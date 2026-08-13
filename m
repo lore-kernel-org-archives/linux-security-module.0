@@ -1,56 +1,56 @@
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBC23AFCFE
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 09:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5DB30F924
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 09:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786613536; cv=none; b=Oz9ZLfgPMTMlPicRoYrHTPzAdv/Nk5tM2Lu+kzPIhb9Uz9rF4m0jasGRGt8d26+824bqy3OKzO/SafQm7fClDbYjft3uKvZ4AQD8ECslDI0G7RQdT1oIW7cJ9RWjUr6RJnXwEmzu4EYH0XDCJSovyCfokCZr5qcnc+CdMSdTSyo=
+	t=1786613542; cv=none; b=jiCO3Mi0qMa1sXJwGT4F2xplaN7qp1OixHdM9Z+oJtKmzU0NXgw3chOVeekLganTupv/EnE3440H9yEJn/PTdUoEU7NjtywFe0qkiibCiLCRFBGrt5zlWdb4Ds2tYRWnPKjJlVho0Mt95s0lMvYO+3kQXuVCx0uhwog5agv9WWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786613536; c=relaxed/simple;
-	bh=ErGs5o10e28dfVAtzVEpysYXW92M/x0Yjc2O8Tf1zKc=;
+	s=arc-20240116; t=1786613542; c=relaxed/simple;
+	bh=6Fe115/E8LmA3L4DNptgcBYXSgvPwv+wAjcr1kGZScc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=g09u9sbPPkGfjFFGU7+Dk9tMY9tRYzlC++gaQJHbqcPipDhLRjhB1Eaz5/Kryf2vqmiEpszTWBXY11frtEifImOx4BVsy2UCjbB5qPry1oNOQkktmq/uXuCngy5jYKrpSRm716pQq7l3lwaIF0fPTWpqQE5zQUiruOUW9gKOhmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KM1sF229; arc=none smtp.client-ip=209.85.128.71
+	 To:Cc:Content-Type; b=CwmD1eHtj/88lvJ0sM7yhWwzrJPZqCVkfogVugDVZ65zFBwmD0cKOA5NW+Q9tseV/MvjiWoPGXJN341npppQn8YJsBW/AHFdY+Yf0vPKMlKg4myB4JN0ScHQyU+jgRxsMkkvExQSa2OjBVQ5iJMWjCf5bcuirDcUvHvs7MAomgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TYRpGT6I; arc=none smtp.client-ip=209.85.218.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KM1sF229"
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-495474a5fbcso17722405e9.1
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 02:32:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TYRpGT6I"
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-c167e032f03so41667766b.1
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 02:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1786613533; x=1787218333; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1786613539; x=1787218339; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=cRNaOK1A0AewDrLDzr0tjnEL+QNpbJHvyeZyhyjeBBk=;
-        b=KM1sF229zVnNeah6/77x1v8fDwmd34hf29lM9sxwrTgS9KAzAciDTQQLYQoXAAXmIB
-         GvAxhuh8NC9egP4u5Av3ov4Mk6mes+s94b8nomFXjxxjuzjov2nzINuluROMer6F3NRc
-         fOhkXcvIf83GJBDLnVl48hxVEYgWgjC/TXRWP/xdWdiYzaUEQDwZGpc39oawli6B8JXG
-         vnca8YwnWBtnYP4pVJ/NPnh7JtL5NKt348lz5B3KBMZLpe4w0vt/kxZeHkgn2NAyZl73
-         2yXfgMUMDi2rUYgQddxkVqmZLf9q2GZPedBNQIcEU38F+NCDjCpn+0jo+wvgrpixbfyM
-         xROA==
+        bh=PGQ0sjjU/ewZQgqV841U3UcbLXMXvr0K5Bswu4dRh6E=;
+        b=TYRpGT6InwJNyqvq87m+nlpUzYdQdcLpYNPz1dBoHikQlBn3g1WNagm7sGCToQh7zQ
+         Hb5wTBhWMvnouAuZjW9WhnAK9riCY/XWFwTOJ5hi13A9QZp0kS0dUMVOfwqaYDnmCBrI
+         atcdDbK90Z7gfXOdQ7OrG8TyWrHBb1uOkpIdCyw/5M4eJr5KfYAA1gONwNgZwHbor9zw
+         EaP3mf3NsT4y0/IH2rRZ5LAygVWP7wbFixshXmtUUWXRPGWk+sh70pjXMQynRSU+SHTQ
+         eZv9PhlqtYibKFZqW2/BthKdJyz26IDx87IzsBm4cYDZ9RfR10kY0AaPUFDGxECWcFrT
+         HWEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786613533; x=1787218333;
+        d=1e100.net; s=20251104; t=1786613539; x=1787218339;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=cRNaOK1A0AewDrLDzr0tjnEL+QNpbJHvyeZyhyjeBBk=;
-        b=TQO0r5ELOhoiHE/xAjefk0qAj6GqY5m+lP8Lx6YJEK4SRQys9Iif9jaohhUrzoFNnY
-         kwQE0v3LRA2dEcQAmhboYICK6EHJX74S2ehLJ88t8RKYpjOKPrYe89ZTMgUPoQAWxJB5
-         o/Yo5op16lf+iYpc5f3rN7BlMQuwKH5Hn2R7wb20mO/oeignsRYEMRPysqvz8WRqU3iJ
-         cw5pvFElPU4fQXF2MVYq0Trt2IjjcLPYIUufdVu5X8odKX6qiK8LLxXu9r8cpDolfzBa
-         HAQS0+8HsZS/9uiVRXYsTWkMK0P6wtpaj79+1F8yDXbhbmCTZelwa5W5/N8xNJynOhlY
-         geVQ==
-X-Gm-Message-State: AOJu0YwX5yRpSir15TIkEw7eOmFSm8sgBH6ffADMfcLuWH3hjrKFksi9
-	so3uuF0gZXGDCDsxyy1GggMJDgaHwWOhpJ5Zao2fSM7mWSqoZx0WBFAESMi68dW6bVtCHULCFYH
-	Ggz0t8A==
-X-Received: from wmv6.prod.google.com ([2002:a05:600c:26c6:b0:492:45de:dde6])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:45d4:b0:499:4dca:aa4
- with SMTP id 5b1f17b1804b1-4998219b782mr47455265e9.4.1786613532357; Thu, 13
- Aug 2026 02:32:12 -0700 (PDT)
-Date: Thu, 13 Aug 2026 11:31:53 +0200
+        bh=PGQ0sjjU/ewZQgqV841U3UcbLXMXvr0K5Bswu4dRh6E=;
+        b=Xl4ZhPhEvuVFSTzYEW1zyemqY2gUip7Kc0ntDIs+iqIcnRfdwbygtDhUIbC7NVYO4h
+         1sWBv4g5ktY7hbW4ytZZNzWKDbj1NW3xvKGP5cIgTemWW8oZbGqw/3JkHHdb1xnOxJAe
+         W/o6u9NFsCl5OW2uczkWOy5zkgtHQs1a31VhL+mvS0YQn2qOFkRKdV15tEJ+UD4nA1hU
+         Gq34jHQerZXRwkosaZZe7f2FLF1Hub0UyVWkczwXCfFjgcXpATbv2+GASFU6qj1DAwQg
+         ngv0+gQOXKUtMU4CStc8qN3EfGa7SNJZX+i0lNUbLRk8IA6T61+JA3n7y8wTC1/jJ/gZ
+         lXAw==
+X-Gm-Message-State: AOJu0Ywto/g//0hvEAP4+u6C56dxhiFhmBHqX2ETyKzRE97GMbnJUKzd
+	DV32WutZfdpfiorJDdzHCrFheWvn9Ezdc/7EEMjLVpE+Ruk2mT2NftCwSjl3qlP7XZgVLDs+hq3
+	udE+0bg==
+X-Received: from edcpv21.prod.google.com ([2002:a05:6402:c295:b0:69f:5133:7186])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:3e0d:b0:c20:56a9:af3d
+ with SMTP id a640c23a62f3a-c21090df101mr196547966b.32.1786613538342; Thu, 13
+ Aug 2026 02:32:18 -0700 (PDT)
+Date: Thu, 13 Aug 2026 11:31:54 +0200
 In-Reply-To: <20260813093157.1436894-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -60,253 +60,226 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260813093157.1436894-1-gnoack@google.com>
 X-Mailer: git-send-email 2.55.0.699.gb54405d56f-goog
-Message-ID: <20260813093157.1436894-3-gnoack@google.com>
-Subject: [PATCH v6 2/6] landlock: Require LANDLOCK_ACCESS_FS_MAKE_REG for
- whiteout creation
+Message-ID: <20260813093157.1436894-4-gnoack@google.com>
+Subject: [PATCH v6 3/6] selftests/landlock: Add tests for whiteout object creation
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
 Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
 	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, Serge Hallyn <serge@hallyn.com>, 
 	Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, stable@vger.kernel.org
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Whiteout objects are used in the upper layer of an OverlayFS to
-indicate that the file with this name does not exist in the unified
-view, even if it is present in one of the lower layer file systems.
+Add a test to check that whiteout object creation is guarded by
+LANDLOCK_ACCESS_FS_MAKE_REG, in the cases where these are created from
+userspace:
 
-For the userspace implementations of OverlayFS (fuse-overlayfs),
-whiteout objects can be created from userspace as well:
+* Conventional creation with mknod()
+* Linking or renaming an existing whiteout object
+* renameat2() with RENAME_WHITEOUT,
+  which creates a new whiteout object in the source location
 
-* mknod(2) with S_IFCHR and makedev(0, 0)
-* renameat2(2) with RENAME_WHITEOUT,
-  creating the whiteout in the old place of the moved file.
-
-This commit guards whiteout creation in both of these cases with
-LANDLOCK_ACCESS_FS_MAKE_REG.  Whiteout objects are *not* considered
-character devices and are not bound to a driver.
-
-For the mknod(2) case, introduce a Landlock erratum.  The creation of
-whiteout objects through mknod(2) was previously guarded using
-LANDLOCK_ACCESS_FS_MAKE_CHAR, and it is now guarded using
-LANDLOCK_ACCESS_FS_MAKE_REG.
-
-For the renameat2(2) case, fix a bug: Before this commit, renameat2(2)
-with RENAME_WHITEOUT would create a directory entry even when all
-LANDLOCK_ACCESS_FS_MAKE_* rights were denied.
-
-This does not affect normal renames within layered OverlayFS mounts:
-When doing a regular rename() on a mounted fuse-overlayfs, it is the
-fuse-overlayfs daemon that exercises renameat2() with RENAME_WHITEOUT,
-and only the Landlock domain of that daemon is checked there.
-
-Suggested-by: Christian Brauner <brauner@kernel.org>
-Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-Cc: stable@vger.kernel.org
-Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
-Depends-on: 49c9e09d9610 ("landlock: Fix handling of disconnected directori=
-es")
-Depends-on: fe72ce6710cb ("landlock: Add errata documentation section")
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- include/uapi/linux/landlock.h    |  1 +
- security/landlock/errata/abi-1.h | 23 ++++++++++++++++++
- security/landlock/fs.c           | 41 +++++++++++++++++++++++++-------
- 3 files changed, 56 insertions(+), 9 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 176 +++++++++++++++++++++
+ 1 file changed, 176 insertions(+)
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index 7ffe2ef127ee..9c1102ebf06e 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -351,6 +351,7 @@ struct landlock_net_port_attr {
-  *   device.
-  * - %LANDLOCK_ACCESS_FS_MAKE_DIR: Create (or rename) a directory.
-  * - %LANDLOCK_ACCESS_FS_MAKE_REG: Create (or rename or link) a regular fi=
-le.
-+ *   This also guards the creation of whiteout objects as used in OverlayF=
-S.
-  * - %LANDLOCK_ACCESS_FS_MAKE_SOCK: Create (or rename or link) a UNIX doma=
-in
-  *   socket.
-  * - %LANDLOCK_ACCESS_FS_MAKE_FIFO: Create (or rename or link) a named pip=
-e.
-diff --git a/security/landlock/errata/abi-1.h b/security/landlock/errata/ab=
-i-1.h
-index 3f099555f059..e0d543d9d508 100644
---- a/security/landlock/errata/abi-1.h
-+++ b/security/landlock/errata/abi-1.h
-@@ -22,3 +22,26 @@
-  * from their original mount points.
-  */
- LANDLOCK_ERRATUM(3)
-+
-+/**
-+ * DOC: erratum_4
-+ *
-+ * Erratum 4: Creation of whiteout objects
-+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+ *
-+ * This fix changes the access rights required for the creation of whiteou=
-t
-+ * objects through :manpage:`mknod(2)` or :manpage:`renameat2(2)`.  Creati=
-ng
-+ * whiteout objects is now guarded by ``LANDLOCK_ACCESS_FS_MAKE_REG`` inst=
-ead of
-+ * ``LANDLOCK_ACCESS_FS_MAKE_CHAR``.
-+ *
-+ * Whiteout objects are used in OverlayFS to mark the absence of a file in=
- an
-+ * upper file system.  Despite being created with ``S_IFCHR``, whiteout ob=
-jects
-+ * do not count as character devices.
-+ *
-+ * Impact:
-+ *
-+ * Sandboxed programs that create OverlayFS whiteouts (such as fuse-overla=
-yfs)
-+ * now require ``LANDLOCK_ACCESS_FS_MAKE_REG`` instead of
-+ * ``LANDLOCK_ACCESS_FS_MAKE_CHAR``.
-+ */
-+LANDLOCK_ERRATUM(4)
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index f7e5e4ef9eac..8fc7f82a374a 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -20,6 +20,7 @@
- #include <linux/falloc.h>
- #include <linux/fs.h>
- #include <linux/init.h>
-+#include <linux/kdev_t.h>
- #include <linux/kernel.h>
- #include <linux/limits.h>
- #include <linux/list.h>
-@@ -983,7 +984,8 @@ static int current_check_access_path(const struct path =
-*const path,
- 	return -EACCES;
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
+ftests/landlock/fs_test.c
+index e82b56a74c5f..871a5b819b98 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -2247,6 +2247,170 @@ TEST_F_FORK(layout1, rename_file)
+ 			       RENAME_EXCHANGE));
  }
 =20
--static __attribute_const__ access_mask_t get_mode_access(const umode_t mod=
-e)
-+static __attribute_const__ access_mask_t get_mode_access(const umode_t mod=
-e,
-+							 const dev_t dev)
- {
- 	switch (mode & S_IFMT) {
- 	case S_IFLNK:
-@@ -991,6 +993,9 @@ static __attribute_const__ access_mask_t get_mode_acces=
-s(const umode_t mode)
- 	case S_IFDIR:
- 		return LANDLOCK_ACCESS_FS_MAKE_DIR;
- 	case S_IFCHR:
-+		/* Whiteout objects are guarded with MAKE_REG. */
-+		if (dev =3D=3D WHITEOUT_DEV)
-+			return LANDLOCK_ACCESS_FS_MAKE_REG;
- 		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
- 	case S_IFBLK:
- 		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
-@@ -1007,6 +1012,13 @@ static __attribute_const__ access_mask_t get_mode_ac=
-cess(const umode_t mode)
- 	}
- }
-=20
-+static access_mask_t get_dentry_access(const struct dentry *const dentry)
++TEST_F_FORK(layout1, rename_whiteout_denied)
 +{
-+	const struct inode *const inode =3D d_backing_inode(dentry);
++	/* The affected file is a FIFO. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
 +
-+	return get_mode_access(inode->i_mode, inode->i_rdev);
++	/* Deny MAKE_REG, but allow MAKE_FIFO. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, NULL);
++
++	/*
++	 * Try to rename a file with RENAME_WHITEOUT.
++	 * file1_s3d3 is in dir_s3d2 (tmpfs), so it supports RENAME_WHITEOUT.
++	 * Denied, because whiteout creation is guarded with MAKE_REG.
++	 */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD,
++				TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
++	EXPECT_EQ(EACCES, errno);
 +}
 +
- static access_mask_t maybe_remove(const struct dentry *const dentry)
- {
- 	if (d_is_negative(dentry))
-@@ -1093,6 +1105,7 @@ static bool collect_domain_accesses(const struct land=
-lock_ruleset *const domain,
-  * @new_dentry: Destination file or directory.
-  * @removable: Sets to true if it is a rename operation.
-  * @exchange: Sets to true if it is a rename operation with RENAME_EXCHANG=
-E.
-+ * @whiteout: Sets to true if it is a rename operation with RENAME_WHITEOU=
-T.
-  *
-  * Because of its unprivileged constraints, Landlock relies on file hierar=
-chies
-  * (and not only inodes) to tie access rights to files.  Being able to lin=
-k or
-@@ -1140,7 +1153,8 @@ static bool collect_domain_accesses(const struct land=
-lock_ruleset *const domain,
- static int current_check_refer_path(struct dentry *const old_dentry,
- 				    const struct path *const new_dir,
- 				    struct dentry *const new_dentry,
--				    const bool removable, const bool exchange)
-+				    const bool removable, const bool exchange,
-+				    const bool whiteout)
- {
- 	const struct landlock_cred_security *const subject =3D
- 		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
-@@ -1159,18 +1173,25 @@ static int current_check_refer_path(struct dentry *=
-const old_dentry,
- 	if (exchange) {
- 		if (unlikely(d_is_negative(new_dentry)))
- 			return -ENOENT;
--		access_request_parent1 =3D
--			get_mode_access(d_backing_inode(new_dentry)->i_mode);
-+		access_request_parent1 =3D get_dentry_access(new_dentry);
- 	} else {
- 		access_request_parent1 =3D 0;
- 	}
--	access_request_parent2 =3D
--		get_mode_access(d_backing_inode(old_dentry)->i_mode);
-+	access_request_parent2 =3D get_dentry_access(old_dentry);
- 	if (removable) {
- 		access_request_parent1 |=3D maybe_remove(old_dentry);
- 		access_request_parent2 |=3D maybe_remove(new_dentry);
- 	}
-=20
-+	/*
-+	 * In case of renameat2(2) with RENAME_WHITEOUT, a whiteout object is
-+	 * created in the source location, so we require an additional access
-+	 * right there.
-+	 */
-+	if (whiteout)
-+		access_request_parent1 |=3D
-+			get_mode_access(S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV);
++static bool is_whiteout(const char *const path)
++{
++	struct stat st;
 +
- 	/* The mount points are the same for old and new paths, cf. EXDEV. */
- 	if (old_dentry->d_parent =3D=3D new_dir->dentry) {
- 		/*
-@@ -1520,7 +1541,7 @@ static int hook_path_link(struct dentry *const old_de=
-ntry,
- 			  struct dentry *const new_dentry)
++	if (stat(path, &st) =3D=3D -1)
++		return false;
++
++	return S_ISCHR(st.st_mode) && st.st_rdev =3D=3D makedev(0, 0);
++}
++
++static bool is_fifo(const char *const path)
++{
++	struct stat st;
++
++	return stat(path, &st) =3D=3D 0 && S_ISFIFO(st.st_mode);
++}
++
++TEST_F_FORK(layout1, rename_whiteout_allowed)
++{
++	const struct rule rules[] =3D {
++		{
++			.path =3D dir_s3d3,
++			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++
++	/* The affected file is a FIFO. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++
++	/* Allow MAKE_REG below dir_s3d3. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, rules);
++
++	/*
++	 * Rename a file with RENAME_WHITEOUT within the same directory.
++	 * Allowed, because MAKE_REG is granted for the whiteout object which
++	 * gets created in the source location.
++	 */
++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD,
++			       TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
++
++	/* A whiteout object took the place of the moved FIFO. */
++	EXPECT_TRUE(is_whiteout(file1_s3d3));
++	EXPECT_TRUE(is_fifo(TMP_DIR "/s3d1/s3d2/s3d3/f2"));
++}
++
++TEST_F_FORK(layout1, rename_whiteout_reparenting)
++{
++	const struct rule rules[] =3D {
++		{
++			.path =3D dir_s3d2,
++			.access =3D LANDLOCK_ACCESS_FS_REFER,
++		},
++		{
++			.path =3D dir_s3d3,
++			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++
++	/* The moved files are FIFOs. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++	ASSERT_EQ(0, unlink(file1_s3d4));
++	ASSERT_EQ(0, mknod(file1_s3d4, S_IFIFO | 0600, 0));
++
++	/* Allow REFER below dir_s3d2, but MAKE_REG only below dir_s3d3. */
++	enforce_fs(_metadata,
++		   LANDLOCK_ACCESS_FS_MAKE_REG | LANDLOCK_ACCESS_FS_REFER,
++		   rules);
++
++	/*
++	 * The whiteout object is created in the source directory: Moving the
++	 * FIFO out of dir_s3d4 is denied because MAKE_REG is not granted
++	 * there, even though it is granted in the destination directory
++	 * dir_s3d3.
++	 */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d4, AT_FDCWD,
++				TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
++	EXPECT_EQ(EACCES, errno);
++
++	/*
++	 * Moving the FIFO out of dir_s3d3 is allowed, because MAKE_REG is
++	 * granted there for the created whiteout object.
++	 */
++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD,
++			       TMP_DIR "/s3d1/s3d2/s3d4/f2", RENAME_WHITEOUT));
++
++	/* A whiteout object took the place of the moved FIFO. */
++	EXPECT_TRUE(is_whiteout(file1_s3d3));
++	EXPECT_TRUE(is_fifo(TMP_DIR "/s3d1/s3d2/s3d4/f2"));
++}
++
++TEST_F_FORK(layout1, rename_whiteout_exchange)
++{
++	const char *const whiteout_s3d3 =3D TMP_DIR "/s3d1/s3d2/s3d3/f2";
++	const struct rule rules[] =3D {
++		{
++			.path =3D dir_s3d2,
++			.access =3D LANDLOCK_ACCESS_FS_REFER,
++		},
++		{
++			.path =3D dir_s3d3,
++			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++
++	/* The exchanged files are FIFOs and an existing whiteout object. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++	ASSERT_EQ(0, mknod(whiteout_s3d3, S_IFCHR | 0600, makedev(0, 0)));
++	ASSERT_EQ(0, unlink(file1_s3d4));
++	ASSERT_EQ(0, mknod(file1_s3d4, S_IFIFO | 0600, 0));
++
++	/* Allow REFER below dir_s3d2, but MAKE_REG only below dir_s3d3. */
++	enforce_fs(_metadata,
++		   LANDLOCK_ACCESS_FS_MAKE_REG | LANDLOCK_ACCESS_FS_REFER,
++		   rules);
++
++	/*
++	 * With RENAME_EXCHANGE, the whiteout object moves into the source
++	 * directory of the rename: Exchanging the FIFO in dir_s3d4 with the
++	 * whiteout object is denied because MAKE_REG is not granted in
++	 * dir_s3d4, even though it is granted in the whiteout object's own
++	 * directory dir_s3d3.
++	 */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d4, AT_FDCWD, whiteout_s3d3,
++				RENAME_EXCHANGE));
++	EXPECT_EQ(EACCES, errno);
++
++	/*
++	 * Exchanging the FIFO in dir_s3d3 with the whiteout object is
++	 * allowed, because MAKE_REG is granted in the directory into which
++	 * the whiteout object moves.
++	 */
++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, whiteout_s3d3,
++			       RENAME_EXCHANGE));
++
++	/* The FIFO and the whiteout object swapped places. */
++	EXPECT_TRUE(is_whiteout(file1_s3d3));
++	EXPECT_TRUE(is_fifo(whiteout_s3d3));
++}
++
+ TEST_F_FORK(layout1, rename_dir)
  {
- 	return current_check_refer_path(old_dentry, new_dir, new_dentry, false,
--					false);
-+					false, false);
+ 	const struct rule rules[] =3D {
+@@ -3270,6 +3434,18 @@ TEST_F_FORK(layout1, make_char)
+ 		       makedev(1, 3));
  }
 =20
- static int hook_path_rename(const struct path *const old_dir,
-@@ -1531,7 +1552,8 @@ static int hook_path_rename(const struct path *const =
-old_dir,
++TEST_F_FORK(layout1, make_whiteout)
++{
++	/*
++	 * Creates a whiteout object (creation guarded by MAKE_REG).
++	 *
++	 * Contrary to the other character devices, this does not require
++	 * CAP_MKNOD, cf. vfs_mknod().
++	 */
++	test_make_file(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, S_IFCHR,
++		       makedev(0, 0));
++}
++
+ TEST_F_FORK(layout1, make_block)
  {
- 	/* old_dir refers to old_dentry->d_parent and new_dir->mnt */
- 	return current_check_refer_path(old_dentry, new_dir, new_dentry, true,
--					!!(flags & RENAME_EXCHANGE));
-+					!!(flags & RENAME_EXCHANGE),
-+					!!(flags & RENAME_WHITEOUT));
- }
-=20
- static int hook_path_mkdir(const struct path *const dir,
-@@ -1544,7 +1566,8 @@ static int hook_path_mknod(const struct path *const d=
-ir,
- 			   struct dentry *const dentry, const umode_t mode,
- 			   const unsigned int dev)
- {
--	return current_check_access_path(dir, get_mode_access(mode));
-+	return current_check_access_path(
-+		dir, get_mode_access(mode, new_decode_dev(dev)));
- }
-=20
- static int hook_path_symlink(const struct path *const dir,
+ 	/* Creates a /dev/loop0 device. */
 --=20
 2.55.0.699.gb54405d56f-goog
 
