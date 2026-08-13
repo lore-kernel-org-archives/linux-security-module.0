@@ -1,106 +1,121 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F0838D419
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 18:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786644509; cv=none; b=AJ0TJkpZC5RwJpGdt7ckFC3Z2C5zhT4232NLxKcujLDniKp5pAB1D4FUj02Ei+flhv99O+iVgjE5HOS0N+qdoiN97o9OyZNtZG+k4HqB8z/3epJHpduCGbJOlYAoakXh3TLF4uZs0gQCwHR0aXRxaRhfzjrHcFjw7ieDtyH5uAE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786644509; c=relaxed/simple;
-	bh=18uwLcHbLGRiIseJ5viEoswF+GNIRi+RyFvLZ5C4nUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tb9JlPI+NM66JIqhpLbwCPJ/IrM8Oq59UlWs8J4ZyyTZGnLMRJnhy1pfYVPqv5jwNsvZZr5s0uSw1tRmjbj6txtj7jz9S5QiGCRcltiJ2TBpgtSonYdMIzmNRD2gBaELTz+Qfy3oxS0NPmZZp1qDWO8qbD9eHie9IcWb5fVdIg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ft3PM7mi; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986E63B83E0
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 18:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786646260; cv=pass; b=AvM5jH2RONiKxartu9wmpC4GDPWbb2wQPNA7kAqscJgLwal8QU6QvUSlckBVVvLNkQJJrivPN0kJR/nbUtK+KI4q/clKE/CKZQgsuTlMDXSqFYqkMBKfkaRb1X8zoQS9CCnCgMwkneZ097U3ye99EUdAr5TVzC5HhaVWiNe4LSg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786646260; c=relaxed/simple;
+	bh=8KbSxJwx3m2I0QqesFzBuyI/iOXYKuTmEIrlWf+3Ed0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tur4PlxQ9c3Ndb2R19w9tNwlbV/4Culzn8ZuFzYKbxuwXW5XvIO4zTTqgzjF5+wLoeSMwAklEtNcq8AtorPnK1GLhK2XDJym0EaWU+vKuXxlmQ18q+ga/xoFbq1aHtKuMSZ10Vm6ncfIR3fqm3Y39VzLknKv44OGVGptBM70WpE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FsKFh/+L; arc=pass smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ft3PM7mi"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-936623c6dd3so78824285a.0
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 11:08:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FsKFh/+L"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2ce87c7e3bbso3188795ad.1
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 11:37:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786646258; cv=none;
+        d=google.com; s=arc-20260327;
+        b=FA5uLaNtwE0plE4IHA2u75aI/2cJ1g8zsu1GO0G5eZKbg0ULHOb8GJARu8pMMkA6Ob
+         bSxyFt5HgPm8TygVJWNNfLgPQZF5XYk1Zxg3DFzYHpPZqVTuY2PwBXYfZM2mWEW16ypO
+         +kB7XpzI6dtQq8zcyVjVQNd+9TDoKhqhyBcnH5q/mGhNKjPuH5RTd9Ia01RtYHcRCzO9
+         Mrpp181nMq0tZ9YIRV1jVOtjVG5dm2dg4T9cWZXpUcBLLE61UxKkO+Ym1ucAzSfc8zj2
+         /VOrNc4zt5rzm0rE/hrEzB5zHcjPpgUcTlRrrO0vDDLkL1pz7ebSE/ANaRtiSaRtz23Z
+         K3+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=QrFyaySZemBX8fPU45g5ZTZ6m4q/Cb7hguiIrZTIlKw=;
+        fh=abZXrZHFtrq0xipQ8HJBnbgsIfvTjyOo0lKzRyDCwys=;
+        b=UYUdM16BWz0v8DOcoowtfp/tNqEvwX9rMf1oK+DZZOK0D+nL0eJZ9MYpg0uKF99B3O
+         0GkYcR120VCTiiLT3EXxEO6b8vjOhKEP2+aYwQqr4DNdkTfjSG1lFVvkwIPOG7INrDnn
+         O8mF2oozTRsMVuNKoVJchf/E8fKAyHt/JA+Wp8KuAwjg1+UBdizQeibyB3l71M5WCoNn
+         toUjQn7JP0TXEMuniNlm/NlPjsb7EALSxQIoD8is2jajR4uBDtOHLlVlnHGJHG7jmuYu
+         2hJCKenRRwCWqVzVsjkXJ7gvFRyis1/NcZCeg0UKZ7crpz8IEBSJFiZIGdQ8Wi7dKNun
+         SH7A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1786644507; x=1787249307; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Eh4YnFKKRSVLMKJwGIOxJMvYKZgsW0irEzH9LlXR5fc=;
-        b=Ft3PM7mitdUh71iptuIVOmQj2QBdmFeqeMHo7IXDu3nxwi4l4TJNOZ0qsXoZ2hJWwj
-         gdbHpSodaoLS0e+C9Ykg1yWvpqnonlnRWdOm+FrtYae5luoj3XqexaicfmnxTpVPmUAG
-         1fTV3LGqcvKqAkUNCfaqwWHcxj1T8TI1nIbBck0Ykc9c++7TJgElzgIsMlseZyU1O6+f
-         wZE2/f/B9qE6wFwJeI2U56SgSm0AXX5HnDydkNihUOcYDa0XzXJDwFVAMQy2O/ESQmqs
-         XGVReDSXDEa6lcY7utmVOzB+D4lyIFQ1/cf2G06fQ2FMW9Wxqe922sykZu9fKjTQObjF
-         0QYQ==
+        d=paul-moore.com; s=google; t=1786646258; x=1787251058; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=QrFyaySZemBX8fPU45g5ZTZ6m4q/Cb7hguiIrZTIlKw=;
+        b=FsKFh/+L10CI0mDq3qwAuqYLoKrxk/miG52P8fUXOqE35/cPddouyMulDRtSmDdh2s
+         Ip80j0Rzct3bxUSWyfQFfR0ewmwuweUu/FKov/xZXrAHBDJozqXSWyQG0H9nflqN/wX1
+         GKlGieZ39HZLKvxu5JULBVi3Jl1oj2pDjk1jRcrsc8t3AMLtQ0N/QTuueitXI2LHGmWl
+         A4rbWfkSdwmWdMuQqPoL3V8Ffga8UgX3LommdlzM8um3CkWmI6thkY3BG8lVoHfB83s+
+         f2TqwPinWJ46weNiMIZS15XDa7v7J6q3k3sB58ZM2gGY1EPzSEVWJq7/Oyku+RL2MRxk
+         wLgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786644507; x=1787249307;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Eh4YnFKKRSVLMKJwGIOxJMvYKZgsW0irEzH9LlXR5fc=;
-        b=PeVRYZiH91KSXZivna4PAmOAQH0w642DSHZvKpf39PfgWte4X7XPwrMlTNu/dSJ6ga
-         YL/8QXhNoJlCuyg3kUYhU5qfxgg/rPoO9Md/igIcZelS5bp5WP/WwfT6CYe0PqwH+f//
-         gbFud4jz5/UB8KBXkn1ZDimvh6OxmNxVr9JbFl3E81MmmQIR50aaRjOXqigGhpNgi0rP
-         l9AFnOdVJmE6gATPzsE38bK66w1JnE3ItIgX+qQxQ904Hd2hBJOcuhskiIzJL05c+/fr
-         M8qNXabD/oLgo69ct9QJh1MivlAqD+C7msweD9eqWj2NDm4wh+VYMQWsYiEHDlZd705M
-         urRA==
-X-Gm-Message-State: AOJu0YzNKFw5UOAH0Gqw9oQzgTM6Szyr/y6pUCL3pf9pspGsDm3xegW2
-	GQ1+TRpIqOOrwy8Jl1UxCK/9TF2gSrn56vqJGXqfr3lXb7L86webLWOEs20z17DUQsQXQeDVSwE
-	pR16TqA==
-X-Gm-Gg: AR+sD11Z+EKCZPlMT7E+yorFil4lJkbVvyYeWdRSibZMeJQiJl46moR1go9jFxxEyuV
-	ZIKqEGGbsvRcBtUFczEfWq4OGjFc4NTDKeq/horTuHzUrl+52Rh8dtWmIB7cHW3+YkarFdI2nTH
-	ujKVs/Qc1uyLaYRWDLb5vBO4SC46IJLJF/ucKQCLJy0PxC4f60Ti+liR83K2ZGIRP1nQVngGuxm
-	PQ8z0yoEzEJDdxxcu+3tex4opwOXGOKFJGUy05FY3PT8PWn464xpGnNWhA/MkSx1LFXkjEgvf6r
-	uDJYmjPCED/G9hz6trgiZU1WdFCaSNiVVnWOnqmUyMAwbTCerD5im49clP7vdCPh+rHfDf7SeNg
-	D5KxfwNO1EPdD5LQmommdTCDnFB2BG+b2Lt7r5GBVS/P5wIQFYoX9jflXgH281pBPx+8232HnHR
-	cuM1knchIVXhKTMMaSN0PuC9Dx5w2TcgaewIWiWwAltA1SERJC4QM/y7OMylnX5GcROFZKdqBzD
-	4LzL92hw9SiGj0o0AuY4Qid89r0dgvbZA==
-X-Received: by 2002:a05:620a:f01:b0:92e:57ea:8c8b with SMTP id af79cd13be357-936c03f21aamr732218585a.0.1786644506957;
-        Thu, 13 Aug 2026 11:08:26 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-936cdf55745sm42553585a.5.2026.08.13.11.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2026 11:08:26 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: linux-security-module@vger.kernel.org
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Subject: [PATCH] lsm: update the BUILD_BUG_ON() in audit_log_lsm_data()
-Date: Thu, 13 Aug 2026 14:08:17 -0400
-Message-ID: <20260813180816.223079-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.55.0
+        d=1e100.net; s=20251104; t=1786646258; x=1787251058;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=QrFyaySZemBX8fPU45g5ZTZ6m4q/Cb7hguiIrZTIlKw=;
+        b=HXgqPX6hC7G2yBOicUV9Nzb+kB/S0FjVoIvyXHGyn4/Rk22kSZYF3FNcAvKHv04j1k
+         ZrE6peomUMkPaG6+yj5ZOLYaSBbX64gy0riQ7UDW2xAOHNHWhi+2bFp9hrp3gfE/evh6
+         xoAXKfR1A2Io6JPrSnCxsfKVuR92LYNfr5pu3ooak2hPtJz/KOPxdULLaw9EmDFaB7hl
+         4242ULVOSsGDbcqCRclnSJFaQDWBIxJ79Os2DcrHTSZmY05gl5cmxTM2NQ35nzhQV6MA
+         RfVFdU3jrD9Acg3BiQdWHmpyaKzxFYwnan5Ns1U/ex4H0z1S0JciWKdWAxsDdY7yDR6V
+         NlpQ==
+X-Gm-Message-State: AOJu0YwTDD3t6DP5rqsoBzzFDnkcQPOHBoQ+dJupiSof44/B3Hd06deX
+	9krbGgkm0uFqDu2EVXmyAIv03AZ+hCgBE6Z1DdgQDyAyp2AboMdwBL7khhXmNYILhKt+n/+GqJI
+	AAlBUdj/4LXyoceMd9slSghOyVygpoUeo4n2KbdHmz/HCAM3jRwluZg==
+X-Gm-Gg: AR+sD138CcxJnQfjyYlSZ5NHUBqBgHIUwtJpVqzRNLhPSNxchSeBpG+k+Am7fpm70Uv
+	/dgaPxFq4NTdglGfgLRC6m9yJHDYCXo6bz32QnQdeEBWPcB6FNVFem+FF0Wu7AvFX5dG/8n1JoP
+	E+cvjxL+M3DLv8n+vzQfLVPxNnTbSlRiYSXB1AkFIZhpH2aOUR9tdaDbvdIOJze41V5kq7M6t6a
+	vyq478I3kVcINCzuAqK8aG8V5p+bHorM66HFAkwco1hPu2IPQ7h8sTaTgR7x7QPnYL/ohTDehU1
+	P/RiEYZUmM9wF6JN1bOnSPbw3xzk/jWkJttj55Pnt/TY
+X-Received: by 2002:a17:903:2f8f:b0:2cf:4339:aaa with SMTP id
+ d9443c01a7336-2d37e8525abmr82161225ad.12.1786646257894; Thu, 13 Aug 2026
+ 11:37:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1162; i=paul@paul-moore.com; h=from:subject; bh=18uwLcHbLGRiIseJ5viEoswF+GNIRi+RyFvLZ5C4nUc=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBqfggQ9aTWqcymPqCy8MNx2Sw557v95DLLWPLEQ LlWT9gnTACJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCan4IEAAKCRDqIPLalzeJ c9JsEACvZ73wdp2Sec2SSjIZhn7NQX7Ph6M/NuZfa/GbcCSsLY1Pd+MkFXyjAGzlguhfpVFDDgb MJh/x57dSZ377e7OViZV6H86MAk5lySsne0sJA1JXTHEyPvLpHbq7gEzitA6lHnIicyxQkReGIB buEI5FZu4eh6w4QuLBYSBCUmt1qZWD4Tlvt5T6jPDoyxeSbJ2lbHuzue91E3luZKG2GJ8b9SGLV bh0ShT3fQZj4dGISIvhkuqbq/R2PJGO8lmywZZDzW5eR3hGEBvcwDZcwyxry7Zi1A3ZtcfW+Irf 9UCrH6LO69iMhR+uZvuB7DKBDyB4rD31+u4YhU0SH/DnQI0Ox6hTohvyDvy6S7X9vwfHX2g7KQ+ nPJdG6yGIere4TJ2zyEgWh0W/L8HafwJdtEXBJhHDbfUdbIwdf0dwME9xga01k1FAxOzA9VClwk sZxCKavFfxwBL2HAUGVDIYdxkHq0ignnF23zxDIvPoLwZoLOMwnD/j7fp/YiFPT2IaL1gh3E37z FfBknbU2x7M6AoBXx2DBPMhoay99v0QcMgVw1JURnHM2Z1iA6Acr5wKVwOPJrwGoCeIYE6WSFel zq1vHT+fZCjUG5PTJId7EauNCZ6IlxwbuEnVS3QHq3bUA6e27+uPYktciE/U+yhAZQz4Z1tIiNf hOkSod+YZMpCyoQ==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+References: <20260813180816.223079-2-paul@paul-moore.com>
+In-Reply-To: <20260813180816.223079-2-paul@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 13 Aug 2026 14:37:25 -0400
+X-Gm-Features: AUfX_mxxC-RQb65lKaegYcqY92xUpq6fv6zLHlJqvcJKr8M0nnur81oWpsfcf2A
+Message-ID: <CAHC9VhRRgLifObY4Adgxe4FBmXn-wbxYmx6unMXtmdTtbWYMog@mail.gmail.com>
+Subject: Re: [PATCH] lsm: update the BUILD_BUG_ON() in audit_log_lsm_data()
+To: linux-security-module@vger.kernel.org
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 32-bit systems the newly added namespace fields in the
-common_audit_data struct exceed the BUILD_BUG_ON(sizeof(void *) * 2)
-size check in audit_log_lsm_data().  Convert the size check to two
-u64 types to both fit the new fields and move to a size that is not
-architecture dependent.
+On Thu, Aug 13, 2026 at 2:08=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On 32-bit systems the newly added namespace fields in the
+> common_audit_data struct exceed the BUILD_BUG_ON(sizeof(void *) * 2)
+> size check in audit_log_lsm_data().  Convert the size check to two
+> u64 types to both fit the new fields and move to a size that is not
+> architecture dependent.
+>
+> Fixes: bb20ca26f960 ("lsm: add LSM_AUDIT_DATA_NS for namespace audit reco=
+rds")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202608131232.Owej9tlx-lkp@i=
+ntel.com/
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  security/lsm_audit.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: bb20ca26f960 ("lsm: add LSM_AUDIT_DATA_NS for namespace audit records")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202608131232.Owej9tlx-lkp@intel.com/
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/lsm_audit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm applying this to lsm/dev-staging to fix the kernel test robot
+build failure, but as this is just the dev-staging branch, please feel
+free to comment on how this is a stupid patch, ACK, review, etc. as
+you see fit.
 
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 404ccbbbf94c..29116ef2986b 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -182,7 +182,7 @@ void audit_log_lsm_data(struct audit_buffer *ab,
- 	 * start making this union too large!  See struct lsm_network_audit
- 	 * as an example of how to deal with large data.
- 	 */
--	BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
-+	BUILD_BUG_ON(sizeof(a->u) > (sizeof(u64) * 2));
- 
- 	switch (a->type) {
- 	case LSM_AUDIT_DATA_NONE:
--- 
-2.55.0
-
+--=20
+paul-moore.com
