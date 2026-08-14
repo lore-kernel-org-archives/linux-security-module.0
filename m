@@ -1,83 +1,91 @@
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD5E438494
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 20:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161FB40E8E1
+	for <linux-security-module@vger.kernel.org>; Fri, 14 Aug 2026 08:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786654778; cv=none; b=txawK2wZ+jk3m2eYx2swBjEFjZu3I4Qbf4AkpN6AeTeKJByfZ2vyu01JZneee9qpsUg9zHPLG4QsL250qWQtZaGGBeRC8GMna7q0ZEYN96dFcpZaLNpsYtFEuyNDSFMIiT3EjqYwXvnQdW2yyN1jmv10i3d/IBtnjZxvUpTV9jY=
+	t=1786697706; cv=none; b=PwomL++mxM9//GMhBBT6gfJhCzAMXGMl/VGIIx6wvlataV7m0AWpMFrU9iAByGl7Zc9gY4lLMIwOgKA4FWZUxwmxKJIjKnrpc3BIT0q2taBwdq1mG3jNeILryzbcXMb+ZHZkM7wC3qg+pKWIudcQFlUv++a1ypjQOfCLYsIgR88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786654778; c=relaxed/simple;
-	bh=iplEOpAuewoDbtmO5Bgo946/rCYzlrvNkYvSo61Gg+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F7kReQO7YF7wofu3Ji54qT85GHMJtmbmkJzP0GBbhZ2YOhd2fLFZEw2lwMCYD8JbyndQjU3/fVyt4kpr4bzQ11vqT2h9k/lCtfwXBo3uasxkF+GpS1xG0XoiCF0Q4crbHl7pi7Z+iCWnbiSUOpR80vuFnr8NF1HHi4U5/85M3W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=c3Mn0nRj; arc=none smtp.client-ip=66.163.189.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1786697706; c=relaxed/simple;
+	bh=NO2JvQNsMMZgyLKm83dJeGXuQXstUbL8uutqQJAqezY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rxVAP9mi4XM08oZ0QqtlAKpyueMa3rd++HTUDtv1ALaYTryu9l0esjlSYBOsSCq3kKzLMwKQK7IGjDPNaTElvkcWYUgD8ijs+OCbxNggpORSXsLo1OPQMdGGTizZVyCx1YZD8Sn6NAuz3LUfRP6G+Jyz1+TcMnR/2klMWQmBb2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=WstEj6x1; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="c3Mn0nRj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1786654775; bh=L8gF9lbb3/GdM063c/AqJxtVF10JcTPk+9Ii0LVaols=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=c3Mn0nRjddd37T/EP2WpMG9zFCl00+SHVRYe+X9IKJdPYG83mnP3ATutvQf0q4KqwcT5WLpjlNUsUHXD3FKbcT0fGbN+pSkiulkBRD1Xlh1NBwuV2FOoWvxIKYxDJxbR27Oa3eVkwZntKRZ5MrAgG4ckSGZGO6vZ9cxJ0e7b2mULFSglAvdiWaugVQpwXgYBOMQNHUxqAneJ9RD8Cv9NtxmfEIvAIhJdp0bL3/xmBjAWxAqZJHy4ZZDrHfN/VPdyYd0XZH827KWbEAUTkz0qdZUV4n7c/i1SYXlriQXyw/QNAcvIsx55BRiLk0ymRhBM0vIKqDNI1oIjSbrkKib/eg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1786654775; bh=lIpGZIdYP0nGBzpXA9MYA4yAXuXldRDKnBvx8yoEyZy=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=kf+7zJVOFefU45ZfObsQqnn8fYj4Qz04g9n8fL6z34UCWrEJP8VwCBQ/9Gcx/tWk9m83ch/2NL3R5THFGPoJd9nRpSmDd4bhfctevDeZhyeRLExr194uE3/SGnK811bY3+EO4wecJOusNW1bOaV/xB/mSNb1kc3POgb1zTpmXye4zGpkNgNkwodlV030Ldm22jb+VUgq+f4b+HVA6cS3tQN/iVZGSrQtgVL/U1+jeoIwUAGF9mtQYrHT3/l/4QJf7ACKGiPAN8ny8NgegrGsNWo4nSyZqoDBXEnavyeR2cq6njM6OFm51ttRZDg5XbcLTNnzYfupl4VD8TCWXKRuCQ==
-X-YMail-OSG: v.aM1UEVM1mRwhXWuoIVtQjgLTChcQQxIObiZted9Av0P_KoQiCW.xehYlBLl4A
- PLwehYS3vk8PER1Xh0xS1.yuwDmZYiTxyHZuTVmkM159P3eBPxHZP5zrkrBoKD3rb0yphLvwGBFw
- 3oY6IMYZaDc768E4yXc0kAgWZ.CrLCaVxqNicV70IETUJCWPTUW8dVm9IQ_mPY6g3MoyUmsNVbcA
- Hsx_WfkBco_j.Ruv5oRn08NQS2Wfz1ZOjNwFfIIZ0i0w3DNHjpBx1T9mWZd0sxRJ9dqgGpdUuTx8
- rVYZF9F.Xm6ZU6Vw6MF4rvQBUZ9nAacp6UOJDoxVdHiUNB_Xg6mXMfNXaec8M2x4aCstqwRpNjPy
- c7E6AbQkOtiOK9OEyBFKGlxmOFs9QxJ8tNK0_.r8EkqII2DX3FL2hwLKxBBPxGo._nVaPA7SM7tM
- NKx4iACoecExmdLp3AJcrl69dpQqNuyFIfejqSdD.zcBdnERZrkSGCkZAhHbdMJ1CZ_o6qSmvqwJ
- bnndJdun2GlyI27OixsCL4zzoYtnjoJoCkjxU7FL_6GvaoWnd.qqzBL8x8AxXBqt5RgkYBeMXOom
- ESNLKjH4rQGYzPyB0QKqMc30DJaVzzHHj8kWcPLKr1DZrhoUzdaR_wjv4MJ4reyFQHqE8Q5IRt06
- vkPs_aRho2szOvPOEACcP1ZIoCgegXkKkwX3oLDj7o.sss.u9Uxu2G92HtMkoez5xxsxEwAD3Vc_
- C7kRDfirVII3KUFrObh7kcWjiAzq36POX16zxRT61wTB5Ot07LQz0zeIpmd2hVsGmJ5_ujZ8HTOn
- I2z3AwRqtgHVYfpciOqJbvobJ3gXeQ3.387L_44bzjhVHovykA8OouPd3sN.UnmKYvadQnRw3kTn
- FJjSUr932.a1nbXEDCfbk0kCrOgQ327edZhNmnZIaA1S43ULRdmslw9FieM.YgyB6oFYwnZFm79.
- Xt2ZgoBZ.8qoulNYdynHD1LPSet70qNK9fMfYYVRC_cfXiedCXC5l5hVaRxH6YBXKqSv7HubvAGJ
- Eo1Nk5vwRsgix54M6xX3geqBcQ8AHeXu7CBetfsh_LHXRfh_b4fQZDu8_jy0xZJ.qjr.cYCMaCpD
- MunEwUo0RQ.boGMOWNmFBUHXh3ckOaksrSde5Jo9SgFNLVzpQRmAAeOBCHcwpx9nTUWOFH54UmxV
- tBOdB9leo_z2hXT9AhyK6Odrd0unf7lQvFsVB.76KmYdcohJ0wNOfrkMUxFZ35PVeA_7S.atGbil
- M56LNxShuCbFJ_Ne2fZYnpwoTqwgY1DYbonSzk0hL9HuZjWu_e9oUdgSqucItfEOeZu_vhsnco4_
- pTBnVVWiXmiOR8yB_0D6j7yGBCoilC4FlxK4z8JjMSStXl.CYYYq.q1T89x24csVxQjP5i760O_T
- gB.WGcCGEPUaZV3fh95ExKK3e7qcp3kTeBzCdyKUwVlhtYXHHF9FWhkx8f0dfoh31zFz7CpkHeyv
- rv1VUbiTJ6RGQbb3azj5D6uF0mzs1d93MDQPcKRU9L4TpX..XS6E2Uvny8RWpm4gmaU9OENjQH67
- TQDucHVDQbVqsVE3IHg9NTp5uqe1GQbJEtaFUTQpp5AezAWGjZ0oZvYkmBW1iwZ0YKwAJPIoxQfV
- seggGTamasoVAs8fLQhb_bqtcQ8qDyDMRPGErj.ujm__rPfeeXbF26LrAfZ_q1M1wMAdRoCpnsSS
- ECBsI7emrRmKIno_jOICb1xF7urBEH89cBY._0YnBOiv_OgKV0hLBB5TjsfcKeSmNWaN_LfGtiMM
- OQaOxEq15AG_dLHd9Zf9qEkeRnXVE2KyvaNQXlTm1laZdie9db9v9qS.oAvivvkBy.V9ILnUIQRc
- HBTkSlGo_mIPpOlfzeXw3vXUBG3aHa6T2TIa8KkGnFLoykwpqjfAAMSOr4Tw0kr1sJ6lbaL4uU.6
- 3g0Luj4Qz6D.fongKWk9dE1GX_UF03E69N0WMHG3jaWdbXnRBrlJkFMIlpwrIVVbWelUuu0n86Xe
- SBJ8aqwfGjNiPSNntx_pHWLUvGEK4SZwf1HOe85hg799WAYnme.YODkYUmvD4PeFdr1UkCLlv3DW
- H_7UILBPn4AfHAL._V9MYUZHzc776s18rNPtlkDotIP1q1VpeYsFasx9FPdFcUZqC38UEVS4UjwI
- UZvoz6F_7dv_jALSvix_fR2AFmsGvSL3DPk2dpm72fNvmTUsfMLrtPFtOZ.dofufu23RYIkBGJm7
- D9xgKAe4RX6DHO.XmAdYs2dcn6bojntgT0mITsok9RP83SB_fxjSotKwQGQZpkJ5pyt7emKlfW25
- .A.4uBYRKRo93gfKviGaKhsvUks7g
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: b6a70a9e-8261-4e33-811a-1e77ff204f88
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Thu, 13 Aug 2026 20:59:35 +0000
-Received: by hermes--production-gq1-678d9dd684-6hkng (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID afc5ff34d004487469fb59f8ce77dff6;
-          Thu, 13 Aug 2026 20:49:16 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="WstEj6x1"
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 238823FBDC
+	for <linux-security-module@vger.kernel.org>; Fri, 14 Aug 2026 08:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1786697700;
+	bh=54b2DVF1kWnIz6lUGKM9/C1BP6a80iMzZ+lel8TT4+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=WstEj6x1h+roZXd/1Q41z6WxPLRIR9jdrWI5KnAAaZIPeAb8p/3Ca2MlZKP3FoLIr
+	 JEGTxdynZ43W7fYBMiLHV3dMH4XP5xGpmOr27HQvEBsi2DDVfpHsXcHV6DFdMEsUgJ
+	 tnH+1vkM4t41b7AvQeJ/+zWecriruCa5kTEcovgjnBhu6oU7NUogupZ7s539Olcjey
+	 CelLtMqN2+T50G6Mvumhp8n0C+qaUB6n7FoTRs6xF2FCHjJAB1/glPB7qyRZZyu2Wv
+	 Q61/xKaUCN0NBlNb6eLBoMW+wl3H78S21DTS8sVyrg2VRuu8bi4YFznvX9uqmO8gnG
+	 Qq57kgPlLIffvlQz+Gv1Z1UTBfPj8+jlHglfSUsd7knqUiUAyRgoUXzO9DJ8kBLHNg
+	 9NSXWHr8Gx3EHp6ziFZ98iWZgEK1T+JCBOPSWKKwO5tfml8YTt1loesaUlrGSKXhx8
+	 /EJf3HCOEotkUUueB0n539JqlxyYFSekU2RLX4hcbp12Kwvh1boA3G9NSuZ7JptUuT
+	 ceowaWasO9d9+RQUJjfAUnJ7PlL6KahDy3tZV9uU7TrJh1cwUiMGjlIDDtWOX4y3np
+	 khfJBhWCw+4Ugr5Y8NLf61ERImCm5QfnCtgTPzCiml9glJBSYzQ0S4NT0H5RovEpSs
+	 aE7oHIzmGZvD2IAKOyRnkqyM=
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-48000d75326so472439f8f.2
+        for <linux-security-module@vger.kernel.org>; Fri, 14 Aug 2026 01:55:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786697700; x=1787302500;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=54b2DVF1kWnIz6lUGKM9/C1BP6a80iMzZ+lel8TT4+E=;
+        b=jAy/3ZTSSXa04V6bcTQSC2M+t5IhTpBwqFKEHyn75qYxpGsdU8IgY0LQ4l2Ud5t/25
+         NNY4Sht+lmAvwWnVfsnD2EJTUIJvv57CGQRtNt54Bp2vvBlT5n0ail0ThyOjGkWi4k+F
+         YktTrKq6OveFmxDyOeZ2ECdvBmwbOataCAMtIeJLYL4KYOcEu/L01C1MwuCjrJveTGYA
+         /2/pV/bp5AHiBochzhjlJjLkr5VCHy1/nJ7Vy1c1jhFpLuaYSAQbg25oN0Nb4f5fdj6E
+         Isp+k3zOe/wfSagnW2+mgwozjpTGjaHth1DqGfdum/IA17zow4x0wAwO51ZMihryI9FS
+         MKqg==
+X-Forwarded-Encrypted: i=1; AHgh+RqYw/nI0j4DehufYtrAHrlbqZ/ylEmd4ek5e1sf3YKbAXSi1LV0WCKUD0Lx/G7ghkDpf+RBGs4hf0osLN5uinqEch/RLo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfNpvRcC2xlJoT+LQs6GORO5jAauI7qBSdMX5ju1iTnzd1ISsw
+	w83Hcl2oUY1khkK00ie7NyQZeDJlnLqDJgspth8iDXXUEcBP4kmywJpsgjuBXwvsKqnwgNTZKje
+	0BnjxfFbnYHzmhfhc56zrXq9gmDhC/CDw+zDsDXXk5nl/RpbJehnai06IMmka2ctIXaYdD0X4uE
+	4fsuTJKNLtP4xEMMp08Q==
+X-Gm-Gg: AR+sD125bpuOW1EmTBbp499mEZ/w4aISu8nfhYNSSJkww5aNWSdOvZYrUhqleo9tpj6
+	GW3f9mb+h+3a98Que/5E8TtKxJ/BFp0TQ77OStxsb2nn8wCUNNQHZt6AMO7wEKhfEeGMHPOmIcI
+	b3stRudir5C/7A6JVf1e8SLh1m5qkCa+H+F7hJSy4zihOxjXJ34TU/xYGwVJN7tzF1+zow2HqBf
+	cTseRcRvQbdJLLVTZkrHolpWNUhS6yXaqqMWoKXL6rBIkviDSsESVoxsPGqfzHrKTt5ryTfdtW0
+	7vSaEKSDOLJmccq8QIVE0PSNVQMs9TsefMwdbZJvln/yFReWG9n9/6eyx3TrD5mY3MNK+M0Kjo1
+	LJr1A+H6ryO0PZlu/HIerQL10vFR0KED1b12QSr4KI8jMtNxizsbzyIgvaR7PK2z79HR2muYjvq
+	QKe/EuNurruCozcClQ4ahVwMic
+X-Received: by 2002:a05:6000:290e:b0:47f:776f:3838 with SMTP id ffacd0b85a97d-481606f682dmr6094933f8f.6.1786697699672;
+        Fri, 14 Aug 2026 01:54:59 -0700 (PDT)
+X-Received: by 2002:a05:6000:290e:b0:47f:776f:3838 with SMTP id ffacd0b85a97d-481606f682dmr6094849f8f.6.1786697699032;
+        Fri, 14 Aug 2026 01:54:59 -0700 (PDT)
+Received: from t-14 (2a01cb00088323008940b17acf2a49f2.ipv6.abo.wanadoo.fr. [2a01:cb00:883:2300:8940:b17a:cf2a:49f2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4815f2c1307sm6625307f8f.27.2026.08.14.01.54.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Aug 2026 01:54:58 -0700 (PDT)
+From: Fabrice Derepas <fabrice.derepas@canonical.com>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Fabrice Derepas <fabrice.derepas@canonical.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	pablo@netfilter.org,
-	fw@strlen.de,
-	phil@nwl.cc
-Cc: linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	selinux@vger.kernel.org
-Subject: [PATCH 6/7] Apparmor: hooks for secctx_to_lsmprop and update_lsmprop
-Date: Thu, 13 Aug 2026 13:48:53 -0700
-Message-ID: <20260813204854.19211-7-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260813204854.19211-1-casey@schaufler-ca.com>
-References: <20260813204854.19211-1-casey@schaufler-ca.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ima: bound line scan in ima_read_policy() to fix OOB read
+Date: Fri, 14 Aug 2026 10:54:33 +0200
+Message-ID: <20260814085443.1211989-1-fabrice.derepas@canonical.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -86,77 +94,140 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement these hooks.
+ima_read_policy() loads a policy file with kernel_read_file_from_path()
+and splits it into lines with
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+	while (size > 0 && (p = strsep(&datap, "\n")))
+
+kernel_read_file() allocates the destination with vmalloc(i_size) --
+exactly i_size bytes, and writes no NUL terminator. strsep()'s scan for
+the next '\n' is not bounded by @size, so when the last line has no
+trailing newline the scan runs off the end of the buffer (CWE-125). When
+i_size is a multiple of PAGE_SIZE the allocation has no slack and the
+read walks into the vmalloc guard page and faults.
+
+Reproduced under KASAN in a VM: writing the path of a page-aligned
+policy file with no trailing newline to <securityfs>/ima/policy oopses:
+
+  BUG: unable to handle page fault for address: ffffc90000032000
+  #PF: supervisor read access in kernel mode
+  RIP: 0010:strsep+0x7a/0xd0
+  Call Trace:
+   ima_write_policy+0x1f4/0x260
+   vfs_write+0x16a/0x6f0
+   ksys_write+0xcb/0x160
+   do_syscall_64+0xe0/0x5a0
+
+This requires CAP_MAC_ADMIN (the policy file is mode 0200), but a policy
+file that does not end in a newline is an ordinary, non-malicious
+condition, so a legitimate policy load can crash the kernel.
+
+Walk the buffer with memchr() bounded by the remaining size instead of
+strsep(): terminate each line in place at its newline, and parse a
+NUL-terminated copy of a final line that has none. The explicit per-line
+accounting replaces the old "size -= rc" step, whose off-by-one
+(ima_parse_add_rule() returns strlen() + 1) made a trailing line without a
+newline fail with -EINVAL; such a policy now loads. The loop now consumes
+the buffer exactly, so the trailing "if (size) return -EINVAL" is dropped.
+
+Fixes: 7429b092811f ("ima: load policy using path")
+Assisted-by: copilot-cli:claude-opus-4-6 frama-c
+Signed-off-by: Fabrice Derepas <fabrice.derepas@canonical.com>
 ---
- security/apparmor/include/secid.h |  4 ++++
- security/apparmor/lsm.c           |  2 ++
- security/apparmor/secid.c         | 23 +++++++++++++++++++++++
- 3 files changed, 29 insertions(+)
+Tested under KASAN (CONFIG_KASAN_GENERIC + CONFIG_KASAN_VMALLOC) in QEMU,
+loading a policy via "echo /path > <securityfs>/ima/policy":
 
-diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
-index 6025d3849cf8..b290ae8f9b01 100644
---- a/security/apparmor/include/secid.h
-+++ b/security/apparmor/include/secid.h
-@@ -28,6 +28,10 @@ struct aa_label *aa_secid_to_label(u32 secid);
- int apparmor_secid_to_secctx(u32 secid, struct lsm_context *cp);
- int apparmor_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp);
- int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
-+int apparmor_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+			       struct lsm_prop *prop);
-+int apparmor_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
-+			    int lsmid);
- void apparmor_release_secctx(struct lsm_context *cp);
+  - page-aligned file, no trailing newline: unpatched -> guard-page oops
+    in strsep()/ima_read_policy() (trace above); patched -> no fault, the
+    load fails cleanly with -EINVAL on the (garbage) content.
+  - valid policy with a trailing newline: loads before and after.
+  - valid rule with no trailing newline: unpatched -> -EINVAL (the size
+    underflow); patched -> loads.
+
+lib/string.o is not KASAN-instrumented, so the over-read is caught by the
+vmalloc guard page rather than a shadow report; the confirmation is the
+page-fault oops with strsep()/ima_write_policy() in the trace.
+
+ security/integrity/ima/ima_fs.c | 46 ++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
+
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 174a94740..7b530b130 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -526,12 +526,10 @@ static const struct file_operations ima_ascii_measurements_staged_ops = {
+ static ssize_t ima_read_policy(char *path)
+ {
+ 	void *data = NULL;
+-	char *datap;
+-	size_t size;
++	char *datap, *eol, *p;
++	size_t size, linelen;
+ 	int rc, pathlen = strlen(path);
  
+-	char *p;
+-
+ 	/* remove \n */
+ 	datap = path;
+ 	strsep(&datap, "\n");
+@@ -546,21 +544,49 @@ static ssize_t ima_read_policy(char *path)
+ 	rc = 0;
  
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 88d12e89d115..1f304b88eaf9 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1766,6 +1766,8 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(secid_to_secctx, apparmor_secid_to_secctx),
- 	LSM_HOOK_INIT(lsmprop_to_secctx, apparmor_lsmprop_to_secctx),
- 	LSM_HOOK_INIT(secctx_to_secid, apparmor_secctx_to_secid),
-+	LSM_HOOK_INIT(secctx_to_lsmprop, apparmor_secctx_to_lsmprop),
-+	LSM_HOOK_INIT(update_lsmprop, apparmor_update_lsmprop),
- 	LSM_HOOK_INIT(release_secctx, apparmor_release_secctx),
+ 	datap = data;
+-	while (size > 0 && (p = strsep(&datap, "\n"))) {
++	while (size > 0) {
++		eol = memchr(datap, '\n', size);
++		linelen = eol ? (size_t)(eol - datap) : size;
++
++		if (eol) {
++			/* NUL-terminate the line in place, within bounds. */
++			*eol = '\0';
++			p = datap;
++		} else {
++			/*
++			 * kernel_read_file_from_path() does not NUL-terminate
++			 * the buffer, and it may be exactly i_size bytes long,
++			 * so a string walk off the end is possible.  The final
++			 * line without a trailing newline has no room for a
++			 * terminator; parse a terminated copy instead.
++			 */
++			p = kmemdup_nul(datap, linelen, GFP_KERNEL);
++			if (!p) {
++				rc = -ENOMEM;
++				break;
++			}
++		}
++
+ 		pr_debug("rule: %s\n", p);
+ 		rc = ima_parse_add_rule(p);
++		if (!eol)
++			kfree(p);
+ 		if (rc < 0)
+ 			break;
+-		size -= rc;
++		rc = 0;
++
++		datap += linelen;
++		size -= linelen;
++		if (eol) {
++			datap++;	/* skip the newline */
++			size--;
++		}
+ 	}
  
- #ifdef CONFIG_IO_URING
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 28caf66b9033..51f3e4ab053e 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -106,6 +106,29 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- 	return 0;
+ 	vfree(data);
+ 	if (rc < 0)
+ 		return rc;
+-	else if (size)
+-		return -EINVAL;
+-	else
+-		return pathlen;
++	return pathlen;
  }
  
-+int apparmor_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+			       struct lsm_prop *prop)
-+{
-+	struct aa_label *label;
-+
-+	label = aa_label_strn_parse(&root_ns->unconfined->label, secdata,
-+				    seclen, GFP_KERNEL, false, false);
-+	if (IS_ERR(label))
-+		return PTR_ERR(label);
-+	prop->apparmor.label = label;
-+
-+	return 0;
-+}
-+
-+int apparmor_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
-+			    int lsmid)
-+{
-+	if (lsmid == LSM_ID_APPARMOR || lsmid == LSM_ID_UNDEF)
-+		dest->apparmor.label = src->apparmor.label;
-+
-+	return 0;
-+}
-+
- void apparmor_release_secctx(struct lsm_context *cp)
- {
- 	if (cp->id == LSM_ID_APPARMOR) {
+ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+
+base-commit: d58772d8520c7ef247c4b95c9bd76d3a25da9ff5
 -- 
-2.54.0
+2.53.0
 
