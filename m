@@ -1,68 +1,66 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425BC3E2740
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 23:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E433E1CE5
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 23:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787008599; cv=none; b=JSPfMv+25Sqa6UZUipi1XeHYQeVKihjJthj+vGGKx7M2vDTE8QzIVKWgmfyyIhY0g44An01Q4j7qH2+A44gA9CJARcOJaX8HnjN6M1fI0plPxtQjLiUxbviJAsjqD9T42CSdR1ahlTP4LxUz18SErgnprsTkTk4Fxi3noEtm6a4=
+	t=1787008605; cv=none; b=UB88OUNxFewhNot4l2x3ROlHMlKSdtU7wefP7TdCgVHoEIeD/kZqpDAfThvaLEq+dJD8lllmOEM3WM8Dbg711XcoMDKcogEbhMiKD8ipu2NrYKzFvpprJiR0+tWvn5jEVpLIKxfxpeIVIKGqcBQn5HgtaXitdKkD/SP9QRnTrUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787008599; c=relaxed/simple;
-	bh=o/2gKu8MtdvjoyhaeLVJAaxv+a83YB2/7qPJ3QHcTTc=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=peo6w0dkNx5vc2cNH4Wr8Fva7+AiQV9c2GFGWsLp9yYWwLkSOu4pTK7TXzBt7g7y8ishGk9gigP4Wk3R/t2SuCvqkeXF5qHj48KUAtCsNKolHl22hNqcrkr7pyH+Kqy/hsLpfKD+hPqFW83fHtdH7QFvGzPjvxb9ZFSY7YkE4fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TCX7UM4o; arc=none smtp.client-ip=209.85.222.176
+	s=arc-20240116; t=1787008605; c=relaxed/simple;
+	bh=J5fKyFXqD3lMTkketcC+clmJE2jwORurbJHj/5xkaxQ=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=AH3jpemZxek8SSdpKo/4vzYr1Wb0B9fFmI4ejjoHyCnz6VRkk6ltSwQPyZPdrUMsehIelreQ7qtv6vmnQ7JGmwHf2KeHmBuoS87dIfRTO5OqnhrAuDFedOmVxD8EvTWpqMDEumLMxiXUjDdTEPjjb5gxpMnz1PmkDsOKHvMly6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=D5w4jOYw; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TCX7UM4o"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-92e57a753f9so330092985a.2
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 16:16:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="D5w4jOYw"
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-936c02e58dfso255654285a.3
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 16:16:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1787008596; x=1787613396; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1787008602; x=1787613402; darn=vger.kernel.org;
         h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=vPaFvQ8Y9PTk8dyhUZHFKOh7qLt62XRYEihfD8ZYjc8=;
-        b=TCX7UM4o+FKhS1kJ3j74DzVv1X5J8KCSp9XcDWVIE58H6Lt10vZ7FbRzROR5R7mt/Q
-         g+ArtuAgJ6pklckHKNxlVrpUXo8hYwtve8CzKIIoyUkA6tKfA+PO+2hEuTSe0+sTNSTA
-         WDRYqxp58m9bP1Pfz2LktwvLScqWYzz3E1ol7wCJO+7ZShsPGXgst5d6cQk5oDfPFall
-         IK6HyJZTwxMlglF+rSe1oLuKiVWGs9azjqU78K5uW9HKasDgbjwa9GnEl5ZUEw6nxy28
-         57zAA9j972TnhATnfgSJ7S+Ez8iHgUyssiXEbwg/XeP/VjMgBO7Lb6jiRcZtoPsfmRD/
-         7qpw==
+        bh=M/nOlUNxPfi564pUlmRuvXg6V5o+MLGmFAiAfMNJZ1g=;
+        b=D5w4jOYwaDejLzh6XzYixAMasTVPtvKNAOqP/5ealC/6hFB7J/JGc5RzGNHHsAtGks
+         4ryd/C/kCgtqilDAnmhOTEEK0lLXG4ct4kIpdih9Eu04qHpQD62KxSxOn//DOX2i8Aup
+         NA1rmoOzTwIP68fH7dZNmjMpm5JeQ+HPYI7/9fES1qfGRSbuMHvMmQ03GGzIlw6Dk5Tu
+         hWf7CBJ1i3W6cDfYpi6SIRd/LgP/oL3lyn5chXKMI9XgJ1/O1ZWcQxvjINKo4m6Lio0F
+         Jmpdxb09jAgKtWnFGT3gsCMEIPTlEbhr48n7AMZ1iOydc0meHbFdATvBKw7teSzYsjsw
+         o8XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787008596; x=1787613396;
+        d=1e100.net; s=20251104; t=1787008602; x=1787613402;
         h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=vPaFvQ8Y9PTk8dyhUZHFKOh7qLt62XRYEihfD8ZYjc8=;
-        b=LNuuMeYLZ9N4U0iJunV1yGKCQHXwk1W7pOtdR9qFyGWEOA2lyIaUT/yPEUKsI7hEWn
-         hmVsRjPxfG9PPxjQNTPhtqjKQMAqkQGeIYPgWIYCUUYl/8ZFWgnWW4kwsQvFq4n9KyGR
-         gtxwZHzsRCVSUExuzIllJyqLeE4tqLMAgfQBPUcxtv5Dt7x7n3YklW1CDOU0QXkRNDN8
-         +noWn7NRGW70E5QhrEVz8z2gl3hyjoCmOXjGhUqR05Q83yyxkgDNGZjrh2rpmKDvgaNx
-         zDY8KtfA3k/dJ5jNLZ8zKt7S1rEEg22vPArJJRNH1kF8paAcx87HeHewgRFBzR4v08ZE
-         SYmA==
-X-Forwarded-Encrypted: i=1; AHgh+Roau/frTGvJeMXy37ponC6Ue1SkEA81NFR+lG3L9YKDuTKPSn7oDZRHtDyBavOmOqWM/WsX1uH17M2FnGA7cWjasteeWag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBdG/oB/g/2yfkVYZZfjNoxQjoYekTW9lQmGQbkjBYdgj/1yFc
-	fcvNp6TNASa41U62B9oDjVzpWa9CEiEWIIgVjSvplT5UFJKNPbCTuQmoCoMJ/o33hAgkEGRVkHJ
-	b76Vydg==
-X-Gm-Gg: AR+sD103CSwpq68rfyoqdalcbbCKDc5XlnaiQGDI0G3JmBppKVLWfgbxol2LM80L0DB
-	h66FYatSISGheQj9lP5laDNmFfe27OpbC6rgtWmqSv5CtY4c4P4XMcZ+pMWEG69kyaaYjZrZMw1
-	9UcYt/BpPtwKPUrW7zvd0/riccl1UarsB6A4YsvAbSv42+v+fbj0pwSAcDVmBy9yhvHA9JZpmgl
-	AIcTFc36gxHeEyUxC1jzwDC6qVL8TN8axGOk4CaOI4/TLkWIIQbhJ+zKUQPG4JyXu+p46oyCzVX
-	QqMFrBRHiAnsUHlTUVRtOZsasernr6l23T4JNIwLXRtRrZJIV3TpjHyNHhQU7Fama/AQSEYNNIm
-	Jt44jBqtd/q1xjs/wJvd2xMCQNOK+LXmghEiTAl2W3PvCi1P/FHgcEcQxPZ4cD+jTWb15L97fLX
-	zAHGTO8/U8miCwp0mtiP5G5Mvevo/vGC+IC4T3TvtRW98Mg5K/exT9PdTGDx9KbJN206p6Eu+t9
-	EjE2FEnX2qoV/DKnwJQiiAxbF1gckLIJMM=
-X-Received: by 2002:a05:620a:2b85:b0:936:e80c:e0ba with SMTP id af79cd13be357-936e80ce8dcmr2119680285a.0.1787008596135;
-        Mon, 17 Aug 2026 16:16:36 -0700 (PDT)
+        bh=M/nOlUNxPfi564pUlmRuvXg6V5o+MLGmFAiAfMNJZ1g=;
+        b=lQMIAVC9qc7YNKdCGuZA5+uv6X+/ivvU+B/f5vid22IHGRvg6hN43aTTpaZALzC9Lw
+         IijTtLCSKf0AqzqpX8XeIS9ZWw7dk1X2QkujAVrc3uIAIZ2T74+b8BX6Kd9GX7IncIS3
+         Q4LJPk5xucihYK2EYMWYpoodrYjeJi+NbuZWlQ+95Bbo+n3b0NEIzhhBdyOYQaVHGaUM
+         d1B3gImXKdY1IQQ6H3zDYo4+Aig3uvF5Z5xrSs4sxjex8sh9TxLp4B6ir6/+YS6l5K1I
+         2PVAN/6GuWIrkBqiHg5XnYKEL2RLrRQHaFz0kIij0FKkV4hyosXli4hxbpmouyGfHikh
+         P0NA==
+X-Gm-Message-State: AOJu0Yxq3Apo4G7LMvfLv6cnDh4RXq2KpSR5KOTQYpc5TR2GBk0SHlE5
+	TEpku1gIHI1lbxWQpWQmNhIItKaZBov/bMo6AEI042P26hLjAuBA5X+74Qga3zzlzg==
+X-Gm-Gg: AR+sD11+G3ciCiXyzR8lKt+sOd/NLaLKuOclJ0uLfi6OQGzN6t3fUSSuOKF5h756g4c
+	8Yl/u28ccqnP8zuoxNrq6vLrlRYPXNJqS2CBa1kZBWetV41u5hkZMBGZmA9KslNAqdXMqPbzxR1
+	JUVKzRoGKuBYDGsQyNewrLqijGbUVPz/xTD/rgxErOwdQIRcDB6l/4TED8K7Q7ogZ4eraWbjqnh
+	eVDH+vARYLGgDexbzRilVUBQbapoL9PNVWAimI3ezNuNPZS8RWWoFEPHNXBa/zSm8K3QRbM5YDS
+	v27KHO0ShpKcnLG9H1TLWvzatG1QauMSBA+uW8nH/hkpGQpJF2AoBWSmL29rdCENrcE61gaDVPz
+	35n8OwR1y5nLRAdZXI6dhw10AL8gmZYCn9yqixXP2n26CTcohjbKqNsrs4UJX3KYfHaOiONYbLO
+	QhG0lfeDIln5f8X5e0eQsfOVZjgBGDMZzLWGhC2gPLbylKDDsX+ILV2jsq6JcvpKGUEpIghuuyX
+	j8Fh6CZdYmGzWv19pupvklNviNG/tpShEnGi7IQrBq0
+X-Received: by 2002:a05:620a:2710:b0:92e:5fe2:fd35 with SMTP id af79cd13be357-936d2373319mr3124323885a.32.1787008601662;
+        Mon, 17 Aug 2026 16:16:41 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-937010e7fc0sm200396885a.20.2026.08.17.16.16.34
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-937010d62besm197271785a.14.2026.08.17.16.16.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 16:16:35 -0700 (PDT)
-Date: Mon, 17 Aug 2026 19:16:34 -0400
-Message-ID: <e3c1c27333646164f71bce44e20cfc49@paul-moore.com>
+        Mon, 17 Aug 2026 16:16:41 -0700 (PDT)
+Date: Mon, 17 Aug 2026 19:16:40 -0400
+Message-ID: <4f24201cc573e07319bbc8b3e96e6abf@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20260814
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20260814
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -71,52 +69,21 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
 Linus,
 
-Nine SELinux patches for the Linux v7.3 merge window, the highlights are
-below:
+Four LSM framework patches for the Linux v7.3 merge window, the highlights
+are below:
 
-- Convert a __get_free_page() call into a kmalloc() call
+- Remove task_euid()
 
-We had some very old code that called out to __get_free_page() for
-allocating a pathname.  There is no reason this couldn't be done with
-a call to kmalloc() so we've done the conversion and now there is one
-less __get_free_page() caller in the kernel.
+The task_euid(), and Rust counterpart, was never widely used, for good
+reason, and now that the only user is gone we're removing it to rid
+ourselves of both dead and funky code.
 
-- Limit the number of retired/unknown DCCP netlink messages
+- Documentation improvements
 
-While DCCP is gone from the kernel, there are still userspace tools which
-try to talk to the kernel about DCCP sockets which were generating SELinux
-related log noise (unrecognized netlink message).  This pull request both
-limits the log messages to just the first instance and also explains to
-the user that DCCP support has been removed.
+Correct some of the kdoc comments for security_task_prctl() and clarify
+the rust comments on task UID accessors.
 
-- Convert the SELinux strlcat() calls to seq_buf_XXX() calls
-
-As part of the effort to drop the strlcat() API from the kernel, the
-SELinux/IMA code was converted over to using seq_buf_XXX() calls.
-
-- Only calculate the SELinux IMA configuration string length once
-
-Previously each call to generate a SELinux configuration string for IMA
-would have to calculate the length of the string.  While the contents of
-the string will likely change over the lifetime of the system, the length
-of the string will not.  Calculate the string length once at boot and
-reuse the length value throughout the lifetime of the system.
-
-- Further validation of the SELinux policy at policy load time
-
-Perform additional sanity checks on the policy constraints and types.
-
-- Proper cleanup and error handling for selinuxfs init failures
-
-We were not properly cleaning up some state in the case where selinuxfs
-fails to initialize properly.  It's somewhat of an academic exercise as
-a failure to initialize selinuxfs will cause the system to fail on boot,
-but it's arguably better to make sure we do things the proper way.
-
-- Various code cleanups
-
-Convert integer flags to boolean types and drop an uncessary goto from
-the SELinux code.
+- Fix a memory leak in the LSM syscall selftests
 
 Paul
 
@@ -127,49 +94,38 @@ The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20260814
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20260814
 
-for you to fetch changes up to fd6e2388a3ea55e58cbbbef840c1d8aa2067dbb3:
+for you to fetch changes up to 0cee720cfd51402cfcb14d96cb326a36c13b823a:
 
-  selinux: validate constraint expression attr and op at load time
-    (2026-07-27 17:17:33 -0400)
+  selftests/lsm: Fix memory leak in attr_lsm_count
+    (2026-07-07 15:14:00 -0400)
 
 ----------------------------------------------------------------
-selinux/stable-7.3 PR 20260814
+lsm/stable-7.3 PR 20260814
 ----------------------------------------------------------------
 
-Haoxiang Li (1):
-      selinux: clean up selinuxfs resources on init failure
+Alice Ryhl (1):
+      cred: delete task_euid()
 
-Ian Bridges (2):
-      selinux: replace strlcat() with seq_buf in
-         selinux_ima_collect_state()
-      selinux: compute the IMA configuration settings string length once
-         at boot
+Bill Roberts (1):
+      lsm: clarify security_task_prctl() hook documentation
 
-Kalevi Kolttonen (2):
-      selinux: convert int flags to bool flags in ss/services.c
-      selinux: drop unnecessary goto and label from avc_alloc_node()
+Jann Horn (1):
+      rust: task: clarify comments on task UID accessors
 
-Mike Rapoport (Microsoft) (1):
-      selinux: hooks: use kmalloc() to allocate path buffer
+Wang Yan (1):
+      selftests/lsm: Fix memory leak in attr_lsm_count
 
-Stephen Smalley (2):
-      selinux: tighten type validation during policy load
-      selinux: validate constraint expression attr and op at load time
-
-Yafang Shao (1):
-      selinux: suppress warning flood for retired DCCP netlink messages
-
- security/selinux/avc.c         |    3 -
- security/selinux/hooks.c       |   27 +++++++++----
- security/selinux/ima.c         |   65 ++++++++++++++++-----------------
- security/selinux/include/ima.h |    4 ++
- security/selinux/selinuxfs.c   |   19 ++++++---
- security/selinux/ss/policydb.c |   46 +++++++++++++++++++++--
- security/selinux/ss/services.c |   18 ++++-----
- 7 files changed, 121 insertions(+), 61 deletions(-)
+ Documentation/security/credentials.rst                    |    6 +----
+ Documentation/translations/zh_CN/security/credentials.rst |    4 ---
+ include/linux/cred.h                                      |    1 
+ rust/helpers/task.c                                       |    5 ----
+ rust/kernel/task.rs                                       |   11 +---------
+ security/security.c                                       |    5 +---
+ tools/testing/selftests/lsm/common.c                      |    4 ++-
+ 7 files changed, 10 insertions(+), 26 deletions(-)
 
 --
 paul-moore.com
