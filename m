@@ -1,192 +1,149 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx2-f5.google.com (mail-yx2-f5.google.com [74.125.224.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4822D9EFF;
-	Mon, 17 Aug 2026 22:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A443ED10F
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 22:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787005341; cv=none; b=Msr2uV9y3nUBRRgmE1lDWyPrTLyOyD7KVxiZv7CHw4EznX86D5RU0ie1zV4X1vkWbz3bsk0n7OqUOHffpCbVLlF48BCB4VFM7891OSq0QAKIi/Ha4X30cwzMyyGlU80pmnbJXRwDgwJLJF4eYto+88nzEHl5N6aOxGYdvwLNFmY=
+	t=1787006411; cv=none; b=hwEGAXhoa7Un1XpCuJ9IDNytUpUrPeQoA2qrjtuYnQo5g6OroKV5JCaoCYVJwkMLr8OiB5mw4CTE6yjE2ivsc4zpYNi6DenuSYz591PFXFKELCzF2RbUAuGn5mCBwSSzCUxumUbfxbPVymdnxyPe7bWmeBg2vXeI2AEgrCDl8pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787005341; c=relaxed/simple;
-	bh=n973ktAQQQHUHkmEI6VuAthTNpTRJ7eS/bUArlODWco=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=egRYsR1Uh7VTkTrzSl7yWLnCssDb8HLYEdtH2zqDlllm3UXfhX7qv2pJu80M7qSwch+0VPqb8Kw0vItvxAj6BAZEo05WLFUtB3WDjzef2PCxA+wl6JyNCcEm3a6SvsRbg0UH6vCBuoETqK01zEMD6CPz3GyVmgQDsUe5QCKSD0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GqxUsnV1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1787006411; c=relaxed/simple;
+	bh=5pK2wFAPykXYbWKw9j+9CU+Sf7TV/OAwc60EQIbTSLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RPI446vG3SYqE/RgnDSeDlh9n1DJ6ThpncyRAcmvrFzwfdvsIyBXKwD+WJoujLrCLYAve7N6mEsb0WRMLH10i+dwdPGSlI8CF60l81wxJQAJzbvhqf1VGuZbe7LHyrrc1DkFZWy3L5tfWKeKSoIT4Xw1AauZE1gcj7inFqAQ5OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=e2Q7BH8I; arc=none smtp.client-ip=74.125.224.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GqxUsnV1"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67HM1erS2668944;
-	Mon, 17 Aug 2026 22:22:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Rh6WQC
-	NlcuOBFHWDGZZkI/HvnYWo6HZ/grlyeERQQXQ=; b=GqxUsnV1+kMqwqYYLeEXBK
-	zDakdVmz3S436jQkXl4b3xrsnYK2AeJEUS7asvIvfQafrOIK+UMZu0yIynOOLm3i
-	2hJJpVq7d7n3CoQaimKRFUimehsRRbQ0JE3iHtivGujq5ICibWw5g7izTxphLjN5
-	u7A6Y9ceZqPsIG1scl/YFjvFqau448gkhds2kLdtaXWAOvdpyzsmTwHSZC4JMGsM
-	cAndjE9ZUn1ipf7t9qsaugoAfa0aiXgG92MkNwdpTcvIqpvqMOdDg6zrhdMtzkwh
-	HES/PPGPMzr3FPfphZhSb9QfuiiXllPrebTQ54FTJKdoaogFDh+oaAz+a7pEy3lw
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g2frt49ap-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Aug 2026 22:21:59 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67HMBJ6F028320;
-	Mon, 17 Aug 2026 22:21:59 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4g33xh026g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Aug 2026 22:21:59 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67HMLKjE7275118
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Aug 2026 22:21:20 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DAB135805D;
-	Mon, 17 Aug 2026 22:21:58 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B6C6A58059;
-	Mon, 17 Aug 2026 22:21:57 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.11.167])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Aug 2026 22:21:57 +0000 (GMT)
-Message-ID: <6045f93f2e2c2ad4f6227509d363e75bf2340510.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="e2Q7BH8I"
+Received: by mail-yx2-f5.google.com with SMTP id 956f58d0204a3-66c70d38356so2872231d50.0
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 15:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1787006408; x=1787611208; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=97BG6VtICGPgHi+9DUaQeQ2mZyM1OOusq8xn45jRUgo=;
+        b=e2Q7BH8IVMaa7RPRFWTUM6wzLHffkALCx2eCbs7NQ8EDyB8QbrvTrCNxX2TXsxyOXU
+         ke8t+PxxxZ2V8LvWCrEDIic83vL/EQvgjBNR85bzi9GWOW/zdFPdKf7v+pEt3pH0+W+3
+         SQdFGDZWAMwx56Ez9enhwesft0CuiwBFcKbEhv29obGiTFTCRst9lRDIBmNaJE5lmgZu
+         mMk/Q2rft08JBuFMekpcCA7nrjipyNYqQ6sdMl33LW1jEyVwmj33S9Sxyn3DFNqV7lS3
+         gcppLHvzjPKVZWB7chQMGrsrx93XA1j7C3LxwUPokz4AmSqlqApKjNmWDTm9Vpro3kes
+         9fUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787006408; x=1787611208;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=97BG6VtICGPgHi+9DUaQeQ2mZyM1OOusq8xn45jRUgo=;
+        b=RQMy2rs9fJijvk/nXcFNnaBFkpTvdtfSh7l7ZJlURJhzQXkTur2upSRsQldg7JndwZ
+         Pa8EMu+wT7cK6jsgG6o8jLwwwY9WZGqk24O7Ui8H/V6Q7jkzK3bXvoS/u2PHCnn/nDFi
+         Hs9zeZo+Khv0hFj1jwITC/LpzGpUKX7NweGP6uajra/1O0nVd+zfY5cAXc3PNwEWp0t7
+         bXJYbXR650+jLH4IikfJKf5BYwH2XDtQXuwEf+g64Q3rX4n6G9o5tK/Kvq5d+yw2vu1X
+         LL2qxjga4k4qjj46ul47XUZE8iceH+pBr+dYazMayGTiuWHlWoXwOypbidTaMpJ0yTrd
+         xbVg==
+X-Forwarded-Encrypted: i=1; AHgh+RoOXvhPxgbboQpjkbkQRjB56vuM0pAgxKdpLU+Scs0yPfUQoqoMX/zgpZ5pdS/i1zuKmERnnn7pWijctTB2EuL8GS6nis8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx37kI30+HziPxHQtXbqWYE9Nsfzl/MGqsLdI3BgL0Qed9GAxf
+	TerHX4Qzl4oul9Wcs/9NHqJbHRvNTqDK9mBE+fM41EyFr65cWsCD8ua20FdokYRJ/Gk=
+X-Gm-Gg: AR+sD12cw3Vx7YQf+Ye6WSOhSo7AD8KxDvxNkGlOSlWTjDz8IPC21QVWqTPcF6oVfOF
+	vBMSHXSOPGZz6jo7s9VU8Exn2rg485nKQR16I5VFFonWGz/JVzMeAIQ0LIP7ZtGf12gbCju1dyO
+	CeGNtAU247ERYpoah0qpE3YuDNJsrQ+Ts6DKU+8PkCFd7zn6uwTIETsHN3zJzW6I4pzBH+FjC6M
+	7F0XlwYKFw/YFlrqLXrvB/tpWe5zBaHZDalLcU6BqAl30HVWM9jieCVK416gA70R3zZqpk/9jdj
+	rQEQfxDonsLG042Nxd6y4G4ZhtIiZK21BdBWonlW4QTKvpBytQ5kQ0qfJ+GRaqaQ+TxUhvZAkCf
+	oEOTrd+6k8DQ5Nh2BSVTQgE7zPyQEOzTKXxX+biRPtLTPY3XWZM3ONKG0zSFnd6m3hfs2elAq71
+	PE8KlpGgp/IwEeBI9uJ0C30INzj/i7YpIaXPAsHBM=
+X-Received: by 2002:a05:690e:43c7:b0:668:db:8c35 with SMTP id 956f58d0204a3-66cb9d15d3cmr1260532d50.20.1787006408368;
+        Mon, 17 Aug 2026 15:40:08 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:62])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66cb57903d5sm1391547d50.14.2026.08.17.15.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2026 15:40:07 -0700 (PDT)
+Date: Mon, 17 Aug 2026 17:40:05 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
 Subject: Re: [syzbot] [lsm?] [integrity?] possible deadlock in
  ima_file_truncate
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Frederick Lawler <fred@cloudflare.com>,
-        syzbot
-	 <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>
-Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        roberto.sassu@huawei.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-In-Reply-To: <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
+Message-ID: <cevxz5bpcfdm5uvjmu3a6qql2qar4477oczd4knffn4wkgojds@ubo47iitdo6k>
 References: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
-	 <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 17 Aug 2026 18:21:57 -0400
+ <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
+ <6045f93f2e2c2ad4f6227509d363e75bf2340510.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=OfaoyBTY c=1 sm=1 tr=0 ts=6a838988 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=edf1wS77AAAA:8
- a=3g80flMcAAAA:8 a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8 a=z6WGd-5gti96ELmFajoA:9
- a=BhMdqm2Wqc4Q2JL7t0yJfBCtM/Y=:19 a=QEXdDO2ut3YA:10 a=slFVYn995OdndYK6izCD:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=3urWGuTZa-U-TZ_dHwj2:22 a=cQPPKAXgyycSBL8etih5:22
- a=-WsGb18yrIRSV60qWLiz:22 a=NWVoK91CQySWRX1oVYDe:22 a=lAIPu-TSoPCgWs-2gwLQ:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODE3MDE2OCBTYWx0ZWRfX4xKQAstcGEPe
- ICSqvFdVbBlziZoGFWrrqqgqVeRGzpOJW7bFWhKMbS9KleoS2KHYCYLPI9FebBFfvT8+wHDwrA1
- 22Uq0YIQR+BtMopTkILU6pJIEsh6WPQ=
-X-Proofpoint-GUID: gmLff2jDvRCW6kdbM9lElHBh4qAObL9E
-X-Proofpoint-ORIG-GUID: _SxEi-FM0GEqj2zeyPUBh1oPJYpvovK2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE3MDE2OCBTYWx0ZWRfX68s2cSqnGo0M
- anM01dRNe9zy7q7LVAWQsR47ZjUMhjJZosWDK9WVRqGT0HVW7yKrfcIJTUGBLN1SeDkQ/KPIraW
- NDOua+OPbd9kWo/m4n+fDoedoWCrY1zJgA8aZ5aLNQRZszzCjPvkB3o8sC33vxL9vO7dggmv7Lc
- G56MxDlFBS08PfSyNKp9jbJOmidoWrLY+J0koAIsAHxJxaouey2HTm3hu+wGcvTJjkN/Wcy9UxA
- mmmwgKaLjZwp7yeLu3lZPvoKYhmaPXFmLikf6LiTkZd/+wmp+Lqj0FTftOx3B5KuZ+a8xOjX7ci
- MHuARcXKBulPVSJSz5V3RY4WhsQf9uviPkWw1VTvB/pnDxAoXk5YUA4MhTXHIK/rUwHVxhU2LRE
- Tx6fNT+jEY1NG/Xgbn93yb9uxCLMH0km8Xth8jPK9/50ASch9fKJrO+ZugqUrAhJDV4qMwFxAeT
- DIq88J1QJTrnT2dou+Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-17_04,2026-08-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0
- malwarescore=0 bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608170168
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6045f93f2e2c2ad4f6227509d363e75bf2340510.camel@linux.ibm.com>
 
-On Mon, 2026-08-17 at 15:43 -0500, Frederick Lawler wrote:
-> On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
-> > Hello,
-> >=20
-> > syzbot found the following issue on:
-> >=20
-> > HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.=
-org..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D113c53b9580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D145fa60d730=
-86782
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D448c2e24b1cef=
-f13ed2a
-> > compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for=
- Debian) 2.44
-> >=20
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >=20
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/d=
-isk-c21bb419.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmli=
-nux-c21bb419.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/283184100427=
-/bzImage-c21bb419.xz
-> >=20
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-> >=20
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > WARNING: possible circular locking dependency detected
-> > syzkaller #0 Not tainted
-> > ------------------------------------------------------
-> > syz.3.857/8643 is trying to acquire lock:
-> > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_rese=
-t_action_flags security/integrity/ima/ima_main.c:708 [inline]
-> > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_rese=
-t_action_flags security/integrity/ima/ima_main.c:697 [inline]
-> > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file=
-_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
-> >=20
-> > but task is already holding lock:
-> > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:469=
-3 [inline]
-> > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4=
-280 fs/namei.c:4863
-> >=20
->=20
-> I had AI whip up a reproducer for this, but it's not mutually exclusive t=
-o the
-> added patch. Tested by running reproducer, then unapplied patch, still
-> reproduced on v7.2-rc4.
->=20
-> I'll need to simplify it before I post it.
->=20
-> #syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measu=
-rement (6)
->=20
-> See below for un-applied repro result.
+On Mon, Aug 17, 2026 at 06:21:57PM -0400, Mimi Zohar wrote:
+> On Mon, 2026-08-17 at 15:43 -0500, Frederick Lawler wrote:
+> > On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following issue on:
+> > > 
+> > > HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
+> > > compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+> > > 
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > 
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
+> > > 
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
+> > > 
+> > > ======================================================
+> > > WARNING: possible circular locking dependency detected
+> > > syzkaller #0 Not tainted
+> > > ------------------------------------------------------
+> > > syz.3.857/8643 is trying to acquire lock:
+> > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
+> > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
+> > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
+> > > 
+> > > but task is already holding lock:
+> > > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
+> > > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
+> > > 
+> > 
+> > I had AI whip up a reproducer for this, but it's not mutually exclusive to the
+> > added patch. Tested by running reproducer, then unapplied patch, still
+> > reproduced on v7.2-rc4.
+> > 
+> > I'll need to simplify it before I post it.
+> > 
+> > #syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (6)
+> > 
+> > See below for un-applied repro result.
+> 
+> Hi Fred,
+> 
+> In response to this syzbot, I responded:
 
-Hi Fred,
+Sorry, I must've missed that.
 
-In response to this syzbot, I responded:
+> Like other pseudo filesystems, configfs files should not be measured by IMA.  To
+> addresss this particular bug, please add a rule to the builtin
+> dont_measure_rules[] and default_appraise_rule[] policies.
+> 
+> Without the configfs filesystem being in policy, can you reproduce the deadlock?
 
-Like other pseudo filesystems, configfs files should not be measured by IMA=
-.  To
-addresss this particular bug, please add a rule to the builtin
-dont_measure_rules[] and default_appraise_rule[] policies.
+I was not able to.
 
-Without the configfs filesystem being in policy, can you reproduce the dead=
-lock?
-
-thanks,
-
-Mimi
+Best,
+Fred
