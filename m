@@ -1,221 +1,148 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8723FA5E7
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 12:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0DF41E6D5;
+	Mon, 17 Aug 2026 12:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786969296; cv=none; b=Id+lWqZm8ODSD8ZdYMnbz1sNnrhnEKgKG5bXdMJQ5m3Tl6KIvuUvGVonGedt+IvI6ye8JCNNE7hG5re4XOoD1s/aqDhhPciorQiRLeBWIBNBrSLlxMSFp1DRIWP1p+NknW7kUCxSxPrm3VGSYAXx5TB13FdTEVKa0rzPMYYTfZg=
+	t=1786971518; cv=none; b=ZI/D+on+f0bfSt6i1t7bnQcJL9KajLM9N8d/rctyglak+olfQeKsIiZrCWS8kbtcp4+7OEqc5EzD5eSZp/vdzN2BPjguaCa2RL1u3/KobiIORB1M9f3d63QOqBAWmsgsgaXZxVcqxDZuMNCDhvsEGqC1GjrGIuTAb26L7e5yCT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786969296; c=relaxed/simple;
-	bh=tow3pyIoIEn8SfWm8iGmxS1KjjEqUhTNr7iReCWznoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JveBtTRsYpFs3uJv8ERJTQvT+7CcEdIC944kmHPUS3bH6JXSGBWdQR2rzDNwNcXP85Hvni35SKCAiIziR3H3hKZJSRwpiKOoNu9qq33g8Z4m5ukB4jt+YgpXJqH3fPBSHLmRXsqdYDWK1qw9LeWaaIyyzt3jfnAN/3IuQevfSgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=eA39eJue; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1786971518; c=relaxed/simple;
+	bh=T77iMH3Z7su686rwm4StmqSLreGVhRCgO3oVeMiLkFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlfDJF997hiSpEHMVJz9ICnyarfyqO/z7aXDiZL8kwNUXgMqu/RvDklZ0dPzKNT6y+Xgh3vGG0V15C/58KlD6zjjDw+rn2THQUUF2TjcT7xeJjucrz7AQ+I8gvkEJF3QOXhGaVyMKRyRzluSEgsSOjzP1l0Rov/+OMPq1dlVVo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lm1e/4MG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="eA39eJue"
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C77263F584
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 12:21:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1786969285;
-	bh=aDQtcVUQh67+ohJJVzNmRTqJdMYbbVhNeLfRhdWahWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=eA39eJueC/vWJx3bZzUwbIwJNpEGYMfkLhBcAbSYoCRHhR6FIprijCLn3/1P+EEWH
-	 PlJ6+E9HhRTaw787rR+pyO9umErnUGD3Q9e6KopNqCNgihP4203rT7iJO4TF1cX9Pq
-	 fER/tK5Z+ZRK2juegz/zH9B0NU+4ISX4pBKoxqIfCtELn3wwSlMOcH9Wq8rcprz635
-	 AVTynTo3xV9KDojI6Ud6jI9NddhxNuHotfADSjSEYwT9DaWOWf/+m/p0kIcinK1Hzi
-	 QY8T+RWWE1gDSrPDi+qcq2AKQE0GmhavRw0nnycIPd9pb05HQUP50n12gyzRrVkmI2
-	 TbdJf/i/eh2PsDE2jWOvlDSPvRTNHOF7WQAbr+ISJtmLjwrATfK4YSWX4xRshAbQtD
-	 CEcj0T3pUdoFNMYkJXHqBUQJU1SzCZpQN9KWtZhqn2aeXjknAwEpg4Zy1RMMeSa5Pp
-	 wVCAaI+NwqzRsb2IuBkRZOZ6aW+qrc/kHVn8E28eKT9h0j2LmtdaB8YDbWIkWMJ0HL
-	 31EB8+A8qhYt0Cw2VFPd9UtFeCLhfExleWppLd7RPXZWXHWEA3186HgpbbeB50I2SY
-	 W+H6UJBrl1RLJkfOdYvv+sk4J156jhYOi3LyoMVSC9TpiVyThC6LAukVFIr+KKtOQh
-	 EX9ISZBQERH7uW+Gk5LuNvkI=
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2ccb687f82eso53907555ad.3
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 05:21:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786969284; x=1787574084;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=aDQtcVUQh67+ohJJVzNmRTqJdMYbbVhNeLfRhdWahWk=;
-        b=dz4oku1swUYOBtqLAewJvHflc4y21JmunOQgEWN8WXYULWpw+KyUM7SuvV6aQmAb/H
-         I3L7ASx12QSei+dxOPBdvH7iTloziTjAYagO7Vs1GE+2kJY0gOnNJ/u4tbi1/tXeJJ/8
-         dfMZU6HAb6JjEwYdp1li2Un3sfYj6xWTafUcymsKAufA1LhMlyO4tPU+hxHQC2IX2pgm
-         aCqK0p+0vkVcSfG4QC2Vync1GtWj/PJZ+2/3ITrapYk5PbrFEKGYjL7bsgUKmxei/V5R
-         QgbdvWtf2DUSfSJDbw5TxlwRTY5dJOuE63Kxy7Fp8FRhgAWNbjzls9w5TRgWpHQ4DPHc
-         Qe1Q==
-X-Forwarded-Encrypted: i=1; AHgh+RrhJgBtXsQryAtOLj7/y5Axx8/5G69EfsyjcHStnkA03sitYH8BGqfdr8eQ8K/J20g6kuxNpJ725jOW5ZaMEvjq5PnTDWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVF6O5oPGLiPaEwL6+IkFZ8KszvbUq5OcRs2gcTPH7XWIgpYRB
-	nRrOS6Oy9yhFNsqeIWSYXovTjCwFhH95KXYeI4o9iTgnoQYAXBiN7NU61B1hDqiwYmu+pOpEy0C
-	b4hmgU/X5QhtwFaQVyRCGnwStuGS5EwFfambnr0vCDLk8pGWOywrbpkr5KqTR4L3MekXdaB2vMg
-	yrQn0Q//H1sVvT8BhU4w==
-X-Gm-Gg: AR+sD10xsNDzJmiOXaJDIF+PTGyfDcb9pZV8DDpdBL63iS+zLeRFf1LcloKivujnNgW
-	ADUe/7pcXV8z4Yw7kjZv8IbXjUrbzO+qQ1lBPWCtc8zMTroGmnaz4xRr4GJaeWBaJ72c6peQBIp
-	aPUIrgkGrdx/KvMGHRpClIO2jEvulLZ+9raKXMQpoW22CtHSO2jX6KZnwa6Qc3IRf8RBHUPeDF7
-	BBaOFyvKPpaOebS7lDY29OhvCzHeXFCmVKk98RQ5l7oYHSetkOp+KMHzeMA51o8AVd3XKdMeE86
-	2td6Y8M1YzDpSqGkZcZWC72HJLdMGD3u4KMQpb4givy3uZH3CiE9IQiuKx4CZPk+RCM2TP18Ry1
-	J7/f2aqpRj6Z3yIA=
-X-Received: by 2002:a17:903:37cd:b0:2c9:c991:3bf0 with SMTP id d9443c01a7336-2d3b0d17a57mr265712365ad.8.1786969284079;
-        Mon, 17 Aug 2026 05:21:24 -0700 (PDT)
-X-Received: by 2002:a17:903:37cd:b0:2c9:c991:3bf0 with SMTP id d9443c01a7336-2d3b0d17a57mr265711725ad.8.1786969283609;
-        Mon, 17 Aug 2026 05:21:23 -0700 (PDT)
-Received: from [192.168.192.71] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2d5bb4e9174sm4822115ad.23.2026.08.17.05.21.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2026 05:21:22 -0700 (PDT)
-Message-ID: <96c804df-80c5-4b8c-a9db-67fcf161bc48@canonical.com>
-Date: Mon, 17 Aug 2026 05:21:21 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lm1e/4MG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76DFE1F000E9;
+	Mon, 17 Aug 2026 12:58:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786971516;
+	bh=B24AzCGu2i0BRtNVjCKkH15/evGoeyRqt5EfBxlcjZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lm1e/4MGolyMIDxOxQ/5lbFPDnVoASbnCrwYLmIDP2c8dHLbqcSYOCcVYNX2LKTAI
+	 jdqMoVjcHYdEYr8SgBFKYaFhG3H4VplroKymHXfaKGLqQeAYzVyu1viR+YyfB7sdaY
+	 33w3jikSLH7FnlCYnyCJfVCnjN6jEjEWoQbz/UNOGH6P79mQ3zesYsEXM+r9NLIa7D
+	 gD6tq161RayJm8xEz1CqrfWjxeFtw4LOpuO/s4xSSzA+rqvo+5y/dsxtqeI5gkwNuJ
+	 nlBJaEk5eOYwC92wfhwSdBsjvjo7graMKPaHqSHeHnDzUCysncDbnDTu81IPLqSjFj
+	 JfzvSDXpFr7iw==
+Date: Mon, 17 Aug 2026 14:58:31 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: sergeh@kernel.org
+Cc: jack@suse.cz, djwong@kernel.org, hch@lst.de, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	stable@vger.kernel.org, "Dr. Thomas Orgis" <thomas.orgis@uni-hamburg.de>
+Subject: Re: [PATCH v4 1/5] xfs: fix capability check in xfs
+Message-ID: <aoMFRhWDH0LpgDid@andromeda.toxiclabs.cc>
+References: <20260804094602.84766-1-cem@kernel.org>
+ <20260804094602.84766-2-cem@kernel.org>
+ <anTC1e_zAhKedcpH@AUS2MQ6190Y76.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Apparmor deadlock in 6.12.101 in complain mode
-To: =?UTF-8?Q?Mattias_=C3=85sander?= <mattiasa@cs.umu.se>,
- Ryan Lee <ryan.lee@canonical.com>
-Cc: regressions@lists.linux.dev, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, stric@cs.umu.se
-References: <anwotItY2-0WMbfn@cs.umu.se>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <anwotItY2-0WMbfn@cs.umu.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <anTC1e_zAhKedcpH@AUS2MQ6190Y76.amd.com>
 
-thanks for the report
+On Thu, Aug 06, 2026 at 12:22:29PM -0500, sergeh@kernel.org wrote:
+> On Tue, Aug 04, 2026 at 11:45:51AM +0200, cem@kernel.org wrote:
+> > From: Carlos Maiolino <cem@kernel.org>
+> > 
+> > An user reported a bug where he managed to evade group's quota
+> > by changing a file's gid to a different group id the same user
+> > belonged to, even though quotas were enforced on both gids and the
+> > file's size was big enough to exceed the quota's hardlimit.
+> > 
+> > Commit eba0549bc7d1 replaced a capable() call by a
+> > has_capability_noaudit() to prevent unnecessary selinux audit messages.
+> > Turns out that both calls have slightly different semantics even though
+> > their documentation seems similar. Where in a nutshell:
+> > 
+> > capable() - Tests the task's effective credentials
+> > has_ns_capability_noaudit() - Tests the task's real credentials
+> > 
+> > This most of the time has no practical difference but in some cases like
+> > changing attrs (specifically group id in this case) through a NFS client
+> > this will allow the quota code to use XFS_QMOPT_FORCE_RES, effectively
+> > bypassing quota accounting checks.
+> > 
+> > Using instead ns_capable_noaudit() should fix this issue and prevent
+> > selinux audit messages.
+> 
+> Hi,
+> 
+> this makes perfect sense, but since you say "should fix this issue",
+> did you have a chance to set up a reproducer, and verify?
 
-This should be fixed by
-   commit 4ec11f14d1d6f apparmor: fix deadlock in complain-mode change_hat
+Hi Serge.
 
-in apparmor-next, linux-next. It went into testing early last week, and got a small revision a couple of days last, and got pushed into linux-next late last week
+Yes, I do have a reproducer to test this all, I'm in process of wiring
+it up on a xfstests once I get to it on my pile of stuff to do :)
 
 
-
-On 8/12/26 01:03, Mattias Åsander wrote:
-> Hello
 > 
-> With the 6.12.101 kernel on debian13 we suddenly got frequent deadlocks in apparmor for our Apache webservers.
+> > This also fix the remaining calls to has_capability_noaudit()
+> > 
+> > Fixes: eba0549bc7d1 ("xfs: don't generate selinux audit messages for capability testing")
+> > Cc: <stable@vger.kernel.org> # v5.18
+> > Reported-by: Dr. Thomas Orgis <thomas.orgis@uni-hamburg.de>
+> > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > 
-> It appears to be caused by the commit "apparmor: grab ns lock and refresh when looking up changehat child profiles"
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=32e92764d6f8d251c1bca62be33793287b453a81
+> Reviewed-by: Serge Hallyn <sergeh@kernel.org>
 > 
-> As of that commit the function change_hat() now takes the ns->lock mutex, and later with the lock held it calls a function that also takes the same namespace lock, causing a deadlock.
+> thanks,
+> -serge
 > 
-> So, security/apparmor/domain.c:change_hat() calls security/apparmor/domain.c:build_change_hat(), and in complain-mode that calls security/apparmor/policy.c:aa_new_learning_profile(),
-> which also tries to takes the profile->ns->lock mutex.
+> > ---
+> >  fs/xfs/xfs_fsmap.c | 2 +-
+> >  fs/xfs/xfs_ioctl.c | 2 +-
+> >  fs/xfs/xfs_iops.c  | 2 +-
+> >  3 files changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+> > index b6a3bc9f143c..7c79fbe0a74c 100644
+> > --- a/fs/xfs/xfs_fsmap.c
+> > +++ b/fs/xfs/xfs_fsmap.c
+> > @@ -1175,7 +1175,7 @@ xfs_getfsmap(
+> >  		return -EINVAL;
+> >  
+> >  	use_rmap = xfs_has_rmapbt(mp) &&
+> > -		   has_capability_noaudit(current, CAP_SYS_ADMIN);
+> > +		   ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN);
+> >  	head->fmh_entries = 0;
+> >  
+> >  	/* Set up our device handlers. */
+> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > index 1b53701bebea..1a8af827dde1 100644
+> > --- a/fs/xfs/xfs_ioctl.c
+> > +++ b/fs/xfs/xfs_ioctl.c
+> > @@ -647,7 +647,7 @@ xfs_ioctl_setattr_get_trans(
+> >  		goto out_error;
+> >  
+> >  	error = xfs_trans_alloc_ichange(ip, NULL, NULL, pdqp,
+> > -			has_capability_noaudit(current, CAP_FOWNER), &tp);
+> > +			ns_capable_noaudit(&init_user_ns, CAP_FOWNER), &tp);
+> >  	if (error)
+> >  		goto out_error;
+> >  
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index 6339f4956ecb..7a8c77fdcf68 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -835,7 +835,7 @@ xfs_setattr_nonsize(
+> >  	}
+> >  
+> >  	error = xfs_trans_alloc_ichange(ip, udqp, gdqp, NULL,
+> > -			has_capability_noaudit(current, CAP_FOWNER), &tp);
+> > +			ns_capable_noaudit(&init_user_ns, CAP_FOWNER), &tp);
+> >  	if (error)
+> >  		goto out_dqrele;
+> >  
+> > -- 
+> > 2.55.0
+> > 
 > 
-> ###########
-> INFO: task /usr/sbin/apach:125024 blocked for more than 120 seconds.
->        Not tainted 6.12.101+deb13-amd64 #1 Debian 6.12.101-1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:/usr/sbin/apach state:D stack:0     pid:125024 tgid:125024 ppid:2366   flags:0x00004006
-> Call Trace:
->   <TASK>
->   __schedule+0x505/0xc00
->   schedule+0x27/0xc0
->   schedule_preempt_disabled+0x15/0x30
->   __mutex_lock.constprop.0+0x41b/0x720
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   aa_new_learning_profile+0x149/0x1e0
->   build_change_hat+0x28b/0x3a0
->   change_hat.isra.0+0x60e/0xd90
->   aa_change_hat+0x301/0x620
->   aa_setprocattr_changehat+0xf8/0x230
->   do_setattr+0x2d1/0x380
->   proc_pid_attr_write+0xe0/0x150
->   vfs_write+0xf5/0x440
->   ? __pte_offset_map+0x1b/0x180
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ? mutex_lock+0x12/0x30
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ksys_write+0x6d/0xf0
->   do_syscall_64+0x87/0x1b0
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ? __count_memcg_events+0x53/0xf0
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ? count_memcg_events.constprop.0+0x1a/0x30
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ? handle_mm_fault+0x1bb/0x2c0
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ? do_user_addr_fault+0x36c/0x620
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ? arch_exit_to_user_mode_prepare.isra.0+0x16/0xa0
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x7f4719c279ee
-> RSP: 002b:00007ffdb983ec48 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007f4719b15c00 RCX: 00007f4719c279ee
-> RDX: 00000000000000d3 RSI: 00005610b4669ce0 RDI: 000000000000008c
-> RBP: 00005610b4669ce0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000000d3
-> R13: 00005610b4669ce0 R14: 00007f4719a8c660 R15: 00007f4719acd054
->   </TASK>
-> ###########
-> 
-> 
-> Some more background on how the issue gets triggered for us:
-> We run apache with MPM-prefork and apparmor has it in complain-mode, and a bunch of different vhosts configured with their own profiles in /etc/apparmor.d/apache2.d/,
-> everything is fine as long as you call a vhost with a matching apparmor profile, but calling it with a hostname that does not have a explicit profile (ex the ip-address) causes an immediate deadlock.
-> So with ex a vhost as "SiteName example.org":
-> curl http://example.org <- works, no issues
-> curl http://127.0.0.1 <- deadlock
-> 
-> A quick workaround for our issue in Apache is to define AADefaultHatName globally so that it avoids the aa_new_learning_profile code-path,
-> we have it set to "AADefaultHatName DEFAULT_URI" as that hat/profile was available by default in the shipped /etc/apparmor.d/usr.sbin.apache2 ruleset in debian13.
-> 
-> Best Regards
-> //Mattias
-
