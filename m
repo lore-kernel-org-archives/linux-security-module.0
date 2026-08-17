@@ -1,149 +1,175 @@
-Received: from mail-yx2-f5.google.com (mail-yx2-f5.google.com [74.125.224.133])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A443ED10F
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 22:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425BC3E2740
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 23:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787006411; cv=none; b=hwEGAXhoa7Un1XpCuJ9IDNytUpUrPeQoA2qrjtuYnQo5g6OroKV5JCaoCYVJwkMLr8OiB5mw4CTE6yjE2ivsc4zpYNi6DenuSYz591PFXFKELCzF2RbUAuGn5mCBwSSzCUxumUbfxbPVymdnxyPe7bWmeBg2vXeI2AEgrCDl8pw=
+	t=1787008599; cv=none; b=JSPfMv+25Sqa6UZUipi1XeHYQeVKihjJthj+vGGKx7M2vDTE8QzIVKWgmfyyIhY0g44An01Q4j7qH2+A44gA9CJARcOJaX8HnjN6M1fI0plPxtQjLiUxbviJAsjqD9T42CSdR1ahlTP4LxUz18SErgnprsTkTk4Fxi3noEtm6a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787006411; c=relaxed/simple;
-	bh=5pK2wFAPykXYbWKw9j+9CU+Sf7TV/OAwc60EQIbTSLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPI446vG3SYqE/RgnDSeDlh9n1DJ6ThpncyRAcmvrFzwfdvsIyBXKwD+WJoujLrCLYAve7N6mEsb0WRMLH10i+dwdPGSlI8CF60l81wxJQAJzbvhqf1VGuZbe7LHyrrc1DkFZWy3L5tfWKeKSoIT4Xw1AauZE1gcj7inFqAQ5OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=e2Q7BH8I; arc=none smtp.client-ip=74.125.224.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1787008599; c=relaxed/simple;
+	bh=o/2gKu8MtdvjoyhaeLVJAaxv+a83YB2/7qPJ3QHcTTc=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=peo6w0dkNx5vc2cNH4Wr8Fva7+AiQV9c2GFGWsLp9yYWwLkSOu4pTK7TXzBt7g7y8ishGk9gigP4Wk3R/t2SuCvqkeXF5qHj48KUAtCsNKolHl22hNqcrkr7pyH+Kqy/hsLpfKD+hPqFW83fHtdH7QFvGzPjvxb9ZFSY7YkE4fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TCX7UM4o; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="e2Q7BH8I"
-Received: by mail-yx2-f5.google.com with SMTP id 956f58d0204a3-66c70d38356so2872231d50.0
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 15:40:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TCX7UM4o"
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-92e57a753f9so330092985a.2
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 16:16:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1787006408; x=1787611208; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=97BG6VtICGPgHi+9DUaQeQ2mZyM1OOusq8xn45jRUgo=;
-        b=e2Q7BH8IVMaa7RPRFWTUM6wzLHffkALCx2eCbs7NQ8EDyB8QbrvTrCNxX2TXsxyOXU
-         ke8t+PxxxZ2V8LvWCrEDIic83vL/EQvgjBNR85bzi9GWOW/zdFPdKf7v+pEt3pH0+W+3
-         SQdFGDZWAMwx56Ez9enhwesft0CuiwBFcKbEhv29obGiTFTCRst9lRDIBmNaJE5lmgZu
-         mMk/Q2rft08JBuFMekpcCA7nrjipyNYqQ6sdMl33LW1jEyVwmj33S9Sxyn3DFNqV7lS3
-         gcppLHvzjPKVZWB7chQMGrsrx93XA1j7C3LxwUPokz4AmSqlqApKjNmWDTm9Vpro3kes
-         9fUg==
+        d=paul-moore.com; s=google; t=1787008596; x=1787613396; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vPaFvQ8Y9PTk8dyhUZHFKOh7qLt62XRYEihfD8ZYjc8=;
+        b=TCX7UM4o+FKhS1kJ3j74DzVv1X5J8KCSp9XcDWVIE58H6Lt10vZ7FbRzROR5R7mt/Q
+         g+ArtuAgJ6pklckHKNxlVrpUXo8hYwtve8CzKIIoyUkA6tKfA+PO+2hEuTSe0+sTNSTA
+         WDRYqxp58m9bP1Pfz2LktwvLScqWYzz3E1ol7wCJO+7ZShsPGXgst5d6cQk5oDfPFall
+         IK6HyJZTwxMlglF+rSe1oLuKiVWGs9azjqU78K5uW9HKasDgbjwa9GnEl5ZUEw6nxy28
+         57zAA9j972TnhATnfgSJ7S+Ez8iHgUyssiXEbwg/XeP/VjMgBO7Lb6jiRcZtoPsfmRD/
+         7qpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787006408; x=1787611208;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=97BG6VtICGPgHi+9DUaQeQ2mZyM1OOusq8xn45jRUgo=;
-        b=RQMy2rs9fJijvk/nXcFNnaBFkpTvdtfSh7l7ZJlURJhzQXkTur2upSRsQldg7JndwZ
-         Pa8EMu+wT7cK6jsgG6o8jLwwwY9WZGqk24O7Ui8H/V6Q7jkzK3bXvoS/u2PHCnn/nDFi
-         Hs9zeZo+Khv0hFj1jwITC/LpzGpUKX7NweGP6uajra/1O0nVd+zfY5cAXc3PNwEWp0t7
-         bXJYbXR650+jLH4IikfJKf5BYwH2XDtQXuwEf+g64Q3rX4n6G9o5tK/Kvq5d+yw2vu1X
-         LL2qxjga4k4qjj46ul47XUZE8iceH+pBr+dYazMayGTiuWHlWoXwOypbidTaMpJ0yTrd
-         xbVg==
-X-Forwarded-Encrypted: i=1; AHgh+RoOXvhPxgbboQpjkbkQRjB56vuM0pAgxKdpLU+Scs0yPfUQoqoMX/zgpZ5pdS/i1zuKmERnnn7pWijctTB2EuL8GS6nis8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx37kI30+HziPxHQtXbqWYE9Nsfzl/MGqsLdI3BgL0Qed9GAxf
-	TerHX4Qzl4oul9Wcs/9NHqJbHRvNTqDK9mBE+fM41EyFr65cWsCD8ua20FdokYRJ/Gk=
-X-Gm-Gg: AR+sD12cw3Vx7YQf+Ye6WSOhSo7AD8KxDvxNkGlOSlWTjDz8IPC21QVWqTPcF6oVfOF
-	vBMSHXSOPGZz6jo7s9VU8Exn2rg485nKQR16I5VFFonWGz/JVzMeAIQ0LIP7ZtGf12gbCju1dyO
-	CeGNtAU247ERYpoah0qpE3YuDNJsrQ+Ts6DKU+8PkCFd7zn6uwTIETsHN3zJzW6I4pzBH+FjC6M
-	7F0XlwYKFw/YFlrqLXrvB/tpWe5zBaHZDalLcU6BqAl30HVWM9jieCVK416gA70R3zZqpk/9jdj
-	rQEQfxDonsLG042Nxd6y4G4ZhtIiZK21BdBWonlW4QTKvpBytQ5kQ0qfJ+GRaqaQ+TxUhvZAkCf
-	oEOTrd+6k8DQ5Nh2BSVTQgE7zPyQEOzTKXxX+biRPtLTPY3XWZM3ONKG0zSFnd6m3hfs2elAq71
-	PE8KlpGgp/IwEeBI9uJ0C30INzj/i7YpIaXPAsHBM=
-X-Received: by 2002:a05:690e:43c7:b0:668:db:8c35 with SMTP id 956f58d0204a3-66cb9d15d3cmr1260532d50.20.1787006408368;
-        Mon, 17 Aug 2026 15:40:08 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:62])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66cb57903d5sm1391547d50.14.2026.08.17.15.40.06
+        d=1e100.net; s=20251104; t=1787008596; x=1787613396;
+        h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=vPaFvQ8Y9PTk8dyhUZHFKOh7qLt62XRYEihfD8ZYjc8=;
+        b=LNuuMeYLZ9N4U0iJunV1yGKCQHXwk1W7pOtdR9qFyGWEOA2lyIaUT/yPEUKsI7hEWn
+         hmVsRjPxfG9PPxjQNTPhtqjKQMAqkQGeIYPgWIYCUUYl/8ZFWgnWW4kwsQvFq4n9KyGR
+         gtxwZHzsRCVSUExuzIllJyqLeE4tqLMAgfQBPUcxtv5Dt7x7n3YklW1CDOU0QXkRNDN8
+         +noWn7NRGW70E5QhrEVz8z2gl3hyjoCmOXjGhUqR05Q83yyxkgDNGZjrh2rpmKDvgaNx
+         zDY8KtfA3k/dJ5jNLZ8zKt7S1rEEg22vPArJJRNH1kF8paAcx87HeHewgRFBzR4v08ZE
+         SYmA==
+X-Forwarded-Encrypted: i=1; AHgh+Roau/frTGvJeMXy37ponC6Ue1SkEA81NFR+lG3L9YKDuTKPSn7oDZRHtDyBavOmOqWM/WsX1uH17M2FnGA7cWjasteeWag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBdG/oB/g/2yfkVYZZfjNoxQjoYekTW9lQmGQbkjBYdgj/1yFc
+	fcvNp6TNASa41U62B9oDjVzpWa9CEiEWIIgVjSvplT5UFJKNPbCTuQmoCoMJ/o33hAgkEGRVkHJ
+	b76Vydg==
+X-Gm-Gg: AR+sD103CSwpq68rfyoqdalcbbCKDc5XlnaiQGDI0G3JmBppKVLWfgbxol2LM80L0DB
+	h66FYatSISGheQj9lP5laDNmFfe27OpbC6rgtWmqSv5CtY4c4P4XMcZ+pMWEG69kyaaYjZrZMw1
+	9UcYt/BpPtwKPUrW7zvd0/riccl1UarsB6A4YsvAbSv42+v+fbj0pwSAcDVmBy9yhvHA9JZpmgl
+	AIcTFc36gxHeEyUxC1jzwDC6qVL8TN8axGOk4CaOI4/TLkWIIQbhJ+zKUQPG4JyXu+p46oyCzVX
+	QqMFrBRHiAnsUHlTUVRtOZsasernr6l23T4JNIwLXRtRrZJIV3TpjHyNHhQU7Fama/AQSEYNNIm
+	Jt44jBqtd/q1xjs/wJvd2xMCQNOK+LXmghEiTAl2W3PvCi1P/FHgcEcQxPZ4cD+jTWb15L97fLX
+	zAHGTO8/U8miCwp0mtiP5G5Mvevo/vGC+IC4T3TvtRW98Mg5K/exT9PdTGDx9KbJN206p6Eu+t9
+	EjE2FEnX2qoV/DKnwJQiiAxbF1gckLIJMM=
+X-Received: by 2002:a05:620a:2b85:b0:936:e80c:e0ba with SMTP id af79cd13be357-936e80ce8dcmr2119680285a.0.1787008596135;
+        Mon, 17 Aug 2026 16:16:36 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-937010e7fc0sm200396885a.20.2026.08.17.16.16.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 15:40:07 -0700 (PDT)
-Date: Mon, 17 Aug 2026 17:40:05 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [lsm?] [integrity?] possible deadlock in
- ima_file_truncate
-Message-ID: <cevxz5bpcfdm5uvjmu3a6qql2qar4477oczd4knffn4wkgojds@ubo47iitdo6k>
-References: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
- <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
- <6045f93f2e2c2ad4f6227509d363e75bf2340510.camel@linux.ibm.com>
+        Mon, 17 Aug 2026 16:16:35 -0700 (PDT)
+Date: Mon, 17 Aug 2026 19:16:34 -0400
+Message-ID: <e3c1c27333646164f71bce44e20cfc49@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20260814
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6045f93f2e2c2ad4f6227509d363e75bf2340510.camel@linux.ibm.com>
 
-On Mon, Aug 17, 2026 at 06:21:57PM -0400, Mimi Zohar wrote:
-> On Mon, 2026-08-17 at 15:43 -0500, Frederick Lawler wrote:
-> > On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
-> > > compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-> > > 
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > 
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
-> > > 
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-> > > 
-> > > ======================================================
-> > > WARNING: possible circular locking dependency detected
-> > > syzkaller #0 Not tainted
-> > > ------------------------------------------------------
-> > > syz.3.857/8643 is trying to acquire lock:
-> > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
-> > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
-> > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
-> > > 
-> > > but task is already holding lock:
-> > > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
-> > > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
-> > > 
-> > 
-> > I had AI whip up a reproducer for this, but it's not mutually exclusive to the
-> > added patch. Tested by running reproducer, then unapplied patch, still
-> > reproduced on v7.2-rc4.
-> > 
-> > I'll need to simplify it before I post it.
-> > 
-> > #syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (6)
-> > 
-> > See below for un-applied repro result.
-> 
-> Hi Fred,
-> 
-> In response to this syzbot, I responded:
+Linus,
 
-Sorry, I must've missed that.
+Nine SELinux patches for the Linux v7.3 merge window, the highlights are
+below:
 
-> Like other pseudo filesystems, configfs files should not be measured by IMA.  To
-> addresss this particular bug, please add a rule to the builtin
-> dont_measure_rules[] and default_appraise_rule[] policies.
-> 
-> Without the configfs filesystem being in policy, can you reproduce the deadlock?
+- Convert a __get_free_page() call into a kmalloc() call
 
-I was not able to.
+We had some very old code that called out to __get_free_page() for
+allocating a pathname.  There is no reason this couldn't be done with
+a call to kmalloc() so we've done the conversion and now there is one
+less __get_free_page() caller in the kernel.
 
-Best,
-Fred
+- Limit the number of retired/unknown DCCP netlink messages
+
+While DCCP is gone from the kernel, there are still userspace tools which
+try to talk to the kernel about DCCP sockets which were generating SELinux
+related log noise (unrecognized netlink message).  This pull request both
+limits the log messages to just the first instance and also explains to
+the user that DCCP support has been removed.
+
+- Convert the SELinux strlcat() calls to seq_buf_XXX() calls
+
+As part of the effort to drop the strlcat() API from the kernel, the
+SELinux/IMA code was converted over to using seq_buf_XXX() calls.
+
+- Only calculate the SELinux IMA configuration string length once
+
+Previously each call to generate a SELinux configuration string for IMA
+would have to calculate the length of the string.  While the contents of
+the string will likely change over the lifetime of the system, the length
+of the string will not.  Calculate the string length once at boot and
+reuse the length value throughout the lifetime of the system.
+
+- Further validation of the SELinux policy at policy load time
+
+Perform additional sanity checks on the policy constraints and types.
+
+- Proper cleanup and error handling for selinuxfs init failures
+
+We were not properly cleaning up some state in the case where selinuxfs
+fails to initialize properly.  It's somewhat of an academic exercise as
+a failure to initialize selinuxfs will cause the system to fail on boot,
+but it's arguably better to make sure we do things the proper way.
+
+- Various code cleanups
+
+Convert integer flags to boolean types and drop an uncessary goto from
+the SELinux code.
+
+Paul
+
+--
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20260814
+
+for you to fetch changes up to fd6e2388a3ea55e58cbbbef840c1d8aa2067dbb3:
+
+  selinux: validate constraint expression attr and op at load time
+    (2026-07-27 17:17:33 -0400)
+
+----------------------------------------------------------------
+selinux/stable-7.3 PR 20260814
+----------------------------------------------------------------
+
+Haoxiang Li (1):
+      selinux: clean up selinuxfs resources on init failure
+
+Ian Bridges (2):
+      selinux: replace strlcat() with seq_buf in
+         selinux_ima_collect_state()
+      selinux: compute the IMA configuration settings string length once
+         at boot
+
+Kalevi Kolttonen (2):
+      selinux: convert int flags to bool flags in ss/services.c
+      selinux: drop unnecessary goto and label from avc_alloc_node()
+
+Mike Rapoport (Microsoft) (1):
+      selinux: hooks: use kmalloc() to allocate path buffer
+
+Stephen Smalley (2):
+      selinux: tighten type validation during policy load
+      selinux: validate constraint expression attr and op at load time
+
+Yafang Shao (1):
+      selinux: suppress warning flood for retired DCCP netlink messages
+
+ security/selinux/avc.c         |    3 -
+ security/selinux/hooks.c       |   27 +++++++++----
+ security/selinux/ima.c         |   65 ++++++++++++++++-----------------
+ security/selinux/include/ima.h |    4 ++
+ security/selinux/selinuxfs.c   |   19 ++++++---
+ security/selinux/ss/policydb.c |   46 +++++++++++++++++++++--
+ security/selinux/ss/services.c |   18 ++++-----
+ 7 files changed, 121 insertions(+), 61 deletions(-)
+
+--
+paul-moore.com
