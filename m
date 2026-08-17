@@ -1,264 +1,192 @@
-Received: from mail-oo2-f9.google.com (mail-oo2-f9.google.com [74.125.231.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683473B443F
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 20:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4822D9EFF;
+	Mon, 17 Aug 2026 22:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786999425; cv=none; b=L8M5dDxmagRy9gAzOOd1523OVyDjMeLYe+MLpeIgZaCgmZFzXR8wF9JsFJXfatCd7ZM78Nj0Mqi3o0HimAo0M78KVdvtUTQ67LRRO2glwBprVZF1Xpex/cLGtDDvulrTYElX+q7dyjpCRx3GdkpQzW0MoQrfa6iqwEUrfo+3vQk=
+	t=1787005341; cv=none; b=Msr2uV9y3nUBRRgmE1lDWyPrTLyOyD7KVxiZv7CHw4EznX86D5RU0ie1zV4X1vkWbz3bsk0n7OqUOHffpCbVLlF48BCB4VFM7891OSq0QAKIi/Ha4X30cwzMyyGlU80pmnbJXRwDgwJLJF4eYto+88nzEHl5N6aOxGYdvwLNFmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786999425; c=relaxed/simple;
-	bh=9aWsYjxU1yrw8viF0+Sf5scIs3DMWcLcR3xM0bHXtys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OyqG48biAyWmEeaAhE+8lteVVUbfn4Epyg0Gvtl2oFrMMNS6WAOadV1FxabgzTiMUCRIdDCqzvcMEHygBhxRsXBvMqiEEtnoTBF6e5zS5f3IyXf9PryTg590hqbMsDPSin0Sa7/uJF6OPKhRBcoQOwJ3qx9ZkrzQvAwOWehoRjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=MF7zWiyA; arc=none smtp.client-ip=74.125.231.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1787005341; c=relaxed/simple;
+	bh=n973ktAQQQHUHkmEI6VuAthTNpTRJ7eS/bUArlODWco=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=egRYsR1Uh7VTkTrzSl7yWLnCssDb8HLYEdtH2zqDlllm3UXfhX7qv2pJu80M7qSwch+0VPqb8Kw0vItvxAj6BAZEo05WLFUtB3WDjzef2PCxA+wl6JyNCcEm3a6SvsRbg0UH6vCBuoETqK01zEMD6CPz3GyVmgQDsUe5QCKSD0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GqxUsnV1; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="MF7zWiyA"
-Received: by mail-oo2-f9.google.com with SMTP id 006d021491bc7-6aaf6076546so1360711eaf.1
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 13:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1786999422; x=1787604222; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8hQvq3XnTlInZZFipkXBqM/QS0vM+oWvL7vzyru0XOw=;
-        b=MF7zWiyALDAvigHeNFELoUu2pQ5DBnl6SkGtCRuXow8DyfAKKd0xBj22pEOvs1GFtD
-         78vJioJg2isUwh0glZ9ttCkNs1PDYZRWE4H8CeZSmwkNArsI9Nhi2XJdrrhehILix5oO
-         iHwDf1pCLq34a2bxKPaxGxYM+efqroBM3biA7nk/1AogTmmccasyet6jJo8ek6hTpZ/s
-         MscGx4FEddY6AFeyi7rolQGma0hJwPm+iVPDbZS8qkHmakwKyzY+5vlckRCHQ29shZVf
-         LrkogMio/k5WnqwGUwIkBdmHNrcF9CXxo9i/toG/azGhbqWCEApewyCHewW0R2jGQuEO
-         7jPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786999422; x=1787604222;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8hQvq3XnTlInZZFipkXBqM/QS0vM+oWvL7vzyru0XOw=;
-        b=SsSrtasjeUPN8FStyqiNkGzv3OYFLY1gqaBzVt35GGMJ2N/Nf8hEKKJd6B2F4rfM2H
-         D7M8aG2csiP1+gBplOVUQe9MUjC48NpdLIzdXDS+0ViL7L6IWGBK6644cVw2qKKgu02q
-         Om8MF8j07/RNZtMXHUXxHoXI12IqGDiUIlRSKaaZijnMxsXl1vHMeX6NhxinlWsScgYQ
-         zUezB2uedrAhy2OgyMtX0NEeEpTkBiHsU3nplxK9Rk6DQ1LQd9crMq7TMY3DfcG3zgxR
-         fYu9UYWkwKHp7kFtt3LVg+GKTqRb1iigksScfrLSEUvQmaOn+pXukZ7LwLQrpIkTC+LC
-         oxMg==
-X-Forwarded-Encrypted: i=1; AHgh+Ro7oHleT4V+lOFfAwKF2If7J5+vq95WnL0n25dru55SiNzjvzN+Esmnaz9T/hOboduzioZVvv+4AhTJTxvULojbfDe4vrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUnddVTCufMfzkzOspZsv/v+hipxf7zx6Omflua94Qi5XF34iB
-	i8fZrKYdfxhZU2vH6DsJrPsknXto1S7dYQGTLZ6jbIOd/OVm6b7nD6j/9lPa03kbqMs=
-X-Gm-Gg: AR+sD13nVwQ8WBtW/3o+YkyCJlV2AX5RZLXbhiNVKMcXdAAy+UdMCZjYBSLXjUB3TIP
-	MxzG4feHPgM802zicgQfajoLDJbue4l8HXtu/hBH85Wdz8zcn0lBx24+2bZkwrHpKsPYh3pUtyx
-	0K90fWsBS2fdyteA+cvGLp5JKbawWBTEoOcUgPFNFSyLJdAZtj0P7uZQV5WGbw1c1hq9DhNdwjA
-	PbiRbahfl+IJexvfc75VyBxgfpJN4sutW9GlLtHpeCAfiMo+zJzKompqavUY1jy54tj3fqAQJph
-	MWwaMPsVEq4FNeSyMaNU5DkXuBcccfEFlieZNBsQRvU16n6sdeg6bjPCKv0C17CMUWTEUwsHE09
-	r1HD3g652WtbNeEQN4CRivWrhoov6NcEyLq/h7d7CyUTZkQ1tcXX888CEs2bZW0SqH9fzpJ8wVV
-	1n9BCNfdX6JO5SX+BO3+0QXfhxya8atgaghTS2qOs=
-X-Received: by 2002:a05:6820:1795:b0:6a3:bdc5:591a with SMTP id 006d021491bc7-6b0d6919fd2mr25263755eaf.32.1786999422065;
-        Mon, 17 Aug 2026 13:43:42 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:62])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b1165cd62fsm2616325eaf.5.2026.08.17.13.43.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 13:43:41 -0700 (PDT)
-Date: Mon, 17 Aug 2026 15:43:38 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>
-Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GqxUsnV1"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67HM1erS2668944;
+	Mon, 17 Aug 2026 22:22:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Rh6WQC
+	NlcuOBFHWDGZZkI/HvnYWo6HZ/grlyeERQQXQ=; b=GqxUsnV1+kMqwqYYLeEXBK
+	zDakdVmz3S436jQkXl4b3xrsnYK2AeJEUS7asvIvfQafrOIK+UMZu0yIynOOLm3i
+	2hJJpVq7d7n3CoQaimKRFUimehsRRbQ0JE3iHtivGujq5ICibWw5g7izTxphLjN5
+	u7A6Y9ceZqPsIG1scl/YFjvFqau448gkhds2kLdtaXWAOvdpyzsmTwHSZC4JMGsM
+	cAndjE9ZUn1ipf7t9qsaugoAfa0aiXgG92MkNwdpTcvIqpvqMOdDg6zrhdMtzkwh
+	HES/PPGPMzr3FPfphZhSb9QfuiiXllPrebTQ54FTJKdoaogFDh+oaAz+a7pEy3lw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g2frt49ap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Aug 2026 22:21:59 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67HMBJ6F028320;
+	Mon, 17 Aug 2026 22:21:59 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4g33xh026g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Aug 2026 22:21:59 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67HMLKjE7275118
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Aug 2026 22:21:20 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DAB135805D;
+	Mon, 17 Aug 2026 22:21:58 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B6C6A58059;
+	Mon, 17 Aug 2026 22:21:57 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.11.167])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Aug 2026 22:21:57 +0000 (GMT)
+Message-ID: <6045f93f2e2c2ad4f6227509d363e75bf2340510.camel@linux.ibm.com>
 Subject: Re: [syzbot] [lsm?] [integrity?] possible deadlock in
  ima_file_truncate
-Message-ID: <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        syzbot
+	 <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>
+Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        roberto.sassu@huawei.com, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+In-Reply-To: <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
 References: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
+	 <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 17 Aug 2026 18:21:57 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=OfaoyBTY c=1 sm=1 tr=0 ts=6a838988 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=edf1wS77AAAA:8
+ a=3g80flMcAAAA:8 a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8 a=z6WGd-5gti96ELmFajoA:9
+ a=BhMdqm2Wqc4Q2JL7t0yJfBCtM/Y=:19 a=QEXdDO2ut3YA:10 a=slFVYn995OdndYK6izCD:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=3urWGuTZa-U-TZ_dHwj2:22 a=cQPPKAXgyycSBL8etih5:22
+ a=-WsGb18yrIRSV60qWLiz:22 a=NWVoK91CQySWRX1oVYDe:22 a=lAIPu-TSoPCgWs-2gwLQ:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODE3MDE2OCBTYWx0ZWRfX4xKQAstcGEPe
+ ICSqvFdVbBlziZoGFWrrqqgqVeRGzpOJW7bFWhKMbS9KleoS2KHYCYLPI9FebBFfvT8+wHDwrA1
+ 22Uq0YIQR+BtMopTkILU6pJIEsh6WPQ=
+X-Proofpoint-GUID: gmLff2jDvRCW6kdbM9lElHBh4qAObL9E
+X-Proofpoint-ORIG-GUID: _SxEi-FM0GEqj2zeyPUBh1oPJYpvovK2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE3MDE2OCBTYWx0ZWRfX68s2cSqnGo0M
+ anM01dRNe9zy7q7LVAWQsR47ZjUMhjJZosWDK9WVRqGT0HVW7yKrfcIJTUGBLN1SeDkQ/KPIraW
+ NDOua+OPbd9kWo/m4n+fDoedoWCrY1zJgA8aZ5aLNQRZszzCjPvkB3o8sC33vxL9vO7dggmv7Lc
+ G56MxDlFBS08PfSyNKp9jbJOmidoWrLY+J0koAIsAHxJxaouey2HTm3hu+wGcvTJjkN/Wcy9UxA
+ mmmwgKaLjZwp7yeLu3lZPvoKYhmaPXFmLikf6LiTkZd/+wmp+Lqj0FTftOx3B5KuZ+a8xOjX7ci
+ MHuARcXKBulPVSJSz5V3RY4WhsQf9uviPkWw1VTvB/pnDxAoXk5YUA4MhTXHIK/rUwHVxhU2LRE
+ Tx6fNT+jEY1NG/Xgbn93yb9uxCLMH0km8Xth8jPK9/50ASch9fKJrO+ZugqUrAhJDV4qMwFxAeT
+ DIq88J1QJTrnT2dou+Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-17_04,2026-08-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608170168
 
-On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
-> dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
-> compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> syzkaller #0 Not tainted
-> ------------------------------------------------------
-> syz.3.857/8643 is trying to acquire lock:
-> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
-> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
-> ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
-> 
-> but task is already holding lock:
-> ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
-> ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
-> 
+On Mon, 2026-08-17 at 15:43 -0500, Frederick Lawler wrote:
+> On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
+> > Hello,
+> >=20
+> > syzbot found the following issue on:
+> >=20
+> > HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.=
+org..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D113c53b9580=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D145fa60d730=
+86782
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D448c2e24b1cef=
+f13ed2a
+> > compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for=
+ Debian) 2.44
+> >=20
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >=20
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/d=
+isk-c21bb419.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmli=
+nux-c21bb419.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/283184100427=
+/bzImage-c21bb419.xz
+> >=20
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
+> >=20
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > WARNING: possible circular locking dependency detected
+> > syzkaller #0 Not tainted
+> > ------------------------------------------------------
+> > syz.3.857/8643 is trying to acquire lock:
+> > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_rese=
+t_action_flags security/integrity/ima/ima_main.c:708 [inline]
+> > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_rese=
+t_action_flags security/integrity/ima/ima_main.c:697 [inline]
+> > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file=
+_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
+> >=20
+> > but task is already holding lock:
+> > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:469=
+3 [inline]
+> > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4=
+280 fs/namei.c:4863
+> >=20
+>=20
+> I had AI whip up a reproducer for this, but it's not mutually exclusive t=
+o the
+> added patch. Tested by running reproducer, then unapplied patch, still
+> reproduced on v7.2-rc4.
+>=20
+> I'll need to simplify it before I post it.
+>=20
+> #syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measu=
+rement (6)
+>=20
+> See below for un-applied repro result.
 
-I had AI whip up a reproducer for this, but it's not mutually exclusive to the
-added patch. Tested by running reproducer, then unapplied patch, still
-reproduced on v7.2-rc4.
+Hi Fred,
 
-I'll need to simplify it before I post it.
+In response to this syzbot, I responded:
 
-#syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (6)
+Like other pseudo filesystems, configfs files should not be measured by IMA=
+.  To
+addresss this particular bug, please add a rule to the builtin
+dont_measure_rules[] and default_appraise_rule[] policies.
 
-See below for un-applied repro result.
+Without the configfs filesystem being in policy, can you reproduce the dead=
+lock?
 
-Best,
-Fred
+thanks,
 
-[   23.443936] ======================================================
-[   23.443988] WARNING: possible circular locking dependency detected
-[   23.444028] 7.2.0-rc4 #11 Not tainted
-[   23.444062] ------------------------------------------------------
-[   23.444095] repro-deadlock./159 is trying to acquire lock:
-[   23.444121] ffff8881033da7b0 (&ima_iint_mutex_key[depth]#2){+.+.}-{4:4}, at: process_measurement+0x298/0xc10
-[   23.444184]
-[   23.444184] but task is already holding lock:
-[   23.444217] ffff88810210ac68 (&subsys->lock){+.+.}-{4:4}, at: nvmet_ns_enable+0x26/0x1e0
-[   23.444265]
-[   23.444265] which lock already depends on the new lock.
-[   23.444265]
-[   23.444302]
-[   23.444302] the existing dependency chain (in reverse order) is:
-[   23.444340]
-[   23.444340] -> #2 (&subsys->lock){+.+.}-{4:4}:
-[   23.444378]        lock_acquire+0xc7/0x2e0
-[   23.444401]        __mutex_lock+0xc7/0x1120
-[   23.444425]        nvmet_ns_device_path_store+0x31/0xd0
-[   23.444454]        configfs_write_iter+0xc8/0x140
-[   23.444484]        vfs_write+0x2af/0x530
-[   23.444508]        ksys_write+0x73/0xf0
-[   23.444531]        do_syscall_64+0x121/0x630
-[   23.444568]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.444598]
-[   23.444598] -> #1 (&p->frag_sem){.+.+}-{4:4}:
-[   23.444634]        lock_acquire+0xc7/0x2e0
-[   23.444653]        down_read+0x31/0x150
-[   23.444678]        __configfs_open_file+0x5d/0x1f0
-[   23.444708]        do_dentry_open+0x136/0x4a0
-[   23.444740]        vfs_open+0x34/0xf0
-[   23.444763]        dentry_open+0x34/0x60
-[   23.444786]        ima_calc_file_hash+0x8a/0xe0
-[   23.444816]        ima_collect_measurement+0x2eb/0x3a0
-[   23.444845]        process_measurement+0x4e4/0xc10
-[   23.444874]        ima_file_check+0x60/0x90
-[   23.444899]        security_file_post_open+0x2e/0x40
-[   23.444928]        path_openat+0x51f/0x1140
-[   23.444950]        do_file_open+0xe4/0x1a0
-[   23.444976]        do_sys_openat2+0x7f/0xe0
-[   23.445003]        __x64_sys_openat+0x56/0xa0
-[   23.445040]        do_syscall_64+0x121/0x630
-[   23.445075]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.445112]
-[   23.445112] -> #0 (&ima_iint_mutex_key[depth]#2){+.+.}-{4:4}:
-[   23.445163]        check_prev_add+0xeb/0xe80
-[   23.445199]        __lock_acquire+0x149d/0x1d10
-[   23.445233]        lock_acquire+0xc7/0x2e0
-[   23.445257]        __mutex_lock+0xc7/0x1120
-[   23.445288]        process_measurement+0x298/0xc10
-[   23.445323]        ima_file_check+0x60/0x90
-[   23.445354]        security_file_post_open+0x2e/0x40
-[   23.445396]        path_openat+0x51f/0x1140
-[   23.445424]        do_file_open+0xe4/0x1a0
-[   23.445452]        file_open_name+0xd1/0x1a0
-[   23.445488]        filp_open+0x28/0x40
-[   23.445516]        nvmet_file_ns_enable+0x2b/0xf0
-[   23.445553]        nvmet_ns_enable+0x13c/0x1e0
-[   23.445590]        nvmet_ns_enable_store+0x8a/0xb0
-[   23.445626]        configfs_write_iter+0xc8/0x140
-[   23.445662]        vfs_write+0x2af/0x530
-[   23.445691]        ksys_write+0x73/0xf0
-[   23.445719]        do_syscall_64+0x121/0x630
-[   23.445755]        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.445790]
-[   23.445790] other info that might help us debug this:
-[   23.445790]
-[   23.445839] Chain exists of:
-[   23.445839]   &ima_iint_mutex_key[depth]#2 --> &p->frag_sem --> &subsys->lock
-[   23.445839]
-[   23.445918]  Possible unsafe locking scenario:
-[   23.445918]
-[   23.445958]        CPU0                    CPU1
-[   23.446004]        ----                    ----
-[   23.446035]   lock(&subsys->lock);
-[   23.446066]                                lock(&p->frag_sem);
-[   23.446109]                                lock(&subsys->lock);
-[   23.446153]   lock(&ima_iint_mutex_key[depth]#2);
-[   23.446190]
-[   23.446190]  *** DEADLOCK ***
-[   23.446190]
-[   23.446230] 5 locks held by repro-deadlock./159:
-[   23.446268]  #0: ffff888101ce6428 (sb_writers#10){.+.+}-{0:0}, at: ksys_write+0x73/0xf0
-[   23.446325]  #1: ffff888101f19080 (&buffer->mutex){+.+.}-{4:4}, at: configfs_write_iter+0x2e/0x140
-[   23.446382]  #2: ffff88810221faf0 (&p->frag_sem){.+.+}-{4:4}, at: configfs_write_iter+0xa0/0x140
-[   23.446439]  #3: ffffffff82e80be8 (nvmet_config_sem){+.+.}-{4:4}, at: nvmet_ns_enable_store+0x4d/0xb0
-[   23.446496]  #4: ffff88810210ac68 (&subsys->lock){+.+.}-{4:4}, at: nvmet_ns_enable+0x26/0x1e0
-[   23.446553]
-[   23.446553] stack backtrace:
-[   23.446583] CPU: 0 UID: 0 PID: 159 Comm: repro-deadlock. Not tainted 7.2.0-rc4 #11 PREEMPT(lazy)
-[   23.446585] Hardware name: QEMU Ubuntu 24.04 PC v2 (i440FX + PIIX, arch_caps fix, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   23.446586] Call Trace:
-[   23.446587]  <TASK>
-[   23.446588]  dump_stack_lvl+0x78/0xe0
-[   23.446591]  print_circular_bug+0x2ca/0x400
-[   23.446593]  check_noncircular+0x161/0x180
-[   23.446597]  check_prev_add+0xeb/0xe80
-[   23.446600]  __lock_acquire+0x149d/0x1d10
-[   23.446602]  lock_acquire+0xc7/0x2e0
-[   23.446603]  ? process_measurement+0x298/0xc10
-[   23.446605]  ? lock_acquire+0xc7/0x2e0
-[   23.446607]  __mutex_lock+0xc7/0x1120
-[   23.446608]  ? process_measurement+0x298/0xc10
-[   23.446610]  ? fs_reclaim_acquire+0x4c/0xd0
-[   23.446612]  ? process_measurement+0x298/0xc10
-[   23.446614]  ? find_held_lock+0x2b/0x80
-[   23.446617]  ? process_measurement+0x298/0xc10
-[   23.446618]  process_measurement+0x298/0xc10
-[   23.446625]  ima_file_check+0x60/0x90
-[   23.446627]  security_file_post_open+0x2e/0x40
-[   23.446629]  path_openat+0x51f/0x1140
-[   23.446632]  ? __lock_acquire+0x5df/0x1d10
-[   23.446633]  do_file_open+0xe4/0x1a0
-[   23.446639]  file_open_name+0xd1/0x1a0
-[   23.446640]  filp_open+0x28/0x40
-[   23.446642]  nvmet_file_ns_enable+0x2b/0xf0
-[   23.446644]  nvmet_ns_enable+0x13c/0x1e0
-[   23.446646]  nvmet_ns_enable_store+0x8a/0xb0
-[   23.446647]  configfs_write_iter+0xc8/0x140
-[   23.446650]  vfs_write+0x2af/0x530
-[   23.446653]  ksys_write+0x73/0xf0
-[   23.446655]  do_syscall_64+0x121/0x630
-[   23.446657]  ? clear_bhb_loop+0x40/0x90
-[   23.446659]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   23.446660] RIP: 0033:0x7f6d63b105a4
-[   23.446662] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d a5 ea 0e 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-[   23.446663] RSP: 002b:00007ffdbeb92468 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-[   23.446665] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f6d63b105a4
-[   23.446666] RDX: 0000000000000002 RSI: 000055be1939cba0 RDI: 0000000000000001
-[   23.446666] RBP: 00007ffdbeb92490 R08: 0000000000000073 R09: 0000000000000000
-[   23.446667] R10: 00000000ffffffff R11: 0000000000000202 R12: 0000000000000002
-[   23.446667] R13: 000055be1939cba0 R14: 00007f6d63bf85c0 R15: 00007f6d63bf5ee0
-[   23.446670]  </TASK>
+Mimi
