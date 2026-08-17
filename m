@@ -1,93 +1,116 @@
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mta0.migadu.com (out-223.mta0.migadu.com [91.218.175.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3A613B58C;
-	Sun, 16 Aug 2026 22:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9909C3B585D
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Aug 2026 07:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786919986; cv=none; b=hpq9D9Rt07hNcS3KaMnSrKb2BKi+1ge8Il/A1DX6AaC3FnOvwPDtr6N3P9LWkHwr9PGi3MyzYsyOm3Nm9agGZDDwSj0r32e0HJgfKvBBHrf/Ksb1+ALe1J0/FJhLbzJUAcC7BJsWRWk79NOTM2EwqnSpprw+ZtWUSEstHdkKdLw=
+	t=1786952342; cv=none; b=A+IkmQXbdmFzKWTjr3bhUosne8jnA6qhSZ0bDTYacn6p2U/AMq2/ZKD27Dp36vX5h1A2CsYL1rdnRbkK0sjqMJ+TqeS/ldO+SbIfyOas1nAyaakyifJuGBVmsbr7D7wghTtoS5d0Tb39UvlqxjgvqidQum0af10uOwHVUpdowVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786919986; c=relaxed/simple;
-	bh=EyEbculfdmcKB1EZX0QglINCttopCIL5evClcdTV5Ik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bh6ompwKbCh3Jjw+3otzC16wrR+WzU7oAp7gwQ2UV6XhOtEABREcCoVpnjnYmfPQgZdXexoazbSdtdytWxXPki6O6qz9uVNWkNvjYnPhplrMQyP50cSljB06qFaD5Sfys23e4G/1TKBCa7RaQvxz/BroEqUpAA9jxRsV2lDBFeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=PCxxr9i/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Rybartp2; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1786952342; c=relaxed/simple;
+	bh=4YGgPm1wRAd8vr5pINF7lmz4ylld4f9QdvgoaXgstqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=je6ICXD1RtLuVNLiiMRII0hHuS8wmgJsMxI0YLD3NncRqqwAk14IMD2bxXyFj/0eEL+iiT4V0CN/SrAyjOkYmnlkyVhFWGJzWlOSvuV2bsN2p1r2TlnizBvZo3NKGYMReZPsKOOJrgS5dZaRH4IF7SJU09R2oWYnkRyU8DuiH44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=drKkCzKS; arc=none smtp.client-ip=91.218.175.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="PCxxr9i/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rybartp2"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 204F314000E7;
-	Sun, 16 Aug 2026 18:39:43 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Sun, 16 Aug 2026 18:39:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1786919983;
-	 x=1787006383; bh=EyEbculfdmcKB1EZX0QglINCttopCIL5evClcdTV5Ik=; b=
-	PCxxr9i/1SfOluatBlV3zwVnWsoPbCgu6+BYQOfPgRv9GAs5gqFFQLOHVxe4fmR3
-	e1Jmn9SfkmZ6NINtowpVNhSVcx+90+MFy82NVwbXZ3qMIFiLU4baUj4QXljimnlp
-	cMAI2ncU0Efe4xoGq4dx+1ReAMBZtnQ/aI+GLwwBLd5qMOPxI+ze6EMV9gFcGpAe
-	OFrwteIg/5pXMl2Jj/cvmIhNe8i/If7xTJ3wTZrgd45ubXw/z5ZK8dIaHM5+rvQK
-	jbatiTIr0c+7GkDWS5m2aay6xow5CY54EJCrl5m3weEdfFGLMvqfgTYJIABO1Yh/
-	KBJnABY4FVF1AADeQpPY+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1786919983; x=
-	1787006383; bh=EyEbculfdmcKB1EZX0QglINCttopCIL5evClcdTV5Ik=; b=R
-	ybartp2CIfsb8zBcDFSK7sAu6tgh8m4FXqLtllHNk6i0DAYZAxnV2FxMnnqZfVQL
-	QzQTsCsmYF2EC2+z6m72LrkvPVm9d5BbFPqmyf8t+GeLsHtcLzNwYgMzs3wZp138
-	8EsS1OKJvIU22JiOIM2FJj9c12kZisSshOQ/EA1vSjO4zQYWTx7lRjJSKcmfkiSh
-	rDhlkloWMmIu0p5mvvXR4ZV1/K/ok1/ZH7oHeGBI0veXLzIZwi/0Xq3D8wpzB3xo
-	OLIWh33XJARYV/+Os8Bkb0pUFZ5AsQZXuXefKu/SBGz5QpP+vVpTwO/2Wk4cvat1
-	Fk53Agwpr7tjpwWyw/Lzw==
-X-ME-Sender: <xms:LjyCaskp4Wl7bzRsNkJiS1dHNOZeqc5klAXcz-QIqE2BSZn_3cX2Fg>
-    <xme:LjyCappu1QzT5FXVOzcH_K7uKzylogydu9JWH1N7gRRwQYIcxuHAW-MmO-ep8vT5L
-    UYoSCcupIHZkKgD8ngd2cFExnrSF4xef3A2vv-x7DpjQIt1gqWAoUjf>
-X-ME-Received: <xmr:LjyCalGpd2e095-V1qgyC6CMrbMSiKFl1wpvfrZlMPsFnWC3gm8KPMZAZWIlZ_dn4g5VqVnm2WFbeVkqmL0w-JmrXXqdfQns6YAlLyfmaKhVvolvgW9E2pY>
-X-ME-Proxy-Cause: dmFkZTGj5+rsZ1MdkW2jE4UWQOyt5NIdygHBfwpYCnu6v7AtmRd24aCCjJvper54sAi4E1
-    9jSAXM/AfRve4DY5E+v78kQH2qqIlNaOvoRerSIBrKTG/pa+IB8ZkJZoJc5T4aGVhq7Avr
-    cM4FwcJ4dU0e04+rUIZ47No6eO01WEjBhDkX0GkJmcAibDwDElpyf5S+7zETgdi6G9+43C
-    W2Bk4ebnOqe5cAPH4Csj/n23keTvR7x2wFgYvyZTAzGayI9fSeCyYLW3SVRqICkSIJwIYG
-    e3hgYIHFnzo521dja0acOrl8Hyk+xXfKpmTGTShK/0jreExxbcfo/HGlu2PAdRcdocRkKj
-    U1q+N5wB2XZPGZJAyoda/EbLcaAhbY+pLOXXoaa+iHkx5uIHGVd8QWswLtpMp/orqOY+fJ
-    wdUPdpIqWyPndjmXYClug2YZlMF95eFkE277IIdIlPbo+E9nffJfF5P9A0La7c7VJOnYwj
-    g2TGJvVO0zPFZtv1CSRv/3110u+HC2vPzcm8HUR3xbgbKudbr1JQZSx8Dq21qBSjHV1ETg
-    g/3BCF7mvqGKaMLTqxsLyi3Gh7419kmta4tbTCpag3YQnSWIrwCLKG7fMV1FOWT8sDbpv6
-    PRYk/RPw2t0VUqlETwxWJT31n888dsdj35AB7ry9gYxA2JH+LMEbUd8pFhog
-X-ME-Proxy: <xmx:LjyCalwrVDP2GO89d0ccODW7z1HgJdQlJAKQOTKHzghF6-JdQF5bMg>
-    <xmx:LjyCaqoxhsK5cbZ4C9kId74-sAnxAOtQoGtizlYi-xTxaX0n2VA_Rg>
-    <xmx:LjyCavjHprO8Q1l7Sja7U4LsWwndkh5Ui-iHFrlYIG77WBDebrvJ1A>
-    <xmx:LjyCaniHXmGP1kTcMZaxAyYP6W_10dwIGgd_9XDEPAXMZrqSkv0_GQ>
-    <xmx:LzyCas7YzN1007uQICkPqrdg_1l6qRW6XA3UTW1-Y4o0ZW15aniJXcga>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Aug 2026 18:39:42 -0400 (EDT)
-Message-ID: <a0436d25-d6a2-4d12-8859-823cbace3119@maowtm.org>
-Date: Sun, 16 Aug 2026 23:39:40 +0100
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="drKkCzKS"
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=4YGgPm1wRAd8vr5pINF7lmz4ylld4f9QdvgoaXgstqU=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1786952338; v=1; x=1787557138;
+ b=drKkCzKSsin9zuHKenvfN9Z2FT92faus9G8LzAbDREnbR3c36ZnwAZwQ92sXsS+0GRnErubh
+ jak7uy/R270dwWU2uNt0CkImdFXguvI2TIumQCaIJyEBLAIyuyEDzuo49xBXaGmyuG+Zalx6zp6
+ sUzdcJHuBYYvj+Fdx2BMVJ9g=
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: from localhost (3.112.29.171)
+	by mta12.migadu.com with ESMTPS id 17e9312474d067d5;
+	Mon, 17 Aug 2026 07:38:57 +0000
+X-Migadu-Flow: FLOW_OUT
+Date: Mon, 17 Aug 2026 15:38:53 +0800
+From: Baoquan He <baoquan.he@linux.dev>
+To: Lukas Wunner <lukas@wunner.de>,
+	Jan Sebastian =?iso-8859-1?Q?G=F6tte?= <contact@jaseg.de>
+Cc: Jan Sebastian =?iso-8859-1?Q?G=F6tte?= <linux@jaseg.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Dave Young <ruirui.yang@linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Ignat Korchagin <ignat@linux.win>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Benjamin Marzinski <bmarzins@redhat.com>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org, keyrings@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-afs@lists.infradead.org, netdev@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	dm-devel@lists.linux.dev
+Subject: Re: [PATCH v2 01/13] kexec: add CRASH_WIPE_SECRETS to wipe secrets
+ before kdump
+Message-ID: <aoK6jXA-tF9qfKOZ@MiWiFi-R3L-srv>
+References: <20260811-crash-zeroize-rework-v2-0-9561d13c2340@jaseg.de>
+ <20260811-crash-zeroize-rework-v2-1-9561d13c2340@jaseg.de>
+ <anw9ILJiO5xIjP4f@MiWiFi-R3L-srv>
+ <9765f7ea-36bb-4c7b-a19b-7facec97b762@jaseg.de>
+ <aoGpcczo5GkBsPwt@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/19] landlock: Decouple the per-denial logging
- decision from CONFIG_AUDIT
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: kernel-team@cloudflare.com, linux-security-module@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20260811094338.288094-1-mic@digikod.net>
- <20260811094338.288094-6-mic@digikod.net>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20260811094338.288094-6-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aoGpcczo5GkBsPwt@wunner.de>
 
-Reviewed-by: Tingmao Wang <m@maowtm.org>
+On 08/16/26 at 02:13pm, Lukas Wunner wrote:
+> On Wed, Aug 12, 2026 at 12:08:39PM +0200, Jan Sebastian Götte wrote:
+> > I can imagine one alternative way to approach this, tell me what you think:
+> > Instead of registering wipe handlers that memzero places on panic, I could
+> > put an optional registry of (addr, len) descriptors into crashkernel memory
+> > that the original kernel populates with the PAs of buffers to clear ahead of
+> > time. Then the kdump kernel could do the actual memzero. This would remove
+> > all code from the actual kdump path here. The registry could be made
+> > per-core to avoid locks.
+
+Since there are a lot of security expert in CC, I am wondering what's
+the risk if we wipe secrets during dumping. System is located in
+user's place, and vmcore is dumped and collected in user's place. If we
+filter out secrets memory when we dumping, what could be leaked out?
+
+> 
+> Or create a dedicated mempool from which all sensitive data is allocated,
+> then call mempool_free_bulk() on kexec to poison everything in that pool?
+> 
+> Thanks,
+> 
+> Lukas
