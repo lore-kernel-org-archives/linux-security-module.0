@@ -1,121 +1,131 @@
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-yx2-f3.google.com (mail-yx2-f3.google.com [74.125.224.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD89484243
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 17:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787074924; cv=pass; b=nCedadTAnaBjX/HFG0IglZcIJiTvdwPzq+9vbJZEfcy+FqP+z6S1WbmsoSCyWf/E3ZlyQ7fJhsFFJTdaRTVCO+OcnmL1fis4a3sHhzNI6oO5cRRPu7r6RCz08ek8q1jB+rXHx1LuUtg6QCSQ5vX8qhpzFF2rK/Cn02ZghiwPsBU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787074924; c=relaxed/simple;
-	bh=7koRXVLA3oYazNCeGdonu2Fx0u9xqB25POt9oeKXmBc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OP+vKSB5acY/Z4xyCD7RG1Br10or8QOpNyIpmwtvjYgbV9l3jF6i+DsLbxygk1+4Pe6fXASGcZsUjfXdia/0XAZVVUUPGw5oLNxK8RwVLmJJ6Mv2CwUlPLvlN2cF0Hn6t2qIB5vOkWlwjcnMC1pYMKyJnSkf92uzgdAWyPKiLyQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVgCyOLy; arc=pass smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE6D36DA1A
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 19:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787081729; cv=none; b=pw9U7qX6dhofRMot//Cjf7p7ZdjAul14LE2e12CXr7sJsIHOCzltKFsBqiGzySfODtefFIcm527lT40hAUrFPtLzHvRW6GOds2FoIS0nvXWjEhYILanXdKOzMsrs+c4obXaFO7r1c6AO3ZwQYL/4jB2RqtlLTx+WnB+/wshFbGA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787081729; c=relaxed/simple;
+	bh=Z1zkBNoqlTE7TFv8YEBzTzxz0vDSaujpRw+vu4hgGrI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eRsYwcfXUOPPXGNDuD6ZrD8Ky8ii/Z8eB2RRzXjGz+Gw1RPjx8PTXHQSGL/D1lDK0TkJa+FagXWLwVIQCy2+D+fCidnJhFsplJarTC4D+S69E6UwAimDGMRLlelyf65tHZgt/QJQ3vqNiW6cx9YwATd2MV25d86bBagtPIMEv+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=WACtdxCv; arc=none smtp.client-ip=74.125.224.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVgCyOLy"
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-8f256eaedf8so2216926d6.2
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 10:42:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787074920; cv=none;
-        d=google.com; s=arc-20260327;
-        b=JaOMP4ueauTZLdAUAQrE9+KSJ02JemGeI9xwVdu3nnXJC+kF22560Oux6BqGfqZzE+
-         BRQPMS7e6cR0OljC3+B+Am6E1FiZLD6nnBfG23aTEBVF0yFCIBIHijFh2UOfKxN32V8d
-         IkXeprjFwmv/FqTxd05Ks2P4yQBovBwUvsPy5c7HCSdxvoZtIK65yWN8j/dMj19Vquph
-         yz+jUUs40l3NV2fRTum5q7rVw1pGlbvOgaBuCsp/a4kc3roycjPrUTi3U0gruoYqeaYb
-         hS27Wpa2niIvQtn0dEFuiTEZkQ6dZAfwLcpQHO9Xxkm1/bvvsnIiRQik0/JTESZp2SNp
-         IBiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=7koRXVLA3oYazNCeGdonu2Fx0u9xqB25POt9oeKXmBc=;
-        fh=aPwB20zpN1RPTLHbkcrxSBU5WU4HMlsNi2JhTqv+Sio=;
-        b=i/PTtvvajOZ06/xUai+c4dRXkYdx0WCaXHufeE0QHGPU3YI/wsI55s6/F7WmTYkUw7
-         pEp7DOGqjfJxx/tKWUkxEyU4xceLbp7AoBUJhjJISrqC6AUFymn2yS95DHTJ9Ifa4nxw
-         7797KJHb4/Su7wUXXDf456XbrCy51TtrlVHgs+8Xl1yhHcXSYiTlX22KRrVNeVLaxaAB
-         8E/VqSN6+50BO6TLvddt5GOJQ2t8YdpIzRXwfqvajOYDeH7+q0Tra+8mgKmQ6lcDP4Ir
-         y0CEx0J2/0SB80CXDdNiY+7cUhc8eXbnF7XN6+QbPM2pSFzwaRcQpUtEbzcBkJRVn2b2
-         lUkw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="WACtdxCv"
+Received: by mail-yx2-f3.google.com with SMTP id 956f58d0204a3-66c70c510b1so239859d50.0
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 12:35:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787074920; x=1787679720; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=7koRXVLA3oYazNCeGdonu2Fx0u9xqB25POt9oeKXmBc=;
-        b=QVgCyOLyuehuQgFYAb4QVdKb1IbW4B45cUA+Vk+6lmNzR4uDW6tNHYcZH77qh+GVyt
-         IjwNBMwbq/5D5T2MLHAqUcqC4xbmIYgr+dmrfUwQInp3Ii7c4KDUwP7F+eC9eg3Utz9h
-         GKT/3qkjvwJVnPDjgpe2dusIN7N/bwlZY/LubM7eZ0TTzLve1Lgggtr+ql62WI2ZRTXy
-         RPTp0hMYbhBrBG0c7Z+s90xAwJ1gz4/edcYrHI6TzRFYCu2AUTy/JQt6cZuPZY29F2v2
-         i84AUCk/NWwDkpL6ZrNp6THAtNeCuglTWtpYSMihlQWN9Y7EUQ+XpYtvosCV5UJlQdrx
-         G7Ug==
+        d=cloudflare.com; s=google09082023; t=1787081727; x=1787686527; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=R5kxolr59Cxqsf3CsaETXDSp9QVWCGFYLmNRwAwnZ74=;
+        b=WACtdxCvnctavIHavv3O3Mx0gLizOCABakxvxlrKZZg8+u0ju7cNdLFeqsXQH84FSw
+         5h+okGnqADtpuq2YbFHojUg6bq4C4BaS+vBraHaEmGjPWiHPGiepauRtMoTPlqvioZi+
+         9kCgu43eZ8sBfv/FV9E/r2R4nal5SQ0Uktgs/mMeTR0Zb+0voVU5XKZWikbxGmFYP6e5
+         aNy2rAEkPs1hnQpAAIYqO7icB97u0NOJpBEKXaX9d0QD6taMTpJbZlPU0lH0qWhF2TDT
+         qVA777IJn5uVt6kpzXSqK0ypOyUvUcqe2BVm3UbdKXbMmoGEqvwkJYW8N/aRu7zR5x0R
+         BcxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787074920; x=1787679720;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7koRXVLA3oYazNCeGdonu2Fx0u9xqB25POt9oeKXmBc=;
-        b=eSVRSgJkzl3UWe53ZFSvjWQuF5+cRN/SzC4LUEcZhnl0PNIN9Gr4rqCldVjposp55b
-         hvRX3VnpSiqoYGMN8akxm/CJOCR6vbY/Tic0kMyEfk/nrISvDzSY1juixJTAUJpheuja
-         r2dsjjej+RAlIq19Gu2sckX5OErX1IwF+NLXNAEd0GjfI9/Yo0Iyk9xiZvleYwcfUvmz
-         ecudCFuPP3zignIrkHTTn5sA8Rv1viduab/tHhEVZ01K01M/03Q8pTvEhB9mgjOJftsY
-         iH3n3JahAEDImU+Z390KwOLwlpZ18RWUtYfzpjFzrWWML2PYVTSSy/LCH3E1CPKZGekJ
-         ygmw==
-X-Forwarded-Encrypted: i=1; AHgh+RoVZP0vcoKuF/IDE9X3GEANJm4JT/HrR984aATNh3k4WbPiYD3LHT4PEXgNrkx5Q7pq4CEPjIr5aoqm+MRnmN165uHgFbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyroB6j2969d/fks/rJNX5pCFqomL+Fda6zBMkreAVN3QWA1kEz
-	NLZsdkCjUC9xuDh+6rQelG33bGjgxxpNowreJrwL8kc+svy6RZiM3qKYuMKcJ6vCoc5/ttMpbP4
-	Iry8O5ay+ttt6jNg1wYylDrvbyQcQ8RI=
-X-Gm-Gg: AR+sD10Rt25XOUrlAsvZ2DckfRVD/ndQXMUxi4hYBESNVhn6CxIo9DajYx5edaWPDr+
-	/BYpkHivZOXgqj+P24OnbEXnAnhaUmLt8rM+Odd1HhsqD2fg7pcPDoJPwiQqU3xrugaRq9267+N
-	hNkeGWyUV/r8Ij+XorYpGuO9JgYdHKWf5husdOyp52TETWnXOVrsV/fRHdg+ASk+zV/79LRxSeW
-	S1s2jCxOBmfs7jQ5iRqt4OPM3dzduoLLUcnXndmKtLtHKu/z2hmewAX9bgus7rgNmUCThgKNLEY
-	mFJTfuU8JRn/cfuXv4CWZWFJxEX0de+QWxTvdsytKbMeTzs9QStnRUZAYXmMFduOj92j5OQ1898
-	=
-X-Received: by 2002:a05:6214:2607:b0:907:88ec:6002 with SMTP id
- 6a1803df08f44-90a91d23fc6mr359439716d6.12.1787074920246; Tue, 18 Aug 2026
- 10:42:00 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787081727; x=1787686527;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=R5kxolr59Cxqsf3CsaETXDSp9QVWCGFYLmNRwAwnZ74=;
+        b=XBCPd5ZLoUL9hFjjXGT4Y0T+bsr4yQL8JeWz8jutG8p8IqoMUj1gGHXSqnSvgh0csl
+         3a/gyKnUNJ8WlbHIox4ups3uT+476dZuiGZR1qqgFLIlrLJQgRPEaD16QOmW34nwfQ2l
+         8Ln3gEwmXkrw4VC5+xv7dlDgkhoo7QAWY6yI90+LWh2qaOt5ApTLKEKA8xl5xdsbLm+G
+         hgZ6atwY/G9UI+hMCYiD5d6WVfpCQ6Dgqi5A+iSUaMnSzuO3caFG813btYjOyuGyjSWT
+         y40Icw2zrQg6E4kcdHPzOoHgLtAASVoBCOr9qFN+Je5PJJyF+yW4+VeDUigD3i+eiMZw
+         XSoA==
+X-Forwarded-Encrypted: i=1; AHgh+RqDTfpe1VSGao56wzOPkQzPtQSBXdEekiuUTQeoiTQ7rXlzdKNoG54AXkAjpSxWllZRn77zXP6OLSNFPZzhAcl4j6xcjWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFjzn0erSjVl4Xwhms9R1F/bVh9S21ROAgtbS0JZZobb0pGDja
+	BnRKNcLVi5mAD4TeeX+oVPcuBM58Kl98C6rh6E5CvI+sVODqIBPEIzvVb4EqxlzifCk=
+X-Gm-Gg: AR+sD12eXhFZ+wWDHLQ858V+GcCCPf/XSwlNp8OGmTwH0w+zisZlnQREQXVFztUJwa0
+	V3zg6sijs9XpLEWiymyq3fxvpqQqA1INqYQwwgDUhd8Yed9+nBgrcd61bqXIMi9epq1oRWLGrFs
+	GtF3Ne1xDiDmjYsPpA4dfErk65dQDhDwWKSgb7H32oiRYdioS4O1DS+qZBPOX+MoNiGTV35m6OQ
+	Fs+Prjgqrx/sTjs1WFd8BiC7Qta8NkKxDqqn+sQMOVmSKQldCV6pkFVh5pGHvyUi6YF5247tpNN
+	oZpVIylcCD1P+BZ4l9r/HjzMnLfYeJp6X/ZlFYylBc1QMkoQvIOQlftYii+vmhJWggbKiMDyAIE
+	AsqjA2Ni4v4CQkl4Mk27nAwNf8naXzh3x/pFBm3SATmIvoIPdRfWHVlWqgkyExpRYeUbxmvIF43
+	Ui4LW2P1/qH+oyyRvrNzRZ/3SqQ3xQGjWq8bHU7kV3169vqE8cxQ==
+X-Received: by 2002:a53:ca4b:0:b0:668:15aa:4f79 with SMTP id 956f58d0204a3-66cca5767bdmr67485d50.2.1787081727116;
+        Tue, 18 Aug 2026 12:35:27 -0700 (PDT)
+Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:52])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66cb47809c6sm2795622d50.11.2026.08.18.12.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2026 12:35:26 -0700 (PDT)
+From: Frederick Lawler <fred@cloudflare.com>
+Subject: [PATCH 0/2] ima: don't measure/appraise files on configfs
+Date: Tue, 18 Aug 2026 14:35:14 -0500
+Message-Id: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260815112041.1248855-1-utilityemal77@gmail.com> <DKRYZPV04750.1V3UXL56PKB6@gmail.com>
-In-Reply-To: <DKRYZPV04750.1V3UXL56PKB6@gmail.com>
-From: David Windsor <dwindsor@gmail.com>
-Date: Tue, 18 Aug 2026 13:41:48 -0400
-X-Gm-Features: AcwNN1XLdyaSasMTp9iBpNvyrMss7F-pcwuEvUrbotoGcvR6ijlcZVek2kfbZ2k
-Message-ID: <CAEXv5_gT+xcZauKug-VsmqSBtuMPEPtw7hubxn6-0nv=D9aq5A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/2] lsm: give BPF programs a way to query
- locked_down state
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: Justin Suess <utilityemal77@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPKzhGoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDC0ML3eT8vLTM9LRi3UQjE4tkE0ODJAMLYyWg8oKi1LTMCrBR0bG1tQB
+ KyJxHWgAAAA==
+X-Change-ID: 20260818-configfs-a248c410b083
+To: Andreas Hindborg <a.hindborg@kernel.org>, 
+ Breno Leitao <leitao@debian.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
+ Frederick Lawler <fred@cloudflare.com>, 
+ syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=Z1zkBNoqlTE7TFv8YEBzTzxz0vDSaujpRw+vu4hgGrI=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqhLP85sosKlBEoFU29UJl56lOKC/kkVBhV+r+9
+ 2q37yvmgnKJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaoSz/AAKCRCrJbR2A5LT
+ bf55D/9zJDWzwTw0F8cSI2kW060svadBjhv31RuDFg0P2mYMzaWe1U7HCKOKEl4LHoVQ5+59vWB
+ myjNmV9wrN0/lTnpp+vXv9FyMdiUZrYk7SR3UhHK3TKvDWyPwCs2AQ8eXQoJHfrfB72KtG1Wmwg
+ kFb/3VYPiJ91mA6GST2sXPjvLpd1mvT6Ae2Cgc4gfXHZPT2CXBWIRMThY32+JRBR+o33rNIDhFS
+ DMYnq0NTreBW4N7JmVGLyyMztvucHwq69d8cw0SQalS806tw32kvmLj7B01L9u/7Hs60fo6TTnY
+ h7CyYFkFV2o9Am9ZyhZRHuLPMTNc+BFLM5l/aEbEzQIaKpCUeOxUHjBrQ7af+WX+tkxZWuez/xK
+ BdgpIDm1Jgjx/xMMUae+T4n1+ATDfvYtfWOsvZ8P0jMJFiQsX4E/OMYMSwEB8JC50sqiMAMWTeT
+ 470kLx6gh13qbkh9VCA3NBiFazh9D9TR5PtgoCqwRHZHvAW5iRPL7qdlOqQd2eNiDg/HrPUT2jG
+ bftQrzmWv4+4bKDvr4QVXik4VqvZwgpvZJR4x5M+bS1ljznbNBc5SnTuN7/T5SykMylVKByPeFo
+ wyinR5QhYps3p1Bnfhn1T2ChRPCYtOQSr8m6nphx7RPAC1H9+AQmlVVtUwsGBvhrOnfl24tReUv
+ 2RJtjTyomFLfGtA==
+X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
+ fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-On Tue, Aug 18, 2026 at 5:43=E2=80=AFAM Kumar Kartikeya Dwivedi
-<memxor@gmail.com> wrote:
->
->
-> Lastly, given the difficulties we've faced from the LSM maintainers, I'm =
-not
-> inclined to waste more time in explaining again why this cannot go under
-> security/.
->
+When IMA appraises/measures a file configfs, it has an opportunity to
+hold onto the ima_iint_mutex while another file from a different file
+system is attempting to appraise/measure. This may cause a cyclical
+lock dependency.
 
-I'm still going to send v7 of bpf_init_inode_xattr series, even though
-it's a stalemate. Haven't yet decided where it'll live in v7, I'm
-inclined to leave it where it was (in fs/) since one side will NAK it
-wherever it lives. We can record NAKs and take it from there.
+Add configfs to the default don't measure/appraise lists, similarly to
+other pseudo file systems.
 
-Just wanted to state this for least surprise when v7 does come out,
-which will be soon.
+Link: https://lore.kernel.org/all/6a77c7cd.b50370da.49fe0.0031.GAE@google.com/#t
 
-Thanks,
-David
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+---
+Frederick Lawler (2):
+      configfs: move CONFIGFS_MAGIC definition to magic.h
+      ima: don't measure/appraise files on configfs
+
+ fs/configfs/mount.c                 | 4 +---
+ include/uapi/linux/magic.h          | 1 +
+ security/integrity/ima/ima_policy.c | 7 ++++++-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+---
+base-commit: f1e10b10874051e4d99911dae0dd7b75a9f8ae66
+change-id: 20260818-configfs-a248c410b083
+
+Best regards,
+-- 
+Frederick Lawler <fred@cloudflare.com>
+
