@@ -1,179 +1,160 @@
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f7.google.com (mail-wm2-f7.google.com [74.125.225.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2533B9D95;
-	Tue, 18 Aug 2026 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7873BCD10
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 09:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787043814; cv=none; b=RQp1z+84goryEOkNPklXK/X3aThlt5joJjTroNTIdFFbXayTc/fRFRzqzuIAfFavz0VMKbxN9NEcqgUVr18mPND7MYAJpKT6BUmGouymDeD9wpplnh6jrM9W/3BiHSLL609leErehN+Lsn/0FXLHTPiHPJ9wjY9D6gG+1EkZY+w=
+	t=1787046159; cv=none; b=AwCFkIbmW/FTcKNzA3ti5l55aYVBdOVLBVQKplxHeBwSXn4zhqxxUKyWaNCNsWgr436Y0OGod1uC+y/6X1q3gA/T2xQZSDGZrSaEuZSi2Z0QqwOsXozfF0yg+5cXhB5hsnFKWO9vVFLfPjMsp54inePPVvXTFK24+OolYvifKIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787043814; c=relaxed/simple;
-	bh=WO3NGxY4syeZ2ZD3BmzUXP3M7Bt0QwU8LVneEp3Vn2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cz+F5X1e+4l3SWhl6sK/5X+hcxIza7yu0U35SROpWcS5TbbOrJPsQwsre52fnk/yUALu3VcQQfvt4d9MZEGu2pw0eRlVlVNRPzY/ixCoApLAyPv2N7b6o8syx2i5tzaRhI39sJaoMZkXFGwdZ/YZSyzb+BolexK8CQXknUMsKkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de; spf=pass smtp.mailfrom=jaseg.de; dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b=WPZZoKGM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NYaRi+TS; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaseg.de
+	s=arc-20240116; t=1787046159; c=relaxed/simple;
+	bh=CAb72qiPny0PvaNCxNGnctOEEFn6/mEhCO2bGL68Rc0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=YIzSK8GWkXbfrB9uD7MbfIXiVTT/vrPohMwbVlCq7wN8hIBojv+SW5/dIaPSTF+2OSjF42gEjfi/2hceQR2qPhAkIWGvb0WhXIoqR+GFQUQixCD1A3FeM/o7Eh0pmuVYKIlLnHfN5lzrh18g98kS+zJBjW+A7HXr/KhMOx8QB6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwHTJw0s; arc=none smtp.client-ip=74.125.225.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b="WPZZoKGM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NYaRi+TS"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.phl.internal (Postfix) with ESMTP id 5C82F1380244;
-	Tue, 18 Aug 2026 05:03:31 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 18 Aug 2026 05:03:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1787043811;
-	 x=1787051011; bh=ZX1CnQZZsg94K1w9ifnkc6/NmgcRySaktgXNfBgb7AQ=; b=
-	WPZZoKGM/D3I5ywu6hWxeUzIxxVJ8JaogWauiMKsZIA9L+2KD8F1opSZimhHAVKL
-	5a0sb6E7AE1N+ZTNYCeJQBZ+m2FEM4CV7GMsqbHBUWfOHXeEjAaQ1OAiBbBbW59J
-	b1PhzIsGrQ2x+2Dni2rvrHfHUrqMx08mPCwM/2bfa9SldiuOZjcpcWOlGE1HpOcd
-	G0YIdXoV0HVGd4L+mxlNmNNDIhof5BifyFVcHuhiep66N7ofIvUZTm6prDYrlyWK
-	zAEmkzqJ+outKDKC0CHUxyq53gCJ6k58wqWemTPbG92+4A3wfTcxtWmA675wMRHC
-	QYOZU0KDnVhgr69AP0V0Bg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1787043811; x=
-	1787051011; bh=ZX1CnQZZsg94K1w9ifnkc6/NmgcRySaktgXNfBgb7AQ=; b=N
-	YaRi+TSIddvpqgRTVgxa6VkeBfERJbKBvbyZhIzfXNJys/mMTEU1csXrJL5DGzbN
-	PCKZKgL431iiunzQQDBvFuzWW69BqYCSsFA5vAr0RhpoL1B1z9aPTFCNw7/QA19A
-	saZ0S0t62u9ilibZlZt1i/7WvU/qVXs+q65oY7JWrtfuouhLYcwOK4sxpw9so70V
-	0/BgQw+DhldDFVQAVyvQgDYSDnmVHgBz/o60QfvZIbIrNu09JczWI0nsBqGFZNEN
-	5UPYGIzCosYhlot0IWvFxAqjKXNQIIe5Nc3jckxMBZ736pOuOvMzIar47qPI4WKI
-	FVKhOCCNDBW0c2jXhd1ZA==
-X-ME-Sender: <xms:4B-EauM8Y-WoFhcHV7CDKlTqAXtB-K4KRmaH8Ji1IGVdeubq9ketyQ>
-    <xme:4B-Ealztkx_kES_mWsN78pZXU9JB54Mew-argE8U363HXR6ZZcMDZrZ1r7KLZayGA
-    VUMOnw_bfE8_HFBnwIY6yzIzSIEfLRM4kpRnIw3jK-F75RiMw1zRw>
-X-ME-Received: <xmr:4B-Ear2lM4JA7KsBrcTQX5tTYYYgKvP9cy4R-UIHarqqQ6wJIAuSBmfYB-cMSSdOV5yu6OXNk-afOhj4igKm>
-X-ME-Proxy-Cause: dmFkZTFpA2CAQ9HsB/cHX0jgjtdDSxrlNaH1N5XdMBpyCH9Ywi6Hdh5ucTA96FWQa4HkQJ
-    FvEd7sRFuzES1QTCCXc72OlhgrTRDpI/mv/2h44E6mQB5bIPt7uKTuP2q0GgZRoIvFIf7T
-    TMZ3/nzGVeOohp8c3ZE54qSC9/YJNe9f6CUcVKmuTPT1A2+XUIsIivDdrhAHumwFv6AQfa
-    NNzoFOD5IVmP3t/+TNxvkur2XMEg96QOc5X07R9jGlcw1D3FBObbnwVn6TapmMDjTj8mel
-    XF3EW9HqD7I9ZDaJuBDS4ARPRSLFsySvU1MjYl98Znh+hLcqka5PZ2lKMDy4GytU3qjXHP
-    98DJem6QpOGqfB3BYBGJDTFsCAtPWcw71a1t0bx+yVXLzQg/zX2eANVIW+Pof9QleQxvN9
-    P/N2zoRmGcsxnzVAX9yilz5Hf18JYw9RDeTkD0e4hVVYoyZ9d7hMxsqFj8qpAc09VhOuqd
-    r9AoF++WkVV8iSPyIp43mJ0TdeQR0JQhCzxLX9LtVsEaNESQdPbIT8kPTvzqYUZ7lqGq/k
-    PEaZa2BEeR2Eln3RH9rkvTn6MqyAurRLUbA+ihdv70Bc4xu6lg5mm9xC/+Pb5HPANA2dOd
-    Ytxl5ozIB8gbREK41rFGTIGGQ9URIpBxDMvfEg9AUeTxj19lPYQvx6jTJGSQ
-X-ME-Proxy: <xmx:4B-EasH0JHdfdUJp3cw75hmN4JbAktp9qP7MbFjC7JV7n6UctIxhEg>
-    <xmx:4B-EagKH8JC384TlH3cR7ulRAHL02wkXnaDo1V9ztrqMfX9MoWhZwg>
-    <xmx:4B-EarwND5OYC8e2x_4D5dXRVAx5TKWwG_rdZqfJdmokI7UUzMRH2Q>
-    <xmx:4B-Eai1Yt3SDtzatr_bnVyQU5MFRORQZ930EDB5uwIJ17WKuX-K8FQ>
-    <xmx:4x-EahEHf5VCv1VRvxU22t6K4tWi1wKnPfuGOHSqlSCXyfMxLQLJcyjV>
-Feedback-ID: i60a14417:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Aug 2026 05:03:21 -0400 (EDT)
-Message-ID: <9071e03b-a633-43e4-ac77-3b05291c1f66@jaseg.de>
-Date: Tue, 18 Aug 2026 11:03:19 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwHTJw0s"
+Received: by mail-wm2-f7.google.com with SMTP id 5b1f17b1804b1-498079e98beso9475195e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 02:42:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787046156; x=1787650956; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=4Ql8DayXDknHcRJNarA/M05HCBsQ3VGg+smqXrhUYPQ=;
+        b=OwHTJw0s1BTdkVyFLT6Bx0gPBH8JsQ6j4LvEHL6Wm8iInaV0rtUVXF2VJZ6bAO4m3z
+         iW/mD2bXmKt9ACbNdU4GOyMrLP7QHeAwmmuTHiVDjKT+260yIkfnpzBPBnqFmCoFOhJ4
+         hvy7Sms2FeDdMq05VH7UjLoGTjQVzOMZ0jpIP1vc3x+Nnyu5AEtqvoaepM3Bua+8V9Ta
+         twQ+p9FITkT6eQckcD8Z6m6MSs3TyoOMzJX3Kaq+shQhyWEKViKbcAjJLsNoZ4XoHLQu
+         MLNvH6v/CtL8Lk3hDIsnA9RRAv6yFyFcY64XQGCqxx9gEU4IEWrsHxQlbEfzrUtMslh3
+         2pLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787046156; x=1787650956;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4Ql8DayXDknHcRJNarA/M05HCBsQ3VGg+smqXrhUYPQ=;
+        b=NyqE2kFIFYQ8KsIsGui+o1vwSLpALjKA1JSvWkpwozzjUm0Oqg2VZ/HgyvyRnD6gTQ
+         vikzrzDlnf2oQLNNybQDD890A8lPBKHZDhWuEy5tEvdQoDVNM/AhP+SH7JFOPVNP3Q4D
+         jrU2cgrSy1e3oJ+Y9XD5xwftt8fQGs7ecClPplT3ganPEwTxjzJocz8ZiWvZT5+su1d3
+         2KFufViqk/X9MMKM+VWt9iSSWn2OwhuUYJJcXUnycKT2+n/JgNu43pJ4HBMWbbTOu+55
+         OqTSurUlypz6Xl270fXr3i0DAg1r/3sLi2T1cicdoeMOBYLk1WS1eO1HWjDEkombInVR
+         98iA==
+X-Forwarded-Encrypted: i=1; AHgh+Ro7vhGd1/iqyOTtLTNQ10Zt57KXz1PBqLwjR/yrVziyp0qMHkIYUG5yU+7Cwu9rm/SKS2LxQvW/xTNKUCJ5oXQgNuOvIPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynrdjcdLY+qi8zUQU1ovZCyEPyFpzce/KJ+mN6QggDK3211nxS
+	2Y6eTDTAgKAgCVE4sVkTKNHrq7/nBaW8JcTKmwzg2BJuC74IA8uSadfMGVOB5M/y
+X-Gm-Gg: AR+sD13TdtNWWa0bxigSpOOu0R19/3jvKHpvtRm/YO8WCGONx5J6EiDBriMDYAku/pk
+	SfC0ffPJG0dLcK309B0pT+4b46+8MGkF4UyoaxgxG283qXaL49L+jnpf552Zja6J5fwFl3BrWrq
+	2Vl2qPz8pJmvSMmdVqm5rVoOiJ2zO6Ax2JVLt0XwAdn/rCONduT8sADPbIG7utGlSS8vaoyB8VC
+	zYp4F+PYsnDNsqxtjCYPXNoS9mJPJo+fkHYCYBD5KJQ1tSnuMW4l8vfMuatLA1OnToz5EYlnId2
+	Ot5A2VmPYXXMNXpH8nmmyOWrqMShHTHWF45wE/HCkUp8/mFaxAR38ESHCAOHYZZM5nC9mbdgZuu
+	sM0/na4CQaXuNlaE/jXtlsBdsWfFq/kTzdfWhiG6Uwg0niaoHu7geWaqTAW8ENTGxJT4grIy+ej
+	vG4Fvn/C+20uJ1XeQ+O0e7zNaxzXSW94trYLjpk5YCbR8uUmTNXiRYD8RAXxVhijX3NJuut2FEr
+	UaQN5SgEd5jbgX2NpchgLzoaPfCKHs5ZT5qKMDZMQCgu9vDg20TzPD5eDlGnddMScL/B8zsuKQU
+	RbTwdMgZYJbm0q9ep45B+Glk8pI=
+X-Received: by 2002:a05:600c:8b6f:b0:499:4e47:eaf2 with SMTP id 5b1f17b1804b1-4999faf519cmr127092225e9.6.1787046155704;
+        Tue, 18 Aug 2026 02:42:35 -0700 (PDT)
+Received: from localhost (nat-icclus-192-26-29-3.epfl.ch. [192.26.29.3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4998777a4bdsm249127735e9.0.2026.08.18.02.42.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Aug 2026 02:42:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/13] kexec: add CRASH_WIPE_SECRETS to wipe secrets
- before kdump
-To: Baoquan He <baoquan.he@linux.dev>, Lukas Wunner <lukas@wunner.de>
-Cc: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Mike Rapoport <rppt@kernel.org>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Pratyush Yadav <pratyush@kernel.org>, Dave Young <ruirui.yang@linux.dev>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Ignat Korchagin <ignat@linux.win>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Marc Dionne <marc.dionne@auristor.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Jaegeuk Kim <jaegeuk@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>,
- Benjamin Marzinski <bmarzins@redhat.com>, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-afs@lists.infradead.org,
- netdev@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, dm-devel@lists.linux.dev
-References: <20260811-crash-zeroize-rework-v2-0-9561d13c2340@jaseg.de>
- <20260811-crash-zeroize-rework-v2-1-9561d13c2340@jaseg.de>
- <anw9ILJiO5xIjP4f@MiWiFi-R3L-srv>
- <9765f7ea-36bb-4c7b-a19b-7facec97b762@jaseg.de> <aoGpcczo5GkBsPwt@wunner.de>
- <aoK6jXA-tF9qfKOZ@MiWiFi-R3L-srv> <aoLFai0gzzH2bGgy@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <contact@jaseg.de>
-In-Reply-To: <aoLFai0gzzH2bGgy@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 18 Aug 2026 11:42:34 +0200
+Message-Id: <DKRYZPV04750.1V3UXL56PKB6@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <bpf@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 0/2] lsm: give BPF programs a way to query
+ locked_down state
+From: "Kumar Kartikeya Dwivedi" <memxor@gmail.com>
+To: "Justin Suess" <utilityemal77@gmail.com>, "Alexei Starovoitov"
+ <ast@kernel.org>, "Paul Moore" <paul@paul-moore.com>, "Xiu Jianfeng"
+ <xiujianfeng@huawei.com>
+X-Mailer: aerc 0.21.0
+References: <20260815112041.1248855-1-utilityemal77@gmail.com>
+In-Reply-To: <20260815112041.1248855-1-utilityemal77@gmail.com>
 
-On 8/17/26 10:25, Baoquan He wrote:
-> On 08/17/26 at 03:38pm, Baoquan He wrote:
->> On 08/16/26 at 02:13pm, Lukas Wunner wrote:
->>> On Wed, Aug 12, 2026 at 12:08:39PM +0200, Jan Sebastian Götte wrote:
->>>> I can imagine one alternative way to approach this, tell me what you think:
->>>> Instead of registering wipe handlers that memzero places on panic, I could
->>>> put an optional registry of (addr, len) descriptors into crashkernel memory
->>>> that the original kernel populates with the PAs of buffers to clear ahead of
->>>> time. Then the kdump kernel could do the actual memzero. This would remove
->>>> all code from the actual kdump path here. The registry could be made
->>>> per-core to avoid locks.
-> 
-> If this has to be done in kernel, your (addr, len) registry idea is a
-> better direction, and we can make it a bit more general.
-> 
-> Instead of a secrets-only wipe registry, consider a small "crash memory
-> region" table with an action per entry:
-> 
-> enum crash_region_action {
->      CRASH_REG_WIPE,   /* memzero, then dump normally (leave zeros) */
->      CRASH_REG_SKIP,   /* do not include in the vmcore at all */
-> };
-> 
-> struct crash_region {
->      phys_addr_t addr;
->      size_t      len;
->      enum crash_region_action action;
-> };
-> 
-> void crash_reg_add(phys_addr_t addr, size_t len,
->                     enum crash_region_action action);
-> void crash_reg_del(phys_addr_t addr, size_t len);
-> 
-> Two actions because the use cases differ:
-> 
-> - WIPE is what you need: zero the secret,
-> - SKIP covers things people do not want in the dump at all
->     — Registering as SKIP reduce dump size. I have been considering how
->       to shrink vmcore size on some big system with huge memory, the
->       vmcore size usually is several or tens of GB.
-> 
-> If this is OK to you, you can start a regiestry table
-> infrastructure with wiping secrets, we can add SKIP later and plus some
-> driver used memory.
-> 
-> I am not sure if it's satisfactory, but you can give it a shot to show
-> what it looks like.
-I think that's a good idea. I'll post a patch adding that registry this 
-or next week.
+On Sat Aug 15, 2026 at 1:20 PM CEST, Justin Suess wrote:
+> Howdy,
+>
+> BPF programs can attach to the locked_down LSM hook and contribute a
+> verdict, but they have never been able to ask the locked_down question
+> themselves: there is no way for a program to invoke the hook and learn
+> whether a given operation is locked down. (i.e be a caller of
+> security_locked_down rather than a consumer).
+>
+> Today the state has to be fed in out of band, for example userspace
+> reading /sys/kernel/security/lockdown and writing the result into a
+> map. That is a time-of-check/time-of-use race: a security_locked_down
+> verdict can be raised at runtime, so the cached answer can be stale
+> by the time the program acts on it.
+>
+> Add a bpf_security_locked_down() kfunc that calls
+> security_locked_down() and returns its verdict, letting LSM and
+> syscall programs query locked_down state at decision time. Out-of-range
+> reasons are rejected with -EINVAL before dispatching the hook, and the
+> kfunc is refused to programs attached to the locked_down hook itself,
+> which would recurse into the dispatch. (how the obvious recursion issue
+> is addressed).
+>
+> As this is the first pure-lsm-hook kfunc, add a new file security/lsm_kfu=
+ncs.c
+> to host it.
+>
+> This kfunc has no reliance on / relation to the Lockdown LSM, despite the
+> similar naming. It is an LSM-agnostic caller of security_locked_down, and
+> Lockdown just happens to be the only in-tree subscriber to this hook at t=
+he
+> moment.
+>
+> In fact, the test environment does not rely on CONFIG_SECURITY_LOCKDOWN a=
+t
+> all, and uses a BPF implementation of security_locked_down.
+>
+> This kfunc can cause notices to be printed with kmsg if the Lockdown LSM =
+is
+> enabled due to this line in security/lockdown/lockdown.c:
+>
+>   pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_l=
+ockdown.7\n",
+> 				                 current->comm, lockdown_reasons[what]);
+>
+> Patch 1 adds the kfunc, patch 2 the selftests. This is based on bpf-next/=
+master, but
+> applies cleanly to the lsm tree.
+>
 
-Thanks,
-Jan
+I don't think there is good enough justification to add this in the discuss=
+ion.
+The reason you gave (dynamically disabling hibernation) also doesn't inspir=
+e
+confidence. I think figuring out some other way to achieve that is better.
 
+If you care about knowing the state of lockdown LSM, doing
+bpf_probe_read_kernel() etc. should allow reading that state from the progr=
+am.
+If you have a BPF LSM supplying a dynamic verdict in your environment, I do=
+n't
+see why you cannot use the decision procedure from the same implementation =
+in
+other places of the LSM. I doubt you have the scenario where BPF LSM is shi=
+pped
+by someone else and your program needs access to its decisions instead.
+
+Lastly, given the difficulties we've faced from the LSM maintainers, I'm no=
+t
+inclined to waste more time in explaining again why this cannot go under
+security/.
+
+pw-bot: cr
+
+> [...]
