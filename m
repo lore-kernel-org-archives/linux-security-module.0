@@ -1,69 +1,69 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85964379991
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 19:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623A9379C40
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 19:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787082706; cv=none; b=ISGEUCMtGNtH3lZ99hrqA0nmukGr8OdW4KALS8AmBvzRgGN3U3CenQBAop77wsfCQtH0DiVu82s0ER3UUCGbUiKfv4tdRY1Wmj0cuwIcyiRjV4vC9Ifv84lSQk51KOZF7XSfl/d0M0zSbzfS4YjcTcKVUV0Pas3xcramvB2it3g=
+	t=1787082708; cv=none; b=MApQ5RmEle9BwsoarvEllm9eNEt2vNL7IIbZ+T0dhtJF0vqqF+DJJC2DoAGYwtaFxNdjuS4O4bEwBfgm8CzP1KOBHpzQuFxLwQmHSYaDmfkm7WL1uWaKw6LkpUFT0ypFuIj4vJQk1i+IDFaKo3sE0hadsSshXCeP+4Aw+OED7Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787082706; c=relaxed/simple;
-	bh=9uHRP1QAod/qRgNxXnmI4WhcZ+rp1J5wXAIzmWkxjdk=;
+	s=arc-20240116; t=1787082708; c=relaxed/simple;
+	bh=zSdAoshV6PguyX7bw95N4A7c09eJSx5mBc5Ua6Jl6bA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rpstABfHB/gzNbCUBOlvhK/kxt7OoEiTJM631YwLKm3AKnTwvuY+iZ+qZRdtY7K8F8RRZnskpwZ65Jw1WhiQWA2L+fil3ZNMg2OJU/gKANU/rxEIsY3X8VSsJoPx44K2sTrDE74HyV/0IJf9VFZtjxnxE/duwLZsffM7/3DIzJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aS6NsC11; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:To:Cc; b=k/Bv20FpZ86dQvBRC/Mnze8ZSXKkV2IFMyvWEfacGVef0HDyn2nXMUyPE62AKSUuQxOqbbZRnw6kK7ujG/hwk9V1OGBPkiT+29pVq+wA0Miz1VdAtgSQJ0hiMxUlNkobOVFQGWcPJJth9As72BAif2vb//2V+R5F0OYlANIfE8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c++GlGGB; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aS6NsC11"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4994d67d260so2105e9.1
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 12:51:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c++GlGGB"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4996e2575dbso2985e9.0
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 12:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787082703; x=1787687503; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1787082704; x=1787687504; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=/48NguWRU9bZx//FrJDrEgNODvcpOLG3InPhFqPXnRg=;
-        b=aS6NsC11xNWTYTPjNvVViDvzInYuo0G58cgpXYX1gfE0NBXqS2CNLrXZYsjUKcWJgx
-         dBXQHR935uEXNhfJs4qg0DvtzD6k450zVbUJ2+BTXkpYVL5Uyew5DF5sVyRevietP6cg
-         9EYgfYqooHdmZ8cJrEqQmCaGnunDqchYNvthqIdT5bBIV1/Y9ohJAhZ+6TjY2+w5jsyb
-         BvYbtV9a54aa6taTxoi4ckjKS+uVaIrZ2Wzrla9B+nJcpucRcQyZeJ4iEqtNNCKdaCpK
-         PYzvAjJNF8ruom+NsG9nsx9LLQ3NDFR9jfMuuyuYOY+43+GfQjzFPZTN/kEQtzGGW3v+
-         Clrw==
+        bh=cgP6lQOibHlCVKVmBeaw+pleu+P2xINjgIC2sMiWwBc=;
+        b=c++GlGGBK+doUn7LFPs21SC8bvcP6KRoJGN2RmCuselaI/4uem8v86Hssk6aPdBOij
+         F0aF7gdKV/eMRO/2Vd7+i6MdcSGx6UhQ65wtM+LAm27ND1nLM8b0kpfL3Lb3G2AhXoEW
+         OkHR4kclpgOgHY2aSjXs2v37jW5/RIf6iqtqc8Aki8KQ1eUv/pU6C/XcBthEC9MFC8JD
+         Zdh5ErUBsMkOG3AEB/tuIYRtW65xt20j4XeLrXcApFmTGvOf6tOJlZWQM6Tmeh4CdVdU
+         0vK6gqjmYhmHsXleXDlKE9ju+wDRajBwjT1xfrU41KqN1U5JhhaWgcbghv9KvR3f4D+R
+         Lpcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787082703; x=1787687503;
+        d=1e100.net; s=20251104; t=1787082704; x=1787687504;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=/48NguWRU9bZx//FrJDrEgNODvcpOLG3InPhFqPXnRg=;
-        b=R5BsgYQZG87yzc0DkjIGNpxqwJ92Mv80Mr57+4jKjMnuxtiBoOAZf/Ft/ybWa6Vegf
-         TTKb6kvi/+aAgOS35RvvDSDcPDCOFhKJrU4uEe6vVQwqfW2BTBEbhhNIWeM2s2hXBnHC
-         fiOS9I/cvDroDkSuZ27a8xGc+dXapXg/yl16vqXhPulEgIfnNSboZ0WIeN3QT9/ONQQk
-         TZaB0tkdtGFxjRyt2IRTPLc63pqJKT6I6ZtlekwcP3CRAFDZbiXWb/9EtOhbnzJ0AZ3S
-         A1qhR5ZUAS+V73JQvwu5915VLEaVFjd1mLcfGXTMcjKDHk2pTTqlyS5e78TcDfI3Zkkm
-         wVXw==
-X-Forwarded-Encrypted: i=1; AHgh+RrXnmnRXP86yRsbwSs53k8m1A2PAxfSSRlT+KQ6urZ0pmvbjYdIdXSBCOLwNemEsrqciMoFAHBVlEhl1waTLzSJCLL9Jl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMAoTNFs3uxU916RWZa4oIz8VUO5wUvmx8toHM08qeKn0wDu1A
-	UxI09I5bXswghDxJvxZ/v2FoG2Xle897I0OdXiHrpushF8FmECS4yEySrgdfeJ5/uQ==
-X-Gm-Gg: AR+sD10K0k3yz5tD/gjU2B+Wa2YOiO0TVaWmjS8w4cj4w5aOr8iSvuZ5jOS6pAfqT1O
-	aQBU937GqtOobWcvU/AK5rkGJz8acArQN60Cjo5I1q38yO/frMNCJVnrxvtxQbFQR+T29vyleVT
-	eZ/Q6O7sPCdWt16ziW+7WYbsqrKYfb5eZkkdAAY5/uKVFbf/kgnuS6Hw7LUHe8UC1gMN2PRXrr/
-	G2dk4CV9raumIrtIovhSpWuWljnhN22LDzCXnFDiiGIq7bpDvvIwJvntivDVywGFV1spXwdFDw2
-	hhTGGmixq75eRzKuTPMSlbdRm6YuMh9WaC+eW2Jkhmn/G9CqJBx2rH/YTepRUoVXlaA8m1+jD62
-	Wz0tXSnWDGXqmqnHHeEFUVW8H4ARN2/efmIIorgbxQh96CkDCBZTf7jx2i2727noOwotmo1+4ZN
-	K5CtV8VjRLnaTs1+jDLyq9oUmvxQXsXKeUzQIATPWsUzfsTKfAr6N8QuhphMhXNAaVvD4djpGow
-	GqPOcl9UkaLQqBMDfKEO8L8Z6GX89cV7fvOS07Nh0KhgwWM
-X-Received: by 2002:a7b:cd0c:0:b0:493:a96b:f9fe with SMTP id 5b1f17b1804b1-499a9574768mr34305e9.4.1787082702506;
-        Tue, 18 Aug 2026 12:51:42 -0700 (PDT)
+        bh=cgP6lQOibHlCVKVmBeaw+pleu+P2xINjgIC2sMiWwBc=;
+        b=CbvIGQnOL796RJQq0RmIrlferD/Bb2UA9YCz8BpwRzTZlIFmfZd4/j8u+4IIPgsbH4
+         regwaVMgpM77/yDR03KMHTVMLQJtegKvnl/u6eG6avp/crL6bq2rc1lEw9XBzvK3u2Pc
+         NIPnBIOlkf24mtGzxmqVWONLdv+BkcOlJlOC3ZvYQf+mZB9nXDcpUx+YExrBjkHAOoL9
+         b5D7Dahj9NMyUWV1LB3PfSirFh1IpVg1sxnF2WmZqF5ryerzZMm8F0jy4Sn4KGg0oyy5
+         M3AKVe6WSmH3sjcE2RgZNUzeSagTCYx/C0cRRqJmI5C5ATBXQOau5mZEz5+MsiWL525t
+         neIw==
+X-Forwarded-Encrypted: i=1; AHgh+RrgIoL8/jSe94wnPvpAhc+kQC94ORAnvX07/8f7kYCkFJZ2IUO4Ln57eEgBI9XUrA2ACTD539Q+hrfSVXOrO6xEzfLHOw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbfQ4h7SZ4Vkp2JZm73amMc/D2/efyNuOiLxrJy3shtti978tt
+	EFBx2FWanmlgE8TdApBb74NJhqmlYxJynmjPaZRo2fhE9hIMdQ0QZ6z1yFsCYuH8OA==
+X-Gm-Gg: AR+sD115EzfgusjteK8FIH+FU+3nfUUle/sGwvyuWliF78KeUulapez+Sc12y8t4RB/
+	jgQkpp7+EblHxhfZ0BQKXGTpZUWhL7edg4sefrsqehPSP4Fe0Y/buFARMi5OG1FM55VBdSbmIfW
+	mdirA7EjLKIf7CSy0Ll2uNpLZ3iYC56shG4y2UOBN+xKI3D/kw5Ve43AYZAncBfbYg7vBrfQmmE
+	6qqv3N4nDL/mamYczca2QwV9eKlz/SXWm/E6uTYPGyjRr8Xf3lmLUkvDMjGhnuQ7Qcg/uWsBPVs
+	WNE3Y+coalUvhTMM2ykqIjLQRMXqFEWo87ISM1ReYk0AquKWEPEGZvLIK0HJXL5nEPFy0FBKLyf
+	aLWWt/vdLdymd5fbHx0+YtBrwzrFI8LIP3C2so+RWqxvJDfBzUy4Pb6Ou7bz8fBatei/1nsQeLh
+	ZS++BujrA5KkZ9DOEjf+UUtfeNxMJLNArNpXlKOWlw7ThljDUeHeLuarIAiOULQll9ePsMlTwdy
+	B6n0SeKUGm6aB8YyzI9l0whrvxlMI2D7tS5cB9kWbgHQSBC
+X-Received: by 2002:a05:600c:8905:b0:493:b169:784d with SMTP id 5b1f17b1804b1-499a98b8974mr38235e9.8.1787082704117;
+        Tue, 18 Aug 2026 12:51:44 -0700 (PDT)
 Received: from localhost ([2a00:79e0:288a:8:f466:5a15:1301:318d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482a5a3b896sm14946986f8f.16.2026.08.18.12.51.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482a5b77f41sm13393110f8f.27.2026.08.18.12.51.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2026 12:51:41 -0700 (PDT)
+        Tue, 18 Aug 2026 12:51:43 -0700 (PDT)
 From: Jann Horn <jannh@google.com>
-Date: Tue, 18 Aug 2026 21:51:06 +0200
-Subject: [PATCH 2/3] proc: query LSMs for introspective mem access (if
- PROC_MEM_FORCE_ALWAYS)
+Date: Tue, 18 Aug 2026 21:51:07 +0200
+Subject: [PATCH 3/3] selinux: require EXECMEM or PTRACE for FOLL_FORCE
+ introspection
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260818-selinux-pokemem-v1-2-90cd2357ee05@google.com>
+Message-Id: <20260818-selinux-pokemem-v1-3-90cd2357ee05@google.com>
 References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
 In-Reply-To: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
 To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
@@ -90,138 +90,77 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
  David Hildenbrand <david@kernel.org>, linux-mm@kvack.org, 
  Jann Horn <jannh@google.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787082694; l=5164;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787082694; l=2735;
  i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=9uHRP1QAod/qRgNxXnmI4WhcZ+rp1J5wXAIzmWkxjdk=;
- b=QhCD/dpVyuHUA59IInGgknlAukZUxr309hmljE5BsC20XSQv0XHxJumcEMH0epWxltedJEorj
- 9o+qlp6IUXyD/NlvzGKNvAyNi+iK04kMVoV2ZDdmCLoy/D2vjaJ0P/7
+ bh=zSdAoshV6PguyX7bw95N4A7c09eJSx5mBc5Ua6Jl6bA=;
+ b=Lyhniy9H5W1G2wuKZtV9Z+ZJwr+oTZ4Wxkivk0swGQT5TVkCUpGEnUh4di50Ud5ofYDrM8FV3
+ hG088NQOnE8BjBxCnVn9kU0SPcGSVr57AdYgL4wVzDxIO+bERsoFvU6
 X-Developer-Key: i=jannh@google.com; a=ed25519;
  pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-If the system is running with PROC_MEM_FORCE_ALWAYS, LSMs currently have no
-good opportunity to block a process from overwriting read-only code in its
-own address space through FOLL_FORCE writes via /proc/self/mem.
-The security_ptrace_access_check() LSM hook is bypassed when a process
-opens /proc/self/mem because this is considered "introspection".
+On systems configured with PROC_MEM_FORCE_ALWAYS, ensure that a process can
+only create anonymous executable memory via /proc/self/mem if it has one
+of:
 
-This causes a hole in SELinux EXECMEM enforcement, which tries to ensure
-that a process cannot create executable anonymous pages.
+ - EXECMEM (like for other methods of creating anonymous executable pages)
+ - PTRACE (like when using /proc/$pid/mem of another process)
 
-PROC_MEM_FORCE_PTRACE prevents that and ensures that such FOLL_FORCE
-accesses are only possible when the LSM allows ptrace() attachment; but it
-is unclear how quickly PROC_MEM_FORCE_PTRACE can be deployed in
-environments running lots of third-party code, such as Android.
-
-So, introduce a new LSM hook that can forbid FOLL_FORCE specifically for
-such "introspective" accesses.
+This closes a hole in EXECMEM enforcement that Project Zero has used in a
+remote Android exploit chain:
+It was possible to use a memory corruption bug in a service without EXECMEM
+permission to overwrite executable code via /proc/self/mem, which made it
+possible to load and run shellcode with a kernel exploit.
 
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
- fs/proc/base.c                |  6 ++++++
- include/linux/lsm_hook_defs.h |  1 +
- include/linux/security.h      |  6 ++++++
- security/security.c           | 15 +++++++++++++++
- 4 files changed, 28 insertions(+)
+ security/selinux/hooks.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index bec6197329dc..3dfaef49bb70 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -851,6 +851,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
- /* private_data for proc_mem_operations */
- struct mem_private {
- 	struct mm_struct *mm;
-+	/* Was the ptrace access check bypassed due to introspection? */
-+	bool introspection;
- };
- 
- static int mem_open(struct inode *inode, struct file *file)
-@@ -864,12 +866,14 @@ static int mem_open(struct inode *inode, struct file *file)
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
- 	if (IS_ERR_OR_NULL(priv->mm))
- 		return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
-+	priv->introspection = priv->mm == current->mm;
- 	file->private_data = no_free_ptr(priv);
- 	return 0;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 18dd28b2bb13..905137c47321 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2157,6 +2157,32 @@ static int selinux_ptrace_traceme(struct task_struct *parent)
+ 			    SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
  }
  
- static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
- {
-+	struct mem_private *priv = file->private_data;
- 	struct task_struct *task;
- 	bool ptrace_active = false;
- 
-@@ -886,6 +890,8 @@ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
- 		}
- 		return ptrace_active;
- 	default:
-+		if (priv->introspection)
-+			return security_introspect_mem_foll_force(file->f_cred) == 0;
- 		return true;
- 	}
- }
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 65c9609ec207..67452f71bedf 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -36,6 +36,7 @@ LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
- LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
- 	 unsigned int mode)
- LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
-+LSM_HOOK(int, 0, introspect_mem_foll_force, const struct cred *subject)
- LSM_HOOK(int, 0, capget, const struct task_struct *target, kernel_cap_t *effective,
- 	 kernel_cap_t *inheritable, kernel_cap_t *permitted)
- LSM_HOOK(int, 0, capset, struct cred *new, const struct cred *old,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 153e9043058f..f8483be58bc8 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -338,6 +338,7 @@ int security_binder_transfer_file(const struct cred *from,
- 				  const struct cred *to, const struct file *file);
- int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
- int security_ptrace_traceme(struct task_struct *parent);
-+int security_introspect_mem_foll_force(const struct cred *subject);
- int security_capget(const struct task_struct *target,
- 		    kernel_cap_t *effective,
- 		    kernel_cap_t *inheritable,
-@@ -676,6 +677,11 @@ static inline int security_ptrace_traceme(struct task_struct *parent)
- 	return cap_ptrace_traceme(parent);
- }
- 
-+static inline int security_introspect_mem_foll_force(const struct cred *subject)
-+{
-+	return 0;
-+}
-+
- static inline int security_capget(const struct task_struct *target,
- 				   kernel_cap_t *effective,
- 				   kernel_cap_t *inheritable,
-diff --git a/security/security.c b/security/security.c
-index 71aea8fdf014..d0f790a534eb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -595,6 +595,21 @@ int security_ptrace_traceme(struct task_struct *parent)
- 	return call_int_hook(ptrace_traceme, parent);
- }
- 
-+/**
-+ * security_introspect_mem_foll_force() - Check if introspective FOLL_FORCE is allowed
-+ * @subject: credentials of the process accessing its own memory
++/*
++ * Decide whether it should be possible to read non-readable VMAs and write
++ * non-writable VMAs via /proc/self/mem.
++ * This only applies to systems configured with PROC_MEM_FORCE_ALWAYS, and only
++ * triggers on accesses that are not visible to selinux_ptrace_access_check().
 + *
-+ * Check if FOLL_FORCE is allowed for a process accessing its own memory, which
-+ * bypasses the security_ptrace_access_check() hook.
-+ * This is only used when the system is configured with PROC_MEM_FORCE_ALWAYS.
++ * This allows a process to overwrite read-only code in its own address space.
 + *
-+ * Return: Returns 0 if permission is granted.
++ * Creating an audit record on denial doesn't make sense here, since we can't
++ * tell whether FOLL_FORCE matters for the accessed VMAs.
 + */
-+int security_introspect_mem_foll_force(const struct cred *subject)
++static int selinux_introspect_mem_foll_force(const struct cred *subject)
 +{
-+	return call_int_hook(introspect_mem_foll_force, subject);
++	struct av_decision avd;
++	int rc;
++	u32 sid = cred_sid(subject);
++
++	/* Allow if the process is generally allowed to have executable anonymous memory. */
++	rc = avc_has_perm_noaudit(sid, sid, SECCLASS_PROCESS, PROCESS__EXECMEM, 0, &avd);
++
++	/* Also allow if selinux_ptrace_access_check() would allow it. */
++	if (rc)
++		rc = avc_has_perm_noaudit(sid, sid, SECCLASS_PROCESS, PROCESS__PTRACE, 0, &avd);
++	return rc;
 +}
 +
- /**
-  * security_capget() - Get the capability sets for a process
-  * @target: target process
+ static int selinux_capget(const struct task_struct *target, kernel_cap_t *effective,
+ 			  kernel_cap_t *inheritable, kernel_cap_t *permitted)
+ {
+@@ -7558,6 +7584,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 
+ 	LSM_HOOK_INIT(ptrace_access_check, selinux_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, selinux_ptrace_traceme),
++	LSM_HOOK_INIT(introspect_mem_foll_force, selinux_introspect_mem_foll_force),
+ 	LSM_HOOK_INIT(capget, selinux_capget),
+ 	LSM_HOOK_INIT(capset, selinux_capset),
+ 	LSM_HOOK_INIT(capable, selinux_capable),
 
 -- 
 2.55.0.737.g08866a6d13-goog
