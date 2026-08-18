@@ -1,148 +1,163 @@
-Received: from mail-yx2-f5.google.com (mail-yx2-f5.google.com [74.125.224.133])
+Received: from mail-oi2-f4.google.com (mail-oi2-f4.google.com [74.125.231.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D8E371880
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 19:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F00236F433
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 19:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787081733; cv=none; b=V/qlkaUMV1TfwxP+A7C5U5jVYLtN3cFO2E9GDuaiZvR8fDgqBG7PpGMu2i3Dipv5yvPx1JuGO0+/o7vcjzkD5ybUDC/zhDXc1aWiJDawWEoqTl0GFVOllWH3ualbRv5eJxMfUjwKg8BNBIUZ5Rwvh0fmD62XpYYJ+XKRruw4B9M=
+	t=1787081991; cv=none; b=pT3drbrI9k/oZq0E8RNqIXt6wXTN9oRNNKbFWlnPcNgzX2njBgMEfAG6UPwZh+Zvt5K1tqJ/rtQ53HklsPYcdiLd+ufPQG4kZV3P9SJrnrDE/CNmVnw95fS5JpP8HVZoWf2NfdMoPtRT09QbvsMEkm7JqvpqvtqyvH4uLpMcwo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787081733; c=relaxed/simple;
-	bh=7LZjP32jUfaZ5RKmBNaB9NcgyxlHRwbSA/1nT2Radhc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M0st8cQM5KlVzPsEwTH242HbBo878Kvc/FGJzqjk07VH8pfE+Ehw2GKn+IZyQajeYHOZ3WAG+pfU2CexULbK7jiOK2KtRpu84h+ua5Mv8g8zPzo47eQNhuKtQFrV/dXqxvCZnV+cv6RYkEujcuYG8jbi7PRrb6SA2XDZ0wN1Uqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=HXaYmoUt; arc=none smtp.client-ip=74.125.224.133
+	s=arc-20240116; t=1787081991; c=relaxed/simple;
+	bh=4+UTR7Z7d5DwpYL503R5TO4vWVuUTpEXPr+HACLyLwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NPvJXLSIdgt3xzFEbWK+5F0efRjiNDRehdzpQOaiqYAoSlTd3GGsLVMryAGyMckZYCo822tSL0kklTSV15l1297joEswV2CqC3fQIc/JL/5uymV++QSgCydx/3VW+A24YoB9uPNd0lhjQG1OWRYmuKYsRMZnmcXJ4zeWMy7WIeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=IWN95f3c; arc=none smtp.client-ip=74.125.231.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="HXaYmoUt"
-Received: by mail-yx2-f5.google.com with SMTP id 956f58d0204a3-66c70d19974so408838d50.0
-        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 12:35:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="IWN95f3c"
+Received: by mail-oi2-f4.google.com with SMTP id 5614622812f47-4ab2d8e7e4cso99139b6e.1
+        for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 12:39:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1787081731; x=1787686531; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=3UXJUp6qjJ2HIYsQIMwEd5fSfbeRNaFsH8a8Xw28Ey4=;
-        b=HXaYmoUtBoAj1nnNe0YyIgi7sRHAU31p9sq6rkC8N4iIBoSfZD/vFRG33g0Tio3fIb
-         KErGPdd1qvTTHtwWmPr+cYPVt/KkA3WVDscLQzGeP6X0Zj7ZV85vEmGiWz8SsAlJJNvv
-         Yh17WFGug6XbGqFODcskEj0pSav6OA7xpUkOfR9FymM+z6JEphP/e4WE7j4XunJ8sCQw
-         r2TmqVUOqds1Po05fylbua3tbob6tslUAvE6/heU2EvkRuKH8plQlWgHxdnJT+fmAoMH
-         b2hobCtE3bHMuQBFTUnlFguTV6aBcUgBEAAdoewoG8beIMlTQcG70qF1MOusxrytrhdH
-         d36w==
+        d=cloudflare.com; s=google09082023; t=1787081989; x=1787686789; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=8LtuU+tO63aCvSR2Bm+1jaIeVmDj7SPmB1MVl55mOpg=;
+        b=IWN95f3cMOxRF+fBlNnOSw+rrp0ZpsiKqQjJ9stXCvtFf7CUTfu2wdGOack2yKuIiB
+         VB3N1aVnyZlajTHLCj7RjVNyacvyCIsjJVhngX7pDrChtAHSf/qvBdnXYimvu1NN/wuL
+         3PNesodW7M1u02AQtAry1FG4NumJyEQtOeJSqFlYs1YyttW1J34bEHhMZIJ/DRXiEY3k
+         SH3HA1TusuGOUYSFC7bEXpj04AbRVyJ4r9/ur46BFJ5kvyWnXtYwqSxAoTqNJUg7YXOJ
+         WQ1LcrWL5r6+7rM6BQCcAcj+/0Yqb71EnuNn79yvBBgWCJenpBudRPjW/FDy/tRXCXqH
+         v1yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787081731; x=1787686531;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20251104; t=1787081989; x=1787686789;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=3UXJUp6qjJ2HIYsQIMwEd5fSfbeRNaFsH8a8Xw28Ey4=;
-        b=M7oHtVmtLxwfD4fgf0I3Up0RZfAkO2qehY7ty/7oMtXRTj6x18st0YZvmHhcH2CKGv
-         dEfa02C7omsiHq7YwnCmDDMl3njlEiVcF44Rd5i1S9Q6BX674rhv3ygfPwsE/0FhYGma
-         BCgNo8UEkXrXUk0+GhjLUbUPg8soUrWttkJzDKClm93EviZE6c1gyPwWaHI0NuGVVj7p
-         C2M3pJgEhqL0V/Tl6BL5L85BACcOJAdNgAhkqko7VrtXhvE70HozmsXCB4aHMP5c8OIX
-         chv1i2XvhlueavMI6n9BY2maDn8rg1IVpVL13yAMmxTbkHniyO23+gnxjqQgLqNMuMZC
-         fW8Q==
-X-Forwarded-Encrypted: i=1; AHgh+RpQCo7j6BxuQ7mdi4jw4OdyQeQkoxQXGIPAUf+XCOa+32626qi33ZDjMDLITmEj2gfzR2MSqi6oZfn3G5byl9CBU78pOi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvtYe/hLqzbtLfiTqhaTzImOxPkDWDgHOHyBxeyP+n4Cm3o9nM
-	eMa5wkz+2Br55Q/O+Ur5eiyM87Nhst+uPEypUWxpPHzyPFRd/HVy2l8/ZnPoXklaYa0=
-X-Gm-Gg: AR+sD13xTmLxiWIMkSbSjRH7wezbYJ+rRomOOgw4U9M3Yf/6RJ91APSIs5Rsvv00jzC
-	Qvi9dqlLjVwC0qa4l5Lbjdsk779/vpdySNIIzhBXApIBBcaA8BhKWP9fVc6kN8een1KyMzXJI+J
-	VikCjwNeCqk/RJWeW8+s3pz6XGpOvL7U+m7fyXhbBVWbV3kj8wBZJUdy5LC47qz0rhs/oWSBcdH
-	GlN+1bayCmJ6tTBltcDOVD/qyIPqWDAyYjsk0U5OockAlJDyjJV4tUY5oTcBxPqbzjDQ/FEp9zA
-	wcv3NI5OY7S+NKJanKRtJVUR4zekOCyBEcQ78HqBeuCsV+JPtWsf6RyPPGB/CJj9tEpsAH60ZLz
-	7EvVkFzSIoOkz6YZXQ68ewwf93HcSbgD4vdGEeOfyelWYintU6IxrGhT1FGmKshE90gvXeyWCje
-	WqEOFMlk/NFhj2KyK3B/CD0dqo4VWA8QTkhR++TZWwSxisRHN2tLKsbPI=
-X-Received: by 2002:a53:bc0c:0:b0:66b:3c40:17e0 with SMTP id 956f58d0204a3-66cca5db977mr58091d50.43.1787081730600;
-        Tue, 18 Aug 2026 12:35:30 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:52])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66cb47809c6sm2795622d50.11.2026.08.18.12.35.28
+        bh=8LtuU+tO63aCvSR2Bm+1jaIeVmDj7SPmB1MVl55mOpg=;
+        b=RmeAHKc4NzxaXSZExnmdIpXNObd291lDciFoaMqf2dK6ypRoCCxz9waXF/iKdUb/BT
+         UQgMENq0uDz+mSX0kT7IIWKaOF99eIwD3V4Kv0Zdx3ZNjQ7gomA2NpQh/o3Oj6TJWZna
+         m1lYxuCVG8fAcbTrNPQiu6N5/PfwwRQrvND9KW620PlnNAc76xUSRho1IeP6+kdFfnDU
+         8Tt1i7NwkNZss6vVhHNS4DS9J/c06B0oe/IKRjA28K/MYdzob5GuktVmSlR9XlKN1cYk
+         Tnbs+zhJNqHDRqsXBybRAMZgXasaQwGvX6fyCenJucBTOzN++A7IXsb69f7RGaYn/rGZ
+         fE+g==
+X-Forwarded-Encrypted: i=1; AHgh+RpDTgHELqbwfsi/M/gtx6L/D6nOeUbeIN35FyRJKTqKjaTeH3EwIl85PeucxtGC73vzcE1memsn2PyM5HZLbbKerioOGVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW5ZBgTvMydiqr6+lZawlFPZc/TbHVm2pX6l9u4Zv9fP80pfsL
+	t5awUSTpF2yeSN3yN99kVSiknMuovuhReAK5lc2MMhw6F6DdyEhIK0GnPWWUkF7NlX8=
+X-Gm-Gg: AR+sD12dnT/hV+4d2iT5mG+zpDGFjFRkRjlBW6e4FLorxl14UVyvpq5VgKbC/9sTHNy
+	megzhYcZISmXzrg11gnWQtRVuSS8WJeahfhtMpz+hIIxa8n0ibd0ExRAeNRBnjv75Ec29StJeBD
+	Fx+K/ejtZbY7C1u3oy1d/+syIioQ8gipTthmoK2O9o0cMFFFDtbMhFW8A+2CKmQutjxe9tM1g7W
+	FpYkPbNRjID2L/gHLNdPPl/3s/dZCbDKFlXiPJwF3KY4iHGNW8JYc/xlt1bluBWqXeWUqkLikHu
+	h7e3SC7jOqjbPYiaJDW82o0v1E0gvMbUkVhGCpr7isMsVrIRg1JM47VrSWe0B4tPeNePYcSacUz
+	pQEnzRagvW06xIK3HLXa8LEFDnnEPfCeWu30Zw/cGkR7H3STcQ0bm6FY7ZU7GTGR7Ptdp0kcxmn
+	1eE5VKt3uJ3hjkRA203MC0i0XAzCdYztfKrhb7A4o=
+X-Received: by 2002:a05:6808:c1e3:b0:4b2:98a3:a567 with SMTP id 5614622812f47-4b2b8fd69d1mr746b6e.4.1787081988851;
+        Tue, 18 Aug 2026 12:39:48 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:52])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4b2960e32dasm4070878b6e.15.2026.08.18.12.39.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2026 12:35:29 -0700 (PDT)
+        Tue, 18 Aug 2026 12:39:48 -0700 (PDT)
+Date: Tue, 18 Aug 2026 14:39:44 -0500
 From: Frederick Lawler <fred@cloudflare.com>
-Date: Tue, 18 Aug 2026 14:35:16 -0500
-Subject: [PATCH 2/2] ima: don't measure/appraise files on configfs
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [lsm?] [integrity?] possible deadlock in
+ ima_file_truncate
+Message-ID: <5jqpdvvwpkrtsvtujrxm4mnuggsaztmm7etwmus3gwznxh5fch@gs5aducakh4q>
+References: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
+ <cc5bsuwzvdoqrhgggqqb6qgkgh2cxymbupt4ghsi2msnudh4rf@slzwriyjykze>
+ <6045f93f2e2c2ad4f6227509d363e75bf2340510.camel@linux.ibm.com>
+ <cevxz5bpcfdm5uvjmu3a6qql2qar4477oczd4knffn4wkgojds@ubo47iitdo6k>
+ <415f81878ac595830e5b5051a5828311c2434e03.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260818-configfs-v1-2-a2329043cf86@cloudflare.com>
-References: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
-In-Reply-To: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
- Breno Leitao <leitao@debian.org>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>, 
- syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2105; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=7LZjP32jUfaZ5RKmBNaB9NcgyxlHRwbSA/1nT2Radhc=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqhLP9Vx66id6HzUGNVJl0dOeeNDs0MBZQgcfLJ
- ozGhqJGiNaJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaoSz/QAKCRCrJbR2A5LT
- bQVIEAC1Z72vgOQ5JGNsxpTTajJOI51TP6Rnol/Bx7J2tcFGgHnnHtMnf5fd/EDtCDec5qNK4cb
- rhvU/uwkK0HBll+nTe32AAgK9R7ABEF34DZPls68z5hz5cJPyNvpfDY/n6SkHkxT+DjKfgK8qPz
- oMmLJs7AgQvQRBjF/YFZbFFvWOGkz8tJ2ar1Bz1bf31+CgbqwIKakWokyp92wdjbXdCIyor5Ovo
- fOpsgCFUEZjgvovWR1w2ITdKCu6rn29UldScCH1TdpmE523wL/POA8NSV2060fEpzuLcP27mAPD
- IDes0e25PVxznRDQ0tY3foFCVaH06CZqy3sT7KkFq47z0enMvmF0nzn0LPLz0mgvjV74WkDWYay
- igd9xjoO+4W6WfzNd4FHague17tw43Gyaigmcc4PWvAZCojhOL5mf8/t8rRuBF8z/afkKdAlHCB
- VC5vtDKqpHvAobWdA7m/+hytXaS5lNB9GtQYQn4kyfdUw1m2ObL+grd22K3OgtFKFPVxbJ70Er0
- cfK8N98igspB5ILoHEIrkJ47vQBBIspKykEujbZisq2n36e7XRxC0F5ZyLWH33Hyt7hq256MJ5J
- jisxr61kCS5tdm5bGlIBi4Fb3AjSH1qVmtN29IRONnbbsuJxZl4jLxDVCn7Ukww5lQtwbN8P682
- qIzx3FXQQ1caHTw==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <415f81878ac595830e5b5051a5828311c2434e03.camel@linux.ibm.com>
 
-When IMA appraises/measures a file configfs, it has an opportunity to
-hold onto the ima_iint_mutex while another file from a different file
-system is attempting to appraise/measure. This may cause a cyclical
-lock dependency.
+On Mon, Aug 17, 2026 at 07:32:43PM -0400, Mimi Zohar wrote:
+> On Mon, 2026-08-17 at 17:40 -0500, Frederick Lawler wrote:
+> > On Mon, Aug 17, 2026 at 06:21:57PM -0400, Mimi Zohar wrote:
+> > > On Mon, 2026-08-17 at 15:43 -0500, Frederick Lawler wrote:
+> > > > On Sat, Aug 08, 2026 at 05:20:29PM -0700, syzbot wrote:
+> > > > > Hello,
+> > > > > 
+> > > > > syzbot found the following issue on:
+> > > > > 
+> > > > > HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
+> > > > > git tree:       upstream
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
+> > > > > compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+> > > > > 
+> > > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > > > 
+> > > > > Downloadable assets:
+> > > > > disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
+> > > > > 
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > > Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
+> > > > > 
+> > > > > ======================================================
+> > > > > WARNING: possible circular locking dependency detected
+> > > > > syzkaller #0 Not tainted
+> > > > > ------------------------------------------------------
+> > > > > syz.3.857/8643 is trying to acquire lock:
+> > > > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
+> > > > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
+> > > > > ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
+> > > > > 
+> > > > > but task is already holding lock:
+> > > > > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
+> > > > > ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
+> > > > > 
+> > > > 
+> > > > I had AI whip up a reproducer for this, but it's not mutually exclusive to the
+> > > > added patch. Tested by running reproducer, then unapplied patch, still
+> > > > reproduced on v7.2-rc4.
+> > > > 
+> > > > I'll need to simplify it before I post it.
+> > > > 
+> > > > #syz dup: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (6)
+> > > > 
+> > > > See below for un-applied repro result.
+> > > 
+> > > Hi Fred,
+> > > 
+> > > In response to this syzbot, I responded:
+> > 
+> > Sorry, I must've missed that.
+> > 
+> > > Like other pseudo filesystems, configfs files should not be measured by IMA.  To
+> > > addresss this particular bug, please add a rule to the builtin
+> > > dont_measure_rules[] and default_appraise_rule[] policies.
+> > > 
+> > > Without the configfs filesystem being in policy, can you reproduce the deadlock?
+> > 
+> > I was not able to.
+> 
+> Do have time to post 2 patches - one to move the configfs magic number to
+> magic.h and the other to update the IMA builtin policies?
 
-Add configfs to the default don't measure/appraise lists, similarly to
-other pseudo file systems.
+Sure thing. Here's the post[1].
 
-Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/6a77c7cd.b50370da.49fe0.0031.GAE@google.com/
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
- security/integrity/ima/ima_policy.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I rebased on linux-integrity/next-integrity.
+(forgot to include that in cover)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index f79d07bb63c6fc4ba6fe594140de8d59f57e4f0b..68d9a5e6c232ea0678e9f51f105cebecccccb43e 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -165,7 +165,10 @@ static struct ima_rule_entry dont_measure_rules[] __ro_after_init = {
- 	{.action = DONT_MEASURE, .fsmagic = CGROUP2_SUPER_MAGIC,
- 	 .flags = IMA_FSMAGIC},
- 	{.action = DONT_MEASURE, .fsmagic = NSFS_MAGIC, .flags = IMA_FSMAGIC},
--	{.action = DONT_MEASURE, .fsmagic = EFIVARFS_MAGIC, .flags = IMA_FSMAGIC}
-+	{.action = DONT_MEASURE, .fsmagic = EFIVARFS_MAGIC,
-+	 .flags = IMA_FSMAGIC},
-+	{.action = DONT_MEASURE, .fsmagic = CONFIGFS_MAGIC,
-+	 .flags = IMA_FSMAGIC}
- };
- 
- static struct ima_rule_entry original_measurement_rules[] __ro_after_init = {
-@@ -211,6 +214,8 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
- 	{.action = DONT_APPRAISE, .fsmagic = EFIVARFS_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP_SUPER_MAGIC, .flags = IMA_FSMAGIC},
- 	{.action = DONT_APPRAISE, .fsmagic = CGROUP2_SUPER_MAGIC, .flags = IMA_FSMAGIC},
-+	{.action = DONT_APPRAISE, .fsmagic = CONFIGFS_MAGIC,
-+	 .flags = IMA_FSMAGIC},
- #ifdef CONFIG_IMA_WRITE_POLICY
- 	{.action = APPRAISE, .func = POLICY_CHECK,
- 	.flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+Best,
+Fred
 
--- 
-2.43.0
-
+[1]: https://lore.kernel.org/all/20260818-configfs-v1-0-a2329043cf86@cloudflare.com/
