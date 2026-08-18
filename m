@@ -1,104 +1,153 @@
-Received: from r9103.ps.combzmail.jp (r9103.ps.combzmail.jp [49.212.47.32])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3533AB28D
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Aug 2026 02:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.47.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D063A9002;
+	Tue, 18 Aug 2026 03:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787019308; cv=none; b=Qa1dv1ghON0wgeGo6f4TKyXChn6c0lRqZjqOZIFhcU8ofdCU53QxEeXe+ybS9DsSU8zpcLJEp90uNpzXIVeQwsC1zJ96mZzNtTyF6wyg0y+hO2vVEXxBL+oSMAKSbAulaLTcgIY4J8qh5ISC8nmUfP80iQYza/hs/fLRJfwEFC0=
+	t=1787024889; cv=none; b=r+WUTfz1jCDNsIXjzRerNsZjlud+ZmEzEzi4WoKbl9NQl60ZjT5fvG8JGaemIYicGWYRUG4vXFl2jAdIveqFPovO/Fyt59EnPRBSQahN770RTgU06/hDTtar3AusHlXd5/prK286uD0iM/D08MbhXwTUs4QOMENM9KrFWIDi61E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787019308; c=relaxed/simple;
-	bh=d2J6ugHyCbYhZynF5W+CX6HoZGS2rvrySoTe/l508dE=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=KQTf1ceQusgKbB12dRd/ACsHjp8LUgOOICSEEKyo9MaZW8GBgAlYrGeei5DuuKEJC+07kajNWQiJWLMA0lDhuWuZVPVFDl6IjdCR+3YioTttmGcuHAi49sCWHYZ5RJ2IAMRHGJ79C3rsMO5VLygwpUo8sIeW3GtDyLXlMKGBIQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-session.jp; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=49.212.47.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-session.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9103.ps.combzmail.jp (Postfix, from userid 99)
-	id 4AA4618853F; Tue, 18 Aug 2026 11:02:43 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9103.ps.combzmail.jp 4AA4618853F
-To: linux-security-module@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCQFBFaBsoQg==?= =?ISO-2022-JP?B?GyRCPFM1KBsoQg==?= <info@fc-session.jp>
-X-Ip: 1278932790143692
-X-Ip-source: k85gj7ra48dnsa5pu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?SVQbJEI2NTBpJEchIj83NSw7djZIGyhC?=
+	s=arc-20240116; t=1787024889; c=relaxed/simple;
+	bh=yixyTo1971oLIY7w5vtlHVoeZwVu+PtOIG8SWb2Y4DE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jztMqUcQh9+szWw0oCo+olyrELnvXvFsv0touvyZgPCg+OaPotO0zqcGlgjb6Abq8Vjr2BQArpbWNu/fPO7ZMy8TIkzf1NDuKZYlkO8qo5hdVgT6ZaWuPga/G3LAOAOyRwybvm/DDWIti4XVgoc64pRitZOQPqYfnWjPs1y6GiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.177])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4hPFyk2YGJzYQtLf;
+	Tue, 18 Aug 2026 11:47:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 0981F4058D;
+	Tue, 18 Aug 2026 11:47:57 +0800 (CST)
+Received: from [10.34.206.8] (unknown [10.34.206.8])
+	by APP3 (Coremail) with UTF8SMTPA id _Ch0CgC38UDr1YNqZA3mCg--.52763S2;
+	Tue, 18 Aug 2026 11:47:56 +0800 (CST)
+Message-ID: <6ab57477-69f8-4c60-852e-58ce7ef25023@huaweicloud.com>
+Date: Tue, 18 Aug 2026 11:47:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-X-MagazineId: ra5p
-X-uId: 6764295640486064714182451000
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20260818020355.4AA4618853F@r9103.ps.combzmail.jp>
-Date: Tue, 18 Aug 2026 11:02:43 +0900 (JST)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 0/2] lsm: give BPF programs a way to query
+ locked_down state
+To: Justin Suess <utilityemal77@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Paul Moore <paul@paul-moore.com>,
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+ Xiujianfeng <xiujianfeng@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20260815112041.1248855-1-utilityemal77@gmail.com>
+From: Xiujianfeng <xiujianfeng@huaweicloud.com>
+In-Reply-To: <20260815112041.1248855-1-utilityemal77@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgC38UDr1YNqZA3mCg--.52763S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw4fKFy3JFWfWFyruw1Dtrb_yoWrXFWUpa
+	1vgF1akr9rZF1xuF17JF47Wr1Sq395Cry7CF1fG3yUAan8XF1xZr1IkFyYka1agrZ5Xr4F
+	vFyI9a9xCa4DAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
 
-$B!!?7$7$$;v6H$r$*9M$($NJ}8~$1$K!"(B
++cc Nicolas
 
-$B!!F|K\$N>-Mh$rC4$&!"$3$I$b650i$K$?$:$5$o$k;v6H$N(B
-$B!!%Q!<%H%J!<Jg=8@bL@2q(B($B%*%s%i%$%s(B)$B$r(B
-$B!!$4;kD0D:$-$?$/!"$4O"Mm$$$?$7$^$7$?!#(B
-$B!!(B
-$B!!K\;v6H$O(B9$B3d0J>e!"0[6H<o$+$i?75,;2F~$5$l$F$*$j(B
-$B!!!VL$7P83!W!V<R0w(B1$BL>!W$G%9%?!<%H2DG=$G$9!#(B
-$B!!(B
-$B!!K\6H$O$=$N$^$^$G!"<}1W$E$/$j$r$*9M$($NJ}$O$<$R$4;kD0$/$@$5$$!#(B
-$B!!(B
------------------------------------------------------------
+On 8/15/2026 7:20 PM, Justin Suess wrote:
+> Howdy,
+> 
+> BPF programs can attach to the locked_down LSM hook and contribute a
+> verdict, but they have never been able to ask the locked_down question
+> themselves: there is no way for a program to invoke the hook and learn
+> whether a given operation is locked down. (i.e be a caller of
+> security_locked_down rather than a consumer).
+> 
+> Today the state has to be fed in out of band, for example userspace
+> reading /sys/kernel/security/lockdown and writing the result into a
+> map. That is a time-of-check/time-of-use race: a security_locked_down
+> verdict can be raised at runtime, so the cached answer can be stale
+> by the time the program acts on it.
 
- $B!!!!!!IT67$K6/$/!">/;R2=$G$b@.D9$9$k(B
- $B!!!!!!(B $B%W%m%0%i%_%s%0650i!_8DJL;XF3(B
-$B!!!=(B $BCO0h$K(B"$B=i(B"$B$N%O%$%V%j%C%I7?3X=,=N$r(B $B!=(B
-$B!!(B
-$B!!F|;~!'(B8$B7n(B20$BF|!JLZ!K(B13$B!'(B00$B!A(B14$B!'(B00
-$B!!7A<0!'%*%s%i%$%s3+:E(B
-$B!!Ds6!!'%(%$%A!&%(%`!&%0%k!<%W(B
+Adding the bpf_security_locked_down() kfunc does not actually solve the
+TOCTOU issue you mentioned. Even after bpf_security_locked_down() is
+called, userspace can still change the lockdown state via /sys/kernel/
+security/lockdown.
 
-$B!!!!!!!!!!!!!c$4;kD0$O$3$A$i!d(B
-$B!!!!!!!!(Bhttps://wam-edu-fc.jp/wam2/
+I fail to see the necessity for a BPF program to know whether a specific
+operation is locked down. The test case provided in patch 2 does not
+clearly demonstrate a scenario where this is required. In my view, the
+verdict should happen exactly where security_locked_down() is currently 
+invoked.
 
------------------------------------------------------------
-$B!!(B
-$B!!(B
-$B!!!X>/;R2=$J$N$K!"650i;v6H!)!Y$H!";W$&$+$b$7$l$^$;$s$,(B
-$B!!(B
-$B!!<B$O!"650iL5=~2=$J$I$N9q:v$b$"$j!";R$I$b0l?M$K$+$1$k(B
-$B!!650iHq$NA}2C$KH<$$!";T>l$O@.D9$7B3$1$F$$$^$9!#(B
-$B!!(B
-$B!!$^$?!"650iHq$OIT67;~$G$b:o8:$5$l$K$/$$$?$a(B
-$B!!%3%m%J2<$G$bBg$-$/Mn$A9~$`$3$H$J$/Dl7x$5$r8+$;$^$7$?!#(B
-$B!!(B
-$B!!$=$s$J650i6H3&$NCf$G$b!"%W%m%0%i%_%s%0!J(BIT$B650i!K$O(B
-$B!!>.3X9;$GI,=$2=$5$l$?$?$a!"J]8n<T$N4X?4$,Hs>o$K9b$^$C$F$$$^$9!#(B
-$B!!(B
-$B!!(B
-$B!!$=$3$G:#2s$4>R2p$9$k$N$,!"A49q(B300$B9;<K!"7QB3N((B97.6$B!s$r8X$k(B
-$B!!%O%$%V%j%C%I650i;v6H!V8DJL;XF3(BWAM$B!W$G$9!#(B
-$B!!(B
-$B!!%5%$%P!<%(!<%8%'%s%H<R3+H/$N65:`$r3hMQ$7$?(B
-$B!!!V%W%m%0%i%_%s%0!_8DJL;XF3!W$H$$$&(B
-$B!!B>=N$K$O$J$$FH<+$N650i;v6H$rDs6!$7$F$$$^$9!#(B
+Furthermore, based on the current implementation of Lockdown, integrity
+is the prerequisite for confidentiality. It is designed to be coarse-
+grained and does not support per-operation lockdown. The fact that LSM
+BPF can already hook into locked_down seems to violate this foundational
+model, this is is analogous to the bitmap implementation [1], I’m
+considering whether we should restrict BPF from attaching to the
+locked_down hook. Nicolas, what are your thoughts on this?
 
-$B!!$$$C$?$$!"650i;T>l$K$I$N$h$&$J%S%8%M%9%A%c%s%9$,$"$k$N$+!)(B
+[1] 
+https://lore.kernel.org/all/20250728111517.134116-1-nik.borisov@suse.com/
 
-$B!!%*%s%i%$%s%;%_%J!<$GJ,$+$j$d$9$/CzG+$K(B
-$B!!$*EA$($7$^$9$N$G!"$<$R$4;kD0$/$@$5$$!#(B
-$B!!(B
-$B!!!!!!!!!!!!!c$4;kD0$O$3$A$i!d(B
-$B!!!!!!!!(Bhttps://wam-edu-fc.jp/wam2/
-$B!!(B
-$B!!(B
-$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
-$B!!650i;v6H(BFC$B%;%_%J!<;vL36I(B
-$B!!EEOC!'(B0120-889-859
-$B!!=;=j!'El5~ETCf1{6h6d:B(B7-13-6
-$B!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=(B
-$B!!K\%a!<%k$N$4ITMW$JJ}$K$OBgJQ$4LBOG$r$*$+$1$$$?$7$^$7$?!#(B
-$B!!:#8e$40FFb$,ITMW$JJ}$O2<5-(BURL$B$h$j$*<jB3$-$r$*4j$$$$$?$7$^$9!#(B
-$B!!(1!!(Bhttps://wam-edu-fc.jp/mail/
-$B(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(,(B
+> 
+> Add a bpf_security_locked_down() kfunc that calls
+> security_locked_down() and returns its verdict, letting LSM and
+> syscall programs query locked_down state at decision time. Out-of-range
+> reasons are rejected with -EINVAL before dispatching the hook, and the
+> kfunc is refused to programs attached to the locked_down hook itself,
+> which would recurse into the dispatch. (how the obvious recursion issue
+> is addressed).
+> 
+> As this is the first pure-lsm-hook kfunc, add a new file security/lsm_kfuncs.c
+> to host it.
+> 
+> This kfunc has no reliance on / relation to the Lockdown LSM, despite the
+> similar naming. It is an LSM-agnostic caller of security_locked_down, and
+> Lockdown just happens to be the only in-tree subscriber to this hook at the
+> moment.
+> 
+> In fact, the test environment does not rely on CONFIG_SECURITY_LOCKDOWN at
+> all, and uses a BPF implementation of security_locked_down.
+> 
+> This kfunc can cause notices to be printed with kmsg if the Lockdown LSM is
+> enabled due to this line in security/lockdown/lockdown.c:
+> 
+>    pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+> 				                 current->comm, lockdown_reasons[what]);
+> 
+> Patch 1 adds the kfunc, patch 2 the selftests. This is based on bpf-next/master, but
+> applies cleanly to the lsm tree.
+> 
+> Justin
+> 
+> Justin Suess (2):
+>    lsm: add bpf_security_locked_down() kfunc
+>    selftests/bpf: Test bpf_security_locked_down kfunc
+> 
+>   security/Makefile                             |  1 +
+>   security/lsm_kfuncs.c                         | 84 +++++++++++++++++++
+>   .../selftests/bpf/prog_tests/lsm_kfuncs.c     | 28 +++++++
+>   .../testing/selftests/bpf/progs/lsm_kfuncs.c  | 34 ++++++++
+>   .../selftests/bpf/progs/lsm_kfuncs_fail.c     | 26 ++++++
+>   5 files changed, 173 insertions(+)
+>   create mode 100644 security/lsm_kfuncs.c
+>   create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_kfuncs.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/lsm_kfuncs.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/lsm_kfuncs_fail.c
+> 
+> 
+> base-commit: d82ebfc685c91e7f5623a8be949da1ddb767420b
+
