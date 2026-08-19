@@ -1,152 +1,107 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652AA43C7DF;
-	Wed, 19 Aug 2026 10:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787134843; cv=pass; b=euvGaCWwxCcZlsfIkmUuh0AFnlRVi8Pzr4nKZJpru/RocvQFfJcmmeqLvloOdtjHU4fDR7ULPogcWODqBY5kdkjHuOYsiY2tTp9YXII9b9VxLFwDzWu24mAQXcrTokJDw4yJBLpWDAwlJ4namqCRCAOXIvyD4//W4/FZCbrkcas=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787134843; c=relaxed/simple;
-	bh=UOlxkwCk3cH02PciWDMJUzXhehTpUXfUZwTZLjpkAtM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=e2GEbt43CTvZlz5P4BHMW0dekwCOW77Mg42BT+G8WgBdz3WKFxuVhEslD+ky7GUjtToIthipRDAlpsLlgx7C7bWmWIbB81OYq+8fVkwtJMqJyXZg9SsxGCyyI7qML8xPpruF7fISADOMZZUS23lvpwsrieeTx1i2XMcX9NaxdJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=Ip3l/sK0; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60C13385B6
+	for <linux-security-module@vger.kernel.org>; Wed, 19 Aug 2026 14:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787150407; cv=none; b=E9GzrJD0zXeSqjEhpc7UKubv2SqkGnl94aChWySyAEz5Dxcs1AHl6NW1HCv5FyoGmKGo/GShWPpNeMQxjiCY3/9T+kl99ODZfcc/96e9YRApuWuHx4mqQzmLLgZ0gWi5yKo7iGOkdR1ygOb80E4fk7vygST3xp6TTKTAbWz4pkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787150407; c=relaxed/simple;
+	bh=59VIFuHIEPnIpLqOvW7ZZ27FmwMymtX6CNna+u/WLZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFJwYs7kZ9zaCQlRV0mZu1YoQa8v3nb/q6ogQF6t3Yge759auGfDBaRY9thot9XWPHSNn3KPvxHicob7ac9bL2EJLQd8j4jqJ1e7aIBYxyg/jno4axa9PV1Pm8OEYwHD13SpAlXRmOEZgdSPWgRKyfDzxcmrpv7zF5f0jstlthk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=eVU0ztwX; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="Ip3l/sK0"
-ARC-Seal: i=1; a=rsa-sha256; t=1787134793; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WNX19sQNfm9NLQmLvSi+kOC6ZCmTbJJ7WAVY89yP7PTkGWzI48mF+DZEo/5SsPfs5tlb4yuNiWbI8whaohcLtGM2LqnZrmG767uXf79yXwmVAB7O77r7oXZGIBJwqMB8isAop3UQDm++jthDlgiG547f9WvjtvGPheZBrO0zZIM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787134793; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xVE/TCa3FajtK4vZ9pzEwtCdg70Sj2GwjXUwN4Rwvtg=; 
-	b=m1yDPOiyrtBnVbwlCc4yAMvn9OuMq60JTYwKYRz96dPuRsHkh9JWEw9jRJLH3KzrYFhz6ZsgmyU4Ktd4Fnar6xtmdHKBdg+FLg6+i/yGf57NH2YOrjMvHpBZ61cXZLwpIjQKTgbmlC7P0LNCnVBro/Xy32P4nrAZOB7taA09dKM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787134793;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=xVE/TCa3FajtK4vZ9pzEwtCdg70Sj2GwjXUwN4Rwvtg=;
-	b=Ip3l/sK0bMz2+Y8wX+yCZDGEhK2CXsJvKXXR7Xd+ofltThaYy/FvuKj3spwT7Ap1
-	weE5M/KPPWjWCyFh68NS7xH94NEyG9FJ4Pjo5kahcKAJNReqm9UeS4NZJjb8BVFjZgq
-	VGFBd45ONz+KGEc8vertMQ4mjLlGQRozXLe/zm3w=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1787134793322567.9703421532414; Wed, 19 Aug 2026 03:19:53 -0700 (PDT)
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1787134791630896.7239743078507; Wed, 19 Aug 2026 03:19:51 -0700 (PDT)
-Date: Wed, 19 Aug 2026 18:19:51 +0800
-From: Li Chen <me@linux.beauty>
-To: "Andy Lutomirski" <luto@kernel.org>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Kees Cook" <kees@kernel.org>,
-	"Gabriel Krisman Bertazi" <krisman@kernel.org>,
-	"Josh Triplett" <josh@joshtriplett.org>,
-	"Mateusz Guzik" <mjguzik@gmail.com>,
-	"John Ericson" <mail@johnericson.me>,
-	"Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>,
-	"Arnd Bergmann" <arnd@arndb.de>, "Oleg Nesterov" <oleg@redhat.com>,
-	"Andrew Morton" <akpm@linux-foundation.org>,
-	"Paul Moore" <paul@paul-moore.com>, "Eric Paris" <eparis@redhat.com>,
-	=?UTF-8?Q?=22Micka=C3=ABl_Sala=C3=BCn=22?= <mic@digikod.net>,
-	=?UTF-8?Q?=22G=C3=BCnther_Noack=22?= <gnoack@google.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>, "linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest" <linux-kselftest@vger.kernel.org>,
-	"linux-doc" <linux-doc@vger.kernel.org>,
-	"audit" <audit@vger.kernel.org>,
-	"linux-security-module" <linux-security-module@vger.kernel.org>,
-	"linux-arch" <linux-arch@vger.kernel.org>,
-	"linux-mm" <linux-mm@kvack.org>
-Message-ID: <1a01988cfb7.7f8bf9df842660.5856426206659756785@linux.beauty>
-In-Reply-To: <CALCETrU2sCf_Ab2oDcUuJV53mhaDHTtf7QNqPJuFxV_ESHkbtg@mail.gmail.com>
-References: <cover.1784204592.git.me@linux.beauty> <538e494dd8fcc677da24ec985c6e90dde554e7f3.1784204592.git.me@linux.beauty> <CALCETrU2sCf_Ab2oDcUuJV53mhaDHTtf7QNqPJuFxV_ESHkbtg@mail.gmail.com>
-Subject: Re: [RFC PATCH 12/24] fork: let kernel callers create embryonic
- tasks
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="eVU0ztwX"
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6b127c88220so768575eaf.1
+        for <linux-security-module@vger.kernel.org>; Wed, 19 Aug 2026 07:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1787150404; x=1787755204; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=XXzcZsy7hW4pGsTmoBSQRX5B4jq8GHlbDv+EwOBktmw=;
+        b=eVU0ztwXhUqyge3uxoO5QtfxpeFXxDU/8r7ErRNofCrlVCRD85wF9TfZJ5MpqDG9fs
+         6nZRgVK9IWdGmKtd29+F8dAmyXmv5QwCDfzNPIbw6/6TMv65X7VbHY6UfunZwVhVC0kg
+         cPFZEMmLyfXzs/xJZRx7j3NPS4mk+rEgoVTAZhl3sR5gxaW2CZZij7e5eT1jc5gzMWSa
+         MN+oCvD0qecN4+ZbujH+yuDCtPfqFQ5aMRA+pXZhlr2kixejlZO8jo67/cCwQwtiA5Nq
+         m43aYnRRx67IxC1qwSexinu2zr2aG+suIOxBJUjcXIckMZA/17xa5JEpM4sIIAeSTEyB
+         tzqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787150404; x=1787755204;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XXzcZsy7hW4pGsTmoBSQRX5B4jq8GHlbDv+EwOBktmw=;
+        b=khb1j3cBKM20YQe+iEpmUeKAY0rScw032kJ/G6qb9twIRlmF8icE8jVDvFtmpej46c
+         22JCSMGI10bF9W6EkClgW3BWzXoalC2mTVzRL6Kem/F7gNwjrv2ryW2mZMyhmSHWsRQS
+         woD6+WTAQfXg9fLPhCkfT/k75dkkEOSwGr56whMBbuITS/MFDTkfMIvK3JrH22ZdRktC
+         /GGElQp44JQCuBkmPss1BnpCD+DppCNJGLE3K3RSWH+cHv6uPu+B+SrTfGD+rJ487KSi
+         pF0qwZ9zMWaN+/0mI+uqHUepTBNyNHH7J+j/YYQp3WJGN8trTWr8lV3gPm/LThVC/mMx
+         Z9fA==
+X-Forwarded-Encrypted: i=1; AHgh+RoDrsuf9c3LRquO9hHFeHjxwjOzYQEP3m7LZC7CU6bsQ7bzzOM08J6D2ciotOVomRi68Npzow5XKpXXe12MTD9y06uVTXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWRtdFDUXUdEpP2CPvo1sPS6otcMzbi1BmcHhDhDDdycM6cKSd
+	BgN+2AONcP3HnwTVwygZxzGWbD8iZP5XF1hfJ1X+pwmfLjJVWKsgooKMH/stxGZtStU=
+X-Gm-Gg: AR+sD10DHfLnIkleKhJ5tTqSvTh4cAb6uDTnA6U6M/FLZ3POE9xSFkOdm5vRn/I4sp4
+	zJoA1O2v9l0jWPZIr+JfbansmmQmmr6LolqmAhersw+CSOd1/TAs/Yi2NmLXgPmJXQztNbBOvAS
+	hvXmze5uNqsgC3adnTm9QXxVm5aFZYQeZpcc6VvvXUYfjon+s2A3PQ7wV1Y3lS5XDZeaZ2jqZUO
+	Wg7MknSpbQmMYsaTm9Do4ZDNj16CfYAWw0H6DZq1h9u99stDz6dag2BghTGqkFS/x4avQFBLPpQ
+	rqjCX38UY9Ib0L6P8c3do6vdd+y2Ds8UAuKctqtrdy68jVyttg2XzjaRkcU3Hln3xHezIkQ0kMl
+	69tA79mTWCQe7RCHo0YdIgmZK0uo+pvAOeHW4GAC9zY5VPX5hinPmx8lzvHLn9FFok0D4P9vv2k
+	VjfX2LL2dPsCZ9OB+VzZQTYuqTx2kjQlmN8VR7h9jhJ9JG
+X-Received: by 2002:a05:6820:1988:b0:6a1:80a7:2c8d with SMTP id 006d021491bc7-6b13c611146mr5172325eaf.32.1787150404578;
+        Wed, 19 Aug 2026 07:40:04 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:84])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b13c90d160sm2123919eaf.0.2026.08.19.07.40.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2026 07:40:02 -0700 (PDT)
+Date: Wed, 19 Aug 2026 09:39:59 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH 1/2] configfs: move CONFIGFS_MAGIC definition to magic.h
+Message-ID: <lr2ysbkhe6nk4bf4roguv3x4lau76clypwc4gkpebfx5wgm3qb@qpxxabipfzmg>
+References: <20260818-configfs-v1-0-a2329043cf86@cloudflare.com>
+ <20260818-configfs-v1-1-a2329043cf86@cloudflare.com>
+ <aoV1hRKX1yb5vKrW@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aoV1hRKX1yb5vKrW@gmail.com>
 
-Hi Andy,
+On Wed, Aug 19, 2026 at 02:21:58AM -0700, Breno Leitao wrote:
+> On Tue, Aug 18, 2026 at 02:35:15PM -0500, Frederick Lawler wrote:
+> > IMA shouldn't measure or appraise configfs, but currently does because
+> > it's missing from the default exclusion policies. Move CONFIGFS_MAGIC to
+> > magic.h to expose the file system's magic to IMA, as well as other userland
+> > applications.
+> > 
+> > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> 
+> Reviewed-by: Breno Leitao <leitao@debian.org>
+> 
+> > +#define CONFIGFS_MAGIC		0x62656570	/* some random number */
+> 
+> 0x62656570 is ASCII "beep", I didn't know that :-)
 
- ---- On Thu, 16 Jul 2026 23:57:58 +0800  Andy Lutomirski <luto@kernel.org>=
- wrote ---=20
- > On Thu, Jul 16, 2026 at 8:52=E2=80=AFAM Li Chen <me@linux.beauty> wrote:
- > >
- > > A kernel-created task can become visible before it has installed a new
- > > executable image or a valid userspace register frame. Exposing such a =
-task
- > > through ptrace can disclose kernel setup state.
- > >
- > > Add a task-local embryonic flag and an internal clone argument for cal=
-lers
- > > that need this lifecycle. Reject ptrace access until the creator clear=
-s the
- > > flag. Clear it with release ordering and observe it with acquire order=
-ing.
- > > This orders visibility of the completed exec state with the transition=
-.
- > >
- > > Existing fork, vfork, clone, and kernel-thread callers leave the argum=
-ent
- > > unset and retain their current behavior.
- > >
- >=20
- > > --- a/kernel/ptrace.c
- > > +++ b/kernel/ptrace.c
- > > @@ -56,6 +56,8 @@ bool ptracer_access_allowed(struct task_struct *tsk)
- > >         guard(rcu)();
- > >         if (ptrace_parent(tsk) !=3D current)
- > >                 return false;
- > > +       if (task_is_embryonic_exec(tsk))
- > > +               return false;
- > >         es =3D task_exec_state_rcu(tsk);
- > >         return READ_ONCE(es->dumpable) =3D=3D TASK_DUMPABLE_OWNER ||
- > >                ptracer_capable(tsk, es->user_ns);
- > > @@ -312,6 +314,8 @@ static int __ptrace_may_access(struct task_struct =
-*task, unsigned int mode)
- > >                 WARN(1, "denying ptrace access check without PTRACE_MO=
-DE_*CREDS\n");
- > >                 return -EPERM;
- > >         }
- > > +       if (task_is_embryonic_exec(task))
- > > +               return -EPERM;
- >=20
- > Would it be better to use a different error code?  -ECONNREFUSED?
- > After all, this isn't a permission failure per se.
+I can't tell if it's a better joke to leave "some random number" as the
+comment, or to change the comment to the more interesting fun fact about
+the number.
 
-Good point. I'm not sure ECONNREFUSED fits outside connection setup,
-though. ESRCH may make more sense if the task is meant to appear hidden.
-I'll think about this some more.
- =20
- > There's a not-locally-obvious gotcha here: reading other process
- > attributes prior to calling task_is_embryonic_exec may result in
- > (security-relevant!) data races.  This should at least be documented
- > -- it's critical to check task_is_embryonic_exec *before* trying to
- > read credentials.  Also, I think /proc and many pidfd APIs have the
- > same issue.
-
-Agreed. Patch 15 later in the series already applies this ordering to procf=
-s,
-including cached dentry revalidation, and to PIDFD_GET_INFO.
-
-The ordering requirement still needs to be made more explicit. I'll
-document it, move the check ahead of ptrace_parent() in
-ptracer_access_allowed(), and audit the remaining pidfd users before the
-next version.
-
-Regards,
-Li=E2=80=8B
-
+Best,
+Fred
