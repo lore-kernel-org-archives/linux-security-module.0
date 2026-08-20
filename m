@@ -1,63 +1,268 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84C25695;
-	Thu, 20 Aug 2026 00:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C0E34F259;
+	Thu, 20 Aug 2026 05:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787187384; cv=none; b=aYXijTke2guIzZorRQm1RtLfglYul9cQ9oFLLpEdjCBD03N3rnw2HLNS+zAo/ZjaEwNnkcRNgrvqGW6ZciO/PLNeAq6L2IW181JIMbmOJK57ZCUTnqOY8s9GHGpzw6IHAv1OcGb1Z2ZeTC1nTG0ImS/sLEGJjE2+yH4vkmsN+LQ=
+	t=1787204748; cv=none; b=V+Lkmx4Wv2P3l5uzSKzlGdvqoSEoQF7jTE1JQ+bW4X/B1uE+OaS0d0RnW2xG/RON/rrukiUlcOm5YJTW8QPJ2qrPr84hA76d5g/LzlNX2va/38I4AHCv0vKJUsHMailfsShiAlOCcUsx9dYJElaowe8fp9Tp0Of34C4vpU3XM8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787187384; c=relaxed/simple;
-	bh=Ag6cMfXErxk2NeGLnP9edeRCQec3/EN7JtHK/LZbb/s=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=s85fFzW94wR0FKeXyCVHKIgAfWQ+Nm58i/ORYjKTEy65M2VZwT2TQmx4Q9LTyGQbuurdohHhVt0IiUagdE4hv1wXpgaXQDRyGwW9C0WUEPkjouX+0j11PvoeCPjIAuIHnzrzXE/Xb7hma4ATKBj6cG7Ypfw8M2Rim1gk8lBX2iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFRahcix; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787204748; c=relaxed/simple;
+	bh=86B0Pk4jVJ6ZQ+Jb+6BAOAHcs2OvwgJHav3rxWmibtI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gKpIXUPYN1QLUWrWCVSARqkaGvslJY6maY71mKAebeVYxvlFD5BwQ/VHDCC9lMTVj9B8krGq5dvjhbT0voLkvJNW5+yX1SHKnQDkzbBokUYVKPpYV82xWr23/WDc8ELCMjmpJ0440Fbdl6qtUWh9CUGh0F8Qg9R/pobbmXPd7wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOJTnqsZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFRahcix"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643E91F000E9;
-	Thu, 20 Aug 2026 00:56:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787187383;
-	bh=9c7EDVew+ZwOB+wdRwx3Vdabdh4ZkFAKsw6aq+7KuU4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=TFRahcixjRGQg9Dq/R8nHKS5AtLs9S09QeM8Bz6ufoTK5tL//2wy7Q5554g5JD9LR
-	 57Y8pxiF1f0kNHxHfcymZkh5y0WmZzWscE8tQRwvVPQXxTBrn3UC1r4/kilZnR0LZo
-	 ubHuxNGjNlnE/EEkmdZ5vUQrKrkMnd/VcVm3wurOH0JWVnvdQIb35eAzxWIH/ynW5P
-	 WflQpLZf01Rxwm3WowXCq0bwtH+FtNobFBcS8kp4pe4XfpimK3OMnrqc3jhOEg++NS
-	 BgeZqm0Ms9OTXIktgdH0/8ukfpFSewZYpdklylFKFsK9oVNdX4GSNhuyZqxj1r3kAW
-	 h7Zx1ZFExry/g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 569C03811A50;
-	Thu, 20 Aug 2026 00:55:35 +0000 (UTC)
-Subject: Re: [GIT PULL] lsm/lsm-pr-20260814
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <4f24201cc573e07319bbc8b3e96e6abf@paul-moore.com>
-References: <4f24201cc573e07319bbc8b3e96e6abf@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <4f24201cc573e07319bbc8b3e96e6abf@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20260814
-X-PR-Tracked-Commit-Id: 0cee720cfd51402cfcb14d96cb326a36c13b823a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 09005a63988521f74111fae344aecb3f63306168
-Message-Id: <178718733389.3758847.5684588269792631733.pr-tracker-bot@kernel.org>
-Date: Thu, 20 Aug 2026 00:55:33 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOJTnqsZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03979C2BCFC;
+	Thu, 20 Aug 2026 05:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1787204748;
+	bh=86B0Pk4jVJ6ZQ+Jb+6BAOAHcs2OvwgJHav3rxWmibtI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=EOJTnqsZ1kTwBmA6gqd7fuNFjTMRAUr88rZy2dnsYg8Y1VbHCwbm4WqmD2JMgiZYC
+	 c6ejc8oatNCihy3kBWSoA5TaDKhFsgv2yTkc0F32AE6hIvqgGzPE030vZU3k3dl4Ix
+	 vPMIGcBN4etjKfncuC5IlbIntd86ZLk8E+U5YLd2GGk8O9cNIRlu0PMdWb/ouwO+/l
+	 u80UzVUS3SEWVhud64sbtIh/v4jbHKS4AV6CweDohZTQZPkHnjP1mzn4eFqRjWSsn/
+	 xhBS7sxKjKPWDEw77dntLh4pOYCrr4Ac2ouP87QD+E3k6tEWe2dj1SKFuhi2N3pJLJ
+	 Jl0tq7Je/Dzow==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27B4C5DF87;
+	Thu, 20 Aug 2026 05:45:47 +0000 (UTC)
+From: Chen Linxuan via B4 Relay <devnull+me.black-desk.cn@kernel.org>
+Date: Thu, 20 Aug 2026 13:45:40 +0800
+Subject: [PATCH RFC 2/3] pidfd: Use scoped cleanup for task access
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260820-pidfd-get-paths-v1-2-ac3eee4003d5@black-desk.cn>
+References: <20260820-pidfd-get-paths-v1-0-ac3eee4003d5@black-desk.cn>
+In-Reply-To: <20260820-pidfd-get-paths-v1-0-ac3eee4003d5@black-desk.cn>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+ Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ K Prateek Nayak <kprateek.nayak@amd.com>, Kees Cook <kees@kernel.org>, 
+ John Johansen <john.johansen@canonical.com>, 
+ Georgia Garcia <georgia.garcia@canonical.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mm@kvack.org, apparmor@lists.ubuntu.com, 
+ linux-security-module@vger.kernel.org, Chen Linxuan <me@black-desk.cn>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5184; i=me@black-desk.cn;
+ h=from:subject:message-id;
+ bh=KBo9FLg9vQy1MB4oOYDcDc0kQebzYNbPiSNI8fLNAR0=;
+ b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBqhpSIhKwGZauH3fC6nxip9ANmNISsp+MKbUnCe
+ /TrubcJkUmJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaoaUiAAKCRB2HuYUOZmu
+ ixmID/41QbF14zMynFNvfg9xr0TvYsQnr5aSI0j2biffLrXEfTAP6BRpHjSCrg/K/mp9z703xWm
+ EdtYRqlXwDUSPzZ8NSsaryeHXNlsADwpA2/9lzhbUfHlunyJ1OiboJCDp6AMophJj2WjqYKxwSl
+ 7WSKaF1HJS0fttFvQK9Bn6tVW80AvAHRbwOQZyLXGpW1dO59yI1Zcsuo9gXYqZlMI/6JGaV/b1b
+ 1hIm9lRiuEBgbJKLZf04LdGEzbS343+JOOqyfTK5BPxqDxNzTUhVPbT+hz2jOcG4KkHFAC9ij0G
+ WBJC5NVICg5EAvvuO60Tl0V7AHNoopxdlgO5z/7IK6eHG1e152EmwKHVsouyJWSOepeD0A7Uz2o
+ q48TzL3h3HmOJ9GBTignvke9t6TBPDriI6GxUlctkca3hh1hRPQglvXItNlt+DZRlffizuumBlr
+ 5vkMGB+9ZCnPh/9LTa4l3jrXlLHw5+ZGLQzsUJ8tRb8THJx3Fnvha4+Eq3GkvuA/w4eGQqRJw+c
+ AFG0KKBtIZvGZCkokmw8vnMxiPah60Qg7VKrwqQ1kNiDsgrFr3YLZZFKxc/bgqkj3Kw9LirC7Si
+ mYvrooo55v/G9MB5TyyLeW3g9JaO6LBMR4pzS5PMLnhe8LyEEkx9cIlMX9HEojUK3DInni74x8k
+ Ze3Wt7ddjFy833A==
+X-Developer-Key: i=me@black-desk.cn; a=openpgp;
+ fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
+X-Endpoint-Received: by B4 Relay for me@black-desk.cn/default with
+ auth_id=573
+X-Original-From: Chen Linxuan <me@black-desk.cn>
+Reply-To: me@black-desk.cn
 
-The pull request you sent on Mon, 17 Aug 2026 19:16:40 -0400:
+From: Chen Linxuan <me@black-desk.cn>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20260814
+Split namespace acquisition from namespace fd creation and represent a
+privileged target task as a scoped class that owns both the task
+reference and exec_update_lock. Use the class for namespace lookups so
+ptrace access checks and task state reads remain tied to the same exec
+critical section, while open_namespace() stays outside the lock.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/09005a63988521f74111fae344aecb3f63306168
+Assisted-by: codex:glm-5.3
+Signed-off-by: Chen Linxuan <me@black-desk.cn>
+---
+ fs/pidfs.c | 123 ++++++++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 77 insertions(+), 46 deletions(-)
 
-Thank you!
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index a6a643f15d08..39e1e7ad9b2b 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -527,62 +527,71 @@ static bool pidfs_ioctl_valid(unsigned int cmd)
+ 	return false;
+ }
+ 
+-static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++static inline void pidfd_put_task_locked(struct task_struct *task)
+ {
+-	struct task_struct *task __free(put_task) = NULL;
+-	struct nsproxy *nsp __free(put_nsproxy) = NULL;
+-	struct ns_common *ns_common = NULL;
+-	int error;
+-
+-	if (!pidfs_ioctl_valid(cmd))
+-		return -ENOIOCTLCMD;
+-
+-	if (cmd == FS_IOC_GETVERSION) {
+-		if (!arg)
+-			return -EINVAL;
+-
+-		__u32 __user *argp = (__u32 __user *)arg;
+-		return put_user(file_inode(file)->i_generation, argp);
++	if (!IS_ERR_OR_NULL(task)) {
++		up_read(&task->signal->exec_update_lock);
++		put_task_struct(task);
+ 	}
++}
+ 
+-	/* Extensible IOCTL that does not open namespace FDs, take a shortcut */
+-	if (_IOC_NR(cmd) == _IOC_NR(PIDFD_GET_INFO))
+-		return pidfd_info(file, cmd, arg);
++/*
++ * Return @pid's task with @task's exec_update_lock held. The ptrace check
++ * and the callers' task state lookup must be performed while the lock is held
++ * so that they cannot race with a concurrent execve().
++ */
++static struct task_struct *pidfd_get_task_locked(struct pid *pid,
++						 unsigned long arg)
++{
++	struct task_struct *task = get_pid_task(pid, PIDTYPE_PID);
++	int error;
+ 
+-	task = get_pid_task(pidfd_pid(file), PIDTYPE_PID);
+ 	if (!task)
+-		return -ESRCH;
++		return ERR_PTR(-ESRCH);
+ 
+-	if (arg)
+-		return -EINVAL;
++	if (arg) {
++		put_task_struct(task);
++		return ERR_PTR(-EINVAL);
++	}
+ 
+-	/*
+-	 * We're trying to open a file descriptor to the namespace so perform a
+-	 * filesystem cred ptrace check. Hold @task's exec_update_lock for the
+-	 * duration of the ptrace check and the namespace lookup so that the
+-	 * credentials used for the access decision match those of @task at the
+-	 * time its namespace is read, preventing a concurrent execve() from
+-	 * swapping the task's credentials in between the check and the use. We
+-	 * mirror nsfs behavior.
+-	 */
+ 	error = down_read_killable(&task->signal->exec_update_lock);
+-	if (error)
+-		return error;
++	if (error) {
++		put_task_struct(task);
++		return ERR_PTR(error);
++	}
+ 
+ 	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)) {
+-		error = -EACCES;
+-		goto out_unlock;
++		up_read(&task->signal->exec_update_lock);
++		put_task_struct(task);
++		return ERR_PTR(-EACCES);
+ 	}
+ 
++	return task;
++}
++
++DEFINE_CLASS(pidfd_task_locked, struct task_struct *,
++	     pidfd_put_task_locked(_T),
++	     pidfd_get_task_locked(pid, arg),
++	     struct pid *pid, unsigned long arg)
++
++static struct ns_common *pidfd_get_namespace(struct pid *pid,
++					     unsigned int cmd,
++					     unsigned long arg)
++{
++	struct nsproxy *nsp __free(put_nsproxy) = NULL;
++	struct ns_common *ns_common = NULL;
++
++	CLASS(pidfd_task_locked, task)(pid, arg);
++	if (IS_ERR(task))
++		return ERR_CAST(task);
++
+ 	scoped_guard(task_lock, task) {
+ 		nsp = task->nsproxy;
+ 		if (nsp)
+ 			get_nsproxy(nsp);
+ 	}
+-	if (!nsp) {
+-		error = -ESRCH; /* just pretend it didn't exist */
+-		goto out_unlock;
+-	}
++	if (!nsp)
++		return ERR_PTR(-ESRCH); /* just pretend it didn't exist */
+ 
+ 	switch (cmd) {
+ 	/* Namespaces that hang of nsproxy. */
+@@ -664,16 +673,38 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ #endif
+ 		break;
+ 	default:
+-		error = -ENOIOCTLCMD;
++		return ERR_PTR(-ENOIOCTLCMD);
++	}
++
++	if (!ns_common)
++		return ERR_PTR(-EOPNOTSUPP);
++
++	return ns_common;
++}
++
++static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct ns_common *ns_common = NULL;
++
++	if (!pidfs_ioctl_valid(cmd))
++		return -ENOIOCTLCMD;
++
++	if (cmd == FS_IOC_GETVERSION) {
++		if (!arg)
++			return -EINVAL;
++
++		__u32 __user *argp = (__u32 __user *)arg;
++
++		return put_user(file_inode(file)->i_generation, argp);
+ 	}
+ 
+-	if (!error && !ns_common)
+-		error = -EOPNOTSUPP;
++	/* Extensible IOCTL that does not open namespace FDs, take a shortcut */
++	if (_IOC_NR(cmd) == _IOC_NR(PIDFD_GET_INFO))
++		return pidfd_info(file, cmd, arg);
+ 
+-out_unlock:
+-	up_read(&task->signal->exec_update_lock);
+-	if (error)
+-		return error;
++	ns_common = pidfd_get_namespace(pidfd_pid(file), cmd, arg);
++	if (IS_ERR(ns_common))
++		return PTR_ERR(ns_common);
+ 
+ 	/* open_namespace() unconditionally consumes the reference */
+ 	return open_namespace(ns_common);
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.53.0
+
+
