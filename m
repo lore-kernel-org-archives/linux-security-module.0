@@ -1,137 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DC93AAF45;
-	Thu, 20 Aug 2026 05:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67A34052C3
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2026 10:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787204748; cv=none; b=Sdk6o18FXDKYyZoonZ2nHyvSEoPFVMWDKizaZ11lXJueN35Vc9zHlDnLfzMasKsPD+69f5ijm66maojKrGG2drDuN2podFP9Jtl5UdpMGsB4qK0nzbwS/s1y1MeqqFFpr7RxKoYRrNBfgiCOISFOMtOlyqeAwtjbMSt7DT2BIO4=
+	t=1787222191; cv=none; b=J5hAQtQGWSiN0Vn2tjWJj27m72Csls0OgryxqNKNoRaVSjahau/Cf4QFcyJL/h57raTzQl7S7eTiDzSNg0XYq1/V7L/jmTVCZR0b+zwnM6DVIBo1wQCEg8/U76MjjSyep6yhonQyAYnDk+h5xuZAoku4ulJsAmqkuq5srIuq7lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787204748; c=relaxed/simple;
-	bh=UY6R+FfPzasxj/Dnn81Uka4E7YYktrqvv/sImm7YIxQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KngOMMKpX7wHmgxb/TG/2aaQDNq+zhEmToKgOmrFq91wvzbEeUW/R57KHpGDztmH9K3R3ERPCbfVdr/scxyxwt0GZeyrXM99MUgHDTbRvZnQ8jWx7milxhYU0/hB3mbvYQbZiudtLkzp1fwlVTXOhtk9FpyKCLAmn9hrB1FdM9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ni5xikoU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1787222191; c=relaxed/simple;
+	bh=FsZofWksRuzFvPkX/+F6Criwr5kIGM9zzDgOXysn/mE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VU9KkSIqZcKwXlUoqNDHoCER5uuHDcJ7XwFJROvu/UvyzQUySR7gOBhaeraYkkassiRqli6lkKm4NXJwtRN6k3Y1P7GQ1n0k5saE6/tRnvOZK8KnbZkVNnRbBkqTVeZVZqilCYAKlMrGECyTSJq43+85/Gi9+/K8SRJgLEWYrSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pAetInl6; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ni5xikoU"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C9F29C2BCC7;
-	Thu, 20 Aug 2026 05:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1787204747;
-	bh=UY6R+FfPzasxj/Dnn81Uka4E7YYktrqvv/sImm7YIxQ=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=Ni5xikoUjotIWFdXkUzYf3aNbSTk6RPR5KWQfCS0Ensw1jf0eMIokklMQtS3YnMzn
-	 lnm7qn+KbKV/JUe+jzt5UKyOqoOQcLfIVCOOAHVRxrd4ZxEjbLGgsX/MxkCs0w3/Jq
-	 9ZTYpX0lQB/ZTiFD/siwG7ZkGtabcWa7XMmA6TYu0Gcz95IhLZQRYO75gZESqxjwbE
-	 UXY6QDdo26CN9k4AuNQSknZGsCNbM1t+iTI9oWun8Axjf7/00gsYneucEprdaiZd5m
-	 54s808wj2kMB7KUDRzIkJKMv6fvBt1wNDTgFTbqHtRUNNppHyT1B4aFIYriNakraoN
-	 l+GLuZS0X277g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0756C5DF85;
-	Thu, 20 Aug 2026 05:45:47 +0000 (UTC)
-From: Chen Linxuan via B4 Relay <devnull+me.black-desk.cn@kernel.org>
-Subject: [PATCH RFC 0/3] pidfd: add task path ioctls
-Date: Thu, 20 Aug 2026 13:45:38 +0800
-Message-Id: <20260820-pidfd-get-paths-v1-0-ac3eee4003d5@black-desk.cn>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pAetInl6"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so22271315e9.2
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2026 03:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1787222188; x=1787826988; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6er9iArCEFrdmjNmw5e8mJvsWGPCU5zllt9FnZFURwU=;
+        b=pAetInl68weZ9sG77Lw3RGSefSyK/2PCNiyxHUwc7cNBUvAPLQ2R76thEMRC1Ex3aL
+         GnB1cc93O/DAaUwBXeIpSCHBTkMluwUVuantMUrcP424ZC6yCW5dTEGToIw/obKNMrvH
+         Zhs9aenNtVO4XoMy2DyMVlv14heRAFjWpRk+T8BXSYpDZYDz/54V8ZYpGPzgEsMSX/Jn
+         vmM/F/rFufAs43rkOVEX5lw6bJDZI8K782h580i39DF1/QxP8AnbPnncTSAsFSKJAP/f
+         62IPLVHfFhojZ+TYkXn1B29tQROhWuFabH9ldMBnmSQLun4q8/bKGDzqiUjvrjKZReSU
+         qxUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787222188; x=1787826988;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=6er9iArCEFrdmjNmw5e8mJvsWGPCU5zllt9FnZFURwU=;
+        b=oJAi2CV2/Q7Nhw2y99/rDtfEnE+D+BXAufad88V5lFWegpkpvkVk203neAuh0XXDhe
+         CmIG3kTiOOrzSHAS2qeb2K8wTd2XDPhzdA9eYY5z/GKNd8DoPZyHCeMeU1CFAByzuMBC
+         7CxLD+0DeIit9nSStphK9sey0K8SwggiZOs28EAhAV0y+xDny3gUGtFZNweguWSBnCut
+         FitoI9ISvzplp3ihVGWEUQ56MIgU/UMMu5x+s+XH868YCbitHBDVEwshHI6rnDnjdoOB
+         fmYYP7fwC1MJbfaMFxpGA5oms5ukxEKfU7ymQHQxvVoT8EQtZ8HDtWuZU87NeJnW547i
+         EzoQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rr4zGIf+ZNeAw+yVeXGEpVQa2DldyU+0yLBH3YfaaZXqM8WT5BlL//ulmqs0uU/JHQ6ScNmS63wEUyUY28rLjlPMZgjW6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkVGHhDAzfxreTJMWowAkUH8oaikkvXdyEJzfs5qkXHo9HmIAx
+	f91sGO3fTIMEZhjK56J7TcImDqBWjWkFmI1fCdP4ayu9XWgoCJHbXVQUCaVt/Icd4A==
+X-Gm-Gg: AR+sD12DU6r2p9PwuWvbEHnR/N8i5wi4TYymLPTwrzyxBkCGi2d1pJWqBrEn0Zc1b7I
+	nkjUMrfp1J/5Qia9rjUH71XtakCHa3PMcB0vD7bjMkDU2IJRsAVh1ifA0TRwFUsg8991ZzLHTbj
+	tHmWjYqwgHC0iPsl68kkGozwM3TkDpN8faqauPGq7haoIoi5xJ6GiXKBIiyUQZmC/5UmykOPOHB
+	zuQ2kpz846YCFH8e7xQq+m+F4mwtLuuHE96drF2wbA7PvyuTfrG3hrQS1NmKFxpO6Jov4+7tR5e
+	Kf7lbbMADH4Me4dA0KyQ1XGsTA8Un044bX+DlpTvTvMILz3ZkQUdDYMedAhiOZjK8kmVZBDuAiR
+	olSUQIV0YtdYKZ/nQuprUVxx5ybvaiPmOvO9AD8aHuVHK45j+SzzLaq6mocWAV+WYZHpwXa53FZ
+	feh0C377uLR4D3cSe7IzjvkfNzNHr6XvwP1BmIVi0uipxvT9WnklbZL2JtpDNRoEwiQ7y6fnhdP
+	49Kx3TtcnOrbikWIjw=
+X-Received: by 2002:a05:600c:3b95:b0:495:48d7:f178 with SMTP id 5b1f17b1804b1-499aa1b97ccmr193609775e9.11.1787222187463;
+        Thu, 20 Aug 2026 03:36:27 -0700 (PDT)
+Received: from google.com ([2a00:79e0:288a:8:d956:c85e:ab42:2c9b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499b29e19f2sm31708775e9.4.2026.08.20.03.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2026 03:36:26 -0700 (PDT)
+Date: Thu, 20 Aug 2026 12:36:11 +0200
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>,
+	Justin Suess <utilityemal77@gmail.com>, Kees Cook <kees@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com,
+	linux-security-module@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 09/19] landlock: Add create_domain and free_domain
+ tracepoints
+Message-ID: <aobYhIt3vcs2xN0b@google.com>
+References: <20260811094338.288094-1-mic@digikod.net>
+ <20260811094338.288094-10-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIKUhmoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDC0NL3YLMlLQU3fTUEt2CxJKMYl1TSzMTgxSL5BTD1FQloK6CotS0zAq
- widFKQW7OSrEQweLSpKzU5BKQWUq1tQACpIQNeAAAAA==
-X-Change-ID: 20260819-pidfd-get-paths-59640d8cd1ee
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
- "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
- Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- K Prateek Nayak <kprateek.nayak@amd.com>, Kees Cook <kees@kernel.org>, 
- John Johansen <john.johansen@canonical.com>, 
- Georgia Garcia <georgia.garcia@canonical.com>, 
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, apparmor@lists.ubuntu.com, 
- linux-security-module@vger.kernel.org, Chen Linxuan <me@black-desk.cn>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2014; i=me@black-desk.cn;
- h=from:subject:message-id;
- bh=UY6R+FfPzasxj/Dnn81Uka4E7YYktrqvv/sImm7YIxQ=;
- b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBqhpSDV8lzoXhNWvb6mCjlmhmRXIKL96NlDz9RG
- uwcg9YQkTGJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaoaUgwAKCRB2HuYUOZmu
- i5OnD/9Q2SjkQW1h+c/+qLhCrhq/tFbDRt8y4anyttX5n0ozBKY1ROAd5938lTwWrxvE2on7GH2
- Ed2SCyxk4p/eAUkUx9Pnx8Mt7wF9UxcSrv5gPlJujrDJ0ayEqcfekGWK3ilR+VjLlX52E8W0oE8
- Nsub6HhzxTJF8hA6iudjclMoQAOLRtYKbSxB9eoHfKqNsaPSSKJfWdIYYr66FmgKDTe1hmFnavD
- 8m6w4oNr0pVOyIAgF6ETD/xMhFA0L3MrjtjDSDrqZFxxAHK1pPCdLBWXdO0lSRj7zV35KNNaTsd
- Kk3xNNf9ExLiO6+hvF4iqOq+0HNblbojWt/criDINke66q29D20hZcGReta1XAW4uEKYp56XWMi
- dVwZncXvkTusEUl9K1UXY4uRAkWNdOyDBv3zAHqzzAXfzPuUhYvgfZfbnJUl2sMdMiZw+cVJZjS
- uxyELiapFXp/I/yDnsmJ/+jQJcLQPpXhr7U0smvU83Lfcpom3dvOFhVQTgIJrkCHDz0Giv9RgzZ
- A5xGV4k7XSuM/A24/oZhz/ylcYTFJyxcj5gZSA6DYZbfoT7YsFVhABW5DckRCr9hzF2HA1KIDCs
- rx4LYqHEWwi84GPdEcVZMoj9GIA1S+b3UYvC8Q2MQkxF/Rga/hXhznAc679HUyG2vzXOgtHSvqS
- GnM6BZwjacrSeBA==
-X-Developer-Key: i=me@black-desk.cn; a=openpgp;
- fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
-X-Endpoint-Received: by B4 Relay for me@black-desk.cn/default with
- auth_id=573
-X-Original-From: Chen Linxuan <me@black-desk.cn>
-Reply-To: me@black-desk.cn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260811094338.288094-10-mic@digikod.net>
 
-Obtaining a target task's executable, working directory, or root
-currently requires walking procfs symlinks such as /proc/<pid>/exe,
-/proc/<pid>/cwd, and /proc/<pid>/root.  That makes the operation depend
-on procfs being mounted and visible to the caller, even when it already
-holds a pidfd for the target.
+On Tue, Aug 11, 2026 at 11:43:23AM +0200, Mickaël Salaün wrote:
+> diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+> index d0b35ccce122..7651eee8fe02 100644
+> --- a/security/landlock/domain.c
+> +++ b/security/landlock/domain.c
+> @@ -427,6 +426,7 @@ landlock_merge_ruleset(struct landlock_domain *const parent,
+>  	int err;
+>  
+>  	might_sleep();
+> +	lockdep_assert_held(&ruleset->lock);
+>  	if (WARN_ON_ONCE(!ruleset))
+>  		return ERR_PTR(-EINVAL);
 
-This series adds PIDFD_GET_EXE, PIDFD_GET_CWD, and PIDFD_GET_ROOT. Each
-ioctl takes no argument and returns a close-on-exec O_PATH file
-descriptor referencing the corresponding task path.  The new ioctls use
-the same ptrace permission check and nonzero-argument rejection as the
-existing pidfd namespace ioctls.
+This checks that ruleset is not NULL, but the newly added
+lockdep_assert_held() line already dereferences it before.
 
-The target task is sampled while holding its exec_update_lock. This
-keeps the access decision and the task-state read in the same exec
-critical section, preventing a concurrent execve() from changing the
-credentials or target state between the check and the use.
-
-The first patch factors out helpers for acquiring referenced task paths
-and reuses them in procfs and AppArmor.  The second patch introduces
-scoped cleanup for privileged pidfd task access and separates namespace
-lookup from namespace fd creation.  The final patch uses these pieces to
-implement the three new ioctls.
-
-Signed-off-by: Chen Linxuan <me@black-desk.cn>
----
-Chen Linxuan (3):
-      fs: Introduce task path helpers
-      pidfd: Use scoped cleanup for task access
-      pidfd: Add task path ioctls
-
- fs/fs_struct.c             |  44 +++++++++++++
- fs/pidfs.c                 | 161 ++++++++++++++++++++++++++++++++-------------
- fs/proc/base.c             |  34 +---------
- include/linux/fs_struct.h  |   3 +
- include/linux/mm.h         |   1 +
- include/uapi/linux/pidfd.h |   7 ++
- kernel/fork.c              |  21 ++++++
- security/apparmor/task.c   |  12 +---
- 8 files changed, 196 insertions(+), 87 deletions(-)
----
-base-commit: a4ff2be345d0abc943da8dd8da98151843b750dc
-change-id: 20260819-pidfd-get-paths-59640d8cd1ee
-
-Best regards,
---  
-Chen Linxuan <me@black-desk.cn>
-
+—Günther
 
