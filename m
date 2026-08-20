@@ -1,217 +1,143 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3417418A48;
-	Thu, 20 Aug 2026 11:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787224849; cv=none; b=BTJtr6hGpFiz6QZn4zb7RwtfeqpPTSZPuJR4aAeF3jEnuBMqzC4SmDbetXTd4AZKOqsbmTvrxlGn2mJqa26gQd6cmRGq76R2vwfzSha+xgHR/J1lWE2T/kbZ908oK9UVm6t1KBI1X+w1z6dLKJmXJE4mFfc0HlTohhyQU5V/cdk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787224849; c=relaxed/simple;
-	bh=mNKo+VeGUQvoC3HvVzi9u54tvLkXnQ+9tpx5PWNNcQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qITC7G9a50KFXY8b1CMLUhF33tdeLypQAFlGDTKim/g1qrFOLf3JudnIPnd/PXnpcfpwAmMPu3XupE3Q05RKvtzhatuKwZx1vfHtnSxzK96lLmwLFA9vm5WvMXPmBm5YIP1ibjgZVUr/2nqsFSyzs1dN6NoCDBzqk2KBwUfrlgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZF3erbxi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OfVmpSul; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DT/kVxbG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=paRH9hh0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842C3379EDA
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2026 15:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787239434; cv=pass; b=PSrhcJbonsVtTusxKJ8szsFpoZtmkekq+i4NjrN3ZFNopvuDVe0mRmuw6dooSZ8e1VcsKeEUaPj3MwZQrv/2Ag798qQdcx9hJQm2FV1RPZVjqn0jvXiCXv08daceLjQvPf72dcMoGfRKgj3EzFT0aIvVdDYYW0Qe1rEa8oOs378=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787239434; c=relaxed/simple;
+	bh=PQ0Uv3fFLVyIJEFAQf/e1k9Wz6QlYJWOA2A7cUy7gUo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MzMxmPOoc5XV4rFpojPUbn3HOFG2wPG4ya2RXWQt2gBbNqO4PFAiYMf0HAG+EBh/jkRwIn1UT7I3J1nouDnQdn6QcERpdEMmSPaThL3UPCPxJ8KTUSzWEPV/x6nCVS4xIB+YeiE2hcUjUSUEIutzj/jcA89J6P+64UjSTGvig/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=noDFYPDe; arc=pass smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZF3erbxi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OfVmpSul";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DT/kVxbG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="paRH9hh0"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 33D3385041;
-	Thu, 20 Aug 2026 11:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1787224836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
-	b=ZF3erbxirjWV5nK4xzrbZfVT2O07TlMViOfP300cWFayelaGeKLsNk8LnWhR0Ub7k9Qb0r
-	esXasTH/LcTKHRpHhiBDPkefP3+BiSJuymIMfBYJWFBrFTsWp6dMRjktRnWlTBBfA0lzyv
-	ABcue/sUx+mR+asrIVKnVEr9HXvR5gA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1787224836;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
-	b=OfVmpSul/tf1tTue3qzy23FO6thfCUnoi31375KiZboJV0+JrSzTGv9ZiTW9r5KZjK6MlF
-	8Ju7a+e/DDu4G2BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1787224832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
-	b=DT/kVxbGZ9DAq4jap/S4imDE9t9bAwAQIWRYYy2h9s22K3c+L9qQAioHE2McDQ2FMCPQTo
-	zQhroHvJMkycZODk3BZWf/D8izEYAb7d+3jrrqcUhUisGx7dq6nwBowXSA7ETEsaXuOVIN
-	xvNIQoA+rzKFVKJfwzIicxW/XwndYTA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1787224832;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
-	b=paRH9hh0L1JywzeFQYaxAykZpRkx60X7NaCFq9r4bRRR7t0I2YZz5z8TOP+nrnrNFb6FhF
-	xoY44CJ2ozOSn9Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2336D27A8;
-	Thu, 20 Aug 2026 11:20:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VUaWCADjhmq9MgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 20 Aug 2026 11:20:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BB7A8A13B9; Thu, 20 Aug 2026 13:20:16 +0200 (CEST)
-Date: Thu, 20 Aug 2026 13:20:16 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jann Horn <jannh@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Jeff Xu <jeffxu@google.com>, =?utf-8?B?VGhpw6liYXVk?= Weksteen <tweek@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH 1/3] proc: refactor /proc/$pid/mem to use struct as
- private_data
-Message-ID: <2vwbng2vmyvssphmthcuzuicpfv2e3oe6ybbakct4fcbachjdr@ixzg6tvsjccu>
-References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
- <20260818-selinux-pokemem-v1-1-90cd2357ee05@google.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="noDFYPDe"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2ccdf36f63dso71125ad.0
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2026 08:23:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787239433; cv=none;
+        d=google.com; s=arc-20260327;
+        b=mrJsbspQAf8o4jZ3iGC/qYab3la/GpC5+NR4Q0IfksAz/4D2SQLCn6CsCD/q61T6rn
+         IIGRaS9eYHPqShtrscILRQcu2kVtfpZdOeN7Oa/JSC6G1yghcOu420hOVPBsoFPmzLz0
+         V/k/HqImT6FzfM1BxWmtpx2/DHDB9Oa+PbMe3sNqnNcogQAJRwBYhbSm2TOK3kTXUPmf
+         ImB8Glu3h9O3g/z0oWgzf02dsP3tnhwxxXmsMupHOmc+3z//tuiCOO7YbAhlK886HT8p
+         Qjm/sgMMHB6JFHu5NP7IeRjl3hJy30C+9Yt2d/8vWNC+y/LGcnTOj38jeK/BZU/L+Rt/
+         m2lg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lma3KONpFpngSE5q14dN/Z1uVUgszHUnJkkI2Hjlr4Q=;
+        fh=eso6yrAtHU4Hifd7evKnjmkyFHV38dUsihrawgm9R80=;
+        b=LHBqfsvuqb0ky+Ns8KPc2xTV3hG0/jZ9mgcry+BwRY+jHjFPzpXoZvZnv8T5w7oE3V
+         Syar2N5idkn6esQE4P0yJS6snp9p1NWqWr1ml4DqdX42IQn2Ku8g0s07KFPtsRRb1PwS
+         vaSCVUpZbbk0zQU+HWX1flO/G3bPDY1AwntZ0NcVEgmdBqFokKkGpDm0Fb+1g1k5ZHM3
+         2POc6X7Kx5meHSfAdtUnSXgToz2Btfs156q0uZcPDhhPcmLdJJ0yU1/iv9PlNiorhkyU
+         lsYLOdmEoz2yslHHQ/J09DV60/3XYdlsv1EMowBY+2iXA/EWzq1w0w6062XoqCujLt+t
+         leog==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1787239433; x=1787844233; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=lma3KONpFpngSE5q14dN/Z1uVUgszHUnJkkI2Hjlr4Q=;
+        b=noDFYPDejiltH6Z5HYHHnoLKbKNvBxK/7X421zy0ZEtN9ZY48PRqsUlpy/CbFgtnDb
+         GmL/oG6LeakrQ35Xl8ZBN7DHeQMTrKvW2XK7bvtzZ2pfJvTHsDNvHlc5gAseTiQAXsvo
+         eeEKGH+09QXLquXcZ65M5eTTOctX2VPP0J55dk+isHR2ryvRq4Wuccl+C5B95XmKPAMb
+         kcC7z8fKCLGwQIrvP37cse92VpoG2sQ/A0YnqS5MaO4aEndm1it0NThP6Cak6oANZnA6
+         lkcnr1jT+yGHI5z6MDEUqsjq0iprveLmbKDGnMYqXuSUJo9UUnlX8Bv9oKYiiPrDqI/K
+         QtQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787239433; x=1787844233;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=lma3KONpFpngSE5q14dN/Z1uVUgszHUnJkkI2Hjlr4Q=;
+        b=By2EGqPeZB9IdZiTADGqgBAj9txBxPvQ3vizWHqtW5GkVLkm52dX20Pou5n02hO7KP
+         bhcyEw0RWJKIFHdKn1tinSyzKKDWTXfBrBqR7V3O3t/yxvykfdw3AugvGrIll2SuPyMw
+         v75VHaLGhfEyOdcYSs7YnNmTvK+gfgYCype6/LobdW7JTwXOC5jQsZbonugKwNvww1YY
+         +k4a7CQM25zqCC13tCJE5mGF8LxVm6pMh51mtD1/prTJuCBJ3Ysj2Jkh+RtxXdJvUEvw
+         W5Moifv48J9R09xe6UzXG8tDqcncR8noEU85qfG8Vci5BagM7Mu0T88yPOrGUlKQhQwP
+         hxwA==
+X-Forwarded-Encrypted: i=1; AHgh+RqYEWdM+RfW5zwG5lGQbyhXRktQrr+X6MnoyBEBq5V5cyfYxweCBaDDYGB0efGDccSgnWgZeoxVsmehi/8TKbvebeCkmiU=@vger.kernel.org
+X-Gm-Message-State: AFuF++mb1QtPXZc0W/Qh3ZcjAIpWYDVAKpykMCTkx0JGL5srZxo9oFxZ
+	zOoKwanBkXVY7kM3+Pzpz9zE135u/Xkk6Cna3Urpr9lAgceqf4U6KMm9D3tUVMMvwWCy5kztESo
+	CflFV7ZB4DF1mwXNosiWJPDLN96xIczYigrmF8ez5Oaie+7zfrQ6zB4lO
+X-Gm-Gg: AR+sD13LNzvaazluvaPyZkSRxivE338uL7EGVhT3HEEtf6N0gQ7M8ro7u0wyigevViM
+	Vp0PGOeMkMFojprLW7dNvgi8I/gT+33PXBmRFrMkPuDo79Yzn8pd3C9of1qP0CvPMT5bSuTrIlr
+	f6devcNvnLzL9I3yj1xX6M288NzhlCH9vmvZ0Cy/p6vxYDXru7TMgBYYzCD3uoDydt5yiO4t7LB
+	Zka+jrAuc/XM1mDxcxqaRgXAJ9VaPsn2Q302Yh4WUnYlTsNoOTsyTDoFNX7LAZ5O7lYMxpwjRHp
+	tpncY7X4P1/J82Z2ADO0EdXfuguB8zGGxOyKQY0j8bsau3rdij2XJL+bl6wMtyl9c/SQBROR6z4
+	m8Wg8JoLwoUjlkdhQf8fROZ9yEAJPOg==
+X-Received: by 2002:a17:902:fd8b:b0:2d5:db38:8013 with SMTP id
+ d9443c01a7336-2d61eaf0bdfmr8352105ad.18.1787239432253; Thu, 20 Aug 2026
+ 08:23:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260818-selinux-pokemem-v1-1-90cd2357ee05@google.com>
-X-Spam-Score: -1.30
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	SUBJECT_HAS_CURRENCY(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[paul-moore.com,namei.org,hallyn.com,gmail.com,google.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,redhat.com,linux-foundation.org,infradead.org,suse.de,kvack.org];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
+References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
+ <20260818-selinux-pokemem-v1-3-90cd2357ee05@google.com> <CAEjxPJ714iCMiQRVAN6MQoOyNx998MS5Xfhbhmugcwz+gWYAuQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ714iCMiQRVAN6MQoOyNx998MS5Xfhbhmugcwz+gWYAuQ@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 20 Aug 2026 17:23:15 +0200
+X-Gm-Features: AcwNN1WfGO0jtM01Prl7T2bhwvtOuD_4x4w_Hjk9Mm13CRcqjZxrghBAfwYQIPw
+Message-ID: <CAG48ez3h2Gft4onQ8AgBmf8gHrF26YqTinajuBysNPkUKaTBoA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] selinux: require EXECMEM or PTRACE for FOLL_FORCE introspection
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jeff Xu <jeffxu@google.com>, 
+	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, 
+	David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 18-08-26 21:51:05, Jann Horn wrote:
-> Refactor the handlers for proc_mem_operations to use the new struct
-> mem_private as ->private_data, rather than directly storing an mm_struct*
-> in ->private_data.
-> 
-> This is in preparation for adding more state in mem_private in the next
-> commit.
-> 
-> Signed-off-by: Jann Horn <jannh@google.com>
+On Wed, Aug 19, 2026 at 4:54=E2=80=AFPM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Tue, Aug 18, 2026 at 3:51=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
+e:
+> >
+> > On systems configured with PROC_MEM_FORCE_ALWAYS, ensure that a process=
+ can
+> > only create anonymous executable memory via /proc/self/mem if it has on=
+e
+> > of:
+> >
+> >  - EXECMEM (like for other methods of creating anonymous executable pag=
+es)
+> >  - PTRACE (like when using /proc/$pid/mem of another process)
+>
+> Allowing it if _either_ permission is allowed is unusual in SELinux
+> and seems prone to errors.
+> Is there a reason to not just require PTRACE always?
 
-Looks good to me. Feel free to add:
+Hmm, that might work.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+My two concerns about that approach are:
 
-								Honza
+1. This is an operation where a process acts on itself, while PTRACE
+is normally for acting on another process. It feels to me like those
+are different types of privilege.
+2. I feel like blocking this operation even for a process with EXECMEM
+privilege increases the risk of breaking existing configurations.
 
-> ---
->  fs/proc/base.c | 29 ++++++++++++++++++++++++++---
->  1 file changed, 26 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 780f81259052..bec6197329dc 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -848,11 +848,24 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
->  	return 0;
->  }
->  
-> +/* private_data for proc_mem_operations */
-> +struct mem_private {
-> +	struct mm_struct *mm;
-> +};
-> +
->  static int mem_open(struct inode *inode, struct file *file)
->  {
-> +	struct mem_private *priv __free(kfree) = kmalloc_obj(struct mem_private);
-> +
-> +	if (!priv)
-> +		return -ENOMEM;
->  	if (WARN_ON_ONCE(!(file->f_op->fop_flags & FOP_UNSIGNED_OFFSET)))
->  		return -EINVAL;
-> -	return __mem_open(inode, file, PTRACE_MODE_ATTACH);
-> +	priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
-> +	if (IS_ERR_OR_NULL(priv->mm))
-> +		return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
-> +	file->private_data = no_free_ptr(priv);
-> +	return 0;
->  }
->  
->  static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
-> @@ -880,7 +893,8 @@ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
->  static ssize_t mem_rw(struct file *file, char __user *buf,
->  			size_t count, loff_t *ppos, int write)
->  {
-> -	struct mm_struct *mm = file->private_data;
-> +	struct mem_private *priv = file->private_data;
-> +	struct mm_struct *mm = priv->mm;
->  	unsigned long addr = *ppos;
->  	ssize_t copied;
->  	char *page;
-> @@ -970,12 +984,21 @@ static int mem_release(struct inode *inode, struct file *file)
->  	return 0;
->  }
->  
-> +static int mem_release_with_private(struct inode *inode, struct file *file)
-> +{
-> +	struct mem_private *priv = file->private_data;
-> +
-> +	mmdrop(priv->mm);
-> +	kfree(priv);
-> +	return 0;
-> +}
-> +
->  static const struct file_operations proc_mem_operations = {
->  	.llseek		= mem_lseek,
->  	.read		= mem_read,
->  	.write		= mem_write,
->  	.open		= mem_open,
-> -	.release	= mem_release,
-> +	.release	= mem_release_with_private,
->  	.fop_flags	= FOP_UNSIGNED_OFFSET,
->  };
->  
-> 
-> -- 
-> 2.55.0.737.g08866a6d13-goog
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I think if we want to gate it on PTRACE, we might need to put this
+behind a policy capability and let policy authors figure this out?
+But I'm no expert on how new security hooks are normally added, or
+what SELinux policies outside Android look like, so if you think it
+would be fine to just check for PTRACE, I'd be happy to go with that.
+
+(I've caused stable regressions several times at this point and am
+trying to avoid causing more...)
