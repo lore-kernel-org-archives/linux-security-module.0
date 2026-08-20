@@ -1,194 +1,217 @@
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82AE363C77
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Aug 2026 11:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3417418A48;
+	Thu, 20 Aug 2026 11:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787223630; cv=none; b=hcm1c5BAjSyz6DExuyE74i1SJj4jV2/2hm/wZnyCOHm1vpQHkVpBeATORC1pEGbkFMT/5YWEdCT4Bp5GIdVI111UbztJIWSFFlF85OqknGYLvI2YOePshS8GcH9tbX5RkvpcSJHDQFgbHOvHX1Y4FtqWrJ/n11aW0uw/nMKNeHk=
+	t=1787224849; cv=none; b=BTJtr6hGpFiz6QZn4zb7RwtfeqpPTSZPuJR4aAeF3jEnuBMqzC4SmDbetXTd4AZKOqsbmTvrxlGn2mJqa26gQd6cmRGq76R2vwfzSha+xgHR/J1lWE2T/kbZ908oK9UVm6t1KBI1X+w1z6dLKJmXJE4mFfc0HlTohhyQU5V/cdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787223630; c=relaxed/simple;
-	bh=PVxWLL64wwHNluB2agmy9maMXtDCYbyd7VaMVxKY0ls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WQOEjHcO9YV++xca7yZ2SnP9xJZmt0CiVinJHy5/lxA/w0VG2GFokho1X9yclPRbGkMv9P6SgWyQd29duxXIVvIkdmQ2fi2bwgoWOqYUvGk90ORs3X2mUqpV6O+Y06qQJkOJM6b0XGoeYu/sZDVWZpieG37Y1+DnpuxslQKcYrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=EQdi9dwU; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1787224849; c=relaxed/simple;
+	bh=mNKo+VeGUQvoC3HvVzi9u54tvLkXnQ+9tpx5PWNNcQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qITC7G9a50KFXY8b1CMLUhF33tdeLypQAFlGDTKim/g1qrFOLf3JudnIPnd/PXnpcfpwAmMPu3XupE3Q05RKvtzhatuKwZx1vfHtnSxzK96lLmwLFA9vm5WvMXPmBm5YIP1ibjgZVUr/2nqsFSyzs1dN6NoCDBzqk2KBwUfrlgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZF3erbxi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OfVmpSul; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DT/kVxbG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=paRH9hh0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="EQdi9dwU"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hQd4Q2YkzzjZL;
-	Thu, 20 Aug 2026 11:12:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1787217142;
-	bh=SgowKIIgI9hb6pgmXOZ0WShYcEV0s5fj2mhTwe5nlk0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EQdi9dwUfdDEZFA3BQFS7RP2Qt5UsQ9KhPBsnUURgVEB0k3oM/LhcRuV6u+Ukd36Z
-	 wsFw/nlr2Vf0esRZ6abvk9GofX1bFRdn8wVu4Mx5A4LKpsmzPxuG4oP1wxV69B37sF
-	 T0HUpkfMHBo8+f0zrpEs1QgFRu8/+1dXluZ+FLKw=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hQd4P01wmzBF2;
-	Thu, 20 Aug 2026 11:12:20 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Christian Brauner <brauner@kernel.org>,
-	Doehyun Baek <doehyunbaek@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Wang Yan <wangyan01@kylinos.cn>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock update for v7.3-rc1
-Date: Thu, 20 Aug 2026 11:12:08 +0200
-Message-ID: <20260820091208.1001980-1-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZF3erbxi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OfVmpSul";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DT/kVxbG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="paRH9hh0"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 33D3385041;
+	Thu, 20 Aug 2026 11:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1787224836; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
+	b=ZF3erbxirjWV5nK4xzrbZfVT2O07TlMViOfP300cWFayelaGeKLsNk8LnWhR0Ub7k9Qb0r
+	esXasTH/LcTKHRpHhiBDPkefP3+BiSJuymIMfBYJWFBrFTsWp6dMRjktRnWlTBBfA0lzyv
+	ABcue/sUx+mR+asrIVKnVEr9HXvR5gA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1787224836;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
+	b=OfVmpSul/tf1tTue3qzy23FO6thfCUnoi31375KiZboJV0+JrSzTGv9ZiTW9r5KZjK6MlF
+	8Ju7a+e/DDu4G2BQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1787224832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
+	b=DT/kVxbGZ9DAq4jap/S4imDE9t9bAwAQIWRYYy2h9s22K3c+L9qQAioHE2McDQ2FMCPQTo
+	zQhroHvJMkycZODk3BZWf/D8izEYAb7d+3jrrqcUhUisGx7dq6nwBowXSA7ETEsaXuOVIN
+	xvNIQoA+rzKFVKJfwzIicxW/XwndYTA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1787224832;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tk8jiJdcjWsP4GhLOTgEUqckIP3KNVGr11ane1BhbCI=;
+	b=paRH9hh0L1JywzeFQYaxAykZpRkx60X7NaCFq9r4bRRR7t0I2YZz5z8TOP+nrnrNFb6FhF
+	xoY44CJ2ozOSn9Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2336D27A8;
+	Thu, 20 Aug 2026 11:20:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VUaWCADjhmq9MgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 20 Aug 2026 11:20:32 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BB7A8A13B9; Thu, 20 Aug 2026 13:20:16 +0200 (CEST)
+Date: Thu, 20 Aug 2026 13:20:16 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jann Horn <jannh@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Jeff Xu <jeffxu@google.com>, =?utf-8?B?VGhpw6liYXVk?= Weksteen <tweek@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] proc: refactor /proc/$pid/mem to use struct as
+ private_data
+Message-ID: <2vwbng2vmyvssphmthcuzuicpfv2e3oe6ybbakct4fcbachjdr@ixzg6tvsjccu>
+References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
+ <20260818-selinux-pokemem-v1-1-90cd2357ee05@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260818-selinux-pokemem-v1-1-90cd2357ee05@google.com>
+X-Spam-Score: -1.30
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	SUBJECT_HAS_CURRENCY(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[paul-moore.com,namei.org,hallyn.com,gmail.com,google.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,redhat.com,linux-foundation.org,infradead.org,suse.de,kvack.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
 
-Hi,
+On Tue 18-08-26 21:51:05, Jann Horn wrote:
+> Refactor the handlers for proc_mem_operations to use the new struct
+> mem_private as ->private_data, rather than directly storing an mm_struct*
+> in ->private_data.
+> 
+> This is in preparation for adding more state in mem_private in the next
+> commit.
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-This PR improves observability with Landlock tracepoints support, which
-required some refactoring for dedicated domain types and common helpers shared
-with audit code.  A LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS flag is also added to
-improve process-wide domain enforcement consistency.  Whiteout files are now
-correctly handled and tested, and a few other fixes complete this PR.
+Looks good to me. Feel free to add:
 
-Please pull these changes for v7.3-rc1 .  These commits merge cleanly
-with your master branch.  Most kernel changes have been tested in the
-latest linux-next releases for some weeks, and I recently updated commit
-messages to reflect latest reviews.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Test coverage for security/landlock is 91.6% of 2571 lines according to
-LLVM 22, and it was 91.8% of 2357 lines before this PR.
+								Honza
 
-Regards,
- Mickaël
-
---
-The following changes since commit 075b74841bd0065a3bda3440873c747938e69b68:
-
-  Linux 7.2-rc6 (2026-08-02 16:24:24 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.3-rc1
-
-for you to fetch changes up to 172b6a6d8463562b0cbebfd66f770b078f81966b:
-
-  landlock: Document tracepoints (2026-08-17 10:17:19 +0200)
-
-----------------------------------------------------------------
-Landlock update for v7.3-rc1
-
-----------------------------------------------------------------
-Doehyun Baek (1):
-      landlock: Document fs.resolve_unix audit blocker
-
-Günther Noack (7):
-      landlock: Documentation wording cleanups
-      selftests/landlock: Use an actual chardev for MAKE_CHAR audit test
-      landlock: Require LANDLOCK_ACCESS_FS_MAKE_REG for whiteout creation
-      selftests/landlock: Add tests for whiteout object creation
-      selftests/landlock: Add audit test for whiteout object creation
-      selftests/landlock: Test whiteout object behaviour in OverlayFS renames
-      landlock: Link the erratum documentation for whiteout objects
-
-Justin Suess (5):
-      landlock: Check landlock_restrict_self(2)'s flags before privileges
-      landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-      selftests/landlock: Test LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-      landlock: Document LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-      samples/landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS to sampler
-
-Mickaël Salaün (20):
-      landlock: Harden sock_is_scoped() against file-less sockets
-      landlock: Prepare ruleset and domain type split
-      landlock: Move domain query functions to domain.c
-      landlock: Split struct landlock_domain from struct landlock_ruleset
-      landlock: Split denial logging from audit into common framework
-      landlock: Decouple the per-denial logging decision from CONFIG_AUDIT
-      landlock: Consolidate access-right and scope names in a shared header
-      landlock: Add create_ruleset and free_ruleset tracepoints
-      landlock: Add landlock_add_rule_fs and landlock_add_rule_net tracepoints
-      landlock: Add create_domain and free_domain tracepoints
-      landlock: Add landlock_enforce_domain tracepoint
-      landlock: Add tracepoints for rule checking
-      landlock: Add landlock_deny_access_fs and landlock_deny_access_net
-      landlock: Add tracepoints for ptrace and scope denials
-      selftests/landlock: Add trace event test infrastructure and tests
-      selftests/landlock: Add filesystem tracepoint tests
-      selftests/landlock: Add network tracepoint tests
-      selftests/landlock: Add scope and ptrace tracepoint tests
-      selftests/landlock: Add landlock_enforce_domain trace tests
-      landlock: Document tracepoints
-
-Wang Yan (1):
-      selftests/landlock: Fix spelling error in fs_test comment
-
- Documentation/admin-guide/LSM/landlock.rst         |  106 +-
- Documentation/security/landlock.rst                |   38 +-
- Documentation/trace/events-landlock.rst            |  326 ++++
- Documentation/trace/index.rst                      |    1 +
- Documentation/userspace-api/landlock.rst           |   62 +-
- MAINTAINERS                                        |    3 +
- include/linux/landlock.h                           |   56 +
- include/trace/events/landlock.h                    |  965 ++++++++++++
- include/uapi/linux/landlock.h                      |   22 +-
- samples/landlock/sandboxer.c                       |   16 +-
- security/landlock/Kconfig                          |    5 +
- security/landlock/Makefile                         |   12 +-
- security/landlock/access.h                         |    6 +-
- security/landlock/audit.c                          |  641 +-------
- security/landlock/audit.h                          |   57 +-
- security/landlock/cred.c                           |   14 +-
- security/landlock/cred.h                           |   29 +-
- security/landlock/domain.c                         |  472 +++++-
- security/landlock/domain.h                         |  163 +-
- security/landlock/errata/abi-1.h                   |   23 +
- security/landlock/fs.c                             |  259 +++-
- security/landlock/fs.h                             |   40 +-
- security/landlock/id.h                             |    6 +-
- security/landlock/limits.h                         |    2 +-
- security/landlock/log.c                            |  587 +++++++
- security/landlock/log.h                            |   86 ++
- security/landlock/net.c                            |   38 +-
- security/landlock/ruleset.c                        |  546 +------
- security/landlock/ruleset.h                        |  250 +--
- security/landlock/syscalls.c                       |  125 +-
- security/landlock/task.c                           |   87 +-
- security/landlock/trace.c                          |  185 +++
- security/landlock/trace.h                          |   44 +
- security/landlock/tsync.c                          |   24 +-
- security/landlock/tsync.h                          |    4 +-
- tools/testing/selftests/landlock/audit.h           |   35 -
- tools/testing/selftests/landlock/base_test.c       |  104 +-
- tools/testing/selftests/landlock/common.h          |   47 +
- tools/testing/selftests/landlock/config            |    2 +
- tools/testing/selftests/landlock/fs_test.c         |  738 ++++++++-
- tools/testing/selftests/landlock/net_test.c        |  590 ++++++-
- tools/testing/selftests/landlock/ptrace_test.c     |  402 +++++
- .../selftests/landlock/scoped_abstract_unix_test.c |  264 ++++
- .../selftests/landlock/scoped_signal_test.c        |  404 +++++
- tools/testing/selftests/landlock/trace.h           |  639 ++++++++
- tools/testing/selftests/landlock/trace_fs_test.c   |  496 ++++++
- tools/testing/selftests/landlock/trace_test.c      | 1620 ++++++++++++++++++++
- tools/testing/selftests/landlock/true.c            |   10 +
- tools/testing/selftests/landlock/tsync_test.c      |   96 +-
- 49 files changed, 9244 insertions(+), 1503 deletions(-)
- create mode 100644 Documentation/trace/events-landlock.rst
- create mode 100644 include/linux/landlock.h
- create mode 100644 include/trace/events/landlock.h
- create mode 100644 security/landlock/log.c
- create mode 100644 security/landlock/log.h
- create mode 100644 security/landlock/trace.c
- create mode 100644 security/landlock/trace.h
- create mode 100644 tools/testing/selftests/landlock/trace.h
- create mode 100644 tools/testing/selftests/landlock/trace_fs_test.c
- create mode 100644 tools/testing/selftests/landlock/trace_test.c
+> ---
+>  fs/proc/base.c | 29 ++++++++++++++++++++++++++---
+>  1 file changed, 26 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 780f81259052..bec6197329dc 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -848,11 +848,24 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+>  	return 0;
+>  }
+>  
+> +/* private_data for proc_mem_operations */
+> +struct mem_private {
+> +	struct mm_struct *mm;
+> +};
+> +
+>  static int mem_open(struct inode *inode, struct file *file)
+>  {
+> +	struct mem_private *priv __free(kfree) = kmalloc_obj(struct mem_private);
+> +
+> +	if (!priv)
+> +		return -ENOMEM;
+>  	if (WARN_ON_ONCE(!(file->f_op->fop_flags & FOP_UNSIGNED_OFFSET)))
+>  		return -EINVAL;
+> -	return __mem_open(inode, file, PTRACE_MODE_ATTACH);
+> +	priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
+> +	if (IS_ERR_OR_NULL(priv->mm))
+> +		return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+> +	file->private_data = no_free_ptr(priv);
+> +	return 0;
+>  }
+>  
+>  static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+> @@ -880,7 +893,8 @@ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+>  static ssize_t mem_rw(struct file *file, char __user *buf,
+>  			size_t count, loff_t *ppos, int write)
+>  {
+> -	struct mm_struct *mm = file->private_data;
+> +	struct mem_private *priv = file->private_data;
+> +	struct mm_struct *mm = priv->mm;
+>  	unsigned long addr = *ppos;
+>  	ssize_t copied;
+>  	char *page;
+> @@ -970,12 +984,21 @@ static int mem_release(struct inode *inode, struct file *file)
+>  	return 0;
+>  }
+>  
+> +static int mem_release_with_private(struct inode *inode, struct file *file)
+> +{
+> +	struct mem_private *priv = file->private_data;
+> +
+> +	mmdrop(priv->mm);
+> +	kfree(priv);
+> +	return 0;
+> +}
+> +
+>  static const struct file_operations proc_mem_operations = {
+>  	.llseek		= mem_lseek,
+>  	.read		= mem_read,
+>  	.write		= mem_write,
+>  	.open		= mem_open,
+> -	.release	= mem_release,
+> +	.release	= mem_release_with_private,
+>  	.fop_flags	= FOP_UNSIGNED_OFFSET,
+>  };
+>  
+> 
+> -- 
+> 2.55.0.737.g08866a6d13-goog
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
