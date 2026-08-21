@@ -1,124 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D208A3ABDA4;
-	Fri, 21 Aug 2026 14:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13074C77B8
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 14:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787322521; cv=none; b=j90FbwXPxBUwqTXirQI8UjADeer3W+QRmfKzDF2RSULc/06K2NgjTXFcP13XyYc01lLpi4Gn6TnFkOsG+GdgA159d23t2FhxbbrO2JRTzeuH2/MhEgE1lpE+7JE9x5v4pHW+Sn8pP4TlUXwY4PgNKmqEPJY/8/bkn6tduZQfQJU=
+	t=1787322726; cv=none; b=fFtUfLKAqe1n8o7oOBqgIkvHwv+gGkrapTfyUkxOuh4T1Xh0Kc1KDbqbMlOZklJZM38A4kIiHXtiTF7KVM85F6s1+cfUUKgmLmVGq5kfJOiYbDk8WSFQjii5Zscar2eLqQEm8QgiF/LnhIeh2dNAhUuz53h5QiRvILunS9TJk6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787322521; c=relaxed/simple;
-	bh=6IujQlVUxwStfJKWtygpw/uIxh2T+lmBgiXiPDDVbFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AWQ8cJ6SBRiMDBB7QS65XATB1dQTBho+TKi0UNWjFv4hHIr4yS8ulWvp5+8tzzRcs1q1U0rQBab1XVHPtcWZEvsZa5Iu3dljCVKw+I/7bEf57DSzTVAsbq0BREef4+D35ftkipFp1V6OU6OiHp4I7sM9sqW6PMWzn3w+9osirpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mr2/hBrM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787322726; c=relaxed/simple;
+	bh=DrZfMDLRTzk2UFTiQWUmac1FpzL/yMGaHEUgIZ1u0pE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OL41I2qJxydrRGSaqCySoGoc8Y/BBP0oRWa+COjVFTzi80kuU5zZ1rF8y4IfCBk7iIFQ/H5RitXtIvnfAZXsmoN1veSX1D4LssV7Fy0lUHuv86kF8US/CK7bfUnjXqOYtu8nPgBmePiOV+/J75aOC2uA6YRcwA4VwSAUv5ZzynQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=im+5H1/+; arc=none smtp.client-ip=74.125.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mr2/hBrM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEA31F000E9;
-	Fri, 21 Aug 2026 14:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787322520;
-	bh=d5z1Xu44las/mDWEQ2T0kdUfLaS63+SXiGlCJ/8yslI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Mr2/hBrMzoTPSYtphivjAOk+c376Vhf1pdY/u4HkJUIejQD3832wDBOi8Uh04AO4f
-	 FUEomt4r+BafWW5sy9NLQXGOGUaRUmZEIeRXz1/FonNBwrOpQ12dArbcJwvgvwg5KB
-	 RrpmYzUHE6p8gvQpfI8Cw1NcCmob0MYGTeNgtDevUc/pgpDl3VbBul3rldQDV9hOpL
-	 7D3VdLVMaf+uVk5Y2QqYI7XW64dwP0C2hdOTYoppVO2au58/cPxr9atazx8//IBbnb
-	 U8ioRwHSBSqX1lzD3XH+nQkr8KCPnAZLHdq1kPbSzX0kHYu8Lq9Yx1Ub3OGpWzfGIh
-	 6eb/gonUzFE6Q==
-Message-ID: <75708479-ae55-4297-888d-fe0b609ee26b@kernel.org>
-Date: Fri, 21 Aug 2026 16:28:35 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im+5H1/+"
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-6688acd1a51so1745008d50.3
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 07:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787322712; x=1787927512; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=KEQwtM0/L/H2ZNYGWj1jrSqhTDuXigyAxGdx+ch9XwU=;
+        b=im+5H1/+xxm3KqD/mY/LTqlNBB4XW2Y+Yn3CtrTn/Hr+HJenHeLobUtDlacTH72Whb
+         fbb01VwtvmVpHFkDQQZI0ycNZ6ujNQnNlnX4bud9N1WtGkjsMKLwela4HnisqczBCIGn
+         sDyxciEEqzKBXgYwuvaVzooCxMzTcvM+N4d+BuO5gp1epKMkexpyAvt+7Y61NyPUX4Oi
+         W/rIG/W2zDhCaq/AJN5jw+NKKUQnwW8mr3uy+TWWPlI+URYsCTZ4zQm2jz2+IIkuMAWS
+         gBxf9ynTuLI6/eiAJgS//pEnmK9EV4hZZQDjB1pD1vDjJ74Vbeon27uqgXsZLgA35Dnl
+         AAiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787322712; x=1787927512;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=KEQwtM0/L/H2ZNYGWj1jrSqhTDuXigyAxGdx+ch9XwU=;
+        b=lHvWDEZl8sXa8ZH+pnkro+LMR6F3tINumIWdHF6Ymu9THg401WeKC8Pdem2xyfuI+E
+         f6hFGbn7JwtOIGW/1TttTM8kvEz9efepIQ/D9H8edB9v3az7uNPr7iCkDvdRNADtZ5XW
+         2B65b/HhKvbgZgDljjiUbmcX7LeGNWXD0TiXST+JzHTjU2GYW2krtNf+53HpUgJk3VBS
+         CCZ/OshnLaVhtHM+s+I8+UJk+ybFdc4+ydYUSWpzKgMQAhZ5zXQDV4hDP2LKlOukovIr
+         u+1s6djZuvlrn2ys5yeBiwRxhRTdw44ZVGoiNBDQ29P0kt+1eS4oNaAJR3CTqbtOEPhE
+         WYUA==
+X-Forwarded-Encrypted: i=1; AHgh+RpwjO4wbTGZRdZ7jBaimwK01GA7oP5zI7XF05hIeLuuC5fNMUW+8o6qTV8VtDuiaMfolqhcpKxztFeFkTr9kYW58bxlioY=@vger.kernel.org
+X-Gm-Message-State: AFuF++n9t+xQPMEjmwkGeoLb7DQtXatr7cWS+wLN/+eLr/GU2ocaVzI4
+	z0MscJ1vUgSsHfvfarSN4uqXpAQBxnvGsKh6g4NEtujzQ3HcGsFc6y9s
+X-Gm-Gg: AR+sD10fHtp3u5LkSWFewZuy/80+Ya9vRzBr4bt1BFZkhSO6xIDDV/1tyZKnx0fPSVN
+	Jp81b8x7olcyykSJ6iRx1SlLCAzoqwF367KaVsRIOLrHM0aiUGzhhk05mPxgebGDQT/Nvj6XzSK
+	V29ENZkd9a5lhI/TODttK8AEAcNHtxqTgHSc3Z8WvhN0ZcaR3hqqg76A+mNKN2Md4tCoTIIzohR
+	/2d0eG9Z+7dKrRCuhZwCDGUVWl6GpavM7K+ytGQVdk5Sx30JJ3/rOuz99miofkdMOS0L33fzyy1
+	zqewyyHa6bQiTpPBbjHEbYmbl15qiNiXpbb4zeMLun4AkkVhduMYvLnXqYgpRsJfqT8h166glhH
+	iAjPa2K9/WkSE6+fty3dlyIk2kLpcirYJj75oMWBJFY+i4VttMXWtXry5PcpVgwa/H+Lf6F625p
+	KjG2mxm1qFFDqc8jQC0+r9GJuXFDqF2PD2q5Q57sUEb0Xl560IMmzeuew/OOczcnheWIWmkf5Bv
+	qFO/JFM3GBvbF38eOwq6w==
+X-Received: by 2002:a53:c087:0:b0:66c:c7ec:27f5 with SMTP id 956f58d0204a3-66ce4b8b4e3mr1930264d50.54.1787322712556;
+        Fri, 21 Aug 2026 07:31:52 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:350e:631:3b2c:9519])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66ccafcfe3esm4404567d50.2.2026.08.21.07.31.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 07:31:52 -0700 (PDT)
+Date: Fri, 21 Aug 2026 10:31:51 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: mic@digikod.net, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] landlock: Bump ABI for
+ LANDLOCK_SCOPE_SYSV_MSG_QUEUE
+Message-ID: <aohfGjG15BUfOY7X@zenbox>
+References: <20260727230833.138165-1-utilityemal77@gmail.com>
+ <20260727230833.138165-4-utilityemal77@gmail.com>
+ <20260821.ad614a879e61@gnoack.org>
+ <aohKoD4GqIFR4ni4@zenbox>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] mm/secretmem: zeroize secret pages before kdump
-To: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <contact@jaseg.de>,
- =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kexec@lists.infradead.org, keyrings@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20260731162739.158320-1-linux@jaseg.de>
- <20260731162739.158320-4-linux@jaseg.de>
- <70c578dc-769f-465f-a146-4a4695f747c1@kernel.org>
- <adcafa9f-2365-484b-b31e-19006833efaa@jaseg.de>
- <8bb53d9a-8870-410c-9a41-f8b536ef0780@kernel.org>
- <69d508db-93c1-4dac-afe3-3e3fdfb5271f@jaseg.de>
-From: "David Hildenbrand (Arm)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
- qIws/H2t
-In-Reply-To: <69d508db-93c1-4dac-afe3-3e3fdfb5271f@jaseg.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aohKoD4GqIFR4ni4@zenbox>
 
-On 8/11/26 17:18, Jan Sebastian Götte wrote:
-> On 8/11/26 17:14, David Hildenbrand (Arm) wrote:
->> On 8/11/26 17:05, Jan Sebastian Götte wrote:
->>>
->>> I'm aware nobody is really using secretmem. I decided to build this on top of
->>> secretmem because it's an existing API that actually kind of fits the use case.
->>> While I could have added a new API just for this (marking userspace memory as
->>> wipe-on-crash), making it part of secretmem instead gives some additional
->>> defense-in-depth protection for both users who only need wiping, and for users
->>> who only want secretmem's additional protection against kernel memory read
->>> primitives so I think everyone wins here.
->>
->> What I was thinking when I looked at patch #3+#4: 50% of the users you add are
->> irrelevant in practice.
->>
->> Or are you saying that you are going to start using secretmem for your use case?
+On Fri, Aug 21, 2026 at 09:15:31AM -0400, Justin Suess wrote:
+> On Fri, Aug 21, 2026 at 02:38:15PM +0200, Günther Noack wrote:
+> > On Mon, Jul 27, 2026 at 07:08:30PM -0400, Justin Suess wrote:
+> > > Bump the ABI version for Landlock SysV message queue scoping.
+> > > 
+> > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> > 
+> > The ABI bump is normally put into the same commit as the
+> > implementation for easier backporting. Otherwise, looks good.
+> I'll squash them.
 > 
-> I'm in fact going to start using secretmem.
+> >
+> Thanks,
+> 
+> I did wonder about if we need to use the landlock_object here?
+> 
+> I'm pretty sure SysV message queues stay open after process exit,
+> which could cause the domain to be pinned by landlock_cred_security,
+> if programs are lazy and don't close them.
+> 
+> So it probably needs to be a weak reference. 
+> 
+> But it's unclear what should be the behavior there when the domain
+> is dropped:
+> 
+> 1. Should it become inaccessible and belong to *nobody's* domain?
+> 
+> (i.e when owning domain is dropped, the queue belongs to no domain and is inaccessible to
+> all LANDLOCK_SCOPE_SYSV_MSG_QUEUE scoped domains)
+> 
+> 2. Should it be moved to the parent's domain?
+> 
+> (i.e when owning domain is dropped, the parent domain is the new scope,
+> and then it's parent, so on and so forth, more complicated, but more correct)
+> 
+> 3. Or be kept as is.
+> 
+> (i.e Allow an open sysv message queue to pin a domain
+> for it's lifetime)
+>
+Scratch all of this, I think it's best if the kern_ipc_blob takes a reference to
+the landlock_hierarchy plus a depth u16.
 
-Okay, thanks for clarifying!
+I think this will require introducing a new
+landlock_put_hierarchy_deferred method because of the runtime context of
+the ipc hooks, but should be pretty easy.
 
--- 
-Cheers,
+Also refactor domain_is_scoped() to take the server side as (hierarchy, depth).
 
-David
+Justin
+> Either way this almost certainly needs to be rebased since it's been
+> a little bit and there were significant refactorings of the domain and
+> ruleset structures since the tracepoints series.
+> 
+> Justin
+> 
+> > –Günther
