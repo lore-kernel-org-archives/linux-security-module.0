@@ -1,41 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A31D3164C5;
-	Thu, 20 Aug 2026 23:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F189475;
+	Fri, 21 Aug 2026 00:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787268496; cv=none; b=rCbj3qgrXKxum+JR/GJ5NIlXZDSRe4WwPFuF0GySIEgOKrf3L8iEkPC5XwjA3dFXVw8OmeyTX6CTjwkvh0tCBYtUg7AzbvJVLF6/lqHp5w03s4msX703TC9xt4Odh4PlJzPlEUiyV7J3EaSf3yZPFD8pc4uh02r6RfhI9HSwdu4=
+	t=1787270613; cv=none; b=R5QYSMoczMqiIVeoENz+kOHZaaHKEyeNqCG/1xkwIBIt1p6Og3PLSIZTiDc6b03Ty75afNu9FRWanlvKLhELf9PPw6MCyS26YC1tLSsKJ+MGLfYYaATkW7CeGm4Skl+7VjLpONTpmVYzPd4vYdSOVLxbP1GU9m9qau38X8fKRSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787268496; c=relaxed/simple;
-	bh=8ELUgFeRV2RayEyxjE3WQkd6h3AZjZdG59vBILZ+4y8=;
+	s=arc-20240116; t=1787270613; c=relaxed/simple;
+	bh=uOVKZFnPH8o5K67dQhSo+RueQptoFuVeeYd5o/6x+7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kvBQzmOMsktP/jOD1Qnih+/MRlVw3vXzwxLVM8sD3sA8qB/vR6R1G3Rff3g4LJgLk4uMoqXSs5N5tHjmDevykol3KFaOjdSMYETDVNTxaveOX7stv8hh2FDkXhrcM79G/tDGgvfF8YxIdWhHhiH/w57OBkbDhPdFvTAdb9fyQYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlP1Fw2r; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxL6NVHnQKKTKlaG+L8/NQ+ua87tUkf3PO/NjjBnf0n4Y9IzDKPqvgjF8Y82tRtJ3kB96aE8KF6Cn4j3UY6N6JSoHi0UjQZ/XH6Yr2Wvilg7sqTvP21p4r8vIQHNC8Kv6Ig2XG2j7bio1qr+zse9/awN7PuX/oWI068pVbN89Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5n9wv3U; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlP1Fw2r"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D5E671F000E9;
-	Thu, 20 Aug 2026 23:28:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5n9wv3U"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 332111F000E9;
+	Fri, 21 Aug 2026 00:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787268494;
-	bh=ueo5OaFPGhfTyGwAjV1YfDV0WDIqcvzbTgRD6BW63NI=;
+	s=k20260515; t=1787270611;
+	bh=ZMOaH3Ifg3zYiZwwfg92Dtd+BEAAcTWCMj96C6OWaGM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OlP1Fw2ru3IFcDO2zUlekbwtJFce7i6wEf3WyiOXlki1xhpu07lxQT8okHELnHbW5
-	 olbEeLbIfP7yhdN0TvEn+v1RvNAg5l6C2lFBg/POUADuEqwCdkfF7nDHloChpa72Ao
-	 kitoXlepagHq3WYfx/Xl47zHRBjAwAEz0yjJuGxIdZP9wEZTbgIcRD/bJh9QG4rlFV
-	 BCKYkjEawsJ1CAdwlRyo9FspWMQw1XbyqILKih2J7cglz6MhdlSbmjTOle0Ng234eH
-	 xJHIiRihJrHMg4JDJcpBcpPCcEjRCrmY3c/INHDqJEngjokhhRUKvZoCpfOW7qSEjL
-	 UAKDPBy7tASAA==
-Date: Fri, 21 Aug 2026 02:28:10 +0300
+	b=Q5n9wv3UMuIVNNtVKpB/5iBO0z0hHn44PwV1f8lGZiseBX3KpLBrj8LSwLjuHfYVi
+	 2xEJGYCUWNlSAoQGLMTu0n6W7+YVC0xM603C5E4M2LMnRwszD7U7apnB2DH7LyZEEy
+	 MewwkKkgwnfS93c8wliAkPhSz3uStjsRkXD1RiiUjUG7vrTQRZNy8SrkUS6TqjrAvs
+	 S4pQ+3I1A3ZmfLPA3mjgPM08n496rdfLcI0qvucw1QOIw6m8dvjh5j/THArm0ZQWB7
+	 VwghisgiE7f9jIgvXGML7lN8Gz51GaeSryRsFA9A23jXHeHIRHwXiAxVeXF3OF9kBE
+	 kYIzG0zQjDBuw==
+Date: Fri, 21 Aug 2026 03:03:27 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Karl Mehltretter <kmehltretter@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: fix lost wakeup when reaping a dead key type
-Message-ID: <aoeNilyh183yLH6B@kernel.org>
-References: <20260811173753.67616-1-kmehltretter@gmail.com>
+To: Thomas Huth <thuth@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 0/3] lib/crypto: Provide a function for zeroizing
+ hmac_sha1_ctx
+Message-ID: <aoeVz8FsDOEP32M2@kernel.org>
+References: <20260812163336.3103835-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -44,34 +53,37 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260811173753.67616-1-kmehltretter@gmail.com>
+In-Reply-To: <20260812163336.3103835-1-thuth@redhat.com>
 
-On Tue, Aug 11, 2026 at 07:37:53PM +0200, Karl Mehltretter wrote:
-> key_garbage_collector() clears KEY_GC_REAPING_KEYTYPE and calls
-> wake_up_bit() after reaping a dead key type. wake_up_bit() uses a
-> lockless waitqueue check and requires a full barrier after the clear.
+On Wed, Aug 12, 2026 at 06:33:33PM +0200, Thomas Huth wrote:
+> It's maybe not worth the effort for hmac_sha1_ctx right now (since there
+> is only one spot that forgot to zeroize the structure in case of errors),
+> but offering a function for zeroizing the data via __cleanup might help to
+> get future code into the proper shape right from the start. Thus let's
+> introduce a hmac_sha1_zeroize_ctx() function now and use it in the
+> appropriate spots.
 > 
-> The existing smp_mb() is before clear_bit(), so the GC can see an empty
-> waitqueue while unregister_key_type() still sees the bit set. The final
-> wakeup can then be lost, leaving module unload stuck in wait_on_bit().
+> Thomas Huth (3):
+>   crypto: Provide a wrapper for zeroizing hmac_sha1_ctx
+>   security: keys: trusted: always clear the hmac_sha1_ctx before
+>     returning
+>   lib/crypto: sha1: Use hmac_sha1_zeroize_ctx() instead of
+>     memzero_explicit()
 > 
-> Use clear_and_wake_up_bit(). Its clear_bit_unlock() preserves the
-> ordering of the completed GC work, and its smp_mb__after_atomic()
-> orders the clear before the waitqueue check.
+>  include/crypto/sha1.h                     | 17 +++++++++++++++++
+>  lib/crypto/sha1.c                         |  2 +-
+>  security/keys/trusted-keys/trusted_tpm1.c |  2 +-
+>  3 files changed, 19 insertions(+), 2 deletions(-)
 > 
-> Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+> -- 
+> 2.55.0
+> 
+
+Looks right to me:
 
 
-I think the fix good but it would be good first to have reminder that
-while clear_bit() is an atomic operation as respect to the data it
-holds, it is an unordered operation [1].
+For 1-3:
 
-That is sort of the beginning of the story.
-
-So yeah, tweak the commit message a bit and send v2.
-
-[1] https://docs.kernel.org/core-api/wrappers/atomic_bitops.html
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
