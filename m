@@ -1,128 +1,181 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9D46A60A;
-	Fri, 21 Aug 2026 09:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5359E47126E
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 09:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787303570; cv=none; b=uWBJWg5EiqgYHo0M9nNaBcnuS8Qordp18ChQ862hLnTa7cUb3L0ziQ5DFt2EY1SEinKvAOEPCjuI3d7+elkTidr7BbegOvyQKVvBRPih+Ro9erObjBxXjxH0bLJsEjQurTgOkrXw3AGBc1gU73OdL188hTXNXHfdoAliWScmMiw=
+	t=1787306394; cv=none; b=ALYqO4h1xNsAgT5KwcQYz5Fz6308uc2wPcsNAbMKMf3Os7G66WWgYGOFpj3bv/f4cgsUv8yneGc7rlKESevzFRkRdvF9u6hnNTuBdZGw/YA/T+Z9Wnksb8t1/UItMG5RfTe9nLVX9FoW/EknDxnqvfnpm57HMV2BrnnIC/AFzrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787303570; c=relaxed/simple;
-	bh=UvyO1Bp0j0IfstgH4vaO2FSNeM0F/X0sj4bue6iUzl0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mEmA/uvKBXcPy1LYiDGjeLHOJr3BeOr5VP/NLt2r8D9QtvqiqwCtltcoNOp5kdpBNSZCU1jKJXg0swD8EERdBJxFSkilZhYFkSpHtaycbiOC6v3DUatrmzSTMZJFHYoqN/RIcqVx+yXlEK9jutR6mxB1T9s3WFdrlaetup/bUKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=N1ArxZlc; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1787306394; c=relaxed/simple;
+	bh=SiMn3BqPiCpQOzGd3YbNwjGLW1tzFnVrSniAKmS5pmA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p8JdtL6LGagiMr8jV+SWTjvnzuGY3L2ITXgJCaYOMoGfVbkGVRe+EnmWY4i5pTwjxt7ZC9f4oj732cuVUyfH0AW5dQ0zAsfFaLFzl1dvZM35kV+St8Yu6nAdtO6P2VCq6MblZ49pxfz8iXad0qG6HLEf56BrJ2MYoceBoWBngbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMEs2PwF; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="N1ArxZlc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1787303550;
-	bh=UvyO1Bp0j0IfstgH4vaO2FSNeM0F/X0sj4bue6iUzl0=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=N1ArxZlc7LqSiC51rJIheAukl0Sxdv6rOc4acoz1ZZN6oe1ZZAJD7W5qpZpq4AUf1
-	 kOCss/5eDA93iDJkrSvOU3DMyykN3pT1mP1ixQidfz4YqsxKIcrPNu6BUA1oY03sJk
-	 NEPkxEJFa1kpUQ7cvFFBZyNWasWU79so9kFrOi0g=
-Received: from [IPv6:2a00:23c8:103c:f701:6906:2df:959d:44bf] (unknown [IPv6:2a00:23c8:103c:f701:6906:2df:959d:44bf])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 415CC1C032B;
-	Fri, 21 Aug 2026 05:12:29 -0400 (EDT)
-Message-ID: <b13a1741eceeba4d4ec50e1c898e011ea81a178b.camel@HansenPartnership.com>
-Subject: Re: [RFC] IMA: periodic runtime re-measurement of process .text/GOT
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Nicolai Kuntze <nicolai.kuntze@hs-mainz.de>, 
-	linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore	
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"	
- <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 21 Aug 2026 10:12:27 +0100
-In-Reply-To: <20260817102323.35950-1-nicolai.kuntze@hs-mainz.de>
-References: <20260817102323.35950-1-nicolai.kuntze@hs-mainz.de>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNE
- lecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn
- 1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHU
- RfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8
- X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvd
- HRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGw
- MGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBI
- FCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy0
- 9J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLb
- K0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8
- tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB
- 8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90
- dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeA
- QIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mYBQkbNYS9AAoJEIFK5HwhSFTWBpwIAL5Bk3
- 5FB34U6iHmDzzgdCbxLTs43T/YQyJpcGIvopBvnI/fDY8oSG6Df64/O6B+1R+A8TDp6ZG5ysUWnCC
- 6GuIaEHemBYkitMPglR6+sGCMQY7O0mlsPvdssvKK1KI9Bno4VU6ogaF2qVzefSqg1Djmf/DcsxWP
- rI/jdJ8FB5AYR2rjIdDFc+zRdAJuavo1/anyY2wgpFh/3R8IOYAEfWV9nGgYkf9+tA4EIn1sxE0I3
- L5oW2N3mbyRrkzuBwO8ztMCwqEPk7moWzhokcZqMXiAIahaZdkashJC+s2X2RZSGCy+g+pvY5NN4B
- BVG5XwLgVBqbHMTcxE0fbmPqz+q6O0LEphbWVzIEJvdHRvbWxleSA8amVqYkBoYW5zZW5wYXJ0bmV
- yc2hpcC5jb20+iQFXBBMBCABBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmODZ5ACGwMFCRs1hL0F
- CwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQgUrkfCFIVNZu0Af/TzvL2/NdgAcw9uN3x60H8
- jc4QUq14VpxcFEFEMpcj1morkX/G93V+56HBBaXZj+yK8PhxIA/SIz+sU7C/0YvKuvzakP8ZX/7WJ
- e32SOUtjfr/VTaqjIBzNj6OxLvZpmNbBw7s6DwhhNpHOWqJ/1ml+PtDRDV71IB58yVqQjp1xlNKVl
- ZppcJ5908EJzsFnRIVjiQiDSKoppqB2BCibBbrWcln7CiWMyOC/cco6SIn6twH+f7+aivJ3xGcOE2
- a9gBKF5rNi9TBoX9oyPmshv/TDmnohsVrH7AYXlGYfZTk15SWEiROh1QX8/uD9wl/gcIv5EDUpT/F
- L2jzOsA5663bw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMEs2PwF"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-38e041ea211so727358a91.0
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 02:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787306381; x=1787911181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=MASfaprH7+tFgg5DHxo9bD5T6H4OeE/g5W/L8IgkjoY=;
+        b=mMEs2PwFOJEfTPjCJ4cYFn4+7tUs3pmd3X9kObQcZQ6PqdTGq9o/+EWK3h6uuvtm4S
+         8bll6DQXwoaTt52+HqC20OsUbIzQQ/56N9bW1tYCcGq2a87DuXK6yAm/FVwqGFihdaXd
+         1CVWEQwddkkRKnDMMkIjEP9QUoOQqEwX1XYxL57s/1VkB4nAO2He5muUwxh+qiCMSpNd
+         FVuJ36SXVKTum6ZDjvnyJ6UHSzk1ySUuVTpzsU5p+Yr2iDP0a8GFCJ67BiRqoZjcyQwq
+         Bgv6ugemKVlWlhncJ9EaJCTc2i+Gkz5IUPPTAQxiijZQ0CDpdrv6SRwmY0sgLIPw72Ab
+         hHrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787306381; x=1787911181;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=MASfaprH7+tFgg5DHxo9bD5T6H4OeE/g5W/L8IgkjoY=;
+        b=OhWcv/S+G9Y5CQvIAJ0ZEOU76ex7hZO5WnJn/Dp+QtHRGRtmxLacGX2nU6tbW1jogD
+         4dBc9o4eUuIU4urgmGEGW5wyXorg97tQ85DbDUShJIbGcUhEwD/J7H3RGGUOfwM+Tw1z
+         rBxh/4XH2hNK5t3xsPXzCA75beLFxVo9giOld496EmytRXe9KLO+LWt9qztGEN2sTNOD
+         XEWB0Zq4b04zVBYdRJPruRNHwKFcLPfNPFAAgLEUpj4lSIZ5+o1UVCSq1zjKlG9aev+F
+         Y+3YDEtCPRheR9s17yfd5BrnUA59nzK2uYR4vviON8fQsMQAuhKCp4sdGcfKnLgwYtfT
+         wv2A==
+X-Forwarded-Encrypted: i=1; AHgh+RrPy2iK7CcIpJHsn4f7MvWGEabJVfPT7TAHDayH1cz/6w+nVRHXjUwP2JxJ6RddwrHUiDQpdXecIiFUIqAZyrrWjR0LAPI=@vger.kernel.org
+X-Gm-Message-State: AFuF++l9JOc1zJ5m+i4cz4Rp6WGMgFnOrIreqN8WAj0WTy3d5JD1sVpt
+	4p+gMYAK0Z+jcxUeyV+BzDXKJTmRBICAi0LvsBe1jrz5m8M5874WTJY6
+X-Gm-Gg: AR+sD11cewx5eEqK6LJdz/2qgxRjZwPeCok2x1W9VEhfR5d3uLq+akNS6rScGq/XHU2
+	PDYQwUqyq4PZ9vLbmanoqJDJbtT+HWqwDtnoKGWWHYzK57O9sEauSP86tCpZ9A/j+5ofk0RQLaB
+	zBi4MOgpEnaYgvC7Ee9MeDwkTofe4c19TgiYsPsqH2ayo8DwVA3a0U9mWBbYVbaiRKp2E1N0nE3
+	ziu2BpvZx70sfoyR8HzltaBJz6X+YQaIGvdfW59G4jwZxoEbca7xsspFA/LZ7tEkXheRSnKV3lZ
+	5C2gA+weGlm4LOdpEHoI3p2tiUUe5w7s+uoWWV9PEg5Fsjn4/jb0LX0sP03czAyeof75l7GSL/Y
+	wJ0CS2hfk33jpeynzkGgFpwRnF4tx/vNgI+eP6c9BgfxQHoa7EUjjqIm4TuhT5mU9twnz1C8QLs
+	jGzFO6darrVJD8ZCJSvKh/GQv7O5BMtau9EzOLIkY0ebj/moI2I5Sk0Q3zj4khb1yLJtaWq8jIA
+	ZyhnlbeQXYGUiBNOCJxfOTh
+X-Received: by 2002:a17:90b:5646:b0:38d:f5bb:e0f4 with SMTP id 98e67ed59e1d1-395c33367ebmr10081913a91.1.1787306381365;
+        Fri, 21 Aug 2026 02:59:41 -0700 (PDT)
+Received: from csl-conti-dell7858.ntu.edu.sg ([155.69.195.57])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-395c45530absm2509528a91.4.2026.08.21.02.59.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 02:59:40 -0700 (PDT)
+From: Maoyi Xie <maoyixie.tju@gmail.com>
+To: dhowells@redhat.com,
+	jarkko@kernel.org
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	James.Bottomley@HansenPartnership.com,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Maoyi Xie <maoyixie.tju@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] keys: translate request_key_auth pid for the reading procfs instance
+Date: Fri, 21 Aug 2026 17:59:35 +0800
+Message-Id: <20260821095935.1864998-1-maoyixie.tju@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2026-08-17 at 12:23 +0200, Nicolai Kuntze wrote:
-> Hi,
->=20
-> This is a design RFC, not a patch submission -- I'd like feedback on
-> the approach before polishing the patch series further. A working
-> reference implementation exists today for demonstration; details and
-> links below.
->=20
-> Problem
->=20
-> Every existing IMA hook (FILE_CHECK, MMAP_CHECK, BPRM_CHECK,
-> MODULE_CHECK, ...) measures once, at load time: file open, exec,
-> mmap, module load, or an explicit ima_measure_critical_data() call.
-> Nothing in IMA today re-measures an object after it's already
-> resident. A process's .text
+request_key_auth_describe() prints rka->pid into /proc/keys as a raw
+pid_t in the initial pid namespace. A reader can open /proc/keys through
+a mount in another pid namespace. That reader sees a number with no
+meaning there. The number can even name an unrelated task. The line
+needs VIEW on the key. So the reader either shares the key owner's uid
+or possesses the key.
 
-A processes text segment is mapped ro and cannot change.  We're looking
-to apply the kernel ROX guarantees to user processes, which would make
-it very hard even for someone with privilege to modify the text
-segment, but if you're looking to fix something like the copy fail
-cache corruption, then a strengthened ROX mechanism would be way better
-than trying to detect it.
+The fix keeps a struct pid. Commit 4f82f45730c6 ("net ip6 flowlabel:
+Make owner a union of struct pid * and kuid_t") gave
+/proc/net/ip6_flowlabel the same storage. The print goes through
+pid_nr_ns(). It renders against the pid namespace of the procfs instance
+the line is read through. Commit ad08978ab41c ("ipv6/flowlabel: simplify
+pid namespace lookup") moved that print to the same anchor. Output
+through an initial namespace /proc does not change. The line shows 0 for
+a requestor with no number in that namespace.
 
->  or GOT can be modified in memory after load
+Translating at read time was the alternative. find_pid_ns() can resolve
+a recycled number. The line would then name a live task with no
+connection to the key. A stored struct pid gives 0 instead when the
+requestor has no number there.
 
-The GOT (and GOT.PLT) sections are updated by the dynamic linker
-*after* the binary is measured.  They're also often constructed lazily
-by just in time symbol resolution meaning they change throughout the
-lifetime of the process ... therefore if you include them, practically
-every measurement will be different and there'll be no way to
-reconstruct what measurement you should have seen or relate it back to
-the original measurement.  It is possible to do non-lazy linking and
-then seal the GOT read only, but that incurs a huge startup cost, so
-what is the actual threat model here?
+Link: https://lore.kernel.org/keyrings/20260809110202.2180410-1-maoyixie.tju@gmail.com/
+Fixes: 78b7280cce23 ("KEYS: Improve /proc/keys")
+Cc: stable@vger.kernel.org # v5.10+
+Assisted-by: Claude:claude-opus-5 codeql
+Signed-off-by: Maoyi Xie <maoyixie.tju@gmail.com>
+---
 
->  (ptrace(), a kernel exploit writing through /proc/pid/mem, or
-> similar) without IMA ever re-examining it
+ include/keys/request_key_auth-type.h |  2 +-
+ security/keys/request_key_auth.c     | 12 +++++++++---
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-Those are all privileged operations, so what is the threat model you're
-guarding against?  because if it's something like container mutations,
-then using dm-verity and proper ROX handling is likely a better
-guarantor.
+diff --git a/include/keys/request_key_auth-type.h b/include/keys/request_key_auth-type.h
+index 01e42ee5f4099..464636278c4f8 100644
+--- a/include/keys/request_key_auth-type.h
++++ b/include/keys/request_key_auth-type.h
+@@ -22,7 +22,7 @@ struct request_key_auth {
+ 	const struct cred	*cred;
+ 	void			*callout_info;
+ 	size_t			callout_len;
+-	pid_t			pid;
++	struct pid		*pid;
+ 	char			op[8];
+ } __randomize_layout;
+ 
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index 282e09d8fa46c..ed6f55b9cdd93 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -9,6 +9,8 @@
+ 
+ #include <linux/sched.h>
+ #include <linux/err.h>
++#include <linux/pid.h>
++#include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+@@ -73,7 +75,10 @@ static void request_key_auth_describe(const struct key *key,
+ 	seq_puts(m, "key:");
+ 	seq_puts(m, key->description);
+ 	if (key_is_positive(key))
+-		seq_printf(m, " pid:%d ci:%zu", rka->pid, rka->callout_len);
++		seq_printf(m, " pid:%d ci:%zu",
++			   pid_nr_ns(rka->pid,
++				     proc_pid_ns(file_inode(m->file)->i_sb)),
++			   rka->callout_len);
+ }
+ 
+ /*
+@@ -113,6 +118,7 @@ static void free_request_key_auth(struct request_key_auth *rka)
+ 	if (rka->cred)
+ 		put_cred(rka->cred);
+ 	kfree(rka->callout_info);
++	put_pid(rka->pid);
+ 	kfree(rka);
+ }
+ 
+@@ -226,14 +232,14 @@ struct key *request_key_auth_new(struct key *target, const char *op,
+ 
+ 		irka = cred->request_key_auth->payload.data[0];
+ 		rka->cred = get_cred(irka->cred);
+-		rka->pid = irka->pid;
++		rka->pid = get_pid(irka->pid);
+ 
+ 		up_read(&cred->request_key_auth->sem);
+ 	}
+ 	else {
+ 		/* it isn't - use this process as the context */
+ 		rka->cred = get_cred(cred);
+-		rka->pid = current->pid;
++		rka->pid = get_pid(task_pid(current));
+ 	}
+ 
+ 	rka->target_key = key_get(target);
+-- 
+2.34.1
 
-Regards,
-
-James
