@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E8C3254AE;
-	Fri, 21 Aug 2026 14:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D208A3ABDA4;
+	Fri, 21 Aug 2026 14:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787321943; cv=none; b=UoVpf4/5kmwYXESvZ2AWZ6DdU5IWw21y2ybVRd/GeVeEDm/aGVr7tfV9kBP6bAhlpvL/Q3ZbqZRxEeImTlG3uDWxgamVdAEpzTHcU+qKPqjfXP8telCOy7zhfI9zmwwaILkyztN6OgTNvohRn1jH8q2A+23sx9xMdW1/9555pNY=
+	t=1787322521; cv=none; b=j90FbwXPxBUwqTXirQI8UjADeer3W+QRmfKzDF2RSULc/06K2NgjTXFcP13XyYc01lLpi4Gn6TnFkOsG+GdgA159d23t2FhxbbrO2JRTzeuH2/MhEgE1lpE+7JE9x5v4pHW+Sn8pP4TlUXwY4PgNKmqEPJY/8/bkn6tduZQfQJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787321943; c=relaxed/simple;
-	bh=uaR2slDwXXVEKiUuo0ZKpphtjqVaIdsfB7EpkceTycE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EqPE1cmty4ZQaQwF69Mltr7RRoXpzP8ULEgZT4f/+iYmUAJynQTYl9qj6J4TLtBGw06D1WoN44NMh8n18HDVhfC61nB9Rb3Ea0lN2pXr5WRFz13Ap80uQOQb417rdKiQ/feea4PbQJlZeq5kH9+3OjjPJqcx8q6F+hj3cqFSZ+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjZSYAWO; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787322521; c=relaxed/simple;
+	bh=6IujQlVUxwStfJKWtygpw/uIxh2T+lmBgiXiPDDVbFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AWQ8cJ6SBRiMDBB7QS65XATB1dQTBho+TKi0UNWjFv4hHIr4yS8ulWvp5+8tzzRcs1q1U0rQBab1XVHPtcWZEvsZa5Iu3dljCVKw+I/7bEf57DSzTVAsbq0BREef4+D35ftkipFp1V6OU6OiHp4I7sM9sqW6PMWzn3w+9osirpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mr2/hBrM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjZSYAWO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 841651F000E9;
-	Fri, 21 Aug 2026 14:18:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mr2/hBrM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEA31F000E9;
+	Fri, 21 Aug 2026 14:28:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787321941;
-	bh=u2XbnGzR4oklypPgE+Viv5JNUn/D8iY5cwkY2Kqvw4E=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=EjZSYAWO28454RqSV7v89nBk8+YcOGyf5apbjjM7L2GvqAzQasrzCMMMPrPqh6tN2
-	 kRkIwcYM3KXd4a+eGEgaAWwNlI2c8Y/h0qkgIHqXQpCSlALAxzpd0dvHnfUQMALz9G
-	 Ru6tS0xXakGh3n3iyyQu9LPwr0J3OsSMOLtLQMOlDhR1sNYJRUWUQcBDQ8gNrGZAax
-	 ILBqWcxTxG9RrLGzzIIAaUFx5QDCqQn8LBEJIBTzQLpdUcdLNhT+sUmmzLFINod50N
-	 uHQSN1V8PHPDs2C3P8ltB4+y8NhkRl3G1uNFasRFtBVjD6wXe1GDFLFCotx11glIuO
-	 KpEGF8Pbq8DDA==
-Message-ID: <dd8c34a9-0e09-453b-88e1-0a5511816627@kernel.org>
-Date: Fri, 21 Aug 2026 16:18:53 +0200
+	s=k20260515; t=1787322520;
+	bh=d5z1Xu44las/mDWEQ2T0kdUfLaS63+SXiGlCJ/8yslI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Mr2/hBrMzoTPSYtphivjAOk+c376Vhf1pdY/u4HkJUIejQD3832wDBOi8Uh04AO4f
+	 FUEomt4r+BafWW5sy9NLQXGOGUaRUmZEIeRXz1/FonNBwrOpQ12dArbcJwvgvwg5KB
+	 RrpmYzUHE6p8gvQpfI8Cw1NcCmob0MYGTeNgtDevUc/pgpDl3VbBul3rldQDV9hOpL
+	 7D3VdLVMaf+uVk5Y2QqYI7XW64dwP0C2hdOTYoppVO2au58/cPxr9atazx8//IBbnb
+	 U8ioRwHSBSqX1lzD3XH+nQkr8KCPnAZLHdq1kPbSzX0kHYu8Lq9Yx1Ub3OGpWzfGIh
+	 6eb/gonUzFE6Q==
+Message-ID: <75708479-ae55-4297-888d-fe0b609ee26b@kernel.org>
+Date: Fri, 21 Aug 2026 16:28:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,26 +35,19 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] mm/secretmem: zeroize secret pages before kdump
+To: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <contact@jaseg.de>,
+ =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kexec@lists.infradead.org, keyrings@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org
+References: <20260731162739.158320-1-linux@jaseg.de>
+ <20260731162739.158320-4-linux@jaseg.de>
+ <70c578dc-769f-465f-a146-4a4695f747c1@kernel.org>
+ <adcafa9f-2365-484b-b31e-19006833efaa@jaseg.de>
+ <8bb53d9a-8870-410c-9a41-f8b536ef0780@kernel.org>
+ <69d508db-93c1-4dac-afe3-3e3fdfb5271f@jaseg.de>
 From: "David Hildenbrand (Arm)" <david@kernel.org>
-Subject: Re: [PATCH 2/3] proc: query LSMs for introspective mem access (if
- PROC_MEM_FORCE_ALWAYS)
-To: Jann Horn <jannh@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>, Jeff Xu
- <jeffxu@google.com>, =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <liam@infradead.org>, Lorenzo Stoakes <ljs@kernel.org>,
- Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>,
- linux-mm@kvack.org
-References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
- <20260818-selinux-pokemem-v1-2-90cd2357ee05@google.com>
- <741a833d-6889-4ee6-9322-d6a3a8b95893@kernel.org>
- <CAG48ez2Ngo3=VtyykXY6ynVzGwA8px-p4zV3V6U=YfgV-Hy4BA@mail.gmail.com>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -100,68 +93,32 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <CAG48ez2Ngo3=VtyykXY6ynVzGwA8px-p4zV3V6U=YfgV-Hy4BA@mail.gmail.com>
+In-Reply-To: <69d508db-93c1-4dac-afe3-3e3fdfb5271f@jaseg.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 8/20/26 20:44, Jann Horn wrote:
-> On Thu, Aug 20, 2026 at 7:22 PM David Hildenbrand (Arm)
-> <david@kernel.org> wrote:
->> On 8/18/26 21:51, Jann Horn wrote:
->>> If the system is running with PROC_MEM_FORCE_ALWAYS, LSMs currently have no
->>> good opportunity to block a process from overwriting read-only code in its
->>> own address space through FOLL_FORCE writes via /proc/self/mem.
->>> The security_ptrace_access_check() LSM hook is bypassed when a process
->>> opens /proc/self/mem because this is considered "introspection".
+On 8/11/26 17:18, Jan Sebastian Götte wrote:
+> On 8/11/26 17:14, David Hildenbrand (Arm) wrote:
+>> On 8/11/26 17:05, Jan Sebastian Götte wrote:
 >>>
->>> This causes a hole in SELinux EXECMEM enforcement, which tries to ensure
->>> that a process cannot create executable anonymous pages.
->>>
->>> PROC_MEM_FORCE_PTRACE prevents that and ensures that such FOLL_FORCE
->>> accesses are only possible when the LSM allows ptrace() attachment; but it
->>> is unclear how quickly PROC_MEM_FORCE_PTRACE can be deployed in
->>> environments running lots of third-party code, such as Android.
->>>
->>> So, introduce a new LSM hook that can forbid FOLL_FORCE specifically for
->>> such "introspective" accesses.
->>>
->>> Signed-off-by: Jann Horn <jannh@google.com>
->>> ---
->>>  fs/proc/base.c                |  6 ++++++
->>>  include/linux/lsm_hook_defs.h |  1 +
->>>  include/linux/security.h      |  6 ++++++
->>>  security/security.c           | 15 +++++++++++++++
->>>  4 files changed, 28 insertions(+)
->>>
->>> diff --git a/fs/proc/base.c b/fs/proc/base.c
->>> index bec6197329dc..3dfaef49bb70 100644
->>> --- a/fs/proc/base.c
->>> +++ b/fs/proc/base.c
->>> @@ -851,6 +851,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
->>>  /* private_data for proc_mem_operations */
->>>  struct mem_private {
->>>       struct mm_struct *mm;
->>> +     /* Was the ptrace access check bypassed due to introspection? */
->>> +     bool introspection;
->>>  };
->>>
->>>  static int mem_open(struct inode *inode, struct file *file)
->>> @@ -864,12 +866,14 @@ static int mem_open(struct inode *inode, struct file *file)
->>>       priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
->>>       if (IS_ERR_OR_NULL(priv->mm))
->>>               return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
->>> +     priv->introspection = priv->mm == current->mm;
+>>> I'm aware nobody is really using secretmem. I decided to build this on top of
+>>> secretmem because it's an existing API that actually kind of fits the use case.
+>>> While I could have added a new API just for this (marking userspace memory as
+>>> wipe-on-crash), making it part of secretmem instead gives some additional
+>>> defense-in-depth protection for both users who only need wiping, and for users
+>>> who only want secretmem's additional protection against kernel memory read
+>>> primitives so I think everyone wins here.
 >>
->> Is the feat that the fd could be passed to someone else that would then not be
->> detected as introspection?
+>> What I was thinking when I looked at patch #3+#4: 50% of the users you add are
+>> irrelevant in practice.
+>>
+>> Or are you saying that you are going to start using secretmem for your use case?
 > 
-> Yes, exactly, that's the primary reason why I did it this way.
+> I'm in fact going to start using secretmem.
 
-Okay, would "opened_by_owner" or something like that be clearer? At least
-"introspection" is less intuitive for me.
+Okay, thanks for clarifying!
 
 -- 
 Cheers,
 
 David
-
