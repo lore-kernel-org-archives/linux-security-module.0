@@ -1,130 +1,162 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A52489866
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 13:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787318150; cv=none; b=Xfn/96TXpvHwQNyGIKwCHdrGXndbim2NRAA4UgKLB1yz1npXveLew54Hz3NpNsJ0sX1LhmkOBdc8Erf1PhFKfBGSUAV1j1AXb5AiINMf6uENH+C+zbNhV/15cc3dTH48XW9rrEI23ZG1zr4lBBUo0tVOROk6Xdfoqdwgi23XI9E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787318150; c=relaxed/simple;
-	bh=TOgYQZ829UyU2jOilwn5+g3K5dTtN7xU+CJosTc4jVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzdcM+GwYPRpqmwheZjSDIvvWbbQ8cq86IGA+PvhW6imHEK2fr1xsGrpzRLEA20U4ZiiNrGXmjdbwvRoUtgf1kDuiJGY6MMADcUHzhyyA1YZ0cFBXk+Wmv1kANb/rZHEoF+nmnSsLgcdMrBmNlGDGvLttZ7zrR7Yh5yvO3WOI8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMv6j9VU; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D73B324B33
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 13:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787320343; cv=pass; b=Zb1gwE+IPKRulwL/KtplHWyv95HQNNiQHY25u4LUJBLTfl5nIMqGMLvzWJPYNGtyrrWcT5lZssTzucWK9YXEQ4fwU+NK0bu4W9t+V/7rCGJGkZFkVidBf2rOH7i0joYK23YkCedQYitqGQqIM/5xn1fe+e/JiKRtGTWe1xN26qQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787320343; c=relaxed/simple;
+	bh=sMCXD58Ck7XMjqxi99CPuHjkI5MeTfpATIu7xweU010=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pFRi4LS/1z9pBquhv6JHsqjrTva9NBmjXjBFBu04LSAh2Uf0C6zcYdBGUHgdie+c53SgHAg7BAOjGyqYqrgtPoSXeZ6P724u9qw0UEkaqiTp4Wef3MrEWs+gk6mC1MEEOBiuNnGqgjVSSrTAWS2jB1rC7xwO3dE3dH14MMQ1n3c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AOkW+V22; arc=pass smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMv6j9VU"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-81ecf499af9so15153477b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 06:15:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AOkW+V22"
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7e9f69ee6f4so1246146a34.2
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Aug 2026 06:52:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787320340; cv=none;
+        d=google.com; s=arc-20260327;
+        b=adBwC7M3LBZ87V64KjwwgTjkjydobVUWSAQMqn/cvzkwi8GSK0CVa5zZ/9hyhQB1B3
+         nqiFrUnER3I2J+NQWzgHAld4N9nrmhqG1VANgELmjA0Wm0Gq5XtDJF8IuMneyukECSaF
+         HyZaa08u+zOmVmdo9AZzzhPwGzvTBhRz75I+75tcMgYONfdPsX1hAbE8GeEw3aeW4bAh
+         ncru1aJOBPhxumGgIdo/xov/ujGcImY3R6NNhX5NdO3Mi+K/ZdBjN6UDrarqFFv1jgt5
+         WiXRzNIeippieIvisHgO4v3o9wGm9Z+t6anHHpzy4j3GROWzOaZmFvdKtGsncfGaMBtK
+         6mIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=0MQng+9xXyTKknMt+t9Rj4wyf14y6xu9aKeDOtOOdJk=;
+        fh=OsjRmjeYdmzLFRYEk2hJDdSJ/Wv8kCU4pNFxCjBQD/E=;
+        b=nqYxOctRQ3Fqi9MgL4cuuSlRHS/Dl8+Q7SQ7SNb859th86RYNYiBlrcUUUOlV1JBkS
+         MUzcuAFy1awEhETcunhEJ8d2H9OQMF7qUmc1ryM3bIt17Z4px3EHYvZDEqnztOQIQamN
+         96GNTHE3AtMZcJc2f0dHgFQ/pGg5gPqDIIEdEYtoYiJ+a6Btk8EZnm+gFaUmiORBBUqY
+         GQtyvHvQjJ13u8skt9yHnmoAHENTImsLdUMTY86e4AlpM4nUxTaygMlJ3O1E+mgUeW3F
+         cpztaNAiFXPGYLY/VoMZItOIZEsr/yRfYlg1JcbZt9oyDtGiwmRMzVob+c0W/Drdtl8H
+         LFSQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787318133; x=1787922933; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=vH94uxfMfesjNr68TvUP5/weYC42qiuv499mvdY0TYU=;
-        b=aMv6j9VUq+cFb/uq0Z438I+ZDp6BJvKZ/zxEsEacDqFOpbbz0pKLicmDd476xMtN5k
-         SBcT83qoMKjq44cW68L3Jf3nbgoQ6TxhsJhH5gph+M/75MknsCC3gkgoBrb6DInYZ98m
-         Fa2fYIeVkObfP+CTDRbIRMk/veMmwiFxXgXrKhhNFyuVlwp9uqAqEWrUmbLS/xxT2h54
-         qAF4wkt3KgyrdLHBm18jcqX4HjFLPb7xEvqK1VurXTjP+jZVztuUb+08uvRIY4j1C8Uc
-         +yC1u315UvFgitDEq4DfCotXT/hUs0qWJOqiNJSRVx2z1c467oHbEGuojGQWLct0CKZ9
-         WmBQ==
+        d=gmail.com; s=20251104; t=1787320340; x=1787925140; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=0MQng+9xXyTKknMt+t9Rj4wyf14y6xu9aKeDOtOOdJk=;
+        b=AOkW+V22rhrAxcDrepdr3WEBsSoDX46UNW13oEtBAtR86Zl+J5D9pmddAY7Bk0995M
+         QuotVn4oehPG+vCPdruMMX5U4gu8EZ+yy2gw7vaEU7vUfqAs7W4uvZAshk9+a24YGt1V
+         hE0y9L7jgoUSzx6YXi9cqEVIleBrHRIctPZ70NwPdGmB36PovDhg/W1EwlBaMinmXMVv
+         E7Bvs3AtK2x6BJeUad3NremEA8nwU3nHssME2Xb5WOKNMZyRHRlhluK3JZwXDkD2/oSL
+         BxNctSj79dDb32MfOHET0LHHkDLRVhjufn6uuN60QOwQNIrvxdZPfzC/N7NGwXuZjD5i
+         ukyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787318133; x=1787922933;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=vH94uxfMfesjNr68TvUP5/weYC42qiuv499mvdY0TYU=;
-        b=IfaAqeJHPjsHoGnW7/Mi67s25tN05FB38UwoXZwe2yf6p/ywyfHnnACyreXoGYSc00
-         AQljck1tRHGbrgo0+rwjhLatiJZhmbKpvoQLEQ+m5ftsYku1Qzs79hefy268n6ORopoM
-         TKRPryL23XDzaj3qcv5aIovJfpN9LqtSshXWLqs2NWkw1wCxfYeO5OhS3Qe96yoI4GXe
-         +zfLubvB7bmb/BaF7108GR7y9g7xb6itGzpQga6D364EZmtQs2FpJI31ExgEwJLT1n4K
-         YDWDilzOSVzYfyMwmxunq6bypa4JR+Fu8AKWVXMVapZtLb9hbPsdT/1UN+C9X/ckxkHF
-         oH+w==
-X-Forwarded-Encrypted: i=1; AHgh+Rqdc4DkAJ1T9v3+1u2KUrZtF9tTV+JHHQdf/+cW786rLFYNd9XjUBwH+EVIBeDX7e1phYU0+GC5G9LbWTV2d/xC3x0legI=@vger.kernel.org
-X-Gm-Message-State: AFuF++kjrxonzGXJapGARE78Ceqvwbl+o7Dncrre1ZwxCkhuVYLqSWz2
-	s4ypfw1xQDYJzuZk7+q/iFF9514NdZ0ywoZt7XVkc7yWdWoBJ7pXluei
-X-Gm-Gg: AR+sD13ffThmXP8VpdmiofQKBSVwt5N9kuot187bS64H4YMuvS+iCDJMrGhfZFz41eW
-	jAGuwFAMovQ3UEaI78CIIMlZPwipMjx+JOdAPBE2gB0vpYLWClDT1rm3HY8iBQaBp8yXAEALD2I
-	Jb4O340Mol++6cVPSmgiEus+ZQC54aNOeG0zQGJBWlzrNxGBXWg0029CtdPYr31OKfPgsQCJ6bm
-	eePP0HfH6NZc0L6hZryoAKnbMf+6twgGINCVPSM93P96V2d3K+HQ/SycDELgbCbbdjjI8AjyXCL
-	D+st6Poj7bOyEOGzV/w2z8/c7HifptgLWPKZpfclS+vn7CPsBQDN4/6BgSGemHQP+/qHzP0DZYE
-	5gqMYGo5BsR3Dk/WQ1kgwTma252qmRwQV2bd5lkY879nCeo74r9vxEGPU2iuxd1ed1+LmFklVbu
-	wBYZ7vsAgr41+4Lw3wgvyLz/jVt+RZvnInNNgJjulwHOvrUAXzTD8Bdl9+XRCcKyu9Qe1QntLuo
-	UactnfpqdnOZTETsrqmsA==
-X-Received: by 2002:a05:690c:2702:b0:833:a89f:6cab with SMTP id 00721157ae682-849f0145609mr29244477b3.2.1787318132623;
-        Fri, 21 Aug 2026 06:15:32 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:350e:631:3b2c:9519])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-84512762addsm39350687b3.15.2026.08.21.06.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2026 06:15:32 -0700 (PDT)
-Date: Fri, 21 Aug 2026 09:15:31 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: mic@digikod.net, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] landlock: Bump ABI for
- LANDLOCK_SCOPE_SYSV_MSG_QUEUE
-Message-ID: <aohKoD4GqIFR4ni4@zenbox>
-References: <20260727230833.138165-1-utilityemal77@gmail.com>
- <20260727230833.138165-4-utilityemal77@gmail.com>
- <20260821.ad614a879e61@gnoack.org>
+        d=1e100.net; s=20251104; t=1787320340; x=1787925140;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0MQng+9xXyTKknMt+t9Rj4wyf14y6xu9aKeDOtOOdJk=;
+        b=QLv+jkEdLsKrC9pRM6q7XzU7055X/qgJQfNchFh3ll47CcaC8qILI/zwowwD7e5BT4
+         /n+5wHKhNZA039gpoLDanjI9cXASB3d6JxSM6PkAmygXhWukExRqvnfe/e2dYGTgbyJ4
+         fcPkpyHdv/YyqIK5m6FiiTCqVkR0l4XkHD0iJbAV0M+zU5g7yUvFht6VMHVKxAK5ljXj
+         jCJDRTZBfJjFanynNyP4zjmWANRS0elVl7J06+FSZv/bnGHpouUhHD3J2qo5HINSRCl3
+         3c++SwdeFfkfpjzM+0VhwmqnAtA39bHI6FQ/DgrD9xYGSAIkat1I9ZNcyJDhfRBs189T
+         1HJw==
+X-Forwarded-Encrypted: i=1; AHgh+RoJ5aGRo0sToQjVfyVIP6jXDcJhXmX2lpI6fx9PDG9wAJCsL4hhs3LJfOetRH+CpfiwaOLbmouRFgdG7cbVoV8cMU/2mAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKaNKEEfh2I90vHfgd7b/GWv1Cm/M31kaeAS+n9A+C7sl76aLu
+	nXz1B2fFHsxOk5fo/uPWYVG2f2jtnZPibT3bWRXjU2hCFye0hLM/o6NNxF4HOCRex2Qq2E4MCcZ
+	1xT6OsKGLd47RlcCz55/+YNjM1tuJ0ss=
+X-Gm-Gg: AR+sD13r3bCS4Kq4VXbxYrPuUOPpe5tQX4Rx8Bq2Qb5xrYi6glbhdwfkDY0lZMNc/XO
+	RI9eob71hn5d5flhZBdQ4ZxcWu2x5wciWE6V8auDUx9iRF2ROcRgGNBcswvTsZXQSDkoS0Evl1b
+	1L5+uVZSE4MMkwl9O8h3dW3iAWJaRmJjfGVtD1S3wdtQzbp08sX/2HBBlSS8or6Nab+Dyov9PL0
+	Js/gfIbTFQIJqda+cPkzjO2fZCtR9AB1B1nquveyn6THuNtLsBy2A+PMMqky1WEkfGVEKXszfSl
+	7TM//7uIiOZP171giEGdNYMKxAJJWWjZaUjI6mrg3/MI
+X-Received: by 2002:a05:6820:341a:20b0:6aa:e176:bcb5 with SMTP id
+ 006d021491bc7-6b15925da2fmr5108790eaf.14.1787320340365; Fri, 21 Aug 2026
+ 06:52:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260821.ad614a879e61@gnoack.org>
+References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
+ <20260818-selinux-pokemem-v1-3-90cd2357ee05@google.com> <CAEjxPJ714iCMiQRVAN6MQoOyNx998MS5Xfhbhmugcwz+gWYAuQ@mail.gmail.com>
+ <CAG48ez3h2Gft4onQ8AgBmf8gHrF26YqTinajuBysNPkUKaTBoA@mail.gmail.com>
+In-Reply-To: <CAG48ez3h2Gft4onQ8AgBmf8gHrF26YqTinajuBysNPkUKaTBoA@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 21 Aug 2026 09:52:09 -0400
+X-Gm-Features: AcwNN1XIMQRcAUBNk7fjxozSpQ8JckvqGIQ5KHe6kYNDH33rw4pKhCm-h8pgeiw
+Message-ID: <CAEjxPJ5cUDBekWe7fC1JYnw6CfT8GVa9fqrFwLPPAOqSP6jn3g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] selinux: require EXECMEM or PTRACE for FOLL_FORCE introspection
+To: Jann Horn <jannh@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jeff Xu <jeffxu@google.com>, 
+	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, 
+	David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 21, 2026 at 02:38:15PM +0200, Günther Noack wrote:
-> On Mon, Jul 27, 2026 at 07:08:30PM -0400, Justin Suess wrote:
-> > Bump the ABI version for Landlock SysV message queue scoping.
-> > 
-> > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> 
-> The ABI bump is normally put into the same commit as the
-> implementation for easier backporting. Otherwise, looks good.
-I'll squash them.
-
+On Thu, Aug 20, 2026 at 11:23=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
 >
-Thanks,
+> On Wed, Aug 19, 2026 at 4:54=E2=80=AFPM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> > On Tue, Aug 18, 2026 at 3:51=E2=80=AFPM Jann Horn <jannh@google.com> wr=
+ote:
+> > >
+> > > On systems configured with PROC_MEM_FORCE_ALWAYS, ensure that a proce=
+ss can
+> > > only create anonymous executable memory via /proc/self/mem if it has =
+one
+> > > of:
+> > >
+> > >  - EXECMEM (like for other methods of creating anonymous executable p=
+ages)
+> > >  - PTRACE (like when using /proc/$pid/mem of another process)
+> >
+> > Allowing it if _either_ permission is allowed is unusual in SELinux
+> > and seems prone to errors.
+> > Is there a reason to not just require PTRACE always?
+>
+> Hmm, that might work.
+>
+> My two concerns about that approach are:
+>
+> 1. This is an operation where a process acts on itself, while PTRACE
+> is normally for acting on another process. It feels to me like those
+> are different types of privilege.
+> 2. I feel like blocking this operation even for a process with EXECMEM
+> privilege increases the risk of breaking existing configurations.
+>
+> I think if we want to gate it on PTRACE, we might need to put this
+> behind a policy capability and let policy authors figure this out?
+> But I'm no expert on how new security hooks are normally added, or
+> what SELinux policies outside Android look like, so if you think it
+> would be fine to just check for PTRACE, I'd be happy to go with that.
 
-I did wonder about if we need to use the landlock_object here?
+I don't think a new policy capability is necessary here. Is there any legit=
+imate
+user of this capability that wouldn't already have ptrace permission?
+The other alternative is to introduce a new permission for this, but that w=
+ill
+deny-by-default on existing Android and allow-by-default on Fedora based
+on handle-unknown until it is defined in the policy. In the case of Android=
+, my
+understanding was that kernel updates can always be coordinated with policy
+updates so there is no need to worry about a new kernel breaking userspace
+with old policies i.e. if and when Android ships a kernel that
+includes these patches
+they can also ship an updated policy that allows the new permission
+where necessary
+but I could be wrong.
 
-I'm pretty sure SysV message queues stay open after process exit,
-which could cause the domain to be pinned by landlock_cred_security,
-if programs are lazy and don't close them.
-
-So it probably needs to be a weak reference. 
-
-But it's unclear what should be the behavior there when the domain
-is dropped:
-
-1. Should it become inaccessible and belong to *nobody's* domain?
-
-(i.e when owning domain is dropped, the queue belongs to no domain and is inaccessible to
-all LANDLOCK_SCOPE_SYSV_MSG_QUEUE scoped domains)
-
-2. Should it be moved to the parent's domain?
-
-(i.e when owning domain is dropped, the parent domain is the new scope,
-and then it's parent, so on and so forth, more complicated, but more correct)
-
-3. Or be kept as is.
-
-(i.e Allow an open sysv message queue to pin a domain
-for it's lifetime)
-
-Either way this almost certainly needs to be rebased since it's been
-a little bit and there were significant refactorings of the domain and
-ruleset structures since the tracepoints series.
-
-Justin
-
-> –Günther
+> (I've caused stable regressions several times at this point and am
+> trying to avoid causing more...)
