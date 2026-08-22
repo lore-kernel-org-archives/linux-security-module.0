@@ -1,450 +1,195 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851D9376A19
-	for <linux-security-module@vger.kernel.org>; Sat, 22 Aug 2026 09:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0A1302163
+	for <linux-security-module@vger.kernel.org>; Sat, 22 Aug 2026 12:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787391859; cv=none; b=qmkwL49Qgv5lH1CFCKx2uAlK/ZOUj2NsUsS4vIUxagtwlf5dsbnk844gzZ1izmyUU5rE3Vz/do2OFAC8amE7r5Ds2OgtzE2Q5OvAZFardATBfMp8iFy3nFEoKO77vanHrDtSFn49EZHGYQVdov5bQZEa2uMiNJkO4bH8SrgkZEw=
+	t=1787401756; cv=none; b=vEFk4pb7dK8nhXhK91QLPojrqWHJUQnD5C61ZLZ6mlUIKGHR+w4b1+fd4QeuKUKHQQxpFWAaNIxR579zWE7v+c0m6UoJ47qfAPBJNx3eJA0XsOo04IjXKWbbTMCr68FodEE3ZrkoZr/7kubiJ5IJJCSb7GDJcTI9aSqLl4c3Ty8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787391859; c=relaxed/simple;
-	bh=3r0pCpBSEptVHBr59f1zhosRG2XBhmLXItK/DBzhJ7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZhJOLEQl6o6XQseiQuSvIN0le0tA7Sn0NOxIvyjT8ZkuSzol5pYYu2gwZzgzfZKt6mrnkXNMDZDdQvwV2fQsRaWhMQy3LTqnGW7du+YaNCLqG+RGJKfaxqYhj/lxhjEHL1Pbx+hWc0CL9vXv4Yt1Al2s589WkxmjzUHZzROesNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ozfRMdhk; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787401756; c=relaxed/simple;
+	bh=4yHzd0/sD7uWBpqiQoo6tgH5+VFqqncgDUgCAHisFbU=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=FC1snPbN5cdJ59m2iXVEIAwR6wg3fTXn/85pSCP2uwp6cwxDt6b/aEE2Q2Mby/nEJTkaOSR9Dzmvtv1DApByjjDX2kfjPmQH+QSxAHPrvovfdmnaQ0cWcFPdPPB8TIowe3yRx83GJVdAk2gEPHlm11vOrLAX2Sc4Vsihq7lYh0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doyensec.com; spf=pass smtp.mailfrom=doyensec.com; dkim=pass (2048-bit key) header.d=doyensec.com header.i=@doyensec.com header.b=LpNH3huC; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doyensec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doyensec.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ozfRMdhk"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6a17cb94b26so3749611a12.3
-        for <linux-security-module@vger.kernel.org>; Sat, 22 Aug 2026 02:44:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=doyensec.com header.i=@doyensec.com header.b="LpNH3huC"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c15f020a223so284752766b.1
+        for <linux-security-module@vger.kernel.org>; Sat, 22 Aug 2026 05:29:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787391856; x=1787996656; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CWXN+LsGTbtN5NpR/5hZetypQ75mLg2EuqRMH1IUCeQ=;
-        b=ozfRMdhkr6RKe4oA8nTJjIIhzTNBMpHwaustof9gLSr989abeXVqyaOJ9n9KLvC+Qf
-         gykFkzcpde1SEgJQeduwv8r4sIlKMtpwMydPvue8NHdlEEcSlKmKW9Ph5ZBLBSJTJ4j0
-         /KxG+J+cNwOBXA9X9O6oeS3Ml0KV5Uy5cWhJ3GNE3/t6/cIjpKW6MdsBNSVfjbTMxnCS
-         lwQHR2+U3vWd+Qbu15k8Mtl8QAYUPVvxhGcn4MEXdAE4YwyD8bnbZcyAL7AV4aktxJKT
-         u7/7QzyD0ZoUqJDSl/ZIv+mz4f6c98WJWPazf08Auuw3hGmeyCnHPdzGEoS5xWTolZGG
-         92+Q==
+        d=doyensec.com; s=google; t=1787401752; x=1788006552; darn=vger.kernel.org;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:content-type:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=V7iKMrQWKrNcFUdtPEGrYqrgrtfQs5EtCDckx7iIZKg=;
+        b=LpNH3huCo2K9HkJ0ovRFb7spQxXj+x+JTiRmAhLHbpHuvAWqrEhO/bI8RasRauLmPk
+         Wvn0FdvvaGdm9KHtrVyom2xyO5pcD0UXpBquN8JaU0y9AaOqIKMPxjO7oQiO/qHmucF9
+         Gs5x13Xq1gHIhZVr9G+i73flJzH4j9AdVgnrVle5kmO6mcHy2ZYYK1WhpL+E+JIFH+Z4
+         WKh1RWYNKt4lhReJEgdh9r5oVf+2Lcb2ZEKhjaO51uzAAQKyKrYIZh2GFDHXgnQvBCwi
+         dT864mc6DZFio4tqMSSh801Pgvc4yYWtXVQReZ7n4tGVVThXivOA4X2TrJDIYSSvNVaT
+         aDsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787391856; x=1787996656;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=CWXN+LsGTbtN5NpR/5hZetypQ75mLg2EuqRMH1IUCeQ=;
-        b=dkTm3EePoD1YiCK2jBYmVrihDkoD0VBvVZbw4EDWhbiJgABlVny2dlIrC4yblrPXGP
-         FrcNN0kAAUmoQtGzbteSEC6X+haJWxxPmNTgKhdpHXobK6mkTa65OAWTzFGOOV+dCM2q
-         m1gxKVlIbQSa4SFIVbITvNEkDGwe92x7/AdSJ3s7YjZfH6F3nkfLHngK3XMdl07bfLK9
-         w7+fzO3c5DqBpO5ZC0DhuTi/RpFJdGzBwikJ6b3d32tzaBAT7r2bXoVTFi7xCUANlYWV
-         KCVFHTE646Aw3fHXq277oBgG1seBv5Kc0Fz7Z/jXSj2wbnjjCFRtAf92SYE5a3ggRyZW
-         0mdw==
-X-Forwarded-Encrypted: i=1; AHgh+RqF1kMWzoV6C23zys5aLzKAwgokPHQmaLRUD1LkJKTy6Qr4HH771oztwGBlLAHStJHxp4E9Qs9jI080u/Kz50P++zvivvQ=@vger.kernel.org
-X-Gm-Message-State: AFuF++nvKU9lHS5uyA7dBsqskgTpBtjclpZ0k5mTkPlROYx4Uk4UfBIN
-	9vY0eSCkQ5UVNx+V0NvQ68NvKvjkee32ynzScq7hCY3Rx/rfiBhk3kpJ0U4cevlA
-X-Gm-Gg: AR+sD11wA2zY8ST0ZAen+U947VAz479ncPJyuv2JkzrZJ/CQuInYW2rPlEd95Ecc4YL
-	3AqIh9rujyD0J1FLjACdUJO47JfszNTudBobxuMvjNHvto3av0If6PHL+l+AcdIKodf2TJBv+L2
-	G1aIppTpPXf1pa8AmP7UeHOBa7+1E1mlLet+tdbV2PsxzWU88hdxSOrSSUVTwhGLn8/GkcA9iIV
-	qF5xplfBAytRI3CtKcjH6KfFxKIbzFoJXCPWTBLoSwd3OmxMyOEFNufcTBrwLFZBol4SqQtijkS
-	SDND7rkky1L2lBRqJ7+Ny37tjgzVLRD2fqszyGOprbdPD6Ki5CyxZP+Qort1pOe+gHWhKC/2Rin
-	ZSNspIZbxBiFdK85P2pExUVgYTrIkSzp5JISFteg39t5gVOZe8v2Ku9sHN98M3wx3Bfza3Hq9Dt
-	z4cSnXgvKq2VMitvtEKNQZMgAUmh+LEhmgwpMEStFlddAsy0eRH8YYiZxvAYP6ZUEaao6yv1xZe
-	mAnW2PDwGuHuw==
-X-Received: by 2002:a05:6402:444a:b0:698:351c:979c with SMTP id 4fb4d7f45d1cf-6a42f16f016mr15134707a12.2.1787391855454;
-        Sat, 22 Aug 2026 02:44:15 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a3ff178289sm11322478a12.30.2026.08.22.02.44.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Aug 2026 02:44:14 -0700 (PDT)
-Date: Sat, 22 Aug 2026 11:44:08 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: mic@digikod.net, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] selftests/landlock: Test
- LANDLOCK_SCOPE_SYSV_MSG_QUEUE
-Message-ID: <20260822.6e90a5c8196c@gnoack.org>
-References: <20260727230833.138165-1-utilityemal77@gmail.com>
- <20260727230833.138165-5-utilityemal77@gmail.com>
+        d=1e100.net; s=20251104; t=1787401752; x=1788006552;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:content-type:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=V7iKMrQWKrNcFUdtPEGrYqrgrtfQs5EtCDckx7iIZKg=;
+        b=EGs/aGNbw4UnAqMYfXIK3BScckosKD/GY+HA43Udp9NLz9EzUgm/QZpJzP0xsdfZWG
+         sKZ86OxNQvY5v23ca9OO4akpJ90A1j0B+X0BsCJWPSCKarNzF/vdUMKqeSk5jXR9nzW9
+         T08eMdbVq8jG5uTMTznWkug8Ch6jLXaOCeaB0Dtk10NsUhtE1H2layXTzGYA8Za1YO2h
+         CgtMvwJTkia6Y/OB+PAd5wIzuogHJ8bL13x3L5UwGyCXn0xmsdfm+MkEqVVH2ziwh++O
+         2oaxF1v0nu4zkxHIUy4graDQwmB4yBHoercyxkF1chIkMMoF9cWBOSYM45w2tFLiWnMy
+         YC4A==
+X-Forwarded-Encrypted: i=1; AHgh+Rr+ngIXJtk6B+82Q/uwiYED0peKM1qtO1LQWVQuWnbqeX47h44tDVYD6kd6hh8+GstPYfKS6WX4csyEb8foFcqpdeOH+Ks=@vger.kernel.org
+X-Gm-Message-State: AFuF++m0G71ZQqqOA/NoeznJdTMFbgSZ04ZvIhpRyNFJ9ZWVlnR7U891
+	oSXnOpkAZ2/L4Mn+zlCXI1Axv+/B8IFu+28LL3SH8/JWAoObrjbRuAnCjd3ENo4BKos=
+X-Gm-Gg: AR+sD123H22akbWn+LtCLxngUGe635Dx53gz/ebQJhBsVogzjpPVW91/8gse8RFGeeZ
+	a68CbTVqDkmIZilZxyU+hA1IEp0Ygm4323FkY+r10YZoUzIg/02hR60l+wlUDx6y/TRudKCajUm
+	SNxN7qvRNNV1wn8OwmWC2mDeZ0vZ/DfuWyRVRiD/2Ds70Xh3uA6kFt88vqqFZfnUY0xVxlHTnsP
+	dwwUwNREbcwprqddH0O+CswZw7bC8V7e+VxZ+OtownNyGoUOfBYuyRHh3KFj4S1jcrgaM1+ObdD
+	Rt3sjlJ6a/Epe8U0iaLi11B/jpSwaiznOaSqczpxktczlvJc79hZAsAt8ipX7oplMWiv1ggnY44
+	A83HFSHOx3nRsaPjm7cF+rQ250udD6sDaMfERz1vB79fRG3lKhmw9TUQaTbu7yzVMwHXdkkx957
+	2kBBAux+GICGL8KbDHmgLMIKKObMlHifDuY9gdruaRA1Y1C4mc7O5Bx+pNYWhy54KmUAt04e/Dj
+	ShBrS+RXYpjXvAl2HjEiTGa/UiYh/t76jdJGZNNVC62eN+rIdp85vha4rP9U899usd0tK+MqSjf
+	owsaMkhDyNJa0+tJ6iHUnw==
+X-Received: by 2002:a17:906:eec1:b0:c21:61a6:8825 with SMTP id a640c23a62f3a-c246a72e5e4mr1468035066b.22.1787401752232;
+        Sat, 22 Aug 2026 05:29:12 -0700 (PDT)
+Received: from smtpclient.apple (78-141-71-213.dynamic.orange.sk. [78.141.71.213])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c249606b60asm314268366b.9.2026.08.22.05.29.11
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Aug 2026 05:29:11 -0700 (PDT)
+From: Norbert Szetei <norbert@doyensec.com>
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260727230833.138165-5-utilityemal77@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.4\))
+Subject: [PATCH] landlock: Fix use-after-free of the source's parent directory
+Message-Id: <E9CDD9E6-E960-4DE2-B1AC-5667D52ABB3E@doyensec.com>
+Date: Sat, 22 Aug 2026 14:29:00 +0200
+Cc: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+X-Mailer: Apple Mail (2.3826.700.81.1.4)
 
-Hello!
+current_check_refer_path() reads old_dentry->d_parent without holding a
+reference nor a lock on it, and then dereferences it in
+collect_domain_accesses() and in the audit record.
 
-On Mon, Jul 27, 2026 at 07:08:31PM -0400, Justin Suess wrote:
-> Add selftests for SysV message queue scoped right.
-> 
-> Use the existing scoped domain harness for msgget, and another fixture
-> for testing msgsnd, msgrcv and msgctl.
-> 
-> Pass the msqid around for coverage of non-msgget syscalls, since calling
-> msgget while already restricted would fail and prevent testing the
-> operation under test.
-> 
-> Denials are checked against -EACCES rather than -EPERM: msgget,
-> msgsnd, msgrcv and msgctl(IPC_STAT) all reach the Landlock scope
-> check via ipcperms(), whose callers map every non-zero return into
-> -EACCES before propagating it to user space.
-> 
-> Track the created msqid in the fixture and remove it from
-> FIXTURE_TEARDOWN_PARENT() so that queues are reclaimed even when a
-> failed assertion aborts a test, and so that the removal is never
-> subject to the scoping under test.
-> 
-> Also add CONFIG_SYSVIPC to the selftest config fragment since the new
-> test requires SysV IPC support.
-> 
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> ---
->  tools/testing/selftests/landlock/config       |   1 +
->  .../landlock/scoped_sysv_msg_queue_test.c     | 265 ++++++++++++++++++
->  2 files changed, 266 insertions(+)
->  create mode 100644 tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c
-> 
-> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
-> index 8fe9b461b1fd..8acb03464df4 100644
-> --- a/tools/testing/selftests/landlock/config
-> +++ b/tools/testing/selftests/landlock/config
-> @@ -15,5 +15,6 @@ CONFIG_SECURITY=y
->  CONFIG_SECURITY_LANDLOCK=y
->  CONFIG_SHMEM=y
->  CONFIG_SYSFS=y
-> +CONFIG_SYSVIPC=y
->  CONFIG_TMPFS=y
->  CONFIG_TMPFS_XATTR=y
-> diff --git a/tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c b/tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c
-> new file mode 100644
-> index 000000000000..91a560c957e6
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c
-> @@ -0,0 +1,265 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Landlock tests - SysV Message Queue Scoping
-> + *
+A reference on a child does not pin its parent: __d_move() reassigns
+dentry->d_parent and drops the reference the child held on its former
+parent.  hook_path_rename() is not affected because the rename path =
+calls
+lock_rename() before the hook, so the source cannot be reparented under
+it.  hook_path_link() has no such protection: do_linkat() holds a
+reference on the source dentry but neither locks nor references its
+parent, so a concurrent rename(2) can reparent the source while
+security_path_link() runs, and the former parent can then be removed and
+freed while the hook walks it.
 
-Extraneous blank comment line here; did you mean to add a Copyright
-line here?
+Any process able to sandbox itself with LANDLOCK_ACCESS_FS_REFER can
+trigger this with a linkat(2) loop racing rename(2) and rmdir(2):
 
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <linux/landlock.h>
-> +#include <sys/ipc.h>
-> +#include <sys/msg.h>
-> +#include <sys/types.h>
-> +#include <sys/wait.h>
-> +#include <unistd.h>
-> +
-> +#include "common.h"
-> +#include "scoped_common.h"
-> +
-> +/*
-> + * Removes the message queue identified by @msqid, ignoring any error since
-> + * the caller might no longer have permission to operate on it (for example,
-> + * after entering a scoped domain).
-> + */
-> +static void cleanup_msg_queue(int msqid)
-> +{
-> +	if (msqid >= 0)
-> +		msgctl(msqid, IPC_RMID, NULL);
-> +}
-> +
-> +FIXTURE(scoped_domains)
-> +{
-> +	int msqid;
-> +};
-> +
-> +#include "scoped_base_variants.h"
-> +
-> +FIXTURE_SETUP(scoped_domains)
-> +{
-> +	self->msqid = -1;
-> +	drop_caps(_metadata);
-> +}
-> +
-> +/*
-> + * The queue is removed by the (never sandboxed) test harness parent, which
-> + * also runs when an assertion aborts the test after the queue got created.
-> + */
-> +FIXTURE_TEARDOWN_PARENT(scoped_domains)
-> +{
-> +	cleanup_msg_queue(self->msqid);
-> +}
-> +
-> +/*
-> + * Parent creates a SysV message queue, then the child tries to associate
-> + * with it via msgget(2).  When the child is in a domain that scopes message
-> + * queues and the parent is not in that same scope, the association must be
-> + * denied with -EACCES (msgget runs the scope check via ipcperms(), which
-> + * masks every denial as -EACCES).
-> + */
-> +TEST_F(scoped_domains, check_access_msg_queue)
-> +{
-> +	pid_t child;
-> +	int status;
-> +	int pipe_parent[2], pipe_child[2];
-> +	char buf;
-> +	key_t key;
-> +	bool can_associate;
-> +
-> +	/*
-> +	 * The child can associate with the parent's queue unless the child
-> +	 * is in a scoped domain that does not include the parent (i.e. the
-> +	 * parent is outside the child's domain).
-> +	 */
-> +	can_associate = !variant->domain_child;
-> +
-> +	/*
-> +	 * Picks a per-test key derived from PID to avoid collisions.  Stale
-> +	 * queues from a previous run are unlikely but handled by removing
-> +	 * any matching entry before applying any scope.
-> +	 */
-> +	key = (key_t)(getpid() & 0x7fffffff);
+  BUG: KASAN: slab-use-after-free in collect_domain_accesses+0x278/0x290
+  Read of size 4 at addr ffff888160bd53f4 by task llrepro2/549
+   collect_domain_accesses+0x278/0x290
+   current_check_refer_path+0x952/0x1120
+   security_path_link+0x1be/0x320
+   filename_linkat+0x342/0x6d0
+   __x64_sys_linkat+0xfa/0x150
+  Freed by task 562:
+   kmem_cache_free+0x139/0x4c0
+   i_callback+0x4b/0x80
+   rcu_core+0x7dc/0x10a0
 
-Is that supported? :)
+Take a reference on the parent with dget_parent(), and release it once
+the hierarchy walk and the audit record are done.
 
-Michael Kerrisk's Linux Programming Interface book only covered ftok()
-and IPC_PRIVATE.  In my understanding, if you pass IPC_PRIVATE to
-msgget(), you are guaranteed to get a new queue?  You are using that
-in the other test below as well.  Isn't that what you want?
+Cc: stable@vger.kernel.org
+Fixes: b91c3e4ea756 ("landlock: Add support for file reparenting with =
+LANDLOCK_ACCESS_FS_REFER")
+Signed-off-by: Norbert Szetei <norbert@doyensec.com>
+---
+ security/landlock/fs.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-
-> +	cleanup_msg_queue(msgget(key, 0));
-> +
-> +	if (variant->domain_both)
-> +		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
-> +
-> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		int ret;
-> +
-> +		EXPECT_EQ(0, close(pipe_child[0]));
-> +		EXPECT_EQ(0, close(pipe_parent[1]));
-> +
-> +		if (variant->domain_child)
-> +			create_scoped_domain(_metadata,
-> +					     LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
-> +
-> +		/* Signals readiness to the parent. */
-> +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> +		EXPECT_EQ(0, close(pipe_child[1]));
-> +
-> +		/* Waits for the parent to have created the queue. */
-> +		ASSERT_EQ(1, read(pipe_parent[0], &buf, 1));
-> +		EXPECT_EQ(0, close(pipe_parent[0]));
-> +
-> +		ret = msgget(key, 0);
-> +		if (can_associate) {
-> +			ASSERT_LE(0, ret);
-> +		} else {
-> +			ASSERT_EQ(-1, ret);
-> +			/*
-> +			 * msgget uses ipcperms(), which masks every LSM
-> +			 * denial as -EACCES regardless of the value the
-> +			 * LSM hook returns.
-> +			 */
-> +			ASSERT_EQ(EACCES, errno);
-> +		}
-
-Testing nit: The checks on the msgget() results should probably be an
-EXPECT_*() variant. ASSERT_*() should only be used when continuing to
-run the test doesn't otherwise make sense.
-
-Compare https://google.github.io/googletest/reference/assertions.html:
-
-    The majority of the macros listed below come as a pair with an
-    EXPECT_ variant and an ASSERT_ variant. Upon failure, EXPECT_
-    macros generate nonfatal failures and allow the current function
-    to continue running, while ASSERT_ macros generate fatal failures
-    and abort the current function.
-
-
-> +
-> +		_exit(_metadata->exit_code);
-> +		return;
-> +	}
-> +	EXPECT_EQ(0, close(pipe_child[1]));
-> +	EXPECT_EQ(0, close(pipe_parent[0]));
-> +
-> +	if (variant->domain_parent)
-> +		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
-> +
-> +	/* Waits for the child to be ready. */
-> +	ASSERT_EQ(1, read(pipe_child[0], &buf, 1));
-> +	EXPECT_EQ(0, close(pipe_child[0]));
-> +
-> +	self->msqid = msgget(key, IPC_CREAT | IPC_EXCL | 0600);
-> +	ASSERT_LE(0, self->msqid);
-> +
-> +	/* Releases the child. */
-> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> +	EXPECT_EQ(0, close(pipe_parent[1]));
-> +
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
-> +}
-> +
-> +/*
-> + * The msg_queue_associate hook (exercised by msgget(2)) is covered by the
-> + * scoped_domains fixture above.  The remaining hooks all funnel through the
-> + * same scope check, so it suffices to verify that each operation is denied
-> + * when the child is scoped relative to the queue's creator.
-> + *
-> + * To attribute a denial to the operation under test (and not to a preceding
-> + * msgget(2) call), the parent creates the queue and the child inherits the
-> + * msqid across fork(2), bypassing msg_queue_associate.
-> + */
-> +enum msg_op {
-> +	MSG_OP_SND,
-> +	MSG_OP_RCV,
-> +	MSG_OP_CTL,
-> +};
-> +
-> +FIXTURE(scoping_msg_ops)
-> +{
-> +	int msqid;
-> +};
-> +
-> +FIXTURE_VARIANT(scoping_msg_ops)
-> +{
-> +	enum msg_op op;
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(scoping_msg_ops, msgsnd) {
-> +	/* clang-format on */
-> +	.op = MSG_OP_SND,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(scoping_msg_ops, msgrcv) {
-> +	/* clang-format on */
-> +	.op = MSG_OP_RCV,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(scoping_msg_ops, msgctl) {
-> +	/* clang-format on */
-> +	.op = MSG_OP_CTL,
-> +};
-> +
-> +FIXTURE_SETUP(scoping_msg_ops)
-> +{
-> +	self->msqid = -1;
-> +	drop_caps(_metadata);
-> +}
-> +
-> +/* See the scoped_domains teardown comment. */
-> +FIXTURE_TEARDOWN_PARENT(scoping_msg_ops)
-> +{
-> +	cleanup_msg_queue(self->msqid);
-> +}
-> +
-> +TEST_F(scoping_msg_ops, deny_op)
-> +{
-> +	struct msgbuf {
-> +		long mtype;
-> +		char mtext[1];
-> +	} msg = { .mtype = 1 };
-> +	struct msqid_ds ds;
-> +	pid_t child;
-> +	int status;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * The child inherits the msqid across fork(2), so no key is needed:
-> +	 * IPC_PRIVATE always creates a new queue and cannot collide with
-> +	 * queues left over by other processes.
-> +	 */
-> +	self->msqid = msgget(IPC_PRIVATE, 0600);
-> +	ASSERT_LE(0, self->msqid);
-> +
-> +	/* Preloads a message so msgrcv(2) would otherwise succeed. */
-> +	ASSERT_EQ(0, msgsnd(self->msqid, &msg, sizeof(msg.mtext), 0));
-> +
-> +	child = fork();
-
-I do not understand why this test needs to fork() at all, tbh.
-If you were to
-
-* create the queue with msgget(),
-* add a message with msgsnd(),
-* then enter the Landlock domain (still in the same process),
-* and then check for the operation failure
-
-Wouldn't that also fail?  After all, the message queue was created at
-a point in time when the process was still unrestricted, so we should
-be comparing to the Landlock state at that earlier point in time, no?
-
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
-> +
-> +		switch (variant->op) {
-> +		case MSG_OP_SND:
-> +			ret = msgsnd(self->msqid, &msg, sizeof(msg.mtext), 0);
-> +			break;
-> +		case MSG_OP_RCV:
-> +			ret = msgrcv(self->msqid, &msg, sizeof(msg.mtext), 0,
-> +				     IPC_NOWAIT);
-> +			break;
-> +		case MSG_OP_CTL:
-> +			ret = msgctl(self->msqid, IPC_STAT, &ds);
-> +			break;
-> +		}
-> +		ASSERT_EQ(-1, ret);
-
-If these operations are all supposed to fail (and presumably be
-no-ops), is it necessary to still use a fixture with multiple cases
-for that?  (The alternative would be to make this a regular TEST()
-without fixtures and do the three failing operations one after
-another. It would save you a lot of macro boilerplate and the special
-enum, and would make the test more direct IMHO.)
-
-> +		/*
-> +		 * msgsnd, msgrcv and msgctl(IPC_STAT) all reach the
-> +		 * Landlock scope check via ipcperms(), whose callers map
-> +		 * any non-zero return into -EACCES before propagating it
-> +		 * to user space.
-> +		 */
-> +		ASSERT_EQ(EACCES, errno);
-> +
-> +		_exit(_metadata->exit_code);
-> +		return;
-> +	}
-> +
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> -- 
-> 2.54.0
-> 
-
-–Günther
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 30aa6ce13590..200c83372bbe 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1298,11 +1298,12 @@ static int current_check_refer_path(struct =
+dentry *const old_dentry,
+ 	/*
+ 	 * old_dentry may be the root of the common mount point and
+ 	 * !IS_ROOT(old_dentry) at the same time (e.g. with open_tree() =
+and
+-	 * OPEN_TREE_CLONE).  We do not need to call dget(old_parent) =
+because
+-	 * we keep a reference to old_dentry.
++	 * OPEN_TREE_CLONE).  Pins the parent in both cases: a reference =
+on
++	 * old_dentry does not pin its parent, which may then be freed =
+after a
++	 * concurrent rename(2).
+ 	 */
+-	old_parent =3D (old_dentry =3D=3D mnt_dir.dentry) ? old_dentry :
+-						      =
+old_dentry->d_parent;
++	old_parent =3D (old_dentry =3D=3D mnt_dir.dentry) ? =
+dget(old_dentry) :
++						      =
+dget_parent(old_dentry);
+=20
+ 	/* new_dir->dentry is equal to new_dentry->d_parent */
+ 	allow_parent1 =3D collect_domain_accesses(subject->domain, =
+mnt_dir.dentry,
+@@ -1311,8 +1312,10 @@ static int current_check_refer_path(struct dentry =
+*const old_dentry,
+ 	allow_parent2 =3D collect_domain_accesses(subject->domain, =
+mnt_dir.dentry,
+ 						new_dir->dentry,
+ 						&layer_masks_parent2);
+-	if (allow_parent1 && allow_parent2)
++	if (allow_parent1 && allow_parent2) {
++		dput(old_parent);
+ 		return 0;
++	}
+=20
+ 	/*
+ 	 * To be able to compare source and destination domain access =
+rights,
+@@ -1324,8 +1327,10 @@ static int current_check_refer_path(struct dentry =
+*const old_dentry,
+ 		    subject->domain, &mnt_dir, access_request_parent1,
+ 		    &layer_masks_parent1, &request1, old_dentry,
+ 		    access_request_parent2, &layer_masks_parent2, =
+&request2,
+-		    exchange ? new_dentry : NULL))
++		    exchange ? new_dentry : NULL)) {
++		dput(old_parent);
+ 		return 0;
++	}
+=20
+ 	if (request1.access) {
+ 		request1.audit.u.path.dentry =3D old_parent;
+@@ -1335,6 +1340,7 @@ static int current_check_refer_path(struct dentry =
+*const old_dentry,
+ 		request2.audit.u.path.dentry =3D new_dir->dentry;
+ 		landlock_log_denial(subject, &request2);
+ 	}
++	dput(old_parent);
+=20
+ 	/*
+ 	 * This prioritizes EACCES over EXDEV for all actions, including
+--=20
+2.55.0=
