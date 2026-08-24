@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435E541F34E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EBC23BD02;
 	Mon, 24 Aug 2026 13:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787578103; cv=none; b=NNu++sX9+L0D3ngGrC/rScVcOI9IugGovbn7pTR0h98bOXW9p20H2SuSHenanG97Vt+4DlIcTat5GMt/s3/M+hyzLZffTtrM7lKsBCYoLuxnP3U4FtYKXAGLN15Q8NslXKYcRBRuvO5oXp/egETYmpe8dHySov3ioMS+xBctTok=
+	t=1787578103; cv=none; b=WjW+J4g1NRJ/CaY4ImZjS8v0H83g5P9i5KeAwHkW645d972ocH5/CnS6AX7nQIA+/+w+UfmdolEKJdvdlm78kODXJOiwABc4ItQQ2FUhTWkO44k0lL4K3++j/vuvAh/ru3O31vSQz0APJ1/iPkVsIejDjba7xNParXJCmicYPIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787578103; c=relaxed/simple;
-	bh=gE/3z15bdmO63fBp1lfQ8mBMdzk5rEK4KiPcGfe1UZ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ELq0megzD+66i3JL+rRYjc3AOV8DbWaQ6eFxf3c7q8zWPdYXTjoL9pdUqXpPM+3PyV8hSGQ8C5ERoVBnO7urDSA/bckcLLfxpDfRXfOiinENpw3QHr1j6e6Yc2sBx4OiL+ZtKcN6AA3BB4isFlgetGPZct+nF00eJQ7lWsLwyYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZq7qCFR; arc=none smtp.client-ip=10.30.226.201
+	bh=prDA2HVVe2wMa35Q1aFO3/S+aVUUWrB3TV9rg1BQDic=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ER/IOJJp+Lrq8z+Mg6YjbgyS/ezV3yroVtr5BuU8oLsWD+UErAbQLDedf/dKmsNkQOo03ZyQsWLQmmZS8QNIFCEEO4eIcb1sfdvjrorrqk+LJ3zv1S/gE1p8a5YQDy0tfdOrD6LwN3vdN2dn+U1wUKGxU+PlhBnE+aRoU+U24NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZC3mdsM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZq7qCFR"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0B459C2BCF7;
-	Mon, 24 Aug 2026 13:28:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZC3mdsM"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F2615C19425;
+	Mon, 24 Aug 2026 13:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1787578103;
-	bh=gE/3z15bdmO63fBp1lfQ8mBMdzk5rEK4KiPcGfe1UZ8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=CZq7qCFRA3JVIz16YSP/e/vWpjHvvVf0N459AwiuHlJHi7ziMIX4eGm8sxFP5cNYH
-	 UFsckaMjR8/E7/6xRJgi6niIU1CPhKky3U4C0F3dZKpFgclb37aSGW1RoqtVITnt04
-	 TXOaiuzg4aBVYzdqIPY99uT8jq+A4D4uZYy5rl6lqUNFZ/ZzZi3+EtCEigi/2Zcq2G
-	 WLNVrMmeAFKnSTXIPnQMT8dhoUEQRuV5FdctPwDWd42phHQPqD074ngbSjHhNTQ5X4
-	 Bm4lwGUYjcrJ/OjPcZfybuAaSZeiXAl5mlO0iSrx5K16V25rrJjBccmHNtdSst0W8Y
-	 NwipcQjiKtMuw==
+	bh=prDA2HVVe2wMa35Q1aFO3/S+aVUUWrB3TV9rg1BQDic=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=HZC3mdsMAK6FPOBo0BwImofl8m3dPeOcgInnZes27IdRjV9EZ2rEWSOXI5J2LTNTj
+	 MGZgDRuTlI0yxcYkwoBe9Q3PcJS7YGdxz2xM8jh6W8VLG1Er7UjoNEgQSStmqufqvT
+	 EnGmco7jmSSNs+ZxnYHODuwQbzAZ5IwWyxMCuqmjPxidg2LGiQ2xIfa0jhetFvk7TP
+	 XUQKRNItlkzuNOoaCxecpkOEkHmOopt9toJSXxD3SruitbgE4+1RXSQbe22lP9KUIQ
+	 SIoETmvGMB61lnDAQqQksI/rn+HSCl+FE2mZJT0/ff7RgLcBydY2EntkbktImgfXyc
+	 T6JGTHyQ0mF1A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CD5C5DF9B;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28E0C5DF94;
 	Mon, 24 Aug 2026 13:28:22 +0000 (UTC)
 From: Daan De Meyer via B4 Relay <devnull+daan.amutable.com@kernel.org>
-Date: Mon, 24 Aug 2026 15:28:12 +0200
-Subject: [PATCH 1/2] lsm: expose mount idmaps to inode hooks
+Subject: [PATCH 0/2] lsm: expose mount idmaps to inode hooks
+Date: Mon, 24 Aug 2026 15:28:11 +0200
+Message-Id: <20260824-lsm-mount-idmaps-v1-0-0414a9641c85@amutable.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -40,18 +40,19 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260824-lsm-mount-idmaps-v1-1-0414a9641c85@amutable.com>
-References: <20260824-lsm-mount-idmaps-v1-0-0414a9641c85@amutable.com>
-In-Reply-To: <20260824-lsm-mount-idmaps-v1-0-0414a9641c85@amutable.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMTQrCMBBGr1Jm7UATihivIi4m6dSOmLRkUhFK7
+ 26iy/f9vB2Us7DCtdsh81tUllTBnDoIM6UHo4yVwfb23F/sgC+NGJctlVpEWhXd6Lxzw8SGDNT
+ bmnmSz095u/9ZN//kUJqnLTwpo8+UwtyiSFo4w3F8AdC/pU6NAAAA
+X-Change-ID: 20260824-lsm-mount-idmaps-9d9b994fe1a1
 To: brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, 
  viro@zeniv.linux.org.uk
 Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787578101; l=20869;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787578101; l=1818;
  i=daan@amutable.com; s=20260712; h=from:subject:message-id;
- bh=NtgrHhAus8doyHZxoWw+el5JCnU1aflWTeUrbb9mM+Q=;
- b=n/TmtKMUZnXROCSPI0u0H5Pc6Nibf/VTt82RGCvp7oN0Ud6Qh6jVtupnc+Ds7mHxm3m863PLx
- e4OYOfIRITvAptIZkBlJ+tN4h5qMTHtNVPPqPlgVjmoZ6OnGEjjmR17
+ bh=prDA2HVVe2wMa35Q1aFO3/S+aVUUWrB3TV9rg1BQDic=;
+ b=yUjMxFE0LjiFTitSfdtCLTLoIEb9XI0bxeb4aHimp4xChKxivwZm18qcqoUxP8itXdh0R8hGs
+ i/a82nK0eHLAnKOk9oyRyi1xtd/wlWUjvfGM1bERJy6EIDFsYjpMlhL
 X-Developer-Key: i=daan@amutable.com; a=ed25519;
  pk=I1l+WwrtmzRgofA5SQ1wTuJi18fjh91w+f5uRkFeZEA=
 X-Endpoint-Received: by B4 Relay for daan@amutable.com/20260712 with
@@ -59,538 +60,45 @@ X-Endpoint-Received: by B4 Relay for daan@amutable.com/20260712 with
 X-Original-From: Daan De Meyer <daan@amutable.com>
 Reply-To: daan@amutable.com
 
-From: Daan De Meyer <daan@amutable.com>
+OverlayFS performs upper-layer operations through inode-based security
+hooks. Those hooks receive the upper inode and dentry, but not the mount
+idmap used by the VFS operation.
 
-Pass the mount idmap through the create, link, symlink, mkdir, mknod,
+The security layer cannot distinguish an identity-mapped upper from an
+idmapped one or make the same ownership decision as the VFS. The VFS
+layer already passes the idmap down into all relevant inode operations
+so this just brings the security hooks to parity.
+
+So pass the mount idmap through the create, link, symlink, mkdir, mknod,
 and permission hooks. Update the in-tree security implementations and
 non-VFS callers accordingly.
+
+systemd has been shipping systemd-nsresourced for quite a while now. It
+relies on inode and path hooks to perform ownership checks using a bpf lsm.
+To make this actually secure we need to be able to calculate the on-disk
+ownership from the idmap.
+
 ---
- fs/cachefiles/security.c      |  4 +--
- fs/namei.c                    | 18 +++++++-------
- include/linux/lsm_hook_defs.h | 23 +++++++++--------
- include/linux/security.h      | 58 +++++++++++++++++++++++++------------------
- security/security.c           | 40 +++++++++++++++++------------
- security/selinux/hooks.c      | 19 +++++++++-----
- security/smack/smack_lsm.c    |  9 ++++---
- 7 files changed, 100 insertions(+), 71 deletions(-)
+Daan De Meyer (2):
+      lsm: expose mount idmaps to inode hooks
+      selftests/bpf: verify mount idmaps reach inode hooks
 
-diff --git a/fs/cachefiles/security.c b/fs/cachefiles/security.c
-index fc6611886b3b..eefe5453b904 100644
---- a/fs/cachefiles/security.c
-+++ b/fs/cachefiles/security.c
-@@ -51,14 +51,14 @@ static int cachefiles_check_cache_dir(struct cachefiles_cache *cache,
- {
- 	int ret;
- 
--	ret = security_inode_mkdir(d_backing_inode(root), root, 0);
-+	ret = security_inode_mkdir(&nop_mnt_idmap, d_backing_inode(root), root, 0);
- 	if (ret < 0) {
- 		pr_err("Security denies permission to make dirs: error %d",
- 		       ret);
- 		return ret;
- 	}
- 
--	ret = security_inode_create(d_backing_inode(root), root, 0);
-+	ret = security_inode_create(&nop_mnt_idmap, d_backing_inode(root), root, 0);
- 	if (ret < 0)
- 		pr_err("Security denies permission to create files: error %d",
- 		       ret);
-diff --git a/fs/namei.c b/fs/namei.c
-index 20a6534ea3ef..99f894f3f7e1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -658,7 +658,7 @@ int inode_permission(struct mnt_idmap *idmap,
- 	if (unlikely(retval))
- 		return retval;
- 
--	return security_inode_permission(inode, mask);
-+	return security_inode_permission(idmap, inode, mask);
- }
- EXPORT_SYMBOL(inode_permission);
- 
-@@ -695,7 +695,7 @@ static __always_inline int lookup_inode_permission_may_exec(struct mnt_idmap *id
- 	if (unlikely(((inode->i_mode & 0111) != 0111) || !no_acl_inode(inode)))
- 		return inode_permission(idmap, inode, mask);
- 
--	return security_inode_permission(inode, mask);
-+	return security_inode_permission(idmap, inode, mask);
- }
- 
- /**
-@@ -4188,7 +4188,7 @@ int vfs_create(struct mnt_idmap *idmap, struct dentry *dentry, umode_t mode,
- 		return -EACCES;	/* shouldn't it be ENOSYS? */
- 
- 	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
--	error = security_inode_create(dir, dentry, mode);
-+	error = security_inode_create(idmap, dir, dentry, mode);
- 	if (error)
- 		return error;
- 	error = try_break_deleg(dir, LEASE_BREAK_DIR_CREATE, di);
-@@ -4212,7 +4212,7 @@ int vfs_mkobj(struct dentry *dentry, umode_t mode,
- 
- 	mode &= S_IALLUGO;
- 	mode |= S_IFREG;
--	error = security_inode_create(dir, dentry, mode);
-+	error = security_inode_create(&nop_mnt_idmap, dir, dentry, mode);
- 	if (error)
- 		return error;
- 	error = f(dentry, mode, arg);
-@@ -4328,7 +4328,7 @@ static int may_o_create(struct mnt_idmap *idmap,
- 	if (error)
- 		return error;
- 
--	return security_inode_create(dir->dentry->d_inode, dentry, mode);
-+	return security_inode_create(idmap, dir->dentry->d_inode, dentry, mode);
- }
- 
- /**
-@@ -5258,7 +5258,7 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error)
- 		return error;
- 
--	error = security_inode_mknod(dir, dentry, mode, dev);
-+	error = security_inode_mknod(idmap, dir, dentry, mode, dev);
- 	if (error)
- 		return error;
- 
-@@ -5395,7 +5395,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 		goto err;
- 
- 	mode = vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, S_IFDIR);
--	error = security_inode_mkdir(dir, dentry, mode);
-+	error = security_inode_mkdir(idmap, dir, dentry, mode);
- 	if (error)
- 		goto err;
- 
-@@ -5783,7 +5783,7 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	if (!dir->i_op->symlink)
- 		return -EPERM;
- 
--	error = security_inode_symlink(dir, dentry, oldname);
-+	error = security_inode_symlink(idmap, dir, dentry, oldname);
- 	if (error)
- 		return error;
- 
-@@ -5907,7 +5907,7 @@ int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
- 	if (S_ISDIR(inode->i_mode))
- 		return -EPERM;
- 
--	error = security_inode_link(old_dentry, dir, new_dentry);
-+	error = security_inode_link(idmap, old_dentry, dir, new_dentry);
- 	if (error)
- 		return error;
- 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 65c9609ec207..9e49a5bc9ff3 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -120,26 +120,27 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
- 	 int *xattr_count)
- LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
- 	 const struct qstr *name, const struct inode *context_inode)
--LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
--	 umode_t mode)
-+LSM_HOOK(int, 0, inode_create, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, umode_t mode)
- LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap *idmap,
- 	 struct inode *inode)
--LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
--	 struct dentry *new_dentry)
-+LSM_HOOK(int, 0, inode_link, struct mnt_idmap *idmap,
-+	 struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
- LSM_HOOK(int, 0, inode_unlink, struct inode *dir, struct dentry *dentry)
--LSM_HOOK(int, 0, inode_symlink, struct inode *dir, struct dentry *dentry,
--	 const char *old_name)
--LSM_HOOK(int, 0, inode_mkdir, struct inode *dir, struct dentry *dentry,
--	 umode_t mode)
-+LSM_HOOK(int, 0, inode_symlink, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, const char *old_name)
-+LSM_HOOK(int, 0, inode_mkdir, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, umode_t mode)
- LSM_HOOK(int, 0, inode_rmdir, struct inode *dir, struct dentry *dentry)
--LSM_HOOK(int, 0, inode_mknod, struct inode *dir, struct dentry *dentry,
--	 umode_t mode, dev_t dev)
-+LSM_HOOK(int, 0, inode_mknod, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, umode_t mode, dev_t dev)
- LSM_HOOK(int, 0, inode_rename, struct inode *old_dir, struct dentry *old_dentry,
- 	 struct inode *new_dir, struct dentry *new_dentry)
- LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
- 	 bool rcu)
--LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
-+LSM_HOOK(int, 0, inode_permission, struct mnt_idmap *idmap,
-+	 struct inode *inode, int mask)
- LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
- 	 struct iattr *attr)
- LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 153e9043058f..0f5f20ac1050 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -404,24 +404,28 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- int security_inode_init_security_anon(struct inode *inode,
- 				      const struct qstr *name,
- 				      const struct inode *context_inode);
--int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
-+int security_inode_create(struct mnt_idmap *idmap, struct inode *dir,
-+			  struct dentry *dentry, umode_t mode);
- void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
- 					struct inode *inode);
--int security_inode_link(struct dentry *old_dentry, struct inode *dir,
--			 struct dentry *new_dentry);
-+int security_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			struct inode *dir, struct dentry *new_dentry);
- int security_inode_unlink(struct inode *dir, struct dentry *dentry);
--int security_inode_symlink(struct inode *dir, struct dentry *dentry,
--			   const char *old_name);
--int security_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode);
-+int security_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
-+			   struct dentry *dentry, const char *old_name);
-+int security_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode);
- int security_inode_rmdir(struct inode *dir, struct dentry *dentry);
--int security_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev);
-+int security_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode, dev_t dev);
- int security_inode_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			  struct inode *new_dir, struct dentry *new_dentry,
- 			  unsigned int flags);
- int security_inode_readlink(struct dentry *dentry);
- int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
- 			       bool rcu);
--int security_inode_permission(struct inode *inode, int mask);
-+int security_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
-+			      int mask);
- int security_inode_setattr(struct mnt_idmap *idmap,
- 			   struct dentry *dentry, struct iattr *attr);
- void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-@@ -902,9 +906,10 @@ static inline int security_inode_init_security_anon(struct inode *inode,
- 	return 0;
- }
- 
--static inline int security_inode_create(struct inode *dir,
--					 struct dentry *dentry,
--					 umode_t mode)
-+static inline int security_inode_create(struct mnt_idmap *idmap,
-+					struct inode *dir,
-+					struct dentry *dentry,
-+					umode_t mode)
- {
- 	return 0;
- }
-@@ -913,9 +918,10 @@ static inline void
- security_inode_post_create_tmpfile(struct mnt_idmap *idmap, struct inode *inode)
- { }
- 
--static inline int security_inode_link(struct dentry *old_dentry,
--				       struct inode *dir,
--				       struct dentry *new_dentry)
-+static inline int security_inode_link(struct mnt_idmap *idmap,
-+				      struct dentry *old_dentry,
-+				      struct inode *dir,
-+				      struct dentry *new_dentry)
- {
- 	return 0;
- }
-@@ -926,16 +932,18 @@ static inline int security_inode_unlink(struct inode *dir,
- 	return 0;
- }
- 
--static inline int security_inode_symlink(struct inode *dir,
--					  struct dentry *dentry,
--					  const char *old_name)
-+static inline int security_inode_symlink(struct mnt_idmap *idmap,
-+					 struct inode *dir,
-+					 struct dentry *dentry,
-+					 const char *old_name)
- {
- 	return 0;
- }
- 
--static inline int security_inode_mkdir(struct inode *dir,
--					struct dentry *dentry,
--					int mode)
-+static inline int security_inode_mkdir(struct mnt_idmap *idmap,
-+				       struct inode *dir,
-+				       struct dentry *dentry,
-+				       int mode)
- {
- 	return 0;
- }
-@@ -946,9 +954,10 @@ static inline int security_inode_rmdir(struct inode *dir,
- 	return 0;
- }
- 
--static inline int security_inode_mknod(struct inode *dir,
--					struct dentry *dentry,
--					int mode, dev_t dev)
-+static inline int security_inode_mknod(struct mnt_idmap *idmap,
-+				       struct inode *dir,
-+				       struct dentry *dentry,
-+				       int mode, dev_t dev)
- {
- 	return 0;
- }
-@@ -974,7 +983,8 @@ static inline int security_inode_follow_link(struct dentry *dentry,
- 	return 0;
- }
- 
--static inline int security_inode_permission(struct inode *inode, int mask)
-+static inline int security_inode_permission(struct mnt_idmap *idmap,
-+					    struct inode *inode, int mask)
- {
- 	return 0;
- }
-diff --git a/security/security.c b/security/security.c
-index 2ee276ab15c5..a9190da3341d 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1614,6 +1614,7 @@ int security_path_chroot(const struct path *path)
- 
- /**
-  * security_inode_create() - Check if creating a file is allowed
-+ * @idmap: idmap of the mount
-  * @dir: the parent directory
-  * @dentry: the file being created
-  * @mode: requested file mode
-@@ -1622,12 +1623,12 @@ int security_path_chroot(const struct path *path)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_create(struct inode *dir, struct dentry *dentry,
--			  umode_t mode)
-+int security_inode_create(struct mnt_idmap *idmap, struct inode *dir,
-+			  struct dentry *dentry, umode_t mode)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_create, dir, dentry, mode);
-+	return call_int_hook(inode_create, idmap, dir, dentry, mode);
- }
- EXPORT_SYMBOL_GPL(security_inode_create);
- 
-@@ -1648,6 +1649,7 @@ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
- 
- /**
-  * security_inode_link() - Check if creating a hard link is allowed
-+ * @idmap: idmap of the mount
-  * @old_dentry: existing file
-  * @dir: new parent directory
-  * @new_dentry: new link
-@@ -1656,12 +1658,12 @@ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_link(struct dentry *old_dentry, struct inode *dir,
--			struct dentry *new_dentry)
-+int security_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			struct inode *dir, struct dentry *new_dentry)
- {
- 	if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry))))
- 		return 0;
--	return call_int_hook(inode_link, old_dentry, dir, new_dentry);
-+	return call_int_hook(inode_link, idmap, old_dentry, dir, new_dentry);
- }
- 
- /**
-@@ -1682,6 +1684,7 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
- 
- /**
-  * security_inode_symlink() - Check if creating a symbolic link is allowed
-+ * @idmap: idmap of the mount
-  * @dir: parent directory
-  * @dentry: symbolic link
-  * @old_name: existing filename
-@@ -1690,16 +1693,17 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_symlink(struct inode *dir, struct dentry *dentry,
--			   const char *old_name)
-+int security_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
-+			   struct dentry *dentry, const char *old_name)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_symlink, dir, dentry, old_name);
-+	return call_int_hook(inode_symlink, idmap, dir, dentry, old_name);
- }
- 
- /**
-  * security_inode_mkdir() - Check if creating a new directory is allowed
-+ * @idmap: idmap of the mount
-  * @dir: parent directory
-  * @dentry: new directory
-  * @mode: new directory mode
-@@ -1709,11 +1713,12 @@ int security_inode_symlink(struct inode *dir, struct dentry *dentry,
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
-+int security_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_mkdir, dir, dentry, mode);
-+	return call_int_hook(inode_mkdir, idmap, dir, dentry, mode);
- }
- EXPORT_SYMBOL_GPL(security_inode_mkdir);
- 
-@@ -1735,6 +1740,7 @@ int security_inode_rmdir(struct inode *dir, struct dentry *dentry)
- 
- /**
-  * security_inode_mknod() - Check if creating a special file is allowed
-+ * @idmap: idmap of the mount
-  * @dir: parent directory
-  * @dentry: new file
-  * @mode: new file mode
-@@ -1747,12 +1753,12 @@ int security_inode_rmdir(struct inode *dir, struct dentry *dentry)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_mknod(struct inode *dir, struct dentry *dentry,
--			 umode_t mode, dev_t dev)
-+int security_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode, dev_t dev)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_mknod, dir, dentry, mode, dev);
-+	return call_int_hook(inode_mknod, idmap, dir, dentry, mode, dev);
- }
- 
- /**
-@@ -1823,6 +1829,7 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
- 
- /**
-  * security_inode_permission() - Check if accessing an inode is allowed
-+ * @idmap: idmap of the mount
-  * @inode: inode
-  * @mask: access mask
-  *
-@@ -1835,11 +1842,12 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_permission(struct inode *inode, int mask)
-+int security_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
-+			      int mask)
- {
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return 0;
--	return call_int_hook(inode_permission, inode, mask);
-+	return call_int_hook(inode_permission, idmap, inode, mask);
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 035aaf113d1d..967984d0af30 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3074,12 +3074,14 @@ static int selinux_inode_init_security_anon(struct inode *inode,
- 			    &ad);
- }
- 
--static int selinux_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
-+static int selinux_inode_create(struct mnt_idmap *idmap, struct inode *dir,
-+				struct dentry *dentry, umode_t mode)
- {
- 	return may_create(dir, dentry, SECCLASS_FILE);
- }
- 
--static int selinux_inode_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
-+static int selinux_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			      struct inode *dir, struct dentry *new_dentry)
- {
- 	return may_link(dir, old_dentry, MAY_LINK);
- }
-@@ -3089,12 +3091,14 @@ static int selinux_inode_unlink(struct inode *dir, struct dentry *dentry)
- 	return may_link(dir, dentry, MAY_UNLINK);
- }
- 
--static int selinux_inode_symlink(struct inode *dir, struct dentry *dentry, const char *name)
-+static int selinux_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
-+				 struct dentry *dentry, const char *name)
- {
- 	return may_create(dir, dentry, SECCLASS_LNK_FILE);
- }
- 
--static int selinux_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mask)
-+static int selinux_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+			       struct dentry *dentry, umode_t mask)
- {
- 	return may_create(dir, dentry, SECCLASS_DIR);
- }
-@@ -3104,7 +3108,8 @@ static int selinux_inode_rmdir(struct inode *dir, struct dentry *dentry)
- 	return may_link(dir, dentry, MAY_RMDIR);
- }
- 
--static int selinux_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
-+static int selinux_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
-+			       struct dentry *dentry, umode_t mode, dev_t dev)
- {
- 	return may_create(dir, dentry, inode_mode_to_security_class(mode));
- }
-@@ -3236,13 +3241,15 @@ static inline void task_avdcache_update(struct task_security_struct *tsec,
- 
- /**
-  * selinux_inode_permission - Check if the current task can access an inode
-+ * @idmap: idmap of the mount
-  * @inode: the inode that is being accessed
-  * @requested: the accesses being requested
-  *
-  * Check if the current task is allowed to access @inode according to
-  * @requested.  Returns 0 if allowed, negative values otherwise.
-  */
--static int selinux_inode_permission(struct inode *inode, int requested)
-+static int selinux_inode_permission(struct mnt_idmap *idmap,
-+				    struct inode *inode, int requested)
- {
- 	int mask;
- 	u32 perms;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 8e88ac65fd7f..a45819d13c0d 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1089,14 +1089,15 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
- 
- /**
-  * smack_inode_link - Smack check on link
-+ * @idmap: idmap of the mount
-  * @old_dentry: the existing object
-  * @dir: unused
-  * @new_dentry: the new object
-  *
-  * Returns 0 if access is permitted, an error code otherwise
-  */
--static int smack_inode_link(struct dentry *old_dentry, struct inode *dir,
--			    struct dentry *new_dentry)
-+static int smack_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			    struct inode *dir, struct dentry *new_dentry)
- {
- 	struct smack_known *isp;
- 	struct smk_audit_info ad;
-@@ -1226,6 +1227,7 @@ static int smack_inode_rename(struct inode *old_inode,
- 
- /**
-  * smack_inode_permission - Smack version of permission()
-+ * @idmap: idmap of the mount
-  * @inode: the inode in question
-  * @mask: the access requested
-  *
-@@ -1233,7 +1235,8 @@ static int smack_inode_rename(struct inode *old_inode,
-  *
-  * Returns 0 if access is permitted, an error code otherwise
-  */
--static int smack_inode_permission(struct inode *inode, int mask)
-+static int smack_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
-+				  int mask)
- {
- 	struct superblock_smack *sbsp = smack_superblock(inode->i_sb);
- 	struct smk_audit_info ad;
+ fs/cachefiles/security.c                          |   4 +-
+ fs/namei.c                                        |  18 +-
+ include/linux/lsm_hook_defs.h                     |  23 +--
+ include/linux/security.h                          |  58 +++---
+ security/security.c                               |  40 ++--
+ security/selinux/hooks.c                          |  19 +-
+ security/smack/smack_lsm.c                        |   9 +-
+ tools/testing/selftests/bpf/prog_tests/test_lsm.c | 231 ++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/lsm.c           |  79 ++++++++
+ 9 files changed, 410 insertions(+), 71 deletions(-)
+---
+base-commit: 0a0d1d55dad570724bf8c7ea83409639cfb4be9b
+change-id: 20260824-lsm-mount-idmaps-9d9b994fe1a1
 
--- 
-2.54.0
+Best regards,
+--  
+Daan De Meyer <daan@amutable.com>
 
 
