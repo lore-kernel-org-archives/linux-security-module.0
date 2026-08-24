@@ -1,120 +1,158 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A07450413
-	for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 16:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787588546; cv=none; b=Wn5rPDanvC46x3RvAg6F59qbslOZRAL1+t/dHNwu7Yz/6ve/RodmLb3vPsrQ9YPYW/UkgO21bBivEUeciWGqMqMoRxr/zzHbS18aGoIDtvZ9Rp+uCNY81xdQkBKCgjjhLUB0FfV9viGukAEAm7hKI63igIR0EzTQ9F/qQUwUAlM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787588546; c=relaxed/simple;
-	bh=h6x4klQMuaENRYpnPstAUeKDBWZfZPIGWzm5A6TXAek=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WC2oxvQQNbi9aWvQGEbYwDyaZcqtTGHyiw90eChyuV9iKfy0fuidU9q4hGpYnTHKx4vCJSoz9/WSTQfnc6AhGbX1rccWzKFUjFYLpXFbsGzLzIkWTHcSZqGvspNgm/EBzLbGrd1aVqlNW09mYqHIxMXqilgJylnRHGW/qnBZ4s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qp+RqEjF; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA01A4334D8
+	for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 17:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.169
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787591204; cv=pass; b=lK0lBwoaeOZ3rX3o8XC/wvK2RSrWoJlTdYRB2siV3JwXYRkpKF/OufgKLeohs4+CO3w2gpU5LDwt4ym0kvI+oQ/LnnOCU38E+Ik6wJeZwoVue3BAnJha0ILgsTasLpzEwnLsAI8QCv1hzU5QtfSYG+/z7SIlf8r0DtCmGgGwACg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787591204; c=relaxed/simple;
+	bh=RetglhChGs54xh+G4sIllqLQaZbHa84fR8ti4Eb52Y8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AKb6+N4RRda/+xVrCC3HnEB7TNwPcaItDVWz4lSNbXZYdZT/5LDzIqt8Ccg2vLwOBWvp7/RrwBGBwopqbGtkw82hftBKlQYUhBb6dZEkQ6hos/uhKb9FN0JRsNQkM2A5nPZ31lGPMvxaD7Sk4goCtcMrMQIgxge0VE4pkPKigIM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vo7CX6da; arc=pass smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qp+RqEjF"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so272735e9.1
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 09:22:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vo7CX6da"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2d3b445a84fso2495ad.1
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 10:06:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787591202; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Sd0KQtdKW5OzA5OdvJq/c00XgqNqh3I7oilwDdsp1qRKRVbgKw5Hoz/JQngGDI5Idb
+         Kl80O5zYp/QOD2aT1Y7F+IaldWogvoWg0Btrqi0+4yHsofebYyrfHxLB+R0il2el9R/D
+         W00FjuOm8A3U9dKdXVNJRsmIhmkXWkaOnubLjK9GaqzKaDb7VG/Z/9aE9n0leLU1JL+Y
+         36yyJkZpJ+zdbkDeUaF70oRMoeJG8VKCYK6SAQe82Cnga7REJXr6x9mBGW6D3O4g7oVH
+         YZm1hMPUxrMi5T4Ik9wcEBb3UPRR7Iiebqty9sCacYR0pYfFAR4M8qONnEXJLNh6P2uD
+         5hWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wBrui9oca87xmLJo5FCru/sywwEnBCWCZyUpBYfq9bA=;
+        fh=kpxmF2EwRm7GV6ycfygogkkJBu0bXN8RnxdQ9mQNZTs=;
+        b=l3jQTKBK8JQ9eJaOApIrHeWuGHU3VGa6yosNIdHEGR5fVFxD/K037ZdjUjLhuXevje
+         4qUcMcuCXCTau7zWJcGAt1jm+17dreq6JHSHrarrQCk1RgTLK0RlAdxUL7w9DafZEqTi
+         lTDI6ppfEahWvlEMAWzFprWjPIzx7vp+KFZst3zEbnCwoYB0HjLHKDJDdk5fJyvMSnlJ
+         qZCTasM57sVyJfO5U+Tws2NKRe0N3XDGySuoNg8zQui4GWW05BBFK9syj4MhX+mbWtRm
+         8iJKndpQYBIWWqYQEMy3z5STjnrxgF8o/oFpQ8aEDKNERH77exCipqYeWD6ORakm3MHU
+         2uBw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787588543; x=1788193343; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=pOdYzX56ODDkS8MxIa5w7s/cy/kIlqifW5C7xMdwnpg=;
-        b=qp+RqEjFoWyPVgWnsBIq7fMjt7vpvDJyNqwvDnShP1AlibtmQVqsjKUw9qbo7z6J/g
-         8B/G2EMu268SGdgQRE4CGXHx6MWRcmTRqRG6BwgrAU40FMnJKXgAx7wKVlX3twqrF0DN
-         di6rXnefX0gUphCPeAc5IRuaKqgF+/CAC+PnmIsAYksWcXCUTbHXhH2UgEWZR/wtKZ/t
-         HM8iunnyG5YQZKxnVFecDCqV3t9DHsI+iJ7E2hJfENl6ynkTRd3GiOGhqw5U55IulF/2
-         5YgWFQwHK1tviZDnGpxAktzk8fD4Nim2rtCVCVMAlRMktucyD4Vb0I723m6ofWAOUx6x
-         uoqw==
+        d=google.com; s=20251104; t=1787591202; x=1788196002; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wBrui9oca87xmLJo5FCru/sywwEnBCWCZyUpBYfq9bA=;
+        b=vo7CX6dacDq3q2MBn4zKHTMEovNhzBuyfUC2ySAhPRikC6MgthlA3DcavDh0Du4RKb
+         vNhH+ry6oUFWzx5kDriVlQlsFp2awFoahbHruVN4841x5DU670ckNINOGk7vv2AsPCeh
+         alykxwXEN/RfBuR1EjJ6cz+3lYDIyIE9QC4z6QOM2AGpwXiHZt40a3Z3m4/E1sDcRDW0
+         15M55ELxms/ZwscMIDMmVi6vHmZfTtzu8VsHF1QzFn8lzT+6XO+FTdxpmK+6Lb2MuFEp
+         RqqBhFwJ42yPIJgd023xLdyyb0vD/PeLT90/WT+PajJWfDK9UmFvIP6UHkzqWPhMinlB
+         0sGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787588543; x=1788193343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=pOdYzX56ODDkS8MxIa5w7s/cy/kIlqifW5C7xMdwnpg=;
-        b=mz0eBMa4rcVq8H8AVt4N0wFlBi4HVBM+aoeJN8qr0P+uN+m9VjqMfq1DMviv5spjoB
-         cJtx1LrqdKDIGdanzWKsHz6OHVTTFGfWY7Vbt1v7QPShqTkQurmN6bp5AeZFDkeTEIsc
-         j5cnbvtdUgZdHTr2nXLvaSXBvbfLL1eII+mePbC3JM5ahaSL6XIvf+5zIomusI81sBjm
-         KeZVgBQPWaWdF1STxVX2E3K89wM0pP0TrIC1EtVTsdnjV+J/wNndzTjg6knGrZ9+yE4k
-         /lOQxvQaIwWXjFB4rauBlsl0YmUe66EPdoz8rb7TEqa7cld2uTAiTH5f01nFeSxNX6xE
-         I+rg==
-X-Forwarded-Encrypted: i=1; AHgh+Rq9EN2OQszbEIW9jriteAutvoQxXq4bDGwJWn1IhQHH4WvCZcBnsDF2nn1Sv/oUCOYl2bDvlSfuM9se+wf3a4ee+OGTCkg=@vger.kernel.org
-X-Gm-Message-State: AFuF++k9qJ6VEDgV9BYbl686pL+i+lQ/ViHuscaLKDbkIfCerPxeyBEs
-	txsCVzpsygpnJFvELG0J60K0wbGpvO7o3nNkp5OJUoxpTyvOr0reQnj4
-X-Gm-Gg: AR+sD13aI77P8eqVl7NFa0cwWy9JAAzNQzsBvoqD0/QMe3KsyktYUNmWgWy4Yqq8iZB
-	RGFFcnPFD+CC0iBubyAr0vXopRMGr6l6DnPuhrlI7h5ZC5bJ+3EYw3vNvo2DRCSyJ1d71b9aMub
-	w92jNNQVvl7esOIuMs9dv9PJ0YcQ6SfJw7ZiFhb9GJwZzfYRfUkiwyEj7QSb84U7m4Q55878NQV
-	pkociXgvKkfsS9pvXeLsus1nCGfEO/GAsrpRmqgJoHth0mDFsfx9yJbIlYmc6Pf6IVHFBOC4szd
-	vZRaB6Cm9cJM9x5kKf6nORD6oTF30JSUaMGGzzPZN4Gb9OppWdufOb+pdn6itx7a7rmxeOkpjvj
-	/2XbHQ60dTeSpMfg2lIm251NZn3z9oDQw273V1cn+qY4JEBLn/+bIqwaHywml9Oan4q8cqtbWMc
-	B/6q9X7JpQw2EEnktnyU78sd+XyzRu7pz4tfDGEks+XNhpTIgadVf+7OLDyUlR6hly40jXFEqum
-	mk6YOfWxE4kz6cPvpJ2u25eCHZQxkwlSPCe6DNRSEIIOd87386j
-X-Received: by 2002:a05:600c:3d92:b0:499:8d9b:832c with SMTP id 5b1f17b1804b1-499d6323202mr7372435e9.4.1787588543063;
-        Mon, 24 Aug 2026 09:22:23 -0700 (PDT)
-Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499d6335051sm1342115e9.1.2026.08.24.09.22.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 09:22:22 -0700 (PDT)
-Sender: Julian Braha <julian.braha@gmail.com>
-From: Julian Braha <julianbraha@gmail.com>
-To: zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: eric.snowberg@oracle.com,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH] ima: allow users to specify the pcr index with IMA_MEASURE_PCR_IDX
-Date: Mon, 24 Aug 2026 17:22:15 +0100
-Message-ID: <20260824162215.1572367-1-julianbraha@gmail.com>
-X-Mailer: git-send-email 2.55.0
+        d=1e100.net; s=20251104; t=1787591202; x=1788196002;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wBrui9oca87xmLJo5FCru/sywwEnBCWCZyUpBYfq9bA=;
+        b=ncrtpv67qoIYqIiLHkymziA+rmPhyChGHHeP08QmD9BIJMaDXHj9vIlBFGHPcxhIDd
+         2TxnZJEU9YfWH+blNBR2RLwf/jy0pJwpZlfqaTg6D8oD/G6YzM5j72h9TXuTXNxbTMHd
+         GZC3IMMXWLKjmW0OPQOx56TC5DB0Vu+Gg0eKTBjcGnl4x8t0jx5fZH8MInAgXpjLNajC
+         FPOFbo1sanaOWLHqV89ycMoEPgxBYMKSa8hZHcp00wUQCuCJki/fvTe6z6suk2VeWqcT
+         D9zX1IR0Bs5mi5gc+/KiSaSkx7l6Y5yhMeGgcBmh7DyNuyzErtaXA/Z/vv0/6sxp710L
+         Yblw==
+X-Forwarded-Encrypted: i=1; AHgh+Rp0/e5246cNrLWKLzB1TBSDXWunWcFRNG0S1Rb1xAsDrKiMY2JvDidrIZMSHTKDoPmb89nwy20j60C/0+ltM6TRz0hTaRc=@vger.kernel.org
+X-Gm-Message-State: AFuF++kHgci9bsaIIAbN3mAUB4hFNoXlDToZR9xvVjbyLC5hLBoIK52y
+	od9o4fqrIgiLQNEFJtfNtVRRUiejsYuTBQ9aoWf5XxvkTucBqbwzZydFGitACLY4f+4NMQ135cN
+	/ffkkpJ6bvLusCI4x1/s4qNklxmRKYX4HMYghKShA
+X-Gm-Gg: AR+sD13w5ZKFMomLpW1Mndw3PEO9lsZeMJ0dHIFzeqC/R/VN/uQ8Vce8sbqkM5qYqyS
+	nU5UEBWDUokinFxzxmKWO5ClYgbr1fLmM3i0RNmsxUKwtvjw5Hm4IoyAAes2FEgsd50jozr7ir0
+	iQ4aLbwKWVcDPoLmEpLHtjI/jU4IUkY5zm/xPb41NATL50BpCZ4XanvGY8ZvdRKxniXXPoNiqLU
+	vXcmRnNgAGLp2doIsb5AL/dySGOF+hNnkNvJ52L0ThhPVBpv7M4/R1bLSv8ZVnD2CI7BtkCx/9k
+	ZWA0UYf5MXyHwTZOhuNvA1Kv0BXP3l19Ngkz1V7NCoMYjoEBHhUsJN9lPgNFPgObKS3XSkpsvHC
+	nYrZaEz01/b+uPINnhI4THb4LxREUr7Y=
+X-Received: by 2002:a17:902:ced1:b0:2d0:1aaf:daec with SMTP id
+ d9443c01a7336-2d673b9afe4mr10236935ad.9.1787591201205; Mon, 24 Aug 2026
+ 10:06:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
+ <20260818-selinux-pokemem-v1-2-90cd2357ee05@google.com> <741a833d-6889-4ee6-9322-d6a3a8b95893@kernel.org>
+ <CAG48ez2Ngo3=VtyykXY6ynVzGwA8px-p4zV3V6U=YfgV-Hy4BA@mail.gmail.com>
+ <dd8c34a9-0e09-453b-88e1-0a5511816627@kernel.org> <CAG48ez2bZEV+3ww2x9XV_5vRPZ_3jU_zg6+h=BDKQ94Xrd3Tqg@mail.gmail.com>
+ <aoibvf6CY99IXynk@gremlin>
+In-Reply-To: <aoibvf6CY99IXynk@gremlin>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 24 Aug 2026 19:06:04 +0200
+X-Gm-Features: AcwNN1XN1HjALO-7sEAr3yIwV5QVslvlMZpManf5842ZQgDGGQ6V_1u_W3SFNwE
+Message-ID: <CAG48ez0CX-PT5Yk5gYJuB6wPe26j0gHHXQqYoNtTA=iHe_5Wdw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] proc: query LSMs for introspective mem access (if PROC_MEM_FORCE_ALWAYS)
+To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+Cc: "David Hildenbrand (Arm)" <david@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Jeff Xu <jeffxu@google.com>, 
+	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The IMA_MEASURE_PCR_IDX option is currently not visible in the kconfig
-frontend, so it always uses its default, 10. This means that the
-'range 8 14' is dead code, and users are unable to specify the pcr index
-value.
+On Fri, Aug 21, 2026 at 8:52=E2=80=AFPM Lorenzo Stoakes (ARM) <ljs@kernel.o=
+rg> wrote:
+> OK so the whole thing is:
+>
+> mem_open()
+>   -> __mem_open()
+>     -> proc_mem_open()
+>       -> mm_access()
+>         -> may_access_mm()
+>
+> And:
+>
+> static bool may_access_mm(struct mm_struct *mm, struct task_struct *task,=
+ unsigned int mode)
+> {
+>         if (mm =3D=3D current->mm)
+>                 return true;
+>         ...
+> }
+>
+> And what this flag is carrying is 'hey the reason we allowed the _open_ i=
+s
+> because it's looking at its own address space'.
 
-In a previous discussion, Mimi explained that users should be able to use
-this config option to specify the pcr index. [1]
+Yes.
 
-Let's add a prompt for users to specify the pcr index, when EXPERT is
-enabled.
+> I did wonder if what you're protecting against is even a process updating
+> execmem _it_ owns, no fd shared anywhere, as something LSM might want to
+> prevent even so?
 
-This dead range was found by kconfirm, a static analysis tool for Kconfig.
+Sorry, can you rephrase that? My goal with this series is to let LSMs
+block a process that tries to modify its own non-writable executable
+memory using /proc/self/mem; I'm not sure if that answers your
+question.
 
-Signed-off-by: Julian Braha <julianbraha@gmail.com>
----
-Link: https://lore.kernel.org/all/1feff118-4afa-4b9c-86f1-271a7a88208f@gmail.com/T/#mc4efa2491b4937eb7c9e532c29ffba516a70e662 [1]
----
- security/integrity/ima/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+For context: In this series, I'm using "execmem" to refer to the
+SELinux permission PROCESS__EXECMEM, which essentially controls
+whether a process is allowed to create writable+executable mappings
+that can contain anonymous pages. Additionally, it blocks creating
+executable mappings of S_PRIVATE inodes. There are other SELinux
+permissions for things like making a VMA containing anonymous pages
+executable (FILE__EXECMOD and others) or mapping files as executable
+(FILE__EXECUTE). FILE__EXECUTE is granular, it can be granted based on
+the security labels of the process and the file that is mapped.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index b3a9f86809b0..2d5bb19ea6ac 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -46,6 +46,7 @@ config IMA_KEXEC
- 
- config IMA_MEASURE_PCR_IDX
- 	int
-+	prompt "PCR Index for Aggregate" if EXPERT
- 	range 8 14
- 	default 10
- 	help
--- 
-2.55.0
+> The sharing a /proc/mem fd seems like that's a pretty dumb thing to do in
+> general :) but I guess you have to protect against that.
 
+Yeah, it's a kinda weird thing to do...
