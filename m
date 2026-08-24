@@ -1,160 +1,170 @@
-Received: from mail-oa2-f0.google.com (mail-oa2-f0.google.com [74.125.231.64])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A576A19D07A
-	for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 06:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CD73E4C96
+	for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 06:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787551660; cv=none; b=IvqI8GIiFJMmavu3isGRUWl97dnOkKXzp+rX00wQrE8ac46+ulE+dtHhKrP6e89fv9qfgSwx6Bazueo3Uew1ZXc9TvoYMj3V0XB8AnQ+KRu9vHggeGRcg2L3bVtBqpD3CVVNli7I5OBrrUAQDZOuNCPOEvACnCgX1DKkCQ2MrLQ=
+	t=1787553379; cv=none; b=Us3yRtetMFCdqvqXScKNLXwwrnM1U/oVsLtesA/bhMmpXuU1691nTsbgYsE+ky1wMArEYdUnMeyg9GvLzoOHQLNYkhjsJ+49DrlKnWo8QT2QtMnPyWm17eXq2vpT2l+ngR4Q4eR+tk9cemekSeZ8pe0i+uZ+PoSPbrvL+wxC5/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787551660; c=relaxed/simple;
-	bh=m5dZWCpjbhvYafQaBrrqQzzD/JtiPAU/M2+4ynxzODA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G01MS4Yt934BW10D/odGnWK9s+nbOrm8LRXr1y1vQ7zzrakBOAo0A1L9IrTn1c/N9KQVzcI5XOlkY0t1osBPYLRfjA3Fr7eoJ3/PeYpZnE2SNi7uuRideAkJJEdg+Q5WI2uhURL9ds5Lh9k+ZeFijkRsFRLG971lUR719W4KznQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=74.125.231.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oa2-f0.google.com with SMTP id 586e51a60fabf-451e8472960so2199786fac.1
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Aug 2026 23:07:38 -0700 (PDT)
+	s=arc-20240116; t=1787553379; c=relaxed/simple;
+	bh=Fq9KG8uTcVdTd+UsYhiSxgn7mOXWFWafpBMc5Lbpa64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elRW7LmcSxakDv6QevzBbZNrOWP3ZNwbYVmxBBMVCJgVZUJdLYf7cBlCr+rjbCxFIgSuAbf+i+26x47uTXmL4S50beR7A5FG2TLWmTKdhcj7GV8PtuaT/hs9azTCbGC4aySU6RTfCyRtYUEQQjtCiWQgqN3ZB0ixyGgB9mun7jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRsAcduN; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRsAcduN"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6a156627e22so7404110a12.1
+        for <linux-security-module@vger.kernel.org>; Sun, 23 Aug 2026 23:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787553376; x=1788158176; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ZPZO/1T9gBfq+o/FMkeYUT9TJ0VTxgJ6DjM2Lc014mU=;
+        b=eRsAcduN1f3oeqENjiwPxmNfEyZgG6NPFKHG2zmv50JNQKWA5FCUiebKcLj6T1ZqY9
+         sW8ycnUnWb4omZ5aK+GATeSTPSBxlhVL1IBNH2gGBtfuKIMty4eijtLf0/8e3U128oi5
+         l/8MLhbP9iaattCw4B3elrtWYwuuVsVQpxaNd9JJEw/P4ZAj6UbAgbSVbDIYrnddvZxK
+         mwrrBgpmV3ETQXPAfQuv2r4Qg19aksfwEoCNjYOfs5p/mZqMMXanFZwOco71nJmSRIl7
+         QzwFA8jcRH0+NRIHiTkknXrj2v/H6cx+3fau+FpQtTBY9nT/9iFtF2MQo2iq6KYDuQTs
+         1QHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787551657; x=1788156457;
-        h=content-type:to:from:subject:message-id:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TZSufcr8EjSGG9TES+EhviFpJfFbdzw3Sg/vtWeKWhc=;
-        b=Gh7bqvIF7QABLzrw+OZVlYpQ0XlZSZkgcZwCJXYBDjgLrP0K8YMF2UpAYlbWT2XcuG
-         QA56SKy2iaEFmMog/KnvarfEm5DSMuYaSI+73szUJ/gu9yskrnIsvDBy1ThpwYOuQUho
-         GApWBZp3FFvvCGgunROYEdciOhEZMZQWYUktzQ/4cVXqF/q7VtWKBS47XdQrgSByhGO/
-         9jAbixq/pyKt3pmVpGakNc210NxqKygyei1tgC3uQs3M5tu1sxT67MnMS+i/byV0109p
-         ikCBKG2obnZw0jv1VW2CyLyvucjvnpwvC4wy8FdYwjXcPeYBmd0Mtm6ktu9Nl2yYqlH4
-         df2Q==
-X-Forwarded-Encrypted: i=1; AHgh+RoiAPWSgZcK697oh4esrkkV7y8TkMVNH4pKV3Z/XX6gAKcSKn9uVTYw/8g5udh4x+PIfu7MYz7R5dl8lZHgr7aaaqdZAjc=@vger.kernel.org
-X-Gm-Message-State: AFuF++mOil/1SIz3Cw2yJad4tvrJHfDZIYXjnrb89Q6rlRLu98jAxxEx
-	QcDniiZmR0eilyWkflzEzx83etd/J0kXlVUtCPrfWEwAZBVPsTX+0fPz/0o0WjArnXgrqmzXiN3
-	62rFEEi8peGtwZSd8F8Zna8bvwgG5i6bnC7hanpAEX1e2FKqG/TUvGwyQH0o=
+        d=1e100.net; s=20251104; t=1787553376; x=1788158176;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=ZPZO/1T9gBfq+o/FMkeYUT9TJ0VTxgJ6DjM2Lc014mU=;
+        b=tFqfPJ2AWD+WGSO59rBCeRgRtEwlBrIfCEBszn5isrgulQBQAwZ1IXrL4p5PyuNK9A
+         VbI2DAXxKvaasLeVm0bF2FNQz3G50wEeMJWseKewtHUg/M5Yhfey1B2v6dE5+yo3ZyE3
+         dPInWAPcsEYey9AdSy4tSUAkNDMfOA4ebYlqD4430CVDnot9aFyHIUpokjz61+hvIM9F
+         Ie6mz2BtfEXOMzdZVO9d+qYtkHo9+8+gy4d/Ah/xB6o3VFMU1XOUxMu4OD/nuQMPvfnu
+         tppXk+0E8Ev7cYh2FQOpEEx1PtbTapDTHkkR6kdKS6eIQNPadg1JGcj/XYzUXmLRlCsn
+         b6Eg==
+X-Forwarded-Encrypted: i=1; AHgh+RrJdcnAkIzPhMG7HtP6nWfSEJVqfYWVDt2vXv15vLtxekOysPsl5fMvA9LiZPHntM21/pJXntiEfNEKohrnxVh1Z21LhZY=@vger.kernel.org
+X-Gm-Message-State: AFuF++l2cnX/sDuhObMlz1SMygO49CWmR9rbq0wzX9r70gjM91HfZWWC
+	Kn6/Wk67NmtG1xy/b769oaE343kJor7b8X4gvzJQ6qFd1t8Pg1iHi5spcTv2SIFc
+X-Gm-Gg: AR+sD11YPzaOTWU/ibYDdi/bIpwnSZtGViEBRT+gApN+pU7YLklJNqqAuno6Tf7Ie4o
+	RtB4BBqcNXfC+FHqYByKpi/9XVcPqeD/aD/4faYcgzSfqPWZVqwHPkN4ulNHnJqrt27zuiR/sj9
+	Rcq/xSUtaQrof3YeDjxkLqwkdaKLoIzRAMRItiCbQYw/CaCimMScePzHJZx2HVWasDEd2LplYNN
+	/3U0oiNfK9u1/jNTNQm9d7/xW9QXFcfrmSesxBAFed/yV4ScPFGO1416boCWCFgkRlH0tAad+ib
+	Dwg7NRqDsKa8/acwsU2lQ4ZWCZgQlf7qXUQytexzpbUEFoa9C8cEPgU+Am9lxMfnf0iv4Nsy/EJ
+	Q4AAKQ0DcshClxThB1eF9faSfDXD6iXdaLZwtUMQbMPgb9z8iyD0Za3WuZrEx8gvG64bOAqJwfK
+	h65m14WKSswGLWcceabWiLsrp0MJRkqRpzPQIwrEPvUIrzjCrUa0ADBWOsVQeE1Cc2d1XXUDvwI
+	w2n2TxbW/9z9Q==
+X-Received: by 2002:a17:907:3e89:b0:c21:7c98:d9ec with SMTP id a640c23a62f3a-c244d6349a2mr2907421166b.5.1787553375916;
+        Sun, 23 Aug 2026 23:36:15 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2496738e7esm1210893166b.46.2026.08.23.23.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Aug 2026 23:36:15 -0700 (PDT)
+Date: Mon, 24 Aug 2026 08:36:10 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: mic@digikod.net, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] landlock: Add scoped access bit for SysV message
+ queues
+Message-ID: <20260824.abc934a59c55@gnoack.org>
+References: <20260727230833.138165-1-utilityemal77@gmail.com>
+ <20260822.c9dcabf4999f@gnoack.org>
+ <20260822.3340c3dd2a46@gnoack.org>
+ <aooS2VVhwWjY7ugo@zenbox>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:24f:b0:6a3:1dc5:3570 with SMTP id
- 006d021491bc7-6b15944b2cemr16703682eaf.31.1787551657632; Sun, 23 Aug 2026
- 23:07:37 -0700 (PDT)
-Date: Sun, 23 Aug 2026 23:07:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a8bdfa9.dbb3a75c.13dd47.0062.GAE@google.com>
-Subject: [syzbot] [apparmor?] WARNING in aa_policy_destroy
-From: syzbot <syzbot+faed97c4ed43bfe7fee5@syzkaller.appspotmail.com>
-To: apparmor@lists.ubuntu.com, georgia.garcia@canonical.com, jmorris@namei.org, 
-	john.johansen@canonical.com, john@apparmor.net, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aooS2VVhwWjY7ugo@zenbox>
 
-Hello,
+On Sat, Aug 22, 2026 at 05:51:33PM -0400, Justin Suess wrote:
+> On Sat, Aug 22, 2026 at 11:13:44PM +0200, Günther Noack wrote:
+> > On Sat, Aug 22, 2026 at 07:26:33PM +0200, Günther Noack wrote:
+> > > I get the impression that with this scheme it would be possible for a
+> > > landlocked process to guess the key of a set of programs which have
+> > > not created their message queue yet, so that these would then start
+> > > communicating on that message queue which the sandboxed process has
+> > > access to.
+> > 
+> > I realized I did maybe not express that clearly enough: Not only would
+> > the landlocked process guess the right key, but it would then also
+> > *create* the queue msgget(key, IPC_CREAT|mode).
+> > 
+> > There apparently is a pattern in real-world software where the program
+> > creates the message queue on the fly if it doesn't exist yet, but uses
+> > the existing queue if it does.  Such software is then prone to reuse
+> > the message queue that was created by the landlocked process.  (You
+> > can find such programs using the Debian code search query from the
+> > parent mail.)
+> > 
+> > Step 1: Landlocked program creates message queue.
+> >         Because it creates the queue, it has access to it.
+> > 
+> > Step 2: Program outside of that domain runs, trying to use the message
+> >         queue.  It discovers that the queue already exists and starts
+> >         using it.
+> > 
+> > Step 3: Landlocked program can read and write the queue and manipulate
+> >         it.
+> > 
+> I do agree. It's a little harder than unix sockets where we can control
+> things at the client/server level (no such construct exists for sysv)
+> 
+> It's a little bit tricky. I suppose the easiest way to handle it would
+> be to deny the ability to squat in a key in the first place. (deny msgget
+> except with IPC_PRIVATE).
+> 
+> This comes with a cost in functionality, but it is easy to implement and
+> closes the gap.
 
-syzbot found the following issue on:
+Agreed.  I am personally leaning on the side of closing the gap as
+well, even if it reduces functionality somewhat.  SystemV Message
+Queues are used very seldomly (as can be seen in Debian Code Search)
+and it would affect few programs.
 
-HEAD commit:    9d2ed026f031 Merge tag 'sysctl-7.03-rc1' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17516549580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6e414d6e0a79e71d
-dashboard link: https://syzkaller.appspot.com/bug?extid=faed97c4ed43bfe7fee5
-compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16120415580000
+Possible Allow-listing variant
+------------------------------
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-9d2ed026.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/89c0c0c0f535/vmlinux-9d2ed026.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/80d7adeb0e7d/bzImage-9d2ed026.xz
+Another possibility that occurred to me after writing the last mail:
+One option we could also take here might be to *combine* the scoped
+approach and a allow-listing approach, as we have also done it for
+named Unix sockets.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+faed97c4ed43bfe7fee5@syzkaller.appspotmail.com
+In this case that could mean that you would be able to allow-list a
+*key*, and then for a msgsnd/msgrcv/msgctl queue operation to be
+allowed, it would require that either of these two conditions is
+fulfilled:
 
- </TASK>
-------------[ cut here ]------------
-AppArmor WARN aa_policy_destroy: (((!list_empty(&policy->profiles) && (&policy->profiles)->prev != ((void *) 0x122 + (0xdead000000000000UL))))): 
-WARNING: security/apparmor/lib.c:509 at aa_policy_destroy+0x164/0x1b0 security/apparmor/lib.c:509, CPU#0: syz.0.17/5541
-Modules linked in:
-CPU: 0 UID: 0 PID: 5541 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-RIP: 0010:aa_policy_destroy+0x16b/0x1b0 security/apparmor/lib.c:509
-Code: 85 ed 7e 4d e8 96 bc 37 fd 5b 41 5c 41 5e 41 5f 5d e9 19 27 4e 07 cc e8 83 bc 37 fd 48 8d 3d 0c f0 d3 0b 48 c7 c6 a4 eb 38 8e <67> 48 0f b9 3a e9 04 ff ff ff e8 66 bc 37 fd 48 8d 3d ff ef d3 0b
-RSP: 0018:ffffc9000345eaa0 EFLAGS: 00010293
-RAX: ffffffff848f530d RBX: ffff88803f734800 RCX: ffff88801af2a580
-RDX: 0000000000000000 RSI: ffffffff8e38eba4 RDI: ffffffff90634320
-RBP: 0000000000000000 R08: 0000000000000cc0 R09: 00000000ffffffff
-R10: dffffc0000000000 R11: fffffbfff1d95913 R12: dead000000000122
-R13: ffff88803f734800 R14: ffff88803f734828 R15: dffffc0000000000
-FS:  00007f5f6a1836c0(0000) GS:ffff88808c519000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d02407b048 CR3: 0000000012aa9000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- aa_free_profile+0x9d/0x9f0 security/apparmor/policy.c:334
- aa_alloc_profile+0x1e4/0x3e0 security/apparmor/policy.c:416
- unpack_profile security/apparmor/policy_unpack.c:1153 [inline]
- aa_unpack+0x17db/0x7430 security/apparmor/policy_unpack.c:1748
- aa_replace_profiles+0x226/0x2a20 security/apparmor/policy.c:1183
- policy_update+0x234/0x4a0 security/apparmor/apparmorfs.c:505
- profile_load+0x1cb/0x320 security/apparmor/apparmorfs.c:522
- vfs_write+0x296/0xba0 fs/read_write.c:685
- ksys_write+0x150/0x270 fs/read_write.c:739
- do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
- do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5f6939e0d9
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5f6a183028 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f5f69625fa0 RCX: 00007f5f6939e0d9
-RDX: 0000000000000041 RSI: 0000200000000400 RDI: 0000000000000003
-RBP: 00007f5f6a183090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007f5f69626038 R14: 00007f5f69625fa0 R15: 00007ffe23725c18
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	85 ed                	test   %ebp,%ebp
-   2:	7e 4d                	jle    0x51
-   4:	e8 96 bc 37 fd       	call   0xfd37bc9f
-   9:	5b                   	pop    %rbx
-   a:	41 5c                	pop    %r12
-   c:	41 5e                	pop    %r14
-   e:	41 5f                	pop    %r15
-  10:	5d                   	pop    %rbp
-  11:	e9 19 27 4e 07       	jmp    0x74e272f
-  16:	cc                   	int3
-  17:	e8 83 bc 37 fd       	call   0xfd37bc9f
-  1c:	48 8d 3d 0c f0 d3 0b 	lea    0xbd3f00c(%rip),%rdi        # 0xbd3f02f
-  23:	48 c7 c6 a4 eb 38 8e 	mov    $0xffffffff8e38eba4,%rsi
-* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
-  2f:	e9 04 ff ff ff       	jmp    0xffffff38
-  34:	e8 66 bc 37 fd       	call   0xfd37bc9f
-  39:	48 8d 3d ff ef d3 0b 	lea    0xbd3efff(%rip),%rdi        # 0xbd3f03f
+1. The queue was created in the same Landlock scope (only for IPC_PRIVATE), OR
+2. The queue is associated with an allow-listed key
 
+Condition 2 is easy to check because the kernel already tracks the
+queue<->key association in struct kern_ipc_perm.
+
+Advantages and Disadvantages:
+
+* It would permit to connect outwards of the scope for allow-listed keys,
+  but only within the limits of what the sandbox policy permits.
+
+* For keys generated on the fly as with ftok(), these keys are hard to
+  predict up front. (Would have to enforce the policy *after*
+  calculating ftok().)
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Given the limited number of programs that use SystemV message queues
+at all, I am unsure whether it is needed to implement that.  But maybe
+it would be an interesting thing to keep in mind so that we keep such
+an option open in the implementation?  It would at least not rule out
+the possibility of restricting SysV message queues in a finer-grained
+way.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Let me know what you think.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+–Günther
