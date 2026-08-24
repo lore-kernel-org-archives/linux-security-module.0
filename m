@@ -1,125 +1,120 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AEB45D182
-	for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 16:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A07450413
+	for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 16:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787587436; cv=none; b=GeitHmYvSYdyYJMwnoYpWhODoYIwsNUsrzK0JA50ugzdqf+FWUy65TF4S0mDxSuppO5PhXWT11Nvpml6J4dypTzlAOI8f6N4/H9kj79PuD5IQNkX4C6uN2SIJblf16Qh4O1m252ZKDrmwqHFHbO6uVLsw3jWrIKy+Fi31RWPPeA=
+	t=1787588546; cv=none; b=Wn5rPDanvC46x3RvAg6F59qbslOZRAL1+t/dHNwu7Yz/6ve/RodmLb3vPsrQ9YPYW/UkgO21bBivEUeciWGqMqMoRxr/zzHbS18aGoIDtvZ9Rp+uCNY81xdQkBKCgjjhLUB0FfV9viGukAEAm7hKI63igIR0EzTQ9F/qQUwUAlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787587436; c=relaxed/simple;
-	bh=7zQx3GnM7KjvtJZrpo7rMHkOTIarYOBO5QCYE26EmNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLePVcJjOHklf5qBEexML2z52s3bkLi/iC35jbAFE9ziTaaUUvrtigKaAPPCO1aTpTvC5zW3uXF5bWJO/VUAIrCk5dUgAQJ3QO/r+tI0eo3dzeAF+/IJtQU+vw0VqKiiRNz2rUKd6ec4ckyINQasQyTgZ2bExCUnA2fcBP9P/7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XFMA9uwp; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1787588546; c=relaxed/simple;
+	bh=h6x4klQMuaENRYpnPstAUeKDBWZfZPIGWzm5A6TXAek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WC2oxvQQNbi9aWvQGEbYwDyaZcqtTGHyiw90eChyuV9iKfy0fuidU9q4hGpYnTHKx4vCJSoz9/WSTQfnc6AhGbX1rccWzKFUjFYLpXFbsGzLzIkWTHcSZqGvspNgm/EBzLbGrd1aVqlNW09mYqHIxMXqilgJylnRHGW/qnBZ4s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qp+RqEjF; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XFMA9uwp"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c2022323c37so578182166b.0
-        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 09:03:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qp+RqEjF"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so272735e9.1
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 09:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787587433; x=1788192233; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=c2tljJuoFxVknx0eN209NVYTMTtwPyJgSuYRQ+fZhAs=;
-        b=XFMA9uwp48fa9srmtUsbn5Id8RKvoc8SIdWoYgW9G5xqOSPXsuVTIQIUUkuPG4WTRa
-         EmVmVMzG5zmZBTlRB1N8D6OOr282NmgjtsI9ndIzi2D82BqFAMXJ6bCg8GSLJ1WAoCKX
-         i/YMB9jplL7FXj6KNT3Kw1tGVHUxl08USVfSPVJlVZTsm7KPDY9fjpJmGhXdDZLaAkYW
-         2+WXZx2/kyOPv4oz0urPEG4gWxBZU2Se5Ds3RT2xEUH0WxA6x0csR/cRYKSiH+tHotsM
-         wHsXeqRkaxWCtdQsrFEwoaIhadTBOCP+7F/vE8PAeiPt5tV98nw0ItIPbps6rxkrOXye
-         GnPw==
+        d=gmail.com; s=20251104; t=1787588543; x=1788193343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pOdYzX56ODDkS8MxIa5w7s/cy/kIlqifW5C7xMdwnpg=;
+        b=qp+RqEjFoWyPVgWnsBIq7fMjt7vpvDJyNqwvDnShP1AlibtmQVqsjKUw9qbo7z6J/g
+         8B/G2EMu268SGdgQRE4CGXHx6MWRcmTRqRG6BwgrAU40FMnJKXgAx7wKVlX3twqrF0DN
+         di6rXnefX0gUphCPeAc5IRuaKqgF+/CAC+PnmIsAYksWcXCUTbHXhH2UgEWZR/wtKZ/t
+         HM8iunnyG5YQZKxnVFecDCqV3t9DHsI+iJ7E2hJfENl6ynkTRd3GiOGhqw5U55IulF/2
+         5YgWFQwHK1tviZDnGpxAktzk8fD4Nim2rtCVCVMAlRMktucyD4Vb0I723m6ofWAOUx6x
+         uoqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787587433; x=1788192233;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=c2tljJuoFxVknx0eN209NVYTMTtwPyJgSuYRQ+fZhAs=;
-        b=L5vVno4Xwf2mxGfJIL1Yzr12Njy5s0y40+E5CxyWMK277MtO5vYf0anMXcnn+VWne7
-         3HDJRjAwNtiLW8v9Pbl4v74abw4zemC954WNlMJLPAH3r0BYmAWkXqLmtE29JWhVvCdE
-         2Bnuql8Ua8tDeSnUZFcJgNnKBzPxxAO3QayUZHMhNflL4pWMZfZzPYc+tMlr926mR88g
-         bb0Q/PJsqdUjNIGsw6HtzANEXPg7HlVeLts5o/6sRNjamwClV+2bFbdd3XpgIotYKYck
-         U7gMALeMawsybfoXTd6MSBU305bJFe1lkQHzp8rcI/CPPWTiSfLI2c6o0vpJKOrOkWMA
-         TM8g==
-X-Forwarded-Encrypted: i=1; AHgh+Rr7oX8jLro1flAWsKZT1tDi4LYAaiZvo6Qnnl8BoPVXhx/63CbvFAuxlj/afmUO84ixhzSm8dMQ+IjbkmtMzqs3MOYWx3M=@vger.kernel.org
-X-Gm-Message-State: AFuF++lEg1CYdkMidP3yjRtjJ9be3L7auRoHB//Loh79wylfvIALTHtk
-	nY9jnpZA0Ifv/k+Sr0BlGWhsyYuw5iftlXSiZnW+hpDLFT5badO7qw6JhTgohgTjMg==
-X-Gm-Gg: AR+sD11Fo5DL1M1gudwCVppT1AfHl8NUGFPK2ECjIwzwpgbid0Xcq1Kz21iYY7tzTDB
-	v5EFmI6nSNHS14ItNKgfjE4NmXkzVvcnYLsPZZ71r7nqIpvsX4HDfwVE1dK/WhzgW3AIFWP3uwf
-	L+SDVSkilKLyCXsSlc8l8RdoTy5H13wLW6nFVInqa8Cn85DPX5y6NccK3qZ7h6SjsbJ/YhmR6Rz
-	uTfMOn7eSc1nobhwEZFduospMD9EKuIg7ieY4SXCQHcI1m7P2kQjuGmz/O3f1Z8p0pM4SGTR1Sc
-	jcAOeFzDFrRC67KylhuDFVTG2FWiBxCXSMLcvxJEw9AihGQPg4HsrstPIX+MOGSFhY/9G5tpRzf
-	H3wijiRw0h3wEfHHW44n4kWCI0NwZhg4snwimuXSB8xsFudVjaUhogXc7UX+kqzSBihuvmW7Jmj
-	AfxmGcODlo+ykKwel46YeUdbSRADqmHM1RqT+vNwhWGRJ5D5AXPne/7hk/6kRSbGXDpWhpG6Q23
-	suWddqSRoiLZpE7uGg=
-X-Received: by 2002:a17:907:e901:b0:c16:769b:9838 with SMTP id a640c23a62f3a-c246a2eba8amr3008972766b.5.1787587432258;
-        Mon, 24 Aug 2026 09:03:52 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:c1fb:9c12:150a:ef4a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c24967383e5sm1269779366b.45.2026.08.24.09.03.51
+        d=1e100.net; s=20251104; t=1787588543; x=1788193343;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=pOdYzX56ODDkS8MxIa5w7s/cy/kIlqifW5C7xMdwnpg=;
+        b=mz0eBMa4rcVq8H8AVt4N0wFlBi4HVBM+aoeJN8qr0P+uN+m9VjqMfq1DMviv5spjoB
+         cJtx1LrqdKDIGdanzWKsHz6OHVTTFGfWY7Vbt1v7QPShqTkQurmN6bp5AeZFDkeTEIsc
+         j5cnbvtdUgZdHTr2nXLvaSXBvbfLL1eII+mePbC3JM5ahaSL6XIvf+5zIomusI81sBjm
+         KeZVgBQPWaWdF1STxVX2E3K89wM0pP0TrIC1EtVTsdnjV+J/wNndzTjg6knGrZ9+yE4k
+         /lOQxvQaIwWXjFB4rauBlsl0YmUe66EPdoz8rb7TEqa7cld2uTAiTH5f01nFeSxNX6xE
+         I+rg==
+X-Forwarded-Encrypted: i=1; AHgh+Rq9EN2OQszbEIW9jriteAutvoQxXq4bDGwJWn1IhQHH4WvCZcBnsDF2nn1Sv/oUCOYl2bDvlSfuM9se+wf3a4ee+OGTCkg=@vger.kernel.org
+X-Gm-Message-State: AFuF++k9qJ6VEDgV9BYbl686pL+i+lQ/ViHuscaLKDbkIfCerPxeyBEs
+	txsCVzpsygpnJFvELG0J60K0wbGpvO7o3nNkp5OJUoxpTyvOr0reQnj4
+X-Gm-Gg: AR+sD13aI77P8eqVl7NFa0cwWy9JAAzNQzsBvoqD0/QMe3KsyktYUNmWgWy4Yqq8iZB
+	RGFFcnPFD+CC0iBubyAr0vXopRMGr6l6DnPuhrlI7h5ZC5bJ+3EYw3vNvo2DRCSyJ1d71b9aMub
+	w92jNNQVvl7esOIuMs9dv9PJ0YcQ6SfJw7ZiFhb9GJwZzfYRfUkiwyEj7QSb84U7m4Q55878NQV
+	pkociXgvKkfsS9pvXeLsus1nCGfEO/GAsrpRmqgJoHth0mDFsfx9yJbIlYmc6Pf6IVHFBOC4szd
+	vZRaB6Cm9cJM9x5kKf6nORD6oTF30JSUaMGGzzPZN4Gb9OppWdufOb+pdn6itx7a7rmxeOkpjvj
+	/2XbHQ60dTeSpMfg2lIm251NZn3z9oDQw273V1cn+qY4JEBLn/+bIqwaHywml9Oan4q8cqtbWMc
+	B/6q9X7JpQw2EEnktnyU78sd+XyzRu7pz4tfDGEks+XNhpTIgadVf+7OLDyUlR6hly40jXFEqum
+	mk6YOfWxE4kz6cPvpJ2u25eCHZQxkwlSPCe6DNRSEIIOd87386j
+X-Received: by 2002:a05:600c:3d92:b0:499:8d9b:832c with SMTP id 5b1f17b1804b1-499d6323202mr7372435e9.4.1787588543063;
+        Mon, 24 Aug 2026 09:22:23 -0700 (PDT)
+Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499d6335051sm1342115e9.1.2026.08.24.09.22.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 09:03:51 -0700 (PDT)
-Date: Mon, 24 Aug 2026 18:03:47 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, mic@digikod.net,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] landlock: Add scoped access bit for SysV message
- queues
-Message-ID: <aoxrY9Iw05UhrYI6@google.com>
-References: <20260727230833.138165-1-utilityemal77@gmail.com>
- <20260822.c9dcabf4999f@gnoack.org>
- <20260822.3340c3dd2a46@gnoack.org>
- <aooS2VVhwWjY7ugo@zenbox>
- <20260824.abc934a59c55@gnoack.org>
- <aow07i8dFO6EAB-K@zenbox>
+        Mon, 24 Aug 2026 09:22:22 -0700 (PDT)
+Sender: Julian Braha <julian.braha@gmail.com>
+From: Julian Braha <julianbraha@gmail.com>
+To: zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: eric.snowberg@oracle.com,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Julian Braha <julianbraha@gmail.com>
+Subject: [PATCH] ima: allow users to specify the pcr index with IMA_MEASURE_PCR_IDX
+Date: Mon, 24 Aug 2026 17:22:15 +0100
+Message-ID: <20260824162215.1572367-1-julianbraha@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aow07i8dFO6EAB-K@zenbox>
 
-On Mon, Aug 24, 2026 at 08:47:28AM -0400, Justin Suess wrote:
-> On Mon, Aug 24, 2026 at 08:36:10AM +0200, Günther Noack wrote:
-> > Agreed.  I am personally leaning on the side of closing the gap as
-> > well, even if it reduces functionality somewhat.  SystemV Message
-> > Queues are used very seldomly (as can be seen in Debian Code Search)
-> > and it would affect few programs.
-> >
-> From msgget(2):
-> 
->        A new message queue is created if key has the value IPC_PRIVATE or
->        key isn't IPC_PRIVATE, no message queue with the given key key
->        exists, and IPC_CREAT is specified in msgflg.
-> 
-> So more specifically, we will disallow if all three of these are true:
-> 
-> - IPC_CREAT is specified
-> - IPC_PRIVATE is not specified.
-> - The queue referenced by key does not already exist
-> 
-> Or if these two are true:
-> 
-> - The queue referenced by key already exists.
-> - The queue referenced by the key is not part of the scope.
-> 
-> Effectively, this allows as much as possible, including msgget(2) on an
-> existing queue within a scope.
+The IMA_MEASURE_PCR_IDX option is currently not visible in the kconfig
+frontend, so it always uses its default, 10. This means that the
+'range 8 14' is dead code, and users are unable to specify the pcr index
+value.
 
-We technically allow msgget(2) on an existing queue within a scope,
-but if I understand this correctly, there is now no way to *create* such a
-queue within the scope.  So effectively, that msgget(2) can not
-succeed, no?
+In a previous discussion, Mimi explained that users should be able to use
+this config option to specify the pcr index. [1]
 
+Let's add a prompt for users to specify the pcr index, when EXPERT is
+enabled.
 
-I agree with your sentiment that we don't need to implement the
-allow-listing approach right now.  It seems like significant effort for
-a very small number of use cases.
+This dead range was found by kconfirm, a static analysis tool for Kconfig.
 
-—Günther
+Signed-off-by: Julian Braha <julianbraha@gmail.com>
+---
+Link: https://lore.kernel.org/all/1feff118-4afa-4b9c-86f1-271a7a88208f@gmail.com/T/#mc4efa2491b4937eb7c9e532c29ffba516a70e662 [1]
+---
+ security/integrity/ima/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index b3a9f86809b0..2d5bb19ea6ac 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -46,6 +46,7 @@ config IMA_KEXEC
+ 
+ config IMA_MEASURE_PCR_IDX
+ 	int
++	prompt "PCR Index for Aggregate" if EXPERT
+ 	range 8 14
+ 	default 10
+ 	help
+-- 
+2.55.0
+
