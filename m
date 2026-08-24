@@ -1,137 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A02B408602;
-	Mon, 24 Aug 2026 11:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEAA40DB45
+	for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 11:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787570425; cv=none; b=kUy5bsi/qQ9Pz4E6C8ShwTWl4htNd4qve1NdwgAfesRYRO0n2VzB+YwM3Sw7xdNZoulkqBO0qFC6hlLfDbCX4vAOEMPCrNf1DXQ1Irs5+ASqDwh/sJOYa6sjcetqVykePfWLmhM3DiPmz9/cQlxWSvBrXRub6r2ZiJinO5+2rS0=
+	t=1787571021; cv=none; b=fdUo/Ss+ZAyzSbJSokP3g7iXcfSnXgDMiPUfcZjXfBc+alefB0I39eowoERXqaLdov9u+mGtHOL7bI8945kQefSLmnRib1G7tKZ/LxuaInQwvVdwSGvuON7odXJhpLU8Ltf8lCXOcy9Va+biyxFZ26jbXKrPFFJMVjDQjacsxbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787570425; c=relaxed/simple;
-	bh=vSOqJFayRfX2VpqkoQBcpBdLMfaWMqIb6v/l01/Pb14=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AC82DknoJ3d9xUDmSBz4qsBqhQkBJxLNxkePwBwIY158adW+dNfDYSk3qUAJuhfy0Y3V176q7Ui93wb54ZbXAoSnktC8dDCACeuzxqyo+O202NjbMmuuzLOCP4rQrJQqp3qZNArRKEy7EXkS/nsNWXAbvITgijtZp9CQ4yMmEc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9EW113i; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787571021; c=relaxed/simple;
+	bh=eIiHDNpGuJvlr6XzJzVZse8EFDoB8HDy4sppT9wCi+w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dxTz5eznYjHtFDTvCduQ2+5Lzl+rb6NbSwiW/Co67XOTY5ofzMWWAn0BRNr5/qPNdue0/cE5tGiifaBHRhPpjqx7bDPGziTXh2xJeFP081ZXLO79yZkEqjLLp/L5LK/EGiZt3KuQUmyiuuVVcoojvS2UAM6PNmYmfbiPqhXymxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V8x3jT9Y; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9EW113i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56B1E1F000E9;
-	Mon, 24 Aug 2026 11:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787570424;
-	bh=gsf4C31WIGEdvjURLO6bh8+KS225jhHsASFOIqCjPTM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=T9EW113i0F7o9cpyn0NKMrr4qzmRV5ZF8U/NZoyuc8hneKIS+m7cpuDvzSVgPWLv3
-	 UZ/T59ijq/leurmQCv1iHl0cmEuk1NIzbIWD6fJx8EeAGt6U1JI1XyOxMxA5DDGolk
-	 cgOQmWmEn9qSTztT73EmE54JnIvSFMBXxz1qP+EiXrnNjG8t7VS3q0HgSuto+OVHb5
-	 K1G1+3cT4C6dI3/1VVHMRa7YVVcSo8rBEa8pYN4f07pLSh1dQdd8A+63hq+JoW803b
-	 2R0aVMMZrfm+rKheifoo5O0r8MXv+DayvLLCFDSDOnBonW+N25ZJmtopKH8uu/+ZSn
-	 N3LkyVXe2gdQA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Mon, 24 Aug 2026 13:18:00 +0200
-Subject: [PATCH v20 8/8] rust: page: add `from_raw()`
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8x3jT9Y"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-84faf0fa17eso3340087b3a.2
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Aug 2026 04:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787571019; x=1788175819; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=0Yqy+VWHRiQmqGDvTYaHpxheSZahwTkk9CcTJ304p/4=;
+        b=V8x3jT9YvM2MrlOBRgaZmcHR4FXpMpUbyk9NcsUuyixF2LqeSZC+16kLsA4iMJmOcH
+         LePSvI+wRfzIs+INpcWdtXh6V630fe1p/GVNRwdhYszG6WcSMVKmJYP8kvZP984ghHKM
+         mc6SRHOTi6oIbPB0NnUjycLLI2DlbNQmUNlMHF4sFZd12Fuctk2il0obUsksYLUFbcxx
+         xhPmeruxVEUXWFwEcm+Q2Q8mrq47t263BTqEdm3BEHe8IMpeMNOHUlJMZstBT3piabcO
+         0V1dVLkepeuEsBnG6B7svLSGLlxEn/p1i6qLIHH72uO8aeDnoUa6z2jLXbnqnjWwozYs
+         3rjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787571019; x=1788175819;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=0Yqy+VWHRiQmqGDvTYaHpxheSZahwTkk9CcTJ304p/4=;
+        b=ovXy8oO6TF8ceL6a0tNeJXzyo27TSl1m75mtAiiFMe16CTWTu7VnQ4k+u1i4WyXdk3
+         Or849KykpPmqFleBXqownWuoI6c5WhaHCpTOFgIpfLjhsnPmudhgI3DYseorNIn32TJs
+         yECZ9cD+MNeTfqqDNyZl5XMg5WmbyA5B7fpKrmz3EEHjgjDXyRlyoeecMQbnTQ9jeRD7
+         Q5iBYBLv/v3xwqjG7X9rwvhgNdhbfF74qV4pMOtfgMuzECm+k07G07nFyaihvuf674ag
+         b7kzAyKyjbLoU9qSG48RM+WWlJPRS9oelU3cXQuQWf99mhun5ZmIEeDEFjSjimIqEg+v
+         S4jQ==
+X-Forwarded-Encrypted: i=1; AHgh+RovvRHxV98ZTsoRiE98byIXISfGQctOwozITqIU1OT1P3CC6jZSsFGzLBEBmJjBMpEj6yjFajB+yq4d6VUjGTbjznR8j0E=@vger.kernel.org
+X-Gm-Message-State: AFuF++mQUlPdW9TO1RcpkUW4Qd/fOvdgiS1RGEVEl66RErWdt42341+n
+	2I5qMXk3v0uAdNURerMJVWHwRnKfqYaqGPP5944XSMW9ps8J4RbKX3dc
+X-Gm-Gg: AR+sD10HNODJBibSbDNu3NN/aNxS/iXNxbx/r14e5vf2aOZFOUe1yuLzXCmZiM8S7zt
+	OVdSP233q4oISZ+VihjxepxQd8x4fbfFuv0laql4tRWSPw60QDEAugbfeYBWwl3x1DQm8VsCoW8
+	+cvQndJ9mCTBMyUVtfF9/Hz0gYWsiDZ+ncBcwrLcq1oN609fFXK/Qz6zh4MleRuvFRQUJqx89Rl
+	NJKxcRwd1d5ZJcbx8rc5YX0CIkoApOXOpJYg1He5XFieT0H1+REduCulEb3MU527Olz3p3vD2/x
+	4urpvxmpMq0nxPTcGdLWwuCTwjxsYdYRH+uBDZw/QCXPjePzj68SNP/F7UvfNtOUb0ls4z0dD5S
+	Wohx4WZTxYBwE6841mjP7CdF3YeZ8ajmZHZP7Sth4K5JnYb+1yBCgUnizpKxUzKTp1lCl1rhUoT
+	EqP0H89sG8QGLl8aY5rTLqOqPGpADqbFD+YE2ZthAfGok5QNPH3C7zUeivuURhs8lKFc3yyg7B
+X-Received: by 2002:a05:6a00:3690:b0:84f:d7e4:3404 with SMTP id d2e1a72fcca58-8520be6fd22mr30209102b3a.11.1787571018912;
+        Mon, 24 Aug 2026 04:30:18 -0700 (PDT)
+Received: from ancienth-X870E-Nova-WiFi ([125.186.72.2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8520f149ef3sm1870661b3a.41.2026.08.24.04.30.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Aug 2026 04:30:18 -0700 (PDT)
+From: Daehyeon Ko <4ncienth@gmail.com>
+To: dhowells@redhat.com,
+	jarkko@kernel.org,
+	lukas@wunner.de,
+	ignat@linux.win
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daehyeon Ko <4ncienth@gmail.com>
+Subject: [PATCH] keys: reject descriptions that exceed the index length
+Date: Mon, 24 Aug 2026 20:30:04 +0900
+Message-ID: <20260824113004.3755053-1-4ncienth@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260824-unique-ref-v20-8-490735672187@kernel.org>
-References: <20260824-unique-ref-v20-0-490735672187@kernel.org>
-In-Reply-To: <20260824-unique-ref-v20-0-490735672187@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
- Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
- Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Tamir Duberstein <tamird@kernel.org>, 
- Alexandre Courbot <acourbot@nvidia.com>, 
- =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
- Lyude Paul <lyude@redhat.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- =?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, 
- Todd Kjos <tkjos@android.com>, Christian Brauner <brauner@kernel.org>, 
- Carlos Llamas <cmllamas@google.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Leon Romanovsky <leon@kernel.org>, 
- Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Igor Korotin <igor.korotin@linux.dev>, Viresh Kumar <vireshk@kernel.org>, 
- Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, 
- Michal Wilczynski <m.wilczynski@samsung.com>, Ira Weiny <iweiny@kernel.org>, 
- Ira Weiny <iweiny@kernel.org>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, 
- Philipp Stanner <phasta@kernel.org>, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
- driver-core@lists.linux.dev, linux-block@vger.kernel.org, 
- linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-usb@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1324; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=wkOYacmcCbns70mMJJNOqXe3g11b+kHYA0S0dbdXM7c=;
- b=owEBbQKS/ZANAwAKAfpQKQiqxb3QAcsmYgBqjCiGqEXZYrPpUe2ITj4yrNHK12u5/qghuV8op
- wHiEF9/CzyJAjMEAAEKAB0WIQRXitnI2WZ2JirAaob6UCkIqsW90AUCaowohgAKCRD6UCkIqsW9
- 0FasEACY3/FKckvX+qb6nS6iG9Xov+RkCghkBwWrcp/pKjcC9tE3uc6u5dni0Jlv0phoXM9ZRCq
- 4Oiskvu/fzDYM3OpBsN5yPrYo5z4pHMgQ1iyZ/E4PT2Qt3U5csMyACtNOfzK20rc5GW+JFzxdSm
- GIwUm1bZmMmmNMMZRB+8ErW6F9CbksrWSHSDwxAJMAQE9ePY1NSP3y5e06cyaZzR5dJmIbd8Qhr
- iaKt2yKFZKa4w9XJTygaZ1X1ufWNpW0NaoqexhZ0Gw1ms6cMuvFEjI4/N/xLlD5YPdiEhExs0NT
- qqL2XTiWvEQ6MqT3NkIe0DeoXtWwmA/KXc72ctatlG4NwhOrqjPanKOBFztt2qMEGDM8l4FIZlL
- DpzZe+X6qPhXJBkNVuMQxBhztKCpOjbSfd32N6Lj/sZX6MIrzjOvvAX/lkZodnyZAqNctVA6OEx
- cEtPjNHNN86XW5r6RbLvk/5f2Xz9Ma85CmnI7b9PMULgpQ4y9DKOXgxQqXwyqph6gf4Hpz0DZ5N
- 3Vci9dlrdolAiJLda0B0TkW4nnyv76G3i538Khhkr6C/u8tAJfA7Bb6K/GM3QJew6tJBXduGUdx
- YYs+T2vtUZz9CkjJrbvnHCPMJFQMH9cbMvEkos3w8s+D6i03ispYF0phnZ+cSWLIoLItRLQxpFZ
- cqeuQ7JvqxT38Fg==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-From: Andreas Hindborg <a.hindborg@samsung.com>
+struct keyring_index_key::desc_len is a u16.  User-provided key
+descriptions are limited to 4095 bytes, but a key type preparser can
+generate a longer description when the caller passes NULL.
 
-Add a method to `Page` that allows construction of an instance from `struct
-page` pointer.
+The X.509 parser forms a description from the certificate subject and
+twice the raw serial length.  A certificate with a two-byte subject and a
+32766-byte serial therefore produces a 65536-byte description.  Assigning
+strlen() to desc_len wraps it to zero, after which __key_link_begin() hits:
 
-Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-Reviewed-by: Onur Özkan <work@onurozkan.dev>
+    BUG_ON(index_key->desc_len == 0);
+
+This is reachable through add_key() by an unprivileged user and can panic
+the kernel when oopses are fatal.
+
+Measure generated descriptions before narrowing the length and reject
+values that cannot be represented.  The boundary input now returns EINVAL,
+while the one-byte-short control still reaches the normal quota check.
+
+Fixes: f771fde82051 ("keys: Simplify key description management")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Signed-off-by: Daehyeon Ko <4ncienth@gmail.com>
 ---
- rust/kernel/page.rs | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ security/keys/key.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
-index e807ffe3cfef..32dd030c8315 100644
---- a/rust/kernel/page.rs
-+++ b/rust/kernel/page.rs
-@@ -144,6 +144,20 @@ pub fn nid(&self) -> i32 {
-         unsafe { bindings::page_to_nid(self.as_ptr()) }
-     }
+diff --git a/security/keys/key.c b/security/keys/key.c
+index b34a64d81d47ab..f2f472b45f4eee 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -14,6 +14,7 @@
+ #include <linux/workqueue.h>
+ #include <linux/random.h>
+ #include <linux/err.h>
++#include <linux/limits.h>
+ #include "internal.h"
  
-+    /// Create a `&Page` from a raw `struct page` pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `ptr` must be convertible to a shared reference with a lifetime of `'a`.
-+    #[inline]
-+    pub unsafe fn from_raw<'a>(ptr: *const bindings::page) -> &'a Self {
-+        // INVARIANT: By the function safety requirements, `ptr` refers to a valid `struct page`, so
-+        // the returned reference upholds the type invariant of `Page`.
-+        // SAFETY: By function safety requirements, `ptr` is not null and is convertible to a shared
-+        // reference.
-+        unsafe { &*ptr.cast() }
-+    }
-+
-     /// Runs a piece of code with this page mapped to an address.
-     ///
-     /// The page is unmapped when this call returns.
+ struct kmem_cache *key_jar;
+@@ -820,6 +821,7 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 	const struct cred *cred = current_cred();
+ 	struct key *keyring, *key = NULL;
+ 	key_ref_t key_ref;
++	size_t desc_len;
+ 	int ret;
+ 	struct key_restriction *restrict_link = NULL;
+ 
+@@ -865,7 +867,12 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 		if (!index_key.description)
+ 			goto error_free_prep;
+ 	}
+-	index_key.desc_len = strlen(index_key.description);
++	desc_len = strlen(index_key.description);
++	if (desc_len > U16_MAX) {
++		key_ref = ERR_PTR(-EINVAL);
++		goto error_free_prep;
++	}
++	index_key.desc_len = desc_len;
+ 	key_set_index_key(&index_key);
+ 
+ 	ret = __key_link_lock(keyring, &index_key);
 
--- 
-2.51.2
-
-
+base-commit: 0a0d1d55dad570724bf8c7ea83409639cfb4be9b
