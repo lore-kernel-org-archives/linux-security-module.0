@@ -1,188 +1,596 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E0641F345;
-	Mon, 24 Aug 2026 13:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435E541F34E;
+	Mon, 24 Aug 2026 13:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787577473; cv=none; b=KtNajm3/PQ2S7VkI1+hL1FFd/rUGZn1ha0ROEREsPNwu4VHnpthyOSeOBzNYMJITfbN07CF23UG3cucQjwFSt/F5t840kPzsk7eqjtjpkCKUnaCGCJ2EUFvS0KhQXCE4emqUIGpQgPYsKxBT+2WUCT2CQyQHMdsb5vY9qCs7HiA=
+	t=1787578103; cv=none; b=NNu++sX9+L0D3ngGrC/rScVcOI9IugGovbn7pTR0h98bOXW9p20H2SuSHenanG97Vt+4DlIcTat5GMt/s3/M+hyzLZffTtrM7lKsBCYoLuxnP3U4FtYKXAGLN15Q8NslXKYcRBRuvO5oXp/egETYmpe8dHySov3ioMS+xBctTok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787577473; c=relaxed/simple;
-	bh=5Hn1TQP/ACq4whtIBZ2GE8JrqMfOQKWgVmzZDilbU0M=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=ifvsreh3m1Feq39prMXKS6AHx4wGr8Za0giBm6tCnT4Gq3s3K62iNQmBcpp1HEo4eFaH50tpZijqJO1x1HeRjocFg2ezrymk4LHKnMQjuAb9k7RjSYuHa7c7lhxsYYor/DktK4QObhl+zY8NtDTCt7xPcedQcD1K57iKLkUqdxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lq4AQVDG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1787578103; c=relaxed/simple;
+	bh=gE/3z15bdmO63fBp1lfQ8mBMdzk5rEK4KiPcGfe1UZ8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ELq0megzD+66i3JL+rRYjc3AOV8DbWaQ6eFxf3c7q8zWPdYXTjoL9pdUqXpPM+3PyV8hSGQ8C5ERoVBnO7urDSA/bckcLLfxpDfRXfOiinENpw3QHr1j6e6Yc2sBx4OiL+ZtKcN6AA3BB4isFlgetGPZct+nF00eJQ7lWsLwyYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZq7qCFR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lq4AQVDG"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67OD1XgP1957979;
-	Mon, 24 Aug 2026 13:17:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=5Hn1TQ
-	P/ACq4whtIBZ2GE8JrqMfOQKWgVmzZDilbU0M=; b=lq4AQVDGxhnR/1pFDtmtav
-	d/2MXfg1DT4JO6e1C9K13SHJA7GPZ8bYnLVnCHViFHj/sEl5LBUEjhNr+MTWGI2v
-	xo36iTsngiEc258V0KKVzdDRzOKifeqt19PODd651MoRDMGCOneBPDVzq72Z73+M
-	jLls94XAIRDdOJ+8WxDD1gXOuZxj2+D1RRHXWqnhNT4CivYZm++L9vLfynS8XVu9
-	sp8njC2PEFfocLz3euJkKqFJeZmu4YMJVvHewW0j6gsbbk26UiEj5JWqNGHiwkrt
-	WfCiJ5OCMYSOYQ3YQZfjpDzkW1zXEmoQgxbTd8E4PDM/xOtpY3ZwMTLuPCE0S/Tw
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g73g4hg4a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Aug 2026 13:17:28 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67ODBGpA024964;
-	Mon, 24 Aug 2026 13:17:27 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4g7q3jp30j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Aug 2026 13:17:27 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67ODHR9748300352
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Aug 2026 13:17:27 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 57C285805C;
-	Mon, 24 Aug 2026 13:17:27 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 507115805F;
-	Mon, 24 Aug 2026 13:17:26 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.146.167])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Aug 2026 13:17:26 +0000 (GMT)
-Message-ID: <1805cb973c0e38e1ca8cbeb6dadc4f46f9475a0c.camel@linux.ibm.com>
-Subject: Re: [RFC] IMA: periodic runtime re-measurement of process .text/GOT
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Nicolai Kuntze <nicolai.kuntze@hs-mainz.de>,
-        linux-integrity@vger.kernel.org
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Roberto Sassu	
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260822193833.98211-1-nicolai.kuntze@hs-mainz.de>
-References: <20260817102323.35950-1-nicolai.kuntze@hs-mainz.de>
-	 <a5efe5059cd261c19496e602459fb37e3159817d.camel@linux.ibm.com>
-	 <b13a1741eceeba4d4ec50e1c898e011ea81a178b.camel@HansenPartnership.com>
-	 <20260822193833.98211-1-nicolai.kuntze@hs-mainz.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 24 Aug 2026 09:17:25 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZq7qCFR"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0B459C2BCF7;
+	Mon, 24 Aug 2026 13:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1787578103;
+	bh=gE/3z15bdmO63fBp1lfQ8mBMdzk5rEK4KiPcGfe1UZ8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=CZq7qCFRA3JVIz16YSP/e/vWpjHvvVf0N459AwiuHlJHi7ziMIX4eGm8sxFP5cNYH
+	 UFsckaMjR8/E7/6xRJgi6niIU1CPhKky3U4C0F3dZKpFgclb37aSGW1RoqtVITnt04
+	 TXOaiuzg4aBVYzdqIPY99uT8jq+A4D4uZYy5rl6lqUNFZ/ZzZi3+EtCEigi/2Zcq2G
+	 WLNVrMmeAFKnSTXIPnQMT8dhoUEQRuV5FdctPwDWd42phHQPqD074ngbSjHhNTQ5X4
+	 Bm4lwGUYjcrJ/OjPcZfybuAaSZeiXAl5mlO0iSrx5K16V25rrJjBccmHNtdSst0W8Y
+	 NwipcQjiKtMuw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CD5C5DF9B;
+	Mon, 24 Aug 2026 13:28:22 +0000 (UTC)
+From: Daan De Meyer via B4 Relay <devnull+daan.amutable.com@kernel.org>
+Date: Mon, 24 Aug 2026 15:28:12 +0200
+Subject: [PATCH 1/2] lsm: expose mount idmaps to inode hooks
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-ORIG-GUID: KYWRm-OPLmw7qgdUy4pURKq9icJnPh1J
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI0MDEwOSBTYWx0ZWRfX65KvzzK1eg+1
- ALSnMqXyKG8PElgFdDN1OfmnpflZgeMIRjNtL/CtE0/oCaQzkjM9/aXDbVn3i1EBmvTyeFo+F+G
- WnGNdTCUJvZhNhxets2pJXwug6O/pjA=
-X-Proofpoint-GUID: Vesi1w5MMZyfmRQO5WOstEt20bnYNIks
-X-Authority-Analysis: v=2.4 cv=JZyMa0KV c=1 sm=1 tr=0 ts=6a8c4469 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=A5NGiW4cX679EOVUI_gA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI0MDEwOSBTYWx0ZWRfX00JHPGEX0yCG
- zcF8rLU9S1n914dB8ZGM7UInWmqhfuDWGZgtK4/uXOED18v6HGbvU5Ofvmi4w2BZ83dVVFoS/XF
- 59xH+zwNmeJWpqyOz6JsGLkPhs/TgXXbc5wKn3Bw5TNvuljiBBj9HNjCBgTwBqLNICpdBU1z1Oy
- qVe6N/zGxe1fVUsLJz+OlwH8jSfnYBws7V43LLimqrlY0Y2g0NxkL86Zdgy29wOKwLRBxBnfqwB
- THS1KHiKxduioCuEjWl35wnURrjs1VCCH1HPSABK7Z3z+FPSoOz2cvzeV7LKEhsYrWn2cdRiPIX
- jrSU51mx/t9Mra741jaA1WuwZymPx48tV4hnUhsZcV49OAfsC7bV7yrgEewkxb7zj96tSYXNh2Q
- jkovxii4q1r5SVim3pqCVEcwRj2iy4UwMB5uVbG5WtBw/6hPCdpcFhsEcJ2it85K1Y9Rb91oyay
- Zv64NIqiibZPy6RJCCg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-24_04,2026-08-24_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 adultscore=0 priorityscore=1501 impostorscore=0
- malwarescore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608240109
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260824-lsm-mount-idmaps-v1-1-0414a9641c85@amutable.com>
+References: <20260824-lsm-mount-idmaps-v1-0-0414a9641c85@amutable.com>
+In-Reply-To: <20260824-lsm-mount-idmaps-v1-0-0414a9641c85@amutable.com>
+To: brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, 
+ viro@zeniv.linux.org.uk
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787578101; l=20869;
+ i=daan@amutable.com; s=20260712; h=from:subject:message-id;
+ bh=NtgrHhAus8doyHZxoWw+el5JCnU1aflWTeUrbb9mM+Q=;
+ b=n/TmtKMUZnXROCSPI0u0H5Pc6Nibf/VTt82RGCvp7oN0Ud6Qh6jVtupnc+Ds7mHxm3m863PLx
+ e4OYOfIRITvAptIZkBlJ+tN4h5qMTHtNVPPqPlgVjmoZ6OnGEjjmR17
+X-Developer-Key: i=daan@amutable.com; a=ed25519;
+ pk=I1l+WwrtmzRgofA5SQ1wTuJi18fjh91w+f5uRkFeZEA=
+X-Endpoint-Received: by B4 Relay for daan@amutable.com/20260712 with
+ auth_id=868
+X-Original-From: Daan De Meyer <daan@amutable.com>
+Reply-To: daan@amutable.com
 
-On Sat, 2026-08-22 at 21:38 +0200, Nicolai Kuntze wrote:
-[...]
+From: Daan De Meyer <daan@amutable.com>
 
->=20
-> > This feature is continuous/periodic ... a different execution
-> > model, not an incremental addition to a hook-based architecture.
-> > The reference implementation ... bypasses IMA's measurement list
-> > and dedup entirely
->=20
-> This was the strongest objection, and rather than argue it away I
-> went back and changed the design -- v2 patches attached/linked below,
-> not just a response in prose. You were right that a self-scheduling
-> timer inside ima_main.c's dispatch is a materially different execution
-> model, not an incremental addition to a hook-based one; the fix wasn't
-> to defend the timer, it was to notice the actual requirement was never
-> "recheck on a schedule," it was "answer a verifier's request," the
-> same shape a TPM Quote already has. So v2 drops the timer and
-> `interval=3D` entirely: RUNTIME_TEXT_CHECK/RUNTIME_GOT_CHECK/
-> KERNEL_TEXT_CHECK are now dispatched from a one-shot trigger, a new
-> write-only securityfs file (`/sys/kernel/security/ima/runtime_measure`,
-> CAP_SYS_ADMIN-gated), the same event-triggered shape every other IMA
-> hook already has -- the event is just "a verifier asked" instead of
-> "a file was opened." Boot-tested under QEMU/KVM: a 5-second idle
-> window with no write to `runtime_measure` produces zero measurement
-> log lines; one write produces exactly one correctly-scoped batch;
-> a further idle wait leaves the count unchanged, confirming it's
-> genuinely one-shot and not a disguised timer restart.
+Pass the mount idmap through the create, link, symlink, mkdir, mknod,
+and permission hooks. Update the in-tree security implementations and
+non-VFS callers accordingly.
+---
+ fs/cachefiles/security.c      |  4 +--
+ fs/namei.c                    | 18 +++++++-------
+ include/linux/lsm_hook_defs.h | 23 +++++++++--------
+ include/linux/security.h      | 58 +++++++++++++++++++++++++------------------
+ security/security.c           | 40 +++++++++++++++++------------
+ security/selinux/hooks.c      | 19 +++++++++-----
+ security/smack/smack_lsm.c    |  9 ++++---
+ 7 files changed, 100 insertions(+), 71 deletions(-)
 
-Thank you.
+diff --git a/fs/cachefiles/security.c b/fs/cachefiles/security.c
+index fc6611886b3b..eefe5453b904 100644
+--- a/fs/cachefiles/security.c
++++ b/fs/cachefiles/security.c
+@@ -51,14 +51,14 @@ static int cachefiles_check_cache_dir(struct cachefiles_cache *cache,
+ {
+ 	int ret;
+ 
+-	ret = security_inode_mkdir(d_backing_inode(root), root, 0);
++	ret = security_inode_mkdir(&nop_mnt_idmap, d_backing_inode(root), root, 0);
+ 	if (ret < 0) {
+ 		pr_err("Security denies permission to make dirs: error %d",
+ 		       ret);
+ 		return ret;
+ 	}
+ 
+-	ret = security_inode_create(d_backing_inode(root), root, 0);
++	ret = security_inode_create(&nop_mnt_idmap, d_backing_inode(root), root, 0);
+ 	if (ret < 0)
+ 		pr_err("Security denies permission to create files: error %d",
+ 		       ret);
+diff --git a/fs/namei.c b/fs/namei.c
+index 20a6534ea3ef..99f894f3f7e1 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -658,7 +658,7 @@ int inode_permission(struct mnt_idmap *idmap,
+ 	if (unlikely(retval))
+ 		return retval;
+ 
+-	return security_inode_permission(inode, mask);
++	return security_inode_permission(idmap, inode, mask);
+ }
+ EXPORT_SYMBOL(inode_permission);
+ 
+@@ -695,7 +695,7 @@ static __always_inline int lookup_inode_permission_may_exec(struct mnt_idmap *id
+ 	if (unlikely(((inode->i_mode & 0111) != 0111) || !no_acl_inode(inode)))
+ 		return inode_permission(idmap, inode, mask);
+ 
+-	return security_inode_permission(inode, mask);
++	return security_inode_permission(idmap, inode, mask);
+ }
+ 
+ /**
+@@ -4188,7 +4188,7 @@ int vfs_create(struct mnt_idmap *idmap, struct dentry *dentry, umode_t mode,
+ 		return -EACCES;	/* shouldn't it be ENOSYS? */
+ 
+ 	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
+-	error = security_inode_create(dir, dentry, mode);
++	error = security_inode_create(idmap, dir, dentry, mode);
+ 	if (error)
+ 		return error;
+ 	error = try_break_deleg(dir, LEASE_BREAK_DIR_CREATE, di);
+@@ -4212,7 +4212,7 @@ int vfs_mkobj(struct dentry *dentry, umode_t mode,
+ 
+ 	mode &= S_IALLUGO;
+ 	mode |= S_IFREG;
+-	error = security_inode_create(dir, dentry, mode);
++	error = security_inode_create(&nop_mnt_idmap, dir, dentry, mode);
+ 	if (error)
+ 		return error;
+ 	error = f(dentry, mode, arg);
+@@ -4328,7 +4328,7 @@ static int may_o_create(struct mnt_idmap *idmap,
+ 	if (error)
+ 		return error;
+ 
+-	return security_inode_create(dir->dentry->d_inode, dentry, mode);
++	return security_inode_create(idmap, dir->dentry->d_inode, dentry, mode);
+ }
+ 
+ /**
+@@ -5258,7 +5258,7 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (error)
+ 		return error;
+ 
+-	error = security_inode_mknod(dir, dentry, mode, dev);
++	error = security_inode_mknod(idmap, dir, dentry, mode, dev);
+ 	if (error)
+ 		return error;
+ 
+@@ -5395,7 +5395,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 		goto err;
+ 
+ 	mode = vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, S_IFDIR);
+-	error = security_inode_mkdir(dir, dentry, mode);
++	error = security_inode_mkdir(idmap, dir, dentry, mode);
+ 	if (error)
+ 		goto err;
+ 
+@@ -5783,7 +5783,7 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (!dir->i_op->symlink)
+ 		return -EPERM;
+ 
+-	error = security_inode_symlink(dir, dentry, oldname);
++	error = security_inode_symlink(idmap, dir, dentry, oldname);
+ 	if (error)
+ 		return error;
+ 
+@@ -5907,7 +5907,7 @@ int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
+ 	if (S_ISDIR(inode->i_mode))
+ 		return -EPERM;
+ 
+-	error = security_inode_link(old_dentry, dir, new_dentry);
++	error = security_inode_link(idmap, old_dentry, dir, new_dentry);
+ 	if (error)
+ 		return error;
+ 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 65c9609ec207..9e49a5bc9ff3 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -120,26 +120,27 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+ 	 int *xattr_count)
+ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+ 	 const struct qstr *name, const struct inode *context_inode)
+-LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+-	 umode_t mode)
++LSM_HOOK(int, 0, inode_create, struct mnt_idmap *idmap, struct inode *dir,
++	 struct dentry *dentry, umode_t mode)
+ LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap *idmap,
+ 	 struct inode *inode)
+-LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
+-	 struct dentry *new_dentry)
++LSM_HOOK(int, 0, inode_link, struct mnt_idmap *idmap,
++	 struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
+ LSM_HOOK(int, 0, inode_unlink, struct inode *dir, struct dentry *dentry)
+-LSM_HOOK(int, 0, inode_symlink, struct inode *dir, struct dentry *dentry,
+-	 const char *old_name)
+-LSM_HOOK(int, 0, inode_mkdir, struct inode *dir, struct dentry *dentry,
+-	 umode_t mode)
++LSM_HOOK(int, 0, inode_symlink, struct mnt_idmap *idmap, struct inode *dir,
++	 struct dentry *dentry, const char *old_name)
++LSM_HOOK(int, 0, inode_mkdir, struct mnt_idmap *idmap, struct inode *dir,
++	 struct dentry *dentry, umode_t mode)
+ LSM_HOOK(int, 0, inode_rmdir, struct inode *dir, struct dentry *dentry)
+-LSM_HOOK(int, 0, inode_mknod, struct inode *dir, struct dentry *dentry,
+-	 umode_t mode, dev_t dev)
++LSM_HOOK(int, 0, inode_mknod, struct mnt_idmap *idmap, struct inode *dir,
++	 struct dentry *dentry, umode_t mode, dev_t dev)
+ LSM_HOOK(int, 0, inode_rename, struct inode *old_dir, struct dentry *old_dentry,
+ 	 struct inode *new_dir, struct dentry *new_dentry)
+ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
+ LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
+ 	 bool rcu)
+-LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
++LSM_HOOK(int, 0, inode_permission, struct mnt_idmap *idmap,
++	 struct inode *inode, int mask)
+ LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
+ 	 struct iattr *attr)
+ LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 153e9043058f..0f5f20ac1050 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -404,24 +404,28 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ int security_inode_init_security_anon(struct inode *inode,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode);
+-int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
++int security_inode_create(struct mnt_idmap *idmap, struct inode *dir,
++			  struct dentry *dentry, umode_t mode);
+ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
+ 					struct inode *inode);
+-int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+-			 struct dentry *new_dentry);
++int security_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
++			struct inode *dir, struct dentry *new_dentry);
+ int security_inode_unlink(struct inode *dir, struct dentry *dentry);
+-int security_inode_symlink(struct inode *dir, struct dentry *dentry,
+-			   const char *old_name);
+-int security_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode);
++int security_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
++			   struct dentry *dentry, const char *old_name);
++int security_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
++			 struct dentry *dentry, umode_t mode);
+ int security_inode_rmdir(struct inode *dir, struct dentry *dentry);
+-int security_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev);
++int security_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
++			 struct dentry *dentry, umode_t mode, dev_t dev);
+ int security_inode_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			  struct inode *new_dir, struct dentry *new_dentry,
+ 			  unsigned int flags);
+ int security_inode_readlink(struct dentry *dentry);
+ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+ 			       bool rcu);
+-int security_inode_permission(struct inode *inode, int mask);
++int security_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
++			      int mask);
+ int security_inode_setattr(struct mnt_idmap *idmap,
+ 			   struct dentry *dentry, struct iattr *attr);
+ void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+@@ -902,9 +906,10 @@ static inline int security_inode_init_security_anon(struct inode *inode,
+ 	return 0;
+ }
+ 
+-static inline int security_inode_create(struct inode *dir,
+-					 struct dentry *dentry,
+-					 umode_t mode)
++static inline int security_inode_create(struct mnt_idmap *idmap,
++					struct inode *dir,
++					struct dentry *dentry,
++					umode_t mode)
+ {
+ 	return 0;
+ }
+@@ -913,9 +918,10 @@ static inline void
+ security_inode_post_create_tmpfile(struct mnt_idmap *idmap, struct inode *inode)
+ { }
+ 
+-static inline int security_inode_link(struct dentry *old_dentry,
+-				       struct inode *dir,
+-				       struct dentry *new_dentry)
++static inline int security_inode_link(struct mnt_idmap *idmap,
++				      struct dentry *old_dentry,
++				      struct inode *dir,
++				      struct dentry *new_dentry)
+ {
+ 	return 0;
+ }
+@@ -926,16 +932,18 @@ static inline int security_inode_unlink(struct inode *dir,
+ 	return 0;
+ }
+ 
+-static inline int security_inode_symlink(struct inode *dir,
+-					  struct dentry *dentry,
+-					  const char *old_name)
++static inline int security_inode_symlink(struct mnt_idmap *idmap,
++					 struct inode *dir,
++					 struct dentry *dentry,
++					 const char *old_name)
+ {
+ 	return 0;
+ }
+ 
+-static inline int security_inode_mkdir(struct inode *dir,
+-					struct dentry *dentry,
+-					int mode)
++static inline int security_inode_mkdir(struct mnt_idmap *idmap,
++				       struct inode *dir,
++				       struct dentry *dentry,
++				       int mode)
+ {
+ 	return 0;
+ }
+@@ -946,9 +954,10 @@ static inline int security_inode_rmdir(struct inode *dir,
+ 	return 0;
+ }
+ 
+-static inline int security_inode_mknod(struct inode *dir,
+-					struct dentry *dentry,
+-					int mode, dev_t dev)
++static inline int security_inode_mknod(struct mnt_idmap *idmap,
++				       struct inode *dir,
++				       struct dentry *dentry,
++				       int mode, dev_t dev)
+ {
+ 	return 0;
+ }
+@@ -974,7 +983,8 @@ static inline int security_inode_follow_link(struct dentry *dentry,
+ 	return 0;
+ }
+ 
+-static inline int security_inode_permission(struct inode *inode, int mask)
++static inline int security_inode_permission(struct mnt_idmap *idmap,
++					    struct inode *inode, int mask)
+ {
+ 	return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index 2ee276ab15c5..a9190da3341d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1614,6 +1614,7 @@ int security_path_chroot(const struct path *path)
+ 
+ /**
+  * security_inode_create() - Check if creating a file is allowed
++ * @idmap: idmap of the mount
+  * @dir: the parent directory
+  * @dentry: the file being created
+  * @mode: requested file mode
+@@ -1622,12 +1623,12 @@ int security_path_chroot(const struct path *path)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_create(struct inode *dir, struct dentry *dentry,
+-			  umode_t mode)
++int security_inode_create(struct mnt_idmap *idmap, struct inode *dir,
++			  struct dentry *dentry, umode_t mode)
+ {
+ 	if (unlikely(IS_PRIVATE(dir)))
+ 		return 0;
+-	return call_int_hook(inode_create, dir, dentry, mode);
++	return call_int_hook(inode_create, idmap, dir, dentry, mode);
+ }
+ EXPORT_SYMBOL_GPL(security_inode_create);
+ 
+@@ -1648,6 +1649,7 @@ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
+ 
+ /**
+  * security_inode_link() - Check if creating a hard link is allowed
++ * @idmap: idmap of the mount
+  * @old_dentry: existing file
+  * @dir: new parent directory
+  * @new_dentry: new link
+@@ -1656,12 +1658,12 @@ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+-			struct dentry *new_dentry)
++int security_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
++			struct inode *dir, struct dentry *new_dentry)
+ {
+ 	if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry))))
+ 		return 0;
+-	return call_int_hook(inode_link, old_dentry, dir, new_dentry);
++	return call_int_hook(inode_link, idmap, old_dentry, dir, new_dentry);
+ }
+ 
+ /**
+@@ -1682,6 +1684,7 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ /**
+  * security_inode_symlink() - Check if creating a symbolic link is allowed
++ * @idmap: idmap of the mount
+  * @dir: parent directory
+  * @dentry: symbolic link
+  * @old_name: existing filename
+@@ -1690,16 +1693,17 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_symlink(struct inode *dir, struct dentry *dentry,
+-			   const char *old_name)
++int security_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
++			   struct dentry *dentry, const char *old_name)
+ {
+ 	if (unlikely(IS_PRIVATE(dir)))
+ 		return 0;
+-	return call_int_hook(inode_symlink, dir, dentry, old_name);
++	return call_int_hook(inode_symlink, idmap, dir, dentry, old_name);
+ }
+ 
+ /**
+  * security_inode_mkdir() - Check if creating a new directory is allowed
++ * @idmap: idmap of the mount
+  * @dir: parent directory
+  * @dentry: new directory
+  * @mode: new directory mode
+@@ -1709,11 +1713,12 @@ int security_inode_symlink(struct inode *dir, struct dentry *dentry,
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
++int security_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
++			 struct dentry *dentry, umode_t mode)
+ {
+ 	if (unlikely(IS_PRIVATE(dir)))
+ 		return 0;
+-	return call_int_hook(inode_mkdir, dir, dentry, mode);
++	return call_int_hook(inode_mkdir, idmap, dir, dentry, mode);
+ }
+ EXPORT_SYMBOL_GPL(security_inode_mkdir);
+ 
+@@ -1735,6 +1740,7 @@ int security_inode_rmdir(struct inode *dir, struct dentry *dentry)
+ 
+ /**
+  * security_inode_mknod() - Check if creating a special file is allowed
++ * @idmap: idmap of the mount
+  * @dir: parent directory
+  * @dentry: new file
+  * @mode: new file mode
+@@ -1747,12 +1753,12 @@ int security_inode_rmdir(struct inode *dir, struct dentry *dentry)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_mknod(struct inode *dir, struct dentry *dentry,
+-			 umode_t mode, dev_t dev)
++int security_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
++			 struct dentry *dentry, umode_t mode, dev_t dev)
+ {
+ 	if (unlikely(IS_PRIVATE(dir)))
+ 		return 0;
+-	return call_int_hook(inode_mknod, dir, dentry, mode, dev);
++	return call_int_hook(inode_mknod, idmap, dir, dentry, mode, dev);
+ }
+ 
+ /**
+@@ -1823,6 +1829,7 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+ 
+ /**
+  * security_inode_permission() - Check if accessing an inode is allowed
++ * @idmap: idmap of the mount
+  * @inode: inode
+  * @mask: access mask
+  *
+@@ -1835,11 +1842,12 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_inode_permission(struct inode *inode, int mask)
++int security_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
++			      int mask)
+ {
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
+-	return call_int_hook(inode_permission, inode, mask);
++	return call_int_hook(inode_permission, idmap, inode, mask);
+ }
+ 
+ /**
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 035aaf113d1d..967984d0af30 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3074,12 +3074,14 @@ static int selinux_inode_init_security_anon(struct inode *inode,
+ 			    &ad);
+ }
+ 
+-static int selinux_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
++static int selinux_inode_create(struct mnt_idmap *idmap, struct inode *dir,
++				struct dentry *dentry, umode_t mode)
+ {
+ 	return may_create(dir, dentry, SECCLASS_FILE);
+ }
+ 
+-static int selinux_inode_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
++static int selinux_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
++			      struct inode *dir, struct dentry *new_dentry)
+ {
+ 	return may_link(dir, old_dentry, MAY_LINK);
+ }
+@@ -3089,12 +3091,14 @@ static int selinux_inode_unlink(struct inode *dir, struct dentry *dentry)
+ 	return may_link(dir, dentry, MAY_UNLINK);
+ }
+ 
+-static int selinux_inode_symlink(struct inode *dir, struct dentry *dentry, const char *name)
++static int selinux_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
++				 struct dentry *dentry, const char *name)
+ {
+ 	return may_create(dir, dentry, SECCLASS_LNK_FILE);
+ }
+ 
+-static int selinux_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mask)
++static int selinux_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
++			       struct dentry *dentry, umode_t mask)
+ {
+ 	return may_create(dir, dentry, SECCLASS_DIR);
+ }
+@@ -3104,7 +3108,8 @@ static int selinux_inode_rmdir(struct inode *dir, struct dentry *dentry)
+ 	return may_link(dir, dentry, MAY_RMDIR);
+ }
+ 
+-static int selinux_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
++static int selinux_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
++			       struct dentry *dentry, umode_t mode, dev_t dev)
+ {
+ 	return may_create(dir, dentry, inode_mode_to_security_class(mode));
+ }
+@@ -3236,13 +3241,15 @@ static inline void task_avdcache_update(struct task_security_struct *tsec,
+ 
+ /**
+  * selinux_inode_permission - Check if the current task can access an inode
++ * @idmap: idmap of the mount
+  * @inode: the inode that is being accessed
+  * @requested: the accesses being requested
+  *
+  * Check if the current task is allowed to access @inode according to
+  * @requested.  Returns 0 if allowed, negative values otherwise.
+  */
+-static int selinux_inode_permission(struct inode *inode, int requested)
++static int selinux_inode_permission(struct mnt_idmap *idmap,
++				    struct inode *inode, int requested)
+ {
+ 	int mask;
+ 	u32 perms;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 8e88ac65fd7f..a45819d13c0d 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1089,14 +1089,15 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+ 
+ /**
+  * smack_inode_link - Smack check on link
++ * @idmap: idmap of the mount
+  * @old_dentry: the existing object
+  * @dir: unused
+  * @new_dentry: the new object
+  *
+  * Returns 0 if access is permitted, an error code otherwise
+  */
+-static int smack_inode_link(struct dentry *old_dentry, struct inode *dir,
+-			    struct dentry *new_dentry)
++static int smack_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
++			    struct inode *dir, struct dentry *new_dentry)
+ {
+ 	struct smack_known *isp;
+ 	struct smk_audit_info ad;
+@@ -1226,6 +1227,7 @@ static int smack_inode_rename(struct inode *old_inode,
+ 
+ /**
+  * smack_inode_permission - Smack version of permission()
++ * @idmap: idmap of the mount
+  * @inode: the inode in question
+  * @mask: the access requested
+  *
+@@ -1233,7 +1235,8 @@ static int smack_inode_rename(struct inode *old_inode,
+  *
+  * Returns 0 if access is permitted, an error code otherwise
+  */
+-static int smack_inode_permission(struct inode *inode, int mask)
++static int smack_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
++				  int mask)
+ {
+ 	struct superblock_smack *sbsp = smack_superblock(inode->i_sb);
+ 	struct smk_audit_info ad;
 
->=20
-> The measurement-list/dedup bypass you also flagged is a separate
-> point from the execution-model one, and v2 does *not* change it: it's
-> still deliberate, for the reason given in the original RFC -- an
-> external verifier replaying the full PCR-extend chain needs every
-> extend the TPM actually performed, including repeats of unchanged
-> content, which is exactly what IMA's own digest-based dedup would
-> throw away. v1's dedicated per-mapping dedup table (built to bound log
-> growth from timer ticks nobody asked for) is dropped in v2 for the
-> same reason it's no longer needed: growth is now bounded by how often
-> a verifier actually requests a measurement, not by an on-device clock.
-
-Extending the TPM is a performance concern =E2=80=94 that's why IMA caches =
-the result.
-CONFIG_IMA_DISABLE_HTABLE addresses the A-B-A case, where without it, a rep=
-eat
-of an earlier digest (A) gets skipped because it's already in the htable, m=
-aking
-the log misleadingly show only A-B. It doesn't change consecutive-repeat
-behavior =E2=80=94 if the last hash was B and the new hash is still B, ther=
-e's still no
-need to add another B.
-
-Why does this case need to be different? With extends now triggered per ver=
-ifier
-request rather than per tick, why does an unchanged digest still need a fre=
-sh
-extend on every request?
+-- 
+2.54.0
 
 
-> It stays available, unchanged, for anyone who still wants periodic
-> mode -- v1 is kept as sent-and-tested history, not deleted, just not
-> the default.
-
-Retaining v1 in your GitHub repo is up to you, but it wouldn't be upstreame=
-d.
-
-Mimi
-
-> Does this address the concern, or is there a reason a request-driven
-> hook still doesn't belong in ima_main.c's dispatch at all? Genuinely
-> asking, not rhetorically -- if the list still prefers the
-> separate-mechanism route (kthread/LSM-adjacent/eBPF, reusing IMA's
-> measurement list and PCR extend chain as a pure data sink without
-> adopting its hook model), I'd rather hear that now than after more
-> patches build on the current shape.
