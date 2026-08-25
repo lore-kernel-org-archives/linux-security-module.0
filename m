@@ -1,68 +1,69 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043DC4369A
-	for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 18:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBA337C91E
+	for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 18:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787683172; cv=none; b=YoseDZsfyR8gJ4tdhshAuwiiPOzhLlGJpeneaEZ84D6PiymyWmsMG+RmzXkFFMY8X/roKteKajGjjKJVY5opKr9mMjOyGMvuewXorxNG8Q4OmjkNslPafTKo0Yg6l8lEBxs3MKqGjJnnCpLXZ9Sugnm069BHSMGWoZV2CiuGrbk=
+	t=1787683174; cv=none; b=BXBLG+B0JIyO7Rg1peEb/XqzVw78JApWs/Om6qpiI/mPCWUm99TsRNl1Z+uxFkHdAxwe/LM1w7BNP7QHuszjG38KyRpWKJ8+McxvL30EgTCcSXCUb5Latm9134ismN8vJdb0mcoapoBkoeiTb9TrFoqQ3VA319D5jDpUvydSZPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787683172; c=relaxed/simple;
-	bh=3my+l3PYWeZMFRCIaaE0JNhFutiymOpmnRDdudUrsB4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SFQfrCEGPGfhoKr4VO1+Rjr4OO2jNC1t+qBLKCPawc5RZTdl4Dslw9Xt7u67kob+RYRqz4hM9P4X+0DOfi8lQTVPf4NGBDvcaB8B+DpE9td68iGqEIBunECpfDUrMn+oChzIaWrRkkHh4C08HkxIOjhrXkz8lU27DeuMj0jc+XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fAxRGkRH; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1787683174; c=relaxed/simple;
+	bh=cMZpfmy5y60iCBgOY8zKfRDT8aXfoJ3FsT1GEaT5qgg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iO8WvNspCLEp4KdKjzd6JXHKGDX9q7NEnyeFpPfuwuJZbC0h6x3jzrR0OnId1LEkjNU4q/6FqaQ/x8m4wQRD+iQFPPRfDe4R81+nfPyZD9Y7LCrtdMoIOrxWdaTkhh029zdy2jSiVC8cqWuUqEmV3btle7gr+qUbwpd5ctpvmnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tzNhsjoo; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fAxRGkRH"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a17c7c3c6eso1699a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 11:39:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tzNhsjoo"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-69fec8b4638so2205a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 11:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787683169; x=1788287969; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=tT3C8RmqnSUSZm6wZr0ulCb4Q+ThIVoSjKYEyKvDdpQ=;
-        b=fAxRGkRHM6GMAYnjYpgOrmCqg5HlcID8o2/vi3G//H+uV9EoN9Nt2TEfzziVEIo/G0
-         uPooubVqweKOeWBq1QHIx0tOSY3DYUR1aBAfiN/WTMxLm8QMmO67JTAS1891afZ4pkGp
-         koJWNE8ElfrjWcXB559t8QKCoqkyulqukQbk0u/7QXf+Gy/E828S6HfLkjw2MV+gdZkc
-         CF8sg1I7VJA2msGHCyOVls+X4ycaDxYElL38L/MYRE04b+5AO9935lLtGaIGohg1gMP1
-         1i5N43mL/HjdqsINJLDhqcxwmudWaxgp1nSVn7mKTIiK5S7ZP/IeHYkpiJ1+9q9YlWGR
-         ZlgA==
+        d=google.com; s=20251104; t=1787683171; x=1788287971; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ZDanl1d4pFlCVpfToYIsXIfzb7i9JlEtociyRendWt4=;
+        b=tzNhsjooTe031QUmSXR820hYC2b+oTzglcWqV1dElHG4uqYvSHKSB+HobBfpRwVEwB
+         9G5PJB0BizVEDVo6HBVNKjtCkceGnHfEUc3e81hiNjsiwUNqCGcOO7eJ65k9ueLbGTZo
+         qTytBVEUkxFZtzrd1dHF1COEOTXn8qsgHRY/En6NMfyWNFkYJNv+5XptXmuVV3kAWVvz
+         UHNzZmjdMIjkTC2v1htpwZm7J1xHQcviRQXE3sPkaqMOIeHzpTk3/TMKXwiTt6knz94r
+         rn5qJ6OPKqKCo1BYN60V9ZZKf/eV09eGkmfxmVOrKptAPu9Qr57nOY8gtW/swDlLmw8g
+         DyDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787683169; x=1788287969;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=tT3C8RmqnSUSZm6wZr0ulCb4Q+ThIVoSjKYEyKvDdpQ=;
-        b=WH+VTnx1TuOiiQX7ViHQF2zJcEUBvXNubJFl/pP9sVDtHPr9BdcT4Fmn9cN9MjZl0N
-         ZTiiU+eewNIRC96JPbzidbIWV6EkSF4GVAUyOm8qlv2ey0qTF2LNrrgHMlj6eTsQmpbg
-         dYu3l7IUn80kdhjMfzq7c+LoV8F301snFoor3mf5vRIyPY332yiMXFhtEScGCpNt5rZ1
-         N4SVkNLaFiDahOUKpzdftyts6vqNGoGtYctZYxA6AX0FzMcdjACuU1jv+T4VVldbTsaO
-         9+lZ48ltkla3FuCux2WBmL3cSRdHQcSKUpKwYsEO9vo0Ip+w2XKjAEumwCkbgKBETVG4
-         GCmA==
-X-Forwarded-Encrypted: i=1; AHgh+RocBgox5oAQe9FwGn7GMQ/L+hxDOfukEE/1+iEFx0MGxWX9DP1uQK/SBfZIj8EjvWzXrWZqSVCrBZJ5XaIvARcxyw9FUq0=@vger.kernel.org
-X-Gm-Message-State: AFuF++le8W34lSA7iwV1hwk8WN2asZoCcdWszwRI4QB3yWPe/0EBed1z
-	jiMdT/XZGahg8pF8hOaR/R2BNq93e+dUffhiE+eFC5x3JleYFLqud2/fF3toZAkQQQ==
-X-Gm-Gg: AR+sD10GX7/XkQA6N4xNWSpyIPbn7SynnEHxYymgNvTg3d6K0X/wzgU50HhHqu+tVef
-	s80aqVtClyihIW35HBe3dwADVnfkIVOWOXp1JU+oZpteZKb9nauteG2jzl2liCRmmJ0dehCTQ57
-	8GcECOUlWp4yyX5hH8SDRG9iPcRSHyow515mlMnmoDUQ2CG/R0zcheNjg24rzcVp059SK8VFMvT
-	TSSE3FeUkKKSPVUgIrQdvjPB9RdYKNGQJrmBLYDzeVHz3P0Iw8VzBKq7xIjYy+U5Wy1j+2KHlv0
-	7wNeq9JXXDSVXzltR/+n8ccT+5UZ/czH7XYDf66DVXFaM8n1zimphUf4+KHY2F7j+MJxpr3u+PN
-	AvetHz0BJnW0I9/wDbPRjXQ+jAlmXUnGeQgRu11qbY0tg2+HT7VWE1uyBNi9PQmftVoAUTA111+
-	OSBQgFD9lIq7VQcIVjpSUlIbl8qg71GlSy3qEGyOj94V9gep/NpJ99h26mpVoWXhsz1yPNu7Hjy
-	APro8QIzm7+PuJCpXdl5KCQ8+tc06pvIni8qMPX54HmFTM=
-X-Received: by 2002:a05:6402:b18:b0:6a3:f7d8:3ad4 with SMTP id 4fb4d7f45d1cf-6a5dfca7b3amr1462a12.9.1787683168580;
-        Tue, 25 Aug 2026 11:39:28 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787683171; x=1788287971;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ZDanl1d4pFlCVpfToYIsXIfzb7i9JlEtociyRendWt4=;
+        b=Fl/gPgpTrenJn+ewGCJIF3h2heVwqtGOgX80U8CAFjxe/bh8oEZHwkUDTo9AWTwaSQ
+         /N8ZI0Mk5WXKiFitz8bbzTY/DuRD2/WPkqAtsKOGSMnaLqFIi+6E7czdob0kNtCqo9o3
+         gXGKk+T4ixH0f0gW60CqzTWfRfokk+TOaTadlSiuKJofsavEXJnk1btPdFK5zQKmjWRI
+         rzEdTZU4tAylN3EJg+05LtwFDgNLzMpbmk566leIajpCsiO+hXkyo17RyDg5STgZw1x/
+         26gTyT5gcZIgPueJ/KVHuT7befXkaXXR+BMQvu0Y/08hX8gWw3GodJl5I3XTl7si9BGr
+         XL9w==
+X-Forwarded-Encrypted: i=1; AHgh+Rq0WpubpD1TjMd7Ev8GnrkxRk4/k8daK22N2r0ZOr4SVwrDOB+FKvYzIymUBTjE/pO2dZC/luX/JylsoNdfAGqGsyL2elc=@vger.kernel.org
+X-Gm-Message-State: AFuF++kjXfnxsYxGBMyz/wdquvkZbUZyg38PqknXFxnNSiFHnh/tcSSJ
+	OWLuqAOaleexPR/aWLUygu4g5abALXb8GBggMVTFZHbzw4wrZeucGkWhy/6hCIPm8A==
+X-Gm-Gg: AR+sD10ijWhOfS8pXaU/suweEi9SuAoKKE3LG6+X2lCzgaDZuFZV0NhsoWDusEcle82
+	Osyhwt7Znc9wZWI2xFzgqvRwnVEJRGp8kyyfIaHMNuqo/+k4jNq4IK89CFcjCoXnuweR8per/yq
+	heyz9tVg0HJs1k3hjwDdNaVfjG2RJx9i5neqBGSacBoTWhM/4MRBpJSCzY5Ols3+ghaI1ozSr1R
+	S0d4e/TS4mghdw+lYvLXvLEgpRK4HQCZc7FSKf2WKI35x8WJMkNw3BtF5Pa5XqIYlwjhv+J24h2
+	sCHE8GU4hkxLbI6zzTQ0guX0bnQfhjhRMKKt31P60WVit2kV/kpqf3Yjdmmml9GHDRrakzEFxZ3
+	V4mHpsi+ku1hieI0seQ7zw+ElvNbgULbwENH6Q7g0eH0oWN0u0Ir0ypxPq8O7r7Xgv/U45FmYuN
+	JYaFt+VC/3uviNWiCRj6Z4u/TXSaQFSH4s9gYA+NTokWMGIqU96gsBx8MX3+GTMPpcr0sfVXXV3
+	q1Ix5bOp89+vHjOOiv69VpZb4DVpD1uHT8b78W0lBgKras=
+X-Received: by 2002:a05:6402:1503:b0:68a:e1ba:9cc0 with SMTP id 4fb4d7f45d1cf-6a5c4a438c1mr79208a12.8.1787683170518;
+        Tue, 25 Aug 2026 11:39:30 -0700 (PDT)
 Received: from localhost ([2a00:79e0:288a:8:980a:b43:2df6:51f2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c250a5d68f9sm80514866b.1.2026.08.25.11.39.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c250a704e55sm77188266b.21.2026.08.25.11.39.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2026 11:39:27 -0700 (PDT)
+        Tue, 25 Aug 2026 11:39:29 -0700 (PDT)
 From: Jann Horn <jannh@google.com>
-Subject: [PATCH v2 0/3] proc,security,selinux: let SELinux block FOLL_FORCE
- for /proc/self/mem
-Date: Tue, 25 Aug 2026 20:39:16 +0200
-Message-Id: <20260825-selinux-pokemem-v2-0-b46bc64916d8@google.com>
+Date: Tue, 25 Aug 2026 20:39:17 +0200
+Subject: [PATCH v2 1/3] proc: refactor /proc/$pid/mem to use struct as
+ private_data
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -71,11 +72,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFThjWoC/2WNwQ6CMBAFf4Xs2ZpSW0BO/ofhoGWFVUpJCwRD+
- u9SjCePk8ybt4JHR+ihTFZwOJMn228gDgno9tY3yKjeGAQXGS9SyTx21E8LG+wLDRomZSaUUrm
- WtYRtNTh80LIXr9WX/XR/oh5jJhot+dG69345p9H71Yu/+pwyzs5c1+KkckSuLo21TYdHbQ1UI
- YQPKEUY48EAAAA=
-X-Change-ID: 20260814-selinux-pokemem-44625557c4d4
+Message-Id: <20260825-selinux-pokemem-v2-1-b46bc64916d8@google.com>
+References: <20260825-selinux-pokemem-v2-0-b46bc64916d8@google.com>
+In-Reply-To: <20260825-selinux-pokemem-v2-0-b46bc64916d8@google.com>
 To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
  "Serge E. Hallyn" <serge@hallyn.com>, 
  Stephen Smalley <stephen.smalley.work@gmail.com>, 
@@ -91,68 +90,93 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
  David Hildenbrand <david@kernel.org>, linux-mm@kvack.org, 
  Jann Horn <jannh@google.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787683163; l=2342;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787683163; l=2508;
  i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=3my+l3PYWeZMFRCIaaE0JNhFutiymOpmnRDdudUrsB4=;
- b=CzHbK0+zJQEADKtDDA6uH3pn6OIbkz9AIyUC7L2oco+isP3+dILkPd73rgxSL8Zp2Mfh41/xz
- R/eca/Dd4dYAuMNNed8z8xlHOsoo0c0+4YBDeYEufBVe+D9K7QOAEz+
+ bh=cMZpfmy5y60iCBgOY8zKfRDT8aXfoJ3FsT1GEaT5qgg=;
+ b=etcdXt6YJPtLzJ6NsslFUvgTrScKbEiz++YkD+u7YgmV0etE8NJizSEaw4u8B+QgHDC0OYnkX
+ 3FNCYVeg1SkCai4r7vUI2wYlcZQZ8x+LEATW601w5uzuzrhWwsKDhRj
 X-Developer-Key: i=jannh@google.com; a=ed25519;
  pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-The goal of this series is to let SELinux prevent the use of FOLL_FORCE
-when a process writes into /proc/self/mem and the system is configured
-with PROC_MEM_FORCE_ALWAYS (which used to be the default behavior, and
-is still used by current Android devices).
+Refactor the handlers for proc_mem_operations to use the new struct
+mem_private as ->private_data, rather than directly storing an mm_struct*
+in ->private_data.
 
-Android has SELinux policy that attempts to ensure that only trusted
-code can be mapped as executable in several system processes, but this
-protection can currently be bypassed by writing into /proc/self/mem.
+This is in preparation for adding more state in mem_private in the next
+commit.
 
-I wrote this series after discussion with Android security folks about
-the state of proc_mem_foll_force() restrictions on Android.
-
-I'm sending this to:
-
- - maintainers for LSM hooks
- - maintainers for SELinux
- - maintainers for VFS (because I think they generally own procfs?)
- - some MM folks just as FYI since this touches GUP usage
- - the Android folks I talked to about this
-
-I think this should probably go through either the VFS tree or the
-LSM tree.
-
-The motivation for this series is that Project Zero managed to write a
-remote exploit for Google Pixel partly because of /proc/self/mem, see
-<https://projectzero.google/2026/01/pixel-0-click-part-1.html#whats-the-plan-seth-and-jann>.
-
+Reviewed-by: Jan Kara <jack@suse.cz>
+Acked-by: David Hildenbrand (Arm) <david@kernel.org>
+Reviewed-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
-Changes in v2:
-- change SELinux hook to only check PROCESS__PTRACE (Stephen Smalley)
-- rename ->introspection to ->opened_by_owner (David Hildenbrand)
-- rename introspect_mem_foll_force hook to mem_foll_force_opened_by_owner
-- improve comments
-- add ack/review trailers
-- Link to v1: https://patch.msgid.link/20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com
+ fs/proc/base.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
----
-Jann Horn (3):
-      proc: refactor /proc/$pid/mem to use struct as private_data
-      proc: query LSMs for introspective mem access (if PROC_MEM_FORCE_ALWAYS)
-      selinux: require PROCESS__PTRACE for FOLL_FORCE introspection
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 780f81259052..bec6197329dc 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -848,11 +848,24 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+ 	return 0;
+ }
+ 
++/* private_data for proc_mem_operations */
++struct mem_private {
++	struct mm_struct *mm;
++};
++
+ static int mem_open(struct inode *inode, struct file *file)
+ {
++	struct mem_private *priv __free(kfree) = kmalloc_obj(struct mem_private);
++
++	if (!priv)
++		return -ENOMEM;
+ 	if (WARN_ON_ONCE(!(file->f_op->fop_flags & FOP_UNSIGNED_OFFSET)))
+ 		return -EINVAL;
+-	return __mem_open(inode, file, PTRACE_MODE_ATTACH);
++	priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
++	if (IS_ERR_OR_NULL(priv->mm))
++		return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
++	file->private_data = no_free_ptr(priv);
++	return 0;
+ }
+ 
+ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+@@ -880,7 +893,8 @@ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 			size_t count, loff_t *ppos, int write)
+ {
+-	struct mm_struct *mm = file->private_data;
++	struct mem_private *priv = file->private_data;
++	struct mm_struct *mm = priv->mm;
+ 	unsigned long addr = *ppos;
+ 	ssize_t copied;
+ 	char *page;
+@@ -970,12 +984,21 @@ static int mem_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
++static int mem_release_with_private(struct inode *inode, struct file *file)
++{
++	struct mem_private *priv = file->private_data;
++
++	mmdrop(priv->mm);
++	kfree(priv);
++	return 0;
++}
++
+ static const struct file_operations proc_mem_operations = {
+ 	.llseek		= mem_lseek,
+ 	.read		= mem_read,
+ 	.write		= mem_write,
+ 	.open		= mem_open,
+-	.release	= mem_release,
++	.release	= mem_release_with_private,
+ 	.fop_flags	= FOP_UNSIGNED_OFFSET,
+ };
+ 
 
- fs/proc/base.c                | 38 +++++++++++++++++++++++++++++++++++---
- include/linux/lsm_hook_defs.h |  1 +
- include/linux/security.h      |  6 ++++++
- security/security.c           | 20 ++++++++++++++++++++
- security/selinux/hooks.c      | 22 ++++++++++++++++++++++
- 5 files changed, 84 insertions(+), 3 deletions(-)
----
-base-commit: 2f1baf1fc8929e6c48370be543ad028ac7ad4131
-change-id: 20260814-selinux-pokemem-44625557c4d4
-
-Best regards,
---  
-Jann Horn <jannh@google.com>
+-- 
+2.55.0.860.g4b6b3295ed-goog
 
