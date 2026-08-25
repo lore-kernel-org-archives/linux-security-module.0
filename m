@@ -1,183 +1,112 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41921481650
-	for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 15:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787670104; cv=pass; b=CBbJSh3Msa/SE0Qaso2jvH9x2s+BQnJvSpa3Y5CvgdyqgrplOHookyfz6C8uHwUMXL3KZuwOfkiIVmM84Uezr543F+oabVLgAGizWwojtzjCHcWtnb/TVI2SElFuzbNbP1XH/qjkZv83uguBeX9kx7Uwu95VNLYgrtH2dfxsoY0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787670104; c=relaxed/simple;
-	bh=0oIFfbtqqpkWwrgVhDrxQYn46cLcGtScXKxY6SpqPlY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dVTdj2ydfSvNomeWe6soqyXT7DjJIOrPYYZrXgePVbs8C7R8LMCIkzbBz0Zac2maZ614+c7rg3wF9BKTcfAm8FfLOXOcoT4SDjkHjDx1jBbxOGeS94DwFY2vVNeXK3g+S0VmYV6MYnmCIzeBJczQmtQ4DTP1/CZDVZBLUsG2Bes=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QRHUBOKl; arc=pass smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1681A38DC77
+	for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 16:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787676430; cv=none; b=L4gifdG6QQD4er0aeK7s4HrOOjzOIj4NZ5EM8kPaxzNQdKA/6t73iaNRJsyV+DXJI3cGoFt2EAoeNMHf9IfchkXXaZogv5RvfnP8PmjQryFOyqAKaoVhyMLXHMcQJ1+5e8n1qFS1F8vPdrU1bjTouvpSoGG+yhIUK3HHgT/ObOg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787676430; c=relaxed/simple;
+	bh=Q5RlCcycfNc2TZ/PvLCKqaWXfCM1b94KP4InGT6cXWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obG0rU8l+180Y/+YFt9E0HZuhZfIX8Yz1yPdK5152ChwuHhIGxTeia/zI5kDmd01TX31Mg/ON5tPEEgzz0PPs4046q47rOBD2tAwNk/m3FyUf+W6RlJrypEeZIpnPds9GK3R8flL7I+iJtYDXorm218lXbZpEIYLbYe1Qu7/pXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=CTsPnkvf; arc=none smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QRHUBOKl"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2d3b445a84fso105315ad.1
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 08:01:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787670098; cv=none;
-        d=google.com; s=arc-20260327;
-        b=HPCJTENnyBQp8n9YB/X45SRUIooYZ2OWMJkc4SJZJQDrzSbVuXALIYMO59cQx1+eel
-         l75tbE/XbwnAL+xsJmQW+7LV+3HclShnTbkvJRtUhKXl6kfKCoIcbafjXjgxnceD4Cci
-         qdHjPbQ1GhzzrQtEGPCJBFAAXjZd0Ui0fB9JOltd4714NrvpSkjt5SYdSOmfvhHOkRhb
-         tvC0vEyOKu+O4VoivEs1RB/cgUQ/3v+C4XkatgVGRiMA1oNktQKTYboqW2Nu+dK7AY4U
-         IHujk5mFBfy42RpAsdcn6KbRQg7kWslbFtYnOYijgvYh3a8ZnBc3Mne1gH0w/9Xdn/Uy
-         MyFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=0oIFfbtqqpkWwrgVhDrxQYn46cLcGtScXKxY6SpqPlY=;
-        fh=p5Lt1rv5Lw99lKTmabEJHtvKn0dgmBm2i6EHS7whLPc=;
-        b=JQU1P1BzMy9m/+2Dci7xLBLpTIUxSysxW/UHB+KI7DgOrDuM968y2JbEMc9mCjY0Ep
-         uh/1OedotPepDljJFBEdI5sydG+8P1JlJN9I1QgSpJbJOCAERwwwdhKuaDz7a8KW2X6k
-         vzZpwlY83xTAsd5l7GQ8cnw/uri/vzTmqktHbP+coOpk77UXv25Yv8E+aUDyyDEEly3x
-         zu3/skB/QkUZiGsQ1YwfVBpgNg/p+slBd4DzT6imlz+nesUk/YrVDcbpkOcdT0MqhSAF
-         Tb79ft4SAQ51eqbFPoOTnXiBJhlVAfg8XYh0fcTMMKoSxVvvn4plRMoCr/OPNlcgaW0K
-         ZJUQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="CTsPnkvf"
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-6682259cae6so6330180d50.3
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Aug 2026 09:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787670098; x=1788274898; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=cloudflare.com; s=google09082023; t=1787676428; x=1788281228; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=0oIFfbtqqpkWwrgVhDrxQYn46cLcGtScXKxY6SpqPlY=;
-        b=QRHUBOKlzFp2EUDbgAbVIUmvSQxukfXIgYGIoHnPGvAN91/GN0MZQHvc60BWiuqmgo
-         kr/PtF59JhfSWOJZ+P21JoGDBIu4Pzd7BTtKT2CPaveAXjfHx+TFxdDCDaNemPUbXFPn
-         UWvnoFI1GObNx3QM0ytQk3/4ScytjtfU16KAkq+5zwGr4w0XzR/RoupLTMzEygVELayQ
-         8voun+KYDqp226WBWpNuM4whG8NKscmcgnUm+EOMCBR0ucOpp7kGCPemZLNVqp4dtJBu
-         HCSTeLH32SzoAZTPLORsjG5kekL4Gno7XZPltPsyA15Zv3GPjDlRI46mK7YRn+4tHOpq
-         MFIA==
+        bh=A7t5uDlAobliWG5HjrlwdWCEo0ZIR1xcFmgey215k/k=;
+        b=CTsPnkvf0m3sqQspkwWMq4D5A/GGYn8KzLNyWRisJVRFRVoZh6Yh3INW9orlTdvr2E
+         vW8HisecWBMfGuV27vMC/k/Y5ZW/EqAe5cYVKiADRDKKHev275E8+FT737YEy8d6ij+u
+         TvNcoEW40FrgjLQbIQM6jJUlAB2cdnBAMFzLCeOnLIHRlW1UoJA6obrsi8KHy6C9Svnm
+         oI4/1qu/paodGaTq7/3Wfr9wgA56kmFvNBuDwYiVp8E+8HGnx+0pz4MRh+UMwaJkz0mh
+         okLoVfynBFUlGwmxjpI6uhDFGBZA2cykAZH/J1SDAQv3ggRGdLB5AGzF3Uhkk5gf3KvC
+         l96g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787670098; x=1788274898;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1787676428; x=1788281228;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0oIFfbtqqpkWwrgVhDrxQYn46cLcGtScXKxY6SpqPlY=;
-        b=a1/+s+legyCsyfUM8hEDeFmxHZTCQQ2AlOQlbG21nTeI8D0T9I5nG3hIJfTKqSvEyS
-         JbZwl2/lICXcRD43VTqo7aXGCMY6aqPD3m5dVOjjbjonaMjRVYvZx8a7d902C1S0qixR
-         ZXERY3XdeSmPhYSV+Cs1CXDflejC9hGOFri0Y6BDcJ9JeBcYnSL71cjhUrDtONq0dGOd
-         nJA0bXefQxCKYS+h/tfIyF1QGsCtPVXdQzWAjQM7LLWn1abAnpzcXXpWfn/WbsNBArq9
-         6PEaU/QBmnm0FKiQFAR4Kzyx14B8GngpfnA7VIVQrIFzadbKT9fjlK924tgbuZ9vReFI
-         FGxw==
-X-Forwarded-Encrypted: i=1; AHgh+RpK8tWiMa0NV8aFlkTVklZckspNybIOEXjUWnTCoEmhv9I0FsDgmC+Kj7YF2ziP7Lt2UudN+8UhdMQvNa6/WHIUQ4JQowU=@vger.kernel.org
-X-Gm-Message-State: AFuF++l1scmjFeKDyZlApCfJPdFWvDofHgZKOJAJyHa5iHK1lELbrZgO
-	FAHoKfg3tJmPsUuN+exCF1iwuTHFwTEIS+GnuxIXI+sUtKDb9IdtPY0YOxiULDh7Zw5VFP9AY27
-	jK+DdMxcQe0HWJazJSO9/TBSM1U6iIvEDZH3nHf2H
-X-Gm-Gg: AR+sD11SsSAnD8c48akUTTgtLvKRKYBA+fN88dKuZogIugcsUdp6NQc8DhbtU4/FIDk
-	VrDUi/0MbZhitLqwowc9DrRAePyOQNiZOq0XmxmvgVlpD6ttF8dGtq0bnBeJbGKIt7iBm/6E4Hp
-	GYa1ppPZlIIdFq9tdxZTM9Nzllz1VnBgra+6PMBWiqWV8QZSKtnYXwbDSDLA0HtiZAU4l+15nJr
-	9g29G4mE2fIKLb5yaVV9QvYkYgsA9NpOpwnAZygas3Itia54xJOwvgzi25yKI8XCILbNLpIFQDJ
-	meeDLa4nrPUGpQ14MYmbP6+TPykvil5SM/6jYm4klpJL0pj0ew+F/JqaS25m68YgdUcrGWXpkFi
-	6CewF2bFBpG6twMLT8Iuwj2RIwfbNVw==
-X-Received: by 2002:a17:902:f142:b0:2c0:defb:557e with SMTP id
- d9443c01a7336-2d6e07f52b9mr5455445ad.1.1787670096873; Tue, 25 Aug 2026
- 08:01:36 -0700 (PDT)
+        bh=A7t5uDlAobliWG5HjrlwdWCEo0ZIR1xcFmgey215k/k=;
+        b=fVRQaXZrYBSAH0UMHJ4Msi/Kqva+Jy7emI7Q1f66u0gpsA2MGqYeA6Ib8paDu2FP30
+         qUobbh2eHP6EVYKSTu9iADwGaICfBMI+xIC0Ai4/hccmQlieUtssomf+2m/AQ7i+mOTV
+         YmRWm3bYT/r9KnoMrMrorjL7+zX8BxUmYiu1jNvAJ4+kPjkRKQG9TMgjq5d7Zm4WS/TS
+         JKNZVb8/bnOh8w/Tw3+nEEwO8pt2ucJaJ1Tzlo9qW/NJ2czN6wxuMoAw5+s4jIv2WahF
+         6ipECCsYDepwWQeDgfI/cIbgFKNjd0oJrpAJjhpig1zsU74O82/Z2my5A1H4jxCjkr55
+         Gvqw==
+X-Forwarded-Encrypted: i=1; AHgh+RocmVSn2P+uGlXAhXFZPwG4Y8+QgTcv2l40EE0Man8tVCkgMGA5ebMVUWa+LlvwEneqsNxPVFR7DVTwqPu9uYjqLsN3bJM=@vger.kernel.org
+X-Gm-Message-State: AFuF++nRczgs370HkWwvY7RAvWA0sKAXh2wY71Dz5chr04RM7kNKixJ3
+	p/njRjMK489EJD91HZ6GUmMssPgFdnVmRXco34xGs3RoMYi9JOAZiIU0BJuDORKiV2s=
+X-Gm-Gg: AR+sD13+2PAJYZmT2Uolcy8vkyFF4sanPCaOLOb82TQ81zASkr51nei0uFz8AdYjW1N
+	B9Jdrb0HQirINuHhvUpFHP2svQOHHUAIIIC7bF39wZRsdzZJIRfniHxWukOdTULYjHaCkxKmSuU
+	JTPoYcCXLVXL9U8hxIi+h7Qnfgjm0vuyou9AUKf5ocO9KcEanjXBesBZ0vnvPnqW4XLqAlLUse/
+	J6dqORfIsjY6M59eh5OG8ZOVwYROAQEqz64a5AGhWULX3X3ReVp0jJ7l7wEku5SsnC9qIoqcTis
+	ba0tg+tNYYQGGbc1kl4fWhuunU5uYyZO55fNOKEgfqpu311scVMY0GFPn/jZV3raM8c9ZEsDsDD
+	k6vtglaoONnZCMQw9y1pPHfSZ4uDgw/lc38BvH69GplpiEMN9LQGs0KbmkohDyF5P/pNEhNCokn
+	Nedp+364PK3JPUnnk16LsQW9a0zykgNhBFW4IsLWk=
+X-Received: by 2002:a05:690e:e26:b0:667:f9cd:6ba4 with SMTP id 956f58d0204a3-66d256656a7mr11937d50.2.1787676427852;
+        Tue, 25 Aug 2026 09:47:07 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:70])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66d2454d92asm262019d50.3.2026.08.25.09.47.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Aug 2026 09:47:07 -0700 (PDT)
+Date: Tue, 25 Aug 2026 11:47:04 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH v2 1/2] configfs: move CONFIGFS_MAGIC definition to
+ magic.h
+Message-ID: <6k67quhqhibslnmavtbvgnlzbohpgmyfm4yxekl4k5lzqdvr5o@xg3wbmdl5wbt>
+References: <20260819-configfs-v2-0-cb6e65d11589@cloudflare.com>
+ <20260819-configfs-v2-1-cb6e65d11589@cloudflare.com>
+ <ao2iHWDZAJf0FRqh@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <741a833d-6889-4ee6-9322-d6a3a8b95893@kernel.org>
- <CAG48ez2Ngo3=VtyykXY6ynVzGwA8px-p4zV3V6U=YfgV-Hy4BA@mail.gmail.com>
- <dd8c34a9-0e09-453b-88e1-0a5511816627@kernel.org> <CAG48ez2bZEV+3ww2x9XV_5vRPZ_3jU_zg6+h=BDKQ94Xrd3Tqg@mail.gmail.com>
- <aoibvf6CY99IXynk@gremlin> <CAG48ez0CX-PT5Yk5gYJuB6wPe26j0gHHXQqYoNtTA=iHe_5Wdw@mail.gmail.com>
- <aox7tVIQBMuz-xFO@gremlin> <CAG48ez2-8UjzOp=St5eTPyG_yd2iBmPF6y7qVBTNaPNJgoX=BA@mail.gmail.com>
- <ao2a33Xf3U0kQmM_@gremlin> <CAG48ez00PjoaXt4xJn1DCNdZfmFn4faya++=U2EeW0_vcYXcqg@mail.gmail.com>
- <ao2jfUGzbtlW0LBI@gremlin>
-In-Reply-To: <ao2jfUGzbtlW0LBI@gremlin>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 25 Aug 2026 17:00:59 +0200
-X-Gm-Features: AcwNN1U7WXh0ifC0L0ioBcpyrRebieCgpS1C9eeY3jXHe62YSQNBLeFZPlG6sX8
-Message-ID: <CAG48ez1ttTOf6wobCpRK+upYJqU82jgmxGSX_e7xWuxU7xYoYg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] proc: query LSMs for introspective mem access (if PROC_MEM_FORCE_ALWAYS)
-To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-Cc: "David Hildenbrand (Arm)" <david@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Jeff Xu <jeffxu@google.com>, 
-	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ao2iHWDZAJf0FRqh@gmail.com>
 
-On Tue, Aug 25, 2026 at 4:24=E2=80=AFPM Lorenzo Stoakes (ARM) <ljs@kernel.o=
-rg> wrote:
-> On Tue, Aug 25, 2026 at 04:08:42PM +0200, Jann Horn wrote:
-> > On Tue, Aug 25, 2026 at 3:42=E2=80=AFPM Lorenzo Stoakes (ARM) <ljs@kern=
-el.org> wrote:
-> > > On Mon, Aug 24, 2026 at 07:43:02PM +0200, Jann Horn wrote:
-> > > > On Mon, Aug 24, 2026 at 7:33=E2=80=AFPM Lorenzo Stoakes (ARM) <ljs@=
-kernel.org> wrote:
-> > > > > On Mon, Aug 24, 2026 at 07:06:04PM +0200, Jann Horn wrote:
-> > > > > > On Fri, Aug 21, 2026 at 8:52=E2=80=AFPM Lorenzo Stoakes (ARM) <=
-ljs@kernel.org> wrote:
-> > > > > > > The sharing a /proc/mem fd seems like that's a pretty dumb th=
-ing to do in
-> > > > > > > general :) but I guess you have to protect against that.
-> > > > > >
-> > > > > > Yeah, it's a kinda weird thing to do...
-> > > > >
-> > > > > Yup :)) but I guess we have to account for people doing weird stu=
-ff...
-> > > > >
-> > > > > In this case (I do mention it in a reply elsewhere I think) it do=
-es seem
-> > > > > like perhaps you should separately check for current->mm !=3D mm =
-of (what was
-> > > > > originally /proc/self/mm)?
-> > > >
-> > > > I wouldn't want to do it for this access check, since that could le=
-ad
-> > > > to "confused deputy" problems.
-> > >
-> > > I guess if it got the decision wrong somehow that'd be a problem? Or =
-wrongly
-> > > OK'd it on one level but then that led to the fd being passed on assu=
-mption it
-> > > was OK to do it or something?
-> >
-> > The problematic scenario would be something like:
-> >
-> > 1. process A opens fd1=3Dopen("/proc/self/mem",O_RDWR)
-> > 2. process A does lseek(fd1, <address of libc>, SEEK_SET)
-> > 3. A sends fd1 to privileged daemon B as a "log output" FD
-> > 4. privileged daemon B write()s into fd1
-> >
-> > In this scenario, daemon B is just trying to write log output into a
-> > file descriptor. If we checked the current credentials on write(), we
-> > might enable FOLL_FORCE just because daemon B is generally permitted
-> > to use ptrace.
-> >
-> > This illustrates why, in general, the "ambient privilege" that a
-> > process has must not influence write() access decisions.
->
-> Ahh. That makes sense.
->
-> But I mean in this case the check would be that the mm is the one belongi=
-ng to
-> the process in question so wouldn't you need in the first place to have o=
-btained
-> a privileged mm anyway?
->
-> If the check is literally mm of /proc/$pid/mem =3D=3D current->mm?
+Hi Breno,
 
-Ah, right, true.
+On Tue, Aug 25, 2026 at 07:10:02AM -0700, Breno Leitao wrote:
+> On Wed, Aug 19, 2026 at 06:45:22PM -0500, Frederick Lawler wrote:
+> > IMA shouldn't measure or appraise configfs, but currently does because
+> > it's missing from the default exclusion policies. Move CONFIGFS_MAGIC to
+> > magic.h to expose the file system's magic to IMA, as well as other userland
+> > applications.
+> > 
+> > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> 
+> Do you want this change to go thorugh the configfs tree, or the tree
+> specific for IMA?
+> ?
 
-Still, I think I want to generally avoid looking at the current
-process in write(). If I did add such a check, and the check failed,
-I'm also not sure what I'd do with this information.
+Unless you have a user asking for it, I personally think it makes sense
+for linux-integrity to take it since the two patches are related.
 
-> And wouldn't prilileged process -> fd to /proc/$pid/mem -> less privilege=
-d
-> process be a fail in itself?
+I don't mind spinning a v3 for integrity if you choose to take it now.
 
-Yes, true.
+Best,
+Fred
+
+PS. Sorry for not keeping the Reviewed-by tag from v1. I usually
+forget _something_ with re-spins until after the fact.
