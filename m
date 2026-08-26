@@ -1,202 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DF621CA13;
-	Wed, 26 Aug 2026 13:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D533C10B9
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Aug 2026 15:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787749628; cv=none; b=QE8A9XyGGObDF8L+JeQq1LoURLCOt7HZ0NtepBCkdBrRLRt4HbWC5DBzZwZv8CQH010aNwkkVfqflZ/XI8FXRZezbOy/Snfcn6aUqiGl7XPSFwkivJ90uM5FZ/4fSpP3ZiW/DUcRX0Fo18mXYMosQemM5FmWefcZARLmqtLs+/s=
+	t=1787759102; cv=none; b=HZ6SHpAMFGRC35VbD7re/l/ycXU1UE8uj3d7gHsTQeUIjT/AIhtmSfzsm9TJ0OUwOG2XiLnTrh7o6KjYI4xXy0LjHZ0OpA0U8tNKEcPSwHnLRJpZHQYB6mIfJy9wj1SIprNURigvfWbm9A5FuIpstG5pW0Qgjd7+cqfbyhXFPVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787749628; c=relaxed/simple;
-	bh=LkDPqDFg345DgqQ3m4DE3To0vpnoKah/CSfR9DfbKng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOqT7w6ZxqXvBFTtHMKnTo1jGT43h9tMQnaKd2TJMnjvg0pWAogNvfbgsDd6zcv1vv2Tm4+FuMG++JpUWboPU0ck8BRd2ZbznEV3NTptvIHQNiEFcwI6oqAkOLO2C+iiUJppKl3u0zkOGlCMu8p4/gIifR/HC89fA9FMVuWo8oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NxEG+kxn; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787759102; c=relaxed/simple;
+	bh=Wpda8V4mB+G1v6M4jdRqgjIHcIik2OOufAHm4b1jPHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vGZ1Zl6EUlMtjpXauVZqQM9yCrBOvs0yLKIuOhuSfPc0RdkIhLO9yF8QxP+WmYDV7LtsxqI7pc90yGdTBEcuWlPBL8oaCfI9a5vYvgOjOa/eFiJ0kBWkgBxu78bnqNxB6HwN/TssgHFaxUfzCamKN3SbvEd52S6Jm4chaXmKyHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qk2CaZ9U; arc=none smtp.client-ip=74.125.224.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NxEG+kxn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857CE1F000E9;
-	Wed, 26 Aug 2026 13:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787749627;
-	bh=N0uNhOoF0fsO+S9VbNFdNjCWH58LGVPdM6KbXTCpaA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NxEG+kxnT6FOnlnSVrSWAVpAwTa7C5QXPrvPYzfYGHPS9FRNdKlXul8HG8zGK8elf
-	 0mygCqOfR9eM3G+dQWdg/bMGnFWpcK2y8v4Yclu6jZMtaLboZWmhcv42qxKucUSKFP
-	 klimZ00U2FyUxGwskveMz1JD1boi8Z7yoZ0o18WqhCyQyYbxFq6O8mJq/8BuUCK+rw
-	 X28C16uva8QqUxBsalSioByWTAnep1PC9q0C9uJ+8+5S50+0X8O1fmOurQORIC978i
-	 4NYcPfTIvqas2AY0e9QaKcmIFCW7ZeLQTXg6L2jmmIVYWqK/pIVylvBOqv8wMV0jF+
-	 9vSuVy515ZNHg==
-Date: Wed, 26 Aug 2026 14:06:59 +0100
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Jeff Xu <jeffxu@google.com>, =?utf-8?B?VGhpw6liYXVk?= Weksteen <tweek@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, 
-	David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/3] proc: query LSMs for introspective mem access (if
- PROC_MEM_FORCE_ALWAYS)
-Message-ID: <ao7kzYoGRrhkaoB4@gremlin>
-References: <20260825-selinux-pokemem-v2-0-b46bc64916d8@google.com>
- <20260825-selinux-pokemem-v2-2-b46bc64916d8@google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qk2CaZ9U"
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-66cf1f9965dso1502239d50.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Aug 2026 08:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787759098; x=1788363898; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6lCs31xrtlUjQWf/CteVcVdyEY/EdqnqYRaq66tpHgs=;
+        b=qk2CaZ9U0gqkZ5PqCfbI1b58hD7WoAkTG+Hqyn5puILDvhvskYa+qQQSPrDd9RMYyz
+         gPvNbKN1tu2wdGA1bi7r2LPNIzFQEaTFQmoOH+pcqcwfVQYevTjeTBH3uI7vUj4fbWcg
+         3G9uJkaIPTY0tK0GRGPnz6z0+LXjAV/S8Lj1s0Zl8EVU61cRexoqf0QyYJ+btMD1lgty
+         i2PQU4380rdTyJk3hMtrYKkhRZCxGF3C/+02Z1LhlK3rWVy2Fpsrt2kxq91tYVCd2WxU
+         qC62FAxt+jm3uApTkR2CVdk4ZutNcXAE2q/o6YBjHZQw7fB2nMvRnC5aeiUrc/nOyxa1
+         vpwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787759098; x=1788363898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6lCs31xrtlUjQWf/CteVcVdyEY/EdqnqYRaq66tpHgs=;
+        b=q6RSdADyM69O3c6SIaJ8Rc0ZQ0KxJ4XiUAXYSBHTWt/IzPVdYqrBkGxWr2HaHiRMq8
+         We+zcsYT9JKjVGpG5p9l6m62X8OieuQyJZcnH79+ae6NfpPX+BvrDyayWnHNNfufdSiJ
+         ibxqKERkh5sAh0nqI9/xhsC24MX5e3+9RYukddemnAgyEeejAmQInYQ5eS6/0Cz7TKlb
+         +Osz1wHIACvtnhk1d7VWon2FWxGI7xWoX5bPoTJJ+qBqFgFhFaOOCjGDuG/QWlw0pidZ
+         Zzbh8854tEIO/lwQ5/1ZIMTqYgng6imlTB8VtbIXRu+TH1UmW9Ev7pV6EqrIm3iL8KW5
+         vx1g==
+X-Forwarded-Encrypted: i=1; AHgh+Rplx04y1HYX2kRO/4MCOgXOF8/0sCI/pFa8TPiKFzgq0B819v+muVtMeid5wgaC8++sjOlsaGEgsNZ+LMN8i47wfnMUYoE=@vger.kernel.org
+X-Gm-Message-State: AFuF++mTdSq02/ltDteEzcu8ddC+c0v81PFeocgW2czLMhQ+yrK9lYeI
+	cb+SlULWp3hqFYEESVSaubflxqHC4TJBQ6pMsfDN62Hxce8Plq4u7a3N
+X-Gm-Gg: AR+sD1330zD2FJKZplX9+1p2DQHVT6qdeaYPvNk2K8Zhj76ncQ3GpzKt96WjbqOLfX9
+	OkrPP0Cn2MIgYiZKXST+4/V8oJTz23PsSjim9D3Kn8fdd7F92VgyP+iYxhawVdTQTJtKNkJFtwW
+	Uw3AloCJH2Ts8oiOHDtlNOYPnQJ2N1/0rnmv5LTYtI1vD09ANBP5EkYjp6gEHw5XS4WmB7gfhfs
+	CoDLf/bSfGPMHU1CItZfwzEYkCfupudNcFoivz7+QCs2cgQd3wMR0ouQA7KXPsPSG8hmNOMGPeR
+	0VQQ75s0+6nXczCgzzdJCG16qJ9b7qqrxYK1xxRMazKXOpj5rzqEA0iP1IoRrXkRkN1/gnLqICq
+	Z4uzHXJZUV5eBCB6nGRKIBdqp42l2vU8P38bbU3N/1VnIblv1bP2oXOCotKWsNA0nrtFQUw5MEB
+	aRRgfHVXgWSO/PESnr7qaO6GcYRxjfNUf9QL01B2Xc50x6nt1JWldn0YGbM8a735ZaC5M=
+X-Received: by 2002:a05:690e:1b55:b0:66c:e3b6:40c7 with SMTP id 956f58d0204a3-66d2580c8aemr2153868d50.47.1787759097975;
+        Wed, 26 Aug 2026 08:44:57 -0700 (PDT)
+Received: from mac.lan ([136.55.173.105])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8570dfcf578sm18285107b3.47.2026.08.26.08.44.57
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 26 Aug 2026 08:44:57 -0700 (PDT)
+From: "Cen Zhang (Microsoft Security FORGE Labs)" <blbllhy@gmail.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Roberto Sassu <roberto.sassu@polito.it>,
+	David Safford <safford@watson.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>,
+	Francis Perron <francis@akrites.dev>,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Akrites SIRT <sirt@akrites.dev>,
+	AutonomousCodeSecurity@microsoft.com,
+	Cen Zhang <cenzhang@microsoft.com>
+Subject: [PATCH v2] KEYS: encrypted: fix integer overflow of datablob_len
+Date: Wed, 26 Aug 2026 11:44:56 -0400
+Message-ID: <20260826154456.85974-1-blbllhy@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260825-selinux-pokemem-v2-2-b46bc64916d8@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 25, 2026 at 08:39:18PM +0200, Jann Horn wrote:
-> If the system is running with PROC_MEM_FORCE_ALWAYS, LSMs currently have no
-> good opportunity to block a process from overwriting read-only code in its
-> own address space through FOLL_FORCE writes via /proc/self/mem.
-> The security_ptrace_access_check() LSM hook is bypassed when a process
-> opens /proc/self/mem because this is considered "introspection".
->
-> This causes a hole in SELinux EXECMEM enforcement, which tries to ensure
-> that a process cannot create executable anonymous pages.
->
-> PROC_MEM_FORCE_PTRACE prevents that and ensures that such FOLL_FORCE
-> accesses are only possible when the LSM allows ptrace() attachment; but it
-> is unclear how quickly PROC_MEM_FORCE_PTRACE can be deployed in
-> environments running lots of third-party code, such as Android.
->
-> So, introduce a new LSM hook that can forbid FOLL_FORCE specifically for
-> such "introspective" accesses.
->
-> Signed-off-by: Jann Horn <jannh@google.com>
+From: "Cen Zhang (Microsoft Security FORGE Labs)" <cenzhang@microsoft.com>
 
-Thanks for the name change! :)
+The datablob_len field in struct encrypted_key_payload and the local
+variable in encrypted_key_alloc() are declared as unsigned short, which
+has a maximum value of 65535. The datablob_len is computed as:
 
-Nothing stands out so:
+  format_len + 1 + strlen(master_desc) + 1 + strlen(datalen) + 1
+  + ivsize + 1 + encrypted_datalen
 
-Acked-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
+An attacker can create an encrypted key with a very long datalen string
+(e.g., 32756 characters of leading zeros followed by "4096", which
+kstrtol() happily parses as 4096), and then update it with a very long
+master_desc string (~32760 characters). The combined lengths exceed
+65535, causing the unsigned short to silently wrap around. This results
+in a grossly undersized kzalloc() allocation, and the subsequent
+memcpy() in __ekey_init() writes ~32KB past the end of the buffer,
+corrupting adjacent slab objects.
 
-> ---
->  fs/proc/base.c                |  9 +++++++++
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/security.h      |  6 ++++++
->  security/security.c           | 20 ++++++++++++++++++++
->  4 files changed, 36 insertions(+)
->
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index bec6197329dc..dc6fdcb47b79 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -851,6 +851,11 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
->  /* private_data for proc_mem_operations */
->  struct mem_private {
->  	struct mm_struct *mm;
-> +	/*
-> +	 * Was the ptrace access check on open bypassed because the opener used
-> +	 * the same MM (introspection)?
-> +	 */
-> +	bool opened_by_owner;
->  };
->
->  static int mem_open(struct inode *inode, struct file *file)
-> @@ -864,12 +869,14 @@ static int mem_open(struct inode *inode, struct file *file)
->  	priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
->  	if (IS_ERR_OR_NULL(priv->mm))
->  		return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
-> +	priv->opened_by_owner = priv->mm == current->mm;
->  	file->private_data = no_free_ptr(priv);
->  	return 0;
->  }
->
->  static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
->  {
-> +	struct mem_private *priv = file->private_data;
->  	struct task_struct *task;
->  	bool ptrace_active = false;
->
-> @@ -886,6 +893,8 @@ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
->  		}
->  		return ptrace_active;
->  	default:
-> +		if (priv->opened_by_owner)
-> +			return security_mem_foll_force_opened_by_owner(file->f_cred) == 0;
->  		return true;
->  	}
->  }
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 65c9609ec207..50e3f0abc676 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -36,6 +36,7 @@ LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
->  LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
->  	 unsigned int mode)
->  LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
-> +LSM_HOOK(int, 0, mem_foll_force_opened_by_owner, const struct cred *subject)
->  LSM_HOOK(int, 0, capget, const struct task_struct *target, kernel_cap_t *effective,
->  	 kernel_cap_t *inheritable, kernel_cap_t *permitted)
->  LSM_HOOK(int, 0, capset, struct cred *new, const struct cred *old,
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 153e9043058f..74eb876054b0 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -338,6 +338,7 @@ int security_binder_transfer_file(const struct cred *from,
->  				  const struct cred *to, const struct file *file);
->  int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
->  int security_ptrace_traceme(struct task_struct *parent);
-> +int security_mem_foll_force_opened_by_owner(const struct cred *subject);
->  int security_capget(const struct task_struct *target,
->  		    kernel_cap_t *effective,
->  		    kernel_cap_t *inheritable,
-> @@ -676,6 +677,11 @@ static inline int security_ptrace_traceme(struct task_struct *parent)
->  	return cap_ptrace_traceme(parent);
->  }
->
-> +static inline int security_mem_foll_force_opened_by_owner(const struct cred *subject)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int security_capget(const struct task_struct *target,
->  				   kernel_cap_t *effective,
->  				   kernel_cap_t *inheritable,
-> diff --git a/security/security.c b/security/security.c
-> index 71aea8fdf014..fff26ff65e07 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -595,6 +595,26 @@ int security_ptrace_traceme(struct task_struct *parent)
->  	return call_int_hook(ptrace_traceme, parent);
->  }
->
-> +/**
-> + * security_mem_foll_force_opened_by_owner() - Check if introspective FOLL_FORCE is allowed
-> + * @subject: credentials of the process accessing its own memory
-> + *
-> + * Check if FOLL_FORCE is allowed for accessing process memory through
-> + * /proc/$pid/mem in the case where the opener's MM was the same as the target
-> + * MM, meaning the security_ptrace_access_check() hook was bypassed on open().
-> + * (current->mm does not matter for this; for example, if write() is called on
-> + * an FD that was received from another process which obtained it with
-> + * open("/proc/self/mem"), this hook still runs.)
-> + *
-> + * This is only used when the system is configured with PROC_MEM_FORCE_ALWAYS.
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_mem_foll_force_opened_by_owner(const struct cred *subject)
-> +{
-> +	return call_int_hook(mem_foll_force_opened_by_owner, subject);
-> +}
-> +
->  /**
->   * security_capget() - Get the capability sets for a process
->   * @target: target process
->
-> --
-> 2.55.0.860.g4b6b3295ed-goog
->
+Fix this by:
+1. Using check_add_overflow() to calculate datablob_len directly into
+   its existing unsigned short destination.
+2. Checking the total payload length the same way before passing it to
+   key_payload_reserve(), since key->datalen is also unsigned short.
+3. Using kzalloc_flex() to allocate encrypted_key_payload together with
+   its trailing payload_data[] array.
 
---
-Cheers, Lorenzo
+Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
+Cc: stable@vger.kernel.org
+Assisted-by: GitHub-Copilot:claude-opus-4.6
+Signed-off-by: Cen Zhang (Microsoft Security FORGE Labs) <cenzhang@microsoft.com>
+Signed-off-by: Francis Perron (Akrites SIRT) <francis@akrites.dev>
+---
+Changes in v2:
+- Keep datablob_len unchanged and check both unsigned short bounds with
+  check_add_overflow().
+- Use kzalloc_flex() for the trailing payload_data[] array.
+- Correct the attribution and sign-off trailers.
+
+The initial version was discussed off-list and is not publicly archived.
+
+ security/keys/encrypted-keys/encrypted.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index 59cb77b237b3..e07092ea301a 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -19,6 +19,7 @@
+ #include <linux/parser.h>
+ #include <linux/string.h>
+ #include <linux/err.h>
++#include <linux/overflow.h>
+ #include <keys/user-type.h>
+ #include <keys/trusted-type.h>
+ #include <keys/encrypted-type.h>
+@@ -579,6 +580,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ {
+ 	struct encrypted_key_payload *epayload = NULL;
+ 	unsigned short datablob_len;
++	unsigned short payload_totallen;
+ 	unsigned short decrypted_datalen;
+ 	unsigned short payload_datalen;
+ 	unsigned int encrypted_datalen;
+@@ -632,16 +634,22 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
+ 
+ 	encrypted_datalen = roundup(decrypted_datalen, blksize);
+ 
+-	datablob_len = format_len + 1 + strlen(master_desc) + 1
+-	    + strlen(datalen) + 1 + ivsize + 1 + encrypted_datalen;
++	if (check_add_overflow(format_len + 1 + strlen(master_desc) + 1
++			       + strlen(datalen) + 1 + ivsize + 1,
++			       encrypted_datalen, &datablob_len))
++		return ERR_PTR(-EINVAL);
++
++	if (check_add_overflow(datablob_len,
++			       payload_datalen + HASH_SIZE + 1,
++			       &payload_totallen))
++		return ERR_PTR(-EINVAL);
+ 
+-	ret = key_payload_reserve(key, payload_datalen + datablob_len
+-				  + HASH_SIZE + 1);
++	ret = key_payload_reserve(key, payload_totallen);
+ 	if (ret < 0)
+ 		return ERR_PTR(ret);
+ 
+-	epayload = kzalloc(sizeof(*epayload) + payload_datalen +
+-			   datablob_len + HASH_SIZE + 1, GFP_KERNEL);
++	epayload = kzalloc_flex(*epayload, payload_data, payload_totallen,
++				GFP_KERNEL);
+ 	if (!epayload)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.55.0
