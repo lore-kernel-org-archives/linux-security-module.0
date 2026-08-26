@@ -1,76 +1,50 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89A532B104
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Aug 2026 10:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B133E41DEE5;
+	Wed, 26 Aug 2026 13:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787741065; cv=none; b=ZC/te91VKzu+oV+SaKXbEXFe8lxWhsllrw26Ar/GyXVq/m4LGRi2jpEp3XjWjSKPsmNMN+prjkUoEk2Zm31HVI4e6PI0ypPPHUNmEva3m+vr/ygyOaj6LkrMUG5PJl9fUmCZrDAS+MPtK+CoO46SGAk5mdHjlK2KhmFVC4Zd6Fc=
+	t=1787749293; cv=none; b=qmVjYLAL3mIa0swJu16TlGNgiW5jpWds77qX7Pbs+46QrN4PVdErtoBPwrHgI/K3yp4AHCpNVKg1QD9lOGK0vrmHNdu6bGKCURfJyEnMtR1xCHfitgmwKvZg/miklh30mNUmPIe1QLe+qN2GzE8o/+GGg7iEW3KxLEYAgMso+50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787741065; c=relaxed/simple;
-	bh=SdMHSRPFPOdRrXYnOJuBx+37r+WD5EJCOrrI0x3V67k=;
+	s=arc-20240116; t=1787749293; c=relaxed/simple;
+	bh=AYFyTq94qRpcRHhSpB8wJkEYJdVK5QmqOCxSGkLYxoc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUeGX7kHuYLjcfNyDWLV6tXtbZkQixKJ5sfM2mePcRQLqo6uWGexx994ki+rronkVc0Vd4VUCqYNY/B+hCeDBxFuA07ABjZ766tardHlLLt81CagEgiZDT0D9xMBuTUkoRPHbv0IFTjnpzd0udit8qm2vjj+N+2QWu0etUyt/5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FOyH1rPo; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0ekAjSvUrNbIvINRXdzv68TSrRvre7oIY/t2WGGzK6igX8k+lpCYFKk+nVTz9kr/RmuCXiRhfHwRa3HODUPwf2b5xESm8xgXnPqHLkpuOdrcherczF6siQd1srdR5VEO6R1BWgPCCDZSuKzVH7pQWe9yoFDCvxjF0kycG4hB6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Deau/1hd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FOyH1rPo"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c252cd2b3c1so42380666b.2
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Aug 2026 03:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787741062; x=1788345862; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pSxv4pYntTUwSidf4pllRCYgkIQxBJh+160AfjnZ5ns=;
-        b=FOyH1rPoM2nAJahQPn56FnFwExKPO1/U0Ka95arPzKRDWfTuOtyhF9rsw6GX8rpTBM
-         MxyTxE/SjRASR6/3E0ea6mpG8+F/B2ybqjPG8kwgGC/70efEHGmdJ/xCpvipfvYfsBY6
-         aXNGxWqdHOT5wdKfYttNcKHwpUdeC58eZtinUoGOtwgEzC7OjYOlu68vjwN782CodE7q
-         5WBvLnC22yPSYmpgmqyX2Vv8gGldbRHbMSyiNygfg1GYfSxutfWYK5UhLumpm5OFDGmq
-         eP7AyOy/g/bHREWqqO9alnKe2H/PJNeE8M5pQeMGMQwnTE98ZiC+1VBhwFXaOFXLWn4B
-         MgtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787741062; x=1788345862;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=pSxv4pYntTUwSidf4pllRCYgkIQxBJh+160AfjnZ5ns=;
-        b=CkbjAZaa1eJu6A/L5GklEO6AIXKYMWOz/yBFRx5jGpQOf1oExNThUU/HZ7Jhkh2388
-         cSGWdj7MubPOBZuTW+SUuRHYrUmLMu3ULqkMickArBeba3R/tuYd9Lh8r9jXQp2dPJ+l
-         iefhgkEdQnCUGUBkqlrN/fwE6bO4UKIfIEj//O3uXsOSx46v3FF9R1391jQMkIz0tzk6
-         ypOlPoVz0HfDbGdCwGoHQ1RZvWXSrNApNef39Lm8tnwRKW47W36Msrt3Tie3UitfLHBc
-         cSkSs5CwVJIteoaJ627741505Er7JYy+ja8VzFBqLpN+1M6y8a6D2tyt5FLRSb8ur4cd
-         +IKA==
-X-Forwarded-Encrypted: i=1; AHgh+RpYqgsIPlCHMSmFfw5DNy0Tt4c2uTHJTqfV2n4ssRZHO4Tvl7sl7sXRX1Fu+vqtCpLK0dGvXkznkmewxLVkEpS+pnTCXhM=@vger.kernel.org
-X-Gm-Message-State: AFuF++nwR46WxBjBfCYO1eRBLlcT6p1Rg471vqIKO6Df6sZ6ExUZcZq4
-	9MaOQrzIabvElxDpH+DSJMRBUAIkqiee+ehW9JBa4wj+PJehXfzzFAjsaTn9Qd2qZw==
-X-Gm-Gg: AR+sD12CZJg+UejWNepDDL7lRFzNKkM2xeg9nGgkmb1wBRYKw0J64OjXAvGOvVdhVHV
-	h6zPxBUUAoxA6GI0VAUhj/wpIs3NY6SMlhHDoYUbA5XlmZRREr9pVsVFeJp1P5CmCsnoGBz/6o1
-	GAecugCrzTcPiieDzhTst0ltf0T7tsGcVsZZmfxmkKCo+VH5dnJBsK75YFOSafFR/xlfDQEWnmh
-	t3R6kbyiIq/wUykmGk2vvERxhixhNJg9b8EXs6pg29fxhdP/5eBijwW88MzoT25AqXyIWgulzJw
-	Z21yJaTd/C2bQi1njGHx+U5gtKxobsZXXCR3f2xdaG+rNx6gyl4FVCB15D2dlAH35TaxkRXcWMh
-	FemgIQX/ozrvG7aCwHk7iqOE8Hltmn7iQSPLiu1TVxqBpFU/kWVMYyTHpsuC1AD14awlP3y7QrY
-	eNHM580uLsDmrf7n2mgGEqO1WGDetyVhTJfC/WcDapboe1/8fQXmnPbBldYA1LSnqvxzMRI6fov
-	KoUyk8d29cjTC8ubq3HmXF01PHDaQ==
-X-Received: by 2002:a17:906:ee88:b0:c12:83da:7eeb with SMTP id a640c23a62f3a-c250c3add0dmr673831966b.19.1787741061401;
-        Wed, 26 Aug 2026 03:44:21 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:7967:21e1:13c1:d2ae])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c250a5d69a7sm642416766b.8.2026.08.26.03.44.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Aug 2026 03:44:20 -0700 (PDT)
-Date: Wed, 26 Aug 2026 12:44:14 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Wang Yan <wangyan01@kylinos.cn>
-Cc: mic@digikod.net, shuah@kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Haofeng Li <lihaofeng@kylinos.cn>
-Subject: Re: [PATCH] selftests/landlock: Fix snprintf truncation checks in
- test files
-Message-ID: <ao7DflLdx7-lFyvk@google.com>
-References: <20260626070016.61049-1-wangyan01@kylinos.cn>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Deau/1hd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E85E11F000E9;
+	Wed, 26 Aug 2026 13:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787749288;
+	bh=i7OqggJ1fEHcFpexMbhQr1tq9t2PX/2Yu/4dFGYaW10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Deau/1hdi71/TOvis/j3rQ6M5DSNtC+Kpb0/4DLYBDHfMXUUwrKHVpPabqpUJDPtS
+	 NHVrY//f44lEJXjWKB0PXAG5QIUAG0304rpz3nGYnEOfCNaiExxKEAURMcUHdvT5oy
+	 LzQpmPMtkJO/r+WlXV24XgkReQb9hpVH/HU1lDUrXhUHWecsnf+KBhcz85XyL5VftT
+	 tBV5WEiYNpA96+w3fsyTK+zu41Qw3lM5ogZkrVsBURYTeXNxv5QpUxim8yuOJkQt/u
+	 OYe8lRx9cHBWu+Blgo8xD745UPdnEgCfM25pZ4Gb+bEFmXWRU6OgD6LbAVRW+0nNft
+	 cwFTYvzm8dD+A==
+Date: Wed, 26 Aug 2026 15:01:21 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Jeff Xu <jeffxu@google.com>, =?utf-8?B?VGhpw6liYXVk?= Weksteen <tweek@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 2/3] proc: query LSMs for introspective mem access (if
+ PROC_MEM_FORCE_ALWAYS)
+Message-ID: <20260826-rotor-heterogen-wollust-2091c20f5e30@brauner>
+References: <20260818-selinux-pokemem-v1-0-90cd2357ee05@google.com>
+ <20260818-selinux-pokemem-v1-2-90cd2357ee05@google.com>
+ <20260825-unweigerlich-biotechnologie-abnormal-accff844337f@brauner>
+ <CAG48ez14F42BgHm5dKeP4g8D_6CNhnAfF7BXdcBwa4NdtFiaiw@mail.gmail.com>
+ <20260826-juror-energetisch-hackordnung-83810c82adcf@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -80,90 +54,99 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260626070016.61049-1-wangyan01@kylinos.cn>
+In-Reply-To: <20260826-juror-energetisch-hackordnung-83810c82adcf@brauner>
 
-On Fri, Jun 26, 2026 at 03:00:16PM +0800, Wang Yan wrote:
-> Commit b566f7a4f0e4 ("selftests/landlock: Fix snprintf truncation checks
-> in audit helpers") fixed the truncation detection in audit.h by changing
-> the comparison from ">" to ">=" to correctly handle the edge case where
-> snprintf returns a value equal to the buffer size.
+On Wed, Aug 26, 2026 at 12:29:14PM +0200, Christian Brauner wrote:
+> On Tue, Aug 25, 2026 at 04:00:40PM +0200, Jann Horn wrote:
+> > On Tue, Aug 25, 2026 at 3:19 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > On Tue, Aug 18, 2026 at 09:51:06PM +0200, Jann Horn wrote:
+> > > > If the system is running with PROC_MEM_FORCE_ALWAYS, LSMs currently have no
+> > > > good opportunity to block a process from overwriting read-only code in its
+> > > > own address space through FOLL_FORCE writes via /proc/self/mem.
+> > > > The security_ptrace_access_check() LSM hook is bypassed when a process
+> > > > opens /proc/self/mem because this is considered "introspection".
+> > > >
+> > > > This causes a hole in SELinux EXECMEM enforcement, which tries to ensure
+> > > > that a process cannot create executable anonymous pages.
+> > > >
+> > > > PROC_MEM_FORCE_PTRACE prevents that and ensures that such FOLL_FORCE
+> > > > accesses are only possible when the LSM allows ptrace() attachment; but it
+> > > > is unclear how quickly PROC_MEM_FORCE_PTRACE can be deployed in
+> > > > environments running lots of third-party code, such as Android.
+> > > >
+> > > > So, introduce a new LSM hook that can forbid FOLL_FORCE specifically for
+> > > > such "introspective" accesses.
+> > > >
+> > > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > > ---
+> > > >  fs/proc/base.c                |  6 ++++++
+> > > >  include/linux/lsm_hook_defs.h |  1 +
+> > > >  include/linux/security.h      |  6 ++++++
+> > > >  security/security.c           | 15 +++++++++++++++
+> > > >  4 files changed, 28 insertions(+)
+> > > >
+> > > > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > > > index bec6197329dc..3dfaef49bb70 100644
+> > > > --- a/fs/proc/base.c
+> > > > +++ b/fs/proc/base.c
+> > > > @@ -851,6 +851,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+> > > >  /* private_data for proc_mem_operations */
+> > > >  struct mem_private {
+> > > >       struct mm_struct *mm;
+> > > > +     /* Was the ptrace access check bypassed due to introspection? */
+> > > > +     bool introspection;
+> > > >  };
+> > > >
+> > > >  static int mem_open(struct inode *inode, struct file *file)
+> > > > @@ -864,12 +866,14 @@ static int mem_open(struct inode *inode, struct file *file)
+> > > >       priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
+> > > >       if (IS_ERR_OR_NULL(priv->mm))
+> > > >               return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+> > > > +     priv->introspection = priv->mm == current->mm;
+> > > >       file->private_data = no_free_ptr(priv);
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > >  static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+> > > >  {
+> > > > +     struct mem_private *priv = file->private_data;
+> > > >       struct task_struct *task;
+> > > >       bool ptrace_active = false;
+> > > >
+> > > > @@ -886,6 +890,8 @@ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+> > > >               }
+> > > >               return ptrace_active;
+> > > >       default:
+> > > > +             if (priv->introspection)
+> > > > +                     return security_introspect_mem_foll_force(file->f_cred) == 0;
+> > >
+> > > Hm. Why not pass the reason to security_introspect_mem_foll_force() and
+> > > call it unconditionally? Similarly it could also be called for the
+> > > active ptracer case. Then you'd just need to pass a flag to the security
+> > > hook and the LSM can decide based on that.
+> > 
+> > A process which is attached as a ptracer can modify memory with (for
+> > example) PTRACE_POKETEXT and registers with (for example)
+> > PTRACE_SETREGS. LSMs that want to prevent such debugging operations
+> > are supposed to prevent ptrace attachment with the ptrace_access_check
+> > hook.
 > 
-> However, the same pattern exists in ptrace_test.c, audit_test.c, and
-> net_test.c and was not fixed.  snprintf() returns the number of characters
-> that would have been written, excluding the terminating NUL byte.  When
-> the output is truncated, this return value equals or exceeds the buffer
-> size. The existing ">" check therefore fails to detect truncation when
-> the return value equals the buffer size.
+> Yeah, but as I said elsewhere that is very very coarse and you can't
+> differentiate between the different operations performed on the other
+> task.
 > 
-> Fix these remaining instances to use ">=" for truncation detection,
-> matching the fix in audit.h.
+> > I am just trying to plug the enforcement hole where ptrace-style
+> > modification of process state is possible without going through
+> > ptrace_access_check - which means just looking at these
+> > "introspection" cases.
 > 
-> Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
-> Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
-> Signed-off-by: Wang Yan <wangyan01@kylinos.cn>
-> ---
->  tools/testing/selftests/landlock/audit_test.c  | 2 +-
->  tools/testing/selftests/landlock/net_test.c    | 4 ++--
->  tools/testing/selftests/landlock/ptrace_test.c | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
+> It seems odd to just call a hook when it's introspection denied.
+> And if that's the case why not also have a general hook in
+> ptrace_may_access() itself in the introspection branch?
 > 
-> diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
-> index 72b5612375dd..4bea8c880a4d 100644
-> --- a/tools/testing/selftests/landlock/audit_test.c
-> +++ b/tools/testing/selftests/landlock/audit_test.c
-> @@ -31,7 +31,7 @@ static int matches_log_signal(struct __test_metadata *const _metadata,
->  
->  	log_match_len =
->  		snprintf(log_match, sizeof(log_match), log_template, opid);
-> -	if (log_match_len > sizeof(log_match))
-> +	if (log_match_len >= sizeof(log_match))
->  		return -E2BIG;
->  
->  	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-> index 2ed1f76b7a8b..aebeafd80466 100644
-> --- a/tools/testing/selftests/landlock/net_test.c
-> +++ b/tools/testing/selftests/landlock/net_test.c
-> @@ -2777,7 +2777,7 @@ static int matches_auditlog(const int audit_fd, const char *const blockers,
->  		log_match_len = snprintf(log_match, sizeof(log_match),
->  					 log_with_addrport_tmpl, blockers,
->  					 dir_addr, addr, dir_port, port);
-> -	if (log_match_len > sizeof(log_match))
-> +	if (log_match_len >= sizeof(log_match))
->  		return -E2BIG;
->  
->  	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-> @@ -3072,7 +3072,7 @@ static int matches_log_connect_bound(int audit_fd, const char *const blockers,
->  
->  	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
->  				 blockers, addr, lport, addr, dport);
-> -	if (log_match_len > sizeof(log_match))
-> +	if (log_match_len >= sizeof(log_match))
->  		return -E2BIG;
->  
->  	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-> index 4f64c90583cd..65cf2d82f721 100644
-> --- a/tools/testing/selftests/landlock/ptrace_test.c
-> +++ b/tools/testing/selftests/landlock/ptrace_test.c
-> @@ -302,7 +302,7 @@ static int matches_log_ptrace(struct __test_metadata *const _metadata,
->  
->  	log_match_len =
->  		snprintf(log_match, sizeof(log_match), log_template, opid);
-> -	if (log_match_len > sizeof(log_match))
-> +	if (log_match_len >= sizeof(log_match))
->  		return -E2BIG;
->  
->  	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-> -- 
-> 2.25.1
-> 
+> I would actually have use-cases for this btw.
 
-Thanks for the fix and the reminder!  The fix is correct, because snprintf()
-returns the number of bytes that would have been written *excluding* the
-trailing NUL byte, whereas the buffer size passed to it *includes* the
-space for the trailing NUL byte.
-
-Reviewed-by: Günther Noack <gnoack@google.com>
-
-—Günther
+To be clear: I have no quarrels with this going in as is. I'm just
+interested in how policy decision such as this can be made more
+meaningful in general. If you have thoughts around this you want to
+share, please do.
