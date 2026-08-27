@@ -1,182 +1,171 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC21C480359;
-	Thu, 27 Aug 2026 15:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B49484231;
+	Thu, 27 Aug 2026 15:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787843585; cv=none; b=qN9byYLPnGuSbiibiuzPvWyalaTsAuf0ak2vS/zAGpF8tj0tnmG9xcmSrs2F4YKK6pMI2M7GOMXq3QPg5J/R5Y1koUUzDi62wH+haNeEI0Li9TwFLN6XtbtjJHyv6nYVy8uiSrYq31H2sGj0nE6H6lzQF2zsKtMe0Aimf/W4u5I=
+	t=1787845816; cv=none; b=DXWw4XQztBm5O6qn3dIIAMWsSuSV9L0P1E1CzY++iF2wKSO8BQeplI7PQT3DCEKd1O0Y3s66i4bRgXjWYPcnCur/dxiTYMRWEflGkCcsefFpNVX5d155FzjI/3vtCG+KiA3IP7jzFBgxs489c7Fisk69MtvunKP7DWzwIQBAcEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787843585; c=relaxed/simple;
-	bh=8XP+3iFvKeqHuHIKqKyr1ZqegPzvcSy8tM88odHicKw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bxWnEr8sSGtxLh0RvMRraGC8kEaEXeAfEfXCCxXDc/e/l70+TznVbbc1cEGwq2Ii/B+poHEQWc6A+tj86y82nLUwbG4pguk01oe85p7s0O71ha/jt4kr6NCoFVEgeZu174aMfQ4E3/gdKncuqsmvo9SR9xDC7ZlfiqFU/FC2FMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4hW4DV383cz1HCFf;
-	Thu, 27 Aug 2026 22:49:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 44C3240558;
-	Thu, 27 Aug 2026 22:56:52 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with UTF8SMTPA id LxC2BwAHWtApUJBqpUVuAA--.42007S2;
-	Thu, 27 Aug 2026 15:56:51 +0100 (CET)
-Message-ID: <d63a007c6d371496780d3577e64e57b4d0e11e1a.camel@huaweicloud.com>
+	s=arc-20240116; t=1787845816; c=relaxed/simple;
+	bh=HPxOQu69spVOes/tRMhJAhpgzpaLImKQDXLe8GLMY44=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=gMo4l/IYnt0BNt2ZCGFYCR2rPdCfQZ3c1Yj5LGPsiAhOmY7LvudYj6tT7YWBWLrysOqWCm+q9A6dXpSHHRghgPwudJZyPi+SOhDBr0cV60T4caU0TYuuzmcr0mteha/FQHH0ooxjE+8KQpw2kfUTKfjUko7Ht7Eo80jN0NhS0Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Gtn9mc4t; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Gtn9mc4t"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67RF59WJ3328746;
+	Thu, 27 Aug 2026 15:49:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=HPxOQu
+	69spVOes/tRMhJAhpgzpaLImKQDXLe8GLMY44=; b=Gtn9mc4t6W3/DPiK4PtYml
+	VEDFb998TeNrL6svQWWFrJqhLq4NLCWZuVTv4Nx3Gic1BpFUb4zu+/kB7C+njqWs
+	4vTJE0T2a0a8pwPmjNYX3jFVXURhOG9lpj3a51EDofQ3HN1/V443hx3HsyD1VoET
+	7gMXwwLsGU+QODiK+8zRgl57mubSh+5H3ECeaWE2PEkRHVI3yd1Zx394WQTa25Cg
+	498QEMkSq9r8lR9QZqySVjFUZMqHXBcJVLm7zZbd/13mKVF9vd6dilizMLB3taz1
+	5ARLmypQ/YHa8A/lQ0aQQ0A9+ttJX8EScbuGOP3Dn9jg2ON5nuRDNWrL4JrmS4Hg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4g7394edxm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Aug 2026 15:49:51 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 67RFfeiB026711;
+	Thu, 27 Aug 2026 15:49:50 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4g7p3qh3x7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Aug 2026 15:49:50 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 67RFnntO50004332
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Aug 2026 15:49:49 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 904455805C;
+	Thu, 27 Aug 2026 15:49:49 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A62A75805B;
+	Thu, 27 Aug 2026 15:49:48 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.98.69])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Aug 2026 15:49:48 +0000 (GMT)
+Message-ID: <837c208460cd7dae1259bd3fd7b8f176ab3597ba.camel@linux.ibm.com>
 Subject: Re: [PATCH] ima: select the SHA384 PCR bank for the boot aggregate
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: "Singh, Jashandeep" <jashandeep.singh@hpe.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, 
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Jashandeep Singh <jdsw@juniper.net>
-Date: Thu, 27 Aug 2026 16:56:38 +0200
-In-Reply-To: <037C125E-9343-464E-A1AF-8078D3B7BA38@hpe.com>
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        "Singh, Jashandeep"
+	 <jashandeep.singh@hpe.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin
+	 <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        "linux-integrity@vger.kernel.org"
+	 <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+	 <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>,
+        Jashandeep Singh <jdsw@juniper.net>
+In-Reply-To: <d63a007c6d371496780d3577e64e57b4d0e11e1a.camel@huaweicloud.com>
 References: <20260826191051.219090-1-jashandeep.singh@hpe.com>
-	 <4ea0433a82c219d6efdb83ad0bf267045c91a374.camel@linux.ibm.com>
-	 <PH7PR84MB16549E7A6AC842D358493B0F96AE2@PH7PR84MB1654.NAMPRD84.PROD.OUTLOOK.COM>
-	 <21bf74a181df485f9daf47f9740972443e31471d.camel@linux.ibm.com>
-	 <92bf67810c6ed6bc4764f330d77c3ac2279781eb.camel@huaweicloud.com>
-	 <037C125E-9343-464E-A1AF-8078D3B7BA38@hpe.com>
+		 <4ea0433a82c219d6efdb83ad0bf267045c91a374.camel@linux.ibm.com>
+		 <PH7PR84MB16549E7A6AC842D358493B0F96AE2@PH7PR84MB1654.NAMPRD84.PROD.OUTLOOK.COM>
+		 <21bf74a181df485f9daf47f9740972443e31471d.camel@linux.ibm.com>
+		 <92bf67810c6ed6bc4764f330d77c3ac2279781eb.camel@huaweicloud.com>
+		 <037C125E-9343-464E-A1AF-8078D3B7BA38@hpe.com>
+	 <d63a007c6d371496780d3577e64e57b4d0e11e1a.camel@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+Date: Thu, 27 Aug 2026 11:49:48 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAHWtApUJBqpUVuAA--.42007S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF4UuFWxWr47Ar4UJr4ktFb_yoW5uF18pr
-	WkX3WUAFn7XF1xArZ2va1xKr12y3yxGw4UWr1YyFy8Awn0gFn29wsFk3yrWrWq9F1kJF90
-	9FW3Kw12yr4DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBGqP4mYnTwABsc
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-GUID: bdYF_4HTd9JB4_Ay2WDWEuvw9VYhOkKe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI3MDEzMSBTYWx0ZWRfX4PC3i573lXfA
+ X3AAx/QUSNw40FMNC3cXLqoTeIxtcbW++O8QKOlV2H2qksxb9mAUtDumJJjAPBLgW6OS4ni8DVc
+ mycnMi73AMeZXKGHKwbgOb7aivTGCqErKukoETqf8Aua1jMvco9AiaKYH6por2NabYp3qccrgra
+ gavappeQNLiLyqohcGFrEexitAcKSLPzh4zAThtKleydKBkfctZOC454WQb/yc62tT7xiKFA7vz
+ bmRtONdm/w2xjUj1tCHMa8ixvVnDyH0vq3iC0Uv6dl76JxwOcr82WzxnRDFh4x6XndJ3mBznSNc
+ AVs5SvhGxHQs6l7DSJ84+K2ubscHCurG9exaI+Q1n79F2QaQGm6hsOUmUsVOmXZDapJK54k8Xdk
+ MXbisYOz8miNFltMSG/sWfrPBgjyQfNQ+BmISem2DImIZ2A4BxCyEJ0Cvnoz6l6tEOKjoNuM7UK
+ JsXN1HW+iowzLCg5M7g==
+X-Authority-Analysis: v=2.4 cv=Y/nIdBeN c=1 sm=1 tr=0 ts=6a905c9f cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=QYWrBf2g2jx3ett7T28A:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI3MDEzMSBTYWx0ZWRfX5aLbhd4ybU/S
+ dUvJteEvqB+LTxf56jHoT489hPA2LNVAyYjGXJAtfAgB6LOI0m90QLF0bNKiMeyLBwGzaO6J5zV
+ i2Qdu0f1fKf7V3TAOVTTMcBjqemlbvQ=
+X-Proofpoint-ORIG-GUID: _1fm15er21bSjOVzuWxwF5ZwVJI0lRAA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-27_06,2026-08-27_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608270131
 
-On Thu, 2026-08-27 at 14:46 +0000, Singh, Jashandeep wrote:
-> Mimi, the patch covers the case where the TPM is provisioned with a singl=
-e PCR
-> bank, SHA-384, while the default IMA hash is configured as SHA-256.
->=20
-> The SHA-384 bank is present in nr_allocated_banks, but it matches neither=
- the
-> configured default (SHA-256) nor the current hardcoded fallbacks (SHA-256=
-, then
-> SHA-1). As a result, bank_idx remains -1, and we hit "No suitable TPM alg=
-orithm
-> for boot aggregate", leaving the boot aggregate zeroed.
->=20
-> Roberto, it is not strictly true that the boot aggregate algorithm is alw=
-ays the
-> same as the default IMA hash algorithm.
->=20
-> When the bank corresponding to the default hash is not allocated, the exi=
-sting
-> SHA-256/SHA-1 fallback logic selects a different bank than the default.
-> Therefore, the boot aggregate can already use a different algorithm from =
-the
-> configured IMA hash.
->=20
-> My patch adds SHA-384 as one more fallback for the case where SHA-384 is =
-the
-> only allocated bank. This allows users with such a configuration to have =
-the
-> boot aggregate computed, without requiring them to change their default I=
-MA
-> hash to SHA-384.
-
-That would work for your use case, but what about anyone using a single
-SHA-512 PCR bank?
-
-Would it be fine to add a new Kconfig and kernel option to specify a
-custom boot aggregate algorithm?
-
-Thanks
-
-Roberto
-
-> Thanks,
-> Jashan
->=20
-> > On 27 Aug 2026, at 6:47=E2=80=AFPM, Roberto Sassu <roberto.sassu@huawei=
-cloud.com> wrote:
+On Thu, 2026-08-27 at 16:56 +0200, Roberto Sassu wrote:
+> On Thu, 2026-08-27 at 14:46 +0000, Singh, Jashandeep wrote:
+> > Mimi, the patch covers the case where the TPM is provisioned with a sin=
+gle PCR
+> > bank, SHA-384, while the default IMA hash is configured as SHA-256.
 > >=20
-> > On Wed, 2026-08-26 at 19:14 -0400, Mimi Zohar wrote:
-> > > Hi Jashan,
-> > >=20
-> > > Mail to the kernel mailing lists are in plain text. Please refer to
-> > > https://docs.kernel.org/process/submitting-patches.html#no-mime-no-li=
-nks-no-compression-no-attachments-just-plain-text=20
-> > >=20
-> > > On Wed, 2026-08-26 at 22:35 +0000, Singh, Jashandeep wrote:
-> > > > Thanks Mimi.
-> > > >=20
-> > > >=20
-> > > > Agreed that all allocated banks are extended via tpm_pcr_extend() -=
- but that's
-> > > > the PCR-extend (write) path. The failure is in ima_calc_boot_aggreg=
-ate(), which
-> > > > reads PCRs 0-9 from a *single* selected bank.
-> > > >=20
-> > > >=20
-> > > > The issue is that a TPM can be provisioned with *only* the SHA-384 =
-bank enabled,
-> > > > while the default IMA hash algorithm is SHA-256. In this configurat=
-ion, the
-> > > > current selection logic only matches the configured IMA default, th=
-en SHA-256,
-> > > > and then SHA-1 - it never considers SHA-384.
-> > >=20
-> > > It's walking the list of allocated TPM banks and, if allocated, sets =
-bank_idx.
-> > >=20
-> > >        for (i =3D 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
-> > >                crypto_id =3D ima_tpm_chip->allocated_banks[i].crypto_=
-id;
-> > >                if (crypto_id =3D=3D hash->algo) {
-> > >                        bank_idx =3D i;
-> > >                        break;
-> > >                }
-> > >=20
-> > > The question is why isn't the sha384 bank found in the list of
-> > > nr_allocated_banks?
+> > The SHA-384 bank is present in nr_allocated_banks, but it matches neith=
+er the
+> > configured default (SHA-256) nor the current hardcoded fallbacks (SHA-2=
+56, then
+> > SHA-1). As a result, bank_idx remains -1, and we hit "No suitable TPM a=
+lgorithm
+> > for boot aggregate", leaving the boot aggregate zeroed.
 > >=20
-> > The boot aggregate algorithm is the same as the default hash algorithm.
+> > Roberto, it is not strictly true that the boot aggregate algorithm is a=
+lways the
+> > same as the default IMA hash algorithm.
 > >=20
-> > Please try ima_hash=3Dsha384.
+> > When the bank corresponding to the default hash is not allocated, the e=
+xisting
+> > SHA-256/SHA-1 fallback logic selects a different bank than the default.
+> > Therefore, the boot aggregate can already use a different algorithm fro=
+m the
+> > configured IMA hash.
 > >=20
-> > Thanks
-> >=20
-> > Roberto
-> >=20
-> > > Mimi
-> > >=20
-> > > >=20
-> > > > Adding a SHA-384 match allows the boot aggregate to be computed cor=
-rectly
-> > > > (sha384:...) instead of returning 0 and logging "No suitable TPM al=
-gorithm for
-> > > > boot aggregate". The fact that the SHA-384 bank can be selected and=
- the boot
-> > > > aggregate computed also confirms that the SHA-384 bank is recognize=
-d and
-> > > > allocated, rather than being missing.
+> > My patch adds SHA-384 as one more fallback for the case where SHA-384 i=
+s the
+> > only allocated bank. This allows users with such a configuration to hav=
+e the
+> > boot aggregate computed, without requiring them to change their default=
+ IMA
+> > hash to SHA-384.
 >=20
+> That would work for your use case, but what about anyone using a single
+> SHA-512 PCR bank?
 >=20
+> Would it be fine to add a new Kconfig and kernel option to specify a
+> custom boot aggregate algorithm?
 
+Yes, I'm fine with defining a new Kconfig and kernel option. =20
+
+Examples:
+sha384: <digest> boot_aggregate, where the digest is calculated based on th=
+e TPM
+384 bank PCRs.
+=20
+sha512: <digest> boot_aggregate, where the digest is calculated based on th=
+e TPM
+512 bank PCRs.
+
+Mimi
+>=20
