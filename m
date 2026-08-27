@@ -1,90 +1,124 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C30E23E334;
-	Thu, 27 Aug 2026 17:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805B85733E;
+	Thu, 27 Aug 2026 17:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787852638; cv=none; b=r3vou7A382zISGwh5ZJhwfMA6KOsVgM1BSXtsaHAAnXjWIoB1QX9v8WIr8DExg7noFzjjH787ndHJ/a4p+4YCSdCteaslQnZ7ORg+zXlqBhpM6TkFIfe7QQ+P9c4zV9LHQh5Z/ajgMS8xrYS5xsBDHsitING0KjtVF75nyEjQUc=
+	t=1787852805; cv=none; b=ZafL3cqfPgY02O1ZyAWziNetOJrH+gPhQrXijv9vHqQzl5h05IDua5Rc38GGryaCBlKw9CehrNJTC38MALEtfd3lx9GSXAJQSo80KEU3M5Eqabw+V0uQsZJ9sbc7iZNneWuEg9gqL4YYzovhDgEghZaL0KmDNAKUdS56eJVnXyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787852638; c=relaxed/simple;
-	bh=5mRXSQ+a87YtlJ6UtHzXO4UFEtS28CTeQ+vXCkYcGPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sx37jcfspn+rctBKYBGLvnvrP9RsqV4qIqfVxLyHYjp3MhgyQodQsi2NvSoCsVa2gqCAAzMpjiJ1KAMZgDgLoWhgOL4AefRiMiN98f9vZrCFbWTLKwRvbhzFybbuCn+dXVFIGYaHD+4dyZU9MukM5EiVbkKjbvs/7E9BXiYRy7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ejFXhYtp; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=HLM1QfNj; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1787852805; c=relaxed/simple;
+	bh=ptA/xWbq8+SD+2Ch3QmBRQyO4sclv1PA/gFeSLbI0WU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwxyBbolcMr+avm5jXYlWooUuBEC9mb4dNv/1l+KICCuVhFTmVFkyKpSQoxyy2HtPeNn3+qSD5nashGHkxg9fA2ljf5qK//M0HzVC/s/T60YvDLERXwKacWfMCURfZA6V8142hBwLzL2fp2FHkXW741jmg0Vp2rP1OaU5cpK5kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CP+igfjs; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ejFXhYtp";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="HLM1QfNj"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1787852620; bh=YB79QfroFRVBxYJA1d72Jo/
-	dU55gRVR2euQiCawh/dk=; b=ejFXhYtp3oyFqnP2IIusctEG/iz3BqbpmsFfvBYHceqFDMgthD
-	Iu5iAEBcMAZ40g7ivdWxtQZtVQ26Z0nbEV1ctCIqX9iG3HWK78LZ5OsgEZHMmnhvbfYufbP9FUW
-	m6OxBJqxiDJmcad3Us/ZLvB0SKAxNd5JjTD+zD9HA+w+RjxuopJqeZB6CSUDdbwSFNCWEfQiQ4s
-	uTPX7bL9p+P+wW/a9piWw18C7PPV1T21npsZz/jMwzbubGWrbTxNBzT0P7jB/grPBoFV9JRwvib
-	vdGfKEUVCIORBNKfBl3RB556cSz1DTLEbg1nJWwXDr0/CiINiQEu7iDDa7b8+C8Xhxw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1787852620; bh=YB79QfroFRVBxYJA1d72Jo/
-	dU55gRVR2euQiCawh/dk=; b=HLM1QfNjTzNsCMBihdlWbDxHGXhnpSi0plQdeibij2eljAPpuY
-	jOCbRbP5XRitLZl2I9ftUXurnPQ6BIbjCkBg==;
-From: Bradley Morgan <brads@mainlining.org>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	brads@mainlining.org,
-	stable@vger.kernel.org,
-	syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com
-Subject: [PATCH] ima: Check for ERR_PTR from dentry_path() in validate_hash_algo()
-Date: Thu, 27 Aug 2026 17:43:38 +0000
-Message-ID: <20260827174339.1729-1-brads@mainlining.org>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CP+igfjs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B06371F000E9;
+	Thu, 27 Aug 2026 17:46:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787852804;
+	bh=kiHY7Snf377oa7VYd1mbKOFtc64xcuOE4VHGz2nzZeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=CP+igfjszNlZbIUl7rnHGKc5raqEHjwLHnJe417BWX3yWF9HaM6DN85AdSyFdpafR
+	 Vs4wm/WpPGSXKAbNEA/53AhUN6oEC7hN4jHHCkhXbAMRBor1W42XhpsHhsVCbuN3sq
+	 pVqH7VlFQru3zOkJ+Ppn3rsCpseAJ9UL5iXp0XKdaag17hYjN16BifGsha9HFLe5yi
+	 BZgX0MQ4oBHg+iEv49WYDHIpSXDfDsIAYSmVkrrbaIS/k4FGHHw2vz/m2uDgtQS4P7
+	 H99s1MB3vgV9u2lVYfJL53d4tk59HUNmhpJDyasvRkRSVFKdr5TL1fJCmbDtuBesoW
+	 G4dI2uPeb2enQ==
+Date: Thu, 27 Aug 2026 18:46:37 +0100
+From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Jeff Xu <jeffxu@google.com>, =?utf-8?B?VGhpw6liYXVk?= Weksteen <tweek@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, 
+	David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH v2 3/3] selinux: require PROCESS__PTRACE for FOLL_FORCE
+ introspection
+Message-ID: <apB32VUayqL37wyf@gremlin>
+References: <20260825-selinux-pokemem-v2-0-b46bc64916d8@google.com>
+ <20260825-selinux-pokemem-v2-3-b46bc64916d8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260825-selinux-pokemem-v2-3-b46bc64916d8@google.com>
 
-dentry_path() returns ERR_PTR(-ENAMETOOLONG) when the path exceeds the
-buffer. validate_hash_algo() passes the result straight to
-integrity_audit_msg() without checking. ERR_PTR is not NULL, so
-integrity_audit_message() sees a valid pointer and calls strlen() on
-it, which faults:
+On Tue, Aug 25, 2026 at 08:39:19PM +0200, Jann Horn wrote:
+> On systems configured with PROC_MEM_FORCE_ALWAYS, ensure that a process can
+> only create anonymous executable memory via /proc/self/mem if it has
+> PROCESS__PTRACE (like when using /proc/$pid/mem of another process).
+>
+> This closes a hole in code integrity enforcement that Project Zero has used
+> in a remote Android exploit chain:
+> It was possible to use a memory corruption bug in a service without
+> EXECMEM/EXECMOD/PTRACE permission to overwrite executable code via
+> /proc/self/mem, which made it possible to load and run shellcode containing
+> a kernel exploit.
+>
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-    BUG: unable to handle page fault for address: ffffffffffffffdc
-    RIP: 0010:strlen+0x30/0xa0
-    Call Trace:
-     audit_log_untrustedstring+0x19/0x30
-     integrity_audit_message+0x366/0x4f0
-     ima_inode_setxattr+0x512/0x5f0
+Not really my area but in general looks reasonable so:
 
-Check for IS_ERR() and use NULL instead, which makes the audit message
-skip the name= field instead of crashing.
+Acked-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 
-Fixes: 4f2946aa0c45 ("IMA: introduce a new policy option func=SETXATTR_CHECK")
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/6a8f89e5.1d9ded08.62e62.00bf.GAE@google.com/
-Signed-off-by: Bradley Morgan <brads@mainlining.org>
----
- security/integrity/ima/ima_appraise.c | 2 ++
- 1 file changed, 2 insertions(+)
+> ---
+>  security/selinux/hooks.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 18dd28b2bb13..2c2c60e9e0fe 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2157,6 +2157,27 @@ static int selinux_ptrace_traceme(struct task_struct *parent)
+>  			    SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
+>  }
+>
+> +/*
+> + * Decide whether it should be possible to read non-readable VMAs and write
+> + * non-writable VMAs via /proc/self/mem.
+> + * This only applies to systems configured with PROC_MEM_FORCE_ALWAYS, and only
+> + * triggers on accesses that are not visible to selinux_ptrace_access_check()
+> + * because of the introspection exceptions in may_access_mm() and
+> + * __ptrace_may_access().
+> + *
+> + * This allows a process to overwrite read-only code in its own address space.
+> + *
+> + * Creating an audit record on denial doesn't make sense here, since we can't
+> + * tell whether FOLL_FORCE matters for the accessed VMAs.
+> + */
+> +static int selinux_mem_foll_force_opened_by_owner(const struct cred *subject)
+> +{
+> +	struct av_decision avd;
+> +	u32 sid = cred_sid(subject);
+> +
+> +	return avc_has_perm_noaudit(sid, sid, SECCLASS_PROCESS, PROCESS__PTRACE, 0, &avd);
+> +}
+> +
+>  static int selinux_capget(const struct task_struct *target, kernel_cap_t *effective,
+>  			  kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>  {
+> @@ -7558,6 +7579,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+>
+>  	LSM_HOOK_INIT(ptrace_access_check, selinux_ptrace_access_check),
+>  	LSM_HOOK_INIT(ptrace_traceme, selinux_ptrace_traceme),
+> +	LSM_HOOK_INIT(mem_foll_force_opened_by_owner, selinux_mem_foll_force_opened_by_owner),
+>  	LSM_HOOK_INIT(capget, selinux_capget),
+>  	LSM_HOOK_INIT(capset, selinux_capset),
+>  	LSM_HOOK_INIT(capable, selinux_capable),
+>
+> --
+> 2.55.0.860.g4b6b3295ed-goog
+>
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index ced2e131b061..b280488e15fc 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -748,6 +748,8 @@ static int validate_hash_algo(struct dentry *dentry,
- 		return -EACCES;
- 
- 	path = dentry_path(dentry, pathbuf, PATH_MAX);
-+	if (IS_ERR(path))
-+		path = NULL;
- 
- 	integrity_audit_msg(AUDIT_INTEGRITY_DATA, d_inode(dentry), path,
- 			    "set_data", errmsg, -EACCES, 0);
--- 
-2.47.3
-
+--
+Cheers, Lorenzo
