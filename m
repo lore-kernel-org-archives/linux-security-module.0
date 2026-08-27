@@ -1,179 +1,129 @@
-Received: from bg-bec.cloudflare-smtp.org (bg-bec.cloudflare-smtp.org [104.30.16.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506B223BCEE
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Aug 2026 12:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.30.16.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54B44746B6;
+	Thu, 27 Aug 2026 13:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787834537; cv=none; b=kvMaYWgaBF3snQ8l+TX4jSMG4kZ2fLBkl2JpoZXKwyNjOIXc6q1zMrFpklGD/0PxcFgdvwgwno4Gw3zAOyOADgzG5H+LJ4cgyZsiWN+OxRhQ6ZhCIP/Wtk5H9EM58tZJQ3e6CWu6+3psY57afjJnP+b06zICzzhugcGax8s3mIE=
+	t=1787837606; cv=none; b=LbmDbEdNntPB6uS3ISl1gHS1T5IoXooq84Xf/qrFrW8x5cUk+yrtrdEg5PNq8VcihKAsMM4+f8aHWETE9Wxwr73yl3U1hzFz7D8TqlCa7JCna2dDLCVEy2Neg4S9x2pMlIRz6YrbqwVSkJW7Ue0rhRnXPHbnHBVzvM4+ZMDUXZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787834537; c=relaxed/simple;
-	bh=6UdXvmcxiyNgsz6+w7pMYno+sCHdZX6CqOByXzxekDs=;
-	h=From:Message-ID:Date:Subject:To:MIME-Version:Content-Type; b=tiYAvtxk6Ia0ymemB82E9g0O/J/YQqQS+0eOLf3JRzU/ai3mh9+Vt07f/Tpyywhh+UPoMAcsgvjSf84lvghsk/NTjE6dayVxQABGkSPx/c5OCRMEshIevZtU7KsN61JhjTGBvwbwfbh1FCRXP9znakCrNCEKX/k2t8M902DSzR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bugs.sh; spf=pass smtp.mailfrom=cf-bounce.bugs.sh; dkim=pass (2048-bit key) header.d=cloudflare-smtp.org header.i=@cloudflare-smtp.org header.b=LIwHcUZ2; dkim=pass (2048-bit key) header.d=bugs.sh header.i=@bugs.sh header.b=aQx50E0u; arc=none smtp.client-ip=104.30.16.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bugs.sh
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cf-bounce.bugs.sh
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare-smtp.org header.i=@cloudflare-smtp.org header.b="LIwHcUZ2";
-	dkim=pass (2048-bit key) header.d=bugs.sh header.i=@bugs.sh header.b="aQx50E0u"
-DKIM-Signature: v=1; a=rsa-sha256; s=cf2024-1; d=cloudflare-smtp.org; c=relaxed/relaxed;
-	h=To:Subject:Date:From:Feedback-ID:from:reply-to:cc:resent-date
-	:resent-from:resent-to:resent-cc:in-reply-to:references:list-id:list-help
-	:list-unsubscribe:list-unsubscribe-post:list-subscribe:list-post
-	:list-owner:list-archive; t=1787834533; x=1788439333; bh=Jcox8l/ThO6XMTGwSm
-	80cpy3q3O7GlZqpuHdohAJm6g=; b=LIwHcUZ25iy/mXN08NFMVB7qwIFGlwzQBGUD+eGqFQgHM
-	fCHO0KP1JEU+emQY1POT/5+gZTR+a/QsGw1gW/P2mjm3HlnqH1CloTdWaoIS4prCUmTAUWTiseI
-	tjRV6OOI926wf+ZerFsqnkj1QYdrqrx8ItEVDGhppmRTWg6kNuHVa7h1WHc1/EShqh57BDyXxJ9
-	8mZzME2BuBbcEM9tF3SqnvyVJ5jfq0GYxQMATZ+Frdc0ENugzAaz52xr5lu/ypCPaxTCNjiOD4Y
-	yRrkbQq0gK0A8Dnom1fgyx9fPsplWaPZQpp/+fSGskpMm94t0e/5PrdqiwpaXxxIb+SS6CRw==;
-DKIM-Signature: v=1; a=rsa-sha256; s=cf-bounce; d=bugs.sh; c=relaxed/relaxed;
-	h=To:Subject:Date:From:Feedback-ID:from:reply-to:cc:resent-date
-	:resent-from:resent-to:resent-cc:in-reply-to:references:list-id:list-help
-	:list-unsubscribe:list-unsubscribe-post:list-subscribe:list-post
-	:list-owner:list-archive; t=1787834533; x=1788439333; bh=Jcox8l/ThO6XMTGwSm
-	80cpy3q3O7GlZqpuHdohAJm6g=; b=aQx50E0ugIVquDWiN5ftWUoNDdaOWWhgFulABPwYVmOls
-	iYQSlarDLs/Xh5LSililP+ZbdIqReFIXUuimtMpBf9Xr7pWxmIy2fkVEHlM8aGDPG4sm4zH7lUC
-	p3pc9vRE+UA64Il+17YnXt8LR5ceeoQuYyehezcYHMak+tFzyHsLzUb5J1QpVuQSgTcUG0rqbBR
-	AiY7TBbRai43MNa67fbSJinZIPY6zY7RcK1Ge3Jfy8RoTy3gqruqxRyx9SW/La+2qhoGHhfgM/I
-	IJrYDoVpKz3FKwGXmGTOaHLnDZ2E6Wa4hlCll+EcfzPWqSVjuYL0GnWNInAKTAAyDdDrISQA==;
-Feedback-ID: bugs.sh:5:6:Cloudflare
-From: co <co+6a581c4284f721d4@bugs.sh>
-Message-ID: <jS2KwfrOeQPAnc2xZL0obs0OW3eVUUvpe6Yt@bugs.sh>
-Date: Thu, 27 Aug 2026 12:42:08 +0000
-Subject: [BUG] security/keys: out-of-bounds in tpm2_unseal_trusted()
-To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, "James
- Bottomley" <James.Bottomley@HansenPartnership.com>, "Jarkko Sakkinen" <jarkko@kernel.org>, "Mimi
- Zohar" <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1787837606; c=relaxed/simple;
+	bh=sADAEZNGrHrwnogfdaHVcKl0hh65+2nxXvW9QfVCfVg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pWrSlX5w9t1tJBCZRHZ0GKzErJEFlT2H0T2PdNV0zA6LFZBgMoQi6i/oM2mklfoPxWXN9uzBLBlR3yv0zkgeCY7wQxEE8HKwqWS+c4oZVmpWbOI6P3p5y8CafS5KYFAgnnpltLsG/9tt6e9IFY8NUYeqKxKBdEDa2qSO3rDrAyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4hW22H2bnnzt50v;
+	Thu, 27 Aug 2026 21:10:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 760CB4055D;
+	Thu, 27 Aug 2026 21:17:24 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with UTF8SMTPA id GxC2BwBnCE7aOJBq+abuAQ--.58194S2;
+	Thu, 27 Aug 2026 14:17:23 +0100 (CET)
+Message-ID: <92bf67810c6ed6bc4764f330d77c3ac2279781eb.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: select the SHA384 PCR bank for the boot aggregate
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, "Singh, Jashandeep"
+ <jashandeep.singh@hpe.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, 
+ "linux-integrity@vger.kernel.org"
+	 <linux-integrity@vger.kernel.org>, "linux-security-module@vger.kernel.org"
+	 <linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, Jashandeep Singh <jdsw@juniper.net>
+Date: Thu, 27 Aug 2026 15:17:11 +0200
+In-Reply-To: <21bf74a181df485f9daf47f9740972443e31471d.camel@linux.ibm.com>
+References: <20260826191051.219090-1-jashandeep.singh@hpe.com>
+	 <4ea0433a82c219d6efdb83ad0bf267045c91a374.camel@linux.ibm.com>
+	 <PH7PR84MB16549E7A6AC842D358493B0F96AE2@PH7PR84MB1654.NAMPRD84.PROD.OUTLOOK.COM>
+	 <21bf74a181df485f9daf47f9740972443e31471d.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:GxC2BwBnCE7aOJBq+abuAQ--.58194S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4fKFy7Jw1UJw17ZFW5Jrb_yoW8Aryrpr
+	4kJ3WUJFnIqr1IyrZFv3y8Kr12v397Jw4xGF1jqFy8Arn8XFs29anxZ34FqFWq93WkXFyY
+	vFWa9wnFyr48Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGqP4nAggwAAsD
 
-We found a bug reachable in:
+On Wed, 2026-08-26 at 19:14 -0400, Mimi Zohar wrote:
+> Hi Jashan,
+>=20
+> Mail to the kernel mailing lists are in plain text. Please refer to
+> https://docs.kernel.org/process/submitting-patches.html#no-mime-no-links-=
+no-compression-no-attachments-just-plain-text
+>=20
+> On Wed, 2026-08-26 at 22:35 +0000, Singh, Jashandeep wrote:
+> > Thanks Mimi.
+> >=20
+> >=20
+> > Agreed that all allocated banks are extended via tpm_pcr_extend() - but=
+ that's
+> > the PCR-extend (write) path. The failure is in ima_calc_boot_aggregate(=
+), which
+> > reads PCRs 0-9 from a *single* selected bank.
+> >=20
+> >=20
+> > The issue is that a TPM can be provisioned with *only* the SHA-384 bank=
+ enabled,
+> > while the default IMA hash algorithm is SHA-256. In this configuration,=
+ the
+> > current selection logic only matches the configured IMA default, then S=
+HA-256,
+> > and then SHA-1 - it never considers SHA-384.
+>=20
+> It's walking the list of allocated TPM banks and, if allocated, sets bank=
+_idx.
+>=20
+>         for (i =3D 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+>                 crypto_id =3D ima_tpm_chip->allocated_banks[i].crypto_id;
+>                 if (crypto_id =3D=3D hash->algo) {
+>                         bank_idx =3D i;
+>                         break;
+>                 }
+>=20
+> The question is why isn't the sha384 bank found in the list of
+> nr_allocated_banks?
 
-    path    security/keys/trusted-keys
-    crash   out-of-bounds in tpm2_unseal_trusted()
-    commit  2709dd5ae32f ("Merge tag 'sched-urgent-2026-08-22' of git://git=
-.kernel.org/pub/scm/linux/kernel/git/tip/tip")
+The boot aggregate algorithm is the same as the default hash algorithm.
 
-Config, environment, the sanitizer report and a C reproducer follow.
+Please try ima_hash=3Dsha384.
 
-=3D=3D Notes =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-    If you patch the bug based on our artifacts, a tag would be
-    appreciated:
+Thanks
 
-Reported-by: co+6a581c4284f721d4@bugs.sh
+Roberto
 
-    Everything in this mail is validated by the reproducer below.
-
-    We also hold an LLM-generated root-cause analysis and a candidate
-    patch. The patch passes an A/B test: the same reproducer panics the
-    unpatched kernel and runs clean on the patched one. Neither has had
-    human review, so both still require validation before you send or
-    apply them. Available on:
-
-        patch.diff  https://bugs.sh/b/6a581c4284f721d4/patch.diff
-        report.md   https://bugs.sh/b/6a581c4284f721d4/report.md
-
-    This is an open science project. The code and the full set of PoCs
-    are not public at this moment, as we intend to disclose our findings
-    in an ethical way.
-
-    Happy to test patches. Complaints and suggestions about our work
-    are welcome at:
-
-        cedalion@bugs.sh
-
-=3D=3D Environment =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-    Reproduced on  2709dd5ae32f ("Merge tag 'sched-urgent-2026-08-22' of gi=
-t://git.kernel.org/pub/scm/linux/kernel/git/tip/tip")
-    VM setup       https://bugs.sh/b/6a581c4284f721d4/run.sh
-    config         https://bugs.sh/b/6a581c4284f721d4/config.gz
-    poc            https://bugs.sh/b/6a581c4284f721d4/repro.c
-
-=3D=3D Sanitizer Report =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-BUG: KASAN: slab-out-of-bounds in tpm2_unseal_trusted (./include/linux/unal=
-igned.h:48 (discriminator 1) security/keys/trusted-keys/trusted_tpm2.c:408 =
-(discriminator 1) security/keys/trusted-keys/trusted_tpm2.c:595 (discrimina=
-tor 1))
-Read of size 2 at addr ffff8880125db7aa by task exploit/149
-CPU: 0 UID: 1000 PID: 149 Comm: exploit Tainted: G        W           7.2.0=
-+ #31 PREEMPTLAZY
-Call Trace:
-dump_stack_lvl (lib/dump_stack.c:94 lib/dump_stack.c:120)
-print_report (mm/kasan/report.c:378 mm/kasan/report.c:482)
-kasan_report (mm/kasan/report.c:595)
-tpm2_unseal_trusted (./include/linux/unaligned.h:48 (discriminator 1) secur=
-ity/keys/trusted-keys/trusted_tpm2.c:408 (discriminator 1) security/keys/tr=
-usted-keys/trusted_tpm2.c:595 (discriminator 1))
-trusted_tpm_unseal (security/keys/trusted-keys/trusted_tpm1.c:928)
-trusted_instantiate (security/keys/trusted-keys/trusted_core.c:196)
-__key_instantiate_and_link (security/keys/key.c:446)
-__key_create_or_update (security/keys/key.c:941)
-key_create_or_update (security/keys/key.c:1021)
-__do_sys_add_key (security/keys/keyctl.c:134)
-do_syscall_64 (arch/x86/entry/syscall_64.c:61 arch/x86/entry/syscall_64.c:8=
-4)
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:121)
-Allocated by task 149:
-kasan_save_stack (mm/kasan/common.c:57)
-kasan_save_track (mm/kasan/common.c:78)
-__kasan_kmalloc (mm/kasan/common.c:398 mm/kasan/common.c:415)
-__kmalloc_noprof (./include/linux/kasan.h:263 mm/slub.c:5337 mm/slub.c:5362)
-tpm2_unseal_trusted (./include/linux/slab.h:992 security/keys/trusted-keys/=
-trusted_tpm2.c:119 security/keys/trusted-keys/trusted_tpm2.c:384 security/k=
-eys/trusted-keys/trusted_tpm2.c:595)
-trusted_tpm_unseal (security/keys/trusted-keys/trusted_tpm1.c:928)
-trusted_instantiate (security/keys/trusted-keys/trusted_core.c:196)
-__key_instantiate_and_link (security/keys/key.c:446)
-__key_create_or_update (security/keys/key.c:941)
-key_create_or_update (security/keys/key.c:1021)
-__do_sys_add_key (security/keys/keyctl.c:134)
-do_syscall_64 (arch/x86/entry/syscall_64.c:61 arch/x86/entry/syscall_64.c:8=
-4)
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:121)
-The buggy address belongs to the object at ffff8880125db7a0
-which belongs to the cache kmalloc-8 of size 8
-The buggy address is located 2 bytes to the right of
-allocated 8-byte region [ffff8880125db7a0, ffff8880125db7a8)
-The buggy address belongs to the physical page:
-page dumped because: kasan: bad access detected
-Memory state around the buggy address:
-ffff8880125db680: 00 fc fc fc fa fc fc fc 00 fc fc fc fc fc fc fc
-ffff8880125db700: fc fc fc fc fc fc fc fc fa fc fc fc 00 fc fc fc
->ffff8880125db780: fc fc fc fc 00 fc fc fc fa fc fc fc fc fc fc fc
-^
-ffff8880125db800: fc fc fc fc fa fc fc fc 07 fc fc fc fc fc fc fc
-ffff8880125db880: fa fc fc fc fc fc fc fc fc fc fc fc 00 fc fc fc
-
-
----
-The report format is based on syzbot bug report.
-
-This report is generated by a bot. It may contain errors.
-See https://github.com/n132/cedalion for more information.
-
-For any issue with this report, reach out to cedalion@bugs.sh
-
-If the report is already addressed, let us know by replying with:
-#co fix: <commit hash>
-
-If the report is a duplicate of another one, reply with:
-#co dup: <lore link>
-
-If you want to undo deduplication, reply with:
-#co undup
-
+> Mimi
+>=20
+> >=20
+> > Adding a SHA-384 match allows the boot aggregate to be computed correct=
+ly
+> > (sha384:...) instead of returning 0 and logging "No suitable TPM algori=
+thm for
+> > boot aggregate". The fact that the SHA-384 bank can be selected and the=
+ boot
+> > aggregate computed also confirms that the SHA-384 bank is recognized an=
+d
+> > allocated, rather than being missing.
 
