@@ -1,184 +1,204 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCB2324B20
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 19:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B3E352FA5
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 20:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787944383; cv=none; b=Od7+gcWZu3XpRbq9H8nsDTlWi920Eu+lM4dr52bDHXmHgoN9mnRUScXxxa7w/iWSLzWQIcxAUrY+qfigAtlmQSX76FPwMZr4w1vPgXTRM0g26Hbq0T9WsIfvWL3EXVHvXi8kjQ0w+iP88nzr71KfE7vjvZyZql3JFywfUcSLtu4=
+	t=1787947227; cv=none; b=DdTbU/kpXbb4oxPHNNHI96Dd2JYjF6efCqIdkTeA8B91rlwAUFlmSDEcFoL0o7wpbVAVnkbF16+VK4XFOawbbO1UfiNLsKxwJOwVmT/sfZxxzyJdJpE5NelMejVB1Cz+ATcl5ZUVFke+AizJGdQ2NP9iJVpHqXrqz1JK9uToTno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787944383; c=relaxed/simple;
-	bh=fde0j7hK2umDyVKS+UAtU9QlH3KMDPeeWTJiyxkR4uY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxCgvROY5E2gEXLE6zKaZhGbfvCCQsv0sxt+T5lUPnzC9gaY8SHkj06YmIK/Ek8CJRsc14G9Si0Gt0KC/tjzqG1ElzR/0yp6LoEbMeCk7kpUasQBthxIZa6iuN4OBBgPMuuvdqHceFRBIbKIVNyX5+W9FTOU6LP/yVf05Fc8WFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ed33JlXd; arc=none smtp.client-ip=83.166.143.171
+	s=arc-20240116; t=1787947227; c=relaxed/simple;
+	bh=tMF5FLIpKc0Clk+cIEzT0utofv6Uen6J0DfSyLtPi+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kDcrQ5Gf/FOPRAFmj7llaBjS5KGEtGhqSbXK8VJ3UDfBCeNqOZWR2zkSiEb3Flz3ehwfZNKVcWUqA/+l4SaCPiYrmQWrE9FrMWFItmd0IhQMGgCwCSNC7hSkKcnH/20xgQZumz64bKMlOQJrbpqB8X8kZ/0K9o0sxcJtQcahTxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pj9OyNkt; arc=none smtp.client-ip=185.125.25.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ed33JlXd"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hWp1Y5TN6zQLc;
-	Fri, 28 Aug 2026 21:12:49 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pj9OyNkt"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hWnrw1RRmz4VX;
+	Fri, 28 Aug 2026 21:05:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1787944369;
-	bh=1stP9CrmWIAd1U8S7EU/ZVYrCnXTEI0NMFcmQwxv5ko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ed33JlXdkZc3ML/XZzaQ2tlEj4x1vV6ni/SFOKBjDyNb3XCJqvk55tjV7PL3T0Bge
-	 /gygMQ+rPW+vm6IEQGDgU2DYU3WQGokdCoZymv69xgNmWAgpKu1D0EOsKCfNjRc4nO
-	 kcINpeXGBppJcGV/klLxX2y6n9gk+raYgodqd76Q=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hWp1Y1vHbzh31;
-	Fri, 28 Aug 2026 21:12:49 +0200 (CEST)
-Date: Fri, 28 Aug 2026 21:12:47 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: poppet lovelace <dmcjisalive@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [Bug] landlock: sun_path length underflow to SIZE_MAX in
- landlock_deny_scope_abstract_unix_socket TP_printk -> unbounded OOB read in
- trace reader
-Message-ID: <20260828.da0Eik3eeSh8@digikod.net>
-References: <CAL4aGcVcT0VWVFmGi_vLqxxZ9KdOHfGXYZtKjBdvoUyFjbu5=A@mail.gmail.com>
+	s=20191114; t=1787943920;
+	bh=ZZh1bvewf3LlGjRs5z64cNaxqjhCmUyxeAg6MT4utNM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pj9OyNktdbv2itYqfqgMoMSEgw5Xn5mNXr95wVRbAGb6v8feIVzmnTJF/vGqF7LLF
+	 +SvH4IrEHdQxR+yKLXlA+5VXMz0rWvy10ZY9doEtgoasC2vVxmwhzAAknR9Pvopq50
+	 fEvxtxfFTrunHavDTX+Wp8dOlWhdVlgQW6Puqjh8=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hWnrv4P7bzJRB;
+	Fri, 28 Aug 2026 21:05:19 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Charles <dmcjisalive@gmail.com>
+Subject: [PATCH v1] selftests/landlock: Test abstract socket trace name limits
+Date: Fri, 28 Aug 2026 21:00:36 +0200
+Message-ID: <20260828190038.71831-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL4aGcVcT0VWVFmGi_vLqxxZ9KdOHfGXYZtKjBdvoUyFjbu5=A@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-Hi Charles,
+The landlock_deny_scope_abstract_unix_socket event captures binary
+socket names with __string_len(), whose dynamic field reserves an extra
+byte for the NUL terminator.  The printer subtracts this byte before
+escaping the content.
 
-This is an impressive report but there is no bug.
+Exercise the minimum accepted address length, which has no name content,
+and the maximum sockaddr_un length, which has 107 content bytes.  Check
+the exact trace output at both boundaries.  The existing stream and
+datagram variants share this event, so the boundary variants only need
+the stream path.
 
-There is no underflow because __string_len() reserves one extra byte for
-the terminating NUL.  I sent a test patch to prove that:
-https://lore.kernel.org/r/20260828190038.71831-1-mic@digikod.net
+The lower-bound test confirms that the subtraction recovers zero instead
+of underflowing.
 
-Dropping the "- 1" would introduce a new bug though.
+Cc: Günther Noack <gnoack@google.com>
+Link: https://patch.msgid.link/CAL4aGcVcT0VWVFmGi_vLqxxZ9KdOHfGXYZtKjBdvoUyFjbu5=A@mail.gmail.com
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ .../landlock/scoped_abstract_unix_test.c      | 76 +++++++++++++------
+ 1 file changed, 54 insertions(+), 22 deletions(-)
 
-Bug reports are very welcome but please test the potential issue before.
-See https://docs.kernel.org/process/coding-assistants.html#procedure-for-finding-and-fixing-bugs
+diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+index 6dbe863ea571..e62f1a2154c6 100644
+--- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
++++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+@@ -1252,6 +1252,11 @@ FIXTURE_TEARDOWN(trace_unix)
+ 	clear_cap(_metadata, CAP_SYS_ADMIN);
+ }
+ 
++static const char
++	trace_unix_max_name[sizeof(((struct sockaddr_un *)0)->sun_path)] = {
++		[0 ... sizeof(trace_unix_max_name) - 2] = 'x',
++	};
++
+ /* clang-format off */
+ FIXTURE_VARIANT(trace_unix) {
+ 	/* clang-format on */
+@@ -1259,6 +1264,8 @@ FIXTURE_VARIANT(trace_unix) {
+ 	bool sandbox;
+ 	bool sandbox_target; /* Peer owned by a domain: peer_domain != 0. */
+ 	int expect_denied;
++	const char *name; /* NULL generates a PID-based binary name. */
++	size_t name_len;
+ };
+ 
+ /* clang-format off */
+@@ -1281,6 +1288,26 @@ FIXTURE_VARIANT_ADD(trace_unix, stream_allowed) {
+ 	.sandbox_target = false, .expect_denied = 0,
+ };
+ 
++/* Stream: lower abstract-name length boundary. */
++FIXTURE_VARIANT_ADD(trace_unix, stream_denied_empty_name) {
++	.sock_type = SOCK_STREAM,
++	.sandbox = true,
++	.sandbox_target = false,
++	.expect_denied = 1,
++	.name = "",
++	.name_len = 0,
++};
++
++/* Stream: upper abstract-name length boundary. */
++FIXTURE_VARIANT_ADD(trace_unix, stream_denied_max_name) {
++	.sock_type = SOCK_STREAM,
++	.sandbox = true,
++	.sandbox_target = false,
++	.expect_denied = 1,
++	.name = trace_unix_max_name,
++	.name_len = sizeof(trace_unix_max_name) - 1,
++};
++
+ /* Datagram: sandboxed client sendto() an unsandboxed peer (peer_domain=0). */
+ FIXTURE_VARIANT_ADD(trace_unix, dgram_denied) {
+ 	.sock_type = SOCK_DGRAM, .sandbox = true,
+@@ -1304,12 +1331,11 @@ FIXTURE_VARIANT_ADD(trace_unix, dgram_allowed) {
+ /*
+  * A sandboxed thread reaching an abstract unix socket peer through connect(2)
+  * (stream) or sendto(2) (datagram) is denied and emits
+- * landlock_deny_scope_abstract_unix_socket.  The abstract name is crafted with
+- * a space and an embedded NUL followed by an "END" marker to check the
+- * tracepoint escaping and its length handling (a raw space would break the
+- * sun_path field regex; strlen() would truncate at the NUL and drop "END").
+- * peer_pid is only meaningful for a stream peer (a datagram peer has no
+- * SO_PEERCRED), so it is asserted only there.
++ * landlock_deny_scope_abstract_unix_socket.  The default abstract name has a
++ * space and an embedded NUL followed by an "END" marker to check escaping and
++ * binary length handling.  Additional stream variants cover the minimum and
++ * maximum abstract-name lengths.  peer_pid is only meaningful for a stream peer
++ * (a datagram peer has no SO_PEERCRED), so it is asserted only there.
+  */
+ TEST_F(trace_unix, deny_scope_unix)
+ {
+@@ -1317,7 +1343,7 @@ TEST_F(trace_unix, deny_scope_unix)
+ 		.sun_family = AF_UNIX,
+ 	};
+ 	char *buf, field[128], expected_pid[16];
+-	int server_fd, count, status, name_len, addr_len;
++	int server_fd, count, status, name_len, addr_len = 0;
+ 	pid_t child;
+ 
+ 	if (!self->tracefs_ok)
+@@ -1336,12 +1362,19 @@ TEST_F(trace_unix, deny_scope_unix)
+ 	ASSERT_LE(0, server_fd);
+ 
+ 	addr.sun_path[0] = '\0';
+-	name_len = snprintf(addr.sun_path + 1, sizeof(addr.sun_path) - 1,
+-			    "landlock_trace_test_%d ", getpid());
+-	addr.sun_path[1 + name_len] = '\0';
+-	memcpy(addr.sun_path + 1 + name_len + 1, "END", 3);
+-	addr_len =
+-		offsetof(struct sockaddr_un, sun_path) + 1 + name_len + 1 + 3;
++	if (variant->name) {
++		ASSERT_LE(variant->name_len, sizeof(addr.sun_path) - 1);
++		memcpy(addr.sun_path + 1, variant->name, variant->name_len);
++		name_len = variant->name_len;
++	} else {
++		name_len = snprintf(addr.sun_path + 1,
++				    sizeof(addr.sun_path) - 1,
++				    "landlock_trace_test_%d ", getpid());
++		addr.sun_path[1 + name_len] = '\0';
++		memcpy(addr.sun_path + 1 + name_len + 1, "END", 3);
++		name_len += 1 + 3;
++	}
++	addr_len = offsetof(struct sockaddr_un, sun_path) + 1 + name_len;
+ 
+ 	ASSERT_EQ(0, bind(server_fd, (struct sockaddr *)&addr, addr_len));
+ 	if (variant->sock_type == SOCK_STREAM)
+@@ -1430,19 +1463,18 @@ TEST_F(trace_unix, deny_scope_unix)
+ 		       count, buf);
+ 	}
+ 
+-	/*
+-	 * sun_path is escaped: a raw space would break this field's [^ ]*$
+-	 * regex, so a successful extract proves the space was escaped, and its
+-	 * full length is honored: the "END" marker after the embedded NUL must
+-	 * survive (strlen() would truncate it at the NUL).
+-	 */
+ 	ASSERT_EQ(0, tracefs_extract_field(
+ 			     buf,
+ 			     REGEX_DENY_SCOPE_ABSTRACT_UNIX_SOCKET(TRACE_TASK),
+ 			     "sun_path", field, sizeof(field)));
+-	EXPECT_NE(NULL, strstr(field, "END"))
+-	{
+-		TH_LOG("sun_path truncated or unescaped: %s", field);
++	if (variant->name) {
++		EXPECT_STREQ(variant->name, field);
++	} else {
++		/* An embedded NUL must not truncate the following marker. */
++		EXPECT_NE(NULL, strstr(field, "END"))
++		{
++			TH_LOG("sun_path truncated or unescaped: %s", field);
++		}
+ 	}
+ 
+ 	/* peer_pid is the parent's PID for a stream peer (0 for datagram). */
+-- 
+2.55.0
 
-Regards,
- Mickaël
-
-
-On Tue, Aug 25, 2026 at 09:00:05PM +0800, poppet lovelace wrote:
-> Hi Mickaël,
-> 
-> While auditing the new landlock tracepoints we found a size_t underflow in
-> the TP_printk() of landlock_deny_scope_abstract_unix_socket that turns a
-> zero-length abstract AF_UNIX address into an effectively unbounded OOB read
-> in the context of whoever consumes the trace (typically root reading
-> tracefs). The tracepoints are new in the current merge window, so this can
-> still be fixed before 7.3.
-> 
-> Root cause
-> ----------
-> 
-> The event stores the abstract name correctly:
-> 
->   include/trace/events/landlock.h:899-932
-> 
->     __string_len(sun_path,
->                  unix_sk(peer)->addr->name->sun_path + 1,
->                  unix_sk(peer)->addr->len -
->                      offsetof(struct sockaddr_un, sun_path) - 1)
-> 
-> For an abstract address bound with addrlen == sizeof(sa_family_t) + 1 (= 3),
-> which net/unix/af_unix.c:335-345 (unix_validate_addr) accepts, addr->len is
-> 3, so the stored dynamic-array length is 0.
-> 
-> The printer then subtracts one more:
-> 
->   include/trace/events/landlock.h:954-955
-> 
->     __trace_print_untrusted_str(p, __get_str(sun_path),
->                                 __get_dynamic_array_len(sun_path) - 1)
-> 
-> 0u - 1 wraps to SIZE_MAX. __trace_print_untrusted_str()
-> (include/trace/events/landlock.h:36-68) forwards that length to
-> string_escape_mem(), whose main loop
-> 
->   lib/string_helpers.c:586
-> 
->     while (isz--) {
->         unsigned char c = *src++;
-> 
-> reads every input byte regardless of output exhaustion (the escape_*
-> helpers stop writing past `end`, but nothing breaks the input walk). With
-> isz == SIZE_MAX the read walks forward from the ring-buffer record through
-> the rest of the tracing buffer and the kernel direct map until it faults.
-> 
-> Impact
-> ------
-> 
-> An unprivileged task inside any landlock domain that scopes abstract unix
-> sockets can plant such a record deterministically. The OOB read itself
-> executes when the trace buffer is consumed (e.g. cat of
-> /sys/kernel/tracing/trace or trace_pipe by a privileged monitor -- exactly
-> the deployment these tracepoints target):
-> 
-> * information disclosure: escaped bytes of adjacent kernel memory
->   (ring-buffer contents and beyond, i.e. direct map) are copied into the
->   visible trace text;
-> * availability: the walk ends in a page fault / oops in the reader's
->   syscall context; with panic_on_oops this takes the whole machine down.
-> 
-> Same-call-site audit: the other __trace_print_untrusted_str() users subtract
-> 1 as well (pathname :389/:725, comm :829/:878), but their captured lengths
-> cannot be 0 (dentry names are non-empty; comm is fixed-size), so only the
-> abstract-socket event is currently reachable. The -1 looks like a leftover
-> from string lengths that include a terminator; here the capture side already
-> excluded the leading abstract-name NUL.
-> 
-> Reproducer (hand-written, not executed against a live kernel)
-> -------------------------------------------------------------
-> 
->   int s = socket(AF_UNIX, SOCK_STREAM, 0);
->   struct sockaddr_un a = { .sun_family = AF_UNIX };
->   a.sun_path[0] = '\0';                       /* abstract, zero length */
->   bind(s, (struct sockaddr *)&a, sizeof(a.sun_family) + 1);   /* ok, len 3 */
-> 
->   /* task restricted by a domain scoping abstract unix sockets: */
->   connect(cfd, (struct sockaddr *)&a, 3);     /* denied -> event recorded */
-> 
->   # echo 1 > /sys/kernel/tracing/events/landlock/\
-> landlock_deny_scope_abstract_unix_socket/enable
->   # cat /sys/kernel/tracing/trace             /* OOB read here */
-> 
-> Self-assessed severity
-> ----------------------
-> 
-> CVSS:3.1 AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:H = 6.7 (Medium).
-> 
-> If the cross-boundary read is judged Scope:Changed (kernel-memory bytes are
-> surfaced into user-visible trace text, and the walk can traverse the whole
-> direct map until it faults): AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:H = 7.3.
-> Honest range 5.5-7.3 depending on scope treatment. Preconditions: the
-> landlock tracepoints are enabled and consumed by a privileged reader --
-> i.e. exactly the monitoring deployment they were added for.
-> 
-> Suggested fixes (either suffices; both preferred)
-> -------------------------------------------------
-> 
-> 1. Drop the "- 1" at include/trace/events/landlock.h:955 -- the capture-side
->    length already excludes the abstract prefix NUL; the subtraction is a
->    double decrement. Please also re-check :389/:725/:829/:878 against their
->    capture lengths.
-> 2. Harden __trace_print_untrusted_str() (or string_escape_mem()) so the
->    input walk cannot exceed the source object: e.g. clamp len, or break the
->    loop when output is exhausted (note this changes string_escape_mem()'s
->    return-size contract for existing callers).
-> 
-> Found by Charles <dmcjisalive@gmail.com> -- happy to test a fix.
-> 
-> Thanks,
-> Charles
-> 
-> Reported-by: Charles <dmcjisalive@gmail.com>
-> 
