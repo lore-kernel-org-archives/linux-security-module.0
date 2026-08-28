@@ -1,106 +1,208 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D2368276
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 15:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4C037EFFD
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 16:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787931945; cv=none; b=T0KQgHyV7wQcp//AM5Lumb/bvHbmBFOQYQhgDGiN4FTRWgVL/4iaKM6avK7qL/x8xdvciwd7cwfZBjW590HmjZsfL+yWPXkEL3Yksa6zf//Ze4HCcvUzEz0ndG6Y5/sulpxZCiekSXkC6iIzrjSueSjhbAubbCKtd7uMFNPvhJM=
+	t=1787934207; cv=none; b=E7zH6ceJbJHZpeDwxh432fmEUe/qW4mSmwNNU3s/D6Lc9EV4W44fznblNg2g7WDV1LDAvhLUV0Y1dJqD7WRmSTh/vZFspCK+b0MyYTh4KIe8fNLkZ25GmcgPYBeRwVbp5L74pOduzXd025bUzixF7wVjkrUcvMxb9Q6LoE7BaeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787931945; c=relaxed/simple;
-	bh=iqHyPDmbEI5UjvdpwHm556L6FUL7rp1Tr1ANQ5JF3l4=;
+	s=arc-20240116; t=1787934207; c=relaxed/simple;
+	bh=EXrA4Rz+Z1SUvLdlK6q1IWLQcN1MltuhMgX8g/P/Pek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D4QBaQQPF5va4098I+CWYLaIQq4CPeEBYB7YAAbRDV/Wipa/XDPDeHpdopBzf3SAQKw/T7FNuWsicdFWsW5rbtmVHbEIRKIfVV62dupbI5z2TAKM2CnFhLL1ZfzRmopI7j4IQwS48Gw8dyWvhe/BeQPNZbKiEdPkD7/sK+bpQ4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8yWvu1L; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=XH9xDOA2G9bIqCTXu8WA0ebn0p4REFGzihhXHNEDWXETInXovnwojcdy0IQuehfk8UISa2B0rrYkakMaVagyIBM9BL3Uv4tOlCbmK/CI41QmRosrHhx1NiokXiDRF6mvTUpqlQfA8dK/3SJ83XVUxCVXmGki6Y/eBQr7FQOXxQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AOTqd3JI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8yWvu1L"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-496bb7cdf51so13673425e9.2
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 08:45:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AOTqd3JI"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-49b965570d7so8687045e9.0
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 09:23:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787931940; x=1788536740; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=wQSUgBrIOZcFCsKuEyQcJFeC5/K07XFbazjqe2DjoiM=;
-        b=J8yWvu1LM69htdEm1qejlKf0cAFLXtLsEq+3sGKc23UDan7h0ky3lvfYnc6LqKnoIy
-         QMH4UGxqrfLvK18o6XkpfhdNIrA0RLHPDpa3jVu2WLzVzzwXqAvQLNU5Lu2miJv5IP+E
-         NkM30Dj/bU27mMDrRXHvIj333N6PlmWKjms53JHERZG5jY7Hwk711m7J1eYFdoikf8Kz
-         23S5O49pupYX6w+YFJGIasCCf8r5TQPE1gXL9VwYy03BtZ1QT0EN5LlcKEbatgmUQM+x
-         n8jyRcyYUvqbnMBLFwugJjIXu32KubrAwDzhG/zfhC0z+GsyZhH37Buv+j3kGzIat5PA
-         RioQ==
+        d=suse.com; s=google; t=1787934204; x=1788539004; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=tOG+EsEc4JsO7LPts5VvW3Bv9S3ckFQ6qY35PjmYmcM=;
+        b=AOTqd3JI/KyEnUFNpkBIfhzHPcUQS7vXdlHS16jaMf23nl28/q83kR8ueN2FdrgtqE
+         bTUQND9vaXLxJWi/QE8FxNqhK35nf+xUEe9M7b26QNolMosWPYLJznGu+AVD46cJ6LHt
+         Ypp6V7HFniI3FaDjcOhAyP06u3NxQBkaeXAv0TgwLLpziL03nAy1q93LE+NWFjEDbfPZ
+         Q4IoKlz9QIGedqgBUhdErJb3YakO1YOmTxVERFkdWfjyjoajwYnhCK/dEUoiZCmOitfl
+         nBbAcNCyOvEZjzpCePDjSi/NG0v7n3EdXNXRhwL8dcNJMmxCuHWnPqfou6FnXeQuG2WA
+         nMYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787931940; x=1788536740;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=wQSUgBrIOZcFCsKuEyQcJFeC5/K07XFbazjqe2DjoiM=;
-        b=Gw0hR6Bg2+m2eIo63KJPTCMfRMHPZzqEQD6fh2nfpsJ7aMiwAo4BZg/4j2TrI9/9zV
-         Xv6SsZiUjNMYr3Wm2Jsjm13nZkWhjjO35EJ8uIgfHcZkcRjkfl1rqydZ7fjUeqGIrp6b
-         wk842D4IQJLs0ns4oO4ogqag8T3xsl3ygsTGfbbgO0zQAyDF09mhNmddDkOwJcETkPgk
-         xraqP4h+fAlinsNmBcDZjqLWSGn9Qx37HZODmhj51w9m7C78aWRrUhQ+rziR+DXKDCj3
-         pUDCSI/WxdIgC0/S8G7HUDwJE9JdcJnfSFHCGoIPmTzA3MLxzO7HvMd5etB38f06RMwd
-         pURw==
-X-Forwarded-Encrypted: i=1; AHgh+RphYEWjhVNyjr2zrsbcDrLewWUERcmfPpCtkMaovUFUFY/xjJ4t9TIyWgCuXkmMnv9l5tJKmOxFoxqnFoh0LMtX6U3h+uE=@vger.kernel.org
-X-Gm-Message-State: AFuF++nx9CC51k+DaijjFl7jiIz3ygmJhUOHJfRDwbTHd+PjAO6dt7Nb
-	HGVmvhukAK0+WRABUFxQPW8b3Si9ZC/d3tlVaui57kDt5ELEFM1ojWYd
-X-Gm-Gg: AR+sD11ApPjq5CUUznKp+3EeFka71846gamGYfbYTqynY69Js5riB+6LY18wpDP7/oJ
-	TGg4PxPt9svARIARYUKQKxyLFPHncqYVcQIfBiAwqS1sj3AWSimoR2cD8q+90/LUmCxawIwOjPw
-	fl88FqXy5aZXFOEOIYuKGPCtg5/kN7UcM4ibeN+3y2L4y2w/S55ivZRR+eaZCBx7CTbEzKjTcGO
-	g3At5mXOIiu0XFcMCbg1X04ri8CmXN8Vgolgc/+INMYn/MXG3evT8VLM6bW9gSQNwGhgZR3dH4p
-	pDNLcmWoAdlwaATY6CayW/sKbOi2T+0QSfORQR8p8hZjUkX/EFSxz3VHs58JvbKGKzL6F8cY/Eo
-	ycr6ppV2VwCe/9w/U+piDPTgCvaalWHJRjySH65BmfdtjWp1jqe5Vt+rxJtH6UROhjH8LrPLQZo
-	9L/Hql2UsAmDIOu6QGdv0sUZYLRdbayURDQFSnZl1Gj4jq/FUKsGRII8t4JeJh03l7C2cZ/5nbp
-	vxQmZNIs/L5XQ==
-X-Received: by 2002:a05:600d:13:b0:49b:9205:45b3 with SMTP id 5b1f17b1804b1-49b920547fcmr110432865e9.15.1787931940285;
-        Fri, 28 Aug 2026 08:45:40 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482fbb34ae6sm5080266f8f.37.2026.08.28.08.45.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Aug 2026 08:45:39 -0700 (PDT)
-Date: Fri, 28 Aug 2026 17:45:37 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, Serge Hallyn <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v6 2/6] landlock: Require LANDLOCK_ACCESS_FS_MAKE_REG for
- whiteout creation
-Message-ID: <20260828.dc270da340a3@gnoack.org>
-References: <20260813093157.1436894-1-gnoack@google.com>
- <20260813093157.1436894-3-gnoack@google.com>
+        d=1e100.net; s=20251104; t=1787934204; x=1788539004;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tOG+EsEc4JsO7LPts5VvW3Bv9S3ckFQ6qY35PjmYmcM=;
+        b=hxYhMjncjb8u7kiHKjoJ08+BEXmopzJpkenTZ9JpiGPpMPZIEoRq0vR4RLftKEoHsG
+         VQcxExI2YBhWhh2+FblUhw+r6fHNG2fsG4FYz3HqZFk02ump9PNvEhHm3WCNtrsIrzgx
+         nEs+fHsGm3JHVb9IVcSC13Cppa8NQP2GfkMQQ+2kQx70XjiAv5OUHLFbuAGYMxq7JOZk
+         UCzc0ytxisHeJTHpksqkmNUXrkF3DJAvEkII7EZxRIBTW/MpwZ2hOfKoHP/Vu+gkq5rb
+         Zlwd/A52ZXwqCQ+OUqtz6St/GVdXmTTeotCyiScbQCHB5RyGOTeUCIUzbIntvqsBaW/g
+         QUAQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rqffu9aSakwWgLmd1S2mPTtS5n8gqfmepXUAWdSQNWPYjpRMT9lq7898NuhLu1tJFTWQqImkH/OZ6rG2BowTtYY12YEqgo=@vger.kernel.org
+X-Gm-Message-State: AFuF++md6FvpKfLOwYFu9/Lvgk0oI+9yvade6SiWzSZDbmSn9uFGpGUZ
+	ZMoOdYtC5uQqt07DqdtJio3b0sni68IfaqCvXYhxdaNyjKNXbMMPPrR4FS+bzKlFcJQ=
+X-Gm-Gg: AR+sD12Vh9FDjPDZhUEuL2R9vrHZ0vBywV4XcDKb/iqRr+wBAurV0W0x02igW+9sVDj
+	bFL42pkfF1p8JY08eAmV8HaubHUZHDLTkxliPQFtngi+50tqceCp6SRdNQPdR0QGekA4G8hQCKa
+	MbmyvWr9rzcuej7wCLbNLnPZAVR0S/oHze7tYfQtLEzDixTaNH6JARKUzRqt+qiQEQbWGqpmQbW
+	hyFDLGgzXynIXjjgCrgtGdY6kcaLyjrrTKOkFzvl+8A/2o2WFxea1qDqfVJiaDJ3GGvLiBHZG1e
+	+7uj8HoUGmAfWVl7iqUTxaiW1XBbzfNWCugn8FE8RwZLpGcUXAzxXtO2spe3wBLUcM8M5XQHaln
+	J4A7/F7ElAK2YjN1gYdjVuhDN5+w8FYbbc7kCbvlihQSOEiXe2Df9LqXv42GdJ7LtTiteLV9j1m
+	a+OhNVy6KGlxhLt79dgKhAmM5G/DRXPH2WixLbMq47WhNbCJjVHA==
+X-Received: by 2002:a05:600c:1c0d:b0:499:a5fc:207e with SMTP id 5b1f17b1804b1-49b91c338dcmr144866675e9.8.1787934203825;
+        Fri, 28 Aug 2026 09:23:23 -0700 (PDT)
+Received: from linux-l9pv.suse ([124.11.22.254])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-142e0d38207sm7074939c88.5.2026.08.28.09.23.20
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Aug 2026 09:23:22 -0700 (PDT)
+Date: Sat, 29 Aug 2026 00:23:16 +0800
+From: joeyli <jlee@suse.com>
+To: Shaomin Chen <eeesssooo020@gmail.com>
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, jlee@suse.com
+Subject: Re: [PATCH] keys: Pin request_key_auth payload in instantiate paths
+Message-ID: <20260828162316.GO6169@linux-l9pv.suse>
+References: <20260526024838.3368409-1-eeesssooo020@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260813093157.1436894-3-gnoack@google.com>
+In-Reply-To: <20260526024838.3368409-1-eeesssooo020@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 
-On Thu, Aug 13, 2026 at 11:31:53AM +0200, Günther Noack wrote:
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 7ffe2ef127ee..9c1102ebf06e 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -351,6 +351,7 @@ struct landlock_net_port_attr {
->   *   device.
->   * - %LANDLOCK_ACCESS_FS_MAKE_DIR: Create (or rename) a directory.
->   * - %LANDLOCK_ACCESS_FS_MAKE_REG: Create (or rename or link) a regular file.
-> + *   This also guards the creation of whiteout objects as used in OverlayFS.
+Hi Shaomin, 
 
-I will send an update to the man page adding this line.
+On Tue, May 26, 2026 at 10:48:38AM +0800, Shaomin Chen wrote:
+> keyctl_instantiate_key_common() reads request_key_auth from the assumed
+> auth key before copying an instantiation payload from userspace.  The copy
+> can fault and sleep.  If the request completes and revokes the auth key in
+> that window, the auth payload can be detached and freed before the
+> instantiate path uses it again.
+> 
+> A request-key helper reproducer can trigger this race.  One helper child
+> blocks in KEYCTL_INSTANTIATE_IOV while the original helper instantiates the
+> requested key and returns.  KASAN then reports a use-after-free from the
+> stale request_key_auth payload in keyctl_instantiate_key_common().
+> 
+> Give request_key_auth payloads a refcount.  Take a payload reference while
+> authkey->sem stabilizes the payload and revocation state.  Hold that
+> reference across the instantiate and reject paths.  Drop the auth key
+> owning reference from revoke and destroy.
+> 
+> Reported-by: Shaomin Chen <eeesssooo020@gmail.com>
+> Closes: https://lore.kernel.org/r/20260519144403.436694-1-eeesssooo020@gmail.com
+> Signed-off-by: Shaomin Chen <eeesssooo020@gmail.com>
+> ---
+>  include/keys/request_key_auth-type.h |  2 ++
+>  security/keys/internal.h             |  2 ++
+>  security/keys/keyctl.c               | 24 +++++++++++++++-----
+>  security/keys/request_key_auth.c     | 33 ++++++++++++++++++++++++++--
+>  4 files changed, 53 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/keys/request_key_auth-type.h b/include/keys/request_key_auth-type.h
+> index 36b89a933310..01e42ee5f409 100644
+> --- a/include/keys/request_key_auth-type.h
+> +++ b/include/keys/request_key_auth-type.h
+> @@ -9,12 +9,14 @@
+>  #define _KEYS_REQUEST_KEY_AUTH_TYPE_H
+>  
+>  #include <linux/key.h>
+> +#include <linux/refcount.h>
+>  
+>  /*
+>   * Authorisation record for request_key().
+>   */
+>  struct request_key_auth {
+>  	struct rcu_head		rcu;
+> +	refcount_t		usage;
+>  	struct key		*target_key;
+>  	struct key		*dest_keyring;
+>  	const struct cred	*cred;
+[...snip]
+> diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+> index a7d7538c1f70..282e09d8fa46 100644
+> --- a/security/keys/request_key_auth.c
+> +++ b/security/keys/request_key_auth.c
+> @@ -23,6 +23,7 @@ static void request_key_auth_describe(const struct key *, struct seq_file *);
+>  static void request_key_auth_revoke(struct key *);
+>  static void request_key_auth_destroy(struct key *);
+>  static long request_key_auth_read(const struct key *, char *, size_t);
+> +static void request_key_auth_rcu_disposal(struct rcu_head *);
+[...snip]
+> +
+> +void request_key_auth_put(struct request_key_auth *rka)
+> +{
+> +	if (rka && refcount_dec_and_test(&rka->usage))
+> +		call_rcu(&rka->rcu, request_key_auth_rcu_disposal);
+> +}
+> +
+[...snip]
+>  
+>  /*
+> @@ -150,7 +178,7 @@ static void request_key_auth_destroy(struct key *key)
+>  	kenter("{%d}", key->serial);
+>  	if (rka) {
+>  		rcu_assign_keypointer(key, NULL);
+> -		call_rcu(&rka->rcu, request_key_auth_rcu_disposal);
+> +		request_key_auth_put(rka);
+>  	}
+>  }
+>  
+> @@ -174,6 +202,7 @@ struct key *request_key_auth_new(struct key *target, const char *op,
+>  	rka = kzalloc_obj(*rka);
+>  	if (!rka)
+>  		goto error;
+> +	refcount_set(&rka->usage, 1);
+>  	rka->callout_info = kmemdup(callout_info, callout_len, GFP_KERNEL);
+>  	if (!rka->callout_info)
+>  		goto error_free_rka;I have a question when looking at the request_key_auth_new() in v7.2 kernel.
 
-Tracking bug for Landlock man page updates:
-https://github.com/landlock-lsm/linux/issues/66
+I have a question when looking at the error handling path in the
+request_key_auth_new() code in v7.2 kernel:
 
-–Günther
+struct key *request_key_auth_new(struct key *target, const char *op,
+                                 const void *callout_info, size_t callout_len,
+                                 struct key *dest_keyring)
+{
+        struct request_key_auth *rka, *irka;
+[...snip]
+        refcount_set(&rka->usage, 1);		// here set refcount to 1
+[...snip]
+        /* construct the auth key */
+        ret = key_instantiate_and_link(authkey, rka, 0, NULL, NULL);
+        if (ret < 0)
+                goto error_put_authkey;
+
+        kleave(" = {%d,%d}", authkey->serial, refcount_read(&authkey->usage));
+        return authkey;
+
+error_put_authkey:
+        key_put(authkey);	// here the key_gc_work will call request_key_auth_destroy()
+error_free_rka:
+        free_request_key_auth(rka);	// Why is not `request_key_auth_put()` being used here?
+error:
+        kleave("= %d", ret);
+        return ERR_PTR(ret);
+}
+
+The request_key_auth_destroy() also calls free_request_key_auth() finally:
+
+request_key_auth_destroy() -> request_key_auth_put() ->
+    request_key_auth_rcu_disposal() -> free_request_key_auth()
+
+Direct use free_request_key_auth() in the error_free_rka path may cause
+double free? Or I missed any information?
+
+Thanks a lot!
+Joey Lee
