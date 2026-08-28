@@ -1,133 +1,184 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A193BCD20
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 18:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787942918; cv=pass; b=SUaTDFVHF759PoQd4LDWu3u3c9yww8SONcC7I1iydFQbKRNTN82kQHk4AOw04KiFJQ3qDHyFwDxgGcuX2B5+VNlPbVqhDLNn9cPjc6k2Sw6xqMuL2MICxwpjco21zL5x0Hb175cfslGEeG3kzpNpe4kz7TTGB/0rHEZYmUHbD2g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787942918; c=relaxed/simple;
-	bh=adx6fIvXjZgFuJ/+Gl0koLCR6NGkKja1b0VlhelWFtM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dbiOVutBR4mMVdBcx/ydgnf6O9K+VBbsASYY7AHD/VQl5U0R7KghczQah8PGGMPAwDmoqkbKXQm3yk2Ka+rGDxxLXVxrYg0/oYVEOavoTb+zbkyHk9mr0YrXGu7/ErW+B3tC1WfF1oyY/1dPPoWpFCCKa7WF1OWPMXB2gNlG/ig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TfueFUTV; arc=pass smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCB2324B20
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 19:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787944383; cv=none; b=Od7+gcWZu3XpRbq9H8nsDTlWi920Eu+lM4dr52bDHXmHgoN9mnRUScXxxa7w/iWSLzWQIcxAUrY+qfigAtlmQSX76FPwMZr4w1vPgXTRM0g26Hbq0T9WsIfvWL3EXVHvXi8kjQ0w+iP88nzr71KfE7vjvZyZql3JFywfUcSLtu4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787944383; c=relaxed/simple;
+	bh=fde0j7hK2umDyVKS+UAtU9QlH3KMDPeeWTJiyxkR4uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxCgvROY5E2gEXLE6zKaZhGbfvCCQsv0sxt+T5lUPnzC9gaY8SHkj06YmIK/Ek8CJRsc14G9Si0Gt0KC/tjzqG1ElzR/0yp6LoEbMeCk7kpUasQBthxIZa6iuN4OBBgPMuuvdqHceFRBIbKIVNyX5+W9FTOU6LP/yVf05Fc8WFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ed33JlXd; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TfueFUTV"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cc147d86bebso1478703a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 11:48:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787942917; cv=none;
-        d=google.com; s=arc-20260327;
-        b=PcQF/ZmdxT68Re+VJIVGADqyqf1vdNRJywYMTakgW94L3sBtHJYvT3xkBKHKWq2vRi
-         asAOSPwy8HwS44q7WLH4SLQYlGCLfCh2P6MUVe7jpaSYpkCkrOA8FQPCAXo+TNDsZsIp
-         8Igb5nT05LOrP/rvA2kiST6E21sUKy2OnHY+ib1tEX7hLyQeAXoG5eN+sDLtLL4cjN7F
-         wpnqMcbqK5Vwcd2Yg87Q8BOdprxB/Z19qNGRrGNGs+bz/yVYCOyaKYPRaxAZLpjLSZ+t
-         RTR5ybNbanpxApvCg7JWPVTMdVxBcrW0XNNf2p+ahdU67UN3x62+wWhGWvBwJvLnCjhz
-         CGzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=k3Y/bbGVtW+ZEOaZ1fAMBPmwdyLY5JaPej6ICz5dmE4=;
-        fh=8C30DctEtRj+xC+RqnbfKNxg0Oloty84A8RYTc8wCH0=;
-        b=iMjECNBvthF4QjKtUvHYG3PH5FF+lU9oJsIUuETGmXWOfBHHsWoqa/xcVsoTYsbN+j
-         yykCXwV2+QbYUO3EJkoyIE6tObAS+8mERF1/16suBi5oH6HotwqahtPHWltCHxHH7dNw
-         ixBFhBXtqo0NbiHGXlzwujW8UwYiiNRd2FyjkdBUy3v/Eux9KppAPhijC5ean3sLVXeh
-         PYkrVE50VFzUat07+wk3Zu7koGthKVCSD/cJLOZCgWPe762uOFNIPc9NEBJzUjW7nKtx
-         TuRjOhYDWXBcFjBBHlTBnxBp0vMriFsv9ptWG/WEAzapFR1JJrgMp7ELG6Cg8XinMq/t
-         c0gw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1787942917; x=1788547717; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=k3Y/bbGVtW+ZEOaZ1fAMBPmwdyLY5JaPej6ICz5dmE4=;
-        b=TfueFUTVz91cKtiaYW0RTm9RUJPq76aWAH7Gt9e2ICbnVEB7DtAlpTLVIU+eeJVHkg
-         ObQvExnZ2U00ymD7TZ+NozoLskbvwKc+ndQlOFzvhuHQN5QJF/PQRaFF2rvDk+t3SnDN
-         k6SAFDI227GK0M4fZ6NgGUVub+FnWfIbcXXEPCPZmZEF+6eh/smOpo6NSEm2/4ROFk10
-         3R1OPSLXKnVg+8BVRsbF4QvmqXfWrg8UKCLakNpFHw5QIt1uRvRD5nt5UqViFZVGlc2w
-         U92BSrZjCI0sn3//5Rh/UkFJrsksajdC8vX+kltuPLZXV9TkQvWBC29/c4c6DVeTb/IV
-         Ba8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787942917; x=1788547717;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=k3Y/bbGVtW+ZEOaZ1fAMBPmwdyLY5JaPej6ICz5dmE4=;
-        b=Juf1WZn3XKiVzOoNZfXDX7KCHWLGHruS2YCuovXx3R1me71uKtYUDE2qB/nlSWpBvG
-         ABf7f9ZWB4tSGz7sRq6JwhV2+T6hOARKrxewihRaYVu8PTjzljL6yw6QLPFyIapo+Kuc
-         Mt23ag3YvHo9u2hKZ5xjgGZkrAhNXyreZc/tUENxu9A2w7GFaelCoK3rT7UkBMzUL1vY
-         muzU40hWUkwU2j7JaLf+EoDFEgHgDRc1sxXTg+rQ8qkstecjgJdAmew8BfZvi6NKWRwE
-         UgG7m/iA2BRr3vwcITGnBNjJfFNjWV8finmo21qEaXXjteTzZGBvgVUVflRRydaCCpBH
-         Bg2Q==
-X-Forwarded-Encrypted: i=1; AHgh+Rqsp795IdgWDINy5RRu8UNq8J+GkjvkOjf3QT6XAks2MTLXwObPIK7iURPeuUxxa47MGUWgiMIdMyuFjtzi6YfpiMYE+o4=@vger.kernel.org
-X-Gm-Message-State: AFuF++lKitTgTCKsibgVEOHCIfFr2uTrk5ZzyzLUKVpzGgBDCd9JtNx2
-	JB/t1tU96gWUBc+C9Y/xqtFdZQDCgDeIWSNohnfkOc32H7SZVOSVvhc8+gsXBMWdARJ4x28d/Yi
-	npZN55rLmGKNDMuJhuGMaaKDsT0E6/lnaiLbcL+14
-X-Gm-Gg: AR+sD10nKsugWooG99eT2uo16UQsR4b3ULYhl3T6svH7Xrt+MNSKnoMQFZeZVHHSPXS
-	NCmDUxAvjoyf491R3TxvbXuRPHrI5AEOF3/8JGzqYr31TkbYOHEH7jJiEiH5FFRGs0fv8QJcbF0
-	hEDpCJS/LSNh4G63swyf5bPXS0sHgXFnsSXtAWxW0A8A9IQoU+LYBe43ysS3FfcdSC9y9BgyPUj
-	6EFJwVUMz0s6b2HAaHWlOX7J6dp/Q0D7abOAHOdI1xkkpYeFx//Q2PX2fqQuqKL5TFgb4gAeFx7
-	sFL+duDwdoTjgdNZf5JwAsc3MPWkETsIYe1qUpZDE2uw
-X-Received: by 2002:a05:6a21:8984:b0:3d3:aed2:6f25 with SMTP id
- adf61e73a8af0-3d3aed27354mr1179453637.25.1787942916987; Fri, 28 Aug 2026
- 11:48:36 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ed33JlXd"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hWp1Y5TN6zQLc;
+	Fri, 28 Aug 2026 21:12:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1787944369;
+	bh=1stP9CrmWIAd1U8S7EU/ZVYrCnXTEI0NMFcmQwxv5ko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ed33JlXdkZc3ML/XZzaQ2tlEj4x1vV6ni/SFOKBjDyNb3XCJqvk55tjV7PL3T0Bge
+	 /gygMQ+rPW+vm6IEQGDgU2DYU3WQGokdCoZymv69xgNmWAgpKu1D0EOsKCfNjRc4nO
+	 kcINpeXGBppJcGV/klLxX2y6n9gk+raYgodqd76Q=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hWp1Y1vHbzh31;
+	Fri, 28 Aug 2026 21:12:49 +0200 (CEST)
+Date: Fri, 28 Aug 2026 21:12:47 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: poppet lovelace <dmcjisalive@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [Bug] landlock: sun_path length underflow to SIZE_MAX in
+ landlock_deny_scope_abstract_unix_socket TP_printk -> unbounded OOB read in
+ trace reader
+Message-ID: <20260828.da0Eik3eeSh8@digikod.net>
+References: <CAL4aGcVcT0VWVFmGi_vLqxxZ9KdOHfGXYZtKjBdvoUyFjbu5=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+0ovChn8nTkgAs3sw+_YDhKWszxMj-tssbPdwGjPMMC7zEpyw@mail.gmail.com>
-In-Reply-To: <CA+0ovChn8nTkgAs3sw+_YDhKWszxMj-tssbPdwGjPMMC7zEpyw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 28 Aug 2026 14:48:25 -0400
-X-Gm-Features: AcwNN1XKi_Z1xekj--_sqjnfGWMHJnkG7-HImC4ofFVGoJEsumduMPxYISz00Kc
-Message-ID: <CAHC9VhT-xBQgidnKEwFZsOX5JD+SPhwrNSph6gQNLZR2-Uf6Pw@mail.gmail.com>
-Subject: Re: [BUG] general protection fault in security_path_post_mknod
-To: Farhad Alemi <farhad.alemi@berkeley.edu>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, falemi@asu.edu, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL4aGcVcT0VWVFmGi_vLqxxZ9KdOHfGXYZtKjBdvoUyFjbu5=A@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, Aug 28, 2026 at 2:11=E2=80=AFAM Farhad Alemi <farhad.alemi@berkeley=
-.edu> wrote:
->
-> Hello,
->
-> As part of the kernel research at ASU's SEFCOM
-> lab, we hit the crash below. Crash reports can be found here:
->
->   https://github.com/farhad-alemi/public_bug_reports/tree/main/178-genera=
-l-protection-fault-in-security-path-post-mknod/
->
->   Oops: general protection fault, probably for non-canonical address
-> 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
->   KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
->   RIP: 0010:security_path_post_mknod+0x49/0x1e0 security/security.c:1430
->   Call Trace:
->    security_path_post_mknod+0x49/0x1e0 security/security.c:1430
->    filename_mknodat+0x40e/0x660 fs/namei.c:5172
->    __do_sys_mknod fs/namei.c:5207 [inline]
->    __se_sys_mknod+0x3a/0x150 fs/namei.c:5204
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0x146/0x480 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Our reproducer.c is available upon request.
->
-> Happy to test a patch if that would help.
+Hi Charles,
 
-Hi Farhad, thanks for the report.  Do you think you can diagnose the
-problem and submit a patch?  Bug reports are always welcome, but as
-you may have noticed, we have plenty of those at the moment.  People
-willing to not only identify problems but fix them too is something we
-are running a bit short on at the moment ;)
+This is an impressive report but there is no bug.
 
---=20
-paul-moore.com
+There is no underflow because __string_len() reserves one extra byte for
+the terminating NUL.  I sent a test patch to prove that:
+https://lore.kernel.org/r/20260828190038.71831-1-mic@digikod.net
+
+Dropping the "- 1" would introduce a new bug though.
+
+Bug reports are very welcome but please test the potential issue before.
+See https://docs.kernel.org/process/coding-assistants.html#procedure-for-finding-and-fixing-bugs
+
+Regards,
+ Mickaël
+
+
+On Tue, Aug 25, 2026 at 09:00:05PM +0800, poppet lovelace wrote:
+> Hi Mickaël,
+> 
+> While auditing the new landlock tracepoints we found a size_t underflow in
+> the TP_printk() of landlock_deny_scope_abstract_unix_socket that turns a
+> zero-length abstract AF_UNIX address into an effectively unbounded OOB read
+> in the context of whoever consumes the trace (typically root reading
+> tracefs). The tracepoints are new in the current merge window, so this can
+> still be fixed before 7.3.
+> 
+> Root cause
+> ----------
+> 
+> The event stores the abstract name correctly:
+> 
+>   include/trace/events/landlock.h:899-932
+> 
+>     __string_len(sun_path,
+>                  unix_sk(peer)->addr->name->sun_path + 1,
+>                  unix_sk(peer)->addr->len -
+>                      offsetof(struct sockaddr_un, sun_path) - 1)
+> 
+> For an abstract address bound with addrlen == sizeof(sa_family_t) + 1 (= 3),
+> which net/unix/af_unix.c:335-345 (unix_validate_addr) accepts, addr->len is
+> 3, so the stored dynamic-array length is 0.
+> 
+> The printer then subtracts one more:
+> 
+>   include/trace/events/landlock.h:954-955
+> 
+>     __trace_print_untrusted_str(p, __get_str(sun_path),
+>                                 __get_dynamic_array_len(sun_path) - 1)
+> 
+> 0u - 1 wraps to SIZE_MAX. __trace_print_untrusted_str()
+> (include/trace/events/landlock.h:36-68) forwards that length to
+> string_escape_mem(), whose main loop
+> 
+>   lib/string_helpers.c:586
+> 
+>     while (isz--) {
+>         unsigned char c = *src++;
+> 
+> reads every input byte regardless of output exhaustion (the escape_*
+> helpers stop writing past `end`, but nothing breaks the input walk). With
+> isz == SIZE_MAX the read walks forward from the ring-buffer record through
+> the rest of the tracing buffer and the kernel direct map until it faults.
+> 
+> Impact
+> ------
+> 
+> An unprivileged task inside any landlock domain that scopes abstract unix
+> sockets can plant such a record deterministically. The OOB read itself
+> executes when the trace buffer is consumed (e.g. cat of
+> /sys/kernel/tracing/trace or trace_pipe by a privileged monitor -- exactly
+> the deployment these tracepoints target):
+> 
+> * information disclosure: escaped bytes of adjacent kernel memory
+>   (ring-buffer contents and beyond, i.e. direct map) are copied into the
+>   visible trace text;
+> * availability: the walk ends in a page fault / oops in the reader's
+>   syscall context; with panic_on_oops this takes the whole machine down.
+> 
+> Same-call-site audit: the other __trace_print_untrusted_str() users subtract
+> 1 as well (pathname :389/:725, comm :829/:878), but their captured lengths
+> cannot be 0 (dentry names are non-empty; comm is fixed-size), so only the
+> abstract-socket event is currently reachable. The -1 looks like a leftover
+> from string lengths that include a terminator; here the capture side already
+> excluded the leading abstract-name NUL.
+> 
+> Reproducer (hand-written, not executed against a live kernel)
+> -------------------------------------------------------------
+> 
+>   int s = socket(AF_UNIX, SOCK_STREAM, 0);
+>   struct sockaddr_un a = { .sun_family = AF_UNIX };
+>   a.sun_path[0] = '\0';                       /* abstract, zero length */
+>   bind(s, (struct sockaddr *)&a, sizeof(a.sun_family) + 1);   /* ok, len 3 */
+> 
+>   /* task restricted by a domain scoping abstract unix sockets: */
+>   connect(cfd, (struct sockaddr *)&a, 3);     /* denied -> event recorded */
+> 
+>   # echo 1 > /sys/kernel/tracing/events/landlock/\
+> landlock_deny_scope_abstract_unix_socket/enable
+>   # cat /sys/kernel/tracing/trace             /* OOB read here */
+> 
+> Self-assessed severity
+> ----------------------
+> 
+> CVSS:3.1 AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:H = 6.7 (Medium).
+> 
+> If the cross-boundary read is judged Scope:Changed (kernel-memory bytes are
+> surfaced into user-visible trace text, and the walk can traverse the whole
+> direct map until it faults): AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:H = 7.3.
+> Honest range 5.5-7.3 depending on scope treatment. Preconditions: the
+> landlock tracepoints are enabled and consumed by a privileged reader --
+> i.e. exactly the monitoring deployment they were added for.
+> 
+> Suggested fixes (either suffices; both preferred)
+> -------------------------------------------------
+> 
+> 1. Drop the "- 1" at include/trace/events/landlock.h:955 -- the capture-side
+>    length already excludes the abstract prefix NUL; the subtraction is a
+>    double decrement. Please also re-check :389/:725/:829/:878 against their
+>    capture lengths.
+> 2. Harden __trace_print_untrusted_str() (or string_escape_mem()) so the
+>    input walk cannot exceed the source object: e.g. clamp len, or break the
+>    loop when output is exhausted (note this changes string_escape_mem()'s
+>    return-size contract for existing callers).
+> 
+> Found by Charles <dmcjisalive@gmail.com> -- happy to test a fix.
+> 
+> Thanks,
+> Charles
+> 
+> Reported-by: Charles <dmcjisalive@gmail.com>
+> 
