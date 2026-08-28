@@ -1,154 +1,103 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC8B3DAACF
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 13:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787923278; cv=pass; b=DaSnZMyHGXYG9F0ZNbqbDoPdvrh4xz5zBmeOmhPghIUq2PLiaAUlWdiMq51rJXjyq5GEIsdcWlBWSTANJlmrFXTmsA0su4CNqbjMjBKUA6jCmV9Ye3wqyErPopJY7Hj/7MrSx30QhzBv1AOgxSTqL+PjirfCIoAjLHBVMZ6GZXk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787923278; c=relaxed/simple;
-	bh=5BzWTvTEODadIF56TEz3lyokV3iJPu75tta+h2QbYzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kksQJBfXRmdLUzfwKOFS74lq2CWel3n7PC2OzwZtI0C4ZKj1yFUMu3sw2cp++eSr2CWFDmuAAK9ThrT8nENMYpMeSmHYkUCQ31AnpnSGTYkOiRc3cEe7q9Zk18GxzsR+qz6PKOQuLc6zah1hdaG3lNTE/p8/dWQ12pjs8jI7LYk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t40N7rN8; arc=pass smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7350C2620DE
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 15:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787931373; cv=none; b=MmqC8712YZW6h56XSxmX7IQfqtzPwIe9pRrXxk68n98TKjkzZojRLRm5u6yvLpvXK8cVfqrD4rf91fGOqA2xV7gm57XARAe7aT9gOuCi48OVCJ4T6/M83alaThp47dmTV9dpV+KM3Va5mAtPm8omI2KQlpb3OfCqwLmDLJYO6bo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787931373; c=relaxed/simple;
+	bh=gnIzB3ULi7x5ONQLDvVTUDoIOX1PzdODHvT44xCkI2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qp/+iH6kJgfcT3EBhO3d7J79aIVJZHDh8FyvimAJTcJd+aF7JwvTCyq/GUuo7Z2tgfUVFj+3mQfjIHBDnT9vObyYlmpgSo4d8uNIKRgrlyFk23oYpttPkRkoLKLMrnNQdlfEHvGKU24R3GZIRuVO7AmcrJhrF8QhveomR3s8tEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apD7kXZF; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t40N7rN8"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2d3b445a84fso94075ad.1
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 06:21:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787923276; cv=none;
-        d=google.com; s=arc-20260327;
-        b=JAohp5a8h1a1MNmzh9OuIrEpVESmVlDxpPZjsCGUZ8rPbqcScEnCI0XdgoXgzGdYFH
-         KvvRElkmfk04sgXw7QenEVEHtpWp1W3YYpmgNUIW6tMsis211feqYolmVHLhyNO2XX+c
-         p82/1CByvA3l6OB0qRPDQfmk9Q9G+/qbiszWXLElRerhczzgHuH6k5wTGeyPtcmU9OQ7
-         W1/SjRhiJa/IKi06aQK8arIaUFYj9Mkcs2zCyuPhbzs923YORN+tG/hclY1N8DNnVm7O
-         SXyZ1CQ0cbtj1x39/cmS6jozd4ocfq1EGr9ODF7fDbgYIYinkUveoNzYUm3s3Oz/ADAQ
-         icfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=TmuJ8XeoPh26H2sa3OfduzNJbG5iPyqGukTAzRwDvaw=;
-        fh=QJBrIBQcIt5xGlgV4RBobzNsm0IUB0uxp86v4sPAfq8=;
-        b=aKFEKPxrG/tP3Mu/hJQxl5XAkQlIecdhhQx7sDEIMDNfDlnbaWYTKFsvGQjBZmOIv2
-         qpkJtxsC7nrJV8KxDw8wOjESyONoh8t0Q+C76MD87XlyJpYjk8JbHGQlMz2J6B6gbLOt
-         0h+zzo07ukGKRfSiH7ys+AVTdDoKwZ7ByxcQdT2vVbXWBOVqDf3p2IaOoIwCiYERfGhg
-         KK7RzXQQH0TbvtFuu18jK8grc3T9T9Klu45twpBpY9VlpsoQQiDD5Hp/cgB/C66yEhVV
-         z1Qg8pHuV9yyrCBiO3xNCDPgTxIQdzKNI0wbnCeNOFAWZChPAFVVORXcRvmLPW3WoMiB
-         jAWQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apD7kXZF"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-482e2904915so814562f8f.0
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 08:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787923276; x=1788528076; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=TmuJ8XeoPh26H2sa3OfduzNJbG5iPyqGukTAzRwDvaw=;
-        b=t40N7rN8XJSRScvkqe0e98xgccDBcGcUWgc7Cj4HBKEL44sPdsOFqJ8qPbUkP4/uo9
-         IsyLSVx8mkN8ChMd0M72M6PfFDkEVBkD82/+Pfmv/auq7qjv8GNk1MR5K8DGE8bd7hoh
-         JH48/8IQL8oUHvDiWs3q2tNzIHo50KblaVvpaXZ/0eew8cl8d8c85FOH3fOu8qgfFvaV
-         4IBzLUxYnnY9cq46Y++W5GnuR+FxFD8MYtKN0T8EDRJAgaz9jTD7wWRljOutCRpjkj+v
-         2D6X8x1F4WujtWCnuCaYXotHT+mSGXlbiLdvEtakky7KzJH+9OcLatIAo1qEGacnAOdi
-         kJaQ==
+        d=gmail.com; s=20251104; t=1787931368; x=1788536168; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=1orVkvfwH46u61Ql1Gfh2n9UOhRS6qwriTQ/HzVy+pI=;
+        b=apD7kXZFoOUaQdhNp5kVLhMC1C5fLe/uXaVXCts+YHrdQoNmfMHD9BOfx/+nC4Wipc
+         A+Q4gD2VNfBXMKF7SxZmkq20bexsvf6DTcSTyLf7/+B/JrC77EfFs5CJ85W242Z++yOF
+         j5TWc3g3qtDHYO+Hc3ocnqp2w/gPpifvC9zractrntZFW+DRTsEx2wY4dNxyrfEH3KII
+         9nDpYFU9bQo5iy6C0ZUjMQlh3lqPFCGKm1McB4+tRtixM3b0iK17wXa2DdFDX4UAHtDh
+         GUC8HzLih9SjSAYTlEs8bXsAVIcQlXg8PgZsini4DCP5hvUjAC9nHMcxU+15ezGSnI+d
+         TW0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787923276; x=1788528076;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TmuJ8XeoPh26H2sa3OfduzNJbG5iPyqGukTAzRwDvaw=;
-        b=boqPFnivU5bpFqSQDt2QMjRr8zSdvHUz2WdQ9OMafAfKy7MXfItEBjl0c/tI3H0vAX
-         pW8LOqZ0yxVPay4DK1Allr4zdNNdAw9b//dRK6TNRkluib3BMTmn+CvR+VeOIX8tM4jO
-         U6TXuHOKFQxMZTeM3Us9SIf4OS2bFgRdMEWjdWKFg92WLorSyUMulrsgiIQT7ekjDf5/
-         S3PVtj1hDJy+rVj/MZV15ZfNTpEGjhARccMN/fisxNWugF5PAPk1n0dSwZK3iJomNwv+
-         s9iVPJRtXymljNFjuFKDbJfjl0HUR/jq1RT3bcNyI9AjgjTF/J19tkID8CBvbaV4+rtr
-         ezqw==
-X-Forwarded-Encrypted: i=1; AHgh+RquIRTh/IwtiDaBU6GlLbkwjmBpkCiZ9dGWytopacSe15wOm0pI+hmF7WLzDZxGHVqbAELUDiQI3qsPGTyxl+RICIcNGcI=@vger.kernel.org
-X-Gm-Message-State: AFuF++mWiOXFNrg2umB68NGxe9PLuL8q9u+/KpPnODwdbPI7Jb4PIGom
-	E8ZrBuJj3I2B48LyVLgl3W931SP/5clcBZsrExf99K2eFq+vWcjkpxg3wF1HORdATLd7CiSY1PY
-	vQpPocPV4Gaq5y1AjI/48jEssrRnjbt2GhtjhCJSM
-X-Gm-Gg: AR+sD11LVg0RbSYeaw2m5N4MOWWJRsv70isP68Lq9sLt/rkcZn8FsvtpFF7kJoEiODW
-	gpB0sksOsoTbwJZ9LXLIwVUVuDfTgJOtars78stRUxPYxt75xM6YAZ2nEATA3xXHzyGnaunIepA
-	+jocOWWs5Bu1KPMLxUjBDCUqxkdceFXy6+lGLRw7LsJewLSYfNw5W17+Vby4U0XvadpZ3CZ7vXz
-	ELEpwDC+hKaq+t+s66dyOu0aXhxjcydM2870wajhHUQRc6+brvO2lZtwpd/BfaCivukflrWpc7N
-	++ilZBoOBbGO4riJPtYhSEUAjYqooJedeHQwdQIHMSEuTpKMS5T6ptosB6KaGMSKZ2ylBWNbFrr
-	Zwd2EIyn1XinVJj4Mj99jCx8163qXug==
-X-Received: by 2002:a17:903:b48:b0:2c9:bd54:cf with SMTP id
- d9443c01a7336-2d74f403213mr6682285ad.4.1787923275276; Fri, 28 Aug 2026
- 06:21:15 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787931368; x=1788536168;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=1orVkvfwH46u61Ql1Gfh2n9UOhRS6qwriTQ/HzVy+pI=;
+        b=Bt4jbYkdbf46lcdmICkAtwhuBRXplFCt50SptxQglqbfd5/2gZlkWkVjnWhyFuIH9y
+         FbreLUMFYovxsMmaKXEUh6NsWy2w43v1r6ru62Jlplb8AvlCPkxmU8TV2fALu2wTIOU9
+         vNXmpI878LDljUq7RQyNbRrPLd8IVmo3mRIdKLad50eDoDmV7N1g9Ovqor9evkQxS1Wg
+         VHoz3gBrO7btExFvF/65qyjjS2e+p2CjcHe22bbreWlIZkbao6zQMOwuPBraz9KJkniO
+         w36C4TptOwVVrxvESu3E1kFYOFcvn3HrkXI2cUzJGTfrDbjLT9aMXnEowrYy8h73IRLY
+         UnsQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrU6y50u2FQBSY8cUJAOiG85dPmDq4jwsTc/u1yX2dLD2rLsFavTw1ZzNa/80jIb9V1wtVBsgwNDs8B8Jq9ZfESm570STo=@vger.kernel.org
+X-Gm-Message-State: AFuF++mmKYyHr2Q2Q15MzdvtHFlVOmCuSsfBIzRjwiKR7Z87BZ9/uG1x
+	RCBbMpcuZO+AFBd3MGZYooFOe2abpfHtI5onKR/RQmHvTucGjHQyuEhb
+X-Gm-Gg: AR+sD12rcQ3hNzvKOZ8Dwh9y1OWfCEJEosZKutmUViy0e0hl0wqenOHZmw+7nplf3G/
+	r3mGBbjhOKmZGsLIKo9qkBD1JMASA1r528bHDaEJ1yPoj5mmHCWLvxcH3qohYVotBiRo4hSjway
+	o93rQs14OtWvau66Uzmu0Ex/i98kCWgQW6wzQa6UUCT9PlUlj6pAYp/eMXI8NdtKm6lFGlz6lNA
+	3yMI6NXrKb16pz4TpqDPbZ4kQg6fxRC4F8YoI4RWCuEpyGhigHtN35yh3t8r2xg6uUUgFTHWprN
+	c8tT4reDLm7mfb5n6hielNxgpVXV7x3lp+mSO9hP6mKhaIITpxhHVsZF6tZ1WCm6FkPILiStayG
+	pWEXWPe1W1HWjVBRZ5ZCQ3emXHqx+aYcEjPmnm712srLiyDJr2M+5icB6ewZ7j3Xqj9HIGCY/MF
+	/SMHGvbwkdOhVA0RLwvKReeVWJRfuRNrruvG20lH6d1U23/YZDXDm+b6El3RPb2WhX0864/uAUN
+	zyT2RRrc/Ev+ag=
+X-Received: by 2002:a05:6000:2310:b0:47f:8183:e9b8 with SMTP id ffacd0b85a97d-482f79e1e9cmr10847640f8f.22.1787931367551;
+        Fri, 28 Aug 2026 08:36:07 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482fbac8e61sm4800483f8f.13.2026.08.28.08.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Aug 2026 08:36:07 -0700 (PDT)
+Date: Fri, 28 Aug 2026 17:35:44 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com, Tingmao Wang <m@maowtm.org>,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] landlock: Add documentation for UDP support
+Message-ID: <20260828.942ec705ed5d@gnoack.org>
+References: <20260611162107.49278-1-matthieu@buffet.re>
+ <20260611162107.49278-7-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260825-selinux-pokemem-v2-2-b46bc64916d8@google.com>
- <82929c994076d95f99560ecc67f6cfce@paul-moore.com> <CAG48ez1rd3cFhmGn7mWkaVvGqYg+cDiGUhuhH6r51dUm-QBXUA@mail.gmail.com>
-In-Reply-To: <CAG48ez1rd3cFhmGn7mWkaVvGqYg+cDiGUhuhH6r51dUm-QBXUA@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 28 Aug 2026 15:20:37 +0200
-X-Gm-Features: AcwNN1X1_-cZAxs-C_zVg9dDOHf5DCa4yCAEiND1xrtOkQ0sGqfzpyFhp0b8haE
-Message-ID: <CAG48ez2jgJHewZYK1SVccJmBa=bjoMW80SPNcbgW2XCtZaWhjg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] proc: query LSMs for introspective mem access (if PROC_MEM_FORCE_ALWAYS)
-To: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Jeff Xu <jeffxu@google.com>, 
-	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, 
-	David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260611162107.49278-7-matthieu@buffet.re>
 
-On Fri, Aug 28, 2026 at 3:03=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
-> On Fri, Aug 28, 2026 at 3:10=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > Beyond that, we really try to avoid making LSM hook calls conditional. =
- It
-> > can limit what an LSM can enforce, it tends to be a bit more fragile, a=
-nd
-> > it adds some unnecessary work in the case where CONFIG_SECURITY is
-> > disabled.  I would suggest passing 'opened_by_owner' flag as a second
-> > parameter to the LSM hook and calling the hook unconditionally in the
-> > default switch case as a replacement for the 'return true;' statement. =
- I
-> > understand it may seem a bit odd, but we try to make the LSM interface =
-as
-> > generic as possible with respect to different models and this is one wa=
-y
->
-> I guess I can do that, but then the question becomes, what other modes
-> of using the LSM hook that don't currently exist in the kernel should
-> I be supporting with this? I can make this a parameter, but any LSM
-> policy that actually uses the parameter in a different way would
-> probably be buggy/inconsistent, unless other new LSM hooks are added.
->
-> If your intent is to make the hook work for any /proc/$pid/mem access,
-> including when the caller is ptrace-attached, then I guess I have to
-> move around the security hook call in proc_mem_foll_force() a little
-> bit. I guess I'll do that in v3, though I really don't like trying to
-> come up with a reasonable in-kernel API contract for a scenario that
-> currently has zero users.
+Hello Matthieu!
 
-I started thinking about how to implement this, and an annoying aspect
-about this is:
+On Thu, Jun 11, 2026 at 06:21:06PM +0200, Matthieu Buffet wrote:
+> Add example of UDP usage, without detailing the two access right.
+> Slightly change the example used in code blocks: build a ruleset for a
+> DNS client, so that it uses both TCP and UDP.
+> 
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
 
-Currently, I only have to look at the credentials of the opener of the
-file - that is both the subject and object of the access. But if I
-want to provide a hook that works for any /proc/$pid/mem access, and
-want the hook to know what the object of the access is, and do it
-race-free, then I would need to grab the creds of the target task in
-mm_access(), bubble them up into proc_mem_open() and mem_open() (which
-will require touching all the callers of mm_access() and
-proc_mem_open()), store them into mem_private there, then let
-proc_mem_foll_force() extract the creds from there. All that would be
-unused code.
+Friendly reminder, would you be able to transcribe the newly added
+documentation into the Landlock man pages?  I added a tracking issue
+at https://github.com/landlock-lsm/linux/issues/66 where I outlined
+the rough process, which is mostly mechanical.  I am happy to do a
+review.
 
-Do you think I should just not provide credentials for the target, and
-document "if opened_by_owner is true, the subject credentials are also
-the object credentials; if opened_by_owner is false, you don't get to
-know what the object is"?
+Thanks,
+Günther
