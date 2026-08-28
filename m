@@ -1,161 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-106119.protonmail.ch (mail-106119.protonmail.ch [79.135.106.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA6729405;
-	Fri, 28 Aug 2026 01:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDD82192FA
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 02:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787882372; cv=none; b=RHmXwl0qpijS7uO7CXP+yfa2iH0sDbkJmabgbBP+k+it1sFK3gca7j4ZB/owxZAf+A3wHkf0k+zAFhz+VqZMH0VLB3IdDJYrKdaBULOOScyP4IjROaDcPbnRNcYyCQEFtcbcrzxaernvOb3TLflVKcRZnY+kolIJKE3qEDGnlI8=
+	t=1787885092; cv=none; b=TmV25+tNtP40KHzUB2W8IRgjfxB3qSd9bS4T0wYfOT6FfQnRE2r7uC3X+vxLyusqPpiittl/aUbt5PJrbZ7I+/RBPeVk+ml4uyc4o51Rty7ng4CHefbOZaxgc9cVcrLnQf6g9HPgW1Wcc8sSE9fe7HdavxGHlPq1DarX54tRe/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787882372; c=relaxed/simple;
-	bh=PLUrSJ7Bgr42fAa7hl3L90oFyHaK/ng3BsHc6DjlYsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwH4PczUyFzbig4jJ4R15lEDqRT7s0XuEkzgSiNhR++xtcep4EbhyTT6/6DZ8/lBWJGbpV+eeJ+qvMc8rSalZgS24e/XAMeJqGaVLU4YfIdn78IRQuxn6iUYvKl2m7JQjPj/TqxhKtUbel9vVnIZSCabxidsw0Hr8wo1bVk2rdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alyJu5Ry; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787885092; c=relaxed/simple;
+	bh=Wa6+2lHvpXA5kOwx/K/W5g8loVWc1BnA7I82cueJWPo=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aNZEBJi3x/9VM6xEN14stTlUDu/B57C/fNevcgayRWRVEQNMnhiQgYzgZQzafRxPjwtyhKeDgGHH0/uW6KQ4Zx+KayW10OH46Z2cTPoor0JbEf7aMAk+paSivbFB/oHAKz/y3Ag1QAhCZk3UNWQR5k2q95mjspDMVkYNNQQFVOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Xo/Br8p4; arc=none smtp.client-ip=79.135.106.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alyJu5Ry"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B51761F000E9;
-	Fri, 28 Aug 2026 01:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787882371;
-	bh=BmMeT+sGruSoarJZXTMiWDmYAjjQLaM8q39gUOJQkx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=alyJu5RyJZxHpySxmSX2EQq01LxMYALxg4y2c7/trNsJ8eg1uAVvo3Ay8zeIfizUT
-	 a1TZZEP8ghnZT7m+o1kxgQbg+UMP57BmgZEpv7WUkf70OpF5fg0ESZnQWa0dSfLH3n
-	 J1wj613i20sY6qEp2Z7S0IdG04bRyXQg7Wug+Q1CJCn99pDT1gX0XFW7cK45t39C3O
-	 d/wNvxDqLspl04zBg3cTdxrdZFxU4NbIMxvXoAFGO0TaKV2GVTzWPYEsJUOAruawKe
-	 Rl0XgcYaJ+IFN00KAUOzqYTfnOcH/yXW6iCR0sFbrmYwqM6NJsZvIRsV84GIP/yKm6
-	 0+0XXkf3ek2UA==
-Date: Fri, 28 Aug 2026 04:59:27 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Cen Zhang (Microsoft Security FORGE Labs)" <blbllhy@gmail.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Roberto Sassu <roberto.sassu@polito.it>,
-	David Safford <safford@watson.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>, Francis Perron <francis@akrites.dev>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Akrites SIRT <sirt@akrites.dev>,
-	AutonomousCodeSecurity@microsoft.com,
-	Cen Zhang <cenzhang@microsoft.com>
-Subject: Re: [PATCH v2] KEYS: encrypted: fix integer overflow of datablob_len
-Message-ID: <apDrfyDB883Nl5Sd@kernel.org>
-References: <20260826154456.85974-1-blbllhy@gmail.com>
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Xo/Br8p4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1787885078; x=1788144278;
+	bh=d2vbG8I8C2vZ3aknTtpETgBaDvg9qhoe2w1vweQf45k=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=Xo/Br8p4XrN1wazdEsBYcFzLyj3wX+AKcHTyrKeIy65LBAlvmEqUoowoA47FzJxPE
+	 OM1pdHC1D9fmJjpS93T1P4sWk+pbH+wD4TOda5ezCBHnQFflVbAHayBafHU/495Ge/
+	 MT2L+c2YXpYuzQJlTZig4yqYxiBm2AaDTJaEioI+qBOceBpvlmQVFspfkKtUHE1kT8
+	 kSqb1fHVSP0u3YGRpfBtWo//cwSgWa26lfBgCkAD7A2zxFv1ZgPcdbnx7Ldb1NvTiK
+	 ZONc+uKuYGedKcqWZkdfNXlegvCVUS3+sqp5luRW9xUszrAdFhqgxuxDWuQ4OEfo8O
+	 4qYu+glpKRS+g==
+Date: Fri, 28 Aug 2026 02:44:30 +0000
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>
+From: Nils Lehnen <nils.lehnen@proton.me>
+Cc: Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>, Boqun Feng <boqun@kernel.org>, Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Onur Ozkan <work@onurozkan.dev>, Atharv Dubey <atharvd440@gmail.com>, Ke Sun <sunke@kylinos.cn>, linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Nils Lehnen <nils.lehnen@proton.me>
+Subject: [PATCH] rust: security: replace `core::mem::zeroed` with `pin_init::zeroed`
+Message-ID: <20260828024335.946-1-nils.lehnen@proton.me>
+Feedback-ID: 188354734:user:proton
+X-Pm-Message-ID: 03d30c8e9b9b95cd199dd517e73934594f333461
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260826154456.85974-1-blbllhy@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 26, 2026 at 11:44:56AM -0400, Cen Zhang (Microsoft Security FORGE Labs) wrote:
-> From: "Cen Zhang (Microsoft Security FORGE Labs)" <cenzhang@microsoft.com>
-> 
-> The datablob_len field in struct encrypted_key_payload and the local
-> variable in encrypted_key_alloc() are declared as unsigned short, which
-> has a maximum value of 65535. The datablob_len is computed as:
-> 
->   format_len + 1 + strlen(master_desc) + 1 + strlen(datalen) + 1
->   + ivsize + 1 + encrypted_datalen
-> 
-> An attacker can create an encrypted key with a very long datalen string
-> (e.g., 32756 characters of leading zeros followed by "4096", which
-> kstrtol() happily parses as 4096), and then update it with a very long
-> master_desc string (~32760 characters). The combined lengths exceed
-> 65535, causing the unsigned short to silently wrap around. This results
+From: Benno Lossin <lossin@kernel.org>
 
-Please use concrete sizes as possible. E.g., 16-bit word or u16 would be
-much less involved than "unsigned short".
+All types in `bindings` implement `Zeroable` if they can, so use
+`pin_init::zeroed` instead of relying on `unsafe` code.
 
-> in a grossly undersized kzalloc() allocation, and the subsequent
-> memcpy() in __ekey_init() writes ~32KB past the end of the buffer,
-> corrupting adjacent slab objects.
+If this ends up not compiling in the future, something in bindgen or on
+the C side changed and is most likely incorrect.
 
-One more: please describe the issue as ergnomic as possible (but still
-complete). I care neither Alice nor Bob.
+Link: https://lore.kernel.org/r/20250814093046.2071971-8-lossin@kernel.org
+Link: https://github.com/Rust-for-Linux/linux/issues/1189
+Signed-off-by: Benno Lossin <lossin@kernel.org>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Nils Lehnen <nils.lehnen@proton.me>
+---
+Resend of Benno's patch from the Zeroable series [1]: only patches 1, 2
+and 11 of that series were applied, and the issue [2] asks for the rest
+to be re-sent. Rebased onto rust-next; it applied cleanly, and a
+defconfig build with CONFIG_RUST=3Dy and CONFIG_SECURITY=3Dy passes.
 
-> 
-> Fix this by:
-> 1. Using check_add_overflow() to calculate datablob_len directly into
->    its existing unsigned short destination.
-> 2. Checking the total payload length the same way before passing it to
->    key_payload_reserve(), since key->datalen is also unsigned short.
-> 3. Using kzalloc_flex() to allocate encrypted_key_payload together with
->    its trailing payload_data[] array.
-> 
-> Fixes: 7e70cb497850 ("keys: add new key-type encrypted")
-> Cc: stable@vger.kernel.org
-> Assisted-by: GitHub-Copilot:claude-opus-4.6
-> Signed-off-by: Cen Zhang (Microsoft Security FORGE Labs) <cenzhang@microsoft.com>
-> Signed-off-by: Francis Perron (Akrites SIRT) <francis@akrites.dev>
-> ---
-> Changes in v2:
-> - Keep datablob_len unchanged and check both unsigned short bounds with
->   check_add_overflow().
-> - Use kzalloc_flex() for the trailing payload_data[] array.
-> - Correct the attribution and sign-off trailers.
-> 
-> The initial version was discussed off-list and is not publicly archived.
-> 
->  security/keys/encrypted-keys/encrypted.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-> index 59cb77b237b3..e07092ea301a 100644
-> --- a/security/keys/encrypted-keys/encrypted.c
-> +++ b/security/keys/encrypted-keys/encrypted.c
-> @@ -19,6 +19,7 @@
->  #include <linux/parser.h>
->  #include <linux/string.h>
->  #include <linux/err.h>
-> +#include <linux/overflow.h>
->  #include <keys/user-type.h>
->  #include <keys/trusted-type.h>
->  #include <keys/encrypted-type.h>
-> @@ -579,6 +580,7 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
->  {
->  	struct encrypted_key_payload *epayload = NULL;
->  	unsigned short datablob_len;
-> +	unsigned short payload_totallen;
->  	unsigned short decrypted_datalen;
->  	unsigned short payload_datalen;
->  	unsigned int encrypted_datalen;
-> @@ -632,16 +634,22 @@ static struct encrypted_key_payload *encrypted_key_alloc(struct key *key,
->  
->  	encrypted_datalen = roundup(decrypted_datalen, blksize);
->  
-> -	datablob_len = format_len + 1 + strlen(master_desc) + 1
-> -	    + strlen(datalen) + 1 + ivsize + 1 + encrypted_datalen;
-> +	if (check_add_overflow(format_len + 1 + strlen(master_desc) + 1
-> +			       + strlen(datalen) + 1 + ivsize + 1,
-> +			       encrypted_datalen, &datablob_len))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (check_add_overflow(datablob_len,
-> +			       payload_datalen + HASH_SIZE + 1,
-> +			       &payload_totallen))
-> +		return ERR_PTR(-EINVAL);
->  
-> -	ret = key_payload_reserve(key, payload_datalen + datablob_len
-> -				  + HASH_SIZE + 1);
-> +	ret = key_payload_reserve(key, payload_totallen);
->  	if (ret < 0)
->  		return ERR_PTR(ret);
->  
-> -	epayload = kzalloc(sizeof(*epayload) + payload_datalen +
-> -			   datablob_len + HASH_SIZE + 1, GFP_KERNEL);
-> +	epayload = kzalloc_flex(*epayload, payload_data, payload_totallen,
-> +				GFP_KERNEL);
->  	if (!epayload)
->  		return ERR_PTR(-ENOMEM);
->  
-> -- 
-> 2.55.0
+Two equivalent one-off patches were posted earlier [3][4]; Miguel asked
+in [5] for a resend that keeps Benno's authorship, which this is.
+Cc'ing the LSM list per Paul's request on the original thread.
 
-BR, Jarkko
+[1] https://lore.kernel.org/r/20250814093046.2071971-1-lossin@kernel.org
+[2] https://github.com/Rust-for-Linux/linux/issues/1189
+[3] https://lore.kernel.org/r/20251129135657.36144-1-atharvd440@gmail.com
+[4] https://lore.kernel.org/r/20260120083824.477339-8-sunke@kylinos.cn
+[5] https://lore.kernel.org/r/CANiq72nJqFOR9vhPBfZUNrxU+M1HMV6wN9bN6i8e9rf_=
+oOD2qw@mail.gmail.com
+
+ rust/kernel/security.rs | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
+index 9d271695265f..4dc3eba6ce84 100644
+--- a/rust/kernel/security.rs
++++ b/rust/kernel/security.rs
+@@ -62,8 +62,7 @@ impl SecurityCtx {
+     /// Get the security context given its id.
+     #[inline]
+     pub fn from_secid(secid: u32) -> Result<Self> {
+-        // SAFETY: `struct lsm_context` can be initialized to all zeros.
+-        let mut ctx: bindings::lsm_context =3D unsafe { core::mem::zeroed(=
+) };
++        let mut ctx: bindings::lsm_context =3D pin_init::zeroed();
+=20
+         // SAFETY: Just a C FFI call. The pointer is valid for writes.
+         to_result(unsafe { bindings::security_secid_to_secctx(secid, &mut =
+ctx) })?;
+
+base-commit: 73e3f0710014fe6d4ed98cfc02292f6121db7558
+--=20
+2.43.0
+
+
