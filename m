@@ -1,175 +1,239 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142403F106F;
-	Thu, 27 Aug 2026 22:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51E42F3C37
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 01:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787868362; cv=none; b=CSW5xlTukDnkWy1KqUTm1sspWJPtmPvrC5at2qGsu44kdJEn3U761T13knNKp6vDdvEViU5pW1Q4zzd0OZ4x4+wGVzrsCDLZeDHcYfoKrCEWzS2N58dOCi9D/ADabSkUxfqaT1EfHwSf6CK1REx3y/POThPwvG457QztkSuGROo=
+	t=1787879451; cv=none; b=CCcS+CPih+43ExQr+BEsz34fanrj4Q+18YtlO1f3ASvcYTCf7POT7z1LOaslm8atoxzqm5V419ep5ChyFRlkmf5AR17HHZFOB8Cq3ywc10tqd2mvvzJOr+lxQpcD9PrpxaTnskVERxStcU4bXLU2/qLwMKpfZxXAIZ7T7ekwRHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787868362; c=relaxed/simple;
-	bh=poBYDZ4Eg3HvpbH01Bcr5xv8th65vKN6a6r+FEOdTW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fOEpKqNem19quo7Vrr/QdZMPxUUNJNDaof5jmEkmW/RFUhTN+bYHd/qTrx2Ebd1T6PGTTNmMaj0xCDoGNfIyIFAZGOABTUrdgXGYx5ltV5+ntMYlQsHRTro/zmKOacZ0RBrz7sZUMJy4ZO7m4TdGjQuEt45bznNe86BsqLlVnFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6L9etGk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787879451; c=relaxed/simple;
+	bh=wIEeS+LwYTnRIYj5ZqZqnhCJG8waLUCHcVYFZ62yyKY=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=YVNIcDv1GmCrRM1o9TwvGmLkElyCmbww5a8HfysaFutufic8sTAHZrDY/OpTbdzExu6TG7j+lxTMPhH4uHKRf5wJONXgon90Jyw8AlgZnYFavIIHTQV60BLb92GSWpaQCo/Z4y11G/gQtWKjfm19PHzMjwYIncwcRl9YIA6e8YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AHXcPHTq; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6L9etGk"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 250941F000E9;
-	Thu, 27 Aug 2026 22:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787868360;
-	bh=uYQ//+Nc6FOYi0VIuRjLfmYOORJZwY6o51QG645xVho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=R6L9etGkhGx1vUChACmOrrebXlCOnn9Fr08hZEt2UyklwGmgleywwVgoIZOWwjPVR
-	 OEMa4EqfwKCZmeLN3Tu96ZTPggJsqvw92Vog1htRPk68ORqdFgWZBxLh4iqzwqvMHj
-	 rpkTSVGDo0/M3Z6juKJagH0wd8PpLuhOz5VtCK2Ao6wsZVHrnPUFYwnd3EioISX5hr
-	 5MLSypr++shF7PkdoNMQ2ov9zEmnzVcB4ztM7RLWPv5D5XWPT+IgYiT8YmkLaQKADj
-	 OBFgcAcqaMvbj6vjB7RTwC/j/2jFoR4nqjLDt9Xe0PuVX1Tln+w9pCkUyRPYkW3ctg
-	 95y8yovIUGr8Q==
-Date: Fri, 28 Aug 2026 01:05:56 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chengfeng Ye <nicoyip.dev@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Serge Hallyn <sergeh@kernel.org>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: Fix key_user use-after-free during ownership
- changes
-Message-ID: <apC0xGqWTIXTIgBU@kernel.org>
-References: <20260823152858.3839939-1-nicoyip.dev@gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AHXcPHTq"
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-52d590ce5cdso5111451cf.1
+        for <linux-security-module@vger.kernel.org>; Thu, 27 Aug 2026 18:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1787879447; x=1788484247; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=F2FIz9UYX+IlSwKp5E5JXDBaBYS18bmjz6r6fwuVCck=;
+        b=AHXcPHTqnZa6w/ozGXcB1Zxb3/q9ETgZwzkXvBAvOTjJmsv3Ar+Ww2svNXRbKqwZQ2
+         /icLl2ujY6yGIpUFAyHQYKYUE5DvZIDMt18rtLRSPZZE7GneuT5TV4DgintgNE/UOtir
+         YVZBOpb/vu6tm9Zy1hCuIibYgC/bnX5W5gN3POQctMcsO/osj9TPWJ5PbPKmGNMp1v3T
+         YGGC3oF+linRv+RqM4XAvoiVh3Qlf2CyfYVGtla26sGtB+cQLTi+41OFbA7I8ULzpb/h
+         RK4JsdjSz5jcHAKOJdyVMQclGNbkM2PMn2IAMJ+aTyD2ZBqDzhltoIA4Gc8Rpyh3pjVn
+         LrAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787879447; x=1788484247;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=F2FIz9UYX+IlSwKp5E5JXDBaBYS18bmjz6r6fwuVCck=;
+        b=aOsMt0+eo1RrMg8Swm9CqCOqdN1U4cUFpnn3W+mg4n2T1EKW+dkF2f1LorGGDNy04c
+         DRV684XIHZT+shi3Y6Chu3y0xD6fD9jRCeYDlS7ag/xw/ed3pv877G7Vi3uIy+m7OaeA
+         SZbGbbfsq3dWwvI6SAg2c5pPnalKwtcD3By4R1XMAngyWFh26oMBLahiH8jSLmd0wz+n
+         V0Eqn3yIy+aqdQdPEBYk/nfuzZqzeW28kpCiFQpSLZHel3NXxQJbDqlqymwWPjb8SUUd
+         aeakOjQpuUR29Hd3IXPSBUa8MJ9G2PqU4D8aWh3egJeX5GY0RgCvcKpxZqb6E+6A36Fw
+         wSFA==
+X-Forwarded-Encrypted: i=1; AHgh+RodBm/oGXbxbo1TY9xkXlEOA8qfQKvLDJgbnE8ixMozuklrLe7dTklXYEJQ1fkSV5jw7gu8MyUDgL6RdU4HZOpYcVlwyyE=@vger.kernel.org
+X-Gm-Message-State: AFuF++mkjeD8/K0BgJ7cGp3e1V0Lm6PrPahXC+xSYT+ud3JOKRhJx+QR
+	v17q5RiP8K8iEfJiJI+amzIjkuZ8p4sRpK1V2a6LPXme+RtwY3pq9L6OjK+h0YcOcA==
+X-Gm-Gg: AR+sD12uLA0NkTZr1YM0Lsf4nBYakX+Ullv9btJXcFId5VFcxk7p5K4/lU0pNt92ng5
+	8Hp850TBkbZCn6ftZoQYK7+yBeFBWoCmjHpmsXckU4WrBbqlO/3svgvVEU9sFp2YuwCcMxaePWl
+	VfmugF9J0PlspGpfN7Pu6VHoPoeWS513cObxevHg5J30LLjoRXwCZCoVTlVf7dKEI6QZMD4enJH
+	IgkbLGtew0uJNIT1j9hwVdjdehTJUUxQjcPMm8PTNGS0mWqpSeafX6Vb1dLRpptIM/5/5/wDP5V
+	e1+toCcDK/yLPNPgSlSvw1nYeMajV0RS8oG21J7iBMsqPhmfJjIToL00V7i5yFco1+EUBNUcMGI
+	34AyTgDZ9MQWjNrdbHIWm0rKFJBhl9FW44xQhDtpu5ThHjdo3uIB/iw5/tdikCWH4mAYfUzFdVw
+	pPUyO/xMllp6633lGku2vpMVR46m6RKxZEi+1YPXr4Nl/UOVkzhvvWSH4T6Cu/xYD70HWkErKLM
+	xDRw5BiktWlbwKKx1486xNqiXcQcopBWw==
+X-Received: by 2002:a05:622a:6118:b0:52f:64c4:8094 with SMTP id d75a77b69052e-52fb965d4a1mr42496571cf.39.1787879446638;
+        Thu, 27 Aug 2026 18:10:46 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-52fbe7f9bafsm2634591cf.19.2026.08.27.18.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2026 18:10:45 -0700 (PDT)
+Date: Thu, 27 Aug 2026 21:10:44 -0400
+Message-ID: <82929c994076d95f99560ecc67f6cfce@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260823152858.3839939-1-nicoyip.dev@gmail.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260827_1122/pstg-lib:20260827_1501/pstg-pwork:20260827_1122
+From: Paul Moore <paul@paul-moore.com>
+To: Jann Horn <jannh@google.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Jeff Xu <jeffxu@google.com>, =?utf-8?q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <liam@infradead.org>, Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@kernel.org>, linux-mm@kvack.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v2 2/3] proc: query LSMs for introspective mem access (if  PROC_MEM_FORCE_ALWAYS)
+References: <20260825-selinux-pokemem-v2-2-b46bc64916d8@google.com>
+In-Reply-To: <20260825-selinux-pokemem-v2-2-b46bc64916d8@google.com>
 
-On Sun, Aug 23, 2026 at 11:28:58PM +0800, Chengfeng Ye wrote:
-> keyctl_chown_key() replaces key->user while holding key->sem and drops
-> the old key_user reference after releasing the semaphore. The /proc/keys
-> iterators and find_keyring_by_name() instead dereference key->user while
-> holding unrelated locks.
+On Aug 25, 2026 Jann Horn <jannh@google.com> wrote:
 > 
-> This allows the following interleaving:
+> If the system is running with PROC_MEM_FORCE_ALWAYS, LSMs currently have no
+> good opportunity to block a process from overwriting read-only code in its
+> own address space through FOLL_FORCE writes via /proc/self/mem.
+> The security_ptrace_access_check() LSM hook is bypassed when a process
+> opens /proc/self/mem because this is considered "introspection".
 > 
->   CPU 0 (/proc/keys)            CPU 1 (KEYCTL_CHOWN)
->   load old key->user
->                                 replace key->user
->                                 key_user_put(old)
->                                   kfree(old)
->   read old->uid
+> This causes a hole in SELinux EXECMEM enforcement, which tries to ensure
+> that a process cannot create executable anonymous pages.
 > 
-> Serialize the namespace-mapping reads and the pointer replacement with
-> key_user_lock. This lock already protects final key_user removal, so the
-> old object cannot be freed while its uid is being read. Keep reading the
-> quota-owner UID rather than key->uid because those values can legitimately
-> differ for thread keyrings.
+> PROC_MEM_FORCE_PTRACE prevents that and ensures that such FOLL_FORCE
+> accesses are only possible when the LSM allows ptrace() attachment; but it
+> is unclear how quickly PROC_MEM_FORCE_PTRACE can be deployed in
+> environments running lots of third-party code, such as Android.
 > 
-> Signed-off-by: Chengfeng Ye <nicoyip.dev@gmail.com>
+> So, introduce a new LSM hook that can forbid FOLL_FORCE specifically for
+> such "introspective" accesses.
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
+> Acked-by: David Hildenbrand (Arm) <david@kernel.org>
+> Acked-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 > ---
->  security/keys/internal.h | 10 ++++++++++
->  security/keys/keyctl.c   |  2 ++
->  security/keys/keyring.c  |  2 +-
->  security/keys/proc.c     |  4 ++--
->  4 files changed, 15 insertions(+), 3 deletions(-)
+>  fs/proc/base.c                |  9 +++++++++
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  6 ++++++
+>  security/security.c           | 20 ++++++++++++++++++++
+>  4 files changed, 36 insertions(+)
 > 
-> diff --git a/security/keys/internal.h b/security/keys/internal.h
-> index b7b622bc36a1..741d547ba5c4 100644
-> --- a/security/keys/internal.h
-> +++ b/security/keys/internal.h
-> @@ -70,6 +70,16 @@ extern struct key_user	root_key_user;
->  extern struct key_user *key_user_lookup(kuid_t uid);
->  extern void key_user_put(struct key_user *user);
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index bec6197329dc..dc6fdcb47b79 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -851,6 +851,11 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+>  /* private_data for proc_mem_operations */
+>  struct mem_private {
+>  	struct mm_struct *mm;
+> +	/*
+> +	 * Was the ptrace access check on open bypassed because the opener used
+> +	 * the same MM (introspection)?
+> +	 */
+> +	bool opened_by_owner;
+>  };
 >  
-> +static inline kuid_t key_user_uid(const struct key *key)
-> +{
-> +	kuid_t uid;
-> +
-> +	spin_lock(&key_user_lock);
-> +	uid = key->user->uid;
-> +	spin_unlock(&key_user_lock);
-> +	return uid;
-> +}
-> +
->  /*
->   * Key quota limits.
->   * - root has its own separate limits to everyone else
-> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> index d14ace88e529..c17924609317 100644
-> --- a/security/keys/keyctl.c
-> +++ b/security/keys/keyctl.c
-> @@ -1036,8 +1036,10 @@ long keyctl_chown_key(key_serial_t id, uid_t user, gid_t group)
->  			atomic_inc(&newowner->nikeys);
+>  static int mem_open(struct inode *inode, struct file *file)
+> @@ -864,12 +869,14 @@ static int mem_open(struct inode *inode, struct file *file)
+>  	priv->mm = proc_mem_open(inode, PTRACE_MODE_ATTACH);
+>  	if (IS_ERR_OR_NULL(priv->mm))
+>  		return priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
+> +	priv->opened_by_owner = priv->mm == current->mm;
+>  	file->private_data = no_free_ptr(priv);
+>  	return 0;
+>  }
+>  
+>  static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
+>  {
+> +	struct mem_private *priv = file->private_data;
+>  	struct task_struct *task;
+>  	bool ptrace_active = false;
+>  
+> @@ -886,6 +893,8 @@ static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
 >  		}
->  
-> +		spin_lock(&key_user_lock);
->  		zapowner = key->user;
->  		key->user = newowner;
-> +		spin_unlock(&key_user_lock);
->  		key->uid = uid;
+>  		return ptrace_active;
+>  	default:
+> +		if (priv->opened_by_owner)
+> +			return security_mem_foll_force_opened_by_owner(file->f_cred) == 0;
+>  		return true;
 >  	}
+>  }
+
+First things first, we've got to shorten that hook name :)  What do you
+think of security_proc_mem_foll_force()?
+
+Beyond that, we really try to avoid making LSM hook calls conditional.  It
+can limit what an LSM can enforce, it tends to be a bit more fragile, and
+it adds some unnecessary work in the case where CONFIG_SECURITY is
+disabled.  I would suggest passing 'opened_by_owner' flag as a second
+parameter to the LSM hook and calling the hook unconditionally in the
+default switch case as a replacement for the 'return true;' statement.  I
+understand it may seem a bit odd, but we try to make the LSM interface as
+generic as possible with respect to different models and this is one way
+we do that.  It also ensures we don't have to process the 'opened_by_owner'
+check in that case where the LSM is disabled.
+
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 65c9609ec207..50e3f0abc676 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -36,6 +36,7 @@ LSM_HOOK(int, 0, binder_transfer_file, const struct cred *from,
+>  LSM_HOOK(int, 0, ptrace_access_check, struct task_struct *child,
+>  	 unsigned int mode)
+>  LSM_HOOK(int, 0, ptrace_traceme, struct task_struct *parent)
+> +LSM_HOOK(int, 0, mem_foll_force_opened_by_owner, const struct cred *subject)
+
+See the default/disabled return value discussion below.
+
+>  LSM_HOOK(int, 0, capget, const struct task_struct *target, kernel_cap_t *effective,
+>  	 kernel_cap_t *inheritable, kernel_cap_t *permitted)
+>  LSM_HOOK(int, 0, capset, struct cred *new, const struct cred *old,
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 153e9043058f..74eb876054b0 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -338,6 +338,7 @@ int security_binder_transfer_file(const struct cred *from,
+>  				  const struct cred *to, const struct file *file);
+>  int security_ptrace_access_check(struct task_struct *child, unsigned int mode);
+>  int security_ptrace_traceme(struct task_struct *parent);
+> +int security_mem_foll_force_opened_by_owner(const struct cred *subject);
+>  int security_capget(const struct task_struct *target,
+>  		    kernel_cap_t *effective,
+>  		    kernel_cap_t *inheritable,
+> @@ -676,6 +677,11 @@ static inline int security_ptrace_traceme(struct task_struct *parent)
+>  	return cap_ptrace_traceme(parent);
+>  }
 >  
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index 15bf4af8f282..49f4be934525 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -1158,7 +1158,7 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
->  	 * grants Search permission and that hasn't been revoked
->  	 */
->  	list_for_each_entry(keyring, &ns->keyring_name_list, name_link) {
-> -		if (!kuid_has_mapping(ns, keyring->user->uid))
-> +		if (!kuid_has_mapping(ns, key_user_uid(keyring)))
->  			continue;
+> +static inline int security_mem_foll_force_opened_by_owner(const struct cred *subject)
+> +{
+> +	return 0;
+> +}
+
+With proc_mem_foll_force() currently returning true/1 in this case,
+shouldn't the LSM hook return true/1 when disabled?
+
+>  static inline int security_capget(const struct task_struct *target,
+>  				   kernel_cap_t *effective,
+>  				   kernel_cap_t *inheritable,
+> diff --git a/security/security.c b/security/security.c
+> index 71aea8fdf014..fff26ff65e07 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -595,6 +595,26 @@ int security_ptrace_traceme(struct task_struct *parent)
+>  	return call_int_hook(ptrace_traceme, parent);
+>  }
 >  
->  		if (test_bit(KEY_FLAG_REVOKED, &keyring->flags))
-> diff --git a/security/keys/proc.c b/security/keys/proc.c
-> index 4f4e2c1824f1..8d6d26652aab 100644
-> --- a/security/keys/proc.c
-> +++ b/security/keys/proc.c
-> @@ -68,7 +68,7 @@ static struct rb_node *key_serial_next(struct seq_file *p, struct rb_node *n)
->  	n = rb_next(n);
->  	while (n) {
->  		struct key *key = rb_entry(n, struct key, serial_node);
-> -		if (kuid_has_mapping(user_ns, key->user->uid))
-> +		if (kuid_has_mapping(user_ns, key_user_uid(key)))
->  			break;
->  		n = rb_next(n);
->  	}
-> @@ -100,7 +100,7 @@ static struct key *find_ge_key(struct seq_file *p, key_serial_t id)
->  		return NULL;
->  
->  	for (;;) {
-> -		if (kuid_has_mapping(user_ns, minkey->user->uid))
-> +		if (kuid_has_mapping(user_ns, key_user_uid(minkey)))
->  			return minkey;
->  		n = rb_next(&minkey->serial_node);
->  		if (!n)
-> -- 
-> 2.43.0
-> 
+> +/**
+> + * security_mem_foll_force_opened_by_owner() - Check if introspective FOLL_FORCE is allowed
+> + * @subject: credentials of the process accessing its own memory
+> + *
+> + * Check if FOLL_FORCE is allowed for accessing process memory through
+> + * /proc/$pid/mem in the case where the opener's MM was the same as the target
+> + * MM, meaning the security_ptrace_access_check() hook was bypassed on open().
+> + * (current->mm does not matter for this; for example, if write() is called on
+> + * an FD that was received from another process which obtained it with
+> + * open("/proc/self/mem"), this hook still runs.)
+> + *
+> + * This is only used when the system is configured with PROC_MEM_FORCE_ALWAYS.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_mem_foll_force_opened_by_owner(const struct cred *subject)
+> +{
+> +	return call_int_hook(mem_foll_force_opened_by_owner, subject);
+> +}
 
-I hope you don't mind that I sanity check a bit:
+Please don't forget to change the LSM callback name when you are changing
+the LSM hook name.
 
- git grep "user->uid" security/keys
-security/keys/internal.h:       uid = key->user->uid;
-security/keys/key.c:            if (uid_lt(uid, user->uid))
-security/keys/key.c:            else if (uid_gt(uid, user->uid))
-security/keys/key.c:            unsigned maxbytes = uid_eq(key->user->uid, GLOBAL_ROOT_UID) ?
-security/keys/proc.c:           if (kuid_has_mapping(user_ns, user->uid))
-security/keys/proc.c:   unsigned maxkeys = uid_eq(user->uid, GLOBAL_ROOT_UID) ?
-security/keys/proc.c:   unsigned maxbytes = uid_eq(user->uid, GLOBAL_ROOT_UID) ?
-security/keys/proc.c:              from_kuid_munged(seq_user_ns(m), user->uid),
-security/keys/process_keys.c:   uid_t uid = from_kuid(user_ns, cred->user->uid);
-security/keys/process_keys.c:           uid_keyring = keyring_alloc(buf, cred->user->uid, INVALID_GID,
-security/keys/process_keys.c:           session_keyring = keyring_alloc(buf, cred->user->uid, INVALID_GID,
-security/keys/process_keys.c:                                               cred->user->uid));
-
-Have you audited these and reflected against your current patch?
-
-BR, Jarkko
-
+--
+paul-moore.com
