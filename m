@@ -1,95 +1,96 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68994369236
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 13:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC8B3DAACF
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 13:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.179
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787922318; cv=pass; b=kjtAqCBO+zmLeSNSEQmdbP/f+8ZVzYRk1FBCMHPcfcx+b5ksRsAFaK2/kHUQ0SVqJ93aVd09eFhuA4cdOsEzFTohCxvBySKvfqosw8qwcqnLVouQ3n/rYBInKdlquN67+MHUoPoh8Ih7ZBuQU6jGxPaVPRVPF54R9VoKFla7urc=
+	t=1787923278; cv=pass; b=DaSnZMyHGXYG9F0ZNbqbDoPdvrh4xz5zBmeOmhPghIUq2PLiaAUlWdiMq51rJXjyq5GEIsdcWlBWSTANJlmrFXTmsA0su4CNqbjMjBKUA6jCmV9Ye3wqyErPopJY7Hj/7MrSx30QhzBv1AOgxSTqL+PjirfCIoAjLHBVMZ6GZXk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787922318; c=relaxed/simple;
-	bh=pajnVni3fs8345lKRDE3FBdUZGFKUMVeC0hP96aTX6U=;
+	s=arc-20240116; t=1787923278; c=relaxed/simple;
+	bh=5BzWTvTEODadIF56TEz3lyokV3iJPu75tta+h2QbYzA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NMyKimPduGceG45ba8uV65NcYCgtRynaRiK/6fNxjiNtaP1juUWzqxYajqe6Su4zV2n5fGQcsA/16PUBVnWhb5yuA0N0ltXqgY+s4Yo3XHiz0NwgZ/JSMV7ircD+E0QFZ/ONJU3lu7HYilsE5Okh1cjvNPVeYHShYL6XfwQt4eQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s9xMtPrb; arc=pass smtp.client-ip=209.85.214.178
+	 To:Cc:Content-Type; b=kksQJBfXRmdLUzfwKOFS74lq2CWel3n7PC2OzwZtI0C4ZKj1yFUMu3sw2cp++eSr2CWFDmuAAK9ThrT8nENMYpMeSmHYkUCQ31AnpnSGTYkOiRc3cEe7q9Zk18GxzsR+qz6PKOQuLc6zah1hdaG3lNTE/p8/dWQ12pjs8jI7LYk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t40N7rN8; arc=pass smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s9xMtPrb"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2ccdf36f63dso114085ad.0
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 06:05:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787922317; cv=none;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t40N7rN8"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2d3b445a84fso94075ad.1
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Aug 2026 06:21:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787923276; cv=none;
         d=google.com; s=arc-20260327;
-        b=M5zvrsyYwZSN/nA1u7PmWz5TZhd/5WjlUz50UlsLd9Vym4vUtB6jQaD6Mr/Miouv7O
-         urPckBeOGXRXz7MsZPw5LKkcc91bmKlhqnDGowf21z43JnHAHVJcg6u9erJGEt2FYe9v
-         W3/EojLbUf9z/+FxaixhJVEoakhAgIbQ78plebok1ydAsMzAsw+Ciaq909KQrbKOEgb7
-         kdvxoF+/uxEnwPDY/sctXcddH6dJx1ROkH8kIQdJ7YAaCwhtxQJrf5YYNprdW0kSPhu7
-         SmMy85RAsKh+TGFAVUNtGm5GMQHmaqc0XvJ0aFRx+65mphuXZ6qXqL78Ed5tK2To4vKg
-         7tZg==
+        b=JAohp5a8h1a1MNmzh9OuIrEpVESmVlDxpPZjsCGUZ8rPbqcScEnCI0XdgoXgzGdYFH
+         KvvRElkmfk04sgXw7QenEVEHtpWp1W3YYpmgNUIW6tMsis211feqYolmVHLhyNO2XX+c
+         p82/1CByvA3l6OB0qRPDQfmk9Q9G+/qbiszWXLElRerhczzgHuH6k5wTGeyPtcmU9OQ7
+         W1/SjRhiJa/IKi06aQK8arIaUFYj9Mkcs2zCyuPhbzs923YORN+tG/hclY1N8DNnVm7O
+         SXyZ1CQ0cbtj1x39/cmS6jozd4ocfq1EGr9ODF7fDbgYIYinkUveoNzYUm3s3Oz/ADAQ
+         icfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=XyY15gZ/uyotBCsU5YViQYJjvIkD9znAZ6y7wL3wuFw=;
-        fh=GHIkRN6ADbgNswebO/aJbUbhzP5ZxsuXmydgOVLbOKU=;
-        b=UZV3HZoU3AUHfTc94oHInwQqcIv5fbClvO6tGSLQZuVIAcRHL00rvb/zSGVWSoM0Hz
-         hLsxA8MuNXpEfJQgPZ5IMiJHkEUtB91nXL5MSAQT3+AAxtn7DOYAV9P236Ibd8s+OMcX
-         BVvjR+aoXs5/iEbh8MKUaqRLGphOiprOAbopcC0iExAiXBPO8sNT0EoUwtf0cMKgICXA
-         U4JdgM4s1fi1rh/C+wwTyeURd7AhhmzdFxHV+lM9nwdv+J3QBBCZyEWS9yl4zLFeMSzi
-         Q1tHd7dhcI9KLTgqjXi0jmpIq9q6wax/AX4Twfa4mNaapIdcqzNiKec9LqqGAnUBK40w
-         Ju1Q==;
+        bh=TmuJ8XeoPh26H2sa3OfduzNJbG5iPyqGukTAzRwDvaw=;
+        fh=QJBrIBQcIt5xGlgV4RBobzNsm0IUB0uxp86v4sPAfq8=;
+        b=aKFEKPxrG/tP3Mu/hJQxl5XAkQlIecdhhQx7sDEIMDNfDlnbaWYTKFsvGQjBZmOIv2
+         qpkJtxsC7nrJV8KxDw8wOjESyONoh8t0Q+C76MD87XlyJpYjk8JbHGQlMz2J6B6gbLOt
+         0h+zzo07ukGKRfSiH7ys+AVTdDoKwZ7ByxcQdT2vVbXWBOVqDf3p2IaOoIwCiYERfGhg
+         KK7RzXQQH0TbvtFuu18jK8grc3T9T9Klu45twpBpY9VlpsoQQiDD5Hp/cgB/C66yEhVV
+         z1Qg8pHuV9yyrCBiO3xNCDPgTxIQdzKNI0wbnCeNOFAWZChPAFVVORXcRvmLPW3WoMiB
+         jAWQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787922317; x=1788527117; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1787923276; x=1788528076; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=XyY15gZ/uyotBCsU5YViQYJjvIkD9znAZ6y7wL3wuFw=;
-        b=s9xMtPrbI2x8d4KzdhJwQ75f7SuKGJFJduQsbl43byIuGIM+LumG6m7kK017wSxnsj
-         5ephCSET2uQRpKk2fTa/VeI4zaQRGe+mqr4BJ9N587Em3ZPJFVxHuxi+kstCvGWO7ZI1
-         Umk9Sh7dMT3DhbdU6yCbJTnCNOFlV/HvSdzxIhOB0JRJoOXIS1GfzZiTcNhepGp4FReT
-         uygpTFo3O2Zm28B3M6FxJho8mLGv6iMg2nbAi/bfG8jXRQqTYuqv1BWavat6gYrgmKwf
-         kHoxOrGmo2vFPk82zKAal7NBlRBC3DRJwhRAw0O/QJgs7vJprFtoso5TBzZcexaMFlfb
-         WxXw==
+        bh=TmuJ8XeoPh26H2sa3OfduzNJbG5iPyqGukTAzRwDvaw=;
+        b=t40N7rN8XJSRScvkqe0e98xgccDBcGcUWgc7Cj4HBKEL44sPdsOFqJ8qPbUkP4/uo9
+         IsyLSVx8mkN8ChMd0M72M6PfFDkEVBkD82/+Pfmv/auq7qjv8GNk1MR5K8DGE8bd7hoh
+         JH48/8IQL8oUHvDiWs3q2tNzIHo50KblaVvpaXZ/0eew8cl8d8c85FOH3fOu8qgfFvaV
+         4IBzLUxYnnY9cq46Y++W5GnuR+FxFD8MYtKN0T8EDRJAgaz9jTD7wWRljOutCRpjkj+v
+         2D6X8x1F4WujtWCnuCaYXotHT+mSGXlbiLdvEtakky7KzJH+9OcLatIAo1qEGacnAOdi
+         kJaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787922317; x=1788527117;
+        d=1e100.net; s=20251104; t=1787923276; x=1788528076;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=XyY15gZ/uyotBCsU5YViQYJjvIkD9znAZ6y7wL3wuFw=;
-        b=Dy0as+xSLdC7F1z03Po9cHKODm5dcXkRj5IuOholdBfww5cZQYsz0yJZ4EhsywBB/9
-         3QwF2R5Wm90crQaUZoHjyCBztEh3JvG0u78LXKlIOmH37zo6+dhtUVsYYNdKHlnLzFO1
-         VVZ59x91kvC3XTcbv8IdEtjZbKryrC3dMnpIu3Hk7zVo6Cxn8mwS8IrHBm7js8I/cwJ+
-         iRnA98X0f9BHXon2g9p9ZoaLPySpqxwOa06mTKbPCILnqEhQ8mDflRlRiRhmxJL1W62d
-         +AjbXhLGEMjBG4Frh+ZL8hcinn4Hz1fGI/wjcmyvVtqWmc2KwZN+YES1yzkdXw4Pd7Bs
-         cxcQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpQE/Dzxon0B5hX1giEqRKUdK41XOzDzUIFvFkAnfVl4gbMVK1fFJk2QnlylcMbNTBAZzV35pCbY8ribI/oErbCaK54efQ=@vger.kernel.org
-X-Gm-Message-State: AFuF++lmchkVjKj98/OQDXouckAA4fOtWTXMTvJirk5rguFwSaYKFDPI
-	cThb3DIbAr+cmPOp6y67dNzHshFq26SwOYztvkGbGsZt5zq7FFsswMvixmSJts3v3Eb5zkw9Qjl
-	J6UggLmgpJQBEvjwvIsQ97sPktYNNncGAY3gQv22e
-X-Gm-Gg: AR+sD12krZCpwGMFyLa4lkD8XvDx3fDdfwrL1f7lQcwdWwJDQ6wBvoc8mV+TMHzw2jJ
-	hx80muQBxNy6qNagUhCVrEoZJDyPxxTX8SkwE4MJyrJPYxo9azNp2StEjDfdO3pIA+7ZQsZEgkG
-	i6Obmu6Y5hKdyXzCyz4Vd5b0z/14vPpD5IjI0/s+hHchzbPpNE/bsh8mHMt3HIBEGRY6SegIBJ2
-	JIQzOhyxvsC4ooicsDU6h9lVOtqxUxb2Ws5QPtWPiiwunqUrA4LH6fxcyjuOZuzfr3v2z8/r+/s
-	rV3RauV7u36Xlu7XTdwqnIXjftvYEiXMgt8CIjUDQE9z6HWLq07gP3DpZS6ikt76jFQCE22rVqn
-	4j4H7mL3y/Y+fvOS7xI9GNeZ0/L4t9rA=
-X-Received: by 2002:a17:903:987:b0:2c7:b1e7:501e with SMTP id
- d9443c01a7336-2d75482c43emr5737145ad.3.1787922316046; Fri, 28 Aug 2026
- 06:05:16 -0700 (PDT)
+        bh=TmuJ8XeoPh26H2sa3OfduzNJbG5iPyqGukTAzRwDvaw=;
+        b=boqPFnivU5bpFqSQDt2QMjRr8zSdvHUz2WdQ9OMafAfKy7MXfItEBjl0c/tI3H0vAX
+         pW8LOqZ0yxVPay4DK1Allr4zdNNdAw9b//dRK6TNRkluib3BMTmn+CvR+VeOIX8tM4jO
+         U6TXuHOKFQxMZTeM3Us9SIf4OS2bFgRdMEWjdWKFg92WLorSyUMulrsgiIQT7ekjDf5/
+         S3PVtj1hDJy+rVj/MZV15ZfNTpEGjhARccMN/fisxNWugF5PAPk1n0dSwZK3iJomNwv+
+         s9iVPJRtXymljNFjuFKDbJfjl0HUR/jq1RT3bcNyI9AjgjTF/J19tkID8CBvbaV4+rtr
+         ezqw==
+X-Forwarded-Encrypted: i=1; AHgh+RquIRTh/IwtiDaBU6GlLbkwjmBpkCiZ9dGWytopacSe15wOm0pI+hmF7WLzDZxGHVqbAELUDiQI3qsPGTyxl+RICIcNGcI=@vger.kernel.org
+X-Gm-Message-State: AFuF++mWiOXFNrg2umB68NGxe9PLuL8q9u+/KpPnODwdbPI7Jb4PIGom
+	E8ZrBuJj3I2B48LyVLgl3W931SP/5clcBZsrExf99K2eFq+vWcjkpxg3wF1HORdATLd7CiSY1PY
+	vQpPocPV4Gaq5y1AjI/48jEssrRnjbt2GhtjhCJSM
+X-Gm-Gg: AR+sD11LVg0RbSYeaw2m5N4MOWWJRsv70isP68Lq9sLt/rkcZn8FsvtpFF7kJoEiODW
+	gpB0sksOsoTbwJZ9LXLIwVUVuDfTgJOtars78stRUxPYxt75xM6YAZ2nEATA3xXHzyGnaunIepA
+	+jocOWWs5Bu1KPMLxUjBDCUqxkdceFXy6+lGLRw7LsJewLSYfNw5W17+Vby4U0XvadpZ3CZ7vXz
+	ELEpwDC+hKaq+t+s66dyOu0aXhxjcydM2870wajhHUQRc6+brvO2lZtwpd/BfaCivukflrWpc7N
+	++ilZBoOBbGO4riJPtYhSEUAjYqooJedeHQwdQIHMSEuTpKMS5T6ptosB6KaGMSKZ2ylBWNbFrr
+	Zwd2EIyn1XinVJj4Mj99jCx8163qXug==
+X-Received: by 2002:a17:903:b48:b0:2c9:bd54:cf with SMTP id
+ d9443c01a7336-2d74f403213mr6682285ad.4.1787923275276; Fri, 28 Aug 2026
+ 06:21:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260825-selinux-pokemem-v2-3-b46bc64916d8@google.com> <de5f1c2fb1ccbb92beda6906e23ac457@paul-moore.com>
-In-Reply-To: <de5f1c2fb1ccbb92beda6906e23ac457@paul-moore.com>
+References: <20260825-selinux-pokemem-v2-2-b46bc64916d8@google.com>
+ <82929c994076d95f99560ecc67f6cfce@paul-moore.com> <CAG48ez1rd3cFhmGn7mWkaVvGqYg+cDiGUhuhH6r51dUm-QBXUA@mail.gmail.com>
+In-Reply-To: <CAG48ez1rd3cFhmGn7mWkaVvGqYg+cDiGUhuhH6r51dUm-QBXUA@mail.gmail.com>
 From: Jann Horn <jannh@google.com>
-Date: Fri, 28 Aug 2026 15:04:38 +0200
-X-Gm-Features: AcwNN1VyfOvZNu7ELf4xzHHJ3BQoTm58QSMty2PAZc7oNVjQteiUlR74XB89qaw
-Message-ID: <CAG48ez1NsUqpZmr66RaeFXMicpZT2FjMfwqTJwcQva50XN6cGw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] selinux: require PROCESS__PTRACE for FOLL_FORCE introspection
+Date: Fri, 28 Aug 2026 15:20:37 +0200
+X-Gm-Features: AcwNN1X1_-cZAxs-C_zVg9dDOHf5DCa4yCAEiND1xrtOkQ0sGqfzpyFhp0b8haE
+Message-ID: <CAG48ez2jgJHewZYK1SVccJmBa=bjoMW80SPNcbgW2XCtZaWhjg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] proc: query LSMs for introspective mem access (if PROC_MEM_FORCE_ALWAYS)
 To: Paul Moore <paul@paul-moore.com>
 Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
 	Stephen Smalley <stephen.smalley.work@gmail.com>, Jeff Xu <jeffxu@google.com>, 
@@ -103,12 +104,51 @@ Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 28, 2026 at 3:10=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Aug 25, 2026 Jann Horn <jannh@google.com> wrote:
-> I realize not all of the SELinux hook callbacks use proper kdoc comments,
-> but I'm trying to fix that.  If you could make this a kdoc function heade=
-r
-> comment I would appreciate it.
+On Fri, Aug 28, 2026 at 3:03=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+> On Fri, Aug 28, 2026 at 3:10=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > Beyond that, we really try to avoid making LSM hook calls conditional. =
+ It
+> > can limit what an LSM can enforce, it tends to be a bit more fragile, a=
+nd
+> > it adds some unnecessary work in the case where CONFIG_SECURITY is
+> > disabled.  I would suggest passing 'opened_by_owner' flag as a second
+> > parameter to the LSM hook and calling the hook unconditionally in the
+> > default switch case as a replacement for the 'return true;' statement. =
+ I
+> > understand it may seem a bit odd, but we try to make the LSM interface =
+as
+> > generic as possible with respect to different models and this is one wa=
+y
+>
+> I guess I can do that, but then the question becomes, what other modes
+> of using the LSM hook that don't currently exist in the kernel should
+> I be supporting with this? I can make this a parameter, but any LSM
+> policy that actually uses the parameter in a different way would
+> probably be buggy/inconsistent, unless other new LSM hooks are added.
+>
+> If your intent is to make the hook work for any /proc/$pid/mem access,
+> including when the caller is ptrace-attached, then I guess I have to
+> move around the security hook call in proc_mem_foll_force() a little
+> bit. I guess I'll do that in v3, though I really don't like trying to
+> come up with a reasonable in-kernel API contract for a scenario that
+> currently has zero users.
 
-Ack, will do.
+I started thinking about how to implement this, and an annoying aspect
+about this is:
+
+Currently, I only have to look at the credentials of the opener of the
+file - that is both the subject and object of the access. But if I
+want to provide a hook that works for any /proc/$pid/mem access, and
+want the hook to know what the object of the access is, and do it
+race-free, then I would need to grab the creds of the target task in
+mm_access(), bubble them up into proc_mem_open() and mem_open() (which
+will require touching all the callers of mm_access() and
+proc_mem_open()), store them into mem_private there, then let
+proc_mem_foll_force() extract the creds from there. All that would be
+unused code.
+
+Do you think I should just not provide credentials for the target, and
+document "if opened_by_owner is true, the subject credentials are also
+the object credentials; if opened_by_owner is false, you don't get to
+know what the object is"?
