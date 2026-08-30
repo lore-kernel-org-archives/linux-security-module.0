@@ -1,236 +1,214 @@
-Received: from mail-oi2-f3.google.com (mail-oi2-f3.google.com [74.125.231.195])
+Received: from mail-pj2-f8.google.com (mail-pj2-f8.google.com [74.125.227.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1053F413E
-	for <linux-security-module@vger.kernel.org>; Sat, 29 Aug 2026 18:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788028061; cv=none; b=CvU44qwtU1U7Ay+U5/JMs6GiI0gHxxSD4Y4IgU0XacvczmA/r8nd4mgzX6alARYVIMFUsBZA3FiSOoS3/PkCYLYoe+LfcaE4Oxnqb+1GLovK0mpInz921gltYO7dsBnGwKbZTkx5l5hdBsf6kCED0KHYxnjZMKHL3JRcbVu6Yq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788028061; c=relaxed/simple;
-	bh=qmIY9cd4YfgD5xSO1PnpOaIsQXH/XfPQKGC4HygGPOs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=eCHpti7iyKNfBDbf7EMFayx0j7mfBj2d2IqMOf6ys1Ahng393w1KT8drbZ1/5o0SP3gBP+NAUz/gWRmSC5AIdpsLNiQXjQ9s1UhQYblekKriQt4FNRMRhC/AUuquar+iUQPp2nNNHH3w7uZT8V4GHCjpkD2slmd/KXmvQmQUWKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=74.125.231.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi2-f3.google.com with SMTP id 5614622812f47-4b38a6e8c79so881801b6e.1
-        for <linux-security-module@vger.kernel.org>; Sat, 29 Aug 2026 11:27:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D798381AFF
+	for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 16:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.136
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788106723; cv=pass; b=AxlKxiKEITGOGYY7j6uQ5zduAdxUpDJjPC4S9kPUiswfGNURTcijN7h8nuzbF+W0XEEDWsqkvFpRq6skQLr7B+bjhIYBPwmVNBqmGpRi0Cz6pJGrzAMJ5MI9OrcKLJBBpMh4woX/JC6pRf1tkzSlyYL6em12BTmCvSYqyZuiums=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788106723; c=relaxed/simple;
+	bh=TBwTBGpfFlI00fiylz+YCziKz54brt7GCa6Ljs3wO/Q=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WjfUcffyuSG3uo+F+Zgnzfr7503Y0hWuzsF0vpxSouVPe6PdQpL04j8scNwZCAaZSlHtiyk2IQ7C2/gwBwEit1HeD1MZzyNMVUnZmnmmqrI3WKWEumKoHW/75XWe4aR+7iN+7Mtg62coCJLylziJC22eM31GR4R4RIv/jfDZ9zw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbUUSCbp; arc=pass smtp.client-ip=74.125.227.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbUUSCbp"
+Received: by mail-pj2-f8.google.com with SMTP id 98e67ed59e1d1-38fd9408220so655872a91.1
+        for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 09:18:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788106721; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Qf51VsdznXwAturpnwcDiI4snPrv1KksURjOPyU9FelD3DnvSFfwe1HLVioNjkryqs
+         d9ZSW1abXZOPug95KIpggfUxo8sCtO3IwNtXdWX30XuhSbYOtYG1O5L9aDHQeZocMFiq
+         TgRUi+jVnUGZjjDAU7AkqnOdrzx5BMNAz6J7G1ofATuoS0uqltp9jMQ90+wRfI1HBLk9
+         /y187jpfk+ZdFoJWeab8XNHzB+q7Z40DNJwjGTgDpewyTk5zsX0c0AoUcoIg+hKXf8SN
+         8hpl/XcJ9fNLLKNQKkSSg1OVQaTfSCoIKYBGYAK5911SyYDox19REAbMcuD/mOkVuC2Z
+         Q3dA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=YCeJLnCjujFd5Tuu3vMrdczTw5NdJBJyfaA6i4lo768=;
+        fh=hKq2zdVm8v201oAqydOQFvDkxBKaGm9p5jSVGjwJByE=;
+        b=qblopRpJpr6k9KoLCs/7rMPVlgFT3uVE14Vl+/24luslmpJfUFpGxbBeNv+W2VseLW
+         vuKE8ve6yIELbrXct48z/NPAklpge492B5tpHiDcfVVaTfb0XX8KEUZTa+bg5d2naJDZ
+         slCu5fZvHGAl/xeyKVbmyh6A9NF7pqzxZFK05EctP04/mqNqCqakt4lqtwNGPvYgd6b7
+         5RmxgA4z1A0LtGSPZRrzkGKYkX7RDGr5mX34arqVQqYahaE4oV8gJwcQlZ8MGroyf6xt
+         g6GaoTju5+jUe9gmg0PY7VswSGOPLW1UTUdlYco4vqKacKltsoyyAUPpji06Hy+QoC6D
+         ygwQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788106721; x=1788711521; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:mime-version:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=YCeJLnCjujFd5Tuu3vMrdczTw5NdJBJyfaA6i4lo768=;
+        b=YbUUSCbp/SFVDe7yWaXMBv/Qfmard+uFE2dLUtkYT1DNrqdDZTCh2ovdokGr8oYveY
+         M+9W04TSKEnclnnGAiNs5WTXjJijb0t3bjNKHYhMyk76xzFf+4scVobXlpiCcY+qFRJd
+         hR2oqcEHVYDWm3jaH4DpsTViKEESfQLB4JJGLIzd2N2QkY5/Osn3D//UMQ9YyTLVbSUz
+         lrVpmOa8P4Qkv6GJSQXhXtGfSfrhdTJ0/YpZ3Id3M0fHJhHDV0Jp2aFDytFx0TeUQU9Z
+         fjfsOaSkT9TmmQ/Hwq54wjnspjSVeHHpzavplM9BywjEqgfJp91qvNv8rHa77MhNbZan
+         aTCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788028058; x=1788632858;
-        h=content-type:cc:to:from:subject:message-id:in-reply-to:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20251104; t=1788106721; x=1788711521;
+        h=content-type:cc:to:subject:message-id:date:from:mime-version
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=VjRRuz0jNscHK4iFPXII8dmeH+0Ecm+OwBXd0YtveV8=;
-        b=bfBPX4TMb6AVtAUDXiP6X1HfFbi40yUenN5492ah41KP0zysC8OQ1FH0quzKRpAZjd
-         Dm1D7APmbuNXeVXlUE6RwsZc/uck5pVaK5VWFMj5WZkJr6kcGRQUQm8QQy7YmMhyex0/
-         iX98O8fyviTVOCF+f6Pj/DmW6UjTwn3mcvkiScq8hw/dV2VUKUzMu5rXeTkpA+yQtTA1
-         EWrwyZIKdzakqrJgPrjcVfDTUnptFvURWnjDWsuz8u+n4Zyb9T2L0qoImdMxk6gwtaYO
-         Ww7eEuxs23+A34wPa6kIwNmngXwdqgc+6xlkpyMhIupxM7sELc4aB564UpIS3GqNlMf+
-         JLDQ==
-X-Forwarded-Encrypted: i=1; AHgh+RppYSWneDKgWPrwp8JgIjDUCvhX5PP67NSYhRC2MMIF9zyTTzotsNtzvf/LM/xZ6tTdfJB30J1hj1tZPSTNL+Kvss/EtBY=@vger.kernel.org
-X-Gm-Message-State: AFuF++kptgg4zBHRn0ZXt6nTN7BbuRC3Ou5sPhPeR1RcK3heKFKl8eWl
-	gHXO84B2pVcVivjVJv93B+iMq39VdrqYbXs/4uHu5jaZilbw/rGiJZ+5gx9DPzofkd8aLtEmwEC
-	H8HZyOKn6qJ0uD+IMM7v19GxObptzMWQj/r3Hzyhjm0e/4X7YSNFfasstJ3k=
+        bh=YCeJLnCjujFd5Tuu3vMrdczTw5NdJBJyfaA6i4lo768=;
+        b=eQ7p5Rbo4s7LZBMMi90+8afbiYNHAYzZnJ77WdHWfUgC/EW/9C2sywWB/00twimqFg
+         bg3rGMZyztWEeHUIuAxi0Lhg6BdoagSu6oQJ0tMJCVEP7GSWMJ8HFzfSiyMLC/a36OVb
+         3LUMoDmUiyVVdV4zTonKMjh+rhmdjVXbszjUr0LG/sUmyQaKQOulngZ1LZPYTvmzxQmH
+         bC0c6vfRFCNc95s9aor1YHPFJ2fCEstS3tcK6alUtq+pavJuivkNRe28hv4rVQx47NTM
+         ls5TrvSyRPVxSZgWPtCpcQsqMIYFqQjSXPkxLwrwh1Qa4hbFD2fcTHT73w8I56Fueg6L
+         2fIw==
+X-Forwarded-Encrypted: i=1; AHgh+RoBnz6/guK2eud9A5gHTsqJurWntiQ0f75mJcV9EAFnQIiXoZtK4G0uYKuP4BW6uGFsev+oVQNKlnmFVZ5u4x/tq9C+Okw=@vger.kernel.org
+X-Gm-Message-State: AFuF++mIL+0WGqNau8t9tiu5e74o4kBwVAz36Zml7SoMqjJEndkGLbtx
+	If+B2kWmCFEKrXCr9nlKlsH24JvHY2nnYo0Z8XNmYHwI4PMwd/4iLQfiiE7JI1b2KO+wF/Osd8m
+	miMUwN0Chbh7uIiUQLvmqFkGo2B1scJg=
+X-Gm-Gg: AR+sD11hnRPvMXB6omYZ1D9Y+/wMgLJWSmqVg46HdVACfo1tO+4AdMi1FYRge7GvLmN
+	v2dIN5m7PQE1y1uDzJ2mSgt/p91S5P4P3va6GmU5cvhs7QmFn4t9Z64xS9AzU3gu2qXh79AL9vu
+	+wVAkopHVNkQfNDBMvwRxrD7AmBT10Pb1cWIGXvrN6SFyxTGFnri+37aXH1EGcpdkEK1+CNCQcp
+	HMAspeGU/It6VP0jmjriRrEJfnIlMzejdqY6bGL6f/Coop39GdLBuGl1LgIuQ5sAN0jv53uXrDo
+	XsvMceox9O+un0RxT5OfWM7rm9CM/DWYFC1CNb449Xm6+A==
+X-Received: by 2002:a05:6a20:548c:b0:3d3:aee4:66f3 with SMTP id
+ adf61e73a8af0-3d3aef46d46mr20526363637.25.1788106721458; Sun, 30 Aug 2026
+ 09:18:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:4f48:b0:4a0:d9a1:1a95 with SMTP id
- 5614622812f47-4b3981b36ffmr16005896b6e.14.1788028058163; Sat, 29 Aug 2026
- 11:27:38 -0700 (PDT)
-Date: Sat, 29 Aug 2026 11:27:38 -0700
-In-Reply-To: <2A2D4D25-BB50-40A5-AF2F-956EBDB07876@mainlining.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a93249a.4d659fcc.734b4.002d.GAE@google.com>
-Subject: Re: [syzbot] [audit?] BUG: unable to handle kernel paging request in integrity_audit_message
-From: syzbot <syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com>
-To: brads@mainlining.org
-Cc: audit@vger.kernel.org, brads@mainlining.org, eparis@redhat.com, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, stable@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+From: Yan Yanhx <yanhx7@gmail.com>
+Date: Mon, 31 Aug 2026 00:18:23 +0800
+X-Gm-Features: AcwNN1WKGFAyXe7WvgEf21yNbwZ63ziGc5yy72Sf2XHSiEEHCFdBg-94X-XdP5A
+Message-ID: <CAMvJdVpx5C0W3wpwYCEphuHnHiv91ZqTPEjTU8Wp0iUJa=01KA@mail.gmail.com>
+Subject: SafeSetID: GID transition policy lookup uses RUID as source,
+ allowlist can be bypassed (setgid to any group including 0)
+To: Micah Morton <mortonm@chromium.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Serge Hallyn <serge@hallyn.com>, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-> On 29 August 2026 19:12:29 BST, syzbot
-> <syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com> wrote:
->>syzbot has found a reproducer for the following issue on:
->>
->
-> #syz test: dentry_path() returns ERR_PTR(-ENAMETOOLONG) when the path
+Hi,
 
-I've failed to parse your command.
-Did you perhaps forget to provide the branch name, or added an extra ':'?
-Please use one of the two supported formats:
-1. #syz test
-2. #syz test: repo branch-or-commit-hash
-Note the lack of ':' in option 1.
+Summary
+-------
 
-> exceeds the
-> buffer. validate_hash_algo() passes the result straight to
-> integrity_audit_msg() without checking. ERR_PTR is not NULL, so
-> integrity_audit_message() sees a valid pointer and calls strlen() on
-> it, which faults:
->
->     BUG: unable to handle page fault for address: ffffffffffffffdc
->     RIP: 0010:strlen+0x30/0xa0
->     Call Trace:
->      audit_log_untrustedstring+0x19/0x30
->      integrity_audit_message+0x366/0x4f0
->      ima_inode_setxattr+0x512/0x5f0
->
-> Check for IS_ERR() and use NULL instead, which makes the audit message
-> skip the name= field instead of crashing.
->
-> Fixes: 4f2946aa0c45 ("IMA: introduce a new policy option func=SETXATTR_CHECK")
-> Cc: stable@vger.kernel.org
-> Reported-by: syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/all/6a8f89e5.1d9ded08.62e62.00bf.GAE@google.com/
-> Signed-off-by: Bradley Morgan <brads@mainlining.org>
->  security/integrity/ima/ima_appraise.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index ced2e131b061..b280488e15fc 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -748,6 +748,8 @@ static int validate_hash_algo(struct dentry *dentry,
->  		return -EACCES;
->  
->  	path = dentry_path(dentry, pathbuf, PATH_MAX);
-> +	if (IS_ERR(path))
-> +		path = NULL;
->  
->  	integrity_audit_msg(AUDIT_INTEGRITY_DATA, d_inode(dentry), path,
->  			    "set_data", errmsg, -EACCES, 0);
-> -- 
-> 2.47.3
->
->>HEAD commit:    cf72cbb39da8 Merge tag 'io_uring-7.3-20260828' of
->>git://gi..
->>git tree:       upstream
->>console output: https://syzkaller.appspot.com/x/log.txt?x=16e7cc15580000
->>kernel config:  https://syzkaller.appspot.com/x/.config?x=85bc5cc2fc7394d9
->>dashboard link:
->>https://syzkaller.appspot.com/bug?extid=5ebeb3089ea6439c37be
->>compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
->>userspace arch: i386
->>syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159ebd79580000
->>C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=123d1d79580000
->>
->>Downloadable assets:
->>disk image (non-bootable):
->>https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-cf72cbb3.raw.xz
->>vmlinux: https://storage.googleapis.com/syzbot-assets/755d053ff703/vmlinux-cf72cbb3.xz
->>kernel image:
->>https://storage.googleapis.com/syzbot-assets/0837738ba281/bzImage-cf72cbb3.xz
->>
->>IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>Reported-by: syzbot+5ebeb3089ea6439c37be@syzkaller.appspotmail.com
->>
->>BUG: unable to handle page fault for address: ffffffffffffffdc
->>#PF: supervisor read access in kernel mode
->>#PF: error_code(0x0000) - not-present page
->>PGD eb99067 P4D eb99067 PUD eb9b067 PMD 0 
->>Oops: Oops: 0000 [#1] SMP KASAN NOPTI
->>CPU: 0 UID: 0 PID: 5921 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
->>Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
->>1.16.3-debian-1.16.3-2 04/01/2014
->>RIP: 0010:strlen+0x30/0xa0 lib/string.c:402
->>Code: 00 00 00 00 00 fc ff df 55 48 89 fa 48 89 fd 53 48 c1 ea 03 48 83 ec 08 0f b6 04 02 48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 50 <80> 7d 00 00 74 3d 48 bb 00 00 00 00 00 fc ff df 48 89 e8 48 83 c0
->>RSP: 0018:ffffc90002eb7920 EFLAGS: 00010246
->>RAX: 0000000000000000 RBX: ffffffffffffffdc RCX: 0000000000000000
->>RDX: 0000000000000004 RSI: ffffffff82081bc1 RDI: ffffffffffffffdc
->>RBP: ffffffffffffffdc R08: 0000000000000004 R09: 00000000000000a9
->>R10: 00000000000006c0 R11: 0000000000000001 R12: ffff888027be0e40
->>R13: 0000000000000007 R14: 00000000fffffff3 R15: ffffffffffffffdc
->>FS:  0000000000000000(0000) GS:ffff888096967000(0063) knlGS:000000005783f480
->>CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
->>CR2: ffffffffffffffdc CR3: 0000000055e55000 CR4: 0000000000352ef0
->>Call Trace:
->> <TASK>
->> __fortify_strlen include/linux/fortify-string.h:218 [inline]
->> audit_log_untrustedstring+0x19/0x30 kernel/audit.c:2203
->> integrity_audit_message+0x366/0x4f0
->> security/integrity/integrity_audit.c:60
->> integrity_audit_msg+0x41/0x60 security/integrity/integrity_audit.c:32
->> validate_hash_algo security/integrity/ima/ima_appraise.c:752 [inline]
->> ima_inode_setxattr+0x512/0x5f0 security/integrity/ima/ima_appraise.c:775
->> security_inode_setxattr+0x299/0x560 security/security.c:1940
->> __vfs_setxattr_locked+0xad/0x2b0 fs/xattr.c:309
->> vfs_setxattr+0x14a/0x390 fs/xattr.c:344
->> do_setxattr+0x145/0x180 fs/xattr.c:662
->> file_setxattr fs/xattr.c:672 [inline]
->> file_setxattr+0x139/0x1b0 fs/xattr.c:666
->> path_setxattrat+0x335/0x3b0 fs/xattr.c:732
->> __do_sys_fsetxattr fs/xattr.c:782 [inline]
->> __se_sys_fsetxattr fs/xattr.c:779 [inline]
->> __ia32_sys_fsetxattr+0xc4/0x140 fs/xattr.c:779
->> do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:79 [inline]
->> __do_fast_syscall_32+0x13a/0x8b0 arch/x86/entry/syscall_32.c:291
->> do_fast_syscall_32+0x32/0x70 arch/x86/entry/syscall_32.c:316
->> entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->>RIP: 0023:0xf7fb7fec
->>Code: Unable to access opcode bytes at 0xf7fb7fc2.
->>RSP: 002b:00000000fffd97bc EFLAGS: 00000296 ORIG_RAX: 00000000000000e4
->>RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000080000080
->>RDX: 0000000080001080 RSI: 0000000000000002 RDI: 0000000000000000
->>RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
->>R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->>R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->> </TASK>
->>Modules linked in:
->>CR2: ffffffffffffffdc
->>---[ end trace 0000000000000000 ]---
->>RIP: 0010:strlen+0x30/0xa0 lib/string.c:402
->>Code: 00 00 00 00 00 fc ff df 55 48 89 fa 48 89 fd 53 48 c1 ea 03 48 83 ec 08 0f b6 04 02 48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 50 <80> 7d 00 00 74 3d 48 bb 00 00 00 00 00 fc ff df 48 89 e8 48 83 c0
->>RSP: 0018:ffffc90002eb7920 EFLAGS: 00010246
->>RAX: 0000000000000000 RBX: ffffffffffffffdc RCX: 0000000000000000
->>RDX: 0000000000000004 RSI: ffffffff82081bc1 RDI: ffffffffffffffdc
->>RBP: ffffffffffffffdc R08: 0000000000000004 R09: 00000000000000a9
->>R10: 00000000000006c0 R11: 0000000000000001 R12: ffff888027be0e40
->>R13: 0000000000000007 R14: 00000000fffffff3 R15: ffffffffffffffdc
->>FS:  0000000000000000(0000) GS:ffff888096967000(0063) knlGS:000000005783f480
->>CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
->>CR2: 00000000f7fb8000 CR3: 0000000055e55000 CR4: 0000000000352ef0
->>----------------
->>Code disassembly (best guess):
->>   0:	00 00                	add    %al,(%rax)
->>   2:	00 00                	add    %al,(%rax)
->>   4:	00 fc                	add    %bh,%ah
->>   6:	ff                   	lcall  (bad)
->>   7:	df 55 48             	fists  0x48(%rbp)
->>   a:	89 fa                	mov    %edi,%edx
->>   c:	48 89 fd             	mov    %rdi,%rbp
->>   f:	53                   	push   %rbx
->>  10:	48 c1 ea 03          	shr    $0x3,%rdx
->>  14:	48 83 ec 08          	sub    $0x8,%rsp
->>  18:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax
->>  1c:	48 89 fa             	mov    %rdi,%rdx
->>  1f:	83 e2 07             	and    $0x7,%edx
->>  22:	38 d0                	cmp    %dl,%al
->>  24:	7f 04                	jg     0x2a
->>  26:	84 c0                	test   %al,%al
->>  28:	75 50                	jne    0x7a
->>* 2a:	80 7d 00 00          	cmpb   $0x0,0x0(%rbp) <-- trapping instruction
->>  2e:	74 3d                	je     0x6d
->>  30:	48 bb 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbx
->>  37:	fc ff df
->>  3a:	48 89 e8             	mov    %rbp,%rax
->>  3d:	48                   	rex.W
->>  3e:	83                   	.byte 0x83
->>  3f:	c0                   	.byte 0xc0
->>
->>
->>---
->>If you want syzbot to run the reproducer, reply with:
->>#syz test: git://repo/address.git branch-or-commit-hash
->>If you attach or paste a git patch, syzbot will apply it before testing.
->>
->
-> --- Thanks!
-> https://lore.kernel.org/all/EE579805-42F2-4C58-B752-F28779EEB717@grrlz.net/
+In security/safesetid/lsm.c, id_permitted_for_cred() builds the policy
+lookup key for a GID transition from the process's old RUID instead of its
+old RGID. When a process's real UID value differs from every source GID in
+the installed GID policy, setgid()/setregid()/setresgid() to any group
+outside the allowlist is silently permitted, and the process is not
+killed. I reproduced setgid(999) and setgid(0) succeeding on Linux 7.2.
+
+Affected version
+----------------
+
+Introduced by commit 5294bac97e12 ("LSM: SafeSetID: Add GID security
+policy handling", 2020-07-16), first shipped in v5.10. Still present in
+current master (08dbfad3f504). The vulnerable line is unchanged since
+introduction.
+
+Code path
+---------
+
+security/safesetid/lsm.c:
+
+    static bool id_permitted_for_cred(const struct cred *old, kid_t new_id,
+                                      enum setid_type new_type)
+    {
+        ...
+        if (new_type == GID) {
+            if (gid_eq(new_id.gid, old->gid) || ...)
+                return true;
+        }
+        ...
+        permitted =
+            setid_policy_lookup((kid_t){.uid = old->uid}, new_id, new_type)
+                != SIDPOL_CONSTRAINED;
+
+The lookup key uses old->uid unconditionally. kid_t is a union of kuid_t
+and kgid_t, so for new_type == GID the numeric value of the old RUID is
+reinterpreted as the source GID and looked up in safesetid_setgid_rules.
+The guard in safesetid_task_fix_setgid() (which decides whether the process
+is constrained) correctly uses old->gid.
+
+Consequence: if the old RUID is not numerically equal to any source GID of
+the installed policy, the lookup misses and returns SIDPOL_DEFAULT, so the
+transition is treated as allowed. setgid() to any group - including gid 0 -
+then succeeds without the intended SIGKILL. This defeats the GID allowlist
+that SafeSetID is designed to enforce.
+
+Reproduction
+------------
+
+Environment: Linux 7.2 (v7.2 tag, kernel.org), CONFIG_SECURITY_SAFESETID=y,
+booted with lsm=...,safesetid.
+
+Deploy a GID policy that allows exactly one transition:
+
+    # echo "2000:100" > /sys/kernel/security/safesetid/gid_allowlist_policy
+
+The policy means: from source gid 2000, switching to gid 100 is allowed;
+anything else must be blocked.
+
+Then, as a process with credentials RUID=1000, RGID=2000, holding
+CAP_SETGID:
+
+    setgid(999);
+
+Control group (RUID == source gid, so the bug is not triggered):
+
+    RUID=2000, RGID=2000, CAP_SETGID, setgid(999)  ->  process killed
+    (SIGKILL, exit 137), as intended.
+
+Buggy case (RUID != source gid):
+
+    RUID=1000, RGID=2000, CAP_SETGID, setgid(999)  ->  succeeds (exit 0)
+    RUID=1000, RGID=2000, CAP_SETGID, setgid(0)    ->  succeeds (exit 0)
+
+Both out-of-allowlist transitions succeed when the old RUID is not a
+policy source GID. A minimal reproducer program is available on request;
+per the reporting guidelines for AI-assisted findings I am not posting the
+exploit source in this message. Say the word and I will send it privately.
+
+Fix (tested)
+------------
+
+The fix builds the policy lookup source from the GID when the transition
+is a GID one, and keeps the UID otherwise:
+
+    permitted =
+        setid_policy_lookup(new_type == UID ?
+                            (kid_t){.uid = old->uid} : (kid_t){.gid = old->gid},
+                            new_id, new_type) != SIDPOL_CONSTRAINED;
+
+I built this change into Linux 7.2 and re-ran the reproduction:
+
+    before fix:
+      RUID=1000, RGID=2000, setgid(999)  ->  succeeds (exit 0)   [bypass]
+      RUID=1000, RGID=2000, setgid(0)    ->  succeeds (exit 0)   [bypass]
+    after fix:
+      RUID=1000, RGID=2000, setgid(999)  ->  killed (exit 137)
+      RUID=1000, RGID=2000, setgid(0)    ->  killed (exit 137)
+      RUID=2000, RGID=2000, setgid(100)  ->  succeeds (exit 0)
+[allowed, unchanged]
+
+The out-of-allowlist transitions are now blocked and the legitimate
+transition still succeeds. scripts/checkpatch.pl reports 0 errors,
+0 warnings. If a proper patch is wanted, I can prepare a git
+format-patch with Fixes: 5294bac97e12 ("LSM: SafeSetID: Add GID
+security policy handling"); the change above is offered as a starting
+point for the maintainers, not as a submission.
+
+Impact
+------
+
+Deployments that rely on SafeSetID GID policies to confine a CAP_SETGID
+service to a limited set of target groups lose that confinement: the
+process can switch to any group, including the root group. This is an
+authorization-boundary bypass limited to systems that explicitly enable
+SafeSetID and install a GID policy; it is not a privilege escalation from
+an unprivileged context on a default kernel.
+
+Best regards
