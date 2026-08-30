@@ -1,214 +1,145 @@
-Received: from mail-pj2-f8.google.com (mail-pj2-f8.google.com [74.125.227.136])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D798381AFF
-	for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 16:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.136
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788106723; cv=pass; b=AxlKxiKEITGOGYY7j6uQ5zduAdxUpDJjPC4S9kPUiswfGNURTcijN7h8nuzbF+W0XEEDWsqkvFpRq6skQLr7B+bjhIYBPwmVNBqmGpRi0Cz6pJGrzAMJ5MI9OrcKLJBBpMh4woX/JC6pRf1tkzSlyYL6em12BTmCvSYqyZuiums=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788106723; c=relaxed/simple;
-	bh=TBwTBGpfFlI00fiylz+YCziKz54brt7GCa6Ljs3wO/Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WjfUcffyuSG3uo+F+Zgnzfr7503Y0hWuzsF0vpxSouVPe6PdQpL04j8scNwZCAaZSlHtiyk2IQ7C2/gwBwEit1HeD1MZzyNMVUnZmnmmqrI3WKWEumKoHW/75XWe4aR+7iN+7Mtg62coCJLylziJC22eM31GR4R4RIv/jfDZ9zw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbUUSCbp; arc=pass smtp.client-ip=74.125.227.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C404C3BB13A
+	for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 18:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788114033; cv=none; b=TbyPex2PwemQ7ZKvJ3xiU8LTQD9ViZRHT0Ko0k7RXKjOIduSYu0Awt38QXWTJOh3Ufu0IUNnA5Nu0TRZmcQcRhqvASkvNqkv+SqVS4LYbRB53sWCuRS0YvRoRROvkyT/bCX9P7ustvQdLpshTYw5mQZFfoMaPY1eiW/LEA3UAl8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788114033; c=relaxed/simple;
+	bh=TVCyLwZDMmVp0hAurQYMH3T2j5DMGrsKI0ZW+vcU8T4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XCIObvKVCw+Yh76IDi1hYRwQs7PLUS2lsJAa8GVhMb1BlsaQDkHHvl+KC1/P1u/d0dUKypU0DL9dge1MlGmnS+uhOCixEF/Kmau/HkVZPyAPsJfNlJgd3ft9btWakVNoFmKI9rFD7WQvlBynQ4+Ogxu0WxdFsqlxbDgbdDqIfnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKmLibdZ; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbUUSCbp"
-Received: by mail-pj2-f8.google.com with SMTP id 98e67ed59e1d1-38fd9408220so655872a91.1
-        for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 09:18:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788106721; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Qf51VsdznXwAturpnwcDiI4snPrv1KksURjOPyU9FelD3DnvSFfwe1HLVioNjkryqs
-         d9ZSW1abXZOPug95KIpggfUxo8sCtO3IwNtXdWX30XuhSbYOtYG1O5L9aDHQeZocMFiq
-         TgRUi+jVnUGZjjDAU7AkqnOdrzx5BMNAz6J7G1ofATuoS0uqltp9jMQ90+wRfI1HBLk9
-         /y187jpfk+ZdFoJWeab8XNHzB+q7Z40DNJwjGTgDpewyTk5zsX0c0AoUcoIg+hKXf8SN
-         8hpl/XcJ9fNLLKNQKkSSg1OVQaTfSCoIKYBGYAK5911SyYDox19REAbMcuD/mOkVuC2Z
-         Q3dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=YCeJLnCjujFd5Tuu3vMrdczTw5NdJBJyfaA6i4lo768=;
-        fh=hKq2zdVm8v201oAqydOQFvDkxBKaGm9p5jSVGjwJByE=;
-        b=qblopRpJpr6k9KoLCs/7rMPVlgFT3uVE14Vl+/24luslmpJfUFpGxbBeNv+W2VseLW
-         vuKE8ve6yIELbrXct48z/NPAklpge492B5tpHiDcfVVaTfb0XX8KEUZTa+bg5d2naJDZ
-         slCu5fZvHGAl/xeyKVbmyh6A9NF7pqzxZFK05EctP04/mqNqCqakt4lqtwNGPvYgd6b7
-         5RmxgA4z1A0LtGSPZRrzkGKYkX7RDGr5mX34arqVQqYahaE4oV8gJwcQlZ8MGroyf6xt
-         g6GaoTju5+jUe9gmg0PY7VswSGOPLW1UTUdlYco4vqKacKltsoyyAUPpji06Hy+QoC6D
-         ygwQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKmLibdZ"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49a97714f5dso20353045e9.0
+        for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 11:20:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788106721; x=1788711521; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=YCeJLnCjujFd5Tuu3vMrdczTw5NdJBJyfaA6i4lo768=;
-        b=YbUUSCbp/SFVDe7yWaXMBv/Qfmard+uFE2dLUtkYT1DNrqdDZTCh2ovdokGr8oYveY
-         M+9W04TSKEnclnnGAiNs5WTXjJijb0t3bjNKHYhMyk76xzFf+4scVobXlpiCcY+qFRJd
-         hR2oqcEHVYDWm3jaH4DpsTViKEESfQLB4JJGLIzd2N2QkY5/Osn3D//UMQ9YyTLVbSUz
-         lrVpmOa8P4Qkv6GJSQXhXtGfSfrhdTJ0/YpZ3Id3M0fHJhHDV0Jp2aFDytFx0TeUQU9Z
-         fjfsOaSkT9TmmQ/Hwq54wjnspjSVeHHpzavplM9BywjEqgfJp91qvNv8rHa77MhNbZan
-         aTCA==
+        d=gmail.com; s=20251104; t=1788114030; x=1788718830; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Rco2GCRhLFay115dRTUgmepuW15efqnKFUOomZek2ow=;
+        b=VKmLibdZ2hzJjmcmtqZhbmpzR2rX3cJB7sKEUjaMQ4PflODCN0/VedqcwTI6bYGBji
+         SyFEdoRBlylb0MbOZs/84j629JUiWxLkvdkC8LvueJXfPQQhDkEY80rt8oO/fOCsHcWo
+         MLehDz7MTz2ijFlekXeRDAJ3coNK0gTw5o+NGC5OXFFn95QFfsyJvCHxEbsX10yWd3Gw
+         I5Ebf8ZmhZUf/6nskQNviZS9ds+TVmY8eBwtdOJFNhdPRdl7UH0JC7I/5/HhWTStyfbD
+         RzZQYNVdR5D2yqUo7IcVTYdF6YSja4tCCI1s16MlCJvm+VPWnPKqOk54+YZeTf+8CZoV
+         Mxlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788106721; x=1788711521;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=YCeJLnCjujFd5Tuu3vMrdczTw5NdJBJyfaA6i4lo768=;
-        b=eQ7p5Rbo4s7LZBMMi90+8afbiYNHAYzZnJ77WdHWfUgC/EW/9C2sywWB/00twimqFg
-         bg3rGMZyztWEeHUIuAxi0Lhg6BdoagSu6oQJ0tMJCVEP7GSWMJ8HFzfSiyMLC/a36OVb
-         3LUMoDmUiyVVdV4zTonKMjh+rhmdjVXbszjUr0LG/sUmyQaKQOulngZ1LZPYTvmzxQmH
-         bC0c6vfRFCNc95s9aor1YHPFJ2fCEstS3tcK6alUtq+pavJuivkNRe28hv4rVQx47NTM
-         ls5TrvSyRPVxSZgWPtCpcQsqMIYFqQjSXPkxLwrwh1Qa4hbFD2fcTHT73w8I56Fueg6L
-         2fIw==
-X-Forwarded-Encrypted: i=1; AHgh+RoBnz6/guK2eud9A5gHTsqJurWntiQ0f75mJcV9EAFnQIiXoZtK4G0uYKuP4BW6uGFsev+oVQNKlnmFVZ5u4x/tq9C+Okw=@vger.kernel.org
-X-Gm-Message-State: AFuF++mIL+0WGqNau8t9tiu5e74o4kBwVAz36Zml7SoMqjJEndkGLbtx
-	If+B2kWmCFEKrXCr9nlKlsH24JvHY2nnYo0Z8XNmYHwI4PMwd/4iLQfiiE7JI1b2KO+wF/Osd8m
-	miMUwN0Chbh7uIiUQLvmqFkGo2B1scJg=
-X-Gm-Gg: AR+sD11hnRPvMXB6omYZ1D9Y+/wMgLJWSmqVg46HdVACfo1tO+4AdMi1FYRge7GvLmN
-	v2dIN5m7PQE1y1uDzJ2mSgt/p91S5P4P3va6GmU5cvhs7QmFn4t9Z64xS9AzU3gu2qXh79AL9vu
-	+wVAkopHVNkQfNDBMvwRxrD7AmBT10Pb1cWIGXvrN6SFyxTGFnri+37aXH1EGcpdkEK1+CNCQcp
-	HMAspeGU/It6VP0jmjriRrEJfnIlMzejdqY6bGL6f/Coop39GdLBuGl1LgIuQ5sAN0jv53uXrDo
-	XsvMceox9O+un0RxT5OfWM7rm9CM/DWYFC1CNb449Xm6+A==
-X-Received: by 2002:a05:6a20:548c:b0:3d3:aee4:66f3 with SMTP id
- adf61e73a8af0-3d3aef46d46mr20526363637.25.1788106721458; Sun, 30 Aug 2026
- 09:18:41 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788114030; x=1788718830;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Rco2GCRhLFay115dRTUgmepuW15efqnKFUOomZek2ow=;
+        b=OUfAlxK4WCKXvyK91zQ7mLYDc0vxEF5hh8RZcruvAckxxa6VxwYVwbliIQ4LYEIXn0
+         xqp6q3B/E6f/IARTzuqQqOZOqNrACPSGUkrxfgCuyO7IZ82ciAl1ptIASLjEDsFVgzYC
+         TKxH05s3TD+jiicugcnxsrpevwWaH9k6kMEcUrCrOWjzrVFx9q7PHGDUMEbrvda/3o/w
+         qDTJJ62pFBBtMvKkMMpEKzUxLVh48q6hkzvgosVa5SLZXfKM4man2LAWLmxlfGeBLEoB
+         l8+fm3AJtCr2FaGHvdncW1nUtwTJ0i6bhyfXER7TNFmGyky1wTE4ca9imgUE5Jqq835Z
+         yeNw==
+X-Forwarded-Encrypted: i=1; AHgh+Rr5TBEQxQ/b4UPoblQCbYCKTHtaO4Wcdxfmh/BgX7kYDGenlYjz2pBi02yIh5Ltb3PXHOYGnNbNlRx+X6PcS6GlfZOSK7A=@vger.kernel.org
+X-Gm-Message-State: AFuF++kqHQopUtErypXQZk+jhU7foLrnqmKnsj/6et95oa0FUp5LqoYT
+	Gw/rVvTUhRiacDnoQpBravGIO3q/9Iqy6t8ThSm7btiw78BZH0pXO0nF
+X-Gm-Gg: AR+sD12YABCop1pOYcS/TRpcjWAHflfwEFacoz8zjyikvleX6uf1pjSONEsIis43Z4q
+	GAUojU6v4mB+ewcEl30FCZjUyhBG9M/LiHeNrgrCQXKC950Zxlr0ndaTbIzO5lfGf7ZhwP+JakL
+	LYmnIYK/CDdHSeCrKkLTucSGzmj+JPic5pG8WZQVjg3/uys/NFh+fVoVU/K7xXAw7wPA/fUzEBB
+	MVCHNSD3A+2aiFAQF/dM93f2+CCPeSmAZs9rrD4VhUextken4Iw0sh3CS/jFAxej4RJhu23k1D4
+	OxB2UXtQWnNBk9Ya6ZycatifaycrXhB5KLXUJjwisMLlnjS4vlRYqb6st1wq7Ls7+wYlY5WDs+U
+	4N6vmBayNT6QPiAUOAfi/h+ZTfrM/8w9yLGjT00QmERRNMfXPsO4FMEhaQ9tLG9FQyGGystEMSp
+	CnScaXUR/Ts7YrpK3I6BvYOJgx2b877q9fqBNcyLVabZuRzXwX1YwAQmmxVZ7tpi01x1sjQlnXw
+	9eDIpT9aM0KfYzeNv3T+jEjKgaDnkI+mJGC+fX9QT+LQTu+YZMYzhnM6PpTbOnuMsDnPE87fipC
+	6U1XYgz4olJ0ucLpygdUfIlZOrSBqPneC+Ynnk3shbZRVBv7Ftu73WwvxZkF2mUHbCIh1MjFWEO
+	UQbNQcUJA8IczVKwxGCO+Jw==
+X-Received: by 2002:a05:600c:8b86:b0:493:f5bf:4dc6 with SMTP id 5b1f17b1804b1-49b91c2777emr366315815e9.7.1788114029578;
+        Sun, 30 Aug 2026 11:20:29 -0700 (PDT)
+Received: from MacBook-Pro-von-Karl.localdomain (dynamic-2a02-3100-adda-dc01-edc7-8a6f-c6f3-73e0.310.pool.telefonica.de. [2a02:3100:adda:dc01:edc7:8a6f:c6f3:73e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b94dc0f57sm252584505e9.2.2026.08.30.11.20.28
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 30 Aug 2026 11:20:29 -0700 (PDT)
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] keys: set persistent keyring timeout before destination linking
+Date: Sun, 30 Aug 2026 20:20:26 +0200
+Message-Id: <bb0370340c671.1788111790.git.kmehltretter@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Yan Yanhx <yanhx7@gmail.com>
-Date: Mon, 31 Aug 2026 00:18:23 +0800
-X-Gm-Features: AcwNN1WKGFAyXe7WvgEf21yNbwZ63ziGc5yy72Sf2XHSiEEHCFdBg-94X-XdP5A
-Message-ID: <CAMvJdVpx5C0W3wpwYCEphuHnHiv91ZqTPEjTU8Wp0iUJa=01KA@mail.gmail.com>
-Subject: SafeSetID: GID transition policy lookup uses RUID as source,
- allowlist can be bypassed (setgid to any group including 0)
-To: Micah Morton <mortonm@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Serge Hallyn <serge@hallyn.com>, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+keyring_alloc() links a newly created persistent keyring into the
+namespace's hidden register with TIME64_MAX expiry.
+key_get_persistent() sets the configured timeout only after linking the
+keyring into the caller's destination.
 
-Summary
--------
+If the destination rejects the link, the registered keyring retains
+infinite expiry. It is exempt from key quota and can remain until namespace
+teardown or reboot even though the syscall returned an error. At most one
+such keyring exists per UID per namespace. Repeated failures for the same
+UID therefore strand only one small allocation.
 
-In security/safesetid/lsm.c, id_permitted_for_cred() builds the policy
-lookup key for a GID transition from the process's old RUID instead of its
-old RGID. When a process's real UID value differs from every source GID in
-the installed GID policy, setgid()/setregid()/setresgid() to any group
-outside the allowlist is silently permitted, and the process is not
-killed. I reproduced setgid(999) and setgid(0) succeeding on Linux 7.2.
+This is reachable from unprivileged userspace: KEYCTL_RESTRICT_KEYRING on
+the destination makes key_link() return -EPERM via restrict_link_reject(),
+after key_create_persistent() has already registered the keyring.
 
-Affected version
-----------------
+Set the timeout immediately after creating and registering the keyring. A
+later permission or destination-link failure then leaves a collectible
+persistent keyring. The successful path may refresh the same timeout again
+without changing its semantics.
 
-Introduced by commit 5294bac97e12 ("LSM: SafeSetID: Add GID security
-policy handling", 2020-07-16), first shipped in v5.10. Still present in
-current master (08dbfad3f504). The vulnerable line is unchanged since
-introduction.
+Fixes: f36f8c75ae2e ("KEYS: Add per-user_namespace registers for persistent per-UID kerberos caches")
+Assisted-by: LLM
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+---
+Tested with QEMU 10.2.1 TCG. The reproducer set
+/proc/sys/kernel/keys/persistent_keyring_expiry to 60 seconds, restricted
+the destination with KEYCTL_RESTRICT_KEYRING, and then called
+KEYCTL_GET_PERSISTENT. No LSM policy was loaded.
 
-Code path
----------
+                      syscall result  /proc/keys expiry
+  i386 baseline       -EPERM          perm
+  i386 patched        -EPERM          1m
+  x86_64 patched      -EPERM          1m
 
-security/safesetid/lsm.c:
+Full kernel builds completed for i386 and ARM926, and for x86_64 with
+CONFIG_PROVE_LOCKING=y. The x86_64 reproducer completed without lockdep
+reports, warnings, or bugs.
 
-    static bool id_permitted_for_cred(const struct cred *old, kid_t new_id,
-                                      enum setid_type new_type)
-    {
-        ...
-        if (new_type == GID) {
-            if (gid_eq(new_id.gid, old->gid) || ...)
-                return true;
-        }
-        ...
-        permitted =
-            setid_policy_lookup((kid_t){.uid = old->uid}, new_id, new_type)
-                != SIDPOL_CONSTRAINED;
+ security/keys/persistent.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The lookup key uses old->uid unconditionally. kid_t is a union of kuid_t
-and kgid_t, so for new_type == GID the numeric value of the old RUID is
-reinterpreted as the source GID and looked up in safesetid_setgid_rules.
-The guard in safesetid_task_fix_setgid() (which decides whether the process
-is constrained) correctly uses old->gid.
+diff --git a/security/keys/persistent.c b/security/keys/persistent.c
+index 97af230aa4b22..0eca8c5758434 100644
+--- a/security/keys/persistent.c
++++ b/security/keys/persistent.c
+@@ -63,6 +63,12 @@ static key_ref_t key_create_persistent(struct user_namespace *ns, kuid_t uid,
+ 	if (IS_ERR(persistent))
+ 		return ERR_CAST(persistent);
+ 
++	/* Set the expiry now: if the caller then fails to link the keyring to
++	 * its destination, the register is left holding a collectible key
++	 * rather than a permanent, quota-exempt one.
++	 */
++	key_set_timeout(persistent, persistent_keyring_expiry);
++
+ 	return make_key_ref(persistent, true);
+ }
+ 
 
-Consequence: if the old RUID is not numerically equal to any source GID of
-the installed policy, the lookup misses and returns SIDPOL_DEFAULT, so the
-transition is treated as allowed. setgid() to any group - including gid 0 -
-then succeeds without the intended SIGKILL. This defeats the GID allowlist
-that SafeSetID is designed to enforce.
-
-Reproduction
-------------
-
-Environment: Linux 7.2 (v7.2 tag, kernel.org), CONFIG_SECURITY_SAFESETID=y,
-booted with lsm=...,safesetid.
-
-Deploy a GID policy that allows exactly one transition:
-
-    # echo "2000:100" > /sys/kernel/security/safesetid/gid_allowlist_policy
-
-The policy means: from source gid 2000, switching to gid 100 is allowed;
-anything else must be blocked.
-
-Then, as a process with credentials RUID=1000, RGID=2000, holding
-CAP_SETGID:
-
-    setgid(999);
-
-Control group (RUID == source gid, so the bug is not triggered):
-
-    RUID=2000, RGID=2000, CAP_SETGID, setgid(999)  ->  process killed
-    (SIGKILL, exit 137), as intended.
-
-Buggy case (RUID != source gid):
-
-    RUID=1000, RGID=2000, CAP_SETGID, setgid(999)  ->  succeeds (exit 0)
-    RUID=1000, RGID=2000, CAP_SETGID, setgid(0)    ->  succeeds (exit 0)
-
-Both out-of-allowlist transitions succeed when the old RUID is not a
-policy source GID. A minimal reproducer program is available on request;
-per the reporting guidelines for AI-assisted findings I am not posting the
-exploit source in this message. Say the word and I will send it privately.
-
-Fix (tested)
-------------
-
-The fix builds the policy lookup source from the GID when the transition
-is a GID one, and keeps the UID otherwise:
-
-    permitted =
-        setid_policy_lookup(new_type == UID ?
-                            (kid_t){.uid = old->uid} : (kid_t){.gid = old->gid},
-                            new_id, new_type) != SIDPOL_CONSTRAINED;
-
-I built this change into Linux 7.2 and re-ran the reproduction:
-
-    before fix:
-      RUID=1000, RGID=2000, setgid(999)  ->  succeeds (exit 0)   [bypass]
-      RUID=1000, RGID=2000, setgid(0)    ->  succeeds (exit 0)   [bypass]
-    after fix:
-      RUID=1000, RGID=2000, setgid(999)  ->  killed (exit 137)
-      RUID=1000, RGID=2000, setgid(0)    ->  killed (exit 137)
-      RUID=2000, RGID=2000, setgid(100)  ->  succeeds (exit 0)
-[allowed, unchanged]
-
-The out-of-allowlist transitions are now blocked and the legitimate
-transition still succeeds. scripts/checkpatch.pl reports 0 errors,
-0 warnings. If a proper patch is wanted, I can prepare a git
-format-patch with Fixes: 5294bac97e12 ("LSM: SafeSetID: Add GID
-security policy handling"); the change above is offered as a starting
-point for the maintainers, not as a submission.
-
-Impact
-------
-
-Deployments that rely on SafeSetID GID policies to confine a CAP_SETGID
-service to a limited set of target groups lose that confinement: the
-process can switch to any group, including the root group. This is an
-authorization-boundary bypass limited to systems that explicitly enable
-SafeSetID and install a GID policy; it is not a privilege escalation from
-an unprivileged context on a default kernel.
-
-Best regards
+base-commit: 08dbfad3f5040f5bdb6c529da20d6d4e81fefd72
+-- 
+2.53.0
