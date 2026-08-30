@@ -1,145 +1,184 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C404C3BB13A
-	for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 18:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6882E7378
+	for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 20:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788114033; cv=none; b=TbyPex2PwemQ7ZKvJ3xiU8LTQD9ViZRHT0Ko0k7RXKjOIduSYu0Awt38QXWTJOh3Ufu0IUNnA5Nu0TRZmcQcRhqvASkvNqkv+SqVS4LYbRB53sWCuRS0YvRoRROvkyT/bCX9P7ustvQdLpshTYw5mQZFfoMaPY1eiW/LEA3UAl8=
+	t=1788121024; cv=none; b=BCKYHO7YuAjK07ftD7GOJmVup7jmMS9g7d+VJj2x88ZGmZB8OX7EzVlb8WQrjCycUftHFF7EdCZO4KZO4d+lZoLCpGDxBy2Zh6yis2Y9XfXQmqvzwGylfdwm3rMAet8jpnUNeG+NSF4lnHcGD2UbO9u3ngQp/nrLOsBDL6R/JuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788114033; c=relaxed/simple;
-	bh=TVCyLwZDMmVp0hAurQYMH3T2j5DMGrsKI0ZW+vcU8T4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XCIObvKVCw+Yh76IDi1hYRwQs7PLUS2lsJAa8GVhMb1BlsaQDkHHvl+KC1/P1u/d0dUKypU0DL9dge1MlGmnS+uhOCixEF/Kmau/HkVZPyAPsJfNlJgd3ft9btWakVNoFmKI9rFD7WQvlBynQ4+Ogxu0WxdFsqlxbDgbdDqIfnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKmLibdZ; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1788121024; c=relaxed/simple;
+	bh=izBMh7eVZhkWs1WnjxZ/AvcCI4mp9b+oIlFEmuKE7Ac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BZ/sAKBzhi05z7/vmiYySjTaXkI/omzRJMWSNKuytGD1PVNXCXIDOnf1TM8QEM+TLYF/bsHSY7rg0ASCG0R+PdLxlImVKmdGmJDKere1JBg8o9IeRnOOKjbyMonGKk7xxrZgsUadBQ09TFhFy3Nct0xt8xVukjs1/a7q/O75vmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k62v4C+E; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKmLibdZ"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49a97714f5dso20353045e9.0
-        for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 11:20:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k62v4C+E"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-49556f97a9dso18019335e9.1
+        for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 13:17:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788114030; x=1788718830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Rco2GCRhLFay115dRTUgmepuW15efqnKFUOomZek2ow=;
-        b=VKmLibdZ2hzJjmcmtqZhbmpzR2rX3cJB7sKEUjaMQ4PflODCN0/VedqcwTI6bYGBji
-         SyFEdoRBlylb0MbOZs/84j629JUiWxLkvdkC8LvueJXfPQQhDkEY80rt8oO/fOCsHcWo
-         MLehDz7MTz2ijFlekXeRDAJ3coNK0gTw5o+NGC5OXFFn95QFfsyJvCHxEbsX10yWd3Gw
-         I5Ebf8ZmhZUf/6nskQNviZS9ds+TVmY8eBwtdOJFNhdPRdl7UH0JC7I/5/HhWTStyfbD
-         RzZQYNVdR5D2yqUo7IcVTYdF6YSja4tCCI1s16MlCJvm+VPWnPKqOk54+YZeTf+8CZoV
-         Mxlg==
+        d=gmail.com; s=20251104; t=1788121021; x=1788725821; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=PRVinZDK/Gxcrvk2NhV4IrbRKPZZNwFZwWSNmf32j2I=;
+        b=k62v4C+EpxXgltqaqTq/3Kw5vjMNOyz70pSJcS3NSRi1vTN0bfP7oXcASvo9eAg5AN
+         LeYAI0epzXKLm3dGWz2omfDp1/nzcQTEXZZ+SEPI9n5aI3cGjLgMKeQjERV3gOkuT8on
+         1HfBEGe94vD8AHWJMuQylJC+PwpdFg6znYjWDNSgNuAQLGIq/5dl0dGNU+mZgyQ7VmvU
+         lbC3ED1rh89iuHe/cRpDbRqyujyKmPSolp86MgoQLCmJcH1jIMshrG2h+VwykskOmjBo
+         EcbxBDFQBWy6wLwSoRqx/yoZdZTnSmrpFzYcbmnyskmFmFbHf3bGmZd2K6t9ofOQAiX5
+         SoVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788114030; x=1788718830;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Rco2GCRhLFay115dRTUgmepuW15efqnKFUOomZek2ow=;
-        b=OUfAlxK4WCKXvyK91zQ7mLYDc0vxEF5hh8RZcruvAckxxa6VxwYVwbliIQ4LYEIXn0
-         xqp6q3B/E6f/IARTzuqQqOZOqNrACPSGUkrxfgCuyO7IZ82ciAl1ptIASLjEDsFVgzYC
-         TKxH05s3TD+jiicugcnxsrpevwWaH9k6kMEcUrCrOWjzrVFx9q7PHGDUMEbrvda/3o/w
-         qDTJJ62pFBBtMvKkMMpEKzUxLVh48q6hkzvgosVa5SLZXfKM4man2LAWLmxlfGeBLEoB
-         l8+fm3AJtCr2FaGHvdncW1nUtwTJ0i6bhyfXER7TNFmGyky1wTE4ca9imgUE5Jqq835Z
-         yeNw==
-X-Forwarded-Encrypted: i=1; AHgh+Rr5TBEQxQ/b4UPoblQCbYCKTHtaO4Wcdxfmh/BgX7kYDGenlYjz2pBi02yIh5Ltb3PXHOYGnNbNlRx+X6PcS6GlfZOSK7A=@vger.kernel.org
-X-Gm-Message-State: AFuF++kqHQopUtErypXQZk+jhU7foLrnqmKnsj/6et95oa0FUp5LqoYT
-	Gw/rVvTUhRiacDnoQpBravGIO3q/9Iqy6t8ThSm7btiw78BZH0pXO0nF
-X-Gm-Gg: AR+sD12YABCop1pOYcS/TRpcjWAHflfwEFacoz8zjyikvleX6uf1pjSONEsIis43Z4q
-	GAUojU6v4mB+ewcEl30FCZjUyhBG9M/LiHeNrgrCQXKC950Zxlr0ndaTbIzO5lfGf7ZhwP+JakL
-	LYmnIYK/CDdHSeCrKkLTucSGzmj+JPic5pG8WZQVjg3/uys/NFh+fVoVU/K7xXAw7wPA/fUzEBB
-	MVCHNSD3A+2aiFAQF/dM93f2+CCPeSmAZs9rrD4VhUextken4Iw0sh3CS/jFAxej4RJhu23k1D4
-	OxB2UXtQWnNBk9Ya6ZycatifaycrXhB5KLXUJjwisMLlnjS4vlRYqb6st1wq7Ls7+wYlY5WDs+U
-	4N6vmBayNT6QPiAUOAfi/h+ZTfrM/8w9yLGjT00QmERRNMfXPsO4FMEhaQ9tLG9FQyGGystEMSp
-	CnScaXUR/Ts7YrpK3I6BvYOJgx2b877q9fqBNcyLVabZuRzXwX1YwAQmmxVZ7tpi01x1sjQlnXw
-	9eDIpT9aM0KfYzeNv3T+jEjKgaDnkI+mJGC+fX9QT+LQTu+YZMYzhnM6PpTbOnuMsDnPE87fipC
-	6U1XYgz4olJ0ucLpygdUfIlZOrSBqPneC+Ynnk3shbZRVBv7Ftu73WwvxZkF2mUHbCIh1MjFWEO
-	UQbNQcUJA8IczVKwxGCO+Jw==
-X-Received: by 2002:a05:600c:8b86:b0:493:f5bf:4dc6 with SMTP id 5b1f17b1804b1-49b91c2777emr366315815e9.7.1788114029578;
-        Sun, 30 Aug 2026 11:20:29 -0700 (PDT)
-Received: from MacBook-Pro-von-Karl.localdomain (dynamic-2a02-3100-adda-dc01-edc7-8a6f-c6f3-73e0.310.pool.telefonica.de. [2a02:3100:adda:dc01:edc7:8a6f:c6f3:73e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b94dc0f57sm252584505e9.2.2026.08.30.11.20.28
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 30 Aug 2026 11:20:29 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
+        d=1e100.net; s=20251104; t=1788121021; x=1788725821;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=PRVinZDK/Gxcrvk2NhV4IrbRKPZZNwFZwWSNmf32j2I=;
+        b=FC8P9c8JSBtLOgfhAKTjDSKO2aFXhXWiolvV7iyOb4sZy+jHo+Rim/PzGlXUH4vX4P
+         0gwJ1dNk/13qRv790U3sPvzS/JHKXx1dmYF3snsMV2zGiq2J3NFb1/kg8skqU8Bk38Ot
+         lqZW7mykpEdWN8MEipBbD6ZDuDjZ/4joZTTFqlOLoEMFIV+pMczyDbLlyQ6Wi74fc1Fa
+         61SdCLxlR3jsNbn+34OaDV+EByC97bzL9I2ifoNZC8H4bJxAFYYgSQ8XYP81PA0ZKw9A
+         IMtBillAeIvlzsjfIePkofP7N+gzEnbpQSYex58QC7imX5NCBn9Vph+jC6c0DpZEP+8T
+         hWWA==
+X-Forwarded-Encrypted: i=1; AHgh+RrtrcuMIfzEZQ4prQx3VLbIFEjXsbg4oLs82upYnu8E0diXauYNAcajPyhuFaYp/t4hNQ5wAP5tiLnNg/cUXaZjJAUK7HU=@vger.kernel.org
+X-Gm-Message-State: AFuF++mVr+4F8B+lP10UEmq72jSnkLaZ48uloSHtN2l+zXB7GUfZtB0N
+	TA+87t8KaVhUMc5QtQCacKSiWWuF7MHmAUh+0l9A4vsKSztujIXKxlJF
+X-Gm-Gg: AR+sD11sMGJaC6aZbRDinwbvqbhlKUyMQ1xbByBA9zJLUE6JYjsgp9z1n5HxlfY8ysz
+	txEwCgSXij+pkyXnoxA3VAgth6yhuMkoRbWbBjQ26tWwIX5QQbsRSGMVVzzzEmG1SEL1Bs2+g0y
+	v9oWRvDW6i6M5v4Ns1KSDpicpRZO334n5aDgWOg4qPe5lKaUK+yeXzGoFpKu6ChEqcYWY26gIvd
+	xa7eoTVvaNgba+qlkVZqMK3tYQ10rDmDpSkMhXFlV6qAlewqSIAfRPXI1jo/wPPrT8OQKVqvpZM
+	iXwos92S0B5u+QzCBXjNRKtsoWOpQXFn8OFbhE5jcjjK5TgAbfgOh5W3hqFLJ/83jFp4kfIQbcg
+	2iAYbpaYpZc6gm03kCnDyljOerNnMIeyuacHuYC6krs2IXoVry2l887DKqr+H50bEaiBusSj+zp
+	ihiFdJ7J3TFWbhP642cKa9cF38cljZyPq3gUfw83ZEsgLRg9M5ZPdfCDy7hopDFP42fgDUsRSTt
+	lOMFArFYeYzTdSYGyFOA3MW2A==
+X-Received: by 2002:a05:600c:4ecb:b0:499:d95a:44d with SMTP id 5b1f17b1804b1-49b91bd885fmr303712975e9.0.1788121020425;
+        Sun, 30 Aug 2026 13:17:00 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49c44feb966sm205868655e9.6.2026.08.30.13.16.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Aug 2026 13:17:00 -0700 (PDT)
+From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	mptcp@lists.linux.dev,
+	netdev@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] keys: set persistent keyring timeout before destination linking
-Date: Sun, 30 Aug 2026 20:20:26 +0200
-Message-Id: <bb0370340c671.1788111790.git.kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH 0/6] landlock: Support MPTCP bind and connect restrictions
+Date: Sun, 30 Aug 2026 22:16:44 +0200
+Message-ID: <20260830201650.67050-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-keyring_alloc() links a newly created persistent keyring into the
-namespace's hidden register with TIME64_MAX expiry.
-key_get_persistent() sets the configured timeout only after linking the
-keyring into the caller's destination.
+Hello!
 
-If the destination rejects the link, the registered keyring retains
-infinite expiry. It is exempt from key quota and can remain until namespace
-teardown or reboot even though the syscall returned an error. At most one
-such keyring exists per UID per namespace. Repeated failures for the same
-UID therefore strand only one small allocation.
+This patch set makes it possible to restrict MPTCP bind(2) and
+connect(2) operations by port, adding the access rights
+LANDLOCK_ACCESS_NET_BIND_MPTCP and LANDLOCK_ACCESS_NET_CONNECT_MPTCP.
 
-This is reachable from unprivileged userspace: KEYCTL_RESTRICT_KEYRING on
-the destination makes key_link() return -EPERM via restrict_link_reject(),
-after key_create_persistent() has already registered the keyring.
+Motivation
+==========
 
-Set the timeout immediately after creating and registering the keyring. A
-later permission or destination-link failure then leaves a collectible
-persistent keyring. The successful path may refresh the same timeout again
-without changing its semantics.
+With MPTCP operations being unrestrictable, some aspects of Landlock's
+existing TCP restrictions were not useful.  Notably, bind(2) and
+listen(2) on MPTCP sockets was possible, sidestepping a bind(2)
+restriction that might exist for plain TCP sockets.  This patch set
+fixes that gap by restricting bind(2) and connect(2) operations in the
+same way as for TCP.
 
-Fixes: f36f8c75ae2e ("KEYS: Add per-user_namespace registers for persistent per-UID kerberos caches")
-Assisted-by: LLM
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
----
-Tested with QEMU 10.2.1 TCG. The reproducer set
-/proc/sys/kernel/keys/persistent_keyring_expiry to 60 seconds, restricted
-the destination with KEYCTL_RESTRICT_KEYRING, and then called
-KEYCTL_GET_PERSISTENT. No LSM policy was loaded.
+As listening on MPTCP sockets is backwards compatible with plain TCP,
+it has gained more support and has become the default in common
+networking libraries such as Go's net.Listen() function since Go 1.24
+[1].
 
-                      syscall result  /proc/keys expiry
-  i386 baseline       -EPERM          perm
-  i386 patched        -EPERM          1m
-  x86_64 patched      -EPERM          1m
+Historical background
+=====================
 
-Full kernel builds completed for i386 and ARM926, and for x86_64 with
-CONFIG_PROVE_LOCKING=y. The x86_64 reproducer completed without lockdep
-reports, warnings, or bugs.
+In the initial implementation, Landlock's TCP bind(2) and connect(2)
+access rights worked on IP stream ports independent of their protocol
+as specified in socket(2).  This was corrected in Landlock erratum 1
+in commit 854277e2cc8c ("landlock: Fix non-TCP sockets restriction")
+[2] [3], but also meant that MPTCP sockets were now not restrictable with
+Landlock any more, even though MPTCP operates on the same TCP ports as
+plain TCP.
 
- security/keys/persistent.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+That MPTCP should often be treated the same as plain TCP was also
+pointed out in [4] and [5].
 
-diff --git a/security/keys/persistent.c b/security/keys/persistent.c
-index 97af230aa4b22..0eca8c5758434 100644
---- a/security/keys/persistent.c
-+++ b/security/keys/persistent.c
-@@ -63,6 +63,12 @@ static key_ref_t key_create_persistent(struct user_namespace *ns, kuid_t uid,
- 	if (IS_ERR(persistent))
- 		return ERR_CAST(persistent);
- 
-+	/* Set the expiry now: if the caller then fails to link the keyring to
-+	 * its destination, the register is left holding a collectible key
-+	 * rather than a permanent, quota-exempt one.
-+	 */
-+	key_set_timeout(persistent, persistent_keyring_expiry);
-+
- 	return make_key_ref(persistent, true);
- }
- 
+Implementation notes
+====================
 
-base-commit: 08dbfad3f5040f5bdb6c529da20d6d4e81fefd72
+* The tests are an extension of the existing exhaustive TCP/UDP
+  selftest coverage.
+* MPTCP subflows are separate connections with their own port numbers.
+  As it is the Linux kernel which negotiates these ports with the
+  remote system, the ports used in subflows are not subject to this
+  Landlock restriction.
+* MPTCP Fast Open is treated the same as for TCP.
+
+Apart from these, MPTCP support is a relatively straightforward
+implementation, mirroring the TCP logic in most places.
+
+Alternatives considered
+=======================
+
+Making MPTCP sockets subject to "plain TCP" Landlock access rights is
+technically feasible, but would undo erratum 1 [3], which could be
+confusing to users and might introduce potential incompatibilities
+with existing programs.
+
+Open questions
+==============
+
+I am on the edge about the helper functions that I added to the
+selftests; maybe would be better to flatten these decisions out into
+the fixture data for improved clarity and to not run the risk of
+reimplementing the same code that we want to test.
+
+
+Let me know what you think!
+–Günther
+
+
+[1] https://go.dev/doc/go1.24#netpkgnet
+[2] commit 854277e2cc8c ("landlock: Fix non-TCP sockets restriction")
+    https://lore.kernel.org/r/20250205093651.1424339-2-ivanov.mikhail1@huawei-partners.com
+[3] Landlock erratum 1, security/landlock/errata/abi-4.h
+[4] https://lore.kernel.org/all/49bc2227-d8e1-4233-8bc4-4c2f0a191b7c@kernel.org/
+[5] https://lore.kernel.org/all/1d1d58b3-2516-4fc8-9f9a-b10604bbe05b@kernel.org/
+
+
+Günther Noack (6):
+  samples/landlock: Implement best-effort fallback for network rules.
+  selftests/landlock: Generalize net test helpers for multiple socket
+    types
+  landlock: Add MPTCP bind and connect access rights
+  selftests/landlock: Add MPTCP network access tests
+  samples/landlock: Support MPTCP access rights
+  landlock: Document MPTCP access rights
+
+ Documentation/userspace-api/landlock.rst     |  27 +-
+ include/linux/landlock.h                     |   5 +-
+ include/uapi/linux/landlock.h                |  24 ++
+ samples/landlock/sandboxer.c                 |  72 +++-
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/net.c                      |  68 ++--
+ security/landlock/syscalls.c                 |   2 +-
+ tools/testing/selftests/landlock/base_test.c |   2 +-
+ tools/testing/selftests/landlock/net_test.c  | 341 ++++++++++++++-----
+ 9 files changed, 425 insertions(+), 118 deletions(-)
+
 -- 
-2.53.0
+2.55.0
+
