@@ -1,65 +1,65 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D1530D3F8
-	for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 20:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F196931A56C
+	for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 20:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788121027; cv=none; b=CE1VNpC7P+uCM1KODBfYkZdLej5kWSPKQuAvar+YFA0Xp8bWMVYkR0awJwAuEhrmPfoaJrKdYE8Rd78kle2B+OX+iBHsBUwO9Mteft4Hs8J0H6WwXhQkDJkpbe3OqdE7iGg6lHp2Di68qcVlJB8FQqOPipwVz0WP5OGGjmd+/4s=
+	t=1788121030; cv=none; b=WH0MTKrsBgjTPMHMdQ4kQ8+gOKoOOPB6fzg5GTWYf3zweUcS34sort700V56hmmKkjxu+/GE6V5kTSh1qZC0cVU7EWHQlI46W0zE2rM63gT5PGZIz8iO6VEuQn7K9dDgOp7WKEVThugmanzGO7YMjDHx6E52sn0aNjiF/7ojjrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788121027; c=relaxed/simple;
-	bh=7wEDaDm21llur5hKylLQvWMRMvBg/bAaty0AoAvvgrI=;
+	s=arc-20240116; t=1788121030; c=relaxed/simple;
+	bh=3HlGz5FZAf5YiW0SZUDdJqY51I4PRzoZ+1IAMBTh0S0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cX7SMrCMDEOAxg/00vnTqJBKhUANaKVE+nDAe7EcHPbm9ajFX95pJgZnV5zcrgBR1u08YfNpSzsh5odOq9s+pX5nmMnUyVuaLPUExAlk3pH4tmINZuo+H9M5x/Mw4timfIv5lp6BkIWyfwwmk6lwI0q3NXKSY19A57sPPiUlgqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDv1LVis; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version:Content-Type; b=RL/ppjsmZAX61dKgZXlhs9mKJkrKQomwwoAU/S6jdSeYyUlmAXP1rr9cdhgRDAMJprQENggWT47kQo+Y4QPHobo4pkOa2t6RY6NweR5VR723MucnTKXIj3znVbw8045Rve1cMTf5GSc13w7Sj3uXSHP1kGLGUc5kRlVb/2z1aak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W6GA5XdG; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDv1LVis"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49b8be0409fso16089685e9.2
-        for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 13:17:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W6GA5XdG"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-495590dde14so26217405e9.0
+        for <linux-security-module@vger.kernel.org>; Sun, 30 Aug 2026 13:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788121024; x=1788725824; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788121026; x=1788725826; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=7Pdseog3hjBqegC/S81uic44NEP627xpHcoKP1WPxsA=;
-        b=nDv1LVisI4np3KEtvGVNGOW7sBFQuqbDLd3gn5uEUVhsdhTHfJlcHSWepHvflET9q1
-         JiV018miv/DwkoP6IYiQ/Qg0JLdcHEpaVED/N/v2QJczqlAmfmGWjBOZMgOlb7f5cNM2
-         e+mU/8fkZzy12zhI+7mXFIbbmEadJDs0/vaYg0OSIRbQwRQzofLxCJuJXtpbBm3muGAl
-         +x7bxBrhG6oxfm5/Xg3+TRKJYViZGa/efoMkWO0ogRtiQtiS5Hia6ibpLyCUasxloVW3
-         J6DNgCXmS8LGgLzj64ofpXGo80cT+2GE5yrnI1Cqq9wAzX2QI6hBReAKZ10VXO84Tqcn
-         eMBg==
+        bh=PCMfevEQD6EgJt39HDJsajq+HZlaKHKHiTDnNP3c2jg=;
+        b=W6GA5XdG2bEXRf3VtQfDkXRAiUc9Kkbn1vROh3+s9ngGZnp2WEPWXIh5aqS8hCGKmV
+         qt644SrDCrCSWGvubWTWathI1rxecYu4OIISHOzNEsEdj3c6HwsoY5KcozMNfGe3rv9U
+         N/2DYN/9T5LqjLk1eINYr5KciJk4ViGnnUG4WciYYk1qqOV/t2nRw2ZcAd6IQToB4eUr
+         SsuB7uCF7oOJDBXxclux1LXw+RRvk97ZqHrGDWqvWfwLRokOYJjpJTC0Na243CE4rAPU
+         mGhUE8VxJgn/H+LfKQUDplTo/9SvRa/Htcj+JEEh4oTmRF0ekKQuTYbObBw4a3URYIpK
+         C5TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788121024; x=1788725824;
+        d=1e100.net; s=20251104; t=1788121026; x=1788725826;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7Pdseog3hjBqegC/S81uic44NEP627xpHcoKP1WPxsA=;
-        b=Ou/mIo1ljFhF15Zttwc4SqIRkYgLgX3FmUWO4GA7jxJstOGbWJ9sWVoYNjMKB8upaS
-         IYSKtECQNzX6FFn4N8QF14PNlf0uTA/QU3wRgBU7opuprK6evxfapVE4hwd6JDt1LaXT
-         eT4g7Vv2O81RVUVgtpp4rdDHtmnfa6WnFyyAx7IKlGp+zhZd5vyh93ZH2mJ2jovX2Bsp
-         qKcjIruxZgqOboZn3DP41DYsdDPN0NySg4je+G3hlQFb8EW80DnYu5UJ0M8Hx1CFfr+q
-         1T3ce/znof6nftFP9jKSiE7U5DVB22ufsPf2CFYn+rlqSxOEO8N06PgLijVUOVtUYju2
-         nSxA==
-X-Forwarded-Encrypted: i=1; AHgh+Roh4PaamOZFf8FX+WsMhiEQcMWYblVX7bzGqnZvwt67xZMseNyucNnEbr7SLQYHL/rdIV+xdnPqJcN4OmNNRJd6fUZtVu8=@vger.kernel.org
-X-Gm-Message-State: AFuF++lDDKEvLXDhQszjtJfJZkEtWQOeamccy6+QJmoz9LuElEmz4CS9
-	BvxmVyWQzCZ+jkqqT3lt0/svtsZRK0fRpJM82I63jIZ2HaI20l6wO7Jv
-X-Gm-Gg: AR+sD12/99vTAzznclF3oVeVeXr0P2R7i3WpYdrtn2FEO2aXPLjAIqkK5lfKQzEi5Pj
-	dudAfhnZqqSYBMWu6xTdx31wMUHW+vulZ0SjM0i0jA9kDkJfNnyC8PZaT7vKU/r4QOxfwKo4n0+
-	kMDmY1N9qbFofpamdpsTUaJafmhgHx+LsVam2PdjJq7d1bFvF96ImBIZvaJbcH6ZJRlqk2sZn0F
-	cFR7yAaVOzggQgDUK+R+LLVVxMQyH/N4NJOROoRIciCXvpaAHWehimH5tB2+oI8HbYM2V+Vs05K
-	jfhZ9pOq1g2KZPXmrvVhW2IcjuIBD9zBskF0Wakp6HSS7zGjj+cbLlzwkbEZ5AJ6rsjp4XbOHac
-	y6hGzTUlJl6K9SNwUIf1kYO1wyIAWlQNoloV7u/ynB8NCXaFfggidGkwGu+qixrHHGZ25U28aDf
-	cjl167XumpjlBPvucL686v/T90FD4Zenh1aO+QgrsaXYg9+SEWyahbZuxx70ESZNGppXopJNgHg
-	xeV8gV54UJ41WgIbv7RFpoa
-X-Received: by 2002:a05:600c:a106:b0:49c:cb6a:1687 with SMTP id 5b1f17b1804b1-49ccb6a1689mr169989075e9.4.1788121024059;
-        Sun, 30 Aug 2026 13:17:04 -0700 (PDT)
+        bh=PCMfevEQD6EgJt39HDJsajq+HZlaKHKHiTDnNP3c2jg=;
+        b=Q8cOV3o5gRTfNXu9Krwlp5jwoJFC1rAmvR3mNyhk1ukbkSg+2EFZvXwVe4UcxqEvm4
+         VRFDN212Z9BXT7j2wHQ5BE7VHvxrL4/5ZkWTe202sWJTNwDd8eAxWuLfQD1W4TSF1fqx
+         AGNkgqACM2zfecTdBa58+T6p36ONC5l6kHXDYZQVaxwQNmAlJtYwp/vJu0oBPvqea0/V
+         55g4TnnhluGe6/GEc3GvtUIUp1GjQtXRsOaSXOaosoSZi8YbSDmX9/XhIfCu9SIF/Ieh
+         iH1m5haSmFYlRTrW8oeeFnGOcFKaPo2ogiMKmK2reEbO23ln0mHQPxwOA3PT/2/cALkS
+         bzWQ==
+X-Forwarded-Encrypted: i=1; AHgh+RquBacLz/4YfCo0rjBjMEREMSk37GG07pPK/60phf9+3Ck/+FBGHMXq67YxJokvrRfQG2F57ttds/nUq2w8vH/4x7+3jcg=@vger.kernel.org
+X-Gm-Message-State: AFuF++laHXR+ojc8uOrMcoo3f9r3Ny5PcMZ4fsek8bp1YVrn8H++g+fm
+	SnpL5Jn6JVaR3TNJ3YlLIdWWmE4TJp56Byv6YYvy7QrrTNUrVb1Ad+aS
+X-Gm-Gg: AR+sD10YziVcyqONBYO2wPfl5wDOtOcMTiW8QLbl/kkSgloRJ4diVfiIH7U2Ga5VXZT
+	BqsIugcXWhzPAbz7aFrCI6fMZ4xeEnHldbIxhQOuF43dGKRfXQMGocUeTVkObBsfGHMetA2GSBu
+	gni58XOoj1/Ocn6iuLEbNNHLgrbCy3T3JRJ4c7IP4B6zhxm7xQXoebuSAomQER0n3+m9G7CRf3Z
+	C5liIzsvnMxLnOOAHWaId/t994JtBY0cZFz8yRWWJme1fBryDCZh4RgrsfqEIoRMnGfT09dmXHE
+	s9+z0H3OHndVifv6ccJkrs1f8ftxLf4IDbucjunMzrnr8eyfmPDIv1uIfS3eOTqG60B6QLhb/W+
+	Ic2opqV9RByhmhMHu5zmLO21TKOeeXP6tQaJorPqrGxOwYDvAyxlXWTTkLFNNgk7gib3x4etew9
+	G97Yozm8OxHk0rZR41xFfao/7HMRWxpwJBa3fL01/cx0iT3O8y9ldMiarfEZgV0OzSJHr5SjjBB
+	9aPVWppUIlHOw==
+X-Received: by 2002:a05:600c:1f8f:b0:499:b65d:1250 with SMTP id 5b1f17b1804b1-49b91c1fc4bmr290143725e9.2.1788121025986;
+        Sun, 30 Aug 2026 13:17:05 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b94dcaf61sm214133605e9.4.2026.08.30.13.17.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cd2e9d9fcsm129432455e9.1.2026.08.30.13.17.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Aug 2026 13:17:03 -0700 (PDT)
+        Sun, 30 Aug 2026 13:17:05 -0700 (PDT)
 From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Matthieu Baerts <matttbe@kernel.org>,
@@ -70,9 +70,9 @@ Cc: Matthieu Baerts <matttbe@kernel.org>,
 	netdev@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH 2/6] selftests/landlock: Generalize net test helpers for multiple socket types
-Date: Sun, 30 Aug 2026 22:16:46 +0200
-Message-ID: <20260830201650.67050-3-gnoack3000@gmail.com>
+Subject: [PATCH 3/6] landlock: Add MPTCP bind and connect access rights
+Date: Sun, 30 Aug 2026 22:16:47 +0200
+Message-ID: <20260830201650.67050-4-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260830201650.67050-1-gnoack3000@gmail.com>
 References: <20260830201650.67050-1-gnoack3000@gmail.com>
@@ -85,172 +85,280 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Create helper methods for determining the access rights to be tested
-based on socket type (TCP or UDP).  This makes it simpler to add more
-socket types with similar bind(2) and connect(2) restrictions in the
-future.
+MPTCP sockets have equivalent bind(2) and connect(2) operations as TCP
+sockets, but can not currently be restricted with Landlock without
+explicit MPTCP access rights.  As MPTCP operates on the same TCP port
+number space as TCP, this is a gap in Landlock's policies.
 
+Add access rights for MPTCP bind(2) and connect(2) operations
+and document them in the header.
+
+Treat TCP Fast Open the same as done for plain TCP in
+commit 33cb713db016 ("landlock: Fix TCP Fast Open connection bypass")
+
+The port numbers used in MPTCP subflows are negotiated by the kernel
+and therefore not subject to these access rights.
+
+Bump the Landlock ABI version to 12.
+
+Closes: https://github.com/landlock-lsm/linux/issues/54
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/net_test.c | 85 +++++++++++----------
- 1 file changed, 46 insertions(+), 39 deletions(-)
+ include/linux/landlock.h                     |  5 +-
+ include/uapi/linux/landlock.h                | 24 +++++++
+ security/landlock/limits.h                   |  2 +-
+ security/landlock/net.c                      | 68 ++++++++++++++------
+ security/landlock/syscalls.c                 |  2 +-
+ tools/testing/selftests/landlock/base_test.c |  2 +-
+ 6 files changed, 79 insertions(+), 24 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index a18761e0fd82..3a0482beca5f 100644
---- a/tools/testing/selftests/landlock/net_test.c
-+++ b/tools/testing/selftests/landlock/net_test.c
-@@ -108,11 +108,41 @@ static bool prot_is_udp(const struct protocol_variant *const prot)
- static bool is_restricted(const struct protocol_variant *const prot,
- 			  const enum sandbox_type sandbox)
- {
--	if (sandbox == TCP_SANDBOX)
-+	switch (sandbox) {
-+	case TCP_SANDBOX:
- 		return prot_is_tcp(prot);
--	else if (sandbox == UDP_SANDBOX)
-+	case UDP_SANDBOX:
- 		return prot_is_udp(prot);
--	return false;
-+	case NO_SANDBOX:
-+	default:
-+		return false;
-+	}
-+}
-+
-+static __u64 sandbox_bind_access(const enum sandbox_type sandbox)
-+{
-+	switch (sandbox) {
-+	case TCP_SANDBOX:
-+		return LANDLOCK_ACCESS_NET_BIND_TCP;
-+	case UDP_SANDBOX:
-+		return LANDLOCK_ACCESS_NET_BIND_UDP;
-+	case NO_SANDBOX:
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static __u64 sandbox_connect_access(const enum sandbox_type sandbox)
-+{
-+	switch (sandbox) {
-+	case TCP_SANDBOX:
-+		return LANDLOCK_ACCESS_NET_CONNECT_TCP;
-+	case UDP_SANDBOX:
-+		return LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
-+	case NO_SANDBOX:
-+	default:
-+		return 0;
-+	}
+diff --git a/include/linux/landlock.h b/include/linux/landlock.h
+index 004cbd0b9298..b04ffc7caa21 100644
+--- a/include/linux/landlock.h
++++ b/include/linux/landlock.h
+@@ -46,7 +46,10 @@
+ 	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_CONNECT_TCP, "connect_tcp"), \
+ 	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_BIND_UDP, "bind_udp"), \
+ 	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP, \
+-			     "connect_send_udp")
++			     "connect_send_udp"), \
++	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_BIND_MPTCP, "bind_mptcp"), \
++	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_CONNECT_MPTCP, \
++			     "connect_mptcp")
+ 
+ #define _LANDLOCK_SCOPE_NAMES \
+ 	_LANDLOCK_NAME_ENTRY(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET, \
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index cceda3b3b961..2a953ba7ce25 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -448,6 +448,9 @@ struct landlock_net_port_attr {
+  * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect TCP sockets to the given
+  *   remote port. Support added in Landlock ABI version 4.
+  *
++ * .. note:: These rights do not apply to MPTCP sockets, which have their own
++ *   access rights (see below).
++ *
+  * And similarly for UDP port numbers:
+  *
+  * - %LANDLOCK_ACCESS_NET_BIND_UDP: Bind UDP sockets to the given local
+@@ -474,12 +477,33 @@ struct landlock_net_port_attr {
+  * .. note:: Sending datagrams to an ``AF_UNSPEC`` destination address
+  *   family is not supported for IPv6 UDP sockets: you will need to use a
+  *   ``NULL`` address instead.
++ *
++ * MPTCP sockets (created with ``IPPROTO_MPTCP``) use TCP port numbers, but
++ * they are controlled by their own access rights:
++ *
++ * - %LANDLOCK_ACCESS_NET_BIND_MPTCP: Bind MPTCP sockets to the given local
++ *   port. Support added in Landlock ABI version 12.
++ * - %LANDLOCK_ACCESS_NET_CONNECT_MPTCP: Connect MPTCP sockets to the given
++ *   remote port. Support added in Landlock ABI version 12.
++ *
++ * .. note:: The TCP and the MPTCP access rights are independent, even though
++ *   they refer to the same port number space. Handling only
++ *   %LANDLOCK_ACCESS_NET_BIND_TCP and %LANDLOCK_ACCESS_NET_CONNECT_TCP leaves
++ *   MPTCP sockets unrestricted, and vice versa. A sandbox that wants to
++ *   control all TCP-based traffic needs to handle both sets.
++ *
++ * .. note:: These MPTCP access rights restrict the ports passed to
++ *   :manpage:`bind(2)` and :manpage:`connect(2)`. The ports used in MPTCP
++ *   subflows are negotiated in the MPTCP protocol by the kernel and are not
++ *   subject to these restrictions.
+  */
+ /* clang-format off */
+ #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+ #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+ #define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL << 2)
+ #define LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP		(1ULL << 3)
++#define LANDLOCK_ACCESS_NET_BIND_MPTCP			(1ULL << 4)
++#define LANDLOCK_ACCESS_NET_CONNECT_MPTCP		(1ULL << 5)
+ /* clang-format on */
+ 
+ /**
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 1a7c5fb8f6fd..d25e056b7ca2 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -23,7 +23,7 @@
+ #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+ 
+-#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP
++#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_MPTCP
+ #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+ 
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index 8f2aaac54b33..8541b0c07d64 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -11,6 +11,7 @@
+ #include <linux/net.h>
+ #include <linux/socket.h>
+ #include <net/ipv6.h>
++#include <net/mptcp.h>
+ 
+ #include "common.h"
+ #include "cred.h"
+@@ -53,6 +54,26 @@ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+ 	return err;
  }
  
- static int socket_variant(const struct service_fixture *const srv)
-@@ -916,16 +946,10 @@ static void test_bind_and_connect(struct __test_metadata *const _metadata,
++static bool sk_is_mptcp_socket(const struct sock *sk)
++{
++	return sk_is_inet(sk) && sk->sk_type == SOCK_STREAM &&
++	       sk->sk_protocol == IPPROTO_MPTCP;
++}
++
++static bool is_connect_access(const access_mask_t access_request)
++{
++	return access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
++	       access_request == LANDLOCK_ACCESS_NET_CONNECT_MPTCP ||
++	       access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
++}
++
++static bool is_bind_access(const access_mask_t access_request)
++{
++	return access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
++	       access_request == LANDLOCK_ACCESS_NET_BIND_MPTCP ||
++	       access_request == LANDLOCK_ACCESS_NET_BIND_UDP;
++}
++
+ static bool unmask_layers_net(const struct landlock_domain *const domain,
+ 			      const struct landlock_id id,
+ 			      struct layer_masks *masks,
+@@ -104,6 +125,7 @@ static int current_check_access_socket(struct socket *const sock,
+ 	switch (address->sa_family) {
+ 	case AF_UNSPEC:
+ 		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
++		    access_request == LANDLOCK_ACCESS_NET_CONNECT_MPTCP ||
+ 		    (access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP &&
+ 		     connecting)) {
+ 			/*
+@@ -147,17 +169,15 @@ static int current_check_access_socket(struct socket *const sock,
+ 					});
+ 				return -EACCES;
+ 			}
+-		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+-			   access_request == LANDLOCK_ACCESS_NET_BIND_UDP) {
++		} else if (is_bind_access(access_request)) {
+ 			/*
+ 			 * Binding to an AF_UNSPEC address is treated
+ 			 * differently by IPv4 and IPv6 sockets. The socket's
+ 			 * family may change under our feet due to
+ 			 * setsockopt(IPV6_ADDRFORM), but that's ok: we either
+-			 * reject entirely for IPv6 or require
+-			 * %LANDLOCK_ACCESS_NET_BIND_TCP or
+-			 * %LANDLOCK_ACCESS_NET_BIND_UDP for IPv4, so it cannot
+-			 * be used to bypass the policy.
++			 * reject entirely for IPv6 or require the relevant bind
++			 * access right for IPv4, so it cannot be used to bypass
++			 * the policy.
+ 			 *
+ 			 * IPv4 sockets map AF_UNSPEC to AF_INET for
+ 			 * retrocompatibility for bind accesses, only if the
+@@ -204,12 +224,10 @@ static int current_check_access_socket(struct socket *const sock,
+ 		addr4 = (struct sockaddr_in *)address;
+ 		port = addr4->sin_port;
  
- TEST_F(protocol, bind)
- {
--	if (variant->sandbox == TCP_SANDBOX ||
--	    variant->sandbox == UDP_SANDBOX) {
--		const __u64 bind_access =
--			(variant->sandbox == TCP_SANDBOX ?
--				 LANDLOCK_ACCESS_NET_BIND_TCP :
--				 LANDLOCK_ACCESS_NET_BIND_UDP);
-+	if (variant->sandbox != NO_SANDBOX) {
-+		const __u64 bind_access = sandbox_bind_access(variant->sandbox);
- 		const __u64 conn_access =
--			(variant->sandbox == TCP_SANDBOX ?
--				 LANDLOCK_ACCESS_NET_CONNECT_TCP :
--				 LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
-+			sandbox_connect_access(variant->sandbox);
- 		const struct landlock_ruleset_attr ruleset_attr = {
- 			.handled_access_net = bind_access | conn_access,
- 		};
-@@ -987,16 +1011,10 @@ TEST_F(protocol, bind)
+-		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+-		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
++		if (is_connect_access(access_request)) {
+ 			audit_net.dport = port;
+ 			audit_net.v4info.daddr = addr4->sin_addr.s_addr;
+-		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+-			   access_request == LANDLOCK_ACCESS_NET_BIND_UDP) {
++		} else if (is_bind_access(access_request)) {
+ 			audit_net.sport = port;
+ 			audit_net.v4info.saddr = addr4->sin_addr.s_addr;
+ 		} else {
+@@ -228,12 +246,10 @@ static int current_check_access_socket(struct socket *const sock,
+ 		addr6 = (struct sockaddr_in6 *)address;
+ 		port = addr6->sin6_port;
  
- TEST_F(protocol, connect)
- {
--	if (variant->sandbox == TCP_SANDBOX ||
--	    variant->sandbox == UDP_SANDBOX) {
--		const __u64 bind_access =
--			(variant->sandbox == TCP_SANDBOX ?
--				 LANDLOCK_ACCESS_NET_BIND_TCP :
--				 LANDLOCK_ACCESS_NET_BIND_UDP);
-+	if (variant->sandbox != NO_SANDBOX) {
-+		const __u64 bind_access = sandbox_bind_access(variant->sandbox);
- 		const __u64 conn_access =
--			(variant->sandbox == TCP_SANDBOX ?
--				 LANDLOCK_ACCESS_NET_CONNECT_TCP :
--				 LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
-+			sandbox_connect_access(variant->sandbox);
- 		const struct landlock_ruleset_attr ruleset_attr = {
- 			.handled_access_net = bind_access | conn_access,
- 		};
-@@ -1054,9 +1072,7 @@ TEST_F(protocol, connect)
+-		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+-		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
++		if (is_connect_access(access_request)) {
+ 			audit_net.dport = port;
+ 			audit_net.v6info.daddr = addr6->sin6_addr;
+-		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+-			   access_request == LANDLOCK_ACCESS_NET_BIND_UDP) {
++		} else if (is_bind_access(access_request)) {
+ 			audit_net.sport = port;
+ 			audit_net.v6info.saddr = addr6->sin6_addr;
+ 		} else {
+@@ -331,6 +347,8 @@ static int hook_socket_bind(struct socket *const sock,
  
- TEST_F(protocol, bind_unspec)
- {
--	const __u64 bind_access = (variant->sandbox == TCP_SANDBOX ?
--					   LANDLOCK_ACCESS_NET_BIND_TCP :
--					   LANDLOCK_ACCESS_NET_BIND_UDP);
-+	const __u64 bind_access = sandbox_bind_access(variant->sandbox);
- 	const struct landlock_ruleset_attr ruleset_attr = {
- 		.handled_access_net = bind_access,
- 	};
-@@ -1066,8 +1082,7 @@ TEST_F(protocol, bind_unspec)
- 	};
- 	int bind_fd, ret;
+ 	if (sk_is_tcp(sock->sk))
+ 		access_request = LANDLOCK_ACCESS_NET_BIND_TCP;
++	else if (sk_is_mptcp_socket(sock->sk))
++		access_request = LANDLOCK_ACCESS_NET_BIND_MPTCP;
+ 	else if (sk_is_udp(sock->sk))
+ 		access_request = LANDLOCK_ACCESS_NET_BIND_UDP;
+ 	else
+@@ -349,6 +367,8 @@ static int hook_socket_connect(struct socket *const sock,
  
--	if (variant->sandbox == TCP_SANDBOX ||
--	    variant->sandbox == UDP_SANDBOX) {
-+	if (variant->sandbox != NO_SANDBOX) {
- 		const int ruleset_fd = landlock_create_ruleset(
- 			&ruleset_attr, sizeof(ruleset_attr), 0);
- 		ASSERT_LE(0, ruleset_fd);
-@@ -1103,8 +1118,7 @@ TEST_F(protocol, bind_unspec)
+ 	if (sk_is_tcp(sock->sk))
+ 		access_request = LANDLOCK_ACCESS_NET_CONNECT_TCP;
++	else if (sk_is_mptcp_socket(sock->sk))
++		access_request = LANDLOCK_ACCESS_NET_CONNECT_MPTCP;
+ 	else if (sk_is_udp(sock->sk))
+ 		access_request = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
+ 	else
+@@ -377,12 +397,20 @@ static int hook_socket_sendmsg(struct socket *const sock,
+ 	access_mask_t access_request;
+ 	int ret = 0;
+ 
+-	if ((msg->msg_flags & MSG_FASTOPEN) && address && sk_is_tcp(sock->sk)) {
+-		ret = current_check_access_socket(
+-			sock, address, addrlen, LANDLOCK_ACCESS_NET_CONNECT_TCP,
+-			true);
+-		if (ret != 0)
+-			return ret;
++	if ((msg->msg_flags & MSG_FASTOPEN) && address) {
++		access_mask_t fastopen_access = 0;
++
++		if (sk_is_tcp(sock->sk))
++			fastopen_access = LANDLOCK_ACCESS_NET_CONNECT_TCP;
++		else if (sk_is_mptcp_socket(sock->sk))
++			fastopen_access = LANDLOCK_ACCESS_NET_CONNECT_MPTCP;
++
++		if (fastopen_access) {
++			ret = current_check_access_socket(
++				sock, address, addrlen, fastopen_access, true);
++			if (ret != 0)
++				return ret;
++		}
  	}
- 	EXPECT_EQ(0, close(bind_fd));
  
--	if (variant->sandbox == TCP_SANDBOX ||
--	    variant->sandbox == UDP_SANDBOX) {
-+	if (variant->sandbox != NO_SANDBOX) {
- 		const int ruleset_fd = landlock_create_ruleset(
- 			&ruleset_attr, sizeof(ruleset_attr), 0);
- 		ASSERT_LE(0, ruleset_fd);
-@@ -1150,13 +1164,8 @@ TEST_F(protocol, bind_unspec)
+ 	if (sk_is_udp(sock->sk))
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 1d02d57f4c48..cc54d4f1d502 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -172,7 +172,7 @@ static const struct file_operations ruleset_fops = {
+  * If the change involves a fix that requires userspace awareness, also update
+  * the errata documentation in Documentation/userspace-api/landlock.rst .
+  */
+-const int landlock_abi_version = 11;
++const int landlock_abi_version = 12;
  
- TEST_F(protocol, connect_unspec)
- {
--	const __u64 connect_right =
--		(variant->sandbox == TCP_SANDBOX ?
--			 LANDLOCK_ACCESS_NET_CONNECT_TCP :
--			 LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
--	const __u64 bind_right = (variant->sandbox == TCP_SANDBOX ?
--					  LANDLOCK_ACCESS_NET_BIND_TCP :
--					  LANDLOCK_ACCESS_NET_BIND_UDP);
-+	const __u64 connect_right = sandbox_connect_access(variant->sandbox);
-+	const __u64 bind_right = sandbox_bind_access(variant->sandbox);
- 	const struct landlock_ruleset_attr ruleset_conn = {
- 		.handled_access_net = connect_right,
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+index d20ab8f0862c..58fe322d8637 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -76,7 +76,7 @@ TEST(abi_version)
+ 	const struct landlock_ruleset_attr ruleset_attr = {
+ 		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
  	};
-@@ -1197,8 +1206,7 @@ TEST_F(protocol, connect_unspec)
- 			EXPECT_EQ(0, ret);
- 		}
+-	ASSERT_EQ(11, landlock_create_ruleset(NULL, 0,
++	ASSERT_EQ(12, landlock_create_ruleset(NULL, 0,
+ 					      LANDLOCK_CREATE_RULESET_VERSION));
  
--		if (variant->sandbox == TCP_SANDBOX ||
--		    variant->sandbox == UDP_SANDBOX) {
-+		if (variant->sandbox != NO_SANDBOX) {
- 			const int ruleset_fd = landlock_create_ruleset(
- 				&ruleset_conn, sizeof(ruleset_conn), 0);
- 			ASSERT_LE(0, ruleset_fd);
-@@ -1229,8 +1237,7 @@ TEST_F(protocol, connect_unspec)
- 			EXPECT_EQ(0, ret);
- 		}
- 
--		if (variant->sandbox == TCP_SANDBOX ||
--		    variant->sandbox == UDP_SANDBOX) {
-+		if (variant->sandbox != NO_SANDBOX) {
- 			const int ruleset_fd = landlock_create_ruleset(
- 				&ruleset_conn_bind, sizeof(ruleset_conn_bind),
- 				0);
+ 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
 -- 
 2.55.0
 
