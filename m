@@ -1,64 +1,64 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3AB4A5ECD
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2ED4A6CD9
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788188394; cv=none; b=Fz/S2BWxVaj73VUGpm/erUmAYjoy8CkmThRUCLDp9ANOJ7Kv3fvzIpZQ5N2BNtWEZ8oe0FF4vEHo9PMy6fgRIfq04sVrKKduhfwRpkwfAwHzIOXu0w2pPRjiRULBsPLf3OckvVAbCrzKHCp6jeky25mRCoSbwRxBmPYSYzauB0g=
+	t=1788188399; cv=none; b=G7LmAv8BcuvosDUkJswSdbwNIwCvVdawD0ax1OiSfK+5aahOc56V9zPwYGEIGyuZO8gD7l2CVeq5MiHm8KbdK/9vv2iuqBKdYn1U1qOXuDHCGKUPSeJPsszaJkMesIicF51mxjPNfCQE3n/rw55LwWeqsEBZ0Ybkgr6nYSwHiZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788188394; c=relaxed/simple;
-	bh=6UZqgo1pNVnRYUaLOBFpn2TGeofhqUttyRB0yoGXOFw=;
+	s=arc-20240116; t=1788188399; c=relaxed/simple;
+	bh=xzF999ibqg4mw3Kbq/zTe/hVGJfzKbE0cK8gaGiljdg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CY3rVrzMP/o+awpMoDN+p1KsHS0EAnoEp0CKbw1ugRXgvTUtzs1fqNog0NdvDqckcbehG8iv53h4rLfi14ouRRqcXe52USGCtUA+qnS6Mp4vBo46lk8jrHOKqmLeLykoJHrRNbiiGB+8U1/YLLKM5CHvZ1+h+7d8RtZ6899HFz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYkvfYRh; arc=none smtp.client-ip=209.85.128.175
+	 MIME-Version; b=ASrEoiZRUbH5dIfp+L5QInkqB6MU0kPfY57483ktG//inhrbygovAv0eZezyIo3b5n//JIVovoZWEl72FMuKf0LCPTTPtvUFTgHZ373dtNCRDmH/6zSCT1PqqSXHuQjInYLc9s5ncsSTsbccyc0YyKdZcth2WVqjejRZLvCmMFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knWJMLeP; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYkvfYRh"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-865bdc6ed72so15669917b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 07:59:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knWJMLeP"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-836c8bdac50so37665817b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 07:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788188392; x=1788793192; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788188397; x=1788793197; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=8vHIsNy/IN9t6970qY2+L8dSJ+0VAmbxT4VuLQXYbHc=;
-        b=nYkvfYRh2kCVnaN0Tj2EhYB4/lWIH1hkSdlsFcbqjPxAEq5YMsvux0IdUOlHxORVhs
-         OPs3zXVqr52d5DJJWQV/h/YDwG8JbGlo84KsmHEdYhfT8aRnxlKCATTYmLtY0PPyBFMX
-         bDRFKFrunByFw4eiLcdi+Dtc0rIwgI7JDRAOt57HgFtVMiW1uwzxt0yHh1ysFckqKFeC
-         Wx9K/9lPtaqDpXnkXMk6eTU70OnEU5y68Q2MGJGsPd53v5keBmKqsby9d9vyH4R3kW+J
-         9VD4atWFGTx8rkwuin7omcU8cAbc19CluS1sDkXBGVopeKcIJ4TIvTWp+bVM6VvWfXaX
-         S92A==
+        bh=CuP/HSiHorbIS7zM6H5giX6A7B2bIefcFZ0dGi8JhTg=;
+        b=knWJMLePsGezU9SC3FmP7QKkENKt554Gq1XxmU4QKQ4WcpnEzvtvbo/08Hrx8JeCye
+         IQQgbx77Og2IuYQ5UJl+Psbigr6QjSaUbqoTKAhxjdEUjvXQGd9CWsE0z/7AJUETNqyC
+         aTB36OpSKgfZfK2OkqoztKqGCGN+LUoCVUilHChbEpq12TQ3x3Jw7lQ7uiTWIDsHCPLl
+         nXbqeoSRXYXbiphon+tP2G3vffRqK8iQ7976SnK1u88VYch+uGPxkRlYxIdm7dX1yVMK
+         cagDmTCWobvLa/wC5+2vmsA6LAoQKn+C3BZxAZahUSFOYPvT3zwq3VhXkf8DOdVo4yEl
+         FkmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788188392; x=1788793192;
+        d=1e100.net; s=20251104; t=1788188397; x=1788793197;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8vHIsNy/IN9t6970qY2+L8dSJ+0VAmbxT4VuLQXYbHc=;
-        b=Sfk09mzkPT2MbAw40ryeKH05kJELErmMkNdhVJCN7Iqys+RkRhNcafrNGcW9uzOKkq
-         UpLwzkOXTw5+tjiJuLCCgw0+SPURWq3JAlRWIB94Dwq54VnbpOvwdsqTCf4OjYJK1U8X
-         ZHI6+H57belJexeWgGzNejPCzX/JSFT0vVWoAx7pmPH1cJd8UsfpXUJS65oWn6o8Obmd
-         s1q4H4c/eCbXLezB7Wd3+bHYh6K+lxUreum4T6PM2zNmBgxceCSRgrFfnDDi4VU8FPQq
-         pPX0s/BxhiLniyd77XcTbsB8YKJKzGiSmtPDPdjao0XOp8pqIwKSK17V/sadGqv1jvCV
-         BWPQ==
-X-Forwarded-Encrypted: i=1; AKwUvByzKETmiK+P+ycs0va8cPQ2RF4Dol1rhm8vv0wn7zi3QVOhKSjt7ydHLPiK6ZC7/ahH/Ibn+rR9yOAzuqlVKPOTsYhKv+c=@vger.kernel.org
-X-Gm-Message-State: AFuF++nEhUWEZxHymvofnPCgf5FCOrWg8je1JKchgyIvV+cIOAN6kd7f
-	5QBxC8srNSCtF5dUwuTzmZcf9riqOLR997oOzpclBMT2P2fidLyxY0R3
-X-Gm-Gg: AYBFou223LztWrFOEDVPolD1Bn2nzc+TnE970meJdKvv/RHG6s+egsF+2KEbdqGCCHE
-	dJ/MCEnDO6dn7Mlt8hq5h4ddHZH7PyYT9pJB9cS4dpegEIQO5IfEeEfx3Gq7dvCw8e3owaSbhCF
-	VpcsNumPho+g8VSslC7hM75/vZckmiL7KHh3k8ra3y8ZzwHynnWLJsvUcLHrawUJcz7ZiUMAxB0
-	Mf/kk2zdwGu2/fLxzs187xtJ2B+vccxyjiRA5s/lLurACEMz4ewVMm4YzOedx7ZxZsq6yBPz13E
-	QjOrC1ee1Gpd2PJbjcP4SgWxPbdFDOhcc8kf4u+jOGUPuVjYI0aolwYuuQslcFtt4dTZMkwmWwF
-	LHKLKmZjw9AO+Nas0WTaDU8sJmrmeuYIca9T3LPX3iIcIy7hq4AjGsw6CxMBWKH56HJDu3vQwO9
-	nq9BNpcr+uR0ls7Zh03SMDFAU0MkPObP6IgybaNSgMsq6VdlrWEtktQevwwiz4BCDkChkvAsWr1
-	TNaDJWIkri9rmox7PvCKra/xNtfBbUJWA==
-X-Received: by 2002:a05:690c:c4e6:b0:7fe:4069:d3fe with SMTP id 00721157ae682-868747fe33emr6595577b3.30.1788188392315;
-        Mon, 31 Aug 2026 07:59:52 -0700 (PDT)
+        bh=CuP/HSiHorbIS7zM6H5giX6A7B2bIefcFZ0dGi8JhTg=;
+        b=X6f9p1gL/YUEgBGzf0p9jaRbm9kOKHHmLB0GIjyv8i752uv3+PtWXu4iaYeEl+Qy1N
+         1uwXeD4GGBt+677bVz/SYD7CB03/jQKZJtN6gFtLdx8HLKA0GkZXEPrFitkM3FPeXMmV
+         q/xLDy+vOHGiTtLXKdHYDc2wIlevR52MuE5HDZuYtq+B1X29DdH+Ukr1Ep6K4+eTcqwO
+         ILbYXpwQNQTxBwwrTllLZgml3O+F/ZuVzwcpq0rftwIaP7dlaQ4vPHRKl5HoN95LFftp
+         z2b02V3aaXP0Zy5f9BifcTyVf9vgzny6UWhiepMyTteVgFZ95MJwhXeuJFeLgihN6Cy9
+         cM2w==
+X-Forwarded-Encrypted: i=1; AKwUvBzwl7qrTy6iwI0eFbTh9MtW150sBqEaebBpdtGes02wHS2zeqS6zUMmMi1lmBBZyL56XTSJdfVb7lHDVWl0oArbJsMVdaM=@vger.kernel.org
+X-Gm-Message-State: AFuF++nQ3KGrQ5UhwBx8/ny2roSWdF21o2T/tY8+TkY3VuJvT+LXxX8T
+	VU7dzPTPvAD82lRmlbLFtUd+Uq56zyR90y9GOr5LgcDkEQ9TBEqxA1KK
+X-Gm-Gg: AYBFou2U+k+EKsTC0BMTVA93GhzMbVUxsQnvQNAew0yqL1kr7Uj0ps8eb49A0KLQDxZ
+	qFk6blqxgaWvS07EgsQwmAPLFY8/irPIPNCk2gBL9Q6zK62/CgO3LV4UwE0/g5/ukWgSKFiHwx5
+	QZdu/KVX0EUy3lxYGZ0d6zxi7FIj1h9XorlBtdIJMQltgiquDho7Nl+mSnUNtS3P4x91TZwR1HA
+	2drOwEcw4pcwosYOUfuJOkE5Irr5CXqAkeTLAoGGs7kwzCIZVu+arxA3qITp70JqSCEiXU/AsOw
+	VEphBYXu0zUeufgpkTSAsiITxNZxWOwKjWXLIHTvtU5eVovW7Jf+FIQEXKG8ba8WZCoIbzSPMiY
+	tpmXjR0dNCBSaJroblNHHRgAw1FMVS2sql9OpuTxrGfgJzgapx87xgsCMV6IP52t70veTtmYjcL
+	SFOj61xGQ0iLIG0r+r8HEwv5w2CZxyrHF988lIGYvLCin8hzULNP4wv96OeHNzKQI2O4wWf2Wg+
+	yoS/2FHtItm8Grw6YQ/dpk=
+X-Received: by 2002:a05:690c:38a:b0:858:ad19:324d with SMTP id 00721157ae682-868703e165fmr7145687b3.3.1788188397150;
+        Mon, 31 Aug 2026 07:59:57 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:f6fc:b424:b1bb:6ff0])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.07.59.50
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.07.59.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 07:59:52 -0700 (PDT)
+        Mon, 31 Aug 2026 07:59:56 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -78,11 +78,10 @@ Cc: gnoack@google.com,
 	bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Justin Suess <utilityemal77@gmail.com>,
-	Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v2 03/15] lsm: Move the lsm_for_each_hook() macro to security/lsm.h
-Date: Mon, 31 Aug 2026 10:58:45 -0400
-Message-ID: <20260831145858.3869191-4-utilityemal77@gmail.com>
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH v2 04/15] lsm: Add the bpf_lsm_policy_release kfunc and policy object destructor
+Date: Mon, 31 Aug 2026 10:58:46 -0400
+Message-ID: <20260831145858.3869191-5-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260831145858.3869191-1-utilityemal77@gmail.com>
 References: <20260831145858.3869191-1-utilityemal77@gmail.com>
@@ -94,52 +93,170 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move the lsm_for_each_hook() iterator from security/security.c to
-security/lsm.h, verbatim: a following commit adds a user outside
-security.c, the file implementing the LSM policy object kfuncs.
-No functional change.
+Add security/bpf_lsm_kfuncs.c, the home of the kfuncs exposing LSM
+policy objects to BPF programs, with the first of them:
+
+  bpf_lsm_policy_release(object)                KF_RELEASE
+
+The kfuncs are the LSM framework's own BPF interface: there is no
+per-LSM kfunc and no intermediate security_*() layer.  Each kfunc
+walks the matching hook's implementation list and calls the one
+registered by the LSM whose lsmid the policy object carries.  Calling
+a kfunc for an LSM that is not active or has no policy object support
+fails at runtime rather than hiding the kfunc at verification time,
+so BPF program loading is independent of the boot-time LSM
+configuration.
+
+A policy object reference is meant to be handed over through a map
+kptr field, so also register a destructor for struct
+lsm_policy_object: map-held references are dropped on map teardown,
+possibly from a context that cannot sleep, which the
+policy_object_put() hook contract accounts for.  For the same reason
+the kfunc is not KF_SLEEPABLE, and the filter adds no per-kfunc rule:
+releasing a reference must be allowed wherever one can be held.  The
+filter itself is needed because BPF_PROG_TYPE_LSM and
+BPF_PROG_TYPE_SYSCALL, the two registered program types, share their
+kfunc lookup buckets with other program types.
 
 Cc: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: KP Singh <kpsingh@kernel.org>
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- security/lsm.h      | 6 ++++++
- security/security.c | 5 -----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ MAINTAINERS               |  1 +
+ security/Makefile         |  2 +-
+ security/bpf_lsm_kfuncs.c | 98 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 100 insertions(+), 1 deletion(-)
+ create mode 100644 security/bpf_lsm_kfuncs.c
 
-diff --git a/security/lsm.h b/security/lsm.h
-index 32f808ad4335..264ae63290a8 100644
---- a/security/lsm.h
-+++ b/security/lsm.h
-@@ -24,6 +24,12 @@ extern bool lsm_debug;
- extern unsigned int lsm_active_cnt;
- extern const struct lsm_id *lsm_idlist[];
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f5301c30ea91..2af6a25a1399 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5037,6 +5037,7 @@ F:	kernel/bpf/bpf_lsm.c
+ F:	kernel/bpf/bpf_lsm_proto.c
+ F:	kernel/trace/bpf_trace.c
+ F:	security/bpf/
++F:	security/bpf_lsm_kfuncs.c
  
-+/* Iterate over the active implementations of a given hook */
-+#define lsm_for_each_hook(scall, NAME)					\
-+	for (scall = static_calls_table.NAME;				\
-+	     scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)  \
-+		if (static_key_enabled(&scall->active->key))
+ BPF [SELFTESTS] (Test Runners & Infrastructure)
+ M:	Andrii Nakryiko <andrii@kernel.org>
+diff --git a/security/Makefile b/security/Makefile
+index 4601230ba442..a9364ea9828b 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -23,7 +23,7 @@ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
+ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
+ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+-obj-$(CONFIG_BPF_LSM)			+= bpf/
++obj-$(CONFIG_BPF_LSM)			+= bpf/ bpf_lsm_kfuncs.o
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
+ obj-$(CONFIG_SECURITY_IPE)		+= ipe/
+ 
+diff --git a/security/bpf_lsm_kfuncs.c b/security/bpf_lsm_kfuncs.c
+new file mode 100644
+index 000000000000..e1190215d477
+--- /dev/null
++++ b/security/bpf_lsm_kfuncs.c
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- /* LSM blob configuration */
- extern struct lsm_blob_sizes blob_sizes;
- 
-diff --git a/security/security.c b/security/security.c
-index 71aea8fdf014..0a6fa21cc31b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -495,11 +495,6 @@ OUT:									\
- 	RC;								\
- })
- 
--#define lsm_for_each_hook(scall, NAME)					\
--	for (scall = static_calls_table.NAME;				\
--	     scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)  \
--		if (static_key_enabled(&scall->active->key))
--
- /* Security operations */
- 
- /**
++/* BPF kfuncs exposing LSM policy objects. */
++
++#include <linux/bpf.h>
++#include <linux/btf.h>
++#include <linux/btf_ids.h>
++#include <linux/cfi.h>
++#include <linux/init.h>
++#include <linux/lsm_hooks.h>
++#include <linux/security.h>
++
++#include "lsm.h"
++
++__bpf_kfunc_start_defs();
++
++/**
++ * bpf_lsm_policy_release - Release a policy object reference
++ * @object: policy object to release
++ *
++ * Release an acquired reference on a policy object.
++ */
++__bpf_kfunc void bpf_lsm_policy_release(struct lsm_policy_object *object)
++{
++	struct lsm_static_call *scall;
++
++	lsm_for_each_hook(scall, policy_object_put) {
++		if (scall->hl->lsmid->id != object->lsmid)
++			continue;
++		scall->hl->hook.policy_object_put(object);
++		return;
++	}
++	/* A held reference implies the owning LSM implements the hook. */
++	WARN_ON_ONCE(1);
++}
++
++/* Destructor for referenced lsm_policy_object kptrs. */
++__bpf_kfunc void bpf_lsm_policy_release_dtor(void *object)
++{
++	bpf_lsm_policy_release(object);
++}
++CFI_NOSEAL(bpf_lsm_policy_release_dtor);
++
++__bpf_kfunc_end_defs();
++
++BTF_KFUNCS_START(bpf_lsm_policy_kfunc_ids)
++BTF_ID_FLAGS(func, bpf_lsm_policy_release, KF_RELEASE)
++BTF_KFUNCS_END(bpf_lsm_policy_kfunc_ids)
++
++BTF_ID_LIST(bpf_lsm_policy_dtor_ids)
++BTF_ID(struct, lsm_policy_object)
++BTF_ID(func, bpf_lsm_policy_release_dtor)
++
++/*
++ * BPF_PROG_TYPE_LSM and BPF_PROG_TYPE_SYSCALL share their kfunc
++ * lookup buckets with other program types, so restricting the policy
++ * kfuncs requires a filter.
++ */
++static int bpf_lsm_policy_kfunc_filter(const struct bpf_prog *prog,
++				       u32 kfunc_id)
++{
++	if (!btf_id_set8_contains(&bpf_lsm_policy_kfunc_ids, kfunc_id))
++		return 0;
++
++	switch (prog->type) {
++	case BPF_PROG_TYPE_SYSCALL:
++	case BPF_PROG_TYPE_LSM:
++		return 0;
++	default:
++		return -EACCES;
++	}
++}
++
++static const struct btf_kfunc_id_set bpf_lsm_policy_kfunc_set = {
++	.owner = THIS_MODULE,
++	.set = &bpf_lsm_policy_kfunc_ids,
++	.filter = bpf_lsm_policy_kfunc_filter,
++};
++
++static int __init bpf_lsm_policy_kfunc_init(void)
++{
++	const struct btf_id_dtor_kfunc bpf_lsm_policy_dtors[] = {
++		{
++			.btf_id = bpf_lsm_policy_dtor_ids[0],
++			.kfunc_btf_id = bpf_lsm_policy_dtor_ids[1],
++		},
++	};
++	int ret;
++
++	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM,
++					&bpf_lsm_policy_kfunc_set);
++	ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,
++					       &bpf_lsm_policy_kfunc_set);
++	return ret ?: register_btf_id_dtor_kfuncs(bpf_lsm_policy_dtors,
++						  ARRAY_SIZE(bpf_lsm_policy_dtors),
++						  THIS_MODULE);
++}
++late_initcall(bpf_lsm_policy_kfunc_init);
 -- 
 2.55.0
 
