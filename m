@@ -1,150 +1,146 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C483A7597
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 21:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F07397338
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 21:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.178
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788211390; cv=pass; b=VVIOpoH2VQ4sWLwYyl+hokFKSaF80dV0utJw2NkT0Ye05mTswH+RrFTsk7dw00nBHMBdrXaFz+1ElPtNDK2rEPkR5OtTLJt6gspU5wYZ2Ei/BeUuh5hALa+5hVeEIDIXBHcL0GTae4IL1K48H67DxWim9YncLpP59xW/LWdka/Q=
+	t=1788211594; cv=pass; b=bDlBQvPYTOVBE1YFyjtxBrSvCbottddWkrZtmDH/ObCRqc5ItslxRNjjnUtIQmjP708zFbfII2HlJQvin20BoxOkTLw9/Q/N7G6hBatjRl0kfuqVVhVYVJcyOcuPHpXV/y4ep7scz9qSLSKeKM2gXg2V6xWc6jGmg+sK8o21wZA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788211390; c=relaxed/simple;
-	bh=+1ctpOnlda54PidlZ6bNmCPQ+W0TpdPhm/i6KN/wKa0=;
+	s=arc-20240116; t=1788211594; c=relaxed/simple;
+	bh=SNlsz2MPRq4levA4MX+yohL5QexaYB539yJgxQLixV8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ByttGItsmFJY9+XPvbfVoDNz7vya9BvSYSilqNz9Lb9ubDg9Ui1zkI7AK2xamlSttByEZcChJzBeCaAHjpow0Yk8hVyYfA2rkSCymu+CbwNU+zXs4+ss93nhIr9ZjcmGdEpqoCMOMWO/bryJjUWHIyXYTwB6ml9YDMxFkOyaiBE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Hg4iWkiR; arc=pass smtp.client-ip=209.85.214.169
+	 To:Cc:Content-Type; b=CL8lr2k5pdXjZIo1NMVK4q9CnnZzzlVcdLL43uzGOwClSIKCuMJx8Mxl2v3Qv0FhqetneIRXOYL1DoOhbAcpStb07wx/DCzH0+Ch4J0nOgDKhlAbeu99tBOET0AKqCGd65AKfYcrQjlNYImrZDLmKLzae7onNKkXLzkEIH5pG5M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PQIMo9RI; arc=pass smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Hg4iWkiR"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2d91ded8174so1054445ad.1
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:23:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788211387; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PQIMo9RI"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-85377c8bc96so3740579b3a.3
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:26:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788211592; cv=none;
         d=google.com; s=arc-20260327;
-        b=FGtwJ2VygiZYM4wTGnobwgMRK6Z3j5T/x4lqjlZq21Z3mpvE7MdEM579N6ZuaHCIfm
-         obPqm4kpcaIE3+9xGn7856s4vJ7GvaDRdJSzVQtlEXTL8MkN43duk6O83YoLeM9+ZywO
-         /kLdxci0456ic6e48S7Y3BwkfOZAnq2jVRLeiulBfNQIH1j8GphdmWOxtxklCoia/ndq
-         Ir/h6CrHzCUvL9fFydcnBgiW+1GRhnMcLuC21p/0t/g2n1eKsAanJYkK/inUzu0dDwah
-         V+1Bq94AYRiUZTWq6XtAbFAnG8ArGoyIwjTHOENBb+GRE4I6setkJ6iGTdOFRnM+Pod6
-         zOwQ==
+        b=GBYhX39Y1LgGpiDY2yRISJJBjOVIdVlUWMstdLwpctrXsEuSHkSsx3MaLd31C1Qr+/
+         NglbDWAAPMJ1oAcr9M8tbaLCT0hf4KTjfpl9BoAqd6yRJ2P7S46qShKBhJGcj5FHtAem
+         jbaL9QwdeEmWV8KBCzedcPm0hJwaRNQ/0v92TSI3+9EeuAgmw7D5A26KJzKgbnn8W1wr
+         O7Tto4ci7cQ3yVAgFobnNwX+8DyflLi6ExU8GRwTNFo1wz1mhO4LRlKvMgGvYMJF5zZL
+         G/a4BaMjh9GN3qAnYxNbGaxC/2veBw5u0uX+3ef//XU7KIjOw9BVI3wW+ANkfBOmSIym
+         Kodw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=TFINHJ5jZ8ERlFnthoEvZPB9L54815EikMU7ng1wOz8=;
-        fh=joOPqi3T1qFSev3+hfK6B+j2U7Gy4rNPdUBq/fCS6K8=;
-        b=LRTd+GYUSbHhITnfFdfv1SusWow7VWI1JiFawSJl1Me0NtyLosrvcrh8R2oVhAzHYm
-         dXx/A4+pull81N94BnsMWqlm5cuApuzXepz9GS5HdtEkbP6cvz1958PZiw1AGh66CcmJ
-         PW1XlOI/l40yN9bi9bN9RXcs1MwlZ0IlpJdypxh9VTg08XGF0UV8x+SUQpb7sAnENCPx
-         3YlChjM02RhZQLqZqrtSNAgqLZiBV9sIbG0OZShKSsqHrTfUpqg+1TwpsrKKrDLGYwmS
-         O3iw1BXVKYNV5G/jXh1meH9gEBblngoeiFKbJ3VL+6xvC46rYLx+D16p7VOo4KmG4/PE
-         VZBQ==;
+        bh=B0t0GoOAIGAPmJB6jitdBOXKLd7x+wtGWWpKwR8Li5c=;
+        fh=+AVUhNCXZUlAK4mOTFvhl25jXZ1/SXnewLwy17V1SIk=;
+        b=DnfirX4FfCI/ROe9Zgs7cmEwyJZM/jl8EVEkS97N2dOUnvunTH/L+rITWjCpT2SEzk
+         IG60rZuhgQ5eJQkxB9PGGE7ZVXQNFiPxU5wbYi5rEjpiCOSOhIefHHsu3tVEn2IAwExA
+         bcyo2sEYY6M6cLEW8sXlN38BUN1EsbtaDFS14CwdFMqo49QU0vio5pEkxs2FFD6fwVFF
+         l5q1azBjoj9K8QA33I3fOAFRJY1gqYN678OxTB58P2z6ibZvhLEC3Av9dGgxBnM7fngq
+         2tt5jQsTrwTBVSv3jJH9mpb2nvynR3XSKuy4bZGcNG4gn4UA9AuFvnX2LdyFI2pixvjk
+         3RnA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1788211387; x=1788816187; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1788211592; x=1788816392; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=TFINHJ5jZ8ERlFnthoEvZPB9L54815EikMU7ng1wOz8=;
-        b=Hg4iWkiRhdIY0QnmPFpdDDHe7bhXyeMl98uRZihvaS06q1MXAaZFnAoaIgkx2NY8Zk
-         MnLJneA+ImYjqm19LJuThUmwetBxKkPOSmTlT0pykqhl+YfAeB+5RjETqQLEdj6DZ1CV
-         g+C7sS2dIfuBeeS8SVco2iPeOro23T6aNAuuCEA3BHxUxgLloJn2jDsdPB0kXpFgRN8L
-         tjiUh5OlWjaBGMoJc0NadY4Qyw7D8r99FpgjO7kMUcG5/nD6xFE3JhmWzGlC9DdbZR1M
-         PQzrDgaPLTZ45MGummuL6ffnkuGJEV4zjUGRCS5nnHn2JKGmLDQBEVQxxznWIk2v4/WE
-         Pvkg==
+        bh=B0t0GoOAIGAPmJB6jitdBOXKLd7x+wtGWWpKwR8Li5c=;
+        b=PQIMo9RIZT6w7HmQKV2ItxMWnQ7jJyw4LDw3Sxt1Fq1/4DVLN4pgtpgAvRvhz211bU
+         VtUJrxLCUImzY8K22youYRZ9bk6Nm7/vW4fFHUnZKcGluCpZ7aubtE3U4Wfm+/FjntTu
+         z/6V+7VDf4SX6e5HWf2GnV73XK/HpkYoauBpjntBsyCzEe98qCEvMXE0T04Fjzp+uIqr
+         NP7VE2I18KgJEnAOlaxy1kTaJoDjqkjzc4ZJlPlVyp+sfH0OZiSEBnIEY1UqMzyxCIQ+
+         IyNCIsKsFVEzVH+jz5prz8x4Ga138WHh9chWvYOO7xHD3+OomyDnNBDb7Gsf/iU9LFu2
+         GW5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788211387; x=1788816187;
+        d=1e100.net; s=20251104; t=1788211592; x=1788816392;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=TFINHJ5jZ8ERlFnthoEvZPB9L54815EikMU7ng1wOz8=;
-        b=YbA1oQ3H1t2L1vM0gkhIQjx3GjfNkMPeVOgrXD8ZelOOu4XmkA0L+huZEKwcZ9BMKc
-         um5ww2axzUb+PHGSXFVLfg7/7hqbBgCVPKzgS7V6XLaZoWljuWeCdA5DNNv2ip3nO46j
-         5LAVfcvFkOGz+kqoXWC5swi5z0pD6UYll5/cB85l0w3999sSvHMBKJopODXXhXN7VbpY
-         HwxlsV01+N0lr7kar/rS+E8Zdgk6nlyte5ntZ4xCmNcY25+sHHaGiAv3GWNs1FokYTK2
-         kkSIIPJRDZ11XqoF4zRPcdjkWdCT7Xuz53HE87uqLXm/TADU3qtMtY3FWuYYx2T/sx5C
-         TDsw==
-X-Forwarded-Encrypted: i=1; AKwUvBwm9DvQNkGurzbrSDKByXplM/ZbkxSJWsgYyuZL0l3AUAldOCt58UaGBN0wdG7p6mQmIslq4GWZi2pMe7QojTKFlfJB54Y=@vger.kernel.org
-X-Gm-Message-State: AFuF++kn5W7/VDPhuy9BfWTQvWKV7yK1Hom7Zq+jqADf60EeQ/VFfmV+
-	JOrJhB71zwy2nG8OeV8s1p6cnnU7jqpE0mvm/p5YNNNezWZ7BH6uAUprnxV9fipjsQzwlzahMhu
-	Wii5AfpViMhEP+TVVuyUS2SGrKSWjZbyfki/BQ51DZgJQ+47qdfOGFA==
-X-Gm-Gg: AYBFou0HkeumciF5ag+KpSMZPB3mqyF6e3/b2M9QaTgq7kBid2hlwf5d50ZWTrJI36J
-	vcy6AoDXpnA7N8Fc2idQ1o5sU1yfEfAAOi6dCDCbI9BSg1eFr2siavcFU+4Xr2wfU6fIIOT+zLm
-	EzdPxrN6lCFkoMCsrrt+w//j15zWBPPIkXjJNGHt18Bv6dHcsi0YkzH+TGlJrOPLbqzQwE1spm0
-	qvx2YKDZyHo9kjm27///J6ZbVSVvyJ/lWHTNoteQHlZw2sXRqsUbVVIyBFrbzT2PbvkCaUNbMlm
-	gGBdkDjnDNHITAK1qgwGeAXNDGCWQdat4ux5NcamgHgl
-X-Received: by 2002:a17:902:ebcb:b0:2c9:e846:a57e with SMTP id
- d9443c01a7336-2d74cfcdb1emr492271905ad.0.1788211387554; Mon, 31 Aug 2026
- 14:23:07 -0700 (PDT)
+        bh=B0t0GoOAIGAPmJB6jitdBOXKLd7x+wtGWWpKwR8Li5c=;
+        b=UcKFm4lvjJipX0OSfSf0SQjm2A6B5aoYM1FVIOAMqhLNkPKhnt2bOsPP1InaNYv6Dw
+         XaSAhAYdQekiMML4lLyZZwS0nD1Io5eyKOnTEmsRmbUSq6nm9dTdaJZcoR+YrqNpndsi
+         C12zI9zi3pek6dC5VcqqWyYxiix+/qoiAiATwqn/YEvmnS2CU5Yw4v08mcfjIBrIMBQ3
+         7EeWD2l5GLBPBvzSK2TyahCzuvQ+5tYYInkhCi+b/cFWQnz4gKHBNAV+9s5zoBcKs1rC
+         BMBVf1OtyAoz5TXhU4czpOjh2F5h+mJnC4Qw2Wy97JwB2dGLU6G76och4vwrtC3lH1mG
+         BTBg==
+X-Forwarded-Encrypted: i=1; AHgh+RrR1tby1XNdPflmEuZXNA1gLHCIsOLOltFRYXvzmEPnpJIL9IHQNUdtIvQFjX75C3G2Z3sYW4cPv2JhUL+qJx3m/2sLmAU=@vger.kernel.org
+X-Gm-Message-State: AFuF++kFDMBZgLfWcNDk2P8fs6ghGY7YtL5Xj5V2iwk6CEnbaSAZqdAY
+	QrW1kfonhN2itUHZhrRJ7KNpU8ByPqG15qVoUULjBZEDEeQzDLmJXQsE1fAxglrIBL5xtxMfUYE
+	HAFm3K+3VfmJB/rL7DB2yb7TargXqSt4skmd6YOTG
+X-Gm-Gg: AR+sD10NfVFjLHb9JYBBHDrB+qzHeIHiO4Sz1McyPUdN634Oz/FKJl5yHFkEPfbDgp/
+	6T8rW6YcwG3AlBbbL3R6kGHJ3diG9DQnD06mdjRn9jPWKJAh10g5bulYSi1pqqgKKXCLIGO98mr
+	ciMKQADh8ejwASyE4IaM1Rxof5wdRbnyD93a8p8IohGqbm8CsB7+qhL8YquDXtBP+oqpv6mx95F
+	h4FaA1u/RIvik9y6f87wJrYz2DMErqgFYHu+LEu/LhfLqI6pok72/CqhuUuVJGms3Cpes+nZ2to
+	NsnW/u0pC70Eb8wg9fEjp46560TKkSCls6DCNxCstBPpYg==
+X-Received: by 2002:a05:6a00:2da7:b0:851:bf92:34c9 with SMTP id
+ d2e1a72fcca58-8562a8d2cdfmr43570322b3a.9.1788211591833; Mon, 31 Aug 2026
+ 14:26:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806-cred-nonrcu-annotation-fix-v1-1-5fd149b2ab54@google.com> <2bdf79f45c5eb2ea66d59904418081c5@paul-moore.com>
-In-Reply-To: <2bdf79f45c5eb2ea66d59904418081c5@paul-moore.com>
+References: <20260726161400.3010511-4-mic@digikod.net> <5cabf9b33a20f130cedcc423b8b2d151@paul-moore.com>
+In-Reply-To: <5cabf9b33a20f130cedcc423b8b2d151@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 31 Aug 2026 17:22:56 -0400
-X-Gm-Features: AcwNN1UgSvn7xJ2VonI3rUNXxETiZFahKrkwjH9zjPk8v2KgPZyHugOYt0cGY20
-Message-ID: <CAHC9VhTYYbmKVXzMrCv=sLi1c+6Wdvum+TmpGNPZysaNHDyTHQ@mail.gmail.com>
-Subject: Re: [PATCH] cred: clarify that task_struct::cred is only for the
- current task
-To: Jann Horn <jannh@google.com>, Serge Hallyn <sergeh@kernel.org>
-Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, audit@vger.kernel.org
+Date: Mon, 31 Aug 2026 17:26:20 -0400
+X-Gm-Features: AcwNN1VcoP3dcmF-y7p30PIUoPvKVk5sVz3Ko6oQrIqfztGFDqzJ9T0P3PiRYsc
+Message-ID: <CAHC9VhS_WP-bLgMGiFAfE1MT76iKvVJ-OV5r7xju-KMdrfjssQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/12] security: Add LSM_AUDIT_DATA_NS for namespace
+ audit records
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: Daniel Durning <danieldurning.work@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Justin Suess <utilityemal77@gmail.com>, Lennart Poettering <lennart@poettering.net>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 10, 2026 at 3:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+On Tue, Aug 11, 2026 at 4:16=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
 ote:
-> On Aug  6, 2026 Jann Horn <jannh@google.com> wrote:
+> On Jul 26, 2026 =3D?UTF-8?q?Micka=3DC3=3DABl=3D20Sala=3DC3=3DBCn?=3D <mic=
+@digikod.net> wrote:
 > >
-> > The `cred` field in task_struct is currently marked as __rcu, but that'=
-s
-> > not true: It can point to credentials from access_override_creds(), whi=
-ch
-> > do not get freed with RCU delay.
+> > Add a new LSM audit data type LSM_AUDIT_DATA_NS that logs namespace
+> > information in audit records.  Two fields are provided:
 > >
-> > What actually protects task_struct::cred is that accessing it is only
-> > permitted for the current task (except for setting up a child during fo=
-rk()
-> > or tearing down a dead process).
-> > (There is currently code in Smack that violates this rule, but that's a=
- bug
-> > and causes UAF, I have sent a separate fix for that.)
+> > - ns_type: the CLONE_NEW* flag identifying the namespace type, logged
+> >   in hexadecimal.
 > >
-> > Clarify this, remove the __rcu marker, and remove RCU helpers from all
-> > accesses to this field.
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> > For context:
-> > There have been at least two UAFs of struct cred that I'm aware of, bot=
-h
-> > caused by wrong use of task_struct::cred:
-> >
-> >  - https://git.kernel.org/linus/a3727a8bac0a9e77c70820655fd8715523ba3db=
-7
-> >  - https://lore.kernel.org/all/20260806-smack-uaf-fix-v1-1-26426d389a26=
-@google.com/
-> > ---
-> >  include/linux/cred.h  | 17 +++++++++++------
-> >  include/linux/sched.h |  8 ++++++--
-> >  kernel/auditsc.c      |  5 +++--
-> >  kernel/cred.c         |  2 +-
-> >  security/lsm_init.c   |  2 +-
-> >  5 files changed, 22 insertions(+), 12 deletions(-)
+> > - ns_id: the unique 64-bit namespace identifier, retrievable from
+> >   userspace via NS_GET_ID or listns(2).  Unlike the proc inode number
+> >   (inum), ns_id is never recycled.  For namespace creation denials,
+> >   ns_id is 0 because the namespace does not exist yet.
 >
-> This looks good to me, with one small nit below, but as we are at -rc7
-> I think this is best kept until after the upcoming merge window so it
-> has more than a few days in linux-next.  I'm going to merge this into
-> lsm/dev-staging with the expectation of merging it into lsm/dev after
-> the upcoming merge window closes.  If anyone wishes to object to this
-> patch or add their own review/ACK/test tag before then, please do.
+> Based on the code in this patch, "ns_type" should be "namespace_type"
+> and a similar change needs to be done for "ns_id".  Regardless, the
+> first three patches look fine to me (I can fixup the above during a
+> merge).
+>
+> As mentioned previously, I want to merge at least the first three
+> patches via the LSM tree since we have multiple LSMs which depend on
+> these new hooks.  I'm happy to also merge the remaining Landlock
+> patches in this patchset via the LSM tree, or you can manage those
+> separately; let me know how you would like to proceed with that.
+>
+> Since we are at -rc7, this is obviously something for after the
+> upcoming merge window so I'm going to merge the first three patches
+> into the lsm/dev-staging branch now with the understanding that they
+> will move over to the lsm/dev branch after the upcoming merge window
+> is finished.  If you want me to merge the Landlock patches too, just
+> let me know.
 
-This is now in lsm/dev, thanks!
+The first three patches are now in lsm/dev, thanks everyone.
+
+Micka=C3=ABl, if you would like me to merge the remaining patches in this
+patchset into the lsm/dev branch just let me know.
 
 --=20
 paul-moore.com
