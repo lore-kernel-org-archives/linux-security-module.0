@@ -1,65 +1,65 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18CE4FECCD
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 15:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F814A8422
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 15:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788188429; cv=none; b=a13zrS6nSdW05F9QUk3h2GVOPC3cSr6hthh+etfM7FyoVA76nNi2zJUSjB4gWxPIjDztf5aiWHdZ96KlTcG7s0i4AlxhTGX9JmWKRYI56NCgeR12vgjVpjmGqOlOJBsxEYtATVwLE0V3hkEF9C8FDJYLQ+JpDkYUSf8dNxSR328=
+	t=1788188432; cv=none; b=o23GNCPcIA3XEawj0LJ8Ep6TBi9Fudz8UIo4Lxvj5FW+VASskiKB71jBrrKZCvEfDnUK7ong93JPvp6b2nJbRok0Yy1A5VuvPzuJ2Fb6xzf1jqKvwJay0WK2iCxW4T9Ezicdw4MKtMMOnBBCWEY6ADr3XUux7mGS0lqBMEEPxgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788188429; c=relaxed/simple;
-	bh=KJmAMn9kyZlisXvbTbDVwQ8wzaahdzZjp32Cx71hT9Y=;
+	s=arc-20240116; t=1788188432; c=relaxed/simple;
+	bh=T5//L0yJEU3CVN1o5jxNYrK6S5XFuiGgpBvi0jp/cJ8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TpdQ1WecWDVCNbLIKTK/NDHWFWybicTsRnTnUESfnbxyjxIJmZm/CojHV7+3+LplWy+epadnpFVrJAoOQRr5wAnd6l3fEx+DSqJlRxNWYzmNmoJHxog9+KUanZ+/ny92jFgNN9+VnQ8MMwvQXZMoDdORfkNph0eErjeb2HmBjDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iasmlXfc; arc=none smtp.client-ip=209.85.128.171
+	 MIME-Version:Content-Type; b=Tg/HaZzyXdyv06FBY8a4oqSxpSRWz9sE1C9KSNbNZZ3c9eRb9nG0EHblTz6YO3GLedcpu5QUJyQ10Nzk3Radzc1e6JSmbpekOq7htPTjjQ/vS41Vjbrt9yYFaPVxp5k+S56ErvmrYoCcLA7AYCKQXwVOhumwe8HLfIGBBOre7S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pwHXeLt7; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iasmlXfc"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-85a50f6a7f7so40534477b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 08:00:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pwHXeLt7"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-855a66e5b5dso33573787b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 08:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788188426; x=1788793226; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788188429; x=1788793229; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=0HdDzHGCpm+jxHHcKn7aF3osQpvVTCYyJTtW+VBgeM8=;
-        b=iasmlXfcIQvkWIy4Q3+gCBHK5OhpLF6ESTfTNWXYZlSqRyNBXqDTdEFmwUyrjg0VWP
-         +99EeCAHNtDbXSIfKv3uCElmQ7uyIT3zkTbtVzKGK0WzZa2XFURUTIh1jBK3NHeqGT+q
-         Z0gdAxvE4aEvalZfPvlZwevFpubCM6BpDWw2XOkjQx0dWRAOkTrfT9TlKIG5Q4yhlZJe
-         KqeGAgAH1p/B7WG5QGoTAwN1mw3L15SbJeTFbLAAgGSVuv8mWdrkkMmygBthn0JsHlqD
-         Izp2iz96n6kd/JTCMpbIooS8jdeblIQ47jbV7FhHGiXuXfE+jUvgXTRC8mJ9HZnM5/LL
-         3YbA==
+        bh=Ewv3B6+QarCZOHtRgYa+vZ91GvJ2yanwE+qIJXxDYtc=;
+        b=pwHXeLt7ZqCYDiNGZxJbgDt5S0lrMpY1WNrVPZ0gMBd1EHvN1FRIs2URmTzC1nBftV
+         +E/gOXn+4ncnWTvG8OtQQdYIORFurWSOorqvJIfB1syAWYZCCtJIIqWNSk02M3rdt5yf
+         fjPFY0vGV3q/gv8qCSd7ipGWPNFwO71BbAd5oW/tv5T/ME6z12EtRHh0pJTJsvotXXGA
+         aucCPfztdXwfFGDauZqv+DaWc2/fPPDFpy8EPaZ2EOjEQOL/e0+PNZ9/RFPCdCL4qP1L
+         hbjL9deuCwKvQ5OaiCP/sRb4tPnuNy/0mD+n23XaqskXce1Ks1YMyo0KFVrtwBHogOkQ
+         a8xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788188426; x=1788793226;
+        d=1e100.net; s=20251104; t=1788188429; x=1788793229;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0HdDzHGCpm+jxHHcKn7aF3osQpvVTCYyJTtW+VBgeM8=;
-        b=aAXUJo+xfaLRx5l9nCfRwHz77Zf2AqUdp5rxsftyG3R4qvU4iqwx3/YNY+NJ/I95bQ
-         2/i83THCn4HKchb1jWYg+nOeXY9bn9lz6UBr8PeOcIOhwAKq4kulTWSNTZ3WgJmbjk2I
-         O0q+FH4VDiUZjRx4muxkwooYR7QUpUzo24cliH+azBrCenj7ef8IFCMukbGwdf5Nzm6l
-         Uq0uMQShGVoJLJPBFA2Pu4/XTIbUW9TBLJqJlZW0+OPhZvNuLatMCbtHRPVoupD+NHJ6
-         j8+H7UW7KxuJY4hD40VY9Mp6ms1Oo8Fwi6EJeVWlr7zyrwgqSei5PNfrgiTGKbWYvfep
-         pCdA==
-X-Forwarded-Encrypted: i=1; AKwUvBx+x2MHVqzB3a3mf9Qy/RZvZFOqWfCjPExp+EbKzblG13/Ua1d7zvd8FiJniLLywsTG8gMPAFKy5wT4oLrq6MJNodoDrV0=@vger.kernel.org
-X-Gm-Message-State: AFuF++lvPg+0Gb7YrZgE4cMcRAmhU7nuc2pAq6L4PwDFIyvuLfOFpvoR
-	udaLkBDvMD32Cme/PSTScjXJMPrtbZQ80qgn4eXfQHFEHR4aK+1xpFs6TQGabRLY
-X-Gm-Gg: AYBFou3EAp/m8kilGQZl1qMiLXCVLEGoR/Y+LO7tYfdsJnCrRyiscFu1dvKkaebW8pd
-	guv7CvMXDNIJG0/at4JQSm0TM90WzinNJaoClGNE8wP9uua8AD3RgbtKU8dcdwg8Nl/JJ528La7
-	xhE+8G2KwmecHrkstNH+fcNhhC220W8iKlVUcaKvP73VQ9heYYrDsNP/Y0JlVmoHNC/BVjBEjtI
-	lskGtGTEVfllyyO20uouDtd7uNRbKziicBclKaywjdArqLU3Fdkjw/gGi0gzoB6CjgjwoNJc/4I
-	5MRta2npUwz09uKM22w7zGtyeHa11t5RfSt5ptUSKllM6Gs//tJ+ncap7QPPIf6/ht073pnFcIJ
-	WQgbR4pDStAnfE8M+pGtz/vWodXnA/vx0rAr5t+1pjWmifzOscqjGeRjn9ClUagga6GNGy97kOQ
-	+rymPLyraKq/Kqabx7QbjB7ItKgRoG1TCMlCIeErJj6QjlZuVVrlfCuxrXJrRdYGzX2bKaGOe68
-	yKvhEwdeOmT3wcuLqAsvB5AR7FZMxWLKw==
-X-Received: by 2002:a05:690c:f15:b0:833:a89f:6cab with SMTP id 00721157ae682-85d660d94aamr105891687b3.2.1788188425564;
-        Mon, 31 Aug 2026 08:00:25 -0700 (PDT)
+        bh=Ewv3B6+QarCZOHtRgYa+vZ91GvJ2yanwE+qIJXxDYtc=;
+        b=EwxoyEm4UE4jBrU5/pQIeXwqfF5jtKcgKDz/nQs1eP599Hx1uErjq7vvRC+/fYrlf9
+         gIIAQESZP5UZVvf2rnsdwaRWWaugHPdc1/NYIAS9GD2V7hHrs6d6F91t5HQ5+gPXylih
+         vqmPYMoqOxYOUv7ldgPxC9X3HOuR/sTPTXvO2WKbfTsrUooONBoUF1YkuKyxC9hbTXGi
+         rKiuVJrCnurSUdIPTnBjiIEbUUcU1ON76Av79LIxVJHbzWn+FghS3z4IuBEAzm7NBcEI
+         rhEmCAOQFLpBRaNbvQ77vXoozHFHCPXWtXrtKWiqrpQUlLqbeFT4NNjw9B2YNPi6hvv4
+         jJZg==
+X-Forwarded-Encrypted: i=1; AKwUvBxdbNhqOFdTYXKyJQ9ABoLAGNB0YVasDR0ekR0m0fR5+yk69xXzTK1OQxVr9rhuCJwpNn7sAWfVIv4yWEMpz0LbxttAfk4=@vger.kernel.org
+X-Gm-Message-State: AFuF++lT0ZjcMKDfVK66UzlsvmtU8hyUduHBdjqmL0ygb8WyWrX9S4C8
+	WvBJR1OQg9nCBvJfE5WkyzNdwBBVE0aBP7uw+LmM+zhwPrDpnQPilLRe
+X-Gm-Gg: AYBFou0dDrwPBF2E1tZLLdDR2NGUThV2ZHwpCYBIqWy4om26QzkldHn1V92IpR4k+l3
+	UbwEuvhTiwTDCBw8WsqS2ttsgZCLBGX6TIub/zDHy2tUO9h6e3w3z0PviXNiRbRFmpkyAGjzTni
+	3hXeLfkkwQQRY2fHwnJ02blTBxgYCXiM2i4rBczxyavBrmaY020alx9CWPsv2zQDgrH94tjtuDf
+	/nId4HvOBdMVcbST1WFkoBbhUc2ByOavaNi48lXE1k4eILNPBFDXJ/JhTlJS2y98Ryf5Ae9IHzs
+	E7At4C9j+UXVhJHxRnBd8z6/JkrxbESsSF5QS+0lmvZHar2/rN91tHbXnf/0ivVeWgVvBxZlxZl
+	1EbE7ThGwY3ZFipZF3e1uNuvRHIPO/MpV3yrVWI8XJQc1h+0pTwT1ZzQIwelc3ixN6z+hIhWXK6
+	FwS8nqVo1ERsCuGRjeWI8NfK9iuOrG7H8rbXqD3iy34x3R8Y4bFt9xIx9cHD1WhOIc3+eO8fnZH
+	8cbLjDwli/jEmiaLS+ZY34=
+X-Received: by 2002:a05:690c:a7c2:b0:822:ee08:749 with SMTP id 00721157ae682-8686ed6877emr7079577b3.6.1788188428958;
+        Mon, 31 Aug 2026 08:00:28 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:f6fc:b424:b1bb:6ff0])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.08.00.22
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.08.00.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 08:00:24 -0700 (PDT)
+        Mon, 31 Aug 2026 08:00:28 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -80,9 +80,9 @@ Cc: gnoack@google.com,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v2 09/15] selftests/bpf: Add tests for the LSM policy object kfuncs
-Date: Mon, 31 Aug 2026 10:58:51 -0400
-Message-ID: <20260831145858.3869191-10-utilityemal77@gmail.com>
+Subject: [PATCH v2 10/15] landlock: Expose the ruleset fd lookup to the rest of Landlock
+Date: Mon, 31 Aug 2026 10:58:52 -0400
+Message-ID: <20260831145858.3869191-11-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260831145858.3869191-1-utilityemal77@gmail.com>
 References: <20260831145858.3869191-1-utilityemal77@gmail.com>
@@ -95,311 +95,69 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Test the properties of the policy object interface that hold
-independently of any LSM implementing the hooks.
+Rename get_ruleset_from_fd() to landlock_get_ruleset_from_fd() and
+give it external linkage within Landlock, declared in ruleset.h next
+to the other ruleset lifetime helpers.
 
-The failure programs pin down the verifier-side contract: the kfuncs
-are rejected in tracing programs, the fd kfunc in LSM programs, the
-apply kfunc in syscall programs, on non-bprm LSM hooks and in
-non-sleepable programs, leaked references fail verification, and a
-kptr loaded outside an RCU read-side section cannot be acquired.
+A following commit implements the LSM kfunc policy hooks, which need
+to translate a ruleset fd into a landlock_ruleset reference from
+outside syscalls.c.  No behavioral change.
 
-The syscall program checks the runtime contract of
-bpf_lsm_policy_from_fd(): a bad fd, a fd that is no LSM's policy
-object, and a nonzero value of the reserved flags all resolve to
-NULL.
-
-Exercising the kfuncs against an LSM actually providing policy
-objects is left to that LSM's own tests.
-
+Cc: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- .../bpf/prog_tests/lsm_policy_kfuncs.c        |  54 ++++++
- .../selftests/bpf/progs/lsm_policy_kfuncs.c   |  52 ++++++
- .../bpf/progs/lsm_policy_kfuncs_failure.c     | 154 ++++++++++++++++++
- 3 files changed, 260 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_policy_kfuncs.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_policy_kfuncs.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_policy_kfuncs_failure.c
+ security/landlock/ruleset.h  | 3 +++
+ security/landlock/syscalls.c | 9 +++++----
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_policy_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/lsm_policy_kfuncs.c
-new file mode 100644
-index 000000000000..9f4ffb5f47be
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/lsm_policy_kfuncs.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright © 2026 Justin Suess <utilityemal77@gmail.com> */
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index b536fa0425b7..b58e3d9846af 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -214,6 +214,9 @@ int landlock_store_rule(struct landlock_rules *const rules,
+ 
+ void landlock_free_rules(struct landlock_rules *const rules);
+ 
++struct landlock_ruleset *landlock_get_ruleset_from_fd(const int fd,
++						      const fmode_t mode);
 +
-+#include <test_progs.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+
-+#include "lsm_policy_kfuncs.skel.h"
-+#include "lsm_policy_kfuncs_failure.skel.h"
-+
-+/*
-+ * Runtime contract of bpf_lsm_policy_from_fd(), independent of any
-+ * LSM implementing the policy object hooks: a bad fd, a fd that is no
-+ * LSM's policy object, and a nonzero value of the reserved flags all
-+ * resolve to NULL.
-+ */
-+static void test_from_fd_null(void)
-+{
-+	LIBBPF_OPTS(bpf_test_run_opts, opts);
-+	struct lsm_policy_kfuncs *skel;
-+	char tmp_path[] = "/tmp/lsm_policy_kfuncs_XXXXXX";
-+	int tmp_fd, err;
-+
-+	tmp_fd = mkstemp(tmp_path);
-+	if (!ASSERT_GE(tmp_fd, 0, "mkstemp"))
-+		return;
-+
-+	skel = lsm_policy_kfuncs__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
-+		goto out_close;
-+	skel->bss->plain_fd = tmp_fd;
-+
-+	err = bpf_prog_test_run_opts(bpf_program__fd(skel->progs.check_from_fd),
-+				     &opts);
-+	if (!ASSERT_OK(err, "check_from_fd_run") ||
-+	    !ASSERT_OK(opts.retval, "check_from_fd_retval"))
-+		goto out_destroy;
-+
-+	ASSERT_TRUE(skel->bss->got_null_for_bad_fd, "bad_fd_null");
-+	ASSERT_TRUE(skel->bss->got_null_for_plain_fd, "plain_fd_null");
-+	ASSERT_TRUE(skel->bss->got_null_for_bad_flags, "bad_flags_null");
-+out_destroy:
-+	lsm_policy_kfuncs__destroy(skel);
-+out_close:
-+	close(tmp_fd);
-+	unlink(tmp_path);
-+}
-+
-+void test_lsm_policy_kfuncs(void)
-+{
-+	if (test__start_subtest("from_fd_null"))
-+		test_from_fd_null();
-+	RUN_TESTS(lsm_policy_kfuncs_failure);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_policy_kfuncs.c b/tools/testing/selftests/bpf/progs/lsm_policy_kfuncs.c
-new file mode 100644
-index 000000000000..f084ccfcde91
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_policy_kfuncs.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright © 2026 Justin Suess <utilityemal77@gmail.com> */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_helpers.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+extern struct lsm_policy_object *
-+bpf_lsm_policy_from_fd(int fd, u32 flags) __ksym;
-+extern void bpf_lsm_policy_release(struct lsm_policy_object *object) __ksym;
-+
-+int plain_fd;
-+bool got_null_for_bad_fd;
-+bool got_null_for_plain_fd;
-+bool got_null_for_bad_flags;
-+
-+/*
-+ * Runs in the test runner's context through BPF_PROG_RUN, where
-+ * @plain_fd is meaningful.
-+ */
-+SEC("syscall")
-+int check_from_fd(void *ctx)
-+{
-+	struct lsm_policy_object *object;
-+
-+	/* A fd not open in this task's fd table must resolve to NULL. */
-+	object = bpf_lsm_policy_from_fd(-1, 0);
-+	if (!object)
-+		got_null_for_bad_fd = true;
-+	else
-+		bpf_lsm_policy_release(object);
-+
-+	/*
-+	 * A valid fd that is not any LSM's policy object must be
-+	 * declined by every LSM and resolve to NULL.
-+	 */
-+	object = bpf_lsm_policy_from_fd(plain_fd, 0);
-+	if (!object)
-+		got_null_for_plain_fd = true;
-+	else
-+		bpf_lsm_policy_release(object);
-+
-+	/* The flags are reserved: any nonzero value must resolve to NULL. */
-+	object = bpf_lsm_policy_from_fd(plain_fd, 1);
-+	if (!object)
-+		got_null_for_bad_flags = true;
-+	else
-+		bpf_lsm_policy_release(object);
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_policy_kfuncs_failure.c b/tools/testing/selftests/bpf/progs/lsm_policy_kfuncs_failure.c
-new file mode 100644
-index 000000000000..04080838aefd
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_policy_kfuncs_failure.c
-@@ -0,0 +1,154 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright © 2026 Justin Suess <utilityemal77@gmail.com> */
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+extern struct lsm_policy_object *
-+bpf_lsm_policy_acquire(struct lsm_policy_object *object) __ksym;
-+extern int bpf_lsm_policy_apply_bprm(struct lsm_policy_object *object,
-+				     struct linux_binprm *bprm,
-+				     u32 flags) __ksym;
-+extern struct lsm_policy_object *
-+bpf_lsm_policy_from_fd(int fd, u32 flags) __ksym;
-+extern void bpf_lsm_policy_release(struct lsm_policy_object *object) __ksym;
-+void bpf_rcu_read_lock(void) __ksym;
-+void bpf_rcu_read_unlock(void) __ksym;
-+
-+struct policy_slot {
-+	struct lsm_policy_object __kptr *object;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(max_entries, 1);
-+	__type(key, int);
-+	__type(value, struct policy_slot);
-+} policy_map SEC(".maps");
-+
-+/*
-+ * The LSM policy kfuncs are limited to LSM and syscall programs by
-+ * the BPF-side kfunc filter: a tracing program calling one must fail
-+ * verification.
-+ */
-+SEC("tp_btf/task_newtask")
-+__failure __msg("calling kernel function bpf_lsm_policy_from_fd is not allowed")
-+int BPF_PROG(tracing_prog, struct task_struct *task, u64 clone_flags)
-+{
-+	struct lsm_policy_object *object;
-+
-+	object = bpf_lsm_policy_from_fd(-1, 0);
-+	if (object)
-+		bpf_lsm_policy_release(object);
-+	return 0;
-+}
-+
-+/*
-+ * The fd kfunc is exclusive to syscall programs: it must be rejected
-+ * in an LSM program, even on an allowed hook.
-+ */
-+SEC("lsm.s/bprm_creds_for_exec")
-+__failure __msg("calling kernel function bpf_lsm_policy_from_fd is not allowed")
-+int BPF_PROG(lsm_get, struct linux_binprm *bprm)
-+{
-+	struct lsm_policy_object *object;
-+
-+	object = bpf_lsm_policy_from_fd(-1, 0);
-+	if (object)
-+		bpf_lsm_policy_release(object);
-+	return 0;
-+}
-+
-+/*
-+ * The enforcement kfunc is exclusive to the sleepable bprm LSM
-+ * hooks: it must be rejected in a syscall program.
-+ */
-+SEC("syscall")
-+__failure __msg("calling kernel function bpf_lsm_policy_apply_bprm is not allowed")
-+int syscall_restrict(void *ctx)
-+{
-+	return bpf_lsm_policy_apply_bprm(NULL, NULL, 0);
-+}
-+
-+/*
-+ * Any LSM attach point other than the sleepable bprm hooks must be
-+ * rejected for the enforcement kfunc.
-+ */
-+SEC("lsm.s/file_open")
-+__failure __msg("calling kernel function bpf_lsm_policy_apply_bprm is not allowed")
-+int BPF_PROG(wrong_hook, struct file *file)
-+{
-+	return bpf_lsm_policy_apply_bprm(NULL, NULL, 0);
-+}
-+
-+/*
-+ * The enforcement kfunc may sleep: a non-sleepable program on an
-+ * allowed hook must be rejected.
-+ */
-+SEC("lsm/bprm_creds_for_exec")
-+__failure
-+__msg("program must be sleepable to call sleepable kfunc bpf_lsm_policy_apply_bprm")
-+int BPF_PROG(nonsleepable_prog, struct linux_binprm *bprm)
-+{
-+	return bpf_lsm_policy_apply_bprm(NULL, bprm, 0);
-+}
-+
-+/* An acquired policy object reference must be released before returning. */
-+SEC("syscall")
-+__failure __msg("Unreleased reference")
-+int leak_policy(void *ctx)
-+{
-+	bpf_lsm_policy_from_fd(-1, 0);
-+	return 0;
-+}
-+
-+/*
-+ * A kptr loaded outside an RCU read-side critical section is
-+ * untrusted: the acquire kfunc must reject it.
-+ */
-+SEC("lsm.s/file_open")
-+__failure __msg("must be a rcu pointer")
-+int BPF_PROG(acquire_untrusted, struct file *file)
-+{
-+	struct lsm_policy_object *object;
-+	struct policy_slot *slot;
-+	int key = 0;
-+
-+	slot = bpf_map_lookup_elem(&policy_map, &key);
-+	if (!slot)
-+		return 0;
-+
-+	object = slot->object;
-+	if (!object)
-+		return 0;
-+
-+	object = bpf_lsm_policy_acquire(object);
-+	if (object)
-+		bpf_lsm_policy_release(object);
-+	return 0;
-+}
-+
-+/* A reference acquired from a shared policy object must be released too. */
-+SEC("lsm.s/file_open")
-+__failure __msg("Unreleased reference")
-+int BPF_PROG(leak_shared_policy, struct file *file)
-+{
-+	struct lsm_policy_object *object;
-+	struct policy_slot *slot;
-+	int key = 0;
-+
-+	slot = bpf_map_lookup_elem(&policy_map, &key);
-+	if (!slot)
-+		return 0;
-+
-+	bpf_rcu_read_lock();
-+	object = slot->object;
-+	if (object)
-+		object = bpf_lsm_policy_acquire(object);
-+	bpf_rcu_read_unlock();
-+	return 0;
-+}
+ /**
+  * landlock_get_rule_root - Get the root of a rule tree by key type
+  *
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 1d02d57f4c48..cb294a3582ae 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -305,8 +305,8 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+  * Returns an owned ruleset from a FD. It is thus needed to call
+  * landlock_put_ruleset() on the return value.
+  */
+-static struct landlock_ruleset *get_ruleset_from_fd(const int fd,
+-						    const fmode_t mode)
++struct landlock_ruleset *landlock_get_ruleset_from_fd(const int fd,
++						      const fmode_t mode)
+ {
+ 	CLASS(fd, ruleset_f)(fd);
+ 	struct landlock_ruleset *ruleset;
+@@ -486,7 +486,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+ 		return -EINVAL;
+ 
+ 	/* Gets and checks the ruleset. */
+-	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
++	ruleset = landlock_get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
+ 	if (IS_ERR(ruleset))
+ 		return PTR_ERR(ruleset);
+ 
+@@ -585,7 +585,8 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	      (flags & ~LANDLOCK_RESTRICT_SELF_TSYNC) ==
+ 		      LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF)) {
+ 		/* Gets and checks the ruleset. */
+-		ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
++		ruleset = landlock_get_ruleset_from_fd(ruleset_fd,
++						       FMODE_CAN_READ);
+ 		if (IS_ERR(ruleset))
+ 			return PTR_ERR(ruleset);
+ 	}
 -- 
 2.55.0
 
