@@ -1,408 +1,398 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F0C54EEB3;
-	Mon, 31 Aug 2026 13:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D94306D2A
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788184007; cv=none; b=qP9PSvzL90Aj73NmkS3fVI7np6Fc9HgAjTQ2diBIgCjKDwXNPOCePm5f5e5zGsuvAiSc23LNbUjz2APCH3PgzVzy9tR2XYcpzhi65c+vvrqGGbcyd3xItSbqI397lKGabbxOoUar2IHjvuL6CRUzX2QCgE7ZvYc++Rf+5tXbSwo=
+	t=1788188381; cv=none; b=UITe0Wd3vq3nijjpfI1r8lE379zLJ27hvqgdFO+GQjKXzrosbnt6SWThbwJ1B4nN81a6WeQKbMjfNtWQvu08WmXxeNQ7SjWfZnB7nUP0ty6KOpFxP0Ud9Me9wF+Lh6lisDCSgSxvuaZxXsOrGbruXZSTPtS+svEZ/XxhoiMk2Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788184007; c=relaxed/simple;
-	bh=UYPJPppqzkAMCqdP1xVBlIiqDkd+p3fS238jn3O7YIM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kATYGioGyKzKivFmXxF/QnYhvGSxyt8qvLpzsAJeTz7nfMKZjBhbAwVB8OTsCxSZMkfvgaEL08/DXQuvaKyPqC1gi8qgMIZ81c3Ptf6RVhzH4LOngUOBKwQKdj867j0bKSY2FJRf9TVCSsYLyQIUVHun0b2S3Pt0RsoTRhvHAK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGgWTQzh; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788188381; c=relaxed/simple;
+	bh=sR+NCrb4jveihqzu/NPXu/su4Ho1Q7I0xS25+c5rX08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l38G/IMU8pKAf+7+c9TgzRVgEI62jrp5UoWbQmoMLajKSKwtxaza/wm2kuy0ShGhGYgEx09wdp9I42Y2NtQK61+rEGIEs2n+d5ugw8cLXH1dslYvMFTmmtmb6vysdUjMcnpqTes3ejZ+XWk0sV8UMsOREUtp8YXKEd/mt4qvUEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFmlf+Y1; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGgWTQzh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D81A1F00A3D;
-	Mon, 31 Aug 2026 13:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788184003;
-	bh=vI53VAL6FJZXcfe47IL/ARawN3+1DnQrfMdNqhIh9IE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YGgWTQzhpAqWX9mF5W7DYNffLDDwFK0qiVrhbJWXgoLBc+TbL4EQ1Iiju2ZD3Hyz+
-	 7UWtz7A1nny+KDyQYydv6XmwqJK5OF3suWC0091hph+3PtKTf4fO5cICbdsUunt/g0
-	 uNymmgE13zdY7V6j2P4JFKzhMwRw0oF3JDbEeptzl2CI5f9WihlkqFeAUpd1aOolse
-	 j4Q/EwKrVg6pf03XXgc6DuwQ8ZilB3MrAECZyCCWUwGAJahvYPvCnO/eBzQE1umZi9
-	 mwaqEpLolR6RioC3+TQ/q4cWkMAqqkgKuQip9/P0rK2DyUaAHVjNspT100+1a0OXoC
-	 grutJjcFAu+sg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Chenguang Zhao <zhaochenguang@kylinos.cn>,
-	Paul Moore <paul@paul-moore.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFmlf+Y1"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-866e57f63a3so8444287b3.3
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 07:59:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788188378; x=1788793178; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=EQRvH3cICJjq9Ao/BggTFlq5eCfk3kLbx4u3cmiu6to=;
+        b=mFmlf+Y1SYbeZf9P7P3HeJ1/Jn9n6cVnNTlrFTn8bKGjewmc9WKFSYP10W5eb9WPgE
+         EK/fe+szUn/A9Rm2FLz3dKJEIYSU9QIMLbsC8ZvvFLkEyB1H/BztD0MDNGUizfmBCCe5
+         q3Bb4WdvgFc7aQKGn9P+vwumFvdpBBmfwCbfQg+NJMTt6Nrf2/yAc0CDrSbweN6Lx1AF
+         +XA5SrLKa9DpUo8IY5meqd/xpgUThco8JcZLSXW5N2VNWz168777+RLamzpWrqJvrCgZ
+         d8sP+o1OeFcw8FBT5Hg/KApUb/uq7VHN2nT9xQNn13q4o/3W37y3cRWd2gdCjVi34IFa
+         5lNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788188378; x=1788793178;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=EQRvH3cICJjq9Ao/BggTFlq5eCfk3kLbx4u3cmiu6to=;
+        b=DbcO/XvmQ2OWepERMpx4G5dHAReY8hF3naxDFl2ofVUk6iRBgmSaVF8QdjYwlDexuD
+         XqEoESkmUaqYwSCDC8BHWqEsaG9Zsc5BoNCQ7T/R1ccqACLBcd2uzu5EC3EmIeEuixWM
+         Vt15ddHoyVxLCRCRYCbebjs6WGe6uRNwmF3k5fr08Sz6IuYMa/QVZsVVOZUPY4muzbi+
+         qr57Nlk6RJ+0x5O7JHo8zGA1d8tBWilqIbuDbWkKiTlDGg1MeeQ+jdBqBuvLDrtlNEYz
+         6/zJ6/JPNlZ4HC0OLVQi2/zLmhEVSiU0c3pMH7sbPIpDhEmIR48IZp6WJpgaRgU6Y0yR
+         oDrQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzjDeInvMPTd5qRSDqKM5b1BZETwM5LloMQSZ+O1gvXoxrajdKI2Svow5l5hJtVp7vfeTBRJbWR7Vwb4fbVjeaue5zU64c=@vger.kernel.org
+X-Gm-Message-State: AFuF++lSa7PP/8ZXHEh1TJeu0P3wZ3OFdVCMi4zdo844G8hm6TZMOAy3
+	utUSPvs+ZO+NMqnyHa2ZtJNIPZYESbu+3821SqLu/4vVnqO2FEMYGMJp
+X-Gm-Gg: AYBFou0iTlTfN2J/jgnkoGxdQRQdKy8ZSiwc4omTwlCCpjREKfvWWhpyEKa61Bq8j9d
+	NyciXHIpqknjWH0XSKbCg/gYQjI3yT7pEvWZcAXiL4uxpaFs+UL5H3fI0aP2Y+zJrmStxPC0EVn
+	hbCc9voLw/nUU6HcZX8vLwPrH/ADGup+xqRLe30N90ncCteeHYemqoq7Q/7DYLr55GyJkBToF3E
+	q6mMlB1CR3ldcNDbXYTt0O5cTUVWCs0owE58AQiBFZAiRQ0elN5Afb7e0Ad08ceezmL5/yxPCUU
+	aGN8072yvllbt8uKGy8F0rzc8RcyoKXmCoJuigTyXSOJ2pPf2x2+Zd/q29DQflBtlLqCiVK5QjV
+	lC2LCihzVbT2eKZHuzy1YJP1/G3aqMtlSxJ80znna505h2fOzBDG9uMk96fSnAZ6dBNzUV0LgiD
+	tuzEnb8hGZGjwCXBffGTGnuLEvVwbURfyRKKwzC4TJkm5+/4fdqTbMi+zVKD68wTh/N81w2A6H0
+	euu520PIsfklfhenzD9iMdhf9zk/U2ZNw==
+X-Received: by 2002:a05:690c:5808:b0:7fd:a7b6:8d87 with SMTP id 00721157ae682-85d6e149eb8mr70738057b3.25.1788188378372;
+        Mon, 31 Aug 2026 07:59:38 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:f6fc:b424:b1bb:6ff0])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.07.59.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Aug 2026 07:59:37 -0700 (PDT)
+From: Justin Suess <utilityemal77@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	kpsingh@kernel.org,
+	paul@paul-moore.com,
+	mic@digikod.net,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	kees@kernel.org
+Cc: gnoack@google.com,
+	jack@suse.cz,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	martin.lau@linux.dev,
+	m@maowtm.org,
+	bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] netlabel: fix IPv6 unlabeled address add error handling
-Date: Mon, 31 Aug 2026 09:27:40 -0400
-Message-ID: <20260831133314.4125787-432-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
-References: <20260831133314.4125787-1-sashal@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH v2 00/15] BPF interface for applying Landlock rulesets
+Date: Mon, 31 Aug 2026 10:58:42 -0400
+Message-ID: <20260831145858.3869191-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chenguang Zhao <zhaochenguang@kylinos.cn>
-
-[ Upstream commit 56872b930feee7ae07b9720ca950dd9fa65596ee ]
-
-netlbl_unlhsh_add_addr6() always returned zero after
-netlbl_af6list_add(), masking failures such as duplicate
-IPv6 static label entries.
-
-Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Link: https://patch.msgid.link/20260522022910.398416-1-zhaochenguang@kylinos.cn
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-# Stable Backport Analysis: `netlabel: fix IPv6 unlabeled address add
-error handling`
-
-**Local tree:** `v6.18.44` (`stable/linux-6.18.y`, `VERSION = 6`,
-`PATCHLEVEL = 18`, `SUBLEVEL = 44`)
-
----
-
-## PHASE 1: COMMIT MESSAGE FORENSICS
-
-### Step 1.1: Subject line
-**Record:** `[netlabel]` `[fix]` — IPv6 unlabeled address add error
-handling was broken; failures from `netlbl_af6list_add()` were masked.
-
-### Step 1.2: Tags
-**Record:**
-- **Signed-off-by:** Chenguang Zhao `<zhaochenguang@kylinos.cn>`
-  (author)
-- **Acked-by:** Paul Moore `<paul@paul-moore.com>` (netlabel maintainer
-  — strong quality signal)
-- **Link:** https://patch.msgid.link/20260522022910.398416-1-
-  zhaochenguang@kylinos.cn
-- **Signed-off-by:** Jakub Kicinski `<kuba@kernel.org>` (committer)
-- No `Fixes:` tag (expected for manual review)
-- No `Reported-by:` / syzbot
-- No `Cc: stable@vger.kernel.org` in submission
-- Ignore pipeline `Signed-off-by: Sasha Levin`
-
-### Step 1.3: Body analysis
-**Record:**
-- **Bug:** `netlbl_unlhsh_add_addr6()` always returned `0` after
-  `netlbl_af6list_add()`, even when that call failed.
-- **Symptom:** Duplicate IPv6 static unlabeled label adds appear
-  successful to callers.
-- **Root cause:** Copy/paste oversight — IPv4 sibling
-  `netlbl_unlhsh_add_addr4()` correctly returns `ret_val`; IPv6 path
-  hard-coded `return 0`.
-- **Version info:** None in message.
-
-### Step 1.4: Hidden bug fix?
-**Record:** Not disguised — explicitly labeled a fix. Error-path
-`kfree(entry)` was already present; the bug is return-value propagation
-and downstream effects, not a leak.
-
----
-
-## PHASE 2: DIFF ANALYSIS
-
-### Step 2.1: Inventory
-**Record:**
-- **Files:** `net/netlabel/netlabel_unlabeled.c` (+1 / -1)
-- **Function:** `netlbl_unlhsh_add_addr6()`
-- **Scope:** Single-file, single-line surgical fix
-
-### Step 2.2: Code flow change
-**Record:**
-- **Before:** On `netlbl_af6list_add()` failure (e.g. `-EEXIST`), entry
-  is freed, but function returns `0`.
-- **After:** Returns actual `ret_val` from `netlbl_af6list_add()`.
-- **Path affected:** IPv6 static unlabeled address add error path
-  (admin/LSM configuration).
-
-### Step 2.3: Bug mechanism
-**Record:**
-- **Category:** Logic / correctness — incorrect error propagation.
-- **Mechanism:** `netlbl_af6list_add()` returns `-EEXIST` for duplicate
-  address/mask (`net/netlabel/netlabel_addrlist.c:193`). IPv6 wrapper
-  discarded that and reported success. IPv4 path at lines 252–254
-  already does the right thing.
-
-### Step 2.4: Fix quality
-**Record:**
-- Obviously correct — mirrors IPv4 and function documentation (“On
-  success zero is returned, otherwise a negative value”).
-- Minimal risk; no locking/API changes.
-- No regression risk identified.
-
----
-
-## PHASE 3: GIT HISTORY INVESTIGATION
-
-### Step 3.1: Blame
-**Record:** Buggy `return 0;` at line 298 in current tree; blame points
-to `e664048784506` (file introduction in this tree). IPv4 `return
-ret_val;` at line 254 present alongside it from the same introduction.
-
-### Step 3.2: Fixes: tag
-**Record:** N/A — no `Fixes:` tag.
-
-### Step 3.3: Related file history
-**Record:**
-- `0c4bb32ad7fdc` — same author, separate netlabel validation fix
-  already in this tree.
-- Upstream fix: `56872b930feee` (mainline, May 25 2026); stable backport
-  exists as `642d90c85b137` on `autosel` branch.
-- Fix is **not** in current `HEAD` (`v6.18.44`).
-
-### Step 3.4: Author context
-**Record:** Chenguang Zhao has multiple netlabel fixes; Paul Moore
-(maintainer) Acked this patch.
-
-### Step 3.5: Dependencies
-**Record:** Standalone one-liner; no series prerequisites. Applies
-cleanly (`return 0` → `return ret_val` at line 298; upstream diff
-context matches aside from unrelated `kzalloc` vs `kzalloc_obj` naming
-elsewhere).
-
----
-
-## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
-
-### Step 4.1: Original discussion
-**Record:**
-- `b4 dig -c 56872b930feee`: https://patch.msgid.link/20260522022910.398
-  416-1-zhaochenguang@kylinos.cn
-- Single v1 submission; applied to netdev/net-next by Jakub Kicinski.
-- Paul Moore replied with **Acked-by** in thread.
-
-### Step 4.2: Reviewers
-**Record:** `b4 dig -w`: CC'd Paul Moore, David Miller, netdev
-maintainers, `linux-security-module@vger.kernel.org`.
-
-### Step 4.3: Bug report
-**Record:** No external bug report or syzbot link — author-found logic
-bug.
-
-### Step 4.4: Series context
-**Record:** Standalone 1-patch series; no dependencies.
-
-### Step 4.5: Stable list
-**Record:** No `Cc: stable` discussion found in mbox thread.
-
----
-
-## PHASE 5: CODE SEMANTIC ANALYSIS
-
-### Step 5.1: Key functions
-**Record:** `netlbl_unlhsh_add_addr6()`, `netlbl_af6list_add()`,
-`netlbl_unlhsh_add()`.
-
-### Step 5.2: Callers
-**Record:**
-- `netlbl_unlhsh_add()` → `netlbl_unlhsh_add_addr6()` (line 423)
-- `netlbl_unlhsh_add()` called from:
-  - `netlbl_unlabel_staticadd()` / `netlbl_unlabel_staticadddef()`
-    (Generic Netlink admin)
-  - `netlbl_cfg_unlbl_static_add()` (kernel API, used e.g. from
-    `security/smack/smackfs.c`)
-
-### Step 5.3: Callees
-**Record:** `kzalloc()`, `netlbl_af6list_add()` (can return `-EEXIST`),
-`kfree()` on failure.
-
-### Step 5.4: Reachability
-**Record:** Reachable from userspace via Netlink (`CAP_NET_ADMIN`) and
-from LSM code configuring static labels. IPv6 path requires
-`CONFIG_IPV6`.
-
-### Step 5.5: Similar patterns
-**Record:** IPv4 `netlbl_unlhsh_add_addr4()` correctly returns `ret_val`
-— confirms this is an IPv6-only regression/typo.
-
----
-
-## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE
-
-### Step 6.1: Buggy code present?
-**Record:** **YES** — line 298 in `/home/sasha/linux-
-autosel-7.0/net/netlabel/netlabel_unlabeled.c` is `return 0;` while line
-254 (IPv4) is `return ret_val;`.
-
-### Step 6.2: Backport complications
-**Record:** Clean one-line apply expected; no structural conflicts in
-this file.
-
-### Step 6.3: Related fixes already present?
-**Record:** Related validation fix `0c4bb32ad7fdc` is present; this
-error-handling fix is **not**.
-
----
-
-## PHASE 7: SUBSYSTEM CONTEXT
-
-### Step 7.1: Subsystem criticality
-**Record:** `net/netlabel` — **IMPORTANT** (LSM integration: SELinux,
-Smack; MAC labeling and audit).
-
-### Step 7.2: Activity
-**Record:** Recent activity in this tree (validation fix June 2026);
-netlabel touched in 6.18.y.
-
----
-
-## PHASE 8: IMPACT AND RISK ASSESSMENT
-
-### Step 8.1: Who is affected
-**Record:** Systems using NetLabel IPv6 static unlabeled labels with
-SELinux/Smack (or other LSM consumers of
-`netlbl_cfg_unlbl_static_add()`). Config-specific (`CONFIG_NETLABEL`,
-`CONFIG_IPV6`).
-
-### Step 8.2: Trigger conditions
-**Record:** Adding a duplicate IPv6 static unlabeled label (same
-address/mask). Requires admin capability. Duplicate-add is a realistic
-admin/script mistake, not exotic.
-
-### Step 8.3: Failure mode severity
-**Record:**
-1. Userspace receives success (`0`) instead of `-EEXIST`.
-2. `netlbl_unlhsh_add()` incorrectly executes
-   `atomic_inc(&netlabel_mgmt_protocount)` (lines 434–435).
-3. Audit records `res=1` (success) on failure (line 444).
-4. **Protocount skew:** duplicate “success” inflates count; after
-   removing the real entry, `netlabel_mgmt_protocount` can remain `> 0`
-   with zero entries, leaving `netlbl_enabled()` true
-   (`net/netlabel/netlabel_kapi.c:960`). SELinux uses `netlbl_enabled()`
-   in netfilter hooks (`security/selinux/hooks.c:6004, 6021`).
-
-**Severity:** **MEDIUM-HIGH** for affected deployments — not a crash,
-but incorrect security subsystem state and audit integrity.
-
-### Step 8.4: Risk-benefit
-**Record:**
-- **Benefit:** Correct errno, accurate audit, correct
-  protocount/`netlbl_enabled()` behavior.
-- **Risk:** Very low (one line, maintainer-acked, mirrors working IPv4
-  path).
-- **Ratio:** Strong benefit, negligible risk.
-
----
-
-## PHASE 9: FINAL SYNTHESIS
-
-### Step 9.1: Evidence summary
-
-**FOR backport:**
-- Clear, real bug (IPv6-only; IPv4 correct)
-- Maintainer Acked-by (Paul Moore)
-- One-line, obviously correct fix
-- Affects LSM/security admin path and audit logs
-- Protocount inflation can leave NetLabel “enabled” after entries
-  removed
-- Bug confirmed present in `v6.18.44`
-- Upstream already merged (`56872b930feee`)
-
-**AGAINST backport:**
-- No crash, UAF, or memory corruption
-- Only failure mode from `netlbl_af6list_add()` is `-EEXIST`
-  (duplicates)
-- Niche subsystem (NetLabel + IPv6 static labels)
-- No syzbot/user crash reports
-
-**Unresolved:** None material to the decision.
-
-### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — mirrors IPv4; maintainer
-   ack; trivial change.
-2. Fixes a real bug affecting users? **PASS** — wrong errno, audit, and
-   protocount on duplicate IPv6 adds.
-3. Important issue? **PASS** — security subsystem correctness and audit
-   integrity (MEDIUM-HIGH).
-4. Small and contained? **PASS** — 1 line, 1 file.
-5. No new features/APIs? **PASS**.
-6. Can apply to local tree? **PASS** — buggy code present; clean apply.
-
-### Step 9.3: Exception categories
-**Record:** N/A (not device ID, quirk, DT, build, or docs fix).
-
-### Step 9.4: Decision rationale
-This is a straightforward error-handling bug in the NetLabel IPv6 admin
-path. While it does not cause a kernel oops, it corrupts security-
-relevant state: callers, audit subsystem, and
-`netlabel_mgmt_protocount`/`netlbl_enabled()` all behave incorrectly on
-a realistic duplicate-add scenario. The fix is trivial, maintainer-
-reviewed, and the bug is present in this `6.18.44` tree.
-
----
-
-## Verification
-
-- [Phase 1] `git describe HEAD` → `v6.18.44`; parsed subject, tags, body
-  from provided commit message
-- [Phase 1] Read current `netlbl_unlhsh_add_addr6()` — confirmed `return
-  0` bug at line 298
-- [Phase 2] Read diff — single line `return 0` → `return ret_val`
-- [Phase 2] Read `netlbl_af6list_add()` — returns `-EEXIST` on duplicate
-  (line 193)
-- [Phase 2] Compared IPv4 `netlbl_unlhsh_add_addr4()` — returns
-  `ret_val` (line 254)
-- [Phase 3] `git blame -L 290,305` — buggy line attributed to file
-  introduction
-- [Phase 3] `git show 56872b930feee` — upstream fix commit confirmed
-- [Phase 3] `git merge-base --is-ancestor 56872b930feee HEAD` → fix NOT
-  in HEAD
-- [Phase 3] `git show 642d90c85b137` — stable backport commit exists on
-  `autosel` branch
-- [Phase 4] `b4 dig -c 56872b930feee -w` — lore URL and recipient list
-  retrieved
-- [Phase 4] `b4 dig -c 56872b930feee -a` — single v1 revision
-- [Phase 4] `b4 dig -m /tmp/netlabel_ipv6_fix.mbox` — Paul Moore Acked-
-  by confirmed; no stable Cc in thread
-- [Phase 5] `grep netlbl_unlhsh_add` — traced callers to Netlink and
-  `netlbl_cfg_unlbl_static_add()`
-- [Phase 5] `grep netlbl_enabled` — SELinux hooks depend on protocount
-- [Phase 6] Read lines 248–299 and 364–447 — buggy code and downstream
-  `atomic_inc`/audit impact verified
-- [Phase 6] `git log --oneline -20 -- net/netlabel/netlabel_unlabeled.c`
-  — fix not yet in tree
-- [Phase 8] Traced protocount inflation scenario through add/remove
-  paths (lines 434–435, 664–666, 960)
-
-**YES**
-
- net/netlabel/netlabel_unlabeled.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index 2237a5261dd2a..0dfbb63d513ce 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -295,7 +295,7 @@ static int netlbl_unlhsh_add_addr6(struct netlbl_unlhsh_iface *iface,
- 
- 	if (ret_val != 0)
- 		kfree(entry);
--	return 0;
-+	return ret_val;
- }
- #endif /* IPv6 */
- 
+Howdy,
+
+This series lets BPF programs apply an existing, userspace-created
+Landlock ruleset to a program during exec.  The goal is unchanged
+from the RFC [1] and v1 [2]: BPF does not create, inspect, or mutate
+Landlock policy, it only decides whether a ruleset that was already
+created and validated through Landlock's existing userspace API
+should be applied, based on runtime exec context.  The policy is in
+place before the first instruction of the new program runs, closing
+the race a userspace supervisor cannot.
+
+The bottom line change in v2: the kfunc interface is now fully
+LSM-generic.
+
+The bpf_landlock_* kfuncs have been dropped in favor of
+bpf_lsm_policy_* kfuncs that carry no LSM-specific details: no kfunc
+argument names an LSM anywhere in the interface.  This is done
+without turning the kfuncs into an ioctl-like multiplexer; see the
+usage example for the ergonomics.
+
+This design choice was based on feedback from Paul Moore [3] and
+Mickaël Salaün [4].  There was some discussion of whether LSMs should
+expose LSM-specific interfaces, and concern that a generic interface
+would have poor ergonomics / become an ioctl-like multiplexer.
+
+While initially I argued against a generic interface, ultimately I
+believe I've found a design that is LSM-generic without the cons /
+poor ergonomics of an ioctl-like interface.
+
+The key is a new struct lsm_policy_object, internal to the LSM
+framework:
+
+  struct lsm_policy_object {
+          u64 lsmid; /* routes the object to the LSM that owns it */
+          u32 type;  /* LSM-private tag for its own object types */
+  };
+
+The owning LSM embeds this struct in its own policy structure (here,
+the Landlock ruleset), and a pointer to it is the BPF-facing kptr.
+
+The kfuncs dispatch an lsm_policy_object pointer to the owning LSM
+based on the lsmid.  The LSM checks the type tag (Landlock has only
+LANDLOCK_POLICY_TYPE_RULESET) and recovers its own object with:
+
+   container_of(object, struct landlock_ruleset, policy_object);
+
+The fd translation is the one call with no object to dispatch on,
+and it needs no LSM_ID_* argument either: a policy object fd refers
+to a file associated with the owning LSM's own userspace interface,
+so the fd is identified by its fops pointer.  The kfunc passes the
+fd to each policy_object_from_fd implementation; an LSM claims its
+own fds and declines anyone else's with -EOPNOTSUPP, so the fd
+reaches exactly the LSM that created it.  A program that expects a
+policy of one specific LSM can still assert its intent by reading
+the lsmid off the returned kptr.
+
+One benefit of this: since all LSMs share the one kptr type, objects
+from multiple LSMs can be stored in the same map, allowing users to
+create LSM-agnostic programs.
+
+The interface
+===
+
+Effectively, the kfuncs are security hooks called by a BPF program.
+
+The kfuncs operate on the generic struct lsm_policy_object (the
+struct any LSM policy object must embed), rather than an
+LSM-specific type:
+
+  bpf_lsm_policy_from_fd(fd, flags)         KF_ACQUIRE | KF_RET_NULL | KF_SLEEPABLE
+  bpf_lsm_policy_acquire(object)            KF_ACQUIRE | KF_RCU | KF_RET_NULL
+  bpf_lsm_policy_release(object)            KF_RELEASE
+  bpf_lsm_policy_apply_bprm(object, bprm, flags)  KF_SLEEPABLE
+
+The interface is owned by the LSM framework in
+security/bpf_lsm_kfuncs.c.  An LSM participates by implementing four
+ordinary hooks:
+
+  policy_object_from_fd(fd, &object)
+  policy_object_get(object)
+  policy_object_put(object)
+  bprm_apply_policy_object(bprm, object, flags)
+
+These hooks are unlike any other in the kernel: they have no
+security_*() wrappers in security.c because they have no in-kernel
+callers.  Their only entry point is BPF, and the BPF entry point is
+the kfunc, so the kfuncs in security/bpf_lsm_kfuncs.c play the role
+the security_*() wrappers play for other hooks, dispatching the
+static call to the LSM matching the object's lsmid.
+
+As they implement LSM-dispatch logic like any other hook, they cannot
+be placed outside security/ without exposing LSM internals in an
+undesirable way.
+
+Usage TL;DR
+===
+
+A syscall program, run in the supervisor's context, translates a
+ruleset fd and parks the reference in a map; a sleepable LSM program
+on bprm_creds_for_exec()/bprm_creds_from_file() applies it:
+
+  /* setup (BPF_PROG_TYPE_SYSCALL, supervisor's task context) */
+  obj = bpf_lsm_policy_from_fd(ruleset_fd, 0);
+  old = bpf_kptr_xchg(&map_val->policy, obj);
+
+  /* enforcement (sleepable BPF_PROG_TYPE_LSM on a bprm hook) */
+  bpf_rcu_read_lock();
+  obj = bpf_lsm_policy_acquire(map_val->policy);
+  bpf_rcu_read_unlock();
+  if (obj) {
+          bpf_lsm_policy_apply_bprm(obj, bprm, 0);
+          bpf_lsm_policy_release(obj);
+  }
+
+Notice that no LSM is named anywhere in this process: the LSM
+information is carried entirely by the fd and the lsm_policy_object.
+The caller need not pass an LSM ID or LSM-specific opcode at all.
+The same program could apply a policy object from LSM A and LSM B
+by simply changing the fd, with zero code changes.
+
+(A caller that needs LSM-specific logic still has the option of
+reading lsm_policy_object->lsmid.)
+
+The acquire kfunc is what lets concurrent executions share the one
+reference stored in the map: each program execution takes a
+reference of its own under an RCU read lock, instead of taking
+exclusive ownership of the stored one with bpf_kptr_xchg() (which
+would prevent concurrent application).  Both the acquire path and
+the hook backing it are new in v2.
+
+The lifetime contract for embedding lsm_policy_object
+===
+
+Collapsing every provider into one BTF type makes the lifetime rules
+part of the interface rather than a per-LSM agreement.  Any
+LSM-specific policy structure embedding lsm_policy_object must
+provide the following semantics:
+
+  - The type field of lsm_policy_object must be nonzero.
+  - The object must be reference counted.
+  - The object must be RCU protected, and freed only after an RCU
+    grace period.
+  - get acquires with inc-not-zero semantics and may fail against a
+    concurrent last put.  Implementing policy_object_get is
+    optional.
+  - put must be callable from contexts that cannot sleep: map
+    teardown drops map-held references through the registered kptr
+    destructor.  Implementing policy_object_put is mandatory, even
+    if policy_object_get is not implemented.
+
+This contract was picked to be implementable by other LSMs in the
+future, and closely mirrors the contract backing the task_struct,
+cgroup, and bpf_crypto_ctx kptrs.
+
+Whether to implement policy_object_get is up to the individual LSM,
+and the choice selects between shared and unique pointers:
+implementing it (as Landlock does here) lets programs acquire
+additional references to the object under RCU, while leaving it out
+yields an object whose pointer cannot be copied after creation, only
+atomically exchanged with bpf_kptr_xchg().  Both models fit the same
+interface.
+
+Landlock specifics
+===
+
+The bprm hook accepts the landlock_restrict_self(2) flags with their
+usual semantics except LANDLOCK_RESTRICT_SELF_TSYNC (rejected: it
+targets the calling threads, not the execution).
+LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS is honored atomically with the
+restriction: both are staged on the bprm credentials and applied past
+the exec point of no return, so the executed task starts no_new_privs
+if and only if it starts confined, and a failed execution leaves the
+calling task untouched.
+
+Enforcement through BPF is as observable as the syscall: committing
+a staged restriction emits the same landlock_enforce_domain trace
+event, and the create/free domain events stay balanced on every
+path, including executions aborted before the point of no return.
+
+Notably, rulesets are now RCU protected, which is what allows
+enforcement to share the stored kptr instead of xchg-ing it in and
+out of the map.
+
+Changes since v1
+===
+
+- The interface is fully generic: the per-LSM kptr type
+  (struct bpf_landlock_ruleset), the erasure to void *, and the
+  security_kfunc_*() shims dispatching on an explicit LSM_ID_*
+  argument are gone.  struct lsm_policy_object (lsmid + LSM-private
+  type tag) is embedded in the LSM's own object and resolved with
+  container_of(), so no LSM type crosses the LSM boundary in either
+  direction.
+- The per-LSM kfuncs (bpf_landlock_*) are replaced by the four
+  LSM-agnostic bpf_lsm_policy_* kfuncs above; they moved from
+  kernel/bpf/bpf_lsm.c to security/bpf_lsm_kfuncs.c as the LSM
+  framework's own BPF interface.  kernel/bpf explicitly would
+  not make sense here because the kfuncs themselves implement
+  LSM dispatch logic, an LSM-internal functionality.
+- New shared-acquisition model: the policy_object_get hook and the
+  bpf_lsm_policy_acquire() kfunc (KF_RCU, backed by
+  refcount_inc_not_zero()) let concurrent executions share one map
+  slot.  Landlock frees rulesets after an RCU grace period to back
+  it, and struct lsm_policy_object is registered in the verifier's
+  rcu_protected_types.
+- The lifetime rules above are now the documented interface
+  contract, not per-kfunc notes.
+- LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS, whose series [5] has been
+  picked up by the Landlock tree since v1 was posted, is honored on
+  the exec path with the same atomicity as the syscall.
+- The staged enforcement emits landlock_enforce_domain at the exec
+  point of no return, with a selftest attached to the tracepoint.
+- The selftests are split in two: the properties of the interface
+  itself (the verifier-side filter rules, reference leak rejection,
+  RCU acquisition, and the from_fd error contract) are tested with no
+  LSM dependency alongside the kfuncs, while the end-to-end
+  enforcement tests sit with the Landlock provider.
+- Still no new UAPI: no map type, no new flag, no ABI bump; the type
+  tag and its enum are kernel-internal.
+
+This series is based on the Landlock tree's next branch [6]: it
+depends on the ruleset/domain split, the tracepoint series, and the
+LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS flag.  The BPF CI bot will
+therefore fail to apply this series onto bpf-next.  To cover CI, the
+full branch has been submitted manually to BPF CI on GitHub
+Actions [7].
+
+The series is structured with LSM framework patches first: patches 1-2
+add the hooks, 3 is trivial macro motion, 4-7 the kfuncs, 8 the interface
+documentation, and 9 its LSM-independent selftests.
+
+The Landlock provider follows: patches 10-13 add it, 14 its selftests,
+and 15 its documentation.
+
+[1] https://lore.kernel.org/linux-security-module/20260407200157.3874806-1-utilityemal77@gmail.com/
+[2] https://lore.kernel.org/bpf/20260731022047.189137-1-utilityemal77@gmail.com/
+[3] https://lore.kernel.org/linux-security-module/CAHC9VhSSzNBCSvy4cQHh6OOM4-EvHF+bmrB9=V1y=Lj53RvxQQ@mail.gmail.com/
+[4] https://lore.kernel.org/linux-security-module/20260702.ierahzaiLub3@digikod.net/
+[5] https://lore.kernel.org/linux-security-module/20260717220320.1030123-1-utilityemal77@gmail.com/
+[6] https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+[7] https://github.com/kernel-patches/bpf/pull/13522
+
+Justin Suess (15):
+  lsm: Add the LSM policy object lifetime hooks
+  lsm: Add the bprm_apply_policy_object LSM hook
+  lsm: Move the lsm_for_each_hook() macro to security/lsm.h
+  lsm: Add the bpf_lsm_policy_release kfunc and policy object destructor
+  lsm: Add the bpf_lsm_policy_from_fd kfunc
+  lsm: Add the bpf_lsm_policy_acquire kfunc
+  lsm: Add the bpf_lsm_policy_apply_bprm kfunc
+  lsm: Document the LSM policy object interface
+  selftests/bpf: Add tests for the LSM policy object kfuncs
+  landlock: Expose the ruleset fd lookup to the rest of Landlock
+  landlock: Factor the credential restriction out of
+    landlock_restrict_self()
+  landlock: Free rulesets after an RCU grace period
+  landlock: Implement the LSM policy object hooks
+  selftests/bpf: Test the LSM policy object kfuncs with Landlock
+  landlock: Document the BPF policy interface
+
+ Documentation/security/landlock.rst           |  38 ++
+ Documentation/security/lsm-development.rst    |  49 ++
+ Documentation/trace/events-landlock.rst       |   5 +-
+ MAINTAINERS                                   |   1 +
+ include/linux/lsm_hook_defs.h                 |   6 +
+ include/linux/security.h                      |  11 +
+ include/trace/events/landlock.h               |  15 +-
+ kernel/bpf/bpf_lsm.c                          |   4 +
+ kernel/bpf/verifier.c                         |   3 +
+ security/Makefile                             |   2 +-
+ security/bpf_lsm_kfuncs.c                     | 251 +++++++++
+ security/landlock/Makefile                    |   2 +
+ security/landlock/bpf.c                       | 152 +++++
+ security/landlock/bpf.h                       |  21 +
+ security/landlock/cred.c                      | 148 ++++-
+ security/landlock/cred.h                      |  47 ++
+ security/landlock/limits.h                    |   4 +
+ security/landlock/ruleset.c                   |  30 +-
+ security/landlock/ruleset.h                   |  75 ++-
+ security/landlock/setup.c                     |   2 +
+ security/landlock/syscalls.c                  | 105 +---
+ security/lsm.h                                |   6 +
+ security/security.c                           |   5 -
+ tools/testing/selftests/bpf/config            |   1 +
+ tools/testing/selftests/bpf/config.x86_64     |   2 +-
+ .../bpf/prog_tests/lsm_policy_kfuncs.c        |  54 ++
+ .../bpf/prog_tests/lsm_policy_landlock.c      | 522 ++++++++++++++++++
+ .../selftests/bpf/progs/lsm_policy_kfuncs.c   |  52 ++
+ .../bpf/progs/lsm_policy_kfuncs_failure.c     | 154 ++++++
+ .../selftests/bpf/progs/lsm_policy_landlock.c | 142 +++++
+ 30 files changed, 1786 insertions(+), 123 deletions(-)
+ create mode 100644 security/bpf_lsm_kfuncs.c
+ create mode 100644 security/landlock/bpf.c
+ create mode 100644 security/landlock/bpf.h
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_policy_kfuncs.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_policy_landlock.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lsm_policy_kfuncs.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lsm_policy_kfuncs_failure.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lsm_policy_landlock.c
+
+
+base-commit: 172b6a6d8463562b0cbebfd66f770b078f81966b
 -- 
-2.53.0
+2.55.0
 
