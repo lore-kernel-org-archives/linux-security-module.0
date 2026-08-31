@@ -1,290 +1,177 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1D3383333;
-	Mon, 31 Aug 2026 12:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8C03F3286;
+	Mon, 31 Aug 2026 12:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788178031; cv=none; b=sxR9aQuwtxswvRRBZQQNxKsdFJJv1G6um5zvGjbxbP9F+15iSLcsJ4Li9vaQKNT0vE6dKmFwzO07JaJn/1ei52JTVXek8qh3ljUOm2dcbCrv/9m9TiVxJ7/6EP1eUAPsmGyNLc63tbCEzsdfVX/YdiEJQpKezUwDvALWMw0Qhsc=
+	t=1788178034; cv=none; b=aMM3r629Tus/xFCxvQIXAhJLI1MZ3LZhOZNvMkvXX4iIkt+68/jwILub/Ob2RcOBuWjCqDdIZFNiJnDJbikwPZjjMFrQXzRmzdy4l6fSFZDgCsq7RvOZKQG158LIZt6iwCzakcDXbbPmKK3J9VKjWDjntgi9MUcfOhcKlBbYgrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788178031; c=relaxed/simple;
-	bh=AGa8gyrTJNq9V1Ppc5Z2E3JOwZCxg1B280Zudifaf34=;
+	s=arc-20240116; t=1788178034; c=relaxed/simple;
+	bh=5wxOEL3j3/PzOyT1mAT3H5nyWhQBgdLu3ua96Tolo1s=;
 	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=t92ot4mlOXXsgHCVaCzsC5kUgTQiUwVxmI4tw3cNklJgsJy8SW8XOwfXTGhCq3n/lo3s+ryaOihRgicCarDyqQP100bgtGndoU4G1x9wQenkhTWluqNm7+0atLEjl4eZ3kiH7+L6gb/gBGnJ3L5wcs7sJNhkBH4Bk6/oWqy3xF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpZyuK7h; arc=none smtp.client-ip=100.103.45.18
+	 Subject:From:To:Cc:Date; b=IInf3Kg6CbxQlo1dh1Sgq4RwWbt92PAv0SgZFcRtiTsvnZn5olrma8Q1iM09ANkVSXtOTgLQSWvuSQEHEMhYz41J6zUu6FFXZGPH60GWMqAUBSb6i1o5hM44Xi0+IK5z8I4H5LzfLHAsufONh6TT2ykE1HTnq+Wb+Nn4uUU7fE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWnuXnga; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpZyuK7h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E7D1F00A3D;
-	Mon, 31 Aug 2026 12:07:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWnuXnga"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BAD81F000E9;
+	Mon, 31 Aug 2026 12:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788178029;
-	bh=HXgafONsnRtvI90NzR3etwsqR9BlEpVPHg1WliuPJYA=;
+	s=k20260515; t=1788178032;
+	bh=gqhTV/l7kW1uQEgYnqAPw6g41+yUIWjiVvUP92dcDsE=;
 	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=PpZyuK7hgi+KQajgJjl2505gOWrzKbBnxq1RuoLc7a9mBReE2ve3y5kumx1jaS690
-	 pvBQZ1gkhwqlgOeCbJOMpxNrEOD/W81CRLZB81nKtH0L9Kg6I8ETtCFVVOR98BX8xp
-	 G7XKSi2X3Fzbj+uAK9wmawB7lC2ub7BUhmGVFphciRbXDoF+M4e0a8PzWCdss3RMZJ
-	 qqx+KPN2cYbMzk94s+zQMihUHKEr3SQW4ycnYblz8pI+9k+AFpakBGx3c3u2qQoH+m
-	 u/yqwHnoT/TWb83bYM0hSIv7Z9z14Qroqd4F4RgsF4gNSmkUd9Viy7D63mNy+m9lpc
-	 orE97yaY68big==
-Content-Type: multipart/mixed; boundary="===============5368566537779779122=="
+	b=nWnuXngavMs6j45o/F6ywVfeC0DK+AvPRC+TN8N3J7rwjRbVa99q9/DZJuRusFs+o
+	 x37gRntKD71dI6NGnI8D+ZtxJ1I8gUZS8fjcFidTllCaJ9Z1R2C8GEgJoPbioxeWLu
+	 caJ0bJyizs4smGInXFFgB83lCisSsFwV0FJCyXwA/vGfwNVLDINhFVUfwcfOtMMMW7
+	 m/rJpPjZ76s7Sso1QGg515tK35leiI8DpgbVz4DwpFV96zTgg5DmcxnWpS/7cVkqit
+	 k+ETvEQ7gPtOKrSRGlvKpFE3rJ5mcUByoL8X+lkAqRrHFVt4ItuoAxESMMhSugcrjN
+	 BE/ZFFoJIu7og==
+Content-Type: multipart/mixed; boundary="===============2308554220683685016=="
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <e2e1c4e876bd26ab17b88d70f0eb96cb56b81ed16358f3ef529a3b224324634f@mail.kernel.org>
-In-Reply-To: <20260831110934.241898-6-a.s.protopopov@gmail.com>
-References: <20260831110934.241898-6-a.s.protopopov@gmail.com>
-Subject: Re: [PATCH bpf-next 5/7] selftests/bpf: Add netdevsim helper library
+Message-Id: <8872f8c265628c401291f2921919eb96e1169eef2a4e5d0b1d8dfb5e80bced6a@mail.kernel.org>
+In-Reply-To: <20260831110934.241898-7-a.s.protopopov@gmail.com>
+References: <20260831110934.241898-7-a.s.protopopov@gmail.com>
+Subject: Re: [PATCH bpf-next 6/7] selftests/bpf: Add tests for the generic netlink BPF hook
 From: bot+bpf-ci@kernel.org
 To: a.s.protopopov@gmail.com,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,netdev@vger.kernel.org,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,eddyz87@gmail.com,memxor@gmail.com,kpsingh@kernel.org,matt@bobrowski.net,john.fastabend@gmail.com,brauner@kernel.org,paul@paul-moore.com,torvalds@linux-foundation.org,edumazet@google.com,kuba@kernel.org,pabeni@redhat.com
 Cc: a.s.protopopov@gmail.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
-Date: Mon, 31 Aug 2026 12:07:08 +0000 (UTC)
+Date: Mon, 31 Aug 2026 12:07:11 +0000 (UTC)
 
---===============5368566537779779122==
+--===============2308554220683685016==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-> index b481b867f372e..c21f89dbe70c0 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -862,6 +862,7 @@ TRUNNER_EXTRA_SOURCES := test_progs.c		\
->  			 unpriv_helpers.c 	\
->  			 sysctl_helpers.c	\
->  			 netlink_helpers.c	\
-> +			 netdevsim_helpers.c	\
->  			 jit_disasm_helpers.c	\
->  			 io_helpers.c		\
->  			 test_loader.c		\
-> diff --git a/tools/testing/selftests/bpf/netdevsim_helpers.c b/tools/testing/selftests/bpf/netdevsim_helpers.c
+> Add a few tests for the new generic netlink BPF hook.
+> Policies only apply themselves to the "nlctrl" family.
+> The following tests are being added:
+>   * doit: allow or deny CTRL_CMD_GETFAMILY
+>   * dump: allow or deny CTRL_CMD_GETPOLICY, nlmsg_flags |= NLM_F_DUMP
+>   * nlmsg_flags: allow or deny a command based on nlmsg_flags
+>   * other_family: check that other families still pass
+
+The enumeration lists four subtests but the patch registers five. The
+"netns" subtest is missing from this list:
+
+    if (test__start_subtest("doit"))          test_doit(skel, fd);
+    if (test__start_subtest("dump"))          test_dump(skel, fd);
+    if (test__start_subtest("nlmsg_flags"))   test_nlmsg_flags(skel, fd);
+    if (test__start_subtest("other_family"))  test_other_family(skel, fd, other_id);
+    if (test__start_subtest("netns"))         test_netns(skel, fd);
+
+The netns subtest is the only one exercising the net argument of
+bpf_lsm_genl_family_rcv_msg(), and it introduces target_netns_inum plus
+a filter in the BPF program, netns_new()/open_netns(), a second socket,
+and the netns_inum() helper - roughly 45 of the 242 added lines. Since
+the netns filtering path is the least obvious part of the hook contract,
+would it make sense to add a fifth bullet, for example "* netns: deny a
+command only inside a target netns, allow it elsewhere"?
+
+> diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+> index 08c6e8a4e..6ca0b083a 100644
+> --- a/tools/testing/selftests/bpf/config
+> +++ b/tools/testing/selftests/bpf/config
+> @@ -30,6 +30,7 @@ CONFIG_DYNAMIC_FTRACE=y
+>  CONFIG_FPROBE=y
+>  CONFIG_FUNCTION_TRACER=y
+
+[ ... ]
+
+> diff --git a/tools/testing/selftests/bpf/prog_tests/genl_lsm.c b/tools/testing/selftests/bpf/prog_tests/genl_lsm.c
 > new file mode 100644
-> index 0000000000000..fbed7442b2e8d
+> index 000000000..9f866c4c6
 > --- /dev/null
-> +++ b/tools/testing/selftests/bpf/netdevsim_helpers.c
-> @@ -0,0 +1,176 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <linux/rtnetlink.h>
-> +#include <poll.h>
-> +#include <stdarg.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include <sys/socket.h>
-> +#include <time.h>
-> +#include <unistd.h>
-> +
-> +#include "netdevsim_helpers.h"
-> +
-> +static int echo(const char *path, const char *fmt, ...)
-> +{
-> +	char buf[64];
-> +	va_list ap;
-> +	int fd, len, err = 0;
-> +
-> +	va_start(ap, fmt);
-> +	len = vsnprintf(buf, sizeof(buf), fmt, ap);
-> +	va_end(ap);
-> +
-> +	fd = open(path, O_WRONLY);
-> +	if (fd < 0)
-> +		return -errno;
-> +	if (write(fd, buf, len) != len)
-> +		err = -errno;
-> +	close(fd);
-> +
-> +	return err;
-> +}
+> +++ b/tools/testing/selftests/bpf/prog_tests/genl_lsm.c
 
-A subsystem pattern flags this as potentially concerning: the guide
-directs reporting when a test hand-rolls sysfs/file I/O instead of using
-existing utilities that the subsystem already provides.
+[ ... ]
 
-Looking at echo(), it implements the open(O_WRONLY)/write()/close()
-sequence that write_sysctl() in test_progs.c already performs for BPF
-selftests. Could this reuse that existing helper?
-
-> +
-> +void netdevsim_destroy(unsigned int id)
+> +static void test_nlmsg_flags(struct genl_lsm *skel, int fd)
 > +{
-> +	echo("/sys/bus/netdevsim/del_device", "%u", id);
-> +}
-> +
-> +static int create_new_device(void)
-> +{
-> +	unsigned int id;
 > +	int err;
 > +
-> +	/* if 10K is not enough, then something is clearly not right */
-> +	for (id = 0; id < 10000; id++) {
-> +		err = echo("/sys/bus/netdevsim/new_device", "%u", id);
-> +		if (!err)
-> +			return id;
-> +		if (err != -ENOSPC)
-> +			return err;
-> +	}
+> +	/* ensure denying works */
+> +	skel->bss->target_cmd = CTRL_CMD_GETFAMILY;
+> +	skel->bss->target_flags = NLM_F_REQUEST | NLM_F_DUMP;
+> +	skel->bss->allow = false;
 > +
-> +	return -ENOSPC;
+> +	err = nlctrl_request(fd, CTRL_CMD_GETFAMILY, false);
+> +	ASSERT_OK(err, "doit_flags_not_matched");
+> +
+> +	err = nlctrl_request(fd, CTRL_CMD_GETFAMILY, true);
+> +	ASSERT_EQ(err, -TEST_ERRNO, "deny_dump_flags");
+> +
+> +	/* now, the other way around */
+> +	skel->bss->target_flags = NLM_F_REQUEST;
+> +
+> +	err = nlctrl_request(fd, CTRL_CMD_GETFAMILY, true);
+> +	ASSERT_OK(err, "doit_flags_not_matched");
+> +
+> +	err = nlctrl_request(fd, CTRL_CMD_GETFAMILY, false);
+> +	ASSERT_EQ(err, -TEST_ERRNO, "deny_dump_flags");
 > +}
-> +
-> +static int open_link_socket(void)
+
+The second half reuses the assertion tags from the first half, but they
+name the opposite case. The dump request gets "doit_flags_not_matched"
+and the doit request gets "deny_dump_flags". The test logic is correct
+but when test_progs prints only the tag and __func__, a CI failure
+reporting "genl_lsm:FAIL:deny_dump_flags" cannot be attributed to either
+of the two assertions with that name, and whichever one it is, the tag
+names the wrong netlink operation. Would four distinct tags - for example
+"deny_dump_flags_matched", "allow_doit_flags_unmatched",
+"allow_dump_flags_unmatched", "deny_doit_flags_matched" - remove the
+ambiguity?
+
+[ ... ]
+
+> +void test_genl_lsm(void)
 > +{
-> +	struct sockaddr_nl addr = {
-> +		.nl_family = AF_NETLINK,
-> +		.nl_groups = RTMGRP_LINK,
-> +	};
-> +	int fd;
+> +	struct genl_lsm *skel = NULL;
+> +	int fd = -1;
+> +	int err, other_id;
 > +
-> +	fd = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE);
-> +	if (fd < 0)
-> +		return -errno;
-> +	if (bind(fd, (struct sockaddr *)&addr, sizeof(addr))) {
-> +		int err = -errno;
+> +	skel = genl_lsm__open_and_load();
+> +	if (!ASSERT_OK_PTR(skel, "genl_lsm__open_and_load"))
+> +		return;
 > +
-> +		close(fd);
-> +		return err;
+> +	fd = genl_open(0);
+> +	if (!ASSERT_OK_FD(fd, "genl_open"))
+> +		goto cleanup;
+> +
+> +	/* do this before attaching our hook, just in case */
+> +	other_id = genl_resolve_family(fd, OTHER_FAMILY_NAME);
+> +	if (other_id == -ENOENT) {
+> +		test__skip();
+> +		goto cleanup;
 > +	}
-> +
-> +	return fd;
-> +}
 
-The subsystem guide also flags this pattern: open_link_socket() appears
-to duplicate rtnl_open(&rth, RTMGRP_LINK) from netlink_helpers.c, which
-does the same socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE)
-plus bind() with nl_groups set to the subscriptions parameter.
+A subsystem pattern flags this as potentially concerning: when
+CONFIG_ETHTOOL_NETLINK is absent, genl_resolve_family() returns -ENOENT
+and the test skips with no printed reason. A reader of the TAP output
+sees "#N genl_lsm:SKIP" with nothing indicating the missing prerequisite
+was the ethtool genl family, so a silently-skipped test looks identical
+to a deliberately-disabled one. All five subtests are skipped this way,
+including the four (doit, dump, nlmsg_flags, netns) that do not need
+ethtool - only test_other_family() consumes other_id.
 
-In particular, it looks structurally similar to genl_open() in
-netlink_helpers.c, which the immediately preceding commit in this series
-(a1205972510b7 "selftests/bpf: Extract some helpers from tests to the
-netlink library") added explicitly for sharing netlink plumbing.
+This pattern is common in bpf selftests (e.g. aggregate_ret.c:52,
+arena_spin_lock.c:57 and :66 all do exactly this), and the config hunk
+in this same patch adds CONFIG_ETHTOOL_NETLINK so the skip path should
+not be taken in a properly configured CI run. Would a one-line printf
+plus optionally deferring the ethtool resolution into test_other_family()
+so the other four subtests still run be worth addressing?
 
-The re-implementation also appears to omit the SO_RCVBUF = 1024 * 1024
-setting that rtnl_open_byproto() sets in netlink_helpers.c, so the new
-socket runs on the default net.core.rmem_default receive buffer.
+[ ... ]
 
-Similarly, the receive/poll loop in recv_device_ifindex() appears to
-hand-roll what rtnl_recvmsg()/__rtnl_recvmsg() in netlink_helpers.c
-already do. Notably, those use MSG_PEEK | MSG_TRUNC to size the receive
-buffer, whereas the new loop uses a fixed 16 KiB buffer with a plain
-recv(fd, buf, sizeof(buf), 0) and no MSG_TRUNC check. Additionally,
-__rtnl_recvmsg() retries on EINTR/EAGAIN where the implementation below
-returns -errno.
-
-The agent notes that functionally these hand-rolled versions are correct
-for their specific use case, and this is selftest-only code. However,
-could the new helpers reuse the existing netlink infrastructure?
-
-> +
-> +static int remaining_timeout_ms(const struct timespec *deadline)
-> +{
-> +	struct timespec now;
-> +	long long remaining;
-> +
-> +	if (clock_gettime(CLOCK_MONOTONIC, &now))
-> +		return -errno;
-> +
-> +	remaining = (deadline->tv_sec - now.tv_sec) * 1000 +
-> +		    (deadline->tv_nsec - now.tv_nsec) / 1000000;
-> +
-> +	return remaining > 0 ? remaining : 0;
-> +}
-
-This isn't a bug, but since clock_gettime(CLOCK_MONOTONIC, ...) on a
-valid stack timespec can't really fail, would it be simpler to have
-remaining_timeout_ms() just return milliseconds? That way the timeout
-check at the end of recv_device_ifindex() (which currently needs
-`return timeout < 0 ? timeout : -ETIMEDOUT;` to forward the
-clock_gettime error) could be a plain `return -ETIMEDOUT;`.
-
-> +
-> +static int recv_device_ifindex(int fd, unsigned int id, unsigned int *ifindex)
-> +{
-> +	char parent_name[32], buf[16 * 1024];
-> +	struct pollfd pfd = {
-> +		.fd = fd,
-> +		.events = POLLIN,
-> +	};
-> +	struct timespec deadline;
-> +	struct nlmsghdr *nlh;
-> +	int len, ret, timeout;
-> +
-> +	snprintf(parent_name, sizeof(parent_name), "netdevsim%u", id);
-> +	if (clock_gettime(CLOCK_MONOTONIC, &deadline))
-> +		return -errno;
-> +	deadline.tv_sec += 5;
-> +
-> +	for (timeout = remaining_timeout_ms(&deadline); timeout > 0;
-> +	     timeout = remaining_timeout_ms(&deadline)) {
-> +		ret = poll(&pfd, 1, timeout);
-> +		if (ret < 0) {
-> +			if (errno == EINTR)
-> +				continue;
-> +			return -errno;
-> +		}
-> +		if (!ret)
-> +			return -ETIMEDOUT;
-> +		if (!(pfd.revents & POLLIN))
-> +			return -EIO;
-> +
-> +		len = recv(fd, buf, sizeof(buf), 0);
-> +		if (len < 0)
-> +			return -errno;
-> +
-> +		for (nlh = (struct nlmsghdr *)buf; NLMSG_OK(nlh, len);
-> +		     nlh = NLMSG_NEXT(nlh, len)) {
-> +			struct ifinfomsg *ifm;
-> +			struct rtattr *attr;
-> +			int attr_len;
-> +
-> +			if (nlh->nlmsg_type != RTM_NEWLINK)
-> +				continue;
-> +
-> +			ifm = NLMSG_DATA(nlh);
-> +			attr = IFLA_RTA(ifm);
-> +			attr_len = IFLA_PAYLOAD(nlh);
-> +			for (; RTA_OK(attr, attr_len);
-> +			     attr = RTA_NEXT(attr, attr_len)) {
-> +				if (attr->rta_type != IFLA_PARENT_DEV_NAME)
-> +					continue;
-> +				if (strcmp(RTA_DATA(attr), parent_name))
-> +					continue;
-> +
-> +				*ifindex = ifm->ifi_index;
-> +				return 0;
-> +			}
-> +		}
-> +	}
-> +
-> +	return timeout < 0 ? timeout : -ETIMEDOUT;
-> +}
-> +
-> +int netdevsim_create(unsigned int *ifindex)
-> +{
-> +	int fd, id, err;
-> +
-> +	fd = open_link_socket();
-> +	if (fd < 0)
-> +		return fd;
-> +
-> +	id = create_new_device();
-> +	if (id < 0) {
-> +		close(fd);
-> +		return id;
-> +	}
-> +
-> +	err = recv_device_ifindex(fd, id, ifindex);
-> +	close(fd);
-> +	if (err) {
-> +		netdevsim_destroy(id);
-> +		return err;
-> +	}
-> +
-> +	return id;
-> +}
+> diff --git a/tools/testing/selftests/bpf/progs/genl_lsm.c b/tools/testing/selftests/bpf/progs/genl_lsm.c
+> new file mode 100644
+> index 000000000..c4d8b4d23
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/progs/genl_lsm.c
 
 [ ... ]
 
@@ -294,4 +181,4 @@ AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
 See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
 
 CI run summary: https://github.com/kernel-patches/bpf/actions/runs/33386073074
---===============5368566537779779122==--
+--===============2308554220683685016==--
