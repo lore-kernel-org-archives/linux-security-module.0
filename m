@@ -1,64 +1,64 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086033C819D
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 10:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162EC3CCFAF
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 10:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788173944; cv=none; b=i+uoZiSD8eb0/lJIewx3CbYFu5g/+yDX0JOuNTko/J4+fl46AX7Kl+oP/HCwjUHhrZ/A6M3oV7/WoTVj9yMkmkLOYWK1lClQLdE5JhHxL2T8jfntWJ9fmSoF6Wl2+wUtlG/izMXuuS4gPdQ4cbEcXMaXoO6qGc59gq4dRkkDfK8=
+	t=1788173945; cv=none; b=Zyo1oQYYmTDnIXP5KpvRazwwkT6K9Tc5dTfMZn5qW5yC4YKuzOyG+e8f1aLy0YNPxirxoaah6ZSMddDenQ7g4QD3y6K/lWI/Ya3BYDQlETQQqXlDV5OervYJZ12hrKTKEjRBRRrPBokFskAPIvaLagr+8l8Qu47WoPFkoPJl0gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788173944; c=relaxed/simple;
-	bh=k3QpJN8+I55g8FljqrOCQatYFMgxnbzdJ4RZK6pPUDU=;
+	s=arc-20240116; t=1788173945; c=relaxed/simple;
+	bh=Nl/go5voN0tsV3KwMOJ4GQgVp3rsIzLKYsRdCy5p5JM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NcvIPxiUyQ05xAW69d+WMLEpdMsSw0O4VVGcOUC8d1KNUsmvHlEbkmDcvGzUtUtY7BtSqlrUOqlBC3IGKykF0iMo7nbUDtSMOkSJquSMEgiYCpimXOU9vKPSQA8DTYvWY3tujJnUU+VK2fNkO6HtPwKWfw5U8+IjGID0FcaBjyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixG+J5a1; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=HRk1O/C29GpyT9rJsMmYw8GaCNVmPyCbtvrplgnrGaVj7Zq/nJ0Ja6IHH0OTgy1YP2UNIw4ufZOyWQAHQUA1Ri9zKDOgbzp8hhnnyeIPhboROHmJR/x4Oifcjn6YBHoTpPu9xNRdVvZ2VPlqt+ArFvDK90W40B0mQrJ+cjUfpFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eTE9XWQR; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixG+J5a1"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-482e2904915so2259086f8f.0
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 03:59:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eTE9XWQR"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-47f96c5b722so2051635f8f.0
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 03:59:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788173941; x=1788778741; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788173942; x=1788778742; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=dQnrI08QM+nCVE1+dkRjMX2+ccdW5vMfHjCDAg3RBlU=;
-        b=ixG+J5a1l2fRVsn861M+crTbHrewieqrh7DuKVfM9vvtAcUHkZg4Nn992xpXrkh/FR
-         8hfvKwdHK0cpr886inKlYmPXmKtDm5BWRVPiPbtrpzxCnSctZh0nhJOT7EfLm7ruRJ+C
-         q9UYOedMrv9GVZZyHNWOIg817sCHlWLnm4YgyhxOxsZMbN7edz+KDe1HIF5912MVnFMW
-         huOBGma66X/P9FYm/6VfU5vm/U6qVr28nrKrU5VbCdl4C6F56zF0JPNuXu8ZRoRkWHQj
-         4exOTArhDGFlWWQQ9mVHrB0+nRSgfOC52Wq0BIlOKRA2SIPJ/5SYQa5H2/cZMIHXaY6J
-         iH+w==
+        bh=12zUrRkkhAoDFz8LTvcI9q2JnGLDYVplYhO4vSWaxZY=;
+        b=eTE9XWQRSZucyV8tNWHnrC9fNycf+fV7qA/1mIc/Ka6M3rMnGWcPuo0SpoHDmfcK7Y
+         VHASlwZOOYCzunJsB82P6qrea7/oPlTA1ewhAlDMbTHPyQNLPgekQ3j+bMxxo8/EgF1Q
+         RIHj3/SaCvh4O6dI20pr3sI0qNanxcEDB9jRCBQ40HUmfHbV/tyqdr9XZz61++rtEgkj
+         2UXNTETEBkRe9yKEI7nR7KI4GZsVrK7b1BXz/mCsWa7V0MxsnBAj0Kt32Jd04lDZCcPY
+         oFn/4+m4i4PPb5GqGt0oGwNSwP9E1jTTUKVsWGD9uxUkbnjBraylWbnuCSZTW3Fqrs3U
+         dxeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788173941; x=1788778741;
+        d=1e100.net; s=20251104; t=1788173942; x=1788778742;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=dQnrI08QM+nCVE1+dkRjMX2+ccdW5vMfHjCDAg3RBlU=;
-        b=izpPOhIULgBGJLU1Lb3JaBp7ZK5ZZhfyiiaNQcbjRoR14jxgvarKCW22pwIjwJ49fG
-         v+CgBLx/r6Aj+SWWFR4uPEpKrUAfV5Pd+gx6OwZTwo5bGHZEk9V3LPvS4m+jNTrwQd7u
-         cAKCHomkMSYQwy2CEKk9gf/Y/uNRpE3YZQtg0ZWduzsSknzXhy3jyM0sK3Uda0xlU4Ef
-         3iLJJ9VX2iBOu4t/3QLloLR5xkHVvGYWJXvGtOok18MequzcL6+5IoJ1Nv1k/du3sVoz
-         qP1rEVLrAViArih2Nz1w23QVdO3PTXdaGpDz5Ta3uhplKJGlrTtXL/FdJicw87+ZeRFI
-         fSfQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwo2lF9FJKkQtcHoGvqp22Yqrz9YY4sZNBL+51MMUF0eyA5pcEU44d/SHywaC1JvAP/3bNMVz2M4tCAkfLLKGD21TiB2Fo=@vger.kernel.org
-X-Gm-Message-State: AFuF++l9Fl31akwQp93GYiR0C4L8yh/9ILi/5Vho+guxeu1ECLx3JfqJ
-	qQpgq6f9beU7xL2Ga/hdJSyE0XGu095wQgOrHuwPCHauvX7djwPPXs/g
-X-Gm-Gg: AYBFou37p6fCgFVavYaRTY6/pK7OHNCnt8uXiLTsBI4ldsggJ8CwYF8DiR/bdNRfiiQ
-	DopcmcKENa8p3AzIEDlM7bc9U0BwOUheXDWoXccFp0yNkFREA0BpWQbhEvA2AEpB1SlmzUE0J0E
-	9BI8FEvMpBfTHC7ewDYO5oBfit+MY/kiZm2cX6jV+LWvpjDvnE9QDkLrN+Fwas+fiDJf3MElRZX
-	BpQQHYgblFHOSUXd4D1qVdcvMJOr5RhiNc75KF1CxY00ODkyN/YumnbE5J5B9IxkvKMj+tSy2ag
-	4GCWSk+C9S7QYx4xwvMq2oFAoMhfHc6J8Z9zm16tVzzGaXosgB8evApodhrRoXkkEMx9Hhc+Rmb
-	cGQgmZoMDMW3JhJRakVTB3aQXGMNJmYz24hCbG6uPWlc02hP/ePThTnPGDxxtd+hmzu0QGHIxNX
-	OngbEVmoI8fRuQihtpX7hdmjEEpmej8ir2JfoEo7cMkeJH+3NJ7SmA1a00/8si3gPXNzUzB86hU
-	AabArc=
-X-Received: by 2002:a05:6000:4609:b0:482:e451:6810 with SMTP id ffacd0b85a97d-482f7976116mr43355819f8f.1.1788173941076;
-        Mon, 31 Aug 2026 03:59:01 -0700 (PDT)
+        bh=12zUrRkkhAoDFz8LTvcI9q2JnGLDYVplYhO4vSWaxZY=;
+        b=ptKiQXx0H9T7uFlmi1qMgoz7FW75trrQjndQlck3lp9C2hY4JCPqMlclFnoH7hPUpr
+         G+QwRfpHZ4TUtN0e/9zcYhMTVuKYf+jimc18ryZxAJH+4+dQhrhtXSQ/fOC9iSi8KiDS
+         FRg6J0HlwXg6iByy78BQ0m5DYZulrktWMU+DJz1G9gTTQEtqP+mu+ktC+oQRm3z/pbIe
+         uiEAXANg7hh8+jpPFXFiKT3UYCh/1R4QspNYDr8fP8ETPtuyUQnXqNPUMwhBb0IsoYtr
+         EXqw+VWB16uwC2MHOFh8H3Vm3pKWXOps9vldDCKNN6YHzH7L5A/qc02RadAI4jPHZS/Y
+         MEOQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxDiQitezuVq3popWOW9ocSN+Xx4FqOpd2uLlAFJS0J6m/mvk8+l9tNQT8W2lBair2BjkFe4+JUcPoI/i1EU7xXycy939s=@vger.kernel.org
+X-Gm-Message-State: AFuF++l92vfBMHIFncRELz6GACvVPTP5dNFYSfIkf9xZ6ccw37atl03a
+	0aNhOVq7AKijHBc5JeSD+E2ARibf6ms7AUw5Z4oy9MYAbkcXhYolm+1r
+X-Gm-Gg: AYBFou2XXWB6iykgjjLfN/XLrMriTXCRWPH0z+X3n6oy3JH17x6TBBoephnI3C3Pq6q
+	ZZ4RD0bAumTopmwknrojzMfkr0QxJU2v+aMMdlxZZLby2waayQG+5Id7bjKzSKJVVnr1V1XaQHG
+	wDrg5+OoKgU1Rjg9lbYL6LgaItR3N0uSi7tFW40OL1uAWgkmleFdCGNzfX1s4ZdAsQvOvoH6XmW
+	u2b5SKiR8rCMXySffCasVL5sx4A85vVB+BCNyN3gH59n6nC64zXAsmWdgnCYKHqT9KT9wcK8G0f
+	NTZdcSCOC0wEE9GmCeYpAypr9yd8tjNEoBxyw/0754ufD0/ceNs21nFexkhN90bRgeeiQrjSlal
+	lCnKFcYlJCYRUw0XEAdwGKco7nj43+hBeH245qKpCda5BiYH+8pkv7wpq/8MvDa6eS5p83PONiI
+	OYagoEhZb/3HXJ/Ux7gqRYX5Q5WIWcTzOJqkmxeG1fz+kgAFZVFlNb2fqWwTqWvhVRETcZuTUki
+	9n18A==
+X-Received: by 2002:a05:6000:24c6:b0:47f:4919:d5b2 with SMTP id ffacd0b85a97d-482f79870bemr37568503f8f.1.1788173942064;
+        Mon, 31 Aug 2026 03:59:02 -0700 (PDT)
 Received: from localhost.localdomain ([2a04:ee41:4:b2de:1ac0:4dff:fe0f:3782])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-484322ce2a6sm16110776f8f.19.2026.08.31.03.59.00
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-484322ce2a6sm16110776f8f.19.2026.08.31.03.59.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 03:59:00 -0700 (PDT)
+        Mon, 31 Aug 2026 03:59:01 -0700 (PDT)
 From: Anton Protopopov <a.s.protopopov@gmail.com>
 To: bpf <bpf@vger.kernel.org>,
 	lsm <linux-security-module@vger.kernel.org>,
@@ -78,9 +78,9 @@ To: bpf <bpf@vger.kernel.org>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
 Cc: Anton Protopopov <a.s.protopopov@gmail.com>
-Subject: [PATCH bpf-next 1/7] bpf: Allow BPF LSM programs to attach to more hooks
-Date: Mon, 31 Aug 2026 11:09:26 +0000
-Message-ID: <20260831110934.241898-2-a.s.protopopov@gmail.com>
+Subject: [PATCH bpf-next 2/7] net, bpf: Add a generic netlink hook on msg_rcv
+Date: Mon, 31 Aug 2026 11:09:27 +0000
+Message-ID: <20260831110934.241898-3-a.s.protopopov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260831110934.241898-1-a.s.protopopov@gmail.com>
 References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
@@ -92,106 +92,137 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The BPF LSM programs are allowed to attach to LSM hooks, all of which
-are defined in the <lsm_hook_defs.h> header file.  From BPF's point
-of view the set of attachment points is defined in the bpf_lsm_hooks
-BTF set. By analogy with existing code, add a new header file
-<bpf_lsm_hook_defs.h> which will also be included in the bpf_lsm_hooks
-BTF set.
+Add a new bpf_lsm_genl_family_rcv_msg() BPF hook called from within
+the genl_family_rcv_msg() function. The hook sees the genl family,
+net, cmd, and nlmsg_flags.  As the hook receives all the information
+pre-parsed, it is not put into the sleepable list.
 
-This change allows attaching BPF LSM programs to more functions.
-The actual hooks are added in subsequent commits.
+There is already an existing LSM hook sitting right at netlink_send,
+however, it looks to be too coarse-grained to be used directly. The
+netlink_send hook sees the struct sock and struct skb, and thus must
+duplicate all the parsing inside BPF. The messages can actually contain
+multiple netlink datagrams, dynamic info (see e.g., selinux_nlmsg_lookup()
+in context of generic netlink), etc.
 
-Each BPF hook calls a [__weak] noinline function each time a hook is
-reached. This may be too expensive for hot paths if a BPF program is
-not attached. A future commit will optimize this by adding a per-hook
-static key and inc/dec it on attach/detach. This way disabled hooks
-will be bypassed efficiently.
+The purpose of this hook is to mitigate, in a coarse-grained way,
+CVEs reachable via the corresponding control path: genl recvmsg.
+While looking at the recent CVEs, robots found ~300 CVEs reachable
+via the genl_rcv. We can roughly split them as follows:
+
+  * Around 100 are ethtool-related. For more detailed information,
+    see the following commit which adds even more finer-grained
+    ethtool hooks.
+
+  * Around 100 of the remaining are fully dominated by the new hook.
+
+  * Around 100 remaining aren't fully mitigatable, as other control
+    paths, besides the genl, lead to the buggy code.
+
+To be more precise, the following CVEs are properly mitigated by the
+new hook:
+
+  * CVE-2021-47518 CVE-2021-47594 CVE-2021-47612 CVE-2022-48687
+    CVE-2022-49060 CVE-2022-49085 CVE-2022-49300 CVE-2022-49862
+    CVE-2022-49959 CVE-2022-50656 CVE-2022-50834 CVE-2022-50854
+    CVE-2023-52698 CVE-2023-52702 CVE-2023-52977 CVE-2023-53113
+    CVE-2023-53298 CVE-2023-53686 CVE-2023-53843 CVE-2024-26608
+    CVE-2024-26663 CVE-2024-26754 CVE-2024-26811 CVE-2024-26950
+    CVE-2024-27025 CVE-2024-27410 CVE-2024-36941 CVE-2024-38562
+    CVE-2024-43912 CVE-2024-45010 CVE-2024-46711 CVE-2024-49937
+    CVE-2024-50085 CVE-2025-21706 CVE-2025-21787 CVE-2025-21862
+    CVE-2025-21875 CVE-2025-21947 CVE-2025-22024 CVE-2025-38184
+    CVE-2025-38443 CVE-2025-40084 CVE-2025-68263 CVE-2025-68366
+    CVE-2026-23297 CVE-2026-23436 CVE-2026-43252 CVE-2026-43394
+    CVE-2026-53128 CVE-2026-53227 CVE-2026-53233 CVE-2026-53238
+    CVE-2026-53257
+
+The following are mitigated as well, but, theoretically, could
+benefit from a finer-grained hook, running after a deeper
+parsing/taking locks (this is however out of scope for now to
+add finer-grained hooks for each involved subsystems, as, unlike
+ethtool, they are more-or-less evenly distributed):
+
+  * CVE-2021-47250 CVE-2021-47257 CVE-2021-47554 CVE-2022-48915
+    CVE-2022-49374 CVE-2022-49505 CVE-2022-50042 CVE-2022-50678
+    CVE-2023-52845 CVE-2023-53141 CVE-2023-53543 CVE-2023-53652
+    CVE-2023-54031 CVE-2024-26725 CVE-2024-26951 CVE-2024-42073
+    CVE-2024-42154 CVE-2024-46676 CVE-2024-47687 CVE-2024-50028
+    CVE-2025-21973 CVE-2025-38020 CVE-2025-38628 CVE-2025-40254
+    CVE-2025-40321 CVE-2025-68785 CVE-2025-71091 CVE-2025-71297
+    CVE-2026-23321 CVE-2026-31707 CVE-2026-31744 CVE-2026-43012
+    CVE-2026-43467 CVE-2026-43481 CVE-2026-45840 CVE-2026-52978
+    CVE-2026-52979 CVE-2023-53570 CVE-2024-42114 CVE-2024-53189
+    CVE-2024-56663 CVE-2025-21909 CVE-2026-53182
+
+Policies for selected CVEs are added in the corresponding
+selftests patch.
 
 Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
 ---
- MAINTAINERS                       |  1 +
- include/linux/bpf_lsm.h           | 12 ++++++++++++
- include/linux/bpf_lsm_hook_defs.h |  6 ++++++
- kernel/bpf/bpf_lsm.c              |  2 ++
- 4 files changed, 21 insertions(+)
- create mode 100644 include/linux/bpf_lsm_hook_defs.h
+ include/linux/bpf_lsm.h           | 2 ++
+ include/linux/bpf_lsm_hook_defs.h | 7 +++++++
+ net/netlink/genetlink.c           | 6 ++++++
+ 3 files changed, 15 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 460cb7268845..d01dd1f096fc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5035,6 +5035,7 @@ L:	bpf@vger.kernel.org
- S:	Maintained
- F:	Documentation/bpf/prog_lsm.rst
- F:	include/linux/bpf_lsm.h
-+F:	include/linux/bpf_lsm_hook_defs.h
- F:	kernel/bpf/bpf_lsm.c
- F:	kernel/bpf/bpf_lsm_proto.c
- F:	kernel/trace/bpf_trace.c
 diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-index dda272d78f01..1e54c7cca27a 100644
+index 1e54c7cca27a..452b9d1d7c49 100644
 --- a/include/linux/bpf_lsm.h
 +++ b/include/linux/bpf_lsm.h
-@@ -16,9 +16,19 @@
+@@ -12,6 +12,8 @@
+ #include <linux/bpf_verifier.h>
+ #include <linux/lsm_hooks.h>
+ 
++struct genl_family; /* for the bpf_lsm_genl_family_rcv_msg hook */
++
+ #ifdef CONFIG_BPF_LSM
  
  extern bool bpf_lsm_initialized __ro_after_init;
- 
-+/*
-+ * Technically, checking bpf_lsm_initialized is not necessary.
-+ * But if it is off, then this means that all security_* calls
-+ * do not call BPF, and it doesn't look reasonable to enable
-+ * only "non-LSM" bpf hooks...
-+ */
-+#define bpf_lsm_hook(NAME, ...) \
-+	(bpf_lsm_initialized ? bpf_lsm_##NAME(__VA_ARGS__) : 0)
-+
- #define LSM_HOOK(RET, DEFAULT, NAME, ...) \
- 	RET bpf_lsm_##NAME(__VA_ARGS__);
- #include <linux/lsm_hook_defs.h>
-+#include <linux/bpf_lsm_hook_defs.h>
- #undef LSM_HOOK
- 
- struct bpf_storage_blob {
-@@ -114,6 +124,8 @@ static inline bool bpf_lsm_hook_returns_errno(u32 btf_id)
- {
- 	return true;
- }
-+
-+#define bpf_lsm_hook(NAME, ...) 0
- #endif /* CONFIG_BPF_LSM */
- 
- #endif /* _LINUX_BPF_LSM_H */
 diff --git a/include/linux/bpf_lsm_hook_defs.h b/include/linux/bpf_lsm_hook_defs.h
-new file mode 100644
-index 000000000000..29bc0b514d16
---- /dev/null
+index 29bc0b514d16..3f57022744a3 100644
+--- a/include/linux/bpf_lsm_hook_defs.h
 +++ b/include/linux/bpf_lsm_hook_defs.h
-@@ -0,0 +1,6 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+@@ -4,3 +4,10 @@
+  * This is a set of BPF LSM hooks, which are _not_ fully implemented
+  * as LSM hooks. Thus, they only can be used by BPF LSM programs.
+  */
 +
-+/*
-+ * This is a set of BPF LSM hooks, which are _not_ fully implemented
-+ * as LSM hooks. Thus, they only can be used by BPF LSM programs.
-+ */
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 82c5988417a0..add344ea2691 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -28,11 +28,13 @@ __weak noinline RET bpf_lsm_##NAME(__VA_ARGS__)	\
- }
++#ifdef CONFIG_NET
++
++LSM_HOOK(int, 0, genl_family_rcv_msg, const struct genl_family *family,
++	 const struct net *net, u32 cmd, u16 nlmsg_flags)
++
++#endif /* CONFIG_NET */
+diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
+index 0da39eaed255..12b4f49c7253 100644
+--- a/net/netlink/genetlink.c
++++ b/net/netlink/genetlink.c
+@@ -17,6 +17,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/mutex.h>
+ #include <linux/bitmap.h>
++#include <linux/bpf_lsm.h>
+ #include <linux/rwsem.h>
+ #include <linux/idr.h>
+ #include <net/sock.h>
+@@ -1161,6 +1162,7 @@ static int genl_family_rcv_msg(const struct genl_family *family,
+ 	struct genlmsghdr *hdr = nlmsg_data(nlh);
+ 	struct genl_split_ops op;
+ 	int hdrlen;
++	int err;
+ 	u8 flags;
  
- #include <linux/lsm_hook_defs.h>
-+#include <linux/bpf_lsm_hook_defs.h>
- #undef LSM_HOOK
+ 	/* this family doesn't exist in this netns */
+@@ -1187,6 +1189,10 @@ static int genl_family_rcv_msg(const struct genl_family *family,
+ 	    !netlink_ns_capable(skb, net->user_ns, CAP_NET_ADMIN))
+ 		return -EPERM;
  
- #define LSM_HOOK(RET, DEFAULT, NAME, ...) BTF_ID(func, bpf_lsm_##NAME)
- BTF_SET_START(bpf_lsm_hooks)
- #include <linux/lsm_hook_defs.h>
-+#include <linux/bpf_lsm_hook_defs.h>
- #undef LSM_HOOK
- BTF_SET_END(bpf_lsm_hooks)
- 
++	err = bpf_lsm_hook(genl_family_rcv_msg, family, net, hdr->cmd, nlh->nlmsg_flags);
++	if (err)
++		return err;
++
+ 	if (flags & GENL_CMD_CAP_DUMP)
+ 		return genl_family_rcv_msg_dumpit(family, skb, nlh, extack,
+ 						  &op, hdrlen, net);
 -- 
 2.43.0
 
