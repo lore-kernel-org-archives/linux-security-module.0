@@ -1,64 +1,64 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD9C4A5C4D
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3AB4A5ECD
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788188390; cv=none; b=chXQnRVJa3O4MJ1QHFvMo6FiSyTVMP/wAx/8vTJSxoP/iZ+wM/Eol1Jd4NtxDI9RpxMwrlAHDm/VkpaU5Cv1u8Z5S/zJIbyVMPHa26PiyoXUOSXZ73iyp7FcvWAVHcQyteXDvYT8O0LOCrnn0/Q2cUXVILJpOFiOSlGlLViFTyg=
+	t=1788188394; cv=none; b=Fz/S2BWxVaj73VUGpm/erUmAYjoy8CkmThRUCLDp9ANOJ7Kv3fvzIpZQ5N2BNtWEZ8oe0FF4vEHo9PMy6fgRIfq04sVrKKduhfwRpkwfAwHzIOXu0w2pPRjiRULBsPLf3OckvVAbCrzKHCp6jeky25mRCoSbwRxBmPYSYzauB0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788188390; c=relaxed/simple;
-	bh=lBMOIU6CWsLN3ziU8VrmYYDs3RoekpMxdj/Po6RCFC8=;
+	s=arc-20240116; t=1788188394; c=relaxed/simple;
+	bh=6UZqgo1pNVnRYUaLOBFpn2TGeofhqUttyRB0yoGXOFw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eOucBgwI8xn7/OZHwRrmIemAJsPbPnSiUdzVHNZsDQywJC63szLpEJtztGslTWPRj9dsOf6uBtmHGIXLW1P2X4KcOGWXyKOtssfW7tAhD6O672/3CogSo5waHT5llypUL0eiXaXD8La3ZY3jkz38nCFRXy+L1jcx3zIcz/kNP3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQFP4e4u; arc=none smtp.client-ip=209.85.128.177
+	 MIME-Version; b=CY3rVrzMP/o+awpMoDN+p1KsHS0EAnoEp0CKbw1ugRXgvTUtzs1fqNog0NdvDqckcbehG8iv53h4rLfi14ouRRqcXe52USGCtUA+qnS6Mp4vBo46lk8jrHOKqmLeLykoJHrRNbiiGB+8U1/YLLKM5CHvZ1+h+7d8RtZ6899HFz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYkvfYRh; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQFP4e4u"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-81f3b227a4aso45516887b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 07:59:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYkvfYRh"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-865bdc6ed72so15669917b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 07:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788188387; x=1788793187; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788188392; x=1788793192; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=1usyBp9aft3dyeY3uN5coYzOfoJwuHJfSY/skJ61OQQ=;
-        b=BQFP4e4ubiv8+GA7M1P3gvEPOxGXLUlMVfV95F9jdsRVKt/d35M0gLgII2tVJFbmzn
-         jrE5vIMuUN8U/3x2QopqPZunQWc/ruGOIDVAvNcxVTCyvoT00oADPNbhz6XpaP4JzDH2
-         3uGYdwby9MXwtvdhyVDgsqpZgzm44Fl8tieZuaL3CKOy44agzIBIEb1k4u0MAiupoCAy
-         +RH/PFNxL35sMZrQmvVPt3qVTureDGQeka8xegkWJXXVhcuu1jyOD4MA9krQpRVG5uk+
-         JfVpsMkdMzgKJ7dM3nhQLFhRgRYoOKnILFopmIzZfPsBtaP6WaMPzd5MSjgUR5DrXq5D
-         kVNA==
+        bh=8vHIsNy/IN9t6970qY2+L8dSJ+0VAmbxT4VuLQXYbHc=;
+        b=nYkvfYRh2kCVnaN0Tj2EhYB4/lWIH1hkSdlsFcbqjPxAEq5YMsvux0IdUOlHxORVhs
+         OPs3zXVqr52d5DJJWQV/h/YDwG8JbGlo84KsmHEdYhfT8aRnxlKCATTYmLtY0PPyBFMX
+         bDRFKFrunByFw4eiLcdi+Dtc0rIwgI7JDRAOt57HgFtVMiW1uwzxt0yHh1ysFckqKFeC
+         Wx9K/9lPtaqDpXnkXMk6eTU70OnEU5y68Q2MGJGsPd53v5keBmKqsby9d9vyH4R3kW+J
+         9VD4atWFGTx8rkwuin7omcU8cAbc19CluS1sDkXBGVopeKcIJ4TIvTWp+bVM6VvWfXaX
+         S92A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788188387; x=1788793187;
+        d=1e100.net; s=20251104; t=1788188392; x=1788793192;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=1usyBp9aft3dyeY3uN5coYzOfoJwuHJfSY/skJ61OQQ=;
-        b=j7wz2rwj9vWctXWHj83FZt5pcrVZdfAA/3EJF3NIRjxSRxOXLITZcae+RmBRzey9C6
-         BkTMc2T/DhcMIfmDGYvzKZSqvbXA1lKK0NUFtre2eA27Mp7vdiVQ9exM6jpfYrWVRbeP
-         iaHjfKu2mlw5xT+6+RBVjtDA6FbnG706r8dzfBYnv1rKVntMWRbY7vH0zxV9Rij277kl
-         rcumQBHMWZeEo7QmwB3OhXmTg7CqMGliDeHD37PKTPZysL213MD+7aTcPkjAAOow2qXY
-         w2hkqIC8z83palPQduRlonVXE9RO3eer6DtkPIID0CmKNUk23GaCpX4tu+LkIS8oytK1
-         p/ZA==
-X-Forwarded-Encrypted: i=1; AKwUvBzGPsLzPEh0NGy2Z4fTk2ry9UercEzh9bZI9Q05Tb2Q/JIeN1idjltRMsfXFE2BFuY4VZFT2ixpMUsZB2aa0esxiTXOD5M=@vger.kernel.org
-X-Gm-Message-State: AFuF++mEThq0cMncJUR8CpFWO+Cc85bDL8zYUhALfCZcZ2bctog++kwY
-	impBOphe5mmlg81uhTLo2nz7XVlHpIGvXniXZeku1k2d3/ZoICD5bp39
-X-Gm-Gg: AYBFou3X6quBkt7p4hr6UY2gZZE53aknvxcrnF14AY8szLcWO8zfyzFBeuyjxo1Ao9+
-	G1P+iPNgyaZd6gweCUNEe2q2ZQ+Vus0vAXGwXojneYG7BSj/nl5vLJr/U7w2Jrd19EanN1ymILq
-	C8+UyosaoxutvIfXq+sUXrXmPlDREctDkRP6TNPd8TgARpHWNTp7qcHZtjTCuf2qJv1E0EHMVs8
-	8F1bX7nTTlHyvGVcNmWwW+uJ2MI5FyZXIweRXRk0ieqzBMpNsdWdISuIw6cr9FjYEbymXI+bcEu
-	p7b8u6NVjo1HH50Zi1ghe5UYKcKfWm3lfH9gWu+Q6dvI274HJh076cne0bMFBqZRxmHgQzD5zCF
-	kBKBxprcmbdAQe6KU2Deh9bdfhrAx4+4B9I7U5cM6aUFF+xHDSLjhTZnMPF/UvGUalsZA9hmY9P
-	vT85Gkx0udvPtEe2SO+U1o7oeogDhWlP+nE+GAc9e/M/mBpw7wXTaA+25bvMZBYecHrbMtuAQwa
-	PIxezlpUreTw4izFtCI6gQ=
-X-Received: by 2002:a05:690c:4021:b0:845:ddf4:a3a7 with SMTP id 00721157ae682-85d6cbd8637mr82959027b3.16.1788188387414;
-        Mon, 31 Aug 2026 07:59:47 -0700 (PDT)
+        bh=8vHIsNy/IN9t6970qY2+L8dSJ+0VAmbxT4VuLQXYbHc=;
+        b=Sfk09mzkPT2MbAw40ryeKH05kJELErmMkNdhVJCN7Iqys+RkRhNcafrNGcW9uzOKkq
+         UpLwzkOXTw5+tjiJuLCCgw0+SPURWq3JAlRWIB94Dwq54VnbpOvwdsqTCf4OjYJK1U8X
+         ZHI6+H57belJexeWgGzNejPCzX/JSFT0vVWoAx7pmPH1cJd8UsfpXUJS65oWn6o8Obmd
+         s1q4H4c/eCbXLezB7Wd3+bHYh6K+lxUreum4T6PM2zNmBgxceCSRgrFfnDDi4VU8FPQq
+         pPX0s/BxhiLniyd77XcTbsB8YKJKzGiSmtPDPdjao0XOp8pqIwKSK17V/sadGqv1jvCV
+         BWPQ==
+X-Forwarded-Encrypted: i=1; AKwUvByzKETmiK+P+ycs0va8cPQ2RF4Dol1rhm8vv0wn7zi3QVOhKSjt7ydHLPiK6ZC7/ahH/Ibn+rR9yOAzuqlVKPOTsYhKv+c=@vger.kernel.org
+X-Gm-Message-State: AFuF++nEhUWEZxHymvofnPCgf5FCOrWg8je1JKchgyIvV+cIOAN6kd7f
+	5QBxC8srNSCtF5dUwuTzmZcf9riqOLR997oOzpclBMT2P2fidLyxY0R3
+X-Gm-Gg: AYBFou223LztWrFOEDVPolD1Bn2nzc+TnE970meJdKvv/RHG6s+egsF+2KEbdqGCCHE
+	dJ/MCEnDO6dn7Mlt8hq5h4ddHZH7PyYT9pJB9cS4dpegEIQO5IfEeEfx3Gq7dvCw8e3owaSbhCF
+	VpcsNumPho+g8VSslC7hM75/vZckmiL7KHh3k8ra3y8ZzwHynnWLJsvUcLHrawUJcz7ZiUMAxB0
+	Mf/kk2zdwGu2/fLxzs187xtJ2B+vccxyjiRA5s/lLurACEMz4ewVMm4YzOedx7ZxZsq6yBPz13E
+	QjOrC1ee1Gpd2PJbjcP4SgWxPbdFDOhcc8kf4u+jOGUPuVjYI0aolwYuuQslcFtt4dTZMkwmWwF
+	LHKLKmZjw9AO+Nas0WTaDU8sJmrmeuYIca9T3LPX3iIcIy7hq4AjGsw6CxMBWKH56HJDu3vQwO9
+	nq9BNpcr+uR0ls7Zh03SMDFAU0MkPObP6IgybaNSgMsq6VdlrWEtktQevwwiz4BCDkChkvAsWr1
+	TNaDJWIkri9rmox7PvCKra/xNtfBbUJWA==
+X-Received: by 2002:a05:690c:c4e6:b0:7fe:4069:d3fe with SMTP id 00721157ae682-868747fe33emr6595577b3.30.1788188392315;
+        Mon, 31 Aug 2026 07:59:52 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:f6fc:b424:b1bb:6ff0])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.07.59.46
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.07.59.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 07:59:46 -0700 (PDT)
+        Mon, 31 Aug 2026 07:59:52 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -80,9 +80,9 @@ Cc: gnoack@google.com,
 	linux-kernel@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>,
 	Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v2 02/15] lsm: Add the bprm_apply_policy_object LSM hook
-Date: Mon, 31 Aug 2026 10:58:44 -0400
-Message-ID: <20260831145858.3869191-3-utilityemal77@gmail.com>
+Subject: [PATCH v2 03/15] lsm: Move the lsm_for_each_hook() macro to security/lsm.h
+Date: Mon, 31 Aug 2026 10:58:45 -0400
+Message-ID: <20260831145858.3869191-4-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260831145858.3869191-1-utilityemal77@gmail.com>
 References: <20260831145858.3869191-1-utilityemal77@gmail.com>
@@ -94,59 +94,52 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the first policy object operation, applying a policy to the
-credentials prepared for an execution:
-
-  bprm_apply_policy_object(bprm, object, flags)
-
-The hook is only called between the preparation and the commitment of
-the bprm's credentials, i.e. from a bprm_creds_for_exec() or
-bprm_creds_from_file() context, where the executed task can still be
-arranged to start confined by the policy.
-
-How the policy composes with restrictions the credentials already
-carry, and the meaning of @flags, are defined by the implementing
-LSM, which must reject unsupported flags with -EINVAL.  An LSM with
-no notion of applying a policy object to an execution does not
-implement the hook, and the calling kfunc fails with -EOPNOTSUPP.
-
-Like the lifetime hooks, this hook is excluded from the "bpf" LSM's
-attachment points, as the targeted dispatch makes an attachment there
-unreachable.
+Move the lsm_for_each_hook() iterator from security/security.c to
+security/lsm.h, verbatim: a following commit adds a user outside
+security.c, the file implementing the LSM policy object kfuncs.
+No functional change.
 
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- include/linux/lsm_hook_defs.h | 2 ++
- kernel/bpf/bpf_lsm.c          | 1 +
- 2 files changed, 3 insertions(+)
+ security/lsm.h      | 6 ++++++
+ security/security.c | 5 -----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index d7684407737a..ddb15bea383e 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -452,6 +452,8 @@ LSM_HOOK(int, 0, bpf_token_create, struct bpf_token *token, union bpf_attr *attr
- LSM_HOOK(void, LSM_RET_VOID, bpf_token_free, struct bpf_token *token)
- LSM_HOOK(int, 0, bpf_token_cmd, const struct bpf_token *token, enum bpf_cmd cmd)
- LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
-+LSM_HOOK(int, -EOPNOTSUPP, bprm_apply_policy_object, struct linux_binprm *bprm,
-+	 struct lsm_policy_object *object, u32 flags)
- LSM_HOOK(int, -EOPNOTSUPP, policy_object_from_fd, int fd,
- 	 struct lsm_policy_object **object)
- LSM_HOOK(int, -EOPNOTSUPP, policy_object_get, struct lsm_policy_object *object)
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index d06744d72e04..d5859553f7f8 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -56,6 +56,7 @@ BTF_ID(func, bpf_lsm_xfrm_decode_session)
- #endif
- BTF_ID(func, bpf_lsm_ismaclabel)
- BTF_ID(func, bpf_lsm_file_alloc_security)
-+BTF_ID(func, bpf_lsm_bprm_apply_policy_object)
- BTF_ID(func, bpf_lsm_policy_object_from_fd)
- BTF_ID(func, bpf_lsm_policy_object_get)
- BTF_ID(func, bpf_lsm_policy_object_put)
+diff --git a/security/lsm.h b/security/lsm.h
+index 32f808ad4335..264ae63290a8 100644
+--- a/security/lsm.h
++++ b/security/lsm.h
+@@ -24,6 +24,12 @@ extern bool lsm_debug;
+ extern unsigned int lsm_active_cnt;
+ extern const struct lsm_id *lsm_idlist[];
+ 
++/* Iterate over the active implementations of a given hook */
++#define lsm_for_each_hook(scall, NAME)					\
++	for (scall = static_calls_table.NAME;				\
++	     scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)  \
++		if (static_key_enabled(&scall->active->key))
++
+ /* LSM blob configuration */
+ extern struct lsm_blob_sizes blob_sizes;
+ 
+diff --git a/security/security.c b/security/security.c
+index 71aea8fdf014..0a6fa21cc31b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -495,11 +495,6 @@ OUT:									\
+ 	RC;								\
+ })
+ 
+-#define lsm_for_each_hook(scall, NAME)					\
+-	for (scall = static_calls_table.NAME;				\
+-	     scall - static_calls_table.NAME < MAX_LSM_COUNT; scall++)  \
+-		if (static_key_enabled(&scall->active->key))
+-
+ /* Security operations */
+ 
+ /**
 -- 
 2.55.0
 
