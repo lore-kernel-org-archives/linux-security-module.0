@@ -1,65 +1,65 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02400501F3A
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 15:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F5A503BC5
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 15:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788188449; cv=none; b=jaEideBczHmwjrRF+DFv3l6e2Z3dWqbPibnrTtO6m+hlmnGuIoMTuxA65PPrHQRU2Z8sV8gu45vBykAgmY6lJDspeoSljrCTfKhdZFTPUtC0UHL3XSoTHp6QvKcIBA+zdozXQ1u9irS9152nbh28Rc52/DmiEVijCiW65SojkJ0=
+	t=1788188456; cv=none; b=IISXlSTOf0R7LeZmXFrbzqOT1X6dg02TwyBlaXHtbajFUJkRbc7cJ5+Rv1JP6nm2qKi7IekykYM14GwvcyAXPvCz03AX5BHEh7upxD/dHGXXNjpPMbLKjO+8FhA1W6zToG+zYzUQMB4GeqK1fmPmep68igix6P7kl7NRtr0Qg5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788188449; c=relaxed/simple;
-	bh=y8vKV0EbX3uwzWTuiC7zAtR24C/exA4HkGBQ/YwAlKE=;
+	s=arc-20240116; t=1788188456; c=relaxed/simple;
+	bh=K8bob/0alFROS+/jtb/M2iJVIOfkWpfvlsD9YGEeofQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CeznRPA97CP0ZmP5bVcxugYxHj3nfGjNDHrVOlnxb94h5irKjzaOK2IRSrGRnWIugGqfpsrrv7BFj5T4gs/mwXXdqRTm8gbKeZlKoI659HGk2C2z8uoBAbqnmLTsLoh2Hl8mqt60NDGUr5rMpPuHMhkGQYRHuDG7Fg1xEOcFRoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJsupqP7; arc=none smtp.client-ip=209.85.128.176
+	 MIME-Version:Content-Type; b=TPfgrOTKxANcqVqqPnSljd0KL+cXzlAmxXMPEJuZcsNPnbv8eAV4elo2Fix6giwDia82Xrq/mvYlfzZRSDHrV6aOk4kjJnQage41bUzv2QwbsvSapMinNs0CCtJv43wgB7sq3dvqQcWtHvoh+OCs3/JRVmAdX6qXgicoIQvsYps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9gmwejv; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJsupqP7"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-855a66e5b5dso33578167b3.0
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 08:00:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9gmwejv"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-861f30636f9so23368817b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 08:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788188446; x=1788793246; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788188451; x=1788793251; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=RiftMX2c5AE5hdKP1oNX+6YGtpBCsKTcAAXYc0whhFw=;
-        b=GJsupqP7En+Cx56W2MKVbSdRhVzoYyZGBitZyyiJv6M9H4+seB26qk+15gJyo/63ir
-         CCXE6kumBUmHea3+2NTaycsOlMpRKZU6OBwKgOB4wzJNdACDYFdLOCDuJq7W0ZBB+46J
-         Lwlwp3vSO4NwFUvIuO3JqQIQ88PBi6d97yg91EiSo9spQv40jSbZpN8ZBDtBjBiaEt9W
-         qF98xP1CBaN9RXON833dgJyljbC9JxyHUViFt75msox3n8fDRrNAF17lFtUfb1/ynHbA
-         r891FnEK6x/x0Ogg8t8WgfJhIMQZ34xllg0dbCFg8oUztBoImL9hAS8CfJUAHEMVBMIv
-         I6/g==
+        bh=2QDe4ORKgIW9X7wqWVheNUlHrEl6DClMeGSUdm41tlw=;
+        b=H9gmwejvzsKDmUCvpwmKwiHAc7WIRB1yYzH++qRpgMEKLlHNzMHoR8xbx0g7Zw8iiS
+         6tDLX/U3gkKP99GzNnNR3LdMZSpbH8IwSxzxvS0BIct+e+n2xfuX3VGXoMs55JxZ8a2E
+         UtjaPq28nrcrtuC2xUdWe+xfr6PWjQGiDUwkzSZTMjSAI6975NKqTIvjTaXtuG856laO
+         slNcMoWn6KDd4Pp6N4fJ/cNQFw6/StnqPtrt5TKPETdJDjIusEeZPajgYFgOjmsLV/jX
+         CJtxSlOqRM3T4w1vXCFUYoqP1JXTCbEyZOqVuHGhKpv0E0kWdIWDMh3CTeDxvc8VCD4P
+         dorg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788188446; x=1788793246;
+        d=1e100.net; s=20251104; t=1788188451; x=1788793251;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=RiftMX2c5AE5hdKP1oNX+6YGtpBCsKTcAAXYc0whhFw=;
-        b=LxPZGg1JwcjdWHtaf5dkaH8yuF6HDYn9NOBCmXZeXJZaXpl34I8nkxcb3zvmNaP25I
-         FxlxvrqTiWN5YLKcZRfm9hHcHPo2bS2OTTriG2IvpuxFRA025q3PKUVeUMUTBdq0LXFj
-         9hZJmnxPDFWg0YjzIW0Q1YX0nswk/m6t9YDfEavxreVtgZoajxqye9HC9UJpKWygQgDK
-         7NDteeiKjqIBioGXgA1fZtAd0vCayhbqq1ui6mVhWkOeTDEmYSxVh1+GcVVx9cgIUOXr
-         tjiWfVfyEc37vb0jZsh94Rk23v0jCjEVlhRRGQYIYeaP5VVwLjMTQoJz1LI/HeJEO5cY
-         PVeg==
-X-Forwarded-Encrypted: i=1; AKwUvBx0p7dAkBikQcsYTBx9fWONdQZWcwLVMNyZ1M6IUcx+7hfZM6hFeprrzkAUUIfpqsqEmLiJXOODR+acHVE/IlAHXvY+Wvs=@vger.kernel.org
-X-Gm-Message-State: AFuF++kVhxJZSu/xklCh4xjQ+yWapsNV1eszzpS1L0qqh1tq5kbkgh9f
-	NzqigN0Hi/6+dhb0hpW5TSwuFUmWwYlyThx4+lN/jB6afI4sIto5+1d+
-X-Gm-Gg: AYBFou1f/xsAoRFk8ykCoB87EUhU5+zIx9eTSQ6WbaeNSoFuDJ8xGmw5OoSe4KAa+4K
-	i6Hit3XuJFJasjFaS8/tk4zHEdCaCKDf+SrCV2grK2jdS3EWsX5thFZvZTIK9XmDErQdswOqDIy
-	7AOBT99sa6G7dwjIZ4xEjk+nl+vo9J4NVx7KQoZS+5QUFa6yLkd7l606fHr4LgccrpSveUYLcqt
-	BmbrgcD8gm1+SEKVHSn9XgGvDQe/T6uQc9rji0rR9JkRFmSe7KdVVqJJBY4R5eCK8lUID/TUB9h
-	/1rdXgbe+l6CzshvMQIizOQR8wV/xEqD2UX9m5dXCJZyFZqxeRY6m8YJE1EAM95yhTMg52uITgA
-	eSSn+kq1Fpex2w5RtG4JKeqMBW2xk9cOwgLGPRGoFrgmVFDlBkV0vsJzVq1I9MYQM60drkMVuaR
-	PzijDJG70N4vLMzwSwsAvGDclJojJj4mkhE8VT5qWKXcci+CAQBI9c68eSaj+BAEFcZv3CycaJU
-	ziqCTC/ZEYSy/M5JESpVz8=
-X-Received: by 2002:a05:690c:a7c2:b0:822:ee08:749 with SMTP id 00721157ae682-8686ed6877emr7087787b3.6.1788188444975;
-        Mon, 31 Aug 2026 08:00:44 -0700 (PDT)
+        bh=2QDe4ORKgIW9X7wqWVheNUlHrEl6DClMeGSUdm41tlw=;
+        b=N73WnzAmZ5Nd3rLNgblvqroF3dkA4zBc6aV5zCPPMb1bf1JnLlXR1MPJZxDVuHaKYx
+         7O6HUfS3da16Ndxm+Ch9OFA4eqXa3Wsi0UeUMMCdURkZBgC+Htm5eIkKDUgPzuOvdD8K
+         BNdkpJiDg+fkySsjhS7yeeRu8ynmCBb3UuyB3k7LPtqJhjJvbEqt9nhSsslpaYKAUgOw
+         w2iEYdXMEi7hyLcWQ/FJIAzuFOvfghfk9RpAz0tF4b8hN1eP5r/zGq6bCMejWBxVue3H
+         MFq7M9oqzjJNUPuw1tHNiDgKTidDxZ5hUZJ5Itrh448HCmiA1DeryDjFxjCGxXXtJfcr
+         RUjQ==
+X-Forwarded-Encrypted: i=1; AKwUvByMcxmRkvhTaAQ57cwovQ2xizxXumunj6UGr3dojSKx5mo2EwEGMNh+KSyibZv908+IDgcAhS95HNUHqthTFzj1WL0/uhA=@vger.kernel.org
+X-Gm-Message-State: AFuF++kDbnqHmSnnyO/m9+FPF3jeRBVpXC+meN8D+yrMTiZaAprui8Xg
+	mkLAcKkJnR046LOzMa35c71hD2CBfo7A4yYxeO4aPRxNXtJO/2pb58Nl
+X-Gm-Gg: AYBFou2qYKWnNoCnudxfqPXiUF5XW+aEhIMtaGDmSMsBQhVTNdX9mSarsXsXsQPIPMu
+	DCIp3slWrfdh6qSPfs1jSxfFYIEvbWS9x3U+HSpBll2QGY9zXh/NBtrtkB+SoNm2A/qLvuhc2Al
+	mxErgTRWWg/4QcOttQXAAoEwSeJrGtrSLm4or7+UViRH6WEwpV8/5XlHF4qSQKTBxEwrJXswCcb
+	sf2KJbaNANcz1TZr9EsIjU/rOf4jJBypRzLvowiToiXavTSpWFmzBJBk4XK0nrGkhdxx3ctIi3y
+	F+GjPN+tSkISBHBph3fsqShTR8sGI3kJ9ECUPLGZwSyYSJLX+m/FFenX5KycgPv/XMRRvCrOV34
+	a3BJjBVrLsJKb/Jer/zKQ+ZIFuDBBbVm4fXblyRbvwTM3BcMS3F0mUj6ibs+ga8xfs91LIPln2+
+	OKpqmPLZOayeDzH1SoAud1Fwcuj+Lu5vm/ICv9q6LSpdpglsgo6BwKtc6iGNxcFozSXJZxATC6a
+	OO717JkdnuEkAkT1zwCRTo=
+X-Received: by 2002:a05:690c:c3b7:b0:868:505e:b97a with SMTP id 00721157ae682-868505ed0ccmr9531957b3.10.1788188450680;
+        Mon, 31 Aug 2026 08:00:50 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:f6fc:b424:b1bb:6ff0])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.08.00.41
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.08.00.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 08:00:42 -0700 (PDT)
+        Mon, 31 Aug 2026 08:00:50 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -80,9 +80,9 @@ Cc: gnoack@google.com,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v2 13/15] landlock: Implement the LSM policy object hooks
-Date: Mon, 31 Aug 2026 10:58:55 -0400
-Message-ID: <20260831145858.3869191-14-utilityemal77@gmail.com>
+Subject: [PATCH v2 14/15] selftests/bpf: Test the LSM policy object kfuncs with Landlock
+Date: Mon, 31 Aug 2026 10:58:56 -0400
+Message-ID: <20260831145858.3869191-15-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260831145858.3869191-1-utilityemal77@gmail.com>
 References: <20260831145858.3869191-1-utilityemal77@gmail.com>
@@ -95,506 +95,749 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Implement the generic LSM hooks exposing Landlock rulesets as policy
-objects to BPF.  The new code is gated on CONFIG_BPF_LSM, the only
-configuration where the kfuncs calling the hooks exist.
+Exercise the policy object kfuncs against an LSM actually providing
+policy objects, complementing the LSM-independent tests of the
+verifier-side and from_fd contracts.
 
-struct lsm_policy_object is embedded in struct landlock_ruleset and
-tagged with LSM_ID_LANDLOCK and LANDLOCK_POLICY_TYPE_RULESET at
-ruleset creation; the hooks resolve the ruleset with container_of()
-and no Landlock type crosses the LSM boundary.  The type namespace is
-private to Landlock and routes the container_of() resolution once
-several policy object types exist: the consuming hooks reject an
-object of an unexpected type with -EINVAL (the put hook, which cannot
-fail, warns instead), while from_fd only produces objects and needs
-no check.  The embedded object sits outside the union overlaying the
-deferred-free work item: an RCU reader may still read its identity
-while a queued free waits out the grace period.
+The programs mirror the intended usage: a syscall program acquires a
+Landlock ruleset with bpf_lsm_policy_from_fd() and parks it in a map
+kptr field; an LSM program on bprm_creds_for_exec() loads the field
+under bpf_rcu_read_lock(), takes its own reference with
+bpf_lsm_policy_acquire(), and applies the ruleset with
+bpf_lsm_policy_apply_bprm().  The prog_tests runner checks that:
 
-- policy_object_from_fd() translates a ruleset fd, created with
-  landlock_create_ruleset(2) and populated with landlock_add_rule(2),
-  into an owned ruleset reference, validated the same way as for the
-  Landlock syscalls (ruleset file type, FMODE_CAN_READ).  A fd
-  referring to a file that is not a Landlock ruleset is declined with
-  -EOPNOTSUPP instead of the syscall's -EBADFD: it may be another
-  LSM's policy object, and the decline lets the framework offer it to
-  the LSM it belongs to.
+- a monitored execution starts confined (a handled-but-not-allowed
+  write fails) while an unmonitored one is untouched,
+- two concurrent monitored executions are both restricted from the
+  one shared map slot,
+- the landlock_restrict_self(2) log flags are accepted while
+  LANDLOCK_RESTRICT_SELF_TSYNC is rejected with -EINVAL and leaves
+  the execution unrestricted,
+- LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS makes the executed program
+  start with no_new_privs set, while an execution without it stays
+  non-nnp,
+- a second apply call on the same execution replaces the staged
+  restriction rather than failing,
+- an execution failing past the bprm hook (ENOEXEC) discards the
+  staged restriction and leaves the caller unconfined,
+- the object's identity is BTF-readable off the trusted kptr: the
+  LSM-private type tag is nonzero, and the lsmid is LSM_ID_LANDLOCK
+  with the fd alone having routed the translation,
+- the bprm application emits a single landlock_enforce_domain event,
+  observed by a tp_btf program: complete == 1, process_wide == 1, and
+  no_new_privs reporting the post-flag state.
 
-- policy_object_put() releases such a reference.  The hook may be
-  reached from BPF object destructors that cannot sleep, which is
-  fine: ruleset puts queue the free as RCU work.
-
-- policy_object_get() acquires an additional reference for a caller
-  that only holds an RCU-protected pointer, e.g. loaded from a BPF
-  map kptr field under rcu_read_lock().  The reference is taken with
-  refcount_inc_not_zero(); the racing reader's access to the ruleset
-  memory is safe because rulesets are freed after an RCU grace
-  period.
-
-- bprm_apply_policy_object() shares the landlock_restrict_self(2)
-  path: it calls landlock_prepare_restriction() on the credentials
-  prepared in the binprm and stages the computed restriction (the
-  merged struct landlock_domain) in their Landlock blob.  The flags
-  are the landlock_restrict_self(2) flags; only
-  LANDLOCK_RESTRICT_SELF_TSYNC is rejected with -EINVAL because the
-  restriction targets the execution, not the calling threads.
-
-LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS is honored, not ignored: the
-syscall implements it directly in landlock_restrict_self(), so the
-staged path reads it back from the staged restriction's flags and
-sets no_new_privs on the executing task at application time.  The
-executed program then starts with no_new_privs set, binding it and
-all its descendants; the current execution's
-privilege computation is unaffected, as the bprm credentials
-(including any setuid elevation) were computed before
-bprm_committing_creds().
-
-The staged restriction is enforced by a bprm_committing_creds() hook
-with the same landlock_apply_restriction() call as the syscall, past
-the exec point of no return: an execution either starts confined by
-the domain or, if it fails earlier, leaves the calling task
-untouched.  The applied layer is accounted in domain_exec so the
-LOG_SAME_EXEC and LOG_NEW_EXEC audit flags follow the executed
-program.  There is no no_new_privs/CAP_SYS_ADMIN precondition here:
-gating who may load a policy-applying BPF program is the BPF
-attachment's privilege model.
-
-The application emits the landlock_enforce_domain trace event,
-keeping the event's invariant that every enforcement falls between
-the domain's create_domain and free_domain events.  The process is
-single-threaded past de_thread(), so the single event concludes the
-operation with complete == 1 and process_wide == 1.  no_new_privs
-reports the post-flag state; on this path a value of 0 carries no
-authorization meaning and only tells the observer that the confined
-program can still elevate through future setuid execs, which the
-event's documentation now spells out.
-
-The staged restriction's lifetime is fully covered: a second
-bprm_apply_policy_object() call on the same execution releases and
-replaces the previously staged restriction, an execution failing
-before the point of no return releases it through hook_cred_free(),
-and the application clears the staged domain so committed task
-credentials never carry one.  landlock_cred_copy(), now also used by
-hook_cred_transfer(), upholds that invariant by never copying a
-staged restriction.
-
-Cc: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- include/trace/events/landlock.h |  15 +++-
- security/landlock/Makefile      |   2 +
- security/landlock/bpf.c         | 152 ++++++++++++++++++++++++++++++++
- security/landlock/bpf.h         |  21 +++++
- security/landlock/cred.c        |  16 ++--
- security/landlock/cred.h        |  16 ++++
- security/landlock/limits.h      |   4 +
- security/landlock/ruleset.c     |   6 ++
- security/landlock/ruleset.h     |  22 +++++
- security/landlock/setup.c       |   2 +
- 10 files changed, 245 insertions(+), 11 deletions(-)
- create mode 100644 security/landlock/bpf.c
- create mode 100644 security/landlock/bpf.h
+ tools/testing/selftests/bpf/config            |   1 +
+ tools/testing/selftests/bpf/config.x86_64     |   2 +-
+ .../bpf/prog_tests/lsm_policy_landlock.c      | 522 ++++++++++++++++++
+ .../selftests/bpf/progs/lsm_policy_landlock.c | 142 +++++
+ 4 files changed, 666 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_policy_landlock.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lsm_policy_landlock.c
 
-diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
-index f82588f6f90e..012ab9dcccb2 100644
---- a/include/trace/events/landlock.h
-+++ b/include/trace/events/landlock.h
-@@ -500,13 +500,22 @@ TRACE_EVENT(landlock_create_domain,
-  *                enforcement time: 1 if set (by a prior
-  *                :manpage:`prctl(2)` %PR_SET_NO_NEW_PRIVS or by
-  *                %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS), 0 if the domain
-- *                was enforced with %CAP_SYS_ADMIN instead.
-+ *                was enforced with %CAP_SYS_ADMIN instead, or without
-+ *                either precondition on the BPF exec path (see below).
-  *
-  * Emitted for each thread sys_landlock_restrict_self() enforces the
-  * domain on, in that thread's own context, right after its
-  * commit_creds(), so it fires only once the thread is irreversibly
-- * enforcing the domain (aborted operations emit none).  Not
-- * balanced; every enforcement falls between the domain's
-+ * enforcing the domain (aborted operations emit none).  Also emitted
-+ * at execve(2)'s point of no return when a BPF-staged policy object
-+ * is applied to the execution (see bpf_lsm_policy_apply_bprm()): the
-+ * process is single-threaded after de_thread(), so the single event
-+ * has @complete == 1 and @process_wide == 1.  On that path,
-+ * @no_new_privs == 0 carries no authorization meaning (the authority
-+ * is the privilege to attach the BPF program, not
-+ * no_new_privs/%CAP_SYS_ADMIN); it only tells the observer that the
-+ * confined program can still elevate through future setuid execs.
-+ * Not balanced; every enforcement falls between the domain's
-  * landlock_create_domain and landlock_free_domain events.
-  *
-  * @complete == 1 && @process_wide == 1 means the whole process is
-diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-index 2711f4876939..606bc91522e2 100644
---- a/security/landlock/Makefile
-+++ b/security/landlock/Makefile
-@@ -20,3 +20,5 @@ landlock-$(CONFIG_SECURITY_LANDLOCK_LOG) += \
- landlock-$(CONFIG_AUDIT) += audit.o
- 
- landlock-$(CONFIG_TRACEPOINTS) += trace.o
-+
-+landlock-$(CONFIG_BPF_LSM) += bpf.o
-diff --git a/security/landlock/bpf.c b/security/landlock/bpf.c
+diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+index ea7044f30adc..2fa734497461 100644
+--- a/tools/testing/selftests/bpf/config
++++ b/tools/testing/selftests/bpf/config
+@@ -120,6 +120,7 @@ CONFIG_SAMPLES=y
+ CONFIG_SAMPLE_LIVEPATCH=m
+ CONFIG_SECURITY=y
+ CONFIG_SECURITYFS=y
++CONFIG_SECURITY_LANDLOCK=y
+ CONFIG_SYN_COOKIES=y
+ CONFIG_TEST_BPF=m
+ CONFIG_UDMABUF=y
+diff --git a/tools/testing/selftests/bpf/config.x86_64 b/tools/testing/selftests/bpf/config.x86_64
+index 42ad817b00ae..13ca4906b67f 100644
+--- a/tools/testing/selftests/bpf/config.x86_64
++++ b/tools/testing/selftests/bpf/config.x86_64
+@@ -126,7 +126,7 @@ CONFIG_LEGACY_VSYSCALL_NONE=y
+ CONFIG_LOG_BUF_SHIFT=21
+ CONFIG_LOG_CPU_MAX_BUF_SHIFT=0
+ CONFIG_LOGO=y
+-CONFIG_LSM="selinux,bpf,integrity"
++CONFIG_LSM="landlock,selinux,bpf,integrity"
+ CONFIG_MAC_PARTITION=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_MCORE2=y
+diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_policy_landlock.c b/tools/testing/selftests/bpf/prog_tests/lsm_policy_landlock.c
 new file mode 100644
-index 000000000000..28dc68013251
+index 000000000000..9270b39f5e3a
 --- /dev/null
-+++ b/security/landlock/bpf.c
-@@ -0,0 +1,152 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Landlock - LSM policy object hooks
-+ *
-+ * Copyright © 2026 Justin Suess <utilityemal77@gmail.com>
-+ */
++++ b/tools/testing/selftests/bpf/prog_tests/lsm_policy_landlock.c
+@@ -0,0 +1,522 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright © 2026 Justin Suess <utilityemal77@gmail.com> */
 +
-+#include <linux/binfmts.h>
-+#include <linux/cred.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/fs.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/sched.h>
-+#include <uapi/linux/landlock.h>
++#include <test_progs.h>
++#include <errno.h>
++#include <linux/landlock.h>
++#include <signal.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/prctl.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/wait.h>
++#include <unistd.h>
 +
-+#include "bpf.h"
-+#include "cred.h"
-+#include "domain.h"
-+#include "limits.h"
-+#include "ruleset.h"
-+#include "setup.h"
++#include "lsm_policy_landlock.skel.h"
 +
-+#include <trace/events/landlock.h>
++/* Fallbacks for old system headers. */
++#ifndef LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
++#define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON (1U << 1)
++#endif
++#ifndef LANDLOCK_RESTRICT_SELF_TSYNC
++#define LANDLOCK_RESTRICT_SELF_TSYNC (1U << 3)
++#endif
++#ifndef LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
++#define LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS (1U << 4)
++#endif
++#ifndef LSM_ID_LANDLOCK
++#define LSM_ID_LANDLOCK 110 /* uapi/linux/lsm.h */
++#endif
 +
-+static int hook_bprm_apply_policy_object(struct linux_binprm *bprm,
-+					 struct lsm_policy_object *object,
-+					 u32 flags)
++struct policy_test_env {
++	struct lsm_policy_landlock *skel;
++	char tmp_path[64];
++	int tmp_fd;
++	int ruleset_fd;
++};
++
++static int create_ruleset(void)
 +{
-+	struct landlock_cred_security *bprm_llcred = landlock_cred(bprm->cred);
-+	struct landlock_ruleset *ruleset;
-+	struct landlock_restriction restriction;
++	const struct landlock_ruleset_attr attr = {
++		.handled_access_fs = LANDLOCK_ACCESS_FS_WRITE_FILE,
++	};
++
++	return syscall(__NR_landlock_create_ruleset, &attr, sizeof(attr), 0);
++}
++
++static void reset_prog_state(struct lsm_policy_landlock *skel)
++{
++	skel->bss->called = false;
++	skel->bss->no_policy = false;
++	skel->bss->restrict_err = -1;
++	skel->bss->restrict2_err = -1;
++	skel->bss->restrict_ok_count = 0;
++	skel->bss->kfunc_flags = 0;
++	skel->bss->double_call = false;
++	skel->bss->monitored_pid = 0;
++	skel->bss->monitored_pid2 = 0;
++	skel->bss->enforce_domain_id = 0;
++	skel->bss->enforce_count = 0;
++	skel->bss->enforce_complete = false;
++	skel->bss->enforce_process_wide = false;
++	skel->bss->enforce_no_new_privs = false;
++}
++
++/*
++ * Runs the syscall program that acquires the ruleset from
++ * @ruleset_fd, in the runner's fd table, and parks it in the map kptr
++ * slot for the LSM program.
++ */
++static int load_ruleset_into_map(struct lsm_policy_landlock *skel)
++{
++	LIBBPF_OPTS(bpf_test_run_opts, opts);
 +	int err;
 +
-+	if (object->type != LANDLOCK_POLICY_TYPE_RULESET)
-+		return -EINVAL;
-+
-+	ruleset = container_of(object, struct landlock_ruleset, policy_object);
-+
-+	/*
-+	 * landlock_restrict_self(2) flags minus TSYNC, which targets
-+	 * the calling threads, not the execution.
-+	 */
-+	if ((flags | LANDLOCK_MASK_RESTRICT_BINPRM) !=
-+	    LANDLOCK_MASK_RESTRICT_BINPRM)
-+		return -EINVAL;
-+
-+	err = landlock_prepare_restriction(bprm_llcred, ruleset, flags,
-+					   &restriction);
-+	if (err)
-+		return err;
-+
-+	/*
-+	 * Replaces (and releases) a previously staged restriction.
-+	 * Nothing is enforced until bprm_committing_creds(); a failed
-+	 * execution drops the staged restriction in hook_cred_free().
-+	 */
-+	landlock_put_domain(bprm_llcred->staged.domain);
-+	bprm_llcred->staged = restriction;
++	err = bpf_prog_test_run_opts(bpf_program__fd(skel->progs.load_policy),
++				     &opts);
++	if (!ASSERT_OK(err, "load_policy_run"))
++		return -1;
++	if (!ASSERT_OK(opts.retval, "load_policy_retval"))
++		return -1;
++	/* Landlock's type tag, read off the trusted kptr, is never 0. */
++	ASSERT_NEQ(skel->bss->policy_type, 0, "policy_type_nonzero");
++	/* The fd, not a kfunc argument, routed the call to Landlock. */
++	ASSERT_EQ(skel->bss->policy_lsmid, LSM_ID_LANDLOCK, "policy_lsmid");
 +	return 0;
 +}
 +
-+static void hook_bprm_committing_creds(const struct linux_binprm *bprm)
++/*
++ * Creates the target tmp file and the ruleset, loads and attaches the
++ * skeleton, and parks the ruleset in the map.  Returns 0 on success;
++ * on failure (or skip), the caller must still run teardown_env().
++ */
++static int setup_env(struct policy_test_env *env)
 +{
-+	struct landlock_cred_security *bprm_llcred = landlock_cred(bprm->cred);
-+	struct landlock_domain *domain = bprm_llcred->staged.domain;
++	env->skel = NULL;
++	env->ruleset_fd = -1;
++	strcpy(env->tmp_path, "/tmp/lsm_policy_landlock_XXXXXX");
++	env->tmp_fd = mkstemp(env->tmp_path);
++	if (!ASSERT_GE(env->tmp_fd, 0, "mkstemp"))
++		return -1;
 +
-+	if (!domain)
-+		return;
-+
-+	/* Set first so the enforcement event reports the post-flag state. */
-+	if (bprm_llcred->staged.flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS)
-+		task_set_no_new_privs(current);
-+
-+	/* The application clears @staged's domain pointer. */
-+	landlock_apply_restriction(bprm_llcred, &bprm_llcred->staged);
-+
-+	/*
-+	 * Past de_thread(), the process is single-threaded: this single
-+	 * event both concludes the operation and covers the whole
-+	 * process.
-+	 */
-+	trace_landlock_enforce_domain(domain, true, true,
-+				      task_no_new_privs(current));
-+}
-+
-+static int hook_policy_object_from_fd(int fd, struct lsm_policy_object **object)
-+{
-+	struct landlock_ruleset *ruleset;
-+
-+	ruleset = landlock_get_ruleset_from_fd(fd, FMODE_CAN_READ);
-+	if (IS_ERR(ruleset)) {
-+		if (ruleset == ERR_PTR(-EBADFD))
-+			return -EOPNOTSUPP;
-+		return PTR_ERR(ruleset);
++	env->ruleset_fd = create_ruleset();
++	if (env->ruleset_fd < 0) {
++		if (errno == EOPNOTSUPP || errno == ENOSYS)
++			test__skip();
++		else
++			ASSERT_GE(env->ruleset_fd, 0,
++				  "landlock_create_ruleset");
++		return -1;
 +	}
 +
-+	*object = &ruleset->policy_object;
-+	return 0;
++	env->skel = lsm_policy_landlock__open_and_load();
++	if (!ASSERT_OK_PTR(env->skel, "skel_open_and_load"))
++		return -1;
++	env->skel->bss->ruleset_fd = env->ruleset_fd;
++	reset_prog_state(env->skel);
++
++	if (!ASSERT_OK(lsm_policy_landlock__attach(env->skel),
++		       "skel_attach"))
++		return -1;
++
++	return load_ruleset_into_map(env->skel);
++}
++
++static void teardown_env(struct policy_test_env *env)
++{
++	lsm_policy_landlock__destroy(env->skel);
++	if (env->ruleset_fd >= 0)
++		close(env->ruleset_fd);
++	if (env->tmp_fd >= 0)
++		close(env->tmp_fd);
++	unlink(env->tmp_path);
 +}
 +
 +/*
-+ * The caller holds no reference, only an RCU-protected pointer: the
-+ * RCU-deferred ruleset free keeps the memory valid for the
-+ * inc_not_zero() race against a concurrent last put.
++ * Forks a child that blocks on a pipe, then execs @path with @argv.
++ * Returns the child's pid, or -1 on error.  @release_fd receives the
++ * pipe's write end: release_exec_child() lets the child exec, after
++ * its pid has been published to the BPF program.
 + */
-+static int hook_policy_object_get(struct lsm_policy_object *object)
++static pid_t spawn_exec_child(const char *path, char *const argv[],
++			      int *release_fd)
 +{
-+	struct landlock_ruleset *ruleset;
++	int pipe_fds[2];
++	char buf = 0;
++	pid_t pid;
 +
-+	if (object->type != LANDLOCK_POLICY_TYPE_RULESET)
-+		return -EINVAL;
++	if (!ASSERT_OK(pipe(pipe_fds), "pipe"))
++		return -1;
 +
-+	ruleset = container_of(object, struct landlock_ruleset, policy_object);
-+	if (!refcount_inc_not_zero(&ruleset->usage))
-+		return -ENOENT;
-+	return 0;
++	pid = fork();
++	if (!ASSERT_GE(pid, 0, "fork")) {
++		close(pipe_fds[0]);
++		close(pipe_fds[1]);
++		return -1;
++	}
++	if (pid == 0) {
++		close(pipe_fds[1]);
++		read(pipe_fds[0], &buf, 1);
++		close(pipe_fds[0]);
++		execv(path, argv);
++		exit(127);
++	}
++	close(pipe_fds[0]);
++	*release_fd = pipe_fds[1];
++	return pid;
 +}
 +
-+static void hook_policy_object_put(struct lsm_policy_object *object)
++static void release_exec_child(int release_fd)
 +{
-+	struct landlock_ruleset *ruleset;
++	char buf = 0;
++
++	write(release_fd, &buf, 1);
++	close(release_fd);
++}
++
++/* Returns the child's exit status, or -1 on error. */
++static int wait_exec_child(pid_t pid)
++{
++	int status;
++
++	if (!ASSERT_EQ(waitpid(pid, &status, 0), pid, "waitpid"))
++		return -1;
++	if (!ASSERT_TRUE(WIFEXITED(status), "child_exited"))
++		return -1;
++	return WEXITSTATUS(status);
++}
++
++static int run_exec_child(struct lsm_policy_landlock *skel,
++			  bool monitored, const char *shell_cmd)
++{
++	char *argv[] = { "sh", "-c", (char *)shell_cmd, NULL };
++	int release_fd;
++	pid_t pid;
++
++	pid = spawn_exec_child("/bin/sh", argv, &release_fd);
++	if (pid < 0)
++		return -1;
++	skel->bss->monitored_pid = monitored ? pid : 0;
++	release_exec_child(release_fd);
++	return wait_exec_child(pid);
++}
++
++/*
++ * Exit codes: 4 = unexpected write outcome, 0 = everything as
++ * expected.
++ */
++static void format_child_cmd(char *cmd, size_t len, bool expect_write_ok,
++			     const char *tmp_path)
++{
++	if (expect_write_ok)
++		snprintf(cmd, len, "echo x > %s || exit 4; exit 0", tmp_path);
++	else
++		snprintf(cmd, len,
++			 "if echo x > %s 2>/dev/null; then exit 4; fi; exit 0",
++			 tmp_path);
++}
++
++static void test_restrict_binprm(void)
++{
++	struct policy_test_env env;
++	struct lsm_policy_landlock *skel;
++	char cmd[256];
++	int ret;
++
++	if (setup_env(&env))
++		goto out;
++	skel = env.skel;
++
++	/* Control: an unmonitored execution may write to the tmp file. */
++	reset_prog_state(skel);
++	format_child_cmd(cmd, sizeof(cmd), true, env.tmp_path);
++	ret = run_exec_child(skel, false, cmd);
++	if (!ASSERT_EQ(ret, 0, "control_child_exit"))
++		goto out;
++	ASSERT_FALSE(skel->bss->called, "control_not_monitored");
 +
 +	/*
-+	 * The type routes the container_of() resolution once several
-+	 * policy object types exist; only rulesets are referenced today.
++	 * A monitored execution starts landlocked: the ruleset handles
++	 * LANDLOCK_ACCESS_FS_WRITE_FILE without any rule, so the write
++	 * must fail.
 +	 */
-+	if (WARN_ON_ONCE(object->type != LANDLOCK_POLICY_TYPE_RULESET))
-+		return;
++	reset_prog_state(skel);
++	format_child_cmd(cmd, sizeof(cmd), false, env.tmp_path);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "restricted_child_exit"))
++		goto out;
++	ASSERT_TRUE(skel->bss->called, "lsm_prog_called");
++	ASSERT_FALSE(skel->bss->no_policy, "ruleset_in_map");
++	ASSERT_EQ(skel->bss->restrict_err, 0, "restrict_binprm");
 +
-+	ruleset = container_of(object, struct landlock_ruleset, policy_object);
++	/* The audit log flags of landlock_restrict_self(2) apply too. */
++	reset_prog_state(skel);
++	skel->bss->kfunc_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
++	format_child_cmd(cmd, sizeof(cmd), false, env.tmp_path);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "log_flags_child_exit"))
++		goto out;
++	ASSERT_EQ(skel->bss->restrict_err, 0, "log_flags_restrict_binprm");
 +
 +	/*
-+	 * May be reached from BPF object destructors that cannot sleep,
-+	 * which is fine: the put queues the free as RCU work.
++	 * LANDLOCK_RESTRICT_SELF_TSYNC targets the calling threads, not
++	 * an execution: the kfunc must reject it and the execution must
++	 * stay unrestricted.
 +	 */
-+	landlock_put_ruleset(ruleset);
++	reset_prog_state(skel);
++	skel->bss->kfunc_flags = LANDLOCK_RESTRICT_SELF_TSYNC;
++	format_child_cmd(cmd, sizeof(cmd), true, env.tmp_path);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "tsync_child_exit"))
++		goto out;
++	ASSERT_TRUE(skel->bss->called, "tsync_prog_called");
++	ASSERT_EQ(skel->bss->restrict_err, -EINVAL, "tsync_rejected");
++
++	/*
++	 * A second call on the same execution replaces the staged
++	 * domain (and releases the first one): the result is a single
++	 * restriction, not an error.
++	 */
++	reset_prog_state(skel);
++	skel->bss->double_call = true;
++	format_child_cmd(cmd, sizeof(cmd), false, env.tmp_path);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "double_child_exit"))
++		goto out;
++	ASSERT_EQ(skel->bss->restrict_err, 0, "double_restrict_first");
++	ASSERT_EQ(skel->bss->restrict2_err, 0, "double_restrict_second");
++out:
++	teardown_env(&env);
 +}
 +
-+static struct security_hook_list landlock_hooks[] __ro_after_init = {
-+	LSM_HOOK_INIT(bprm_apply_policy_object, hook_bprm_apply_policy_object),
-+	LSM_HOOK_INIT(bprm_committing_creds, hook_bprm_committing_creds),
-+	LSM_HOOK_INIT(policy_object_from_fd, hook_policy_object_from_fd),
-+	LSM_HOOK_INIT(policy_object_get, hook_policy_object_get),
-+	LSM_HOOK_INIT(policy_object_put, hook_policy_object_put),
-+};
-+
-+__init void landlock_add_bpf_hooks(void)
++/*
++ * Two monitored executions, released together, must both be
++ * restricted from the one shared map kptr slot.
++ */
++static void test_restrict_binprm_concurrent(void)
 +{
-+	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
-+			   &landlock_lsmid);
++	struct policy_test_env env;
++	char *argv[4];
++	int release_fds[2] = { -1, -1 };
++	pid_t pids[2] = { -1, -1 };
++	char cmd[256];
++	int i;
++
++	if (setup_env(&env))
++		goto out;
++
++	format_child_cmd(cmd, sizeof(cmd), false, env.tmp_path);
++	argv[0] = "sh";
++	argv[1] = "-c";
++	argv[2] = cmd;
++	argv[3] = NULL;
++
++	for (i = 0; i < 2; i++) {
++		pids[i] = spawn_exec_child("/bin/sh", argv, &release_fds[i]);
++		if (pids[i] < 0)
++			goto out_kill;
++	}
++
++	env.skel->bss->monitored_pid = pids[0];
++	env.skel->bss->monitored_pid2 = pids[1];
++
++	/* Releases both children only once both pids are published. */
++	for (i = 0; i < 2; i++) {
++		release_exec_child(release_fds[i]);
++		release_fds[i] = -1;
++	}
++
++	for (i = 0; i < 2; i++) {
++		ASSERT_EQ(wait_exec_child(pids[i]), 0,
++			  "concurrent_child_exit");
++		pids[i] = -1;
++	}
++
++	ASSERT_FALSE(env.skel->bss->no_policy, "ruleset_in_map");
++	ASSERT_EQ(env.skel->bss->restrict_ok_count, 2,
++		  "both_execs_restricted");
++
++out_kill:
++	for (i = 0; i < 2; i++) {
++		if (pids[i] > 0) {
++			kill(pids[i], SIGKILL);
++			waitpid(pids[i], NULL, 0);
++		}
++		if (release_fds[i] >= 0)
++			close(release_fds[i]);
++	}
++out:
++	teardown_env(&env);
 +}
-diff --git a/security/landlock/bpf.h b/security/landlock/bpf.h
++
++/*
++ * Checks that a staged restriction is discarded, and the staged
++ * domain released, when the execution fails after the bprm hook: the
++ * calling task must not end up landlocked.
++ */
++static void test_restrict_binprm_discard(void)
++{
++	struct policy_test_env env;
++	char garbage_path[] = "/tmp/lsm_policy_garbage_XXXXXX";
++	int garbage_fd, pipe_fds[2];
++	char buf = 0;
++	pid_t pid;
++
++	if (setup_env(&env))
++		goto out;
++
++	/*
++	 * An executable file that no binfmt handler accepts: the exec
++	 * fails with ENOEXEC after bprm_creds_for_exec() has run.
++	 */
++	garbage_fd = mkstemp(garbage_path);
++	if (!ASSERT_GE(garbage_fd, 0, "mkstemp_garbage"))
++		goto out;
++	if (!ASSERT_EQ(write(garbage_fd, "junk\n", 5), 5, "write_garbage") ||
++	    !ASSERT_OK(fchmod(garbage_fd, 0700), "chmod_garbage")) {
++		close(garbage_fd);
++		goto out_unlink;
++	}
++	close(garbage_fd);
++
++	if (!ASSERT_OK(pipe(pipe_fds), "pipe"))
++		goto out_unlink;
++
++	/*
++	 * Cannot use spawn_exec_child(): the same process must test its
++	 * write access after the failed exec.
++	 */
++	pid = fork();
++	if (!ASSERT_GE(pid, 0, "fork"))
++		goto out_unlink;
++	if (pid == 0) {
++		char *argv[] = { "garbage", NULL };
++		int fd;
++
++		close(pipe_fds[1]);
++		read(pipe_fds[0], &buf, 1);
++		close(pipe_fds[0]);
++		execv(garbage_path, argv);
++		/*
++		 * The failed execution must leave no trace: no
++		 * Landlock domain, i.e. writing must still work
++		 * (exit 6).
++		 */
++		fd = open(env.tmp_path, O_WRONLY | O_TRUNC);
++		if (fd < 0)
++			exit(6);
++		close(fd);
++		exit(0);
++	}
++	close(pipe_fds[0]);
++	env.skel->bss->monitored_pid = pid;
++	release_exec_child(pipe_fds[1]);
++
++	ASSERT_EQ(wait_exec_child(pid), 0, "discard_child_exit");
++	ASSERT_TRUE(env.skel->bss->called, "lsm_prog_called");
++	ASSERT_EQ(env.skel->bss->restrict_err, 0, "restrict_binprm");
++out_unlink:
++	unlink(garbage_path);
++out:
++	teardown_env(&env);
++}
++
++/*
++ * LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS makes the executed program start
++ * with no_new_privs set; without it, a non-nnp parent's execution
++ * stays non-nnp.  Child exit code 5: unexpected NoNewPrivs value.
++ */
++static void test_restrict_binprm_nnp(void)
++{
++	static const char nnp_cmd[] =
++		"grep -q '^NoNewPrivs:[[:space:]]*%d' /proc/self/status || exit 5";
++	struct policy_test_env env;
++	struct lsm_policy_landlock *skel;
++	char cmd[sizeof(nnp_cmd)];
++	int ret;
++
++	if (setup_env(&env))
++		goto out;
++	skel = env.skel;
++
++	if (!ASSERT_OK(prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0),
++		       "runner_not_nnp"))
++		goto out;
++
++	reset_prog_state(skel);
++	snprintf(cmd, sizeof(cmd), nnp_cmd, 0);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "no_flag_child_exit"))
++		goto out;
++	ASSERT_EQ(skel->bss->restrict_err, 0, "no_flag_restrict_binprm");
++
++	reset_prog_state(skel);
++	skel->bss->kfunc_flags = LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
++	snprintf(cmd, sizeof(cmd), nnp_cmd, 1);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "nnp_flag_child_exit"))
++		goto out;
++	ASSERT_EQ(skel->bss->restrict_err, 0, "nnp_flag_restrict_binprm");
++out:
++	teardown_env(&env);
++}
++
++/*
++ * The bprm application emits landlock_enforce_domain, observed here by
++ * a tp_btf program: the single event concludes the operation
++ * (complete == 1), covers the whole post-de_thread() process
++ * (process_wide == 1), and reports the post-flag no_new_privs state.
++ */
++static void test_restrict_binprm_trace(void)
++{
++	struct policy_test_env env;
++	struct lsm_policy_landlock *skel;
++	char cmd[256];
++	int ret;
++
++	if (setup_env(&env))
++		goto out;
++	skel = env.skel;
++
++	if (!ASSERT_OK(prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0),
++		       "runner_not_nnp"))
++		goto out;
++
++	reset_prog_state(skel);
++	format_child_cmd(cmd, sizeof(cmd), false, env.tmp_path);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "trace_child_exit"))
++		goto out;
++	ASSERT_EQ(skel->bss->restrict_err, 0, "restrict_binprm");
++	ASSERT_EQ(skel->bss->enforce_count, 1, "one_enforce_event");
++	ASSERT_TRUE(skel->bss->enforce_complete, "enforce_complete");
++	ASSERT_TRUE(skel->bss->enforce_process_wide, "enforce_process_wide");
++	ASSERT_NEQ(skel->bss->enforce_domain_id, 0, "enforce_domain_id");
++	ASSERT_FALSE(skel->bss->enforce_no_new_privs, "enforce_nnp_off");
++
++	reset_prog_state(skel);
++	skel->bss->kfunc_flags = LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
++	format_child_cmd(cmd, sizeof(cmd), false, env.tmp_path);
++	ret = run_exec_child(skel, true, cmd);
++	if (!ASSERT_EQ(ret, 0, "trace_nnp_child_exit"))
++		goto out;
++	ASSERT_EQ(skel->bss->enforce_count, 1, "one_enforce_event_nnp");
++	ASSERT_TRUE(skel->bss->enforce_no_new_privs, "enforce_nnp_on");
++out:
++	teardown_env(&env);
++}
++
++void test_lsm_policy_landlock(void)
++{
++	if (test__start_subtest("restrict_binprm"))
++		test_restrict_binprm();
++	if (test__start_subtest("restrict_binprm_concurrent"))
++		test_restrict_binprm_concurrent();
++	if (test__start_subtest("restrict_binprm_discard"))
++		test_restrict_binprm_discard();
++	if (test__start_subtest("restrict_binprm_nnp"))
++		test_restrict_binprm_nnp();
++	if (test__start_subtest("restrict_binprm_trace"))
++		test_restrict_binprm_trace();
++}
+diff --git a/tools/testing/selftests/bpf/progs/lsm_policy_landlock.c b/tools/testing/selftests/bpf/progs/lsm_policy_landlock.c
 new file mode 100644
-index 000000000000..7c0f199c630a
+index 000000000000..231b24b87dd4
 --- /dev/null
-+++ b/security/landlock/bpf.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock - LSM policy object hooks
-+ *
-+ * Copyright © 2026 Justin Suess <utilityemal77@gmail.com>
-+ */
++++ b/tools/testing/selftests/bpf/progs/lsm_policy_landlock.c
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright © 2026 Justin Suess <utilityemal77@gmail.com> */
 +
-+#ifndef _SECURITY_LANDLOCK_BPF_H
-+#define _SECURITY_LANDLOCK_BPF_H
++#include <vmlinux.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
 +
-+#include <linux/init.h>
++char _license[] SEC("license") = "GPL";
 +
-+#ifdef CONFIG_BPF_LSM
-+__init void landlock_add_bpf_hooks(void);
-+#else /* CONFIG_BPF_LSM */
-+static inline void landlock_add_bpf_hooks(void)
-+{
-+}
-+#endif /* CONFIG_BPF_LSM */
++extern struct lsm_policy_object *
++bpf_lsm_policy_acquire(struct lsm_policy_object *object) __ksym;
++extern int bpf_lsm_policy_apply_bprm(struct lsm_policy_object *object,
++				     struct linux_binprm *bprm,
++				     u32 flags) __ksym;
++extern struct lsm_policy_object *
++bpf_lsm_policy_from_fd(int fd, u32 flags) __ksym;
++extern void bpf_lsm_policy_release(struct lsm_policy_object *object) __ksym;
++void bpf_rcu_read_lock(void) __ksym;
++void bpf_rcu_read_unlock(void) __ksym;
 +
-+#endif /* _SECURITY_LANDLOCK_BPF_H */
-diff --git a/security/landlock/cred.c b/security/landlock/cred.c
-index f02706f12c7d..8e5b1b6c165e 100644
---- a/security/landlock/cred.c
-+++ b/security/landlock/cred.c
-@@ -151,11 +151,7 @@ void landlock_apply_restriction(struct landlock_cred_security *const llcred,
- static void hook_cred_transfer(struct cred *const new,
- 			       const struct cred *const old)
- {
--	const struct landlock_cred_security *const old_llcred =
--		landlock_cred(old);
--
--	landlock_get_domain(old_llcred->domain);
--	*landlock_cred(new) = *old_llcred;
-+	landlock_cred_copy(landlock_cred(new), landlock_cred(old));
- }
- 
- static int hook_cred_prepare(struct cred *const new,
-@@ -167,10 +163,14 @@ static int hook_cred_prepare(struct cred *const new,
- 
- static void hook_cred_free(struct cred *const cred)
- {
--	struct landlock_domain *const dom = landlock_cred(cred)->domain;
-+	struct landlock_cred_security *const llcred = landlock_cred(cred);
-+
-+	landlock_put_domain_deferred(llcred->domain);
- 
--	if (dom)
--		landlock_put_domain_deferred(dom);
-+#ifdef CONFIG_BPF_LSM
-+	/* Releases a restriction staged for an aborted execution. */
-+	landlock_put_domain_deferred(llcred->staged.domain);
-+#endif /* CONFIG_BPF_LSM */
- }
- 
- #ifdef CONFIG_SECURITY_LANDLOCK_LOG
-diff --git a/security/landlock/cred.h b/security/landlock/cred.h
-index 88fa97fc3bd2..9a2971197892 100644
---- a/security/landlock/cred.h
-+++ b/security/landlock/cred.h
-@@ -59,6 +59,16 @@ struct landlock_cred_security {
- 	 */
- 	struct landlock_domain *domain;
- 
-+#ifdef CONFIG_BPF_LSM
-+	/**
-+	 * @staged: Restriction staged by the bprm_apply_policy_object() hook,
-+	 * owning its domain reference, applied at bprm_committing_creds().
-+	 * Only ever set on credentials prepared for an execution; committed
-+	 * task credentials never carry a staged restriction.
-+	 */
-+	struct landlock_restriction staged;
-+#endif /* CONFIG_BPF_LSM */
-+
- #ifdef CONFIG_SECURITY_LANDLOCK_LOG
- 	/**
- 	 * @domain_exec: Bitmask identifying the domain layers that were enforced by
-@@ -99,6 +109,12 @@ static inline void landlock_cred_copy(struct landlock_cred_security *dst,
- 	*dst = *src;
- 
- 	landlock_get_domain(src->domain);
-+
-+#ifdef CONFIG_BPF_LSM
-+	/* Only bprm credentials own a staged restriction: never copied. */
-+	WARN_ON_ONCE(src->staged.domain);
-+	dst->staged = (struct landlock_restriction){};
-+#endif /* CONFIG_BPF_LSM */
- }
- 
- static inline struct landlock_domain *landlock_get_current_domain(void)
-diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-index 1a7c5fb8f6fd..9aeb99b2f173 100644
---- a/security/landlock/limits.h
-+++ b/security/landlock/limits.h
-@@ -37,6 +37,10 @@
- #define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
- #define LANDLOCK_MASK_RESTRICT_SELF	((LANDLOCK_LAST_RESTRICT_SELF << 1) - 1)
- 
-+/* Subset of the restrict-self flags applicable to an execution. */
-+#define LANDLOCK_MASK_RESTRICT_BINPRM \
-+	(LANDLOCK_MASK_RESTRICT_SELF & ~LANDLOCK_RESTRICT_SELF_TSYNC)
-+
- /* clang-format on */
- 
- #endif /* _SECURITY_LANDLOCK_LIMITS_H */
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index 00a6b9938fd1..6de326b71a5a 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -23,6 +23,7 @@
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
- #include <uapi/linux/landlock.h>
-+#include <uapi/linux/lsm.h>
- 
- #include "access.h"
- #include "id.h"
-@@ -51,6 +52,11 @@ landlock_create_ruleset(const access_mask_t fs_access_mask,
- 	mutex_init(&new_ruleset->lock);
- 	new_ruleset->rules.root_inode = RB_ROOT;
- 
-+#ifdef CONFIG_BPF_LSM
-+	new_ruleset->policy_object.lsmid = LSM_ID_LANDLOCK;
-+	new_ruleset->policy_object.type = LANDLOCK_POLICY_TYPE_RULESET;
-+#endif /* CONFIG_BPF_LSM */
-+
- #if IS_ENABLED(CONFIG_INET)
- 	new_ruleset->rules.root_net_port = RB_ROOT;
- #endif /* IS_ENABLED(CONFIG_INET) */
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index 1465f8a5c464..22edb140bb7f 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -15,6 +15,7 @@
- #include <linux/mutex.h>
- #include <linux/rbtree.h>
- #include <linux/refcount.h>
-+#include <linux/security.h>
- #include <linux/workqueue.h>
- 
- #include "access.h"
-@@ -146,6 +147,16 @@ struct landlock_rules {
- 	u32 num_rules;
- };
- 
-+#ifdef CONFIG_BPF_LSM
-+/*
-+ * Landlock's lsm_policy_object types.  The namespace is private to
-+ * Landlock; 0 stays reserved as "unset".
-+ */
-+enum landlock_policy_type {
-+	LANDLOCK_POLICY_TYPE_RULESET = 1,
++struct policy_slot {
++	struct lsm_policy_object __kptr *object;
 +};
-+#endif /* CONFIG_BPF_LSM */
 +
- /**
-  * struct landlock_ruleset - Landlock ruleset
-  *
-@@ -157,6 +168,17 @@ struct landlock_ruleset {
- 	 * @rules: Red-black tree storage for rules.
- 	 */
- 	struct landlock_rules rules;
++struct {
++	__uint(type, BPF_MAP_TYPE_ARRAY);
++	__uint(max_entries, 1);
++	__type(key, int);
++	__type(value, struct policy_slot);
++} policy_map SEC(".maps");
 +
-+#ifdef CONFIG_BPF_LSM
-+	/**
-+	 * @policy_object: Identity under which the ruleset is handed out
-+	 * to BPF programs as a referenced kptr: the LSM policy kfuncs
-+	 * dispatch back to Landlock through its lsmid.  Kept outside the
-+	 * union with @work_free: RCU readers may read its lsmid while a
-+	 * queued free waits out the grace period.
++int monitored_pid;
++int monitored_pid2;
++int ruleset_fd;
++u32 kfunc_flags;
++bool double_call;
++u32 policy_type;
++u64 policy_lsmid;
++bool no_policy;
++int restrict_err;
++int restrict2_err;
++int restrict_ok_count;
++bool called;
++u64 enforce_domain_id;
++int enforce_count;
++bool enforce_complete;
++bool enforce_process_wide;
++bool enforce_no_new_privs;
++
++/*
++ * Runs in the test runner's context through BPF_PROG_RUN, where
++ * @ruleset_fd is meaningful.
++ */
++SEC("syscall")
++int load_policy(void *ctx)
++{
++	struct lsm_policy_object *object, *old;
++	struct policy_slot *slot;
++	int key = 0;
++
++	slot = bpf_map_lookup_elem(&policy_map, &key);
++	if (!slot)
++		return 1;
++
++	object = bpf_lsm_policy_from_fd(ruleset_fd, 0);
++	if (!object)
++		return 2;
++
++	/*
++	 * The object's identity is BTF-readable off the trusted kptr: a
++	 * program that expects a policy of one specific LSM can check
++	 * the lsmid the fd resolved to.
 +	 */
-+	struct lsm_policy_object policy_object;
-+#endif /* CONFIG_BPF_LSM */
- 	/**
- 	 * @usage: Number of file descriptors referencing this ruleset.  Kept
- 	 * outside the union with @work_free: RCU readers may still call
-diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-index 47dac1736f10..3b7e18edadfb 100644
---- a/security/landlock/setup.c
-+++ b/security/landlock/setup.c
-@@ -11,6 +11,7 @@
- #include <linux/lsm_hooks.h>
- #include <uapi/linux/lsm.h>
- 
-+#include "bpf.h"
- #include "common.h"
- #include "cred.h"
- #include "errata.h"
-@@ -68,6 +69,7 @@ static int __init landlock_init(void)
- 	landlock_add_task_hooks();
- 	landlock_add_fs_hooks();
- 	landlock_add_net_hooks();
-+	landlock_add_bpf_hooks();
- 	landlock_init_id();
- 	landlock_initialized = true;
- 	pr_info("Up and running.\n");
++	policy_type = object->type;
++	policy_lsmid = object->lsmid;
++
++	old = bpf_kptr_xchg(&slot->object, object);
++	if (old)
++		bpf_lsm_policy_release(old);
++	return 0;
++}
++
++SEC("lsm.s/bprm_creds_for_exec")
++int BPF_PROG(restrict_exec, struct linux_binprm *bprm)
++{
++	struct lsm_policy_object *object;
++	struct policy_slot *slot;
++	int pid = bpf_get_current_pid_tgid() >> 32;
++	int key = 0;
++
++	if (pid != monitored_pid && pid != monitored_pid2)
++		return 0;
++
++	called = true;
++
++	slot = bpf_map_lookup_elem(&policy_map, &key);
++	if (!slot)
++		return 0;
++
++	/*
++	 * RCU load + acquire instead of bpf_kptr_xchg(): the slot is
++	 * never emptied, so concurrent executions can share it.
++	 */
++	bpf_rcu_read_lock();
++	object = slot->object;
++	if (object)
++		object = bpf_lsm_policy_acquire(object);
++	bpf_rcu_read_unlock();
++
++	if (!object) {
++		no_policy = true;
++		return 0;
++	}
++
++	restrict_err = bpf_lsm_policy_apply_bprm(object, bprm, kfunc_flags);
++	if (!restrict_err)
++		__sync_fetch_and_add(&restrict_ok_count, 1);
++	if (double_call)
++		/* Replaces the domain staged by the first call. */
++		restrict2_err = bpf_lsm_policy_apply_bprm(object, bprm,
++							  kfunc_flags);
++
++	bpf_lsm_policy_release(object);
++	return 0;
++}
++
++SEC("tp_btf/landlock_enforce_domain")
++int BPF_PROG(on_enforce_domain, struct landlock_domain *domain, bool complete,
++	     bool process_wide, bool no_new_privs)
++{
++	int pid = bpf_get_current_pid_tgid() >> 32;
++
++	if (pid != monitored_pid && pid != monitored_pid2)
++		return 0;
++
++	__sync_fetch_and_add(&enforce_count, 1);
++	enforce_domain_id = domain->hierarchy->id;
++	enforce_complete = complete;
++	enforce_process_wide = process_wide;
++	enforce_no_new_privs = no_new_privs;
++	return 0;
++}
 -- 
 2.55.0
 
