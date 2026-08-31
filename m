@@ -1,64 +1,64 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1046B3DAAB1
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 10:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AC63DD525
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 10:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788173948; cv=none; b=XYVdEdZZXZIpCmvBDLg5xLM5NspqYpvP3JUuL9AABdArVEPSLziXIjJbtweWEB4z/tmwrOW+gkIsrXe0le4qNJfNh2AmIgW6PiVI4nUZqS+ecm4PAqovmzD8gXJrE37qwU6CB0S+KKfgsgnY23qbatal5nPx8EAJiwTKq9WKBec=
+	t=1788173949; cv=none; b=XSHl5HhljbWUTS45/sBs5xCE1Zgw4mWAcDU0EOOb8PRgN6O9EcTn7UaEXtsgZ5lVbxPjaE2zlreVOoaH5CxtRX3+DPoquYokd+eBkbMGYpJdOlwn7bGK3tM1wKh2pOiSmGNHp3HgO09B961OTeV9g7rmCziS+QxZPhldC6N34p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788173948; c=relaxed/simple;
-	bh=Rg/P8mir4cpirVWiGay0UkON5tKN0JlDXEdLEYzxPK8=;
+	s=arc-20240116; t=1788173949; c=relaxed/simple;
+	bh=pIjdgBZ1taPA1iv3/c0vNRhJC7x+oF6SGlubjJ1Aonc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d8IvOK8eUY1J6CU+XdWvjj4jiJJhz0fB+B5bi+GEUdjuhYAB48w6TEx5WMUixuVY2SKPlKett+ekJAb9UphaRuzlOaYzt4+IrXPi6nkubEL38OXlzW5ijzu7+W4x/JwzY06K3pWJc774S/cvaOtNZBq28/8kZ8MX2kV756kRcsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnwCOwx1; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=c1FaNDkDsjQTcQxhX9OjsT+1saSz85k7APn4OWz82U/b1aa1ms8N7DgE5V3+P1bPmHY/++HytuIV/h8jj1DB3V8fj2NoJyOQd57kr09RdOGa+WgzMOq5pyV0RIquxXymCxD0EUJVv5rIcgmLh7yFrJdOD+aRa29YfwQEKLfHBO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=r49JdCy+; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnwCOwx1"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-482e257a23aso1807564f8f.0
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 03:59:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r49JdCy+"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48436251906so1356975f8f.0
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 03:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788173944; x=1788778744; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788173945; x=1788778745; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=RabuXIdiwJmtHqraR0jP+2z6AyCz7IHVfjNPgcy0mfQ=;
-        b=XnwCOwx15sM6PXwUm6nUYs85UxiflMnUfvU/Febf+fv6mk/MxX5VgYCeraL0gwkVSE
-         w5Y/maOWiPQswAVOEvUNzGB9T8liFMlK6BKCo4yyONr2/VJI6MYON6xM/Ph80o5Ab/hF
-         abxXwL02Gge+K1M7p/LjnCLG20GhwD/zfm5I8IvrQ8UxBK0xxca7Lq9h9N1k905v/ZMH
-         RH6KXuK76sDqjjYAmZwyJhuqk715zfE2IgPwU2vdgUgq4fcTvRTT/K4pbek9hz+D/pHu
-         RjS1IHKQGP5dvOTw4Q8EZCTul17Y9M1FJAJFGjkEsEsGmjlqqBNIqHUEgiRbYgoyO1DH
-         LOcA==
+        bh=t3mmMU4xxW8TePa1Rfu9/t+dY+HYu/mATT18pxovI3c=;
+        b=r49JdCy+4lJmpzh4BXsMtQcrB8b6CpF4avde58ipYFRaJcPPIEWYPq+3pQeqSSkzX/
+         vk9Ovh47Iaj92qVZL4bcHEbPa5qDGk65k48732xCtsQrKr89nxBuppKUx/KJpTDc/j3B
+         3FhdFJGAEoYoLbpZOIb9quXRhzYozGRtPD0dpppOIKym7LTkYs8haGrjENeerRSq7zNo
+         TykxzZqOewkZhphFBtnS1uzp7oQ09oyr36qf1WWHwENrAgIfsnYLyPhfF3LI66iTMrhp
+         AskTJjBXOoJuqE4PMyo0d9m/goZSoBkpfXQ2/nfKcbY5nCnl+cGmIt5GUHsjnrQsvbal
+         WfVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788173944; x=1788778744;
+        d=1e100.net; s=20251104; t=1788173945; x=1788778745;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=RabuXIdiwJmtHqraR0jP+2z6AyCz7IHVfjNPgcy0mfQ=;
-        b=bdDQEzwC+LPrzDYprnDuw96wzrBrneJm4Sbppk3H1OuSui0JQSCHUvh4pvswZp9q1z
-         TKDqQsNplDo64u6XHWU7ZA75luylVVis+lYlZRa2Sv2FUj98LkycqdcRUMkV33u45slV
-         Vryk6wP4ghX3Ws9CsxkZvi6jAFZduk/eVt5uJm4htYq065IMHzr0SYYajhdiSgAsiuHk
-         USUx8utzashlYvakJ1v/1g3rYik289ZK+jFWAalWDnYMS5zIHQ5xxI1x12MIjL/QDqOJ
-         KHtwZfxiRrLG+JozkSIORkuLwqScKjdpawyDboilSI6A7+nvPTt8JWnt/PhkO2H8GL7Y
-         IGkw==
-X-Forwarded-Encrypted: i=1; AKwUvBx4WLAWnMZJHfuD1CoObyG4fhUPugPR1mVPn8fDqKq/n38PRsd/48h8xC9XUf1amdK0KckdeEXhCLJ6SEqrGhSM7NyH8Zc=@vger.kernel.org
-X-Gm-Message-State: AFuF++nGk6fhqSb+we70Ery/HKMCImHHlsgTxVbPkDLpcjVOKRE6Fi3u
-	y/CrEYt5Qg+kB4oep6THVRJGuAgvzefiH13AMeU7L7I06/fv4AvuzTWF
-X-Gm-Gg: AYBFou3vKsoLVnAwYidLm7MYId1FGySj8AppWCMZV0tZTskAASHFLdyY4bv7aeMEgym
-	zkVE2fZ3vNhzAZ7oMtuUNA1Rzy2ySJVu2vrJei5kV1ge3vXkGB8CejWH80CryE3DUnpDjJuXfDK
-	PiwjGjrFQxuovY9BWkfHRBdB7MRACcdAaOYnY/+NUOUID1U5b7eqv/Sb4U4PWDgJ6f/ZxlEnYd8
-	t9qWZzcVchI4fz9jvw9Kq7sHoTODE89JxtmrJgGn2v59QT630Di8d8F/yQJn1e5MaxdJHdV4Sp+
-	avFXpQb0sNLgAD+piT/gBM4cMWE6XncH5S9TVmWCckmuu7YOt3lc85Id7LqopS7B0L3pIwJeAMP
-	C3MjOWvmSdg8GjQrwrCV64lVBaH28u0tUqMX1pOT7NMrKSV+Vz5L5iZu2l1FtfgVLauCfuQHWzo
-	2P7CtFuTC7lE75pCxrFS6ZCsF/ZGd2rebjySXbjQAWPddg2SL9Yyqym2QE7UmwWhXWnc8VrsDeY
-	dPYow==
-X-Received: by 2002:a05:6000:470b:b0:474:530:9d with SMTP id ffacd0b85a97d-482f79b0048mr40480965f8f.13.1788173944200;
-        Mon, 31 Aug 2026 03:59:04 -0700 (PDT)
+        bh=t3mmMU4xxW8TePa1Rfu9/t+dY+HYu/mATT18pxovI3c=;
+        b=AjEQCtL2XjCb58lfmc6+WMdDCVJYMa+/ptfgkxeFyjNiMGrlHQZ/sLQoh7gtM2Yx5/
+         Rr0EVLPQCnBDZ08hngcu3nk4mj66T6XGjcPT/pt1cSsFCVDQ32w7Mh/ZLBcxVJzQRl5f
+         OwlqKdLThCGqWJ74tKmzSvQ3KJeCKTIDA2rNywpUwHG1FWUcyybuPNfU1MLpiV/WxAL5
+         owYmL7d/2FCB+/JS5Q8vF04I6xTsfQTVx1JQLmkGuFpAs3fGa8aDaHp6qJzQi0sX1W7+
+         Kxl1eVLTJZ/FO57LjZGLXARvyw2hLdC0Yr07IjPcgIm/3pDFvJaLuKU0UVQvCbaOmFL/
+         Z/DA==
+X-Forwarded-Encrypted: i=1; AKwUvBwxJtbqWrXtjo3gXpKD/I84mw1xCXcDpTDlH0QR6XbNWr0v83L/7zz4vnPAnfYPjr/EXECyntrG1+UVAcPAemNSIE0xQWI=@vger.kernel.org
+X-Gm-Message-State: AFuF++ktTc6Sf1raxlxaI3tFrugA/EGK4oYW9XGpu2RfN86tcpiNzuCx
+	XayJjz2eGZA5OmzlCQRJ213Ga7N2sPYf4tjrUODu+SHnic62QgjsJvtM
+X-Gm-Gg: AYBFou2dzys9U5GDXFBLdVEB7OJnQv2fFTkn1mgUUaN+Enr000wlX6H2H0sWIb58EOG
+	yg44isiLjhlgDwQ8ewLXFe34fMJ+Vo7SZsXGnM9pE4ROYe4VVWOya7dQAtpwx9mdJ8adz3qyZuu
+	eUvdkBE9VI1ySKEQ0Vx8W3/dMn9F2w2iZ0PqKotzpVoGb7tb873bxCqJNuddSnwr6nfJCZh3G7V
+	4tF5kcPqHu1BrqSh/HY+Fzw6UQjRM84elH9qrjOzS5B3Xj70MC/6uct5oa8Q13aOfOg/wYtJLde
+	fHQ+zm4fqI9VrbQ5TMSjaK9iMjV1pHyECDz9MqHyVHN5kFZexljcbDFWpQyQBuZIMBHBWi2TTt6
+	yfq93lOvdpwhqOTJS589MzFOu2zApJyYGTKqnlfxS8vMe9F7LmjjtcULMfyzAduY3pkqL8L8tVQ
+	UTcPjUqtkptqrPFWH3D9vRaG5fH/YTyus2crRaXhXxYXcMOJTgS6yiVyYtnh9Fzr5FdCKllqYi4
+	UJoeg==
+X-Received: by 2002:a05:6000:40dc:b0:484:3314:eff6 with SMTP id ffacd0b85a97d-4843f014695mr4274773f8f.28.1788173945184;
+        Mon, 31 Aug 2026 03:59:05 -0700 (PDT)
 Received: from localhost.localdomain ([2a04:ee41:4:b2de:1ac0:4dff:fe0f:3782])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-484322ce2a6sm16110776f8f.19.2026.08.31.03.59.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-484322ce2a6sm16110776f8f.19.2026.08.31.03.59.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 03:59:03 -0700 (PDT)
+        Mon, 31 Aug 2026 03:59:04 -0700 (PDT)
 From: Anton Protopopov <a.s.protopopov@gmail.com>
 To: bpf <bpf@vger.kernel.org>,
 	lsm <linux-security-module@vger.kernel.org>,
@@ -78,9 +78,9 @@ To: bpf <bpf@vger.kernel.org>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
 Cc: Anton Protopopov <a.s.protopopov@gmail.com>
-Subject: [PATCH bpf-next 4/7] selftests/bpf: Extract some helpers from tests to the netlink library
-Date: Mon, 31 Aug 2026 11:09:29 +0000
-Message-ID: <20260831110934.241898-5-a.s.protopopov@gmail.com>
+Subject: [PATCH bpf-next 5/7] selftests/bpf: Add netdevsim helper library
+Date: Mon, 31 Aug 2026 11:09:30 +0000
+Message-ID: <20260831110934.241898-6-a.s.protopopov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260831110934.241898-1-a.s.protopopov@gmail.com>
 References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
@@ -92,447 +92,228 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extract and generalize, a bit, generic netlink code used in the
-bpf_smc test to the netlink_helpers.{c,h} library such that it
-can be reused by other tests.
+Add a minimal netdevsim helper library for the BPF selftests.  This
+covers basics: netdevsim creation with one port and one queue, which
+we need for the upcoming BPF selftests.
 
 Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
 ---
- tools/testing/selftests/bpf/netlink_helpers.c | 176 ++++++++++++++++++
- tools/testing/selftests/bpf/netlink_helpers.h |  12 ++
- .../selftests/bpf/prog_tests/test_bpf_smc.c   | 160 ++++------------
- 3 files changed, 226 insertions(+), 122 deletions(-)
+ tools/testing/selftests/bpf/Makefile          |   1 +
+ .../testing/selftests/bpf/netdevsim_helpers.c | 176 ++++++++++++++++++
+ .../testing/selftests/bpf/netdevsim_helpers.h |   9 +
+ 3 files changed, 186 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/netdevsim_helpers.c
+ create mode 100644 tools/testing/selftests/bpf/netdevsim_helpers.h
 
-diff --git a/tools/testing/selftests/bpf/netlink_helpers.c b/tools/testing/selftests/bpf/netlink_helpers.c
-index caf36eb1d032..ff0ec10cc3a1 100644
---- a/tools/testing/selftests/bpf/netlink_helpers.c
-+++ b/tools/testing/selftests/bpf/netlink_helpers.c
-@@ -8,11 +8,187 @@
- #include <errno.h>
- #include <time.h>
- #include <sys/socket.h>
-+#include <sys/time.h>
- 
- #include "netlink_helpers.h"
- 
- static int rcvbuf = 1024 * 1024;
- 
-+int genl_open(__u32 pid)
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index b481b867f372..c21f89dbe70c 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -862,6 +862,7 @@ TRUNNER_EXTRA_SOURCES := test_progs.c		\
+ 			 unpriv_helpers.c 	\
+ 			 sysctl_helpers.c	\
+ 			 netlink_helpers.c	\
++			 netdevsim_helpers.c	\
+ 			 jit_disasm_helpers.c	\
+ 			 io_helpers.c		\
+ 			 test_loader.c		\
+diff --git a/tools/testing/selftests/bpf/netdevsim_helpers.c b/tools/testing/selftests/bpf/netdevsim_helpers.c
+new file mode 100644
+index 000000000000..fbed7442b2e8
+--- /dev/null
++++ b/tools/testing/selftests/bpf/netdevsim_helpers.c
+@@ -0,0 +1,176 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/rtnetlink.h>
++#include <poll.h>
++#include <stdarg.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/socket.h>
++#include <time.h>
++#include <unistd.h>
++
++#include "netdevsim_helpers.h"
++
++static int echo(const char *path, const char *fmt, ...)
 +{
-+	struct sockaddr_nl local = {
++	char buf[64];
++	va_list ap;
++	int fd, len, err = 0;
++
++	va_start(ap, fmt);
++	len = vsnprintf(buf, sizeof(buf), fmt, ap);
++	va_end(ap);
++
++	fd = open(path, O_WRONLY);
++	if (fd < 0)
++		return -errno;
++	if (write(fd, buf, len) != len)
++		err = -errno;
++	close(fd);
++
++	return err;
++}
++
++void netdevsim_destroy(unsigned int id)
++{
++	echo("/sys/bus/netdevsim/del_device", "%u", id);
++}
++
++static int create_new_device(void)
++{
++	unsigned int id;
++	int err;
++
++	/* if 10K is not enough, then something is clearly not right */
++	for (id = 0; id < 10000; id++) {
++		err = echo("/sys/bus/netdevsim/new_device", "%u", id);
++		if (!err)
++			return id;
++		if (err != -ENOSPC)
++			return err;
++	}
++
++	return -ENOSPC;
++}
++
++static int open_link_socket(void)
++{
++	struct sockaddr_nl addr = {
 +		.nl_family = AF_NETLINK,
-+		.nl_pid = pid,
++		.nl_groups = RTMGRP_LINK,
 +	};
-+	struct timeval timeout = {
-+		.tv_sec = 1
-+	};
-+	int ret;
 +	int fd;
 +
-+	fd = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_GENERIC);
++	fd = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE);
 +	if (fd < 0)
-+		return -1;
++		return -errno;
++	if (bind(fd, (struct sockaddr *)&addr, sizeof(addr))) {
++		int err = -errno;
 +
-+	if (bind(fd, (void *)&local, sizeof(local)))
-+		goto err_close;
-+
-+	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)))
-+		goto err_close;
++		close(fd);
++		return err;
++	}
 +
 +	return fd;
-+
-+err_close:
-+	ret = -errno;
-+	close(fd);
-+	return ret;
 +}
 +
-+int genl_send(int fd, const struct nlmsghdr *nlh)
++static int remaining_timeout_ms(const struct timespec *deadline)
 +{
-+	struct sockaddr_nl kernel = {
-+		.nl_family = AF_NETLINK
-+	};
-+	ssize_t sent;
++	struct timespec now;
++	long long remaining;
 +
-+	sent = sendto(fd, nlh, nlh->nlmsg_len, 0, (void *)&kernel, sizeof(kernel));
-+	if (sent < 0)
++	if (clock_gettime(CLOCK_MONOTONIC, &now))
 +		return -errno;
-+	if (sent != nlh->nlmsg_len)
-+		return -EIO;
 +
-+	return 0;
++	remaining = (deadline->tv_sec - now.tv_sec) * 1000 +
++		    (deadline->tv_nsec - now.tv_nsec) / 1000000;
++
++	return remaining > 0 ? remaining : 0;
 +}
 +
-+int genl_recv(int fd, __u32 seq, __u16 family_id, bool dump)
++static int recv_device_ifindex(int fd, unsigned int id, unsigned int *ifindex)
 +{
-+	char buf[64 * 1024];
++	char parent_name[32], buf[16 * 1024];
++	struct pollfd pfd = {
++		.fd = fd,
++		.events = POLLIN,
++	};
++	struct timespec deadline;
++	struct nlmsghdr *nlh;
++	int len, ret, timeout;
 +
-+	for (;;) {
-+		struct nlmsghdr *nlh;
-+		int remaining;
-+		ssize_t len;
++	snprintf(parent_name, sizeof(parent_name), "netdevsim%u", id);
++	if (clock_gettime(CLOCK_MONOTONIC, &deadline))
++		return -errno;
++	deadline.tv_sec += 5;
++
++	for (timeout = remaining_timeout_ms(&deadline); timeout > 0;
++	     timeout = remaining_timeout_ms(&deadline)) {
++		ret = poll(&pfd, 1, timeout);
++		if (ret < 0) {
++			if (errno == EINTR)
++				continue;
++			return -errno;
++		}
++		if (!ret)
++			return -ETIMEDOUT;
++		if (!(pfd.revents & POLLIN))
++			return -EIO;
 +
 +		len = recv(fd, buf, sizeof(buf), 0);
 +		if (len < 0)
 +			return -errno;
-+		if (!len)
-+			return -ENODATA;
 +
-+		remaining = len;
-+		for (nlh = (struct nlmsghdr *)buf;
-+		     NLMSG_OK(nlh, remaining);
-+		     nlh = NLMSG_NEXT(nlh, remaining)) {
-+			if (nlh->nlmsg_seq != seq)
++		for (nlh = (struct nlmsghdr *)buf; NLMSG_OK(nlh, len);
++		     nlh = NLMSG_NEXT(nlh, len)) {
++			struct ifinfomsg *ifm;
++			struct rtattr *attr;
++			int attr_len;
++
++			if (nlh->nlmsg_type != RTM_NEWLINK)
 +				continue;
 +
-+			if (nlh->nlmsg_type == NLMSG_ERROR) {
-+				const struct nlmsgerr *nlerr = NLMSG_DATA(nlh);
++			ifm = NLMSG_DATA(nlh);
++			attr = IFLA_RTA(ifm);
++			attr_len = IFLA_PAYLOAD(nlh);
++			for (; RTA_OK(attr, attr_len);
++			     attr = RTA_NEXT(attr, attr_len)) {
++				if (attr->rta_type != IFLA_PARENT_DEV_NAME)
++					continue;
++				if (strcmp(RTA_DATA(attr), parent_name))
++					continue;
 +
-+				if (NLMSG_PAYLOAD(nlh, 0) < sizeof(*nlerr))
-+					return -EBADMSG;
-+				if (nlerr->error || !dump)
-+					return nlerr->error;
-+				continue;
-+			}
-+
-+			if (nlh->nlmsg_type == NLMSG_DONE) {
-+				int done_err = 0;
-+
-+				if (NLMSG_PAYLOAD(nlh, 0) >= sizeof(done_err))
-+					memcpy(&done_err, NLMSG_DATA(nlh),
-+					       sizeof(done_err));
-+				if (done_err)
-+					return done_err;
++				*ifindex = ifm->ifi_index;
 +				return 0;
 +			}
-+
-+			if (nlh->nlmsg_type == family_id) {
-+				if (!dump)
-+					return 0;
-+			}
 +		}
-+		if (remaining)
-+			return -EBADMSG;
 +	}
++
++	return timeout < 0 ? timeout : -ETIMEDOUT;
 +}
 +
-+int genl_resolve_family(int fd, const char *name)
++int netdevsim_create(unsigned int *ifindex)
 +{
-+	struct genl_req req = {};
-+	char buf[4096];
-+	struct nlmsghdr *nlh;
-+	int remaining;
-+	ssize_t len;
-+	int err;
++	int fd, id, err;
 +
-+	req.nlh.nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN);
-+	req.nlh.nlmsg_type = GENL_ID_CTRL;
-+	req.nlh.nlmsg_flags = NLM_F_REQUEST;
-+	req.nlh.nlmsg_seq = 1;
-+	req.genl.cmd = CTRL_CMD_GETFAMILY;
-+	req.genl.version = 2;
-+	if (addattrstrz(&req.nlh, sizeof(req), CTRL_ATTR_FAMILY_NAME, name))
-+		return -EMSGSIZE;
++	fd = open_link_socket();
++	if (fd < 0)
++		return fd;
 +
-+	err = genl_send(fd, &req.nlh);
-+	if (err)
-+		return err;
-+
-+	len = recv(fd, buf, sizeof(buf), 0);
-+	if (len < 0)
-+		return -errno;
-+	if (!len)
-+		return -ENODATA;
-+
-+	remaining = len;
-+	for (nlh = (struct nlmsghdr *)buf;
-+	     NLMSG_OK(nlh, remaining);
-+	     nlh = NLMSG_NEXT(nlh, remaining)) {
-+		struct nlattr *attr;
-+		int attr_len;
-+
-+		if (nlh->nlmsg_seq != req.nlh.nlmsg_seq)
-+			continue;
-+
-+		if (nlh->nlmsg_type == NLMSG_ERROR) {
-+			const struct nlmsgerr *nlerr = NLMSG_DATA(nlh);
-+
-+			if (NLMSG_PAYLOAD(nlh, 0) < sizeof(*nlerr))
-+				return -EBADMSG;
-+			return nlerr->error ?: -ENOENT;
-+		}
-+		if (nlh->nlmsg_type != GENL_ID_CTRL)
-+			continue;
-+		if (NLMSG_PAYLOAD(nlh, 0) < GENL_HDRLEN)
-+			return -EBADMSG;
-+
-+		attr = (struct nlattr *)((char *)NLMSG_DATA(nlh) +
-+					 GENL_HDRLEN);
-+		attr_len = NLMSG_PAYLOAD(nlh, GENL_HDRLEN);
-+		while (attr_len >= (int)sizeof(*attr) &&
-+		       attr->nla_len >= sizeof(*attr) &&
-+		       attr->nla_len <= attr_len) {
-+			__u16 family_id;
-+			int step;
-+
-+			if ((attr->nla_type & NLA_TYPE_MASK) ==
-+			    CTRL_ATTR_FAMILY_ID &&
-+			    attr->nla_len >= NLA_HDRLEN + sizeof(family_id)) {
-+				memcpy(&family_id, (char *)attr + NLA_HDRLEN,
-+				       sizeof(family_id));
-+				return family_id;
-+			}
-+
-+			step = NLA_ALIGN(attr->nla_len);
-+			attr_len -= step;
-+			attr = (struct nlattr *)((char *)attr + step);
-+		}
++	id = create_new_device();
++	if (id < 0) {
++		close(fd);
++		return id;
 +	}
 +
-+	return remaining ? -EBADMSG : -ENOENT;
++	err = recv_device_ifindex(fd, id, ifindex);
++	close(fd);
++	if (err) {
++		netdevsim_destroy(id);
++		return err;
++	}
++
++	return id;
 +}
+diff --git a/tools/testing/selftests/bpf/netdevsim_helpers.h b/tools/testing/selftests/bpf/netdevsim_helpers.h
+new file mode 100644
+index 000000000000..0a37d564a2c8
+--- /dev/null
++++ b/tools/testing/selftests/bpf/netdevsim_helpers.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
- void rtnl_close(struct rtnl_handle *rth)
- {
- 	if (rth->fd >= 0) {
-diff --git a/tools/testing/selftests/bpf/netlink_helpers.h b/tools/testing/selftests/bpf/netlink_helpers.h
-index 68116818a47e..964e8ad94a1f 100644
---- a/tools/testing/selftests/bpf/netlink_helpers.h
-+++ b/tools/testing/selftests/bpf/netlink_helpers.h
-@@ -3,9 +3,21 @@
- #define NETLINK_HELPERS_H
- 
- #include <string.h>
-+#include <linux/genetlink.h>
- #include <linux/netlink.h>
- #include <linux/rtnetlink.h>
- 
-+struct genl_req {
-+	struct nlmsghdr nlh;
-+	struct genlmsghdr genl;
-+	char attrs[256];
-+};
++#ifndef NETDEVSIM_HELPERS_H
++#define NETDEVSIM_HELPERS_H
 +
-+int genl_open(__u32 pid);
-+int genl_send(int fd, const struct nlmsghdr *nlh);
-+int genl_recv(int fd, __u32 seq, __u16 family_id, bool dump);
-+int genl_resolve_family(int fd, const char *name);
++int netdevsim_create(unsigned int *ifindex);
++void netdevsim_destroy(unsigned int id);
 +
- struct rtnl_handle {
- 	int			fd;
- 	struct sockaddr_nl	local;
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_bpf_smc.c b/tools/testing/selftests/bpf/prog_tests/test_bpf_smc.c
-index 40d38280c091..45e479a649c0 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_bpf_smc.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_bpf_smc.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <test_progs.h>
- #include <linux/genetlink.h>
-+#include "netlink_helpers.h"
- #include "network_helpers.h"
- #include "bpf_smc.skel.h"
- 
-@@ -44,105 +45,28 @@ enum {
- 	SMC_NLA_EID_TABLE_ENTRY,    /* string */
- };
- 
--struct msgtemplate {
--	struct nlmsghdr n;
--	struct genlmsghdr g;
--	char buf[1024];
--};
--
--#define GENLMSG_DATA(glh)	((void *)(NLMSG_DATA(glh) + GENL_HDRLEN))
--#define GENLMSG_PAYLOAD(glh)	(NLMSG_PAYLOAD(glh, 0) - GENL_HDRLEN)
--#define NLA_DATA(na)		((void *)((char *)(na) + NLA_HDRLEN))
--#define NLA_PAYLOAD(len)	((len) - NLA_HDRLEN)
--
- #define SMC_GENL_FAMILY_NAME	"SMC_GEN_NETLINK"
-+#define SMC_GENL_FAMILY_VERSION	1
- #define SMC_BPFTEST_UEID	"SMC-BPFTEST-UEID"
-+#define SMC_BPFTEST_UEID_LEN	32
- 
--static uint16_t smc_nl_family_id = -1;
--
--static int send_cmd(int fd, __u16 nlmsg_type, __u32 nlmsg_pid,
--		    __u16 nlmsg_flags, __u8 genl_cmd, __u16 nla_type,
--		    void *nla_data, int nla_len)
--{
--	struct nlattr *na;
--	struct sockaddr_nl nladdr;
--	int r, buflen;
--	char *buf;
--
--	struct msgtemplate msg = {0};
--
--	msg.n.nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN);
--	msg.n.nlmsg_type = nlmsg_type;
--	msg.n.nlmsg_flags = nlmsg_flags;
--	msg.n.nlmsg_seq = 0;
--	msg.n.nlmsg_pid = nlmsg_pid;
--	msg.g.cmd = genl_cmd;
--	msg.g.version = 1;
--	na = (struct nlattr *)GENLMSG_DATA(&msg);
--	na->nla_type = nla_type;
--	na->nla_len = nla_len + 1 + NLA_HDRLEN;
--	memcpy(NLA_DATA(na), nla_data, nla_len);
--	msg.n.nlmsg_len += NLMSG_ALIGN(na->nla_len);
--
--	buf = (char *)&msg;
--	buflen = msg.n.nlmsg_len;
--	memset(&nladdr, 0, sizeof(nladdr));
--	nladdr.nl_family = AF_NETLINK;
--
--	while ((r = sendto(fd, buf, buflen, 0, (struct sockaddr *)&nladdr,
--			   sizeof(nladdr))) < buflen) {
--		if (r > 0) {
--			buf += r;
--			buflen -= r;
--		} else if (errno != EAGAIN) {
--			return -1;
--		}
--	}
--	return 0;
--}
-+static __u16 smc_nl_family_id;
- 
- static bool get_smc_nl_family_id(void)
- {
--	struct sockaddr_nl nl_src;
--	struct msgtemplate msg;
--	struct nlattr *nl;
- 	int fd, ret;
- 	pid_t pid;
- 
--	fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
-+	pid = getpid();
-+	fd = genl_open(pid);
- 	if (!ASSERT_OK_FD(fd, "nl_family socket"))
- 		return false;
- 
--	pid = getpid();
--
--	memset(&nl_src, 0, sizeof(nl_src));
--	nl_src.nl_family = AF_NETLINK;
--	nl_src.nl_pid = pid;
--
--	ret = bind(fd, (struct sockaddr *)&nl_src, sizeof(nl_src));
--	if (!ASSERT_OK(ret, "nl_family bind"))
--		goto fail;
--
--	ret = send_cmd(fd, GENL_ID_CTRL, pid,
--		       NLM_F_REQUEST, CTRL_CMD_GETFAMILY,
--		       CTRL_ATTR_FAMILY_NAME, (void *)SMC_GENL_FAMILY_NAME,
--		       strlen(SMC_GENL_FAMILY_NAME));
--	if (!ASSERT_OK(ret, "nl_family query"))
--		goto fail;
--
--	ret = recv(fd, &msg, sizeof(msg), 0);
--	if (msg.n.nlmsg_type == NLMSG_ERROR)
--		goto fail;
--	if (!ASSERT_FALSE(ret < 0 || !NLMSG_OK(&msg.n, ret),
--			  "nl_family response"))
--		goto fail;
--
--	nl = (struct nlattr *)GENLMSG_DATA(&msg);
--	nl = (struct nlattr *)((char *)nl + NLA_ALIGN(nl->nla_len));
--	if (!ASSERT_EQ(nl->nla_type, CTRL_ATTR_FAMILY_ID, "nl_family nla type"))
-+	ret = genl_resolve_family(fd, SMC_GENL_FAMILY_NAME);
-+	if (!ASSERT_GT(ret, 0, "nl_family query"))
- 		goto fail;
- 
--	smc_nl_family_id = *(uint16_t *)NLA_DATA(nl);
-+	smc_nl_family_id = ret;
- 	close(fd);
- 	return true;
- fail:
-@@ -152,56 +76,48 @@ static bool get_smc_nl_family_id(void)
- 
- static bool smc_ueid(int op)
- {
--	struct sockaddr_nl nl_src;
--	struct msgtemplate msg;
--	struct nlmsgerr *err;
--	char test_ueid[32];
-+	char test_ueid[SMC_BPFTEST_UEID_LEN + 1] = {};
-+	struct genl_req req = {};
- 	int fd, ret;
- 	pid_t pid;
- 
- 	/* UEID required */
--	memset(test_ueid, '\x20', sizeof(test_ueid));
--	memcpy(test_ueid, SMC_BPFTEST_UEID, strlen(SMC_BPFTEST_UEID));
--	fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
-+	memset(test_ueid, ' ', SMC_BPFTEST_UEID_LEN);
-+	memcpy(test_ueid, SMC_BPFTEST_UEID, sizeof(SMC_BPFTEST_UEID) - 1);
-+	pid = getpid();
-+	fd = genl_open(pid);
- 	if (!ASSERT_OK_FD(fd, "ueid socket"))
- 		return false;
- 
--	pid = getpid();
--	memset(&nl_src, 0, sizeof(nl_src));
--	nl_src.nl_family = AF_NETLINK;
--	nl_src.nl_pid = pid;
--
--	ret = bind(fd, (struct sockaddr *)&nl_src, sizeof(nl_src));
--	if (!ASSERT_OK(ret, "ueid bind"))
-+	req.nlh.nlmsg_len = NLMSG_LENGTH(GENL_HDRLEN);
-+	req.nlh.nlmsg_type = smc_nl_family_id;
-+	req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
-+	req.nlh.nlmsg_pid = pid;
-+	req.genl.cmd = op;
-+	req.genl.version = SMC_GENL_FAMILY_VERSION;
-+	ret = addattrstrz(&req.nlh, sizeof(req), SMC_NLA_EID_TABLE_ENTRY,
-+			  test_ueid);
-+	if (!ASSERT_OK(ret, "ueid attribute"))
- 		goto fail;
- 
--	ret = send_cmd(fd, smc_nl_family_id, pid,
--		       NLM_F_REQUEST | NLM_F_ACK, op, SMC_NLA_EID_TABLE_ENTRY,
--		       (void *)test_ueid, sizeof(test_ueid));
-+	ret = genl_send(fd, &req.nlh);
- 	if (!ASSERT_OK(ret, "ueid cmd"))
- 		goto fail;
- 
--	ret = recv(fd, &msg, sizeof(msg), 0);
--	if (!ASSERT_FALSE(ret < 0 ||
--			  !NLMSG_OK(&msg.n, ret), "ueid response"))
--		goto fail;
--
--	if (msg.n.nlmsg_type == NLMSG_ERROR) {
--		err = NLMSG_DATA(&msg);
--		switch (op) {
--		case SMC_NETLINK_REMOVE_UEID:
--			if (!ASSERT_FALSE((err->error && err->error != -ENOENT),
--					  "ueid remove"))
--				goto fail;
--			break;
--		case SMC_NETLINK_ADD_UEID:
--			if (!ASSERT_OK(err->error, "ueid add"))
--				goto fail;
--			break;
--		default:
--			break;
--		}
-+	ret = genl_recv(fd, req.nlh.nlmsg_seq, smc_nl_family_id, false);
-+	switch (op) {
-+	case SMC_NETLINK_REMOVE_UEID:
-+		if (!ASSERT_FALSE(ret && ret != -ENOENT, "ueid remove"))
-+			goto fail;
-+		break;
-+	case SMC_NETLINK_ADD_UEID:
-+		if (!ASSERT_OK(ret, "ueid add"))
-+			goto fail;
-+		break;
-+	default:
-+		break;
- 	}
-+
- 	close(fd);
- 	return true;
- fail:
++#endif /* NETDEVSIM_HELPERS_H */
 -- 
 2.43.0
 
