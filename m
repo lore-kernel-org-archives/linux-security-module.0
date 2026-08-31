@@ -1,125 +1,116 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7C43955F1
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 21:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD783955F1
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 21:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.171
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788211679; cv=pass; b=W+nYWBdYqtZq+I8glL479I2VgFtPG+jGJ2xoOZXe/C/DtBh6bHvdHfIoNf5+L2/07MXbzsJFnQWBbRoa79lS1EfW05EowI0MiJmXQJHEorJKuH2mmWyyrquUlWN/saQFUlkNnxornwYqJHHL39BTrMwzHgYZINyXTcG5GXam5MI=
+	t=1788211709; cv=pass; b=GjfDy4Ehyj7hcJPB9WkSEe/o0x8M65q2mfZj2RlpY9hD0zMvXWu7hUFARm/+lZnZPKRrtMVWsjQGHHroVBBOy3IJBkzPSOMdLoSu1TeQd/NZWepp0SvPX7Obv7zJJl/B95lgJGd0r43Z3VLEQXEn8RVgNK2vwpZNXraFxZWp5Bk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788211679; c=relaxed/simple;
-	bh=yTHTdSbwM0jIYQIQxOZKHrg6+D5erA2cHY/eW+jop0Q=;
+	s=arc-20240116; t=1788211709; c=relaxed/simple;
+	bh=bfNrL7XwYmUCxmPxgk5/2sdM6T6+oYFGe+D+rry6+yE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CYux9Mwsz//V/m3dMg1sJzr/1WuVbbuUcfRYpOHUSyQ5eCoa6gbftZVE/bNQAVlDZy1QC6sI/rUQWkxo8n9oAK/1AZEMWaYgSuUAy4Yj9BeKdmckySTzeSVdXxiNke25NXwtVj2WWOmbujG+vznwGGmKayMXZEI2QTJiTauXULs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HBaQKPo6; arc=pass smtp.client-ip=209.85.214.180
+	 To:Cc:Content-Type; b=jp0Gqpj+sRhkUT0aj+M1HlaWyGYJn1PeNMPBPETkNq6qXBIClQu7fxnWVvCqVZ/oFGx9Dk7Kw7aN+nW491uCYWGscE+/ySUo0CtegMpd68ccI5/wUd0BdlojUkYL9snokw/5ZjjPuv9Al51PeoH62kVX/jj1sZO8xPhOSqSDMFU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SJyJQ7Jq; arc=pass smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HBaQKPo6"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2d91518a63fso1121965ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:27:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788211677; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SJyJQ7Jq"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2d01663d816so967405ad.1
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 14:28:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788211706; cv=none;
         d=google.com; s=arc-20260327;
-        b=j/6g/yzNp+m8i70GfFQtOzT2XTHngqQz7GNEAe2Q2gpzUIMVd1YM3yUAJj5GklGnXG
-         cO8ASDligqElr2N3gqa4MS635qhoLENBTdEh9Bxga2mZnIdZilhzZ7+CvKDz9GtXnHV2
-         T9hhhfhMQXz0GajdeSGJyDWvm9gO0/M8PDS27J73HkKHsOiwuWmF6ciqTyPXvCK/5/rL
-         Zzew8ob7chWgvwMqOQ+AJle2WZj8U+SKRLB8LpkDn9vtPsaD+OQGvpaXirFZjU3Vamec
-         Z7hkOM4hS6RnfoohEc5cykj6XCveLjpUBUU2HnIqbdgJWdxooO9LjfIefcIVBhiodCur
-         Z89w==
+        b=h8KT3w/I/SkYwsbuq1BO8wJfWAniNKgvvJx74DZ5bTmQtKCDDi2olAczWISuzd2ge9
+         xMAZK2GWyMiZPLSQaR7mydanEUQVvEXfhMX0qB3tcfJeCjCUYXBsGaytyGs4tSO1VpDn
+         FQZD28oCOp+b7DSyU9bOCh+jZ3W0Hhss+bvZSvB5cyjyMHRo+qn3bnNm17eouOfxhsC4
+         a1h02BBbuvixPhLTdDn+JgT2jGtpMfjTO4Kdy+pCl+K7KLQXkyKb5jnXsN42WFBOJ515
+         5QkNMsXSGUXNZL4NOUOIj05crfUEIZ/5UylrWTDaWqplfVtd1S72F84H0U/f2p4Sr0TB
+         fblg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=uib+h/AbmDRvGw6OaHSNOXJWYyNU1BcABtaXv7oLMeo=;
-        fh=abZXrZHFtrq0xipQ8HJBnbgsIfvTjyOo0lKzRyDCwys=;
-        b=ZFHWiqWq46tpudRu3lejJV45q8OWC//37niiv+O82ll3lRoajdwmGrpQqAvjNhL8z0
-         9SQgCpTRJYCqtaLfWXH3Ye7ZQBIGyx1Y/1P5aoHjYXzPmwJQ7XPpVB1rkYPg7cPP1KZ+
-         aUTIdKOjDEBTmT8HdIZgBLY94A4+4/la+lZDj9nypIgaK49Rj9YBTE8TXiZG2xs4f2hf
-         U876u04JOuz8dOkXAtQuvMw2LSwggv7TQmJcjmFXHD3AwHW/3RpAiBEv3FY7CRHEs1C2
-         CMfqcZ3FRgZNzaPthFeK3tYT2r250Hc1m44DCBSKntPgueeRE507TIE1uvyzkWVV2OzY
-         3H9g==;
+        bh=JsoDZnDnnjuhIjWwApu8K5QF0OsufRvTAlRhz2feA9k=;
+        fh=zXLpA7YpfX43dWIdoSaPkQA0hGa2NZ0k8isn9Wvgqp4=;
+        b=sL/9XY3O1L2FK2wAOq/F+DJTJ2TLKeTI8HPBx/0jNksWw9TIOlxn98dNie6e6SV6NJ
+         lRQ/Gzt+xQdJOUzfDDKvSUK0wSMd+Dq7yLJc+YegoAA/chUhU7g+RMgvH7DU5IdPxNIy
+         +IOkWNOWCUZi/tZk+gS+J51gluh62LBSZF5O5/jf1vZ+qoRXomRX3FJHJKAPrLR0yaWA
+         JDrr3DiTpChl2HLyoJuKl1xfDxK5MuDT03SL/zhlDt4xyVPkOfVz6LIOSsyhiR3ARao4
+         59uR/whgx3Pwaj4mlB4E4aS3Up+T0roM4CQO5oiGhVGWSTUpe+IqYhBasDTtVDpwLySl
+         z+gQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1788211677; x=1788816477; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1788211706; x=1788816506; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=uib+h/AbmDRvGw6OaHSNOXJWYyNU1BcABtaXv7oLMeo=;
-        b=HBaQKPo6M2gwHj8JVkoMemqRa0PxTKFAJVv8cjeASuY/i01OVq1sJx2V9swWwRs9Pz
-         BYOrJfktdX/fngnKO0ncxB89wKFNLBo7jn4O3WDSbz2nk523m29X3+zpfZkTz22pIkMY
-         QSBkRNCP01QufSDELhOtENMTU5aQp5q0GcSu1I9VbzzddeUcUY2nHbqNt5QIKK98crQl
-         aezHfTPSTIUswAbjFtVUkgsUTX53bCytOjCUAojshuOshoEJ4S/dKXIdmomLiXdDwtmd
-         pKQDwCnBr3M3NWgiMP0RG8ksheXI4LsRa4WNDMkwuwL8lEyoR0BEBC0gkd8y/05Nlo0V
-         nnCA==
+        bh=JsoDZnDnnjuhIjWwApu8K5QF0OsufRvTAlRhz2feA9k=;
+        b=SJyJQ7JqrE7TcZPzOXt3OLwon7pelFjylGTAKsvrlf9it4Lyk5/yQthvO65CaJBr8b
+         fVw58+kZrXoFtB8lydFCMsQkPaytpvw8CD9pSLLLwdve+d0rrcWZYPPWjg2iRFv/abK8
+         wxjJnh743h9/+69fHMye5YnHqWLauxu3kscsWLdpV4OMbPoDq3eLEBQNVAsQA65CKrbS
+         aYSiSGdjdF4iqDU6pS+QW664RjQjsX58jnzYtitV5OMr1Fku8HbW8weDhQXJWW/dJpw2
+         YNOF8x/e0J1XJ+Cx1my9wtZEg1zFmjMf9GahQAsBIGm8+EqKcac4HFmYjejyTIXZjcDn
+         eQ7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788211677; x=1788816477;
+        d=1e100.net; s=20251104; t=1788211706; x=1788816506;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uib+h/AbmDRvGw6OaHSNOXJWYyNU1BcABtaXv7oLMeo=;
-        b=AdfPNMLdfs2emh9zctX098kvKXTeUimvi5K4mqMF0/drJeIW2u6tzYOdO5vJ3Ev3fE
-         BoP2rSgjAuxwJ1aINLLLXG/469s8c72wrlyIRsDXpUMA3IcwKlLVHZsaBBNbv4uAuQ2d
-         iEIyp2np3ng79bgJ1tTcQtaX+SZHz+okZKNwKQZ5DAOkpwTVBCF58xAyUnEarTXVxk8v
-         Yp6plaX0/PTTa8DVJiK0EH0QKT+1M+JWh/yFgSbCq4ehpLb5KFTQ/e7blhxAhin9GxvQ
-         MMGGmeZpLD0fbh3kP8sVbQrHbHNiz6poIajTsWaO8ptR6deNs0TJrkTu2ahfNp/oMIbG
-         B5dA==
-X-Gm-Message-State: AFuF++mIvwtP16jQcfwC1cdmzKwhpTMkYavzePlBJXR7O77UJrBEDE/Q
-	KmHvd7rzV3nWOUcu5lcRNyvlpg4y4zUU5EoYhnwIqxq68KZ0ujx15vsl1z/pLw2hA/h9GtF7Ibg
-	gGd4+L7t2SiRBwzX5vVgdauc7tQMmkaBTY1oZAw2Dmde4I93zNFmWrA==
-X-Gm-Gg: AYBFou0T1tUgbXjXPgS9KsyfnarNmgIGmlu+4sul/TJQO0tCE93dZFBEZJEk5i/vkSl
-	jb+n72TKAdM1iAoEgYmdyiDhnbiNTNYI9f8HvPxgUuYtBtpGJCkWsayGLc/gXNiJfqcneS4k6Lx
-	hGH1nOvE9x5uxXNLnNwtSQOe1gB1t3M7qcv5zNjEpnfAPFSIxjoKZWP4F4GTCxUWCk9W6/reNjF
-	MnebRap4ERHqVSWRP6adQyv+Dipp1NhxCp7vWUvtLLaQSPypB01ejbPVZlKHUVqG41D1DPj+EfL
-	oyvS42KZikEPNZszH9Dtmhp2Txg3/39uWhgwAZ58zV5W
-X-Received: by 2002:a17:902:d988:b0:2cf:afa5:b19a with SMTP id
- d9443c01a7336-2d74e0cb133mr525716965ad.11.1788211676733; Mon, 31 Aug 2026
- 14:27:56 -0700 (PDT)
+        bh=JsoDZnDnnjuhIjWwApu8K5QF0OsufRvTAlRhz2feA9k=;
+        b=OHAdpK9AklKpVAULOCect6jtxUuhIoa5pCc6uJXwcwmNfpE2/jI9FfATNwStO+loNq
+         MTFyp8rb7q+UqQt0y11ksOjwbir9KA0AQZZ1m1bc8sphug6D8XFx43OWKi+WVQlGDZFu
+         fCmZQ9zURUrmVX7I6cDzFQ28/ny4XqCH2c2fXe51zIqs7oV4HXd8ZecJFY8CFMysdDUc
+         lJC9klgvMWr9CmIZlnGsKUbU/2oAN/l98VWpDsMg+N0IoNJ3mtY96iv19zhR7D8qVcxV
+         +Vzaexhfe8FQ9Vl3/QbAwoSe4FL2ro/1FjW3g7TKeKFWOTmOFZg7wUMhhSJ7uJPfhIYU
+         ptTQ==
+X-Gm-Message-State: AFuF++nyAZh6cpPoo83oHizqI27sb2cZ+B04bj5nxO4/Ws7SAOxAGkMU
+	Q7TAM+VYc6UbIOfJBRXZC+x9etLGcAEg9Gfj2ryUOM9ep/NojZvsG+UQR1AooGwYK4R/G5NNNdV
+	Dwip2pu8LfBtRds5ieGLmVW4i+WudxxLHXnIIYVJeU8h2ywPMVdBpiQ==
+X-Gm-Gg: AYBFou3tc0oUbY+gr5X0Gxib+58Gh0a9HL9IGw2Ie5U9//TyCgyTjGrrZLD3SLJsO0u
+	sehbccfpbwyemRM6ObQQpErSWv1EAbLIszxhALtKMXsoFXxSft1LITkDZTLQv9fHKyxsB2FpTc3
+	PwYIJpo8aftANlgIGyjMa8ZLxpAtFSjcrmKZD9U+scwKzgpWvpvqRriXLVKBlK4UMe2OSoJg+WX
+	4rMBvjXoIyhj82XljS9hqt/fvzFCqj0gFOZpC5THniGe2N82H9EsHxjlG3MRBQ98wzypwhSItkk
+	fKDjuQdTbYNBdAA+7uiHZk24v0UPzhv+MblCj1k0jO+C
+X-Received: by 2002:a17:902:be02:b0:2d8:d4ce:9f37 with SMTP id
+ d9443c01a7336-2d8d4cea3c8mr206776655ad.21.1788211705902; Mon, 31 Aug 2026
+ 14:28:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260813180816.223079-2-paul@paul-moore.com> <CAHC9VhRRgLifObY4Adgxe4FBmXn-wbxYmx6unMXtmdTtbWYMog@mail.gmail.com>
-In-Reply-To: <CAHC9VhRRgLifObY4Adgxe4FBmXn-wbxYmx6unMXtmdTtbWYMog@mail.gmail.com>
+References: <20260707080615.1235830-2-caixinchen1@huawei.com> <e94ebd7547b7c28a7caaf6948d3d4953@paul-moore.com>
+In-Reply-To: <e94ebd7547b7c28a7caaf6948d3d4953@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 31 Aug 2026 17:27:44 -0400
-X-Gm-Features: AcwNN1WjDfQrxM0apeV_uScdXizUUKNnmMNtHp9fUevDxIZbWPUqcvPQOmdTwkY
-Message-ID: <CAHC9VhTGjva77Tf+7obKPkeUvb13++9gDyzbZ=PSjNcVeqq3oA@mail.gmail.com>
-Subject: Re: [PATCH] lsm: update the BUILD_BUG_ON() in audit_log_lsm_data()
-To: linux-security-module@vger.kernel.org
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Date: Mon, 31 Aug 2026 17:28:14 -0400
+X-Gm-Features: AcwNN1VUodnldawlS_uqwoK_0s9F_ptNR9NaT6eAmgzNXN8aIg-3rz0MbKhy-Ec
+Message-ID: <CAHC9VhQYZg1tuwBOqF3jw310U8SjhEvJn62zsFxbNNS4=MN19g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] security: Delete dumplicate assignment
+To: Cai Xinchen <caixinchen1@huawei.com>, jmorris@namei.org, serge@hallyn.com, 
+	amir73il@gmail.com, brauner@kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lujialin4@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 13, 2026 at 2:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Thu, Aug 13, 2026 at 2:08=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > On 32-bit systems the newly added namespace fields in the
-> > common_audit_data struct exceed the BUILD_BUG_ON(sizeof(void *) * 2)
-> > size check in audit_log_lsm_data().  Convert the size check to two
-> > u64 types to both fit the new fields and move to a size that is not
-> > architecture dependent.
-> >
-> > Fixes: bb20ca26f960 ("lsm: add LSM_AUDIT_DATA_NS for namespace audit re=
-cords")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202608131232.Owej9tlx-lkp=
-@intel.com/
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  security/lsm_audit.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Aug 27, 2026 at 12:30=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
 >
-> I'm applying this to lsm/dev-staging to fix the kernel test robot
-> build failure, but as this is just the dev-staging branch, please feel
-> free to comment on how this is a stupid patch, ACK, review, etc. as
-> you see fit.
+> On Jul  7, 2026 Cai Xinchen <caixinchen1@huawei.com> wrote:
+> >
+> > Delete a blobs variable with duplicate assignment.
+> >
+> > Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
+> > ---
+> >  security/lsm_init.c | 1 -
+> >  1 file changed, 1 deletion(-)
+>
+> Merged into lsm/dev-staging and I'll plan to move it to lsm/dev once the
+> merge window closes, thanks!
 
-This is now in lsm/dev.
+This is now merged into lsm/dev, thanks again.
 
 --=20
 paul-moore.com
