@@ -1,49 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ACE474258;
-	Mon, 31 Aug 2026 13:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264D9483BEE;
+	Mon, 31 Aug 2026 13:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183340; cv=none; b=kHI5TagiUuil8wxjcYME31MIIuUmPX6bChMpfMx2sU/fElCyMG61vaG13M3X9TOjCEFZv2+IHRjkSwEt+LV0ico9cHg1yqUJXB+Ylw02sSp1IKQWJGWNt5YEvAatBnXLfFTsjL/w5iHLFP5FWY5LayBk/vrCZUar8uiC36/G6lM=
+	t=1788183482; cv=none; b=dOrP7XDSeUlHu75MBrhjeso+atcfO3xdEzKP1zaBcN4e9i3eZ2sHXpYybKJgRM4yD5R1WaxyYqurN3PPWAUZqNlZ/9Sx4dZfmIGkGB++PgcP2y8FbIEo9WccHZnpAMVBxlrzzpWMLehYWt8XipVUsDkW85WfsfX4Tw8JXtc5qy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183340; c=relaxed/simple;
-	bh=axz5vylE4FxBOgoV1DlQWb8KgAqUuL00a1VstUYsNKQ=;
+	s=arc-20240116; t=1788183482; c=relaxed/simple;
+	bh=WbESUFpehW6NsQQOLP5btAcYc1a0bZ2UoZavzrv69gs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YYfZsEUMXYlKPThSo1FRxvO6IWiD4BgJz2s2bXukG4UrKfWl/N3lIeeZ4n9aBDHhS7KPiQC/mwtp82dQRUpzJ12V9TY+pBRm47rKear00wgQX4ujV5qbDSIGJQxDlzw5N9aLtdrAbi/YLtM995tOeo2FMGLdlICzQQcuzUIvE00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOHGpe3n; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=p5vFhtp1kZHROTJfzXVZ1ymk1Px/q1QM6qRaIJPtv0CfO9Y0m/DlSN1LYLSBAyvnRwRzo52b0eB7UZOJ1aKPt/I8FB+KnKgZjQUJmqeP+IBjok9spFvL8hYvzNuQRAjFWR28dO7DKxJjlFwYRVRgJRpMdhED1FtblQgrYW2/uag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePI39RlD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOHGpe3n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BA81F00A3D;
-	Mon, 31 Aug 2026 13:35:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePI39RlD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF5C1F00A3D;
+	Mon, 31 Aug 2026 13:37:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183337;
-	bh=QpstxJnSY0vcdZyNSDutxF0fesjA6gCk/K78ALCzL4I=;
+	s=k20260515; t=1788183480;
+	bh=veYRmZykR+yH9kIOVWkGX95kuGIKb9R0oZk6wmMxbuQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jOHGpe3nR2OxwcY4oja0MXj0lYsegH1QjBiYFc+z7mp2G3xrQrq33cslcM2mZh99E
-	 nYXDXw31cXqJoj0+8b64QkEkRBSmnthr/7981/XamXKAMiSmQz6c4k26xCr+LdyNzX
-	 qVF2xWxj6e/TvYRP4BgJeBTQ8kUVgB/DaFpEoilDDOq8awB4iRLYKXj946CrTPWlTl
-	 sLEJOfUZj1zeA0txtg0IREkIRjxyXz08Fi1uSVtkdZvUSAWtzB+rhYsVLjSna/cJNp
-	 NSCWm4NanUmlMKKQpXxK9WmTcKeOAo5TcTnI7zRmBAXbk7e3E8BSyWDGfmvPWjw6ch
-	 OwwMd5Ed0gciA==
+	b=ePI39RlDwnuNJK/VXEoGgiTCMpYm9Le9TZ1qXJ1E0yTT8E9EjQXJKDCfcw71GO1GP
+	 LY/LGh48JSI1egS5zBvT5PwwH9n+TfXpKLnF75f5I+twizFsWQH/D7S3xrLaqnC97Z
+	 1vMqcWX2WjRWf52Mi9dVo43wmHifLxonaRNDUdHMEr/oM7LKUBDCzP3D6461dCNEFL
+	 knrXBQbGBLgqMpVR96HQo3hcQ1+OkKCTUuFtroBOu9ZWzYUQfyi7qDO1i+jtwPARgV
+	 DmtrRpwvLxT6+mD4NbZfhbyT70rVDdJfCokzFP4w11TPOzZCgvVAVGBIPcoL8hJh+A
+	 7L2SDJDyZkgbg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Stefan Berger <stefanb@linux.ibm.com>,
-	Kamlesh Kumar <kam@juniper.net>,
-	Mimi Zohar <zohar@linux.ibm.com>,
+Cc: =?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>,
+	John Johansen <john.johansen@canonical.com>,
 	Sasha Levin <sashal@kernel.org>,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
 	paul@paul-moore.com,
 	jmorris@namei.org,
 	serge@hallyn.com,
-	linux-integrity@vger.kernel.org,
+	apparmor@lists.ubuntu.com,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.15] integrity: Check for NULL returned by asymmetric_key_public_key
-Date: Mon, 31 Aug 2026 09:21:56 -0400
-Message-ID: <20260831133314.4125787-88-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-6.12] apparmor: propagate -ENOMEM correctly in unpack_table
+Date: Mon, 31 Aug 2026 09:22:29 -0400
+Message-ID: <20260831133314.4125787-121-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -53,358 +51,459 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18.48
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+From: Maxime Bélair <maxime.belair@canonical.com>
 
-[ Upstream commit c93a5f038ccc11ed8558ce642f62d5ede701a348 ]
+[ Upstream commit 1c8a839442823ce5c627d645730d8c61d828aafa ]
 
-Check for a NULL pointer returned by asymmetric_key_public_key and return
--ENOKEY in this case.
+Currently, if the `kvzalloc` in `unpack_table` fails, it returns NULL.
+This is masked by `aa_dfa_unpack` which interprets NULL as a -EPROTO,
+leading to confusing error messages in `apparmor_parser` [1].
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Tested-by: Kamlesh Kumar <kam@juniper.net>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+The fixed behavior correctly propagates -ENOMEM on allocation failure.
+
+Link: https://gitlab.com/apparmor/apparmor/-/issues/592
+Reviewed-by: Georgia Garcia <georgia.garcia@canonical.com>
+Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Phase 1: Commit Message Forensics
+# Stable Backport Analysis: `apparmor: propagate -ENOMEM correctly in
+unpack_table`
 
-### Step 1.1: Subject line
-**Record:** `[integrity]` `[Check]` — Add a NULL check on the return
-value of `asymmetric_key_public_key()` in asymmetric signature
-verification.
-
-### Step 1.2: Tags
-**Record:**
-- **Signed-off-by:** Stefan Berger `<stefanb@linux.ibm.com>` (author)
-- **Tested-by:** Kamlesh Kumar `<kam@juniper.net>`
-- **Signed-off-by:** Mimi Zohar `<zohar@linux.ibm.com>` (integrity
-  subsystem maintainer)
-- **No** Fixes:, Reported-by:, Link:, Cc: stable@vger.kernel.org,
-  Reviewed-by:, Acked-by:
-
-Notable: maintainer sign-off plus Tested-by; no syzbot or user bug
-report.
-
-### Step 1.3: Body analysis
-**Record:**
-- **Bug:** `asymmetric_key_public_key()` can return NULL; the code
-  dereferences `pk` without checking.
-- **Symptom:** NULL pointer dereference → kernel oops in
-  `asymmetric_verify()`.
-- **Fix:** Return `-ENOKEY` and jump to the existing `out:` cleanup
-  path.
-- **Series context:** Patch 1/4 of “Add support for ML-DSA signature for
-  EVM and IMA”; v3 added patches 1/4 and 2/4 per Mimi Zohar’s review
-  comments on v2.
-
-### Step 1.4: Hidden bug fix?
-**Record:** Yes — explicit NULL-dereference fix, not cosmetic cleanup.
+**Local tree:** `v6.18.44-1-g2736c32da98b9` (kernel version **6.18.44**)
 
 ---
 
-## Phase 2: Diff Analysis
+## PHASE 1: COMMIT MESSAGE FORENSICS
 
-### Step 2.1: Inventory
-**Record:**
-- **File:** `security/integrity/digsig_asymmetric.c` (+4 / −0)
-- **Function:** `asymmetric_verify()`
-- **Scope:** Single-file, surgical (4 lines)
+### Step 1.1: Parse the subject line
+**Record:** `[apparmor]` `[propagate]` — Fix incorrect error-code
+propagation in `unpack_table()` when DFA table allocation fails.
 
-### Step 2.2: Code flow change
+### Step 1.2: Parse all commit message tags
 **Record:**
-- **Before:** After `request_asymmetric_key()` succeeds, `pk =
-  asymmetric_key_public_key(key)` is used immediately as
-  `pk->pkey_algo`.
-- **After:** If `pk` is NULL, set `ret = -ENOKEY`, `goto out` (which
-  calls `key_put(key)`).
-- **Path:** Error handling in IMA/EVM asymmetric signature verification
-  (sig v2).
+| Tag | Value |
+|-----|-------|
+| Link | https://gitlab.com/apparmor/apparmor/-/issues/592 |
+| Reviewed-by | Georgia Garcia \<georgia.garcia@canonical.com\> |
+| Signed-off-by | Maxime Bélair \<maxime.belair@canonical.com\> |
+| Signed-off-by | John Johansen \<john.johansen@canonical.com\> |
+| Fixes: | absent (expected for manual review) |
+| Cc: stable | absent (expected) |
+| Reported-by | absent |
+| Tested-by | absent |
+
+Notable: Reviewed by Canonical AppArmor developer; signed off by
+subsystem maintainer (John Johansen). No syzbot report.
+
+### Step 1.3: Analyze commit body
+**Record:**
+- **Bug:** `kvzalloc()` failure in `unpack_table()` returns `NULL`;
+  `aa_dfa_unpack()` treats any `NULL` as protocol failure and returns
+  `-EPROTO`.
+- **Symptom:** Misleading "profile does not conform to protocol" errors
+  in `apparmor_parser` when the real failure is OOM.
+- **Root cause:** `unpack_table()` conflates allocation failure (`NULL`)
+  with protocol/validation failure (`NULL` from `goto out`).
+- **Version info:** None stated in commit message.
+
+### Step 1.4: Detect hidden bug fixes
+**Record:** Yes — described as error propagation, but it is a real
+correctness bug in error handling. Policy load still fails, but with the
+wrong errno, which misleads operators and can cause incorrect
+retry/debug behavior under memory pressure.
+
+---
+
+## PHASE 2: DIFF ANALYSIS
+
+### Step 2.1: Inventory the changes
+**Record:**
+- **File:** `security/apparmor/match.c` only (~20 lines changed)
+- **Functions:** `unpack_table()`, `aa_dfa_unpack()`
+- **Scope:** Single-file surgical fix
+
+### Step 2.2: Code flow change per hunk
+
+**Hunk 1 — `unpack_table()`:**
+- **Before:** Returns `NULL` for all failures (protocol validation and
+  `kvzalloc` failure).
+- **After:** Initializes to `ERR_PTR(-EPROTO)`; validation failures
+  return `-EPROTO`; `kvzalloc` failure returns `ERR_PTR(-ENOMEM)`;
+  internal `fail` label removed in favor of explicit `ERR_PTR` returns.
+
+**Hunk 2 — `aa_dfa_unpack()`:**
+- **Before:** `if (!table) goto fail;` with `error` already set to
+  `-EPROTO` at line 326.
+- **After:** `if (IS_ERR(table)) { error = PTR_ERR(table); table = NULL;
+  goto fail; }` — propagates the specific error from `unpack_table()`.
 
 ### Step 2.3: Bug mechanism
-**Record:** **Category:** NULL pointer dereference.
-**Mechanism:** `asymmetric_key_public_key()` is an inline accessor
-returning `key->payload.data[asym_crypto]`, which can be NULL. The code
-assumed it was always valid after a successful key lookup.
+**Record:** **Error-path / logic correctness fix.** Allocation failure
+was indistinguishable from protocol errors. The fix uses the kernel
+`ERR_PTR`/`IS_ERR`/`PTR_ERR` pattern already used elsewhere in AppArmor
+(e.g. `aa_dfa_unpack` itself returns `ERR_PTR(error)`).
 
 ### Step 2.4: Fix quality
-**Record:** Obviously correct; mirrors existing `!pkey` handling in
-`restrict_link_by_digsig()` / `restrict_link_by_ca()`. Uses existing
-`out:` label. Very low regression risk.
+**Record:** Obviously correct; minimal; uses established kernel idioms.
+Low regression risk — only affects failure paths. One gap:
+`remap_data16_to_data32()` still returns `NULL` on alloc failure and is
+still treated as `-EPROTO` in `aa_dfa_unpack()` (lines 409–411); this
+commit does not address that separate path.
 
 ---
 
-## Phase 3: Git History Investigation
+## PHASE 3: GIT HISTORY INVESTIGATION
 
-### Step 3.1: Blame
-**Record:** Lines 110–111 in the local tree were introduced in commit
-`6bda50f4333fa` (2025-11-29) when `digsig_asymmetric.c` was added. The
-missing NULL check has been present since that introduction in this
-tree.
+### Step 3.1: Blame changed lines
+**Record:** `unpack_table()` introduced in `e06f75a6a2b43b` (John
+Johansen, 2010). `kvzalloc` added in `a7c3e901a46ff5` (Michal Hocko, May
+2017, "mm: introduce kv[mz]alloc helpers"). The ENOMEM-as-NULL bug has
+existed since **v4.12** era when `kvzalloc` replaced prior allocation in
+this function.
 
-### Step 3.2: Fixes: tag
-**Record:** N/A — no Fixes: tag.
+### Step 3.2: Follow Fixes: tag
+**Record:** Not applicable — no `Fixes:` tag in commit message.
 
-### Step 3.3: Related file history
-**Record:** On `stable/linux-6.18.y`, `digsig_asymmetric.c` appears from
-`6bda50f4333fa`. The buggy pattern is present at merge-base
-`7b923c78b50d`. Part of ML-DSA v3 series (4 patches); this commit is
-standalone and does not require patches 2–4.
+### Step 3.3: File history for related changes
+**Record:** Recent related fixes in this tree:
+- `ac8f179e5c9ee` — "return -ENOMEM in unpack_perms_table upon alloc
+  failure" (identical bug class, already backported to this 6.18.y tree)
+- `22dc9433d458c` — accept2 allocation failure returning success path
+  (more severe, already backported)
+Standalone fix; not part of a numbered series.
 
-### Step 3.4: Author context
-**Record:** Stefan Berger is a regular integrity contributor. Mimi Zohar
-(maintainer) signed off. Series included in `integrity-v7.2` pull (June
-2026).
+### Step 3.4: Author's other commits
+**Record:** Maxime Bélair has at least one other AppArmor fix in tree
+(`57b1bd4486d56` UAF fix). John Johansen is the AppArmor maintainer and
+original author of `unpack_table()`.
 
-### Step 3.5: Dependencies
-**Record:** No prerequisites. Applies independently of ML-DSA support
-(patches 3/4 and 4/4).
+### Step 3.5: Prerequisites
+**Record:** No dependencies. Uses `<linux/err.h>` already included at
+line 16. Applies to existing code in this tree. Standalone.
 
 ---
 
-## Phase 4: Mailing List and External Research
+## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 
-### Step 4.1: Original discussion
-**Record:** Found via spinics/openwall at [PATCH v3
-1/4](https://www.spinics.net/lists/kernel/msg6157574.html). Cover
-letter: [PATCH v3
-0/4](https://www.spinics.net/lists/kernel/msg6157584.html). v3 added
-patches 1/4 and 2/4 addressing Mimi’s v2 comments. `b4 dig -c` could not
-be run (commit not in local tree); `b4 shazam` did not find message-id.
-lore.kernel.org blocked by bot protection.
+### Step 4.1: Original patch discussion
+**Record:** `b4 dig -c <commit>` failed — commit not yet in this
+checkout. Web search found Ubuntu AppArmor list submission at
+https://www.mail-archive.com/apparmor@lists.ubuntu.com/msg12204.html
+(fetch timed out). Patch content from search matches provided diff.
 
 ### Step 4.2: Reviewers
-**Record:** CC’d: linux-integrity, linux-security-module, Mimi Zohar,
-Roberto Sassu, Eric Biggers.
+**Record:** Reviewed-by Georgia Garcia (Canonical). Signed-off-by John
+Johansen (maintainer). Submitted to Ubuntu AppArmor list per mail-
+archive.
 
 ### Step 4.3: Bug report
-**Record:** No external bug report, syzbot, or sanitizer report. Found
-during ML-DSA series review (Mimi’s v2 feedback).
+**Record:** GitLab issue #592 describes Qubes OS users seeing "Profile
+does not conform to protocol" on `aa-enforce`, sometimes resolving after
+multiple retries — consistent with transient failures (including OOM)
+being misreported as protocol errors. Maintainer comment on related
+issue #265 notes protocol errors can indicate kernel/parser bugs or
+mismatched policy. Severity from reporter: operational confusion, not a
+confirmed security issue.
 
-### Step 4.4: Series context
-**Record:** 4-patch ML-DSA series. This patch is independently valuable;
-later patches refactor and add ML-DSA sigv3 support.
+### Step 4.4: Related patches
+**Record:** `ac8f179e5c9ee` (unpack_perms_table ENOMEM fix) was
+backported to stable (visible in spinics stable list for 6.19.y). Same
+subsystem, same bug pattern, accepted for stable.
 
-### Step 4.5: Stable list
-**Record:** No stable-list discussion found. Included in maintainer’s
-`integrity-v7.2` pull for mainline.
+### Step 4.5: Stable mailing list
+**Record:** No specific stable-list discussion found for this exact
+patch. The sibling `unpack_perms_table` fix was included in stable
+releases.
 
 ---
 
-## Phase 5: Code Semantic Analysis
+## PHASE 5: CODE SEMANTIC ANALYSIS
 
 ### Step 5.1: Key functions
-**Record:** `asymmetric_verify()` modified.
+**Record:** `unpack_table()` (static), `aa_dfa_unpack()` (exported via
+`match.h`)
 
 ### Step 5.2: Callers
 **Record:**
-- `integrity_digsig_verify()` in `security/integrity/digsig.c` (sig
-  types 2 and 3)
-- Callers of `integrity_digsig_verify()`:
-  - `security/integrity/ima/ima_appraise.c` — IMA signature appraisal
-  - `security/integrity/evm/evm_main.c` — EVM signature verification
+- `aa_dfa_unpack()` called from:
+  - `unpack_dfa()` in `policy_unpack.c` — policy load path
+  - `aa_setup_dfa_engine()` in `lsm.c` — built-in nulldfa/stacksplitdfa
+    at init (static blobs, unlikely to OOM)
+- `unpack_dfa()` → `unpack_pdb()` → policy unpack →
+  `aa_replace_profiles()` via `apparmorfs.c`
+
+Primary user-visible path: **policy load**
+(`/sys/kernel/security/apparmor/` write or equivalent).
 
 ### Step 5.3: Callees
-**Record:** `request_asymmetric_key()`, `asymmetric_key_public_key()`,
-`verify_signature()`, `key_put()`.
+**Record:** `kvzalloc()`, `kvfree()`, `get_unaligned_be*()`,
+`vm_unmap_aliases()`, `verify_table_headers()`, `verify_dfa()`
 
-### Step 5.4: Reachability
-**Record:** Reachable from file access when
-`CONFIG_INTEGRITY_ASYMMETRIC_KEYS` and IMA/EVM appraisal are enabled. On
-this tree, IMA rejects sig version ≥ 3 before verification; sig v2
-asymmetric verification is the affected path.
+### Step 5.4: Call chain / reachability
+**Record:** `write(apparmorfs)` → `aa_replace_profiles()` →
+`aa_unpack()` → `unpack_pdb()` → `unpack_dfa()` → `aa_dfa_unpack()` →
+`unpack_table()`. Reachable from **privileged userspace** loading
+AppArmor policy. Trigger requires memory pressure during DFA table
+unpacking.
 
 ### Step 5.5: Similar patterns
-**Record:** `crypto/asymmetric_keys/restrict.c` checks `if (!pkey)
-return -ENOPKG`. `verify_signature()` checks `!key->payload.data[0]`
-(same slot as `asym_crypto`) — but only after `asymmetric_verify()`
-would have already crashed on NULL `pk`.
+**Record:** Same NULL-on-OOM → `-EPROTO` pattern existed in
+`unpack_perms_table()` (fixed by `ac8f179e5c9ee`).
+`remap_data16_to_data32()` in the same file still has the unfixed
+pattern.
 
 ---
 
-## Phase 6: Cross-Reference Against Local Tree
+## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE (6.18.44)
 
-### Step 6.1: Buggy code present?
-**Record:** **Yes.** Local tree is **v6.18.43** (`stable/linux-6.18.y`,
-`HEAD` detached). `security/integrity/digsig_asymmetric.c` lines 110–111
-lack the NULL check:
-
-```110:111:security/integrity/digsig_asymmetric.c
-        pk = asymmetric_key_public_key(key);
-        pks.pkey_algo = pk->pkey_algo;
-```
+### Step 6.1: Does buggy code exist?
+**Record:** **Yes.** Current `security/apparmor/match.c` lines 34–91
+return `NULL` on `kvzalloc` failure; `aa_dfa_unpack()` at lines 361–363
+treats `!table` as `-EPROTO`. Bug present since kvzalloc adoption
+(~2017).
 
 ### Step 6.2: Backport complications
-**Record:** Clean apply expected — 4 lines at a stable location. Minor
-field-name difference (`pks.digest` vs `pks.m` in the submitted diff)
-does not affect patch placement.
+**Record:** Expected **clean apply** — tree matches the "before" state
+in the provided diff. No conflicting recent changes to these functions.
+`git apply --check` with truncated test patch failed due to patch
+formatting, not code mismatch; file content verified identical to pre-
+patch state.
 
 ### Step 6.3: Related fixes already present?
-**Record:** No — grep shows no existing NULL check at this site.
+**Record:** `ac8f179e5c9ee` (ENOMEM in `unpack_perms_table`) already in
+tree. This specific `unpack_table` fix is **not** yet present.
 
 ---
 
-## Phase 7: Subsystem Context
+## PHASE 7: SUBSYSTEM CONTEXT
 
-### Step 7.1: Subsystem criticality
-**Record:** **security/integrity** (IMA/EVM) — **IMPORTANT** (security-
-sensitive, affects systems with integrity appraisal enabled).
+### Step 7.1: Subsystem and criticality
+**Record:** **security/apparmor** — LSM security module. **IMPORTANT**
+for Ubuntu, Debian, openSUSE, and other AppArmor-enabled distributions.
 
-### Step 7.2: Activity
-**Record:** Actively maintained; recent IMA/EVM commits on this branch.
+### Step 7.2: Subsystem activity
+**Record:** Actively maintained — multiple AppArmor stable backports
+already in this 6.18.y tree (UAF, refcount, ENOMEM fixes in 2026).
 
 ---
 
-## Phase 8: Impact and Risk Assessment
+## PHASE 8: IMPACT AND RISK ASSESSMENT
 
 ### Step 8.1: Who is affected
-**Record:** Systems with `CONFIG_INTEGRITY_ASYMMETRIC_KEYS` and IMA/EVM
-digital-signature appraisal. Not universal, but important for
-secured/enterprise deployments.
+**Record:** AppArmor-enabled systems where administrators load or
+replace policy. Config-specific (`CONFIG_SECURITY_APPARMOR`).
 
 ### Step 8.2: Trigger conditions
-**Record:** A signature references a key ID that resolves to an
-asymmetric key whose `asym_crypto` payload is NULL. With standard
-X.509-loaded RSA/ECDSA keys this is unlikely; the subsystem already
-treats `!pkey` as a valid error state elsewhere. More relevant once non-
-standard key types (e.g. ML-DSA) are introduced. Trigger does not
-require ML-DSA patch 4/4 on this tree, but practical likelihood on
-6.18.y without ML-DSA is low.
+**Record:** Memory pressure during `kvzalloc()` in `unpack_table()`
+while unpacking a policy DFA. Uncommon but realistic on constrained
+systems or under heavy memory load. Privileged operation (policy load),
+not unprivileged attack surface for escalation.
 
 ### Step 8.3: Failure mode severity
-**Record:** **Kernel oops** (NULL dereference at `pk->pkey_algo`) —
-**CRITICAL** if triggered.
+**Record:** Policy load fails with **`-EPROTO`** instead of
+**`-ENOMEM`**. Users see misleading protocol-conformance errors. Policy
+is **not** loaded in either case — no silent security bypass. Severity:
+**MEDIUM** (operational/diagnostic), not CRITICAL (no crash, corruption,
+or UAF).
 
 ### Step 8.4: Risk-benefit
 **Record:**
-- **Benefit:** Prevents crash in security verification path; returns
-  proper error instead.
-- **Risk:** Very low — 4 lines, uses existing cleanup, no API change.
-- **Ratio:** Favorable for stable despite rare trigger on current 6.18.y
-  key types.
+- **Benefit:** Correct errno under OOM; better diagnostics; consistent
+  with already-backported `unpack_perms_table` fix; helps admins
+  distinguish transient OOM from corrupt policy.
+- **Risk:** Very low — ~20 lines, failure-path only, established ERR_PTR
+  pattern.
+- **Ratio:** Favorable, especially given subsystem precedent.
 
 ---
 
-## Phase 9: Final Synthesis
+## PHASE 9: FINAL SYNTHESIS
 
 ### Step 9.1: Evidence summary
 
 **FOR backport:**
-- Real NULL-deref bug in security code
-- Small, surgical, maintainer-signed fix with Tested-by
-- Buggy code exists in v6.18.43
-- Applies cleanly and standalone
-- IMA/EVM verification path is security-critical
-- Consistent with existing `!pkey` handling in asymmetric key code
+- Real bug in error handling (ENOMEM masked as EPROTO)
+- Bug present in this 6.18.44 tree since ~2017
+- Small, surgical, maintainer-reviewed fix
+- Identical bug class already backported in this tree (`ac8f179e5c9ee`)
+- Affects policy-load path on AppArmor systems
+- Canonical team fix with maintainer sign-off
 
 **AGAINST backport:**
-- No user report or fuzzer finding
-- Added during ML-DSA series review; practical trigger on 6.18.y without
-  ML-DSA may be very rare
-- Standard X.509 keys normally always populate `asym_crypto`
-- IMA already rejects sig v3 on this tree, limiting some future trigger
-  scenarios
+- No crash, corruption, deadlock, or security vulnerability
+- Policy load fails either way — functional outcome unchanged
+- GitLab #592 is not a direct ENOMEM reproducer
+- `remap_data16_to_data32()` has the same unfixed pattern (incomplete
+  coverage)
+- Commit not yet in tree; lore fetch incomplete
 
-**Unresolved:** No confirmed production crash on 6.18.y with current key
-types only.
+**Unresolved:** Full mail-archive thread content; whether stable
+maintainers will treat this identically to `unpack_perms_table`
+(precedent suggests yes).
 
 ### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** (simple NULL check; Tested-by;
-   maintainer SOB)
-2. Fixes a real bug? **PASS** (NULL deref is a real defect, even if
-   trigger is edge-case)
-3. Important issue? **PASS** (kernel oops in integrity verification —
-   HIGH/CRITICAL)
-4. Small and contained? **PASS** (4 lines, one function)
-5. No new features/APIs? **PASS**
-6. Can apply to local tree? **PASS**
+| Criterion | Result |
+|-----------|--------|
+| 1. Obviously correct and tested? | **PASS** — clear ERR_PTR pattern;
+Reviewed-by present |
+| 2. Fixes real bug affecting users? | **PASS** — wrong errno on policy
+load under OOM |
+| 3. Important issue? | **PASS (borderline)** — not crash/security, but
+policy-load failure misdiagnosis on production AppArmor systems; same
+class already deemed stable-worthy |
+| 4. Small and contained? | **PASS** — one file, ~20 lines |
+| 5. No new features/APIs? | **PASS** — internal error propagation only
+|
+| 6. Can apply to local tree? | **PASS** — buggy code confirmed present;
+clean apply expected |
 
 ### Step 9.3: Exception categories
-**Record:** None (not a quirk, device ID, or build fix).
+**Record:** None (not device ID, quirk, DT, build, or docs). Pure error-
+handling correctness fix.
 
 ### Step 9.4: Decision rationale
-
-For **linux-6.18.y** specifically: the vulnerable code is present, the
-fix is minimal and obviously correct, and a NULL dereference in the
-IMA/EVM signature path is exactly the kind of security-subsystem defect
-stable trees should fix. While the trigger may be uncommon with today’s
-RSA/ECDSA-only keyrings, the kernel already acknowledges that asymmetric
-keys can lack a public-key payload (`restrict.c`), and this path lacked
-the corresponding guard. The patch is independent of the ML-DSA feature
-commits and safe to backport alone.
+This fix belongs in stable for the same reason `ac8f179e5c9ee` was
+already backported to this 6.18.y tree: AppArmor policy unpacking must
+return the correct errno so administrators and userspace tools can
+distinguish OOM from protocol corruption. The change is minimal,
+obviously correct, and the bug has been present since `kvzalloc` was
+adopted in 2017. While severity is operational rather than catastrophic,
+the established precedent in this exact subsystem and tree supports
+inclusion.
 
 ---
 
 ## Verification
 
-- **[Phase 1]** Parsed commit message and tags from user query and
-  spinics/openwall
-- **[Phase 2]** Read `security/integrity/digsig_asymmetric.c`; confirmed
-  4-line NULL check at `asymmetric_key_public_key()` call site
-- **[Phase 2]** Read `include/keys/asymmetric-type.h`; confirmed
-  `asymmetric_key_public_key()` returns `key->payload.data[asym_crypto]`
-  with no NULL guarantee
-- **[Phase 3]** `git describe HEAD` → `v6.18.43`; Makefile VERSION
-  6.18.43
-- **[Phase 3]** `git blame -L 108,115
-  security/integrity/digsig_asymmetric.c` → `6bda50f4333fa`
-- **[Phase 3]** `git show 7b923c78b50d:...` → buggy code at merge-base
-- **[Phase 3]** `git branch` → detached from `stable/linux-6.18.y`
-- **[Phase 4]** spinics/openwall: found v3 1/4 and 0/4; v3 added patches
-  per Mimi’s comments
-- **[Phase 4]** `b4 shazam` — message-id not found; `b4 dig -c` not run
-  (commit absent locally)
-- **[Phase 4]** lore.kernel.org — blocked (bot protection)
-- **[Phase 4]** Web search — commit `c93a5f0`, integrity-v7.2 pull
-  confirmed
-- **[Phase 5]** `grep asymmetric_verify` — callers in `digsig.c`,
-  `ima_appraise.c`, `evm_main.c`
-- **[Phase 5]** Read `crypto/asymmetric_keys/restrict.c` — `!pkey`
-  checks at lines 141 and 183
-- **[Phase 5]** Read `crypto/asymmetric_keys/signature.c` —
-  `verify_signature()` checks `!key->payload.data[0]` but only after
-  `asymmetric_verify()` would crash
-- **[Phase 6]** Confirmed NULL check absent in current tree at lines
-  110–111
-- **[Phase 6]** Read `ima_appraise.c` lines 335–338 — sig v3 rejected
-  before `integrity_digsig_verify()`
-- **[Phase 8]** `grep mldsa` in `crypto/asymmetric_keys` — no ML-DSA
-  support in this tree
-- **UNVERIFIED:** Exact Mimi Zohar review text (follow-up to v2 on
-  spinics not fetched); no production crash report
+- [Phase 1] Parsed commit message and tags from user-provided content
+- [Phase 1] Link: https://gitlab.com/apparmor/apparmor/-/issues/592 —
+  fetched; describes Qubes OS protocol errors on `aa-enforce`, not a
+  direct ENOMEM reproducer
+- [Phase 2] Read `security/apparmor/match.c` lines 34–91, 314–434 —
+  confirmed buggy NULL-return pattern and `!table` → `-EPROTO` path
+- [Phase 2] Confirmed `remap_data16_to_data32()` still returns NULL on
+  OOM (lines 283–286, 409–411) — unfixed by this commit
+- [Phase 3] `git describe HEAD` → `v6.18.44-1-g2736c32da98b9`; `make
+  kernelversion` → `6.18.44`
+- [Phase 3] `git blame -L 34,91 security/apparmor/match.c` → function
+  from 2010; `kvzalloc` from `a7c3e901a46ff5` (2017)
+- [Phase 3] `git show a7c3e901a46ff5` — confirmed kvzalloc introduction
+  in `match.c`
+- [Phase 3] `git log --oneline -20 -- security/apparmor/match.c` —
+  recent activity, no conflicting fix
+- [Phase 3] `git show ac8f179e5c9ee` — identical ENOMEM/EPROTO pattern
+  fix already in this tree with stable backport marker
+- [Phase 3] `git log --oneline --grep="ENOMEM" -- security/apparmor/` —
+  related ENOMEM fixes present
+- [Phase 4] `b4 dig -c ac8f179e5c9ee` — no lore match (stable-backport
+  commit)
+- [Phase 4] `b4 dig --commitish "apparmor: propagate -ENOMEM correctly
+  in unpack_table"` — commit not in tree
+- [Phase 4] Web search — found Ubuntu AppArmor list submission
+  (msg12204); spinics stable list shows `unpack_perms_table` ENOMEM fix
+  in stable batch
+- [Phase 4] WebFetch gitlab #592 — success; WebFetch mail-archive —
+  timed out
+- [Phase 5] `grep aa_dfa_unpack security/apparmor/` — callers in
+  `policy_unpack.c`, `lsm.c`
+- [Phase 5] Read `unpack_pdb()` lines 765–770 — `PTR_ERR(pdb->dfa)`
+  propagates error to policy unpack
+- [Phase 6] Confirmed buggy code present in local 6.18.44 checkout
+- [Phase 6] `ac8f179e5c9ee` confirmed in tree; this fix not yet applied
+- [Phase 7] `git log --oneline -20 -- security/apparmor/` — active
+  subsystem with multiple stable backports
 
-**YES**The background history search finished. In this
-`stable/linux-6.18.y` checkout, `digsig_asymmetric.c` and the
-`asymmetric_verify()` path without the NULL check both trace back to
-commit `6bda50f4333fa` (Nov 29, 2025), when that file was added. The
-vulnerable code is present in the current v6.18.43 tree, so the backport
-analysis stands: **YES**.
+**YES**The AppArmor `unpack_table` ENOMEM backport analysis is done for
+your **6.18.44** tree.
 
- security/integrity/digsig_asymmetric.c | 4 ++++
- 1 file changed, 4 insertions(+)
+**Verdict: YES** — backport it.
 
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index 457c0a396caf3..17219424a34dd 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -108,6 +108,10 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+When `kvzalloc()` fails during DFA table unpacking, the kernel currently
+returns `-EPROTO` instead of `-ENOMEM`, so policy load failures under
+memory pressure look like protocol/corruption errors in
+`apparmor_parser`. The fix is small (~20 lines in
+`security/apparmor/match.c`), uses the standard `ERR_PTR`/`IS_ERR`
+pattern, and matches an already-backported fix in this tree
+(`ac8f179e5c9ee` for `unpack_perms_table`). The buggy code is present
+here; the patch should apply cleanly.
+
+Severity is operational (wrong errno, not a crash or security bug), but
+the subsystem precedent and maintainer review support stable inclusion.
+
+ security/apparmor/match.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+index 0de249725efbf..b2a4bee4e3939 100644
+--- a/security/apparmor/match.c
++++ b/security/apparmor/match.c
+@@ -27,13 +27,13 @@
+  * @blob: data to unpack (NOT NULL)
+  * @bsize: size of blob
+  *
+- * Returns: pointer to table else NULL on failure
++ * Returns: pointer to table else ERR_PTR on failure
+  *
+  * NOTE: must be freed by kvfree (not kfree)
+  */
+ static struct table_header *unpack_table(char *blob, size_t bsize)
+ {
+-	struct table_header *table = NULL;
++	struct table_header *table = ERR_PTR(-EPROTO);
+ 	struct table_header th;
+ 	size_t tsize;
  
- 	pk = asymmetric_key_public_key(key);
-+	if (!pk) {
-+		ret = -ENOKEY;
-+		goto out;
-+	}
- 	pks.pkey_algo = pk->pkey_algo;
- 	if (!strcmp(pk->pkey_algo, "rsa")) {
- 		pks.encoding = "pkcs1";
+@@ -74,20 +74,21 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
+ 		else if (th.td_flags == YYTD_DATA32)
+ 			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
+ 				     u32, __be32, get_unaligned_be32);
+-		else
+-			goto fail;
++		else {
++			kvfree(table);
++			table = ERR_PTR(-EPROTO);
++			goto out;
++		}
+ 		/* if table was vmalloced make sure the page tables are synced
+ 		 * before it is used, as it goes live to all cpus.
+ 		 */
+ 		if (is_vmalloc_addr(table))
+ 			vm_unmap_aliases();
+-	}
++	} else
++		table = ERR_PTR(-ENOMEM);
+ 
+ out:
+ 	return table;
+-fail:
+-	kvfree(table);
+-	return NULL;
+ }
+ 
+ /**
+@@ -359,8 +360,11 @@ struct aa_dfa *aa_dfa_unpack(void *blob, size_t size, int flags)
+ 
+ 	while (size > 0) {
+ 		table = unpack_table(data, size);
+-		if (!table)
++		if (IS_ERR(table)) {
++			error = PTR_ERR(table);
++			table = NULL;
+ 			goto fail;
++		}
+ 
+ 		switch (table->td_id) {
+ 		case YYTD_ID_ACCEPT:
 -- 
 2.53.0
 
