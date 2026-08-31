@@ -1,59 +1,60 @@
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37543C062F
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 22:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC473C416A
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 22:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788216504; cv=none; b=tRKL4dchX3M/tCcrAOihDU0GtAkkWivRiZmcoqAcanTGXBoRUjfq3Iiilkk4Lo9EpQE09Sme5DawtS2Qt00iZnvYxVWYDEU8GqJ7oC3n4BZ8y/enWwqjKN9renltCaqkZgik+NIczfntd0thg1zfoYLS9FASH55bMLpOFFPQlRA=
+	t=1788216505; cv=none; b=b5MCHO1VEDC6Pa6zgWb43iJ4N7nu6iXxNyxx4lUme66BCjNJCVN3Kqg6Xugi5e+hsQUpJZ5kSkzn6tcTifRkIVwum4/qFhbH7Qh8chq4MA8bu+m4wV+E1ZLOGu70KU/mFSeRvhHM3ryX2+hi0tERcDeRAs+EaBj75sEgnNrdN1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788216504; c=relaxed/simple;
-	bh=XVSjcaZyuUD2SrbqN9FUXg2GXtPt/4t566caTuPgIpQ=;
+	s=arc-20240116; t=1788216505; c=relaxed/simple;
+	bh=l5xZJq7SJIQbEKIdMk/8CyU82z95S13RHM4M5HNEOB0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=El7LHte+pRWWwhlySJDq4/ELUViHSPIlL3H/qGqYujkPhRaOog3QR3OLLND/eYYf5FHzPjY3HflE5pBuGn2ik5LxM061+OPYcojWdY9/aN+yT+Mu/p7ENuFfstF8Fo8B8gh/5y6Y66Oi4MCLbT2QSMo9VCdTzrAzY5FBvdrfFVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=JG9c8kog; arc=none smtp.client-ip=66.163.189.153
+	 MIME-Version; b=fOFNLxLhi+nTTfzYk7UmMlKWlIq5tqswXs9lshF6OdydwMazVR9ZR6lLL1nfFmX8pz1osascGDqZp+XNwOud7qy0fqyV4gd00h5jPbAi7pQCvCK+MME1sDoWpW7IF6mWDKaJJ6ZDm/yMjwoUjwbY/Jqmz5ggdXODereMPZRR3Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=gwKr4gx0; arc=none smtp.client-ip=66.163.186.212
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="JG9c8kog"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788216501; bh=tLRp/oU1oiSOD4+KZUJnxFQDz8wkKZs/J7I1da4eUx0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=JG9c8kogUJT6zz5KKprXcCdcObTNQFdiKyN04nShXKcOIgXnfFjeVLe0JpZCREjPoRwPoqnHnBfugFVvfXqLaCt3dqg7zqDVlqf2K4Kw0tiI5BOak7GsqZiKIUlcNXrov+VKl/mNsx31Krxi5zEIw5y+4pjRSqDnoSZiMwj7NQq2d0kKizw5QMMDzSfTP1U8t3Kl/vkqPHJaKo6O9bYXkXv9aIng+9S5iZ1QOTFXt4zUDPZbwdnZk++akmMmQMLXPalVbuGTwfTiaMAITYgsgNhCxkhZVIEoSYwOM+PkMofbvwv/FRv92a8ewxPfSXnMAmwHuen5XCPnI/CkFDGAxg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788216501; bh=fdHyV9FdtZXJAY2G3IDH+23YiOHc66ZQhTIP+1kl/Iv=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Z7nT1LWOPRXCrgElvG0VhpHfwgfcwX0fNb6O1Om+VwmAzi5H7c4ldt5h5m9jL+P9KOMJbJKoAisbPMsSjGN/mmtdaIiDPAITlyd39B1mBHDlrey6+U8zMHmWT5hUHczgVeT6u4dSiLhECyKBoMmagaRb4BsYf/L5wNsqLoy3INAaawBmI9cTpzr+B/joBqqik2Ptq6p7kG0XYnGjZ3DGyNOL2z8oAJttHgKe9h2ff5Nqcd7bD6bKHqceQvrOp08GViKObp4Ln+Lst3LGzHjgtzqUP+41oJiC21FHT+p290GH9aUFw6C5SzR1UxpnWAKdcYbHFeLDsjvmORpJ3kC54w==
-X-YMail-OSG: r4mSwyAVM1l0GdCNgnHvnP9wSKs0gd0UY9Ts5o6sEt3lJS3fIkPMmzhivF7eCfF
- dPGVSHMoNe3TfbSI2FKmQmNLv0VG5VC2_qnL1wBwuQl_tDgAmahK9xnc3TS9e9v6K5eS6ZCdt28k
- qTgebUj4zdl1zXsvepfLzTiRfqmTqC2vGjMgxxSpD73NMB7A7Avlal4dI0kOm7M9YYYierwaCuja
- 8x0ma9qlpc7W_TxP757pL6uCRBIawnuobVKMALhxcIk968lwAXh9dbmhlngNqyDWF.nm1kSr6obW
- 33TTdrL96mSFz04pWjFId_hPPlChBaL6fsCYzpYhleAZIEv9p91YqOwr_02C.XfqMGn65j_eFOxx
- iW0BIEA56pIQf2KfrqxYUkEfZ.I0cY9utIyTTFzLZoIFD80LKqBCNvusRX946eCMjx_Sg37XYZLH
- Dsts3qRNz2pJi9.Yhe1SYqrBvVdju0KQzdGZ7BIOmUaE8Cx2amy_FFPg17JjyTjbLgALxSgdouHY
- nVNn7ixIgR_26ziepY25k0ZAl2beCrun99TRfymhDEWvrAUJpf28lCXsqvP1ljXXp4Slh4_jQ7fs
- BxkN6l_y8yVmY9mI9bt.K5LPZj4mjFrPw1q0jYDn4Q1zlj74oQqBjNDRffK3TBY75WYH_ZNvBxG2
- vrAJtuR3ivYfDNASdExRhGyNYjc1JOuWZEhxxFrYeJvUjBu3heGAd.jcFVHwtrw_TDy26NkisrHd
- o4bZ07lOzQ6rhF527PFvdyozmIOPiHX.H0C64oLI_kJJbnebcxtyk9jVWf8v9bsN_RFT0GrsW0qQ
- dA57n.ZPV.xPywikhmQt2ok.7gV7G23WzCdD7o2dL2aW_cX6vD27FNwIwpssHfnOQ4et39ekArBx
- EY4PDNqDfdk.ovoMTMxVV1p80dHy25y2N1WmPOVuSxi0IoNOAUhg6LKBkqhe9fUj9tx6FH7ywYDv
- IftnHJQkppioRXywiCBsr6bgwgaToCtKU5KATioeQEkYXPmpOe0.pRzU5EdQpeBHb192TejyUOBO
- 5UJL.dm4hhJi1iaWgFa3nYhLPmaG0jSVfGGKugITVZMgwCR.opmTX.xuk4ChjGvGFQP1Q.03Ulbw
- MRDWd1UQjnZt0rPCnp43EEYJ1daGuQJ1g7z.83p_C3mziqGYsrbTYxxKE6C9UNbFiwpDVpyXp2Fo
- 9nKU7tnuFQaCp1nUG7i868oT8i3ZGir5JeI.EDUz6_5.bxbTT6fqmwAK6nB1gscxACYzrDIyxMdO
- oO9fcO_FrMRhhYXf3zzq2Unn87omu3k3s1BkN_LyIJCS_3ccGtZxJA9Oso4IBza4gPN1j1dFWk1_
- CLxVC48_vQ25cOvzmyLulmh_S8xbaghU_iKT4jPD52yYToqZZVfNR5hkgN20oZYmP.nIc_LkacrH
- F5yMSTgk1w9.51iJ6qPaCXHLT56.8eZ11EWL0S288RIP_avlY8vLyryVTcWl4Jkrw1njAmxRuitN
- vx1nBoNaqBzpeGdncPICmg5U3d5RdEUWrPH.ORD9y9XQ8Zo2hsxbsFWYg8Bwk0gea7JHXju.ij03
- PrlmTZA_IYMtpfNPMs7dddUOJjAkROQUVXdToU1cjR1QOzrmaeyUTPC3ETBQ79y9hw.VZB6ZrHcn
- MHkirXQThjSLtmnKosOI06qxPluqFtVHqRh0JCl5_G5GtAy0oa9stknF63ReSDndqFqNjxFOhAPX
- haqGAI2CF3YmFltNFvfDV9Lin7tqoqeGsAeNoo_IAM9AAUFHbGC6P5ioxUDq7tZbiMIPG4UgQsGj
- PZj6UMXI.edYZWhgBI2aXHt.eg4cnELXmuRZEfxJYlcGs1XCyT.YwegQdp60NA9Hx06ZbFbgg6sB
- d49_lgZJM7PrqwgWP3ZJCE5v3.S5l1FRUo43GTZ9VXzU7v0btm5biUr3OezqKWg8RjId3f25iAxy
- SHdHHvIZvcgJOJXCJDp5Cu1_Rpn8xvnrTYALf9IIhg_RSWG6jBcATaUtrkvl7DQgHAJ50HccPXFq
- 7WIjuhS7j4KsQvNcKOgehaJSvO.mi5XJliuIWA6OtdPTmLBAIc3CLDPvDrSHL4WUWVqpFeRx9wfS
- 0OQN6w0I017IucBKw2bDg0xf7_M9QgXkJ_dLKFRi47UsdJ13wIQVcTnWTBAwvy1Pih06gT7VmgR9
- iZBpiutakD7N2mP_fgj1VRQKjtQ55I53uWttNvAmizON8UZnaApPMZtE2noypWdtDLNPXOe4iFoQ
- D1ZFaTFl_9PEk2iM83ak_uECZRtaBIjcVlC2SRSVXHPQA9Ngc
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gwKr4gx0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788216503; bh=spL1TCRGv1nTSaQv5qslf2f6hMhi+lllz41KcBPUl+Y=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=gwKr4gx0kZUkhiAECAksALYR3v5Gl8hnVQk6ngs1EaQjdHLX8TfAMgklnEesZzo1TJ8DIjex4/U4p6XQIXA7Yd+XZJlsB5OyD6ErXI9IW7lekou9HVkgYeWu8p3oyyKJYqgXFq7cNw6e+ij+p4dzIJo3oe65YEVPb+SG+5YAjYb9kUGD+nG4+wx+H5nFZk1XFCzNsqjWwtTGk5l1AkVZLn11rWRk8oEjcNd/yME82Yp5uLjdYRz9If5y/jLSa1aRMa9qKGsEhxH2NrY/J0gzB7XE+jCB/01f9r0E4vww167vOw/1o4G4gZfANMH69gK8cyLcNShKqvc4Iob2x0cogw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788216503; bh=Z/1fWiYsmMDNeAaVEXeCJ6ld2SoFUtLqEH+tmJKulLC=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Fky0wm30AuY3MCwp3UYzYozajrPE+cSLMyOVwkJ9UI7B+KEp8JBEtKnI/8NJImbKGB0qUyYEzbkUHWu6wR1ws1K1ZXz+XLzyl5/Jy0wcZQBqBMaOXG0JxLnZ6jeGtoxMaJaoHbSzzOpz1HTtwsSH/RQVQt5C9Ym0dOL0ZC8jYyhhvVi5G1WuWspAJZ5Ve8/DCXLENFsanQm+N76+KVs76wSifWCdBwuN0d28Xe6liu92Rjhc70qaB5kH3/MqTphMTwtqhd1pDIB5/KbvDq/1t2gttes6WLDfUq3z15LqDwbuON5r1OdvGGK7WB9y8m+JSYpvntcfMKGn9TAL+KRpGQ==
+X-YMail-OSG: ZSn2pXEVM1mK5oBxIu.zt1Bip6WyTcdPQTr0dYfx9G93Bn8wyhp8eFSTaGVVs6H
+ 9rs1pt7jNa3VQCY3J2yF90yQ4iIoC5VMTiKTVOWq.zn53quPF5UphUH.6GqWSOgZncyfaQRBWK8t
+ V8My55uDt8L4wfY3MdIGcTrj2y_ycR1dNJCB4DT5qosr5ErRUy_YNVvO2NNC2w7h9tBJtgkV7K0V
+ .LXQeWunRYaNM_Rx55G0yoT7etq94BvutBJ.rNzuzpENO2xEN7L0vYvT71IEATL4wMgG_kFE3KxD
+ n6qMGLD.WxWqJtYqb0ufNB2pSwDDoqWZU3oirbutTDv6J5djgNXfrui46mlHtZXDo0FXRf4NLrlF
+ HEIbqRtP1O4GXF9Va_knUxYV0489PRWeOIDOV3e2GEOItUy6q3wI40VhmKePsoDL6bT7Scu4DQot
+ 2mB7lz5us0witW0amWTXf8FMYx1GgbTXqbGfWnBeixyTXymYMOuNQ2szgzU2XigQ6MHfXU4_E3.d
+ caIXD9duEOH2jWIkg4CMyPxeJO6nvBQdJLpAf0KmTfF9PxVu.JLPYYFTgTOYb6_cl4jnmad_GwEX
+ 6jrMS3tPQIIFiKXCA0TiornCKppwtk8UZWi1RjGf_Ay_c4AiDxwfDP9hak7bEZvH1PhIOYqyt_op
+ UcM.yULD.k8HysO6OJIh5SzNJSAHjcF.Rpq8GQOPeuKCb5ALrK4xapjMvpIVlpIDkPiOt4PI2In5
+ Nlxy.HGysfM0BlxWP.eK5JD9W4cpUICGrmWRQe9RxEfILbZc4r3QNH4UuiPRXfCkYwO1UkKRndcY
+ qXDryODbJ5CroPL.Or4kWUP5eTc3JSaou129QkaoviTV.zZI4QMq5fxSxP6ffADnc64VvPlr7vUw
+ hRIFzLpQ5J0DE.PnaGazne1qjiHN3Bs9z7kor6PxZL_oTSW4mdbYKoL.WmfMzyPg7fm5d91EOvD4
+ 64nAKCb1Y6YBI0LRXLrNTSjBP7bp32TzFfRRKr82dVlawr.dV3i5S0iYsims9vtOgt2AmOu5zGbR
+ st1eNTBvO_fq1_8K1w4bRx7VF3xM6OJpT3GzKO3422yHOhsVGXxBuRnUQJe8ocDjWNH6jSATCv8F
+ 5iWya3sAEdeQ0J7liAv3SY8dKBW.W1usmubWTR1K7Ukskv7yJTRjrthMiRHCF4_KRw6BmNKOyebU
+ HlkFyp2zO4QGz7nD.ZH9TVlx0k.FcIhcwlwCpKJ6NVi0Wvh0Ypo2YK7ekKlWkb5DJQKs.A7rM8Xx
+ UnP6FJkO91v5d08eYyXVNfaWTfq.nyojowcsuAofVl0t2mOcZ5ei4sNK80ur5tQ5HE92VRuoIN7T
+ 4vYHda4pUbAd9S62JTHsUHdQMmOFcgxey38BOytttJV3sbsZy6dX.EC06CtNrbSiAxqUQX1Zuy02
+ TYAvIfSRiXTwNm7_9A217.OQTMbLf1kzGHqxX_LmSOp6I6RD.gkY44XKGqzwGo5UK3evSx0BIBVu
+ mz16MjXSnloJ1kx9tkkJobxBTKN6AHf9v9UzRxNkye2PZiFeisQWQGWEFDJxk0ckqyfmIqcytXKy
+ qAudyqSIYoZcGucGaoOmLK6fdS4d7AB4NsriqbNaCN4umEHZ33YYxyiQN5cF.u09oN6loG6sXV0X
+ ghVAZUl1x2vdUYg2KaRpTVJsU1uNz03yUBuqC709qOjHJaYl_kxr.dzSLzH785xC8nSLF1pFcKzY
+ V9XWWZTHeX0JYusu.rHgRPM0QO4EM.KiZomI3lKUsmvNp2uwx_7dLKrKwCHas2GMVugQyhSAed6E
+ HmNwQ5tr5xFMYjhKX.GmKbJ2UEkHRwuRh0PDsTV.Wi97swrCp9FXnN4hPz4O3nKYTECF28qN86e_
+ aDp.2p8.JBpjDkepv8OEim4p.f4_nAhJFzbspbong7MaM4.NQ6yU.AZO_n4J4aGGsKqsCcb6LUxg
+ .eJ12HElu.a9vHNQ3nqDorwExJwedXNsVoincJI.iZ3LwYiyredTRBg4DzOksAFFlEIMM.t.M58x
+ zw0g_8Qhhh4o6uVDeECcdti_XhmXf0Tx9MtT51.HEZjP80YaAwM_Fr8QJY4FN57UIaP0u2m6Oygi
+ 2iazhxrhxO83xRdslfqJU2MAErmfKdF742iF1QbAGSEXHXdm_4hzvaun91co1kRan_22iIKeo13t
+ ppSyU_PjmpA76Db5I2FoEwn27lfpyy8ygacD2YCx6NONJfZwRonQKZNZ4bOQueWMDCBOcAR0ro1H
+ EA32GCTYwfH63kXc0By5E6uDBUYs1n9pJ2QHSGZX1VBcFW.zS8nWKm0sG61EggB0iOxp2tPvaz5y
+ odARCPRimoiSaO3raC.VVF9_y7Q--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 951b3f9a-4cc0-47df-9489-96d6215cd7ea
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 31 Aug 2026 22:48:21 +0000
+X-Sonic-ID: a3b693a1-d47f-4dc6-8929-4fb8f8ae304c
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Mon, 31 Aug 2026 22:48:23 +0000
 Received: by hermes--production-gq1-678d9dd684-vr75x (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9afda7e456c775b6473ef75f34d3e2be;
-          Mon, 31 Aug 2026 22:38:04 +0000 (UTC)
+          Mon, 31 Aug 2026 22:38:06 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -71,9 +72,9 @@ Cc: linux-kernel@vger.kernel.org,
 	penguin-kernel@i-love.sakura.ne.jp,
 	stephen.smalley.work@gmail.com,
 	selinux@vger.kernel.org
-Subject: [PATCH 3/7] LSM: Two hooks for manipulating struct lsm_prop
-Date: Mon, 31 Aug 2026 15:37:44 -0700
-Message-ID: <20260831223748.4304-4-casey@schaufler-ca.com>
+Subject: [PATCH 5/7] Smack: hooks for secctx_to_lsmprop and update_lsmprop
+Date: Mon, 31 Aug 2026 15:37:46 -0700
+Message-ID: <20260831223748.4304-6-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260831223748.4304-1-casey@schaufler-ca.com>
 References: <20260831223748.4304-1-casey@schaufler-ca.com>
@@ -85,129 +86,64 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-security_update_lsmprop() updates the property of the
-specified LSM in the @dest structure with that in the @src.
-
-security_secctx_to_lsmprop() sets the @prop field associated
-with the LSM specified to the value of the passed security
-context.
-
-LSM specific implementations of these hooks to follow.
+Implement these hooks.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hook_defs.h |  4 ++++
- include/linux/security.h      | 16 ++++++++++++++++
- security/security.c           | 32 ++++++++++++++++++++++++++++++++
- 3 files changed, 52 insertions(+)
+ security/smack/smack_lsm.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 65c9609ec207..679c40a8e127 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -305,7 +305,11 @@ LSM_HOOK(int, 0, ismaclabel, const char *name)
- LSM_HOOK(int, -EOPNOTSUPP, secid_to_secctx, u32 secid, struct lsm_context *cp)
- LSM_HOOK(int, -EOPNOTSUPP, lsmprop_to_secctx, struct lsm_prop *prop,
- 	 struct lsm_context *cp)
-+LSM_HOOK(void, LSM_RET_VOID, update_lsmprop, struct lsm_prop *dest,
-+	 struct lsm_prop *src, int lsmid)
- LSM_HOOK(int, 0, secctx_to_secid, const char *secdata, u32 seclen, u32 *secid)
-+LSM_HOOK(int, -EINVAL, secctx_to_lsmprop, const char *secdata, u32 seclen,
-+	 struct lsm_prop *prop)
- LSM_HOOK(void, LSM_RET_VOID, release_secctx, struct lsm_context *cp)
- LSM_HOOK(void, LSM_RET_VOID, inode_invalidate_secctx, struct inode *inode)
- LSM_HOOK(int, 0, inode_notifysecctx, struct inode *inode, void *ctx, u32 ctxlen)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 153e9043058f..19adc19eb9af 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -576,6 +576,11 @@ int security_secid_to_secctx(u32 secid, struct lsm_context *cp);
- int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
- 			       int lsmid);
- int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
-+int security_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+			       struct lsm_prop *prop, int lsmid);
-+
-+void security_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
-+			     int lsmid);
- void security_release_secctx(struct lsm_context *cp);
- void security_inode_invalidate_secctx(struct inode *inode);
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
-@@ -1581,6 +1586,11 @@ static inline int security_lsmprop_to_secctx(struct lsm_prop *prop,
- 	return -EOPNOTSUPP;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index ff115068c5c0..fcfadd5d9994 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4909,6 +4909,37 @@ static int smack_lsmprop_to_secctx(struct lsm_prop *prop,
+ 	return smack_to_secctx(prop->smack.skp, cp);
  }
- 
-+static inline void security_update_lsmprop(struct lsm_prop *dest,
-+					   struct lsm_prop *src, int lsmid)
-+{
-+}
-+
- static inline int security_secctx_to_secid(const char *secdata,
- 					   u32 seclen,
- 					   u32 *secid)
-@@ -1588,6 +1598,12 @@ static inline int security_secctx_to_secid(const char *secdata,
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int security_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+					     struct lsm_prop *prop, int lsmid)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline void security_release_secctx(struct lsm_context *cp)
- {
- }
-diff --git a/security/security.c b/security/security.c
-index 71aea8fdf014..1dec0037370b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3965,6 +3965,13 @@ int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
- }
- EXPORT_SYMBOL(security_lsmprop_to_secctx);
- 
-+void security_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
-+			     int lsmid)
-+{
-+	call_void_hook(update_lsmprop, dest, src, lsmid);
-+}
-+EXPORT_SYMBOL(security_update_lsmprop);
-+
- /**
-  * security_secctx_to_secid() - Convert a secctx to a secid
-  * @secdata: secctx
-@@ -3982,6 +3989,31 @@ int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- }
- EXPORT_SYMBOL(security_secctx_to_secid);
  
 +/**
-+ * security_secctx_to_lsmprop() - Convert a secctx to a lsmprop
-+ * @secdata: secctx
-+ * @seclen: length of secctx
-+ * @prop: prop
-+ * @lsmid: which LSM the context is appropriate to.
++ * smack_secctx_to_lsmprop - add the smack label to an lsmprop
++ * @secdata: smack label
++ * @seclen: how long label is
++ * @prop: where to put the result
 + *
-+ * Convert security context to an lsmprop.
-+ *
-+ * Return: Returns 0 on success, error on failure.
++ * Exists for audit and networking code.
 + */
-+int security_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+			       struct lsm_prop *prop, int lsmid)
++static int smack_secctx_to_lsmprop(const char *secdata, u32 seclen,
++				   struct lsm_prop *prop)
 +{
-+	struct lsm_static_call *scall;
++	prop->smack.skp = smk_find_entry(secdata);
 +
-+	lsm_for_each_hook(scall, secctx_to_lsmprop) {
-+		if (lsmid != LSM_ID_UNDEF && lsmid != scall->hl->lsmid->id)
-+			continue;
-+		return scall->hl->hook.secctx_to_lsmprop(secdata, seclen, prop);
-+	}
-+	return LSM_RET_DEFAULT(secctx_to_lsmprop);
++	return 0;
 +}
-+EXPORT_SYMBOL(security_secctx_to_lsmprop);
++
++/**
++ * smack_update_lsmprop - set the smack label in an lsmprop
++ * @dest: destination properties
++ * @src: source properties
++ * @lsmid: which LSM is relevant.
++ *
++ * Set the Smack entry in the @dest if appropriate.
++ */
++static void smack_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
++				 int lsmid)
++{
++	if (lsmid == LSM_ID_SMACK || lsmid == LSM_ID_UNDEF)
++		dest->smack.skp = src->smack.skp;
++}
 +
  /**
-  * security_release_secctx() - Free a secctx buffer
-  * @cp: the security context
+  * smack_secctx_to_secid - return the secid for a smack label
+  * @secdata: smack label
+@@ -5269,6 +5300,8 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(secid_to_secctx, smack_secid_to_secctx),
+ 	LSM_HOOK_INIT(lsmprop_to_secctx, smack_lsmprop_to_secctx),
+ 	LSM_HOOK_INIT(secctx_to_secid, smack_secctx_to_secid),
++	LSM_HOOK_INIT(secctx_to_lsmprop, smack_secctx_to_lsmprop),
++	LSM_HOOK_INIT(update_lsmprop, smack_update_lsmprop),
+ 	LSM_HOOK_INIT(inode_notifysecctx, smack_inode_notifysecctx),
+ 	LSM_HOOK_INIT(inode_setsecctx, smack_inode_setsecctx),
+ 	LSM_HOOK_INIT(inode_getsecctx, smack_inode_getsecctx),
 -- 
 2.54.0
 
