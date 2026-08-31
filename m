@@ -1,64 +1,64 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252464F475F
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 15:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DDE4FB9B7
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 15:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788188405; cv=none; b=ogl4e2pHqj3/QN7Wc1GFmeQ9j4TNgwmD3/w52J+uptEJbwVf3vw8QWEdcIbPk58Oo+40LlIzOaGgj4akBhMFCY1MGTrbGzFISFS3MpkZjtPzT1N2fCEhU4YJNJ79J15LgrCgspchZOn9i5z763fgH+kP9lQKAJJzkgM2uCiqdxw=
+	t=1788188412; cv=none; b=onQu0GAb290a7wW8iDuNCvZBcFw5u1g1dcSI1wkKwF1YYOp14S8h3rtGYP1tDDg+8WjU+6PPprvo7V+5r047InQ1NAVebTZm2WWgMXOvypA96bmAqj/hSAC4NXCU0dqdJfWFxQKx3js6+XtZDcudqIbHP51mHVeWFnxu0uIfx1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788188405; c=relaxed/simple;
-	bh=b13IPf/84INpWuDI29q/RKRtrh98z2Lf1mSfFGTrgeM=;
+	s=arc-20240116; t=1788188412; c=relaxed/simple;
+	bh=ZSuaHxdeSmdK1XVdgW9I78FY4WiLUsxPZgAk1jSE970=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VcwHf3rin9cTgQis1ib1gyjMSOD3HNekOQHali0yI1hYGaC3GINlIsXNeuZdYYWF+P/lgvernoehyU5XBpBJBsedEeoQLc4SaIMI3gbNFw3FVrNSbnOSnQg3M76NG4isMSTpC72hTLrDZUeAehgEEGgtfFd9Kr/j8Y8Jm+4b/bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZbge3x0; arc=none smtp.client-ip=209.85.128.169
+	 MIME-Version; b=WjQ4A9azTZ7x4a/pIfmzHRwJ5SU9nQr9XAWWF3zyqkMl9VQg/vomwZ0wwNVM2ifApNToFZiXpvJBJVvV67nH9fGpxu52zIqvLfNxczrzdID3rJgGczCHO0lpf1UPf8ZsL40fAw99eETK+DGh5NVuHgD94Xq7ds4ZMD8hto0fEnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2/Vm0nU; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZbge3x0"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-836c4474028so44740267b3.0
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 08:00:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2/Vm0nU"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-81f36179d72so40915147b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 08:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788188403; x=1788793203; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788188409; x=1788793209; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=rCFWN9c5DyvZlo6DEGKf40uISp6POIHTrkimV4mL3IQ=;
-        b=kZbge3x06aKFzXNvf6cyjoA7yBvs5Ly+cX1WlfmDUoSnwqQih1TnNj2pK1iRia+5wb
-         lpUl6uE5rzbRx4elvQdOtyUEerK2r9vxqATKZs9flWkMvmC+qATzcrIZtsx4Jyw1Fzx1
-         zSxDQfo3FRwq9HCH5tgP3KdEXN2s8opCR8CsdY4PxE2GUYQbrQDPH271O9EBtuT0xk8C
-         H+v95cOXvlRk0zUrAZy7RY+IjGRqcddqiSgdsAiKs8ykI8P6VsFqWA1ew9em/Zi+yy9v
-         Z4039trmXpZocgF+eJtBnNQH+RMVI+Asn/VuBcbyjXi7ohefY91/w6SduZvFGRHFa7kb
-         VzUQ==
+        bh=xKtb+s5mvwWHR2Dm56oQU87T2PX0PUH0OEkGW4x95GI=;
+        b=Y2/Vm0nUmzXzhAQjDw/2Y5pc/FwY5dIj308vVT12yAbmD6fVCV68CiTqI/nRoKK+to
+         fhf7XtN5CWyG/ydMSnekty57XGpqqI8mDNg+OMiJarRYCjocUGVwFypCNmj96Q3PZjuf
+         mPZ7yqpuqyPWnTfzje3Q2SjPE3qM0Mbq+wT8XfEXr4d3mnVWgt9UIlcyOQcJgrD9yWpu
+         1LbqAdnvzdIWd5x7BiesnOp/b6SWJWrEbLMaHLryZ7VczXWEIRBpfcWd0fDWNCaDRfjx
+         1SvaajZ5iaOmCXDr+DHbtTpm3RQxW7pY7QMMMeAuWMGdHbavFNsE+hAugDlJ0apH2uQB
+         Vs/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788188403; x=1788793203;
+        d=1e100.net; s=20251104; t=1788188409; x=1788793209;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=rCFWN9c5DyvZlo6DEGKf40uISp6POIHTrkimV4mL3IQ=;
-        b=E5DTe8G8sUKnPemGYVtrg3RtKXCQari9IL82BrxIcV5BEl9EIakN2Cb/5eew9qwWLm
-         xUc3KxNVffIf9rVIKHl23z6IaNwWhvZpnkqCPs5a9pG8WAcqK80Wo9vfeNO09V30czVv
-         X7gUgLKtfPDWC9DDIhmQUnIykMBwzVhmwzCluVGp/feNIurXdfteOrC5UKHOzgcl3q+L
-         ZnG3icpEy3otvhKA64vPmy2V8V191cgaQjJFfuneuFaBiFMsuzswdFmaboHx5naJ1l4+
-         DocXwx1ZmUfX/ecObNYUtIqtP8GIJb69V5P+nc2/cqm2ifXTHIcapx0i7YWu4y3qC5Ak
-         FyCw==
-X-Forwarded-Encrypted: i=1; AKwUvBx8xrdNsVvKVyv8arKL8T6LBAFowNvz+TaRZ9CeJ5nXWp3PVhTqMxIsgabpudxbR2wi9fi4CejeKR0dykttI7VHFz8K9o4=@vger.kernel.org
-X-Gm-Message-State: AFuF++mGx5BwHy7zHnWif5Xq2u+/sg33cN0HWvFgMQBo2ihAvXU2Z1Fl
-	WBFW8lJ/KmMz+Ug3lTvm6+ZoDgArogNfWbPdBbIQGuIaU3vaIW9sXMIF
-X-Gm-Gg: AYBFou3qOp+Aksv6hcGuopA1ZBswXJEcpUz+gT9qDUqRzHHUTJ6TatxPVK5q3f4KRes
-	0S9U37ilSgyWP8ZWXfUYXO20g2HCbOcgchSK01NPWM86N4w6Z+x6Btzj01T2w9g1iv6cNJADKKv
-	zWpfWr08LkZtykcRPfqHN6BwqbtyEOII73YuEjXgRKll0emY8rOs6Fz5vfcb7Z/L9qiupZ2540p
-	k6jNHEPt+GAr4H0Gw6Ka0Cgy020bkjszubQU2KTvENLYwRiP6nShUTEiVkxJbdnYjk+gfMxBRFm
-	hdCGabeyyX36lhANDHzmyjWFVUgv+a8LRC11qaXFwZIYogYrbkgAzbBQCigEBdTyhRJC4IxlAHd
-	k4qB0IiYRNg1v99je+Z3pUjr56HkMlCXqEqUAU+1wZGw6bYMWa3hOka+jQoWbuUQSHR0WWHzKbk
-	yrmZRtgU2rJ/6jSYNBb98z7f6UfKSgCIPqUDFdIuo5Rsy8ploKIm2dUY4CrF4x/KK5L6I+KY7Jr
-	RPnxinnt8vczO1LqQbvKqE=
-X-Received: by 2002:a05:690c:93:b0:862:65f4:c8bb with SMTP id 00721157ae682-86265f4cb64mr46763897b3.3.1788188402897;
-        Mon, 31 Aug 2026 08:00:02 -0700 (PDT)
+        bh=xKtb+s5mvwWHR2Dm56oQU87T2PX0PUH0OEkGW4x95GI=;
+        b=f6cTua3XcZxihCmrf/sGYrcNWPNXDI33OGWsQnfqwX65Mxu0ZaOVED3sgXTJEtFted
+         4zbI8izgcFclASALtvTFd7oZYTLISL6bQn9P1q3W9MVPXVTlZHIP3zUrpi2HUH2kxOwl
+         W7lpKXvlJmtv5RZjKvvjWLCzunq1XOIhgpcOPanS4fp3lBMAz4LYvebA7eWrHgyDS928
+         pC36yxFSSlq7I6RtfKe8wkKxXjrR+FmwMHAa+Ui26PHCmDfP9r3+3+jgPbRpQvutaLc/
+         C/yAJalNbs7YpWUJ1XOnxeWdUO3ZoB06ntS/bRvcEz31Z8MucMlyfEiyxoYDxjpA3H9a
+         8V9Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwZsafu3SXD5/YyP2EA/3IgzQml/fXivaltZU8uSQzj9dC0x664ifBLiDzWpIMTUqetIFHyvsPGVTscB4YHVtTifINadxQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++mR1QfedcmM8J6ncvVszCoG5uzRW6ZGCQWklGiWRddaGF5gOM4E
+	bjkjwdMk4uaTiPHhrC8uf9cm8BCIa5XjZfCqJnXRf/d7meS/FRKbXesM
+X-Gm-Gg: AYBFou3u93XU47pgKnyPuG66rD9r1lq/H0whGVa9574BgTk08h6dcaQ5hRfHXluqRFK
+	VX84mpZoZI54n7i1N91D56IWapUfzl6RtJnTPvV82rbomfLG8xRTf5wTArsEMbibu7lKu6XLQ0d
+	yrfmMDftZP8ylKLAmxeS0326ap6GBxMpanOfjwp0PpmQaeRsz+aTf2fWF8Zb1Yjs2yiaqX0JsAh
+	jFIjnuCc1D9D9hX9Sdb+NSX7vWACtbWfoEs/uJLsEe1Dj53LUOabWxKW+j6l3MIJVxodgzpBKEb
+	cuDVZvbgVHhuy/xYFsvAZHof5kPbI/GuKAPqAUV8qsH8LDAH5pijO+LBgfg7p3fM2QB/JKJcVdh
+	LX504i+LtVV760oD146ffWdOFODSc7p+oGRBxNXioO/fFzaaCrFfhNOA5svl5wT69dAEX7RONin
+	LHAK8CjrC1FcjTEyR59zjAFUPF0uCfFJguEIPDcRQnBqp8PFycQfxS0fTprDSBI3kYTN1U0VNl0
+	hhqo17RECtOZGDvnSX8w0g=
+X-Received: by 2002:a05:690c:c6c5:b0:85c:79d2:91a4 with SMTP id 00721157ae682-85d6b275eacmr80105927b3.17.1788188408827;
+        Mon, 31 Aug 2026 08:00:08 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:f6fc:b424:b1bb:6ff0])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.08.00.01
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.08.00.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 08:00:02 -0700 (PDT)
+        Mon, 31 Aug 2026 08:00:08 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -79,9 +79,9 @@ Cc: gnoack@google.com,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v2 05/15] lsm: Add the bpf_lsm_policy_from_fd kfunc
-Date: Mon, 31 Aug 2026 10:58:47 -0400
-Message-ID: <20260831145858.3869191-6-utilityemal77@gmail.com>
+Subject: [PATCH v2 06/15] lsm: Add the bpf_lsm_policy_acquire kfunc
+Date: Mon, 31 Aug 2026 10:58:48 -0400
+Message-ID: <20260831145858.3869191-7-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260831145858.3869191-1-utilityemal77@gmail.com>
 References: <20260831145858.3869191-1-utilityemal77@gmail.com>
@@ -93,75 +93,88 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the kfunc translating a file descriptor into a referenced policy
-object:
+Add the kfunc acquiring a reference on a policy object the program
+does not own:
 
-  bpf_lsm_policy_from_fd(fd, flags)
-      KF_ACQUIRE|KF_RET_NULL|KF_SLEEPABLE
+  bpf_lsm_policy_acquire(object)        KF_ACQUIRE|KF_RCU|KF_RET_NULL
 
-No argument names an LSM: a policy object fd refers to a file set up
-through the owning LSM's own userspace interface so the fd itself
-identifies the LSM asked to translate it.  The kfunc offers the fd to
-every policy_object_from_fd implementation in turn until one claims it.
-
-Following the convention of the lsm_*(2) syscalls, @flags belongs to
-the framework and is reserved: the kfunc returns NULL for @flags != 0.
-
-A policy object fd is only meaningful in the fd table of the process
-that set the object up, while an LSM program runs in the context of
-the task it mediates, so the filter makes this kfunc exclusive to
-syscall programs (BPF_PROG_TYPE_SYSCALL), which run in the context of
-the task invoking them.  The acquired object may be released with
+bpf_kptr_xchg() is the only way to take an owned pointer out of a map
+kptr field, and it empties the slot: concurrent executions of an
+enforcement program would race for the one stored reference.  Modeled
+after bpf_task_acquire(), this kfunc removes the exclusivity: a
+program loads the kptr field with a plain read under
+bpf_rcu_read_lock(), acquires its own reference through the
+policy_object_get hook, and leaves the map slot untouched.  The
+acquired reference survives bpf_rcu_read_unlock(), carrying over to a
+sleepable bpf_lsm_policy_apply_bprm() call, and is released with
 bpf_lsm_policy_release().
+
+Adding struct lsm_policy_object to the verifier's rcu_protected_types
+set makes the plain load yield an RCU-protected pointer instead of an
+untrusted one.  This is where the policy object contract's RCU
+requirements become load-bearing: the kfunc and the get hook examine
+the object concurrently with a possible last put, which is safe
+because implementations free only after an RCU grace period and
+acquire with inc-not-zero semantics.  A failed get makes the kfunc
+return NULL, per KF_RET_NULL.
+
+The kfunc does not sleep and is meaningful wherever a policy object
+pointer can be loaded, so the filter adds no per-kfunc rule.
 
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: KP Singh <kpsingh@kernel.org>
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- security/bpf_lsm_kfuncs.c | 53 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 51 insertions(+), 2 deletions(-)
+ kernel/bpf/verifier.c     |  3 +++
+ security/bpf_lsm_kfuncs.c | 34 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 1 deletion(-)
 
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 7aa47342dc65..ba9972c572e1 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -4394,6 +4394,9 @@ BTF_ID(struct, task_struct)
+ #ifdef CONFIG_CRYPTO
+ BTF_ID(struct, bpf_crypto_ctx)
+ #endif
++#ifdef CONFIG_BPF_LSM
++BTF_ID(struct, lsm_policy_object)
++#endif
+ BTF_SET_END(rcu_protected_types)
+ 
+ static bool rcu_protected_object(const struct btf *btf, u32 btf_id)
 diff --git a/security/bpf_lsm_kfuncs.c b/security/bpf_lsm_kfuncs.c
-index e1190215d477..988dcd6f4dd9 100644
+index 988dcd6f4dd9..43a4bf57fd31 100644
 --- a/security/bpf_lsm_kfuncs.c
 +++ b/security/bpf_lsm_kfuncs.c
-@@ -14,11 +14,50 @@
+@@ -14,6 +14,36 @@
  
  __bpf_kfunc_start_defs();
  
 +/**
-+ * bpf_lsm_policy_from_fd - Get an LSM policy object from a fd
-+ * @fd: file descriptor referring to a policy object, resolved in the
-+ *      file descriptor table of the task running the program
-+ * @flags: reserved for future use, must be 0
++ * bpf_lsm_policy_acquire - Acquire a reference on a shared policy object
++ * @object: RCU-protected pointer to a policy object, e.g. loaded from
++ *          a map kptr field under bpf_rcu_read_lock()
 + *
-+ * Translate @fd, as set up through the owning LSM's own userspace
-+ * interface, into a referenced policy object.  The fd identifies the
-+ * LSM asked to translate it: each LSM recognizes its own fds and
-+ * declines every other.  Only syscall programs may call this kfunc:
-+ * they run in the context of the task invoking them, where the fd is
-+ * meaningful.  The reference must be released with
++ * Acquire a reference of its own on a policy object the program does
++ * not own, so that any number of concurrent program executions can
++ * use the object shared through one map kptr field, without emptying
++ * it as bpf_kptr_xchg() would.  The returned reference stays valid
++ * after bpf_rcu_read_unlock() and must be released with
 + * bpf_lsm_policy_release().
 + *
-+ * Return: A referenced policy object, or NULL if @flags is not 0, if
-+ * no enabled LSM recognizes @fd as one of its policy objects, or if
-+ * the recognizing LSM fails to translate it.
++ * Return: A referenced policy object, or NULL if the object's
++ * reference count concurrently dropped to zero.
 + */
-+__bpf_kfunc struct lsm_policy_object *bpf_lsm_policy_from_fd(int fd, u32 flags)
++__bpf_kfunc struct lsm_policy_object *
++bpf_lsm_policy_acquire(struct lsm_policy_object *object)
 +{
 +	struct lsm_static_call *scall;
-+	struct lsm_policy_object *object;
-+	int err;
 +
-+	if (flags)
-+		return NULL;
-+
-+	lsm_for_each_hook(scall, policy_object_from_fd) {
-+		err = scall->hl->hook.policy_object_from_fd(fd, &object);
-+		if (err == -EOPNOTSUPP)
-+			/* Not this LSM's fd: let another claim it. */
++	lsm_for_each_hook(scall, policy_object_get) {
++		if (scall->hl->lsmid->id != object->lsmid)
 +			continue;
-+		if (err)
++		if (scall->hl->hook.policy_object_get(object))
 +			return NULL;
 +		return object;
 +	}
@@ -169,51 +182,26 @@ index e1190215d477..988dcd6f4dd9 100644
 +}
 +
  /**
+  * bpf_lsm_policy_from_fd - Get an LSM policy object from a fd
+  * @fd: file descriptor referring to a policy object, resolved in the
+@@ -57,7 +87,8 @@ __bpf_kfunc struct lsm_policy_object *bpf_lsm_policy_from_fd(int fd, u32 flags)
   * bpf_lsm_policy_release - Release a policy object reference
   * @object: policy object to release
   *
-- * Release an acquired reference on a policy object.
-+ * Release a reference acquired with bpf_lsm_policy_from_fd().
+- * Release a reference acquired with bpf_lsm_policy_from_fd().
++ * Release a reference acquired with bpf_lsm_policy_from_fd() or
++ * bpf_lsm_policy_acquire().
   */
  __bpf_kfunc void bpf_lsm_policy_release(struct lsm_policy_object *object)
  {
-@@ -44,6 +83,8 @@ CFI_NOSEAL(bpf_lsm_policy_release_dtor);
+@@ -83,6 +114,7 @@ CFI_NOSEAL(bpf_lsm_policy_release_dtor);
  __bpf_kfunc_end_defs();
  
  BTF_KFUNCS_START(bpf_lsm_policy_kfunc_ids)
-+BTF_ID_FLAGS(func, bpf_lsm_policy_from_fd,
-+	     KF_ACQUIRE | KF_RET_NULL | KF_SLEEPABLE)
++BTF_ID_FLAGS(func, bpf_lsm_policy_acquire, KF_ACQUIRE | KF_RCU | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_lsm_policy_from_fd,
+ 	     KF_ACQUIRE | KF_RET_NULL | KF_SLEEPABLE)
  BTF_ID_FLAGS(func, bpf_lsm_policy_release, KF_RELEASE)
- BTF_KFUNCS_END(bpf_lsm_policy_kfunc_ids)
- 
-@@ -51,10 +92,14 @@ BTF_ID_LIST(bpf_lsm_policy_dtor_ids)
- BTF_ID(struct, lsm_policy_object)
- BTF_ID(func, bpf_lsm_policy_release_dtor)
- 
-+BTF_ID_LIST_SINGLE(bpf_lsm_policy_from_fd_ids, func, bpf_lsm_policy_from_fd)
-+
- /*
-  * BPF_PROG_TYPE_LSM and BPF_PROG_TYPE_SYSCALL share their kfunc
-  * lookup buckets with other program types, so restricting the policy
-- * kfuncs requires a filter.
-+ * kfuncs requires a filter.  A policy object fd is only meaningful in
-+ * the fd table of the task that set the object up: the fd kfunc is
-+ * exclusive to syscall programs, which run in that task's context.
-  */
- static int bpf_lsm_policy_kfunc_filter(const struct bpf_prog *prog,
- 				       u32 kfunc_id)
-@@ -64,7 +109,11 @@ static int bpf_lsm_policy_kfunc_filter(const struct bpf_prog *prog,
- 
- 	switch (prog->type) {
- 	case BPF_PROG_TYPE_SYSCALL:
-+		return 0;
- 	case BPF_PROG_TYPE_LSM:
-+		if (kfunc_id == bpf_lsm_policy_from_fd_ids[0])
-+			return -EACCES;
-+
- 		return 0;
- 	default:
- 		return -EACCES;
 -- 
 2.55.0
 
