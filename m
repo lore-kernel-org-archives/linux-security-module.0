@@ -1,179 +1,96 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7B3503BED
-	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 15:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EB3411A0A
+	for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 17:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788188460; cv=none; b=sUCaxofIBvINvySwyf+AtdBR5spEi1RH0g+CxDRSsVQNes7RoV/SK4La8mIRhs1K95RMXV3gtx4yC0kaslKGAqoqxm+uCQCbDmBDB14Ofpyd5BJ6Jwmqp7gn21XwEWgo5CT5PIj/6pmhG5UUHp6w8Ur8bDviHDxD8IVJutYToyQ=
+	t=1788196680; cv=none; b=RHZQXzKa5rp8nALfPLxmH2KAaNBJCDywC+UbaaiqzdWnaRKPnKMUrcPAzcHLfgHTcKYBzAmcCyk2EFQtvVuZhA+EoBvlfDQ4C61+u05I4cm9IG2/W01rvuxRm+84khuy4NzJujYJPSqDKNUdmk9T/gTBlMd5gDcZG000gtq9o0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788188460; c=relaxed/simple;
-	bh=WptSfOqEMNBmGXPbTwBGhZeeMOjidJMhs+vE6dbvvzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tbg21CtLLpU419jrGM+HpnjrhGOH6sv/yLLgydR2ZE4fPrt0CDBYFOErd16CrWdb9yxhoLWpjMDzSR8p9RdgVVCQmjb6TF85SiDYPmzTIITpYorgcmFpo8auLt+bBN/gW1gUBeezGNaP73U64+QSHJA3UxOKyR7/Jev2Jsx55lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qdR5VD8i; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788196680; c=relaxed/simple;
+	bh=FTwFSgGp7B0oMcAD4FjqadY/I7FONTHuVvMlJ2D8huw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iEnLQIX/sjbx+C6ZsY1vYPY+ZjNaa4YjzPJn+T7a/SkeN/WEKj23zyaraUGynYy6r5HlhowgioOipyD4Igx5oZc4yX92Hon5bF95xdwcK21Quz1phdD8EgDgiBhb6Fj/BhD0etoKRwLuxfTnWnmMZQO2WB9oEti8hFZpL0UL86s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=arlCgvwv; arc=none smtp.client-ip=66.163.190.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qdR5VD8i"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-865bdc6ed72so15699147b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 31 Aug 2026 08:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788188458; x=1788793258; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=P+ivS8VeeEbj61xzPS0u7NgZI1YqhiDthhnP+E6PAls=;
-        b=qdR5VD8iNcuRx462EBfWJeyu9x0tUaxVsaqQz2xAiVhTvDSQIpM7/pmzrnUU8neMFL
-         YB4HR3mtnwD/I2GaMDdu6y3tnVwTlP5RgSdsFD5iwnxYHWjz8eZU8XgaMso3ZYlvA4kj
-         FsfD014PI8/5djnkc/5jobgKsGtbpz1YZkaQ7PnoqsvguMfecefjNBBZzjC7UxNILmLe
-         w+n8IkIHZRmk24UTzXLjBWIXTedT+fdu6JJc6xBbgZyKLDPTnXTP9HuH/x4ERS8jPVHW
-         54o/elhfn4l10v0XQv2/TeCrht1jl8WG69jGmgsRqqXXU+yyZniYa3w8OzmgChTiDDoE
-         JY1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788188458; x=1788793258;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=P+ivS8VeeEbj61xzPS0u7NgZI1YqhiDthhnP+E6PAls=;
-        b=mvVH9LQF1TqKUIwnOPItS6iK3R1LTMCx5ej7M2+QdHb4ZAVhMASVG7VXbqoNJmfRl/
-         XZ6u6R4Du5lir6jIrCt0SUfUHthU+VKbjbNYH2JKYJ7bWEqnIr4uFHbFsrF6cRiGft0W
-         WGzQiYontMw1a2bKVwQKYz7gvaHeXWpyrYwxa2L9FQyhYy3FYapovp5BnrIjSbxIf4lm
-         e1H7GVVj5li3VvhX05BJQ1QX3z8H7y1mH3DljoVV1UIghmuKqlP6e2x7/im7s72wFfC7
-         9zRI1CjipA6HghysgESAr1daPTgN63KF4VEbLaAVrDOdUTp8qXv1zFnM+4QuJPEr2vAZ
-         6xHw==
-X-Forwarded-Encrypted: i=1; AKwUvBwDZvq7HM4MbMDj952wnkc5FnXwQ9bpjcvwfYqkU1ah+2EnYLNGuAjdrKPSl+sF/61LU8J3fx2A43ZPghh1h2tyCxT9QoU=@vger.kernel.org
-X-Gm-Message-State: AFuF++kcvL3iBZNIq1Hz00m3VS2ETXfLH2cNNoRIPA5IgIele7d1+suM
-	fl3ltJQaz25xTf6tzjME8tyWGJqZKksYgIFSnyZVD2wNL7pll1EMpg8P
-X-Gm-Gg: AYBFou17rFBJXMwgQtKL/9+S1kKGL7SmKRz7G2ngcqxu//RNS5RTj2CuEMEitXPceE3
-	ggSFfb0IkUCeML3hBhGes24lHPC4E9kZJMIekNT5K1WE1RNksfp6DZNHsDt9jEhrKYNMck1/E8r
-	knVnhPNU+cMCK02IaIoSMRaNPdBTxuhqa+vdLVHVTH3RL+QNNdA92ZUypujKkKuPpK3JAzNipzm
-	d8yZCHPaC6+Sr3Sj+0F8wPOnRJ6uy5QlC+2USGAptWmqCBBGICHHG+oxV4SDgwlYgG+NF6M/2H8
-	5qnZoC8h8r9V3Iyd7/gEpqZBqkitJTPD6HvVxkF0xGjOyhxshRiScQ2E5JdY4WZrik/hjhrUo1x
-	FHh7zYQ2KB55jZnrvWj+XmSn3mZeEQnnnqndXCWMmameI9aVtrLMDCsJwnlhmdfNO0bIZ9okPiH
-	e5fjMlIrh6EmAnoF87ukvtM0nO8xqgc54ou3FEsPwc7xOLFftS9ZmriQxOcp54hand9lTnFhiiJ
-	OtNc06ZJgrg2EP4QAvMvm4=
-X-Received: by 2002:a05:690c:47c5:b0:81d:edf2:dad8 with SMTP id 00721157ae682-868726e607emr7223467b3.22.1788188457650;
-        Mon, 31 Aug 2026 08:00:57 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:f6fc:b424:b1bb:6ff0])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-85e58666e15sm53903827b3.0.2026.08.31.08.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 08:00:56 -0700 (PDT)
-From: Justin Suess <utilityemal77@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	kpsingh@kernel.org,
-	paul@paul-moore.com,
-	mic@digikod.net,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	kees@kernel.org
-Cc: gnoack@google.com,
-	jack@suse.cz,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	martin.lau@linux.dev,
-	m@maowtm.org,
-	bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v2 15/15] landlock: Document the BPF policy interface
-Date: Mon, 31 Aug 2026 10:58:57 -0400
-Message-ID: <20260831145858.3869191-16-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260831145858.3869191-1-utilityemal77@gmail.com>
-References: <20260831145858.3869191-1-utilityemal77@gmail.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="arlCgvwv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788196672; bh=FTwFSgGp7B0oMcAD4FjqadY/I7FONTHuVvMlJ2D8huw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=arlCgvwvLm8Qb7Nbjh550SeFjIV5in6tm1BOa8NudEZoI42czzBifZzOz7DtY0CTiMtAm/qxInGtcear2DqLQACxKaji8Nr96FK7h/lLKo8bhE6aITm93wN5tzcQ7hB/edVD8ogfHgWI7tz948thXqUCKrF8/IcR7aBboecX1STYtULSqgF5l3TnXNjJGR1Eg+Vg4dTu1ZOqwEsplBN6mttB4iGUwQEKOkd+y7ibUWVXohCpGEeBF+gwdKmLWh8RUNsJ+T6BWvZaMavVv/ivaJ1KMAcVqkHjJfvqrYv0diZovORFoa78gfSyJwp8vibrvcGP4EPmsZea8WnROzuXmQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788196672; bh=6mmQWRLcrgRtVdpHRvtmZHOvnh8HLTcZ++5pFhqLU+G=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=g6exJgxWioI0LRrCIbeMrOIa+epz3VMHYkEGntIzRHnOfoZSDHzfO63kxo7f1b8qmIaw9MmwVhxPE8j1XOuAb040kqYlrt0xEqWGaNev4gEp3Wvv+MYmdfE/Hk2xuAjZy2VLy43NC+bB940n4AHnB4I/yfBkG4hgGb5dy0WwBjp4/SqN4Hk2dregB+tocH+REMGL/OtNOs3ZRymYs/ZVOllZZgbBkly1nwJ3zD6JYTmzmxrPwJvXhYo5pdLbeVtSaonZNd2tr2oZBN6FibRunneLOfkHsmnyCJRfDtun6kEhCpkTJGFDZbhUYuQ7380er9CgN2DJ1tqkjVNDP3PgyA==
+X-YMail-OSG: kPAetDYVM1mWKOgZJCvUWv2wQ60g205jl8VA8mnfSu5dDspmFK4i3NFBkBQcXBi
+ CJJbTW6FzhivEvMS0FO4OHSc8GKL6yaeNOvd6yOHQSjFjYUCqAn_1CAjxHOwUbJDuvng8YlW05Mp
+ gmPsBPuwjvs88l0XQxLnpGfKDKNfmKlMERSzhABFZKvkuRvAavt_OhArDFe6hzbAX5G359yWg775
+ PlYLHRau2j.W1OcestXCxk8MdJuRqWGWOfmOilcB2kwoyAGDRCtjIxEhJkzzhKTt42SbXuzHTXqq
+ xhA7GT_I1ENBE6el0VXFLzYD9038UwdnpBudEVL5CVYmie.ZTw9lUBhdf_AZivzxGtKp4HQHTbsr
+ wRIj0LBIyILd3cnplGDbHQIdmbuYQgKcV3UaytrQi9483SfmnArPJu_q5nBlTcUkSfX_k4NVrCBn
+ Ymltlxc3lV.xu9k0_UW.O1FPH9zwYc0jG0CBGr23fWdT2B6Mcbj4jnBOT2nAizxyNSp6JfUim18K
+ Pa1r776AkGjumesFPbuGROrLqXufjKGsXtM0E7y5WUfhVnN7Jt8tPpnXUA.w4MhMrP40dAkAPsgu
+ .8mayL4wDjzrmU6aewG_O7QGIuWW3WVNRJ3VHTVtJ08_TSk4oyXNdJHcvX8M04iA8MCbKZtFz8q6
+ iL7tCooy1dPPqi94tb62fJCqM60UpA1gEUc7iMYsc6qKvRWuh4nl5Lo3yBIG7TXl2J_5POLIOUBb
+ rovkj0E313x6yR8v4Oaplufp8O9L4FbBHE7OxtpJnO02Cvlzb43sqop3dtpBXC871jTbQenxHzJ_
+ .k5bpSZQbavKS7D0FWkvciA1sK.zUmkKh0gjVvb90PBWZwf6ug3UdlLuYdUUrW.5dXhimNJmRZ5a
+ d4SMOw6_Tj54_u_C3W62DU.wSlTyi4vz3dLBzY5vYoc8oW0QBYkBpZIDaBt6a8oDbtuNO7aUCO5p
+ WOw4SQ8yF9zxc0AoXaanTcm0hjZeRGrYeso0HMrSDQ14DP38Fub59evDGO9JgKmOCLt4uXWIytUw
+ MR9H7QiOdDeazZP7rpMejoD_iiQvvFNlSA_mie9mezkdZDGQxDELh_.BNUL_ONE5vxfnrZRuWFGa
+ 4rik09lbw0.BA9VrQrg4nFU_wm78B83bx5lHMGEYxRlmPf6Qjiad1m5FukFhsGN.aBG.3kIsXzsY
+ WLtXzFQY0l9dYM9eyLfRSKSKCa9BS2rs4r3Fp6SMk8twag5SNRAf9StdSI15y5oyLdfwor9qBS79
+ 2bP8qczCB5ekl4rAwaCbJa4_UzsF2.9JPbNuRObsYAsEzoKxmB.AiH2DrgihUZa00SinPt4Gch7E
+ TIyEK5VZjWIN4iwtuITvbyXkTXek254f1dsPQpG4J.DcYuomTwdNctzbL6mrIfagSZgZ_DCnSqvE
+ lGFWGAlwk3I9xeBGS_rGCg435Dex4O7oWdbSw_Gz1kWAL14ud7P_I7J3psvqYXAoj50ALCBIqgZH
+ 3awUmldP.0Vjk9RT0PW7dT5NCDhtLBTz_2vjKS6OzDtbglNCs1Galol3ctMm436QLa4vTBCGHROf
+ II86vlEDlaTxDqrYzPYaxuiVyUGwd8Imi3d3jibJaXNhRMMkmjeowFv6JgcdaYaL2Im7vN4nWdWP
+ iaNlAdcuTaU6QJWsnOC4FmMw7R3RPdPeDwROTaj6D6YBeh53EOczR3IkL04vW2uB3SnwIv4swO.u
+ 8fTEvo2oqv22zxGwk7wFGaanFxjHmhw7jHHA_NFv3UEidtcnNYV7pu.mDX_F1Mly0qKM1iTtOv2F
+ CnoAy_4HBKFrkanxpXIndIME6kdENfxAZxysjDRcH1rboMKDq1cSIdplCymRXFrRRm3pE5Z_ZOMe
+ kk8XwotGGdSKtoeId84wDLS3l9Lra8qk.cjQwd.twKJb4_y7OGUSiFBfHI6bRUgSgtCPzr7NT.Ld
+ xmkjY4SMRDo9rGF1Y.ZwEPTRQEgvkAmKguqHnG62m42Q4za8lYsXgVA2CMcimVNzM0u8LkT5IFD3
+ _LjoZ5SG3.tw0QJ8H4BFLFZAg3Pd1uVKeCU82pvPzsS7aTfj1vvFxnc7HM59tUW3pz0wBsUEH2gx
+ JlUDQx9lOCrVycVpp74V9bHI1wGmfmV91T_QEYQhiXYHle7iaabFeL0jM75ARySzK8DPeMQqlcjH
+ 1l2CuEuSV9M5ApaMqWrY_rFUEXfyWuuNtgrxDOXNa1uyoxZXAk.GH8_J_P_OAfbgsUYld2ZTHAjc
+ VMQJspEN7L4BV311WpxsiJli5MUpOSPAePOaT4TIoRiQsgU7Ay6IsI6N9BsZLxTO2onRPDmE-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 786667d0-d8a6-4fa6-8e93-77cf5c761ecf
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Mon, 31 Aug 2026 17:17:52 +0000
+Received: by hermes--production-gq1-678d9dd684-hq55n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4f7c313e920f4db629c8c9abe1721bbb;
+          Mon, 31 Aug 2026 17:17:48 +0000 (UTC)
+Message-ID: <fb9ee5e1-dfc1-460a-85db-1f31f2f6ed17@schaufler-ca.com>
+Date: Mon, 31 Aug 2026 10:17:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/15] lsm: Add the LSM policy object lifetime hooks
+To: Justin Suess <utilityemal77@gmail.com>, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, kpsingh@kernel.org,
+ paul@paul-moore.com, mic@digikod.net, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, kees@kernel.org
+Cc: gnoack@google.com, jack@suse.cz, song@kernel.org,
+ yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org,
+ bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20260831145858.3869191-1-utilityemal77@gmail.com>
+ <20260831145858.3869191-2-utilityemal77@gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20260831145858.3869191-2-utilityemal77@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.26380 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Describe how the generic LSM policy kfuncs apply to Landlock
-rulesets: the program-side flow, the staged restriction and its trace
-event, the LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS semantics on an
-execution, and why the bprm path carries no no_new_privs/
-CAP_SYS_ADMIN precondition.  Note the new emission point in the trace
-events overview.
+On 8/31/2026 7:58 AM, Justin Suess wrote:
+> Add struct lsm_policy_object, the identity an LSM embeds in a policy
+> object it shares with BPF programs, and the three hooks managing such
+> an object's lifetime:
 
-Cc: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
- Documentation/security/landlock.rst     | 38 +++++++++++++++++++++++++
- Documentation/trace/events-landlock.rst |  5 +++-
- 2 files changed, 42 insertions(+), 1 deletion(-)
+I am not seeing the cover letter for this patch set. Are you sending
+it to the LSM list? Without that I do not have sufficient context to
+comment on the patches (1,2,3 and 8) that you have sent.
 
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-index 2d6e1076484e..ddc0d149ae8f 100644
---- a/Documentation/security/landlock.rst
-+++ b/Documentation/security/landlock.rst
-@@ -130,6 +130,44 @@ The reasoning is:
-   restrictions, because access within the same scope is already
-   allowed based on ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX``.
- 
-+BPF kfuncs
-+==========
-+
-+BPF programs can apply a userspace-created Landlock ruleset to an
-+execution, through the generic LSM policy kfuncs (see
-+Documentation/security/lsm-development.rst).  A syscall program
-+(``BPF_PROG_TYPE_SYSCALL``), running in the context of the process
-+that set the ruleset up, acquires the ruleset with
-+``bpf_lsm_policy_from_fd()`` and typically hands it over through a
-+map kptr field; a sleepable LSM BPF program attached to the
-+``bprm_creds_for_exec`` or ``bprm_creds_from_file`` hooks then
-+enforces it on an execution with ``bpf_lsm_policy_apply_bprm()``.
-+
-+The restriction is staged in the Landlock blob of the credentials
-+prepared for the execution and committed past the exec point of no
-+return, so a failed execution leaves the calling task untouched.  The
-+commitment emits the ``landlock_enforce_domain`` trace event (see
-+Documentation/trace/events-landlock.rst).  The kfunc flags take the
-+``landlock_restrict_self(2)`` flags with their usual semantics, with
-+the exception of ``LANDLOCK_RESTRICT_SELF_TSYNC``, which is rejected:
-+the restriction targets the execution, not the calling threads.
-+
-+``LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS`` makes the executed program
-+start with no_new_privs set, binding it and all its descendants.  It
-+does not affect the current execution's privilege computation: the
-+bprm credentials, including any setuid elevation, are computed before
-+the flag is set.
-+
-+Unlike ``landlock_restrict_self(2)``, the bprm path has no
-+no_new_privs/``CAP_SYS_ADMIN`` precondition: a task that is not
-+no_new_privs can carry a BPF-applied domain, and its setuid
-+executions still elevate while confined.  This is sound because
-+attaching the BPF program is itself privileged, granting the same
-+power as the syscall's ``CAP_SYS_ADMIN`` carve-out.
-+
-+Executions may run concurrently: each takes its own reference on
-+the shared ruleset with ``bpf_lsm_policy_acquire()``.
-+
- Tests
- =====
- 
-diff --git a/Documentation/trace/events-landlock.rst b/Documentation/trace/events-landlock.rst
-index af9267cca47d..6cec3194af0b 100644
---- a/Documentation/trace/events-landlock.rst
-+++ b/Documentation/trace/events-landlock.rst
-@@ -34,7 +34,10 @@ Landlock trace events are organized in four categories:
- - ``landlock_add_rule_fs``: a filesystem rule is added to a ruleset
- - ``landlock_add_rule_net``: a network port rule is added to a ruleset
- - ``landlock_create_domain``: a new domain is created from a ruleset
--- ``landlock_enforce_domain``: a domain is enforced on a thread
-+- ``landlock_enforce_domain``: a domain is enforced on a thread.  Also
-+  emitted at ``execve(2)``'s point of no return when a BPF program has
-+  staged a policy on the execution (see the BPF kfuncs section of
-+  Documentation/security/landlock.rst)
- 
- **Denial events** are emitted when an access is denied:
- 
--- 
-2.55.0
+What I do see has me quite concerned. It's possible the cover letter
+will addresses my issues. If nothing else, I assume it describes what
+a "policy object" is, and what it's for.
 
