@@ -1,203 +1,122 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8F047ACD1
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2026 22:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788300966; cv=pass; b=n9axbSn4cn/NPoKz+f/baaAsVSuV02gndm1Jc4kFsh//5fzY81laXjTu7B5LbYkcAUnMUMfjZnftPa8d1giCHfZx43En59BV+NFlbjRfrRFKWwlJr2U3zdilv7+pq8w6FhYqQDuteLgf+q23jxCkrNG2ORJKbWWDfBL43i7bao0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788300966; c=relaxed/simple;
-	bh=mKdTmKx+z6mwUGqcorW8iH+bPrZTGVyvSXc8efMHImI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oZMvLpGoAOqjlBNetcsIJkleFfmj9rltjgds6aGmpUGIwdk24i2uRjKTPSR/DOPPM9071ZySITUNpZGWR2tnd4pme5mg23WK2cS1pqH1YBTHhtpAzbN4AEkfJytqOkjpG1Rp5Y8fCZmMFiYoOzcu7Z9mEOn9vZ57Bkn+P0lmeMk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eqHh81s+; arc=pass smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AB52F49F6;
+	Tue,  1 Sep 2026 22:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788303179; cv=none; b=TOf4slaGIc61gOQR5G4OxIYZY8FD7hbiSPkQVN9d86S72nB76Ktn+684S5UjHIMzWOsDenm7DgxDdYn9xKVSVUn8msIfIQlzPEyMkrSDeP3abFluVWy62oJvzRPh+E4Xrod6shQe0fXklzVph6iaeAS8VG+zhhm9v0n3wK0aYgk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788303179; c=relaxed/simple;
+	bh=cNKvgu/lmPJM4ixOs3dCfcoZ+BDVYU8oSxgE0VQtWtI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eIEm/kPAI9bwF0uS99vs1y6DGRSHKK1PdwVjrWMCcXQfsnPd7Ow0FULuVJYvGdahhhCr8zDjyHbnecbjTbUF3nI1koMtwMvCUmAMr6by3Ozor3hXpxfERlIQtN9vaWGjPZn2Bht5QAS2HN4EkF/hObFdLq0y8miJ8qrsdIel8f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBNxHBty; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eqHh81s+"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2caced6038eso3661735ad.0
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2026 15:16:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788300962; cv=none;
-        d=google.com; s=arc-20260327;
-        b=qrczzNnBqZh0VbBsjGPjE2NSr3w3HPSDSPdhOtaPt0Kdu7KbSuAz0ztIw1G3Hsuh8u
-         3LKHQHXKToRvLnuIIb8LPWl4avesmIhW0ZAufrqjCDoxlUQCOAfeNAfut/66kYUJDW8l
-         hJCJMIS7dMxmwgwSqpeqxTiloMJEsPqY82tYQwhtO/pacs5gNUchAv3mnamP+kXJ8Yw2
-         kJf6+MSEkeaw47OEHzkaFg6h236BGnGGBPiZfIs4YtyUz5ETKQvJXvnBi7dcWJGNtnBx
-         1HAlpbgNHtUVcUwr6VD/aBlsGSxRxpxx3Nv+FZTwBbXillVQyGHy9+TFibmg1nRsaDNP
-         hwJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=1ATcm8apudD2vfrozzvIh0C6UKnA5qihRpZDqTJ19B8=;
-        fh=wH0p2Hhr8U7G4QEc2FOAtSfOt4g3JmGG64v0hHYfNRU=;
-        b=qlPZocLp+NGQMMQcr08nMGES+gZHhwDX0ggru8OkabOQkMG27C2DFsmjC3KnvSjGZn
-         +lK20Px0RkqCaLB2aO8gqEJOQ7s2B0eg6zmETHWnkxSHTyyoFuw+cqzyy8dVQIc3jT0H
-         XwbaJoNQYTPK1GNphhkfzbhV0sDxGBgMYVZ4yPbVmEALDB+U0KUVC2PdfqEy47iYLLQR
-         1qiFH/vmayFm7NreTZTSLJjCWvOxR8bAMOLEAV1O4tsUiJwqrgF9ZAUfRoxuUugNBcKK
-         hIG6//LEcP6VqY9P0qUcIagx/9CPP2McTp35k69eMY8IbHUOHa7xCQPfD8OhuemFgjUz
-         eHhQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1788300962; x=1788905762; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=1ATcm8apudD2vfrozzvIh0C6UKnA5qihRpZDqTJ19B8=;
-        b=eqHh81s+7tojPHBWGAv5Z71iklqC1frwXCy5DQz86f05QiXQaT0WK1ayrOxB4tvX6w
-         9NP4C53JDCak/Lsv2Lr74xcFbCdQCssDxn8y1jzTU8uezehh5OxhJQuQ3tVdovDu1G5S
-         Dx1gpayTpCB6fRm/3vIjzMM/Rcs0cUzvZ+/aH8PRHNoDAyplBfdwfniUhdMONtJGO6Px
-         doLJ9pBtEZfOEO9M/oiURYUS5ZQ/6ACZcWCBi7g8OQnYWYxfGGr5/9+sO9twEA1SsdE4
-         O0Zm175JagvCH8VKyYXt5pleEW9b/88f1NX6YFreDqbNy4IMGIl/6+2ZN7FQzgTCikwG
-         HIxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788300962; x=1788905762;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1ATcm8apudD2vfrozzvIh0C6UKnA5qihRpZDqTJ19B8=;
-        b=leMn8I8do6LAJQUxjPCYc4X9wqmBaKYC6M6mZ8mFQ+RxRvHpHaexNQYUWh82CwMQAT
-         Kea50Y+hvqHIca4tUHV2fbHJgnifFtCsmSLnJqeXcZuc6qr6zZJQLJDJZrwCjStqz4A1
-         VwdFuH9eCEQMpk7uFfjAD42DYln7x/QMYciCZI7BcU9KS9w7lK2/6pNj7Kgxzjz5quks
-         vOmKyhhAkr34e+mt5pkLVimeM1Umt8T/JmglbEtJ53zsN/9MwOHYMQNus0S3K3FQ0Z5Y
-         FqLxy3LJswE3WzUsiJstCDdv1IrZNHJpK+qJOtq0LsNmtPfCm8SGKdiHFhQBQQ9rUDp/
-         h4rQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzGciowsTmHRhYCpmPVg/X/kZRYHSk2INV5y+iHbli8SSHF70GoTySx1ko3hwGFlMWhXbQY0pkLSCbijcH6CH76uwEesvA=@vger.kernel.org
-X-Gm-Message-State: AFuF++nwqTzw27CsmHUF97ChlQeqA7Zvuc/RQbyu0VTWE1rrh25dej1Z
-	dyj7euy0zFhRMyeWsEhNN7QAbpZmFguxJJoAbdPCCMckGo2L7+Cx0F43Nhk1e08jdw63H9GDLjj
-	aAvApBqORF8RDIK/W1UzSbwUIJsM6fOpsEJMwxYrR
-X-Gm-Gg: AYBFou1xcWNTjUb9DGGmh1/FOn9gYnsqk4I4SzfNXCr7JccGGXXvzi8NVFsyBy1GJrV
-	oV9LFxoySmV4ON3f0JiPlnbQyjJ6NxwkEN63laiLrVAdgnJ9MVECFU6E/Wz3Y2RZsf/8t4Km4Rf
-	W8rpTyqgaTF7bhuEnW+JZkQeLzDRxD5tkwjoiNFnmJE+sODG1c8Ercrlum4Ff6oO+9qvX+26DTs
-	4670GW5VStT4WZ4c2yuUz5zt75BWElb5AXaXGNxHQZGO54K16nlyNGF9FNBbXR63pdLLByeww2d
-	tCpUbXeWoWUqV9QjlKJdDaGc49HNPJ2TKVVH7R2s++RD
-X-Received: by 2002:a17:903:2410:b0:2d9:2b1b:878a with SMTP id
- d9443c01a7336-2d9526c2cdfmr80572575ad.10.1788300961608; Tue, 01 Sep 2026
- 15:16:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBNxHBty"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F01A1F000E9;
+	Tue,  1 Sep 2026 22:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788303178;
+	bh=n1f4BxpHK9hO8LsGzvklPkEOi5mpKEL+L5A62czqZC8=;
+	h=From:Date:Subject:To:Cc;
+	b=dBNxHBtyC8FXbk5bdS4scnWqIqvU3rH1brbEggvfXVQjguplRGErGGmtbia1ijSH1
+	 CC2yDdI4U31xJk3RnlYB/zKxNZh2N/SJg1HhMlyBoBe6K1n2bnzZTrED1B7E1kh7m/
+	 rziZq9WwL4u6tFrDcNuvfFfNHVFspuLV6VdKgG2OovgpI+UHd+DCwguOajUAglogrK
+	 33+xKwLgOadzPe5auAwmHPxPP7VxP1HKy1adsv1aca083ZLObHwz5UlZDYRwVxmZ/w
+	 R/Uh2/HyCa8POncYmwxXpbR4+VLXbfmrbgceKDZLtSWbr/hySDKL97ANqrT4FiNasI
+	 64Ap9hLbXEyWA==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 01 Sep 2026 23:50:02 +0100
+Subject: [PATCH v4] hardening: Default randstruct off with rust for better
+ allmodconfig support
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
- <20260831110934.241898-2-a.s.protopopov@gmail.com> <CAHC9VhT7=wMsB9mERWoiM6pF+_T1=2tyAsSrxMphhtdE2NPHMw@mail.gmail.com>
- <apbU8-fpioNIwUA8@mail.gmail.com>
-In-Reply-To: <apbU8-fpioNIwUA8@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 1 Sep 2026 18:15:49 -0400
-X-Gm-Features: AcwNN1W7aLRefGcheWJ-uymO40RrLBDpF_-JUw-mmYcnuhgB-KD2OI0728rejLU
-Message-ID: <CAHC9VhQbWPqEz5g1rVcMyJgrzzd4cQuwi7cddgJQK1H3ugMz7A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/7] bpf: Allow BPF LSM programs to attach to
- more hooks
-To: Anton Protopopov <a.s.protopopov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, lsm <linux-security-module@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <matt@bobrowski.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260901-rust-reverse-randstruct-dep-v4-1-3bfa19efe1fa@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJlWl2oC/5XNzYrCMBiF4VuRrI18+autK+9jmEVNjpoZaeVLW
+ maQ3rupLmQYEF0eeHnORSRwRBKbxUUwxphi35Vhlwvhj213gIyhbKFJV1SRkzykLEsJTpDcdiF
+ lHnyWAWfpWkfW15VSuhZFODP28eemf3zedxp2X/B5JufiGFPu+fd2P6q5e+1pVFJJ6zwaoA4U1
+ PYb3OG06vkg5qtRv4HpgjUmmJq02VX75h9mHtia9HPMFAwW1HhHpCz+YNM0XQHZlDl+cwEAAA=
+ =
+X-Change-ID: 20260605-rust-reverse-randstruct-dep-5a504c861128
+To: Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: linux-hardening@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2049; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=cNKvgu/lmPJM4ixOs3dCfcoZ+BDVYU8oSxgE0VQtWtI=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBql1dEHtkcOC51RXS3uYuMlpw2VR3oIF7e1EDUo
+ kUgO/ITRt+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCapdXRAAKCRAk1otyXVSH
+ 0GqhB/wNn5D/C/CUmPqq9FSJB8FholgaXbDnJs5MCTln44kXBBE8NqRYEORVFZg3P/M6g3rzgaO
+ LpNJqWidG3PavKfP5DUi2idhbPak2JpYhYtEcpaZ4UJl/eOdo6k0qMYJkhPKQA6ndLNQLaVKExA
+ eyoVIrNYF8D4PT/nu+SU0H6Ox6S0PIQ5ckQcYrrgqAEKxMa4fy67wGoYtV/Mj9mM0QfbBm60rou
+ tNGG2cNCJRG3JEDsQXv/gMB8HFKGKIbr5NkC/z/aX2vtG1qmSMw8pbgIBpJEwMP8fH8muJRv1cH
+ q6tStLFg3K6E/Ho4cIVLMb42/lhpCwfEQvNVRRIrdxX5CbUq
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Sep 1, 2026 at 9:26=E2=80=AFAM Anton Protopopov
-<a.s.protopopov@gmail.com> wrote:
-> On 26/08/31 06:42PM, Paul Moore wrote:
-> > On Mon, Aug 31, 2026 at 6:59=E2=80=AFAM Anton Protopopov
-> > <a.s.protopopov@gmail.com> wrote:
-> > >
-> > > The BPF LSM programs are allowed to attach to LSM hooks, all of which
-> > > are defined in the <lsm_hook_defs.h> header file.  From BPF's point
-> > > of view the set of attachment points is defined in the bpf_lsm_hooks
-> > > BTF set. By analogy with existing code, add a new header file
-> > > <bpf_lsm_hook_defs.h> which will also be included in the bpf_lsm_hook=
-s
-> > > BTF set.
-> > >
-> > > This change allows attaching BPF LSM programs to more functions.
-> > > The actual hooks are added in subsequent commits.
-> > >
-> > > Each BPF hook calls a [__weak] noinline function each time a hook is
-> > > reached. This may be too expensive for hot paths if a BPF program is
-> > > not attached. A future commit will optimize this by adding a per-hook
-> > > static key and inc/dec it on attach/detach. This way disabled hooks
-> > > will be bypassed efficiently.
-> > >
-> > > Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
-> > > ---
-> > >  MAINTAINERS                       |  1 +
-> > >  include/linux/bpf_lsm.h           | 12 ++++++++++++
-> > >  include/linux/bpf_lsm_hook_defs.h |  6 ++++++
-> > >  kernel/bpf/bpf_lsm.c              |  2 ++
-> > >  4 files changed, 21 insertions(+)
-> > >  create mode 100644 include/linux/bpf_lsm_hook_defs.h
-> >
-> > Adding new BPF hooks in the kernel is one thing, but adding new BPF
-> > LSM hooks outside of the LSM framework is likely to be problematic as
-> > these new hooks operate disconnected from the LSM framework (callback
-> > and LSM kernel object state management).  We've seen bugs in the past
-> > caused by the BPF LSM trying to operate independently of the LSM
-> > framework, something like this will only make that worse.
->
-> Could you please point me to some of the bugs you mention, such that
-> I understand exactly what you mean?
+Currently randstruct does not support rust so we have Kconfig dependencies
+which prevent rust being enabled when randstruct is. Unfortunately this
+prevents rust being enabled in allmodconfig, our standard coverage build.
+randstruct gets turned on by default, then the dependency on !RANDSTRUCT
+causes rust to get disabled.
 
-The latest that I'm aware of was a few months ago:
+Work around this by disabling randstruct by default if we have a usable
+rust toolchain and rust support for the architecture, circular
+dependencies prevent us directly depending on !RUST. This means we might
+end up with a configuration that disables both rust and randstruct but
+hopefully it's more likely go give the expected result.
 
-https://lore.kernel.org/bpf/20260628201103.3624525-1-mattbobrowski@google.c=
-om
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v4:
+- Rebase onto v7.3-rc1.
+- Link to v3: https://patch.msgid.link/20260702-rust-reverse-randstruct-dep-v3-1-e4e09c50014e@kernel.org
 
-> I am not really seeing how the
-> real LSM hooks differ from the ones added here (from BPF point of
-> view, and the objects it can access via kfuncs/maps).
+Changes in v3:
+- Rebase onto v7.2-rc1.
+- Link to v2: https://patch.msgid.link/20260605-rust-reverse-randstruct-dep-v2-1-93d38023b6f9@kernel.org
 
-The existing LSM hooks, LSM security blobs (the 'void *security'
-fields present in many kernel objects), and individual LSM callbacks
-are managed by the LSM framework whereas the functions you are
-proposing are not.  This is important because the LSM framework
-enables/disables individual LSMs at boot time which impacts both the
-executed LSM callbacks and the security blob allocations.
-Implementing "hooks" that operate outside the LSM framework can cause
-unexpected user behavior and potentially destabilize the kernel,
-leading to a system crash.
+Changes in v2:
+- Add a HAVE_RUST in there too.
+- Link to v1: https://patch.msgid.link/20260605-rust-reverse-randstruct-dep-v1-1-45ce9ee8d0d1@kernel.org
+---
+ security/Kconfig.hardening | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We require all LSMs (Landlock, Smack, AppArmor, SELinux, etc.) to go
-through the LSM framework, the BPF LSM is no exception to this rule.
-If you want to add additional BPF program call sites beyond what the
-LSM framework provides, please implement them outside of the BPF LSM;
-there is plenty of precendence for that already.
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 6923036e1a2f..81c81ad983ad 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -278,7 +278,7 @@ config CC_HAS_RANDSTRUCT
+ 
+ choice
+ 	prompt "Randomize layout of sensitive kernel structures"
+-	default RANDSTRUCT_FULL if COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
++	default RANDSTRUCT_FULL if !(RUST_IS_AVAILABLE && HAVE_RUST) && COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
+ 	default RANDSTRUCT_NONE
+ 	help
+ 	  If you enable this, the layouts of structures that are entirely
 
-> The main reason (for now) to specifically create a new list of BPF-only L=
-SM
-> hooks is (pcmoore/lsm.git/tree/README.md):
->
->   """New LSM hooks must demonstrate their usefulness by providing a meani=
-ngful
->   implementation for at least one in-kernel LSM.  The goal is to demonstr=
-ate the
->   purpose and expected semantics of the hooks.  Out of tree kernel code, =
-and pass
->   through implementations, such as the BPF LSM, are not eligible for LSM =
-hook
->   reference implementations."""
->
-> And for the hooks added in this series
->
->   a) BPF satisfies our needs, as we can precisely analyse what the
->      calls are trying to do with good granularity
->
->   b) I am not sure how to actually express this in any in-tree LSMs
->
-> Can't BPF be considered enough to demonstrate usefulness?
+---
+base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
+change-id: 20260605-rust-reverse-randstruct-dep-5a504c861128
 
-The core issue has little to do with BPF, it has everything to do with
-in-tree vs out-of-tree code.  The BPF LSM is explicitly mentioned as a
-"pass through" because some have argued that the BPF LSM is in-tree,
-and while the basic BPF enablement is in-tree, the actual LSM code
-that is executed has thus far always been out-of-tree.
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
---=20
-paul-moore.com
