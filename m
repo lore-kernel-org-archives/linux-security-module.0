@@ -1,608 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5CB2253B0;
-	Tue,  1 Sep 2026 13:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A63546D2AF
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2026 13:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788269102; cv=none; b=HQkSvGhu7BjsMUJCS4DivDn75KlFOHUFGa9BAB3jf2l4X4/mLWrh2qbXxKTg+zpTWH9Q9z1O43bZh+YUYx13lPmtx9SGVR72AWdYaV+DZGMWwSJ7Rj8SzonYIuNfpn9DMJ2n0DPWSUP5cYYnHec2XIJh7bhnlyJMo/qoSyVZ73Q=
+	t=1788269180; cv=none; b=eHpCTYtVZ7jLSy7PdScVhsICgEbdbqoZ4mnsD8dbBHKn1iqV17jzfTWJOTK8gSiM5InRFMO6McKZSrrm1TPgpYjqqCaSfu3335tYzBy0v2Ng37XUwfBH44JJXz8gnfOqMR+JAM5Pc34Zp7aVIVRyvx9h5JZFAPYzDv/JkoD+KvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788269102; c=relaxed/simple;
-	bh=vhMCmNTtKCQoBcxNKaytu8+Mw8Wg3gds52xNfkCmkC0=;
+	s=arc-20240116; t=1788269180; c=relaxed/simple;
+	bh=Rn9/tcknkMhoBJMoT/vDX/T84MaINb69k5oYE5QTRas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGe+ePfKKm3PEqd9QwvStAUsSswPPGfW0TjaO2rUKTNf99ZmF+HJ7f8HyP4lZ0u4aTR8MwJwLdpDe8P7KtUJaMIX5ubFLpdN0T1agjmMfr56w//PDfaNaMjESC9eJBx1oX8WKjrYnfY76qfpL6jeDcP16n25J6ZlsaRz4kX+JiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giMWRqJr; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiTWDhVnCq5NX/Pk1DWAc63XVFooJP1HF29fvWSGRiAkkCk4bpvX7abAKXt1xQLhtgOnuUit6TpeiSL9LGKrmZANBKDPfoq9WdkHAjQ9yTWM0UZqV0EkSa3Kxen4x7c6uAX7/7lUB8yWtpPMl5lFYnIjWdkdChgL0MG5ACIDaqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmLmJrFU; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giMWRqJr"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 67F3D1F000E9;
-	Tue,  1 Sep 2026 13:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788269100;
-	bh=M5+2kdHM1Iy6Gd0cKSh1g2pqZ3a4OGensXcLHLza4IQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=giMWRqJrAdaH2YY7R6y+ImoPdBSk634QE/SQ7zb+rNNJDODtfLwJW24vGMuSJU1iY
-	 pHStCaaEMXaUX6yzdlKhMUyXEKrcgz7JyKJY1Cc1xhbtbRnPcH+B1YRv3mdOj9CJzn
-	 Fp2PxQOdmJn8d6vMDOTwl2nktEMN52kjpR8dVl9QoRJ8TyL/H3cy6dGXrDT4tQ2qiq
-	 HUdaVUMxAELMoN9sAM23EEQ9aLGchbfLkwJ6FhiWKap9+RvfcbJ+eC8M5rfyHffNCz
-	 LnyeTXNaMwLFH7YIqp/hxXzzViG4LGjBhqur1dzgYtxR5Y88cpduwgg3UWduaZnCcv
-	 vQKYuEMOOE0wA==
-Date: Tue, 1 Sep 2026 16:24:56 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Srish Srinivasan <ssrish@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	James.Bottomley@hansenpartnership.com, stefanb@linux.ibm.com,
-	zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
-	rnsastry@linux.ibm.com, sudhakar@linux.ibm.com
-Subject: Re: [PATCH v4] keys/trusted_keys: move TPM-specific fields into
- trusted_tpm_options
-Message-ID: <apbSKDGTGbAyVWC4@kernel.org>
-References: <20260829130917.699516-1-ssrish@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmLmJrFU"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5b5e18f0439so3980847e87.2
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2026 06:26:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788269176; x=1788873976; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5YQ2NkdYE1UkDQmtG4k56tSGp0dI9qqzV8dhPz8o8Qo=;
+        b=MmLmJrFUY+prIRyTONU+oFVHyOs92yM2LiDDdexmu11edZB8c/MwbOvXoPluCI9onV
+         V6tt7E5kd1jXAglceOgm4r4Gt1R3GoawaWepLpC06FSFKPmCgpkdZHL6CD0P0IT2HRtb
+         ULbgcbMjPpDlfEQ60BjH4ZVeBCSqwGPYw0ZmOrn8DsPZnF8KUqUgRjkZhIe0Q0Z3iPV6
+         oYMsGUZtjgfS7A5ZHjUGTTY+gnql7DzvNcl0/45HgAG5qS2NDxdUSPbpJIP6711Y7sAb
+         SNcANDd/MMKJMnd4X2P+j+b5V8+N0p7JtcJLvZabaWScKywLQsupMmPuEwgwBqN+OYdE
+         ZiUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788269176; x=1788873976;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=5YQ2NkdYE1UkDQmtG4k56tSGp0dI9qqzV8dhPz8o8Qo=;
+        b=VjIOQCDnwb6C8rzKiJIgNRobwzbvNa+IRI4D0vTu3PV2QOuV09/cqz4bpsi4gbjVUv
+         fkfeJe+zBOJ2h/3LAK7wHC+kq9n/aifMCvYGC6/gF7tpFTO33yjJzKmmx8YjIHts04Jx
+         gIto7kX7nkecqOXcBlpEav7tlwTa6adj3kPlbdBuD+9ZCy28p+L8rP0C10/n39gtrxZu
+         nR1frIon9yHam8s0040cWhRcuEQix4+xDnlokkwfLo8RIvQTakJJXFdfuAqCsAzb/wb0
+         Hu3yHW/SpSjCYClF8vO86kEABKVM2zYDL3Byue9VBiECSLt8+h0u2KYrpfnFh2hwsfbb
+         UoZA==
+X-Forwarded-Encrypted: i=1; AKwUvBw4Bwz2K0yzdViWy2vtbfewKJMRdOm1D7LEU+kNNZmMaxSMrVlgl9RNYKoea/AABjFciGqCoBl5JE2XxyzbIpsgZU831Vk=@vger.kernel.org
+X-Gm-Message-State: AFuF++mVkc59NAn8aWayG3TSQeENtHVCqTOasHmUbGKFsjVVZ/rfy+eQ
+	xT0na7el+4dczzkquMf3wmexzkv8URESvQU7Qnfcm0EO0AOyNYMN5GAb
+X-Gm-Gg: AYBFou1WHxBVJqfM/M5h7q4lNE2vtVm8VvQ+GKH6nAYDhvkLJtLp6713EAR4grvLbOH
+	gTrHgAFRjf2SrsiCuByh92p8zg9rk8V5XE96M0j8DBk44KLxQKdyxh7uv39ybKeUsp2J5mDXtWm
+	J9rv/vsNyQOugcFprKSqbvM0f6uPb9WCLEr+wAxeJ1woPHGRjfVQXqDbrgbo1bWUmP1SmDIWW//
+	iD1tqMywSt+rUT8Mak5cD0gigowAdmklsttfbkO2f4PrhCfqxxox02eAEOaHLgvW1G05taGWHN3
+	6BassILCtdOyGJuhiw584HMIO64xigigPCXNK7wWIrcOY/MeMRxPZsgY2J1g05UVBCEGhBoSb6A
+	0zb5hDQmpH7HTBV7PaeQcpibxdyZRTz65FfC/LA+iJdTXdecNos6JD3rdT4BRFmEQmC+NjDq2+4
+	6onfARvRV5D+D+jDjhgbuSlvOfaUa04bmFsNoHUVN93EOG1ZAgvHBqwx63m0W6im2al7bkHXnCB
+	aiw+BM=
+X-Received: by 2002:a05:6512:3985:b0:5b4:b03e:b17 with SMTP id 2adb3069b0e04-5b5fe0914e3mr3071911e87.4.1788269175321;
+        Tue, 01 Sep 2026 06:26:15 -0700 (PDT)
+Received: from mail.gmail.com ([2a04:ee41:4:b2de:1ac0:4dff:fe0f:3782])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b5e8a18422sm2841927e87.76.2026.09.01.06.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Sep 2026 06:26:14 -0700 (PDT)
+Date: Tue, 1 Sep 2026 13:36:51 +0000
+From: Anton Protopopov <a.s.protopopov@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: bpf <bpf@vger.kernel.org>, lsm <linux-security-module@vger.kernel.org>,
+	netdev <netdev@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <matt@bobrowski.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH bpf-next 1/7] bpf: Allow BPF LSM programs to attach to
+ more hooks
+Message-ID: <apbU8-fpioNIwUA8@mail.gmail.com>
+References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
+ <20260831110934.241898-2-a.s.protopopov@gmail.com>
+ <CAHC9VhT7=wMsB9mERWoiM6pF+_T1=2tyAsSrxMphhtdE2NPHMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260829130917.699516-1-ssrish@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT7=wMsB9mERWoiM6pF+_T1=2tyAsSrxMphhtdE2NPHMw@mail.gmail.com>
 
-On Sat, Aug 29, 2026 at 06:39:17PM +0530, Srish Srinivasan wrote:
-> The trusted_key_options struct contains TPM-specific fields (keyhandle,
-> keyauth, blobauth_len, blobauth, pcrinfo_len, pcrinfo, pcrlock, hash,
-> policydigest_len, policydigest, and policyhandle). This leads to the
-> accumulation of backend-specific fields in the generic options structure.
+On 26/08/31 06:42PM, Paul Moore wrote:
+> On Mon, Aug 31, 2026 at 6:59 AM Anton Protopopov
+> <a.s.protopopov@gmail.com> wrote:
+> >
+> > The BPF LSM programs are allowed to attach to LSM hooks, all of which
+> > are defined in the <lsm_hook_defs.h> header file.  From BPF's point
+> > of view the set of attachment points is defined in the bpf_lsm_hooks
+> > BTF set. By analogy with existing code, add a new header file
+> > <bpf_lsm_hook_defs.h> which will also be included in the bpf_lsm_hooks
+> > BTF set.
+> >
+> > This change allows attaching BPF LSM programs to more functions.
+> > The actual hooks are added in subsequent commits.
+> >
+> > Each BPF hook calls a [__weak] noinline function each time a hook is
+> > reached. This may be too expensive for hot paths if a BPF program is
+> > not attached. A future commit will optimize this by adding a per-hook
+> > static key and inc/dec it on attach/detach. This way disabled hooks
+> > will be bypassed efficiently.
+> >
+> > Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
+> > ---
+> >  MAINTAINERS                       |  1 +
+> >  include/linux/bpf_lsm.h           | 12 ++++++++++++
+> >  include/linux/bpf_lsm_hook_defs.h |  6 ++++++
+> >  kernel/bpf/bpf_lsm.c              |  2 ++
+> >  4 files changed, 21 insertions(+)
+> >  create mode 100644 include/linux/bpf_lsm_hook_defs.h
 > 
-> Define a trusted_tpm_options structure and move the TPM-specific fields
-> there. Store a pointer to trusted_tpm_options in the private member of
-> trusted_key_options.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
-> Changelog:
->  v4:
->   - Rebased onto mainline after tpm-buf memory-safe allocation changes were
->     merged
->   - Resolved the resulting merge conflicts
-> 
->  v3:
->   - Exclude the preparatory clean up patch as the problem has been addressed
->     in commit 9ec4175a30eb ("KEYS: trusted: Debugging as a feature")
-> 
->  v2:
->   - Exclude the bug-fix patch as it has already been applied to 6.19-rc7
->   - Rename instances of trusted_tpm_options from tpm_opts to private
->   - Use pr_debug and KERN_DEBUG for logging debug messages (preparatory clean
->     up patch)
->   - Address other minor comments from Jarkko
-> 
->  include/keys/trusted-type.h               | 11 ---
->  include/keys/trusted_tpm.h                | 14 ++++
->  security/keys/trusted-keys/trusted_tpm1.c | 96 ++++++++++++++---------
->  security/keys/trusted-keys/trusted_tpm2.c | 50 ++++++------
->  4 files changed, 102 insertions(+), 69 deletions(-)
-> 
-> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-> index 9f9940482da4..3db61b57cf73 100644
-> --- a/include/keys/trusted-type.h
-> +++ b/include/keys/trusted-type.h
-> @@ -39,17 +39,6 @@ struct trusted_key_payload {
->  
->  struct trusted_key_options {
->  	uint16_t keytype;
-> -	uint32_t keyhandle;
-> -	unsigned char keyauth[TPM_DIGEST_SIZE];
-> -	uint32_t blobauth_len;
-> -	unsigned char blobauth[TPM_DIGEST_SIZE];
-> -	uint32_t pcrinfo_len;
-> -	unsigned char pcrinfo[MAX_PCRINFO_SIZE];
-> -	int pcrlock;
-> -	uint32_t hash;
-> -	uint32_t policydigest_len;
-> -	unsigned char policydigest[MAX_DIGEST_SIZE];
-> -	uint32_t policyhandle;
->  	void *private;
->  };
->  
-> diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
-> index 3a0fa3bc8454..98d638d13ecb 100644
-> --- a/include/keys/trusted_tpm.h
-> +++ b/include/keys/trusted_tpm.h
-> @@ -6,6 +6,20 @@
->  
->  extern struct trusted_key_ops trusted_key_tpm_ops;
->  
-> +struct trusted_tpm_options {
+> Adding new BPF hooks in the kernel is one thing, but adding new BPF
+> LSM hooks outside of the LSM framework is likely to be problematic as
+> these new hooks operate disconnected from the LSM framework (callback
+> and LSM kernel object state management).  We've seen bugs in the past
+> caused by the BPF LSM trying to operate independently of the LSM
+> framework, something like this will only make that worse.
 
-To be aligned with existing convention a better name would be "trusted_key_tpm".
+Could you please point me to some of the bugs you mention, such that
+I understand exactly what you mean? I am not really seeing how the
+real LSM hooks differ from the ones added here (from BPF point of
+view, and the objects it can access via kfuncs/maps). We provide the
+same "sleepable", "untrusted", etc. guarantees with the new hooks,
+as for normal ones.
 
-> +	uint32_t keyhandle;
-> +	unsigned char keyauth[TPM_DIGEST_SIZE];
-> +	uint32_t blobauth_len;
-> +	unsigned char blobauth[TPM_DIGEST_SIZE];
-> +	uint32_t pcrinfo_len;
-> +	unsigned char pcrinfo[MAX_PCRINFO_SIZE];
-> +	int pcrlock;
-> +	uint32_t hash;
-> +	uint32_t policydigest_len;
-> +	unsigned char policydigest[MAX_DIGEST_SIZE];
-> +	uint32_t policyhandle;
-> +};
-> +
->  int tpm2_seal_trusted(struct tpm_chip *chip,
->  		      struct trusted_key_payload *payload,
->  		      struct trusted_key_options *options);
-> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> index bf0bf7f36970..14d005e76a1c 100644
-> --- a/security/keys/trusted-keys/trusted_tpm1.c
-> +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> @@ -48,15 +48,17 @@ enum {
->  #ifdef CONFIG_TRUSTED_KEYS_DEBUG
->  static inline void dump_options(struct trusted_key_options *o)
->  {
-> +	struct trusted_tpm_options *private = o->private;
-> +
->  	if (!trusted_debug)
->  		return;
->  
->  	pr_debug("sealing key type %d\n", o->keytype);
-> -	pr_debug("sealing key handle %0X\n", o->keyhandle);
-> -	pr_debug("pcrlock %d\n", o->pcrlock);
-> -	pr_debug("pcrinfo %d\n", o->pcrinfo_len);
-> +	pr_debug("sealing key handle %0X\n", private->keyhandle);
-> +	pr_debug("pcrlock %d\n", private->pcrlock);
-> +	pr_debug("pcrinfo %d\n", private->pcrinfo_len);
->  	print_hex_dump_debug("pcrinfo ", DUMP_PREFIX_NONE,
-> -			     16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-> +			     16, 1, private->pcrinfo, private->pcrinfo_len, 0);
->  }
->  
->  static inline void dump_sess(struct osapsess *s)
-> @@ -626,6 +628,7 @@ static int tpm_unseal(struct tpm_buf *tb,
->  static int key_seal(struct trusted_key_payload *p,
->  		    struct trusted_key_options *o)
->  {
-> +	struct trusted_tpm_options *private = o->private;
->  	int ret;
->  
->  	struct tpm_buf *tb __free(kfree) = kzalloc(TPM_BUFSIZE, GFP_KERNEL);
-> @@ -637,9 +640,10 @@ static int key_seal(struct trusted_key_payload *p,
->  	/* include migratable flag at end of sealed key */
->  	p->key[p->key_len] = p->migratable;
->  
-> -	ret = tpm_seal(tb, o->keytype, o->keyhandle, o->keyauth,
-> +	ret = tpm_seal(tb, o->keytype, private->keyhandle, private->keyauth,
->  		       p->key, p->key_len + 1, p->blob, &p->blob_len,
-> -		       o->blobauth, o->pcrinfo, o->pcrinfo_len);
-> +		       private->blobauth, private->pcrinfo,
-> +		       private->pcrinfo_len);
->  	if (ret < 0)
->  		pr_info("srkseal failed (%d)\n", ret);
->  
-> @@ -652,6 +656,7 @@ static int key_seal(struct trusted_key_payload *p,
->  static int key_unseal(struct trusted_key_payload *p,
->  		      struct trusted_key_options *o)
->  {
-> +	struct trusted_tpm_options *private = o->private;
->  	int ret;
->  
->  	struct tpm_buf *tb __free(kfree) = kzalloc(TPM_BUFSIZE, GFP_KERNEL);
-> @@ -660,8 +665,8 @@ static int key_unseal(struct trusted_key_payload *p,
->  
->  	tpm_buf_init(tb, TPM_BUFSIZE);
->  
-> -	ret = tpm_unseal(tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
-> -			 o->blobauth, p->key, &p->key_len);
-> +	ret = tpm_unseal(tb, private->keyhandle, private->keyauth, p->blob,
-> +			 p->blob_len, private->blobauth, p->key, &p->key_len);
->  	if (ret < 0)
->  		pr_info("srkunseal failed (%d)\n", ret);
->  	else
-> @@ -697,6 +702,7 @@ static const match_table_t key_tokens = {
->  static int getoptions(char *c, struct trusted_key_payload *pay,
->  		      struct trusted_key_options *opt)
->  {
-> +	struct trusted_tpm_options *private = opt->private;
->  	substring_t args[MAX_OPT_ARGS];
->  	char *p = c;
->  	int token;
-> @@ -712,7 +718,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  	if (tpm2 < 0)
->  		return tpm2;
->  
-> -	opt->hash = tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
-> +	private->hash = tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
->  
->  	if (!c)
->  		return 0;
-> @@ -726,11 +732,11 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  
->  		switch (token) {
->  		case Opt_pcrinfo:
-> -			opt->pcrinfo_len = strlen(args[0].from) / 2;
-> -			if (opt->pcrinfo_len > MAX_PCRINFO_SIZE)
-> +			private->pcrinfo_len = strlen(args[0].from) / 2;
-> +			if (private->pcrinfo_len > MAX_PCRINFO_SIZE)
->  				return -EINVAL;
-> -			res = hex2bin(opt->pcrinfo, args[0].from,
-> -				      opt->pcrinfo_len);
-> +			res = hex2bin(private->pcrinfo, args[0].from,
-> +				      private->pcrinfo_len);
->  			if (res < 0)
->  				return -EINVAL;
->  			break;
-> @@ -739,12 +745,12 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  			if (res < 0)
->  				return -EINVAL;
->  			opt->keytype = SEAL_keytype;
-> -			opt->keyhandle = handle;
-> +			private->keyhandle = handle;
->  			break;
->  		case Opt_keyauth:
->  			if (strlen(args[0].from) != 2 * SHA1_DIGEST_SIZE)
->  				return -EINVAL;
-> -			res = hex2bin(opt->keyauth, args[0].from,
-> +			res = hex2bin(private->keyauth, args[0].from,
->  				      SHA1_DIGEST_SIZE);
->  			if (res < 0)
->  				return -EINVAL;
-> @@ -755,21 +761,23 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  			 * hex strings.  TPM 2.0 authorizations are simple
->  			 * passwords (although it can take a hash as well)
->  			 */
-> -			opt->blobauth_len = strlen(args[0].from);
-> +			private->blobauth_len = strlen(args[0].from);
->  
-> -			if (opt->blobauth_len == 2 * TPM_DIGEST_SIZE) {
-> -				res = hex2bin(opt->blobauth, args[0].from,
-> +			if (private->blobauth_len == 2 * TPM_DIGEST_SIZE) {
-> +				res = hex2bin(private->blobauth, args[0].from,
->  					      TPM_DIGEST_SIZE);
->  				if (res < 0)
->  					return -EINVAL;
->  
-> -				opt->blobauth_len = TPM_DIGEST_SIZE;
-> +				private->blobauth_len = TPM_DIGEST_SIZE;
->  				break;
->  			}
->  
-> -			if (tpm2 && opt->blobauth_len <= sizeof(opt->blobauth)) {
-> -				memcpy(opt->blobauth, args[0].from,
-> -				       opt->blobauth_len);
-> +			if (tpm2 &&
-> +			    private->blobauth_len <=
-> +			    sizeof(private->blobauth)) {
-> +				memcpy(private->blobauth, args[0].from,
-> +				       private->blobauth_len);
->  				break;
->  			}
->  
-> @@ -787,14 +795,14 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  			res = kstrtoul(args[0].from, 10, &lock);
->  			if (res < 0)
->  				return -EINVAL;
-> -			opt->pcrlock = lock;
-> +			private->pcrlock = lock;
->  			break;
->  		case Opt_hash:
->  			if (test_bit(Opt_policydigest, &token_mask))
->  				return -EINVAL;
->  			for (i = 0; i < HASH_ALGO__LAST; i++) {
->  				if (!strcmp(args[0].from, hash_algo_name[i])) {
-> -					opt->hash = i;
-> +					private->hash = i;
->  					break;
->  				}
->  			}
-> @@ -806,14 +814,14 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  			}
->  			break;
->  		case Opt_policydigest:
-> -			digest_len = hash_digest_size[opt->hash];
-> +			digest_len = hash_digest_size[private->hash];
->  			if (!tpm2 || strlen(args[0].from) != (2 * digest_len))
->  				return -EINVAL;
-> -			res = hex2bin(opt->policydigest, args[0].from,
-> +			res = hex2bin(private->policydigest, args[0].from,
->  				      digest_len);
->  			if (res < 0)
->  				return -EINVAL;
-> -			opt->policydigest_len = digest_len;
-> +			private->policydigest_len = digest_len;
->  			break;
->  		case Opt_policyhandle:
->  			if (!tpm2)
-> @@ -821,7 +829,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  			res = kstrtoul(args[0].from, 16, &handle);
->  			if (res < 0)
->  				return -EINVAL;
-> -			opt->policyhandle = handle;
-> +			private->policyhandle = handle;
->  			break;
->  		default:
->  			return -EINVAL;
-> @@ -832,6 +840,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->  
->  static struct trusted_key_options *trusted_options_alloc(void)
->  {
-> +	struct trusted_tpm_options *private;
->  	struct trusted_key_options *options;
->  	int tpm2;
->  
-> @@ -844,14 +853,22 @@ static struct trusted_key_options *trusted_options_alloc(void)
->  		/* set any non-zero defaults */
->  		options->keytype = SRK_keytype;
->  
-> -		if (!tpm2)
-> -			options->keyhandle = SRKHANDLE;
-> +		private = kzalloc_obj(*private);
-> +		if (!private) {
-> +			kfree_sensitive(options);
-> +			options = NULL;
-> +		} else {
-> +			if (!tpm2)
-> +				private->keyhandle = SRKHANDLE;
-> +			options->private = private;
-> +		}
->  	}
->  	return options;
->  }
->  
->  static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
->  {
-> +	struct trusted_tpm_options *private = NULL;
->  	struct trusted_key_options *options = NULL;
->  	int ret = 0;
->  	int tpm2;
-> @@ -869,7 +886,8 @@ static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
->  		goto out;
->  	dump_options(options);
->  
-> -	if (!options->keyhandle && !tpm2) {
-> +	private = options->private;
-> +	if (!private->keyhandle && !tpm2) {
->  		ret = -EINVAL;
->  		goto out;
->  	}
-> @@ -883,20 +901,23 @@ static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
->  		goto out;
->  	}
->  
-> -	if (options->pcrlock) {
-> -		ret = pcrlock(options->pcrlock);
-> +	if (private->pcrlock) {
-> +		ret = pcrlock(private->pcrlock);
->  		if (ret < 0) {
->  			pr_info("pcrlock failed (%d)\n", ret);
->  			goto out;
->  		}
->  	}
->  out:
-> +	if (options)
-> +		kfree_sensitive(options->private);
->  	kfree_sensitive(options);
->  	return ret;
->  }
->  
->  static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
->  {
-> +	struct trusted_tpm_options *private = NULL;
->  	struct trusted_key_options *options = NULL;
->  	int ret = 0;
->  	int tpm2;
-> @@ -914,7 +935,8 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
->  		goto out;
->  	dump_options(options);
->  
-> -	if (!options->keyhandle && !tpm2) {
-> +	private = options->private;
-> +	if (!private->keyhandle && !tpm2) {
->  		ret = -EINVAL;
->  		goto out;
->  	}
-> @@ -926,14 +948,16 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
->  	if (ret < 0)
->  		pr_info("key_unseal failed (%d)\n", ret);
->  
-> -	if (options->pcrlock) {
-> -		ret = pcrlock(options->pcrlock);
-> +	if (private->pcrlock) {
-> +		ret = pcrlock(private->pcrlock);
->  		if (ret < 0) {
->  			pr_info("pcrlock failed (%d)\n", ret);
->  			goto out;
->  		}
->  	}
->  out:
-> +	if (options)
-> +		kfree_sensitive(options->private);
->  	kfree_sensitive(options);
->  	return ret;
->  }
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> index 67225dd562a9..07b831b515bb 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> @@ -23,6 +23,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->  			   struct trusted_key_options *options,
->  			   u8 *src, u32 len)
->  {
-> +	struct trusted_tpm_options *private = options->private;
->  	const int SCRATCH_SIZE = PAGE_SIZE;
->  	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
->  	u8 *work = scratch, *work1;
-> @@ -45,7 +46,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->  	work = asn1_encode_oid(work, end_work, tpm2key_oid,
->  			       asn1_oid_len(tpm2key_oid));
->  
-> -	if (options->blobauth_len == 0) {
-> +	if (private->blobauth_len == 0) {
->  		unsigned char bool[3], *w = bool;
->  		/* tag 0 is emptyAuth */
->  		w = asn1_encode_boolean(w, w + sizeof(bool), true);
-> @@ -68,7 +69,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->  		goto err;
->  	}
->  
-> -	work = asn1_encode_integer(work, end_work, options->keyhandle);
-> +	work = asn1_encode_integer(work, end_work, private->keyhandle);
->  	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
->  	work = asn1_encode_octet_string(work, end_work, priv, priv_len);
->  
-> @@ -101,6 +102,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
->  			   struct trusted_key_options *options,
->  			   u8 **buf)
->  {
-> +	struct trusted_tpm_options *private = options->private;
->  	int ret;
->  	struct tpm2_key_context ctx;
->  	u8 *blob;
-> @@ -120,7 +122,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
->  		return -ENOMEM;
->  
->  	*buf = blob;
-> -	options->keyhandle = ctx.parent;
-> +	private->keyhandle = ctx.parent;
->  
->  	memcpy(blob, ctx.priv, ctx.priv_len);
->  	blob += ctx.priv_len;
-> @@ -232,6 +234,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
->  		      struct trusted_key_payload *payload,
->  		      struct trusted_key_options *options)
->  {
-> +	struct trusted_tpm_options *private = options->private;
->  	off_t offset = TPM_HEADER_SIZE;
->  	struct tpm_buf *buf __free(kfree) = NULL;
->  	struct tpm_buf *sized __free(kfree) = NULL;
-> @@ -240,11 +243,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
->  	u32 flags;
->  	int rc;
->  
-> -	hash = tpm2_find_hash_alg(options->hash);
-> +	hash = tpm2_find_hash_alg(private->hash);
->  	if (hash < 0)
->  		return hash;
->  
-> -	if (!options->keyhandle)
-> +	if (!private->keyhandle)
->  		return -EINVAL;
->  
->  	rc = tpm_try_get_ops(chip);
-> @@ -274,18 +277,18 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
->  
->  	tpm_buf_init_sized(sized, TPM_BUFSIZE);
->  
-> -	rc = tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
-> +	rc = tpm_buf_append_name(chip, buf, private->keyhandle, NULL);
->  	if (rc)
->  		goto out;
->  
->  	tpm_buf_append_hmac_session(chip, buf, TPM2_SA_DECRYPT,
-> -				    options->keyauth, TPM_DIGEST_SIZE);
-> +				    private->keyauth, TPM_DIGEST_SIZE);
->  
->  	/* sensitive */
-> -	tpm_buf_append_u16(sized, options->blobauth_len);
-> +	tpm_buf_append_u16(sized, private->blobauth_len);
->  
-> -	if (options->blobauth_len)
-> -		tpm_buf_append(sized, options->blobauth, options->blobauth_len);
-> +	if (private->blobauth_len)
-> +		tpm_buf_append(sized, private->blobauth, private->blobauth_len);
->  
->  	tpm_buf_append_u16(sized, payload->key_len);
->  	tpm_buf_append(sized, payload->key, payload->key_len);
-> @@ -298,14 +301,15 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
->  
->  	/* key properties */
->  	flags = 0;
-> -	flags |= options->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
-> +	flags |= private->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
->  	flags |= payload->migratable ? 0 : (TPM2_OA_FIXED_TPM | TPM2_OA_FIXED_PARENT);
->  	tpm_buf_append_u32(sized, flags);
->  
->  	/* policy */
-> -	tpm_buf_append_u16(sized, options->policydigest_len);
-> -	if (options->policydigest_len)
-> -		tpm_buf_append(sized, options->policydigest, options->policydigest_len);
-> +	tpm_buf_append_u16(sized, private->policydigest_len);
-> +	if (private->policydigest_len)
-> +		tpm_buf_append(sized, private->policydigest,
-> +			       private->policydigest_len);
->  
->  	/* public parameters */
->  	tpm_buf_append_u16(sized, TPM_ALG_NULL);
-> @@ -376,6 +380,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->  			 u32 *blob_handle)
->  {
->  	u8 *blob_ref __free(kfree) = NULL;
-> +	struct trusted_tpm_options *private = options->private;
->  	struct tpm_buf *buf __free(kfree) = NULL;
->  	unsigned int private_len;
->  	unsigned int public_len;
-> @@ -395,7 +400,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->  	}
->  
->  	/* new format carries keyhandle but old format doesn't */
-> -	if (!options->keyhandle)
-> +	if (!private->keyhandle)
->  		return -EINVAL;
->  
->  	/* must be big enough for at least the two be16 size counts */
-> @@ -439,11 +444,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->  	tpm_buf_init(buf, TPM_BUFSIZE);
->  	tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
->  
-> -	rc = tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
-> +	rc = tpm_buf_append_name(chip, buf, private->keyhandle, NULL);
->  	if (rc)
->  		return rc;
->  
-> -	tpm_buf_append_hmac_session(chip, buf, 0, options->keyauth,
-> +	tpm_buf_append_hmac_session(chip, buf, 0, private->keyauth,
->  				    TPM_DIGEST_SIZE);
->  
->  	tpm_buf_append(buf, blob, blob_len);
-> @@ -483,6 +488,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
->  			   struct trusted_key_options *options,
->  			   u32 blob_handle)
->  {
-> +	struct trusted_tpm_options *private = options->private;
->  	struct tpm_header *head;
->  	struct tpm_buf *buf __free(kfree) = NULL;
->  	u16 data_len;
-> @@ -507,10 +513,10 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
->  	if (rc)
->  		return rc;
->  
-> -	if (!options->policyhandle) {
-> +	if (!private->policyhandle) {
->  		tpm_buf_append_hmac_session(chip, buf, TPM2_SA_ENCRYPT,
-> -					    options->blobauth,
-> -					    options->blobauth_len);
-> +					    private->blobauth,
-> +					    private->blobauth_len);
->  	} else {
->  		/*
->  		 * FIXME: The policy session was generated outside the
-> @@ -523,9 +529,9 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
->  		 * could repeat our actions with the exfiltrated
->  		 * password.
->  		 */
-> -		tpm2_buf_append_auth(buf, options->policyhandle,
-> +		tpm2_buf_append_auth(buf, private->policyhandle,
->  				     NULL /* nonce */, 0, 0,
-> -				     options->blobauth, options->blobauth_len);
-> +				     private->blobauth, private->blobauth_len);
->  		if (tpm2_chip_auth(chip)) {
->  			tpm_buf_append_hmac_session(chip, buf, TPM2_SA_ENCRYPT,
->  						    NULL, 0);
+The main reason (for now) to specifically create a new list of BPF-only LSM
+hooks is (pcmoore/lsm.git/tree/README.md):
+
+  """New LSM hooks must demonstrate their usefulness by providing a meaningful
+  implementation for at least one in-kernel LSM.  The goal is to demonstrate the
+  purpose and expected semantics of the hooks.  Out of tree kernel code, and pass
+  through implementations, such as the BPF LSM, are not eligible for LSM hook
+  reference implementations."""
+
+And for the hooks added in this series
+
+  a) BPF satisfies our needs, as we can precisely analyse what the
+     calls are trying to do with good granularity
+
+  b) I am not sure how to actually express this in any in-tree LSMs
+
+Can't BPF be considered enough to demonstrate usefulness?
+
+> 
 > -- 
-> 2.53.0
-> 
-
-BR, Jarkko
+> paul-moore.com
