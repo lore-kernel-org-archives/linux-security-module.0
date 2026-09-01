@@ -1,159 +1,118 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A63546D2AF
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2026 13:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79862383C93;
+	Tue,  1 Sep 2026 13:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788269180; cv=none; b=eHpCTYtVZ7jLSy7PdScVhsICgEbdbqoZ4mnsD8dbBHKn1iqV17jzfTWJOTK8gSiM5InRFMO6McKZSrrm1TPgpYjqqCaSfu3335tYzBy0v2Ng37XUwfBH44JJXz8gnfOqMR+JAM5Pc34Zp7aVIVRyvx9h5JZFAPYzDv/JkoD+KvE=
+	t=1788269433; cv=none; b=FnZgSaXg9eNDQZcDz3j7dc1S0kDe8Z2tKV/gqqCMfhmFjkRD6cTP4jz0+soophGwx3YYG/qxOUhEVnwstoY1tZ3ejqMOY9GD+gSLVsGk4eGibXqsbmbC1JdW/lggkm5Qk7LH1BLsa2ir8h6veQcSHjVvxhixVFfrO9yJmUgAzeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788269180; c=relaxed/simple;
-	bh=Rn9/tcknkMhoBJMoT/vDX/T84MaINb69k5oYE5QTRas=;
+	s=arc-20240116; t=1788269433; c=relaxed/simple;
+	bh=O9WHREr9BPWQkUYzuzB9Vacqtpd2xznMaYHzQNKjSx4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MiTWDhVnCq5NX/Pk1DWAc63XVFooJP1HF29fvWSGRiAkkCk4bpvX7abAKXt1xQLhtgOnuUit6TpeiSL9LGKrmZANBKDPfoq9WdkHAjQ9yTWM0UZqV0EkSa3Kxen4x7c6uAX7/7lUB8yWtpPMl5lFYnIjWdkdChgL0MG5ACIDaqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmLmJrFU; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=j75ZHWNL5pGYrKhqwEkXcuXgdt7+zHUsOQFGr9O1Jw/NeAJ93qy/hg5Ex1DYGMjQUIqzh+edCq6fQA6kQTQiGex5JORFFfo2+zPw08TR2y7OuQQMabu+OUXcxfkHAfwwJuND2rWzeegLTq7w9zZlAwM8KUzqEF4Tb6bGrC06z1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBfk8E0/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmLmJrFU"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5b5e18f0439so3980847e87.2
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2026 06:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788269176; x=1788873976; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5YQ2NkdYE1UkDQmtG4k56tSGp0dI9qqzV8dhPz8o8Qo=;
-        b=MmLmJrFUY+prIRyTONU+oFVHyOs92yM2LiDDdexmu11edZB8c/MwbOvXoPluCI9onV
-         V6tt7E5kd1jXAglceOgm4r4Gt1R3GoawaWepLpC06FSFKPmCgpkdZHL6CD0P0IT2HRtb
-         ULbgcbMjPpDlfEQ60BjH4ZVeBCSqwGPYw0ZmOrn8DsPZnF8KUqUgRjkZhIe0Q0Z3iPV6
-         oYMsGUZtjgfS7A5ZHjUGTTY+gnql7DzvNcl0/45HgAG5qS2NDxdUSPbpJIP6711Y7sAb
-         SNcANDd/MMKJMnd4X2P+j+b5V8+N0p7JtcJLvZabaWScKywLQsupMmPuEwgwBqN+OYdE
-         ZiUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788269176; x=1788873976;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=5YQ2NkdYE1UkDQmtG4k56tSGp0dI9qqzV8dhPz8o8Qo=;
-        b=VjIOQCDnwb6C8rzKiJIgNRobwzbvNa+IRI4D0vTu3PV2QOuV09/cqz4bpsi4gbjVUv
-         fkfeJe+zBOJ2h/3LAK7wHC+kq9n/aifMCvYGC6/gF7tpFTO33yjJzKmmx8YjIHts04Jx
-         gIto7kX7nkecqOXcBlpEav7tlwTa6adj3kPlbdBuD+9ZCy28p+L8rP0C10/n39gtrxZu
-         nR1frIon9yHam8s0040cWhRcuEQix4+xDnlokkwfLo8RIvQTakJJXFdfuAqCsAzb/wb0
-         Hu3yHW/SpSjCYClF8vO86kEABKVM2zYDL3Byue9VBiECSLt8+h0u2KYrpfnFh2hwsfbb
-         UoZA==
-X-Forwarded-Encrypted: i=1; AKwUvBw4Bwz2K0yzdViWy2vtbfewKJMRdOm1D7LEU+kNNZmMaxSMrVlgl9RNYKoea/AABjFciGqCoBl5JE2XxyzbIpsgZU831Vk=@vger.kernel.org
-X-Gm-Message-State: AFuF++mVkc59NAn8aWayG3TSQeENtHVCqTOasHmUbGKFsjVVZ/rfy+eQ
-	xT0na7el+4dczzkquMf3wmexzkv8URESvQU7Qnfcm0EO0AOyNYMN5GAb
-X-Gm-Gg: AYBFou1WHxBVJqfM/M5h7q4lNE2vtVm8VvQ+GKH6nAYDhvkLJtLp6713EAR4grvLbOH
-	gTrHgAFRjf2SrsiCuByh92p8zg9rk8V5XE96M0j8DBk44KLxQKdyxh7uv39ybKeUsp2J5mDXtWm
-	J9rv/vsNyQOugcFprKSqbvM0f6uPb9WCLEr+wAxeJ1woPHGRjfVQXqDbrgbo1bWUmP1SmDIWW//
-	iD1tqMywSt+rUT8Mak5cD0gigowAdmklsttfbkO2f4PrhCfqxxox02eAEOaHLgvW1G05taGWHN3
-	6BassILCtdOyGJuhiw584HMIO64xigigPCXNK7wWIrcOY/MeMRxPZsgY2J1g05UVBCEGhBoSb6A
-	0zb5hDQmpH7HTBV7PaeQcpibxdyZRTz65FfC/LA+iJdTXdecNos6JD3rdT4BRFmEQmC+NjDq2+4
-	6onfARvRV5D+D+jDjhgbuSlvOfaUa04bmFsNoHUVN93EOG1ZAgvHBqwx63m0W6im2al7bkHXnCB
-	aiw+BM=
-X-Received: by 2002:a05:6512:3985:b0:5b4:b03e:b17 with SMTP id 2adb3069b0e04-5b5fe0914e3mr3071911e87.4.1788269175321;
-        Tue, 01 Sep 2026 06:26:15 -0700 (PDT)
-Received: from mail.gmail.com ([2a04:ee41:4:b2de:1ac0:4dff:fe0f:3782])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b5e8a18422sm2841927e87.76.2026.09.01.06.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2026 06:26:14 -0700 (PDT)
-Date: Tue, 1 Sep 2026 13:36:51 +0000
-From: Anton Protopopov <a.s.protopopov@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: bpf <bpf@vger.kernel.org>, lsm <linux-security-module@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <matt@bobrowski.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH bpf-next 1/7] bpf: Allow BPF LSM programs to attach to
- more hooks
-Message-ID: <apbU8-fpioNIwUA8@mail.gmail.com>
-References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
- <20260831110934.241898-2-a.s.protopopov@gmail.com>
- <CAHC9VhT7=wMsB9mERWoiM6pF+_T1=2tyAsSrxMphhtdE2NPHMw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBfk8E0/"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id CEB031F000E9;
+	Tue,  1 Sep 2026 13:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788269431;
+	bh=YbJKsihIEL3iTlpT0PPP0qrj+KIlUNzWEvcENpLfI7M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BBfk8E0/QAGRWE1agjQVpoFkg6Z3SrRc4rdi12/+YH9u6prI2qocDME2IhTBsz/2W
+	 TEWBe11fYXVTqQ2kkDRUJCVJhjysut07rtr6SMyoIJPHKYFQVX63QMR0wIYaMbfXji
+	 NmP0Vb/d6PgTsdQmOV6xMXJJTk1Qz4Hk4n8uVmhZdt88yrg4I9DHVPju7y1J03K2Yg
+	 89/5ZZD3xnc3A06XfKjq4nfU+/IKKMGPwWVYl0F+CrGufdivse7DHCmHS1gXrrRgQf
+	 aecp+bPCOWHmI5ej/WhVhc/kk8Oe3P3cfzir+eBwIvEmEYUSsVscF7Zz7EJ8zv2NuF
+	 9fJDaNXasIzDg==
+Date: Tue, 1 Sep 2026 16:30:27 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Karl Mehltretter <kmehltretter@gmail.com>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: set persistent keyring timeout before destination
+ linking
+Message-ID: <apbTc9BisLTqBaE_@kernel.org>
+References: <bb0370340c671.1788111790.git.kmehltretter@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhT7=wMsB9mERWoiM6pF+_T1=2tyAsSrxMphhtdE2NPHMw@mail.gmail.com>
+In-Reply-To: <bb0370340c671.1788111790.git.kmehltretter@gmail.com>
 
-On 26/08/31 06:42PM, Paul Moore wrote:
-> On Mon, Aug 31, 2026 at 6:59 AM Anton Protopopov
-> <a.s.protopopov@gmail.com> wrote:
-> >
-> > The BPF LSM programs are allowed to attach to LSM hooks, all of which
-> > are defined in the <lsm_hook_defs.h> header file.  From BPF's point
-> > of view the set of attachment points is defined in the bpf_lsm_hooks
-> > BTF set. By analogy with existing code, add a new header file
-> > <bpf_lsm_hook_defs.h> which will also be included in the bpf_lsm_hooks
-> > BTF set.
-> >
-> > This change allows attaching BPF LSM programs to more functions.
-> > The actual hooks are added in subsequent commits.
-> >
-> > Each BPF hook calls a [__weak] noinline function each time a hook is
-> > reached. This may be too expensive for hot paths if a BPF program is
-> > not attached. A future commit will optimize this by adding a per-hook
-> > static key and inc/dec it on attach/detach. This way disabled hooks
-> > will be bypassed efficiently.
-> >
-> > Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
-> > ---
-> >  MAINTAINERS                       |  1 +
-> >  include/linux/bpf_lsm.h           | 12 ++++++++++++
-> >  include/linux/bpf_lsm_hook_defs.h |  6 ++++++
-> >  kernel/bpf/bpf_lsm.c              |  2 ++
-> >  4 files changed, 21 insertions(+)
-> >  create mode 100644 include/linux/bpf_lsm_hook_defs.h
+On Sun, Aug 30, 2026 at 08:20:26PM +0200, Karl Mehltretter wrote:
+> keyring_alloc() links a newly created persistent keyring into the
+> namespace's hidden register with TIME64_MAX expiry.
+> key_get_persistent() sets the configured timeout only after linking the
+> keyring into the caller's destination.
 > 
-> Adding new BPF hooks in the kernel is one thing, but adding new BPF
-> LSM hooks outside of the LSM framework is likely to be problematic as
-> these new hooks operate disconnected from the LSM framework (callback
-> and LSM kernel object state management).  We've seen bugs in the past
-> caused by the BPF LSM trying to operate independently of the LSM
-> framework, something like this will only make that worse.
+> If the destination rejects the link, the registered keyring retains
+> infinite expiry. It is exempt from key quota and can remain until namespace
+> teardown or reboot even though the syscall returned an error. At most one
+> such keyring exists per UID per namespace. Repeated failures for the same
+> UID therefore strand only one small allocation.
+> 
+> This is reachable from unprivileged userspace: KEYCTL_RESTRICT_KEYRING on
+> the destination makes key_link() return -EPERM via restrict_link_reject(),
+> after key_create_persistent() has already registered the keyring.
+> 
+> Set the timeout immediately after creating and registering the keyring. A
+> later permission or destination-link failure then leaves a collectible
+> persistent keyring. The successful path may refresh the same timeout again
+> without changing its semantics.
+> 
+> Fixes: f36f8c75ae2e ("KEYS: Add per-user_namespace registers for persistent per-UID kerberos caches")
+> Assisted-by: LLM
+> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+> ---
+> Tested with QEMU 10.2.1 TCG. The reproducer set
+> /proc/sys/kernel/keys/persistent_keyring_expiry to 60 seconds, restricted
+> the destination with KEYCTL_RESTRICT_KEYRING, and then called
+> KEYCTL_GET_PERSISTENT. No LSM policy was loaded.
+> 
+>                       syscall result  /proc/keys expiry
+>   i386 baseline       -EPERM          perm
+>   i386 patched        -EPERM          1m
+>   x86_64 patched      -EPERM          1m
+> 
+> Full kernel builds completed for i386 and ARM926, and for x86_64 with
+> CONFIG_PROVE_LOCKING=y. The x86_64 reproducer completed without lockdep
+> reports, warnings, or bugs.
 
-Could you please point me to some of the bugs you mention, such that
-I understand exactly what you mean? I am not really seeing how the
-real LSM hooks differ from the ones added here (from BPF point of
-view, and the objects it can access via kfuncs/maps). We provide the
-same "sleepable", "untrusted", etc. guarantees with the new hooks,
-as for normal ones.
-
-The main reason (for now) to specifically create a new list of BPF-only LSM
-hooks is (pcmoore/lsm.git/tree/README.md):
-
-  """New LSM hooks must demonstrate their usefulness by providing a meaningful
-  implementation for at least one in-kernel LSM.  The goal is to demonstrate the
-  purpose and expected semantics of the hooks.  Out of tree kernel code, and pass
-  through implementations, such as the BPF LSM, are not eligible for LSM hook
-  reference implementations."""
-
-And for the hooks added in this series
-
-  a) BPF satisfies our needs, as we can precisely analyse what the
-     calls are trying to do with good granularity
-
-  b) I am not sure how to actually express this in any in-tree LSMs
-
-Can't BPF be considered enough to demonstrate usefulness?
+Please describe this in the commit message and delete most of
+the text it has. This is the motivation part.
 
 > 
+>  security/keys/persistent.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/security/keys/persistent.c b/security/keys/persistent.c
+> index 97af230aa4b22..0eca8c5758434 100644
+> --- a/security/keys/persistent.c
+> +++ b/security/keys/persistent.c
+> @@ -63,6 +63,12 @@ static key_ref_t key_create_persistent(struct user_namespace *ns, kuid_t uid,
+>  	if (IS_ERR(persistent))
+>  		return ERR_CAST(persistent);
+>  
+> +	/* Set the expiry now: if the caller then fails to link the keyring to
+> +	 * its destination, the register is left holding a collectible key
+> +	 * rather than a permanent, quota-exempt one.
+> +	 */
+> +	key_set_timeout(persistent, persistent_keyring_expiry);
+> +
+>  	return make_key_ref(persistent, true);
+>  }
+>  
+> 
+> base-commit: 08dbfad3f5040f5bdb6c529da20d6d4e81fefd72
 > -- 
-> paul-moore.com
+> 2.53.0
+
+BR, Jarkko
