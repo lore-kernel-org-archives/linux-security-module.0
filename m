@@ -1,129 +1,203 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6D1383994;
-	Tue,  1 Sep 2026 20:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788296298; cv=none; b=N907j3oCOOgiifVnrtfo9jLM989fapsYm9iZrPMEOBKJwvM6y2xlBs6qtl7XSfMsG2zjoVYi9/CM2qG39IHaZPlYlzVD9U9XxFrcX02v4qPysnp89HDENdfXI0JTW5OKkuH7lRWbsuvxQbuBPFOWSzruCG7bbF/I7yb25yAujlk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788296298; c=relaxed/simple;
-	bh=XwRCKHVp10ID8xYE1dVM9CVX5ALnXbCrJAcU78wXc5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fdATYwCg4A6k+UecQtjWp5hj5BBwXpWWvxZcx8K86c5ryyo2Mqp74TdpArqej25yJfaLfsK2AkeNL/rHmFOEM09tRx95b3V+XFZrXsIDXLngJ9Eq69ek4htBllyCZnVLnnipMRZAFmdM4JZP5mKRZQRz6IN/QnhprDdla8Mncn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHQghr8h; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8F047ACD1
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2026 22:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788300966; cv=pass; b=n9axbSn4cn/NPoKz+f/baaAsVSuV02gndm1Jc4kFsh//5fzY81laXjTu7B5LbYkcAUnMUMfjZnftPa8d1giCHfZx43En59BV+NFlbjRfrRFKWwlJr2U3zdilv7+pq8w6FhYqQDuteLgf+q23jxCkrNG2ORJKbWWDfBL43i7bao0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788300966; c=relaxed/simple;
+	bh=mKdTmKx+z6mwUGqcorW8iH+bPrZTGVyvSXc8efMHImI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oZMvLpGoAOqjlBNetcsIJkleFfmj9rltjgds6aGmpUGIwdk24i2uRjKTPSR/DOPPM9071ZySITUNpZGWR2tnd4pme5mg23WK2cS1pqH1YBTHhtpAzbN4AEkfJytqOkjpG1Rp5Y8fCZmMFiYoOzcu7Z9mEOn9vZ57Bkn+P0lmeMk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eqHh81s+; arc=pass smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHQghr8h"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A8B0E1F000E9;
-	Tue,  1 Sep 2026 20:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788296296;
-	bh=wlJPEe39WmavK2sNL398qv9Unw3EKaaOF3Vm6DfuKzY=;
-	h=From:To:Cc:Subject:Date;
-	b=aHQghr8hAhKm+FsutTE59BANpL9L04FsiuLncO3XHYw9TWEZF0KR6lJVEDxLHkdDY
-	 ZY8zELS0XulYmxsYz9IVyAtXEODLzjj1RHaqbYXScjsxKgQutkWrBSH8a3ypresa0e
-	 DYie0H8c5ZbhWnCt92TC+G17r8MkqJYeF21pjbZlQRPxwBGMxX8aHIB5CzJVyFFKGJ
-	 JAnsHclXO2uVmHt/Pc0F+b636MEYA4TjQeVZHFnU2Ums13qHlewrSYfyB7Gl52yTXt
-	 u975ryVkpNhKgg8+4xGGyKl3cI0r0nb+dYHslBbNCHn1OOQKgptBd2EO9eVcjaH5aZ
-	 SlTLwIbZO9J2w==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	co+6a581c4284f721d4@bugs.sh,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan McDowell <noodles@meta.com>,
-	Ross Philipson <ross.philipson@gmail.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Srish Srinivasan <ssrish@linux.ibm.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KEYS: trusted: Fix tpm2_load_cmd() boundary check
-Date: Tue,  1 Sep 2026 23:58:06 +0300
-Message-ID: <20260901205809.2028454-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eqHh81s+"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2caced6038eso3661735ad.0
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2026 15:16:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788300962; cv=none;
+        d=google.com; s=arc-20260327;
+        b=qrczzNnBqZh0VbBsjGPjE2NSr3w3HPSDSPdhOtaPt0Kdu7KbSuAz0ztIw1G3Hsuh8u
+         3LKHQHXKToRvLnuIIb8LPWl4avesmIhW0ZAufrqjCDoxlUQCOAfeNAfut/66kYUJDW8l
+         hJCJMIS7dMxmwgwSqpeqxTiloMJEsPqY82tYQwhtO/pacs5gNUchAv3mnamP+kXJ8Yw2
+         kJf6+MSEkeaw47OEHzkaFg6h236BGnGGBPiZfIs4YtyUz5ETKQvJXvnBi7dcWJGNtnBx
+         1HAlpbgNHtUVcUwr6VD/aBlsGSxRxpxx3Nv+FZTwBbXillVQyGHy9+TFibmg1nRsaDNP
+         hwJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=1ATcm8apudD2vfrozzvIh0C6UKnA5qihRpZDqTJ19B8=;
+        fh=wH0p2Hhr8U7G4QEc2FOAtSfOt4g3JmGG64v0hHYfNRU=;
+        b=qlPZocLp+NGQMMQcr08nMGES+gZHhwDX0ggru8OkabOQkMG27C2DFsmjC3KnvSjGZn
+         +lK20Px0RkqCaLB2aO8gqEJOQ7s2B0eg6zmETHWnkxSHTyyoFuw+cqzyy8dVQIc3jT0H
+         XwbaJoNQYTPK1GNphhkfzbhV0sDxGBgMYVZ4yPbVmEALDB+U0KUVC2PdfqEy47iYLLQR
+         1qiFH/vmayFm7NreTZTSLJjCWvOxR8bAMOLEAV1O4tsUiJwqrgF9ZAUfRoxuUugNBcKK
+         hIG6//LEcP6VqY9P0qUcIagx/9CPP2McTp35k69eMY8IbHUOHa7xCQPfD8OhuemFgjUz
+         eHhQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1788300962; x=1788905762; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=1ATcm8apudD2vfrozzvIh0C6UKnA5qihRpZDqTJ19B8=;
+        b=eqHh81s+7tojPHBWGAv5Z71iklqC1frwXCy5DQz86f05QiXQaT0WK1ayrOxB4tvX6w
+         9NP4C53JDCak/Lsv2Lr74xcFbCdQCssDxn8y1jzTU8uezehh5OxhJQuQ3tVdovDu1G5S
+         Dx1gpayTpCB6fRm/3vIjzMM/Rcs0cUzvZ+/aH8PRHNoDAyplBfdwfniUhdMONtJGO6Px
+         doLJ9pBtEZfOEO9M/oiURYUS5ZQ/6ACZcWCBi7g8OQnYWYxfGGr5/9+sO9twEA1SsdE4
+         O0Zm175JagvCH8VKyYXt5pleEW9b/88f1NX6YFreDqbNy4IMGIl/6+2ZN7FQzgTCikwG
+         HIxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788300962; x=1788905762;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=1ATcm8apudD2vfrozzvIh0C6UKnA5qihRpZDqTJ19B8=;
+        b=leMn8I8do6LAJQUxjPCYc4X9wqmBaKYC6M6mZ8mFQ+RxRvHpHaexNQYUWh82CwMQAT
+         Kea50Y+hvqHIca4tUHV2fbHJgnifFtCsmSLnJqeXcZuc6qr6zZJQLJDJZrwCjStqz4A1
+         VwdFuH9eCEQMpk7uFfjAD42DYln7x/QMYciCZI7BcU9KS9w7lK2/6pNj7Kgxzjz5quks
+         vOmKyhhAkr34e+mt5pkLVimeM1Umt8T/JmglbEtJ53zsN/9MwOHYMQNus0S3K3FQ0Z5Y
+         FqLxy3LJswE3WzUsiJstCDdv1IrZNHJpK+qJOtq0LsNmtPfCm8SGKdiHFhQBQQ9rUDp/
+         h4rQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzGciowsTmHRhYCpmPVg/X/kZRYHSk2INV5y+iHbli8SSHF70GoTySx1ko3hwGFlMWhXbQY0pkLSCbijcH6CH76uwEesvA=@vger.kernel.org
+X-Gm-Message-State: AFuF++nwqTzw27CsmHUF97ChlQeqA7Zvuc/RQbyu0VTWE1rrh25dej1Z
+	dyj7euy0zFhRMyeWsEhNN7QAbpZmFguxJJoAbdPCCMckGo2L7+Cx0F43Nhk1e08jdw63H9GDLjj
+	aAvApBqORF8RDIK/W1UzSbwUIJsM6fOpsEJMwxYrR
+X-Gm-Gg: AYBFou1xcWNTjUb9DGGmh1/FOn9gYnsqk4I4SzfNXCr7JccGGXXvzi8NVFsyBy1GJrV
+	oV9LFxoySmV4ON3f0JiPlnbQyjJ6NxwkEN63laiLrVAdgnJ9MVECFU6E/Wz3Y2RZsf/8t4Km4Rf
+	W8rpTyqgaTF7bhuEnW+JZkQeLzDRxD5tkwjoiNFnmJE+sODG1c8Ercrlum4Ff6oO+9qvX+26DTs
+	4670GW5VStT4WZ4c2yuUz5zt75BWElb5AXaXGNxHQZGO54K16nlyNGF9FNBbXR63pdLLByeww2d
+	tCpUbXeWoWUqV9QjlKJdDaGc49HNPJ2TKVVH7R2s++RD
+X-Received: by 2002:a17:903:2410:b0:2d9:2b1b:878a with SMTP id
+ d9443c01a7336-2d9526c2cdfmr80572575ad.10.1788300961608; Tue, 01 Sep 2026
+ 15:16:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
+ <20260831110934.241898-2-a.s.protopopov@gmail.com> <CAHC9VhT7=wMsB9mERWoiM6pF+_T1=2tyAsSrxMphhtdE2NPHMw@mail.gmail.com>
+ <apbU8-fpioNIwUA8@mail.gmail.com>
+In-Reply-To: <apbU8-fpioNIwUA8@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 1 Sep 2026 18:15:49 -0400
+X-Gm-Features: AcwNN1W7aLRefGcheWJ-uymO40RrLBDpF_-JUw-mmYcnuhgB-KD2OI0728rejLU
+Message-ID: <CAHC9VhQbWPqEz5g1rVcMyJgrzzd4cQuwi7cddgJQK1H3ugMz7A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/7] bpf: Allow BPF LSM programs to attach to
+ more hooks
+To: Anton Protopopov <a.s.protopopov@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, lsm <linux-security-module@vger.kernel.org>, 
+	netdev <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <matt@bobrowski.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tpm2_load_cmd() does boundary checks against the ASN.1 size i.e.,
-payload->blob_len. Address this by passing the decoded blob size to
-tpm2_load_cmd(), and use it for the boundary checks.
+On Tue, Sep 1, 2026 at 9:26=E2=80=AFAM Anton Protopopov
+<a.s.protopopov@gmail.com> wrote:
+> On 26/08/31 06:42PM, Paul Moore wrote:
+> > On Mon, Aug 31, 2026 at 6:59=E2=80=AFAM Anton Protopopov
+> > <a.s.protopopov@gmail.com> wrote:
+> > >
+> > > The BPF LSM programs are allowed to attach to LSM hooks, all of which
+> > > are defined in the <lsm_hook_defs.h> header file.  From BPF's point
+> > > of view the set of attachment points is defined in the bpf_lsm_hooks
+> > > BTF set. By analogy with existing code, add a new header file
+> > > <bpf_lsm_hook_defs.h> which will also be included in the bpf_lsm_hook=
+s
+> > > BTF set.
+> > >
+> > > This change allows attaching BPF LSM programs to more functions.
+> > > The actual hooks are added in subsequent commits.
+> > >
+> > > Each BPF hook calls a [__weak] noinline function each time a hook is
+> > > reached. This may be too expensive for hot paths if a BPF program is
+> > > not attached. A future commit will optimize this by adding a per-hook
+> > > static key and inc/dec it on attach/detach. This way disabled hooks
+> > > will be bypassed efficiently.
+> > >
+> > > Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
+> > > ---
+> > >  MAINTAINERS                       |  1 +
+> > >  include/linux/bpf_lsm.h           | 12 ++++++++++++
+> > >  include/linux/bpf_lsm_hook_defs.h |  6 ++++++
+> > >  kernel/bpf/bpf_lsm.c              |  2 ++
+> > >  4 files changed, 21 insertions(+)
+> > >  create mode 100644 include/linux/bpf_lsm_hook_defs.h
+> >
+> > Adding new BPF hooks in the kernel is one thing, but adding new BPF
+> > LSM hooks outside of the LSM framework is likely to be problematic as
+> > these new hooks operate disconnected from the LSM framework (callback
+> > and LSM kernel object state management).  We've seen bugs in the past
+> > caused by the BPF LSM trying to operate independently of the LSM
+> > framework, something like this will only make that worse.
+>
+> Could you please point me to some of the bugs you mention, such that
+> I understand exactly what you mean?
 
-Cc: stable@vger.kernel.org # v5.13+
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Reported-by: co+6a581c4284f721d4@bugs.sh
-Closes: https://bugs.sh/b/6a581c4284f721d4/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+The latest that I'm aware of was a few months ago:
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 67225dd562a9..01f18bb37047 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -99,7 +99,7 @@ struct tpm2_key_context {
- 
- static int tpm2_key_decode(struct trusted_key_payload *payload,
- 			   struct trusted_key_options *options,
--			   u8 **buf)
-+			   u8 **buf, unsigned int *blob_len)
- {
- 	int ret;
- 	struct tpm2_key_context ctx;
-@@ -120,6 +120,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
- 		return -ENOMEM;
- 
- 	*buf = blob;
-+	*blob_len = ctx.priv_len + ctx.pub_len;
- 	options->keyhandle = ctx.parent;
- 
- 	memcpy(blob, ctx.priv, ctx.priv_len);
-@@ -384,10 +385,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 	int rc;
- 	u32 attrs;
- 
--	rc = tpm2_key_decode(payload, options, &blob);
-+	rc = tpm2_key_decode(payload, options, &blob, &blob_len);
- 	if (rc) {
- 		/* old form */
- 		blob = payload->blob;
-+		blob_len = payload->blob_len;
- 		payload->old_format = 1;
- 	} else {
- 		/* Bind for cleanup: */
-@@ -399,17 +401,17 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		return -EINVAL;
- 
- 	/* must be big enough for at least the two be16 size counts */
--	if (payload->blob_len < 4)
-+	if (blob_len < 4)
- 		return -EINVAL;
- 
- 	private_len = get_unaligned_be16(blob);
- 
- 	/* must be big enough for following public_len */
--	if (private_len + 2 + 2 > (payload->blob_len))
-+	if (private_len + 2 + 2 > blob_len)
- 		return -E2BIG;
- 
- 	public_len = get_unaligned_be16(blob + 2 + private_len);
--	if (private_len + 2 + public_len + 2 > payload->blob_len)
-+	if (private_len + 2 + public_len + 2 > blob_len)
- 		return -E2BIG;
- 
- 	pub = blob + 2 + private_len + 2;
--- 
-2.47.3
+https://lore.kernel.org/bpf/20260628201103.3624525-1-mattbobrowski@google.c=
+om
 
+> I am not really seeing how the
+> real LSM hooks differ from the ones added here (from BPF point of
+> view, and the objects it can access via kfuncs/maps).
+
+The existing LSM hooks, LSM security blobs (the 'void *security'
+fields present in many kernel objects), and individual LSM callbacks
+are managed by the LSM framework whereas the functions you are
+proposing are not.  This is important because the LSM framework
+enables/disables individual LSMs at boot time which impacts both the
+executed LSM callbacks and the security blob allocations.
+Implementing "hooks" that operate outside the LSM framework can cause
+unexpected user behavior and potentially destabilize the kernel,
+leading to a system crash.
+
+We require all LSMs (Landlock, Smack, AppArmor, SELinux, etc.) to go
+through the LSM framework, the BPF LSM is no exception to this rule.
+If you want to add additional BPF program call sites beyond what the
+LSM framework provides, please implement them outside of the BPF LSM;
+there is plenty of precendence for that already.
+
+> The main reason (for now) to specifically create a new list of BPF-only L=
+SM
+> hooks is (pcmoore/lsm.git/tree/README.md):
+>
+>   """New LSM hooks must demonstrate their usefulness by providing a meani=
+ngful
+>   implementation for at least one in-kernel LSM.  The goal is to demonstr=
+ate the
+>   purpose and expected semantics of the hooks.  Out of tree kernel code, =
+and pass
+>   through implementations, such as the BPF LSM, are not eligible for LSM =
+hook
+>   reference implementations."""
+>
+> And for the hooks added in this series
+>
+>   a) BPF satisfies our needs, as we can precisely analyse what the
+>      calls are trying to do with good granularity
+>
+>   b) I am not sure how to actually express this in any in-tree LSMs
+>
+> Can't BPF be considered enough to demonstrate usefulness?
+
+The core issue has little to do with BPF, it has everything to do with
+in-tree vs out-of-tree code.  The BPF LSM is explicitly mentioned as a
+"pass through" because some have argued that the BPF LSM is in-tree,
+and while the basic BPF enablement is in-tree, the actual LSM code
+that is executed has thus far always been out-of-tree.
+
+--=20
+paul-moore.com
