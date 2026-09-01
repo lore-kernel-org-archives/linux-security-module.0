@@ -1,1005 +1,608 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2D539A812;
-	Tue,  1 Sep 2026 12:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5CB2253B0;
+	Tue,  1 Sep 2026 13:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788267027; cv=none; b=pdl8o0l5FrBpHzvSDakNo8tQBs0PLHpTkcuQb3ABTtJCEixez68qPBx7AOGChO4N+BgN44+XFdyLW4MOHYawuf69igLH8tTKzQ4TNGMCBDx5bT53iYwjGVvgre1pwxLr9L5csT8gejzjatvhGtPqTAvJmpfZShisEAMfLwszzRM=
+	t=1788269102; cv=none; b=HQkSvGhu7BjsMUJCS4DivDn75KlFOHUFGa9BAB3jf2l4X4/mLWrh2qbXxKTg+zpTWH9Q9z1O43bZh+YUYx13lPmtx9SGVR72AWdYaV+DZGMWwSJ7Rj8SzonYIuNfpn9DMJ2n0DPWSUP5cYYnHec2XIJh7bhnlyJMo/qoSyVZ73Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788267027; c=relaxed/simple;
-	bh=9DE74tX2lwEva6OE6OIc7EgynKMRIxLKSewftgVnEqE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IW6w6xY3tThqIJfpfyOI+l/7WnLZ4lJ3fjF5UTiOZrS9YhOkeRMNxz2BvNhn4HMF291caiTKMsTQzoYopAfqfPJVaT8HclC4lw4VN4quJw8tOMDFrBuKkJzbTj+7iEZBYYmcav2LordIkBncsNGz1I2eTj4LmmzQuP189pt7060=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYI8YLxJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1788269102; c=relaxed/simple;
+	bh=vhMCmNTtKCQoBcxNKaytu8+Mw8Wg3gds52xNfkCmkC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGe+ePfKKm3PEqd9QwvStAUsSswPPGfW0TjaO2rUKTNf99ZmF+HJ7f8HyP4lZ0u4aTR8MwJwLdpDe8P7KtUJaMIX5ubFLpdN0T1agjmMfr56w//PDfaNaMjESC9eJBx1oX8WKjrYnfY76qfpL6jeDcP16n25J6ZlsaRz4kX+JiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giMWRqJr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYI8YLxJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 56BE9C2BCF4;
-	Tue,  1 Sep 2026 12:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1788267027;
-	bh=9DE74tX2lwEva6OE6OIc7EgynKMRIxLKSewftgVnEqE=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=nYI8YLxJ5VqCTchf3RcSoQZL7c9LRoLWW+5euiJs1wmPu+z5NviqhWClW5VYMVVXl
-	 TKIWOw4l1S+Xh6WF9S6bmQQK4Ad32Z1UmxCb4TJ6zBI6PHc5cdChlNkD9GWOYo/Hk6
-	 2l4t3jzXCunV6z9NUnXMOfNbfQ805WH3J22tXoWfop+wKUYpAaEE8hVxzy8CMgx+lF
-	 2AfpHH9cE71+I/z+6lnrK/HlQagqeEbnmpUOvJYpUZJmr3zmUE7squrtp0QvZOytcZ
-	 Hvwl+MmjC8MTDUgf+mm2U7/AFMhCIisyu5d9xcWwVJVcdp+kWcvIAn32iQx6aKGcsu
-	 mfT75TShUdeEQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AD9C61DD3;
-	Tue,  1 Sep 2026 12:50:27 +0000 (UTC)
-From: Daan De Meyer via B4 Relay <devnull+daan.amutable.com@kernel.org>
-Date: Tue, 01 Sep 2026 14:50:23 +0200
-Subject: [PATCH v2] lsm: expose mount idmaps to inode hooks
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giMWRqJr"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 67F3D1F000E9;
+	Tue,  1 Sep 2026 13:24:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788269100;
+	bh=M5+2kdHM1Iy6Gd0cKSh1g2pqZ3a4OGensXcLHLza4IQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=giMWRqJrAdaH2YY7R6y+ImoPdBSk634QE/SQ7zb+rNNJDODtfLwJW24vGMuSJU1iY
+	 pHStCaaEMXaUX6yzdlKhMUyXEKrcgz7JyKJY1Cc1xhbtbRnPcH+B1YRv3mdOj9CJzn
+	 Fp2PxQOdmJn8d6vMDOTwl2nktEMN52kjpR8dVl9QoRJ8TyL/H3cy6dGXrDT4tQ2qiq
+	 HUdaVUMxAELMoN9sAM23EEQ9aLGchbfLkwJ6FhiWKap9+RvfcbJ+eC8M5rfyHffNCz
+	 LnyeTXNaMwLFH7YIqp/hxXzzViG4LGjBhqur1dzgYtxR5Y88cpduwgg3UWduaZnCcv
+	 vQKYuEMOOE0wA==
+Date: Tue, 1 Sep 2026 16:24:56 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Srish Srinivasan <ssrish@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	James.Bottomley@hansenpartnership.com, stefanb@linux.ibm.com,
+	zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+	rnsastry@linux.ibm.com, sudhakar@linux.ibm.com
+Subject: Re: [PATCH v4] keys/trusted_keys: move TPM-specific fields into
+ trusted_tpm_options
+Message-ID: <apbSKDGTGbAyVWC4@kernel.org>
+References: <20260829130917.699516-1-ssrish@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260901-lsm-mount-idmaps-v2-1-3309b9d1eda2@amutable.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32OQQ6DIBBFr9KwLo0QaqSr3qNxMeBYaQQMg6aN8
- e4Vu+/yzf/zZlZGmBwSu51WlnBx5GLYQZ5PzA4QnshdtzOTlayrRio+kuc+ziHvgYeJuO600Vr
- 1KECwfW1K2Lv3oXy0P6bZvNDm4ikNA4TcJAh2KCMPlDGVYHCUY/oczyyiCP7cXQSveKWEAl0rY
- ZvrHfycwYx4sdGzdtu2L6IbaKHeAAAA
-X-Change-ID: 20260824-lsm-mount-idmaps-9d9b994fe1a1
-To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Daan De Meyer <daan@amutable.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788267025; l=32302;
- i=daan@amutable.com; s=20260712; h=from:subject:message-id;
- bh=kCMkMf+z2oQ4T+pgo7o7oym5ZIBnl46n+SUF8TOkch0=;
- b=SUyk2y3vSrYPsWVYRcge2LG3axDL6twag2lFkkQ8N1q2rXwoebsBG05DOdWZ1pvvjZbpGSHnJ
- o4zUX5UeQSTCiU1O+hOz/zomechFer5X3OQypEzexx2vhFJjvIEF9Vc
-X-Developer-Key: i=daan@amutable.com; a=ed25519;
- pk=I1l+WwrtmzRgofA5SQ1wTuJi18fjh91w+f5uRkFeZEA=
-X-Endpoint-Received: by B4 Relay for daan@amutable.com/20260712 with
- auth_id=868
-X-Original-From: Daan De Meyer <daan@amutable.com>
-Reply-To: daan@amutable.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260829130917.699516-1-ssrish@linux.ibm.com>
 
-From: Daan De Meyer <daan@amutable.com>
+On Sat, Aug 29, 2026 at 06:39:17PM +0530, Srish Srinivasan wrote:
+> The trusted_key_options struct contains TPM-specific fields (keyhandle,
+> keyauth, blobauth_len, blobauth, pcrinfo_len, pcrinfo, pcrlock, hash,
+> policydigest_len, policydigest, and policyhandle). This leads to the
+> accumulation of backend-specific fields in the generic options structure.
+> 
+> Define a trusted_tpm_options structure and move the TPM-specific fields
+> there. Store a pointer to trusted_tpm_options in the private member of
+> trusted_key_options.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+> Changelog:
+>  v4:
+>   - Rebased onto mainline after tpm-buf memory-safe allocation changes were
+>     merged
+>   - Resolved the resulting merge conflicts
+> 
+>  v3:
+>   - Exclude the preparatory clean up patch as the problem has been addressed
+>     in commit 9ec4175a30eb ("KEYS: trusted: Debugging as a feature")
+> 
+>  v2:
+>   - Exclude the bug-fix patch as it has already been applied to 6.19-rc7
+>   - Rename instances of trusted_tpm_options from tpm_opts to private
+>   - Use pr_debug and KERN_DEBUG for logging debug messages (preparatory clean
+>     up patch)
+>   - Address other minor comments from Jarkko
+> 
+>  include/keys/trusted-type.h               | 11 ---
+>  include/keys/trusted_tpm.h                | 14 ++++
+>  security/keys/trusted-keys/trusted_tpm1.c | 96 ++++++++++++++---------
+>  security/keys/trusted-keys/trusted_tpm2.c | 50 ++++++------
+>  4 files changed, 102 insertions(+), 69 deletions(-)
+> 
+> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+> index 9f9940482da4..3db61b57cf73 100644
+> --- a/include/keys/trusted-type.h
+> +++ b/include/keys/trusted-type.h
+> @@ -39,17 +39,6 @@ struct trusted_key_payload {
+>  
+>  struct trusted_key_options {
+>  	uint16_t keytype;
+> -	uint32_t keyhandle;
+> -	unsigned char keyauth[TPM_DIGEST_SIZE];
+> -	uint32_t blobauth_len;
+> -	unsigned char blobauth[TPM_DIGEST_SIZE];
+> -	uint32_t pcrinfo_len;
+> -	unsigned char pcrinfo[MAX_PCRINFO_SIZE];
+> -	int pcrlock;
+> -	uint32_t hash;
+> -	uint32_t policydigest_len;
+> -	unsigned char policydigest[MAX_DIGEST_SIZE];
+> -	uint32_t policyhandle;
+>  	void *private;
+>  };
+>  
+> diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
+> index 3a0fa3bc8454..98d638d13ecb 100644
+> --- a/include/keys/trusted_tpm.h
+> +++ b/include/keys/trusted_tpm.h
+> @@ -6,6 +6,20 @@
+>  
+>  extern struct trusted_key_ops trusted_key_tpm_ops;
+>  
+> +struct trusted_tpm_options {
 
-OverlayFS performs upper-layer operations through inode-based security
-hooks. Those hooks receive the upper inode and dentry, but not the mount
-idmap used by the VFS operation. An LSM therefore cannot distinguish an
-identity-mapped upper from an idmapped one or make the same ownership
-decision as the VFS.
+To be aligned with existing convention a better name would be "trusted_key_tpm".
 
-Pass the mount idmap through the create, link, symlink, mkdir, mknod, and
-permission hooks. Update the in-tree LSM implementations and non-VFS
-callers accordingly.
+> +	uint32_t keyhandle;
+> +	unsigned char keyauth[TPM_DIGEST_SIZE];
+> +	uint32_t blobauth_len;
+> +	unsigned char blobauth[TPM_DIGEST_SIZE];
+> +	uint32_t pcrinfo_len;
+> +	unsigned char pcrinfo[MAX_PCRINFO_SIZE];
+> +	int pcrlock;
+> +	uint32_t hash;
+> +	uint32_t policydigest_len;
+> +	unsigned char policydigest[MAX_DIGEST_SIZE];
+> +	uint32_t policyhandle;
+> +};
+> +
+>  int tpm2_seal_trusted(struct tpm_chip *chip,
+>  		      struct trusted_key_payload *payload,
+>  		      struct trusted_key_options *options);
+> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+> index bf0bf7f36970..14d005e76a1c 100644
+> --- a/security/keys/trusted-keys/trusted_tpm1.c
+> +++ b/security/keys/trusted-keys/trusted_tpm1.c
+> @@ -48,15 +48,17 @@ enum {
+>  #ifdef CONFIG_TRUSTED_KEYS_DEBUG
+>  static inline void dump_options(struct trusted_key_options *o)
+>  {
+> +	struct trusted_tpm_options *private = o->private;
+> +
+>  	if (!trusted_debug)
+>  		return;
+>  
+>  	pr_debug("sealing key type %d\n", o->keytype);
+> -	pr_debug("sealing key handle %0X\n", o->keyhandle);
+> -	pr_debug("pcrlock %d\n", o->pcrlock);
+> -	pr_debug("pcrinfo %d\n", o->pcrinfo_len);
+> +	pr_debug("sealing key handle %0X\n", private->keyhandle);
+> +	pr_debug("pcrlock %d\n", private->pcrlock);
+> +	pr_debug("pcrinfo %d\n", private->pcrinfo_len);
+>  	print_hex_dump_debug("pcrinfo ", DUMP_PREFIX_NONE,
+> -			     16, 1, o->pcrinfo, o->pcrinfo_len, 0);
+> +			     16, 1, private->pcrinfo, private->pcrinfo_len, 0);
+>  }
+>  
+>  static inline void dump_sess(struct osapsess *s)
+> @@ -626,6 +628,7 @@ static int tpm_unseal(struct tpm_buf *tb,
+>  static int key_seal(struct trusted_key_payload *p,
+>  		    struct trusted_key_options *o)
+>  {
+> +	struct trusted_tpm_options *private = o->private;
+>  	int ret;
+>  
+>  	struct tpm_buf *tb __free(kfree) = kzalloc(TPM_BUFSIZE, GFP_KERNEL);
+> @@ -637,9 +640,10 @@ static int key_seal(struct trusted_key_payload *p,
+>  	/* include migratable flag at end of sealed key */
+>  	p->key[p->key_len] = p->migratable;
+>  
+> -	ret = tpm_seal(tb, o->keytype, o->keyhandle, o->keyauth,
+> +	ret = tpm_seal(tb, o->keytype, private->keyhandle, private->keyauth,
+>  		       p->key, p->key_len + 1, p->blob, &p->blob_len,
+> -		       o->blobauth, o->pcrinfo, o->pcrinfo_len);
+> +		       private->blobauth, private->pcrinfo,
+> +		       private->pcrinfo_len);
+>  	if (ret < 0)
+>  		pr_info("srkseal failed (%d)\n", ret);
+>  
+> @@ -652,6 +656,7 @@ static int key_seal(struct trusted_key_payload *p,
+>  static int key_unseal(struct trusted_key_payload *p,
+>  		      struct trusted_key_options *o)
+>  {
+> +	struct trusted_tpm_options *private = o->private;
+>  	int ret;
+>  
+>  	struct tpm_buf *tb __free(kfree) = kzalloc(TPM_BUFSIZE, GFP_KERNEL);
+> @@ -660,8 +665,8 @@ static int key_unseal(struct trusted_key_payload *p,
+>  
+>  	tpm_buf_init(tb, TPM_BUFSIZE);
+>  
+> -	ret = tpm_unseal(tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
+> -			 o->blobauth, p->key, &p->key_len);
+> +	ret = tpm_unseal(tb, private->keyhandle, private->keyauth, p->blob,
+> +			 p->blob_len, private->blobauth, p->key, &p->key_len);
+>  	if (ret < 0)
+>  		pr_info("srkunseal failed (%d)\n", ret);
+>  	else
+> @@ -697,6 +702,7 @@ static const match_table_t key_tokens = {
+>  static int getoptions(char *c, struct trusted_key_payload *pay,
+>  		      struct trusted_key_options *opt)
+>  {
+> +	struct trusted_tpm_options *private = opt->private;
+>  	substring_t args[MAX_OPT_ARGS];
+>  	char *p = c;
+>  	int token;
+> @@ -712,7 +718,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  	if (tpm2 < 0)
+>  		return tpm2;
+>  
+> -	opt->hash = tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
+> +	private->hash = tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
+>  
+>  	if (!c)
+>  		return 0;
+> @@ -726,11 +732,11 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  
+>  		switch (token) {
+>  		case Opt_pcrinfo:
+> -			opt->pcrinfo_len = strlen(args[0].from) / 2;
+> -			if (opt->pcrinfo_len > MAX_PCRINFO_SIZE)
+> +			private->pcrinfo_len = strlen(args[0].from) / 2;
+> +			if (private->pcrinfo_len > MAX_PCRINFO_SIZE)
+>  				return -EINVAL;
+> -			res = hex2bin(opt->pcrinfo, args[0].from,
+> -				      opt->pcrinfo_len);
+> +			res = hex2bin(private->pcrinfo, args[0].from,
+> +				      private->pcrinfo_len);
+>  			if (res < 0)
+>  				return -EINVAL;
+>  			break;
+> @@ -739,12 +745,12 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  			if (res < 0)
+>  				return -EINVAL;
+>  			opt->keytype = SEAL_keytype;
+> -			opt->keyhandle = handle;
+> +			private->keyhandle = handle;
+>  			break;
+>  		case Opt_keyauth:
+>  			if (strlen(args[0].from) != 2 * SHA1_DIGEST_SIZE)
+>  				return -EINVAL;
+> -			res = hex2bin(opt->keyauth, args[0].from,
+> +			res = hex2bin(private->keyauth, args[0].from,
+>  				      SHA1_DIGEST_SIZE);
+>  			if (res < 0)
+>  				return -EINVAL;
+> @@ -755,21 +761,23 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  			 * hex strings.  TPM 2.0 authorizations are simple
+>  			 * passwords (although it can take a hash as well)
+>  			 */
+> -			opt->blobauth_len = strlen(args[0].from);
+> +			private->blobauth_len = strlen(args[0].from);
+>  
+> -			if (opt->blobauth_len == 2 * TPM_DIGEST_SIZE) {
+> -				res = hex2bin(opt->blobauth, args[0].from,
+> +			if (private->blobauth_len == 2 * TPM_DIGEST_SIZE) {
+> +				res = hex2bin(private->blobauth, args[0].from,
+>  					      TPM_DIGEST_SIZE);
+>  				if (res < 0)
+>  					return -EINVAL;
+>  
+> -				opt->blobauth_len = TPM_DIGEST_SIZE;
+> +				private->blobauth_len = TPM_DIGEST_SIZE;
+>  				break;
+>  			}
+>  
+> -			if (tpm2 && opt->blobauth_len <= sizeof(opt->blobauth)) {
+> -				memcpy(opt->blobauth, args[0].from,
+> -				       opt->blobauth_len);
+> +			if (tpm2 &&
+> +			    private->blobauth_len <=
+> +			    sizeof(private->blobauth)) {
+> +				memcpy(private->blobauth, args[0].from,
+> +				       private->blobauth_len);
+>  				break;
+>  			}
+>  
+> @@ -787,14 +795,14 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  			res = kstrtoul(args[0].from, 10, &lock);
+>  			if (res < 0)
+>  				return -EINVAL;
+> -			opt->pcrlock = lock;
+> +			private->pcrlock = lock;
+>  			break;
+>  		case Opt_hash:
+>  			if (test_bit(Opt_policydigest, &token_mask))
+>  				return -EINVAL;
+>  			for (i = 0; i < HASH_ALGO__LAST; i++) {
+>  				if (!strcmp(args[0].from, hash_algo_name[i])) {
+> -					opt->hash = i;
+> +					private->hash = i;
+>  					break;
+>  				}
+>  			}
+> @@ -806,14 +814,14 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  			}
+>  			break;
+>  		case Opt_policydigest:
+> -			digest_len = hash_digest_size[opt->hash];
+> +			digest_len = hash_digest_size[private->hash];
+>  			if (!tpm2 || strlen(args[0].from) != (2 * digest_len))
+>  				return -EINVAL;
+> -			res = hex2bin(opt->policydigest, args[0].from,
+> +			res = hex2bin(private->policydigest, args[0].from,
+>  				      digest_len);
+>  			if (res < 0)
+>  				return -EINVAL;
+> -			opt->policydigest_len = digest_len;
+> +			private->policydigest_len = digest_len;
+>  			break;
+>  		case Opt_policyhandle:
+>  			if (!tpm2)
+> @@ -821,7 +829,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  			res = kstrtoul(args[0].from, 16, &handle);
+>  			if (res < 0)
+>  				return -EINVAL;
+> -			opt->policyhandle = handle;
+> +			private->policyhandle = handle;
+>  			break;
+>  		default:
+>  			return -EINVAL;
+> @@ -832,6 +840,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+>  
+>  static struct trusted_key_options *trusted_options_alloc(void)
+>  {
+> +	struct trusted_tpm_options *private;
+>  	struct trusted_key_options *options;
+>  	int tpm2;
+>  
+> @@ -844,14 +853,22 @@ static struct trusted_key_options *trusted_options_alloc(void)
+>  		/* set any non-zero defaults */
+>  		options->keytype = SRK_keytype;
+>  
+> -		if (!tpm2)
+> -			options->keyhandle = SRKHANDLE;
+> +		private = kzalloc_obj(*private);
+> +		if (!private) {
+> +			kfree_sensitive(options);
+> +			options = NULL;
+> +		} else {
+> +			if (!tpm2)
+> +				private->keyhandle = SRKHANDLE;
+> +			options->private = private;
+> +		}
+>  	}
+>  	return options;
+>  }
+>  
+>  static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
+>  {
+> +	struct trusted_tpm_options *private = NULL;
+>  	struct trusted_key_options *options = NULL;
+>  	int ret = 0;
+>  	int tpm2;
+> @@ -869,7 +886,8 @@ static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
+>  		goto out;
+>  	dump_options(options);
+>  
+> -	if (!options->keyhandle && !tpm2) {
+> +	private = options->private;
+> +	if (!private->keyhandle && !tpm2) {
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+> @@ -883,20 +901,23 @@ static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
+>  		goto out;
+>  	}
+>  
+> -	if (options->pcrlock) {
+> -		ret = pcrlock(options->pcrlock);
+> +	if (private->pcrlock) {
+> +		ret = pcrlock(private->pcrlock);
+>  		if (ret < 0) {
+>  			pr_info("pcrlock failed (%d)\n", ret);
+>  			goto out;
+>  		}
+>  	}
+>  out:
+> +	if (options)
+> +		kfree_sensitive(options->private);
+>  	kfree_sensitive(options);
+>  	return ret;
+>  }
+>  
+>  static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
+>  {
+> +	struct trusted_tpm_options *private = NULL;
+>  	struct trusted_key_options *options = NULL;
+>  	int ret = 0;
+>  	int tpm2;
+> @@ -914,7 +935,8 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
+>  		goto out;
+>  	dump_options(options);
+>  
+> -	if (!options->keyhandle && !tpm2) {
+> +	private = options->private;
+> +	if (!private->keyhandle && !tpm2) {
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+> @@ -926,14 +948,16 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
+>  	if (ret < 0)
+>  		pr_info("key_unseal failed (%d)\n", ret);
+>  
+> -	if (options->pcrlock) {
+> -		ret = pcrlock(options->pcrlock);
+> +	if (private->pcrlock) {
+> +		ret = pcrlock(private->pcrlock);
+>  		if (ret < 0) {
+>  			pr_info("pcrlock failed (%d)\n", ret);
+>  			goto out;
+>  		}
+>  	}
+>  out:
+> +	if (options)
+> +		kfree_sensitive(options->private);
+>  	kfree_sensitive(options);
+>  	return ret;
+>  }
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 67225dd562a9..07b831b515bb 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -23,6 +23,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  			   struct trusted_key_options *options,
+>  			   u8 *src, u32 len)
+>  {
+> +	struct trusted_tpm_options *private = options->private;
+>  	const int SCRATCH_SIZE = PAGE_SIZE;
+>  	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+>  	u8 *work = scratch, *work1;
+> @@ -45,7 +46,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  	work = asn1_encode_oid(work, end_work, tpm2key_oid,
+>  			       asn1_oid_len(tpm2key_oid));
+>  
+> -	if (options->blobauth_len == 0) {
+> +	if (private->blobauth_len == 0) {
+>  		unsigned char bool[3], *w = bool;
+>  		/* tag 0 is emptyAuth */
+>  		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+> @@ -68,7 +69,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  		goto err;
+>  	}
+>  
+> -	work = asn1_encode_integer(work, end_work, options->keyhandle);
+> +	work = asn1_encode_integer(work, end_work, private->keyhandle);
+>  	work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+>  	work = asn1_encode_octet_string(work, end_work, priv, priv_len);
+>  
+> @@ -101,6 +102,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+>  			   struct trusted_key_options *options,
+>  			   u8 **buf)
+>  {
+> +	struct trusted_tpm_options *private = options->private;
+>  	int ret;
+>  	struct tpm2_key_context ctx;
+>  	u8 *blob;
+> @@ -120,7 +122,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+>  		return -ENOMEM;
+>  
+>  	*buf = blob;
+> -	options->keyhandle = ctx.parent;
+> +	private->keyhandle = ctx.parent;
+>  
+>  	memcpy(blob, ctx.priv, ctx.priv_len);
+>  	blob += ctx.priv_len;
+> @@ -232,6 +234,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+>  		      struct trusted_key_payload *payload,
+>  		      struct trusted_key_options *options)
+>  {
+> +	struct trusted_tpm_options *private = options->private;
+>  	off_t offset = TPM_HEADER_SIZE;
+>  	struct tpm_buf *buf __free(kfree) = NULL;
+>  	struct tpm_buf *sized __free(kfree) = NULL;
+> @@ -240,11 +243,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+>  	u32 flags;
+>  	int rc;
+>  
+> -	hash = tpm2_find_hash_alg(options->hash);
+> +	hash = tpm2_find_hash_alg(private->hash);
+>  	if (hash < 0)
+>  		return hash;
+>  
+> -	if (!options->keyhandle)
+> +	if (!private->keyhandle)
+>  		return -EINVAL;
+>  
+>  	rc = tpm_try_get_ops(chip);
+> @@ -274,18 +277,18 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+>  
+>  	tpm_buf_init_sized(sized, TPM_BUFSIZE);
+>  
+> -	rc = tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
+> +	rc = tpm_buf_append_name(chip, buf, private->keyhandle, NULL);
+>  	if (rc)
+>  		goto out;
+>  
+>  	tpm_buf_append_hmac_session(chip, buf, TPM2_SA_DECRYPT,
+> -				    options->keyauth, TPM_DIGEST_SIZE);
+> +				    private->keyauth, TPM_DIGEST_SIZE);
+>  
+>  	/* sensitive */
+> -	tpm_buf_append_u16(sized, options->blobauth_len);
+> +	tpm_buf_append_u16(sized, private->blobauth_len);
+>  
+> -	if (options->blobauth_len)
+> -		tpm_buf_append(sized, options->blobauth, options->blobauth_len);
+> +	if (private->blobauth_len)
+> +		tpm_buf_append(sized, private->blobauth, private->blobauth_len);
+>  
+>  	tpm_buf_append_u16(sized, payload->key_len);
+>  	tpm_buf_append(sized, payload->key, payload->key_len);
+> @@ -298,14 +301,15 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+>  
+>  	/* key properties */
+>  	flags = 0;
+> -	flags |= options->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
+> +	flags |= private->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
+>  	flags |= payload->migratable ? 0 : (TPM2_OA_FIXED_TPM | TPM2_OA_FIXED_PARENT);
+>  	tpm_buf_append_u32(sized, flags);
+>  
+>  	/* policy */
+> -	tpm_buf_append_u16(sized, options->policydigest_len);
+> -	if (options->policydigest_len)
+> -		tpm_buf_append(sized, options->policydigest, options->policydigest_len);
+> +	tpm_buf_append_u16(sized, private->policydigest_len);
+> +	if (private->policydigest_len)
+> +		tpm_buf_append(sized, private->policydigest,
+> +			       private->policydigest_len);
+>  
+>  	/* public parameters */
+>  	tpm_buf_append_u16(sized, TPM_ALG_NULL);
+> @@ -376,6 +380,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>  			 u32 *blob_handle)
+>  {
+>  	u8 *blob_ref __free(kfree) = NULL;
+> +	struct trusted_tpm_options *private = options->private;
+>  	struct tpm_buf *buf __free(kfree) = NULL;
+>  	unsigned int private_len;
+>  	unsigned int public_len;
+> @@ -395,7 +400,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>  	}
+>  
+>  	/* new format carries keyhandle but old format doesn't */
+> -	if (!options->keyhandle)
+> +	if (!private->keyhandle)
+>  		return -EINVAL;
+>  
+>  	/* must be big enough for at least the two be16 size counts */
+> @@ -439,11 +444,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>  	tpm_buf_init(buf, TPM_BUFSIZE);
+>  	tpm_buf_reset(buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
+>  
+> -	rc = tpm_buf_append_name(chip, buf, options->keyhandle, NULL);
+> +	rc = tpm_buf_append_name(chip, buf, private->keyhandle, NULL);
+>  	if (rc)
+>  		return rc;
+>  
+> -	tpm_buf_append_hmac_session(chip, buf, 0, options->keyauth,
+> +	tpm_buf_append_hmac_session(chip, buf, 0, private->keyauth,
+>  				    TPM_DIGEST_SIZE);
+>  
+>  	tpm_buf_append(buf, blob, blob_len);
+> @@ -483,6 +488,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+>  			   struct trusted_key_options *options,
+>  			   u32 blob_handle)
+>  {
+> +	struct trusted_tpm_options *private = options->private;
+>  	struct tpm_header *head;
+>  	struct tpm_buf *buf __free(kfree) = NULL;
+>  	u16 data_len;
+> @@ -507,10 +513,10 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+>  	if (rc)
+>  		return rc;
+>  
+> -	if (!options->policyhandle) {
+> +	if (!private->policyhandle) {
+>  		tpm_buf_append_hmac_session(chip, buf, TPM2_SA_ENCRYPT,
+> -					    options->blobauth,
+> -					    options->blobauth_len);
+> +					    private->blobauth,
+> +					    private->blobauth_len);
+>  	} else {
+>  		/*
+>  		 * FIXME: The policy session was generated outside the
+> @@ -523,9 +529,9 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+>  		 * could repeat our actions with the exfiltrated
+>  		 * password.
+>  		 */
+> -		tpm2_buf_append_auth(buf, options->policyhandle,
+> +		tpm2_buf_append_auth(buf, private->policyhandle,
+>  				     NULL /* nonce */, 0, 0,
+> -				     options->blobauth, options->blobauth_len);
+> +				     private->blobauth, private->blobauth_len);
+>  		if (tpm2_chip_auth(chip)) {
+>  			tpm_buf_append_hmac_session(chip, buf, TPM2_SA_ENCRYPT,
+>  						    NULL, 0);
+> -- 
+> 2.53.0
+> 
 
-Extend the BPF LSM selftest to verify that both the identity idmap and an
-idmapped mount idmap reach each hook.
-
-Signed-off-by: Daan De Meyer <daan@amutable.com>
----
-OverlayFS performs upper-layer operations through inode-based security
-hooks. Those hooks receive the upper inode and dentry, but not the mount
-idmap used by the VFS operation.
-
-The security layer cannot distinguish an identity-mapped upper from an
-idmapped one or make the same ownership decision as the VFS. The VFS
-layer already passes the idmap down into all relevant inode operations
-so this just brings the security hooks to parity.
-
-So pass the mount idmap through the create, link, symlink, mkdir, mknod,
-and permission hooks. Update the in-tree security implementations and
-non-VFS callers accordingly.
-
-systemd has been shipping systemd-nsresourced for quite a while now. It
-relies on inode and path hooks to perform ownership checks using a bpf lsm.
-To make this actually secure we need to be able to calculate the on-disk
-ownership from the idmap.
----
-Changes in v2:
-- Squash the implementation and selftest into a single patch.
-- Add the missing Signed-off-by trailer.
-- Link to v1: https://patch.msgid.link/20260824-lsm-mount-idmaps-v1-0-0414a9641c85@amutable.com
----
- fs/cachefiles/security.c                          |   4 +-
- fs/namei.c                                        |  18 +-
- include/linux/lsm_hook_defs.h                     |  23 +--
- include/linux/security.h                          |  58 +++---
- security/security.c                               |  40 ++--
- security/selinux/hooks.c                          |  19 +-
- security/smack/smack_lsm.c                        |   9 +-
- tools/testing/selftests/bpf/prog_tests/test_lsm.c | 231 ++++++++++++++++++++++
- tools/testing/selftests/bpf/progs/lsm.c           |  79 ++++++++
- 9 files changed, 410 insertions(+), 71 deletions(-)
-
-diff --git a/fs/cachefiles/security.c b/fs/cachefiles/security.c
-index fc6611886b3b..eefe5453b904 100644
---- a/fs/cachefiles/security.c
-+++ b/fs/cachefiles/security.c
-@@ -51,14 +51,14 @@ static int cachefiles_check_cache_dir(struct cachefiles_cache *cache,
- {
- 	int ret;
- 
--	ret = security_inode_mkdir(d_backing_inode(root), root, 0);
-+	ret = security_inode_mkdir(&nop_mnt_idmap, d_backing_inode(root), root, 0);
- 	if (ret < 0) {
- 		pr_err("Security denies permission to make dirs: error %d",
- 		       ret);
- 		return ret;
- 	}
- 
--	ret = security_inode_create(d_backing_inode(root), root, 0);
-+	ret = security_inode_create(&nop_mnt_idmap, d_backing_inode(root), root, 0);
- 	if (ret < 0)
- 		pr_err("Security denies permission to create files: error %d",
- 		       ret);
-diff --git a/fs/namei.c b/fs/namei.c
-index 20a6534ea3ef..99f894f3f7e1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -658,7 +658,7 @@ int inode_permission(struct mnt_idmap *idmap,
- 	if (unlikely(retval))
- 		return retval;
- 
--	return security_inode_permission(inode, mask);
-+	return security_inode_permission(idmap, inode, mask);
- }
- EXPORT_SYMBOL(inode_permission);
- 
-@@ -695,7 +695,7 @@ static __always_inline int lookup_inode_permission_may_exec(struct mnt_idmap *id
- 	if (unlikely(((inode->i_mode & 0111) != 0111) || !no_acl_inode(inode)))
- 		return inode_permission(idmap, inode, mask);
- 
--	return security_inode_permission(inode, mask);
-+	return security_inode_permission(idmap, inode, mask);
- }
- 
- /**
-@@ -4188,7 +4188,7 @@ int vfs_create(struct mnt_idmap *idmap, struct dentry *dentry, umode_t mode,
- 		return -EACCES;	/* shouldn't it be ENOSYS? */
- 
- 	mode = vfs_prepare_mode(idmap, dir, mode, S_IALLUGO, S_IFREG);
--	error = security_inode_create(dir, dentry, mode);
-+	error = security_inode_create(idmap, dir, dentry, mode);
- 	if (error)
- 		return error;
- 	error = try_break_deleg(dir, LEASE_BREAK_DIR_CREATE, di);
-@@ -4212,7 +4212,7 @@ int vfs_mkobj(struct dentry *dentry, umode_t mode,
- 
- 	mode &= S_IALLUGO;
- 	mode |= S_IFREG;
--	error = security_inode_create(dir, dentry, mode);
-+	error = security_inode_create(&nop_mnt_idmap, dir, dentry, mode);
- 	if (error)
- 		return error;
- 	error = f(dentry, mode, arg);
-@@ -4328,7 +4328,7 @@ static int may_o_create(struct mnt_idmap *idmap,
- 	if (error)
- 		return error;
- 
--	return security_inode_create(dir->dentry->d_inode, dentry, mode);
-+	return security_inode_create(idmap, dir->dentry->d_inode, dentry, mode);
- }
- 
- /**
-@@ -5258,7 +5258,7 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error)
- 		return error;
- 
--	error = security_inode_mknod(dir, dentry, mode, dev);
-+	error = security_inode_mknod(idmap, dir, dentry, mode, dev);
- 	if (error)
- 		return error;
- 
-@@ -5395,7 +5395,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 		goto err;
- 
- 	mode = vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, S_IFDIR);
--	error = security_inode_mkdir(dir, dentry, mode);
-+	error = security_inode_mkdir(idmap, dir, dentry, mode);
- 	if (error)
- 		goto err;
- 
-@@ -5783,7 +5783,7 @@ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	if (!dir->i_op->symlink)
- 		return -EPERM;
- 
--	error = security_inode_symlink(dir, dentry, oldname);
-+	error = security_inode_symlink(idmap, dir, dentry, oldname);
- 	if (error)
- 		return error;
- 
-@@ -5907,7 +5907,7 @@ int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
- 	if (S_ISDIR(inode->i_mode))
- 		return -EPERM;
- 
--	error = security_inode_link(old_dentry, dir, new_dentry);
-+	error = security_inode_link(idmap, old_dentry, dir, new_dentry);
- 	if (error)
- 		return error;
- 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 65c9609ec207..9e49a5bc9ff3 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -120,26 +120,27 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
- 	 int *xattr_count)
- LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
- 	 const struct qstr *name, const struct inode *context_inode)
--LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
--	 umode_t mode)
-+LSM_HOOK(int, 0, inode_create, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, umode_t mode)
- LSM_HOOK(void, LSM_RET_VOID, inode_post_create_tmpfile, struct mnt_idmap *idmap,
- 	 struct inode *inode)
--LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
--	 struct dentry *new_dentry)
-+LSM_HOOK(int, 0, inode_link, struct mnt_idmap *idmap,
-+	 struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
- LSM_HOOK(int, 0, inode_unlink, struct inode *dir, struct dentry *dentry)
--LSM_HOOK(int, 0, inode_symlink, struct inode *dir, struct dentry *dentry,
--	 const char *old_name)
--LSM_HOOK(int, 0, inode_mkdir, struct inode *dir, struct dentry *dentry,
--	 umode_t mode)
-+LSM_HOOK(int, 0, inode_symlink, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, const char *old_name)
-+LSM_HOOK(int, 0, inode_mkdir, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, umode_t mode)
- LSM_HOOK(int, 0, inode_rmdir, struct inode *dir, struct dentry *dentry)
--LSM_HOOK(int, 0, inode_mknod, struct inode *dir, struct dentry *dentry,
--	 umode_t mode, dev_t dev)
-+LSM_HOOK(int, 0, inode_mknod, struct mnt_idmap *idmap, struct inode *dir,
-+	 struct dentry *dentry, umode_t mode, dev_t dev)
- LSM_HOOK(int, 0, inode_rename, struct inode *old_dir, struct dentry *old_dentry,
- 	 struct inode *new_dir, struct dentry *new_dentry)
- LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
- 	 bool rcu)
--LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
-+LSM_HOOK(int, 0, inode_permission, struct mnt_idmap *idmap,
-+	 struct inode *inode, int mask)
- LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
- 	 struct iattr *attr)
- LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 153e9043058f..0f5f20ac1050 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -404,24 +404,28 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- int security_inode_init_security_anon(struct inode *inode,
- 				      const struct qstr *name,
- 				      const struct inode *context_inode);
--int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
-+int security_inode_create(struct mnt_idmap *idmap, struct inode *dir,
-+			  struct dentry *dentry, umode_t mode);
- void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
- 					struct inode *inode);
--int security_inode_link(struct dentry *old_dentry, struct inode *dir,
--			 struct dentry *new_dentry);
-+int security_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			struct inode *dir, struct dentry *new_dentry);
- int security_inode_unlink(struct inode *dir, struct dentry *dentry);
--int security_inode_symlink(struct inode *dir, struct dentry *dentry,
--			   const char *old_name);
--int security_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode);
-+int security_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
-+			   struct dentry *dentry, const char *old_name);
-+int security_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode);
- int security_inode_rmdir(struct inode *dir, struct dentry *dentry);
--int security_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev);
-+int security_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode, dev_t dev);
- int security_inode_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			  struct inode *new_dir, struct dentry *new_dentry,
- 			  unsigned int flags);
- int security_inode_readlink(struct dentry *dentry);
- int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
- 			       bool rcu);
--int security_inode_permission(struct inode *inode, int mask);
-+int security_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
-+			      int mask);
- int security_inode_setattr(struct mnt_idmap *idmap,
- 			   struct dentry *dentry, struct iattr *attr);
- void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-@@ -902,9 +906,10 @@ static inline int security_inode_init_security_anon(struct inode *inode,
- 	return 0;
- }
- 
--static inline int security_inode_create(struct inode *dir,
--					 struct dentry *dentry,
--					 umode_t mode)
-+static inline int security_inode_create(struct mnt_idmap *idmap,
-+					struct inode *dir,
-+					struct dentry *dentry,
-+					umode_t mode)
- {
- 	return 0;
- }
-@@ -913,9 +918,10 @@ static inline void
- security_inode_post_create_tmpfile(struct mnt_idmap *idmap, struct inode *inode)
- { }
- 
--static inline int security_inode_link(struct dentry *old_dentry,
--				       struct inode *dir,
--				       struct dentry *new_dentry)
-+static inline int security_inode_link(struct mnt_idmap *idmap,
-+				      struct dentry *old_dentry,
-+				      struct inode *dir,
-+				      struct dentry *new_dentry)
- {
- 	return 0;
- }
-@@ -926,16 +932,18 @@ static inline int security_inode_unlink(struct inode *dir,
- 	return 0;
- }
- 
--static inline int security_inode_symlink(struct inode *dir,
--					  struct dentry *dentry,
--					  const char *old_name)
-+static inline int security_inode_symlink(struct mnt_idmap *idmap,
-+					 struct inode *dir,
-+					 struct dentry *dentry,
-+					 const char *old_name)
- {
- 	return 0;
- }
- 
--static inline int security_inode_mkdir(struct inode *dir,
--					struct dentry *dentry,
--					int mode)
-+static inline int security_inode_mkdir(struct mnt_idmap *idmap,
-+				       struct inode *dir,
-+				       struct dentry *dentry,
-+				       int mode)
- {
- 	return 0;
- }
-@@ -946,9 +954,10 @@ static inline int security_inode_rmdir(struct inode *dir,
- 	return 0;
- }
- 
--static inline int security_inode_mknod(struct inode *dir,
--					struct dentry *dentry,
--					int mode, dev_t dev)
-+static inline int security_inode_mknod(struct mnt_idmap *idmap,
-+				       struct inode *dir,
-+				       struct dentry *dentry,
-+				       int mode, dev_t dev)
- {
- 	return 0;
- }
-@@ -974,7 +983,8 @@ static inline int security_inode_follow_link(struct dentry *dentry,
- 	return 0;
- }
- 
--static inline int security_inode_permission(struct inode *inode, int mask)
-+static inline int security_inode_permission(struct mnt_idmap *idmap,
-+					    struct inode *inode, int mask)
- {
- 	return 0;
- }
-diff --git a/security/security.c b/security/security.c
-index 2ee276ab15c5..a9190da3341d 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1614,6 +1614,7 @@ int security_path_chroot(const struct path *path)
- 
- /**
-  * security_inode_create() - Check if creating a file is allowed
-+ * @idmap: idmap of the mount
-  * @dir: the parent directory
-  * @dentry: the file being created
-  * @mode: requested file mode
-@@ -1622,12 +1623,12 @@ int security_path_chroot(const struct path *path)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_create(struct inode *dir, struct dentry *dentry,
--			  umode_t mode)
-+int security_inode_create(struct mnt_idmap *idmap, struct inode *dir,
-+			  struct dentry *dentry, umode_t mode)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_create, dir, dentry, mode);
-+	return call_int_hook(inode_create, idmap, dir, dentry, mode);
- }
- EXPORT_SYMBOL_GPL(security_inode_create);
- 
-@@ -1648,6 +1649,7 @@ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
- 
- /**
-  * security_inode_link() - Check if creating a hard link is allowed
-+ * @idmap: idmap of the mount
-  * @old_dentry: existing file
-  * @dir: new parent directory
-  * @new_dentry: new link
-@@ -1656,12 +1658,12 @@ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_link(struct dentry *old_dentry, struct inode *dir,
--			struct dentry *new_dentry)
-+int security_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			struct inode *dir, struct dentry *new_dentry)
- {
- 	if (unlikely(IS_PRIVATE(d_backing_inode(old_dentry))))
- 		return 0;
--	return call_int_hook(inode_link, old_dentry, dir, new_dentry);
-+	return call_int_hook(inode_link, idmap, old_dentry, dir, new_dentry);
- }
- 
- /**
-@@ -1682,6 +1684,7 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
- 
- /**
-  * security_inode_symlink() - Check if creating a symbolic link is allowed
-+ * @idmap: idmap of the mount
-  * @dir: parent directory
-  * @dentry: symbolic link
-  * @old_name: existing filename
-@@ -1690,16 +1693,17 @@ int security_inode_unlink(struct inode *dir, struct dentry *dentry)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_symlink(struct inode *dir, struct dentry *dentry,
--			   const char *old_name)
-+int security_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
-+			   struct dentry *dentry, const char *old_name)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_symlink, dir, dentry, old_name);
-+	return call_int_hook(inode_symlink, idmap, dir, dentry, old_name);
- }
- 
- /**
-  * security_inode_mkdir() - Check if creating a new directory is allowed
-+ * @idmap: idmap of the mount
-  * @dir: parent directory
-  * @dentry: new directory
-  * @mode: new directory mode
-@@ -1709,11 +1713,12 @@ int security_inode_symlink(struct inode *dir, struct dentry *dentry,
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
-+int security_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_mkdir, dir, dentry, mode);
-+	return call_int_hook(inode_mkdir, idmap, dir, dentry, mode);
- }
- EXPORT_SYMBOL_GPL(security_inode_mkdir);
- 
-@@ -1735,6 +1740,7 @@ int security_inode_rmdir(struct inode *dir, struct dentry *dentry)
- 
- /**
-  * security_inode_mknod() - Check if creating a special file is allowed
-+ * @idmap: idmap of the mount
-  * @dir: parent directory
-  * @dentry: new file
-  * @mode: new file mode
-@@ -1747,12 +1753,12 @@ int security_inode_rmdir(struct inode *dir, struct dentry *dentry)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_mknod(struct inode *dir, struct dentry *dentry,
--			 umode_t mode, dev_t dev)
-+int security_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode, dev_t dev)
- {
- 	if (unlikely(IS_PRIVATE(dir)))
- 		return 0;
--	return call_int_hook(inode_mknod, dir, dentry, mode, dev);
-+	return call_int_hook(inode_mknod, idmap, dir, dentry, mode, dev);
- }
- 
- /**
-@@ -1823,6 +1829,7 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
- 
- /**
-  * security_inode_permission() - Check if accessing an inode is allowed
-+ * @idmap: idmap of the mount
-  * @inode: inode
-  * @mask: access mask
-  *
-@@ -1835,11 +1842,12 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_inode_permission(struct inode *inode, int mask)
-+int security_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
-+			      int mask)
- {
- 	if (unlikely(IS_PRIVATE(inode)))
- 		return 0;
--	return call_int_hook(inode_permission, inode, mask);
-+	return call_int_hook(inode_permission, idmap, inode, mask);
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 035aaf113d1d..967984d0af30 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3074,12 +3074,14 @@ static int selinux_inode_init_security_anon(struct inode *inode,
- 			    &ad);
- }
- 
--static int selinux_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
-+static int selinux_inode_create(struct mnt_idmap *idmap, struct inode *dir,
-+				struct dentry *dentry, umode_t mode)
- {
- 	return may_create(dir, dentry, SECCLASS_FILE);
- }
- 
--static int selinux_inode_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry)
-+static int selinux_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			      struct inode *dir, struct dentry *new_dentry)
- {
- 	return may_link(dir, old_dentry, MAY_LINK);
- }
-@@ -3089,12 +3091,14 @@ static int selinux_inode_unlink(struct inode *dir, struct dentry *dentry)
- 	return may_link(dir, dentry, MAY_UNLINK);
- }
- 
--static int selinux_inode_symlink(struct inode *dir, struct dentry *dentry, const char *name)
-+static int selinux_inode_symlink(struct mnt_idmap *idmap, struct inode *dir,
-+				 struct dentry *dentry, const char *name)
- {
- 	return may_create(dir, dentry, SECCLASS_LNK_FILE);
- }
- 
--static int selinux_inode_mkdir(struct inode *dir, struct dentry *dentry, umode_t mask)
-+static int selinux_inode_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+			       struct dentry *dentry, umode_t mask)
- {
- 	return may_create(dir, dentry, SECCLASS_DIR);
- }
-@@ -3104,7 +3108,8 @@ static int selinux_inode_rmdir(struct inode *dir, struct dentry *dentry)
- 	return may_link(dir, dentry, MAY_RMDIR);
- }
- 
--static int selinux_inode_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
-+static int selinux_inode_mknod(struct mnt_idmap *idmap, struct inode *dir,
-+			       struct dentry *dentry, umode_t mode, dev_t dev)
- {
- 	return may_create(dir, dentry, inode_mode_to_security_class(mode));
- }
-@@ -3236,13 +3241,15 @@ static inline void task_avdcache_update(struct task_security_struct *tsec,
- 
- /**
-  * selinux_inode_permission - Check if the current task can access an inode
-+ * @idmap: idmap of the mount
-  * @inode: the inode that is being accessed
-  * @requested: the accesses being requested
-  *
-  * Check if the current task is allowed to access @inode according to
-  * @requested.  Returns 0 if allowed, negative values otherwise.
-  */
--static int selinux_inode_permission(struct inode *inode, int requested)
-+static int selinux_inode_permission(struct mnt_idmap *idmap,
-+				    struct inode *inode, int requested)
- {
- 	int mask;
- 	u32 perms;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 8e88ac65fd7f..a45819d13c0d 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1089,14 +1089,15 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
- 
- /**
-  * smack_inode_link - Smack check on link
-+ * @idmap: idmap of the mount
-  * @old_dentry: the existing object
-  * @dir: unused
-  * @new_dentry: the new object
-  *
-  * Returns 0 if access is permitted, an error code otherwise
-  */
--static int smack_inode_link(struct dentry *old_dentry, struct inode *dir,
--			    struct dentry *new_dentry)
-+static int smack_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry,
-+			    struct inode *dir, struct dentry *new_dentry)
- {
- 	struct smack_known *isp;
- 	struct smk_audit_info ad;
-@@ -1226,6 +1227,7 @@ static int smack_inode_rename(struct inode *old_inode,
- 
- /**
-  * smack_inode_permission - Smack version of permission()
-+ * @idmap: idmap of the mount
-  * @inode: the inode in question
-  * @mask: the access requested
-  *
-@@ -1233,7 +1235,8 @@ static int smack_inode_rename(struct inode *old_inode,
-  *
-  * Returns 0 if access is permitted, an error code otherwise
-  */
--static int smack_inode_permission(struct inode *inode, int mask)
-+static int smack_inode_permission(struct mnt_idmap *idmap, struct inode *inode,
-+				  int mask)
- {
- 	struct superblock_smack *sbsp = smack_superblock(inode->i_sb);
- 	struct smk_audit_info ad;
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_lsm.c b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-index d7495efd4a56..c0ae813698ae 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-@@ -1,18 +1,30 @@
- // SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
- 
- /*
-  * Copyright (C) 2020 Google LLC.
-  */
- 
- #include <test_progs.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <string.h>
-+#include <sys/stat.h>
-+#include <sys/syscall.h>
- #include <sys/wait.h>
- #include <unistd.h>
- 
-+#include <linux/mount.h>
-+
- #include "lsm.skel.h"
- #include "lsm_tailcall.skel.h"
- 
- char *CMD_ARGS[] = {"true", NULL};
- 
-+enum {
-+	INODE_IDMAP_ALL = (1U << 6) - 1,
-+};
-+
- int exec_cmd(int *monitored_pid)
- {
- 	int child_pid, child_status;
-@@ -30,6 +42,219 @@ int exec_cmd(int *monitored_pid)
- 	return -EINVAL;
- }
- 
-+static ssize_t write_nointr(int fd, const void *buf, size_t count)
-+{
-+	ssize_t ret;
-+
-+	do {
-+		ret = write(fd, buf, count);
-+	} while (ret < 0 && errno == EINTR);
-+
-+	return ret;
-+}
-+
-+static int write_file(const char *path, const char *value)
-+{
-+	size_t len = strlen(value);
-+	int fd, saved_errno = 0;
-+	ssize_t ret;
-+
-+	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY | O_NOFOLLOW);
-+	if (fd < 0)
-+		return -1;
-+
-+	ret = write_nointr(fd, value, len);
-+	if (ret < 0)
-+		saved_errno = errno;
-+	else if ((size_t)ret != len)
-+		saved_errno = EIO;
-+	close(fd);
-+	if (saved_errno) {
-+		errno = saved_errno;
-+		return -1;
-+	}
-+	return 0;
-+}
-+
-+static int write_userns_file(pid_t pid, const char *name, const char *value)
-+{
-+	char path[64];
-+	int len;
-+
-+	len = snprintf(path, sizeof(path), "/proc/%d/%s", pid, name);
-+	if (len < 0 || (size_t)len >= sizeof(path)) {
-+		errno = EOVERFLOW;
-+		return -1;
-+	}
-+
-+	return write_file(path, value);
-+}
-+
-+static int create_userns_fd(void)
-+{
-+	char path[64];
-+	pid_t pid, waited;
-+	int fd = -1, len, saved_errno, status;
-+
-+	pid = fork();
-+	if (pid < 0)
-+		return -1;
-+	if (pid == 0) {
-+		if (unshare(CLONE_NEWUSER))
-+			_exit(1);
-+		raise(SIGSTOP);
-+		_exit(0);
-+	}
-+
-+	do {
-+		waited = waitpid(pid, &status, WUNTRACED);
-+	} while (waited < 0 && errno == EINTR);
-+	if (waited != pid)
-+		goto out;
-+	if (!WIFSTOPPED(status)) {
-+		pid = -1;
-+		goto out;
-+	}
-+
-+	/* A one-entry map is identity for root but remains distinct from nop_mnt_idmap. */
-+	if (write_userns_file(pid, "setgroups", "deny") && errno != ENOENT)
-+		goto out;
-+	if (write_userns_file(pid, "uid_map", "0 0 1") ||
-+	    write_userns_file(pid, "gid_map", "0 0 1"))
-+		goto out;
-+
-+	len = snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
-+	if (len < 0 || (size_t)len >= sizeof(path)) {
-+		errno = EOVERFLOW;
-+		goto out;
-+	}
-+	fd = open(path, O_RDONLY | O_CLOEXEC);
-+
-+out:
-+	saved_errno = errno;
-+	if (pid > 0) {
-+		kill(pid, SIGKILL);
-+		do {
-+			waited = waitpid(pid, NULL, 0);
-+		} while (waited < 0 && errno == EINTR);
-+	}
-+	errno = saved_errno;
-+	return fd;
-+}
-+
-+static int create_idmapped_tmpfs(void)
-+{
-+	struct mount_attr attr = {
-+		.attr_set = MOUNT_ATTR_IDMAP,
-+	};
-+	int fsfd = -1, mntfd = -1, saved_errno, userns_fd = -1;
-+
-+	userns_fd = create_userns_fd();
-+	if (userns_fd < 0)
-+		goto out;
-+
-+	/* A detached tmpfs avoids relying on the host test directory supporting idmaps. */
-+	fsfd = syscall(__NR_fsopen, "tmpfs", FSOPEN_CLOEXEC);
-+	if (fsfd < 0)
-+		goto out;
-+	if (syscall(__NR_fsconfig, fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0))
-+		goto out;
-+
-+	mntfd = syscall(__NR_fsmount, fsfd, FSMOUNT_CLOEXEC, 0);
-+	if (mntfd < 0)
-+		goto out;
-+
-+	attr.userns_fd = userns_fd;
-+	if (syscall(__NR_mount_setattr, mntfd, "", AT_EMPTY_PATH, &attr,
-+		    sizeof(attr))) {
-+		close(mntfd);
-+		mntfd = -1;
-+	}
-+
-+out:
-+	saved_errno = errno;
-+	if (fsfd >= 0)
-+		close(fsfd);
-+	if (userns_fd >= 0)
-+		close(userns_fd);
-+	errno = saved_errno;
-+	return mntfd;
-+}
-+
-+static int exercise_inode_idmap_hooks(int dirfd)
-+{
-+	int fd = -1, ret = -1;
-+
-+	fd = openat(dirfd, "file", O_CREAT | O_EXCL | O_WRONLY | O_CLOEXEC,
-+		    0600);
-+	if (!ASSERT_GE(fd, 0, "create"))
-+		goto out;
-+	close(fd);
-+	fd = -1;
-+
-+	if (!ASSERT_OK(mkdirat(dirfd, "dir", 0700), "mkdir"))
-+		goto out;
-+	if (!ASSERT_OK(symlinkat("target", dirfd, "symlink"), "symlink"))
-+		goto out;
-+	if (!ASSERT_OK(linkat(dirfd, "file", dirfd, "link", 0), "link"))
-+		goto out;
-+	if (!ASSERT_OK(mkfifoat(dirfd, "fifo", 0600), "mknod"))
-+		goto out;
-+
-+	ret = 0;
-+out:
-+	if (fd >= 0)
-+		close(fd);
-+	unlinkat(dirfd, "link", 0);
-+	unlinkat(dirfd, "fifo", 0);
-+	unlinkat(dirfd, "symlink", 0);
-+	unlinkat(dirfd, "file", 0);
-+	unlinkat(dirfd, "dir", AT_REMOVEDIR);
-+	return ret;
-+}
-+
-+static int test_lsm_inode_idmap(struct lsm *skel)
-+{
-+	char tmpdir[] = "/var/tmp/test_lsm_idmap.XXXXXX";
-+	__u32 expected = INODE_IDMAP_ALL;
-+	int dirfd = -1, idmapped_dirfd = -1;
-+	int ret = -1;
-+
-+	if (!ASSERT_OK_PTR(mkdtemp(tmpdir), "mkdtemp"))
-+		return -1;
-+
-+	dirfd = open(tmpdir, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-+	if (!ASSERT_GE(dirfd, 0, "open_tmpdir"))
-+		goto out;
-+
-+	idmapped_dirfd = create_idmapped_tmpfs();
-+	if (!ASSERT_GE(idmapped_dirfd, 0, "create_idmapped_tmpfs"))
-+		goto out;
-+
-+	skel->bss->inode_identity_idmap_seen = 0;
-+	skel->bss->inode_idmapped_mount_seen = 0;
-+
-+	if (!ASSERT_OK(exercise_inode_idmap_hooks(dirfd), "identity_idmap"))
-+		goto out;
-+	if (!ASSERT_OK(exercise_inode_idmap_hooks(idmapped_dirfd),
-+		       "idmapped_mount"))
-+		goto out;
-+
-+	if (!ASSERT_EQ(skel->bss->inode_identity_idmap_seen, expected,
-+		       "inode_identity_idmap_seen"))
-+		goto out;
-+	ret = ASSERT_EQ(skel->bss->inode_idmapped_mount_seen, expected,
-+			"inode_idmapped_mount_seen") ? 0 : -1;
-+
-+out:
-+	if (idmapped_dirfd >= 0)
-+		close(idmapped_dirfd);
-+	if (dirfd >= 0)
-+		close(dirfd);
-+	rmdir(tmpdir);
-+	return ret;
-+}
-+
- static int test_lsm(struct lsm *skel)
- {
- 	struct bpf_link *link;
-@@ -53,6 +278,10 @@ static int test_lsm(struct lsm *skel)
- 
- 	skel->bss->monitored_pid = getpid();
- 
-+	err = test_lsm_inode_idmap(skel);
-+	if (!ASSERT_OK(err, "test_lsm_inode_idmap"))
-+		return err;
-+
- 	err = stack_mprotect();
- 	if (!ASSERT_EQ(err, -1, "stack_mprotect") ||
- 	    !ASSERT_EQ(errno, EPERM, "stack_mprotect"))
-@@ -71,6 +300,8 @@ static int test_lsm(struct lsm *skel)
- 	skel->bss->copy_test = 0;
- 	skel->bss->bprm_count = 0;
- 	skel->bss->mprotect_count = 0;
-+	skel->bss->inode_identity_idmap_seen = 0;
-+	skel->bss->inode_idmapped_mount_seen = 0;
- 	return 0;
- }
- 
-diff --git a/tools/testing/selftests/bpf/progs/lsm.c b/tools/testing/selftests/bpf/progs/lsm.c
-index 7de173daf27b..7e32fbddbfad 100644
---- a/tools/testing/selftests/bpf/progs/lsm.c
-+++ b/tools/testing/selftests/bpf/progs/lsm.c
-@@ -84,6 +84,85 @@ char _license[] SEC("license") = "GPL";
- int monitored_pid = 0;
- int mprotect_count = 0;
- int bprm_count = 0;
-+__u32 inode_identity_idmap_seen = 0;
-+__u32 inode_idmapped_mount_seen = 0;
-+
-+enum {
-+	INODE_IDMAP_CREATE	= 1U << 0,
-+	INODE_IDMAP_LINK	= 1U << 1,
-+	INODE_IDMAP_SYMLINK	= 1U << 2,
-+	INODE_IDMAP_MKDIR	= 1U << 3,
-+	INODE_IDMAP_MKNOD	= 1U << 4,
-+	INODE_IDMAP_PERMISSION	= 1U << 5,
-+};
-+
-+static __always_inline bool is_monitored_idmap(struct mnt_idmap *idmap)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+
-+	return monitored_pid == pid && idmap;
-+}
-+
-+static __always_inline bool is_identity_idmap(struct mnt_idmap *idmap)
-+{
-+	return idmap->uid_map.nr_extents == 0 &&
-+	       idmap->gid_map.nr_extents == 0;
-+}
-+
-+static __always_inline int record_inode_idmap(struct mnt_idmap *idmap,
-+					      __u32 hook, int ret)
-+{
-+	if (ret || !is_monitored_idmap(idmap))
-+		return ret;
-+	if (is_identity_idmap(idmap))
-+		inode_identity_idmap_seen |= hook;
-+	else
-+		inode_idmapped_mount_seen |= hook;
-+	return 0;
-+}
-+
-+SEC("lsm/inode_create")
-+int BPF_PROG(test_inode_create, struct mnt_idmap *idmap, struct inode *dir,
-+	     struct dentry *dentry, umode_t mode, int ret)
-+{
-+	return record_inode_idmap(idmap, INODE_IDMAP_CREATE, ret);
-+}
-+
-+SEC("lsm/inode_link")
-+int BPF_PROG(test_inode_link, struct mnt_idmap *idmap,
-+	     struct dentry *old_dentry, struct inode *dir,
-+	     struct dentry *new_dentry, int ret)
-+{
-+	return record_inode_idmap(idmap, INODE_IDMAP_LINK, ret);
-+}
-+
-+SEC("lsm/inode_symlink")
-+int BPF_PROG(test_inode_symlink, struct mnt_idmap *idmap, struct inode *dir,
-+	     struct dentry *dentry, const char *old_name, int ret)
-+{
-+	return record_inode_idmap(idmap, INODE_IDMAP_SYMLINK, ret);
-+}
-+
-+SEC("lsm/inode_mkdir")
-+int BPF_PROG(test_inode_mkdir, struct mnt_idmap *idmap, struct inode *dir,
-+	     struct dentry *dentry, umode_t mode, int ret)
-+{
-+	return record_inode_idmap(idmap, INODE_IDMAP_MKDIR, ret);
-+}
-+
-+SEC("lsm/inode_mknod")
-+int BPF_PROG(test_inode_mknod, struct mnt_idmap *idmap, struct inode *dir,
-+	     struct dentry *dentry, umode_t mode, dev_t dev, int ret)
-+{
-+	return record_inode_idmap(idmap, INODE_IDMAP_MKNOD, ret);
-+}
-+
-+SEC("lsm/inode_permission")
-+int BPF_PROG(test_inode_permission, struct mnt_idmap *idmap,
-+	     struct inode *inode, int mask, int ret)
-+{
-+	return record_inode_idmap(idmap, INODE_IDMAP_PERMISSION, ret);
-+}
- 
- SEC("lsm/file_mprotect")
- int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
-
----
-base-commit: 786262be6048deab760f68c8acc2c85607165894
-change-id: 20260824-lsm-mount-idmaps-9d9b994fe1a1
-
-Best regards,
---  
-Daan De Meyer <daan@amutable.com>
-
-
+BR, Jarkko
