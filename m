@@ -1,233 +1,111 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66E9426408
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2026 16:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E0844063C
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Sep 2026 16:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788278645; cv=none; b=tfp+Hf0UAOzayckuwS3ep4Mh14PdWZ8tBXHIRDmk+hqCUBr/G/y1xpItu5+OQxoATYYJH7iKi+VynhVr94xthT8tpnBPBJ3oYhzqto9PA2z8QiuY81fPgnkqYh6PJ9D4c8fVPUW2ylmoOj76ZTlljyeWqa6GDL8zj/X+Bo+vchY=
+	t=1788279379; cv=none; b=PJlQKUMEDlS0ZkU1UC+xmYyaswly8++xU06QKGjFJlxunYtac4NHkaaNm5G1/18JV1WLfsL8LbuNwlvDN6X1xTJnXyIcNWpZqpVZYgQR0VYnSKn1xpSzZEfTXNWig8n5dmvOxAzpsjfMIWcLetfs6mDF+wZR1dj3aJjKSK7Wvnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788278645; c=relaxed/simple;
-	bh=EIjyPnqw8QTTn+ydcMEjt0qRWEFtEg0Ql8NGv6CxEVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VSpkVE1+ZQ09/swTnHZR/kaBWZvkjyMdYIox9Glwr7gG22f1PuQ5CIv4pRNI+LxgIGnOv6ue9Kh7i/0b3yPRFhn4IBBfX0kJWZ9ujx4EjL6ZcKHXP7H9xoxSQ8DWom1GoStnpLjKQOzDSE1CGbbE0w66oK4MVHHfqWCcDHenORg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=HAv4y6Nr; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1788279379; c=relaxed/simple;
+	bh=eDOuu6SSu52TKbjWx6ehFX9DzfSBGnFG4ldHBQmydqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EX3eF5bePE8EnkX2inp5xU+Ucj8caluQZz8dZmvNcQ6knXWsXXnAEaP7/kOMFHIewnuRzsGxH0EeqtZjvBQ6/R6OKvmtvXKYQDLDNJkvP22RyPFUfaIu1fXLD93AenceMv1Ouv1EL9mCOmPkswtswl1wBv26NLuvTFWKTYgrz2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=p6Ll7cs7; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="HAv4y6Nr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788278641; bh=gPh+X/iBiqRKhw1S4WGz1YTRGse+nCFpHEMx4R0LHRw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=HAv4y6NrO49IyeCK8ZkLhfUqS3eLzWFDijFgd78h34+VEQMBxbHOTw4wYbM+n2iXkcnGmHTqypE3Z3w6bH4BXn10NPTA/NNlTmlMMZ+UxOi3yruY/DPYAIQyLGC/uXhydAK/tjmiqQm0PZWpo1XZxmVyHatm1r7KOqXXuwU+s4DhwOUwX5MN2KQIHqMVGU5l40dILhB5rJUpuDq8gLGgugv8kqF1Pm/MPD0NgdHhFdoJBYS6MPRV2R5NGqN4rSQoJSa2a7QCVXKSfV/urjknglW+Ox3GYIus0zUQA4j+L5GhRkDs147mshDbl4j8ZHvmavNdlXTshjQd+Oeg+9ty/w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788278641; bh=rFC1DG1NL8CVGLsRBltrtHBUMJsTSaMfo7ESqd9/TAc=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ub3dWp9HeAEcdMj40vvbWEUhAGO9gJ1WbWZH1RXFABHSgSUM4nVNZGxKkp7nEeGFAsZgJimywgtlWmBcgrhwkftmIkenl3bLZxv5qaKOd0+4XTbv5o2UC1nDE0PppN2ZxRdJusOXI2ignVmZBxhhGlATtOWjVhdID//P3KjJcdgVj6gl4Vj2YIUaFND77Afdj2Xa7w4ErqfhLJfFiip4WQR08/lK0SGmRmvgwPCq71PtmPrBy4kDlMObFEhVnhSyVxjcWWKunCYDAqXhRrvt4mTa9mSD8j+RMvnPW8KZSaDbJ/d0FpxhSfbQSpuPbSyoRIxdMYoKTIcFStEmKRK5mA==
-X-YMail-OSG: BnRSzUsVM1l6DMJ0RcDbVkj8OA4EnfP5.zaF5Sy_6KG2J6a5XNB2nRUsOjT3ART
- x5kLRUjxN7qI.IXN_GOJxUAxbDm4WQ1qWxDFpikbntvRnmDeeModNmJvEuDFj70nMxMVDCfR7i08
- TLoHA1R6hIZ1LhwgEBJz6BXTQpcu137HEdLRqbU3iAMWdmdCgHN.jybBtQrF.C89oj3iXdcwq83U
- kyDrUGwY2QAD56uB_yS9.v1b6lpsfgvy_wVq5Xl.XMcya.NblpqHct.74b_WgBLRj.n2g260Ze_5
- MC6oHD9kLsWBzV7oNxexUIrvLvA2NSEWiiQVAEF5Dyw0J_p2gi34blnPWV1ffY2fr2.2ndZK5mCw
- q8JZUkPybYawiAqbZMETn62xgxSJxqPLZriKVsh.Yur2GcbnN9rZY_BrvztvDaILL1w.poZ6QlwF
- HHWdMVYN65I.NYExwdSzLBLVE_XCTXiFgVwWkHjUWiRUX1WAttlhY7x7O4pRzoFf7rDr5KUvjq5T
- QFYbawEwONrjsddJQcutigmcwqUqQcYbsFsMPcGrG7uqKjThJvkpiyR9ZVvBcSQW7i.VmngJ09L3
- zNPMqOW23l3jYUmLNJA9tdLGcCRY8qixdtT_dA_LF6khvJdag3IzZ0iJXOPiBVwoPqOpVzmSDK0K
- rYXwTp56ucWKOEXaUx9qB5fKNpyhTVno69lmXRn586srKGKH9bcyQNuag15gmd4cQ_bwLRJpsebv
- hrH9oshCVWTElz0zb3kh5ZTnkTH3F540Joo96iqkl4GF1jBVeoHTGqM93jXemH20j.XQzu7F1kjv
- silAPMLu3nlfcOUZEuG6P6yeunGiFF8wT88ZXiNAvrO_eCWdV.BKTTl_GDY8Ki1_nhXYmMPNWTWL
- L4WVgb9bg2GzAGgwe7O_YWw1lUPljGE_7kizgV86h5n6.AeO1GAta2FijW7JtM4CIp94IlvVt3_X
- n2JoT.pEZXBK5T0805WWPzRfy0KT0RDYN2uYFdzPP3vo1mIWkiWPjfBSfdpa0P6T2p84k6QfmCkz
- HPyi8EzuxmPrb0oXLYeiYnj9Wv99M29bnqSOdD_91vneq9YVbWF7Q6Ob8VIQf6f_em9BBLlclDi4
- EXEc8pebwZ6v3bSF9hJIvWVd_1nwlDXudPKpTYbDy01lfwwMPxHqX4U7yo7jMXECMbWjiPC_EIei
- 1rwJ6gZqwT_kXId0dQZTUuj7.NHXwISkRI5c77y.JwwNOrTopnjvAO50EPbmSmBYZ.Wm9.zbd7zz
- 8mffN78xMRX437TWJmZsia5XHlwnD__SwtGTCFgLLDLqG0waLpdI5Gnjsk7PEsRhAB7b3weR_G4t
- mFhIaY7iOjLIM44a1g_LCMSSyJWLGhnL1u9Qf2jhZLL5gJ_6IYVXHVRVfV9ziNetQXEm_8WaIrTT
- tlixevJkEx6Dz..j6uh5NXC35zBpJbSM7StGjzdCZ6VVY86xr1QYX9Xm8BJhSQ7pkqx89uwC3CP0
- .p1kR0Plgh_Gdiw1C.9uSEEfWllyoBISuzXgpocW6t8tN5S53NAmNWF18cQm.SZHhO3Ncak.CkAx
- lo6eXKa52FjEofHF7ZRseScCLRHlnMH854MvxW05_v4OQqzn_dKcr.1mdNt1FlZvmNwoNCvKEhTr
- GBc11oR5WIkXvaO1zclx6FmXGgDjPc.Ie266nDgGo_72clnHYHYUKf875KOPIW1AzvxAW7oCLKHe
- 2ahfFP1DPqv5akZ1S14Gks6tf1x27QnHtgR7mdotq8XOFuwAZe7DpFOphuTtnOuu3rwpY5WAFfoO
- 8trFKjtEC7u.3PTb_9.FyXwuzAcJdZp6xU1DxO1LCDc9QG1ccOvBHiFjpwSgUkohS1J3Mu_vnr1p
- d5Wxy21YJJhYtS21aiCcV50vmBxj0jgvFg59llCpT3vN1pMaxf14PawfRh5PKiqRWhpad2vNXT4f
- FKtJWRdyhVAaFVTSBsbPot7S9XzzRgEInkTcl.vBKUhn9jtA8ADT7YWT9zvV1foYbKik0_X_dnYJ
- 7ckBVPo6fIx2.7eqgJZ8JOsUBOfYNp5C6Cd2io8btrpEiGP8XXEIXv8lNiMIuiZrcm841JUkmksG
- DyK0xgr3MeyHSybaP_Fys7Nltg.EIr4Q0v4309l60Yib91EEQ7awW7xjVpdcnBZw1bekGO9PBACm
- HJtn0fGSUS3U9JB.nlXkq9a.8PxosWl9UkcaGzsm98E_rYsjhEt3dLJIH0eSlHBj8M9ednNL0JvJ
- WkoKD3FJpOYf25tly81HBtlpU0e0sVW1fbNJ3xF70RJgzlCrypYY0bHfiaif786dAoWYR1oDy_Pd
- SPBHQbxcB6yTNOQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: ae5512ae-c89c-4588-a92d-d5c736d4192f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 1 Sep 2026 16:04:01 +0000
-Received: by hermes--production-gq1-678d9dd684-mxdfs (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7bb86a24437c43194baefa3abed212e3;
-          Tue, 01 Sep 2026 15:53:44 +0000 (UTC)
-Message-ID: <d3656927-c39d-421f-8baa-f04c8d4eeff3@schaufler-ca.com>
-Date: Tue, 1 Sep 2026 08:53:42 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p6Ll7cs7"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-49b0dd3c9a0so34731355e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2026 09:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788279376; x=1788884176; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Sg3qBeJDPejirqtBPfSpWtNEMRQUM5xEwb+IRE4corw=;
+        b=p6Ll7cs7LZhhhfYhmC5Uq2eKvjhG6DnFGcHMlrg38mvfkSZOxwu/Illqe92gXn7oDK
+         ujRNKiY78StWqYXY40H7+isDnySn53TgaiCbMJXL9NM/A+Fuii3u2ybmwht+oFvWPG7W
+         YO2v/BJfs5fe0U0z6IEZ4OJxTejoq4/TwvLonu4H6DRNXLne6UncaZ8d83PDGupQuQEK
+         9gsXQSQlUfmgWQDHHoPVwbNwKbvpIJvy0rM/8oc2kShiVTzjyQ2bk+LKTczxpF0CHCad
+         1JXRky/rGUXYn3UFAPLjqagDYQwIS73DsIa4pwDS57VTGwjuUuvm50OUF4ugVpnAVQAH
+         Dt/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788279376; x=1788884176;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Sg3qBeJDPejirqtBPfSpWtNEMRQUM5xEwb+IRE4corw=;
+        b=THdSJQiLQ26OS6oTmTeyG2Ofgb7Oo1TH+muJ9CnudzMyG729nKMDz55xMSpR0/AsNa
+         8l3TyAM/uAGqjzB+0Vuydq5DidGYrI3gm+DlV9/K9PfZIWCfquXH+otqv1hAtxRi+j6v
+         WaglcCDKPQg1o1c+XTYb8TCvSefsCjpqWtR9QJ3uTa+aBwF92+BGifYLWOQhttNDMrkO
+         IRDwZUlM+LumIvoUrnPscp/h+S+BRzqPRgZZv/Xjg4Uhp9Z5vrFSdTuWjebWfaxP0mRW
+         upAZCy/ufqKNO+Je4kUerRmgCIS1fMKFDWb3grkJMvbTD76FdxNbOpve4Ss7bkgvlQTF
+         TsGA==
+X-Forwarded-Encrypted: i=1; AHgh+RrmjtE03cY7A3LsD495KyZZcX3tjOfkS+8BcPZRSvUfwIdkYQSZGLbhKixp6i2/jTmpZVTYuggrQnn3qHSP4nGMeb9PXqE=@vger.kernel.org
+X-Gm-Message-State: AFuF++lduOSRdE3rqEueotBeEcGulG65MJKtmCo/jyGfe0rHY5W7fxD3
+	iWF/YemGoN6jCeN+y/Z2hXls0fwNPnoum48P9gGLHe1oKOHCIlC6/KPW
+X-Gm-Gg: AR+sD137gn7Jzl8HNxvVushDF2A7wVHfKGhs6+uNjnsc4Q1zHrBrmxjzHOOHqALNmHn
+	KD767i/3LBaaeriTsMA1W8sp4ppCEBKgoUEmTcB/yjcejT0NaKICGPiymFONTPzM5y0fogNvzds
+	HVCRuuXkG0E27/eI7uLu9zf7JzGhh8NY2kH/iaw6SU8AHq7ZUdziOS621pA6mlUQag+R5eR9beX
+	LNTgddQkGmla2hjsmhCBOyRHPDpEs0tU+PYyLEWwIvHGXdZ/oGvxZ774jNk0BgWhLNlRiLyGSxt
+	UxMlKZY5k46+uXeHMujA/a1TuAYQqxoOxCAEJMCeRFd2m73CIOA5Y9vIGDWy+dPppPM5uyimaO3
+	s7aFNVtWMXsP+opkfI4ZUKXfYhtEpz1Ka6D8ex/2cE2o0m70d0f87R4BzT0HJhqsIztg0O65/fw
+	vrGMp9+iRjlPf59xjreo0AKoCleo/QYBC91OXQ/z7fQgltYpdIZL+yG8L7v4ZuwW380DSBBbv4/
+	tHF+voRWt1JqgJycEj1zsKDFvk4NJ07RqlvBF8/v3+3cMEPJgHiRyNWCJueBZdLX4uZhXOti/JI
+	JMqwGq9G6iGOZgIuUXGh0fh3gbalf9zqm0gPgFjGJFzGnUwOTjXPJ9hJKpmm7px1T88K0ThRFYv
+	s9fUSlw==
+X-Received: by 2002:a05:600c:c11c:b0:499:b65d:1250 with SMTP id 5b1f17b1804b1-49cdc422c5bmr176732735e9.2.1788279375445;
+        Tue, 01 Sep 2026 09:16:15 -0700 (PDT)
+Received: from MacBook-Pro-von-Karl.localdomain (dynamic-2a02-3100-a16a-7801-fd8c-4b37-36b4-e53a.310.pool.telefonica.de. [2a02:3100:a16a:7801:fd8c:4b37:36b4:e53a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce365048asm17915365e9.5.2026.09.01.09.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Sep 2026 09:16:15 -0700 (PDT)
+Date: Tue, 1 Sep 2026 18:16:12 +0200
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: set persistent keyring timeout before destination
+ linking
+Message-ID: <apb5_kMgDxSIviWb@gmail.com>
+References: <bb0370340c671.1788111790.git.kmehltretter@gmail.com>
+ <apbTc9BisLTqBaE_@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/27] fs: port ->setattr() to pass const mnt_idmap
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Christoph Hellwig <hch@lst.de>, Seth Forshee <sforshee@kernel.org>,
- Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
- Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
- Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- linux-unionfs@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260901-work-idmap-const-v1-0-54ccd48e100b@kernel.org>
- <20260901-work-idmap-const-v1-24-54ccd48e100b@kernel.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20260901-work-idmap-const-v1-24-54ccd48e100b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.26380 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <apbTc9BisLTqBaE_@kernel.org>
 
-On 9/1/2026 5:14 AM, Christian Brauner wrote:
-> Convert to const struct mnt_idmap.
->
-> A mount's idmapping is immutable. The only thing that is allowed to be
-> modified afterwards is the reference count and that is hidden behind
-> mnt_idmap_get() and mnt_idmap_put(). Everything else only ever reads
-> from the idmapping. This is the same model that struct cred uses and the
-> idmapping is also rather sensitive.
->
-> So make the idmap argument const wherever we can. The conversion is done
-> from the bottom up so callers can continue to pass a non-const pointer
-> to a const parameter until the conversion is finished.
->
-> No functional changes.
->
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
->  Documentation/filesystems/locking.rst     | 2 +-
->  Documentation/filesystems/vfs.rst         | 2 +-
->  arch/powerpc/platforms/cell/spufs/inode.c | 2 +-
->  fs/9p/v9fs_vfs.h                          | 2 +-
->  fs/9p/vfs_inode.c                         | 2 +-
->  fs/9p/vfs_inode_dotl.c                    | 2 +-
->  fs/adfs/adfs.h                            | 2 +-
->  fs/adfs/inode.c                           | 2 +-
->  fs/affs/affs.h                            | 2 +-
->  fs/affs/inode.c                           | 2 +-
->  fs/afs/inode.c                            | 2 +-
->  fs/afs/internal.h                         | 2 +-
->  fs/anon_inodes.c                          | 2 +-
->  fs/attr.c                                 | 2 +-
->  fs/bad_inode.c                            | 2 +-
->  fs/btrfs/inode.c                          | 2 +-
->  fs/ceph/inode.c                           | 2 +-
->  fs/ceph/super.h                           | 2 +-
->  fs/coda/coda_linux.h                      | 2 +-
->  fs/coda/inode.c                           | 2 +-
->  fs/configfs/configfs_internal.h           | 2 +-
->  fs/configfs/inode.c                       | 2 +-
->  fs/debugfs/inode.c                        | 2 +-
->  fs/ecryptfs/inode.c                       | 2 +-
->  fs/efivarfs/inode.c                       | 2 +-
->  fs/exfat/exfat_fs.h                       | 2 +-
->  fs/exfat/file.c                           | 2 +-
->  fs/ext2/ext2.h                            | 2 +-
->  fs/ext2/inode.c                           | 2 +-
->  fs/ext4/ext4.h                            | 2 +-
->  fs/ext4/inode.c                           | 2 +-
->  fs/f2fs/f2fs.h                            | 2 +-
->  fs/f2fs/file.c                            | 2 +-
->  fs/fat/fat.h                              | 2 +-
->  fs/fat/file.c                             | 2 +-
->  fs/fuse/dir.c                             | 2 +-
->  fs/gfs2/inode.c                           | 2 +-
->  fs/hfs/hfs_fs.h                           | 2 +-
->  fs/hfs/inode.c                            | 2 +-
->  fs/hfsplus/inode.c                        | 2 +-
->  fs/hostfs/hostfs_kern.c                   | 2 +-
->  fs/hpfs/hpfs_fn.h                         | 2 +-
->  fs/hpfs/inode.c                           | 2 +-
->  fs/hugetlbfs/inode.c                      | 2 +-
->  fs/inode.c                                | 2 +-
->  fs/internal.h                             | 2 +-
->  fs/jffs2/fs.c                             | 2 +-
->  fs/jffs2/os-linux.h                       | 2 +-
->  fs/jfs/file.c                             | 2 +-
->  fs/jfs/jfs_inode.h                        | 2 +-
->  fs/kernfs/inode.c                         | 2 +-
->  fs/kernfs/kernfs-internal.h               | 2 +-
->  fs/libfs.c                                | 4 ++--
->  fs/minix/file.c                           | 2 +-
->  fs/nfs/inode.c                            | 2 +-
->  fs/nfs/namespace.c                        | 2 +-
->  fs/nilfs2/inode.c                         | 2 +-
->  fs/nilfs2/nilfs.h                         | 2 +-
->  fs/ntfs/file.c                            | 2 +-
->  fs/ntfs/inode.h                           | 2 +-
->  fs/ntfs3/file.c                           | 2 +-
->  fs/ntfs3/ntfs_fs.h                        | 2 +-
->  fs/ocfs2/dlmfs/dlmfs.c                    | 2 +-
->  fs/ocfs2/file.c                           | 2 +-
->  fs/ocfs2/file.h                           | 2 +-
->  fs/omfs/file.c                            | 2 +-
->  fs/orangefs/inode.c                       | 2 +-
->  fs/orangefs/orangefs-kernel.h             | 2 +-
->  fs/overlayfs/inode.c                      | 2 +-
->  fs/overlayfs/overlayfs.h                  | 2 +-
->  fs/pidfs.c                                | 2 +-
->  fs/proc/base.c                            | 2 +-
->  fs/proc/generic.c                         | 2 +-
->  fs/proc/internal.h                        | 2 +-
->  fs/proc/proc_sysctl.c                     | 2 +-
->  fs/ramfs/file-nommu.c                     | 4 ++--
->  fs/smb/client/cifsfs.h                    | 2 +-
->  fs/smb/client/inode.c                     | 2 +-
->  fs/tracefs/event_inode.c                  | 2 +-
->  fs/tracefs/inode.c                        | 2 +-
->  fs/ubifs/file.c                           | 2 +-
->  fs/ubifs/ubifs.h                          | 2 +-
->  fs/udf/file.c                             | 2 +-
->  fs/ufs/inode.c                            | 2 +-
->  fs/ufs/ufs.h                              | 2 +-
->  fs/vboxsf/utils.c                         | 2 +-
->  fs/vboxsf/vfsmod.h                        | 2 +-
->  fs/xfs/xfs_iops.c                         | 2 +-
->  fs/zonefs/super.c                         | 2 +-
->  include/linux/fs.h                        | 6 +++---
->  include/linux/lsm_hook_defs.h             | 4 ++--
->  include/linux/nfs_fs.h                    | 2 +-
->  include/linux/security.h                  | 8 ++++----
->  mm/secretmem.c                            | 2 +-
->  mm/shmem.c                                | 2 +-
->  net/socket.c                              | 2 +-
->  security/integrity/evm/evm_main.c         | 4 ++--
->  security/integrity/ima/ima_appraise.c     | 2 +-
->  security/security.c                       | 4 ++--
->  security/selinux/hooks.c                  | 2 +-
->  security/smack/smack_lsm.c                | 2 +-
->  virt/kvm/guest_memfd.c                    | 2 +-
->  102 files changed, 112 insertions(+), 112 deletions(-)
+On Tue, Sep 01, 2026 at 04:30:27PM +0100, Jarkko Sakkinen wrote:
+> > Tested with QEMU 10.2.1 TCG. The reproducer set
+> > /proc/sys/kernel/keys/persistent_keyring_expiry to 60 seconds, restricted
+> > the destination with KEYCTL_RESTRICT_KEYRING, and then called
+> > KEYCTL_GET_PERSISTENT. No LSM policy was loaded.
+> > 
+> >                       syscall result  /proc/keys expiry
+> >   i386 baseline       -EPERM          perm
+> >   i386 patched        -EPERM          1m
+> >   x86_64 patched      -EPERM          1m
+> > 
+> > Full kernel builds completed for i386 and ARM926, and for x86_64 with
+> > CONFIG_PROVE_LOCKING=y. The x86_64 reproducer completed without lockdep
+> > reports, warnings, or bugs.
+> 
+> Please describe this in the commit message and delete most of
+> the text it has. This is the motivation part.
 
-...
+Got it, thanks. I'll shorten commit message.
 
+I also found a narrow race if linking is delayed past expiry and GC runs.
+It is unlikely in practice, but reproducible with an injected delay, so
+I'll address it in v2.
 
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index df4fc6ff26aa..bb78569b3d5b 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1270,7 +1270,7 @@ static int smack_inode_permission(struct inode *inode, int mask)
->   *
->   * Returns 0 if access is permitted, an error code otherwise
->   */
-> -static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> +static int smack_inode_setattr(const struct mnt_idmap *idmap, struct dentry *dentry,
->  			       struct iattr *iattr)
-
-Please keep to 80 columns.
-
-+static int smack_inode_setattr(const struct mnt_idmap *idmap,
-+				struct dentry *dentry, struct iattr *iattr)
-
-Note that the above may get whitespace mangled.
-
->  {
->  	struct smk_audit_info ad;
->
+Thanks,
+Karl
