@@ -1,108 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2013DAAAE;
-	Tue,  1 Sep 2026 23:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141CC1DE8BB;
+	Wed,  2 Sep 2026 00:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788304052; cv=none; b=Vfi/Fbp2IpHhYCu6TWOVNxby6rvK74RFQeVJ7pGfcQOdVD/JQ3z93yEXL8ulPzlzCkLolBuAOjHZZgV6aKZgDNLDKEI2LIaFC1AIHMTU7p+627ZMrZmfLra+CFiOL5FxEO1lLBnM21oQ08E4LB6w5C9S6JcMe6BgeBRxV9orYQc=
+	t=1788310169; cv=none; b=nzB54mBb9SSkh5oseD0UwK0WXZ077/EiNFGILyuZkYViLCGt3PLaUiFcT8hFJHfnErqt8T5ncLLjL03X0789vnGlrADDfkmrorEsyMc42qfaV0abkBAOXuKY3f5raIK8UHYcu7Bw/eXBD/MfdmgoSeMxsA+1+TveKaCzPmdJW18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788304052; c=relaxed/simple;
-	bh=i63y7r98zPdQhcmDnBCiNOhfAZFF71DuJYrpPUzIFWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/+o24NG2+ufewA3NqV2Km/pQk7GIcFfJHcwaclOuYP3uQmjwgjVIIkaKQeKVT51Tdx9HCtbNr+ztwT+mmvPQtO8sKwx6+52INvJM9HTMDK7mCo1Za+0FZWFFymFf9QIjt7/bf/EM8FXd9e/Ax8C/GKFHZiLLPw8bA4UhIVsQ+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHqPdlv0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788310169; c=relaxed/simple;
+	bh=pXG0V5jXBLIVF9fdYnPv8sfD7dZDrtssN9xflLdKFBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QvstI4Q//wvQ8Bwg2+EriHYtQgZtvn03AVObEdaD5ZMkFv5zI+KX8+QHIAPlME4dPiVGqn2mm3U4K2ymAmsrH/rZE38zUlX5nAn7SK+bfrmTBmeNpy96ewlqS4aXIMRQklwD1tYJbfDt326OZzahpKLDWJfbS+lzKIPIBHw9TnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V11WDYvd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHqPdlv0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165091F000E9;
-	Tue,  1 Sep 2026 23:07:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V11WDYvd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD551F000E9;
+	Wed,  2 Sep 2026 00:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788304051;
-	bh=C3anIUeB1bB58RQmTGiNdJUaxEJ2R6teXFLUx/u9Y3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=hHqPdlv0zWTfOqpyAorrq1BUAPYRxDE0+9/9NBWB4+t64z+3FpWiLxhHavPnLJDvq
-	 ZPwbarGNxBeExKE3qfQRM9scHGW14xfkLZwcYB7CqvlW6/KpFomEa8z9JDP+VHxP/s
-	 uytYtFAjtRo7v3tbYoG0VNtF5IySJz+2fRJfRSGtBmf5SzUFuVgDgXIryD0qo+TeUM
-	 VGCwIghYTktnHn1prcHYcuKjsWDnJtFxZMSXjTURAQwQvYl4uVsp5dOYZwPzAw3MQa
-	 B/3hjwdUVhlVrJX6LPNkaHrz3xdahiEgxfM+pdfOc7bw8o0keXJRTZDN3OaYVhUOOq
-	 VJLf2i4oBh6MQ==
-Date: Wed, 2 Sep 2026 00:07:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-hardening@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v4] hardening: Default randstruct off with rust for
- better allmodconfig support
-Message-ID: <87236b36-fa99-4588-8181-f3ab6dcfc777@sirena.org.uk>
-References: <20260901-rust-reverse-randstruct-dep-v4-1-3bfa19efe1fa@kernel.org>
- <CANiq72nOk-gbd+C9oG5y5RKrYhqNx+BLcwS-8u-uHxUjVTwEtA@mail.gmail.com>
+	s=k20260515; t=1788310167;
+	bh=7nLgCQSaCFKCb63UhFK8QBEL2bgjau/HoDT7IXt2qnI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=V11WDYvd0mgQawzLkGXiCrh1Gbka0P+U0c2qkRCJRZslacaQG0DNwxHoLn1Qju7WQ
+	 0MzAu+NpoT3thjyrsWNg7u67A+WKgEddbnwOdrfAjgEOH0419r4CNRQcbBRrzGmQjq
+	 2ZSPSSFNKK7hv+832HVp6OXpkPLSWGVYfAFoPB81EuBd0s34N/nYrZoF7Day9GON8M
+	 SF/NDbPlTIf7CDL+JwCsiqzMroZbYj65xzREDqptE3Jl+F/8JZlbHGCao5rfK+cQtY
+	 S+GA9fnfWhjB5gZeaxQHD6S5GHKq3kZ5Fkkhu5HJekLEQIS8Epb9ebG2t2a4nZYcm/
+	 9SWVQPrbIhNUA==
+Date: Tue, 1 Sep 2026 17:49:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Anton Protopopov <a.s.protopopov@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, lsm <linux-security-module@vger.kernel.org>,
+ netdev <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Kumar Kartikeya
+ Dwivedi <memxor@gmail.com>, KP Singh <kpsingh@kernel.org>, Matt Bobrowski
+ <matt@bobrowski.net>, John Fastabend <john.fastabend@gmail.com>, Christian
+ Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH bpf-next 0/7] Add new way to add BPF LSM hooks
+Message-ID: <20260901174926.12cc95f1@kernel.org>
+In-Reply-To: <apbFG4WKaZNsURo8@mail.gmail.com>
+References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
+	<20260831153456.5a7d6937@kernel.org>
+	<apbFG4WKaZNsURo8@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3KtuDqqo+l8OieTH"
-Content-Disposition: inline
-In-Reply-To: <CANiq72nOk-gbd+C9oG5y5RKrYhqNx+BLcwS-8u-uHxUjVTwEtA@mail.gmail.com>
-X-Cookie: Prevent forest fires.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 1 Sep 2026 12:29:15 +0000 Anton Protopopov wrote:
+> On 26/08/31 03:34PM, Jakub Kicinski wrote:
+> > On Mon, 31 Aug 2026 11:09:25 +0000 Anton Protopopov wrote:  
+> > > The BPF LSM programs are allowed to attach to LSM hooks. This enables
+> > > operators to mitigate known bugs without a need to reboot or livepatch
+> > > machines.  BPF has shown very useful to create such runtime policies.
+> > > However, many APIs and parts of kernel aren't covered by existing LSM
+> > > hooks and this would be beneficial to extend the coverage.  
+> > 
+> > Dunno. Do you have any reason to believe that any of the CVEs your LLM
+> > gathered for you here are actually getting exploited? Spot checking 
+> > a few they seem to be mostly driver bugs. What security model do you
+> > have in mind? Untrusted/malicious users with physical NIC access?  
+> 
+> For the untrusted part, here are some existing examples:
+> 
+>   * old untrusted bugs: CVE-2022-50651, CVE-2025-40255
+>   * "namespace CAP_NET_ADMIN" bugs: CVE-2024-43836, CVE-2025-21921
 
---3KtuDqqo+l8OieTH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These span 4 years.
 
-On Wed, Sep 02, 2026 at 12:59:59AM +0200, Miguel Ojeda wrote:
-> On Wed, Sep 2, 2026 at 12:52=E2=80=AFAM Mark Brown <broonie@kernel.org> w=
-rote:
+> Also, the recent copy-fail is a stronger example (though not generic
+> netlink-related).
 
-> > Work around this by disabling randstruct by default if we have a usable
-> > rust toolchain and rust support for the architecture, circular
-> > dependencies prevent us directly depending on !RUST. This means we might
-> > end up with a configuration that disables both rust and randstruct but
-> > hopefully it's more likely go give the expected result.
+Yes, if anything it proves that serious security issues are usually
+on the datapath for networking, not what you're covering.
 
-> I thought this was already applied:
+> The general idea is that we gate the common de-multiplexors such that
+> not only known bugs, but mainly those which will appear in future are
+> covered. Rough numbers for coverage: around 5% of known cves are
+> covered with existing LSM hooks. Another ~5-7% can be covered if we
+> add netlink-related hooks [this series + net/sched, nftables,
+> rtnetlink, others smaller]. So, statistically, we know where
+> bugs had appeared in the past, so we can "predict" where new
+> will appear. Some of them might be severe, so this would be
+> good to have hooks in place to be able to "mitigate" them.
 
->   https://git.kernel.org/kees/c/3844a38c9c4a
+Easy to PoC stuff with LLMs these days. I'd like to hear from
+an end user who would find these hooks useful, in more detail.
+Anyone with an ounce of gray matter will run untrusted workloads
+_at least_ in a VM today.
 
->   https://lore.kernel.org/rust-for-linux/178733378275.2181196.31861729113=
-25132761.b4-ty@kernel.org/
+> Just in case, to test this patch locally, I've found around 10 new
+> ethtool-related bug candidates. I've sent a fix to one, d09c98a6da21
+> ("virtio_net: Fix resize of the RX ring"), which was easy to
+> reproduce in a VM. Others require specific hardware, though popular,
+> so I can try to reproduce some, and was planning to do this later.
+> Of those findings one is unprivileged, it triggers a OOB read.
 
-> But it doesn't seem to be in -next -- that branch isn't merged there I th=
-ink.
-
-Yes, I had thought I'd seen something saying it was applied but as you
-did I checked -next, didn't find it and figured I must have been
-confused.  The link in the mail above to the commit says it's missing
-too.
-
---3KtuDqqo+l8OieTH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqXWqwACgkQJNaLcl1U
-h9CETQf9Guyx2148TKM91A00sc3QY+19XqXFnGPJSW1A5EIxbcbVYdzBofl5fvyV
-52mmkV//F0KZ1TPIZ7lWckDdV5+a7gp7cTjmZKty7xmnLlEUuALBMeURJ7NrldjA
-YWW9ZKUKR9fTNcZUYfzJNf2f9xhwdqr+cvFG0l+6WhFYF0ClWrVQpWRWYLqfnxKa
-1NHlTRZAI+ZwbdYVdLYqPwZVrTBJ6zLetAomGw8Ap/XCXx9GZzDwAHF2sP1LvuWX
-bjou0TdI8tj6SqI/kN/cCNAtZPA3i8h1qWWhjrIIkJivNRjASM5q1VsXmVMSG85w
-/O6gMIrk8ws9o15GtlDLQkRGDScPvw==
-=k7Aj
------END PGP SIGNATURE-----
-
---3KtuDqqo+l8OieTH--
+Please send the fixes along. The hash you mention requires
+CAP_NET_ADMIN on a real interface, not a serious security
+issue.
