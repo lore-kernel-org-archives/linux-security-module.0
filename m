@@ -1,156 +1,143 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85BA3176EE;
-	Wed,  2 Sep 2026 00:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03E038F926
+	for <linux-security-module@vger.kernel.org>; Wed,  2 Sep 2026 06:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788310509; cv=none; b=PYDnXrugmMMgOs7DQwXauGoXmHMj+I2I095qUdiapYLUvvcfBeif5DdNgFqV+wtTpJouKo3d0SCn7EHmnjcvvkfoPcf6aY9OgCVBNzxAf4xCAT6yd+6+ERk7+M2MYcO4PKg88gdf6wOpTH8g1B4aOy7x5jqyj+/lqyZUtP25sHI=
+	t=1788332082; cv=none; b=RTOZx/8cGpKNLRom0wxc9tvSoBNiwhc0NC1KcKyTVhtnvQ3FQoOy8RUMl73QRbtGEvY8HkT+b7NP2thoQ2kj+l997sHP/t/dX37u8BFFbRJmY1y3G2+qyk/4CrpaOG8Vz+x+5H/yc75+Lg5HCKSfbvpBV/4WT4MmqPTPEagw4Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788310509; c=relaxed/simple;
-	bh=rQQWXROtXEPolbL3+WmQ76ec5bRrNQnToMx7O28pmXE=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=PFES8+czhYu/bPYecAH3YwoA20HSoPkhe/7ZkvOl8lWajVGB53yt/OArz/a/AT7EpfLuQ6PHbqqhWccA1BTnVIvcfIbG21rC8scGVfDIVVZYyTTwKsKHasdidnusYIb0h1S/8R+EQNTofzcHcCukh3GsI087qBXpyhwsYJS6YPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S+VOXujc; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S+VOXujc"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 681KWWT9354836;
-	Wed, 2 Sep 2026 00:54:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=BCSQKB
-	VO5LU27JLC1hpqQFvXR9CV1TehM4jZhukoXTA=; b=S+VOXujcw9DjXIc9CAiBPf
-	IfF0KfmbS6ZheS5sfxd/prbi6ggjZb2Jwet/pRd/BGAV0MnDY/77OdKw1d0km2HQ
-	c8PFbso4YYgkAWDxctyzNsKU4wQenjo/HV5RhEMQbaOxm9qc79+6cLy4jENZ8yop
-	wDpEr/NlGojpIxWlEyzEWUFqZzkYNKA2YjKS2w67lbsYgbIKg8qXKik7p7lsihup
-	zeN1FTBv/+T+xT2ZvSdu13KZJKvBKcIAyRDIADbist7Mgacw9T+QIRZ34DGlIYI+
-	VpazB2rLROhHvdnMn3nHzPxUOUX4wonIxzrOHc09RXMZAOBnsjgMT/moGVezvcvw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbq3rbdmg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Sep 2026 00:54:49 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6820QKSK026824;
-	Wed, 2 Sep 2026 00:54:48 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gca4w6yhp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Sep 2026 00:54:48 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6820sloR13042200
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Sep 2026 00:54:47 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2F4C958050;
-	Wed,  2 Sep 2026 00:54:47 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3974658045;
-	Wed,  2 Sep 2026 00:54:46 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.87.106])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  2 Sep 2026 00:54:46 +0000 (GMT)
-Message-ID: <35ae5c9fd60874127d15f5fedb84c0a90e56eca4.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: allow users to specify the pcr index with
- IMA_MEASURE_PCR_IDX
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Julian Braha <julianbraha@gmail.com>, roberto.sassu@huawei.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc: eric.snowberg@oracle.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260824162215.1572367-1-julianbraha@gmail.com>
-References: <20260824162215.1572367-1-julianbraha@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 01 Sep 2026 20:54:45 -0400
+	s=arc-20240116; t=1788332082; c=relaxed/simple;
+	bh=ixlWqFuSFl+kXQc/tcrrAFQiec5rJ4PZr781QjNJjcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cjC4BXZBhXnjjq/ie0YSEyaP6Ifw3/2oLlf4m9EtxjYwxvr6E3NwuJCL5GTqHsq9pcYxXT1gx9hXr2EjlR7hL9KSD8B+TUpZ566tZvA5AgDqYS1U6MgAvJC/QZDHmKD3H2J/zFfYBGl8feJrZ6JJc3/Da69PX4Uxvq+ZQ4cJots=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b5e18f0439so588310e87.2
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2026 23:54:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788332071; x=1788936871;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=CtlpH4A/FsfIicKK/MMLWRSJhN08nYCVAAoP5yOKMSg=;
+        b=RjjNZOrno+L/wH4v/0/3F41gd9xYm6TXUV8TzmBXp+xSPAydyJ/d57GDBK+QYLD8qr
+         6DZ7bkQjtvwFsPbxjFAX7xKm654+hml84p5jIG+hMCMGrvfBcb2ZRm0AIstUgq9pmBGM
+         oTssCqY34uyqQPXmUkS9/kwojUCncbZCPTPALSEdQlCyD4x66FzaHz5FL4SAbHjPdzgM
+         HcQlDQi06T0icd/7maI7UbrO7c0W2bt9UAJLvWAQwxujTsOryVxIjCpdwv6vFg9Cd/fG
+         25Gfmg9uUjLeWYGE6TnldvSq5v4wfpT/n8LTUXdiS/UTYaUaL7Ft5dgpc8fDAr5yD6Br
+         DQow==
+X-Forwarded-Encrypted: i=1; AKwUvBz+lYtkS7/sWFJ1quxgtNDQfR0QSLsIBgO/mkpdKDej9LSCkLC16slPxqkSZbA8MXNp3g/nLN+bOFEMo0nH+uZoYTh37cw=@vger.kernel.org
+X-Gm-Message-State: AFuF++mHo+cfyavXtzDjnoD/fokyWDAYIOBm+g8Es6l9pGuDG0WvKPaj
+	OkiIsfVNDHu87odsDThmyjOBvdEPbTFOxENTsesRZ7s5wSL4f9qp7ZEhqgifoiOjOTENFw==
+X-Gm-Gg: AYBFou3wM3kMbY3x80duLyVcWuj1bjkwcpvJg0jdlBV5KQHbK+D7e32uuO/rt/45Coo
+	+TusAeXRMlVgRW5qflIvbzY+bZg6Bjf5pNb51aOAKgKkBfIDYh3ySjlRK8LZZ5Rv7R7LONdNH2S
+	LOPm0uX9T7AW56rYUdU1pmkjHjEgTPihrOxrkCcp2s1Adm/cew56a0mupEPiDfB0+83mgLC+5EK
+	1XqzV7x0PVaw94cGksRWmUOTkLJoIUyWoq1pptaoVjt+a3NLA6suleCin8cIURfU5aGkIRJBOy3
+	SZ5P/HG5H+povR24kU0U4VTdwuA2dLpVmfyUSLysqGodR69+gzGmYXydU36FIYYoQ1sWHb/Urx1
+	7F16tgO53l8bzU3A3WpR9hKjoyIWwxQ06pXUUocFPzd2w8biKU78cYJxCRTONWj+fbTTPVHcnaz
+	gDVV7woV/X7/2qTc463UuGtgzQlKvFkEWLMpnfFRC6kNYvYOig6yQobdsGYiKzWk1TsF5AzZT8R
+	AaMNn49t9Uz4L6ExLssiG3OhSfZC+sMOYY9Y1XU3V69lOdaiQ0dHY0N
+X-Received: by 2002:a05:6512:3b20:b0:5b4:b03e:b17 with SMTP id 2adb3069b0e04-5b60831eb64mr767670e87.4.1788332070643;
+        Tue, 01 Sep 2026 23:54:30 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b606b94450sm361139e87.50.2026.09.01.23.54.30
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Sep 2026 23:54:30 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3a0faa764beso4642511fa.2
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Sep 2026 23:54:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBy/faZ4vE1cxykh0DRcZdxXz61roDep1CGjK3Z/uIIdICGQLz7ixOQGa29CtSENrhvfCQ7eroryPP18/huAH5m5MNbxPiU=@vger.kernel.org
+X-Received: by 2002:a05:6512:32c9:b0:5b5:e8af:a5f6 with SMTP id
+ 2adb3069b0e04-5b60831e880mr829854e87.3.1788331663502; Tue, 01 Sep 2026
+ 23:47:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=EIc2FVZC c=1 sm=1 tr=0 ts=6a9773d9 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=cuzdW0VFpDOfPp0CwCYA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDAwMyBTYWx0ZWRfX6bhuzGfolJq0
- /RB2Syow7w1TDWIorthN3CY73kKLPhQ59eNxVDx3WpMVk+eh+yfIauhnBA60W7gvbyAp4gmjp3i
- BlrDLvlz6KhvEnC1o2hv/5FGwNqh0jg6ynqH7f/+JTV4FB+BpLFiRhTosYB7xivjclug8FsdWdD
- W/YyWAAIclPUcaFHjVQEIe8hCi8Z38rRsY7GJtqFIwVxaJk43vC8tjaf3+XPMrA11EOUEB9pwGF
- xI1hY+E9Ka2PvwMNH+k/nLpis131PSpamDE9MZakqMnVMM3nzukbJd1xslWPDKcXJrLoWjXqoDv
- rXm3zZxDPKf8orwBILw/Q7WWhGXmCnqcJF1ChCizQKGXzB7l6fdmmLX9NRbkErssjf3GuMV/7D8
- zFqdzPIZkf2JpC+DZawffbtcY37aDcLI8ESWG4nfUQxh/3cz7l70XT0FDX7GLG73Pa+TAFZnoN7
- hyAfOR9iuvg6V+bMGTA==
-X-Proofpoint-GUID: sny8BGHa00BGvO7ry_uvDL7XDYIGxeaR
-X-Proofpoint-ORIG-GUID: btMsHG92T1r6fmUTgAshUvsd9mkuXLeg
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDAwMyBTYWx0ZWRfX1F4uml2URZOk
- 49a+Nq5KxupP07u8QYD0iyjelfJjjBuPNAn0yMvdtJpxQPpYkL2c8FxbmleUj1t2+iG+Ppe58pt
- zoXeOGFFH20uqPJRPbETwWJ3ZM6mqLE=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-01_06,2026-09-01_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020003
+References: <20260831-pidfd-get-paths-v2-0-c59ea6a21b72@black-desk.cn> <20260831-tauwetter-werkbank-dramen-b37eb4025283@brauner>
+In-Reply-To: <20260831-tauwetter-werkbank-dramen-b37eb4025283@brauner>
+From: Chen Linxuan <me@black-desk.cn>
+Date: Wed, 2 Sep 2026 14:47:31 +0800
+X-Gmail-Original-Message-ID: <CAC1kPDMK_D4nhyRmBHg6KC7SmmCkH73Xtc5DhXeJbSvf3LcqcQ@mail.gmail.com>
+X-Gm-Features: AcwNN1WESqzlj5-w8dgp1OujQBVwB04y72AI-TKWGXGM1Ob33MtgcQyu2-BCfjY
+Message-ID: <CAC1kPDMK_D4nhyRmBHg6KC7SmmCkH73Xtc5DhXeJbSvf3LcqcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] pidfd: add task path ioctls
+To: Christian Brauner <brauner@kernel.org>
+Cc: Chen Linxuan <me@black-desk.cn>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Kees Cook <kees@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Georgia Garcia <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2026-08-24 at 17:22 +0100, Julian Braha wrote:
-> The IMA_MEASURE_PCR_IDX option is currently not visible in the kconfig
-> frontend, so it always uses its default, 10. This means that the
-> 'range 8 14' is dead code, and users are unable to specify the pcr index
-> value.
->=20
-> In a previous discussion, Mimi explained that users should be able to use
-> this config option to specify the pcr index. [1]
->=20
-> Let's add a prompt for users to specify the pcr index, when EXPERT is
-> enabled.
->=20
-> This dead range was found by kconfirm, a static analysis tool for Kconfig=
-.
->=20
-> Signed-off-by: Julian Braha <julianbraha@gmail.com>
-> ---
-> Link: https://lore.kernel.org/all/1feff118-4afa-4b9c-86f1-271a7a88208f@gm=
-ail.com/T/#mc4efa2491b4937eb7c9e532c29ffba516a70e662 [1]
-> ---
->  security/integrity/ima/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kcon=
-fig
-> index b3a9f86809b0..2d5bb19ea6ac 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -46,6 +46,7 @@ config IMA_KEXEC
-> =20
->  config IMA_MEASURE_PCR_IDX
->  	int
-> +	prompt "PCR Index for Aggregate" if EXPERT
->  	range 8 14
->  	default 10
->  	help
+On Mon, Aug 31, 2026 at 4:49=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On 2026-08-31 10:59 +0800, Chen Linxuan wrote:
+> > Obtaining a target task's executable, working directory, or root
+> > currently requires walking procfs symlinks such as /proc/<pid>/exe,
+> > /proc/<pid>/cwd, and /proc/<pid>/root.  That makes the operation depend
+> > on procfs being mounted and visible to the caller, even when it already
+> > holds a pidfd for the target.
+> >
+> > This series adds PIDFD_GET_EXE, PIDFD_GET_CWD, and PIDFD_GET_ROOT. Each
+> > ioctl takes no argument and returns a close-on-exec O_PATH file
+> > descriptor referencing the corresponding task path.  The new ioctls use
+> > the same ptrace permission check and nonzero-argument rejection as the
+> > existing pidfd namespace ioctls.
+> >
+> > The target task is sampled while holding its exec_update_lock. This
+> > keeps the access decision and the task-state read in the same exec
+> > critical section, preventing a concurrent execve() from changing the
+> > credentials or target state between the check and the use.
+> >
+> > The first patch factors out helpers for acquiring referenced task paths
+> > and reuses them in procfs and AppArmor.  The second patch introduces
+> > scoped cleanup for privileged pidfd task access and separates namespace
+> > lookup from namespace fd creation.  The final patch uses these pieces t=
+o
+> > implement the three new ioctls.
+> >
+> > Signed-off-by: Chen Linxuan <me@black-desk.cn>
+> > ---
+>
+> I really have difficulties forming an opinion on this. So this sounds
+> very useful but it has implications.
+>
+> Right now, pidfd ioctls are available even in situations where the task
+> in question would not be accessible via procfs, e.g., when procfs is
+> mounted with "hidepid" options or similar. So this would expand the
 
-Thanks, Julian.  The existing Help says, "If unsure, use the default 10."  =
-Could
-we make this recommendation stronger?  AI suggested:
+One point regarding hidepid: for callers that can pass
+PTRACE_MODE_READ_FSCREDS, hidepid does not provide an additional
+restriction. With hidepid=3D1 or hidepid=3D2, has_pid_permissions() falls
+back to ptrace_may_access(..., PTRACE_MODE_READ_FSCREDS), and
+hidepid=3Dptraceable uses that check directly. In addition, the
+/proc/<pid>/{exe,cwd,root} links independently perform the same
+PTRACE_MODE_READ_FSCREDS check in call_proc_get_link(), regardless of
+the hidepid mode.
 
-	  IMA_MEASURE_PCR_IDX determines the TPM PCR register index
-	  that IMA uses to maintain the integrity aggregate of the
-	  measurement list. Most attestation tooling expects PCR 10.
+So for these specific path lookups, hidepid does not block a caller who
+would already pass the check used by the proposed pidfd ioctls.
 
-	  The default is almost always what you want. Only change
-	  this if you know what you are doing.
-
-Thanks,
-
-Mimi
+> surface of operations you could potentially do.
+>
+> But again, I do think it is actually useful. Adding Jann.
+>
+>
