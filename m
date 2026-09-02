@@ -1,139 +1,218 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5534746A6
-	for <linux-security-module@vger.kernel.org>; Wed,  2 Sep 2026 11:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9860477E21;
+	Wed,  2 Sep 2026 11:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788349130; cv=none; b=ODny5pcPh8PKgAg6z2uDA2Jcidjv0I9frc7jLSrw/9JvWXQOV3z27ts096tlv8uzaQYtwozdz+EI2zZrQ8yXDid+p5iKDDbLCTvo61l8Qx0uYahasqSNOtbdBT5t+5YltJ2KxWrmsYCcxpIQAF+sEoPDxkLk9cOLvFj2nvjFoLU=
+	t=1788349437; cv=none; b=OPnF0eOI29sWxU1/7N4mVHLK0K4w89e3tvzgXmDX12xP1fgVomOUhw6OO5u9paxQKeDnn6l3sWkGmZncd1+R1QVIfhbgc0SJyzuOKNGziQRZT/oIvilYQ95rtPZ7IhI+iACWorwbDeedM5ZFWoyEcAX64dK/jC5m3lrw1ithbBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788349130; c=relaxed/simple;
-	bh=q/jOT0aSezOBSpE6+6RycY5gUNZ6DERvx3WJ8/EXdUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G09ikt3XIcL8O3UezbbXWpvbmmgWmGMml7tHdgzujXFlMLpg768wPRXx7F4+3rWVDxMtnDbD/kJvQm9dVi+GJSnEthb6S5rSxdioflCKe/B+dpcuGu1X0miEaemLZiMMeQb61eWEEepNjkrK/hvVxQXHPaUM3Wen/PogrVYfCrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGAKfdLm; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788349437; c=relaxed/simple;
+	bh=ggKa7KIi21WU2uKOMS+p0bPnUnCubskpBwZvDZ/Q1xc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YmZQ4IW4T7Ynr7E2nqCmPpgf711CoxrXjte7SBJof5RBz953TrYV4hYIbcH4tbT34oSYNVupd/L4ZThvy1lGYyuMKdbrUXKkkpvQOVpCRHYnkFf+yuJ/Gjt/EkFcTlpX+jcLtK3FYmD5LXxNnp7E88dXcKgyG/fCy/PHi9glkao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BafiX/tf; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGAKfdLm"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49b8eeb3ff2so7964075e9.2
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Sep 2026 04:38:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788349124; x=1788953924; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ZYZ6NU8jX/7XJB8VagafYKNIpfybNyjtFYVwXJsyJqw=;
-        b=VGAKfdLmwPqDAHyHZT0xMMWrql2D1RGgneRVFwxIBDo3gLR5RgRw/BxTQSXV9dYOPX
-         erYDCfiaPvQjVQVhx3Z+m8a1LvOspwAQ8esrm+g/rQoGAPkRvSm53A/d6N98sWM02KHs
-         S0B5dFuYwMxivRcGlUqybl99gsTi0axKHYgJYmVaK4KQk1Tk/OWQhvyieAIQOTI+kBC+
-         tPkcU8NxRRfmcTIJJ0TTRI0ajBUFAINgvOhqSXGvhZTEy+YMhEHZZqSfytj1MX3rvegw
-         flQz+sht0wuP/UIJos/JHjQyIA8cNVPt3qiy2uKx0bQ1s6txLtLuC7ch/8/hPPkQs7Ex
-         OA7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788349124; x=1788953924;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=ZYZ6NU8jX/7XJB8VagafYKNIpfybNyjtFYVwXJsyJqw=;
-        b=iPv6z2KAMD7Wfa8+9woYGVUk28OQRyckepUnOk9O7UQYfUwHga0ovBcMRMMSRklKR3
-         NGF4/NJISn7WFqMUPc8OlBYEOKEYHDlZAqLp7/tAxX9DCEZwq14PrvKOfz/10HP3xDJN
-         zOhFYy+ndU1qXVUteRSXkRuxUdn8h817QnThZEex0yZproinM92R4lrPpWirAVJziGYv
-         EIvZWmt0BCJs9GgG55XO0Eu50fHoKLj1bAgV4CypT8KTJG9JHykA9xs/3QPEZb7qMp7B
-         tW+P9YGSlLKB/dByS3Rji59XC8avlb6+Nh4Hc8dFIeslmL5+WicyMuAEK7FlgsIr8zSj
-         abWQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqpTv5b6u63YeMvN/ObWyjaEROvEZMljz5MAUcZLjXYOCSGlYKcgdNZN5BjpkGDoVHIviiZncFOy/jXhlzxjup6QJed69g=@vger.kernel.org
-X-Gm-Message-State: AFuF++m+9HxNW7esH2ZDuyzuKNODfS51+aidsekjDMAf6/qTi9ilHUtc
-	/1Lh+CypXxR9Pyl5gPkiSIy3NYGQm8wp47bbQ4ZFA2PcyvgYVYEVi2FK
-X-Gm-Gg: AR+sD11Qzw0eRLT1d1zvvX04GwpnGudpykPutDW8gGb6WM292Un6OgdsM+kdywoIwAi
-	zsQg7yOH9kJuYnxREKaxmM3aGqzJLKERzA//HYw0DWpRryVGYQ/MvovUX5OOvW4DUFgqZAp0CzG
-	Zzxbig9l8cRgAd5M3GyB+Qc4spmOMmQISz3jDDihpzlKRfN/V5oPYd5nePiSbnKRAc22bWZ3WO/
-	BAFX7zWVyRopqsuK0TzqqARAVyiS32gGweK+si9Om9IpDECjDyegSQUDV9X+IdmIezfWU1H7T2c
-	Vy0n0fmT89UlhIixrJ919UKqJvlS5N/kMhJRZpUKwHtu8l3pUqoGWVRmGY6hLy3vyr99hIamRnG
-	KK48MnmU9RxOmccpIcWmp8nMHCrSQobiuo+TjrP6C3EBvYEryTFm1a2aGli91CMGw7DqvV3vYpT
-	uOSH6+S1enpDL1x2b0oG01JOp++o7nvtoPpaYJaWF7JNG0jvh9BqpN7t1ULNgzmy6+6rtHBsNhg
-	Ix4jQs7ss4uAZw8Nk6pC2+HkUYxeZuTST2HOmU8VP0F9tGtMKY72wHh0A==
-X-Received: by 2002:a05:600c:1d89:b0:49c:ed8f:d094 with SMTP id 5b1f17b1804b1-49ced8fd250mr10166605e9.10.1788349124161;
-        Wed, 02 Sep 2026 04:38:44 -0700 (PDT)
-Received: from [10.128.10.232] (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce309e418sm85608165e9.13.2026.09.02.04.38.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 04:38:43 -0700 (PDT)
-Sender: Julian Braha <julian.braha@gmail.com>
-Message-ID: <7b7e4b45-dc5c-4328-bb51-5d1fac4c5586@gmail.com>
-Date: Wed, 2 Sep 2026 12:38:42 +0100
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BafiX/tf"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6829VbQt3694126;
+	Wed, 2 Sep 2026 11:43:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=BJrMRhmRwWTDTWuAzlgVProSEMH2U3ZCsw/nl0saE
+	o4=; b=BafiX/tfZqnFRwrt697V9Eujq2MV1Y7IUJ2Vya6DkvJWAFt8oTjLMacbR
+	oxYcWIHCSBjHo97HK0bp8T3fqiphlO/1eDHi3YBHfRDb61su3hzIkgPAE3TnKHqo
+	Y01/SNjtvqBo7YCjeSZOAoINJW/cJOfWWY/TCxDYCWM9SEV0bTj8pcCOiWBrKUxb
+	qMnQN1ssq7PqW4J4H/txzCS1aDppzfJoscLUFft0MNf9PVuP6tTAi8IFsyIngXzk
+	xxIOC1c616SMuWQg9/rjTFJIZBJ/Tk/jRdv9aJ5k4otd5U6MYqRgVrR/6diV5tt1
+	8JokiSgLByFu8d37QxKnUjk5XDV1w==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbmuhx13y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 11:43:49 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 682BfMhI019060;
+	Wed, 2 Sep 2026 11:43:48 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gcark9dps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 11:43:48 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 682BhiSq46072168
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Sep 2026 11:43:44 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4067E2004E;
+	Wed,  2 Sep 2026 11:43:44 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD0842004B;
+	Wed,  2 Sep 2026 11:43:41 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.bl1-in.ibm.com (unknown [9.123.14.23])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Sep 2026 11:43:41 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+        rnsastry@linux.ibm.com, ssrish@linux.ibm.com
+Subject: [PATCH] keys/trusted/tpm2: Validate TPM2_Create object sizes separately
+Date: Wed,  2 Sep 2026 17:13:40 +0530
+Message-ID: <20260902114340.268698-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ima: allow users to specify the pcr index with
- IMA_MEASURE_PCR_IDX
-To: Mimi Zohar <zohar@linux.ibm.com>, roberto.sassu@huawei.com,
- dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: eric.snowberg@oracle.com, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260824162215.1572367-1-julianbraha@gmail.com>
- <35ae5c9fd60874127d15f5fedb84c0a90e56eca4.camel@linux.ibm.com>
-Content-Language: en-US
-From: Julian Braha <julianbraha@gmail.com>
-In-Reply-To: <35ae5c9fd60874127d15f5fedb84c0a90e56eca4.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: HJVa7UfjiVPPT1e1wT2_mr01GN2buSJ4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDEwMiBTYWx0ZWRfXzeR40qRDoGJe
+ djwYq7YHnEFNtJoPiGsDDWMtWxnZWdFWGWAAEun7g0UMt7kPIVMuFjefdsJ8xdDlt6ZmBa5gZn9
+ 9ManuMHDgjiT2ldfw26GqR+QypD7jmMnysLbVZ+fhpjOVZ+2rbOvMApSfc10EnskjtTfVkRwulu
+ +YDHnFOPPGUu5OoGfYfxFzdjhWAXLHq9WCDr7XZDLt47Dko9d3Z5mm9vzAZImQnufDO2uKpvL1r
+ PBAtX5FOwGzZX9EUdutnB2Rd0uc14VsaDnvHKfcT/XqmloACrT4oIfGvUs/ZZfFJk7PJTXq4v2b
+ HlU/gCIR7DM42JelmzfX5XI+qLZcRmlilgIwxFeIUXgf4VMVSwiXv/U9l+uVBf6/JQd+lq8aY19
+ nlWaoc/O0xN31EvKWS/pcAP0eZEde7WhgIb1SpIWKsU1cOEr/SNz8j76t9XvDCDoKE8lpy3oIGE
+ DTBIDq5fG6eNJvMuH7g==
+X-Authority-Analysis: v=2.4 cv=Osl/DS/t c=1 sm=1 tr=0 ts=6a980bf5 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VnNF1IyMAAAA:8 a=f_b9kDos49BzVt9CYJgA:9
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDEwMiBTYWx0ZWRfX4kb4v573ZDk+
+ 3KCy/Pw9PDOB28muuB6pngVsZUpT4pnAxt2k2z2tvKPueWyBdJVyYzSH9wOammQt7EXqkeLTjxR
+ 4+pLMFyUEp/OsiMbciyE1O9sFoWwu58=
+X-Proofpoint-ORIG-GUID: HJVa7UfjiVPPT1e1wT2_mr01GN2buSJ4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-02_02,2026-09-01_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ adultscore=0 impostorscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020102
 
-Hi Mimi,
+TPM2_Create returns outPrivate, outPublic, creationData, creationHash and
+creationTicket in its response parameter area. However, only outPrivate and
+outPublic are included in the trusted key blob. The size of the blob is
+therefore not determined by the size of the complete response parameter
+area.
 
-On 9/2/26 01:54, Mimi Zohar wrote:
-> On Mon, 2026-08-24 at 17:22 +0100, Julian Braha wrote:
->> The IMA_MEASURE_PCR_IDX option is currently not visible in the kconfig
->> frontend, so it always uses its default, 10. This means that the
->> 'range 8 14' is dead code, and users are unable to specify the pcr index
->> value.
->>
->> In a previous discussion, Mimi explained that users should be able to use
->> this config option to specify the pcr index. [1]
->>
->> Let's add a prompt for users to specify the pcr index, when EXPERT is
->> enabled.
->>
->> This dead range was found by kconfirm, a static analysis tool for Kconfig.
->>
->> Signed-off-by: Julian Braha <julianbraha@gmail.com>
->> ---
->> Link: https://lore.kernel.org/all/1feff118-4afa-4b9c-86f1-271a7a88208f@gmail.com/T/#mc4efa2491b4937eb7c9e532c29ffba516a70e662 [1]
->> ---
->>  security/integrity/ima/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
->> index b3a9f86809b0..2d5bb19ea6ac 100644
->> --- a/security/integrity/ima/Kconfig
->> +++ b/security/integrity/ima/Kconfig
->> @@ -46,6 +46,7 @@ config IMA_KEXEC
->>  
->>  config IMA_MEASURE_PCR_IDX
->>  	int
->> +	prompt "PCR Index for Aggregate" if EXPERT
->>  	range 8 14
->>  	default 10
->>  	help
-> 
-> Thanks, Julian.  The existing Help says, "If unsure, use the default 10."  Could
-> we make this recommendation stronger?  AI suggested:
-> 
-> 	  IMA_MEASURE_PCR_IDX determines the TPM PCR register index
-> 	  that IMA uses to maintain the integrity aggregate of the
-> 	  measurement list. Most attestation tooling expects PCR 10.
-> 
-> 	  The default is almost always what you want. Only change
-> 	  this if you know what you are doing.
+tpm2_seal_trusted() currently compares the size of the complete response
+parameter area against MAX_BLOB_SIZE. This can reject a valid response
+when the remaining response outputs cause the entire response parameter
+area to exceed MAX_BLOB_SIZE, even though the outPrivate and outPublic
+TPM2B structures consumed by tpm2_key_encode() remain small enough to be
+encoded in the key blob.
 
+This is observed when creating larger trusted keys using an swtpm TPM 2.0
+emulator backed by libtpms.
 
-Thank you for your feedback, will include this in v2!
+For example, requesting a 113-byte key succeeds, 114 fails.
 
-- Julian Braha
+~$ keyctl add trusted trusted_key1 "new 113 keyhandle=0x81000001" @u
+520504613
+~$ keyctl add trusted trusted_key2 "new 114 keyhandle=0x81000001" @u
+add_key: Argument list too long
+~$
+
+Remove the MAX_BLOB_SIZE check on the complete response parameter area.
+Instead, use the response length passed to tpm2_key_encode() to validate
+that the outPrivate and outPublic TPM2B structures are fully contained
+in the response before accessing them.
+
+Previously, a response parameter area larger than MAX_BLOB_SIZE was
+rejected with -E2BIG before ASN.1 encoding. With this change, if the
+resulting encoded blob does not fit in payload->blob, the error returned by
+asn1_encode_sequence() is propagated instead.
+
+Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+---
+ security/keys/trusted-keys/trusted_tpm2.c | 47 +++++++++++++++++++----
+ 1 file changed, 39 insertions(+), 8 deletions(-)
+
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 67225dd562a9..efb016a6d4b8 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -24,24 +24,54 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 			   u8 *src, u32 len)
+ {
+ 	const int SCRATCH_SIZE = PAGE_SIZE;
+-	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+-	u8 *work = scratch, *work1;
+-	u8 *end_work = scratch + SCRATCH_SIZE;
++	u8 *scratch;
++	u8 *work, *work1;
++	u8 *end_work;
+ 	u8 *priv, *pub;
+-	u16 priv_len, pub_len;
++	u32 priv_len, pub_len;
+ 	int ret;
+ 
+-	priv_len = get_unaligned_be16(src) + 2;
++	/*
++	 * TPM2_Create Response Parameters:
++	 *
++	 * outPrivate
++	 * outPublic
++	 * creationData
++	 * creationHash
++	 * creationTicket
++	 *
++	 * Validate outPrivate and outPublic against the response parameter
++	 * length before accessing them.
++	 */
++	if (len < sizeof(__be16))
++		return -EFAULT;
++
++	priv_len = get_unaligned_be16(src);
++	if (priv_len > len - sizeof(__be16))
++		return -EFAULT;
++
++	priv_len += sizeof(__be16);
+ 	priv = src;
+ 
++	if (len - priv_len < sizeof(__be16))
++		return -EFAULT;
++
+ 	src += priv_len;
+ 
+-	pub_len = get_unaligned_be16(src) + 2;
++	pub_len = get_unaligned_be16(src);
++	if (pub_len > len - priv_len - sizeof(__be16))
++		return -EFAULT;
++
++	pub_len += sizeof(__be16);
+ 	pub = src;
+ 
++	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+ 	if (!scratch)
+ 		return -ENOMEM;
+ 
++	work = scratch;
++	end_work = scratch + SCRATCH_SIZE;
++
+ 	work = asn1_encode_oid(work, end_work, tpm2key_oid,
+ 			       asn1_oid_len(tpm2key_oid));
+ 
+@@ -335,10 +365,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		goto out;
+ 
+ 	blob_len = tpm_buf_read_u32(buf, &offset);
+-	if (blob_len > MAX_BLOB_SIZE || buf->flags & TPM_BUF_INVALID) {
+-		rc = -E2BIG;
++	if (buf->flags & TPM_BUF_INVALID) {
++		rc = -EFAULT;
+ 		goto out;
+ 	}
++
+ 	if (buf->length - offset < blob_len) {
+ 		rc = -EFAULT;
+ 		goto out;
+-- 
+2.53.0
+
