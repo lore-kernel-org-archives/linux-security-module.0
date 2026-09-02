@@ -1,214 +1,143 @@
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A067C4AD4DC
-	for <linux-security-module@vger.kernel.org>; Wed,  2 Sep 2026 22:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE284ADD90;
+	Wed,  2 Sep 2026 22:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788386550; cv=none; b=tGV3N83otAgbE+ZqsOTPlQrt3bNaETCC55Qj+5wrHvkzlQ0XyjabnRGIWRvrLcYXxQLdX/ZiHWgxvkkQKO5rMIKQ4PHFMsAkqchZ0cdbEUIrcRcZziErcgtp40psdl0NgXxEEY7UYZIsF5fo2FQ0HijSZueDSih/+nUuFY9Y5Sw=
+	t=1788387895; cv=none; b=gGJnHI/xwl7BL2Mlcu337jbrSXXX0hIl1tAX6XE0q/K3DpuCkiZB8ISIX6PyfSSYw5/uDVppTEQ4dc3Nf+5gdXpzAKxD5+FolxCDLwB9YxaRhq5LzjmiCITbG2MlzWxSunHbLKkYvxkYtMXsaADaJQeZh5KmPDCx4W9C5wis3BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788386550; c=relaxed/simple;
-	bh=XVSjcaZyuUD2SrbqN9FUXg2GXtPt/4t566caTuPgIpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gu3/ew59m/hPQ29c3BAnxC3NhT0/CHojfVvE+jWi1OZqrC8HXuV/A56R/k2nHVoCkVzKWRZhDDwdq4D6LzKQ09+VpTTX0XuTCwrw2zLy7wtpIF1YFAGfPXiz41gbU6Z9As7o8GudCOV7yMWz4ZDI5hh7/XjYg60uXnc2gu2UAEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ExBwVp8d; arc=none smtp.client-ip=66.163.191.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1788387895; c=relaxed/simple;
+	bh=D6bkpoIpcIYOnZZyO6lK4ItdOwuknHRlO1Z8sHXjL6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AP8epyQOCcV0rZwrGYow22L6YGfSBiBaoH8j5Eo7HuCwjLSmTMtqDw2O8Ub65Qi2o4ywXAqvYRFR2ABUvhhg/vdp7RpsHkJ1aDzkEB8tLsy3wacZZ7+MuscMp8iAccZg351L8Tofazu6Ef0HG+/kJz8g02OzVyJtLuTQO/NFAm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=X4Vu2QtD; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ExBwVp8d"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788386535; bh=tLRp/oU1oiSOD4+KZUJnxFQDz8wkKZs/J7I1da4eUx0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=ExBwVp8d8nDylCLh77KcI3HmLcPmefifIFBTLuI11xwwnrrxRtPjDhqHn+Jw76n3X4pqWD3486XgLsfpsghwsoZ4SDKfQehZrtcEXmwVFT7uGfOI8FZ3aGCLY4IBeCy3gK7iwzrrvFQNfOVD4sS3mDK6O4V2xyX42hqlJqzKRylul7j1kCXnIvL7SgulcjMpNlWxU1mqdbOTu7WpR18Qfye98WrxXSg+K3pdLT4CRnDa5JQGKaRE7Qinu0XesD3HuNWC1d2EVJLdwEgP60xyyBJe7Wv28WJWtICsoG3HAz2nFm88huUuc6M1bJdkfFd7/lf46RbJRf1171HgNMI84w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788386535; bh=+v5K2uFpu5dCBXjy939H/WDTC/DhQqaxP3dUSfFGCf/=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=XD/e+qxD7JgnVnbCmZzAQX40NW2slkWKk5gmtFJsbxEH65Du5c3RkvVXMOD/G4StqxPSjn3cMcHODf1jWWy+2JU4dRZkBjrD5KIyM0D8vpygNlBd8nsB2EHnSLKzplhJyifvi6dIbsy2p3zk9yfNxaUuiNAwKEp6r5fysNVZKxev8K1DWqVpyPeD57qHkrrYzV2sgIfmvdA0i5ASME6I7Ua2sp0+i3as+7k18keBephiL38OGP5wSj3z6B3Pel1lT4onnElcIS5F0L9fDGgsCtOTncXyJcwLpDo2+icOPfY7iwnTdeJX9GC2ehZtQrOY4Eg63A1mBRt1FU9WJEkCcA==
-X-YMail-OSG: TJKKPT4VM1l_Va2xG1kVZ7sz8hR0vjw6l8SzEn5_05v4yx.PxjeWWgC66InfWJg
- A.HgW9ghqij7Qhcxhq4XVmBEzRbf_zZPZOMV0Qht7fPVfl3kasYfV71ScWpDAn1RERbAHypUK_h3
- feQvz9sJbeJgD10HZUSxvb0w16ExXDvaXQtS6WOXU7ibFrNj6dESZ0wIYeDF49N08mOiLKr5V7JW
- 6gVdyImqm5p3vDVt_DUnd4TEnC1iKZORbnKIIdh6mJAnxbo6qbxk1o2SIEhllqqjjhwgCXpcdzPY
- ZtHEBu2kpqbQWSf4lQTMtKfVxAgQSeIfRCIYNs9.xPnGNFxLEsufnBsdNIx80F4zjknoKsFOOEt.
- c9MpkYlLhmZlwqxznoEu9JerC36rpk7fZnoOKm6k8Kbqik0zsna5zZ5RqFwSmOxzLI4P91ZQLX1S
- ez3EC.nyQIWD4x4FBpfkweBhcNF5y3gXTmcq7nQS_jaCCft0jKgj37ccf2HfQfJe2bymoJusfgGf
- 8QwegX21pd9LBIcSFLBwj6IEV8THLKqofUr2T.smSubgYNP9rvFk8fwngTtdaG4jLhqdPz2HnJWV
- kgu0nHcO7HfgGRhdDhmurZElPWIAidcEszCQz_vWjJludoJDl2xufuGT8MOkjpBsEIRco4CVPMVy
- Bmz_oHUQ1nUUKohdhCmBFl3I5UfDvgwA70BNaOncE1Bmx3PNWT24TvLxKho2Nyg_7NBNAGAsIGuH
- oJ7z7IbmvBzrJWqG2bRjYio_HKJDJUzNZqlRAy8tzV8IPSD3A2SEav87cwaCYn2zFmqV9WL3z7RY
- P2PDTZnZ8f.TivwXJ6Mjiwu0VYahNSsBn4GPErBDaROgiL9xEse.ymcw24ZypGKbTtK53myhHP0N
- jvm2iLX.1MI7CUBmXxkH4_2D.qaK5r2L85eluifWZmOEFG1LSVXbofIJjQnnIdomhhtlmgy06q4Y
- aHow8cQMfzOH.jqZojFRFsXmjeuyaepm1XyGewGwkxVGv7bOi33e__UEJHMgLiI89vlm2v0Q_Rac
- kSXohDcCBWaoGqmDfgi0zLnBHJZKDz9Sgm0Ca95BtIWJHIdBWeOyFh2cZWE2QrOhFNMJ2eCltdkP
- H4p7l0PjDS_J5LJsc6Fh2lj6UQJ7f.Ntg6oWrxpVB6lmjhd3I0sQOQZi6oFWIkm4OhE4._E0AGrm
- IWAERlq0ICfxBMYEbtrOOrXPxxBxjXujzfdh2xOdwMvDct22tyWIK8ODMQ5B6JyEU02dCq.kfzVu
- RtgMjCzxlZ6qph1nFEOTtU0BxRQIA1mtGVPSddVaTrJWeIs2PUWQWu3hVLgvyTraDg38yA9q0.hL
- hJixHC7_qL6X3LLqJQji2PWkCh8ePuWDx553wlGFqn_RUXOYwBZAZu4OmIuGxUVXi.1YGVtFqHg.
- 2X4rdMkdlY9usnquLCp7b1pIISGNW0_tmk730KUWGXun2g2TDeHydiHGaGjJbTW80VXuPGw3mfIx
- IXu3niTCRzT4Wr.uHepWBmXX2fGFkNnGHqEyMO8_K6zQEnWvSCnjmigFkhaz0OD1xY_5gQWp3rET
- bXirnxggPfc17jslbrH9352KsCevpRWmlilFMb6dLCFagybghvx3hRFERPDQfJ0Gd0Fnx_ZneMpc
- yvMZMEVApVqqiwPNmum_Q1xtdtVe6_S0dCjI7Lf78HCZgsGXOyAxMpuDlj96kgxeM5Jtw4lq8lWt
- ORn5fdELp10XtVmYHd4B1uBoh13ALjR0tOwPyhFBLWzcbMaADiJJBraz917r7A6eCpY.KQ.rqCJA
- VKkYssY5b0zLVgyAfnyWmy.cJjuxasmRTtn32UGSibVjgynKIiWzcY3VPxfbziFxVQiCtyL5q6l4
- H.SWG2E8YAjDMefU3xuFdBsmxjY_g2ibEgIlxvHPubUmqyRbp3Ob7tRmFIyKwz1M0nWjTW6dQ.U2
- drCss3HyHbb9MxvQbjIdc_QrXLZFIIftv2FruyJFx7KDX24e2vWH8Pv6BVg_y3DkQkt3jsoimrP_
- 2xS0pu6riyL7AhOtibsl1gR.KuV2Zn.VsfS2ZwT6D2.mNnHttTnB48KvvucnwkgF.NWxKPobQ81H
- Jx..FJG7VPSPVjHnMfuUR5WHglL0EMfDXaawdvbbv9F7zaQDH6CZMfK0YF3rKwBH1hBPSLyq8u58
- bmZnMdD0UNjrzeWeE5ITIL43tuh7J3JGIja3mnQNqtN691jgEcj_18gGLeFoJlwQlurWMMBdoGOA
- 0E8Gpuwmw5GsUFWMDrb3vGjaSmsw0thalu074CSFilTwH.ZKY2VYGfQHWJ6ThZsLdlydazzB4eYE
- 1sJ_beJJ7TCFWDwEUCxpo0lA-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 1557c0c9-4797-4679-b987-c0c0087dacc5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Wed, 2 Sep 2026 22:02:15 +0000
-Received: by hermes--production-gq1-678d9dd684-dljdn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 39a905a7360d4d1389754a332443770a;
-          Wed, 02 Sep 2026 22:02:09 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org,
-	pablo@netfilter.org,
-	fw@strlen.de,
-	phil@nwl.cc
-Cc: linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	selinux@vger.kernel.org
-Subject: [PATCH v2 3/7] LSM: Two hooks for manipulating struct lsm_prop
-Date: Wed,  2 Sep 2026 15:01:46 -0700
-Message-ID: <20260902220150.18586-4-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260902220150.18586-1-casey@schaufler-ca.com>
-References: <20260902220150.18586-1-casey@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="X4Vu2QtD"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 682KVV4u3367009;
+	Wed, 2 Sep 2026 22:24:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jxIqqe
+	Ksku6ms7BZZ9tYTyFuKkIPq5UjiX6SWrdx6hk=; b=X4Vu2QtDEpA7K9cWhaKhY4
+	Z6PJzwo+j71oQttr8O2b7fuY4p/1nLwsaHCreY/M1XGAxiWFROOsAg/gEVPDZRA0
+	g2NmOFvu7v+shALYBhI9RuOYD8fRPkez/SZqYJp0gN6ZJM0tqfpDuR7jhM3Feywx
+	wrfePnmWoR2IU6H2doo6kPT0IEQmgQh0AX+zrObeOjDChW0CYr4EmYXLkWP3yWDm
+	dYxg0mQAZHPs9PKv3EraJUDRU57AaCDaCeNTiNIsan8B4OGL8QxQ7YAQBI8i+4Do
+	VzJm4tyxy11j1GJcYhsmurc1vThUbsfWLB4Z7BMlCw4IQ5OQwYUKPCoXjGy5pe3Q
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbq3rhua9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 22:24:44 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 682LuY4W030585;
+	Wed, 2 Sep 2026 22:24:43 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gecjan46x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Sep 2026 22:24:43 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 682MOgwR19989100
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Sep 2026 22:24:42 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 630A758056;
+	Wed,  2 Sep 2026 22:24:42 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9959E58063;
+	Wed,  2 Sep 2026 22:24:39 +0000 (GMT)
+Received: from [9.67.98.186] (unknown [9.67.98.186])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Sep 2026 22:24:39 +0000 (GMT)
+Message-ID: <b2d390dd-3ba0-4faf-967b-d1188da12e62@linux.ibm.com>
+Date: Thu, 3 Sep 2026 03:54:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] keys/trusted_keys: return immediately after TPM
+ unseal failure
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+        rnsastry@linux.ibm.com
+References: <20260902103120.222326-1-ssrish@linux.ibm.com>
+ <20260902103120.222326-2-ssrish@linux.ibm.com>
+Content-Language: en-US
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+In-Reply-To: <20260902103120.222326-2-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=EIc2FVZC c=1 sm=1 tr=0 ts=6a98a22d cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=Y-y2Im-bRa9duunfRGsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDE5NSBTYWx0ZWRfX3PxBAJMX5NU1
+ YKCe2YMNrQeY54PsYfBlvCKv28mWayPk8iRBmEnM1baoCAtPfuvoXn30rYRGAK7fQ7QD4mLJCeD
+ SB8H6xRe3NCmJjFH2jslQUVos+NNZ4EtxiRTg8aj/Pbq9DnCHUDFJtifPovPeZ/GLAeXom2j15t
+ grt9Xs9iWn8rp47FzBwCFIv43r1KqFJe+HugzZ/vKlA6e3HKrg3E1WvMwmEIUQ8gnKXEpRSK4Eb
+ upVIaxDHUpi9Mg9elYidDWX5CgqBFBw4iG/X+L3rMYhSW961l2W+I/LEOahO6Oqbxi9BFNEkp7Y
+ fda7IYZ4B+1G5ok039CmzVSjne7puMG4yHJDoHFvL97xAulwXVKvnJSvNsgr07Gk/ojvbHYpI5Y
+ Lh66xFuN2aXm3Oy3r4nmWILRWfMam07vXrtRsG4lQoMLZXrMGnbrPEym3ad67+aqWpYxEZfBA3/
+ 6I9MmMoTvcu5s8NafGg==
+X-Proofpoint-GUID: a4VYTaxDfaTffOkljByhbbMBZnHapPtp
+X-Proofpoint-ORIG-GUID: a4VYTaxDfaTffOkljByhbbMBZnHapPtp
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDE5NSBTYWx0ZWRfXzGkBGzAc61jh
+ MEFbVliPiV+D965upWYoi/s6Ena9FYRLqig6LuTdPpAYENTmWUfBDAqM2oAxi0MxNkhfcFX6wX1
+ 6JkTIRUlsONS7vN8VAoJehHVt3vKjaY=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-02_05,2026-09-02_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020195
 
-security_update_lsmprop() updates the property of the
-specified LSM in the @dest structure with that in the @src.
 
-security_secctx_to_lsmprop() sets the @prop field associated
-with the LSM specified to the value of the passed security
-context.
+On 9/2/26 4:01 PM, Srish Srinivasan wrote:
+> trusted_tpm_unseal() proceeds to pcrlock() when the TPM unseal operation
+> fails. If pcrlock() succeeds, its return value overwrites the unseal error,
+> causing key instantiation to succeed.
+>
+> Return immediately when unseal fails to preserve the original error.
+>
+> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> ---
+>   security/keys/trusted-keys/trusted_tpm1.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+> index bf0bf7f36970..1168ca235205 100644
+> --- a/security/keys/trusted-keys/trusted_tpm1.c
+> +++ b/security/keys/trusted-keys/trusted_tpm1.c
+> @@ -923,8 +923,10 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
+>   		ret = tpm2_unseal_trusted(chip, p, options);
+>   	else
+>   		ret = key_unseal(p, options);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+>   		pr_info("key_unseal failed (%d)\n", ret);
+> +		return ret;
 
-LSM specific implementations of these hooks to follow.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- include/linux/lsm_hook_defs.h |  4 ++++
- include/linux/security.h      | 16 ++++++++++++++++
- security/security.c           | 32 ++++++++++++++++++++++++++++++++
- 3 files changed, 52 insertions(+)
+This should be "goto out;"
+will fix this in my next version
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 65c9609ec207..679c40a8e127 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -305,7 +305,11 @@ LSM_HOOK(int, 0, ismaclabel, const char *name)
- LSM_HOOK(int, -EOPNOTSUPP, secid_to_secctx, u32 secid, struct lsm_context *cp)
- LSM_HOOK(int, -EOPNOTSUPP, lsmprop_to_secctx, struct lsm_prop *prop,
- 	 struct lsm_context *cp)
-+LSM_HOOK(void, LSM_RET_VOID, update_lsmprop, struct lsm_prop *dest,
-+	 struct lsm_prop *src, int lsmid)
- LSM_HOOK(int, 0, secctx_to_secid, const char *secdata, u32 seclen, u32 *secid)
-+LSM_HOOK(int, -EINVAL, secctx_to_lsmprop, const char *secdata, u32 seclen,
-+	 struct lsm_prop *prop)
- LSM_HOOK(void, LSM_RET_VOID, release_secctx, struct lsm_context *cp)
- LSM_HOOK(void, LSM_RET_VOID, inode_invalidate_secctx, struct inode *inode)
- LSM_HOOK(int, 0, inode_notifysecctx, struct inode *inode, void *ctx, u32 ctxlen)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 153e9043058f..19adc19eb9af 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -576,6 +576,11 @@ int security_secid_to_secctx(u32 secid, struct lsm_context *cp);
- int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
- 			       int lsmid);
- int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
-+int security_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+			       struct lsm_prop *prop, int lsmid);
-+
-+void security_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
-+			     int lsmid);
- void security_release_secctx(struct lsm_context *cp);
- void security_inode_invalidate_secctx(struct inode *inode);
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
-@@ -1581,6 +1586,11 @@ static inline int security_lsmprop_to_secctx(struct lsm_prop *prop,
- 	return -EOPNOTSUPP;
- }
- 
-+static inline void security_update_lsmprop(struct lsm_prop *dest,
-+					   struct lsm_prop *src, int lsmid)
-+{
-+}
-+
- static inline int security_secctx_to_secid(const char *secdata,
- 					   u32 seclen,
- 					   u32 *secid)
-@@ -1588,6 +1598,12 @@ static inline int security_secctx_to_secid(const char *secdata,
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int security_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+					     struct lsm_prop *prop, int lsmid)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline void security_release_secctx(struct lsm_context *cp)
- {
- }
-diff --git a/security/security.c b/security/security.c
-index 71aea8fdf014..1dec0037370b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3965,6 +3965,13 @@ int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
- }
- EXPORT_SYMBOL(security_lsmprop_to_secctx);
- 
-+void security_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
-+			     int lsmid)
-+{
-+	call_void_hook(update_lsmprop, dest, src, lsmid);
-+}
-+EXPORT_SYMBOL(security_update_lsmprop);
-+
- /**
-  * security_secctx_to_secid() - Convert a secctx to a secid
-  * @secdata: secctx
-@@ -3982,6 +3989,31 @@ int security_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- }
- EXPORT_SYMBOL(security_secctx_to_secid);
- 
-+/**
-+ * security_secctx_to_lsmprop() - Convert a secctx to a lsmprop
-+ * @secdata: secctx
-+ * @seclen: length of secctx
-+ * @prop: prop
-+ * @lsmid: which LSM the context is appropriate to.
-+ *
-+ * Convert security context to an lsmprop.
-+ *
-+ * Return: Returns 0 on success, error on failure.
-+ */
-+int security_secctx_to_lsmprop(const char *secdata, u32 seclen,
-+			       struct lsm_prop *prop, int lsmid)
-+{
-+	struct lsm_static_call *scall;
-+
-+	lsm_for_each_hook(scall, secctx_to_lsmprop) {
-+		if (lsmid != LSM_ID_UNDEF && lsmid != scall->hl->lsmid->id)
-+			continue;
-+		return scall->hl->hook.secctx_to_lsmprop(secdata, seclen, prop);
-+	}
-+	return LSM_RET_DEFAULT(secctx_to_lsmprop);
-+}
-+EXPORT_SYMBOL(security_secctx_to_lsmprop);
-+
- /**
-  * security_release_secctx() - Free a secctx buffer
-  * @cp: the security context
--- 
-2.54.0
 
+> +	}
+>   
+>   	if (options->pcrlock) {
+>   		ret = pcrlock(options->pcrlock);
