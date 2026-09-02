@@ -1,133 +1,236 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7022D876A
-	for <linux-security-module@vger.kernel.org>; Wed,  2 Sep 2026 19:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.178
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788378211; cv=pass; b=H1zJc4wwdVPLbthPSPsCJsNXMx8XoeAEkACvtprYL+hq00gYdEuhV4utVNNRqcrw4lfmnPr0Y+tDxR5fK7AlvgIQ6DZFjrY/NiLhZ4TWFvCmwzv6u3PCxLJBOqZZrR5lnUXeKQwCZ2foRLtSPY/yqAi/4BXYPiC8Em3+rUz4f30=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788378211; c=relaxed/simple;
-	bh=v13IBvJ3Cs5k45Op8zhzzynqZs/Da4H7F6eGXP4EZOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JTkOVUc4ejVCcrKE780SjP9gsuSNr4ZQcN8UcrlKsK9Wg9f1uQYK/MIYqSkaKYZpsOliOuXaSyx3AJIuSmHEoZKnOcR/TaWrOYmLHeYsTC5K/OcxWRtffyvMv57rLnLG6ftjhz0+OB4BInY1AIlpb2LPBARJQu+rH8je4jBCDVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aYFA5tCO; arc=pass smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C7E42848B
+	for <linux-security-module@vger.kernel.org>; Wed,  2 Sep 2026 22:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.90
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788386543; cv=none; b=I//r8J5Olz9qBTA+0uYIgA+Wwm/KQ+caytthFfIkaeXGNgkIIB5KNyKY64Z/RBQ23aqUXF8ZfJ/WbP2/erQJl7KvjfWW59SxwQ2oHxlY8mxh7tjhYvrMUd8vgefUcgPs0ZW+q/5Uq7922GCNhRy/l/MAGfkjCrL0C6KrQ2MJtPY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788386543; c=relaxed/simple;
+	bh=YePZ51dlYmZ/cucTyw+gosn8F7f35BMcwjmeoZtY7Bw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cw6W8cfkGULY5AQ+BTHlcdkICz9UcUlcmE27ud7DwzE+cRf3yYxnymbFVhQYhzmxQgWNT4yUZNaDzeTIah9bIBdseR1C6w6ZfQVEMsT1m817BuUcf81x+1e3ke6qK4TU/zo5sLqCx+nIQfzJoFZpZ5PfFVc6peFO56Nxldv87Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=moyRBFJn; arc=none smtp.client-ip=66.163.189.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aYFA5tCO"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8535a9be75eso1249631b3a.2
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Sep 2026 12:43:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788378196; cv=none;
-        d=google.com; s=arc-20260327;
-        b=dQwxbmOgOS4sZ7vFdzPVzGLkfJNQ0wp1rpV9zBdAvS+m9rWKFEofH4zYHgok0F8M6B
-         b0N4IZxJnYYX9nF+3pQUnreXW8envWIjWK+2dFXvO7jcZHBRqGyBZ6qGaGi8QCyAj+wq
-         w+iA6VBeDPy8OeTtP18qsxlJcrHiE5v6zh1zQcITzt6yQQSVu39nKvn3PrVg/+SpQoRb
-         z1ZorBBsbRoYqk9YwO3QI6SD+JEHl3B79qGta8PNLK/QnJu3uc6w02RW956EhvJk2Pxl
-         DT5mTKILYQSBna5yRyCLdDVA5NJmzsVW/Db2eLPZMGN4/+H0Hu9Tr0i2fvWmq+xxLABs
-         VmzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=HZzgWfQ/86NrxOY8y/QdFfPZVfg39pEM5TlwSWapW24=;
-        fh=dowhTw/OSn/1soLM9JOef4W1bduJ6kTH6AyxE1W2icc=;
-        b=LwzQO5KyeCBm04zTCSFCgjt+51L/m7YjwiYA8O/nEj3cg/Ye8BzE0z/u4OJSrpYin8
-         pZvmVcmyxZsOtoI6Kl0YYO2cNh/foEezlaeGwZ7GIBadvCyn/EH5xjMEaAusDUfreZyi
-         TK7irU2E9/gn4aYA4NgornXW2R9U0RcV1CKTT3dygP5zlvpnLPsgHxEHLXvVcFLEPxWr
-         +2sRz88TJlpz0D2ENbMdA7zufjUvHZSS4NPeFHcuBMcGPE6fNYilQBV+QfOfRVnhO1i6
-         6Wzwtxo/WSEzvZzfFdrSWPxk+/HCrJCku4Y0Z5VgyY3kuYssunCrxsTdlmiOSQkZwISw
-         F8ag==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1788378196; x=1788982996; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=HZzgWfQ/86NrxOY8y/QdFfPZVfg39pEM5TlwSWapW24=;
-        b=aYFA5tCOZ5UjOiabbKf+4Li2QUBDULtgqc0UtYdMcN42FuRj6wzgCLFhAKAaI60NZg
-         7u1Eli49zAV6MQy2b78QDrhXqwsAAyzcu0FxEVwk7WavXov/6rxM2LcwYoEZz+y3+VJW
-         UPE1ELzTJgWxSva8X0e2e1NXkBo3cCfyVB0GIATavl2RU2ZDH7e8KvDWAqlS6L4lRWc7
-         K6dMtF07P92DD6er/SfN4xho3HHF40di7hzQcuudBqZKdhG7XH6aiNRsVxtH3VbzeKgV
-         MtP22v903BOORWOseI5xsYPMTLbzRrrQg9QhGLpbqq1N/BcLGnPT4dTtTl6qp/VcSKPD
-         sBvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788378196; x=1788982996;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=HZzgWfQ/86NrxOY8y/QdFfPZVfg39pEM5TlwSWapW24=;
-        b=BRp0yO6Ndu1Dhn1QPN33jOUomhNZxa5IjtXI6FdaqpAsZkq7lwLgPsjChjulMzf98/
-         JFD9SSEf8CbTrrcBajXEQgO5I3aE5qYx9Ky3L0YbE4GX3SJpl8Ap+xVCoTtqTe8s0jV8
-         pVgD8YnhpYKQWEeBO4RbESLdwiQFUGnhnjYRTp+mniuua2guRsYrOVPUPhqGr4ymXyxC
-         lm6M2h41yPYSeILjFjldvTbHuV4N3pf7sNUhz/20UOdp/fF3Uglcb0ubhLBFXq0GnlGh
-         t3PqawGh393IlF5nHQeoQFTCixh+zF1TGHzS2iraxoWy+8OLN2JAemOMYWHlIoWgpRex
-         AcCA==
-X-Forwarded-Encrypted: i=1; AKwUvBzS2p2nWyFEOIjHlxo3KMofYmSvg0nfM4rqbeKPmH4rY8FZgRMx0zY8G2UUhdlHt+wBXEb8zREiPOpfJT8XWuqsL4V+MkI=@vger.kernel.org
-X-Gm-Message-State: AFuF++k5Qr3XeYRzXmIh79R19eNd3bE/7OagO18Jmutv0nGQiGcQwyem
-	STdHTlPlXkbTYF9UJdgVJGfguZDImRz2x8QsAxdAxGhOOcSyFMLOw5N5ARt5MeNfVyrmqSV5Xhl
-	f8mr+9AVOGxV+IoRA5mq4Nddydso/eOhC/wucKEh3
-X-Gm-Gg: AYBFou3M7P/Qy0vSya1Zs+Zhhrbv9rXZopYRzmcJSWLJlQI/C7if2mRs0BnfK6I665k
-	JqBD5Y0T601zHf84htMTDmlHHljHucYVl74Az2HTdZ0KIAMtYvxmDihXSsWZ4l/EVElbQAyeO4U
-	PXG0qRbVIVToYS9/WwMMKzemymDhhtf88Kb0t2dB/WAcz2h2Hr9MCEVlhEZwuM2Dm1SLDAX8oR1
-	G+J4US9A8cbrk59fI4XGOherTtU4w2R4JM8pcu1NRhoZ8W+QC0oQJhlZBpXsxppCajXahu9pUdk
-	NTtuwdad85uNub+b2Z7I1i5taBU95MgwPBB5S4Q2QYgd
-X-Received: by 2002:a05:6a21:2d04:b0:3d1:8876:fb1e with SMTP id
- adf61e73a8af0-3d9a9695714mr11592712637.0.1788378196405; Wed, 02 Sep 2026
- 12:43:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="moyRBFJn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788386526; bh=yHlrmN78oxAAQbX+BTQB5IQgb1bzCbKp9XLNwOjJhUs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=moyRBFJnmjEOXp0cu0W0YXF51tTa/JKusHspmFEp1fCf88plxwqPUJ4YgU0txTeCf7IKmEWM5EqDiXJg0VUMVrFCpNpuDZiZqZelfEzF0RpycarI/wgiVvXYEyh4mbEB/9BjTkCFJNoJafg13BfHpA86c+sQN47Y7hhpKrVZwRFCMt9xVz9k6XpGici/umXBCkOSKOEaYADtGNrgV3f2iHg6mu+s2NeBvlTkzPgHErBEV3ndsGA2RPuAAqC0J4f10UFL7XmKq1VKAtCnWy+6r2kBKolryyogd7DC+qFwNxNCq9P3ozEZc62SYAtExq4Zwj0eK0k1XA0ZGd4HaUHw2g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1788386526; bh=rHAuPVQSlNPBPD1AZj8DFXMRW5csewSbXSJoRErwmEK=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=UXyDgj/fThrxCWNpEAjyGPVXEYfN2zvC6X3Zsl67TzVL/7p+BQu+V50Zo398nPPFrJ7shLasldvyHywG/yudt0s/CC7/6m3la7M6NCKEyw0OawSVHkiOZMwLW7fs2m4CAr1pw5YMaYAOVsxup8VXFQALMXPp4rq9lB2hgXFFtOgaAieJdi+dQ67ggF/da7rOJWWBmFQTusEMZZTfktOklSFrcZ8kQK0sWlyxsnxUhVEdzU8y8z2yiq51xDeKCs3ZUQAcy/4wBalceSH9JoEQsINVYug3XiRtFQfTTEQs6sC8JvQ+p02xk4WtNRFxijh454kJ0sinJwtNp0GFVbEm+A==
+X-YMail-OSG: c2CNKksVM1nrISRBf2URQ6BWUvFkDkFeXETfEGOGpuAYHacV83L2Ib4DRZc7VyV
+ 5bA4P1tEFEy_j7_ek6i9n_zKnVTPfQO6pB.J8ksEX9xqJDBkhWs4dg_epQHazN5HhXhZIZxw8yQP
+ 7tyuGl1FBXfCwTaZrj2dxL5tK0i_LOuiNU_6NRXI89gSzEzsC7TnE.DbttsF0GHF5P6Jvrrn8_Om
+ nIXDfW3bleFkx8SxbmfAVfyl4bFIw5tVGJILFCv2Ivu4NihPDw.QJrbjh7EoBN3dlbkzKdZI8c5t
+ JaMu790XpWH73l3uvDsIy_Qe2nYxVCp68N7nrse5D3zcdQwTmgoE7OpEh9AuTlCJgu5Tyg24ThuF
+ pVwCxDLYLk0vo4VYanNSndoW0y.1IEARERia8Ce9qtUOLiLG5YenGDIySt4CiFzP6o34ZPziTbrK
+ 5o8EUOb.3jbn6w_pDiZ0.GJioFssWqosBB0.Slehod1adqnENqhvTY3uJ.1szVxgc7ir9V2CCbmm
+ kl0mdiflqFmiEVjZnVOQqUrX.OS3NHUHwqYNjgqFoiyGR06EQmKG79VayPIoBcpMLhcDL29zK21Y
+ WJnm3cfEyd1I_O6uuUtqpSMYdCkSK_hiCwqDC6wf67XQSYXkaCRUX0xF0lDN8sfmqup7jsRHfFQ4
+ hPDnroqIzO7tIQsrUSIBJBlx3pFiHdboEjULZKom1VJXLmrinbIZwoDDI_qaYmjekPjm_VvfW0Zm
+ EevRuSS4LKOVC7OP1kRQrx_fk6IJk.ml.uvwpciRbx5szX8UHBYKFyzF8rwIe5baSjgO98tj7UxI
+ 3QpMdoG5pokKNdNkHzSFHm9FBFy1ioat78hc3uSJ3YEHdYnaIA8TDZa0h9Od8K3mXg8Cf5YIUhVw
+ PYFwY1LYdDDL0iizAWwOjsiV.shpi8tPLe63RW8TCRgECmcI.Cry0SzacePbQUslQg2WWYRADFcY
+ FB5bs0MrI1KI3Xa7AsaPuN2SJT.qckgry8H_WH.Mbx1vwC2B_o49fSC4GYlYK4GSvxC8VWJuIM5d
+ _6g0Kpp7Aw60gc.kuquz0.xn.g77FgAqh8Zm5ndXm.5N6iicTkRfiISPkZ9iTt.P5_CGCAOpU_j8
+ h2_psp7nj0urwZXsDQ.zqTdu2eJEKanbz9R2n7EOHqggpGQGllzAdyyiwqbSSaxQhqQ7CeYoz1Q2
+ ydz4ty.DChasU2_qDw1uWGF2mvQPR13IhBy6_lQM3NkESmu2IuyFcqsOEbbw4juwwZpC5K1F2301
+ hThZJx1Wj2X_NNfteBQW8zY9Q_5dw579DwE1fLIBBa782i.3yWKXo685iq9X1wXRG1PHh9JsA4lT
+ zeqRWfxEjSzDhlWPjVQgqSnEGyrDlkF49roHbEjdohWIMdg8aUaGx4VNsDMpbOvqOr6JfDAPgQJg
+ qafcKqJd2NuELZdR36tXcMUcX8PDrwMlMX2QPd7m9VtJYJlEiVBK8wjURUgPVurqzeRI6R8D3hOc
+ 3.b1vmjCgTjdizyIL1o5AKXwgJ1rwtzKIWVZNlBI.Bnr18eikPJNVwMqGAZsRMWHRcWYkNbs91ts
+ kNW69_HUYod0ui7eDDdo7Jcf6FFN6bFQSF6oylzf31IfVcl69EVB6JZ7wzjS81ecYypY6oXnz6.U
+ FiTZ2dkSes7fgQT_rxeVjgrPQDXrQeylqr5fazLJnKHsrtQDDuR4I3uYgoWMP1lASpqmvY4IZwyp
+ 7FH46lTGjIA5tUFkw6GsstMKlqLcIZMlrzdb_5lulMMeB_MIsdaG124ptIrAbwGvs3g9FcRwE4cD
+ lORHwnDClZ7VHanZ2vQCWbxC6iA3Qx4iyYugFHVWJTH1AU4Gm1HWXcY7RbtXcUeTAWSorI7EIHfz
+ 1gWwaYAv62Ys0Waz3wIjpPNJyVAWsUXI2bwTREAy9M2Dk2X3ZFuStjGKgiYQUodJq.BREwLm8jU6
+ dKqXEMy4ITVQFvjvplSYF6l_3O6vraZpdzaD8t00nJYZqiZCV79yj1qOabdfMSaVD.KFhoz8GMcX
+ uB4MyGkmLzAJ9hR0mIeP_UwYLAX1QOjviE40H3aRy8UbL2sAPCUI0JwHEFKZPIYhHvGZGimDEErE
+ Dd6deAGHJvYuf6ApPjb1VkLA9AQ559Z0JsCx.oNacj39Mg4Kj04j6coLn5Z8MdsOCwaHdxo24S3_
+ zYifJUzJQscmHkPDIlm5rliBU7oYZWyBhX1N6cyav.PEvvnAN31wk_OGUw1j5UWjRkWgi5FLuzfc
+ 4rd3BJCDcCP8XvBSniiP6iWiEdPlq6qI1spsAomAAAhSlalM.ROirbuqBYtndXkioluVLvUn4ef8
+ w8UfY2dDVBGViqQkpLEftI_E-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 38997c78-a1ee-469c-a996-0309c53fa4f3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 2 Sep 2026 22:02:06 +0000
+Received: by hermes--production-gq1-678d9dd684-dljdn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 39a905a7360d4d1389754a332443770a;
+          Wed, 02 Sep 2026 22:02:04 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org,
+	pablo@netfilter.org,
+	fw@strlen.de,
+	phil@nwl.cc
+Cc: linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	selinux@vger.kernel.org
+Subject: [PATCH v2 1/7] net, smack: Create a function to set secmarks
+Date: Wed,  2 Sep 2026 15:01:44 -0700
+Message-ID: <20260902220150.18586-2-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260902220150.18586-1-casey@schaufler-ca.com>
+References: <20260902220150.18586-1-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260831110934.241898-1-a.s.protopopov@gmail.com>
- <20260831110934.241898-2-a.s.protopopov@gmail.com> <CAHC9VhT7=wMsB9mERWoiM6pF+_T1=2tyAsSrxMphhtdE2NPHMw@mail.gmail.com>
- <apbU8-fpioNIwUA8@mail.gmail.com> <CAHC9VhQbWPqEz5g1rVcMyJgrzzd4cQuwi7cddgJQK1H3ugMz7A@mail.gmail.com>
- <aphBNqQK0JeVy5Sm@mail.gmail.com>
-In-Reply-To: <aphBNqQK0JeVy5Sm@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 2 Sep 2026 15:43:04 -0400
-X-Gm-Features: AcwNN1XYNCXydNpNM6ZU2Rnek6l8sLmm3paMheXeGevlLusJ85KkWm2it_ZUJS0
-Message-ID: <CAHC9VhREB2krVp9XkV6Psp4PWhYT14281+1TQUZL7o+GTo1cXQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/7] bpf: Allow BPF LSM programs to attach to
- more hooks
-To: Anton Protopopov <a.s.protopopov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, lsm <linux-security-module@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <matt@bobrowski.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 2, 2026 at 11:20=E2=80=AFAM Anton Protopopov
-<a.s.protopopov@gmail.com> wrote:
-> On 26/09/01 06:15PM, Paul Moore wrote:
+Rather than open coding assignments to skb->secmark, use a helper function
+secxa_set_secmark(). This allows for a case where assigning a secmark
+is more complex than a simple assignment. The version of the function
+here does the legacy simple assignment.
 
-...
+Change the functions that currently assign values to skb->secmark to
+use this function.
 
-> > The core issue has little to do with BPF, it has everything to do with
-> > in-tree vs out-of-tree code.  The BPF LSM is explicitly mentioned as a
-> > "pass through" because some have argued that the BPF LSM is in-tree,
-> > and while the basic BPF enablement is in-tree, the actual LSM code
-> > that is executed has thus far always been out-of-tree.
->
-> Yes, the actual code isn't, but all the building blocks are.
-> The BPF is just a sophisticated policy language, in which,
-> given, say, ethtool hooks are present, one can say "block
-> all ethtool ETHTOOL_TEST_CMD calls for the XXX driver" or so.
->
-> Is there any way into turning BPF first-class citizen from LSMs
-> point of view?
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ include/linux/lsm_secxa.h        | 28 ++++++++++++++++++++++++++++
+ net/netfilter/nft_meta.c         |  5 +++--
+ net/netfilter/xt_CONNSECMARK.c   |  3 ++-
+ net/netfilter/xt_SECMARK.c       |  3 ++-
+ security/smack/smack_netfilter.c |  3 ++-
+ 5 files changed, 37 insertions(+), 5 deletions(-)
+ create mode 100644 include/linux/lsm_secxa.h
 
-As I said earlier, the important part is in-tree vs out-of-tree code.
-We are not going to add new LSM hooks only for code that lives outside
-the kernel sources, regardless of whether that code is written in C,
-Rust, or BPF.
+diff --git a/include/linux/lsm_secxa.h b/include/linux/lsm_secxa.h
+new file mode 100644
+index 000000000000..926257d4730c
+--- /dev/null
++++ b/include/linux/lsm_secxa.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * Copyright (C) 2026 Casey Schaufler <casey@schaufler-ca.com>
++ */
++
++#ifndef __LINUX_LSM_SECXA_H
++#define __LINUX_LSM_SECXA_H
++
++#ifdef CONFIG_NETWORK_SECMARK
++
++#include <linux/security.h>
++#include <linux/skbuff.h>
++
++static inline void secxa_set_secmark(struct sk_buff *skb, u32 secxa)
++{
++	skb->secmark = secxa;
++}
++#else /* CONFIG_NETWORK_SECMARK */
++
++struct sk_buff;
++
++static inline void secxa_set_secmark(struct sk_buff *skb, u32 secxa)
++{
++}
++#endif /* CONFIG_NETWORK_SECMARK */
++
++#endif  /* __LINUX_LSM_SECXA_H */
+diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
+index 0a43e0787a68..bd0f7a0931f4 100644
+--- a/net/netfilter/nft_meta.c
++++ b/net/netfilter/nft_meta.c
+@@ -17,6 +17,7 @@
+ #include <linux/random.h>
+ #include <linux/smp.h>
+ #include <linux/static_key.h>
++#include <linux/lsm_secxa.h>
+ #include <net/dst.h>
+ #include <net/ip.h>
+ #include <net/sock.h>
+@@ -502,7 +503,7 @@ void nft_meta_set_eval(const struct nft_expr *expr,
+ 		break;
+ #ifdef CONFIG_NETWORK_SECMARK
+ 	case NFT_META_SECMARK:
+-		skb->secmark = value;
++		secxa_set_secmark(skb, value);
+ 		break;
+ #endif
+ 	default:
+@@ -950,7 +951,7 @@ static void nft_secmark_obj_eval(struct nft_object *obj, struct nft_regs *regs,
+ 	const struct nft_secmark *priv = nft_obj_data(obj);
+ 	struct sk_buff *skb = pkt->skb;
+ 
+-	skb->secmark = priv->secid;
++	secxa_set_secmark(skb, priv->secid);
+ }
+ 
+ static int nft_secmark_obj_init(const struct nft_ctx *ctx,
+diff --git a/net/netfilter/xt_CONNSECMARK.c b/net/netfilter/xt_CONNSECMARK.c
+index 1494b3ee30e1..9d799d2459dc 100644
+--- a/net/netfilter/xt_CONNSECMARK.c
++++ b/net/netfilter/xt_CONNSECMARK.c
+@@ -14,6 +14,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ #include <linux/module.h>
+ #include <linux/skbuff.h>
++#include <linux/lsm_secxa.h>
+ #include <linux/netfilter/x_tables.h>
+ #include <linux/netfilter/xt_CONNSECMARK.h>
+ #include <net/netfilter/nf_conntrack.h>
+@@ -55,7 +56,7 @@ static void secmark_restore(struct sk_buff *skb)
+ 
+ 		ct = nf_ct_get(skb, &ctinfo);
+ 		if (ct && ct->secmark)
+-			skb->secmark = ct->secmark;
++			secxa_set_secmark(skb, ct->secmark);
+ 	}
+ }
+ 
+diff --git a/net/netfilter/xt_SECMARK.c b/net/netfilter/xt_SECMARK.c
+index 5bc5ea505eb9..ea67aa92ddc2 100644
+--- a/net/netfilter/xt_SECMARK.c
++++ b/net/netfilter/xt_SECMARK.c
+@@ -11,6 +11,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ #include <linux/module.h>
+ #include <linux/security.h>
++#include <linux/lsm_secxa.h>
+ #include <linux/skbuff.h>
+ #include <linux/netfilter/x_tables.h>
+ #include <linux/netfilter/xt_SECMARK.h>
+@@ -36,7 +37,7 @@ secmark_tg(struct sk_buff *skb, const struct xt_secmark_target_info_v1 *info)
+ 		BUG();
+ 	}
+ 
+-	skb->secmark = secmark;
++	secxa_set_secmark(skb, secmark);
+ 	return XT_CONTINUE;
+ }
+ 
+diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+index 17ba578b1308..b363c42f252e 100644
+--- a/security/smack/smack_netfilter.c
++++ b/security/smack/smack_netfilter.c
+@@ -14,6 +14,7 @@
+ #include <linux/netfilter_ipv4.h>
+ #include <linux/netfilter_ipv6.h>
+ #include <linux/netdevice.h>
++#include <linux/lsm_secxa.h>
+ #include <net/inet_sock.h>
+ #include <net/net_namespace.h>
+ #include "smack.h"
+@@ -29,7 +30,7 @@ static unsigned int smack_ip_output(void *priv,
+ 	if (sk) {
+ 		ssp = smack_sock(sk);
+ 		skp = ssp->smk_out;
+-		skb->secmark = skp->smk_secid;
++		secxa_set_secmark(skb, skp->smk_secid);
+ 	}
+ 
+ 	return NF_ACCEPT;
+-- 
+2.54.0
 
---=20
-paul-moore.com
