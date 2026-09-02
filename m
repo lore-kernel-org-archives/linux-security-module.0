@@ -1,68 +1,67 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1384ACC9B
-	for <linux-security-module@vger.kernel.org>; Wed,  2 Sep 2026 19:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496494AD4B0
+	for <linux-security-module@vger.kernel.org>; Wed,  2 Sep 2026 19:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788377701; cv=none; b=IpxXaXxmThyUGhZV2tanbnUAZhfXGJb3RAuBYWJE/nZW1Ia2nFFXCpM4P8SyWFvAPZpzeqwI0MwUEHMDX1VIRoLYM3/trTh9wmhcILqsDcdKZiz077A/UHleld+Kpb8mRPYDUeSaIR7Uk0eMdEaS1E17wSwymk4SESjlGI1mKlw=
+	t=1788377711; cv=none; b=mwCyc5VHgNbnjuRT4KYQuzFia4D19ooYdHrkNv8fQBJ6AqfQ5aZQs5mvxHfgYsI2KrFlGmaqjyzfqpD26M5N41ieimhcxoO53rqCdE1AGz0de4wBAeZBpBUjUvr94hkxfuu51yTeiEUDCaRN4ihxfKIk8Ibr4svA/nO4Cj3Fqwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788377701; c=relaxed/simple;
-	bh=7XijPLwz3cHBxl1YFk+E8vu/tL68tteh4h0gxiMHTNc=;
+	s=arc-20240116; t=1788377711; c=relaxed/simple;
+	bh=dINnaKckdfOT2F94x9t7jziPlS9yc2iyV99WUJZti5k=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=nF8lGkQnGdZIL/JOloQqFzAWXpW8+xiQRpB1Yp+FaCnBefkR6PWgc5n6WNvS0cWg75HltO7gn2CmuHLa1KBVFbnriD3ijCIcCfOoDjguzKQEJ+Gc5CgJTfropTfDJWXmq/p/R5RdKq/B0Lna8uehC5yzBoHfCyd/ROPJ9nmDHUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=apaOjh7d; arc=none smtp.client-ip=209.85.219.41
+	 References:In-Reply-To; b=W/HDTTUwYxBuhrh/s39YctHNx7sxoEzYOEM6KkJOjvarfPRwTqRVMdNwOXOXSiSxCIFmzSoG/DDS21U3WQqI4KjiYXQadkBsOCgHqkSd6eK8J6mJllOnw3SMBE8asljrb+dQgJe8Bl/tPnYKPHY1C6p+mb2ttr0bC9T8Vm8OBJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Mp6gh/qJ; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="apaOjh7d"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-90ce3971a86so14467826d6.0
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Sep 2026 12:34:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Mp6gh/qJ"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-90e7bde5596so15083186d6.1
+        for <linux-security-module@vger.kernel.org>; Wed, 02 Sep 2026 12:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1788377690; x=1788982490; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1788377692; x=1788982492; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-type:mime-version:message-id:date:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=BIdNMxFvwqrPz4tpIyv6StSQNKP9oc9jkPpYrkixADU=;
-        b=apaOjh7dQp74WY42ZKX1LucplV5mZwhakPtY5Jg2eXD4fZ3oEZRJXmKGzxoPFjE+Sd
-         TFfutb20vFTVAwcF8aFfemNt+nNl2YigcQV+qQOzgrBZCsRMIjQAuCsL06AIQQPDPill
-         MkUKXuR5tuMo6l8FA//nAL1Tj/XGhR8GdhHCcbs6J/tW84CM/8/sKhSrjkWKYzLVip42
-         ZvhxgG8RAlyP+XVemMTyp9hSCSvPOSZ6O099hPlHoH9oipeJfJ8CrCyHgbhmgS30owwF
-         HV1aWHhUJ3mUY881jnB4aQkdPvbZn9vSbvoRWmIqm1/impT4Vj7OvR0gzwrjwAj+PxTq
-         nR5Q==
+        bh=183/fvO/by+DRdIa2ztu9BBJ4pI2bMZEyG+Jxipy0sA=;
+        b=Mp6gh/qJ9PlBzkbFBngWPcHLug6aL4CVpoMoBhP+8cG8UE9y85GoduQoqIih5YgyNl
+         SvWVTiaBA/qyWMiONrZyvM0SY6wAjBbacAFAI4GP+egbp+jJYuipoqAOwzb682f32Yt1
+         fBk0GiCRl9Z4HsaMpBNG+78y26N5SSpIM/AOYae8IP4AZNWGUSbhW260XHN+LyULIoky
+         tTLV/D4i/SUONQC9eRCfWI3RnwTzmbOnuTetb2uBIXo13sa2mXOch1rXBMVA132fBrCs
+         m5HvTYka9FeVwWTn1jP+9TIgCrYp74rb/+grmmfh1kSjT9kNCRgOlwiR9+mH/Zta7Csw
+         WhQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788377690; x=1788982490;
+        d=1e100.net; s=20251104; t=1788377692; x=1788982492;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-type:mime-version:message-id:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=BIdNMxFvwqrPz4tpIyv6StSQNKP9oc9jkPpYrkixADU=;
-        b=qf3zH/A1IxJ+XyTBKmPow1nVrFT1y/P/nS7zZSBE/ix6FXL5XY2CLOmUbiAaVQqlc/
-         5R6m2Ra7aX46LdRHaYR4wT47aJRCMJ0hBkt1vB4TlLImrCLgaHGHb9LZq8+gmLt7huQL
-         Eha7ikjTcSjhOsEeYu7xVun6qS+w2tO32WNp5EV4zSNhxaKPuG9YH0ENvApXL1COuaSv
-         Q6KiTu6BirZSjpcB7guX6DDAtrNbBWp3mwHMorQYSwDEBkDiH+G5dfqMwghKiMs+PTQe
-         EWJRX3PlVH/s2fidLu2cURa0P5TQWS4snFb4iDzmiIv0HPLfJuSzFjuN1cxmSAbq1Tj5
-         C/eA==
-X-Forwarded-Encrypted: i=1; AKwUvBycE+GtqZPTq7Qkok7oHYZwUMHR62gPvX7uQKPAh6i9Vd3esLKQ1qb/YUa6qqvYg7duuhNBsv6AhE6zx/vngVwl7hC3BuI=@vger.kernel.org
-X-Gm-Message-State: AFuF++neObGdAo/JK6oMNG6NqYqgR7/xgtkF1UJodjtq8TOag0+CK0pA
-	zuNGvk61CFZ5RJb1nnRCq6LDmg4e3hTNQZELdrgAI6CSStcPSYJT/UXpJDHtXtH+TMupUF+z9Zs
-	4Mq1MqA==
-X-Gm-Gg: AYBFou3jt06TXbfT4kH+LUdfZygScMwg/Vld3IwrZEzN9+9vaciUPZAfFCsL/Cp1D1L
-	Gg4LLOvV4qutkQtY5pISelPfgK8hxJu4vuiWCfKzravGCMSCiGgdW4IdfWKKbWIR5pbSFmh8QBz
-	CtweCrFyv61VurdaR9WmeV3LbvHFwyaLzeAYjl0NYro6h105V+tL0SVGXlEUv+SotqV6wo+NatB
-	h66C9L2TCn6UeufNs0Ha1M9CUaNcxg8pQOi8YuxGcfV5Qjb33AGfaKjdV95EOznC7N8w0vo4Y/D
-	sVK6b8Z72HklPbriinTZ3jQY5BUr0i6VDTVqo+PWP+ekwaEBMZWlmPJcsRQSk27XBe1BT4CGtOI
-	5DNFii1M/ANjgvgq6d15D8fMJptzmDed1ymWUEsRA/X39s9B0gZJuPGp0aF0sF1Euz0cPTvFAgI
-	j0ZjLlKfJ02aXrtu7lAKQe2c8ozL9KMtk/YEoHVmRjzsKPfI5/3T3d56APCBR6WeR/HY3LiPCgX
-	YUwU6rk89ew+EaFQd//FH11usj/eCOYbw==
-X-Received: by 2002:a05:6214:4601:b0:8f0:3b2c:a9c8 with SMTP id 6a1803df08f44-90e9f25c224mr108760886d6.12.1788377690538;
-        Wed, 02 Sep 2026 12:34:50 -0700 (PDT)
+        bh=183/fvO/by+DRdIa2ztu9BBJ4pI2bMZEyG+Jxipy0sA=;
+        b=tYE3whxsj1BrYmWg1fAPUwd8UJnCYT7VyUcPdxx+tNi/rGH02om6imV9cJn3GrgxUl
+         J3F8q2unJFqgVW+2UkHYCGN59jChDDp3YdWSs0Rjb0Q1ueEefgaudMT9VufERGPRSWTJ
+         EbmOafJcxBpMmvbHBN2YA9ouZATlijQJ/Jn2TiApC7KaljLFmfGXs9xSkUrGKrAfoz+d
+         0JYKWOvifhEelr40gAxuLoFMmDucxFYO6vRx/kuUPljS+HiKDOBquX21k9Wdr8t//ii9
+         g5P4tvNjK/hZBiABpOzU9VSQ31A+wed824NB0SZ5z5mtXqduFsfXH4DsbTF69+TwCIrr
+         3LvQ==
+X-Forwarded-Encrypted: i=1; AKwUvByBxTsqpnJqAup72vJPGvM8XKKcJQi8XvTNliGKlhpephrbO3eY2L1sIL0FptSMwGXBMKsYpvzVvg9Mc1L68QPDi9i0NXA=@vger.kernel.org
+X-Gm-Message-State: AFuF++kBQtEsNu2UWGnJUurMrIhBNghLmlCh+y2iVN1eCMa4EYC7pQ70
+	81tDVgK8o05w0h84Be2mKbKzyXN7oCUyS20dA7+jf0YO6+g8Veeqq0y+Q7zLJQuH1w==
+X-Gm-Gg: AYBFou2SFw5HFv+IQ+41NyLXVlpRNctH0mMxlK9zBXt/GWvISQRjIV4C/uzESrtipcS
+	zbCA51YoLK3Okpn+njI6mP6V5IZz9Wm6P/rK94n2j7wE9GjVd75EbWxCcYcn/LKGxR3G737IS6d
+	K2f543lWIqXF/wooiYwmNNysIFoPL6Lqk88Q6Sec/bROp1XI4DAe6g67etiWpjzKkP89TEIq9ku
+	RLyZq5uBRXxk3eVDyxjsyMOqDqCCrzjkYUwzJvaj8LLDFbw8mq/p8v4za23s9FZ7vJb74NiiVba
+	KN4BICxZRTwxujmxoL/NHMXp9ZIy5KBVcWS7GPsVyqTfg5AmVznUvwhyqcuo1rlahjUEaSxCQ7U
+	DSNuDM+LZAp/uOlvvQJPSTwv1Y4O52B+y8mI2dh9NY1bwCK2X0ocatGuLCeW2Q51Q6EyLObkIjI
+	0/FN4NQVpBo+GjSDn5bgwBRJpjDyfZKRQrZ2eVdKfjhABrXtUa5/d/jOo3Ow7/D9sCHx7ixwaTg
+	tHutopNs4GVseLecLDlpAbCHJn4lyqfZA==
+X-Received: by 2002:a05:6214:2dc9:b0:90e:8022:b66a with SMTP id 6a1803df08f44-90eca50ecaamr99641606d6.22.1788377691985;
+        Wed, 02 Sep 2026 12:34:51 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90e9ef0f57fsm25004716d6.47.2026.09.02.12.34.49
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90e9eec8099sm25284386d6.30.2026.09.02.12.34.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 12:34:49 -0700 (PDT)
-Date: Wed, 02 Sep 2026 15:34:49 -0400
-Message-ID: <f12155b3bc5ca8d846bf822b35f6b857@paul-moore.com>
+        Wed, 02 Sep 2026 12:34:51 -0700 (PDT)
+Date: Wed, 02 Sep 2026 15:34:50 -0400
+Message-ID: <32dd145d801e472375c21d582023ed40@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -75,9 +74,9 @@ X-Mailer: pstg-pwork:20260902_1319/pstg-lib:20260901_1604/pstg-pwork:20260902_13
 From: Paul Moore <paul@paul-moore.com>
 To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, Seth Forshee <sforshee@kernel.org>, linux-security-module@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, "Christian Brauner (Amutable)" <brauner@kernel.org>
-Subject: Re: [PATCH 13/27] fs: port xattr to const mnt_idmap
-References: <20260901-work-idmap-const-v1-13-54ccd48e100b@kernel.org>
-In-Reply-To: <20260901-work-idmap-const-v1-13-54ccd48e100b@kernel.org>
+Subject: Re: [PATCH 17/27] fs: port ->tmpfile() to pass const mnt_idmap
+References: <20260901-work-idmap-const-v1-17-54ccd48e100b@kernel.org>
+In-Reply-To: <20260901-work-idmap-const-v1-17-54ccd48e100b@kernel.org>
 
 On Sep  1, 2026 Christian Brauner <brauner@kernel.org> wrote:
 > 
@@ -98,66 +97,32 @@ On Sep  1, 2026 Christian Brauner <brauner@kernel.org> wrote:
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 > Reviewed-by: Jan Kara <jack@suse.cz>
 > ---
->  Documentation/filesystems/locking.rst |  2 +-
->  fs/9p/xattr.c                         |  2 +-
->  fs/afs/xattr.c                        |  4 ++--
->  fs/attr.c                             |  2 +-
->  fs/btrfs/xattr.c                      |  6 +++---
->  fs/ceph/xattr.c                       |  2 +-
->  fs/ecryptfs/inode.c                   |  2 +-
->  fs/ext2/xattr_security.c              |  2 +-
->  fs/ext2/xattr_trusted.c               |  2 +-
->  fs/ext2/xattr_user.c                  |  2 +-
->  fs/ext4/xattr_hurd.c                  |  2 +-
->  fs/ext4/xattr_security.c              |  2 +-
->  fs/ext4/xattr_trusted.c               |  2 +-
->  fs/ext4/xattr_user.c                  |  2 +-
->  fs/f2fs/xattr.c                       |  4 ++--
->  fs/fuse/dir.c                         |  2 +-
->  fs/fuse/fuse_i.h                      |  2 +-
->  fs/fuse/xattr.c                       |  2 +-
->  fs/gfs2/xattr.c                       |  2 +-
->  fs/hfs/attr.c                         |  2 +-
->  fs/hfsplus/xattr.c                    |  2 +-
->  fs/hfsplus/xattr_security.c           |  2 +-
->  fs/hfsplus/xattr_trusted.c            |  2 +-
->  fs/hfsplus/xattr_user.c               |  2 +-
->  fs/jffs2/security.c                   |  2 +-
->  fs/jffs2/xattr_trusted.c              |  2 +-
->  fs/jffs2/xattr_user.c                 |  2 +-
->  fs/jfs/xattr.c                        |  4 ++--
->  fs/kernfs/inode.c                     |  4 ++--
->  fs/nfs/nfs4proc.c                     | 10 +++++-----
->  fs/ntfs/ea.c                          |  2 +-
->  fs/ntfs3/xattr.c                      |  2 +-
->  fs/ocfs2/xattr.c                      |  6 +++---
->  fs/orangefs/xattr.c                   |  2 +-
->  fs/overlayfs/xattrs.c                 |  4 ++--
->  fs/pidfs.c                            |  2 +-
->  fs/smb/client/xattr.c                 |  2 +-
->  fs/smb/server/vfs.c                   | 24 ++++++++++++------------
->  fs/smb/server/vfs.h                   | 20 ++++++++++----------
->  fs/ubifs/xattr.c                      |  2 +-
->  fs/xattr.c                            | 22 +++++++++++-----------
->  fs/xfs/xfs_iops.c                     |  2 +-
->  fs/xfs/xfs_xattr.c                    |  2 +-
->  include/linux/capability.h            |  4 ++--
->  include/linux/fs.h                    |  2 +-
->  include/linux/lsm_hook_defs.h         |  8 ++++----
->  include/linux/security.h              | 20 ++++++++++----------
->  include/linux/xattr.h                 | 20 ++++++++++----------
->  kernel/bpf/inode.c                    |  2 +-
->  mm/shmem.c                            |  2 +-
->  net/socket.c                          |  4 ++--
->  security/commoncap.c                  |  8 ++++----
->  security/integrity/evm/evm_main.c     |  4 ++--
->  security/integrity/ima/ima_appraise.c |  4 ++--
->  security/security.c                   |  8 ++++----
->  security/selinux/hooks.c              |  6 +++---
->  security/smack/smack_lsm.c            |  6 +++---
->  57 files changed, 135 insertions(+), 135 deletions(-)
+>  Documentation/filesystems/locking.rst | 2 +-
+>  Documentation/filesystems/vfs.rst     | 2 +-
+>  fs/bad_inode.c                        | 2 +-
+>  fs/btrfs/inode.c                      | 2 +-
+>  fs/ext2/namei.c                       | 2 +-
+>  fs/ext4/namei.c                       | 2 +-
+>  fs/f2fs/namei.c                       | 2 +-
+>  fs/fuse/dir.c                         | 2 +-
+>  fs/hugetlbfs/inode.c                  | 2 +-
+>  fs/minix/namei.c                      | 2 +-
+>  fs/overlayfs/dir.c                    | 2 +-
+>  fs/ramfs/inode.c                      | 2 +-
+>  fs/smb/client/cifsfs.h                | 2 +-
+>  fs/smb/client/dir.c                   | 2 +-
+>  fs/ubifs/dir.c                        | 2 +-
+>  fs/udf/namei.c                        | 2 +-
+>  fs/xfs/xfs_iops.c                     | 2 +-
+>  include/linux/fs.h                    | 2 +-
+>  include/linux/lsm_hook_defs.h         | 2 +-
+>  include/linux/security.h              | 4 ++--
+>  mm/shmem.c                            | 2 +-
+>  security/integrity/ima/ima_main.c     | 2 +-
+>  security/security.c                   | 2 +-
+>  23 files changed, 24 insertions(+), 24 deletions(-)
 
-Acked-by: Paul Moore <paul@paul-moore.com> (LSM, SELinux)
+Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
 
 --
 paul-moore.com
