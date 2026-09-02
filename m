@@ -1,184 +1,105 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B734A9D76;
-	Wed,  2 Sep 2026 16:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DBD4AA58F;
+	Wed,  2 Sep 2026 17:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788365269; cv=none; b=SZHkDmF/Kf03QqRVRZDLYwRbijXZEZTkkPeRr2T0w5pOv0yWt02Z/ZG4MrVlB/FnrFDNOGWnJ02+kSwzRe1Gh9hHSO6DEhgoeCyGc8dUuPFFgVwGox/qkIeWtp6+Cja6kvEt4sKY2fgUv4JjIVEh+JXeSv4WuyOzmFDHCPCUBFE=
+	t=1788369717; cv=none; b=jl7AEFIlUbKAA/WZWM9FP7c/0M6na2SZ8OiTUyIx6kBDhfPvcO41dUQV9p+I9ePYliz6eVt1nu54gG7lJkVI28xlg0tceE94SB5VvWaxaxj+Kp8FhZuaHa+WtAnXgi2Ws8B78GX8MbuJ3fce0LUBvMsdzV7rzwpTTPV/uZUaHMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788365269; c=relaxed/simple;
-	bh=P6CyjnQCD6Ueg6/odmAdFf71SxIvposEfb5XFt0XTH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heFO5EHKX2AvAnQrWyO0BANsm5jGW7v04JYnxIX87U9Auxh2cpAemA4ld7rcrQsnoNoo+T13bkaNYEvdZ9DejImKa84ogOPNZ2Ny2yWr39VIsOxGQte8bBTt7Uh/4oKeERYLW6hXuw3nzdSsObjI38xaIMmerjXIuVBF/7sAj54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A0G0EV6U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wMfk1JD4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J2u0vrLQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jhVZVvvG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1788369717; c=relaxed/simple;
+	bh=BPcF7tK+9wjEO8AHHaaT7RkdtWrPCMtrKpsxJUOa4Ic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CW6u0JG/BXIja9MWjUesjsIWSjOHwfQLjnmA5Q+3bgeLisgvznnlPTkK3C0CMqpOlOfRv8tA0xGw1w9EjLQDSuJUsPHQLhr3ezGM/dcADu637qn+Gbgc6t2iYhGnZF3MFdebLFpUuw/2poHxMjZaM7SIOBWKHwVzMF1h7hGIGVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Epf2Eq7n; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A0G0EV6U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wMfk1JD4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J2u0vrLQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jhVZVvvG"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D984721CF1;
-	Wed,  2 Sep 2026 16:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1788365260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GyyAayOiVnv3aCFB/W1ne3d6kkITO1+ebE/Tmz3HhRc=;
-	b=A0G0EV6UhbB6YIvOcpkFyIfobvY9/e8i/ReIi8HVus8DxK9g5Hk5ISsE5espVhhlivJZOU
-	ImQ51Lja4jGOm1Tf6aRccvgqzCLff2nf22JUKY5mlzlEFKzQFTn60qtuyKgzDV0AOBqIUV
-	lfAJu0mnlzJXGa3I9wqiz48JnlJ1ZdE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1788365260;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GyyAayOiVnv3aCFB/W1ne3d6kkITO1+ebE/Tmz3HhRc=;
-	b=wMfk1JD4823uYOsl8fRyyPrX6HKmco8UqVmxSlHr5EdUleJzoOC6hSE544UQHcxcMbS1Rq
-	p9SnsXWpu3kNZmDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1788365255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GyyAayOiVnv3aCFB/W1ne3d6kkITO1+ebE/Tmz3HhRc=;
-	b=J2u0vrLQuKQxOjcCTVhxFLjobpvG5TMTIE29WBZx0Kfd6B7+2rH4mLAdzP/e+YRYBfkhi1
-	/dsloXZkTXfiA7rJdHeBBTbJgSCdbgHK7Gnw0uA41QQrTbKKpIkmlh8noKS+0iuqcNcXcg
-	zx/wQArVMHi8TVda+qCcK9L3pWQap+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1788365255;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GyyAayOiVnv3aCFB/W1ne3d6kkITO1+ebE/Tmz3HhRc=;
-	b=jhVZVvvGm3fLLJuX6gV+8KGwP9KoKX/mo0qHd/+V2P87KOQvfzzvsovffSqZZ5hvtPLeGP
-	YaEYZs6Z2naE0oBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B91D713515;
-	Wed,  2 Sep 2026 16:07:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AAStLMdJmGrnegAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Sep 2026 16:07:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 64656A13B5; Wed, 02 Sep 2026 18:07:35 +0200 (CEST)
-Date: Wed, 2 Sep 2026 18:07:35 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Seth Forshee <sforshee@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	linux-security-module@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
-	linux-integrity@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, 
-	Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org, 
-	Namjae Jeon <linkinjeon@kernel.org>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 27/27] fs: make nop_mnt_idmap and invalid_mnt_idmap const
-Message-ID: <zjaeoapknslc6sxdf7ycgkytk2fr6ougieqz7icejptlfzkuhd@sr47lzi4ldex>
-References: <20260901-work-idmap-const-v1-0-54ccd48e100b@kernel.org>
- <20260901-work-idmap-const-v1-27-54ccd48e100b@kernel.org>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Epf2Eq7n"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=ijDI5sjv0PAMOD6lrMuq488aWX1/T3nzo96haAqvwtY=; b=Epf2Eq7ntw5PUbmPjPRkZVAo9R
+	gaF3QCTuhcNqvxkUh6JOCZMhWNbdw4nG5AYzx2tkiJeTSLUnybpbyq/kEAlie++TN5ijQJxlkbEN1
+	wuYgJl/TJAJs2dk7RPp7sTJCRWpKf4vAYEa9DRG3jiuBifkuVaVXt1EfGr+sNJOtv0ClhS0wnicGv
+	iPAnxEUAbHpL3PrIHVMldhifWwgYp88vhizjjWwhNrUp4WJVsGcXpjX3Vb7PUA/UvgKJWUyruOEst
+	ndmwH6cWVjDTOJE8STEm2q+FFPjtgwDbJLxw1rRQVBoEPR7I69p4d6Fhc5mXzxKCO0sJoA3ji0WfM
+	ndH7BzWg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1x1oeo-0000000FQIJ-1S7G;
+	Wed, 02 Sep 2026 17:21:54 +0000
+Message-ID: <a4f81c75-bd83-499d-9dc7-b891ec9cd922@infradead.org>
+Date: Wed, 2 Sep 2026 10:21:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260901-work-idmap-const-v1-27-54ccd48e100b@kernel.org>
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,zeniv.linux.org.uk,suse.cz,lst.de,kernel.org,paul-moore.com,linux.ibm.com,gmail.com,szeredi.hu];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ipe: fix invalid sgid value in audit event
+ documentation
+To: Manuel Ebner <manuelebnerli@mailbox.org>, Fan Wu <wufan@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ Deven Bowers <deven.desai@linux.microsoft.com>,
+ Paul Moore <paul@paul-moore.com>
+Cc: Manuel Ebner <manuelebner@mailbox.org>, Fan Wu
+ <wufan@linux.microsoft.com>, linux-security-module@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260902152910.708743-3-manuelebnerli@mailbox.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260902152910.708743-3-manuelebnerli@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 01-09-26 14:14:52, Christian Brauner wrote:
-> Make both static maps const so they end up in rodata. Any attempt to
-> modify them now faults instead of silently corrupting the initial
-> idmapping.
+
+
+On 9/2/26 8:29 AM, Manuel Ebner wrote:
+> From: Manuel Ebner <manuelebner@mailbox.org>
 > 
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> The audit event example in the IPE documentation contains 'sgid=)',
+> which is not a valid Set Group ID value. Fix it to use 'sgid=0'.
+> 
+> Fixes: ac6731870ed9 ("documentation: add IPE documentation")
+> Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks.
 
 > ---
->  fs/mnt_idmapping.c            | 4 ++--
->  include/linux/mnt_idmapping.h | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-> index 26704eeb7318..bed57094cef0 100644
-> --- a/fs/mnt_idmapping.c
-> +++ b/fs/mnt_idmapping.c
-> @@ -28,7 +28,7 @@ struct mnt_idmap {
->   * mapping. This means that {g,u}id 0 is mapped to {g,u}id 0, {g,u}id 1 is
->   * mapped to {g,u}id 1, [...], {g,u}id 1000 to {g,u}id 1000, [...].
->   */
-> -struct mnt_idmap nop_mnt_idmap = {
-> +const struct mnt_idmap nop_mnt_idmap = {
->  	.count	= REFCOUNT_INIT(1),
->  };
->  EXPORT_SYMBOL_GPL(nop_mnt_idmap);
-> @@ -37,7 +37,7 @@ EXPORT_SYMBOL_GPL(nop_mnt_idmap);
->   * Carries the invalid idmapping of a full 0-4294967295 {g,u}id range.
->   * This means that all {g,u}ids are mapped to INVALID_VFS{G,U}ID.
->   */
-> -struct mnt_idmap invalid_mnt_idmap = {
-> +const struct mnt_idmap invalid_mnt_idmap = {
->  	.count	= REFCOUNT_INIT(1),
->  };
->  EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
-> diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-> index b445c7660040..78eeef4c2996 100644
-> --- a/include/linux/mnt_idmapping.h
-> +++ b/include/linux/mnt_idmapping.h
-> @@ -8,8 +8,8 @@
->  struct mnt_idmap;
->  struct user_namespace;
+> [v3]
+>  Really fix commit message.
 >  
-> -extern struct mnt_idmap nop_mnt_idmap;
-> -extern struct mnt_idmap invalid_mnt_idmap;
-> +extern const struct mnt_idmap nop_mnt_idmap;
-> +extern const struct mnt_idmap invalid_mnt_idmap;
->  extern struct user_namespace init_user_ns;
+> [v2]
+>  Add Fixes tag.
+>  Fix commit message
+> 
+> Thanks for the help Fan Wu.
+> ---
+>  Documentation/admin-guide/LSM/ipe.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+> index a756d8158531..bebf14fc2411 100644
+> --- a/Documentation/admin-guide/LSM/ipe.rst
+> +++ b/Documentation/admin-guide/LSM/ipe.rst
+> @@ -502,11 +502,11 @@ The following table lists the error codes that may appear in the errno field whi
+>  Event Examples::
 >  
->  typedef struct {
-> 
-> -- 
-> 2.53.0
-> 
+>     type=1404 audit(1653425689.008:55): enforcing=0 old_enforcing=1 auid=4294967295 ses=4294967295 enabled=1 old-enabled=1 lsm=ipe res=1
+> -   type=1300 audit(1653425689.008:55): arch=c000003e syscall=1 success=yes exit=2 a0=1 a1=55c1065e5c60 a2=2 a3=0 items=0 ppid=405 pid=441 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=)
+> +   type=1300 audit(1653425689.008:55): arch=c000003e syscall=1 success=yes exit=2 a0=1 a1=55c1065e5c60 a2=2 a3=0 items=0 ppid=405 pid=441 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0
+>     type=1327 audit(1653425689.008:55): proctitle="-bash"
+>  
+>     type=1404 audit(1653425689.008:55): enforcing=1 old_enforcing=0 auid=4294967295 ses=4294967295 enabled=1 old-enabled=1 lsm=ipe res=1
+> -   type=1300 audit(1653425689.008:55): arch=c000003e syscall=1 success=yes exit=2 a0=1 a1=55c1065e5c60 a2=2 a3=0 items=0 ppid=405 pid=441 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=)
+> +   type=1300 audit(1653425689.008:55): arch=c000003e syscall=1 success=yes exit=2 a0=1 a1=55c1065e5c60 a2=2 a3=0 items=0 ppid=405 pid=441 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0
+>     type=1327 audit(1653425689.008:55): proctitle="-bash"
+>  
+>  This record will always be emitted in conjunction with a ``AUDITSYSCALL`` record for the ``write`` syscall.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+~Randy
