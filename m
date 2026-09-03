@@ -1,247 +1,188 @@
-Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CD13B42FD
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 08:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F8C2E7F20;
+	Thu,  3 Sep 2026 09:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788422678; cv=none; b=lA1LK3pcPkoq5/W/9WY98+Qzo8/W8OP/K1L9P4TrzBKFTaMYgf2BNlGJw6fCyw8NlCdZRUnHzXQxevxRCX8zHRORemjgI6T9lg0CSxZeABRhGCQi+zYV2cAzR8E3uROlnN4Bo6TO7i7VVXGrgSNKBLcmSVeyLWGY8U2IGUxlNR0=
+	t=1788427917; cv=none; b=DCJsULOs9cHtsKahSQ8YZpiByHH+5JRv6K+Dt+uljkmOasSF3khQuqHKTYhI3JPwGn1pyhalwgMp09sHKIp0ZEWhzy9weYvvyFTHUJUefZfaDmoZJCfyRx5nG8/bUyhRDtNHJKaZcB+5fnU6LdDRhb5O+c9P3zdW8ll9+g5OfmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788422678; c=relaxed/simple;
-	bh=/cU/rXoqPmij/0icEQ/WL6PzuBlibn1NvZix5YNhZnM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OCGM/wJWkg7l/tQ2E1Bi3BkcPGje/1nIyxShuiuvnxPji8w/eRmHX+u1DSxBDOobOkomFAxmgQfFX653Y4EXh+7Wh131rxLHBRIM5594S702n92GMSGI85J6IJwSfCTRMjRyHz7f1iI6/JqmGkV7Y6EUIk0AWWnenivS64ZET5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-6b34e02c466so769947eaf.1
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 01:04:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788422675; x=1789027475;
-        h=content-type:to:from:subject:message-id:in-reply-to:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=EdIlJpPWXX+y9INBx3cKuIwPRg7+iB8XVRejihaUQ1A=;
-        b=Al7UqYwhe2i4QA0Cd3+kargpnO4RlHx2hglO5Bwqk0Kmj/7WMbxQz9YN2cYwPDj+/z
-         yy1wKERDa8V5OfuPRIdzpqCTnaRTmR23WQIYEWsoUie3j1maWi0wL1HHNZeC2uuIYD6i
-         eVeZJgTO9hGQu6+VaIUGx9IeUfsF1lgV6Ane1KIT8Hy0tx95adcsHBB2DR2sTKZHy+aw
-         nLLWMK4nrYAuRvvqRU7QeP2UTdWJFgwuGR+6m1b7xF4K6KZDdkyF5bL3msfsPrkGwF7f
-         qpAcp3n+5J5eNb0dXiLYy1C+6c0BmCkos8oI8wn961jBCttyovW2Mx+LWc59Jx/lyFyX
-         9UAw==
-X-Forwarded-Encrypted: i=1; AKwUvBxODTj2pBNMVOPFenTe+2DxVt1pqLekNuPrT8tYHzOA2S4g1otk0QtFPTVRNI1hTOjU+73ktWcn3C45CWlDSkXXatiHAds=@vger.kernel.org
-X-Gm-Message-State: AFuF++lpF2vwVcKcL98HsrDf621JZbUaUJgan1SLeFo+L8QyKZf1Ziis
-	jlGK8Bjt9p1W3/Q49n0KcdQtTbIjKlKSPdRuVAMrCywG3MWV3Or/0+EYwCe56wsN1WGeHkPTUAp
-	/aGYSmgIY1KBbSL66UrvVYslrVNfEU/ctBNIUpH6ymLPiwhMbmxntMzmudsY=
+	s=arc-20240116; t=1788427917; c=relaxed/simple;
+	bh=M1GuArPDszQqhtRbvFDsXyR6Fc3gKdDpC4liGH6u+fk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YA9YBIf2jpdm0xK+k9xRComvlAGCpzS4R92qVvp3T9tOIK1RYcTLfVwfYuk4Vc6CvMa4gaKBpfudHCkyav2Wzjy592BdwVSueRcO8xn6o1oeH8n/2HvkcsWpHIo3KGh2+jG4MT8vYBUCxR+L8oCzGdEQDL0yRz5CTJtzxPXwL7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=j04Ou6le; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j04Ou6le"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68392MD92554949;
+	Thu, 3 Sep 2026 09:31:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Oes1IY
+	6tLtZP0ojS7F9/jWz9DNW2mLJCHP801lQkmNk=; b=j04Ou6leVZz1OLXCqueA/W
+	Yyi7Ijyufw8f64/1JYtjIehAT6UG94yxol4bLznNmbqz9AJqRNOxSckjNcQck1uE
+	IzL40AKywC9ZV0ZFRFQ02dOh3uLrFok8h5483SKoKyvS6Pb6Q3kJ8MCVpHUtrDob
+	wuwF3qdoMxvanfVgrHJw7818MBnyIWBRTTtD67rJ0SpYie6g9eTjoL6Oznr1KgMq
+	o/tRa/bjf2VuA5Mw2zkQrNTj2xnC6jMT0+t+NNXWsAUSCMj7yyNM6NK5U+Hu7VRS
+	seWSbJsxXacS0EYDfme/E8fa77s8/1K85wFCpXK4vn52FAFEFuQ57O+kdbYT49tA
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbpx5v37e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Sep 2026 09:31:22 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6839QKxr027721;
+	Thu, 3 Sep 2026 09:31:21 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gecjaqc9f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Sep 2026 09:31:21 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6839VKig56361414
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Sep 2026 09:31:20 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 076FE58061;
+	Thu,  3 Sep 2026 09:31:20 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B2C558059;
+	Thu,  3 Sep 2026 09:31:14 +0000 (GMT)
+Received: from [9.123.14.23] (unknown [9.123.14.23])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Sep 2026 09:31:14 +0000 (GMT)
+Message-ID: <44129fcb-e898-4567-b328-693c3b25b84d@linux.ibm.com>
+Date: Thu, 3 Sep 2026 15:01:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:e90a:0:b0:6b4:117e:53a with SMTP id
- 006d021491bc7-6b58679127dmr2800558eaf.20.1788422675173; Thu, 03 Sep 2026
- 01:04:35 -0700 (PDT)
-Date: Thu, 03 Sep 2026 01:04:35 -0700
-In-Reply-To: <6a698f41.d9e86bb5.297b12.0052.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a992a13.f03f19fe.169578.0004.GAE@google.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in configfs_read_iter
-From: syzbot <syzbot+d2085ac2d653b9e383e2@syzkaller.appspotmail.com>
-To: a.hindborg@kernel.org, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	jmorris@namei.org, leitao@debian.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    940de590b839 Merge tag 'hardening-v7.3-rc2' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=164270f9580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5c3949d762a91f
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2085ac2d653b9e383e2
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e850f9580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=114270f9580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-940de590.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/64f87fb4f049/vmlinux-940de590.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/917bd28bbd2d/bzImage-940de590.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d2085ac2d653b9e383e2@syzkaller.appspotmail.com
-
-nvmet: adding nsid 1 to subsystem testsubsys
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.0.17/5927 is trying to acquire lock:
-ffff88802cf0e080 (&buffer->mutex){+.+.}-{4:4}, at: configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
-
-but task is already holding lock:
-ffff88802405fe48 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5908 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
-       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
-       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
-       process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
-       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xc4/0x210 security/security.c:2755
-       do_open fs/namei.c:4839 [inline]
-       path_openat+0x5cd/0x2440 fs/namei.c:5000
-       do_file_open+0x20e/0x430 fs/namei.c:5029
-       file_open_name+0x1c3/0x3e0 fs/open.c:1375
-       filp_open+0x2e/0x50 fs/open.c:1392
-       nvmet_file_ns_enable+0x95/0x420 drivers/nvme/target/io-cmd-file.c:41
-       nvmet_ns_enable+0x35f/0x5d0 drivers/nvme/target/core.c:596
-       nvmet_ns_enable_store+0x11e/0x160 drivers/nvme/target/configfs.c:737
-       flush_write_buffer fs/configfs/file.c:207 [inline]
-       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x6af/0x1050 fs/read_write.c:687
-       ksys_write+0x12a/0x250 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&subsys->lock){+.+.}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5908 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
-       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
-       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
-       nvmet_ns_device_path_store+0x57/0x1c0 drivers/nvme/target/configfs.c:538
-       flush_write_buffer fs/configfs/file.c:207 [inline]
-       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x6af/0x1050 fs/read_write.c:687
-       ksys_write+0x12a/0x250 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&p->frag_sem){.+.+}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5908 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
-       down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
-       flush_write_buffer fs/configfs/file.c:205 [inline]
-       configfs_write_iter+0x218/0x4e0 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x6af/0x1050 fs/read_write.c:687
-       ksys_write+0x12a/0x250 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&buffer->mutex){+.+.}-{4:4}:
-       check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3181
-       check_prevs_add kernel/locking/lockdep.c:3300 [inline]
-       validate_chain kernel/locking/lockdep.c:3924 [inline]
-       __lock_acquire+0x1492/0x1ec0 kernel/locking/lockdep.c:5254
-       lock_acquire kernel/locking/lockdep.c:5908 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
-       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
-       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
-       configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
-       __kernel_read+0x397/0xad0 fs/read_write.c:532
-       integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
-       ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
-       ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
-       process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
-       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xc4/0x210 security/security.c:2755
-       do_open fs/namei.c:4839 [inline]
-       path_openat+0x5cd/0x2440 fs/namei.c:5000
-       do_file_open+0x20e/0x430 fs/namei.c:5029
-       do_sys_openat2+0x10f/0x1e0 fs/open.c:1417
-       do_sys_open fs/open.c:1423 [inline]
-       __do_sys_openat fs/open.c:1439 [inline]
-       __se_sys_openat fs/open.c:1434 [inline]
-       __x64_sys_openat+0x12d/0x210 fs/open.c:1434
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &buffer->mutex --> &subsys->lock --> &ima_iint_mutex_key[depth]
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ima_iint_mutex_key[depth]);
-                               lock(&subsys->lock);
-                               lock(&ima_iint_mutex_key[depth]);
-  lock(&buffer->mutex);
-
- *** DEADLOCK ***
-
-locks held by syz.0.17/5927: 1, last CPU#3:
- #0: ffff88802405fe48 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
-
-stack backtrace:
-CPU: 3 UID: 0 PID: 5927 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x100/0x190 lib/dump_stack.c:120
- print_circular_bug.cold+0x178/0x1be kernel/locking/lockdep.c:2059
- check_noncircular+0x146/0x160 kernel/locking/lockdep.c:2191
- check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3181
- check_prevs_add kernel/locking/lockdep.c:3300 [inline]
- validate_chain kernel/locking/lockdep.c:3924 [inline]
- __lock_acquire+0x1492/0x1ec0 kernel/locking/lockdep.c:5254
- lock_acquire kernel/locking/lockdep.c:5908 [inline]
- lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
- __mutex_lock_common kernel/locking/mutex.c:646 [inline]
- __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
- configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
- __kernel_read+0x397/0xad0 fs/read_write.c:532
- integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
- ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
- ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
- process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
- ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
- security_file_post_open+0xc4/0x210 security/security.c:2755
- do_open fs/namei.c:4839 [inline]
- path_openat+0x5cd/0x2440 fs/namei.c:5000
- do_file_open+0x20e/0x430 fs/namei.c:5029
- do_sys_openat2+0x10f/0x1e0 fs/open.c:1417
- do_sys_open fs/open.c:1423 [inline]
- __do_sys_openat fs/open.c:1439 [inline]
- __se_sys_openat fs/open.c:1434 [inline]
- __x64_sys_openat+0x12d/0x210 fs/open.c:1434
- do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
- do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f57f139e159
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd81407e38 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f57f1625fa0 RCX: 00007f57f139e159
-RDX: 0000000000000002 RSI: 0000200000000240 RDI: ffffffffffffff9c
-RBP: 00007f57f1435024 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f57f1625fac R14: 00007f57f1625fa0 R15: 00007f57f1625fa0
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KEYS: trusted: Fix tpm2_load_cmd() boundary check
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: stable@vger.kernel.org, co+6a581c4284f721d4@bugs.sh,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jonathan McDowell <noodles@meta.com>,
+        Ross Philipson <ross.philipson@gmail.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Stefano Garzarella <sgarzare@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260901205809.2028454-1-jarkko@kernel.org>
+Content-Language: en-US
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+In-Reply-To: <20260901205809.2028454-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=PPc/P/qC c=1 sm=1 tr=0 ts=6a993e6b cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=9NdF306EAAAA:8
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=w0kG7cfk7OnRNx5R66wA:9 a=QEXdDO2ut3YA:10
+ a=rgq1sGBS9uhxkUNMdZk6:22
+X-Proofpoint-GUID: vIX0nz_Oxt4zQ4BLL0BIgl3RrLAIh53g
+X-Proofpoint-ORIG-GUID: 1ZJ0Rqam87dI5LDuAG4CJt-2a3_NwCbG
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA4MiBTYWx0ZWRfX+BCe6WQL3AXn
+ YS2g/5qL1e6W2Hot4135EYWaUXwzM9mBpoj6RC3dPMOSrOnsJjoCJH48u98CAaTWz4D6cbqdUWG
+ P47GfeVFmULHERpuZrOcliqBflC9GiY=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA4MiBTYWx0ZWRfX3Ut2khEE/1PZ
+ H6vC3iAWiTw6ZhaPXTRtQRko3VB1G+5Gul5uh3ChRiLFdLp+qZMSykbfpl6/1WUJZXeckiqFUEY
+ f04xEhsBTGyxrsllFFrZieqxCROuD6V4wNR/a1tINopVcCc3y55CBoQDV1TR+PzsDD5Qr+sEvoO
+ 3wcbAQlKQ+ek3SxBAjSQ4zonSEI/MybHNpV0y96jr8UD4Sj+XNjIeoZHkNns1vNrlavGfgxhnVd
+ vGj2rASbeNb0zNNkVVRGhHuQLPk6ngOvXDq0iE80QageoXZqh02YERi1RI2rS0P2EQgHwUA5SoF
+ 4Qi+iKJcQdla2sMytB92RwKahZLz2QoVbLG8/1pXrXxzrNCZek6HUDg4/pejp3vIwCmehWKv/Lb
+ 3wdbDIZCJbv0D4/9iVSj438yYHCgGmiMggruB9Zu8fqn0YJzuIaLP6PjF/YblR/dB8FjW4Pkb4J
+ NoMQSFWjjMrSiklp+Jw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-03_02,2026-09-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 phishscore=0 adultscore=0 suspectscore=0 bulkscore=0
+ spamscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2609030082
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+On 9/2/26 2:28 AM, Jarkko Sakkinen wrote:
+> tpm2_load_cmd() does boundary checks against the ASN.1 size i.e.,
+> payload->blob_len. Address this by passing the decoded blob size to
+> tpm2_load_cmd(), and use it for the boundary checks.
+>
+> Cc: stable@vger.kernel.org # v5.13+
+> Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+> Reported-by: co+6a581c4284f721d4@bugs.sh
+> Closes: https://bugs.sh/b/6a581c4284f721d4/
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+
+Tested-by: Srish Srinivasan <ssrish@linux.ibm.com>
+
+
+> ---
+>   security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 67225dd562a9..01f18bb37047 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -99,7 +99,7 @@ struct tpm2_key_context {
+>   
+>   static int tpm2_key_decode(struct trusted_key_payload *payload,
+>   			   struct trusted_key_options *options,
+> -			   u8 **buf)
+> +			   u8 **buf, unsigned int *blob_len)
+>   {
+>   	int ret;
+>   	struct tpm2_key_context ctx;
+> @@ -120,6 +120,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+>   		return -ENOMEM;
+>   
+>   	*buf = blob;
+> +	*blob_len = ctx.priv_len + ctx.pub_len;
+>   	options->keyhandle = ctx.parent;
+>   
+>   	memcpy(blob, ctx.priv, ctx.priv_len);
+> @@ -384,10 +385,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>   	int rc;
+>   	u32 attrs;
+>   
+> -	rc = tpm2_key_decode(payload, options, &blob);
+> +	rc = tpm2_key_decode(payload, options, &blob, &blob_len);
+>   	if (rc) {
+>   		/* old form */
+>   		blob = payload->blob;
+> +		blob_len = payload->blob_len;
+>   		payload->old_format = 1;
+>   	} else {
+>   		/* Bind for cleanup: */
+> @@ -399,17 +401,17 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>   		return -EINVAL;
+>   
+>   	/* must be big enough for at least the two be16 size counts */
+> -	if (payload->blob_len < 4)
+> +	if (blob_len < 4)
+>   		return -EINVAL;
+>   
+>   	private_len = get_unaligned_be16(blob);
+>   
+>   	/* must be big enough for following public_len */
+> -	if (private_len + 2 + 2 > (payload->blob_len))
+> +	if (private_len + 2 + 2 > blob_len)
+>   		return -E2BIG;
+>   
+>   	public_len = get_unaligned_be16(blob + 2 + private_len);
+> -	if (private_len + 2 + public_len + 2 > payload->blob_len)
+> +	if (private_len + 2 + public_len + 2 > blob_len)
+>   		return -E2BIG;
+>   
+>   	pub = blob + 2 + private_len + 2;
