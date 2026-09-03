@@ -1,60 +1,79 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F8C2E7F20;
-	Thu,  3 Sep 2026 09:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09CB403AF0
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788427917; cv=none; b=DCJsULOs9cHtsKahSQ8YZpiByHH+5JRv6K+Dt+uljkmOasSF3khQuqHKTYhI3JPwGn1pyhalwgMp09sHKIp0ZEWhzy9weYvvyFTHUJUefZfaDmoZJCfyRx5nG8/bUyhRDtNHJKaZcB+5fnU6LdDRhb5O+c9P3zdW8ll9+g5OfmM=
+	t=1788428375; cv=none; b=muWbb49gzBMOLryvEwwFt82PlocE8SVzxNlbBtxNDLazad3XH8n1fp+RyJ5G9WVCSkBkiBODVxhSs8uVeXiKJWKbFALX+Md8fVqmyN8PrViCAllK9v5dMRJG7c4CE2+IdFiQNtP+01T8AzXrjaClUNgwXejwlSULMKE9sbveyCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788427917; c=relaxed/simple;
-	bh=M1GuArPDszQqhtRbvFDsXyR6Fc3gKdDpC4liGH6u+fk=;
+	s=arc-20240116; t=1788428375; c=relaxed/simple;
+	bh=eteUzrmkq8h8GgYq7AnBB8NLtsAMTQF/SAj+F1OBPTU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YA9YBIf2jpdm0xK+k9xRComvlAGCpzS4R92qVvp3T9tOIK1RYcTLfVwfYuk4Vc6CvMa4gaKBpfudHCkyav2Wzjy592BdwVSueRcO8xn6o1oeH8n/2HvkcsWpHIo3KGh2+jG4MT8vYBUCxR+L8oCzGdEQDL0yRz5CTJtzxPXwL7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=j04Ou6le; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	 In-Reply-To:Content-Type; b=hP5ZpenBqQvTNvv1e9qYXi5eLZl5mhjaAJ5Ki3Gu1ieEz++hdhmHfi9yMirL5+MIqANNxjAoeuIOU6rJh7v02w1XyguTX0TC24nwB7xPX6AaIxY+fWmXpRH1cNuM88O+eBO6GAwhPAr6ZU39OdLFooi4gHs8+hJRe6+4Z4uWxDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=ZvwxeX3l; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j04Ou6le"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68392MD92554949;
-	Thu, 3 Sep 2026 09:31:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Oes1IY
-	6tLtZP0ojS7F9/jWz9DNW2mLJCHP801lQkmNk=; b=j04Ou6leVZz1OLXCqueA/W
-	Yyi7Ijyufw8f64/1JYtjIehAT6UG94yxol4bLznNmbqz9AJqRNOxSckjNcQck1uE
-	IzL40AKywC9ZV0ZFRFQ02dOh3uLrFok8h5483SKoKyvS6Pb6Q3kJ8MCVpHUtrDob
-	wuwF3qdoMxvanfVgrHJw7818MBnyIWBRTTtD67rJ0SpYie6g9eTjoL6Oznr1KgMq
-	o/tRa/bjf2VuA5Mw2zkQrNTj2xnC6jMT0+t+NNXWsAUSCMj7yyNM6NK5U+Hu7VRS
-	seWSbJsxXacS0EYDfme/E8fa77s8/1K85wFCpXK4vn52FAFEFuQ57O+kdbYT49tA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gbpx5v37e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Sep 2026 09:31:22 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6839QKxr027721;
-	Thu, 3 Sep 2026 09:31:21 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gecjaqc9f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Sep 2026 09:31:21 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6839VKig56361414
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Sep 2026 09:31:20 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 076FE58061;
-	Thu,  3 Sep 2026 09:31:20 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B2C558059;
-	Thu,  3 Sep 2026 09:31:14 +0000 (GMT)
-Received: from [9.123.14.23] (unknown [9.123.14.23])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Sep 2026 09:31:14 +0000 (GMT)
-Message-ID: <44129fcb-e898-4567-b328-693c3b25b84d@linux.ibm.com>
-Date: Thu, 3 Sep 2026 15:01:12 +0530
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="ZvwxeX3l"
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0C41B44B9A
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 09:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1788428369;
+	bh=KKkLnet/xNso2VgwykzycKd8FLUzbCAtDdRFW1K53Ic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=ZvwxeX3la+ukS5I5aysGjGnhc0dZ9tU3buK6XpFI6YQJsGY0Li1brx0iLXjDo5Wpq
+	 V7rkwlPtzO40UpY+LuJxoZ/EkhgPjqNFIPWBlIAcdEzgVYRKHKByPbqPwLL7EM/g/f
+	 Qy0fmDp4lCbxT8nDCQkUhERXpWkove9jguHBptFNLh3VzcfvBoOsAdDcQ5UlEI7ocb
+	 nwmRn4MXLpIdO5FjR+SSFBNh3+SQv4UAI74Ijc/2CwB0K+tHiRh5JvnTXxL/Y/JHqQ
+	 5WkEDjnW2Otap9O8nDDNRc4D95ILySo6/ZPQNeRIxHi34grscPz5lh67SbEwmqTnuN
+	 sq6cFZTsdsANy/dCOcQafyYLORmOVlRzjS5MfkVN8J57mQLCJI6wLWvz7TB/Uanf3N
+	 Ug0lEtCTFGfnhr4HKIIObr82iXmtbIFK3n41pUATx7//tGcmBqBrzpk+yLWmai7EJS
+	 C+EwYbhv/nYLzm0Ojpo/VlQUW6A+YEzakk527w/I5taxCBeR1ccxkxOeWpXg97Gk9q
+	 wcsE+DMAjkeeOupVUkRTJWQexrWZz8KGotHWmiUDDJhJYfKPDCgvXnqy4ORZ0kcs1z
+	 MiMvrTXpru/evX9FZ6P1xaFkyS47mfkkmKvuvDbz1RYIXIo0JMraQsY+kxgHrjiP+9
+	 HLnIlooLx4HSE16h/Tsva4sE=
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38e8e864ef0so3814478a91.0
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 02:39:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788428367; x=1789033167;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:from:content-language:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=KKkLnet/xNso2VgwykzycKd8FLUzbCAtDdRFW1K53Ic=;
+        b=LWR29uhuFf5ZCBz4XsrsfpMz1N4cCORa5n32QaqP3dsQQN0QdNf7sItWcDy4vHrdSY
+         aqWZx+ekkbqZIxhpzd2ZDrzi5movz2abfziOi7cJNp2/7PK8vck/5T0g9L0g8ZkFTB1+
+         OaT3GlmASPMRP3u1qSDbcLdUMHHzAyjU8p3J4NsYMcUQLazdunNHLDymKQYQ+n+15CEw
+         qYHPE/erltlssD1C8Ec7vrx1FmhxxiMsFQk4CFqqOpGIA1r9ELBR2IM259SIi0SSI2+R
+         kUVQPlciKb80PhppklBzR+mEdSgPWf7bMF3+vlbOSSrZslNdJ3/cZXCCMCeAMJwCOTu3
+         VCDQ==
+X-Forwarded-Encrypted: i=1; AKwUvByOctHiTrXuNRr9WRIYG5Y4SZHKQEC031Lkcm+vDH+wIV4njEdRa2U5r+qJKUuB2YqE4jWe3ZCyXBp1DR+aX/eSCMtHnFU=@vger.kernel.org
+X-Gm-Message-State: AFuF++kX7xNvdFQIXl6y+twylyUAmXabWopNRXfZnaTYr53KTsdxHhLh
+	nT2syC8HRoI0nC6I07yp7SmlB365UB10X5xZoLMNqFjwAiPpnMuvS+OT2z8IntvRkDHojpvgN1R
+	DLnFNvFgHoW+SKtEGSS5axJNc0MvFlsPoCziU0WZnqhF3y0KpoIwYdOzwkm16+97X5vxvt5qNVY
+	/cIEoZ2O9jnoczG3nLUQ==
+X-Gm-Gg: AYBFou3AoC/VbXJiWt1w0uEwYhSQa6JNI7oAHQiRhAcuM+3le+dWByeI1VX6pCsK+1F
+	ifQUDCnDcTntor87x6H7Y9V75NpC6on/FlQitrdurycAAntKQBP6OacQna98QEIy0oVT3CzifDJ
+	0i2ONb2cnqE7+AWCQb+jVLXnTj1igeOcYZFmWOFPZ9Fkuv+5mKkoou/rXDTtKFQKz2ea0WL9BTK
+	KMWuC9m//m8WdF8SiuRihlL8vBNzFSd82+MZpG5AxlZHA7ehpYiB/JMpjSDAhB/tZ+qYMF9g+By
+	qpG14zyIaXKTUN8Aga3MB94rNDZUhgsuY5yiFRArEGP5X+TyzN63qCq4+q7NIBu4r9ft6U5vyJ/
+	dWR4+FFxd4b8Dylo=
+X-Received: by 2002:a17:90a:d604:b0:398:c9be:cca8 with SMTP id 98e67ed59e1d1-39aedf5e124mr17481263a91.2.1788428367515;
+        Thu, 03 Sep 2026 02:39:27 -0700 (PDT)
+X-Received: by 2002:a17:90a:d604:b0:398:c9be:cca8 with SMTP id 98e67ed59e1d1-39aedf5e124mr17481215a91.2.1788428367163;
+        Thu, 03 Sep 2026 02:39:27 -0700 (PDT)
+Received: from [192.168.192.72] ([50.47.147.90])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-39b08cacbb0sm4360801a91.13.2026.09.03.02.39.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2026 02:39:26 -0700 (PDT)
+Message-ID: <231fbb7c-0b31-4379-b02a-a79e3b9c28ae@canonical.com>
+Date: Thu, 3 Sep 2026 02:39:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -62,127 +81,144 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KEYS: trusted: Fix tpm2_load_cmd() boundary check
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: stable@vger.kernel.org, co+6a581c4284f721d4@bugs.sh,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jonathan McDowell <noodles@meta.com>,
-        Ross Philipson <ross.philipson@gmail.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Stefano Garzarella <sgarzare@redhat.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260901205809.2028454-1-jarkko@kernel.org>
+Subject: Re: [PATCH v2 6/7] Apparmor: hooks for secctx_to_lsmprop and
+ update_lsmprop
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+ linux-security-module@vger.kernel.org, pablo@netfilter.org, fw@strlen.de,
+ phil@nwl.cc
+Cc: linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, jmorris@namei.org, serge@hallyn.com,
+ keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, selinux@vger.kernel.org
+References: <20260902220150.18586-1-casey@schaufler-ca.com>
+ <20260902220150.18586-7-casey@schaufler-ca.com>
 Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <20260901205809.2028454-1-jarkko@kernel.org>
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20260902220150.18586-7-casey@schaufler-ca.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=PPc/P/qC c=1 sm=1 tr=0 ts=6a993e6b cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=9NdF306EAAAA:8
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=w0kG7cfk7OnRNx5R66wA:9 a=QEXdDO2ut3YA:10
- a=rgq1sGBS9uhxkUNMdZk6:22
-X-Proofpoint-GUID: vIX0nz_Oxt4zQ4BLL0BIgl3RrLAIh53g
-X-Proofpoint-ORIG-GUID: 1ZJ0Rqam87dI5LDuAG4CJt-2a3_NwCbG
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA4MiBTYWx0ZWRfX+BCe6WQL3AXn
- YS2g/5qL1e6W2Hot4135EYWaUXwzM9mBpoj6RC3dPMOSrOnsJjoCJH48u98CAaTWz4D6cbqdUWG
- P47GfeVFmULHERpuZrOcliqBflC9GiY=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA4MiBTYWx0ZWRfX3Ut2khEE/1PZ
- H6vC3iAWiTw6ZhaPXTRtQRko3VB1G+5Gul5uh3ChRiLFdLp+qZMSykbfpl6/1WUJZXeckiqFUEY
- f04xEhsBTGyxrsllFFrZieqxCROuD6V4wNR/a1tINopVcCc3y55CBoQDV1TR+PzsDD5Qr+sEvoO
- 3wcbAQlKQ+ek3SxBAjSQ4zonSEI/MybHNpV0y96jr8UD4Sj+XNjIeoZHkNns1vNrlavGfgxhnVd
- vGj2rASbeNb0zNNkVVRGhHuQLPk6ngOvXDq0iE80QageoXZqh02YERi1RI2rS0P2EQgHwUA5SoF
- 4Qi+iKJcQdla2sMytB92RwKahZLz2QoVbLG8/1pXrXxzrNCZek6HUDg4/pejp3vIwCmehWKv/Lb
- 3wdbDIZCJbv0D4/9iVSj438yYHCgGmiMggruB9Zu8fqn0YJzuIaLP6PjF/YblR/dB8FjW4Pkb4J
- NoMQSFWjjMrSiklp+Jw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-03_02,2026-09-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 phishscore=0 adultscore=0 suspectscore=0 bulkscore=0
- spamscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609030082
 
 
-On 9/2/26 2:28 AM, Jarkko Sakkinen wrote:
-> tpm2_load_cmd() does boundary checks against the ASN.1 size i.e.,
-> payload->blob_len. Address this by passing the decoded blob size to
-> tpm2_load_cmd(), and use it for the boundary checks.
->
-> Cc: stable@vger.kernel.org # v5.13+
-> Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-> Reported-by: co+6a581c4284f721d4@bugs.sh
-> Closes: https://bugs.sh/b/6a581c4284f721d4/
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+the code itself looks right
+same nit on update_lsmprop as previous two patches.
+
+I know you are working within the insane constraints of the secid, but it really
+hurts that apparmor has a local xarray for secids, and now the LSM infra has
+one too. I know its a problem to be solved later, I am just griping about the
+current state of affairs.
 
 
-Tested-by: Srish Srinivasan <ssrish@linux.ibm.com>
-
-
+On 9/2/26 15:01, Casey Schaufler wrote:
+> Implement these hooks.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->   security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> index 67225dd562a9..01f18bb37047 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> @@ -99,7 +99,7 @@ struct tpm2_key_context {
+>   security/apparmor/include/secid.h |  4 ++++
+>   security/apparmor/lsm.c           |  2 ++
+>   security/apparmor/secid.c         | 21 +++++++++++++++++++++
+>   3 files changed, 27 insertions(+)
+> 
+> diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
+> index 6025d3849cf8..ba7adf2fc09e 100644
+> --- a/security/apparmor/include/secid.h
+> +++ b/security/apparmor/include/secid.h
+> @@ -28,6 +28,10 @@ struct aa_label *aa_secid_to_label(u32 secid);
+>   int apparmor_secid_to_secctx(u32 secid, struct lsm_context *cp);
+>   int apparmor_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp);
+>   int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
+> +int apparmor_secctx_to_lsmprop(const char *secdata, u32 seclen,
+> +			       struct lsm_prop *prop);
+> +void apparmor_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
+> +			     int lsmid);
+>   void apparmor_release_secctx(struct lsm_context *cp);
 >   
->   static int tpm2_key_decode(struct trusted_key_payload *payload,
->   			   struct trusted_key_options *options,
-> -			   u8 **buf)
-> +			   u8 **buf, unsigned int *blob_len)
+>   
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 88d12e89d115..1f304b88eaf9 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1766,6 +1766,8 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
+>   	LSM_HOOK_INIT(secid_to_secctx, apparmor_secid_to_secctx),
+>   	LSM_HOOK_INIT(lsmprop_to_secctx, apparmor_lsmprop_to_secctx),
+>   	LSM_HOOK_INIT(secctx_to_secid, apparmor_secctx_to_secid),
+> +	LSM_HOOK_INIT(secctx_to_lsmprop, apparmor_secctx_to_lsmprop),
+> +	LSM_HOOK_INIT(update_lsmprop, apparmor_update_lsmprop),
+>   	LSM_HOOK_INIT(release_secctx, apparmor_release_secctx),
+>   
+>   #ifdef CONFIG_IO_URING
+> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+> index 28caf66b9033..d35fdbf074e0 100644
+> --- a/security/apparmor/secid.c
+> +++ b/security/apparmor/secid.c
+> @@ -106,6 +106,27 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+>   	return 0;
+>   }
+>   
+> +int apparmor_secctx_to_lsmprop(const char *secdata, u32 seclen,
+> +			       struct lsm_prop *prop)
+> +{
+> +	struct aa_label *label;
+> +
+> +	label = aa_label_strn_parse(&root_ns->unconfined->label, secdata,
+> +				    seclen, GFP_KERNEL, false, false);
+> +	if (IS_ERR(label))
+> +		return PTR_ERR(label);
+> +	prop->apparmor.label = label;
+> +
+> +	return 0;
+> +}
+> +
+> +void apparmor_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
+> +			     int lsmid)
+> +{
+> +	if (lsmid == LSM_ID_APPARMOR || lsmid == LSM_ID_UNDEF)
+> +		dest->apparmor.label = src->apparmor.label;
+> +}
+> +
+>   void apparmor_release_secctx(struct lsm_context *cp)
 >   {
->   	int ret;
->   	struct tpm2_key_context ctx;
-> @@ -120,6 +120,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
->   		return -ENOMEM;
->   
->   	*buf = blob;
-> +	*blob_len = ctx.priv_len + ctx.pub_len;
->   	options->keyhandle = ctx.parent;
->   
->   	memcpy(blob, ctx.priv, ctx.priv_len);
-> @@ -384,10 +385,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->   	int rc;
->   	u32 attrs;
->   
-> -	rc = tpm2_key_decode(payload, options, &blob);
-> +	rc = tpm2_key_decode(payload, options, &blob, &blob_len);
->   	if (rc) {
->   		/* old form */
->   		blob = payload->blob;
-> +		blob_len = payload->blob_len;
->   		payload->old_format = 1;
->   	} else {
->   		/* Bind for cleanup: */
-> @@ -399,17 +401,17 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->   		return -EINVAL;
->   
->   	/* must be big enough for at least the two be16 size counts */
-> -	if (payload->blob_len < 4)
-> +	if (blob_len < 4)
->   		return -EINVAL;
->   
->   	private_len = get_unaligned_be16(blob);
->   
->   	/* must be big enough for following public_len */
-> -	if (private_len + 2 + 2 > (payload->blob_len))
-> +	if (private_len + 2 + 2 > blob_len)
->   		return -E2BIG;
->   
->   	public_len = get_unaligned_be16(blob + 2 + private_len);
-> -	if (private_len + 2 + public_len + 2 > payload->blob_len)
-> +	if (private_len + 2 + public_len + 2 > blob_len)
->   		return -E2BIG;
->   
->   	pub = blob + 2 + private_len + 2;
+>   	if (cp->id == LSM_ID_APPARMOR) {
+
