@@ -1,106 +1,128 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7223468C10
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 11:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788435003; cv=none; b=Zr8OdyznzbO0L3RJ4nWfegW1JpA/hObgwPzGPd7RM3OWjnrB6msqk0kvQv2deIeAAkI1hjv1fFqvOJ7sPbeFEFpU7QLMSlmS2VkgNWLlwpBrbWdx5azHpJrwwk6iQOy+Hp5x5psI5SVOO/nK8eVQ2KWdJhsWIlNvpftVirVxnlc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788435003; c=relaxed/simple;
-	bh=zVxEUER+vovhITHpwOAeij4FL/yULLzNoKNM7GtRucg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=u0ehfrbSjPQ3retvIwIVwVND1CM6LZKE1Jd4ri72SidJGRHNmHJ+fBCERXEMSb2Fksehdv0NuxcB7+WXnNZKPgiHeVXAL8+ZRWhxN/07ARksOJelUEOSusdYFTt8HOLABUPOhSWhyy9LrjavhbrOHT3lDJ+tpZQX1diyRnw7Frc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NsTtA8Y+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC1146C85E
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 11:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788436449; cv=pass; b=lcMsUeJhEIhoONUTRV4x/CWtQzUW3CmFsIiUnmy+hY8t4xYw8daEEyXd8DNS3UOb4W04Sk0054hb+9bA6rudNqVJ93Rrz1ujjrYEtmg8uu/hANnmusLTZeP8+7jU2JE7Bs45el7OqECHIMcZU83865Nzmnk8KHNkpZo3gthw4rI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788436449; c=relaxed/simple;
+	bh=cmrmJFgNXl9cwByq4wccjkamqLrAgOAlhe3K+qkWDxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DpcIMzZp7HTYdgyT7ARXW8CesdUASgNkSYuTC++z+jsrtPqQ4NvuW1JxNmAmutBfpNmu/T2/dmJn3fbIN5Oi7+dMGB97ka+XXMLCv7ZLFGylw1/mvzhFUjQp7eV1VKsoKChUco7pDe7xF/N5E2E2bm4FwCL2btHkXojU230tv5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oOZQS0+y; arc=pass smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NsTtA8Y+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788434989;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=XooQYKR9Puxgt0G9f+A4PYpT9G+l/snRHdODOQmPlVM=;
-	b=NsTtA8Y+iZ16l1mCXQY2hoUVWqV7b+0sDAEaIf3yA+b0CecOiEaJVQJ7flPsv0MDj9MkgJ
-	J8Md/G+MvyjcX94334bqqQqrjsqc9tsDaADOWSQRIJ13aFrFMWBZS/hYL6RGLvLKMwevTh
-	HJOr12jYY7DI1KHBCRZox/YIY2xM91g=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-426-D2JvhJ9TM9eKSb8QCY-8lw-1; Thu, 03 Sep 2026 07:29:47 -0400
-X-MC-Unique: D2JvhJ9TM9eKSb8QCY-8lw-1
-X-Mimecast-MFC-AGG-ID: D2JvhJ9TM9eKSb8QCY-8lw_1788434987
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-396b9ef3070so3721431a91.3
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 04:29:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oOZQS0+y"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-38a0c7e841fso3418188a91.2
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 04:54:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788436444; cv=none;
+        d=google.com; s=arc-20260327;
+        b=juJSBFouKFJSihXZ66Gmhy8cwW+sEGAN0SffR7pu+W6lMdyEZuC+gnhEv7qbwv+IxC
+         /U2F7akKopDiRFbL5H6nj2CQ0rgmC9gJG6PrwU4eTfweHx6qR1vjUEvNEn7BtOk7+wFq
+         liDdP2U9x5ay5RoM6Yoe20w5L8uP4foBWOOo5XqnjJvBEv8v/+h36fRIh+9MLt1AVLs6
+         Quyj4pNN8KUrSvksvBEULIvrGvmpXRf4WjahldChwdbivST6l+yOtCDygL3DZ1tQ976D
+         52Gw4TqWkOfHrwkogU44cSn0nOfMmZV2NEkPHH3hRRLoqqlhfrouM/v3BaqPSzEQ921O
+         wZUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=cmrmJFgNXl9cwByq4wccjkamqLrAgOAlhe3K+qkWDxo=;
+        fh=PwCKF2IR0RHvoOjme4HhzjFMqyiLmJTaJ8ga8j0nRKE=;
+        b=GPkP1T5ud5evM7P5DLhn4n7foonB7iz883sP6itvecH6idnMA1YUVY5BOSgluEKSjN
+         K2jQ62eJ1iheTazqqNRswOYXfIRBbXRgYfjBof7GW6+fc9+ztnv4WSki7nqCkbVFxQcj
+         7MFI35MG/3KopeAKAEUsNv1uhMLlKx8rFdQY9V35etn8/RcBHomzzZW2p2fqXLU5Em+q
+         SszkEPPXo3GcpVwlJitInpMQoW7aXsBVpZxgNRH9hWXIz1XP3NJXYcZLK5V8gUBm148y
+         flP0djwfiqMFRRkY2sfp576/G496JBnpqogMJRPf/seV/PfYPn+GaXFYQ125fqvFmdwL
+         SwBw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788436444; x=1789041244; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cmrmJFgNXl9cwByq4wccjkamqLrAgOAlhe3K+qkWDxo=;
+        b=oOZQS0+yEEfqtdVqvAymA2Od9R+g4vrT7ueq/oiO3JMQMeeGJ40Pz4OGTuAGPLyCHj
+         ymIcM6kIKVrV5Uszp3m5JS0XeFTpwf4uASQqxaR3izCkjrQgpRCxr+dAQo4XeNIyjtZp
+         oZlWCy8YwSzynD3HY8Vm3vSvH/u/LkavcPV90Dn9RR0u3Jv2jhQzbJVSYQjmY0fTABMX
+         BFs2a8UEfAK1X9rW0E9/Buq/BVagjM6aazbhmfoSCIo/TawQ4Hn8d5c77O8FOHt+YCo9
+         WzdEdlpt7P4556g7/1Txa4K68HGt3k/4n254vJYROLSdlXFaUJSy77ZH1PnVpyN1igvC
+         AEJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788434987; x=1789039787;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=XooQYKR9Puxgt0G9f+A4PYpT9G+l/snRHdODOQmPlVM=;
-        b=dJIYYu2eT9/r6lzL9ionxsRJ3hg8UYys8/4TPZ3ywqF6entbCouebwH3oEVa7qBjrm
-         Ce5uaKRqPO/MLxLY27SgiGz48jfd/c2psz6BTW6azfX6NEk+nFiDC1d6Pvax147b0Cmx
-         AGkuZAqsUY1uHJqs9K0HlKqI5UWUm1dIhTh2xp2m96C3eVQRYwUKrWZYEyIEC/u4kpca
-         L8Dz2FWh4IoL6y4tWd8AHcLqfyRhcDhp3DElLYq7nRD29QK6Ds8WMHOkEx0duullHHGB
-         FdyFUlpaNiLAmoGczIfc3AsM5LvKT43RHBFFWSEo14MwCnA81pILX2AhbXR4swWDQlpv
-         wJyA==
-X-Forwarded-Encrypted: i=1; AKwUvBytTUK/xG7HZxeuNmCrOu2ikW8bCDqcGZzaavG8WIdbVa5Axhej56/K4hpfo/udfd8mOFPAKxXsOwLlZR7Gme6f20oWOL4=@vger.kernel.org
-X-Gm-Message-State: AFuF++kNfW3ZZsK8cwwVSRyu2BZPE8TOO/D02fBgubicVnvaYwSlrHUU
-	tcF4OHz3XkVbFIqySnkgbNUeuyK9kuZeP+7ElO8da5cOnJa+gJeQwWU0OO9I3XFVml+Ay7GiMTc
-	d3xQqFpNS+4ttcxJ2FVn1yvYp50qAF+l+6ATYsqd0EhqsHy5NwwoUWLUxVYOKtzwQgXI5HNLVjg
-	s6cdmO5hi6XL3UAxf7xjW73s0SCjbfQUk5n/PWvdljbbD492BMO9ZD
-X-Gm-Gg: AYBFou1PDsrfZebur2F6QBVsCP67TJzmCatmcZd/1kY4GVsGn3K1LzIQUq4GrRwxi3C
-	z/gMxE4K8qGs5MTlyN79KaAUOHgCH1+AjnlFn7KNuAg7Yeh6zXagJZK9Xk7bvG+7HUElIPaXPo7
-	4OZ/dwfugmf5Mg3T1KoNlrNFvS6p+H7jCbqDEI3IYMrQtBbDeG8sGEGH6W
-X-Received: by 2002:a17:90a:114f:b0:399:1b08:28de with SMTP id 98e67ed59e1d1-39b13247f46mr3961967a91.7.1788434986634;
-        Thu, 03 Sep 2026 04:29:46 -0700 (PDT)
-X-Received: by 2002:a17:90a:114f:b0:399:1b08:28de with SMTP id
- 98e67ed59e1d1-39b13247f46mr3961904a91.7.1788434986124; Thu, 03 Sep 2026
- 04:29:46 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788436444; x=1789041244;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cmrmJFgNXl9cwByq4wccjkamqLrAgOAlhe3K+qkWDxo=;
+        b=LQRRS1sukRVrvAClSuGWsgQ0YnWOt86RWdyFytK8XK7U3wVTj2Yy67jKFnzPVr/m76
+         1yBWn9UjkjdMLbNPwqb/tij3MIR0gJwzkbHW2VlKyujWFkL1hrXtgRz3HEX9gZcpG9Cf
+         2Uztq8+MSHljFxg44jS2Nd3+UucW6wQVUxBfcm+exrpoiJ6/TWd9R1VMcQD8zZ0XiIyM
+         Nf2jPtqMifwyxRQomfUlauWRcdfYyi8iyVQuheKHHOkFtz1jpHQF4pStRj3949fbgULO
+         WsWoGeD36sOO1M+1+QUh39yqQEehS/Z3NFk3UqzNlG42MwIFOWtzj2gIdkJb7rxwDa2f
+         7S9g==
+X-Forwarded-Encrypted: i=1; AKwUvBxN/cumnFbNHcYCZnzUU+k2DGgTZ6tA4EkCFmFg4AkhZ9cDMAJXsioBURYE3Enu0ZIxVLOghaDhZBz/nXh/Ntz/mk3HeFg=@vger.kernel.org
+X-Gm-Message-State: AFuF++mo6vwF61bkBKUtstTjIDoioHFXtV6sYWzopJvsDqnqIVQ5NROK
+	mhviHPo+iABYZ+O2VhGOYDXfHKUvawGxsaM1nfX6bRbH6ngAz//MppXNHAjxUtV25gkOn5gPsff
+	FbGsC/2QwT/g/x7U2rH/slRhZq1qdssVmYZOPpjU=
+X-Gm-Gg: AYBFou1d79bIPieKcf+DG5M+Mpvivjher+VIEJ26gQLt57YDXyVfxJD5/MAsgXIUnqD
+	g79JV/Y7gYqcowhNG6k+N5izVvEqc1iYMQg22WnEjRNXjSQ5pB2bHuUkU8/62CRMcV1MRpIaR8F
+	4ZWW4j4ZjagylOlkwT3Gqp67XQoL130NZCKmx5+1Pw+nlViBCLu04rxAPHp9yFjJgpOiklMvIe2
+	B+/kdcDT4+8R+yicvGN1CwmT4Sqmg8RPA5mGg2BCUdWl16HXdRAFlvqErN9uDKhpPHh7BKiWmYx
+	ZNVdci7MrYZ/gfIh2nblXkoT0F7/2WGjEWC+K3jlQnadDaeqz4QDOIR2UVdL0yehe7ewYyOAoxI
+	A
+X-Received: by 2002:a17:90b:3d89:b0:398:deed:6e1d with SMTP id
+ 98e67ed59e1d1-39aedf89bc9mr18610572a91.5.1788436443559; Thu, 03 Sep 2026
+ 04:54:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Thu, 3 Sep 2026 13:29:34 +0200
-X-Gm-Features: AcwNN1XauK1UHYRFaqFGM29UmCm7nNRZqtPbHkS3EwnXkUnjWmV2sSB-gTg8_vI
-Message-ID: <CAFqZXNvOGbzy8-ZnJtKi94jfu2H173Tz7VYpK8KuseMQS-9tNA@mail.gmail.com>
-Subject: Heads up: Moving to a different email address for my Linux
+References: <CAFqZXNvOGbzy8-ZnJtKi94jfu2H173Tz7VYpK8KuseMQS-9tNA@mail.gmail.com>
+In-Reply-To: <CAFqZXNvOGbzy8-ZnJtKi94jfu2H173Tz7VYpK8KuseMQS-9tNA@mail.gmail.com>
+From: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
+Date: Thu, 3 Sep 2026 13:53:51 +0200
+X-Gm-Features: AcwNN1UoWZTfWh3agR_jdxc3Q2M3uh3UgHIHKTZhxeYlUtsA2KRhKMGejWfjeZo
+Message-ID: <CAAUqJDu1R0KjX+-zj9in7sCN+2XPcqE9Uc34GNPZ+209VFou0g@mail.gmail.com>
+Subject: Re: Heads up: Moving to a different email address for my Linux
  kernel/SELinux contributions
-To: SElinux list <selinux@vger.kernel.org>, 
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: SElinux list <selinux@vger.kernel.org>, 
 	Linux Security Module list <linux-security-module@vger.kernel.org>, 
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Paul Moore <paul@paul-moore.com>, 
-	=?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 14xbWmQ6x8Z5-_SMcX5VlA-QGmtXDPsAQ_BphBTcP4k_1788434987
-X-Mimecast-Originator: redhat.com
+	Linux kernel mailing list <linux-kernel@vger.kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Paul Moore <paul@paul-moore.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Due to certain upcoming changes to my employer's work laptop usage
-policy, I'm being forced to more strictly separate my work-internal
-vs. upstream/personal environments/identities and in relation to that
-I'd like to transition to using my personal email
-(omosnacek@gmail.com) for my future kernel/SELinux (or other upstream
-community) contributions.
+On Thu, 3 Sept 2026 at 13:29, Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> Due to certain upcoming changes to my employer's work laptop usage
+> policy, I'm being forced to more strictly separate my work-internal
+> vs. upstream/personal environments/identities and in relation to that
+> I'd like to transition to using my personal email
+> (omosnacek@gmail.com) for my future kernel/SELinux (or other upstream
+> community) contributions.
+>
+> My work email address remains tied to me for the foreseeable future
+> and nothing really changes in terms of its abuse potential or
+> whatever, so nothing bad will happen if someone accidentally sends
+> anything upstream-related to this address (or continues an existing
+> thread), I'd just prefer to use the personal one as the default from
+> now on.
+>
+> I'll soon send patches to update .mailmap and MAINTAINERS in the
+> kernel tree and SECURITY.md in the SELinux userspace repo accordingly.
+> My future git commits (e.g. on SELinux GitHub repos) will also start
+> to show my personal email address in the metadata + Signed-off-by.
+>
+> Hopefully I didn't miss any important detail and the transition will be smooth.
+>
+> --
+> Ondrej Mosnacek
+> Senior Software Engineer, Linux Security - SELinux kernel
+> Red Hat, Inc.
 
-My work email address remains tied to me for the foreseeable future
-and nothing really changes in terms of its abuse potential or
-whatever, so nothing bad will happen if someone accidentally sends
-anything upstream-related to this address (or continues an existing
-thread), I'd just prefer to use the personal one as the default from
-now on.
-
-I'll soon send patches to update .mailmap and MAINTAINERS in the
-kernel tree and SECURITY.md in the SELinux userspace repo accordingly.
-My future git commits (e.g. on SELinux GitHub repos) will also start
-to show my personal email address in the metadata + Signed-off-by.
-
-Hopefully I didn't miss any important detail and the transition will be smooth.
-
--- 
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+Acknowledging this from the new address as well.
