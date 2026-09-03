@@ -1,213 +1,156 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2A3D0932
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 06:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F063515D1
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 07:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788416154; cv=none; b=Cyd+K8K9iZxZkQ25VjfDjkYSkisYvyZiFSLCK+uOZ4WCSVIh1kxtzWjaygLA2tzpHmaS3Brb53y1NcroPgQLPRJ+6VcHEK1WXS+d7M5zrJsvugAd9ADpqEbgQYXPUctpaMFb0K3R9O13s1VV+gj6fP5SymTZ53VyNlsQcaVKn6A=
+	t=1788420429; cv=none; b=OgGGBmVoLC/BuUmnis1/W+5QX/XajXFHBO01Mc2lraQUykWLbXrYhIrSGfVLWid5fhE6Q8kRzpX7xd1gkxS53WeAUXnVB2wkBL1LXnoWlNd+Nq4JBwip4VEuTkVCnHg+cpUZs+IKR2qA2ltnAkVVxkvksdgBi5G77eX3UdwkLZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788416154; c=relaxed/simple;
-	bh=wpl9wKkbJFGy3u71BuJLHaA4TN3RjLmyXn7wBnE/sZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RK3kj0EK3IrdeHU0blpOYJY9K5RZPP/6+5fW3YBKNTFYsluwkwSZlJIzv5Rq41ifiSJVNL3KND8S+IPabRbTyaTpS1gCjxHcnXjoSPSIxqWfK25LLDZ/6ri/8uuP3mIUi87ewqYLTJ0Mb0vZVL0JLmPwzul72EjJdP3Ee7EoupY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=CWveD9Ei; arc=none smtp.client-ip=185.125.188.123
+	s=arc-20240116; t=1788420429; c=relaxed/simple;
+	bh=X6wygyM7bHhRtMnfnptFuRnjEVCOuJmtTCh4Ce9BLwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nwGMx0GmWa8XTUhmQskSNCZlwfa+mZKNlpTQqMmkIMvYVwiMFgUbwlNjlSOq0lYX0og5m9gJTOBvWIfTte8NgD+3sDvOAEqPhZIKOaXd/BdaCpU4okFYWtIVMvxSLNjGnnsRcoOdzzT5Rj0lKJP5iUObLRCGLJw3NXsVHd+J++Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ur126TUR; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="CWveD9Ei"
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ur126TUR"
+Received: from sec-questing-amd64 (lfbn-idf3-1-218-1.w90-22.abo.wanadoo.fr [90.22.217.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 248713F97A
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 06:15:51 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 672064000D;
+	Thu,  3 Sep 2026 07:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1788416151;
-	bh=KUWZRyqFeEf4s3ueoyPuRgRthTlv7fXXCaa5u+oHG9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=CWveD9EiNBCrYyOTQYcrC4UhijWm+YW80NCPxVXFWm39SkItRMfgYMchzR/sELLjc
-	 yKFSVq3XT7e36B+8MckbWqjKOIWskX0iFR4GXS/Xheql0qhqEUu1y1uK6E6DPaavP9
-	 0OIe2Qs0Ffj32fdYs0e7jiaFM+IF/faPG+Ab/1yDMZSpXQJtHSDC3JKIcGlNtQ0Leg
-	 Ujym704xWrKyIv1IjcbCxiJuHV73jIeyzW1yMBZE89gp92jWItXlscDshx+trA9ybr
-	 X0nxzjv62AQkYVlE42eLtiUkDpIewBKqCmpNMhv4mQk7hX4eYpw/tGWTvplROwc831
-	 HuLNW2Ntrp4UJT/UIVCj8lVYiLtyiRLEBEo1EOsLElfZlmuJQmUDqJX0vyywi3+717
-	 vCXWf70VH+wUptCDxgfTwORZFHCaR1rXg2XevE/dgbG17HkkJBwx7gT4hzJkplajEx
-	 ECmijjTsJRLsJsjAOvWktHk6Hk12Bol9Zsio7QNOIorsGw4kesfvvysw0iJBnsz0un
-	 PtlSCSlh1R7v3GJRDQZnP4vVFfz3XXp/bm1/gsQSk+yIG3P5qy38dMyETk1uGVWEUt
-	 bYworYPJMRrn1nb0HkAPC7jeKnpz/GHYQoekHrVLe4dsfEnaSe6HjDcxRVrIuzHfYD
-	 htXKprw9MyofYCDrAOyaDDiM=
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-84f0d3ab2f4so820277b3a.1
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Sep 2026 23:15:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788416149; x=1789020949;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=KUWZRyqFeEf4s3ueoyPuRgRthTlv7fXXCaa5u+oHG9Q=;
-        b=sF9uMXCq3rVk9jnP7TFvqTbf9lBXCNKyWcUwHfSrnYOe+3vzjfoQIGOUM9yk1Ow4hV
-         3f1SqIkPobfcUkkAmyD8wxNlUuvoh4MoTwoRSQyNNfnqF1mRpVwRDMTuDO0zrsAzisUr
-         sxDnTE790mUPYffWqH1w7Njg5YLMZmvFs99zik1BL/BJlCz4YeMrPV59rIBQUB35/he9
-         TsDjt8ThF77Sbz9cY0AGMnbcu50iTbMKs2dyVnkSlx3bcBR6fNaJtA+t2eZ/vDedDGSh
-         74HpRqehC4TX9oTJ4/3eJcvMqDQLZx/SNww8KGkmFdaYYVZb2TbSA0MMPUEmy6Qp/n6O
-         czmA==
-X-Forwarded-Encrypted: i=1; AKwUvBxzbwnWwYcsJgptktMByErrKNGJb7BNGd7Ls8xMAgP2/ySQNxMbK9qCVbzQJ2ovumWBUu+zcMxIZKGnxA1FhroEi+lQE9k=@vger.kernel.org
-X-Gm-Message-State: AFuF++nh4uvYhoCqlhfQCtwcPra5dcwq0yXR8jzx+VeESIZ/EaZ6aoBP
-	u6ShIqAC7uRcjqygMKefI4rNbtBcyYyo12FMhFgoRo72svzRFEL/FbzmEk07eumS89SP79TGmk9
-	M92JKd2xyCDBRbu/srxgUDi/BIziECXHli+DTivnOs1IAwyGGifvk51IB9UyEfK6fEZ/Ckvx1j+
-	w3jWEQiTtRw0sgnIP4Og==
-X-Gm-Gg: AYBFou0UUglh5RUqZztBr5wkDGg5lHf6eZnb9fyopWqnSpSXOz72Rw5OnNRFtnvIPD3
-	OPGl5u7YdWrVguI0/GzNramwMyx4lZly8zeR4KQ202kMhnwITa63l/B988eHqJMUCBvJIASJUIZ
-	6gnKNFKQWNzLd7wRU6iqVnFRwkKVIWitMfE/bTNsf506AvqdA0rDr8n76gTPdfeupwrYIo4bWJZ
-	7NfydXZSA3oMZXfseOOVbF9CrgKdPI5kMSc1V25GoynBLFVqvj9ZncLBAxmE7ifpOI1Qtazz6C3
-	b//VYpl74jmj70h2XYGfHy/ZP/D0hPpEtR5VWFDtYEtPA6NuXGwV6ssidbQtiM/y7f1GTdsob0o
-	jbN6nTWmgdXQ/uQM=
-X-Received: by 2002:a05:6a00:e08:b0:82f:2b0:2809 with SMTP id d2e1a72fcca58-85ed7158030mr14968917b3a.1.1788416149456;
-        Wed, 02 Sep 2026 23:15:49 -0700 (PDT)
-X-Received: by 2002:a05:6a00:e08:b0:82f:2b0:2809 with SMTP id d2e1a72fcca58-85ed7158030mr14968878b3a.1.1788416149103;
-        Wed, 02 Sep 2026 23:15:49 -0700 (PDT)
-Received: from [192.168.192.72] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-85dc003a7d6sm2259856b3a.34.2026.09.02.23.15.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 23:15:48 -0700 (PDT)
-Message-ID: <ac628baf-3c8d-4f8b-b410-0c10990bdd1d@canonical.com>
-Date: Wed, 2 Sep 2026 23:15:47 -0700
+	s=20251003; t=1788420418;
+	bh=YyvOTlskMC9s9Q9sXMx/FSnZ33YDjwHo8fsc870gJbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=Ur126TURcEFBeVokEUcGuzKX/z5M1pJxyfmCG2bdeaZ4GWfE7cvaAchetSO7x4awX
+	 yHkqIZiF2kZ2wMJf7lLt+hH6h/ZutR4SFFh2+V6LvOgLJrxipIKp5vIuYhTDuMgnko
+	 tE/8ci9XHc/5e525gJeJ2A+SOKT4n8kRgno6pW3h7mHPOk8ZRviO1Qe+o2A/62QImS
+	 D8o1TMv2SK3yQa57i7COhDl32dWOMUuKEwMCYDofzvmnZZWNPpYc5vlKrQzb3RwgkS
+	 ZNOzBZxwWTr7NU7ugMuSB4hEkegB7aQk8qPKEDqzFsPLLonvci6ODfF5nmRoZh2J0C
+	 eYAA8hOtzzhVSupQJUQWp+i9DwpyASKwYl0En22l49yVkHYyiP0gfbzDC1gaefrqKc
+	 YTrdW9usVMvhqDTviPjcYHYojQnU9OAr+Aj753BS8nNFZgfQSKxXieRSDTfgSxe7x3
+	 QEhb+XVRyHVhKuJAW8SBSbbI1c5HK2x4DJidWdIwGNyB20gnG48p2vOzBvt7PKxCGC
+	 UMqcEx7kAX7kjqceLkyOXo6J0cRjwvM/Shmm7Mqqrd8b9IQesWX8vsb3HI0iARchUF
+	 Y0pZEFWAUdfVlZBty8W1c8WzzE6Rbrygg5ZJ1YnD58BZAinEUG/fuLN2dr1DGpT78O
+	 klXxX6jodao873eiTT43QMEI=
+From: =?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
+To: John Johansen <john.johansen@canonical.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>
+Cc: apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	=?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
+Subject: [PATCH] apparmor: fix table_size() integer overflow on 32 bit
+Date: Thu,  3 Sep 2026 09:25:51 +0200
+Message-ID: <20260903072650.13160-1-maxime.belair@canonical.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] Smack: hooks for secctx_to_lsmprop and
- update_lsmprop
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
- linux-security-module@vger.kernel.org, pablo@netfilter.org, fw@strlen.de,
- phil@nwl.cc
-Cc: linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, jmorris@namei.org, serge@hallyn.com,
- keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, selinux@vger.kernel.org
-References: <20260902220150.18586-1-casey@schaufler-ca.com>
- <20260902220150.18586-6-casey@schaufler-ca.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20260902220150.18586-6-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 9/2/26 15:01, Casey Schaufler wrote:
-> Implement these hooks.
-> 
-beyond the question from the previous patch, wanting more in the
-description, and the quick double check question below.
+table_size() checks ALIGN(sizeof(struct table_header) + len * el_size, 8)
+in size_t, where @len is td_lolen, a u32 user-provided value from the
+policy blob. On 32 bit kernels both operations can overflow.
 
-This is looks right
+Triggering this bug allows to:
+ - overflow a 16 byte allocation with up to 4GiB of policy data
+ - store the table header at address ZERO_SIZE_PTR (kvzalloc(0))
 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->   security/smack/smack_lsm.c | 33 +++++++++++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
-> 
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index ff115068c5c0..fcfadd5d9994 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4909,6 +4909,37 @@ static int smack_lsmprop_to_secctx(struct lsm_prop *prop,
->   	return smack_to_secctx(prop->smack.skp, cp);
->   }
->   
-> +/**
-> + * smack_secctx_to_lsmprop - add the smack label to an lsmprop
-> + * @secdata: smack label
-> + * @seclen: how long label is
-> + * @prop: where to put the result
-> + *
-> + * Exists for audit and networking code.
-> + */
-> +static int smack_secctx_to_lsmprop(const char *secdata, u32 seclen,
-> +				   struct lsm_prop *prop)
-> +{
-> +	prop->smack.skp = smk_find_entry(secdata);
+However, this bug requires CAP_MAC_ADMIN, only affects 32 bit kernels,
+and the copy runs until the machine is destroyed, so it gives no
+controllable primitive and is therefore not a security issue.
 
-just double checking a null value here, looks to be okay, but just double
-checking as I just did a quick skim of the code.
+Compute the size with the checked helpers and return 0 when the result is
+not representable, so the callers can reject the table. A valid table is
+never 0 bytes, the header alone is 12.
 
+64 bit kernels cannot overflow (these structs are 32 bit), and are hence
+not affected.
 
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * smack_update_lsmprop - set the smack label in an lsmprop
-> + * @dest: destination properties
-> + * @src: source properties
-> + * @lsmid: which LSM is relevant.
-> + *
-> + * Set the Smack entry in the @dest if appropriate.
-> + */
-> +static void smack_update_lsmprop(struct lsm_prop *dest, struct lsm_prop *src,
-> +				 int lsmid)
-> +{
-> +	if (lsmid == LSM_ID_SMACK || lsmid == LSM_ID_UNDEF)
-> +		dest->smack.skp = src->smack.skp;
-> +}
-> +
->   /**
->    * smack_secctx_to_secid - return the secid for a smack label
->    * @secdata: smack label
-> @@ -5269,6 +5300,8 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
->   	LSM_HOOK_INIT(secid_to_secctx, smack_secid_to_secctx),
->   	LSM_HOOK_INIT(lsmprop_to_secctx, smack_lsmprop_to_secctx),
->   	LSM_HOOK_INIT(secctx_to_secid, smack_secctx_to_secid),
-> +	LSM_HOOK_INIT(secctx_to_lsmprop, smack_secctx_to_lsmprop),
-> +	LSM_HOOK_INIT(update_lsmprop, smack_update_lsmprop),
->   	LSM_HOOK_INIT(inode_notifysecctx, smack_inode_notifysecctx),
->   	LSM_HOOK_INIT(inode_setsecctx, smack_inode_setsecctx),
->   	LSM_HOOK_INIT(inode_getsecctx, smack_inode_getsecctx),
+Fixes: e06f75a6a2b4 ("AppArmor: dfa match engine")
+Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
+---
+ security/apparmor/include/match.h | 11 ++++++++++-
+ security/apparmor/match.c         |  6 +++++-
+ security/apparmor/policy_unpack.c |  5 +++++
+ 3 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/include/match.h b/security/apparmor/include/match.h
+index f7bd7855f1bd..66485f76d331 100644
+--- a/security/apparmor/include/match.h
++++ b/security/apparmor/include/match.h
+@@ -12,6 +12,7 @@
+ #define __AA_MATCH_H
+ 
+ #include <linux/kref.h>
++#include <linux/overflow.h>
+ 
+ #define DFA_NOMATCH			0
+ #define DFA_START			1
+@@ -120,7 +121,15 @@ struct aa_dfa {
+ 
+ static inline size_t table_size(size_t len, size_t el_size)
+ {
+-	return ALIGN(sizeof(struct table_header) + len * el_size, 8);
++	size_t size;
++
++	/* Need check_*_overflow for 32 bit machines */
++	if (check_mul_overflow(len, el_size, &size) ||
++	    check_add_overflow(size, sizeof(struct table_header), &size) ||
++	    size > SIZE_MAX - 7)
++		return 0;
++
++	return ALIGN(size, 8);
+ }
+ 
+ #define aa_state_t unsigned int
+diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+index 7713484f6a36..825811d566b9 100644
+--- a/security/apparmor/match.c
++++ b/security/apparmor/match.c
+@@ -58,7 +58,7 @@ static struct table_header *unpack_table(const char *blob, size_t bsize)
+ 	if (th.td_lolen == 0)
+ 		goto out;
+ 	tsize = table_size(th.td_lolen, th.td_flags);
+-	if (bsize < tsize)
++	if (!tsize || bsize < tsize)
+ 		goto out;
+ 
+ 	table = kvzalloc(tsize, GFP_KERNEL);
+@@ -281,6 +281,10 @@ static struct table_header *remap_data16_to_data32(struct table_header *old)
+ 	u32 i;
+ 
+ 	tsize = table_size(old->td_lolen, YYTD_DATA32);
++	if (!tsize) {
++		kvfree(old);
++		return NULL;
++	}
+ 	new = kvzalloc(tsize, GFP_KERNEL);
+ 	if (!new) {
+ 		kvfree(old);
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index f1fc48e72d0e..3c744f99a15c 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -1052,6 +1052,11 @@ static int unpack_pdb(struct aa_ext *e, struct aa_policydb **policy,
+ 		u16 tdflags = pdb->dfa->tables[YYTD_ID_ACCEPT]->td_flags;
+ 		size_t tsize = table_size(noents, tdflags);
+ 
++		if (!tsize) {
++			*info = "invalid dfa flags table size";
++			error = -EPROTO;
++			goto fail;
++		}
+ 		pdb->dfa->tables[YYTD_ID_ACCEPT2] = kvzalloc(tsize, GFP_KERNEL);
+ 		if (!pdb->dfa->tables[YYTD_ID_ACCEPT2]) {
+ 			*info = "failed to alloc dfa flags table";
+-- 
+2.51.0
 
