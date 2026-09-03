@@ -1,649 +1,247 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f79.google.com (mail-oo1-f79.google.com [209.85.161.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE33541D11E
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 07:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CD13B42FD
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 08:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788420691; cv=none; b=OE772gscD+DBfW+QyFt2QGcKz1lawi9Mm2Bw+NeLkswBNk52zcNGXzlI+Ixw81s1Aa01XyUWHyIfh7pIEeLd2jaXznoF38lv9ENUp8bJHxrq1L1kSzumbVFZ+IRUKePPpuS6p6kmojnaHYK4zFkw80HYWM0VySK126LixyHq6AI=
+	t=1788422678; cv=none; b=lA1LK3pcPkoq5/W/9WY98+Qzo8/W8OP/K1L9P4TrzBKFTaMYgf2BNlGJw6fCyw8NlCdZRUnHzXQxevxRCX8zHRORemjgI6T9lg0CSxZeABRhGCQi+zYV2cAzR8E3uROlnN4Bo6TO7i7VVXGrgSNKBLcmSVeyLWGY8U2IGUxlNR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788420691; c=relaxed/simple;
-	bh=t/AKO0tLHF9dGW+FB6Zo8bC8blJ274t1qMusFIsWLAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iL6xhPcpETpo9usO7VkQO74vtiaTMi803PI05aRai9gOc/bokzRnrFF39pHOmYkt01nQOlKBN9xtjfZ3/6OEnZruYV++AEIHn9hzacumd4/oGU1fM350GrgyZDiEmbH+z0XedWtUeHEFMfJDLcImQMyLCwEo/kBLKzOxLZkj2cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=tDaaDydH; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="tDaaDydH"
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8252E4293B
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 07:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1788420681;
-	bh=OwlZrVOYFz3WV0bGdbITbNQ4pLsWzVXi1TJiFeM+0OU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=tDaaDydHnkxrxMFkj7eJxKk4tzwJtyEpiqZYCyTUQYKazkI0cz0T63wfrVnkBSmIP
-	 nr6RQTG1jPaCA88iMkKP3NN3/QdUStCdMrWmQJY+Ei1WwXdpxKyJGEI9m2t7ePInlG
-	 +lsgPIahYiXtNkG4C3d7mJnielHjeKZWWFpvUkhG9jQpLTTC0chzplUSbgpxf2OJlG
-	 X4Abw1Vr6vJcCsrfOdCPNfPHTDgvqHzSmGRigqm8QBGUUZnIBdpPVw7IHLvqPY1CjK
-	 nDoV59f3DEgENw/HOX9/9+9Zdo4E6pFZ7MSP0enM/wHvuBi7QM2NrPr3BBjG8c3krN
-	 WmoN7e7ybUEIjR0NAglWnB71oli45DvaDPpp5oR6c9akfEaHGVKqn5KNW2hLhA81W7
-	 W15oY6RlV8zKG3Vy7I0fmo7dYYdplVQUOg4QDGp7sFpJzsm/ynZIF7HbJ/Tj4fRgWV
-	 LnZEQh2KlP2l+bkWkl3pDGyfTsQF4/wM8txFaG8bRtK7tdtFL7ENZsGohaenS/0pH+
-	 DjNB8+3z04d6EuR2p/+6yDEGl9QVB2Fvr+cqO0NlUXtO1V/FX3wymenRT+jU+UPO/U
-	 lQQQ1vHSm4yX0ywAN8W2Di8QiEErZUPelaWKNLa5EPp/bxv0FEJRmLJPioJH0N/umw
-	 k6m+N9/BlGweF1tL3/qZQ/5Y=
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-cc1b8088202so1857793a12.3
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 00:31:21 -0700 (PDT)
+	s=arc-20240116; t=1788422678; c=relaxed/simple;
+	bh=/cU/rXoqPmij/0icEQ/WL6PzuBlibn1NvZix5YNhZnM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OCGM/wJWkg7l/tQ2E1Bi3BkcPGje/1nIyxShuiuvnxPji8w/eRmHX+u1DSxBDOobOkomFAxmgQfFX653Y4EXh+7Wh131rxLHBRIM5594S702n92GMSGI85J6IJwSfCTRMjRyHz7f1iI6/JqmGkV7Y6EUIk0AWWnenivS64ZET5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f79.google.com with SMTP id 006d021491bc7-6b34e02c466so769947eaf.1
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 01:04:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788420680; x=1789025480;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=OwlZrVOYFz3WV0bGdbITbNQ4pLsWzVXi1TJiFeM+0OU=;
-        b=N4fDQ2MYsPF2mf83mKVQJzHqNlMh6fXb3U6RQIMv9crRSwuekirlnUmqBjyLKV/72a
-         g/yFhcZ0N/uZBPnAtPaD+LLsUx+43vGYguKN9dd+WrcDAsBCjYqJKSTTp7U+0Ww7G5gn
-         s4DmwPJHyM+YCjZ34RpOU1JnP5XvduhWe2e4WO+EqOnonP4tjUA36L5nkaEfRX0v9TwS
-         49lFggRmHcgH8hNg0m3AgROluJek5TeVY9D+ohmkoUw2i55vDQIDbZTPzlIzLPGUh0Cp
-         UkrTDZ2hn6Hy24mHs2lFre2KxK6U481rg7xFC66nJjf5cI5gkTa6ubERks5RPXTi1zhq
-         SfHw==
-X-Forwarded-Encrypted: i=1; AKwUvBw9RokU9Qjc3PStHLqxLmvMnUOh+amv0yjT2sM2PQ0jOYvr/2SUIACCQd3S0vmdyEppREOJWZ9Wpn+KYFcjVYoTG4oIPDw=@vger.kernel.org
-X-Gm-Message-State: AFuF++lMTVv9fkhc/n/QG1nDsfZeER/nTgRQR7xwMl14AfULPiBYrHzv
-	3sJCIypbxb48cv0AqeBFqOBuC2vs5wVXCocWc2Xa0zLY+EMEjNQl5idnAPkeu13ZvG/se8Gy0+Z
-	llVz/DlKDKGjOtJIj+3jswFCyV3uwBCR44i/MmeEKaY7rRyEeqz8BjaaZEbrT8z/ac8PLrHPEq7
-	ZNzQEWNXNncIrrl/Qw1g==
-X-Gm-Gg: AYBFou1wdDUS4ISbF3BG5mTpxjHsefghOe62lPH9Hpyy1SVDTlKVUXQAfePL+eNGWfu
-	cJG0I+B3bcjbR1d6vyxyIg7n9Ajw9NPM6an6xdQFU47D3D8sliFw/Y1+8munlrNm3i0avKVq1dW
-	Rc6BYM6xd/WE42DWYtajgV+rhiogdxj/V56fKhNW1BsKgma6siYLC7LDx54JyWMx/F/WPNOUiXw
-	TKniauD1OMO0DjPs9El7WhPWUChv7V2ifmNKymHYm0Zts1xB+zoYM5vXHSbz3AkcRGnrrV9j7qo
-	+qbyQbHjd/OzsIZT3qKtV28c4q4qTIGE7HK0anT//9rQKfMjwaKPlpnc6YfEv8mbUVWqI8pgKRI
-	17uJ77wzu+csvRuU=
-X-Received: by 2002:a17:902:fc47:b0:2d9:33d4:a910 with SMTP id d9443c01a7336-2daec5f55a5mr153173055ad.4.1788420679677;
-        Thu, 03 Sep 2026 00:31:19 -0700 (PDT)
-X-Received: by 2002:a17:902:fc47:b0:2d9:33d4:a910 with SMTP id d9443c01a7336-2daec5f55a5mr153172425ad.4.1788420679114;
-        Thu, 03 Sep 2026 00:31:19 -0700 (PDT)
-Received: from [192.168.192.72] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2dafed49b93sm5727745ad.67.2026.09.03.00.31.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2026 00:31:18 -0700 (PDT)
-Message-ID: <6965738d-75a6-4da6-8dba-6214d3e6a458@canonical.com>
-Date: Thu, 3 Sep 2026 00:31:17 -0700
+        d=1e100.net; s=20251104; t=1788422675; x=1789027475;
+        h=content-type:to:from:subject:message-id:in-reply-to:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=EdIlJpPWXX+y9INBx3cKuIwPRg7+iB8XVRejihaUQ1A=;
+        b=Al7UqYwhe2i4QA0Cd3+kargpnO4RlHx2hglO5Bwqk0Kmj/7WMbxQz9YN2cYwPDj+/z
+         yy1wKERDa8V5OfuPRIdzpqCTnaRTmR23WQIYEWsoUie3j1maWi0wL1HHNZeC2uuIYD6i
+         eVeZJgTO9hGQu6+VaIUGx9IeUfsF1lgV6Ane1KIT8Hy0tx95adcsHBB2DR2sTKZHy+aw
+         nLLWMK4nrYAuRvvqRU7QeP2UTdWJFgwuGR+6m1b7xF4K6KZDdkyF5bL3msfsPrkGwF7f
+         qpAcp3n+5J5eNb0dXiLYy1C+6c0BmCkos8oI8wn961jBCttyovW2Mx+LWc59Jx/lyFyX
+         9UAw==
+X-Forwarded-Encrypted: i=1; AKwUvBxODTj2pBNMVOPFenTe+2DxVt1pqLekNuPrT8tYHzOA2S4g1otk0QtFPTVRNI1hTOjU+73ktWcn3C45CWlDSkXXatiHAds=@vger.kernel.org
+X-Gm-Message-State: AFuF++lpF2vwVcKcL98HsrDf621JZbUaUJgan1SLeFo+L8QyKZf1Ziis
+	jlGK8Bjt9p1W3/Q49n0KcdQtTbIjKlKSPdRuVAMrCywG3MWV3Or/0+EYwCe56wsN1WGeHkPTUAp
+	/aGYSmgIY1KBbSL66UrvVYslrVNfEU/ctBNIUpH6ymLPiwhMbmxntMzmudsY=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/7] net, lsm: Change skb secmarks to x-array indexes
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
- linux-security-module@vger.kernel.org, pablo@netfilter.org, fw@strlen.de,
- phil@nwl.cc
-Cc: linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, jmorris@namei.org, serge@hallyn.com,
- keescook@chromium.org, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, selinux@vger.kernel.org
-References: <20260902220150.18586-1-casey@schaufler-ca.com>
- <20260902220150.18586-8-casey@schaufler-ca.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
- BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
- rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
- PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
- a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
- 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
- gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
- BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
- eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
- ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzStKb2huIEpvaGFu
- c2VuIDxqb2huLmpvaGFuc2VuQGNhbm9uaWNhbC5jb20+wsF3BBMBCgAhBQJOjRdaAhsDBQsJ
- CAcDBRUKCQgLBRYCAwEAAh4BAheAAAoJEAUvNnAY1cPYi0wP/2PJtzzt0zi4AeTrI0w3Rj8E
- Waa1NZWw4GGo6ehviLfwGsM7YLWFAI8JB7gsuzX/im16i9C3wHYXKs9WPCDuNlMc0rvivqUI
- JXHHfK7UHtT0+jhVORyyVVvX+qZa7HxdZw3jK+ROqUv4bGnImf31ll99clzo6HpOY59soa8y
- 66/lqtIgDckcUt/1ou9m0DWKwlSvulL1qmD25NQZSnvB9XRZPpPd4bea1RTa6nklXjznQvTm
- MdLq5aJ79j7J8k5uLKvE3/pmpbkaieEsGr+azNxXm8FPcENV7dG8Xpd0z06E+fX5jzXHnj69
- DXXc3yIvAXsYZrXhnIhUA1kPQjQeNG9raT9GohFPMrK48fmmSVwodU8QUyY7MxP4U6jE2O9L
- 7v7AbYowNgSYc+vU8kFlJl4fMrX219qU8ymkXGL6zJgtqA3SYHskdDBjtytS44OHJyrrRhXP
- W1oTKC7di/bb8jUQIYe8ocbrBz3SjjcL96UcQJecSHu0qmUNykgL44KYzEoeFHjr5dxm+DDg
- OBvtxrzd5BHcIbz0u9ClbYssoQQEOPuFmGQtuSQ9FmbfDwljjhrDxW2DFZ2dIQwIvEsg42Hq
- 5nv/8NhW1whowliR5tpm0Z0KnQiBRlvbj9V29kJhs7rYeT/dWjWdfAdQSzfoP+/VtPRFkWLr
- 0uCwJw5zHiBgzsFNBE5mrPoBEACirDqSQGFbIzV++BqYBWN5nqcoR+dFZuQL3gvUSwku6ndZ
- vZfQAE04dKRtIPikC4La0oX8QYG3kI/tB1UpEZxDMB3pvZzUh3L1EvDrDiCL6ef93U+bWSRi
- GRKLnNZoiDSblFBST4SXzOR/m1wT/U3Rnk4rYmGPAW7ltfRrSXhwUZZVARyJUwMpG3EyMS2T
- dLEVqWbpl1DamnbzbZyWerjNn2Za7V3bBrGLP5vkhrjB4NhrufjVRFwERRskCCeJwmQm0JPD
- IjEhbYqdXI6uO+RDMgG9o/QV0/a+9mg8x2UIjM6UiQ8uDETQha55Nd4EmE2zTWlvxsuqZMgy
- W7gu8EQsD+96JqOPmzzLnjYf9oex8F/gxBSEfE78FlXuHTopJR8hpjs6ACAq4Y0HdSJohRLn
- 5r2CcQ5AsPEpHL9rtDW/1L42/H7uPyIfeORAmHFPpkGFkZHHSCQfdP4XSc0Obk1olSxqzCAm
- uoVmRQZ3YyubWqcrBeIC3xIhwQ12rfdHQoopELzReDCPwmffS9ctIb407UYfRQxwDEzDL+m+
- TotTkkaNlHvcnlQtWEfgwtsOCAPeY9qIbz5+i1OslQ+qqGD2HJQQ+lgbuyq3vhefv34IRlyM
- sfPKXq8AUTZbSTGUu1C1RlQc7fpp8W/yoak7dmo++MFS5q1cXq29RALB/cfpcwARAQABwsFf
- BBgBCgAJBQJOZqz6AhsMAAoJEAUvNnAY1cPYP9cP/R10z/hqLVv5OXWPOcpqNfeQb4x4Rh4j
- h/jS9yjes4uudEYU5xvLJ9UXr0wp6mJ7g7CgjWNxNTQAN5ydtacM0emvRJzPEEyujduesuGy
- a+O6dNgi+ywFm0HhpUmO4sgs9SWeEWprt9tWrRlCNuJX+u3aMEQ12b2lslnoaOelghwBs8IJ
- r998vj9JBFJgdeiEaKJLjLmMFOYrmW197As7DTZ+R7Ef4gkWusYFcNKDqfZKDGef740Xfh9d
- yb2mJrDeYqwgKb7SF02Hhp8ZnohZXw8ba16ihUOnh1iKH77Ff9dLzMEJzU73DifOU/aArOWp
- JZuGJamJ9EkEVrha0B4lN1dh3fuP8EjhFZaGfLDtoA80aPffK0Yc1R/pGjb+O2Pi0XXL9AVe
- qMkb/AaOl21F9u1SOosciy98800mr/3nynvid0AKJ2VZIfOP46nboqlsWebA07SmyJSyeG8c
- XA87+8BuXdGxHn7RGj6G+zZwSZC6/2v9sOUJ+nOna3dwr6uHFSqKw7HwNl/PUGeRqgJEVu++
- +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
- p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
-Organization: Canonical
-In-Reply-To: <20260902220150.18586-8-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a4a:e90a:0:b0:6b4:117e:53a with SMTP id
+ 006d021491bc7-6b58679127dmr2800558eaf.20.1788422675173; Thu, 03 Sep 2026
+ 01:04:35 -0700 (PDT)
+Date: Thu, 03 Sep 2026 01:04:35 -0700
+In-Reply-To: <6a698f41.d9e86bb5.297b12.0052.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a992a13.f03f19fe.169578.0004.GAE@google.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in configfs_read_iter
+From: syzbot <syzbot+d2085ac2d653b9e383e2@syzkaller.appspotmail.com>
+To: a.hindborg@kernel.org, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	jmorris@namei.org, leitao@debian.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/2/26 15:01, Casey Schaufler wrote:
-> Maintain a xarray of lsm_prop structures which represent the
-> LSM security information passed via skb->secmark. Pass the xarray
-> index of the appropriate lsm_prop (the secxa) instead of an LSM
-> specific secid. Allow multiple LSMs to specify their components
-> in xarray entries, or create new entries as necessary.
-> 
-> Change uses of security_secctx_to_secid() to security_secctx_to_lsmprop()
-> in the netfilter and iptables code. Change security_secmark_relabel_packet()
-> to accept an lsm_prop pointer rather than a secid. Change secxa_set_secmark()
-> to update and create new entries as necessary.
-> 
-> Update the SELinux, Smack and AppArmor hooks that use secmarks to
-> expect a secxa xarray index instead of a secid.
-> 
+syzbot has found a reproducer for the following issue on:
 
-see comments below
+HEAD commit:    940de590b839 Merge tag 'hardening-v7.3-rc2' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164270f9580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5c3949d762a91f
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2085ac2d653b9e383e2
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e850f9580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=114270f9580000
 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->   include/linux/lsm_hook_defs.h    |  2 +-
->   include/linux/lsm_secxa.h        |  2 +
->   include/linux/security.h         |  4 +-
->   net/netfilter/nfnetlink_queue.c  | 12 +++++-
->   net/netfilter/nft_meta.c         | 15 ++++---
->   net/netfilter/xt_SECMARK.c       | 16 +++++--
->   security/apparmor/net.c          |  8 +++-
->   security/lsm_secxa.c             | 20 ++++++
->   security/security.c              |  6 +--
->   security/selinux/hooks.c         | 71 +++++++++++++++++++++++++++-----
->   security/smack/smack_lsm.c       | 10 ++++-
->   security/smack/smack_netfilter.c | 10 +++--
->   12 files changed, 141 insertions(+), 35 deletions(-)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 679c40a8e127..8ecf07e0e3f0 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -371,7 +371,7 @@ LSM_HOOK(void, LSM_RET_VOID, inet_csk_clone, struct sock *newsk,
->   	 const struct request_sock *req)
->   LSM_HOOK(void, LSM_RET_VOID, inet_conn_established, struct sock *sk,
->   	 struct sk_buff *skb)
-> -LSM_HOOK(int, 0, secmark_relabel_packet, u32 secid)
-> +LSM_HOOK(int, 0, secmark_relabel_packet, struct lsm_prop *prop)
->   LSM_HOOK(void, LSM_RET_VOID, secmark_refcount_inc, void)
->   LSM_HOOK(void, LSM_RET_VOID, secmark_refcount_dec, void)
->   LSM_HOOK(void, LSM_RET_VOID, req_classify_flow, const struct request_sock *req,
-> diff --git a/include/linux/lsm_secxa.h b/include/linux/lsm_secxa.h
-> index 84b06c093460..5be9d64e67e4 100644
-> --- a/include/linux/lsm_secxa.h
-> +++ b/include/linux/lsm_secxa.h
-> @@ -7,6 +7,8 @@
->   #ifndef __LINUX_LSM_SECXA_H
->   #define __LINUX_LSM_SECXA_H
->   
-> +#include <linux/types.h>
-> +
->   #ifdef CONFIG_SECURITY
->   
->   struct lsm_prop;
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 19adc19eb9af..ffbd1708065f 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1715,7 +1715,7 @@ void security_inet_csk_clone(struct sock *newsk,
->   			const struct request_sock *req);
->   void security_inet_conn_established(struct sock *sk,
->   			struct sk_buff *skb);
-> -int security_secmark_relabel_packet(u32 secid);
-> +int security_secmark_relabel_packet(struct lsm_prop *prop);
->   void security_secmark_refcount_inc(void);
->   void security_secmark_refcount_dec(void);
->   int security_tun_dev_alloc_security(void **security);
-> @@ -1898,7 +1898,7 @@ static inline void security_inet_conn_established(struct sock *sk,
->   {
->   }
->   
-> -static inline int security_secmark_relabel_packet(u32 secid)
-> +static inline int security_secmark_relabel_packet(struct lsm_prop *prop)
->   {
->   	return 0;
->   }
-> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-> index b8aaf39cb4d8..ebab037edc6b 100644
-> --- a/net/netfilter/nfnetlink_queue.c
-> +++ b/net/netfilter/nfnetlink_queue.c
-> @@ -32,6 +32,7 @@
->   #include <linux/cgroup-defs.h>
->   #include <linux/rhashtable.h>
->   #include <linux/jhash.h>
-> +#include <linux/lsm_secxa.h>
->   #include <net/gso.h>
->   #include <net/sock.h>
->   #include <net/tcp_states.h>
-> @@ -606,8 +607,15 @@ static int nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsm_context *ctx)
->   {
->   	int seclen = 0;
->   #if IS_ENABLED(CONFIG_NETWORK_SECMARK)
-> -	if (skb->secmark)
-> -		seclen = security_secid_to_secctx(skb->secmark, ctx);
-> +	struct lsm_prop *prop;
-> +	int rc;
-> +
-> +	if (skb->secmark) {
-> +		rc = secxa_get_lsmprop(&prop, skb->secmark);
-> +		if (rc)
-> +			return 0;
-> +		seclen = security_lsmprop_to_secctx(prop, ctx, LSM_ID_UNDEF);
-> +	}
->   #endif
->   	return seclen;
->   }
-> diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
-> index bd0f7a0931f4..664191dfa4b2 100644
-> --- a/net/netfilter/nft_meta.c
-> +++ b/net/netfilter/nft_meta.c
-> @@ -927,21 +927,24 @@ static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
->   
->   static int nft_secmark_compute_secid(struct nft_secmark *priv)
->   {
-> -	u32 tmp_secid = 0;
-> +	struct lsm_prop tmp_prop;
-> +	u32 secxa = 0;
->   	int err;
->   
-> -	err = security_secctx_to_secid(priv->ctx, strlen(priv->ctx), &tmp_secid);
-> +	err = security_secctx_to_lsmprop(priv->ctx, strlen(priv->ctx),
-> +					 &tmp_prop, LSM_ID_UNDEF);
->   	if (err)
->   		return err;
->   
-> -	if (!tmp_secid)
-> -		return -ENOENT;
-> +	err = secxa_from_lsmprop(&tmp_prop, &secxa);
-> +	if (err)
-> +		return err;
->   
-> -	err = security_secmark_relabel_packet(tmp_secid);
-> +	err = security_secmark_relabel_packet(&tmp_prop);
->   	if (err)
->   		return err;
->   
-> -	priv->secid = tmp_secid;
-> +	priv->secid = secxa;
->   	return 0;
->   }
->   
-> diff --git a/net/netfilter/xt_SECMARK.c b/net/netfilter/xt_SECMARK.c
-> index ea67aa92ddc2..05b023a7c576 100644
-> --- a/net/netfilter/xt_SECMARK.c
-> +++ b/net/netfilter/xt_SECMARK.c
-> @@ -43,13 +43,15 @@ secmark_tg(struct sk_buff *skb, const struct xt_secmark_target_info_v1 *info)
->   
->   static int checkentry_lsm(struct xt_secmark_target_info_v1 *info)
->   {
-> +	struct lsm_prop prop;
->   	int err;
->   
->   	info->secctx[SECMARK_SECCTX_MAX - 1] = '\0';
->   	info->secid = 0;
->   
-> -	err = security_secctx_to_secid(info->secctx, strlen(info->secctx),
-> -				       &info->secid);
-> +	err = security_secctx_to_lsmprop(info->secctx, strlen(info->secctx),
-> +					 &prop, LSM_ID_UNDEF);
-> +
->   	if (err) {
->   		if (err == -EINVAL)
->   			pr_info_ratelimited("invalid security context \'%s\'\n",
-> @@ -57,18 +59,24 @@ static int checkentry_lsm(struct xt_secmark_target_info_v1 *info)
->   		return err;
->   	}
->   
-> -	if (!info->secid) {
-> +	if (!lsmprop_is_set(&prop)) {
->   		pr_info_ratelimited("unable to map security context \'%s\'\n",
->   				    info->secctx);
->   		return -ENOENT;
->   	}
->   
-> -	err = security_secmark_relabel_packet(info->secid);
-> +	err = security_secmark_relabel_packet(&prop);
->   	if (err) {
->   		pr_info_ratelimited("unable to obtain relabeling permission\n");
->   		return err;
->   	}
->   
-> +	err = secxa_from_lsmprop(&prop, &info->secid);
-> +	if (err) {
-> +		pr_info_ratelimited("unable to obtain secmark\n");
-> +		return err;
-> +	}
-> +
->   	security_secmark_refcount_inc();
->   	return 0;
->   }
-> diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-> index cf590dd08540..e26e15c2d947 100644
-> --- a/security/apparmor/net.c
-> +++ b/security/apparmor/net.c
-> @@ -8,6 +8,7 @@
->    * Copyright 2009-2017 Canonical Ltd.
->    */
->   
-> +#include <linux/lsm_secxa.h>
->   #include "include/af_unix.h"
->   #include "include/apparmor.h"
->   #include "include/audit.h"
-> @@ -365,12 +366,17 @@ static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
->   			   struct apparmor_audit_data *ad)
->   {
->   	int i, ret;
-> +	struct lsm_prop *prop;
->   	struct aa_perms perms = { };
->   	struct aa_ruleset *rules = profile->label.rules[0];
->   
->   	if (rules->secmark_count == 0)
->   		return 0;
->   
-> +	ret = secxa_get_lsmprop(&prop, secid);
-> +	if (ret)
-> +		return ret;
-> +
->   	for (i = 0; i < rules->secmark_count; i++) {
->   		if (!rules->secmark[i].secid) {
->   			ret = apparmor_secmark_init(&rules->secmark[i]);
-> @@ -378,7 +384,7 @@ static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
->   				return ret;
->   		}
->   
-> -		if (rules->secmark[i].secid == secid ||
-> +		if (rules->secmark[i].secid == prop->apparmor.label->secid ||
->   		    rules->secmark[i].secid == AA_SECID_WILDCARD) {
->   			if (rules->secmark[i].deny)
->   				perms.deny = ALL_PERMS_MASK;
-> diff --git a/security/lsm_secxa.c b/security/lsm_secxa.c
-> index ccbe78095d70..f0702ac5601d 100644
-> --- a/security/lsm_secxa.c
-> +++ b/security/lsm_secxa.c
-> @@ -103,7 +103,25 @@ EXPORT_SYMBOL(secxa_from_lsmprop);
->    */
->   void secxa_set_secmark(struct sk_buff *skb, u32 secxa)
->   {
-> -	if (!skb->secmark)
-> +	struct lsm_prop *olp;
-> +	struct lsm_prop *nlp;
-> +	struct lsm_prop prop;
-> +	u32 tsecxa;
-> +	int rc;
-> +
-> +	if (!skb->secmark) {
->   		skb->secmark = secxa;
-> +		return;
-> +	}
-> +
-> +	olp = xa_load(&secxa_xa, skb->secmark);
-> +	nlp = xa_load(&secxa_xa, secxa);
-> +
-> +	prop = *olp;
-> +	security_update_lsmprop(&prop, nlp, LSM_ID_UNDEF);
-> +
-> +	rc = secxa_from_lsmprop(&prop, &tsecxa);
-> +	if (!rc)
-> +		skb->secmark = tsecxa;
->   }
->   EXPORT_SYMBOL(secxa_set_secmark);
-> diff --git a/security/security.c b/security/security.c
-> index 1dec0037370b..e80e7823ce14 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -4646,15 +4646,15 @@ EXPORT_SYMBOL(security_inet_conn_established);
->   
->   /**
->    * security_secmark_relabel_packet() - Check if setting a secmark is allowed
-> - * @secid: new secmark value
-> + * @lsmprop: new secmark value
->    *
->    * Check if the process should be allowed to relabel packets to @secid.
-change @secid to @lsmprop
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-940de590.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/64f87fb4f049/vmlinux-940de590.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/917bd28bbd2d/bzImage-940de590.xz
 
->    *
->    * Return: Returns 0 if permission is granted.
->    */
-> -int security_secmark_relabel_packet(u32 secid)
-> +int security_secmark_relabel_packet(struct lsm_prop *prop)
->   {
-> -	return call_int_hook(secmark_relabel_packet, secid);
-> +	return call_int_hook(secmark_relabel_packet, prop);
->   }
->   EXPORT_SYMBOL(security_secmark_relabel_packet);
->   
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 12614478b638..bf832eff0b92 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -94,6 +94,7 @@
->   #include <linux/io_uring/cmd.h>
->   #include <uapi/linux/lsm.h>
->   #include <linux/memfd.h>
-> +#include <linux/lsm_secxa.h>
->   
->   #include "initcalls.h"
->   #include "avc.h"
-> @@ -5414,7 +5415,16 @@ static int selinux_sock_rcv_skb_compat(struct sock *sk, struct sk_buff *skb,
->   		return err;
->   
->   	if (selinux_secmark_enabled()) {
-> -		err = avc_has_perm(sk_sid, skb->secmark, SECCLASS_PACKET,
-> +		struct lsm_prop *prop;
-> +		u32 secmark = 0;
-> +
-> +		if (skb->secmark) {
-> +			err = secxa_get_lsmprop(&prop, skb->secmark);
-> +			if (!err)
-> +				secmark = prop->selinux.secid;
-> +		}
-> +
-> +		err = avc_has_perm(sk_sid, secmark, SECCLASS_PACKET,
->   				   PACKET__RECV, &ad);
->   		if (err)
->   			return err;
-> @@ -5483,7 +5493,15 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->   	}
->   
->   	if (secmark_active) {
-> -		err = avc_has_perm(sk_sid, skb->secmark, SECCLASS_PACKET,
-> +		struct lsm_prop *prop;
-> +		u32 secmark = 0;
-> +
-> +		if (skb->secmark) {
-> +			err = secxa_get_lsmprop(&prop, skb->secmark);
-> +			if (!err)
-> +				secmark = prop->selinux.secid;
-> +		}
-> +		err = avc_has_perm(sk_sid, secmark, SECCLASS_PACKET,
->   				   PACKET__RECV, &ad);
->   		if (err)
->   			return err;
-> @@ -5885,10 +5903,10 @@ static void selinux_inet_conn_established(struct sock *sk, struct sk_buff *skb)
->   	selinux_skb_peerlbl_sid(skb, family, &sksec->peer_sid);
->   }
->   
-> -static int selinux_secmark_relabel_packet(u32 sid)
-> +static int selinux_secmark_relabel_packet(struct lsm_prop *lsmprop)
->   {
-> -	return avc_has_perm(current_sid(), sid, SECCLASS_PACKET, PACKET__RELABELTO,
-> -			    NULL);
-> +	return avc_has_perm(current_sid(), lsmprop->selinux.secid,
-> +			    SECCLASS_PACKET, PACKET__RELABELTO, NULL);
->   }
->   
->   static void selinux_secmark_refcount_inc(void)
-> @@ -6016,10 +6034,21 @@ static unsigned int selinux_ip_forward(void *priv, struct sk_buff *skb,
->   		}
->   	}
->   
-> -	if (secmark_active)
-> -		if (avc_has_perm(peer_sid, skb->secmark,
-> +	if (secmark_active) {
-> +		struct lsm_prop *prop;
-> +		u32 secmark = 0;
-> +		int err;
-> +
-> +		if (skb->secmark) {
-> +			err = secxa_get_lsmprop(&prop, skb->secmark);
-> +			if (!err)
-> +				secmark = prop->selinux.secid;
-> +		}
-> +
-> +		if (avc_has_perm(peer_sid, secmark,
->   				 SECCLASS_PACKET, PACKET__FORWARD_IN, &ad))
->   			return NF_DROP;
-> +	}
->   
->   	if (netlbl_enabled())
->   		/* we do this in the FORWARD path and not the POST_ROUTING
-> @@ -6093,10 +6122,20 @@ static unsigned int selinux_ip_postroute_compat(struct sk_buff *skb,
->   	if (selinux_parse_skb(skb, &ad, NULL, 0, &proto))
->   		return NF_DROP;
->   
-> -	if (selinux_secmark_enabled())
-> -		if (avc_has_perm(sksec->sid, skb->secmark,
-> +	if (selinux_secmark_enabled()) {
-> +		struct lsm_prop *prop;
-> +		u32 secmark = 0;
-> +		int err;
-> +
-> +		if (skb->secmark) {
-> +			err = secxa_get_lsmprop(&prop, skb->secmark);
-> +			if (!err)
-> +				secmark = prop->selinux.secid;
-> +		}
-> +		if (avc_has_perm(sksec->sid, secmark,
->   				 SECCLASS_PACKET, PACKET__SEND, &ad))
->   			return NF_DROP_ERR(-ECONNREFUSED);
-> +	}
->   
->   	if (selinux_xfrm_postroute_last(sksec->sid, skb, &ad, proto))
->   		return NF_DROP_ERR(-ECONNREFUSED);
-> @@ -6215,10 +6254,20 @@ static unsigned int selinux_ip_postroute(void *priv,
->   	if (selinux_parse_skb(skb, &ad, &addrp, 0, NULL))
->   		return NF_DROP;
->   
-> -	if (secmark_active)
-> -		if (avc_has_perm(peer_sid, skb->secmark,
-> +	if (secmark_active) {
-> +		struct lsm_prop *prop;
-> +		u32 secmark = 0;
-> +		int err;
-> +
-> +		if (skb->secmark) {
-> +			err = secxa_get_lsmprop(&prop, skb->secmark);
-> +			if (!err)
-> +				secmark = prop->selinux.secid;
-> +		}
-> +		if (avc_has_perm(peer_sid, secmark,
->   				 SECCLASS_PACKET, secmark_perm, &ad))
->   			return NF_DROP_ERR(-ECONNREFUSED);
-> +	}
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d2085ac2d653b9e383e2@syzkaller.appspotmail.com
+
+nvmet: adding nsid 1 to subsystem testsubsys
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.0.17/5927 is trying to acquire lock:
+ffff88802cf0e080 (&buffer->mutex){+.+.}-{4:4}, at: configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
+
+but task is already holding lock:
+ffff88802405fe48 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
+
+which lock already depends on the new lock.
 
 
-doesn't
+the existing dependency chain (in reverse order) is:
 
-   selinux_socket_getpeersec_dgram()
-   selinux_req_classify_flow()
+-> #3 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
+       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xc4/0x210 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x5cd/0x2440 fs/namei.c:5000
+       do_file_open+0x20e/0x430 fs/namei.c:5029
+       file_open_name+0x1c3/0x3e0 fs/open.c:1375
+       filp_open+0x2e/0x50 fs/open.c:1392
+       nvmet_file_ns_enable+0x95/0x420 drivers/nvme/target/io-cmd-file.c:41
+       nvmet_ns_enable+0x35f/0x5d0 drivers/nvme/target/core.c:596
+       nvmet_ns_enable_store+0x11e/0x160 drivers/nvme/target/configfs.c:737
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6af/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I haven't detangled yet whether the xfrm hooks, every grab the
-secmark of a packet directly. It looks to me so far to be only
-the skb->xfrm->security->ctx_sid. Paul?
+-> #2 (&subsys->lock){+.+.}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       nvmet_ns_device_path_store+0x57/0x1c0 drivers/nvme/target/configfs.c:538
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6af/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&p->frag_sem){.+.+}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
+       flush_write_buffer fs/configfs/file.c:205 [inline]
+       configfs_write_iter+0x218/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6af/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&buffer->mutex){+.+.}-{4:4}:
+       check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3181
+       check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+       validate_chain kernel/locking/lockdep.c:3924 [inline]
+       __lock_acquire+0x1492/0x1ec0 kernel/locking/lockdep.c:5254
+       lock_acquire kernel/locking/lockdep.c:5908 [inline]
+       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
+       __kernel_read+0x397/0xad0 fs/read_write.c:532
+       integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
+       ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
+       process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xc4/0x210 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x5cd/0x2440 fs/namei.c:5000
+       do_file_open+0x20e/0x430 fs/namei.c:5029
+       do_sys_openat2+0x10f/0x1e0 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x12d/0x210 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &buffer->mutex --> &subsys->lock --> &ima_iint_mutex_key[depth]
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ima_iint_mutex_key[depth]);
+                               lock(&subsys->lock);
+                               lock(&ima_iint_mutex_key[depth]);
+  lock(&buffer->mutex);
+
+ *** DEADLOCK ***
+
+locks held by syz.0.17/5927: 1, last CPU#3:
+ #0: ffff88802405fe48 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x5ab/0x2350 security/integrity/ima/ima_main.c:319
+
+stack backtrace:
+CPU: 3 UID: 0 PID: 5927 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x100/0x190 lib/dump_stack.c:120
+ print_circular_bug.cold+0x178/0x1be kernel/locking/lockdep.c:2059
+ check_noncircular+0x146/0x160 kernel/locking/lockdep.c:2191
+ check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3181
+ check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+ validate_chain kernel/locking/lockdep.c:3924 [inline]
+ __lock_acquire+0x1492/0x1ec0 kernel/locking/lockdep.c:5254
+ lock_acquire kernel/locking/lockdep.c:5908 [inline]
+ lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5865
+ __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+ __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+ configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
+ __kernel_read+0x397/0xad0 fs/read_write.c:532
+ integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
+ ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
+ ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
+ process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
+ ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+ security_file_post_open+0xc4/0x210 security/security.c:2755
+ do_open fs/namei.c:4839 [inline]
+ path_openat+0x5cd/0x2440 fs/namei.c:5000
+ do_file_open+0x20e/0x430 fs/namei.c:5029
+ do_sys_openat2+0x10f/0x1e0 fs/open.c:1417
+ do_sys_open fs/open.c:1423 [inline]
+ __do_sys_openat fs/open.c:1439 [inline]
+ __se_sys_openat fs/open.c:1434 [inline]
+ __x64_sys_openat+0x12d/0x210 fs/open.c:1434
+ do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+ do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f57f139e159
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd81407e38 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f57f1625fa0 RCX: 00007f57f139e159
+RDX: 0000000000000002 RSI: 0000200000000240 RDI: ffffffffffffff9c
+RBP: 00007f57f1435024 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f57f1625fac R14: 00007f57f1625fa0 R15: 00007f57f1625fa0
+ </TASK>
 
 
-overall this conversion bothers me, in that we need to put this
-boiler plate into every hook, instead of having the infrastructure
-handle the conversion for the specific LSM.
-
-I know this is partly being done because of the
-   if (secmakr_active)
-check, but I think it would be far cleaner, and less prone to error
-if the infra could grab the per LSM property and pass that instead,
-and not expose the secid value that has to go through the mapping.
-At a minimum the API should identify this mapped secid is different
-from the secid being passed in some of the other hooks.
-
-Perhaps we could have a way to store if the LSM is using the secid
-so the LSM infra could do the secmark_active check before calling the
-hook?
-
->   
->   	if (peerlbl_active) {
->   		u32 if_sid;
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index fcfadd5d9994..79140e6829a4 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -42,6 +42,7 @@
->   #include <linux/fs_context.h>
->   #include <linux/fs_parser.h>
->   #include <linux/watch_queue.h>
-> +#include <linux/lsm_secxa.h>
->   #include <linux/io_uring/cmd.h>
->   #include <uapi/linux/lsm.h>
->   #include "smack.h"
-> @@ -4189,10 +4190,17 @@ static int smk_skb_to_addr_ipv6(struct sk_buff *skb, struct sockaddr_in6 *sip)
->   #ifdef CONFIG_NETWORK_SECMARK
->   static struct smack_known *smack_from_skb(struct sk_buff *skb)
->   {
-> +	struct lsm_prop *prop;
-> +	int rc;
-> +
->   	if (skb == NULL || skb->secmark == 0)
->   		return NULL;
->   
-> -	return smack_from_secid(skb->secmark);
-> +	rc = secxa_get_lsmprop(&prop, skb->secmark);
-> +	if (prop)
-> +		return prop->smack.skp;
-> +
-> +	return NULL;
->   }
->   #else
->   static inline struct smack_known *smack_from_skb(struct sk_buff *skb)
-> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
-> index b363c42f252e..0378f74aa22b 100644
-> --- a/security/smack/smack_netfilter.c
-> +++ b/security/smack/smack_netfilter.c
-> @@ -24,13 +24,17 @@ static unsigned int smack_ip_output(void *priv,
->   				    const struct nf_hook_state *state)
->   {
->   	struct sock *sk = skb_to_full_sk(skb);
-> +	struct lsm_prop prop = { };
->   	struct socket_smack *ssp;
-> -	struct smack_known *skp;
-> +	u32 secxa;
-> +	int rc;
->   
->   	if (sk) {
->   		ssp = smack_sock(sk);
-> -		skp = ssp->smk_out;
-> -		secxa_set_secmark(skb, skp->smk_secid);
-> +		prop.smack.skp = ssp->smk_out;
-> +		rc = secxa_from_lsmprop(&prop, &secxa);
-> +		if (!rc)
-> +			secxa_set_secmark(skb, secxa);
->   	}
->   
->   	return NF_ACCEPT;
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
