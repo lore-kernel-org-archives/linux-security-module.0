@@ -1,134 +1,125 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1A24AF681
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 13:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788442163; cv=pass; b=FBy0lmo7HKowVtdlECGK2tkSz4n5jK3YNC57ogX4oVe/lJfYLWiMaZquNfvBQxuF5shvryF0OKy6qwg5ONCTTKrVQuGxZrZKccp3u778P+mlNFIiHkLgJ9R1cJWcV9aZGksgb2Y0QgIQQMbfPuXeAsaMv2bHCVW7BgB8CuHpIEo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788442163; c=relaxed/simple;
-	bh=0lzGBDpPSFyRzORpVpv5BVqn0OH17bvA2nEL9BC2eGk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VysLf7MuWkcPBnryTd2iRC0vNn5Ft5Y0gUPdD+pRk2sLoLQPziFxjYHV+sotc/OTZreeVE7lME3obYdecZ7RCtyGdmT6lz+385qhnp6rAKSdsDdDSdBH2H/9xhsC5QaG+cNs879EwJ5b4lYQD8nV3AsooGwNmDbDbMxYm8F1q6Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QibOJQnk; arc=pass smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8967A4E8DF2
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 15:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788450983; cv=none; b=eCdKIZ0Up7A/CCHDxwVyZZGyMcWEroSLJkP1XMsHfNGXSD6UA4YNZf9PBDJnQ7bDJK6nmZfb94qnRAGQUdwqAIEf9juGRyW7IHU/ExvxCTEU94K4xP3AghMz3D2GHakcGSg8cgsug92Gct0jZnI/OHFUj21u+44GPYXAW/Wp7XI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788450983; c=relaxed/simple;
+	bh=9BK1kyxk5Z0/CaDbriSQ++DzrreFQG+kLaclcVYwGN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o9ESAQRDew+HdO/0ZsbyTvBkov2EonTT/y/5/k4C7e+7Wio+h6aYTiTT7LsWImmUsG6iHxCTQxcw7JcnLROIbFTDA++LFhonILw91H8+b8TNr3Gy0V2vTy1a/uL3pXrCSI5s6Yn9YGnL/XeHYsBroQ+KTb2nPRJPF61N2dQRo4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=btkRkqlf; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QibOJQnk"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2d70066b704so3531735ad.2
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 06:29:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788442137; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Jhtih1bZsIrmjYrDluCR4RsghdiZ+nqpPvsxWWPNypBXLEBqR+afBi5TAaK1vo7wMF
-         zxPlRrHIb/+5ShWmT51jWNZMMSt4lGAlfNxHomXvdgkAWlQgVmbIvTE17x6/eZqiTHeB
-         ZTKkzxOw2fK3zU8qlo8fe+Zbs44VK56DDz2jOxc/1x0BNx7V09Th9crE8T0NGtOgeoSB
-         oG8WIxhjtq94TcfLONsdvgWPb7a9261yhD+P5TpluYzvgpdkwc3QbmRiSvzBL6UYGcRj
-         wUnUDuTmUDRZ8HIq8ZVCox6d6lzIP6T+7m6MYGaAiSOvo/S5jYeaVJQGUOC5VmYRwGMD
-         aSEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=0lzGBDpPSFyRzORpVpv5BVqn0OH17bvA2nEL9BC2eGk=;
-        fh=47iAmsTbDNpySy5FwRa6oBjkDXAJSOlKlYMa0OPfhpA=;
-        b=L+/4wr0i4lgRpDpaTEA1Gp9JrhaFRV3o56ep3VkMQR245g0T5rXX67cmxvIC3dUvJk
-         hh9V0z6mJLotqUJKk6Wsx/ShubouA/gHHtP+v1AjTrSvt111hGGAYXYavADDZTnvKYMy
-         8U282Ns4jA/KfhkrGxyNXdhZR1XZq4VBoSbSVtt06ODi6Bxd7BlYTzPZvgcwPObCmwHn
-         AEPxzNpbkh5tzvVDW0Sf3Yj0HK7rDdsHm+O+aS5QGUHwnsjpMvwoJoBgj9OiaQ0GzIkp
-         Hbyv0nIbFvhD1+6JQlr88xWxy7T6XpwYZSpkOzRQDIZVjqgJk/eZXqv69Jvzpp6LV2T2
-         wkig==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btkRkqlf"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49a97714f5dso404875e9.0
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 08:56:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788442137; x=1789046937; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0lzGBDpPSFyRzORpVpv5BVqn0OH17bvA2nEL9BC2eGk=;
-        b=QibOJQnk1IcJqAPts7niHKXB4MYd7rKKk/wudeEGKQp0iGQwDGwevv3JskZ75xdch6
-         jfqm4L1dCpknWVRfoup0pgPVeoVkxrEgPBofP5UlvVojRvaPkpNXhQFo3YOpI5eUKzJ3
-         oVIpCzNOrezqt2zVbyS0+jWle3e6IbhPsEo3ji4QqZhQGS8vqm75osJq5KNHbniSe7Cs
-         7IMjXLKRAKNvoWjZP6f0QpU7q5nxhdS5rzzAAq7Cy/eRo92sBJSuU2C/89sY38/jJfVI
-         jvANMBPDBxnLupAoA5f1OGYcmYjS1lAQ1aXvNLhVjMv0fKwt2U1nwuAN5oFlZ7SxOXAL
-         4HoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788442137; x=1789046937;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1788450979; x=1789055779; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0lzGBDpPSFyRzORpVpv5BVqn0OH17bvA2nEL9BC2eGk=;
-        b=c6eG3JphwQO1pkqO1wh4jSG/8g9ll//Dn0ESmyVY2ZWt7zIm3A1id3t0SPBmnI0HQt
-         KXnMjN8gYkmttvVlLg8s2P6cjYcnTWbRse0dGyFLulVxP1eEawfnizVbBhIAoZ8B4O4z
-         hHfziEuF04mP5COS26quy+iSvFxJr5l98bNwRahi3BaqVZCjhQ6k2ypSHI5aEGK9fp6d
-         qhl9zIEdhEvR/jq3jS9avp7KdnK46U+VpcCULGRa7L95qegkGWOkIk6vb37l+MhSiloj
-         h+xSL3Pjam4rsB6GCH2TItAz2cq0gMe+RGXYESKJPhuEUJOSfdb4PWmdEpCehBOQIl39
-         bhHQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwPjxhQ9KcXSVM2iB4dfeMpqxq2pYrCW5SIAoS0yclzxTOssQXjokoY0lt34QDp21smEHFiNKLBICEV79+YqfpxAGpFsO8=@vger.kernel.org
-X-Gm-Message-State: AFuF++la8kJCJXdZDXLSX+ipqjYF4C3hFXSfhwkUhEpyBHwMZlfWinrS
-	hcO5FhCCt1OHSMVKusC6S/gsiGEoXzCXNdYo5m1Bf2/xh6BkVtvTD5X3I/dDoLdMHlCnBjjcvqY
-	mJPksCRm8oj30wC8Jjy7YfiarcKiGEao=
-X-Gm-Gg: AYBFou03xmlxvs4YHxSIfqx/WYEtq9guLfOxyw/D4b0IFyo5pBIh5QAMQBI+Myf0D5d
-	tv7TbGloB09kXPxq1nKKPKyJNvMeQbLZ7K5/Hqck6Dxqq39RZtO5gkrxJxI6SCdnmAtMQwqB6oG
-	ZnIoWCYmjhQQ6OE/Cu/9az+jk3capwRgrQ3Z7aL9hPl86P5x6Q9gULxBdPfSUMzqJ0n6OePSfBU
-	gmQG61vIuKEn6AdRnCmrypf2tXi3fQbeWk2IlYOiJDK/iO5tHOiQKapV2iBdzkq7GejytHE8Hz4
-	kRqbns75fvO2LAXbZAYgigXf+LNnPJCCpZypXk/3vqaCnMPfTJfMOA0/oq4yd/M0WFmooGHULOs
-	eRoeahbwInAUKTavk3gqZO4X2QhJ1DoHodfErFba5XKmhAk0H26hVTAZyCfmE
-X-Received: by 2002:a17:90b:1d0d:b0:38e:c140:2a0b with SMTP id
- 98e67ed59e1d1-39aee0e6ed8mr12609481a91.3.1788442136905; Thu, 03 Sep 2026
- 06:28:56 -0700 (PDT)
+        bh=Qf5A2iWXrze7f/WQGCmLESIXScEzdMF2bet/pRtY3Is=;
+        b=btkRkqlfotTbaNJJyaxS4LwL7rBuN8VRekBWvzMifhXVTv7st8iBwhg2et4/seMKtS
+         5kuo1D/4VmvPntokf67cJPDTL4LNAz+SGUysGEw3s5N98UdMU1ZtwhVAvhi+ugahidtT
+         jfSwJQ7pt+GVLsXUHRvvPtjmuMziLsx0F1yEEAC8PWrg/W1mpyacXoyLgZGqnQVA273r
+         n2i5GatRaL7j9G+lbpjzzjimD0AMbaXAu3o3KhOAfahyW52IJHcUxKg0SCr+TeVFtSYl
+         LGlpsCEQRtO0rJ3q7SZbTqvR4ugigRDWDeGnU0OgmVdqIfW8u//Ii3evKOY6AJACEg0S
+         DACw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788450979; x=1789055779;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Qf5A2iWXrze7f/WQGCmLESIXScEzdMF2bet/pRtY3Is=;
+        b=GgZcROBIAAjZK+LVoqbrqTnnuVkpdLBmogw5jbuNZl3m29p74I2OAtavv3tWopFBih
+         l1cJE5PlCeO1wR9Bzli3E9grTkGAaOSFimVjOuH3Pvcslw+AQ1cVqiCuBJ5qOBIXcgym
+         ZZdHDLqD3pV+h027PtVSZx2qusGmB5Oo+PmqgvCePiyqRIQ0copT4cs6gX5qMqAN1kNk
+         oGgy2o87qUQoBxsbSrT4RHtwTJkOLdKVgrtxUFkRqULp+S1aOOISQAzUSm71YDccxNBO
+         gwb+/Ft+eSPmGpmSN/YnE+Rx7FBr5V8g70u6McGWNFj9atXbiV239ydNb8Rj7pAlq2TU
+         XILg==
+X-Forwarded-Encrypted: i=1; AKwUvByTjDKMkwjoi8osRCPSW4esImOzSjbvR+FYUVnun1evO6NF8PQkd2YgnY3FFPYD/oV2J5R86HKwbQGkgjR80msv19VmnHI=@vger.kernel.org
+X-Gm-Message-State: AFuF++nlwO889wP5ETeDombYbZJ3jlHpB555mnIxPb6VUjAqrdW4tC/e
+	kVCAGcMtb5e3u3K8wQZuhBNWqLJFm7mKS9iTuJtIwebQUtq8UvFIAGjm
+X-Gm-Gg: AYBFou2X4kYRlfU//zEGncqN7sjqRbFjN6vl6UjRP00cLbz9t0/GUihmo1P6kuK8OUB
+	HNWo6tzuP0mLc1/AIFjlOqy54127ye/Uxj+yb77/ZiuOm/j/YzVxGzW7QX+/W4zAetbmrUSjiuM
+	Z/UjSnZCBFjdK0JPWHSKjc2RcWRzuRB8i5FXtKVIYqIwWsLwcTHTsxVW/eJJUreXZDD+CU+M5FO
+	poSQrjV3fo2Y9NTgpocTw19VpI1p9x9PMjWGDQNXuEBYSay8r8L09dsTgEK8t+zAgWuVfvwSrLJ
+	1VlOigFV0JYUI62xJ5cVxWHx0olEEIJEQS3DXv6Mbv6RqamWZI7NLLVrwAUI4/XABwVwKUhKpzT
+	HOW+5Q5mzzHtFeqok//qcK18rEixyXt+h1HQm2XF80A0F2R3+bWuYq14zSaderrntLnB5e85Oe9
+	9b0I5Ex0WzS+dS74UvUL43Z7o2gDUYq/35QJAqpRkQ2+UMz7DcYNqKvUsF2noz8QPmrEQibwPbc
+	tFXdB7m+gKyhb0g9dFxYCp9shNhb9gofOB5pg==
+X-Received: by 2002:a05:600c:354b:b0:49b:d03:8d3a with SMTP id 5b1f17b1804b1-49ce58180bbmr220232615e9.11.1788450978626;
+        Thu, 03 Sep 2026 08:56:18 -0700 (PDT)
+Received: from omos-acer (109-81-21-204.rct.o2.cz. [109.81.21.204])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee6024a8sm80527185e9.6.2026.09.03.08.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 08:56:17 -0700 (PDT)
+From: =?UTF-8?q?Ondrej=20Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] =?UTF-8?q?MAINTAINERS,=20mailmap:=20update=20email=20addr?= =?UTF-8?q?ess=20for=20Ondrej=20Mosn=C3=A1=C4=8Dek?=
+Date: Thu,  3 Sep 2026 17:56:15 +0200
+Message-ID: <20260903155615.516010-1-omosnacek@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260824-unique-ref-v20-0-490735672187@kernel.org>
- <20260824-unique-ref-v20-6-490735672187@kernel.org> <CANiq72mPLrKQMzb37ow2969m5r3Z2Kh_4LHERUun6ALw3ea6tg@mail.gmail.com>
- <87y0dt1b8b.fsf@t14s.mail-host-address-is-not-set>
-In-Reply-To: <87y0dt1b8b.fsf@t14s.mail-host-address-is-not-set>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 3 Sep 2026 15:28:43 +0200
-X-Gm-Features: AcwNN1XsmuEPyO39jqyvRGfAMw_DGGPMkiDRHtfg1ZEoNlBhpVDCHnmjvBP_pa8
-Message-ID: <CANiq72muo8SotJHJQhEe=2kiprbrQTvrEMqd1Uw_7yNSfA3Gpw@mail.gmail.com>
-Subject: Re: [PATCH v20 6/8] rust: Add missing SAFETY documentation for `ARef` example
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	"Liam R. Howlett" <liam@infradead.org>, Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Tamir Duberstein <tamird@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, 
-	=?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
-	Lyude Paul <lyude@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Leon Romanovsky <leon@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Igor Korotin <igor.korotin@linux.dev>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Ira Weiny <iweiny@kernel.org>, Philipp Stanner <phasta@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, driver-core@lists.linux.dev, 
-	linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Oliver Mangold <oliver.mangold@pm.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 26, 2026 at 11:29=E2=80=AFAM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->
-> Do you want a link to this issue with a regular `Link:` tag?
+I'm going to use my personal email for kernel contributions from now on.
+Update MAINTAINERS and .mailmap to reflect this.
 
-Yeah, thanks!
+Also switch to use proper spelling with diacritics, since I normally use
+the full Unicode name with my personal email address. I'm leaving
+in-code occurences unchanged though, as that would be just unnecessary
+churn.
 
-Cheers,
-Miguel
+Link: https://lore.kernel.org/lkml/CAFqZXNvOGbzy8-ZnJtKi94jfu2H173Tz7VYpK8KuseMQS-9tNA@mail.gmail.com/
+Signed-off-by: Ondrej Mosnáček <omosnacek@gmail.com>
+---
+
+Hoping for this to get picked up via the SELinux tree, since the main
+change is in the SELinux MAINTAINERS entry.
+
+ .mailmap    | 1 +
+ MAINTAINERS | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/.mailmap b/.mailmap
+index 6803f3bd2865..0e672a60afdc 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -699,6 +699,7 @@ Oliver Hartkopp <socketcan@hartkopp.net> <oliver.hartkopp@volkswagen.de>
+ Oliver Hartkopp <socketcan@hartkopp.net> <oliver@hartkopp.net>
+ Oliver Upton <oupton@kernel.org> <oupton@google.com>
+ Oliver Upton <oupton@kernel.org> <oliver.upton@linux.dev>
++Ondrej Mosnáček <omosnacek@gmail.com> <omosnace@redhat.com>
+ Ondřej Jirman <megi@xff.cz> <megous@megous.com>
+ Oza Pawandeep <quic_poza@quicinc.com> <poza@codeaurora.org>
+ Pali Rohár <pali@kernel.org> <pali.rohar@gmail.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fc320b373656..875d0baed8b9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24772,7 +24772,7 @@ K:	\bsecurity_[a-z_0-9]\+\b
+ SELINUX SECURITY MODULE
+ M:	Paul Moore <paul@paul-moore.com>
+ M:	Stephen Smalley <stephen.smalley.work@gmail.com>
+-R:	Ondrej Mosnacek <omosnace@redhat.com>
++R:	Ondrej Mosnáček <omosnacek@gmail.com>
+ L:	selinux@vger.kernel.org
+ S:	Supported
+ W:	https://github.com/SELinuxProject
+-- 
+2.54.0
+
