@@ -1,167 +1,138 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42D6476CD2
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 17:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7994FC8D7
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Sep 2026 18:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788458085; cv=pass; b=C8vqUHDiJcOgz2WvyUHmlj5LaX4Rn/KGsCYCgXkETSJkyT82rqqkvPXkLj8u9VqjTbLC1No6NpuoOSwc+jI3Me88Gbp4NUdALNub4Abm5usMM51YLsfjwhvrw5ft6c04XokhBJkzfkUqrQrC9yYPE6nt66oSihrQeKW/mm6m/Ak=
+	t=1788458657; cv=pass; b=vCHzS5Y2ZYHjp7bQDqBkZw63PiH3jJIIrc4dBQTzqgdVwRoDp44m2+Hst3mWmGrnURZ36Tlc+XX9uRd5WHz6m+NYDe32UwxQ+YY/cvSmyzdCNuX5SxDXEzssq3Om+A6eOGMzC6ryx3w2PVaMeK1bNaCa30odejI/zSUgGgU64h8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788458085; c=relaxed/simple;
-	bh=Eb/KhBPYrVdCZVZnXYUBQP7PX6xwvKjmsmjk45O53BA=;
+	s=arc-20240116; t=1788458657; c=relaxed/simple;
+	bh=rBhnMpnlpQJIqe45e7mghY2bbrkfay04f++iDuWUl10=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YZd0rc5hr64lFj3BJiQjyLaamTGiOujjSOkdQEfH6uhN/c5iJOWTMgnwldl7OXOQKnyr83XxBUKF936AqiFwHKdga/Z312DZV0jopQNgCaaRHz3cQFLN5w9ZXYX+Eb7DNMtzWVFiP/s8FVXrvc30mACmtfD79b0G1TfRuLR+v6E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxy5o8Ae; arc=pass smtp.client-ip=209.85.215.174
+	 To:Cc:Content-Type; b=bZSWmhJp5U/VAo4HxX2nFVgYMubivfkxTZtmc9kBJk139mb3Wbd/ClWbuXAKTTKvzVgHz/o3Ws/CWoOwliJSheVGHn+FmBr2Zy3mXmKlKj4ObJFOJGEIACcRL17aiu3EzA4XYqiAdCXuuyWwEMIqvJVCNC1Mmc+I9fEtuThav8Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RccCEGpi; arc=pass smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxy5o8Ae"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c96c92c0980so151505a12.3
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 10:54:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788458083; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RccCEGpi"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6a5d42684d7so4197a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Sep 2026 11:04:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788458655; cv=none;
         d=google.com; s=arc-20260327;
-        b=KadC/Nkqv3q+VgT/B33qoWxNsXLd4eStUTU3LqmtjaMdDZgVq1Q8k4oV/B1u2RyKL5
-         Y/7HRk9xQGNlaX3TDjstPXgrdk9/p0GQhVvhQlXdIfiLmbh4y7IDTOJ5/cvNvXOjetGE
-         nGao1Vm26y0adEGQe2mSOyTccTc0uyv5vUyqRh3PNybs2iVTQM7TDMw7u+l8oCLiq5Qt
-         EX44i80SltHLWqUflXCCNTLw+sSnKWNq8ZznbqlBhLq2U8THcZQP4jFwoRZd8/lC+D8L
-         D6lUl/GFwc1M0I9G1i+ECAG0wLg8rFT9YtFKUqnLPGHMCwUsEz3gg6w7XnO3KlTXpPkr
-         IOAg==
+        b=sDY3Zf83E+voRMkpKfAi+rfY6C16ry9cG4r/eSiBfCxoqCn1DhpLRBLWv3amHetyDk
+         wkgMshp2MLSiD1xx0vTqxUw/wIcasvj1zFS34assdVXfTelaCeOQfF00/JsOg7AnU7IX
+         2rdJK00SToCiHVkZ+96SdWnZsY4udb8eB59Eypfk8moieKMo/mDBHPK0OXH1NozQd09j
+         2nn5tueAir9uDkKs6Mj26kII7uh/crErJ95KHqvmgYYaybXkziRZbgk8M3uUVn0NRG5I
+         4NoWCvDjD+d6u5fJMsNbTslNB0Ym2X1g2F9dgiIFLCa6fHldyhaKmnxjNO8AkWd8rMpv
+         2C5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=vDI4hMnJGcLesPQ/jL9UZwM4DiKEnVIKEk2punA20fc=;
-        fh=rMvHlWmSzBEkDECU7z1mrGFL0CDeqYKS0zAJkjaIFUs=;
-        b=dr/wRmN0ZSNFHV099AzOvcISja4x2eqEKnQTNvimIrXy9PxcpQ6+56HcNuid81lSHr
-         ic63VSoN0tnFZpZmbMxhRfzbAWdqsaRgjZ/FOX0ujDsM+KnjDVshmZ4iBvfBMBcgpW7u
-         1TJaYfOJSjuJ+HRYp8ihcGzlknwBHroJvhhmp2YmjKozq+tnvOqO+svJ7XMobmGCm7gb
-         QFWj/osmWiyS/v5kXBkwZjx80VcUUBcLJ4w6Odn3GeEqlYCQPPxO67SMwBTcjfCB6PIo
-         WonpIcfil/kmYlYxGhey/cNROBYnwrH9AlPbzLUBt4LrVg0WghWKl1xVJWonoUc++h3y
-         xuww==;
+        bh=uK/GuQ6nbungHJUUyJOtLDjrs+AVjPNapJ1G3ZSkOBc=;
+        fh=0QVoDVaddYS2TlS9uKKbOxGXsJ8pnQhpEMMayVqScGw=;
+        b=L0swDu/TGC29zA1YIUZlFKJkXpYk4eKOU0/kUEY1knRzyZ1AYlqPYDmzxL9Io4wT4z
+         upj7Gg1hqYGbWj0UZZGxFW1IYRaW5fi52mvHL+NLJjWOb3nySYtOdM7Td+zaqZa5lBI6
+         N+4mBY3LNvmVpKTZ6EbvWgQhCoSrACqZlbxqXWlqQ7a77eABZ4AgZeQ4PiX0TC5V7ym/
+         KIwBjGS1gZtXu1FgJu8fI0biU4EbQ6RbOFKZZLYf3VW+kFhIS/pk1/lph/FajsNOnmTg
+         rCoumAc2ec8ZJ95C/RuUt4DCo4O+cuNb7qIKWVliUToG6Kl5bgcdKk/N3quTBnhjovPY
+         J5WA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788458083; x=1789062883; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788458655; x=1789063455; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=vDI4hMnJGcLesPQ/jL9UZwM4DiKEnVIKEk2punA20fc=;
-        b=cxy5o8Ae8pbher6ijED6ifRIiibu5IlBWet83We/V2pz6tE4+pP+0jVQqnMCf4KfUk
-         CVxRBpqAqDbo8LVjBRqtOnU5M5+D6+/cue7XsHSeX1l7N7HKC5fqEG1AjT4D1uw6L7gx
-         RHYJmmLJLOkxDlsRSOPyT74+L5RC1fj+mshawveJYEiIG4GAvNmDB0EzbjarcHGyrLHZ
-         RV0zzcjuffUUqi2mw3yLhjEwgTZDSmJikegfp41eyap3sB6YdFu//rZmccsl/8+fhbbP
-         vfh+bBL1zGCPHq4MAK1uT2BgfZm7jtgXEIMpq96ZRGxLNLiXltFuR/G2/35B4GDG/uVO
-         xD5g==
+        bh=uK/GuQ6nbungHJUUyJOtLDjrs+AVjPNapJ1G3ZSkOBc=;
+        b=RccCEGpiA7D7Pf/qAQaHVXLmcQu4HvtTYkDZDCl9EtQa8UOUSWjX7VNEbGAToiTY3+
+         1K8kZCa/pTbhlPrZlOZIXKz0XXv9xDSv+qWrTBbcyWDD7iZvT/xdng91f/FAYq5JEuw4
+         vs5PeWxL1VX6hcuU3w54d3Gi/USbAs7D3k9Qurdvj0zwujivEJ2rzi/2HEPEMjbwruub
+         7ePUCfV84U4s+4+TjRX2UyaBJh8XJexp2mioen6Q5yE8ezRjYCf7jiPHi314mMQHGWQD
+         lHA32d/k/KNYFlTGdCD4R3OzjfDGuCT39rErJLZaMgRnJihS8DYZlSg0Wgd80oryWxlK
+         BAPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788458083; x=1789062883;
+        d=1e100.net; s=20251104; t=1788458655; x=1789063455;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=vDI4hMnJGcLesPQ/jL9UZwM4DiKEnVIKEk2punA20fc=;
-        b=EcJJz7zEs3z1x0iB7/k6lmgi78pm5PJXbROP6S8MUWPt4aSIQGvalqtrRCGdfltqNR
-         3lCGN5WMfkmArBB+b9y2E/MQWAlApDtqxOcXW9JcCTY7oehXB6KCvOHg1/Op3MEtLrYh
-         hp4fbS6fv1NQttn/ofD/+fGdIZRgt7Izamc2vVX2rawTvqvlWe05JapjF36Z9VAUggXR
-         5sJIiXFCD08Q0X5qSjjppNqHQWVuDf6rwjiYBm1cLp/r/s5wvLeSGV8s8vKJOBxv5SsC
-         eAJlLyCjUFoarDMiRZ/VhsGPWGZzGKEoaS121fqsewC6YqHAGXMZg42i+vsRgYJrVrZo
-         4gCw==
-X-Forwarded-Encrypted: i=1; AKwUvByRqieEjP02IkSfYQTrewOKJ7smvar89EL2mv15Ol9csiDDPaWTQRuEGDj1FlSge1xRbM1YtsD+dpTi6cQJVjHJnP29epY=@vger.kernel.org
-X-Gm-Message-State: AFuF++nMS9tWah65Uz+3du6if1B4tNdXobfYQ6S3RAIicvnGBC1GPz4L
-	TAC2vG/YgQe9nIYqczJXZI1QZIR6yGtTDferskX2Zl/Luw0J8YHC2gnWOv17v3sRaRdc0sQhDoK
-	NPTmhT5szSlM+VNB8s80uIYxZNrJJZ/s=
-X-Gm-Gg: AYBFou0ikkKGq5goThJzFAQqWquKvvsXy2BGLSU1dS1vLRP9erBPuhknRf8E1wEjTV3
-	UXra5L0qM6HJcli/N+fQTe2/HpRobE5IaEL4RN8r/PHmGh5Kzn00Gm3maS3IPfTsd2O32h+zA/m
-	aJVgX5j3oFOwsoMrukXBDiApaSHZwwdF1bbbMGEX2spTTpmmgOLD8LHSqXGrLsrPelLlnETsotL
-	5CyqDTAvKCtAt+Mjt/NcX7k46xd/4knYEerSNTLhQGRCIuVJsoQEsSOknbDKeO/hudOtmTf0mSA
-	rVxImLCAMJg42wORl679/Y2981Ql6waeymsjowAw9WGC2lfqa/FVrmg6mvEw7ff9V1q4wiZdF4h
-	CXcwrNyFmPmIXLw==
-X-Received: by 2002:a17:90b:2e52:b0:38d:ddc2:7ccb with SMTP id
- 98e67ed59e1d1-39b260dd3efmr358365a91.1.1788458083081; Thu, 03 Sep 2026
- 10:54:43 -0700 (PDT)
+        bh=uK/GuQ6nbungHJUUyJOtLDjrs+AVjPNapJ1G3ZSkOBc=;
+        b=mTOm1xKMtvxAyRWf8ipwK0pKyCXMWGcmEEmTFboRgGlTtKAGXE4FjbT5B4juxEiOnl
+         cxon/8Rni3Fno0fYgZTJqM1Ss4x1TSAmnPgZgznR8XIoWLv02dwOlq8UMtMSFHKADTU4
+         /TTs4RtGekiJX79Fo3sxEhWN9KKHMGfJ7f/mg4QT2MuMJbV1VWFr1Iwb+1WFA0KgmXep
+         pxNVDW/6dUQcWGcRpzr09pDBYQqatOs6IXc3ucLzJDtUgp+CKmNi1jvcdK1WSOc97UIt
+         qLSSU1W7fntNKBmiZalMJg9dA5C+XFDSjTb6GI4fY3m762EgEDaercJtyw9QxR28VxqY
+         3WOg==
+X-Forwarded-Encrypted: i=1; AKwUvBw6dk9vg4sWJTEkWcg8GRfkoAsa2v7FJdW//jNRy0BtxrBa5bOg/jghT3K18f2lHOFlZkGVQx9LroykFKy5b5lbKR450rc=@vger.kernel.org
+X-Gm-Message-State: AFuF++ng0e957mgA57kPEk5LKGIrxx1Xo3rAxW0mEi2sIZCHAi7CG1w0
+	ajgGZyAPNAOoK3b4nJlibc6ZI0tTfyetbUf7lais6aFybofVNdv/SrGdfV8vP++hpEgqhO5sY0U
+	ChtjPZxZdr6ng4/rbiQRSEbQtxiDY1cw=
+X-Gm-Gg: AYBFou0fRcNYZe8kNsFArnYIUcB9zw5h155HPf9od6xoc6TBqP9+jzeVyQnPmrwZ9Du
+	ewaKGGaoBOosj9wvfocFpgkHS1PIyb/LiXR1YpRXD9rPSoE98/V46QtlkgRQxt38sUy9X3pU05i
+	iS4pLTyEGeiBh3Zvp/gmLtwqU8c1VmFy1PLsPNHXk8WIYKINgxNUONnrHRs5slgYe2hWKjNFjNL
+	NBfBszKhLnxfS80uQ8knjpcqqtF+7bDSE9ILL6jN/hHzxzLSYkSfsEVuFDGXcmTKyK0L6XpE8Dn
+	cvW4kfwfaHWTKhyasBxKu6t+XkkdzyDoh+RxX8Sk3Q76qwu69cxxKn6No02pUiMIoYwCn/BrhTg
+	=
+X-Received: by 2002:a05:6402:440b:b0:6a1:d68:338a with SMTP id
+ 4fb4d7f45d1cf-6a6818d6c95mr5674598a12.0.1788458654598; Thu, 03 Sep 2026
+ 11:04:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260903155615.516010-1-omosnacek@gmail.com> <CAHC9VhQSoWBfWrf97Ch3ZZJXkOvhbwNOGmq8rMxLFzq+a-CkQg@mail.gmail.com>
-In-Reply-To: <CAHC9VhQSoWBfWrf97Ch3ZZJXkOvhbwNOGmq8rMxLFzq+a-CkQg@mail.gmail.com>
-From: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-Date: Thu, 3 Sep 2026 19:54:31 +0200
-X-Gm-Features: AcwNN1VZckJ80AmrXNyT2zeNvIrDg0xBBi5yci3USYnxHaD1VlvQhO3H_tXYCmE
-Message-ID: <CAAUqJDuPN4_qaCKhAfUz9xQ61NVhf=z-VAG_8Oe+QJeqqgi=SA@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_MAINTAINERS=2C_mailmap=3A_update_email_addre?=
-	=?UTF-8?Q?ss_for_Ondrej_Mosn=C3=A1=C4=8Dek?=
-To: Paul Moore <paul@paul-moore.com>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+References: <20260823152858.3839939-1-nicoyip.dev@gmail.com> <apC0xGqWTIXTIgBU@kernel.org>
+In-Reply-To: <apC0xGqWTIXTIgBU@kernel.org>
+From: Chengfeng Ye <nicoyip.dev@gmail.com>
+Date: Fri, 4 Sep 2026 02:04:02 +0800
+X-Gm-Features: AcwNN1Vixc56lPwOlEAr0jNOgKZcPkT3QtgHqPSwQ2VM7-p1rr5p9dczVDYtyP8
+Message-ID: <CAAo+4rXK_MpdsSbmuu+oHP2STUxApG2XRBkKUcpvcTKETEznOQ@mail.gmail.com>
+Subject: Re: [PATCH] keys: Fix key_user use-after-free during ownership changes
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Serge Hallyn <sergeh@kernel.org>, 
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 3 Sept 2026 at 18:50, Paul Moore <paul@paul-moore.com> wrote:
+On Fri, Aug 28, 2026 at 6:06=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
 >
-> On Thu, Sep 3, 2026 at 11:56=E2=80=AFAM Ondrej Mosn=C3=A1=C4=8Dek <omosna=
-cek@gmail.com> wrote:
-> >
-> > I'm going to use my personal email for kernel contributions from now on=
-.
-> > Update MAINTAINERS and .mailmap to reflect this.
-> >
-> > Also switch to use proper spelling with diacritics, since I normally us=
-e
-> > the full Unicode name with my personal email address. I'm leaving
-> > in-code occurences unchanged though, as that would be just unnecessary
-> > churn.
-> >
-> > Link: https://lore.kernel.org/lkml/CAFqZXNvOGbzy8-ZnJtKi94jfu2H173Tz7VY=
-pK8KuseMQS-9tNA@mail.gmail.com/
-> > Signed-off-by: Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gmail.com>
-> > ---
-> >
-> > Hoping for this to get picked up via the SELinux tree, since the main
-> > change is in the SELinux MAINTAINERS entry.
-> >
-> >  .mailmap    | 1 +
-> >  MAINTAINERS | 2 +-
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
+> I hope you don't mind that I sanity check a bit:
 >
-> Of course, I'll take this via the SELinux tree.  Since I'm going to be
-> sending up a pull request to Linus soon with a v7.3-rcX fix, do you
-> have any objection to me sending this up with that fix, or would you
-> prefer this to wait for the next merge window?
+> =EE=9A=91 git grep "user->uid" security/keys
+> security/keys/internal.h:       uid =3D key->user->uid;
+> security/keys/key.c:            if (uid_lt(uid, user->uid))
+> security/keys/key.c:            else if (uid_gt(uid, user->uid))
+> security/keys/key.c:            unsigned maxbytes =3D uid_eq(key->user->u=
+id, GLOBAL_ROOT_UID) ?
+> security/keys/proc.c:           if (kuid_has_mapping(user_ns, user->uid))
+> security/keys/proc.c:   unsigned maxkeys =3D uid_eq(user->uid, GLOBAL_ROO=
+T_UID) ?
+> security/keys/proc.c:   unsigned maxbytes =3D uid_eq(user->uid, GLOBAL_RO=
+OT_UID) ?
+> security/keys/proc.c:              from_kuid_munged(seq_user_ns(m), user-=
+>uid),
+> security/keys/process_keys.c:   uid_t uid =3D from_kuid(user_ns, cred->us=
+er->uid);
+> security/keys/process_keys.c:           uid_keyring =3D keyring_alloc(buf=
+, cred->user->uid, INVALID_GID,
+> security/keys/process_keys.c:           session_keyring =3D keyring_alloc=
+(buf, cred->user->uid, INVALID_GID,
+> security/keys/process_keys.c:                                            =
+   cred->user->uid));
+>
+> Have you audited these and reflected against your current patch?
+>
+> BR, Jarkko
+>
 
-No objections, sooner is probably better than later for me.
+Right, there are more sites that take and dereference key->user but
+not serialized to prevent the UAF. I am going to send a v2 to protect
+other sites affected by the data race.
 
-Thanks!
-
->
-> > diff --git a/.mailmap b/.mailmap
-> > index 6803f3bd2865..0e672a60afdc 100644
-> > --- a/.mailmap
-> > +++ b/.mailmap
-> > @@ -699,6 +699,7 @@ Oliver Hartkopp <socketcan@hartkopp.net> <oliver.ha=
-rtkopp@volkswagen.de>
-> >  Oliver Hartkopp <socketcan@hartkopp.net> <oliver@hartkopp.net>
-> >  Oliver Upton <oupton@kernel.org> <oupton@google.com>
-> >  Oliver Upton <oupton@kernel.org> <oliver.upton@linux.dev>
-> > +Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gmail.com> <omosnace@redhat.com>
-> >  Ond=C5=99ej Jirman <megi@xff.cz> <megous@megous.com>
-> >  Oza Pawandeep <quic_poza@quicinc.com> <poza@codeaurora.org>
-> >  Pali Roh=C3=A1r <pali@kernel.org> <pali.rohar@gmail.com>
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index fc320b373656..875d0baed8b9 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -24772,7 +24772,7 @@ K:      \bsecurity_[a-z_0-9]\+\b
-> >  SELINUX SECURITY MODULE
-> >  M:     Paul Moore <paul@paul-moore.com>
-> >  M:     Stephen Smalley <stephen.smalley.work@gmail.com>
-> > -R:     Ondrej Mosnacek <omosnace@redhat.com>
-> > +R:     Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gmail.com>
-> >  L:     selinux@vger.kernel.org
-> >  S:     Supported
-> >  W:     https://github.com/SELinuxProject
-> > --
-> > 2.54.0
->
-> --
-> paul-moore.com
+Best regards,
+Chengfeng
