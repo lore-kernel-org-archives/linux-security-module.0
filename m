@@ -1,119 +1,95 @@
-Received: from mta1.migadu.com (out-19.mta1.migadu.com [95.215.58.19])
+Received: from mta1.migadu.com (out-107.mta1.migadu.com [95.215.58.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4DD350A18
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Sep 2026 08:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD173E95A8
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Sep 2026 08:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788510624; cv=none; b=WrlCkC+xAzJV5Ix37+xya2i49liPMSpIlPVBpZIgNfGJI6bYVtNiwOWTTEhpIVRn79NnrxTLSkOXfJrwM0CHiR8TBBe1yVZiAB7c54KN2qSJKICaj4eytZjzRcxwL3nwxXuybY270GoKALU/JGuioTvXzFb9x/8enMrFV5z7aRQ=
+	t=1788510674; cv=none; b=bzoDPuPVPI6sOsUamTEZ5zAuM5Yldo//18KPtYScX0wJeldI9SElPLe7e5LRPl7WL+CvYA1XrevgCiZciBL2rtjTdPNAha8MiTvboSVkpNJ2Lc+vrTZtUD9NKV16e4SEnc0lQWtmFJd/7Bl1YVbk0wBC2BazZP1yJe0gq94QAdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788510624; c=relaxed/simple;
-	bh=L8pOajLjq6OOGJ6hOdj/9J4YnLULNmgvV3Ddj6iBbVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=grfiW50CaSOrRBYj1k8PFEbUoovYmrgGiF7OLPUcuhMrUwZRAmbDHW9DywQ8ea1YmFH6NsjygkmE3AfqNAypvRdNXsWWcY88nzmSDjXtTOu9oM4MNjepzah58FvGMK8m5NFHE0sSJG7IXL3FN71HB9OPIbDlJDsBwfDa1ulvC9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SwyJQPQ/; arc=none smtp.client-ip=95.215.58.19
+	s=arc-20240116; t=1788510674; c=relaxed/simple;
+	bh=+SXmtKc9SrYxbBPOvsPXeXvF9U/YMgEAJNrujcS+q+c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=duZj+MNaWJBbcwcNYu1zf+Rir7hRsQLINONwwcAqzdyunxPUgUD4oJBIF1e31+fuYU60x6G4ClyFI2IpSn4lJdKp7jKD4/txW4WqHFmYFXFsKqdMWc+BzSen7xZzBCCTGUvhRMcdX8HPjQZ3L1Jqs1fd9ZYcKk9JX+rzrrhlVyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kGf5WZHo; arc=none smtp.client-ip=95.215.58.107
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SwyJQPQ/"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kGf5WZHo"
 X-Envelope-To: linux-security-module@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=L8pOajLjq6OOGJ6hOdj/9J4YnLULNmgvV3Ddj6iBbVU=;
+DKIM-Signature: a=rsa-sha256; bh=+SXmtKc9SrYxbBPOvsPXeXvF9U/YMgEAJNrujcS+q+c=;
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1788510619; v=1; x=1789115419;
- b=SwyJQPQ/JsqB0G+VQvAHfhOqVMDhSiAIC4wNpuayZfNUeVrLxXBB47YPlyrxfXF8weTMjmWD
- zMtG0x5ODFmBJzGTVqVb61iOkElSJupyRY8r1iV16nqYAs4x+/s4D9BsqoaCZ/mEJaMkYbOwXPG
- MHZyIm6+6Ci6OKgaWZX8Yb0g=
+ t=1788510670; v=1; x=1789115470;
+ b=kGf5WZHosNuan7P+prM6GrhJbzFxmetqPMJPR4vOaZROimZ9wgCSKckRGzr1y5KGpuYR3WXk
+ gXRVsksx/Uu36M5mbsTx9YIefYjgGEEk9p02e0eB4IAeMM23sHY7hezvTXGhT+TUdydxo+i0iGn
+ rRApQe0iDi9vZgvorZAuqusQ=
 X-Envelope-To: linux-security-module@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id c4aafd7d2505d2d3;
-	Fri, 04 Sep 2026 08:30:11 +0000
-X-Mizu-Trace-ID: c4aafd7d2505d2d3
+Received: by smtp.migadu.com with ESMTPS id f1edcafb530ef41a;
+	Fri, 04 Sep 2026 08:31:10 +0000
+X-Mizu-Trace-ID: f1edcafb530ef41a
 X-Migadu-Flow: FLOW_OUT
 From: Ye Liu <ye.liu@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
 Cc: Ye Liu <liuye@kylinos.cn>,
-	David Hildenbrand <david@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rcu@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	linux-security-module@vger.kernel.org,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Subject: [PATCH 0/8] mm: introduce for_each_process_rcu and for_each_thread_rcu
-Date: Fri,  4 Sep 2026 16:29:52 +0800
-Message-Id: <20260904083001.553587-1-ye.liu@linux.dev>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 8/8] security/landlock: convert thread iterator to for_each_thread_rcu
+Date: Fri,  4 Sep 2026 16:30:00 +0800
+Message-Id: <20260904083001.553587-9-ye.liu@linux.dev>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260904083001.553587-1-ye.liu@linux.dev>
+References: <20260904083001.553587-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 From: Ye Liu <liuye@kylinos.cn>
 
-Introduce for_each_process_rcu(), for_each_thread_rcu() and
-for_each_process_thread_rcu() macros that combine the existing
-iteration macros with scoped_guard(rcu), so that the RCU read lock
-is automatically acquired before iteration and released when the
-loop exits — including via break, goto, or return.
+Replace guard(rcu)() + for_each_thread() with for_each_thread_rcu(),
+so that the RCU read-side critical section is scoped to the loop body.
 
-The rest of the series converts manual rcu_read_lock()/
-rcu_read_unlock() and guard(rcu)() pairs across mm/, kernel/, fs/,
-lib/ and security/ to use the new macros.
-
-Patch 1 may trigger checkpatch "Macros with complex values should be
-enclosed in parentheses" errors.  These are false positives — the
-scoped_guard() pattern is a control-flow construct, not a multi-
-statement macro, and the same idiom is used elsewhere in the kernel.
-
-Suggested by Michal Hocko for the oom_kill path [1].
-
-[1] https://lore.kernel.org/all/20260813092933.562028-1-ye.liu@linux.dev/
-
-Ye Liu (8):
-  mm: introduce for_each_process_rcu and for_each_thread_rcu
-  mm/oom_kill: convert process/thread iterators to for_each_*_rcu
-  mm/ksm: convert process iterator to for_each_process_rcu
-  mm/memory-failure: convert process iterator to for_each_process_rcu
-  kernel: convert process/thread iterators to for_each_*_rcu
-  fs: convert process/thread iterators to for_each_*_rcu
-  lib: convert process iterator to for_each_process_rcu
-  security/landlock: convert thread iterator to for_each_thread_rcu
-
- fs/proc/base.c               |  4 +---
- fs/resctrl/rdtgroup.c        |  8 ++------
- include/linux/sched/signal.h | 19 +++++++++++++++++++
- kernel/cpu.c                 |  4 +---
- kernel/freezer.c             |  4 +---
- kernel/hung_task.c           |  7 ++-----
- kernel/locking/lockdep.c     |  4 +---
- kernel/rcu/update.c          |  4 +---
- kernel/sched/core.c          |  3 +--
- kernel/sched/debug.c         |  4 +---
- kernel/trace/fgraph.c        |  8 ++------
- kernel/unwind/deferred.c     |  3 +--
- lib/is_single_threaded.c     |  5 +----
- mm/ksm.c                     |  4 +---
- mm/memory-failure.c          | 16 ++++------------
- mm/oom_kill.c                | 20 +++++---------------
- security/landlock/tsync.c    |  8 ++------
- 17 files changed, 46 insertions(+), 79 deletions(-)
+No functional change.
 
 Signed-off-by: Ye Liu <liuye@kylinos.cn>
+---
+ security/landlock/tsync.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index 0b71e158c3f5..f1c08aae179b 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -335,9 +335,7 @@ static size_t count_additional_threads(const struct tsync_works *works)
+ 
+ 	caller = current;
+ 
+-	guard(rcu)();
+-
+-	for_each_thread(caller, thread) {
++	for_each_thread_rcu(caller, thread) {
+ 		/* Skip current, since it is initiating the sync. */
+ 		if (thread == caller)
+ 			continue;
+@@ -376,9 +374,7 @@ static bool schedule_task_work(struct tsync_works *works,
+ 
+ 	caller = current;
+ 
+-	guard(rcu)();
+-
+-	for_each_thread(caller, thread) {
++	for_each_thread_rcu(caller, thread) {
+ 		/* Skip current, since it is initiating the sync. */
+ 		if (thread == caller)
+ 			continue;
+-- 
 2.25.1
+
