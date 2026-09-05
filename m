@@ -1,346 +1,267 @@
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo2-f6.google.com (mail-oo2-f6.google.com [74.125.231.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF16331F9A7;
-	Sat,  5 Sep 2026 09:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF813C276B
+	for <linux-security-module@vger.kernel.org>; Sat,  5 Sep 2026 10:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788601658; cv=none; b=Uu8nFqZm+VHtzRSVAheHo3TPMYfN/mfJCLHZ9RMlQRlLCtIrDtNwtFBwlq/pfJfVwoIG+yHi2nz72YJeVe5l9eZMMuqtpMr+gCjAgpvBuyvek90ZDHo6Q50szpWUgJ9TWZvN7QFWypqmoygF1+ixPAr603Nr8DA2q00JIc1eZlg=
+	t=1788604235; cv=none; b=F1FFOXITh0+wmBIEJg4n6EVlwDF9DZH/j5QPnukmoc6ADG32hj+q5XW8THj2fimnhj1TXtDYqHFyAVu6G0rb6e4jnGNfI0DTmODdwPrzgj5G/WH95cmjcuFN7FYaOYGX5WGol38V3BAgGp53Rx/6SyuSRGfues4vWQueBlgtWE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788601658; c=relaxed/simple;
-	bh=DMmTUl4gZ/uo7DvUsJvpo3hiGP4KQsZvrn8UedE56Eo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=TqHPIEv9iFAUV82XoMhO2Mfq7XBrykk7sXOu6WcMI/xjx2uIibqYl5qiEg+qg2NMrFk9m48gPdBts7LPRAykrUGrLkiB1R/bgyB8JNY9wTr6JqOLeuGufdC7e8hfJruOx+77xQDZ9R0hLJj+HDwvx3a6Y17I9YxX491H4gMquGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dTAqXKkq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MWHJ1BCX; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dTAqXKkq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MWHJ1BCX"
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfout.stl.internal (Postfix) with ESMTP id 66E521D00095;
-	Sat,  5 Sep 2026 05:47:33 -0400 (EDT)
-Received: from ams-imap-03 ([10.64.2.23])
-  by ams-compute-02.internal (MEProxy); Sat, 05 Sep 2026 05:47:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1788601652;
-	 x=1788688052; bh=dpIbpuQe3XyPN3n+tJb53g4BmX7xhEeASMSDssg2FAY=; b=
-	dTAqXKkqNbsMLz5Eb1taMnWSkTOpzgxeXVhldlPzVcZ0WLWHEtzMPNB1PdeKUFGJ
-	MHchhWXztj6eGCeLsbDR0cYavvD2ZFagYLRAcW0QlNSlf3Gup51nA+lciys1+Ov6
-	vqQxRi5QDrHyNFss8k54r1iAqkv09HS5wbF9oygHn7w/2WNrzhfgntdFGhCjj0i6
-	gShRmyUWmjPfLkrTdRjmQH5BS9ARYz1NkLOPcVCkOBhUWT02XE/BE9eAmtbzijrw
-	m6NO851hAyCk9i3MvlRi6L1erPKqQbupzJkm+DkMcxafrzhDK/RO372lzebSB1iU
-	I6JS9HCIZbV9cynsmkHDtg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1788601652; x=
-	1788688052; bh=dpIbpuQe3XyPN3n+tJb53g4BmX7xhEeASMSDssg2FAY=; b=M
-	WHJ1BCXIPKZoQSwVCSnD8C7sqXX7eM2O1dQ6FfJan/RwEdQTc+WkS49v6RPmi8S/
-	xLwjZ27DhFO/M3D/btKxhgUCeEMXsgk1rKjj40kVIoRXX1yBMtIpUanqzN3cHSZh
-	l/OlxTBdH0coBGM5jd7kRNzyDRHFztm8dTWBMWOJZJ08F09vtqZ5jioQCBbowMFq
-	89A26cgl0Mo/VZfuAI7cccm6+Ws/iKISP63oxxqF91ogi9Uk3BxtiwFhz5lGeiss
-	qw/rpE4KAKsviAhtgftKS+KEzMBfk+N+7gg+qsccCEv77vlsI+v0Kd17Ou7ZV6DY
-	fLzcatpuY7vjQCXflX5Hw==
-X-ME-Sender: <xms:MeWbarsUWoQ2GSCeWhBsGh06zd1YI9Sn2S4vt0CGkvBscBDIjKXSVg>
-    <xme:MeWbanSp7WrjpgJoLuF4D_fUO1fOX26Qb98o0R86CK4Ye3UHbAf_LmV-WRQSyfW6l
-    Hk-GSBsvQoFkgtpUHZk7d8qHpyJOMO0fttNXIfv-MUamI2SYzfVArhu>
-X-ME-Proxy-Cause: dmFkZTF90JHOteLx0W4V9S2K/5fYfrTbpzrSMTBXXX2h1FHHmjqULcyNksOR8GB915SPlw
-    WpoBNVJhoggW9SN8VWmCpEbGAkzooTpCYAEz5TFjApVd8+duIOGp95ns7QKsxvlbbqmrLI
-    yOT4y9RWtyxZPQoQ+/xn+hYy0n/fmfv+OJ8vHp/rjTJKvsR6qsqrkPcNuB6lsItU3ZyoCV
-    NXCRok1Ma/s2Z+BI/wU5ejuB/TcRqJaDr0MfvNxkq85mZracrYk//r6Q6ZGYG2m9s0BWII
-    /8S1Yn1r7xqv4wMCciG9zsK9fzXYz+i4Z27q/DxL8p8KNHgM4lqCBgcYCLBJSfRvJ4n5mY
-    goAMI9JTeTYMxMwaKtXIBKinyuBCwSz7ig9xjLVW+Mb6BGafDhLmoCr3HxfTdLmHNACUnI
-    ayV4LFuirTkUz8YXiSuEONn+K7AygSmyrDwhOMMjK+02A9loEfaEFpRhneXkOPmwyf0+ef
-    gjBvs2hrutSg906CLMwR+BGFhs4Lz6ao9ztVlcSZjpO9bheT8QohHMnU6y/LjT1BAz4YA+
-    Y3C2yG+Gc/ldMc4FM8zGDseDd55jfRAtNANJHobbqIXWr5EvEB4PHDl3ZsANM5egwf6tXN
-    pawECE2CLbZqLYl6uqvccfLC9POXbbj939AT+8cKzwViswDqY8sm+GcQC49A
-X-ME-Proxy: <xmx:M-WbahackKEHB2UJo2suXna5S70UAmM2P97QBSdjXB124ztI75YK3A>
-    <xmx:M-WbagREwckkwlNo80YpTTawsazQPWy2huNvJ7MLEwG2Q9RDrmnFpA>
-    <xmx:M-WbajXtyGk15JRIBMxixUDzN_oukLjOt0MTFGVvuPfmRVW8UQ7fqA>
-    <xmx:M-WbanYl2EZudRJEd2t17M-2UW2YXHlJFtEqioZM72JTmrFYXfUAkQ>
-    <xmx:NOWbaqIqGhWIxj3ltFlVf7lk5HOHkNkZOBTF5BqzppQV9hDLuuy39LkO>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 4F63432A0078; Sat,  5 Sep 2026 05:47:29 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1788604235; c=relaxed/simple;
+	bh=KnT7J76VOs0JF4MkaqyU7PKqA4YcPl9vPwF1cPE55wM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bqd36QT/x1ESBL5oXs+EIA6vs9ho0O5k9BkEE0R+JV/A642Hmi0iBmtkE45KNSLmPpcXTanxK4yFKkLpcuQs6U1sLW42vM1qhnQhGlZlxTLNXgpWZ7EvI+eUPSJuYARV9hE1hxF8DeG2pf0JjHdHhjBOZcC5yqciEbm+n+SH9Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=74.125.231.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo2-f6.google.com with SMTP id 006d021491bc7-6aafac56856so596395eaf.1
+        for <linux-security-module@vger.kernel.org>; Sat, 05 Sep 2026 03:30:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788604232; x=1789209032;
+        h=content-type:to:from:subject:message-id:in-reply-to:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=2ikTUDMvgbs6Pvx2tv73p+QKcEhBgflCF3gftTATyaI=;
+        b=pj5wXUgEe0xZ8sM2zDwh5wcvX6rLeKHPS5rXP9tlIiX+SUeyWTZrw2AsMh5YfXj3HU
+         mUMzhi/4Z4ea1oQ0tkTKMWQz7ZqqMV9opd4dgV7ZLfYxaQbHieyyZ4M0rtD3hU59ABuQ
+         fXvzBYA/Nukrpu/v+7iGG++vup+t2ZnA7hnp3EBTy+Cw5ActSkdLnCvHsNzbuY2h9UK6
+         YoBnlr9bASpfdMsVJzaLlAr4szyxq5NLKRN4zYnOScIpb7yg4ZiZc9KprAexKGjCC9Es
+         m0gOcgpMpyIK3hDiOSrnXtzEsgFKckCrcCyRjhOwj4ICugEoG9nOYJE7xrPml3IzfiXb
+         AkfA==
+X-Forwarded-Encrypted: i=1; AKwUvBw3SGkkeu1pzJn4eRkCz0NHjo4nL8M+zG+h4RpZMM1VSnYRvVmyjh08WYipteJSpHjsQB1G+CWTO34nbZ/bH1vkIknT4kI=@vger.kernel.org
+X-Gm-Message-State: AFuF++k49QE1++kDD7uPQchZ/eHwoyNdTcroi1d4Jb8HfxhA7kOlROVt
+	k0+mM7S8RK3uAGeT81sHEm73rHc34dx07OXf3uHXV2TBBapTABx/h38kBAGyLtSbfZzp1k6Your
+	scK1UpJL6i13w/GXqhSV+oNtGs0hskU6K+EVmGDYVZXJLTDXjQdCi+HHdtHk=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AbEPZWvNmxeF
-Date: Sat, 05 Sep 2026 11:46:48 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Breno Rodrigues Alves" <breno3011alves@gmail.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, linux-clk@vger.kernel.org,
- linux-input@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-fbdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Message-Id: <09c4c6c8-1431-41ff-95c5-c70baa1b2214@app.fastmail.com>
-In-Reply-To: <20260904231240.87106-1-breno3011alves@gmail.com>
-References: <20260904231240.87106-1-breno3011alves@gmail.com>
-Subject: Re: [PATCH] Kconfig: purge twenty-nine legacy ghost options
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6820:2019:b0:6b1:7251:41d5 with SMTP id
+ 006d021491bc7-6b6fabe1b66mr11573347eaf.3.1788604231940; Sat, 05 Sep 2026
+ 03:30:31 -0700 (PDT)
+Date: Sat, 05 Sep 2026 03:30:31 -0700
+In-Reply-To: <6a6a9895.7eebbf3c.214d51.000d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a9bef47.37659fcc.e790.0002.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] possible deadlock in process_measurement (6)
+From: syzbot <syzbot+c0bfa7a9a227036e8454@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	gregkh@linuxfoundation.org, jmorris@namei.org, linux-ext4@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-usb@vger.kernel.org, 
+	paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Sep 5, 2026, at 01:12, Breno Rodrigues Alves wrote:
-> You can keep a dead config option around for a while out of sympathy.
-> After a couple of releases it stops being "transitional" and starts
-> being "you are confusing every user who greps for it". These options
-> select nothing, gate nothing, and -- I checked by hand, this is not a
-> regex accident -- are referenced by exactly nobody in the tree.
+syzbot has found a reproducer for the following issue on:
 
-Cleaning this up seems useful, but it's not nearly as trivial
-as you describe it.
+HEAD commit:    654ae5d73c05 Merge tag 'drm-fixes-2026-09-05' of https://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14c568f9580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b454dc6b1b7acd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=c0bfa7a9a227036e8454
+compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c568f9580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17cc6b49580000
 
-Some of them do 'select' other options, either for backwards
-compatibility or as the intended use. I would suggest splitting
-these out into separate patches and only having a combined
-cleanup patch for changes that are free of side-effects.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/49c1a99f815b/disk-654ae5d7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6fcecf1b8c8d/vmlinux-654ae5d7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fa54b23691ca/bzImage-654ae5d7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7be96c47c44b/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=12041125580000)
 
-> -config PANEL
-> -	tristate "Parallel port LCD/Keypad Panel support (OLD OPTION)"
-> -	depends on PARPORT
-> -	select AUXDISPLAY
-> -	select PARPORT_PANEL
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c0bfa7a9a227036e8454@syzkaller.appspotmail.com
 
-This change may break old defconfigs, but is probably a good idea
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor428/5602 is trying to acquire lock:
+ffff88803f38b458 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
 
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index b059d4457..94a8a0a6f 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -181,12 +181,6 @@ config COMMON_CLK_MT6765_CAMSYS
->         help
->           This driver supports MediaTek MT6765 camsys clocks.
-> 
-> -config COMMON_CLK_MT6765_GCESYS
-> -       tristate "Clock driver for MediaTek MT6765 gcesys"
-> -       depends on COMMON_CLK_MT6765
-> -       help
-> -         This driver supports MediaTek MT6765 gcesys clocks.
-> -
-...
-> -config COMMON_CLK_MT6765_MIPI2BSYS
-> -       tristate "Clock driver for MediaTek MT6765 mipi2bsys"
-> -       depends on COMMON_CLK_MT6765
-> -       help
-> -         This driver supports MediaTek MT6765 mipi2bsys clocks.
+but task is already holding lock:
+ffff888038eee198 (&common->filesem){++++}-{4:4}, at: fsg_store_file+0x163/0x400 drivers/usb/gadget/function/storage_common.c:452
 
-I think these have come up before, the change looks correct to
-me, but I'd split that up for the mediatek clk maintainers
-to decide.
-   Topre REALFORCE R3S 87 key keyboards.
-> 
-> -config HID_THINGM
-> -	tristate "ThingM blink(1) USB RGB LED"
-> -	depends on LEDS_CLASS
-> -	select HID_LED
-> -	help
-> -	Support for the ThingM blink(1) USB RGB LED. This driver has been
-> -	merged into the generic hid led driver. Config symbol HID_THINGM
-> -	just selects HID_LED and will be removed soon.
-> -
->  config HID_THRUSTMASTER
->  	tristate "ThrustMaster devices support"
->  	depends on USB_HID
+which lock already depends on the new lock.
 
-There is still a comment referring to the old option, which you
-should modify at the same time.
 
-> diff --git a/drivers/interconnect/mediatek/Kconfig 
-> b/drivers/interconnect/mediatek/Kconfig
-> index 9fd3f2170..a7aebfa1a 100644
-> --- a/drivers/interconnect/mediatek/Kconfig
-> +++ b/drivers/interconnect/mediatek/Kconfig
-> @@ -28,9 +28,3 @@ config INTERCONNECT_MTK_MT8195
->  	  This is a driver for the MediaTek bus interconnect on MT8195-based
->  	  platforms.
-> 
-> -config INTERCONNECT_MTK_MT8196
-> -	tristate "MediaTek MT8196 interconnect driver"
-> -	depends on INTERCONNECT_MTK_DVFSRC_EMI
-> -	help
-> -	  This is a driver for the MediaTek bus interconnect on MT8196-based
-> -	  platforms.
+the existing dependency chain (in reverse order) is:
 
-Here you should look at the patch that introduced it, it
-appears that there is a typo in the Makefile that you
-should fix instead.
+-> #3 (&common->filesem){++++}-{4:4}:
+       down_read+0x97/0x200 kernel/locking/rwsem.c:1574
+       fsg_show_file+0x2d/0x140 drivers/usb/gadget/function/storage_common.c:339
+       fill_read_buffer fs/configfs/file.c:68 [inline]
+       configfs_read_iter+0x2ba/0x620 fs/configfs/file.c:88
+       __kernel_read+0x4d3/0x970 fs/read_write.c:532
+       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
+       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       do_sys_openat2+0x115/0x200 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> diff --git a/drivers/media/dvb-core/Kconfig b/drivers/media/dvb-core/Kconfig
-> index 8b3f2d53c..c6a97add8 100644
-> --- a/drivers/media/dvb-core/Kconfig
-> +++ b/drivers/media/dvb-core/Kconfig
-> @@ -67,14 +67,3 @@ config DVB_DEMUX_SECTION_LOSS_LOG
-> 
->  	  If you are unsure about this, say N here.
-> 
-> -config DVB_ULE_DEBUG
-> -	bool "Enable DVB net ULE packet debug messages"
-> -	depends on DVB_CORE
-> -	help
-> -	  Enable extra log messages meant to detect problems while
-> -	  handling DVB network ULE packet loss inside the Kernel.
-> -
-> -	  Should not be enabled on normal cases, as logs can
-> -	  be very verbose.
-> -
-> -	  If you are unsure about this, say N here.
+-> #2 (&p->frag_sem){.+.+}-{4:4}:
+       down_read+0x97/0x200 kernel/locking/rwsem.c:1574
+       fill_read_buffer fs/configfs/file.c:66 [inline]
+       configfs_read_iter+0x1cf/0x620 fs/configfs/file.c:88
+       __kernel_read+0x4d3/0x970 fs/read_write.c:532
+       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
+       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       do_sys_openat2+0x115/0x200 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Same here, commit ba711e1cee75 ("media: dvb-core: allow users
-to enable DVB net ULE debug") introduced a typo. Please either
-fix that typo or revert the whole thing.
+-> #1 (&buffer->mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
+       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
+       configfs_read_iter+0x73/0x620 fs/configfs/file.c:86
+       __kernel_read+0x4d3/0x970 fs/read_write.c:532
+       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+       ima_calc_file_hash+0x45d/0x8a0 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x521/0xa10 security/integrity/ima/ima_api.c:300
+       process_measurement+0x1282/0x1c20 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       do_sys_openat2+0x115/0x200 fs/open.c:1417
+       do_sys_open fs/open.c:1423 [inline]
+       __do_sys_openat fs/open.c:1439 [inline]
+       __se_sys_openat fs/open.c:1434 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1434
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 2c7699b66..dbef2275f 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -22,12 +22,6 @@ config SDR_PLATFORM_DRIVERS
->  	help
->  	  Say Y here to enable support for platform-specific SDR Drivers.
-> 
-> -config DVB_PLATFORM_DRIVERS
-> -	bool "DVB platform devices"
-> -	depends on MEDIA_DIGITAL_TV_SUPPORT
-> -	help
-> -	  Say Y here to enable support for platform-specific Digital TV drivers.
-> -
->  config V4L_MEM2MEM_DRIVERS
->  	bool "Memory-to-memory multimedia devices"
->  	depends on VIDEO_DEV
+-> #0 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3181 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+       validate_chain kernel/locking/lockdep.c:3924 [inline]
+       __lock_acquire+0x15ff/0x2e40 kernel/locking/lockdep.c:5254
+       lock_acquire+0x115/0x350 kernel/locking/lockdep.c:5908
+       __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
+       mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
+       process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
+       ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xb3/0x260 security/security.c:2755
+       do_open fs/namei.c:4839 [inline]
+       path_openat+0x148a/0x1d60 fs/namei.c:5000
+       do_file_open+0x23e/0x4a0 fs/namei.c:5029
+       file_open_name fs/open.c:1375 [inline]
+       filp_open+0x16d/0x1d0 fs/open.c:1392
+       fsg_lun_open+0x6c/0xe00 drivers/usb/gadget/function/storage_common.c:194
+       fsg_store_file+0x19e/0x400 drivers/usb/gadget/function/storage_common.c:455
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x33a/0x430 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x61e/0xbb0 fs/read_write.c:687
+       ksys_write+0x156/0x270 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+       do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-This was apparently used until 2282f7610736 ("media: c8sectpfe:
-remove support of STi c8sectpfe driver").
+other info that might help us debug this:
 
-> b/drivers/pci/controller/dwc/Kconfig
-> index dcfbe7e22..c43b3bde5 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -121,20 +121,6 @@ config PCI_IMX6_HOST
->  	  on DesignWare hardware and therefore the driver re-uses the
->  	  DesignWare core functions to implement the driver.
-> 
-> -config PCI_IMX6_EP
-> -	bool "Freescale i.MX6/7/8 PCIe controller (endpoint mode)"
-> -	depends on ARCH_MXC || COMPILE_TEST
-> -	depends on PCI_ENDPOINT
-> -	select PCIE_DW_EP
-> -	select PCI_HOST_COMMON
-> -	select PCI_IMX6
-> -	select PCI_PWRCTRL_GENERIC
-> -	help
-> -	  Enables support for the PCIe controller in the i.MX SoCs to
-> -	  work in endpoint mode. The PCI controller on i.MX is based
-> -	  on DesignWare hardware and therefore the driver re-uses the
-> -	  DesignWare core functions to implement the driver.
+Chain exists of:
+  &ima_iint_mutex_key[depth] --> &p->frag_sem --> &common->filesem
 
-This looks intentional and useful, something went wrong with your
-validation.
-> 
-> @@ -900,16 +899,6 @@ config REGULATOR_MT6315
->  	  This driver supports the control of different power rails of device
->  	  through regulator interface.
-> 
-> -config REGULATOR_MT6316
-> -	tristate "MT6316 SPMI PMIC regulator driver"
-> -	depends on SPMI
-> -	select REGMAP_SPMI
-> -	help
-> -	  Say Y here to enable support for 2+2, 3+1 and 4 phase regulators
-> -	  found in the MediaTek MT6316 BP, CP, DP, HP, VP and TP SPMI PMICs.
-> -	  This driver supports the control of different power rails of device
-> -	  through regulator interface.
-> -
+ Possible unsafe locking scenario:
 
-Another typo, this one from a87a7b353072 ("regulator: Add
-support for MediaTek MT6316 SPMI PMIC Regulators")
+       CPU0                    CPU1
+       ----                    ----
+  lock(&common->filesem);
+                               lock(&p->frag_sem);
+                               lock(&common->filesem);
+  lock(&ima_iint_mutex_key[depth]);
 
-> diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
-> index 76521555e..f05eb1bb7 100644
-> --- a/drivers/usb/gadget/Kconfig
-> +++ b/drivers/usb/gadget/Kconfig
-> @@ -492,20 +492,6 @@ config USB_CONFIGFS_F_PRINTER
->  	  For more information, see Documentation/usb/gadget_printer.rst
->  	  which includes sample code for accessing the device file.
-> 
-> -config USB_CONFIGFS_F_TCM
-> -	bool "USB Gadget Target Fabric"
-> -	depends on TARGET_CORE
-> -	depends on USB_CONFIGFS
-> -	select USB_LIBCOMPOSITE
-> -	select USB_F_TCM
-> -	help
-> -	  This fabric is a USB gadget component. Two USB protocols are
-> -	  supported that is BBB or BOT (Bulk Only Transport) and UAS
-> -	  (USB Attached SCSI). BOT is advertised on alternative
-> -	  interface 0 (primary) and UAS is on alternative interface 1.
-> -	  Both protocols can work on USB2.0 and USB3.0.
-> -	  UAS utilizes the USB 3.0 feature called streams support.
-> -
+ *** DEADLOCK ***
 
-How is this one different from the other USB_CONFIGFS_F_* ones?
+locks held by syz-executor428/5602: 4, last CPU#0:
+ #0: ffff88801d734510 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2753 [inline]
+ #0: ffff88801d734510 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x231/0xbb0 fs/read_write.c:683
+ #1: ffff888028b16678 (&buffer->mutex){+.+.}-{4:4}, at: configfs_write_iter+0x81/0x430 fs/configfs/file.c:226
+ #2: ffff888025f30b68 (&p->frag_sem){.+.+}-{4:4}, at: flush_write_buffer fs/configfs/file.c:205 [inline]
+ #2: ffff888025f30b68 (&p->frag_sem){.+.+}-{4:4}, at: configfs_write_iter+0x23b/0x430 fs/configfs/file.c:229
+ #3: ffff888038eee198 (&common->filesem){++++}-{4:4}, at: fsg_store_file+0x163/0x400 drivers/usb/gadget/function/storage_common.c:452
 
-> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> index 10cff12a3..06999ba3d 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -281,20 +281,6 @@ config USB_EHCI_HCD_AT91
->  	  Enables support for the on-chip EHCI controller on
->  	  Atmel chips.
-> 
-> -config USB_EHCI_TEGRA
-> -	tristate "NVIDIA Tegra HCD support"
-> -	depends on ARCH_TEGRA
-> -	select USB_CHIPIDEA
-> -	select USB_CHIPIDEA_HOST
-> -	select USB_CHIPIDEA_TEGRA
-> -	select USB_GADGET
-> -	help
-> -	  This option is deprecated now and the driver was removed, use
-> -	  USB_CHIPIDEA_TEGRA instead.
-> -
+stack backtrace:
+CPU: 0 UID: 0 PID: 5602 Comm: syz-executor428 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ print_circular_bug+0x2e2/0x300 kernel/locking/lockdep.c:2059
+ check_noncircular+0x12f/0x150 kernel/locking/lockdep.c:2191
+ check_prev_add kernel/locking/lockdep.c:3181 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3300 [inline]
+ validate_chain kernel/locking/lockdep.c:3924 [inline]
+ __lock_acquire+0x15ff/0x2e40 kernel/locking/lockdep.c:5254
+ lock_acquire+0x115/0x350 kernel/locking/lockdep.c:5908
+ __mutex_lock_common kernel/locking/rtmutex_api.c:559 [inline]
+ mutex_lock_nested+0x5a/0x1d0 kernel/locking/rtmutex_api.c:578
+ process_measurement+0x7e0/0x1c20 security/integrity/ima/ima_main.c:319
+ ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+ security_file_post_open+0xb3/0x260 security/security.c:2755
+ do_open fs/namei.c:4839 [inline]
+ path_openat+0x148a/0x1d60 fs/namei.c:5000
+ do_file_open+0x23e/0x4a0 fs/namei.c:5029
+ file_open_name fs/open.c:1375 [inline]
+ filp_open+0x16d/0x1d0 fs/open.c:1392
+ fsg_lun_open+0x6c/0xe00 drivers/usb/gadget/function/storage_common.c:194
+ fsg_store_file+0x19e/0x400 drivers/usb/gadget/function/storage_common.c:455
+ flush_write_buffer fs/configfs/file.c:207 [inline]
+ configfs_write_iter+0x33a/0x430 fs/configfs/file.c:229
+ new_sync_write fs/read_write.c:595 [inline]
+ vfs_write+0x61e/0xbb0 fs/read_write.c:687
+ ksys_write+0x156/0x270 fs/read_write.c:739
+ do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+ do_syscall_64+0x166/0x520 arch/x86/entry/syscall_64.c:84
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f29897e19a9
+Code: c0 79 93 eb d5 48 8d 7c 1d 00 eb 99 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 d8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe566936c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00002000000002c0 RCX: 00007f29897e19a9
+RDX: 0000000000000005 RSI: 00002000000003c0 RDI: 0000000000000005
+RBP: 0000200000000200 R08: 00005555573c7560 R09: 00005555573c7560
+R10: 00005555573c7560 R11: 0000000000000246 R12: 6769666e6f632f2e
+R13: 0000000000000002 R14: 431bde82d7b634db R15: 00007f298984104b
+ </TASK>
+mass_storage.0/lun.0: file too small: file0
 
-There is a recommentation to use USB_CHIPIDEA_TEGRA, but that
-one depends on CONFIG_EXPERT. Changing this needs to be
-done more carefully.
 
-> index fdc954028..e52f7cb9e 100644
-> --- a/sound/soc/tegra/Kconfig
-> +++ b/sound/soc/tegra/Kconfig
-> @@ -192,15 +192,6 @@ config SND_SOC_TEGRA_AUDIO_GRAPH_CARD
->  config SND_SOC_TEGRA_MACHINE_DRV
->  	tristate
-> 
-> -config SND_SOC_TEGRA_RT5631
-> -	tristate "SoC Audio support for Tegra boards using an RT5631 codec"
-> -	depends on SND_SOC_TEGRA && I2C && GPIOLIB
-> -	select SND_SOC_TEGRA_MACHINE_DRV
-> -	select SND_SOC_RT5631
-> -	help
-> -	  Say Y or M here if you want to add support for SoC audio on Tegra
-> -	  boards using the RT5631 codec, such as Transformer.
-... 
-> -config SND_SOC_TEGRA_CPCAP
-> -	tristate "SoC Audio support for Tegra boards using a CPCAP codec"
-> -	depends on I2C && GPIOLIB && MFD_CPCAP
-> -	select SND_SOC_TEGRA_MACHINE_DRV
-> -	select SND_SOC_CPCAP
-> -	help
-> -	  Say Y or M here if you want to add support for SoC audio on Tegra
-> -	  boards using the CPCAP codec, such as Motorola Atrix 4G or Droid X2.
-> -
-
-These all look like intentional shorthand options for selecting
-the correct set of drivers.
-
-     Arnd
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
