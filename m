@@ -1,62 +1,98 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCCA443308;
-	Mon,  7 Sep 2026 21:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7FD3AD51C
+	for <linux-security-module@vger.kernel.org>; Mon,  7 Sep 2026 22:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788818386; cv=none; b=oIjj52FQ8E4zJf32Vwo2eqx/htd8Jv3acMAYpjO23VV+9opQeD3DHecr1wfZw5OiNAIX9zXW+QjMO2/QW5qryW8q7soyOKL0g0/6vc/CvGr6iOFGSo4EDdq9puWhUPBXmltEsA3LsjTQteN8jXfu3uTNshYyqlYz9NGNtvk05jc=
+	t=1788820041; cv=none; b=vAWUrOHI4aM0qsQ3giloMXhyjpRmZnX9OtflvdJShKZzWEIdyolvN6HfMB/f9B0gBo9dcxtElmB/CREADucBXNUM01H2QWNxwmPv/wojUwUpPl5bGA8cATTrYn0CQFsTg6pSLSAr74H3o8F0aQdKXcYnCI0d/fu7xZQGQLTPSHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788818386; c=relaxed/simple;
-	bh=r65CDcHWr0z3eA9/ubS4hZ4+/sbcVXJDw5ZA38MifW8=;
+	s=arc-20240116; t=1788820041; c=relaxed/simple;
+	bh=w089gXyEOCJY9gUZSUVwdihbdEuqGTphnzmTU3c5wIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hN8X8kb8cJtq/ZZD1qv/fm/hpb8b3aBrKP0HXtbG277dGFBZae576W1Y6iql8SHQ6uW953zLTly+mS/G5Y61hXYu7zcgmcYwzB5W9cEpYV+dqRn3wP76mobe588vOiUUEoTdOvccqsKG1qgbYhpSHah/LognsEj+/RkE7ze59Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dHDE/7II; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=aj8YFFAGt6jQCNZhbXYCvdggae9JIEEYNpLLiNMKoqmRQ1njCW4Xq1qh85sHm60xj+LU155FS+dJb2VAXgHmRSTYOxWd3EqI+bYD61hVEsqEtOmiEsNyJ9MsiNXfr9q8l+7XHBXIXiwKQhUbzYMWrt2UYDsjZ2F9QpVsTgK43YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gaVEiIr+; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dHDE/7II"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788818384; x=1820354384;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r65CDcHWr0z3eA9/ubS4hZ4+/sbcVXJDw5ZA38MifW8=;
-  b=dHDE/7IIJknhhecfVwmrFI1Pq5BvUC07Glv7YcmmFFqvzLT3oed97e6w
-   ccRn8sZGkSqkwdz7T+lK+xLpJLHwKhObDxHNZrvXJO+CHKqD/x4SjjnH3
-   IW24kw/31x4DbkbeEAG6LXwA0lT6T3Qvo2h7JaEhGM/sxi27rOD7kjB9d
-   SItgx9uANWeiTs95NI7l6vHZy3GTjnxkgriSpnIO0CDsny9KLdRz9rYEX
-   fa5lYhpDlurhDg187dhpUYuZKZXKWuuqhrXUD7i00cqVUxKnDAi24IP+4
-   n7hmkZJzZkYG7gDoqZBMpqfKcl//PHADOIYbWL+tCRHzaXsDMg9jDw52j
-   A==;
-X-CSE-ConnectionGUID: Q+qB1/bVRA6dWt2ctKJbtw==
-X-CSE-MsgGUID: otM5c9IySU276TC2dXE4FQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="88152042"
-X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
-   d="scan'208";a="88152042"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2026 14:59:44 -0700
-X-CSE-ConnectionGUID: 8NWTMYYgSIGCQB0adp1Deg==
-X-CSE-MsgGUID: HeYaaeU4Q2uPmLoLfhjo5w==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO dff15f1b2031) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 07 Sep 2026 14:59:41 -0700
-Received: from kbuild by dff15f1b2031 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x3hNL-000000001Ml-2447;
-	Mon, 07 Sep 2026 21:59:39 +0000
-Date: Tue, 8 Sep 2026 05:59:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Breno Rodrigues Alves <breno3011alves@gmail.com>,
-	gregkh@linuxfoundation.org
-Cc: oe-kbuild-all@lists.linux.dev, torvalds@linux-foundation.org,
-	linux-media@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Breno Rodrigues Alves <breno3011alves@gmail.com>
-Subject: Re: [PATCH v2] media: dvb-core: extirpate defective and unsafe ULE
- debug block
-Message-ID: <202609080524.kwJEdv90-lkp@intel.com>
-References: <20260905142222.22818-1-breno3011alves@gmail.com>
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gaVEiIr+"
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-51c0c45c580so43905411cf.0
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Sep 2026 15:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1788820038; x=1789424838; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=voF+0uPdvqMWSZZsE3DB359nSHA2KdFl0fM0Svv/P2k=;
+        b=gaVEiIr+tWszuP7yIhlBLyyh6/EQoRUbXiocZyOvHCAyBAuFNw4GjNq+ApFupWmr+O
+         +tDD4hPSE0KEVpVFxDgs2hlVMnH1STJdy/eJU1jdZzOxgpd3KhkSPxtbMxAeux4ifkJj
+         dOgDQjsDRKYUGY83uMid7eSJa1jVyw8TBHH/DDUJC6VYhuPT7QNQmV+is1/w9MxWB06L
+         /vIil5JV+IF72ZbJZw8oKRphab6uPo5BZN6FIITg8v049OxKRawJ4GU2ukGXiu/xBflG
+         ehUOPG5JWTfgduNbsO32bN/kw2Jv9lVlhfbTfLG7myRDbuVZOHJn8mctdilaaubRODmi
+         GRXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788820038; x=1789424838;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=voF+0uPdvqMWSZZsE3DB359nSHA2KdFl0fM0Svv/P2k=;
+        b=ddfGrF4se3ZIUGpo0TN87SrVt+fQVmz6lAUtjBNdiOmaYIJTltAYFyNPJinBFOwuXJ
+         mFjHyqFgjW2jVka48hVhlBNHS08ojDFr/66D3PHk1HUmbZRfXQhtlFrLprVXXG438bqB
+         RgEjsgDmHTzQvxsbXiA53Rj3mmdC4NjF5l+pJZkm+Y+YSxKEKDWsqDE9w7vXB8Dr7FDw
+         HrRD8CltDTgFUQH57G2fPug8IPL+iLrmqZmYEdLDYYDkSfym7hWslZ5WFNtxWQbTdIEM
+         u8acI1GG0+UGDQl74yvMFsbiJPalshhpeoIEHlKQwLG3XaQ242CNSZQi1lAwBZrYv6lW
+         NieA==
+X-Forwarded-Encrypted: i=1; AKwUvBwknFeID7fG8hKBCt3BLbEm4AQoBvHk4f5JfKqsSIiRyAc33BELqHudjBM0IWYiVIZRTs3lBD3yTrHI/KylPjvGT3yVeKI=@vger.kernel.org
+X-Gm-Message-State: AFuF++myNpx25Bfon+M2u7VWBgXzVy6loKdg4jkr2i1H7j1SU/aS4Ajp
+	nR58vqnVcpoa4gXqXXhGfFXdJYffv1ibaCAPbE8lfa2NiDPkDCCLyt2r7Zp68aa0Hb4=
+X-Gm-Gg: AYBFou3xMuEXJ8mpbxH4KegK5/crx4kVLRPso9fvMfqKCwgxbNdq/rWzGkx9EFRCUet
+	97IugNrKHHJ0PbAcMX1x+5flXEfyB1xu+dfX7lG2ves2Ku/tsZC2B1SvCVxzNK1SUFtlUmPqMM+
+	qj7YvLf+NQc0aJIL6ZGeGyzjNCIpzrFGsQg7hqtL7tPu5f532g3cvSbNjl01MC9Ss4fG5Mmf16X
+	L4POuA2r6Eu4QVGQf3Vwo3QoyrgqFfrESCXi04GAox5BpG/L2LMCJqQ9G1quDqKaWBAVlRuJxdV
+	z35Eex5aGZ8oYNyfoPvwVZ2eupQmLlViV/iC0FWkgl2nAmg/j2iPXbjU3yUDTQA2DeLRfWc9XJ1
+	cTIAqBqYv4gDKIR9E9aCa2zynDoP/vA/YMQfRiDblC6q5JFHh9+9+Y2Bf3eBgBptPZ8vMyoheVn
+	Gz4U7vFpjfWYCJEu57OCpBh3nPcpnAhTAP4siB8yCr+f7ME852WcmNmyezCCPXToxMyiIvzKiYh
+	UQAG8bbVZmmlF6gxFj2aoUIuQnGJN5KLCuZTwOEkrOk
+X-Received: by 2002:ac8:594c:0:b0:52f:b1b6:a4aa with SMTP id d75a77b69052e-530547fb02fmr300586681cf.4.1788820038503;
+        Mon, 07 Sep 2026 15:27:18 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53080ce82aesm39676931cf.31.2026.09.07.15.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Sep 2026 15:27:18 -0700 (PDT)
+Date: Mon, 7 Sep 2026 18:27:14 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Ye Liu <ye.liu@linux.dev>, Thomas Gleixner <tglx@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Boqun Feng <boqun@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett <josh@joshtriplett.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Ye Liu <liuye@kylinos.cn>, 
+	Michal Hocko <mhocko@suse.com>, mic@digikod.net, david@kernel.org, linmiaohe@huawei.com, 
+	nao.horiguchi@gmail.com, gnoack3000@gmail.com, ljs@kernel.org, sj@kernel.org, 
+	rientjes@google.com, shakeel.butt@linux.dev, xu.xin16@zte.com.cn, 
+	chengming.zhou@linux.dev, tony.luck@intel.com, reinette.chatre@intel.com, x86@kernel.org, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pavel@kernel.org, 
+	lance.yang@linux.dev, pmladek@suse.com, longman@redhat.com, 
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, qiang.zhang@linux.dev, 
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	kprateek.nayak@amd.com, mark.rutland@arm.com, Dave.Martin@arm.com, james.morse@arm.com, 
+	babu.moger@amd.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, rcu@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] kernel: convert process/thread iterators to
+ for_each_*_rculock
+Message-ID: <ap83lNf0bUXX4ZS8@gourry-fedora-PF4VCD3F>
+References: <20260907081334.1152889-1-ye.liu@linux.dev>
+ <20260907081334.1152889-6-ye.liu@linux.dev>
+ <ap7dC-LWNaoPYJvv@gourry-fedora-PF4VCD3F>
+ <ap76-0-hN6CAcYXX@redhat.com>
+ <ap8mgnpE7D4TTrno@gourry-fedora-PF4VCD3F>
+ <ap8yoW37GY17pHYS@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -65,169 +101,38 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260905142222.22818-1-breno3011alves@gmail.com>
+In-Reply-To: <ap8yoW37GY17pHYS@redhat.com>
 
-Hi Breno,
+On Mon, Sep 07, 2026 at 11:54:41PM +0200, Oleg Nesterov wrote:
+> >
+> > This might be my - admittedly shallow - understanding of scoped_guard,
+> > but does scoped guard handle goto correctly?
+> 
+> Yes, it does,
+> 
+> > and why it's generally discouraged to mix cleanup.h and goto.
+> 
+> Hmm, why? I didn't know...
+> 
 
-kernel test robot noticed the following build errors:
+one of the reasons to use cleanup.h it is to eliminate the "goto
+for exit cleanup" mechanism in the first place (says so in the first
+paragraph of cleanup.h).
 
-[auto build test ERROR on staging/staging-testing]
-[also build test ERROR on staging/staging-next staging/staging-linus linuxtv-media-pending/master media-tree/master sailus-media-tree/master linus/master linux/master sailus-media-tree/streams v7.3-rc2 next-20260907]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Later in the header is explicit says don't mix:
+ 
+ * Lastly, given that the benefit of cleanup helpers is removal of
+ * "goto", and that the "goto" statement can jump between scopes, the
+ * expectation is that usage of "goto" and cleanup helpers is never
+ * mixed in the same function. I.e. for a given routine, convert all
+ * resources that need a "goto" cleanup to scope-based cleanup, or
+ * convert none of them.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Rodrigues-Alves/media-dvb-core-extirpate-defective-and-unsafe-ULE-debug-block/20260905-112222
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20260905142222.22818-1-breno3011alves%40gmail.com
-patch subject: [PATCH v2] media: dvb-core: extirpate defective and unsafe ULE debug block
-config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20260908/202609080524.kwJEdv90-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260908/202609080524.kwJEdv90-lkp@intel.com/reproduce)
+This particular patch only does a partial conversion - so it's a
+bit of an anti-pattern.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202609080524.kwJEdv90-lkp@intel.com/
+Reading up on scoped_guard a bit more it seems you're right it handles
+the issue to jump-out, but i can see why cleanup.h says "don't do that"
+because it's confusing to look at / hard to reason about.
 
-All error/warnings (new ones prefixed by >>):
-
-   drivers/media/dvb-core/dvb_net.c: In function 'dvb_net_ule':
->> drivers/media/dvb-core/dvb_net.c:806:51: warning: passing argument 2 of 'dvb_net_ule_check_crc' makes pointer from integer without a cast [-Wint-conversion]
-     806 |                         dvb_net_ule_check_crc(&h, ule_crc, expected_crc);
-         |                                                   ^~~~~~~
-         |                                                   |
-         |                                                   u32 {aka unsigned int}
-   drivers/media/dvb-core/dvb_net.c:626:47: note: expected 'struct kvec *' but argument is of type 'u32' {aka 'unsigned int'}
-     626 |                                   struct kvec iov[3],
-         |                                   ~~~~~~~~~~~~^~~~~~
->> drivers/media/dvb-core/dvb_net.c:806:25: error: too few arguments to function 'dvb_net_ule_check_crc'
-     806 |                         dvb_net_ule_check_crc(&h, ule_crc, expected_crc);
-         |                         ^~~~~~~~~~~~~~~~~~~~~
-   drivers/media/dvb-core/dvb_net.c:625:13: note: declared here
-     625 | static void dvb_net_ule_check_crc(struct dvb_net_ule_handle *h,
-         |             ^~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/dvb_net_ule_check_crc +806 drivers/media/dvb-core/dvb_net.c
-
-   721	
-   722	static void dvb_net_ule(struct net_device *dev, const u8 *buf, size_t buf_len)
-   723	{
-   724		int ret;
-   725		struct dvb_net_ule_handle h = {
-   726			.dev = dev,
-   727			.priv = netdev_priv(dev),
-   728			.ethh = NULL,
-   729			.buf = buf,
-   730			.buf_len = buf_len,
-   731			.skipped = 0L,
-   732			.ts = NULL,
-   733			.ts_end = NULL,
-   734			.from_where = NULL,
-   735			.ts_remain = 0,
-   736			.how_much = 0,
-   737			.new_ts = 1,
-   738			.error = false,
-   739		};
-   740	
-   741		/*
-   742		 * For all TS cells in current buffer.
-   743		 * Appearently, we are called for every single TS cell.
-   744		 */
-   745		for (h.ts = h.buf, h.ts_end = h.buf + h.buf_len;
-   746		     h.ts < h.ts_end; /* no incr. */) {
-   747			if (h.new_ts) {
-   748				/* We are about to process a new TS cell. */
-   749				if (dvb_net_ule_new_ts_cell(&h))
-   750					continue;
-   751			}
-   752	
-   753			/* Synchronize on PUSI, if required. */
-   754			if (h.priv->need_pusi) {
-   755				if (dvb_net_ule_ts_pusi(&h))
-   756					continue;
-   757			}
-   758	
-   759			if (h.new_ts) {
-   760				if (dvb_net_ule_new_ts(&h))
-   761					continue;
-   762			}
-   763	
-   764			/* Check if new payload needs to be started. */
-   765			if (h.priv->ule_skb == NULL) {
-   766				ret = dvb_net_ule_new_payload(&h);
-   767				if (ret < 0)
-   768					return;
-   769				if (ret)
-   770					continue;
-   771			}
-   772	
-   773			/* Copy data into our current skb. */
-   774			h.how_much = min(h.priv->ule_sndu_remain, (int)h.ts_remain);
-   775			skb_put_data(h.priv->ule_skb, h.from_where, h.how_much);
-   776			h.priv->ule_sndu_remain -= h.how_much;
-   777			h.ts_remain -= h.how_much;
-   778			h.from_where += h.how_much;
-   779	
-   780			/* Check for complete payload. */
-   781			if (h.priv->ule_sndu_remain <= 0) {
-   782				/* Check CRC32, we've got it in our skb already. */
-   783				__be16 ulen = htons(h.priv->ule_sndu_len);
-   784				__be16 utype = htons(h.priv->ule_sndu_type);
-   785				const u8 *tail;
-   786				struct kvec iov[3] = {
-   787					{ &ulen, sizeof ulen },
-   788					{ &utype, sizeof utype },
-   789					{ h.priv->ule_skb->data,
-   790					  h.priv->ule_skb->len - 4 }
-   791				};
-   792				u32 ule_crc = ~0L, expected_crc;
-   793				if (h.priv->ule_dbit) {
-   794					/* Set D-bit for CRC32 verification,
-   795					 * if it was set originally. */
-   796					ulen |= htons(0x8000);
-   797				}
-   798	
-   799				ule_crc = iov_crc32(ule_crc, iov, 3);
-   800				tail = skb_tail_pointer(h.priv->ule_skb);
-   801				expected_crc = *(tail - 4) << 24 |
-   802					       *(tail - 3) << 16 |
-   803					       *(tail - 2) << 8 |
-   804					       *(tail - 1);
-   805	
- > 806				dvb_net_ule_check_crc(&h, ule_crc, expected_crc);
-   807	
-   808				/* Prepare for next SNDU. */
-   809				reset_ule(h.priv);
-   810			}
-   811	
-   812			/* More data in current TS (look at the bytes following the CRC32)? */
-   813			if (h.ts_remain >= 2 && *((unsigned short *)h.from_where) != 0xFFFF) {
-   814				/* Next ULE SNDU starts right there. */
-   815				h.new_ts = 0;
-   816				h.priv->ule_skb = NULL;
-   817				h.priv->ule_sndu_type_1 = 0;
-   818				h.priv->ule_sndu_len = 0;
-   819				// pr_warn("More data in current TS: [%#x %#x %#x %#x]\n",
-   820				//	*(h.from_where + 0), *(h.from_where + 1),
-   821				//	*(h.from_where + 2), *(h.from_where + 3));
-   822				// pr_warn("h.ts @ %p, stopped @ %p:\n", h.ts, h.from_where + 0);
-   823				// hexdump(h.ts, 188);
-   824			} else {
-   825				h.new_ts = 1;
-   826				h.ts += TS_SZ;
-   827				h.priv->ts_count++;
-   828				if (h.priv->ule_skb == NULL) {
-   829					h.priv->need_pusi = 1;
-   830					h.priv->ule_sndu_type_1 = 0;
-   831					h.priv->ule_sndu_len = 0;
-   832				}
-   833			}
-   834		}	/* for all available TS cells */
-   835	}
-   836	
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+~Gregory
