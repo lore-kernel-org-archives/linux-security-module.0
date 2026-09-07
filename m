@@ -1,187 +1,252 @@
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020078.outbound.protection.outlook.com [52.101.195.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F0B1D6DA9;
-	Sun,  6 Sep 2026 13:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788699731; cv=fail; b=tjIS+P1O8aPM8DoVwoimV0xPnnE8Dtqg78TwKmYuOWi+TewHkIlzmpdzhLZ2MPE/uVh+MqDDVJlp9T675jzGVq7L7BtP2RddcW7SatZBvp+a8/ilClFVpWIfumE/kyEBL1gCIdt3WsHsf4KypnEhZEuu9RQbjocSba9WDPHphc0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788699731; c=relaxed/simple;
-	bh=NxRsnhzxJWN2qjAlaz63JgBPlPN0uGq2YYM2kzQ6reM=;
-	h=Content-Type:Date:Message-Id:Subject:From:To:Cc:References:
-	 In-Reply-To:MIME-Version; b=CEaoRpUsu78zrwtxO0AGm+mAHDIreuMzOkmFWNTlaE9NtsywpioNMaIObhVZ6pg6N+UwrWE/CZ+/f7TuUPNJjq6m0TXq3OKWaBq1cANHMrlXFLxHpAQHG8zcfp8rKj2Moq9Ic+T/Wys2cHvQoRb6kpjRZGqza+TGP8sMJ7Df8FY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=xKYOvs7g; arc=fail smtp.client-ip=52.101.195.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8BF40DB29;
+	Mon,  7 Sep 2026 07:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788764415; cv=none; b=b4vsoDPYmUtTLQfuIVaVTs9z0qVLaxrFHIbQkf0FW4MB44EjTuIy4yAFT8jQzofs4cj+poZEN+T/SrNubd58MGonaphn9P4We7xN3z8kc7k3qlGmNaQ44rdaEPwxqkO+G7/JcejwYWqFom5d8aeY+AW9iwby/tmw3B5PjOU285w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788764415; c=relaxed/simple;
+	bh=68zq9K51Ay0P16Ip57VHSJhSwyjNPhK8KfIuClbnaR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aNcP5OJTG/2ZmKkUe8y/i8dK6WSOfhKA7Fx0Cp35LrLyM6lwEQmt8ueVeq6j8Jy5VSHlZWWE/qSWdt2gXiXSx7/PV1WNh52SFWGTWA1+bgkmg5Gbat1JS8pOot/FRS+5+2hJynJ6f6SUn1LCqYVdey0Ehe19iCho/R7ODIx5GeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wlIPwCRp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cx9KJBXU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e0rZrifk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5f9VZldn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="xKYOvs7g"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uQVqy+M0uVhT5ynteeiQ3lKchUaXYVU3FPnJjiXMv5SvUtDXi8jTtGJf4bgToXeLRJ/4eESX72gh/TqLEQMXwEDyOe3Cc12uJFERefYa75enkgchOW78IlXHgGM2XjzcBL+5tfcO/N3gmRS/qtT2LLIzBoLHvk+6oFRosd90XnI0oZdeMDZIpu3rMNVZ8ODPqE6XREzxRMcgY6njDu3R/1HbmFYv1EopTapUixOOMZz4gkMobyn1ZRd0zrQan015+4uOwfk9wVZzz73sfIeTDytE+WaQvVfhYjlT+9xxgaaRRilXd2kmlSuZTcpn8gsIikkdSW4P8rlGCS0pBX5Ruw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z5sHOADaRnb4q6ggfAZo5w0PFsTjdXn0aCEfA1hegTU=;
- b=R7T5ugPbZo1qJP9fGmNOolgyjtZ2N6P8/JmGS9AJ0pTmVX8mEMU7I0ltKIkGpOowH0GHnLsdHnp2ggFPAm4KmMuOx3f2aQEXayDJmgTOd3KahN/yH/8gwdR1Nd4+gHioDZ+FtfC90jfDAzVuft6DBI99JGJw0vGXoP+SK5nVeDxtf9TJ8+BV+5/sotyiWzO4NCu42fYEQt+yhR+uWLFR7Ed5BM+RSEp3Jcckp5gZ/TaR3cPbmLNBmMXK3ya2Vl9p/qgQw4BrNnN+W1hsyawRO3ymkw5Rdkxvn3BAL37AFs0qa+3igvivc+WZVPizqrMp+2SJBUHLAowbWceaM1ag7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z5sHOADaRnb4q6ggfAZo5w0PFsTjdXn0aCEfA1hegTU=;
- b=xKYOvs7g6y5D5MZ5R27QLvf29Ko54FtUx+Dzkp25bgN08q4GgbU3LRJLmoJRdI8UySTHimMB7ODvY32GJHKRZxhXHw71GsrbSayQh/WbQkhJYYmtRmgIKuT7OUD+1Odb8Lzo1x6FWoBoix+V/lryYRHdPiR8smWrUyIYvqIu2u0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:4ab::19)
- by LO0P265MB2635.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:14c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Sun, 6 Sep
- 2026 13:02:05 +0000
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1]) by LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1%4]) with mapi id 15.21.0382.014; Sun, 6 Sep 2026
- 13:02:05 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 06 Sep 2026 14:02:04 +0100
-Message-Id: <DL894TFXM5AT.2QOXN683UKXIF@garyguo.net>
-Subject: Re: [PATCH v20 4/8] rust: page: convert to `Ownable`'
-From: "Gary Guo" <gary@garyguo.net>
-To: "Alice Ryhl" <aliceryhl@google.com>, "Andreas Hindborg"
- <a.hindborg@kernel.org>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Lorenzo Stoakes"
- <ljs@kernel.org>, "Vlastimil Babka" <vbabka@kernel.org>, "Liam R. Howlett"
- <liam@infradead.org>, "Uladzislau Rezki" <urezki@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Boqun Feng" <boqun@kernel.org>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Trevor
- Gross" <tmgross@umich.edu>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Tamir Duberstein" <tamird@kernel.org>,
- "Alexandre Courbot" <acourbot@nvidia.com>, =?utf-8?q?Onur_=C3=96zkan?=
- <work@onurozkan.dev>, "Lyude Paul" <lyude@redhat.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, =?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=
- <arve@android.com>, "Todd Kjos" <tkjos@android.com>, "Christian Brauner"
- <brauner@kernel.org>, "Carlos Llamas" <cmllamas@google.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, "Dave Ertman" <david.m.ertman@intel.com>,
- "Leon Romanovsky" <leon@kernel.org>, "Paul Moore" <paul@paul-moore.com>,
- "Serge Hallyn" <sergeh@kernel.org>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Alexander Viro"
- <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>, "Igor Korotin"
- <igor.korotin@linux.dev>, "Viresh Kumar" <vireshk@kernel.org>, "Nishanth
- Menon" <nm@ti.com>, "Stephen Boyd" <sboyd@kernel.org>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Pavel Tikhomirov" <ptikhomirov@virtuozzo.com>,
- "Michal Wilczynski" <m.wilczynski@samsung.com>, "Ira Weiny"
- <iweiny@kernel.org>, "Philipp Stanner" <phasta@kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-mm@kvack.org>, <driver-core@lists.linux.dev>,
- <linux-block@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <linux-usb@vger.kernel.org>, "Asahi Lina"
- <lina+kernel@asahilina.net>
-X-Mailer: aerc 0.22.0
-References: <20260824-unique-ref-v20-0-490735672187@kernel.org>
- <20260824-unique-ref-v20-4-490735672187@kernel.org>
- <ao2WubjLtDuHvRzx@google.com>
-In-Reply-To: <ao2WubjLtDuHvRzx@google.com>
-X-ClientProxiedBy: LO4P123CA0491.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1ab::10) To LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:4ab::19)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wlIPwCRp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cx9KJBXU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e0rZrifk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5f9VZldn"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5FA391F750;
+	Mon,  7 Sep 2026 06:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1788764373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=wlIPwCRpbSjG1YwZQLRGeVaoTAbjDlZ5mQUVIr4JXo/iBT3a4Q0iH6q3KuiIBzJUKfxnX9
+	/Oxidgg3nxHJKpUzDbw6cBurL8wqFfjnExlFpplf04hO2aRAAa7RStxV7HsL02DYMbRZNr
+	3UDtjGBoTvoHszkZaN/z9Q3bUK9ze6g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1788764373;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=Cx9KJBXUtp5fhYyVV4hzQS2p48f2jp5NsH1gki5wAXk89bfUrjPfS2krewBdl6mcSHoSJy
+	NapMeisj3ThAF8Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1788764369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=e0rZrifkg5vEXUNAp301FUAS6arueahh02Qtfk9f0nOM+BgnLLgvHz6Sgvz7rpoid5c1qs
+	BFjB+Zfp+bwj+/p7iA4LqSH5FFkiqvlLvqZjogfaaPbwca795R1Clm3gRhoh2ncfN5mBo9
+	e+bwzWMbc0kej1wlII9bg9vhYMRLVqQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1788764369;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=5f9VZldnsThtR5Ool3IzbjkvtPK6c0RIReUaSQm+sGldhPOHl7PvojatmPqO4560OylauL
+	+3SEaaWT2ZkZcbCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E7AE513432;
+	Mon,  7 Sep 2026 06:59:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vHVEN9BgnmpDaQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 07 Sep 2026 06:59:28 +0000
+Message-ID: <22707a1f-970b-4309-905d-13ac794c51fa@suse.de>
+Date: Mon, 7 Sep 2026 08:59:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LOAP265MB8560:EE_|LO0P265MB2635:EE_
-X-MS-Office365-Filtering-Correlation-Id: c199a891-13f7-4282-70cc-08df0c170d38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|23010399003|1800799024|6133799003|10067099003|56012099006|4143699003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	oHZczSBmuvigdmwE0JkKMQ5z49WRn/lY+qSO0sohdjYq3x2ORIlQGt1RQ9jW6fRR+wWBtpgFwNEdbPuMLgE/NUNZRJeZILiYO1W0JwdrP8o465ggDu52dcmrEbnqv70SE1F2XJmVnoOhjSpMC62OA807bkYachAhXHzprZoLG4I3yhS62gX+IrgoydfAWWXXH/aBzAzdKITRUU+TOAzNZd8mQzR6Q1LP86+vFCsOdxAStDYCCwq43GCKxb+eoU2T/N4dFPTE1o1b5vOYr1ISv7ZUJJn7Y1EkY7c6+MDPLqtWKyJxyu6ocKB5CWiOyqBv1puQlt1c980QfgaTuAv9NhgtTT+RjUHuvAFYS8jTcUhxQwjMVFqkszUY/ujBBBYJaFoY4nTMb4P0j+zO+afd/iQm7H0sf+rI9SmpIWs6z7D5Jaz8js2HcqDDcDqFmjYF4pFyxy33dA8RO1WJ1xbn8JLMgeWt9KUdZ+MAwV8qy2YkH3CZNTzr5JCfzqC6BZxEG6W/7iQrHcoAvMjkkgNg8JwpBs7jUzaiuuNudacWfVtbXZBbWBFIHau3esnsnCBz9at/JziMPjCDu1Arn+EySzIkfwYwscrSwUsSP6rZHDGdgip/fNzKpaRa99S2D7DeeRPAGi3HU7zFZZPM+neP7aT+ImZrgmsBDvWcaDFosaY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(23010399003)(1800799024)(6133799003)(10067099003)(56012099006)(4143699003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OFlaNEZsc2cxUml4ZC8zOThBVnEzUElqNzFSZTkwR3FPL0NiSm1wSHJENEh0?=
- =?utf-8?B?NzgwNGhyd2c4N1VCS2hvU0l2cjRwVlhPSFY3b21iUjV2dUlaRURpdGg4SDJx?=
- =?utf-8?B?cTBOYlIzRmlRMUFLNkFlbmFuUldxUHhMVUVXeUlXUjdVUUcyR1AxNk5nNGNX?=
- =?utf-8?B?aXc5akdrV3lFczQyenNjVHdwZm16NzFKWE8rUFF4VVpjdVNyekJaeDlSOGFX?=
- =?utf-8?B?bDNMNkhpRTdwbTdWR0plVDlPZ3hpV2F6S3ZkOHRsZmdpMDdXTkRhS2RoWS8y?=
- =?utf-8?B?WG50bDlzVkNaSGdCSTJGVHYzZEVYR0R3QVZmQ04rTTEzVGlZSisxQ2hOeVIy?=
- =?utf-8?B?R3lCQlFwdVpKbFN3b244RW81ZEhodUl0QStBVWRWdHJNbWlmL2Z6Y291RDhT?=
- =?utf-8?B?SVFqdFg0R0tmUnZGeW9QNDJ4QVhuN1F0bFVYVWZUQ0FSRG5rNXZJTG9ndmhs?=
- =?utf-8?B?d2pLK09MaXFsRnRPcnRMSWZQUWppN0w3RFI4L2hzTGp6dDRJeFFxNkxYbktq?=
- =?utf-8?B?bTVWZ3hmQTZDSVpoV0M4b1lDY3R4enl1VDVZNlgwZHNyL1g0OXprUUVPYXNR?=
- =?utf-8?B?RWVuNDJVZHk0THdMOXBKTEFvT3AvL1ZjTWtha2loUDNoY29rckx5a3RSVUVD?=
- =?utf-8?B?TU5HNll5b0o4a04xV2c1ak9TQjUxVGxyN3Fvd1FuZ3FHOEFUdTJQekFNSE8x?=
- =?utf-8?B?RFlTanBBZTljdThGNUhiM0htSHllNlpORm1jUVZLZjJpanhUaFd2QjRaa3J5?=
- =?utf-8?B?cndqdWRVSFMvQmxlb0UyNG5MLzlTLzdSeUNDQ0pWM0FWdVZCNy9ySjU2MHdV?=
- =?utf-8?B?dVV1cWVYUnFROWpSUys4dWZUcEV2SGdsZzJWcnA4dmFyOFlJeVhMYjJUZ3RI?=
- =?utf-8?B?TjZuekdaTkJoNkZuM0plMUhZTmFKYTBKRzBxQml6dkhrZm56YURHTittWlpu?=
- =?utf-8?B?VWVrUWhPODlLbkxWQnlCTm9ZTmxhRzN1eVc1ejAyVUc0ZDI4aFdUamo5d2NW?=
- =?utf-8?B?cjZ6TVc1a3RZUndoVXFveEdMNEsvWjlpSTJzTGR2SUZoeSt4bVA1Q1VPN2I4?=
- =?utf-8?B?bVl2cFVIU1FXOXNQL0RIUXBINlpZR3dsWldsNnAzdTF6N2NLeVV5S1QrdDV6?=
- =?utf-8?B?cVFNSXpRUXc5Y0MrTnNsd2k1QXdvMkkxOS8xZGNLaktHNWNrM2hmN0tScTZG?=
- =?utf-8?B?bGp0WlpMN3NyT1cvYW8xVlR5d0tleHJTZ0xjSmx0RlBsMjE5YTUwTTQ2eHht?=
- =?utf-8?B?NWhsQndUWUVZczJ2R2R5RFdtYWtFbG1JRU0vV25iL05WeHJINkZZVDZKRFRw?=
- =?utf-8?B?cWUvRDY5RCtOcERTNHRLdWJVb0xvb0R5TEphc2poSEM3UHM5Q1A1eXNycXdD?=
- =?utf-8?B?SmZ4bzdXTkh1VzFTV29NTlEvcjlNcUJjdEVqSGlhMnp3TGhCb2hiSU1HS3dR?=
- =?utf-8?B?VXFPK296RDVqVFRhMGNJKzFCckVQQ0w2a1k3Z1F0dUhnUkRrRnZxMXNkQk5m?=
- =?utf-8?B?ZHp2ZyttaThsZjIvRHJtVDZ2VHRRdjFWNWFXK3NkY09kTENicFZxN1Jkc1hL?=
- =?utf-8?B?TlVMRDY5aU9SQWVNMThuNGJLYUZ5TjJRSHJrUjErQ3JSbjAwbVdQNjFtQ3pS?=
- =?utf-8?B?UzRTc0VVbUJRZHhPSnhJZkdBUWpCVlVXMkZ1MnFhcm9mQjVRQ0NhbGpET3VN?=
- =?utf-8?B?NGhrZU5YSWpISitzUXl1U2xXOWFLdVoyc1RVdzZCNzRXdmhIVHRWU1NYTU93?=
- =?utf-8?B?cTdaYksyRzhmMDk4UTFWSmpLRTRHcWlIU0d0TzlnTzExckpodVJ5bnA4enhh?=
- =?utf-8?B?OUwwK3pmUGd1SjJFU28xN3RWc3FFaXBoQVRRcGNCN0V1aGZNck8zTHFVakF3?=
- =?utf-8?B?c250OEpOUEhhVmRRR2xKVlIvK0RWWVdtdC8yNE1oeVZranE2RmNiOG0vRndS?=
- =?utf-8?B?RkdXdU9Zb1I0L1FQcUtxNk15NlV2bjVzU2YvUmd5aXlvTms1VmpxQ01hQmdS?=
- =?utf-8?B?KzZxM0VvTXVZRFkvSjZHWVdVK05mQ21naldmUlI5d0QvN2Fzb2FOYnE1Rkhy?=
- =?utf-8?B?Z3NOMVNoYmZ3MUNFMk5QaTNCVnZhcG96TlFlQUdHK2lOTERWZTRZbXJIOWEw?=
- =?utf-8?B?MG4rTWdWeTRJRWEzTDUzZmdkN3BHaVF0WTQyTWRBNlFndEVhQnljeWd2cTVq?=
- =?utf-8?B?WktMQklOMGNKMENwWC9pMS8xU29HUEp0RWZLbS9yVWRQOThFM0NXa1VTanZU?=
- =?utf-8?B?VFFyMzM2cEw4MG1uaHRpd1hCM21ENTE0cGUxWDM4SHJhL3JwRFppSVViNzFM?=
- =?utf-8?B?V002d0x6aXNZTDdNOWpnc3ZjZTZvcEtURzV0OWphbWE2dGNVaklFZz09?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: c199a891-13f7-4282-70cc-08df0c170d38
-X-MS-Exchange-CrossTenant-AuthSource: LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2026 13:02:05.6269
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AkauLTZx4X5Dz4gvyJANoeWosPMdYVkCsolGiDnoKV15dWosTp0jrJx8X0MuQySK6grKcr5AhOiWH/U23Qp8JA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB2635
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] Kconfig: fix typos in core makefiles and purge
+ defective DVB debug (v5)
+To: Breno Rodrigues Alves <breno3011alves@gmail.com>,
+ torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de,
+ linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-fbdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+References: <20260905003005.118245-1-breno3011alves@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20260905003005.118245-1-breno3011alves@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:mid]
 
-On Tue Aug 25, 2026 at 2:20 PM BST, Alice Ryhl wrote:
-> On Mon, Aug 24, 2026 at 01:17:56PM +0200, Andreas Hindborg wrote:
->> +        // SAFETY: We just successfully allocated a page, so we now hav=
-e ownership of the newly
->> +        // allocated page. We transfer that ownership to the new `Owned=
-<Page>` object.
->> +        // Since `Page` is transparent, we can cast the pointer directl=
-y.
->> +        Ok(unsafe { Owned::from_raw(page.cast()) })
+Please stop spamming this list with revisions.
+
+Am 05.09.26 um 02:30 schrieb Breno Rodrigues Alves:
+> Automated review from Sashiko AI revealed that re-enabling the legacy
+> DVB_ULE_DEBUG code via CONFIG_DVB_ULE_DEBUG exposes severe race conditions
+> on global state variables, leading to out-of-bounds memory corruption.
+> Additionally, the debug block suffers from undeclared identifiers (TS_SZ).
 >
-> This doesn't satisfy the safety requirements of Owned::from_raw()
-> because the page may be used with vm_insert_page(), which increments its
-> refcount and causes it to be shared the vma system, and this occurs
-> before Page::release() is called.
+> Following the core kernel principle of eliminating dangerous, unmaintained
+> code, this patch completely extirpates the defective DVB_ULE_DEBUG block
+> from dvb_net.c and purges its corresponding configuration symbol from
+> the Kconfig tree.
+>
+> This version retains the verified MediaTek bugfixes and ghost purges:
+>    - Fixes MediaTek interconnect typo mapping mt8196.o to MT8196.
+>    - Fixes MediaTek regulator typo mapping mt6316-regulator to MT6316.
+>    - Cleans up the dangling comment in drivers/leds/Kconfig.
+>    - Purges verified legacy ghost weight.
+>
+> Signed-off-by: Breno Rodrigues Alves <breno3011alves@gmail.com>
+> ---
+>   drivers/interconnect/mediatek/Makefile | 2 +-
+>   drivers/leds/Kconfig                   | 1 -
+>   drivers/media/dvb-core/dvb_net.c       | 6 +++---
+>   drivers/regulator/Makefile             | 2 +-
+>   4 files changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/interconnect/mediatek/Makefile b/drivers/interconnect/mediatek/Makefile
+> index 6bd656668..64170ab16 100644
+> --- a/drivers/interconnect/mediatek/Makefile
+> +++ b/drivers/interconnect/mediatek/Makefile
+> @@ -3,4 +3,4 @@
+>   obj-$(CONFIG_INTERCONNECT_MTK_DVFSRC_EMI) += icc-emi.o
+>   obj-$(CONFIG_INTERCONNECT_MTK_MT8183) += mt8183.o
+>   obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8195.o
+> -obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8196.o
+> +obj-$(CONFIG_INTERCONNECT_MTK_MT8196) += mt8196.o
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index d0d318223..800fbd560 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -873,7 +873,6 @@ config LEDS_UPBOARD
+>   	  This driver can also be built as a module. If so the module will be
+>   	  called leds-upboard.
+>   
+> -comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
+>   
+>   config LEDS_BLINKM
+>   	tristate "LED support for the BlinkM I2C RGB LED"
+> diff --git a/drivers/media/dvb-core/dvb_net.c b/drivers/media/dvb-core/dvb_net.c
+> index a2159b2bc..3b503695e 100644
+> --- a/drivers/media/dvb-core/dvb_net.c
+> +++ b/drivers/media/dvb-core/dvb_net.c
+> @@ -68,7 +68,7 @@ static inline __u32 iov_crc32( __u32 c, struct kvec *iov, unsigned int cnt )
+>   
+>   #define DVB_NET_MULTICAST_MAX 10
+>   
+> -#ifdef DVB_ULE_DEBUG
+> +#ifdef CONFIG_DVB_ULE_DEBUG
+>   /*
+>    * The code inside DVB_ULE_DEBUG keeps a history of the
+>    * last 100 TS cells processed.
+> @@ -320,7 +320,7 @@ static int dvb_net_ule_new_ts_cell(struct dvb_net_ule_handle *h)
+>   {
+>   	/* We are about to process a new TS cell. */
+>   
+> -#ifdef DVB_ULE_DEBUG
+> +#ifdef CONFIG_DVB_ULE_DEBUG
+>   	if (ule_where >= &ule_hist[100*TS_SZ])
+>   		ule_where = ule_hist;
+>   	memcpy(ule_where, h->ts, TS_SZ);
+> @@ -659,7 +659,7 @@ static void dvb_net_ule_check_crc(struct dvb_net_ule_handle *h,
+>   			h->ts_remain > 2 ?
+>   				*(unsigned short *)h->from_where : 0);
+>   
+> -	#ifdef DVB_ULE_DEBUG
+> +	#ifdef CONFIG_DVB_ULE_DEBUG
+>   		hexdump(iov[0].iov_base, iov[0].iov_len);
+>   		hexdump(iov[1].iov_base, iov[1].iov_len);
+>   		hexdump(iov[2].iov_base, iov[2].iov_len);
+> diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+> index 5a764cec8..f81d1f31a 100644
+> --- a/drivers/regulator/Makefile
+> +++ b/drivers/regulator/Makefile
+> @@ -107,7 +107,7 @@ obj-$(CONFIG_REGULATOR_MP886X) += mp886x.o
+>   obj-$(CONFIG_REGULATOR_MPQ7920) += mpq7920.o
+>   obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6315) += mt6315-regulator.o
+> -obj-$(CONFIG_REGULATOR_MT6315)  += mt6316-regulator.o
+> +obj-$(CONFIG_REGULATOR_MT6316)  += mt6316-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6331)	+= mt6331-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6332)	+= mt6332-regulator.o
 
-I suppose the existing vm_insert_page() abstraction we have is already
-problematic, because it uses `&Page`?
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, (HRB 36809, AG Nürnberg)
 
-Maybe we want to change the API to use `ARef<Page>` so it already has to be
-shared? Conceptually it takes a reference count from a `&Page`, which isn't
-possible because `Page` is not `AlwaysRefCounted`, so it needs a `&ARef<Pag=
-e>`
-to be able to do that op.
 
-Best,
-Gary
