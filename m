@@ -1,147 +1,233 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D21525A9D
-	for <linux-security-module@vger.kernel.org>; Mon,  7 Sep 2026 21:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCCA443308;
+	Mon,  7 Sep 2026 21:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788818108; cv=none; b=h2HAa6+i6mYqOtRoOgY5KpCrPrWy5O5YcvC0xAVNp517IsXEd3GErGoyMKAyHNKuWvXGf2dHPGvSMTmBT1zNrvC3pcjUZS0sAhbPzxHC3pFzwNaM2jTOxj6HJDqCuEBqCryTbEdzNoLrC8FmzWpsUHXWN6+/RY4pjHg/EhgJmkI=
+	t=1788818386; cv=none; b=oIjj52FQ8E4zJf32Vwo2eqx/htd8Jv3acMAYpjO23VV+9opQeD3DHecr1wfZw5OiNAIX9zXW+QjMO2/QW5qryW8q7soyOKL0g0/6vc/CvGr6iOFGSo4EDdq9puWhUPBXmltEsA3LsjTQteN8jXfu3uTNshYyqlYz9NGNtvk05jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788818108; c=relaxed/simple;
-	bh=Rp87txIj1Itj2htGVKkLuIFznvABC1xejs5EuVShP/g=;
+	s=arc-20240116; t=1788818386; c=relaxed/simple;
+	bh=r65CDcHWr0z3eA9/ubS4hZ4+/sbcVXJDw5ZA38MifW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=HE7YI1yPn2ZPoSBxDa6guHnwehbV8UpRmJIZsc203AGPTk6SkeGgow9Aq25ZvCexRr+SLOHu6DgyT4wEns29JARnmDXiBkyIiM+H67V3YErOhLGZ5b9HDvzx5oiz2I8k1cqgxMQb6taXnK6O1Y2ouAsq3yKu2r9mG7TvOyyomog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W3gkbr78; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=hN8X8kb8cJtq/ZZD1qv/fm/hpb8b3aBrKP0HXtbG277dGFBZae576W1Y6iql8SHQ6uW953zLTly+mS/G5Y61hXYu7zcgmcYwzB5W9cEpYV+dqRn3wP76mobe588vOiUUEoTdOvccqsKG1qgbYhpSHah/LognsEj+/RkE7ze59Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dHDE/7II; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W3gkbr78"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788818105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U5vbt3dDTcq0wdPHap0JtL9B1dVtnkBH7soBmqKWLIw=;
-	b=W3gkbr78+o5zSjzwdZmKze/Lx12LDtBdJ5DghhHLlhKOwkSMdRqsMuRNGzfezvuU7iBdW6
-	tmlim+BJ+JWCEhtdqd2R6ACAk6Sc+BFZPT4ewg2XfgKat+NBcqmOc/zWB7iBWJoQMiZ8wO
-	q73lb+VKGOAX197N7HqIGeSHdNC3N/k=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-139-Ut24lLeFO0a40zf8pdXsKw-1; Mon,
- 07 Sep 2026 17:55:02 -0400
-X-MC-Unique: Ut24lLeFO0a40zf8pdXsKw-1
-X-Mimecast-MFC-AGG-ID: Ut24lLeFO0a40zf8pdXsKw_1788818101
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 92C831800EC7;
-	Mon,  7 Sep 2026 21:55:00 +0000 (UTC)
-Received: from fedora (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8E52D1800257;
-	Mon,  7 Sep 2026 21:54:42 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  7 Sep 2026 23:55:00 +0200 (CEST)
-Date: Mon, 7 Sep 2026 23:54:41 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: Ye Liu <ye.liu@linux.dev>, Thomas Gleixner <tglx@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, Ye Liu <liuye@kylinos.cn>,
-	Michal Hocko <mhocko@suse.com>, mic@digikod.net, david@kernel.org,
-	linmiaohe@huawei.com, nao.horiguchi@gmail.com, gnoack3000@gmail.com,
-	ljs@kernel.org, sj@kernel.org, rientjes@google.com,
-	shakeel.butt@linux.dev, xu.xin16@zte.com.cn,
-	chengming.zhou@linux.dev, tony.luck@intel.com,
-	reinette.chatre@intel.com, x86@kernel.org, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, pavel@kernel.org,
-	lance.yang@linux.dev, pmladek@suse.com, longman@redhat.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, dietmar.eggemann@arm.com, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, kprateek.nayak@amd.com,
-	mark.rutland@arm.com, Dave.Martin@arm.com, james.morse@arm.com,
-	babu.moger@amd.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	rcu@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] kernel: convert process/thread iterators to
- for_each_*_rculock
-Message-ID: <ap8yoW37GY17pHYS@redhat.com>
-References: <20260907081334.1152889-1-ye.liu@linux.dev>
- <20260907081334.1152889-6-ye.liu@linux.dev>
- <ap7dC-LWNaoPYJvv@gourry-fedora-PF4VCD3F>
- <ap76-0-hN6CAcYXX@redhat.com>
- <ap8mgnpE7D4TTrno@gourry-fedora-PF4VCD3F>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dHDE/7II"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788818384; x=1820354384;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r65CDcHWr0z3eA9/ubS4hZ4+/sbcVXJDw5ZA38MifW8=;
+  b=dHDE/7IIJknhhecfVwmrFI1Pq5BvUC07Glv7YcmmFFqvzLT3oed97e6w
+   ccRn8sZGkSqkwdz7T+lK+xLpJLHwKhObDxHNZrvXJO+CHKqD/x4SjjnH3
+   IW24kw/31x4DbkbeEAG6LXwA0lT6T3Qvo2h7JaEhGM/sxi27rOD7kjB9d
+   SItgx9uANWeiTs95NI7l6vHZy3GTjnxkgriSpnIO0CDsny9KLdRz9rYEX
+   fa5lYhpDlurhDg187dhpUYuZKZXKWuuqhrXUD7i00cqVUxKnDAi24IP+4
+   n7hmkZJzZkYG7gDoqZBMpqfKcl//PHADOIYbWL+tCRHzaXsDMg9jDw52j
+   A==;
+X-CSE-ConnectionGUID: Q+qB1/bVRA6dWt2ctKJbtw==
+X-CSE-MsgGUID: otM5c9IySU276TC2dXE4FQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="88152042"
+X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
+   d="scan'208";a="88152042"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Sep 2026 14:59:44 -0700
+X-CSE-ConnectionGUID: 8NWTMYYgSIGCQB0adp1Deg==
+X-CSE-MsgGUID: HeYaaeU4Q2uPmLoLfhjo5w==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO dff15f1b2031) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 07 Sep 2026 14:59:41 -0700
+Received: from kbuild by dff15f1b2031 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x3hNL-000000001Ml-2447;
+	Mon, 07 Sep 2026 21:59:39 +0000
+Date: Tue, 8 Sep 2026 05:59:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Breno Rodrigues Alves <breno3011alves@gmail.com>,
+	gregkh@linuxfoundation.org
+Cc: oe-kbuild-all@lists.linux.dev, torvalds@linux-foundation.org,
+	linux-media@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Breno Rodrigues Alves <breno3011alves@gmail.com>
+Subject: Re: [PATCH v2] media: dvb-core: extirpate defective and unsafe ULE
+ debug block
+Message-ID: <202609080524.kwJEdv90-lkp@intel.com>
+References: <20260905142222.22818-1-breno3011alves@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ap8mgnpE7D4TTrno@gourry-fedora-PF4VCD3F>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-MFC-PROC-ID: nnRSbRJBQOYVjeI_jlaxVAcpW4NKLVEcs_hsibQpSI8_1788818101
-X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20260905142222.22818-1-breno3011alves@gmail.com>
 
-On 09/07, Gregory Price wrote:
->
-> On Mon, Sep 07, 2026 at 07:57:15PM +0200, Oleg Nesterov wrote:
-> > On 09/07, Gregory Price wrote:
-> > >
-> > > On Mon, Sep 07, 2026 at 04:13:31PM +0800, Ye Liu wrote:
-> > > > --- a/kernel/hung_task.c
-> > > > +++ b/kernel/hung_task.c
-> > > > @@ -315,13 +315,12 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
-> > > >  		return;
-> > > >
-> > > >  	this_round_count = 0;
-> > > > -	rcu_read_lock();
-> > > > -	for_each_process_thread(g, t) {
-> > > > +	for_each_process_thread_rculock(g, t) {
-> > > >  		if (!max_count--)
-> > > > -			goto unlock;
-> > > > +			goto out;
-> > > ... snip ...
-> > > > - unlock:
-> > > > -	rcu_read_unlock();
-> > > > -
-> > > > +out:
-> > > >  	if (!this_round_count)
-> > > >  		return;
-> > > >
-> > >
-> > > The sunken rcu_read_lock()/unlock() + scoped_guard usage makes this goto
-> > > at a minimum very confusing, if not actually broken.
-> >
-> > I am afraid I misunderstood you concerns...
-> >
->
-> This might be my - admittedly shallow - understanding of scoped_guard,
-> but does scoped guard handle goto correctly?
+Hi Breno,
 
-Yes, it does,
+kernel test robot noticed the following build errors:
 
-> and why it's generally discouraged to mix cleanup.h and goto.
+[auto build test ERROR on staging/staging-testing]
+[also build test ERROR on staging/staging-next staging/staging-linus linuxtv-media-pending/master media-tree/master sailus-media-tree/master linus/master linux/master sailus-media-tree/streams v7.3-rc2 next-20260907]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Hmm, why? I didn't know...
+url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Rodrigues-Alves/media-dvb-core-extirpate-defective-and-unsafe-ULE-debug-block/20260905-112222
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20260905142222.22818-1-breno3011alves%40gmail.com
+patch subject: [PATCH v2] media: dvb-core: extirpate defective and unsafe ULE debug block
+config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20260908/202609080524.kwJEdv90-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260908/202609080524.kwJEdv90-lkp@intel.com/reproduce)
 
-Oleg.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202609080524.kwJEdv90-lkp@intel.com/
 
+All error/warnings (new ones prefixed by >>):
+
+   drivers/media/dvb-core/dvb_net.c: In function 'dvb_net_ule':
+>> drivers/media/dvb-core/dvb_net.c:806:51: warning: passing argument 2 of 'dvb_net_ule_check_crc' makes pointer from integer without a cast [-Wint-conversion]
+     806 |                         dvb_net_ule_check_crc(&h, ule_crc, expected_crc);
+         |                                                   ^~~~~~~
+         |                                                   |
+         |                                                   u32 {aka unsigned int}
+   drivers/media/dvb-core/dvb_net.c:626:47: note: expected 'struct kvec *' but argument is of type 'u32' {aka 'unsigned int'}
+     626 |                                   struct kvec iov[3],
+         |                                   ~~~~~~~~~~~~^~~~~~
+>> drivers/media/dvb-core/dvb_net.c:806:25: error: too few arguments to function 'dvb_net_ule_check_crc'
+     806 |                         dvb_net_ule_check_crc(&h, ule_crc, expected_crc);
+         |                         ^~~~~~~~~~~~~~~~~~~~~
+   drivers/media/dvb-core/dvb_net.c:625:13: note: declared here
+     625 | static void dvb_net_ule_check_crc(struct dvb_net_ule_handle *h,
+         |             ^~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/dvb_net_ule_check_crc +806 drivers/media/dvb-core/dvb_net.c
+
+   721	
+   722	static void dvb_net_ule(struct net_device *dev, const u8 *buf, size_t buf_len)
+   723	{
+   724		int ret;
+   725		struct dvb_net_ule_handle h = {
+   726			.dev = dev,
+   727			.priv = netdev_priv(dev),
+   728			.ethh = NULL,
+   729			.buf = buf,
+   730			.buf_len = buf_len,
+   731			.skipped = 0L,
+   732			.ts = NULL,
+   733			.ts_end = NULL,
+   734			.from_where = NULL,
+   735			.ts_remain = 0,
+   736			.how_much = 0,
+   737			.new_ts = 1,
+   738			.error = false,
+   739		};
+   740	
+   741		/*
+   742		 * For all TS cells in current buffer.
+   743		 * Appearently, we are called for every single TS cell.
+   744		 */
+   745		for (h.ts = h.buf, h.ts_end = h.buf + h.buf_len;
+   746		     h.ts < h.ts_end; /* no incr. */) {
+   747			if (h.new_ts) {
+   748				/* We are about to process a new TS cell. */
+   749				if (dvb_net_ule_new_ts_cell(&h))
+   750					continue;
+   751			}
+   752	
+   753			/* Synchronize on PUSI, if required. */
+   754			if (h.priv->need_pusi) {
+   755				if (dvb_net_ule_ts_pusi(&h))
+   756					continue;
+   757			}
+   758	
+   759			if (h.new_ts) {
+   760				if (dvb_net_ule_new_ts(&h))
+   761					continue;
+   762			}
+   763	
+   764			/* Check if new payload needs to be started. */
+   765			if (h.priv->ule_skb == NULL) {
+   766				ret = dvb_net_ule_new_payload(&h);
+   767				if (ret < 0)
+   768					return;
+   769				if (ret)
+   770					continue;
+   771			}
+   772	
+   773			/* Copy data into our current skb. */
+   774			h.how_much = min(h.priv->ule_sndu_remain, (int)h.ts_remain);
+   775			skb_put_data(h.priv->ule_skb, h.from_where, h.how_much);
+   776			h.priv->ule_sndu_remain -= h.how_much;
+   777			h.ts_remain -= h.how_much;
+   778			h.from_where += h.how_much;
+   779	
+   780			/* Check for complete payload. */
+   781			if (h.priv->ule_sndu_remain <= 0) {
+   782				/* Check CRC32, we've got it in our skb already. */
+   783				__be16 ulen = htons(h.priv->ule_sndu_len);
+   784				__be16 utype = htons(h.priv->ule_sndu_type);
+   785				const u8 *tail;
+   786				struct kvec iov[3] = {
+   787					{ &ulen, sizeof ulen },
+   788					{ &utype, sizeof utype },
+   789					{ h.priv->ule_skb->data,
+   790					  h.priv->ule_skb->len - 4 }
+   791				};
+   792				u32 ule_crc = ~0L, expected_crc;
+   793				if (h.priv->ule_dbit) {
+   794					/* Set D-bit for CRC32 verification,
+   795					 * if it was set originally. */
+   796					ulen |= htons(0x8000);
+   797				}
+   798	
+   799				ule_crc = iov_crc32(ule_crc, iov, 3);
+   800				tail = skb_tail_pointer(h.priv->ule_skb);
+   801				expected_crc = *(tail - 4) << 24 |
+   802					       *(tail - 3) << 16 |
+   803					       *(tail - 2) << 8 |
+   804					       *(tail - 1);
+   805	
+ > 806				dvb_net_ule_check_crc(&h, ule_crc, expected_crc);
+   807	
+   808				/* Prepare for next SNDU. */
+   809				reset_ule(h.priv);
+   810			}
+   811	
+   812			/* More data in current TS (look at the bytes following the CRC32)? */
+   813			if (h.ts_remain >= 2 && *((unsigned short *)h.from_where) != 0xFFFF) {
+   814				/* Next ULE SNDU starts right there. */
+   815				h.new_ts = 0;
+   816				h.priv->ule_skb = NULL;
+   817				h.priv->ule_sndu_type_1 = 0;
+   818				h.priv->ule_sndu_len = 0;
+   819				// pr_warn("More data in current TS: [%#x %#x %#x %#x]\n",
+   820				//	*(h.from_where + 0), *(h.from_where + 1),
+   821				//	*(h.from_where + 2), *(h.from_where + 3));
+   822				// pr_warn("h.ts @ %p, stopped @ %p:\n", h.ts, h.from_where + 0);
+   823				// hexdump(h.ts, 188);
+   824			} else {
+   825				h.new_ts = 1;
+   826				h.ts += TS_SZ;
+   827				h.priv->ts_count++;
+   828				if (h.priv->ule_skb == NULL) {
+   829					h.priv->need_pusi = 1;
+   830					h.priv->ule_sndu_type_1 = 0;
+   831					h.priv->ule_sndu_len = 0;
+   832				}
+   833			}
+   834		}	/* for all available TS cells */
+   835	}
+   836	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
