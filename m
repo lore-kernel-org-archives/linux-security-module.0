@@ -1,117 +1,174 @@
-Received: from mail-qv2-f12.google.com (mail-qv2-f12.google.com [74.125.230.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2366F4B0C9E
-	for <linux-security-module@vger.kernel.org>; Mon,  7 Sep 2026 15:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808E343A809
+	for <linux-security-module@vger.kernel.org>; Mon,  7 Sep 2026 15:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788795836; cv=none; b=oQkjfdQjUsuOII6WkQVjrL2qNpzofiWGYj/+aUI+8O/Qw51YHvE0S1bR8FKOe4yhET0X7257DPJLuONTQYx87FLQ7CPpH+ManAHm/3lo85SZdsVW0CXotwA/t9qlsjbxhfqm9Sj3I8GYzV+f5IX4iSx2n9NHVZ2/6IJ3mCmjK60=
+	t=1788795857; cv=none; b=i9v66QtOThbQ1hSEffQJ8V159/zndJW2bYMKTc5i4JANgnJx88mutZH7ljQamnS1XrCvMtvD9Bx6EkboYOZoKpEcGEgMBIup6/EfZ7pRzpawVqjgoPkGQgSjDnZiMMs4AWZzKhMntR0+IW/P2P5mBR4mo8nMkhvKzCoRaYCpQlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788795836; c=relaxed/simple;
-	bh=CJsX7WqNwIl8xka2b9C1MLEX7MPjxesh8mktt0eOQLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUCWYxc/emqh5xKaZGQ86l3+P1fTEHnL2HBJQ8BtZceEX6vXUbB/gpgaaEK6yP85MCA4JchIFFej3m1eBUJn4O6tqOi7Yd0lTnYqh1pSRp83PqpkxN+j86sVMnK4b/VseePNSdET33cb1lzycp4FJoFL29KQuFtVP3T4cHaKy84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=VGljGjQp; arc=none smtp.client-ip=74.125.230.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+	s=arc-20240116; t=1788795857; c=relaxed/simple;
+	bh=q0JC8ZCyOUkNe3QOhwME4K8qc1vt2dTOlhEgRoeOCD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BXZX+WHmU8F0khdUsw4SN9XcmgvnCQu1PEKtLXmJ5yFvXrAbZNZRiBKC1Us2cJdOAzsjSqM8deTbII7tK4I+Tr8aFfSHq504E/0VCwzLNDdIv56IxTUBWuZzbfUqi9qBUeOkW8UoWRAnAoIxpBrq2t9uhx7UPLCMYdY2REmHLf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CsvuUbjY; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="VGljGjQp"
-Received: by mail-qv2-f12.google.com with SMTP id 6a1803df08f44-90cdfe528e9so1054556d6.0
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Sep 2026 08:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1788795830; x=1789400630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=87Eb9cn0gqF/vxYu718MPm0f1YFf09SOKLR2T0rK7Rg=;
-        b=VGljGjQpYsCwidgu0HJPuqnfN0T37V1FyO5ZPQ5b3UOBsBQwsPOlawZs9u/eXrpv75
-         1kMqeNbFPxr0/m/io6bcWPZek6rRy6kkqtGvsJDkrMxialSziNmtxv+dJNtynH5Qdbta
-         mRhmrkP7c3B7vuC+/LTqnj073PZEFQAK75A/dIhi4fcNCtOc1F8tX+927pj2CyCEGkR1
-         CQGiU7B0KlCz1azTO4klTUzE33dskWbGdy/tXGjCGf0keZ7rCcdNEYN0F4c1WQNEVgyb
-         JFrYoT3MpwMfGGfwNdeQeNRuwsQbe4V9Qj4MqxzaseegI/FJnQs+i/Kdf7Y0oPFhL2w8
-         S/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788795830; x=1789400630;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=87Eb9cn0gqF/vxYu718MPm0f1YFf09SOKLR2T0rK7Rg=;
-        b=Otmj3CCaU/bRjvVi802RVafjzNCmMAxb823gK6a9CJOxx6tKIqQ5ZKD6shY9eQ96NT
-         MHVgJX5U69Wgrl+NOz49H48m30XEpeWQFHLF42fABTAKGZkKucqWAPKYSF0sEYUpciwP
-         ZKkAr+WK+XmrjU3tU9irEngpThZOY39enN8eOYK7YcMMQIoe2gKgct+zjMLYhKU7j5PJ
-         8HlUNTs7Gwtmg3pspLcqpfPaYlu2vbZaVzqiERd73FzM7/k4jFDQx5F37u6kA1OW076/
-         eDqCYsvUscX9mv8IJIAOSLN/Bw6i9+vLwtHB2JKIhWqTqZgjRApAwLFdKRD90+zQqLHp
-         Eulg==
-X-Forwarded-Encrypted: i=1; AKwUvBwJmWIOBD4MpEGrpt0SriJJ23N+O15kZhHgFq8n69R38lznl7CSxTR9IfuGhXeMkuCTX+JtCRwAHGojDfJHO54z1ZDetRA=@vger.kernel.org
-X-Gm-Message-State: AFuF++nimO5KfCsyWccKoIp7Z0tlbeBF11rx/rx38Qhed73WjSsTGt6h
-	ooftTDhAJaYP5115pEgbzPptDm2YdDW/s6EwEqx1G6ojjtXbrWwXlfaPpUkjEkAHugE=
-X-Gm-Gg: AYBFou1NRu53s8fL27gkpN2rkchX17CkUpEGMGmkzYsXPbEovMvH93mlAIiEi8MoKrb
-	fJrwTJX4gME0EgivImumUAfrtVVn9Rr7WAb5pQfS8GWuZW0CyD/zo4ptmYLrsq+SuFMdqAg+ASz
-	lOHywt5Ui6oeQ556rIF5uG9t65WFmy405tl9GwkamGbgeEP3cA4zXPvqXuTqoWr3JJ161YptyaL
-	EeCIUbbhcSIbYgpx9dsYRjwdE/Z91U20/zzfz9cR+by0S8cbwErIS/h1xF63Ng5WinwXKIAiNsE
-	WOuYU6QP4XEXTLLwRjTMo91AV10nY6NsYkj3ICqppBYXGU7Bi4cGCIrLmigAvmYXnllQid4DK0t
-	SQLGC61uWO9H8FlhZx/3M203pUpunzaTiPe6pSWVfmQOu2brGNINcMSe9xABTA2oa8NZISLT6Y9
-	IaOrE+U8TKj7yvC7NJ+3lWUSWeYUj2brMtjaIBIrX94yHRtd6blAsdwan9BU+2kb5CThhOlGleF
-	ivY2SX/+w6oeZUrHmDqcWl+V8ZHsppf6jKC9diGoIplnw==
-X-Received: by 2002:a05:6214:2b85:b0:90e:9ddb:1224 with SMTP id 6a1803df08f44-91061f709e8mr21563666d6.4.1788795830418;
-        Mon, 07 Sep 2026 08:43:50 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91040646d59sm93755486d6.8.2026.09.07.08.43.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2026 08:43:50 -0700 (PDT)
-Date: Mon, 7 Sep 2026 11:43:47 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: Miaohe Lin <linmiaohe@huawei.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ye Liu <liuye@kylinos.cn>, Michal Hocko <mhocko@suse.com>, 
-	peterz@infradead.org, paulmck@kernel.org, mingo@redhat.com, rostedt@goodmis.org, 
-	jpoimboe@kernel.org, mic@digikod.net, oleg@redhat.com, tglx@kernel.org, 
-	david@kernel.org, nao.horiguchi@gmail.com, rafael@kernel.org, gnoack3000@gmail.com, 
-	ljs@kernel.org, sj@kernel.org, rientjes@google.com, shakeel.butt@linux.dev, 
-	xu.xin16@zte.com.cn, chengming.zhou@linux.dev, will@kernel.org, boqun@kernel.org, 
-	frederic@kernel.org, neeraj.upadhyay@kernel.org, joelagnelf@nvidia.com, 
-	josh@joshtriplett.org, urezki@gmail.com, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, tony.luck@intel.com, reinette.chatre@intel.com, x86@kernel.org, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pavel@kernel.org, 
-	lance.yang@linux.dev, mhiramat@kernel.org, pmladek@suse.com, longman@redhat.com, 
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, qiang.zhang@linux.dev, 
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	kprateek.nayak@amd.com, mark.rutland@arm.com, Dave.Martin@arm.com, james.morse@arm.com, 
-	babu.moger@amd.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rcu@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] mm/memory-failure: convert process iterator to
- for_each_process_rculock
-Message-ID: <ap7bqPro90Mg270u@gourry-fedora-PF4VCD3F>
-References: <20260907081334.1152889-1-ye.liu@linux.dev>
- <20260907081334.1152889-5-ye.liu@linux.dev>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CsvuUbjY"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hdrw93VN0zQ5y;
+	Mon,  7 Sep 2026 17:44:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1788795849;
+	bh=PDqYhNAVv54EBJAJsltUZvPuXdi6vzppVMBCdtYhQLA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CsvuUbjYeVKzz0cwvijV0njKU+ybbJJARO+YhqRCXuy7Y/59E9OKpMJkX5/iarEQX
+	 NdjdJEeg4NvEc8iUWBhE8D9npfl60ulP0ogz74ccEqpIyIS5KahkDknSRg0rI8oW+K
+	 CBM6RpHbnlx+hvYQrqbAkg1E4kyIFzU9oKzUyGsw=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hdrw86CQnz58l;
+	Mon,  7 Sep 2026 17:44:08 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v1 1/2] landlock: Bound escaped trace path output
+Date: Mon,  7 Sep 2026 17:43:58 +0200
+Message-ID: <20260907154401.124362-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260907081334.1152889-5-ye.liu@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Mon, Sep 07, 2026 at 04:13:30PM +0800, Ye Liu wrote:
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> Replace the manual rcu_read_lock()/rcu_read_unlock() pairs combined
-> with for_each_process() loop in mm/memory-failure.c with
-> for_each_process_rculock(), which scopes the RCU read lock to the
-> loop body via scoped_guard(rcu).
-> 
-> In collect_procs_file(), the page_pgoff() call now falls outside the
-> RCU read-side critical section.  This is safe because page_pgoff()
-> only reads folio->index and does not traverse any RCU-protected
-> structures.
-> 
-> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Acked-by: Miaohe Lin <linmiaohe@huawei.com>
+Filesystem paths may expand fourfold when trace text escapes spaces and
+other untrusted bytes.  A sufficiently long representation can exhaust
+the shared scratch sequence.  A sibling __print_flags() helper may then
+return an unterminated one-past pointer because TP_printk() argument
+ordering is unspecified.
 
-Reviewed-by: Gregory Price (Meta) <gourry@gourry.net>
+Use a fixed budget rather than the scratch space available at call time,
+so output does not vary with sibling evaluation order.  Limit an
+untrusted string to three quarters of the trace sequence, leaving the
+rest for sibling helpers and final event metadata.  Compute and commit
+complete escaped output transactionally so an exact fill cannot consume
+the terminating NUL or poison the scratch sequence.
+
+For strings that exceed the limit, retain the largest prefix ending at a
+complete escape unit, then append a raw UTF-8 ellipsis.  Keep the
+helper's existing octal fallback so complete values remain unchanged.
+Hex fallback would consume the same four bytes per escaped byte without
+increasing the prefix or strengthening the marker.  ESCAPE_NAP renders
+every non-ASCII input byte in octal, so legitimate data cannot reproduce
+the marker without being escaped.
+
+Cc: Günther Noack <gnoack@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ include/trace/events/landlock.h | 70 +++++++++++++++++++++++++--------
+ 1 file changed, 53 insertions(+), 17 deletions(-)
+
+diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
+index f82588f6f90e..d05253afaf59 100644
+--- a/include/trace/events/landlock.h
++++ b/include/trace/events/landlock.h
+@@ -28,6 +28,16 @@ struct task_struct;
+ 
+ #ifdef CREATE_TRACE_POINTS
+ 
++/* About 6 KiB, leaving about 2 KiB for sibling helpers and fixed fields. */
++#define TRACE_UNTRUSTED_STR_OUTPUT_SIZE \
++	(TRACE_SEQ_BUFFER_SIZE - TRACE_SEQ_BUFFER_SIZE / 4)
++
++/*
++ * A raw UTF-8 ellipsis (…) marks truncation and cannot collide with escaped
++ * input: ESCAPE_NAP renders every non-ASCII input byte in octal.
++ */
++#define TRACE_TRUNCATION_MARKER "\xe2\x80\xa6"
++
+ /*
+  * Escapes @len bytes of an untrusted string into the trace sequence @p so it
+  * cannot inject field separators or control characters into the ftrace text
+@@ -37,33 +47,59 @@ struct task_struct;
+  * NUL-terminated or carries embedded NUL bytes (an abstract socket name) is
+  * escaped in full instead of being truncated at the first NUL.
+  *
+- * Return: a pointer into @p's buffer, or NULL if @src is NULL or the buffer is
+- * exhausted (normal when the trace buffer is full).
++ * Strings that exceed the output limit retain the largest complete escaped
++ * prefix followed by the truncation marker.
++ *
++ * Return: a pointer into @p's buffer, or NULL if @src is NULL or the fixed
++ * output reservation is unavailable.
+  */
+ static inline const char *
+ __trace_print_untrusted_str(struct trace_seq *p, const char *src, size_t len)
+ {
++	const unsigned int escape_flags = ESCAPE_SPACE | ESCAPE_SPECIAL |
++					  ESCAPE_NAP | ESCAPE_APPEND |
++					  ESCAPE_OCTAL;
++	const size_t marker_len = sizeof(TRACE_TRUNCATION_MARKER) - 1;
++	size_t buf_size, prefix_len, prefix_size;
+ 	int escaped_size;
+ 	char *buf;
+-	size_t buf_size = seq_buf_get_buf(&p->seq, &buf);
+-	const char *ret = trace_seq_buffer_ptr(p);
++	const char *ret;
+ 
+-	/* Buffer exhaustion is normal when the trace buffer is full. */
+-	if (!src || buf_size == 0)
++	buf_size = seq_buf_get_buf(&p->seq, &buf);
++	if (!src || buf_size < TRACE_UNTRUSTED_STR_OUTPUT_SIZE)
+ 		return NULL;
+ 
+-	escaped_size =
+-		string_escape_mem(src, len, buf, buf_size,
+-				  ESCAPE_SPACE | ESCAPE_SPECIAL | ESCAPE_NAP |
+-					  ESCAPE_APPEND | ESCAPE_OCTAL,
+-				  " ='\"\\");
+-	if (unlikely(escaped_size >= buf_size)) {
+-		/* We need some room for the final '\0'. */
+-		seq_buf_set_overflow(&p->seq);
+-		p->full = 1;
+-		return NULL;
++	ret = trace_seq_buffer_ptr(p);
++	escaped_size = string_escape_mem(src, len, buf,
++					 TRACE_UNTRUSTED_STR_OUTPUT_SIZE,
++					 escape_flags, " ='\"\\");
++	if (likely(escaped_size < TRACE_UNTRUSTED_STR_OUTPUT_SIZE)) {
++		seq_buf_commit(&p->seq, escaped_size);
++		trace_seq_putc(p, 0);
++		return ret;
++	}
++
++	prefix_len = 0;
++	prefix_size = 0;
++	while (prefix_len < len) {
++		const char *const src_char = src + prefix_len;
++		int char_size;
++
++		char_size = string_escape_mem(src_char, 1, NULL, 0,
++					      escape_flags, " ='\"\\");
++		if (char_size > TRACE_UNTRUSTED_STR_OUTPUT_SIZE - marker_len -
++					1 - prefix_size)
++			break;
++		prefix_size += char_size;
++		prefix_len++;
+ 	}
+-	seq_buf_commit(&p->seq, escaped_size);
++
++	escaped_size = string_escape_mem(src, prefix_len, buf, prefix_size,
++					 escape_flags, " ='\"\\");
++	if (WARN_ON_ONCE(escaped_size != prefix_size))
++		return NULL;
++	memcpy(buf + prefix_size, TRACE_TRUNCATION_MARKER, marker_len);
++	seq_buf_commit(&p->seq, prefix_size + marker_len);
+ 	trace_seq_putc(p, 0);
+ 	return ret;
+ }
+-- 
+2.55.0
 
