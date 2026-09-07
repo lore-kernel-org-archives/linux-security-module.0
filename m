@@ -1,147 +1,315 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAE94F30E5
-	for <linux-security-module@vger.kernel.org>; Mon,  7 Sep 2026 15:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F43751121A
+	for <linux-security-module@vger.kernel.org>; Mon,  7 Sep 2026 16:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788796437; cv=none; b=DflKI22P52NArxFtz5tm65yITIyJQGrYZ9pTyKuttHDliLiejt8CT0Y8nHvYlEOsvfyzokcOb9gkYnHVtsxhBJxzX/AdjffRWr2HWNMAjDtTx2+RosFqH/95z8tG2u/f0FUO0espbSgBVMuuFxcqOrktZS/z6I3V7AYgxbfmy84=
+	t=1788797244; cv=none; b=cOm4a90t1o8K9Y6/Oi0IrsgXm8DU/NilBQNz4VF+vcV0GgCToRYb1ZtHQwmCmKISkow8nZcq22Hl0TRu3Ov8kAux4z/9WTS0bVLoo4Q/qXGWeXDCJQajUOhH9FoOhIoz3hu01UC2l3wfH91dljU9AFiG0jggKf5V6aMRmXTXIlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788796437; c=relaxed/simple;
-	bh=kdW80z8QSijQXKWXMTATEq/l6KVSa+t5CIJEX8QYy6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lOthFLoXqRVkRTt3STMRkgpYvH5/dG4YLqEJ6PHuJpK3dno0XA0EYiz4f2pCEmp4boPyxmhVLnp7LhoIvWl9GLzFHP9kv3b0Y9jSQ09FN0E9SiutdnOeEntwdYa+Z+V8CHDhi97WYHbxLFuyGMgSDz0drM0V5ngs4guZtX12Yzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Ct/qjgub; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+	s=arc-20240116; t=1788797244; c=relaxed/simple;
+	bh=5E1LljRwIzWZR9i+QAKf1+bZiwyJRjLjxQzuOst++MU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lL0ac9c0XLlDT+1edPnl/t6Hb6yBB5EvCE+kq3UeziozGkAJvhzVV8k0lXne41bPovUC/ZYHYxKbyVv6mEKMgT3+5CQ8svILwCbaOFBVfy7Lqh/nT8YCTjv4buU78ZRpTVC7K3b0Aj05ECYLxY5wy0GZKSsMA2PUB/H5JtAZLZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RlcdUVjY; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Ct/qjgub"
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-936c02e58dfso318341085a.3
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Sep 2026 08:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1788796435; x=1789401235; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MpjJCtF9a7Ao8JicOrb9fcW3ZU3uKqej/fz3Z0ryD7g=;
-        b=Ct/qjgubq83YDJuMY08ToLOHwyKEQAwm5/0XgADGkzXP/clOU6nt0U4E2QnUwbl9Ym
-         4+G7A8NlhptRM84KvYs42cjxX0FLUrShBMnPRYud/Iy6CauD5sBoOmOCLhxOOXiDIe05
-         2AzWTldRciiRFeRxCDYwLrU3sVqlLqmsm23QSOMa0r41Ga53oGwtbc6Iz7SPupKP7msQ
-         k8kAh0dn52fzlA3KbLMr3dJn95x5embEN/wOPU7Z1nwZkwB4hgqkaZh/dbr4JIDaB3gB
-         lWciwpHEO2RE0uIh4WpGSQMfrYNwG3jq2xZ4qWc7HQx+wCfO5pp2mS8p9as7Cy6fGzZ1
-         F6ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788796435; x=1789401235;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MpjJCtF9a7Ao8JicOrb9fcW3ZU3uKqej/fz3Z0ryD7g=;
-        b=gnecVg9nBJ7ws8D9lOyTBk2PDH25xtIdvVwTko7Yf2D3cutubf1wac1SiZwqoIunE3
-         0ATO7zcncW5/GmQWE5OQgXGmxaKT80jgjCb/sX5y7x4prXqWQ3nMJKDc504V4l4Y7dLN
-         86NwIyqxRpb9ZICt5FAJPe7Yh1f/jMWqTi77dzPdz2ezUWDnzmOp8FUY371pKjMvtbDf
-         YLEd6cVGSaoXLIeW2tdMu+RoNIybF8DQjY4Zr7vdxhFCzVktfcApb9Qv3tc++lAp41um
-         w3D2ZGXAd6RqsEdtDX4UJ/R399hVz+uHuOvISMi9y3cRd5w9Zoi81VdKmquftbw89n10
-         5OGg==
-X-Forwarded-Encrypted: i=1; AKwUvBx2PbWf/53tGVwHoaQLUBq+1HXZN0sUn3xosdULAkBrje3uQigyT2LBPp6VMKnFLLmOtS/zhI2DO33lQdwjw72tdjAecm4=@vger.kernel.org
-X-Gm-Message-State: AFuF++mEW0xiMR4KJJIXBxHFALZtjGFIkvcxNGw4rrJkETDKkez4Hyj2
-	+OaPabH04qQj3VUJP0aza7pl5re3pjRXovExA8e9GGFJ+4L8OEBGYZUGiSNhddhaEvw=
-X-Gm-Gg: AYBFou2F450wVucwluE4OfIpl8eBAPbBvk9yAiFpKP41R21YPoadg1zfjouWAiOMLoN
-	+B9omtlzzA7rvAKGbH62F+LX+vTQEKD+HmmVlG5/7Fe92IYMklvrluogUKUqrFJuwuQuFqplGGh
-	OnGromz5u0qKHt0yXDiw4RBMWBZd/RUMZNBjJjcX3rAnrMZgO+kXAoc1Cj9dYHdbzNh6h6PIs1q
-	euZRDHj3O+EgVuuWAlUAPruT5VznUBDw6oGKK6vRYiXx0oGwzVM0WxzIK9NDeDiWY1zarzDBZ9r
-	PvNwx2JakypaNt5bcLz4CJHXMRw7qyFsMScSscgu3H6Zr1FhzwvBit+2ApOvYalOI4XRrR/67x3
-	fAxZchXhGYYWMw/P2axEeO5bJrz5n71rEnCLuz8sqPOdiFKnD/lvjwr8c3Gsu5pOTtVJvxlcrG7
-	iyyv7HFPoHfVlespoBXEmR/kd0d3J00qA1gDizw9P7ffEfnGa/1d95FaADsUL2p7lpsxyruWoWI
-	ZKUPpowgQ7N2d5MUOl/yAc+ho/6UaBAeNNEdGaX0HrY
-X-Received: by 2002:a05:620a:851d:b0:939:6de8:43e3 with SMTP id af79cd13be357-939804cc15amr1836196285a.48.1788796434937;
-        Mon, 07 Sep 2026 08:53:54 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9397fb59c72sm907982585a.26.2026.09.07.08.53.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2026 08:53:54 -0700 (PDT)
-Date: Mon, 7 Sep 2026 11:53:51 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: Thomas Gleixner <tglx@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Boqun Feng <boqun@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett <josh@joshtriplett.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Ye Liu <liuye@kylinos.cn>, 
-	Michal Hocko <mhocko@suse.com>, mic@digikod.net, oleg@redhat.com, david@kernel.org, 
-	linmiaohe@huawei.com, nao.horiguchi@gmail.com, gnoack3000@gmail.com, ljs@kernel.org, 
-	sj@kernel.org, rientjes@google.com, shakeel.butt@linux.dev, xu.xin16@zte.com.cn, 
-	chengming.zhou@linux.dev, tony.luck@intel.com, reinette.chatre@intel.com, x86@kernel.org, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pavel@kernel.org, 
-	lance.yang@linux.dev, pmladek@suse.com, longman@redhat.com, 
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, qiang.zhang@linux.dev, 
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	kprateek.nayak@amd.com, mark.rutland@arm.com, Dave.Martin@arm.com, james.morse@arm.com, 
-	babu.moger@amd.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rcu@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] kernel: convert process/thread iterators to
- for_each_*_rculock
-Message-ID: <ap7dC-LWNaoPYJvv@gourry-fedora-PF4VCD3F>
-References: <20260907081334.1152889-1-ye.liu@linux.dev>
- <20260907081334.1152889-6-ye.liu@linux.dev>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RlcdUVjY"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hdsQq5HjGzl2Z;
+	Mon,  7 Sep 2026 18:07:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1788797235;
+	bh=iR6Q6ys10vIU2JHc4r8BYgB0M00FN/D1JDgncWnq0Zw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RlcdUVjYUXQX+ZFT+xytkFxwmQpAyWeK+IE9Kot96IAc2IrptwVp3OWNLosJpaAum
+	 4nWJ74g5I6HHzmeTEDqZTz43cLnCl0SvB0BD0mBC6AcoGxa1rtG25JG5BCTBkYRSdX
+	 GW31o4bH2IPj8yUqKcj7GBfWnJavFIgXRFSm8/rQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hdsQq1hd5zcLC;
+	Mon,  7 Sep 2026 18:07:15 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v1 1/2] selftests/landlock: Fix trace variant formatting
+Date: Mon,  7 Sep 2026 18:07:06 +0200
+Message-ID: <20260907160710.126525-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260907081334.1152889-6-ye.liu@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Mon, Sep 07, 2026 at 04:13:31PM +0800, Ye Liu wrote:
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> Replace the manual rcu_read_lock()/rcu_read_unlock() and guard(rcu)
-> pairs combined with for_each_process(), for_each_thread() and
-> for_each_process_thread() loops across kernel/ with the
-> for_each_*_rculock() macros, which scope the RCU read lock to the
-> loop body via scoped_guard(rcu).
-> 
-> No functional change.
-> 
-> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> Acked-by: Michal Hocko <mhocko@suse.com>
+Group-wide clang-format exclusions also cover comments and unrelated
+initializers, hiding which construct needs protection and leaving some
+variant fields bin-packed.
 
-Question below
+Use per-variant guards and format designated fields one per line.  End
+each guard after the macro header when clang-format preserves the
+initializer.  Keep the initializer guarded only where re-enabling
+clang-format would bin-pack its fields.
 
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 6fcc94ce4ca9..73a5ad3be9a8 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -315,13 +315,12 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->  		return;
->  
->  	this_round_count = 0;
-> -	rcu_read_lock();
-> -	for_each_process_thread(g, t) {
-> +	for_each_process_thread_rculock(g, t) {
->  		if (!max_count--)
-> -			goto unlock;
-> +			goto out;
-... snip ...
-> - unlock:
-> -	rcu_read_unlock();
-> -
-> +out:
->  	if (!this_round_count)
->  		return;
->  
+Cc: Günther Noack <gnoack@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ tools/testing/selftests/landlock/net_test.c   | 13 ++--
+ .../landlock/scoped_abstract_unix_test.c      | 56 ++++++++++++-----
+ tools/testing/selftests/landlock/trace_test.c | 62 ++++++++++++++-----
+ 3 files changed, 95 insertions(+), 36 deletions(-)
 
-The sunken rcu_read_lock()/unlock() + scoped_guard usage makes this goto
-at a minimum very confusing, if not actually broken.
+diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+index a18761e0fd82..0d13556c50f2 100644
+--- a/tools/testing/selftests/landlock/net_test.c
++++ b/tools/testing/selftests/landlock/net_test.c
+@@ -3569,31 +3569,34 @@ FIXTURE_VARIANT(trace_net_connect) {
+ 	bool deny_connect;
+ };
+ 
+-/* clang-format off */
+-
+ /* Denied connect(): sport=0, dport=<denied port>. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_net_connect, connect_denied) {
++	/* clang-format on */
+ 	.handled = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+ 	.bind_base_first = false,
+ 	.deny_connect = true,
+ };
+ 
+ /* Denied bind(): sport=<denied port>, dport=0. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_net_connect, bind_fields) {
++	/* clang-format on */
+ 	.handled = LANDLOCK_ACCESS_NET_BIND_TCP,
+ 	.bind_base_first = false,
+ 	.deny_connect = false,
+ };
+ 
+ /* Denied connect() after an allowed bind(): the connect fields (sport=0). */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_net_connect, connect_after_bind) {
+-	.handled = LANDLOCK_ACCESS_NET_BIND_TCP | LANDLOCK_ACCESS_NET_CONNECT_TCP,
++	/* clang-format on */
++	.handled = LANDLOCK_ACCESS_NET_BIND_TCP |
++		   LANDLOCK_ACCESS_NET_CONNECT_TCP,
+ 	.bind_base_first = true,
+ 	.deny_connect = true,
+ };
+ 
+-/* clang-format on */
+-
+ /*
+  * A denied TCP bind(2) or connect(2) emits one deny_access_net event.  The port
+  * is reported in the field matching the denied operation, in host endianness
+diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+index eed684d4c364..54bc4081cd56 100644
+--- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
++++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+@@ -1268,27 +1268,38 @@ FIXTURE_VARIANT(trace_unix) {
+ 	size_t name_len;
+ };
+ 
+-/* clang-format off */
+-
+ /* Stream: sandboxed client connect() to an unsandboxed peer (peer_domain=0). */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, stream_denied) {
+-	.sock_type = SOCK_STREAM, .sandbox = true,
+-	.sandbox_target = false, .expect_denied = 1,
++	/* clang-format on */
++	.sock_type = SOCK_STREAM,
++	.sandbox = true,
++	.sandbox_target = false,
++	.expect_denied = 1,
+ };
+ 
+ /* Stream: peer socket owned by a domain, so peer_domain != 0. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, stream_denied_scoped_peer) {
+-	.sock_type = SOCK_STREAM, .sandbox = true,
+-	.sandbox_target = true, .expect_denied = 1,
++	/* clang-format on */
++	.sock_type = SOCK_STREAM,
++	.sandbox = true,
++	.sandbox_target = true,
++	.expect_denied = 1,
+ };
+ 
+ /* Stream: unsandboxed client, connect() succeeds, no event. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, stream_allowed) {
+-	.sock_type = SOCK_STREAM, .sandbox = false,
+-	.sandbox_target = false, .expect_denied = 0,
++	/* clang-format on */
++	.sock_type = SOCK_STREAM,
++	.sandbox = false,
++	.sandbox_target = false,
++	.expect_denied = 0,
+ };
+ 
+ /* Stream: lower abstract-name length boundary. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, stream_denied_empty_name) {
+ 	.sock_type = SOCK_STREAM,
+ 	.sandbox = true,
+@@ -1297,9 +1308,12 @@ FIXTURE_VARIANT_ADD(trace_unix, stream_denied_empty_name) {
+ 	.name = "",
+ 	.name_len = 0,
+ };
++/* clang-format on */
+ 
+ /* Stream: upper abstract-name length boundary. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, stream_denied_max_name) {
++	/* clang-format on */
+ 	.sock_type = SOCK_STREAM,
+ 	.sandbox = true,
+ 	.sandbox_target = false,
+@@ -1309,25 +1323,35 @@ FIXTURE_VARIANT_ADD(trace_unix, stream_denied_max_name) {
+ };
+ 
+ /* Datagram: sandboxed client sendto() an unsandboxed peer (peer_domain=0). */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, dgram_denied) {
+-	.sock_type = SOCK_DGRAM, .sandbox = true,
+-	.sandbox_target = false, .expect_denied = 1,
++	/* clang-format on */
++	.sock_type = SOCK_DGRAM,
++	.sandbox = true,
++	.sandbox_target = false,
++	.expect_denied = 1,
+ };
+ 
+ /* Datagram: peer socket owned by a domain, so peer_domain != 0. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, dgram_denied_scoped_peer) {
+-	.sock_type = SOCK_DGRAM, .sandbox = true,
+-	.sandbox_target = true, .expect_denied = 1,
++	/* clang-format on */
++	.sock_type = SOCK_DGRAM,
++	.sandbox = true,
++	.sandbox_target = true,
++	.expect_denied = 1,
+ };
+ 
+ /* Datagram: unsandboxed client, sendto() succeeds, no event. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_unix, dgram_allowed) {
+-	.sock_type = SOCK_DGRAM, .sandbox = false,
+-	.sandbox_target = false, .expect_denied = 0,
++	/* clang-format on */
++	.sock_type = SOCK_DGRAM,
++	.sandbox = false,
++	.sandbox_target = false,
++	.expect_denied = 0,
+ };
+ 
+-/* clang-format on */
+-
+ /*
+  * A sandboxed thread reaching an abstract unix socket peer through connect(2)
+  * (stream) or sendto(2) (datagram) is denied and emits
+diff --git a/tools/testing/selftests/landlock/trace_test.c b/tools/testing/selftests/landlock/trace_test.c
+index afdaf8511b3a..a28a2ac55687 100644
+--- a/tools/testing/selftests/landlock/trace_test.c
++++ b/tools/testing/selftests/landlock/trace_test.c
+@@ -1243,45 +1243,77 @@ FIXTURE_VARIANT(trace_enforce) {
+ 	int no_new_privs;
+ };
+ 
+-/* clang-format off */
+-
+ /* Single thread, no flags: prctl-backed no_new_privs. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_enforce, single) {
+-	.nthreads = 0, .flags = 0,
+-	.total = 1, .complete = 1, .process_wide = 1, .no_new_privs = 1,
++	.nthreads = 0,
++	.flags = 0,
++	.total = 1,
++	.complete = 1,
++	.process_wide = 1,
++	.no_new_privs = 1,
+ };
++/* clang-format on */
+ 
+ /* Single thread: the NO_NEW_PRIVS flag sets no_new_privs (no prctl). */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_enforce, no_new_privs) {
+-	.nthreads = 0, .flags = LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS,
+-	.total = 1, .complete = 1, .process_wide = 1, .no_new_privs = 1,
++	.nthreads = 0,
++	.flags = LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS,
++	.total = 1,
++	.complete = 1,
++	.process_wide = 1,
++	.no_new_privs = 1,
+ };
++/* clang-format on */
+ 
+ /* TSYNC on a lone thread still concludes, process-wide. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_enforce, tsync_single) {
+-	.nthreads = 0, .flags = LANDLOCK_RESTRICT_SELF_TSYNC,
+-	.total = 1, .complete = 1, .process_wide = 1, .no_new_privs = 1,
++	.nthreads = 0,
++	.flags = LANDLOCK_RESTRICT_SELF_TSYNC,
++	.total = 1,
++	.complete = 1,
++	.process_wide = 1,
++	.no_new_privs = 1,
+ };
++/* clang-format on */
+ 
+ /* TSYNC sweeps N siblings; the caller's prctl-backed nnp propagates to all. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_enforce, tsync_multithread) {
+-	.nthreads = 3, .flags = LANDLOCK_RESTRICT_SELF_TSYNC,
+-	.total = 4, .complete = 1, .process_wide = 4, .no_new_privs = 4,
++	.nthreads = 3,
++	.flags = LANDLOCK_RESTRICT_SELF_TSYNC,
++	.total = 4,
++	.complete = 1,
++	.process_wide = 4,
++	.no_new_privs = 4,
+ };
++/* clang-format on */
+ 
+ /* TSYNC + NO_NEW_PRIVS flag sets nnp on the caller and every swept sibling. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_enforce, tsync_no_new_privs) {
++	/* clang-format on */
+ 	.nthreads = 3,
+-	.flags = LANDLOCK_RESTRICT_SELF_TSYNC | LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS,
+-	.total = 4, .complete = 1, .process_wide = 4, .no_new_privs = 4,
++	.flags = LANDLOCK_RESTRICT_SELF_TSYNC |
++		 LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS,
++	.total = 4,
++	.complete = 1,
++	.process_wide = 4,
++	.no_new_privs = 4,
+ };
+ 
+ /* Non-TSYNC on a multi-threaded process enforces only the caller. */
++/* clang-format off */
+ FIXTURE_VARIANT_ADD(trace_enforce, multithread_non_tsync) {
+-	.nthreads = 3, .flags = 0,
+-	.total = 1, .complete = 1, .process_wide = 0, .no_new_privs = 1,
++	.nthreads = 3,
++	.flags = 0,
++	.total = 1,
++	.complete = 1,
++	.process_wide = 0,
++	.no_new_privs = 1,
+ };
+-
+ /* clang-format on */
+ 
+ /*
+-- 
+2.55.0
 
-Are we sure this isn't broken as-written? Generally we don't mix cleanup
-and goto for exactly this reason.
-
-~Gregory
