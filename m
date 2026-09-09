@@ -1,121 +1,103 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DD137D124
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 17:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D0B39CD13
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 18:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788976428; cv=none; b=EBaECeFYnOcSuv/H67tDm2qZ9qiijPQCZM93ZK3Xh6yFWPdBZF7R3zaTyELkyKJNngQPTMuUQsPEHS55k1FzWE/hovKeiaRSYFzVw+vVr8Ffp7qayC2GOkpb+dfM+JeUqZGfErduUQM1cIZQBWLYB7TuAvVC5BRwXVmSiowqEr4=
+	t=1788978917; cv=none; b=K9UbrN3v7pC69BRl8G46l1Ur/Os8x4Qlcd4dFyKSedb+YGBvKUdxdVAfvPsg5Crho/T0Ai8Cz9ZPrkoOhGFUcFAm9X5A1/2rnePWrm3LmZmieSR+vgXnYAVTYw3kNUKjZC6Fem8XEE9khxSVpiwQb52qxbL0LDmdaOiVWOKk+PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788976428; c=relaxed/simple;
-	bh=c/i490OXbFpkfgBsFCReQhspvRl0PoEXDMLnbXAz9Fo=;
+	s=arc-20240116; t=1788978917; c=relaxed/simple;
+	bh=AC4lBqGuD4zcf/6Z/HUBafA2incti3y8Lkd1zHpZjns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TN8FXi9I67WZdHmuZKWieVyGrqkWfvpcpMa1ejWtlkT8VPG9pR3cDJX6Wn9DDIb6PAHMu1JyWaALYzBFKaBxP2m36l8L1yz9CTgK0Vw6rZik9hOjVPEpOeQ++DBw137n45WX4+p/SOS0YhkUexjnxmnZ5sX+gDGYZmhdQjP6GvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=HvF1LeAh; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=uECznXdtqgRnf1uMvvR5raeaPCHfzA5faWWPTDcrRLT2L9HaOJ2SS840HvHTUC9QliJiWLg0k58TyiK6NKGIIhPgGqDAHyp0KC3fiZ6v5XM75LGQohUKBWvNnpfZn3jHQoHRwFMWQZD3mmj6h5tkW2F8E8vDmyt2lMIWISF7R44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HUIOhqI9; arc=none smtp.client-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="HvF1LeAh"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-86d43cdee51so78700547b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Sep 2026 10:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1788976426; x=1789581226; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=XRIgg3iSuevNT11a9+TD/UWqT0ngKKbrlCWnrPVS/0g=;
-        b=HvF1LeAh4DQVg5v4KsaPg4Dv0qbFIjmuxl8+CejoQrKaLsp/LIhchtp+CvOxmi7Jrm
-         u54UL5BCIGdt87ycq/Bo5mTs31Xrdqwss7RZ8k3lEfme8f+nxz+W1vgCI+F18yUOTP7s
-         d3/NmQIofc6J6VDTxijc4hOm2mdCwLNH3buKLKNOo/Hw2gRgad2YJWVSTjorDxUK5Qf+
-         BMieBQpNYNX1Tks7+dM3FFjlCZ1p1ehsrj7h/6CZmuXHvhckKdh8xAloLfdHFHFW2Hk6
-         c83wKGXRISJG5o6+yywDC+x0dKrcxxveARgomkrzIQJcIIVIvPUTSZj8qQxFh6EHKQdE
-         qUiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788976426; x=1789581226;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XRIgg3iSuevNT11a9+TD/UWqT0ngKKbrlCWnrPVS/0g=;
-        b=i7tAgA3xjPqZ4atdNmC8oEPASRmBTqDn9q3fh400oB3mCTrCj4NDhu8gAQPL/jQXZ2
-         MfUGJoPLWnoWdAfS/vEovzhbQf8w8qMIiZeoVVDupIXuMhDinsh9rZgxXiSruPH0V3XS
-         ASUuW91LZkglUwtq/qa8h7ehA1bVPGBmCJ39gwk4gIQcKO51oHlHQizgd217JXB/bxwO
-         +JJetjApROgZB0VYWD12lUWuFZQLW6sPjfyccDhpQqARR28BQxwzpS8OBRsaE3umtfAf
-         cQ7ZeM2YDiGNUefx576LxsIvkoQm5BsRc38QOzexIuTelVzLq0QC4nQWnY9UTc0Xjz3P
-         CYtg==
-X-Forwarded-Encrypted: i=1; AKwUvBy6ZxV7fKg6KtiLWacdP0y2f+8FJ45l19/C9misKA1D/dlwV/qJR2OkllIKy53ETAXExLjXAnuppa2f/FFW3z37DIwyYWo=@vger.kernel.org
-X-Gm-Message-State: AFuF++mPpzLAWcEaUIT1CCQM/4CTygEcjdgNJj8HN208L5uvW3FmZJ4U
-	I0i3cMzwgJKHcRsrh35J0S8DMMsfrxVtCfuNnjdRnMDB/wh1/bdBjNPxJ5nWLHReu9c=
-X-Gm-Gg: AYBFou0BSY5ERwj+2Q0AH3HXZ75OcOGRn7uOyeAaRspFaPvC24Y7rUCb9y9VClBduBh
-	dfgAKCgGV9Az2X4QcAkQ9UFL/T0FmdWsEN/TssBF9z0xOGBqx95YVcNNeLFGfjkYEuPlHnb2vux
-	Ra/1FVxDBk+4bXrwm/KDEAGiCL5arCuJwbojhEFvziLkE2giILjInpNUOPI55Z1MPRg+cTELube
-	DMwNbt27Xslj9EFl/HfpZSg6y0GNdBrI/8iHJi9yLJ04KdxYTGN5xNcejT0hnWnL4Gzb4co0oWZ
-	NJiX4aX2EAmTHv+6L8SRaIO4+CXiLJ90yj5c8wg0cHFCKkpf52vluF5Oh7Pz2ULASzCthHhuH9i
-	yVdFJDbofqAO9czl5Modn8+MYDz5elw2oeXugfsLtGTEDIPoO2GLmvJzVbSjkpCY51xya35JX8M
-	d3NH/jnqPGMLaBfbNglb5YuYdUgWSlIQomjmHb39vgzv1gK61eSQ==
-X-Received: by 2002:a05:690e:1244:b0:66c:707b:60eb with SMTP id 956f58d0204a3-66fb5a149f7mr11250899d50.23.1788976425617;
-        Wed, 09 Sep 2026 10:53:45 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:7d])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66fb7c7e8d7sm11902088d50.14.2026.09.09.10.53.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 10:53:45 -0700 (PDT)
-Date: Wed, 9 Sep 2026 12:53:42 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH v2 0/3] integrity: Return error codes in audit messages
-Message-ID: <weadqcqqw3e4snwysfnx2fszrxctppkqqgdjrkfyn7uh5poczp@dpnp6tl3mk6u>
-References: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HUIOhqI9"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hg8cV5DxQzx9j;
+	Wed,  9 Sep 2026 20:35:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1788978906;
+	bh=039DE0Nj6zfdqHjgOxtMBb1+k4HmJRZc5h2UMeymOjA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HUIOhqI9V1nC2Wg+pzSs1XnGXHH9Iit5VUcr+5eRi0gn03VrArdNNuxZ6ILDs+gKJ
+	 eReVIOMYr4Hc7YSYrGq6c9JBScQcUD+XArk77TD+deWOnCWkJ7jfYE5GsFnGl4zeYy
+	 t7ieIU3UmcpX8TJJFC99LV48IOZpuvRFSLTFl0Gc=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hg8cS5C1PznPJ;
+	Wed,  9 Sep 2026 20:35:04 +0200 (CEST)
+Date: Wed, 9 Sep 2026 20:35:00 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Daniel Durning <danieldurning.work@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Justin Suess <utilityemal77@gmail.com>, Lennart Poettering <lennart@poettering.net>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 3/12] security: Add LSM_AUDIT_DATA_NS for namespace
+ audit records
+Message-ID: <20260909.quahcia8aiF4@digikod.net>
+References: <20260726161400.3010511-4-mic@digikod.net>
+ <5cabf9b33a20f130cedcc423b8b2d151@paul-moore.com>
+ <CAHC9VhS_WP-bLgMGiFAfE1MT76iKvVJ-OV5r7xju-KMdrfjssQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhS_WP-bLgMGiFAfE1MT76iKvVJ-OV5r7xju-KMdrfjssQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hi Mimi and Roberto,
+On Mon, Aug 31, 2026 at 05:26:20PM -0400, Paul Moore wrote:
+> On Tue, Aug 11, 2026 at 4:16 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Jul 26, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> > >
+> > > Add a new LSM audit data type LSM_AUDIT_DATA_NS that logs namespace
+> > > information in audit records.  Two fields are provided:
+> > >
+> > > - ns_type: the CLONE_NEW* flag identifying the namespace type, logged
+> > >   in hexadecimal.
+> > >
+> > > - ns_id: the unique 64-bit namespace identifier, retrievable from
+> > >   userspace via NS_GET_ID or listns(2).  Unlike the proc inode number
+> > >   (inum), ns_id is never recycled.  For namespace creation denials,
+> > >   ns_id is 0 because the namespace does not exist yet.
+> >
+> > Based on the code in this patch, "ns_type" should be "namespace_type"
+> > and a similar change needs to be done for "ns_id".  Regardless, the
+> > first three patches look fine to me (I can fixup the above during a
+> > merge).
+> >
+> > As mentioned previously, I want to merge at least the first three
+> > patches via the LSM tree since we have multiple LSMs which depend on
+> > these new hooks.  I'm happy to also merge the remaining Landlock
+> > patches in this patchset via the LSM tree, or you can manage those
+> > separately; let me know how you would like to proceed with that.
+> >
+> > Since we are at -rc7, this is obviously something for after the
+> > upcoming merge window so I'm going to merge the first three patches
+> > into the lsm/dev-staging branch now with the understanding that they
+> > will move over to the lsm/dev branch after the upcoming merge window
+> > is finished.  If you want me to merge the Landlock patches too, just
+> > let me know.
+> 
+> The first three patches are now in lsm/dev, thanks everyone.
 
-On Mon, Jul 27, 2026 at 05:21:46PM -0500, Frederick Lawler wrote:
-> Commit 2f845882ecd2 ("integrity: Add errno field in audit message")
-> introduced an audit log function that can take an error code. It is
-> wrapped by integrity_audit_msg() that implicitly sets the error code
-> argument to zero. The problem is that there are uses of integrity_audit_msg()
-> such as ima_collect_measurement() that hide the failure cause for
-> the message.
-> 
-> This series aims to convert integrity_audit_msg() call sites to
-> integrity_audit_message(), and then expose error codes based on the
-> following criteria:
-> 
->     1. The log depends on a result from earlier callee, and/or
->     2. The caller function itself returns with that result
-> 
-> ima_release_policy() is the only caller I thought made sense to keep as
-> is. The message doesn't correlate with a return code, nor does it
-> depend on a result from an earlier callee in the function.
-> 
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> ---
-> This is probably a bit more than what was asked from v1, but as I was
-> making changes and looking at other call sites, I didn't think it made
-> sense to keep integrity_audit_msg() around anymore.
-> 
-> Changes in v2:
-> - Changes from v1 are now reflected in patch 3.
-> - Replace all instances of integrity_audit_msg().
-> - Convert to patch series.
-> - Link to v1: https://lore.kernel.org/r/20260716-report-hash-error-v1-1-ac19281112e4@cloudflare.com
-> 
+Thanks.
 
-I think this series may have fallen through the cracks between the merge
-windows. Shall I respin + rebase?
+> 
+> Mickaël, if you would like me to merge the remaining patches in this
+> patchset into the lsm/dev branch just let me know.
 
-Best,
-Fred
+I'll send a new patch series soon because this v3 would not apply
+anymore.  I'll include your lsm/dev patches to keep a consistent patch
+series.
