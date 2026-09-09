@@ -1,103 +1,63 @@
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D0B39CD13
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 18:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D4A3A4F31;
+	Wed,  9 Sep 2026 18:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788978917; cv=none; b=K9UbrN3v7pC69BRl8G46l1Ur/Os8x4Qlcd4dFyKSedb+YGBvKUdxdVAfvPsg5Crho/T0Ai8Cz9ZPrkoOhGFUcFAm9X5A1/2rnePWrm3LmZmieSR+vgXnYAVTYw3kNUKjZC6Fem8XEE9khxSVpiwQb52qxbL0LDmdaOiVWOKk+PA=
+	t=1788979152; cv=none; b=ZJUqJMwrvChAf5ckBXas2idPaXaIHT8NsdoMToSkPaGb+mIFLVTasNarJ4uHlc4CqFUBSGsajaaQNJudG0CcqsF8Mm/2Q1S7/rEh0+uYNZ0YyULX17DZOYzN5MSZe5iY+Bq3DutyKkkhM4bw2gRt+OKZaUosfEBVpP32L23YiwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788978917; c=relaxed/simple;
-	bh=AC4lBqGuD4zcf/6Z/HUBafA2incti3y8Lkd1zHpZjns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uECznXdtqgRnf1uMvvR5raeaPCHfzA5faWWPTDcrRLT2L9HaOJ2SS840HvHTUC9QliJiWLg0k58TyiK6NKGIIhPgGqDAHyp0KC3fiZ6v5XM75LGQohUKBWvNnpfZn3jHQoHRwFMWQZD3mmj6h5tkW2F8E8vDmyt2lMIWISF7R44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HUIOhqI9; arc=none smtp.client-ip=45.157.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1788979152; c=relaxed/simple;
+	bh=T7uvfTf2PW3zy9Ca+j0YKt/gf+FP4miXI6gJg9+djgs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eK0XIBZOWsvOyiCTmBOpgSWC54gBpsPJ1IIfGOn7Z1S7+vGjVJfvDnz079fge6y7YneMWML4oW5rkeSPC8gK+oAOjC5aQth2S9f53nEanCMRF45Xm4np1Fs5sG9q8UPs6RjgVE23zk4ZjIHjVcoQjMC1eR4Td6f29ZyniZYplww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/E0AOxx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HUIOhqI9"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hg8cV5DxQzx9j;
-	Wed,  9 Sep 2026 20:35:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1788978906;
-	bh=039DE0Nj6zfdqHjgOxtMBb1+k4HmJRZc5h2UMeymOjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HUIOhqI9V1nC2Wg+pzSs1XnGXHH9Iit5VUcr+5eRi0gn03VrArdNNuxZ6ILDs+gKJ
-	 eReVIOMYr4Hc7YSYrGq6c9JBScQcUD+XArk77TD+deWOnCWkJ7jfYE5GsFnGl4zeYy
-	 t7ieIU3UmcpX8TJJFC99LV48IOZpuvRFSLTFl0Gc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hg8cS5C1PznPJ;
-	Wed,  9 Sep 2026 20:35:04 +0200 (CEST)
-Date: Wed, 9 Sep 2026 20:35:00 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Daniel Durning <danieldurning.work@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Justin Suess <utilityemal77@gmail.com>, Lennart Poettering <lennart@poettering.net>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 3/12] security: Add LSM_AUDIT_DATA_NS for namespace
- audit records
-Message-ID: <20260909.quahcia8aiF4@digikod.net>
-References: <20260726161400.3010511-4-mic@digikod.net>
- <5cabf9b33a20f130cedcc423b8b2d151@paul-moore.com>
- <CAHC9VhS_WP-bLgMGiFAfE1MT76iKvVJ-OV5r7xju-KMdrfjssQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/E0AOxx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 612831F0089A;
+	Wed,  9 Sep 2026 18:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788979149;
+	bh=RVhUsOPNi2wR8lM4C2OCQAm83jf98XMT7z4Coh/BP4c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc;
+	b=b/E0AOxxaIbZlJcSrORCoshj5nVxzHy4Osf3AaUtxomJ87Ow/lXEJNb2Dlf8YNY57
+	 Ss1UsIe38FuXnrtmo+UbBfO9S2YsO4VnN2ipE9OCVBRKvBCtJgCpHyexZk2ktb7Mtq
+	 Wo3/rlWu+N8En0nRWysA/6cefM1bD91DzJbQ7WZMUk2wJRNGi8bt2hfE0HvwuOyK6D
+	 6JndGtUH5kihGU8QUVDzdLQy2hFEfAUgimoAfJpJplKBVkRCWIMPaCRfNE4Rd1NHQ7
+	 lgeFEr6nr+ahexvQG5IXkbAnAOJB8o4tjc138mQ5xTu1xWwL4oBNFP6Eb4VmUkKjsk
+	 OaDpiRMcdOblw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 93A98380AA52;
+	Wed,  9 Sep 2026 18:38:08 +0000 (UTC)
+Subject: Re: [GIT PULL] Landlock fix for v7.3-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20260909153118.361748-1-mic@digikod.net>
+References: <20260909153118.361748-1-mic@digikod.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20260909153118.361748-1-mic@digikod.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.3-rc3
+X-PR-Tracked-Commit-Id: d41d0021a6ea3e9fcd14126a00fead47f981c46e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 50d05c7c76c96b90462f24debacca971d2e86713
+Message-Id: <178897908717.999556.4614265468808314875.pr-tracker-bot@kernel.org>
+Date: Wed, 09 Sep 2026 18:38:07 +0000
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Norbert Szetei <norbert@doyensec.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhS_WP-bLgMGiFAfE1MT76iKvVJ-OV5r7xju-KMdrfjssQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Mon, Aug 31, 2026 at 05:26:20PM -0400, Paul Moore wrote:
-> On Tue, Aug 11, 2026 at 4:16 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Jul 26, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
-> > >
-> > > Add a new LSM audit data type LSM_AUDIT_DATA_NS that logs namespace
-> > > information in audit records.  Two fields are provided:
-> > >
-> > > - ns_type: the CLONE_NEW* flag identifying the namespace type, logged
-> > >   in hexadecimal.
-> > >
-> > > - ns_id: the unique 64-bit namespace identifier, retrievable from
-> > >   userspace via NS_GET_ID or listns(2).  Unlike the proc inode number
-> > >   (inum), ns_id is never recycled.  For namespace creation denials,
-> > >   ns_id is 0 because the namespace does not exist yet.
-> >
-> > Based on the code in this patch, "ns_type" should be "namespace_type"
-> > and a similar change needs to be done for "ns_id".  Regardless, the
-> > first three patches look fine to me (I can fixup the above during a
-> > merge).
-> >
-> > As mentioned previously, I want to merge at least the first three
-> > patches via the LSM tree since we have multiple LSMs which depend on
-> > these new hooks.  I'm happy to also merge the remaining Landlock
-> > patches in this patchset via the LSM tree, or you can manage those
-> > separately; let me know how you would like to proceed with that.
-> >
-> > Since we are at -rc7, this is obviously something for after the
-> > upcoming merge window so I'm going to merge the first three patches
-> > into the lsm/dev-staging branch now with the understanding that they
-> > will move over to the lsm/dev branch after the upcoming merge window
-> > is finished.  If you want me to merge the Landlock patches too, just
-> > let me know.
-> 
-> The first three patches are now in lsm/dev, thanks everyone.
+The pull request you sent on Wed,  9 Sep 2026 17:31:18 +0200:
 
-Thanks.
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.3-rc3
 
-> 
-> Mickaël, if you would like me to merge the remaining patches in this
-> patchset into the lsm/dev branch just let me know.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/50d05c7c76c96b90462f24debacca971d2e86713
 
-I'll send a new patch series soon because this v3 would not apply
-anymore.  I'll include your lsm/dev patches to keep a consistent patch
-series.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
