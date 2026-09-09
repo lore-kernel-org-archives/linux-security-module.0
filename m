@@ -1,210 +1,98 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468CC55C1CE
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 13:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788959318; cv=pass; b=s2EXilxB7jvirINTsoxpD4jcRkloj2oVZd++GHvWNVhpuP6SfbLMHTol/b/BDwGXpu2IOxGI2Kx+CIf7RX85usxIW/hkdmN3TxWvz6TCKUgbuXDoo9/3hkB//FiguY6LyTt/Mebe5qA3FedmZhU5j6xfE9lSc69PMxFJ5rtiMXo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788959318; c=relaxed/simple;
-	bh=ZfDt8S7Tc0KZXJPH2FTRtp7wfHfUNB5cPyGvFtf4FAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JJF+77wfNkVoLZOaq0ktilJvkVL25ecGp2FmmPQ9x60vqrUniEwIqtydUKqao5/pMFELNzo9cc224OljooexWSv/qWMy91V3mvNXu/70LDaJ39QTt3LB82Vc/uSo9lfh89ene81CbX3a6co0hYmMw6LhRy4lwl1W0dEcQHeUClo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Qb9UGjAV; arc=pass smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86E953B5FD
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 14:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788965699; cv=none; b=ogCcY4Gx3SVVI4SAD1CdpvYPILWJJ7I3pvRaF2gXGo9YZr/g4WDzFJkoAAJ/O5hdgcYG2tFUfD0YvqsdAJuUEohmX81Q072qA7UytUCviWH2u0DMWf0dKJ7c6P0TqfWiUNLgp2EF2PRz6ligOOPZUT43t4Tvab8+SwYIewz0JjM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788965699; c=relaxed/simple;
+	bh=3mrzF4PFQcJ4DbH3RGaSc+zm2PljjP5W+lnaM84CL3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZS6QTPwUPzzmURA9kwtRIMU2tlKxzHKHAZsarYeCnRZ6QjCtgGWDaSm2AW/+kqXzhRaHYzKWPYKvf1U9WdQ88KpLtFWZYnR7lw+z7pEdML1ACb/8+eQrWtp/hqYs+jLu7H1xYmcSG7D0UGOfZZQG+bsRmqueA6IP/DOMQTtZ00A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IffCLY9U; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Qb9UGjAV"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-87f4e914a45so13858457b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Sep 2026 06:08:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788959315; cv=none;
-        d=google.com; s=arc-20260327;
-        b=MkEBcSY4nU47DayGG3wHRZVhI+RBPyA7OheW9LUP0jmC3XE3jAu2YnIiS8HW+BdBBo
-         jen2FBkWzEMhfnRKEA06QX7R/6u/EhR1Z2/3UkWTdL4aUf2qV/wA1BSN09xHKQ9TIpI+
-         aENm0Rw7hNlwSp6z3YeSstvKgrHkQc00CWV0ly/0WSPf4pqKIrkGjCOf4pJp8DCMJy9z
-         XW592HL6EAK5gQK6VO42C9ujuz+LM0JxXMekjwim1NJTigvUXqf0WvVU5gnH2fBTKI0T
-         CxA7t7zX8UrWf+ELNokWuGqz5MQyIX2At/YgYFmZRBP4FEaBzXajYUK00vUKQfu/H0H+
-         twig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=UnhkoTwgBT+xmQamF4svidVUoLvRUKP0o6WY6qmR4PQ=;
-        fh=Q2vZ63tMV0FnTuiQumf+h3qPCcAW9FhoB4anQUg5mh4=;
-        b=QaBVB34FeJj51oEcmoA4mvHjBNpnEhP3ZxNWl9wbn1vr4v9l3ETmGU0SrVqoHQ5YI0
-         oqDaAw63yN+4MbxaoE4YoKZLFmI1+D5WLffA68Nog1arcC4ulADx/oI2FeYWa9NdQLdD
-         cYTvBPcq0RRoJvQL9Og+M1QhJnV/15f7NfdWkmxIiDu7sYJQTXTSqxyCUjB53kDTyJl5
-         d4Tn5wUmofXZ1XN+xEZhTfM8a5cIdvQwS32FdMRvFosqY4iHhHc8iyxILZIGo/kpzSLA
-         WuW3h89kh6wTTstOGm2VCwa7GSsAPLBRdguYldfFr4VUrnyWxjHIvqTdYM9FkVoeQN/L
-         7qmg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IffCLY9U"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49cc9f581c4so8357915e9.0
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Sep 2026 07:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1788959315; x=1789564115; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1788965696; x=1789570496; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=UnhkoTwgBT+xmQamF4svidVUoLvRUKP0o6WY6qmR4PQ=;
-        b=Qb9UGjAVto1hqlABO50D88kOJF0JZ2dGlk6oXEXMhaHhOyBTMzGe5wv7wyrOooglE9
-         vwpbR54BgoGDFnvTKeW+KClQ1zwSYP415Wc3zdeD2j55dVAALTg6r885+/Ie2XOMs2pE
-         yn7ZN8i0MEY1zDTuu9s5e4a8V/sgXh0rasC/sFTe1pyyeg0E5hoZBZHPL68TKUrAKyhA
-         xOkLUZzevL9+mcJwfF911jlDxInnL8k8M0R70yXPEhOzW/BM29DYFiexgYGgFu+Ys5un
-         z8SdKYsvKiExUTWw8CSG5hcOgtmYRWDlfSGHdVJG2T94JuMxAd9xMy5zXQAcKYYxZ9et
-         PWnA==
+        bh=CEnAlwwtVf98S0MQnKDx/a7P5qnwKuSWE+q0EOlFqn8=;
+        b=IffCLY9U20m06r8jq41Wip3wbMxiCRO5u98+gwJ4IShm4wkkg7X/pL8ySww6J4XebT
+         8G83o+T8HV7UQxDY3AILmU5PPSPuO0534vpsVpgml81WxUkg+jSWdlsrkZC1XojQfCR9
+         wPEjfOUTpu0aWTpyHsP2JLI4iJJRVFv2sABsgKZDRr9k7CZCff9jMvjKbbYGvq36IDFe
+         m7IyRHupa9IRPB9ER/5GcA3V13z7+3yeRCUbOWz3N6E2aXBB+QFxpxYsIAmSR8V60/bn
+         NLxgbMrD38xmDezTXGpi3zHNw6RU9YnQGWCE6LS1nhtK5eZf2geTo1QVmBir/zZ28I2y
+         AQCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788959315; x=1789564115;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1788965696; x=1789570496;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=UnhkoTwgBT+xmQamF4svidVUoLvRUKP0o6WY6qmR4PQ=;
-        b=k5yeB47jhZ+IkgNnkP65WZpZoqQwXkmlA/9RQkuSA4W1j/zir1EB/7Uh3lZFlD8N7N
-         9w/SE8geVW/q5J54sx6bC8C47dQT1oytQNrwPoJq7OWJ82YwjdM8yYEVP03zREmSbjLi
-         bi+OpN04u37/TmNXiicbfRRp4UIsJ83bQvLhl5pyqX0Qmt+wllbiJ3ggAt2zhIxpkFhs
-         4DSa5hyd21Fug9OA2A7VKVhU/+vt2+S/f2QR/R3catSMRk4hmkGwyQcRyD4FV4t1HlT+
-         bmXp5UJUOnEK1o/Ylt4RWd8f9fuyOFY+2reYm7855l4D4K63ltRgg7SuB4Y/msR2POqG
-         +Sfg==
-X-Forwarded-Encrypted: i=1; AKwUvBy+PdxUfjA61wAshIiJqJ/nHMwwpFc1AaoiT8IVqWiKDGnGNVqIX9ROKQyFlO/GqPYfLA8m22OWbGcYCuPiUazpWwKvtLw=@vger.kernel.org
-X-Gm-Message-State: AFuF++ku4WapMd5iKkWvLIEtfsnHOb8WW5KV8639x1ILVbu45qB9l4rS
-	QhOgc4UuydKmaGeIc4/B2Ymh9GCx0tlO2pHjOVrLyTtGS7CTvYWG0GD4yqPQRIabj0/JP70ktzh
-	xIMfTk9h+d9TAYppSgpS+kx2+6RgU0wbvQvOQrfP9FNYFtHnoUBDmfRYetgLpn/g=
-X-Gm-Gg: AYBFou3yk8WIWGyL89w82za7sqxIJ3GlZn0APeztJN0LdI7azW0Yzj/soe9NVDPeKSL
-	YiBj6uOwcn+oQuGcIZ6bx9WaWi/jOwgy6/J6lTa6Wt8zQo5k/KJ0bEuinHnhTc0Zabas0j18J8h
-	IV8gcJ11QVeMai9m8gnRBXwkWXuY5/1tq2kf9WSXemwMOFLmW3oOsWIvwIHLpSfcwnPHMXbVprT
-	bzZCqysyrsJCBdMhCpi+tMAsTUjd6ZcsAGOSdcRAq6sxE4C8aQsDecmH24ci7LFDG2vOL9MIGbb
-	9T8mHZMzqqA2ckQhyP77w82j/0yMgDAzuAf3avYx7IIDO9dzFRA4sfKoog==
-X-Received: by 2002:a05:690c:e64e:b0:870:7983:948a with SMTP id
- 00721157ae682-8712259c772mr89107647b3.4.1788959314936; Wed, 09 Sep 2026
- 06:08:34 -0700 (PDT)
+        bh=CEnAlwwtVf98S0MQnKDx/a7P5qnwKuSWE+q0EOlFqn8=;
+        b=NAoWKbUAaZEVWuuHzU131qd4TNeCWfS3j9GCFm0mGl5jcdkUDyel0p9W5lt4anQ5jU
+         A3tovjqjbtORqLBLqNapXetWvC7Ja5dE8h+y4xZQ3u8k3yBQJTYU1x+actTiAccrI8qo
+         JR5b9Tkh2KaF7+Wa9tGQPCkKSVkenOqvBH+9tFw0T3+180I5w7xc0LEJYHmBj71P7xeg
+         cFUVsrJKLXHPy3MwSRwyYvaWEKcXwzGwjdLiaq4/FZwosDS/4DvFAnZ7Si2SWrbQzGrS
+         zATg8kvvALJx/V/+L4QaDxazLJNx/Y8ESGwEE3iJgOEhUypQ6/0oqAwRBhIhKuBKJQVR
+         buEQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzjqiArVz/OmBeTdNx5vI/utuCdHO1uQ3DAfmAVC1+m397nSn8RZKiCP3fddPgwktqlioP6IEFDGXOcDR4Lns9Bb+IG6r4=@vger.kernel.org
+X-Gm-Message-State: AFuF++lCnYA1q1Kj6l5ay2Vowk0LU5s+RI+sDpsC4ZELoplbFn+mHw6M
+	+x/3bTKcOaT4S2s4U24fOaZN6Cn+x0+mDryoKOiOvcm78ZYfOfcswf+5
+X-Gm-Gg: AYBFou3TLbDOtrHiH49kAHxSbMvqtcTvz6xaTh/cbpnT3wKdlkEe5mURpNy4CzRDCqB
+	Mi60HdHoe95GaSgwYSJlypx7M5hqNGeUVDxXq/e1aqouNVeXFvlexgXBulyshTgFtkYGwMZ3Lm9
+	MaEHctX+vyST2fOTv+cvUEom73yzEWJgnh0PGFRvS+/LsNEjZONhMtUPKqTI40mHBHSMCHEyt+k
+	A1srEtUM0U6uYH8qWEL1Bqa98kc0mIxkkDbhIsCfYEWHQ058+kTB9tj7ER9V4rsEhB0errodfKH
+	FbdvUHkthUaa2cynm0hImCUKb3H3v3rfKDSrcGieJvnQvr8OLl5zs/bAE344GMBHu/gU4JpDaf6
+	1TOWV/sQLBVn8EydgNIv+aWF0IwzUzJA3+kOu8Vemt+9i1XUKaFd+hdjvivHSqbnWIvN45XdtEE
+	pLFUJrMNKJgd0xIDh4xYL8oM6JvGDFsBS4frfzvJKmxkYgjaBejFIIgB9gfWjpXYpTc0Rw+H4HI
+	ZhZx6M=
+X-Received: by 2002:a05:600c:a01:b0:49d:1916:2133 with SMTP id 5b1f17b1804b1-49d1916215amr117005945e9.8.1788965695566;
+        Wed, 09 Sep 2026 07:54:55 -0700 (PDT)
+Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d03543064sm384918195e9.13.2026.09.09.07.54.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Sep 2026 07:54:54 -0700 (PDT)
+Date: Wed, 9 Sep 2026 17:54:48 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Breno Rodrigues Alves <breno3011alves@gmail.com>,
+	torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org, arnd@arndb.de,
+	linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-fbdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5] Kconfig: fix typos in core makefiles and purge
+ defective DVB debug (v5)
+Message-ID: <aqFzOFa3ADXIBo3G@stanley.mountain>
+References: <20260905003005.118245-1-breno3011alves@gmail.com>
+ <22707a1f-970b-4309-905d-13ac794c51fa@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260909090112.790006-1-sunjunchao@bytedance.com> <pblp6tof6t6otp5kzelc3pyu2y2si4e7i62kp63c5symdaqrd3@q7drqoro2b73>
-In-Reply-To: <pblp6tof6t6otp5kzelc3pyu2y2si4e7i62kp63c5symdaqrd3@q7drqoro2b73>
-From: Julian Sun <sunjunchao@bytedance.com>
-Date: Wed, 9 Sep 2026 21:08:23 +0800
-X-Gm-Features: AcwNN1U41_g-qadIrai6fD3kTUCArV1yDblgph8PCD2WJC1KBtLwz2cU_4D4HKM
-Message-ID: <CAHSKhteB4aK_EtuZOBsjN-tmyqS-ycGAP3gxMsdfU3pVAH+9JA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 0/7] fs: preserve superblock inode walk
- positions across lock drops
-To: Jan Kara <jack@suse.cz>
-Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	gfs2@lists.linux.dev, linux-security-module@vger.kernel.org, 
-	agruenba@redhat.com, mic@digikod.net, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, aleksa@amutable.com, legion@kernel.org, 
-	djwong@kernel.org, ebiggers@kernel.org, sandeen@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22707a1f-970b-4309-905d-13ac794c51fa@suse.de>
 
-On Wed, Sep 9, 2026 at 8:49=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 09-09-26 17:01:05, Julian Sun wrote:
-> > [Motivation]
-> >
-> > We observed hung tasks in production during disk hotplug operations. A
-> > kernel thread spends a long time in evict_inodes() while holding s_umou=
-nt,
-> > blocking other users of that lock and causing further stalls.
-> >
-> > The problem is that evict_inodes() restarts its walk from the head of
-> > sb->s_inodes every time it reschedules. When a large number of referenc=
-ed
-> > inodes remain near the head, each restart scans those inodes again with=
-out
-> > making progress through that part of the list. The repeated scans can
-> > delay eviction long enough to trigger hung-task reports. This is the sa=
-me
-> > problem that [1] attempted to address.
->
-> Thanks fro the patch! What's really unexpected is that there are many
-> inodes with incremented refcount at the time when evict_inodes() is calle=
-d.
-> Did you have a look who's holding those references? Or is evict_inodes()
-> called through the fs_bdev_mark_dead() call (as you mention "disk hotplug
-> operations")? There the filesystem is in fact in use so what you describe
-> makes some sense.
+On Mon, Sep 07, 2026 at 08:59:28AM +0200, Thomas Zimmermann wrote:
+> Please stop spamming this list with revisions.
+> 
 
-Yes, the filesystem was still in use, and the disk was unplugged
-directly without being unmounted. As a result, `fs_bdev_mark_dead()`
-holds the `s_umount` lock and performs a large number of redundant
-traversals, which takes a significant amount of time.
->
->                                                                 Honza
->
-> > [Approach]
-> >
-> > This series introduces sb_for_each_inodes() for two purposes:
-> >
-> >   1. Consolidate open-coded s_inodes walks behind a common entry point.
-> >   2. Retain each walk's position across drops of s_inode_list_lock.
-> >
-> > The iterator mechanism follows the approach used by cgroup task iterati=
-on,
-> > such as css_task_iter_next(). Active iterators are registered on a sepa=
-rate
-> > list, sb->s_inodes_iters. Before removing an inode from s_inodes, the
-> > removal path advances any iterator whose next position points to that
-> > inode. These updates are protected by s_inode_list_lock, so a walker ca=
-n
-> > drop the lock and later resume from its saved position.
-> >
-> > Existing walkers, such as drop_pagecache_sb() and add_dquot_ref(), alre=
-ady
-> > contain their own position-preserving logic: they carry an inode refere=
-nce
-> > across iterations so that they can resume after dropping the list lock.
-> > Moving that responsibility into sb_for_each_inodes() simplifies these
-> > callers and lets their callbacks focus on the per-inode work.
-> >
-> > Patch 1 removes trailing whitespace from include/linux/fs.h.
-> > Patch 2 introduces sb_for_each_inodes().
-> > The remaining patches convert existing walks to the new interface.
-> > remove_dquot_ref() and nr_blockdev_pages() are left unchanged: their
-> > walks are simple and do not require the inode->i_lock locking imposed
-> > by the callback interface. Converting them would add an unnecessary
-> > lock/unlock overhead for every inode.
-> >
-> > [Testing]
-> >
-> > I tested this series with approximately 20 hours of xfstests case
-> > execution, repeatedly running the auto group on ext4 and XFS, no new
-> > issues were observed. And with this patch applied, the hung task that
-> > previously occurred on every run no longer occurs.
-> >
-> > [1] https://lore.kernel.org/all/20241118114508.1405494-1-yebin@huaweicl=
-oud.com/
-> >
-> > Julian Sun (7):
-> >   fs: remove trailing whitespace from include/linux/fs.h
-> >   fs: introduce sb_for_each_inodes().
-> >   block: use sb_for_each_inodes() in sync_bdevs()
-> >   fs: use sb_for_each_inodes() API.
-> >   gfs2: use sb_for_each_inodes() for cooperative eviction
-> >   quota: use sb_for_each_inodes() in add_dquot_ref()
-> >   landlock: use sb_for_each_inodes() when detaching a superblock
-> >
-> >  block/bdev.c                   |  85 +++++++++----------
-> >  fs/drop_caches.c               |  44 +++++-----
-> >  fs/gfs2/ops_fstype.c           |  38 ++++-----
-> >  fs/inode.c                     | 142 +++++++++++++++++++++++--------
-> >  fs/quota/dquot.c               |  72 ++++++----------
-> >  fs/super.c                     |   1 +
-> >  include/linux/fs.h             |  29 +++++--
-> >  include/linux/fs/super_types.h |   3 +-
-> >  security/landlock/fs.c         | 150 +++++++++++++--------------------
-> >  9 files changed, 295 insertions(+), 269 deletions(-)
-> >
-> > --
-> > 2.39.5
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Generally, the rule is wait a day between resends.  Otherwise it
+becomes pair programming and no one wants that.
 
+regards,
+dan carpenter
 
-Thanks,
---=20
-Julian Sun <sunjunchao@bytedance.com>
