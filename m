@@ -1,64 +1,64 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1D34915BF
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 09:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA7D48F02C
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 09:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788944496; cv=none; b=m4Tl1N5Wy4dbItEzLaOothugKy+CJaDUdtzitMq5/L37dPdIeXpM4ywUy2TzFwGt9brAovyTBMSTVWEe7VBA7cHUAFpUyJcucRJ4hny6OMjIqP7MrBeVyoTK8hHB9jHKN/1AawrzOMmQjNBgEC1NWcqu5kZp0eNvzrDuVoN4rrU=
+	t=1788944497; cv=none; b=HtaMnlrPMfiKkFBR4qGWv725k8ePXi7uHDQl6jIUeii5w+IV4Oh2S89tJmIfBF1DIDZJlYekA9ce4hRm9c4wyyCxFIeN2geg9KriURzRAKXj3HeEtRhYM5ek+8ifz+liiU3UUuu2jZy2lLAaBIaiECxhzw57hzoSlLx2wFQIUOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788944496; c=relaxed/simple;
-	bh=+N65DOQCnJgQqGpfVkRNDf8fPq5SSO1tZXUIQK8AhmQ=;
+	s=arc-20240116; t=1788944497; c=relaxed/simple;
+	bh=jhgRCcb7mvKVZxOJ1EM1RoAJ+ehrjZv/eQIaG8NPXAc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Zf0hGT5jBZIIdIiANsR+zCigsKIyORAezgWtFZL3H2KuRYbpF9QJv1EsXto1W6fqqQlQqyvCW5+KMcVQFiiY/qKz9ZhghSPjAlrwPGwBm/m8yw5hOlnBmWejK7WaIxEwQmunbSPNxofOvKvG7iQdqEZObVvYck0lD/nddPNGLQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LAncElzF; arc=none smtp.client-ip=74.125.227.140
+	 MIME-Version; b=bZ4ZjB0PxiHfjfVY06Oaz1wl/wJa94IDq1i36v9WMNHbSVRh+ybKhtAQdcb1ojyY/jGGP6JGgkGH4KtAbBGpghfHL0UZJRNKDP6eUoJCw0tcddMbrV6mtWBzw2jQikgwkR24Bb4ov9sk/r3qQewTUN5etFCJ2DgwCJvb7GA08dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=D3hBpL7j; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LAncElzF"
-Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-396ccafb752so815799a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Sep 2026 02:01:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="D3hBpL7j"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-39675172593so4589789a91.2
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Sep 2026 02:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1788944488; x=1789549288; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1788944489; x=1789549289; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=uD00HHK4q2p2m+RWf7dPjIKnA4HG/zGsgecKKk0GRwI=;
-        b=LAncElzFkbL/948YP8dKg5Trota1ZKYEnHtZpurVn4hbxJyoXnIrxGASvzfCu9VRSr
-         AJVaCjIy3HeD9HUkke+RVjqWGJK70cbJJU6nn2Ks4EP/LrWumYx9elx/dBHvGnjcqj67
-         OppYi/ZUtqy6WdmPg1+2oMJQ5cKw/pyOl2Cj3fF9Tbc4QKPAwPJ6JrqpLgZTNnMg4Hay
-         JJD2NAgZtciZDvBpf8pDrZqjcoco5KLPycpXNv/IATE+gKL4MkUO/kmECm6mVlAQDycw
-         WgPiNE6xdIFZ0r5oCh5QuISvr20DrPw2DCVUxFQSFaULul1DuTvkAubTCvW5pdOiGy5X
-         NALw==
+        bh=tYH8W8/cakUiUYwi0P1xd+OFPw98tjeFCA4aRl63o4I=;
+        b=D3hBpL7jO1bVMfYC78IMXfkgLMf4BMzVGv3zHb6mDDsn55CkT9uxaViDvnZMYwS6N/
+         SoQnpFvZ0ERcy9zWt1Bw6QRH3q/BWgA4AVnWBAZ4nluxaBikwSfOlm8HFdPKXAs4/9XE
+         AX2YuUAkae3jCrtlLIm9kWUeMEICwTUMsM8R0al5hlkI0lYiE9e5VFeYWi6XuOFj42DK
+         7X0CCA0ljtQB6/bHtUV8XYgux8T2bG8NXoh8hzBJp4Ly9H1Su/25SnWtysrKayUa3nyJ
+         1o0++avvZidmFpNeiR7ClQdlxq1fjvtrSIhcVBubCDHTQ2wRWJsLFGNqQ7vE7cF2j0a5
+         SnjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788944488; x=1789549288;
+        d=1e100.net; s=20251104; t=1788944489; x=1789549289;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uD00HHK4q2p2m+RWf7dPjIKnA4HG/zGsgecKKk0GRwI=;
-        b=WPM3T4rnD5GdoQN/gFXszbvZUAMRmR4oEdNKyvvUMuRZjW1oCgTrHADpnCRO8/Ho23
-         nXhcN6Dsucgz6yw1JB5z4uAX2BQm3F+4As8UT5Y0YRZnEDgQ5nNsnfhHzIaXpAFPD/x4
-         UV//+y5r8QbF0pk1UQvQaqqMXINV4vLVTNuc3PGv2KfHuecSTaUG+cp7jFOINAHdjGNI
-         L21KBxrXHIHM9TQYIzVm55LveeLdGVTYpM1SyiExy+zuhO5apdOYNpH3+aVOkFdBNDts
-         pgwyos45torqgyErAEXhTYmLBLpK3mbixd2RitN1Qt87nokTfhJiUSWJWO1sZyWAVE53
-         XB9Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzFyBwD3qncYmOuyl3Ln9tbD6YSb3dY+DgcVOEIWf/v6KQye26swgHLELz7niAqKGzSHkL2HXnQCUrDEp5HP7bXixKtNRY=@vger.kernel.org
-X-Gm-Message-State: AFuF++muVgpX7BmOgGLJuIKQDWDLpl2gUF7fp1IlIZVxc+gxPQy6e4Mn
-	2vCY1q0Uf0ruqtAwiLk6oFufBxzhzDla3Hqm/OAUOOpPICh9hwf4t8EArqDN0TNMN84=
-X-Gm-Gg: AYBFou31ziwJk4sgLVuiBWW4aor5+ICAYfbEbzFoXbXCAqXDBn8/aKSVrmOl7BtABQD
-	sj3WxEJXTdqcOzovXpYDHVGzzwXNqirKPHz36vfLRi6FkZm5hb8UI/SjKIUNWeBSS6Lbu28ijoM
-	/35AX4SszSsN33jHXCMZ/imy1wZrnzKAmiUcdtmQfGiaUaKk9b7SKv5hyPSvaDM1hFdSgTvbK9P
-	HKLJML/H5nFbQr1UkDQVjxCrESZar0qQt6HOu2NjnqX8CXZRmfcyr1TxGW4XTdXYNdYMzPcl06+
-	KirWJj68p8rvoAC+7UGNj+n3OtlHBi+FOCXnNLSnvYfGx4H0yZx3UIBJTxmBxNefVpBcb0izTsU
-	Na0UtLJd7s5tuY041npX8kvVtT2YDy4BRsBBKAQeJ2SSGN3/30dB13UMJOPGg9K5rbANkGDDm26
-	MwKz3qw2UbLgsaqdzXcaeNg8EF31elWpLcPiQlgmjb4apnkwQyftshE6JBsWyagkgG2Eq8iEYIV
-	A==
-X-Received: by 2002:a17:90b:4986:b0:395:4de4:92be with SMTP id 98e67ed59e1d1-39bac34a641mr7338347a91.13.1788944487761;
-        Wed, 09 Sep 2026 02:01:27 -0700 (PDT)
-Received: from localhost ([106.38.226.34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39cd20641e2sm951155a91.3.2026.09.09.02.01.26
+        bh=tYH8W8/cakUiUYwi0P1xd+OFPw98tjeFCA4aRl63o4I=;
+        b=oi6V7L31z9P/1L0qSL4ag3lXkYZhNv6MBr/Bg3S/PKNltKuS52GzjOueBzUL3zvUSZ
+         8htwRFDZiSgJjC1EgnKJT/hc4aJsQTflBNA6pKfX+KIVFkcwSFrGHowc2woknTe9wApX
+         YibEUK/+BUQegeh6GrHqLjUgPvNB2rKswk23MsUHP2QzPa93InZaibrpvIeJnEzZalZ3
+         Pjf1VARVCLgyAhNpyQoxD5TCTMJCq9W0apG3bsPy/HcIESHhVbDVJvCkHuRhrB9C68mH
+         dve/RItefazidhRczeAtjcNQ39Rb70iKHi47f1h/mh42pAwu8fVpUBbZoSTbGWAQ8MlG
+         LvEQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxfk23hzvjj6U/A/u2kji/CjAt8uLtkZ49KY+otwOyQSTVZUeoJDLtzHsMLlCtiKZfZ0CgospU9Zyx6aYbVG1Il/2DmRc8=@vger.kernel.org
+X-Gm-Message-State: AFuF++l3kW0g1ro3e1EoSFwlCVgUdYo4HDZrcOLc94a8jh3di3pL5Zwe
+	KFrBD8l3WZ8Hv67DcYX0B56Fvtt9lqSAPg0uF2r/597lwoJu4CNKJiWnBJsmSv+vxLQ=
+X-Gm-Gg: AYBFou2hm9KLJWn6Zd8zlA3tau8XN9wKgH9Mlx2KQ2jR7CAbnSBbDxYvLfDWP7/iLK/
+	aSGrXtgckTt8n5fRzcT3jY/NAkDMnNY/BbGqOowAX/yOn8OKJW9ZvOol7D/V1dQEftWTISP7Q6C
+	5IijSJlmsSmsU5RwmqQNUUNNP/gHFWRHaYJjiveMIbOOEIVuRr92tArbkiOPtaP8Wue+Sg00pfV
+	ciB7J33tYeISEyy3lQYoajf1f1jxbRf4Oi9btpOuBgtWa+0Dsgs4w/Tm/YK1jynbqAqC1pD6RrE
+	53lzNzdl4PMfEGvwTBiE6Y4ydRLGp94snUbgguNirWntSswShDNkaEGQqFCQ6fNHtyHbKWJy3zc
+	J8lHrW4mf+h7b/JfeGQGWVuY15JjUeyx4kkISEljhlbuDRkegKLLjIwQ686M0JEIBfkXqovlllY
+	rmfBJczm6gwB/EvWSiWn2Mr3ZhjLhmMQZrfEYVf4YCu457PCeK6Ye0Jdk/Dr4asQjJU9MoFrki8
+	TuDpZLSYw3pbw==
+X-Received: by 2002:a17:90b:544b:b0:398:c8ef:3644 with SMTP id 98e67ed59e1d1-39b26203e7amr48533741a91.15.1788944483947;
+        Wed, 09 Sep 2026 02:01:23 -0700 (PDT)
+Received: from localhost ([106.38.226.141])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cc4640bc66bsm5418841a12.10.2026.09.09.02.01.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 02:01:27 -0700 (PDT)
+        Wed, 09 Sep 2026 02:01:23 -0700 (PDT)
 From: Julian Sun <sunjunchao@bytedance.com>
 To: linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -76,9 +76,9 @@ Cc: jack@suse.cz,
 	djwong@kernel.org,
 	ebiggers@kernel.org,
 	sandeen@redhat.com
-Subject: [PATCH 3/7] block: use sb_for_each_inodes() in sync_bdevs()
-Date: Wed,  9 Sep 2026 17:01:08 +0800
-Message-Id: <20260909090112.790006-4-sunjunchao@bytedance.com>
+Subject: [PATCH 2/7] fs: introduce sb_for_each_inodes().
+Date: Wed,  9 Sep 2026 17:01:07 +0800
+Message-Id: <20260909090112.790006-3-sunjunchao@bytedance.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20260909090112.790006-1-sunjunchao@bytedance.com>
 References: <20260909090112.790006-1-sunjunchao@bytedance.com>
@@ -90,118 +90,193 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert sync_bdevs() to sb_for_each_inodes() and move device writeback
-into a callback. The iterator preserves the walk position, allowing the
-callback to iput() its inode before reacquiring the list lock and removing
-the old_inode reference carried across iterations.
+Add sb_for_each_inodes() to share s_inodes traversal and preserve its
+position while s_inode_list_lock is dropped.
+
+Track active iterators on sb->s_inodes_iters and advance their saved
+positions before unlinking an inode. Callbacks manage inode references
+and per-inode work, allowing both normal walks and eviction to use the
+same interface.
 
 Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
 ---
- block/bdev.c | 85 +++++++++++++++++++++++++---------------------------
- 1 file changed, 41 insertions(+), 44 deletions(-)
+ fs/inode.c                     | 93 ++++++++++++++++++++++++++++++++++
+ fs/super.c                     |  1 +
+ include/linux/fs.h             | 15 ++++++
+ include/linux/fs/super_types.h |  3 +-
+ 4 files changed, 111 insertions(+), 1 deletion(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index cd8323083740..ae472a062e51 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -1336,56 +1336,53 @@ void bdev_mark_dead(struct block_device *bdev, bool surprise)
-  */
- EXPORT_SYMBOL_GPL(bdev_mark_dead);
+diff --git a/fs/inode.c b/fs/inode.c
+index ba7da39be4a3..b4279063a5dd 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -69,6 +69,15 @@ const struct address_space_operations empty_aops = {
+ };
+ EXPORT_SYMBOL(empty_aops);
  
--void sync_bdevs(bool wait)
-+static int sync_bdevs_inode_iter_cb(struct inode *inode, void *data)
- {
--	struct inode *inode, *old_inode = NULL;
--
--	spin_lock(&blockdev_superblock->s_inode_list_lock);
--	list_for_each_entry(inode, &blockdev_superblock->s_inodes, i_sb_list) {
--		struct address_space *mapping = inode->i_mapping;
--		struct block_device *bdev;
-+	bool wait = (bool)data;
-+	struct block_device *bdev;
-+	struct address_space *mapping = inode->i_mapping;
++struct inode_iter {
++	struct list_head	iters_node;	/* sb->s_inodes_iters */
++	struct list_head	*next;		/* next node going to iterate */
++	unsigned int flags;
++	inode_iter_cb func;
++	void *data;
++	int ret;
++};
++
+ static DEFINE_PER_CPU(unsigned long, nr_inodes);
+ static DEFINE_PER_CPU(unsigned long, nr_unused);
  
--		spin_lock(&inode->i_lock);
--		if (inode_state_read(inode) & (I_FREEING | I_WILL_FREE | I_NEW) ||
--		    mapping->nrpages == 0) {
--			spin_unlock(&inode->i_lock);
--			continue;
--		}
--		__iget(inode);
-+	if (mapping->nrpages == 0) {
- 		spin_unlock(&inode->i_lock);
--		spin_unlock(&blockdev_superblock->s_inode_list_lock);
-+		return 0;
-+	}
-+
-+	/*
-+	 * We hold a reference to 'inode' so it couldn't have been
-+	 * removed from s_inodes list while we dropped the
-+	 * s_inode_list_lock.
-+	 */
-+	__iget(inode);
-+	spin_unlock(&inode->i_lock);
-+	spin_unlock(&blockdev_superblock->s_inode_list_lock);
-+	bdev = I_BDEV(inode);
-+
-+	mutex_lock(&bdev->bd_disk->open_mutex);
-+	if (!atomic_read(&bdev->bd_openers)) {
-+		; /* skip */
-+	} else if (wait) {
- 		/*
--		 * We hold a reference to 'inode' so it couldn't have been
--		 * removed from s_inodes list while we dropped the
--		 * s_inode_list_lock  We cannot iput the inode now as we can
--		 * be holding the last reference and we cannot iput it under
--		 * s_inode_list_lock. So we keep the reference and iput it
--		 * later.
-+		 * We keep the error status of individual mapping so
-+		 * that applications can catch the writeback error using
-+		 * fsync(2). See filemap_fdatawait_keep_errors() for
-+		 * details.
- 		 */
--		iput(old_inode);
--		old_inode = inode;
--		bdev = I_BDEV(inode);
--
--		mutex_lock(&bdev->bd_disk->open_mutex);
--		if (!atomic_read(&bdev->bd_openers)) {
--			; /* skip */
--		} else if (wait) {
--			/*
--			 * We keep the error status of individual mapping so
--			 * that applications can catch the writeback error using
--			 * fsync(2). See filemap_fdatawait_keep_errors() for
--			 * details.
--			 */
--			filemap_fdatawait_keep_errors(inode->i_mapping);
--		} else {
--			filemap_fdatawrite(inode->i_mapping);
--		}
--		mutex_unlock(&bdev->bd_disk->open_mutex);
--
--		spin_lock(&blockdev_superblock->s_inode_list_lock);
-+		filemap_fdatawait_keep_errors(inode->i_mapping);
-+	} else {
-+		filemap_fdatawrite(inode->i_mapping);
- 	}
--	spin_unlock(&blockdev_superblock->s_inode_list_lock);
--	iput(old_inode);
-+	mutex_unlock(&bdev->bd_disk->open_mutex);
-+	iput(inode);
-+
-+	spin_lock(&blockdev_superblock->s_inode_list_lock);
-+
-+	return 0;
+@@ -641,12 +650,96 @@ void inode_sb_list_add(struct inode *inode)
+ }
+ EXPORT_SYMBOL_GPL(inode_sb_list_add);
+ 
++static void inode_sb_iter_start(struct super_block *sb, struct inode_iter *it,
++				unsigned int flags, inode_iter_cb fn, void *data)
++{
++	it->flags = flags;
++	it->func = fn;
++	it->data = data;
++	it->ret = 0;
++	spin_lock(&sb->s_inode_list_lock);
++	it->next = sb->s_inodes.next;
++	list_add(&it->iters_node, &sb->s_inodes_iters);
 +}
 +
-+void sync_bdevs(bool wait)
++static void inode_sb_iter_end(struct inode_iter *it, struct super_block *sb)
 +{
-+	sb_for_each_inodes(blockdev_superblock, INODE_ITER_NORMAL,
-+			   sync_bdevs_inode_iter_cb, (void *)wait);
- }
++	list_del(&it->iters_node);
++	spin_unlock(&sb->s_inode_list_lock);
++}
++
++static bool inode_sb_iter_next(struct inode_iter *it, struct super_block *sb)
++{
++	struct inode *inode = NULL;
++	int ret;
++
++	while (!inode && it->next != &sb->s_inodes) {
++		inode = list_entry(it->next, struct inode, i_sb_list);
++		if (it->flags & INODE_ITER_UNUSED) {
++			if (icount_read_once(inode)) {
++				it->next = it->next->next;
++				continue;
++			}
++
++			spin_lock(&inode->i_lock);
++			if (icount_read(inode)) {
++				spin_unlock(&inode->i_lock);
++				it->next = it->next->next;
++				continue;
++			}
++		} else {
++			spin_lock(&inode->i_lock);
++		}
++
++		if ((it->flags & INODE_ITER_NORMAL) &&
++		    (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE))) {
++			spin_unlock(&inode->i_lock);
++			it->next = it->next->next;
++			continue;
++		}
++
++		it->next = it->next->next;
++		ret = it->func(inode, it->data);
++		if (ret) {
++			it->ret = ret;
++			return false;
++		}
++
++		if (need_resched()) {
++			spin_unlock(&sb->s_inode_list_lock);
++			cond_resched();
++			spin_lock(&sb->s_inode_list_lock);
++		}
++	}
++
++	return it->next == &sb->s_inodes ? false : true;
++}
++
++int sb_for_each_inodes(struct super_block *sb, unsigned int flags,
++		       inode_iter_cb fn, void *data)
++{
++	struct inode_iter it;
++
++	inode_sb_iter_start(sb, &it, flags, fn, data);
++	while (inode_sb_iter_next(&it, sb))
++		;
++	inode_sb_iter_end(&it, sb);
++
++	return it.ret;
++}
++EXPORT_SYMBOL(sb_for_each_inodes);
++
+ static inline void inode_sb_list_del(struct inode *inode)
+ {
+ 	struct super_block *sb = inode->i_sb;
++	struct inode_iter *it;
  
+ 	if (!list_empty(&inode->i_sb_list)) {
+ 		spin_lock(&sb->s_inode_list_lock);
++		list_for_each_entry(it, &sb->s_inodes_iters, iters_node) {
++			if (it->next == &inode->i_sb_list)
++				it->next = inode->i_sb_list.next;
++		}
+ 		list_del_init(&inode->i_sb_list);
+ 		spin_unlock(&sb->s_inode_list_lock);
+ 	}
+diff --git a/fs/super.c b/fs/super.c
+index 05e443173038..3e069150c544 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -382,6 +382,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ 	spin_lock_init(&s->s_roots_lock);
+ 	mutex_init(&s->s_sync_lock);
+ 	INIT_LIST_HEAD(&s->s_inodes);
++	INIT_LIST_HEAD(&s->s_inodes_iters);
+ 	spin_lock_init(&s->s_inode_list_lock);
+ 	INIT_LIST_HEAD(&s->s_inodes_wb);
+ 	spin_lock_init(&s->s_inode_wblist_lock);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 09c4db5e9ae0..f3176ab10e65 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -870,6 +870,21 @@ struct inode {
+ 	void			*i_private; /* fs or device private pointer */
+ } __randomize_layout;
+ 
++enum inode_iter_flags_enum {
++	INODE_ITER_NORMAL = (1U << 1),  /* Exclude inodes with (I_NEW | I_FREEING | I_WILL_FREE). */
++	INODE_ITER_UNUSED = (1U << 2),  /* Only return inodes with (i_count == 0). */
++};
++
++/*
++ *                             start          end
++ *  inode->i_lock              locked         unlocked
++ *  sb->s_inode_list_lock      locked         locked
++ */
++typedef int (*inode_iter_cb) (struct inode *, void *);
++
++int sb_for_each_inodes(struct super_block *sb, unsigned int flags,
++		       inode_iter_cb fn, void *data);
++
  /*
+  * i_state handling
+  *
+diff --git a/include/linux/fs/super_types.h b/include/linux/fs/super_types.h
+index ecd96aeb1cee..1f81cc219b8e 100644
+--- a/include/linux/fs/super_types.h
++++ b/include/linux/fs/super_types.h
+@@ -269,9 +269,10 @@ struct super_block {
+ 	 */
+ 	int s_stack_depth;
+ 
+-	/* s_inode_list_lock protects s_inodes */
++	/* s_inode_list_lock protects s_inodes and s_inodes_iters */
+ 	spinlock_t				s_inode_list_lock ____cacheline_aligned_in_smp;
+ 	struct list_head			s_inodes;	/* all inodes */
++	struct list_head			s_inodes_iters; /* all iterators */
+ 
+ 	spinlock_t				s_inode_wblist_lock;
+ 	struct list_head			s_inodes_wb;	/* writeback inodes */
 -- 
 2.39.5
 
