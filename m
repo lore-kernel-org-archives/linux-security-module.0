@@ -1,153 +1,210 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181E741A56A
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Sep 2026 20:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B43BED7A;
+	Wed,  9 Sep 2026 20:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788985219; cv=none; b=IrabSR5bvwijKC9qT0YuPsRssfgvKjyfJBGiwuNEjb+PWVXoV9c8Gu5jeIvO8OPfYOsQ3ciiMn56ZvoerfgD7zCYPyXlMmCUFxrYb1WwgHHg4t72fMsSkZtSUqT6hTUnS/IxhhmneT72CKh6R19OIdjA1rIWRHGVR9hpee3t8SI=
+	t=1788985808; cv=none; b=TuN/UUxxxRLGHsjKpV+sZjYknhx4k5uMMiqH32T9Dx0VtD/JJIgDAdKz5MCzrEzXK8gyNjQCUICxlFVEw+Tf4tiR0UcxPmxg90o6vpkjbGpkvjWSiHWgZ/W5rTooolnlApR6A8i8yALM95gylQCoGb/aFdXHuAHt9KuQuAa+weo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788985219; c=relaxed/simple;
-	bh=9jw50TickrTaZQXgt5lOY+a4WpEkiifrBIEHCEFDnmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ilH5MYkmWM/98G1pg1xMFI5kNJmHfD7ejqgAvSH+kxPTsRZlObdd2K8ACcHw02D8KlTVy7q/tvUv7lc936TdarWwcbilbwaZkwGWxJAVeyqsM15sIr0aWWsIljO00adwVU2ijW9vaPCr1Yd710NUPD4rosdnLWGgpAWEtKdkP7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NktLe6PE; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788985808; c=relaxed/simple;
+	bh=s02EU2GNXiVHdlRJ+jyRr/Y7YLTUSaDRYXZzcj7qkc8=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=GWs9+c9WCWl08Q+SDInMc0xK/GyEhspGdZ48SN13crqSaalMMzq3MYyxTeiIdkiewfEWnf47ScYZKk5xmstNVBAilRhVBg9Q5F40FWTwKjwDoqaRS+OV2h5Wg7MC38Wp4ViezPjo9TKAsd+efOmw8nsRzDJHEBTbuSWDQt/mVDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFG7AQ9y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NktLe6PE"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-878ed0f17bfso44782297b3.1
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Sep 2026 13:20:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788985213; x=1789590013; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=N8UCfmj+BAmm+9KzmB0PX4qemdmhN7ZLk+S/oBX8ZU0=;
-        b=NktLe6PEfo9VLJqPjt9OInn2zHhCM6DYzZwkX1imzBBVHl9Y2ZMtsE5ahTdRFsMiGE
-         j9+PVsvNYl/Qpo8WY2lLohGaOGMLSBdnRxLTTBnWMok5ndj9zfMncKXxV84TmYgm8yVc
-         qA4lOw9QdPhM+C8Az1zdB3l/FVgDKa5Ll0QJYhK5WydkPezmGEtNFEKUJ4RBei9DcbCf
-         UJU3uuevT4Aa4VfmLjCT6UF2RlHVbG4wgACzUCOLOyA61GzrYvJLOPeVC5DYkUhoKkUy
-         3mGSM7/AHmOKIUkywNguJuoVnq+wd8vo1ZIi5LDl35t8dldYLkX3/wCSqvbp0haLwh9L
-         aSgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788985213; x=1789590013;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=N8UCfmj+BAmm+9KzmB0PX4qemdmhN7ZLk+S/oBX8ZU0=;
-        b=o65lDc98mZkoZdkB1vwMv4xheq2i+dUL9L6uULP8Mg4m9azPDardT4a668SrEN/2SH
-         jVgzoTuBEnByMhqkvs2U/MBy/sjeD23ot3enq/XggtpfNKfwIv2yAAzYcTRg41gKsZQY
-         MHQIvY3vND+fUk4hi5aMf7Qv2jUXO1FZw3N/jVwNyeUY4cRR5kOVWmJsivuqmEppDrAQ
-         6GbyNthO+JoqLPEa43hxpSHRBOT/3NcKaibNJsUh8f+08BcRBCyDWEhC+BAaWqBRVG2T
-         JjdUmXH/g4Of4kXuExUeCrcZpa3j+wF5ngMlPthku07/v8Rag6kxw+WEZx+MTzg5gV0H
-         JlEw==
-X-Forwarded-Encrypted: i=1; AKwUvBxdGTvaRjdRTs4XV1N0lMxbHqEu09ys7sZYQ+btBW423ZdG3pwuYEtq9WXzMI4c5WtgxChywBLTBB2UezI1PkWk2I/Jd6w=@vger.kernel.org
-X-Gm-Message-State: AFuF++mWc0MEc+sbg6yb2Li8QcckmP01yR3ejDcwjJ58kFvlhBNbBPDX
-	l9ID2V/bo92OBFiQc2VfiLc1GHHjhOlp/6E2nB/czgFRF/7//b5t5N8m
-X-Gm-Gg: AYBFou3EMv6Q+NKwmBqY+EuaKXKvcsicAMpEml97koSu1+gw8rOqa4GcBFXhB6+ICco
-	vuAkzSV8n9Eb8vGvU+3WZM05aHQqXtydxEBE3F+Z0TR5tA7Nr7yBlEiSEe2sgA0Qocyg4tjQsFf
-	Wd7cRLomPJiNwOKhomq89HC1rAsIC6FaVIejm8lR12+kap9B4kYqJwN7mbcQAdycrxBDlF4fyr6
-	7+ZibKjyfi6dxdwDLglyaqL3TQCbtEe2TuUHH7Z7RgHY1GNgecgQlin4L9isf74bI81nhAtQkNJ
-	2XSzMKufaz5UdVVWERvxPTfRl6owj317hHMjLcM028sP0fdMNqUosfhnLt/F9xtOWe3JLPzismW
-	W0spuBKE1CgSr3ku7JQ9GGPhBqEY0LCcMznfHucvLbJZ7SQ1l4eV666GUNYYCnOIwH+v5+EKRWm
-	qwkMA83oJaj5kk+qBG0mq3UHcnfQ7BYPs3ghgVeJGx155ri+1aZ3bbM9OK3XhtME6cSrx8ll16s
-	opdvKlPzOmGdWa5KDGQ9xFVkaDe3Kp8
-X-Received: by 2002:a05:690c:e1e:b0:873:5ddf:d87a with SMTP id 00721157ae682-8735ddfdbd2mr117164447b3.69.1788985213338;
-        Wed, 09 Sep 2026 13:20:13 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:bae:bfc2:7e96:e5c8])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8821dd9932csm2117017b3.4.2026.09.09.13.20.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 13:20:13 -0700 (PDT)
-Date: Wed, 9 Sep 2026 16:20:12 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: sashiko-reviews@lists.linux.dev
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next v3 07/15] lsm: Add the bpf_lsm_policy_apply_bprm
- kfunc
-Message-ID: <aqG7XUBqmUftjyyD@zenbox>
-References: <20260909193719.518517-1-utilityemal77@gmail.com>
- <20260909193719.518517-8-utilityemal77@gmail.com>
- <20260909195500.DA3E31F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFG7AQ9y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DDAD1F000FF;
+	Wed,  9 Sep 2026 20:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788985796;
+	bh=QuZM46OhKdDN97PeCm8YPFKOdhxXnQF0sSeKdtxBTGw=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=VFG7AQ9y4RUvvHULJsxIXmxp0/vBHuDaRJj4luwBOo//gLicsiaDr6JIUnGH7G539
+	 g1dj3ADSA1vk/xAWo2QiJmmn/Xs9hiHvO5kMqaMqXDTFho/8j62GCWWBUSZe0CrgDD
+	 UKMp9cV6i+QzNW6kvuit3Votz07QFMRQQ4MSZ5C5n7ovVEryHg5vinkSWaOY1MB+V6
+	 0SD7ks1h24/S2LSkGplcS6RUlcWgrNH8Fou6pc3Gs7dPyXAvwffdxxE4/GWv0K/mM9
+	 e+xkTfe5qIU757TCaYS9ApA1maIVuTW6PmAucUnW9lhESf8Iv8LYux4cmczSx84Zxg
+	 kyGIoIpKANuwg==
+Content-Type: multipart/mixed; boundary="===============2822446474814226014=="
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260909195500.DA3E31F000FF@smtp.kernel.org>
+Message-Id: <3c28736e3864daa3aca308ac20ca4ddf11da29c951013e0daf7a7a9d2c2c780b@mail.kernel.org>
+In-Reply-To: <20260909193719.518517-12-utilityemal77@gmail.com>
+References: <20260909193719.518517-12-utilityemal77@gmail.com>
+Subject: Re: [PATCH bpf-next v3 11/15] landlock: Factor the credential restriction out of landlock_restrict_self()
+From: bot+bpf-ci@kernel.org
+To: utilityemal77@gmail.com,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,kpsingh@kernel.org,matt@bobrowski.net,paul@paul-moore.com,mic@digikod.net,viro@zeniv.linux.org.uk,brauner@kernel.org,kees@kernel.org
+Cc: casey@schaufler-ca.com,gnoack@google.com,jack@suse.cz,song@kernel.org,yonghong.song@linux.dev,martin.lau@linux.dev,eddyz87@gmail.com,memxor@gmail.com,jolsa@kernel.org,m@maowtm.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,linux-kernel@vger.kernel.org,utilityemal77@gmail.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
+Date: Wed,  9 Sep 2026 20:29:55 +0000 (UTC)
 
-On Wed, Sep 09, 2026 at 07:55:00PM +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [High] The attach-point authorization boundary for `bpf_lsm_policy_apply_bprm` can be bypassed using BPF tail calls.
-> --
-> 
-> commit 7b53e20161b20c35fb85beb1fba538fe85514074
-> Author: Justin Suess <utilityemal77@gmail.com>
-> Date:   Wed Sep 9 19:37:10 2026 +0000
-> 
->     lsm: Add the bpf_lsm_policy_apply_bprm kfunc
->     
-> This commit introduces the bpf_lsm_policy_apply_bprm kfunc, allowing sleepable
-> LSM BPF programs to restrict credentials prepared in a linux_binprm. It
-> restricts this kfunc to specific execution hooks (bprm_creds_for_exec and
-> bprm_creds_from_file) to prevent policies from being applied at unsafe points.
-> 
-> > diff --git a/security/bpf_lsm_kfuncs.c b/security/bpf_lsm_kfuncs.c
-> > index 43a4bf57fd31e..857e9a316d1cc 100644
-> > --- a/security/bpf_lsm_kfuncs.c
-> > +++ b/security/bpf_lsm_kfuncs.c
-> 
-> [ ... ]
-> 
-> > @@ -141,11 +202,18 @@ static int bpf_lsm_policy_kfunc_filter(const struct bpf_prog *prog,
-> >  
-> >  	switch (prog->type) {
-> >  	case BPF_PROG_TYPE_SYSCALL:
-> > +		if (kfunc_id == bpf_lsm_policy_apply_bprm_ids[0])
-> > +			return -EACCES;
-> >  		return 0;
-> >  	case BPF_PROG_TYPE_LSM:
-> >  		if (kfunc_id == bpf_lsm_policy_from_fd_ids[0])
-> >  			return -EACCES;
-> >  
-> > +		if (kfunc_id == bpf_lsm_policy_apply_bprm_ids[0] &&
-> > +		    !btf_id_set_contains(&bpf_lsm_policy_bprm_hooks,
-> > +					 prog->aux->attach_btf_id))
-> > +			return -EACCES;
-> 
-> [Severity: High]
-> Can the attach-point authorization boundary be bypassed using BPF tail calls?
-> 
-> This verification-time check inspects the initial program's attach point,
-> but does it account for runtime context switches via tail calls?
-> 
-> For example, if a privileged user loads Program A attached to
-> bprm_creds_for_exec that calls bpf_lsm_policy_apply_bprm(), it passes this
-> filter and can be inserted into a PROG_ARRAY map.
-> 
-> If they then load Program B attached to bprm_check_security and perform a
-> bpf_tail_call() into Program A, the tail call is permitted because both
-> hooks share identical BTF function prototypes (int (struct linux_binprm *)).
-> 
-> Does this allow bpf_lsm_policy_apply_bprm() to be executed at
-> bprm_check_security, creating a TOCTOU vulnerability since the execution
-> can still be rewritten by an interpreter?
+--===============2822446474814226014==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+> diff --git a/security/landlock/cred.c b/security/landlock/cred.c
+> index 03449c26247e..f02706f12c7d 100644
+> --- a/security/landlock/cred.c
+> +++ b/security/landlock/cred.c
+> @@ -8,14 +8,146 @@
+>   */
 >
-Yes you can do this, but no it's not a vulnerability. No incorrect state
-would be created here (in bprm_check_security, creds are still
-uncommitted), so there's no issue in actually just letting a user apply
-their policy there...
+>  #include <linux/binfmts.h>
+> +#include <linux/bits.h>
+>  #include <linux/cred.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
 
-I'll probably just add bprm_check_security to the allowed hook list.
-> > +
-> >  		return 0;
-> >  	default:
-> >  		return -EACCES;
-> 
-> -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/20260909193719.518517-1-utilityemal77@gmail.com?part=7
+This isn't a bug, but is <linux/errno.h> needed here?  The new code
+returns PTR_ERR(new_dom) (from <linux/err.h>) and never names an -Exxx
+constant.
+
+> +#include <linux/lsm_hooks.h>
+> +#include <linux/mutex.h>
+> +#include <uapi/linux/landlock.h>
+>
+>  #include "common.h"
+>  #include "cred.h"
+> +#include "domain.h"
+>  #include "ruleset.h"
+>  #include "setup.h"
+>
+> +#include <trace/events/landlock.h>
+> +
+> +/**
+> + * landlock_prepare_restriction - Compute a credential restriction
+> + *
+> + * @llcred: Landlock credentials to restrict: provides the parent domain and
+> + *          the previous log configuration.  Not modified.
+> + * @ruleset: Ruleset to enforce, or NULL for a log-configuration-only change.
+> + * @flags: landlock_restrict_self(2) flags.  The caller is responsible for
+> + *         validating them against the set of flags it supports.
+> + * @restriction: Computed restriction.  On success, holds a reference on
+> + *               @restriction->domain (if any), which
+> + *               landlock_apply_restriction() transfers to the restricted
+> + *               credentials.
+> + *
+> + * The restriction builds on @llcred's current state: the caller must apply
+> + * it to (or stage it for) these same credentials.
+> + *
+> + * Return: 0 on success, -errno on failure.
+> + */
+> +int landlock_prepare_restriction(
+> +	const struct landlock_cred_security *const llcred,
+> +	struct landlock_ruleset *const ruleset, const u32 flags,
+> +	struct landlock_restriction *const restriction)
+> +{
+
+[ ... ]
+
+> +#ifdef CONFIG_SECURITY_LANDLOCK_LOG
+> +	new_dom->hierarchy->log_same_exec = log_same_exec;
+> +	new_dom->hierarchy->log_new_exec = log_new_exec;
+> +	/*
+> +	 * The creation event fired above, so move the domain out of
+> +	 * LANDLOCK_LOG_UNCOMMITTED: its free_domain event must fire
+> +	 * too, even if the domain is dropped before being enforced.
+> +	 * Audit logging may still be disabled (DISABLED); tracing
+> +	 * observes it anyway.
+> +	 */
+> +	if ((!log_same_exec && !log_new_exec) || !prev_log_subdomains)
+> +		new_dom->hierarchy->log_status = LANDLOCK_LOG_DISABLED;
+> +	else
+> +		new_dom->hierarchy->log_status = LANDLOCK_LOG_PENDING;
+> +#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
+
+The LANDLOCK_LOG_UNCOMMITTED -> PENDING/DISABLED transition moves from
+sys_landlock_restrict_self() into landlock_prepare_restriction(), but
+comments that document this contract by naming the old site remain
+unrevisioned, and no later commit in the 02756181d382..1cc3305917e4
+range updates them either.
+
+In security/landlock/domain.c (landlock_init_hierarchy_log):
+
+     /*
+      * The hierarchy is born unobservable: landlock_restrict_self() moves it
+      * out of LANDLOCK_LOG_UNCOMMITTED once it has emitted the creation
+      * event, so the matching free_domain event fires for it and not for a
+      * hierarchy whose creation was never observed.
+      */
+
+In security/landlock/trace.c (landlock_trace_free_domain):
+
+      * Fires only for a hierarchy whose creation event was emitted, i.e. one that
+      * left LANDLOCK_LOG_UNCOMMITTED in landlock_restrict_self().  ...
+      * while a domain that landlock_restrict_self() created and a
+      * thread-sync failure then aborted still fires free_domain, ...
+
+In include/trace/events/landlock.h (Lifecycle consistency block):
+
+The window is still described as 'A rare thread-sync failure aborts the
+just-created domain' even though the new helper's documentation
+(cred.c:89-93) states it also covers an aborted execution, introduced
+two commits later in 0a88c757f4f0.
+
+After this commit, landlock_prepare_restriction() performs the
+transition, and 0a88c757f4f0 adds a second, non-syscall caller
+(bprm_apply_policy_object()), so 'landlock_restrict_self()' no longer
+enforces this invariant nor provides the only path that can create and
+drop a domain.
+
+Behaviour is unaffected, but should these references be updated to
+reflect the new code structure?
+
+> +
+> +	restriction->domain = new_dom;
+> +	return 0;
+> +}
+
+[ ... ]
+
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index cb294a3582ae..9451376ccf50 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -9,7 +9,6 @@
+>
+>  #include <asm/current.h>
+>  #include <linux/anon_inodes.h>
+> -#include <linux/bitops.h>
+>  #include <linux/build_bug.h>
+>  #include <linux/capability.h>
+>  #include <linux/cleanup.h>
+
+[ ... ]
+
+> @@ -546,10 +544,9 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+>  	struct landlock_ruleset *ruleset __free(landlock_put_ruleset) = NULL;
+>  	struct landlock_domain *new_dom = NULL;
+>  	struct cred *new_cred;
+
+This isn't a bug, but is the `= NULL` initializer still needed here?
+Before the refactor, new_dom was only assigned inside the if (ruleset)
+block, so the initializer was load-bearing for the later if (ruleset)
+trace_landlock_enforce_domain(new_dom, ...) call. After the split,
+new_dom is assigned unconditionally from restriction.domain, and every
+path between the declaration and that assignment is a plain return.  It
+is the only `= NULL` pointer initializer left in the file apart from the
+__free() declaration on the line above.
+
+> -	struct landlock_cred_security *new_llcred;
+> +	struct landlock_restriction restriction;
+>  	bool process_wide;
+> -	bool __maybe_unused log_same_exec, log_new_exec, log_subdomains,
+> -		prev_log_subdomains;
+> +	int err;
+
+[ ... ]
+
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/34398515657
+--===============2822446474814226014==--
