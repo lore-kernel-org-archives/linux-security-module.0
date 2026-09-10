@@ -1,135 +1,187 @@
-Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170F83D413C
-	for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 19:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.204
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789068385; cv=none; b=jas+TOAqDfJ5N8K9SUtb4CHAAfVL1iHKRBK5Ofrs8MSXqv6+v6GjAC2uKYqTNa4HGmcVnevV9mzoQRPTeuUYHh98OkE7nYUqe7WU5SnpBQSTM81fsdFzJ6x3Z9fNuCDLKjKqdIlps+go2gW3Pxer22ZS5Kz1Gnu4aorBAG+6adA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789068385; c=relaxed/simple;
-	bh=PK8bn5aU171tfON89RThbs87i/BE1OYud3wLsDUh4hU=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=cuinUpWZNqRw/Z2sIiA+tNZ+zWMeJPJdme1kvhQoIvLiWZ5Ne6uLWfq6v5qffAj/+cIXVsrigQWfiA3n9yHp0El2/JCYuNHGJcuUfBXs0ZqqRkMzNFaL6MiFwx7ZYudIjwunYse/JkMM6zSDrT8/LQKaumJyktnxYc73ok3L+FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TJzVSaBe; arc=none smtp.client-ip=74.125.230.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A3D33EB06
+	for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 23:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.176
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789081808; cv=pass; b=d8bEnyB1QSNfgVXK45Ej/HMUkmyKRLif2K6jHkydANspsVjx5dW8wMSVZwO2pASjopzxLRhXqOB8rQQYHf9ioFEQSM5RTEr+hcprWBS2VAhzstk2m5UoxJ/auxGLTYmARagFbE71d2j9rp9kuoJC4MW9u4t9oqZPwQPJT+8trl8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789081808; c=relaxed/simple;
+	bh=PnxSfTGJD54jJaS0qmt8X/NOj0X3sFgFp335BaX6BlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aP1onBUpBBgLlwpnxq69gGjFSyNzYRS2utEgfUpP/zMaxWYasGUu5HUDWkom+KfAquwDS01r+1cW02GGPI9U08VlXaNct2LR2CsZ+5W8SwhhrNhnK9/xYt/gIqOrTAhmXI1heoICKLOKWKaxjAuTI7VvaGTsTnizv5GR4O3PE1E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ciq9dS4E; arc=pass smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TJzVSaBe"
-Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-939da6087f2so3526385a.2
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 12:26:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ciq9dS4E"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-cc1cf287ef8so342991a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 16:10:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789081802; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ado54KKZTPbVRETKj181b+zR3cYYT8i4tZJvk6j9w6W49G+Wjes3m7MqtD8wb81z/O
+         MK5Lfw9FQl/jq/3VzX4xt01OUp5lwJILd1qK9jAm4k1EOx6fjwfuU1XGAduV4y58cV1E
+         xpBfzMCepFmqe+b31RjAm4778QapSwVSacXTd1snIwoJCth+JtBS0uqqw0O76eIRdi3s
+         7kVst7bi78l7+dF/ACzOMF7k+qmDsOFB+RHEr8yPF7CDr/3Eev+pkU1f/+mG3mzr1tmR
+         LD617pGGZz6W4aQuSrpRh3v1HZVSF3sKLXXRYwXdY7vjWbAhbXLjoEdEpIYMrDlwryV3
+         mxrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=L8sMxb6Uw8z6M0MXXSleWX5vN1RUfOts+cADzDtTadc=;
+        fh=GxARcsWe2GQ3Rxpk4dtdex3O7HB0Dlx66Ed/T2FIRs4=;
+        b=ZhVJt7dFEECOFIG0TbVGOVTVI84Wn1MPeAQDbie0jxHQa2Aa643yPKm42ANAh9qK0R
+         +Q8OSaC6HBfIgS+2z2pbll54JMB6HjOiGAXqLA3Un/1CT4nsH80NUtlMLyB3EX3j8Tsz
+         uauCzNHAQdQGZ+eZbcKiDghgstJ51LED2F8efFVUFKFD8h/cl219TLrzjT+9H+s/W+Hr
+         mqZTmNIgUbZJ3CL4in3b3pMfJScrh8Mdwbezy5i34OoWvikr4pl54dQ/SuXlfi5jNAlo
+         8Hw41BNnRl8fWXF3zGPLJ0NNXdArfWFmblx7JtdyH719JF8cJDNUlG8lzTalIl28mdHv
+         tZrA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1789068382; x=1789673182; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4xukxtRxDbbfqZShrZASrA+GXX4dRNxrhliA3H85hXQ=;
-        b=TJzVSaBe6JWN3LWgLyYOZUFto49U5CTuJraV4VIPAmuBR7ZJBmyKCIBU/+2bTVxEW4
-         L56FQrsc2n++FdHOiZlMa+30UoluoJ0OCeD82XWQ8TnSRUcpS6ELlAFAWX3rYjhvxYxa
-         I2N+mbEtMnPAp62CPX6EQDkK20snic25TSNJ64Sdyjf0tiOv+O9rDDGOhIPVsNhFqjof
-         L/w7ohojbwyPI8eaVyj1W6zxrNkyHzPZ6GQ8yVjBCucZL9KINHUD4D25ygbh5MGbCV8j
-         u4s29Csmji/0TXNgyFvp1JVremYVguwLbdOkyQa5b8ktuNfjBxUz806L0llSUr5ufvr9
-         irJg==
+        d=paul-moore.com; s=google; t=1789081802; x=1789686602; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=L8sMxb6Uw8z6M0MXXSleWX5vN1RUfOts+cADzDtTadc=;
+        b=ciq9dS4Eqz5hX+ydh5aF6tMZODwh1Wu4ZDbvj8bPJNa8T1AbvoWIjsyeez0EIPEc3t
+         9D0PDSb+dOow0piSGo4UVZtE7qL+fG/U5noB1UWmKPi2WoQ3U1Gpu5r63VfhfQjLvjMT
+         yrzdKWksXkcUGyzCmesQMrc/uCyuK5k8zx/egQ/1dyIuWktTFfOYG5JaAmdMfd3dxVoW
+         vUjTEx4x4/Jzb45pCnR3x3WMrxyYm1nK4W+mazpea750IFE1cL2CkqQN1pik7oNUji+u
+         q0MMqdQ5UWruaRbzaA6MGLOPZoQ22tiRO+cCntZZ/KxgK5AHErDYY6stdvma7h6A+jOB
+         rhlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789068382; x=1789673182;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1789081802; x=1789686602;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4xukxtRxDbbfqZShrZASrA+GXX4dRNxrhliA3H85hXQ=;
-        b=Sp4knFzwZP94mj5fD43o2W4BJM9fU6t7ew8bkwNZtgJOl1+OJc3V85dAHB/JkM72t6
-         0CHMA/1FBnMkr6yvjZSHAeQS39BmElDeazQtTJ4Vfdk5sEtHO14nGI//zccBD8dZ2b7a
-         Fl4EFGl9RZF47ItLDHCvGYGHC/Haga+3UAIw0fUSKUxkepaKCe+yTvPuMIE+V2jsi3pO
-         BjVtpPBayHkyqRcov4HYm9KcL1vrUIaxB7+VNu2DBsvY14c7h5DiKcGL83VsvxGWSvup
-         nPEgDWS29NdNaDkMMAG0DP+/vQCwSXb9RXbDyK5lQCs2XOw1GmFhGzTSNVCRlw8esw/O
-         +brg==
-X-Forwarded-Encrypted: i=1; AKwUvBxZbH69bzbAjt0ExxbF+z6FZkEcMignXF3q7z99++p+PMcUCbfMnmLRYu3f7wDZpevp3A2T64ipVtk5DqqcaEm66xofyvA=@vger.kernel.org
-X-Gm-Message-State: AFuF++kiZ1BhAXqz2x5RVko22gdeicSBe869gnkeW5NT1LyjuSCv32wW
-	oNm2CXyECUa7UuEXwhLp+sKMxX3mLkvwmmgHMKbFltUlkgNoQH4Yu3nfFy1jTBpFmw==
-X-Gm-Gg: AYBFou2MqMp88w9f5Bd9QIQAI1J9uLy6IWtIytGCMJkM1rORBpOtUaImkzoTmVGkxaw
-	UlZV9DVK4lc2Pl4GOACdn20HU/bCVRXCKH+Ey8kT5lGRy828EqKLAZ64fHc8SsrfNNiBeyR+bMe
-	Y8vfinBDlqx3tqrSSzijk4L+5M/bONWecUHiuVfJZy4GG0rQowLGN6Byxdc/UNHW/ifaj4+HQpO
-	jdm7wTZPXw8ZYCVz6njP9uqaf9NvTFdSH03wnAhsoUsD4+F7X7VxYsGIu87kjsVvlSKo0QeGSo4
-	zCUK1jzek4jQsDkz6m6lu7wJZUFv7AbBCa4zMQeZSsKKCGGCNtw2cpKkgpVryvzYQlM03V4jmj/
-	lbuzgJwHX5hGJuZk/JAxYOtp+NRBTEusAB0LbOdW/86/pRz1yZLhgR1gjf8bsp1+fwehMjXLCNO
-	ZL3xEU/mewxJ3C037voO2voRtKgHL5hhm8+AtZXK6dRfxt0j5GXO5rWwVnlqj7g4ioQtTTm9QbK
-	UxWPSlH0cENtynsUcc0n9zo/WP+Zo+VUly0VS4Rf91hkSBUejKPr+GnCoDvl2WKmSRl8nzFa3a4
-X-Received: by 2002:a05:620a:28d4:b0:936:8840:427f with SMTP id af79cd13be357-939ea037c44mr52546485a.4.1789068381925;
-        Thu, 10 Sep 2026 12:26:21 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-939e8045b46sm56168385a.18.2026.09.10.12.26.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2026 12:26:21 -0700 (PDT)
-Date: Thu, 10 Sep 2026 15:26:20 -0400
-Message-ID: <f444c557e77c22eb578216a5e6eb5b98@paul-moore.com>
+        bh=L8sMxb6Uw8z6M0MXXSleWX5vN1RUfOts+cADzDtTadc=;
+        b=r2LN75sUN3o767qCbqreXGeCQxJxKkNWSue7Pq27RCg822KFt/LSckCrZudo4le+qI
+         MsGQuvhBUU+f9d2lw63UDj0gRFYS+kknYonXJ63M6C4AcVghki73on/Q01/OeKlggcE8
+         ymxwPbc6ehTTXZ4O1veBXeEaFiaBZkPoccPyr6XwzfwpBBUyZq1ZyMTwyhaNurN4N6ot
+         0SlTtCvV5Ql3Zv/X/lN3Lmnw/v67mik1DWILOUcYUfc9Yv42I01r/DKvJEXNjEQqVW/q
+         BCn6Ctkp/e/I+Q5+mzjRBQfj4cJQ3XkzZbmmUmMElxj4KvBFKTEr3afA/pWQuFkTQqBS
+         2hUQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzG0dFlFOJ2B5pNDEDKk5/fc2huxuJsCV1ZMjZrvj9xaftApW+r/PC6/AITlH17LKWv63jiUXXnZAC049DSF9uJVajPunQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++ldsf5Hz6TKanLCJCGcYwm513pSdf7fKR+QqEDbLpUREfc2nv2H
+	UriVmgSEanmuJDeAFz8KBwP7YtTHCggA4iASUdO/fhU+XKw/DI913M/IXaxQfNFwlnmq+zOCZEM
+	gDJ28QofiLyzxvyAqk9V05qkobn0TN3230WNNtJLh
+X-Gm-Gg: AYBFou0Fqy4aKw6d61GNDoj4lTR+/2NQ7H+arQDJvQ69dveVhHUBFuygcThFYK1ly9s
+	7ecJ2Kyc5TgASczs6RAECmzEJ1SylCK6JRexbjRh7yJS4b/K7M4XcWbyeSsS8Kx/hF2mVO2FO1z
+	ChcQY36+cuR0+S7ff9s0tr3nSvjZ0vHE7Z4P3AqsUWEyJTxkMxV7VhBdH9+ReO1yLTnNaSSyMPQ
+	WsM4qRVGRwCCqNLJY97Wq+WUrq+k0s64VuSOH2BdJqjMSsFoTx1bpaMzdhNFU2bIUc9fz5/+QDq
+	GpXdfZRgw7USbJYIVTFy9d1p9h5ndZb6oPQNxlHFMSm3MSeouISREpRawrzHvWpnYVY2ZEjypOO
+	xo4VYwZofUzDe5XYs7M7k7A==
+X-Received: by 2002:a05:6a21:e58d:b0:3d3:ae0f:5269 with SMTP id
+ adf61e73a8af0-3daed38e31cmr2162731637.21.1789081802270; Thu, 10 Sep 2026
+ 16:10:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260909_1743/pstg-lib:20260909_1550/pstg-pwork:20260909_1743
+MIME-Version: 1.0
+References: <20260726161400.3010511-4-mic@digikod.net> <5cabf9b33a20f130cedcc423b8b2d151@paul-moore.com>
+ <CAHC9VhS_WP-bLgMGiFAfE1MT76iKvVJ-OV5r7xju-KMdrfjssQ@mail.gmail.com>
+ <20260909.quahcia8aiF4@digikod.net> <CAHC9VhSRV_axaGM0hTZngQY36Jw1ULy_sHHsik0_HCSdVv4P+A@mail.gmail.com>
+ <20260910.Ooph5bing9zu@digikod.net>
+In-Reply-To: <20260910.Ooph5bing9zu@digikod.net>
 From: Paul Moore <paul@paul-moore.com>
-To: Bradley Morgan <include@grrlz.net>, linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bradley Morgan <include@grrlz.net>, stable@vger.kernel.org, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 2/2] lsm: fix size queries for getselfattr with NULL buffer
-References: <20260619130305.27779-2-include@grrlz.net>
-In-Reply-To: <20260619130305.27779-2-include@grrlz.net>
+Date: Thu, 10 Sep 2026 19:09:50 -0400
+X-Gm-Features: AcwNN1XD4jUdsWX_8lOn0Nqg8RhgpbaV_W3e5S49NjErQsIEe7OI26lKNwsad-4
+Message-ID: <CAHC9VhSJ3jRybaU=6y2kOKA=KpGE8r=QTMPwdD3KptGcB7msTw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/12] security: Add LSM_AUDIT_DATA_NS for namespace
+ audit records
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Daniel Durning <danieldurning.work@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Justin Suess <utilityemal77@gmail.com>, 
+	Lennart Poettering <lennart@poettering.net>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Jun 19, 2026 Bradley Morgan <include@grrlz.net> wrote:
-> 
-> The lsm_get_self_attr() syscall allows callers to pass in a NULL context
-> buffer to find out the size of the output needed. That path still
-> compared the computed entry size against the caller provided size first,
-> so a NULL buffer with size 0 incorrectly returned -E2BIG rather than
-> reporting the required size.
-> 
-> Only enforce the available buffer length after checking for the NULL
-> buffer. Cover the zero length sizing query in the self test.
-> 
-> Fixes: d7cf3412a9f6 ("lsm: consolidate buffer size handling into lsm_fill_user_ctx()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bradley Morgan <include@grrlz.net>
-> ---
->  security/security.c                                  | 8 ++++----
->  tools/testing/selftests/lsm/lsm_get_self_attr_test.c | 5 ++---
->  2 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 71aea8fdf014..fa0d7e036249 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -406,15 +406,15 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
->  	int rc = 0;
->  
->  	nctx_len = ALIGN(struct_size(nctx, ctx, val_len), sizeof(void *));
-> +	/* no buffer - return success/0 and set @uctx_len to the req size */
-> +	if (!uctx)
-> +		goto out;
-> +
->  	if (nctx_len > *uctx_len) {
->  		rc = -E2BIG;
->  		goto out;
->  	}
->  
-> -	/* no buffer - return success/0 and set @uctx_len to the req size */
-> -	if (!uctx)
-> -		goto out;
-> -
->  	nctx = kzalloc(nctx_len, GFP_KERNEL);
->  	if (nctx == NULL) {
->  		rc = -ENOMEM;
+On Thu, Sep 10, 2026 at 4:12=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> On Wed, Sep 09, 2026 at 03:49:11PM -0400, Paul Moore wrote:
+> > On Wed, Sep 9, 2026 at 2:35=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@di=
+gikod.net> wrote:
+> > > On Mon, Aug 31, 2026 at 05:26:20PM -0400, Paul Moore wrote:
+> > > > On Tue, Aug 11, 2026 at 4:16=E2=80=AFPM Paul Moore <paul@paul-moore=
+.com> wrote:
+> > > > > On Jul 26, 2026 =3D?UTF-8?q?Micka=3DC3=3DABl=3D20Sala=3DC3=3DBCn?=
+=3D <mic@digikod.net> wrote:
+> >
+> > ...
+> >
+> > > > Micka=C3=ABl, if you would like me to merge the remaining patches i=
+n this
+> > > > patchset into the lsm/dev branch just let me know.
+> > >
+> > > I'll send a new patch series soon because this v3 would not apply
+> > > anymore.
+> >
+> > Okay.
+> >
+> > > I'll include your lsm/dev patches to keep a consistent patch
+> > > series.
+> >
+> > Please don't as those are already merged.  If you want to stick with
+> > the same patch series, which is fine, just note that the first three
+> > patches have already been merged into the LSM tree.  It's not uncommon
+> > for patchsets to add or drop patches over time as both the patchset
+> > and the surrounding environment progress.
+>
+> Yeah, I know, but at the same time are there (merged) users of these
+> hooks?  Anyway, we should of course avoid to have two commits for the
+> same patch in different branches (even if that would not be an issue for
+> Git), but having to handle several origins (e.g. the lsm/dev branch for
+> new hooks and the master branch for fixes) might lead to an unpleasant
+> gymnastic.
 
-I'm not sure the existing code is necessarily wrong.  The existing code
-allows for an E2BIG length check against the current necessary size, so
-one can still do a length check regardless of if a buffer is passed.
-Even in the NULL/E2BIG case, the necessary buffer size should still be
-returned to the caller so that the process can size their allocation
-appropriately.
+We discussed this already during an unrelated offline conversation,
+but for the sake of others who might be wondering, that's not quite
+how things work in the LSM tree.  As a refresher, here is how the LSM
+is managed:
 
-Or am I missing something else?
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#kernel-so=
+urce-branches-and-development-process
 
---
+As a quick summary, the lsm/stable-X.Y branch (the current being
+lsm/stable-7.3) contains patches that go up to Linus during the
+v7.3-rcX cycle.  When relevant, patches in lsm/stable-X.Y are also
+tagged for linux-stable.  New development targeting the upcoming merge
+window is merged into the lsm/dev branch.
+
+The lsm/next branch feeds into the daily linux-next tree and is
+composed by cloning the latest lsm/stable-X.Y branch and merging the
+lsm/dev branch on top.  This enables linux-next testing of patches
+bound for both the current RC cycle as well as the upcoming merge
+window.  During the normal RC cycle, the lsm/next branch is updated
+whenever there is a change to either the latest lsm/stable-X.Y branch
+or the lsm/dev branch.
+
+While one might imagine merge conflicts in lsm/next requiring manual
+intervention would be common, after years of experience I can say that
+they are not. On the rare occasion when conflicts require manual
+intervention, they haven't been very difficult to resolve.  If we do
+arrive at such a situation we can work together to sort it out.
+
+> Another concern is to ease review (for both humans and bots) ... which
+> might require a well-known base commit, instead of a (transient?)
+> merge commit.
+
+As documented in the link above, lsm/dev should be a stable branch
+that you can use as a base for patchsets.  It will move forward as
+patches are added, but it is rebased only under extreme cases (e.g.
+filesystem corruption, etc.), and rebases are typically communicated
+to the list.
+
+--=20
 paul-moore.com
