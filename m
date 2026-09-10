@@ -1,105 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505DE2E6CAB;
-	Thu, 10 Sep 2026 07:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3678D3DA5C1
+	for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 07:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789026659; cv=none; b=Sowpqw3EbGRtBYGP6dzDG1unozGJhGiMcVxp8kayEPIIlkC+VBsW2cjOwojeuHaWrJKpOZHJNm/j/XMokBWnpvqB3/LTejopMR/gLm/0D7aSdtQLg/O7MbNThQQ/6y6YSz8e/y6RL7+CPXFaNMrAl2a3o8by8bGgqnthSmOVHkM=
+	t=1789026776; cv=none; b=rEgNV0Let3y80aDY8FulR4Dg2cmPR/ocLZanmmPqlBU/XjYnitaPaeS7gx/1KyNvMJHXpb8s1eGXm5w4ZfidoTfh+/IAz5MDbFAI4vCsvsu3ctIVi+5NPXQVNCrIjZNDeKDA9QnrPPE8e/cZ5RQMdHNn8SIO1gaorLlvZ+9NK+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789026659; c=relaxed/simple;
-	bh=KP/TVT990Jk6qSqTonW4zGEnqjZVXeEhG7kgWM7rpbU=;
-	h=From:To:Cc:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=D2aNrzb8VhIbNrFFeM4oxanrPfLoIEZF2BLzA2WZ2k3xxHxtw5kCIS/egOeEC/zZ5Iu+9eKTn7LCyK8E/PkprNDBchv8xX8FoOWZR3QvXKs8dehkr1PEJJa4ytXnFqGy6so4wC0F+PC3Olw7t/ht7ku68vshPm6MSt1NGgV3tQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WC0ozvcu; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789026776; c=relaxed/simple;
+	bh=CsLIGHHO8YWAldmY8Naazy7NOx7PZIBpEJmR+iBDvqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 In-Reply-To:Content-Type:Content-Disposition; b=hSYdsD9hwqMso57w4sVhk5ZbzI9wZaMXC3hEgcQoQ5MUGAEV43v1JyauAKmZpB8T6aoe3W766+6yQD5v/Gul5y/XwlO7Whi6wLKBjK80nCcsZ9uoouh5UQpqH39jt+1ZF5udh9PrJzv+17/reKw4PtdNqZj/py88Dr8blyKmSZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bj7oyrmZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WC0ozvcu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDE81F000FF;
-	Thu, 10 Sep 2026 07:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789026657;
-	bh=bo4Zc2Vjjp0eoQaA5SCGx0fk3myt9u8dxHPEF5jd53w=;
-	h=From:To:Cc:Cc:In-Reply-To:References:Subject:Date;
-	b=WC0ozvcumClM2Zk72IpUYM3ax15/lEjWizeh5ueYU8QJVQpFYoF8upF8QiDNXxZdL
-	 LPXTNV1dDBIvAiW5qxLP/z0ZbDj6F1hkELjHf6bMI0GSNNsCtHDvhWx2UEYv/q7wvJ
-	 B5PDaMntpjp/SxArHyAM5I6sHxlk8oBKkXS7T5obb+rlZR8OM0O1uMj7pcpjWb7jrn
-	 uS84sKPWB0nsiHqG7yLViksMDLestWT1IBn/Dus0NJoAsL0DwXnSaq3WeJP18N0xQa
-	 pnf3wozyZeD8YJn2xXgv2ArJNSs8Y4wfmhrcHqHXfluyZxANoHfBMFDgMu6nW7jZlV
-	 H7/EsrpdaXZEg==
-From: Christian Brauner <brauner@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>, 
- Stephen Smalley <stephen.smalley.work@gmail.com>, 
- Jeff Xu <jeffxu@google.com>, 
- =?utf-8?q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <liam@infradead.org>, Lorenzo Stoakes <ljs@kernel.org>, 
- Vlastimil Babka <vbabka@kernel.org>, Pedro Falcato <pfalcato@suse.de>, 
- David Hildenbrand <david@kernel.org>, linux-mm@kvack.org
-In-Reply-To: <20260907-selinux-pokemem-v3-0-0bafbaeafe50@google.com>
-References: <20260907-selinux-pokemem-v3-0-0bafbaeafe50@google.com>
-Subject: Re: [PATCH v3 0/3] proc,security,selinux: let SELinux block
- FOLL_FORCE for /proc/self/mem
-Message-Id: <20260910-wohnbau-bezwangen-wegziehen-7a32dcf237b1@brauner>
-Date: Thu, 10 Sep 2026 09:48:34 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bj7oyrmZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1789026774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3zdat3lb+JFaceCjEvZhP3kP5xpKa4RbvpVHW8sS2v0=;
+	b=Bj7oyrmZVR9i5l09nENsd3Ehvh1j3A2xi86XHNxDhT2mXfcs28L+dK0JMaxFshMm+uMCQc
+	fz6AHrQiwN9Xhrs5sCE+zujaXCYbysPtvW7J6lc57gJpca2oQK99xiD0i0ePdB2B0WUr1N
+	tsTj5H6qdt7jIgjOS1H8BnCmJLCX6h8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-144-vi-dAUwTOiy4byBvfAzH2A-1; Thu, 10 Sep 2026 03:52:52 -0400
+X-MC-Unique: vi-dAUwTOiy4byBvfAzH2A-1
+X-Mimecast-MFC-AGG-ID: vi-dAUwTOiy4byBvfAzH2A_1789026772
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-495474a5fbcso67982155e9.1
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 00:52:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789026771; x=1789631571;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3zdat3lb+JFaceCjEvZhP3kP5xpKa4RbvpVHW8sS2v0=;
+        b=bcQcDozH8Wm5T/pmrhbAYHSMNeBm19dRVWpQv5U/4iump70dLKBobOzoc4BBPrG9RM
+         tb7kKvZ7UNmqa51Fiix7VCkG/PgRT/rIfchnmCfQ0yB6rLA6l1LXhxLRbXkN0gt/VP2z
+         6N6g1PVsKBXN8N6Eo1wJDcMQuvHJMBSJ7dlQ6UCet38R3nhmrQ8D/miES8moEVV4vye+
+         rhZ7bu4NeGl1PMXmhNltpgJON5R1qRJIrdO1UUNowCg65l6sxycHuk1Mqi1Ge0dDAg6q
+         u7KGrcv6ELN/hwnS/xrPoP7foKNYd6jjOdxyYYHvXE4SCgobdOy3+HYFTIhtyo8ftaqx
+         SzKw==
+X-Forwarded-Encrypted: i=1; AKwUvBz4IF6vvu+QCrZVCWiuOwqX+SYPb7UIuNAy0jh1SeUvKBPVbFur2KyC92XIsUiaov/p9ToxYxFWnnIhT8XaizRzX0zuOjU=@vger.kernel.org
+X-Gm-Message-State: AFuF++nW8SrXTTejp4+bY1SH1H2w8hVY/4rl8RPHDroaJPHLRX0bBPHl
+	mjJ4yN4scxH/TGhaJSZON1reiwCgiMot5iLv1Roqsu3BCqnAeKhcYqV95ayd+vuBvWKDtwBWBF4
+	XwowB5zCVTL5rcBkQ2tMPCslb/aySAGg6a+iGrGJL38brqYAIxDop+BvXilYHb8Pp5ecEETVsJt
+	8rbg==
+X-Gm-Gg: AYBFou3wy3Z8WDCATJL1Bcvbx7CVaM3W1xr4uHALEIHgVHoeP8afz9B+5xCL4JEhi8R
+	TdscuCZGBSc1PGadmkalfzJwnS0BRv5TYFytGLgB+r1PAMrOzTHeIMumFk54IpZH8YoKX2lmFUk
+	IpU+ug0loBrS3Y/Rhp/GXL32qiDImgZYMweNYkyQdVejZaNH6HSK8VEkzXwa7PHhihECo/yMtRt
+	R9jvX/wuDoBSB9HHrmBBY9FTL+AYHS0RZkIO/cQxwiU10AjbkDFxzFLrfXmzAVYnj5orAHBTbaZ
+	Fa01/gZSfxW+d3HHqLHKXZ2JOgz8XAT5LuDhbCGubRJ0WnvxBFE+vKL/u4DRJ0jxbhOnJZpzda/
+	jLcpBW7DyfkK4FCxKcSPG6JFMP4lBjseSxkhN7WOzgblXBQ==
+X-Received: by 2002:a05:600c:1991:b0:49d:1842:f001 with SMTP id 5b1f17b1804b1-49d1842f00dmr150578165e9.14.1789026771622;
+        Thu, 10 Sep 2026 00:52:51 -0700 (PDT)
+X-Received: by 2002:a05:600c:1991:b0:49d:1842:f001 with SMTP id 5b1f17b1804b1-49d1842f00dmr150577875e9.14.1789026771102;
+        Thu, 10 Sep 2026 00:52:51 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-53-30-11.retail.telecomitalia.it. [79.53.30.11])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-485883be709sm48847267f8f.21.2026.09.10.00.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Sep 2026 00:52:50 -0700 (PDT)
+Date: Thu, 10 Sep 2026 09:52:38 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, stable@vger.kernel.org, 
+	co+6a581c4284f721d4@bugs.sh, James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan McDowell <noodles@meta.com>, 
+	Ross Philipson <ross.philipson@gmail.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	Srish Srinivasan <ssrish@linux.ibm.com>, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: trusted: Fix tpm2_load_cmd() boundary check
+Message-ID: <aqJhkjPdib-MQTCT@sgarzare-redhat>
+References: <20260901205809.2028454-1-jarkko@kernel.org>
+ <apfoKo-BdwaLXtkT@sgarzare-redhat>
+ <aqHIwoKcEWeI_yjs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev-db0b7
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1738; i=brauner@kernel.org;
- h=from:subject:message-id; bh=KP/TVT990Jk6qSqTonW4zGEnqjZVXeEhG7kgWM7rpbU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQtSowq4HP7sexZeNLbJRtXzZ06ueXsvVkW0cmHdMWzH
- tk3bfg3o6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiRrsY/nDEvtj2yNPmyULZ
- HUuMevjq9vsWsBZybVM59aCX60vFVz1GhmVnVpful2MS3/Ao9j+3p+fSJUozH4nX6xUqpWtXr34
- Xww4A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+In-Reply-To: <aqHIwoKcEWeI_yjs@kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 2J_Uu4CtZgRceJGkMgrXxN65WoMoia6XFX2BaljX0BI_1789026772
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 
-On Mon, 07 Sep 2026 23:00:15 +0200, Jann Horn wrote:
-> proc,security,selinux: let SELinux block FOLL_FORCE for /proc/self/mem
-> 
-> The goal of this series is to let SELinux prevent the use of FOLL_FORCE
-> when a process writes into /proc/self/mem and the system is configured
-> with PROC_MEM_FORCE_ALWAYS (which used to be the default behavior, and
-> is still used by current Android devices).
-> 
-> [...]
+On Wed, Sep 09, 2026 at 11:59:46PM +0300, Jarkko Sakkinen wrote:
+>On Wed, Sep 02, 2026 at 11:24:16AM +0200, Stefano Garzarella wrote:
+>> On Tue, Sep 01, 2026 at 11:58:06PM +0300, Jarkko Sakkinen wrote:
+>> > tpm2_load_cmd() does boundary checks against the ASN.1 size i.e.,
+>> > payload->blob_len. Address this by passing the decoded blob size to
+>> > tpm2_load_cmd(), and use it for the boundary checks.
+>> >
+>> > Cc: stable@vger.kernel.org # v5.13+
+>> > Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+>> > Reported-by: co+6a581c4284f721d4@bugs.sh
+>> > Closes: https://bugs.sh/b/6a581c4284f721d4/
+>> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> > ---
+>> > security/keys/trusted-keys/trusted_tpm2.c | 12 +++++++-----
+>> > 1 file changed, 7 insertions(+), 5 deletions(-)
+>> >
+>> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+>> > index 67225dd562a9..01f18bb37047 100644
+>> > --- a/security/keys/trusted-keys/trusted_tpm2.c
+>> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
+>> > @@ -99,7 +99,7 @@ struct tpm2_key_context {
+>> >
+>> > static int tpm2_key_decode(struct trusted_key_payload *payload,
+>> > 			   struct trusted_key_options *options,
+>> > -			   u8 **buf)
+>> > +			   u8 **buf, unsigned int *blob_len)
+>> > {
+>> > 	int ret;
+>> > 	struct tpm2_key_context ctx;
+>> > @@ -120,6 +120,7 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+>>
+>> 	blob = kmalloc(ctx.priv_len + ctx.pub_len + 4, GFP_KERNEL);
+>>
+>> Pre-existing, but is `+ 4` here useless?
+>
+>I checked this through in detail.
+>
+>It should not be like that given that callbacks tpm2_key_{pub,priv}
+>provide the length of TPM2B_PUBLIC and TPM2B_PRIVATE.
+>
+>Thus, it is a bug introduced by f2219745250f ("security: keys: trusted:
+>use ASN.1 TPM2 key format for the blobs")
 
-Let's move this on a shared branch that both the vfs tree and the lsm
-tree pull. That's the standard way of handling dependencies between two
-subsystems that want to route code that touches both of them. Branch is
-stable.
+Yep, agree. Do you want me to send a fix?
 
----
-
-Applied to the vfs-7.4.shared.lsm.foll_force branch of the vfs/vfs.git tree.
-Patches in the vfs-7.4.shared.lsm.foll_force branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-7.4.shared.lsm.foll_force
-
-[1/3] proc: refactor /proc/$pid/mem to use struct as private_data
-      https://git.kernel.org/vfs/vfs/c/d5662602d178
-[2/3] proc: query LSMs for introspective mem access (if PROC_MEM_FORCE_ALWAYS)
-      https://git.kernel.org/vfs/vfs/c/9f90f96af73d
-[3/3] selinux: require PROCESS__PTRACE for FOLL_FORCE introspection
-      https://git.kernel.org/vfs/vfs/c/5dac8c291d9b
+Thanks,
+Stefano
 
