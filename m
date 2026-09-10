@@ -1,125 +1,267 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDC54BE454
-	for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 15:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789053341; cv=pass; b=ppp6VdPyeZwloaXEwggKTkYdWiG+uTfuEEeLjQIIorgVrDoGDi662o9RfZe7xmE5UcQ2/Kgk36+xtZNScLHouTQwHMjOP6EAuciJ2i2knv6/x70xXBIyBSi8YHoO4FSZT93o4NK+TIspkNc+9TjDbQAxiztIb9IP1x+WAer8ViA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789053341; c=relaxed/simple;
-	bh=i0qyr2C0ENgPCQGsh4QhYiKOgzXs/bwuuJYt5R71+JY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mXASsrF6rqiOZP0dsI331bZKR6YLoEhgpxOhruKTqYB8WEyN2FK4DDA7nAtMSg1JoRdOdNGCcuNGeJfvmzWpP6IHb2/YF+PxJY8eBCsJy8BYCGAOYhVDre1pqe/BRrXY2MsWMuZbSonEDH7O9OR4q1lTmxcqwGwKvDgO7EpL+TM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jzUOconq; arc=pass smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8691B4A3F25;
+	Thu, 10 Sep 2026 15:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789054382; cv=none; b=NzlbS1VOFzD8NYUKBtXIzAzRssDhXFUma9fY0uk2VQE9yKOoiWlLcMpBMI/MUf8LJkXirfSv3BCNpnIkewyz066f8PJfYxR3BU9DOL3Rntpxy8RNqMH8tI76XNzzhpo/VaNju4NxvGJHjDVrxQKj67KLFX2o2OERqsoMAqT0X5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789054382; c=relaxed/simple;
+	bh=TfSrgWUYYJwahSa+FbSacbR0Qt4tsvku6lQjbRGnV3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sta0EEi+1KEf81XNOVMZLw1zk5cY7QdHvH/qrnfujv1UIeNY7NjtYYK0Kkjgjs1PvbEGU8dXcHrZtU0SI1jeKbTq/qlAv11GbM5CzagS7VyEhRoQqfFVUeunJK9PLMfBlvJx/ZdETWG5/Q+E087xJ2ibdO1ElggZ34CogdSXiuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ye0ZfhhC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CFJEDO+G; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XJXdvWaF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=X/YemN1Z; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jzUOconq"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49a97714f5dso68979095e9.0
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 08:15:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789053335; cv=none;
-        d=google.com; s=arc-20260327;
-        b=rUIAaXdeTYwpghSMBoMH6FODTd78bhSx115YjNL4mVstb7sP1J9of1PelrMrzt/31z
-         +XbF9HpUCERrY/rYQ/iRMjJXLl/IkJsS61bNGrhqe6Fnb5WCFW9dR3KFiUAPO7fbLp5L
-         JK6rUQLd7cm9Z7nCgzzUDTAbzDY8wdlnjadGz0wyUZxos1ubcNyApG6Mt3QrHWh7/rgB
-         2VOYFaPFoK/PBLlrLk9DWYgTwVP6+tVfwWm8ZZEo4FWK+IQ3Md7O8pQK6RHKrEp5jmlK
-         SZXt2nvJ7zXHjPpmJgPyGzVY7/bxPZb0tLL6/nNtXJlMnSn9xd88l7mJ90zLImtWDCRv
-         zrRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=i0qyr2C0ENgPCQGsh4QhYiKOgzXs/bwuuJYt5R71+JY=;
-        fh=tym5xDOsGD0vXWVdZndX4xaHR7w+3NeXIdbyk+qkIZ4=;
-        b=Z4hZEHUfbfo4Wiwx6QlxCNyDjpzBjF5Rz6rPIohegJSxU6/jn2GsbvYqX0hE4GrXFX
-         kOZHHRHKGO9XdQWb2nGTC9sU036tyhYk6w5+NYXq+LTH1YYi5ulUc7eRJgQJOi/ZYbXf
-         4DjInIHQrlls/XR3u7e0EPZ372kmewwSLPYg04HtA4ku8tH/7hERtGqu6RlM2H6Wf0sW
-         9/1CDtJDVHbiMuPkC4x5S6KRaUKYyDnw8LAwsRhtxXkb87wd0KqdLkyf+61SzQvgbq9R
-         UgfEo5UWQXgmJvqvH/2h6oMvd1iJbzDkkLpRRZFuMRqr+t3+9boxSFsvItTlCOtup1z5
-         JtDA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789053335; x=1789658135; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=i0qyr2C0ENgPCQGsh4QhYiKOgzXs/bwuuJYt5R71+JY=;
-        b=jzUOconqUVvpvDDNCvwTtRxEW5tyaUELT15zzOt3LOCwc0zBRM0WYkWeGJFkKi57O/
-         gW5Sl6Peb5EM9vcQfb0rVisAmznCCdoQmObr5FE9k1mPvst0MX85L8IJyH/nPQlfDPY/
-         2uiyFSoMQDqumZgYnwAPY6Padvtmnb6g6PkyMY/uE7FImvfFyATppcmiW88mDMUR3/yR
-         7xuYXxUDLm5xYppHSvoyY3T978BxRoFZnEH2ZKG+a+8mplsbUsmTVK1NnbraXHMyQPsp
-         v3EmMh1gHjtPMdzwrPs34MvLnEAHkG5ool9O5OQ7TunP5vJ82avaJrI7tR1cgUgkBmQK
-         wjqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789053335; x=1789658135;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=i0qyr2C0ENgPCQGsh4QhYiKOgzXs/bwuuJYt5R71+JY=;
-        b=cAWvP9gEOdXAYqKKWQgyNuBUHhuqjndxyNzNQcwbjlCnI1PUTVRuh/hRtnEns7WRRf
-         eQ+6pfxq4Zc9wDUA5trKhXIoVoml2ESWPgpVk6N3527U8ZPmHNRItmIfvBOjwHKKeGcv
-         G8CzTJDxqQTRd+Z7snjF5XW9Qg7FAcQk1Vu8ZvpAkiKja0y0OnGBiLQ83x/TGbq2CQh7
-         MuBAIDFQT7aeiPLQnHPgpXF4mQ8g1YSdQsXU+FceY9uFzdqzmQRx9JfH/OOxwZd84avD
-         scuMngMQ7u4M0QDyKZYg3+jPnqkmtEcFV46hBPubtDp8ZseX5XdRXLWwzJYgpAo0X5kr
-         WJWw==
-X-Forwarded-Encrypted: i=1; AKwUvBw3Fcm5/UoGA30a/vSPnmsBZvkB5LQCt5yR7l/c9NhN3VYyYbYF4vRZToEo2/m598k2d0gC9nGD35ewTTP+bl6l8VzrIqo=@vger.kernel.org
-X-Gm-Message-State: AFuF++myWVivjDPpUgT0r/qbfWroBp6ew1nroVmg2kR8e4lEBymGyTes
-	YlBuuwXjlopV/i9fhIWXpRVgrN2uNCbCyhevAJBzRoseP++AriCKcnk72uTjg4Od5gFqGH6hW8D
-	6GMeGFu+fEqXBFWpDktVyUNSGhAqCQZI/r2R5I5X3
-X-Gm-Gg: AYBFou0e13WKCaHkWADr87UDV+OFDfKGd+5wwxWU+muR54bkBz8p9SbwRPVAdTxATsP
-	Thh7zGoqEPnmCZqFsSNKsAgu+5Bl8cip5B8VrQ/2lvael2f8IpFnEfmtwCNeI0Yyb8mpzQOST9l
-	4bjLN6Q9SjTyiWhul01nnsKB/Xa83PsJUOgudlgm1JkJzFUl3B37HGhog7VXLySQ63VzA506Fbs
-	iFUlBh34kbuAjlyF3ZK1ekiQ5Se2HZ+czRa9nQ6uu87uQy0dPSCXQg6u/SasIrdwSxOZLsP5+wr
-	Q9LDJDQ6D+Z4pfc1ATJfDSQeaEjFUKnlLn6rwyj6vUWKTxb/C8GZmzgd6fn/PJezRiFy44+lQqX
-	at64QrLVdKwO6OGZBsBHD
-X-Received: by 2002:a05:600c:3495:b0:49c:dadb:18a7 with SMTP id
- 5b1f17b1804b1-49cf8244260mr429288325e9.10.1789053333570; Thu, 10 Sep 2026
- 08:15:33 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ye0ZfhhC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CFJEDO+G";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XJXdvWaF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="X/YemN1Z"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 21A11219A0;
+	Thu, 10 Sep 2026 15:32:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1789054374; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u+K7ooVeSqRxjIANte2bbg3RZ65EwBMeUVjE/SVMc5A=;
+	b=Ye0ZfhhC5Lmz/BxATsM2B+JzJtLa8HYRZzjN2qTnCWADRr6tpIkldt5l15o0L5el79nBz2
+	oxOoqtQd2ouUdCLsphREEXlorloZZHY2/rFncCrdsARA22zuA49YjggNQYafpgpHqYkRO6
+	j9whO/q1716g3jKwYWpPYf+drdXl+x8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1789054374;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u+K7ooVeSqRxjIANte2bbg3RZ65EwBMeUVjE/SVMc5A=;
+	b=CFJEDO+GQCFf0ce6h7Qw97LPvPGntfnxuuvt147Evijut8os4kPxwuboU+JLN1tLWEGHXC
+	YKBKJGAx7Xn6d0BA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XJXdvWaF;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="X/YemN1Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1789054370; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u+K7ooVeSqRxjIANte2bbg3RZ65EwBMeUVjE/SVMc5A=;
+	b=XJXdvWaFFLx8zFfzQHInjvc/ynoER3OZ5wux2JpT5ct+UqLpqlLniDhzvJOip6EDunwaDq
+	quHk2QHvF40YLVGOA+vgEf/w+GlazRd7eXPybgJfxPkseGWQhtjkNr2+S3AMlkX3w5EE5W
+	oM0GMnKUGclL7NeHFKYCPmbRMvs3VrQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1789054370;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u+K7ooVeSqRxjIANte2bbg3RZ65EwBMeUVjE/SVMc5A=;
+	b=X/YemN1ZpByULvRUTvR6JHpWh1rpkcxrIY4nd4XWcdtghJ/BM/ZPQz32A8R3KZxhdbyfKL
+	v4PU0Kq3UpVylZBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 757391326D;
+	Thu, 10 Sep 2026 15:32:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bsfdGZvNomr8FQAAD6G6ig
+	(envelope-from <fmancera@suse.de>); Thu, 10 Sep 2026 15:32:43 +0000
+Message-ID: <5a4d00a9-65ba-4f58-8c0f-9d6ce97f6bad@suse.de>
+Date: Thu, 10 Sep 2026 17:32:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260828024335.946-1-nils.lehnen@proton.me>
-In-Reply-To: <20260828024335.946-1-nils.lehnen@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 10 Sep 2026 17:15:21 +0200
-X-Gm-Features: AcwNN1Uzoi8lwGKaGFrFRU-C5_p6rCaJZlH12ISlamLuab6ijiQmyc1yoeBy_qE
-Message-ID: <CAH5fLgib5D=nk4OwoREHAqzpC7=Ly=MZoU3gUGpTgGTZLS0mjg@mail.gmail.com>
-Subject: Re: [PATCH] rust: security: replace `core::mem::zeroed` with `pin_init::zeroed`
-To: Nils Lehnen <nils.lehnen@proton.me>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Benno Lossin <lossin@kernel.org>, 
-	Gary Guo <gary@garyguo.net>, Boqun Feng <boqun@kernel.org>, 
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, 
-	Alexandre Courbot <acourbot@nvidia.com>, Onur Ozkan <work@onurozkan.dev>, 
-	Atharv Dubey <atharvd440@gmail.com>, Ke Sun <sunke@kylinos.cn>, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/13 net-next] net: ipv4: introduce CONFIG_IPV4 to
+ decouple the IPv4 stack
+To: Nicolai Buchwitz <nb@tipi-net.de>
+Cc: netdev@vger.kernel.org, horms@kernel.org, kuba@kernel.org,
+ pabeni@redhat.com, edumazet@google.com, davem@davemloft.net,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Elad Nachman <enachman@marvell.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ Mark Bloch <mbloch@nvidia.com>, Ido Schimmel <idosch@nvidia.com>,
+ Petr Machata <petrm@nvidia.com>, Edward Cree <ecree.xilinx@gmail.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Arend van Spriel <arend.vanspriel@broadcom.com>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Saurav Kashyap <skashyap@marvell.com>,
+ Javed Hasan <jhasan@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <mkp@kernel.org>, Nilesh Javali <njavali@marvell.com>,
+ Manish Rangankar <mrangankar@marvell.com>, Varun Prakash
+ <varun@chelsio.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Chuck Lever <cel@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ Marek Lindner <marek.lindner@mailbox.org>,
+ Simon Wunderlich <sw@simonwunderlich.de>,
+ Antonio Quartulli <antonio@mandelbit.com>,
+ Sven Eckelmann <sven@narfation.org>,
+ Nikolay Aleksandrov <razor@blackwall.org>,
+ Pablo Neira Ayuso <pablo@netfilter.org>, Florian Westphal <fw@strlen.de>,
+ Phil Sutter <phil@nwl.cc>, Johannes Berg <johannes@sipsolutions.net>,
+ Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, Julian Anastasov <ja@ssi.bg>,
+ Aaron Conole <aconole@redhat.com>, Eelco Chaudron <echaudro@redhat.com>,
+ Ilya Maximets <i.maximets@ovn.org>, Allison Henderson <achender@kernel.org>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Xin Long <lucien.xin@gmail.com>, "D. Wythe" <alibuda@linux.alibaba.com>,
+ Dust Li <dust.li@linux.alibaba.com>, Sidraya Jayagond
+ <sidraya@linux.ibm.com>, Mahanta Jambigi <mjambigi@linux.ibm.com>,
+ Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+ Jon Maloy <jmaloy@redhat.com>, Tung Quang Nguyen
+ <tung.quang.nguyen@est.tech>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Vikas Gupta <vikas.gupta@broadcom.com>,
+ Bhargava Marreddy <bhargava.marreddy@broadcom.com>,
+ Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>,
+ =?UTF-8?Q?Markus_Bl=C3=B6chl?= <markus@blochl.de>,
+ Arnd Bergmann <arnd@arndb.de>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Qingfang Deng <qingfang.deng@linux.dev>, Julian Braha
+ <julianbraha@gmail.com>, Ethan Nelson-Moore <enelsonmoore@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Willem de Bruijn <willemb@google.com>, Alyssa Ross <hi@alyssa.is>,
+ Joel Granados <joel.granados@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, oss-drivers@corigine.com,
+ linux-net-drivers@amd.com, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+ target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+ b.a.t.m.a.n@lists.open-mesh.org, bridge@lists.linux.dev,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ mptcp@lists.linux.dev, lvs-devel@vger.kernel.org, dev@openvswitch.org,
+ rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
+ linux-s390@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+ linux-security-module@vger.kernel.org
+References: <20260910144914.8025-1-fmancera@suse.de>
+ <20260910144914.8025-2-fmancera@suse.de>
+ <aeb37452e976f5d44540ac3a0999d07b@tipi-net.de>
+Content-Language: en-US
+From: Fernando Fernandez Mancera <fmancera@suse.de>
+In-Reply-To: <aeb37452e976f5d44540ac3a0999d07b@tipi-net.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 21A11219A0
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	FORGED_RECIPIENTS(2.00)[m:horms@kernel.org,m:kuba@kernel.org,m:edumazet@google.com,m:davem@davemloft.net,m:leon@kernel.org,m:andrew+netdev@lunn.ch,m:anthony.l.nguyen@intel.com,m:przemyslaw.kitszel@intel.com,m:enachman@marvell.com,m:saeedm@nvidia.com,m:tariqt@nvidia.com,m:mbloch@nvidia.com,m:idosch@nvidia.com,m:petrm@nvidia.com,m:ecree.xilinx@gmail.com,m:maxime.chevallier@bootlin.com,m:mcoquelin.stm32@gmail.com,m:alexandre.torgue@foss.st.com,m:arend.vanspriel@broadcom.com,m:miriam.rachel.korenblit@intel.com,m:kbusch@kernel.org,m:axboe@kernel.dk,m:hch@lst.de,m:sagi@grimberg.me,m:kch@nvidia.com,m:skashyap@marvell.com,m:jhasan@marvell.com,m:GR-QLogic-Storage-Upstream@marvell.com,m:James.Bottomley@hansenpartnership.com,m:mkp@kernel.org,m:njavali@marvell.com,m:mrangankar@marvell.com,m:varun@chelsio.com,m:brauner@kernel.org,m:marc.dionne@auristor.com,m:trondmy@kernel.org,m:anna@kernel.org,m:cel@kernel.org,m:jlayton@kernel.org,m:neil@brown.name,m:Dai.Ngo@oracle.com,m:marek.lindner@mailbox.o
+ rg,m:antonio@mandelbit.com,m:sven@narfation.org,m:razor@blackwall.org,m:pablo@netfilter.org,m:phil@nwl.cc,m:matttbe@kernel.org,m:martineau@kernel.org,m:geliang@kernel.org,m:i.maximets@ovn.org,m:achender@kernel.org,m:jhs@mojatatu.com,m:marcelo.leitner@gmail.com,m:lucien.xin@gmail.com,m:alibuda@linux.alibaba.com,m:dust.li@linux.alibaba.com,m:sidraya@linux.ibm.com,m:mjambigi@linux.ibm.com,m:tonylu@linux.alibaba.com,m:guwen@linux.alibaba.com,m:tung.quang.nguyen@est.tech,m:herbert@gondor.apana.org.au,m:paul@paul-moore.com,m:jmorris@namei.org,m:serge@hallyn.com,m:vikas.gupta@broadcom.com,m:bhargava.marreddy@broadcom.com,m:rajashekar.hudumula@broadcom.com,m:markus@blochl.de,m:arnd@arndb.de,m:hkallweit1@gmail.com,m:florian.fainelli@broadcom.com,m:krzk@kernel.org,m:qingfang.deng@linux.dev,m:julianbraha@gmail.com,m:enelsonmoore@gmail.com,m:gregkh@linuxfoundation.org,m:ebiggers@kernel.org,m:ardb@kernel.org,s:oleg@redhat.com,s:linux-stm32@st-md-mailman.stormreply.com,s:linux-fsdevel@vger.kernel
+ .org,s:linux-kernel@vger.kernel.org,s:linux-nfs@vger.kernel.org,s:linux-rdma@vger.kernel.org,s:linux-s390@vger.kernel.org,s:linux-scsi@vger.kernel.org,s:linux-sctp@vger.kernel.org,s:linux-security-module@vger.kernel.org,s:linux-wireless@vger.kernel.org,s:lvs-devel@vger.kernel.org,s:netfilter-devel@vger.kernel.org,s:target-devel@vger.kernel.org];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,redhat.com,google.com,davemloft.net,ziepe.ca,lunn.ch,intel.com,marvell.com,nvidia.com,gmail.com,bootlin.com,foss.st.com,broadcom.com,kernel.dk,lst.de,grimberg.me,hansenpartnership.com,chelsio.com,zeniv.linux.org.uk,suse.cz,auristor.com,brown.name,oracle.com,talpey.com,mailbox.org,simonwunderlich.de,mandelbit.com,narfation.org,blackwall.org,netfilter.org,strlen.de,nwl.cc,sipsolutions.net,ssi.bg,ovn.org,mojatatu.com,resnulli.us,linux.alibaba.com,linux.ibm.com,est.tech,secunet.com,gondor.apana.org.au,schaufler-ca.com,paul-moore.com,namei.org,hallyn.com,blochl.de,arndb.de,linux.dev,linuxfoundation.org,alyssa.is,lists.osuosl.org,corigine.com,amd.com,st-md-mailman.stormreply.com,lists.infradead.org,lists.linux.dev,lists.open-mesh.org,openvswitch.org,oss.oracle.com,lists.sourceforge.net];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLdey6otz8cz7qhffota9ydd97)];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCPT_COUNT_GT_50(0.00)[133];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[netdev];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -1.01
 
-On Fri, Aug 28, 2026 at 4:44=E2=80=AFAM Nils Lehnen <nils.lehnen@proton.me>=
- wrote:
->
-> From: Benno Lossin <lossin@kernel.org>
->
-> All types in `bindings` implement `Zeroable` if they can, so use
-> `pin_init::zeroed` instead of relying on `unsafe` code.
->
-> If this ends up not compiling in the future, something in bindgen or on
-> the C side changed and is most likely incorrect.
->
-> Link: https://lore.kernel.org/r/20250814093046.2071971-8-lossin@kernel.or=
-g
-> Link: https://github.com/Rust-for-Linux/linux/issues/1189
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> Signed-off-by: Nils Lehnen <nils.lehnen@proton.me>
+On 9/10/26 5:11 PM, Nicolai Buchwitz wrote:
+> Hi Fernando,
+> 
+> Thanks for the patch - after nearly 30 years IPv6 should be mature 
+> enough :)
+> 
+> On 10.9.2026 16:48, Fernando Fernandez Mancera wrote:
+>> Historically, the IPv4 protocol has been linked to the core INET
+>> subsystem. Because shared infrastructure like the TCP/UDP engine,
+>> routing or INET hashtables live inside net/ipv4/, it has been impossible
+>> to compile a kernel with only IPv6 support.
+>>
+>> This patch introduces the CONFIG_IPV4 Kconfig symbol, which is set to
+>> 'def_bool y' for now. This does not allow to completely disable the
+>> IPv4 stack yet but it lays the necessary build-system work for that
+>> goal.
+>>
+>> In addition, multiple subsystems Kconfig symbols across networking
+>> features like tunnels, drivers and filesystems have been adjusted to
+>> depend on IPv4. Keep on mind that follow-up work is required to convert
+>> the Kconfig symbol to bool and remove the dependency on IPv4 where it
+>> makes sense.
+>>
+>> Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
+>> ---
+> 
+>> [...]
+> 
+>> diff --git a/net/packet/Kconfig b/net/packet/Kconfig
+>> index 2997382d597c..00fda9e08cb0 100644
+>> --- a/net/packet/Kconfig
+>> +++ b/net/packet/Kconfig
+>> @@ -5,6 +5,7 @@
+>>
+>>  config PACKET
+>>      tristate "Packet socket"
+>> +    depends on IPV4
+> 
+>    depends on IPV4 || !INET
+> 
+> Otherwise this would break existing configs with INET=n. The same applies
+> to other affected options that currently permit INET=n.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+That is a good point. I will review the other configs too.
+
+Thanks!
+Fernando.
+
+> 
+>> [...]
+> 
+> Thanks,
+> Nicolai
+> 
+
