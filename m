@@ -1,109 +1,125 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3A4489FBF
-	for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 12:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789044157; cv=none; b=fN7YZxwYEA03a17qKQsiPmw8/IFfMW7PLWDFSyGKn3cWKXwLkRqg56Iw4BdNsPEVVAh/3b8ZGOwKH9VaNTXUXNBK1nRmQ2jXYOPFgn4JEPArRs/e4kVi1VCo6dbCrHANksfvtsLWsEnAMvAU+XYrdROaaYAr3OjjHqY97OAV5gY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789044157; c=relaxed/simple;
-	bh=YA+a6CCA1zWdQPcieNEuLQ0mIwRn0Ck7WsDOY4ql94Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:content-type; b=CRvy9hh3Jq+3EL1C7e7wbua2rdWCjd2IG4uLmMyS85HTJrY47YEMlr+xD/NBP7zKnB+jOF4hHVBXKsaqu/OIidxZptG+czH2pQaDPwYoCydZdLvJKsDNk+ls+kXY9MTgtM0r+QH2hOh6k8GGtWEDcDdyWlPuE3ny8tsooLw4Kmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cpXyJpfL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45232492E30
+	for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 14:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789050049; cv=pass; b=EeZUkYe2l7THoVAESR1QeH80LCsxeshylyNqRLDGPYlo/Bn9wue3S5S/H7KbqcQrnQCMfF7dhF1S94kooVTkQ7SDyhwuF1Sk34FqaLYGhEp1LODpEdcVmzKcfjbm3zL+wWAfkPKG/31TJhF29fpMSw5hqU17m4mgRcVirw9XXz4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789050049; c=relaxed/simple;
+	bh=kHC7Ae2Tl3n/mBGFrKAMMqnaWcYKFzJ/lmrhtoGI6qk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K4eBcHZno9TNTxYoHVLFCLIq9sB7dwwf4AKGnaSQexxj+rU0BuR3Nkb5JCQvAW/1un4er5t6KtUGxXysCccc6D3aWzYmPTKpeNetNN8YYWH9xwDt4aKxyCzyY9IoSIZzKNdVrWtA92AB5MEqaOEc0TwQHT4qtjwYX2CjrA+t7Zc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OKWZu9ym; arc=pass smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cpXyJpfL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789044154;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FeWcXK9/x+ZPPaC++IgCQ9jS/VWtgj79RgI0CVq94cU=;
-	b=cpXyJpfLOCIdWtuPqoECaFJcNTK5NLsMwRBSFqAMLe7B7aczzMcOGWeFAcLwHre1pYARmI
-	CvhJ4mrr+yLs5kWogI9Dbk9bZ0q80Um+ppZIPZo6oJxFZtzTxtzm2q1SLpACDK6xOYqaKW
-	j+3bLLHYqQNCaye4KaFDkH7SZU/2reQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-510-_fDLdsfrOGmPiu1KhPeDgg-1; Thu,
- 10 Sep 2026 08:42:28 -0400
-X-MC-Unique: _fDLdsfrOGmPiu1KhPeDgg-1
-X-Mimecast-MFC-AGG-ID: _fDLdsfrOGmPiu1KhPeDgg_1789044146
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA9721800640;
-	Thu, 10 Sep 2026 12:42:25 +0000 (UTC)
-Received: from thuth-p1g4.redhat.corp (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B2AB730001A2;
-	Thu, 10 Sep 2026 12:42:19 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 09/13] security: keys: trusted: always clear the hmac_sha1_ctx before returning
-Date: Thu, 10 Sep 2026 14:41:28 +0200
-Message-ID: <20260910124138.417439-10-thuth@redhat.com>
-In-Reply-To: <20260910124138.417439-1-thuth@redhat.com>
-References: <20260910124138.417439-1-thuth@redhat.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OKWZu9ym"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-383b4a3755fso6629092a91.3
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 07:20:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789050047; cv=none;
+        d=google.com; s=arc-20260327;
+        b=fZmVPpTZtJYuSMtys6WJvVqkMHdllwL0PgWoyGvU7LQ8PrME9bdva7CRiVbX8Pqgnm
+         EWsqPLLuxeqCZWdGcp9EDY7uOYGBt2MSvPh6TDM7us5ygEa7UIOfjoCxT2zTx169KBKV
+         Gvn0hYwwItloc1dYVooKeEXXNpoc+J7xRnCnPdG5Mu9dJOkUFdhk0k7GuQYUOYajyTf0
+         wzNgeNIkHDgTApmEd0GYS9LJm+y/pG/xlMRclVMHc6ZzwzH0iUdXRdTntwQWKscDbHHH
+         UN0kO+kUGiSvuJGBcFPlHhyzZjNjQWzc73zbOCd21d3bKlSPKuGjo5JPO1UuwBEUEMH4
+         2yjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=kHC7Ae2Tl3n/mBGFrKAMMqnaWcYKFzJ/lmrhtoGI6qk=;
+        fh=0G8z3T0eBfswsqwzDCENb1Xh74lTDGbgncBChuzfrCA=;
+        b=fxcyWhiQ8OuYFhgoa0bZ/Xd2CIQe6s5FEJmaWXU8WzOmlLmX/npmcP8+kP5CRGtZbb
+         vj/G8cbwDbmYAl5WMp91wI+YmBcMnn43SxlMwMMF/3JQW87Vw3j9XNWiHFWLtMxknBq9
+         4OiuH5Nr/J28wy7Hb6bMEe//SswrRoUK5rGcnv+3ZePDCYqoy+yd0WnqEGTeUyFZ52nu
+         QQvPlV67uvVyDJ1LpbQqZtErL0/HeNm2V/0g/khSb2RW/UbSeCOEMwnPzHziQqGLcwF5
+         vztJx9UL0PrBdYv1mTh+CoKtz75NpVuxL15jHUNhU20yb4Y2rzMc0gvGU7q5X4Fas5wb
+         6OqQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1789050047; x=1789654847; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=kHC7Ae2Tl3n/mBGFrKAMMqnaWcYKFzJ/lmrhtoGI6qk=;
+        b=OKWZu9ymn5Qz7S+ShDmSTTthKUZeP3gaCnqLBGMgefhkXxhD86vbg55xU5i7guRuxH
+         tuDOseuQNTmzNudvxG3q5VkH1w2N0jYOGYgb3C7m2bcAmX96MarVNxVJQyjgJ/n5Wg6X
+         0ZXRHJSjkOVBvbAtSamErddfmjFNwTAqakZtpabCWTOmZQGPLn95ElLpQWmAZhYadGEV
+         4dpNNSQcP//3YP+SWt6AdzRg/HEM87YA/YcPSnAu9lmq/6n97OlSNFdaigmILrfcPKZe
+         2spGQGnYs7umBRplsH2Q0tXWQi9R6ACdBiqN3aERgdw4OnWeR2mm3hh62At83dx/WOhl
+         KbwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789050047; x=1789654847;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=kHC7Ae2Tl3n/mBGFrKAMMqnaWcYKFzJ/lmrhtoGI6qk=;
+        b=pnhZr2TQijnmGP+3xYE5N5WOdllyDGnLkuZv9Y9u4NvqcmKjDxaEaIvPI9YLM1Zfaw
+         KGlp1Sy/t9WSQOT3jL5bMZ63J1kt0wM4fgiwsSzHKOC8yvcSrml4uM2nyZtS/SqZcVbf
+         ExcYiAuk5Q3NwsWTlN1r6g2Jc45ZpVB2exjif0IJQ0zgDBL9GpnGpRADTVsOTwBAyl1V
+         lfkiFJZ3Yf+eLG0wH+a7INNNebIaKnaZH+MvwcLKloEqRV/WaOM5L5Rk2S/Uv3r7bN1p
+         Jm1VRp9liSZdhwPQS+eDmNzYBFti4LGkIa2VLjmbAwNVEDao1qPvevuFWHygFqqI4JrA
+         eLHQ==
+X-Forwarded-Encrypted: i=1; AKwUvBx07MwXfgknVhx65H+VF1C/9S/yLLOwhSJ3sjePgYtshYSNd+B6sR+mtbgff9d7pDCsLZMa6t/SpRshJKWLwaU6LQcoYoU=@vger.kernel.org
+X-Gm-Message-State: AFuF++miaNd0pUEg03Tm+fOe5mqPJGBZjW430J2qdgUzLnjDhJwuY02K
+	OwGozRWdF2lGZ5QvwBsrUZ+ZXpIDu8KoijbYS1gPY59BLvawLGH3A+Uc+GbRW48gPr6HnlYMPdp
+	UMl+p+n+43FYlRw3SqJ70G6cxdbc4TZhazfhE8SAq
+X-Gm-Gg: AYBFou2VO17gUQPuqqwnfKKHLHZ/+JsgkqrFItBiWv3altRlwfYHqDOrB1FYOBYdI6p
+	noHMkfkrkKBl5jCk/3Z2b/jBDvAcG/8JOcyvkYaStRurGEWCrg9naQpajo26w2zvT39YS/7ZOL1
+	S2ZL2mybx44wNqCczwA+2OdrZ21zwLxdKFUjn7u2deqXCkBJN7w21+AaNS0JFltKv5gZMickDjc
+	9IbtBe+sI+jtjutWm/s28kGBJRSb1BvweQlWbOuyEgZgFK6mcczdLAhw62JrvlYx48bSeZxL+o1
+	tobZA5g/TVVRqYOWS+rQX4fXuVKFqGnr3fO1B0gPAKrr/6UBWfIDsgn3cAIQpDdE1afs4DXm3QG
+	SBa0rwPNl9NY=
+X-Received: by 2002:a17:90a:dfd0:b0:396:61f1:da5c with SMTP id
+ 98e67ed59e1d1-39b260de667mr62254361a91.4.1789050047048; Thu, 10 Sep 2026
+ 07:20:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-MFC-PROC-ID: lUcrdok8xmJ1NTQJSGjanY8IOMQsUkXNri-dCSKVNnM_1789044146
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+References: <20260828024335.946-1-nils.lehnen@proton.me> <CANiq72mn2vvCL2VP8yJxmzXM4n+jfV4R7arUcj4UXSi04y5sfQ@mail.gmail.com>
+ <CAHC9VhSuuNmdRQ5puaxWh5ez3Dz9LhtAmZU40SUGgEAL8Sn9-w@mail.gmail.com> <CANiq72m0yYRj75RQBRprcHTrqfd7=m_OnZAAQfZdO9T3dfUQdw@mail.gmail.com>
+In-Reply-To: <CANiq72m0yYRj75RQBRprcHTrqfd7=m_OnZAAQfZdO9T3dfUQdw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 10 Sep 2026 10:20:34 -0400
+X-Gm-Features: AcwNN1XQpJke8Xbxx6RwTk63Zpj7bDWuOMMs7moVd1l9uyfsDlmCNzMgiT1n-QI
+Message-ID: <CAHC9VhRjjJpv95AgF6cnOdh4g3gC4zViRoiHVehMLx-Fv9b1vw@mail.gmail.com>
+Subject: Re: [PATCH] rust: security: replace `core::mem::zeroed` with `pin_init::zeroed`
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Nils Lehnen <nils.lehnen@proton.me>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Benno Lossin <lossin@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>, Boqun Feng <boqun@kernel.org>, 
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Onur Ozkan <work@onurozkan.dev>, 
+	Atharv Dubey <atharvd440@gmail.com>, Ke Sun <sunke@kylinos.cn>, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Clear the hmac_sha1_ctx structure via __cleanup(hmac_sha1_zeroize_ctx)
-to make sure that the function does not leak sensitive data on the stack
-when returning without calling hmac_sha1_final().
+On Wed, Sep 9, 2026 at 6:43=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Wed, Sep 9, 2026 at 11:51=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > Looks fine to me, I'm assuming the Rust folks would prefer to take this=
+ patch?
+>
+> Up to you! If usually patches go through your tree, then that is fine;
+> otherwise, I am happy to take it of course (ideally with an Acked-by).
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- security/keys/trusted-keys/trusted_tpm1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm not sure we have a "usually" yet with the Rust LSM glue code, but
+I'm happy to take this patch :)
 
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index bf0bf7f369705..e5a904b5c1946 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -101,7 +101,7 @@ static inline void dump_tpm_buf(unsigned char *buf)
- static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
- 		       unsigned int keylen, ...)
- {
--	struct hmac_sha1_ctx hmac_ctx;
-+	struct hmac_sha1_ctx hmac_ctx __cleanup(hmac_sha1_zeroize_ctx);
- 	va_list argp;
- 	unsigned int dlen;
- 	unsigned char *data;
--- 
-2.55.0
+Since you've already reviewed it, can I add your Reviewed-by tag?
 
+--=20
+paul-moore.com
