@@ -1,124 +1,155 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787531E0E14;
-	Thu, 10 Sep 2026 00:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C66F196C7C;
+	Thu, 10 Sep 2026 01:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788999168; cv=none; b=Ysi7Lg5IEiJzCY5mSyrfEqm88p6eLJI6cnZF1KKQ4boB2fxghSeQzgZQAdcMqlMiT0kkGLIN+kz59xlkKze0RCJMVQ8orLsbyYsUOd/p3otGbVNHNmbGPTpwLLy6I0AA0rX4CIOBR5hIQxjzrb8kpVGz3Ip2Vel+LoHwar+kUe8=
+	t=1789003412; cv=none; b=R9S8lfZXEJ3h1b3I71GUCq2sPfuPHtBUQDDvnS+g1Eu/+i2YUfv0mfiJYMGbpexLAhKANIR5ljH6ygsZrZBg5zjAd2Mb8FwVYVmKMZjUGHi7qhev/2fyNBwzMKBkq81oPZYcCkNBtgINOMUJJp7InUEWk9ipH7nQfSw7zv2Jrro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788999168; c=relaxed/simple;
-	bh=J1jJnaeyf7LLhRqA+aeobhaA5FN1rbTKGY9M/HtxP4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uEtqAjiwyCwOLzXZK2+0d9IxSXrXZxOKjKxsIj2xlzbJCHX+KxpujKe1pD262g0MeJrLK4Gi4GWoAOA5pmjcP6QIdpFcS4QKZYLWsO0f8UxWqI95bAC2twptcu52uih1J9+jttJzS2ID7JGjY1CkO/AKiD0hrXdjxJ3rcIevbxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nHG6J6Bf; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1789003412; c=relaxed/simple;
+	bh=cd4/itkR2z/uYptRKT8sgjBiPd3C482KD0TEqaf3ySg=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=Eh2FKL5uL0mNtXZOsncQC3ZIKVdmiRu6hDVH9E7Io/pzUSVYWCIFj+yABuk1LTp4vuroVFMSmgBNs5zHXZXUQijxxA1w3V4kKtUYWblDRLEh4t/c/L1beTWqFaKl5y30mLeuR5BiBjsg+h7eYP8EqJWX9nI/Ff9NtOvHirKCSXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aIt1Cf8h; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nHG6J6Bf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788999167; x=1820535167;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J1jJnaeyf7LLhRqA+aeobhaA5FN1rbTKGY9M/HtxP4k=;
-  b=nHG6J6BfXPcIowaA912QKVzXyc8TXWD5eQ586HWUjnHphsZYh8PCWqw0
-   I97TkvfCifUE6vWq/BnxLiG4lHO55H0id9pqgOlkJ5VpP+4E2s4J52M69
-   tmeyP+lTD0MHaipmzpGSYJp8BAoND6aGjHrosPNldOKGNeiHoaAXXqgbp
-   glCoNTFnzStw0JLgPr/2O7lFiNPxdBvldrOzMIg8VuEWzb8uk6TRhyuhh
-   BI2iZf+/7T4VspPSwEX6G/NxYmQk9IXi2npP2/57aioCVCZOD1Y7hqmrq
-   1MNBIwBfmY+qi9XNlLPulikTFDiugSGB70uQb4lLZombOsbloUUqxiHqe
-   g==;
-X-CSE-ConnectionGUID: DtJjLdW/QtieSh1jFtP1sg==
-X-CSE-MsgGUID: 6e2B8osBSWiB6VLXITkSKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="88384806"
-X-IronPort-AV: E=Sophos;i="6.25,271,1779174000"; 
-   d="scan'208";a="88384806"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Sep 2026 17:12:46 -0700
-X-CSE-ConnectionGUID: 57YLa0rXQiKYLTcF3IhQXQ==
-X-CSE-MsgGUID: Mhufsv5iQ4+dLQjYqL4qAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,271,1779174000"; 
-   d="scan'208";a="276707916"
-Received: from lkp-server01.sh.intel.com (HELO a3e91e2cf319) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Sep 2026 17:12:42 -0700
-Received: from kbuild by a3e91e2cf319 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x4SPA-0000000018G-0Anx;
-	Thu, 10 Sep 2026 00:12:40 +0000
-Date: Thu, 10 Sep 2026 08:11:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Breno Rodrigues Alves <breno3011alves@gmail.com>,
-	torvalds@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, arnd@arndb.de,
-	linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-fbdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Breno Rodrigues Alves <breno3011alves@gmail.com>
-Subject: Re: [PATCH v5] Kconfig: fix typos in core makefiles and purge
- defective DVB debug (v5)
-Message-ID: <202609100824.ndDVSLWu-lkp@intel.com>
-References: <20260905003005.118245-1-breno3011alves@gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aIt1Cf8h"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 689MVmbb1075777;
+	Thu, 10 Sep 2026 01:23:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=bSdP0m
+	KK6GEv6pHkHPvouHqxEGB7Xe7KCWL0InguvIQ=; b=aIt1Cf8hyN+tC5MshNUn7O
+	5Cip4979ZDtWloMY5S16HL4lvu4r0EVfbEfegH6ZEw8mJSAWBoIVEz+vcfGbyai1
+	c5do8TfgzbRcv1rJpoDSXTs+97SozYkSyYsNZuasvCeLkSvWJWETxF2fG6RA6hRm
+	EwuyTYk6T2ucLMg6mJEuFKs1fnMuZrpLME5IZwazXsB3qbAk0x3Ydx6F3u8qo0k9
+	iswElTWzn50ixBLA0rscFB9cEp5alcg1GjLHdSy8lAKUeUdH24i0bps8CNdI4Dkv
+	Nj8KrRE6SU4MW9wMyg6oJtw3v16FtwS7yJXLEkBE+LRq5Fhcgm6l78V//8KeA4CA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gkd8phkfr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Sep 2026 01:23:09 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 68A1BCiF010380;
+	Thu, 10 Sep 2026 01:23:08 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4gkcr31qgx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Sep 2026 01:23:08 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68A1N7Z818023110
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Sep 2026 01:23:07 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 70ED95805B;
+	Thu, 10 Sep 2026 01:23:07 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0A30D58059;
+	Thu, 10 Sep 2026 01:23:06 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.156.196])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 10 Sep 2026 01:23:05 +0000 (GMT)
+Message-ID: <64cd28d394d692c9a452d7262190fff6f4b6c328.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 0/3] integrity: Return error codes in audit messages
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <weadqcqqw3e4snwysfnx2fszrxctppkqqgdjrkfyn7uh5poczp@dpnp6tl3mk6u>
+References: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
+	 <weadqcqqw3e4snwysfnx2fszrxctppkqqgdjrkfyn7uh5poczp@dpnp6tl3mk6u>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 09 Sep 2026 21:23:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260905003005.118245-1-breno3011alves@gmail.com>
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=eM2GH3p1 c=1 sm=1 tr=0 ts=6aa2067d cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=VwQbUJbxAAAA:8
+ a=EG7W4yiQAAAA:8 a=URXeEHRefUtLXCjPl0oA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: U8LCBmuhUfoPQgk4O1q5qjsSWqHL8TfO
+X-Proofpoint-GUID: Sa64SLqVefjn_jmohwpB-G4y8RvPQ0Kx
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTEwMDAwOSBTYWx0ZWRfX9rmQIkhA3bbB
+ VRQ+ImBp96mUPxlJSZv4lMfJaPS46rjt+h4yRYL8VUx47hzb2bKTEDysHgbxxwJJMnba6AUxIYW
+ /EjfCB1XbIQo7088JRIQ19Xm4VdazIY=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTEwMDAwOSBTYWx0ZWRfX/j5s6e4zoxLk
+ x+0YDzEINdLX91gL1064SPWl2rFhQ5UR2+S3O0ZMrbXoR5T5DdhPIYskI0YAy+sCYLLamOxpMJD
+ ECPIduGkoJnpT0Sxbmfg+88/9YTzC1DeBMif5PY0+Te0PuIreaiKEiK2H5uEMvitbG+NZXHXHf9
+ Fdis3b+VY4712RhUpLhrkOJoPbsWiD+o11NYOyKi7aFDTFJmSGC9h/F/2qh1o2d8tKFoNnuo2jt
+ ytA1BPXYkft1JqNjVwuZD1iwlv2hllsS9y1baKMj919Q5AJKgwXqKmUE/kZwTS63PMaH6OJqNcV
+ TyRBPy6LpI4lCzrpADvT8JrFKfiHHJRmazm/nDeWBoUsXk0MYcN9CUQ16TAAurR6zzgHb3Ui1IP
+ OYU5CC17+YYJ/VpPEKD/47tl6AMW5dssIti7a+BwaTWb9b1i9qQb/14sf9ChEgsOomQ8a4/cfiU
+ FKuLsEeJuGoN6w3Xsaw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-09_02,2026-09-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 malwarescore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609100009
 
-Hi Breno,
+On Wed, 2026-09-09 at 12:53 -0500, Frederick Lawler wrote:
+> Hi Mimi and Roberto,
+>=20
+> On Mon, Jul 27, 2026 at 05:21:46PM -0500, Frederick Lawler wrote:
+> > Commit 2f845882ecd2 ("integrity: Add errno field in audit message")
+> > introduced an audit log function that can take an error code. It is
+> > wrapped by integrity_audit_msg() that implicitly sets the error code
+> > argument to zero. The problem is that there are uses of integrity_audit=
+_msg()
+> > such as ima_collect_measurement() that hide the failure cause for
+> > the message.
+> >=20
+> > This series aims to convert integrity_audit_msg() call sites to
+> > integrity_audit_message(), and then expose error codes based on the
+> > following criteria:
+> >=20
+> >     1. The log depends on a result from earlier callee, and/or
+> >     2. The caller function itself returns with that result
+> >=20
+> > ima_release_policy() is the only caller I thought made sense to keep as
+> > is. The message doesn't correlate with a return code, nor does it
+> > depend on a result from an earlier callee in the function.
+> >=20
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> > ---
+> > This is probably a bit more than what was asked from v1, but as I was
+> > making changes and looking at other call sites, I didn't think it made
+> > sense to keep integrity_audit_msg() around anymore.
+> >=20
+> > Changes in v2:
+> > - Changes from v1 are now reflected in patch 3.
+> > - Replace all instances of integrity_audit_msg().
+> > - Convert to patch series.
+> > - Link to v1: https://lore.kernel.org/r/20260716-report-hash-error-v1-1=
+-ac19281112e4@cloudflare.com
+> >=20
+>=20
+> I think this series may have fallen through the cracks between the merge
+> windows. Shall I respin + rebase?
 
-kernel test robot noticed the following build errors:
+Thanks for the reminder.  Let me take a look at it again, before you post
+another version.  It might take a few days until I get to it.
 
-[auto build test ERROR on lee-leds/for-leds-next]
-[also build test ERROR on broonie-regulator/for-next linus/master v7.3-rc2 next-20260909]
-[cannot apply to linux/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Rodrigues-Alves/Kconfig-fix-typos-in-core-makefiles-and-purge-defective-DVB-debug-v5/20260904-213005
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20260905003005.118245-1-breno3011alves%40gmail.com
-patch subject: [PATCH v5] Kconfig: fix typos in core makefiles and purge defective DVB debug (v5)
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20260910/202609100824.ndDVSLWu-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 16.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260910/202609100824.ndDVSLWu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202609100824.ndDVSLWu-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> drivers/media/dvb-core/dvb_net.c:76:35: error: 'TS_SZ' undeclared here (not in a function)
-      76 | static unsigned char ule_hist[100*TS_SZ] = { 0 };
-         |                                   ^~~~~
->> drivers/media/dvb-core/dvb_net.c:76:22: warning: 'ule_hist' defined but not used [-Wunused-variable]
-      76 | static unsigned char ule_hist[100*TS_SZ] = { 0 };
-         |                      ^~~~~~~~
-
-
-vim +/TS_SZ +76 drivers/media/dvb-core/dvb_net.c
-
-^1da177e4c3f41 drivers/media/dvb/dvb-core/dvb_net.c Linus Torvalds        2005-04-16  70  
-e9f8b7ccd92d83 drivers/media/dvb-core/dvb_net.c     Breno Rodrigues Alves 2026-09-04  71  #ifdef CONFIG_DVB_ULE_DEBUG
-b93a25e120d5a4 drivers/media/dvb-core/dvb_net.c     Mauro Carvalho Chehab 2017-12-11  72  /*
-ba711e1cee7553 drivers/media/dvb-core/dvb_net.c     Mauro Carvalho Chehab 2017-12-11  73   * The code inside DVB_ULE_DEBUG keeps a history of the
-b93a25e120d5a4 drivers/media/dvb-core/dvb_net.c     Mauro Carvalho Chehab 2017-12-11  74   * last 100 TS cells processed.
-b93a25e120d5a4 drivers/media/dvb-core/dvb_net.c     Mauro Carvalho Chehab 2017-12-11  75   */
-b93a25e120d5a4 drivers/media/dvb-core/dvb_net.c     Mauro Carvalho Chehab 2017-12-11 @76  static unsigned char ule_hist[100*TS_SZ] = { 0 };
-b93a25e120d5a4 drivers/media/dvb-core/dvb_net.c     Mauro Carvalho Chehab 2017-12-11  77  static unsigned char *ule_where = ule_hist, ule_dump;
-b93a25e120d5a4 drivers/media/dvb-core/dvb_net.c     Mauro Carvalho Chehab 2017-12-11  78  
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mimi
