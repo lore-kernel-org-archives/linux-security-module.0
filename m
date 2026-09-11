@@ -1,307 +1,141 @@
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77526982C
-	for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 03:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215EC42E8F8
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 07:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789097730; cv=none; b=R1ftWzc8rHovbSFRjDl+zaMpqkSERHVvqAPbfs6htRkicnqbyY8RPVb+DB7gNi5CYzF+wKb2AbGQ3vBs31yOhDCfnj1fLMf3x6fA1wZRsyXxsg+DluAUtzJac5Gt0Bp8mbhWNin5NkF6BfXRTc/i+DV9ds7wXhFr63ikt1xScE8=
+	t=1789110263; cv=none; b=bpyri+BWrYZv9yl2TZ9JVlsHkMY7cV+5LQMjtRWMMOm4hERCMTzJuLRZTVzfuVc1jq+hnusKeIMwCdb/aLwFaDaFhsRYJMTBmhm+LsHUddgCCb3+Bg2vaBUJZ4bviqGuSe4jA/94Kce2NQ1mmS7F/wd/cdPKDAwNdiv6SJRA9yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789097730; c=relaxed/simple;
-	bh=Tu8pKOZMUv7MW57ziXM+jjfR2tJTZJ5OdKiSdiJIjOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ei7rnRTs+uPdVTsB3J1kErqEyEMj6gz+k+69iNLPpDPaYCfqKntfB2M1nMIjA/qh15NGksfErjFp9QgiGPX+u6Zjn1jttPA7CETk0NGINAA+66b2/BWG0fM8ILRCJoloKuOZc4v2xIJNEJO4MxQyodfZI/VdIh7S6UutCr2qY60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=F9IfZGKw; arc=none smtp.client-ip=74.125.228.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+	s=arc-20240116; t=1789110263; c=relaxed/simple;
+	bh=fm/g9CJFQX8QW6SK6YilLm0SHEquTeI6Hq80kwbEfwI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AKEjyOLLnWcOzG6fMyxyZ6JyCBru2O9aAnZRY2Bc6Gsgd9MLoPjPZigVR9Ke8G6zeGSgKUWlBQ60SI/kcfeZ2pBWH4T+avL0xzawzpZ43L0uScjv3CpCc2zND0sY+o6OwbaGgqPEPXAPtEfbPKnq/kGil9w9eRALzE/Bq4OWSXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QwJmB1pj; arc=none smtp.client-ip=209.85.215.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="F9IfZGKw"
-Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc4b29fa803so381266a12.1
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Sep 2026 20:35:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QwJmB1pj"
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-cc4b524ce78so532221a12.2
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 00:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1789097729; x=1789702529; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
+        d=google.com; s=20251104; t=1789110252; x=1789715052; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=fuXAmveLdtY834MnFfaJv8gpo2I0H6i9bOQiKf03dlw=;
-        b=F9IfZGKwqevcC0DEG9Wu/NGlrJljnuhcnuWUFrUU0nwf2jiwE2RO+cQMXutl3wiA3B
-         KxNPLpTmRwRO1tyjuZfAz59vn0ZuA1Y+CBVeKTGubKz2E1Pg0zmRH5kNn1mzeUEOJWPZ
-         YjjitP4Fi3FBGXKuPE1IA/IiN+6YtQNu+IcPup2jMlcuz+gVyaps17pRK0onIMsrKOoU
-         KfR20tCGyzt6R1+xBLYxbfJ24Gcah+cMDQE2uu3MfIYcKxFU4TJ4HiaZbCrdq5wcfNWT
-         chytS6WJv57Ys2vKSnncn+EjRh0vH1NRqDjTqKtOcIuzvz7S7vVv0BwENtI3F9q1tAbu
-         46uQ==
+        bh=q15pDPXWwHD21xyeCsqnIN6CD+fe6kHmFEwudOZDaaw=;
+        b=QwJmB1pjHFhKmGll/90ssgmI9fYS46XiFoPPGYFLPwuOvXakG0LZu/Ohy0g32jwfbs
+         RSyodyv8LJt5wjQMHeV0jPJ92ihRvwCILsxaepqrZRsmS14hmJPqMNQ/iWssAPTHCoe6
+         KGgUy2itEO8h8RBr1wfjs+YaITXUXDzX7NDq1zObsSjI1xRfsLOXflcxMQ/mlmE7NatK
+         NU7ohyGNdEVVNz041N/EOpmBzVyzlftIsIFAjepMoCqWEjOR7DskVIWW37pzbGje68Cu
+         8MBlMibpjbLlVR6EfN/6M/b9yrpwtf5Flml4MFr4D3ShlWhZhynPrF0F9k7tfQ1FpGRj
+         Qb0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789097729; x=1789702529;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
+        d=1e100.net; s=20251104; t=1789110252; x=1789715052;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=fuXAmveLdtY834MnFfaJv8gpo2I0H6i9bOQiKf03dlw=;
-        b=QDCYPShMr4aCDbFy/6ewEjLCnSC3DXRdBZaeusCPQP36ePfK+24xPYxXw5NVeyw7RL
-         yp3QxFdKk1tMQzFJNvvnBJ0qn44m6lvMH9oXWcgRsWo/KtYrp0Bi0iAomGX17IoWUNJQ
-         Sl7d+xDWvxKtBqLvSgc/f9/hnTIGWy0xaSrzLYmqgfHC+dg8nyl+9R/6Pz8RIux9I6xM
-         7WlCx/c5W94Vd4vDqtgTlsdzqmU1qOU664fAXSaW32x75M97VKdnJ/IA0BNpLOLK48PC
-         S264IZWh8QkpTlJRuHdSFt2Gu7mKehZ2BSc1gxo78KGlViskGVIbOaq8HMOWwysMdTjP
-         ntdg==
-X-Forwarded-Encrypted: i=1; AKwUvByqQrktusJQHkS5WPPdyiiiLyfMuMSCgttMgvmxO3eWKYXF066VpM0ryishvsJwtAh/CJ+m2Nm+K0xfs5IavqIfCmdKhbw=@vger.kernel.org
-X-Gm-Message-State: AFuF++nAUCt+MKJTU01vTpz7hdes4LKJPnOMZG9lrfyU3qmTXJHP1YGo
-	sBspW6YWDgRj7FCL9Mv6c9l+UAJ9nu9KQ7mD1rn7SnLaL2K9i6O7YpWyiWEbpqSz5aU=
-X-Gm-Gg: AYBFou0Iw9zhYFEVmCKZ0Uh41V4ZL0ylD/AiTydtdO5IRpMtu0qo7fW9ykDs3T21woq
-	fcFsf/GUjwU9PQgfxG4ZO3ZZX2HOqCMwyHQsW/qqaiKjP5WlS9pi2itAqg3GL+6hcrlDBkLHY1y
-	R/0ALSZfAOe3hK1syHDcyK8Cee5XbNlkqOVTdZt4gsyNka7wUvIHwy7B0kjcC6M/XBYCIzXwclm
-	k2TBXIFdX56dUZvisFmRUzZKVyMv8PD6SpodV9E3N1mJM6Ic5v9ZAgRAWEtUHPGa8tyxKHmm4B6
-	N4M6dUUElsZS1gnUP0qwTeEqjAkBnNwEV0dbGV7gpzOgzCkkoYqmFZdR9SbxAlXYHAQ9EYjCCRh
-	NwFElXdfPvngXmG7f+rn2biPxvsRbldKN6URu5i938adgla6dYe7xvjJZlIjPmTQJFv9iH7SSGE
-	ElRR9Ta4xCfL16oPyLgGpjTiayMMx1PW3Eo7u9pcnfgpKLJPBmrrA6acCIAICf7fPDGd07z4FxR
-	dhjHkOI3V4vHS/xjHe1icgAe3GEvy7W76Mv15ZURDI=
-X-Received: by 2002:a05:6a21:113:b0:3cc:8f53:26c0 with SMTP id adf61e73a8af0-3daed31ac42mr4326967637.17.1789097728599;
-        Thu, 10 Sep 2026 20:35:28 -0700 (PDT)
-Received: from [100.81.12.150] ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cc4c65a8120sm472495a12.30.2026.09.10.20.35.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Sep 2026 20:35:28 -0700 (PDT)
-Message-ID: <1891f4ac-139e-4e9c-80ff-802ec2bb2844@bytedance.com>
-Date: Fri, 11 Sep 2026 11:35:23 +0800
+        bh=q15pDPXWwHD21xyeCsqnIN6CD+fe6kHmFEwudOZDaaw=;
+        b=SKqMM9UvISKOH+a3D5LURWY2Lum0Oz0ZG1V8pQvfNPlftUzALP3QNW4FVJx3nmnUrj
+         k6PGqzYhWUtKlbKY9vtmL0dDj6sK8HsCDRqm1IBZZhCdn84Yl5r0NuKcTs8kdb+lMl6V
+         QF48RQecz/2Y7Hm8NTs/S0szXuVRBeQbJaxacEHOIZw+kM6Up9pNp0WlwCKI6Meo9Iux
+         AAYuKLRt3sRMSCYvKdVhLiymOE9Vq2roHvsvUDL7jzClJPvPMC9LLDqZaHM2IL/kbJHx
+         7FsUTWm5E2c5SIU74ltCNHZWoNIUWBPuhGnJF64McCmojZ+WPk0BiPmm/lkGzt6nGUFY
+         uC/Q==
+X-Forwarded-Encrypted: i=1; AKwUvByGKHBdM9uzXfG6jb2BBQ1U8SSnQt8X4ujSCf+oNS0Cd30g+VAqcazTHShcTsU/YF9+/9DvnoUM5R1xwhqdZauRiImq6Ow=@vger.kernel.org
+X-Gm-Message-State: AFuF++mKb4Jbf0HMhM5/ViCHLQk5DEDH1eNWFBDG84Fotfv22Vy69MsO
+	KWjiP+wrD8Mz2ioSDdFohyCtOmCJ0+ATxT48xBC0uCzIwbR0m5d73AxCnuEo3feQDXZWG+fGVR3
+	k
+X-Received: from pgbbx40.prod.google.com ([2002:a05:6a02:528:b0:cc4:aa48:7b7e])
+ (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1611:b0:3d7:eb3e:1c58
+ with SMTP id adf61e73a8af0-3daed1c1684mr5671856637.8.1789110251982; Fri, 11
+ Sep 2026 00:04:11 -0700 (PDT)
+Date: Fri, 11 Sep 2026 07:03:39 +0000
+In-Reply-To: <20260911070346.801948-1-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] fs: introduce sb_for_each_inodes().
-To: Jan Kara <jack@suse.cz>
-Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- gfs2@lists.linux.dev, linux-security-module@vger.kernel.org,
- agruenba@redhat.com, mic@digikod.net, gnoack@google.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- aleksa@amutable.com, legion@kernel.org, djwong@kernel.org,
- ebiggers@kernel.org, sandeen@redhat.com
-References: <20260909090112.790006-1-sunjunchao@bytedance.com>
- <20260909090112.790006-3-sunjunchao@bytedance.com>
- <yhfoyto6skszguj447a7ifajl2r6qiwj5japcg2zsj2ooshi4r@tgkq5fadmyto>
-From: Julian Sun <sunjunchao@bytedance.com>
-In-Reply-To: <yhfoyto6skszguj447a7ifajl2r6qiwj5japcg2zsj2ooshi4r@tgkq5fadmyto>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20260911070346.801948-1-morbo@google.com>
+X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
+Message-ID: <20260911070346.801948-2-morbo@google.com>
+Subject: [PATCH 1/7] kasan: Add .kunitconfig for KUnit tests
+From: Bill Wendling <morbo@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Bill Wendling <morbo@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, kasan-dev@googlegroups.com, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/26 1:47 AM, Jan Kara wrote:
-> On Wed 09-09-26 17:01:07, Julian Sun wrote:
->> Add sb_for_each_inodes() to share s_inodes traversal and preserve its
->> position while s_inode_list_lock is dropped.
->>
->> Track active iterators on sb->s_inodes_iters and advance their saved
->> positions before unlinking an inode. Callbacks manage inode references
->> and per-inode work, allowing both normal walks and eviction to use the
->> same interface.
->>
->> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
-> 
-> So I'm not generally opposed the to a superblock inode iterator idea but
-> what you have looks more complex than I'd expect. Also we shouldn't tie
-> that to the fix of the lockup in evict_inodes(). So first I'd just
-> concentrate on fixing that lockup, then we can have a look at the iterator
-> idea.
-> 
-> You can take some inspiration about inode iteration API from the Dave
-> Chinner's patch set [1]. That looked more like what I'd expect although
-> Christoph had some comments on it too.
-> 
-> Regarding the fix I'd just make evict_inodes() do what all other inode
-> iterators do when they decide to drop s_inode_list_lock - pin an inode in
-> the list by grabbing refcount and then resume from it.
+Add a .kunitconfig file for the KASAN test suite so that it can easily
+be run via kunit.py:
 
-Thanks for the feedback. I agree that we should fix the lockup separately,
-and I'll focus on that first.
+    ./tools/testing/kunit/kunit.py run --arch=3Dx86_64 --kunitconfig mm/kas=
+an
 
-I had seen Dave Chinner's series before. I'll revisit it and the review
-comments when working on the inode iteration API.>
-> 								Honza
-> 
-> [1] https://lore.kernel.org/all/20241002014017.3801899-1-david@fromorbit.com/
-> 
->> ---
->>   fs/inode.c                     | 93 ++++++++++++++++++++++++++++++++++
->>   fs/super.c                     |  1 +
->>   include/linux/fs.h             | 15 ++++++
->>   include/linux/fs/super_types.h |  3 +-
->>   4 files changed, 111 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/inode.c b/fs/inode.c
->> index ba7da39be4a3..b4279063a5dd 100644
->> --- a/fs/inode.c
->> +++ b/fs/inode.c
->> @@ -69,6 +69,15 @@ const struct address_space_operations empty_aops = {
->>   };
->>   EXPORT_SYMBOL(empty_aops);
->>   
->> +struct inode_iter {
->> +	struct list_head	iters_node;	/* sb->s_inodes_iters */
->> +	struct list_head	*next;		/* next node going to iterate */
->> +	unsigned int flags;
->> +	inode_iter_cb func;
->> +	void *data;
->> +	int ret;
->> +};
->> +
->>   static DEFINE_PER_CPU(unsigned long, nr_inodes);
->>   static DEFINE_PER_CPU(unsigned long, nr_unused);
->>   
->> @@ -641,12 +650,96 @@ void inode_sb_list_add(struct inode *inode)
->>   }
->>   EXPORT_SYMBOL_GPL(inode_sb_list_add);
->>   
->> +static void inode_sb_iter_start(struct super_block *sb, struct inode_iter *it,
->> +				unsigned int flags, inode_iter_cb fn, void *data)
->> +{
->> +	it->flags = flags;
->> +	it->func = fn;
->> +	it->data = data;
->> +	it->ret = 0;
->> +	spin_lock(&sb->s_inode_list_lock);
->> +	it->next = sb->s_inodes.next;
->> +	list_add(&it->iters_node, &sb->s_inodes_iters);
->> +}
->> +
->> +static void inode_sb_iter_end(struct inode_iter *it, struct super_block *sb)
->> +{
->> +	list_del(&it->iters_node);
->> +	spin_unlock(&sb->s_inode_list_lock);
->> +}
->> +
->> +static bool inode_sb_iter_next(struct inode_iter *it, struct super_block *sb)
->> +{
->> +	struct inode *inode = NULL;
->> +	int ret;
->> +
->> +	while (!inode && it->next != &sb->s_inodes) {
->> +		inode = list_entry(it->next, struct inode, i_sb_list);
->> +		if (it->flags & INODE_ITER_UNUSED) {
->> +			if (icount_read_once(inode)) {
->> +				it->next = it->next->next;
->> +				continue;
->> +			}
->> +
->> +			spin_lock(&inode->i_lock);
->> +			if (icount_read(inode)) {
->> +				spin_unlock(&inode->i_lock);
->> +				it->next = it->next->next;
->> +				continue;
->> +			}
->> +		} else {
->> +			spin_lock(&inode->i_lock);
->> +		}
->> +
->> +		if ((it->flags & INODE_ITER_NORMAL) &&
->> +		    (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE))) {
->> +			spin_unlock(&inode->i_lock);
->> +			it->next = it->next->next;
->> +			continue;
->> +		}
->> +
->> +		it->next = it->next->next;
->> +		ret = it->func(inode, it->data);
->> +		if (ret) {
->> +			it->ret = ret;
->> +			return false;
->> +		}
->> +
->> +		if (need_resched()) {
->> +			spin_unlock(&sb->s_inode_list_lock);
->> +			cond_resched();
->> +			spin_lock(&sb->s_inode_list_lock);
->> +		}
->> +	}
->> +
->> +	return it->next == &sb->s_inodes ? false : true;
->> +}
->> +
->> +int sb_for_each_inodes(struct super_block *sb, unsigned int flags,
->> +		       inode_iter_cb fn, void *data)
->> +{
->> +	struct inode_iter it;
->> +
->> +	inode_sb_iter_start(sb, &it, flags, fn, data);
->> +	while (inode_sb_iter_next(&it, sb))
->> +		;
->> +	inode_sb_iter_end(&it, sb);
->> +
->> +	return it.ret;
->> +}
->> +EXPORT_SYMBOL(sb_for_each_inodes);
->> +
->>   static inline void inode_sb_list_del(struct inode *inode)
->>   {
->>   	struct super_block *sb = inode->i_sb;
->> +	struct inode_iter *it;
->>   
->>   	if (!list_empty(&inode->i_sb_list)) {
->>   		spin_lock(&sb->s_inode_list_lock);
->> +		list_for_each_entry(it, &sb->s_inodes_iters, iters_node) {
->> +			if (it->next == &inode->i_sb_list)
->> +				it->next = inode->i_sb_list.next;
->> +		}
->>   		list_del_init(&inode->i_sb_list);
->>   		spin_unlock(&sb->s_inode_list_lock);
->>   	}
->> diff --git a/fs/super.c b/fs/super.c
->> index 05e443173038..3e069150c544 100644
->> --- a/fs/super.c
->> +++ b/fs/super.c
->> @@ -382,6 +382,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
->>   	spin_lock_init(&s->s_roots_lock);
->>   	mutex_init(&s->s_sync_lock);
->>   	INIT_LIST_HEAD(&s->s_inodes);
->> +	INIT_LIST_HEAD(&s->s_inodes_iters);
->>   	spin_lock_init(&s->s_inode_list_lock);
->>   	INIT_LIST_HEAD(&s->s_inodes_wb);
->>   	spin_lock_init(&s->s_inode_wblist_lock);
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index 09c4db5e9ae0..f3176ab10e65 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -870,6 +870,21 @@ struct inode {
->>   	void			*i_private; /* fs or device private pointer */
->>   } __randomize_layout;
->>   
->> +enum inode_iter_flags_enum {
->> +	INODE_ITER_NORMAL = (1U << 1),  /* Exclude inodes with (I_NEW | I_FREEING | I_WILL_FREE). */
->> +	INODE_ITER_UNUSED = (1U << 2),  /* Only return inodes with (i_count == 0). */
->> +};
->> +
->> +/*
->> + *                             start          end
->> + *  inode->i_lock              locked         unlocked
->> + *  sb->s_inode_list_lock      locked         locked
->> + */
->> +typedef int (*inode_iter_cb) (struct inode *, void *);
->> +
->> +int sb_for_each_inodes(struct super_block *sb, unsigned int flags,
->> +		       inode_iter_cb fn, void *data);
->> +
->>   /*
->>    * i_state handling
->>    *
->> diff --git a/include/linux/fs/super_types.h b/include/linux/fs/super_types.h
->> index ecd96aeb1cee..1f81cc219b8e 100644
->> --- a/include/linux/fs/super_types.h
->> +++ b/include/linux/fs/super_types.h
->> @@ -269,9 +269,10 @@ struct super_block {
->>   	 */
->>   	int s_stack_depth;
->>   
->> -	/* s_inode_list_lock protects s_inodes */
->> +	/* s_inode_list_lock protects s_inodes and s_inodes_iters */
->>   	spinlock_t				s_inode_list_lock ____cacheline_aligned_in_smp;
->>   	struct list_head			s_inodes;	/* all inodes */
->> +	struct list_head			s_inodes_iters; /* all iterators */
->>   
->>   	spinlock_t				s_inode_wblist_lock;
->>   	struct list_head			s_inodes_wb;	/* writeback inodes */
->> -- 
->> 2.39.5
->>
+CONFIG_KASAN_KUNIT_TEST depends on TRACEPOINTS, which is an invisible
+Kconfig symbol without a prompt. CONFIG_FTRACE alone only unlocks the
+tracer submenu and does not select TRACEPOINTS by itself, so also
+enable CONFIG_SCHED_TRACER=3Dy, which selects GENERIC_TRACER -> TRACING
+-> TRACEPOINTS. This follows the same pattern used by
+security/landlock/.kunitconfig. Verified with:
 
-Thanks,
--- 
-Julian Sun <sunjunchao@bytedance.com>
+    make KCONFIG_ALLCONFIG=3Dmm/kasan/.kunitconfig allnoconfig
+
+that CONFIG_TRACEPOINTS=3Dy and CONFIG_KASAN_KUNIT_TEST=3Dy both resolve.
+
+In addition, set CONFIG_LOG_BUF_SHIFT=3D20 to prevent printk buffer
+overflows on serial consoles when running under QEMU, as KASAN generates
+extensive reports across its test cases.
+
+Assisted-by: Claude:claude-sonnet-5
+Signed-off-by: Bill Wendling <morbo@google.com>
+---
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Micka=C3=ABl Sala=C3=BCn" <mic@digikod.net>
+Cc: "G=C3=BCnther Noack" <gnoack@google.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
+Cc: linux-mm@kvack.org
+Cc: linux-security-module@vger.kernel.org
+---
+ mm/kasan/.kunitconfig | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 mm/kasan/.kunitconfig
+
+diff --git a/mm/kasan/.kunitconfig b/mm/kasan/.kunitconfig
+new file mode 100644
+index 000000000000..58a7448fa352
+--- /dev/null
++++ b/mm/kasan/.kunitconfig
+@@ -0,0 +1,15 @@
++CONFIG_KUNIT=3Dy
++CONFIG_KASAN=3Dy
++CONFIG_KASAN_KUNIT_TEST=3Dy
++
++# Additional dependencies.
++# CONFIG_KASAN_KUNIT_TEST depends on TRACEPOINTS, an invisible Kconfig
++# symbol with no prompt. CONFIG_FTRACE alone only unlocks the tracer
++# submenu; CONFIG_SCHED_TRACER is needed to actually select
++# GENERIC_TRACER -> TRACING -> TRACEPOINTS.
++CONFIG_FTRACE=3Dy
++CONFIG_SCHED_TRACER=3Dy
++
++# Prevent printk buffer overflows on serial consoles when running under
++# QEMU, since KASAN generates extensive reports across its test cases.
++CONFIG_LOG_BUF_SHIFT=3D20
+--=20
+2.47.3
+
