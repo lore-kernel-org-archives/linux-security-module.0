@@ -1,93 +1,177 @@
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2C747D442;
-	Fri, 11 Sep 2026 12:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451DD39022A;
+	Fri, 11 Sep 2026 13:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789131538; cv=none; b=QHkwKFyODE3AHhXQ4j0iQx8QqjCQkz1EE+EHwylI3G++rZOfd8sGpirPMPaja5a9onL9dU5CYO1NA4adIfWge5BZMZm2IfFjYeh8qqmB2OLT/UHQi7JISYTX0PzstGUWErNRJX1+LKwTq0CHFoc3U6Q+J3bV71sHl33uGAXRqPs=
+	t=1789133161; cv=none; b=mQXd5tHqC+2DaCWiT7UoXiF37PWZF4EDMK7E82RIarYGywgLbtJtfEeg6HJO2qojAWaM99zF0kchPcxtikodkckEEGM3/PY/bqjEGX/LuWiaM4JSdluc6kAkscS3sl1W9nRMvpTWQmGBuwiDOXjkMBii2WTq/bIBiqve+SKO6sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789131538; c=relaxed/simple;
-	bh=bjoTTqpWpKvplAqU+RyCcsF1m/WtPEW3tfKywXliCM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p8yaJNx4Z0Kn+7xf7QCDEANgT7Qp9d4dKtLtneBVPLDLFHB8Tub4xRmTh9RUS4JKQUGtIlXVwWakKsbK8juslUY5SS2yCvABdAUPzpcOXCBXQ6aS6UnQr/SnZOQv1LTGenpA5sczC+xBRmiylpK2w5EfX5xfOdzeoVOR1RWqdE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; dkim=pass (1024-bit key) header.d=goodmis.org header.i=@goodmis.org header.b=0JqVOVv+; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+	s=arc-20240116; t=1789133161; c=relaxed/simple;
+	bh=zFyyWzdhfFZMVM5stqf613uCaXnIeVSxmc31g5HKUZA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ldRG3ptfGA+efkj+hq8IbutQrj6EoFKmZYy4TUQPd3CbJaINrnr0X1GUejTi4MkQ8kVJAqaeshedy37fE2dJ0A3GtB74pNrR9SPJwAunrvBKkEcbhKjz9yuk6m38UgVgPU/ZuduFa35nQv5zZK8UnZro6CkKN63rK+wvVDmMi3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXtn1fiY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=goodmis.org header.i=@goodmis.org header.b="0JqVOVv+"
-Received: from omf02.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 57FF11A0226;
-	Fri, 11 Sep 2026 12:58:17 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 411FB80012;
-	Fri, 11 Sep 2026 12:57:57 +0000 (UTC)
-Date: Fri, 11 Sep 2026 08:59:18 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Ye Liu <liuye@kylinos.cn>,
- Michal Hocko <mhocko@suse.com>, SJ Park <sj@kernel.org>, Lorenzo Stoakes
- <ljs@kernel.org>, Oleg Nesterov <oleg@redhat.com>, peterz@infradead.org,
- paulmck@kernel.org, mingo@redhat.com, jpoimboe@kernel.org, mic@digikod.net,
- tglx@kernel.org, akpm@linux-foundation.org, david@kernel.org,
- linmiaohe@huawei.com, nao.horiguchi@gmail.com, rafael@kernel.org,
- gnoack3000@gmail.com, gourry@gourry.net, rientjes@google.com,
- shakeel.butt@linux.dev, xu.xin16@zte.com.cn, chengming.zhou@linux.dev,
- will@kernel.org, boqun@kernel.org, frederic@kernel.org,
- neeraj.upadhyay@kernel.org, joelagnelf@nvidia.com, josh@joshtriplett.org,
- urezki@gmail.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- tony.luck@intel.com, reinette.chatre@intel.com, x86@kernel.org,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pavel@kernel.org,
- lance.yang@linux.dev, pmladek@suse.com, longman@redhat.com,
- mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
- qiang.zhang@linux.dev, dietmar.eggemann@arm.com, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, kprateek.nayak@amd.com,
- mark.rutland@arm.com, Dave.Martin@arm.com, james.morse@arm.com,
- babu.moger@amd.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, rcu@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 11/15] tracing/fgraph: convert process/thread
- iterator to for_each_process_thread_rculock
-Message-ID: <20260911085918.30c87ab3@gandalf.local.home>
-In-Reply-To: <20260911075800.491472-12-ye.liu@linux.dev>
-References: <20260911075800.491472-1-ye.liu@linux.dev>
-	<20260911075800.491472-12-ye.liu@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXtn1fiY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FF51F00898;
+	Fri, 11 Sep 2026 13:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789133159;
+	bh=b8hBkIDR5gbaIa/OcVZo7VYHM8DXFaO8ihp5gcV65Tc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=VXtn1fiY2o5DXMdoNaf8ZzLgSZsGCdT7ZwNY6FB4pdySVmjeQIqo+jTZLfm3/q33+
+	 LnCbzK/A0d6W3mHy5MlGsh+dOBxN4T+7UuC7if51SC4Y4WOsawT4loI6z4f/cPPsPb
+	 LEHZm4NM/UiYfaaDB2e8nAEDA/bUbIeD89ffVwAWP5YoZyzbml/CvceH29+Tq6pfbc
+	 5OiH8ODldkyB5xaiz0JQc+5SkYuDaxk8ZB5CaqnQ1olk+xod9sHadlEIgKFs0bPhqk
+	 mpWXADE1ONaJWHe+tK1DyeoOXHAnAcaBRnsz8NpG1Ysw760kl3cXOV1DCzOlIhHu25
+	 jY4cewUPGE/7g==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
+ Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett"
+ <liam@infradead.org>, Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo
+ <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno
+ Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Daniel Almeida <daniel.almeida@collabora.com>,
+ Tamir Duberstein <tamird@kernel.org>, Alexandre Courbot
+ <acourbot@nvidia.com>, Onur =?utf-8?Q?=C3=96zkan?= <work@onurozkan.dev>,
+ Lyude Paul
+ <lyude@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve
+ =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>, Todd Kjos
+ <tkjos@android.com>, Christian
+ Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, "Rafael
+ J.
+ Wysocki" <rafael@kernel.org>, Dave Ertman <david.m.ertman@intel.com>, Leon
+ Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge
+ Hallyn <sergeh@kernel.org>, David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan
+ Kara <jack@suse.cz>, Igor Korotin <igor.korotin@linux.dev>, Viresh Kumar
+ <vireshk@kernel.org>, Nishanth
+ Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>,
+ Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Michal Wilczynski
+ <m.wilczynski@samsung.com>, Ira Weiny <iweiny@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+ <thomas.hellstrom@linux.intel.com>, Philipp Stanner <phasta@kernel.org>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, driver-core@lists.linux.dev,
+ linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-usb@vger.kernel.org, Oliver Mangold
+ <oliver.mangold@pm.me>
+Subject: Re: [PATCH v21 6/9] rust: Add `OwnableRefCounted`
+In-Reply-To: <aqPHvi1xFnMXvYLW@google.com>
+References: <20260910-unique-ref-v21-0-e83257373062@kernel.org>
+ <20260910-unique-ref-v21-6-e83257373062@kernel.org>
+ <or1Yx6egJPyUT07SJzH5J4d8aI6S2qOc1sfl70J55bvsy-l2H0DHJHa-MeXQIv40mrfFILbhL0uB2G0aHIYUlA==@protonmail.internalid>
+ <aqPHvi1xFnMXvYLW@google.com>
+Date: Fri, 11 Sep 2026 15:25:43 +0200
+Message-ID: <87se3fvs14.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 411FB80012
-X-Stat-Signature: n6a6yg87erzr1tr8kadm4kbym8uws4c7
-X-Rspamd-Server: rspamout03
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX184cgL4CPzpG6wyU7gqy6pHH3IT2rF9ets=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=goodmis.org; h=date:from:to:cc:subject:message-id:in-reply-to:references:mime-version:content-type:content-transfer-encoding; s=dkim1; bh=UaQYdknTmueyDeiPHskDcTArMbJldar1uQP+OR5ILiM=; b=0JqVOVv+9L81lkGml08i9mMS8B782yjgSSh0J7qB8NJfLJbXU0fLz9weZAM4fQ5Ra9CUavRTBo+PCH73WKm//G+wNOzwNoyxnF2a7JXOtbmdL7tZR3SzwRbbk7iw2rNQVN3kwRcItAAPl3JNid1xBW4naEquTGk2Qi05wOwcUrA=
-X-HE-Tag: 1789131477-955751
-X-HE-Meta: U2FsdGVkX18IEJ34TJ0+KfkZrrzHJ2dGti8SCtUwJBxnBs7A77nAwjwyHWgBGGkRmcWxfRbbgYYDx9+//1mp9vVOjUQbCfr8JwoUfq6qObLo5XckYsaDveVKT4KVuSxa43lMppAHrfkQ6q66hua38QSWiGZ4pR4WLuiB/fRlv95rgRSwCTUef6/9xZIREFm6zARLWSxhMwm/+USXJ5Odeo33wnQhHtMWXVBSR1fuAOuRDXqRFn/VmuEmY4R93qX7JzsgtbqMZNWtX+CwTgbkKXii7THG1FmHcDAGAFH4eWA8QubRpp9x6o0Bf0fFFGOxvfWU4KGfGsEN23tdH4CEfp8DdKmJ89MyETXiouFLfhLA9mjoesG1uJ4spkJ5GIdarVsiaR7bvBIJXGMAkAiEBCCCpjOlciuLokm1pcCBCZvkrE1QZjTT39frBEzytesHCZdU724fPrc5uye0+xI5ILZJA4Ngv6OQ1x3Efp0PWJo=
+Content-Type: text/plain
 
-On Fri, 11 Sep 2026 15:57:56 +0800
-Ye Liu <ye.liu@linux.dev> wrote:
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> Replace the manual rcu_read_lock()/rcu_read_unlock() pair combined
-> with for_each_process_thread() loop in kernel/trace/fgraph.c with
-> for_each_process_thread_rculock(), which scopes the RCU read lock
-> to the loop body via scoped_guard(rcu).
-> 
-> No functional change.
-> 
-> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Reviewed-by: SJ Park <sj@kernel.org>
-> Reviewed-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> On Thu, Sep 10, 2026 at 11:00:10AM +0200, Andreas Hindborg wrote:
+>> From: Oliver Mangold <oliver.mangold@pm.me>
+>>
+>> Types implementing one of these traits can safely convert between an
+>> `ARef<T>` and an `Owned<T>`.
+>>
+>> This is useful for types which generally are accessed through an `ARef`
+>> but have methods which can only safely be called when the reference is
+>> unique, like e.g. `block::mq::Request::end_ok()`.
+>>
+>> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+>> [ Andreas: Fix formatting, update documentation, fix error handling in
+>>   examples. ]
+>> Assisted-by: LLM
+>> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+>>  /// Types that specify their own way of performing allocation and destruction. Typically, this trait
+>>  /// is implemented on types from the C side.
+>>  ///
+>> -/// Implementing this trait allows types to be referenced via the [`Owned<Self>`] pointer type. This
+>> -/// is useful when it is desirable to tie the lifetime of the reference to an owned object, rather
+>> -/// than pass around a bare reference. [`Ownable`] types can define custom drop logic that is
+>> -/// executed when the owned reference [`Owned<Self>`] pointing to the object is dropped.
+>> +/// Implementing this trait allows types to be referenced via the [`Owned<Self>`] pointer type.
+>> +///  - This is useful when it is desirable to tie the lifetime of an object reference to an owned
+>> +///    object, rather than pass around a bare reference.
+>> +///  - [`Ownable`] types can define custom drop logic that is executed when the owned reference
+>> +///    of type [`Owned<_>`] pointing to the object is dropped.
+>
+> This diff looks like it should be in the patch introducing Ownable.
 
-Acked-by: Steven Rostedt <rostedt@goodmis.org>
+Yes, wrong target commit for the edit.
 
--- Steve
+>
+>> +/// # #![expect(clippy::disallowed_names)]
+>> +/// # use core::ptr::NonNull;
+>> +/// # use kernel::alloc::{flags, kbox::KBox, AllocError};
+>> +/// # use kernel::sync::aref::{ARef, RefCounted};
+>> +/// # use kernel::sync::atomic::Acquire;
+>> +/// # use kernel::sync::Refcount;
+>> +/// # use kernel::types::{Owned, Ownable, OwnableRefCounted};
+>> +///
+>
+> This newline will appear weirdly in generated docs because no content is
+> shown above it. Consider not hiding the imports.
+
+Will remove.
+
+>
+>> +pub trait OwnableRefCounted: RefCounted + Ownable + Sized {
+>> +    /// Checks if the [`ARef`] is unique and converts it to an [`Owned`] if that is the case.
+>> +    /// Otherwise it returns again an [`ARef`] to the same underlying object.
+>> +    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<Self>>;
+>> +
+>> +    /// Converts the [`Owned`] into an [`ARef`].
+>> +    fn into_shared(this: Owned<Self>) -> ARef<Self>;
+>> +}
+>
+> This trait provides two methods that have very different conditions for
+> existing, IMO.
+>
+> The into_shared() method is so likely to exist, that I would almost
+> consider placing it on the Ownable trait.
+>
+> pub trait Ownable {
+>     unsafe fn release(this: NonNull<Self>);
+>
+>     fn into_shared(this: Owned<Self>) -> ARef<Self>
+>     where
+>     	Self: Refcounted;
+> }
+>
+> On the other hand, I think try_from_shared() is more likely to be a
+> tricky operation you cannot necessarily implement, and as such it can be
+> on its own separate trait like you have here.
+
+Ownable does not require RefCounted, so this method is not always
+implementable.
+
+>
+> At the very least, I can easily imagine that some types can never become
+> unique again after having been shared.
+
+It could make sense to split the capability in a separate trait. But
+perhaps we should wait with that till we need it and not introduce
+premature complexity?
+
+Best regards,
+Andreas Hindborg
+
+
+
