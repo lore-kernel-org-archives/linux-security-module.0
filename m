@@ -1,185 +1,132 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com [74.125.228.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7673236B901
-	for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 14:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789138032; cv=none; b=kuoFCkDglcc2jFlMiwPfEgqbwqef/LfewX0nov/sxyUo+q1kVtGA7G20SFpq6S+QqbZN4qZCjX7epW57m53pCBbtcKwb6aLK1YqJpIUVKwzrWsliVnOjXrmUZKUHQ0E9boArpnU/8+rIKmbvhJk3d7JBiJ5Mw92cG4jzu78w0h4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789138032; c=relaxed/simple;
-	bh=6qK7Y4OCyC5WsOE2SJMQ4fti6jzNs1Pji9/QbACrVAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=psVjou6gc3vE9IQ3Izl2ozSBoZudRqeMZoJySuwOmouDjlEJpMW9/4gs74Cd2wdsdUXr/OPxXFtw/MtttLIo2zHNsHlIHJ04B0ebfd//wiAOIVukZXytQqvu67vfIRwF/rxPKvn45Air/AkbxiLLa9xA7r7bqPs9aVWDTNdrJPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A/5m4Fh/; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810DE3815DE
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 17:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789147944; cv=pass; b=DSpup8U5PC97FLvdJ73ybfYHocI34tBPk9AZsK+D2z2AIrJm2lhmGjaieii6dBF7mOdKQD8ErO6XleGFTmyWolSaHDnyIIeskTgA00WVnpJb6RvEnng4T8uA6AD7D2BUDJ4I4oUr7ehSdqaXCcpqN7gebDBgY2rAGQGRkGm8WBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789147944; c=relaxed/simple;
+	bh=kW8qgpTiEaxSYdpL6zxHLeLhCoMuclZGCtfSmKy5L2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cvsFoU5BSDUy5A0dYlt1hXLiQuQAt2Vn8osmLV/eUFjKuNTbLyYMBZpYMTs5+WHxy8p4I0vrnqYm+YyUVLMRkUSKqo+GyQ1EPo4DhLerL+3SCevFU2ytmgvjNGkEuyk46ihabDtqzekzZUIILiqEMqv91NxEDankROvNpjKlU/w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UqheGuyi; arc=pass smtp.client-ip=74.125.228.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A/5m4Fh/"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-486e70f2457so490898f8f.2
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 07:47:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UqheGuyi"
+Received: by mail-pz2-f43.google.com with SMTP id d2e1a72fcca58-85469e25187so145311b3a.2
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 10:32:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789147933; cv=none;
+        d=google.com; s=arc-20260327;
+        b=OgLsT0YXrubL7g8g4o4EREPDaJ1BrWA+ZiBHHzIRwqWYONICAyde+SnhCo0zXcGhrk
+         KzWxCqSf0uK/+Ax/p5EagQEVs1JF/zGMa7qqbouETHUwaJQMsZbZXIk0HRZkgS7uydbk
+         y80S1Zv+mj+ePfbcUG8R7vc5FAFB2YpQKELJbINglQK7bLlxN+yy1W0VMqGGCeLmhdTY
+         HUrZ2PevQB0xdmFI3T3Isv8NtFu6Ps5lmABdtp/vbcf9mz6B5ZudSQTZUp0atxS+E84p
+         qEBRKS6kAqQ1UeFfQUs/GN9IxE6AQ2cDKUr9LZRhCsUDjppw5/duDllzx9qJ8CvUnh9U
+         uleg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WsPcTSE7tXZ7STQaDrKcB3TWLUFfJE17N5WpFurAIfQ=;
+        fh=TMiGYuXLWTB0HEOE283kd74kl1A+1tx5K5q13zni3Yw=;
+        b=Lo8hL2zLj6XYIwfkYp6pnFw/PjmOdDmavOGe4JHkUkmXxbj0Oxl7SiwFD7C6yOYhOI
+         roL1VOKB8O4IbU/tRqVc4fHykRjZWkLFA/TX39cdkfJkdMC1LplpfwVBq6myV9Z5fHFv
+         Ly5frWoh1K6Vz4xA4bGqULu1IlGS0xx7q/eS75tpoEsfsUWlco9AkQ/+zn+y7P8oGcgH
+         +xpDa7gqMC6Nf4G8dg4ra8AMyb80gtmDrqi+cVgnzryGge+eurwaIG9SZjYarj51tlfq
+         kbcQilE70Ett7jOmPANrMbQTdIxHlAhP7Gi5a1ZesBgwaaTNXXvOWQnRRhHNGDDD9qiN
+         1FfA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1789138023; x=1789742823; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+        d=paul-moore.com; s=google; t=1789147933; x=1789752733; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=QuYE5JBWhvW9oHs2kdysh3HB71WxLYQMcei9gKN4bpc=;
-        b=A/5m4Fh/sngCKaEoJLtOhd0PEwql+T8zBi0qHa6cFg5H9HZAwcJa6OQkyRfUkv+4l5
-         PrwPUM2nfa2NQ5ZfES2qecayX0h9xaZPjNb5dZ+gNkld9Gq+JI7LtsTkqcJdS043KHXL
-         AYrw5uKonljqZ69+949bBF4VmJLQCR12wMLd9GTD7yU89XnGbPwo5FMSdRPi3bUSbnco
-         ibBekgmGXt2s/P3iIX1rpyu/BfwNKBORTLgqjA1B0N5VgKnIbC7oztcfa1lA32Qmm1Fp
-         rZA6+wXmHyJJXapZZo9qqcM+UPHrA+PTNhVhLBZyYMs5jY9zkFEivXrcP5idys2xQ9LL
-         Xd5w==
+        bh=WsPcTSE7tXZ7STQaDrKcB3TWLUFfJE17N5WpFurAIfQ=;
+        b=UqheGuyiMjVVVOGiGccV3JNOZLv/PFYpRUiMDAjQNm8RkpDr0WmuuipgENB9wmjWLI
+         d065p0jjbbC6cZl63apUcS3hvWckD9G+9V4dzqEsLmt4gk2jMcEZW31CYrnb3SyIGMOf
+         6w+uVr7S8KCUf/LHJbQTFwRxpW33OFdwzs1B5qT3Tr/QyRoxd0WNYGyAHW1PuQBU3SVt
+         2rWVculH+MJGux8tqBgkPbUAlKjsRydWlK0w1fepaLF6AYpTCJFAtcU6krEn1U0radqR
+         5QOajehVZL7gRzjzpaI3/zDfZomxje84fZVe6Ef8wcenlDyZ6OGMnmPNZ7XyeoMeQpmA
+         wuBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789138023; x=1789742823;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20251104; t=1789147933; x=1789752733;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=QuYE5JBWhvW9oHs2kdysh3HB71WxLYQMcei9gKN4bpc=;
-        b=MqGk5jM+imrx4pdF2/nZwzEbam7yxrb8oW2y3nR+PxGig0pk2EDzuNoM4QyZhfPrsY
-         gEVIihmQxNG154ISryppQ3MuDk8PGcoZv+XvLw0yTJp4JuboXwUEnYyC5A+uFx5LF5wS
-         YYvR5lDa+VocT7HLyAvVz7WXLZ2I3NsS8auTtrKFxMwvLSis/pGHLqx+xdV+TzUWS8Oo
-         omFRi25ZfhUJOF/1qXZuOFRPwxzniHpyswBfwX9LDkx36FEVVFFiwX55odwNehpuqNfi
-         M/wiAW6QGgyiFV7peAs6r2UTvLcFgvYGt/qM4YJo95Opq0tC6iGFX597h485vswVtmPm
-         cB7w==
-X-Forwarded-Encrypted: i=1; AKwUvBx+Sxsv8B/sfWV/kGChH9Rg55degyqQuN67mJyHGFZhqp2ZiOzgZg3rA2LxTDEjZ9D51G4LxbqRUG4+LxCbIOzcexr1KJU=@vger.kernel.org
-X-Gm-Message-State: AFuF++nUif1QDMTMVfc5mBT4d3qmCUVjMe4dpdw2bXNmTndg9KhZOiGj
-	XjGyN86bSJCbEhNSpvkillb+IfuYAMNzqPgVxxezLoa53+gSGww/28FQkQNnDxPGIzY=
-X-Gm-Gg: AYBFou1yxnXrbOYX/2gIE0Vgg499pBRvtj1HAhYuB071J2YlYZ6f1Wio1sJWIskvBbm
-	TGXh4WWsCGkcAMxsECj/4qj5OngEx7M+rI27/Pll9osdLtJYSb84C3BZ7OrVngZBaBh8ppTNTO7
-	gpuvvLDRP3gZTlxDk94+voeuh7l3vKQgbjVW9l4+U2JS+psUxaudjiPB8CBlgO4TlCzGVY4r8oA
-	c14CKqzamVAv+AfF2/V4obvRnJQvTGOYeUn9n6ToVIex8rJvr0ir5kcR9LMQgRHzhgnHonwvXdf
-	DajG3CSorxk5/KlwrjS3maRoHFRjX+UhegZa8RNBaT9pjtzY4+15IB7d4CGHROb61HKbcSZyUPC
-	9QoaITiaOc2AX18d9UQHbG05cVwB6Q/1iWU/ndVItCJhKy44dQPk0i5KJqT2pFtuoB3/mkyDMSE
-	TH1+rdtw7tReFjm1FNKMBSyAX2WGgJJHO8I8gxVmySfkHNoLK96LgK4ao+OwmISDqB1D06YnydW
-	jsMyQ==
-X-Received: by 2002:a5d:5e08:0:b0:486:e81b:842a with SMTP id ffacd0b85a97d-486eb358ab6mr5259626f8f.48.1789138022582;
-        Fri, 11 Sep 2026 07:47:02 -0700 (PDT)
-Received: from localhost.localdomain ([2001:af0:8000:1409:193:86:92:181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-486eb32e8d1sm6328068f8f.11.2026.09.11.07.47.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 07:47:02 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Michal Januszewski <spock@gentoo.org>,
-	Helge Deller <deller@gmx.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <cel@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	drbd-dev@lists.linux.dev,
-	linux-block@vger.kernel.org,
-	greybus-dev@lists.linaro.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-acpi@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev,
-	cgroups@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	driver-core@lists.linux.dev,
-	bridge@lists.linux.dev,
-	netdev@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 2/3] time/jiffies: Include linux/sysctl.h for proc_int_u2k_conv_uop(), ...
-Date: Fri, 11 Sep 2026 14:46:15 +0000
-Message-ID: <20260911-module-include-kmod-v3-2-6ebccc3e0731@suse.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260911-module-include-kmod-v3-0-6ebccc3e0731@suse.com>
-References: <20260911-module-include-kmod-v3-0-6ebccc3e0731@suse.com>
+        bh=WsPcTSE7tXZ7STQaDrKcB3TWLUFfJE17N5WpFurAIfQ=;
+        b=civsDDIptEeUMO35DjVY0fuQMcYPgtQ8b/YFWEyQwiOChAKZ8Cug0Wtpg4WYaH9ead
+         rtjNHO8JmQ3bZdnzMEYRFbR3ue44TmDHncCe+Bio5RGdPfW//x5ZeWhQkXDk8zHKJK5I
+         ax9E81fBId01F56ZJqZWbQlOmM+4/BW0gBTljUEkjy05TAtf+QBnQQ40wFR8iHyGQY23
+         MGLdKswVLPFWJFlT1SQujxK34SRbtnMQ77JhvBIf3+2o5pL1nEh3gfucO01LVGjP4SdD
+         mQktDwH63v3QsMBVSd+uElMA5lWAxc71WZClOnYwk5wJAx8s5nSBrZ6C/3wGwQv67I9H
+         IMnA==
+X-Forwarded-Encrypted: i=1; AKwUvBzELU74FOOuDi9OJcPV9qnO8A7gTTOWx+dMWHcuu1Gr+hoYFCwb0vFJXnS9tl6fYlZA+QKbceJgNVfj72IRhpPUV3nmoEc=@vger.kernel.org
+X-Gm-Message-State: AFuF++kah6yy1pKGtqbKr3Bo/c7BrUe4xDztM2kxo6RU3qmo86xGkJ4i
+	nI9VJBopdXbme9Ec/CXI9LC1ppkLFRGY4dTcP59TIYMn/C8T9rMi4OZ1NKt5wVA+zLgZqjVELjt
+	IwRyfLGNB7NpCB0bD0TeXEPaHaHWrXUzafWJGsMai
+X-Gm-Gg: AYBFou3RgCNychsYLR4X3qWb83p2FbXqm+QqimXKRHB6IbxgCKxLHilqBS6yR+zxeJq
+	DrNV+V8pNBV8lPKZ0wO7gu4bOBK7R/2q2eFmsfCnekQ4HwgDR9J5beHjdeE4ujaXhF1FYZdOcOu
+	umHMa0Jdcc3QjIOUHrfS17Gxtyd5Hh+xVq5Wj0sCHe4OzVE+w1+yL28iRdMu/zrbmZx7wrIDGac
+	H9TfL4g9pHS5uFdF8RnwtRQsVMpgGLiQzUR/BJRgdhDiHANbqmj6+L6GFsbMYU+qLv5bbaAYFmI
+	o7mW5v3PbIbPk2YkGZbY7MUSQWGCD3ewkfYl60WprXG+LQ12ayvvSFKxCOlcscyfwbBf1b05R2I
+	IapTtXLIESsrOtFyii1CXWw==
+X-Received: by 2002:a05:6a00:419a:b0:845:bda6:574b with SMTP id
+ d2e1a72fcca58-86b2e8f6e10mr9085747b3a.5.1789147933173; Fri, 11 Sep 2026
+ 10:32:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20260904-lsm-mount-idmaps-v3-0-920a1963675d@amutable.com>
+ <20260904-lsm-mount-idmaps-v3-1-920a1963675d@amutable.com>
+ <CAHC9VhS5q2=6p2bi5c7CZ3mutji1xiKR2eFKgJ9C+XZsYgky2g@mail.gmail.com> <312cbf15-71d7-4fac-bee4-67fd237c5f5b@schaufler-ca.com>
+In-Reply-To: <312cbf15-71d7-4fac-bee4-67fd237c5f5b@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 11 Sep 2026 13:32:01 -0400
+X-Gm-Features: AcwNN1VMGI9zz0tqqwR_fG_D5fsVL778Ou1jXQO7hFzumGc64ffvrJMBWIPUuH4
+Message-ID: <CAHC9VhShjf770Djx8_unbeWpO_ni0ahMFvrGFpaUcyuHzYgCyA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] lsm: expose mount idmaps to inode hooks
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: daan@amutable.com, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-jiffies.c uses proc_int_u2k_conv_uop(), proc_int_k2u_conv_kop(),
-proc_int_conv(), proc_dointvec_conv() and proc_doulongvec_minmax_conv(),
-which are declared in linux/sysctl.h. It currently gets that header
-indirectly through linux/module.h -> linux/kmod.h, but the latter no longer
-needs to include linux/sysctl.h.
+On Tue, Sep 8, 2026 at 6:27=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
+com> wrote:
+> On 9/8/2026 3:05 PM, Paul Moore wrote:
+> > On Fri, Sep 4, 2026 at 10:48=E2=80=AFAM Daan De Meyer via B4 Relay
+> > <devnull+daan.amutable.com@kernel.org> wrote:
+> >> From: Daan De Meyer <daan@amutable.com>
+> >>
+> >> Pass the mount idmap through the create, link, symlink, mkdir, mknod,
+> >> and permission hooks. Update the in-tree security implementations and
+> >> non-VFS callers accordingly.
+> >>
+> >> Signed-off-by: Daan De Meyer <daan@amutable.com>
+> >> ---
+> >>  fs/cachefiles/security.c      |  4 +--
+> >>  fs/namei.c                    | 18 +++++++-------
+> >>  include/linux/lsm_hook_defs.h | 23 +++++++++--------
+> >>  include/linux/security.h      | 58 +++++++++++++++++++++++++---------=
+---------
+> >>  security/security.c           | 40 +++++++++++++++++------------
+> >>  security/selinux/hooks.c      | 19 +++++++++-----
+> >>  security/smack/smack_lsm.c    |  9 ++++---
+> >>  7 files changed, 100 insertions(+), 71 deletions(-)
+> > Casey, are you okay with the Smack changes (below)?
+>
+> Yes, assuming the 80 character limit is adhered to.
 
-Include linux/sysctl.h directly in jiffies.c ahead of removing the
-unnecessary include from linux/kmod.h.
+I just checked and the smack_lsm.c changes all fit nicely in my
+80-char wide terminal.
 
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
-Acked-by: Thomas Gleixner <tglx@kernel.org>
----
- kernel/time/jiffies.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/time/jiffies.c b/kernel/time/jiffies.c
-index 213ae1d6a014..9231fea557ce 100644
---- a/kernel/time/jiffies.c
-+++ b/kernel/time/jiffies.c
-@@ -8,6 +8,7 @@
- #include <linux/jiffies.h>
- #include <linux/module.h>
- #include <linux/init.h>
-+#include <linux/sysctl.h>
- 
- #include "timekeeping.h"
- #include "tick-internal.h"
-
--- 
-2.55.0
+--=20
+paul-moore.com
