@@ -1,141 +1,190 @@
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+Received: from mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215EC42E8F8
-	for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 07:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3127744F557
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 07:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789110263; cv=none; b=bpyri+BWrYZv9yl2TZ9JVlsHkMY7cV+5LQMjtRWMMOm4hERCMTzJuLRZTVzfuVc1jq+hnusKeIMwCdb/aLwFaDaFhsRYJMTBmhm+LsHUddgCCb3+Bg2vaBUJZ4bviqGuSe4jA/94Kce2NQ1mmS7F/wd/cdPKDAwNdiv6SJRA9yc=
+	t=1789113502; cv=none; b=NY0vh6MaJo1pJoFgjdqlKaq+8Gwj7/1PlV1EkVNubaKwwPhF8TdcOE/5iO4HxaF+41FbcoqK8a9CycuhCSLht/eMkufXZqgyBd/P8pRlZR8rTF0ubqM57aP0RmG09LY0zPKscVi+UDlWmaX1cIw4JPNEszFL5OqsvAzhsHhoapU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789110263; c=relaxed/simple;
-	bh=fm/g9CJFQX8QW6SK6YilLm0SHEquTeI6Hq80kwbEfwI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AKEjyOLLnWcOzG6fMyxyZ6JyCBru2O9aAnZRY2Bc6Gsgd9MLoPjPZigVR9Ke8G6zeGSgKUWlBQ60SI/kcfeZ2pBWH4T+avL0xzawzpZ43L0uScjv3CpCc2zND0sY+o6OwbaGgqPEPXAPtEfbPKnq/kGil9w9eRALzE/Bq4OWSXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QwJmB1pj; arc=none smtp.client-ip=209.85.215.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
+	s=arc-20240116; t=1789113502; c=relaxed/simple;
+	bh=2z6K28VZFghAvaOC2rxcV8P37YjNcXnY9WqrSWMHQ/k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dYcJc3zdt1CL4OP9Vc/WFDy8I7WxzJ41/Ub6J3rGf+/2iHVGsIC43lkhEVM2HMxIukzqRbAGbxQtYZg6net/MqmAC/z3v213AM4IoXWG+GzckJ1G2Mq13qxAhJ11Zh13xhXjXQtA8A0ufRkihDcuCrT2D3zQm2NMPz79UppYvTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=czgAtOF3; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QwJmB1pj"
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-cc4b524ce78so532221a12.2
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Sep 2026 00:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789110252; x=1789715052; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=q15pDPXWwHD21xyeCsqnIN6CD+fe6kHmFEwudOZDaaw=;
-        b=QwJmB1pjHFhKmGll/90ssgmI9fYS46XiFoPPGYFLPwuOvXakG0LZu/Ohy0g32jwfbs
-         RSyodyv8LJt5wjQMHeV0jPJ92ihRvwCILsxaepqrZRsmS14hmJPqMNQ/iWssAPTHCoe6
-         KGgUy2itEO8h8RBr1wfjs+YaITXUXDzX7NDq1zObsSjI1xRfsLOXflcxMQ/mlmE7NatK
-         NU7ohyGNdEVVNz041N/EOpmBzVyzlftIsIFAjepMoCqWEjOR7DskVIWW37pzbGje68Cu
-         8MBlMibpjbLlVR6EfN/6M/b9yrpwtf5Flml4MFr4D3ShlWhZhynPrF0F9k7tfQ1FpGRj
-         Qb0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789110252; x=1789715052;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=q15pDPXWwHD21xyeCsqnIN6CD+fe6kHmFEwudOZDaaw=;
-        b=SKqMM9UvISKOH+a3D5LURWY2Lum0Oz0ZG1V8pQvfNPlftUzALP3QNW4FVJx3nmnUrj
-         k6PGqzYhWUtKlbKY9vtmL0dDj6sK8HsCDRqm1IBZZhCdn84Yl5r0NuKcTs8kdb+lMl6V
-         QF48RQecz/2Y7Hm8NTs/S0szXuVRBeQbJaxacEHOIZw+kM6Up9pNp0WlwCKI6Meo9Iux
-         AAYuKLRt3sRMSCYvKdVhLiymOE9Vq2roHvsvUDL7jzClJPvPMC9LLDqZaHM2IL/kbJHx
-         7FsUTWm5E2c5SIU74ltCNHZWoNIUWBPuhGnJF64McCmojZ+WPk0BiPmm/lkGzt6nGUFY
-         uC/Q==
-X-Forwarded-Encrypted: i=1; AKwUvByGKHBdM9uzXfG6jb2BBQ1U8SSnQt8X4ujSCf+oNS0Cd30g+VAqcazTHShcTsU/YF9+/9DvnoUM5R1xwhqdZauRiImq6Ow=@vger.kernel.org
-X-Gm-Message-State: AFuF++mKb4Jbf0HMhM5/ViCHLQk5DEDH1eNWFBDG84Fotfv22Vy69MsO
-	KWjiP+wrD8Mz2ioSDdFohyCtOmCJ0+ATxT48xBC0uCzIwbR0m5d73AxCnuEo3feQDXZWG+fGVR3
-	k
-X-Received: from pgbbx40.prod.google.com ([2002:a05:6a02:528:b0:cc4:aa48:7b7e])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:1611:b0:3d7:eb3e:1c58
- with SMTP id adf61e73a8af0-3daed1c1684mr5671856637.8.1789110251982; Fri, 11
- Sep 2026 00:04:11 -0700 (PDT)
-Date: Fri, 11 Sep 2026 07:03:39 +0000
-In-Reply-To: <20260911070346.801948-1-morbo@google.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="czgAtOF3"
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=2z6K28VZFghAvaOC2rxcV8P37YjNcXnY9WqrSWMHQ/k=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1789113497; v=1; x=1789718297;
+ b=czgAtOF3JlWxuaKbHd6nJn+3vEEx++yytKytXfhgizpNlKXoBu0iIPbhZbr1uCfHrYUvkPQD
+ pkP6XMVK5eXLDp8cDD9X27POKFZ1M6XVUvSlRcXc7oWwe48CfuZxUSc6jmc7O3rXoKS75h0w7Ex
+ c/9gvUSCt+YiV0IBUdtl2XfQ=
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 08c4df989fc31bb8;
+	Fri, 11 Sep 2026 07:58:16 +0000
+X-Mizu-Trace-ID: 08c4df989fc31bb8
+X-Migadu-Flow: FLOW_OUT
+From: Ye Liu <ye.liu@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Thomas Gleixner <tglx@kernel.org>
+Cc: Ye Liu <liuye@kylinos.cn>,
+	David Hildenbrand <david@kernel.org>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	SJ Park <sj@kernel.org>,
+	Gregory Price <gourry@gourry.net>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rcu@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	rientjes@google.com,
+	shakeel.butt@linux.dev,
+	xu.xin16@zte.com.cn,
+	chengming.zhou@linux.dev,
+	will@kernel.org,
+	boqun@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com,
+	josh@joshtriplett.org,
+	urezki@gmail.com,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	tony.luck@intel.com,
+	reinette.chatre@intel.com,
+	x86@kernel.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	pavel@kernel.org,
+	lance.yang@linux.dev,
+	mhiramat@kernel.org,
+	pmladek@suse.com,
+	longman@redhat.com,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev,
+	dietmar.eggemann@arm.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	kprateek.nayak@amd.com,
+	mark.rutland@arm.com,
+	Dave.Martin@arm.com,
+	james.morse@arm.com,
+	babu.moger@amd.com
+Subject: [PATCH v3 00/15] sched: introduce for_each_process_rculock and for_each_thread_rculock
+Date: Fri, 11 Sep 2026 15:57:45 +0800
+Message-Id: <20260911075800.491472-1-ye.liu@linux.dev>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260911070346.801948-1-morbo@google.com>
-X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
-Message-ID: <20260911070346.801948-2-morbo@google.com>
-Subject: [PATCH 1/7] kasan: Add .kunitconfig for KUnit tests
-From: Bill Wendling <morbo@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Bill Wendling <morbo@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, kasan-dev@googlegroups.com, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add a .kunitconfig file for the KASAN test suite so that it can easily
-be run via kunit.py:
+From: Ye Liu <liuye@kylinos.cn>
 
-    ./tools/testing/kunit/kunit.py run --arch=3Dx86_64 --kunitconfig mm/kas=
-an
+Introduce for_each_process_rculock(), for_each_thread_rculock() and
+for_each_process_thread_rculock() macros that combine the existing
+iteration macros with scoped_guard(rcu), so that the RCU read lock
+is automatically acquired before iteration and released when the
+loop exits — including via break, goto, or return.
 
-CONFIG_KASAN_KUNIT_TEST depends on TRACEPOINTS, which is an invisible
-Kconfig symbol without a prompt. CONFIG_FTRACE alone only unlocks the
-tracer submenu and does not select TRACEPOINTS by itself, so also
-enable CONFIG_SCHED_TRACER=3Dy, which selects GENERIC_TRACER -> TRACING
--> TRACEPOINTS. This follows the same pattern used by
-security/landlock/.kunitconfig. Verified with:
+The rest of the series converts manual rcu_read_lock()/
+rcu_read_unlock() and guard(rcu)() pairs across mm/, kernel/, fs/,
+lib/ and security/ to use the new macros.
 
-    make KCONFIG_ALLCONFIG=3Dmm/kasan/.kunitconfig allnoconfig
+Suggested by Michal Hocko for the oom_kill path [2].
 
-that CONFIG_TRACEPOINTS=3Dy and CONFIG_KASAN_KUNIT_TEST=3Dy both resolve.
+Signed-off-by: Ye Liu <liuye@kylinos.cn>
 
-In addition, set CONFIG_LOG_BUF_SHIFT=3D20 to prevent printk buffer
-overflows on serial consoles when running under QEMU, as KASAN generates
-extensive reports across its test cases.
-
-Assisted-by: Claude:claude-sonnet-5
-Signed-off-by: Bill Wendling <morbo@google.com>
 ---
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Micka=C3=ABl Sala=C3=BCn" <mic@digikod.net>
-Cc: "G=C3=BCnther Noack" <gnoack@google.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: kasan-dev@googlegroups.com
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
----
- mm/kasan/.kunitconfig | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 mm/kasan/.kunitconfig
+Changes since v2 [3]:
+  - Split the kernel/ patch into per-subsystem patches, as the
+    combined patch could not be applied (Peter Zijlstra, Steven
+    Rostedt).
+  - Move changelog below the --- separator so it is excluded from
+    the commit message (Lorenzo Stoakes).
+  - Indent loop body in macro definitions to show scoped_guard
+    scope (Lorenzo Stoakes).
 
-diff --git a/mm/kasan/.kunitconfig b/mm/kasan/.kunitconfig
-new file mode 100644
-index 000000000000..58a7448fa352
---- /dev/null
-+++ b/mm/kasan/.kunitconfig
-@@ -0,0 +1,15 @@
-+CONFIG_KUNIT=3Dy
-+CONFIG_KASAN=3Dy
-+CONFIG_KASAN_KUNIT_TEST=3Dy
-+
-+# Additional dependencies.
-+# CONFIG_KASAN_KUNIT_TEST depends on TRACEPOINTS, an invisible Kconfig
-+# symbol with no prompt. CONFIG_FTRACE alone only unlocks the tracer
-+# submenu; CONFIG_SCHED_TRACER is needed to actually select
-+# GENERIC_TRACER -> TRACING -> TRACEPOINTS.
-+CONFIG_FTRACE=3Dy
-+CONFIG_SCHED_TRACER=3Dy
-+
-+# Prevent printk buffer overflows on serial consoles when running under
-+# QEMU, since KASAN generates extensive reports across its test cases.
-+CONFIG_LOG_BUF_SHIFT=3D20
---=20
-2.47.3
+Changes since v1 [1]:
+  - Rename macros from *_rcu to *_rculock, as suggested by Steven
+    Rostedt and acked by Thomas Gleixner, to avoid confusion with
+    existing *_rcu() list iterators that expect the caller to hold
+    the RCU read lock.
+  - Improve the comment on for_each_process_thread_rculock() to
+    document that 'break' only exits the inner loop and 'goto' is
+    needed to exit both loops (Thomas Gleixner).
+  - Rename the stale 'unlock:' label to 'out:' in hung_task.c, as
+    noted by Günther Noack.
+  - Clarify in patch 4 that page_pgoff() is safe outside the RCU
+    read-side critical section (SJ Park).
+  - CC all relevant maintainers on every patch (Lorenzo Stoakes).
+  - Drop the mm: prefix from patch 1, as the macros are in
+    include/linux/sched/signal.h (Michal Hocko).
 
+[1] https://lore.kernel.org/all/20260904083001.553587-1-ye.liu@linux.dev/
+[2] https://lore.kernel.org/all/20260813092933.562028-1-ye.liu@linux.dev/
+[3] https://lore.kernel.org/all/20260907081334.1152889-1-ye.liu@linux.dev/
+
+Ye Liu (15):
+  sched: introduce for_each_process_rculock and for_each_thread_rculock
+  mm/oom_kill: convert process/thread iterators to for_each_*_rculock
+  mm/ksm: convert process iterator to for_each_process_rculock
+  mm/memory-failure: convert process iterator to for_each_process_rculock
+  cpu/hotplug: convert thread iterator to for_each_thread_rculock
+  freezer: convert thread iterator to for_each_thread_rculock
+  hung_task: convert process/thread iterators to for_each_*_rculock
+  locking/lockdep: convert process/thread iterators to for_each_*_rculock
+  rcu: convert process/thread iterator to for_each_process_thread_rculock
+  sched: convert process/thread iterators to for_each_*_rculock
+  tracing/fgraph: convert process/thread iterator to for_each_process_thread_rculock
+  unwind: convert process/thread iterator to for_each_process_thread_rculock
+  fs: convert process/thread iterators to for_each_*_rculock
+  lib: convert process iterator to for_each_process_rculock
+  security/landlock: convert thread iterator to for_each_thread_rculock
+
+ fs/proc/base.c               |  4 +---
+ fs/resctrl/rdtgroup.c        |  8 ++------
+ include/linux/sched/signal.h | 26 ++++++++++++++++++++++++++
+ kernel/cpu.c                 |  4 +---
+ kernel/freezer.c             |  4 +---
+ kernel/hung_task.c           | 11 ++++-------
+ kernel/locking/lockdep.c     |  4 +---
+ kernel/rcu/update.c          |  4 +---
+ kernel/sched/core.c          |  3 +--
+ kernel/sched/debug.c         |  4 +---
+ kernel/trace/fgraph.c        |  8 ++------
+ kernel/unwind/deferred.c     |  3 +--
+ lib/is_single_threaded.c     |  5 +----
+ mm/ksm.c                     |  4 +---
+ mm/memory-failure.c          | 16 ++++------------
+ mm/oom_kill.c                | 20 +++++---------------
+ security/landlock/tsync.c    |  8 ++------
+ 17 files changed, 55 insertions(+), 81 deletions(-)
+
+--
+2.25.1
