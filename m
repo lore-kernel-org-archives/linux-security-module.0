@@ -1,254 +1,503 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E55019D8BC
-	for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2026 09:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954AB38DC72
+	for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2026 15:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789206892; cv=none; b=B6jcTZdRuYCA0tHBZpwtv8aE6QmWV/FpM70hFgV1BvcccQCdSZ1DhDWvjnKPt3Yyg1Pjq3lcRktM6bHx46wf+PiGN8OukBi/1ZwtffFoT6h0Htzn2VyZPuaQchkUVDrA/oC65xL1odZJIjWBZaZDE3cFPAlMudmSrrFfH9eqlmQ=
+	t=1789228114; cv=none; b=bSPzLQEG4IxwJc+rquCljXPLl73yKvilONkCfkZdUXAiQY3KtI88eZwDVHtz3zZt6XVYyYSgJe3dFcmK71jKHA8fmQTIt0PvF/LszgZc2kG547XdVaNz3ZkEmY/FVAEjh/F+t4m9nMGnJ+SVKuCFSxeIAgwCmkeaFcvoeWCfB/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789206892; c=relaxed/simple;
-	bh=xLGZ6pfrGi7Y0P4Mp+UYTrV0Mv1NTPoX6SsMuAFVEFY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hZ4J4N5xzFnu72yzRNfl+afndSdidMGnILINGfaULQX546LlYVndxrhG6orreVShOZURy4da5KjvlrWQ4UKpr5UI1k8Z2u1WGCRjaBykZT5EXVz/ouBZMu/zt82JPIf6QRERLELrtKYigejR+8n7zUlxKUYFyBTD9RJ1xeMjiqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQRcTUGR; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789228114; c=relaxed/simple;
+	bh=EGHAS28EShiEx1Qx68HBuJ+sNFt643nzMI61mTBgzuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MYYJaMKkISPO1O1k3IdhTRnRvxri7b7lt6WWhDebbfhPk36QSnjjEbIOx77rCp1t3yk/tvQmKxjDwQGzymEG7X4yOt89cTNOQYCaVrdK2BB/PTYjVuoye1PoiMnePHRKx/yvcZrMxIJF+zSu1F6YR5XdT/eYkyUMUVMZ+YUy6RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=dTpifUqP; arc=none smtp.client-ip=66.163.184.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQRcTUGR"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e6b885ef8so2006215e9.1
-        for <linux-security-module@vger.kernel.org>; Sat, 12 Sep 2026 02:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789206889; x=1789811689; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=KnNpw1WOa9p3MlCBG6ZZCFsfq25XNP5JJbLzPV5Kleo=;
-        b=YQRcTUGRgJG63ylGSvwLq9lvUJSzb6MmR8xxznYtZHOZx2ydHGJlkrbEUtO/TEeM5X
-         Y6P0hxK3/5Wj0k3xMfnZUdJdw9+Nk7FyuFy7PlWodrfGvX1zVBSwIBqA8gq/tD/viXI1
-         Icy9Z19vkv/lB6FxfydG5l5A/HCS1gCGLT1bob3jaqpGAVonEIt6AHJ67mS/95VE+YZ0
-         g3vNezzDlTcnJ4YydGXiWGxZRH3IzB4udOKuhce+jkSdveykWBS+FmBoK4f7wvrpLhVT
-         QKWODaPEogClLGgHP3LCcNnr/LDsGraYo1ZX1rcCGAVKd8q6/BRxLmU8byMDt0uJZ25f
-         dBMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789206889; x=1789811689;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=KnNpw1WOa9p3MlCBG6ZZCFsfq25XNP5JJbLzPV5Kleo=;
-        b=XB32GGYNCEym5tziUtzMLjhuOMwAlFj4+kHLjC2B2fzMno82bRXXws4vEtNGpbzVIX
-         bmd+3gI0KyMby9Guty2VuEElDjhJ4hzWSfbRGOmaNElpHerZiHtz1/ENliDGR/HUQIfS
-         S1G20zzXcKztUz82OvyaSROBKCXda08jIc69WwApzw9ZkGzacgO9KK2BzpMZJWNASGlK
-         HEFUibwmkjwA3gpiPP2kRQm/9ONXrayo8WZCNsNg8nAAkMfT0RurxETfCDP32rEgC6mk
-         m9oCc9GZKEq1n8CyHe2lbELCRsPUZ9v9Mv0OXPYBtTXZ9U3Bhk6UHjSiuXFF/f2yQ+Cn
-         DSxQ==
-X-Forwarded-Encrypted: i=1; AKwUvBybRVLgmWFBhDRgd7eOZxm4CnXcuxxt45ztPSfyOKoVJzY/9Dqok4RloH5MgFNk6XUoHwjW3qHV9XbHbQbJsMXxDZERVMI=@vger.kernel.org
-X-Gm-Message-State: AFuF++nT9F7ISign1kAn5teVtg9Eg3SndYHPBtyv9fTblBVUXc1Hks39
-	oPrpTKsP/hVMudi7uIKPxSwTe40EuJpOTO/QydJa7g4Y17f3c0/Sw/0r
-X-Gm-Gg: AYBFou3IXDRcG5frL/uX+qwBzaneACJ3jjg30uJkEcHREty/B6z9jcrcDcru1vqA5WJ
-	efp/YR41Iwg0p2eItBeqsxrzUe7aCkXzW6Iu133wZo8hTHa4A58OTWxdVewWce17wMwyBIyj7D+
-	zkXmJhvCEqhAqmva7x219CCKMgxmNA8aNQ9Tw6jWuhUhCvmBdLTnYZoRAxYDXxyqxY8j4EBjpTh
-	N8ryIxUQgPutTs15rtaEg9+RuN5fsDO9ipRu49Q9wnF/iVu0Rbb/o3nX4z5KBNsN+8rzZa4wTUp
-	0YTSIoNX0jW2BNMwcFvf4enHe+ckeLZbfGK4g2SZRfdtyxbw7cADbDeRkdbsHxZ4OUVim/2wxj8
-	SK47dfIsw9J5NU7QHcuiHmsuu5nSjb/iY+odrr03PRxgJTuDdSOQM3R4AWXf8rluVidjBPM+CTb
-	3K6glKh1dyqj0fznQlicg06dGgnLKKd8v04YNOFsTjpZ3Cb1mU9Q6KE0TyJoh9rFaOozpmNyFhF
-	Lu7cvYSJ9iPmzjPQ//QjM1XJ0ntcNnw7UnXhGDUcpL7o00GXP1b2d/frs8heDJUqz6QjQ8Mb0eu
-	1hPURzqg+mkGVZRB8wb8GSWZ5MY1khb/u7Ya603sDAdX/XUxBWSBZ9+9KihDiUTCd62FbYGrvkn
-	J8A==
-X-Received: by 2002:a05:600d:4452:20b0:499:b65d:124f with SMTP id 5b1f17b1804b1-49e6198c2aemr67076425e9.11.1789206888615;
-        Sat, 12 Sep 2026 02:54:48 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a02-3100-b260-f201-9983-e8c4-aff5-7a36.310.pool.telefonica.de. [2a02:3100:b260:f201:9983:e8c4:aff5:7a36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e71adc2ecsm15179175e9.4.2026.09.12.02.54.47
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 12 Sep 2026 02:54:48 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] keys: finalize persistent keyring timeout after link attempt
-Date: Sat, 12 Sep 2026 11:54:40 +0200
-Message-Id: <20260912095440.79864-1-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dTpifUqP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1789228110; bh=EGHAS28EShiEx1Qx68HBuJ+sNFt643nzMI61mTBgzuE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=dTpifUqPO6B+l+uNvyI3fXrp39GXqvKlUDpKQcJuy9hHLZc0u6uXG96ojuk3CdxulILqB8e8i4CIBcN0DR0FKIpr9O1gSk1Vspi94aNXbxPqbPylx6/F+qsJiLy8cnIMSIp59gijHq3C4wmZRdzz3DVniU6FfscdzwRTxLPIZMJmvsBjXJLuV4wRSclmCN8iIX/ilbEVg7vS2/bBcoTFOtJkB8p7YewkVrWJRRXKoWR0Qt5Cfmq9QYMabxZUoL3ouC1BK5fVoE2DowUUAUlDFU3kDA0pWPm/U3fXTF4y1L9Hwc2EKpEQJ+ZDuGtJy8yduEKS7NX1ksTQvxj/37U/ZQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1789228110; bh=Kuo77RivD71kpeau9nV3OO7TvktMF6NeCL5kwSfpQGd=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=fBTLBMIugSGBQyJD2jbw+Ap2a5Y0Iqxpsl+8j4htX0TfRKEUC5v4gsoTtCnlk8Klqm/hKjnPRVy8N/PHAnRKv1tfmNvmuR/xoSqfXUpmF/IR/AUaZS77/PNWkj02ozizwJES1L+OP6imltyc9Gxl60rFw5EibAYDKZiUBsPS+gISmRpqi+ypKqzWK5U93thHJEg9zL6gTv4CxuSwYD6jtghmUyq9qknQYP8kII4tu07JnPJpi/M59PbKCxhz1mgLoOk/XEolxEkBe+MPpJ2a5Nmj98KMGq0etxMVd4ZexZRg6FvKoS9HQuVu2K1HFrii3IAbpoXwEXF60uSqZalsyg==
+X-YMail-OSG: ObdbLP0VM1lTANdCCOhz3Y5atfmmeTnkmcSDp.uRI6ipGn5DkYB3MnMgWL5ZNyv
+ U0OFDUnxdn6ZdvBXfs6528VMN4rWgM_uadEvepI.cPdgIQ3ZMJ8ZzzIjeHL0BG0XhNQLS8AQhJYw
+ PxHq6L7Y4P5HYlK6D9RykQC8raJUL_NYY6QIAmc94_pk0flJ8jKKYwEr2BaepXULj1FQBXNGP.NJ
+ h.QA9oc5DQdZmYsgFF7odaA90fvnCD9ip_1amPpmvDdwtrFJhDXbCfEprLw3nXlLRj0J38V6C7XV
+ ..1W.D1nL2WnvTrQGsMN2pjyWdwIdhyEpRfoeT_tcBP8gu.Ox6x6BbkklK1iQFqlUR2KSOdaEjsS
+ .nmXUjH1ubndtTsKDiAn5hbGmV9EBX6aDwLBNR9We8GtGJ_LQBqU.PZkyv_e59rBgZqkhrTEBLjk
+ sVGbIsI1JZzUEj5pAW86ZrtPJMHN9nsJqBYe8ydGJAFX9RvvaCPCu1RFCaYThGfBac4F7hMQYzr3
+ jYohKbJmkuRGg32SMqvzPbnnJYXvTsi3QY.jVDaFI952FEFsDTU43VtbnNnSwwWgk.2JbRFmKzZd
+ SxADASZxysQNFs8tfhwtlKwlRyGUOvuV8ZEhxMIOf6B81.TBNZxf3tMqxl6aPDW9GhCD5thZvIHN
+ ZS_h62VRMiKMTlWe4tfpATgLyCx6a1qOu1blf3c7Idcd8gZ.i3ZP72eLmqO7Jd9ltdHIl.MVkrLQ
+ unsUBe8nGJRplBsXgXF7gMwtij64nRCEJMV6NPJsDJDfs6FvWZgEJq3IY97PIsELMgkVGjNGzghD
+ EpRIEroF.yWeYDjmgBcFuQKxICWfM4XAfzK4klUNoFs5qMb7iKI2x10puZsKLSEn1X19JnOc9fuz
+ 7nb3pOrjBfPWY3lVw1npI._4cIMupUYD5e2SLfS8bC9B.2BpufeMkl07aUOg4jtZCm7ezi5UbCM4
+ Nb7Pp5AMl92jx26vuuLjvmvhrJtNjFnWgOMkpD9D0GoD0W_Chd1kDxtf89X3hn5s552nwxUoSxHH
+ zO40mbWF7sbdqRfSe19HrrY3VrC6rIn1HXu2FI6l_v2zZA3IthfZrahja9vaaqjb_qKmezT0zwGt
+ y.FUDP_7v3Qxb5zt8ckJNftVLazFi_O8wsWDy3ggO_jefcpyi.0igLbzaRJ28Fov1rGOcAjjcWVg
+ CpkpH.cJEbidaoovgGOQi2nveyOG7E_InIQPLw1qQuZCzFAKLUZRs6BIJN1zEsE99ZilOulxAfYw
+ 0BELIQ5sd0DzucvjZA3Mziw_Yl98twVLl5PKDjlIJuwpR_ELgDDoMXjwkaIjZApfafSf_I7wK5a.
+ dSQ3m3148KFoJjwR0HbN4bqAGrEJ2HRrOxor542096YigmbaGy3S8Kuw9eoyXvAvqQ3dZvMKMs.X
+ Gwy.pD7Eskb8Hkg28llzpXlw_zGvsbR7GSZUtajfertbGg4hwL7F.Bvr5bapfJd_kRg.4XMEq99S
+ w.714srLTXsYMKiNmfx4tO49Ix9pI6yOha0kW3O5AVpADvQ1kpszzpzyVDO5ORYe_E9AB_CtxsKJ
+ x_5_Zp9Jf8HIXvr2OcQRTw.eYOtzBueD22ENS1ISs0FevPFBxugqfaOlejWM0ESqXZ_ePrYRRkJ6
+ hUvrmC8qbk9luyFYqKUgHnbJRCk0CAULaJR9QBq_0BPLCBHwlRQmXVARTZg1PKHYaNPCeT94nzgY
+ nY1D4rhhp1tfjTn6bkBy5W8fInXlq94rgyiIWSBZdEufo4FezdrPTBsL9VEqe81.ju76oxmGijr8
+ dWrB18Yez9SdOWRFVKgPW40Jnv4ycJLptiWMokuhl8DmnXXinU_DskMoBKIFDpMlrmXx469JEWNE
+ N5iLvSoA97UP97MlcgAipYqPWaYGZkLkXM1gW6nesYDVHaA7IPWegHR7DWhVURgVeSPAeONyA5RQ
+ pN9pu2kwu2dJwOMQYu.uWt8IfLYVM5DByOoxbjnGSICaaK5CuJFBEQ34yAzomgpkdMXHgxL9O3W0
+ ZAKhO5_rZY1mrYxxUTPFbfboXFy56qxiO0bMo029jDOQYwNwjoZkDYleJTHV8BNn6ADPvTtInaie
+ EgLWQLry1pVj.inoPP8lpkfbIUu3m6Vnhx7hmtohlOFfBav6a0oYvjDejBSaORJJiytwavlP6l7H
+ lEkn614nrvd1Iz_EIcP46g5AvN_LVtMItDU06twEUfs_nUJk55hKLGLdPs78rXSW4o1mR8iK4zh1
+ 0dbnHyGhnBg.qG8Ap4KSmy3jYZ5fy9MST4Cn1IPTPAMB9XpqipNN9KYwhxPcsO5PGobrcmnjeIwP
+ NC0mfUY1fz.VwuMuG8kM-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 0d459944-998f-448b-8164-eda19d817a83
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Sat, 12 Sep 2026 15:48:30 +0000
+Received: by hermes--production-gq1-678d9dd684-86v4w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4d1e64e686a8a701f35c52a78dda57f4;
+          Sat, 12 Sep 2026 15:48:25 +0000 (UTC)
+Message-ID: <5c4492df-e58c-4df3-b996-4ad5c54e3d2f@schaufler-ca.com>
+Date: Sat, 12 Sep 2026 08:48:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] smack: preserve low-integrity labels on copy via
+ whitelist
+To: Tang Peter <Peter_Towne@hotmail.com>
+Cc: "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,
+ "gaolong@yhkylin.cn" <gaolong@yhkylin.cn>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <TY0PR06MB4957733568F7DBD502775B5B81AE2@TY0PR06MB4957.apcprd06.prod.outlook.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <TY0PR06MB4957733568F7DBD502775B5B81AE2@TY0PR06MB4957.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.26525 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-When no keyring exists for the requested UID, KEYCTL_GET_PERSISTENT
-creates and registers one before linking it to the requested destination.
-The configured timeout is set only after the destination link succeeds.
+On 8/25/2026 8:33 PM, Tang Peter wrote:
+> Subject: [RFC PATCH] smack: preserve low-integrity labels on copy via whitelist
 
-A destination restricted with KEYCTL_RESTRICT_KEYRING makes that link fail
-with -EPERM. With persistent_keyring_expiry set to 60 seconds, /proc/keys
-still reports the registered keyring's expiry as "perm".
-The failed call therefore leaves a quota-exempt keyring in the namespace's
-hidden register, where it may remain until namespace teardown.
+I haven't been ignoring this, sorry for the delay.
+I can't say that I like it all that much, but I can see where it
+could have value. It's not all that weirder than the relabel-self
+behavior. So, if you put it under a configuration option, say
+CONFIG_SECURITY_SMACK_COPYWHITELIST which would default to "no"
+I will have another look. I'm not promising I'll take it at this
+point, but I will look even more closely.
 
-Rename the write-locked helper to key_get_or_create_persistent() and return
-the key reference through a result parameter. Return 0 when it creates a
-keyring and 1 when the retry finds an existing one. Return a negative error
-on failure. Another caller may create the keyring between the initial
-read-locked lookup and the retry under the write lock.
-
-Set the timeout after permission checking and linking. Do this on success,
-or on failure if the call allocated the keyring. This leaves a new keyring
-collectible after failure without starting its timeout while linking is
-still in progress.
-
-Fixes: f36f8c75ae2e ("KEYS: Add per-user_namespace registers for persistent per-UID kerberos caches")
-Assisted-by: LLM
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
----
-Changes in v4:
-- tweak comment (Jarkko)
-
-v3: https://lore.kernel.org/r/20260901191743.39210-1-kmehltretter@gmail.com/
-
-Changes in v3:
-- Return the persistent key reference through a result parameter (Jarkko).
-- Keep lookup-or-create atomic inside the helper and use 0 for creation, 1
-  for an existing keyring, and negative values only for errors.
-
-v2: https://lore.kernel.org/r/20260901164323.35785-1-kmehltretter@gmail.com/
-
-Changes in v2:
-- Rewrite the commit message around the restricted-destination reproducer
-  and trim the explanation (Jarkko).
-- Track whether the persistent keyring was newly allocated and finalize its
-  timeout after the permission and link checks. This preserves an existing
-  keyring's timeout on failure and avoids expiry during linking.
-
-Testing below was performed for v3; v4 changes only the comment.
-
-Tested with QEMU 10.2.1 TCG on i386 and x86_64. With
-persistent_keyring_expiry set to 60 seconds, KEYCTL_GET_PERSISTENT returned
--EPERM and /proc/keys reported "perm" before the fix and "1m" after it on
-both architectures.
-
-Also tested on x86_64 with persistent_keyring_expiry set to 1 second and
-gc_delay set to 0. Successful calls reused the same serial, a newly created
-keyring from a failed call expired, and a failed call using an existing
-keyring left its timeout unchanged. A test-only two-second delay before
-timeout finalization did not allow the keyring to be collected before link.
-
-Two concurrent callers returned the same serial. A test-only 100 ms delay
-after the read-locked miss forced both callers into the write-locked retry
-and confirmed that the second caller took the 1 (existing) return path.
-
- security/keys/persistent.c | 55 ++++++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 23 deletions(-)
-
-diff --git a/security/keys/persistent.c b/security/keys/persistent.c
-index 97af230aa4b22..bdab995393261 100644
---- a/security/keys/persistent.c
-+++ b/security/keys/persistent.c
-@@ -33,25 +33,31 @@ static int key_create_persistent_register(struct user_namespace *ns)
- }
- 
- /*
-- * Create the persistent keyring for the specified user.
-+ * Get or create the persistent keyring for the specified user.
-  *
-  * Called with the namespace's sem locked for writing.
-+ *
-+ * Returns a boolean indicating whether the keyring already existed,
-+ * or a negative error. On success, *persistent_ref holds a reference
-+ * to the keyring.
-  */
--static key_ref_t key_create_persistent(struct user_namespace *ns, kuid_t uid,
--				       struct keyring_index_key *index_key)
-+static int key_get_or_create_persistent(struct user_namespace *ns, kuid_t uid,
-+					struct keyring_index_key *index_key,
-+					key_ref_t *persistent_ref)
- {
- 	struct key *persistent;
--	key_ref_t reg_ref, persistent_ref;
-+	key_ref_t reg_ref;
- 
- 	if (!ns->persistent_keyring_register) {
--		long err = key_create_persistent_register(ns);
-+		int err = key_create_persistent_register(ns);
-+
- 		if (err < 0)
--			return ERR_PTR(err);
-+			return err;
- 	} else {
- 		reg_ref = make_key_ref(ns->persistent_keyring_register, true);
--		persistent_ref = find_key_to_update(reg_ref, index_key);
--		if (persistent_ref)
--			return persistent_ref;
-+		*persistent_ref = find_key_to_update(reg_ref, index_key);
-+		if (*persistent_ref)
-+			return 1;
- 	}
- 
- 	persistent = keyring_alloc(index_key->description,
-@@ -61,9 +67,10 @@ static key_ref_t key_create_persistent(struct user_namespace *ns, kuid_t uid,
- 				   KEY_ALLOC_NOT_IN_QUOTA, NULL,
- 				   ns->persistent_keyring_register);
- 	if (IS_ERR(persistent))
--		return ERR_CAST(persistent);
-+		return PTR_ERR(persistent);
- 
--	return make_key_ref(persistent, true);
-+	*persistent_ref = make_key_ref(persistent, true);
-+	return 0;
- }
- 
- /*
-@@ -78,6 +85,7 @@ static long key_get_persistent(struct user_namespace *ns, kuid_t uid,
- 	key_ref_t reg_ref, persistent_ref;
- 	char buf[32];
- 	long ret;
-+	bool created = false;
- 
- 	/* Look in the register if it exists */
- 	memset(&index_key, 0, sizeof(index_key));
-@@ -100,23 +108,24 @@ static long key_get_persistent(struct user_namespace *ns, kuid_t uid,
- 	 * also need to create the register.
- 	 */
- 	down_write(&ns->keyring_sem);
--	persistent_ref = key_create_persistent(ns, uid, &index_key);
-+	ret = key_get_or_create_persistent(ns, uid, &index_key,
-+					   &persistent_ref);
- 	up_write(&ns->keyring_sem);
--	if (!IS_ERR(persistent_ref))
--		goto found;
--
--	return PTR_ERR(persistent_ref);
-+	if (ret < 0)
-+		return ret;
-+	created = ret == 0;
- 
- found:
-+	persistent = key_ref_to_ptr(persistent_ref);
- 	ret = key_task_permission(persistent_ref, current_cred(), KEY_NEED_LINK);
--	if (ret == 0) {
--		persistent = key_ref_to_ptr(persistent_ref);
-+	if (ret == 0)
- 		ret = key_link(key_ref_to_ptr(dest_ref), persistent);
--		if (ret == 0) {
--			key_set_timeout(persistent, persistent_keyring_expiry);
--			ret = persistent->serial;
--		}
--	}
-+
-+	if (ret == 0 || created)
-+		key_set_timeout(persistent, persistent_keyring_expiry);
-+
-+	if (ret == 0)
-+		ret = persistent->serial;
- 
- 	key_ref_put(persistent_ref);
- 	return ret;
-
-base-commit: 08dbfad3f5040f5bdb6c529da20d6d4e81fefd72
--- 
-2.53.0
+>
+> Hi Casey,
+>
+> I did try SMACK64EXEC, and it works for a dedicated copy tool. But two
+> cases on this device fall outside it:
+>
+>   1. The application itself reads USB content. A Qt app opens files on
+>      the stick directly (to import / preview) and later writes its own
+>      files. It isn't a cp_usbarea-style tool, so its output inherits the
+>      app's process label, not USB_Area — the provenance is lost through
+>      normal, legitimate use, not through a copy command.
+>
+>   2. An attacker won't use my cp_usbarea. If untrusted code reads the
+>      USB file and writes its own file directly, SMACK64EXEC doesn't get
+>      in the way — the copy tool only constrains the paths that
+>      voluntarily use it.
+>
+> So SMACK64EXEC constrains the "compliant" path, but this device also has
+> non-compliant paths (the app's own reads, and arbitrary writes). That's
+> what pushed me toward a whitelist enforced in the kernel on every read
+> rather than only when someone uses the right tool.
+>
+> Here is the implementation, rebased onto current mainline and
+> build-tested against 7.2.0. Compared with the earlier /lib/ path-filter
+> version, two things changed:
+>
+>   1. The gate is a label whitelist, not a path prefix. Only labels added
+>      to /smack/preserve-whitelist are ever preserved, so the /lib/ and
+>      /usr/lib/ filter is gone: a shared-library label is simply not on
+>      the whitelist and can never pollute the slot.
+>
+>   2. The record is taken only after a passing MAY_READ check, so a
+>      process that cannot read a file cannot create a file bearing its
+>      label (which would widen the write-down further).
+>
+> The mechanism in short:
+>
+>   - smack_file_open(): after a passing read check, a regular file opened
+>     O_RDONLY whose label is whitelisted records it in
+>     task_smack::smk_preserve.
+>
+>   - smack_inode_init_security(): if no transmutation applies and a
+>     preserve label is recorded, use it for the new inode and clear it.
+>     TRANSMUTE still takes priority.
+>
+>   - One-shot slot: consumed on create, cleared on fork and exec.
+>
+>   - /smack/preserve-whitelist is the single source of truth; an empty
+>     list is the lock-free fast path in smack_file_open().
+>
+> I understand none of this removes the write-down primitive — it only
+> narrows the target to the whitelisted channel labels. That is a
+> deliberate device-side tradeoff for our deployment, where the only
+> subject able to read the sensitive label is the trusted admin and the
+> operator performing the copies has no read access to it, so the
+> cross-sequence laundering you described is not reachable here. I am not
+> asking to merge this; I'd value your read on whether the implementation
+> has problems I've missed, and on whether there is a way to get the
+> "enforced on every read" property without the write-down at all.
+>
+> The patch is a single commit, 235 insertions over four files, checkpatch
+> clean apart from the symbolic-permission warning (kept to match the rest
+> of smackfs).
+>
+> Regards,
+> Tang Pengke
+>
+> ---
+>  security/smack/smack.h        | 22 +++++++++
+>  security/smack/smack_access.c | 75 ++++++++++++++++++++++++++++
+>  security/smack/smack_lsm.c    | 45 +++++++++++++++++
+>  security/smack/smackfs.c      | 93 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 235 insertions(+)
+>
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index 9b9eb262f..0b0a2ba42 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -73,6 +73,23 @@ struct smack_known {
+>       struct mutex                  smk_rules_lock;   /* lock for rules */
+>  };
+>  
+> +/*
+> + * An entry in the preserve whitelist.
+> + *
+> + * The whitelist is the single source of truth for which labels are
+> + * preservable.  Its emptiness is the fast path in smack_file_open(),
+> + * and membership is tested by walking the list.
+> + *
+> + * Only untrusted-channel / low-integrity labels should be added, so a
+> + * process can only ever preserve a low label and never a system trusted
+> + * label (which would be a write-down primitive and let shared-library
+> + * loads pollute the record).
+> + */
+> +struct smk_preserve_wl {
+> +     struct list_head        list;
+> +     struct smack_known            *skp;
+> +};
+> +
+>  /*
+>   * Maximum number of bytes for the levels in a CIPSO IP option.
+>   * Why 23? CIPSO is constrained to 30, so a 32 byte buffer is
+> @@ -121,6 +138,7 @@ struct task_smack {
+>       struct smack_known      *smk_task;  /* label for access control */
+>       struct smack_known      *smk_forked;      /* label when forked */
+>       struct smack_known      *smk_transmuted;/* label when transmuted */
+> +     struct smack_known      *smk_preserve;    /* label to inherit on next create */
+>       struct list_head  smk_rules;  /* per task access rules */
+>       struct mutex            smk_rules_lock;   /* lock for the rules */
+>       struct list_head  smk_relabel;      /* transit allowed labels */
+> @@ -312,6 +330,8 @@ bool smack_privileged(int cap);
+>  bool smack_privileged_cred(int cap, const struct cred *cred);
+>  void smk_destroy_label_list(struct list_head *list);
+>  int smack_populate_secattr(struct smack_known *skp);
+> +bool smk_preserve_allowed(struct smack_known *skp);
+> +void smk_preserve_set(struct smack_known *skp, bool on);
+>  
+>  /*
+>   * Shared data.
+> @@ -326,6 +346,8 @@ extern struct smack_known *smack_unconfined;
+>  #endif
+>  extern int smack_ptrace_rule;
+>  extern struct lsm_blob_sizes smack_blob_sizes;
+> +extern struct list_head smk_preserve_wl;
+> +extern struct mutex smk_preserve_wl_lock;
+>  
+>  extern struct smack_known smack_known_floor;
+>  extern struct smack_known smack_known_hat;
+> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+> index 350b88d58..961d47545 100644
+> --- a/security/smack/smack_access.c
+> +++ b/security/smack/smack_access.c
+> @@ -53,6 +53,81 @@ static u32 smack_next_secid = 10;
+>  int log_policy = SMACK_AUDIT_DENIED;
+>  #endif /* CONFIG_AUDIT */
+>  
+> +/*
+> + * Preserve whitelist: only labels on this list are preserved on copy.
+> + *
+> + * The list is the single source of truth for "which labels are
+> + * preservable". It also lets smack_file_open() take a plain
+> + * list_empty() fast path.
+> + *
+> + * Only untrusted-channel / low-integrity labels should be added, so
+> + * that a process can only ever preserve a low label -- never a system
+> + * trusted or sensitive label -- which would otherwise be a write-down
+> + * primitive (and would let shared-library loads pollute the record).
+> + *
+> + * Entries hold raw smack_known pointers. SMACK global labels are never
+> + * freed at runtime (smk_destroy_label_list frees list elements, not the
+> + * label objects), so these pointers stay valid for the life of the
+> + * system.
+> + */
+> +LIST_HEAD(smk_preserve_wl);
+> +DEFINE_MUTEX(smk_preserve_wl_lock);
+> +
+> +bool smk_preserve_allowed(struct smack_known *skp)
+> +{
+> +     struct smk_preserve_wl *e;
+> +
+> +     mutex_lock(&smk_preserve_wl_lock);
+> +     list_for_each_entry(e, &smk_preserve_wl, list) {
+> +           if (e->skp == skp) {
+> +                 mutex_unlock(&smk_preserve_wl_lock);
+> +                 return true;
+> +           }
+> +     }
+> +     mutex_unlock(&smk_preserve_wl_lock);
+> +     return false;
+> +}
+> +
+> +/*
+> + * Add or remove a label from the preserve whitelist.
+> + *
+> + * The sysfs interface (preserve-whitelist) calls this with on=true for
+> + * a plain label, and on=false for a label prefixed with '-'.
+> + */
+> +void smk_preserve_set(struct smack_known *skp, bool on)
+> +{
+> +     struct smk_preserve_wl *e, *new = NULL;
+> +
+> +     if (on) {
+> +           new = kzalloc_obj(*new, GFP_KERNEL);
+> +           if (!new)
+> +                 return;
+> +           new->skp = skp;
+> +     }
+> +
+> +     mutex_lock(&smk_preserve_wl_lock);
+> +     if (on) {
+> +           list_for_each_entry(e, &smk_preserve_wl, list) {
+> +                 if (e->skp == skp) {
+> +                       kfree(new);
+> +                       new = NULL;
+> +                       break;
+> +                 }
+> +           }
+> +           if (new)
+> +                 list_add_tail(&new->list, &smk_preserve_wl);
+> +     } else {
+> +           list_for_each_entry(e, &smk_preserve_wl, list) {
+> +                 if (e->skp == skp) {
+> +                       list_del(&e->list);
+> +                       kfree(e);
+> +                       break;
+> +                 }
+> +           }
+> +     }
+> +     mutex_unlock(&smk_preserve_wl_lock);
+> +}
+> +
+>  /**
+>   * smk_access_entry - look up matching access rule
+>   * @subject_label: a pointer to the subject's Smack label
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index ff115068c..b2a702668 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -325,6 +325,7 @@ static void init_task_smack(struct task_smack *tsp, struct smack_known *task,
+>  {
+>       tsp->smk_task = task;
+>       tsp->smk_forked = forked;
+> +     tsp->smk_preserve = NULL;
+>       INIT_LIST_HEAD(&tsp->smk_rules);
+>       INIT_LIST_HEAD(&tsp->smk_relabel);
+>       mutex_init(&tsp->smk_rules_lock);
+> @@ -906,6 +907,8 @@ static int smack_bprm_creds_for_exec(struct linux_binprm *bprm)
+>       struct superblock_smack *sbsp;
+>       int rc;
+>  
+> +     bsp->smk_preserve = NULL;
+> +
+>       isp = smack_inode(inode);
+>       if (isp->smk_task == NULL || isp->smk_task == bsp->smk_task)
+>             return 0;
+> @@ -1066,6 +1069,17 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+>             }
+>       }
+>  
+> +     /*
+> +      * If a whitelisted label was recorded on file open and no
+> +      * transmutation applies, inherit it so the new file keeps the
+> +      * source's (low-integrity) label across the copy.
+> +      */
+> +     if (!trans_cred && tsp->smk_preserve != NULL &&
+> +         !(trans_rule && smk_inode_transmutable(dir))) {
+> +           issp->smk_inode = tsp->smk_preserve;
+> +           tsp->smk_preserve = NULL;
+> +     }
+> +
+>       if (rc == 0)
+>             if (xattr_dupval(xattrs, xattr_count,
+>                       XATTR_SMACK_SUFFIX,
+> @@ -2068,6 +2082,37 @@ static int smack_file_open(struct file *file)
+>       smk_ad_setfield_u_fs_path(&ad, file->f_path);
+>       rc = smk_tskacc(tsp, smk_of_inode(inode), MAY_READ, &ad);
+>       rc = smk_bu_credfile(file->f_cred, file, MAY_READ, rc);
+> +     if (rc)
+> +           return rc;
+> +
+> +     /*
+> +      * Record a whitelisted label after a successful read check so the
+> +      * next file create (smack_inode_init_security) can inherit it.
+> +      *
+> +      * The record must happen only after the read check passes;
+> +      * otherwise a process without read access to the source could
+> +      * create a file with that label without ever reading it, which
+> +      * would be a write-down primitive.
+> +      *
+> +      * The whitelist must only hold untrusted-channel / low-integrity
+> +      * labels (peripheral, network, serial, and other external
+> +      * sources), never system trusted labels (system binaries, shared
+> +      * libraries, etc.) -- otherwise shared-library loads would pollute
+> +      * the record.  Because of this constraint no library path
+> +      * filtering is needed here: the whitelist check already excludes
+> +      * every non-whitelisted file, including shared libraries.
+> +      *
+> +      * The whitelist is read-only after configuration, so the
+> +      * list_empty() fast path needs no locking.
+> +      */
+> +     if (!list_empty(&smk_preserve_wl) &&
+> +         (file->f_flags & O_ACCMODE) == O_RDONLY &&
+> +         S_ISREG(inode->i_mode)) {
+> +           struct smack_known *skp = smk_of_inode(inode);
+> +
+> +           if (smk_preserve_allowed(skp))
+> +                 tsp->smk_preserve = skp;
+> +     }
+>  
+>       return rc;
+>  }
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 6e62dcb36..568c40ffc 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -62,6 +62,7 @@ enum smk_inos {
+>       SMK_NET6ADDR      = 23, /* single label IPv6 hosts */
+>  #endif /* CONFIG_IPV6 */
+>       SMK_RELABEL_SELF = 24, /* relabel possible without CAP_MAC_ADMIN */
+> +     SMK_PRESERVE_WL   = 25, /* preserve whitelist labels */
+>  };
+>  
+>  /*
+> @@ -2867,6 +2868,95 @@ static const struct file_operations smk_ptrace_ops = {
+>       .llseek           = default_llseek,
+>  };
+>  
+> +/*
+> + * Seq_file operations for /smack/preserve-whitelist.
+> + * Iterates the whitelist and shows each preservable label.
+> + */
+> +static void *preserve_wl_seq_start(struct seq_file *s, loff_t *pos)
+> +{
+> +     mutex_lock(&smk_preserve_wl_lock);
+> +     return seq_list_start(&smk_preserve_wl, *pos);
+> +}
+> +
+> +static void *preserve_wl_seq_next(struct seq_file *s, void *v, loff_t *pos)
+> +{
+> +     return seq_list_next(v, &smk_preserve_wl, pos);
+> +}
+> +
+> +static void preserve_wl_seq_stop(struct seq_file *s, void *v)
+> +{
+> +     mutex_unlock(&smk_preserve_wl_lock);
+> +}
+> +
+> +static int preserve_wl_seq_show(struct seq_file *s, void *v)
+> +{
+> +     struct smk_preserve_wl *e = list_entry(v, struct smk_preserve_wl, list);
+> +
+> +     seq_printf(s, "%s\n", e->skp->smk_known);
+> +     return 0;
+> +}
+> +
+> +static const struct seq_operations preserve_wl_seq_ops = {
+> +     .start = preserve_wl_seq_start,
+> +     .next  = preserve_wl_seq_next,
+> +     .stop  = preserve_wl_seq_stop,
+> +     .show  = preserve_wl_seq_show,
+> +};
+> +
+> +static int smk_open_preserve_wl(struct inode *inode, struct file *file)
+> +{
+> +     return seq_open(file, &preserve_wl_seq_ops);
+> +}
+> +
+> +static ssize_t smk_write_preserve_wl(struct file *file, const char __user *buf,
+> +                            size_t count, loff_t *ppos)
+> +{
+> +     struct smack_known *skp;
+> +     char *data, *label;
+> +     bool on = true;
+> +
+> +     if (!smack_privileged(CAP_MAC_ADMIN))
+> +           return -EPERM;
+> +
+> +     data = memdup_user_nul(buf, count);
+> +     if (IS_ERR(data))
+> +           return PTR_ERR(data);
+> +
+> +     label = strim(data);
+> +     if (!label[0]) {
+> +           kfree(data);
+> +           return -EINVAL;
+> +     }
+> +
+> +     /* A leading '-' removes the label (same convention as revoke-subject). */
+> +     if (label[0] == '-') {
+> +           on = false;
+> +           label = strim(label + 1);
+> +           if (!label[0]) {
+> +                 kfree(data);
+> +                 return -EINVAL;
+> +           }
+> +     }
+> +
+> +     skp = smk_find_entry(label);
+> +     if (!skp) {
+> +           kfree(data);
+> +           return -ENOENT;
+> +     }
+> +
+> +     smk_preserve_set(skp, on);
+> +     kfree(data);
+> +     return count;
+> +}
+> +
+> +static const struct file_operations smk_preserve_wl_ops = {
+> +     .open       = smk_open_preserve_wl,
+> +     .read       = seq_read,
+> +     .write            = smk_write_preserve_wl,
+> +     .llseek           = seq_lseek,
+> +     .release    = seq_release,
+> +};
+> +
+>  /**
+>   * smk_fill_super - fill the smackfs superblock
+>   * @sb: the empty superblock
+> @@ -2933,6 +3023,9 @@ static int smk_fill_super(struct super_block *sb, struct fs_context *fc)
+>             [SMK_RELABEL_SELF] = {
+>                   "relabel-self", &smk_relabel_self_ops,
+>                         S_IRUGO|S_IWUGO},
+> +           [SMK_PRESERVE_WL] = {
+> +                 "preserve-whitelist", &smk_preserve_wl_ops,
+> +                       S_IRUGO|S_IWUSR},
+>             /* last one */
+>                   {""}
+>       };
+> -- 
+> 2.43.0
