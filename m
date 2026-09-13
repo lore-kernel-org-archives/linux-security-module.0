@@ -1,77 +1,63 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2111A6816;
-	Sun, 13 Sep 2026 09:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D0D233944;
+	Sun, 13 Sep 2026 16:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789292969; cv=none; b=GExvjF2FS6EeXrEs0CgDO4m0/mAwR3iGvMMtG+bcTMWWRuqNz6Oz+sTf7zoxoqIkFNxU8cYFGfvnEUdmfdyCU6AiLJYs5BPdw0AcrNZqjyTGPL/YRwX7EXjUeJ5dga8TtMfkg+c9IZWEsHfjbyE2xYGSKaXhP9J1ww3Lp0E1N4Y=
+	t=1789317038; cv=none; b=Xz/9bebz60BEmIgJGe4QwOjMcYC0raRcRw0JyjhSwgbhMtHMquON0/H1OnGnXj0UBCS7BfDbI66dfYVmKq5o2RRYvZ7c+2Ng8zc04PcQ/Q0sqvKgahgWnWvfzQL7aIvimqFjBi46L3Zs0+MFUjE87IE6gl4fSlTrkXGBXo4Rcy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789292969; c=relaxed/simple;
-	bh=mGAg4rKunkIul1QDQuUassVbQndYIl+aQxGofMURzUU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=j1e5p6dHcuhzvGG3zBN5qpb7Syoo4ew9znIajUKqZavGbH5IOrAT6bSYOdasCqrTpVgVS17Lwle6H370aL1VSlW/kHfAYbLrmMPooG20oR0c3qsWEH7EwhXg1dP+jBHeruJlPWBd0XFkky/wgYgky197VPX1Tox9FjpsOaNO/Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfBvxpKE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789317038; c=relaxed/simple;
+	bh=2JSp6uF2+/wqGyKdfLGQ1uBv5SoCdvqLA2/UiHxvnA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NRc1zdW5UYuz0V9a3b2l672gniityA4tI0k591KqOA9RutcxqjCb8Ge2bcmju9uUoD8wofxj57YTxYvAyTX8MTQ4xVz28930NHPgBDvq8v2TNCK/UfbXlaEvz6fsjQUgS8sWxBJHwd4VkJH/j07pFnAFndABL0gGsXooI2MQSj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=uuv6UN8q; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfBvxpKE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DC51F000FF;
-	Sun, 13 Sep 2026 09:49:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789292967;
-	bh=Tg5IU0+H9KMkSOpIVEYusfjm6bIb4fQEllwynyz0EVc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=PfBvxpKEvpJ5VLvXhFNDyHaYXB+ow/oOmmQUHohuPRTQ5OidCuKr72NVna21Lhj74
-	 r5JNth+EicGcrCC7nWRPU3KP7VvVO3pSw3SMgGmOSz4IhFnNf6O4Pe/2yjIehooC1j
-	 V5gfQBN3V7CSTiFObippk57pdzCBTAaYjhpBs8h86PcRmrAVE5mHCe8CBXR8sdZ9lI
-	 hOiIl8GhtQRUZJhWmq4v0gpGo2yCDfi4JJ5+JCDbKJMzUMLQpHEY7eL23wcPEXXOYK
-	 YUZArZv4sXfKDhvHqKab4q5jTSS5LAjaBXREtzk2jtVz45lYaQ3li0P61UqlG1ww9i
-	 AGBthjzkxuVUQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Gary Guo <gary@garyguo.net>, Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett"
- <liam@infradead.org>, Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda
- <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo
- <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno
- Lossin <lossin@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, Daniel Almeida <daniel.almeida@collabora.com>,
- Tamir Duberstein <tamird@kernel.org>, Alexandre Courbot
- <acourbot@nvidia.com>, Onur =?utf-8?Q?=C3=96zkan?= <work@onurozkan.dev>,
- Lyude Paul
- <lyude@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve
- =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>, Todd Kjos
- <tkjos@android.com>, Christian
- Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, "Rafael
- J.
- Wysocki" <rafael@kernel.org>, Dave Ertman <david.m.ertman@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge
- Hallyn <sergeh@kernel.org>, David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan
- Kara <jack@suse.cz>, Igor Korotin <igor.korotin@linux.dev>, Viresh Kumar
- <vireshk@kernel.org>, Nishanth
- Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>,
- Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Michal Wilczynski
- <m.wilczynski@samsung.com>, Ira Weiny <iweiny@kernel.org>, Matthew Brost
- <matthew.brost@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
- <thomas.hellstrom@linux.intel.com>, Philipp Stanner <phasta@kernel.org>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, driver-core@lists.linux.dev,
- linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-usb@vger.kernel.org, Oliver Mangold
- <oliver.mangold@pm.me>, Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v21 4/9] rust: rename `AlwaysRefCounted` to `RefCounted`.
-In-Reply-To: <DLCHKYBQ3WF1.B8YPUTAKNM7@garyguo.net>
-References: <20260910-unique-ref-v21-0-e83257373062@kernel.org>
- <20260910-unique-ref-v21-4-e83257373062@kernel.org>
- <CAH5fLghUQW5urTfLCCDT4BhuqoFVoLUAG46TS-SxaS37bJcgWQ@mail.gmail.com>
- <DLCHKYBQ3WF1.B8YPUTAKNM7@garyguo.net>
-Date: Sun, 13 Sep 2026 11:49:12 +0200
-Message-ID: <875x09v5uv.fsf@kernel.org>
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="uuv6UN8q"
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C305C14C2D6;
+	Sun, 13 Sep 2026 18:30:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1789317030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tvmaiIU5PddctNQD7UfqypasD+Yj4SWTiUXRtO7KUcw=;
+	b=uuv6UN8qiqJ+HmRv28s0aZ5AqKplDFCjnjryYvhy92cpG82wRZuK2Hvqjbw2dqtGL2ZBou
+	tWGgtCm396btk/IrGwlz7F0SmmGBwukXWpSjc3isOjs6cxsdiQOfXMQOQPotnAAizPeXdd
+	v82xQH0+TY8Zvh5CFaWgtsh0DqFxZ2/HMwdlScl50r1OZmBHRuzcHY/L+X0BuTMODOckls
+	nWz9LtTYCtqRlHgvnmI5ZeLfu+tRJBsJjG9rjctg09IrZ5asn+hcLHsckbCCl/gnIQ0kMw
+	rx8yy2iX7EpnKszo1ADbECNnD2DdaGC8CcYw4hHizkPXahofRv7tFngHVtM3+Q==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 266e6f96;
+	Sun, 13 Sep 2026 16:30:24 +0000 (UTC)
+Date: Mon, 14 Sep 2026 01:30:09 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Tingmao Wang <m@maowtm.org>
+Cc: Greg Kurz <groug@kaod.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	qemu-devel@nongnu.org, Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: Re: [PATCH v2 0/7] fs/9p: Reuse inode based on path (in addition to
+ qid)
+Message-ID: <aqbPkWJBrphVwOKW@codewreck.org>
+References: <aMih5XYYrpP559de@codewreck.org>
+ <20250917.Eip1ahj6neij@digikod.net>
+ <f1228978-dac0-4d1a-a820-5ac9562675d0@maowtm.org>
+ <3061192.c3ltI2prpg@silver>
+ <20251013112424.6b93659c@bahia>
+ <15ccd30e-e5f2-4612-b0ac-e495748732e6@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,63 +65,50 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <15ccd30e-e5f2-4612-b0ac-e495748732e6@maowtm.org>
 
-"Gary Guo" <gary@garyguo.net> writes:
+Tingmao Wang wrote on Tue, Jul 14, 2026 at 02:14:00AM +0100:
+> Does anyone have preferences / suggestions on whether to keep going with
+> the path-tracking based approach (perhaps subject to figuring out a way to
+> handle parent renames), or an approach where Landlock simply stores the
+> fhandle (or (i_ino, i_generation (but this is u32 whereas st_gen within 9p
+> is u64))) as the rule key?
 
-> On Fri Sep 11, 2026 at 10:08 AM BST, Alice Ryhl wrote:
->> On Thu, Sep 10, 2026 at 11:01=E2=80=AFAM Andreas Hindborg <a.hindborg@ke=
-rnel.org> wrote:
->>>
->>> From: Oliver Mangold <oliver.mangold@pm.me>
->>>
->>> There are types where it may both be reference counted in some cases and
->>> owned in others. In such cases, obtaining `ARef<T>` from `&T` would be
->>> unsound as it allows creation of `ARef<T>` copy from `&Owned<T>`.
->>>
->>> Therefore, we split `AlwaysRefCounted` into `RefCounted` (which `ARef<T=
->`
->>> would require) and a marker trait to indicate that the type is always
->>> reference counted (and not `Ownable`) so the `&T` -> `ARef<T>` conversi=
-on
->>> is possible.
->>>
->>> - Rename `AlwaysRefCounted` to `RefCounted`.
->>> - Add a new unsafe trait `AlwaysRefCounted`.
->>> - Implement the new trait `AlwaysRefCounted` for the newly renamed
->>>   `RefCounted` implementations. This leaves functionality of existing
->>>   implementers of `AlwaysRefCounted` intact.
->>>
->>> Suggested-by: Alice Ryhl <aliceryhl@google.com>
->>> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->>> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
->>> [ Andreas: Updated commit message and rebase on rust-next (7.2) ]
->>> Acked-by: Igor Korotin <igor.korotin.linux@gmail.com>
->>> Acked-by: Danilo Krummrich <dakr@kernel.org>
->>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->>> Reviewed-by: Gary Guo <gary@garyguo.net>
->>> Assisted-by: LLM
->>> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
->>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>
->> This has a lot of safety comments of the form "This does not implement
->> Ownable, *therefore* it can implement AlwaysRefcounted". But I think
->> the safety comment should instead explain that it's okay to create an
->> ARef<_> from an &_ for this type. The fact that Ownable is not
->> implemented is not sufficient argument.
->>
->> Alice
->
-> Yeah, I think for types that currently implement `AlwaysRefCounted` and d=
-oes not
-> have a new `Ownable` form, it should keep saying that "this is always ref=
-erence
-> counted".
+st_gen comes from FS_IOC_GETVERSION which is exactly i_generation on at
+least ext4/btrfs/xfs, so it's not like that brings you anything
+(and it's also stored in the 9p inode's i_generation afaics?)
 
-Makes sense, I will fix them.
+My understanding is that if the underlying filesystem supports it then
+yes mountpoint + i_ino + i_generation ought to be unique when combined
+together, but that leaves you with what to do with filesystems that
+don't support it (at least tmpfs?) and 9p mounts sharing multiple
+filesystems (even if qemu has been warning about it for a while and that
+brings its own share of bugs around cache)
 
-Best regards,
-Andreas Hindborg
+If you're fine not supporting them, I think that definitely looks more
+promising, but otherwise you don't have much choice
 
 
+Either way I'm afraid I don't have time to look much into it (I'm afraid
+I have to admit I didn't read your full mail, and I have to get up in 4
+hours so I should probably stop processing this 9p backlog...), and it
+doesn't look like Greg is much more reactive, so you're on your own and
+I'm really sorry about it :/
+I wish you best though!
 
+> If I find some time over the next couple of weeks I will try out the
+> second approach since it might be turning out to be the simpler option,
+> but the drawback is that it doesn't enable i/fanotify on 9pfs, which I
+> originally hoped to achieve together with fixing Landlock on 9pfs.
+
+(inotify/fanotify would need a protocol overhaul to get "right" and is a
+much bigger can of works, because if you get it to work locally then
+you'll get people to expect the server to notify clients of remote
+changes (some network filesystems can do it with leases, but 9p doesn't
+have any such mechanism);
+I can understand it is useful even if it only works within the client
+local changes but I'm not sure I want to push much here either.)
+
+-- 
+Domnique
