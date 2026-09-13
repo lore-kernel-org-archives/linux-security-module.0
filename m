@@ -1,271 +1,185 @@
-Received: from mail-yx2-f4.google.com (mail-yx2-f4.google.com [74.125.224.132])
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com [74.125.228.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEFD38CFFA
-	for <linux-security-module@vger.kernel.org>; Sun, 13 Sep 2026 22:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.132
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789338017; cv=none; b=QXeRJxaE9bU53dSSCocAxGGMhyVDBGDtD5Qz85p52H+G7D7sY+wDQVVxEKwYd6iEkk0bBJb6xLd6jwsxj3NmnqTZxbet3WoSzzqsWZKYU7FC093prnwEKq9maF0q7yKMkoMygUpNLtR642Qko9AyJLFG5mHnW+EADQOLbfbAVxk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789338017; c=relaxed/simple;
-	bh=5pkHB3i164W8icF3HNIo5S3m7IXJeAl7ZFd29G+8BJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LiO+mtg4YYSNzeVswul8cxdCN5RIdQuRXJ7gkMkCJW9nqNbRyGJ1/p2c+zQX+HMFThv8f8VEUz+8Im2YEZSJ3UiN36OtHPUzmszRfvMdN8fjz8xiwH+a5OHwu4jRltntN3MyXPhuRjt5O+xfloIBtL8bbt0HoUubbzfHUN+UQq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=northecho.dev; spf=none smtp.mailfrom=northecho.dev; dkim=pass (2048-bit key) header.d=northecho-dev.20251104.gappssmtp.com header.i=@northecho-dev.20251104.gappssmtp.com header.b=aucMGjy7; arc=none smtp.client-ip=74.125.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=northecho.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=northecho.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB46437F8DC
+	for <linux-security-module@vger.kernel.org>; Sun, 13 Sep 2026 23:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789341910; cv=pass; b=CixrH/ANTVr5iHCIHIfRvlstoip0+86VWzd5jlKg4OW3koXZ86cVqbSF531H7g7Z4c/i+KfV7uywdEsv6XObkd/p6Y40RULns5r7gx4VvuKR9s2932un+uFCUzivHAgcscRan50axtWdDqPW7Iemko9ffNtA4YAiniyAx5NAVOg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789341910; c=relaxed/simple;
+	bh=MKz9YMkBGISCMtma3zl4V6/L6vHskNHtuEKv8FNHu8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GzzOVXUZnwwDB+gezC33+/hb37EMdskvyAJuifSqL1mJjQCOGWNmRNI7viiUnN9sY0o34fnqIHyXVs2kHnwJv5DI6wnlXbYnzpIcWVxIVTExVwXQ9MzyhPx8kg+HdJ7X3n0pG6QmUD7TKSl176KXLq/kyWSc5gZWujF9sy8xQ9I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdcNQvqv; arc=pass smtp.client-ip=74.125.228.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=northecho-dev.20251104.gappssmtp.com header.i=@northecho-dev.20251104.gappssmtp.com header.b="aucMGjy7"
-Received: by mail-yx2-f4.google.com with SMTP id 00721157ae682-8670da2f2dcso542447b3.1
-        for <linux-security-module@vger.kernel.org>; Sun, 13 Sep 2026 15:20:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdcNQvqv"
+Received: by mail-pz2-f43.google.com with SMTP id d2e1a72fcca58-8623e5d435cso471356b3a.1
+        for <linux-security-module@vger.kernel.org>; Sun, 13 Sep 2026 16:25:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789341908; cv=none;
+        d=google.com; s=arc-20260327;
+        b=X2Oo8sHCSkk9XaBiJufvQrJkLp7JqAhixyyvvtvtUIC3FXo34vo6SGjP+cuSAmqNqT
+         j5hmY6EgX/7rQ5ycpsbwBPeINF/j17nxnIgdE4lZXt3rLk1VeRk0kmzTdV2Hb347zeq5
+         x4ICL7qZOgJ+zJfEOscZgyZgnAXPamiMfeLJISQg114Fyc9GlU5cQDYMXILUZCgpo1LZ
+         XXWcniRmakIqjuazMxORqrfulsCCinRNR7yrvI3CY7qoWgY4t9zsDGKq67y1DJyxLWpF
+         8Ej1SvcKFfkE5OMOlFvL+3qs9p0213ZADxz1xO3Agu8F0hZhaz1FD2/amFiZ+Jy9gTFU
+         dEgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pbPc/varaxQSoxoCvlzbtZpSK7urW4ExB0j1Yox4pVo=;
+        fh=aYoiVrWZV6W5Q15VLdNIi/tB9H3S3/EOZk0xVXQrr+4=;
+        b=aHMQVE2e6wQAsXzWX2bT031cJBmyAIxj4J2yyWwjJIGX7sr+B6/J4bxlunFOegKuhQ
+         NuM/+5GhSIluIY5/nJ5lWJEfZJdGYHDjS3cdtoxw15dpF5p7vkiceZKTvJBADWnnTSyA
+         vU0B3SyRJXa1/8P4T/xd0WtIK8Bu+r0Jw7EFjN94JB4DbEZ1lpMzXkVyQH8/iKD5IKL4
+         CaAmOY0U7FVW2Cqpt4egMniI+z0qiPl/hBsq5O3DghO5zyLVAUFwmjEzyXqgYJ3LHVl2
+         D+CWF7qKFPXqexJu42ps+W9jFLjeTHHoIijZZhEjnTpyPverDlb6d/3BuTj9NdhkERfP
+         qT9w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=northecho-dev.20251104.gappssmtp.com; s=20251104; t=1789338014; x=1789942814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=S1OwKuJbWNl7O6FSAPDDrjoi72RznfkxqUaE7FgbPyI=;
-        b=aucMGjy74s6Z5XM2h/EnIm2F7ep/Pf04YdmPrh0i1AssTwZLuRehEIXzitKchSUWDb
-         DDTNEa3GxalwWT0yDj3W6Xl5zva6wNoqj0/W1F5fjip+HosSD8hnqdgthxByURwWeklO
-         U2Cidk6cROC6GWL8p+0sqyo/hC3Wt+4gTZvXoO/l20ipODBMadz7xYp4wwgyV7F8gBNU
-         EiKFCLP6PBLagkowlIKlVgW8NwY+UxbsWu5x7HKjIVimpajXl+LK8vCSaSGH3oGDp7+K
-         YnQ8IrQhflhbcT4JiVl0gC80pYaV8/rUTEr/p2fLyPEG3swtG8ZlTcptXN2z0FbwX2jX
-         gDTA==
+        d=gmail.com; s=20251104; t=1789341908; x=1789946708; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pbPc/varaxQSoxoCvlzbtZpSK7urW4ExB0j1Yox4pVo=;
+        b=GdcNQvqvWwzquJgXATB7kfNOSBVXqpwZjNMNOmOLbnz0ldHeslnRK4hic72ZE6oMun
+         j0UC1uJAtCxu/RtUqx3a48H9RqiknvMPC/qnc892eLGXJPITtSWmP8PVhhJlVbU6P7Tf
+         Y1QZOZc6g4xrYqKwTDuq3vreKroCNZenh6wbkDL4djFzwJYR7t/9F+yQ3GMPHAKFAheX
+         5+hKGTS6VtDjMns8RAs/X54vgQJ4yDJ98hocOuPqa13IM7OebUb3n11GwWaAHF6eld2R
+         eclqt386plu4Uw3CVp64recHkjCK/Ez8iNbo6OakvplDIX+YKRJgZfNDf22UfYb5sOLG
+         ZKjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789338014; x=1789942814;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=S1OwKuJbWNl7O6FSAPDDrjoi72RznfkxqUaE7FgbPyI=;
-        b=jIQ0VmELQHwBRp0gr4nW4kAPyYCBcPeLh6CW8ahOLjl9AX1mUxUEgzxVHTiscjSP9L
-         0H114c61NkJQa1uoB1EZFNhGuLph+oiUHe0VA3AhHrUYjNzXMumu4YCG0GA+kmanyOHJ
-         +BLFETXAv8pe9SGBHrsaV8mB0Ezt7bcH8TMDvwepPGnd1gLjDFTttWtkY1aBNtw0yRNY
-         utYlElrmdjs0UOhwjrUk5h0ILZcUK9O4q11ZZnmCCxDxe1wWQq5Vqc+EUz6YGrIg7v3/
-         L7tB32ET++clRjvyTSNrUXObxMeTPeFbrhW3qWw7ZOvNqWu6ka1qphxQ6CzyibW49juE
-         I1qw==
-X-Forwarded-Encrypted: i=1; AKwUvBzH8uqFCVrtNl/SQRJmbaE3OKyfSfo9NaLqn1kdNuuS29chzjwM7uAxkGYjgrG7rD1yxPyJMCel4Yhed9zhT047eGVaiBI=@vger.kernel.org
-X-Gm-Message-State: AFuF++mHslFuSY3OJPWP5qHE2BhxPgnC4Ba21mmfBIv9mT0VcuNbTbpe
-	Pzje5/koHAst/DuMaebuLdUPe9x05cRmhW66tsAIgN7bqPGUEBwPjWufstg16GNNXFG3
-X-Gm-Gg: AYBFou0ANxjt1uGthBX5oMlxkjHCSxAGfE+adgFkGNc1GJF0wgnQntmMaiad5AIXSNk
-	w2dOTbsSjMYk+qvUnBzqM+BM7nl4Lx9w9hMbwrstYO/dgDBj0FEVBwCQg2pSfV9nP+doexS/ijf
-	CrwgVUegOi4ARpr3RwNS4YevRoc6ryAdLTz1HSuw7O04MTXad+04f8sfnzs6NaMZfl+Hp4Yjm79
-	sfOULQ4EhakgIOAPj0FH83PQIcxfhOc7Yj/sz0971sHFq+GuviVFjxDcO/FMd7oQtGtbQR+kORg
-	YCi4cyC+pc5HDnikPDUVZvU7O22uPKwUSm+Vwo433sPC8NNKlzgfa9sb2fbNZCYoI721FP2A/jW
-	/6OKDIAE4/abOpjuhpJDlsEivjFRHkt+Tr1YXipZ2sHSc6o9CK4oyFj6AyvhFTbj9Hx7KG35Cnl
-	0Ssb2UNnHd2BSqfmzPXMzOwasiYeySN72al4gX5KcblFwYIlUQ0+PbgGMWtXBnhauhm/fd+fHKP
-	+c1Tfnqfd79WjweU//lkTY2pfrZoifRIgO/3rYcWew4hqc40Q==
-X-Received: by 2002:a05:690c:b13:b0:820:100e:1abb with SMTP id 00721157ae682-88d235a8491mr430957b3.4.1789338013628;
-        Sun, 13 Sep 2026 15:20:13 -0700 (PDT)
-Received: from kelso (99-10-92-174.lightspeed.rlghnc.sbcglobal.net. [99.10.92.174])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67125ea8a35sm3737883d50.19.2026.09.13.15.20.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Sep 2026 15:20:13 -0700 (PDT)
-From: Christopher Lusk <clusk@northecho.dev>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	John Johansen <john.johansen@canonical.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH 2/2] selftests/landlock: cover TIOCSIG signal scoping
-Date: Sun, 13 Sep 2026 18:19:58 -0400
-Message-ID: <20260913221958.839429-3-clusk@northecho.dev>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260913221958.839429-1-clusk@northecho.dev>
-References: <20260913221958.839429-1-clusk@northecho.dev>
+        d=1e100.net; s=20251104; t=1789341908; x=1789946708;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pbPc/varaxQSoxoCvlzbtZpSK7urW4ExB0j1Yox4pVo=;
+        b=mHIFNT5XFNT18QgKJHaYnQ5Rxm1RguYeTbQ8mkQMrpOGm8OOru/0qUZ6TvM9rntCfP
+         T5g4GX9p05HGqai+Tdqx7g6W+pHIliNJTNTgdRH/6yAzAb6DdTTxmsnWymez3oQg4lYM
+         dB5CqV12XXavc0dbAZkanI6YfzrKy8JYOvgXqf4TtBvecHTTtCvFT+ljDqdrAdJ0H/iv
+         r35RpaCqJC6hrc9XlQuvEgNd3PHE4B3XB0DzRoCl8ApS5c8eJd4sszybuL3iitaSY2SL
+         psGlKoboWmzRO8X7hX9DSoifClyToaESA0eFz/vy/91thl0iLjSwuzh/66NrYTqzdUFy
+         itBA==
+X-Forwarded-Encrypted: i=1; AKwUvByitEv+phQJYJIpc1JuKwD/tJv6ybPHdqQNvt+NSBzAKwN5vBPKLYy+qYzgihmSr+Mvm0cvbiewOFHTU71u62KQ6sWHbHk=@vger.kernel.org
+X-Gm-Message-State: AFuF++mD7vn8BvR+dOtcg47sWh75dMb46SQ8RKi0BhAEId1oXpvn4U0x
+	+48BqrQFHf8AOHRxttd4LZEYxCQ+3U0Vli5GzPYa5KznF9xdQaV3zr+anM9EHRkh0+faD5O3jqF
+	yZeS4VEALT5YoZ/AOpWK4vJKhGysd4F4=
+X-Gm-Gg: AYBFou1j4XoyqhuvuOWZdjpu2ybCmERg46cjiMUbKg9l9IUh3zY3JxPqHwDvEcTWPjH
+	ebZG1drlBcVab80UN/iAgLK8NS51dCxCWWZajOc/ckCHEsWGg23rUVfqc2youhAF6lWeGhKHgFz
+	3jEB1XZVKgwz8t/0wRgkrypOYVG4q2RQWFcg8jIv9xRSCeM5iJ2ZEkqOWw02fp1ANnyTDkh0cp9
+	mSqaMEh++es+vS5q9QIXangXSuxzwAc5IPI8tkMYgeTrFHVwUmJuzcxlmEr7F2peDRJivahAEbr
+	ApeLp1/p+mKY00cA2zW4nYaack184gUhmtg79XOYXY4sEbHQGuzTM2zERD/hroC7FhlTGnp5MHo
+	kqbnnN61XR5rha74L/MFJmJodfIYlgSMiiaBZYr8=
+X-Received: by 2002:a05:6a21:4c0f:b0:3d8:effe:34f2 with SMTP id
+ adf61e73a8af0-3db3f1e2442mr103161637.12.1789341908038; Sun, 13 Sep 2026
+ 16:25:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260909193719.518517-1-utilityemal77@gmail.com>
+ <20260909193719.518517-5-utilityemal77@gmail.com> <CAHC9VhQHZ+ngFdzKqmnzBh341CGEg-jexu+QYU8=1qXK=u-x-Q@mail.gmail.com>
+ <aqHUw6k0Mf83CGFT@zenbox> <CAHC9VhTM7emi9vxs+5Za8Hrc_e9dg7fZx+Z6BGUc4VQ1qhEAUA@mail.gmail.com>
+ <DLD0VQ3D8CYC.3V5ZT8HDMY4IH@gmail.com> <aqTZdCz6JaoK16Fp@zenbox>
+ <DLDL7KK3FZKU.17ADLLWJVXB5F@gmail.com> <CAHC9VhS0JckwfomqLTUJkZZkDSgeRXYOjMmPQYErgYynQYqMKQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhS0JckwfomqLTUJkZZkDSgeRXYOjMmPQYErgYynQYqMKQ@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 13 Sep 2026 16:24:56 -0700
+X-Gm-Features: AcwNN1U6X57XXPgvs7wBUo1AVpm-fnxQGl3Bt0cNbgPT5Dz1tG3b1h2XibzcFQ8
+Message-ID: <CAADnVQJCJjy9Eiwn6-88c0iOk4LfgPU6KBv+w0JZdBzmXBMUCw@mail.gmail.com>
+Subject: LSM boundaries. Was: [PATCH bpf-next v3 04/15] lsm: Add the
+ bpf_lsm_policy_release kfunc and policy object destructor
+To: Paul Moore <paul@paul-moore.com>
+Cc: Justin Suess <utilityemal77@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <matt@bobrowski.net>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Jan Kara <jack@suse.cz>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Jiri Olsa <jolsa@kernel.org>, Tingmao Wang <m@maowtm.org>, 
+	bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a focused regression test for a sandboxed PTY master holder using
-TIOCSIG to signal an out-of-domain slave foreground process group.
+On Sun, Sep 13, 2026 at 12:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Sat, Sep 12, 2026 at 3:33=E2=80=AFPM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> > On Fri Sep 11, 2026 at 10:26 PM PDT, Justin Suess wrote:
+> > >
+> > > If fs/, mm/, drivers/, net/, are permitted to have kfuncs, then why n=
+ot
+> > > security/? kfuncs.rst doesn't seem to forbid this.
+> >
+> > because fs, mm, net see the value in bpf. bpf helps these subsytems
+> > to focus on their core technologies and moves policy decisions out of
+> > kernel and into bpf.
+> > while lsm people treat bpf as arch-enemy.
+>
+> It's amusing to read this when just this week we merged a patchset
+> into the LSM tree for the benefit of those writing BPF LSMs.  If you
+> look at the discussion around patch 2/2 you will even see a reasonable
+> exchange between Matt Bobrowski, a BPF LSM maintainer, and me about
+> the patch.  Alexei is obviously welcome to his own opinion, but I
+> would encourage those reading this thread to look beyond his comments.
+>
+> https://lore.kernel.org/linux-security-module/20260904-lsm-mount-idmaps-v=
+3-0-920a1963675d@amutable.com/
 
-The test observes both the ioctl result and the target's signal-handler
-effect.  It fails on the unpatched base because TIOCSIG succeeds and
-SIGTSTP is delivered.  It passes with the preceding RFC prototype because
-the ioctl fails with EPERM and the target observes no signal.
+And that's an example of unacceptable land grab by LSM folks
+that I'm concerned about.
+security*() calls sprinkled around the kernel are not LSM territory.
+It's a decision of subsystem maintainers to pass more or less
+objects into lsm hooks.
+VFS folks could have decided to pass a subset of the object to
+avoid exposing internal details to abusive LSMs or, as in this case,
+they decided to pass struct mnt_idmap as well to increase
+visibility into vfs operations.
 
-The identical test binary and initramfs were booted against both kernels
-under QEMU.  TAP reported one failing test on the affected image and one
-passing test on the patched image.
+Paul,
+it's not your call to ack or nack their decisions.
+Your job is to review security/*.c side of changes
+and give feedback.
 
-Assisted-by: Claude:claude-opus-4-8
-Assisted-by: Codex:gpt-5.6-sol
-Signed-off-by: Christopher Lusk <clusk@northecho.dev>
----
- .../selftests/landlock/scoped_signal_test.c   | 142 ++++++++++++++++++
- 1 file changed, 142 insertions(+)
+The needs of the kernel subsystem are far greater
+than all LSM concerns combined.
 
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index 259cdcc8aa5c..9e1dbcfa07c2 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -12,6 +12,8 @@
- #include <pthread.h>
- #include <sched.h>
- #include <signal.h>
-+#include <stdio.h>
-+#include <sys/ioctl.h>
- #include <sys/mount.h>
- #include <sys/prctl.h>
- #include <sys/types.h>
-@@ -681,6 +683,146 @@ TEST(sigio_to_pgid_members)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
-+struct tiocsig_result {
-+	int ret;
-+	int error;
-+};
-+
-+static void handle_tiocsig(int sig)
-+{
-+	if (sig == SIGTSTP)
-+		signal_received = 1;
-+}
-+
-+static int setup_tiocsig_handler(void)
-+{
-+	struct sigaction action = {
-+		.sa_handler = handle_tiocsig,
-+		.sa_flags = SA_RESTART,
-+	};
-+
-+	if (sigemptyset(&action.sa_mask))
-+		return -1;
-+	return sigaction(SIGTSTP, &action, NULL);
-+}
-+
-+static int create_pty_master(char *const slave_path,
-+			     const size_t slave_path_size)
-+{
-+	int master_fd, pty_number, unlock = 0;
-+
-+	master_fd = open("/dev/ptmx", O_RDWR | O_NOCTTY | O_CLOEXEC);
-+	if (master_fd < 0)
-+		return -1;
-+	if (ioctl(master_fd, TIOCSPTLCK, &unlock) < 0 ||
-+	    ioctl(master_fd, TIOCGPTN, &pty_number) < 0) {
-+		const int saved_errno = errno;
-+
-+		close(master_fd);
-+		errno = saved_errno;
-+		return -1;
-+	}
-+	if (snprintf(slave_path, slave_path_size, "/dev/pts/%d", pty_number) >=
-+	    (int)slave_path_size) {
-+		close(master_fd);
-+		errno = ENAMETOOLONG;
-+		return -1;
-+	}
-+	return master_fd;
-+}
-+
-+/*
-+ * Checks that TIOCSIG cannot bypass LANDLOCK_SCOPE_SIGNAL when a sandboxed
-+ * holder of a PTY master targets an out-of-domain foreground process group.
-+ */
-+TEST(tiocsig_to_foreground_pgrp)
-+{
-+	struct tiocsig_result result = {};
-+	char slave_path[64], byte;
-+	int ready[2], release[2], effect[2], report[2];
-+	int master_fd, status, target_effect = -1;
-+	pid_t attacker, target;
-+
-+	drop_caps(_metadata);
-+	master_fd = create_pty_master(slave_path, sizeof(slave_path));
-+	if (master_fd < 0 && errno == ENOENT)
-+		SKIP(return, "Unix98 PTY not available");
-+	ASSERT_LE(0, master_fd);
-+	ASSERT_EQ(0, pipe2(ready, O_CLOEXEC));
-+	ASSERT_EQ(0, pipe2(release, O_CLOEXEC));
-+	ASSERT_EQ(0, pipe2(effect, O_CLOEXEC));
-+	ASSERT_EQ(0, pipe2(report, O_CLOEXEC));
-+
-+	target = fork();
-+	ASSERT_LE(0, target);
-+	if (target == 0) {
-+		int slave_fd;
-+
-+		EXPECT_EQ(0, close(master_fd));
-+		EXPECT_EQ(0, close(ready[0]));
-+		EXPECT_EQ(0, close(release[1]));
-+		EXPECT_EQ(0, close(effect[0]));
-+		EXPECT_EQ(0, close(report[0]));
-+		EXPECT_EQ(0, close(report[1]));
-+		ASSERT_LE(0, setsid());
-+		slave_fd = open(slave_path, O_RDWR | O_CLOEXEC);
-+		ASSERT_LE(0, slave_fd);
-+		ASSERT_NE(SIG_ERR, signal(SIGTTOU, SIG_IGN));
-+		ASSERT_EQ(0, setup_tiocsig_handler());
-+		signal_received = 0;
-+		ASSERT_EQ(0, tcsetpgrp(slave_fd, getpgrp()));
-+		ASSERT_EQ(1, write(ready[1], ".", 1));
-+		ASSERT_EQ(1, read(release[0], &byte, 1));
-+		target_effect = signal_received;
-+		ASSERT_EQ((ssize_t)sizeof(target_effect),
-+			  write(effect[1], &target_effect,
-+				sizeof(target_effect)));
-+		EXPECT_EQ(0, close(slave_fd));
-+		_exit(_metadata->exit_code);
-+		return;
-+	}
-+	EXPECT_EQ(0, close(ready[1]));
-+	EXPECT_EQ(0, close(release[0]));
-+	EXPECT_EQ(0, close(effect[1]));
-+	ASSERT_EQ(1, read(ready[0], &byte, 1));
-+
-+	attacker = fork();
-+	ASSERT_LE(0, attacker);
-+	if (attacker == 0) {
-+		EXPECT_EQ(0, close(ready[0]));
-+		EXPECT_EQ(0, close(release[1]));
-+		EXPECT_EQ(0, close(effect[0]));
-+		EXPECT_EQ(0, close(report[0]));
-+		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+		errno = 0;
-+		result.ret = ioctl(master_fd, TIOCSIG, SIGTSTP);
-+		result.error = errno;
-+		ASSERT_EQ((ssize_t)sizeof(result),
-+			  write(report[1], &result, sizeof(result)));
-+		_exit(_metadata->exit_code);
-+		return;
-+	}
-+	EXPECT_EQ(0, close(report[1]));
-+	ASSERT_EQ((ssize_t)sizeof(result),
-+		  read(report[0], &result, sizeof(result)));
-+	ASSERT_EQ(attacker, waitpid(attacker, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	/* Release the target only after the signal has either fired or failed. */
-+	ASSERT_EQ(1, write(release[1], ".", 1));
-+	ASSERT_EQ((ssize_t)sizeof(target_effect),
-+		  read(effect[0], &target_effect, sizeof(target_effect)));
-+	ASSERT_EQ(target, waitpid(target, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	EXPECT_EQ(-1, result.ret);
-+	EXPECT_EQ(EPERM, result.error);
-+	EXPECT_EQ(0, target_effect);
-+	EXPECT_EQ(0, close(master_fd));
-+}
-+
- static void *thread_setown_scoped(void *arg)
- {
- 	const int fd = *(int *)arg;
--- 
-2.55.0
+Daan's patch:
+-int security_inode_create(struct inode *dir, struct dentry *dentry,
+umode_t mode);
++int security_inode_create(struct mnt_idmap *idmap, struct inode *dir,
++  struct dentry *dentry, umode_t mode);
+ void security_inode_post_create_tmpfile(struct mnt_idmap *idmap,
+  struct inode *inode);
+-int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+- struct dentry *new_dentry);
++int security_inode_link(struct mnt_idmap *idmap, struct dentry *old_dentry=
+,
++ struct inode *dir, struct dentry *new_dentry);
 
+broke a bunch of production bpf-lsm programs for many companies.
+It's annoying, but I cannot complain, since it was VFS
+folks' decision to change their hooks.
+Pls at least cc bpf@vger next time.
+If you didn't mention it we would have found out about
+the breakage only during the next merge window.
+
+Anyway, back to LSM's land grab...
+Because of LSM people's behavior, networking folks dont
+want to add new LSM hooks.
+It's really starting to feel that LSM hooks are like
+tracepoints of the past.
+They could be in the way of subsystem development.
+Hence it's important to stress that it's a subsystem
+maintainers' decision to shape LSM hooks in their subsystem.
+Neither LSM people nor BPF cannot nack VFS's LSM hook changes.
