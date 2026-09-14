@@ -1,143 +1,115 @@
-Received: from mail-yx2-f1.google.com (mail-yx2-f1.google.com [74.125.224.129])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2BD48F843
-	for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2026 18:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8E849F123
+	for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2026 20:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789409408; cv=none; b=iR2XaQbYiwxXdz94LKLoDeKooXyEk6FvBI9dXWHyeRO0PjsGKTajEgV8quETEDto4e4mRHO7zo5OWMNr53/LDrZ1F56ScZ/yEUCgtqmvzBM1e1FmHF2bY42ZuTEkIdNzhuDQRGKt6cqVMXt0U0U3/BHEROW2ZdYg0Bh5laqmoDQ=
+	t=1789418517; cv=none; b=UoHZd6bOSynpvIXu/wDX9FvDdID5ino5sEQ3kwtqR4VgCqVrUgKKLhgwK97+JSntKoR+22xFktQB89iO+R5z+5dZ/xsoH9Sy3CQJHn3b9EJxAuZ9pnqi5v1lWenUVd2xq9lNOkO8S2XTqPHWPuCsm9QBcE1ijHqjN3i8mVFqa10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789409408; c=relaxed/simple;
-	bh=BYAdkqFw+JhFCbVAYMWPqM8MRr41rR9mE0Rhks0Supk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wl2oF64uigPlGvFbQ9blteZrru13k1GACMJ/miWq4eH1GIECvNJu7h63TUFYT6PQG6atB60hTjjoIx8SnLuWah2uKvR0sN9ngi/xw4fqov8FfMtsNp2j93y8Q1xlsvEqNKIpZJdmwbOgoKl5cum9eqbPTLx3kwG/Z2lx7qyBaRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=northecho.dev; spf=none smtp.mailfrom=northecho.dev; dkim=pass (2048-bit key) header.d=northecho-dev.20251104.gappssmtp.com header.i=@northecho-dev.20251104.gappssmtp.com header.b=vyfnIJsJ; arc=none smtp.client-ip=74.125.224.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=northecho.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=northecho.dev
+	s=arc-20240116; t=1789418517; c=relaxed/simple;
+	bh=NGWB4j6Qtj1I45qJXTxUF3DXiZ03+1wrOcaEWMEdRtc=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=hSMjPK02TEC9/DExOTb8GISuU0qm+hU9Oy5NMZt5c3ZvRULdV6e3OxaAFLiwPeDduskRRl/VpftxD7rh1I1RMv9fnqPonqMSSzvAHO3UB7EYTqyqAz38Jk2G7wmYN6w1U/6ZjkAcGD3eligZcjRaIa29BO3cvrNSLdNnB5b8Iy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BKJZYJqx; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=northecho-dev.20251104.gappssmtp.com header.i=@northecho-dev.20251104.gappssmtp.com header.b="vyfnIJsJ"
-Received: by mail-yx2-f1.google.com with SMTP id 00721157ae682-858ef75b39fso839447b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2026 11:10:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BKJZYJqx"
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-53024149d40so19122241cf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2026 13:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=northecho-dev.20251104.gappssmtp.com; s=20251104; t=1789409401; x=1790014201; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8OIGXq9LPdM6hJ4yEHsUVyge0A5woOLwG6L03+WxApo=;
-        b=vyfnIJsJswN7qzRiqUGOS/VpBIvTG1LFLie1I3KRLjtfYe4LVnMyoWiL55s4kciQkU
-         Sw1zeZocv7NNfzJlxTxDvvltpES6mmbICO50PBFPK6I/8stSYm/9etbOQV3Lsu6MKmnA
-         +Ag0iDirVLgJrpLT5K1jmUaVef+7J4RatiwgarUlTxUdZKVwfF7F1Dzz3nEkpv+uuTv7
-         eZHcYtQMcgiJ26iuGOLPTpYFI22eVpBU4OMBYsCA/N+Gs7hZGuXLW/JwnSkT2x4jA8Po
-         oi4x/ZehEz8TCQ1ODwmeJJBR9qXzpMJ+jmOIurT8uHRKaH5LCR7MU+7zf5IhBSQMwmOn
-         kDaw==
+        d=paul-moore.com; s=google; t=1789418512; x=1790023312; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=weFISBwya/NR8Sn9j+ZA3fbgOeUtW9dlmxru4a9CsTM=;
+        b=BKJZYJqxLJgFemMBcjr5I/aDXNKPtJB3WRJtLpLBN90kCCOc2ISZa//Hx+A9+uy7hz
+         KotROizMJXWX9tEzVf5O2jdHFH3zcLlGP6MzE7D9BcffRwl5dnFhOwNpSiEVpj1HEnJ7
+         EvvPhvn7MfJE76qXhcCt4bZKswpUqfwd0aWhG8mfZX2zxmbfWiqBIzrihkzUvkRM4+pU
+         0txeqCV4C+FMMdpJa03B+HismbOogUi7Ezhk+FqcN08IynGTUWXRYeAFxW76NBiVlJ0L
+         L414LmF6/TYULPjGTgneeLNYrcAk3bxDHO3JN/fQrYxHr7NjczBjhvGl0Vfc2MBYNYf7
+         gRVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789409401; x=1790014201;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1789418512; x=1790023312;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=8OIGXq9LPdM6hJ4yEHsUVyge0A5woOLwG6L03+WxApo=;
-        b=QdLiFBLbwE4Zrd3eDob4r2kVKsJebZqaaqnT4AxztvCUP4SbYn2DfS0QhxYEoqutGx
-         lq8YOIuo+tKyzjEWAS5f6u0ILxP3JIWr7YBQ+zWRo9EJfoSWqag2lxy9tXv7slQtOVUD
-         4pxU1KPyEBXw7AoG+wMoUlNYs4O1Z4nN+x6KhcVEDIteF8PuP8ABmsv9TIhvYEqcXaEx
-         c6u3L2KLiADYPAdcluZkgzJTfJd8hGX2envXzK0P46HR1kiaxVbPO5YYGy44CCzCoycb
-         e2PB6iCoOvDo/70dyvBjTmaAQwcqe2OOcyltN7Cf6nJL7CeDep+d8GdNftTW/zau8tWT
-         RLfQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwqIvkPZG9X0YdjDBwmevujTg7M8Qj0Mt8UQOyfd+SxevwqW//83C8UNOmqRTgMJt4QA6HPt2k6J/3sv9LhWRSARiQw6lA=@vger.kernel.org
-X-Gm-Message-State: AFuF++nRaE2PAbYXFkv0f3cIFgVn28ekS+DOX+gdmNqUomsVx8WP5XmY
-	7jNMBq+8yU6SdHXY2sj+Mhq1NMgmvE2MyjnTAi2gufJBuzebxJ5oHpCK4oNSl5+afCTM
-X-Gm-Gg: AYBFou1XnRlBoQ61z/HWD/WsD3AjFeutAL5dw2kYb6TbnUREStqv2q//tWSeoRgqFrH
-	5/OMbTnrgrPYgWISg5IwkvkF27XEgjsFGc43rCXuCCbcg4gz0iPeBQ2GAH4P8KCNwVFZOzk47ZB
-	nNWHIt0JxZrDH0wAxP7jdHrkjcPmJkYsnSRIYG/nuUvRU40faDsZX7aillpt7jddN8QUavfXM2J
-	foNoBieIKhEFZpHgUt0NgDyX0kn6oEElNoZM2mkkDpOZ3mqPCBHiTtNfQ2OipBrtAtcndHjYnf0
-	9EKpuc5AuS2qL4aUakUS7QNnkZCgTRdqAk6OjAIvz5gngca9s+6sHBBhSsnB+mY+CzjGl/SvWNx
-	SLxTLbiS6AZBvaG41hIJW/CCjEzIIOZJKzxlh8RG+U5K2FRE1mkggRqBFIdJuVhl4IqMaVPOHGi
-	mDpgmjAG4Rvk3Eaj4Mfjysm9eRkWND+sOu/WbJVP6mk6oN5Nk/C8XzL7NMsJvnnJ1CFDloP4kDt
-	FgCvvnOEuxOzpmbyHpDsUGmSRcOJAR1HHK2QBs=
-X-Received: by 2002:a05:690c:6c87:b0:861:a34b:7de6 with SMTP id 00721157ae682-88d1992ba59mr15916227b3.0.1789409401043;
-        Mon, 14 Sep 2026 11:10:01 -0700 (PDT)
-Received: from kelso (99-10-92-174.lightspeed.rlghnc.sbcglobal.net. [99.10.92.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-88488856486sm39517817b3.37.2026.09.14.11.10.00
+        bh=weFISBwya/NR8Sn9j+ZA3fbgOeUtW9dlmxru4a9CsTM=;
+        b=kuvISBLIpQ3bEHNUzGVdgwgSv7jUHg7OTIKXvrlKVqpf8UDyQh1vzR+mMZprG+8SRJ
+         5OAzc4gqmDIAx32c6YhSSGxf56JUe2C2zh9GQAzPwBUnoq7biD7Egwp9SACJlgGxHueE
+         r/hXF7k5rApvxwZ2gb1LGHOl2cGggSxzI1+A83qKQmun5xdXL5tJrgowjvs2a4D7yv+j
+         d5LXuWCduJJV/CXV2S0Vk9iWFuM7DFsFCpuqN8I/JJk9ak7e+NbwPWot47IctfxeFO12
+         iF43GFaN3nlG1CrWiljGZ/HseQG96aQuY5fbG4OfiWLkAaK1LfxLfyq3T6VRBZ0R+NUX
+         Fn2A==
+X-Forwarded-Encrypted: i=1; AKwUvBym00T4bFywwk3zamQilOyR0ml6HEibi2dFaQN4t69E+Jjg0EhH9kmz0UBitztCi0n8CqC9KKx/+dWduCsqJvbcBS6D95s=@vger.kernel.org
+X-Gm-Message-State: AFuF++ks2rIvNqT20OyOD1NA82+3n0XkHcmwo4Aosq9klU76F0ef3W1c
+	wuk0k9BJEA0OIP+uURDgBNRWQeKKU8lvSC/WUp84D5X43sw03vaBHmLzzg2FHQ/Wlg==
+X-Gm-Gg: AYBFou0DFrpqwKSf+ShLXfz/bgL0teYj+FUOR7OghHb+wsB4bbc6P6KcS7yycre4bl6
+	PCccmd7HkGLOx48J/CTso2eMvwyNCEW/f36dCfu5W174zfdKfvIxwA2aKbTMkAMucsN0CmfLvJp
+	Ek7ngEVVxDLKv7MMKW7Aoc9H5q/EmGb3ocl4JXnqFfzoHaYz18L7sQJsfk5C4KZTZloY0vjPs/s
+	M5XmjpP9m5yhoHBKuRLgGfWbtr6D609r7fuC9OftIw7/iQgkcRb/+z1sYKKoP41BfG3gS9KrlTC
+	8JfmIUribc9997Ss/lyhHO8nc7JAj8Jn9ekwLsBYSuEKedxZb+9fUXziev55Nm5B4k2OD+GVpz9
+	G1RMOPRYG5RNb9aJxgKq9+vuu3Wm3P3F1JNsbDuMgt/NfUt8dBIApEbD5ZCb+D/auPrzFplPvAw
+	kyEAjHKWRQ60M5wkc/OVL4AccVA+8OflSuvDEgPecsFZeSKbHUXcAXj2MbC6D9mXV876JJRi7Gz
+	7cCP0vQicvyMLL9flimmPipZE/NizQ9LzXser9ZHn8HGL/DtHpk72YrzEOtyx+69pqiyn+feG+/
+X-Received: by 2002:a05:622a:15d6:b0:530:b2e1:8e38 with SMTP id d75a77b69052e-5310d063e03mr64295201cf.51.1789418511760;
+        Mon, 14 Sep 2026 13:41:51 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530ca3098easm108403901cf.3.2026.09.14.13.41.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2026 11:10:00 -0700 (PDT)
-From: Christopher Lusk <clusk@northecho.dev>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	linux-security-module@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: landlock: clarify TTY signal scoping
-Date: Mon, 14 Sep 2026 14:09:46 -0400
-Message-ID: <20260914180946.1462099-1-clusk@northecho.dev>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260914.b8a029f9abb8@gnoack.org>
-References: <20260914.b8a029f9abb8@gnoack.org>
+        Mon, 14 Sep 2026 13:41:51 -0700 (PDT)
+Date: Mon, 14 Sep 2026 16:41:50 -0400
+Message-ID: <af4448a7a2b428d0f4af0ea4c19abeff@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260914_1619/pstg-lib:20260914_1251/pstg-pwork:20260914_1619
+From: Paul Moore <paul@paul-moore.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, audit@vger.kernel.org, kernel-team@cloudflare.com, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] lsm: Preserve full ioctl commands in audit records
+References: <20260910144837.381855-2-mic@digikod.net>
+In-Reply-To: <20260910144837.381855-2-mic@digikod.net>
 
-LANDLOCK_SCOPE_SIGNAL mediates signal delivery when a sandboxed process
-selects the recipient, including SIGIO through fowner.  It does not mediate
-signals directed by the TTY layer to processes attached to a terminal in
-response to terminal activity.  This distinction was clarified while
-discussing TIOCSIG handling because the PTY master acts as a capability and
-the signal recipients have attached to the terminal.
+On Sep 10, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> 
+> Ioctl commands are unsigned int values, with their encoded direction and
+> size in the upper 16 bits.  However, struct lsm_ioctlop_audit keeps only
+> a u16, and the common audit formatter uses %hx.  This logs 0xc00ffeee as
+> 0xfeee and makes distinct commands with matching low 16 bits
+> indistinguishable.
+> 
+> Change cmd to unsigned int and use %x.  Pass the full command through
+> ioctl_has_perm() as well.  Its driver and xperm values remain u8 values
+> derived from the same low 16 bits, so SELinux enforcement does not
+> change.  Commands that fit in 16 bits keep the same audit text.
+> 
+> Cc: Jeff Vander Stoep <jeffv@google.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 671a2781ff01 ("security: add ioctl specific auditing to lsm_audit")
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>  include/linux/lsm_audit.h | 2 +-
+>  security/lsm_audit.c      | 2 +-
+>  security/selinux/hooks.c  | 6 +++---
+>  3 files changed, 5 insertions(+), 5 deletions(-)
 
-Document the TTY-driven signal paths which are outside the scope and advise
-controlling access to the terminal or PTY master instead.  This records the
-outcome of the RFC discussion and avoids implying that
-LANDLOCK_SCOPE_SIGNAL covers every signal-delivery mechanism.
+This looks good, thanks Mickaël.
 
-The documentation text and changelog were drafted with assistance from
-Claude (claude-opus-4-8) and Codex (gpt-5.6-sol).
+However, I am going to drop the stable tag and merge this via lsm/dev
+instead of lsm/stable-7.3 simply because we're changing the audit field
+(going from a 16-bit to 32-bit hex string) and I don't want that to catch
+anyone by surprise in a stable kernel release.  I will leave the 'Fixes:'
+tag for reference in case there is a downstream that wants to pick this
+up as a fix.
 
-The userspace API documentation builds successfully with the kernel-pinned
-Sphinx dependencies.  The remaining warnings are unrelated to the changed
-Landlock text.
-
-Link: https://lore.kernel.org/r/20260914.b8a029f9abb8@gnoack.org
-Suggested-by: Günther Noack <gnoack@google.com>
-Assisted-by: Claude:claude-opus-4-8
-Assisted-by: Codex:gpt-5.6-sol
-Signed-off-by: Christopher Lusk <clusk@northecho.dev>
----
- Documentation/userspace-api/landlock.rst | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 84cb7bf6b3ed..64418b09840d 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -430,6 +430,21 @@ The operations which can be scoped are:
-     This limits the sending of signals to target processes which run within the
-     same or a nested Landlock domain.
- 
-+    This scope does not cover signals delivered by the TTY layer.  A process
-+    holding a PTY master, or otherwise driving a terminal, can cause the TTY
-+    driver to deliver signals to processes attached to that terminal across
-+    Landlock domain boundaries.  This includes ``SIGINT``, ``SIGQUIT``, and
-+    ``SIGTSTP`` via the ``TIOCSIG`` :manpage:`ioctl(2)` command or the
-+    corresponding control characters.  The TTY layer may also deliver
-+    ``SIGWINCH``, ``SIGHUP``, and ``SIGCONT``.
-+
-+    These signals originate from the TTY driver in response to terminal
-+    activity rather than from a :manpage:`kill(2)`-style request.  They can
-+    only reach processes attached to the terminal.  To restrict this
-+    interaction, control possession of the PTY master and terminal attachment.
-+    For example, do not pass a PTY master to a sandboxed process if its slave
-+    has processes from outside the Landlock domain attached to it.
-+
- ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
-     This limits the set of abstract :manpage:`unix(7)` sockets to which we can
-     :manpage:`connect(2)` to socket addresses which were created by a process in
--- 
-2.55.0
-
+--
+paul-moore.com
