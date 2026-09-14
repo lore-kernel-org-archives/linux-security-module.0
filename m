@@ -1,103 +1,155 @@
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328794A0904
-	for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2026 20:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8B4377567;
+	Mon, 14 Sep 2026 21:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789418518; cv=none; b=cH+bfVxmsvoV70vsTAqwDAHtqzqVEW92xeGf7/muXkc9kbJRQfG39GuniR741SiWw1B0i/yaNi58Zm/rgjuJEBrYU2fhOHFUeaYrJhlBi8F5iVsz8naqQSSl1UoeGqQYla8GNIzug5p4qXpBjnTu2YDioYJzDi2A6JYZOzvt630=
+	t=1789421090; cv=none; b=YA4aKoypiOmLA6oFkgKy3rTbqkYT0gS/FLJMTUQdv6Hq9hdduxyc84HLVSKHfwvTkhCYG95D9lTJDU4pkZGPMDSJ+5nCHaypR74SfG2pq4vvZ1NDMhGfFWEWpFy8QrMyz/XRwmlG9qBsKv212dveGXWWxCBxMUPWPZzYAjix1pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789418518; c=relaxed/simple;
-	bh=7lTv3k07zA7RFFF2IudlduRWQ6nXWPTkRfXfmwqrpmg=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=WUUrUhHSK2zADG/CyM9FvLJgY0VI3RfXOWq0Y0+1L4zajc5LHVdmrvFab1/8gFOgMrfRSBZapF5j/zutqqeKuUDhw2NZ4AUxHLFO3SRuNOevPjXDqQh3awI3IunwNqdA4DjC+dq28o0alinf8LNkaEOzibUnvN6WHf+ykjWBB3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SEF5ugga; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SEF5ugga"
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-90ceab90152so35765716d6.0
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Sep 2026 13:41:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1789418513; x=1790023313; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=duuPvdB4qaHPpjjbBizZlT/PQ2qkQWx6bSPOOeU9NRQ=;
-        b=SEF5uggay4dlMAl2tPfntHb/aTTPGNwMmCpQFP9rIrryHgaD9+ElcAjxeQeSlL0wWB
-         FHwUilZr0oeZ0/3tHgRUypLNsyBQxCZqIoE3FyTrv5LigFRVsXrLoA326XyHGSXWq8+9
-         bIyqu3Cv0iD0gFra2rJom0neFV65HWZtehniWcLOBV94Z5FM98Ratkge6pgUXbAvSoCF
-         Y1D59GV+/EOd5G9Q6YuKZtFg3ft4mAkXeWB5bi7L8k0JQ+F4hwV1xbnBh+JWpKLg0Glj
-         0Bf3GJhDJmXL+AjMo/CnNCG5Jif8SlnrCcn+fOQuoKaIZBRwpEfLbL03JljI5vey+N+L
-         MM6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789418513; x=1790023313;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=duuPvdB4qaHPpjjbBizZlT/PQ2qkQWx6bSPOOeU9NRQ=;
-        b=nz8aisYq9SPaCPY6NKAj7eAEvs64uoT6+lPcC++6+z91N0zbhWrA0w2ns1rnQQkYZ9
-         wAkNX6kDupAPUCHemBMj0/g061A5G6nYXGIOEkXIIOz0kMbjtpYO/Ee0dadq97HiPJwJ
-         iiD7Hd1Bzb4Z/RAY0+ibO/ZLXIYv7O28zYdG8V2ggTHzo2P6Qla+Au/kCAnG/LMy16aS
-         ftJDPgnvDqBphp65XwEaxEs0ltdZLq+8Twqe9jMv2SlUDLeuoBQRKwmyzSYgTk9cXPCU
-         EFPXGGhQ+IhTq4y+YFXazvZYxjiH32ekHEXHl5FZlUb0ywngssQyPRxiafysHOvX+Nn6
-         Qw3A==
-X-Forwarded-Encrypted: i=1; AKwUvBztyXKOIhpjjETp7RRIeWnILDMvj7y+Dw8EKM58aT+8lpNteOVGuQ8VtPaA3tcKg83ihVyZ2YdmmS6Nrb0CmuRyeU71AW4=@vger.kernel.org
-X-Gm-Message-State: AFuF++mJV+tWh9qhL6tioSvz86A+cdO3tS3tyRNwaqfiVTb6AHz6lDKZ
-	qGr82cCM1GW5WAG3nYSEDrUWWvCBXBX/HIxMLpCr2HWDCGQbXvF7ECjrhjP3TERrCA==
-X-Gm-Gg: AYBFou0rcGBcBJIYXL4inqEz5qmFCpzNHNvsa4/6Sr4V5BsgpFOEO4c4vqCjBUMxdV8
-	agVQJmb/5yqliIlXVpzK9ZdH63o9pnFvw0567Bcr99uaNTfXCYUziv3LjBujdrv8gAlG6w3omfC
-	qn25IUg85cFmYRBr7GEZj4rwil8Xl1DdyWRHCmVIdEiH3FVhmVU4cI1F74Sp/pQjzvABS3MFWll
-	KjSL1/lOXC1dkPZnJHSyMgR4xwJk8BXBHcyAXsm90fd/ofhUlEOJTAZWdw2DiYpYALh6WPV5qSU
-	UmdfDqR9QqybooWKNo/WNeeAfvwB9Vu6kE0R72N5Cj/qvoAXELe7jF0EZ8Act8JBa43Ep9FWTc6
-	cloEZLVQoR5mEPwx8B1CnJj5XuvI8Vqi3REVm7MGhnPVS7Ohg8ew6jeqSHZOe3Efn4UR+rQzbkE
-	GPisB92lBFjlbZK4ZC8iRjdBoANITgXwROvzEBwLGfXx/1o6R/CQb/I3L4JnT/ynM36w6fLXywF
-	LrEnLLw8mstWBKfN3O/Q6HiLhdfMj+Uu2PESFgSK9GCOPugTS7PuWOw1PIkd/a4PNAxTNPn2b4N
-X-Received: by 2002:a05:620a:2707:b0:939:bd4e:b2fe with SMTP id af79cd13be357-93a29a12d15mr593158585a.40.1789418513279;
-        Mon, 14 Sep 2026 13:41:53 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-939ebda519bsm1046663585a.26.2026.09.14.13.41.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2026 13:41:52 -0700 (PDT)
-Date: Mon, 14 Sep 2026 16:41:52 -0400
-Message-ID: <506803b6b6c4a74551bc5c0d6e31cf71@paul-moore.com>
+	s=arc-20240116; t=1789421090; c=relaxed/simple;
+	bh=NViCHrnd3m24sOLMApGT9OBLH5NNtssA4JEmXRlkfUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfAXUyhwTN5NdE6t/s1y6CJQsaBjiqWpOoPKOhxuCIJ9LuGZmB8kJ7RhPEc7i7mHcfXXv+pyiXqk1Xe7gwSEucnP51o+BewnVb6GSP+z5SqIc8beFwtsjQuyzdNZsAsmt4gtAVG/qaTqSg+kZHzmy+a6cD5bl9VtEXY1zd3onqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 68ELIZgV022271;
+	Mon, 14 Sep 2026 16:18:35 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 68ELIWZT022270;
+	Mon, 14 Sep 2026 16:18:32 -0500
+Date: Mon, 14 Sep 2026 16:18:32 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, Justin Suess <utilityemal77@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Matt Bobrowski <matt@bobrowski.net>,
+        Micka??l Sala??n <mic@digikod.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        G??nther Noack <gnoack@google.com>, Jan Kara <jack@suse.cz>,
+        Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+        Eduard <eddyz87@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>, Tingmao Wang <m@maowtm.org>,
+        bpf <bpf@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: LSM boundaries. Was: [PATCH bpf-next v3 04/15] lsm: Add the
+ bpf_lsm_policy_release kfunc and policy object destructor
+Message-ID: <aqhkqDvwM6loGihB@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CAHC9VhQHZ+ngFdzKqmnzBh341CGEg-jexu+QYU8=1qXK=u-x-Q@mail.gmail.com>
+ <aqHUw6k0Mf83CGFT@zenbox>
+ <CAHC9VhTM7emi9vxs+5Za8Hrc_e9dg7fZx+Z6BGUc4VQ1qhEAUA@mail.gmail.com>
+ <DLD0VQ3D8CYC.3V5ZT8HDMY4IH@gmail.com>
+ <aqTZdCz6JaoK16Fp@zenbox>
+ <DLDL7KK3FZKU.17ADLLWJVXB5F@gmail.com>
+ <CAHC9VhS0JckwfomqLTUJkZZkDSgeRXYOjMmPQYErgYynQYqMKQ@mail.gmail.com>
+ <CAADnVQJCJjy9Eiwn6-88c0iOk4LfgPU6KBv+w0JZdBzmXBMUCw@mail.gmail.com>
+ <CAHC9VhTh446SkpPF-hUiLYOHipuurzkgju_nH9LsRGdERSAL1w@mail.gmail.com>
+ <CAADnVQLZscKkCxvK5puuOE1aN8nW6PnaS+_dx_zBQjjP2T-DFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260914_1619/pstg-lib:20260914_1251/pstg-pwork:20260914_1619
-From: Paul Moore <paul@paul-moore.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, audit@vger.kernel.org, kernel-team@cloudflare.com, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] selftests/landlock: Check full ioctl commands in  audit records
-References: <20260910144837.381855-3-mic@digikod.net>
-In-Reply-To: <20260910144837.381855-3-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADnVQLZscKkCxvK5puuOE1aN8nW6PnaS+_dx_zBQjjP2T-DFg@mail.gmail.com>
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 14 Sep 2026 16:18:35 -0500 (CDT)
 
-On Sep 10, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
-> 
-> The ioctl audit test uses FIONREAD, whose command value fits in 16 bits.
-> It therefore cannot detect truncation of encoded direction and size
-> bits.
-> 
-> Use an architecture-independent unknown command with set upper bits and
-> require its complete value in the audit record.  Landlock rejects the
-> command before the device handles it, and the existing ioctl enforcement
-> test already exercises the same request.  The new expectation fails with
-> ioctlcmd=0xfeee on an unfixed kernel and passes with ioctlcmd=0xc00ffeee
-> after the shared audit field is widened.
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Reviewed-by: Günther Noack <gnoack@google.com>
-> ---
->  tools/testing/selftests/landlock/fs_test.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+On Sun, Sep 13, 2026 at 07:24:14PM -0700, Alexei Starovoitov wrote:
 
-Merged into lsm/dev, thanks.
+> On Sun, Sep 13, 2026 at 5:10???PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Sun, Sep 13, 2026 at 7:25???PM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > > On Sun, Sep 13, 2026 at 12:41???PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Sat, Sep 12, 2026 at 3:33???PM Alexei Starovoitov
+> > > > <alexei.starovoitov@gmail.com> wrote:
+> > > > > On Fri Sep 11, 2026 at 10:26 PM PDT, Justin Suess wrote:
+> > > > > >
+> > > > > > If fs/, mm/, drivers/, net/, are permitted to have kfuncs, then why not
+> > > > > > security/? kfuncs.rst doesn't seem to forbid this.
+> > > > >
+> > > > > because fs, mm, net see the value in bpf. bpf helps these subsytems
+> > > > > to focus on their core technologies and moves policy decisions out of
+> > > > > kernel and into bpf.
+> > > > > while lsm people treat bpf as arch-enemy.
+> > > >
+> > > > It's amusing to read this when just this week we merged a patchset
+> > > > into the LSM tree for the benefit of those writing BPF LSMs.  If you
+> > > > look at the discussion around patch 2/2 you will even see a reasonable
+> > > > exchange between Matt Bobrowski, a BPF LSM maintainer, and me about
+> > > > the patch.  Alexei is obviously welcome to his own opinion, but I
+> > > > would encourage those reading this thread to look beyond his comments.
+> > > >
+> > > > https://lore.kernel.org/linux-security-module/20260904-lsm-mount-idmaps-v3-0-920a1963675d@amutable.com/
+> > >
+> > > And that's an example of unacceptable land grab by LSM folks
+> > > that I'm concerned about.
+> >
+> > I made sure that patchset was ACK'd or Reviewed-by'd a VFS maintainer,
+> > a BPF LSM maintainer, and the Smack maintainer before merging (I
+> > covered the LSM and SELinux parts).  You might want to double check
+> > your definition of "land grab".
 
---
-paul-moore.com
+> You're still missing the point.
+> Christian could have landed it via vfs tree with your ack for security/*.
+> You have no power over lsm hook changes within vfs.
+
+I've indicated to a number of colleagues that this issue would begin
+to generate considerable dialogue, once everyone finished with their
+summer holidays, I see that fact is now eventuating.
+
+There is an important discussion to be had that affects the ability of
+Linux to serve the security needs of its constituency, which at this
+point now, is pretty much the planet and beyond.  Advancing a relevant
+discussion requires casting the underlying issue involved in all of
+this into perhaps the glow of harsh sunlight.
+
+The issue at hand is not who gets to ACK or NACK various security
+relevant infrastructure, based on who manages source code in a
+particular directory heirarchy.
+
+The underlying motivation driving all of this is who gets to control
+and define what can be advertised as 'mainline' Linux security.  This
+has been the bane of Linux security development for a quarter century
+now, Linus openly acknowledges this fact, ie. security people can
+never agree on how to do things.
+
+Given the power that this control conveys on certain parties, the
+objective of maintaining this type of control is certainly
+understandable.
+
+I have deep respect for Linus, but he has failed to demonstrate
+appropriate leadership on this front.  Indicating that people should
+simply figure out how to use what is already in Linux, given the
+current technological tsunami of machine modeling/learning overtaking
+all of us, is so hopelessly naive that I cannot believe that he
+actually believes what he is saying.
+
+The current static security architectures in Linux, supported by the
+LSM model and its development processes, while still technically
+useful, will not be operationally relevant to the technology industry
+by the end of the decade.
+
+We need a technical architecture to fix to what is a political
+problem.  That seems consistent with Linux development ostensibly
+being about technology rather than politics.
+
+The steps in recovery are admitting, and then identifying, that one
+has a problem, before it can be fixed.  Given the agendas involved it
+seems like a great role for the Linux Foundation to assist with.
+
+We now return you to your regularily scheduled programming of who gets
+to ACK/NACK kfuncs.
+
+Greg
+
+My opinions and those of my Golden Retriever Hezzie only.
