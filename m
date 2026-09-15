@@ -1,121 +1,172 @@
-Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846734FF62
-	for <linux-security-module@vger.kernel.org>; Tue, 15 Sep 2026 21:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F2743B3E6;
+	Tue, 15 Sep 2026 21:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789506510; cv=none; b=Osyzem6eTgBRXo1hQR4LxquKknsHKYk1H3gxE8W8bPQl1Mr44fUrbxEC5CCmwNvgNfizdWOpYSQNYstfrSC1zFf8G68MHv6X1ixTC/9ySu+0QSmdj1o3jEaAyJ+/rftDf1Q94yHLCuZGnq+zJMR6cWFaNbh4M0FjZ8VpdsLzfDs=
+	t=1789507960; cv=none; b=lcD6V/ND3La6dZ+cxbtY4d30mp5R59/OXx7hCzu43ivTQcmbpJ40MRWIwhAN9lwE01FToDGxFNn67walgkg7fBC4UH2Eq7irwLWjEXH0x+pHYEvzuPEfhyDBRe3Mw6xU0k0VYeDygOp+cBF/7EaTclxNuqICeeX751C5jlk/LbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789506510; c=relaxed/simple;
-	bh=OVt7rF2uYXd5FqrcxZJpOUDanDLfPylOQanuOssiHlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dt8qmNC8JLvTSq1t0lTYv13EVCh/1ZaEE5fND72DhgVo+pvqL0CK3wr11BvzQpudXdX/FRbEKUHuc3R7jXvxVoxKNpyK/YSJHf6Eet6cjp+JK6QkgeP2AMsDYmRNVI2Xf5IlvLfgJTjffhdfTTpqTYAHaDeKYqBCkBoUGl3W6N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=T+O0YTZv; arc=none smtp.client-ip=74.125.231.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1789507960; c=relaxed/simple;
+	bh=iJIwyB765EM3XFe3QC8bvt6dtm5ovpJNPJeUGu2SYtw=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=kH2RZpjhCZ8wpcjTsGZRW0UPoA6C0DdYdXUCPWFJslU6gSxFje6xJCPn8kEv1Oszrr8KawgaRps/6dSuOUNrpa4ZgMhe9e1e/tLiMv9CgfQsdKV5IsJCtylHpUnCXtvuoP1/EYq3v5zw0J4QAQnuGJIXYVWahdyzWGfxn2fJh14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BjIKOW90; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="T+O0YTZv"
-Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-466cc9b2f1dso138932fac.0
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Sep 2026 14:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1789506508; x=1790111308; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0ZAGGN3eayfShEQqBKliqu7mRVw6xYFjSDe0eN2CZjA=;
-        b=T+O0YTZv/scLmh99eR7Qpp2zdQv83w8txdifPfjRGkSBLYbD+P7eDNE6aOMuYDkLtL
-         ZOjzOWftGiF7Aiu4zdADCezcUGPKD3sxfD0BoFhPGqSB2y51h8PJL/xj0Ry77lisCZVH
-         XEHR2J1nt0dslheQPFK1q2A79VnxXvl/pGesnFpPlimkj3cPpcxHaVY/wrmT+8AifDBP
-         DQXb4TnZ9nLWnRxfgFjWPYCFBPd/uBvMUUaSD7/aTW8JkGtD8+mZz+4vjTB6E7TCy85i
-         ychwv7G2lLL4Af1ivG0zt4PlKKrheiMi66NY4TLSFeiF1OtlZ5nW9cJsaJYaTlvQ0U3v
-         LduA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789506508; x=1790111308;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0ZAGGN3eayfShEQqBKliqu7mRVw6xYFjSDe0eN2CZjA=;
-        b=eKoNOBCs+GE3EfKsBH8jVjvjaYTI1jCXCiqOwvkPf/cyjVgktg+OJYxwEcAOp44tZp
-         X6uloxOqtgf45U3TJXyl5P5exwd3HnErQFtS91RT3WxMmEcIWv8cxsZlfVwvKNclQ1J1
-         6wp41Kt0eBprzja5ViacV6vT3YW3bSB4InU+jsOYYpCe44qewXUbQi2VlwMKMIevJfob
-         Cij4nQ4vf3TXM/Hx7MSq5JNgMASHj8iM3smqFFbDTM6vClKLnImclfdHgfbuU+//Ckmx
-         KlHRGXasJE4kxsS3pHoo/4nuLb7M79Nu76gxruVxKax2Sh6d90luWrLshkaFhZL1RsmW
-         C7rQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwMXaId+adAw5/9zkNJUJTHemOkFoyqGrNYwNC7yw8RTZCAFNUeDC4tHHojeFdzXayZ6y8hUNgF+0rjkX22m6fXt/MvKoQ=@vger.kernel.org
-X-Gm-Message-State: AFuF++nr8PhyqkJOvu1cvXG0msRbSau64qKZV7D0t5QWkz4yMuSk5p6b
-	XynLuELVfBo3Mgz1pARHjdPmkiHgXP9YMV1BplVZGAVkJbG0OxToE21DohJB10fB2Lk=
-X-Gm-Gg: AYBFou0X8JSPlpA1az/fDuy80/welyP6wNAvWT3oNaueasYwKBIYYljh4tGlYakrzUX
-	ffOdniKy27bQrMCtagedMAj/mNVSkzqcwqLABISrDiru2p17KfesdNXyHt9srBS4vr/DIKtgEIQ
-	yQJg8cQTWQzE6NmEzZ0JcWbzIuzEiuVOGFMAjKgFANGZL/xexA481e8FDXqEDLFVOPKFXrQo6xB
-	YM2I8dDkTnGrrWgCRioUHcxhBS0VerEyzQfHimRykUYgF2OxbIjpcT8COu/9hNs5XsMWPhd4Koa
-	J5wbzIczSu1GFR6uIQvWX6qFMNtQXUeEcYG6a2d8pjcy8IMl/AxOJeNoYnM+AaIX1InRlUiD0JL
-	S/s+wmcBQpGwF38OSNUuOQ1YJeChA1nHHMN+gaHBCoeH/Fm2IVfqEnrnl1X7qV2GjOO1Yu/45IX
-	aN8/oTuNHwAyrZvD3yrX7v14g5Ik416/IDarUbSxB1sP2tbBwI0fsD
-X-Received: by 2002:a05:6870:e0c7:b0:470:e96b:43e3 with SMTP id 586e51a60fabf-482e56fb3d1mr3685772fac.15.1789506508396;
-        Tue, 15 Sep 2026 14:08:28 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac6:947f:1800::264:ac])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-48429a91b9asm997942fac.6.2026.09.15.14.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2026 14:08:27 -0700 (PDT)
-Date: Tue, 15 Sep 2026 16:08:23 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BjIKOW90"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68FLW6NR1990570;
+	Tue, 15 Sep 2026 21:32:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jwirPE
+	P/2vdYiKFo3DHec1VsjsWrlvu2hreVrMZUWak=; b=BjIKOW90ImsxxN05wQCxIp
+	lzJV/bURTY/H45pFk07YsHxjZncNhNLsAcOwgmzGjeFA2cKNFn3GvZ7hS/6xEcGE
+	Jp6WLq9bl3esb0sty5IxlPcPeTAlagHfVvTP2+D6uzwkwtJw9YLh0pjutTggFVPu
+	/UWFkBBgvCNTniJtjhecsyDpF79RpIMPHZVLszOzxwz8dsSuO9XMUI772HJIQUSD
+	aFFuednJ+Lqu5p8t1hb6hVmXJGKylSqdr39CtF94bGnHU9URZhPWi9nfU/rlOf7w
+	6/oy5ldlBoBDC1KICnVI4njK1PFsG+YaXqFZrZ0VGTtpj6tiXThm7BqtVGooPWEw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gmxcv16ng-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 15 Sep 2026 21:32:15 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68FJ57Lw245680;
+	Tue, 15 Sep 2026 21:32:14 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gq089kdwg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Sep 2026 21:32:14 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68FLWD408061602
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 15 Sep 2026 21:32:14 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D82DE5805A;
+	Tue, 15 Sep 2026 21:32:13 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 32AAA5805C;
+	Tue, 15 Sep 2026 21:32:13 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.104.242])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 15 Sep 2026 21:32:13 +0000 (GMT)
+Message-ID: <c2a8a6b2e55bc0cf062bbfea045eb1f593149e5f.camel@linux.ibm.com>
 Subject: Re: [PATCH v2 1/3] integrity: Replace all uses of
  integrity_audit_msg() with integrity_audit_message()
-Message-ID: <ykq6awewbz2f4ckgwrwnubcprlta2trm24by6bw3z2q6u6mr43@gn6ajl46tc6r>
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin	
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn"	 <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <ykq6awewbz2f4ckgwrwnubcprlta2trm24by6bw3z2q6u6mr43@gn6ajl46tc6r>
 References: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
- <20260727-report-hash-error-v2-1-30e394f524fc@cloudflare.com>
- <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
+	 <20260727-report-hash-error-v2-1-30e394f524fc@cloudflare.com>
+	 <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
+	 <ykq6awewbz2f4ckgwrwnubcprlta2trm24by6bw3z2q6u6mr43@gn6ajl46tc6r>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 15 Sep 2026 17:32:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE1MDMxNCBTYWx0ZWRfX2QuAyhP+05mQ
+ iCWuwC50DoA9h2paXnAA5rqgwt4HtvUntLBl8cEJWiVF4JCbBUdaCgyXzrwJBISXi6pRNF73IX7
+ semZBxWHTwDOnbeFyX0O1VVGjCIVvf8=
+X-Proofpoint-ORIG-GUID: WJh87iaX5-NKarW41dNN5locBf8UfVjh
+X-Proofpoint-GUID: 4v_ah-CXMPydT4HRKR6XRcVmIFktwjac
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE1MDMxNCBTYWx0ZWRfXzJ2cUhuLiPzn
+ J0pzshTwQHQCX4gQftUnz1cCtSs1wYZoovC0lDUYikjuQ1dUDC/o4x8uT1JTiC042Jdg1hD1guJ
+ aAy5HIabp8ae39429LQtd8tJ/Q285250CayDfPl1G4KE+4nvmHxC7yVvzmTBI0tNagRHi0kKw21
+ 2GDfXu7PZ8FjgNz+7rCgcNjEWy6mPRgqhN8iczspELO9ianxMx3pVDAtrz26aiVH5SuL0Nty5vp
+ Jb1EjZFC8UQarNAeqXtqQVFzDu2de0wLvywZXB7ljovd+4XKAHHlsL/1E090xPc8hg+hH9/wUgp
+ sh8DcU81Y2oVLhZzX3PMmzose59OrTH7cosHD+JEZqDRZ63PzMqgzNX6ugUL2LuEKIU33EnT17o
+ uJ6VgTmxlVJcih/hRNkgOBLv4UFMW26pN8jXbcOZY3/xDjoYxpsbrOa4gr5F8l/k+YJItyu18GY
+ 1aKBhBlToJE0Jo2sEJA==
+X-Authority-Analysis: v=2.4 cv=F+7C5ahN c=1 sm=1 tr=0 ts=6aa9b95f cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=EG7W4yiQAAAA:8
+ a=KaHl30EOXU6AYE5tbzAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-15_05,2026-09-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609150314
 
-Hi Mimi,
+On Tue, 2026-09-15 at 16:08 -0500, Frederick Lawler wrote:
+> Hi Mimi,
+>=20
+> On Tue, Sep 15, 2026 at 04:00:34PM -0400, Mimi Zohar wrote:
+> > On Mon, 2026-07-27 at 17:21 -0500, Frederick Lawler wrote:
+> > > integrity_audit_msg() wraps integrity_audit_message() such that
+> > > error codes are hidden by passing an additional parameter to
+> > > integrity_audit_message(). Since this is a wrapper, we can replace
+> > > this function with integrity_audit_message() introduced in commit
+> > > 2f845882ecd2 ("integrity: Add errno field in audit message")
+> > >=20
+> > > No functional change intended.
+> >=20
+> > There's an unintentional change in ima_write_policy(), which replaces t=
+he
+> > existing '1' with result.
+>=20
+> Oof. Good catch. That was intended for the later patch.
+>=20
+> >=20
+> > >=20
+> > > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> >=20
+> > Is renaming integrity_audit_msg() to integrity_audit_message() actually=
+ the
+> > right approach here?  integrity_audit_message() currently has only 2 ca=
+llers vs.
+> > ~20+ for integrity_audit_msg(), and the rename forces re-wrapping of ev=
+ery
+> > multi-line call site since integrity_audit_message is 4 chars longer, b=
+loating
+> > the first patch.
+> >=20
+> > Why not simply add errno to the integrity_audit_msg() definition and ca=
+llers. =20
+> >=20
+>=20
+> I can switch that around. I assumed we'd want to keep _message() since
+> that was wrapped by _msg(). And not dealing with the line-wrapping is
+> better.
 
-On Tue, Sep 15, 2026 at 04:00:34PM -0400, Mimi Zohar wrote:
-> On Mon, 2026-07-27 at 17:21 -0500, Frederick Lawler wrote:
-> > integrity_audit_msg() wraps integrity_audit_message() such that
-> > error codes are hidden by passing an additional parameter to
-> > integrity_audit_message(). Since this is a wrapper, we can replace
-> > this function with integrity_audit_message() introduced in commit
-> > 2f845882ecd2 ("integrity: Add errno field in audit message")
-> > 
-> > No functional change intended.
-> 
-> There's an unintentional change in ima_write_policy(), which replaces the
-> existing '1' with result.
+No, making integrity_audit_msg() a wrapper for integrity_audit_message was =
+done
+for expediency, instead of changing ALL the integrity_audit_msg() call site=
+s.
 
-Oof. Good catch. That was intended for the later patch.
+Thank you for taking the time to review all the integrity_audit_msg() call =
+sites
+and adding errno..
 
-> 
-> > 
-> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> 
-> Is renaming integrity_audit_msg() to integrity_audit_message() actually the
-> right approach here?  integrity_audit_message() currently has only 2 callers vs.
-> ~20+ for integrity_audit_msg(), and the rename forces re-wrapping of every
-> multi-line call site since integrity_audit_message is 4 chars longer, bloating
-> the first patch.
-> 
-> Why not simply add errno to the integrity_audit_msg() definition and callers.  
-> 
+Mimi
 
-I can switch that around. I assumed we'd want to keep _message() since
-that was wrapped by _msg(). And not dealing with the line-wrapping is
-better.
 
-Best,
-Fred
+
+
+
+
+
