@@ -1,107 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDE034FF45;
-	Tue, 15 Sep 2026 20:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846734FF62
+	for <linux-security-module@vger.kernel.org>; Tue, 15 Sep 2026 21:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789503043; cv=none; b=rP4suOsaLVAfIuBomjyaiD75dC/mybNHjm7UQpPhsM/JXGhgXopO1AKKldahHw1btB7/Z0LYtgHucpU8Mpep7Y/hfHezPUMCdx/G7ZEjJFkIZQh339s2EAeuT10QVT79KqqBjSSB6ZxjAj+lyhbyXJy+qYxamHzR87xN8Spg3yQ=
+	t=1789506510; cv=none; b=Osyzem6eTgBRXo1hQR4LxquKknsHKYk1H3gxE8W8bPQl1Mr44fUrbxEC5CCmwNvgNfizdWOpYSQNYstfrSC1zFf8G68MHv6X1ixTC/9ySu+0QSmdj1o3jEaAyJ+/rftDf1Q94yHLCuZGnq+zJMR6cWFaNbh4M0FjZ8VpdsLzfDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789503043; c=relaxed/simple;
-	bh=6XYkumIhHEIyNZ2u1bT13wM/863vuIbXI2ZE8MHjCkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BF7kH3b3tAKoHi4JIXyqUVoYVGTsZSdSURiVagJI6Z8K4z5b1rLiWjriEua8M4Tgc6XlPTXnYa9gxqjlT8pDQFqpOdzo2Nurr0tOJMRxp+YO9DZVu9j/eaf9qbSmg52ChnlQDAL5tb44DXC/R90Qfs2a+0QY5G8h39QFVEikfV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kko+GjaW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789506510; c=relaxed/simple;
+	bh=OVt7rF2uYXd5FqrcxZJpOUDanDLfPylOQanuOssiHlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dt8qmNC8JLvTSq1t0lTYv13EVCh/1ZaEE5fND72DhgVo+pvqL0CK3wr11BvzQpudXdX/FRbEKUHuc3R7jXvxVoxKNpyK/YSJHf6Eet6cjp+JK6QkgeP2AMsDYmRNVI2Xf5IlvLfgJTjffhdfTTpqTYAHaDeKYqBCkBoUGl3W6N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=T+O0YTZv; arc=none smtp.client-ip=74.125.231.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kko+GjaW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7FB51F000FF;
-	Tue, 15 Sep 2026 20:10:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789503042;
-	bh=UwYxnLuySY+xicIABJVAisL4S5E1oHsvqVA0Vf18rAE=;
-	h=From:To:Cc:Subject:Date;
-	b=kko+GjaWcok3kceRrsfw785GR5hSBgmyFyN7ffjRIQG+KlUtvtIGHJzmYEYXsCTYa
-	 +2E2Co4AkM8YcIMF8mkCYu3Ch6F3kQwG+6GfLkTe789tMA+y1l6UEp750GxiF4KQTX
-	 TNcI9piOPwl1fn8EeCIMFc8RQ+z8q/I2uFFK/Z18aRWBLoJHO1ika7/uuK6SNkdDWi
-	 6qAlIyYs7FuRIgQTkanZoY7GghfbtQojzhPkdZbshMn6bdfJwL3wgZ4uwHS/cyutBk
-	 fUx4hlOIeFZtxmd7cVXn3qcy4/opaZl27OLTXTdZxhlYLIxR7IlZzQL1IlHMpVRPme
-	 7fP7yheT/QLqw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Justin Suess <utilityemal77@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] landlock: work around gcc-16 -Wuninitialized warning
-Date: Tue, 15 Sep 2026 22:10:30 +0200
-Message-ID: <20260915201036.3527935-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="T+O0YTZv"
+Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-466cc9b2f1dso138932fac.0
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Sep 2026 14:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1789506508; x=1790111308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=0ZAGGN3eayfShEQqBKliqu7mRVw6xYFjSDe0eN2CZjA=;
+        b=T+O0YTZv/scLmh99eR7Qpp2zdQv83w8txdifPfjRGkSBLYbD+P7eDNE6aOMuYDkLtL
+         ZOjzOWftGiF7Aiu4zdADCezcUGPKD3sxfD0BoFhPGqSB2y51h8PJL/xj0Ry77lisCZVH
+         XEHR2J1nt0dslheQPFK1q2A79VnxXvl/pGesnFpPlimkj3cPpcxHaVY/wrmT+8AifDBP
+         DQXb4TnZ9nLWnRxfgFjWPYCFBPd/uBvMUUaSD7/aTW8JkGtD8+mZz+4vjTB6E7TCy85i
+         ychwv7G2lLL4Af1ivG0zt4PlKKrheiMi66NY4TLSFeiF1OtlZ5nW9cJsaJYaTlvQ0U3v
+         LduA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789506508; x=1790111308;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0ZAGGN3eayfShEQqBKliqu7mRVw6xYFjSDe0eN2CZjA=;
+        b=eKoNOBCs+GE3EfKsBH8jVjvjaYTI1jCXCiqOwvkPf/cyjVgktg+OJYxwEcAOp44tZp
+         X6uloxOqtgf45U3TJXyl5P5exwd3HnErQFtS91RT3WxMmEcIWv8cxsZlfVwvKNclQ1J1
+         6wp41Kt0eBprzja5ViacV6vT3YW3bSB4InU+jsOYYpCe44qewXUbQi2VlwMKMIevJfob
+         Cij4nQ4vf3TXM/Hx7MSq5JNgMASHj8iM3smqFFbDTM6vClKLnImclfdHgfbuU+//Ckmx
+         KlHRGXasJE4kxsS3pHoo/4nuLb7M79Nu76gxruVxKax2Sh6d90luWrLshkaFhZL1RsmW
+         C7rQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwMXaId+adAw5/9zkNJUJTHemOkFoyqGrNYwNC7yw8RTZCAFNUeDC4tHHojeFdzXayZ6y8hUNgF+0rjkX22m6fXt/MvKoQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++nr8PhyqkJOvu1cvXG0msRbSau64qKZV7D0t5QWkz4yMuSk5p6b
+	XynLuELVfBo3Mgz1pARHjdPmkiHgXP9YMV1BplVZGAVkJbG0OxToE21DohJB10fB2Lk=
+X-Gm-Gg: AYBFou0X8JSPlpA1az/fDuy80/welyP6wNAvWT3oNaueasYwKBIYYljh4tGlYakrzUX
+	ffOdniKy27bQrMCtagedMAj/mNVSkzqcwqLABISrDiru2p17KfesdNXyHt9srBS4vr/DIKtgEIQ
+	yQJg8cQTWQzE6NmEzZ0JcWbzIuzEiuVOGFMAjKgFANGZL/xexA481e8FDXqEDLFVOPKFXrQo6xB
+	YM2I8dDkTnGrrWgCRioUHcxhBS0VerEyzQfHimRykUYgF2OxbIjpcT8COu/9hNs5XsMWPhd4Koa
+	J5wbzIczSu1GFR6uIQvWX6qFMNtQXUeEcYG6a2d8pjcy8IMl/AxOJeNoYnM+AaIX1InRlUiD0JL
+	S/s+wmcBQpGwF38OSNUuOQ1YJeChA1nHHMN+gaHBCoeH/Fm2IVfqEnrnl1X7qV2GjOO1Yu/45IX
+	aN8/oTuNHwAyrZvD3yrX7v14g5Ik416/IDarUbSxB1sP2tbBwI0fsD
+X-Received: by 2002:a05:6870:e0c7:b0:470:e96b:43e3 with SMTP id 586e51a60fabf-482e56fb3d1mr3685772fac.15.1789506508396;
+        Tue, 15 Sep 2026 14:08:28 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:1800::264:ac])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-48429a91b9asm997942fac.6.2026.09.15.14.08.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Sep 2026 14:08:27 -0700 (PDT)
+Date: Tue, 15 Sep 2026 16:08:23 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH v2 1/3] integrity: Replace all uses of
+ integrity_audit_msg() with integrity_audit_message()
+Message-ID: <ykq6awewbz2f4ckgwrwnubcprlta2trm24by6bw3z2q6u6mr43@gn6ajl46tc6r>
+References: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
+ <20260727-report-hash-error-v2-1-30e394f524fc@cloudflare.com>
+ <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1214eed319ccb441ba0cd26ce168a0383a3e41c6.camel@linux.ibm.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Mimi,
 
-gcc has a bug with -ftrivial-auto-var-init=pattern that produces a
-warning for correct code that uses sparse bitfields:
+On Tue, Sep 15, 2026 at 04:00:34PM -0400, Mimi Zohar wrote:
+> On Mon, 2026-07-27 at 17:21 -0500, Frederick Lawler wrote:
+> > integrity_audit_msg() wraps integrity_audit_message() such that
+> > error codes are hidden by passing an additional parameter to
+> > integrity_audit_message(). Since this is a wrapper, we can replace
+> > this function with integrity_audit_message() introduced in commit
+> > 2f845882ecd2 ("integrity: Add errno field in audit message")
+> > 
+> > No functional change intended.
+> 
+> There's an unintentional change in ima_write_policy(), which replaces the
+> existing '1' with result.
 
-security/landlock/fs.c: In function 'is_access_to_paths_allowed.isra':
-security/landlock/fs.c:767:28: error: '_layer_masks_child1' is used uninitialized [-Werror=uninitialized]
-  767 |         struct layer_masks _layer_masks_child1, _layer_masks_child2;
-      |                            ^~~~~~~~~~~~~~~~~~~
-security/landlock/fs.c:767:28: note: '_layer_masks_child1' declared here
-  767 |         struct layer_masks _layer_masks_child1, _layer_masks_child2;
-      |                            ^~~~~~~~~~~~~~~~~~~
-security/landlock/fs.c: In function 'hook_unix_find':
-security/landlock/fs.c:1649:28: error: 'layer_masks' is used uninitialized [-Werror=uninitialized]
- 1649 |         struct layer_masks layer_masks;
-      |                            ^~~~~~~~~~~
-security/landlock/fs.c:1649:28: note: 'layer_masks' declared here
- 1649 |         struct layer_masks layer_masks;
-      |                            ^~~~~~~~~~~
+Oof. Good catch. That was intended for the later patch.
 
-To work around this, change the definition of struct layer_mask to
-use an explictit padding field. This also avoids the extra attributes
-for aligning the structure.
+> 
+> > 
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> 
+> Is renaming integrity_audit_msg() to integrity_audit_message() actually the
+> right approach here?  integrity_audit_message() currently has only 2 callers vs.
+> ~20+ for integrity_audit_msg(), and the rename forces re-wrapping of every
+> multi-line call site since integrity_audit_message is 4 chars longer, bloating
+> the first patch.
+> 
+> Why not simply add errno to the integrity_audit_msg() definition and callers.  
+> 
 
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110743
-Link: https://lore.kernel.org/all/20260619082133.3504146-1-arnd@kernel.org/
-Fixes: a260c0055665 ("landlock: Add a place for flags to layer rules")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: rebased to linux-next-20260914
+I can switch that around. I assumed we'd want to keep _message() since
+that was wrapped by _msg(). And not dealing with the line-wrapping is
+better.
 
-I originally sent this in June, but got no reply and this still
-happens with gcc-16.2, which is the latest stable release.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- security/landlock/access.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/security/landlock/access.h b/security/landlock/access.h
-index bbbb41f41147..f41ac3fc6476 100644
---- a/security/landlock/access.h
-+++ b/security/landlock/access.h
-@@ -81,6 +81,9 @@ struct layer_mask {
- 	 */
- 	access_mask_t quiet : 1;
- #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
-+	access_mask_t __pad : ((sizeof(access_mask_t) * 8) -
-+				LANDLOCK_NUM_ACCESS_MAX -
-+				IS_ENABLED(CONFIG_SECURITY_LANDLOCK_LOG));
- } __packed __aligned(sizeof(access_mask_t));
- 
- /*
--- 
-2.53.0
-
+Best,
+Fred
