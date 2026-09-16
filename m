@@ -1,90 +1,204 @@
-Received: from out28-73.mail.aliyun.com (out28-73.mail.aliyun.com [115.124.28.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243D44F30D6;
-	Wed, 16 Sep 2026 11:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8FD4DA545
+	for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 12:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789559610; cv=none; b=t4rQb6Khb4xmILFWwqE2CSCabq4Hq+7TogWxSXU/E+dgJr+/vrhYGnZsvfy6wCfBKg4e3Vtnxyf5I9s6nMNaYA3mjda5WIBtpkPkv036/oSWmUZhfc7m0Y7bllRw4fCEY10xhuPNcGzhlaD/hjOFyxLpe50mTG6NQCw/hp1SA2s=
+	t=1789561100; cv=none; b=A45Wxg5X7RxThcVTF4zbUAGt4RxRHoCvId91s8jXC14rUKZ+t318EY60aQncaemmU+L99UxkNPbHlDk/8+JSpyJwNAZkwNR+k14PH6PQ8WNQMsHGVMFl8mf6CUr6lIGPf4M1/l+u+I+jwhpzZVPpssqyrg2gco1T+qsI6X8xhh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789559610; c=relaxed/simple;
-	bh=NlO9jCqCwr8FDguvIAbf8yb0HzDUi9hyY+9dUChy9Gc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K6zzDJHGWlzOUxGv5dj1J8AzN+dr0e23TNtSxzPIQZkmVjD3xPCmuMxyLKBDRhuXwxKMI259vUWRxGX5tPIqEw3DV74jJpRDwG3vt8z3Xq8AkwnWc0dA71dYAcZjMsRL6PV4wQQn9rkrl3eBjtRCTJ30C43cVCf6wI+pMN7du/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com; spf=pass smtp.mailfrom=xiaopeng.com; dkim=pass (1024-bit key) header.d=xiaopeng.com header.i=@xiaopeng.com header.b=HzxeJAnK; arc=none smtp.client-ip=115.124.28.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xiaopeng.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaopeng.com
+	s=arc-20240116; t=1789561100; c=relaxed/simple;
+	bh=5WFjVUuobuPQxAFoCziWaPOaSMkBfc9ecA27/iiHUzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj0SH68OB2X6a3ZC0ji2TxvmP+nXjpciYH2bOqOE3FiyJmH8zHPcqKj99j8EkhSYEDz+8CBQwW2EfSGufj6Hj/DetDkqCVyw6mXBbpZIZxYa0fvliM68H3K7xKdvR2XNNXubZLdN13d0u9rZqriVb9q9zTvk46efT07Vqdf/JYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=camzooUc; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xiaopeng.com header.i=@xiaopeng.com header.b="HzxeJAnK"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xiaopeng.com; s=default;
-	t=1789559588; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=fy/mxmIjJ7w1MoF3yLvzybTgG1U8D7JPb41tBTx98Ww=;
-	b=HzxeJAnKg1GvWCCG3eOOrMxSQNoGEfhVtZuHvQGEC5+/skME8vJuiVOlJDQ+StmzCe6V6lz1ZV/Zc5Kwpl3/R+V8St/Qf86gm+hHZwNzGP6YCAe8fatQFnA0cXiWqb/G4Rh4QuVv26AiMcTVajlFY2uWNpnI9w8ihwKmEh/ruI0=
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08687898|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0115228-0.000282178-0.988195;FP=4460677476019412727|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037071049;MF=zhugl3@xiaopeng.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.jF2DfAu_1789559587;
-Received: from DESKTOP-UL5U09E.xiaopeng.local(mailfrom:zhugl3@xiaopeng.com fp:SMTPD_---.jF2DfAu_1789559587 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Wed, 16 Sep 2026 19:53:08 +0800
-From: Guanglei Zhu <zhugl3@xiaopeng.com>
-To: John Johansen <john.johansen@canonical.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>
-Cc: apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="camzooUc"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49d1ca5b0d6so6230525e9.0
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 05:18:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1789561096; x=1790165896; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=q+ts77r74LmMvSBcklE9DvUY6/Ijk6SNBQqauJ/Ja6A=;
+        b=camzooUcQnyAFNJOloPBCfg31XuRKft0cZfmlXWpBAgRunnURBOzvfjvmPInCWFV9k
+         tJMQ9CjG5yufVo0EHOQbdioOqbTNWXm6Vdzk34ltno0l2AAfdfbKlMmbWFXyV4WQFy02
+         zBPn3qttncXxwZalIHbHrZfWFtwKyCRySbiaEVGe9ey5ofdR7e/YYKEx5O68i9KDM8kT
+         m333XnLqUitJGSECnpv3EA/eUvCvYRkK7F9NVncT6uUncBJO6rhKs1xtejz9JiQBeQ6e
+         KWdA845LqQRK7LkemYhVPf/k+MngzcdgEhO+3GU/DFS0y5FvWtcy0k1I4820kz8DH9kV
+         wOBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789561096; x=1790165896;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=q+ts77r74LmMvSBcklE9DvUY6/Ijk6SNBQqauJ/Ja6A=;
+        b=tkYDfybnGq0/abFYPpNGkyohEei1MftgZaEtIPsHWa6A7mblTyHOTCVhpSX+MDvMUC
+         g9KZ2qISBxImrn3o4MWtN/D2XzgvZydgwJAAgnUTa8JJEWvFV1rriWaL1ObvVZ3xrJMn
+         Ib0swoYna/iils/8ILDEmhsd3RJNB3stC7s2zPjZOjYox8zWI8GodNKvSJDGHKllSi0z
+         EcPK5XqQd9+p4OcbmSz4aHy6uY64C8p193486b919xASgBoInHeE2LxRscd2hhzlV2Jk
+         cF6nvBTRNBtJU7PAzrkYiCgIPMpqmff/MWeDUnkXhBsBfAGszJ2/CBfgNRXcRgc8Dp70
+         SyDg==
+X-Forwarded-Encrypted: i=1; AKwUvByG2KCEKAiriwm4kLlL0p58yuINvwWtqnDWcu2H1XFgk+iUYIJXfJLyDBa2BamWZN+aKzN97Bzjsurn3Cl3BbX5boLklK0=@vger.kernel.org
+X-Gm-Message-State: AFuF++lBH/cW6xPkf4qajliqafVTv72D6FMPM53e570kNxMHeHS4nOjz
+	MvL3QlejLWIR1b7ChM9i9ClgJi4ecVnM2oDxvt5LtpuzWTizSqrAt+mv7jhJi0koWw==
+X-Gm-Gg: AYBFou1YHPeGZLyGeOYyhN9elbkGRhuqMmIutxbHAky8mBlTVBemm/kJuod0C6QRHAj
+	LlhQLajBnqzBCnqUMPalnJmXEbR0f3yqfWh3LLSmwopCwPe9u/BgNiEclmOu3vsjvIEaxQI7V6G
+	4QGyzdCyPQLfCKQAT+jy5Cl8I9Om1m6ENRS3z8C6KG41uTZrj1Wc6wO8tTPEsd93Muh9SPKMPPJ
+	2NVlwlc3NMhn/69syNZpPzoVDq23Xmuox5ZmEecx8mwtb23ZWUyNH3A+ItWwC4YypgJbs4yoi6g
+	WEiAhZjzHkoiXX1EAgD56NK1lUt1/REgHg2SOrwDMj5RXBynxyGXgowX1gmSf79K1Mk16eObrAG
+	MD3L91mfEZ417MUOTeaCrRouCQO3bv/znT1j4Ois8ceLY8te981YsmhF37mHDbIBjYnNTh/RE2/
+	iV7hp8XtoWA5m2Ow96AsJ4uUmhcEvqbqUH6PVU3tgAMyrVNdHaN+rKk7m4ryPtvwKQbN3zWYmjN
+	/sz6UfQxcVHPkFfYWtIehLgQB7QyVFRDDreqvLP
+X-Received: by 2002:a05:600c:3b09:b0:49e:6fd2:a45 with SMTP id 5b1f17b1804b1-49eb73477famr28445955e9.16.1789561095701;
+        Wed, 16 Sep 2026 05:18:15 -0700 (PDT)
+Received: from google.com ([2a00:79e0:288a:8:a430:d4f:f001:4a5d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e83da071asm92376395e9.8.2026.09.16.05.18.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2026 05:18:14 -0700 (PDT)
+Date: Wed, 16 Sep 2026 14:18:09 +0200
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: Christopher Lusk <clusk@northecho.dev>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: check accept index + 1 is in bounds
-Date: Wed, 16 Sep 2026 19:53:07 +0800
-Message-ID: <20260916115307.454593-1-zhugl3@xiaopeng.com>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH] docs: landlock: clarify TTY signal scoping
+Message-ID: <aqqJAZfG9FC7PgMW@google.com>
+References: <20260914.b8a029f9abb8@gnoack.org>
+ <20260914180946.1462099-1-clusk@northecho.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260914180946.1462099-1-clusk@northecho.dev>
 
-aa_lookup_condperms() returns perms[index + 1] when an accept entry has
-ACCEPT_FLAG_OWNER set and the subject uid does not match the file uid,
-so such an entry consumes two slots in the perms table.  But
-verify_dfa_accept_index() only checks that index is within the perms
-table, so a policy that sets the owner flag on the last entry is
-accepted, and the runtime lookup then reads perms[index + 1] one entry
-past the end of the table.
+Hello!
 
-The perms table is allocated by unpack_perms_table() with a u16 size
-read from the policy blob, so a crafted policy can place the owner flag
-at index size - 1 to reach the out-of-bounds read.
+Thanks for the review!
 
-Check that index + 1 is also in bounds when the owner flag is set.
+On Mon, Sep 14, 2026 at 02:09:46PM -0400, Christopher Lusk wrote:
+> LANDLOCK_SCOPE_SIGNAL mediates signal delivery when a sandboxed process
+> selects the recipient, including SIGIO through fowner.  It does not mediate
+> signals directed by the TTY layer to processes attached to a terminal in
+> response to terminal activity.  This distinction was clarified while
+> discussing TIOCSIG handling because the PTY master acts as a capability and
+> the signal recipients have attached to the terminal.
+> 
+> Document the TTY-driven signal paths which are outside the scope and advise
+> controlling access to the terminal or PTY master instead.  This records the
+> outcome of the RFC discussion and avoids implying that
+> LANDLOCK_SCOPE_SIGNAL covers every signal-delivery mechanism.
+> 
+> The documentation text and changelog were drafted with assistance from
+> Claude (claude-opus-4-8) and Codex (gpt-5.6-sol).
+> 
+> The userspace API documentation builds successfully with the kernel-pinned
+> Sphinx dependencies.  The remaining warnings are unrelated to the changed
+> Landlock text.
+> 
+> Link: https://lore.kernel.org/r/20260914.b8a029f9abb8@gnoack.org
+> Suggested-by: Günther Noack <gnoack@google.com>
+> Assisted-by: Claude:claude-opus-4-8
+> Assisted-by: Codex:gpt-5.6-sol
+> Signed-off-by: Christopher Lusk <clusk@northecho.dev>
+> ---
+>  Documentation/userspace-api/landlock.rst | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index 84cb7bf6b3ed..64418b09840d 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -430,6 +430,21 @@ The operations which can be scoped are:
+>      This limits the sending of signals to target processes which run within the
+>      same or a nested Landlock domain.
+>  
+> +    This scope does not cover signals delivered by the TTY layer.  A process
+> +    holding a PTY master, or otherwise driving a terminal, can cause the TTY
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Signed-off-by: Guanglei Zhu <zhugl3@xiaopeng.com>
----
-Found by code inspection: aa_lookup_condperms() reads perms[index + 1]
-for owner-conditional entries, but verify_dfa_accept_index() does not
-bound index + 1.
+What other ways of driving a terminal are you alluding to?  (I assume
+the LLM wrote that?  Did it make that up, or does it have another trick
+up its sleeve for sending signals that we are overlooking?)
 
- security/apparmor/policy_unpack.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index f1fc48e72..1ea89e9c5 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -1489,6 +1489,15 @@ static bool verify_dfa_accept_index(const struct aa_dfa *dfa, int table_size)
- 	for (i = 0; i < dfa->tables[YYTD_ID_ACCEPT]->td_lolen; i++) {
- 		if (ACCEPT_TABLE(dfa)[i] >= table_size)
- 			return false;
-+		/*
-+		 * Accept indexes for owner-conditional permissions come in
-+		 * pairs, so the non-owner entry at index + 1 must also be
-+		 * in bounds.
-+		 */
-+		if (dfa->tables[YYTD_ID_ACCEPT2] &&
-+		    (ACCEPT_TABLE2(dfa)[i] & ACCEPT_FLAG_OWNER) &&
-+		    ACCEPT_TABLE(dfa)[i] + 1 >= table_size)
-+			return false;
- 	}
- 	return true;
- }
--- 
-2.43.0
+> +    driver to deliver signals to processes attached to that terminal across
+> +    Landlock domain boundaries.  This includes ``SIGINT``, ``SIGQUIT``, and
+> +    ``SIGTSTP`` via the ``TIOCSIG`` :manpage:`ioctl(2)` command or the
+> +    corresponding control characters.  The TTY layer may also deliver
+> +    ``SIGWINCH``, ``SIGHUP``, and ``SIGCONT``.
+> +
+> +    These signals originate from the TTY driver in response to terminal
+> +    activity rather than from a :manpage:`kill(2)`-style request.  They can
+> +    only reach processes attached to the terminal.  To restrict this
+> +    interaction, control possession of the PTY master and terminal attachment.
+> +    For example, do not pass a PTY master to a sandboxed process if its slave
+> +    has processes from outside the Landlock domain attached to it.
+> +
 
+LANDLOCK_SCOPE_SIGNAL was previously described in two lines here.
+Now we have 15 lines, 13 of which are talking exclusively about the PTY corner
+case.  I am afraid this will water down the main message here.
+
+I understand that LLMs can help in writing good English, but they also
+have a tendency to be much more verbose than the existing text and can
+direct the reader's attention away from the main points with that.
+
+Suggested replacement:
+
+  Holding a PTY master FD still grants the capability to issue signals
+  through that PTY to the processes running under that terminal.
+
+Does that seem reasonable?
+
+Listing the full list of signals that can be sent through a PTY seems like an
+excessive level of detail here.  But if you find a reference listing
+the same signals in kernel doc or a stable URL, we could link it from
+the docs.
+
+
+Please also add an (even shorter) remark to the landlock.h header
+file's description of LANDLOCK_SCOPE_SIGNAL, similar in length to the
+one we added for the whiteout objects for LANDLOCK_ACCESS_FS_MAKE_REG
+recently.
+
+>  ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
+>      This limits the set of abstract :manpage:`unix(7)` sockets to which we can
+>      :manpage:`connect(2)` to socket addresses which were created by a process in
+> -- 
+> 2.55.0
+> 
+
+Some meta-level remarks:
+
+* Please send new patch sets as top-level emails rather than as
+  responses to existing mail threads.  (It is not technically wrong to
+  do that, but they do get overlooked within mail threads more often.
+  To connect the dots, you can link the original mail on lore as
+  you've already done here as well.)
+
+* *If you want*, a thing that would still be worthwhile having in code
+  would be a regression selftest for this signal sending path.  This
+  is similar to the tests you've already created in your initial
+  patchset, but would now check that signal sending *works* despite
+  the sender being in the scoped domain.
+
+(For transparency, I should remark that the final decision on this
+code review is still up to Mickaël in the end.  I do believe that this
+approach is the best solution, but the reasoning is less clear-cut
+than in other bugs we had before.)
+
+Thanks,
+—Günther
