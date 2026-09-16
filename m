@@ -1,194 +1,131 @@
-Received: from mail-oo2-f25.google.com (mail-oo2-f25.google.com [74.125.231.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5FA4DD3C7
-	for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 17:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.153
+Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012364C9DEC;
+	Wed, 16 Sep 2026 17:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789578236; cv=none; b=ek+hVftauS0hAy92AK9OL6U6NW0Ith0zTH6Rz54L7xt2GoYuLW9mOK7oQnBvqHy02aGwRPLxLKCzdr+LOfs+/ENreUzmWijSePF5+AZzgq4KAkyYyrnrD698fO2zriFN0anQoqyZRt1PE1Ud9dZ3LciOIZVwCczmEYevwZEn+HE=
+	t=1789578265; cv=none; b=oF9ac/dgYwvhx3YqQkLLHcUX62nA8KEznt8p8nZS3npniCmlQ1xP3QVKfdWyR/Wi/P37tndQ+pPms+PxXefF6MXA18E5AhcULXSoHEYDUIm7hQ7KeCJEnGVCTsHMI3WRBbp1YojwSTgRPP9TtVn1lFkQTBXZq2oI+IjRDiyLUWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789578236; c=relaxed/simple;
-	bh=Ks4WXakjDHaULISnrpHV/j5kbM2MXAKKMjVWUBVW3xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lLiGsPUBHHQaGlapWI6GWGyXu7IHWCLI6+X2JSyXlcLRiJc526AsqF9XSo7wqYUF5JXO+MPcjqaJBtLjNZCSSxgaOu6gxFw3ztRv0r9Opvoz7BhpOBsgmpHtjgn61eHLqqHsfaFHhgPzXTZn5KiwO4OKCyxHZhzlxtNDatO+kck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTlmxjDC; arc=none smtp.client-ip=74.125.231.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTlmxjDC"
-Received: by mail-oo2-f25.google.com with SMTP id 006d021491bc7-6c901f4bfffso61464eaf.2
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 10:03:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789578220; x=1790183020; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=XPj8i2bxKQOSEoNifSANwZq2nYwCvvCNoM4rujFqkpk=;
-        b=LTlmxjDCgOTX+Iv6NIjiaRTEPmNIhR5QIOJrzuzqpJ/PmD8+T56CPau6AKI8ZSqpPR
-         9Hr0e+aF1z/vizB+FR14KiigEESe1c6oxW9OVJhP8II96/FCVOLJpWPd/HI2Fa5rBRt9
-         Gg2tRV0s4GKp3KyrGBD0PAHE6CvQz617q61mHp30b9oOVcDckzCuc2AF3lsxZlAo/VeT
-         U+QBurRoWMDiqsX3Pbb3/0o/Z1WedhTOQRfqH/VFrxoUAHvadn9jbVV/3sfFYoVzodqA
-         VcbydKCq3zzvESwlNwej+gAeeKQIud68AqCIJxzrSIUlr44vO3M0XHXXNrbfgObOiLqK
-         pTlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789578220; x=1790183020;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=XPj8i2bxKQOSEoNifSANwZq2nYwCvvCNoM4rujFqkpk=;
-        b=m/ljny4BpCankrIEuHa8IAQkZ1vNywgXTetcMaZy/BMgHTgsYbycurQA2DyI3WoMjM
-         uzR3ThIh1ByxqzIGSwdGO3IgAfLi0gQfrlKCVq1VBOs+PcHYTzoG5lPSHZ6ubUl45Q/7
-         yT4HKmmqrpUFCaHV5basI4nLg1VKciEBM7yfrN31t9IxAEOLqRUFiJjI7tokAy0Yk8hx
-         OmzM1kjS6YVBM9EcXqmh/1wTwbVb3FPevV92PAJMerqjbYs1egMLxddBv9KNvw9hygWu
-         g29FFIAVQ/TRFsAR6C+a2L7KYI5YqgFmxfVDO2QUplHW1cp/eNowyU0wekBgCcTcHAcN
-         yv4g==
-X-Forwarded-Encrypted: i=1; AKwUvBwEtvRP/cD7n0NxdzY5B8IdNlxe1qrQ51M+AE9YNyAkEGNtkt5vkTgsfyDTCjmBHGbrMqtaJhYB5pMj5k1uMBPzgnSiOi0=@vger.kernel.org
-X-Gm-Message-State: AFuF++mDwN6D84oX+9B0rfZlXFjyV8Y1MHyH8cG9NuMJL3aRs/DbKFCS
-	oYAUBw1hrLXCOON4eIdyTaBww7X2B3Qa1G99S0OfHjA72QSiFvSBd+6p
-X-Gm-Gg: AYBFou1B1jrR/oqVA/tMy+36edmvtN/14HZ1adHJKXGgyN0KP6o36DrrpJzYtqw6Fl+
-	9wk9szsxnKKAFU7cR7V5QFJqE4cP6iIMRQEqg04OvSYryMy7yBlysDkD01WNIzakYOsfchpxCXn
-	AF6T+UciAnYZso1UeDdjcGV2jAIxsaJXPStheg1t1dAm4QhEWgH2oYvCHWqmfw5bzBuZO+feI3i
-	aCFBkULEqMttG60VaiYagQy1JfpTM2fvIMWAgXeZW/JvtMt2KaBVduCX9D+3s9F0H8aGoKpHolm
-	6czORLNZGe9mJB+4iFSEFA0bP6zBwLuVAwabEawSlinL4f59Br2dfpZ9q/MeZVGqaAupucG9ycd
-	ShVx8UVmFix5Bn/rHeZvOZLDzlDAH+uwi6bcICGh1qKtaqwwO5KqSr9qwpc/sUuI54Q+BlIMTVm
-	HC8lXsHclzKQxEc0ruHQ6B0pr0Z1V4J6rMCefo7hgo
-X-Received: by 2002:a05:6820:1f04:b0:6c4:28bd:fdf3 with SMTP id 006d021491bc7-6c7d340555amr3126331eaf.34.1789578219819;
-        Wed, 16 Sep 2026 10:03:39 -0700 (PDT)
-Received: from gmail.com ([2804:1b3:c402:7a4c:6d25:8c4:21f3:ba2c])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6c8f7bc41basm366840eaf.15.2026.09.16.10.03.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 10:03:38 -0700 (PDT)
-From: Murilo Duarte M de Almeida <muriloduartemouradealmeida@gmail.com>
-X-Google-Original-From: Murilo Duarte M de Almeida <murilo.almeida.dev@outlook.com>
-To: john.johansen@canonical.com,
-	georgia.garcia@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Murilo Duarte M de Almeida <murilo.almeida.dev@outlook.com>
-Subject: [PATCH] apparmor: lift path_name lookup in umount
-Date: Wed, 16 Sep 2026 14:03:09 -0300
-Message-ID: <20260916170309.396648-1-murilo.almeida.dev@outlook.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1789578265; c=relaxed/simple;
+	bh=Lqx96ZCiyALkeCFGSyJXviXMdYefOb4bpTZRt+mnaKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqERKwkUxYaOFCWwCJSBT2UxQ47bbPPQ5gDH/lYmVnjQznNbG9fWFtt37NSJc1myKradu1alcTE//WHIve9uYuoPmrs6hhvtSBQj/PuGbOL+u6UjDG1ZYPg1sZWp8008QCWTgznVU0UZ6UjKuBFzdTpq+Y0ADrZ4Yzq13C4gCxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 68GH2gE1029431;
+	Wed, 16 Sep 2026 12:02:42 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 68GH2fW5029430;
+	Wed, 16 Sep 2026 12:02:41 -0500
+Date: Wed, 16 Sep 2026 12:02:41 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Micka??l Sala??n <mic@digikod.net>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Justin Suess <utilityemal77@gmail.com>,
+        Paul Moore <paul@paul-moore.com>, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kpsingh@kernel.org, matt@bobrowski.net,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org,
+        casey@schaufler-ca.com, gnoack@google.com, jack@suse.cz,
+        song@kernel.org, yonghong.song@linux.dev, martin.lau@linux.dev,
+        eddyz87@gmail.com, memxor@gmail.com, jolsa@kernel.org, m@maowtm.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v3 04/15] lsm: Add the bpf_lsm_policy_release
+ kfunc and policy object destructor
+Message-ID: <aqrLsbnzbbX4HPr-@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20260909193719.518517-1-utilityemal77@gmail.com>
+ <20260909193719.518517-5-utilityemal77@gmail.com>
+ <CAHC9VhQHZ+ngFdzKqmnzBh341CGEg-jexu+QYU8=1qXK=u-x-Q@mail.gmail.com>
+ <aqHUw6k0Mf83CGFT@zenbox>
+ <CAHC9VhTM7emi9vxs+5Za8Hrc_e9dg7fZx+Z6BGUc4VQ1qhEAUA@mail.gmail.com>
+ <DLD0VQ3D8CYC.3V5ZT8HDMY4IH@gmail.com>
+ <aqTZdCz6JaoK16Fp@zenbox>
+ <DLDL7KK3FZKU.17ADLLWJVXB5F@gmail.com>
+ <20260915.ok8eig8Eishi@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260915.ok8eig8Eishi@digikod.net>
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 16 Sep 2026 12:02:42 -0500 (CDT)
 
-Before this change, pathname lookup for umount permission checks was
-performed inside profile_umount(). This mixed object-specific path
-information with profile-specific path configuration.
+On Tue, Sep 15, 2026 at 11:25:13AM +0200, Micka??l Sala??n wrote:
 
-PATH_IS_DIR describes the object being unmounted, while path_flags and
-disconnected belong to the current profile. Keeping these inputs
-together inside profile_umount() unnecessarily coupled pathname
-resolution with the permission check. An existing TODO in
-profile_umount() already called for lifting this lookup.
+> Hi,
 
-Separate pathname resolution from the mount permission check.
-Calculate PATH_IS_DIR once in aa_umount(), since it is specific to the
-object. Then, for each profile, combine it with profile->path_flags
-when calling aa_path_name(), using profile->disconnected from the
-current profile.
+Hezzie says hi too.
 
-Move this per-profile pathname lookup into umount_path_perm() and pass
-the resolved pathname to profile_umount().
+> On Sat, Sep 12, 2026 at 12:33:13PM -0700, Alexei Starovoitov wrote:
+> > On Fri Sep 11, 2026 at 10:26 PM PDT, Justin Suess wrote:
+> 
+> [...]
+> 
+> > landlock was designed for unprivileged users. bpf needs CAP_BPF.
 
-Keep profile_umount() focused on checking the resolved pathname against
-the mount policy: DFA matching, permission lookup, profile mode
-handling, and the final AA_MAY_UMOUNT check.
+> Yep, and this series would kind of bridge these two worlds. ;)
 
-Signed-off-by: Murilo Duarte M de Almeida <murilo.almeida.dev@outlook.com>
----
- security/apparmor/mount.c | 42 +++++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
+See my comments to Justin about this 'Mixing of the Blood'... ;-)
 
-diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
-index 4ed7b9136beb..c7dfdae95747 100644
---- a/security/apparmor/mount.c
-+++ b/security/apparmor/mount.c
-@@ -541,13 +541,32 @@ int aa_new_mount(const struct cred *subj_cred, struct aa_label *label,
- 	return error;
- }
- 
--static int profile_umount(struct aa_profile *profile, const struct path *path,
--			  char *buffer, struct apparmor_audit_data *ad)
-+static int profile_umount(struct aa_profile *profile, const char *name,
-+			  struct apparmor_audit_data *ad)
- {
-+
-+	AA_BUG(!profile);
-+	AA_BUG(!name);
-+
- 	struct aa_ruleset *rules = profile->label.rules[0];
- 	struct aa_perms perms = { };
--	const char *name = NULL;
- 	aa_state_t state;
-+
-+	state = aa_dfa_match(rules->policy->dfa,
-+			     rules->policy->start[AA_CLASS_MOUNT],
-+			     name);
-+	perms = *aa_lookup_perms(rules->policy, state);
-+
-+	aa_apply_modes_to_perms(profile, &perms);
-+	return aa_check_perms(profile, &perms, AA_MAY_UMOUNT, ad, audit_cb);
-+}
-+
-+static int umount_path_perm(struct aa_profile *profile, const struct path *path,
-+			    int flags, char *buffer,
-+			    struct apparmor_audit_data *ad)
-+{
-+	struct aa_ruleset *rules = profile->label.rules[0];
-+	const char *name = NULL;
- 	int error;
- 
- 	AA_BUG(!profile);
-@@ -556,23 +575,14 @@ static int profile_umount(struct aa_profile *profile, const struct path *path,
- 	if (!RULE_MEDIATES(rules, AA_CLASS_MOUNT))
- 		return 0;
- 
--	/* TODO: lift path_name, need to separate profile path_flags from
--	 * the lookup
--	 */
--	error = aa_path_name(path, path_flags(profile, path), buffer, &name,
-+	error = aa_path_name(path, flags | profile->path_flags, buffer, &name,
- 			     &ad->info, profile->disconnected);
- 	if (error)
- 		return aa_audit_perm_error(&profile->label, AA_MAY_UMOUNT,
- 					   error, ad, audit_cb);
- 
- 	ad->name = name;
--	state = aa_dfa_match(rules->policy->dfa,
--			     rules->policy->start[AA_CLASS_MOUNT],
--			     name);
--	perms = *aa_lookup_perms(rules->policy, state);
--
--	aa_apply_modes_to_perms(profile, &perms);
--	return aa_check_perms(profile, &perms, AA_MAY_UMOUNT, ad, audit_cb);
-+	return profile_umount(profile, name, ad);
- }
- 
- int aa_umount(const struct cred *subj_cred, struct aa_label *label,
-@@ -587,12 +597,14 @@ int aa_umount(const struct cred *subj_cred, struct aa_label *label,
- 	AA_BUG(!label);
- 	AA_BUG(!mnt);
- 
-+	flags = S_ISDIR(path.dentry->d_inode->i_mode) ? PATH_IS_DIR : 0;
-+
- 	buffer = aa_get_buffer(false);
- 	if (!buffer)
- 		return -ENOMEM;
- 
- 	error = fn_for_each(label, profile,
--			profile_umount(profile, &path, buffer, &ad));
-+			umount_path_perm(profile, &path, flags, buffer, &ad));
- 	aa_put_buffer(buffer);
- 
- 	return error;
--- 
-2.43.0
+> > There is a fundamental disconnect. If you can tolerate CAP_BPF then
+> > just use bpf-lsm and implement whatever policy you need there.
+> > If bpf-lsm is missing a feature we can fix that.
 
+> The question is not if BPF LSM can or cannot do what Landlock does.
+> Landlock provides a way for userspace to sandbox processes, and that
+> comes with a well-defined semantic, logs, and an user space ABI, which
+> are specific and dedicated to Landlock.  Some user space depend on that.
+> 
+> The goal of this patch series is to improve BPF LSM to enable it to
+> (also) enforce a Landlock security policy defined by user space thanks
+> to the Landlock syscalls.  The security policy still has the properties
+> that makes it possible to safely compose different ones (e.g.
+> monotonicity/stacking enforcement, inheritance, separation of duty, no
+> cover channel, safe privilege reduction without confused deputy issues).
+> 
+> A process can currently define such security policy, get a file
+> descriptor referring to it, and pass this FD to another process that
+> would enforce it.  This helps design secure architectures by splitting
+> ownership, trust, and privileges (e.g. CAP_BPF).  Being able to use BPF
+> programs instead of user space programs to enforce (e.g. an already
+> defined) security policy would make this enforcement more powerful
+> thanks to the context BPF have access to.  Of course, BPF LSM can (and
+> should) also enforce other kind of complementary restrictions.
+
+This may be the answer to the question that I was asking Justin, lets
+see if we can unpack it a bit for those of us that are dense.
+
+Big picture, as Justin so elegantly pointed out, there are a bunch of
+things that eBPF cannot do now, and may never be able to do in the
+future, particularily when it comes to 'raceless free' path based
+security controls, ie. TOCTOU avoidance.
+
+So, the objective is to have a program, systemd for example, compose a
+set of different security policies, that it then hands out to various
+process heirarchies, which then uses eBPF to call LandLock kernel
+internals to do the heavy security lifting with kernel level
+privileges and capabilities, particularily when it comes to path based
+controls.
+
+Is that close?
+
+If so, the question remains, why take on this amount of drama?
+
+Something like systemd does at least 10,000 other things, composing
+and handing out multiple variants of file descriptor based process
+hierarchy security policies would seem like chump change to it.
+
+I'm assuming the answer is that the eBPF programs involved are going
+to be implementing other, perhaps proprietary, security controls that
+extend beyond the path based controls that eBPF can't do.
+
+We will be interested in your reflections.
+
+Greg
+
+My opinions and those of my Golden Retriever Hezzie only.
