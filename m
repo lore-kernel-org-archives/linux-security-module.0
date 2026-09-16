@@ -1,66 +1,66 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CF83B994F
-	for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 15:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CAD4D6C31
+	for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 15:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789573081; cv=none; b=Op1KVLdVVNHhzRDMMOLR9rPnyuSU9//qxSS9lSpD2g5odzM8sReFxumKYyP3KimxK36fz51a6IVtl7RALLr/ykeihsvO/AkauQN8h0Dk5bRWS7PIWc+X9Vt11K7vglVAzdd2pEdvIHD+0jpxKP3LQd0Lm9M+U3+C9lihkHIHKbY=
+	t=1789573384; cv=none; b=GqzVjnaEZgT6H1dDECnPswrlgp9/4CZbdLZ2zEWj91mjdcIvkLOEnC2UKXA2VIqf4DJdr9tw5rHduqcPxPs24YuVQ7Ao23XkLye2n2duw/Iaw3q+FHaI2Z8GJks6kaYz/seA4SRbjxxLOuQj1JrQ+GxoLyRaEijdRGVkOF5iJSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789573081; c=relaxed/simple;
-	bh=5v/s/7Iuul7C56PuYL9oxgVQSwxVWgtd57ybWn92daw=;
+	s=arc-20240116; t=1789573384; c=relaxed/simple;
+	bh=xzkEs5LiSja3dbzzicR21Qn0XTrKAUdE1PB/NwOkDos=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=do1pfNV2jASbsCaCLUvDCdRei64qvYngsDT+h+bO0buiE/QaTWeNb3j533tMgDc0Uu4WIDv7Q9RTb78yHbxYlvsO5ghGNDKNyFzbAS1YG2LwWGuxusn6h9x4R1RLpAEAY50UGFaQXXnj8eJP5SI2Ml1owguVaDUFB5qGkT3CrsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ESae3DYl; arc=none smtp.client-ip=74.125.225.76
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDsNPkzTRRqeFNNxCAJqtrYR8UVGPOWI2N3uNLLOnzhyafbi94UG2ZlDXISjrpm3VDng1o/xLWWSJzT23HGkowgwTJtLeOBGlJ0oaiPFHRylenAY7EHm7wUJoJpEqC9fPM6heBj0Z1dVbAO45Xk/YuApMMjZnsJJxARs36G4LQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kod5TDBu; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ESae3DYl"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4834977ae75so586320f8f.3
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 08:37:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kod5TDBu"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49cd38e0e5dso12198725e9.2
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 08:43:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789573071; x=1790177871; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1789573380; x=1790178180; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=u78CS4uMDZfbASZgzU72LbLYuroH821SkavMLSLlG4o=;
-        b=ESae3DYl0ElhtPOfui/CPLv6anRyze1qYVeThoLfUDCe0Sh1oPblhbfKsajLJ2zvjj
-         E4NqGzIXCwOq7fvg8lQfCGOPI6JimF+pT87HWuoM+2cIeDeYcuDRLEjUPAVwVkNWhODJ
-         0sN6SLxWPsl6kbPgYlr4RjmzstJTpSocKrcXqqkDOrzaZA6ArbX+mPL+d+e9aDrQAfXq
-         6TBmq6XvGKd6OSxkkcVPtAnRqk58zX94EkP2d69WD9d/ORbD7BZnbF94LIkVjEQWyz9/
-         qoMGlSFf3GQj2N0Vf8Op+AKKBlB60F+utpatGeOYhSqb3om63UFlU9nQfrS5vU1Avnsz
-         BE3w==
+        bh=6Sim/Uq2bss990wMC5LOqQrIp+Z1Yp2vLh2aHVXHuME=;
+        b=Kod5TDBumB6ymIwo7H/RjtjtrnCuDomtfuR8A8HGXpN9zgO1n4IyBkl3igGXu+7HOs
+         zw27PQMKllXoPTSLu/HpagKlvd8CU2+NFGHJiZ2WyfdcqLz31yTLCw7AVgVcp/IYfVbS
+         I1Xlt7B7YltXwZ+O7fBbgLEprxlZ4BCPNCxrn3IRJudknDVfer8wPbaz5xom4wVVpNSL
+         LHRQSL7U4jIQQm+VrlVv4qjOU1i3lYzkhhb76vIkfawkePesgPYnJBAcsLVs2B0IHc7o
+         eavU318LnTyYFVlk/KW38KOB3d93So/91Lwn4vbIy35Ivb0es/onxLKICAcyvHkNdNk/
+         IIlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789573071; x=1790177871;
+        d=1e100.net; s=20260707; t=1789573380; x=1790178180;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=u78CS4uMDZfbASZgzU72LbLYuroH821SkavMLSLlG4o=;
-        b=iElblsRKcGJT24i6wEyo5jpZDejYbIHIvheeud/i+vzWIX+C5cPongwgZt5BZvP0PF
-         /AjH+Pj/MSaUg+ib8o0iWyqkf1H7APSz/4A49IRwySWQy+my34R3RjXxfOsIvrL9kfV9
-         YmVgWYfYv6YwERZJCy53IYiWcV8akMI5uX2M+0dYwzveE9hf9LowArTYVe2zGP2A+DAC
-         GPstp6mBlUDg2DCSZDJ+F7TKjKPxd/wvGI8gl0RInw66QXiSfCHMmQP/kC5MRsmEq3B3
-         c2rys3/rF/hZB+SIUMWrXCChg+T8IWIRwoow6b04hHx51LYqyTLbcUgDves5Cw0FRw+K
-         5cfw==
-X-Forwarded-Encrypted: i=1; AKwUvBycdd2sxIWn4J4hNe7DFfKglvZYc3Xs3+Y4hJYd7GAOUZHbAmOVIWrsp5HsNI4x5EUw+tgGiXBkw+dmBPOD25+PY0F1v/0=@vger.kernel.org
-X-Gm-Message-State: AFuF++lnhbZspEBJEfQ9jDCFmbKDCDsfZfe99yeTvGTR5IwDvjH85Hd1
-	ABH+oGZjjxN2V8B0FRkZ7aLKywA1WXUQOEvAsPRd25DQh+3XcMOymHPOpRrN5KeWuA==
-X-Gm-Gg: AYBFou04kqE6xFpwPBqnF+29IYiQvZtVoONk+DEUr5MHtgmTgP9Z1LlNksCMCjmEYrS
-	vLhg0Vmne9Of/Z4da9Jxz3xNX/bkvhCVra6BYut3QH4ef3tEwJHqtqziHMuJk87G3JhwPVRxwvq
-	Qd/95J3kR1D3PGDQ01kE89r1Ic2+p2lA3Cecxir7lkx47rQ1ZJmYfbGCQrc0ulRixyAz7aB9gac
-	+ESQGfxKbC5K1YVYOhCeCct4ptP6IDaeedcF8jXhgbFzAnCB/7wm4dk1iLWMrvQcih7LfUrbmNk
-	qBnVhhovFQXxl0QYmmuOGEm2LFvat7cpbP4rXdmNuLULBdQ5HgxyVqERWbvGhvBkiDasjxv0V3w
-	uu8StpDAvMt+MvNmChgRv5nIlluExqnoVbTPrs97l2KzXfCUiZ61nJDhJ7xhrUwPQ2qnn8SB7yi
-	NOAGs2utIdFADCNgGNSstMn5pCwz/iQtMpyhxdLfM5YdrG2n/njYCWoSKl6MxvWiQ7puMR0d+QK
-	rqdfIgp9wG3R0p4w04rz9JdK324
-X-Received: by 2002:a05:6000:2408:b0:486:f301:11df with SMTP id ffacd0b85a97d-4870cee0b72mr8867562f8f.6.1789573070432;
-        Wed, 16 Sep 2026 08:37:50 -0700 (PDT)
+        bh=6Sim/Uq2bss990wMC5LOqQrIp+Z1Yp2vLh2aHVXHuME=;
+        b=Ll4hjkBA8cd1ahIJucssMlVmD+3SmGN9XHL/wXRy4x2x7fTdsDK1XYdnsMjngNWidt
+         e+AH25n+WD86uAOZurobiqH9AFaJgA2iRGwdKDe8E3FmV6oOzmbCRzFmbEpbLo8SIlVO
+         RrDTlEMIkQOU/OpS0y9wjFc+Q0KUR3/bXfcHDJhHBdeosIh/sMf9af7hjFOd4CaIIpiO
+         Vbe/PUyePO70Aid2JnC9sb04LD36CG1luKzvcuwxLX0+WhiudOjrlEKZ3TmObkqfw93d
+         ZY7s+Zj+AFlsxYFgn/0/N5tc3QMj/48M1WisydXlQRmdtn4HZ19M443lxmCY5OH8xRUq
+         OTaA==
+X-Forwarded-Encrypted: i=1; AKwUvBw4gDpKv6IMhTpUMa6ie/hhmrHEwP9CWl5Dg8VI3QJ4R2f8XlX005tcjCKlmVjwuSQC7/lexcmIwkxM7oG6WGcDKbbgDqs=@vger.kernel.org
+X-Gm-Message-State: AFuF++lgb9cVWX5zg8hEi3xR1p0Md8vaD3KQLiYiXyaoOpdYABR64eg/
+	orn9V7Hobp7BXdet7EJP1WQ89+M8qT98y/g0Ii7o6waf6O5azQeuaoCXXU7y8LmMWQ==
+X-Gm-Gg: AYBFou2BwlJ1oPNhRbJLygUY64FPdERckvSUdukIa22WHgLJR0h8WByAd1r/pAzkuDa
+	PwIqSZVYSyce3v/j5QCmxrhDuTunG0vtIkappisp0Q3Ac4p/Li/3vict9vnwGyoCCf3eTdjMoum
+	FtD1M1LSgKdTzMxaYtnFziH6PLUbEco/S4xE/qwLaEQylGzgyurI47xhs+Syl0vCeBjOj7D5LjL
+	l1uxTYBoLLzNi37qEQptJqmLE7G6IvaW4/FEgtGENdQHkSye9gEjDKUyzDWSC1kREN5H3+mafdB
+	CbjgvawLTM1R4BZtSF7zm+fkqMqQSbPtPbl+UGVjxqCveXcVBysxAZTK1ESTAvDewqITH3mUn76
+	DycPtLOqT96UhlcFEMz1xPsIZZFZVlyUjAHQUSiBqIrmlqk3vaLEntqSR8djGzQv8O8ZIxpsPFV
+	danNYRKGI8Ec8/BRCMPbsUQ9pVXwclmhW9AluGnQqiH+ss3QzXHHgBfjH3dg0mEY10HY0fu1dbm
+	ORW+VelwDAB6i0CpfCGo8V6Necv5MBXRdHd0SM=
+X-Received: by 2002:a05:600c:5489:b0:49c:cee0:e7c1 with SMTP id 5b1f17b1804b1-49eb7340a28mr62591055e9.16.1789573378755;
+        Wed, 16 Sep 2026 08:42:58 -0700 (PDT)
 Received: from google.com ([2a00:79e0:288a:8:a430:d4f:f001:4a5d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bf438fbsm8022313f8f.36.2026.09.16.08.37.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bf27198sm7580265f8f.15.2026.09.16.08.42.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 08:37:50 -0700 (PDT)
-Date: Wed, 16 Sep 2026 17:37:45 +0200
+        Wed, 16 Sep 2026 08:42:58 -0700 (PDT)
+Date: Wed, 16 Sep 2026 17:42:53 +0200
 From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
 To: Christopher Lusk <clusk@northecho.dev>
 Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
@@ -69,9 +69,12 @@ Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
 	Randy Dunlap <rdunlap@infradead.org>,
 	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs: landlock: clarify TTY signal scoping
-Message-ID: <aqq3yY8SKIBGUZ8v@google.com>
-References: <20260916152336.1589383-1-clusk@northecho.dev>
+Subject: Re: [PATCH] docs: landlock: clarify TTY signal scoping
+Message-ID: <aqq4_Xh_JJ6OHpST@google.com>
+References: <20260914.b8a029f9abb8@gnoack.org>
+ <20260914180946.1462099-1-clusk@northecho.dev>
+ <aqqJAZfG9FC7PgMW@google.com>
+ <20260916145255.1587381-1-clusk@northecho.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,83 +84,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260916152336.1589383-1-clusk@northecho.dev>
+In-Reply-To: <20260916145255.1587381-1-clusk@northecho.dev>
 
-On Wed, Sep 16, 2026 at 11:23:36AM -0400, Christopher Lusk wrote:
-> The LANDLOCK_SCOPE_SIGNAL documentation does not describe how TTY-driven
-> signals interact with signal scoping.  Holding a PTY master file descriptor
-> is a separate capability: its holder can cause the TTY layer to signal
-> processes running under that terminal, even across a Landlock domain
-> boundary.
+On Wed, Sep 16, 2026 at 10:52:55AM -0400, Christopher Lusk wrote:
+> Hello Günther,
 > 
-> Add a concise clarification to the userspace API guide and the UAPI header.
-> This records the capability boundary identified during review of the
-> TIOCSIG discussion without enumerating individual TTY signal paths.
+> Thank you for the careful review.
 > 
-> The documentation text and changelog were drafted with assistance from
-> Codex (gpt-5.6-sol).
+> The phrase "or otherwise driving a terminal" was LLM over-generalization,
+> not a separate mechanism.  I checked the paths I had in mind against the
+> source, and none justifies that broader wording.  I am dropping it.
+
+Thanks for double checking the wording, sounds good.
+
+        
+> You are also right about the verbosity.  The generated text expanded a
+> two-line distinction into 15 lines and obscured the main point.  I will use
+> your suggested sentence and remove the signal enumeration.  I do not have a
+> stable kernel documentation URL for that list, so I will not add a citation.
 > 
-> The userspace API documentation builds successfully with the kernel-pinned
-> Sphinx dependencies.  The patch introduces no new warnings; the existing
-> missing-graphviz and undefined-label warnings are unchanged.
-
-Minor nit: Last two paragraphs of the commit message would have been
-fine to drop for conciseness (the Assisted-by line already lists Codex
-and the other paragraph talks about things that didn't change).
-
-But really just very minor, and probably not worth changing unless we
-unexpectedly need a V3.
-
+> v2 will contain your sentence and a short LANDLOCK_SCOPE_SIGNAL remark in
+> landlock.h, matched to the recent MAKE_REG whiteout remark.  I will post it
+> as a new top-level patch with a Link back to this discussion.
 > 
-> Link: https://lore.kernel.org/r/aqqJAZfG9FC7PgMW@google.com
-> Suggested-by: Günther Noack <gnoack@google.com>
-> Assisted-by: Codex:gpt-5.6-sol
-> Signed-off-by: Christopher Lusk <clusk@northecho.dev>
-> ---
->  Documentation/userspace-api/landlock.rst | 3 +++
->  include/uapi/linux/landlock.h            | 2 ++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 84cb7bf6b3ed..33a514ebc615 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -430,6 +430,9 @@ The operations which can be scoped are:
->      This limits the sending of signals to target processes which run within the
->      same or a nested Landlock domain.
->  
-> +    Holding a PTY master FD still grants the capability to issue signals through
-> +    that PTY to the processes running under that terminal.
-> +
->  ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
->      This limits the set of abstract :manpage:`unix(7)` sockets to which we can
->      :manpage:`connect(2)` to socket addresses which were created by a process in
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index cceda3b3b961..6485af37dd25 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -501,6 +501,8 @@ struct landlock_net_port_attr {
->   *   related Landlock domain (e.g., a parent domain or a non-sandboxed process).
->   * - %LANDLOCK_SCOPE_SIGNAL: Restrict a sandboxed process from sending a signal
->   *   to another process outside the domain.
-> + *   Holding a PTY master FD still grants the capability to issue signals
-> + *   through that PTY to the processes running under that terminal.
->   */
->  /* clang-format off */
->  #define LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
-> -- 
-> 2.55.0
-> 
+> I will keep the positive selftest you suggested as a separate follow-up so
+> the documentation clarification can be reviewed independently.
 
-Reviewed-by: Günther Noack <gnoack@google.com>
+Sounds good as well.
 
-Thank you very much for your contribution! :)
-
-It ended up as a much smaller patch than we started out with, but the
-real advancement lies in the understanding of the semantics and in the
-double checking of these boundary conditions.  The LLM output was in
-some cases a bit wordy ;-) but overall this was a good discovery and
-useful discussion.
-
-Thanks,
 —Günther
