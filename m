@@ -1,228 +1,160 @@
-Received: from mail-qk2-f43.google.com (mail-qk2-f43.google.com [74.125.230.235])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD65A43F0AC
-	for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 19:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6777047D925
+	for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 20:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789588141; cv=none; b=f6kgZLyFXEnq3hiVq4+56WKkfBGQYkczSKuDOO02q7c8cfURCuRZoncV1lhbDx5KzLzm8L8cBmgL7A6Dh8+0OrD2WDzU3LbFJOztmkOwJDQ6UNQMqL4CCN9DVjwBPTxBJK8eXJnyTpJp8FgalgKUDCL0IX/jiCRc/kPLZNqZgFE=
+	t=1789590024; cv=none; b=rMilEBBr1e/EyTBok7PGiYj0o6xDFYLPXSNBW4OnueNwaVoJlaB+Bdpncpd1YvQe4JcbWa39Mu37B3MGAb5B/U/5jUld6KYR0jV6voAdfUBFicDM1pOyzihYc+LmbbduEdLtPwa6n9NjliaowinKhHlR6i3t9oD8wFFBYhw7LtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789588141; c=relaxed/simple;
-	bh=knldyJyGeCw6r9CPbVqq5+yktTZFJvNyL9I5DvHLKts=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Miy3Nktn4/IPp8cV/YVtLICui6fbcp8yWu787M3gDnqSvP62lyv1AnFCTkC5anRW1xlqC+EWyJ/eKPiABSuP0+MvHBZZqWrs/d0Pe9GhldwgXRbZjhbxVObNPzy+nbZPmqeT6CY1v3QlWKQcYgXZpxwEr0cmx8TutZ8oKLXbocc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLz6jsJv; arc=none smtp.client-ip=74.125.230.235
+	s=arc-20240116; t=1789590024; c=relaxed/simple;
+	bh=Ej22vtckdvfQ+B6irJUNrCPNb/Gby576+ozFZBj1s5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ofddghoeoz1s0dH57FNENTAKFPfDzb1P/uGyDROfBV16FkgekgyhH8d+Mrrdl9BJQWw71MJrtjsq1i5dH8DSdUl+zrs/cHfkPSXHzQL9Z5mQ8hir+jIDny1/iQppseDdm2uE0T9rSOXR69ChjKFL536xgi3R1MOTJoi49wyJFic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmddu+L/; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLz6jsJv"
-Received: by mail-qk2-f43.google.com with SMTP id af79cd13be357-939109fafd6so1649885a.3
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 12:48:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmddu+L/"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49cd4ba9f68so1821775e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 13:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789588124; x=1790192924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=c1bOnz0v9eTKbvguaCiE7qIR45GeNS/vixR+MamjQGw=;
-        b=ZLz6jsJvc2+IYKfM9RdPldBEj67twkkYqvUYG2Z4GO8zS5HynuaUuekluj3V8bMEMV
-         RjGcVGZC4KLd27+OfpACPVkNp5juso5CQNwS33BlybOIkHIQi2JzF6MU0n69HdG99N7g
-         Ax5bKoUtN/Sgfr6Cc3ThyvL/tomUMFk5yHtPSsbqyo8ZrZD8a6y2MK7vgW4heDWqOuri
-         Q2VrIHhVyQTDDWetEKK154N3AApuq0adiK0VhbO6W5O0wJIVwxUMaAQeSfPYPGKQcuX8
-         Sko5Eyc1xCleoTmmP9xYKEhNU+6w9lOQVCax8aPepXP9xz+75+Wztahj99D/ksRarDtE
-         Lb1w==
+        d=gmail.com; s=20251104; t=1789590009; x=1790194809; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=p0JU7NG9wWGfnbR02xknk5oExK7M/TW6csExg90umtY=;
+        b=lmddu+L/f1iUwEmQVkkOI3ZFWSpv5tSw/48+ly/d8AI8yN0TRkx7HuxOJlcVUp/l78
+         3Rjawz3CY+VT2e8rWlA7yxpKNGHBKd0t9kvW28TgXmJs9Dp39TtFr3QUBPjfMw3I3wQZ
+         tA44/QW3ixdrLGQ0ky8CJyGXTfpPtvCkSm4Ro9Ufer2UY22fr+eNbkxUc9XOMHoNlXGK
+         pI9IdbBF9baui4ThsaCcEqO8EZpiNLXjDklO/qJycN/cBRGPGMQuHxJBww/n109mdpiU
+         sBZ0UKRIyYGmsnSOx3PB3ETN8keGYT+r402ahVBYh3DZQ+fWi3t5WS2XmELboZdqX9tO
+         O5HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789588124; x=1790192924;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=c1bOnz0v9eTKbvguaCiE7qIR45GeNS/vixR+MamjQGw=;
-        b=fZyrbp7fJ3RBbwoJspgsIIL2EwCarH8pWt3k/agsXxNyTwm0ISpUfivIDVE3iKPNfM
-         c6IG5ZTg1tzaSbGYNEc6QoV9gP4Fg5znOMaVqRQcWQ58lK/AvGBExi0ZrBAEYf6uDF68
-         3Exed0cXgCr9G7Aj8Ad/v9HV579gBa/o49t6Kjr6+sRxVd0biV4hS1Rk4ZC+jQxvVacC
-         BIQRmAswX6f43DTKvdLQ85FQcGnvInGM+TWhEHcsuDl9BLjgiBKB7CWQnIAT3bQMYFSw
-         Yd0/7Qfkt9tIrzp242sspUiYW3yAA6IsSOovKPL31kMQJRG+FwEnzjGAyZWsIa5c1Yyt
-         NF3A==
-X-Forwarded-Encrypted: i=1; AKwUvBw2O/mwmazqAVZuzVeI45NPdHr5nWlOwbk3UNLnm+ztkFSKq0NRoIVD+5XSY5bIVrTqKQX7tMz0XEKHmxJ2HZq5gyTUzqE=@vger.kernel.org
-X-Gm-Message-State: AFuF++lWKsq+/Fejv3cn39+Ho2uxmoJQnU3OICBrohQsxAEfh8YWrlXJ
-	+Vw3uS72Z4XC/ksDSvx5vcFuyd1sDxWp+bsQB/PwPCtupO+zO4j6Logq
-X-Gm-Gg: AYBFou2MYtflGQQPAMhINq8OThXoZ9sEFTIMc+1jpxMBljsZO43VS+Bh8QcORa2hS8a
-	9l6TuXY+EOrQFGQ+3PYHsOMAfLEFcl0xDEhXOhIwh6yuN/KkC7FfjXelPURbp86S66UncAHSBT7
-	i/4Bu+OHfydBViboqescWAWRCU8NSE6J/eMGUN4PCPDXBY3NriS86mmCkn66UkLoA8TvNk47N50
-	2P2mPzOfZnqkuO86mK/C7JbDUKZZx9tItIiAeJPsshi1sSYfQVt93WW+2gDI3hrH0xc20IlThrn
-	Wk1eWZ/x+mimPTJbaXIKtPrNmHWfFaY2GqiPRGxLuFh+Kcv/tN471rIMyY4tLR748zAFxodhgtk
-	CBVVGXYEKBw9Y5JIk/vPrhO/NFvf5WbLi6HupBLEhJVVRuJamrWOXcpiJw8JMFgdv9t00VstSgj
-	wKXdFH+JuG2+thOITzqdfEyLHy9+Mon9FOmmlvUAWkQfyT6lHOz4AnEQp+NdOKjvNPTRvV1qfD/
-	B9ucmxPoP4Hhuvq41g4N5DaVNGr8C/5tALZnJDK/iYVn4FmnDBfo0WA7VAdaQB52ZjAgFu2B08=
-X-Received: by 2002:a05:620a:84c3:b0:939:c555:efb6 with SMTP id af79cd13be357-93bb7739892mr612145985a.12.1789588119533;
-        Wed, 16 Sep 2026 12:48:39 -0700 (PDT)
-Received: from fedora (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93b781dfbe6sm287128085a.13.2026.09.16.12.48.38
+        d=1e100.net; s=20260707; t=1789590009; x=1790194809;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=p0JU7NG9wWGfnbR02xknk5oExK7M/TW6csExg90umtY=;
+        b=yU8g6TQ1GXws3xuaEr0/FxdOHQx3qT3VzL20wx3776iecGb1Rr2YvQUcu/RxoYfoB+
+         Mo8h1CJQNYTJ/4C1r8ff0QxcFR0zC7mZMKJEbBq7tJ2I/9tDg5x5VCuR69+Uq+xLmNGT
+         SwypzyECMFQyFN6Bzv0wnuZOzj+HPqFWSYj8H1Xn3FZk9roQNDyMqyRlDiADqTpx24aY
+         1gjl1TNJyMuri6eo5Kxn6tZS91wwVrQ2OtT1DfDbjCQg2ADTzgf60fRgillUNI8qDGUm
+         HtHcrtOURb1e+nxCvi5sYGLgTtZKboikVpSrbICbu6oqQs59F0fe9LCE+1O+MeCoFPKX
+         5/NQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxOAszsAySzN0+hinbdgkFAr2QiRknbDBkNk0Uotdu49K7e/twS8EZ8Q7EUrTAZPZUw0ulW/VwW2UYFzZwUzvO3hPtpTmY=@vger.kernel.org
+X-Gm-Message-State: AFuF++m580C9s4k9P0FRZ2ubZYreI6uFGSSWTL12skn75R4BdEpVpF5h
+	IsrqCY/tzN7ZP0YCy0PCv/uQ80V6dBWg/GSTjPoTiGcGKolE4JnldL7s
+X-Gm-Gg: AYBFou0Hw2FqtYr5Qaxnyjj/5ck8hvhdzHitFf5C0s9KdSFc4V+Fa0Zaz2D01M0hxYb
+	Zx6AflCpXi4zH2wQ31BlRaCudWaI9dHKRTS84gFlJaIVbgLpbeGsTGQfEMA/N8dr2ppL/Q+4kBl
+	7xPqurbJRPRhKFPs7xI0slPCUqif3qYk853n7zUQRfSSxhKuD/pbYb1WKdTKZm44v82MAh+rf41
+	gVQ3bayT1p1+FXYrYxRkHCAtTj3nY3enqPsS+oh2BigsiaVdGUFF7dySBYfUPkziPw+HTj64YXq
+	PK6/SAeaY8ad8vtIOBCLQ1+yLKbsx4XMQTu+s6o7fA66Oiyuf+bsACaSmqbDyGolxo6lje52kOZ
+	LY9k6eJwvetc6FDnTDbb+y4/Ub7pi/arpSlG3REE9t3V3K8zCKI/p6o66qthdsfXz9bWb61Ck/L
+	ZCNzEPzgjqWPEG4ydOGXVNQTMjI+weUY7MZ2W3bmnTY/0+ESGZBrTiOj+xy6po+rIIzfe4wcxuV
+	jOIINl+ZZuJdLCyZObW6WXU
+X-Received: by 2002:a05:600c:1907:b0:49d:10d6:fd55 with SMTP id 5b1f17b1804b1-49eb73143c7mr47167685e9.1.1789590008675;
+        Wed, 16 Sep 2026 13:20:08 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fbd24774esm27685625e9.10.2026.09.16.13.20.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 12:48:38 -0700 (PDT)
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-To: selinux@vger.kernel.org
-Cc: paul@paul-moore.com,
-	omosnacek@gmail.com,
-	linux-security-module@vger.kernel.org,
-	brauner@kernel.org,
-	mic@digikod.net,
-	serge@hallyn.com,
-	jack@suse.cz,
-	jmorris@namei.org,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [PATCH] lsm: initialize the security blob for the initial namespaces
-Date: Wed, 16 Sep 2026 15:48:24 -0400
-Message-ID: <20260916194824.37332-1-stephen.smalley.work@gmail.com>
-X-Mailer: git-send-email 2.55.0
+        Wed, 16 Sep 2026 13:20:08 -0700 (PDT)
+Date: Wed, 16 Sep 2026 22:20:03 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, kpsingh@kernel.org,
+	matt@bobrowski.net, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	kees@kernel.org, casey@schaufler-ca.com, gnoack@google.com,
+	jack@suse.cz, song@kernel.org, yonghong.song@linux.dev,
+	martin.lau@linux.dev, eddyz87@gmail.com, memxor@gmail.com,
+	jolsa@kernel.org, m@maowtm.org, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v3 04/15] lsm: Add the bpf_lsm_policy_release
+ kfunc and policy object destructor
+Message-ID: <20260916.e518e5ee513e@gnoack.org>
+References: <20260909193719.518517-1-utilityemal77@gmail.com>
+ <20260909193719.518517-5-utilityemal77@gmail.com>
+ <CAHC9VhQHZ+ngFdzKqmnzBh341CGEg-jexu+QYU8=1qXK=u-x-Q@mail.gmail.com>
+ <aqHUw6k0Mf83CGFT@zenbox>
+ <CAHC9VhTM7emi9vxs+5Za8Hrc_e9dg7fZx+Z6BGUc4VQ1qhEAUA@mail.gmail.com>
+ <DLD0VQ3D8CYC.3V5ZT8HDMY4IH@gmail.com>
+ <aqTZdCz6JaoK16Fp@zenbox>
+ <DLDL7KK3FZKU.17ADLLWJVXB5F@gmail.com>
+ <20260915.ok8eig8Eishi@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260915.ok8eig8Eishi@digikod.net>
 
-Commit f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-added a security blob to struct ns_common and allocates it from
-__ns_common_init(). Most initial namespaces (init_user_ns,
-init_uts_ns, init_pid_ns, init_mnt_ns, and, depending on
-configuration, init_ipc_ns, init_cgroup_ns and init_time_ns) are
-however set up statically via NS_COMMON_INIT() and never pass through
-__ns_common_init(), so their ns_security pointer is left NULL for the
-lifetime of the system. Any LSM that registers an lbs_ns blob and
-dereferences its slice on one of those namespaces (for example from
-the namespace_install hook when a task setns()'s back into an initial
-namespace) will fault.
+On Tue, Sep 15, 2026 at 11:25:13AM +0200, Mickaël Salaün wrote:
+> On Sat, Sep 12, 2026 at 12:33:13PM -0700, Alexei Starovoitov wrote:
+> > On Fri Sep 11, 2026 at 10:26 PM PDT, Justin Suess wrote:
+> 
+> [...]
+> 
+> > landlock was designed for unprivileged users. bpf needs CAP_BPF.
+> 
+> Yep, and this series would kind of bridge these two worlds. ;)
+> 
+> > There is a fundamental disconnect. If you can tolerate CAP_BPF then
+> > just use bpf-lsm and implement whatever policy you need there.
+> > If bpf-lsm is missing a feature we can fix that.
+> 
+> The question is not if BPF LSM can or cannot do what Landlock does.
+> Landlock provides a way for userspace to sandbox processes, and that
+> comes with a well-defined semantic, logs, and an user space ABI, which
+> are specific and dedicated to Landlock.  Some user space depend on that.
+> 
+> The goal of this patch series is to improve BPF LSM to enable it to
+> (also) enforce a Landlock security policy defined by user space thanks
+> to the Landlock syscalls.  The security policy still has the properties
+> that makes it possible to safely compose different ones (e.g.
+> monotonicity/stacking enforcement, inheritance, separation of duty, no
+> cover channel, safe privilege reduction without confused deputy issues).
+> 
+> A process can currently define such security policy, get a file
+> descriptor referring to it, and pass this FD to another process that
+> would enforce it.  This helps design secure architectures by splitting
+> ownership, trust, and privileges (e.g. CAP_BPF).  Being able to use BPF
+> programs instead of user space programs to enforce (e.g. an already
+> defined) security policy would make this enforcement more powerful
+> thanks to the context BPF have access to.  Of course, BPF LSM can (and
+> should) also enforce other kind of complementary restrictions.
 
-Allocate the blob and run the namespace_init hook for each of these
-namespaces at the end of security_init(), after all ordered LSMs have
-registered their hooks, so every LSM sees the initial namespaces the
-same way it sees init_net (which is initialized at runtime via
-ns_common_init(&init_net) from net_ns_init() immediately after
-security_init()) and does not need to special-case them in its own
-->init() callback.
+I'd like to voice my support for this here and maybe try to make more
+concrete the "bridging of the two worlds".
 
-Provide an init_ns_common_for_each() iterator in kernel/nscommon.c so
-the list of statically-defined initial namespaces and their Kconfig
-guards live next to the rest of the ns_common infrastructure. init_net
-is intentionally excluded: pre-initializing it here would leak once
-__ns_common_init() clears ns_security and re-allocates.
+For normal Landlock use, CAP_BPF can *not* be assumed because Landlock
+is designed to be used by unprivileged processes.  (See
+https://landlock.io/integrations/ for an incomplete list of programs
+already using it.)  It works similar to the unprivileged use of
+seccomp-bpf: The unprivileged process both defines and enforces the
+Landlock policy, by invoking unprivileged syscalls.
 
-Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
----
- include/linux/ns_common.h |  1 +
- kernel/nscommon.c         | 45 +++++++++++++++++++++++++++++++++++++++
- security/lsm_init.c       | 11 ++++++++++
- 3 files changed, 57 insertions(+)
+So a full rewrite of Landlock in eBPF seems infeasible (and TBH, it
+would be quite a drastic deviation from the original scope of this
+patch set).
 
-diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-index c8e227a3f9e2..742627000453 100644
---- a/include/linux/ns_common.h
-+++ b/include/linux/ns_common.h
-@@ -11,6 +11,7 @@
- bool is_current_namespace(struct ns_common *ns);
- int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops, int inum);
- void __ns_common_free(struct ns_common *ns);
-+int init_ns_common_for_each(int (*fn)(struct ns_common *ns));
- struct ns_common *__must_check ns_owner(struct ns_common *ns);
- 
- static __always_inline bool is_ns_init_inum(const struct ns_common *ns)
-diff --git a/kernel/nscommon.c b/kernel/nscommon.c
-index e72426bba29a..4f3cba5518d7 100644
---- a/kernel/nscommon.c
-+++ b/kernel/nscommon.c
-@@ -1,11 +1,17 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /* Copyright (c) 2025 Christian Brauner <brauner@kernel.org> */
- 
-+#include <linux/cgroup.h>
-+#include <linux/ipc_namespace.h>
-+#include <linux/mnt_namespace.h>
- #include <linux/ns_common.h>
- #include <linux/nstree.h>
-+#include <linux/pid_namespace.h>
- #include <linux/proc_ns.h>
- #include <linux/security.h>
-+#include <linux/time_namespace.h>
- #include <linux/user_namespace.h>
-+#include <linux/uts_namespace.h>
- #include <linux/vfsdebug.h>
- 
- #ifdef CONFIG_DEBUG_VFS
-@@ -101,6 +107,45 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
- 	return 0;
- }
- 
-+/**
-+ * init_ns_common_for_each - iterate the statically-defined initial namespaces
-+ * @fn: callback invoked with each initial ns_common
-+ *
-+ * Walk the initial namespaces that are set up via NS_COMMON_INIT() at compile
-+ * time and therefore never pass through __ns_common_init(). The initial
-+ * network namespace is intentionally excluded: it is initialized at runtime
-+ * via ns_common_init(&init_net) from net_ns_init().
-+ *
-+ * Return: the first non-zero return from @fn, or 0.
-+ */
-+int __init init_ns_common_for_each(int (*fn)(struct ns_common *ns))
-+{
-+	struct ns_common *set[] = {
-+		to_ns_common(&init_user_ns),
-+		to_ns_common(&init_uts_ns),
-+		to_ns_common(&init_pid_ns),
-+		from_mnt_ns(&init_mnt_ns),
-+#if defined(CONFIG_POSIX_MQUEUE) || defined(CONFIG_SYSVIPC)
-+		to_ns_common(&init_ipc_ns),
-+#endif
-+#ifdef CONFIG_CGROUPS
-+		to_ns_common(&init_cgroup_ns),
-+#endif
-+#ifdef CONFIG_TIME_NS
-+		to_ns_common(&init_time_ns),
-+#endif
-+	};
-+	unsigned int i;
-+	int ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(set); i++) {
-+		ret = fn(set[i]);
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
- void __ns_common_free(struct ns_common *ns)
- {
- 	security_namespace_free(ns);
-diff --git a/security/lsm_init.c b/security/lsm_init.c
-index dbda7771013b..60e15215f6bd 100644
---- a/security/lsm_init.c
-+++ b/security/lsm_init.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/init.h>
- #include <linux/lsm_hooks.h>
-+#include <linux/ns_common.h>
- 
- #include "lsm.h"
- 
-@@ -490,6 +491,16 @@ int __init security_init(void)
- 		lsm_init_single(*lsm);
- 	}
- 
-+	/*
-+	 * The initial namespaces are set up statically via NS_COMMON_INIT()
-+	 * and never pass through __ns_common_init(), so allocate their
-+	 * security blobs and run the namespace_init hooks now that all LSMs
-+	 * are registered. init_net is not covered here; it is initialized
-+	 * at runtime from net_ns_init() shortly after security_init().
-+	 */
-+	if (init_ns_common_for_each(security_namespace_init))
-+		panic("initial LSM ns alloc failed\n");
-+
- 	return 0;
- }
- 
--- 
-2.55.0
+However: It *is* true that a program that would use Justin's patch set
+*would* need CAP_BPF to use it, and therefore that program *could*
+also implement custom logic with the BPF-LSM.
 
+But then again, since Landlock anyway already ships with well-reviewed
+policy logic for the normal unprivileged use-case, I don't understand
+why it should not be allowed for CAP_BPF programs to lean on that?  It
+may be technically feasible to reimplement similar policies in eBPF,
+but it might also avoid a lot of complication and potential bugs if
+people could lean on a maintained solution like Landlock for the
+aspects where it fits the purpose?
+
+–Günther
