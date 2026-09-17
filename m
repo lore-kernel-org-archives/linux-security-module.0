@@ -1,204 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from r9114.ps.combzmail.jp (r9114.ps.combzmail.jp [49.212.47.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AE531328E;
-	Thu, 17 Sep 2026 00:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744AE388E58
+	for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 02:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.47.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789604615; cv=none; b=blGYQ3ZusovvrV0fEaHSuKVs5LmuVV3JjdK58W52LVBMf1fYFVRYmDYmPXYAhGgin9D04CJz2r62FY7wku8MnJohkLDoAEsIMCgkC2BJqoyjzPcokaBeUyFptgTF3iTMXD6cEwxt1s0gUwStZr8JRq2z/C8hc2gK7MAD5AgOSNs=
+	t=1789612040; cv=none; b=XVh0qMy7TH5ypB8pmuGn5f54slPElOVNynY3bXnY9yyZBPQRnvE36to0jpKIji1WQzwQklx7FKVj1WISutXk+FYfrpGVy88+GDPJvhxULB09Tq1xj67F2AaR9D5Ai//CwHCNOFXkvygaxBeCdw3LOyGsvM298P7NL3V5HC4k0n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789604615; c=relaxed/simple;
-	bh=2dWOoAScSeIiKgVRpgMZ6w+qzOKok7SkSwpny2uNySs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D8eWFuiYLx+Vfe+a9h/eTrCJhU3xDdR/7DrIuxqaNVCQWuuC0ngWAWDYTPasGwOpBc/VvZ6Fs52rFgrkISLtSUyvjTMIPLT/0JVvjOMhfybP3c/LJzNvNkslqfiDIuxweUmcKuH2VVYrKHOuKJ1cXrPq0aBHUQ2PIsE5HnRmgZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MO9p4U1j; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MO9p4U1j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E88A1F00899;
-	Thu, 17 Sep 2026 00:23:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789604613;
-	bh=/6ZKzbTNPnpfoJwkQzuIsoomBE/MLjH9JGmNsSrwXUQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=MO9p4U1j3804lt0V0vU1eY1oxN7NftBFYSKVlTGtFiUUNf1Sb113cgypIoneghn6G
-	 9IZ0gWOmAhOe+Esk58/UbAjWk7pSneRJUQwMoGZosBPzOwafU0ozTbYD9n3rWsUSAi
-	 q/kb6uDrvWSmxa/QJq+D5qV5HxMUsO1p1Y/uqSXWbGuJtmncdLXqtgLgjgsGD+sfaR
-	 y0PTxQVwKlpnzzSe3jUpvxoOY8gmTkb4Eh4Rp5R42uGse51UlXt8dX/cJWtmA3kRwI
-	 qwWEcIaoTMvjLyJ+axt38GH9Tcdna87VyahU6p7Cqt3+gv+iew1z/OUYT1zntVzYrt
-	 ZTrdUyl2HZcSg==
-From: Kees Cook <kees@kernel.org>
-To: Bill Wendling <morbo@google.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Shuvam Pandey <shuvampandey1@gmail.com>,
-	David Gow <david@davidgow.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 1/7] seq_buf: Do not pop from an overflowed seq_buf
-Date: Wed, 16 Sep 2026 17:23:13 -0700
-Message-Id: <20260917002333.2306346-1-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260917002312.i.923-kees@kernel.org>
-References: <20260917002312.i.923-kees@kernel.org>
+	s=arc-20240116; t=1789612040; c=relaxed/simple;
+	bh=HlizVZr1fDBuiVc3LJZPmbtEuIF/O6EeaRBwsMufKPM=;
+	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=mIMVFS9r9PptPThQ62R66WqkMIe+E3UD4pxYu+fqTfd+Dd7f4VjgIMgv2mCf8T7COFWqxetr6tlJvVAJ9Iobl1iujPX2M/84MtJCpZTx++4JGfOKmhweq++CMH47q7+UcaC49Fxz/wb0nSGF4OWPiP+LUjS9qh09fN1dBF/739M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=knowledgelink-corp.jp; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=49.212.47.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=knowledgelink-corp.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
+Received: by r9114.ps.combzmail.jp (Postfix, from userid 99)
+	id 2BB07306B91; Thu, 17 Sep 2026 11:13:49 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9114.ps.combzmail.jp 2BB07306B91
+To: linux-security-module@vger.kernel.org
+From: =?ISO-2022-JP?B?GyRCJUolbCVDJTglaiVzJS8bKEI=?= <info@knowledgelink-corp.jp>
+X-Ip: 6111062898970802
+X-Ip-source: k85gj73p48dnsa9wu0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?GyRCTSUkNyQkPFJEOSROGyhCTkc=?=
+ =?ISO-2022-JP?B?GyRCOVRGMBsoQg==?=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5368; i=kees@kernel.org; h=from:subject; bh=2dWOoAScSeIiKgVRpgMZ6w+qzOKok7SkSwpny2uNySs=; b=owGbwMvMwCVmps19z/KJym7G02pJDFmrjb4c8Fvl7fgp+XHF6+6UIDHDzOTeb4v9Ik5KmarO1 Px+rqGho5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCIK6Qx/xV1u8hXfnfguY3eK zeGQI0qMl/8ezGn/MvuoX0HQ/v7GWww/GYu6Xp6zbDgQamLDlDl1okLI0x0vitjUAnVfXtu1Yrk nGwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-MagazineId: 3p9w
+X-uId: 6764305539486065704185541027
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20260917021403.2BB07306B91@r9114.ps.combzmail.jp>
+Date: Thu, 17 Sep 2026 11:13:49 +0900 (JST)
 
-When a seq_buf has overflowed, its len is size + 1, so seq_buf_pop()
-decrements len to size and reads buffer[size], one byte past the end of
-the buffer. It also leaves len equal to size, which no longer counts as
-overflowed, so a truncated seq_buf then looks like a complete, full one.
+$B!!(B
+$B!!Cf>.4k6H$N7P1D<TMM$X(B
+$B!!(B
+$B!!!&<R0w$N%b%A%Y!<%7%g%s$r>e$2$h$&$H@<$r$+$1$k(B
+$B!!!&8=>l$N%H%i%V%k$K!"<+$i@hF,$KN)$C$FBP1~$9$k(B
+$B!!(B
+$B!!$b$7!"<RD9$,$3$l$i$rN(@h$7$F$$$k$h$&$G$"$l$P(B
+$B!!;DG0$J$,$i!"$=$NAH?%$N@.D9$O$=$3$G;_$^$j$^$9!#(B
+$B!!(B
+$B!!<RD9$N!HM%$7$5!I$,!"<R0w$N4E$($r@8$_!"@UG$46$rC%$$(B
+$B!!!V;X<(BT$A?M4V!W$rNL;:$9$kAuCV$K$J$C$F$$$k$+$i$G$9!#(B
+$B!!(B
+$B!!(B
+$B!!(B4,800$B<R$N7P1D<T$,>W7b$r<u$1$?!"(B
+$B!!NI$+$l$H;W$C$F$d$C$F$7$^$&!V<RD9$N(BNG$B9TF0!W$N@5BN!#(B
+$B!!(B
+$B!!AH?%$r7`E*$KJQ$($k$?$a$N%&%'%S%J!<$G$9!#!!(B
+$B!!$b$7?4Ev$?$j$,$"$l$P!"0lEY$4;kD0$/$@$5$$!#!!(B
+$B!!(B
+$B!!(B>>$B;kD0M=Ls$O$3$A$i(B
+$B!!(Bhttps://knowledge-co.jp/shikigaku5/
+$B!!(B
+----------------------------------------------
+$B!!(B
+$B!!%F!<%^(B $B!'!!$=$l!"4m81$G$9(B $B!X<RD9$N(BNG$B9TF0!Y(B
+$B!!!!!!!!!!(B $B!A(B $B$=$N9TF0$,!"AH?%Jx2u$r>7$/(B $B!A(B
+$B!!(B
 
-An overflowed seq_buf has no last character to pop: the length of what
-was written has been lost, and the last byte of the buffer may be the
-NUL written by vsnprintf() or bytes that were never committed. Return
--1 for an overflowed seq_buf, as for an empty one, and leave it
-overflowed, as the rest of the seq_buf API does until seq_buf_clear()
-or seq_buf_init().
+$B!!F|(B $BDx!!!'(B 9$B7n(B29$BF|!J2P!K(B13:00$B%9%?!<%H(B
+$B!!!!!!!!!!(B  10$B7n(B14$BF|!J?e!K(B13:00$B%9%?!<%H(B
+$B!!!!!!!!!!(B  $B"(FbMF$OF1$8$G$9!#(B
+$B!!!!!!!!!!(B
+$B!!2q(B $B>l!!!'(BZoom$B3+:E(B
+$B!!Dj(B $B0w!!!'@hCe(B100$BL>!JHqMQ$OITMW!K(B
+----------------------------------------------
+$B!!"(7P1DAX$NJ}8BDj$G$9(B
+$B!!(B
+$B!!(B
+$B!!$J$<!"<R0w$O!V8@$o$l$?$3$H!W$7$+$d$i$J$$$N$+!#(B
+$B!!$J$<!"<!@$Be$N%j!<%@!<8uJd$,0i$?$J$$$N$+!#(B
+$B!!(B
+$B!!$=$l$O!"G=NO$NLdBj$G$O$J$/!"(B
+$B!!(B
+$B!!NI$+$l$H;W$C$FB3$1$F$$$k!V<RD9$NG[N8!W$3$=$,!"(B
+$B!!AH?%@.D9$r;_$a$k!":GBg$N%\%H%k%M%C%/$+$b$7$l$^$;$s!#(B
+$B!!(B
+$B!!K\%;%_%J!<$G$O!"(B4,800$B<R0J>e$,F3F~$7$?(B
+$B!!FH<+$NAH?%O@!V<13X!W$K4p$E$-!"<RD9$N!V(BNG$B9TF0!W$H(B
+$B!!??$N7P1D<T$XC&Hi$9$k$?$a$N%^%$%s%I%;%C%H$rEA<x$7$^$9!#(B
+$B!!(B
+$B!!(B
+$B!!!Z%;%_%J!<FbMF(B($B0lItH4?h(B)$B![(B
+$B!!(B $B!{(B NG$B9TF0(B3$BA*(B
+$B!!(B $B!{(B $B$J$<M%=($J(BNo.2$B$dItD9$,0i$?$J$$$N$+(B
+$B!!(B $B!{(B $B%^%M%8%a%s%H%9%?%$%k$NJQ3W$K$D$$$F(B
+$B!!(B $B!{(B $BF3F~4k6H$N;vNc(B
+$B!!(B
+$B!!!V4IM}?&$,0i$C$?$iG$$;$k!W$G$O$J$/!VG$$;$k$+$i0i$D!W(B
+$B!!$H$$$&;W9M$N5UE>$rDs8@!#(B
+$B!!(B
+$B!!8=>l$+$i!VNd$?$/$J$C$?!W$H;W$o$l$k$3$H$r62$l$:(B
+$B!!5!G=E*$J3,AX9=B$$r:n$k$3$H$G(B
 
-The current callers do not reach this, e.g. trace_syscalls only calls
-trace_seq_pop() when the trace_seq it pops from has not overflowed, and
-kernel/bpf/diagnostics.c sets the length from strnlen() before popping.
+$B!!7k2L$H$7$F<R0wA40w$r<i$j(B
+$B!!Mx1W$r:GBg2=$5$;$kF;6Z$rL@<($7$^$9!#(B
 
-Add tests for the pop corner cases.
+$B!!!VM%$7$5!W$G?M$rF0$+$9$N$G$O$J$/(B
+$B!!!V@5$7$5!W$GAH?%$rF0$+$9!#(B
 
-Tests passed under qemu on ARCH=x86_64 with GCC 16.2.0 and CONFIG_KASAN=y,
-and on big-endian ARCH=s390 with GCC s390x-linux-gnu 16.1.0.
+$B!!2;@<$d$*4i$,I=$K=P$k$3$H$O$4$6$$$^$;$s$N$G(B
+$B!!$*5$7Z$K$4;kD0$/$@$5$$!#(B
+$B!!(B
+$B!!(B>>$B;kD0M=Ls$O$3$A$i(B
+$B!!(Bhttps://knowledge-co.jp/shikigaku5/
+$B!!(B
+$B!!(B
+-----------------------
+$B!!0lHL<RCDK!?M(B $B%J%l%C%8%j%s%/(B
+$B!!El5~ET@iBeED6h?@ED>.@nD.(B1-8-3
+$B!!EEOC!'(B03-5256-7638
 
-Fixes: 32e0f607ac6a2 ("tracing: Add trace_seq_pop() and seq_buf_pop()")
-Assisted-by: LLM
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: "Mickaël Salaün" <mic@digikod.net>
-Cc: "Günther Noack" <gnoack@google.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Shuvam Pandey <shuvampandey1@gmail.com>
-Cc: David Gow <david@davidgow.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: <linux-trace-kernel@vger.kernel.org>
-Cc: <linux-security-module@vger.kernel.org>
-Cc: <bpf@vger.kernel.org>
----
- include/linux/seq_buf.h   |  4 ++--
- include/linux/trace_seq.h |  4 +++-
- lib/tests/seq_buf_kunit.c | 42 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 47 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
-index 9f2839e73f8a..f5a350347bc5 100644
---- a/include/linux/seq_buf.h
-+++ b/include/linux/seq_buf.h
-@@ -155,11 +155,11 @@ static inline void seq_buf_commit(struct seq_buf *s, int num)
-  *
-  * Removes the last written character to the seq_buf @s.
-  *
-- * Returns the last character or -1 if it is empty.
-+ * Returns the last character, or -1 if @s is empty or has overflowed.
-  */
- static inline int seq_buf_pop(struct seq_buf *s)
- {
--	if (!s->len)
-+	if (!s->len || seq_buf_has_overflowed(s))
- 		return -1;
- 
- 	s->len--;
-diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
-index 697d619aafdc..9aaa141d0965 100644
---- a/include/linux/trace_seq.h
-+++ b/include/linux/trace_seq.h
-@@ -86,7 +86,9 @@ static inline bool trace_seq_has_overflowed(struct trace_seq *s)
-  *
-  * Removes the last written character to the trace_seq @s.
-  *
-- * Returns the last character or -1 if it is empty.
-+ * Returns the last character, or -1 if @s is empty or its buffer has
-+ * overflowed. Note that a @s that is full, but has not overflowed, still
-+ * pops.
-  */
- static inline int trace_seq_pop(struct trace_seq *s)
- {
-diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
-index eb466386bbef..9048037f6ba0 100644
---- a/lib/tests/seq_buf_kunit.c
-+++ b/lib/tests/seq_buf_kunit.c
-@@ -113,6 +113,47 @@ static void seq_buf_putc_test(struct kunit *test)
- 	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
- }
- 
-+static void seq_buf_pop_test(struct kunit *test)
-+{
-+	DECLARE_SEQ_BUF(s, 8);
-+	struct seq_buf t;
-+	char *buf;
-+
-+	/* Nothing to pop. */
-+	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), -1);
-+	KUNIT_EXPECT_EQ(test, s.len, 0);
-+
-+	seq_buf_puts(&s, "hello");
-+	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'o');
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hell");
-+
-+	/* A 0xff byte must not be mistaken for an empty buffer. */
-+	seq_buf_putc(&s, 0xff);
-+	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 0xff);
-+
-+	/* A full buffer pops its last byte. */
-+	seq_buf_puts(&s, "abc");
-+	seq_buf_putc(&s, 'd');
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 8);
-+	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'd');
-+	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 7);
-+	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hellabc");
-+
-+	/*
-+	 * An overflowed buffer has nothing to pop, and stays overflowed. Use
-+	 * a buffer allocated at its exact size, so that KASAN reports any
-+	 * read past its end.
-+	 */
-+	buf = kunit_kmalloc(test, 16, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, buf);
-+	seq_buf_init(&t, buf, 16);
-+	KUNIT_EXPECT_EQ(test, seq_buf_printf(&t, "%s", "longer than sixteen"), -1);
-+	KUNIT_EXPECT_EQ(test, seq_buf_pop(&t), -1);
-+	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&t));
-+}
-+
- static void seq_buf_printf_test(struct kunit *test)
- {
- 	DECLARE_SEQ_BUF(s, 32);
-@@ -223,6 +264,7 @@ static struct kunit_case seq_buf_test_cases[] = {
- 	KUNIT_CASE(seq_buf_puts_test),
- 	KUNIT_CASE(seq_buf_puts_overflow_test),
- 	KUNIT_CASE(seq_buf_putc_test),
-+	KUNIT_CASE(seq_buf_pop_test),
- 	KUNIT_CASE(seq_buf_printf_test),
- 	KUNIT_CASE(seq_buf_printf_overflow_test),
- 	KUNIT_CASE(seq_buf_get_buf_commit_test),
--- 
-2.34.1
-
+$B!!%;%_%J!<$N$40FFb$,ITMW$JJ}$OBgJQ;DG0$G$O$4$6$$$^$9$,!"(B
+$B!!2<5-(BURL$B$h$j<jB3$-2<$5$$$^$;!#(B
+$B!!(B
+$B!!%a!<%kG[?.$N%o%s%/%j%C%/2r=|$O$3$A$i(B
+$B!!(Bhttps://fc-knowledgelink-corp.jp/mail/
+$B!!(B
