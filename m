@@ -1,205 +1,204 @@
-Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3583F44E4
-	for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 21:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AE531328E;
+	Thu, 17 Sep 2026 00:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789594628; cv=none; b=eg5pXGgYpOTIQ38HAQ5SFP7lQvUNDbbqZ3R3Q4SxB+LUZsXiQrKLf23gy6H8NvVZ1eApNsWfjg8ak4XMhMntKj22NXXTRpmfPfXQRa4Vxq7/JTCp/SmrBwNSnxUWgW6e3yhATO48OW1ThDTrE8kOVlrSOIMtNCYMgbOmRZ6HJ1w=
+	t=1789604615; cv=none; b=blGYQ3ZusovvrV0fEaHSuKVs5LmuVV3JjdK58W52LVBMf1fYFVRYmDYmPXYAhGgin9D04CJz2r62FY7wku8MnJohkLDoAEsIMCgkC2BJqoyjzPcokaBeUyFptgTF3iTMXD6cEwxt1s0gUwStZr8JRq2z/C8hc2gK7MAD5AgOSNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789594628; c=relaxed/simple;
-	bh=z2tQHhAwEFt+agCaRWeVzBR9XVTRt1GIp8bQCvmiYuk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PKQIst/BN0gpnMvnZ+wY02Q0i325KuGRPoiMdycROYpnycXdHyxOZMEOwhos+Oebgu+1MJ+E7rkU3Makyc1UphltlO7qtht1Ultx2J/QGvAWEIXNO5ro4EAbOLiyGxhAXoQVAXDzXhSqTgqVapzjDN2sV2XhuA857W3eXPJLDNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=EA81dlCD; arc=none smtp.client-ip=74.125.231.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1789604615; c=relaxed/simple;
+	bh=2dWOoAScSeIiKgVRpgMZ6w+qzOKok7SkSwpny2uNySs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D8eWFuiYLx+Vfe+a9h/eTrCJhU3xDdR/7DrIuxqaNVCQWuuC0ngWAWDYTPasGwOpBc/VvZ6Fs52rFgrkISLtSUyvjTMIPLT/0JVvjOMhfybP3c/LJzNvNkslqfiDIuxweUmcKuH2VVYrKHOuKJ1cXrPq0aBHUQ2PIsE5HnRmgZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MO9p4U1j; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="EA81dlCD"
-Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-46a63c34533so93924fac.1
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Sep 2026 14:36:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1789594613; x=1790199413; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jhuOR/yTpkseeAWrvSpKFTY7Og9vlkZJ0CujlTEe3/8=;
-        b=EA81dlCDWK8Brg7yFLt12E8nZlqjwrkN0YEPpAojkNirkQk13Y9EBI8WkR5wMuziOn
-         J8PpG7hJn/L8j6WmijRAO6sk+rbNKqmXZtKJBS6VhM4TP9N5WXGrHvRaTGmydE2VgwDS
-         OaeLEKKULlqA19YKFhlEEUdIx2+cUr3TUXyGivcSng8lCnUT6cXJtyg6goStQi8X2chj
-         CzSy953u9/uyHqrpMumPFqGLQgdwU+LxIIiyRVB2WSkT1OwddN//BnZ4o802EtXzjv/S
-         Q3veP9F/7urB38Ozg8Yb6Lhy+2YVoH8NVVytMxhAafS/6CMYAnUBxrnaNaNEXuOrf4Bo
-         mHZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789594613; x=1790199413;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=jhuOR/yTpkseeAWrvSpKFTY7Og9vlkZJ0CujlTEe3/8=;
-        b=SgTlc+uK7GtpfRe0pDvdeXmDFQHwUk5YDsfARNL97jtKjRn+NVV6/nCWFqF+ZUgAIi
-         oHKBCBTjXKk4WVKqqI3U5sG0uV9uehYW4izi+/6yku62W06Ml9LbTq68Pd/B01fTcHf0
-         jN527GD8YS9RRPmmiEZOpuXqWeJtA6q7V6EpZEcKwBhx8sfC2SWTaXho1t0nh+SOqjsw
-         Q3nhwFUu/jV9fXG2Ni2MYipHDRQFYSEUmoHAkS/pQBBCnbC2edMPWkdng8JxF31luM24
-         dZNOpOyR1aWqm5u5zSnlzxW4jCkGb09nxZZUzh1OxnkxpD5YJFVEsww31JX9YAGMOdK2
-         PCiQ==
-X-Forwarded-Encrypted: i=1; AKwUvByQbj31Oe//+Sewk228TSyS3FKDevvAtf8TSfUWjaDVGv4lEQ7V1bjapggyLdTuAQz/an6r2jYW5493Tbp1JAaJhSuPjXE=@vger.kernel.org
-X-Gm-Message-State: AFuF++ndk3stoBCUO3S09o7xqvwS6CkIdDBuKg8wOu2C9TmBcWReNp0G
-	OpgV91CdT4CIQ40VM7BsZY3qtiBvkt/CIeNfpyaokD5jrgeJ52tVNR7W9rFLf1k8TzM=
-X-Gm-Gg: AYBFou0X2jjK80RckOHJDDEBBN7M4K8boS1i3BCneVGWNAdzVC5XVnmCCfjUPZOVT5K
-	af0rCSf/eq/xqGQLXOi61RrayNE1b10ENZwHoab5J3EI+Wh0GgEVGo3DTH2+mxIMP+DsfCy+X0l
-	tnOQpF3ufODJanjrgQaf0kufSA8j8zbG/e6N2JzU0CrTJR4O6cKlnPdf69tfo1kzqxdSjfEU9s6
-	dZsUS8JeNUc4vcZlFcbCY8lGD7NsEnoZB7m8Rrmg2bRcKLMsb3kLMK80vHCcSIM7XNtpDHhuxZ9
-	c2asTozNzFUFmUkunezYqeJgDNm/ZqOQFeN3Dy1quj3d4FM1Rga1+X88AtuUcH35IApBUjonk7/
-	OFX33oNQfo/4Y9Y9U9NgDS0imXII1sblEKYsXnGkBTNDEHvQQc/2LJTofgcMo/QecFDjvxHy1mu
-	RGhVC1tdcUb0wsdwDryHTuEFoXtd1S/Q3VQ9keuEcLS1Ft7W8QMj2esSN4TEjJEo/RHKbF
-X-Received: by 2002:a05:6870:b3d4:b0:475:a1ec:9621 with SMTP id 586e51a60fabf-484778f2bd2mr4152184fac.35.1789594613524;
-        Wed, 16 Sep 2026 14:36:53 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac6:947f:31f5::4fa:4b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4842a23e310sm3387557fac.12.2026.09.16.14.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 14:36:52 -0700 (PDT)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Wed, 16 Sep 2026 16:36:38 -0500
-Subject: [PATCH v3 2/2] integrity: Replace integrity_audit_message() with
- integrity_audit_msg()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MO9p4U1j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E88A1F00899;
+	Thu, 17 Sep 2026 00:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789604613;
+	bh=/6ZKzbTNPnpfoJwkQzuIsoomBE/MLjH9JGmNsSrwXUQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MO9p4U1j3804lt0V0vU1eY1oxN7NftBFYSKVlTGtFiUUNf1Sb113cgypIoneghn6G
+	 9IZ0gWOmAhOe+Esk58/UbAjWk7pSneRJUQwMoGZosBPzOwafU0ozTbYD9n3rWsUSAi
+	 q/kb6uDrvWSmxa/QJq+D5qV5HxMUsO1p1Y/uqSXWbGuJtmncdLXqtgLgjgsGD+sfaR
+	 y0PTxQVwKlpnzzSe3jUpvxoOY8gmTkb4Eh4Rp5R42uGse51UlXt8dX/cJWtmA3kRwI
+	 qwWEcIaoTMvjLyJ+axt38GH9Tcdna87VyahU6p7Cqt3+gv+iew1z/OUYT1zntVzYrt
+	 ZTrdUyl2HZcSg==
+From: Kees Cook <kees@kernel.org>
+To: Bill Wendling <morbo@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Petr Mladek <pmladek@suse.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Shuvam Pandey <shuvampandey1@gmail.com>,
+	David Gow <david@davidgow.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 1/7] seq_buf: Do not pop from an overflowed seq_buf
+Date: Wed, 16 Sep 2026 17:23:13 -0700
+Message-Id: <20260917002333.2306346-1-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260917002312.i.923-kees@kernel.org>
+References: <20260917002312.i.923-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-report-hash-error-v3-2-73e5d95e9efe@cloudflare.com>
-References: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
-In-Reply-To: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3985; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=z2tQHhAwEFt+agCaRWeVzBR9XVTRt1GIp8bQCvmiYuk=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqqwvrmVrK7ESQgDOkwOK2VK1kK4+HrtNpxxvea
- iBnILRGMd6JAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaqsL6wAKCRCrJbR2A5LT
- bV/uD/9wvueyIbMy+vcKKZMyE4dXComXFcTtuZRJhDcc5DnG+h+yNYsKK4JLnE1BKm5i3Vog4uP
- DZXGjaJVBZ6dYP6FG5oIKKyE6xe5PQzylgbOhDCQQH1Ogj+kO9bwdc3aliPDrL2nCk8Iq4S/bVF
- EtlxhXPDl9jQjhZUJIa5oaY03bXz05eZehXZhHxG6Pas6SLhZBbgSdmMrtcUDaFagzJT80OL3gq
- jFmJngTlmZJUHZyfwazPDDTx/ltZTzrt/cCxjE98xkFEA04Gq5QkHfgb3dazPMuffaHI9sTGLzr
- JqFqMHc+v1C0FZeYxI8SYGZM5/wwzyYwLsqhg/JadVucvL/64vh/s46S68VpsRUAXFD9jnPCXeD
- 8pvpAQOVW+adIVTCdKVggnu85//0B1fgKXffGaznAde2/zAXwmTEZxb6f/03ygRr0HRrvsrRPEE
- z1pF4piiWMlwVqorNuMn0hPNNHzdjvYyJNAIpRn/1VA/LpBHpw2Q7pyAUgjF0KPQgi+kda7hfaw
- spcyEl7Xl6f4xGZPR8N8yQaFDNFUlPr8mMK5fha85Zutm9aikQE2nx/iwY/JpUEtldK3e/SCI1m
- jxM6ZIvzlDVYF/nvfe37LanXSxyJIq2sloWsd7PGzWyz00BXBjgS2T+CiYMb5DcxBDPtdocdi2H
- 7nBu+Ssj5st78Rw==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5368; i=kees@kernel.org; h=from:subject; bh=2dWOoAScSeIiKgVRpgMZ6w+qzOKok7SkSwpny2uNySs=; b=owGbwMvMwCVmps19z/KJym7G02pJDFmrjb4c8Fvl7fgp+XHF6+6UIDHDzOTeb4v9Ik5KmarO1 Px+rqGho5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCIK6Qx/xV1u8hXfnfguY3eK zeGQI0qMl/8ezGn/MvuoX0HQ/v7GWww/GYu6Xp6zbDgQamLDlDl1okLI0x0vitjUAnVfXtu1Yrk nGwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-integrity_audit_msg() wraps integrity_audit_message(). Replace remaining
-call sites with the truncated function name. Then remove it since there
-are no more callers.
+When a seq_buf has overflowed, its len is size + 1, so seq_buf_pop()
+decrements len to size and reads buffer[size], one byte past the end of
+the buffer. It also leaves len equal to size, which no longer counts as
+overflowed, so a truncated seq_buf then looks like a complete, full one.
 
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+An overflowed seq_buf has no last character to pop: the length of what
+was written has been lost, and the last byte of the buffer may be the
+NUL written by vsnprintf() or bytes that were never committed. Return
+-1 for an overflowed seq_buf, as for an empty one, and leave it
+overflowed, as the rest of the seq_buf API does until seq_buf_clear()
+or seq_buf_init().
+
+The current callers do not reach this, e.g. trace_syscalls only calls
+trace_seq_pop() when the trace_seq it pops from has not overflowed, and
+kernel/bpf/diagnostics.c sets the length from strnlen() before popping.
+
+Add tests for the pop corner cases.
+
+Tests passed under qemu on ARCH=x86_64 with GCC 16.2.0 and CONFIG_KASAN=y,
+and on big-endian ARCH=s390 with GCC s390x-linux-gnu 16.1.0.
+
+Fixes: 32e0f607ac6a2 ("tracing: Add trace_seq_pop() and seq_buf_pop()")
+Assisted-by: LLM
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
- security/integrity/ima/ima_main.c       |  6 +++---
- security/integrity/ima/ima_queue_keys.c |  8 ++++----
- security/integrity/integrity.h          | 13 -------------
- security/integrity/integrity_audit.c    |  9 ---------
- 4 files changed, 7 insertions(+), 29 deletions(-)
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: "Mickaël Salaün" <mic@digikod.net>
+Cc: "Günther Noack" <gnoack@google.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Shuvam Pandey <shuvampandey1@gmail.com>
+Cc: David Gow <david@davidgow.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: <linux-trace-kernel@vger.kernel.org>
+Cc: <linux-security-module@vger.kernel.org>
+Cc: <bpf@vger.kernel.org>
+---
+ include/linux/seq_buf.h   |  4 ++--
+ include/linux/trace_seq.h |  4 +++-
+ lib/tests/seq_buf_kunit.c | 42 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+), 3 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 9e80f40680d7be08d14d26ba48ed334d4e4ab10c..bd9997b01633d6235fc2fcaa9bef1931d6ba7247 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1196,9 +1196,9 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 
- out:
- 	if (ret < 0)
--		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL, eventname,
--					func_measure_str(func),
--					audit_cause, ret, 0, ret);
-+		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, eventname,
-+				    func_measure_str(func),
-+				    audit_cause, ret, 0, ret);
- 
- 	return ret;
- }
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index b5ed33cbb272fdfaf7f5e945137c56e46e0d7db1..8adc8863ad5a540bf0c047ba47cc4817fcb46e9a 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -90,10 +90,10 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
- 
- out:
- 	if (rc) {
--		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL,
--					keyring->description,
--					func_measure_str(KEY_CHECK),
--					audit_cause, rc, 0, rc);
-+		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL,
-+				    keyring->description,
-+				    func_measure_str(KEY_CHECK),
-+				    audit_cause, rc, 0, rc);
- 		ima_free_key_entry(entry);
- 		entry = NULL;
- 	}
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 2ab6b7e34e7ee2dd29ae03ae1fb45fa26d9c032a..52c5ec881cca468bde72c885cffa1c564877735e 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -221,11 +221,6 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 const char *cause, int result, int info,
- 			 int errno);
- 
--void integrity_audit_message(int audit_msgno, struct inode *inode,
--			     const unsigned char *fname, const char *op,
--			     const char *cause, int result, int info,
--			     int errno);
--
- static inline struct audit_buffer *
- integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
+diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
+index 9f2839e73f8a..f5a350347bc5 100644
+--- a/include/linux/seq_buf.h
++++ b/include/linux/seq_buf.h
+@@ -155,11 +155,11 @@ static inline void seq_buf_commit(struct seq_buf *s, int num)
+  *
+  * Removes the last written character to the seq_buf @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if @s is empty or has overflowed.
+  */
+ static inline int seq_buf_pop(struct seq_buf *s)
  {
-@@ -240,14 +235,6 @@ static inline void integrity_audit_msg(int audit_msgno, struct inode *inode,
+-	if (!s->len)
++	if (!s->len || seq_buf_has_overflowed(s))
+ 		return -1;
+ 
+ 	s->len--;
+diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
+index 697d619aafdc..9aaa141d0965 100644
+--- a/include/linux/trace_seq.h
++++ b/include/linux/trace_seq.h
+@@ -86,7 +86,9 @@ static inline bool trace_seq_has_overflowed(struct trace_seq *s)
+  *
+  * Removes the last written character to the trace_seq @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if @s is empty or its buffer has
++ * overflowed. Note that a @s that is full, but has not overflowed, still
++ * pops.
+  */
+ static inline int trace_seq_pop(struct trace_seq *s)
  {
+diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
+index eb466386bbef..9048037f6ba0 100644
+--- a/lib/tests/seq_buf_kunit.c
++++ b/lib/tests/seq_buf_kunit.c
+@@ -113,6 +113,47 @@ static void seq_buf_putc_test(struct kunit *test)
+ 	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
  }
  
--static inline void integrity_audit_message(int audit_msgno,
--					   struct inode *inode,
--					   const unsigned char *fname,
--					   const char *op, const char *cause,
--					   int result, int info, int errno)
--{
--}
--
- static inline struct audit_buffer *
- integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
++static void seq_buf_pop_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 8);
++	struct seq_buf t;
++	char *buf;
++
++	/* Nothing to pop. */
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), -1);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++
++	seq_buf_puts(&s, "hello");
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'o');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hell");
++
++	/* A 0xff byte must not be mistaken for an empty buffer. */
++	seq_buf_putc(&s, 0xff);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 0xff);
++
++	/* A full buffer pops its last byte. */
++	seq_buf_puts(&s, "abc");
++	seq_buf_putc(&s, 'd');
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 8);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'd');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 7);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hellabc");
++
++	/*
++	 * An overflowed buffer has nothing to pop, and stays overflowed. Use
++	 * a buffer allocated at its exact size, so that KASAN reports any
++	 * read past its end.
++	 */
++	buf = kunit_kmalloc(test, 16, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, buf);
++	seq_buf_init(&t, buf, 16);
++	KUNIT_EXPECT_EQ(test, seq_buf_printf(&t, "%s", "longer than sixteen"), -1);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&t), -1);
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&t));
++}
++
+ static void seq_buf_printf_test(struct kunit *test)
  {
-diff --git a/security/integrity/integrity_audit.c b/security/integrity/integrity_audit.c
-index 2dd2d7e3916e7bf35c753450315ff22e2d0292b7..22106aaeb0df21fef0990b80611dcd13cba112be 100644
---- a/security/integrity/integrity_audit.c
-+++ b/security/integrity/integrity_audit.c
-@@ -29,15 +29,6 @@ void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 const unsigned char *fname, const char *op,
- 			 const char *cause, int result, int audit_info,
- 			 int errno)
--{
--	integrity_audit_message(audit_msgno, inode, fname, op, cause,
--				result, audit_info, errno);
--}
--
--void integrity_audit_message(int audit_msgno, struct inode *inode,
--			     const unsigned char *fname, const char *op,
--			     const char *cause, int result, int audit_info,
--			     int errno)
- {
- 	struct audit_buffer *ab;
- 	char name[TASK_COMM_LEN];
-
+ 	DECLARE_SEQ_BUF(s, 32);
+@@ -223,6 +264,7 @@ static struct kunit_case seq_buf_test_cases[] = {
+ 	KUNIT_CASE(seq_buf_puts_test),
+ 	KUNIT_CASE(seq_buf_puts_overflow_test),
+ 	KUNIT_CASE(seq_buf_putc_test),
++	KUNIT_CASE(seq_buf_pop_test),
+ 	KUNIT_CASE(seq_buf_printf_test),
+ 	KUNIT_CASE(seq_buf_printf_overflow_test),
+ 	KUNIT_CASE(seq_buf_get_buf_commit_test),
 -- 
-2.43.0
+2.34.1
 
