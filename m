@@ -1,120 +1,288 @@
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC74472071;
-	Thu, 17 Sep 2026 11:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EA851FCBB
+	for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 14:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789645006; cv=none; b=jTzHT9O0sMRtIojBaPP1iAVR0ZlqqRXb1CF7AnL01xbMtHbkdnBTXZxu5d6Vq+IppI8H3rU5lnFmQpQYo/3vKPgYdb1aTZ06PiXtXQdoK34+ptdc0GF93xrZkSJcBvZi70nmg/jfhfgfVe9vXNzBoL2hXGVoAihjE2Wuqbgj8NY=
+	t=1789656969; cv=none; b=VsB+Oj0TpDSTm/hIhjySR5URvuPRkz8VYSmv6F3cqLrKtS1jbFLTZ4GKKZa7WlZfrNNuZM27moLXeRyQfD/Ld88Ecre2fUXkWt6qKDuAx3j2oy3Zex7m9XiwyOJPVeQ1mDWP/jpFFlJv4IpZFw/x4wNJ3bPGdP5zfizGOJd0I90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789645006; c=relaxed/simple;
-	bh=wnVF4EDSgyK6ufClPx8Vkw5CO0NpbiMXFip/7WIQvMQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Sf/szQWNbWCePnIU2oZjFhck3a5dsmLKG3Tqn/gzX6s3AroRPuaJVHjMXebSfXmfk5pDw+6c7Eu4W8c7TxVk+neig+ZwC72/DqUI5VXbX7MlF0OmWbaGHYKPwXsxjkw9d6IuCv1jCRFUlJdiIkwk80lhf+sK6dQUD5C7Fh5Ioto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=iza2NPC4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iAJHFcp2; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1789656969; c=relaxed/simple;
+	bh=5nE39/imSlDB2IgcyOzV3DtB3+adDOPOTTkPE7I5Q3E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K0NikknNsFDGbliAGliEs97iC+I7zP05KGjc4zKqIzXsxpM64zjeB+p+fEA8GCMX6PFAJKUub+Wqm8kdsdhgydkd1VOIXET6fF6bdwYdcJ6iy7ljarw5lkUyNydoE2fbjCRRLWeFpNwnKQmgE9vCNyhsWc6HWcWGuOmy97YOdb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=tGoWdSZ/; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="iza2NPC4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iAJHFcp2"
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfout.phl.internal (Postfix) with ESMTP id 1B357EC00A5;
-	Thu, 17 Sep 2026 07:36:42 -0400 (EDT)
-Received: from ams-imap-03 ([10.64.2.23])
-  by ams-compute-02.internal (MEProxy); Thu, 17 Sep 2026 07:36:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1789645001;
-	 x=1789731401; bh=ziPVSX4/3cQB748F1o2ZX4kZiZbJlTcRzcCjsKowjHY=; b=
-	iza2NPC4mZ3pvoRung8Ay5RDxQowHHRGJ8FMjy9RjiFmznc2qSOqK3X5x8hjvIQC
-	08lk3DplldfaPvbcPXpdlbj9NBx1S7GHdFG6E8IUG8VePjTxFaNVWP0ZvUCMSWaT
-	9LlF9d8/i1yzuA3L6bls5tCazF+8udhbjjny37NMiMvF5UZjKJtvPJBhbGTXRDGn
-	NtYUmtfXhYbaWfKv1NrJmP5iUiK6PP1uO5rBlHELetRzQsXYKaVhJXaVa3CpOOR8
-	gDTb0oyxgVtJixzQ4h/d5jAIBTxS7dWy2mY03Gn1wdcffNwybNxSFsjdU3HUv/6h
-	a/IY/dVrKmfN5xF9CQt8oA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789645001; x=
-	1789731401; bh=ziPVSX4/3cQB748F1o2ZX4kZiZbJlTcRzcCjsKowjHY=; b=i
-	AJHFcp2bT1RdX2RsTr3Em/95nrBinrE/zUotZ+m56zIU3EoCoKKaF2YfW4bbaZ5b
-	rn+hsMkKPsm+PilLGpqoHaxLWSIdiOcI8kwWHdnBTr6tm70mAgBRM6oDyp5AqVhi
-	hrQJP/hZxR6RrVwkblVG9/z1awQLOr+wYLhdtrWulk80/klpDO1GMotG5/43lHYy
-	tzgwSe6x3JaUXWhD4KeuuDQw/8kHwu40fihk15EVtM9MHxJ7nppLt2ahWphNMvlk
-	FbjWTpx91Ap4QTw4c9RhSO6Tc2+3ClXyHTXSEhE85kzBHKJgEbCLdjgx1RFpDlQB
-	ol1J/ZU9NpGVE0y8xYZQw==
-X-ME-Sender: <xms:xNCrasfu5B7Hea255n73ua47tOhvrlxRN_cpz4_CURxepqSmJ83iTA>
-    <xme:xNCrapBIA2NefeSyRahTczoDNojHDVd1RLIouRGb9bHqC6eyRBfcak2UiFUCm8Pt4
-    DAysVdriXfi_D-a-ZUd55ldw9f_qS4A0MWLW3JlupK3Etbwkj_hno47>
-X-ME-Proxy-Cause: dmFkZTEP9uUHDX9dZsqDF5MTd3hSYSGi/ykCJR/t5N/emZ29OdpuQijn00YYtcHqSDQ7/9
-    0xONnZPrHgy9cWTWveWtEeIkn5qf+Yagi1y1biJxGuyA32dNpBud8+vXZNzahA7iExbqG1
-    zSb7dBmgVbJQM9bo2JLtu989R6Y0th4217limY/Y10DHACHhlwL9cZdNKDEyhqvc7eO8XW
-    EFnyytYjFjQozY2uX/+OP6xfPWWQmORtuTMNbMsimmdmFDAM11D0qL+fyFP/5j/xEFTK7C
-    ladkSLzqO+YdIxYY7NPCiOEFYRtA4XuVjvHJMV5gQxgtb1iwgdezHMlKM3fKXWBPfRnZAm
-    t7BXZFzNmLoOOmcJkJL6Q1L0nGYyvzjbUo4Mkw1Wb5c9PczuLvwt8ZmTTl/fvRzMMJA9oH
-    HFTdEet+UOzXurbXKQ/94rGlt3P7Vx+2eVKSgEhqGtNYH3SItq7VqHVZUXvpwf2VZs8OGp
-    CsebyQxXqjFQ6H3zMVYkRmD0s3zFnKuKnYN+fAJJPWiROzc9PCx0ITAujnOwCjCNqoXjA0
-    j6Y4lVgxOC//w5K/vjRPPkAIs8zQ3kLWKtJn8V09bKHcoYmK2eO/krufwcy1WjWDY5bvay
-    96whB0gpO2AvBsUaPscxr5TYbpNUCz43Tc+jF0H+I3Hs25Xua8ZHVXfOn65Q
-X-ME-Proxy: <xmx:xtCraoCcf914H0Mia0HozzhJT1qdn0Uv65BhEulf8S9arBXx90Q9fg>
-    <xmx:xtCramZ11TIPFX7voeD2VMPInRyvr0GGRpIPQmjA1DMoqnGCJNu-JQ>
-    <xmx:xtCraom7L-o0kFca2nPOVUxP9nlxeqOBjwj0WAykh3_-vERmMdZpMA>
-    <xmx:xtCrajpaTQbzYFM-7NfTqUqCv7nS6t6tZQZxekH-SDgIhcWP8k6Lpg>
-    <xmx:ydCrag0iNIUSh52yf0SFfzjOxFkiRQe7WOROVCMNVSDmQ5fHGp327eQU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 2F3F132A0084; Thu, 17 Sep 2026 07:36:36 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="tGoWdSZ/"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hlzMg5hM5zSdN;
+	Thu, 17 Sep 2026 16:55:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1789656943;
+	bh=iIriynrEu5LwJNNlh0oydDdRqnA/sdfPPXQmxmJmFHs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tGoWdSZ/WeEXt6dtuIqJwoakoP9xiqamZ5GKsP1tn667tVF/NIL6x7m76f7jx8zut
+	 xgfpTvZ6rW/SPsU4OYSjnfmGdBCeTF+lFG9l58WBrKydQG3bh40goqCWnYQthMqcCv
+	 rS+n5kmPJeslje/7bJiVMP/iqqE4CjUPN+CsSXjQ=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hlzMf3yQRz14t;
+	Thu, 17 Sep 2026 16:55:42 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: stable@vger.kernel.org
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 5.15.y 2/2] selftests/landlock: Add tests for whiteout object creation
+Date: Thu, 17 Sep 2026 16:55:22 +0200
+Message-ID: <88432dfe86f2aaa9ae499587fd7acff9d34a338b.1789655723.git.mic@digikod.net>
+In-Reply-To: <2026090319-sprinkler-mandolin-e566@gregkh>
+References: <2026090319-sprinkler-mandolin-e566@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AMQlh5H7f1Z-
-Date: Thu, 17 Sep 2026 13:36:15 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Arnd Bergmann" <arnd@kernel.org>, "Paul Moore" <paul@paul-moore.com>,
- "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- "Tingmao Wang" <m@maowtm.org>, "Justin Suess" <utilityemal77@gmail.com>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <95e794f6-6ec4-4b3e-bfa8-7edae0ac898e@app.fastmail.com>
-In-Reply-To: <20260917104544.3trW9Jq1@linutronix.de>
-References: <20260915201036.3527935-1-arnd@kernel.org>
- <20260916084947.6QDy8KZQ@linutronix.de> <20260916.shai0tha3IPa@digikod.net>
- <57b5869d-7411-46e8-ade6-6d2a7fea02ac@app.fastmail.com>
- <20260917070915.Ix8TOn5Y@linutronix.de>
- <1192c2df-d39a-4d43-ad57-68b0167759f5@app.fastmail.com>
- <20260917104544.3trW9Jq1@linutronix.de>
-Subject: Re: [PATCH] [v2] landlock: work around gcc-16 -Wuninitialized warning
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Thu, Sep 17, 2026, at 12:45, Sebastian Andrzej Siewior wrote:
-> On 2026-09-17 12:26:17 [+0200], Arnd Bergmann wrote:
->> I checked again and found that this is a config that did produce
->> the issue a few weeks ago, but doesn't today for me.
->> I found a different config from this week and managed to reproduce
->> the problem on today's linux-next using both gcc-16.2 and gcc-17.0
->> from yesterday, so there is still a related issue that is not
->> fixed in gcc, even though one at least one of them was fixed.
->
-> Confirmed. I see the warning on arm64 while x86-64 is quiet. The patch
-> fixes the issue.
->
-> You might need to update gcc bug tracker.
+From: Günther Noack <gnoack@google.com>
 
-Correction: I noticed the failing gcc-17 binary was an old one,
-the current snapshot does not produce the warning any more.
-It does seem like the fix was not yet backported to older compilers,
-and seeing that the final gcc-13.x was released, we will
-continue to need the kernel workaround. I assume the compiler
-fix will eventually make its way into the other stable branches.
+[ Upstream commit ee890889b30b22f9a21636061def7a04e4f89380 ]
 
-      Arnd
+Add tests to check that whiteout object creation is guarded by
+LANDLOCK_ACCESS_FS_MAKE_REG, in the cases where these are created from
+userspace:
+
+* Conventional creation with mknod()
+* Linking or renaming an existing whiteout object
+* renameat2() with RENAME_WHITEOUT,
+  which creates a new whiteout object in the source location
+* renameat2() with RENAME_EXCHANGE,
+  with one of the renamed objects being a whiteout object
+
+Signed-off-by: Günther Noack <gnoack@google.com>
+Link: https://patch.msgid.link/20260813093157.1436894-4-gnoack@google.com
+[mic: Update commit message as requested]
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+[mic: Backport: add enforce_fs() and the missing s3 fixture paths, and
+adapt tests to ABI 1 without REFER]
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ tools/testing/selftests/landlock/fs_test.c | 150 +++++++++++++++++++++
+ 1 file changed, 150 insertions(+)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 47fc4392f412..f5c965e9aa80 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -62,6 +62,8 @@ static const char dir_s3d1[] = TMP_DIR "/s3d1";
+ /* dir_s3d2 is a mount point. */
+ static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
+ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
++static const char file1_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3/f1";
++static const char file2_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3/f2";
+ 
+ /*
+  * layout1 hierarchy:
+@@ -249,6 +251,7 @@ static void create_layout1(struct __test_metadata *const _metadata)
+ 	clear_cap(_metadata, CAP_SYS_ADMIN);
+ 
+ 	ASSERT_EQ(0, mkdir(dir_s3d3, 0700));
++	create_file(_metadata, file1_s3d3);
+ }
+ 
+ static void remove_layout1(struct __test_metadata *const _metadata)
+@@ -265,6 +268,8 @@ static void remove_layout1(struct __test_metadata *const _metadata)
+ 	EXPECT_EQ(0, remove_path(file1_s2d2));
+ 	EXPECT_EQ(0, remove_path(file1_s2d1));
+ 
++	EXPECT_EQ(0, remove_path(file2_s3d3));
++	EXPECT_EQ(0, remove_path(file1_s3d3));
+ 	EXPECT_EQ(0, remove_path(dir_s3d3));
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	umount(dir_s3d2);
+@@ -595,6 +600,27 @@ static void enforce_ruleset(struct __test_metadata *const _metadata,
+ 	}
+ }
+ 
++static void enforce_fs(struct __test_metadata *const _metadata,
++		       const __u64 access_fs, const struct rule rules[])
++{
++	int ruleset_fd;
++
++	if (rules) {
++		ruleset_fd = create_ruleset(_metadata, access_fs, rules);
++	} else {
++		const struct landlock_ruleset_attr ruleset_attr = {
++			.handled_access_fs = access_fs,
++		};
++
++		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
++						     sizeof(ruleset_attr), 0);
++		ASSERT_LE(0, ruleset_fd);
++	}
++
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++}
++
+ TEST_F_FORK(layout1, proc_nsfs)
+ {
+ 	const struct rule rules[] = {
+@@ -1941,6 +1967,118 @@ TEST_F_FORK(layout1, rename_file)
+ 			       RENAME_EXCHANGE));
+ }
+ 
++TEST_F_FORK(layout1, rename_whiteout_denied)
++{
++	/* The affected file is a FIFO. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++
++	/* Deny MAKE_REG, but allow MAKE_FIFO. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, NULL);
++
++	/*
++	 * Try to rename a file with RENAME_WHITEOUT.
++	 * file1_s3d3 is in dir_s3d2 (tmpfs), so it supports RENAME_WHITEOUT.
++	 * Denied, because whiteout creation is guarded with MAKE_REG.
++	 */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, file2_s3d3,
++				RENAME_WHITEOUT));
++	EXPECT_EQ(EACCES, errno);
++}
++
++static bool is_whiteout(const char *const path)
++{
++	struct stat st;
++
++	if (stat(path, &st) == -1)
++		return false;
++
++	return S_ISCHR(st.st_mode) && st.st_rdev == makedev(0, 0);
++}
++
++static bool is_fifo(const char *const path)
++{
++	struct stat st;
++
++	return stat(path, &st) == 0 && S_ISFIFO(st.st_mode);
++}
++
++TEST_F_FORK(layout1, rename_whiteout_allowed)
++{
++	const struct rule rules[] = {
++		{
++			.path = dir_s3d3,
++			.access = LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++
++	/* The affected file is a FIFO. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++
++	/* Allow MAKE_REG below dir_s3d3. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, rules);
++
++	/*
++	 * Rename a file with RENAME_WHITEOUT within the same directory.
++	 * Allowed, because MAKE_REG is granted for the whiteout object which
++	 * gets created in the source location.
++	 */
++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, file2_s3d3,
++			       RENAME_WHITEOUT));
++
++	/* A whiteout object took the place of the moved FIFO. */
++	EXPECT_TRUE(is_whiteout(file1_s3d3));
++	EXPECT_TRUE(is_fifo(file2_s3d3));
++}
++
++TEST_F_FORK(layout1, rename_whiteout_exchange_denied)
++{
++	const char *const whiteout_s3d3 = file2_s3d3;
++
++	/* The exchanged files are a FIFO and an existing whiteout object. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++	ASSERT_EQ(0, mknod(whiteout_s3d3, S_IFCHR | 0600, makedev(0, 0)));
++
++	/* Deny MAKE_REG, but allow MAKE_FIFO. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, NULL);
++
++	/* Exchanging the whiteout object is denied without MAKE_REG. */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, whiteout_s3d3,
++				RENAME_EXCHANGE));
++	EXPECT_EQ(EACCES, errno);
++}
++
++TEST_F_FORK(layout1, rename_whiteout_exchange_allowed)
++{
++	const char *const whiteout_s3d3 = file2_s3d3;
++	const struct rule rules[] = {
++		{
++			.path = dir_s3d3,
++			.access = LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++
++	/* The exchanged files are a FIFO and an existing whiteout object. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++	ASSERT_EQ(0, mknod(whiteout_s3d3, S_IFCHR | 0600, makedev(0, 0)));
++
++	/* Allow MAKE_REG below dir_s3d3. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, rules);
++
++	/* Exchanging the whiteout object is allowed with MAKE_REG. */
++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, whiteout_s3d3,
++			       RENAME_EXCHANGE));
++
++	/* The FIFO and the whiteout object swapped places. */
++	EXPECT_TRUE(is_whiteout(file1_s3d3));
++	EXPECT_TRUE(is_fifo(whiteout_s3d3));
++}
++
+ TEST_F_FORK(layout1, rename_dir)
+ {
+ 	const struct rule rules[] = {
+@@ -2128,6 +2266,18 @@ TEST_F_FORK(layout1, make_char)
+ 		       makedev(1, 3));
+ }
+ 
++TEST_F_FORK(layout1, make_whiteout)
++{
++	/*
++	 * Creates a whiteout object (creation guarded by MAKE_REG).
++	 *
++	 * Contrary to the other character devices, this does not require
++	 * CAP_MKNOD, cf. vfs_mknod().
++	 */
++	test_make_file(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, S_IFCHR,
++		       makedev(0, 0));
++}
++
+ TEST_F_FORK(layout1, make_block)
+ {
+ 	/* Creates a /dev/loop0 device. */
