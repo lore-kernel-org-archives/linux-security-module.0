@@ -1,128 +1,90 @@
-Received: from r9114.ps.combzmail.jp (r9114.ps.combzmail.jp [49.212.47.36])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744AE388E58
-	for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 02:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.47.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9163D9522;
+	Thu, 17 Sep 2026 07:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789612040; cv=none; b=XVh0qMy7TH5ypB8pmuGn5f54slPElOVNynY3bXnY9yyZBPQRnvE36to0jpKIji1WQzwQklx7FKVj1WISutXk+FYfrpGVy88+GDPJvhxULB09Tq1xj67F2AaR9D5Ai//CwHCNOFXkvygaxBeCdw3LOyGsvM298P7NL3V5HC4k0n0=
+	t=1789628962; cv=none; b=L9AzVq7linUh4+MHVh3A/dQVzES+3Z6tIezlyamrhlrwYsCqLqWPXwocfz9UYBvAx59jWjVguVmoaiMkq9Ed55rGmPWxOZF/l5/oXFpe2uh1zAh5sbqeGFVtrzgCNUrMvFNLuCTEcxjHCR0R4n/tSqNXfK+WVt3nJf6rseJ6RdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789612040; c=relaxed/simple;
-	bh=HlizVZr1fDBuiVc3LJZPmbtEuIF/O6EeaRBwsMufKPM=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=mIMVFS9r9PptPThQ62R66WqkMIe+E3UD4pxYu+fqTfd+Dd7f4VjgIMgv2mCf8T7COFWqxetr6tlJvVAJ9Iobl1iujPX2M/84MtJCpZTx++4JGfOKmhweq++CMH47q7+UcaC49Fxz/wb0nSGF4OWPiP+LUjS9qh09fN1dBF/739M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=knowledgelink-corp.jp; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=49.212.47.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=knowledgelink-corp.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9114.ps.combzmail.jp (Postfix, from userid 99)
-	id 2BB07306B91; Thu, 17 Sep 2026 11:13:49 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9114.ps.combzmail.jp 2BB07306B91
-To: linux-security-module@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCJUolbCVDJTglaiVzJS8bKEI=?= <info@knowledgelink-corp.jp>
-X-Ip: 6111062898970802
-X-Ip-source: k85gj73p48dnsa9wu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCTSUkNyQkPFJEOSROGyhCTkc=?=
- =?ISO-2022-JP?B?GyRCOVRGMBsoQg==?=
+	s=arc-20240116; t=1789628962; c=relaxed/simple;
+	bh=YuFr3g55RjF1JuBuvkUfi/7kTrg/Re+Ath2LMU1l5wY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQU8i2+Gq1L5U+5VBNzkyuk1cLcIIwHFjVO2+oAjrKb1KuS2tCIjBonGPbUjS0xAByHEQ1i6169827rEwwqcLuG6r4wDuVT+YRDopXtnTQAuGpNoadQjLTNx2jcfNGhBHpQWvNg0R4NRFRWIPOpAUDVcP60BNXaMcQVLV1btflU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H2RDGXvW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BQ5fVFDL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H2RDGXvW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BQ5fVFDL"
+Date: Thu, 17 Sep 2026 09:09:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1789628956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KmoOzql2YcauqS8+uEcaOyn1yIVt4dhXoiJnVQB4CBE=;
+	b=H2RDGXvWp5ZR8Kv7Kll024zrS1vLQtR9T2wHHVEt1KO7GXS+Y/ILx99js5akok26KPvU9N
+	L3M/643gT40YINkz2357VxQxMAA820LvZnJvaIuqFKFg6fU9rnYCNNudeqNF/8z5n/tUs2
+	0yUDwHNudIcbVMPmcKti5cf2b812il81caPfKWPvvZL+uif3dYJO47XaSahtOozvmjsLso
+	E8Gp2ZW7FI9FaKJbur2S1JUPjs0j+G4QRRyKbBv++guP+/TXudovKvLkLV6JSc41ju9R87
+	W4jk58PY9ikGkVbszDMQhKVsrWl/9QytjEqy1TEJgkPuDJDt20IM5+uXqFz3zg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1789628956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KmoOzql2YcauqS8+uEcaOyn1yIVt4dhXoiJnVQB4CBE=;
+	b=BQ5fVFDLX+010Mc6g7BilKvn5pVN5LpzycbqU230561+0xxV+zxhcbmIzVbrsreAamY5ml
+	5XviFc2fNj5xN6AQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Arnd Bergmann <arnd@kernel.org>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>,
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] landlock: work around gcc-16 -Wuninitialized warning
+Message-ID: <20260917070915.Ix8TOn5Y@linutronix.de>
+References: <20260915201036.3527935-1-arnd@kernel.org>
+ <20260916084947.6QDy8KZQ@linutronix.de>
+ <20260916.shai0tha3IPa@digikod.net>
+ <57b5869d-7411-46e8-ade6-6d2a7fea02ac@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-X-MagazineId: 3p9w
-X-uId: 6764305539486065704185541027
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20260917021403.2BB07306B91@r9114.ps.combzmail.jp>
-Date: Thu, 17 Sep 2026 11:13:49 +0900 (JST)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <57b5869d-7411-46e8-ade6-6d2a7fea02ac@app.fastmail.com>
 
-　
-　中小企業の経営者様へ
-　
-　・社員のモチベーションを上げようと声をかける
-　・現場のトラブルに、自ら先頭に立って対応する
-　
-　もし、社長がこれらを率先しているようであれば
-　残念ながら、その組織の成長はそこで止まります。
-　
-　社長の“優しさ”が、社員の甘えを生み、責任感を奪い
-　「指示待ち人間」を量産する装置になっているからです。
-　
-　
-　4,800社の経営者が衝撃を受けた、
-　良かれと思ってやってしまう「社長のNG行動」の正体。
-　
-　組織を劇的に変えるためのウェビナーです。　
-　もし心当たりがあれば、一度ご視聴ください。　
-　
-　>>視聴予約はこちら
-　https://knowledge-co.jp/shikigaku5/
-　
-----------------------------------------------
-　
-　テーマ ：　それ、危険です 『社長のNG行動』
-　　　　　 〜 その行動が、組織崩壊を招く 〜
-　
+On 2026-09-16 23:06:30 [+0200], Arnd Bergmann wrote:
+> As far as I can tell, 16.2 is still affected, even though it should be
+> fixed in HEAD. gcc-16.3 won't be released until spring 2027 though.
+> 
+> It is possible that there are additional configuration options that
+> have to be set just right to reproduce the issue. I've attached a
+> configuration that triggered it for me this week.
 
-　日 程　： 9月29日（火）13:00スタート
-　　　　　  10月14日（水）13:00スタート
-　　　　　  ※内容は同じです。
-　　　　　
-　会 場　：Zoom開催
-　定 員　：先着100名（費用は不要）
-----------------------------------------------
-　※経営層の方限定です
-　
-　
-　なぜ、社員は「言われたこと」しかやらないのか。
-　なぜ、次世代のリーダー候補が育たないのか。
-　
-　それは、能力の問題ではなく、
-　
-　良かれと思って続けている「社長の配慮」こそが、
-　組織成長を止める、最大のボトルネックかもしれません。
-　
-　本セミナーでは、4,800社以上が導入した
-　独自の組織論「識学」に基づき、社長の「NG行動」と
-　真の経営者へ脱皮するためのマインドセットを伝授します。
-　
-　
-　【セミナー内容(一部抜粋)】
-　 ○ NG行動3選
-　 ○ なぜ優秀なNo.2や部長が育たないのか
-　 ○ マネジメントスタイルの変革について
-　 ○ 導入企業の事例
-　
-　「管理職が育ったら任せる」ではなく「任せるから育つ」
-　という思考の逆転を提言。
-　
-　現場から「冷たくなった」と思われることを恐れず
-　機能的な階層構造を作ることで
+This is from v7.2. I tried this and v7.3-rc3 and did not notice a
+warning (other than unrelated stack size from drm). I did notice:
 
-　結果として社員全員を守り
-　利益を最大化させる道筋を明示します。
+-CONFIG_CC_VERSION_TEXT="x86_64-linux-gcc (GCC) 16.2.0"
++CONFIG_CC_VERSION_TEXT="gcc (Debian 16.2.0-2) 16.2.0"
+ CONFIG_GCC_VERSION=160200
+-CONFIG_AS_VERSION=20285426
++CONFIG_AS_VERSION=24700
+-CONFIG_LD_VERSION=20285426
++CONFIG_LD_VERSION=24700
++CONFIG_CC_HAS_MARCH_NATIVE=y
 
-　「優しさ」で人を動かすのではなく
-　「正しさ」で組織を動かす。
+which might be the culprit. There were other things, too, so the
+oldconfig was not clean (such as missing CONFIG_VIRTUALIZATION).
 
-　音声やお顔が表に出ることはございませんので
-　お気軽にご視聴ください。
-　
-　>>視聴予約はこちら
-　https://knowledge-co.jp/shikigaku5/
-　
-　
------------------------
-　一般社団法人 ナレッジリンク
-　東京都千代田区神田小川町1-8-3
-　電話：03-5256-7638
+>       Arnd
 
-　セミナーのご案内が不要な方は大変残念ではございますが、
-　下記URLより手続き下さいませ。
-　
-　メール配信のワンクリック解除はこちら
-　https://fc-knowledgelink-corp.jp/mail/
-　
+Sebastian
