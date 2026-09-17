@@ -1,157 +1,134 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi2-f4.google.com (mail-oi2-f4.google.com [74.125.231.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E44F4DEC1D
-	for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 19:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.125.188.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789672773; cv=pass; b=II2FK0uvELLskNudDLwRb2LL/CZaX5ImWfUxiTFyRmb0Z9JcOIeYQfKkVIRfWFW4BgEgTKTaIRV7iE3QF+8cWyYRCnNdHfi9tdZQuXfIv/XD5xminpE+NOQNLmlsYppSmiEG2TBuzhyRyPaYF6ARTxXvcuGPY3G33mBP2wf0QCs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789672773; c=relaxed/simple;
-	bh=vg/HnBjL6ui8rIqhl2mHTCgUWM64HScF5/iWIe/ShIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=da34nfxdD97AZ54hT93O0E5/miOZAKMvhv1TPUoRuxqw0KWiYBhGPNUHqyaw71u0Ef2rIoFGicOzbFSU4Aljkq/spAXBkbr7Nw7QeSLPw2Dj7dU9yROIWHGisbHsk/9prZmqp9gIpmhoWqWP9vPj94a1JAznBpaEz92ITj3pqkc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=nLybyOiJ; arc=pass smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="nLybyOiJ"
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D8BDD3FCF2
-	for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 19:19:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1789672766;
-	bh=9ZQkQJ8DBmzRmP+IXbsxhfErJtZ6ER/ycldjmLcGGe8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=nLybyOiJ7SKhwDnpnmvhMCEFIaInDvUq8COaa8Wp+wRRI4aOKLDA+6lnwYzawaCj0
-	 LkF3zgmWRAgiG5ZOkoCJav5IlSDycklo3IyplmPXxmisalPOVcreZibfdoe+fNSjgK
-	 7BcebBbr5R6XlMUJ9BJa+yI8eSLSOyS91NyC8yOv+HALineqoU2m16mkWmy7t1BoQf
-	 cF/fI9WEomcqcXhKjhvHUgQQ1apEfSgizZF01mc33DYOeh3uEAqKP2qwvJkaioVJ4y
-	 fHBI0nfp2UYZSG1QYzrc5P0leByRPN92yIfCqLZ+pO09ecMx0Q47qdctZ0tAB8dv3Z
-	 febwGU8Kmz0AOeBUyXSZF+8Vtp+SMkTlC66xBIrCcaBZYc3OvZxbpv7ARCgn8apbFb
-	 4ADmgxLS1HTkh6V8OI3mMxWlmPxvtxlCTwpPpV8h+ati2+k5fqCc6Ua/DcdTHfcKbs
-	 mIFa6F7S4vu4NkZG5qYnB30mMx1X+5FdXL8aVu9ZwYzr2Ke/cWow1WbEsfUpugvLgw
-	 V4g7hTYvTwvxrBFqfT8eM7pGYJjKOzjNOpRN9O3AAUVbL0/9pK5Ook5QxwBGOGlmhC
-	 +baUGAsZQZKxIx/TJDIezTUUfAVEuYPPQD3sPht9ZfQtLI8DcEXZEsGazpGvKex0+B
-	 A/q/Hl+hZC+43aAv2s2NrNY0=
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-c293e9cd02fso144529366b.3
-        for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 12:19:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789672766; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ppB2xGrgx7vQd0EfLqh/0Znz3buRg8JGLAZUWN0nZy43PPJKIM4Rd/s4oFy+t0E3Jo
-         gDLtttc/YWiROBa5CQR5TXMnm2R909u1xEXZWlKqvXgwfwjAuldVbh8Mxrx4uXtWhnFJ
-         kOtrIOydB5Y0hTsxhUmEXRcgWyWEfjeQYp4QmcMQTbqfd8FjUkf09zX538YrTebEZAp2
-         K1DSXalNOTxjqy7pSNln2IoiVPeM3RMtegthLVjwOb/QXpA2/fI61LBQQUwobaErjFji
-         ymGgydq6tBRIOt+GAS5lfIdXef4+T0GQo0VcxM5QoP+mWNu/kRDvPaQ6DYsj0sRUV6lW
-         +lnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version;
-        bh=9ZQkQJ8DBmzRmP+IXbsxhfErJtZ6ER/ycldjmLcGGe8=;
-        fh=88oRiehlHwDcEnKrzX82pRkgk0HIm93ysfymAlZdZ0M=;
-        b=ZgnAiiJ4HRCaDbHn4DAH2g1OXjLJUuhkucnRKOYNhG+IGvyJ1OeMD2/sRf7CpKqh8I
-         FIeO955kwbOrZJteY60KLeJXdzNbN0rfgJ2oOYNKkvrdWgJ1eXQJjSEw9v6y9VLw9Mh9
-         CN5dbs0UQlM/Jt5SGvfT+VeazauPAeIEkuniLL0GrneK5KO78glG+Qk+Q77be9i0jG4w
-         R6mj0v1LAvRw9LHfq/3aiI3E8YxIeIZvJpQcMFiP5nZ3IenOhQn4dm+9s8PdvqEFcd0P
-         fUJLH9Kgd9+WDoCWp/lWRq4IGr43u8TZs0nn3jGNqIQdqDDwkO3Jyc0XrQ79va2LCBYr
-         S1wQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC3644E66B
+	for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 19:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789673436; cv=none; b=T03iXKOzIeZyIxUaN8zVE8XWEoUdT23Mi433GyNn1wkfm0oBITDiLwxIY1UyPocdxT/LzB4EgL5jPnCHWCHB86+q9+elXxpV4C1cgamLCqYhaeI0MiINmOFR86qbRRoqb3vS83tRnpDwqhduKLYO6IbBxoRqjYAuxZWPD2+Mjwo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789673436; c=relaxed/simple;
+	bh=op/43Q8ivGnszBMmvmaQWfcywOTvNbXrkE7Z3J2S4MM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jLSjVeG7RVzeAwHKhZ129l+KE0wlNnc0X4ICeKAARqCwJzY7amxpd1wk4WWnqAgBWWf3Akww3TSgBHj6EdCgslKTUJGnZmWzWpTZGsUzYEeMRjPgF6slAJl+JY+gTGke8OKTyD2EaYnC7VY9B7+uGDTOzMHmG5ALmtWTV0vzFI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=74.125.231.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi2-f4.google.com with SMTP id 5614622812f47-4ab2d8e7e4cso13445b6e.1
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Sep 2026 12:30:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789672766; x=1790277566;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1789673433; x=1790278233;
+        h=content-type:to:from:subject:message-id:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=9ZQkQJ8DBmzRmP+IXbsxhfErJtZ6ER/ycldjmLcGGe8=;
-        b=aQYDL4n/BvRJMsShJ6qu3zCfyki10N27WRDVKnWLnnwbyrRGnLud4zNdcyFtKVWoJ9
-         pZyq0nK3MersWlYBK8FBcJ2L4vkrMWZ2fqMuSSyGGuoyerbtb/Gi5wfS02adXDjwwXtY
-         viBTMekjLtGHvmzh40QGyPoVVib+9rj4ypaL/7uzcfdgZ5+VPqtop5g1r9xSUQ9rjm1M
-         vyB58MsejUAqmhDfaoN4pH4YZZ/QsWMitfncwgIh7u+8VgaO3OGSdWf6nW1owvERyHB/
-         JAPKw6mopkQnoSuUWgTSlAClvyaFCyfdYAe8QyD+BX9VV0LoGb7HGP8n+AauPGmIRj+c
-         XUfQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwbhQQiOk5GZGOtky1Lf5chAikG37sbPaUb2Qi3iH3eaeGx6HVZC8upb4qGyq+mBSxRr+5WT+GF9Ex0a6a2wa91H04zqe8=@vger.kernel.org
-X-Gm-Message-State: AFuF++moi638Ll6YtsmX3cIbVq3tCrIieHBxVE1i3BwIWIciADhsU+re
-	dk0CfvZNboeXbQCBV6CaNcxEdlqewWGJ64gVezEHbjhd855U6wG1MNB3h1+WjK9jwe01PR8B3Od
-	Y7swvWj5kIG0Q8xfyZfFjmevkDJeNhlKfv6Qj2vVjKrUlOTfHmjXqq3uAdCnxbuDdIOOuNqLLu9
-	y0ogYuQE4GUVpY/J05vTtK0jLIHXGwziQZDXkJX+NA/xdmp9BQnj3t4PUElkn6enQch3yc
-X-Gm-Gg: AYBFou26+s6NVuBurEIXM7YFKjYIRKEOu5cR3vRFymM5B7yrt4VJBugL+fE2GNYQVHJ
-	ZV7/1DtKb9CbDCMlBGTtrNugbFC2JsBVamJGMZvgUz+c11+Q7EqeYcT5/XhB6RtPqLj5mUhg2d+
-	yuqItqMoGTWfsq5HMf81YvlyIXcNmkaHyaVncIEDt2aD72sAwXxQr76VpsEcg+Q3kynmVqpck4/
-	nzAvBV6JdwMGpmCIU3+TA2GN9L/LT90OqMgBy7I1Ho=
-X-Received: by 2002:a17:907:d07:b0:c26:1691:b374 with SMTP id a640c23a62f3a-c2a15827d9fmr13365466b.45.1789672766392;
-        Thu, 17 Sep 2026 12:19:26 -0700 (PDT)
-X-Received: by 2002:a17:907:d07:b0:c26:1691:b374 with SMTP id
- a640c23a62f3a-c2a15827d9fmr13363866b.45.1789672766071; Thu, 17 Sep 2026
- 12:19:26 -0700 (PDT)
+        bh=DKBKAO6uZv7zwP+i5r1kqr1VSMo/flSyHByrbO63mzg=;
+        b=JCaa5atr1h8ZOmB0HLfe8fs96aMKyXsgDQ2SFssREM/xz/fvqEKeF93Tf42SREjYt+
+         g2fHG2soDcNRsNApDcJKFNEzYAtCMgpA6gl8fkBLHWt4d1sKp7QVOpruz79iG7berY35
+         w+fFo5njYPYfysAZesHjFA+NYferegvgxRvZTbwWsQRrdD5mMx+X+YVJZaqYhXhdnSc7
+         FgatvfkBkaqW1QdBM2X2Wk6el+mGVWlkzm7IRvduLPoQ5NK7rqBxzUjmPiMLm6InU7Is
+         9pe8U2idRAsy4GcUTkX7J3OGEVcawQIMckgt9G1wm+bEYlGpgbN9eNXPpkA0dJvH7Jv8
+         k6Yw==
+X-Forwarded-Encrypted: i=1; AKwUvBwG83tN+GB5aIyBAuz4rR1A2tx/3NPAJt8p8MXFHp2RW4jnjT01wm6k+sh//XUs1luBHZz/7jqt7XNrMb2S5Pmn6wkq7Fc=@vger.kernel.org
+X-Gm-Message-State: AFuF++n/mbLzWoZ8qR3qHYj5ncxOwRJIgDw/Z63MtmtP8jaZDb8CEt0c
+	KBYtlqPYA6QpOC5G7CFGWWACpxrlSE7FzpHenWrqYDcX4JIZuGBWGCtYYEN4bmteqa6iGnH3j1e
+	5SNf25vxy4ClXlWLV23Twfx2yzd04yT7+v6LhYSpgUYRhgoOdh5VUVXJdojw=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260917164136.2162858-1-vulab@iscas.ac.cn>
-In-Reply-To: <20260917164136.2162858-1-vulab@iscas.ac.cn>
-From: Ryan Lee <ryan.lee@canonical.com>
-Date: Thu, 17 Sep 2026 12:19:12 -0700
-X-Gm-Features: AcwNN1Wzvx_67694p1o28AQ7birKEsyjcvTFnAQ2BuPeUqdnKMT1U0VxjCdP-Ys
-Message-ID: <CAKCV-6uui82r4U3+ab=2ZFQvGQYnxfhYMHJNzLim-HEw6pRp7A@mail.gmail.com>
-Subject: Re: [PATCH] apparmor: Fix label reference leak in aa_unix_file_perm()
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: apparmor@lists.ubuntu.com, jmorris@namei.org, john.johansen@canonical.com, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	paul@paul-moore.com, serge@hallyn.com, stable@vger.kernel.org
+X-Received: by 2002:a05:6808:1383:b0:490:315d:e0d5 with SMTP id
+ 5614622812f47-4ccf6a75030mr310242b6e.16.1789673433516; Thu, 17 Sep 2026
+ 12:30:33 -0700 (PDT)
+Date: Thu, 17 Sep 2026 12:30:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6aac3fd9.b398a7c9.1f86be.0021.GAE@google.com>
+Subject: [syzbot] [lsm?] [io-uring?] kernel BUG in commit_creds (3)
+From: syzbot <syzbot+fa63184795283ac3f842@syzkaller.appspotmail.com>
+To: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, sergeh@kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 17, 2026 at 11:59=E2=80=AFAM Wentao Liang <vulab@iscas.ac.cn> w=
-rote:
->
-> The inner block in aa_unix_file_perm() re-declares plabel, shadowing the
-> outer variable that is released at the out label. The reference taken by
-> aa_get_label_rcu() is thus lost when the block exits, and aa_put_label()
-> at out is a no-op on the still NULL outer plabel, leaking one label per
-> permission check on a non-filesystem unix socket.
->
-> Drop the shadowing declaration so the outer plabel is used and released.
->
-> Fixes: 88fec3526e84 ("apparmor: make sure unix socket labeling is correct=
-ly updated.")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  security/apparmor/af_unix.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/security/apparmor/af_unix.c b/security/apparmor/af_unix.c
-> index fdb4a9f212c3..ecb40cfe7e14 100644
-> --- a/security/apparmor/af_unix.c
-> +++ b/security/apparmor/af_unix.c
-> @@ -758,7 +758,6 @@ int aa_unix_file_perm(const struct cred *subj_cred, s=
-truct aa_label *label,
->                            unix_fs_perm(op, request, subj_cred, label,
->                                         is_unix_fs(peer_sk) ? &peer_path =
-: NULL));
->         } else if (!is_sk_fs) {
-> -               struct aa_label *plabel;
->                 struct aa_sk_ctx *pctx =3D aa_sock(peer_sk);
->
->                 rcu_read_lock();
-> --
-> 2.34.1
->
->
+Hello,
 
-NACK: this exact patch has been proposed before, and unfortunately
-exposes an additional latent bug around plabel handling that results
-in a use-after-free if the shadowed declaration is removed without
-additional fixes.
+syzbot found the following issue on:
 
-I can try to dig out the relevant exchange from the AppArmor mailing
-list later, if you'd be interested.
+HEAD commit:    5445d6419962 arm64: Don't read GMID_EL1 when MTE is disabled
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f4d8c9580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=56ed23170c168d4c
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa63184795283ac3f842
+compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124353f9580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f73bf9580000
 
-Ryan
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e8b70e3bd109/disk-5445d641.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e5227e56ac93/vmlinux-5445d641.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/54905f78be59/Image-5445d641.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fa63184795283ac3f842@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at kernel/cred.c:376!
+Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+Modules linked in:
+CPU: 0 UID: 0 PID: 4923 Comm: iou-wrk-4922 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/14/2026
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : commit_creds+0x888/0x8d4 kernel/cred.c:376
+lr : commit_creds+0x888/0x8d4 kernel/cred.c:376
+sp : ffff800098287850
+x29: ffff800098287860 x28: ffff0000d05e08c8 x27: ffff0000d05e0000
+x26: dfff800000000000 x25: dfff800000000000 x24: ffff700013050f18
+x23: ffff0000c7e6bac8 x22: ffff0000d05e08d0 x21: ffff0000d2bb7000
+x20: ffff0000d2bb7000 x19: ffff0000d2bb7300 x18: 1fffe00035b9ec28
+x17: ffff8000818fd3bc x16: ffff8000816109b4 x15: ffff800080391038
+x14: ffff8000815de4b4 x13: 0000000000000001 x12: 0000000000000000
+x11: 0000000000000000 x10: ffff600018fcd751 x9 : 0000000000000000
+x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000004 x3 : ffff800080391048
+x2 : 0000000000000000 x1 : ffff0000d05e0000 x0 : 0000000000000000
+Call trace:
+ commit_creds+0x888/0x8d4 kernel/cred.c:376 (P)
+ smk_write_relabel_self+0x398/0x418 security/smack/smackfs.c:2709
+ loop_rw_iter+0x3c0/0x5c0 include/linux/uio.h:-1
+ io_write+0xd50/0x1364 io_uring/rw.c:1170
+ __io_issue_sqe+0x134/0x364 io_uring/io_uring.c:1386
+ io_issue_sqe+0x94/0x8f0 io_uring/io_uring.c:1409
+ io_wq_submit_work+0x4c4/0x690 io_uring/io_uring.c:1525
+ io_worker_handle_work+0x640/0xeb8 io_uring/io-wq.c:659
+ io_wq_worker+0x830/0xb44 io_uring/io-wq.c:752
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:838
+Code: 91009280 9420ad5a 17fffe51 940b1fa2 (d4210000) 
+---[ end trace 0000000000000000 ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
