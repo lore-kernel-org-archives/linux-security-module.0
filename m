@@ -1,151 +1,147 @@
-Received: from mail-yx2-f12.google.com (mail-yx2-f12.google.com [74.125.224.140])
+Received: from mail-yx2-f42.google.com (mail-yx2-f42.google.com [74.125.224.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4E7522699
-	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 19:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673FF43A809
+	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 21:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789761591; cv=none; b=jKWIYlCQoolG6FWdZoFRX91rO9FgUEEdYTUNVrh7eknLJGs6QM/z4pmGUXI9mHu6aEhR+rUg9Ogj01bcJsf5Z/7QVQRZNWS4jwRjNTSvAndBme5GHR+yqDS4P3IefFyOpchf2C8fUK4XcejGl96cZ1+uVOV7pkQLvyIi59mmI7Y=
+	t=1789765927; cv=none; b=On9hZd2PLa0KuljnJ48OSlXvXNC/kDPFYKqupKcEkMpFGBIsEkb4eXdiw6vK5am9hJG0LPWHI1Hsfk7ekUhkn7r+M1sDd8TdupJtC+PlhbTcsSgi4RRg4ep/gItAJWVu/IB5kEl1NsOWYo6UontWQpg0oSqoYQNuoAxWpioqzbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789761591; c=relaxed/simple;
-	bh=Jv9PmI2tuRQ6a0mGkf94vkgPMQlOdZGeXzjl16O8i00=;
+	s=arc-20240116; t=1789765927; c=relaxed/simple;
+	bh=g4lx2u+ot1L81/J/UgHU7Wj2kq/pV6QiVmT+UZI0pAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uLEfyGeFdnm7JySBzuTXvRE63tQV9hoKtkseaWzXJQfb6Mn4hDQAKZ56ad46qlfnV1caQ4LqLr4j4cPBsMFO1PYjntWJk/s6/rbeHsS8+N7fVXi27CDobaWxjByOP0JwCgrJ6ZA8cE7ipE+eHwrbGIwqyU9TZdzZT36jdUrSc/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amutable.com; spf=pass smtp.mailfrom=amutable.com; dkim=pass (2048-bit key) header.d=amutable-com.20251104.gappssmtp.com header.i=@amutable-com.20251104.gappssmtp.com header.b=ch2e604T; arc=none smtp.client-ip=74.125.224.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amutable.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amutable.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=GCKm8DNntLXKRoJMR4rTvQqD8QP7RRrTw8XCr388ooPSD5KQQnTGPQoWFk+QWeJ8ZBUFKjHMnMsCMWqh3hJOeSuv7GGygvXPlH8FTfgOFE9KQ16Xurt8xCf5U74MyE7exBC9TTn9K/FBBtwpwWYjEeqnbT+rXGeu85cpRzbKZS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=fklhwivi; arc=none smtp.client-ip=74.125.224.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amutable-com.20251104.gappssmtp.com header.i=@amutable-com.20251104.gappssmtp.com header.b="ch2e604T"
-Received: by mail-yx2-f12.google.com with SMTP id 956f58d0204a3-66fabb1a601so1098318d50.3
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 12:59:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="fklhwivi"
+Received: by mail-yx2-f42.google.com with SMTP id 00721157ae682-895fd505824so10432457b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 14:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amutable-com.20251104.gappssmtp.com; s=20251104; t=1789761587; x=1790366387; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=jFiXSu2V4pZ+QeomBn1c5HcWy5gtnzTo7Z55CduAixo=;
-        b=ch2e604TIxvi8hLh6mLXV0Kd6bTBiZI6iola+whhEHBQ/gRtNMLO9+O8h75SUTlcSD
-         ct4Fq4vTT/VWzsVFSc3o1K507n3fGuVDlzN1p1N7Lkdt1Oewd4iWhDCX9oexGV0yw1Uf
-         x2xfQyWszMMyEtpwNcapqacbwvHOBZrrOHwghHYVKP+FpxGbDBAq6+cwPnqMOmdXT/Wp
-         RmREmPUaX2sGnpVAZP5EJ1ONwPxNa2rNIQ/a9maVbyLwwsluXGxl9TM9z9D6C+ZEnGU5
-         8BEMTctHx5RvzLgo9Lu01MauixY+qjScYIhLTGc4EVl9uKr4tRuCeerFP6EutvGdfkxX
-         Sdmg==
+        d=cloudflare.com; s=google09082023; t=1789765923; x=1790370723; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=yhKm/9XBDPOEFCi2fB4i14ffVbBzYqLX1m78dQNPvjk=;
+        b=fklhwiviuJLyeud7FMEOqT+J16Me7ZwSdZtasmj9pYBQFXnlw6hQLLGh0xNjHlIvGJ
+         9jlgEa6fkIemuMYOeENpFCCiDCMFSRTxkrj1HSTCYqpl2dJhSiyDZ/k9wK36011+0SnN
+         d4/M8aGVGSgRrw17YaauFEvnJYIVZPqoe8L0R0yXciDC2Bvv2QPcjz0/fDtiJ48E7rB5
+         SIhico+J2c7Vc2ca9TUPJT0ZYCqfahYHo9tWc7p3YmcSl27sZU9r7Pl9p/X4/ki9P/O8
+         hG0oHe84oyOcrWc8eFrLlaRviUJ2EzN4e24nBFQMmHfMfQhoKjnvcLh4LHrraPs6Z/VR
+         /Clg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789761587; x=1790366387;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=jFiXSu2V4pZ+QeomBn1c5HcWy5gtnzTo7Z55CduAixo=;
-        b=d5QwiY20IRUki7LVgV+2UL284Eo/3r5RYb0KfLs7+5DQGjXLlduGfKw++bDPZXGglF
-         8ZNa9nidYOKkpIohr4p5VPR7MvbalqYqKNvXrXPBFytr4TywAuhOuxm1sYophBgmCRzC
-         eE4WCdocl0zHLblZpKRhEgAC64ecOnLWiBus1QNcenUVmT74Kah0ThUyDFWGPuEpYEcy
-         bLIOWJ1IWR3N9FiSQR3hLhHA+I+rarQ/2ynEBAs9wQYF7Q/oA6uMiavfzKrJC4rkROtd
-         yjlacq+WO8T6ahVYL6ERT+rgzn6P13uLYxL4gHywM3O24YisDTjXMaVf1fP0Pf1/oSFq
-         cpmg==
-X-Forwarded-Encrypted: i=1; AKwUvBxeggXwtg+YKOgltFPYeb+Fh0/vbWXUr25s6rdJv11+svrhqQ5hmUGjAQaRrdWMsvaAhpzLACeUw3JVqubMOYHJEVlnWow=@vger.kernel.org
-X-Gm-Message-State: AFuF++mfn5UOHpYy5JxFIwSGe6/1Yj+EGEKSUOM3N19xJNXr7e6depiT
-	smQIy5pfxr7uBu5OrE2kj0lSIHGAUMlOrmVnmTMhXexrd/cuM8pxZkPtslo32wcUj9un
-X-Gm-Gg: AYBFou00+I2SQawgDWR1nWhahRQOoUDH2uNuaPQEGz9H5mSobdDbB+N89g9bYxDFX4C
-	DsO6oG+Dyk3UNGrmpfsLTtxAEl7Nuzg0MrBe3b3m7yPkSYbzB+24HsFBbKXeCouX5H4T85IPhDs
-	MUHcVzahokJMnX7VA5k36tpv9V80kc7by3uRx88iaBnZNfxEHQe0QTUsSJwunhNDAeWJUSJGfwH
-	5wOrJ9u1v/c07t1UbPrfHLLcQJtzrjmcUiv9VsnL/0ZSCISrglUWuRT9D3IN8VQp7bGy9DeuMQB
-	KKl9CNyRJnEGd/EQOfdvhXDu1d23J5Y9y7by1SQWo3gRC2Xp/d/r1PlXytX8kxyPPJZKvTqsXFT
-	gVoTst2iWZMlKwTuPgO8VXG2BYVWbU03AsSc+/MQdu+PMMG1Dj5Z6LSZ2shs4QelhP9ND0fVqmU
-	a3isz+hqxnI/AOTo7nwq+jRQBHo9v5iBGq+VABLyl2s6f78HOIPL1HNtSaEunK4b32MCC9t+ikR
-	dWscTsXFh9E1lWfso+yF9HsNyJC9IkI29ptoV5O44WkPSsfq1O0sg==
-X-Received: by 2002:a05:690e:e89:b0:671:4d46:8d5a with SMTP id 956f58d0204a3-6717fcee54emr1347891d50.41.1789761587246;
-        Fri, 18 Sep 2026 12:59:47 -0700 (PDT)
-Received: from toolbx (104-53-165-62.lightspeed.stlsmo.sbcglobal.net. [104.53.165.62])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-672990ab5desm406523d50.8.2026.09.18.12.59.45
+        d=1e100.net; s=20260707; t=1789765923; x=1790370723;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=yhKm/9XBDPOEFCi2fB4i14ffVbBzYqLX1m78dQNPvjk=;
+        b=Kr7ndPJWmiDY+/TtWyXEZstrBkL+OehhRBIX9FnxnuKVweMX3sYJ3zeSBJWVrW45mi
+         sib0I2EecExftluORjpB0xigGJjOYvXuPFZQc5BCjokhxm2T9aoVXHfxdD/n3HVou9+t
+         VCnq5jz5xTcLR1obGvHsAtPAXfTaw3vPQ+f7PJxwmEyW3SPge8HxhAwdY6OVsok9rpTN
+         EQrj+6NjuW3a3tEhy+xhFrvt9Fu6CkFoFmcrV0wZuxaYLutmsmA4siHe0YdKStZMM4Zs
+         5ICumouNKUeeBksfCu8YakCnc2n94jb4SCXBc9uWDK3YlMY3VbsehTEVx9/fKDVCGBjc
+         Q3GA==
+X-Forwarded-Encrypted: i=1; AKwUvBzr5XFmg+69aOZWUZpvDWtyIzZohopebCAHPCMpg6bHTzkXHH3hctMwyjELbEux5VKVqrmOtvR9dW7F4jkFoOpOnhjjON4=@vger.kernel.org
+X-Gm-Message-State: AFuF++lRc6jTJuSJw6GMaY8dIcyHdXYMKPsbhiimO0vS6x2qJPzN+cde
+	/tJ++HLxQYkFo5++ilYustvt0zuYxI6OdbS09xlPUbAU4qjeuc/0LBv2djC8qIhHRjo=
+X-Gm-Gg: AYBFou1HG5Bw7eP8AHgxI7EE8ScO2yge3DEmoedIlH4pjDwN0Wg4GtIIMIWj83SGrzL
+	aM/xQaU/V9nyioKN35LrStV46vhLIOrmrIerZm128BX4C9FClhzq8PJarNSktnIApjWMqHS2Ljm
+	OCw87PUuxkZH0kbYy+5cXua/1eugNKeZPQog3wRmvfOnUTJkkEUARjEalw39St1HXbAY2lqnoSl
+	OOhVVRbvBJXttlQy9PH9S5cvoF5/s4hmUkbdyUz6SMEi2jBU8dlq+PYZlozCmM/g2goaaCUJhoH
+	uHrxEqFV9Pu6nJPRANUYqNQHmYbwQ8eNw0/hV+WcSDsEH15DfTQPpU5mjnF2uhNEerVBfBgfd/e
+	YYaN3KfRJqmZQVzPC4Ac5+xibucN06QV9/eIkKE714oztoY7lewlC/Ysk5CbPLULFobTWqgGgH+
+	vFJkfS3HlSqRTL/s8hULPS2xZ5RsAWNnmHXoj7/5H6oeYkU8oxNw==
+X-Received: by 2002:a05:690c:81:b0:89a:63bc:8cb with SMTP id 00721157ae682-89a63bc0bdamr3178557b3.85.1789765923383;
+        Fri, 18 Sep 2026 14:12:03 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:5a])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-89a4152081bsm3995547b3.2.2026.09.18.14.12.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 12:59:46 -0700 (PDT)
-Date: Fri, 18 Sep 2026 14:59:49 -0500
-From: Andrew Halaney <andrew@amutable.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Alasdair Kergon <agk@redhat.com>, 
-	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, 
-	Benjamin Marzinski <bmarzins@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	fsverity@lists.linux.dev, linux-doc@vger.kernel.org, 
-	"Christian Brauner (Amutable)" <brauner@kernel.org>
-Subject: Re: [PATCH 1/3] keys: add KEY_SPEC_DM_VERITY_KEYRING
-Message-ID: <aq2VxlttdlTNlHo6@toolbx>
-References: <aqyiCavj3xeNqyAo@kernel.org>
- <20260914-ajhalaney-dmverity-key-identifier-v1-0-01922dc1366a@amutable.com>
- <20260914-ajhalaney-dmverity-key-identifier-v1-1-01922dc1366a@amutable.com>
- <715249.1789718726@warthog.procyon.org.uk>
+        Fri, 18 Sep 2026 14:12:02 -0700 (PDT)
+Date: Fri, 18 Sep 2026 16:11:59 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Enrico Bravi <enrico.bravi@polito.it>
+Cc: "zohar@linux.ibm.com" <zohar@linux.ibm.com>, 
+	"roberto.sassu@huawei.com" <roberto.sassu@huawei.com>, "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>, 
+	"paul@paul-moore.com" <paul@paul-moore.com>, "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>, 
+	"serge@hallyn.com" <serge@hallyn.com>, "jmorris@namei.org" <jmorris@namei.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kernel-team@cloudflare.com" <kernel-team@cloudflare.com>
+Subject: Re: [PATCH v3 1/2] integrity: Report error code in
+ integrity_audit_msg() call sites
+Message-ID: <zu2rdshqwc6t72q22nayydud222ecic4ca5inzvte5lqtbnkfu@mcq7ta422era>
+References: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
+ <20260916-report-hash-error-v3-1-73e5d95e9efe@cloudflare.com>
+ <132d83cb5dcfb6fa7024480626a829b4e03309f9.camel@polito.it>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <715249.1789718726@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <132d83cb5dcfb6fa7024480626a829b4e03309f9.camel@polito.it>
 
-On Fri, Sep 18, 2026 at 09:05:26AM +0100, David Howells wrote:
-> Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> 
-> > This is great for discussion but what we want for the commit message
-> > is just motivation and resolution.
-> 
-> Actually, I think it's useful that Andrew wrote up the issues in the commit
-> message - and I think it shows part of the motivation.  The 'writing a fake
-> /proc/keys line in the description' is something I hadn't considered.
+Hi Enrico,
 
-I'll defer to what you all want in the message here, I found it valuable
-but I trend on the side of overly verbose admittedly!
+On Thu, Sep 17, 2026 at 10:58:22PM +0000, Enrico  Bravi wrote:
+> Hi Frederick,
+> 
+> On Wed, 2026-09-16 at 16:36 -0500, Frederick Lawler wrote:
+> > integrity_audit_msg() hides error codes by wrapping
+> > integrity_audit_message() which obfuscates the underlying reason for the
+> > failure.
+> > 
+> > Update integrity_audit_msg() call sites
+> 
+> here it could be mentioned that also integrity_audit_msg() itself is
+> updated.
 
+Good point. I can see that I may have not been clear about that.
+  
+> > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+> > index
+> > 2a0bca5543161912abe2a0236c9fcae7055e62bc..6d2ef44b21f8d40b4981a6a441cf7c3d69f9
+> > 4dee 100644
+> > --- a/security/integrity/ima/ima_fs.c
+> > +++ b/security/integrity/ima/ima_fs.c
+> > @@ -595,7 +595,7 @@ static ssize_t ima_write_policy(struct file *file, const
+> > char __user *buf,
+> >   pr_err("signed policy file (specified as an absolute pathname) required\n");
+> >   integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+> >       "policy_update", "signed policy required",
+> > -     1, 0);
+> > +     1, 0, -EINVAL);
 > 
-> > I don't think we need all this just to say that /proc/keys in a racy
-> > query mechanism for production, which is an issue for dm-verity, given
-> > that nothing else is available.
-> 
-> I think at some point, we will need a system call to search all for all
-> accessible keys matching certain criteria by actually walking the key
-> database.  The problem there is that there may be multiple hits, so we may
-> need something like:
-> 
-> 	int count = find_key(key_serial_t start_id,
-> 			     const char *type, const char *desc_prefix,
-> 			     key_serial_t *results, size_t results_size,
-> 			     unsigned int flags);
-> 
-> Allowing you to do:
-> 
-> 	key_serial_t dm_key;
-> 	int n = find_key(0, "keyring", ".dm_verity", &dm_key, 1,
-> 			 FIND_KEY_EXACT_DESC);
-> 
-> This wouldn't be as fast as a direct lookup since it would have to walk the
-> key tree, doing name comparisons and perm checks on each key of the type.
-> 
-> > And secondly special keys are meant for implicit keyrings so isn't
-> > that all there's to it?
-> 
-> I have no particular objection to setting aside a block of negative key IDs
-> for special keyrings that need to be accessed a lot - though I would make
-> common reg/unreg functions that take the ID to be registered and, say, set the
-> block at -257..-512.  Moving the BFP keyring to -257 and DM to -258.
+> Here it could be put -EACCES as errno, being the value returned for this case.
 
-To be clear are you suggesting I do that for v2 here? Happy to make the
-change and add some reuse to the registration functions, etc. I'm
-guessing its fine to change the bpf id since its still only in -next?
+Sashiko said the same. I kept going back and forth on this one because
+of what the message actually says. EACCES is the result, but the string
+itself + pr_error() implies that it's an input error. Similar to
+ima_release_policy() below, I should probably keep this zero, and
+follow up.
 
-The only awkward bit with making that more generic is that dm-verity
-isn't __ro_after_init since its coming from a module possibly, and
-because of the module usage I also protected it with a spinlock in case
-someone's accessing it while you unload the module. Could just use one
-spinlock for the whole generic array, and drop the __ro_after_init I
-suppose.
+> >   result = -EACCES;
+> >   } else {
+> >   ima_measure_raw_policy(data, datalen);
+> > @@ -745,7 +745,7 @@ static int ima_release_policy(struct inode *inode, struct
+> > file *file)
+> >  
+> >   pr_info("policy update %s\n", cause);
+> >   integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+> > -     "policy_update", cause, !valid_policy, 0);
+> > +     "policy_update", cause, !valid_policy, 0, 0);
+> 
+> Here maybe it could be put a conditional errno, based on the validity of the
+> policy, instead of hardcoding a zero.
 
-Let me know if I'm not following properly!
+I can see that making sense to throw a -EINVAL on it. The function
+is designed to always succeed, but it might be worth pulling out the
+error code from ima_check_policy() for this case.
 
-Thanks,
-Andrew
+Best,
+Fred
