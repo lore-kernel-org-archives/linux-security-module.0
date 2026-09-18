@@ -1,69 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C19495045;
-	Fri, 18 Sep 2026 19:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7D0498915;
+	Fri, 18 Sep 2026 19:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789758157; cv=none; b=lXKM+E9SnVQK6mGVQQYfvW37yCaFErPt1/A9UqADqvrJr2o74dbjzCH2Qj32l8Ouj+FCX3GZ2PWLJfDpxPyIC8ZVlHxD9OSX8vfmoEP6MJNNmT5ms8jViMpDb8Y8KA4fJa0umrB0z9ITnUhYUDjMx0UKbL1HdwdZwk8GiDNRUgo=
+	t=1789760754; cv=none; b=tF+b4WJzttdHjrxu9+oRcUzuv9B0IHn6eToRY6ZTlSYts0CJm88qw1moeUuaMbeiSwib9bXOgxI1gepzaXhXAsQeVRfmrSkoZyn2tCdJuwg+sqSUhizykbxuPpA+ddrYvU09gWo3itkhtm1VchSiVHRbfgqyMqi3LciGXFmxeto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789758157; c=relaxed/simple;
-	bh=QPhs5TmGzKtHWwiUSgtnIxINZyre2JVeb8UFF72povo=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=iVLJqir4tO8u2GnMhvEnZS/Cnby260vqEVfmNZbMstA1r0bkeayvZgk34fgWkvqjNEHiOM7UWxnseJ2u2TLAHwSQo7nRXRRVZaclL4tnmKzpkHp+rgNK4ZWOjzLOx0Ut2ak8M5QoUnt6Wu2TmAZgT07OH6QjxP730K+wHxzfTf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bo3gPwjz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789760754; c=relaxed/simple;
+	bh=lJGnWAY5jJsT2hCJBGWpALsy7J3/tbAT0eNUqjOW/jE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=l26n8mIvHeQKw6VPE3Vs138WUq4EZtP1IRJJlHiblqf0nXHRcyHS9nYpBMApZLpRGyWJ7qUj7HpUJRzOCv+Aoa/Oky2/XO2T8Knuj+p0agPZhBryhxBMaxqqmAYpemD/1PIXoiEgv5oMO4vIBEeFGVYtmDtp0XFCHiHH/qnkqSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PI1OY0Ms; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo3gPwjz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 727D91F0089D;
-	Fri, 18 Sep 2026 19:02:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PI1OY0Ms"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB61F1F00899;
+	Fri, 18 Sep 2026 19:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789758152;
-	bh=QPhs5TmGzKtHWwiUSgtnIxINZyre2JVeb8UFF72povo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=bo3gPwjzi81dn2ywlEhsVkXOlGYJLe4YL/1U2JE76Qxc92CBmUhMxA9NI1+6FwTCf
-	 TsPWuVLsaSJcwBz4IGNRnzwAffp1LX76BcTieanreexv94DG99u116rj5j4AzmKLtM
-	 3I0N3EhnYN1Tvb12ZgpxEtIfR8fmaI0Royto9Duhamp6dHrZCjworqiCpwDpYCrqY5
-	 s+Okpma8Dw100TooQybRuFiKRHmq88R2UqcnUW2GFMpieDrbVMHAv5++k9EeFSFBBY
-	 PDzxao/xDFDKcnVovf+h2n6AOsDrlaHwcp042I4SHukaxlWWieIo7mnH3YNsChIMj7
-	 K2Is3J5UTrEHA==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 9/9] landlock: Fix tracepoint contract documentation
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20260918185036.608651-10-mic@digikod.net>
-References: <20260918185036.608651-1-mic@digikod.net>
- <20260918185036.608651-10-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 18 Sep 2026 19:02:32 +0000
-Message-Id: <20260918190232.727D91F0089D@smtp.kernel.org>
+	s=k20260515; t=1789760750;
+	bh=eeIhXIUuXsObJh6Pqk8zY8SHLOxVY4tbbQP/IzP42ho=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PI1OY0Ms3CDl3JKFnt4JjbFhZNu6Ev1DspE78DVx9Hp1xtL6HoYcljzqliVtt1Gta
+	 BSFghvgfA5u3msnlR/mbDrD0kbbpQqsYeXkjGKsy8GjIDT/4SSNHnC2nNCWjChYgsR
+	 MwOkG2mFAyzcSDM9Wlm1guMua7YUTscugiJ92rhwPLuGJAnfFAM3cEbmvWQhYJ9/iA
+	 g1ylj/ViwtlQW4mGSHD4ibjuzId8hLcNYf2mpMsWmY6/d3WM750TfW5IjXUD56diXW
+	 HDYRaSmF83nJdQl+dPvPqH9aAPyKkLZcUqZkTXrY61YWIzloxCdCkqGv2g/7af4+aL
+	 oH7zAI/fW5nAw==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: Sasha Levin <sashal@kernel.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5.15.y 2/2] selftests/landlock: Add tests for whiteout object creation
+Date: Fri, 18 Sep 2026 15:45:30 -0400
+Message-ID: <2026-09-18-daily-reply-0003-re-landlock-whiteout-5-15@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <88432dfe86f2aaa9ae499587fd7acff9d34a338b.1789655723.git.mic@digikod.net>
+References: <88432dfe86f2aaa9ae499587fd7acff9d34a338b.1789655723.git.mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> The tracepoint documentation claims that denial and lifecycle events
-> expose every input needed to reproduce a verdict. Instead document how
-> denial, ruleset, and domain events identify the denying policy, checked
-> operation and object, and reason for denial. Direct consumers to generic
-> tracepoints for additional operational context.
->=20
-> State the reconstruction limits: IDs are boot-local, rule checks have no
-> request ID, and exported records may be lost or cross-CPU reordered.
->=20
-> Also replace the incorrect BPF_RAW_TRACEPOINT guidance with libbpf
-> SEC("tp_btf/...") attachment and refer consumers to the event prototypes
-> for callback argument layouts.
->=20
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> [mic: Backport: add enforce_fs() and the missing s3 fixture paths, and
+> adapt tests to ABI 1 without REFER]
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Queued for 5.15, thanks.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260918185036.6086=
-51-1-mic@digikod.net?part=3D9
-
+-- 
+Thanks,
+Sasha
