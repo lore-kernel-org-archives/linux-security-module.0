@@ -1,267 +1,192 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35064492E3F;
-	Fri, 18 Sep 2026 06:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8D64A4842;
+	Fri, 18 Sep 2026 07:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789714129; cv=none; b=qrXLTN0F/IbSmfToBKT8HtYApsKoQWiSgGidfpRmO3ndcGyPpfJ+tcYhrgoeHHFONtKeffale4rqdbrGGjLBIR1zkie9vubzTtCyisEU998CJs/L2L18CMSct1MYgPKd/lXrPp8hubC8IlHf49S28XQxNXEAlANo3RamBWP5nvc=
+	t=1789716495; cv=none; b=hVozF4ViVrtM1E9zHhzizvI1Y6s7ulswD7Kw/vUiOOs7x0h+ssX68snCrfLhPll26Zhs1PUJOnuy93RmyEBm98hBpjMI7EKrgDd6GMhPrRF7Wn9oZsIHLwC1RBEk9R9u0/MgKQuEYLWCHQ0P9bz7uL8MnBlb0pCJherjbqzvd5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789714129; c=relaxed/simple;
-	bh=qYEFzIm+N0CfUhVGL28bB4CRxWsTwzRqweegiM+XOQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d1Iw+dNN5HeC9XzNGQ5L1t7vMT1bwWvcgFNRlhJ7e0usU824FEKbl/NG6Alv7OJ4RmmhGuq2jfltWhfhXPySnlkN37Y0fB8uYl8bFn3CHFIY4gknQT4g9sB78BXSlZW5LN6iLdtamHcTF3jyCDEUzkqdnL/kPnjGiHy4U+pWhi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ln5wKdTA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1789716495; c=relaxed/simple;
+	bh=z9d99/rxOW1nQfP5fM1K+vdvqvuf3TqZ0MmNsHP0Lps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9Q8n9tjEp2wc/fi/Y7qCVdtIL88DKGq4EySdeobAvRzyN17uk5xvYJ8Nq35dZN66iw1cd9ZMLRkBBDtulbzzG7cVMzygCCTzSGX75F4NzzS2awYFCZh79qEFttpvUfbFvbgBybONQYIb9cUwZlnyZiSTMjnG0a5VSnQHWAtOA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RoaD5iIE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ln5wKdTA"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68I61c2C2781323;
-	Fri, 18 Sep 2026 06:48:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=JlJbws
-	tGkzlMLSOxQwpy8CnDx+tVF5dvH6CEitAre5g=; b=ln5wKdTAS5s/Nk5VqtAXJ6
-	9mW9QnoXPOS6YmMhYIdHSIttd5opYZmLf9MmxTeNA+2CwgtkwU+9K7y9N7niO85e
-	1aqiv1cDbabqK6yh7pOrfeY/rVaX6Htoep6dXPw9w+C9elPUvXwNxtu0cR7Cmn9j
-	GHgO5dbhRfcuxDYSzX8n+4rWBxRkkwR6yOvZXEJQya+vJ6Ql88kaGw1i25RHNPi0
-	Wud0tv1Cu/HlipDlvilKJF/6Mo4BrdpMIN3dDk+Zk1uvhGxA57a7NWoIoCzBrBH+
-	3f6eXqOC72oYAhTMOJ2+qSG7wdibTWRSESA6nbcykiJd66F7xOdTEPQLHoyYjWPQ
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gmxdqpn4d-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 18 Sep 2026 06:48:31 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68I6552b196230;
-	Fri, 18 Sep 2026 06:48:30 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gr5fjp5c0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Sep 2026 06:48:30 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68I6mTAe14680646
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Sep 2026 06:48:29 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A579E58065;
-	Fri, 18 Sep 2026 06:48:29 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 831DD58052;
-	Fri, 18 Sep 2026 06:48:26 +0000 (GMT)
-Received: from [9.123.14.23] (unknown [9.123.14.23])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 18 Sep 2026 06:48:26 +0000 (GMT)
-Message-ID: <e05d8ca7-ac48-47ef-bc47-bef5b22cb723@linux.ibm.com>
-Date: Fri, 18 Sep 2026 12:18:25 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RoaD5iIE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DEB1F000FF;
+	Fri, 18 Sep 2026 07:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789716482;
+	bh=mtFqLx8WMWdyHMx6wmboMfxQCGzliJI+dmsZqGbwLQw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RoaD5iIEoCPQrHXU+U8wVKNg9pVdgksf27ihSN/Nt1uEp5387yrjNavwuZG0bw2uE
+	 07OkGmtl3iNUi99eiMveVonJHcjfhPZHVba68XHil6+FVCLohoHi3YJQAUvKGeKSV3
+	 6jjvfg7PYdJfdHaKGeDvINW3RDruYRnbpUR/C8vaWrVDFyBhu3JOrxkDcFar6Xq2eL
+	 z9AppVILc+MWfJCUdUoj6M79FKSHvX6lo7C3p+QeO4cNCFij1LL+zmvkPaOHLdij/c
+	 xUvhuq0VvKaF3PGb4xJGAFTxkMgv2MKj93kawcXpt7e1UOCHm/ocTzlfXNuxpSwSWx
+	 WNvIJKU4+uRGw==
+Date: Fri, 18 Sep 2026 09:27:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: selinux@vger.kernel.org, paul@paul-moore.com, omosnacek@gmail.com, 
+	linux-security-module@vger.kernel.org, mic@digikod.net, serge@hallyn.com, jack@suse.cz, 
+	jmorris@namei.org
+Subject: Re: [PATCH] lsm: initialize the security blob for the initial
+ namespaces
+Message-ID: <20260918-kernbereich-altkleider-gespuckt-3b9488e49810@brauner>
+References: <20260916194824.37332-1-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] keys/trusted/tpm2: Validate TPM2_Create object sizes
- separately
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
-        stefanb@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
-        rnsastry@linux.ibm.com
-References: <20260910100222.247529-1-ssrish@linux.ibm.com>
- <aqydqxpVmp67kTQO@kernel.org>
-Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <aqydqxpVmp67kTQO@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE4MDA4NyBTYWx0ZWRfX5k5yd4li2M9t
- JsI+7majam6CmqxsdGiN3Mrbigzxi8aH3KV/1rxMLMHczy2YqBmukK/Bk7qUhlMfPeh7xECcjfL
- iF7i+ci9S36LSSG4Z0hBssEf3STxec/PwFTvcFWB/0gzkofy56W4K3PWuxaDP+nXfIf0u+3Ifqf
- 25CCpnR9J4c/JFaHbO5xhDusNouakAMjXHfL79BKaBOCoeWC0mn1QA9fHfqMorJTl9Ks6MghLdA
- B+0VJglJ6iQI3WDSGoM0z4N8dFSpgPtmKDL/tfu6N3B0GlAR/jSMX34vKz0Kv8I6tncxep+BGqt
- GLCTtKgR/6QBuGGF+iT8mU19HNGV8gl/CVH7tAXm/7DlarMdEiVrK4boV6oi6kiMk/CxFHLoGOH
- F4lzwgcF/FFcAnU30j+cgYfY5vqmgzu918H0mdBjFBDDa2P44z0obu258IAekV1n2zKTC0qNVp4
- HrissPhr9s/eUWaQcTw==
-X-Proofpoint-GUID: M3B6wiPu_x1nxjmVpbQahD3mqB6-0nxd
-X-Authority-Analysis: v=2.4 cv=DobDa2/+ c=1 sm=1 tr=0 ts=6aacdebf cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VnNF1IyMAAAA:8
- a=6fPxEW-5Y_PwP9TQzHIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: M3B6wiPu_x1nxjmVpbQahD3mqB6-0nxd
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE4MDA4NyBTYWx0ZWRfXzJcxTnCKncGt
- ku5UXDI3rC2R1HRmjgp9K/2AowyZkBTsgAZSjMy3o875udla0FMFtwhMowNpJcML7D7asIIIHSk
- 3jpihV0kNiO6f/p7b9Jjh8WVwNyYV2g=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-18_02,2026-09-16_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 malwarescore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- spamscore=0 clxscore=1015 adultscore=0 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609180087
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260916194824.37332-1-stephen.smalley.work@gmail.com>
 
+On Wed, Sep 16, 2026 at 03:48:24PM -0400, Stephen Smalley wrote:
+> Commit f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> added a security blob to struct ns_common and allocates it from
+> __ns_common_init(). Most initial namespaces (init_user_ns,
+> init_uts_ns, init_pid_ns, init_mnt_ns, and, depending on
+> configuration, init_ipc_ns, init_cgroup_ns and init_time_ns) are
+> however set up statically via NS_COMMON_INIT() and never pass through
+> __ns_common_init(), so their ns_security pointer is left NULL for the
+> lifetime of the system. Any LSM that registers an lbs_ns blob and
+> dereferences its slice on one of those namespaces (for example from
+> the namespace_install hook when a task setns()'s back into an initial
+> namespace) will fault.
+> 
+> Allocate the blob and run the namespace_init hook for each of these
+> namespaces at the end of security_init(), after all ordered LSMs have
+> registered their hooks, so every LSM sees the initial namespaces the
+> same way it sees init_net (which is initialized at runtime via
+> ns_common_init(&init_net) from net_ns_init() immediately after
+> security_init()) and does not need to special-case them in its own
+> ->init() callback.
+> 
+> Provide an init_ns_common_for_each() iterator in kernel/nscommon.c so
+> the list of statically-defined initial namespaces and their Kconfig
+> guards live next to the rest of the ns_common infrastructure. init_net
+> is intentionally excluded: pre-initializing it here would leak once
+> __ns_common_init() clears ns_security and re-allocates.
+> 
+> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+>  include/linux/ns_common.h |  1 +
+>  kernel/nscommon.c         | 45 +++++++++++++++++++++++++++++++++++++++
+>  security/lsm_init.c       | 11 ++++++++++
+>  3 files changed, 57 insertions(+)
+> 
+> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+> index c8e227a3f9e2..742627000453 100644
+> --- a/include/linux/ns_common.h
+> +++ b/include/linux/ns_common.h
+> @@ -11,6 +11,7 @@
+>  bool is_current_namespace(struct ns_common *ns);
+>  int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops, int inum);
+>  void __ns_common_free(struct ns_common *ns);
+> +int init_ns_common_for_each(int (*fn)(struct ns_common *ns));
+>  struct ns_common *__must_check ns_owner(struct ns_common *ns);
+>  
+>  static __always_inline bool is_ns_init_inum(const struct ns_common *ns)
+> diff --git a/kernel/nscommon.c b/kernel/nscommon.c
+> index e72426bba29a..4f3cba5518d7 100644
+> --- a/kernel/nscommon.c
+> +++ b/kernel/nscommon.c
+> @@ -1,11 +1,17 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /* Copyright (c) 2025 Christian Brauner <brauner@kernel.org> */
+>  
+> +#include <linux/cgroup.h>
+> +#include <linux/ipc_namespace.h>
+> +#include <linux/mnt_namespace.h>
+>  #include <linux/ns_common.h>
+>  #include <linux/nstree.h>
+> +#include <linux/pid_namespace.h>
+>  #include <linux/proc_ns.h>
+>  #include <linux/security.h>
+> +#include <linux/time_namespace.h>
+>  #include <linux/user_namespace.h>
+> +#include <linux/uts_namespace.h>
+>  #include <linux/vfsdebug.h>
+>  
+>  #ifdef CONFIG_DEBUG_VFS
+> @@ -101,6 +107,45 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
+>  	return 0;
+>  }
+>  
+> +/**
+> + * init_ns_common_for_each - iterate the statically-defined initial namespaces
+> + * @fn: callback invoked with each initial ns_common
+> + *
+> + * Walk the initial namespaces that are set up via NS_COMMON_INIT() at compile
+> + * time and therefore never pass through __ns_common_init(). The initial
+> + * network namespace is intentionally excluded: it is initialized at runtime
+> + * via ns_common_init(&init_net) from net_ns_init().
+> + *
+> + * Return: the first non-zero return from @fn, or 0.
+> + */
+> +int __init init_ns_common_for_each(int (*fn)(struct ns_common *ns))
+> +{
+> +	struct ns_common *set[] = {
+> +		to_ns_common(&init_user_ns),
+> +		to_ns_common(&init_uts_ns),
+> +		to_ns_common(&init_pid_ns),
+> +		from_mnt_ns(&init_mnt_ns),
+> +#if defined(CONFIG_POSIX_MQUEUE) || defined(CONFIG_SYSVIPC)
+> +		to_ns_common(&init_ipc_ns),
+> +#endif
+> +#ifdef CONFIG_CGROUPS
+> +		to_ns_common(&init_cgroup_ns),
+> +#endif
+> +#ifdef CONFIG_TIME_NS
+> +		to_ns_common(&init_time_ns),
+> +#endif
+> +	};
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(set); i++) {
+> +		ret = fn(set[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	return 0;
+> +}
+> +
+>  void __ns_common_free(struct ns_common *ns)
+>  {
+>  	security_namespace_free(ns);
+> diff --git a/security/lsm_init.c b/security/lsm_init.c
+> index dbda7771013b..60e15215f6bd 100644
+> --- a/security/lsm_init.c
+> +++ b/security/lsm_init.c
+> @@ -7,6 +7,7 @@
+>  
+>  #include <linux/init.h>
+>  #include <linux/lsm_hooks.h>
+> +#include <linux/ns_common.h>
+>  
+>  #include "lsm.h"
+>  
+> @@ -490,6 +491,16 @@ int __init security_init(void)
+>  		lsm_init_single(*lsm);
+>  	}
+>  
+> +	/*
+> +	 * The initial namespaces are set up statically via NS_COMMON_INIT()
+> +	 * and never pass through __ns_common_init(), so allocate their
+> +	 * security blobs and run the namespace_init hooks now that all LSMs
+> +	 * are registered. init_net is not covered here; it is initialized
+> +	 * at runtime from net_ns_init() shortly after security_init().
+> +	 */
+> +	if (init_ns_common_for_each(security_namespace_init))
+> +		panic("initial LSM ns alloc failed\n");
 
-On 9/18/26 7:40 AM, Jarkko Sakkinen wrote:
-> On Thu, Sep 10, 2026 at 03:32:22PM +0530, Srish Srinivasan wrote:
->> TPM2_Create returns outPrivate, outPublic, creationData, creationHash and
->> creationTicket in its response parameter area. However, only outPrivate and
->> outPublic are included in the trusted key blob. The size of the blob is
->> therefore not determined by the size of the complete response parameter
->> area.
->>
->> tpm2_seal_trusted() currently compares the size of the complete response
->> parameter area against MAX_BLOB_SIZE. This can reject a valid response
->> when the remaining response outputs cause the entire response parameter
->> area to exceed MAX_BLOB_SIZE, even though the outPrivate and outPublic
->> TPM2B structures consumed by tpm2_key_encode() remain small enough to be
->> encoded in the key blob.
->>
->> This is observed when creating larger trusted keys using an swtpm TPM 2.0
->> emulator backed by libtpms.
->>
->> For example, requesting a 113-byte key succeeds, 114 fails.
->>
->> ~$ keyctl add trusted trusted_key1 "new 113 keyhandle=0x81000001" @u
->> 520504613
->> ~$ keyctl add trusted trusted_key2 "new 114 keyhandle=0x81000001" @u
->> add_key: Argument list too long
->> ~$
->>
->> Remove the MAX_BLOB_SIZE check on the complete response parameter area.
->> Instead, use the response length passed to tpm2_key_encode() to validate
->> that the outPrivate and outPublic TPM2B structures are fully contained
->> in the response before accessing them.
->>
->> Previously, a response parameter area larger than MAX_BLOB_SIZE was
->> rejected with -E2BIG before ASN.1 encoding. With this change, if the
->> resulting encoded blob does not fit in payload->blob, the error returned by
->> asn1_encode_sequence() is propagated instead.
->>
->> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
->> ---
->> Changelog:
->>
->>   v2:
->>    - Exclude a comment pointed out by Jarkko
->>
->>   security/keys/trusted-keys/trusted_tpm2.c | 35 +++++++++++++++++------
->>   1 file changed, 27 insertions(+), 8 deletions(-)
->>
->> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
->> index 01f18bb37047..cbec4f591952 100644
->> --- a/security/keys/trusted-keys/trusted_tpm2.c
->> +++ b/security/keys/trusted-keys/trusted_tpm2.c
->> @@ -24,24 +24,42 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
->>   			   u8 *src, u32 len)
->>   {
->>   	const int SCRATCH_SIZE = PAGE_SIZE;
->> -	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
->> -	u8 *work = scratch, *work1;
->> -	u8 *end_work = scratch + SCRATCH_SIZE;
->> +	u8 *scratch;
->> +	u8 *work, *work1;
->> +	u8 *end_work;
->>   	u8 *priv, *pub;
->> -	u16 priv_len, pub_len;
->> +	u32 priv_len, pub_len;
->>   	int ret;
->>   
->> -	priv_len = get_unaligned_be16(src) + 2;
->> +	if (len < sizeof(__be16))
->> +		return -EFAULT;
->> +
->> +	priv_len = get_unaligned_be16(src);
->> +	if (priv_len > len - sizeof(__be16))
->> +		return -EFAULT;
->> +
->> +	priv_len += sizeof(__be16);
->>   	priv = src;
->>   
->> +	if (len - priv_len < sizeof(__be16))
->> +		return -EFAULT;
-> This caused for me some head scrathing tbh.
->
-> See:
->
-> 1. len >= 2
-> 2. priv_len <= len - 2
-> 3. 2 - priv_len + priv_len <= 2 - priv_len + len - 2
-> 4. 2 <= len - priv_len
->
-> Is this check required?
-
-
-Hi Jarkko,
-Thanks for taking a look.
-
-The preceding check,
-
-
-     if (priv_len > len - sizeof(__be16))
-         return -EFAULT;
-
-
-ensures that the complete TPM2B_PRIVATE, including its size field,
-fits within len. After this check, priv_len is incremented by 2 and
-therefore represents the complete TPM2B_PRIVATE length.
-
-
-The check you pointed out,
-
-
-     if (len - priv_len < sizeof(__be16))
-         return -EFAULT;
-
-
-then ensures that at least 2 bytes remain for reading the following
-TPM2B_PUBLIC size field.
-
-
->
->> +
->>   	src += priv_len;
->>   
->> -	pub_len = get_unaligned_be16(src) + 2;
->> +	pub_len = get_unaligned_be16(src);
->> +	if (pub_len > len - priv_len - sizeof(__be16))
->> +		return -EFAULT;
->> +
->> +	pub_len += sizeof(__be16);
->>   	pub = src;
->>   
->> +	scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
->>   	if (!scratch)
->>   		return -ENOMEM;
->>   
->> +	work = scratch;
->> +	end_work = scratch + SCRATCH_SIZE;
->> +
->>   	work = asn1_encode_oid(work, end_work, tpm2key_oid,
->>   			       asn1_oid_len(tpm2key_oid));
->>   
->> @@ -336,10 +354,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
->>   		goto out;
->>   
->>   	blob_len = tpm_buf_read_u32(buf, &offset);
->> -	if (blob_len > MAX_BLOB_SIZE || buf->flags & TPM_BUF_INVALID) {
->> -		rc = -E2BIG;
->> +	if (buf->flags & TPM_BUF_INVALID) {
->> +		rc = -EFAULT;
->>   		goto out;
->>   	}
->> +
->>   	if (buf->length - offset < blob_len) {
->>   		rc = -EFAULT;
->>   		goto out;
->> -- 
->> 2.53.0
->>
-> BR, Jarkko
-
-Thanks,
-Srish.
+Wouldn't it be nicer to turn this around and call
+security_namespace_init from the ns common code and avoid the callback?
+Especially since there's only one.
