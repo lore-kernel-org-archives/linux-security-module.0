@@ -1,33 +1,33 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CD8521881
-	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 18:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A9551D50F
+	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 18:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789757470; cv=none; b=VSvJbVYX8muIh6agxxPyazL/loVNk7Mch5GFu9lIbYcB2Ph4nefGJjDdWdKMlETPF6/tF8b0O3XAI0SOoo95wGCDc35eQoO16dl3UttUwBkkgChNYvEwP5IjTIX7xrrmR9Ax2y/qLJyKpeEbX8RfhNf/YwhBHc0AvJnTu4QnPN0=
+	t=1789757471; cv=none; b=oilksGLkQ4h7rOwXjSYCgtJmHxJ5YZCBltnOza5CsnxCzXVlMGB87Z0QsGNGgEc0JXtFTk7H8Y/q65855vaAkHv+PqtcaGJIUoOAHex41PV6rmb2M70YHileG9L+QmcwyuHq4putkFPpSk47AQGkhSMpTiqkCg9betMwNa5Si6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789757470; c=relaxed/simple;
-	bh=tFKbLggTlvbL5B7qGQezA7fpbfW9xyMXk+u8E73wpcg=;
+	s=arc-20240116; t=1789757471; c=relaxed/simple;
+	bh=ytXpe2dIYFCAomZKMM8kbpEsl0GbuQJkjfSkGXW6eq0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PrsoJWAthPTCYhz/n/+LRAFCsNHiDnoC+LW4tE9uBCvNwnyafWViqmFOymhL8oF93CrPetvkvHSwWY6Px63X4B7QZTYFHoGVmYMu4NaCic/0PtLhJEvsZJmV6KbpJPOamDJP/qIjKJ0NQd39p1nS5BbDlMQZL183avPxSBJEM58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JqNdejdK; arc=none smtp.client-ip=45.157.188.13
+	 MIME-Version:Content-Type; b=kYc1gGA9sVGh3EH2/S12d98DkT6Jpa6wExtq+TA0ajgEIle/3u2R97qev4VP4Rbz1+pLJgqgeL8ZgLSidz2ZsKBrHP8xcIswiYpeTXFbp3w6j4zlDXvhDJelnSwUJ50Zsr9IR+yHc8s6A7Cz0B/a76J5SS4mh3021gqwXRkNn6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Jnh9MphC; arc=none smtp.client-ip=83.166.143.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JqNdejdK"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Jnh9MphC"
 Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hmhXX1D5bzpY4;
-	Fri, 18 Sep 2026 20:50:52 +0200 (CEST)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hmhXP3VWvznp3;
+	Fri, 18 Sep 2026 20:50:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1789757451;
-	bh=Bl5Dg13ojEeAEGJaAzBrUo4ASsoLYLJB4EWykQ3NTzo=;
+	s=20191114; t=1789757445;
+	bh=+bTLH1lKbEeVBcx0NXffsHETLf3zKiegb74JzSOXv38=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JqNdejdK2jzDsVysKPMFevycOQocQYJPVeBGYAhvbSuytMst9Z5I3mZ0/NPedhRNl
-	 efczwSKWhpy5sBCGrjdVlgkcfFfpRiqLMKGznOnsBOPoU/KjfXMRJ0Avnb0eMDh1mE
-	 NDF3k1O5z9tLoLtgQJUg1k/mmOrS4ecfaSl4sMUg=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hmhXW2tsgz3tj;
-	Fri, 18 Sep 2026 20:50:51 +0200 (CEST)
+	b=Jnh9MphCkThNmm5H0vTev2tXD8WmJtLUL9nPEBzDKisqBJ6nCxw7IvjGymhpx/H59
+	 GHGPnsne0niooY+4yVLBM1lHuO1YHls2Iojp/1R9qoAEoC8wlQbEVvFRhFZkbpWCqA
+	 xX1Et7DadRjSJntMbUCrOK+ynIVTh4JwqyHUpzWc=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hmhXN56ZGz63s;
+	Fri, 18 Sep 2026 20:50:44 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
 Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -39,9 +39,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	kernel-team@cloudflare.com,
 	linux-security-module@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v1 6/9] landlock: Report the effective signal number
-Date: Fri, 18 Sep 2026 20:50:29 +0200
-Message-ID: <20260918185036.608651-7-mic@digikod.net>
+Subject: [PATCH v1 1/9] landlock: Fix tracepoint fixed-width type names
+Date: Fri, 18 Sep 2026 20:50:24 +0200
+Message-ID: <20260918185036.608651-2-mic@digikod.net>
 In-Reply-To: <20260918185036.608651-1-mic@digikod.net>
 References: <20260918185036.608651-1-mic@digikod.net>
 Precedence: bulk
@@ -54,309 +54,223 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-The signal-scope denial callback identifies its target but not the
-effective signal. This loses permission-probe signal zero and makes the
-file-owner hook's zero sentinel ambiguous.
+The new Landlock tracepoints use UAPI-prefixed __u32 and __u64 names for
+callback arguments and record fields, including internal IDs that are
+not Landlock UAPI values. Typed BPF consumers see callback typedef names
+through BTF.
 
-Append an int signal argument to the typed-BPF callback. Preserve sig,
-including zero, in hook_task_kill(). In hook_file_send_sigiotask(),
-translate signum zero to SIGIO at the producer, where its meaning is
-known.
-
-Carry the effective signal and target domain ID in a private,
-stack-backed context consumed synchronously. This requires no allocation
-or task reference in the interrupt-capable file-owner path. Gate this
-context and the remaining scope-only domain IDs with CONFIG_TRACEPOINTS.
-
-Keep the tracefs record and audit output unchanged.
+Use the kernel u32 and u64 aliases before release so the tracepoint
+contract does not present internal values as Landlock UAPI types. This
+changes BTF-visible typedef spelling but not integer widths, calling
+conventions, tracefs formats, or record layouts.
 
 Cc: Günther Noack <gnoack@google.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
-Fixes: bb91730f16c0 ("landlock: Add tracepoints for ptrace and scope denials")
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- include/trace/events/landlock.h |  8 +++--
- security/landlock/log.h         | 21 ++++++++----
- security/landlock/task.c        | 59 +++++++++++++++++++++++----------
- security/landlock/trace.c       | 12 +++++--
- 4 files changed, 71 insertions(+), 29 deletions(-)
+ include/trace/events/landlock.h | 68 ++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 34 deletions(-)
 
 diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
-index 8c6ebf958d66..5da0f12ed2c3 100644
+index d05253afaf59..4984f80923ed 100644
 --- a/include/trace/events/landlock.h
 +++ b/include/trace/events/landlock.h
-@@ -928,12 +928,14 @@ TRACE_EVENT(landlock_deny_ptrace,
+@@ -243,8 +243,8 @@ static inline const char *__trace_landlock_print_layers(
+  * Field encoding
+  * ~~~~~~~~~~~~~~
   *
-  * @hierarchy: Denying domain's hierarchy node (never NULL); its id is the
-  *             domain field.
-- * @same_exec: Whether the current task entered the denying domain itself.
-+ * @same_exec: Whether the policy subject entered the denying domain itself.
-  * @logged: The domain's audit-logging decision for this denial.
-  * @target_domain_id: The target's Landlock domain ID, or 0 if the target
-  *                    is unsandboxed.
-  * @target: The task the signal was aimed at (never NULL).  target_pid is
-  *          the init-namespace TGID (like audit's opid).
-+ * @signal: The signal selected by the denied check.  Zero is a permission
-+ *          probe, not an absent value.
+- * Fields that mirror the Landlock UAPI use the same C types and endianness
+- * (e.g. network ports are __u64 in host endianness, like
++ * Fields that mirror the Landlock UAPI preserve their widths and endianness
++ * (e.g. network ports are u64 in host endianness, like
+  * landlock_net_port_attr.port).  Per-event details, such as where a value
+  * is byte-swapped, live in the field's own kdoc.
   *
-  * Emitted when a Landlock domain denies signal delivery to a scoped-out
-  * target.
-@@ -942,9 +944,9 @@ TRACE_EVENT(landlock_deny_scope_signal,
- 
- 	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
- 		 bool logged, u64 target_domain_id,
--		 const struct task_struct *target),
-+		 const struct task_struct *target, int signal),
- 
--	TP_ARGS(hierarchy, same_exec, logged, target_domain_id, target),
-+	TP_ARGS(hierarchy, same_exec, logged, target_domain_id, target, signal),
+@@ -319,8 +319,8 @@ TRACE_EVENT(landlock_create_ruleset,
+ 	TP_ARGS(ruleset),
  
  	TP_STRUCT__entry(
- 		__field(	u64,		domain_id	)
-diff --git a/security/landlock/log.h b/security/landlock/log.h
-index 821df6f711c6..faa30e26e42a 100644
---- a/security/landlock/log.h
-+++ b/security/landlock/log.h
-@@ -45,6 +45,11 @@ struct landlock_ptrace_trace {
- 	const struct task_struct *tracer;
- };
+-		__field(	__u64,		ruleset_id	)
+-		__field(	__u32,		ruleset_version	)
++		__field(	u64,		ruleset_id	)
++		__field(	u32,		ruleset_version	)
+ 		__field(	access_mask_t,	handled_fs	)
+ 		__field(	access_mask_t,	handled_net	)
+ 		__field(	access_mask_t,	scoped		)
+@@ -359,8 +359,8 @@ TRACE_EVENT(landlock_free_ruleset,
+ 	TP_ARGS(ruleset),
  
-+struct landlock_signal_trace {
-+	u64 target_domain_id;
-+	int signal;
-+};
-+
- #endif /* CONFIG_TRACEPOINTS */
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		ruleset_id	)
+-		__field(	__u32,		ruleset_version	)
++		__field(	u64,		ruleset_id	)
++		__field(	u32,		ruleset_version	)
+ 	),
  
- /*
-@@ -74,22 +79,24 @@ struct landlock_request {
- 	deny_masks_t deny_masks;
- 	optional_access_t quiet_optional_accesses;
+ 	TP_fast_assign(
+@@ -396,8 +396,8 @@ TRACE_EVENT(landlock_add_rule_fs,
+ 	TP_ARGS(ruleset, access_rights, path, pathname),
  
-+#ifdef CONFIG_TRACEPOINTS
- 	union {
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		ruleset_id	)
+-		__field(	__u32,		ruleset_version	)
++		__field(	u64,		ruleset_id	)
++		__field(	u32,		ruleset_version	)
+ 		__field(	access_mask_t,	access_rights	)
+ 		__field(	dev_t,		dev		)
+ 		__field(	ino_t,		ino		)
+@@ -443,15 +443,15 @@ TRACE_EVENT(landlock_add_rule_fs,
+ TRACE_EVENT(landlock_add_rule_net,
+ 
+ 	TP_PROTO(const struct landlock_ruleset *ruleset,
+-		 access_mask_t access_rights, __u64 port),
++		 access_mask_t access_rights, u64 port),
+ 
+ 	TP_ARGS(ruleset, access_rights, port),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		ruleset_id	)
+-		__field(	__u32,		ruleset_version	)
++		__field(	u64,		ruleset_id	)
++		__field(	u32,		ruleset_version	)
+ 		__field(	access_mask_t,	access_rights	)
+-		__field(	__u64,		port		)
++		__field(	u64,		port		)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -495,10 +495,10 @@ TRACE_EVENT(landlock_create_domain,
+ 	TP_ARGS(domain, ruleset),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
+-		__field(	__u64,		parent_id	)
+-		__field(	__u64,		ruleset_id	)
+-		__field(	__u32,		ruleset_version	)
++		__field(	u64,		domain_id	)
++		__field(	u64,		parent_id	)
++		__field(	u64,		ruleset_id	)
++		__field(	u32,		ruleset_version	)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -557,7 +557,7 @@ TRACE_EVENT(landlock_enforce_domain,
+ 	TP_ARGS(domain, complete, process_wide, no_new_privs),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	bool,		complete	)
+ 		__field(	bool,		process_wide	)
+ 		__field(	bool,		no_new_privs	)
+@@ -595,8 +595,8 @@ TRACE_EVENT(landlock_free_domain,
+ 	TP_ARGS(hierarchy),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
+-		__field(	__u64,		denials		)
++		__field(	u64,		domain_id	)
++		__field(	u64,		denials		)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -631,7 +631,7 @@ TRACE_EVENT(landlock_check_rule_fs,
+ 	TP_ARGS(domain, rule, access_request, dentry),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	access_mask_t,	access_request	)
+ 		__field(	dev_t,		dev		)
+ 		__field(	ino_t,		ino		)
+@@ -675,14 +675,14 @@ TRACE_EVENT(landlock_check_rule_net,
+ 
+ 	TP_PROTO(const struct landlock_domain *domain,
+ 		 const struct landlock_rule *rule,
+-		 access_mask_t access_request, __u64 port),
++		 access_mask_t access_request, u64 port),
+ 
+ 	TP_ARGS(domain, rule, access_request, port),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	access_mask_t,	access_request	)
+-		__field(	__u64,		port		)
++		__field(	u64,		port		)
+ 		__dynamic_array(access_mask_t,	grants,
+ 				domain->num_layers)
+ 	),
+@@ -729,7 +729,7 @@ TRACE_EVENT(landlock_deny_access_fs,
+ 	TP_ARGS(hierarchy, same_exec, logged, blockers, path, pathname),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	bool,		same_exec	)
+ 		__field(	bool,		logged		)
+ 		__field(	access_mask_t,	blockers	)
+@@ -791,17 +791,17 @@ TRACE_EVENT(landlock_deny_access_net,
+ 
+ 	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
+ 		 bool logged, access_mask_t blockers, const struct sock *sk,
+-		 __u64 sport, __u64 dport),
++		 u64 sport, u64 dport),
+ 
+ 	TP_ARGS(hierarchy, same_exec, logged, blockers, sk, sport, dport),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	bool,		same_exec	)
+ 		__field(	bool,		logged		)
+ 		__field(	access_mask_t,	blockers	)
+-		__field(	__u64,		sport		)
+-		__field(	__u64,		dport		)
++		__field(	u64,		sport		)
++		__field(	u64,		dport		)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -842,10 +842,10 @@ TRACE_EVENT(landlock_deny_ptrace,
+ 	TP_ARGS(hierarchy, same_exec, logged, tracee_domain_id, tracee),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	bool,		same_exec	)
+ 		__field(	bool,		logged		)
+-		__field(	__u64,		tracee_domain_id)
++		__field(	u64,		tracee_domain_id)
+ 		__field(	pid_t,		tracee_pid	)
+ 		__string(	tracee_comm,	tracee->comm	)
+ 	),
+@@ -891,10 +891,10 @@ TRACE_EVENT(landlock_deny_scope_signal,
+ 	TP_ARGS(hierarchy, same_exec, logged, target_domain_id, target),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	bool,		same_exec	)
+ 		__field(	bool,		logged		)
+-		__field(	__u64,		target_domain_id)
++		__field(	u64,		target_domain_id)
+ 		__field(	pid_t,		target_pid	)
+ 		__string(	target_comm,	target->comm	)
+ 	),
+@@ -940,10 +940,10 @@ TRACE_EVENT(landlock_deny_scope_abstract_unix_socket,
+ 	TP_ARGS(hierarchy, same_exec, logged, peer_domain_id, peer),
+ 
+ 	TP_STRUCT__entry(
+-		__field(	__u64,		domain_id	)
++		__field(	u64,		domain_id	)
+ 		__field(	bool,		same_exec	)
+ 		__field(	bool,		logged		)
+-		__field(	__u64,		peer_domain_id	)
++		__field(	u64,		peer_domain_id	)
+ 		__field(	pid_t,		peer_pid	)
  		/*
--		 * Other-party domain ID for a scope denial, or 0 if that party
--		 * is unsandboxed.  Store an ID, not a pointer: the other task
--		 * can replace its credential and free the domain it referenced.
--		 * Audit ignores this trace-only field.
-+		 * Other-party domain ID for an abstract UNIX socket scope
-+		 * denial, or 0 if that party is unsandboxed.  Store an ID, not
-+		 * a pointer: the other task can replace its credential and free
-+		 * the domain it referenced.
- 		 */
- 		u64 other_domain_id;
- 
--#ifdef CONFIG_TRACEPOINTS
- 		/* Synchronous context for a network denial. */
- 		const struct landlock_net_trace *trace_net;
--		/* Consumed only by the synchronous trace dispatcher. */
-+		/* Synchronous context for a ptrace denial. */
- 		const struct landlock_ptrace_trace *trace_ptrace;
--#endif /* CONFIG_TRACEPOINTS */
-+		/* Synchronous context for a signal denial. */
-+		const struct landlock_signal_trace *trace_signal;
- 	};
-+#endif /* CONFIG_TRACEPOINTS */
- };
- 
- #ifdef CONFIG_SECURITY_LANDLOCK_LOG
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index 445f6b921a87..d9eae86fc552 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -256,8 +256,7 @@ static bool domain_is_scoped(const struct landlock_domain *const client,
- }
- 
- static bool sock_is_scoped(struct sock *const other,
--			   const struct landlock_domain *const domain,
--			   u64 *const peer_domain_id)
-+			   const struct landlock_domain *const domain)
- {
- 	const struct landlock_domain *dom_other;
- 
-@@ -275,13 +274,23 @@ static bool sock_is_scoped(struct sock *const other,
- 		return false;
- 
- 	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
--#ifdef CONFIG_SECURITY_LANDLOCK_LOG
--	*peer_domain_id = dom_other ? dom_other->hierarchy->id : 0;
--#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
- 	return domain_is_scoped(domain, dom_other,
- 				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
- }
- 
-+#ifdef CONFIG_TRACEPOINTS
-+
-+static u64 get_socket_domain_id(const struct sock *const other)
-+{
-+	const struct landlock_domain *domain;
-+
-+	lockdep_assert_held(&unix_sk(other)->lock);
-+	domain = landlock_cred(other->sk_socket->file->f_cred)->domain;
-+	return domain ? domain->hierarchy->id : 0;
-+}
-+
-+#endif /* CONFIG_TRACEPOINTS */
-+
- static bool is_abstract_socket(struct sock *const sock)
- {
- 	struct unix_address *addr = unix_sk(sock)->addr;
-@@ -305,7 +314,6 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 				    struct sock *const newsk)
- {
- 	size_t handle_layer;
--	u64 peer_domain_id = 0;
- 	const struct landlock_cred_security *const subject =
- 		landlock_get_applicable_subject(current_cred(), unix_scope,
- 						&handle_layer);
-@@ -317,7 +325,7 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 	if (!is_abstract_socket(other))
- 		return 0;
- 
--	if (!sock_is_scoped(other, subject->domain, &peer_domain_id))
-+	if (!sock_is_scoped(other, subject->domain))
- 		return 0;
- 
- 	landlock_log_denial(subject, &(struct landlock_request) {
-@@ -329,7 +337,9 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 			},
- 		},
- 		.layer_plus_one = handle_layer + 1,
--		.other_domain_id = peer_domain_id,
-+#ifdef CONFIG_TRACEPOINTS
-+		.other_domain_id = get_socket_domain_id(other),
-+#endif /* CONFIG_TRACEPOINTS */
- 	});
- 	return -EPERM;
- }
-@@ -338,7 +348,6 @@ static int hook_unix_may_send(struct socket *const sock,
- 			      struct socket *const other)
- {
- 	size_t handle_layer;
--	u64 peer_domain_id = 0;
- 	const struct landlock_cred_security *const subject =
- 		landlock_get_applicable_subject(current_cred(), unix_scope,
- 						&handle_layer);
-@@ -356,7 +365,7 @@ static int hook_unix_may_send(struct socket *const sock,
- 	if (!is_abstract_socket(other->sk))
- 		return 0;
- 
--	if (!sock_is_scoped(other->sk, subject->domain, &peer_domain_id))
-+	if (!sock_is_scoped(other->sk, subject->domain))
- 		return 0;
- 
- 	landlock_log_denial(subject, &(struct landlock_request) {
-@@ -368,7 +377,9 @@ static int hook_unix_may_send(struct socket *const sock,
- 			},
- 		},
- 		.layer_plus_one = handle_layer + 1,
--		.other_domain_id = peer_domain_id,
-+#ifdef CONFIG_TRACEPOINTS
-+		.other_domain_id = get_socket_domain_id(other->sk),
-+#endif /* CONFIG_TRACEPOINTS */
- 	});
- 	return -EPERM;
- }
-@@ -383,7 +394,9 @@ static int hook_task_kill(struct task_struct *const p,
- {
- 	bool is_scoped;
- 	size_t handle_layer;
-+#ifdef CONFIG_TRACEPOINTS
- 	u64 target_domain_id = 0;
-+#endif /* CONFIG_TRACEPOINTS */
- 	const struct landlock_cred_security *subject;
- 
- 	if (!cred) {
-@@ -415,10 +428,10 @@ static int hook_task_kill(struct task_struct *const p,
- 
- 		is_scoped = domain_is_scoped(subject->domain, other,
- 					     signal_scope.scope);
--#ifdef CONFIG_SECURITY_LANDLOCK_LOG
-+#ifdef CONFIG_TRACEPOINTS
- 		if (other)
- 			target_domain_id = other->hierarchy->id;
--#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
-+#endif /* CONFIG_TRACEPOINTS */
- 	}
- 
- 	if (!is_scoped)
-@@ -431,7 +444,12 @@ static int hook_task_kill(struct task_struct *const p,
- 			.u.tsk = p,
- 		},
- 		.layer_plus_one = handle_layer + 1,
--		.other_domain_id = target_domain_id,
-+#ifdef CONFIG_TRACEPOINTS
-+		.trace_signal = &(struct landlock_signal_trace) {
-+			.target_domain_id = target_domain_id,
-+			.signal = sig,
-+		},
-+#endif /* CONFIG_TRACEPOINTS */
- 	});
- 	return -EPERM;
- }
-@@ -441,7 +459,9 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- {
- 	const struct landlock_cred_security *subject;
- 	bool is_scoped = false;
-+#ifdef CONFIG_TRACEPOINTS
- 	u64 target_domain_id = 0;
-+#endif /* CONFIG_TRACEPOINTS */
- 
- 	/* Lock already held by send_sigio() and send_sigurg(). */
- 	lockdep_assert_held(&fown->lock);
-@@ -474,10 +494,10 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- 
- 		is_scoped = domain_is_scoped(subject->domain, other,
- 					     signal_scope.scope);
--#ifdef CONFIG_SECURITY_LANDLOCK_LOG
-+#ifdef CONFIG_TRACEPOINTS
- 		if (other)
- 			target_domain_id = other->hierarchy->id;
--#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
-+#endif /* CONFIG_TRACEPOINTS */
- 	}
- 
- 	if (!is_scoped)
-@@ -492,7 +512,12 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- #ifdef CONFIG_SECURITY_LANDLOCK_LOG
- 		.layer_plus_one = landlock_file(fown->file)->fown_layer + 1,
- #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
--		.other_domain_id = target_domain_id,
-+#ifdef CONFIG_TRACEPOINTS
-+		.trace_signal = &(struct landlock_signal_trace) {
-+			.target_domain_id = target_domain_id,
-+			.signal = signum ? signum : SIGIO,
-+		},
-+#endif /* CONFIG_TRACEPOINTS */
- 	});
- 	return -EPERM;
- }
-diff --git a/security/landlock/trace.c b/security/landlock/trace.c
-index 43091c052f77..225dbf37bab0 100644
---- a/security/landlock/trace.c
-+++ b/security/landlock/trace.c
-@@ -201,10 +201,18 @@ void landlock_trace_denial(
- 		}
- 		break;
- 	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
--		if (trace_landlock_deny_scope_signal_enabled())
-+		if (trace_landlock_deny_scope_signal_enabled()) {
-+			const struct landlock_signal_trace *const trace_signal =
-+				request->trace_signal;
-+
-+			if (WARN_ON_ONCE(!trace_signal))
-+				return;
-+
- 			trace_landlock_deny_scope_signal(
- 				youngest_denied, same_exec, logged,
--				request->other_domain_id, request->audit.u.tsk);
-+				trace_signal->target_domain_id,
-+				request->audit.u.tsk, trace_signal->signal);
-+		}
- 		break;
- 	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
- 		if (trace_landlock_deny_scope_abstract_unix_socket_enabled())
+ 		 * Abstract socket names are untrusted binary data from
 -- 
 2.55.0
 
