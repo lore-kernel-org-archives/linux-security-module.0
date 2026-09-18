@@ -1,86 +1,81 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8444FC32F
-	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 13:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9013D4FD792;
+	Fri, 18 Sep 2026 13:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789739742; cv=none; b=FqklBN5d1KRFg7Y3OXvBAE9E4plyC3GvKm4osSgItTcu/KmEv4MT8Bw7cAwtVshmHUOjfyd4DIphnDmszWcWNqwOMg52XnYP6VNLkX32eU4BG+iUAh6FvuhZ9LpHj8S7QHBA8QFKkTc6iW5tHTv2bPYpIN51l8jKPAHLTbHmtNA=
+	t=1789739742; cv=none; b=kqR3ayE3ctJb2GnVnv3xony7vHLvOx7E317rTC0b48DDyjmuGrJQfK5Oo5xEHAtFlItPQSuidSV/99iocZy1InOFfpCQ5AXuX5jdY7MA0kPpAILT6D38KxLwG/8j8qZ6vOhclzo+CqxjRwFousLQgTyT67yR1VryiAou1iSxnrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789739742; c=relaxed/simple;
-	bh=OLlEp6HiPmwteNgpfFgTSKTzyM8Nd7EDQkX9u/GVDkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AI5xIxCuaJBTeRi8FH+CI4hVAPEIHsg/mgyEfFosINx4LKCys0Q5xjN0XvBagqu7k08h3Hh1whCHAXT0kUACesUOv+Gt8Ka1txAW62NrC+4K3yw5ZhJGRb6OTZhniDdJRkBvKUbGxUazFqVFsZwKyix64sLPClqleX19iJyDiQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FcAacEes; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	bh=hZzQbBSILrFnPGHGDgbZEM1qMQQxGpSVCDK9a09Cfko=;
+	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=DQwvpu2qenOjMGum45N8CDVmbHTsM+15UAwpK89U0JVYvJAxWYjTRS+p+2SD3auMbRo4hBeRexaIi9gWstgxrCm6ZTcxAUzdy+IhQadrW3/LBYWgPGCxthfvr6CJc23qiGKlfDqdFEYQ46R0QeERXq59UlR3EyjN5EIvEvj+oCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFDVpMbs; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FcAacEes"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hmYzm4zfnz18dT;
-	Fri, 18 Sep 2026 15:55:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1789739732;
-	bh=T3ufC42INIwJA1Uj+mhYOs+cNe4p+Da6IX2vT85Vehc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FcAacEeshC0N0Z15PbH5Egdfd10dMLo+C+BJK+ltSZ7oaVRnSSmjtc9SZQQcHWpo0
-	 3NtEltXmOXnGlaMd7Q7ypZip1lveJXZmV+S+tiEOfnSSH/fS34KleTVTEuD5zMIl1v
-	 x2XiZmVJ0E/kXzciICx9Q8O0Qnt/6z/h2Y4DVomE=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hmYzk6hXgzcy2;
-	Fri, 18 Sep 2026 15:55:30 +0200 (CEST)
-Date: Fri, 18 Sep 2026 15:55:26 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Arnd Bergmann <arnd@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] landlock: work around gcc-16 -Wuninitialized warning
-Message-ID: <20260918.dofeC7vahHai@digikod.net>
-References: <20260915201036.3527935-1-arnd@kernel.org>
- <20260916084947.6QDy8KZQ@linutronix.de>
- <20260916.shai0tha3IPa@digikod.net>
- <57b5869d-7411-46e8-ade6-6d2a7fea02ac@app.fastmail.com>
- <20260917070915.Ix8TOn5Y@linutronix.de>
- <1192c2df-d39a-4d43-ad57-68b0167759f5@app.fastmail.com>
- <20260917104544.3trW9Jq1@linutronix.de>
- <95e794f6-6ec4-4b3e-bfa8-7edae0ac898e@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFDVpMbs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0341F00899;
+	Fri, 18 Sep 2026 13:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789739735;
+	bh=hZzQbBSILrFnPGHGDgbZEM1qMQQxGpSVCDK9a09Cfko=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=TFDVpMbsFu3kK1eMXYQR1yRlevQLk+MoWnJe96d8ZY0+8/LbSZdhzY/orM3dzgnPB
+	 cfde3CmlpSESQJoiqNB2wLgCnyvfyaiNnkfnSc8RN6d4i/oJYu4v+gAJM4uid7MtQA
+	 bLV5rIGWjfGIZ0DNkFSBH5DUDylvfrryoXp4L6klmfQIyRCRHXos/5psYVGZEgJ6GE
+	 D36NbmVvtf0niQ8JEC/WMTZ7h7MtSmFTK0TdJhxbjOCAHVBrx40iC6P1etQhyAbBic
+	 zP0CzSDbEz4ThQRqyt9+MGAMtxEm1LWY9vM0PhgWQMWNDgB+jAW4Ya/J3CiEN1aWql
+	 K7DFj9eq3kWbg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] lsm,nscommon: initialize the security blob for the
+ initial namespaces
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+In-Reply-To: <20260918134422.17053-2-stephen.smalley.work@gmail.com>
+References: <20260918134422.17053-2-stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 18 Sep 2026 13:55:35 +0000
+Message-Id: <20260918135535.8D0341F00899@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <95e794f6-6ec4-4b3e-bfa8-7edae0ac898e@app.fastmail.com>
-X-Infomaniak-Routing: alpha
 
-On Thu, Sep 17, 2026 at 01:36:15PM +0200, Arnd Bergmann wrote:
-> On Thu, Sep 17, 2026, at 12:45, Sebastian Andrzej Siewior wrote:
-> > On 2026-09-17 12:26:17 [+0200], Arnd Bergmann wrote:
-> >> I checked again and found that this is a config that did produce
-> >> the issue a few weeks ago, but doesn't today for me.
-> >> I found a different config from this week and managed to reproduce
-> >> the problem on today's linux-next using both gcc-16.2 and gcc-17.0
-> >> from yesterday, so there is still a related issue that is not
-> >> fixed in gcc, even though one at least one of them was fixed.
-> >
-> > Confirmed. I see the warning on arm64 while x86-64 is quiet. The patch
-> > fixes the issue.
-> >
-> > You might need to update gcc bug tracker.
-> 
-> Correction: I noticed the failing gcc-17 binary was an old one,
-> the current snapshot does not produce the warning any more.
-> It does seem like the fix was not yet backported to older compilers,
-> and seeing that the final gcc-13.x was released, we will
-> continue to need the kernel workaround. I assume the compiler
-> fix will eventually make its way into the other stable branches.
+> Commit f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> added a security blob to struct ns_common and allocates it from
+> __ns_common_init(). Most initial namespaces (init_user_ns,
+> init_uts_ns, init_pid_ns, init_mnt_ns, and, depending on
+> configuration, init_ipc_ns, init_cgroup_ns and init_time_ns) are
+> however set up statically via NS_COMMON_INIT() and never pass through
+> __ns_common_init(), so their ns_security pointer is left NULL for the
+> lifetime of the system. Any LSM that registers an lbs_ns blob and
+> dereferences its slice on one of those namespaces (for example from
+> the namespace_install hook when a task setns()'s back into an initial
+> namespace) will fault.
+>=20
+> Allocate the blob and run the namespace_init hook for each of these
+> namespaces at the end of security_init(), after all ordered LSMs have
+> registered their hooks, so every LSM sees the initial namespaces the
+> same way it sees init_net (which is initialized at runtime via
+> ns_common_init(&init_net) from net_ns_init() immediately after
+> security_init()) and does not need to special-case them in its own
+> ->init() callback.
+>=20
+> Provide a ns_common_init_security() helper in kernel/nscommon.c so
+> that the list of statically-defined initial namespaces and their
+> Kconfig guards live next to the rest of the ns_common
+> infrastructure. init_net is intentionally excluded: pre-initializing
+> it here would leak once __ns_common_init() clears ns_security and
+> re-allocates.
+>=20
+> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 
-Ok, thanks for the investigation, I plan to sent a PR next week.
+Sashiko has reviewed this patch and found no issues. It looks great!
 
- Mickaël
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260918134422.1705=
+3-2-stephen.smalley.work@gmail.com?part=3D1
+
