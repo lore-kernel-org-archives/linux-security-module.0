@@ -1,81 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9013D4FD792;
-	Fri, 18 Sep 2026 13:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE974FECE5
+	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 13:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789739742; cv=none; b=kqR3ayE3ctJb2GnVnv3xony7vHLvOx7E317rTC0b48DDyjmuGrJQfK5Oo5xEHAtFlItPQSuidSV/99iocZy1InOFfpCQ5AXuX5jdY7MA0kPpAILT6D38KxLwG/8j8qZ6vOhclzo+CqxjRwFousLQgTyT67yR1VryiAou1iSxnrs=
+	t=1789739763; cv=none; b=jqlT31BG8cqtqv7c9pt8aPuBFJAb4E0SEbazJ+ayHD4TQhw1O1uPaznPKF+zjrAxNUm3UB/RKaaHIgVMHi4zFKU1k3Z3ty0HQL+CVFEzRBo5Nk1RyGTyFoPJshuKqfvnqEtMAMcAHNZucDLz0NrSWPisHpriTcv19QWc/oUuLiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789739742; c=relaxed/simple;
-	bh=hZzQbBSILrFnPGHGDgbZEM1qMQQxGpSVCDK9a09Cfko=;
-	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=DQwvpu2qenOjMGum45N8CDVmbHTsM+15UAwpK89U0JVYvJAxWYjTRS+p+2SD3auMbRo4hBeRexaIi9gWstgxrCm6ZTcxAUzdy+IhQadrW3/LBYWgPGCxthfvr6CJc23qiGKlfDqdFEYQ46R0QeERXq59UlR3EyjN5EIvEvj+oCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFDVpMbs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789739763; c=relaxed/simple;
+	bh=oLmGdDlmT9FsQ8Nns5gbaXtz/Y7Q4xu35sluIs2bD/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XbbZ3gOOJ9lbNYFkhqgSlHKq2ZoceCmMB6APY7dln6NCtWLjmguSZ1AwbQMfwy71kNK26OieiWLchZVOobDCohXthkN0yxtBmOt/3uKZXc1Q7q9L9m+dGWEygUF2Q7f+FzDDAZTR6IkRm2t/txYHvnVBjTQtJuMwGjAhbyXZb1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=tQJui7wD; arc=none smtp.client-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFDVpMbs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0341F00899;
-	Fri, 18 Sep 2026 13:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789739735;
-	bh=hZzQbBSILrFnPGHGDgbZEM1qMQQxGpSVCDK9a09Cfko=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=TFDVpMbsFu3kK1eMXYQR1yRlevQLk+MoWnJe96d8ZY0+8/LbSZdhzY/orM3dzgnPB
-	 cfde3CmlpSESQJoiqNB2wLgCnyvfyaiNnkfnSc8RN6d4i/oJYu4v+gAJM4uid7MtQA
-	 bLV5rIGWjfGIZ0DNkFSBH5DUDylvfrryoXp4L6klmfQIyRCRHXos/5psYVGZEgJ6GE
-	 D36NbmVvtf0niQ8JEC/WMTZ7h7MtSmFTK0TdJhxbjOCAHVBrx40iC6P1etQhyAbBic
-	 zP0CzSDbEz4ThQRqyt9+MGAMtxEm1LWY9vM0PhgWQMWNDgB+jAW4Ya/J3CiEN1aWql
-	 K7DFj9eq3kWbg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] lsm,nscommon: initialize the security blob for the
- initial namespaces
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20260918134422.17053-2-stephen.smalley.work@gmail.com>
-References: <20260918134422.17053-2-stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 18 Sep 2026 13:55:35 +0000
-Message-Id: <20260918135535.8D0341F00899@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="tQJui7wD"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hmZ0H3VnLz16rf;
+	Fri, 18 Sep 2026 15:55:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1789739759;
+	bh=GBaWyZsNpf6Mq6Ba//QGR2wROdsbPFqMBuqnMq9IDG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tQJui7wDq4/ekdYf4Z5P+itPMeWB1+eROfLneiMxKaPJjblrptTytYohso+/Nyzk7
+	 QWxKnpqxdzJUEDI2PBQLWODCAVNnBkbsnBWrbTKLnMFQHQScgMKs2TORQgP47xjU/7
+	 +iJ2yS5CzCPRdvYorvW2Xemgv8+2KR89FfS0C/Ss=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hmZ091z8BzcBq;
+	Fri, 18 Sep 2026 15:55:53 +0200 (CEST)
+Date: Fri, 18 Sep 2026 15:55:51 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Paul Moore <paul@paul-moore.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5.15.y 2/2] selftests/landlock: Add tests for whiteout
+ object creation
+Message-ID: <20260918.ineeFoh3ooHi@digikod.net>
+References: <88432dfe86f2aaa9ae499587fd7acff9d34a338b.1789655723.git.mic@digikod.net>
+ <2026-09-17-daily-reply-0015-landlock-whiteout-tests-hold@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2026-09-17-daily-reply-0015-landlock-whiteout-tests-hold@kernel.org>
+X-Infomaniak-Routing: alpha
 
-> Commit f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-> added a security blob to struct ns_common and allocates it from
-> __ns_common_init(). Most initial namespaces (init_user_ns,
-> init_uts_ns, init_pid_ns, init_mnt_ns, and, depending on
-> configuration, init_ipc_ns, init_cgroup_ns and init_time_ns) are
-> however set up statically via NS_COMMON_INIT() and never pass through
-> __ns_common_init(), so their ns_security pointer is left NULL for the
-> lifetime of the system. Any LSM that registers an lbs_ns blob and
-> dereferences its slice on one of those namespaces (for example from
-> the namespace_install hook when a task setns()'s back into an initial
-> namespace) will fault.
->=20
-> Allocate the blob and run the namespace_init hook for each of these
-> namespaces at the end of security_init(), after all ordered LSMs have
-> registered their hooks, so every LSM sees the initial namespaces the
-> same way it sees init_net (which is initialized at runtime via
-> ns_common_init(&init_net) from net_ns_init() immediately after
-> security_init()) and does not need to special-case them in its own
-> ->init() callback.
->=20
-> Provide a ns_common_init_security() helper in kernel/nscommon.c so
-> that the list of statically-defined initial namespaces and their
-> Kconfig guards live next to the rest of the ns_common
-> infrastructure. init_net is intentionally excluded: pre-initializing
-> it here would leak once __ns_common_init() clears ns_security and
-> re-allocates.
->=20
-> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+On Thu, Sep 17, 2026 at 08:52:42PM -0400, Sasha Levin wrote:
+> > [ Upstream commit ee890889b30b22f9a21636061def7a04e4f89380 ]
+> >
+> > Add tests to check that whiteout object creation is guarded by
+> > LANDLOCK_ACCESS_FS_MAKE_REG, in the cases where these are created from
+> > userspace:
+> 
+> I am holding these until the newer trees are covered. 7.2 and 6.18 already
+> carry 672fa082d48b ("landlock: Require LANDLOCK_ACCESS_FS_MAKE_REG for whiteout
+> creation") but not ee890889b30b ("selftests/landlock: Add tests for whiteout
+> object creation"), and taking a fix on 6.12 and older while 6.18 lacks it is
+> the wrong order.
+> 
+> 7.2 can take the upstream commit as is, but 6.18 cannot: it has no enforce_fs()
+> and dc75f8904694 ("selftests/landlock: Simplify ruleset creation and
+> enforcement in fs_test") does not apply there.
+> 
+> Could you send a 6.18.y version? The 6.12, 6.6, 6.1 and 5.15 patches themselves
+> look good and I will take them once 6.18 is in hand.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+I sent the 6.18.y version here:
+https://lore.kernel.org/stable/22492930911630bb9724ed1c34248143f8913f68.1789655724.git.mic@digikod.net/
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260918134422.1705=
-3-2-stephen.smalley.work@gmail.com?part=3D1
-
+and the 7.2.y version here:
+https://lore.kernel.org/stable/732f5f5e0f5bb22d5717577d9c382b00c87725c4.1789655724.git.mic@digikod.net/
