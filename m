@@ -1,192 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8D64A4842;
-	Fri, 18 Sep 2026 07:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711534A32
+	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 08:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789716495; cv=none; b=hVozF4ViVrtM1E9zHhzizvI1Y6s7ulswD7Kw/vUiOOs7x0h+ssX68snCrfLhPll26Zhs1PUJOnuy93RmyEBm98hBpjMI7EKrgDd6GMhPrRF7Wn9oZsIHLwC1RBEk9R9u0/MgKQuEYLWCHQ0P9bz7uL8MnBlb0pCJherjbqzvd5M=
+	t=1789718744; cv=none; b=E1Jr9VTXd/7tqD3pWsxCwgGJSgNImzrPS8Bv0CLVvKFenKeCb2DBLmo2zK7ceC1BxVAo1CDS2c3g1OBIrxZ9Z5Nh6hs/XiOicaLC9ag+FW3MLPDrkJaOWE4RihX+bzthvFwg+XJ4rkwsCIboF+xArJf22UPyvfsVLstOqqZMGyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789716495; c=relaxed/simple;
-	bh=z9d99/rxOW1nQfP5fM1K+vdvqvuf3TqZ0MmNsHP0Lps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9Q8n9tjEp2wc/fi/Y7qCVdtIL88DKGq4EySdeobAvRzyN17uk5xvYJ8Nq35dZN66iw1cd9ZMLRkBBDtulbzzG7cVMzygCCTzSGX75F4NzzS2awYFCZh79qEFttpvUfbFvbgBybONQYIb9cUwZlnyZiSTMjnG0a5VSnQHWAtOA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RoaD5iIE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789718744; c=relaxed/simple;
+	bh=SSml5sWGhbr1aX5qXNp5m87HXKcpLyEzFeK1/Q/8sOE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:Date:
+	 Message-ID:Content-Type; b=fyujYyTEE6kPQWwUDe5vezonV5rcEXBrnVc9UJTUdLfdBG62gNWcW2RUrxmc2vHSc6sR3xhs07ccn8dAKU/vxSX5IAPDTL4wjCGj8us2nMXcw6p4y38RzOIpBN9Upn7OsbG4GJyvHPNd/LqOJ1wl4VxTYgYxo5jQk0LuSTbQ3Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PNReafD0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RoaD5iIE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DEB1F000FF;
-	Fri, 18 Sep 2026 07:28:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789716482;
-	bh=mtFqLx8WMWdyHMx6wmboMfxQCGzliJI+dmsZqGbwLQw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=RoaD5iIEoCPQrHXU+U8wVKNg9pVdgksf27ihSN/Nt1uEp5387yrjNavwuZG0bw2uE
-	 07OkGmtl3iNUi99eiMveVonJHcjfhPZHVba68XHil6+FVCLohoHi3YJQAUvKGeKSV3
-	 6jjvfg7PYdJfdHaKGeDvINW3RDruYRnbpUR/C8vaWrVDFyBhu3JOrxkDcFar6Xq2eL
-	 z9AppVILc+MWfJCUdUoj6M79FKSHvX6lo7C3p+QeO4cNCFij1LL+zmvkPaOHLdij/c
-	 xUvhuq0VvKaF3PGb4xJGAFTxkMgv2MKj93kawcXpt7e1UOCHm/ocTzlfXNuxpSwSWx
-	 WNvIJKU4+uRGw==
-Date: Fri, 18 Sep 2026 09:27:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: selinux@vger.kernel.org, paul@paul-moore.com, omosnacek@gmail.com, 
-	linux-security-module@vger.kernel.org, mic@digikod.net, serge@hallyn.com, jack@suse.cz, 
-	jmorris@namei.org
-Subject: Re: [PATCH] lsm: initialize the security blob for the initial
- namespaces
-Message-ID: <20260918-kernbereich-altkleider-gespuckt-3b9488e49810@brauner>
-References: <20260916194824.37332-1-stephen.smalley.work@gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PNReafD0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1789718742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ym7emDJFhy4PiOXGVpk05NT3ISXd1kAvgtskHF5RU0g=;
+	b=PNReafD077lIjVU+tGlGZqSpttPqD4MOuRVkfVy4b2Yo2UmGInE8f4YaO6UZvDl6/5k5/p
+	QNVA8oHGdnoHw8R/3IxVlR4Ro9FoQ6xwxagC6VhIf3QhNk3TDYxLOKhQVi9B8W7Ll0wkbh
+	6Z42oQjinsehD5NOZCLVzaBzBmwkhZY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-546-RN0R4fb1NhK5JGQk9pctmg-1; Fri,
+ 18 Sep 2026 04:05:38 -0400
+X-MC-Unique: RN0R4fb1NhK5JGQk9pctmg-1
+X-Mimecast-MFC-AGG-ID: RN0R4fb1NhK5JGQk9pctmg_1789718736
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA7F818512C6;
+	Fri, 18 Sep 2026 08:05:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.54])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1CADB1956047;
+	Fri, 18 Sep 2026 08:05:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aqyiCavj3xeNqyAo@kernel.org>
+References: <aqyiCavj3xeNqyAo@kernel.org> <20260914-ajhalaney-dmverity-key-identifier-v1-0-01922dc1366a@amutable.com> <20260914-ajhalaney-dmverity-key-identifier-v1-1-01922dc1366a@amutable.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: dhowells@redhat.com, Andrew Halaney <andrew@amutable.com>,
+    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+    Mikulas Patocka <mpatocka@redhat.com>,
+    Benjamin Marzinski <bmarzins@redhat.com>,
+    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+    "Serge E. Hallyn" <serge@hallyn.com>,
+    Eric Biggers <ebiggers@kernel.org>,
+    "Theodore Y. Ts'o" <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
+    Shuah Khan <skhan@linuxfoundation.org>,
+    Randy Dunlap <rdunlap@infradead.org>, dm-devel@lists.linux.dev,
+    linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+    linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+    fsverity@lists.linux.dev, linux-doc@vger.kernel.org,
+    "Christian Brauner (Amutable)" <brauner@kernel.org>
+Subject: Re: [PATCH 1/3] keys: add KEY_SPEC_DM_VERITY_KEYRING
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260916194824.37332-1-stephen.smalley.work@gmail.com>
+Date: Fri, 18 Sep 2026 09:05:26 +0100
+Message-ID: <715249.1789718726@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-MFC-PROC-ID: DKFBCpjc524MmQre3fvKrOaQb2jgj3J2jRKefO60uvs_1789718736
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <715248.1789718726.1@warthog.procyon.org.uk>
 
-On Wed, Sep 16, 2026 at 03:48:24PM -0400, Stephen Smalley wrote:
-> Commit f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-> added a security blob to struct ns_common and allocates it from
-> __ns_common_init(). Most initial namespaces (init_user_ns,
-> init_uts_ns, init_pid_ns, init_mnt_ns, and, depending on
-> configuration, init_ipc_ns, init_cgroup_ns and init_time_ns) are
-> however set up statically via NS_COMMON_INIT() and never pass through
-> __ns_common_init(), so their ns_security pointer is left NULL for the
-> lifetime of the system. Any LSM that registers an lbs_ns blob and
-> dereferences its slice on one of those namespaces (for example from
-> the namespace_install hook when a task setns()'s back into an initial
-> namespace) will fault.
-> 
-> Allocate the blob and run the namespace_init hook for each of these
-> namespaces at the end of security_init(), after all ordered LSMs have
-> registered their hooks, so every LSM sees the initial namespaces the
-> same way it sees init_net (which is initialized at runtime via
-> ns_common_init(&init_net) from net_ns_init() immediately after
-> security_init()) and does not need to special-case them in its own
-> ->init() callback.
-> 
-> Provide an init_ns_common_for_each() iterator in kernel/nscommon.c so
-> the list of statically-defined initial namespaces and their Kconfig
-> guards live next to the rest of the ns_common infrastructure. init_net
-> is intentionally excluded: pre-initializing it here would leak once
-> __ns_common_init() clears ns_security and re-allocates.
-> 
-> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
->  include/linux/ns_common.h |  1 +
->  kernel/nscommon.c         | 45 +++++++++++++++++++++++++++++++++++++++
->  security/lsm_init.c       | 11 ++++++++++
->  3 files changed, 57 insertions(+)
-> 
-> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-> index c8e227a3f9e2..742627000453 100644
-> --- a/include/linux/ns_common.h
-> +++ b/include/linux/ns_common.h
-> @@ -11,6 +11,7 @@
->  bool is_current_namespace(struct ns_common *ns);
->  int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops, int inum);
->  void __ns_common_free(struct ns_common *ns);
-> +int init_ns_common_for_each(int (*fn)(struct ns_common *ns));
->  struct ns_common *__must_check ns_owner(struct ns_common *ns);
->  
->  static __always_inline bool is_ns_init_inum(const struct ns_common *ns)
-> diff --git a/kernel/nscommon.c b/kernel/nscommon.c
-> index e72426bba29a..4f3cba5518d7 100644
-> --- a/kernel/nscommon.c
-> +++ b/kernel/nscommon.c
-> @@ -1,11 +1,17 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /* Copyright (c) 2025 Christian Brauner <brauner@kernel.org> */
->  
-> +#include <linux/cgroup.h>
-> +#include <linux/ipc_namespace.h>
-> +#include <linux/mnt_namespace.h>
->  #include <linux/ns_common.h>
->  #include <linux/nstree.h>
-> +#include <linux/pid_namespace.h>
->  #include <linux/proc_ns.h>
->  #include <linux/security.h>
-> +#include <linux/time_namespace.h>
->  #include <linux/user_namespace.h>
-> +#include <linux/uts_namespace.h>
->  #include <linux/vfsdebug.h>
->  
->  #ifdef CONFIG_DEBUG_VFS
-> @@ -101,6 +107,45 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
->  	return 0;
->  }
->  
-> +/**
-> + * init_ns_common_for_each - iterate the statically-defined initial namespaces
-> + * @fn: callback invoked with each initial ns_common
-> + *
-> + * Walk the initial namespaces that are set up via NS_COMMON_INIT() at compile
-> + * time and therefore never pass through __ns_common_init(). The initial
-> + * network namespace is intentionally excluded: it is initialized at runtime
-> + * via ns_common_init(&init_net) from net_ns_init().
-> + *
-> + * Return: the first non-zero return from @fn, or 0.
-> + */
-> +int __init init_ns_common_for_each(int (*fn)(struct ns_common *ns))
-> +{
-> +	struct ns_common *set[] = {
-> +		to_ns_common(&init_user_ns),
-> +		to_ns_common(&init_uts_ns),
-> +		to_ns_common(&init_pid_ns),
-> +		from_mnt_ns(&init_mnt_ns),
-> +#if defined(CONFIG_POSIX_MQUEUE) || defined(CONFIG_SYSVIPC)
-> +		to_ns_common(&init_ipc_ns),
-> +#endif
-> +#ifdef CONFIG_CGROUPS
-> +		to_ns_common(&init_cgroup_ns),
-> +#endif
-> +#ifdef CONFIG_TIME_NS
-> +		to_ns_common(&init_time_ns),
-> +#endif
-> +	};
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(set); i++) {
-> +		ret = fn(set[i]);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	return 0;
-> +}
-> +
->  void __ns_common_free(struct ns_common *ns)
->  {
->  	security_namespace_free(ns);
-> diff --git a/security/lsm_init.c b/security/lsm_init.c
-> index dbda7771013b..60e15215f6bd 100644
-> --- a/security/lsm_init.c
-> +++ b/security/lsm_init.c
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/init.h>
->  #include <linux/lsm_hooks.h>
-> +#include <linux/ns_common.h>
->  
->  #include "lsm.h"
->  
-> @@ -490,6 +491,16 @@ int __init security_init(void)
->  		lsm_init_single(*lsm);
->  	}
->  
-> +	/*
-> +	 * The initial namespaces are set up statically via NS_COMMON_INIT()
-> +	 * and never pass through __ns_common_init(), so allocate their
-> +	 * security blobs and run the namespace_init hooks now that all LSMs
-> +	 * are registered. init_net is not covered here; it is initialized
-> +	 * at runtime from net_ns_init() shortly after security_init().
-> +	 */
-> +	if (init_ns_common_for_each(security_namespace_init))
-> +		panic("initial LSM ns alloc failed\n");
+Jarkko Sakkinen <jarkko@kernel.org> wrote:
 
-Wouldn't it be nicer to turn this around and call
-security_namespace_init from the ns common code and avoid the callback?
-Especially since there's only one.
+> This is great for discussion but what we want for the commit message
+> is just motivation and resolution.
+
+Actually, I think it's useful that Andrew wrote up the issues in the commit
+message - and I think it shows part of the motivation.  The 'writing a fake
+/proc/keys line in the description' is something I hadn't considered.
+
+> I don't think we need all this just to say that /proc/keys in a racy
+> query mechanism for production, which is an issue for dm-verity, given
+> that nothing else is available.
+
+I think at some point, we will need a system call to search all for all
+accessible keys matching certain criteria by actually walking the key
+database.  The problem there is that there may be multiple hits, so we may
+need something like:
+
+	int count = find_key(key_serial_t start_id,
+			     const char *type, const char *desc_prefix,
+			     key_serial_t *results, size_t results_size,
+			     unsigned int flags);
+
+Allowing you to do:
+
+	key_serial_t dm_key;
+	int n = find_key(0, "keyring", ".dm_verity", &dm_key, 1,
+			 FIND_KEY_EXACT_DESC);
+
+This wouldn't be as fast as a direct lookup since it would have to walk the
+key tree, doing name comparisons and perm checks on each key of the type.
+
+> And secondly special keys are meant for implicit keyrings so isn't
+> that all there's to it?
+
+I have no particular objection to setting aside a block of negative key IDs
+for special keyrings that need to be accessed a lot - though I would make
+common reg/unreg functions that take the ID to be registered and, say, set the
+block at -257..-512.  Moving the BFP keyring to -257 and DM to -258.
+
+David
+
