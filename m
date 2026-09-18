@@ -1,67 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2164B51B178;
-	Fri, 18 Sep 2026 18:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116155208DF;
+	Fri, 18 Sep 2026 18:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789757869; cv=none; b=vGiW79FLjTxgn7WWbw3QON3nYaLBtIaeC28sVKqfn4IJUCN8Z5cE2PUmNRB/dt6ElmVTFPu3AhCA1MHhU4us7oeon5yxVLVwtLaaTDklMqHQvNCp5KTA0aDkSh9Y42t36xMci6dOA6DtrhuLPoZ6aeAnNvkUpD2q1+jS8cxqJM0=
+	t=1789757872; cv=none; b=HX3C7fRdPAPE2fLLFkRWCFUgW4/QNW4m5ubUO4mEdu6L5bz4C7CE0t1YebXvudL4JUvWRhum6n4YByt/IPwcFG+spSolRhKpiZVTvMVn6cbMmVWwhNU1Ventv7ut/71gH2qv8Em2VdImpFFGDvJXePEUAsr94V7kwZ9NgLH9TLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789757869; c=relaxed/simple;
-	bh=k9YRDBGbH3GNZS4Jgm0KoBGOSaX5IYXKokVVVvQLbsw=;
+	s=arc-20240116; t=1789757872; c=relaxed/simple;
+	bh=DDv0htgjuA6Yzf97upzcahodKIyk5xpgklXec1gwokE=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=lUHI1iUNZNcBDEBYx5lZJJgINQgw4PvOAVh0qYbw8rIb0f2+/g4d3aoFdQO5NmaEuGdeFTrTlkCTDS/zDliLuYZvple6Zb7RL6ZwuyW9LeWSXqYRFbJpiX1WMcU7wHSURppdkwTii+u/NddrRb+O4GUiKrPrJYYBLogboXydVyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PojI/agp; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=sXMQM8+8EH2wYmgevB8OJZJcRhaNKJ5g9FDAPg7J2TVRyYme7b/k6ciZHDAbqCPeoHwf5Ml/5nNK1Mcn+cHA/iN6hija083A0IbpkqDdhypPR7wtS4yXgRvFfvPIMHo2diRLIB8oUnoXYwqATgmYCMjHCFwoWPBJf/c+wFOvZmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzOdbroW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PojI/agp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A290C1F000FF;
-	Fri, 18 Sep 2026 18:57:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzOdbroW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C5F1F00898;
+	Fri, 18 Sep 2026 18:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789757852;
-	bh=30rYvN23fSbbY+namDlPuAuHSXK3/suz9un0bB0OTxQ=;
+	s=k20260515; t=1789757858;
+	bh=DDv0htgjuA6Yzf97upzcahodKIyk5xpgklXec1gwokE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=PojI/agp1xXyyp10osngQEYxfcmTmXZPEvQ5kYV1llnDhjHVRGeGlVXwh4sUQLqpZ
-	 5nxUtk2xZvjm0qMUR3PqmZLWy3QrSQRR/KzoOEa+54QdoBcJWxLfzDKUGJKiP0JwyW
-	 PPPKq/hZczbGyXjZwkAB6LgNtEX1Xwush0U+0qEXnD7QFhP9vyNTekjUzH4gKDAJjz
-	 xaV8uJcjQUxJY4ncbgyaQUpM13Qf5BxUCyaNoNHmET1fry9NBmIK1oScTD2qLnkzcm
-	 BsDYjWvc8v/D6Q/nv9YuI4GVDFGia5S73BvTWu8gTgKfPjnnFSRjyrB88IpjN1ZCTb
-	 9LbHuWf9q+4zw==
+	b=jzOdbroWVa3Qxht2gmpF92gkaWEbqeYn1KzFOA7E2AMaDZZ6L4y9vU9nXqFAPXAHj
+	 8YU8LQrHm/XqZKhPOIN8nxt8NPZqyOmuEPQJzq8A1ysMoTqcC2TFIOSP/34SAnBdA6
+	 yTgcb+zXKj1IjB1gDHyOeTohVm6KJibmAKzh+N8Xm2aPPSfzpulm7jQblEi+/y9Vvw
+	 8R6vqeZ+womWzIB0uN6IbKem2UscYePLvVCRHTCIyumYZzEnnQzRoDrVhDBUBNXVZp
+	 LAh2g+1bUoXKF9qT8jDsqzQ1wdYK7v0RTuCpHu6LZglHa1op/2yP96r2MS0F80H+GQ
+	 bSI4ToU9recxg==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 7/9] selftests/landlock: Test filesystem denial
- blockers
+Subject: Re: [PATCH v1 6/9] landlock: Report the effective signal number
 Reply-To: sashiko-reviews@lists.linux.dev
 To: =?utf-8?b?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20260918185036.608651-8-mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+In-Reply-To: <20260918185036.608651-7-mic@digikod.net>
 References: <20260918185036.608651-1-mic@digikod.net>
- <20260918185036.608651-8-mic@digikod.net>
+ <20260918185036.608651-7-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 18 Sep 2026 18:57:32 +0000
-Message-Id: <20260918185732.A290C1F000FF@smtp.kernel.org>
+Date: Fri, 18 Sep 2026 18:57:37 +0000
+Message-Id: <20260918185738.50C5F1F00898@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> Filesystem denial traces identify the policy change needed to allow a
-> request, so require exact blocker values rather than merely nonempty
-> output. Pin a READ_DIR denial to exactly one event with
-> blockers=3Dread_dir. Pin a REFER-only mount denial to EPERM and exactly
-> one event with blockers=3Dchange_topology.
+> The signal-scope denial callback identifies its target but not the
+> effective signal. This loses permission-probe signal zero and makes the
+> file-owner hook's zero sentinel ambiguous.
 >=20
-> The mount child retains CAP_SYS_ADMIN so Landlock is the only expected
-> source of EPERM.  This prevents a later capability failure from masking
-> a Landlock regression; the trace-collecting parent remains unsandboxed.
+> Append an int signal argument to the typed-BPF callback. Preserve sig,
+> including zero, in hook_task_kill(). In hook_file_send_sigiotask(),
+> translate signum zero to SIGIO at the producer, where its meaning is
+> known.
+>=20
+> Carry the effective signal and target domain ID in a private,
+> stack-backed context consumed synchronously. This requires no allocation
+> or task reference in the interrupt-capable file-owner path. Gate this
+> context and the remaining scope-only domain IDs with CONFIG_TRACEPOINTS.
+>=20
+> Keep the tracefs record and audit output unchanged.
 >=20
 > Cc: G=C3=BCnther Noack <gnoack@google.com>
 > Cc: Steven Rostedt <rostedt@goodmis.org>
+> Fixes: bb91730f16c0 ("landlock: Add tracepoints for ptrace and scope deni=
+als")
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 
 Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260918185036.6086=
-51-1-mic@digikod.net?part=3D7
+51-1-mic@digikod.net?part=3D6
 
