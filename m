@@ -1,147 +1,131 @@
-Received: from mail-yx2-f42.google.com (mail-yx2-f42.google.com [74.125.224.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673FF43A809
-	for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 21:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5890352B1D3;
+	Fri, 18 Sep 2026 21:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789765927; cv=none; b=On9hZd2PLa0KuljnJ48OSlXvXNC/kDPFYKqupKcEkMpFGBIsEkb4eXdiw6vK5am9hJG0LPWHI1Hsfk7ekUhkn7r+M1sDd8TdupJtC+PlhbTcsSgi4RRg4ep/gItAJWVu/IB5kEl1NsOWYo6UontWQpg0oSqoYQNuoAxWpioqzbQ=
+	t=1789768209; cv=none; b=jTFKExPnN4C4iMs2jDSHX2zNI6L6wZxkl/TCiNhBoKpxxuG/oXnsT4MgNpvwXsizOpy7WtscZ5fhYXoYipzDCXOY+I+L8JseWY3UAtVBvL9cGeiPlX5teFrIwE9uJts03ZY0oDQ04pfbwtX3TI7R1K+fsr3VPdkpIK8I7whPtwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789765927; c=relaxed/simple;
-	bh=g4lx2u+ot1L81/J/UgHU7Wj2kq/pV6QiVmT+UZI0pAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GCKm8DNntLXKRoJMR4rTvQqD8QP7RRrTw8XCr388ooPSD5KQQnTGPQoWFk+QWeJ8ZBUFKjHMnMsCMWqh3hJOeSuv7GGygvXPlH8FTfgOFE9KQ16Xurt8xCf5U74MyE7exBC9TTn9K/FBBtwpwWYjEeqnbT+rXGeu85cpRzbKZS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=fklhwivi; arc=none smtp.client-ip=74.125.224.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1789768209; c=relaxed/simple;
+	bh=Cko9Zwq3Vh7ZcfuOeKNRCO4UyO3g4kNbUEW/7FT5nns=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=PWx5/ueOXBu7yDgwJjBllEux1ubMLDcn6gBqwkBz4cjW057CSrbPNgaWfF31vSW0Zz+CJ+1R79g0znHhRQbc6p9RGwiteryNuWFM8+W6GAdiVsxSz9yLN6bdKJE3HMJt5tCihrcjAeo8gPtFFCEyDHQrWXcspnBTZ/KM5TWaHDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Av/RJSfR; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="fklhwivi"
-Received: by mail-yx2-f42.google.com with SMTP id 00721157ae682-895fd505824so10432457b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2026 14:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1789765923; x=1790370723; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=yhKm/9XBDPOEFCi2fB4i14ffVbBzYqLX1m78dQNPvjk=;
-        b=fklhwiviuJLyeud7FMEOqT+J16Me7ZwSdZtasmj9pYBQFXnlw6hQLLGh0xNjHlIvGJ
-         9jlgEa6fkIemuMYOeENpFCCiDCMFSRTxkrj1HSTCYqpl2dJhSiyDZ/k9wK36011+0SnN
-         d4/M8aGVGSgRrw17YaauFEvnJYIVZPqoe8L0R0yXciDC2Bvv2QPcjz0/fDtiJ48E7rB5
-         SIhico+J2c7Vc2ca9TUPJT0ZYCqfahYHo9tWc7p3YmcSl27sZU9r7Pl9p/X4/ki9P/O8
-         hG0oHe84oyOcrWc8eFrLlaRviUJ2EzN4e24nBFQMmHfMfQhoKjnvcLh4LHrraPs6Z/VR
-         /Clg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789765923; x=1790370723;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=yhKm/9XBDPOEFCi2fB4i14ffVbBzYqLX1m78dQNPvjk=;
-        b=Kr7ndPJWmiDY+/TtWyXEZstrBkL+OehhRBIX9FnxnuKVweMX3sYJ3zeSBJWVrW45mi
-         sib0I2EecExftluORjpB0xigGJjOYvXuPFZQc5BCjokhxm2T9aoVXHfxdD/n3HVou9+t
-         VCnq5jz5xTcLR1obGvHsAtPAXfTaw3vPQ+f7PJxwmEyW3SPge8HxhAwdY6OVsok9rpTN
-         EQrj+6NjuW3a3tEhy+xhFrvt9Fu6CkFoFmcrV0wZuxaYLutmsmA4siHe0YdKStZMM4Zs
-         5ICumouNKUeeBksfCu8YakCnc2n94jb4SCXBc9uWDK3YlMY3VbsehTEVx9/fKDVCGBjc
-         Q3GA==
-X-Forwarded-Encrypted: i=1; AKwUvBzr5XFmg+69aOZWUZpvDWtyIzZohopebCAHPCMpg6bHTzkXHH3hctMwyjELbEux5VKVqrmOtvR9dW7F4jkFoOpOnhjjON4=@vger.kernel.org
-X-Gm-Message-State: AFuF++lRc6jTJuSJw6GMaY8dIcyHdXYMKPsbhiimO0vS6x2qJPzN+cde
-	/tJ++HLxQYkFo5++ilYustvt0zuYxI6OdbS09xlPUbAU4qjeuc/0LBv2djC8qIhHRjo=
-X-Gm-Gg: AYBFou1HG5Bw7eP8AHgxI7EE8ScO2yge3DEmoedIlH4pjDwN0Wg4GtIIMIWj83SGrzL
-	aM/xQaU/V9nyioKN35LrStV46vhLIOrmrIerZm128BX4C9FClhzq8PJarNSktnIApjWMqHS2Ljm
-	OCw87PUuxkZH0kbYy+5cXua/1eugNKeZPQog3wRmvfOnUTJkkEUARjEalw39St1HXbAY2lqnoSl
-	OOhVVRbvBJXttlQy9PH9S5cvoF5/s4hmUkbdyUz6SMEi2jBU8dlq+PYZlozCmM/g2goaaCUJhoH
-	uHrxEqFV9Pu6nJPRANUYqNQHmYbwQ8eNw0/hV+WcSDsEH15DfTQPpU5mjnF2uhNEerVBfBgfd/e
-	YYaN3KfRJqmZQVzPC4Ac5+xibucN06QV9/eIkKE714oztoY7lewlC/Ysk5CbPLULFobTWqgGgH+
-	vFJkfS3HlSqRTL/s8hULPS2xZ5RsAWNnmHXoj7/5H6oeYkU8oxNw==
-X-Received: by 2002:a05:690c:81:b0:89a:63bc:8cb with SMTP id 00721157ae682-89a63bc0bdamr3178557b3.85.1789765923383;
-        Fri, 18 Sep 2026 14:12:03 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:5a])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-89a4152081bsm3995547b3.2.2026.09.18.14.12.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 14:12:02 -0700 (PDT)
-Date: Fri, 18 Sep 2026 16:11:59 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Enrico Bravi <enrico.bravi@polito.it>
-Cc: "zohar@linux.ibm.com" <zohar@linux.ibm.com>, 
-	"roberto.sassu@huawei.com" <roberto.sassu@huawei.com>, "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>, 
-	"paul@paul-moore.com" <paul@paul-moore.com>, "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>, 
-	"serge@hallyn.com" <serge@hallyn.com>, "jmorris@namei.org" <jmorris@namei.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kernel-team@cloudflare.com" <kernel-team@cloudflare.com>
-Subject: Re: [PATCH v3 1/2] integrity: Report error code in
- integrity_audit_msg() call sites
-Message-ID: <zu2rdshqwc6t72q22nayydud222ecic4ca5inzvte5lqtbnkfu@mcq7ta422era>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Av/RJSfR"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68IKVhiC1094215;
+	Fri, 18 Sep 2026 21:49:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=37ntVI
+	DIWX9UKzB+TsdGFUb+iaRVQhISSLkL9LJYvrQ=; b=Av/RJSfRAUdJeRi+8xO0bL
+	TMgrFF8izryjQ2KM/Lu3nHKNWr4fcCHPZEb7vUaJAzd68M/wkbawGT3UGIi/GuQ4
+	bFb6xtwQQcOganPb7NIntcQj0RLX+35C6w4luUhFQ6xKG4sMC4CjgoEarIOC1877
+	BUorOroOdOAyP/Sa6TwNpGuNee2jbSBOkpOEQ+V0PB6BhcmhC84aU3HJva1qISuh
+	8nWqsikXwVLWr2e99/We90BaB7M4o12odZJ+6enD80/3twWmP5UCS+FpdfyokLOr
+	hgDnH66cLU4stF5640smNqlBLa85bYp2dcNXXk6pITaInxhbR+lTKMZZdJFs0c4w
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gmw5ehx0v-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 18 Sep 2026 21:49:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68IKK5v81234619;
+	Fri, 18 Sep 2026 21:49:45 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gs56qa3jg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 18 Sep 2026 21:49:45 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68ILnjjA8192640
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 18 Sep 2026 21:49:45 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 388835803F;
+	Fri, 18 Sep 2026 21:49:45 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 289AC58054;
+	Fri, 18 Sep 2026 21:49:44 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.133.121])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 18 Sep 2026 21:49:44 +0000 (GMT)
+Message-ID: <4086ad937c14946de11dcd01ce6d46c0e1458620.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 2/2] integrity: Replace integrity_audit_message()
+ with integrity_audit_msg()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <20260916-report-hash-error-v3-2-73e5d95e9efe@cloudflare.com>
 References: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
- <20260916-report-hash-error-v3-1-73e5d95e9efe@cloudflare.com>
- <132d83cb5dcfb6fa7024480626a829b4e03309f9.camel@polito.it>
+	 <20260916-report-hash-error-v3-2-73e5d95e9efe@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 18 Sep 2026 17:49:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <132d83cb5dcfb6fa7024480626a829b4e03309f9.camel@polito.it>
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE4MDMxMSBTYWx0ZWRfX2l+YI1sEkM4t
+ IoDfOZ7Ff5C+9hQinuopmSqW52VEOtfBLAW5ZfIR0eDiPz9JxzsThpSvllZPHukGGxJJkGCwvXx
+ sZdWLC+YK4XN9J4dO2LiRPKWcA4L1kWtmq86B6NTMm07E0Zxcd8cXL0nVpy2GUFicohG4bTVEPx
+ XlMxAArktCiKSDjvjlMiodIoVSKxhtWgmv4N72cv1jigJaQsPpCmqCY/j8houcdTxJLG2qARtU7
+ DnB9fwLp2aeEAj43NAIQsZw/sSo7rtkjo4f3gdIpRqfl7LSCQv5vncaI7I1fK5kMNHMafGeuHBJ
+ Txf6czzrBX3EBuBwHu0BvdntRzehzQpiUUitPZiWRGTq1bcdfove9Xi2mGsQJwwlwEgyJFkxsWY
+ YlobSS9uWpbY7kh3r3cI38pmXEaEL3rTtlUbwTIoBh+n11Hv8hCbWBTo3t5xcu7fEiPIxe5M5OT
+ y7842gMWOFKVSpIM2mQ==
+X-Authority-Analysis: v=2.4 cv=E/NYNqdl c=1 sm=1 tr=0 ts=6aadb1fa cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=EG7W4yiQAAAA:8
+ a=KUfPkIi8R2PQVBz8DpUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: 6--v3iu37kEqKOUMuRmLZDAcreEhe69N
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE4MDMxMSBTYWx0ZWRfXyMJhwbIC7Us+
+ JBff6eHf+dL5yZeQ8/2ZP+15hJ+1ed5BPrpELfCXOWdM/5KLrmYgeUH879cRE7I5Ihd387cWHag
+ BP6FXczMi2Vo0h6+vRFF+aP6XcrPa+g=
+X-Proofpoint-GUID: QkOwZOtJYh65AHxg1MNbWxz0N8ip1kA7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-18_06,2026-09-16_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
+ adultscore=0 clxscore=1015 bulkscore=0 malwarescore=0 suspectscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2609180311
 
-Hi Enrico,
+Hi Fred,
 
-On Thu, Sep 17, 2026 at 10:58:22PM +0000, Enrico  Bravi wrote:
-> Hi Frederick,
-> 
-> On Wed, 2026-09-16 at 16:36 -0500, Frederick Lawler wrote:
-> > integrity_audit_msg() hides error codes by wrapping
-> > integrity_audit_message() which obfuscates the underlying reason for the
-> > failure.
-> > 
-> > Update integrity_audit_msg() call sites
-> 
-> here it could be mentioned that also integrity_audit_msg() itself is
-> updated.
+On Wed, 2026-09-16 at 16:36 -0500, Frederick Lawler wrote:
+> integrity_audit_msg() wraps integrity_audit_message(). Replace remaining
+> call sites with the truncated function name. Then remove it since there
+> are no more callers.
+>=20
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 
-Good point. I can see that I may have not been clear about that.
-  
-> > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-> > index
-> > 2a0bca5543161912abe2a0236c9fcae7055e62bc..6d2ef44b21f8d40b4981a6a441cf7c3d69f9
-> > 4dee 100644
-> > --- a/security/integrity/ima/ima_fs.c
-> > +++ b/security/integrity/ima/ima_fs.c
-> > @@ -595,7 +595,7 @@ static ssize_t ima_write_policy(struct file *file, const
-> > char __user *buf,
-> >   pr_err("signed policy file (specified as an absolute pathname) required\n");
-> >   integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
-> >       "policy_update", "signed policy required",
-> > -     1, 0);
-> > +     1, 0, -EINVAL);
-> 
-> Here it could be put -EACCES as errno, being the value returned for this case.
+I agree with Enrico on the 1/2 patch description.  This patch description
+similarly should say something like:
 
-Sashiko said the same. I kept going back and forth on this one because
-of what the message actually says. EACCES is the result, but the string
-itself + pr_error() implies that it's an input error. Similar to
-ima_release_policy() below, I should probably keep this zero, and
-follow up.
+Now that integrity_audit_msg() accepts an errno parameter, it is equivalent=
+ to
+integrity_audit_message(). Convert the couple of integrity_audit_message()
+callers to integrity_audit_msg() and remove integrity_audit_message().
 
-> >   result = -EACCES;
-> >   } else {
-> >   ima_measure_raw_policy(data, datalen);
-> > @@ -745,7 +745,7 @@ static int ima_release_policy(struct inode *inode, struct
-> > file *file)
-> >  
-> >   pr_info("policy update %s\n", cause);
-> >   integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
-> > -     "policy_update", cause, !valid_policy, 0);
-> > +     "policy_update", cause, !valid_policy, 0, 0);
-> 
-> Here maybe it could be put a conditional errno, based on the validity of the
-> policy, instead of hardcoding a zero.
+Mimi
 
-I can see that making sense to throw a -EINVAL on it. The function
-is designed to always succeed, but it might be worth pulling out the
-error code from ima_check_policy() for this case.
 
-Best,
-Fred
