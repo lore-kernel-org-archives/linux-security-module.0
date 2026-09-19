@@ -1,131 +1,208 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5890352B1D3;
-	Fri, 18 Sep 2026 21:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177D52DCBEC;
+	Sat, 19 Sep 2026 00:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789768209; cv=none; b=jTFKExPnN4C4iMs2jDSHX2zNI6L6wZxkl/TCiNhBoKpxxuG/oXnsT4MgNpvwXsizOpy7WtscZ5fhYXoYipzDCXOY+I+L8JseWY3UAtVBvL9cGeiPlX5teFrIwE9uJts03ZY0oDQ04pfbwtX3TI7R1K+fsr3VPdkpIK8I7whPtwM=
+	t=1789777640; cv=none; b=pEDkvupt/sK2WtPwB7jlMypcd2165fgM2vR0d/X2TRC5lTbh4IpmoButFBusy5ilJf2V0nKRpxBmNtZqe5nw82Jnaq7AaWvoybmntirrYnNtieT98OuNxmlCsaoAiW8hxAXOaznnMDwhWtMm3m5+PWtgg5Ssepwjvzf86MoPHsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789768209; c=relaxed/simple;
-	bh=Cko9Zwq3Vh7ZcfuOeKNRCO4UyO3g4kNbUEW/7FT5nns=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=PWx5/ueOXBu7yDgwJjBllEux1ubMLDcn6gBqwkBz4cjW057CSrbPNgaWfF31vSW0Zz+CJ+1R79g0znHhRQbc6p9RGwiteryNuWFM8+W6GAdiVsxSz9yLN6bdKJE3HMJt5tCihrcjAeo8gPtFFCEyDHQrWXcspnBTZ/KM5TWaHDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Av/RJSfR; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1789777640; c=relaxed/simple;
+	bh=fYjJCoMwHmQye7/VloP5QI8g55DMF1gGv8QsEafA+tA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tq93VuNt78Z6g4HwwNHIXW7l/EghGEMolfkgFjUXbHrDPPzLHM6o9Pl5oD0CMzTvmakwiGZzWhbgcwaDEbWrMaorKEZs6MsLsZZaJsJZih/xRC1byuurgreKYZQbAyZTNEdAZlXYJqz4JyBln/4g6r8QVez/zX3Xk0W5qg0LOY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuV/wG2s; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Av/RJSfR"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68IKVhiC1094215;
-	Fri, 18 Sep 2026 21:49:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=37ntVI
-	DIWX9UKzB+TsdGFUb+iaRVQhISSLkL9LJYvrQ=; b=Av/RJSfRAUdJeRi+8xO0bL
-	TMgrFF8izryjQ2KM/Lu3nHKNWr4fcCHPZEb7vUaJAzd68M/wkbawGT3UGIi/GuQ4
-	bFb6xtwQQcOganPb7NIntcQj0RLX+35C6w4luUhFQ6xKG4sMC4CjgoEarIOC1877
-	BUorOroOdOAyP/Sa6TwNpGuNee2jbSBOkpOEQ+V0PB6BhcmhC84aU3HJva1qISuh
-	8nWqsikXwVLWr2e99/We90BaB7M4o12odZJ+6enD80/3twWmP5UCS+FpdfyokLOr
-	hgDnH66cLU4stF5640smNqlBLa85bYp2dcNXXk6pITaInxhbR+lTKMZZdJFs0c4w
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4gmw5ehx0v-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 18 Sep 2026 21:49:46 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 68IKK5v81234619;
-	Fri, 18 Sep 2026 21:49:45 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4gs56qa3jg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 18 Sep 2026 21:49:45 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 68ILnjjA8192640
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Sep 2026 21:49:45 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 388835803F;
-	Fri, 18 Sep 2026 21:49:45 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 289AC58054;
-	Fri, 18 Sep 2026 21:49:44 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.133.121])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 18 Sep 2026 21:49:44 +0000 (GMT)
-Message-ID: <4086ad937c14946de11dcd01ce6d46c0e1458620.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/2] integrity: Replace integrity_audit_message()
- with integrity_audit_msg()
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Frederick Lawler <fred@cloudflare.com>,
-        Roberto Sassu	
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-In-Reply-To: <20260916-report-hash-error-v3-2-73e5d95e9efe@cloudflare.com>
-References: <20260916-report-hash-error-v3-0-73e5d95e9efe@cloudflare.com>
-	 <20260916-report-hash-error-v3-2-73e5d95e9efe@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 18 Sep 2026 17:49:43 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuV/wG2s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78EE41F000FF;
+	Sat, 19 Sep 2026 00:27:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789777634;
+	bh=OZopYLFTJlf3PkMhPLbAyetqyxTv3lYaNJu5W/0y9dk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=JuV/wG2sz0qCIQSjQxsrReDBEzPo7huMI8B/ftpiCGhQ3UIfd7h8V5pbJkl3Jtn9N
+	 t6I+HuVuH47jco2b0SNsuD7buEfsry8aR9XZU6p3VJn3wq+SKa5nVxpu8O4Nrdhiod
+	 9oiaXsEGWCTtfPW0D9G3gaDarIGcuEk4EdUVM32MvcllbccEAZs7gnWH3eruoVfYk7
+	 2MQVk3fXUiV5KYdrrPzZNZqtbWXsMny/KgpmIkW0wYYHQXxrCtypVFrsrdW5pFfaX9
+	 obyph5+lgJaXEUYndIU2dB2kzbAuxmJEZlCXkbAYI9sBfPlIfqW3L/DSelB88Qy5Cf
+	 hgCGj2lW0NuAg==
+From: Kees Cook <kees@kernel.org>
+To: Bill Wendling <morbo@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Gow <david@davidgow.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Shuvam Pandey <shuvampandey1@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	nikitash.mariiaw@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2 2/9] seq_buf: Do not pop from an overflowed seq_buf
+Date: Fri, 18 Sep 2026 17:27:00 -0700
+Message-Id: <20260919002714.4060307-2-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260919002658.stay.929-kees@kernel.org>
+References: <20260919002658.stay.929-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE4MDMxMSBTYWx0ZWRfX2l+YI1sEkM4t
- IoDfOZ7Ff5C+9hQinuopmSqW52VEOtfBLAW5ZfIR0eDiPz9JxzsThpSvllZPHukGGxJJkGCwvXx
- sZdWLC+YK4XN9J4dO2LiRPKWcA4L1kWtmq86B6NTMm07E0Zxcd8cXL0nVpy2GUFicohG4bTVEPx
- XlMxAArktCiKSDjvjlMiodIoVSKxhtWgmv4N72cv1jigJaQsPpCmqCY/j8houcdTxJLG2qARtU7
- DnB9fwLp2aeEAj43NAIQsZw/sSo7rtkjo4f3gdIpRqfl7LSCQv5vncaI7I1fK5kMNHMafGeuHBJ
- Txf6czzrBX3EBuBwHu0BvdntRzehzQpiUUitPZiWRGTq1bcdfove9Xi2mGsQJwwlwEgyJFkxsWY
- YlobSS9uWpbY7kh3r3cI38pmXEaEL3rTtlUbwTIoBh+n11Hv8hCbWBTo3t5xcu7fEiPIxe5M5OT
- y7842gMWOFKVSpIM2mQ==
-X-Authority-Analysis: v=2.4 cv=E/NYNqdl c=1 sm=1 tr=0 ts=6aadb1fa cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=EG7W4yiQAAAA:8
- a=KUfPkIi8R2PQVBz8DpUA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 6--v3iu37kEqKOUMuRmLZDAcreEhe69N
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE4MDMxMSBTYWx0ZWRfXyMJhwbIC7Us+
- JBff6eHf+dL5yZeQ8/2ZP+15hJ+1ed5BPrpELfCXOWdM/5KLrmYgeUH879cRE7I5Ihd387cWHag
- BP6FXczMi2Vo0h6+vRFF+aP6XcrPa+g=
-X-Proofpoint-GUID: QkOwZOtJYh65AHxg1MNbWxz0N8ip1kA7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-18_06,2026-09-16_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- adultscore=0 clxscore=1015 bulkscore=0 malwarescore=0 suspectscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
- definitions=main-2609180311
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5577; i=kees@kernel.org; h=from:subject; bh=fYjJCoMwHmQye7/VloP5QI8g55DMF1gGv8QsEafA+tA=; b=owGbwMvMwCVmps19z/KJym7G02pJDFlrr93IXbp7Ld+m2KjGktU8+ry/9k2bf1eww21LT8Q0l s3KGzdnd5SyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAExkjxHD/3TRVR4XOIL2fMwO FDufcllw9wzWJoP7lUnPVl3wyTkv1szwv1z6NO/BO/cY7fcISvstXznZQP6X1MKCUwuTlG/s1qs 6zgsA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Hi Fred,
+When a seq_buf has overflowed, its len is size + 1, so seq_buf_pop()
+decrements len to size and reads buffer[size], one byte past the end of
+the buffer. It also leaves len equal to size, which no longer counts as
+overflowed, so a truncated seq_buf then looks like a complete, full one.
 
-On Wed, 2026-09-16 at 16:36 -0500, Frederick Lawler wrote:
-> integrity_audit_msg() wraps integrity_audit_message(). Replace remaining
-> call sites with the truncated function name. Then remove it since there
-> are no more callers.
->=20
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+An overflowed seq_buf logically has no last character to pop: the
+length of what was written has been lost, and the last byte of the
+buffer may be the NUL written by vsnprintf() or bytes that were never
+committed. Return -1 for an overflowed seq_buf, as for an empty one,
+and leave it overflowed, as the rest of the seq_buf API does until
+seq_buf_clear() or seq_buf_init().
 
-I agree with Enrico on the 1/2 patch description.  This patch description
-similarly should say something like:
+The current callers do not reach this, e.g. trace_syscalls only calls
+trace_seq_pop() when the trace_seq it pops from has not overflowed, and
+kernel/bpf/diagnostics.c sets the length from strnlen() before popping.
 
-Now that integrity_audit_msg() accepts an errno parameter, it is equivalent=
- to
-integrity_audit_message(). Convert the couple of integrity_audit_message()
-callers to integrity_audit_msg() and remove integrity_audit_message().
+Add tests for the pop corner cases.
 
-Mimi
+Tests passed under qemu on ARCH=x86_64 with GCC 16.2.0 and CONFIG_KASAN=y,
+and on big-endian ARCH=s390 with GCC s390x-linux-gnu 16.1.0.
 
+Fixes: 32e0f607ac6a2 ("tracing: Add trace_seq_pop() and seq_buf_pop()")
+Assisted-by: LLM
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: "Günther Noack" <gnoack@google.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: "Mickaël Salaün" <mic@digikod.net>
+Cc: <bpf@vger.kernel.org>
+Cc: <linux-security-module@vger.kernel.org>
+Cc: <linux-trace-kernel@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: David Gow <david@davidgow.net>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Shuvam Pandey <shuvampandey1@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+---
+ include/linux/seq_buf.h   |  4 ++--
+ include/linux/trace_seq.h |  5 ++++-
+ lib/tests/seq_buf_kunit.c | 42 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
+index 9f2839e73f8a..f5a350347bc5 100644
+--- a/include/linux/seq_buf.h
++++ b/include/linux/seq_buf.h
+@@ -155,11 +155,11 @@ static inline void seq_buf_commit(struct seq_buf *s, int num)
+  *
+  * Removes the last written character to the seq_buf @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if @s is empty or has overflowed.
+  */
+ static inline int seq_buf_pop(struct seq_buf *s)
+ {
+-	if (!s->len)
++	if (!s->len || seq_buf_has_overflowed(s))
+ 		return -1;
+ 
+ 	s->len--;
+diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
+index 697d619aafdc..7174ebf3f015 100644
+--- a/include/linux/trace_seq.h
++++ b/include/linux/trace_seq.h
+@@ -86,7 +86,10 @@ static inline bool trace_seq_has_overflowed(struct trace_seq *s)
+  *
+  * Removes the last written character to the trace_seq @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if the underlying seq_buf is empty or
++ * has overflowed. Note that only that buffer is consulted: a @s marked
++ * full by a write that did not fit, which trace_seq_has_overflowed()
++ * reports as overflowed, still pops the last character written.
+  */
+ static inline int trace_seq_pop(struct trace_seq *s)
+ {
+diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
+index 9ceccdc3029f..d5a0c618b880 100644
+--- a/lib/tests/seq_buf_kunit.c
++++ b/lib/tests/seq_buf_kunit.c
+@@ -115,6 +115,47 @@ static void seq_buf_putc_test(struct kunit *test)
+ 	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
+ }
+ 
++static void seq_buf_pop_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 8);
++	struct seq_buf t;
++	char *buf;
++
++	/* Nothing to pop. */
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), -1);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++
++	seq_buf_puts(&s, "hello");
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'o');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hell");
++
++	/* A 0xff byte must not be mistaken for an empty buffer. */
++	seq_buf_putc(&s, 0xff);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 0xff);
++
++	/* A full buffer pops its last byte. */
++	seq_buf_puts(&s, "abc");
++	seq_buf_putc(&s, 'd');
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 8);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'd');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 7);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hellabc");
++
++	/*
++	 * An overflowed buffer has nothing to pop, and stays overflowed. Use
++	 * a buffer allocated at its exact size, so that KASAN reports any
++	 * read past its end.
++	 */
++	buf = kunit_kmalloc(test, 16, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, buf);
++	seq_buf_init(&t, buf, 16);
++	KUNIT_EXPECT_EQ(test, seq_buf_printf(&t, "%s", "longer than sixteen"), -1);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&t), -1);
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&t));
++}
++
+ static void seq_buf_printf_test(struct kunit *test)
+ {
+ 	DECLARE_SEQ_BUF(s, 32);
+@@ -355,6 +396,7 @@ static struct kunit_case seq_buf_test_cases[] = {
+ 	KUNIT_CASE(seq_buf_puts_test),
+ 	KUNIT_CASE(seq_buf_puts_overflow_test),
+ 	KUNIT_CASE(seq_buf_putc_test),
++	KUNIT_CASE(seq_buf_pop_test),
+ 	KUNIT_CASE(seq_buf_printf_test),
+ 	KUNIT_CASE(seq_buf_printf_overflow_test),
+ 	KUNIT_CASE(seq_buf_get_buf_commit_test),
+-- 
+2.34.1
 
