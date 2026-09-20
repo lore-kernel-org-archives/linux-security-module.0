@@ -1,195 +1,120 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from mail-qv2-f43.google.com (mail-qv2-f43.google.com [74.125.230.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1313350A05
-	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 01:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789867687; cv=pass; b=bc/9Aju0hTXkGEPw0X3py0kZDBdbD0SefjS0YK7hHy5E/rNcjYrDtf7iJ6X2FhkxeZAWwi0qxkxsXiCTge3jNaDL7f/w17i6jvwM4xnIMIR7V/V37gpow1qM5A3PdF66ne3Zb/Tq1hciI8eftWQMQssQyrgtdiF1QKfmC6ESHyk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789867687; c=relaxed/simple;
-	bh=58SYG8u0pc/53nUlC52jnU/rC2SgxqQAeHb7MZSbjZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ip6oXQttL/HEoU2k3ogoXUJHHt5jevajir/sbWWBamMQQxvW2inWQAnrMxtoGrh1NPpMzPJ5jyxtq8/oquJ/8RN3b8uI92TVpjtSP2Z8goUlHnoMPrNusBatiPMJxiAgfl2EE6ETA+3rP6V2d3QbkFk84u1PqVgq9R2klNRWDd4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Oye3jcMX; arc=pass smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC0621255A
+	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 02:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789870040; cv=none; b=PLdDTQ87dDtKdEenAF3KnSTdlV7eJ1ynK5vKU7QdCEnORq/HAyfQk8uR5jjjaV/qe4uXdT6Re/wT5zIflNl0wgfoXn7UGBvTSzuMxFD9CtLfrqWe+WeQaS2sQB9nWA+N9DC09RZRFQraCMNFNEilWy6PG7TkROPfd7/wJibtqcU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789870040; c=relaxed/simple;
+	bh=v3ioTneesQ4IhyYIfJxKV4qgKfus9Larac1jgDv+YKU=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=VaTzvAThE4XaDFIj70/8J20l+PtolrI8is2Ha4RqFvH/egCqwSF0LN/qaInobVtZg7eSdyJn5tGaKlH3euo1OqXjvOc7tJS6xQEx4h+74snOZHg8JTcopv+RgEg7svEsOTvvqcVUK7Gavzimcf5Hyly0vkvM3lRb/nBKzMq1AzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f72xp97m; arc=none smtp.client-ip=74.125.230.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Oye3jcMX"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-cbe6295f05bso2279090a12.1
-        for <linux-security-module@vger.kernel.org>; Sat, 19 Sep 2026 18:28:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789867685; cv=none;
-        d=google.com; s=arc-20260327;
-        b=YX64ds8jus+8o7kePG1CB7+4d1Zf/VTeza47eM0e993OX/l4KSuMRbbxge5kh3z6QL
-         JoSfeLownE9lmhLSPzsaQ/NkJtQBQJaK7d5XV5zcbGzkU9utE2CY+hHfuT9O7FnB3Qh4
-         AER/SP3NecfsazZ+QfithjwWJHkPteRyMHK79favoPuyx1OkgawPi2Fc+yE5HnllfcMr
-         T6pSK1WSNKHu4DxvbdduYDaaDI1b0NdA4yYK9NKXoQa9X9ZzoNhdOJ7m8D7vyoJuHBSA
-         0SbIfawFAvJfioYEsKdKXB8PYMiczeHUY/wwtrJENY9JYy4/oCZ64zOgzkCSfp3f5ZgD
-         Hxjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=REeNKeU2w+4sUIJzVcJdRnI84oWXH0Weq6lkeZd2jWQ=;
-        fh=sZ2Kq74X75tC/oMXRvNonX9hsuakcYObCm8o/7lPItM=;
-        b=PVy4kPzHJMBuQtl7NK/bjvBF+QhAao5HRYUjz91m9UIM7D6j2duiXNESBjvxOkiF1r
-         pzB9VhMkNGW+Nj05LQma08IN8yTzkDHenfFcDO+mS8q/5dD+1GxsxH+j81ss3YmvK+sX
-         mb7SHFP3hWNA43KcwHyMyjPFbMRrdSD5PHu3DFuyzCgXyG8a67QU6x7YjeK2eCnPyePj
-         K8KeJpbfHMxBuYfev/kinktA7fkptsHL9BCKc3ZKXqHyANnfv9WXohy6dFGCtvKYG+oc
-         YhcQPxyk8+BL7tRqovTSLSh85Ii4Rk45zHMj1uxe3Sery6kqxSi4+bdRhQZbxIEN51ZL
-         tn0g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f72xp97m"
+Received: by mail-qv2-f43.google.com with SMTP id 6a1803df08f44-912628ea724so6852136d6.0
+        for <linux-security-module@vger.kernel.org>; Sat, 19 Sep 2026 19:07:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1789867685; x=1790472485; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=REeNKeU2w+4sUIJzVcJdRnI84oWXH0Weq6lkeZd2jWQ=;
-        b=Oye3jcMXOo+JxGG8lg0tyo01cPzFsTzFwSPst9BvLEqGSGa10jiZlNKw79qgxxXa2k
-         FI9TdJpfbNUX38lw6WTLltiufg7psbg6ZhkN9+GE+846FFKTSoEId/ybZ2apmxSgMMPy
-         LE0W8gEqHSzp0XDoi1x8HsmzbmaaCelra3DFxYhN3neBAb+PEMRuYjgD8zCe057sWJ1B
-         Y4GAduW19STxRo5cwliyVd/iDZJejl7gDPX4fsWHXqAF6ldjFQaRevoZCJVuHUz1+k31
-         EDUaRNJrocKF7nWOUz6G6BjlQpgPUhvK3h5mSgDAnFPhNCY0opQYbm3BwV19mw19547R
-         rO9Q==
+        d=paul-moore.com; s=google; t=1789870037; x=1790474837; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=G3+zGNgJRkxBaioG5ib3jA+WMEMkM7qf13aN5UYh0n8=;
+        b=f72xp97mARjRcuBps6jbRNZ7PRLKmF96Z0UzNvppBVEZEBzPSfC/be0f53Lmek/qcw
+         +oEMAzIY1u5NG+N1dDL5Q5Cx6whNdo/Sx/IQ/+REPfHT4SQAY7qUyM7UD0eISTyFgw5m
+         /Mn06FdHxgIZ7y8dpKbTS59Uc/wrC807Gpu95w6NFvKGNNFqpA3sB3WqtAVpcn3UdWYC
+         0JUiI1ndhrmFhIM5rtY+0wdJBPKIRRa20/iP0521s/pIkzV2bAp9raYshiyojNaTYbok
+         K0SmnYOBG0rSfKcd4u9xTROuaWC7wL/ZyciP+DRroV2j2/bZ0OJW0IoAU6YS0Cjblr0L
+         293Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789867685; x=1790472485;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=REeNKeU2w+4sUIJzVcJdRnI84oWXH0Weq6lkeZd2jWQ=;
-        b=LN6CDHq10BGI6j01URvbV1Z590cKUfDp5QnjLSye7fYK6eLcnh3nrEmKEA8CSBYpWR
-         bCPWXKbOtBIWWlQTb3tD8Ovnu3fOjBwe7yWGhqeTDDJquOJfQV5s7abH0iFPdKh1kedW
-         uF71Cy7+WHdDiGQEOG5H6gmUUQzuYE4qdbdxLmVgplbvvXq/pgoLNIZgIyknxjJNdezn
-         zfUbFQ4C+ujFyQOoYA5U62uZ2xkFgVSwaR739plRvNU2lNh87c5LU6wkgYPdFpvF2UYg
-         0xK4Z/oHER+BER3+0XDkEzGQ7+9ADKtgdFAYno4+ZNV1BwZFsAablPUuUX/Fz2A0SvlL
-         pxhA==
-X-Forwarded-Encrypted: i=1; AKwUvBzp4HYUSg6aa3DN4QMVjaLUqfaK2FBt50PFyyGAny+7r5IBDBSxjr/u4+yAI3iN9xFdaZK7oI3XA2XocA3Hf036krsagCo=@vger.kernel.org
-X-Gm-Message-State: AFuF++ntb75zS4g6jM5FJnkzweWMdXXRqj/nMek0vbcHycCTgABFfjfH
-	A0zX5QIIhCZReIh77y992JLrPBnWbXwqto6RynAFERC5TPnMwiW5aW9VjsZZryP3cEtWdcZErAL
-	JXwyHzOdecGwAePl6YnJveHMmkxdvRQ/UPMEEBrDD
-X-Gm-Gg: AYBFou1CteGnhEMu5rHghMWlCHpimQOGlyWdYyBhXqUw1aHZMi43CSvLSAADMnQ6DeS
-	2HpOg+4Pvs+gkhERIrq4wgQTUwCZ5zMc/mOW96BUbaSSWExDVBbAN/+/AxJlrekxfKTPmz9B5M2
-	A5sf1xjRbcLif+g/LjUzvyNqlI3qDxYbPi1QDRJxi4b+PN2s6quciQjUrvOtLXBO0PrMWY1mvK+
-	u+dLc+kbGmsA+9c4xvNBgxmQPq7WK/Vsw/nM4VUGt2kGQ8j3f0mmFjDJgdSS+/OTjX3CcB/35QP
-	QjsxPrfEfkGMfADfB9ekucqQzDtspEHu3HdVroUusoK6AbvEP7FzwQ8Mtq8jrZ1h0H10BNBKfM5
-	PNgKpf/iCrkk=
-X-Received: by 2002:a05:6a21:6b18:b0:3da:e57d:4a79 with SMTP id
- adf61e73a8af0-3dd7263a307mr14783301637.13.1789867684717; Sat, 19 Sep 2026
- 18:28:04 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1789870037; x=1790474837;
+        h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=G3+zGNgJRkxBaioG5ib3jA+WMEMkM7qf13aN5UYh0n8=;
+        b=dka/yB9wGlFUmi15fq9yhLEdESj3H2EZx9+RBj/toSay15Tgy5kT9h6/63KJjpMnWY
+         c5GmzT0zIN9O3JmsU1xzqpuEATLuevlIH+S0XxGiW/qfqjUt9u2fxuDr3zhKj0e8nWIF
+         QY4EqaGQf087FmJD/GM/3W+hFTTkxTt+sZ80G6kdBlrE7Xrdy1oM88Nk4gIaQIDOKgkR
+         c715JhVQeS8iE6RKa9ozAn1uA6b8LFipTG8Rj7hjePY06R4Asq3sknxdja+EwOH+TSLP
+         InU9IrgulpKdRTuPdntOJAlU2IL4EhQ8BhVEQm0pIZm3cTZu9cnkPRFHV+XBaaCrQS/3
+         0R6A==
+X-Forwarded-Encrypted: i=1; AKwUvByoljfnTrvMY7kIOKNE9x4KSR2GW1o+U/cZBZYNbLWZmDU0jA6D2C7AAIrl2VJU8X5EPBxe4QAGnw4DbAGcrv0Y0vcQe38=@vger.kernel.org
+X-Gm-Message-State: AFuF++mP2H3zFWT5HL7KKyd3o/KmqxZMMF7uG41TesDMsTG/Ta5JmZnE
+	XZRezzhU3xAONW3kAo6OSfE3hLCmfonKDZTzStvom/tnRPdtZ89aq8Zb0U5SFBfxKukyXf5al4h
+	JgJ4SkA==
+X-Gm-Gg: AYBFou2MeoEvV0ZfsmaraLrSyBNPgmOn2rNKqeVlQhtbUyL+1VrUZW0wMu13bLJOBwS
+	NjCWZmr7AYAcBw51yT7v93tSFpPggKIALl8Ge6s646yeatJUyX71mTNqrO54N62380pTCu4ZfYG
+	NdYE34xLgRGIf0R3ZFieN98kAZ5mbunOeLztq/SjBdVdQPngl5TibIYUfrqmeHI64PtO9izrEtH
+	ox7+me1uikvn4XgCh1CJOFIbTMsvzUQZtyNPrZQMbNTdy00WdQsa4WxAPSU+H3QYySR1rmhWsyS
+	q9kn93mAiq01dbxadD0079J4+LG6a/kf1Kos5ey1kZAcgLPYwUC1ghFq98VDPMq/5BNSb9lsUqY
+	Zx0E/NEg4a9BMCJk9hiyFlEHabq21wZcSMBfknNw68Ou+1R+FImvpQlt8cDE0H0f01jVhr8oVnp
+	ZH1WM3DUmx4rKINBo0aZgu8S1dskNXvVAMqA3rCf/fOXd1uQJOUeQn+qYWKSJvPfxMRoa29r2bq
+	UwmNHf3WNkYxjKM6E0QIX9PvpwVzb0J2EgqOJkIXZ5kFaa3MBUXMcFt3t4shkYVx/8Nmb3TjZP9
+	pw==
+X-Received: by 2002:a05:6214:ca8:b0:912:5951:179b with SMTP id 6a1803df08f44-912a8017caemr43115516d6.30.1789870037098;
+        Sat, 19 Sep 2026 19:07:17 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91260aa1c03sm33242166d6.39.2026.09.19.19.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Sep 2026 19:07:15 -0700 (PDT)
+Date: Sat, 19 Sep 2026 22:07:14 -0400
+Message-ID: <932d0e418d78fa40b5d18951a34876ac@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20260919
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260919210621.3029744-1-benquike@gmail.com>
-In-Reply-To: <20260919210621.3029744-1-benquike@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 19 Sep 2026 21:27:51 -0400
-X-Gm-Features: AcwNN1VaFHIGGaQ5NtAlsPyN6fZLotOP8OtOjiPI2lLmpI72SuzrZttUCiuI84A
-Message-ID: <CAHC9VhT426aweDqPhBWz+16b9zWGj5GsEdn3Jv9dJUnaz5wdyw@mail.gmail.com>
-Subject: Re: [PATCH] ipv6: calipso: fix 8-bit hdrlen overflow and missing
- pskb_may_pull() in hop-by-hop options
-To: Hui Peng <benquike@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 19, 2026 at 5:06=E2=80=AFPM Hui Peng <benquike@gmail.com> wrote=
-:
->
-> Two bugs exist in the CALIPSO hop-by-hop option handling in
-> net/ipv6/calipso.c:
->
-> 1. When inserting a CALIPSO option into an existing Hop-by-Hop extension
->    header in calipso_opt_insert() or calipso_skbuff_setattr(), the
->    resulting header length `buf_len` (or `ipv6_optlen(hop) + len_delta`)
->    can exceed the maximum size representable by the 8-bit `hdrlen` field
->    (256 * 8 =3D 2048 bytes). When `buf_len > 2048`, `new->hdrlen =3D buf_=
-len
->    / 8 - 1` (or `hop->hdrlen =3D ...`) truncates modulo 256, causing
->    `ipv6_optlen()` to under-report the allocated header size and
->    mismatch `opt->opt_nflen` or `skb->len`.
-> 2. In calipso_skbuff_setattr(), when `ip6_hdr->nexthdr =3D=3D NEXTHDR_HOP=
-`,
->    `hop` is dereferenced at `(struct ipv6_opt_hdr *)(ip6_hdr + 1)` and
->    scanned by `calipso_opt_find(hop, &start, &end)` without ensuring
->    that the Hop-by-Hop header resides in the linear data area of `skb`
->    via `pskb_may_pull()`, risking an out-of-bounds read past `skb->tail`
->    on non-linear skbs.
->
-> Reject Hop-by-Hop headers that would exceed `8 * 256` bytes with
-> `-ENOSPC`, and ensure `pskb_may_pull()` linearizes `hop` before
-> inspecting it in calipso_skbuff_setattr().
->
-> Fixes: ceba1832b1b2 ("calipso: Set the calipso socket label to match the =
-secattr.")
-> Fixes: 2917f57b6bc1 ("calipso: Allow the lsm to label the skbuff directly=
-.")
-> Assisted-by: LLM
-> Signed-off-by: Hui Peng <benquike@gmail.com>
->
-> ---
->  net/ipv6/calipso.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+Linus,
 
-Similar to my comment on your other patch, since you are fixing two
-potential issues in this patch, please break this up into two patches
-and resubmit.
+Three fixes for Linux v7.3-rcX:
 
-Thank you.
+- Ensure that the cached SELinux access decisions are correct.
 
-> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
-> index c6a34334e657..b8b7451a16ed 100644
-> --- a/net/ipv6/calipso.c
-> +++ b/net/ipv6/calipso.c
-> @@ -944,6 +944,10 @@ calipso_opt_insert(struct ipv6_opt_hdr *hop,
->                 memcpy((char *)new + buf_len, (char *)hop + end, hop_len =
-- end);
->                 buf_len +=3D hop_len - end;
->         }
-> +       if (buf_len > 8 * 256) {
-> +               kfree(new);
-> +               return ERR_PTR(-ENOSPC);
-> +       }
->         new->nexthdr =3D 0;
->         new->hdrlen =3D buf_len / 8 - 1;
->
-> @@ -1323,6 +1327,13 @@ static int calipso_skbuff_setattr(struct sk_buff *=
-skb,
->
->         ip6_hdr =3D ipv6_hdr(skb);
->         if (ip6_hdr->nexthdr =3D=3D NEXTHDR_HOP) {
-> +               if (!pskb_may_pull(skb, sizeof(*ip6_hdr) + sizeof(*hop)))
-> +                       return -EINVAL;
-> +               ip6_hdr =3D ipv6_hdr(skb);
-> +               hop =3D (struct ipv6_opt_hdr *)(ip6_hdr + 1);
-> +               if (!pskb_may_pull(skb, sizeof(*ip6_hdr) + ipv6_optlen(ho=
-p)))
-> +                       return -EINVAL;
-> +               ip6_hdr =3D ipv6_hdr(skb);
->                 hop =3D (struct ipv6_opt_hdr *)(ip6_hdr + 1);
->                 ret_val =3D calipso_opt_find(hop, &start, &end);
->                 if (ret_val && ret_val !=3D -ENOENT)
-> @@ -1341,6 +1352,8 @@ static int calipso_skbuff_setattr(struct sk_buff *s=
-kb,
->         /* At this point new_end aligns to 4n, so (new_end & 4) pads to 8=
-n */
->         pad =3D ((new_end & 4) + (end & 7)) & 7;
->         len_delta =3D new_end - (int)end + pad;
-> +       if (start && (int)ipv6_optlen(hop) + len_delta > 8 * 256)
-> +               return -ENOSPC;
->         ret_val =3D skb_cow(skb,
->                           skb_headroom(skb) + (len_delta > 0 ? len_delta =
-: 0));
->         if (ret_val < 0)
-> --
-> 2.55.0.1082.g2b9226bbc0-goog
->
+- Fix the SELinux overlayfs code to properly track the top-level/user
+information on multiple stacked overlayfs filesystems.
 
+- Fix the SELinux overlayfs code to properly enforce mprotect() access
+control policy on all of the different layers in multiple stacked
+overlayfs filesystems.
 
---=20
+Paul
+
+--
+The following changes since commit df2908090cda368b01ff43709f51890076c56157:
+
+  Linux 7.3-rc2 (2026-09-06 15:07:20 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20260919
+
+for you to fetch changes up to 78fc54b934bfb2c18aad8154c7302067146946f9:
+
+  selinux: recheck intermediate backing files on mprotect()
+    (2026-09-15 23:30:07 -0400)
+
+----------------------------------------------------------------
+selinux/stable-7.3 PR 20260919
+----------------------------------------------------------------
+
+Christian Göttsche (1):
+      selinux: always fill AVC decision in avc_has_perm_noaudit()
+
+Karl Mehltretter (2):
+      selinux: preserve user SID across nested backing files
+      selinux: recheck intermediate backing files on mprotect()
+
+ security/selinux/avc.c            |    5 
+ security/selinux/hooks.c          |  158 ++++++++++++++++++++++++++----
+ security/selinux/include/objsec.h |   10 +
+ 3 files changed, 150 insertions(+), 23 deletions(-)
+
+--
 paul-moore.com
