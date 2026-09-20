@@ -1,173 +1,208 @@
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com [74.125.228.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E06242D62
-	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 01:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8153828505E
+	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 01:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789867332; cv=pass; b=eXDCTJ0lmpYuMw3gWNVzA3TmnILOXk3TdbvqdsJeHyZFjhgw7mHKjc4MXg0Hd3llGjmv0u3GPVtuengTQY34Cp+mYXColWMAWw5Q008IshZnnAZiP2Micq4gR0jWaEUq+em2KzsgHjfcJ16gXGdn4P9673jPT02tC6mEEIEWxe4=
+	t=1789867555; cv=pass; b=qfoSzK6VV2AVlfqkUzBx6UzxSFqOZ4EITS7SgEumUfmtLkuHdRav03Pb+0LFVWe/8fcnNUr4jKQqXZn0Nj/EegC6yPn3dhEy8Kam6H8Zbop/q4aD78SliLmNTO/id65lawvxd4C1tAg2LIa0e+42VnFwjheHkYXeW/+ghtVP/Nw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789867332; c=relaxed/simple;
-	bh=2VEm69UeAdHkIwbBU0Ergf1rGXkHAkJuOFSQAiSO0p8=;
+	s=arc-20240116; t=1789867555; c=relaxed/simple;
+	bh=rE0jWmiH8mZl6rl9Yc+bmfiJlsxIdVsL+Q8JnRqVZlk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vfnqf6meF4KJVnOw+G5Sc+JMWztiTPq+PKl+T7A63lqCBV89K/90S4HdnkghrCxBOu/dSa6/8wGBpSUusGFg7VAPGv0u8GfCjGZ3f/Ai1Hz6ZrW6rKysId3/56ch6/AS9bfXVXeRap3jhvv8UcjnJoGjZgwez32xMIwuLQnRuQM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L6O+ve67; arc=pass smtp.client-ip=74.125.228.12
+	 To:Cc:Content-Type; b=YLo21NKbQ+M10FIjIKXj7qpa/cKpDYDUmCT7dxvCesfATWgBOfe7x4fWV0WBnCrEJldeVzHdKtQFpDLRXSEA8fGsDKp0aOzoaIvkLVSRrcYB63ussVeUuAFApiUUAzIH1hWvXeF23RRjIq/jv3otM6TmOJ1Hntd38CeCNnKGkCg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ITHPYTFY; arc=pass smtp.client-ip=74.125.228.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L6O+ve67"
-Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc1cea50db3so1075575a12.1
-        for <linux-security-module@vger.kernel.org>; Sat, 19 Sep 2026 18:22:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789867330; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ITHPYTFY"
+Received: by mail-pz2-f42.google.com with SMTP id d2e1a72fcca58-86e6d007703so1650829b3a.0
+        for <linux-security-module@vger.kernel.org>; Sat, 19 Sep 2026 18:25:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789867554; cv=none;
         d=google.com; s=arc-20260327;
-        b=dv6hcpSo/IwGOMksoqPEIwBYp8oz2lMhH4AHFqxX+/GKeBIY2pBq+PR8Is57tBxRd2
-         zf+UJGwe1Z2J1n0XvJCSmamwlqDNX2woyiFx1lz5MK8TFRTP8tbi+63CHvJfxhJXWpVR
-         gDnEJ1xQfbNgaMYIIQeoqMfDllDdNFo9rl/II8Kxo06bQ7LPhvTUdDo8q+kwfVA3Em+p
-         y0bAHFyiheqka483GfC1mf0YsdNZju9uMv+mlwrut/nk+TMHUerj5H5a19kDv/q6Rn6E
-         T59ED24nj0K2F2q+pN21uBVawNqXqtSVuAK8P1P1JoJXJ01+v+nnsiUkT44g5sXzj6+X
-         Rurg==
+        b=s9w2beGBvFFAZL38azWkiqpYx6tN4f6XXtofktph0NF6rDfu2g4zg7Cxl8NGW8rzyN
+         zWWwy9hEPx/5F+ugLDMLeKcaZGYNjIzIli0CzFNmgyBZy7mVku1UszBgLKQpwljMtVwL
+         RWxJLp2Qt8ftVvvLB/a6TIQo6HYXlxQxaSVPgquBw+prOugxF3EquMD0fub5C8qLHnkf
+         DKI3jD8gqacbN7MOmVhGRvoyXbfJ3nalSkqKp31IOB2lqw6IYMNHeMZLBkr1mCoC3JwK
+         HegBmyVrpnxbznQUrz1WtaIw1Z55UHXDsviUm7DWHBoU2eo4Ig3VrnhAkyt9ImAztnGK
+         hmJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=zXdKuOcPQjh4tFULSVStg5yQtDl5Sivh8Z/3KuFYKs0=;
-        fh=xitIjIrl4yzPKALHb2IxhSgFfA75ZfDGxOVaA98X0o8=;
-        b=HpeHWwNishJplwUJpTM1Mi01s9QCiBjrDAlP6ml7JxtnbHJ1PSqdIeCTjwinywQ/QM
-         ztTWnGvAUIwLSqr8uk0f1Q4du9q/cA+6a4tfiqWUHB7w9aSxuq4nSDhINFd0SjT3fmmG
-         ZSRQ9zE5pO7lLGGOuIgvv1HUaBdvIOesLQLMkuCNeRDRoDyx0b29fFAeHGH69uGNqX+/
-         nhZUlyJqkn6WVgmVA6p/B2jahrSUCkqYX2wNhbtUtJ/YPr10zYvYJVQ+oMBPl92CgUWF
-         XoNmrOGHWBzHKM7p2XNEY0GDwviShAv/YIyTILefTzTf68vz8gEUYhULh/zlRF08N57s
-         b3rA==;
+        bh=MNRnVH7wuWaValEcQugtvoveGgv+gdl3RdPnin3h+/k=;
+        fh=fhA+VOgsZ2EhxsI1xEaeM84sS2qQHYN12fswBEHMGuM=;
+        b=l0ucNEvWtG7srKzmOwmTGv/3e80Y8fVPr+n2vL4wpQP0gencrTCMXdz+BdkqoC/g40
+         lnlLYkReUVea5ev3AwhYME0qde/PsLk2SbZke/lo+HjzxAw//fAt8Vj3B6mdoIYbGu4i
+         zhZUZpeZUHPERJKP0u/qou8JAqXxwxse3erfh7vg271ff07lQrohEQ/61czSJs+UWQfP
+         tMmqIQaEczCrPqHcJQDfO1ZPztaVcojFr3SYnk5wtrDS4Alfl/sAmb8W5ADEMpArJIEh
+         CY2RhMrjW2ZpFondt8DcwK2Q0xTR+b2fyFkS/eG7n+vMF08cJUh4sCj5wi74n89d/qZO
+         wAQg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1789867330; x=1790472130; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1789867554; x=1790472354; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=zXdKuOcPQjh4tFULSVStg5yQtDl5Sivh8Z/3KuFYKs0=;
-        b=L6O+ve675fqEPtcUxqXtqgUQOpms6zlKaUIVzibB6dwlz8UfhHs18NE2LQUD0Itsbq
-         AmXaRpmqj59ev0o94mh3ukN0p/YT3QVdvoOrUJ1MdZT9J/lGPqVNQkvOsxD5rhN+A9eL
-         LSsfQ6qJGaQTDNhZ2QQWWEBDV889TT7n/YsnabMngyUxuZlKl/P1C3y/n3UyrpfAOlcN
-         MOBAOUOJScs7eRYBD8xg0ICP/+2B7tz/TIyD6q5N1RhFcabKg9Gkct3n4hjEokIhjm3X
-         69PzVQcrIsgtUubhk1bGHZETjXsz2Or2LbKOUnyrb7IK1ddnqQG3J9tdZG88507MKWLH
-         P/fw==
+        bh=MNRnVH7wuWaValEcQugtvoveGgv+gdl3RdPnin3h+/k=;
+        b=ITHPYTFY09cCVl7MzEnnEta1wLZ5p02SW98zHa6QunF+numSL9lPPU4myPxlSfOfLl
+         t/JmSHSAVyQbDhi/qHx3XPUGYsX2gK9uHWaQH5Dv5foU3w0OYj15QfNQT3tmnf3v6QbV
+         /Nu70CSbVpoEUYbdGO8NXLo1msD+kx6hEJ2YRa147gdHzQvzoE70kNUV0MTzy5Jfk3co
+         z71fcZa0+7ecmLeuzQX7dR1BYgng87bqOJb4isuTy4Di0sUt9DSeaVotZ4iM5nZTKxC1
+         YcTxV1NQOVFz4PJdbll8YVdbkiD84HvZoKnvGbRkPB3fBkPonGlF+qxs0SlgH07xShhX
+         4Duw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789867330; x=1790472130;
+        d=1e100.net; s=20260707; t=1789867554; x=1790472354;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=zXdKuOcPQjh4tFULSVStg5yQtDl5Sivh8Z/3KuFYKs0=;
-        b=pAV81EO7ETbIOJeotRL3igtD08zD/Te+VYkD6Vh6oKpH0hsRab52t/bPYy2ffPWvZ9
-         BnjzSC4J+K9Ubpon6acqf8vMrMCA/1dDvTzly4/5HmBpfKZVNk0e+m8O0q87VlKqoGph
-         MREws+P9pkkgv97Hk2ow8oEjib2PGoX/IzjkX3kPNbefuS8ydwIxLPM/7Czz+IpnwBeM
-         TLsP0439YhE/5QoTCCDCjxMWhgr1tYrWf7NNCc30mCO7vJJD0bXv9MSHIuws+xRgq1Fq
-         qEVLaVh1orcBHgShBXC4gJA1lu9ncgG+J+KWh1jQG+wuPgRREurv4nqw6O8V84wiC1/j
-         E2ew==
-X-Forwarded-Encrypted: i=1; AKwUvByw54tNwFm7lW9RydtNbeirU/cArZ8nBunhPYVhcuyDRTM82M35CAOff3e5b0Orn5GPIZXo7UIUJl/rgZc6O43lUu/zU+Y=@vger.kernel.org
-X-Gm-Message-State: AFuF++ncEGWHpMRz0Qs+sEtSvvaJt6A7yZHaGcreRDjze7Ptsgmx+cFA
-	s5aQRq92t1r6OiHkcgMOFS4uXyom8p0l2Q09N/OAaHSY9TaNDVVF/H5ZPlr1pH+FyfNAZG221I5
-	LwUvPv0IPB9d9oajS/n34VsHImruYprtr3CD9ew4w
-X-Gm-Gg: AYBFou05O/MWA4wgl/uLFHX8BPOcIHlsBZudT7mLrzhnQNAO/jLyqkSe1nCQiOyDTK/
-	RgAswyPn39W9x1DMi0YdIwJag1n+O8lspHQ94vpx49AHtPTOR9HSBgxzGcbjDYZB8lPGg2pWNkS
-	z7wrc0yoGUDpZCDGs1AhDxXIV5YPsNYC/3Agly368ud/QTWzeioGGW73Hp90H+cn1FGue1UHFtB
-	a1g2CPftJjOfMbLOkRBd1UJ7+pD4cfCzc0BlJX3xSGY9ldzSwBAw3X5Sz3Ey7TpI3V2TbreLhR7
-	I6KhDlxhyOlDys+bOlvw1pcu84i3eAhT4yjm5uPs0eRuxWCQ0Rlx4/RN2HNhH4e7W2CI4/cAN7U
-	yR2EAAvOvyB0=
-X-Received: by 2002:a05:6a20:144d:b0:3dd:a008:dc39 with SMTP id
- adf61e73a8af0-3dda008e131mr6498106637.39.1789867330527; Sat, 19 Sep 2026
- 18:22:10 -0700 (PDT)
+        bh=MNRnVH7wuWaValEcQugtvoveGgv+gdl3RdPnin3h+/k=;
+        b=LZf/Mho2cNLdWsjllyH2WS6hEcNp1XyxpnGWPt3cW8ON4SsCWwn8dSnh4m86THVHlW
+         gAKUiHjYBfQJBoD7SQByLCaHyn0+hyMYJzHkc3zLCAF4HbvDce2u7WM6nJCCCCQoo6xG
+         SJFRmhzlqN6OLQ6dcaS0Vgg6MQHRIEYTXpqf1dXY6y+MQYoMcTcsr1Qv0yGFX56xKb8J
+         6KYZJANOfvknhIX/RVb8lA/BSGO19AFX+IxucL3OwGBo7X45gZwee5UEv5cJzMAI4oPb
+         dqE3wncWGamSrEMRASjxWrHTAfpGUjXwzRqrkzBMu0EaC3hIBuzVkvcfpGQLPBgJkBcs
+         v0/g==
+X-Forwarded-Encrypted: i=1; AKwUvBxFcY752VG3XLe5mZ82XcJhRGkKqTRiOASObTs4XLW8hV26Ocsk8GF2d/3wCH9Pv9utZEEPzknbjdpQ9PfdadWNoK6O8Ic=@vger.kernel.org
+X-Gm-Message-State: AFuF++mYdJjvMS/NVCun/+34vehz3SN05mqkF+w8+2npRY76HbDb8K6Z
+	IYw7WBosoINBSULWhSDCJF6gtUr3IqQEGQ+/pKMbaXaspl8QZcj57f7XhAgrbzHpUT65PDLkt9l
+	GViI39Z4chqg33AveWIgsZL/si0xYAwaJeW6JnabP
+X-Gm-Gg: AYBFou0W9/aGwLfTpFOMkRJu/izhJ1q5wehXP1Qn4oy4PzHF8L7k5C0/cs5gh/D2Fgu
+	IAkmJ+h7uMFsePu09zXiO4/PfpaHFLPPm1s/99OuCF8SkWNAmef68021g+aZW+q898CNfSVtsjv
+	t4RxWGHQyNAmCB8i81G9Ef941dJEnO1pXOvCjrTQInChaV8BhPZEuAPm7crGwHRErtsq18j9DVl
+	NAZDYE2zdAy4s1/kNckbckq7IxPGjyu82Djf2xZRMyV6nW4ZnD8CGO4nF8W7Tuj7L3trNI7m18T
+	0jnpVCMBtGqE8HO0CR4tCXmv3YHwYvqsXIt9WN9GK4kexnJTOqSICHsOLf4BFXHiLi+49F4QrR3
+	agte1uz0YFnI=
+X-Received: by 2002:a05:6a20:7f8e:b0:3dd:a196:907a with SMTP id
+ adf61e73a8af0-3dda196a7a5mr6025808637.68.1789867553821; Sat, 19 Sep 2026
+ 18:25:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260919223438.3883567-1-benquike@gmail.com>
-In-Reply-To: <20260919223438.3883567-1-benquike@gmail.com>
+References: <20260919215243.3472150-1-benquike@gmail.com>
+In-Reply-To: <20260919215243.3472150-1-benquike@gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 19 Sep 2026 21:21:58 -0400
-X-Gm-Features: AcwNN1XYIQ_wBn8i5ggt4CeI5Ch8V6l0HMTPG10aIvqe5hBWEiugJPjmk6GI8NQ
-Message-ID: <CAHC9VhS7sZQaPaRswKQ1ETrReEPB2f5buNAMGSXqZ1iBKTs+bg@mail.gmail.com>
-Subject: Re: [PATCH] netlabel: calipso, x509: clean up ADDRSELECT on DOI
- removal and check AKID len
+Date: Sat, 19 Sep 2026 21:25:42 -0400
+X-Gm-Features: AcwNN1UUreSec9NyLkvaWFAQ9DB9RVlT6GgTGCc3Y8l3T4QYDUJMKR-P4SIbpMM
+Message-ID: <CAHC9VhSxPmufV8Xve=kFX3kH6aBztyH9+tSynrXUEXcgTuw5Sw@mail.gmail.com>
+Subject: Re: [PATCH] netlabel: cipso_v4: reject empty MLS level/cat lists and
+ zero tail in cipso_v4_delopt()
 To: Hui Peng <benquike@gmail.com>
-Cc: dhowells@redhat.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 19, 2026 at 6:34=E2=80=AFPM Hui Peng <benquike@gmail.com> wrote=
+On Sat, Sep 19, 2026 at 5:52=E2=80=AFPM Hui Peng <benquike@gmail.com> wrote=
 :
 >
-> Fix two issues in netlabel CALIPSO and X.509 key parsing:
+> Fix three bugs in NetLabel CIPSOv4 handling:
 >
-> 1. In netlbl_calipso_remove_cb() (net/netlabel/netlabel_calipso.c), also
->    inspect NETLBL_NLTYPE_ADDRSELECT entries so IPv6 address-selected
->    mappings referencing a removed CALIPSO DOI are removed.
-> 2. In crypto/asymmetric_keys/x509_public_key.c, guard against zero-
->    length signature/AKID fields before key matching.
+> 1. In netlbl_cipsov4_add_std(), an empty NLBL_CIPSOV4_A_MLSLVLLST or
+>    NLBL_CIPSOV4_A_MLSCATLST leaves local_size or cipso_size at 0, causing
+>    kcalloc(0, ...) to return ZERO_SIZE_PTR (0x10), which bypasses NULL
+>    checks and installs ZERO_SIZE_PTR arrays into cipso_v4_doi_list. Rejec=
+t
+>    0-sized level or category tables before allocation.
+> 2. In netlbl_cipsov4_remove_cb(), also inspect NETLBL_NLTYPE_ADDRSELECT
+>    entries so IPv4 address-selected domain mappings referencing a removed
+>    CIPSOv4 DOI are properly cleaned up.
+> 3. In cipso_v4_delopt(), zero the trailing cipso_len bytes with IPOPT_END
+>    after memmove() and pass opt->opt.optlen - cipso_len to
+>    cipso_v4_get_actual_opt_len() so stale tail bytes are not re-parsed.
 >
-> Fixes: cb72d38211ea ("netlabel: Initial support for the CALIPSO netlink p=
-rotocol.")
+> Fixes: 96cb8e3313c7 ("[NetLabel]: CIPSOv4 and Unlabeled packet integratio=
+n")
+> Fixes: 389fb800ac8b ("netlabel: Label incoming TCP connections correctly =
+in SELinux")
 > Assisted-by: LLM
 > Signed-off-by: Hui Peng <benquike@gmail.com>
 
-Thank you for your patch, but as NetLabel and the kernel key code are
-in two very different subsystems, please split this into two patches
-so they can be properly reviewed and potentially merged.
+Generally speaking, unless multiple problems are tightly related, one
+patch should focus on fixing one problem.  As you have identified
+three potential issues that don't appear to be related, please break
+this patch up into three patches and resubmit.
 
-> diff --git a/crypto/asymmetric_keys/x509_public_key.c b/crypto/asymmetric=
-_keys/x509_public_key.c
-> index 25cf8ac7f257..5c9165a83f91 100644
-> --- a/crypto/asymmetric_keys/x509_public_key.c
-> +++ b/crypto/asymmetric_keys/x509_public_key.c
-> @@ -53,9 +53,11 @@ int x509_get_sig_params(struct x509_certificate *cert)
+Thanks.
+
+> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> index a05aa075de1a..4ac1a4965abe 100644
+> --- a/net/ipv4/cipso_ipv4.c
+> +++ b/net/ipv4/cipso_ipv4.c
+> @@ -2025,9 +2025,11 @@ static int cipso_v4_delopt(struct ip_options_rcu _=
+_rcu **opt_ptr)
 >
->         if (sig->algo_takes_data) {
->                 /* The signature algorithm does whatever passes for hashi=
-ng. */
-> -               sig->m =3D (u8 *)cert->tbs;
-> +               sig->m =3D kmemdup(cert->tbs, cert->tbs_size, GFP_KERNEL)=
+>                 memmove(cipso_ptr, cipso_ptr + cipso_len,
+>                         opt->opt.optlen - cipso_off - cipso_len);
+> +               memset(&opt->opt.__data[opt->opt.optlen - cipso_len],
+> +                      IPOPT_END, cipso_len);
+>
+>                 optlen_new =3D cipso_v4_get_actual_opt_len(opt->opt.__dat=
+a,
+> -                                                        opt->opt.optlen)=
 ;
-> +               if (!sig->m)
-> +                       return -ENOMEM;
->                 sig->m_size =3D cert->tbs_size;
-> -               sig->m_free =3D false;
-> +               sig->m_free =3D true;
->                 goto out;
->         }
->
-> diff --git a/net/netlabel/netlabel_calipso.c b/net/netlabel/netlabel_cali=
-pso.c
-> index e1efd888b4a2..3756193b1c49 100644
-> --- a/net/netlabel/netlabel_calipso.c
-> +++ b/net/netlabel/netlabel_calipso.c
-> @@ -283,10 +283,21 @@ static int netlbl_calipso_listall(struct sk_buff *s=
+> +                                                        opt->opt.optlen =
+- cipso_len);
+>                 hdr_delta =3D opt->opt.optlen;
+>                 opt->opt.optlen =3D (optlen_new + 3) & ~3;
+>                 hdr_delta -=3D opt->opt.optlen;
+> diff --git a/net/netlabel/netlabel_cipso_v4.c b/net/netlabel/netlabel_cip=
+so_v4.c
+> index b080e666523f..9bb28236b8fe 100644
+> --- a/net/netlabel/netlabel_cipso_v4.c
+> +++ b/net/netlabel/netlabel_cipso_v4.c
+> @@ -185,6 +185,9 @@ static int netlbl_cipsov4_add_std(struct genl_info *i=
+nfo,
+>                                         break;
+>                                 }
+>                 }
+> +       if (doi_def->map.std->lvl.local_size =3D=3D 0 ||
+> +           doi_def->map.std->lvl.cipso_size =3D=3D 0)
+> +               goto add_std_failure;
+>         doi_def->map.std->lvl.local =3D kcalloc(doi_def->map.std->lvl.loc=
+al_size,
+>                                               sizeof(u32),
+>                                               GFP_KERNEL | __GFP_NOWARN);
+> @@ -260,6 +263,9 @@ static int netlbl_cipsov4_add_std(struct genl_info *i=
+nfo,
+>                                                 break;
+>                                         }
+>                         }
+> +               if (doi_def->map.std->cat.local_size =3D=3D 0 ||
+> +                   doi_def->map.std->cat.cipso_size =3D=3D 0)
+> +                       goto add_std_failure;
+>                 doi_def->map.std->cat.local =3D kcalloc(
+>                                               doi_def->map.std->cat.local=
+_size,
+>                                               sizeof(u32),
+> @@ -680,10 +686,21 @@ static int netlbl_cipsov4_listall(struct sk_buff *s=
 kb,
->  static int netlbl_calipso_remove_cb(struct netlbl_dom_map *entry, void *=
+>  static int netlbl_cipsov4_remove_cb(struct netlbl_dom_map *entry, void *=
 arg)
 >  {
 >         struct netlbl_domhsh_walk_arg *cb_arg =3D arg;
-> +       struct netlbl_af6list *iter6;
-> +       struct netlbl_domaddr6_map *map6;
+> +       struct netlbl_af4list *iter4;
+> +       struct netlbl_domaddr4_map *map4;
 >
->         if (entry->def.type =3D=3D NETLBL_NLTYPE_CALIPSO &&
->             entry->def.calipso->doi =3D=3D cb_arg->doi)
+>         if (entry->def.type =3D=3D NETLBL_NLTYPE_CIPSOV4 &&
+>             entry->def.cipso->doi =3D=3D cb_arg->doi)
 >                 return netlbl_domhsh_remove_entry(entry, cb_arg->audit_in=
 fo);
 > +       else if (entry->def.type =3D=3D NETLBL_NLTYPE_ADDRSELECT) {
-> +               netlbl_af6list_foreach_rcu(iter6, &entry->def.addrsel->li=
-st6) {
-> +                       map6 =3D netlbl_domhsh_addr6_entry(iter6);
-> +                       if (map6->def.type =3D=3D NETLBL_NLTYPE_CALIPSO &=
+> +               netlbl_af4list_foreach_rcu(iter4, &entry->def.addrsel->li=
+st4) {
+> +                       map4 =3D netlbl_domhsh_addr4_entry(iter4);
+> +                       if (map4->def.type =3D=3D NETLBL_NLTYPE_CIPSOV4 &=
 &
-> +                           map6->def.calipso->doi =3D=3D cb_arg->doi)
+> +                           map4->def.cipso->doi =3D=3D cb_arg->doi)
 > +                               return netlbl_domhsh_remove_entry(entry,
-> +                                                                 cb_arg-=
->audit_info);
+> +                                                       cb_arg->audit_inf=
+o);
 > +               }
 > +       }
 >
