@@ -1,164 +1,180 @@
-Received: from mail-ed2-f30.google.com (mail-ed2-f30.google.com [74.125.228.94])
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EDC82866
-	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 01:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E06242D62
+	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 01:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789866329; cv=pass; b=e5LLKPHBdCWDHgiGL+q5wBEBBnSMAc77K/2+adm4nTY7VXS0VvfKOh2d04MGqT/roDoRSGHOvhJVv7R2SZHM7kgPDXcWkc4LnEpVhj5ld5kH7QVpBI9iwa3iB3NYM3LL46qHwOGDhdT10qlb+hgO/+Mcb1/km408fgRXmMKnL+8=
+	t=1789867332; cv=pass; b=eXDCTJ0lmpYuMw3gWNVzA3TmnILOXk3TdbvqdsJeHyZFjhgw7mHKjc4MXg0Hd3llGjmv0u3GPVtuengTQY34Cp+mYXColWMAWw5Q008IshZnnAZiP2Micq4gR0jWaEUq+em2KzsgHjfcJ16gXGdn4P9673jPT02tC6mEEIEWxe4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789866329; c=relaxed/simple;
-	bh=NFivfYCAF6WzoAZvkEeMJ7W40uKcjTBrzmLLFRBodWw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Pzh/n8KLbocYPrw4B5B8fT8mtHAmUQLfzBovRxMKD2XBwzqIvtLitLFkFGa4It+30VMPi3IVUv1PhAWZNNeefrawPLDhX/aKctCdbjLKp/58K4TvHOw5SRWGopDIDQVKmRVylK2Id3GMMFIoj2lWKSm4RQWQlJ3ZHdfJm9r624Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkcUQQqm; arc=pass smtp.client-ip=74.125.228.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789867332; c=relaxed/simple;
+	bh=2VEm69UeAdHkIwbBU0Ergf1rGXkHAkJuOFSQAiSO0p8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vfnqf6meF4KJVnOw+G5Sc+JMWztiTPq+PKl+T7A63lqCBV89K/90S4HdnkghrCxBOu/dSa6/8wGBpSUusGFg7VAPGv0u8GfCjGZ3f/Ai1Hz6ZrW6rKysId3/56ch6/AS9bfXVXeRap3jhvv8UcjnJoGjZgwez32xMIwuLQnRuQM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L6O+ve67; arc=pass smtp.client-ip=74.125.228.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkcUQQqm"
-Received: by mail-ed2-f30.google.com with SMTP id 4fb4d7f45d1cf-6aa06e51bc3so3176275a12.2
-        for <linux-security-module@vger.kernel.org>; Sat, 19 Sep 2026 18:05:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789866327; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L6O+ve67"
+Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc1cea50db3so1075575a12.1
+        for <linux-security-module@vger.kernel.org>; Sat, 19 Sep 2026 18:22:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789867330; cv=none;
         d=google.com; s=arc-20260327;
-        b=UtQw/r2wKR8VUmB3J6Kx7DhefzSxNC649n/t11oJeDsTa3zY27NdUAkV3hIk43o5jG
-         L4ICGKsBKNgNluH2cidU/t1sb9lfCXC3xs1mwdHPoF2hXt/qtzHsDR1afIaj0kcW/4vG
-         FC9cos9Vu4Fzd82YkKYZK60PioUJAideFK8ZHQYfpdMaAtXtCZ6aKl5RBEm7BVr8SK2o
-         p9MAQfSyMYz1r65uH0bcBicwJ3Te0Sa71a1jEXHFv7Slm9C9QEpx6JiSy9qBDKFrqtvp
-         fagpr2mGCMDWSm4M5IT2QjR8KT6HDgWkoxm39LtFX8IgTTak31kuOl+KlWso2A12unQk
-         nmBg==
+        b=dv6hcpSo/IwGOMksoqPEIwBYp8oz2lMhH4AHFqxX+/GKeBIY2pBq+PR8Is57tBxRd2
+         zf+UJGwe1Z2J1n0XvJCSmamwlqDNX2woyiFx1lz5MK8TFRTP8tbi+63CHvJfxhJXWpVR
+         gDnEJ1xQfbNgaMYIIQeoqMfDllDdNFo9rl/II8Kxo06bQ7LPhvTUdDo8q+kwfVA3Em+p
+         y0bAHFyiheqka483GfC1mf0YsdNZju9uMv+mlwrut/nk+TMHUerj5H5a19kDv/q6Rn6E
+         T59ED24nj0K2F2q+pN21uBVawNqXqtSVuAK8P1P1JoJXJ01+v+nnsiUkT44g5sXzj6+X
+         Rurg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:dkim-signature;
-        bh=NFivfYCAF6WzoAZvkEeMJ7W40uKcjTBrzmLLFRBodWw=;
-        fh=pOHn8TkHFejXkDE1ORfV2qrAzZm95uVchfx7g8VwDHc=;
-        b=Tc9LSu7W5hHKlQX7W3S7/uEwU2eIuLRCSrnlDADXtRsAC4KDMKBpLSgk9jydsjJceg
-         +GVEFLRPbw5sGFNpjdAzhWVNRsVauW3hU2kMYiVrPST/sRd/AdRBphonHSLTPQE49hbc
-         1day2ObY1mS8pkvF9sWKpHwkEifZjBLbSevGU2NoMrluLy8xd4FEgk3XnJS1LeK6Gt7o
-         +PPz4cJW+1bAk4sikHiZkdUjyjBLBbARhNkKvu8X3K/DTTe2H2i+s03NsG3w8t8MoaZ4
-         y7zqZyHjbaew+F9rFm8r0tHLXHEA4eSm0bsT+5Pq8l4EwLvFYFn3xW/tKDmneCO4taV0
-         1jDQ==;
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=zXdKuOcPQjh4tFULSVStg5yQtDl5Sivh8Z/3KuFYKs0=;
+        fh=xitIjIrl4yzPKALHb2IxhSgFfA75ZfDGxOVaA98X0o8=;
+        b=HpeHWwNishJplwUJpTM1Mi01s9QCiBjrDAlP6ml7JxtnbHJ1PSqdIeCTjwinywQ/QM
+         ztTWnGvAUIwLSqr8uk0f1Q4du9q/cA+6a4tfiqWUHB7w9aSxuq4nSDhINFd0SjT3fmmG
+         ZSRQ9zE5pO7lLGGOuIgvv1HUaBdvIOesLQLMkuCNeRDRoDyx0b29fFAeHGH69uGNqX+/
+         nhZUlyJqkn6WVgmVA6p/B2jahrSUCkqYX2wNhbtUtJ/YPr10zYvYJVQ+oMBPl92CgUWF
+         XoNmrOGHWBzHKM7p2XNEY0GDwviShAv/YIyTILefTzTf68vz8gEUYhULh/zlRF08N57s
+         b3rA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789866327; x=1790471127; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1789867330; x=1790472130; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=NFivfYCAF6WzoAZvkEeMJ7W40uKcjTBrzmLLFRBodWw=;
-        b=TkcUQQqmrXmajigL4ymUVXzgVzMfgsfniiweC8zQ4sDe/TQMRpnmaiZFRz7RnRR+rE
-         agbH+5wFbgo4yYfMpx3mdH6C7kSiwdzQN+UqAaV5UTHrXK9VS0xVqtUf5uj+hi8667sI
-         FlY3D4pPIpXU8TNxDlaeStNl7TVU8I2UHaL+0skLYh/4YP6qp0pw95eUM+7OtATga0Vi
-         CIMK4By0WCJbhaTTgbmG2SuWh35/tG4XsEA1gp6Lo5l+pQi3U0Iea89hcqp9LSlcdO1d
-         cBj9UkduyO2NbygdLz4NO/NHkUv6Y/auoBVFZb9wN3eprZKbtV40W7ZJlRCnVh9UoqAK
-         krVQ==
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=zXdKuOcPQjh4tFULSVStg5yQtDl5Sivh8Z/3KuFYKs0=;
+        b=L6O+ve675fqEPtcUxqXtqgUQOpms6zlKaUIVzibB6dwlz8UfhHs18NE2LQUD0Itsbq
+         AmXaRpmqj59ev0o94mh3ukN0p/YT3QVdvoOrUJ1MdZT9J/lGPqVNQkvOsxD5rhN+A9eL
+         LSsfQ6qJGaQTDNhZ2QQWWEBDV889TT7n/YsnabMngyUxuZlKl/P1C3y/n3UyrpfAOlcN
+         MOBAOUOJScs7eRYBD8xg0ICP/+2B7tz/TIyD6q5N1RhFcabKg9Gkct3n4hjEokIhjm3X
+         69PzVQcrIsgtUubhk1bGHZETjXsz2Or2LbKOUnyrb7IK1ddnqQG3J9tdZG88507MKWLH
+         P/fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789866327; x=1790471127;
+        d=1e100.net; s=20260707; t=1789867330; x=1790472130;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=NFivfYCAF6WzoAZvkEeMJ7W40uKcjTBrzmLLFRBodWw=;
-        b=hnmn+PFgA07woshsNdHmPtJlJn1rYpYRVbljpu01vTnFClN9vSuPArEvEyfq52cz0S
-         Y+T8NwBuNODO8fJdnB51p+WwilFUTMzw7yzgSZb35zKRYnXtv4gMisst9S6Cihj7TEvT
-         SLCdouBSP9DGZcOY2xOVZTBPV8L5vAW+KZhOdjR9R7KWjz2j8gkhc4ZMEd2sd25ANLhw
-         zuQRuGa7I/H+4EbIP6g2RlGJeY8kfHDtzhyVHiwpCq+ODOUCzx6SKas5DYh/HmmCmAgW
-         XWapGawS/EYWokFeDpdPGhTE2rBRfju7ae8HCcMFz6sel6T8GjjrNxRoMoyAuuUIFdrn
-         yxNQ==
-X-Gm-Message-State: AFuF++lFeXEMGB41956Oq+wxFBm7MOIUR3WmU/5SZ3Q2Z03A9HKXcZZ4
-	U349NxgUCPWz+RUzc2YwcZHftkgqRUj98L1u8jfSIJm+MnJE23i+ZqKvSuDIW6MkduV2g8k8HK9
-	/camv0RKVyF2c/Q+ePJbtM3uUeu+oihJsM3Ak
-X-Gm-Gg: AYBFou1sPS5bws6wvvov4rFK1MvsjGLveZAQgO0SSN+E7OUmqlP7xQ93XtVzeDQxe0W
-	iPttAp/iIjG2W1sD2Knluvg3k0gkRl5AoLl3z9E4ZfKMh9OCUhfYai+5I7/Qs2r3GzwVb/xgrFl
-	VhYHSX56oSqvnOymaw1QlWFGydlkJ26qCheMkiNhB3X8hflc1kzpOfrKBYxf2z7PWSYXLC66Gcm
-	HW3svbs7DGkwHr5I4aXHL2/iHdN6FlGWSMp5zXS80KUNGuwsSz5NTdOH2YrGCyqCFIlFCagyMjD
-	TBwcEHVnhaSyNT+6xDTHLaPn0xMBapjldH1fmndD+gaa6XpFInS0Ug==
-X-Received: by 2002:a05:6402:4150:b0:6a6:7d56:7977 with SMTP id
- 4fb4d7f45d1cf-6aa5686e419mr4607422a12.22.1789866326378; Sat, 19 Sep 2026
- 18:05:26 -0700 (PDT)
-Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
- Sat, 19 Sep 2026 18:05:25 -0700
-Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
- Sat, 19 Sep 2026 18:05:25 -0700
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=zXdKuOcPQjh4tFULSVStg5yQtDl5Sivh8Z/3KuFYKs0=;
+        b=pAV81EO7ETbIOJeotRL3igtD08zD/Te+VYkD6Vh6oKpH0hsRab52t/bPYy2ffPWvZ9
+         BnjzSC4J+K9Ubpon6acqf8vMrMCA/1dDvTzly4/5HmBpfKZVNk0e+m8O0q87VlKqoGph
+         MREws+P9pkkgv97Hk2ow8oEjib2PGoX/IzjkX3kPNbefuS8ydwIxLPM/7Czz+IpnwBeM
+         TLsP0439YhE/5QoTCCDCjxMWhgr1tYrWf7NNCc30mCO7vJJD0bXv9MSHIuws+xRgq1Fq
+         qEVLaVh1orcBHgShBXC4gJA1lu9ncgG+J+KWh1jQG+wuPgRREurv4nqw6O8V84wiC1/j
+         E2ew==
+X-Forwarded-Encrypted: i=1; AKwUvByw54tNwFm7lW9RydtNbeirU/cArZ8nBunhPYVhcuyDRTM82M35CAOff3e5b0Orn5GPIZXo7UIUJl/rgZc6O43lUu/zU+Y=@vger.kernel.org
+X-Gm-Message-State: AFuF++ncEGWHpMRz0Qs+sEtSvvaJt6A7yZHaGcreRDjze7Ptsgmx+cFA
+	s5aQRq92t1r6OiHkcgMOFS4uXyom8p0l2Q09N/OAaHSY9TaNDVVF/H5ZPlr1pH+FyfNAZG221I5
+	LwUvPv0IPB9d9oajS/n34VsHImruYprtr3CD9ew4w
+X-Gm-Gg: AYBFou05O/MWA4wgl/uLFHX8BPOcIHlsBZudT7mLrzhnQNAO/jLyqkSe1nCQiOyDTK/
+	RgAswyPn39W9x1DMi0YdIwJag1n+O8lspHQ94vpx49AHtPTOR9HSBgxzGcbjDYZB8lPGg2pWNkS
+	z7wrc0yoGUDpZCDGs1AhDxXIV5YPsNYC/3Agly368ud/QTWzeioGGW73Hp90H+cn1FGue1UHFtB
+	a1g2CPftJjOfMbLOkRBd1UJ7+pD4cfCzc0BlJX3xSGY9ldzSwBAw3X5Sz3Ey7TpI3V2TbreLhR7
+	I6KhDlxhyOlDys+bOlvw1pcu84i3eAhT4yjm5uPs0eRuxWCQ0Rlx4/RN2HNhH4e7W2CI4/cAN7U
+	yR2EAAvOvyB0=
+X-Received: by 2002:a05:6a20:144d:b0:3dd:a008:dc39 with SMTP id
+ adf61e73a8af0-3dda008e131mr6498106637.39.1789867330527; Sat, 19 Sep 2026
+ 18:22:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Eric Robles <erobles3224@gmail.com>
-Date: Sat, 19 Sep 2026 18:05:25 -0700
-X-Gm-Features: AcwNN1XJoucD_suv2L2FflovLq3kBi756l3AhDrFl5_waj8s73I6QDvJXyL4hvA
-Message-ID: <CANBsAxr6=Q2AB-NOEGyZohEXt7F_3wMzi5O8yw=fEUmuj5zFqQ@mail.gmail.com>
-Subject: [RFC] bpf-lsm: scoped one-shot userspace authorization binding for exec
-To: bpf@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
+References: <20260919223438.3883567-1-benquike@gmail.com>
+In-Reply-To: <20260919223438.3883567-1-benquike@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 19 Sep 2026 21:21:58 -0400
+X-Gm-Features: AcwNN1XYIQ_wBn8i5ggt4CeI5Ch8V6l0HMTPG10aIvqe5hBWEiugJPjmk6GI8NQ
+Message-ID: <CAHC9VhS7sZQaPaRswKQ1ETrReEPB2f5buNAMGSXqZ1iBKTs+bg@mail.gmail.com>
+Subject: Re: [PATCH] netlabel: calipso, x509: clean up ADDRSELECT on DOI
+ removal and check AKID len
+To: Hui Peng <benquike@gmail.com>
+Cc: dhowells@redhat.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello BPF and LSM reviewers,
+On Sat, Sep 19, 2026 at 6:34=E2=80=AFPM Hui Peng <benquike@gmail.com> wrote=
+:
+>
+> Fix two issues in netlabel CALIPSO and X.509 key parsing:
+>
+> 1. In netlbl_calipso_remove_cb() (net/netlabel/netlabel_calipso.c), also
+>    inspect NETLBL_NLTYPE_ADDRSELECT entries so IPv6 address-selected
+>    mappings referencing a removed CALIPSO DOI are removed.
+> 2. In crypto/asymmetric_keys/x509_public_key.c, guard against zero-
+>    length signature/AKID fields before key matching.
+>
+> Fixes: cb72d38211ea ("netlabel: Initial support for the CALIPSO netlink p=
+rotocol.")
+> Assisted-by: LLM
+> Signed-off-by: Hui Peng <benquike@gmail.com>
 
-I=E2=80=99m requesting review of a narrow BPF-LSM authorization pattern tha=
-t
-is already running as a live prototype.
+Thank you for your patch, but as NetLabel and the kernel key code are
+in two very different subsystems, please split this into two patches
+so they can be properly reviewed and potentially merged.
 
-The problem being tested is simple: how can an external userspace
-authorization decision be bound to one exact exec consequence so that
-the kernel enforces the final allow/deny rather than merely receiving
-a post-execution log?
+> diff --git a/crypto/asymmetric_keys/x509_public_key.c b/crypto/asymmetric=
+_keys/x509_public_key.c
+> index 25cf8ac7f257..5c9165a83f91 100644
+> --- a/crypto/asymmetric_keys/x509_public_key.c
+> +++ b/crypto/asymmetric_keys/x509_public_key.c
+> @@ -53,9 +53,11 @@ int x509_get_sig_params(struct x509_certificate *cert)
+>
+>         if (sig->algo_takes_data) {
+>                 /* The signature algorithm does whatever passes for hashi=
+ng. */
+> -               sig->m =3D (u8 *)cert->tbs;
+> +               sig->m =3D kmemdup(cert->tbs, cert->tbs_size, GFP_KERNEL)=
+;
+> +               if (!sig->m)
+> +                       return -ENOMEM;
+>                 sig->m_size =3D cert->tbs_size;
+> -               sig->m_free =3D false;
+> +               sig->m_free =3D true;
+>                 goto out;
+>         }
+>
+> diff --git a/net/netlabel/netlabel_calipso.c b/net/netlabel/netlabel_cali=
+pso.c
+> index e1efd888b4a2..3756193b1c49 100644
+> --- a/net/netlabel/netlabel_calipso.c
+> +++ b/net/netlabel/netlabel_calipso.c
+> @@ -283,10 +283,21 @@ static int netlbl_calipso_listall(struct sk_buff *s=
+kb,
+>  static int netlbl_calipso_remove_cb(struct netlbl_dom_map *entry, void *=
+arg)
+>  {
+>         struct netlbl_domhsh_walk_arg *cb_arg =3D arg;
+> +       struct netlbl_af6list *iter6;
+> +       struct netlbl_domaddr6_map *map6;
+>
+>         if (entry->def.type =3D=3D NETLBL_NLTYPE_CALIPSO &&
+>             entry->def.calipso->doi =3D=3D cb_arg->doi)
+>                 return netlbl_domhsh_remove_entry(entry, cb_arg->audit_in=
+fo);
+> +       else if (entry->def.type =3D=3D NETLBL_NLTYPE_ADDRSELECT) {
+> +               netlbl_af6list_foreach_rcu(iter6, &entry->def.addrsel->li=
+st6) {
+> +                       map6 =3D netlbl_domhsh_addr6_entry(iter6);
+> +                       if (map6->def.type =3D=3D NETLBL_NLTYPE_CALIPSO &=
+&
+> +                           map6->def.calipso->doi =3D=3D cb_arg->doi)
+> +                               return netlbl_domhsh_remove_entry(entry,
+> +                                                                 cb_arg-=
+>audit_info);
+> +               }
+> +       }
+>
+>         return 0;
+>  }
 
-Prototype flow:
 
-1. Fork the child and stop it before exec.
-2. Resolve and measure the exact executable: path, argv, device/inode,
-size/timestamps, SHA-256, running kernel, and active LSM chain.
-3. Bind those facts into the userspace authorization decision.
-4. Only after PERMIT + execution_authorized=3Dtrue, re-check the
-executable identity and write a short-lived one-shot BPF map grant.
-5. Resume the child.
-6. A BPF-LSM program at bprm_check_security matches the governed TGID
-+ executable device/inode.
-7. Matching live grant: consume the grant and allow exec.
-8. Missing, expired, or mismatched grant: return -EACCES.
 
-Live result on Ubuntu 26.04.1 / Linux 7.0.0-31-generic:
-- authorized governed exec: succeeded
-- governed child deliberately given no grant: denied by Linux with
-EACCES before exec
-- BPF LSM active in the live LSM chain
-- governed / exec_grants / events maps pinned and active
-- 25/25 local tests green
-- 6/6 adversarial ProofGate cases green
-
-The review question is specifically about the kernel-facing binding
-pattern, not about moving the external policy engine into the kernel.
-
-I would value feedback on:
-- whether TGID + dev_t + inode is a sufficiently strong exec binding
-for this pattern;
-- remaining TOCTOU concerns between userspace revalidation and
-bprm_check_security;
-- one-shot/TTL grant cleanup semantics;
-- whether an existing kernel primitive would provide a stronger or
-simpler authorization binding.
-
-Linux-focused repo:
-https://github.com/KnowledgeeKZA3224/linux-coherence-gate
-
-Live proof:
-https://github.com/KnowledgeeKZA3224/linux-coherence-gate/blob/main/LIVE_PR=
-OOF.md
-
-BPF-LSM source:
-https://github.com/KnowledgeeKZA3224/linux-coherence-gate/blob/main/kernel_=
-integration/scqos_exec_gate.bpf.c
-
-Userspace launcher:
-https://github.com/KnowledgeeKZA3224/linux-coherence-gate/blob/main/kernel_=
-integration/scqos_kernel_exec.py
-
-No claim is being made that Linux itself was patched, or that every
-Linux operation is governed. The proven boundary is explicitly
-enrolled process exec through the existing BPF-LSM hook.
-
-Assisted-by: LLM
-
-Knowledgee KZA
-http://SupremeComputation.org
+--=20
+paul-moore.com
