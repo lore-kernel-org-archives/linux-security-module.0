@@ -1,122 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf2-f13.google.com (mail-lf2-f13.google.com [74.125.229.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BA54A6885;
-	Mon, 21 Sep 2026 16:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146F04E13E9
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 17:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790006942; cv=none; b=gv5/aPv9QxTECoHxEnv30YOEvUoJNCAG5BIRM/FSH00ntQblaIjTIlwOqkHzCOA0XS5xE1MXc2dXZJx6E5WBRIyNUS0QHj22MkK/DFBK9PYaPvDy0MrhefC+A+lbhxYO0W3lCuYUO5Lp2IMhfF/XCa4vHJHE4h/VvK58HNUu7SY=
+	t=1790010053; cv=none; b=X3jHpGuZSD4JCTv5b9s64mfteOTigUBIVzCR0LYFnAAaboFFX906GBcRZ3mOMDcMfIySFJhSy6huHq5gstR7zSdNULMNVn084lBCTR+wZ+P6GJIr33j9ya/kH5j7sg1yecnPCggGdh6MKAVxpeCWjhQEgkXaOp+P5jzKcMIHfXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790006942; c=relaxed/simple;
-	bh=+Ca6tglu5oyhC46HUGwjSP8wMmqDs5loib6dloR0A38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joRKh5azkr/peNGsgUUtAhd2Og1PwFwJqGLe3SzeEdkTEwVHUABTfuza5WgvE2ez+REsqA2gfj7bqCZlM80jWSLycCHJz+Smpl3mjFcegMAup9HtoMX72HBjBRUISIbfplzGU/iegOenD2iR8ITvm6oGPoxMlzYqFg8j+EvShwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6lco+9i; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6lco+9i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562381F00893;
-	Mon, 21 Sep 2026 16:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790006941;
-	bh=FOTV0PHDPjv7T4ZC0QP6/caxtiiGCzPPnekS36QsNyQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
-	b=I6lco+9iUwAqO3zjgvumlLA5C/VhfXUwEk6SUo3gSkM4oTj4GvL0t3U4GwpiU+aFj
-	 MuMQAuyChxeRaQp9gYkR2DtCDN4T1OrLkPS/ojp2WE1cPoM0iooDGXYr3uoSn+xBaF
-	 1C4QW+Ll5f789AvK2JwPuRCnzDwI7zwh/Z6gxDafAIWJqj29JrwN5sDfbpFTNBIxuQ
-	 RI0QQS1cRnfDeaKYL1XiMw7v1/N4mZbcxHYmuzsbK6XXOfv/eU0pbJM+zgoumIdeIW
-	 Nle6h3WO6Yslfm1dRJRE7tO9hPI5pG+0mtAOpVKKRdAa4lPpCtQWILF8WzQSn3IXYA
-	 79HqW3QApVSLQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1541ECE086B; Mon, 21 Sep 2026 09:09:01 -0700 (PDT)
-Date: Mon, 21 Sep 2026 09:09:01 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun@kernel.org>, Uladzislau Rezki <urezki@gmail.com>,
-	Ye Liu <liuye@kylinos.cn>, Michal Hocko <mhocko@suse.com>,
-	SJ Park <sj@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>, akpm@linux-foundation.org,
-	peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
-	jpoimboe@kernel.org, mic@digikod.net, tglx@kernel.org,
-	david@kernel.org, linmiaohe@huawei.com, nao.horiguchi@gmail.com,
-	rafael@kernel.org, gnoack3000@gmail.com, gourry@gourry.net,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, rcu@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, rientjes@google.com,
-	shakeel.butt@linux.dev, xu.xin16@zte.com.cn,
-	chengming.zhou@linux.dev, will@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, tony.luck@intel.com,
-	reinette.chatre@intel.com, x86@kernel.org, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, pavel@kernel.org,
-	lance.yang@linux.dev, mhiramat@kernel.org, pmladek@suse.com,
-	longman@redhat.com, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang@linux.dev,
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, kprateek.nayak@amd.com, mark.rutland@arm.com,
-	Dave.Martin@arm.com, james.morse@arm.com, babu.moger@amd.com
-Subject: Re: [PATCH v4 09/15] rcu: convert process/thread iterator to
- for_each_process_thread_rculock
-Message-ID: <f0c6954c-1e43-4a01-9c9d-11d38edc1e2c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20260921092101.89285-1-ye.liu@linux.dev>
- <20260921092101.89285-10-ye.liu@linux.dev>
+	s=arc-20240116; t=1790010053; c=relaxed/simple;
+	bh=hK+61oik5gsxN96IHn3CnokMCdTIaajwpmg47B7x+JA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ro9+DJeXfoIyMHqVmkpSkD+fH06j+sU4o8+8vf0BiyQfO8REnnksHHdTr9l0lN3mDCtMEHNMRFL8a8pNcrAgnKJlmy8Dg+S0Y2+cMpDPnkoIpK8wmi4XSSDeS8sBilvoS3U0PjrUa9to9hmsfXzPXJsc85AbvbI/IugixZi0v+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.229.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b8c1b8d7b5so2492884e87.0
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 10:00:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790010050; x=1790614850;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=hK+61oik5gsxN96IHn3CnokMCdTIaajwpmg47B7x+JA=;
+        b=mxOqdK5Gb3ZOlJPfzlqa4EnJYmGvuUYo5mSxtxRi+LIwl6eLT8Rvw0no0tTV/16mM6
+         /crlcSeIj2go3kBTguX+Xwldu58fyvxFaZvsn8YpkaiseN//0GdqhVPjQeuWmQ7+UlzD
+         0DMmxt+Dbs0SBlObT9xel43TxqnGp2YAy6eYaZY7NcMd97j7z2htZHePLpu7YzWTE6XJ
+         MQT093UHCN4e3/j2AiRRaoKnRXKJt2gMGQFU7+6xm8yAKeTu3tadqcDMK7S9kFaTGkfC
+         ypDx+5n0DRhag4wnRTv2Ppai5H0RHU05anyv+EuTmgzerto9J/ep5QAc2NzW1IBeZu0U
+         yheg==
+X-Forwarded-Encrypted: i=1; AKwUvBxZtzwwyl9/TlfKF0f4R1rRxPJiuBbvP+95f6haIZLiOkjtpVI41qPIpOrfGMSGEm9NsE6pDXNqP+U4cQOVSUziCvhRCXg=@vger.kernel.org
+X-Gm-Message-State: AFuF++nuOw1155GCbBzVpgMQr0N4s/TKjyEJN31KoZKTf1VzG7q9/0dC
+	ubYJ1ICIu0XaZNqz/6NIpfaj1O85Th/vYb8qkRTPqI9jIwiCYIPpjZXvHA4ThxhonoIrJg==
+X-Gm-Gg: AYBFou3t1tty8AZnuxA7vVPabh76yFmk6+mmO2JtHKkDHKG74KEqKtjrP/iKjqNoDhG
+	wRYvFexs6/MWyTRByvGDf2SuJj6GjC4Lim3LB5iWAg2eb0pQHXPMBfoHiPnJX3sOt07to7Pn++J
+	MDtDUxTIvlyeSf6PgtMkGkC0YCo7LZmVZnfCDz21SUP8FOnXaIw5QICkomdoQd+2qmpyHWyBUI3
+	R+X+jRHpG3e4Bypahsy6K6fkCFlUVDo8vIHCQ6+t3xiH/65GOWNInkzQMLmeZFv3IruKiw5T1jB
+	ktCkfoD9G2F99i4IPGfOaaiT85wpMkiAkOQnrJ6D6yqy+8p/TzVrLlMKPn2XZOCkgON6h/zIC01
+	/oq1MnV/pCW3zHIp31xdFXVysK7JWV1f0nnpWRYyJjx8ABxZWpOcgzq6NqIaVSST+YhmUE0J1IQ
+	RZXU94V54eJrkvOpwciB43X7Lri6HqeFuDFBaZjj65wq6VXf4QSm57xVIzd9X//pwPIcVuNTH8x
+	MQuxsxGF7wqnoReDhy1wTlZcXX6GWXRF5avn1z5juX7WwuMXnTcKWMT/bHADwU=
+X-Received: by 2002:a05:6512:1389:b0:5b7:6489:37c7 with SMTP id 2adb3069b0e04-5b8c179d8cdmr3513670e87.0.1790010049753;
+        Mon, 21 Sep 2026 10:00:49 -0700 (PDT)
+Received: from mail-lr2-f12.google.com (mail-lr2-f12.google.com. [74.125.230.76])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b8c78c11d6sm2180756e87.2.2026.09.21.10.00.49
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Sep 2026 10:00:49 -0700 (PDT)
+Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a2ff176d5bso26365831fa.2
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 10:00:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw8uXUxrq8hhQyz1bR5eC7cgnf1a9IMKoOQ4w3jtpxCE9Gjl6OUmEAh8igAGqQU42W6bLWPHGlbRQgJWVtcp/nWn0C3SwQ=@vger.kernel.org
+X-Received: by 2002:ac2:4c4e:0:b0:5ad:55f6:1ec3 with SMTP id
+ 2adb3069b0e04-5b8c181f45bmr3718755e87.5.1790009663874; Mon, 21 Sep 2026
+ 09:54:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260921092101.89285-10-ye.liu@linux.dev>
+References: <20260831-pidfd-get-paths-v2-0-c59ea6a21b72@black-desk.cn>
+ <lhuecf9cbl8.fsf@oldenburg.str.redhat.com> <CAC1kPDPu41RxMLHpPtz4VqfkEZeu-fYXG76XVZMh8bbQa3okaw@mail.gmail.com>
+In-Reply-To: <CAC1kPDPu41RxMLHpPtz4VqfkEZeu-fYXG76XVZMh8bbQa3okaw@mail.gmail.com>
+From: Chen Linxuan <me@black-desk.cn>
+Date: Tue, 22 Sep 2026 00:54:11 +0800
+X-Gmail-Original-Message-ID: <CAC1kPDMCFoVsPDZgoCF6mHqHQafCkDc3Pohpp6pNOLJzE2OTYg@mail.gmail.com>
+X-Gm-Features: AcwNN1U1zJ5xAFsdo7eYagPVPgcyEU2aovVJcIoR_uPclCIazBY4PYSmw97k5Co
+Message-ID: <CAC1kPDMCFoVsPDZgoCF6mHqHQafCkDc3Pohpp6pNOLJzE2OTYg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] pidfd: add task path ioctls
+To: Chen Linxuan <me@black-desk.cn>, Jann Horn <jannh@google.com>
+Cc: Florian Weimer <fweimer@redhat.com>, 
+	Chen Linxuan via B4 Relay <devnull+me.black-desk.cn@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Kees Cook <kees@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Georgia Garcia <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 21, 2026 at 05:20:55PM +0800, Ye Liu wrote:
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> Replace the manual rcu_read_lock()/rcu_read_unlock() pair combined
-> with for_each_process_thread() loop in kernel/rcu/update.c with
-> for_each_process_thread_rculock(), which scopes the RCU read lock
-> to the loop body via scoped_guard(rcu).
-> 
-> No functional change.
-> 
-> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Reviewed-by: SJ Park <sj@kernel.org>
-> Reviewed-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Hi Jann,
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Christian suggested adding you to the discussion on this series.
+I sent a follow-up reply with you, but I=E2=80=99m not sure whether it
+reached you.
 
-> ---
->  kernel/rcu/update.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> index 2a778b8ab4ad..d8e0b5896db9 100644
-> --- a/kernel/rcu/update.c
-> +++ b/kernel/rcu/update.c
-> @@ -548,15 +548,13 @@ void synchronize_rcu_trivial_preempt(void)
->  	struct task_struct *t;
->  
->  	smp_mb(); // Order prior accesses before grace-period start.
-> -	rcu_read_lock(); // Protect task list.
-> -	for_each_process_thread(g, t) {
-> +	for_each_process_thread_rculock(g, t) {
->  		if (t == current)
->  			continue;  // Don't deadlock on ourselves!
->  		// Order later rcu_read_lock() on other tasks after QS.
->  		while (smp_load_acquire(&t->rcu_trivial_preempt_nesting))
->  			continue;
->  	}
-> -	rcu_read_unlock();
->  }
->  EXPORT_SYMBOL_GPL(synchronize_rcu_trivial_preempt);
->  #endif // #if IS_ENABLED(CONFIG_TRIVIAL_PREEMPT_RCU)
-> -- 
-> 2.25.1
-> 
+When you have a chance, could you please take a look at the thread and
+let me know if you have any concerns?
+
+Thanks,
+Chen Linxuan
