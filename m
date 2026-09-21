@@ -1,230 +1,113 @@
-Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
+Received: from mail-ua2-f43.google.com (mail-ua2-f43.google.com [74.125.226.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504F61A6834
-	for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 02:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.141
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789958688; cv=pass; b=Ke6TS6S2azzIiTAPXVG/4aFRXt2W63JsYhyQO9b6fWlB3+1/PXmUzPTBULChzVrtem2W4zC4YvbPrZHS2V+zTYxlnWBqpEng94V6f2O2GjOdHnr85Z8x8jl3kWcd4uArMl0yqiu9kdNuX7nCuOVuUTf2VznK0E4nCYgK/LEi2sg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789958688; c=relaxed/simple;
-	bh=bvJeiEbXoWPFF06hCLDrPbaWPob0szAckAtK0XuiYME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SSgOUAalw9X/CsaCo+XNnKu4lwYSPI7fEnHhvjbym9NkWvINzWtsYrxUyAWRNjIykVBEkZGh8f5ysTZLhxG4kYcJ9CYAw066KWzD35BIbZMZY3D6ktynxcm+UmcXtbBnQ0weeAQfxUGlXKTB/RUHh9zRZRA7JYMvYNYYXdgYuVc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Cii1ic2f; arc=pass smtp.client-ip=74.125.227.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820AF146D5A
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 02:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.235
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789959141; cv=none; b=HQ8l+bu6Sr+UI3ePnwG3v+fU7hXGk19hC1nGty1K9uEBY6X0Jwyqr7DB59bG34iyssNLSCc2cmhUcbaa7G8smi81OdWSRCoEPjs9jxxJApAjQXexCmgXBcZryo/MXWfdN4fOm8A8+YY1FXQsM0nmevlfERB8LxYzrflmGvDVfuY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789959141; c=relaxed/simple;
+	bh=uH7eKxt7kWAo1rOgj0dYifOKmGydyRI1l6nx5HpvG8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TiDiLncOPgtgqHv7XPGzE6ZsbKMIesW9+bjLPO77GGLBiVuKM4HHXWVCWCItHNgBak9jv0GvEmbxdoEVLx5sQNY5vJtf7lB8JPtvcZlOcKP9gex1Vf6YolbEIgwxEdrloWL1uMkTKmuErmn6by9RwNhCj80aQJqHO6NTTQ39aK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQwDiX6B; arc=none smtp.client-ip=74.125.226.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Cii1ic2f"
-Received: by mail-pj2-f13.google.com with SMTP id d9443c01a7336-2db22383fe8so15203695ad.2
-        for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 19:44:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789958687; cv=none;
-        d=google.com; s=arc-20260327;
-        b=GhW+fDoeIbnY/XfhW2/QKw548hLcjCmZlJB2anQNLf40OB4wUtmhvaq9Opc3sx/1E+
-         +r6vdZKloIz3TwcxxQNaOZj/2DD+GjIA0DE2+A6AnqLplWxHlk/vhe1dhYm10JgjtfWu
-         DUT381HpRRSEEK0eBJZskmvocC20OydSUup35WyYAHVc6Iafud5OFJU8I3qfHxKUSa+V
-         nkkkb3tMcaLafYuzScaWV+nAxZDq3iPtqPBzu/z2SGKmKw/SjA/otp3Fuh6vdNyQi59k
-         G9968DbHvK9gKnxlwDYs/yesF0lhXWNoIaR/dC+GFeNAvwS+1b9247o7CXozZrzCxdhp
-         u8RA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=2Tev7/sptcmKn54rHbAqw+siNwCkqV/Wt6jvN5QgiB0=;
-        fh=CZH1eSh+9yOckoj1P0IxpTX7cfJJyCm1OR7xYeyViWg=;
-        b=Ut+BseCTrCXVOF8ZWfbaewnhvE6NHFD3cqKmCs2Z2NCZLFY2EFemMXmun6O3JtyhzA
-         pxv09x1CjnyzGImFNRNeT9eA8vMPt0Ve69oHM2eXdymgUvwaUh6rBMOns1tB6Nz1/KjK
-         zJFfso//y4Oh674CY95gyYdC/XPZh5ecS1Ra3JRs613T8iiZlFCzqFQISTb3N+so+Xjd
-         vVnjpTqQTqTEA0ODxviUY2WQtIeO3PrZasZz/kBLPKodl5N1YziB1cnYQKgcjbK0qhmt
-         CY5HcIz1yMQ7nRLUaSRd5qCAh8tdHw2jPUrVeCp+GgkH+8EOQ5LWx0ycHzOvoLk6VXue
-         V+Aw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQwDiX6B"
+Received: by mail-ua2-f43.google.com with SMTP id a1e0cc1a2514c-97e7c62dde2so490016241.2
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 19:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1789958687; x=1790563487; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=2Tev7/sptcmKn54rHbAqw+siNwCkqV/Wt6jvN5QgiB0=;
-        b=Cii1ic2f1/HniWBWYRJdEoBwduoNrwQ+QHomh5y50PUaeLteRWCKSNui98aYanv3JS
-         Ry69fHwBNblqQzn3iSXB5NVCXBOW/TZGO+c/Pzi89tDYLOzy6+0/n+9edPm+HKINo9Zt
-         OmEXoKLY7RBRUH1QYaFFeh5GxiQDy81jHNZOq/AGAz0oW5gOl5pE2an7zVMsVq6KW1Er
-         w5gDeOFOURUvfjJaB0hXWdql/MtcQoyxajD/0JQJMLAMI0ucUF516q+ClKagjSkRQ7SC
-         40p+WvFXxDMgPQtZtcvK0qt79cXRKB+lOzHXfV6yCnLv2knRT7wHCUEBaJmxXLr1MjTN
-         bzyA==
+        d=gmail.com; s=20251104; t=1789959139; x=1790563939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=fylApfWtPHGuyYyrsXRrUYGweIIt0QHbKGqTTf5IA9E=;
+        b=OQwDiX6BOkW5hwaKzmCKMZINMNI7n92Hjhdt6ZiDNMEa90LYgFK+HwkktjuZ3JILk/
+         Mf2nNQAuArW1WSbYkPdF5aOryEFqib+/IcGuvFTIk3GQGB7ZeDt4RGtpoXpKKzecOzle
+         1M4Vb362vLTiAv+iRZhrUy6nU2gYLwwK6W1T4GFPu3GFylpsFP+wyMimi6XnEu1bwYMz
+         DGC51J1E9Wi8RSDPRrxho5DMeK+pdJnpt9ffLpXRG7AdEjAU60L8ESJP7og/QIkznup0
+         M405xJs17RnjuLS561FRvcT2clA7VEzMwbT66BWWjlZX5uXE0GWlr/vSjujfz6D4y7NO
+         d4ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789958687; x=1790563487;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=2Tev7/sptcmKn54rHbAqw+siNwCkqV/Wt6jvN5QgiB0=;
-        b=CE5GUJspSDHOjlKmrXKuvpN1moQht8GD3Km97UJ3spEwtaLnJAJHyeoqS6XZ4WqQwc
-         XWHUuX7AdkTzOW/QX3Zrm2dUG60zbNNgHP3V2QlY+60kXS/Yd/YNDiDLPFOp4bzLr6WK
-         y2pwwk1EZ7KPO3WFnVVF6/b0MED3DFldLKmy3iyhwLZfymvgIcuEj+SBc59k1STCqPRc
-         npq3qYBxOZHCrTeqg0sRChiBVjUNYvxylp0kpkHuEC4fPwqP6FB5MT2t0Tf3ZmnEHR0D
-         v5HJ8OUM2LIyDN21JtWJDC+ZkzZvHS3ggi0k0Koo1bg8wgDgXjDuzo5n8zKgRNWHMEwJ
-         iVNQ==
-X-Forwarded-Encrypted: i=1; AKwUvBy9wlf10k/uYwKTqEYIz+ZaMChI8WW5Jcl6oDMpT/aHI6k1j97RZJDXFtuDx5vnwhEGCK09eYKOc6ITywxnrzEDUjwXntU=@vger.kernel.org
-X-Gm-Message-State: AFuF++m2ZihNj4sAvHea/iJFht4VeOVr+Zvl/q6bWyKBIsZzw7qckn5p
-	pAIl89KFIhkp2uyg7ba2P/pXaGtansOzPw69cZi3iuT6FcpVckWfePbphq6UOaVej3EAkMd8dcr
-	qWbHtltLFfyAxjCSMgrUAtoACrDfXSahfcw90KRcT
-X-Gm-Gg: AYBFou0fhwCQPCQ5t/n7RCdju8WkW9rCjpXIqpa828Fzh+BUKV1Z1HoZJSIDiYX37ox
-	EKGobRga/K5ZtQI1GLV3ht9aFkgKTRvqUKrNzCuo4EpAt1sNCjwdzsUp1uhlah7m6j9Y0OpktI6
-	IwZLRjYFkJBCA+Ks/Bu8NXkus+dyUEfW122TPtacMpTGa9CieXcdb5rs13MRz5uRk+BSSNXAugw
-	KmqqkftXEdSNQxX4LcR0MJWD/ZDex2yTSMKqJDgxPun8+TzUHYp19uhUuOxaQsR29vSDDU1j7ir
-	PdDh7TOqTZiz0322oZYrfspbWbOWcC/vJcNaIHc1YrqzjeeLSnxH7GXsVKun6Enkpb1jZHWkYbW
-	BmWJEpYBPwW7z0sAfoVY=
-X-Received: by 2002:a17:902:ce0c:b0:2dd:ad73:c989 with SMTP id
- d9443c01a7336-2ddb1bc360emr136942245ad.33.1789958686614; Sun, 20 Sep 2026
- 19:44:46 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1789959139; x=1790563939;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fylApfWtPHGuyYyrsXRrUYGweIIt0QHbKGqTTf5IA9E=;
+        b=2VOonIHFMTL0luwmLn5Vocw2YhSUi4Ym5XVETJHvlIa3ObC9s7VonM35NJJQnPCQCr
+         ONsBs1xIzu9aew6bBjrCZrltdD8G5lYn4Fs6vdwOSCQRnA6kmDXwiAio0kkQMiPeO8F0
+         eERmgIAk9vjAItf33bElk3losaNQHNQFoi2mRfGdKKgKfccHGRuiXbFZONRBdRcKXE13
+         Dr5EL434zJDJzTmaoDZyL+Irbgt3bAyXktgw+Xj1ffOhRS+XyJvowoq7jHu9Qa8hs4Fu
+         EWkn+TdM5Ya7kQG0TEuxFqbTpxuIHxJJnygvJ2+w36DePSVTvWMiqaYfW7bwMIgKnWQv
+         g2bA==
+X-Forwarded-Encrypted: i=1; AKwUvBwMb3zuoXwODiU79Cj/w4KSDPAnCjcjcECUiYmM9pl1J7SYBtcHAP2Q7QcsX5BaeMhfanyHH98eaNm/SZ7Hs/QZOjSyMAA=@vger.kernel.org
+X-Gm-Message-State: AFuF++kioEKougG4WfspAlHPzy/sNN753BoqQFUM/DCD8Cgrt4te8YoN
+	pwHKJByySl1+1mKOFEZXlzp8BnsVXakQG1P72NzcGzBz7+UZnvrRIeYPAOFpF+70
+X-Gm-Gg: AYBFou3NhVztCgnw4oety3gzDwd5iqgegUIu2Eg4oeDFQx35vYlA7j9VkQJLQRPvbDH
+	wr5BhqDJmKoQPhlfz7FV00h5eUbJ9IV46XwNqpaEeZzvdljZUz87u2OLmccoRgUXFJh9grZFlgf
+	eRhqTcDQgmXqqLehN8zMEq6SIyR8fwBIRFpib0w+THQWzaU51qcboeELIUKCK71s45co82WpFvz
+	abmvlnGRwXNHsugPD29RKJ3dT5UxMz5nsJHl8ryo23U2pHJw4tIFB2qRXik1eGjpsD3cL6PHyGG
+	fLX7FAkIdb93hoK3LWvU4ipgowY83cqRnsi+wLjLVx4bPP41pgEhSrSd85gLvGRFIPQ4G/ow3iV
+	l/K5AGfCmkqvXZ8HijLR4O1j36gyyqy0jhQiGRPqFMj1YpxOLJOhRHwxaH24Q+SBnuv2Vb35KxE
+	S1xQH9kPPyWoTrnvIgLn3hK1zKd9D/5g1Ts8sUOE2o8W1CY5ObhWAUXjn+afwSQTg=
+X-Received: by 2002:a05:6102:2929:b0:7a7:ad9f:53c6 with SMTP id ada2fe7eead31-7a7ad9f81fbmr1337410137.13.1789959139182;
+        Sun, 20 Sep 2026 19:52:19 -0700 (PDT)
+Received: from adriano ([190.215.95.120])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7a6acafe715sm6809839137.11.2026.09.20.19.52.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Sep 2026 19:52:18 -0700 (PDT)
+From: Adriano Cordova <adrianox@gmail.com>
+To: Serge Hallyn <serge@hallyn.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	linux-security-module@vger.kernel.org,
+	Adriano Cordova <adrianox@gmail.com>
+Subject: [PATCH v2] security: commoncap: clarify CAP_FS_SET comment in cap_task_fix_setuid()
+Date: Sun, 20 Sep 2026 23:52:08 -0300
+Message-ID: <20260921025209.1023530-1-adrianox@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhTM7emi9vxs+5Za8Hrc_e9dg7fZx+Z6BGUc4VQ1qhEAUA@mail.gmail.com>
- <DLD0VQ3D8CYC.3V5ZT8HDMY4IH@gmail.com> <aqTZdCz6JaoK16Fp@zenbox>
- <DLDL7KK3FZKU.17ADLLWJVXB5F@gmail.com> <CAHC9VhS0JckwfomqLTUJkZZkDSgeRXYOjMmPQYErgYynQYqMKQ@mail.gmail.com>
- <CAADnVQJCJjy9Eiwn6-88c0iOk4LfgPU6KBv+w0JZdBzmXBMUCw@mail.gmail.com>
- <CAHC9VhTh446SkpPF-hUiLYOHipuurzkgju_nH9LsRGdERSAL1w@mail.gmail.com>
- <CAADnVQLZscKkCxvK5puuOE1aN8nW6PnaS+_dx_zBQjjP2T-DFg@mail.gmail.com>
- <20260915-laken-ferngeblieben-verflachen-bafe1f296b02@brauner>
- <CAHC9VhTC5YvALs5K76qDBP9bDRpZPc_V-U8DPZ8qhNsCsXyLnQ@mail.gmail.com> <20260916-vollrausch-tango-bagger-420300d403c7@brauner>
-In-Reply-To: <20260916-vollrausch-tango-bagger-420300d403c7@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 20 Sep 2026 22:44:34 -0400
-X-Gm-Features: AcwNN1XwWf1qiBIc7wIqlPXy7pUKTJ8jTM7dbiiGU__XYQo3ndI3fN_ernAyi1A
-Message-ID: <CAHC9VhR9dBMptt2tQLjvkTjXsJd+uDGxOAoEGR6iMQkPWMFsAw@mail.gmail.com>
-Subject: Re: LSM boundaries. Was: [PATCH bpf-next v3 04/15] lsm: Add the
- bpf_lsm_policy_release kfunc and policy object destructor
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Justin Suess <utilityemal77@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <matt@bobrowski.net>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Kees Cook <kees@kernel.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	Eduard <eddyz87@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Tingmao Wang <m@maowtm.org>, bpf <bpf@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 16, 2026 at 4:48=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> On Tue, Sep 15, 2026 at 09:48:59AM -0400, Paul Moore wrote:
-> > On Tue, Sep 15, 2026 at 9:00=E2=80=AFAM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > > On Sun, Sep 13, 2026 at 07:24:14PM -0700, Alexei Starovoitov wrote:
-> > > > On Sun, Sep 13, 2026 at 5:10=E2=80=AFPM Paul Moore <paul@paul-moore=
-.com> wrote:
-> > > > >
-> > > > > On Sun, Sep 13, 2026 at 7:25=E2=80=AFPM Alexei Starovoitov
-> > > > > <alexei.starovoitov@gmail.com> wrote:
-> > > > > > On Sun, Sep 13, 2026 at 12:41=E2=80=AFPM Paul Moore <paul@paul-=
-moore.com> wrote:
-> > > > > > > On Sat, Sep 12, 2026 at 3:33=E2=80=AFPM Alexei Starovoitov
-> > > > > > > <alexei.starovoitov@gmail.com> wrote:
-> > > > > > > > On Fri Sep 11, 2026 at 10:26 PM PDT, Justin Suess wrote:
-> > > > > > > > >
-> > > > > > > > > If fs/, mm/, drivers/, net/, are permitted to have kfuncs=
-, then why not
-> > > > > > > > > security/? kfuncs.rst doesn't seem to forbid this.
-> > > > > > > >
-> > > > > > > > because fs, mm, net see the value in bpf. bpf helps these s=
-ubsytems
-> > > > > > > > to focus on their core technologies and moves policy decisi=
-ons out of
-> > > > > > > > kernel and into bpf.
-> > > > > > > > while lsm people treat bpf as arch-enemy.
-> > > > > > >
-> > > > > > > It's amusing to read this when just this week we merged a pat=
-chset
-> > > > > > > into the LSM tree for the benefit of those writing BPF LSMs. =
- If you
-> > > > > > > look at the discussion around patch 2/2 you will even see a r=
-easonable
-> > > > > > > exchange between Matt Bobrowski, a BPF LSM maintainer, and me=
- about
-> > > > > > > the patch.  Alexei is obviously welcome to his own opinion, b=
-ut I
-> > > > > > > would encourage those reading this thread to look beyond his =
-comments.
-> > > > > > >
-> > > > > > > https://lore.kernel.org/linux-security-module/20260904-lsm-mo=
-unt-idmaps-v3-0-920a1963675d@amutable.com/
-> > > > > >
-> > > > > > And that's an example of unacceptable land grab by LSM folks
-> > > > > > that I'm concerned about.
-> > > > >
-> > > > > I made sure that patchset was ACK'd or Reviewed-by'd a VFS mainta=
-iner,
-> > > > > a BPF LSM maintainer, and the Smack maintainer before merging (I
-> > > > > covered the LSM and SELinux parts).  You might want to double che=
-ck
-> > > > > your definition of "land grab".
-> > > >
-> > > > You're still missing the point.
-> > > > Christian could have landed it via vfs tree with your ack for secur=
-ity/*.
-> > > > You have no power over lsm hook changes within vfs.
-> > >
-> > > Which tbf is generally how I like to handle thing especially since we
-> > > usually have a lot of changes. But I'm open to shared branches as wel=
-l.
-> > >
-> > > So I think we naturally have to modify existing LSM hooks. But it's
-> > > shared pain. Since we use BPF LSM heavily in systemd we generally hav=
-e
-> > > to absorb such growing pains as well.
-> >
-> > I have no problem with topic branches that various trees can pull, but
-> > I do have an issue with the VFS tree merging patchsets that haven't
-> > been properly ACK'd as well as the VFS tree creating topic branches
-> > for patchsets that aren't primarily VFS changes.  See below:
-> >
-> > https://lore.kernel.org/linux-security-module/CAHC9VhTE82bRRSXSUuMOdrfo=
-Mh=3DxOb5hDvqiKWzBKD1urab3hA@mail.gmail.com/
-> >
-> > Christian, if you want us to move forward with topic branches in the
-> > LSM tree for LSM changes that touch fs/ code I'm happy to do that, but
-> > I need an acknowledgement from you that the behaviors mentioned above
-> > will be cleaned up in the future.
->
-> This is another instance where one of your mails around how to organize
-> process ends up reading like you're lecturing your peers. This is not
-> just my impression btw. That impression is shared by other subsystem
-> maintainers - including in your own.
+CAP_FS_SET is exactly the set of capabilities that an fsuid of 0
+historically granted (see CAP_FS_MASK in include/linux/capability.h),
+so cap_task_fix_setuid() drops that set from the effective set when
+fsuid leaves 0.  Replace the stale FIXME with this explanation.
 
-If my comments came across as a lecture, you are likely hearing the
-frustration of having to revisit a topic where my past requests for
-some mutual understanding on process have been ignored or silently
-discarded.  If you have been offended by the tone of my comments,
-please understand that I have been offended by your actions.
+Signed-off-by: Adriano Cordova <adrianox@gmail.com>
+---
+v2: reword the comment to something more concise.
 
-> If another subsystems hooks into the vfs layer or filesystems that the
-> vfs trees maintain then the default will always be that the vfs layer
-> provides the shared tree to pull.
+ security/commoncap.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Regardless of how we got here, I think we can agree that we both want
-to sort this out and find a way to work better moving forward, yes?
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 3399535808fe..1ba2ea2651fc 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1169,11 +1169,13 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
+ 		break;
+ 
+ 	case LSM_SETID_FS:
+-		/* juggle the capabilities to follow FSUID changes, unless
+-		 * otherwise suppressed
++		/* Juggle the capabilities to follow FSUID changes, unless
++		 * otherwise suppressed.
+ 		 *
+-		 * FIXME - is fsuser used for all CAP_FS_MASK capabilities?
+-		 *          if not, we might be a bit too harsh here.
++		 * CAP_FS_SET is exactly the set of capabilities that an
++		 * fsuid of 0 historically granted (see CAP_FS_MASK in
++		 * <linux/capability.h>), so we drop that set when fsuid
++		 * leaves 0.
+ 		 */
+ 		if (!issecure(SECURE_NO_SETUID_FIXUP)) {
+ 			kuid_t root_uid = make_kuid(old->user_ns, 0);
+-- 
+2.51.0
 
-My request is the same as it ever was: please don't merge code for one
-of the subsystems I am responsible for maintaining without an explicit
-ACK or reviewed-by tag on the patch{set} you are merging.  As for who
-merges what, and where, considering past history, I think it's
-probably going to be difficult to find a single generic rule that will
-make both of us happy.  Perhaps we can simply agree to have a
-discussion about where the patches are merged when we are
-ACK'ing/Review'ing them?  In other words, there would be no default
-merging tree/branch, the default would be for us to discuss how best
-to get the changes in Linus' tree on a per-patchset basis.
-
-I'm sure you have your own thoughts, but I figured it would be helpful
-to get something out here as a start.
-
---=20
-paul-moore.com
