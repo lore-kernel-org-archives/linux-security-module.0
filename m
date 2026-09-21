@@ -1,76 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23EC3FA5D9
-	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 23:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1C21F938;
+	Mon, 21 Sep 2026 01:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789948772; cv=none; b=JKy5YRtH89hn8yijaHMZifUhVVHPFGl2CGGVGeHx9f+MbwB6vnafcBTIOaNn4nd5hiwYmLS6Db3Vst9T0ZEsmcweFxd+3CRHopH+XuDUSpJO+YKwx4QMcsDtXP3OihXAEaX3v2ODoi8J0X0lLfjNyaqv3Fme3lNj6BvjfJkWqic=
+	t=1789955215; cv=none; b=Eu7f6v7lCYsl0P7DvdhuQEBfKcoZAaZTg1mnanPLUYbi9L8YbUvg7wI1lRwlZBg08STN5Q/dMyyXgytWDlzuteSOdnOZz2gouwZrnBe2v4SicN1dmBYErQHZ9ryW8jtAPVxQALblAVy15lMP1wgS3eWIY1JhXvGkNGXNeb7f0bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789948772; c=relaxed/simple;
-	bh=UHQDz3UJ4OADxaOh/QMyFUEv1yZW2MJEjWROO9nHE/k=;
-	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=oZlzU+HYfn5d6Ft8jCsO4ZZRlyh6CMDmoPEDJ0mUvWvplK0sgqqInOmgcLEA4rB3zfL2fpvGxxPlc+hx7cZ/dRfRdj1nzoAbXG6OIjFCo+r6BX9nNJHna8FyOYJuW9qMXMz3d+m5eU2eCgeuZ7xYBkDEbIZXJrMZ90jO+AWo3tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5/UUY7N; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5/UUY7N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4613F1F000FF
-	for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2026 23:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789948771;
-	bh=UHQDz3UJ4OADxaOh/QMyFUEv1yZW2MJEjWROO9nHE/k=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=g5/UUY7NnJtMT3mw9V1V6CtuzJ028OLZlAi53RNYB3ae47M0Eg8hgot9myfF7GJ7X
-	 fT+zom23v77exf21rUuI9C76Mhe+pbM1h1++37GC84kUYTwoxRLYa6LBhPt6ntytIO
-	 BwYeN1q52uF2+qCH+b0ZI1NVP+LqW+cwSn3UsY0e6UbG0oI7YtUNNU4LQwNomF35p6
-	 X8nuEn3/D6dcVpSyzgBmMe/y9pYbQLi0GXxYK5YUMXdcSZ0uVfdCltbT2vQyLjv1Uk
-	 1Hc7vZlo3BlHDHdhmPq79Ovm4f4YrQknkY22oJQZzjoFS6UN9BiZRVEkuOw91+l7rD
-	 CEPJChKYlGFvw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] certs: x509: duplicate cert->tbs when
- sig->algo_takes_data is set
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20260920235249.260530-1-benquike@gmail.com>
-References: <20260919223438.3883567-1-benquike@gmail.com>
- <CAHC9VhS7sZQaPaRswKQ1ETrReEPB2f5buNAMGSXqZ1iBKTs+bg@mail.gmail.com>
- <20260920235249.260530-1-benquike@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 20 Sep 2026 23:59:30 +0000
-Message-Id: <20260920235931.4613F1F000FF@smtp.kernel.org>
+	s=arc-20240116; t=1789955215; c=relaxed/simple;
+	bh=Q9beA94/928uU3xWnpz7idvGdeGny2607rbitfMEU40=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dKIZkjF85fKLXmbF7/5zPs4Tmjk6ujfKQDcxL2VCrueEx+p25o0yADyHx08kepvFnLgZdWmWndfhOROst3jIi6DB3hpP46KLYmZ4ynEXyiCrrIPqHAX+AL3Swb0hl4L+FMbijlEje4JE6QkCEoVIHYUaR8XKbPGplFP8YVWdKXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn; spf=pass smtp.mailfrom=kylinsec.com.cn; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinsec.com.cn
+X-QQ-mid: esmtpgz11t1789955160td87a9fbb
+X-QQ-Originating-IP: 2C5HUUwQm6uH1u8zjMviVM4I/RkA0fRP2jb6bdi/X0M=
+Received: from localhost.localdomain ( [111.8.45.130])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 21 Sep 2026 09:45:58 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14727765409296284287
+EX-QQ-RecipientCnt: 11
+From: Hongjian Dai <daihongjian@kylinsec.com.cn>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qinyungao@kylinsec.com.cn,
+	luoqiu@kylinsec.com.cn,
+	liudalin@kylinsec.com.cn,
+	dengyingchao@kylinsec.com.cn,
+	Hongjian Dai <daihongjian@kylinsec.com.cn>
+Subject: [PATCH] smackfs: reject out-of-range IPv4 octets in netlabel writes
+Date: Mon, 21 Sep 2026 09:45:55 +0800
+Message-ID: <FFA41AC93858A96A+20260921014555.20351-1-daihongjian@kylinsec.com.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:kylinsec.com.cn:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: MhIaRTw6VKSjaLw95y9TN+VzVftrOf9Lwpq9sIfYmqlHNGbKeCNFgZdL
+	fJHFmFUn3J1OaINVUnMUxxJ3eIPysK+FK+Mf19osOraTH+gEKZzhrDQgEY4W6d072LR1gLO
+	dH345ujoD6RoHQvWkjFdfBkw27NGsHIM9j6kwF8m58MiaN48BKSXXjSmZw1voPr4IyIe32n
+	i1SHQ8pUXFklEy+yPkzBTt9jQV3A9X96XjtRpCr0BNE2vfg8XtAxyf1ro+9JYTBTAxa7W7V
+	nNxafstDjquxzHfzp6VxsioUuHjXlJJPnif/4iHSnFIGpjcOp5P4wFbRH8XqorapTc8qPhf
+	DEVSRVswgu1cBzIVBm2Rb7fvvx266cvG1iQZEKcHWbsqUQfeZflkEcSgswQ1m6c82cMJPFM
+	wvfBFDWYAza1fU+JZJ7Cw+EkOvbyagPIRAILi1QE8Tvh3CLmSBaBj+WVlU+lZIF+N0WVjZh
+	9pRBvxkl7js3Q3gCgmBZoz/Mq8A7VV0cI+KT8bQKsgYac6su4ar+r/HmY6l+TkFiyTxJOs+
+	Du3caNNvWaV4MqT1+go1OY41FkQlk0WnlchKTF2ldJJ7A333LQXMWtQE64IKg/cK3X6uE8n
+	9Af2pi8NV0tErMqs03oH63+bFY7C4/MsLIEaNkx3cVk9y0owgNAZQcsnsgjpLENZhrQl5Fk
+	djv59LeSxSsqNk7FedgzcCG/pAIRPeqnFPJwGqhUjSr6ozWsMeU9jxqQHE5Cy6psCQnqLAl
+	iiARo1ntYoFVR9mkZIVMO+nOuWlYpzNXf61DSkoDG1A0Nvv9ILm171YguHfJgSYoDb5SUkv
+	tdckGWpWqnjqros+t3icPpwK4BmfR20gMuh+yONprowwEK34FzRj5QtDyl6K7rp4IVmA5ZD
+	Wf40w0a7XfKDAJ6IJuL9Ve9E5k+XVZdTJbAa8yVnTJqY0c2QQZWzI/icEjR87S+5Mg1Z9UK
+	5gqbAHv1pDrVHy9bj+N/T3Ak0P2WarUpBDVmv9V405oKqx9oLJ9xKpieW7zLaN5m2bVo1WB
+	cHWrRRBDpdITb3HmGTficJxEmH0bH3OHuelk83mam62+N67f3hxfgByh1iKzA5pPMLUxWfo
+	CMjnU9Ap/C6viKF65/DfFgv8tVVoQ3b9w==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-RECHKSPAM: 0
 
-> In x509_get_sig_params(), when sig->algo_takes_data is true, sig->m is
-> assigned (u8 *)cert->tbs with sig->m_free =3D false. However, cert->tbs
-> points into the temporary ASN.1 buffer (prep->data) passed to
-> x509_cert_parse(), while cert->sig is retained in
-> prep->payload.data[asym_auth] by x509_key_preparse() after prep->data
-> is freed by the caller. Subsequent signature verification on the key's
-> public_key_signature dereferences the freed TBS buffer.
->=20
-> Duplicate cert->tbs with kmemdup() and set sig->m_free =3D true so sig->m
-> remains valid for the lifetime of struct public_key_signature.
->=20
-> Tested in QEMU against Linux 7.3.0-rc3 with KASAN enabled by adding an
-> ML-DSA-44 (OID 2.16.840.1.101.3.4.3.17) X.509 certificate via
-> add_key("asymmetric", ...) and linking it into a signature-restricted
-> keyring via keyctl(KEYCTL_LINK), which triggers the following KASAN
-> [ ... ]
->=20
-> Fixes: f3eccecd782d ("pkcs7: Allow the signing algo to do whatever digest=
-ion it wants itself")
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Signed-off-by: Hui Peng <benquike@gmail.com>
+smk_write_net4addr() parses the address with %hhd, which silently
+wraps values over 255 (e.g. 300 becomes 44) and accepts them. The
+wrong address is then stored and passed to netlbl_cfg_unlbl_static_add(),
+so inbound packets get mislabeled and policy can be bypassed or
+connections wrongly denied by a privileged misconfiguration.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Parse into unsigned ints like the IPv6 path does and reject any
+octet above 255 with -EINVAL, mirroring the existing scanned[i] >
+0xffff check in smk_write_net6addr().
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260920235249.2605=
-30-1-benquike@gmail.com?part=3D1
+Fixes: 6d3dc07cbb1e ("smack: Add support for unlabeled network hosts and networks")
+Signed-off-by: Hongjian Dai <daihongjian@kylinsec.com.cn>
+---
+ security/smack/smackfs.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index a72bc7fabea9..845660cc3a7b 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -1169,6 +1169,7 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
+ 	struct in_addr mask;
+ 	unsigned int m;
+ 	unsigned int masks;
++	unsigned int octet[4];
+ 	int found;
+ 	u32 mask_bits = (1<<31);
+ 	__be32 nsa;
+@@ -1198,17 +1199,26 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
+ 		goto free_data_out;
+ 	}
+ 
+-	rc = sscanf(data, "%hhd.%hhd.%hhd.%hhd/%u %s",
+-		&host[0], &host[1], &host[2], &host[3], &masks, smack);
++	rc = sscanf(data, "%u.%u.%u.%u/%u %s",
++		&octet[0], &octet[1], &octet[2], &octet[3], &masks, smack);
+ 	if (rc != 6) {
+-		rc = sscanf(data, "%hhd.%hhd.%hhd.%hhd %s",
+-			&host[0], &host[1], &host[2], &host[3], smack);
++		rc = sscanf(data, "%u.%u.%u.%u %s",
++			&octet[0], &octet[1], &octet[2], &octet[3], smack);
+ 		if (rc != 5) {
+ 			rc = -EINVAL;
+ 			goto free_out;
+ 		}
+ 		masks = 32;
+ 	}
++	if (octet[0] > 255 || octet[1] > 255 || octet[2] > 255 ||
++	    octet[3] > 255) {
++		rc = -EINVAL;
++		goto free_out;
++	}
++	host[0] = octet[0];
++	host[1] = octet[1];
++	host[2] = octet[2];
++	host[3] = octet[3];
+ 	if (masks > BEBITS) {
+ 		rc = -EINVAL;
+ 		goto free_out;
+-- 
+2.43.0
 
