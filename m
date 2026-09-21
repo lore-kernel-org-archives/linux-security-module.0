@@ -1,156 +1,64 @@
-Received: from mta0.migadu.com (out-1.mta0.migadu.com [91.218.175.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9134E492E4D
-	for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 09:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA339339389;
+	Mon, 21 Sep 2026 09:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789983235; cv=none; b=J0Ma4RjxoUdK8/5rhgLSEmw8/nYWFYCBOrxASAbkfjcsrtcs6ntuB6IK/z1x3Jj9HtR+Hrjp6cJCUqyE4iK+kvzGFij0EKGejkV+6cWso7n4O8FbHzcTR5emz6x2/N9055FWAa/gXpEVpflWOmwexb7UEIIJdO0WYNQ9cI4FWxE=
+	t=1789983680; cv=none; b=FlYjMpmdESgasYZV974cpnuq+4rhCN/dPitr2l0M7gqiqGxNcaodcSK92nsSFxA5Qe2PqJuudhvoXy6wuZi4NorfSPFbdLvOKe+D9Gyd4itK8+VKncFdrhQswShdsP7Qysjy+YWHc9uoEcN65wWUqA/WgSE6qfFfxw4NAp7iqfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789983235; c=relaxed/simple;
-	bh=EYCPbF4GXVvVmlhwTlUPGyo1CDrWSEx3JYzEGtOW8IA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C3js0kiBxI8LZjX3mgJ/srfKKhWXhbOE6So0MUZIj7hjXbckfq8NsAGADTNmM/aFa2rigAJ10WQsEs3/wfjrwRN7qs19xAAuYJ2hiei2uIcN3c4gXZMPKq05hdhhWsSh0zAkTAQBAWjtNYJZKuKkHkNs097B3ZWKgWLJHarqjOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FEhrKxGt; arc=none smtp.client-ip=91.218.175.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1789983680; c=relaxed/simple;
+	bh=R7F/otBY0YF+9Z8GlD32A4j4/znCfy4lGY+o8kykMs8=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=J2gOZ1CBKr6WVL/B2PTtTQtvbggp5c6IXqbreYs5ZzidPily9NbHTAaCSKHNAZ27Q/K1zZ4fbXPPXN+Z5IfRCAsfrLzfEVH2QHhkpbJADsol1Ea9NmrwQMj3+Q6p/HnT5ref8r5WZBcSMhnvBexW1+N2v+8iR4+aCqXCxzISXO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apoy+4Ft; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FEhrKxGt"
-X-Envelope-To: linux-security-module@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=EYCPbF4GXVvVmlhwTlUPGyo1CDrWSEx3JYzEGtOW8IA=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1789983230; v=1; x=1790588030;
- b=FEhrKxGt9s7lgZ8WqPH7VDOpF9udhJxQW05bDn7s2BKy9QTjk71eT9cayi63uddxNYwj6pZi
- 5K7kE42mv1lqv4JNC/vhgbvMckfm+eqadNwsvuctYY/1cp0g3ALobxhSCCSOuCV6dsZP5DUu63i
- 1S/f/93BjKz+hEZFsUypIk+I=
-X-Envelope-To: linux-security-module@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 5246bf0a6504571f;
-	Mon, 21 Sep 2026 09:33:50 +0000
-X-Mizu-Trace-ID: 5246bf0a6504571f
-X-Migadu-Flow: FLOW_OUT
-From: Ye Liu <ye.liu@linux.dev>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	Justin Suess <utilityemal77@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	Gregory Price <gourry@gourry.net>,
-	SJ Park <sj@kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	akpm@linux-foundation.org,
-	mhocko@suse.com,
-	peterz@infradead.org,
-	paulmck@kernel.org,
-	mingo@redhat.com,
-	rostedt@goodmis.org,
-	jpoimboe@kernel.org,
-	oleg@redhat.com,
-	tglx@kernel.org,
-	david@kernel.org,
-	linmiaohe@huawei.com,
-	nao.horiguchi@gmail.com,
-	rafael@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rcu@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	rientjes@google.com,
-	shakeel.butt@linux.dev,
-	xu.xin16@zte.com.cn,
-	chengming.zhou@linux.dev,
-	will@kernel.org,
-	boqun@kernel.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com,
-	josh@joshtriplett.org,
-	urezki@gmail.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	tony.luck@intel.com,
-	reinette.chatre@intel.com,
-	x86@kernel.org,
-	pavel@kernel.org,
-	lance.yang@linux.dev,
-	mhiramat@kernel.org,
-	pmladek@suse.com,
-	longman@redhat.com,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev,
-	dietmar.eggemann@arm.com,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	kprateek.nayak@amd.com,
-	mark.rutland@arm.com,
-	Dave.Martin@arm.com,
-	james.morse@arm.com,
-	babu.moger@amd.com
-Subject: [PATCH v4 15/15] security/landlock: convert thread iterator to for_each_thread_rculock
-Date: Mon, 21 Sep 2026 17:33:33 +0800
-Message-Id: <20260921093334.105291-1-ye.liu@linux.dev>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260921092101.89285-1-ye.liu@linux.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apoy+4Ft"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEB91F000FF;
+	Mon, 21 Sep 2026 09:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789983679;
+	bh=R7F/otBY0YF+9Z8GlD32A4j4/znCfy4lGY+o8kykMs8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=apoy+4FtHO76MeSfvuK4yDN8+TWD+bTrbkBFtCTJv6wZw5F3jTdv5ust6gEyKyySv
+	 ZKVKoseUpDYURd2mFPp9joxYa3larxxqgw7932VJYsS+qyxozYrX44iRv+pQZ6/FNg
+	 VCTWsU3yii5WWNRjTjNLFNhzwnNYsJHLl9LIXD5DGjXZmF1Nv85eTpr8JnqXWbW+RD
+	 8FVF1TmMyNHcMTtZD43l69IY2FAa15YajpBUGCYoxCc64BqtQbZp4as06pQMMviWbc
+	 htuf4M/5T2OZDVLtetnA+Q+Dc3DOEDGFum/Y5dS+ibcYPERyb3amo4GHOpzCnxuEZB
+	 TWHcBtNLnNpeg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 01/15] sched: introduce for_each_process_rculock and
+ for_each_thread_rculock
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ye Liu" <ye.liu@linux.dev>
+Cc: linux-trace-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+In-Reply-To: <20260921092101.89285-2-ye.liu@linux.dev>
 References: <20260921092101.89285-1-ye.liu@linux.dev>
+ <20260921092101.89285-2-ye.liu@linux.dev>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 21 Sep 2026 09:41:18 +0000
+Message-Id: <20260921094119.1EEB91F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-From: Ye Liu <liuye@kylinos.cn>
+> From: Ye Liu <liuye@kylinos.cn>
+>=20
+> Introduce for_each_process_rculock(), for_each_thread_rculock() and
+> for_each_process_thread_rculock() macros that acquire the RCU read
+> lock before the iteration starts and release it when the loop is left,
+> so that the RCU read-side critical section is scoped to the loop body
+> instead of an externally managed rcu_read_lock()/rcu_read_unlock()
+> pair.
+>=20
+> Signed-off-by: Ye Liu <liuye@kylinos.cn>
 
-Replace guard(rcu)() + for_each_thread() with for_each_thread_rculock(),
-which scopes the RCU read lock to the loop body via scoped_guard(rcu).
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-No functional change.
-
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
-Reviewed-by: Justin Suess <utilityemal77@gmail.com>
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-Reviewed-by: Gregory Price (Meta) <gourry@gourry.net>
-Reviewed-by: SJ Park <sj@kernel.org>
-Reviewed-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
----
- security/landlock/tsync.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-index 0b71e158c3f5..a578af640aad 100644
---- a/security/landlock/tsync.c
-+++ b/security/landlock/tsync.c
-@@ -335,9 +335,7 @@ static size_t count_additional_threads(const struct tsync_works *works)
- 
- 	caller = current;
- 
--	guard(rcu)();
--
--	for_each_thread(caller, thread) {
-+	for_each_thread_rculock(caller, thread) {
- 		/* Skip current, since it is initiating the sync. */
- 		if (thread == caller)
- 			continue;
-@@ -376,9 +374,7 @@ static bool schedule_task_work(struct tsync_works *works,
- 
- 	caller = current;
- 
--	guard(rcu)();
--
--	for_each_thread(caller, thread) {
-+	for_each_thread_rculock(caller, thread) {
- 		/* Skip current, since it is initiating the sync. */
- 		if (thread == caller)
- 			continue;
--- 
-2.25.1
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260921092101.8928=
+5-1-ye.liu@linux.dev?part=3D1
 
