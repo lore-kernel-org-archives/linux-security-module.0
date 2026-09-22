@@ -1,153 +1,180 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557224432F2
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2026 09:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3114F5E08
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2026 10:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790071105; cv=none; b=YGSbxEDWu46mqCV+3IWPMf/OPpOAvjcY1oxFNjhx6//+yYrG325IMM+LlyrgzZbxIrvL/QpcMeNcYuO90Ohy3sCt0b3W5R3SNGCQppeLzP89Vtkf7z+E3zmKyPLRVMdqbo+VbF908ORDa+V4KsS6kmQNUj6yI+KrWD+uyWu+szs=
+	t=1790071577; cv=none; b=XPJJyPoekJrMNzJm8Wf2mmiZ3ds+p5E3ahUay9KP2rWwLXgP4Tm9ZXcXUch30c30bGUPohxWIdm2Xjgg5v4Q1jYM8/AGZ9GU0453XqMrk0i6lx2aNdDJNJ5eqaIQsKyGzPeanKe/k1Ven+jbmoGpXqFTFWvX6+pr/QZdSf1M/BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790071105; c=relaxed/simple;
-	bh=zYbfbPSv4oN0DQRZXu+ig0WpHZAE1jueUN/5aUe+dpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GwA5/cmgRH7SiT/QMquDEW3l/kuhb3ItlhwsCYiUG3MfaZYjHfPVFzkUltnydR56xuQ2UQ0LKGKFZXg7I8JEofvKDmgsBI01sUjsMEyvUQuhc74V3O4+c7H4+C0YV7rwwMKjZNtmmlCbFZ9TBwawEjVjWJu2JTvN8GIFI26gdN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VtBoOvXm; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1790071577; c=relaxed/simple;
+	bh=ugvR5jc/SG646C8b/cBwumoFG4JzGWHqOzH1P4LSUWY=;
+	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=rqF3eNXL8E+hrRJzKYDJrXJgh9eLSh5z7OBq0klERmiyZMlF4j1gXfnzp+rqrL3gPzQva/z1UzmR4I0TZIiReZbZv1iGSyBU8OcCCKhTQ9tE6wJRcn0n2maJ1jWqG7PtuvAZbNPw5CAKtwZcZg/EropxUieY/PyST9UVqXAwmxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6yZBLw+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VtBoOvXm"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912e4b11so21399525e9.3
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2026 02:58:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1790071102; x=1790675902; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nZUNZdA2VreC5ZuzVVTaU77y9kWQRV4FmcQNBHWyLvk=;
-        b=VtBoOvXmAmen9A15P2XUuom5lD/1FL4lYGpdQVlTKAozAKOcuAjxP/fvx0Ao38Exoq
-         5+Z4Hz0ZBE6NheeiWCh5xeWyQPagqjfs4f79S40IPirUpX5MyYP/m4caovC3dzry78uG
-         qLVHF46WMJzE6APh5ToFTevmH6sDFNe8j6X21GWEoW4cLdhNm4hEB96kOS4aoPn79zyN
-         nZrL7X7l5ieVRSVE7emEimSWG9oKJUGSRvLQJGSqXqZQPPgzbooqStbK79ZVMeOIf3FZ
-         Rfg8io+iLrPWZmwv45RZ6QmcYxFygH8ndbcley/wqvpcy8l0XeKLrrX3CsuxOj3R0rI1
-         hMhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790071102; x=1790675902;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=nZUNZdA2VreC5ZuzVVTaU77y9kWQRV4FmcQNBHWyLvk=;
-        b=XcjtYfke2/NB9YGQAFQu6hsarWoiXiabvmxE4YmQeJFVIodyqneIDOVG115SrymDqp
-         +L6bLphUEOUJOhhi9a3ZWTUMaC+fro34HVaFdZfowg8hM9P9o4oSKGmjDnDstvbT/EAW
-         EN5prlmPvqBQ+1D8GgS763KtNlJrGrVoKPxJ/dHVE0N2FGosuck+JC7R0HQI78WWDhGt
-         V2iHVmmzbVVWOK6r/nNWYs3++kDUyDfE4OOA4WR1Xm8MtPHcKPv5UPS2ndyIk6hJU5f6
-         S9A4PCrdS3mL+QN/oX/iC3q19WbmvOg+DpJTecjtxFCmsyt74Qn8wjo9CHFZZrdSu9Mr
-         +5+Q==
-X-Forwarded-Encrypted: i=1; AKwUvBwBvLFpUsD19Uu9fuajoiN7GguV0tdQxeGZaPGQgmwvuAhPfwoWdinY48b+0d2xf7CP40ZHBNQSnIX5axK/LTUedIkPW9E=@vger.kernel.org
-X-Gm-Message-State: AFuF++n4k4fHjyE+p7vykNcbdA4A4JTSDf1sOk+0PtRHsQtV/V7DMJai
-	fPDY4khDywD1m9qljZ8P1JgojymZ9pTr+mHtLLnKg093inYIzKGsY0+9+eNSLV3PTKA=
-X-Gm-Gg: AYBFou2aYGG9oyMvmUMmUPXAs6FS7EjXOqjU+0Of2NNHwrA1O6x9n4mxxPvDXzCW6W1
-	Zo/HT5Rhcoqz13fUiRcQ4LHIGgjpeMl5dYCj8yb1+8HBBhZmx+mtoPbdE3xwh+7IUUhsvxE4VsD
-	rRKgnJpnFZ9TvwsSwGFxuKaT+sLL9ZzlhGSfPNKvMXaHfoYn2W0oxy1DIIBd9dN7ziH/WFMkuv3
-	7e/37UgTmCqSyJDRRuo1SjyYjls16OEdSf6KByFlTaAZIEYfcB+PWHAS3sUzdJAVFJlYnvx4+Sk
-	iOEfjrquDMrqKK1P8gFLIOdYV8SOh6LAGeYUC+PRzF8HfhV6KCZHUUq6YZn/xxQXQn+M/UwdyQo
-	zfdajuO1zcv8OM/90GjZMnyIVIXA++C4AvF7sVjwqIRaO5iZgby6IXMO8RF/nisofPKegaTKeGB
-	3FvFvVZn3Zcj7bbJJNRz2OHoP/O3gi7S18DKvK9O8FXLHvFxkg5KQlai/0H6s3LBYGxHzywZfu9
-	REaQSEyuDyqOYn/YlwyzjrUOzu3ydRu7+0jNE8//Nyo6oGq7IIPbxo0MyUs3ejcvJfYMY7s8FZ3
-	oYO2Tb6JeHDk0PzUerwkx0KuyMa8bsLzXqV+6qcj
-X-Received: by 2002:a05:600c:a0a:b0:49e:84bf:6110 with SMTP id 5b1f17b1804b1-49fc56dbb49mr199597855e9.6.1790071101618;
-        Tue, 22 Sep 2026 02:58:21 -0700 (PDT)
-Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fdab0c240sm27108755e9.4.2026.09.22.02.58.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Sep 2026 02:58:21 -0700 (PDT)
-Message-ID: <2bf82e0b-a032-4ee7-8d93-c5604222723d@suse.com>
-Date: Tue, 22 Sep 2026 11:58:18 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6yZBLw+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F8C11F000FF
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2026 10:06:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790071575;
+	bh=iyOFtQIdT8jZw+6T9t3tVcEZgsZNeyLLfXJas0qEQIU=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=N6yZBLw+vJV9nsLBv6LjHkR5rQHHj1jJDyf9xQG4TLaIGAV+2Yj1E5Pu/S5cpAER4
+	 02QtwtLOz4qSz+9mFoJDF/JKP6t451LULp9y3uMue0kfkBO74DMnWRwjGYOl34UN3z
+	 nUd7x3TxsILEZ/L45FcwW0zMQWD/6HBpmJt6TSuX6Dtlnp7hv3dMk/JJBKenv4JOTR
+	 NQ5S0zu/0bSR2Vqs/J5bGGlobZ62mThoY9y2UxtnYAC1QckI3QGGDTnjmix8ufBe3e
+	 AA0yP0Wt9f+6wZguNyLnOKXmtUr8v7aBKTR8frLv625M9bURrkQmLQCVxVnL3banxM
+	 jZkqtX1oXaadQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC PATCH] security: Allow dropping bounding set process-wide
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20260922095816.1191799-1-ruanjinjie@huawei.com>
+References: <20260922095816.1191799-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 22 Sep 2026 10:06:14 +0000
+Message-Id: <20260922100615.5F8C11F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Bring includes in linux/kmod.h up to date
-To: petr.pavlu@suse.com
-Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
- Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- Philipp Reisner <philipp.reisner@linbit.com>,
- Lars Ellenberg <lars.ellenberg@linbit.com>,
- =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
- Jens Axboe <axboe@kernel.dk>, Johan Hovold <johan@kernel.org>,
- Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Michal Januszewski <spock@gentoo.org>, Helge Deller <deller@gmx.de>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- Chuck Lever <cel@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- Aaron Tomlin <atomlin@atomlin.com>, Pavel Machek <pavel@kernel.org>,
- Len Brown <lenb@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Nikolay Aleksandrov
- <razor@blackwall.org>, Ido Schimmel <idosch@nvidia.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Kentaro Takeda <takedakn@nttdata.co.jp>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
- drbd-dev@lists.linux.dev, linux-block@vger.kernel.org,
- greybus-dev@lists.linaro.org, linuxppc-dev@lists.ozlabs.org,
- linux-acpi@vger.kernel.org, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
- cgroups@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-pm@vger.kernel.org, driver-core@lists.linux.dev,
- bridge@lists.linux.dev, netdev@vger.kernel.org, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org
-References: <20260911-module-include-kmod-v3-0-6ebccc3e0731@suse.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20260911-module-include-kmod-v3-0-6ebccc3e0731@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 9/11/26 4:46 PM, Petr Pavlu wrote:
-> The usermode helper declarations were previously provided by linux/kmod.h
-> but commit c1f3fa2a4fde ("kmod: split off umh headers into its own file")
-> moved them to linux/umh.h in 2017. Add explicit includes of linux/umh.h to
-> files that use usermode helpers and remove linux/kmod.h where it is no
-> longer needed.
-> 
-> Also add a missing include of linux/sysctl.h to kernel/time/jiffies.c.
-> 
-> Finally, clean up linux/kmod.h so that it includes only the headers that it
-> actually requires, importantly removing the compat linux/umh.h include.
-> 
-> This cleanup is motivated by trying to reduce the preprocessed size of
-> linux/module.h, which includes linux/kmod.h. linux/module.h appears in
-> roughly 15k #include directives across the kernel. This makes it a "hot"
-> header, so it should avoid pulling in unnecessary definitions. Note that
-> this series doesn't immediately improve the situation, since most of the
-> files included by linux/kmod.h are, for now, also included by
-> linux/module.h through other paths.
-> 
-> Apologies for the wide distribution. Acked-bys are appreciated.
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Critical] security: PR_CAPBSET_DROP_MASK fails open on memory allocation=
+ failure
+- [High] security: unbounded GFP_ATOMIC allocations in cap_bset_drop_process
+--
 
-I've queued the series on modules-next for 7.4-rc1.
+commit 4012a62a02d93ede388203c8691ecc0410b4a911
+Author: Jinjie Ruan <ruanjinjie@huawei.com>
 
--- 
-Thanks,
-Petr
+security: Allow dropping bounding set process-wide
+
+This commit adds a new prctl, PR_CAPBSET_DROP_MASK, to drop capabilities fr=
+om
+the bounding set of all threads in a thread group simultaneously. It achiev=
+es
+this synchronously for the calling thread and queues a task_work item for e=
+ach
+sibling thread.
+
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 3399535808fec..ae7ce50a81518 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+
+[ ... ]
+
+> @@ -1283,6 +1290,123 @@ static int cap_prctl_drop(unsigned long cap)
+>  	return commit_creds(new);
+>  }
+> =20
+> +/*
+> + * Structure used to queue process-wide bounding set drops via task_work.
+> + */
+> +struct cap_bset_drop_work {
+> +	struct callback_head work;
+> +	struct task_struct *task;
+> +	kernel_cap_t mask;
+> +	struct cap_bset_drop_work *next;
+> +};
+> +
+> +static void cap_bset_drop_work_fn(struct callback_head *work)
+> +{
+> +	struct cap_bset_drop_work *w =3D container_of(work, struct cap_bset_dro=
+p_work, work);
+> +	struct cred *new =3D prepare_creds();
+> +
+> +	if (!new) {
+> +		/* Out of memory: bounding set drop failed silently for this thread. */
+> +		pr_warn_ratelimited("capability bounding set drop failed for pid %d (%=
+s)\n",
+> +				    task_pid_nr(current), current->comm);
+> +		goto out;
+> +	}
+
+[Severity: Critical]
+Does this handle memory allocation failures safely?
+
+If prepare_creds() fails, the capability drop is skipped and the target thr=
+ead
+retains its capabilities. However, the original prctl() caller has already
+received a success code and may assume the entire process is successfully
+sandboxed.
+
+Should this fail closed (for example, by forcing a SIGKILL) to prevent
+bypassing the intended security boundary?
+
+> +
+> +	new->cap_bset =3D cap_drop(new->cap_bset, w->mask);
+> +	commit_creds(new);
+> +
+> +out:
+> +	put_task_struct(w->task);
+> +	kfree(w);
+> +}
+> +
+> +/*
+> + * cap_bset_drop_process - Drop capabilities from all threads in the gro=
+up.
+> + * @mask: Mask of capabilities to drop from the bounding set.
+> + *
+> + * Drops @mask from the calling thread synchronously, and queues a task_=
+work
+> + * item for each sibling thread to safely apply the drop in its own cont=
+ext.
+> + *
+> + * The caller must hold CAP_SETPCAP. Thread group must be quiescent to a=
+void
+> + * racing with concurrent thread creation.
+> + *
+> + * Returns 0 on success, or -ENOMEM if allocations fail (all-or-nothing).
+> + */
+> +static int cap_bset_drop_process(kernel_cap_t mask)
+> +{
+> +	struct cap_bset_drop_work *list =3D NULL, *w, *next;
+> +	struct task_struct *thread;
+> +	struct cred *new =3D NULL;
+> +	int ret =3D 0;
+> +
+> +	rcu_read_lock();
+> +	for_each_thread(current, thread) {
+> +		const struct cred *cred;
+> +
+> +		if (thread =3D=3D current || (thread->flags & PF_EXITING))
+> +			continue;
+> +
+> +		cred =3D __task_cred(thread);
+> +		if (cap_isclear(cap_intersect(cred->cap_bset, mask)))
+> +			continue;
+> +
+> +		w =3D kmalloc_obj(*w, GFP_ATOMIC);
+> +		if (!w) {
+> +			ret =3D -ENOMEM;
+> +			break;
+> +		}
+
+[Severity: High]
+Can this loop exhaust the atomic memory pool?
+
+An unprivileged user could create tens of thousands of threads and then call
+prctl(PR_CAPBSET_DROP_MASK). This would execute an unbounded number of
+GFP_ATOMIC allocations sequentially inside an RCU read-side critical sectio=
+n,
+which could deplete emergency memory reserves and cause system instability.
+
+> +
+> +		w->task =3D get_task_struct(thread);
+> +		w->mask =3D mask;
+> +		w->next =3D list;
+> +		list =3D w;
+> +	}
+> +	rcu_read_unlock();
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260922095816.1191=
+799-1-ruanjinjie@huawei.com?part=3D1
