@@ -1,71 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B195A5519B4;
-	Tue, 22 Sep 2026 13:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8680A3955D6;
+	Tue, 22 Sep 2026 14:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790083964; cv=none; b=MI/fXO22LqHra6pfh9SCIbuPmX0fFJHOTiUP4sSWwrlz5Qj9V/9nugZVBQbz0NfhdCgo4S1Ad7cFOHTGrjSvERj7lirgaqkIVnkCpcVHPUzY1r1YVflDm0lbTaR27LrULw0EKoUXhzTjdOyTj/dwWGHIEc8nyQwaIypEPyloBU4=
+	t=1790088610; cv=none; b=jQK76tEvPHggHlGMc2lSmhnRuyLkIaZglugqfCc60WWiOA35cPxd18E2LebERgJXUeCP50x3aEaCau5h77DZ65ox5LKoRGoFu1SbfVJ8O4XWWI/5R8z+SqvnGRfEJhwKLSUiTfvCD0sR6r5wMaM8PTgTLjwM1lZROZBbcts2aEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790083964; c=relaxed/simple;
-	bh=zECeUf+7aYFcSL1MTMvWT35bZSfVk3BhoABrnDR2N98=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=vCl0SoHjY9ay2kFVYUhYG8taN/t+PHJJyxF4EWRY49upble7oOO1qGmNfxb80GKZZvImkKGDsaTC6YlKKzTph7c/RidOxad8z//IblKxpRNpsdbAWd2Ur9ZL8KKWMbmG9h3cCFeWudTw2Mzj6Iy4/6+tRlDwZPlJHDRlAfcAceg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWhtSVe7; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWhtSVe7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2852C1F00893;
-	Tue, 22 Sep 2026 13:32:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790083963;
-	bh=l/HgF6yiQLsjKBuVjGNIOKQ0c7VQbdR7KKAP0GiBsLg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=gWhtSVe7oFfJkKDAcN+Plln8oIJK9EaL2SJGJQyDMyHz7UQPHwopZq/fjdjZyRKDv
-	 b+BHQLMR6MtzAz2VQzpksU3YalPJUvrNj/QoTLdwCRPTkIb7AEWsWZ7HZ9nFjohbtc
-	 okRMCKxC17lskpyZkopniXt1hjQs0Q6spEIfc/rZR8bT9OfxN5HOFFgOiWwMz/FV1b
-	 5iy/rxwgJbKN60Lp155zCQkevuj3I6iAudWJtr3t+aYSyYHxBDnW9UMrJGMYzoEe17
-	 nSNz7FUOivNmNbkgIFIXb/2prf3LTSt7lHeIIawPO7/nDO7R44wAwOgQ3rFccMbcs8
-	 Ob6CZ1VJtr1kQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1] landlock: Widen ruleset versions to 64 bits
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-In-Reply-To: <20260922132615.1025945-1-mic@digikod.net>
-References: <20260922132615.1025945-1-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 22 Sep 2026 13:32:42 +0000
-Message-Id: <20260922133243.2852C1F00893@smtp.kernel.org>
+	s=arc-20240116; t=1790088610; c=relaxed/simple;
+	bh=xx9lx+vAlnsB2mvTyGUhmbrsk8f2+azLaHC9Cyvs+pE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pB6T5aTOKE1MIKrtryPl4lHG8FGbYFfblRh+lullOgyYs1RSh+X8a0kxicOnFYXn++a2O1bmVB5DMiZKSMpCKOZxAnReanHhH15rk1AxF3QQOkeM95rUrt//QWakTKpeXhSwaa5lzieujU5h3CJ8VR2RGfA8oVhvKbf1pSY80p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn; spf=pass smtp.mailfrom=kylinsec.com.cn; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinsec.com.cn
+X-QQ-mid: zesmtpip3t1790088553t8688084e
+X-QQ-Originating-IP: CeNMXMgN08HI9g+/bhQKFO97KJixQ4/apYMuth+JRt4=
+Received: from kylin-ThinkBook-14-G5-ABP.. ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Sep 2026 22:49:11 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 383231133204121578
+EX-QQ-RecipientCnt: 7
+From: Hongjian Dai <daihongjian@kylinsec.com.cn>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hongjian Dai <daihongjian@kylinsec.com.cn>
+Subject: [PATCH] smackfs: fix IPv6 netlabel prefix mask for non-16-aligned lengths
+Date: Tue, 22 Sep 2026 22:47:38 +0800
+Message-ID: <A82C90B4956EE3A9+20260922144738.9594-1-daihongjian@kylinsec.com.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:kylinsec.com.cn:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: NhdiEwnVOUqEcy9GRLdRqCDiCRqn0h1XJWxu1NAYjvq3Rvg30j0sXkwv
+	yoAeCUkAWus88c8/rYOWosJBM93zofzktxRAkrGVNn6B+SAui8Aya2ccqbCPHrm+IKzHSAm
+	pkFkOcK5n5HtwjOJxA/LMBYNMfEqe9ycTNG0LcPqsVTTD/219AhJd/N7Qe3G88XgoXspGcp
+	tYj5LZ8Kxrute9Na28e276cnDCX7+5oaot6qnBCMJFJgbBocq7KkQQKX23A9xiMGPdDhzwB
+	lK/esCiWK+MSnkz8ryEWmSoLEOccMK0PQYzDATCsRJN1Fn4P8CO6nKbQ/ho/XQSMs76sczm
+	rBa+2h9gQvg6ZxjZTWgmqrUeaFSaUQx04e4zUsgF0G+HpE50j2DXyCZIGnWiqGcyA5oDE26
+	eZIf7kRVRuZRiPFwmFHVxZ+qr8VRk2oZUsry/QhmoEX9Lqm53F8Cc94tukYKFUmlRmZAUnv
+	J0+1MGdLwMHX0UH4sTFTUazeNVXBbV1jxqec4nlQKqS5IA3pdZ7LkqvHPdl7v9XQLSRWn4n
+	h8AGvuSv785NqvI/azYbV3kH6TRWZ7J9fdW8BG/Etd0y28k8+Ku5bfRp1o11fsE0iDLRGlF
+	VRJDdn5hrPxDA79cGYrcMHRegcfg8qivLQ11x3smDP7FbnznQLrOI1TyP/Vo80sCoupTa7P
+	oVftw/9TWvOSliIL+VmPYs0kQtCtNyairGXC2+9a2xclR5N3Bdnmk3Ev5kNyde+Ds6PLWVr
+	VzFNDcl+ininoKlklPeSqqrxZ85umwV4KdJTvSVwbGNkp2hm6XCazuSaY3RtECgOQxOvT7a
+	zMfrPk1x9qDDS35G3YvFgPjZu8Vyuy/SFqy59DwVeOkX8agIrNdl5/5y5IZIUPbJg9P1suH
+	09CpyjHSQqLjhrQDBKcbGALN4TDRnpgjUUGrmCve2I1MeiLd7iwJ2YZSZzNJzWw2QEiNYMu
+	ZIkahJb4iA4lodVA7XLrIxFmzwA0oZXUsJ7dqQmRqN8LckguIq798LOEYU0SlKqciQSTL+n
+	M8DVd5XQ==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+X-QQ-RECHKSPAM: 0
 
-> Tracepoint consumers use a ruleset ID and version to identify the
-> successful landlock_add_rule(2) call prefix used to create a domain.
-> LANDLOCK_MAX_NUM_RULES bounds distinct stored rules, not successful
-> calls: re-adding already-present rights for an object or port succeeds
-> without increasing num_rules.  Because every successful call increments
-> the version, these calls can wrap the 32-bit counter and give different
-> prefixes the same trace identity.
->=20
-> Widen the counter and its trace fields to 64 bits so the counter cannot
-> wrap in practice, while preserving the successful-call semantics.
-> Saturating would alias all subsequent histories, while rejecting a call
-> at the limit would change otherwise valid syscall behavior solely for
-> trace metadata.
->=20
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Fixes: 63747c94774d ("landlock: Add landlock_add_rule_fs and landlock_add=
-_rule_net tracepoints")
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+smk_write_net6addr() builds the partial-word mask as (1 << m) - 1,
+which keeps the low m bits instead of the high m bits (e.g. /33
+yields 0x0001 instead of 0x8000), and stores it without htons()
+while the address words are in network byte order. Any prefix with
+mask % 16 != 0 is truncated to the wrong network and mislabeled.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Take the high m bits and convert to network byte order, matching
+how newname words are stored with htons().
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260922132615.1025=
-945-1-mic@digikod.net?part=3D1
+Fixes: 21abb1ec414c ("Smack: IPv6 host labeling")
+---
+ security/smack/smackfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index a72bc7fabea9..6d680424a8c3 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -1506,7 +1506,7 @@ static ssize_t smk_write_net6addr(struct file *file, const char __user *buf,
+ 			fullmask.s6_addr16[i] = 0xffff;
+ 			m -= 16;
+ 		} else if (m > 0) {
+-			fullmask.s6_addr16[i] = (1 << m) - 1;
++			fullmask.s6_addr16[i] = htons(0xffff << (16 - m));
+ 			m = 0;
+ 		} else
+ 			fullmask.s6_addr16[i] = 0;
+-- 
+2.43.0
 
