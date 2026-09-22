@@ -1,140 +1,272 @@
-Received: from mail-ej2-f43.google.com (mail-ej2-f43.google.com [74.125.228.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832B7382F08
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2026 06:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824DE4534AD;
+	Tue, 22 Sep 2026 09:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790057121; cv=none; b=vFcUNW63rV2g5hm/CnnJ8ORgbUL/lC3WEMKIF06KncSYoIfKbIKyS2nbouED3QOKvrJ1/urrV7230YZeB7s+bsFcMRwwS32+DhRMDdafR3SAUB8yLQ3AxfuFdQp1GfU92vcqQaiyW+1Dh81CIlS5RpU5ujOoWPHMscXCdLgmSJo=
+	t=1790071036; cv=none; b=lfT6bHlmg7V4i9QbgB2/DNgidXtxp0Bsa5Nm7V2oWnxEEFb7ZitUNNa3ZuLealLl1YpeCdcal2ToKhyrX+SUBcjSOSY81Ppa3gRiFz0hmVY3Zp1d9zEqiikeG4D7F38lmMOm3Rc+Klowbdi3+cCrpbwMD8ikMVTrfUT7Jehty5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790057121; c=relaxed/simple;
-	bh=Q/oDrKjoLV0PJ7re9Qc+KtJR5UkROXgTJNC/Syw4ETE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iq6yXGNG4ti3+25UNsDqWMVErpYlGnV9ujyK67x0qUavlA5hgKX4CIWvbaxVLVaCtGo/+R1Ofoj18BApaRGlcfylyFxmYa2S3bnOErEpGtG8EPjDsuVmWxofdlvCZowZhi9T+d40l7W7x4lKoNhONCxSMkJ4sIvd79hzf/GBEIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.228.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=black-desk.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej2-f43.google.com with SMTP id a640c23a62f3a-c2a7d46c5bbso98355166b.0
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 23:05:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790057119; x=1790661919;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Zxmsk/EJ4w4QHvprrsLgwa7ofL6yH0BsSIWlOL221Nk=;
-        b=1CKh+oNMRf8SO105LTbgBlD35N5B991VWQy0lCiqyfibxPBf6nvsDGDCia8MCX+UIy
-         oCvgeCEafH61Ke5QmNIHPYHBvgpnzuxOZJNRc1N7X+bRkSrF+vJq+xvaHfLFksBfVQNA
-         zN7OyfDNlTucF4O0jCJabu4E1ekd9D3isAFWf/kZFj4SzsrhW/pRrr0d++3Ayodi+1jW
-         pTzUWGh5zDQQqZXD5380Kp+C0klDM6G4nwj6E/eyhhDBVixsTCSw8pN/la91teRnsX8l
-         LVxHemhmR4Rw9Au/n9h6q50r6+nNQIravJP9GXVmiwRSdbNfj3Zo8heQtlC6CDOLjQc/
-         DYTg==
-X-Forwarded-Encrypted: i=1; AKwUvBwPbUveW3u06gU3gxezyPQkg47YEvu3JABdWmhXRMnGAoqw2r3EYLTvvUgxbaVivzlsbLMWbdYNS0ykrBnFqjUSyj9SngE=@vger.kernel.org
-X-Gm-Message-State: AFuF++lC+TY4iElQ191m0TTzTfXO9ZyOgEmrNJ0WTc0+KQz0H8RBaRo2
-	lRY9VpGB3prbyDvAaolXet36FyziEuFcMMGtNbYfYWKCylSIbLa/gz7GG8VbH7sJmEfe/A==
-X-Gm-Gg: AYBFou19vdHQWmh4oYCIGDUPAoY/ZlqKNdp4SIILnfrWihZ9gfJbQzRfGj3N2hoTULy
-	cs30uN/YmfdEhPIwNrqCs4LWiatTTGfeFfO/Y6VV+hTk6H+DjwbAZETjSabiokrax3FEiUi0HzK
-	0+XzrspSKn2Cu3hZFtnz360z0TgRX0G57VVaNBJXCPgUPVtv3CaO7CHXAg7AjG3J+dnO/deHY/5
-	YI9nZNmC5c85WADdC9kn9lRK+C8EyqKKWlv3mcrOmCPyVtoX4GiJy5dl0VgdE0V5WlZgGYn7PLt
-	msrGPaeg/NoACjc4lv1rxyQoGfNq9vLCwRZk/fVFzVJ/ZQ3mj/6nVxjEVlI+P7zkat5FfET9GVk
-	ayjx8KbHHXPsWbK5hnKvjqXQSs7ecsbVHprTEeKSSUSrfKB5PFi+H2w3bI29RPWxfOadzSLHIjA
-	HtQgwDClVE8ij0EI339o624pfdCF0HSRdgkyCaEmxsQWkuFC9jJu0UY9O0h91VzB21PK8ms7xs0
-	1wVEJBSarF3Tdx/VS4buYBA1vD5JQ0SHxebsofiUV61uaoASdKZgHwChThqibE=
-X-Received: by 2002:a17:907:8692:b0:c25:4ba1:594f with SMTP id a640c23a62f3a-c2a8cffeff4mr160427866b.0.1790057118548;
-        Mon, 21 Sep 2026 23:05:18 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2a9c580d2fsm33430366b.26.2026.09.21.23.05.18
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2026 23:05:18 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6aa13a28848so911691a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2026 23:05:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBytswdJM14IdAI0Iz8l5KvZYEPf0roFa94yjb9FNCHDgOYAndMRa6QA37qzWx3TrnzQRQsgFjyGfR/iDwX172IXGfKIAuU=@vger.kernel.org
-X-Received: by 2002:a05:6512:220f:b0:5aa:62df:cd0f with SMTP id
- 2adb3069b0e04-5b8d28f3a47mr500408e87.2.1790056745194; Mon, 21 Sep 2026
- 22:59:05 -0700 (PDT)
+	s=arc-20240116; t=1790071036; c=relaxed/simple;
+	bh=VuKq7eAHNKmmD/LaroeDZQUDOeITzHHS0I1yojtt1Ko=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cEGM59chXC1DDEH1kZ1I2Wkf7+rWohHWtAECtL0p5xbTAPBdHddpwhEGfI4QunJQcMhjk2vocNrptnTFx+eX7KXx/CuBlfH5H1LRAbMADCuCooxEuujxDXZJCc0WKI+ESQpc5626lN4nf/HCAu09QnQU7l8s5U1x8D4En7SgWu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=p4JXr0De; arc=none smtp.client-ip=113.46.200.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="p4JXr0De"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=3BqWh1wb6kufBC/kkCOrOwrCG54Y5Wbt92KY/ogPgqQ=;
+	b=p4JXr0DeLl/xYUKtUENc3Aq59Vgf/5GCiLU1BmS60ySE8TXtzCaCy5nU6Z1XflM0q3Z7TUkbf
+	mCdOcNBmH7w7UUscLfNlaEcouQlWO92uGuVGUiSYtiWVkk3CA2hB1LdByrOqU4B3BGsit8nqriY
+	AhjLaepfvQ75b8YQwqs2TdI=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4hpwF02krRzpT0F;
+	Tue, 22 Sep 2026 17:45:08 +0800 (CST)
+Received: from kwepemk200008.china.huawei.com (unknown [7.202.194.74])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8E9BD40537;
+	Tue, 22 Sep 2026 17:57:04 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemk200008.china.huawei.com
+ (7.202.194.74) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 22 Sep
+ 2026 17:57:03 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <serge@hallyn.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<pjw@kernel.org>, <tglx@kernel.org>, <peterz@infradead.org>,
+	<debug@rivosinc.com>, <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [RFC PATCH] security: Allow dropping bounding set process-wide
+Date: Tue, 22 Sep 2026 17:58:16 +0800
+Message-ID: <20260922095816.1191799-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260831-pidfd-get-paths-v2-0-c59ea6a21b72@black-desk.cn>
- <20260831-pidfd-get-paths-v2-1-c59ea6a21b72@black-desk.cn> <CAG48ez3vJrbt+qYh5b-PYxmr2txcg3DAKDRwmBwVzNhRB+8Ueg@mail.gmail.com>
-In-Reply-To: <CAG48ez3vJrbt+qYh5b-PYxmr2txcg3DAKDRwmBwVzNhRB+8Ueg@mail.gmail.com>
-From: Chen Linxuan <me@black-desk.cn>
-Date: Tue, 22 Sep 2026 13:58:53 +0800
-X-Gmail-Original-Message-ID: <CAC1kPDMUT6pUarj-ohTGB9=5u=7osk+8bvyyAAjStsJN6Z3sEw@mail.gmail.com>
-X-Gm-Features: AclHuK-ZUoiNUpNllD9s0TdWDgkEMFXuDsvm8kdoP44o6gMCMaHAEIjZzTqw_NM
-Message-ID: <CAC1kPDMUT6pUarj-ohTGB9=5u=7osk+8bvyyAAjStsJN6Z3sEw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] fs: Introduce task path helpers
-To: Jann Horn <jannh@google.com>
-Cc: me@black-desk.cn, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Kees Cook <kees@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Georgia Garcia <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemk200008.china.huawei.com (7.202.194.74)
 
-On Tue, Sep 22, 2026 at 3:21=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
->
-> On Mon, Aug 31, 2026 at 4:59=E2=80=AFAM Chen Linxuan via B4 Relay
-> <devnull+me.black-desk.cn@kernel.org> wrote:
-> > Introduce helpers that acquire a referenced struct path for a task's
-> > executable, root, and working directory. Reuse them for procfs task
-> > links and AppArmor executable-path handling instead of duplicating file
-> > and path reference handling at each call site.
-> [...]
-> > +/**
-> > + * get_task_exe_path - acquire a reference to the task's executable pa=
-th
-> > + * @task: The task.
-> > + * @exe_path: The task's executable path.
-> > + *
-> > + * Returns 0 if the task has an executable path, or -ENOENT if it does=
- not.
-> > + * The caller must release the path through path_put() on success.
-> > + */
-> > +int get_task_exe_path(struct task_struct *task, struct path *exe_path)
-> > +{
-> > +       struct file *exe_file =3D get_task_exe_file(task);
-> > +
-> > +       if (!exe_file)
-> > +               return -ENOENT;
-> > +
-> > +       *exe_path =3D exe_file->f_path;
-> > +       path_get(exe_path);
-> > +       fput(exe_file);
-> > +       return 0;
-> > +}
-> [...]
-> >  static const char *get_current_exe_path(char *buffer, int buffer_size)
-> >  {
-> > -       struct file *exe_file;
-> > -       struct path p;
-> > +       struct path p __free(path_put) =3D {};
-> >         const char *path_str;
-> >
-> > -       exe_file =3D get_task_exe_file(current);
-> > -       if (!exe_file)
-> > +       if (get_task_exe_path(current, &p))
-> >                 return ERR_PTR(-ENOENT);
->
-> This assumes that when get_task_exe_path() fails, it doesn't set
-> members of the path argument to non-NULL values. That should be noted
-> in a comment above get_task_exe_path().
+The capability bounding set is per-thread: PR_CAPBSET_DROP only affects
+the calling thread, since its bounding set lives in the per-task struct
+cred.  User space that wants to drop capabilities for a whole process
+must therefore invoke PR_CAPBSET_DROP once per capability per thread,
+which on a many-threaded process is expensive, and from a Go runtime
+requires stopping the world and signalling every thread.
 
-Will be updated in V3.
+Add PR_CAPBSET_DROP_MASK, an opt-in prctl that removes a set of
+capabilities, given as a 64-bit mask in arg2 (low 32 bits) and arg3
+(high 32 bits), from the bounding set of every thread of the calling
+thread group in a single call.
 
->
+The calling thread drops the capabilities synchronously, last; every
+sibling that still holds any of them is asked to drop them through a
+task_work item, so that it applies the drop in its own context.  This
+avoids racing with a sibling's concurrent credential updates such as
+setuid() or capset().  The call does not wait for the siblings: a
+sibling may be parked in a wait that is not woken by TIF_NOTIFY_SIGNAL
+(e.g. futex), so waiting could block for an unbounded time.  This is
+still safe, because TIF_NOTIFY_SIGNAL is handled on the way out to user
+mode, so a sibling applies the drop before executing any further
+userspace code.  It does not synchronize against a sibling that is
+concurrently creating threads, so callers must keep the thread group
+quiescent while dropping.
+
+Measured with gVisor's "bounding set trimmed" boot phase on an arm64 KVM
+guest (medians over repeated boots):
+  - 8 vCPUs:  ~1.6ms  -> ~0.10ms
+  - 32 vCPUs: ~3.5ms  -> ~0.11ms
+  - 64 vCPUs: ~10.1ms -> ~0.1-0.6ms
+  - cost goes from O(capabilities * threads) stop-the-world prctls to a
+    single thread-group walk.
+
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Paul Walmsley <pjw@kernel.org>
+Cc: Thomas Gleixner <tglx@kernel.org>
+Cc: Zong Li <zong.li@sifive.com>
+Cc: Deepak Gupta <debug@rivosinc.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ include/uapi/linux/prctl.h |   1 +
+ security/commoncap.c       | 129 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
+
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index b6ec6f693719..750a7824d3bc 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -70,6 +70,7 @@
+ /* Get/set the capability bounding set (as per security/commoncap.c) */
+ #define PR_CAPBSET_READ 23
+ #define PR_CAPBSET_DROP 24
++#define PR_CAPBSET_DROP_MASK 83
+ 
+ /* Get/set the process' ability to use the timestamp counter instruction */
+ #define PR_GET_TSC 25
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 3399535808fe..ae7ce50a8151 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -19,7 +19,14 @@
+ #include <linux/hugetlb.h>
+ #include <linux/mount.h>
+ #include <linux/sched.h>
++#include <linux/cred.h>
++#include <linux/rcupdate.h>
++#include <linux/sched/signal.h>
++#include <linux/sched/task.h>
++#include <linux/slab.h>
++#include <linux/task_work.h>
+ #include <linux/prctl.h>
++#include <linux/printk.h>
+ #include <linux/securebits.h>
+ #include <linux/user_namespace.h>
+ #include <linux/binfmts.h>
+@@ -1283,6 +1290,123 @@ static int cap_prctl_drop(unsigned long cap)
+ 	return commit_creds(new);
+ }
+ 
++/*
++ * Structure used to queue process-wide bounding set drops via task_work.
++ */
++struct cap_bset_drop_work {
++	struct callback_head work;
++	struct task_struct *task;
++	kernel_cap_t mask;
++	struct cap_bset_drop_work *next;
++};
++
++static void cap_bset_drop_work_fn(struct callback_head *work)
++{
++	struct cap_bset_drop_work *w = container_of(work, struct cap_bset_drop_work, work);
++	struct cred *new = prepare_creds();
++
++	if (!new) {
++		/* Out of memory: bounding set drop failed silently for this thread. */
++		pr_warn_ratelimited("capability bounding set drop failed for pid %d (%s)\n",
++				    task_pid_nr(current), current->comm);
++		goto out;
++	}
++
++	new->cap_bset = cap_drop(new->cap_bset, w->mask);
++	commit_creds(new);
++
++out:
++	put_task_struct(w->task);
++	kfree(w);
++}
++
++/*
++ * cap_bset_drop_process - Drop capabilities from all threads in the group.
++ * @mask: Mask of capabilities to drop from the bounding set.
++ *
++ * Drops @mask from the calling thread synchronously, and queues a task_work
++ * item for each sibling thread to safely apply the drop in its own context.
++ *
++ * The caller must hold CAP_SETPCAP. Thread group must be quiescent to avoid
++ * racing with concurrent thread creation.
++ *
++ * Returns 0 on success, or -ENOMEM if allocations fail (all-or-nothing).
++ */
++static int cap_bset_drop_process(kernel_cap_t mask)
++{
++	struct cap_bset_drop_work *list = NULL, *w, *next;
++	struct task_struct *thread;
++	struct cred *new = NULL;
++	int ret = 0;
++
++	rcu_read_lock();
++	for_each_thread(current, thread) {
++		const struct cred *cred;
++
++		if (thread == current || (thread->flags & PF_EXITING))
++			continue;
++
++		cred = __task_cred(thread);
++		if (cap_isclear(cap_intersect(cred->cap_bset, mask)))
++			continue;
++
++		w = kmalloc_obj(*w, GFP_ATOMIC);
++		if (!w) {
++			ret = -ENOMEM;
++			break;
++		}
++
++		w->task = get_task_struct(thread);
++		w->mask = mask;
++		w->next = list;
++		list = w;
++	}
++	rcu_read_unlock();
++
++	if (!ret) {
++		new = prepare_creds();
++		if (!new)
++			ret = -ENOMEM;
++	}
++
++	if (ret) {
++		while (list) {
++			next = list->next;
++			put_task_struct(list->task);
++			kfree(list);
++			list = next;
++		}
++		return ret;
++	}
++
++	for (w = list; w; w = next) {
++		next = w->next;
++		init_task_work(&w->work, cap_bset_drop_work_fn);
++		if (task_work_add(w->task, &w->work, TWA_SIGNAL)) {
++			put_task_struct(w->task);
++			kfree(w);
++		}
++	}
++
++	new->cap_bset = cap_drop(new->cap_bset, mask);
++	commit_creds(new);
++
++	return 0;
++}
++
++static int cap_prctl_drop_mask(unsigned long low, unsigned long high)
++{
++	kernel_cap_t mask = mk_kernel_cap((u32)low, (u32)high);
++
++	if (cap_isclear(mask))
++		return 0;
++
++	if (!ns_capable(current_user_ns(), CAP_SETPCAP))
++		return -EPERM;
++
++	return cap_bset_drop_process(mask);
++}
++
+ /**
+  * cap_task_prctl - Implement process control functions for this security module
+  * @option: The process control function requested
+@@ -1313,6 +1437,11 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 	case PR_CAPBSET_DROP:
+ 		return cap_prctl_drop(arg2);
+ 
++	case PR_CAPBSET_DROP_MASK:
++		if (arg4 || arg5)
++			return -EINVAL;
++		return cap_prctl_drop_mask(arg2, arg3);
++
+ 	/*
+ 	 * The next four prctl's remain to assist with transitioning a
+ 	 * system from legacy UID=0 based privilege (when filesystem
+-- 
+2.34.1
+
