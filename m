@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4422AD35;
-	Wed, 23 Sep 2026 03:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB003909B8;
+	Wed, 23 Sep 2026 03:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790133234; cv=none; b=A2t/dviWhRkOojgbh12K6pyfvqev3M7ub78Ztk68yseGn8o4slVLEmZt6jBUw2eWsTMJlmyQ9kBhdgWqz5hBA34+rexR6HC36JZQlanO2yug2TToFbk9DN2DhmN8IlKgO79sR+YA7LzZMHuOQwsR06SjSvtZ96/tRfGSzEf8ixk=
+	t=1790133234; cv=none; b=F5JElZN8d/NPXXkczdg5DdPTf6ZOHfVUW4XnlzeFkdvkGfmaq2QKZIrwq/XjW4iKbSzxxsticEH9xSpX0MZpGWqAIDAmQEf3zvwbFQpYoAj5nVsApPkxSYumgdveYxKzKncLGVRWK+QPLu7PONw9hxAGtlhPI2HdraYfZYf6Olw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790133234; c=relaxed/simple;
-	bh=wSwRZCLNZgxwPzeKe4iEUPEd7PgDtA5PKjXAMd1mW7M=;
+	bh=eQ1YqUTslb5dxOryo6W74H5gHamHrhSV+gWcsOV8LVs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jCqYu+nmQDL47ZhUacL7yT8EAlDZu82XRJV7o/aF4/j7xsN/GytUskh+TCjxwDH/uZ3fgt+eXbYXjgyodvHCSJVo3iEkg+3HvI6Z+LT7HTc2JfQU8vDW/QpcW95czVqN4oyPrewUELmxFpbX1YYk9ITRxiE5JRBWl0hgp0WI/f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDweNtyH; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=DOSqmSN0DJnD2EfWnMt7iLSsoHcrUh4BXjlCizEepQ+lVgZgnliUljGBqE/O6R/rb84Dokv3WzWaheDliXy7STn1tWpkDBMOfX4lq+1m2YGFGtXFeVQtkYdj/WnbnuYpwaUv5pSBoPz9MSxrBEKuvzAGnSJuWm6mSA01Ow35mmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyoLf2dP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDweNtyH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB13B1F00893;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyoLf2dP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDEFD1F00898;
 	Wed, 23 Sep 2026 03:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790133232;
-	bh=s5x+veFgRX8LKTI/wZtWAwS1aUs7xtYA1sK5BXFOFek=;
+	s=k20260515; t=1790133233;
+	bh=unThhJ5PlV7XLz3f6cbDsSTG6/h/IqkEJcR1t8o4uxA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=mDweNtyHCZX3yJGzNMjW+Q1mqNTlRf+1ECWYljAt5HMlxSDFBrxWV2ePB/Sw5Nzvw
-	 41HBh1vgy8lWQlCO+tXeVpRSwfB2BmoAeHRJqgvtW8Yj+glbknjy47PYbv0n22wFJ0
-	 2Z/wrCv7/alUYJ0UMmrnjvzMyUtSQmZW8HlqW3qOnAznlztDSBKYrfOUQdYGiStDSf
-	 FbV6zIlEhgmOHtAbKh7BKM+G+r38KLb9yIjEyvoWQu0DjttcnpzGvhSYt3YXpZRxR5
-	 mU9L4wd9R1XUL/JEdvNTMEqIV/EwpJFmtzhoB1Q5xV4V8exW2l4vw8nqoNiu/NEFfe
-	 zz5SOc4yVb8ZQ==
+	b=XyoLf2dPUmzVfxYvTgVVz7oOmsyf/1YgXiSdqvjQWA4YSqJZdGQSJybY698i1WRXt
+	 a4pFsyy78z+WFAQ7Q0R0GYMZhoI+2Bwwt5vX5eib2YDm4Ebh7TL9226Bndf3ihGAO4
+	 E/rjhTctQ+WdBVA85WjNOb0SGh9uHgDL3f+tlB/Aww2APeVpPjN0tm9Z+XAaVdIgEa
+	 RHL6/v5NwQN2mtzzaFsYH0uBriuJVxQtA689B9hdMKuCEk4VvCwVulS0yPz6Np+Vp2
+	 ed93mugAS7vejtoKVgauAMwQaqLD4Ox26/Dr9zFcP2yJJXasZ5lgGxwbcvSxhbQT0/
+	 Qmo/1k0AGHp2A==
 From: Fan Wu <wufan@kernel.org>
 To: linux-security-module@vger.kernel.org
 Cc: paul@paul-moore.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] ipe: fix use-after-free when auditing a newly loaded policy
-Date: Tue, 22 Sep 2026 20:13:48 -0700
-Message-ID: <20260923031349.1216431-2-wufan@kernel.org>
+Subject: [PATCH 2/2] ipe: protect the dm-verity root hash with RCU
+Date: Tue, 22 Sep 2026 20:13:49 -0700
+Message-ID: <20260923031349.1216431-3-wufan@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260923031349.1216431-1-wufan@kernel.org>
 References: <20260923031349.1216431-1-wufan@kernel.org>
@@ -44,61 +44,113 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-new_policy() audits the policy after ipe_new_policyfs_node() publishes it
-and drops the new directory's inode lock. A concurrent delete can free
-the policy while ipe_audit_policy_load() is still using it.
+ipe_bdev_setintegrity() frees the old root hash when dm-verity publishes
+a new one on ->preresume, while policy evaluation can still be
+dereferencing it.
 
-Audit the successful load under that lock.
+Protect the root hash with RCU. The evaluation path already runs under
+rcu_read_lock().
 
-Fixes: f44554b5067b ("audit,ipe: add IPE auditing support")
+Fixes: e155858dd995 ("ipe: add support for dm-verity as a trust provider")
 Cc: stable@vger.kernel.org
 Assisted-by: claude-opus-5.5
 Signed-off-by: Fan Wu <wufan@kernel.org>
 ---
- security/ipe/fs.c        | 8 +++-----
- security/ipe/policy_fs.c | 3 +++
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ security/ipe/eval.c  | 12 ++++++++----
+ security/ipe/eval.h  |  2 +-
+ security/ipe/hooks.c | 22 +++++++++++++++++-----
+ 3 files changed, 26 insertions(+), 10 deletions(-)
 
-diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-index 076c111c85c8..847a76afb93d 100644
---- a/security/ipe/fs.c
-+++ b/security/ipe/fs.c
-@@ -159,18 +159,16 @@ static ssize_t new_policy(struct file *f, const char __user *data,
- 	}
- 
- 	rc = ipe_new_policyfs_node(p);
--	if (rc)
--		goto out;
- 
- out:
- 	kfree(copy);
- 	if (rc < 0) {
- 		ipe_free_policy(p);
- 		ipe_audit_policy_load(ERR_PTR(rc));
--	} else {
--		ipe_audit_policy_load(p);
-+		return rc;
- 	}
--	return (rc < 0) ? rc : len;
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+index 21439c5be336..4a7be96c84f0 100644
+--- a/security/ipe/eval.c
++++ b/security/ipe/eval.c
+@@ -134,10 +134,14 @@ static bool evaluate_boot_verified(const struct ipe_eval_ctx *const ctx)
+ static bool evaluate_dmv_roothash(const struct ipe_eval_ctx *const ctx,
+ 				  struct ipe_prop *p)
+ {
+-	return !!ctx->ipe_bdev &&
+-	       !!ctx->ipe_bdev->root_hash &&
+-	       ipe_digest_eval(p->value,
+-			       ctx->ipe_bdev->root_hash);
++	const struct digest_info *root_hash;
 +
-+	return len;
++	if (!ctx->ipe_bdev)
++		return false;
++
++	root_hash = rcu_dereference(ctx->ipe_bdev->root_hash);
++
++	return root_hash && ipe_digest_eval(p->value, root_hash);
+ }
+ #else
+ static bool evaluate_dmv_roothash(const struct ipe_eval_ctx *const ctx,
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+index fef65a36468c..b26d1147d070 100644
+--- a/security/ipe/eval.h
++++ b/security/ipe/eval.h
+@@ -27,7 +27,7 @@ struct ipe_bdev {
+ #ifdef CONFIG_IPE_PROP_DM_VERITY_SIGNATURE
+ 	bool dm_verity_signed;
+ #endif /* CONFIG_IPE_PROP_DM_VERITY_SIGNATURE */
+-	struct digest_info *root_hash;
++	struct digest_info __rcu *root_hash;
+ };
+ #endif /* CONFIG_IPE_PROP_DM_VERITY */
+ 
+diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
+index 0ae54a880405..d878b52ceec8 100644
+--- a/security/ipe/hooks.c
++++ b/security/ipe/hooks.c
+@@ -9,6 +9,7 @@
+ #include <linux/binfmts.h>
+ #include <linux/mman.h>
+ #include <linux/blk_types.h>
++#include <linux/rcupdate.h>
+ 
+ #include "ipe.h"
+ #include "hooks.h"
+@@ -232,7 +233,20 @@ void ipe_bdev_free_security(struct block_device *bdev)
+ {
+ 	struct ipe_bdev *blob = ipe_bdev(bdev);
+ 
+-	ipe_digest_free(blob->root_hash);
++	ipe_digest_free(rcu_access_pointer(blob->root_hash));
++}
++
++static void ipe_set_dmverity_roothash(struct ipe_bdev *blob,
++				      struct digest_info *info)
++{
++	struct digest_info *old;
++
++	/* Protected by device-mapper's md->suspend_lock */
++	old = rcu_replace_pointer(blob->root_hash, info, true);
++	if (old) {
++		synchronize_rcu();
++		ipe_digest_free(old);
++	}
  }
  
- static const struct file_operations np_fops = {
-diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-index 9d92d8a14b13..a7aeb57483c6 100644
---- a/security/ipe/policy_fs.c
-+++ b/security/ipe/policy_fs.c
-@@ -481,6 +481,9 @@ int ipe_new_policyfs_node(struct ipe_policy *p)
- 	inode_lock(root);
- 	p->policyfs = policyfs;
- 	root->i_private = p;
-+	/* Only audit signed policies from userspace */
-+	if (p->pkcs7)
-+		ipe_audit_policy_load(p);
- 	inode_unlock(root);
+ #ifdef CONFIG_IPE_PROP_DM_VERITY_SIGNATURE
+@@ -280,8 +294,7 @@ int ipe_bdev_setintegrity(struct block_device *bdev, enum lsm_integrity_type typ
+ 		return -EINVAL;
+ 
+ 	if (!value) {
+-		ipe_digest_free(blob->root_hash);
+-		blob->root_hash = NULL;
++		ipe_set_dmverity_roothash(blob, NULL);
+ 
+ 		return 0;
+ 	}
+@@ -301,8 +314,7 @@ int ipe_bdev_setintegrity(struct block_device *bdev, enum lsm_integrity_type typ
+ 
+ 	info->digest_len = digest->digest_len;
+ 
+-	ipe_digest_free(blob->root_hash);
+-	blob->root_hash = info;
++	ipe_set_dmverity_roothash(blob, info);
  
  	return 0;
+ err:
 -- 
 2.55.0
 
