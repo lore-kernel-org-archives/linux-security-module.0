@@ -1,312 +1,305 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475DB531629
-	for <linux-security-module@vger.kernel.org>; Wed, 23 Sep 2026 14:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6DE496D4E;
+	Wed, 23 Sep 2026 16:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790173638; cv=none; b=kSKchLWe3YeUbhAyC+91VSjJjL02JYX+LjsrQ36YJdV7E4wNI+US6vBmPlnLMJzgFkrZJnQkdCCKpLMynlAZGf1ZqRk1bCGelOw39tpFoWL7pmZJIKF6TppruEcYCOv/0aFdxhQpx7LDCKmiL0rTXDJNB4DF8rgm8UKb/TqoRcw=
+	t=1790180078; cv=none; b=ZnKgvTOCliVs+/05kXLmcRFk+8kGPn5rBrz5zIKNfm7cMgms6XmNnyrBAwmq4sKy6dJQwlAgHCGcchLQZDp2DEDYVWVemSVF9y8f6tqst5fsh9o67ntGs1hTj1ClCB9FeYTnFcU4uM9YARS4/JZPLFJ6H3ie3soatfXT3xuBvfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790173638; c=relaxed/simple;
-	bh=8h06L4zgt0xbnYaqADQB9yddRobQhsv4hVUNTqVY1jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ugtv81k+b8ebcq4IvQQ0U8oa06FfTTXCBsKy7xb9HrCpt6gmh3Xf7oIc8mBdn/FYRSKPqRwNNXk6uOxQBT8cAsf1Ft034GQlR+aZKmgzjYJo6AIlZEqrujHbxCj9BQqD0n8YsMnsdxPa/zPcLPcZ25X9q4QTAZWWhypVZZb0TQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bzNC1eNM; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1790180078; c=relaxed/simple;
+	bh=o+lnkeQINKOx1FMGfJoPJvIdUjvWx2rDpqbnJIYqQB0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=krf5MRyfV7dDR1F94O3gvzKamMBu8lsOwm9KHLVDJnoasuh2Yd9dArEjJwsY0wTmDZ0VIGk6rG7D5oEN7RWqf277HNV7z9AKhr9KFxOW4heIPjzPOfPyBxPWdZ3OYFKIo67WCbT7uf8Udno9gP14hpYo8iBEUwFgV/EHAPx5FW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=G7uQOJwh; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bzNC1eNM"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49e66390995so6260125e9.2
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Sep 2026 07:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1790173633; x=1790778433; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=PSzGnM9hkcOoFtPupK98ZapwC/NnVGSiD0/uooo0h9E=;
-        b=bzNC1eNMuM1eShI2U0vCqWsQQzIXyrxi5Ku7mDQ80V18DQ8f9v4n092LXfBPxCI79z
-         mx6Go3u6l9OkhDFe5z3gBNTrlFO7OUUSahlV9m4pZvi0mRsNyRdrveD3JhX5SZ2nzvhp
-         NMlJ1Se3WgL4FBwhVj4GRmmCI+c/4nStaF8WTlWeQhP+bJ6i4/wRPgsyUTWMOHcibOXP
-         mYWpHJ6A1JAjGBC29D1AE26M8diqDcNSEHStT1IOPpc5WMzmJW0rEPmy/7BXJNvD45x7
-         wDRlZMB7kZqYENcuaXsf5GMevY1rjmsuX0CEqik6hHewgkzOaPBqvq1H/OvRjl4rCgme
-         GkLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790173633; x=1790778433;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=PSzGnM9hkcOoFtPupK98ZapwC/NnVGSiD0/uooo0h9E=;
-        b=q566yUtCjjJcZ1CvtTTW59/sCGZDchD8BvwNjrGBRz0/52QYkw+J4Deh24n2CzjBWL
-         wr5N82YtRYv6thfr8OeHISTZIDc58yxP3Bs2OvhI9vANlvNZvZk+pd8r1G7sth9kUu4U
-         qDVFITHeEJpJ7UvRKXHFXPOSq+hmN5ShqvaoYl7RsRZE+WJ8lc49QL7Vi7RJfp9aJlFP
-         KvhWChA+tZeTrEX47AflLZ8CT/+o6VUA9W/hKTHLbVAM2FkKCV0zI3BNjLFpIvoEw7T7
-         vgJS+fqtDYhwVPCbXVn43iEKArv0aqqRCmXZSEn+dKPSKQb9ImD+NmIh9cTnUegK2dAI
-         U9Sg==
-X-Forwarded-Encrypted: i=1; AKwUvBwes1SAkQ14Y1HcZEnTHcZjr9JlQWOTWWyi/nBJHco3QCkTrWI2mQ68ZNvzdn92g4dETxmwru1F/MRLmQxfBTZc3yLiQ+4=@vger.kernel.org
-X-Gm-Message-State: AFuF++kQf8sDKpbJJrLdGMXZnmHV8cuYDHHyvsJWBMDAgKFn3P6aK7oB
-	69X+q1nU7sy/47FOhhjmChVyjUMlEuWNrhpi7CIe9PPEioD14r8thuyJHclUYbCORA==
-X-Gm-Gg: AYBFou2wPy8mOLbwNSWmthswHDQO4E802KFPx4boxGXK7OI8kTOZWvgSx59j5Au4Lrb
-	B4nN3sF8jPbqC9wNAHnuvOEUEk3csgRVPam03dKFFFKqHknWBa3H97qtTmiVEBVvV8MJh7e3PYN
-	IWaXacIC2Ndk5kniBukzLWJNhk1yOSlTCTanG9XM7+LjZUNnc/Y8eA0HXDLkl0QnzBFIe6ZB1cv
-	slMBapSCM74NZbWJxVkOociOUPEQ3I+ms5UyOwYOnawbpREHkR36b7Vv+wzWrrTZ78hV5Zpi562
-	CBMSfUd/dEe6EHyKf6auj1o+h03ALg3cvG87UcX7GTkFAMIlYnjHBXn4raiT16ess2ML04YUpvt
-	yy6qDwW/A/5ng4N0+QZjzviZ2jEYTWTkck76Y9iEAn5uaXJ3lsSbwQ4DTwn/RO+vl6MRL3yDQH4
-	3u965bsDxksmBKEwUjq6eSsJ2z2fOPi8TCqwPoHafrxa0Vj6m8u5ZA1ppjh44HuSXHS6y0SFZzQ
-	l0/Iry/leQYNx7rQh7/viwhs8f/sNDvdOF4t5gd
-X-Received: by 2002:a05:600c:8a0a:10b0:49f:df99:ff1a with SMTP id 5b1f17b1804b1-49fdf99ffb9mr29806345e9.17.1790173632836;
-        Wed, 23 Sep 2026 07:27:12 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:c20f:9e7a:eeee:1b06])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886848636asm6964795f8f.6.2026.09.23.07.27.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2026 07:27:12 -0700 (PDT)
-Date: Wed, 23 Sep 2026 16:27:07 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Geliang Tang <geliang@kernel.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	mptcp@lists.linux.dev, netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 3/6] landlock: Add MPTCP bind and connect access rights
-Message-ID: <arPhu-qFxCgmfk87@google.com>
-References: <20260830201650.67050-1-gnoack3000@gmail.com>
- <20260830201650.67050-4-gnoack3000@gmail.com>
- <c0bf0918bd97105ee50f1436e6ff729e84cedf03.camel@kernel.org>
- <a5a2f4353d0c2a1b1f86ebf466838f5ef3de27ce.camel@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="G7uQOJwh"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hqhqm0h4nzF7w;
+	Wed, 23 Sep 2026 18:14:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1790180067;
+	bh=Zz5S3FJbOhv3TWXlUV7w7svivks5vbTStg1jsi/EPOU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=G7uQOJwh9oPRJ7cyksfAHd88TFlDoSMK2UYPt0/hoAcdOf+Ltsqp3+fCHOFblC7Fi
+	 P4wxSMx209og0ySqX0P+92Ek0cv4wVLxcUiweDJvFG2exAso1pY6j8PHLrGNGb05y7
+	 V14k57CNGURWq6/WsBBKLohR4712Q7mCXTRTbJLM=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hqhqh0w3pzl4W;
+	Wed, 23 Sep 2026 18:14:24 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: stable@vger.kernel.org
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	=?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 5.15.y v2] selftests/landlock: Add tests for whiteout object creation
+Date: Wed, 23 Sep 2026 18:14:15 +0200
+Message-ID: <aee05236ad5600be7fc35c089b345eadf6bcaba8.1790169454.git.mic@digikod.net>
+In-Reply-To: <2026-09-18-daily-reply-0003-re-landlock-whiteout-5-15@kernel.org>
+References: <2026-09-18-daily-reply-0003-re-landlock-whiteout-5-15@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a5a2f4353d0c2a1b1f86ebf466838f5ef3de27ce.camel@kernel.org>
+X-Infomaniak-Routing: alpha
 
-On Wed, Sep 23, 2026 at 01:04:40PM +0800, Geliang Tang wrote:
-> On Mon, 2026-08-31 at 12:09 +0800, Geliang Tang wrote:
-> > On Sun, 2026-08-30 at 22:16 +0200, Günther Noack wrote:
-> > > MPTCP sockets have equivalent bind(2) and connect(2) operations as
-> > > TCP
-> > > sockets, but can not currently be restricted with Landlock without
-> > > explicit MPTCP access rights.  As MPTCP operates on the same TCP
-> > > port
-> > > number space as TCP, this is a gap in Landlock's policies.
-> > > 
-> > > Add access rights for MPTCP bind(2) and connect(2) operations
-> > > and document them in the header.
-> > > 
-> > > Treat TCP Fast Open the same as done for plain TCP in
-> > > commit 33cb713db016 ("landlock: Fix TCP Fast Open connection
-> > > bypass")
-> > > 
-> > > The port numbers used in MPTCP subflows are negotiated by the
-> > > kernel
-> > > and therefore not subject to these access rights.
-> > > 
-> > > Bump the Landlock ABI version to 12.
-> > > 
-> > > Closes: https://github.com/landlock-lsm/linux/issues/54
-> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > ---
-> > >  include/linux/landlock.h                     |  5 +-
-> > >  include/uapi/linux/landlock.h                | 24 +++++++
-> > >  security/landlock/limits.h                   |  2 +-
-> > >  security/landlock/net.c                      | 68 ++++++++++++++--
-> > > --
-> > > --
-> > >  security/landlock/syscalls.c                 |  2 +-
-> > >  tools/testing/selftests/landlock/base_test.c |  2 +-
-> > >  6 files changed, 79 insertions(+), 24 deletions(-)
-> > > 
-> > > diff --git a/include/linux/landlock.h b/include/linux/landlock.h
-> > > index 004cbd0b9298..b04ffc7caa21 100644
-> > > --- a/include/linux/landlock.h
-> > > +++ b/include/linux/landlock.h
-> > > @@ -46,7 +46,10 @@
-> > >  	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> > > "connect_tcp"), \
-> > >  	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_BIND_UDP,
-> > > "bind_udp"), \
-> > >  	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
-> > > \
-> > > -			     "connect_send_udp")
-> > > +			     "connect_send_udp"), \
-> > > +	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_BIND_MPTCP,
-> > > "bind_mptcp"), \
-> > > +	_LANDLOCK_NAME_ENTRY(LANDLOCK_ACCESS_NET_CONNECT_MPTCP, \
-> > > +			     "connect_mptcp")
-> > >  
-> > >  #define _LANDLOCK_SCOPE_NAMES \
-> > >  	_LANDLOCK_NAME_ENTRY(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
-> > > \
-> > > diff --git a/include/uapi/linux/landlock.h
-> > > b/include/uapi/linux/landlock.h
-> > > index cceda3b3b961..2a953ba7ce25 100644
-> > > --- a/include/uapi/linux/landlock.h
-> > > +++ b/include/uapi/linux/landlock.h
-> > > @@ -448,6 +448,9 @@ struct landlock_net_port_attr {
-> > >   * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect TCP sockets to the
-> > > given
-> > >   *   remote port. Support added in Landlock ABI version 4.
-> > >   *
-> > > + * .. note:: These rights do not apply to MPTCP sockets, which
-> > > have
-> > > their own
-> > > + *   access rights (see below).
-> > > + *
-> > >   * And similarly for UDP port numbers:
-> > >   *
-> > >   * - %LANDLOCK_ACCESS_NET_BIND_UDP: Bind UDP sockets to the given
-> > > local
-> > > @@ -474,12 +477,33 @@ struct landlock_net_port_attr {
-> > >   * .. note:: Sending datagrams to an ``AF_UNSPEC`` destination
-> > > address
-> > >   *   family is not supported for IPv6 UDP sockets: you will need
-> > > to
-> > > use a
-> > >   *   ``NULL`` address instead.
-> > > + *
-> > > + * MPTCP sockets (created with ``IPPROTO_MPTCP``) use TCP port
-> > > numbers, but
-> > > + * they are controlled by their own access rights:
-> > > + *
-> > > + * - %LANDLOCK_ACCESS_NET_BIND_MPTCP: Bind MPTCP sockets to the
-> > > given local
-> > > + *   port. Support added in Landlock ABI version 12.
-> > > + * - %LANDLOCK_ACCESS_NET_CONNECT_MPTCP: Connect MPTCP sockets to
-> > > the given
-> > > + *   remote port. Support added in Landlock ABI version 12.
-> > > + *
-> > > + * .. note:: The TCP and the MPTCP access rights are independent,
-> > > even though
-> > > + *   they refer to the same port number space. Handling only
-> > > + *   %LANDLOCK_ACCESS_NET_BIND_TCP and
-> > > %LANDLOCK_ACCESS_NET_CONNECT_TCP leaves
-> > > + *   MPTCP sockets unrestricted, and vice versa. A sandbox that
-> > > wants to
-> > > + *   control all TCP-based traffic needs to handle both sets.
-> > > + *
-> > > + * .. note:: These MPTCP access rights restrict the ports passed
-> > > to
-> > > + *   :manpage:`bind(2)` and :manpage:`connect(2)`. The ports used
-> > > in
-> > > MPTCP
-> > > + *   subflows are negotiated in the MPTCP protocol by the kernel
-> > > and
-> > > are not
-> > > + *   subject to these restrictions.
-> > >   */
-> > >  /* clang-format off */
-> > >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL <<
-> > > 0)
-> > >  #define
-> > > LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
-> > >  #define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL <<
-> > > 2)
-> > >  #define LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP		(1ULL <<
-> > > 3)
-> > > +#define LANDLOCK_ACCESS_NET_BIND_MPTCP			(1ULL <<
-> > > 4)
-> > > +#define LANDLOCK_ACCESS_NET_CONNECT_MPTCP		(1ULL <<
-> > > 5)
-> > >  /* clang-format on */
-> > >  
-> > >  /**
-> > > diff --git a/security/landlock/limits.h
-> > > b/security/landlock/limits.h
-> > > index 1a7c5fb8f6fd..d25e056b7ca2 100644
-> > > --- a/security/landlock/limits.h
-> > > +++ b/security/landlock/limits.h
-> > > @@ -23,7 +23,7 @@
-> > >  #define
-> > > LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) -
-> > > 1)
-> > >  #define
-> > > LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_AC
-> > > CESS_FS)
-> > >  
-> > > -#define
-> > > LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_SEND_U
-> > > DP
-> > > +#define
-> > > LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_MPTCP
-> > >  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET
-> > > << 1) - 1)
-> > >  #define
-> > > LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_AC
-> > > CESS_NET)
-> > >  
-> > > diff --git a/security/landlock/net.c b/security/landlock/net.c
-> > > index 8f2aaac54b33..8541b0c07d64 100644
-> > > --- a/security/landlock/net.c
-> > > +++ b/security/landlock/net.c
-> > > @@ -11,6 +11,7 @@
-> > >  #include <linux/net.h>
-> > >  #include <linux/socket.h>
-> > >  #include <net/ipv6.h>
-> > > +#include <net/mptcp.h>
-> > >  
-> > >  #include "common.h"
-> > >  #include "cred.h"
-> > > @@ -53,6 +54,26 @@ int landlock_append_net_rule(struct
-> > > landlock_ruleset *const ruleset,
-> > >  	return err;
-> > >  }
-> > >  
-> > > +static bool sk_is_mptcp_socket(const struct sock *sk)
-> > > +{
-> > > +	return sk_is_inet(sk) && sk->sk_type == SOCK_STREAM &&
-> > > +	       sk->sk_protocol == IPPROTO_MPTCP;
-> > > +}
-> > 
-> > This helper should be placed in include/net/mptcp.h. I had already
-> > implemented one in [1], called sk_is_msk(), to differentiate it from
-> > sk_is_mptcp(). If you have no concerns with my implementation, please
-> > feel free to pick it up and use it in your series.
-> 
-> Sorry, let me correct myself. I thought about this more carefully, and
-> the ideal place to define sk_is_msk() is in include/net/sock.h, between
-> sk_is_tcp() and sk_is_udp():
-> 
-> static inline bool sk_is_tcp(const struct sock *sk) 
-> {
->         return sk_is_inet(sk) &&
->                sk->sk_type == SOCK_STREAM &&
->                sk->sk_protocol == IPPROTO_TCP;
-> }
-> 
-> static inline bool sk_is_msk(const struct sock *sk) 
-> {
->         return sk_is_inet(sk) &&
->                sk->sk_type == SOCK_STREAM &&
->                sk->sk_protocol == IPPROTO_MPTCP;
-> }
-> 
-> static inline bool sk_is_udp(const struct sock *sk) 
-> {
->         return sk_is_inet(sk) &&
->                sk->sk_type == SOCK_DGRAM &&
->                sk->sk_protocol == IPPROTO_UDP;
-> }
-> 
-> If possible, please fold this code into this patch.
+From: Günther Noack <gnoack@google.com>
 
-Thank you for the review, Geliang!
+[ Upstream commit ee890889b30b22f9a21636061def7a04e4f89380 ]
 
-I'll include something like this in the next review round.
-(We are a bit bottlenecked on doing Landlock code reviews at the moment,
-so some delays are unfortunately expected.)
+Add tests to check that whiteout object creation is guarded by
+LANDLOCK_ACCESS_FS_MAKE_REG, in the cases where these are created from
+userspace:
 
-Small question about the function name sk_is_msk(): Is "msk" the right
-name for this?  It seems to be used as abbreviation for "MPTCP" in
-net/mptcp, but it's also used in net/mctp as an abbreviation, and I
-could not find a function name in include/net/mptcp.h which used "msk"
-to mean "MPTCP".  Should that say sk_is_mptcp() instead?
+* Conventional creation with mknod()
+* Linking or renaming an existing whiteout object
+* renameat2() with RENAME_WHITEOUT,
+  which creates a new whiteout object in the source location
+* renameat2() with RENAME_EXCHANGE,
+  with one of the renamed objects being a whiteout object
 
-Thanks,
-—Günther
+Signed-off-by: Günther Noack <gnoack@google.com>
+Link: https://patch.msgid.link/20260813093157.1436894-4-gnoack@google.com
+[mic: Update commit message as requested]
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+[mic: Backport: add enforce_fs() and the missing s3 fixture paths, and
+adapt tests to ABI 1 without REFER]
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since v1:
+https://patch.msgid.link/88432dfe86f2aaa9ae499587fd7acff9d34a338b.1789655723.git.mic@digikod.net
+- Add a guarded RENAME_WHITEOUT fallback for glibc versions before 2.28.
+---
+ tools/testing/selftests/landlock/fs_test.c | 154 +++++++++++++++++++++
+ 1 file changed, 154 insertions(+)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 47fc4392f412..c33f00c499d3 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -36,6 +36,10 @@ int renameat2(int olddirfd, const char *oldpath, int newdirfd,
+ #define RENAME_EXCHANGE (1 << 1)
+ #endif
+ 
++#ifndef RENAME_WHITEOUT
++#define RENAME_WHITEOUT (1 << 2)
++#endif
++
+ #define TMP_DIR "tmp"
+ #define BINARY_PATH "./true"
+ 
+@@ -62,6 +66,8 @@ static const char dir_s3d1[] = TMP_DIR "/s3d1";
+ /* dir_s3d2 is a mount point. */
+ static const char dir_s3d2[] = TMP_DIR "/s3d1/s3d2";
+ static const char dir_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3";
++static const char file1_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3/f1";
++static const char file2_s3d3[] = TMP_DIR "/s3d1/s3d2/s3d3/f2";
+ 
+ /*
+  * layout1 hierarchy:
+@@ -249,6 +255,7 @@ static void create_layout1(struct __test_metadata *const _metadata)
+ 	clear_cap(_metadata, CAP_SYS_ADMIN);
+ 
+ 	ASSERT_EQ(0, mkdir(dir_s3d3, 0700));
++	create_file(_metadata, file1_s3d3);
+ }
+ 
+ static void remove_layout1(struct __test_metadata *const _metadata)
+@@ -265,6 +272,8 @@ static void remove_layout1(struct __test_metadata *const _metadata)
+ 	EXPECT_EQ(0, remove_path(file1_s2d2));
+ 	EXPECT_EQ(0, remove_path(file1_s2d1));
+ 
++	EXPECT_EQ(0, remove_path(file2_s3d3));
++	EXPECT_EQ(0, remove_path(file1_s3d3));
+ 	EXPECT_EQ(0, remove_path(dir_s3d3));
+ 	set_cap(_metadata, CAP_SYS_ADMIN);
+ 	umount(dir_s3d2);
+@@ -595,6 +604,27 @@ static void enforce_ruleset(struct __test_metadata *const _metadata,
+ 	}
+ }
+ 
++static void enforce_fs(struct __test_metadata *const _metadata,
++		       const __u64 access_fs, const struct rule rules[])
++{
++	int ruleset_fd;
++
++	if (rules) {
++		ruleset_fd = create_ruleset(_metadata, access_fs, rules);
++	} else {
++		const struct landlock_ruleset_attr ruleset_attr = {
++			.handled_access_fs = access_fs,
++		};
++
++		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
++						     sizeof(ruleset_attr), 0);
++		ASSERT_LE(0, ruleset_fd);
++	}
++
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++}
++
+ TEST_F_FORK(layout1, proc_nsfs)
+ {
+ 	const struct rule rules[] = {
+@@ -1941,6 +1971,118 @@ TEST_F_FORK(layout1, rename_file)
+ 			       RENAME_EXCHANGE));
+ }
+ 
++TEST_F_FORK(layout1, rename_whiteout_denied)
++{
++	/* The affected file is a FIFO. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++
++	/* Deny MAKE_REG, but allow MAKE_FIFO. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, NULL);
++
++	/*
++	 * Try to rename a file with RENAME_WHITEOUT.
++	 * file1_s3d3 is in dir_s3d2 (tmpfs), so it supports RENAME_WHITEOUT.
++	 * Denied, because whiteout creation is guarded with MAKE_REG.
++	 */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, file2_s3d3,
++				RENAME_WHITEOUT));
++	EXPECT_EQ(EACCES, errno);
++}
++
++static bool is_whiteout(const char *const path)
++{
++	struct stat st;
++
++	if (stat(path, &st) == -1)
++		return false;
++
++	return S_ISCHR(st.st_mode) && st.st_rdev == makedev(0, 0);
++}
++
++static bool is_fifo(const char *const path)
++{
++	struct stat st;
++
++	return stat(path, &st) == 0 && S_ISFIFO(st.st_mode);
++}
++
++TEST_F_FORK(layout1, rename_whiteout_allowed)
++{
++	const struct rule rules[] = {
++		{
++			.path = dir_s3d3,
++			.access = LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++
++	/* The affected file is a FIFO. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++
++	/* Allow MAKE_REG below dir_s3d3. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, rules);
++
++	/*
++	 * Rename a file with RENAME_WHITEOUT within the same directory.
++	 * Allowed, because MAKE_REG is granted for the whiteout object which
++	 * gets created in the source location.
++	 */
++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, file2_s3d3,
++			       RENAME_WHITEOUT));
++
++	/* A whiteout object took the place of the moved FIFO. */
++	EXPECT_TRUE(is_whiteout(file1_s3d3));
++	EXPECT_TRUE(is_fifo(file2_s3d3));
++}
++
++TEST_F_FORK(layout1, rename_whiteout_exchange_denied)
++{
++	const char *const whiteout_s3d3 = file2_s3d3;
++
++	/* The exchanged files are a FIFO and an existing whiteout object. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++	ASSERT_EQ(0, mknod(whiteout_s3d3, S_IFCHR | 0600, makedev(0, 0)));
++
++	/* Deny MAKE_REG, but allow MAKE_FIFO. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, NULL);
++
++	/* Exchanging the whiteout object is denied without MAKE_REG. */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, whiteout_s3d3,
++				RENAME_EXCHANGE));
++	EXPECT_EQ(EACCES, errno);
++}
++
++TEST_F_FORK(layout1, rename_whiteout_exchange_allowed)
++{
++	const char *const whiteout_s3d3 = file2_s3d3;
++	const struct rule rules[] = {
++		{
++			.path = dir_s3d3,
++			.access = LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++
++	/* The exchanged files are a FIFO and an existing whiteout object. */
++	ASSERT_EQ(0, unlink(file1_s3d3));
++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
++	ASSERT_EQ(0, mknod(whiteout_s3d3, S_IFCHR | 0600, makedev(0, 0)));
++
++	/* Allow MAKE_REG below dir_s3d3. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, rules);
++
++	/* Exchanging the whiteout object is allowed with MAKE_REG. */
++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, whiteout_s3d3,
++			       RENAME_EXCHANGE));
++
++	/* The FIFO and the whiteout object swapped places. */
++	EXPECT_TRUE(is_whiteout(file1_s3d3));
++	EXPECT_TRUE(is_fifo(whiteout_s3d3));
++}
++
+ TEST_F_FORK(layout1, rename_dir)
+ {
+ 	const struct rule rules[] = {
+@@ -2128,6 +2270,18 @@ TEST_F_FORK(layout1, make_char)
+ 		       makedev(1, 3));
+ }
+ 
++TEST_F_FORK(layout1, make_whiteout)
++{
++	/*
++	 * Creates a whiteout object (creation guarded by MAKE_REG).
++	 *
++	 * Contrary to the other character devices, this does not require
++	 * CAP_MKNOD, cf. vfs_mknod().
++	 */
++	test_make_file(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, S_IFCHR,
++		       makedev(0, 0));
++}
++
+ TEST_F_FORK(layout1, make_block)
+ {
+ 	/* Creates a /dev/loop0 device. */
