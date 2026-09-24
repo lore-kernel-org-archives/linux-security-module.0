@@ -1,121 +1,153 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C46D3793C3
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Sep 2026 16:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790266806; cv=none; b=tU1+z1QWQb9dJG/odePXfmg7YzwCmSy9xF5bhAmt8j8A97L9nd4TSPy9UN1LiCV28Lo9dXVLloMb7gsGo+KTsB/7EKvJRI/PrU5dIcWV0LD0jHLL563Oq9CzbVRL2oBb8NZF0YXIN2RhvEQcJ1wyQ19hxVLAORFwWAR3GgfTwoU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790266806; c=relaxed/simple;
-	bh=DMjQnOyVhS6y2pOO/EulNFqZvZgjiHI8oJL7LeFZwc4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kNxWD3fXQwcPE3WGJoDZPFaXjbbOkrumNZv//SZbb/o9Tgm22xFynitOQNjtIm+ttlA6UBfukPeMOfHDy51lteLf0mMSgp9goKc7wPVgUfJUz/U+qve+B0GiHY+wlu96l00XR6jGCIEJ7v6wqVF8y8eRoGWWlORx0tdn7MFWDJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Rlhw9j0n; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A4B377AB2
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Sep 2026 16:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790267007; cv=pass; b=IdVnpn7GHZI9RZ7B6jJsu6AscgldZGM0FOE3YbIM5XqWVx3WOsxjnw4LlrxGeQlgzxKuDPHHSUMGZDPUn5BIAvRYVbfE3p52ycN1LpeYAMAAwrGlUj1oO/qMw0gvbZHLFOkdbGh84Y11EnfuYJGJlnT/Fv4BVegU9eLQEZbPUbY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790267007; c=relaxed/simple;
+	bh=6LYnEnDjDCPLg9ek+kfbdZFOATFZrCp/gleIZE32Nis=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iYuRzNCAY9RaT8q29LhmTrYAImtHpBnEtwpZa+VAXoVhdhuPlAgbk10kLjvnacMz+kpt6+A1zK5ZUHV8JJdDcRsoS08Q6uAdVUtDPKfuFmmOHS9vwu/rBpq4Fd3snR8xg8M01NQ7iFlRj/tEgIBf6wF3Hh8hX/qGz46Lr39r8qI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cTz5jQ8i; arc=pass smtp.client-ip=74.125.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Rlhw9j0n"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hrJvg5Fvbz9bW;
-	Thu, 24 Sep 2026 18:19:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1790266799;
-	bh=I/hEEJPmwajbrQWBJ+BSovGXHHEjZ6S93Af1PTL3rpI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Rlhw9j0nEM5DDuwt0o64Yox6ZkwMJjVjRWjHgGxhVc08Y8RjcQ2P0lBmraZyU0d+c
-	 ZMX28v1NBXZM9YQIS3l6hf5kTIRccHMJCrqc3GmYx4lMr1JA5eZ9uX73itp4kxIH+I
-	 f9PGOuK8gz00+Pka3XbW2dSiBmem8H689OU0QvNE=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hrJvf5wQQzQBF;
-	Thu, 24 Sep 2026 18:19:58 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Tingmao Wang <m@maowtm.org>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v7.3-rc5
-Date: Thu, 24 Sep 2026 18:19:52 +0200
-Message-ID: <20260924161952.1104402-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cTz5jQ8i"
+Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-85469f204f6so41514b3a.2
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Sep 2026 09:23:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790267006; cv=none;
+        d=google.com; s=arc-20260327;
+        b=s1QsKKEAzZYgjb9b/KNd7Xf7XTjOTDfQ00K35fxuXfTv3ZKspLI1rly+54cnkX/oDe
+         F0F/WUmFRev/fXQDYVs3oFzPOJ3qQfjtp2eSLaI6sfgis3UgK8Tr7dDDe1WsFNlLIpy7
+         aXGhCZWK/xgzypg1ZfpnDgGBPcYlEwSEQqhQrnWplGdx1sShQw7SfFutNj0jVMwK1H4R
+         5UiMe82zHCAT4wQ4d5r/2ohkEESuzm1JeJJ5hRfGcMCVlC1vNGofBbFt7b0P1n34cWUR
+         vGMvzumDIe3aOTbFECbAIFron9Mgr7bxAzPt1CMdHaaTexEN/9CKmMMvHe3EWKe4TeB7
+         P3jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=PPib6yxoB1FRZrRWxa+lTjPODBOKUXazi7+OtJhcpow=;
+        fh=FMvhD4jSE+FoHU1wpFExJalMVvNRgINhaKEOjrDp6tA=;
+        b=Sz0rFbr84W1hUOI7veVDQ5/Gx8k7ukZR8HCJOf3eFTECa91QymL0kBV+goeUCgJHF3
+         Pzw1REIvPMrpdZLld7cgbSnvUXdtgrGgzAE+bIuHJ3AEyqB67uAwv5scU4+WvhK8yA1Y
+         sK+7T6cb/Uf4Iw8I78xWIGEGcIj78NFalV+3V4DsTQFsYMEIso/0wGHoApLf61ue1vjg
+         agbeml4Xe4xIVDcXCuQ4ND/s2MUOW0mHOSQzltUEqAUo4ZdIVQzizMWqszHmlViEOLFq
+         FBIGYkuHiFv6zRnbszd8elbXZChZdekbvXMY7dkOR0RU8rCe3XJ0M4Mw0WuUUwEq9OWu
+         pISw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1790267006; x=1790871806; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=PPib6yxoB1FRZrRWxa+lTjPODBOKUXazi7+OtJhcpow=;
+        b=cTz5jQ8iQ8Z9m+yXT+w/DVEkFGVLoFOwj/jk81451eLJn0jC7GwZZbvS5wmuVRufQj
+         dHoFR63IaxWdYn5AJ0o5etk08HxBSFwhE1A7n2a/X+bB20HE5ewODe0OVYs0mFIFCllN
+         L3D8NFr7b+B2YUUnS7uuMgwQZSpW8VeNdYFUAptQqMlZHDRPp+0RZKANON0ZQnMklqEV
+         lkGGopNJFt9uhiNSDahESzw/5u53RzQQg5s+Je6/fRuf92h2aW+WYLLHBq5cb4wAGJV7
+         C02xfMr45vFDqWJBAqwEI0GejAxWvAKuWYiRSYPHtv9Lk4TMCuO/sDeAIC/Ii17rS8Er
+         tPZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790267006; x=1790871806;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=PPib6yxoB1FRZrRWxa+lTjPODBOKUXazi7+OtJhcpow=;
+        b=ch5Yg57zXmFK2NC8qc1pKkiL3Mngyz5pOt7H8T23D2P8IXeBecTjTp3slOTs2hnq4H
+         u9Av704Eq5WVi26wbfoVJ7c30jOlcJdBv8cHLSCXezMcS6PddqjevGJJ0wAgjr+rjtUW
+         dTRA2iD+WDH/Ja7svsu/3rDe45BUwxZoDvmBb/Zj/1vb4JPDmji9qy/mZr6R+YbbXA5r
+         88rO3R6N5N1lyNsQ2qm1Bj836Q7BXE/KyibEDSXxfU6Z1FhfpzXhpTgLlmWiUSd7JzZX
+         dyCjlMop3eHJ5kC4qsTr0GhwK4vDuPz18OoZopjQhqr79a3+uB5akbHYkCZLhQ59YYWM
+         ppaQ==
+X-Forwarded-Encrypted: i=1; AKwUvByAKpXb6ey90BqVEZ+dBhxvi5X6cnflJYC7bs9woJpDhiC7rKcRdvBz2IeEpwEEWOhPL/5jmmjbl+rMoG+jHZt4nI7UJUQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++mHbSfMa+HckfwRIDFCKHFmwQOV/IUAmglNnb3ywp3mgi7IN8Ed
+	a5f/ygxXMNxP5dFRrite1MT5NdFJ4O/dYCGTh3P9e//12YI5/l9TkVT3NE2294QV2/VM08QtWSJ
+	NBK8QRyz501IrTvlknt095Jfz6rdnlsIRrTazabQz
+X-Gm-Gg: AYBFou2ddEwOwuFeealLQjAsWB281RoUgP++K3yOfOqk1BclYC6pKhwzBWsjKth+qhd
+	9CRdvJFpIdR35sSE+RNyx8PMK1SppjgjFTVsW1jsDZ5wNd9QJebMS4IfXfYj8DNMiozkz0ncD7a
+	P4/7WM8En2hjG9Vjb73TsLb9ldpedZivXlsRrqoCzyTcN/yNZCaCJLWt0aZlT4aISDZhFzuuM3g
+	MGc6dP6p+K7Gd0M3JFxyvtojpc3PbWVcJu5VciEuuuOoHTL8i7qE6BDtmLUvuDGrmatCGMylbe+
+	ltdfbZflC/yYidW6BovTMimclp7S5SLkiklSzHv2mrz4GAPbPoomwDqC7LtU58VqAYxh9JAuQtS
+	5cMYbFpC1YYA5HUsT+bJrgQ==
+X-Received: by 2002:a05:6a00:bb91:b0:878:3773:81fb with SMTP id
+ d2e1a72fcca58-87e9cd0e721mr2840299b3a.55.1790267005739; Thu, 24 Sep 2026
+ 09:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20260915150739.284189-1-daniel@iogearbox.net> <20260915150739.284189-5-daniel@iogearbox.net>
+ <CAHC9VhR2Zp9LzDRwDOZoesOC7o8hretfgRH-PRqQRXA0EES2vA@mail.gmail.com>
+ <CAEXv5_g1XQAwsydnbu9SUvxNBdYQf+xXjPaZMeC8hxgfThP+pw@mail.gmail.com> <arVKSpezisxe3pkr@suesslenovo>
+In-Reply-To: <arVKSpezisxe3pkr@suesslenovo>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 24 Sep 2026 12:23:13 -0400
+X-Gm-Features: AclHuK_6WIHuuAde2rO_dJRZdDgeEWTftPypXMJBnjHVfzkE8DO4K6tdHmMf_Bs
+Message-ID: <CAHC9VhSwbHF8tZkZ00JM40VTBeXVgcVdoBt7NcX0XKaKSARWug@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 4/8] bpf, lsm: Let BPF LSM provide xattrs at
+ inode creation
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: David Windsor <dwindsor@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	alexei.starovoitov@gmail.com, brauner@kernel.org, john.fastabend@gmail.com, 
+	memxor@gmail.com, kpsingh@kernel.org, matt@bobrowski.net, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Sep 24, 2026 at 12:15=E2=80=AFPM Justin Suess <utilityemal77@gmail.=
+com> wrote:
+> On Wed, Sep 23, 2026 at 03:14:28PM -0400, David Windsor wrote:
+> > On Wed, Sep 23, 2026 at 12:57=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > @David, simply for my own understanding, did you ask Daniel to do
+> > > this, or was Daniel operating on his own with this patchset?
+> > >
+> >
+> > Daniel and I work together and both have things written on top of this
+> > kfunc. He reached out to collaborate, I agreed. We're also going to
+> > send bpf_set_file_xattr shortly.
+> >
+> > This implementation was chosen due to its immediate mergeability (it
+> > only touches security/bpf), but was actually suggested by Kumar in v1
+> > or so of my original series.
+> >
+> > That said, sorry for any confusion about this appearing as a new
+> > series rather than as v7 of my previous one.
+>
+> Howdy all,
+>
+> Hope you all are doing well and having a good Thursday.
+>
+> These patches are excellent and useful, and have been in the pipeline
+> for a while.
+>
+> In the interest of moving forward:
+>
+> Would you both be able to live with the following: provide a security hoo=
+k
+> for lsm_get_xattr_slot or another proper interface with the necessary
+> abstraction, and keep the kfunc where it is in fs/?
 
-This mainly fixes the Landlock tracepoint support merged this cycle so
-that denial and rule events report the intended policy context, whether
-through tracefs or BTF-visible callbacks.  The size comes from
-propagating the corrected contract through event definitions and
-producers, adding new tests for the reported context, and updating the
-documentation.  This PR also improves annotation and fixes a GCC 16
-build warning.
+That still doesn't change the fundamentals around the kfunc: it is
+really only a valid to call it from within the LSM inode_init_security
+callback, it populates a LSM framework managed buffer, and that buffer
+is then used to by the LSM framework code in
+security_inode_init_security() to do the xattr initialization using
+the values from the BPF LSM as well as all of the other configured
+LSMs.  It's very hard to see this as anything other than an LSM kfunc.
+I worked with David over several revisions of his patchset to review
+the code and get it in a good place, I'm supportive of the basic
+ideas, but this really needs to be located in
+security/bpf_lsm_kfuncs.c as it is an LSM kfunc.  As we've seen there
+is precedence for subsystem specific kfuncs located in the associated
+subsystem's directory, things should be no different here.
 
-Please pull these changes for v7.3-rc5 .  These commits have been part
-of latest linux-next releases and merge cleanly with your master branch.
-
-Test coverage for security/landlock is 91.6% of 2625 lines according to
-LLVM 22, and it was 91.6% of 2574 lines before this PR.
-
-Regards,
- Mickaël
-
---
-The following changes since commit fd73f4a6659897191fa0d40695fe370925dd3780:
-
-  Linux 7.3-rc3 (2026-09-13 14:38:02 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.3-rc5
-
-for you to fetch changes up to e7e0a54300a896e731dffd3e2e8dae5631d6243d:
-
-  landlock: Widen ruleset versions to 64 bits (2026-09-22 20:52:13 +0200)
-
-----------------------------------------------------------------
-Landlock fix for v7.3-rc5
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      landlock: Work around gcc-16 -Wuninitialized warning
-
-Mickaël Salaün (10):
-      landlock: Fix tracepoint fixed-width type names
-      landlock: Fix filesystem denial blocker reporting
-      landlock: Fix rule tracepoint context
-      landlock: Fix network denial trace context
-      landlock: Report the actual ptrace tracer
-      landlock: Report the effective signal number
-      selftests/landlock: Test filesystem denial blockers
-      selftests/landlock: Test network denial context
-      landlock: Fix tracepoint contract documentation
-      landlock: Widen ruleset versions to 64 bits
-
-Tingmao Wang (1):
-      landlock: Add counted_by in landlock_domain
-
- Documentation/trace/events-landlock.rst          |  52 ++--
- include/trace/events/landlock.h                  | 301 ++++++++++++++---------
- security/landlock/access.h                       |   8 +
- security/landlock/domain.h                       |   3 +-
- security/landlock/fs.c                           |  10 +-
- security/landlock/log.h                          |  52 +++-
- security/landlock/net.c                          |  42 +++-
- security/landlock/ruleset.h                      |   5 +-
- security/landlock/task.c                         |  87 ++++---
- security/landlock/trace.c                        |  71 ++++--
- tools/testing/selftests/landlock/fs_test.c       |  28 +--
- tools/testing/selftests/landlock/net_test.c      | 295 +++++++++++-----------
- tools/testing/selftests/landlock/trace.h         |  59 +++--
- tools/testing/selftests/landlock/trace_fs_test.c | 130 ++++++++--
- tools/testing/selftests/landlock/trace_test.c    |  51 ++--
- 15 files changed, 753 insertions(+), 441 deletions(-)
+--=20
+paul-moore.com
