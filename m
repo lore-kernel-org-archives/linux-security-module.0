@@ -1,157 +1,101 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B013815E2
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2026 21:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A26479889
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2026 21:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790372501; cv=none; b=Yk4tU3Bfoc7yJmyb75CrPOyG36Jl61e7QZhcnOUX549CaPEg6YQ/+ZGPLRzvZerdM195Y9lSMAouyDh9veI2mp9Z6GE49cr1r65kNgl4Ljmdk7FGnB7SLXxC/40uRmILzK8p5MLS8grQVTLgwuGXG34FEjx9gIR3zpEDX6Fh6E8=
+	t=1790373299; cv=none; b=K9z0Wbmgx0J00zHBSucQIP/JEXALJA3GZ9nhuslG8xd7lRM86lbeRhuOLi4nC4ivjdeCHYU3iZhU4wyEx3dp25y3qxMA9QcuXbZ4wufeSKWKEAuCLfQ6RiRfNBpMfUVTioog5DAi8qeEHPRaurZ+9jAkbckzBk/EQqm8bvSDIaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790372501; c=relaxed/simple;
-	bh=M/J3JHrFSdmetG2sD42/PhVP5jz1OJWcqKv/6D2HPG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrDbGKBt2DHwBzBIz7P8+mP7Kmf9/DlStbfQrew/xmzJ8b+FWEuFY+08ePz7sPzQi0xiNX9byhxUk4I6u2hZTsedx4DX3MxhR0vi/Tw38jK81yI7hmqH0FMLCX4Erbq6GwVBaLRgMYCf+apn/TLq25BxOktj1aqsAZ9ijaPrz38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyC3yZYZ; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790373299; c=relaxed/simple;
+	bh=uL5GG0Rhy2kqx41pafopbGKUn9BWoUoGILgGIU4hV5Y=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=i/+z+KZpZjYELOe5I6yDtAWRS087CEOwiSl5Z8jZv4UW/Ezfejyhvz6TQBWbIKtlHTL6+7zXw3sNjJ3uYkcQW5fFmWkIqj3a2LeQbInetBm59nrhtZ9jT2yn8tzXoRF/NjdwUYfe0MnWoh7fNRLH96F0sDUasSuksc1c/BgEZCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPrRA9Eg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyC3yZYZ"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-48449f62b93so448812f8f.0
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2026 14:41:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790372498; x=1790977298; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PFi4tcAEojQR1Y7C+MNFuQaV3e5c6j0d2XQ9TkcL7VI=;
-        b=eyC3yZYZYSHCBM+fWVHuhOsjHXASN4QsVSDEMDMSD/q/vD38VwkTSjJkZ258EurkK8
-         imOa7v7vaf1OJnyBmOt+KPacEJ+Xfo4rPM9BvsylJAX+eIFksyBBUK5r0apkb8E6Rtsk
-         qdGL2f7+At6YsuTtZAkIsMxPMAxTWFZPo07TeSOr5iFlLcHzmLrq4re2aBGvAGHiyB3c
-         w3nPhhgqgfLlOn4KXJ7RjAdF7hXrTNwrYQKLdrl1aaJ69n0/I7LkhwGXnnjP5Cg6Wkm6
-         XspqTy5HA28BjkR6TePOa6x6asYi1DY3hzpIRa4cIW+j3c2BmOvxVN+srMXdnmbOuC6m
-         8YAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790372498; x=1790977298;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=PFi4tcAEojQR1Y7C+MNFuQaV3e5c6j0d2XQ9TkcL7VI=;
-        b=TgU379FPTsEHJZnxJT3kg0oonYO52aggQpzVMTiWlTw8JNEIOWbgxDY0w4+ZLt695T
-         VaIdrku2uerbpJMfcqIl2n0LyYdNvrHpOFCpGIkD0xRVOAeiuMOf8Gr1QEgNozBs0FLC
-         jax3+tPMzo+CtKUf3c96n6FDAn0yTD9a3ouJJxup6dxyvfD9f9LLOp4ZrBiZxvMD0BYc
-         hNex3Y8eTPFBzfYxtoQOM0oFUBSGdfSbxh1pOVv1g8buocoq4Mz6U1Y/IE/9a/wjhUiK
-         MvoChvNySuD79FBtrjXy3nCKRg4D/AEEo33qfa3c+XNuUYeT28NS7BSa1bwfrbkvZglc
-         cjXg==
-X-Forwarded-Encrypted: i=1; AKwUvBzsYxA4U7xlD0BgNFbmX73zep5t9UFgQUA+P5UpjNxjdT2x4Uh5uH68d68mQulw3jfBZgFuZgoB6X6ZaYlbWwdc5iXDYsc=@vger.kernel.org
-X-Gm-Message-State: AFuF++nlr/bAMmm1SKu2qYf+HQjj4k+wNYlDyHWiuTTZI/2n1XCyARXs
-	t1IPtyixBxehEYasGKiUPs3X1zqBW/BH2lQFOkfiPD5KhZLrjfhsGEmt
-X-Gm-Gg: AYBFou0swa32EgBF1Fx44Bpmu4vZXVUKZ1SBL1BjXttDVvzBy/PGsiU8wti9p9q1Wuv
-	Eqq8buJFeOIhQmLaJFMlRa+ClHEnJqpTx5VrM2z2XbdNaK9jXUJugXPESo3hWbQ3Jm75wbx5COC
-	i37+SdZTTm8OL3EsM+DTc6lNwuHHWZdddx7s3xSQ02ISYQYo4xplE1LLtc2oCMqoEvFUVLslqx+
-	pBuMmIWF2igNa1+zYMxc8WHcUQhm1IO1Oa6clvI2pSoJgMebGzlzNi/6jRE6duMLTvNv9/gxYlt
-	PqLqM5Kna6DBIJN3ZGCKVTc/rWem42ht2a+EX9UVZ8WB9ciZOE54crWcNP0+a75aONaF9PlTZDj
-	u4HQk1ffTbeFgTuJTtDV9uwj+2W+TeCOHIlCG1IknjadbqTQnbpbNPy0pVQQnseoSXUJvDfTKcA
-	vIZhgeL8rvCGndfXG6hpfkMFZZWZ0o44rJPWsIbvIRKLNRVrOAoroii1dXkbakWS+pCilDaZTxf
-	a7/gm4Q95klBzOC2kXgJnI4NewhbF4KiKaeaT+RGLIjIg==
-X-Received: by 2002:a05:6000:2211:b0:485:8ea0:da8c with SMTP id ffacd0b85a97d-488716c6d66mr14287448f8f.16.1790372497585;
-        Fri, 25 Sep 2026 14:41:37 -0700 (PDT)
-Received: from eldamar.lan (c-82-192-247-196.customer.ggaweb.ch. [82.192.247.196])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a84221bsm9799121f8f.36.2026.09.25.14.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 14:41:36 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 5ED3EDC0ADE; Fri, 25 Sep 2026 23:41:35 +0200 (CEST)
-Date: Fri, 25 Sep 2026 23:41:35 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Aurelien Jarno <aurelien@aurel32.net>,
-	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
-Cc: John Johansen <john.johansen@canonical.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	1145111@bugs.debian.org
-Subject: Re: [PATCH] apparmor: fix NULL ctx->peer derefs in unix socket ctx
- updates
-Message-ID: <arbqj-wnv_fo3beH@eldamar.lan>
-References: <20260824155822.9214-1-maxime.belair@canonical.com>
- <aoy4UAvUp4ZS0gnn@aurel32.net>
- <apXjIw4NK4okChLn@aurel32.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPrRA9Eg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5471F000FF
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2026 21:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790373296;
+	bh=cuU7iDUVNjz66/P7FWp2ZsG+j9S9ECJg0zYFXGseCIc=;
+	h=From:Date:Subject:To:Cc;
+	b=ZPrRA9Egj3WMNTd5GsfTyJtA5ESANI7/eobJuApg2i2bWvzhAbvdZ5jmL7lz+6Qtg
+	 U49Jdnc5O3MogbAqgg0ba1Hs1+FpWRQT93HSIa8vQFim9Gykca1a5gJ9FXmIjw4/eN
+	 g6TE89gj2Hn7ktmKJpXZA7bbHfJnKGXgs9lLwdqvjX3nfVQeh4xYQAZHxp7z5gk7xi
+	 OHy3MzMWPg9a7b39nzf0ClMBsWMTxDCM04qZRuTIlTMaub+roPh67wwqbjynBhczjs
+	 sGmKJnRptOZN7vEMwQmKBYqvUJULj2SEHU4sjIKBpQElR014VU+ZTIvYNCG/zSLAYo
+	 D9yf5oaBDk4Lw==
+Received: by mail-dl2-f43.google.com with SMTP id a92af1059eb24-142dd04be84so1628847c88.3
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2026 14:54:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxW13zzfcdCnS8Iek97xiWRhQVIAO/CV0EDuu2XjcuiD7GRSr7KDTtjiKydJydlfd0okQk7k9arlszEdcr136b6k1qzRRI=@vger.kernel.org
+X-Gm-Message-State: AFuF++n5Y9/q9lpB6oCEMsOrgHDFgP/YP1PVUo099Op0NTGi/F3UETiE
+	LkTbmi8Xq/1ovR9TWJ3pPlbAP8La57xCsquOB5fn75lPhRMJ6FUoYefpYGTpgP1dc/Prl5iaWoK
+	pRqWnhBTr8Kggei6fenV02rk7thUtXWc=
+X-Received: by 2002:a05:7022:7e85:b0:144:ff47:60d2 with SMTP id
+ a92af1059eb24-146ce2a0697mr1522054c88.13.1790373296134; Fri, 25 Sep 2026
+ 14:54:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <apXjIw4NK4okChLn@aurel32.net>
+From: Fan Wu <wufan@kernel.org>
+Date: Fri, 25 Sep 2026 14:54:43 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkFPVY0zBLBZx_9A4f_t2ud3JPR7N=DtJtFuC5AsgvpRnw@mail.gmail.com>
+X-Gm-Features: AclHuK86fNR6pYQI7ojQXiBVyVc4SEzAPWtq7CvxM_W04dqbFhtesH6uZSds1nY
+Message-ID: <CAKtyLkFPVY0zBLBZx_9A4f_t2ud3JPR7N=DtJtFuC5AsgvpRnw@mail.gmail.com>
+Subject: [GIT PULL] IPE fixes for 7.3-rc5
+To: torvalds@linux-foundation.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Maxime,
+Hi Linus,
 
-On Mon, Aug 31, 2026 at 10:25:07PM +0200, Aurelien Jarno wrote:
-> Hi,
-> 
-> On 2026-08-24 23:32, Aurelien Jarno wrote:
-> > Hi Maxime,
-> > 
-> > On 2026-08-24 17:58, Maxime Bélair wrote:
-> > > aa_unix_file_perm lazily refreshes the AppArmor context cached on a unix
-> > > socket. Two of the helpers it uses assume ctx->peer has already been set:
-> > > 
-> > > 	update_peer_ctx ->  l = aa_label_merge(old, label, GFP_ATOMIC);
-> > > 	update_sk_ctx   ->  } else if (aa_label_is_subset(plabel, old)) {
-> > > 
-> > > where @old is ctx->peer. Neither aa_label_merge nor aa_label_is_subset
-> > > allows NULL. So both fault on the aa_label->size load.
-> > > 
-> > >   BUG: kernel NULL pointer dereference, address: 000000000000004c
-> > >   RIP: 0010:__aa_label_next_not_in_set+0xb/0xd0
-> > >   Call Trace:
-> > >    aa_label_is_subset+0x3f/0x70
-> > >    aa_unix_file_perm+0x5e8/0x9d0
-> > >    aa_file_perm+0x45a/0x550
-> > >    apparmor_file_permission+0x44/0xb0
-> > >    security_file_permission+0x40/0x100
-> > >    rw_verify_area+0x56/0x180
-> > >    vfs_write+0x7c/0x480
-> > >    ksys_write+0xbf/0xf0
-> > > 
-> > > ctx->peer is only recorded for stream connections and socket pairs.
-> > > unix_dgram_connect sets unix_peer(sk) without going through that path,
-> > > so a connected AF_UNIX datagram socket has unix_peer(sk) set while
-> > > ctx->peer is still NULL, and the first write that needs revalidation
-> > > reaches the helpers above.
-> > > 
-> > > Both derefs date back to the Fixes: commit, but the update_sk_ctx() one
-> > > was dormant until commit 4483efe4f215 ("apparmor: fix shadowing of plabel
-> > > that prevents cache from being updated") stopped @plabel being shadowed,
-> > > which is why bisecting the oops lands there.
-> > > 
-> > > A NULL @old just means no peer label has been recorded yet, so install
-> > > the label directly instead of merging or comparing against it.
-> > > 
-> > > Fixes: 88fec3526e84 ("apparmor: make sure unix socket labeling is correctly updated.")
-> > > Reported-by: Aurelien Jarno <aurelien@aurel32.net>
-> > > Closes: https://bugs.debian.org/1145111
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
-> > > ---
-> > >  security/apparmor/af_unix.c | 20 ++++++++++++--------
-> > >  1 file changed, 12 insertions(+), 8 deletions(-)
-> > 
-> > Thanks a lot for the quick patch. I confirm it fixes the issue I 
-> > reported.
-> > 
-> > Tested-by: Aurelien Jarno <aurelien@aurel32.net>
-> 
-> Any news about this patch? The kernel oops can be triggered as a simple 
-> user, so it would be nice to get it fixed relatively soon.
+Please merge this PR for the IPE fixes for 7.3.
 
-Any news here? As Aurelien has pointed out this can be relatively easy
-triggered, so having a fix landing would be great.
+This PR contains two commits that fix use-after-free issues found by
+recent LLM-assisted code analysis.
 
-Regards,
-Salvatore
+The first commit moves successful policy load auditing under the new
+policy directory's inode lock, preventing a concurrent policy deletion
+from freeing the policy while it is still being audited.
+
+The second commit protects the dm-verity root hash with RCU, preventing
+policy evaluation from racing with root hash replacement during
+preresume.
+
+Both commits have been tested in linux-next since Tuesday without any
+issues.
+
+Thanks,
+Fan
+
+--
+The following changes since commit 93f51579e7df248780214094418f205253383cc5:
+
+  Linux 7.3-rc4 (2026-09-20 13:48:15 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git
+tags/ipe-pr-20260925
+
+for you to fetch changes up to 2776e9c28513a1c855a94792b292cbcc533418c8:
+
+  ipe: protect the dm-verity root hash with RCU (2026-09-25 13:30:27 -0700)
+
+----------------------------------------------------------------
+ipe/stable-7.3 PR 20260925
+
+----------------------------------------------------------------
+Fan Wu (2):
+      ipe: fix use-after-free when auditing a newly loaded policy
+      ipe: protect the dm-verity root hash with RCU
+
+ security/ipe/eval.c      | 12 ++++++++----
+ security/ipe/eval.h      |  2 +-
+ security/ipe/fs.c        |  8 +++-----
+ security/ipe/hooks.c     | 22 +++++++++++++++++-----
+ security/ipe/policy_fs.c |  3 +++
+ 5 files changed, 32 insertions(+), 15 deletions(-)
