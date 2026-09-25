@@ -1,67 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5596C4A3D3E
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2026 13:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAD21F427C;
+	Fri, 25 Sep 2026 13:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790343634; cv=none; b=czX2BHCiaynB8q3dOKynHfzIMZEsDk5Wn5MzOxROQINZphFVkGSURy03FiL8tO3mTAtd7oXGtpBK6/VYOxMkVdDrMiGwf5yn0Sadx0ZIDsNdbhcMFXIVuo5XfLQuoY/8/QOUBBH45PmzTuQgpFmlZth/X2WXUg8nK9/+Fq3YpqY=
+	t=1790344733; cv=none; b=TWaClnEm864eXSaBLYhZVCIUCUefvqHgGmJ4n+ZrrJwgbY0F4CW+bIWuvoDWnyemznQn5gmuavyjkP6XuYQlRg113fM+rT+eBD2MqxH5XXdmWtLQDA3FesCHPyRri9gVtDVHC/JxiuHQniT54J9xzrn25nvNBjxy8qjEJQ0/Lnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790343634; c=relaxed/simple;
-	bh=fRObL9ny3GixUTpEjVNTN0X8esBnq7YYN0rMKOHcW64=;
-	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=tMEPsiQGmCv7F/RjQ5Ma5MPYscWxg1eOtb/dy8+2CrrafLKqDE7uUJ/1He7++a7Zoh0jqebQFb62pcuX8inX7rCI+9djhAY2xNcGxrFr1UV5v/fpZ5lyw3te2g46V6XSvLFTS2yx/yExRP++xVmj5f8j7y43eg9ZvngUvq7AejY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRjTrAQ9; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790344733; c=relaxed/simple;
+	bh=cF7kmCYdvSUhXAb6Anp2qNKZ7n9y9dO5D6yXNCCIv8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KO09oDthnIICp+05DzX/xPB95sX/io334nFjPwmpC+jAUbFnU9kEunTUKfBWhnhiXFzrgFNJP2A+0Qxl2UGMAhG1u6pOcFXBd5R8WHSOI+PdgOp2QriSVtUHV/SV1eT0ip9Pn9+Vs618GpXXo/kxhBpIYKGjjPmtVzwm/tk09Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9zGyFeX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRjTrAQ9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAF91F000FF
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2026 13:40:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9zGyFeX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211EF1F000FF;
+	Fri, 25 Sep 2026 13:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790343631;
-	bh=fRObL9ny3GixUTpEjVNTN0X8esBnq7YYN0rMKOHcW64=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=jRjTrAQ93VVuY50GPqNkAyjFdpNYDMx6CKmehF0rYAvqUpl9Ibq9VI7+EZv2RHv9H
-	 qXBMIhfWhGAMxs0O8fcAZ+5/UNAwVuvdnObuq5xUZDfAq4OLmhxZXxEdnpYavlp/sL
-	 P+PVoi9hb7oK+FFJaedyUa+9e2EJhdEo4DI2H+JkB/2GzcfvmtfJ+jix8QF2wGtpDe
-	 9fT8SChbn6IIrxv6El2qPyzxFdOBz9s33+Ki7a+HRM0JwtWs+q9ew73w0ub+vQSuA5
-	 /GNTl90qrZSE83PTVJBwvRnYB50LMe/o/fM5LYffxfwukiylXSb9t1LRMC8li9UWm4
-	 9p/cGquXHan4A==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] selftests: binderfs: skip the stress test without
- binderfs
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20260925133435.3635453-1-eva.kurchatova@virtuozzo.com>
-References: <20260925133435.3635453-1-eva.kurchatova@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 25 Sep 2026 13:40:31 +0000
-Message-Id: <20260925134031.CCAF91F000FF@smtp.kernel.org>
+	s=k20260515; t=1790344732;
+	bh=VBLaw2VxaSkQ1Ui0iogeAEvRyP976Xo0PLpWfj2E1hQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=n9zGyFeXn60gkK/I2elWSZMwV6gVDT2Vw5wM0gm4NL2UV0dL/Aywko6hjDa5rcA5Y
+	 QTk5cCaBej2Y7L+8TxfB+UsKxqP26dE+4WfKo1WUW9r7DfmSuctrTIAcmy0sIPhvRg
+	 yZ+djyVU06ZnbBReZUMRjmCCj4oZo/2oa8Bronoavx22ZYJOtE8WUAAggvhmfdse7a
+	 ScS4bt931UTEyBugh15t94A0A7/To0PvAaqkjKlLnmG3TPS9N7+WhOnN8ocxzbqMNS
+	 4DIWSE10DgwTQzmqSzf5aKElkz3FNGbaTOpBE8ov0sNQzDiwe0OVBVHgL7QAkgQpOy
+	 Y/XQF8USZCYKA==
+Date: Fri, 25 Sep 2026 15:58:47 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	mic@digikod.net, serge@hallyn.com, jack@suse.cz, jmorris@namei.org, 
+	omosnacek@gmail.com, selinux@vger.kernel.org
+Subject: Re: [PATCH v3] lsm,nscommon: initialize the security blob for the
+ initial namespaces
+Message-ID: <20260925-gebaggert-ersehen-serpentinen-a6e61570e1b7@brauner>
+References: <20260918143142.19435-2-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260918143142.19435-2-stephen.smalley.work@gmail.com>
 
-> binderfs_stress mounts binderfs and asserts on the first mount, so on
-> a kernel without CONFIG_ANDROID_BINDERFS the case fails rather than
-> reporting that the filesystem is not there.
->=20
-> Ask /proc/filesystems whether the kernel has it, the way
-> supports_filesystem() in the landlock tests and check_resctrlfs_support()
-> in the resctrl ones already do, and skip when it does not.
->=20
-> Probing with a mount instead would not work here: the test is meant to
-> run unprivileged, and path_mount() rejects an unprivileged caller in
-> may_mount() before do_new_mount() ever looks the filesystem type up, so
-> the probe would see EPERM whether binderfs is there or not. The child
-> would then still reach the real mount inside its userns and fail.
->=20
-> Signed-off-by: Eva Kurchatova <eva.kurchatova@virtuozzo.com>
+On Fri, Sep 18, 2026 at 10:31:43AM -0400, Stephen Smalley wrote:
+> Commit f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> added a security blob to struct ns_common and allocates it from
+> __ns_common_init(). Most initial namespaces (init_user_ns,
+> init_uts_ns, init_pid_ns, init_mnt_ns, and, depending on
+> configuration, init_ipc_ns, init_cgroup_ns and init_time_ns) are
+> however set up statically via NS_COMMON_INIT() and never pass through
+> __ns_common_init(), so their ns_security pointer is left NULL for the
+> lifetime of the system. Any LSM that registers an lbs_ns blob and
+> dereferences its slice on one of those namespaces (for example from
+> the namespace_install hook when a task setns()'s back into an initial
+> namespace) will fault.
+> 
+> Allocate the blob and run the namespace_init hook for each of these
+> namespaces at the end of security_init(), after all ordered LSMs have
+> registered their hooks, so every LSM sees the initial namespaces the
+> same way it sees init_net (which is initialized at runtime via
+> ns_common_init(&init_net) from net_ns_init() immediately after
+> security_init()) and does not need to special-case them in its own
+> ->init() callback.
+> 
+> Provide a ns_common_init_security() helper in kernel/nscommon.c so
+> that the list of statically-defined initial namespaces and their
+> Kconfig guards live next to the rest of the ns_common
+> infrastructure. init_net is intentionally excluded: pre-initializing
+> it here would leak once __ns_common_init() clears ns_security and
+> re-allocates.
+> 
+> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Seems good to me,
+Reviewed-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260925133435.3635=
-453-1-eva.kurchatova@virtuozzo.com?part=3D1
-
+I'm waiting for Paul and then I would pick this into namespace-7.4.misc.
