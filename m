@@ -1,315 +1,115 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from relay.virtuozzo.com (relay.virtuozzo.com [130.117.225.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF9A486408;
-	Fri, 25 Sep 2026 13:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79D2423E9E;
+	Fri, 25 Sep 2026 13:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.117.225.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790342235; cv=none; b=rPkmXELjudI02uwFSgdWuwG0Kp38KqLHb9RNUXkc+T9S7LJlaI4zpa5pdYUP4xiAbjVSc5NgD6BBEIOoZSPQbaQpkJ2NJjBlI5rxaK26XXzArrB6nlqWvv44JzuWUCztcCvHfyYqcSR8FaskCgzCMALOigW6vMKKuRAfwLiURXI=
+	t=1790343284; cv=none; b=Sl55cVy29bIu21UXPa6pqdTE4aZqQEiNY7JhuklbB0uSXXGQlpRnD6OkVKk1ykpHt2OdlI3xAaIK/950XaIPbQOzwVNXjkAn0Vr73U1PgupAVuKIAvNr5xTJ/ASo3RHfSFhA3AVZ9M144HdnY3ZBFpSmrWyQDKU95REO/ZiJZwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790342235; c=relaxed/simple;
-	bh=PraEMBeYHzwBtevYXhd6+xSGYfKbug2HtVBz83AI5NU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwiAjYUZzGNVExYPe0UA90vQTpHXaAufOmcqsCGxrllTaiLeMLCYxpBLBUn2dfJa35ps3JuRyiEmht1npGlYABDnARqPGjDKKGnfBEtc1Vx8HxbpCfujhVJtwETF4Lx90goJWnB+x3MSDa/o8B3hFsnJ8KgCovB1lrzd/V0zOvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=unknown smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=bkvhaH2g; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
+	s=arc-20240116; t=1790343284; c=relaxed/simple;
+	bh=0vielYZed4HV7XfW82om9xTVqeGDlpkgGTZ1SIoqWNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KXYIGAJ2As4r+Sy0FKXts9/yfrUcUR9Mw6vb0GdUQxZO0U8SFT7+dVOEVN4Gf4Qxzs3YBwOHdq126a8EWkZ0eJD2T6wT1D/FtewF6fPU7k+Ru4eIP0SycuHiuctgWiw45Yw/961XL7r1wvz6agfeGgYRQakFvg4BQ9H9Ge2X71Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com; spf=pass smtp.mailfrom=virtuozzo.com; dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=I4Yw7KLX; arc=none smtp.client-ip=130.117.225.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=virtuozzo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="bkvhaH2g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1790342221; bh=PraEMBeYHzwBtevYXhd6+xSGYfKbug2HtVBz83AI5NU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bkvhaH2gApqNJslCd+Cf4aVV38GRS+F0/3r21c2+mvlgG7RO6QLEnctvc5g70wXsI
-	 Zjv3B1Xn2dt9kaxG2Vt+xPy5AXKjraO5hhb7iZUJrvv9e6opdyUsAN7wacQkEpk6E8
-	 5kawk2O2ONyRNJGDvV/ct1aEAIJWtH7e0mfV/yk+KI96e+8fxhrJNkNqzy4Fv6tMRS
-	 o3auJguqZG/fEkNKpN7AekdCqoE+u5rP+1VhQUR7H31kujEyhIFPhbcOrPii+5lfOH
-	 HPXdFNufkv3oDPPQz4eB0xo7xFexMPzcQc7pgLpqI/Tpamdrxw8fjfX+e66JSxXHnc
-	 PJ+Pj2Fhl+2mQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 3FFDB277; Fri, 25 Sep 2026 08:17:01 -0500 (CDT)
-Date: Fri, 25 Sep 2026 08:17:01 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: "Andrew G. Morgan" <morgan@kernel.org>, paul@paul-moore.com,
-	jmorris@namei.org, pjw@kernel.org, tglx@kernel.org,
-	peterz@infradead.org, debug@rivosinc.com, broonie@kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] security: Allow dropping bounding set process-wide
-Message-ID: <arZ0TfXSLjmDtyRy@hallyn.com>
-References: <20260922095816.1191799-1-ruanjinjie@huawei.com>
- <arK0cT7CGb3Khy69@hallyn.com>
- <7f0c935f-2c3f-4511-924f-822c3acf93da@huawei.com>
+	dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="I4Yw7KLX"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=virtuozzo.com; s=relay; h=MIME-Version:Message-ID:Date:Subject:From:
+	Content-Type; bh=682gjvnHozUTQ/G+7ht1Fk/nN9QjqnhUXggkVz8k2/g=; b=I4Yw7KLX+JIR
+	9XiEqgZ6EHl+v6tAAviFE0n2F3p65dcGLP6Ptz0K0kg+BfqEZGQUoYzkIlA4CetaXm+Li/yqIRwfB
+	q62iyyp1OF/ahPrCqAx9YIFT/LJzoHAXPuEuBBd4dNd/KLWX5RInKbTT7drcz2CpwblBfJtF7YrtK
+	26+pkSITaWRYLgkqetyB4TZngfrSPTKvgiH8b2qp9GBO5Qe8gFW1C8K+o/CR3OAfwSy1alMlFTphv
+	GEHMUNpsWk2EeBjQJM/nyDuhlg4nTMIYQkxhPd5t05RMMaLb9aVHBDBVu+d6pADWxMU/71kV0X58Q
+	Fhd1c3w/hpbvoAB47v0FcA==;
+Received: from ch-vpn.virtuozzo.com ([130.117.225.6] helo=LekKit-T14)
+	by relay.virtuozzo.com with esmtp (Exim 4.96)
+	(envelope-from <eva.kurchatova@virtuozzo.com>)
+	id 1xA61W-008SRE-1i;
+	Fri, 25 Sep 2026 15:34:34 +0200
+From: Eva Kurchatova <eva.kurchatova@virtuozzo.com>
+To: Shuah Khan <shuah@kernel.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Eva Kurchatova <eva.kurchatova@virtuozzo.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] selftests: binderfs: skip the stress test without binderfs
+Date: Fri, 25 Sep 2026 16:34:07 +0300
+Message-ID: <20260925133435.3635453-1-eva.kurchatova@virtuozzo.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7f0c935f-2c3f-4511-924f-822c3acf93da@huawei.com>
 
-On Thu, Sep 24, 2026 at 04:05:59PM +0800, Jinjie Ruan wrote:
-> 
-> 
-> 在 2026/9/23 1:01, Serge E. Hallyn 写道:
-> > On Tue, Sep 22, 2026 at 05:58:16PM +0800, Jinjie Ruan wrote:
-> >> The capability bounding set is per-thread: PR_CAPBSET_DROP only affects
-> >> the calling thread, since its bounding set lives in the per-task struct
-> >> cred.  User space that wants to drop capabilities for a whole process
-> >> must therefore invoke PR_CAPBSET_DROP once per capability per thread,
-> >> which on a many-threaded process is expensive, and from a Go runtime
-> >> requires stopping the world and signalling every thread.
-> >>
-> >> Add PR_CAPBSET_DROP_MASK, an opt-in prctl that removes a set of
-> >> capabilities, given as a 64-bit mask in arg2 (low 32 bits) and arg3
-> >> (high 32 bits), from the bounding set of every thread of the calling
-> >> thread group in a single call.
-> >>
-> >> The calling thread drops the capabilities synchronously, last; every
-> >> sibling that still holds any of them is asked to drop them through a
-> >> task_work item, so that it applies the drop in its own context.  This
-> >> avoids racing with a sibling's concurrent credential updates such as
-> >> setuid() or capset().  The call does not wait for the siblings: a
-> >> sibling may be parked in a wait that is not woken by TIF_NOTIFY_SIGNAL
-> >> (e.g. futex), so waiting could block for an unbounded time.  This is
-> >> still safe, because TIF_NOTIFY_SIGNAL is handled on the way out to user
-> >> mode, so a sibling applies the drop before executing any further
-> >> userspace code.  It does not synchronize against a sibling that is
-> >> concurrently creating threads, so callers must keep the thread group
-> >> quiescent while dropping.
-> >>
-> >> Measured with gVisor's "bounding set trimmed" boot phase on an arm64 KVM
-> >> guest (medians over repeated boots):
-> >>   - 8 vCPUs:  ~1.6ms  -> ~0.10ms
-> >>   - 32 vCPUs: ~3.5ms  -> ~0.11ms
-> >>   - 64 vCPUs: ~10.1ms -> ~0.1-0.6ms
-> >>   - cost goes from O(capabilities * threads) stop-the-world prctls to a
-> >>     single thread-group walk.
-> > 
-> > That is impressive, but please do detail the specific use case where
-> > you need to drop from the bounding set after the go scheduler has started.
-> > I can imagine some cases where you need to do some early setup and then
-> > want to drop privileges, but you could also do that by re-exec'ing, so
-> > I'd like to hear specifics.
-> 
-> Hi Serge,
-> 
-> Thanks for the review.
-> 
-> The use case is gVisor's sentry: a long-lived, pure-Go process that
-> starts a sandbox per container/pod. The final capability set depends on
-> the spec, the platform (ptrace requires CAP_SYS_PTRACE),
-> directfs/networking, and the capabilities granted to the runtime's user
-> namespace.
-> 
-> It is therefore only known after the runtime and gVisor's own threads
-> are already up — the trim happens multi-threaded. We do have a re-exec
-> path, but it re-loads a ~100 MB binary and re-runs Go init, so we only
-> take it when forced.
-> 
-> > 
-> > This makes me nervous, reminding me of the 'sendmail capabilities bug'.
-> > If some program specifically locks down one thread, I could imagine the
-> > locked down thread forcing wrong behavior from the privileged threads
-> > by calling this.
-> 
-> Fair concern. This new prcoess-wide drop is also a drop — it only
-> removes capabilities from all threads, and requires CAP_SETPCAP. But it
+binderfs_stress mounts binderfs and asserts on the first mount, so on
+a kernel without CONFIG_ANDROID_BINDERFS the case fails rather than
+reporting that the filesystem is not there.
 
-Good point, CAP_SETPCAP requirement might mitigate my concern.  I'll look
-at this a bit more, thanks.
+Ask /proc/filesystems whether the kernel has it, the way
+supports_filesystem() in the landlock tests and check_resctrlfs_support()
+in the resctrl ones already do, and skip when it does not.
 
-> must actually reach every thread, so the thread-creation race still
-> needs to be addressed.
-> 
-> > 
-> >>
-> >> Cc: Serge Hallyn <serge@hallyn.com>
-> >> Cc: Paul Moore <paul@paul-moore.com>
-> >> Cc: James Morris <jmorris@namei.org>
-> >> Cc: Paul Walmsley <pjw@kernel.org>
-> >> Cc: Thomas Gleixner <tglx@kernel.org>
-> >> Cc: Zong Li <zong.li@sifive.com>
-> >> Cc: Deepak Gupta <debug@rivosinc.com>
-> >> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> >> ---
-> >>  include/uapi/linux/prctl.h |   1 +
-> >>  security/commoncap.c       | 129 +++++++++++++++++++++++++++++++++++++
-> >>  2 files changed, 130 insertions(+)
-> >>
-> >> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> >> index b6ec6f693719..750a7824d3bc 100644
-> >> --- a/include/uapi/linux/prctl.h
-> >> +++ b/include/uapi/linux/prctl.h
-> >> @@ -70,6 +70,7 @@
-> >>  /* Get/set the capability bounding set (as per security/commoncap.c) */
-> >>  #define PR_CAPBSET_READ 23
-> >>  #define PR_CAPBSET_DROP 24
-> >> +#define PR_CAPBSET_DROP_MASK 83
-> >>  
-> >>  /* Get/set the process' ability to use the timestamp counter instruction */
-> >>  #define PR_GET_TSC 25
-> >> diff --git a/security/commoncap.c b/security/commoncap.c
-> >> index 3399535808fe..ae7ce50a8151 100644
-> >> --- a/security/commoncap.c
-> >> +++ b/security/commoncap.c
-> >> @@ -19,7 +19,14 @@
-> >>  #include <linux/hugetlb.h>
-> >>  #include <linux/mount.h>
-> >>  #include <linux/sched.h>
-> >> +#include <linux/cred.h>
-> >> +#include <linux/rcupdate.h>
-> >> +#include <linux/sched/signal.h>
-> >> +#include <linux/sched/task.h>
-> >> +#include <linux/slab.h>
-> >> +#include <linux/task_work.h>
-> >>  #include <linux/prctl.h>
-> >> +#include <linux/printk.h>
-> >>  #include <linux/securebits.h>
-> >>  #include <linux/user_namespace.h>
-> >>  #include <linux/binfmts.h>
-> >> @@ -1283,6 +1290,123 @@ static int cap_prctl_drop(unsigned long cap)
-> >>  	return commit_creds(new);
-> >>  }
-> >>  
-> >> +/*
-> >> + * Structure used to queue process-wide bounding set drops via task_work.
-> >> + */
-> >> +struct cap_bset_drop_work {
-> >> +	struct callback_head work;
-> >> +	struct task_struct *task;
-> >> +	kernel_cap_t mask;
-> >> +	struct cap_bset_drop_work *next;
-> >> +};
-> >> +
-> >> +static void cap_bset_drop_work_fn(struct callback_head *work)
-> >> +{
-> >> +	struct cap_bset_drop_work *w = container_of(work, struct cap_bset_drop_work, work);
-> >> +	struct cred *new = prepare_creds();
-> >> +
-> >> +	if (!new) {
-> >> +		/* Out of memory: bounding set drop failed silently for this thread. */
-> >> +		pr_warn_ratelimited("capability bounding set drop failed for pid %d (%s)\n",
-> >> +				    task_pid_nr(current), current->comm);
-> >> +		goto out;
-> >> +	}
-> >> +
-> >> +	new->cap_bset = cap_drop(new->cap_bset, w->mask);
-> >> +	commit_creds(new);
-> >> +
-> >> +out:
-> >> +	put_task_struct(w->task);
-> >> +	kfree(w);
-> >> +}
-> >> +
-> >> +/*
-> >> + * cap_bset_drop_process - Drop capabilities from all threads in the group.
-> >> + * @mask: Mask of capabilities to drop from the bounding set.
-> >> + *
-> >> + * Drops @mask from the calling thread synchronously, and queues a task_work
-> >> + * item for each sibling thread to safely apply the drop in its own context.
-> >> + *
-> >> + * The caller must hold CAP_SETPCAP. Thread group must be quiescent to avoid
-> >> + * racing with concurrent thread creation.
-> >> + *
-> >> + * Returns 0 on success, or -ENOMEM if allocations fail (all-or-nothing).
-> >> + */
-> >> +static int cap_bset_drop_process(kernel_cap_t mask)
-> >> +{
-> >> +	struct cap_bset_drop_work *list = NULL, *w, *next;
-> >> +	struct task_struct *thread;
-> >> +	struct cred *new = NULL;
-> >> +	int ret = 0;
-> >> +
-> >> +	rcu_read_lock();
-> >> +	for_each_thread(current, thread) {
-> >> +		const struct cred *cred;
-> >> +
-> >> +		if (thread == current || (thread->flags & PF_EXITING))
-> >> +			continue;
-> >> +
-> >> +		cred = __task_cred(thread);
-> >> +		if (cap_isclear(cap_intersect(cred->cap_bset, mask)))
-> >> +			continue;
-> >> +
-> >> +		w = kmalloc_obj(*w, GFP_ATOMIC);
-> >> +		if (!w) {
-> >> +			ret = -ENOMEM;
-> >> +			break;
-> >> +		}
-> >> +
-> >> +		w->task = get_task_struct(thread);
-> >> +		w->mask = mask;
-> >> +		w->next = list;
-> >> +		list = w;
-> >> +	}
-> >> +	rcu_read_unlock();
-> >> +
-> >> +	if (!ret) {
-> >> +		new = prepare_creds();
-> >> +		if (!new)
-> >> +			ret = -ENOMEM;
-> >> +	}
-> >> +
-> >> +	if (ret) {
-> >> +		while (list) {
-> >> +			next = list->next;
-> >> +			put_task_struct(list->task);
-> >> +			kfree(list);
-> >> +			list = next;
-> >> +		}
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	for (w = list; w; w = next) {
-> >> +		next = w->next;
-> >> +		init_task_work(&w->work, cap_bset_drop_work_fn);
-> >> +		if (task_work_add(w->task, &w->work, TWA_SIGNAL)) {
-> >> +			put_task_struct(w->task);
-> >> +			kfree(w);
-> >> +		}
-> >> +	}
-> >> +
-> >> +	new->cap_bset = cap_drop(new->cap_bset, mask);
-> >> +	commit_creds(new);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int cap_prctl_drop_mask(unsigned long low, unsigned long high)
-> >> +{
-> >> +	kernel_cap_t mask = mk_kernel_cap((u32)low, (u32)high);
-> >> +
-> >> +	if (cap_isclear(mask))
-> >> +		return 0;
-> >> +
-> >> +	if (!ns_capable(current_user_ns(), CAP_SETPCAP))
-> >> +		return -EPERM;
-> >> +
-> >> +	return cap_bset_drop_process(mask);
-> >> +}
-> >> +
-> >>  /**
-> >>   * cap_task_prctl - Implement process control functions for this security module
-> >>   * @option: The process control function requested
-> >> @@ -1313,6 +1437,11 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
-> >>  	case PR_CAPBSET_DROP:
-> >>  		return cap_prctl_drop(arg2);
-> >>  
-> >> +	case PR_CAPBSET_DROP_MASK:
-> >> +		if (arg4 || arg5)
-> >> +			return -EINVAL;
-> >> +		return cap_prctl_drop_mask(arg2, arg3);
-> >> +
-> >>  	/*
-> >>  	 * The next four prctl's remain to assist with transitioning a
-> >>  	 * system from legacy UID=0 based privilege (when filesystem
-> >> -- 
-> >> 2.34.1
-> 
-> -- 
-> Best regards,
-> Jinjie
+Probing with a mount instead would not work here: the test is meant to
+run unprivileged, and path_mount() rejects an unprivileged caller in
+may_mount() before do_new_mount() ever looks the filesystem type up, so
+the probe would see EPERM whether binderfs is there or not. The child
+would then still reach the real mount inside its userns and fail.
+
+Signed-off-by: Eva Kurchatova <eva.kurchatova@virtuozzo.com>
+---
+ .../filesystems/binderfs/binderfs_test.c      | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+index a1a79a6fef17..70f0391136c4 100644
+--- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
++++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+@@ -36,6 +36,28 @@
+ 		fd = -EBADF;        \
+ 	}
+ 
++static bool binderfs_supported(void)
++{
++	char line[128];
++	bool ret = false;
++	FILE *f;
++
++	f = fopen("/proc/filesystems", "r");
++	if (!f)
++		return true;	/* Cannot tell, let the test run and report. */
++
++	while (fgets(line, sizeof(line), f)) {
++		/* binderfs has no backing device, hence the "nodev" prefix. */
++		if (!strcmp(line, "nodev\tbinder\n")) {
++			ret = true;
++			break;
++		}
++	}
++
++	fclose(f);
++	return ret;
++}
++
+ static void change_mountns(struct __test_metadata *_metadata)
+ {
+ 	int ret;
+@@ -388,6 +410,9 @@ TEST(binderfs_stress)
+ 	char binderfs_mntpt[] = P_tmpdir "/binderfs_XXXXXX",
+ 		device_path[sizeof(P_tmpdir "/binderfs_XXXXXX/") + BINDERFS_MAX_NAME];
+ 
++	if (!binderfs_supported())
++		SKIP(return, "The Android binderfs filesystem is not available");
++
+ 	ret = socketpair(PF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, syncfds);
+ 	ASSERT_EQ(ret, 0) {
+ 		TH_LOG("%s - Failed to create socket pair", strerror(errno));
+-- 
+2.55.0
+
