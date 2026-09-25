@@ -1,199 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9E43822A3;
-	Fri, 25 Sep 2026 11:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A590B471402;
+	Fri, 25 Sep 2026 13:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790335314; cv=none; b=sLtQC56lLTauuEOAzBjMqafCeDIoM6OfFqfXMbLlYuiJSg+XJBsi7rK+W/Az/oNASLFoPlbUxKEqJLeICxJpayNzeqlGcxZsoM2qTJ3kTTRpSv75fxjlZrtWZUhb2C6gm60vhXCugvwz8yh1M+xeJoG7UZPttDCXoa72DweXKGU=
+	t=1790341596; cv=none; b=GXSioNaDm8l/9zjydLPDdJsQpejLc3UAVCu2ipgJK4OUTouWwaezOEhmwqd/JNpUyFZuJNdJFWM+sQ8iuMCtW8S6Ve1vJxdUUs7ymOGMIl8ENe7xN/PJABADEOLWSWJx+Elgj7PhIDCZabOvg79jos4032qIKbRBQSQoGLfockE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790335314; c=relaxed/simple;
-	bh=UHCMywZvfWdwa8q7+cyUrN+GwHK+fEj70J00xQNWtrk=;
+	s=arc-20240116; t=1790341596; c=relaxed/simple;
+	bh=78O9kZWyXHmb3QRI0o3vBS4521JbbQIxKlPpbFqwmyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQ1FGttqKE563sRs4pS2/0PQJ7vHsRt3EdpquetV2HWXwq8CMJYiM5iOcunUwK36SYmzpWTsgFO3rUBSbG2sewxY3Gra23Vc/P9yOizP5mIHhuHvN8HZUJeDJmKTx9QrE9cRWP72C7ABsvRqv3IP9lkixU9HUftT8P3FQJxpBns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExAFe32Z; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXx2AapK3rERkor4ZFnyf18rBxYUFuQhKVekraRv59zbkwUNyPs7XB2Vpy30Oo9SkG+n59/UaHfBOz6qsaYv53rCK1p1mp7ybKyqQN/2qZS5rx/rYaIc+0LYhUjy8GBw+gmt2QWJpKj/lYYxVrUE8FJA9NQxrzbB7GqjDXAklMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=unknown smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=ZT02gRL4; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExAFe32Z"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A89E71F0089A;
-	Fri, 25 Sep 2026 11:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790335312;
-	bh=miLcBRngihWIVYaaly2PlwDdE5WcdS69bqsIYC/yY88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ExAFe32ZaHq9tV7YAL98GC/Oxpj8VBEVauV/HekqNCJKTpHuHMJyDHp3F9UJYrJ/a
-	 AqBCRkz8tZWgp2Mq0SRKNVxVu9rSevh0DrGp9x4iH4GP/BR8Ec1vb2wCsJwXtd6oNY
-	 11zdbuN3mrp1z2SlG2inv85H0hH2uNbu5ry/laA9KqPfpKKgpc15DJSUgkAYGyQGdI
-	 y6X87ZqMZkIiqfL9JasVjFDvn+YxTcABFqJvnH82nyTeHjR9y9ccCGlAcB5WKBXy6/
-	 xoW1mULxMTM4q18CjTJ/hcXf6UPaMKw55qi5iy+YWNe0XNaRAjrwNk2sYM2xEcEdOp
-	 R3Q4PGU6tk4ag==
-Date: Fri, 25 Sep 2026 14:21:48 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Srish Srinivasan <ssrish@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
-	stefanb@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
-	rnsastry@linux.ibm.com
-Subject: Re: [PATCH v2] keys/trusted/tpm2: Validate TPM2_Create object sizes
- separately
-Message-ID: <arZZTGtmo1ZLit0j@kernel.org>
-References: <20260910100222.247529-1-ssrish@linux.ibm.com>
- <aqydqxpVmp67kTQO@kernel.org>
- <e05d8ca7-ac48-47ef-bc47-bef5b22cb723@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="ZT02gRL4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1790341583; bh=78O9kZWyXHmb3QRI0o3vBS4521JbbQIxKlPpbFqwmyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZT02gRL4AiFFpPHfcQKgeFCbRmRbcJXdUcJ6QxYGpEcxCPRzvvRXL+tPEq9WkdRJ1
+	 w2GBM/E9lSQSuxP8LzcsSWoRJ/iEelqk5YhTzKTrJ9tSW2lMkVeTsOrhIW+wGjOYmY
+	 QRad6lFtLh/vnua+fPezbqyH+xzaMqVhsQeJX20Z0FzEv3wBtNrvyouxgCmjjopYyB
+	 9Vg+saqgBKmaajMK7H5Iz0vamYk/hIxBx5PEUCQPbBEnLUoojiIRaP+VarCtWij2IG
+	 XZE3XCE+O9oVUUcnkHLvAM/A2y4iad2dQ0z1CGMMSSvOLMs03exnDZ8g3y4Rnj47RH
+	 9DXg71wAq7+Cg==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id A470D4CD; Fri, 25 Sep 2026 08:06:23 -0500 (CDT)
+Date: Fri, 25 Sep 2026 08:06:23 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: =?utf-8?B?5rSb56We6JG1?= <chengjna@gmail.com>
+Cc: linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Proposal for a standard Competitive / Protected Session
+ API in Linux
+Message-ID: <arZxz8rz6H6L99l4@hallyn.com>
+References: <CAHDTbUFX=8aAQnwv32hqmwHKkeJR0UA5XfZtMZRD1H+kV7uCzA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e05d8ca7-ac48-47ef-bc47-bef5b22cb723@linux.ibm.com>
+In-Reply-To: <CAHDTbUFX=8aAQnwv32hqmwHKkeJR0UA5XfZtMZRD1H+kV7uCzA@mail.gmail.com>
 
-On Fri, Sep 18, 2026 at 12:18:25PM +0530, Srish Srinivasan wrote:
+On Fri, Sep 25, 2026 at 05:14:46PM +0800, æ´›ç¥žè‘µ wrote:
+> Hello,
 > 
-> On 9/18/26 7:40 AM, Jarkko Sakkinen wrote:
-> > On Thu, Sep 10, 2026 at 03:32:22PM +0530, Srish Srinivasan wrote:
-> > > TPM2_Create returns outPrivate, outPublic, creationData, creationHash and
-> > > creationTicket in its response parameter area. However, only outPrivate and
-> > > outPublic are included in the trusted key blob. The size of the blob is
-> > > therefore not determined by the size of the complete response parameter
-> > > area.
-> > > 
-> > > tpm2_seal_trusted() currently compares the size of the complete response
-> > > parameter area against MAX_BLOB_SIZE. This can reject a valid response
-> > > when the remaining response outputs cause the entire response parameter
-> > > area to exceed MAX_BLOB_SIZE, even though the outPrivate and outPublic
-> > > TPM2B structures consumed by tpm2_key_encode() remain small enough to be
-> > > encoded in the key blob.
-> > > 
-> > > This is observed when creating larger trusted keys using an swtpm TPM 2.0
-> > > emulator backed by libtpms.
-> > > 
-> > > For example, requesting a 113-byte key succeeds, 114 fails.
-> > > 
-> > > ~$ keyctl add trusted trusted_key1 "new 113 keyhandle=0x81000001" @u
-> > > 520504613
-> > > ~$ keyctl add trusted trusted_key2 "new 114 keyhandle=0x81000001" @u
-> > > add_key: Argument list too long
-> > > ~$
-> > > 
-> > > Remove the MAX_BLOB_SIZE check on the complete response parameter area.
-> > > Instead, use the response length passed to tpm2_key_encode() to validate
-> > > that the outPrivate and outPublic TPM2B structures are fully contained
-> > > in the response before accessing them.
-> > > 
-> > > Previously, a response parameter area larger than MAX_BLOB_SIZE was
-> > > rejected with -E2BIG before ASN.1 encoding. With this change, if the
-> > > resulting encoded blob does not fit in payload->blob, the error returned by
-> > > asn1_encode_sequence() is propagated instead.
-> > > 
-> > > Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-> > > ---
-> > > Changelog:
-> > > 
-> > >   v2:
-> > >    - Exclude a comment pointed out by Jarkko
-> > > 
-> > >   security/keys/trusted-keys/trusted_tpm2.c | 35 +++++++++++++++++------
-> > >   1 file changed, 27 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> > > index 01f18bb37047..cbec4f591952 100644
-> > > --- a/security/keys/trusted-keys/trusted_tpm2.c
-> > > +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> > > @@ -24,24 +24,42 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
-> > >   			   u8 *src, u32 len)
-> > >   {
-> > >   	const int SCRATCH_SIZE = PAGE_SIZE;
-> > > -	u8 *scratch = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
-> > > -	u8 *work = scratch, *work1;
-> > > -	u8 *end_work = scratch + SCRATCH_SIZE;
-> > > +	u8 *scratch;
-> > > +	u8 *work, *work1;
-> > > +	u8 *end_work;
-> > >   	u8 *priv, *pub;
-> > > -	u16 priv_len, pub_len;
-> > > +	u32 priv_len, pub_len;
-> > >   	int ret;
-> > > -	priv_len = get_unaligned_be16(src) + 2;
-> > > +	if (len < sizeof(__be16))
-> > > +		return -EFAULT;
-> > > +
-> > > +	priv_len = get_unaligned_be16(src);
-> > > +	if (priv_len > len - sizeof(__be16))
-> > > +		return -EFAULT;
-> > > +
-> > > +	priv_len += sizeof(__be16);
-> > >   	priv = src;
-> > > +	if (len - priv_len < sizeof(__be16))
-> > > +		return -EFAULT;
-> > This caused for me some head scrathing tbh.
-> > 
-> > See:
-> > 
-> > 1. len >= 2
-> > 2. priv_len <= len - 2
-> > 3. 2 - priv_len + priv_len <= 2 - priv_len + len - 2
-> > 4. 2 <= len - priv_len
-> > 
-> > Is this check required?
+> I would like to propose an idea for a Linux API intended for
+> competitive games, online games, and potentially other applications
+> that require a high-integrity execution environment.
 > 
+> Linux already provides a number of relevant security mechanisms,
+> including ptrace restrictions, process memory access controls, LSM,
+> Secure Boot, kernel lockdown, and kernel module signing.
 > 
-> Hi Jarkko,
-> Thanks for taking a look.
+> However, these mechanisms are currently exposed separately. A game
+> that wants to establish a trusted competitive environment may need to
+> detect and combine several different mechanisms on its own.
 > 
-> The preceding check,
+> I would like to ask whether it would make sense to provide a unified
+> Protected Session / Competitive Session API.
 > 
+> The basic model could be relatively simple.
 > 
->     if (priv_len > len - sizeof(__be16))
->         return -EFAULT;
+> When a game starts, it requests a protected session, for example:
 > 
+> competitive_session_create(...)
 > 
-> ensures that the complete TPM2B_PRIVATE, including its size field,
-> fits within len. After this check, priv_len is incremented by 2 and
-> therefore represents the complete TPM2B_PRIVATE length.
+> The kernel checks whether the current environment satisfies the
+> requested protection level and returns something similar to:
 > 
+> ALLOWED: the environment satisfies the requested requirements;
 > 
-> The check you pointed out,
+> DENIED: the environment does not satisfy them, together with a
+> standardized reason.
 > 
+> While the protected session is active, Linux would protect processes
+> belonging to that session from unauthorized interference.
 > 
->     if (len - priv_len < sizeof(__be16))
->         return -EFAULT;
+> For example, depending on the selected protection level, this could
+> restrict other processes from:
 > 
+> debugging or attaching to the protected process through ptrace;
 > 
-> then ensures that at least 2 bytes remain for reading the following
-> TPM2B_PUBLIC size field.
+> reading or modifying its process memory;
+> 
+> obtaining sensitive information through /proc;
+> 
+> using other kernel interfaces to observe or interfere with the
+> protected process.
+> 
+> The exact interfaces covered by such a mechanism would of course need
+> further discussion.
+> 
+> The game may explicitly terminate the protected session:
+> 
+> competitive_session_close(...)
+> 
+> Normal system behavior would then be restored.
+> 
+> If the game crashes, is terminated, or the protected process exits,
+> the session should automatically be destroyed by the kernel.
+> 
+> This would ensure that the system cannot accidentally remain in a
+> competitive/protected state if the application fails to shut down
+> cleanly.
+> 
+> A major advantage of this model is that game developers would not need
+> broad permission to scan the user's system, inspect unrelated files,
+> or monitor every other application.
 
-OK, maybe I got something wrong in my deduction but I'm not
-still entirely sure whether this is leanest way to do these
-checks.
+Why would they need to do that anyway?  What are you protecting them
+from exactly?  Cheating?  Secret stealing?  Playing without a license?
 
-I'll iterate some other remarks so that this can move forward.
+This sounds like us going out of our way to enable proprietary software
+to lock us down to protect their "rights" - DRM.
 
-I was not either entirely sure why this was done:
+I guess what you're promising us is that "this way you won't be forced
+to run crowdstrike and tenable and intune to be able to play these games".
+But 1. I still prefer to say "then nobody *needs* to play these particular
+games", and 2. I could just compile my own kernel with
+competitive_session_create() being a noop, so you'd still be digging
+around to make sure I didn't do that, right?
 
--	u16 priv_len, pub_len;
-+	u32 priv_len, pub_len;
+> Instead, Linux itself would establish and enforce the protected environment.
+> 
+> The game would only need to know:
+> 
+> "Does the current system satisfy the requirements for this protected session?"
+> 
+> In other words, the API would provide a trusted execution environment
+> for the application rather than granting the application broader
+> system-monitoring privileges.
+> 
+> A simplified lifecycle would look like this:
+> 
+> Game starts
+> |
+> v
+> Request Protected Session
+> |
+> v
+> Linux checks the environment
+> |
+> v
+> ALLOWED / DENIED
+> |
+> v
+> Game enters competitive mode
+> |
+> v
+> Game exits or explicitly closes the session
+> |
+> v
+> Protected Session is automatically destroyed
+> 
+> My main questions are:
+> 
+> Does Linux already provide a unified interface with similar semantics?
 
-Why wrong len causes -EFAULT and not -EINVAL? EFAULT is for
-memory failures. Probably two that follow should return -EIO.
+I think the closest you could come today is to run it in a
+confidential computing VM like SEV-SNP/TDX.
 
-One more that came to mind:
+> If not, would a Protected Session abstraction like this be worth
+> discussing as a generic userspace API?
 
--	priv_len = get_unaligned_be16(src) + 2;
-+	if (len < sizeof(__be16))
-+		return -EFAULT;
-+
-+	priv_len = get_unaligned_be16(src);
-+	if (priv_len > len - sizeof(__be16))
-+		return -EFAULT;
-+
-+	priv_len += sizeof(__be16);
+Possibly, but the first objection you'd have to overcome is that
+you are asking us to reduce our rights on the hardware and software
+that we own.  E.g. not being able to strace to figure out what is
+missing when the software isn't working - yuck.
 
-Removing the line above is not necessary and neither is the last
-the last statement if you just change your check accordingly.
-
-
-BR, Jarkko
+> Competitive gaming is the most obvious use case, but such a mechanism
+> could potentially also be useful for other applications that need
+> stronger protection of their process integrity or confidentiality, so
+> I do not think it necessarily needs to be designed as a game-specific
+> API.
+> 
+> Thank you.
