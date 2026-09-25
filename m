@@ -1,46 +1,55 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5708936194F;
-	Fri, 25 Sep 2026 14:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381954C10C9;
+	Fri, 25 Sep 2026 15:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790347361; cv=none; b=J3Ca2KX8MRpe6BYd3NwvuT6LHaR53xINuJnPM5SL7NS0Pr1bHwIYY+zPsC0smp5SkiPXMzOv/3QHYZUKBLr0TdfjjDVb2fxW0D0SUZJLlH5wKQaplLn1zUYJgxnnKcA1SpfAcWXSE90gSvPD+/AhKkoaUomwto1n0pnSRJntuEw=
+	t=1790349160; cv=none; b=WcKNs/QjxAbwcAsPKa+9RHCU5hU7IvWAUnRs7r9kTBGPEVGRVmX8hGcGF/jofvF3f0Vy73S1WxfQziJO8FUiaMJnwyWNNc3RBcRk7GZlEY54joENNGueZHAyZzZLIOAKjYmE+rWqywHtf0IOQQfQlhK7Pu3P87ykOMBDlFc/Q44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790347361; c=relaxed/simple;
-	bh=gBMJJ1TQqBja3X8kFWISk1lQVl6qtuplfPx7+gvki9Q=;
+	s=arc-20240116; t=1790349160; c=relaxed/simple;
+	bh=MRSukCWNve3Kzs5BeN87oA6khPyqwIpTypZ7gKzRH3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YaeB+/08xWR3/OKW0Z51CyxTqWtxMP/ucDFoq/GSJlHUOCL8DACg8pksZSffeGNtjdA8jFUjMoHOEEk23l183CUxAxgbdC8aYvJ3H/GbFBJL7J107oy9sp89A+miCgfvnokp05HGXUAetnI2j1tOdpDhrbs3IMB8KzJaBGaAS/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=unknown smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=CZlMbzoz; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=eH5tQr8/piYWx5kNKgj1YTIOZrpDXrimLKCF+edONg7cajOWrR40rF+EBqWsEShXIDj4FGz8IC4dACJ+RxSFD66LGWh65Z6Zutts2pC0UosiAt+CRpV5yVDJuIcGaKkwiGCPtC1z5zZDFyhiXPIBNf0QkWpxPLozEuAa2oNCEBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAhy/v8T; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="CZlMbzoz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1790347345; bh=gBMJJ1TQqBja3X8kFWISk1lQVl6qtuplfPx7+gvki9Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CZlMbzoz6bhDaKZ2vzsBO8WjM9a9BtlhpGrODE57UZ0OJ1KVZqnL2urdxpy8cl/MU
-	 fO5iMjOvYPY2uIgvfsm+B/RU/kyTtFTmgOfvkLgE6lbLMeW/qiEfouZ+TkjIdUMkCE
-	 q2YXbn0RfEHPJY1vZzvK6Y8EuaQPSYlizvWA/6tafBS4AdTUgGImLIPN4Q6jfPGxmX
-	 S9aOezIAS1DMAlhTKEoh+lgYQ0hKJOCqppuAq14PVxieY66JBePi9XxuO8l1DG99Rv
-	 iB4hnd9KpvasIwSEiHEfLRyTzWj0wW1ycgnjBjO+BCzb6y+gjRiaqNqpfiqIBNXlL+
-	 j08ZBBzU9ZUKQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 71B83277; Fri, 25 Sep 2026 09:42:25 -0500 (CDT)
-Date: Fri, 25 Sep 2026 09:42:25 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: "Andrew G. Morgan" <morgan@kernel.org>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, paul@paul-moore.com,
-	jmorris@namei.org, pjw@kernel.org, tglx@kernel.org,
-	peterz@infradead.org, debug@rivosinc.com, broonie@kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] security: Allow dropping bounding set process-wide
-Message-ID: <araIUXjOOQ9KuXki@hallyn.com>
-References: <20260922095816.1191799-1-ruanjinjie@huawei.com>
- <arK0cT7CGb3Khy69@hallyn.com>
- <7f0c935f-2c3f-4511-924f-822c3acf93da@huawei.com>
- <arZ0TfXSLjmDtyRy@hallyn.com>
- <CACmP8UL0SEZxMn4XkByVPtKbRuc_mWQLafwgPZ_=dOFUzo5HKQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAhy/v8T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A6DD1F000FF;
+	Fri, 25 Sep 2026 15:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790349141;
+	bh=c5yS4K3YB4cbDqechSUZ/Ihi+uzGED0jeEp/TnJEBhA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BAhy/v8TxG6BFYuCpIAX+zhkeekEHZwQXxuuF9RW92bIf3O/Be8NmqqdEryfJWALg
+	 U/D9uKVRaM8f3sG74RyDOjAda0blaOWoy7xbb/potO1QU2j1USwNVqlH9++InDJfTi
+	 OQooqgeolp/H7pt+snwrdA3psFqDp1p1jH1q/8+fl2CmKEJacXTOHI4UuvnEHcwWaS
+	 9atvlZX1qGtA6vt4u7uCDpOt88XcpdJcfljswhb+S7Pqbdgpmg6HXAfTUgkvzuz14F
+	 J1F0aD/9ILLkNRnzjRGWsCjD3sAVn06mCxk0/Lm5hVsE0LcCBGMCS0ivJqjT9unVI5
+	 mXlhb7B3qE4+g==
+Date: Fri, 25 Sep 2026 17:12:11 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Chen Linxuan <me@black-desk.cn>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Kees Cook <kees@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Georgia Garcia <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] pidfd: add task path ioctls
+Message-ID: <20260925-gewischt-auftrag-tierzucht-c153cb3f9f74@brauner>
+References: <20260831-pidfd-get-paths-v2-0-c59ea6a21b72@black-desk.cn>
+ <20260831-tauwetter-werkbank-dramen-b37eb4025283@brauner>
+ <CAC1kPDMK_D4nhyRmBHg6KC7SmmCkH73Xtc5DhXeJbSvf3LcqcQ@mail.gmail.com>
+ <CAG48ez1T5-tUHVK_iHsgUtWa-inVdrZxA3E-ZCW0iENJvasKfg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,293 +59,77 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACmP8UL0SEZxMn4XkByVPtKbRuc_mWQLafwgPZ_=dOFUzo5HKQ@mail.gmail.com>
+In-Reply-To: <CAG48ez1T5-tUHVK_iHsgUtWa-inVdrZxA3E-ZCW0iENJvasKfg@mail.gmail.com>
 
-Also (not sure whether this is what Andrew is referring to here), in your
-code below, what keeps one thread from doing a clone in between the
-task harvesting loop and the task_work_add() loop?  It seems like you'd
-need to do another loop after to make sure you didn't miss any new
-tasks?
-
-And of course we'd need a more robust solution to
-
-> > > >> +          /* Out of memory: bounding set drop failed silently for this thread. */
-
--serge
-
-On Fri, Sep 25, 2026 at 07:28:08AM -0700, Andrew G. Morgan wrote:
-> I don't see a race condition in the (*cap.IAB).Set() code. The
-> semantics of this sort of thing can't be allowed to include a race;
-> otherwise, back-to-back calls to this "system call" might generate
-> divergent thread state. How you do that without some serialization
-> isn't clear to me.
-> 
-> Cheers
-> 
-> Andrew
-> 
-> On Fri, Sep 25, 2026 at 6:17 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> >
-> > On Thu, Sep 24, 2026 at 04:05:59PM +0800, Jinjie Ruan wrote:
-> > >
-> > >
-> > > 在 2026/9/23 1:01, Serge E. Hallyn 写道:
-> > > > On Tue, Sep 22, 2026 at 05:58:16PM +0800, Jinjie Ruan wrote:
-> > > >> The capability bounding set is per-thread: PR_CAPBSET_DROP only affects
-> > > >> the calling thread, since its bounding set lives in the per-task struct
-> > > >> cred.  User space that wants to drop capabilities for a whole process
-> > > >> must therefore invoke PR_CAPBSET_DROP once per capability per thread,
-> > > >> which on a many-threaded process is expensive, and from a Go runtime
-> > > >> requires stopping the world and signalling every thread.
-> > > >>
-> > > >> Add PR_CAPBSET_DROP_MASK, an opt-in prctl that removes a set of
-> > > >> capabilities, given as a 64-bit mask in arg2 (low 32 bits) and arg3
-> > > >> (high 32 bits), from the bounding set of every thread of the calling
-> > > >> thread group in a single call.
-> > > >>
-> > > >> The calling thread drops the capabilities synchronously, last; every
-> > > >> sibling that still holds any of them is asked to drop them through a
-> > > >> task_work item, so that it applies the drop in its own context.  This
-> > > >> avoids racing with a sibling's concurrent credential updates such as
-> > > >> setuid() or capset().  The call does not wait for the siblings: a
-> > > >> sibling may be parked in a wait that is not woken by TIF_NOTIFY_SIGNAL
-> > > >> (e.g. futex), so waiting could block for an unbounded time.  This is
-> > > >> still safe, because TIF_NOTIFY_SIGNAL is handled on the way out to user
-> > > >> mode, so a sibling applies the drop before executing any further
-> > > >> userspace code.  It does not synchronize against a sibling that is
-> > > >> concurrently creating threads, so callers must keep the thread group
-> > > >> quiescent while dropping.
-> > > >>
-> > > >> Measured with gVisor's "bounding set trimmed" boot phase on an arm64 KVM
-> > > >> guest (medians over repeated boots):
-> > > >>   - 8 vCPUs:  ~1.6ms  -> ~0.10ms
-> > > >>   - 32 vCPUs: ~3.5ms  -> ~0.11ms
-> > > >>   - 64 vCPUs: ~10.1ms -> ~0.1-0.6ms
-> > > >>   - cost goes from O(capabilities * threads) stop-the-world prctls to a
-> > > >>     single thread-group walk.
+On Mon, Sep 21, 2026 at 10:22:11PM +0200, Jann Horn wrote:
+> On Wed, Sep 2, 2026 at 8:47 AM Chen Linxuan <me@black-desk.cn> wrote:
+> > On Mon, Aug 31, 2026 at 4:49 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > On 2026-08-31 10:59 +0800, Chen Linxuan wrote:
+> > > > Obtaining a target task's executable, working directory, or root
+> > > > currently requires walking procfs symlinks such as /proc/<pid>/exe,
+> > > > /proc/<pid>/cwd, and /proc/<pid>/root.  That makes the operation depend
+> > > > on procfs being mounted and visible to the caller, even when it already
+> > > > holds a pidfd for the target.
 > > > >
-> > > > That is impressive, but please do detail the specific use case where
-> > > > you need to drop from the bounding set after the go scheduler has started.
-> > > > I can imagine some cases where you need to do some early setup and then
-> > > > want to drop privileges, but you could also do that by re-exec'ing, so
-> > > > I'd like to hear specifics.
-> > >
-> > > Hi Serge,
-> > >
-> > > Thanks for the review.
-> > >
-> > > The use case is gVisor's sentry: a long-lived, pure-Go process that
-> > > starts a sandbox per container/pod. The final capability set depends on
-> > > the spec, the platform (ptrace requires CAP_SYS_PTRACE),
-> > > directfs/networking, and the capabilities granted to the runtime's user
-> > > namespace.
-> > >
-> > > It is therefore only known after the runtime and gVisor's own threads
-> > > are already up — the trim happens multi-threaded. We do have a re-exec
-> > > path, but it re-loads a ~100 MB binary and re-runs Go init, so we only
-> > > take it when forced.
-> > >
+> > > > This series adds PIDFD_GET_EXE, PIDFD_GET_CWD, and PIDFD_GET_ROOT. Each
+> > > > ioctl takes no argument and returns a close-on-exec O_PATH file
+> > > > descriptor referencing the corresponding task path.  The new ioctls use
+> > > > the same ptrace permission check and nonzero-argument rejection as the
+> > > > existing pidfd namespace ioctls.
 > > > >
-> > > > This makes me nervous, reminding me of the 'sendmail capabilities bug'.
-> > > > If some program specifically locks down one thread, I could imagine the
-> > > > locked down thread forcing wrong behavior from the privileged threads
-> > > > by calling this.
-> > >
-> > > Fair concern. This new prcoess-wide drop is also a drop — it only
-> > > removes capabilities from all threads, and requires CAP_SETPCAP. But it
-> >
-> > Good point, CAP_SETPCAP requirement might mitigate my concern.  I'll look
-> > at this a bit more, thanks.
-> >
-> > > must actually reach every thread, so the thread-creation race still
-> > > needs to be addressed.
-> > >
+> > > > The target task is sampled while holding its exec_update_lock. This
+> > > > keeps the access decision and the task-state read in the same exec
+> > > > critical section, preventing a concurrent execve() from changing the
+> > > > credentials or target state between the check and the use.
 > > > >
-> > > >>
-> > > >> Cc: Serge Hallyn <serge@hallyn.com>
-> > > >> Cc: Paul Moore <paul@paul-moore.com>
-> > > >> Cc: James Morris <jmorris@namei.org>
-> > > >> Cc: Paul Walmsley <pjw@kernel.org>
-> > > >> Cc: Thomas Gleixner <tglx@kernel.org>
-> > > >> Cc: Zong Li <zong.li@sifive.com>
-> > > >> Cc: Deepak Gupta <debug@rivosinc.com>
-> > > >> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> > > >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> > > >> ---
-> > > >>  include/uapi/linux/prctl.h |   1 +
-> > > >>  security/commoncap.c       | 129 +++++++++++++++++++++++++++++++++++++
-> > > >>  2 files changed, 130 insertions(+)
-> > > >>
-> > > >> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> > > >> index b6ec6f693719..750a7824d3bc 100644
-> > > >> --- a/include/uapi/linux/prctl.h
-> > > >> +++ b/include/uapi/linux/prctl.h
-> > > >> @@ -70,6 +70,7 @@
-> > > >>  /* Get/set the capability bounding set (as per security/commoncap.c) */
-> > > >>  #define PR_CAPBSET_READ 23
-> > > >>  #define PR_CAPBSET_DROP 24
-> > > >> +#define PR_CAPBSET_DROP_MASK 83
-> > > >>
-> > > >>  /* Get/set the process' ability to use the timestamp counter instruction */
-> > > >>  #define PR_GET_TSC 25
-> > > >> diff --git a/security/commoncap.c b/security/commoncap.c
-> > > >> index 3399535808fe..ae7ce50a8151 100644
-> > > >> --- a/security/commoncap.c
-> > > >> +++ b/security/commoncap.c
-> > > >> @@ -19,7 +19,14 @@
-> > > >>  #include <linux/hugetlb.h>
-> > > >>  #include <linux/mount.h>
-> > > >>  #include <linux/sched.h>
-> > > >> +#include <linux/cred.h>
-> > > >> +#include <linux/rcupdate.h>
-> > > >> +#include <linux/sched/signal.h>
-> > > >> +#include <linux/sched/task.h>
-> > > >> +#include <linux/slab.h>
-> > > >> +#include <linux/task_work.h>
-> > > >>  #include <linux/prctl.h>
-> > > >> +#include <linux/printk.h>
-> > > >>  #include <linux/securebits.h>
-> > > >>  #include <linux/user_namespace.h>
-> > > >>  #include <linux/binfmts.h>
-> > > >> @@ -1283,6 +1290,123 @@ static int cap_prctl_drop(unsigned long cap)
-> > > >>    return commit_creds(new);
-> > > >>  }
-> > > >>
-> > > >> +/*
-> > > >> + * Structure used to queue process-wide bounding set drops via task_work.
-> > > >> + */
-> > > >> +struct cap_bset_drop_work {
-> > > >> +  struct callback_head work;
-> > > >> +  struct task_struct *task;
-> > > >> +  kernel_cap_t mask;
-> > > >> +  struct cap_bset_drop_work *next;
-> > > >> +};
-> > > >> +
-> > > >> +static void cap_bset_drop_work_fn(struct callback_head *work)
-> > > >> +{
-> > > >> +  struct cap_bset_drop_work *w = container_of(work, struct cap_bset_drop_work, work);
-> > > >> +  struct cred *new = prepare_creds();
-> > > >> +
-> > > >> +  if (!new) {
-> > > >> +          /* Out of memory: bounding set drop failed silently for this thread. */
-> > > >> +          pr_warn_ratelimited("capability bounding set drop failed for pid %d (%s)\n",
-> > > >> +                              task_pid_nr(current), current->comm);
-> > > >> +          goto out;
-> > > >> +  }
-> > > >> +
-> > > >> +  new->cap_bset = cap_drop(new->cap_bset, w->mask);
-> > > >> +  commit_creds(new);
-> > > >> +
-> > > >> +out:
-> > > >> +  put_task_struct(w->task);
-> > > >> +  kfree(w);
-> > > >> +}
-> > > >> +
-> > > >> +/*
-> > > >> + * cap_bset_drop_process - Drop capabilities from all threads in the group.
-> > > >> + * @mask: Mask of capabilities to drop from the bounding set.
-> > > >> + *
-> > > >> + * Drops @mask from the calling thread synchronously, and queues a task_work
-> > > >> + * item for each sibling thread to safely apply the drop in its own context.
-> > > >> + *
-> > > >> + * The caller must hold CAP_SETPCAP. Thread group must be quiescent to avoid
-> > > >> + * racing with concurrent thread creation.
-> > > >> + *
-> > > >> + * Returns 0 on success, or -ENOMEM if allocations fail (all-or-nothing).
-> > > >> + */
-> > > >> +static int cap_bset_drop_process(kernel_cap_t mask)
-> > > >> +{
-> > > >> +  struct cap_bset_drop_work *list = NULL, *w, *next;
-> > > >> +  struct task_struct *thread;
-> > > >> +  struct cred *new = NULL;
-> > > >> +  int ret = 0;
-> > > >> +
-> > > >> +  rcu_read_lock();
-> > > >> +  for_each_thread(current, thread) {
-> > > >> +          const struct cred *cred;
-> > > >> +
-> > > >> +          if (thread == current || (thread->flags & PF_EXITING))
-> > > >> +                  continue;
-> > > >> +
-> > > >> +          cred = __task_cred(thread);
-> > > >> +          if (cap_isclear(cap_intersect(cred->cap_bset, mask)))
-> > > >> +                  continue;
-> > > >> +
-> > > >> +          w = kmalloc_obj(*w, GFP_ATOMIC);
-> > > >> +          if (!w) {
-> > > >> +                  ret = -ENOMEM;
-> > > >> +                  break;
-> > > >> +          }
-> > > >> +
-> > > >> +          w->task = get_task_struct(thread);
-> > > >> +          w->mask = mask;
-> > > >> +          w->next = list;
-> > > >> +          list = w;
-> > > >> +  }
-> > > >> +  rcu_read_unlock();
-> > > >> +
-> > > >> +  if (!ret) {
-> > > >> +          new = prepare_creds();
-> > > >> +          if (!new)
-> > > >> +                  ret = -ENOMEM;
-> > > >> +  }
-> > > >> +
-> > > >> +  if (ret) {
-> > > >> +          while (list) {
-> > > >> +                  next = list->next;
-> > > >> +                  put_task_struct(list->task);
-> > > >> +                  kfree(list);
-> > > >> +                  list = next;
-> > > >> +          }
-> > > >> +          return ret;
-> > > >> +  }
-> > > >> +
-> > > >> +  for (w = list; w; w = next) {
-> > > >> +          next = w->next;
-> > > >> +          init_task_work(&w->work, cap_bset_drop_work_fn);
-> > > >> +          if (task_work_add(w->task, &w->work, TWA_SIGNAL)) {
-> > > >> +                  put_task_struct(w->task);
-> > > >> +                  kfree(w);
-> > > >> +          }
-> > > >> +  }
-> > > >> +
-> > > >> +  new->cap_bset = cap_drop(new->cap_bset, mask);
-> > > >> +  commit_creds(new);
-> > > >> +
-> > > >> +  return 0;
-> > > >> +}
-> > > >> +
-> > > >> +static int cap_prctl_drop_mask(unsigned long low, unsigned long high)
-> > > >> +{
-> > > >> +  kernel_cap_t mask = mk_kernel_cap((u32)low, (u32)high);
-> > > >> +
-> > > >> +  if (cap_isclear(mask))
-> > > >> +          return 0;
-> > > >> +
-> > > >> +  if (!ns_capable(current_user_ns(), CAP_SETPCAP))
-> > > >> +          return -EPERM;
-> > > >> +
-> > > >> +  return cap_bset_drop_process(mask);
-> > > >> +}
-> > > >> +
-> > > >>  /**
-> > > >>   * cap_task_prctl - Implement process control functions for this security module
-> > > >>   * @option: The process control function requested
-> > > >> @@ -1313,6 +1437,11 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
-> > > >>    case PR_CAPBSET_DROP:
-> > > >>            return cap_prctl_drop(arg2);
-> > > >>
-> > > >> +  case PR_CAPBSET_DROP_MASK:
-> > > >> +          if (arg4 || arg5)
-> > > >> +                  return -EINVAL;
-> > > >> +          return cap_prctl_drop_mask(arg2, arg3);
-> > > >> +
-> > > >>    /*
-> > > >>     * The next four prctl's remain to assist with transitioning a
-> > > >>     * system from legacy UID=0 based privilege (when filesystem
-> > > >> --
-> > > >> 2.34.1
+> > > > The first patch factors out helpers for acquiring referenced task paths
+> > > > and reuses them in procfs and AppArmor.  The second patch introduces
+> > > > scoped cleanup for privileged pidfd task access and separates namespace
+> > > > lookup from namespace fd creation.  The final patch uses these pieces to
+> > > > implement the three new ioctls.
+> > > >
+> > > > Signed-off-by: Chen Linxuan <me@black-desk.cn>
+> > > > ---
 > > >
-> > > --
-> > > Best regards,
-> > > Jinjie
+> > > I really have difficulties forming an opinion on this. So this sounds
+> > > very useful but it has implications.
+> > >
+> > > Right now, pidfd ioctls are available even in situations where the task
+> > > in question would not be accessible via procfs, e.g., when procfs is
+> > > mounted with "hidepid" options or similar. So this would expand the
+> >
+> > One point regarding hidepid: for callers that can pass
+> > PTRACE_MODE_READ_FSCREDS, hidepid does not provide an additional
+> > restriction. With hidepid=1 or hidepid=2, has_pid_permissions() falls
+> > back to ptrace_may_access(..., PTRACE_MODE_READ_FSCREDS), and
+> > hidepid=ptraceable uses that check directly. In addition, the
+> > /proc/<pid>/{exe,cwd,root} links independently perform the same
+> > PTRACE_MODE_READ_FSCREDS check in call_proc_get_link(), regardless of
+> > the hidepid mode.
+> >
+> > So for these specific path lookups, hidepid does not block a caller who
+> > would already pass the check used by the proposed pidfd ioctls.
+> 
+> Agreed, I think with regards to hidepid there should be no issue here.
+> 
+> If I try to come up with scenarios in which this could introduce
+> additional danger, the main one I can think of would be: A task T1 is
+> running inside a pid namespace and has a unix domain socket connection
+> to a task T2 outside the namespace, with both running as the same
+> EUID; T1 sets SO_PASSPIDFD on its socket to obtain a pidfd pointing to
+> T2 on the next message sent by T2, then T1 uses that to get access to
+> the mount namespace of T2.
+> 
+> Christian, is there some mechanism that already protects against using
+> something like SO_PASSPIDFD to get a pidfd to a process in a parent
+> namespace?
+> Otherwise, should we add something like a "pid_vnr(pid) != 0" check
+> either in these new operations or in SO_PASSPIDFD?
+
+Right now we don't place any hierarchical restrictions on SO_PASSPIDFD
+or SO_PEERPIDFD at all and this is in use by varlink iirc.
+
+What about requiring pid_vnr(pid != 0 for any operations that grant
+access to additional resources. IOW, make the icotl for any ns
+descriptor or cwd/root fail if the caller is outside the pidns
+hierarchy?
