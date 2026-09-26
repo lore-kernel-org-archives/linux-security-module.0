@@ -1,280 +1,298 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+Received: from mail-pz2-f39.google.com (mail-pz2-f39.google.com [74.125.228.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361D43890E4
-	for <linux-security-module@vger.kernel.org>; Sat, 26 Sep 2026 08:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790411911; cv=none; b=TI7NwogPQxpc5JtPMRsrRzpFJNRVkevhgf7Zw3fkit0eWV2NJNTsq2nV/xlt9jFCgjvX+UI+EUDYG0KG9XM5yEjahtazKUMwAbUkjogEBfEOToUKhfV2EuxLAB894I1suXG9MIthAmq38KO8+dt5r5jpX5GBFXcQf3t2Wz2dtDg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790411911; c=relaxed/simple;
-	bh=dg1L5YWtdAyboMbKumSCH8z23MTRvvFyqARphfS6bXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GCtBMOFOa0/HPfhDMsPs1L7iUtMfxSOT97lLfYWPL5UC8t1KUUyNHgosaDX9rtT17Qr/IXmnaWpGDW75HOz2Goj4qFvmrv5LJRfjkgHp/1ObWfzAzVkcMgf/VnvX10jdQnDf+axSdfc540fu6ESN+OqGW8Y1Gp3aclk+5GAYsWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKURZPTO; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F172931D2
+	for <linux-security-module@vger.kernel.org>; Sat, 26 Sep 2026 08:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790413123; cv=pass; b=ew51E2/o7G+39+gofom1z09tIwWJ2IiAgUfv5wyiK+gZnPM0SsoO5XhtybYdzUQM/+pZmVNRfk/aXT7YL+WpuwcTWd2CDEsQwofSo4C8Y86Yav+OeTbAPyvpPmgHYqfnuswHmKN04xpjZoZHmvrlo67bJb74qFpOvxuS6luejUA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790413123; c=relaxed/simple;
+	bh=OQCD4U8C6TSULpjCMi6zqQfbL1jDsjPO8gEeTcXQ9ac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A9+AyQIYT1yHQIKkFNnG26hMKTnTicyDwHdNP/tq5Waqj0S8o5jRtmihU7knO673tUWao6njYBSvFJYEkRS/8yRatds/hj15jQjuvr5TnIkfdgx3smplhyD6vfAXWsQzObuR0o47UK5D9gdGJnX6yavzPvepPvpGBt6sUE/LbEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSYTolPR; arc=pass smtp.client-ip=74.125.228.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKURZPTO"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912df756so12571815e9.3
-        for <linux-security-module@vger.kernel.org>; Sat, 26 Sep 2026 01:38:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSYTolPR"
+Received: by mail-pz2-f39.google.com with SMTP id d2e1a72fcca58-88098db8dcdso552737b3a.3
+        for <linux-security-module@vger.kernel.org>; Sat, 26 Sep 2026 01:58:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790413121; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Cvr+suSGFhxqf7tQAHEYoRedEWVDmej4KIv33l1jq3URtaCwp9YTdu8wyCPUCl75dB
+         nKF9VT4YuNubm60d2rn59RemhZtIZGgq/2ZY9urwgWNV2UJDLCnRFLXqsTGO9GNhIhwU
+         SFidnJ8CV+2VbijGwReP62ghEcz4qdzugg48A81oIN3McTE+KStby+l7BkSO37annp5B
+         WXqn0ksQ6ZgB3I/UgPSX1Wsb+cGpPXfxf5GBHm9TqoL8w09TJqRcCa+T0QjWq1rzMQ3l
+         2aICLRCNP/eK1YKZXHqMQXII6Ivk58HR8G774EewE8glBDVOxnrzn5WsI0tPfZpexqmz
+         vqdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/L09o1VH6+wZLPxn4ggW0hajBAb5iNl9Iz95qERtT3M=;
+        fh=bbEfnwH+l3LH6tum0hBIIQakDDJFgNXD/K1HOJDyfEU=;
+        b=KIDnv7Iym/v2QGhwb4HGIZsu5LL8S0ygEcnTGcWSI/Nz0V7JPE/ts6T3vMK3Pn5y4Y
+         xYevQ1IEOAE5EdqPV1cjPDO5GsOSvCoG1qpr+KdAWDVyt1apnSeLMp+BMWM7YGtsbiuv
+         RphMJGS5yQaWhje8t9ZjN9sKyHa7464IaXwyXILEGEwq6QJYJ9GTu+3ZP/g++W1n5hvR
+         wxP45fRWlsK8/nOFojtWF2tASu9F26v3LD7c4BsC4AP0lbPz743PWqNOvLrNGoK/DoYD
+         W838ki5ubs0ylx5rinwkqoGdOWhp+rrzAfJ82X4Wt3O38H6JDfGdBwu/GmhdxKwm+Ctz
+         2Ngg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790411906; x=1791016706; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=c9e9Ohjh62jjpKVoXb3eLlcbg9rHFeTPk+yn3uYWypA=;
-        b=BKURZPTOWxv3VmPPK29w/6Si+KDE00h4CnjQmN8AsVssqxOHoY+LFnD7548RMzRKlw
-         kC1H75pYwv88rBTYtz7U4GLaSTWr/UCfaqsmA35bA6JrHALtnz/rvSOQgIyS9am4tAI8
-         857YtNnRAjqSAAbTM5AnkwBw0DJgnHP5EN3xPZ+5t2Vml0NuBZOROu2f4KAMRNbVYRkt
-         dmA0jfdAhBGp3t02V20XibZQmtzAN3qDkqE+ekgZcwcNAhXeTHwFltNh3IRz+TyaTnHb
-         HNtz9S/Jcz8jgJFoei42ZnCLoJn7yAdYgDj2BMe/12b7qNoWAwa9whoLYDTxJHrGkEoH
-         OwVw==
+        d=gmail.com; s=20251104; t=1790413121; x=1791017921; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=/L09o1VH6+wZLPxn4ggW0hajBAb5iNl9Iz95qERtT3M=;
+        b=CSYTolPRzgZlXug8nntuD1ZxxUI7cyA8q/h1dOoSB1wtzFHB/26be7YDhfhxClkn88
+         rq6PxPmpGh8kxrnxM5xisoEVGOSRdNH5kQJDEgF3xU5iMcaRwsg/SlVNFSQkkjNtxaKY
+         i7D6dH0uWDn9cPvHoJNYfNI/9WU2GqAdSW3VF83stEmDsMEA4vkTaaguvLNcE4wIG1ro
+         TrqKxvV5saQ6Vqu38/n7wbaeHbMnmbYe5lzl6vbZ/c+L7wYRL/cbI1AoL38DoXFl2KrB
+         J5d47rUT0q4vjPycTe/J2HPrpglt8Uk0J/FKJuOEEZTodsUuR8Shpp3cC8FaRdM9nBKI
+         X+ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790411906; x=1791016706;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=c9e9Ohjh62jjpKVoXb3eLlcbg9rHFeTPk+yn3uYWypA=;
-        b=B4kUsUzNwClckyyyAXbdIv5M3eDPwBjLl4y8aI2DgdtcU1t7qPPYflJr856p4Do/LX
-         +khNpYZIgzpd86aPOHKWvr/EfiFMx7+xYTRnvba0fjIAvAGeppndZ+/sTnYKefzebbSg
-         aoB+qZlns6N+W8vkQ5CmWUhab761wnjl5ibb2huF7wM8/brB2SbnLVgOHgJUEDmjamQ7
-         sPzn8ldRAHnzp+S7GFs5C+WGRpa2bG0FwUHFv1kJoQINlRuWMFlzdktzI90r8WYaeduB
-         JelqwGAXbxKZOWf3cFbKURQxFTCkSrD904Hw18XrAtaBJLR9enNbr9c2I4PGa5cpJGAr
-         amhA==
-X-Forwarded-Encrypted: i=1; AKwUvBz+nCbXNGWvY+kxgMUd/T/Bqj6e+htx+oNsLl5kdZialpncQqGH2GE4jCSJwt8kxjtJAq09zecW6LJcxJZC5XIjxbmIgJ0=@vger.kernel.org
-X-Gm-Message-State: AFuF++nB2q5gR9t2IZdFXCR/NNT//s70AEozdnrwDfBsgL0iBPSv+yDE
-	OTdfIZ588s262eh8VE19RhRHn+1zjbiZNAOUPCXxZKNULtyQX8k8woRp
-X-Gm-Gg: AYBFou2T/sDQslhmKeFHfwdlJVHhOyowgLi5+MrBmE7feiDW5WtRO3H+qDpz6plkD+n
-	Y7KonkOyD6ff0A+CKsCNIUpSCfPyTkUC1POhWUs0+Ol/MuxDRbto+IDtEWx3wY8f+hpZmkBvYrl
-	H8x3VHQ0BQjt+53oGNTifqcaOMETDo/lXMjYpfe5zlHyj8ou1gosmPuTWLQtTn9PxkbNZR+iE9M
-	Kb2Ag49UC1qFcj6y8VCFdUz4J5n326RpBRwV6fdOFyJD+tkpLqeuC06isS9c0YGz882VclyFkHl
-	jwrNb0Itw5BsZ4fhcgS145Z+3QV2v+5ppR1ZYh3nrYspv0HFbY25NZMIRkU+OvljaeZKuHDVdcj
-	AP90M+YN0tw4iEQ1wRH4Z8WQIdmNQD+4KHyJsjmNg3SVOgnc+lFGz7YaWcjTt00g3LoONT/Skgb
-	nUUXWdjwifTxXLkLd6FnWehMhNJG3DrjFVTA0y8z1hGtEnyfJHo2SqQa850JInmAdGpY+iX29zP
-	Ja1XGu2LwfqRjwmY9oFPyI=
-X-Received: by 2002:a05:600c:1d02:b0:49f:fd66:5fe0 with SMTP id 5b1f17b1804b1-49ffd6661a7mr12811255e9.9.1790411906263;
-        Sat, 26 Sep 2026 01:38:26 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fe5de4de4sm215396785e9.8.2026.09.26.01.38.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Sep 2026 01:38:25 -0700 (PDT)
-Date: Sat, 26 Sep 2026 10:38:24 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Cai Xinchen <caixinchen1@huawei.com>
-Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, corbet@lwn.net,
-	skhan@linuxfoundation.org, rdunlap@infradead.org,
-	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
-	dlemoal@kernel.org, hch@lst.de, axboe@kernel.dk,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	dhowells@redhat.com, code@tyhicks.com, linkinjeon@kernel.org,
-	sj1557.seo@samsung.com, yuezhang.mo@sony.com,
-	hirofumi@mail.parknet.co.jp, cel@kernel.org, jlayton@kernel.org,
-	neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com,
-	tom@talpey.com, miklos@szeredi.hu, amir73il@gmail.com,
-	senozhatsky@chromium.org, chenxiaosong@chenxiaosong.com,
-	zohar@linux.ibm.com, roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-	stephen.smalley.work@gmail.com, omosnacek@gmail.com,
-	casey@schaufler-ca.com, nanx95726@gmail.com, djwong@kernel.org,
-	daniel@iogearbox.net, linux-security-module@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	driver-core@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
-	ecryptfs@vger.kernel.org, exfat@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-integrity@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	xiujianfeng@huawei.com, lujialin4@huawei.com
-Subject: Re: [PATCH RFC -next 09/12] landlock: Implement metadata access hooks
-Message-ID: <20260926.a96402fcbd4b@gnoack.org>
-References: <20260924104831.1081137-1-caixinchen1@huawei.com>
- <20260924104831.1081137-10-caixinchen1@huawei.com>
+        d=1e100.net; s=20260707; t=1790413121; x=1791017921;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/L09o1VH6+wZLPxn4ggW0hajBAb5iNl9Iz95qERtT3M=;
+        b=vU5ACKPtl86OEs9S9SLzw3/2z2cGLgFLrtNPoaIjFbskT5sJs5jXgtFrhAMYvHx3Ms
+         hvvZCJRlE/38gI4oc49nHo4/25ffRPsmFRjrbzglFMf/qvks4XFu2cJZIA/p92hjiTxX
+         jCNwCs36v0ePrv4TcNAzVBzueHgni3Sh6BuKYZFaMTO5Tm3seKKPOdeKjiMO8lMwzVYM
+         1gOlfE5BKtuxA8rYC70If6+cW8FR5ivXMifDVALO3oICeuWOC6Qv45Fy4U81+zg/G/ot
+         5JTV5yeYli4A2EPrjKl5sMyVM3/TDW2wmddQpt0A0apJVIl1CMUY1VY2jPvhTR9JwXcQ
+         wtSQ==
+X-Gm-Message-State: AFuF++ldsOuH8vUWktrgTTBJjXidNXmB/hHU0WtoV9xtszxNx6kS/Cj2
+	JxWnKKX2gnh8WBA9wzHlC2lp5cV/zDQ64cXkgM6l/FKt7sSKJAbmrYYilF1mip+XDPE1RPOe+cJ
+	mZxeDrScUP4nX36IcVuyHeZ2lJEqMLG0=
+X-Gm-Gg: AYBFou2GGqup/QSxIEgzYJ0+2sZqfkUQPsZbSClqtsl/BS/GBX7Xts0uPooS3I1Z4Bl
+	flZvNcCGfNjrdL3L6WXx9Gz+qkbc1TfLePf2+zP9sC+bW/E/K/4opsrfy9uRt7elnVfNxrJyJ45
+	vbZNCKHAqsDqsU4xPNq+fbDz9AoLJvRdAD8J1hwIMC8HmYeU5JrdtGw07HNprYNtj3z5cDH+uVF
+	RznLNEKkdABHraKCOLCK6LM8nad50/owr38akj/IAZ3jQVO1shQwxE5IRngLSiHtF/Y/CCMwvHx
+	N2HPzf86ggU2CRw0AfNT5TL1hYkCH5iDdHRj6RxK1TYAewT0B+v7
+X-Received: by 2002:a05:6a00:14c4:b0:878:3705:2513 with SMTP id
+ d2e1a72fcca58-87e9dfafffbmr6515627b3a.51.1790413120991; Sat, 26 Sep 2026
+ 01:58:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260924104831.1081137-10-caixinchen1@huawei.com>
+References: <CAHDTbUFX=8aAQnwv32hqmwHKkeJR0UA5XfZtMZRD1H+kV7uCzA@mail.gmail.com>
+ <arZxz8rz6H6L99l4@hallyn.com>
+In-Reply-To: <arZxz8rz6H6L99l4@hallyn.com>
+From: =?UTF-8?B?5rSb56We6JG1?= <chengjna@gmail.com>
+Date: Sat, 26 Sep 2026 16:58:30 +0800
+X-Gm-Features: AclHuK-bOuJNx3l9TfFNHTrSM9DJ3Be_0lgB2lf05O-Hbf3wNGEnjS7yIL5dJN4
+Message-ID: <CAHDTbUF=PmRfFHzmFnqhpwB7h1paL2DfMQMgFpdAEwUsVWzeWw@mail.gmail.com>
+Subject: Re: [RFC] Proposal for a standard Competitive / Protected Session API
+ in Linux
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 24, 2026 at 06:48:28PM +0800, Cai Xinchen wrote:
-> Implement the LANDLOCK_ACCESS_FS_READ_METADATA and
-> LANDLOCK_ACCESS_FS_WRITE_METADATA access rights by hooking the
-> inode_getattr, inode_setattr, inode_setxattr, inode_getxattr,
-> inode_listxattr, inode_removexattr, inode_set_acl, inode_get_acl and
-> inode_remove_acl LSM hooks, which now receive a struct path thanks to
-> the preceding VFS and LSM refactoring.
-> 
-> The following system calls are now controlled:
-> 
-> - stat(2), fstat(2), lstat(2), newfstatat(2), getxattr(2) and
->   friends, listxattr(2) and friends, and POSIX ACL reads via
->   inode_getattr, inode_getxattr, inode_listxattr and inode_get_acl
->   (READ_METADATA)
-> - chmod(2), fchmod(2), fchmodat(2), fchmodat2(2), chown(2), fchown(2),
->   lchown(2), fchownat(2), chgrp(2), utimensat(2), futimens(2),
->   utime(2), setxattr(2) and friends, removexattr(2) and friends, and
->   POSIX ACL set and remove via inode_setattr, inode_setxattr,
->   inode_removexattr, inode_set_acl and inode_remove_acl
->   (WRITE_METADATA)
-> 
-> Both new rights are added to ACCESS_FILE as they apply to both files
-> and directories.
-> 
-> hook_inode_setattr only restricts explicit metadata changes, i.e. it
-> checks WRITE_METADATA only when the ia_valid mask contains
-> ATTR_MODE, ATTR_UID, ATTR_GID, ATTR_TIMES_SET or ATTR_TOUCH.
-> Metadata changes that the kernel performs implicitly, such as
-> timestamp updates on write(2) or size changes on truncate(2), are
-> therefore not restricted, and neither are chmod(2)/chown(2) calls
-> that do not change any attribute (e.g. chown(2) with -1/-1, which is
-> a no-op that never reaches the hook), matching the behavior of the
-> SELinux inode_setattr hook.
-> 
-> Kernel-internal accesses performed with override_creds() (e.g.
-> overlayfs and cachefiles) are not affected because Landlock domains
-> are attached to credentials, and kernel threads without a Landlock
-> domain (e.g. nfsd and ksmbd) are not restricted either.
-> 
-> Assisted-by: opencode: glm-5.3
-> Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
-> ---
->  security/landlock/fs.c | 86 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 86 insertions(+)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index cab43892ec2f..e58b2aa0da65 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -318,6 +318,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
->  	LANDLOCK_ACCESS_FS_EXECUTE | \
->  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
->  	LANDLOCK_ACCESS_FS_READ_FILE | \
-> +	LANDLOCK_ACCESS_FS_READ_METADATA | \
-> +	LANDLOCK_ACCESS_FS_WRITE_METADATA | \
->  	LANDLOCK_ACCESS_FS_TRUNCATE | \
->  	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
->  	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
-> @@ -1676,6 +1678,81 @@ static int hook_path_truncate(const struct path *const path)
->  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
->  }
->  
-> +static int hook_inode_getattr(const struct path *const path)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_READ_METADATA);
-> +}
-> +
-> +static int hook_inode_setattr(const struct path *const path,
-> +			      struct iattr *const attr)
-> +{
-> +	/*
-> +	 * Explicit metadata changes (i.e. mode, ownership, and timestamps
-> +	 * set with utimes() and friends) require
-> +	 * LANDLOCK_ACCESS_FS_WRITE_METADATA.  Implicit timestamp updates
-> +	 * (e.g. ATTR_CTIME set for a write) and size changes (handled by
-> +	 * the truncate hooks) are not restricted.
+Hello,
 
-Nit: It feels like this comment about implicit timestamp updates
-(especially the size change) should go in the top-level documentation
-for the WRITE_METADATA right?  setattr() can not result in a size
-change, after all, AFAIK?
+Thank you for the reply. After thinking about it again, I realized
+that my original proposal mixed up two different layers: the
+competitive policy of a gaming platform, and the generic mechanisms
+that the Linux kernel should provide.
 
-Remark on the side, apart from truncation, normal writes into the file
-can of course also change its size ;-) and ATTR_ATIME and ATTR_MTIME
-also come to mind as implicit metadata changes.
+I now think that a Competitive Mode / Competitive Session would be
+better implemented by a distribution or gaming platform such as
+SteamOS, rather than being defined directly by the Linux kernel.
 
-> +	 */
-> +	if (!(attr->ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID |
-> +				ATTR_TIMES_SET | ATTR_TOUCH)))
-> +		return 0;
-> +
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_WRITE_METADATA);
-> +}
-> +
-> +static int hook_inode_setxattr(const struct path *const path,
-> +			       const char *const name,
-> +			       const void *const value, const size_t size,
-> +			       const int flags)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_WRITE_METADATA);
-> +}
-> +
-> +static int hook_inode_getxattr(const struct path *const path,
-> +			       const char *const name)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_READ_METADATA);
-> +}
-> +
-> +static int hook_inode_listxattr(const struct path *const path)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_READ_METADATA);
-> +}
-> +
-> +static int hook_inode_removexattr(const struct path *const path,
-> +				  const char *const name)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_WRITE_METADATA);
-> +}
-> +
-> +static int hook_inode_set_acl(const struct path *const path,
-> +			      const char *const acl_name,
-> +			      struct posix_acl *const kacl)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_WRITE_METADATA);
-> +}
-> +
-> +static int hook_inode_get_acl(const struct path *const path,
-> +			      const char *const acl_name)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_READ_METADATA);
-> +}
-> +
-> +static int hook_inode_remove_acl(const struct path *const path,
-> +				 const char *const acl_name)
-> +{
-> +	return current_check_access_path(path,
-> +					LANDLOCK_ACCESS_FS_WRITE_METADATA);
-> +}
-> +
->  /**
->   * unmask_scoped_access - Remove access right bits in @masks in all layers
->   *                        where @client and @server have the same domain
-> @@ -2100,6 +2177,15 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
->  	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
->  	LSM_HOOK_INIT(path_truncate, hook_path_truncate),
-> +	LSM_HOOK_INIT(inode_getattr, hook_inode_getattr),
-> +	LSM_HOOK_INIT(inode_setattr, hook_inode_setattr),
-> +	LSM_HOOK_INIT(inode_setxattr, hook_inode_setxattr),
-> +	LSM_HOOK_INIT(inode_getxattr, hook_inode_getxattr),
-> +	LSM_HOOK_INIT(inode_listxattr, hook_inode_listxattr),
-> +	LSM_HOOK_INIT(inode_removexattr, hook_inode_removexattr),
-> +	LSM_HOOK_INIT(inode_set_acl, hook_inode_set_acl),
-> +	LSM_HOOK_INIT(inode_get_acl, hook_inode_get_acl),
-> +	LSM_HOOK_INIT(inode_remove_acl, hook_inode_remove_acl),
->  	LSM_HOOK_INIT(unix_find, hook_unix_find),
->  
->  	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
-> -- 
-> 2.18.0.huawei.25
-> 
+For the Linux kernel itself, I think there may only be two generic
+capabilities worth considering.
 
-On the Landlock side, the implementation looks quite straightforward,
-without having double checked for missing hooks now.  This commit is
-probably fine as soon as we have agreement on the LSM hook changes.
+First, a unified and stable interface for userspace to obtain factual
+information about the current security state of the system, such as
+the boot chain, kernel integrity, module state, and other relevant
+security properties.
 
-–Günther
+Linux itself would not decide whether the system is "trusted". It
+would only report the relevant facts.
+
+SteamOS or another platform could then define its own Competitive
+Profile based on those facts, and a game could decide whether it
+accepts that profile.
+
+Second, a unified Protected Process / Protected Process Group semantic.
+
+The purpose would simply be to allow a process to request stronger
+isolation from unrelated processes that might observe, read, modify,
+debug, or otherwise interfere with its internal state.
+
+This should not take ultimate control of the machine away from its
+owner. The user should still be able to disable the protection, debug
+the process, or modify their own system. The upper layer would simply
+be able to determine that the protected state is no longer valid.
+
+The resulting model could therefore be quite simple:
+
+Linux Kernel:
+- provide a unified interface for security-state information;
+- provide a unified Protected Process primitive.
+
+SteamOS / Game Platform:
+- build a Competitive Session on top of those mechanisms;
+- define its own competitive security policy.
+
+Game:
+- decide whether the current environment is acceptable for ranked or
+competitive play.
+
+For the ordinary competitive-gaming threat model I had in mind, I also
+do not think it is necessary to immediately use a
+confidential-computing environment such as SEV-SNP or TDX. That seems
+more appropriate for a stronger threat model.
+
+Thanks again for the feedback.
+
+Serge E. Hallyn <serge@hallyn.com> =E4=BA=8E2026=E5=B9=B49=E6=9C=8825=E6=97=
+=A5=E5=91=A8=E4=BA=94 21:06=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Fri, Sep 25, 2026 at 05:14:46PM +0800, =E6=B4=9B=E7=A5=9E=E8=91=B5 wro=
+te:
+> > Hello,
+> >
+> > I would like to propose an idea for a Linux API intended for
+> > competitive games, online games, and potentially other applications
+> > that require a high-integrity execution environment.
+> >
+> > Linux already provides a number of relevant security mechanisms,
+> > including ptrace restrictions, process memory access controls, LSM,
+> > Secure Boot, kernel lockdown, and kernel module signing.
+> >
+> > However, these mechanisms are currently exposed separately. A game
+> > that wants to establish a trusted competitive environment may need to
+> > detect and combine several different mechanisms on its own.
+> >
+> > I would like to ask whether it would make sense to provide a unified
+> > Protected Session / Competitive Session API.
+> >
+> > The basic model could be relatively simple.
+> >
+> > When a game starts, it requests a protected session, for example:
+> >
+> > competitive_session_create(...)
+> >
+> > The kernel checks whether the current environment satisfies the
+> > requested protection level and returns something similar to:
+> >
+> > ALLOWED: the environment satisfies the requested requirements;
+> >
+> > DENIED: the environment does not satisfy them, together with a
+> > standardized reason.
+> >
+> > While the protected session is active, Linux would protect processes
+> > belonging to that session from unauthorized interference.
+> >
+> > For example, depending on the selected protection level, this could
+> > restrict other processes from:
+> >
+> > debugging or attaching to the protected process through ptrace;
+> >
+> > reading or modifying its process memory;
+> >
+> > obtaining sensitive information through /proc;
+> >
+> > using other kernel interfaces to observe or interfere with the
+> > protected process.
+> >
+> > The exact interfaces covered by such a mechanism would of course need
+> > further discussion.
+> >
+> > The game may explicitly terminate the protected session:
+> >
+> > competitive_session_close(...)
+> >
+> > Normal system behavior would then be restored.
+> >
+> > If the game crashes, is terminated, or the protected process exits,
+> > the session should automatically be destroyed by the kernel.
+> >
+> > This would ensure that the system cannot accidentally remain in a
+> > competitive/protected state if the application fails to shut down
+> > cleanly.
+> >
+> > A major advantage of this model is that game developers would not need
+> > broad permission to scan the user's system, inspect unrelated files,
+> > or monitor every other application.
+>
+> Why would they need to do that anyway?  What are you protecting them
+> from exactly?  Cheating?  Secret stealing?  Playing without a license?
+>
+> This sounds like us going out of our way to enable proprietary software
+> to lock us down to protect their "rights" - DRM.
+>
+> I guess what you're promising us is that "this way you won't be forced
+> to run crowdstrike and tenable and intune to be able to play these games"=
+.
+> But 1. I still prefer to say "then nobody *needs* to play these particula=
+r
+> games", and 2. I could just compile my own kernel with
+> competitive_session_create() being a noop, so you'd still be digging
+> around to make sure I didn't do that, right?
+>
+> > Instead, Linux itself would establish and enforce the protected environ=
+ment.
+> >
+> > The game would only need to know:
+> >
+> > "Does the current system satisfy the requirements for this protected se=
+ssion?"
+> >
+> > In other words, the API would provide a trusted execution environment
+> > for the application rather than granting the application broader
+> > system-monitoring privileges.
+> >
+> > A simplified lifecycle would look like this:
+> >
+> > Game starts
+> > |
+> > v
+> > Request Protected Session
+> > |
+> > v
+> > Linux checks the environment
+> > |
+> > v
+> > ALLOWED / DENIED
+> > |
+> > v
+> > Game enters competitive mode
+> > |
+> > v
+> > Game exits or explicitly closes the session
+> > |
+> > v
+> > Protected Session is automatically destroyed
+> >
+> > My main questions are:
+> >
+> > Does Linux already provide a unified interface with similar semantics?
+>
+> I think the closest you could come today is to run it in a
+> confidential computing VM like SEV-SNP/TDX.
+>
+> > If not, would a Protected Session abstraction like this be worth
+> > discussing as a generic userspace API?
+>
+> Possibly, but the first objection you'd have to overcome is that
+> you are asking us to reduce our rights on the hardware and software
+> that we own.  E.g. not being able to strace to figure out what is
+> missing when the software isn't working - yuck.
+>
+> > Competitive gaming is the most obvious use case, but such a mechanism
+> > could potentially also be useful for other applications that need
+> > stronger protection of their process integrity or confidentiality, so
+> > I do not think it necessarily needs to be designed as a game-specific
+> > API.
+> >
+> > Thank you.
