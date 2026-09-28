@@ -1,196 +1,361 @@
-Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com [74.125.224.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313734EF140
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 17:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F7F3FC5B7;
+	Mon, 28 Sep 2026 17:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790615651; cv=none; b=mw+HnKsxVTR4uR5sUd9rmkECqF/41GJ6ebA48R+qwyGPkTKsTi6BP2afdYFY11uCpYp6WQx0XWM1PDm7zyruDBc+HseIENynIHZNkFgEJ2bGuCOHbTZgqvodUaENSJa0IDJKa9zBTHCk46AmMQ8p15dyg3APScosFuiv1e9jlxU=
+	t=1790615915; cv=none; b=Y0B6v8P2TXm6GvRrhELiebtg6R2rHPv/JDfR2C7k8LJNJRtg/9KZr8varK7ruuB/6zgbhlUHIE4pC+nsa6oWNLkdW/YuqwI6fw3NiLqobDckZuU5ov/+BiDrlPTOEsMrwiL3ZAjNDd3Y9itIAMVnerfM8wfkD1IaP8sKlbvmlrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790615651; c=relaxed/simple;
-	bh=MbYUL73La3phT6CWXVxz3A2hkcPLAKJyAdn49kkRKFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iB09zHJ4HAPI9aDUL0zrCtEv/RT3PSJ9Oy57vrBoHZvlfoU1JMDBRqYpIG1/CMp+MyFraxEMWsSVrFpTDKiQ/bZOyHVDRIZBCsqPWrEgDKfS4pyVi/b1NHPolBT9Dlp0lgktSU7RwvdRxpR02Liisw2QVFxA0na0CgPOkFLEM8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpEt8Q/R; arc=none smtp.client-ip=74.125.224.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790615915; c=relaxed/simple;
+	bh=NQ7FCOvj1P0hio7GdY33PzDULFySRHmwCazTCiLXg0M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hpSer6I1pRvfNHJrUMdZEWPVNpBtp2Ob4Jx7cValI2+mdRSiKaJPPjGIJU5/2n4wltsyO9QI/SxX0/QaSWXe1jShng2lurKxA0Qg1tsxVg9ubFLrOQO/R99xwNAcUfSEfZFVFNmePr/cEZK/FEc0tBBGyf8LeS2bAhYp3XWgTRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de; spf=pass smtp.mailfrom=jaseg.de; dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b=PDW96tMY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rP7VwLU+; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaseg.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpEt8Q/R"
-Received: by mail-yx2-f13.google.com with SMTP id 956f58d0204a3-66e4ab20f4bso3502738d50.0
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 10:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790615647; x=1791220447; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=MmJ/EW0KwY0F0cm8LaUC3Fhj6N704NFs3EmzLQEffnQ=;
-        b=DpEt8Q/Rtt6CU3VVCy088mlM94gI41xgFL8/OIpF7pLSuO5iZe0mNZsHnYrtDAxXH0
-         hJUBdhVhN4oej1WlPQhTfYlrf8FVZLn/Kqq6kzE7jSdpa5rY1Prk7NIoKnPW7z9n+klw
-         mWAtVjQboIZziiPgP+TY2Bge/YSusfHHOvkSn59MNZR1OAL3agPO+Lq0bqe90fr4z29l
-         BZDEZFONCqNi35OL8P0pUwsiDVQddf++iE7GOXMf2O6JOD4jkWmv+EUpdgqp/9MwXfbE
-         bhVWF7vK2Q+15ah7ydijagIGn6QwcNK70wA1I1/gAJIHvjji3tEm5JUboSICRcvCP8nh
-         fHZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790615647; x=1791220447;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=MmJ/EW0KwY0F0cm8LaUC3Fhj6N704NFs3EmzLQEffnQ=;
-        b=b7dEC3QYMAOqZSHZ1b7g1srz+RyiCXtmu0HRSqqhnHydfY5gze2PONxqvSIbapxEGV
-         CoD2Y07WfTGF/iKZZiXhNIZ9blYXvRejKkTieLCQTvhxsjG/Zq62i9Rae5TNG077McFk
-         4CFZnJALPIxdZkYhNPtopYxm+0NhQ+ICofld5Zoh4ci0RZDm0MxTkhnxiy7Mf5K7D7iE
-         DVBKaplCq17Gd8QdFz+WuSRBRN8E2+a002GbQqc37sKGZeorc/SPhyJiIRiQDXjJ8IJd
-         29d3q53T4VXeL0Ibo/QAj5IdIkTz6vzP5fHTENfR4MGZjXvhc4HNBO8djezmu2b31qZl
-         xvuw==
-X-Forwarded-Encrypted: i=1; AKwUvByYYH8NEnauuKCtwkr+fgrOJ7M7r/UXB6yKDk1OwtNNqsrEOO2sJwD0WHIEv4TlLSqARwLc9QxRsDL9Xx34mMLSDuMbKeE=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLXh/XeWU382nsGcNho4hX0YVxRg1vj6lT1ckYhN/dFIy93eOA0
-	XgQ5Bfs0yDgmTzEvCsCdMq/7yRXCbWLVhA1ujyUIhT/9yfe8ADUZxvUK
-X-Gm-Gg: AYBFou0uHww5JzKFlUCf4Ukxs5AgfwXBERUp0b7LPJlj0SAcrY0vnwInNg0yGUNh1RL
-	Von2Y7oriw7nTPCwZ2vhnAHWfU8zBbPOV/O1e5kP2ritltEUQSLVh4KazwvCFNBjUHS1+DABe91
-	N8zm1l6b7SeJUH1yD1RLuKQkepXsqceNs6p8R0OcXhOKzZHl2jNtUdACSR4zZqAIEUxBcRLr1GD
-	SlExOkEwVyFe4FsC2dpRjwtflMsJSFc7DTtC36QzyvmlUbE7t6ImfHnSRC/YHaZf576J9QqLWVf
-	9mU2fe2BI/UsOm9y5edVYhl87NNuegBWflBNB9Venqu62VeCNbEdJKmr86GrQHsQIb/Urib7bm6
-	GNVnSujIAIZNFfbFUZKQCZLPqqHnH2mOrk+Hnc0k5Jl4M8+ApfCfhFQn42RhmgiyIKRYy8KNntT
-	WwE+QHrx9nhhtA49vp/hNKfM7WIaPQuKPC0oov6gM0uxoL5cEefwOH28JN0XtOio87VO1QWPaOb
-	lc=
-X-Received: by 2002:a53:ac98:0:b0:671:1398:648d with SMTP id 956f58d0204a3-674111a8a77mr3399078d50.9.1790615647178;
-        Mon, 28 Sep 2026 10:14:07 -0700 (PDT)
-Received: from suesslenovo ([71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6740ee940a0sm4752038d50.3.2026.09.28.10.14.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2026 10:14:06 -0700 (PDT)
-Date: Mon, 28 Sep 2026 13:13:35 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: Cai Xinchen <caixinchen1@huawei.com>, mic@digikod.net, 
-	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	corbet@lwn.net, skhan@linuxfoundation.org, rdunlap@infradead.org, 
-	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, dlemoal@kernel.org, 
-	hch@lst.de, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, dhowells@redhat.com, code@tyhicks.com, linkinjeon@kernel.org, 
-	sj1557.seo@samsung.com, yuezhang.mo@sony.com, hirofumi@mail.parknet.co.jp, 
-	cel@kernel.org, jlayton@kernel.org, neil@brown.name, okorniev@redhat.com, 
-	Dai.Ngo@oracle.com, tom@talpey.com, miklos@szeredi.hu, amir73il@gmail.com, 
-	senozhatsky@chromium.org, chenxiaosong@chenxiaosong.com, zohar@linux.ibm.com, 
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	stephen.smalley.work@gmail.com, omosnacek@gmail.com, casey@schaufler-ca.com, nanx95726@gmail.com, 
-	djwong@kernel.org, daniel@iogearbox.net, linux-security-module@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, driver-core@lists.linux.dev, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, exfat@lists.linux.dev, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, xiujianfeng@huawei.com, 
-	lujialin4@huawei.com
-Subject: Re: [PATCH RFC -next 00/12] landlock: Add READ_METADATA and
- WRITE_METADATA access rights
-Message-ID: <arqcbjWLN1CLkL_Y@suesslenovo>
-References: <20260924104831.1081137-1-caixinchen1@huawei.com>
- <araxO4ze0KZBz756@suesslenovo>
- <20260926.255b951d3013@gnoack.org>
+	dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b="PDW96tMY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rP7VwLU+"
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailflow.phl.internal (Postfix) with ESMTP id 5F29B13804CF;
+	Mon, 28 Sep 2026 13:18:29 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Mon, 28 Sep 2026 13:18:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1790615909; x=1790623109; bh=bV
+	g0AFXfRcn0kYVBIO4bfsJw3vxA/g/QL37izKwnfQA=; b=PDW96tMYg4rbGYdKku
+	0EJCPNI36r4B2hUwhfR3GlFGPvu014j8MQbAmAu/jDt3apTosy9kl2lONm7ZW0tM
+	WC4dSMUV+DZI/8WakXXy5rvWgEkGpzOScmSGb3IPOjsBrUN8LkjH/Ha/MT9arhrj
+	lV5WTyTu5QzeR2yKg40VcC6BtfLWYxr0LyUY5BGoYDxszYqxkqeq1WOd58jjird1
+	0fglY81og4AL3IOrAAj7x5sfsCKjH667Jl5IVYoZIlLo1qFx44vMQ/d8KNsxXLVQ
+	te3Wx/YozKKpZTJTzDde316FvaArpyqNf3tYolcTAtev5GeHOKL7zDSQW4uXXnx+
+	4Stw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1790615909; x=1790623109; bh=bVg0AFXfRcn0kYVBIO4bfsJw3vxA
+	/g/QL37izKwnfQA=; b=rP7VwLU+g5w5kgoZE/Ygfqp4O9SaMC2M+jdmk9pJscEl
+	bgmxy1pqsyLyypPy/teiX1wg0jXQ0nPfuIwXjq7cUEIAaTJcjGO6UtUMfk3GOpgU
+	GaOjwK1OyDrIS9OX4Y1TV59vKf7VSnORwDlqJraYMK2QlLsBNY9hYFndgoTVNxfh
+	vyCKI6ejywyPLgEjUW6+Pb04S7gVk5iKib7E09GD3L7/daSIm3D4AM307v44m2bR
+	SeamX+Tm+3Nvlp/aNOv1nfTHTGSkvpcrQBOJr8lxReqrA/SSML+H471MoZh6RYuM
+	JMo72E3ICD3MLbyjniYyWV9zP3MEDkginbxbVtTKqA==
+X-ME-Sender: <xms:YaG6akR6zEUWWm5zOtptcC5g5i5w2qNblqYpBtRBWKX05DcEkDNT_w>
+    <xme:YaG6alOFelEG63JQmHEZMaF-e4O7ggLjwK0VvoRAwxO-8RIN98lg_2lp5CIaMUa7R
+    W6iT7JUfZfhiE29ZEi5ZgAq-xs1FljwChczQM_LN_PCP9886HB2Pas>
+X-ME-Received: <xmr:YaG6auEySkVu0oVYOEBOMDlnLc03H5U-j1rY_MXACx-1l3Zx97auzd4rkzBPJVDq>
+X-ME-Proxy-Cause: dmFkZTF0iCUIjHjLkwYyqUzkXaYeY8zBVzbYdKa9uLqQTqMZv99nAR+IiEJPZL8+SJzKiZ
+    B7K3UjPIiWFyTiV33TJp2Iu3+otBrZpR7GdRG7oEWKpQxhAYRys/bIgWVjAFO+ttb48/Iu
+    vqtTDVO6beSYfb8DehSXxRdciBkpTkKn6DftQ8bRlXa4NWwGLAN1zR3yNWg1JGuJyO2wz/
+    IIAW+S+/FbyS/i0Qc8pWib5DM/WcYqRedoxaD58VxZCKYewFPrkCfWlpRLwPx+CCMijei6
+    NYqaXMB3pIqrRZsvEgwz9iXvEg7oTndNrsTGOSQoCalXtITSIECGB5COlgHV3BetS9pdNk
+    Mi2BWMxCxErt8z5rhQ8RzJjuSNmMDsZ13mfP2K5O4G/XtKP4GwUlbMqf2G/eDIzZTe7Ddf
+    W8g6pT8RqKP0+eIeSfmPFa6lY+sN4EB3i8gbBuTkoF0K64vyoMVtJhiICB7+CPi6u5Rqjk
+    Hx+lJhTi44brC6/RpmQR8K1/0vQ+VbXWiIsYI0Tajw97tGq1WtKJHin2gLVyZQXOghUoHC
+    iF9Q8Rkrf9hrCgBCVxZdi4r8n08voOTzj01FOEXwmMjJYyw/N0x0PZuaB8Z+VCCg0Vd3EA
+    qwVKuKkmhlJ7CaWDTzA2u9vCQbBGkZI7hdOPcs/SXlyoX3Q7/RgMG4GELV2Q
+X-ME-Proxy: <xmx:YaG6ahB_BxV8xWTFhKnQ-hpdBQ-bjdKKSLoNBOcCL1FzH_JkIOQyfQ>
+    <xmx:YaG6ankfpCLXapt1GM8R3UNIjgB_PVs2fW6PYF7Pk1XTmowCMoZQjA>
+    <xmx:YaG6ahvSEmutTft2TiccZxTYsTwsCXnVsrxvWvOoTJB2T9GVDW8Snw>
+    <xmx:YaG6anVJ0kMtsUB9aikmSQQRzu1NRpBUPJB1FlMUDlFX-eAuWy3grQ>
+    <xmx:ZaG6ahiI1MV-bxXkvIHv1w2c4MwhADANsDKMFiU-VHH_QQ7gj6gVuWzt>
+Feedback-ID: i60a14417:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 28 Sep 2026 13:18:08 -0400 (EDT)
+From: =?utf-8?q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>
+Subject: [PATCH v3 00/12] CRASH_MEMACTION: describe pages to a kdump kernel
+ (was: CRASH_WIPE_SECRETS)
+Date: Mon, 28 Sep 2026 19:17:48 +0200
+Message-Id: <20260928-crash-memaction-upstream-20260921-v3-0-e511e9ee2329@jaseg.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260926.255b951d3013@gnoack.org>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/y2Oyw6CMBBFf4V07RjaCgFX/odhUcsAxUDJtKBC+
+ HfLY3mSk3vuwhySQcfu0cIIJ+OM7QPIS8R0o/oawZSBmYhFGuciAU3KNdBhp7QPLoyD84Sqg9P
+ gkKLUldKJklnOws5AWJnv3ngWB7vx1aL22/BmNMZ5S7/9xCQ37+hlnJ+9GcmaGYHwY+kNk4AY8
+ iTlJZdayFv8aJXD+loiK9Z1/QMbbXc71gAAAA==
+X-Change-ID: 20260925-crash-memaction-upstream-20260921-6e3cfac5a389
+To: Jonathan Corbet <corbet@lwn.net>,
+  Shuah Khan <skhan@linuxfoundation.org>,
+  Randy Dunlap <rdunlap@infradead.org>, Rob Herring <robh@kernel.org>,
+  Saravana Kannan <saravanak@kernel.org>,
+  Andrew Morton <akpm@linux-foundation.org>,
+  Baoquan He <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>,
+  Pasha Tatashin <pasha.tatashin@soleen.com>,
+  Pratyush Yadav <pratyush@kernel.org>,
+ Dave Young <ruirui.yang@linux.dev>,
+  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+  "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>,  Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>,
+  David Hildenbrand <david@kernel.org>,
+ Vlastimil Babka <vbabka@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+  Brendan Jackman <brendan.jackman@linux.dev>,
+  Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+  Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,
+ Alasdair Kergon <agk@redhat.com>,  Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>,
+  Benjamin Marzinski <bmarzins@redhat.com>,
+  Herbert Xu <herbert@gondor.apana.org.au>,
+  "David S. Miller" <davem@davemloft.net>,
+ Mimi Zohar <zohar@linux.ibm.com>,  David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,  Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
+  James Bottomley <James.Bottomley@HansenPartnership.com>,
+  "Liam R. Howlett" <liam@infradead.org>,
+ Lorenzo Stoakes <ljs@kernel.org>,  Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>,  Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry@kernel.org>,  Lance Yang <lance.yang@linux.dev>,
+  Baolin Wang <baolin.wang@linux.alibaba.com>,
+  Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>,
+  Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+  Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>,
+  Matthew Brost <matthew.brost@intel.com>,
+  Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Byungchul Park <byungchul@sk.com>,  Gregory Price <gourry@gourry.net>,
+  Ying Huang <ying.huang@linux.alibaba.com>,
+  Alistair Popple <apopple@nvidia.com>, Peter Xu <peterx@redhat.com>,
+  Arnd Bergmann <arnd@arndb.de>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ kexec@lists.infradead.org, driver-core@lists.linux.dev, linux-mm@kvack.org, 
+ linux-arm-kernel@lists.infradead.org, dm-devel@lists.linux.dev, 
+ linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, 
+ =?utf-8?q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>
+X-Mailer: b4 0.15.2
 
-On Sat, Sep 26, 2026 at 09:56:28AM +0200, Günther Noack wrote:
-> Hello!
-> 
-> On Fri, Sep 25, 2026 at 02:03:05PM -0400, Justin Suess wrote:
-> > On Thu, Sep 24, 2026 at 06:48:19PM +0800, Cai Xinchen wrote:
-> > > This series adds two new Landlock filesystem access rights,
-> > > LANDLOCK_ACCESS_FS_READ_METADATA and LANDLOCK_ACCESS_FS_WRITE_METADATA,
-> > > which control access to file and directory metadata such as inode
-> > > attributes (mode, ownership, timestamps), extended attributes and POSIX
-> > > ACLs.  It picks up the work from the "landlock: add chmod and chown
-> > > support" series [1] and follows the coarse-grained grouping discussed in
-> > > that thread [2]: instead of separate chmod/chown rights, metadata
-> > > operations are grouped into one read and one write right.
-> > > 
-> > > Landlock evaluates access rights on a per-path basis, but the metadata
-> > > related LSM hooks (inode_getattr, inode_setattr, inode_setxattr,
-> > > inode_getxattr, inode_listxattr, inode_removexattr, inode_set_acl,
-> > > inode_get_acl, inode_remove_acl) only receive the dentry of the accessed
-> > > object.  Patches 1-7 therefore first pass struct path instead of dentry
-> > > through the metadata-related VFS helpers and LSM hooks.  This is a pure
-> > > refactoring with no behavior change, split so that every patch builds
-> > > and works on its own:
-> > >
-> > I like these patches, but is the ability to read metadata already
-> > sorta controlled by LANDLOCK_ACCESS_FS_READ_DIR on the parent
-> > directory?
-> > 
-> > The one case I see this being different is:
-> > 
-> > 1. if you wanted to grant read access to the file, but not metadata
-> > read access, but I can't think of any usecase for being able to read
-> > the contents of a file, but not the metadata. (see below)
-> > 
-> > 2. If you had the absolute path already and didn't need READ_DIR.
-> > 
-> > I see introducing this READ_METADATA as causing potential
-> > hard-to-diagnose issues.
-> > 
-> > Say you handle READ_METADATA and READ_FILE, but only grant READ_FILE.
-> > 
-> > The program can technically open the file with the READ_FILE permission,
-> > but it may error out because the stat() on it beforehand failed.
-> > It's pretty common for programs to do that kind of thing (stat before
-> > open), like for checking for config files (strace bash and you see it
-> > stat .profile, /etc/profile)
-> > 
-> > There may be other bugs, because being able to set permissions to read
-> > a file *but not read it's metadata* isn't possible currently in posix
-> > acl and userspace may not work well if that assumption no longer holds.
-> >
-* posix acl and linux DAC.
+I'm using linux on an embedded target in a Hardware Security Module-like
+application. One requirement is that I want the system to be able to
+quickly erase its memory when it detects physical tampering. I'm
+approaching that by using kdump to load into a small payload that
+instead of dumping RAM, erases RAM frmo start to end. However, writing
+all of RAM, especially on an embedded target, is rather slow. For this
+reason, I propose a new crash_memaction mechanism that lets the old
+kernel indicate marked memory areas to the kdump kernel at page
+granularity.
 
-> > So maybe WRITE_METADATA is good enough?
-> 
-> The existing use cases are the combinations of (a) READ_DIR
-> allowed/denied and (b) READ_METADATA allowed/denied.  Because these
-> two access rights overlap slightly, it seems likely that for a given
-> directory or file, users will want to either grant both, or deny both.
-> 
-> At the moment, where the (not yet existing) READ_METADATA is
-> implicitly always allowed, the problematic case is the one where the
-> Landlock user wants to deny READ_DIR, but where much of the same
-> metadata is still available through stat() and the various
-> get-attribute syscalls.  (c.f. the warning box in the Landlock docs
-> [1])
-> 
-> In my view the READ_METADATA right closes a gap that READ_DIR left
-> open (which is also potentially surprising to callers if they did not
-> read the docs closely).  Also, if its implementation is symmetric to
-> WRITE_METADATA, I feel that it's worth having it in the same patch
-> set.
-> 
-> –Günther
-> 
-> P.S.: I know, even after we can control stat(), there are likely ways
-> to infer the presence of a file by observing Landlock error codes.
-> This would be nice to fix as well, but is harder to do without
-> controlling the path walk itself [2].  But also, the fact that this is
-> currently not controllable is not an excuse for leaving READ_METADATA
-> open IMHO.
->
-I'm still sort of concerned about the case where read access is allowed,
-but metadata isn't, due to how many applications will not cleanly handle
-such an unexpected condition. You can reproduce this with a seccomp
-policy forbidding stat().
+I will be using this mechanism to indicate "secret" memory ranges for
+early wiping by my kdump payload. After discussion with Baoquan He early
+August, the patchset includes a second flag that can be used to indicate
+"cache" memory that the kdump kernel may want to skip when creating the
+dumpfile.
 
-Would it make sense to have the existing READ rights
-(READ_DIR/READ_FILE) imply READ_METADATA on the files/directories 
-if READ_METADATA is handled? Reading a file's contents should always
-imply that you can read the metadata.
+The record is a bitmap with one bit per page, allocated at boot. It
+reaches the kdump kernel as a PT_NOTE named MEMACTION. Marking is a
+lock-free atomic bitmap update with no allocation, so it is safe in any
+context.
 
-Thanks,
-Justin
-> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
-> [2] https://github.com/landlock-lsm/linux/issues/9
+The feature is gated by a static key that is patched in only when the
+kernel is booted with a crash_memaction= parameter indicating which
+flags to pass to the kdump kernel. The parameter sets the meaning of the
+bitmap bits to both kernels.
+
+Marking Memory
+==============
+
+Theres both a kernel and a userspace interface to mark memory.
+
+In-kernel, crash_memaction_mark() takes a virtual address range and a
+type. Marking has page granularity. To support smaller objects,
+patch 2 adds a "secret pool" kmem_buckets instance whose backing pages
+are marked SECRET. Patches 5 to 7 move dm-crypt volume keys and IV
+seeds, crypto tfm contexts, and the payloads of the user, trusted, and
+encrypted key types into this pool. Keeping keys in dedicated slab
+caches also provides some defence in depth against use-after-free and
+out-of-bounds reads, independently of what I'm doing here with kdump.
+
+For userspace mappings, madvise() with MADV_CRASH_SECRET or
+MADV_CRASH_CACHE sets a new VMA flag, VM_CRASH_MARK. Folios mapped into
+a marked VMA are registered as they arrive in rmap.
+
+A mark lasts until the page frame is allocated again, so it is cleared
+in post_alloc_hook() rather than when freed to account for leftover
+data. Hugetlb folios reused from the pool bypass post_alloc_hook(), so
+their marks are cleared on dequeue instead.
+
+Overhead
+========
+
+Measured on arm64 (QRB2210, 4x Cortex-A53, 3.6G) at next-20260922, three
+boots of the same tree:
+
+    k0  CONFIG_CRASH_MEMACTION=n
+    k1  CONFIG_CRASH_MEMACTION=y, no crash_memaction=
+    k2  CONFIG_CRASH_MEMACTION=y, crash_memaction=secret
+
+k1 and k2 are the same kernel image. The workload rebuilds mm/ of a
+kernel tree a few times with make -j4.
+
+    k0  157.05 s median (n=8, range 156.51-157.77)
+    k1  158.23 s median (n=8, range 157.96-159.69)
+    k2  157.42 s median (n=8, range 156.97-163.24)
+
+Against k0 that is +0.75% for k1 and +0.24% for k2, both within
+measurement noise.
+
+Out of scope here
+=================
+
+This series only records the page types in the note. The secret type is
+wired up with some kernel users related to disk encryption. The cache
+type is not wired up with any kernel users (but can be used from
+userspace).
+
+The bitmap is sized from the memblock memory map at boot and is never
+resized. Memory added by hotplug is therefore not covered by a bitmap
+and cannot be marked. I'm focused on embedded targets that don't support
+hotplug anyway.
+
+Signed-off-by: Jan Sebastian Götte <linux@jaseg.de>
+---
+Changes in v3:
+- Use page bitmap instead of range-based registry
+- Move smaller allocations into secret_pool buckets
+- Link to v3: https://patch.msgid.link/20260811-crash-zeroize-rework-v2-0-9561d13c2340@jaseg.de
+
+To: Jonathan Corbet <corbet@lwn.net>
+To: Shuah Khan <skhan@linuxfoundation.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+To: Rob Herring <robh@kernel.org>
+To: Saravana Kannan <saravanak@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Baoquan He <baoquan.he@linux.dev>
+To: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: Pratyush Yadav <pratyush@kernel.org>
+To: Dave Young <ruirui.yang@linux.dev>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+To: Muchun Song <muchun.song@linux.dev>
+To: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@kernel.org>
+To: Vlastimil Babka <vbabka@kernel.org>
+To: Suren Baghdasaryan <surenb@google.com>
+To: Michal Hocko <mhocko@suse.com>
+To: Brendan Jackman <brendan.jackman@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+To: Zi Yan <ziy@nvidia.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+To: Alasdair Kergon <agk@redhat.com>
+To: Mike Snitzer <snitzer@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+To: Benjamin Marzinski <bmarzins@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+To: "David S. Miller" <davem@davemloft.net>
+To: Mimi Zohar <zohar@linux.ibm.com>
+To: David Howells <dhowells@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+To: James Morris <jmorris@namei.org>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "Liam R. Howlett" <liam@infradead.org>
+To: Lorenzo Stoakes <ljs@kernel.org>
+To: Jann Horn <jannh@google.com>
+To: Pedro Falcato <pfalcato@suse.de>
+To: Rik van Riel <riel@surriel.com>
+To: Harry Yoo <harry@kernel.org>
+To: Lance Yang <lance.yang@linux.dev>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: Nico Pache <nico.pache@linux.dev>
+To: Ryan Roberts <ryan.roberts@arm.com>
+To: Dev Jain <dev.jain@arm.com>
+To: Barry Song <baohua@kernel.org>
+To: Usama Arif <usama.arif@linux.dev>
+To: Kiryl Shutsemau <kas@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Byungchul Park <byungchul@sk.com>
+To: Gregory Price <gourry@gourry.net>
+To: Ying Huang <ying.huang@linux.alibaba.com>
+To: Alistair Popple <apopple@nvidia.com>
+To: Peter Xu <peterx@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: kexec@lists.infradead.org
+Cc: driver-core@lists.linux.dev
+Cc: linux-mm@kvack.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: dm-devel@lists.linux.dev
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+
+---
+Jan Sebastian Götte (12):
+      kexec: Add a crash memaction registry
+      lib, kexec: Add a secret pool for key material
+      mm: Wire up the crash memaction registry
+      arm64: Enable the crash memaction registry
+      dm crypt: Allocate key material from the secret pool
+      crypto: api - Allocate tfms from the secret pool
+      security/keys: Allocate key payloads from the secret pool
+      mm: Add VM_CRASH_MARK
+      mm/rmap: Mark folios mapped into crash_memaction-marked VMAs
+      mm/madvise: Add MADV_CRASH_SECRET, MADV_CRASH_CACHE and MADV_CRASH_RESET
+      Documentation/mm: Document the crash memaction registry
+      kexec: Expose the crash memaction bitmap in debugfs
+
+ Documentation/admin-guide/kernel-parameters.txt |   9 +
+ Documentation/mm/crash_memaction.rst            |  68 ++++
+ Documentation/mm/index.rst                      |   1 +
+ MAINTAINERS                                     |   4 +
+ arch/arm64/Kconfig                              |   3 +
+ crypto/api.c                                    |   9 +-
+ drivers/md/dm-crypt.c                           |  19 +-
+ drivers/of/kexec.c                              |   7 +
+ fs/proc/task_mmu.c                              |   3 +
+ include/linux/crash_memaction.h                 |  86 +++++
+ include/linux/kexec.h                           |   6 +
+ include/linux/mm.h                              |   9 +
+ include/linux/rmap.h                            |   5 +-
+ include/linux/secret_pool.h                     |  47 +++
+ include/uapi/asm-generic/mman-common.h          |   4 +
+ kernel/Kconfig.kexec                            |  39 ++
+ kernel/crash_core.c                             | 475 ++++++++++++++++++++++++
+ kernel/kexec_core.c                             |   4 +
+ kernel/kexec_file.c                             |  10 +
+ kernel/ksysfs.c                                 |  15 +
+ lib/Makefile                                    |   1 +
+ lib/secret_pool.c                               |  27 ++
+ mm/huge_memory.c                                |   2 +
+ mm/hugetlb.c                                    |  10 +-
+ mm/madvise.c                                    | 132 +++++++
+ mm/migrate.c                                    |   2 +-
+ mm/mm_init.c                                    |   3 +
+ mm/page_alloc.c                                 |   6 +
+ mm/rmap.c                                       |   8 +
+ mm/userfaultfd.c                                |   1 +
+ security/keys/encrypted-keys/encrypted.c        |   5 +-
+ security/keys/trusted-keys/trusted_core.c       |   3 +-
+ security/keys/user_defined.c                    |   3 +-
+ 33 files changed, 1006 insertions(+), 20 deletions(-)
+---
+base-commit: a8c591ed6b672915e0be57843f943a2a723aff40
+change-id: 20260925-crash-memaction-upstream-20260921-6e3cfac5a389
+
+Best regards,
+--  
+Jan Sebastian Götte <linux@jaseg.de>
+
