@@ -1,180 +1,154 @@
-Received: from mail-ed2-f33.google.com (mail-ed2-f33.google.com [74.125.228.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2394D1DF736
-	for <linux-security-module@vger.kernel.org>; Sun, 27 Sep 2026 17:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.97
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790529599; cv=pass; b=HJh7uC3UBJKUYNFZ+qWTE1OGNz15/AA/NSFVzE+6ycnr3ZVLMtK0CFZ2zj3XXFjxqSd2+R6Mn58yjHw2CCBEFUOV9WNp8nF8Y+kGjLyNEPxWpB3HRwy9jmrfjwyvK7n1MFUzhWnSc1Bklq2R7NQYAKzl9kgFrfW3mhBtHKdkyqk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790529599; c=relaxed/simple;
-	bh=NgU7t86W/VexiwqKV9fxVLNSEaHoaTI7MJusd6ZnYzw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rg/VcXPQcsIksJgnDEN8cPA8VCh98m2dwdmaSl0dvD0LHgs8zOkaXE7QSWnrkMZC93CAl1K1i+mJosiSby+xrxTq8zrzQer5HpXvP0RSPBpysWZPAV4zrYvxs7gSQpWEk2EG2sdZbrDaocaTrG/YZtHV2wWrAhJCEfsbk4cNiaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JN/dTztp; arc=pass smtp.client-ip=74.125.228.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485E235F619;
+	Mon, 28 Sep 2026 03:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790565043; cv=none; b=AKBa3kN1Y6qQ6+qkVO54ppYVCOOBFXH6e9KZES4Sbwnshkv0CHtX7i0+SvyPTyXCcOrAbN9UWHhnGTu7/V0fJ5jLFrCy12LMtquvTBD5He2e1ZDZa2sa9u93t7/hPTaPk+iaVvkGcHb7FCOUjKPDY9/lj0/j4OaYmfDLE+A9hxE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790565043; c=relaxed/simple;
+	bh=7kiacjfJm9eg0o4SwtbMZmSLln96ATsdFYtP7J5a5/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NlBqU3zZ2IbKrMCCj3xGkn1CpW0/5wryzJ8wuIgwTP9IHTPvjd4Wbkiq1q0kb+yVcXtH6+H6E+RCJeMh+wpR/riic9MbHRFAyJmjucQi/h/5B3Vw8naha8E1et9SY0r5lPh+Jf28+MnImV8a0VT7Crj7EDW6HcGMIjto+J/I7/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=lvj+CEDU; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=lvj+CEDU; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JN/dTztp"
-Received: by mail-ed2-f33.google.com with SMTP id 4fb4d7f45d1cf-6ac8774c8b4so583a12.1
-        for <linux-security-module@vger.kernel.org>; Sun, 27 Sep 2026 10:19:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790529596; cv=none;
-        d=google.com; s=arc-20260327;
-        b=nhXhVbS+sJ1ixiYTxlGEDltOmrlS/m7rdw+wBJ9u5zqlDxBPpIXoJPZ8FqiftI243a
-         a8li2EGwoxdEcjtMnYczn8BZeyNO3hXRZFjAFzfxa/2qSPsYOGSp6K8LrmojIBWrOAAj
-         lYlvKBIUvvTaWgzMbAnrDD7r7q3QqsuOk6V/RQ/l6NMmcWUmzdx3mrKZOthbjORvnHag
-         0mcWgzIhqLIk9KVHjxPjcG7DJzpd4OXVzlBdNObw++o8BNGa1R7aLDsweDaPYAEqDuBE
-         EAwpB8U7nChpBG7b0/v+3ZSNFPQiZCxIGqkYLipou1wIYMGEJ2TBLv3/6EesREr2pxtK
-         FeJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=/R4IpN8egmbt+t8Ci9l3zcVKOJVLWdh83YYmUmU9rXA=;
-        fh=mbcObRxPgnfZ2CGBAR5Ir329uaxmVu17g0nxsC5nKgE=;
-        b=IK9BplI6HWQqBRJn/DyaZugcLoH33wuL4pD1thQj/fS/6yME6TMNochkHr1wMx/DDb
-         okT4vDNCLvMEg4HTKONLXk7OQNrm9lmI4AenZYquskWQVLjtdVoxuj+dHQjMTAcPudon
-         EOQJkcKeEVPQ3hZ+VuwSoGpm5M2RyQtFkm1RvIy/yGZdCOxdD13qzQBIbUwgjxosf64L
-         cmWKEPWbrqMETjVtoKHt7Q4ZEBPPYsOKNY0AIcugrYeLWhM3YErYSACMFNFii2iQnBuU
-         nVbhMRp6c7h75cVBEgHGdjaABY/4RcSCjb8mtK2BzTfiT7fMGOdY3m6vQwnmKU071SMF
-         ABFA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790529596; x=1791134396; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=/R4IpN8egmbt+t8Ci9l3zcVKOJVLWdh83YYmUmU9rXA=;
-        b=JN/dTztp5uBkVnr6owRPG+oeELNoohat3/eUjTx6gvx9CdxgoF3JZth2R8/9CJJV/X
-         Lki27GSbXucwze04slXd5e3AonvCAk0x8uHm+2Hk43pycy1aL8vXk4GFMQJqI28h/C4r
-         TjtUuJlnwB7onadn0T3OLEZYnD5DEqEYVmM8Q78B/U2QCfLtc2JCGuYwLQrwILT703Du
-         yY5KJcnwWtSX/MWqg2q8xkAJwXXMyvBiWlXoJ+5eF4p3aQDrFUcH/WJW0HBYOsClO9S0
-         BWOSQZ7/JoLxZIZ4ocvWr13cxXcVqvVxZYerW42xk3p4011Ympib5kWh1G6pLABoq8Kg
-         hCdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790529596; x=1791134396;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/R4IpN8egmbt+t8Ci9l3zcVKOJVLWdh83YYmUmU9rXA=;
-        b=EagNI7d10LP+Ql6pPgPBlzRcQZ74Ge6530OjufJ4NzNvYY+D69cRc8O3c2vkPCZzsh
-         CNXiuEGLfbdskx2q0HhBJ5u2+ItN93QDgAkM/UDCQW+t7X0J1y/qrq5LtLo+hI/wrr8f
-         E9zmVwvQr7DNmd5YBHHiKuXnZcQuAv3y2Jr3pkM79D2aUID8fqwBFG51lFWe/5N3ORVo
-         25tHPWTyWl5O7Z6bk5bJb+0eYWKmrKqeRQ3m7Ogc+P3DZTj6mZ0SaSRKcwkPcsb8snuQ
-         TDC6QTlRWGy6Hrv/nI7sH3jBmcdOER60u3n6n7P1OCQ2hPZduE9egd4XIgvvNp6ia9k5
-         Potw==
-X-Forwarded-Encrypted: i=1; AKwUvByDrVMRVtbM7G8nxnWWpPtLqZGoaZSTlrFkmRh0ek4koucND4wWOckOW0Y5TGGQQaf9mF+ACB5+WCMVF4wrj4cB5mXk5Wk=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI4i9rdB+8Wj9m3M4XG6p3LAr5WhAdHiePe3fI0qXimnI+Q2YX7
-	sUPnjS6/hgTkydDB+patXjwHeFQ2fct2GUuQgOWuh+rMA35pMPjwAilQMf6mzeMQGlAYoLZl36r
-	y0FL7LDnIGDlp1ilTOsm12XQymzOLizk=
-X-Gm-Gg: AYBFou3MfZWAjFQhAshXQQZVx+M4O6lRalBjqEGZgNH7LcSJx5DSUHtrv5Q2bW/xHn9
-	Fk3bLGIA73IxSM8OtDIPD3254y60uH8K6YbhzSfb5WW4NGhgmUoBEhzy4Cw0SJbLSVuucD94czk
-	R9s/arTm3F0orNn1rcwVzhrlpvUvHhm+zhroQnbQ7TTxd3vNobIrxpS1aX8TWfGNpdDZkVBNdvr
-	4+708hn8r6ZMYOugL80YpU6r3vKzKVlrPZQlizB6jmvbcnz+/7SV7hs9sb628Yqryw6/OK04df7
-	y21evhzgwh34yK0FLK55C+TPS7/AjwN5JfrzSoEbxW03JoidYS/yaEUY2pWMYRCZJrGVsapJInC
-	dlx005P2vJTY=
-X-Received: by 2002:a05:6402:13ca:b0:6aa:490e:5518 with SMTP id
- 4fb4d7f45d1cf-6aae1fcf708mr7295949a12.2.1790529596172; Sun, 27 Sep 2026
- 10:19:56 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="lvj+CEDU";
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="lvj+CEDU"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=laF9olr803hHgYq5bUVHMyGweB+jScW/Hym2Kh92OJw=;
+	b=lvj+CEDUh0+zZRvZIJCYL+GYuWO/qzhhd5Q7qgYnt2I+nDVdUz/aiYc/IZ01phJcD5inE58kW
+	6HqI7Hn0o/Is6qqUzyFLZO4ASADWAzz1au0mPPp9VhiTBboW/DVWXLTqOvqdilDQg3pdQSN5L2y
+	l6w3cxJj40MNw5nmCxtvjHE=
+Received: from canpmsgout10.his.huawei.com (unknown [172.19.92.130])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTPS id 4htR9z1VXJz126LtP;
+	Mon, 28 Sep 2026 11:09:43 +0800 (CST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=laF9olr803hHgYq5bUVHMyGweB+jScW/Hym2Kh92OJw=;
+	b=lvj+CEDUh0+zZRvZIJCYL+GYuWO/qzhhd5Q7qgYnt2I+nDVdUz/aiYc/IZ01phJcD5inE58kW
+	6HqI7Hn0o/Is6qqUzyFLZO4ASADWAzz1au0mPPp9VhiTBboW/DVWXLTqOvqdilDQg3pdQSN5L2y
+	l6w3cxJj40MNw5nmCxtvjHE=
+Received: from mail.maildlp.com (unknown [172.19.163.163])
+	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4htQwb4hXWz1K99t;
+	Mon, 28 Sep 2026 10:58:07 +0800 (CST)
+Received: from kwepemk200008.china.huawei.com (unknown [7.202.194.74])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1F8634057A;
+	Mon, 28 Sep 2026 11:10:16 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemk200008.china.huawei.com (7.202.194.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 28 Sep 2026 11:10:15 +0800
+Message-ID: <26ec4edf-8eb4-4153-8e17-7f67376f13a8@huawei.com>
+Date: Mon, 28 Sep 2026 11:10:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904080940.575882-1-nicoyip.dev@gmail.com> <aqHhZO0GjMTOer4j@kernel.org>
-In-Reply-To: <aqHhZO0GjMTOer4j@kernel.org>
-From: Chengfeng Ye <nicoyip.dev@gmail.com>
-Date: Mon, 28 Sep 2026 01:19:44 +0800
-X-Gm-Features: AclHuK8YMIA5n5DLx6saWD3JedHa-zp1toc5aC5wKE4OHA3Bf05WcoKKBxjw3MI
-Message-ID: <CAAo+4rW_kT_GL_3cr8aSHkAM29yQQgNL4EJktfTirOi4nHwOOA@mail.gmail.com>
-Subject: Re: [PATCH v2] keys: Fix key_user use-after-free during ownership changes
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] security: Allow dropping bounding set process-wide
+To: "Serge E. Hallyn" <serge@hallyn.com>, "Andrew G. Morgan"
+	<morgan@kernel.org>
+CC: <paul@paul-moore.com>, <jmorris@namei.org>, <pjw@kernel.org>,
+	<tglx@kernel.org>, <peterz@infradead.org>, <debug@rivosinc.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>
+References: <20260922095816.1191799-1-ruanjinjie@huawei.com>
+ <arK0cT7CGb3Khy69@hallyn.com>
+ <CACmP8UK5wGZmBTRVBOm2_ZGhpFG-jWpihvUNxrcrgXr5K2GYEw@mail.gmail.com>
+ <araGY/FhiKu61l5v@hallyn.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <araGY/FhiKu61l5v@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk200008.china.huawei.com (7.202.194.74)
 
-On Thu, Sep 10, 2026 at 6:44=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Fri, Sep 04, 2026 at 04:09:40PM +0800, Chengfeng Ye wrote:
-> > keyctl_chown_key() replaces key->user and then drops the key's
-> > reference to the previous key_user. Several paths access key->user
-> > without any common synchronization with this replacement, including
-> > the /proc/keys iterators, find_keyring_by_name(), quota accounting, and
-> > key instantiation.
-> >
-> > This allows an ownership change to free the previous key_user while a
-> > reader is still accessing it:
-> >
-> >   CPU 0 (/proc/keys)            CPU 1 (KEYCTL_CHOWN)
-> >   user =3D key->user
-> >                                 old =3D key->user
-> >                                 key->user =3D newowner
-> >                                 key_user_put(old)
-> >                                   kfree(old)
-> >   uid =3D user->uid
-> >
-> > The same missing synchronization also can corrupt instantiated-key
-> > accounting. KEY_LOOKUP_PARTIAL allows keyctl_chown_key() to change the
-> > owner of a key while it is still being instantiated:
-> >
-> >   CPU 0 (instantiate)           CPU 1 (KEYCTL_CHOWN)
-> >   atomic_inc(old->nikeys)
-> >                                 observe KEY_IS_UNINSTANTIATED
-> >                                 skip the nikeys transfer
-> >                                 key->user =3D newowner
-> >   mark key instantiated
-> >
-> > The increment remains charged to the previous owner. Quota reservation
-> > can similarly select one owner for its quota limit and another owner
-> > for the usage update, or access an owner that has already been freed.
-> >
-> > The existing locks do not provide common exclusion for these
-> > operations. keyctl_chown_key() holds key->sem, key construction uses
-> > key_construction_mutex, and the affected readers hold their respective
-> > tree or list locks.
-> >
-> > Use key_user_lock to serialize access to key ownership. Hold it across
-> > the accounting transfer and key->user replacement in keyctl_chown_key()=
-.
-> > Use the same lock while readers copy the owner's UID, while quota usage
-> > is updated, and while the instantiated-key count and key state are
-> > committed.
-> >
-> > key_user_lock already serializes final key_user removal, so an old
-> > owner cannot be freed while one of these readers is accessing it.
-> >
-> > Fixes: 5801649d8b83 ("[PATCH] keys: let keyctl_chown() change a key's o=
-wner")
-> > Signed-off-by: Chengfeng Ye <nicoyip.dev@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Audit every user->uid occurrence and all direct key->user accesses.
-> > - Take key_user_lock explicitly at each namespace-filtering reader inst=
-ead
-> >   of hiding the lock acquisition in an accessor.
-> > - Serialize quota reservation and construction accounting with ownershi=
-p
-> >   changes while preserving the existing direct key->user accesses.
-> > - Use the commit that introduced ownership changes as the Fixes target.
-> >
-> > Link: https://lore.kernel.org/keyrings/20260823170448.3856516-1-nicoyip=
-.dev@gmail.com/ [v1]
->
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#se=
-parate-your-changes
->
-> I.e. no bundle commits. This unreviewable.
 
-Thanks for the review. I have split the changes into two patches
-and sent them as v3:
 
-https://lists.openwall.net/linux-kernel/2026/09/27/734
+在 2026/9/25 22:34, Serge E. Hallyn 写道:
+> Jinjie, could you reproduce your timing experiments against the
+> SetProc code?
 
+Hi Serge, the test result is as below:
+
+|   method      |   Description                                       |
+| ------------- | --------------------------------------------------- |
+| baseline	| Per-cap syscall.AllThreadsSyscall6(PR_CAPBSET_DROP),|
+|               |   the original gVisor implementation                |
+| dropbound	| libcap cap.DropBound() (library API, per-thread)    |
+| SetProc	| cap.IABGetProc() + SetVector(Bound) + SetProc()     |
+| SetProc-min	| Minimal IAB with the read overhead removed: NewIAB()|
+|               |  + SetVector(Bound) + SetProc()                     |
+| mask	        | prctl(PR_CAPBSET_DROP_MASK, lo, hi)                 |
+
+All variants uniformly drop all 41 caps (cap_last_cap = 40), and both
+the success rate and dropped are verified.
+
+Sampling scale:
+- Patched guest, 8 vCPU: 2 boots × 21 runs = 42 runs/point, 1050 samples
+total;
+- Patched guest, 32 vCPU: 21 runs per point, 525 samples total.
+
+Mean in µs bucketed by actual thread count (sample count in parentheses)
+
+## 8 vCPU (42 samples per point)
+
+method	     8–15	16–31	      32–63	   64–95
+baseline    3258.9(41)	6955.9(43)   10303.9(84)   14394.3(42)
+dropbound   3356.3(41)	5048.1(43)   9914.3(84)	   16837.1(42)
+SetProc	    3365.4(41)	6255.4(43)   10179.4(84)   16799.8(42)
+SetProc-min 3485.0(41)	5603.9(43)   10533.2(84)   15146.8(42)
+mask	    68.2(42)	92.3(42)     224.2(84)	   433.7(42)
+
+## 32 vCPU (21 samples per point)
+
+method	      8–15	 16–31	       32–63	      64–95
+baseline     8422.4(20)	 8491.8(22)   17814.2(42)    21612.6(21)
+dropbound    5235.5(21)	 7568.9(21)   17350.8(42)    21205.5(21)
+SetProc	     5540.8(21)	 8159.2(21)   17920.5(42)    22168.3(21)
+SetProc-min  5582.8(20)	 7907.7(22)   15136.0(42)    22334.5(21)
+mask	     114.6(21)	 181.8(21)    428.5(42)      684.7(21)
+
+So IAB.SetProc is not an optimization. Like the gVisor baseline, it
+issues one PR_CAPBSET_DROP per capability on every thread
+(syscall.AllThreadsSyscall); averaged over multiple repeated groups, it
+is on the same order of magnitude as the baseline, or even slower.
+
+> 
+> On Tue, Sep 22, 2026 at 07:10:11PM -0700, Andrew G. Morgan wrote:
+>> The https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/cap#IAB.SetProc
+>> already handles this for the whole process. It can be run from main()
+>> if you need it to happen early, and it will track down all of the
+>> threads in the runtime.
+>>
+>> To Serge's point, I am also curious what benefit there is from doing
+>> it more quickly. After all, this is pretty much a one-time function
+>> request for any executable.
+>>
+>> FYI The "sendmail capabilities bug" reference is written up here:
+>> https://sites.google.com/site/fullycapable/thesendmailcapabilitiesissue
+>>
+>> Cheers
+>>
+>> Andrew
+>>
+
+[...]
+>>>>       /*
+>>>>        * The next four prctl's remain to assist with transitioning a
+>>>>        * system from legacy UID=0 based privilege (when filesystem
+>>>> --
+>>>> 2.34.1
+
+-- 
 Best regards,
-Chengfeng
+Jinjie
+
