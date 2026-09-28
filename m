@@ -1,389 +1,135 @@
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6484264F80;
-	Mon, 28 Sep 2026 12:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE0447CA84;
+	Mon, 28 Sep 2026 13:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790599088; cv=none; b=A8b97njXL4x6NkAHdh6o4EjMcumRIDzo2kcjVcn5i8sm4QU5d4lwyT2N7PKLgfK4aU8dhZGQOVjSP8FAIJ6WCNDQMLiCVXRYxWtFH7fyLg9ftIa67kfFxp2+4SxzhDjZONM4DXIBR3rXr+F1LsyhzmkmWWMTh3RuCXyS21M9qZk=
+	t=1790601246; cv=none; b=UkKX71lKlg66er6t+m/Z/QzgMM4P++gxP/ZG61rzttGtL3iGwCaFTHBwjofF8GSEenXqwT6AiMi3tH6v5W5lPv1caZsk4shGrGHLDxEvigseMKVfEvG6fC6LtEzpU9Q9eCGcwfsZcxwscLJvfj13NAc1qEq1FjON7KwxFLFnXhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790599088; c=relaxed/simple;
-	bh=0pgowuY40jVfehX7LGtml0cr8DPDl/k+8dIUn294QtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Om1OdvCIbndSpcRnAvlsAqmT7epRwfX2qNAOmnMcT+664d4nqwPzyLHEtThWlJaUQZDB4QXCg+mSD6GqyJrjXwV6NoLure/3I9EOVTKKx5p/RJsEmOv60/uAf9fH1wDbH1yRKV5xkTwpSZGVCYwPNyV4Ydo+EbuSYnU4Qi/cSec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=TAWjSW/O; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1790601246; c=relaxed/simple;
+	bh=GocJgfuPT72cKEg3bm4osv0OZxD7cy1wWgciX0EOcvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doEpeXrfaa3LN5RsW7rquIbWhK4DjCjsWRvzo6OkZDAOy3pfDSADWA7LadTZhT3dL/tQ5s9EXoe/b/jkxAysHRLd9iyJXIVgc0a3+WJLBzyiClq7Xllx/pxJuX/07otLSxw4lSEMyJcgvjqikrbcem9oooe0Al+pxD+DhIt5W7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=ExWJaAtM; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="TAWjSW/O"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=jK3h+BbU8ClSed/mgUyAV7nEFnlFEpmB8MPlSGvpo00=;
-	b=TAWjSW/OlIFTZQ04ktxIEM0ah2bJeG7+uj9AbkrWKbTy5xkTpeExCCKnIfeaE2G+4ChdhDg+3
-	1gkavizXuuCWBjBnsmM4JWpf97b3O1eVPRnQHQDNcsEmLNq1nFlslRKj3RCLrHX31OYMm+NCoWl
-	PvkwBzVPkgpyjDhHP1zMj2o=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4htgWc4HMTzKm6K;
-	Mon, 28 Sep 2026 20:25:48 +0800 (CST)
-Received: from kwepemk200008.china.huawei.com (unknown [7.202.194.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7EF464055B;
-	Mon, 28 Sep 2026 20:38:00 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemk200008.china.huawei.com (7.202.194.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 28 Sep 2026 20:37:59 +0800
-Message-ID: <2d086f02-5638-4673-83e1-53d3640e3d3d@huawei.com>
-Date: Mon, 28 Sep 2026 20:37:58 +0800
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="ExWJaAtM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1790601235; bh=GocJgfuPT72cKEg3bm4osv0OZxD7cy1wWgciX0EOcvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ExWJaAtM1Fy5UfZ4xwuGWHuQ4QMLxL/2jmOGmxO5CEOQkhqxAhJjvpyBKpiWMbAG3
+	 wMvUBAJVwLSYA5dzkeucvIjO8vnur3Z6rDbKXTrtXHW+7DojcKm3hJ7K+YBr09Q/PC
+	 ZOcneFc/Y8Egw9thUymlIRNrpo0m/mhDF3HNv9FnJkztInSjC9FjpBhEzcDUXtERPJ
+	 YAIApugXnSvBvKe10y4UmIalohDLU+FK7KheIDrVpaz3AKWh73Za5Pn8vomsP5XGzu
+	 +1dhRpF/sJ+qfmxzyyfPEJ0C3RQfi8EFfcMkQv9NrGYIhZNoJlj5/+r9gwEqWfPHt+
+	 6Y1QPbhP99/Ng==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 291DFA57; Mon, 28 Sep 2026 08:13:55 -0500 (CDT)
+Date: Mon, 28 Sep 2026 08:13:55 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: "Andrew G. Morgan" <morgan@kernel.org>, paul@paul-moore.com,
+	jmorris@namei.org, pjw@kernel.org, tglx@kernel.org,
+	peterz@infradead.org, debug@rivosinc.com, broonie@kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH] security: Allow dropping bounding set process-wide
+Message-ID: <arpoE6UN7xuv87qR@hallyn.com>
+References: <20260922095816.1191799-1-ruanjinjie@huawei.com>
+ <arK0cT7CGb3Khy69@hallyn.com>
+ <CACmP8UK5wGZmBTRVBOm2_ZGhpFG-jWpihvUNxrcrgXr5K2GYEw@mail.gmail.com>
+ <araGY/FhiKu61l5v@hallyn.com>
+ <26ec4edf-8eb4-4153-8e17-7f67376f13a8@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] security: Allow dropping bounding set process-wide
-To: "Andrew G. Morgan" <morgan@kernel.org>, "Serge E. Hallyn"
-	<serge@hallyn.com>
-CC: <paul@paul-moore.com>, <jmorris@namei.org>, <pjw@kernel.org>,
-	<tglx@kernel.org>, <peterz@infradead.org>, <debug@rivosinc.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>
-References: <20260922095816.1191799-1-ruanjinjie@huawei.com>
- <arK0cT7CGb3Khy69@hallyn.com>
- <7f0c935f-2c3f-4511-924f-822c3acf93da@huawei.com>
- <arZ0TfXSLjmDtyRy@hallyn.com>
- <CACmP8UL0SEZxMn4XkByVPtKbRuc_mWQLafwgPZ_=dOFUzo5HKQ@mail.gmail.com>
- <araIUXjOOQ9KuXki@hallyn.com>
- <CACmP8ULzE-m2d+76AdyQ7nsVj=t6kWvyed05KCc2=99EOr+6Yw@mail.gmail.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <CACmP8ULzE-m2d+76AdyQ7nsVj=t6kWvyed05KCc2=99EOr+6Yw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk200008.china.huawei.com (7.202.194.74)
+In-Reply-To: <26ec4edf-8eb4-4153-8e17-7f67376f13a8@huawei.com>
 
-
-
-在 2026/9/27 23:31, Andrew G. Morgan 写道:
-> My point is as follows.
+On Mon, Sep 28, 2026 at 11:10:14AM +0800, Jinjie Ruan wrote:
 > 
-> - Let's say proc p1 contains threads t1, t2, t3.
-> - Both t1 and t2 call this new system call at the same time with
-> different target states.
-> - All while t3 is calling clone (creating t4 at some point).
 > 
-> Without serialization, what state results? The state t1 wants or the
-> state t2 wants? If a loop around is included for t4, what happens if
-> t1, having set its own thread state and "returned" immediately calls
-> this syscall again? What state will the threads end up with?
+> 在 2026/9/25 22:34, Serge E. Hallyn 写道:
+> > Jinjie, could you reproduce your timing experiments against the
+> > SetProc code?
 > 
-> Serialization, for me, is that one of t1 and t2 wins the first race,
-> and its will is enforced on every thread (including t4) before t2's
-> intent can take effect. That intent may, indeed, not be attainable, if
-> t1 has denied something t2 wants and that attempt should fail.
+> Hi Serge, the test result is as below:
 
-I completely agree with your point: when cloning between different
-threads of the same process, or when calling this new prctl, there needs
-to be a fully deterministic ordering; otherwise, it will be chaos.
+Thanks!
 
+> |   method      |   Description                                       |
+> | ------------- | --------------------------------------------------- |
+> | baseline	| Per-cap syscall.AllThreadsSyscall6(PR_CAPBSET_DROP),|
+> |               |   the original gVisor implementation                |
+> | dropbound	| libcap cap.DropBound() (library API, per-thread)    |
+> | SetProc	| cap.IABGetProc() + SetVector(Bound) + SetProc()     |
+> | SetProc-min	| Minimal IAB with the read overhead removed: NewIAB()|
+> |               |  + SetVector(Bound) + SetProc()                     |
+> | mask	        | prctl(PR_CAPBSET_DROP_MASK, lo, hi)                 |
 > 
-> Cheers
+> All variants uniformly drop all 41 caps (cap_last_cap = 40), and both
+> the success rate and dropped are verified.
 > 
-> Andrew
+> Sampling scale:
+> - Patched guest, 8 vCPU: 2 boots × 21 runs = 42 runs/point, 1050 samples
+> total;
+> - Patched guest, 32 vCPU: 21 runs per point, 525 samples total.
 > 
-> On Fri, Sep 25, 2026 at 7:42 AM Serge E. Hallyn <serge@hallyn.com> wrote:
->>
->> Also (not sure whether this is what Andrew is referring to here), in your
->> code below, what keeps one thread from doing a clone in between the
->> task harvesting loop and the task_work_add() loop?  It seems like you'd
->> need to do another loop after to make sure you didn't miss any new
->> tasks?
->>
->> And of course we'd need a more robust solution to
->>
->>>>>>> +          /* Out of memory: bounding set drop failed silently for this thread. */
->>
->> -serge
->>
->> On Fri, Sep 25, 2026 at 07:28:08AM -0700, Andrew G. Morgan wrote:
->>> I don't see a race condition in the (*cap.IAB).Set() code. The
->>> semantics of this sort of thing can't be allowed to include a race;
->>> otherwise, back-to-back calls to this "system call" might generate
->>> divergent thread state. How you do that without some serialization
->>> isn't clear to me.
->>>
->>> Cheers
->>>
->>> Andrew
->>>
->>> On Fri, Sep 25, 2026 at 6:17 AM Serge E. Hallyn <serge@hallyn.com> wrote:
->>>>
->>>> On Thu, Sep 24, 2026 at 04:05:59PM +0800, Jinjie Ruan wrote:
->>>>>
->>>>>
->>>>> 在 2026/9/23 1:01, Serge E. Hallyn 写道:
->>>>>> On Tue, Sep 22, 2026 at 05:58:16PM +0800, Jinjie Ruan wrote:
->>>>>>> The capability bounding set is per-thread: PR_CAPBSET_DROP only affects
->>>>>>> the calling thread, since its bounding set lives in the per-task struct
->>>>>>> cred.  User space that wants to drop capabilities for a whole process
->>>>>>> must therefore invoke PR_CAPBSET_DROP once per capability per thread,
->>>>>>> which on a many-threaded process is expensive, and from a Go runtime
->>>>>>> requires stopping the world and signalling every thread.
->>>>>>>
->>>>>>> Add PR_CAPBSET_DROP_MASK, an opt-in prctl that removes a set of
->>>>>>> capabilities, given as a 64-bit mask in arg2 (low 32 bits) and arg3
->>>>>>> (high 32 bits), from the bounding set of every thread of the calling
->>>>>>> thread group in a single call.
->>>>>>>
->>>>>>> The calling thread drops the capabilities synchronously, last; every
->>>>>>> sibling that still holds any of them is asked to drop them through a
->>>>>>> task_work item, so that it applies the drop in its own context.  This
->>>>>>> avoids racing with a sibling's concurrent credential updates such as
->>>>>>> setuid() or capset().  The call does not wait for the siblings: a
->>>>>>> sibling may be parked in a wait that is not woken by TIF_NOTIFY_SIGNAL
->>>>>>> (e.g. futex), so waiting could block for an unbounded time.  This is
->>>>>>> still safe, because TIF_NOTIFY_SIGNAL is handled on the way out to user
->>>>>>> mode, so a sibling applies the drop before executing any further
->>>>>>> userspace code.  It does not synchronize against a sibling that is
->>>>>>> concurrently creating threads, so callers must keep the thread group
->>>>>>> quiescent while dropping.
->>>>>>>
->>>>>>> Measured with gVisor's "bounding set trimmed" boot phase on an arm64 KVM
->>>>>>> guest (medians over repeated boots):
->>>>>>>   - 8 vCPUs:  ~1.6ms  -> ~0.10ms
->>>>>>>   - 32 vCPUs: ~3.5ms  -> ~0.11ms
->>>>>>>   - 64 vCPUs: ~10.1ms -> ~0.1-0.6ms
->>>>>>>   - cost goes from O(capabilities * threads) stop-the-world prctls to a
->>>>>>>     single thread-group walk.
->>>>>>
->>>>>> That is impressive, but please do detail the specific use case where
->>>>>> you need to drop from the bounding set after the go scheduler has started.
->>>>>> I can imagine some cases where you need to do some early setup and then
->>>>>> want to drop privileges, but you could also do that by re-exec'ing, so
->>>>>> I'd like to hear specifics.
->>>>>
->>>>> Hi Serge,
->>>>>
->>>>> Thanks for the review.
->>>>>
->>>>> The use case is gVisor's sentry: a long-lived, pure-Go process that
->>>>> starts a sandbox per container/pod. The final capability set depends on
->>>>> the spec, the platform (ptrace requires CAP_SYS_PTRACE),
->>>>> directfs/networking, and the capabilities granted to the runtime's user
->>>>> namespace.
->>>>>
->>>>> It is therefore only known after the runtime and gVisor's own threads
->>>>> are already up — the trim happens multi-threaded. We do have a re-exec
->>>>> path, but it re-loads a ~100 MB binary and re-runs Go init, so we only
->>>>> take it when forced.
->>>>>
->>>>>>
->>>>>> This makes me nervous, reminding me of the 'sendmail capabilities bug'.
->>>>>> If some program specifically locks down one thread, I could imagine the
->>>>>> locked down thread forcing wrong behavior from the privileged threads
->>>>>> by calling this.
->>>>>
->>>>> Fair concern. This new prcoess-wide drop is also a drop — it only
->>>>> removes capabilities from all threads, and requires CAP_SETPCAP. But it
->>>>
->>>> Good point, CAP_SETPCAP requirement might mitigate my concern.  I'll look
->>>> at this a bit more, thanks.
->>>>
->>>>> must actually reach every thread, so the thread-creation race still
->>>>> needs to be addressed.
->>>>>
->>>>>>
->>>>>>>
->>>>>>> Cc: Serge Hallyn <serge@hallyn.com>
->>>>>>> Cc: Paul Moore <paul@paul-moore.com>
->>>>>>> Cc: James Morris <jmorris@namei.org>
->>>>>>> Cc: Paul Walmsley <pjw@kernel.org>
->>>>>>> Cc: Thomas Gleixner <tglx@kernel.org>
->>>>>>> Cc: Zong Li <zong.li@sifive.com>
->>>>>>> Cc: Deepak Gupta <debug@rivosinc.com>
->>>>>>> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
->>>>>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->>>>>>> ---
->>>>>>>  include/uapi/linux/prctl.h |   1 +
->>>>>>>  security/commoncap.c       | 129 +++++++++++++++++++++++++++++++++++++
->>>>>>>  2 files changed, 130 insertions(+)
->>>>>>>
->>>>>>> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
->>>>>>> index b6ec6f693719..750a7824d3bc 100644
->>>>>>> --- a/include/uapi/linux/prctl.h
->>>>>>> +++ b/include/uapi/linux/prctl.h
->>>>>>> @@ -70,6 +70,7 @@
->>>>>>>  /* Get/set the capability bounding set (as per security/commoncap.c) */
->>>>>>>  #define PR_CAPBSET_READ 23
->>>>>>>  #define PR_CAPBSET_DROP 24
->>>>>>> +#define PR_CAPBSET_DROP_MASK 83
->>>>>>>
->>>>>>>  /* Get/set the process' ability to use the timestamp counter instruction */
->>>>>>>  #define PR_GET_TSC 25
->>>>>>> diff --git a/security/commoncap.c b/security/commoncap.c
->>>>>>> index 3399535808fe..ae7ce50a8151 100644
->>>>>>> --- a/security/commoncap.c
->>>>>>> +++ b/security/commoncap.c
->>>>>>> @@ -19,7 +19,14 @@
->>>>>>>  #include <linux/hugetlb.h>
->>>>>>>  #include <linux/mount.h>
->>>>>>>  #include <linux/sched.h>
->>>>>>> +#include <linux/cred.h>
->>>>>>> +#include <linux/rcupdate.h>
->>>>>>> +#include <linux/sched/signal.h>
->>>>>>> +#include <linux/sched/task.h>
->>>>>>> +#include <linux/slab.h>
->>>>>>> +#include <linux/task_work.h>
->>>>>>>  #include <linux/prctl.h>
->>>>>>> +#include <linux/printk.h>
->>>>>>>  #include <linux/securebits.h>
->>>>>>>  #include <linux/user_namespace.h>
->>>>>>>  #include <linux/binfmts.h>
->>>>>>> @@ -1283,6 +1290,123 @@ static int cap_prctl_drop(unsigned long cap)
->>>>>>>    return commit_creds(new);
->>>>>>>  }
->>>>>>>
->>>>>>> +/*
->>>>>>> + * Structure used to queue process-wide bounding set drops via task_work.
->>>>>>> + */
->>>>>>> +struct cap_bset_drop_work {
->>>>>>> +  struct callback_head work;
->>>>>>> +  struct task_struct *task;
->>>>>>> +  kernel_cap_t mask;
->>>>>>> +  struct cap_bset_drop_work *next;
->>>>>>> +};
->>>>>>> +
->>>>>>> +static void cap_bset_drop_work_fn(struct callback_head *work)
->>>>>>> +{
->>>>>>> +  struct cap_bset_drop_work *w = container_of(work, struct cap_bset_drop_work, work);
->>>>>>> +  struct cred *new = prepare_creds();
->>>>>>> +
->>>>>>> +  if (!new) {
->>>>>>> +          /* Out of memory: bounding set drop failed silently for this thread. */
->>>>>>> +          pr_warn_ratelimited("capability bounding set drop failed for pid %d (%s)\n",
->>>>>>> +                              task_pid_nr(current), current->comm);
->>>>>>> +          goto out;
->>>>>>> +  }
->>>>>>> +
->>>>>>> +  new->cap_bset = cap_drop(new->cap_bset, w->mask);
->>>>>>> +  commit_creds(new);
->>>>>>> +
->>>>>>> +out:
->>>>>>> +  put_task_struct(w->task);
->>>>>>> +  kfree(w);
->>>>>>> +}
->>>>>>> +
->>>>>>> +/*
->>>>>>> + * cap_bset_drop_process - Drop capabilities from all threads in the group.
->>>>>>> + * @mask: Mask of capabilities to drop from the bounding set.
->>>>>>> + *
->>>>>>> + * Drops @mask from the calling thread synchronously, and queues a task_work
->>>>>>> + * item for each sibling thread to safely apply the drop in its own context.
->>>>>>> + *
->>>>>>> + * The caller must hold CAP_SETPCAP. Thread group must be quiescent to avoid
->>>>>>> + * racing with concurrent thread creation.
->>>>>>> + *
->>>>>>> + * Returns 0 on success, or -ENOMEM if allocations fail (all-or-nothing).
->>>>>>> + */
->>>>>>> +static int cap_bset_drop_process(kernel_cap_t mask)
->>>>>>> +{
->>>>>>> +  struct cap_bset_drop_work *list = NULL, *w, *next;
->>>>>>> +  struct task_struct *thread;
->>>>>>> +  struct cred *new = NULL;
->>>>>>> +  int ret = 0;
->>>>>>> +
->>>>>>> +  rcu_read_lock();
->>>>>>> +  for_each_thread(current, thread) {
->>>>>>> +          const struct cred *cred;
->>>>>>> +
->>>>>>> +          if (thread == current || (thread->flags & PF_EXITING))
->>>>>>> +                  continue;
->>>>>>> +
->>>>>>> +          cred = __task_cred(thread);
->>>>>>> +          if (cap_isclear(cap_intersect(cred->cap_bset, mask)))
->>>>>>> +                  continue;
->>>>>>> +
->>>>>>> +          w = kmalloc_obj(*w, GFP_ATOMIC);
->>>>>>> +          if (!w) {
->>>>>>> +                  ret = -ENOMEM;
->>>>>>> +                  break;
->>>>>>> +          }
->>>>>>> +
->>>>>>> +          w->task = get_task_struct(thread);
->>>>>>> +          w->mask = mask;
->>>>>>> +          w->next = list;
->>>>>>> +          list = w;
->>>>>>> +  }
->>>>>>> +  rcu_read_unlock();
->>>>>>> +
->>>>>>> +  if (!ret) {
->>>>>>> +          new = prepare_creds();
->>>>>>> +          if (!new)
->>>>>>> +                  ret = -ENOMEM;
->>>>>>> +  }
->>>>>>> +
->>>>>>> +  if (ret) {
->>>>>>> +          while (list) {
->>>>>>> +                  next = list->next;
->>>>>>> +                  put_task_struct(list->task);
->>>>>>> +                  kfree(list);
->>>>>>> +                  list = next;
->>>>>>> +          }
->>>>>>> +          return ret;
->>>>>>> +  }
->>>>>>> +
->>>>>>> +  for (w = list; w; w = next) {
->>>>>>> +          next = w->next;
->>>>>>> +          init_task_work(&w->work, cap_bset_drop_work_fn);
->>>>>>> +          if (task_work_add(w->task, &w->work, TWA_SIGNAL)) {
->>>>>>> +                  put_task_struct(w->task);
->>>>>>> +                  kfree(w);
->>>>>>> +          }
->>>>>>> +  }
->>>>>>> +
->>>>>>> +  new->cap_bset = cap_drop(new->cap_bset, mask);
->>>>>>> +  commit_creds(new);
->>>>>>> +
->>>>>>> +  return 0;
->>>>>>> +}
->>>>>>> +
->>>>>>> +static int cap_prctl_drop_mask(unsigned long low, unsigned long high)
->>>>>>> +{
->>>>>>> +  kernel_cap_t mask = mk_kernel_cap((u32)low, (u32)high);
->>>>>>> +
->>>>>>> +  if (cap_isclear(mask))
->>>>>>> +          return 0;
->>>>>>> +
->>>>>>> +  if (!ns_capable(current_user_ns(), CAP_SETPCAP))
->>>>>>> +          return -EPERM;
->>>>>>> +
->>>>>>> +  return cap_bset_drop_process(mask);
->>>>>>> +}
->>>>>>> +
->>>>>>>  /**
->>>>>>>   * cap_task_prctl - Implement process control functions for this security module
->>>>>>>   * @option: The process control function requested
->>>>>>> @@ -1313,6 +1437,11 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
->>>>>>>    case PR_CAPBSET_DROP:
->>>>>>>            return cap_prctl_drop(arg2);
->>>>>>>
->>>>>>> +  case PR_CAPBSET_DROP_MASK:
->>>>>>> +          if (arg4 || arg5)
->>>>>>> +                  return -EINVAL;
->>>>>>> +          return cap_prctl_drop_mask(arg2, arg3);
->>>>>>> +
->>>>>>>    /*
->>>>>>>     * The next four prctl's remain to assist with transitioning a
->>>>>>>     * system from legacy UID=0 based privilege (when filesystem
->>>>>>> --
->>>>>>> 2.34.1
->>>>>
->>>>> --
->>>>> Best regards,
->>>>> Jinjie
+> Mean in µs bucketed by actual thread count (sample count in parentheses)
+> 
+> ## 8 vCPU (42 samples per point)
+> 
+> method	     8–15	16–31	      32–63	   64–95
+> baseline    3258.9(41)	6955.9(43)   10303.9(84)   14394.3(42)
+> dropbound   3356.3(41)	5048.1(43)   9914.3(84)	   16837.1(42)
+> SetProc	    3365.4(41)	6255.4(43)   10179.4(84)   16799.8(42)
+> SetProc-min 3485.0(41)	5603.9(43)   10533.2(84)   15146.8(42)
+> mask	    68.2(42)	92.3(42)     224.2(84)	   433.7(42)
+> 
+> ## 32 vCPU (21 samples per point)
+> 
+> method	      8–15	 16–31	       32–63	      64–95
+> baseline     8422.4(20)	 8491.8(22)   17814.2(42)    21612.6(21)
+> dropbound    5235.5(21)	 7568.9(21)   17350.8(42)    21205.5(21)
+> SetProc	     5540.8(21)	 8159.2(21)   17920.5(42)    22168.3(21)
+> SetProc-min  5582.8(20)	 7907.7(22)   15136.0(42)    22334.5(21)
+> mask	     114.6(21)	 181.8(21)    428.5(42)      684.7(21)
+> 
+> So IAB.SetProc is not an optimization. Like the gVisor baseline, it
 
--- 
-Best regards,
-Jinjie
+Oh, I could be wrong, but I didn't think Andrew meant that it was
+an optimization.  Rather, it was correct, and possibly complicated
+or fragile enough that it belongs more in userspace than kernel.
 
+Looking forward to seeing the updated design.
+
+> issues one PR_CAPBSET_DROP per capability on every thread
+> (syscall.AllThreadsSyscall); averaged over multiple repeated groups, it
+> is on the same order of magnitude as the baseline, or even slower.
+> 
+> > 
+> > On Tue, Sep 22, 2026 at 07:10:11PM -0700, Andrew G. Morgan wrote:
+> >> The https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/cap#IAB.SetProc
+> >> already handles this for the whole process. It can be run from main()
+> >> if you need it to happen early, and it will track down all of the
+> >> threads in the runtime.
+> >>
+> >> To Serge's point, I am also curious what benefit there is from doing
+> >> it more quickly. After all, this is pretty much a one-time function
+> >> request for any executable.
+> >>
+> >> FYI The "sendmail capabilities bug" reference is written up here:
+> >> https://sites.google.com/site/fullycapable/thesendmailcapabilitiesissue
+> >>
+> >> Cheers
+> >>
+> >> Andrew
+
+thanks,
+-serge
