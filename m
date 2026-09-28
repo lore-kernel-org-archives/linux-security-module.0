@@ -1,135 +1,193 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31A23AF666;
-	Mon, 28 Sep 2026 19:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A87D4EFFBC
+	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 19:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790623228; cv=none; b=booYWv8WKl8xMLMjYHTSxIfkS+M8xNwEbEXr97xA9pg4yJVld17yETnv+go7y68DQd+FHRFsdpZqOno/wlLMwXOq54yUP9ABySV32h1AalBlGYQMCQOJkzupE90aWRzF86PdMaafrX1XcrW3nWiIPj9ZtECaEVxfU50ldqcme+w=
+	t=1790623591; cv=none; b=JTpeUVYz9Qv70LBRiFgyMJLrZe8tfoJLSgLkxBMIzBWeSmcUUXJzvyvYaf2pKnHgvPX6f+ZOnJXXo+TAnlpqQinVE/HSmVdjFYD9IhSV1A8+ibRiMDy+DXsgL4tGbAsoPcXLbwKXse/hu8qCR8dcDJEJJhuklp9Zmt8RAFyO478=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790623228; c=relaxed/simple;
-	bh=3zEPkUFxOR09IdnXs7p5QQFfZrVevbRfZuoN0pz3I+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tdFVJTpUDBbeJBJnOkhOOxuXE4oZEGog96Uo4+E5ZMlBvYsY+WJw3dsIhtjHiLXU7LVk2U+h1SeU4ovqXyOEVjZWhk6HsUNExTRsxkzUve5JZzScV3uTgc5ich0S0rKH2SaI6Lp6DpukDyjIOmxMGjmeV3c/v+YYuoIXWi1OiH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RqFymikj; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1790623591; c=relaxed/simple;
+	bh=a/fVDOxXWPf4pRO+JMUIkEs0kESCcu/HaVc7rPzOchg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9RGiHY1LAxSSBMeE7JWQjz9aQ/t3tpTPefVIw0x5ZK5Mvpp4dxrVMtKHJacFW2imj5XO+AQPMZzoXQOn1sgLl67ultmCmtSstlBANG0VB1m7kf7pIGuX0LrOKtd9A4fuidFpE+SGQ8+bx0ZBytlJvys6hZSiJKAAx9PZfaW5dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sXM4jCYk; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RqFymikj"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=XBqyVMo6pWKAr13NYV/9DY4DwxVan3yzu41fmE1Qx6w=; b=RqFymikjtUZjzYg7puqAnn+sg3
-	61FRddqIeawfj9uM+vYWtCfo1ylwmmINy9FVZ/tC3YoBr4aJbIxEXtzk8tGX7VF962W5/ko1IE4pH
-	KonoVPFwRYCXr6IMzmkpDCSMyDSAZY/zqDxV/mCwdoNoAM5tXfSzkQUN3apsLc04f+dO2/wr/GN47
-	fslxlNodhFwrFldD91LdDL0Shf4oAvq9/kpLqsB1DAq9kpr0v0pi54xZnCxJ165Dj5JiEfHoGb14+
-	XqJsHdq9vLDUgWcjCxT3dZasZuSlJQzWrvwEoI6aKbB3bzok+wGAUIx0NeBWwrnl2M9jV0GUdDAJm
-	b5C3yInA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1xBGt9-00000001Pqt-0G3I;
-	Mon, 28 Sep 2026 19:19:47 +0000
-Message-ID: <99217c46-6ec4-4af6-ac14-18f814f86ba1@infradead.org>
-Date: Mon, 28 Sep 2026 12:19:44 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sXM4jCYk"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4htrrm2x2VzWj0;
+	Mon, 28 Sep 2026 21:26:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1790623575;
+	bh=CrjvvaHMWaKYxoFcBUB4DJe92VZuzwdQ8u7IVRkbMcU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sXM4jCYkfSMLVOJD3ZTes7bDu0d+mQkq46RD27THmJWjN2OLGRENiHtu/kk3q9MmY
+	 1rS3gQ42pIxSGI6Jri5E1rvadGfwYZ013Om7EwYKUsN0PhD4mOifCDvQNxdEVSmMKd
+	 jevpWMMN/ZmoE0TF9iizmsTOaz0QYQtwFwzl6pHE=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4htrrF6HTKzphQ;
+	Mon, 28 Sep 2026 21:25:48 +0200 (CEST)
+Date: Mon, 28 Sep 2026 21:25:44 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	Cai Xinchen <caixinchen1@huawei.com>, gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, corbet@lwn.net, skhan@linuxfoundation.org, rdunlap@infradead.org, 
+	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, dlemoal@kernel.org, 
+	hch@lst.de, axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, dhowells@redhat.com, code@tyhicks.com, linkinjeon@kernel.org, 
+	sj1557.seo@samsung.com, yuezhang.mo@sony.com, hirofumi@mail.parknet.co.jp, 
+	cel@kernel.org, jlayton@kernel.org, neil@brown.name, okorniev@redhat.com, 
+	Dai.Ngo@oracle.com, tom@talpey.com, miklos@szeredi.hu, amir73il@gmail.com, 
+	senozhatsky@chromium.org, chenxiaosong@chenxiaosong.com, zohar@linux.ibm.com, 
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	stephen.smalley.work@gmail.com, omosnacek@gmail.com, casey@schaufler-ca.com, nanx95726@gmail.com, 
+	djwong@kernel.org, daniel@iogearbox.net, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, driver-core@lists.linux.dev, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, exfat@lists.linux.dev, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, xiujianfeng@huawei.com, 
+	lujialin4@huawei.com
+Subject: Re: [PATCH RFC -next 00/12] landlock: Add READ_METADATA and
+ WRITE_METADATA access rights
+Message-ID: <20260928.eithae8Oov4p@digikod.net>
+References: <20260924104831.1081137-1-caixinchen1@huawei.com>
+ <araxO4ze0KZBz756@suesslenovo>
+ <20260926.255b951d3013@gnoack.org>
+ <arqcbjWLN1CLkL_Y@suesslenovo>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/12] kexec: Expose the crash memaction bitmap in
- debugfs
-To: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He
- <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Pratyush Yadav <pratyush@kernel.org>, Dave Young <ruirui.yang@linux.dev>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
- David Hildenbrand <david@kernel.org>, Vlastimil Babka <vbabka@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <brendan.jackman@linux.dev>,
- Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
- Benjamin Marzinski <bmarzins@redhat.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Mimi Zohar <zohar@linux.ibm.com>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- "Liam R. Howlett" <liam@infradead.org>, Lorenzo Stoakes <ljs@kernel.org>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
- Lance Yang <lance.yang@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- kexec@lists.infradead.org, driver-core@lists.linux.dev, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, dm-devel@lists.linux.dev,
- linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
- keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <20260928-crash-memaction-upstream-20260921-v3-0-e511e9ee2329@jaseg.de>
- <20260928-crash-memaction-upstream-20260921-v3-12-e511e9ee2329@jaseg.de>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260928-crash-memaction-upstream-20260921-v3-12-e511e9ee2329@jaseg.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <arqcbjWLN1CLkL_Y@suesslenovo>
+X-Infomaniak-Routing: alpha
 
+On Mon, Sep 28, 2026 at 01:13:35PM -0400, Justin Suess wrote:
+> On Sat, Sep 26, 2026 at 09:56:28AM +0200, Günther Noack wrote:
+> > Hello!
+> > 
+> > On Fri, Sep 25, 2026 at 02:03:05PM -0400, Justin Suess wrote:
+> > > On Thu, Sep 24, 2026 at 06:48:19PM +0800, Cai Xinchen wrote:
+> > > > This series adds two new Landlock filesystem access rights,
+> > > > LANDLOCK_ACCESS_FS_READ_METADATA and LANDLOCK_ACCESS_FS_WRITE_METADATA,
+> > > > which control access to file and directory metadata such as inode
+> > > > attributes (mode, ownership, timestamps), extended attributes and POSIX
+> > > > ACLs.  It picks up the work from the "landlock: add chmod and chown
+> > > > support" series [1] and follows the coarse-grained grouping discussed in
+> > > > that thread [2]: instead of separate chmod/chown rights, metadata
+> > > > operations are grouped into one read and one write right.
+> > > > 
+> > > > Landlock evaluates access rights on a per-path basis, but the metadata
+> > > > related LSM hooks (inode_getattr, inode_setattr, inode_setxattr,
+> > > > inode_getxattr, inode_listxattr, inode_removexattr, inode_set_acl,
+> > > > inode_get_acl, inode_remove_acl) only receive the dentry of the accessed
+> > > > object.  Patches 1-7 therefore first pass struct path instead of dentry
+> > > > through the metadata-related VFS helpers and LSM hooks.  This is a pure
+> > > > refactoring with no behavior change, split so that every patch builds
+> > > > and works on its own:
+> > > >
+> > > I like these patches, but is the ability to read metadata already
+> > > sorta controlled by LANDLOCK_ACCESS_FS_READ_DIR on the parent
+> > > directory?
+> > > 
+> > > The one case I see this being different is:
+> > > 
+> > > 1. if you wanted to grant read access to the file, but not metadata
+> > > read access, but I can't think of any usecase for being able to read
+> > > the contents of a file, but not the metadata. (see below)
+> > > 
+> > > 2. If you had the absolute path already and didn't need READ_DIR.
+> > > 
+> > > I see introducing this READ_METADATA as causing potential
+> > > hard-to-diagnose issues.
+> > > 
+> > > Say you handle READ_METADATA and READ_FILE, but only grant READ_FILE.
+> > > 
+> > > The program can technically open the file with the READ_FILE permission,
+> > > but it may error out because the stat() on it beforehand failed.
+> > > It's pretty common for programs to do that kind of thing (stat before
+> > > open), like for checking for config files (strace bash and you see it
+> > > stat .profile, /etc/profile)
+> > > 
+> > > There may be other bugs, because being able to set permissions to read
+> > > a file *but not read it's metadata* isn't possible currently in posix
+> > > acl and userspace may not work well if that assumption no longer holds.
+> > >
+> * posix acl and linux DAC.
+> 
+> > > So maybe WRITE_METADATA is good enough?
+> > 
+> > The existing use cases are the combinations of (a) READ_DIR
+> > allowed/denied and (b) READ_METADATA allowed/denied.  Because these
+> > two access rights overlap slightly, it seems likely that for a given
+> > directory or file, users will want to either grant both, or deny both.
+> > 
+> > At the moment, where the (not yet existing) READ_METADATA is
+> > implicitly always allowed, the problematic case is the one where the
+> > Landlock user wants to deny READ_DIR, but where much of the same
+> > metadata is still available through stat() and the various
+> > get-attribute syscalls.  (c.f. the warning box in the Landlock docs
+> > [1])
+> > 
+> > In my view the READ_METADATA right closes a gap that READ_DIR left
+> > open (which is also potentially surprising to callers if they did not
+> > read the docs closely).  Also, if its implementation is symmetric to
+> > WRITE_METADATA, I feel that it's worth having it in the same patch
+> > set.
+> > 
+> > –Günther
+> > 
+> > P.S.: I know, even after we can control stat(), there are likely ways
+> > to infer the presence of a file by observing Landlock error codes.
+> > This would be nice to fix as well, but is harder to do without
+> > controlling the path walk itself [2].  But also, the fact that this is
+> > currently not controllable is not an excuse for leaving READ_METADATA
+> > open IMHO.
+> >
+> I'm still sort of concerned about the case where read access is allowed,
+> but metadata isn't, due to how many applications will not cleanly handle
+> such an unexpected condition. You can reproduce this with a seccomp
+> policy forbidding stat().
 
+I agree that wrong policies could cause userspace to break, but that the
+same for any kind of access control/restriction (e.g. your seccomp
+example).
 
-On 9/28/26 10:18 AM, Jan Sebastian Götte wrote:
-> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> index 3cdc8d459ac0..b5380e16bfaf 100644
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -204,4 +204,18 @@ config CRASH_MEMACTION
->  
->  	  If unsure, say N.
->  
-> +config CRASH_MEMACTION_DEBUGFS
-> +	bool "Expose the crash memaction bitmap in debugfs"
-> +	depends on CRASH_MEMACTION && DEBUG_FS
-> +	help
-> +	  Allow reading the live crash_memaction bitmap through
-> +      /sys/kernel/debug/crash_memaction/. The bitmap is used when
-> +      CRASH_MEMACTION is set and when a crash_memaction cmdline param is present
-> +      to tell an eventual kdump kernel about the use of certain memory pages.
-> +
-> +      Note that this is a debug interface only that gives no guarantees
-> +      whatsoever on memory consistency.
-> +
-> +	  If unsure, say N.
-> +
->  endmenu
+This series fill a gap which is to forbid access to metadata.  As for
+other kind of access rights, this should be use wisely, and (user space)
+libraries can help.
 
-Please adhere to kernel coding style for Kconfig files:
+To be able to deny reading or modifying file's attributes, following the
+Landlock model means to "handle" the related access rights, and
+potentially to add exceptions to that with rules.
 
-10) Kconfig configuration files
--------------------------------
+Your concern is legitimate and the documentation should warn about this
+case (i.e. most of the time, users should tie READ_FILE with
+READ_METADATA...).
 
-For all of the Kconfig* configuration files throughout the source tree,
-the indentation is somewhat different.  Lines under a ``config`` definition
-are indented with one tab, while help text is indented an additional two
-spaces.
+> 
+> Would it make sense to have the existing READ rights
+> (READ_DIR/READ_FILE) imply READ_METADATA on the files/directories 
+> if READ_METADATA is handled? Reading a file's contents should always
+> imply that you can read the metadata.
 
--- 
-~Randy
+That would make the kernel code more complex, especially wrt nested
+domains.  However, user space libraries/configurations can make that the
+default.  Anyway, if user space break with this kind of too strict
+policy, I guess it would be quite loud and then fixed quickly.
 
+Also, some tailored user space programs may not need to read metadata.
+
+> 
+> Thanks,
+> Justin
+> > [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+> > [2] https://github.com/landlock-lsm/linux/issues/9
+> 
