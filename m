@@ -1,145 +1,98 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321F64E236B
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 15:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0CF4E8DF0
+	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 15:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790610607; cv=none; b=A03Pea6vCQGxyujw+Gp1JFEv/1XcesUc6xpnHLtwRmCS+ZxLhyCYZsYOHN2OAV0ILGwtVckh5TnBOFjckYDACrKKbXknw81KxaM4LwD6qp3hBCmrElSJmScI3v/Mkb/kzodmL2g39NYl2CQN8CHd5zAijLoL4mEURqdcsSYKdQE=
+	t=1790611074; cv=none; b=qyiifbgk795gkEeL0AxFUzmEyH1Y2DQ/cdt3CQRXNaXZgac7fmahXnKGmj82ngulyGeSCCWrkIJixIEUWyxNu90YmQUuI6ntuXR7+lPewRtTG6AFesGCjyIFUoXqWHTlLZP3Q3Iz5zVxRzVvsTyIvhfMdyzrB96zTzw7OyBNJD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790610607; c=relaxed/simple;
-	bh=eK/eJ3hguVN3HC5ZratOGBwPh0MmUBHZAM2stBK3p20=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QPk1x60RI7LvkSHPCo9xF6mcNhC4+YT6WsEpbmU0yTk5vix61Zwaui14tAocFKI/UkH/RSxtLtVPC6B1itpfUXMZ/vXNL63A7DRKrEP+DYGrEYTvx4dlLXpD92aOmKjKgeY7oSQJucBQOz3t3VChVGaltMYuD+o/RjRjE0CprBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuTsTw5F; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790611074; c=relaxed/simple;
+	bh=6RkanIU8PVNUWTxE1K3cu7f8GzkfvZEBor6PzaFNVPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNUEcRh/6k4bOdNQ6XuX8ro5kv1xiDas3FZcVK7Fl5WIFLetmFXxM5I14nIzUQFhcoYop61DkMQh0+DUse7f5k0Z5Xx89a9NMpWnItkospOAKINtsJlW9hmQx6zgTL3OUcYHPjofmjwDHQpUlIHr7YKQH8gjTex2sz5zZnMadEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKH7K+3w; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuTsTw5F"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49ffa15f67fso11714045e9.2
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 08:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790610604; x=1791215404; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=TUupXe47hKEwtrJAakpSRuAqpv3FGIO9UcE3gl7qRpw=;
-        b=GuTsTw5FHOlnCxMbllfdMQRs2AnHKkLQmOx3jmsPoKeYSnOd9RiAwvSIWFBP4te9UK
-         Q7/pP2NIfSvfuSDzyUmq8B8gQki3oe9fyZHfjRDWSRT/Jfx+NBeOzWnNBdRZBIMZAuG7
-         MIOUAS4qOk/tfUEPEiqonEIJaM0AfxnwDnjIRZ7FqzhxC53P48nPPvjFQQRTN4S4PvC4
-         0h2ygoHyJfuYlojDMwWk9qEeBWO7B19sQkeYPQuqpI/Nw14yeFO9wX2IAehQPPhaCQtY
-         8gnek4jdQqwOWWW5VwcdsAC/D1XTplq+UpONaHcpHUOa8pwVmJB5/h2btVeXpEbvroQ5
-         ZwDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790610604; x=1791215404;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TUupXe47hKEwtrJAakpSRuAqpv3FGIO9UcE3gl7qRpw=;
-        b=IUSQVTgyaCRIufpsMZfx1NofX2Folhfi/REIPNFrnVJXBTBsV61EdZbBXFaMOa2OLo
-         urtt2qADiyZn0liO4vJ0f/LLH+5ppLxb8pobb2JMKz+3RwliDWRHddoAeVU/dDgjq3ZN
-         WhkyR0H6AO2KaEuixD9Twa38W1r9xN899h4hDa765E0+yp55qNOgJJXd6PKGs5WUNHqw
-         vK2LRZijQjoYkBXyN3KEAV5g9emCanao2Uh04MOOEj3mYg3PpPSidUJb7QGyemEUjDdB
-         wRM2bXGo34LdUFxJlNSXcbOxAdcp0DuwFXSizdSStkYC5GjIbRMeD99kLluL3bI9rBBv
-         xVOw==
-X-Forwarded-Encrypted: i=1; AKwUvBz+7DNA0igufsmz47LEB46jE6+6mYKMF0Oav5MeL80KO1jvxtMwsqZCD2irckpVW1cjUGiOZ/jLMquJl0c0nyE1Ds2YYcs=@vger.kernel.org
-X-Gm-Message-State: AFuF++n0eVGumcIB5aoHNLWB+0/vicyNH+/Fv1muJR+rEtGBzEDjkylr
-	5yWKFpnFIessqJsJL+Ok9Z9j7IW17dRiJuMDMtfnz8wbTHVn+URxr5G4
-X-Gm-Gg: AYBFou3WDiRMG2494d49bwaTC1k7qSaFc+CUgt8Dth12Pyb4CE6SrqCFevExo3SXKIE
-	/F8FXgoXicpAKeKK0yB1udFRo7LZIAtaCfakZ5xvStI5BG6NtCAyDS9WrJu4pT9jmmKJT3bO2ck
-	F36fRcwpH4pg6TM2e9l9TMqSYmZui6POorDNDu57lYM1PLPB/o3kv9uFhgbIR6R4mkaBZbw4eOo
-	jwgQtT8jvKhG9dKI6bI0Y52yknfLkPGrcQNkcn1Zg2j416zLb9ZJDWkchoBUyJNRPIPmzzDdaoS
-	rSh6QGX3f3rgDSBt8KwJ2prozAxa8HkcDT/cApAI/9cJ4LWtn6Yne32Wxb4n74kNXt5FUToXFAp
-	INun/w5wIck+8/A9wtcWh09RwfZlvrGZAqLiuMJgToHV+kt0Jc+6fgrsEHJXscszi4XJ5lcDc0f
-	Qd5cSVjGqFnMEXqVQmKZG2Ov6QqeTBp8vgv9X5wNS6PZzkCe/7+p2+2jPTYGSl4cZXlTLz+5V8s
-	ZHsLNWeX4vIU69MjXRa
-X-Received: by 2002:a05:600d:6402:10b0:4a0:c01:1902 with SMTP id 5b1f17b1804b1-4a00c011a5fmr9990865e9.2.1790610603593;
-        Mon, 28 Sep 2026 08:50:03 -0700 (PDT)
-Received: from penguin-ubuntu.lan ([2a00:23c6:6405:9301:5b51:b317:1deb:4845])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a354c47sm29772532f8f.15.2026.09.28.08.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2026 08:50:02 -0700 (PDT)
-From: Oxana Kharitonova <webprosto@gmail.com>
-To: webprosto@gmail.com
-Cc: gnoack3000@gmail.com,
-	gnoack@google.com,
-	jmorris@namei.or,
-	landlock@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	mic@digikod.net,
-	oxana@cloudflare.com,
-	paul@paul-moore.com,
-	serge@hallyn.com,
-	wangyan01@kylinos.cn,
-	utilityemal77@gmail.com
-Subject: Re: [PATCH 0/6] landlock: Add POSIX message queue scoping
-Date: Mon, 28 Sep 2026 16:47:34 +0100
-Message-ID: <20260928155002.742984-1-webprosto@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260914141156.258282-1-webprosto@gmail.com>
-References: <20260914141156.258282-1-webprosto@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKH7K+3w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E27B1F000FF;
+	Mon, 28 Sep 2026 15:57:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790611073;
+	bh=hmQfzqKBzpuF1e9TDzlCXiPdDH8rd6Ubz85gn3v4kGg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=bKH7K+3wX23e4ItVQihBkkVik3pLCRXuJTMAd8HMnVX3YXjyAJqVJLUKLiybE5o7C
+	 ZpxwT+RzRbV4YAaD9iG7Q/ZBw11zcaz1qCy4yEka2nHvR2+a7zzK9ZbrTTdgv9+epc
+	 9ZxtOFIP+MtdBir45yoc+I61CzNmSu9gFtGH5WVuqzcMULadQKaC5U9mjTI0UYRVNM
+	 YY8ZnE3wZa7wtXBNIYTfW0HyMZ6u4pgSGE06yfINXg3BlUJMD65DUvSaT4SwZ6HODj
+	 2SSHFKO8zZTUPlIZQ0Cbinclj38kQ74w7ihuLPx7kJ5CD/MncuHdYjxRh4wU+A7ZdT
+	 oSr8mvgO1/iuA==
+Message-ID: <9699317a-df42-4ae0-986c-5602e66ae773@kernel.org>
+Date: Mon, 28 Sep 2026 08:57:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: name the wufan/ipe next branch
+To: Matthias Goergens <matthias.goergens@gmail.com>
+Cc: linux-security-module@vger.kernel.org
+References: <20260926055223.3678216-1-matthias.goergens@gmail.com>
+Content-Language: en-US
+From: Fan Wu <wufan@kernel.org>
+In-Reply-To: <20260926055223.3678216-1-matthias.goergens@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Günther!
 
-As promissed, I'm following up with a more complete answer.  
-
-On 14/09/2026 15:10, Oxana Kharitonova wrote:
-> On 21/08/2026 09:46, GÃ¼nther Noack wrote:
->> What *might* still be interesting to restrict though: While mq_open()
->> checks the READ_FILE and WRITE_FILE rights, it checks none of the
->> LANDLOCK_ACCESS_FS_MAKE_* rights -- the message queue gets still
->> created, even when the mq_open() is denied and returns with an error.
-
-I revisited my changes and noticed the gap you mentioned regarding
-mqueue creation. Thanks for highlighting it. I'll address it in v2.
-
->> To expand on Justin's comment in [1] -- it feels that there are maybe
->> still some gaps in the "lifecycle management" of these message queues
->> that might be worth thinking systematically about, because both
->> mq_unlink() and the creation of the message queue entries are
->> currently apparently not restrictable yet?  It makes me wonder whether
->> hijacking of message queue names (creating same-named queues in other
->> Landlock domains) is a problem then?  Do you have thoughts on this?
+On 9/25/2026 10:52 PM, Matthias Goergens wrote:
+> The T: entry for INTEGRITY POLICY ENFORCEMENT (IPE) names wufan/ipe
+> without a branch.  The repository's HEAD points to branch master, which
+> mainline already contains.  linux-next merges the next branch of this
+> repository (Next/Trees).  Name that branch in the entry.
 > 
-> I need to think about it more and check how the mq_unlink works, taking
-> into account the comment from Justin and Mickaël.
-> I'll follow up with a more complete answer.
+> Signed-off-by: Matthias Goergens <matthias.goergens@gmail.com>
+> ---
+> This is part of a cleanup of all T: entries whose repository HEAD is
+> not where development happens: one patch per repository, sent in small
+> batches.  The plan is at [1], and why it goes out in batches at [2].
+> 
+> [1] https://lore.kernel.org/all/20260924033200.3615554-1-matthias.goergens@gmail.com/
+> [2] https://lore.kernel.org/all/20260924101844.2403008-1-matthias.goergens@gmail.com/
+> 
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 140eafcbbd78..fc42b68e0718 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12960,7 +12960,7 @@ INTEGRITY POLICY ENFORCEMENT (IPE)
+>  M:	Fan Wu <wufan@kernel.org>
+>  L:	linux-security-module@vger.kernel.org
+>  S:	Supported
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git next
+>  F:	Documentation/admin-guide/LSM/ipe.rst
+>  F:	Documentation/security/ipe.rst
+>  F:	scripts/ipe/
+> 
+> base-commit: 62f4c998b297cf233997a2b4cd6fc2d2df0319c9
 
-Regarding the lifecycle management of POSIX message queues, I haven’t
-found a good solution yet. I experimented with test programs, but the
-main constraints come from the POSIX message-queue semantics. A queue is
-independent of its creator’s lifetime and remains until mq_unlink() is
-called explicitly and all open descriptors are closed. Its name must be
-unique within the IPC namespace, but the same name can be reused after
-the existing queue has been unlinked.
+Hi Matthias,
 
-If mq_unlink() is restricted for a process, a stale queue could remain
-and that process might be unable to clean it up. This seems to be the
-concern Mickaël raised in [2]. However, Landlock restrictions apply to
-the restricted process or domain, rather than globally to the queue, so
-another process might still be able to access or unlink it if its
-permissions allow. Therefore, I don’t currently see how to restrict this
-correctly through a Landlock policy, other than documenting the
-limitation. Let me know if you have other thoughts or I'm missing
-something.
+From the related discussion, this looks intended to stop Sashiko from
+picking a stale tree as its baseline.
 
->>
->> Thanks,
->> –Günther
->>
->> [1] https://lore.kernel.org/all/amKDYoOSvHMzVbKX@suesslenovo/
+For IPE, I only update next when there are patches queued, so it can
+remain unchanged for several releases. Contributors should normally
+base their work on Linus' master rather than next. Naming next here
+could therefore lead to the same stale-baseline problem.
 
-Thanks,
-Oxana
+I also looked at your Sashiko PR. When the default HEAD is a strict
+ancestor of Linus' master, would Sashiko use Linus' master instead?
+If so, that's the behavior we want for IPE, and there would be no
+need to add next here.
 
-[2] https://lore.kernel.org/all/20260728.Heephie1tai3@digikod.net/
+Fan
