@@ -1,98 +1,114 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0CF4E8DF0
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 15:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C4A4F3901
+	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 17:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790611074; cv=none; b=qyiifbgk795gkEeL0AxFUzmEyH1Y2DQ/cdt3CQRXNaXZgac7fmahXnKGmj82ngulyGeSCCWrkIJixIEUWyxNu90YmQUuI6ntuXR7+lPewRtTG6AFesGCjyIFUoXqWHTlLZP3Q3Iz5zVxRzVvsTyIvhfMdyzrB96zTzw7OyBNJD0=
+	t=1790614815; cv=none; b=HNPUe7ec3X0X7KjzwGoky907fL0bQRV4Xtr0NxxDfLx0Wuv8JtAiaeEE1Z8VvEql/PEDUrtRl/WYf3qBea/39V1QQSF6fJ8R6sKtcMXUWl2+ffmcTRje+YvpYekH1aQqwqjdD2rJ4uw65oRXWHEklMB9CSB0HmwrS6YAqprc2c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790611074; c=relaxed/simple;
-	bh=6RkanIU8PVNUWTxE1K3cu7f8GzkfvZEBor6PzaFNVPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNUEcRh/6k4bOdNQ6XuX8ro5kv1xiDas3FZcVK7Fl5WIFLetmFXxM5I14nIzUQFhcoYop61DkMQh0+DUse7f5k0Z5Xx89a9NMpWnItkospOAKINtsJlW9hmQx6zgTL3OUcYHPjofmjwDHQpUlIHr7YKQH8gjTex2sz5zZnMadEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKH7K+3w; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790614815; c=relaxed/simple;
+	bh=aNjWnh0AOl3s0eUeng1gZliNevLqt7fbAwztduu9NnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZlyCPkoJVQzsLx17Yy7uwJUw7pNT1ih0Z4sR1dA68iuN1ju0y3X6fpQhJEoHMNW1wrC262ywp136FSVs6vdFy9yxgp2Aq21rrg4JWnQRAp6pcU9E3VwG3z9In+GGR63+5h049Mr5e2M0iZM1XoeUlFZuTCJ5rXMU29sZZoI6HCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FATkbUle; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKH7K+3w"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E27B1F000FF;
-	Mon, 28 Sep 2026 15:57:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FATkbUle"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F081F0089C
+	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 17:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790611073;
-	bh=hmQfzqKBzpuF1e9TDzlCXiPdDH8rd6Ubz85gn3v4kGg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=bKH7K+3wX23e4ItVQihBkkVik3pLCRXuJTMAd8HMnVX3YXjyAJqVJLUKLiybE5o7C
-	 ZpxwT+RzRbV4YAaD9iG7Q/ZBw11zcaz1qCy4yEka2nHvR2+a7zzK9ZbrTTdgv9+epc
-	 9ZxtOFIP+MtdBir45yoc+I61CzNmSu9gFtGH5WVuqzcMULadQKaC5U9mjTI0UYRVNM
-	 YY8ZnE3wZa7wtXBNIYTfW0HyMZ6u4pgSGE06yfINXg3BlUJMD65DUvSaT4SwZ6HODj
-	 2SSHFKO8zZTUPlIZQ0Cbinclj38kQ74w7ihuLPx7kJ5CD/MncuHdYjxRh4wU+A7ZdT
-	 oSr8mvgO1/iuA==
-Message-ID: <9699317a-df42-4ae0-986c-5602e66ae773@kernel.org>
-Date: Mon, 28 Sep 2026 08:57:53 -0700
+	s=k20260515; t=1790614814;
+	bh=aNjWnh0AOl3s0eUeng1gZliNevLqt7fbAwztduu9NnU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=FATkbUleVm8J6SK8B6WrYRtkZiBUSfQcPdIiz+umpBT8tc5HlMUIfbm0E7WUBg8Mn
+	 uUg5sekK9oDpiYfiN54M1dXDmnF9FOpXK0o7C3w2EHcRSTYNpf+C6yf8VDfuEBo8np
+	 Xb1vs+fbmhE2LYrcTbKnYcX63IpAv3FL3CK01bh+7oJottb2ZNDibTPwDRfz6DX/ZK
+	 KNUvREaPPfsKkKV8LGvg2Fwl5sjtzCjomy52prJMm7Fymz5hL3Hduve2JR7XP7gKEi
+	 QEF3Gcug0aRNDEF2GMVw4SAcFw/NyX9cueTx813LSZ+C5LHUL2emFYZhBNsaFLYfin
+	 8XlAN6M7hmHLw==
+Received: by mail-qk2-f40.google.com with SMTP id af79cd13be357-93c61451de5so154903985a.2
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 10:00:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByP2lMymvy9I74bvxtiOkrkOfMM9LohnXvP/eVIxaglKsQEm57q7/GFdJZafbBDAxQJZW5O8p5+QMrL9KsuvTq+3dCEvB0=@vger.kernel.org
+X-Gm-Message-State: AFuF++lgLCT//qyPHwoRBv73LD3o6hq13fk/PIpXW8fKvSNDDmLI9Ntw
+	W/YYXMRMOun/BI2J0LxMaDNIL2FOf7P1GCrRjclB5WKHQhA4zbiacnqfmLUEpfT0N2KcNRyS7A4
+	R6sN7G5SHp71hVrvCOdNTkZU6hT+dmf0=
+X-Received: by 2002:a05:620a:4050:b0:937:5ab5:53f7 with SMTP id
+ af79cd13be357-93c43dc8b4fmr2164543285a.43.1790614813372; Mon, 28 Sep 2026
+ 10:00:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: name the wufan/ipe next branch
-To: Matthias Goergens <matthias.goergens@gmail.com>
-Cc: linux-security-module@vger.kernel.org
-References: <20260926055223.3678216-1-matthias.goergens@gmail.com>
-Content-Language: en-US
-From: Fan Wu <wufan@kernel.org>
-In-Reply-To: <20260926055223.3678216-1-matthias.goergens@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260706235053.4104951-1-song@kernel.org> <CAPhsuW7E-mW5CvmSXjUsc1GBjvgpy=pnaYOzTJsLXDvx8+RMJQ@mail.gmail.com>
+ <20260928-hinein-lacke-nachfahren-45ac39a36146@brauner> <CAHC9VhRPd8z=67=RWM-0DqjTXysk75FtF=haY9-Vv1oGcX1PAg@mail.gmail.com>
+In-Reply-To: <CAHC9VhRPd8z=67=RWM-0DqjTXysk75FtF=haY9-Vv1oGcX1PAg@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 28 Sep 2026 10:00:00 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7iFP4Y6C1ZhTvtEgTzgKjnpF9+8YfVg4o3P4BHEnR+LA@mail.gmail.com>
+X-Gm-Features: AclHuK_nonVI-hneqRocC_bdGS7S6tjPJjqMlAvwButNtrovBaChNzu1f_vNOHQ
+Message-ID: <CAPhsuW7iFP4Y6C1ZhTvtEgTzgKjnpF9+8YfVg4o3P4BHEnR+LA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] lsm: Replace security_sb_mount with granular mount hooks
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, jmorris@namei.org, serge@hallyn.com, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, john.johansen@canonical.com, 
+	stephen.smalley.work@gmail.com, omosnace@redhat.com, mic@digikod.net, 
+	gnoack@google.com, takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	herton@canonical.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Christian and Paul,
 
-On 9/25/2026 10:52 PM, Matthias Goergens wrote:
-> The T: entry for INTEGRITY POLICY ENFORCEMENT (IPE) names wufan/ipe
-> without a branch.  The repository's HEAD points to branch master, which
-> mainline already contains.  linux-next merges the next branch of this
-> repository (Next/Trees).  Name that branch in the entry.
-> 
-> Signed-off-by: Matthias Goergens <matthias.goergens@gmail.com>
-> ---
-> This is part of a cleanup of all T: entries whose repository HEAD is
-> not where development happens: one patch per repository, sent in small
-> batches.  The plan is at [1], and why it goes out in batches at [2].
-> 
-> [1] https://lore.kernel.org/all/20260924033200.3615554-1-matthias.goergens@gmail.com/
-> [2] https://lore.kernel.org/all/20260924101844.2403008-1-matthias.goergens@gmail.com/
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 140eafcbbd78..fc42b68e0718 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12960,7 +12960,7 @@ INTEGRITY POLICY ENFORCEMENT (IPE)
->  M:	Fan Wu <wufan@kernel.org>
->  L:	linux-security-module@vger.kernel.org
->  S:	Supported
-> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git next
->  F:	Documentation/admin-guide/LSM/ipe.rst
->  F:	Documentation/security/ipe.rst
->  F:	scripts/ipe/
-> 
-> base-commit: 62f4c998b297cf233997a2b4cd6fc2d2df0319c9
+Thanks for your replies.
 
-Hi Matthias,
+On Mon, Sep 28, 2026 at 8:46=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Mon, Sep 28, 2026 at 10:13=E2=80=AFAM Christian Brauner <brauner@kerne=
+l.org> wrote:
+> > On Thu, Jul 23, 2026 at 11:19:30AM -0700, Song Liu wrote:
+> > > Hi Christian and folks,
+> > >
+> > > Could you please help review this set? Does this set address
+> > > concerns from earlier versions?
+> >
+> > I just realized something while looking at this. This doesn't cover the
+> > new mount api at all fsopen, fsconfig, fsmount, fspick, open_tree,
+> > open_tree_attr and mount_setattr. Without this the series is not very
+> > useful imho.
 
-From the related discussion, this looks intended to stop Sashiko from
-picking a stale tree as its baseline.
+Yes, I am fully aware that this does not cover the new mount APIs. I think
+those are orthogonal to the optimization here. This series is very useful
+without covering the new APIs. Users from multiple companies have
+repeatedly requested this change. ([1] and users requested this set).
 
-For IPE, I only update next when there are patches queued, so it can
-remain unchanged for several releases. Contributors should normally
-base their work on Linus' master rather than next. Naming next here
-could therefore lead to the same stale-baseline problem.
+If we can land this set without covering the new APIs, I am more than
+happy to draft new patch set that covers the new APIs as a follow-up
+work. Therefore, could you please review this set as-is, and see whether
+we can land it without the orthogonal work covering the new mount APIs?
 
-I also looked at your Sashiko PR. When the default HEAD is a strict
-ancestor of Linus' master, would Sashiko use Linus' master instead?
-If so, that's the behavior we want for IPE, and there would be no
-need to add next here.
+> Thanks Christian.
+>
+> Song, I'm still open to reworking the LSM mount hooks, but any rework
+> should really take into account everything.
 
-Fan
+There is another question here. These new hooks do not have any in-tree
+user at the moment. This appears to violate the "New LSM Hooks" policy
+in [2]. Could you please give more specific guidance on this?
+
+Do we need at least one in-tree user hook that uses the new mount APIs?
+Or will we make an exception for these new hooks?
+Or will we revise the "New LSM hooks" policy to allow reasonable hooks
+without an in-tree user?
+
+Thanks,
+Song
+
+[1] https://lore.kernel.org/all/20241231014632.589049-1-enlightened@chromiu=
+m.org/
+[2] https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-l=
+sm-hooks
