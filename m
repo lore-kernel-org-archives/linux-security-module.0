@@ -1,114 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C4A4F3901
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 17:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB544F3919
+	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 17:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790614815; cv=none; b=HNPUe7ec3X0X7KjzwGoky907fL0bQRV4Xtr0NxxDfLx0Wuv8JtAiaeEE1Z8VvEql/PEDUrtRl/WYf3qBea/39V1QQSF6fJ8R6sKtcMXUWl2+ffmcTRje+YvpYekH1aQqwqjdD2rJ4uw65oRXWHEklMB9CSB0HmwrS6YAqprc2c8=
+	t=1790615206; cv=none; b=QiEWqP4lpIvzmV2HGiNxDj3lUM76DU58JhPZcubLcPdsJgACAO0QRb6d1DFcrl4vJcdOBJC28zEcZzCk69GB42stcw9kgCBncA5pyfoy5EAesZgU4PQbQzwoNoKfHiBhUBec7/qA3N5QOkqo+XUmtRluPGh0lwRQ5vgkJTIfFWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790614815; c=relaxed/simple;
-	bh=aNjWnh0AOl3s0eUeng1gZliNevLqt7fbAwztduu9NnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZlyCPkoJVQzsLx17Yy7uwJUw7pNT1ih0Z4sR1dA68iuN1ju0y3X6fpQhJEoHMNW1wrC262ywp136FSVs6vdFy9yxgp2Aq21rrg4JWnQRAp6pcU9E3VwG3z9In+GGR63+5h049Mr5e2M0iZM1XoeUlFZuTCJ5rXMU29sZZoI6HCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FATkbUle; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790615206; c=relaxed/simple;
+	bh=uChUTreZM9DjWLtWdqF97wlSLIW9onV+Eq5lCV7/kDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pO6Z7dVT2GYxA/74+/3esZO6pNBgFVuV3oXzgahD12Tp2VUX9WK6Er64BRsXvQyAMji+G/XQ1Ra0kCGP7mx7eINkcJ/8c6iyRwH+Duu2egj6Bshz76UMWZJm1d8femAxScX53pmM8cQkHtbMZacvJvRWyRbiq8xs/yekXEQODqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJtoPnSc; arc=none smtp.client-ip=74.125.227.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FATkbUle"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F081F0089C
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 17:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790614814;
-	bh=aNjWnh0AOl3s0eUeng1gZliNevLqt7fbAwztduu9NnU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=FATkbUleVm8J6SK8B6WrYRtkZiBUSfQcPdIiz+umpBT8tc5HlMUIfbm0E7WUBg8Mn
-	 uUg5sekK9oDpiYfiN54M1dXDmnF9FOpXK0o7C3w2EHcRSTYNpf+C6yf8VDfuEBo8np
-	 Xb1vs+fbmhE2LYrcTbKnYcX63IpAv3FL3CK01bh+7oJottb2ZNDibTPwDRfz6DX/ZK
-	 KNUvREaPPfsKkKV8LGvg2Fwl5sjtzCjomy52prJMm7Fymz5hL3Hduve2JR7XP7gKEi
-	 QEF3Gcug0aRNDEF2GMVw4SAcFw/NyX9cueTx813LSZ+C5LHUL2emFYZhBNsaFLYfin
-	 8XlAN6M7hmHLw==
-Received: by mail-qk2-f40.google.com with SMTP id af79cd13be357-93c61451de5so154903985a.2
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 10:00:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByP2lMymvy9I74bvxtiOkrkOfMM9LohnXvP/eVIxaglKsQEm57q7/GFdJZafbBDAxQJZW5O8p5+QMrL9KsuvTq+3dCEvB0=@vger.kernel.org
-X-Gm-Message-State: AFuF++lgLCT//qyPHwoRBv73LD3o6hq13fk/PIpXW8fKvSNDDmLI9Ntw
-	W/YYXMRMOun/BI2J0LxMaDNIL2FOf7P1GCrRjclB5WKHQhA4zbiacnqfmLUEpfT0N2KcNRyS7A4
-	R6sN7G5SHp71hVrvCOdNTkZU6hT+dmf0=
-X-Received: by 2002:a05:620a:4050:b0:937:5ab5:53f7 with SMTP id
- af79cd13be357-93c43dc8b4fmr2164543285a.43.1790614813372; Mon, 28 Sep 2026
- 10:00:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJtoPnSc"
+Received: by mail-pj2-f13.google.com with SMTP id d9443c01a7336-2d747f066d8so8818375ad.1
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Sep 2026 10:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790615205; x=1791220005; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3CiF+deL5rORB6fprCctgwEm0oaIPMhbyCbEcoF6Cfg=;
+        b=GJtoPnSczqAyjd2j6wz3pFnrJnDQb3UUzktIf4wUac1tDXry5rYgWkuiAz3GQO6V4o
+         ij9zX5ji9UNhsJ3ljsWJjLwxX1QV/3LbVBCcmhGvqTCSPSIbGdSlcyZXdQlCzbRZZTlz
+         LlfmHJRyfueFklZnNSCsnXRe6LMVqp/ghYcWOIvqfFBjqW71OiPRqOUQ+YFMlIBY/+Nq
+         Ndyrtrt45jI0+qxksx/gcel9qEmU8dZiqV9slyOesW1E3VGFRPt29bIvzErk/fw5Fi3O
+         8ZM1FYGS0n7HW7v3Nm7xNra1qw1ZVE/an7O5VAne5TEJ7HYQXeV/4PjGc6+DK5Nw9Z8W
+         X52Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790615205; x=1791220005;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3CiF+deL5rORB6fprCctgwEm0oaIPMhbyCbEcoF6Cfg=;
+        b=q5ABz/rPve3Idx8ONdwe1Fc5lAmBW4UTzxmFLfaz2q+l+wk/+uM1PmR6O6JBKiALTr
+         oQWn3paZCz4uNoPiI2DNx8J6DKukkG7zQ3RQd9X314Ehosdk+cOzK9AR9AHyHph9ev2m
+         d1neZfdFGNLZm2aMqSiRAlZ+ZqzyhTA0d+boEUBzygos/U4KHrOrZS3gkF6kGgJ0EJX5
+         2xYneE+vvVToeD2pJSo6TyVJ7iTg/ECkSUrF8A3ezIMFck6UQ07a5t03fdJoSa+yoe85
+         de7eRLhQWeDJ29q5ByYeTWzB15X/e3qYThpQLgFRKOJgiYY17ry/6ZCfeiO73b71UV2B
+         0APw==
+X-Gm-Message-State: AFq9FYIAkYMhSYL2DaVNR/XRxiUNwYU/SZawSrLuvD9JbIMdZ1UY8P7S
+	kjhmo+D8uGqCfIqxxu4DE10mkkZp13UvIlssZD1tClwTxxnH1wW4zqZSjSJRlF3a
+X-Gm-Gg: AYBFou071aGiSeyrWjWhsahru0OrHtc4BZpyuqPhe8+4XMrmhJHFNT0rVUNi6K0Y8jx
+	YGN6WexorBPNylmFbP4SNLigshptEEO/N8ZmVcpWnC3dEMHDgRRGutE8uGpnFMZWnC/RQViUWx8
+	ahCU84LWMZp6FISzvQFSzrnP9yLbqhfLmPQVTJ6S8TTieHxnYb7m4XbTUj5r8zarOBa9q20LZYE
+	7evdb7q2m7zjJG7YBc5eHb80H8WFKa9VVTLGWfrGV+vmVozyEqnoqSt2Fja3Nq3TM0vHgHK5b8C
+	xG6hPyGgeyE8xlTrjWALdN8lvEQIwUkpNdMx9vcuvJq+h5IykvcDde0h6ezsdZimopmUySUUWkO
+	Q/yBgZPGXvfj8nYuSIPQDszNRYnuGxmhfn1ujoqNwLmeR4N0aCRt6QbIHUzaKIXKp+kISyJNp1J
+	3eBVHqH/q0FtXZba3tolnA6TPqSbpJp9yMmV9vJZpOu70V6Se2YwP5GUUjjgJp0KqX
+X-Received: by 2002:a17:903:1210:b0:2df:8c4d:a2be with SMTP id d9443c01a7336-2e2c48c6ce3mr90575ad.39.1790615204411;
+        Mon, 28 Sep 2026 10:06:44 -0700 (PDT)
+Received: from ubuntu.. ([110.9.142.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2df91423df7sm44957605ad.43.2026.09.28.10.06.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2026 10:06:44 -0700 (PDT)
+From: Sang-Heon Jeon <ekffu200098@gmail.com>
+To: James Morris <jmorris@namei.org>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Subject: [PATCH] lsm: remove redundant NULL check in security_init()
+Date: Tue, 29 Sep 2026 02:06:37 +0900
+Message-ID: <20260928170639.413560-1-ekffu200098@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260706235053.4104951-1-song@kernel.org> <CAPhsuW7E-mW5CvmSXjUsc1GBjvgpy=pnaYOzTJsLXDvx8+RMJQ@mail.gmail.com>
- <20260928-hinein-lacke-nachfahren-45ac39a36146@brauner> <CAHC9VhRPd8z=67=RWM-0DqjTXysk75FtF=haY9-Vv1oGcX1PAg@mail.gmail.com>
-In-Reply-To: <CAHC9VhRPd8z=67=RWM-0DqjTXysk75FtF=haY9-Vv1oGcX1PAg@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 28 Sep 2026 10:00:00 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7iFP4Y6C1ZhTvtEgTzgKjnpF9+8YfVg4o3P4BHEnR+LA@mail.gmail.com>
-X-Gm-Features: AclHuK_nonVI-hneqRocC_bdGS7S6tjPJjqMlAvwButNtrovBaChNzu1f_vNOHQ
-Message-ID: <CAPhsuW7iFP4Y6C1ZhTvtEgTzgKjnpF9+8YfVg4o3P4BHEnR+LA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] lsm: Replace security_sb_mount with granular mount hooks
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, jmorris@namei.org, serge@hallyn.com, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, john.johansen@canonical.com, 
-	stephen.smalley.work@gmail.com, omosnace@redhat.com, mic@digikod.net, 
-	gnoack@google.com, takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	herton@canonical.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Christian and Paul,
+Since commit 5137e583ba26 ("lsm: cleanup the debug and console output
+in lsm_init.c"), the NULL check for lsm_order_legacy in security_init()
+has no effect.
 
-Thanks for your replies.
+So remove the check.
 
-On Mon, Sep 28, 2026 at 8:46=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Mon, Sep 28, 2026 at 10:13=E2=80=AFAM Christian Brauner <brauner@kerne=
-l.org> wrote:
-> > On Thu, Jul 23, 2026 at 11:19:30AM -0700, Song Liu wrote:
-> > > Hi Christian and folks,
-> > >
-> > > Could you please help review this set? Does this set address
-> > > concerns from earlier versions?
-> >
-> > I just realized something while looking at this. This doesn't cover the
-> > new mount api at all fsopen, fsconfig, fsmount, fspick, open_tree,
-> > open_tree_attr and mount_setattr. Without this the series is not very
-> > useful imho.
+No functional change.
 
-Yes, I am fully aware that this does not cover the new mount APIs. I think
-those are orthogonal to the optimization here. This series is very useful
-without covering the new APIs. Users from multiple companies have
-repeatedly requested this change. ([1] and users requested this set).
+Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+---
+ security/lsm_init.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-If we can land this set without covering the new APIs, I am more than
-happy to draft new patch set that covers the new APIs as a follow-up
-work. Therefore, could you please review this set as-is, and see whether
-we can land it without the orthogonal work covering the new mount APIs?
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index dbda7771013b..8d5ecea99c46 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -431,8 +431,7 @@ int __init security_init(void)
+ 	}
+ 
+ 	if (lsm_order_cmdline) {
+-		if (lsm_order_legacy)
+-			lsm_order_legacy = NULL;
++		lsm_order_legacy = NULL;
+ 		lsm_order_parse(lsm_order_cmdline, "cmdline");
+ 	} else
+ 		lsm_order_parse(lsm_order_builtin, "builtin");
 
-> Thanks Christian.
->
-> Song, I'm still open to reworking the LSM mount hooks, but any rework
-> should really take into account everything.
+base-commit: 63b4c8561b436e8950409d6041fce43f12936f59
+-- 
+2.43.0
 
-There is another question here. These new hooks do not have any in-tree
-user at the moment. This appears to violate the "New LSM Hooks" policy
-in [2]. Could you please give more specific guidance on this?
-
-Do we need at least one in-tree user hook that uses the new mount APIs?
-Or will we make an exception for these new hooks?
-Or will we revise the "New LSM hooks" policy to allow reasonable hooks
-without an in-tree user?
-
-Thanks,
-Song
-
-[1] https://lore.kernel.org/all/20241231014632.589049-1-enlightened@chromiu=
-m.org/
-[2] https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-l=
-sm-hooks
