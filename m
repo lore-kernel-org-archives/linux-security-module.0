@@ -1,37 +1,38 @@
 Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BB24DAF8F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9D84FD7B2;
 	Tue, 29 Sep 2026 13:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790686929; cv=none; b=KmDWZ7A0eLlxswKT3NUaa3xN52ktZ2aHm9A0mCVEAkT9aXeUWnx/voWbUHd1lpj8cyS3dAGdBld83G1Kv+fTyVlfsulslHR+r9IHRovUdcBe8BIfaOW6l8Y3jyNzu+W4CNuDr9wYPpX2rzuCTWN/yzKLFzSz6v3j6UVakJbs3KU=
+	t=1790686929; cv=none; b=a0kLlaCNtuRbrbskGoBmyNRESY5EO33nWXQBPeWj6svDCONJ4BzB14r+2WtRu0tqM5nJ29+YVB2RPs+kASjr5F7idHMGnh7v6RBo60PewhL7sPoiLd5cjzH/oZbHJVSOaVNBHU9Oh4HuH6wFEcYfXcuv0dBIFBauWImzAsUhgcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790686929; c=relaxed/simple;
-	bh=80qtXjubZEcllirRIHbrp2kSJnWFpmcmeuc6WFI1pPM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XHamyY5KaipW5ujZnP1ob/ICQRjYz3pMf7ZqW4UmnZ3j6h7eUcgfKvXEFbRJzURM8vvCNGksQ00/7FWnL+PTHDHRYQkeITSpclL5g4qk77RQ2NcZc/vvE8zocy1zICCwttkdA+/VrFmgGJ+x8SbAcpkNYz3l97e1Qci81l2A42k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=LIvFe9/k; arc=none smtp.client-ip=113.46.200.220
+	bh=WS7/rv+1j4KLhRVMYVbQpJXVGNgIjE+6F3oidp07VCE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mKuEvrAezEeE7cD9RKFl9qFAOID8Q37IG1YEFGO9SUb22yb7G0vv2VvqpsJeIG6DwhDKQgGUBd5TKOl983TBlMJ1DkFJEkc59pinMyKHDKNXW0d+qFfmMHEY8tKtAk4OuYPOorSBKTmffy4T/39seUa608Hiqy5KBl0xeYp3oOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=nm9PVa8x; arc=none smtp.client-ip=113.46.200.220
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="LIvFe9/k"
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="nm9PVa8x"
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=slvHoTQRjNrntVAntkRlhQEzR8bZ4lJQ4rBgjdoTYUk=;
-	b=LIvFe9/kBmoJ4hrz56JZGCTKFzU/k6S+xnzxjEWNqZVNbbVzP/l//oYaAOeYrCv4ysw2/mML2
-	21jCkP24AatQFzPskRyO7QJEM0doyCJ71InXIGr964RS8bMi42jLBV0uZqpKxVPfQnoqlrneLuN
-	iTQCU2Asc2iiWESsoV4Xgvo=
-Received: from mail.maildlp.com (unknown [172.19.162.223])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4hvJ104rSSz12LHh;
-	Tue, 29 Sep 2026 20:49:56 +0800 (CST)
+	bh=5XAn6zhR8TlnHteI0nnuYbqgMQj+LJ5WKgZIIVFlK7s=;
+	b=nm9PVa8xFIBgUvAqkBLN7U2om6/WJA5JNCCyDV+s5uzWQHz03DBdIBMFb0HAwGv9MnRPg1eEz
+	gVd9nay2uVFictUymaPVaIUKvkWZmAvVDBfFKelpSTOJzglAbY1t3IU5jAjTHYQz71Fsr04ru4A
+	JvPKxJRp6w8eG0sExmy57zk=
+Received: from mail.maildlp.com (unknown [172.19.162.197])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4hvJ126fKHz12LHn;
+	Tue, 29 Sep 2026 20:49:58 +0800 (CST)
 Received: from kwepemk200008.china.huawei.com (unknown [7.202.194.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4A4F440575;
-	Tue, 29 Sep 2026 21:01:59 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 884D24057D;
+	Tue, 29 Sep 2026 21:02:01 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemk200008.china.huawei.com
  (7.202.194.74) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 29 Sep
- 2026 21:01:57 +0800
+ 2026 21:02:00 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <serge@hallyn.com>, <kees@kernel.org>, <akpm@linux-foundation.org>,
 	<david@kernel.org>, <ljs@kernel.org>, <liam@infradead.org>,
@@ -49,10 +50,12 @@ To: <serge@hallyn.com>, <kees@kernel.org>, <akpm@linux-foundation.org>,
 	<linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>, <morgan@kernel.org>
 CC: <ruanjinjie@huawei.com>
-Subject: [RFC PATCH v2 0/3] security: Add PR_CAPBSET_DROP_MASK
-Date: Tue, 29 Sep 2026 21:01:57 +0800
-Message-ID: <20260929130200.1638343-1-ruanjinjie@huawei.com>
+Subject: [RFC PATCH v2 2/3] security: Add PR_CAPBSET_DROP_MASK for process-wide bounding-set drops
+Date: Tue, 29 Sep 2026 21:01:59 +0800
+Message-ID: <20260929130200.1638343-3-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260929130200.1638343-1-ruanjinjie@huawei.com>
+References: <20260929130200.1638343-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,45 +67,289 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
  kwepemk200008.china.huawei.com (7.202.194.74)
 
-PR_CAPBSET_DROP only affects the calling thread, so dropping capabilities
-for a whole process means one call per capability per thread.  For a
-long-lived, multi-threaded process such as gVisor's sentry this is
-stop-the-world signal delivery and costs milliseconds per sandbox on a
-many-core host.
+PR_CAPBSET_DROP only affects the calling thread. Process-wide capability
+dropping requires user space to loop over every thread and every
+capability, which is highly expensive. For instance, long-lived
+multi-threaded processes (like gVisor's sentry) spend milliseconds
+trimming the bounding set because the runtime has to coordinate
+and signal every thread.
 
-This series adds PR_CAPBSET_DROP_MASK, which removes a 64-bit mask of
-capabilities from the whole thread group in a single call.  The drop is
-recorded per thread group and folded into the bounding set wherever it
-gates gaining a capability, so already-running, concurrently-created and
-later-created threads -- as well as children forked by a sibling -- all
-observe it.
+Add PR_CAPBSET_DROP_MASK, an opt-in prctl that removes a set of
+capabilities from the entire thread group's bounding set in a single call.
+The capabilities are specified via a 64-bit mask across arg2 (low 32 bits)
+and arg3 (high 32 bits).
 
-Trimming 41 capabilities in an arm64 KVM guest goes from ~8.5-23.6ms with
-the per-thread loop to ~11-14us, independent of the thread count.
+The drop is recorded in a per-thread-group mask,
+signal_struct::cap_bset_pending, under sighand->siglock. This pending drop
+is dynamically folded into the bounding set in critical paths:
+cap_capset(), PR_CAPBSET_READ(), and cap_bprm_creds_from_file().
+Running, concurrently created, or future threads within the group will
+all immediately observe the drop. A forked child inherits this mask
+in cap_bset_drop_fork() under siglock to close the race window
+against clone().
 
-Changes in RFC v2:
-- Solve concurrently clone and concurrently drop mask problem.
-- Solove sashiko problems in [1].
-- Link to RFC v1: https://lore.kernel.org/all/20260922095816.1191799-1-ruanjinjie@huawei.com/
-[1] https://sashiko.dev/#/patchset/20260922095816.1191799-1-ruanjinjie%40huawei.com
+The operation is drop-only, so concurrent callers commute and a single
+atomic OR is the linearization point.  It performs no per-thread allocation
+and only the caller's replacement cred can fail, reported synchronously as
+-ENOMEM before anything changes.
 
-Jinjie Ruan (3):
-  capability: Move mk_kernel_cap() to header
-  security: Add PR_CAPBSET_DROP_MASK for process-wide bounding-set drops
-  selftests: prctl: add process-wide bounding-set drop tests
+In an arm64 KVM guest, trimming 41 capabilities of a multi-threaded Go
+process takes ~8.5-23.6ms with the per-thread PR_CAPBSET_DROP loop and
+~11-14us with PR_CAPBSET_DROP_MASK, independent of the thread count.
 
- fs/proc/array.c                               |   3 +-
- include/linux/capability.h                    |  10 +
- include/linux/sched/signal.h                  |   8 +
- include/uapi/linux/prctl.h                    |   1 +
- kernel/capability.c                           |   5 -
- kernel/fork.c                                 |   1 +
- security/commoncap.c                          |  91 ++-
- tools/testing/selftests/prctl/Makefile        |  12 +-
- .../selftests/prctl/cap-bset-drop-test.c      | 641 ++++++++++++++++++
- 9 files changed, 759 insertions(+), 13 deletions(-)
- create mode 100644 tools/testing/selftests/prctl/cap-bset-drop-test.c
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ fs/proc/array.c              |  3 +-
+ include/linux/capability.h   |  5 ++
+ include/linux/sched/signal.h |  8 ++++
+ include/uapi/linux/prctl.h   |  1 +
+ kernel/fork.c                |  1 +
+ security/commoncap.c         | 91 ++++++++++++++++++++++++++++++++++--
+ 6 files changed, 105 insertions(+), 4 deletions(-)
 
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index f6f75d206762..f1cde26d079c 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -63,6 +63,7 @@
+ #include <linux/tty.h>
+ #include <linux/string.h>
+ #include <linux/mman.h>
++#include <linux/capability.h>
+ #include <linux/sched/mm.h>
+ #include <linux/sched/numa_balancing.h>
+ #include <linux/sched/task_stack.h>
+@@ -318,7 +319,7 @@ static inline void task_cap(struct seq_file *m, struct task_struct *p)
+ 	cap_inheritable	= cred->cap_inheritable;
+ 	cap_permitted	= cred->cap_permitted;
+ 	cap_effective	= cred->cap_effective;
+-	cap_bset	= cred->cap_bset;
++	cap_bset	= cap_bset_effective(p, cred);
+ 	cap_ambient	= cred->cap_ambient;
+ 	rcu_read_unlock();
+ 
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 7921a0b3b04a..6413c7fedb69 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -38,6 +38,7 @@ struct file;
+ struct inode;
+ struct dentry;
+ struct task_struct;
++struct cred;
+ struct user_namespace;
+ struct mnt_idmap;
+ 
+@@ -197,6 +198,10 @@ bool capable_wrt_inode_uidgid(struct mnt_idmap *idmap,
+ 			      const struct inode *inode, int cap);
+ extern bool file_ns_capable(const struct file *file, struct user_namespace *ns, int cap);
+ extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
++extern kernel_cap_t cap_bset_effective(const struct task_struct *task,
++				       const struct cred *cred);
++extern void cap_bset_drop_fork(struct task_struct *p);
++
+ static inline bool perfmon_capable(void)
+ {
+ 	return capable(CAP_PERFMON) || capable(CAP_SYS_ADMIN);
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index d45a5476b97d..bda6f18b65b9 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -98,6 +98,14 @@ struct signal_struct {
+ 	int			quick_threads;
+ 	struct list_head	thread_head;
+ 
++	/*
++	 * Capabilities being removed from the bounding set of every thread in
++	 * this group by PR_CAPBSET_DROP_MASK.  Read on capability-transition
++	 * paths without sighand->siglock, hence atomic64 (a 64-bit value would
++	 * otherwise tear on 32-bit).
++	 */
++	atomic64_t		cap_bset_pending;
++
+ 	wait_queue_head_t	wait_chldexit;	/* for wait4() */
+ 
+ 	/* current thread group signal load-balancing target: */
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index b6ec6f693719..85ac71897070 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -70,6 +70,7 @@
+ /* Get/set the capability bounding set (as per security/commoncap.c) */
+ #define PR_CAPBSET_READ 23
+ #define PR_CAPBSET_DROP 24
++#define PR_CAPBSET_DROP_MASK 82
+ 
+ /* Get/set the process' ability to use the timestamp counter instruction */
+ #define PR_GET_TSC 25
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 5ef413368912..bf671a85d39d 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2504,6 +2504,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	 * before holding sighand lock.
+ 	 */
+ 	copy_seccomp(p);
++	cap_bset_drop_fork(p);
+ 
+ 	if (clone_flags & CLONE_NNP)
+ 		task_set_no_new_privs(p);
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 3399535808fe..3bec15d43731 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -3,6 +3,7 @@
+  */
+ 
+ #include <linux/capability.h>
++#include <linux/cred.h>
+ #include <linux/audit.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+@@ -19,6 +20,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/mount.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <linux/prctl.h>
+ #include <linux/securebits.h>
+ #include <linux/user_namespace.h>
+@@ -30,6 +32,25 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/capability.h>
+ 
++/**
++ * Effective bounding set of @cred in @task's thread group
++ * @task: task whose thread group's pending drop applies
++ * @cred: credentials to read the bounding set from
++ *
++ * A drop recorded by PR_CAPBSET_DROP_MASK is authoritative on the thread group
++ * and may not have been materialized into every thread's cred yet, so the
++ * effective bounding set is the cred's own set minus the group's pending drop.
++ */
++kernel_cap_t cap_bset_effective(const struct task_struct *task,
++				const struct cred *cred)
++{
++	kernel_cap_t pending = {
++		.val = atomic64_read(&task->signal->cap_bset_pending),
++	};
++
++	return cap_drop(cred->cap_bset, pending);
++}
++
+ /*
+  * If a non-root user executes a setuid-root binary in
+  * !secure(SECURE_NOROOT) mode, then we raise capabilities.
+@@ -284,8 +305,8 @@ int cap_capset(struct cred *new,
+ 
+ 	if (!cap_issubset(*inheritable,
+ 			  cap_combine(old->cap_inheritable,
+-				      old->cap_bset)))
+ 		/* no new pI capabilities outside bounding set */
++				      cap_bset_effective(current, old))))
+ 		return -EPERM;
+ 
+ 	/* verify restrictions on target's new Permitted set */
+@@ -849,7 +870,7 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_fcap,
+ 	 */
+ 	if (__is_eff(root_uid, new) || __is_real(root_uid, new)) {
+ 		/* pP' = (cap_bset & ~0) | (pI & ~0) */
+-		new->cap_permitted = cap_combine(old->cap_bset,
++		new->cap_permitted = cap_combine(new->cap_bset,
+ 						 old->cap_inheritable);
+ 	}
+ 	/*
+@@ -925,6 +946,8 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ 	int ret;
+ 	kuid_t root_uid;
+ 
++	new->cap_bset = cap_bset_effective(current, new);
++
+ 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
+ 		return -EPERM;
+ 
+@@ -1283,6 +1306,63 @@ static int cap_prctl_drop(unsigned long cap)
+ 	return commit_creds(new);
+ }
+ 
++static int cap_bset_drop_process(kernel_cap_t mask)
++{
++	kernel_cap_t pending;
++	struct cred *new;
++
++	new = prepare_creds();
++	if (!new)
++		return -ENOMEM;
++
++	/*
++	 * Record the drop before committing the caller's cred, so that a
++	 * thread created from now on is guaranteed to observe it.  Apply the
++	 * current union, not just this call's mask, to the caller's cred.
++	 */
++	spin_lock_irq(&current->sighand->siglock);
++	atomic64_or(mask.val, &current->signal->cap_bset_pending);
++	pending.val = atomic64_read(&current->signal->cap_bset_pending);
++	spin_unlock_irq(&current->sighand->siglock);
++
++	new->cap_bset = cap_drop(new->cap_bset, pending);
++	commit_creds(new);
++
++	return 0;
++}
++
++/*
++ * Propagate a pending process-wide bounding-set drop to @p, a task being
++ * created by the current thread.  Threads sharing the group read
++ * current->signal->cap_bset_pending directly; a forked child gets its own
++ * signal_struct and must carry the mask itself.  Called under
++ * current->sighand->siglock, which serializes it with cap_bset_drop_process().
++ */
++void cap_bset_drop_fork(struct task_struct *p)
++{
++	kernel_cap_t mask = {
++		.val = atomic64_read(&current->signal->cap_bset_pending),
++	};
++
++	if (cap_isclear(mask) || p->signal == current->signal)
++		return;
++
++	atomic64_or(mask.val, &p->signal->cap_bset_pending);
++}
++
++static int cap_prctl_drop_mask(unsigned long low, unsigned long high)
++{
++	kernel_cap_t mask = mk_kernel_cap((u32)low, (u32)high);
++
++	if (cap_isclear(mask))
++		return 0;
++
++	if (!ns_capable(current_user_ns(), CAP_SETPCAP))
++		return -EPERM;
++
++	return cap_bset_drop_process(mask);
++}
++
+ /**
+  * cap_task_prctl - Implement process control functions for this security module
+  * @option: The process control function requested
+@@ -1308,11 +1388,16 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 	case PR_CAPBSET_READ:
+ 		if (!cap_valid(arg2))
+ 			return -EINVAL;
+-		return !!cap_raised(old->cap_bset, arg2);
++		return !!cap_raised(cap_bset_effective(current, old), arg2);
+ 
+ 	case PR_CAPBSET_DROP:
+ 		return cap_prctl_drop(arg2);
+ 
++	case PR_CAPBSET_DROP_MASK:
++		if (arg4 || arg5)
++			return -EINVAL;
++		return cap_prctl_drop_mask(arg2, arg3);
++
+ 	/*
+ 	 * The next four prctl's remain to assist with transitioning a
+ 	 * system from legacy UID=0 based privilege (when filesystem
 -- 
 2.34.1
 
