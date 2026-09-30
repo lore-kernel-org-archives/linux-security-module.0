@@ -1,307 +1,193 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B904D0A0D;
-	Wed, 30 Sep 2026 13:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A04F4047
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790776511; cv=none; b=Dqo0cgLRNWgEN6Rc+7BqdAxLMGdNEwEX77ce/XyixRzjdXC7vwgzF71/j7TiM5KHaEsRRTf1zXvrIUjz3luesXCzp765/+Un7luM3tY0fByaY76Mw3BqYZW1S/YQvebYuYyqaXZNcfsaxUoFhEqd15gcTj6A/FLrjnDM1mLX20I=
+	t=1790776534; cv=none; b=rboIYAJErSKe84fG2/YKNOlggS4mi9GaH5c09qJRyf0LORNDF3DvZc0lVPZH3h6WvQ6G5LZUN23aWqYmdcJjtJ0Cf8tOqTKvsKKuzxaFo3cILuMoHwblPQo3ocyQP3C6EiSgRmZVgyPJhI7QqK6FA4xSmAev0em+kz00iKn/Ay0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790776511; c=relaxed/simple;
-	bh=8Daqr49GTkOdyPVcu3YfH7zRwQ2q2SKCN6OFsi9VlEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rKD67sR+h0Kv6gXHoLwo1zQjs/JqzY2ds3mfXhfFlthzO0rCIE9le6wUYz4lBIkFo6NjiOItgT/42FhLdUcJi7dixAs4ex0mOuNKBvow697WBVkQX1ERAtA0xPLqLAkxG4cs9meY5kAs2ALJCz6PQjybK3z2mWGQ3St+mbOy/dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E431321E26;
-	Wed, 30 Sep 2026 13:54:51 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F32413ABC;
-	Wed, 30 Sep 2026 13:54:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fJXpHGIUvWqUTwAAD6G6ig:T16
-	(envelope-from <fmancera@suse.de>); Wed, 30 Sep 2026 13:54:50 +0000
-From: Fernando Fernandez Mancera <fmancera@suse.de>
-To: netdev@vger.kernel.org
-Cc: horms@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	edumazet@kernel.org,
-	davem@davemloft.net,
-	Fernando Fernandez Mancera <fmancera@suse.de>,
-	Paul Moore <paul@paul-moore.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Florian Westphal <fw@strlen.de>,
-	Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>,
-	Yung Chih Su <yuuchihsu@gmail.com>,
-	Wyatt Feng <bronzed_45_vested@icloud.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 15/16 net-next v3] netlabel: cipso: introduce CONFIG_CIPSO to decouple IPv4 dependency
-Date: Wed, 30 Sep 2026 15:52:58 +0200
-Message-ID: <20260930135334.4739-16-fmancera@suse.de>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260930135334.4739-1-fmancera@suse.de>
-References: <20260930135334.4739-1-fmancera@suse.de>
+	s=arc-20240116; t=1790776534; c=relaxed/simple;
+	bh=5zuDm0fjvz+c4G85/bG76BROPTJiCJEjLHNxq1/ELCM=;
+	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=hJ1jJxuLTq5TnVrEyCMQ9Nem4TAk/8cS+xqx6VmlWTNPWc/Q5ElIhnpnWZnatchrRjawrlfte2oIKwFBZSLUFnPGzrkOKvSbIzIi5lBNfsgLGTcKbqrBZXt+7utTbRFwFpA4WeRuDNIv8UY3JFN42PcafNlAvj8+XNA8tMqQwOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvQPl4Q6; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvQPl4Q6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB4421F000FF
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790776516;
+	bh=RPYSGrmzVN7Cs9Wdj4ROkVBHZERBZsKALB9wNqT4XUg=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=NvQPl4Q6SZ0xsA+cAhbrRNHxttdSwdpUa8cIgYl/D5hSp3gyX6178MfvPN3z8nSj0
+	 1O6092r+l4ni9u/42KfN8WWmUX6JCOZHgA3jLKHFYX7+Y2ZGt5YhHL1CcsxftwPTwH
+	 TQBBMBXdV/PBfUY433z0IXaL/EVnHJS6pql5HNoEg5Jp+BJNxGifETOr73XQql0lSP
+	 whTlQHL1vccqVesjuuJApxZhHO5/lBOfCJ2m1315DMwO+Bvd2mRwK6dcLoNYcphDQy
+	 ItFvzh05NwmlucAWrriVko4ljzdboE8KcwORThcpQql98oJsg2K0rnDMOxSN04fs1V
+	 MPkqRX1lKPsBw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RFC 2/3] security: IMA: introduce ima_mr structure
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20260930-ima_tgx_integration_v2-v1-2-722c35370548@arm.com>
+References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
+ <20260930-ima_tgx_integration_v2-v1-2-722c35370548@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 30 Sep 2026 13:55:15 +0000
+Message-Id: <20260930135515.DB4421F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Score: -4.00
-X-Spam-Level: 
-X-Rspamd-Queue-Id: E431321E26
-X-Spam-Flag: NO
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-Currently, the Commercial IP Security Option (CIPSO) is unconditionally
-tied to CONFIG_NETLABEL. Because CIPSO is inherently an IPv4 protocol
-feature, this creates a transitive dependency where subsystems relying on
-NetLabel (such as Smack) are forced to depend on CONFIG_IPV4, even if
-the user only wants to utilize IPv6/CALIPSO.
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Medium] ima: memory leak of ima_shash_tfm and ima_algo_array in ima_init=
+_crypto()
+- [Medium] ima: memory leak of digests array in ima_init_digests()
+--
 
-This patch introduces a new CONFIG_CIPSO boolean that is automatically
-enabled only when both NETLABEL and IPV4 are selected. It abstracts the
-CIPSO-specific Makefile targets, sysctls, and kernel APIs behind this
-new config.
+commit babc42a28171ec6623537f00a8d1222d9f72a6e2
+Author: Yeoreum Yun <yeoreum.yun@arm.com>
 
-By safely stubbing out the CIPSO netlabel_kapi functions to return
--ENOSYS when disabled, this allows NetLabel and Smack to be successfully
-built and used on IPv6-only kernels.
+security: IMA: introduce ima_mr structure
+   =20
+This commit introduces the ima_mr structure to abstract measurement registe=
+rs=20
+and operations, preparing the subsystem to integrate TSM measurement regist=
+ers=20
+with IMA. It also migrates the TPM device using PCRs as measurement registe=
+rs=20
+to use this new interface.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
----
- include/net/cipso_ipv4.h         | 18 +++++++++++-------
- net/Kconfig                      |  3 ---
- net/ipv4/Makefile                |  2 +-
- net/ipv4/sysctl_net_ipv4.c       |  4 ++--
- net/netlabel/Kconfig             |  4 ++++
- net/netlabel/Makefile            |  2 +-
- net/netlabel/netlabel_cipso_v4.h |  7 +++++++
- net/netlabel/netlabel_kapi.c     |  3 +++
- security/smack/Kconfig           |  1 -
- 9 files changed, 29 insertions(+), 15 deletions(-)
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima=
+/ima_crypto.c
+> index 0d72b48249ee6..efa27ce5f1282 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
 
-diff --git a/include/net/cipso_ipv4.h b/include/net/cipso_ipv4.h
-index d6780d7903f4..6f50a0a6951b 100644
---- a/include/net/cipso_ipv4.h
-+++ b/include/net/cipso_ipv4.h
-@@ -100,7 +100,7 @@ struct cipso_v4_std_map_tbl {
-  * Sysctl Variables
-  */
- 
--#ifdef CONFIG_NETLABEL
-+#ifdef CONFIG_CIPSO
- extern int cipso_v4_cache_enabled;
- extern int cipso_v4_cache_bucketsize;
- extern int cipso_v4_rbm_optfmt;
-@@ -111,7 +111,7 @@ extern int cipso_v4_rbm_strictvalid;
-  * DOI List Functions
-  */
- 
--#ifdef CONFIG_NETLABEL
-+#ifdef CONFIG_CIPSO
- int cipso_v4_doi_add(struct cipso_v4_doi *doi_def,
- 		     struct netlbl_audit *audit_info);
- void cipso_v4_doi_free(struct cipso_v4_doi *doi_def);
-@@ -144,19 +144,23 @@ static inline struct cipso_v4_doi *cipso_v4_doi_getdef(u32 doi)
- 	return NULL;
- }
- 
-+static inline void cipso_v4_doi_putdef(struct cipso_v4_doi *doi_def)
-+{
-+}
-+
- static inline int cipso_v4_doi_walk(u32 *skip_cnt,
- 		     int (*callback) (struct cipso_v4_doi *doi_def, void *arg),
- 		     void *cb_arg)
- {
- 	return 0;
- }
--#endif /* CONFIG_NETLABEL */
-+#endif /* CONFIG_CIPSO */
- 
- /*
-  * Label Mapping Cache Functions
-  */
- 
--#ifdef CONFIG_NETLABEL
-+#ifdef CONFIG_CIPSO
- void cipso_v4_cache_invalidate(void);
- int cipso_v4_cache_add(const unsigned char *cipso_ptr,
- 		       const struct netlbl_lsm_secattr *secattr);
-@@ -171,13 +175,13 @@ static inline int cipso_v4_cache_add(const unsigned char *cipso_ptr,
- {
- 	return 0;
- }
--#endif /* CONFIG_NETLABEL */
-+#endif /* CONFIG_CIPSO */
- 
- /*
-  * Protocol Handling Functions
-  */
- 
--#ifdef CONFIG_NETLABEL
-+#ifdef CONFIG_CIPSO
- void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway);
- int cipso_v4_getattr(const unsigned char *cipso,
- 		     struct netlbl_lsm_secattr *secattr);
-@@ -303,6 +307,6 @@ static inline int cipso_v4_validate(const struct sk_buff *skb,
- 	return err_offset;
- 
- }
--#endif /* CONFIG_NETLABEL */
-+#endif /* CONFIG_CIPSO */
- 
- #endif /* _CIPSO_IPV4_H */
-diff --git a/net/Kconfig b/net/Kconfig
-index ca86f20540dd..2ef4ea6ce056 100644
---- a/net/Kconfig
-+++ b/net/Kconfig
-@@ -136,10 +136,7 @@ if INET
- source "net/ipv4/Kconfig"
- source "net/ipv6/Kconfig"
- source "net/mptcp/Kconfig"
--
--if IPV4
- source "net/netlabel/Kconfig"
--endif # if IPV4
- 
- endif # if INET
- 
-diff --git a/net/ipv4/Makefile b/net/ipv4/Makefile
-index 83c25f52eb58..871187937add 100644
---- a/net/ipv4/Makefile
-+++ b/net/ipv4/Makefile
-@@ -62,7 +62,7 @@ obj-$(CONFIG_TCP_CONG_YEAH) += tcp_yeah.o
- obj-$(CONFIG_TCP_CONG_ILLINOIS) += tcp_illinois.o
- obj-$(CONFIG_NET_SOCK_MSG) += tcp_bpf.o
- obj-$(CONFIG_BPF_SYSCALL) += udp_bpf.o
--obj-$(CONFIG_NETLABEL) += cipso_ipv4.o
-+obj-$(CONFIG_CIPSO) += cipso_ipv4.o
- 
- obj-$(CONFIG_XFRM) += xfrm4_policy.o xfrm4_state.o xfrm4_input.o \
- 		      xfrm4_output.o xfrm4_protocol.o
-diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
-index 6096e9e4d82d..89b0caf5a9f5 100644
---- a/net/ipv4/sysctl_net_ipv4.c
-+++ b/net/ipv4/sysctl_net_ipv4.c
-@@ -573,7 +573,7 @@ static struct ctl_table ipv4_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec
- 	},
--#ifdef CONFIG_NETLABEL
-+#ifdef CONFIG_CIPSO
- 	{
- 		.procname	= "cipso_cache_enable",
- 		.data		= &cipso_v4_cache_enabled,
-@@ -602,7 +602,7 @@ static struct ctl_table ipv4_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
--#endif /* CONFIG_NETLABEL */
-+#endif /* CONFIG_CIPSO */
- 	{
- 		.procname	= "tcp_available_ulp",
- 		.maxlen		= TCP_ULP_BUF_MAX,
-diff --git a/net/netlabel/Kconfig b/net/netlabel/Kconfig
-index 4383ac29693e..bcc27196d5bd 100644
---- a/net/netlabel/Kconfig
-+++ b/net/netlabel/Kconfig
-@@ -17,3 +17,7 @@ config NETLABEL
- 	   * https://github.com/netlabel/netlabel_tools
- 
- 	  If you are unsure, say N.
-+
-+config CIPSO
-+	def_bool y
-+	depends on NETLABEL && IPV4
-diff --git a/net/netlabel/Makefile b/net/netlabel/Makefile
-index 5a46381a64e7..8afc1bf00424 100644
---- a/net/netlabel/Makefile
-+++ b/net/netlabel/Makefile
-@@ -12,5 +12,5 @@ obj-y	+= netlabel_mgmt.o
- 
- # protocol modules
- obj-y	+= netlabel_unlabeled.o
--obj-y	+= netlabel_cipso_v4.o
-+obj-$(CONFIG_CIPSO) += netlabel_cipso_v4.o
- obj-$(subst m,y,$(CONFIG_IPV6)) += netlabel_calipso.o
-diff --git a/net/netlabel/netlabel_cipso_v4.h b/net/netlabel/netlabel_cipso_v4.h
-index 9518ab56ec98..fb718f86bcbd 100644
---- a/net/netlabel/netlabel_cipso_v4.h
-+++ b/net/netlabel/netlabel_cipso_v4.h
-@@ -147,6 +147,13 @@ enum {
- #define NLBL_CIPSOV4_A_MAX (__NLBL_CIPSOV4_A_MAX - 1)
- 
- /* NetLabel protocol functions */
-+#if IS_ENABLED(CONFIG_CIPSO)
- int netlbl_cipsov4_genl_init(void);
-+#else
-+static inline int netlbl_cipsov4_genl_init(void)
-+{
-+	return 0;
-+}
-+#endif
- 
- #endif
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 3583fa63dd01..c088f599b53d 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -332,6 +332,9 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
- 	struct netlbl_domaddr_map *addrmap = NULL;
- 	struct netlbl_domaddr4_map *addrinfo = NULL;
- 
-+	if (!IS_ENABLED(CONFIG_CIPSO))
-+		return -ENOSYS;
-+
- 	doi_def = cipso_v4_doi_getdef(doi);
- 	if (doi_def == NULL)
- 		return -ENOENT;
-diff --git a/security/smack/Kconfig b/security/smack/Kconfig
-index b4e6d0168bd1..5a8dfad469c3 100644
---- a/security/smack/Kconfig
-+++ b/security/smack/Kconfig
-@@ -3,7 +3,6 @@ config SECURITY_SMACK
- 	bool "Simplified Mandatory Access Control Kernel Support"
- 	depends on NET
- 	depends on INET
--	depends on IPV4
- 	depends on SECURITY
- 	select NETLABEL
- 	select SECURITY_NETWORK
--- 
-2.55.0
+[ ... ]
 
+> @@ -77,6 +77,7 @@ int __init ima_init_crypto(void)
+>  	enum hash_algo algo;
+>  	long rc;
+>  	int i;
+> +	mr_bank_info_t bank_info;
+> =20
+>  	rc =3D ima_init_ima_crypto();
+>  	if (rc)
+> @@ -85,8 +86,12 @@ int __init ima_init_crypto(void)
+>  	ima_sha1_idx =3D -1;
+>  	ima_hash_algo_idx =3D -1;
+> =20
+> -	for (i =3D 0; i < NR_BANKS(ima_tpm_chip); i++) {
+> -		algo =3D ima_tpm_chip->allocated_banks[i].crypto_id;
+> +	for (i =3D 0; i < NR_BANKS(ima_mr); i++) {
+> +		rc =3D ima_mr->ops->mr_get_bank_info(ima_mr, i, &bank_info);
+> +		if (rc)
+> +			return rc;
+
+[Severity: Medium]
+Does this direct return bypass the cleanup for ima_shash_tfm?
+
+Since ima_init_ima_crypto() is called earlier and allocates it, it looks
+like returning rc here skips the out label where the cleanup happens.
+
+> +
+> +		algo =3D bank_info.crypto_id;
+>  		if (algo =3D=3D HASH_ALGO_SHA1)
+>  			ima_sha1_idx =3D i;
+
+[ ... ]
+
+> @@ -95,24 +100,28 @@ int __init ima_init_crypto(void)
+>  	if (ima_hash_algo_idx < 0)
+> -		ima_hash_algo_idx =3D NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
+> +		ima_hash_algo_idx =3D NR_BANKS(ima_mr) + ima_extra_slots++;
+> =20
+>  	ima_algo_array =3D kzalloc_objs(*ima_algo_array,
+> -				      NR_BANKS(ima_tpm_chip) + ima_extra_slots);
+> +				      NR_BANKS(ima_mr) + ima_extra_slots);
+>  	if (!ima_algo_array) {
+>  		rc =3D -ENOMEM;
+>  		goto out;
+>  	}
+> =20
+> -	for (i =3D 0; i < NR_BANKS(ima_tpm_chip); i++) {
+> -		algo =3D ima_tpm_chip->allocated_banks[i].crypto_id;
+> -		digest_size =3D ima_tpm_chip->allocated_banks[i].digest_size;
+> +	for (i =3D 0; i < NR_BANKS(ima_mr); i++) {
+> +		rc =3D ima_mr->ops->mr_get_bank_info(ima_mr, i, &bank_info);
+> +		if (rc)
+> +			return rc;
+
+[Severity: Medium]
+Could this return cause a memory leak of ima_algo_array and any hash
+transforms allocated in previous loop iterations?
+
+Taking this path bypasses the explicitly defined out_array cleanup label.
+
+> +
+> +		algo =3D bank_info.crypto_id;
+> +		digest_size =3D bank_info.digest_size;
+>  		ima_algo_array[i].algo =3D algo;
+>  		ima_algo_array[i].digest_size =3D digest_size;
+
+[ ... ]
+
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 67782c004cdf7..037979829242c 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+
+[ ... ]
+
+> @@ -548,25 +547,27 @@ void __init ima_init_reboot_notifier(void)
+> =20
+>  int __init ima_init_digests(void)
+>  {
+> +	int rc, i;
+> +	mr_bank_info_t bank_info;
+>  	u16 digest_size;
+> -	u16 crypto_id;
+> -	int i;
+> =20
+> -	if (!ima_tpm_chip)
+> +	if (!ima_mr)
+>  		return 0;
+> =20
+> -	digests =3D kzalloc_objs(*digests, ima_tpm_chip->nr_allocated_banks,
+> -			       GFP_NOFS);
+> +	digests =3D kzalloc_objs(*digests, NR_BANKS(ima_mr), GFP_NOFS);
+>  	if (!digests)
+>  		return -ENOMEM;
+> =20
+> -	for (i =3D 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
+> -		digests[i].alg_id =3D ima_tpm_chip->allocated_banks[i].alg_id;
+> -		digest_size =3D ima_tpm_chip->allocated_banks[i].digest_size;
+> -		crypto_id =3D ima_tpm_chip->allocated_banks[i].crypto_id;
+> +	for (i =3D 0; i < NR_BANKS(ima_mr); i++) {
+> +		rc =3D ima_mr->ops->mr_get_bank_info(ima_mr, i, &bank_info);
+> +		if (rc)
+> +			return rc;
+
+[Severity: Medium]
+If mr_get_bank_info() fails here, does this return abandon the newly
+allocated digests array?
+
+It appears kfree(digests) might be needed before returning rc to prevent a
+memory leak.
+
+> +
+> +		digests[i].alg_id =3D bank_info.alg_id;
+> +		digest_size =3D bank_info.digest_size;
+> =20
+>  		/* for unmapped TPM algorithms digest is still a padded SHA1 */
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260930-ima_tgx_in=
+tegration_v2-v1-0-722c35370548@arm.com?part=3D2
