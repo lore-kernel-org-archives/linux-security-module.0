@@ -1,435 +1,1415 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7534E2F3E;
-	Wed, 30 Sep 2026 13:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304A94E5322;
+	Wed, 30 Sep 2026 13:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790775880; cv=none; b=Km47sSRrk07Mgm9BxRNhPvZu+jLw+8SMZz57DQzo+TuX2F1l6JoK1XCa39nhvBiZ4gD6DY3i9Ee3urKBunsDVGXECd7jg0C6LTpaeGp4oHYqKR4LFnNk/Bn7JqZHyQOQowAEQmLXbUF0dHzQ6N7h0PsmHQXjosaLWvFesK80m2k=
+	t=1790776473; cv=none; b=YpSZRxdEbpJk29THllGziPTMp7WEXgjhtWy/CXy+Z5+vkfuNxtq78FDVJ9zEMcH3QSOYvmpY0IGcZHhjtxLLoVn21xXA2qrK4lJjM5ovIxix/jwQWUF32N0ro8oHmTnlmMOrHMNKIvOmRVITB8t+alpl7P+H4LAwnDhkZDh4IwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790775880; c=relaxed/simple;
-	bh=d6nZ0CYHV1j5DDfKelAp5NeZoMJ0Ig7FSoRuiZJx2Ko=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SVjw7eO7wSwvdfMOYyWCljDljSVjM/8jUA9LDb7wxCniAILBbUFXB+vkI1tdn/b7GzTAxr2vgE2yCHUbNRTucttLw+nKQbjwOpafRP0kGT+c9bATPEi4yCTImpNvitcrZjPIX+qTA63EKii+rOanRDU58rOTczG5rx8sr6u+S2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Bd7o93Qa; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1790776473; c=relaxed/simple;
+	bh=jNmuJCUQ6AV+uZkYgO4Rl+6zLRg4alhoFL9PUHqBETY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pc9ZsAInDUPExBaKOiq+MMHhHrywrWS1hsteuBheybyDtIsg1MvOoiCSycT/YnpSJI0dg7MjZh1PnzcmZ+6G+mNrEQPyPxMdcidpSY7whoDmy1KZVU7a26y3aFrL1qZnZFhRdyYfPbUZAyuqLJv/uAdt7A5DtwXPoGzsKSwre4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RMlAQQh6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P936QFcu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gM3IYV04; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LLHlj2rw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Bd7o93Qa"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 727E6168F;
-	Wed, 30 Sep 2026 06:44:24 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F02EC3F86F;
-	Wed, 30 Sep 2026 06:44:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1790775867; bh=d6nZ0CYHV1j5DDfKelAp5NeZoMJ0Ig7FSoRuiZJx2Ko=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Bd7o93Qa4PFjgVXK07gWvwXZrDcfEFGQIs/QAkCVds9/yksQ8KmpaTwp+ibtmen4s
-	 L5sXkl6iJ/NBAzd3gKZNrOuHAV9O0MhB7/oDYEuE5+BXCuJ1EV+KWOpbXPsSA5afbx
-	 OKmQYx0RaWyYXk1k31UnALGaqId4G3C0jLf1Tnhw=
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-Date: Wed, 30 Sep 2026 14:44:01 +0100
-Subject: [PATCH RFC 3/3] security: IMA: use TSM measurement registers
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RMlAQQh6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P936QFcu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gM3IYV04";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LLHlj2rw"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9041B21D6E;
+	Wed, 30 Sep 2026 13:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1790776441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/1IBlTX6vlcUFCjGWOjia0E+4yysJS/6lorCAPFPo2k=;
+	b=RMlAQQh6Ro2RDStq9a9Pi4hvvzfw/pA5YUeUecyAZ4aFYcJJWbS916DqfmwuxBem6zAStE
+	C2duED++f9sTtXDi5RcfVhz/dydQoUk6hTRuFnNUwIvvOEaqgeuxfOLiG1IcvI5IN19Ddp
+	eTpsISxoKWRqRrmuU4YCQHYleh6Z0RM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1790776441;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/1IBlTX6vlcUFCjGWOjia0E+4yysJS/6lorCAPFPo2k=;
+	b=P936QFcu0z8RG2dASK2K1h3d7//Tq0wpKPHKld1bjAzQAZLP7v0LTYDuzqVmweo99MLUAL
+	rPDE3NILpnxJ+GAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1790776437; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/1IBlTX6vlcUFCjGWOjia0E+4yysJS/6lorCAPFPo2k=;
+	b=gM3IYV04c03WM7/KGb0tyF1pfVk1tn84pCcc2mA/mqFYqKxd777ODk16gGzzw4f2Hbg3Ll
+	4/pf7CEMbxB/HG8j2FsDpHv10PuPOLkaXzClmKHOuJHAlskz7TZtJnsAO1dXqjCfXyjby5
+	igQhfVatYTIbZbzb6s2oLOpRRBkeAAU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1790776437;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/1IBlTX6vlcUFCjGWOjia0E+4yysJS/6lorCAPFPo2k=;
+	b=LLHlj2rwNW2vWZZWdFhrfd0aqpDv2Ka96milIukaY7nmcybc90aDipBEKI9am2til22yHn
+	C2ZKOgyP4QsQjNBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A512313ABC;
+	Wed, 30 Sep 2026 13:53:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fJXpHGIUvWqUTwAAD6G6ig:T2
+	(envelope-from <fmancera@suse.de>); Wed, 30 Sep 2026 13:53:51 +0000
+From: Fernando Fernandez Mancera <fmancera@suse.de>
+To: netdev@vger.kernel.org
+Cc: horms@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	edumazet@kernel.org,
+	davem@davemloft.net,
+	Fernando Fernandez Mancera <fmancera@suse.de>,
+	Chuck Lever <cel@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Zhu Yanjun <zyjzyj2000@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Elad Nachman <enachman@marvell.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Ido Schimmel <idosch@nvidia.com>,
+	Petr Machata <petrm@nvidia.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Edward Cree <ecree.xilinx@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Varun Prakash <varun@chelsio.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <mkp@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Marek Lindner <marek.lindner@mailbox.org>,
+	Simon Wunderlich <sw@simonwunderlich.de>,
+	Antonio Quartulli <antonio@mandelbit.com>,
+	Sven Eckelmann <sven@narfation.org>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Florian Westphal <fw@strlen.de>,
+	Phil Sutter <phil@nwl.cc>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Julian Anastasov <ja@ssi.bg>,
+	Allison Henderson <achender@kernel.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Dust Li <dust.li@linux.alibaba.com>,
+	Sidraya Jayagond <sidraya@linux.ibm.com>,
+	Mahanta Jambigi <mjambigi@linux.ibm.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>,
+	Jon Maloy <jmaloy@redhat.com>,
+	Tung Quang Nguyen <tung.quang.nguyen@est.tech>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Qingfang Deng <qingfang.deng@linux.dev>,
+	Julian Braha <julianbraha@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ethan Nelson-Moore <enelsonmoore@gmail.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Alyssa Ross <hi@alyssa.is>,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-net-drivers@amd.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-afs@lists.infradead.org,
+	linux-nfs@vger.kernel.org,
+	b.a.t.m.a.n@lists.open-mesh.org,
+	bridge@lists.linux.dev,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	mptcp@lists.linux.dev,
+	lvs-devel@vger.kernel.org,
+	rds-devel@oss.oracle.com,
+	linux-sctp@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH 01/16 net-next v3] ipv4: introduce CONFIG_IPV4 to decouple the IPv4 stack
+Date: Wed, 30 Sep 2026 15:52:44 +0200
+Message-ID: <20260930135334.4739-2-fmancera@suse.de>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260930135334.4739-1-fmancera@suse.de>
+References: <20260930135334.4739-1-fmancera@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260930-ima_tgx_integration_v2-v1-3-722c35370548@arm.com>
-References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
-In-Reply-To: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
-To: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Eric Snowberg <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org
-Cc: Dan Williams <djbw@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
- Suzuki Poulose <suzuki.poulose@arm.com>, 
- Steven Price <steven.price@arm.com>, Sami Mujawar <sami.mujawar@arm.com>, 
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Jiri Pirko <jiri@resnulli.us>, 
- Yeoreum Yun <yeoreum.yun@arm.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10095; i=yeoreum.yun@arm.com;
- h=from:subject:message-id; bh=d6nZ0CYHV1j5DDfKelAp5NeZoMJ0Ig7FSoRuiZJx2Ko=;
- b=owEB7QES/pANAwAKAW3Vw9FaxTEzAcsmYgBqvRIuDp0ses8uekRGMZSlJEtTE++PzOEzQHBGj
- J1jf6ABkYSJAbMEAAEKAB0WIQQtg+CS3QUzuFh1pJ1t1cPRWsUxMwUCar0SLgAKCRBt1cPRWsUx
- M3VGDACbmjMwaE1TpUBn0d2fNZbF815kR7BpsXO/j/OxUlJ4cnrthT3T9Ly1HKCEtGT5+RHbiiV
- of2LubVbNpcs42/U9M4oS8fj1swjbbjV0svdny+5QKYsHKBELl4RzlcHEMH7or2iha7a9E/rhRu
- cOgmsPBLCKli0bCn3nE0IXCyWJSu/IaroIE6su2u2Zg4cPhvLJiQNP2Yyp86AzkkYn19d1vHIcz
- 6AZm/wz1J6icZe6L48Rj9Ynacif9cKpt1xi12pcViilXMnvPx7vFnwmRa+P0F7+i0XBM8mqSfld
- 7ppHaQDx7dMdMhe/Q53YN37fQdsoH+Yud6qbSLEaKDoA/HQjxpjlIRdsy1cxF6DN0XJkU6A9CUc
- Ljrb/EZBLULov+/VWiLHGzOjvp4JGLyHdQ7XNYPiQiD9B7tbyMklcc64OlzsImvdNSwsUqqtEtt
- uJ+Keg0hGSpFU9WtMf3VGeNPyx8aOh5DWkLOoB31Zlsy+YISvCvErSbGyPCWGVjtYum6Q=
-X-Developer-Key: i=yeoreum.yun@arm.com; a=openpgp;
- fpr=2D83E092DD0533B85875A49D6DD5C3D15AC53133
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	FORGED_RECIPIENTS(2.00)[m:horms@kernel.org,m:kuba@kernel.org,m:pabeni@redhat.com,m:edumazet@kernel.org,m:davem@davemloft.net,m:fmancera@suse.de,m:cel@kernel.org,m:leon@kernel.org,m:zyjzyj2000@gmail.com,m:andrew+netdev@lunn.ch,m:edumazet@google.com,m:anthony.l.nguyen@intel.com,m:przemyslaw.kitszel@intel.com,m:enachman@marvell.com,m:saeedm@nvidia.com,m:tariqt@nvidia.com,m:mbloch@nvidia.com,m:idosch@nvidia.com,m:petrm@nvidia.com,m:jiri@resnulli.us,m:ecree.xilinx@gmail.com,m:maxime.chevallier@bootlin.com,m:mcoquelin.stm32@gmail.com,m:alexandre.torgue@foss.st.com,m:arend.vanspriel@broadcom.com,m:miriam.rachel.korenblit@intel.com,m:kbusch@kernel.org,m:axboe@kernel.dk,m:hch@lst.de,m:sagi@grimberg.me,m:kch@nvidia.com,m:varun@chelsio.com,m:James.Bottomley@HansenPartnership.com,m:mkp@kernel.org,m:brauner@kernel.org,m:jack@suse.cz,m:dhowells@redhat.com,m:marc.dionne@auristor.com,m:trondmy@kernel.org,m:anna@kernel.org,m:jlayton@kernel.org,m:neil@brown.name,m:okorniev@redhat.com,m:Dai.Ngo@oracle
+ .com,m:tom@talpey.com,m:marek.lindner@mailbox.org,m:sw@simonwunderlich.de,m:antonio@mandelbit.com,m:sven@narfation.org,m:razor@blackwall.org,m:pablo@netfilter.org,m:fw@strlen.de,m:phil@nwl.cc,m:matttbe@kernel.org,m:martineau@kernel.org,m:geliang@kernel.org,m:ja@ssi.bg,m:achender@kernel.org,m:jhs@mojatatu.com,m:marcelo.leitner@gmail.com,m:lucien.xin@gmail.com,m:alibuda@linux.alibaba.com,m:dust.li@linux.alibaba.com,m:sidraya@linux.ibm.com,m:mjambigi@linux.ibm.com,m:tonylu@linux.alibaba.com,m:guwen@linux.alibaba.com,m:jmaloy@redhat.com,m:tung.quang.nguyen@est.tech,m:steffen.klassert@secunet.com,m:herbert@gondor.apana.org.au,m:casey@schaufler-ca.com,m:paul@paul-moore.com,m:jmorris@namei.org,m:serge@hallyn.com,m:krzk@kernel.org,m:qingfang.deng@linux.dev,m:julianbraha@gmail.com,m:gregkh@linuxfoundation.org,m:enelsonmoore@gmail.com,m:ebiggers@kernel.org,m:ardb@kernel.org,m:ncardwell@google.com,m:kuniyu@google.com,m:hi@alyssa.is,m:intel-wired-lan@lists.osuosl.org,m:linux-net-drivers@amd.com
+ ,m:linux-stm32@st-md-mailman.stormreply.com,m:linux-arm-kernel@lists.infradead.org,m:brcm80211@lists.linux.dev,m:brcm80211-dev-list.pdl@broadcom.com,m:linux-nvme@lists.infradead.org,s:linux-nfs@vger.kernel.org,s:linux-s390@vger.kernel.org,s:linux-sctp@vger.kernel.org,s:linux-security-module@vger.kernel.org,s:lvs-devel@vger.kernel.org,s:netfilter-devel@vger.kernel.org,s:target-devel@vger.kernel.org];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.994];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[kernel.org,redhat.com,davemloft.net,suse.de,ziepe.ca,gmail.com,lunn.ch,google.com,intel.com,marvell.com,nvidia.com,resnulli.us,bootlin.com,foss.st.com,broadcom.com,kernel.dk,lst.de,grimberg.me,chelsio.com,HansenPartnership.com,zeniv.linux.org.uk,suse.cz,auristor.com,brown.name,oracle.com,talpey.com,mailbox.org,simonwunderlich.de,mandelbit.com,narfation.org,blackwall.org,netfilter.org,strlen.de,nwl.cc,ssi.bg,mojatatu.com,linux.alibaba.com,linux.ibm.com,est.tech,secunet.com,gondor.apana.org.au,schaufler-ca.com,paul-moore.com,namei.org,hallyn.com,linux.dev,linuxfoundation.org,alyssa.is,vger.kernel.org,lists.osuosl.org,amd.com,st-md-mailman.stormreply.com,lists.infradead.org,lists.linux.dev,lists.open-mesh.org,oss.oracle.com,lists.sourceforge.net];
+	RCPT_COUNT_GT_50(0.00)[114];
+	TAGGED_RCPT(0.00)[netdev];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
 
-IMA uses TPM PCRs to record measurement digests. When no TPM device is
-available, TSM measurement registers can serve as an alternative for guest.
+Historically, the IPv4 protocol has been linked to the core INET
+subsystem. Because shared infrastructure like the TCP/UDP engine,
+routing or INET hashtables live inside net/ipv4/, it has been impossible
+to compile a kernel with only IPv6 support.
 
-The following mappings are defined for Intel TDX [0] and proposed for
-Arm CCA [1]:
+This patch introduces the CONFIG_IPV4 Kconfig symbol, which is set to
+'def_bool y' for now. This does not allow to completely disable the
+IPv4 stack yet but it lays the necessary build-system work for that
+goal.
 
-  TPM PCR index | Intel TDX register | Arm CCA register
-  --------------+--------------------+-----------------
-  0             | MRTD               | RIM
-  1, 7          | RTMR[0]            | REM[0]
-  2-6           | RTMR[1]            | REM[1]
-  8-15          | RTMR[2]            | REM[2]
+In addition, multiple subsystems Kconfig symbols across networking
+features like tunnels, drivers and filesystems have been adjusted to
+depend on IPv4. Keep on mind that follow-up work is required to convert
+the Kconfig symbol to bool and remove the dependency on IPv4 where it
+makes sense.
 
-Add support for extending IMA measurement digests into the corresponding
-TSM measurement register when no TPM device is available.
-
-Link: [0] https://uefi.org/specs/UEFI/2.11/38_Confidential_Computing.html#intel-trust-domain-extension
-Link: [1] https://github.com/tianocore/edk2/issues/11383
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Acked-by: Chuck Lever <cel@kernel.org>
+Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
 ---
- security/integrity/ima/Makefile     |   3 +-
- security/integrity/ima/ima_mr.c     |   1 +
- security/integrity/ima/ima_mr.h     |   1 +
- security/integrity/ima/ima_mr_tsm.c | 290 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 294 insertions(+), 1 deletion(-)
+Sashiko: Marking the Kconfig symbols to depend on IPV4 is intentional,
+plenty of features won't work without IPv4 for now. Follow-up patches
+are required to support IPv4=n for those symbols.
+---
+ drivers/infiniband/Kconfig                    |  2 +-
+ drivers/infiniband/sw/rxe/Kconfig             |  2 +-
+ drivers/net/Kconfig                           | 23 ++++++++++---------
+ drivers/net/ethernet/chelsio/Kconfig          |  2 +-
+ drivers/net/ethernet/intel/Kconfig            |  2 ++
+ drivers/net/ethernet/marvell/prestera/Kconfig |  1 +
+ .../net/ethernet/mellanox/mlx5/core/Kconfig   |  3 ++-
+ drivers/net/ethernet/mellanox/mlxsw/Kconfig   |  1 +
+ drivers/net/ethernet/qlogic/Kconfig           |  2 ++
+ drivers/net/ethernet/rocker/Kconfig           |  1 +
+ drivers/net/ethernet/sfc/Kconfig              |  1 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  1 +
+ drivers/net/ethernet/via/Kconfig              |  1 +
+ drivers/net/ppp/Kconfig                       |  1 +
+ .../broadcom/brcm80211/brcmfmac/Kconfig       |  1 +
+ drivers/net/wireless/intel/iwlwifi/Kconfig    |  1 +
+ drivers/nvme/host/Kconfig                     |  2 +-
+ drivers/nvme/target/Kconfig                   |  2 +-
+ drivers/scsi/cxgbi/cxgb3i/Kconfig             |  2 +-
+ drivers/scsi/cxgbi/cxgb4i/Kconfig             |  2 +-
+ drivers/target/iscsi/Kconfig                  |  2 +-
+ drivers/target/iscsi/cxgbit/Kconfig           |  2 +-
+ fs/Kconfig                                    |  1 +
+ fs/afs/Kconfig                                |  2 +-
+ fs/nfs/Kconfig                                |  2 +-
+ fs/nfsd/Kconfig                               |  2 +-
+ net/Kconfig                                   | 12 ++++++----
+ net/batman-adv/Kconfig                        |  6 ++---
+ net/bridge/Kconfig                            |  2 +-
+ net/bridge/netfilter/Kconfig                  |  3 ++-
+ net/ipv4/Kconfig                              | 21 ++++++++++++++---
+ net/ipv4/Makefile                             | 21 ++++++++---------
+ net/ipv4/netfilter/Kconfig                    |  2 +-
+ net/ipv6/Kconfig                              | 17 ++++++++++----
+ net/ipv6/netfilter/Kconfig                    |  2 +-
+ net/l2tp/Kconfig                              |  2 +-
+ net/mptcp/Kconfig                             |  2 +-
+ net/netfilter/Kconfig                         |  2 +-
+ net/netfilter/ipset/Kconfig                   |  2 +-
+ net/netfilter/ipvs/Kconfig                    |  2 +-
+ net/rds/Kconfig                               |  1 +
+ net/rxrpc/Kconfig                             |  2 +-
+ net/sched/Kconfig                             |  2 +-
+ net/sctp/Kconfig                              |  2 +-
+ net/smc/Kconfig                               |  2 +-
+ net/sunrpc/Kconfig                            |  2 +-
+ net/tipc/Kconfig                              |  1 +
+ net/xfrm/Kconfig                              | 10 ++++++--
+ security/smack/Kconfig                        |  1 +
+ 49 files changed, 118 insertions(+), 65 deletions(-)
 
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index f2c46b405a00..f0a22e3a5320 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -7,7 +7,8 @@
- obj-$(CONFIG_IMA) += ima.o ima_iint.o
+diff --git a/drivers/infiniband/Kconfig b/drivers/infiniband/Kconfig
+index 086195758a8a..e9302002b6ea 100644
+--- a/drivers/infiniband/Kconfig
++++ b/drivers/infiniband/Kconfig
+@@ -3,7 +3,7 @@ menuconfig INFINIBAND
+ 	tristate "InfiniBand support"
+ 	depends on HAS_IOMEM && HAS_DMA
+ 	depends on NET
+-	depends on INET
++	depends on INET && IPV4
+ 	depends on !ALPHA
+ 	select DMA_SHARED_BUFFER
+ 	select IRQ_POLL
+diff --git a/drivers/infiniband/sw/rxe/Kconfig b/drivers/infiniband/sw/rxe/Kconfig
+index 1ed5b63f8afc..e4272f863944 100644
+--- a/drivers/infiniband/sw/rxe/Kconfig
++++ b/drivers/infiniband/sw/rxe/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config RDMA_RXE
+ 	tristate "Software RDMA over Ethernet (RoCE) driver"
+-	depends on INET && PCI && INFINIBAND && 64BIT
++	depends on INET && IPV4 && PCI && INFINIBAND && 64BIT
+ 	depends on INFINIBAND_VIRT_DMA
+ 	select NET_UDP_TUNNEL
+ 	select CRC32
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index ff79c466712d..5f60c3ff182b 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -40,7 +40,7 @@ if NET_CORE
  
- ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
--	 ima_policy.o ima_template.o ima_template_lib.o ima_mr.o ima_mr_tpm.o
-+	 ima_policy.o ima_template.o ima_template_lib.o ima_mr.o ima_mr_tpm.o \
-+	 ima_mr_tsm.o
- ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
- ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
- ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
-diff --git a/security/integrity/ima/ima_mr.c b/security/integrity/ima/ima_mr.c
-index fe58eb968954..85a66e616f64 100644
---- a/security/integrity/ima/ima_mr.c
-+++ b/security/integrity/ima/ima_mr.c
-@@ -15,6 +15,7 @@ struct ima_mr *ima_mr;
+ config BONDING
+ 	tristate "Bonding driver support"
+-	depends on INET
++	depends on INET && IPV4
+ 	depends on TLS || TLS_DEVICE=n
+ 	help
+ 	  Say 'Y' or 'M' if you wish to be able to 'bond' multiple Ethernet
+@@ -73,7 +73,7 @@ config DUMMY
  
- static struct ima_mr_operations *ima_mr_ops[] = {
- 	&ima_mr_tpm_operations,
-+	&ima_mr_tsm_operations,
- };
+ config WIREGUARD
+ 	tristate "WireGuard secure network tunnel"
+-	depends on NET && INET
++	depends on NET && INET && IPV4
+ 	select NET_UDP_TUNNEL
+ 	select DST_CACHE
+ 	select CRYPTO_LIB_CURVE25519
+@@ -102,7 +102,7 @@ config WIREGUARD_DEBUG
  
- void __init ima_init_mr(void)
-diff --git a/security/integrity/ima/ima_mr.h b/security/integrity/ima/ima_mr.h
-index 23b85522da34..bc7b06c3adcd 100644
---- a/security/integrity/ima/ima_mr.h
-+++ b/security/integrity/ima/ima_mr.h
-@@ -51,6 +51,7 @@ struct ima_mr_operations {
+ config OVPN
+ 	tristate "OpenVPN data channel offload"
+-	depends on NET && INET
++	depends on NET && INET && IPV4
+ 	select DST_CACHE
+ 	select NET_UDP_TUNNEL
+ 	select CRYPTO
+@@ -198,7 +198,7 @@ config IPVLAN_L3S
  
- extern struct ima_mr *ima_mr;
- extern struct ima_mr_operations ima_mr_tpm_operations;
-+extern struct ima_mr_operations ima_mr_tsm_operations;
+ config IPVLAN
+ 	tristate "IP-VLAN support"
+-	depends on INET
++	depends on INET && IPV4
+ 	help
+ 	  This allows one to create virtual devices off of a main interface
+ 	  and packets will be delivered based on the dest L3 (IPv6/IPv4 addr)
+@@ -229,7 +229,7 @@ config IPVTAP
  
- void __init ima_init_mr(void);
+ config VXLAN
+ 	tristate "Virtual eXtensible Local Area Network (VXLAN)"
+-	depends on INET
++	depends on INET && IPV4
+ 	select NET_UDP_TUNNEL
+ 	select GRO_CELLS
+ 	help
+@@ -244,7 +244,7 @@ config VXLAN
  
-diff --git a/security/integrity/ima/ima_mr_tsm.c b/security/integrity/ima/ima_mr_tsm.c
-new file mode 100644
-index 000000000000..3f88edfb8511
---- /dev/null
-+++ b/security/integrity/ima/ima_mr_tsm.c
-@@ -0,0 +1,290 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Arm Ltd
-+ *
-+ * Author:
-+ * Yeoreum Yun <yeoreum.yun@arm.com>
-+ */
+ config GENEVE
+ 	tristate "Generic Network Virtualization Encapsulation"
+-	depends on INET
++	depends on INET && IPV4
+ 	select NET_UDP_TUNNEL
+ 	select GRO_CELLS
+ 	help
+@@ -259,7 +259,7 @@ config GENEVE
+ 
+ config BAREUDP
+ 	tristate "Bare UDP Encapsulation"
+-	depends on INET
++	depends on INET && IPV4
+ 	select NET_UDP_TUNNEL
+ 	select GRO_CELLS
+ 	help
+@@ -271,7 +271,7 @@ config BAREUDP
+ 
+ config GTP
+ 	tristate "GPRS Tunneling Protocol datapath (GTP-U)"
+-	depends on INET
++	depends on INET && IPV4
+ 	select NET_UDP_TUNNEL
+ 	help
+ 	  This allows one to create gtp virtual interfaces that provide
+@@ -288,7 +288,7 @@ config GTP
+ 
+ config PFCP
+ 	tristate "Packet Forwarding Control Protocol (PFCP)"
+-	depends on INET
++	depends on INET && IPV4
+ 	select NET_UDP_TUNNEL
+ 	help
+ 	  This allows one to create PFCP virtual interfaces that allows to
+@@ -301,7 +301,7 @@ config PFCP
+ 
+ config AMT
+ 	tristate "Automatic Multicast Tunneling (AMT)"
+-	depends on INET && IP_MULTICAST
++	depends on INET && IP_MULTICAST && IPV4
+ 	select NET_UDP_TUNNEL
+ 	help
+ 	  This allows one to create AMT(Automatic Multicast Tunneling)
+@@ -471,6 +471,7 @@ config NETKIT
+ 
+ config NET_VRF
+ 	tristate "Virtual Routing and Forwarding (Lite)"
++	depends on IPV4
+ 	depends on IP_MULTIPLE_TABLES
+ 	depends on NET_L3_MASTER_DEV
+ 	depends on IPV6_MULTIPLE_TABLES || IPV6=n
+@@ -604,7 +605,7 @@ source "drivers/net/hyperv/Kconfig"
+ config NETDEVSIM
+ 	tristate "Simulated networking device"
+ 	depends on DEBUG_FS
+-	depends on INET
++	depends on INET && IPV4
+ 	depends on PSAMPLE || PSAMPLE=n
+ 	depends on PTP_1588_CLOCK_MOCK || PTP_1588_CLOCK_MOCK=n
+ 	select NET_DEVLINK
+diff --git a/drivers/net/ethernet/chelsio/Kconfig b/drivers/net/ethernet/chelsio/Kconfig
+index 96d7779cd2f0..c738820688e0 100644
+--- a/drivers/net/ethernet/chelsio/Kconfig
++++ b/drivers/net/ethernet/chelsio/Kconfig
+@@ -48,7 +48,7 @@ config CHELSIO_T1_1G
+ 
+ config CHELSIO_T3
+ 	tristate "Chelsio Communications T3 10Gb Ethernet support"
+-	depends on PCI && INET
++	depends on PCI && INET && IPV4
+ 	select FW_LOADER
+ 	select MDIO
+ 	help
+diff --git a/drivers/net/ethernet/intel/Kconfig b/drivers/net/ethernet/intel/Kconfig
+index 780f113986ea..ce1c68e9cdf6 100644
+--- a/drivers/net/ethernet/intel/Kconfig
++++ b/drivers/net/ethernet/intel/Kconfig
+@@ -195,6 +195,7 @@ config IXGBE_IPSEC
+ 	bool "IPSec XFRM cryptography-offload acceleration"
+ 	depends on IXGBE
+ 	depends on XFRM_OFFLOAD
++	depends on IPV4 || !INET
+ 	default y
+ 	select XFRM_ALGO
+ 	help
+@@ -221,6 +222,7 @@ config IXGBEVF_IPSEC
+ 	bool "IPSec XFRM cryptography-offload acceleration"
+ 	depends on IXGBEVF
+ 	depends on XFRM_OFFLOAD
++	depends on IPV4 || !INET
+ 	default y
+ 	select XFRM_ALGO
+ 	help
+diff --git a/drivers/net/ethernet/marvell/prestera/Kconfig b/drivers/net/ethernet/marvell/prestera/Kconfig
+index f2f7663c3d10..257afbb3c434 100644
+--- a/drivers/net/ethernet/marvell/prestera/Kconfig
++++ b/drivers/net/ethernet/marvell/prestera/Kconfig
+@@ -7,6 +7,7 @@ config PRESTERA
+ 	tristate "Marvell Prestera Switch ASICs support"
+ 	depends on NET_SWITCHDEV && VLAN_8021Q
+ 	depends on BRIDGE || BRIDGE=n
++	depends on IPV4 || !INET
+ 	select NET_DEVLINK
+ 	select PHYLINK
+ 	help
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
+index 925ee25d05b4..99d998aa7e9b 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlx5/core/Kconfig
+@@ -12,6 +12,7 @@ config MLX5_CORE
+ 	depends on PTP_1588_CLOCK_OPTIONAL
+ 	depends on PCI_HYPERV_INTERFACE || !PCI_HYPERV_INTERFACE
+ 	depends on HWMON || !HWMON
++	depends on IPV4 || !INET
+ 	help
+ 	  Core driver for low level functionality of the ConnectX-4 and
+ 	  Connect-IB cards by Mellanox Technologies.
+@@ -28,7 +29,7 @@ config MLX5_FPGA
+ 
+ config MLX5_CORE_EN
+ 	bool "Mellanox 5th generation network adapters (ConnectX series) Ethernet support"
+-	depends on NETDEVICES && ETHERNET && INET && PCI && MLX5_CORE
++	depends on NETDEVICES && ETHERNET && INET && PCI && MLX5_CORE && IPV4
+ 	select PAGE_POOL
+ 	select PAGE_POOL_STATS
+ 	select DIMLIB
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/Kconfig b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+index 2229a2694aa5..fb3028600724 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+@@ -53,6 +53,7 @@ config MLXSW_I2C
+ 
+ config MLXSW_SPECTRUM
+ 	tristate "Mellanox Technologies Spectrum family support"
++	depends on IPV4 || !INET
+ 	depends on MLXSW_CORE && MLXSW_PCI && NET_SWITCHDEV && VLAN_8021Q
+ 	depends on PSAMPLE || PSAMPLE=n
+ 	depends on BRIDGE || BRIDGE=n
+diff --git a/drivers/net/ethernet/qlogic/Kconfig b/drivers/net/ethernet/qlogic/Kconfig
+index 1203353238e5..aed78311ecaf 100644
+--- a/drivers/net/ethernet/qlogic/Kconfig
++++ b/drivers/net/ethernet/qlogic/Kconfig
+@@ -29,6 +29,7 @@ config QLA3XXX
+ config QLCNIC
+ 	tristate "QLOGIC QLCNIC 1/10Gb Converged Ethernet NIC Support"
+ 	depends on PCI
++	depends on IPV4 || !INET
+ 	select FW_LOADER
+ 	help
+ 	  This driver supports QLogic QLE8240 and QLE8242 Converged Ethernet
+@@ -68,6 +69,7 @@ config QLCNIC_HWMON
+ 
+ config NETXEN_NIC
+ 	tristate "NetXen Multi port (1/10) Gigabit Ethernet NIC"
++	depends on IPV4 || !INET
+ 	depends on PCI
+ 	select FW_LOADER
+ 	help
+diff --git a/drivers/net/ethernet/rocker/Kconfig b/drivers/net/ethernet/rocker/Kconfig
+index 2318811ff75a..2f994bd6f9bd 100644
+--- a/drivers/net/ethernet/rocker/Kconfig
++++ b/drivers/net/ethernet/rocker/Kconfig
+@@ -19,6 +19,7 @@ if NET_VENDOR_ROCKER
+ config ROCKER
+ 	tristate "Rocker switch driver (EXPERIMENTAL)"
+ 	depends on PCI && NET_SWITCHDEV && BRIDGE
++	depends on IPV4 || !INET
+ 	select CRC32
+ 	help
+ 	  This driver supports Rocker switch device.
+diff --git a/drivers/net/ethernet/sfc/Kconfig b/drivers/net/ethernet/sfc/Kconfig
+index e2898ec2e6e9..2bf5c2a185d2 100644
+--- a/drivers/net/ethernet/sfc/Kconfig
++++ b/drivers/net/ethernet/sfc/Kconfig
+@@ -18,6 +18,7 @@ if NET_VENDOR_SOLARFLARE
+ 
+ config SFC
+ 	tristate "Solarflare SFC9100/EF100-family support"
++	depends on IPV4 || !INET
+ 	depends on PCI
+ 	depends on PTP_1588_CLOCK_OPTIONAL
+ 	select MDIO
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index ab3c4cf96423..0b487786dad4 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config STMMAC_ETH
+ 	tristate "STMicroelectronics Multi-Gigabit Ethernet driver"
++	depends on IPV4 || !INET
+ 	depends on HAS_IOMEM && HAS_DMA
+ 	depends on PTP_1588_CLOCK_OPTIONAL
+ 	depends on ETHTOOL_NETLINK
+diff --git a/drivers/net/ethernet/via/Kconfig b/drivers/net/ethernet/via/Kconfig
+index 00773f5e4d7e..dbb24d35dfbd 100644
+--- a/drivers/net/ethernet/via/Kconfig
++++ b/drivers/net/ethernet/via/Kconfig
+@@ -45,6 +45,7 @@ config VIA_RHINE_MMIO
+ 
+ config VIA_VELOCITY
+ 	tristate "VIA Velocity support"
++	depends on IPV4 || !INET
+ 	depends on (PCI || (OF_ADDRESS && OF_IRQ))
+ 	depends on HAS_DMA
+ 	select CRC32
+diff --git a/drivers/net/ppp/Kconfig b/drivers/net/ppp/Kconfig
+index 4047f13b83dc..c5200fae5e4a 100644
+--- a/drivers/net/ppp/Kconfig
++++ b/drivers/net/ppp/Kconfig
+@@ -160,6 +160,7 @@ config PPPOE_HASH_BITS
+ 
+ config PPTP
+ 	tristate "PPP over IPv4 (PPTP)"
++	depends on IPV4 || !INET
+ 	depends on NET_IPGRE_DEMUX
+ 	select PPPOX
+ 	help
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Kconfig b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Kconfig
+index 32794c1eca23..01a5b3310e1e 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Kconfig
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Kconfig
+@@ -1,6 +1,7 @@
+ config BRCMFMAC
+ 	tristate "Broadcom FullMAC WLAN driver"
+ 	depends on CFG80211
++	depends on IPV4 || !INET
+ 	select BRCMUTIL
+ 	help
+ 	  This module adds support for wireless adapters based on Broadcom
+diff --git a/drivers/net/wireless/intel/iwlwifi/Kconfig b/drivers/net/wireless/intel/iwlwifi/Kconfig
+index 153a8368b412..3719fa0727c2 100644
+--- a/drivers/net/wireless/intel/iwlwifi/Kconfig
++++ b/drivers/net/wireless/intel/iwlwifi/Kconfig
+@@ -2,6 +2,7 @@
+ config IWLWIFI
+ 	tristate "Intel Wireless WiFi Next Gen AGN - Wireless-N/Advanced-N/Ultimate-N (iwlwifi) "
+ 	depends on PCI && HAS_IOMEM && CFG80211
++	depends on IPV4 || !INET
+ 	depends on IWLMEI || !IWLMEI
+ 	select FW_LOADER
+ 	help
+diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
+index 31974c7dd20c..6e119cf475de 100644
+--- a/drivers/nvme/host/Kconfig
++++ b/drivers/nvme/host/Kconfig
+@@ -82,7 +82,7 @@ config NVME_FC
+ 
+ config NVME_TCP
+ 	tristate "NVM Express over Fabrics TCP host driver"
+-	depends on INET
++	depends on INET && IPV4
+ 	depends on BLOCK
+ 	select CRC32
+ 	select NET_CRC32C
+diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
+index 69bde270115e..f731a043f6a9 100644
+--- a/drivers/nvme/target/Kconfig
++++ b/drivers/nvme/target/Kconfig
+@@ -86,7 +86,7 @@ config NVME_TARGET_FCLOOP
+ 
+ config NVME_TARGET_TCP
+ 	tristate "NVMe over Fabrics TCP target support"
+-	depends on INET
++	depends on INET && IPV4
+ 	depends on NVME_TARGET
+ 	help
+ 	  This enables the NVMe TCP target support, which allows exporting NVMe
+diff --git a/drivers/scsi/cxgbi/cxgb3i/Kconfig b/drivers/scsi/cxgbi/cxgb3i/Kconfig
+index 143e881ec77e..abb4a462cb37 100644
+--- a/drivers/scsi/cxgbi/cxgb3i/Kconfig
++++ b/drivers/scsi/cxgbi/cxgb3i/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config SCSI_CXGB3_ISCSI
+ 	tristate "Chelsio T3 iSCSI support"
+-	depends on PCI && INET
++	depends on PCI && INET && IPV4
+ 	select NETDEVICES
+ 	select ETHERNET
+ 	select NET_VENDOR_CHELSIO
+diff --git a/drivers/scsi/cxgbi/cxgb4i/Kconfig b/drivers/scsi/cxgbi/cxgb4i/Kconfig
+index dd1c8ff36b00..04b3e7b053dc 100644
+--- a/drivers/scsi/cxgbi/cxgb4i/Kconfig
++++ b/drivers/scsi/cxgbi/cxgb4i/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config SCSI_CXGB4_ISCSI
+ 	tristate "Chelsio T4 iSCSI support"
+-	depends on PCI && INET
++	depends on PCI && INET && IPV4
+ 	depends on PTP_1588_CLOCK_OPTIONAL
+ 	depends on THERMAL || !THERMAL
+ 	depends on ETHERNET
+diff --git a/drivers/target/iscsi/Kconfig b/drivers/target/iscsi/Kconfig
+index 70d76f3dd693..362edff80c15 100644
+--- a/drivers/target/iscsi/Kconfig
++++ b/drivers/target/iscsi/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config ISCSI_TARGET
+ 	tristate "SCSI Target Mode Stack"
+-	depends on INET
++	depends on INET && IPV4
+ 	select CRC32
+ 	select CRYPTO
+ 	select CRYPTO_HASH
+diff --git a/drivers/target/iscsi/cxgbit/Kconfig b/drivers/target/iscsi/cxgbit/Kconfig
+index bdeefa75f29e..7a2e585d76d7 100644
+--- a/drivers/target/iscsi/cxgbit/Kconfig
++++ b/drivers/target/iscsi/cxgbit/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config ISCSI_TARGET_CXGB4
+ 	tristate "Chelsio iSCSI target offload driver"
+-	depends on ISCSI_TARGET && CHELSIO_T4 && INET
++	depends on ISCSI_TARGET && CHELSIO_T4 && INET && IPV4
+ 	select CHELSIO_LIB
+ 	help
+ 	To compile this driver as module, choose M here: the module
+diff --git a/fs/Kconfig b/fs/Kconfig
+index e05917adcd60..2f492fa3a3fb 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -358,6 +358,7 @@ config GRACE_PERIOD
+ 
+ config LOCKD
+ 	tristate
++	depends on IPV4 || !INET
+ 	depends on FILE_LOCKING
+ 	select CRC32
+ 	select GRACE_PERIOD
+diff --git a/fs/afs/Kconfig b/fs/afs/Kconfig
+index 682bd8ec2c10..e7ed46426f81 100644
+--- a/fs/afs/Kconfig
++++ b/fs/afs/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config AFS_FS
+ 	tristate "Andrew File System support (AFS)"
+-	depends on INET
++	depends on INET && IPV4
+ 	select AF_RXRPC
+ 	select DNS_RESOLVER
+ 	select NETFS_SUPPORT
+diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
+index 6bb30543eff0..52efd3664d21 100644
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config NFS_FS
+ 	tristate "NFS client support"
+-	depends on INET && FILE_LOCKING && MULTIUSER
++	depends on INET && FILE_LOCKING && MULTIUSER && IPV4
+ 	select CRC32
+ 	select LOCKD
+ 	select SUNRPC
+diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
+index ffb76761d6a8..153a9918214d 100644
+--- a/fs/nfsd/Kconfig
++++ b/fs/nfsd/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config NFSD
+ 	tristate "NFS server support"
+-	depends on INET
++	depends on INET && IPV4
+ 	depends on FILE_LOCKING
+ 	depends on FSNOTIFY
+ 	select CRC32
+diff --git a/net/Kconfig b/net/Kconfig
+index 76ab44aa439a..ca86f20540dd 100644
+--- a/net/Kconfig
++++ b/net/Kconfig
+@@ -135,9 +135,12 @@ config INET
+ if INET
+ source "net/ipv4/Kconfig"
+ source "net/ipv6/Kconfig"
+-source "net/netlabel/Kconfig"
+ source "net/mptcp/Kconfig"
+ 
++if IPV4
++source "net/netlabel/Kconfig"
++endif # if IPV4
 +
-+#include <linux/kernel.h>
-+#include <linux/tsm-mr.h>
+ endif # if INET
+ 
+ config NETWORK_SECMARK
+@@ -232,6 +235,7 @@ config BRIDGE_NETFILTER
+ 	depends on BRIDGE
+ 	depends on NETFILTER && INET
+ 	depends on NETFILTER_ADVANCED
++	depends on IPV4
+ 	select NETFILTER_FAMILY_BRIDGE
+ 	select SKB_EXTENSIONS
+ 	help
+@@ -384,7 +388,7 @@ menu "Network testing"
+ 
+ config NET_PKTGEN
+ 	tristate "Packet Generator (USE WITH CAUTION)"
+-	depends on INET && PROC_FS
++	depends on INET && IPV4 && PROC_FS
+ 	help
+ 	  This module will inject preconfigured packets, at a configurable
+ 	  rate, out of a given interface.  It is used for network interface
+@@ -451,7 +455,7 @@ config LWTUNNEL
+ 
+ config LWTUNNEL_BPF
+ 	bool "Execute BPF program as route nexthop action"
+-	depends on LWTUNNEL && INET
++	depends on LWTUNNEL && INET && IPV4
+ 	default y if LWTUNNEL=y
+ 	help
+ 	  Allows to run BPF programs as a nexthop action following a route
+@@ -473,7 +477,7 @@ config NET_IEEE8021Q_HELPERS
+ 
+ config NET_SELFTESTS
+ 	def_tristate PHYLIB
+-	depends on PHYLIB && INET
++	depends on PHYLIB && INET && IPV4
+ 
+ config NET_SOCK_MSG
+ 	bool
+diff --git a/net/batman-adv/Kconfig b/net/batman-adv/Kconfig
+index 58c408b7a7d9..5c66122c137c 100644
+--- a/net/batman-adv/Kconfig
++++ b/net/batman-adv/Kconfig
+@@ -33,7 +33,7 @@ config BATMAN_ADV_BATMAN_V
+ 
+ config BATMAN_ADV_BLA
+ 	bool "Bridge Loop Avoidance"
+-	depends on BATMAN_ADV && INET
++	depends on BATMAN_ADV && INET && IPV4
+ 	select CRC16
+ 	select NET_CRC32C
+ 	default y
+@@ -46,7 +46,7 @@ config BATMAN_ADV_BLA
+ 
+ config BATMAN_ADV_DAT
+ 	bool "Distributed ARP Table"
+-	depends on BATMAN_ADV && INET
++	depends on BATMAN_ADV && INET && IPV4
+ 	default y
+ 	help
+ 	  This option enables DAT (Distributed ARP Table), a DHT based
+@@ -56,7 +56,7 @@ config BATMAN_ADV_DAT
+ 
+ config BATMAN_ADV_MCAST
+ 	bool "Multicast optimisation"
+-	depends on BATMAN_ADV && INET && !(BRIDGE=m && BATMAN_ADV=y)
++	depends on BATMAN_ADV && INET && !(BRIDGE=m && BATMAN_ADV=y) && IPV4
+ 	default y
+ 	help
+ 	  This option enables the multicast optimisation which aims to
+diff --git a/net/bridge/Kconfig b/net/bridge/Kconfig
+index 318715c8fc9b..c7737d3ebac8 100644
+--- a/net/bridge/Kconfig
++++ b/net/bridge/Kconfig
+@@ -36,7 +36,7 @@ config BRIDGE
+ config BRIDGE_IGMP_SNOOPING
+ 	bool "IGMP/MLD snooping"
+ 	depends on BRIDGE
+-	depends on INET
++	depends on INET && IPV4
+ 	default y
+ 	help
+ 	  If you say Y here, then the Ethernet bridge will be able selectively
+diff --git a/net/bridge/netfilter/Kconfig b/net/bridge/netfilter/Kconfig
+index 4fd5a6ea26b4..31e388ce503f 100644
+--- a/net/bridge/netfilter/Kconfig
++++ b/net/bridge/netfilter/Kconfig
+@@ -28,6 +28,7 @@ endif # NF_TABLES_BRIDGE
+ config NF_CONNTRACK_BRIDGE
+ 	tristate "IPv4/IPV6 bridge connection tracking support"
+ 	depends on NF_CONNTRACK
++	depends on IPV4 || !INET
+ 	default n
+ 	help
+ 	  Connection tracking keeps a record of what packets have passed
+@@ -188,7 +189,7 @@ config BRIDGE_EBT_VLAN
+ #
+ config BRIDGE_EBT_ARPREPLY
+ 	tristate "ebt: arp reply target support"
+-	depends on BRIDGE_NF_EBTABLES && INET
++	depends on BRIDGE_NF_EBTABLES && INET && IPV4
+ 	help
+ 	  This option adds the arp reply target, which allows
+ 	  automatically sending arp replies to arp requests.
+diff --git a/net/ipv4/Kconfig b/net/ipv4/Kconfig
+index 301b47660305..51bf05d9770c 100644
+--- a/net/ipv4/Kconfig
++++ b/net/ipv4/Kconfig
+@@ -2,6 +2,9 @@
+ #
+ # IP configuration
+ #
++config IPV4
++	def_bool y
 +
-+#include "ima.h"
+ config IP_MULTICAST
+ 	bool "IP: multicasting"
+ 	help
+@@ -62,7 +65,7 @@ config IP_FIB_TRIE_STATS
+ 
+ config IP_MULTIPLE_TABLES
+ 	bool "IP: policy routing"
+-	depends on IP_ADVANCED_ROUTER
++	depends on IPV4 && IP_ADVANCED_ROUTER
+ 	select FIB_RULES
+ 	help
+ 	  Normally, a router decides what to do with a received packet based
+@@ -105,6 +108,7 @@ config IP_ROUTE_CLASSID
+ 
+ config IP_PNP
+ 	bool "IP: kernel level autoconfiguration"
++	depends on IPV4
+ 	help
+ 	  This enables automatic configuration of IP addresses of devices and
+ 	  of the routing table during kernel boot, based on either information
+@@ -161,6 +165,7 @@ config IP_PNP_RARP
+ 
+ config NET_IPIP
+ 	tristate "IP: tunneling"
++	depends on IPV4
+ 	select INET_TUNNEL
+ 	select NET_IP_TUNNEL
+ 	help
+@@ -185,12 +190,14 @@ config NET_IPGRE_DEMUX
+ 
+ config NET_IP_TUNNEL
+ 	tristate
++	depends on IPV4
+ 	select DST_CACHE
+ 	select GRO_CELLS
+ 	default n
+ 
+ config NET_IPGRE
+ 	tristate "IP: GRE tunnels over IP"
++	depends on IPV4
+ 	depends on NET_IPGRE_DEMUX
+ 	select NET_IP_TUNNEL
+ 	help
+@@ -219,7 +226,7 @@ config IP_MROUTE_COMMON
+ 
+ config IP_MROUTE
+ 	bool "IP: multicast routing"
+-	depends on IP_MULTICAST
++	depends on IP_MULTICAST && IPV4
+ 	select IP_MROUTE_COMMON
+ 	help
+ 	  This is used if you want your machine to act as a router for IP
+@@ -267,6 +274,7 @@ config IP_PIMSM_V2
+ 
+ config SYN_COOKIES
+ 	bool "IP: TCP syncookie support"
++	depends on IPV4
+ 	help
+ 	  Normal TCP/IP networking is open to an attack known as "SYN
+ 	  flooding". This denial-of-service attack prevents legitimate remote
+@@ -303,6 +311,7 @@ config SYN_COOKIES
+ 
+ config NET_IPVTI
+ 	tristate "Virtual (secure) IP: tunneling"
++	depends on IPV4
+ 	select INET_TUNNEL
+ 	select NET_IP_TUNNEL
+ 	select XFRM
+@@ -315,11 +324,13 @@ config NET_IPVTI
+ 
+ config NET_UDP_TUNNEL
+ 	tristate
++	depends on IPV4
+ 	select NET_IP_TUNNEL
+ 	default n
+ 
+ config NET_FOU
+ 	tristate "IP: Foo (IP protocols) over UDP"
++	depends on IPV4
+ 	select NET_UDP_TUNNEL
+ 	help
+ 	  Foo over UDP allows any IP protocol to be directly encapsulated
+@@ -338,6 +349,7 @@ config NET_FOU_IP_TUNNELS
+ 
+ config INET_AH
+ 	tristate "IP: AH transformation"
++	depends on IPV4
+ 	select XFRM_AH
+ 	help
+ 	  Support for IPsec AH (Authentication Header).
+@@ -353,6 +365,7 @@ config INET_AH
+ 
+ config INET_ESP
+ 	tristate "IP: ESP transformation"
++	depends on IPV4
+ 	select XFRM_ESP
+ 	help
+ 	  Support for IPsec ESP (Encapsulating Security Payload).
+@@ -393,6 +406,7 @@ config INET_ESPINTCP
+ 
+ config INET_IPCOMP
+ 	tristate "IP: IPComp transformation"
++	depends on IPV4
+ 	select INET_XFRM_TUNNEL
+ 	select XFRM_IPCOMP
+ 	help
+@@ -747,7 +761,7 @@ config TCP_AO
+ 	select CRYPTO_LIB_SHA1
+ 	select CRYPTO_LIB_SHA256
+ 	select CRYPTO_LIB_UTILS
+-	depends on 64BIT # seq-number extension needs WRITE_ONCE(u64)
++	depends on IPV4 && 64BIT # seq-number extension needs WRITE_ONCE(u64)
+ 	help
+ 	  TCP-AO specifies the use of stronger Message Authentication Codes (MACs),
+ 	  protects against replays for long-lived TCP connections, and
+@@ -758,6 +772,7 @@ config TCP_AO
+ 
+ config TCP_MD5SIG
+ 	bool "TCP: MD5 Signature Option support (RFC2385)"
++	depends on IPV4
+ 	select CRYPTO_LIB_MD5
+ 	select CRYPTO_LIB_UTILS
+ 	help
+diff --git a/net/ipv4/Makefile b/net/ipv4/Makefile
+index 06e21c26b76f..8b148be79fa4 100644
+--- a/net/ipv4/Makefile
++++ b/net/ipv4/Makefile
+@@ -3,18 +3,17 @@
+ # Makefile for the Linux TCP/IP (INET) layer.
+ #
+ 
+-obj-y     := route.o inetpeer.o protocol.o \
+-	     ip_input.o ip_fragment.o ip_forward.o ip_options.o \
+-	     ip_output.o ip_sockglue.o inet_hashtables.o \
+-	     inet_timewait_sock.o inet_connection_sock.o \
+-	     tcp.o tcp_input.o tcp_output.o tcp_timer.o tcp_ipv4.o \
++obj-y     := inetpeer.o protocol.o inet_hashtables.o inet_timewait_sock.o \
++	     inet_connection_sock.o tcp.o tcp_input.o tcp_output.o tcp_timer.o \
+ 	     tcp_minisocks.o tcp_cong.o tcp_metrics.o tcp_fastopen.o \
+-	     tcp_recovery.o tcp_ulp.o \
+-	     tcp_offload.o tcp_plb.o datagram.o raw.o udp.o \
+-	     udp_offload.o arp.o icmp.o devinet.o af_inet.o igmp.o \
+-	     fib_frontend.o fib_semantics.o fib_trie.o fib_notifier.o \
+-	     inet_fragment.o ping.o ip_tunnel_core.o gre_offload.o \
+-	     metrics.o netlink.o nexthop.o udp_tunnel_stub.o
++	     tcp_recovery.o tcp_ulp.o tcp_offload.o tcp_plb.o raw.o udp.o \
++	     udp_offload.o af_inet.o inet_fragment.o ping.o ip_tunnel_core.o \
++	     gre_offload.o metrics.o netlink.o nexthop.o udp_tunnel_stub.o
 +
-+#define INVALID_MR_IDX		(-1)
-+
-+struct tsm_context {
-+	const struct tsm_measurements *tm;
-+	int pcr_map[TPM2_PLATFORM_PCR];
-+};
-+
-+static struct tsm_context tsm_ctx;
-+
-+static int tsm_mr_idx_by_name(const struct tsm_measurements *tm,
-+			      const char *mr_name)
-+{
-+	int i;
-+	const struct tsm_measurement_register *mr;
-+
-+	for (i = 0; i < tm->nr_mrs; i++) {
-+		mr = &tm->mrs[i];
-+		if (!strcmp(mr->mr_name, mr_name))
-+			return i;
-+	}
-+
-+	return INVALID_MR_IDX;
-+}
-+
-+static __always_inline
-+int tsm_mr_idx(const struct tsm_measurements *tm,
-+	       const struct tsm_measurement_register *tmr)
-+{
-+	return tmr - tm->mrs;
-+}
-+
-+static __always_inline
-+void __create_tsm_pcr_map(struct tsm_context *ctx,
-+			  int mr0, int mr1, int mr2, int mr3)
-+{
-+	int i;
-+
-+	ctx->pcr_map[TPM_PCR0] = mr0;
-+	ctx->pcr_map[TPM_PCR1] = ctx->pcr_map[TPM_PCR7] = mr1;
-+
-+	for (i = TPM_PCR2; i < TPM_PCR7; i++) {
-+		ctx->pcr_map[i] = mr2;
-+	}
-+
-+	for (i = TPM_PCR8; i < TPM_PCR16; i++) {
-+		ctx->pcr_map[i] = mr3;
-+	}
-+
-+	for (i = TPM_PCR16; i < TPM2_PLATFORM_PCR; i++) {
-+		ctx->pcr_map[i] = INVALID_MR_IDX;
-+	}
-+}
-+
-+static int create_tsm_arm_cca_pcr_map(struct tsm_context *ctx)
-+{
-+	int rim_idx, rem0_idx, rem1_idx, rem2_idx;
-+
-+	rim_idx = tsm_mr_idx_by_name(ctx->tm, "rim");
-+	rem0_idx = tsm_mr_idx_by_name(ctx->tm, "rem0");
-+	rem1_idx = tsm_mr_idx_by_name(ctx->tm, "rem1");
-+	rem2_idx = tsm_mr_idx_by_name(ctx->tm, "rem2");
-+
-+	if ((rim_idx == INVALID_MR_IDX) || (rem0_idx == INVALID_MR_IDX) ||
-+	    (rem1_idx == INVALID_MR_IDX) || (rem2_idx == INVALID_MR_IDX))
-+		return -ENODEV;
-+
-+	__create_tsm_pcr_map(ctx, rim_idx, rem0_idx, rem1_idx, rem2_idx);
-+
-+	return 0;
-+}
-+
-+static int create_tsm_tgx_pcr_map(struct tsm_context *ctx)
-+{
-+	int mrtd_idx, rtmr0_idx, rtmr1_idx, rtmr2_idx;
-+
-+	mrtd_idx = tsm_mr_idx_by_name(ctx->tm, "mrtd");
-+	rtmr0_idx = tsm_mr_idx_by_name(ctx->tm, "rtmr0");
-+	rtmr1_idx = tsm_mr_idx_by_name(ctx->tm, "rtmr1");
-+	rtmr2_idx = tsm_mr_idx_by_name(ctx->tm, "rtmr2");
-+
-+	if ((mrtd_idx == INVALID_MR_IDX) || (rtmr0_idx == INVALID_MR_IDX) ||
-+	    (rtmr1_idx == INVALID_MR_IDX) || (rtmr2_idx == INVALID_MR_IDX))
-+		return -ENODEV;
-+
-+	__create_tsm_pcr_map(ctx, mrtd_idx, rtmr0_idx, rtmr1_idx, rtmr2_idx);
-+
-+	return 0;
-+}
-+
-+static const struct tsm_measurement_register *
-+tsm_mr_get(struct tsm_context *ctx, int pcr_idx)
-+{
-+	int idx;
-+
-+	if (pcr_idx < 0 || pcr_idx >= ARRAY_SIZE(ctx->pcr_map))
-+		return NULL;
-+
-+	idx = ctx->pcr_map[pcr_idx];
-+	if (idx == INVALID_MR_IDX)
-+		return NULL;
-+
-+	return &ctx->tm->mrs[idx];
-+}
-+
-+static int tsm_mr_init(struct ima_mr *mr)
-+{
-+	int rc;
-+	const struct tsm_measurements *tm;
-+
-+	if (!mr)
-+		return -EINVAL;
-+
-+	tm = tsm_default_tm();
-+	if (!tm) {
-+		pr_info("No TSM measurement registers found!\n");
-+		return -ENODEV;
-+	}
-+
-+	tsm_ctx.tm = tm;
-+
-+	if (IS_BUILTIN(CONFIG_ARM_CCA_GUEST))
-+		rc = create_tsm_arm_cca_pcr_map(&tsm_ctx);
-+	else
-+		rc = create_tsm_tgx_pcr_map(&tsm_ctx);
-+
-+	if (rc) {
-+		tsm_ctx.tm = NULL;
-+		return rc;
-+	}
-+
-+	mr->data = &tsm_ctx;
-+	mr->nr_banks = 1;
-+	mr->ops = &ima_mr_tsm_operations;
-+
-+	return 0;
-+}
-+
-+static int tsm_mr_get_bank_info(struct ima_mr *mr, int bank,
-+				mr_bank_info_t *info)
-+{
-+	struct tsm_context *ctx;
-+	const struct tsm_measurement_register *tsm_mr;
-+
-+	if (!mr || !mr->data || !info || (bank >= mr->nr_banks))
-+		return -EINVAL;
-+
-+	ctx = mr->data;
-+	tsm_mr = tsm_mr_get(ctx, TPM_PCR0);
-+	if (!tsm_mr)
-+		return -ENODEV;
-+
-+	info->crypto_id = tsm_mr->mr_hash;
-+	info->digest_size = tsm_mr->mr_size;
-+	info->alg_id = hash_to_alg(info->crypto_id);
-+
-+	if (info->alg_id == TPM_ALG_ERROR)
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
-+static int tsm_mr_calc_boot_aggregate(struct ima_mr *mr, int bank,
-+				      char *digest, struct crypto_shash *tfm)
-+{
-+	int rc;
-+	struct tsm_context *ctx;
-+	const struct tsm_measurement_register *tsm_mr;
-+	mr_digest_t d = { .digest = {0} };
-+	SHASH_DESC_ON_STACK(shash, tfm);
-+	int mr_idx, pcr_idx;
-+
-+	if (!mr || !mr->data || !tfm || (bank >= mr->nr_banks))
-+		return -EINVAL;
-+
-+	ctx = mr->data;
-+	tsm_mr = tsm_mr_get(ctx, TPM_PCR0);
-+	if (!tsm_mr)
-+		return -ENODEV;
-+
-+	d.alg_id = hash_to_alg(tsm_mr->mr_hash);
-+	if (d.alg_id == TPM_ALG_ERROR)
-+		return -ENODEV;
-+
-+	shash->tfm = tfm;
-+
-+	pr_devel("calculating the boot-aggregate based on TSM bank: %04x\n",
-+		 d.alg_id);
-+
-+	rc = crypto_shash_init(shash);
-+	if (rc)
-+		return rc;
-+
-+	/*
-+	 * In TSM, PCR 0 mapped into MR 0, PCR 1,7 into MR 1 and
-+	 * PCR 2-6 into MR 2. Therefore, accumulate with  MR 0-2.
-+	 */
-+	for (pcr_idx = TPM_PCR0; pcr_idx <= TPM_PCR2; pcr_idx++) {
-+		tsm_mr = tsm_mr_get(ctx, pcr_idx);
-+		if (!tsm_mr)
-+			return -ENODEV;
-+
-+		mr_idx = tsm_mr_idx(ctx->tm, tsm_mr);
-+		rc = tsm_mr_read(ctx->tm, mr_idx, d.digest, tsm_mr->mr_size);
-+		if (rc) {
-+			pr_err("Error Communicating to TSM(%d)\n", rc);
-+			return rc;
-+		}
-+
-+		/* now accumulate with current aggregate */
-+		rc = crypto_shash_update(shash, d.digest,
-+					 crypto_shash_digestsize(tfm));
-+		if (rc)
-+			return rc;
-+	}
-+
-+	/*
-+	 * Extend cumulative digest over MR 3 which corespondant to
-+	 * TPM registers 8-9, which contain measurement for
-+	 * the kernel command line (TPM_PCR8) and image (TPM_PCR9)
-+	 * in a typical PCR allocation. MR 3 is only included in
-+	 * non-SHA1 boot_aggregate digests to avoid ambiguity.
-+	 */
-+	if (d.alg_id != TPM_ALG_SHA1) {
-+		tsm_mr = tsm_mr_get(ctx, TPM_PCR8);
-+		if (!tsm_mr)
-+			return -ENODEV;
-+
-+		mr_idx = tsm_mr_idx(ctx->tm, tsm_mr);
-+		rc = tsm_mr_read(ctx->tm, mr_idx, d.digest, tsm_mr->mr_size);
-+		if (rc) {
-+			pr_err("Error Communicating to TSM(%d)\n", rc);
-+			return rc;
-+		}
-+
-+		rc = crypto_shash_update(shash, d.digest,
-+					crypto_shash_digestsize(tfm));
-+	}
-+
-+	if (!rc)
-+		rc = crypto_shash_final(shash, digest);
-+	return rc;
-+}
-+
-+static int tsm_mr_extend(struct ima_mr *mr, u32 pcr_idx,
-+			 mr_digest_t *digests)
-+{
-+	int rc, mr_idx;
-+	struct tsm_context *ctx;
-+	const struct tsm_measurement_register *tsm_mr;
-+
-+	if (!mr || !mr->data)
-+		return -EINVAL;
-+
-+	ctx = mr->data;
-+	tsm_mr = tsm_mr_get(ctx, pcr_idx);
-+	if (!tsm_mr)
-+		return -ENODEV;
-+
-+	mr_idx = tsm_mr_idx(ctx->tm, tsm_mr);
-+
-+	/* TSM has only one bank. */
-+	rc = tsm_mr_write(ctx->tm, mr_idx, digests[0].digest, tsm_mr->mr_size);
-+	if (rc)
-+		pr_err("Error Communicating to TSM, result: %d\n", rc);
-+
-+	return rc;
-+}
-+
-+struct ima_mr_operations ima_mr_tsm_operations = {
-+	.name                    = "TSM",
-+	.supported               = (IS_BUILTIN(CONFIG_ARM_CCA_GUEST) ||
-+				    IS_BUILTIN(CONFIG_TDX_GUEST_DRIVER)),
-+	.mr_init                 = tsm_mr_init,
-+	.mr_get_bank_info        = tsm_mr_get_bank_info,
-+	.mr_calc_boot_aggregate  = tsm_mr_calc_boot_aggregate,
-+	.mr_extend               = tsm_mr_extend,
-+};
-
++obj-$(CONFIG_IPV4) += route.o ip_input.o ip_fragment.o ip_forward.o ip_options.o \
++		      ip_sockglue.o tcp_ipv4.o datagram.o icmp.o arp.o devinet.o \
++		      igmp.o fib_notifier.o ip_output.o fib_frontend.o \
++		      fib_semantics.o fib_trie.o
+ 
+ obj-$(CONFIG_NET_IP_TUNNEL) += ip_tunnel.o
+ obj-$(CONFIG_SYSCTL) += sysctl_net_ipv4.o
+diff --git a/net/ipv4/netfilter/Kconfig b/net/ipv4/netfilter/Kconfig
+index 7dc9772fe2d8..ab4fa6a6d453 100644
+--- a/net/ipv4/netfilter/Kconfig
++++ b/net/ipv4/netfilter/Kconfig
+@@ -4,7 +4,7 @@
+ #
+ 
+ menu "IP: Netfilter Configuration"
+-	depends on INET && NETFILTER
++	depends on INET && NETFILTER && IPV4
+ 
+ config NF_DEFRAG_IPV4
+ 	tristate
+diff --git a/net/ipv6/Kconfig b/net/ipv6/Kconfig
+index c3806c6ac96f..f83efc1505cc 100644
+--- a/net/ipv6/Kconfig
++++ b/net/ipv6/Kconfig
+@@ -47,6 +47,7 @@ config IPV6_OPTIMISTIC_DAD
+ config INET6_AH
+ 	tristate "IPv6: AH transformation"
+ 	select XFRM_AH
++	depends on IPV4
+ 	help
+ 	  Support for IPsec AH (Authentication Header).
+ 
+@@ -61,6 +62,7 @@ config INET6_AH
+ 
+ config INET6_ESP
+ 	tristate "IPv6: ESP transformation"
++	depends on IPV4
+ 	select XFRM_ESP
+ 	help
+ 	  Support for IPsec ESP (Encapsulating Security Payload).
+@@ -101,6 +103,7 @@ config INET6_ESPINTCP
+ 
+ config INET6_IPCOMP
+ 	tristate "IPv6: IPComp transformation"
++	depends on IPV4
+ 	select INET6_XFRM_TUNNEL
+ 	select XFRM_IPCOMP
+ 	help
+@@ -111,6 +114,7 @@ config INET6_IPCOMP
+ 
+ config IPV6_MIP6
+ 	tristate "IPv6: Mobility"
++	depends on IPV4
+ 	select XFRM
+ 	help
+ 	  Support for IPv6 Mobility described in RFC 3775.
+@@ -119,6 +123,7 @@ config IPV6_MIP6
+ 
+ config IPV6_ILA
+ 	tristate "IPv6: Identifier Locator Addressing (ILA)"
++	depends on IPV4
+ 	depends on NETFILTER
+ 	select DST_CACHE
+ 	select LWTUNNEL
+@@ -149,6 +154,7 @@ config INET6_TUNNEL
+ 
+ config IPV6_VTI
+ 	tristate "Virtual (secure) IPv6: tunneling"
++	depends on IPV4
+ 	select IPV6_TUNNEL
+ 	select NET_IP_TUNNEL
+ 	select XFRM
+@@ -161,6 +167,7 @@ config IPV6_VTI
+ 
+ config IPV6_SIT
+ 	tristate "IPv6: IPv6-in-IPv4 tunnel (SIT driver)"
++	depends on IPV4
+ 	select INET_TUNNEL
+ 	select NET_IP_TUNNEL
+ 	select IPV6_NDISC_NODETYPE
+@@ -198,6 +205,7 @@ config IPV6_NDISC_NODETYPE
+ 
+ config IPV6_TUNNEL
+ 	tristate "IPv6: IP-in-IPv6 tunnel (RFC2473)"
++	depends on IPV4
+ 	select INET6_TUNNEL
+ 	select DST_CACHE
+ 	select GRO_CELLS
+@@ -209,6 +217,7 @@ config IPV6_TUNNEL
+ 
+ config IPV6_GRE
+ 	tristate "IPv6: GRE tunnel"
++	depends on IPV4
+ 	select IPV6_TUNNEL
+ 	select NET_IP_TUNNEL
+ 	depends on NET_IPGRE_DEMUX
+@@ -256,7 +265,7 @@ config IPV6_SUBTREES
+ 
+ config IPV6_MROUTE
+ 	bool "IPv6: multicast routing"
+-	depends on IPV6
++	depends on IPV4 && IPV6
+ 	select IP_MROUTE_COMMON
+ 	help
+ 	  Support for IPv6 multicast forwarding.
+@@ -285,7 +294,7 @@ config IPV6_PIMSM_V2
+ 
+ config IPV6_SEG6_LWTUNNEL
+ 	bool "IPv6: Segment Routing Header encapsulation support"
+-	depends on IPV6
++	depends on IPV4 && IPV6
+ 	select LWTUNNEL
+ 	select DST_CACHE
+ 	select IPV6_MULTIPLE_TABLES
+@@ -316,7 +325,7 @@ config IPV6_SEG6_BPF
+ 
+ config IPV6_RPL_LWTUNNEL
+ 	bool "IPv6: RPL Source Routing Header support"
+-	depends on IPV6
++	depends on IPV4 && IPV6
+ 	select LWTUNNEL
+ 	select DST_CACHE
+ 	help
+@@ -327,7 +336,7 @@ config IPV6_RPL_LWTUNNEL
+ 
+ config IPV6_IOAM6_LWTUNNEL
+ 	bool "IPv6: IOAM Pre-allocated Trace insertion support"
+-	depends on IPV6
++	depends on IPV4 && IPV6
+ 	select LWTUNNEL
+ 	select DST_CACHE
+ 	help
+diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
+index 81daf82ddc2d..f99a2176bf3d 100644
+--- a/net/ipv6/netfilter/Kconfig
++++ b/net/ipv6/netfilter/Kconfig
+@@ -4,7 +4,7 @@
+ #
+ 
+ menu "IPv6: Netfilter Configuration"
+-	depends on INET && IPV6 && NETFILTER
++	depends on INET && IPV6 && NETFILTER && IPV4
+ 
+ # old sockopt interface and eval loop
+ config IP6_NF_IPTABLES_LEGACY
+diff --git a/net/l2tp/Kconfig b/net/l2tp/Kconfig
+index 0de178d5baba..e92cf6d94135 100644
+--- a/net/l2tp/Kconfig
++++ b/net/l2tp/Kconfig
+@@ -5,7 +5,7 @@
+ 
+ menuconfig L2TP
+ 	tristate "Layer Two Tunneling Protocol (L2TP)"
+-	depends on INET
++	depends on INET && IPV4
+ 	select NET_UDP_TUNNEL
+ 	help
+ 	  Layer Two Tunneling Protocol
+diff --git a/net/mptcp/Kconfig b/net/mptcp/Kconfig
+index be71fc9b4638..c5b660fdda4c 100644
+--- a/net/mptcp/Kconfig
++++ b/net/mptcp/Kconfig
+@@ -1,7 +1,7 @@
+ 
+ config MPTCP
+ 	bool "MPTCP: Multipath TCP"
+-	depends on INET
++	depends on INET && IPV4
+ 	select SKB_EXTENSIONS
+ 	select CRYPTO_LIB_SHA256
+ 	select CRYPTO_LIB_UTILS
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index 09874c26fd13..857af95fbb48 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menu "Core Netfilter Configuration"
+-	depends on INET && NETFILTER
++	depends on INET && IPV4 && NETFILTER
+ 
+ config NETFILTER_INGRESS
+ 	bool "Netfilter ingress support"
+diff --git a/net/netfilter/ipset/Kconfig b/net/netfilter/ipset/Kconfig
+index 6c4d54758106..e6537c842a45 100644
+--- a/net/netfilter/ipset/Kconfig
++++ b/net/netfilter/ipset/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menuconfig IP_SET
+ 	tristate "IP set support"
+-	depends on INET && NETFILTER
++	depends on INET && IPV4 && NETFILTER
+ 	select NETFILTER_NETLINK
+ 	help
+ 	  This option adds IP set support to the kernel.
+diff --git a/net/netfilter/ipvs/Kconfig b/net/netfilter/ipvs/Kconfig
+index 7724cb44e6de..fb09218d84d0 100644
+--- a/net/netfilter/ipvs/Kconfig
++++ b/net/netfilter/ipvs/Kconfig
+@@ -4,7 +4,7 @@
+ #
+ menuconfig IP_VS
+ 	tristate "IP virtual server support"
+-	depends on INET && NETFILTER
++	depends on INET && NETFILTER && IPV4
+ 	depends on (NF_CONNTRACK || NF_CONNTRACK=n)
+ 	help
+ 	  IP Virtual Server support will let you build a high-performance
+diff --git a/net/rds/Kconfig b/net/rds/Kconfig
+index f007730aa2bb..af5632b37dd7 100644
+--- a/net/rds/Kconfig
++++ b/net/rds/Kconfig
+@@ -17,6 +17,7 @@ config RDS_RDMA
+ config RDS_TCP
+ 	tristate "RDS over TCP"
+ 	depends on RDS
++	depends on IPV4
+ 	depends on IPV6 || !IPV6
+ 	help
+ 	  Allow RDS to use TCP as a transport.
+diff --git a/net/rxrpc/Kconfig b/net/rxrpc/Kconfig
+index 2cebb666dc07..2029d2d1065f 100644
+--- a/net/rxrpc/Kconfig
++++ b/net/rxrpc/Kconfig
+@@ -5,7 +5,7 @@
+ 
+ config AF_RXRPC
+ 	tristate "RxRPC session sockets"
+-	depends on INET
++	depends on INET && IPV4
+ 	select CRYPTO
+ 	select CRYPTO_LIB_DES if RXKAD
+ 	select KEYS
+diff --git a/net/sched/Kconfig b/net/sched/Kconfig
+index 6ddff028b81a..bb782822c3fb 100644
+--- a/net/sched/Kconfig
++++ b/net/sched/Kconfig
+@@ -807,7 +807,7 @@ config NET_ACT_SKBEDIT
+ 
+ config NET_ACT_CSUM
+ 	tristate "Checksum Updating"
+-	depends on NET_CLS_ACT && INET
++	depends on NET_CLS_ACT && INET && IPV4
+ 	select NET_CRC32C
+ 	help
+ 	  Say Y here to update some common checksum after some direct
+diff --git a/net/sctp/Kconfig b/net/sctp/Kconfig
+index fc989a3791b3..eb3e2bf1ec3a 100644
+--- a/net/sctp/Kconfig
++++ b/net/sctp/Kconfig
+@@ -5,7 +5,7 @@
+ 
+ menuconfig IP_SCTP
+ 	tristate "The SCTP Protocol"
+-	depends on INET
++	depends on INET && IPV4
+ 	select CRYPTO_LIB_SHA1
+ 	select CRYPTO_LIB_SHA256
+ 	select CRYPTO_LIB_UTILS
+diff --git a/net/smc/Kconfig b/net/smc/Kconfig
+index 277ef504bc26..faac6586b848 100644
+--- a/net/smc/Kconfig
++++ b/net/smc/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config SMC
+ 	tristate "SMC socket protocol family"
+-	depends on INET && INFINIBAND && DIBS
++	depends on INET && IPV4 && INFINIBAND && DIBS
+ 	help
+ 	  SMC-R provides a "sockets over RDMA" solution making use of
+ 	  RDMA over Converged Ethernet (RoCE) technology to upgrade
+diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
+index e7808e5714dc..58e6f6db3100 100644
+--- a/net/sunrpc/Kconfig
++++ b/net/sunrpc/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config SUNRPC
+ 	tristate
+-	depends on MULTIUSER
++	depends on MULTIUSER && IPV4
+ 
+ config SUNRPC_GSS
+ 	tristate
+diff --git a/net/tipc/Kconfig b/net/tipc/Kconfig
+index 18f62135e47b..2db479597c79 100644
+--- a/net/tipc/Kconfig
++++ b/net/tipc/Kconfig
+@@ -30,6 +30,7 @@ config TIPC_MEDIA_IB
+ config TIPC_MEDIA_UDP
+ 	bool "IP/UDP media type support"
+ 	depends on TIPC
++	depends on IPV4
+ 	select NET_UDP_TUNNEL
+ 	default y
+ 	help
+diff --git a/net/xfrm/Kconfig b/net/xfrm/Kconfig
+index 4a62817a88f8..203188b05be4 100644
+--- a/net/xfrm/Kconfig
++++ b/net/xfrm/Kconfig
+@@ -4,7 +4,7 @@
+ #
+ config XFRM
+ 	bool
+-	depends on INET
++	depends on INET && IPV4
+ 	select GRO_CELLS
+ 	select SKB_EXTENSIONS
+ 
+@@ -13,6 +13,7 @@ config XFRM_OFFLOAD
+ 
+ config XFRM_ALGO
+ 	tristate
++	depends on IPV4
+ 	select XFRM
+ 	select CRYPTO
+ 	select CRYPTO_AEAD
+@@ -23,6 +24,7 @@ if INET
+ config XFRM_USER
+ 	tristate "Transformation user configuration interface"
+ 	select XFRM_ALGO
++	depends on IPV4
+ 	help
+ 	  Support for Transformation(XFRM) user configuration interface
+ 	  like IPsec used by native Linux tools.
+@@ -42,7 +44,7 @@ config XFRM_USER_COMPAT
+ 
+ config XFRM_INTERFACE
+ 	tristate "Transformation virtual interface"
+-	depends on XFRM && IPV6
++	depends on XFRM && IPV4 && IPV6
+ 	help
+ 	  This provides a virtual interface to route IPsec traffic.
+ 
+@@ -83,6 +85,7 @@ config XFRM_STATISTICS
+ # RFC 8221 lists as MUST be implemented.
+ config XFRM_AH
+ 	tristate
++	depends on IPV4
+ 	select XFRM_ALGO
+ 	select CRYPTO
+ 	select CRYPTO_HMAC
+@@ -92,6 +95,7 @@ config XFRM_AH
+ # algorithms that RFC 8221 lists as MUST be implemented.
+ config XFRM_ESP
+ 	tristate
++	depends on IPV4
+ 	select XFRM_ALGO
+ 	select CRYPTO
+ 	select CRYPTO_AES
+@@ -105,12 +109,14 @@ config XFRM_ESP
+ 
+ config XFRM_IPCOMP
+ 	tristate
++	depends on IPV4
+ 	select XFRM_ALGO
+ 	select CRYPTO
+ 	select CRYPTO_DEFLATE
+ 
+ config NET_KEY
+ 	tristate "PF_KEY sockets (deprecated)"
++	depends on IPV4
+ 	select XFRM_ALGO
+ 	help
+ 	  PF_KEYv2 socket family, compatible to KAME ones.
+diff --git a/security/smack/Kconfig b/security/smack/Kconfig
+index 5a8dfad469c3..b4e6d0168bd1 100644
+--- a/security/smack/Kconfig
++++ b/security/smack/Kconfig
+@@ -3,6 +3,7 @@ config SECURITY_SMACK
+ 	bool "Simplified Mandatory Access Control Kernel Support"
+ 	depends on NET
+ 	depends on INET
++	depends on IPV4
+ 	depends on SECURITY
+ 	select NETLABEL
+ 	select SECURITY_NETWORK
 -- 
-2.43.0
+2.55.0
 
