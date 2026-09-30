@@ -1,178 +1,194 @@
-Received: from mail-pz2-f37.google.com (mail-pz2-f37.google.com [74.125.228.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330A451FCA5
-	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 21:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790805350; cv=pass; b=M3H/S0YsPeBUDrpdZGitlDzEZ5hwlBYxy0gWjgmFm/D9ONCH6QKLUFBmmfaNPKqOXj8PcQYL//mg1baJHRbQXphuDc1Hr37pxEQPF9EwKQaQ0RcozKFNCS5d0nTAPhbNc+ruX8mtKI6cIbqdHXVMsP+0fa47i6AlKMfwcfgN+zk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790805350; c=relaxed/simple;
-	bh=QmWl/AmmgMmabSUiwRaKQe9VaGRizjY/KG7QhS56eqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pd1uTnKlp+X58UVWHq8KlkGvr+OTzjHAoK+VSa2xo0+MCf9I9AptDeX/jKYD1mjBy7e4j2zHC7lV9G49LUvzPA538tcCkUxfgYduJkJXwrmn9w/DGBkx+auweaFityC5KdKCZ9IFxEqDs4xtUSdnh5WPlvE+YTyjshnexPBbs0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QbMSNeR7; arc=pass smtp.client-ip=74.125.228.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007FB4C224A;
+	Wed, 30 Sep 2026 23:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790812373; cv=none; b=Y10Akh7rM2LVSdn3ejC7zx5MYhPOiQ0MeVfSuejY2ZwXxVNsD5t+zEkIS04rXeb8ZvkwxmtVlQ/fKPzYsGlDzNH4SPTpKp7WgxKB6kZYsHs4UoRhSSo7PQ8IYsJ1DOIbvJU/TqNs7knXKlcye1Pr2fQY2c0eJuZBO+A4FxaQ/9s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790812373; c=relaxed/simple;
+	bh=+wzf3MCK0k5b4spAzsf+dCLhLnezuYJM2T60DnOvev4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qySHXPzu/SACDKof35yt31xcvEJZzefQk/5Fl/qqmwLqyUjdhAq+/Q6/0VA146gUlTnXrF6AEU0lKR/vHH9UT8dhgmBf5KXyn7wuy9MzpZLkLZJO1aS5jhoO6N3CU5B0CzZ2//PgSIj8HqCOiyRX5znT7N5xAoz+YVU7HqZU+Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jpe3JYM3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QbMSNeR7"
-Received: by mail-pz2-f37.google.com with SMTP id d2e1a72fcca58-887c067c816so355868b3a.2
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 14:55:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790805347; cv=none;
-        d=google.com; s=arc-20260327;
-        b=pprwI7Qe6eoEvoH3rHLiyz/+fNdgXSZkEDcJxM7BaxooLsnlRuHlHPFUnUlfpKMCq5
-         4N70O79JzU916RvQykYIo2TaNDFU2j5Ci0ZIU5eSDW0U1suLRqEhxi66JeaP3gWrzcut
-         22D3xhNQxEwFeB1XidVYcln3eAgXcznVJZyB0mguNeMuvnoitdzIiy4eYKqVgeeRZYN/
-         yepYKRfjTHYpR0sWA2n709J/Jws4IVvkxPQQ9UFNUeRTTg7gcfFVeLNrQxgsKdhz3nuZ
-         /uaE5uJrODOSzX+06nmMTUhflalFjECnHiwgACKBfgAodlwm3JvlIWkdMrTIkltatzjw
-         hE3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=KOrZ7yXLzKa14m8tKGoSyqvqIE7nI/4PIailhByJN1E=;
-        fh=rO5r6xzuFBFzmymRX0pv874I/95Y7cB24+Tx+qcObOU=;
-        b=FASGzcXy2xHeYLIB3t4YB9wo9lImelIIiU8rN4qJbdynnJ7zF8vPCkHGKww1FSXerd
-         xjrZnGUgxEUYrDy7Vpe3JJPCZK2U3XR+kVipCx3tfZrGSsnQWMNntbaBdMk/QGUF8xiQ
-         ub6An1VCxfAK5AYMf1xpDY1jozaAI9G46spFbG7aaykYkbX+D+w9QTD/FFxa+/nbqCBZ
-         A/I7GMm9xmzD/2CbeNvEkL0Z8k44PzQ2JWjxqV9TME66E3l/a/imo5UuTEIcJrodGCir
-         /6djS9qQ8yYXPJwpBk9WEBfRRqwTeCWIpf4vU9tj49ySwIUw1IJ7dAWueCgwBQWQNBdx
-         l7zA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1790805347; x=1791410147; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=KOrZ7yXLzKa14m8tKGoSyqvqIE7nI/4PIailhByJN1E=;
-        b=QbMSNeR7DDtZpzxTUKW8CXKN7rB2ni21B0sGhvFfmZBuekqKN+mITEfR/Kqh1VrQI2
-         ZQ2eDEeVZd/VpSdlzXW602GmsPJnZ6NxOT5cggxqmLhoh+HzeQSpty4Sb+CBSD/E58ds
-         KSymEnr3o764IXWID0J6DM5r9hC8T4/VxNaNx/MvmTsbBd/6pgnNa3ggaK4eyXDEDj+9
-         h/ziqMQvbu2xGSZW46sO8PfsJenxJLD1WJgJGt6GA67YWI3ROwOQp74TVPkLYym/Ok+x
-         gp+ez2uFNDT345eT5Srgd/FkAxB5Vxr66j3OmLg/ZHIgxEZ+QM/u5RBhY7oriPRY72xR
-         O9mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790805347; x=1791410147;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=KOrZ7yXLzKa14m8tKGoSyqvqIE7nI/4PIailhByJN1E=;
-        b=KKvIWAE5OzuXg71deXty4X1DXnb2mHc0XOA97478KZyFIgS0k8wmtTO2O3WVHXX46N
-         CNpjzEAqBaUeJj2rw3jq33tgTZCHSr9tTJTdl9AGkoZZWDzyEiWX+ZmHVHTqLC/lyWZG
-         Wxv+Zs0CkIPz/nqD6tMA2ZV1heS/qIRd5nhS2dyo+jEBLwis4Py3fjN3ty7kqtF59aTo
-         y//TfaZDs2OnfP/+lQyBL7MUSxiLfLxyp9TmOCprHgEa6nlpVn8AmH2f0en8ONmUVuBs
-         WcgKjyzjWjQGzVJgjUO7YhUUd0tSlWNf0ukroIaqETMbN9bPWh9tK5CZf3Hz/ssRzJJO
-         Im2w==
-X-Forwarded-Encrypted: i=1; AKwUvBycjMlXj3/+9kSsKjBIzwe343w/80QKLG5FQfbm63iqbiw1eni99wdBmWG1mxfCg3vpoh+Ubg/5xRcl5FtYztzvGT5D3PE=@vger.kernel.org
-X-Gm-Message-State: AFuF++nc5KXTlhTh127rqPkP3piQVwF/swB3Fb+xJTN8rLsZ0+JMu2Z6
-	4O3Zr+R84kUvlY50RDor+xZNP6wPyM5Wz4cDPviAXVQ2JDVyX0t4ztKUwZN9l39Q39UmS4JizsB
-	AbNYOt1YByRUdvCDjHrjio9nGtsr6oGWKWKiYzfHG
-X-Gm-Gg: AYBFou2DL1c4JX8aZCAsfYEWNj+Hd3dfhdLVH9DG39YYjEcOatpIT1JV5XUaTP2+5An
-	4QOIbcqS2VeqeywCsjIrOd2dni5N4qYDV0+EZVQ6PO6Ep26Y84W025K+pGkUVeTCPas31Tlcqr4
-	9GknkgQdGwrLO8JrlOsNBeus67BqfwiQtOwtfMOjR8SkIUNHAXuG5aUtP2Mu94DV09lmI7mOvA3
-	xEshd36w1irVZKA4G3WkqCS4O6EDZje8ts80H/D5A7digA/0odkstf9xf9Vuucqn3z83W3gYDaK
-	9X0pYEyTrlmKS0Of3cW9q7mVjHg5mFEnAwZ/dgFoKJWPfjEmrNImxtyZk6VDBQSKjkq/bBpZrsm
-	3yN9F1/Kdhgs=
-X-Received: by 2002:a05:6a00:1da2:b0:874:705d:f659 with SMTP id
- d2e1a72fcca58-8874bf05bf6mr1951607b3a.39.1790805347530; Wed, 30 Sep 2026
- 14:55:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jpe3JYM3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEDDB1F00898;
+	Wed, 30 Sep 2026 23:52:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790812370;
+	bh=C+agq54WE0HX8gYLICSvvyTPH8K0IpFdMx44lcFnFWM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Jpe3JYM3iK4XOBgBE/6euYMenyV1EqgqSWaNVkb7zAMMvTg+HVDuXTJ5GBtouluit
+	 RuzKdhrpDSY2hvLrKFRypOiQWsERM+np5FRqpLVr+Uxe4OM3EMC1IksuciS8VdA7WX
+	 te2rnoKHfPLGcls2kFFY2duQZ2Nbb7/wwDTrQF2k5HSskL9bl//llkIS754qRwqWQh
+	 NVUDGk/Vr2yw1B2ionMn9z349dKIEqC6I5usg61WyF95RQa29eWiuehyi9qiCubG2a
+	 WPDahdPGtymMNvK8zQE7iOY9pwxjsN3xxeYI6PXngXwHYCAbe8Iou6d8pzhoAU+30U
+	 qubIYy4FZfViw==
+From: Kees Cook <kees@kernel.org>
+To: Bill Wendling <morbo@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	David Gow <david@davidgow.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Shuvam Pandey <shuvampandey1@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	nikitash.mariiaw@gmail.com,
+	Greg KH <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v3 02/11] seq_buf: Do not pop from an overflowed seq_buf
+Date: Wed, 30 Sep 2026 16:52:30 -0700
+Message-Id: <20260930235247.157921-2-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260930235231.out.387-kees@kernel.org>
+References: <20260930235231.out.387-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260706235053.4104951-1-song@kernel.org> <CAPhsuW7E-mW5CvmSXjUsc1GBjvgpy=pnaYOzTJsLXDvx8+RMJQ@mail.gmail.com>
- <20260928-hinein-lacke-nachfahren-45ac39a36146@brauner> <CAHC9VhRPd8z=67=RWM-0DqjTXysk75FtF=haY9-Vv1oGcX1PAg@mail.gmail.com>
- <CAPhsuW7iFP4Y6C1ZhTvtEgTzgKjnpF9+8YfVg4o3P4BHEnR+LA@mail.gmail.com>
- <CAHC9VhQVVfKkRaHOp90E-WVGEVy_MYFBreUYPMc9Y79rLaviRQ@mail.gmail.com>
- <CAPhsuW5jQCe89LT_22dvQWVnw2cvpceODjvKiHEiYT9Wm_Npgg@mail.gmail.com>
- <CAHC9VhRdn-jrNJY1K=1RsZQiO80QKR3nD+DHyUM5n_a3TrxLhA@mail.gmail.com> <CAPhsuW5r0Uqu2xUzxkLAakA4=waE-1LLORSqU4SSD5sX_NEn9A@mail.gmail.com>
-In-Reply-To: <CAPhsuW5r0Uqu2xUzxkLAakA4=waE-1LLORSqU4SSD5sX_NEn9A@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 30 Sep 2026 17:55:35 -0400
-X-Gm-Features: AclHuK8j3JJsG9N_X2Nst_6_FuY0gcEZPJUGwr_MZctj7YLOb-QGGZskV69W31E
-Message-ID: <CAHC9VhQvaQyx35M-DJmfrVVqXNcmS+_5uwbtDgMB9SPERaQvog@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] lsm: Replace security_sb_mount with granular mount hooks
-To: Song Liu <song@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, jmorris@namei.org, serge@hallyn.com, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, john.johansen@canonical.com, 
-	stephen.smalley.work@gmail.com, omosnace@redhat.com, mic@digikod.net, 
-	gnoack@google.com, takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4958; i=kees@kernel.org; h=from:subject; bh=+wzf3MCK0k5b4spAzsf+dCLhLnezuYJM2T60DnOvev4=; b=owGbwMvMwCVmps19z/KJym7G02pJDFl7FxzZMrkzf8//rptcV56fUtzK98NR97LQObPMdJbuX X23v9zn6ShlYRDjYpAVU2QJsnOPc/F42x7uPlcRZg4rE8gQBi5OAZjI3teMDLvYMy/u/Wh6tu5M 0yLBKbPyw//sKOrfU3HUeMbLRy3uuw0ZGf4+2G5t/WTzye2b8365KnUb7di0YlHOvadPD6/PzJz +8To3AA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 30, 2026 at 12:37=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> On Tue, Sep 29, 2026 at 8:41=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Tue, Sep 29, 2026 at 2:21=E2=80=AFAM Song Liu <song@kernel.org> wrot=
-e:
-> > > On Mon, Sep 28, 2026 at 3:35=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > [...]
-> > > > >
-> > > > > There is another question here. These new hooks do not have any i=
-n-tree
-> > > > > user at the moment. This appears to violate the "New LSM Hooks" p=
-olicy
-> > > > > in [2]. Could you please give more specific guidance on this?
-> > > >
-> > > > There are LSMs which implement mount level access controls, you've
-> > > > been updating those in your patchset :)  I believe that some of tho=
-se
-> > > > LSMs do have some (full? needs verification) coverage on the new mo=
-unt
-> > > > API.  I would expect that a patchset that adds, or modifies the
-> > > > existing, mount hooks would also update those LSMs accordingly.  Fr=
-om
-> > > > what I've seen, you've done a good job updating the individual LSMs
-> > > > thus far, but if you have any questions or are unsure of what to do
-> > > > for any one LSM, please ask and I'm sure the associated devs will b=
-e
-> > > > happy to help.
-> > >
-> > > I don't think the scope here, adding hooks for fsopen, fsconfig, fsmo=
-unt,
-> > > fspick, open_tree, open_tree_attr and mount_setattr and using them
-> > > properly in all LSMs, is a reasonable ask for a single patchset. Give=
-n
-> > > how much time this simple refactoring patchset has taken, I don't for=
-esee
-> > > this work landing in any reasonable timeframe.
-> > >
-> > > Please consider reviewing this set and landing it before asking for m=
-ore
-> > > work.
-> >
-> > [NOTE: dropped herton@canonical due to bounces]
-> >
-> > I suspect there is a misunderstanding regarding the new mount API and
-> > the LSM hooks.  I believe that we have all of the necessary LSM hooks
-> > already in place for the new mount API, but since I haven't looked at
-> > that in several years, verifying this would be good.  Beyond ensuring
-> > the hooks are still complete, I was suggesting that if you are going
-> > to create per-operation LSM hooks for the legacy mount API, it would
-> > be good if we had similar (same?) LSM hooks for the new mount API.
-> > Alternatively, if it doesn't make sense to have per-operation hooks
-> > with the new API, it would be good to document that in your patchset's
-> > commit descriptions.  Either way, I think your patchset needs to
-> > address the new mount API in some way.  I don't want to speak for
-> > Christian, but I believe these comments are in keeping with his
-> > previous comments in this thread.
->
-> Thanks for the clarification! It appears we can indeed add coverage
-> for the new mount APIs without much work.
->
-> Attached is a quick draft for this change on top of current patchset.
-> Is this heading in the right direction?
+When a seq_buf has overflowed, its len is size + 1, so seq_buf_pop()
+decrements len to size and reads buffer[size], one byte past the end of
+the buffer. It also leaves len equal to size, which no longer counts as
+overflowed, so a truncated seq_buf then looks like a complete, full one.
 
-Can you send out a revised patchset?  I suspect there will be a number
-of people who want to review your draft, and it's a lot easier if we
-don't all have to apply the patch separately :)
+An overflowed seq_buf logically has no last character to pop: the
+length of what was written has been lost, and the last byte of the
+buffer may be the NUL written by vsnprintf() or bytes that were never
+committed. Return -1 for an overflowed seq_buf, as for an empty one,
+and leave it overflowed, as the rest of the seq_buf API does until
+seq_buf_clear() or seq_buf_init().
 
---=20
-paul-moore.com
+The current callers do not reach this, e.g. trace_syscalls only calls
+trace_seq_pop() when the trace_seq it pops from has not overflowed, and
+kernel/bpf/diagnostics.c sets the length from strnlen() before popping.
+
+Add tests for the pop corner cases.
+
+Tests passed under qemu on ARCH=x86_64 with GCC 16.2.0 and CONFIG_KASAN=y,
+and on big-endian ARCH=s390 with GCC s390x-linux-gnu 16.1.0.
+
+Fixes: 32e0f607ac6a2 ("tracing: Add trace_seq_pop() and seq_buf_pop()")
+Assisted-by: LLM
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+ include/linux/seq_buf.h   |  4 ++--
+ include/linux/trace_seq.h |  5 ++++-
+ lib/tests/seq_buf_kunit.c | 42 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
+index 9f2839e73f8a..f5a350347bc5 100644
+--- a/include/linux/seq_buf.h
++++ b/include/linux/seq_buf.h
+@@ -155,11 +155,11 @@ static inline void seq_buf_commit(struct seq_buf *s, int num)
+  *
+  * Removes the last written character to the seq_buf @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if @s is empty or has overflowed.
+  */
+ static inline int seq_buf_pop(struct seq_buf *s)
+ {
+-	if (!s->len)
++	if (!s->len || seq_buf_has_overflowed(s))
+ 		return -1;
+ 
+ 	s->len--;
+diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
+index 697d619aafdc..7174ebf3f015 100644
+--- a/include/linux/trace_seq.h
++++ b/include/linux/trace_seq.h
+@@ -86,7 +86,10 @@ static inline bool trace_seq_has_overflowed(struct trace_seq *s)
+  *
+  * Removes the last written character to the trace_seq @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if the underlying seq_buf is empty or
++ * has overflowed. Note that only that buffer is consulted: a @s marked
++ * full by a write that did not fit, which trace_seq_has_overflowed()
++ * reports as overflowed, still pops the last character written.
+  */
+ static inline int trace_seq_pop(struct trace_seq *s)
+ {
+diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
+index 9ceccdc3029f..d5a0c618b880 100644
+--- a/lib/tests/seq_buf_kunit.c
++++ b/lib/tests/seq_buf_kunit.c
+@@ -115,6 +115,47 @@ static void seq_buf_putc_test(struct kunit *test)
+ 	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
+ }
+ 
++static void seq_buf_pop_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 8);
++	struct seq_buf t;
++	char *buf;
++
++	/* Nothing to pop. */
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), -1);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++
++	seq_buf_puts(&s, "hello");
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'o');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hell");
++
++	/* A 0xff byte must not be mistaken for an empty buffer. */
++	seq_buf_putc(&s, 0xff);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 0xff);
++
++	/* A full buffer pops its last byte. */
++	seq_buf_puts(&s, "abc");
++	seq_buf_putc(&s, 'd');
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 8);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'd');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 7);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hellabc");
++
++	/*
++	 * An overflowed buffer has nothing to pop, and stays overflowed. Use
++	 * a buffer allocated at its exact size, so that KASAN reports any
++	 * read past its end.
++	 */
++	buf = kunit_kmalloc(test, 16, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, buf);
++	seq_buf_init(&t, buf, 16);
++	KUNIT_EXPECT_EQ(test, seq_buf_printf(&t, "%s", "longer than sixteen"), -1);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&t), -1);
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&t));
++}
++
+ static void seq_buf_printf_test(struct kunit *test)
+ {
+ 	DECLARE_SEQ_BUF(s, 32);
+@@ -355,6 +396,7 @@ static struct kunit_case seq_buf_test_cases[] = {
+ 	KUNIT_CASE(seq_buf_puts_test),
+ 	KUNIT_CASE(seq_buf_puts_overflow_test),
+ 	KUNIT_CASE(seq_buf_putc_test),
++	KUNIT_CASE(seq_buf_pop_test),
+ 	KUNIT_CASE(seq_buf_printf_test),
+ 	KUNIT_CASE(seq_buf_printf_overflow_test),
+ 	KUNIT_CASE(seq_buf_get_buf_commit_test),
+-- 
+2.34.1
+
