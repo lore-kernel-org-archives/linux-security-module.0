@@ -1,201 +1,176 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0F24EB845
-	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379544FC33E
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790776556; cv=none; b=KpM9PrRSPYohO0Lf3rONjrVHuvE0563gzoWoUah7enlxgcZqcfOlThMA58gwI0mTE9OnLkV66/Rznp9XYQi3Gn3OglTafsQoGQ4BrNZcq4VAd4PpTZFs2tJjeDDcIW7uuFIgMegoFdqROwCOWhlIvD7lqTC6QrR9dDsLRbC5hCQ=
+	t=1790776809; cv=none; b=KU9qpAC46i3iDLIg/iinHJi8t5B3ucQGveFwF2d1cBE1X5rG/rYLhiVWFnCUzu6GmHn7F5juuMssfLZpPx1yfa0wX2ARJPKT8egJBAqVuwP42nAGki2p+DUs12AL/bxAFbVqc6/DYySUoYc3sKQpPSyJc93mcKsl1D9fQc9/tM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790776556; c=relaxed/simple;
-	bh=o3vO+ROmAxUnv04mUEERF5aEsfgLpY8zBqHkHZYljM4=;
+	s=arc-20240116; t=1790776809; c=relaxed/simple;
+	bh=b2h2bwC6rKrbMBliNtP0FYJN076UpYIOXhismyN+H+4=;
 	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=bAHN/ptSXQrYK1VFEJnZyHmgUKi+9Cr6WNWEWLHH5rPBK5YRXksB94q1vbo24auYtVBvj984QJN4tIpq5mP3VoAuP1HnNEmXnxkPjNYHjNJ0h7+y5Prg5K925cfmg8lo81Ps2pip9gQWEcO7yjuEHS7SXMGatK2sCXrw8nOj3es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PIqEUjjq; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=T8OcVhjdf/eqB/Y0K4gM2cn1h/fl35spGJsV6IdSIVqbP4ypYAY4v/JtW5/4e2g4jMLU8dhACbIUQEg1riLyMW6z5shKNhHVmoBuVOnP3BziiOHjNcWSLLNdn3a2/JQG0fyhEB5l13axEarPhw4jUwY9utxF8ZQllzemp/8122s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fx1jTUQt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIqEUjjq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B9A1F00893
-	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fx1jTUQt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A1C31F00893
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:59:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790776546;
-	bh=8IUm4y/UqVertwcKbHpn5s+bbF7TcOrMA6JEK/crw/c=;
+	s=k20260515; t=1790776795;
+	bh=f6zmC3RJZ6RnSYm+ihWa+FCFPsGIlUcn+0uBFvcPrOE=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=PIqEUjjqNu8V2DUMTnUCO3M39e5DOpQwJnRSUoQWNks9zr0wWCrA8dhTkyF+Ueac5
-	 waSEVRvYBcx/c44oxitBTTs0StM4gyq6Krd19qNStDjPgB9nhtmB6sTPt6TpR3wn/2
-	 P7IVKORyAzdNqxowXFi00ZiRELmuTopyyDdl7OIXStyVE2nb1uVepw1jX0z6Vqcdo7
-	 jo69mrQFU1QwRQOrH7UHFAnVd5IrkvX3OxmSbj3zpncBx6hX1wAmMmP3Hhnv3qKOPL
-	 XqoErKmzdK/5FCUt95Eyyrl5iYMWjgn82hmQg00hPs/6/QfpgLP3dqbLgw+4eNYvCL
-	 hw+ACHkZrwjAw==
+	b=Fx1jTUQt28xF3rapDC/v22nCNGmXSxp2wzmoFmxfzKYkGz+OpTK+oEjEUFdjZzNEM
+	 11dH/AttYY8dJfYnEBrJzQB1xThzM+JJq6ax/cGf6cXi/FnHhv4NN7JeEsonU5zYZk
+	 6jsnbtfi0+NZ0fADP0eXY/w/3BsNsNMNpyOkP1f/zY7DUQFPeIcgTiWsTW/qoN3cNU
+	 Xzpnkk7BUGgax/SoYxdkjHtSXI5cDBl1ZbWnO0eyUfLw28Y+Gd7TsXpO2w8Kb39X0n
+	 FXSR2j12fwoF/9mPfk/hECgY9P4fsArwEMdxpqO6uRn50AuzOAsEnTw71Zb8jgixbc
+	 tW1p8TwpXJq3w==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 1/3] virt: coco: introduce tsm_default_tm() and
- tsm_mr_read()/write()
+Subject: Re: [PATCH RFC 3/3] security: IMA: use TSM measurement registers
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20260930-ima_tgx_integration_v2-v1-1-722c35370548@arm.com>
+In-Reply-To: <20260930-ima_tgx_integration_v2-v1-3-722c35370548@arm.com>
 References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
- <20260930-ima_tgx_integration_v2-v1-1-722c35370548@arm.com>
+ <20260930-ima_tgx_integration_v2-v1-3-722c35370548@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 30 Sep 2026 13:55:46 +0000
-Message-Id: <20260930135546.99B9A1F00893@smtp.kernel.org>
+Date: Wed, 30 Sep 2026 13:59:54 +0000
+Message-Id: <20260930135955.8A1C31F00893@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [High] virt: coco: UAF in tsm_mr_read/write due to premature lock release
-- [High] virt: coco: mutating const parameter causes page fault on rodata
+- [Medium] ima: buffer capacity check bypass in TSM MR read/write operations
+- [Medium] ima: implicit assumption of uniform MR sizes across a TSM bank
+- [Low] ima: typographical error tgx instead of tdx in function name
 --
 
-commit 9580da40a9c2580df1ab20f035b99adff1efdc0d
+commit 2a879775437b1a2234f6a7ecbc56b85ccdc11baf
 Author: Yeoreum Yun <yeoreum.yun@arm.com>
 
-virt: coco: introduce tsm_default_tm() and tsm_mr_read()/write()
+security: IMA: use TSM measurement registers
 
-This patch introduces new APIs to allow reading and extending TSM measureme=
-nt
-registers from IMA. It adds an IDR mechanism to track measurement contexts
-so that IMA can retrieve and manipulate them using the new exported symbols.
+This commit adds support for extending IMA measurement digests into Trusted
+Security Module (TSM) measurement registers. This serves as an alternative
+for guests when no TPM device is available. Mappings are provided for Intel
+TDX and Arm CCA.
 
-> diff --git a/drivers/virt/coco/guest/tsm-mr.c b/drivers/virt/coco/guest/t=
-sm-mr.c
-> index 657b9c5739d0d..9e721348be8d3 100644
-> --- a/drivers/virt/coco/guest/tsm-mr.c
-> +++ b/drivers/virt/coco/guest/tsm-mr.c
+Link: [0] https://uefi.org/specs/UEFI/2.11/38_Confidential_Computing.html#i=
+ntel-trust-domain-extension
+Link: [1] https://github.com/tianocore/edk2/issues/11383
 
+> diff --git a/security/integrity/ima/ima_mr_tsm.c b/security/integrity/ima=
+/ima_mr_tsm.c
+> new file mode 100644
+> index 0000000000000..3f88edfb8511c
+> --- /dev/null
+> +++ b/security/integrity/ima/ima_mr_tsm.c
 [ ... ]
+> +static int create_tsm_tgx_pcr_map(struct tsm_context *ctx)
 
-> @@ -230,6 +251,15 @@ tsm_mr_create_attribute_group(const struct tsm_measu=
-rements *tm)
->  	ctx->agrp.name =3D "measurements";
->  	ctx->agrp.bin_attrs =3D no_free_ptr(attrs);
->  	ctx->tm =3D tm;
+[Severity: Low]
+This isn't a bug, but is tgx here a typographical error for tdx (Intel
+Trust Domain Extensions)?
+
+> +{
+> +	int mrtd_idx, rtmr0_idx, rtmr1_idx, rtmr2_idx;
+[ ... ]
+> +static int tsm_mr_calc_boot_aggregate(struct ima_mr *mr, int bank,
+> +				      char *digest, struct crypto_shash *tfm)
+> +{
+[ ... ]
+> +	for (pcr_idx =3D TPM_PCR0; pcr_idx <=3D TPM_PCR2; pcr_idx++) {
+> +		tsm_mr =3D tsm_mr_get(ctx, pcr_idx);
+> +		if (!tsm_mr)
+> +			return -ENODEV;
 > +
-> +	guard(mutex)(&idr_lock);
-> +	((struct tsm_measurements *)tm)->ctx_id =3D idr_alloc(&tm_ctx_idr, ctx,=
- 0,
-> +							    TM_NUM_CTX, GFP_KERNEL);
+> +		mr_idx =3D tsm_mr_idx(ctx->tm, tsm_mr);
+> +		rc =3D tsm_mr_read(ctx->tm, mr_idx, d.digest, tsm_mr->mr_size);
 
-[Severity: High]
-Does casting away the const qualifier here cause a write protection violati=
-on?
+[Severity: Medium]
+Does passing tsm_mr->mr_size instead of the actual buffer capacity bypass
+internal bounds checking?
 
-If a provider driver passes a struct tsm_measurements template that is
-statically allocated in read-only memory (.rodata), this write to ctx_id
-will trigger a kernel oops page fault.
+If a future TSM architecture implements an mr_size larger than the
+statically sized d.digest buffer (which is bounded to TPM2_MAX_DIGEST_SIZE),
+passing the hardware-defined size rather than sizeof(d.digest) could
+result in a stack buffer overflow.
 
-> +	if (tm->ctx_id < 0) {
-> +		kfree(ctx->agrp.bin_attrs);
-> +		return ERR_PTR(tm->ctx_id);
+> +		if (rc) {
+> +			pr_err("Error Communicating to TSM(%d)\n", rc);
+> +			return rc;
+> +		}
+> +
+> +		/* now accumulate with current aggregate */
+> +		rc =3D crypto_shash_update(shash, d.digest,
+> +					 crypto_shash_digestsize(tfm));
+
+[Severity: Medium]
+Does this code assume that all TSM measurement registers mapped to this bank
+share the exact same digest size as TPM_PCR0?
+
+The bank information is initialized using PCR0's hash algorithm and size.
+If a future TSM architecture were to use heterogeneous MR sizes, and a
+subsequent register had a smaller size than PCR0, could tsm_mr_read() only
+partially overwrite d.digest?
+
+This would leave stale bytes from previous loop iterations in the buffer.
+These stale bytes would then be hashed by crypto_shash_update(), since it
+uses the larger size returned by crypto_shash_digestsize(tfm), which could
+silently corrupt the boot aggregate.
+
+> +		if (rc)
+> +			return rc;
 > +	}
-> +
->  	return &no_free_ptr(ctx)->agrp;
->  }
-
 [ ... ]
-
-> @@ -243,9 +273,90 @@ EXPORT_SYMBOL_GPL(tsm_mr_create_attribute_group);
->   */
->  void tsm_mr_free_attribute_group(const struct attribute_group *attr_grp)
->  {
-> +	struct tm_context *ctx;
+> +	if (d.alg_id !=3D TPM_ALG_SHA1) {
+> +		tsm_mr =3D tsm_mr_get(ctx, TPM_PCR8);
+> +		if (!tsm_mr)
+> +			return -ENODEV;
 > +
->  	if (!IS_ERR_OR_NULL(attr_grp)) {
-> +		ctx =3D container_of(attr_grp, struct tm_context, agrp);
-> +		scoped_guard(mutex, &idr_lock)
-> +			idr_remove(&tm_ctx_idr, ctx->tm->ctx_id);
->  		kfree(attr_grp->bin_attrs);
-> -		kfree(container_of(attr_grp, struct tm_context, agrp));
-> +		kfree(ctx);
->  	}
->  }
+> +		mr_idx =3D tsm_mr_idx(ctx->tm, tsm_mr);
+> +		rc =3D tsm_mr_read(ctx->tm, mr_idx, d.digest, tsm_mr->mr_size);
 
+[Severity: Medium]
+Does this second instance also neutralize the capacity bounds check by
+passing the hardware-defined mr_size instead of the destination buffer size?
+
+> +		if (rc) {
+> +			pr_err("Error Communicating to TSM(%d)\n", rc);
+> +			return rc;
+> +		}
+> +
+> +		rc =3D crypto_shash_update(shash, d.digest,
+> +					crypto_shash_digestsize(tfm));
+> +	}
 [ ... ]
-
-> +int tsm_mr_read(const struct tsm_measurements *tm, int idx,
-> +		u8 *digest, u32 digest_size)
+> +static int tsm_mr_extend(struct ima_mr *mr, u32 pcr_idx,
+> +			 mr_digest_t *digests)
 > +{
-> +	struct tm_context *ctx;
-> +	const struct tsm_measurement_register *mr;
-> +	int rc;
+[ ... ]
+> +	mr_idx =3D tsm_mr_idx(ctx->tm, tsm_mr);
 > +
-> +	scoped_guard(mutex, &idr_lock)
-> +		ctx =3D idr_find(&tm_ctx_idr, tm->ctx_id);
-> +
-> +	if (IS_ERR_OR_NULL(ctx))
-> +		return -ENODEV;
-> +
-> +	if (!digest || (idx >=3D ctx->tm->nr_mrs) ||
-> +	    (ctx->tm->mrs[idx].mr_size > digest_size) ||
-> +	    !(ctx->tm->mrs[idx].mr_flags & TSM_MR_F_READABLE))
-> +		return -EINVAL;
-> +
-> +	mr =3D &ctx->tm->mrs[idx];
-> +
-> +	rc =3D __tsm_mr_read(ctx, mr, (char *)digest, 0, mr->mr_size);
+> +	/* TSM has only one bank. */
+> +	rc =3D tsm_mr_write(ctx->tm, mr_idx, digests[0].digest, tsm_mr->mr_size=
+);
 
-[Severity: High]
-Can this result in a use-after-free if tsm_mr_free_attribute_group() runs
-concurrently?
+[Severity: Medium]
+Could this lead to an out-of-bounds read if tsm_mr->mr_size exceeds
+TPM2_MAX_DIGEST_SIZE?
 
-Since scoped_guard only applies to the single statement block (the idr_find
-call), the idr_lock is released immediately afterward. If a concurrent devi=
-ce
-unbind triggers tsm_mr_free_attribute_group() before __tsm_mr_read()
-completes, the context could be removed from the IDR and freed via kfree(ct=
-x)
-while this function is still dereferencing it for bounds checks and the read
-operation.
+Similar to the read operations above, using the hardware-defined register
+size instead of the array bounds of digests[0].digest might cause the code
+to read past the end of the allocated structure if a larger MR size is
+encountered.
 
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(tsm_mr_read);
-> +
-> +int tsm_mr_write(const struct tsm_measurements *tm, int idx,
-> +		 u8 *digest, u32 digest_size)
-> +{
-> +	struct tm_context *ctx;
-> +	const struct tsm_measurement_register *mr;
-> +	int rc;
-> +
-> +	scoped_guard(mutex, &idr_lock)
-> +		ctx =3D idr_find(&tm_ctx_idr, tm->ctx_id);
-> +
-> +	if (IS_ERR_OR_NULL(ctx))
-> +		return -ENODEV;
-> +
-> +	if (!digest || (idx >=3D ctx->tm->nr_mrs) ||
-> +	    !(ctx->tm->mrs[idx].mr_flags & TSM_MR_F_WRITABLE))
-> +		return -EINVAL;
-> +
-> +	/* partial writes are not supported */
-> +	if (ctx->tm->mrs[idx].mr_size !=3D digest_size)
-> +		return -EINVAL;
-> +
-> +	mr =3D &ctx->tm->mrs[idx];
-> +
-> +	rc =3D __tsm_mr_write(ctx, mr, (char *)digest, mr->mr_size);
-
-[Severity: High]
-Does this suffer from the same concurrent use-after-free issue as
-tsm_mr_read()?
-
-The scoped_guard releases idr_lock right after idr_find(), leaving ctx
-vulnerable to being freed by tsm_mr_free_attribute_group() before the write
-completes.
-
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	return 0;
-> +}
+> +	if (rc)
+> +		pr_err("Error Communicating to TSM, result: %d\n", rc);
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260930-ima_tgx_in=
-tegration_v2-v1-0-722c35370548@arm.com?part=3D1
+tegration_v2-v1-0-722c35370548@arm.com?part=3D3
