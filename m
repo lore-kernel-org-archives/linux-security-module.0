@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A04F4047
-	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0F24EB845
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790776534; cv=none; b=rboIYAJErSKe84fG2/YKNOlggS4mi9GaH5c09qJRyf0LORNDF3DvZc0lVPZH3h6WvQ6G5LZUN23aWqYmdcJjtJ0Cf8tOqTKvsKKuzxaFo3cILuMoHwblPQo3ocyQP3C6EiSgRmZVgyPJhI7QqK6FA4xSmAev0em+kz00iKn/Ay0=
+	t=1790776556; cv=none; b=KpM9PrRSPYohO0Lf3rONjrVHuvE0563gzoWoUah7enlxgcZqcfOlThMA58gwI0mTE9OnLkV66/Rznp9XYQi3Gn3OglTafsQoGQ4BrNZcq4VAd4PpTZFs2tJjeDDcIW7uuFIgMegoFdqROwCOWhlIvD7lqTC6QrR9dDsLRbC5hCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790776534; c=relaxed/simple;
-	bh=5zuDm0fjvz+c4G85/bG76BROPTJiCJEjLHNxq1/ELCM=;
+	s=arc-20240116; t=1790776556; c=relaxed/simple;
+	bh=o3vO+ROmAxUnv04mUEERF5aEsfgLpY8zBqHkHZYljM4=;
 	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=hJ1jJxuLTq5TnVrEyCMQ9Nem4TAk/8cS+xqx6VmlWTNPWc/Q5ElIhnpnWZnatchrRjawrlfte2oIKwFBZSLUFnPGzrkOKvSbIzIi5lBNfsgLGTcKbqrBZXt+7utTbRFwFpA4WeRuDNIv8UY3JFN42PcafNlAvj8+XNA8tMqQwOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvQPl4Q6; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=bAHN/ptSXQrYK1VFEJnZyHmgUKi+9Cr6WNWEWLHH5rPBK5YRXksB94q1vbo24auYtVBvj984QJN4tIpq5mP3VoAuP1HnNEmXnxkPjNYHjNJ0h7+y5Prg5K925cfmg8lo81Ps2pip9gQWEcO7yjuEHS7SXMGatK2sCXrw8nOj3es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PIqEUjjq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvQPl4Q6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB4421F000FF
-	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIqEUjjq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B9A1F00893
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2026 13:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790776516;
-	bh=RPYSGrmzVN7Cs9Wdj4ROkVBHZERBZsKALB9wNqT4XUg=;
+	s=k20260515; t=1790776546;
+	bh=8IUm4y/UqVertwcKbHpn5s+bbF7TcOrMA6JEK/crw/c=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=NvQPl4Q6SZ0xsA+cAhbrRNHxttdSwdpUa8cIgYl/D5hSp3gyX6178MfvPN3z8nSj0
-	 1O6092r+l4ni9u/42KfN8WWmUX6JCOZHgA3jLKHFYX7+Y2ZGt5YhHL1CcsxftwPTwH
-	 TQBBMBXdV/PBfUY433z0IXaL/EVnHJS6pql5HNoEg5Jp+BJNxGifETOr73XQql0lSP
-	 whTlQHL1vccqVesjuuJApxZhHO5/lBOfCJ2m1315DMwO+Bvd2mRwK6dcLoNYcphDQy
-	 ItFvzh05NwmlucAWrriVko4ljzdboE8KcwORThcpQql98oJsg2K0rnDMOxSN04fs1V
-	 MPkqRX1lKPsBw==
+	b=PIqEUjjqNu8V2DUMTnUCO3M39e5DOpQwJnRSUoQWNks9zr0wWCrA8dhTkyF+Ueac5
+	 waSEVRvYBcx/c44oxitBTTs0StM4gyq6Krd19qNStDjPgB9nhtmB6sTPt6TpR3wn/2
+	 P7IVKORyAzdNqxowXFi00ZiRELmuTopyyDdl7OIXStyVE2nb1uVepw1jX0z6Vqcdo7
+	 jo69mrQFU1QwRQOrH7UHFAnVd5IrkvX3OxmSbj3zpncBx6hX1wAmMmP3Hhnv3qKOPL
+	 XqoErKmzdK/5FCUt95Eyyrl5iYMWjgn82hmQg00hPs/6/QfpgLP3dqbLgw+4eNYvCL
+	 hw+ACHkZrwjAw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 2/3] security: IMA: introduce ima_mr structure
+Subject: Re: [PATCH RFC 1/3] virt: coco: introduce tsm_default_tm() and
+ tsm_mr_read()/write()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20260930-ima_tgx_integration_v2-v1-2-722c35370548@arm.com>
+In-Reply-To: <20260930-ima_tgx_integration_v2-v1-1-722c35370548@arm.com>
 References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
- <20260930-ima_tgx_integration_v2-v1-2-722c35370548@arm.com>
+ <20260930-ima_tgx_integration_v2-v1-1-722c35370548@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 30 Sep 2026 13:55:15 +0000
-Message-Id: <20260930135515.DB4421F000FF@smtp.kernel.org>
+Date: Wed, 30 Sep 2026 13:55:46 +0000
+Message-Id: <20260930135546.99B9A1F00893@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -45,149 +46,156 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [Medium] ima: memory leak of ima_shash_tfm and ima_algo_array in ima_init=
-_crypto()
-- [Medium] ima: memory leak of digests array in ima_init_digests()
+- [High] virt: coco: UAF in tsm_mr_read/write due to premature lock release
+- [High] virt: coco: mutating const parameter causes page fault on rodata
 --
 
-commit babc42a28171ec6623537f00a8d1222d9f72a6e2
+commit 9580da40a9c2580df1ab20f035b99adff1efdc0d
 Author: Yeoreum Yun <yeoreum.yun@arm.com>
 
-security: IMA: introduce ima_mr structure
-   =20
-This commit introduces the ima_mr structure to abstract measurement registe=
-rs=20
-and operations, preparing the subsystem to integrate TSM measurement regist=
-ers=20
-with IMA. It also migrates the TPM device using PCRs as measurement registe=
-rs=20
-to use this new interface.
+virt: coco: introduce tsm_default_tm() and tsm_mr_read()/write()
 
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima=
-/ima_crypto.c
-> index 0d72b48249ee6..efa27ce5f1282 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
+This patch introduces new APIs to allow reading and extending TSM measureme=
+nt
+registers from IMA. It adds an IDR mechanism to track measurement contexts
+so that IMA can retrieve and manipulate them using the new exported symbols.
+
+> diff --git a/drivers/virt/coco/guest/tsm-mr.c b/drivers/virt/coco/guest/t=
+sm-mr.c
+> index 657b9c5739d0d..9e721348be8d3 100644
+> --- a/drivers/virt/coco/guest/tsm-mr.c
+> +++ b/drivers/virt/coco/guest/tsm-mr.c
 
 [ ... ]
 
-> @@ -77,6 +77,7 @@ int __init ima_init_crypto(void)
->  	enum hash_algo algo;
->  	long rc;
->  	int i;
-> +	mr_bank_info_t bank_info;
-> =20
->  	rc =3D ima_init_ima_crypto();
->  	if (rc)
-> @@ -85,8 +86,12 @@ int __init ima_init_crypto(void)
->  	ima_sha1_idx =3D -1;
->  	ima_hash_algo_idx =3D -1;
-> =20
-> -	for (i =3D 0; i < NR_BANKS(ima_tpm_chip); i++) {
-> -		algo =3D ima_tpm_chip->allocated_banks[i].crypto_id;
-> +	for (i =3D 0; i < NR_BANKS(ima_mr); i++) {
-> +		rc =3D ima_mr->ops->mr_get_bank_info(ima_mr, i, &bank_info);
-> +		if (rc)
-> +			return rc;
-
-[Severity: Medium]
-Does this direct return bypass the cleanup for ima_shash_tfm?
-
-Since ima_init_ima_crypto() is called earlier and allocates it, it looks
-like returning rc here skips the out label where the cleanup happens.
-
+> @@ -230,6 +251,15 @@ tsm_mr_create_attribute_group(const struct tsm_measu=
+rements *tm)
+>  	ctx->agrp.name =3D "measurements";
+>  	ctx->agrp.bin_attrs =3D no_free_ptr(attrs);
+>  	ctx->tm =3D tm;
 > +
-> +		algo =3D bank_info.crypto_id;
->  		if (algo =3D=3D HASH_ALGO_SHA1)
->  			ima_sha1_idx =3D i;
+> +	guard(mutex)(&idr_lock);
+> +	((struct tsm_measurements *)tm)->ctx_id =3D idr_alloc(&tm_ctx_idr, ctx,=
+ 0,
+> +							    TM_NUM_CTX, GFP_KERNEL);
 
-[ ... ]
+[Severity: High]
+Does casting away the const qualifier here cause a write protection violati=
+on?
 
-> @@ -95,24 +100,28 @@ int __init ima_init_crypto(void)
->  	if (ima_hash_algo_idx < 0)
-> -		ima_hash_algo_idx =3D NR_BANKS(ima_tpm_chip) + ima_extra_slots++;
-> +		ima_hash_algo_idx =3D NR_BANKS(ima_mr) + ima_extra_slots++;
-> =20
->  	ima_algo_array =3D kzalloc_objs(*ima_algo_array,
-> -				      NR_BANKS(ima_tpm_chip) + ima_extra_slots);
-> +				      NR_BANKS(ima_mr) + ima_extra_slots);
->  	if (!ima_algo_array) {
->  		rc =3D -ENOMEM;
->  		goto out;
->  	}
-> =20
-> -	for (i =3D 0; i < NR_BANKS(ima_tpm_chip); i++) {
-> -		algo =3D ima_tpm_chip->allocated_banks[i].crypto_id;
-> -		digest_size =3D ima_tpm_chip->allocated_banks[i].digest_size;
-> +	for (i =3D 0; i < NR_BANKS(ima_mr); i++) {
-> +		rc =3D ima_mr->ops->mr_get_bank_info(ima_mr, i, &bank_info);
-> +		if (rc)
-> +			return rc;
+If a provider driver passes a struct tsm_measurements template that is
+statically allocated in read-only memory (.rodata), this write to ctx_id
+will trigger a kernel oops page fault.
 
-[Severity: Medium]
-Could this return cause a memory leak of ima_algo_array and any hash
-transforms allocated in previous loop iterations?
-
-Taking this path bypasses the explicitly defined out_array cleanup label.
-
+> +	if (tm->ctx_id < 0) {
+> +		kfree(ctx->agrp.bin_attrs);
+> +		return ERR_PTR(tm->ctx_id);
+> +	}
 > +
-> +		algo =3D bank_info.crypto_id;
-> +		digest_size =3D bank_info.digest_size;
->  		ima_algo_array[i].algo =3D algo;
->  		ima_algo_array[i].digest_size =3D digest_size;
+>  	return &no_free_ptr(ctx)->agrp;
+>  }
 
 [ ... ]
 
-> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
-ima_queue.c
-> index 67782c004cdf7..037979829242c 100644
-> --- a/security/integrity/ima/ima_queue.c
-> +++ b/security/integrity/ima/ima_queue.c
-
-[ ... ]
-
-> @@ -548,25 +547,27 @@ void __init ima_init_reboot_notifier(void)
-> =20
->  int __init ima_init_digests(void)
+> @@ -243,9 +273,90 @@ EXPORT_SYMBOL_GPL(tsm_mr_create_attribute_group);
+>   */
+>  void tsm_mr_free_attribute_group(const struct attribute_group *attr_grp)
 >  {
-> +	int rc, i;
-> +	mr_bank_info_t bank_info;
->  	u16 digest_size;
-> -	u16 crypto_id;
-> -	int i;
-> =20
-> -	if (!ima_tpm_chip)
-> +	if (!ima_mr)
->  		return 0;
-> =20
-> -	digests =3D kzalloc_objs(*digests, ima_tpm_chip->nr_allocated_banks,
-> -			       GFP_NOFS);
-> +	digests =3D kzalloc_objs(*digests, NR_BANKS(ima_mr), GFP_NOFS);
->  	if (!digests)
->  		return -ENOMEM;
-> =20
-> -	for (i =3D 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
-> -		digests[i].alg_id =3D ima_tpm_chip->allocated_banks[i].alg_id;
-> -		digest_size =3D ima_tpm_chip->allocated_banks[i].digest_size;
-> -		crypto_id =3D ima_tpm_chip->allocated_banks[i].crypto_id;
-> +	for (i =3D 0; i < NR_BANKS(ima_mr); i++) {
-> +		rc =3D ima_mr->ops->mr_get_bank_info(ima_mr, i, &bank_info);
-> +		if (rc)
-> +			return rc;
-
-[Severity: Medium]
-If mr_get_bank_info() fails here, does this return abandon the newly
-allocated digests array?
-
-It appears kfree(digests) might be needed before returning rc to prevent a
-memory leak.
-
+> +	struct tm_context *ctx;
 > +
-> +		digests[i].alg_id =3D bank_info.alg_id;
-> +		digest_size =3D bank_info.digest_size;
-> =20
->  		/* for unmapped TPM algorithms digest is still a padded SHA1 */
+>  	if (!IS_ERR_OR_NULL(attr_grp)) {
+> +		ctx =3D container_of(attr_grp, struct tm_context, agrp);
+> +		scoped_guard(mutex, &idr_lock)
+> +			idr_remove(&tm_ctx_idr, ctx->tm->ctx_id);
+>  		kfree(attr_grp->bin_attrs);
+> -		kfree(container_of(attr_grp, struct tm_context, agrp));
+> +		kfree(ctx);
+>  	}
+>  }
+
+[ ... ]
+
+> +int tsm_mr_read(const struct tsm_measurements *tm, int idx,
+> +		u8 *digest, u32 digest_size)
+> +{
+> +	struct tm_context *ctx;
+> +	const struct tsm_measurement_register *mr;
+> +	int rc;
+> +
+> +	scoped_guard(mutex, &idr_lock)
+> +		ctx =3D idr_find(&tm_ctx_idr, tm->ctx_id);
+> +
+> +	if (IS_ERR_OR_NULL(ctx))
+> +		return -ENODEV;
+> +
+> +	if (!digest || (idx >=3D ctx->tm->nr_mrs) ||
+> +	    (ctx->tm->mrs[idx].mr_size > digest_size) ||
+> +	    !(ctx->tm->mrs[idx].mr_flags & TSM_MR_F_READABLE))
+> +		return -EINVAL;
+> +
+> +	mr =3D &ctx->tm->mrs[idx];
+> +
+> +	rc =3D __tsm_mr_read(ctx, mr, (char *)digest, 0, mr->mr_size);
+
+[Severity: High]
+Can this result in a use-after-free if tsm_mr_free_attribute_group() runs
+concurrently?
+
+Since scoped_guard only applies to the single statement block (the idr_find
+call), the idr_lock is released immediately afterward. If a concurrent devi=
+ce
+unbind triggers tsm_mr_free_attribute_group() before __tsm_mr_read()
+completes, the context could be removed from the IDR and freed via kfree(ct=
+x)
+while this function is still dereferencing it for bounds checks and the read
+operation.
+
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(tsm_mr_read);
+> +
+> +int tsm_mr_write(const struct tsm_measurements *tm, int idx,
+> +		 u8 *digest, u32 digest_size)
+> +{
+> +	struct tm_context *ctx;
+> +	const struct tsm_measurement_register *mr;
+> +	int rc;
+> +
+> +	scoped_guard(mutex, &idr_lock)
+> +		ctx =3D idr_find(&tm_ctx_idr, tm->ctx_id);
+> +
+> +	if (IS_ERR_OR_NULL(ctx))
+> +		return -ENODEV;
+> +
+> +	if (!digest || (idx >=3D ctx->tm->nr_mrs) ||
+> +	    !(ctx->tm->mrs[idx].mr_flags & TSM_MR_F_WRITABLE))
+> +		return -EINVAL;
+> +
+> +	/* partial writes are not supported */
+> +	if (ctx->tm->mrs[idx].mr_size !=3D digest_size)
+> +		return -EINVAL;
+> +
+> +	mr =3D &ctx->tm->mrs[idx];
+> +
+> +	rc =3D __tsm_mr_write(ctx, mr, (char *)digest, mr->mr_size);
+
+[Severity: High]
+Does this suffer from the same concurrent use-after-free issue as
+tsm_mr_read()?
+
+The scoped_guard releases idr_lock right after idr_find(), leaving ctx
+vulnerable to being freed by tsm_mr_free_attribute_group() before the write
+completes.
+
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	return 0;
+> +}
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260930-ima_tgx_in=
-tegration_v2-v1-0-722c35370548@arm.com?part=3D2
+tegration_v2-v1-0-722c35370548@arm.com?part=3D1
