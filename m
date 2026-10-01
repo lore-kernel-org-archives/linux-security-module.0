@@ -1,149 +1,151 @@
-Received: from mail-oo2-f38.google.com (mail-oo2-f38.google.com [74.125.231.166])
+Received: from mail-yx2-f39.google.com (mail-yx2-f39.google.com [74.125.224.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3055304C9
-	for <linux-security-module@vger.kernel.org>; Thu,  1 Oct 2026 15:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.166
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790867886; cv=none; b=t6pQJ9AWiiXDWAfnsiCiVyOgrJdpjyxsKd7w+ZrRh1dGFHaAwL4Vqll2PEG+znNSzjOhZgHjOJv+aP+134lpqpxHb3AshuMBI3TxGYb8PxYYiMXscnfxrksIcLGzvl25kw5DKAHhfoY3gO9LG6LGSUG2KdyG8YruMW+/L+BnCRg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790867886; c=relaxed/simple;
-	bh=Q85kZEspfRbBEZSBGOjOQeRPZ7EBf2+4Hi635vpRBZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hO/7lHOxSzQ8aU9+yycjWybSYyg0JB2jM/U8p0zoYYDdYLMFVP0Rw9kWvJAwita6ISf52Pl9RfP+brwS4P7jTSSEyCycAEoEPGk5wpH/KF2XxRNPhoFNe7VX8ib+GQ/9RZWYFr/J+nyo1P4zzIZTB4ER4R+q6LtyfNfnH668cnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Wzr7qjDa; arc=none smtp.client-ip=74.125.231.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D173803F1
+	for <linux-security-module@vger.kernel.org>; Thu,  1 Oct 2026 16:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790872697; cv=pass; b=dzceY9XtAiCiQ/N6stVl01fqKj0aibSDY/eOcJIgJnsHgGHcc1Z8iLryUcs5OWhDhEoxBBIh6ugPLEGS1OcFdWMd2CMfP07Mm17/WifGkZbv/9scc4Y0YOdD2/VmszsDbT25v369ed1jjlYe46kA7eTCClxMaQ8qufw1KnQVJAs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790872697; c=relaxed/simple;
+	bh=zTzFHP+jlHeUdEQ5vb0ZGqSBPiDfPT/kEkT+MC7FqqA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=In3g+ATWwUoWKKUSXT5UmBvmtnAqMAiso0K5+4zBLWcMDuXrwAQmafJPghx1b9CmMvtikXspBYJx8gnwTRWb/kau6E61y5gcSEPoTHOPFy4TTgnoFXUhqfJ0VuCxtH5+96zh3n07O5hAJi70znTu3PDubneRri++2fLUba6BHHQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=p0zwbtj2; arc=pass smtp.client-ip=74.125.224.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Wzr7qjDa"
-Received: by mail-oo2-f38.google.com with SMTP id 46e09a7af769-81f707db14cso2917928a34.2
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Oct 2026 08:18:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p0zwbtj2"
+Received: by mail-yx2-f39.google.com with SMTP id 00721157ae682-8ac8e048735so22336597b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Oct 2026 09:38:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790872694; cv=none;
+        d=google.com; s=arc-20260327;
+        b=eJAFlP8dg13LUjL9lDYXM7O0H/5iYTE25fFv0yIBzk7LGgMn4V/7NJO2sK4maq/T+J
+         r8U5oJBjWO46gZ1rCUqaJm0zu1fdmEE7kRyJDAm7MZ+MeswQmoiYLH1aawuG8bMAFC/F
+         bTYTxpe+yhrv0QC4oUL5kCgpFBJIJ2VDbYUrHer2sKKUr5f1GIb9X7oEY3XPMxOwxJwK
+         zSv+6gen4OFX2UxE4pIc3yzhFtU5+p4gtCVM7h0H6hjAjLLkU+KyGsICOFxuJjBcbxlv
+         VKSyIQ4TZkhjewBgIvQDubHOCRVl4qG/E88QD/HDOv4LhMm4Yd89jFP1D3d+0d9T05i+
+         Bzqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=LQXuuhnfvTeYpPkQ/vLVbCwdQc1Ux1adrvIel5vGZts=;
+        fh=aXDW4ogPwkTwzXiMFK29AX7+yOLcK4ArYz0fyyfamLk=;
+        b=A0RGX88F47HFh4DR881f4cNxUnIF+a6gdeB2yUwqJ2fKK39//Rs4l14LodeMj1BvcQ
+         jz+xXEtyjlS7Ep/oml/BsJCf5ncbORHk/siXPCnZTb8V1Ie5oWYU/tHLp1o1F8nW095A
+         OFAwkDNMX07VGx0P7flakInqIzOjmXnPJw0yknIwqGyCSugpvG0a9GKqnA+uB298S8R7
+         5meXZfGKJszCFtsTawOIwM9hDRMtRJFPkxwv2HJ5Pjn2svVOnUQqS3qqnnEiycPEb80o
+         K1mNEtHzdzDzV61byYY4eYxXBoCAbN8RJ9Hz3xKWfNBc/vY2KkNEppeohRiq9OjqZvNb
+         cQkQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1790867883; x=1791472683; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1790872694; x=1791477494; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=PiIPZwDVa/FTGpS0Ac/pTVSem1bCOOPpbOCOtMlbuUk=;
-        b=Wzr7qjDa4/x4HNkCkGtcqfemfvbGJipDfnbEOi7Xswqv4/CqsiB7619RRhyinHvtn+
-         Y5bp1fXu+1410xACXRsP/di2ssXWovqw4gGAm73gbBD/jmD+naaxnpuNI1F5zhAqiqo/
-         fYuLcTIYkyS3k3rLclnWyn8Uqy+nSIAhwHYokVbvtAmbe/gOOtLqeuQvOH5T+ktpnzqK
-         u/IgTCklKqd6ORi5Wr8cb8Ypjo1ozUa/Rp3Gg4i4SXpqGBlNCUXIe82F5mWWcBK2Got3
-         bIe1ZdI42/PiVSy3hXsKmbTc3gaZ1MWQLNFJc4Y/SRVHbmyQgPsm+2mCDT+tCRfQXyRU
-         g7iw==
+        bh=LQXuuhnfvTeYpPkQ/vLVbCwdQc1Ux1adrvIel5vGZts=;
+        b=p0zwbtj2iMdxEh/A5vyx+HjgSR5La6BfqoMiH5mYCyIL7SPycfOwxsNRkKpQd6fCVR
+         SAjbTLXSZC2UDWklN+JlivAc9Xtfz+y5g7IJ6onnyoG5xWsXLBNH6V/CATcWqxgQ0cB1
+         AleETTEBOSE1qLEJgtMUmeWlrS7RdLXxXEUBRbkTxR4FaOL4HwIVtu13enYP98mmlfGo
+         z6INaT1ysaqe5X6lVryLh90S3PiHnltipGLuak0EUm8kkGkdnpG7aE25Cb00aAUPdw4a
+         zZJZh2pPi7+mBoCD1bsrC9sRR3nBrccTpdfXkQHx2hIFodzCmz0ugVpGVQ4V6gyaMU/T
+         6hZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790867883; x=1791472683;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1790872694; x=1791477494;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=PiIPZwDVa/FTGpS0Ac/pTVSem1bCOOPpbOCOtMlbuUk=;
-        b=j5C/468g2NM9Si/UMqOv/Nw3nNrj0qnxhZDZnQnDCarlXfc5lqth5ddM3pGUdKhCI2
-         ti9OuFOTqo+bBjgySirs6PHyyrVoD0Lr2zRQWn0x4Dz0Cko2erh65HJQjlpMARM9uYVN
-         x/gTfsnkmpLgS/X1VvHVnleS8WEWuoK5Nj5hUpmlLFUmNXFT+DPlM/azEHHQwBW/Vt56
-         qf0TsDq+Oxa3tQPYsxabWToyGXxaElRqeUqNNR4fiFluPwkf6WjywElwSvLTW4Db6ey0
-         ILEGPYdQUyIMDCqUQbdNRGMDSmEATuSjFyK13YvZwX2mT39wa+DDog+2qdRY1BUpaX/R
-         MmVw==
-X-Forwarded-Encrypted: i=1; AKwUvByL1ScZDghGMLx+bvGd3ZLOHhszRgmEY7IbWP32VYRXKB9HK64UJvjhqffXhMA8es+pLPQZMXsTmOFV+zufeyl+RPh5TOg=@vger.kernel.org
-X-Gm-Message-State: AFuF++niGX+EWaaNzf1cVwa+b21rD3pt/oCDgEC7mWZnMhvpeZBCpJza
-	GjZCH/hOC0iuEdcrf2R5As5no3rvkVwKM40IT1stsQFRhanDGkp5YwP0H7UjepoKbXI=
-X-Gm-Gg: AYBFou21ytEoVw6iP3FLme5UkFYkS9+nOGsrnX0uCjlJGDADNEtXVp2nVTeUafTFhY4
-	ShQfZ9MO1EALcRehgogiZy9Wpcu7GaiiAQLCEE/eMKPq0m38QX43tQ+5RJFW1+AKuGY09cM+0e5
-	y4NXKgMJpElkL1pzgFx8/tFY2sX9QF5hHINmZK/IMA8qAETBdUm6f3fwaXa2p2o/6vT85zkMbU8
-	NXExDhYkq0jq1HgZElaMRKyg763Dw2ugPRg4i5SDznQb+DxbHk6bs/pKQRtCvR5hDtTlJvaK5KP
-	B9dT5t9WIGf0/+rzrX3Aj5VXesVpFRe/kwijuGAcAIhSEnykZGJ4EdfaoLIrTWaORCXOg7PVHBS
-	PCLJWyEvuy3b8chj2HO1XnsFQA2mFgKej5ZSvkk9MeMYVBfjNCVYNHgQ4MDCyBmj3b8WZYJrbdL
-	+wol+h45dw9TyMlMcrZAPeNZWry1ZCvC9VQfLcqaR6Fc5n
-X-Received: by 2002:a05:6830:6d0b:b0:813:baf6:c644 with SMTP id 46e09a7af769-8204b2bd01cmr6068580a34.26.1790867882898;
-        Thu, 01 Oct 2026 08:18:02 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-8227a56e124sm18793a34.21.2026.10.01.08.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2026 08:18:02 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1xCIXp-0000000ENnk-1pv5;
-	Thu, 01 Oct 2026 12:18:01 -0300
-Date: Thu, 1 Oct 2026 12:18:01 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Sami Mujawar <sami.mujawar@arm.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Jiri Pirko <jiri@resnulli.us>, gongruiqi1@huawei.com
-Subject: Re: [PATCH RFC 0/3] security: ima: support TSM measurement registers
-Message-ID: <20261001151801.GC3019323@ziepe.ca>
-References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
- <ebe68f6463f8ece8a5cd8ce70bba292ec4f64a41.camel@huaweicloud.com>
- <c4fe5315d70fc162f1e5648e3fccb1676710d5e6.camel@huaweicloud.com>
+        bh=LQXuuhnfvTeYpPkQ/vLVbCwdQc1Ux1adrvIel5vGZts=;
+        b=2trgXT08xhv4OoyEb3UCxA72lVkrGDsZ3uFp2vZzwHklOPyna+x3OJzrN60Q2K7HVo
+         XovPJPJALo9a6DDDgYmG32Z66GO35DscgWdTILyRiIIxqgEnUB2RvjjyAuo/CN9ivcZ9
+         fvqw7tVdBze/zrTF5rWqMck2J+Ea2NelJEtFPgkZm+qRAt/SbcCZgOn0sJlzHZ75gFI9
+         P0J8cvPX6NFNrEUkzaD9la/tydzIdLuCLTwj6HCo9GGeSniBJlnfAoXIpV3zkOBBP7X/
+         DnAkH5hpE2uHUNmc455t17i/FKLu23aZsO19DTW+rRbnudX+0e7uqij62NLU9PdIvXvX
+         O2ZA==
+X-Forwarded-Encrypted: i=1; AKwUvBxFq+NL8A2ezNwyt3Jt7dJZEGpFnPrZ/GNLnIlrRoDeA5M74HqJkj72J39fJCOBYMaTlVGc9JdzQOJNCoRZtB7Q2lykrvg=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKaZ9tGA6weRFGC4VDPN72ETFVMS2srW0XHtGGwX4QBnx+XHob8
+	3qirRlDBRWIHk40TiC7cirSrwLrA9Ma18B1J5MwMv5+trK2zuGqB1TLK88ReK3L5IXYOBJyiWTS
+	h8Jx3tTOSUkq5VqHKHhUFFT17tKmTKEI=
+X-Gm-Gg: AYBFou3W9HkeFjC267tZxvfmJ3T+aAiPei/ISJikCveJziC/N1NtpbgxAuqYM7+u/nm
+	eG1oV1zrr2XZwtDDPw8dkHwpMu4q4C1r4rfYBZEK+dWR4DXke+0aQzBKzpq1EsuokOTqTptehmM
+	K9fgRDuzyRZQXDbznZkxC9hO/JEMhLHEPhZL8ew/+69VzxOYe3VABIzFrnlW+NG9j1GZd1lMwDs
+	NMuRvUjUvMhbM7YPMvwCZxjgwHPzyrI/1yHl++LA8AYDF5p2PfecJJPGN/lEK8nEYJk5ZY0EyiK
+	HZgfMKnAjWV5t4T5gMQmi8R46M0izdJujMq2oR/115QNO9UvJ+Wqs4s=
+X-Received: by 2002:a05:690c:6c10:b0:873:5c6b:a310 with SMTP id
+ 00721157ae682-8ac948c849cmr22214287b3.62.1790872693677; Thu, 01 Oct 2026
+ 09:38:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4fe5315d70fc162f1e5648e3fccb1676710d5e6.camel@huaweicloud.com>
+References: <20260918143142.19435-2-stephen.smalley.work@gmail.com>
+ <20260925-gebaggert-ersehen-serpentinen-a6e61570e1b7@brauner> <CAHC9VhTga1k7SnT+JXWgmCdfsEDkm83PwjonVBpNeNm+q3UWVA@mail.gmail.com>
+In-Reply-To: <CAHC9VhTga1k7SnT+JXWgmCdfsEDkm83PwjonVBpNeNm+q3UWVA@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 1 Oct 2026 12:38:02 -0400
+X-Gm-Features: AclHuK96-5glJSr8F5qL1SZIZo6qNIPEama9zFWhTW_-k1WBXGLnbo55O8cQqZ8
+Message-ID: <CAEjxPJ7w-8J37OjPUNzLzofbPezq41yK_GtsZJxRDNbDRZnw+A@mail.gmail.com>
+Subject: Re: [PATCH v3] lsm,nscommon: initialize the security blob for the
+ initial namespaces
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
+	mic@digikod.net, serge@hallyn.com, jack@suse.cz, jmorris@namei.org, 
+	omosnacek@gmail.com, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 01, 2026 at 01:45:26PM +0200, Roberto Sassu wrote:
-> On Thu, 2026-10-01 at 13:27 +0200, Roberto Sassu wrote:
-> > On Wed, 2026-09-30 at 14:43 +0100, Yeoreum Yun wrote:
-> > > Confidential computing guests without a TPM can use TSM measurement
-> > > registers to record IMA measurement digests instead of TPM PCRs.
-> 
-> + Gong Ruiqi, of course.
+On Tue, Sep 29, 2026 at 9:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Fri, Sep 25, 2026 at 9:58=E2=80=AFAM Christian Brauner <brauner@kernel=
+.org> wrote:
+> > On Fri, Sep 18, 2026 at 10:31:43AM -0400, Stephen Smalley wrote:
+> > > Commit f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> > > added a security blob to struct ns_common and allocates it from
+> > > __ns_common_init(). Most initial namespaces (init_user_ns,
+> > > init_uts_ns, init_pid_ns, init_mnt_ns, and, depending on
+> > > configuration, init_ipc_ns, init_cgroup_ns and init_time_ns) are
+> > > however set up statically via NS_COMMON_INIT() and never pass through
+> > > __ns_common_init(), so their ns_security pointer is left NULL for the
+> > > lifetime of the system. Any LSM that registers an lbs_ns blob and
+> > > dereferences its slice on one of those namespaces (for example from
+> > > the namespace_install hook when a task setns()'s back into an initial
+> > > namespace) will fault.
+> > >
+> > > Allocate the blob and run the namespace_init hook for each of these
+> > > namespaces at the end of security_init(), after all ordered LSMs have
+> > > registered their hooks, so every LSM sees the initial namespaces the
+> > > same way it sees init_net (which is initialized at runtime via
+> > > ns_common_init(&init_net) from net_ns_init() immediately after
+> > > security_init()) and does not need to special-case them in its own
+> > > ->init() callback.
+> > >
+> > > Provide a ns_common_init_security() helper in kernel/nscommon.c so
+> > > that the list of statically-defined initial namespaces and their
+> > > Kconfig guards live next to the rest of the ns_common
+> > > infrastructure. init_net is intentionally excluded: pre-initializing
+> > > it here would leak once __ns_common_init() clears ns_security and
+> > > re-allocates.
+> > >
+> > > Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> > > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > ---
+> >
+> > Seems good to me,
+> > Reviewed-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> >
+> > I'm waiting for Paul and then I would pick this into namespace-7.4.misc=
+.
+>
+> Since we already have the other LSM/namespace patches in lsm/dev I'd
+> prefer to merge this patch into lsm/dev so it is we have the core
+> LSM/namespace patches rooted in one branch.  Going forward we can
+> stick with the topic branch approach.
+>
+> Are we all okay with that for this patch?
 
-We are working very seriously on this same problem too.
-
-For some time we did investigate extending tsm_mr to do more things,
-have a better uAPI, but that eventually evolved into the realization
-that tsm_mr is simply too narrowly focused. It looks like James got to
-this idea before we did. I agree with his remarks in the 2025 thread
-with Gong.
-
-So we've started work on a new comprehensive "Attestation subsytem"
-that will pull in all forms of ROTs, TPM, CC stuff and SPDM use cases
-to give a consistent user API to work with this class of HW. In many
-ways I view this as a rename of tsm_mr (it will eventually fully
-absorb it), but the name evokes the broader goal and encourages
-everyone to come in, not just CC world.
-
-Our overall goal would be for something like systemd to have a single
-uniform kernel API that allows it interwork with any ROT someone may
-have. A uAPI to do "Extend", "Quote", "Get Log" operations so that the
-existing TPM support in systemd can be improved to work on any ROT
-flexibly without having to hard code specific ROT behaviors into
-systemd.
-
-I've felt the ultimate end goal would be to make all the in-kernel tpm
-users go through the proposed attestation subsystem so they can have
-ROT and "PCR profile" agility. Certainly I've heard enough people
-asking for this.
-
-This is a broader topic than just IMA. For example DRTM also has to
-use the TPM, and other ROTs. It also brings in a global shift of how
-the system wide "PCR Profile" should work as post-DRTM has a different
-TPM locality and access to the protected DRTM-only PCRs that are
-normally blocked.
-
-Jiri posted his current state here:
-  https://lore.kernel.org/r/arzr32ZDComnfmny@FV6GYCPJ69
-
-While we plan to start with SPDM and CC topics as the initial launch
-Jiri has enough detailed plans now for all the main use cases, PCI
-SPDM, TPM, "CC PCRS", CC attestation, and Caliptra that I'm feeling
-confident something like this is the right way forward.
-
-Jason
+That's fine with me.
