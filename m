@@ -1,151 +1,114 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3F13C3F5B
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Oct 2026 12:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18734519A3
+	for <linux-security-module@vger.kernel.org>; Fri,  2 Oct 2026 12:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790945612; cv=none; b=V5oqgIc8Z/xGB2tTXSEuj5JuKDxbeL9O8TLAa7TGtP5rvR/+70X405G4OpBn3xDW1B1cmpjSJT0oyU3Ej3YZYHH5euNoDtwCfT8vnYHJuLFeBIvMAJiukWKyJjWwcu4GXqVVlWi2tCPgHfuLLnQBSa736GgIzFrQlok8JUg8mF0=
+	t=1790945638; cv=none; b=TKCQukybVqIJ0UniHl8jGSBU/LNxgMuz5WMs3QLR3rvXRBT8KSmz75cOXJbAEs4SgIpiloQKJ3pLfN1uBO/ZFVbFNA8mPVwGePeeCXEFK8IziulBcSjFEdwMDBHEMec3SaHCG02bplt0oGwaDUHakDr3UQUjEV+q1SD5VC7XZeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790945612; c=relaxed/simple;
-	bh=t0FNcuuutnVufVEMnNQDrDT7f1aMhbDfSCmr/9yeChI=;
+	s=arc-20240116; t=1790945638; c=relaxed/simple;
+	bh=UCe9/tBFCYSQKCiDTCirjXqxSI1tJR1rTxZxoHoI+u8=;
 	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=gPQGB7R2HSnBjkpR9qEtg7o8m5zyBZ/DQeVfSskvlRr1y8muUbYl4SEvAR0Q/16NlXHxekG04tA9TZBHRs6lTcdwW2HY2BONMW1DS9P2MWRlLygteF6Y+6196v33GWKPd8ae7Cc0y3io/hobopa7kezVRP+jsBfXIgMmecP1smQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awvK2xTv; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=SKwHvjyUQRaLvOi2QMhfPCzqcS6H+akknkNaSW+STXvHoVcc9ctgge9Yox+ZxRBKt3HpJ/ihz+9aY7CSfNJXIlESKjOi9Vmm78ZyfSl0sGFollAxxOgZ2/XnypoMSgX6wpIBTPBuXQJkOB8ybqeEbKneHXFvdHZ7SW5ywtznr5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3XV40hz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awvK2xTv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4FA11F000FF
-	for <linux-security-module@vger.kernel.org>; Fri,  2 Oct 2026 12:53:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3XV40hz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C1321F000FF
+	for <linux-security-module@vger.kernel.org>; Fri,  2 Oct 2026 12:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790945610;
-	bh=bhiFW4U0x8vLf+1VFi+6/wN7e5jppqSGv1anjjDT85s=;
+	s=k20260515; t=1790945636;
+	bh=gAFpNxVFctZZbMchz8S05z5hLYLhzpaOfQAQKMtrgdU=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=awvK2xTvlE7hrNveNVsCLjt8fd2b4fTM1AcyKIZW9v1m7aHqerRqZYsC09JbHZ3RG
-	 vNeJ5HkePmv3eTXVwXntGhBGXNTx1qL1XoQP668zFU0TKOboPC5Chpu2qWkGgnOORF
-	 OJd73OifjQIsh8uRnEUoYN7z6Q1fSLnVzGQCxxufxv6xVPu9xz8ZWBPzz5/bJMT9gI
-	 mqWhOduZqScat7Ai37xBawk9lglgU6pifRVwZ5LcgRsJOYybTqXSCwfrHhWwMQ0Tlh
-	 z2Gydolh2hx73O5z0VS5VrMct5mojsRoMCQsKruohDGnxQlt80i4SSJLgw40OWv0YO
-	 tLUroZ8AEnEmg==
+	b=E3XV40hz4KhtTdYiHd97reutP3f4DDbLES+FA27a/6u1HMqJ6xdLx78FefD9GMlL1
+	 0154iB9a5H7+/GcbrYU0MQpbtNZLBRMst8gQMmIXdQB6GUTbTWG/7eggeQ9YGdi0+J
+	 jOEgjgpZ+P2q5o0z3lO88Cr8lCt8ei3wcl4ZEORFqYGvaP3/JQUwe1gZpTujtD3m3l
+	 7x/0we2NRbBkxT9CbXOPgIsrGqjla9Fresp3/Y9HHGh51bbPKOPIuXo6gK2HSym4DF
+	 Ag1VI+xdP1Vgi0kUxjmwNSTaix1sRV7+B2yeaLWH1btVZ3bB0V/fjP2OLxanPedwFX
+	 1klCEsN+p5GEw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 7/8] samples/landlock: Add capability and namespace
- restriction support
+Subject: Re: [PATCH v4 6/8] selftests/landlock: Add capability restriction
+ tests
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261002124409.1277970-8-mic@digikod.net>
+In-Reply-To: <20261002124409.1277970-7-mic@digikod.net>
 References: <20261002124409.1277970-1-mic@digikod.net>
- <20261002124409.1277970-8-mic@digikod.net>
+ <20261002124409.1277970-7-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 02 Oct 2026 12:53:30 +0000
-Message-Id: <20261002125330.A4FA11F000FF@smtp.kernel.org>
+Date: Fri, 02 Oct 2026 12:53:55 +0000
+Message-Id: <20261002125356.4C1321F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] build: sample landlock fails on systems without libcap-dev
-- [Low] build: missing fallback for CLONE_NEWTIME breaks build on glibc < 2=
-.33
+- [Medium] selftests/landlock: host hostname modification in cap_without_nn=
+p test failure
 --
 
-commit c88aebdbd55f6c34b61885d4e3d918bc61983af0
+commit 359c59ecc043d1cac20779ee8cc6bc19e3b8e705
 Author: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+selftests/landlock: Add capability restriction tests
 
-samples/landlock: Add capability and namespace restriction support
+This commit adds tests to exercise capability restrictions enforced by
+Landlock. It covers various standard capability evaluations, stacking
+combinations, and non-standard contexts such as enforcing a domain
+without no_new_privs.
 
-This commit extends the sandboxer sample to demonstrate new Landlock
-capability and namespace restriction features. It allows parsing allowed
-namespaces and capabilities using libcap, adding appropriate command line
-arguments for testing.
-
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index a75e8e78330da..b18efc19b85d0 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -166,8 +166,10 @@ config SAMPLE_LANDLOCK
->  	bool "Landlock example"
->  	depends on CC_CAN_LINK && HEADERS_INSTALL
->  	help
-> -	  Build a simple Landlock sandbox manager able to start a process
-> -	  restricted by a user-defined filesystem access control policy.
-> +	  Build a Landlock sandbox manager able to start a process restricted
-> +	  by user-defined filesystem, network, scope, namespace, and capability
-> +	  policies.  This sample requires the libcap development headers and
-> +	  library.
-> =20
->  config SAMPLE_PIDFD
->  	bool "pidfd sample"
-
+> diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/=
+selftests/landlock/cap_test.c
+> new file mode 100644
+> index 0000000000000..8673934aac11e
+> --- /dev/null
+> +++ b/tools/testing/selftests/landlock/cap_test.c
 [ ... ]
-
-> diff --git a/samples/landlock/Makefile b/samples/landlock/Makefile
-> index 5d601e51c2ebf..b30239c8a281c 100644
-> --- a/samples/landlock/Makefile
-> +++ b/samples/landlock/Makefile
-> @@ -3,6 +3,7 @@
->  userprogs-always-y :=3D sandboxer
-> =20
->  userccflags +=3D -I usr/include
-> +userldlibs +=3D -lcap
-
-[Severity: Low]
-Does this unconditional linking cause build failures during make allmodconf=
-ig
-or make samples if the host system lacks the libcap-dev library?
-
-Since the Kconfig does not verify the presence of the libcap library (for
-example, using a $(success,...) check), the build will unconditionally
-attempt to link against it and fail when the dependency is missing. Could a
-dependency check be added in the Kconfig to prevent breaking automated=20
-testing on minimal host environments?
-
-> =20
->  .PHONY: all clean
-
-[ ... ]
-
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index 030583273f3f7..4a86ae6d4552d 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -232,6 +241,166 @@ static int populate_ruleset_net(const char *const e=
-nv_var, const int ruleset_fd,
->  	return ret;
->  }
-> =20
-> +static __u64 str2ns(const char *const name)
+> +TEST(cap_without_nnp)
 > +{
-> +	static const struct {
-> +		const char *name;
-> +		__u64 value;
-> +	} ns_map[] =3D {
-> +		/* clang-format off */
-> +		{ "cgroup",	CLONE_NEWCGROUP },
-> +		{ "ipc",	CLONE_NEWIPC },
-> +		{ "mnt",	CLONE_NEWNS },
-> +		{ "net",	CLONE_NEWNET },
-> +		{ "pid",	CLONE_NEWPID },
-> +		{ "time",	CLONE_NEWTIME },
+> +	int ruleset_fd;
+> +
+> +	disable_caps(_metadata);
+> +
+> +	ruleset_fd =3D create_cap_ruleset();
+> +	ASSERT_LE(0, ruleset_fd);
+> +
+> +	/* Allow CAP_SYS_CHROOT but not CAP_SYS_ADMIN. */
+> +	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SYS_CHROOT));
+> +
+> +	/*
+> +	 * Enforce WITHOUT NNP: landlock_restrict_self() succeeds when the
+> +	 * caller has CAP_SYS_ADMIN (checked before the new domain takes
+> +	 * effect).
+> +	 */
+> +	set_cap(_metadata, CAP_SYS_ADMIN);
+> +	ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0));
+> +	EXPECT_EQ(0, close(ruleset_fd));
+> +
+> +	/*
+> +	 * CAP_SYS_ADMIN is still in effective set but Landlock denies it:
+> +	 * cap_capable() returns 0, then hook_capable() returns -EPERM.
+> +	 */
+> +	EXPECT_EQ(-1, sethostname("test", 4));
 
-[Severity: Low]
-Will this missing fallback macro for CLONE_NEWTIME cause compilation failur=
-es
-on older host environments?
+[Severity: Medium]
+Will this modify the host system's hostname if the test fails?
 
-The CLONE_NEWTIME macro was added to the glibc sched.h header starting in
-version 2.33. If the sample is built on a system with an older glibc, it
-fails to compile. Can we add a fallback preprocessor definition for=20
-CLONE_NEWTIME so the sample can still build on older distributions?
+The cap_without_nnp test does not appear to isolate its UTS namespace via
+unshare(CLONE_NEWUTS) before verifying the sethostname() restriction. If the
+Landlock enforcement does not block the operation during a failing test run,
+could the sethostname("test", 4) call succeed and unexpectedly change the
+test machine's global hostname?
 
-> +		{ "user",	CLONE_NEWUSER },
-> +		{ "uts",	CLONE_NEWUTS },
-> +		/* clang-format on */
-> +	};
-> +	size_t i;
+> +	EXPECT_EQ(EPERM, errno);
+> +
+> +	/* CAP_SYS_CHROOT is allowed by the rule. */
+> +	set_cap(_metadata, CAP_SYS_CHROOT);
+> +	EXPECT_EQ(0, chroot("/"));
+> +}
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261002124409.1277=
-970-1-mic@digikod.net?part=3D7
+970-1-mic@digikod.net?part=3D6
