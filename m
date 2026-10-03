@@ -1,85 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F23237A498
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 02:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4DB2E975E
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 02:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790995915; cv=none; b=frjHsgAIjXyg883jpMJ7S6STv0L4TdSS9cQyy/NeRlX0+sDVvq2IBug5VvyeF0acGHITmB3hrUuMDdunHnc7A2REcg2uVraRkG3lGGJpbu0GVeEgOJCc4RpDzFnKbOCvUKc3rSUAkiaC+s9p2tvhLlWYD+kIIxnV8cs9AgVp2DQ=
+	t=1790996136; cv=none; b=n3xUnq7JrWDhS5C3luVZaxTiOrUjdT2DP81jCaJg2VHGo2pFcmlIx9wZzYuvIG5UtFv349HGBJc0e/UPBP713BfArGkNQhYWZJBQtfrgBhMxw/Deey2CTpHraFeZeBt/ra3JPtvDYBYf4KSDRC8PxLTmw0levuiG8pXqVrxB+uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790995915; c=relaxed/simple;
-	bh=kSM8ikHUl1CnSqOAhzV0MQKGmCtJYHR09abdLCo/gZk=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dHd1YtyOuDTos4AlkfPMwGTftDtBNm4h49yhzIPWM4FZGkTn67yd+OI8VnPfyDSufEHYd0sEH484C3gzEX+m8wmihVjB4ewd/OkYIIUqe09tHl44OS4NGAFzT9Dmj2tNWx8x5TNK45o0ANaGe5Q5X3x2EucOR57EO64QHgiDMj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7V7Cfl0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790996136; c=relaxed/simple;
+	bh=KiH2vafN0YoHsUNNunGb+MbnpK0bclCfa6v6vHmC/fE=;
+	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=UYHRJFbMvO6NgBHz6NrOga+mHIOJDsVYQqa/t8MKSZIU2q3r8aa+0c9BaugmpI6lPteFgYgKgiEkgRxmgSO+m0b0fCyyUPkUe7Vo8mQm8iGFeUry7BQnC1tDmjTy3bLGqx8wW1uUTcXDBxEGMnsgamrrjLA8+VQQ0JjzGvVqR1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyJXbQa4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7V7Cfl0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 674641F0089C
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 02:51:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyJXbQa4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E425B1F000FF
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 02:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790995913;
-	bh=vaNGFAcFTy61wB/V1mnRIIDXs30qUZnVoTQ5o9jmWE0=;
-	h=From:To:Subject:Date:In-Reply-To:References;
-	b=Z7V7Cfl0peMTYGDCKbJhri/z6MiUeDsAJ4h5HU2NroAh4KIs2M5VJQuic0BobFop6
-	 0xXM8UtPpF6noCJUjYTSYbIjxpgTDXY5gu8zcuygyHCas3MN7MJbZMY0txE41lWWlM
-	 ihZKbB3ChiVm96ctRt7eTmmNsE9sF0xN+snL4Winfys0hquxbNPvo04MEZVbwaYHI8
-	 Iwb8eVHQPbva3WfDP6BfQnBlFCUIRwn1oMWhaFW3kQFRX6O6tO/1I2FAEMK+sbaFGk
-	 t9TYpPNIDzXrGbfyd+Bz3fp8tUyTk+RSI/cOYJ3e2vklpLiwXyKQVoF+d+4z2m/3Bg
-	 A159bAxDwfD1w==
-From: Fan Wu <wufan@kernel.org>
-To: linux-security-module@vger.kernel.org
-Subject: [PATCH 6/6] ipe: update the project and test suite links
-Date: Fri,  2 Oct 2026 19:51:35 -0700
-Message-ID: <20261003025135.3666767-7-wufan@kernel.org>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261003025135.3666767-1-wufan@kernel.org>
+	s=k20260515; t=1790996135;
+	bh=KiH2vafN0YoHsUNNunGb+MbnpK0bclCfa6v6vHmC/fE=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=PyJXbQa4KA54VfuNTRPcQSEOHAODTGwDALztAHi6YosztI1kYYuiQd4VLVuie5bn3
+	 pDtxl0mzHfhJSCcbS+sGDFRU5NkpFAZGA5459m0aEGCxZMtlSGOBKMpEklFpQMi6ds
+	 oIK1GYJfo+fDvtF6BjPmwN7+dhb+dNgiCw0DF7sJD7GW5Q7UDRTnUU/SNXZ11bZwPV
+	 6Wnvqk9cWV80/cDTSIKH2kwRlHLbYXlGLjfLrYjT4l7YprUYS9d+ZEgqm2c3CLN393
+	 ILsUc2aJpDXvqPJGVzr2CGBsKwFu8DVrFdraJsTxlBDhCu2pIP2hJQV4dew+9lQnH4
+	 vb2Q3vXUppiSA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 5/6] ipe: fix enforcement audit
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261003025135.3666767-6-wufan@kernel.org>
 References: <20261003025135.3666767-1-wufan@kernel.org>
+ <20261003025135.3666767-6-wufan@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 03 Oct 2026 02:55:34 +0000
+Message-Id: <20261003025534.E425B1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-IPE now has a project website at https://ipe-lsm.org/, and its
-integration tests are maintained in the Integrity-Policy-Enforcement/ci
-repository.
+> ipe_audit_enforce() starts an audit buffer but writes the state change
+> with audit_log(), which logs its own record. Ending the unused buffer
+> then emits an extra empty AUDIT_MAC_STATUS record.
+>=20
+> Remove the unused buffer and log the state change with audit_log()
+> alone.
+>=20
+> Fixes: a68916eaedcd ("ipe: add permissive toggle")
+> Assisted-by: LLM
+> Signed-off-by: Fan Wu <wufan@kernel.org>
 
-Point the admin guide to the website, and point the test suite link in
-the developer documentation to the new repository.
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-Assisted-by: LLM
-Signed-off-by: Fan Wu <wufan@kernel.org>
----
- Documentation/admin-guide/LSM/ipe.rst | 2 +-
- Documentation/security/ipe.rst        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
-index a756d8158531..978773a256e4 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -791,7 +791,7 @@ Allow execution of a specific fs-verity file
- Additional Information
- ----------------------
- 
--- `Github Repository <https://github.com/microsoft/ipe>`_
-+- `IPE website <https://ipe-lsm.org/>`_
- - :doc:`Developer and design docs for IPE </security/ipe>`
- 
- FAQ
-diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
-index 5eb3e6265fbd..4490aed5918a 100644
---- a/Documentation/security/ipe.rst
-+++ b/Documentation/security/ipe.rst
-@@ -442,5 +442,5 @@ IPE has KUnit Tests for the policy parser. Recommended kunitconfig::
-   CONFIG_SECURITY_IPE_KUNIT_TEST=y
- 
- In addition, IPE has a python based integration
--`test suite <https://github.com/microsoft/ipe/tree/test-suite>`_ that
-+`test suite <https://github.com/Integrity-Policy-Enforcement/ci>`_ that
- can test both user interfaces and enforcement functionalities.
--- 
-2.55.0
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261003025135.3666=
+767-1-wufan@kernel.org?part=3D5
 
