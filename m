@@ -1,148 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from cvsmtppost11.nm.naver.com (cvsmtppost11.nm.naver.com [114.111.35.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31273BBA0E
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 10:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3373346B4
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 10:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.111.35.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791024285; cv=none; b=EwRmziBHn/4nbj+iJLfc7+t53HpF7K8sQ1YECgFflIYfcyOBFQUJ+vnkvIU/n7TgINbQn/hvY8UKZoioeR9wj332P3XAKPTDYinwzhp7W0wNbwCu3Sk0w9D/Q4UXY4P8z4b9rmJxN7LSoJkge3/zY2zUiZ/h9obGGBS8NzO9uVc=
+	t=1791024899; cv=none; b=Emrm3jug4D6eIvtPyzX/TjhYK6/rM6r879V5KqOZInA66j3+Y+5wFsYkniCyDngFXLj43x7+8STx44mzk6O1FAS1KzwnBMSHLM2x8uLDur11cOacUB0CJ2bGV1286PIOVtU6JtjrMQpner4cMvH/kqjfnrZ6fEXLxGYex1+yr4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791024285; c=relaxed/simple;
-	bh=y5OeGYinrXzRzq0tBg3sEWgnUdWjcu1pb7qZt2vuNag=;
-	h=From:Subject:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=eMxQaqvFvKUgRzKfoKUoelkmkrdeZJu6Ql9KAdhBLYopoxbbnvTx6MAt6Ktif26K3UUMdkscM0i9DpSFM9r2XR8WT7jp7VmVSe+hFR3VsO2R1u7WYpPP8MxYhJiedhqc5C7LnHSX+LepsWUmBwmlvO9NSlc7vL5JPrbO9+BHLog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5UGR4yd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791024899; c=relaxed/simple;
+	bh=Hjy8ICAJXIAuwiDFKQ8ZUuWhgz5IefLTmTJu2piga5Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bA7SjM0MEF9yo1ZwiTPqg4uYw8wYammGQkfMYSC1/ETPAPWBW28QkAntrD655qgD0WUCb0rxrzo90iJf2YyuIT/O3mU+VaXoMWCB7sRFFl7vHPnQTNWbBGM0kV9TAAbwoSUqWPi1a7IiO3dUumBQtlao1iyHN/aVXyJNELAwNHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=naver.com; spf=pass smtp.mailfrom=naver.com; dkim=pass (2048-bit key) header.d=naver.com header.i=@naver.com header.b=X8PHpBT6; arc=none smtp.client-ip=114.111.35.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=naver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=naver.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5UGR4yd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE661F0089B
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 10:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791024283;
-	bh=7G6sp4qNmunbstpIVuSaKNXJyOvQNLCuG8jBpsowGAg=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=O5UGR4yd4hcnqBcjFxFNEN5lXC1NCGyLlyE+4p7GVC8z11E2gKzm5J6DrjHEj0R2B
-	 5Rct9n/XllGr5ypu0k4hWn7KDTz0d4pNvNPP1jcdym7y6Xli0beapXIUngTsCT4dNp
-	 dxr5d+lTwvdC64F9rmun7nU3x+NpX5315Kr02GBhw4DEPsglInaODzPGYCMG0w1daf
-	 y/LjOu0lhZuSXn5Dn16EbaKnW/uhHdl1cW1m73VAnQXkP5N+Gw7ej0KAsbhN8spzz/
-	 H4t6sjQMw6hVKzH1/WoaiR4T8Qsm8AXRWI/mYaTUkxuRFEIwfbQ5oQCQPh5jwpR0Tx
-	 5stOPMJxuJbYQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] selftests/safesetid: test GID policy with
- mismatched real IDs
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <899af06e29dd599246082096e27edd51eda1fb27.1791023194.git.tjdqudcks0424@naver.com>
+	dkim=pass (2048-bit key) header.d=naver.com header.i=@naver.com header.b="X8PHpBT6"
+Received: from cvsendbo026.nm ([10.112.20.48])
+  by cvsmtppost11.nm.naver.com with ESMTP id PBqRAlCQTnmm-m4ZJnXvGQ
+  for <linux-security-module@vger.kernel.org>;
+  Sat, 03 Oct 2026 10:34:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=naver.com; s=s20171208;
+	t=1791023671; bh=Hjy8ICAJXIAuwiDFKQ8ZUuWhgz5IefLTmTJu2piga5Y=;
+	h=From:To:Subject:Date:Message-ID:From:Subject:Feedback-ID:
+	 X-Works-Security;
+	b=X8PHpBT64cKr6jfJhl0SoearvNHJFEgtJUvPB9Y35kUDZpq75YFHWqGQguoAGe8Y3
+	 SlLf5bz3+OH6W6FPQdJT6EXoh5V+EuGE0ii3GaUD5uYNR412JIlmK4Gc/VFNZgOB3x
+	 ed1OqaY7SO/gd4CVFEHZKWQfmp8wYlmnhFlYfwKQcC6gay9nuyH/bnZKIohd2rCopU
+	 u0e0/pzukAF9kj1BteNPF3wAh7FITZhMkfVltJvmPF267qMeBPMqNFPtHQ1oB48YON
+	 V937Q7+sz0vQglZMWMeDsUoxnbt69yu20ySGS54SedX0KiIn++T5egXF9NKk26X+HV
+	 bLRoOFBIiN2Nw==
+X-Session-ID: hxW-p6ZdTie88dg+22MhzQ
+X-Works-Send-Opt: O9RwpzGdjHmdKHFOMr39Ko3YKHmwKBmwFAbrFxKrKqEmjJkaBd9YKBmm
+X-Works-Smtp-Source: AwYlaxglFqJZ+HmwFqUw+6E=
+Received: from localhost.localdomain ([115.136.205.4])
+  by cvnsmtp007.nm.naver.com with ESMTP id hxW-p6ZdTie88dg+22MhzQ
+  for <multiple recipients>
+  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+  Sat, 03 Oct 2026 10:34:31 -0000
+From: tjdqudcks0424@naver.com
+To: Micah Morton <mortonm@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Thomas Cedeno <thomascedeno@google.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	security@kernel.org
+Subject: [PATCH 1/2] security: safesetid: use real GID for GID policy lookup
+Date: Sat,  3 Oct 2026 19:34:15 +0900
+Message-ID: <d7e10b50556ab3b79c7132018249f6f7c608411b.1791023194.git.tjdqudcks0424@naver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1791023194.git.tjdqudcks0424@naver.com>
 References: <cover.1791023194.git.tjdqudcks0424@naver.com>
- <899af06e29dd599246082096e27edd51eda1fb27.1791023194.git.tjdqudcks0424@naver.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 03 Oct 2026 10:44:43 +0000
-Message-Id: <20261003104443.9DE661F0089B@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Medium] selftests: false test failure on older kernels due to strict prc=
-tl() check
-- [Low] selftests: build failure on older glibc due to SYS_pidfd_open depen=
-dency
---
+From: Sung Byeongchan <tjdqudcks0424@naver.com>
 
-commit dbf0ec68f44394083debd3f938ca7365c6cad4f1
-Author: Sung Byeongchan <tjdqudcks0424@naver.com>
+SafeSetID policies constrain the ID transitions available to a task for
+each source ID.  id_permitted_for_cred() always builds that source key
+from the old real UID, even when it is checking a GID transition.  If the
+real UID and real GID differ, the policy attached to the real GID is
+therefore missed and the lookup can return the unconstrained default.
 
-selftests/safesetid: test GID policy with mismatched real IDs
+On current mainline, a test task with real UID 1000, real GID 2000 and
+only CAP_SETGID obtained non-allowlisted GID 2002 despite a 2000:2001 GID
+policy.  The bypass reproduced for setgid(), setegid(), setregid(),
+setresgid(), setfsgid() and setgroups() across three clean QEMU boots,
+and enabled access to a synthetic group-protected resource.  This shows
+a SafeSetID GID policy bypass and group privilege expansion; it does not
+show direct UID 0 elevation or a universal local privilege escalation.
 
-This commit adds child-process cases to the SafeSetID selftests that use
-mismatched real IDs to properly distinguish the source of a GID policy look=
-up.
-It verifies that allowed and forbidden transitions are handled correctly us=
-ing
-both setresgid() and setgroups().
+Build the source key from the old real UID for UID policy checks and the
+old real GID for GID policy checks.  In three fixed-kernel boots, all
+tested non-allowlisted transitions were blocked while the allowed target,
+existing-ID, no-policy and UID-policy controls, and the existing SafeSetID
+selftest continued to pass.
 
-> diff --git a/tools/testing/selftests/safesetid/safesetid-gid-policy-test.=
-c b/tools/testing/selftests/safesetid/safesetid-gid-policy-test.c
-> new file mode 100644
-> index 0000000000000..873d65627c494
-> --- /dev/null
-> +++ b/tools/testing/selftests/safesetid/safesetid-gid-policy-test.c
-[ ... ]
-> +static int check_child_credentials(void)
-> +{
-[ ... ]
-> +	if (effective !=3D expected || permitted !=3D expected || inheritable) {
-> +		fprintf(stderr, "child does not hold only CAP_SETGID\n");
-> +		return -1;
-> +	}
-> +	for (i =3D 0; i <=3D CAP_LAST_CAP; i++) {
-> +		if (prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_IS_SET, i, 0, 0) !=3D 0) {
+Fixes: 5294bac97e12 ("LSM: SafeSetID: Add GID security policy handling")
+Cc: stable@vger.kernel.org
+Assisted-by: OpenAI Codex
+Signed-off-by: Sung Byeongchan <tjdqudcks0424@naver.com>
+---
+ security/safesetid/lsm.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-[Severity: Medium]
-Will this strict non-zero check cause the test to falsely fail on older
-kernels?
+diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+index d5fb949050dd8..18124fc499dbc 100644
+--- a/security/safesetid/lsm.c
++++ b/security/safesetid/lsm.c
+@@ -148,13 +148,16 @@ static int safesetid_security_capable(const struct cred *cred,
+ static bool id_permitted_for_cred(const struct cred *old, kid_t new_id, enum setid_type new_type)
+ {
+ 	bool permitted;
++	kid_t source_id;
+ 
+ 	/* If our old creds already had this ID in it, it's fine. */
+ 	if (new_type == UID) {
++		source_id.uid = old->uid;
+ 		if (uid_eq(new_id.uid, old->uid) || uid_eq(new_id.uid, old->euid) ||
+ 			uid_eq(new_id.uid, old->suid))
+ 			return true;
+ 	} else if (new_type == GID){
++		source_id.gid = old->gid;
+ 		if (gid_eq(new_id.gid, old->gid) || gid_eq(new_id.gid, old->egid) ||
+ 			gid_eq(new_id.gid, old->sgid))
+ 			return true;
+@@ -162,11 +165,10 @@ static bool id_permitted_for_cred(const struct cred *old, kid_t new_id, enum set
+ 		return false;
+ 
+ 	/*
+-	 * Transitions to new UIDs require a check against the policy of the old
+-	 * RUID.
++	 * Transitions require a check against the policy of the old real ID.
+ 	 */
+ 	permitted =
+-	    setid_policy_lookup((kid_t){.uid = old->uid}, new_id, new_type) != SIDPOL_CONSTRAINED;
++	    setid_policy_lookup(source_id, new_id, new_type) != SIDPOL_CONSTRAINED;
+ 
+ 	if (!permitted) {
+ 		if (new_type == UID) {
+-- 
+2.43.0
 
-If the selftest is compiled with newer kernel headers (where CAP_LAST_CAP is
-higher) but executed on an older kernel, prctl(PR_CAP_AMBIENT_IS_SET) will
-return -1 (-EINVAL) for newly defined capabilities that the older kernel do=
-es
-not support.
-
-Since the test checks for !=3D 0 instead of exactly =3D=3D 1 (or explicitly
-ignoring -1), the -EINVAL error return is treated as an unexpected ambient
-capability.
-
-Could this be updated to check for =3D=3D 1 or ignore -1 to prevent false
-failures?
-
-> +			fprintf(stderr, "unexpected ambient capability %d\n", i);
-> +			return -1;
-> +		}
-> +	}
-> +	return 0;
-> +}
-[ ... ]
-> +static int run_case(const char *name, enum test_operation operation,
-> +		    gid_t target, bool expect_kill)
-> +{
-> +	struct pollfd pollfd =3D {};
-> +	int status;
-> +	int pidfd;
-> +	pid_t child;
-> +
-> +	child =3D fork();
-> +	if (child < 0) {
-> +		perror("fork");
-> +		return -1;
-> +	}
-> +	if (!child)
-> +		run_child(operation, target);
-> +
-> +	pidfd =3D syscall(SYS_pidfd_open, child, 0);
-
-[Severity: Low]
-Does this rely on host glibc syscall definitions instead of the kernel-prov=
-ided
-headers?
-
-Older glibc versions (prior to 2.36) do not define SYS_pidfd_open, which wi=
-ll
-result in a compilation error when building the selftests on an older host.
-
-Using the kernel-provided __NR_pidfd_open is the standard approach in
-selftests to maintain backwards compatibility and independence from the host
-libc's system call knowledge. Could __NR_pidfd_open be used here instead?
-
-> +	if (pidfd < 0) {
-> +		perror("pidfd_open");
-> +		kill(child, SIGKILL);
-> +		waitpid(child, &status, 0);
-> +		return -1;
-> +	}
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1791023194.gi=
-t.tjdqudcks0424@naver.com?part=3D2
