@@ -1,47 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05E838B7A6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8531738AC90;
 	Sat,  3 Oct 2026 03:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790999968; cv=none; b=kpIbi38UVppsXfvebXFmAlbJugLN8gStYMQ/Van/BpGne3UgWLO1vPeu5o7vKwuyoTkde4rTNE+B/KWsF6KtVe4VB6Bl6+22t2zakxAyMVI1kuQopgYlMf9mjCTJkSguLRCoqFvVesM/SjIyPXhztlH7aqTxuM9CEkq6mDJlHxw=
+	t=1790999968; cv=none; b=bel8DiA0M4J7g+vkOs2say0O4/YN13QBBf/hH/HgbcGuNsqgdh/Q9XriXnR3WwIcUNdLes8FcCxMths6F8vniCLn9rsVxLAjlbEMqDMI/GwO7NSlbAI8Nnb3JTfieWDMz5/pM2WNFWxHU/A29wzd4DcW4Ba+vEYA58aLq4p5uQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790999968; c=relaxed/simple;
-	bh=qLtnL1zcugdCZ7k2f5owH6NFcJ+HwIDUAHkKxFRjTzw=;
+	bh=83ejdE21ZGKoH4IcbNOtIYCWNlvKIrQjgUzARamzwfE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I3VNVOzXrONfbvDvPqtErCpbCHqLeoUYA2oF3vRoZRFkrYnWzRarJXbOyyPSOIU9gM7WNAjtWRGgPW+DtTxP57Dtk7Veo925ogIooS4WrSPTj83AFOUod9WjKIfDdfvz6XEXeRdAJAW5zYm9lNuMvzaKHjTSPY7ms24aapDXMB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmXXk7oC; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=okYv+OskvnVAl+jXo1f4Ii4hadiBvDTjpcPqqtJbZL+L7nHpwEcehQsYp0MljFKiAWds/6SmfnGKmWCeDgfN9k1MD6qGxXfzbQ6pIsTJIaq3ADliwZZaHXlmOgMl6caA4a28Wz51grdpJBtHn+7vJoa+SHay37ioC7LKvuzzu10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esNzDwkF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmXXk7oC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 109391F008AB;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esNzDwkF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048601F008A2;
 	Sat,  3 Oct 2026 03:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1790999962;
-	bh=vT6DnMwBY+XwQ6aSwUxVvTPJh6+CpecvgsrumKxGDn8=;
+	bh=3OTiHc1/0syaVTh9plxPSwZX9JA+w6f18TNYUs4mWiI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UmXXk7oClunsZGxVg0LdpLwxBEmS1dKK57/EqG1NCzGo/HBKLnkF+ATtDj1LEWhiL
-	 JRzt5u8c4YZ9ac+2rwB+NYvbST7zN7omAYAMfRdLFpmcPA2dLRaCQpI5cvvGZott9c
-	 xBh994/qIBf87DnJNnTwbyPKBT6TSn73F+rojOMDNDAfzAboURmN5JBRXDWfm6qpWN
-	 NbRH08r8aJSoOGk4A0/dvuhzGEFdsWs3I7bTH/ONxgK1efZuZw7Btq+CVMs3dRGNa1
-	 nOiOEe0dj/vIholrDWLDdbCqdLNSK6r5Z64A9lGxJXTP5JB82E7DJ1UprhuIxcvk2y
-	 QwUoisd2am7Dg==
+	b=esNzDwkF/ZPzuVHUwOX/wWg1G8q95GJofpLCNZ8CqjZQ3tSrgZVSe0wl0i/6tgYuB
+	 b+Og8ah3xsZ8t9cxtea4sG661YTsOMgK8WVA8wpEoh1BTI8kBHx36q6v+G2wPY7mPx
+	 z4I5y1NwZKx3SFzjqzalrK3VNGzGzXi+Mz5t8hh+znJCYY/w/7zYGnJf7LEk0Ev38H
+	 z5LVKQGZpj2BeyE843ig3p7wNG9C7eq7HmfrKRy6iuRy1T6I4c49+fSOADaKVkxXWO
+	 kl9SSeOeX8e292rsoebDYCW364bXxFepgepHcQXFCiqAipN3wEtdDK2FQylf72d8Ko
+	 +8U5XvTRO77ng==
 From: Kees Cook <kees@kernel.org>
 To: Bill Wendling <morbo@google.com>
 Cc: Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	nvdimm@lists.linux.dev,
+	Alison Schofield <alison.schofield@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guangshuo Li <lgs201920130244@gmail.com>,
+	Ira Weiny <iweiny@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Vishal Verma <vishal.l.verma@intel.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	David Gow <david@davidgow.net>,
+	Petr Mladek <pmladek@suse.com>,
 	Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Shuvam Pandey <shuvampandey1@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
@@ -64,23 +69,18 @@ Cc: Kees Cook <kees@kernel.org>,
 	Nicholas Piggin <npiggin@gmail.com>,
 	Shivaprasad G Bhat <sbhat@linux.ibm.com>,
 	Thorsten Blum <blum@kernel.org>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	Ira Weiny <iweiny@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Vishal Verma <vishal.l.verma@intel.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org,
-	nvdimm@lists.linux.dev,
+	linux-doc@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH v4 11/11] docs: core-api: Document the seq_buf API
-Date: Fri,  2 Oct 2026 20:59:16 -0700
-Message-ID: <20261003035921.1918874-11-kees@kernel.org>
+Subject: [PATCH v4 10/11] nvdimm: ndtest: Return the string length from flags_show()
+Date: Fri,  2 Oct 2026 20:59:15 -0700
+Message-ID: <20261003035921.1918874-10-kees@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261003035906.too.263-kees@kernel.org>
 References: <20261003035906.too.263-kees@kernel.org>
@@ -90,111 +90,44 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3434; i=kees@kernel.org; h=from:subject; bh=qLtnL1zcugdCZ7k2f5owH6NFcJ+HwIDUAHkKxFRjTzw=; b=owGbwMvMwCVmps19z/KJym7G02pJDFkHaqfIMonP55oyd9O3xfyq65u4lc99OHbTaOu6qY/fd a3MWuvL0lHKwiDGxSArpsgSZOce5+Lxtj3cfa4izBxWJpAhDFycAjARvUiG/ymW89/1/F11Uuor 55LI3fItuhlqp/9NU1XveFIY4bjMazHD/5B9d9sb1kUIzLjYFbXi+J/z5quz+/fccZw1nf1+qKz SOQ4A
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1205; i=kees@kernel.org; h=from:subject; bh=83ejdE21ZGKoH4IcbNOtIYCWNlvKIrQjgUzARamzwfE=; b=owGbwMvMwCVmps19z/KJym7G02pJDFkHaieLvLjkuOz2nWpmDfsU5q917HcOHpCrm/clZhVX5 dEteh/WdJSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEzEo5Thf0HjJa6f2wWCLz5Z ndCTresx5Vpd30Jz8x/NP1assHW/ZMzwT78//eJ0f787O6pSOef+ZToVzRjHcTRt/ZT+eYtmCc4 o4QUA
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-The kernel-doc in include/linux/seq_buf.h and lib/seq_buf.c documents
-the seq_buf interface, but no .rst file pulls either of them in, so none
-of it reaches the generated documentation.
+flags_show() build their output with a seq_buf and return seq_buf_used(),
+which may include the trailing NUL byte when the seq_buf has
+overflowed. Use seq_buf_strlen() instead.
 
-Add the missing kernel-doc for seq_buf_clear() and seq_buf_init(), and a
-Sequence Buffers section to the kernel API documentation. The static
-internal helper seq_buf_can_fit() is left out. Additionally fix
-seq_buf_hex_dump() indentation to avoid the reported Sphinx error:
+The flag names are far shorter than the PAGE_SIZE buffer sysfs
+provides, so this cannot overflow today.
 
-  ERROR: Unexpected indentation.
-  WARNING: Block quote ends without a blank line; unexpected unindent.
-
-Verified with "make SPHINXDIRS=core-api htmldocs", which rendered
-happily into core-api/kernel-api.html.
+Build tested ARCH=x86_64 with GCC 16.2.0, built out of tree with
+make M=tools/testing/nvdimm:
+tools/testing/nvdimm/test/ndtest.o
 
 Assisted-by: LLM
-Co-developed-by: Bill Wendling <morbo@google.com>
-Signed-off-by: Bill Wendling <morbo@google.com>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 Signed-off-by: Kees Cook <kees@kernel.org>
 ---
- Documentation/core-api/kernel-api.rst |  9 +++++++++
- include/linux/seq_buf.h               | 12 ++++++++++++
- lib/seq_buf.c                         | 13 +++++++------
- 3 files changed, 28 insertions(+), 6 deletions(-)
+ tools/testing/nvdimm/test/ndtest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-index 4c4a57c1c094..f5a0aedbbb48 100644
---- a/Documentation/core-api/kernel-api.rst
-+++ b/Documentation/core-api/kernel-api.rst
-@@ -96,6 +96,15 @@ Error Pointers
- .. kernel-doc:: include/linux/err.h
-    :internal:
+diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
+index 2051ad5d4882..f097f2992966 100644
+--- a/tools/testing/nvdimm/test/ndtest.c
++++ b/tools/testing/nvdimm/test/ndtest.c
+@@ -693,7 +693,7 @@ static ssize_t flags_show(struct device *dev,
+ 	if (seq_buf_used(&s))
+ 		seq_buf_printf(&s, "\n");
  
-+Sequence Buffers
-+----------------
-+
-+.. kernel-doc:: include/linux/seq_buf.h
-+   :internal:
-+
-+.. kernel-doc:: lib/seq_buf.c
-+   :no-identifiers: seq_buf_can_fit
-+
- Sorting
- -------
- 
-diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
-index 50b1e78eeea6..c97dd9b0ba53 100644
---- a/include/linux/seq_buf.h
-+++ b/include/linux/seq_buf.h
-@@ -31,6 +31,10 @@ struct seq_buf {
- 		.size = SIZE,				\
- 	}
- 
-+/**
-+ * seq_buf_clear - reset the seq_buf to be read / appended from the beginning
-+ * @s: the seq_buf handle
-+ */
- static inline void seq_buf_clear(struct seq_buf *s)
- {
- 	s->len = 0;
-@@ -38,6 +42,14 @@ static inline void seq_buf_clear(struct seq_buf *s)
- 		s->buffer[0] = '\0';
+-	return seq_buf_used(&s);
++	return seq_buf_strlen(&s);
  }
+ static DEVICE_ATTR_RO(flags);
  
-+/**
-+ * seq_buf_init - initialize a seq_buf
-+ * @s: the seq_buf handle
-+ * @buf: pointer to the buffer
-+ * @size: total size of @buf
-+ *
-+ * The contents of the buffer are ignored.
-+ */
- static inline void
- seq_buf_init(struct seq_buf *s, char *buf, unsigned int size)
- {
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index 8da2e9447adf..54b76044e4ba 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -409,12 +409,13 @@ int seq_buf_to_user(struct seq_buf *s, char __user *ubuf, size_t start, int cnt)
-  *
-  * Function is an analogue of print_hex_dump() and thus has similar interface.
-  *
-- * linebuf size is maximal length for one line.
-- * 32 * 3 - maximum bytes per line, each printed into 2 chars + 1 for
-- *	separating space
-- * 2 - spaces separating hex dump and ASCII representation
-- * 32 - ASCII representation
-- * 1 - terminating '\0'
-+ * linebuf size is maximal length for one line::
-+ *
-+ *	32 * 3 - maximum bytes per line, each printed into 2 chars + 1 for
-+ *		 separating space
-+ *	2 - spaces separating hex dump and ASCII representation
-+ *	32 - ASCII representation
-+ *	1 - terminating '\0'
-  *
-  * Returns: zero on success, -1 on overflow.
-  */
 -- 
 2.55.0
 
