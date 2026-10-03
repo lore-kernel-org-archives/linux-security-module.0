@@ -1,84 +1,101 @@
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C38450F2
-	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 04:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F40450F2;
+	Sat,  3 Oct 2026 04:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791002012; cv=none; b=QUFIhfKnfv/97zdTQIQOHXBOTktkpCYr/vDcwAoOSbZVwbwAnCgnaThBLh8b7aimVTuJvSH7Nbr3w/1H7P5yxHgDaILXKL6FWcR2eCPriWvVe+lGaq9zZ6HBcqeN/hFIxKPqS8mGDhMkr6EofRFCf0jAOBmKVsChZ9cLyL3znDI=
+	t=1791002043; cv=none; b=KnCERuzadMNQu5B5GQ/4ShdFtM8O9SW5HzSsZT5tpT+HiIvoWx9n0NrTao2ksWUQedy09OwF9HJh6yKzYbIe7y+8Et8x8oWv4zgBSOLa1uE3nS3K5DQJcucsy8L1B4MGnpj3xZhLA086QRhK53mPSIN5g7blE9D4gkq4IEVmgDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791002012; c=relaxed/simple;
-	bh=Tip7luQdg8lcMdjVWKlKFSl7kQWY0i1g4tyNrbEzGhg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HW8WMMazSKLvN7l3vr8ttrtRBnYvYuNjqxicr6Jh/Cp5ayfSDIq/B63amc8avG0EdDQMc+7CIL0YxauIkYnQgurYmB8XXgoZsP8obYftfOmTfrooDDBrVFsfuZUWVVWOmwmWUZ+VsxYaUClGgzUA4kdmHrbLXILbBpg7s3Z+J8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-4c55ba309c2so195128b6e.1
-        for <linux-security-module@vger.kernel.org>; Fri, 02 Oct 2026 21:33:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791002009; x=1791606809;
-        h=content-type:to:from:subject:message-id:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=OULXk60hzpDfovu0nVbj6/L+oh5KXRgHr04gu3IGI9E=;
-        b=Z6VRw0k11hYLeg+2fQnbYuKdouCLzjtz8SYc49m1qwyeJ7hTbAQmcrvrcKdQ7ok86Y
-         trGMcQ03YwKz3Er4pKyIGH1qTPyJgM12PeHvZ/bGm3VvkGLKydVSKvmLhOBaG8HJ2ZBn
-         TS2kjzLd49GvXS3YbGYIW8iiGBHjKmx60B5juOr78LSwjqsSfDE+TQ/ezZgm4O0fm6ss
-         8kLmZEwa/0zmWKmowaBKCwm4rMBhIfDgHNJVzmkec8t+/kJ7Pq8On9j/9h905DnY/ZjJ
-         lXQFtlvr029oAxu5es+zV+ZTl27fYg27oVJbIrcCpacpUjTSCAifQk00GhdIxFyWlwOZ
-         8cVA==
-X-Forwarded-Encrypted: i=1; AKwUvBwBpOocsGruVGom0/HFsLpzQx7B3SuNOCWV+fwHLjV+2KCnWKVSFVk59r6NmqDhEaxjInj9Bmj5z+9E7xSv5uAcaRgHcqQ=@vger.kernel.org
-X-Gm-Message-State: AFuF++m2URv4oOxV8ronMSipBKJFY3+uXSQdCYB4O1YsyPsprpbERmtu
-	hA+gx/gyCCy0v9R/3aAg5V1kJ1qCR9i8rsfT1Bfnx9bgKWbir3Xs5DtnVojkCSWHZhzwXbHTxTx
-	rUp930l/pqglzq1sG9XKqfqsC7vo+Lz/+w+nv1fk1TNHC/pLFqUpRBjdUOfs=
+	s=arc-20240116; t=1791002043; c=relaxed/simple;
+	bh=zGsMMCFnuZoFawv7/XTqHVMWITtkX2O6G8xrb12kjxs=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=CnE0kVGkNNBTUtK5EWrW/xJEH42blNe62YWDLfMHsFRLhnPXpzX8rskK1tHXMUMe3rNWaNHqmF6xwDwuaTGce6yCi9nFOf4+6A4RNuAc/kB4iQs2s3bIE0KI8N2RfGLeWomfqksiLdL+Iw/KVGOGH69+sTNzkQIEpY5Cg9GVQ7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMZBO/0C reason="signature verification failed"; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMZBO/0C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2089C1F000FF;
+	Sat,  3 Oct 2026 04:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791002041;
+	bh=T5WqpPkABYIUr+bdw9uNCeIvTTslukdoECjwAYUP7k8=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=CMZBO/0C5xeumMuL3ncSkFagppcPpT5dOBjyZc+U25dEpLF/06r0ZRaHPXYDLuqD6
+	 SNcQRLrq+gVgrsRiZKbdWdUuby/voNjj10L7uz5SMzAVj3vpKVOtP/p6BjKY5bgDGa
+	 mKbfI1DXTb4RaywucblX8VTCk2IVBVBv32LzbGlrHmPLImUMnup8WdULwUFxyR7b3S
+	 xU4XPlOThF3RXjVJfDS3SprBoad763bLCItuU1Wu1M6MngY1qY3pbifawvQrozhrgG
+	 Dzz5fuCF0GcT9b6O5AIJJsItZDm/UXZINp0EBqrWEbp2sT4jVzKo5EYUNgCqDGWxqH
+	 8sGRvF90o/fvg==
+Content-Type: multipart/mixed; boundary="===============0675329118283778615=="
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1828:b0:4c3:b290:cf55 with SMTP id
- 5614622812f47-4f526a4f33emr4183826b6e.7.1791002009647; Fri, 02 Oct 2026
- 21:33:29 -0700 (PDT)
-Date: Fri, 02 Oct 2026 21:33:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6ac08599.34119e79.2f92f3.000e.GAE@google.com>
-Subject: [syzbot] Monthly lsm report (Oct 2026)
-From: syzbot <syzbot+listc9328a48c11a8947def7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <f3b5a05404cc45b59981e869a0203ed07497f6f6942e6d72cee63b37612b7cda@mail.kernel.org>
+In-Reply-To: <20261003035921.1918874-8-kees@kernel.org>
+References: <20261003035921.1918874-8-kees@kernel.org>
+Subject: Re: [PATCH v4 08/11] seq_buf: Add seq_buf_init_append()
+From: bot+bpf-ci@kernel.org
+To: kees@kernel.org,morbo@google.com
+Cc: kees@kernel.org,willy@infradead.org,akpm@linux-foundation.org,andriy.shevchenko@linux.intel.com,david@davidgow.net,pmladek@suse.com,shuvampandey1@gmail.com,rostedt@goodmis.org,corbet@lwn.net,senozhatsky@chromium.org,gnoack@google.com,mic@digikod.net,mhiramat@kernel.org,mathieu.desnoyers@efficios.com,jikos@kernel.org,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,eddyz87@gmail.com,memxor@gmail.com,martin.lau@linux.dev,song@kernel.org,yonghong.song@linux.dev,jolsa@kernel.org,emil@etsalapatis.com,ihor.solodrai@linux.dev,chleroy@kernel.org,u.kleine-koenig@baylibre.com,maddy@linux.ibm.com,mpe@ellerman.id.au,npiggin@gmail.com,sbhat@linux.ibm.com,blum@kernel.org,alison.schofield@intel.com,dave.jiang@intel.com,gregkh@linuxfoundation.org,lgs201920130244@gmail.com,iweiny@kernel.org,u.kleine-koenig@pengutronix.de,vishal.l.verma@intel.com,rdunlap@infradead.org,skhan@linuxfoundation.org,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,linux-trace-k
+ ernel@vger.kernel.org,linuxppc-dev@lists.ozlabs.org,nvdimm@lists.linux.dev,linux-doc@vger.kernel.org,linux-hardening@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
+Date: Sat,  3 Oct 2026 04:33:59 +0000 (UTC)
 
-Hello lsm maintainers/developers,
+--===============0675329118283778615==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-This is a 31-day syzbot report for the lsm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/lsm
+> seq_buf: Add seq_buf_init_append()
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 46 have already been fixed.
-There are also 2 low-priority issues.
+TL;DR: Commit message only: it says seq_buf_init() sets the buffer size to 0
+via seq_buf_clear(), but it resets the length, not the size. The code is not
+reported as buggy.
 
-Some of the still happening issues:
+> seq_buf: Add seq_buf_init_append()
+>
+> Several strlcat() call sites being converted to seq_buf need behavior
+> seq_buf doesn't currently provide. The normal seq_buf_init() always
+> sets the new buffer size to 0 via seq_buf_clear(). Code migrating from
+> strlcat(buf, ...), which appends to whatever buf already contains,
+> can't use seq_buf_init() without discarding that existing content. Add
+> seq_buf_init_append(), which preserves the existing contents and positions
+> the seq_buf to append after it. A buffer with no NUL within its size
+> starts out overflowed, as strlcat() treats it as already truncated.
+> Add KUnit tests for behavior coverage.
+>
+> Tests passed under qemu on ARCH=x86_64 with GCC 16.2.0 and CONFIG_KASAN=y,
+> and on big-endian ARCH=s390 with GCC s390x-linux-gnu 16.2.0.
+>
+> Assisted-by: LLM
+> Signed-off-by: Bill Wendling <morbo@google.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Co-developed-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Ref Crashes Repro Title
-<1> 114     Yes   INFO: task hung in process_measurement (3)
-                  https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
-<2> 49      Yes   INFO: task hung in ima_file_free (4)
-                  https://syzkaller.appspot.com/bug?extid=8036326eebe7d0140944
-<3> 6       Yes   kernel BUG in commit_creds (3)
-                  https://syzkaller.appspot.com/bug?extid=fa63184795283ac3f842
+This isn't a bug in the code, but is the changelog accurate when it says
+seq_buf_init() "always sets the new buffer size to 0 via seq_buf_clear()"?
+
+seq_buf_init() stores the size it was given in s->size, and seq_buf_clear()
+leaves s->size alone.  It only resets the length and terminates the first
+byte:
+
+    static inline void seq_buf_clear(struct seq_buf *s)
+    {
+    	s->len = 0;
+    	if (s->size)
+    		s->buffer[0] = '\0';
+    }
+
+Should the sentence say that seq_buf_init() always sets the length (s->len)
+to 0 via seq_buf_clear(), rather than the buffer size?
+
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/37096036516
+--===============0675329118283778615==--
