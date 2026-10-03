@@ -1,70 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E828D831;
-	Sat,  3 Oct 2026 04:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C38450F2
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 04:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791000500; cv=none; b=bNy+92g8ekkOAjngKovX+TZLprrVSkpYgj8eJ5pdWvPmExCWfQy9aRfoeSenEKOKG07t0Ajh/xUF3Vm7yPYqj7epuasmKDXy+DJPoHLhQFhOCwKRG8h8aCGXkYJMfu058iaslgqGe7zke9fhQDGJe+isQPSLx8rI1wPZeN8OxxE=
+	t=1791002012; cv=none; b=QUFIhfKnfv/97zdTQIQOHXBOTktkpCYr/vDcwAoOSbZVwbwAnCgnaThBLh8b7aimVTuJvSH7Nbr3w/1H7P5yxHgDaILXKL6FWcR2eCPriWvVe+lGaq9zZ6HBcqeN/hFIxKPqS8mGDhMkr6EofRFCf0jAOBmKVsChZ9cLyL3znDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791000500; c=relaxed/simple;
-	bh=b3CGu0TmSPt1Tyf6/KGEIXqWW84UpyfEGFFeEECH7IQ=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=mpPLNrsvt6POyM7mdqzNzb8g+2e/RS906W+bkS0tNz5fhLmPtKnOGkjmX9hOQw24/HA1yNqZxZOd1uNwJPPwcyL7IFK/d2O6apG1m+Ybec5cWUbrelth3cRuEluPWJ1a7rK4yvMCMTaKdcxRxhkEnZGvwLSwrZOl9w/6/w4xl9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HiwVsGvx; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HiwVsGvx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A7F1F000FF;
-	Sat,  3 Oct 2026 04:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791000499;
-	bh=b3CGu0TmSPt1Tyf6/KGEIXqWW84UpyfEGFFeEECH7IQ=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=HiwVsGvx2Z0MgW/GQuCKP6GrSqI/2nRODbs5nhreXq/J7lv5DrCKVRUTXR0m0Km7p
-	 N71n5p1tz6j5prwsXlnS6/IgHK6imETLl7UIFYPDHLA8F75oZzl9xaboj2TQkDl91V
-	 fJCyqQrPtJUa8hw3MNmUHqQmM7zSkIZ6OTELLYuU7mL96n5avV+IItL2SVoIOAHfmW
-	 kxzQ/O6UZTfuwm5Zy9mkvE1jmtHENgjv6QhiAgPTqohPxyNB7rdRa4PJA+d1KssKWs
-	 L9KbZfryrVP4D9OH9ZvJqZE5em/uEU3Hkq6Y68Urr6ay3FIbbbV7ZRpW+nqC8zH9hp
-	 YsFp7fs6r4f3A==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 10/11] nvdimm: ndtest: Return the string length from
- flags_show()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Kees Cook" <kees@kernel.org>
-Cc: nvdimm@lists.linux.dev, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-In-Reply-To: <20261003035921.1918874-10-kees@kernel.org>
-References: <20261003035906.too.263-kees@kernel.org>
- <20261003035921.1918874-10-kees@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 03 Oct 2026 04:08:18 +0000
-Message-Id: <20261003040818.70A7F1F000FF@smtp.kernel.org>
+	s=arc-20240116; t=1791002012; c=relaxed/simple;
+	bh=Tip7luQdg8lcMdjVWKlKFSl7kQWY0i1g4tyNrbEzGhg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HW8WMMazSKLvN7l3vr8ttrtRBnYvYuNjqxicr6Jh/Cp5ayfSDIq/B63amc8avG0EdDQMc+7CIL0YxauIkYnQgurYmB8XXgoZsP8obYftfOmTfrooDDBrVFsfuZUWVVWOmwmWUZ+VsxYaUClGgzUA4kdmHrbLXILbBpg7s3Z+J8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-4c55ba309c2so195128b6e.1
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Oct 2026 21:33:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791002009; x=1791606809;
+        h=content-type:to:from:subject:message-id:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=OULXk60hzpDfovu0nVbj6/L+oh5KXRgHr04gu3IGI9E=;
+        b=Z6VRw0k11hYLeg+2fQnbYuKdouCLzjtz8SYc49m1qwyeJ7hTbAQmcrvrcKdQ7ok86Y
+         trGMcQ03YwKz3Er4pKyIGH1qTPyJgM12PeHvZ/bGm3VvkGLKydVSKvmLhOBaG8HJ2ZBn
+         TS2kjzLd49GvXS3YbGYIW8iiGBHjKmx60B5juOr78LSwjqsSfDE+TQ/ezZgm4O0fm6ss
+         8kLmZEwa/0zmWKmowaBKCwm4rMBhIfDgHNJVzmkec8t+/kJ7Pq8On9j/9h905DnY/ZjJ
+         lXQFtlvr029oAxu5es+zV+ZTl27fYg27oVJbIrcCpacpUjTSCAifQk00GhdIxFyWlwOZ
+         8cVA==
+X-Forwarded-Encrypted: i=1; AKwUvBwBpOocsGruVGom0/HFsLpzQx7B3SuNOCWV+fwHLjV+2KCnWKVSFVk59r6NmqDhEaxjInj9Bmj5z+9E7xSv5uAcaRgHcqQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++m2URv4oOxV8ronMSipBKJFY3+uXSQdCYB4O1YsyPsprpbERmtu
+	hA+gx/gyCCy0v9R/3aAg5V1kJ1qCR9i8rsfT1Bfnx9bgKWbir3Xs5DtnVojkCSWHZhzwXbHTxTx
+	rUp930l/pqglzq1sG9XKqfqsC7vo+Lz/+w+nv1fk1TNHC/pLFqUpRBjdUOfs=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6808:1828:b0:4c3:b290:cf55 with SMTP id
+ 5614622812f47-4f526a4f33emr4183826b6e.7.1791002009647; Fri, 02 Oct 2026
+ 21:33:29 -0700 (PDT)
+Date: Fri, 02 Oct 2026 21:33:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6ac08599.34119e79.2f92f3.000e.GAE@google.com>
+Subject: [syzbot] Monthly lsm report (Oct 2026)
+From: syzbot <syzbot+listc9328a48c11a8947def7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> flags_show() build their output with a seq_buf and return seq_buf_used(),
-> which may include the trailing NUL byte when the seq_buf has
-> overflowed. Use seq_buf_strlen() instead.
->=20
-> The flag names are far shorter than the PAGE_SIZE buffer sysfs
-> provides, so this cannot overflow today.
->=20
-> Build tested ARCH=3Dx86_64 with GCC 16.2.0, built out of tree with
-> make M=3Dtools/testing/nvdimm:
-> tools/testing/nvdimm/test/ndtest.o
->=20
-> Assisted-by: LLM
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
+Hello lsm maintainers/developers,
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+This is a 31-day syzbot report for the lsm subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/lsm
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261003035906.too.=
-263-kees@kernel.org?part=3D10
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 46 have already been fixed.
+There are also 2 low-priority issues.
 
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 114     Yes   INFO: task hung in process_measurement (3)
+                  https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
+<2> 49      Yes   INFO: task hung in ima_file_free (4)
+                  https://syzkaller.appspot.com/bug?extid=8036326eebe7d0140944
+<3> 6       Yes   kernel BUG in commit_creds (3)
+                  https://syzkaller.appspot.com/bug?extid=fa63184795283ac3f842
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
