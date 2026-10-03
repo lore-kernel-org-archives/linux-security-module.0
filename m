@@ -1,132 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f39.google.com (mail-pz2-f39.google.com [74.125.228.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0616A272803;
-	Sat,  3 Oct 2026 04:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7442E233936
+	for <linux-security-module@vger.kernel.org>; Sat,  3 Oct 2026 06:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791003062; cv=none; b=urdcfsJ73LuGbZONcWGhd0EWRiZPhAcoBu5lc7drotHxzToKldS+H3rx8BjOVRFajlC8XG9AHm3WDREsz6DYEwSMGbNWoRKTicwZ/x3j+hfUt/V1bjVHgFi8GFngoJdvm5Xm234M73b1kKrZTO2ogQ3VEq4VF9eNlXNaPzEn3K8=
+	t=1791009146; cv=none; b=WxmVJdSyl8H1BEPRhhR6yH71dE4JGoSQ5cTUhJamUV9l/105L9LuEDX1nDyHCzSgA+RZsXVbutpCoK4IgbY65vbLWvWk9PqRgeCPMST+wHCtS0cXPWJ7IuAyRDdTOy0GRKtufEuawkRJkeiF7OaZXpgnlG7wFelJ5LIvVRrD5dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791003062; c=relaxed/simple;
-	bh=0V5dpx7bgV70Jzf0mFlBUkoH8Sc5YzrBjrMfMQS5vZ8=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=s8ho8uW925mv1AN0znVzrjp8bimM9tW/G5pKcz9eCOE5ORNAtWnwqY7mXmqeWszabwhhFeHEjwqNlaSyBALzGk1gdMbp9eiAlbXbf2/zc9ZW7gQ9Xx6HTdEXFzXDta++yOxsRESJTaSVe4QhOOx+j51jrxPi/yEFxErNlgszjK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBbDo+0V reason="signature verification failed"; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791009146; c=relaxed/simple;
+	bh=VuiMGsvrxoxHYIMjTtEAMKJLNMC58E+oDp1FFjB26XU=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:In-Reply-To:
+	 References:MIME-Version; b=dyAB5+YPK9KLyhRkb6RY1+RHqA57NSetwksESYDkKQb3An4hlxWwKkG0lCvGJqXXedQyycbWBFCQ9fYpVc7QjQdFjw70uUWDCdVLdarTPHdmrAWRmmCQuowcW6A/bkSnuScafSRYsKO4HdeE6sc5+6JuQpcViBmwdlHtOOe6OO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DL3guCmC; arc=none smtp.client-ip=74.125.228.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBbDo+0V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C5D01F000FF;
-	Sat,  3 Oct 2026 04:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791003060;
-	bh=Rms+lxZF9z8Sb3tW2DEtvUlSOL076vw/3UOncHYJUyg=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=fBbDo+0Vp4sT7OTMptP7l22LYB8DFYOrcLK/vYkPvZcJ+1tLNSluFTSR8w5+CU7OO
-	 Z/P7q8xJZx9Ch9v4WxoYtayQIgWA1AR8hJI5cuckv1hd5CplgURaEej1xWJ0XeQ/Kp
-	 RcMEF1gZP26pSpyQ3zX7vx6/xGv9y7Tc0zFbU1DHxrnrYboDuubDlX9iG/CrcoY4gH
-	 +na8jpApp3q3WKCeHmywE5SnL3/CqIslhYvfH1FiZ75goNYT3GTK/edaL/NnwGRcAj
-	 weC4lyRd3I8t3uNlZDjbgMSpTgoaGx6hemN7CdiEOGOBxFFyLSWSt9FfFbQNPaQLdM
-	 K/M/wyhoP2/LQ==
-Content-Type: multipart/mixed; boundary="===============1261292974183120383=="
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DL3guCmC"
+Received: by mail-pz2-f39.google.com with SMTP id 41be03b00d2f7-cc78d59bb02so43808a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 02 Oct 2026 23:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791009144; x=1791613944; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:references:in-reply-to:to
+         :from:subject:cc:message-id:date:content-type:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=vr5KVZoPR0cul9dM0w9bT4mgxCHNEHDqUMfTuf7KfX8=;
+        b=DL3guCmCAoGGad5fqQhT+5W2N60ezuvD94VtFpob8EDuN/9oZNMQlKHDpKAkIFeIqv
+         cOYuDc2THo5GGGolhJh0u08uEpd/a0aW2pVhSbGM+DGfgBTDKm22DxkQ6LX2FkKiM7yS
+         jJV/jTe/NGZqAqIfD6TfS+NvtBajMlBp4v/HObTFUIzWKLyviiMPwG3ZAouqLj26zAwG
+         ZcJjzfa+1isefTBiR26J43dKgCqETQBDF8CPhVZde99KZyOFaecA23+M4lrbFKXIXN/C
+         dkTOqRKnWejNq/nzi8KHvYZV7R7OXmRw9eMk5898z5VOh6iUMuXoiZABMloEUTphOZXz
+         PHIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791009144; x=1791613944;
+        h=mime-version:content-transfer-encoding:references:in-reply-to:to
+         :from:subject:cc:message-id:date:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vr5KVZoPR0cul9dM0w9bT4mgxCHNEHDqUMfTuf7KfX8=;
+        b=cwGKIyzyfrW4+bh7Bd1YFIcJnVHVUfP2pXXrUUj13Rk6GxD9UkzY5cU6wn2L+pWuO6
+         x+GyWAVSULVdZvYApQWpjM2SaoVN3KFOesbbgY0sftqzq7erbUTI1HySvYbbSqW0yisK
+         vazEWlJTSPnAnGbLX39JfvffyrRcEgm5cD0SBLDm5PJFtlLVIshjSZyCrxDSGxa1oEJz
+         sfU5LO7hvCDZnrAvvZ/cMLyYVFSmc9ViINoAo6yq+QdI0MO5IQvIzG2Us0LLwW2axQa8
+         CHoE53ShxRTnAO17sJj7/262wGw2i82RqDQfB24u0iZCJnVzESKFFXhoAD8BiiD+15ar
+         c9ZQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwctthvoAjVNBA3vST+vqxkvH4lCwDIWfaBk+fEInwXDLl9dFJfNWr1tzw+ZyAj/zM/uD2+bTvmBnPqvfUZUpNiK3sf0zY=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLVNh49w4VggMBIzvPw/2E2DxgKuy4MaC4aIbw4v8pb07+P+rlf
+	1SzSumQh7N6KHr3VFKLuXB2AnnSIRutNtdCqU9BOpzbmWnq6Hax+Plcl
+X-Gm-Gg: AYBFou1Vt6kkDypSlKbKcqFeWVD2HvUVcZOuDmEDtG8BkQk0GNUUoHvZrPZLxENoyT4
+	H1nofIBQeMa+sHtX7U2Pj9HYKwBqbMBV/0KBmIhKtlDcGi0XGK+r67DfQx8V2uFelYg9i6CpmR3
+	3sALzc45ir8ZcoOhz4eh3Y4w7asQKXjaTSAc1yh4vlqp2bPh1y3U9+2+pBONawb1spBx9/A8B9U
+	JN9KN448IFPjw2OmBzUzjOYsy0riv1JyidgMekm9XJvij3CQxIYOSDfrYSAdKTalGzmS8c0Ns+w
+	gmcde+SczhYfRrP78/TUQ+/KBHUSNupNFlUC7abgZdY/An/mDZJ81Z/q+qKyjhpQIo3qChhCvPr
+	MszGSAkN90UleFKrkELc4xK/Lz2wedbHdXq4TceN09jmh4RuJEMh0YtVWv1fkU4Y7Q5F5iZqVPI
+	UcJ7TDLc0efr5Mq5zEMVznPzZ51UpKKWWwsd7Nd0AYy5baqFuOPO5U2BGqoOs7tRIuuAU4S0gx6
+	Jh6tyNt15QIXHd8ru3ivwbH8nMgipozhBGqlYCSXutMRGvKcuRnAdZbU55fqbUlVByQxNNMp8DQ
+	m6HG1yoIDVYieQ==
+X-Received: by 2002:a17:90a:1650:b0:3a0:7261:d58e with SMTP id 98e67ed59e1d1-3a6e622a50cmr2049092a91.22.1791009143685;
+        Fri, 02 Oct 2026 23:32:23 -0700 (PDT)
+Received: from localhost ([153.61.198.249])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a78d6b5c3dsm1823004a91.13.2026.10.02.23.32.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Oct 2026 23:32:22 -0700 (PDT)
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 03 Oct 2026 06:32:21 +0000
+Message-Id: <DLUZR540Z45R.3RTC4COS2IW2V@gmail.com>
+Cc: "Jonathan Corbet" <corbet@lwn.net>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "David Gow" <david@davidgow.net>, "Petr
+ Mladek" <pmladek@suse.com>, "Sergey Senozhatsky"
+ <senozhatsky@chromium.org>, "Shuvam Pandey" <shuvampandey1@gmail.com>,
+ "Steven Rostedt" <rostedt@goodmis.org>, =?utf-8?q?G=C3=BCnther_Noack?=
+ <gnoack@google.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>, "Masami Hiramatsu"
+ <mhiramat@kernel.org>, "Mathieu Desnoyers"
+ <mathieu.desnoyers@efficios.com>, "Jiri Kosina" <jikos@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>,
+ "Eduard Zingerman" <eddyz87@gmail.com>, "Kumar Kartikeya Dwivedi"
+ <memxor@gmail.com>, "Martin KaFai Lau" <martin.lau@linux.dev>, "Song Liu"
+ <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Emil Tsalapatis" <emil@etsalapatis.com>, "Ihor
+ Solodrai" <ihor.solodrai@linux.dev>, "Christophe Leroy (CS GROUP)"
+ <chleroy@kernel.org>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, "Madhavan Srinivasan"
+ <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>, "Nicholas
+ Piggin" <npiggin@gmail.com>, "Shivaprasad G Bhat" <sbhat@linux.ibm.com>,
+ "Thorsten Blum" <blum@kernel.org>, "Alison Schofield"
+ <alison.schofield@intel.com>, "Dave Jiang" <dave.jiang@intel.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Guangshuo Li"
+ <lgs201920130244@gmail.com>, "Ira Weiny" <iweiny@kernel.org>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "Vishal
+ Verma" <vishal.l.verma@intel.com>, "Randy Dunlap" <rdunlap@infradead.org>,
+ "Shuah Khan" <skhan@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+ <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <nvdimm@lists.linux.dev>, <linux-doc@vger.kernel.org>,
+ <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH v4 00/11] seq_buf: Add seq_buf_strlen()
+From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+To: "Kees Cook" <kees@kernel.org>, "Bill Wendling" <morbo@google.com>
+In-Reply-To: <20261003035906.too.263-kees@kernel.org>
+References: <20261003035906.too.263-kees@kernel.org>
+X-Mailer: mkdraft (claude review draft; edit before sending)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d56cb11faf507e24e879644226fdd67d0191840f3ed43153577f5f6ae6854236@mail.kernel.org>
-In-Reply-To: <20261003035921.1918874-3-kees@kernel.org>
-References: <20261003035921.1918874-3-kees@kernel.org>
-Subject: Re: [PATCH v4 03/11] seq_buf: Copy what fits when seq_buf_puts() and seq_buf_putmem() overflow
-From: bot+bpf-ci@kernel.org
-To: kees@kernel.org,morbo@google.com
-Cc: kees@kernel.org,willy@infradead.org,akpm@linux-foundation.org,andriy.shevchenko@linux.intel.com,david@davidgow.net,pmladek@suse.com,shuvampandey1@gmail.com,rostedt@goodmis.org,corbet@lwn.net,senozhatsky@chromium.org,gnoack@google.com,mic@digikod.net,mhiramat@kernel.org,mathieu.desnoyers@efficios.com,jikos@kernel.org,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,eddyz87@gmail.com,memxor@gmail.com,martin.lau@linux.dev,song@kernel.org,yonghong.song@linux.dev,jolsa@kernel.org,emil@etsalapatis.com,ihor.solodrai@linux.dev,chleroy@kernel.org,u.kleine-koenig@baylibre.com,maddy@linux.ibm.com,mpe@ellerman.id.au,npiggin@gmail.com,sbhat@linux.ibm.com,blum@kernel.org,alison.schofield@intel.com,dave.jiang@intel.com,gregkh@linuxfoundation.org,lgs201920130244@gmail.com,iweiny@kernel.org,u.kleine-koenig@pengutronix.de,vishal.l.verma@intel.com,rdunlap@infradead.org,skhan@linuxfoundation.org,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,linux-trace-k
- ernel@vger.kernel.org,linuxppc-dev@lists.ozlabs.org,nvdimm@lists.linux.dev,linux-doc@vger.kernel.org,linux-hardening@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
-Date: Sat,  3 Oct 2026 04:50:58 +0000 (UTC)
 
---===============1261292974183120383==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+On Fri, Oct 02, 2026 at 08:59 PM Kees Cook <kees@kernel.org> wrote:
+>   seq_buf: Add seq_buf_terminate()
+>   bpf: Remove dead newline stripping from format_disasm_line()
 
-> seq_buf: Copy what fits when seq_buf_puts() and seq_buf_putmem() overflow
-
-TL;DR: seq_buf_puts() now copies a partial string on overflow, which may break
-lpfc_rx_monitor_report(), which relies on whole-record drops. Debugfs output
-could then end in a truncated record followed by a duplicate.
-
-> diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-> index 35a5964370b4..60e9eadb3ef7 100644
-> --- a/lib/seq_buf.c
-> +++ b/lib/seq_buf.c
-
-[ ... ]
-
-> @@ -194,6 +196,11 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
->  		s->len += len - 1;
->  		return 0;
->  	}
-> +	/* Copy what fits, so the buffer never holds stale bytes */
-> +	if (s->len < s->size) {
-> +		strscpy(s->buffer + s->len, str, s->size - s->len);
-> +		s->len = s->size;
-> +	}
->  	seq_buf_set_overflow(s);
->  	return -1;
->  }
-
-Can this break callers that rely on seq_buf_puts() dropping a string whole
-when it does not fit?
-
-lpfc_rx_monitor_report() in drivers/scsi/lpfc/lpfc_sli.c was converted to
-seq_buf in 22d4cbf6f750 ("scsi: lpfc: Replace strlcat() with seq_buf in
-lpfc_rx_monitor_report()"), and that changelog says seq_buf_puts() "appends
-it only when it fits whole, so the output keeps ending at the last complete
-record".  The code still documents this:
-
-	/*
-	 * Drop a record whole if it does not fit, without
-	 * consuming its ring entry.
-	 */
-	scnprintf(tmp, sizeof(tmp), "%03d:\t%-16llu...", ...);
-
-	if (seq_buf_puts(&s, tmp) < 0)
-		break;
-
-With this patch, a record that does not fit is now copied up to
-buf[buf_len - 2] and NUL-terminated at buf[buf_len - 1] before the loop
-breaks.
-
-lpfc_rx_monitor_read() then returns strlen(buffer) bytes through
-simple_read_from_buffer(), so the debugfs output ends in a truncated record
-with no newline.
-
-Since the loop breaks before *head_idx is advanced, the same ring entry is
-printed again in full at the start of the next read, so the reader sees a
-partial copy followed by a duplicate.
-
-Both the old strlcat() code ("if ((strlen(buf) + strlen(tmp)) >= buf_len)
-break;") and the seq_buf version before this patch dropped the record whole.
-
-Getting there needs the 800 rows to average more than about 128 bytes in the
-128 * LPFC_MAX_RXMONITOR_ENTRY buffer, which can happen when the u64/u32
-counters (cmf_info, max_read_cnt, avg_io_latency, timer_utilization, ...)
-are wider than their %-8/%-16 columns.
-
-The commit message does not mention auditing seq_buf_puts() callers that
-rely on the old semantics, and nothing later in the series changes lpfc.
-
-Would it make sense to have lpfc_rx_monitor_report() check
-strlen(tmp) < seq_buf_buffer_left(&s) before calling seq_buf_puts()?
-
-The other callers I checked (setup_trace_event(), the usbhid name building,
-the partition pp_buf users, string_stream_get_string(), dynevent_str_add()
-and the hist command builders) either treat overflow as an error or used
-strlcat() before, which also copied a partial string.
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/37096036516
---===============1261292974183120383==--
+For bpf bits:
+Acked-by: Alexei Starovoitov <ast@kernel.org>
