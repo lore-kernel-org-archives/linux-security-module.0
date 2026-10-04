@@ -1,196 +1,78 @@
-Received: from mail-dy2-f43.google.com (mail-dy2-f43.google.com [74.125.229.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5074248C0
-	for <linux-security-module@vger.kernel.org>; Sun,  4 Oct 2026 10:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840C63921E9
+	for <linux-security-module@vger.kernel.org>; Sun,  4 Oct 2026 14:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791111091; cv=none; b=BFBaZnod7GL9z/1bcWLe8eE6zUmmvD1UNID9QkdnCu7ABWylF4XdaNdwiDBM03V+ZTs/FMM6X4RVqusTYIMBJzfNq/xP0KUTS5Z6DWPxtQ5w/8Qfia8XhdxxwXJFzYGi4o2NhOcaKVjxNvdYZ54oLCRZ8K8mjFnwJOlPki4vJOM=
+	t=1791123653; cv=none; b=TbHwa70FXORwH4TuziAb0od+V4Or/pGKcmC/uhDV7yCaT2bavGIfTmIxCtBEhZRLXkBXo2E6MSnLsNwKHhfFzUKZbJego7ZPgr4bzY/Zb8jEtT7RYd1ZFbju/xmaz3FAnwhPDOR4gdkspWMZ7kXRdpEWPb1d+ZvPoVoDJzuf/jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791111091; c=relaxed/simple;
-	bh=4MRxwd7MzrAqfyJ7mimlrfGaFAcX/tkMDz0Yg+CsHtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i46SRusHtjdEJZDAyHMxZO+b6Ck+tjjrcaDLsmG+1NO9a+rxVKp1fDdLtcAib3pEwB3Vyj/4E04SJgq18Ff5IMtbdIWXEmSDeHH+FvuKFrEx3QfZs9sAbfIb0NkOADGA7bDdSGpwh5iRHl78Bn5osDdPhQEo6JvImS+HpauK6eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OVA34rGy; arc=none smtp.client-ip=74.125.229.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVA34rGy"
-Received: by mail-dy2-f43.google.com with SMTP id 5a478bee46e88-34b1743e9c7so736118eec.3
-        for <linux-security-module@vger.kernel.org>; Sun, 04 Oct 2026 03:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791111087; x=1791715887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=OU10JUkOnCjExkP9pLJslSiL15VSpV7uAw3VaBnuTMo=;
-        b=OVA34rGyoQxPo0wRv2zEemiSYWkKsDXwZStVOByBQRpu1DQU+Ux1wXdGhPRfPWJ2ht
-         ouzg/l9fDoy4wZ4euP5p8lSaoWg9rG9fZaKYtejcMe2sLNInHQTJRfxfmQZMe1qawkEv
-         rk+ljgwDABA0aWwMOyjO7W2/GmSrlrEnlMsehl8voU4xsbmKVz9gk/Ogj6oGfr8ii6sS
-         l3qesCpMjIJp2mX/KknTTgJj92xvPMlxpmMvI3gaZdf5nWW0UYLAXpFpOv2tT9v3D2Li
-         xbUQ3aLXlQsME980CGogDR3xWSx3k1tqD8k2m/VTgDE0NLGWeD4a92JNkkElYfXQZNzC
-         HlPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791111087; x=1791715887;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=OU10JUkOnCjExkP9pLJslSiL15VSpV7uAw3VaBnuTMo=;
-        b=BIpxOK1clgVzdRo9YCKgMnUQm8Y9CxxF7xdmgmBckTk4jXeMKzJb54IuxpigxFUIko
-         DJTyU5oVqi6D0bYSzd6kelICO9BVYg8Xr/SMCKeE4xpMMnw/2/xU4JpNCKwLL5gLwJWF
-         /+Xq/FoKkKFbWK3rPYLCZHTenzpG9KUwdFfX+919u5/Mjs/EPapUm8R4EKiyUQtjMSeS
-         Za8pZjxxGYCHMYNM+m/nC6k1Noj2l/7f7n/CnEXm8SSl3n7SXV8yWfGZ3QR2WEo61KDO
-         ZnnFj6I1/gOKCrO79+ejo0JNCQA6XHu6382/6wbGG+g/rJDsuJypmm+tVfvmgcE3WQjf
-         hhaA==
-X-Forwarded-Encrypted: i=1; AKwUvBwN1712vW0YsCAyJGvtT+CjJBYDfxP0OuB8ExsLRiAgG5QFN2+l1NGnwd99YApvhdaoC909Lp1yTFoHcmyl/ngCVjCg50U=@vger.kernel.org
-X-Gm-Message-State: AFq9FYL8uLT6NyZm2Lrh3q28DyZM5d+ZUUvYXcu3TyTP07dMBcbw/KPM
-	fF3SZb0kK7KGjLJnAlAhnbe+RRr/z1fSmsja1fFFHUgptESdY+yXmlcT
-X-Gm-Gg: AYBFou0k+p4PYV3G9+w763EKjMXfzXLlNm2u35jNA+ODX6fSkvVZpqJphkvrFM9C7Xk
-	D8MS0gzVkoOX846y8A0VkhRfCL0KStlwPw/7sHpmSgzZnR1u3dyt9yB8sBGT7RebkAuNDODbTRx
-	CEfe+f1CnAJbp6a59zZwRrqpY52friFTrsKiHhKTZasOQNh2Ngu+gv1WGLbZctEDpx6k8KNVBPf
-	VzKy6ZifKLZlPzV1U/KxOlTSyrxgbY633iO/xgFF1pksOlS8x2KyC/B0YqGJIK4dXq3PnkQyi30
-	Exe983vyhRJ28FpK1AqyisTL+pWkD3I5p1GE7KTKGIdLsbq0CKElH6tjzFj8N7dOeq7bIiuJYm9
-	7a98sOgnrTc/thy3iCui41I4KSyouIHxwr+cO+UY9WAZStzKijDVidtl8Dq+MXrwCAQI6bl1Nug
-	CjMEOSTsN0m0yvXHz1ARwytvFMcLs9zm64HdiWnPsGyh33sYF8cQdSXNSUvm9NQWLfd5aoYroPh
-	5+V3p69MNop7aWonO8XYCFu9DQ4z//JFgi9gip4tqdbP1k=
-X-Received: by 2002:a05:7300:e5c2:b0:341:3ca2:de2d with SMTP id 5a478bee46e88-34f15077edfmr9383419eec.6.1791111087081;
-        Sun, 04 Oct 2026 03:51:27 -0700 (PDT)
-Received: from Anshuman ([123.63.59.156])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-35127161474sm3815965eec.13.2026.10.04.03.50.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Oct 2026 03:51:26 -0700 (PDT)
-From: Anshuman <anshumantewari123@gmail.com>
-To: kees@kernel.org
-Cc: Frank.Li@kernel.org,
-	James.Bottomley@HansenPartnership.com,
-	airlied@gmail.com,
-	akpm@linux-foundation.org,
-	andriy.shevchenko@linux.intel.com,
-	anton.ivanov@cambridgegreys.com,
-	apparmor@lists.ubuntu.com,
-	atomlin@atomlin.com,
-	benjamin.berg@intel.com,
-	bhelgaas@google.com,
-	bp@alien8.de,
-	bvanassche@acm.org,
-	corey@minyard.net,
-	da.gomez@kernel.org,
-	daniel.lezcano@kernel.org,
-	dave.hansen@linux.intel.com,
-	david.e.box@linux.intel.com,
-	dmaengine@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dvyukov@google.com,
-	elver@google.com,
-	eperezma@redhat.com,
-	georgia.garcia@canonical.com,
-	glider@google.com,
-	gor@linux.ibm.com,
-	gregkh@linuxfoundation.org,
-	hansg@kernel.org,
-	hare@suse.de,
-	hca@linux.ibm.com,
-	hpa@zytor.com,
-	ilpo.jarvinen@linux.intel.com,
-	intel-gfx@lists.freedesktop.org,
-	jani.nikula@linux.intel.com,
-	jasowang@redhat.com,
-	jbaron@akamai.com,
-	jgg@ziepe.ca,
-	jim.cromie@gmail.com,
-	jirislaby@kernel.org,
-	jmorris@namei.org,
-	johannes@sipsolutions.net,
-	john.johansen@canonical.com,
-	joonas.lahtinen@linux.intel.com,
-	kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com,
-	lenb@kernel.org,
-	leon@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-modules@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-usb@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	lukasz.luba@arm.com,
-	macro@orcam.me.uk,
-	martin.petersen@oracle.com,
-	mcgrof@kernel.org,
-	mchehab@kernel.org,
-	mingo@redhat.com,
-	mst@redhat.com,
-	netdev@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	paul@paul-moore.com,
-	pbonzini@redhat.com,
-	pengpeng@iscas.ac.cn,
-	peterz@infradead.org,
-	petr.pavlu@suse.com,
-	qemu-devel@nongnu.org,
-	rafael@kernel.org,
-	richard@nod.at,
-	rodrigo.vivi@intel.com,
-	rui.zhang@intel.com,
-	samitolvanen@google.com,
-	seanjc@google.com,
-	serge@hallyn.com,
-	simona@ffwll.ch,
-	somlo@cmu.edu,
-	srinivas.pandruvada@linux.intel.com,
-	stable@vger.kernel.org,
-	stern@rowland.harvard.edu,
-	tglx@kernel.org,
-	tiwei.btw@antgroup.com,
-	tursulin@ursulin.net,
-	usb-storage@lists.one-eyed-alien.net,
-	virtualization@lists.linux.dev,
-	vkoul@kernel.org,
-	x86@kernel.org,
-	xuanzhuo@linux.alibaba.com
-Subject: Re: [PATCH 01/11] params: bound array element output to the caller's page buffer
-Date: Sun,  4 Oct 2026 16:17:41 +0530
-Message-ID: <20261004104741.51238-1-anshumantewari123@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260521133326.2465264-1-kees@kernel.org>
-References: <20260521133326.2465264-1-kees@kernel.org>
+	s=arc-20240116; t=1791123653; c=relaxed/simple;
+	bh=j4cIOXhw46BIrZkbNNaU+2mGKLCCpvelM5gwV4i6ztQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S8gRvnnu8ZFoD3aIVqSvhqdA1zc7vBMZaAjKMEaBDQTO6GSmghKU1+/kiHj4MvnaLxO3wP1PL5dS+0BzmD4ucSqPn/M2zZYE/KBmS3NqGdSkW+R3jGQpQQPNqdZ8iZTIWfiltKLuK4JKPdSdcMdcavqvEfLgQavfEzQeyQzW52A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 694EKmOn013786;
+	Sun, 4 Oct 2026 23:20:48 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 694EKmF6013781
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 4 Oct 2026 23:20:48 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <dbdb66c3-eb3a-40fc-ac68-ff77aa4c7614@I-love.SAKURA.ne.jp>
+Date: Sun, 4 Oct 2026 23:20:47 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tomoyo: Enforce connect policy in TCP Fast Open
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: Bryam Vargas <hexlabsecurity@proton.me>,
+        linux-security-module@vger.kernel.org,
+        Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>,
+        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
+References: <20260619002207.61104-1-matthieu@buffet.re>
+ <2951101e-d503-4a48-91b8-d6f041f0b1b6@I-love.SAKURA.ne.jp>
+ <4163fb5e-c4ee-42cf-a964-f617bb378173@buffet.re>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <4163fb5e-c4ee-42cf-a964-f617bb378173@buffet.re>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav413.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Thu, May 21, 2026 at 06:33:14AM -0700, Kees Cook wrote:
-> ret = min(ret, (int)(PAGE_SIZE - 1 - off));
-> if (!ret)
-> 	break;
+On 2026/09/21 7:34, Matthieu Buffet wrote:
+> Hi Tomoyo maintainers,
+> 
+> On 6/27/2026 7:28 AM, Tetsuo Handa wrote:
+>> I updated your patch like below in order to exclude kernel threads from this check.
+>> If we are OK to go with modifying individual LSM, I'll apply this change.
+> Archiving this patch, I see you have had no answer from other maintainers to your
+> question about the approach taken (per-LSM instead of aiming for a hook-wide fix).
+> Patches have indeed been merged for other affected LSMs:
+> 4d587cd8a721 ("apparmor: mediate the implicit connect of TCP fast open sendmsg")
+> 44c74d27d1b9 ("selinux: check connect-related permissions on TCP Fast Open")
+> 33cb713db016 ("landlock: Fix TCP Fast Open connection bypass")
+> 
+> Have a nice day!
+> 
+> Matthieu
 
-One question about the truncation behavior here: when an element does
-not fully fit in the remaining buffer, this min() can cause only part
-of that element to be copied. For example, if the remaining space is
-4 bytes and the next element produces "123456789\n", the resulting
-output could contain only "1234".
+Thank you for letting me know.
 
-This leaves the reader with no way to distinguish a genuinely short
-value from one that was truncated due to the PAGE_SIZE limit, while
-the array otherwise still looks like a normal comma-separated list.
-
-Is this partial-element truncation intentional for this patch, or is
-the expectation that it gets handled as part of the later seq_buf
-conversion? Would it be preferable to avoid copying an element unless
-it fits completely, and leave the larger-buffer case to be addressed
-later in the series?
+I am currently modifying your patch into a series that can please sashiko's review.
+Since sashiko finds many corner cases, I need to make several trial and errors.
+Please wait patiently.
