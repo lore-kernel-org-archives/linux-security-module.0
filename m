@@ -1,78 +1,76 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840C63921E9
-	for <linux-security-module@vger.kernel.org>; Sun,  4 Oct 2026 14:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B0B246778;
+	Sun,  4 Oct 2026 17:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791123653; cv=none; b=TbHwa70FXORwH4TuziAb0od+V4Or/pGKcmC/uhDV7yCaT2bavGIfTmIxCtBEhZRLXkBXo2E6MSnLsNwKHhfFzUKZbJego7ZPgr4bzY/Zb8jEtT7RYd1ZFbju/xmaz3FAnwhPDOR4gdkspWMZ7kXRdpEWPb1d+ZvPoVoDJzuf/jA=
+	t=1791136453; cv=none; b=oePsOQ8ohnp0dt7aJc80ju5g7JDs7rdqLPCr2ZnB59JoIq8owLXt/SsilD8XWqbjntcIOY8G03JS/jBbvWBzEz3+rif/Ivbk93WP6vVQOSZxf4sS/Jr/b4oh7yqrigg0V+UseWABloOiLInLCR5xFT1IJjAWy3KtBoJ4Vt1Ylag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791123653; c=relaxed/simple;
-	bh=j4cIOXhw46BIrZkbNNaU+2mGKLCCpvelM5gwV4i6ztQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S8gRvnnu8ZFoD3aIVqSvhqdA1zc7vBMZaAjKMEaBDQTO6GSmghKU1+/kiHj4MvnaLxO3wP1PL5dS+0BzmD4ucSqPn/M2zZYE/KBmS3NqGdSkW+R3jGQpQQPNqdZ8iZTIWfiltKLuK4JKPdSdcMdcavqvEfLgQavfEzQeyQzW52A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 694EKmOn013786;
-	Sun, 4 Oct 2026 23:20:48 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 694EKmF6013781
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 4 Oct 2026 23:20:48 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <dbdb66c3-eb3a-40fc-ac68-ff77aa4c7614@I-love.SAKURA.ne.jp>
-Date: Sun, 4 Oct 2026 23:20:47 +0900
+	s=arc-20240116; t=1791136453; c=relaxed/simple;
+	bh=bIpBpwSDMTaU8BXN8CxrzjQJkRxgkHLzToHm5hjgwr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMi2v6gftCMqXvh77ixnf34Wj+DtcBDl/mGmBzStHYUdIdqUH/uBM36iRd1/fnAX+YrHSan/3AXw1GOlAOorT7va2rX+Uq5YTB2iqotF0WU7r4i7FMVY9/jjttCf95M28JP5lHBB1x+lcHEsjue0w1AGhfVuaCF2+J0TUhp+QVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLwf4tyy; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLwf4tyy"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9FEA41F000FF;
+	Sun,  4 Oct 2026 17:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791136450;
+	bh=s1bBFTOMd9m2tkNcN4VP+RVchshr8UAmNsEx4KkZNLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eLwf4tyyd5mGT72nG216gHgHkhDJTrhCEqosXbfVBHKoq6I6LlE+HnqZuL7B+8hVo
+	 KQYFklWS7GJOzqGqiHU1gtS1dYMkG6m5G9MC0Ghwl8SDqPPnspr8F9cbOmEEgkpdZk
+	 5tVRxk6zlPlmg6x8tLGLqT9g9yo0pSRBSjMctzT830MNAreqE5qIdp9J7Ydm+Ncl/5
+	 8BmqwrvE/I56whU7mbMDyZ78a9RuqBtKC9fqi7EzmQSfenwBhk+Bzl9sBQq0SsxE9/
+	 YyET9k4u+cpvWDqTE6N8kvjEjWKRyTNdG8bDVx31cfkMdUvK/Dd8mcgyp0bq0M+mxU
+	 G7X3tvobYE6uQ==
+Date: Sun, 4 Oct 2026 20:54:06 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: keyrings@vger.kernel.org
+Cc: Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [RFC PATCH 0/2] keys: Address lookup_user_key() mutability
+Message-ID: <asKSvjz2YLZhFI4t@kernel.org>
+References: <20260924055521.1981957-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tomoyo: Enforce connect policy in TCP Fast Open
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: Bryam Vargas <hexlabsecurity@proton.me>,
-        linux-security-module@vger.kernel.org,
-        Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>,
-        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>
-References: <20260619002207.61104-1-matthieu@buffet.re>
- <2951101e-d503-4a48-91b8-d6f041f0b1b6@I-love.SAKURA.ne.jp>
- <4163fb5e-c4ee-42cf-a964-f617bb378173@buffet.re>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <4163fb5e-c4ee-42cf-a964-f617bb378173@buffet.re>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav413.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260924055521.1981957-1-jarkko@kernel.org>
 
-On 2026/09/21 7:34, Matthieu Buffet wrote:
-> Hi Tomoyo maintainers,
+On Thu, Sep 24, 2026 at 08:55:16AM +0300, Jarkko Sakkinen wrote:
+> The main objective in these patches is to remove to unneeded mutability
+> from key look ups. It does harm and brings no value so it is pretty obvious
+> to me that addressing this harmful behaviour is what we should do.
 > 
-> On 6/27/2026 7:28 AM, Tetsuo Handa wrote:
->> I updated your patch like below in order to exclude kernel threads from this check.
->> If we are OK to go with modifying individual LSM, I'll apply this change.
-> Archiving this patch, I see you have had no answer from other maintainers to your
-> question about the approach taken (per-LSM instead of aiming for a hook-wide fix).
-> Patches have indeed been merged for other affected LSMs:
-> 4d587cd8a721 ("apparmor: mediate the implicit connect of TCP fast open sendmsg")
-> 44c74d27d1b9 ("selinux: check connect-related permissions on TCP Fast Open")
-> 33cb713db016 ("landlock: Fix TCP Fast Open connection bypass")
+> I based the first patch on what Jann suggested in [1]. Nothing too clever here
+> and I'm ofc open for further suggestions.
 > 
-> Have a nice day!
+> [1] https://lore.kernel.org/keyrings/CAG48ez0XjVSR=M--UBauTm8sJuc+ZbhKzaPa3a6wrSVHyoKevw@mail.gmail.com/
 > 
-> Matthieu
+> Jarkko Sakkinen (2):
+>   keys: Return user session keyring on lookup
+>   keys: Reject keyring creation with overridden credentials
+> 
+>  Documentation/security/keys/core.rst |  7 ++-
+>  security/keys/process_keys.c         | 65 +++++++++++++++-------------
+>  2 files changed, 40 insertions(+), 32 deletions(-)
+> 
+> --
+> 2.47.3
+> 
 
-Thank you for letting me know.
+So.. should I move forward to with non-RFC v2?
 
-I am currently modifying your patch into a series that can please sashiko's review.
-Since sashiko finds many corner cases, I need to make several trial and errors.
-Please wait patiently.
+Note that some tags (e.g., Fixes) are missing simply because this is RFC.
+
+Br, Jarkko
