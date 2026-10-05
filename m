@@ -1,121 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588B14CDA3A;
-	Mon,  5 Oct 2026 15:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B838F4CC622;
+	Mon,  5 Oct 2026 16:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791215927; cv=none; b=uKAmB7AdZzEMj/xAfQ7kH0YPf/0hiGzgefXKH24ugtN8JheUqgKYBcrTGubUviSlDn8lTMdimNLNa7ZHGN5yhpPNaXXDAvM7rfFgiiFL6Zt2f7hhltV6cHAvnYTa4L/gxkYRT8FEWFlN956TSEX3M9KhQkclJ/0LcUGmYgHju44=
+	t=1791216176; cv=none; b=m+prUH5jMUYxhSe/BGFlxsykZvP0cb9/DOK23enWvtrhH25BZuD8QyK3Td42D+1cmvyztY8wyHUSUOntkJwFessVmjhIcm1uMV4MDK/DWJbnBNIN9k/1dBPv+GCoMvQwH/nvBQSMuBK8nfqmaas57ilrrsHUQafb1ZHQYVJPMEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791215927; c=relaxed/simple;
-	bh=b4IJqXx+udUexVuL32KrcEb1C/aYXq6Fd7NuBJSyaa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnJ4FFyR3LSLSBiWRHhh4d8Rn+Fy+XGC2lQ/Lgg36PX5maUJGja9F3/PkJRO067TWOr7GpmakRBi1nI3gwm1ma6SOfegn55fbL4GP0UCOojUcXzVqMhwHSFNEYDtu1E5y+nFipJoYaSYafp5xTEmFwWXiomPmnz5Ti+uRbFYru0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF24PVnR; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791216176; c=relaxed/simple;
+	bh=k3UdqU5Wa/fatxseqbsHav5Jbqwk984lao9TOqvG26o=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=r8F6IU56GQz0sPyoN4QUaolopXDvbXGAe0wlZfSDuNeD0NVCCDG9d+K87ORGvNFnnnyeaHodmGZIkKfxRL8G0c6tQxEKaTGE2V0pRW+i+S0WrN8BHm0OqniNajwg5Tu0ps1ZK51WlKSfi2X9uUnnGcKYq2lX+iIpoQTzKqcReOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZWesnvW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF24PVnR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E04021F00893;
-	Mon,  5 Oct 2026 15:58:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZWesnvW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE1E1F000FF;
+	Mon,  5 Oct 2026 16:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791215926;
-	bh=unJVs8XKy/ViJvkyFC1zJx/IWmn39RPVHGP+T8Nd3dY=;
-	h=Date:From:List-Id:To:Cc:Subject:References:In-Reply-To;
-	b=LF24PVnRFhTlc9BEimSTExr9zUlpqrHyxrAGI7xZb/ZfXouE0BCbuO9zcuJ+RBZdF
-	 yjoRuFTSMwvI1Ht6xWt/tMJsOlO8nZgrwWDePGsDn0+YsY438uvxaRnwjBDS2H+37x
-	 nTSG5Fpy2ERh7+9AbNJtIdfvqrEhlyYcZFmuE02ErrDhiqyqYJjJaR4+Cv5TTevh4U
-	 MfMeMSspVc6JWVpoCQhOlEEB8m7p/vh96oV2ehORFdvGBW1VcAgYqnIQi+ruFsOetu
-	 ST40EqgKy44/Q0XqKG4whbJGBeuYc59+yMzF2LeMixthMp3KyWpBUEPr5MEZQSYPs7
-	 ijRBPuBdWa62w==
-Date: Mon, 5 Oct 2026 08:58:45 -0700
-From: Kees Cook <kees@kernel.org>
-To: Alejandro Colomar <alx+linux-hardening@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bill Wendling <morbo@google.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Gow <david@davidgow.net>, Petr Mladek <pmladek@suse.com>,
-	Shuvam Pandey <shuvampandey1@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jiri Kosina <jikos@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Shivaprasad G Bhat <sbhat@linux.ibm.com>,
-	Thorsten Blum <blum@kernel.org>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	Ira Weiny <iweiny@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	nvdimm@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v4 05/11] seq_buf: Add seq_buf_strlen()
-Message-ID: <20261005155839.d5d200-kees@kernel.org>
-References: <20261003035906.too.263-kees@kernel.org>
- <20261003035921.1918874-5-kees@kernel.org>
- <asEhEe0Urb5Wx7yi@ashevche-desk.local>
- <202610040023.A3865A6@keescook>
- <asIPlnb0noMd33rr@ashevche-desk.local>
- <20261005112209.1e47fa-kees@kernel.org>
- <asOKvhT01aNb5-Dg@debian>
+	s=k20260515; t=1791216175;
+	bh=k3UdqU5Wa/fatxseqbsHav5Jbqwk984lao9TOqvG26o=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=PZWesnvWkQVfMSCd55k9hk3NcYZRa1dHRGa9D7ZgaooSfSPmrmJVfMAFN9RSoxXML
+	 bhvzrG/XGGeudaZbHFNMiZFsro+aOrtWxOtsAnG25RsjU1Q8hH7LD7MFa1Z4wClj+s
+	 FUA3OxBSBBdYWVlPScYIcYtO+PePAABRmMGVJ11PWBPFNpOfs9ZuzpHutEloMr+z+v
+	 B9RI7cAUko+Lco/xu/DZfzx+Wg9bfti8GLhCx5gve7W2wHe6P8qCXL52oiRDYBxtg9
+	 KY3foAnItbMWWg5n33JrONbWMc/rOq/ffB1wV7upA6jXmtEzObNvL+Y9Eb2XycFCC7
+	 vHKMdW07a2atw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v5 02/12] seq_buf: Do not pop from an overflowed seq_buf
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Kees Cook" <kees@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+In-Reply-To: <20261005155708.1471260-2-kees@kernel.org>
+References: <20261005155653.late.426-kees@kernel.org>
+ <20261005155708.1471260-2-kees@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 05 Oct 2026 16:02:54 +0000
+Message-Id: <20261005160255.3AE1E1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <asOKvhT01aNb5-Dg@debian>
 
-On Mon, Oct 05, 2026 at 01:34:10PM +0200, Alejandro Colomar wrote:
-> > Yeah, reasonable. :) For v5 I've added this to seq_buf_str()'s kernel-doc:
-> >
-> >  * A zero-sized seq_buf has nowhere to put a NUL, so the empty string
-> >  * is returned instead of writing to @s->buffer. Any other seq_buf
-> >  * returns @s->buffer, even when it holds an empty string, so callers
-> >  * always get their own buffer back.
->
-> Are such buffers actually used on purpose anywhere?  Why not keep the
-> WARN_ON?
+> When a seq_buf has overflowed, its len is size + 1, so seq_buf_pop()
+> decrements len to size and reads buffer[size], one byte past the end of
+> the buffer. It also leaves len equal to size, which no longer counts as
+> overflowed, so a truncated seq_buf then looks like a complete, full one.
+>=20
+> An overflowed seq_buf logically has no last character to pop: the
+> length of what was written has been lost, and the last byte of the
+> buffer may be the NUL written by vsnprintf() or bytes that were never
+> committed. Return -1 for an overflowed seq_buf, as for an empty one,
+> and leave it overflowed, as the rest of the seq_buf API does until
+> seq_buf_clear() or seq_buf_init().
+>=20
+> The current callers do not reach this, e.g. trace_syscalls only calls
+> trace_seq_pop() when the trace_seq it pops from has not overflowed, and
+> kernel/bpf/diagnostics.c sets the length from strnlen() before popping.
+>=20
+> Add tests for the pop corner cases.
+>=20
+> Tests passed under qemu on ARCH=3Dx86_64 with GCC 16.2.0 and CONFIG_KASAN=
+=3Dy,
+> and on big-endian ARCH=3Ds390 with GCC s390x-linux-gnu 16.1.0.
+>=20
+> Fixes: 32e0f607ac6a2 ("tracing: Add trace_seq_pop() and seq_buf_pop()")
+> Assisted-by: LLM
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Yes, though not often: the sched_ext debug dump builds a nested per-CPU
-seq_buf from seq_buf_get_buf(), which returns a size of 0 once the dump
-buffer has overflowed, and it handles that case on purpose (see the
-"$s may already have overflowed" comment in kernel/sched/ext/ext.c).
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-Greg asked about the WARN_ON() in v2[1]: a size that comes from a device
-or from userspace would have to be checked before every seq_buf_init(),
-or it becomes a crash under panic_on_warn, and an empty buffer can just
-hold the empty string. So the accessors do that instead.
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261005155653.late=
+.426-kees@kernel.org?part=3D2
 
-[1] https://lore.kernel.org/all/2026091953-cherub-empty-ef35@gregkh/
-
--Kees
-
--- 
-Kees Cook
