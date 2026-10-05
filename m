@@ -1,215 +1,192 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79AD4BB268;
-	Mon,  5 Oct 2026 15:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69AD4CDA3A;
+	Mon,  5 Oct 2026 15:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791212499; cv=none; b=Z+P0HDYNaVf7Ki+teLMZiulxwJYwXneUXftZwqX4UdDyZZDDszYg6tSy/Cksuuu/6+QjhCzvw3fdbzSk53Gvh9bErKifafnslo13OZVDGOtVRGKZ6mDP5VhRhJ0/t/qAVZ3OSf4ao8H/gj0EUB5l0TsDHAjz1kw9kBlxXZj/7Po=
+	t=1791215840; cv=none; b=t3gVFxQq5pqLDFZFDHhoZjLJwp8TOYJ3iCVtjne7/xkLBZtEBgTIq+/eL+sO5RGvaaAqyThjy0wYWzLDJd1RGXPpZRb0InDtyV89UrixvaKqnDr3q8avhRS3kTcLosOFWp8BHWc0/7vg/FgdFXzL2vmfDtp7T23Y6gFo7s2RuUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791212499; c=relaxed/simple;
-	bh=EskCKeiZGwxdu9zfkZksEUoza5HBgmgb/BIr5b4K5z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXfJ4BudyYiRX5Rx/XjLoDS7/eRYgRjITN7nKHtScIhofSaGznR6jLPOdtfS6ReQcmhzz4duM0YoXb86Zle4NCqbkzHtwtU7QIb/Ybtx6DZLQb5ga1CbRoenT3WT6Y8+/YG3ik0WfDVYIucpTxmKZ7844fZzRnARhy77V1HlKCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=FS2r2uYt; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+	s=arc-20240116; t=1791215840; c=relaxed/simple;
+	bh=Y6zIobaHfAH25spVVd3tRtK22OpsmMUzA9m4akP1URw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p6TPzK2WyeO3/MGmi1+tr21UX0Jmg1Z/BGYl4u+N5FN2p7+l7m58h6s7IEf1rysJ5iZnLe2/iQPIKqcjyeCcqrOxaXKYEPxaRoJ+K5P8cKTevTgMRGfSEAzHzic9PsEulr1jtOqwGvlWr/6r5+RR8uZdV7szzyIHz+0a2AviaEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BntoAAVe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="FS2r2uYt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1791212492; bh=EskCKeiZGwxdu9zfkZksEUoza5HBgmgb/BIr5b4K5z4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FS2r2uYtMmNL2S3mSPpa0gsXu1TxF1BfXP4NJMpNWj0WJ45+W6Oir/D5xvRvnlwTr
-	 uxFZDS9fba7AdgDVKOnf3XDmCCna0CxYSkoTscaVo1Er47ZIvofuBFO6859q7z03K2
-	 S1FGoWCG7vyCgCd8fwYCTMVM27A56CvW8yVNAw/tfixzpUkq5nX+twt3+ya3pD7PNN
-	 0OwBeHQ9HgAxepy2GuPiamIaAWVGefig4HVmL2KUMV5Lds25oRM5clMs5mg9XiWhsl
-	 ARgFEkjwP7huj0lZVbGAa4wCdPvX3RI6wn9+83+dMq56nONRU/QzKueoryrnzElH8B
-	 zsCLn0JDCTqGQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id C5B9B5A9; Mon,  5 Oct 2026 10:01:32 -0500 (CDT)
-Date: Mon, 5 Oct 2026 10:01:32 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Srish Srinivasan <ssrish@linux.ibm.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	James.Bottomley@hansenpartnership.com, jarkko@kernel.org,
-	zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	nayna@linux.ibm.com, rnsastry@linux.ibm.com
-Subject: Re: [PATCH v2] keys/trusted_keys: reuse TPM version in option
- handling
-Message-ID: <asO7zHFE3C6W8TV/@hallyn.com>
-References: <20261002071050.179879-1-ssrish@linux.ibm.com>
- <asMYa0lD7RNcoszb@iki.fi>
- <d3574d84-84dd-4aa5-b80f-acc7844c3f12@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BntoAAVe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E36D1F000FF;
+	Mon,  5 Oct 2026 15:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791215838;
+	bh=0Fe4ObO/b/TE5s1PNVsS4XfT/c4N/SLhXa9vwlS3HrM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=BntoAAVepFtL24WpSXFkvVOvlZQ2XNzqoMzX/oGT2IrDJ08YRNDEdVfxkOJrau6da
+	 EQDDbIKtKwkgSkG57w/z7F5/g2o2i4SHk1K5gjczqaNq7Mj7q4wnhe91LwMPnsKr0J
+	 jTylrtsI6n2YPsJoBIyMReDNFivmxb4gwbu8L97lKYCuslZr/uhtXdOYEGQh6dLWZp
+	 HGITYqSM3RSACTnQEunn2RMMxlNFeG1FPypB6Rd2Pjvy5se5L0Af5KhGl/VCVpk5CO
+	 y0EYziJr49LVrwPSh87wYHcxj8kJfwCmqzzloelO55weXDu1STfeHKJMDR9OT7qJ9R
+	 MdKxWZ8a0KSqQ==
+From: Kees Cook <kees@kernel.org>
+To: Bill Wendling <morbo@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	David Gow <david@davidgow.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Shuvam Pandey <shuvampandey1@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v5 02/12] seq_buf: Do not pop from an overflowed seq_buf
+Date: Mon,  5 Oct 2026 08:56:52 -0700
+Message-ID: <20261005155708.1471260-2-kees@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261005155653.late.426-kees@kernel.org>
+References: <20261005155653.late.426-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3574d84-84dd-4aa5-b80f-acc7844c3f12@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4958; i=kees@kernel.org; h=from:subject; bh=Y6zIobaHfAH25spVVd3tRtK22OpsmMUzA9m4akP1URw=; b=owGbwMvMwCVmps19z/KJym7G02pJDFmHT5z6Ls15Odk1t6hwzUSLFA2OdOapKQZW95YscC1re //DN3xCRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwES8bjMyPLsV+bRr567z4tdu tz5pW/h09Y44DW0WJe56+XerVJ6ZqTP8ZjX/+q18Sr546MXit49nvXvVdpblqkYJn/zO32r7zBI 6GQE=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 05, 2026 at 11:31:46AM +0530, Srish Srinivasan wrote:
-> Hi Jarkko,
-> 
-> On 10/5/26 8:54 AM, Jarkko Sakkinen wrote:
-> > On Fri, Oct 02, 2026 at 12:40:50PM +0530, Srish Srinivasan wrote:
-> > > Determine the TPM version once in the seal and unseal paths and reuse it
-> > > when allocating and parsing trusted key options. This avoids redundant TPM
-> > > version checks.
-> > So this is a bit nitpicking perhaps but a patch that would just clean
-> > the code up a bit would not be be worth of applying. Almost anything
-> > that "does nothing" goes to that bin.
-> > 
-> > What I'm saying is that the conclusion in the last sentence goes to
-> > wrong direction but luckily the change has also feasible effects that
-> > we care about.
-> > 
-> > By caching tpm_is_tpm2() there are less fallible sites in the key
-> > creation process, and reduced number of roundtrips with the TPM chip.
-> > 
-> > Or from blackbox perspective it reduces I/O traffic between kernel
-> > and the hardware platform.
-> 
-> 
-> Yes, that makes sense. Thank you for pointing this out.
-> 
-> I will revise the commit message to highlight the reduced failure
-> surface and I/O between the kernel and the TPM, and
-> send v3.
+When a seq_buf has overflowed, its len is size + 1, so seq_buf_pop()
+decrements len to size and reads buffer[size], one byte past the end of
+the buffer. It also leaves len equal to size, which no longer counts as
+overflowed, so a truncated seq_buf then looks like a complete, full one.
 
-And I've seen chips where every round trip is a roll of the dice as
-to whether the chip will become useless till next reboot, so that is
-a bigger win than I was first thinking.
+An overflowed seq_buf logically has no last character to pop: the
+length of what was written has been lost, and the last byte of the
+buffer may be the NUL written by vsnprintf() or bytes that were never
+committed. Return -1 for an overflowed seq_buf, as for an empty one,
+and leave it overflowed, as the rest of the seq_buf API does until
+seq_buf_clear() or seq_buf_init().
 
-> > > Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-> > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > ---
-> > > Changelog:
-> > > 
-> > >   v2:
-> > >    - Use bool to indicate whether the chip is TPM 2.0 in the option helpers
-> > > 
-> > >   security/keys/trusted-keys/trusted_tpm1.c | 35 +++++++++--------------
-> > >   1 file changed, 13 insertions(+), 22 deletions(-)
-> > > 
-> > > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> > > index 3ec078ca3f97..6dbce058368f 100644
-> > > --- a/security/keys/trusted-keys/trusted_tpm1.c
-> > > +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> > > @@ -700,7 +700,7 @@ static const match_table_t key_tokens = {
-> > >   /* can have zero or more token= options */
-> > >   static int getoptions(char *c, struct trusted_key_payload *pay,
-> > > -		      struct trusted_key_options *opt)
-> > > +		      struct trusted_key_options *opt, bool is_tpm2)
-> > >   {
-> > >   	struct trusted_key_tpm *private = opt->private;
-> > >   	substring_t args[MAX_OPT_ARGS];
-> > > @@ -712,13 +712,8 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
-> > >   	unsigned long token_mask = 0;
-> > >   	unsigned int digest_len;
-> > >   	int i;
-> > > -	int tpm2;
-> > > -
-> > > -	tpm2 = tpm_is_tpm2(chip);
-> > > -	if (tpm2 < 0)
-> > > -		return tpm2;
-> > > -	private->hash = tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
-> > > +	private->hash = is_tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
-> > >   	if (!c)
-> > >   		return 0;
-> > > @@ -773,7 +768,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
-> > >   				break;
-> > >   			}
-> > > -			if (tpm2 &&
-> > > +			if (is_tpm2 &&
-> > >   			    private->blobauth_len <=
-> > >   			    sizeof(private->blobauth)) {
-> > >   				memcpy(private->blobauth, args[0].from,
-> > > @@ -808,14 +803,15 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
-> > >   			}
-> > >   			if (i == HASH_ALGO__LAST)
-> > >   				return -EINVAL;
-> > > -			if  (!tpm2 && i != HASH_ALGO_SHA1) {
-> > > +			if (!is_tpm2 && i != HASH_ALGO_SHA1) {
-> > >   				pr_info("TPM 1.x only supports SHA-1.\n");
-> > >   				return -EINVAL;
-> > >   			}
-> > >   			break;
-> > >   		case Opt_policydigest:
-> > >   			digest_len = hash_digest_size[private->hash];
-> > > -			if (!tpm2 || strlen(args[0].from) != (2 * digest_len))
-> > > +			if (!is_tpm2 ||
-> > > +			    strlen(args[0].from) != (2 * digest_len))
-> > >   				return -EINVAL;
-> > >   			res = hex2bin(private->policydigest, args[0].from,
-> > >   				      digest_len);
-> > > @@ -824,7 +820,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
-> > >   			private->policydigest_len = digest_len;
-> > >   			break;
-> > >   		case Opt_policyhandle:
-> > > -			if (!tpm2)
-> > > +			if (!is_tpm2)
-> > >   				return -EINVAL;
-> > >   			res = kstrtoul(args[0].from, 16, &handle);
-> > >   			if (res < 0)
-> > > @@ -838,15 +834,10 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
-> > >   	return 0;
-> > >   }
-> > > -static struct trusted_key_options *trusted_options_alloc(void)
-> > > +static struct trusted_key_options *trusted_options_alloc(bool is_tpm2)
-> > >   {
-> > >   	struct trusted_key_tpm *private;
-> > >   	struct trusted_key_options *options;
-> > > -	int tpm2;
-> > > -
-> > > -	tpm2 = tpm_is_tpm2(chip);
-> > > -	if (tpm2 < 0)
-> > > -		return NULL;
-> > >   	options = kzalloc_obj(*options);
-> > >   	if (options) {
-> > > @@ -858,7 +849,7 @@ static struct trusted_key_options *trusted_options_alloc(void)
-> > >   			kfree_sensitive(options);
-> > >   			options = NULL;
-> > >   		} else {
-> > > -			if (!tpm2)
-> > > +			if (!is_tpm2)
-> > >   				private->keyhandle = SRKHANDLE;
-> > >   			options->private = private;
-> > >   		}
-> > > @@ -877,13 +868,13 @@ static int trusted_tpm_seal(struct trusted_key_payload *p, char *datablob)
-> > >   	if (tpm2 < 0)
-> > >   		return tpm2;
-> > > -	options = trusted_options_alloc();
-> > > +	options = trusted_options_alloc(tpm2);
-> > >   	if (!options)
-> > >   		return -ENOMEM;
-> > >   	private = options->private;
-> > > -	ret = getoptions(datablob, p, options);
-> > > +	ret = getoptions(datablob, p, options, tpm2);
-> > >   	if (ret < 0)
-> > >   		return ret;
-> > >   	dump_options(options);
-> > > @@ -922,12 +913,12 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
-> > >   	if (tpm2 < 0)
-> > >   		return tpm2;
-> > > -	options = trusted_options_alloc();
-> > > +	options = trusted_options_alloc(tpm2);
-> > >   	if (!options)
-> > >   		return -ENOMEM;
-> > >   	private = options->private;
-> > > -	ret = getoptions(datablob, p, options);
-> > > +	ret = getoptions(datablob, p, options, tpm2);
-> > >   	if (ret < 0)
-> > >   		return ret;
-> > >   	dump_options(options);
-> > > -- 
-> > > 2.53.0
-> > > 
-> > Br, Jarkko
-> 
-> Thanks,
-> Srish
+The current callers do not reach this, e.g. trace_syscalls only calls
+trace_seq_pop() when the trace_seq it pops from has not overflowed, and
+kernel/bpf/diagnostics.c sets the length from strnlen() before popping.
+
+Add tests for the pop corner cases.
+
+Tests passed under qemu on ARCH=x86_64 with GCC 16.2.0 and CONFIG_KASAN=y,
+and on big-endian ARCH=s390 with GCC s390x-linux-gnu 16.1.0.
+
+Fixes: 32e0f607ac6a2 ("tracing: Add trace_seq_pop() and seq_buf_pop()")
+Assisted-by: LLM
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+ include/linux/seq_buf.h   |  4 ++--
+ include/linux/trace_seq.h |  5 ++++-
+ lib/tests/seq_buf_kunit.c | 42 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
+index 9f2839e73f8a..f5a350347bc5 100644
+--- a/include/linux/seq_buf.h
++++ b/include/linux/seq_buf.h
+@@ -155,11 +155,11 @@ static inline void seq_buf_commit(struct seq_buf *s, int num)
+  *
+  * Removes the last written character to the seq_buf @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if @s is empty or has overflowed.
+  */
+ static inline int seq_buf_pop(struct seq_buf *s)
+ {
+-	if (!s->len)
++	if (!s->len || seq_buf_has_overflowed(s))
+ 		return -1;
+ 
+ 	s->len--;
+diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
+index 697d619aafdc..7174ebf3f015 100644
+--- a/include/linux/trace_seq.h
++++ b/include/linux/trace_seq.h
+@@ -86,7 +86,10 @@ static inline bool trace_seq_has_overflowed(struct trace_seq *s)
+  *
+  * Removes the last written character to the trace_seq @s.
+  *
+- * Returns the last character or -1 if it is empty.
++ * Returns the last character, or -1 if the underlying seq_buf is empty or
++ * has overflowed. Note that only that buffer is consulted: a @s marked
++ * full by a write that did not fit, which trace_seq_has_overflowed()
++ * reports as overflowed, still pops the last character written.
+  */
+ static inline int trace_seq_pop(struct trace_seq *s)
+ {
+diff --git a/lib/tests/seq_buf_kunit.c b/lib/tests/seq_buf_kunit.c
+index 0934dfb602ff..de491f96c1ac 100644
+--- a/lib/tests/seq_buf_kunit.c
++++ b/lib/tests/seq_buf_kunit.c
+@@ -115,6 +115,47 @@ static void seq_buf_putc_test(struct kunit *test)
+ 	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "");
+ }
+ 
++static void seq_buf_pop_test(struct kunit *test)
++{
++	DECLARE_SEQ_BUF(s, 8);
++	struct seq_buf t;
++	char *buf;
++
++	/* Nothing to pop. */
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), -1);
++	KUNIT_EXPECT_EQ(test, s.len, 0);
++
++	seq_buf_puts(&s, "hello");
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'o');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 4);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hell");
++
++	/* A 0xff byte must not be mistaken for an empty buffer. */
++	seq_buf_putc(&s, 0xff);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 0xff);
++
++	/* A full buffer pops its last byte. */
++	seq_buf_puts(&s, "abc");
++	seq_buf_putc(&s, 'd');
++	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(&s));
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 8);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&s), 'd');
++	KUNIT_EXPECT_EQ(test, seq_buf_used(&s), 7);
++	KUNIT_EXPECT_STREQ(test, seq_buf_str(&s), "hellabc");
++
++	/*
++	 * An overflowed buffer has nothing to pop, and stays overflowed. Use
++	 * a buffer allocated at its exact size, so that KASAN reports any
++	 * read past its end.
++	 */
++	buf = kunit_kmalloc(test, 16, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, buf);
++	seq_buf_init(&t, buf, 16);
++	KUNIT_EXPECT_EQ(test, seq_buf_printf(&t, "%s", "longer than sixteen"), -1);
++	KUNIT_EXPECT_EQ(test, seq_buf_pop(&t), -1);
++	KUNIT_EXPECT_TRUE(test, seq_buf_has_overflowed(&t));
++}
++
+ static void seq_buf_printf_test(struct kunit *test)
+ {
+ 	DECLARE_SEQ_BUF(s, 32);
+@@ -354,6 +395,7 @@ static struct kunit_case seq_buf_test_cases[] = {
+ 	KUNIT_CASE(seq_buf_puts_test),
+ 	KUNIT_CASE(seq_buf_puts_overflow_test),
+ 	KUNIT_CASE(seq_buf_putc_test),
++	KUNIT_CASE(seq_buf_pop_test),
+ 	KUNIT_CASE(seq_buf_printf_test),
+ 	KUNIT_CASE(seq_buf_printf_overflow_test),
+ 	KUNIT_CASE(seq_buf_get_buf_commit_test),
+-- 
+2.55.0
+
