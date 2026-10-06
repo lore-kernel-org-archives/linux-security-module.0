@@ -1,141 +1,250 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3CD3EC81D
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 12:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.178
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791288908; cv=pass; b=TD0wiL5/JtAzoewYYmTJRuM5z6XCBPxnLb8oekCcrLb68M8oji5Ql0RigufsEuDIdxyocG05tr6oFbKAXOpkrktbsI9+QbgzlH7YycxClNWtR2pMQo/YfGTPrTam+5oK0yObp7KLIJcLSkN2y1QVhCd1/+kYzM1l2zD+fgrL5VQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791288908; c=relaxed/simple;
-	bh=20SoLCTlUosZH3gg7t5ypYAOftvZZuBui2tmg5aXxP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hK6fd8P5PKsbZF5/HAQTB0503ccvqO1K0pmAjZsrzlIQ1Vlyv7a75IG+XRhnJvXPNEFbieW20QvVfM4U6NMGex4wAV8bfpcE97EQHvrk23dJ9K0cTyRBtk8mXqs26GiwztdeQr7ZPf2NiRoHIRDj9o9kNROq9LAb4kAhx6GGa28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Gd+rM08t; arc=pass smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717E946AA64
+	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 14:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791297863; cv=none; b=f8zAqTvAnOY3v5RGg8NYGRvnO6+3F/jtkPEOO4clzisL5bNn5p+UjSyJuvFrgBzU9+t9xVmc6WQPxOhVSinth7/3BhyxUoDPjJlfQAvr4nmBiuk+Rm9tncszFsV87CqFHUrbcK3NkF4WY5Gw82zHtOs9mQcSES1We+VSVnt4PkQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791297863; c=relaxed/simple;
+	bh=xg4nVjZgK3omQ3IqcCOJ6LqQ7bDNIMVw34gz+6JR8ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5eSVrSTsh9bdrOr2hrvJM9WwFU+E6r757Ro68EPRU8563Cu60LjsSUCEjgwS5eScg1gXWY/GqsBf20aFot9k2gbWGyl33aOQNAW3c9p1aaRQi6cjZH4eNKPjaeVb16Xv6++7rQLDrCr0X/X9nDXysUM8xXDRvfxJqk+MYvVf/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ik9V3upG; arc=none smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Gd+rM08t"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-cc52c1b8286so328692a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Oct 2026 05:15:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791288906; cv=none;
-        d=google.com; s=arc-20260327;
-        b=iaJpf7OdjMRJCcaDIthTKwwcHsTao05/jEwpv2va5BYlQByTnqd7v6WEb/6edfB7LW
-         YYrLxqrqVisw9tgQWlwLIF7siRLkAvujoVBVYlvXM8+SR1CKUjR0CWlQKNiYnWqGCs66
-         TU/tWJ1kOfaYxgktfsGv3v0BPE3Xx+SyazAktiWMNlCY2QawX+KdBSmD3KQULM7MKjMZ
-         HX7tHbbWN+3I6/TNQZu7VIcr6sUzL39BUTEZOOEibPfjURcAX5izODBXLR1mLP3zY4x3
-         Q3OKKIlTFkHZMeUjcnFedJUs1I/3HkkrWlux5oX0r5vEb2QTC53FBX+v1sl73YPcq/Zr
-         T7iA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=hhU5kMp1rxGMciu/YZ1tuWYg/j9SOf7ZmdFtxjzJ6YM=;
-        fh=y0lFCNBrynTCwTcF2WKJrLIwL1QD8PMpof/j7eFJ71A=;
-        b=nlzE4SsQN/4UY1tY8TvIE01bmslpBEim4DCDsCt7eJtvMVgu6MGIpyTt3qxCvu7cbT
-         G03t7qtOaO2EdGfOjazz/sUiiirNavnBoVh2mzURLQE+vaDIlI+X6LaCIWyWeNGuJB6t
-         82OcDCm5i5YfaDc1QLOis/sY/VGvusts4HhkSmygXTPl1CUrAKot08tFnL3jI7SDQC8b
-         jT1N5quk/aMACeM8aU3CEpHMw8iQnJ9zSJSHiZXP452yejsdoMgF6jfqur1zW8SgQmu0
-         HX/AeqkpsOwiu1NCSG8zi/g2jJP2WuUlb9TwIIPmrFQ+lBxP5A7IM9pY5a6EQQXcouCI
-         2/5g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ik9V3upG"
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-677d35fd1d2so2278950d50.1
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Oct 2026 07:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1791288906; x=1791893706; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1791297860; x=1791902660; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=hhU5kMp1rxGMciu/YZ1tuWYg/j9SOf7ZmdFtxjzJ6YM=;
-        b=Gd+rM08thoFmZVQsnxAwprenjbH0SYu18KM8fEyZ0sBh0rXCK7d7SiBMrE19MMoOsh
-         hpz9SL3g1RbTJoXWYKTQXwhCY/gVs9xzpEt//LL9ObB5XLlLEg+govE7cZHs3b1iVL23
-         f4SRZvH3Uq0pdAyZr6JxtvY9wS4lEQ19ofVanydHry/DcVrCMop0Xyrhvze7cQw1d4f7
-         qbpU+wQk3L3Patl7MKlBTbPCmKWYzVWo3V29JWDQZV/l0o6BGjiTrKc/8nrns1bzHsBT
-         +91vXgEIytdN87qyxJSm/HMb8fn6fuAKh6oGPG8GpRXxMdxNWFUT9X9SM2CkbPBmB0/k
-         P1tw==
+        bh=z16WMQi6X5ulLLprpNpp5KM6uOsUPopslq1m3ekUifc=;
+        b=ik9V3upGVtCUpR3/aqNSQoWBARrPlUwfBLwu7x9KrE+mVYYLpj3Ken17EWeqx60NaR
+         +iMWl6b77TTj7G0ski4SJd9YphF139UwmUOg4RDR+H9b4lD7h3VHi6LDwRYFbFY7ZSxg
+         fDjo2LixnKPlr6/BI03F0dIzO+XSdG8B5GiRIM2KYIWPw+9vSUTPyiktFHEq0VGBoF7p
+         846TNxDBByd08hSOj971BuKfkxmHC0W83gGQYyEDLZ3dbnSWHrM6UwrTjQzI9Ko4uiZw
+         SnK809V5siho6qbdricxw+82VnQlVUT07oJDRaFIR0qx/Inuf1uQMAKmybpOBqvd9tLc
+         jkSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791288906; x=1791893706;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1791297860; x=1791902660;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=hhU5kMp1rxGMciu/YZ1tuWYg/j9SOf7ZmdFtxjzJ6YM=;
-        b=gdlf6/nU4ZVCV8alBiPlqH/6S0U3igBjhkdY5xUgN35FJTYciVNINe6KWFUJjqfwC8
-         HcM0vluKKnlnah63ySiZVY8weT6VPlMDQiVSVlwEcoFQjIqxWKoCl3Cl9amiYEy040MV
-         uS1gGP4qEaLsBQo6AitqGi4W5VCmha6Uz7A2o6a8vr4CoRBQb0XGCCNllGXgQoa9Q9bW
-         MrlsquuUmuMZlIahWaFK6DmAjoYeOSNYT1FG05uKLXlmyXS9OFcebHjkZ0tgTShfXn6q
-         jqz3A69vHcJiRLDb6lzwPgCZc3SWuWKFzf6uyPVWECKA8u7uyLiq5L6Ma5tvf9CClAHJ
-         02VQ==
-X-Forwarded-Encrypted: i=1; AKwUvBz8vXdvXNeeu8oJUqHbfhsBDPk05Rae982n0NxwSAHdaH4xijRaAIJgjlEiX9CrZB4GE+pmrcb6KkFwsNsLzdxpqqSkgxs=@vger.kernel.org
-X-Gm-Message-State: AFuF++kr2SFp62fL7gWc+2P3oQWC/XYXJ+81z0kQoEaUA84MrAXdc2Eb
-	bg3uDzYfHF7QOb31tdF523RNRI+NgjC+wn3zjQ8etdYNKWvNPdq/r1tWSrQmLeJjbwQOXqSXbqf
-	eHH1Pv1eIhXR25Ls0pVFOrkvh1Az1yilpDOOj8rw7uaxwRBH1MUhUl50Y
-X-Gm-Gg: AYBFou21BKTWgNbPcCtmxG2UMMgT4SD+8LOBEOiXrokN6bIUGAfEfCkHa9VFkkzLKYT
-	S3NC2UsdBuhCCc5VXXcpBC+DIIlI5goXxNUuHF7VpPshCtQWw/Q8YwVidpM/VOIHK1H4rx0p3hW
-	JZpzoQ92FG8cWUt/jFYPHLDXvjw1oRv4NMDjsQY9639vfdwuIji+CqN/On2Nyzc1acXHk8pdfQe
-	JXdrxDpVMywrrchAmLyIs4waOekAG6NVydyM8uqw8IjmOPu51wFz1WCFNNNkJDEdzVF9ZWQdQV+
-	d9enw4HLHRhvAb9e1QCwsy+PY6hU5B2uRXSubfwLv2b8zjN4o9RJMQWcvWEejhtZWhz52fiA9qd
-	p5FI4k1UH
-X-Received: by 2002:a05:6a21:8284:b0:3e1:2422:1d4b with SMTP id
- adf61e73a8af0-3e124221e5cmr890709637.36.1791288906570; Tue, 06 Oct 2026
- 05:15:06 -0700 (PDT)
+        bh=z16WMQi6X5ulLLprpNpp5KM6uOsUPopslq1m3ekUifc=;
+        b=MjlIuDD6VTsPOYhfjY/3ZM03e9yIZ7+IRoPNeaL7sY/1/VGk+VR9GssbyGhsWbb8wz
+         H2dTsyUCNo7LZGsAy0J7ndO+ZvyDdY0RL/CtU7vug3RovjbTWhaw2nN5V4is+S+pfSG3
+         ZWkYo3EUNH+2p5iiyKm/KnD/hRP3v4wyoe0rAvde6NIasiHDtPg+Bk6R26TR45bNsoN6
+         OYBY6A57fW8MgIfwtvsFrmpbUiHFGtpcFMemxni94nzBO/7gi+0sXU5tMohS8BXhAkWH
+         PGr60T0d1BWJBDm1tozaTsjITAUj5JQX+jPXzEL+Q8q8Ua4y5aApBtCnh8V4uyWU7F0d
+         ehPg==
+X-Forwarded-Encrypted: i=1; AKwUvBzfmF8ET0kF5QSMUowdGyWfTXhLSRIfoM8A8Q45DGSZagP8RvNwyw06RNadbPUeIDBTAgrVzC+PIb0+p7BCqW8ZY++8kf4=@vger.kernel.org
+X-Gm-Message-State: AFuF++le2BSxDw6OL0g8GBqdVFfwoWdksM7AQGqmdTP6myY49oKDwcYJ
+	U+80oZeBDUGLsz0r5oL87o7nFxgl6N8wvCPQn420M1eLjYCsISqN6m6K
+X-Gm-Gg: AYBFou3GtAo21Ve2Fuy+4JWh9QIT+rM9MkgsZQrwmObU2Gy4OJx1aXifng8nSMJB2kC
+	waXmg+cwt5RkpNGmWTZ6ZMY5uxlS+HCvqPCWQT3thgeatI42wSrmzy5RmMYJC0rFpE+1AV9Q9kG
+	Q6ZXzS7w7brwTL1RsuRT6LMekO31DgF/kWnFjC3cQs8+Gz7Furilbnf/OcxuANcszlkELSXPtcC
+	2SPuFbTThLkVZYeEURqHMAEkAtYhiuuBp3yt/i+O9NkkX6IMnceQqEpF8vQBtnSYW5YUkRt9yTg
+	hjQpzjn/nbR/J2hh5g6O39DlKer0G0Th1VvnTQpJymPx5khjEObA7zJZ7XjbO13Y20l4h+zJQbB
+	PkV8Gbe8D05NQrY/lZICtjnnCyj7k0TI87AGCZBrtgI6VBOM5q8hR109IA68wrYPF4Ju10byr8v
+	NCjB48bgCrTsLdgDl/SRxnI/r4kGGRAvlh+zQ/Wh20FuQsp5FY2ZqjIQN/gVBbrgbNhCrP8hrgM
+	g==
+X-Received: by 2002:a53:ac85:0:b0:674:11fe:cb0d with SMTP id 956f58d0204a3-678fcf01225mr679592d50.57.1791297860190;
+        Tue, 06 Oct 2026 07:44:20 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:6dc9:4ffd:1851:60b1])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-677c19b196esm4642908d50.1.2026.10.06.07.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Oct 2026 07:44:19 -0700 (PDT)
+Date: Tue, 6 Oct 2026 10:44:18 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: bot+bpf-ci@kernel.org
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	neil@brown.name, mic@digikod.net, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, song@kernel.org, linux-fsdevel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, memxor@gmail.com, jolsa@kernel.org, jlayton@kernel.org, 
+	amir73il@gmail.com, mjguzik@gmail.com, shuah@kernel.org, m@maowtm.org, 
+	martin.lau@kernel.org, mason@kernel.org, ihor.solodrai@linux.dev
+Subject: Re: [RFC PATCH bpf-next 11/12] bpf: add a lockless path ancestor
+ iterator
+Message-ID: <asUBWNVtSzLXkXsF@zenbox>
+References: <20261006002020.2890858-12-utilityemal77@gmail.com>
+ <ea38d86f4c0b9e3a152efb949421d2af3bcc50c03c620780eddc90ef28a9ad51@mail.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261006035108.3101440-1-4ncienth@gmail.com>
-In-Reply-To: <20261006035108.3101440-1-4ncienth@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 6 Oct 2026 08:14:53 -0400
-X-Gm-Features: AclHuK-0rgBX0Rc-BZAEtLzd-Bv2KqLRMjK2L8kmkoDKLlRupZOtGrn3yq5-x8I
-Message-ID: <CAHC9VhT1upbG7_0pB6KTZyBEbycbdkaWCw=-rYARmkmBF519ZA@mail.gmail.com>
-Subject: Re: [PATCH net v2] cipso: adjust cached option offsets when removing CIPSO
-To: Daehyeon Ko <4ncienth@gmail.com>
-Cc: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea38d86f4c0b9e3a152efb949421d2af3bcc50c03c620780eddc90ef28a9ad51@mail.kernel.org>
 
-On Mon, Oct 5, 2026 at 11:51=E2=80=AFPM Daehyeon Ko <4ncienth@gmail.com> wr=
-ote:
+On Tue, Oct 06, 2026 at 01:10:47AM +0000, bot+bpf-ci@kernel.org wrote:
+> > bpf: add a lockless path ancestor iterator
+> 
+> TL;DR:
+> - Verifier may give a plain trusted dentry from the lockless path iterator,
+>   risking use-after-free in sleepable kfuncs after RCU exit
+> - A failed legitimize may look like a finished walk, hiding a lost race
+> 
+> > diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> > index 265cb414a08a..9dad65df4267 100644
+> > --- a/fs/bpf_fs_kfuncs.c
+> > +++ b/fs/bpf_fs_kfuncs.c
+> 
+> [ ... ]
+> 
+> > @@ -633,6 +656,79 @@ bpf_path_ancestors_pos_flags(struct bpf_iter_path_ancestors *it__iter)
+> 
+> [ ... ]
+> 
+> > +/*
+> > + * Unlike the referenced variant, this hands out the walk's own position:
+> > + * a lockless iteration holds no references to pass on, and the verifier
+> > + * keeps the whole of it inside one RCU read-side critical section.
+> > + */
+> > +__bpf_kfunc struct path *
+> > +bpf_iter_path_ancestors_rcu_next(struct bpf_iter_path_ancestors_rcu *it)
+> > +{
+> > +	return bpf_path_ancestors_step((void *)it);
+> > +}
+> 
+> The commit message says that "nothing read out of the position may be passed
+> to a kfunc demanding a trusted argument", and the comment above struct
+> bpf_iter_path_ancestors says the same.  Does the verifier actually enforce
+> this?
+> 
+> The position returned by bpf_iter_path_ancestors_rcu_next() is typed
+> PTR_TO_BTF_ID | MEM_RCU, because check_kfunc_call() adds MEM_RCU to the
+> iter_next result of a KF_RCU_PROTECTED iterator.  Commit 7ed5aa71ad77 ("bpf:
+> mark struct path trusted") added:
+> 
+>     BTF_TYPE_SAFE_TRUSTED(struct path) {
+>             struct dentry *dentry;
+>     };
+> 
+> In check_ptr_to_btf_access(), the branch taken for
+> is_trusted_reg(env, reg) || is_rcu_reg(reg) applies type_is_trusted() and
+> sets PTR_TRUSTED on a safe-trusted field even when the base pointer is only
+> MEM_RCU.
+> 
+> So loading the dentry field of a lockless position yields a plain
+> PTR_TRUSTED dentry.  It does not keep MEM_RCU, so
+> invalidate_rcu_protected_refs() leaves it alone at bpf_rcu_read_unlock().
+> 
+> The safe-trusted rule for struct path assumes the path pins its dentry.  That
+> holds for the referenced variant, but the lockless walk takes no reference on
+> the dentry, and an ancestor's lifetime is not tied to the original path once
+> a concurrent rename moves the descendant.
+> 
+> After the program leaves the RCU read-side section, could a sleepable kfunc
+> that takes a trusted dentry (the xattr kfuncs in this set, for example) be
+> handed a dentry that has neither a reference nor RCU protection?
+> 
+> Would it work to keep MEM_RCU on fields loaded from a MEM_RCU struct path
+> (for example by applying the struct path safe-trusted rule only to trusted
+> bases), or to avoid exposing struct path as the return type of the lockless
+> iterator?  A negative selftest showing that such a load is rejected would
+> also help.
+This feedback was repeated several times, and it's real (missed this).
+I assumed that the RCU characteristic would propagate, but it does not.
+
+Basically the issue is that the dentry is trusted even if the path is
+under rcu, so it can be stored and becomes a UAF outside the rcu
+critical section for RCU walks.
+
+Two ways this can be handled:
+
+1. Don't mark the dentry as trusted. (patch 4) 
+This is the simplest fix, but limits the utility of this patchset
+as you couldn't use the dentry for kfuncs expecting trusted dentry args,
+including the xattr kfuncs.
+
+2. Propagate MEM_RCU for a __safe_trusted field reached from a MEM_RCU
+base. (as stated in the above suggestion)
+
+More invasive and affects existing BTF definitions. I'd have to dig
+more into this to see what this would affect.
+
+...
+
+Leaning towards 1. 2 can be a follow up series without breaking
+compatibility (path* equivalents of the dentry* kfuncs would work too).
+But if it's desired I can try 2.
+
+> 
+> [ ... ]
+> 
+> > + * Return: 0, -%ENOENT if the lockless iteration was not on a position, or
+> > + * -%ECHILD if it lost the race to acquire one; %BPF_PATH_ANCESTORS_RETRY is
+> > + * then also flagged, and the program has reached no conclusion about the
+> > + * ancestry.  @it__uninit is initialized whatever this returns, so a program
+> > + * need not branch on the result: a walk that could not be escalated simply
+> > + * yields no position.
+> > + */
+> > +__bpf_kfunc int
+> > +bpf_path_ancestors_legitimize(struct bpf_iter_path_ancestors *it__uninit,
+> > +			      struct bpf_iter_path_ancestors_rcu *rcu_it__iter)
+> > +{
+> > +	struct bpf_path_ancestors_kern *rcu_kit = (void *)rcu_it__iter;
+> > +	struct bpf_path_ancestors_kern *kit = (void *)it__uninit;
+> > +
+> > +	/* A zeroed walk makes destroying the iterator a no-op. */
+> > +	memset(kit, 0, sizeof(*kit));
+> > +	kit->step = 1;
+> > +
+> > +	/* Drained, or already failed: nothing to hand over. */
+> > +	if (rcu_kit->step)
+> > +		return -ENOENT;
+> > +	if (!vfs_walk_handover(&kit->aw, &rcu_kit->aw)) {
+> > +		rcu_kit->step = -ECHILD;
+> > +		return -ECHILD;
+> > +	}
+> > +	kit->step = 0;
+> > +	return 0;
+> > +}
+> 
+> When the lockless iteration had already failed with -ECHILD, or when
+> vfs_walk_handover() fails, @it__uninit is left with step == 1.  That is the
+> same state as a referenced walk that has passed the real root, so
+> bpf_iter_path_ancestors_next() returns NULL and bpf_path_ancestors_pos_flags()
+> on that iterator returns 0.
+> 
+> The documented contract of bpf_iter_path_ancestors_next() says NULL comes
+> "once the walk has passed the real root - or on an allocation failure ...
+> reported as NOMEM", so a lost race reads as a completed walk.  The kernel-doc
+> above also tells programs they "need not branch on the result".
+> 
+> Can a policy program that follows that advice and only inspects the resumed
+> iterator treat a lost race as a finished ancestry walk with no match?
+> BPF_PATH_ANCESTORS_RETRY is flagged only on the lockless iterator, which has
+> to be destroyed before the resumed iteration can run.
+> 
+> Would setting kit->step = -ECHILD on the destination in both failure paths
+> work?  Stepping would still stop (step != 0), the zeroed walk would keep
+> destroy a no-op, and bpf_path_ancestors_pos_flags() on the resumed iterator
+> would report BPF_PATH_ANCESTORS_RETRY.
+> 
+> Separately, when the source had already lost a race, the first check returns
+> -ENOENT rather than -ECHILD, which conflicts with the kernel-doc describing
+> -ENOENT as "not on a position".
 >
-> cipso_v4_skbuff_delattr() removes the CIPSO bytes but does not adjust
-> cached offsets for options that follow them.
->
-> For example, with a valid 10-byte CIPSO option followed by a seven-byte
-> RR option, parsing records rr at offset 30.  Removing CIPSO moves RR to
-> offset 20, while the cached offset remains 30.  Consumers such as
-> ip_forward_options() and __ip_options_echo() then access the wrong bytes;
-> the latter may interpret packet data as the option length and copy it int=
-o
-> fixed-size option storage.
->
-> Mirror cipso_v4_delopt() and subtract cipso_len from the srr, rr, ts and
-> router_alert offsets when they follow CIPSO.  cipso_len is the distance
-> the first memmove() shifts those options.  The later header move and
-> network-header reset relocate the bytes and their offset base together.
->
-> Fixes: 89aa3619d141 ("cipso: make cipso_v4_skbuff_delattr() fully remove =
-the CIPSO options")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gmail.com>
-> Assisted-by: LLM
-> Signed-off-by: Daehyeon Ko <4ncienth@gmail.com>
+This is also real, just forgot to add kit->step = -ECHILD on the failure
+paths. ~2 lines.
+
+Justin
+> 
 > ---
-> Changes in v2:
-> - Replace the parser-invalid 8-byte example with a valid 10-byte one.
-> - Move the offset updates beside the other option metadata updates.
->
-> Link: https://lore.kernel.org/netdev/20260930140400.2955466-1-4ncienth@gm=
-ail.com/
->
->  net/ipv4/cipso_ipv4.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+> 
+> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/37395354107
 
-Acked-by: Paul Moore <paul@paul-moore.com>
-
---=20
-paul-moore.com
