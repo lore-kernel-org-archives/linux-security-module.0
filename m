@@ -1,43 +1,43 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03CF37C91E
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 09:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0515B37C91E
+	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 09:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791280639; cv=none; b=Uyt0rTgmaaJlPDDyLXRGZ7wGSXyaPWA8B+7KIaTyjAdgFpqDBKNswtoOLN3dzd8P7WGHIdPe+fIokPvTOSaDcGc3Xm9Vsu9R8yefhxHSUhIUKgIQHf9E398HvI59s4VcMrtd4CWI3DbGVKnOg8YQaiRmxUrVU1BVl/Z9mON0f98=
+	t=1791280643; cv=none; b=UbpZn31Fiu+58e8u/gnhkMYcPu7NHAGiJFDF7rKeqaU0xWEjHGlhYVD5Y9q2lkmWwv6Am4HEdRzM5slkSZajq6KJSttoap5xn7dAC+qMBE+49zeztSIXrxdOY2f6Kd0fTTwd1D03D5LAU2QiwV88dBcqWgUsy2ZOZA0dGfviF8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791280639; c=relaxed/simple;
-	bh=YZQu7g3QBp9P4SUelfN9I3/NuwGuO8VwyhtRC4EnDNk=;
+	s=arc-20240116; t=1791280643; c=relaxed/simple;
+	bh=5FvX3R3n4RdU9wFxznbPNeNOZI/GS9a34u0SrJPI0AI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XL+EVbD6TD8IhrDUezs3fBcIIq3A4ZMNUR2/Q8eIanfTjUKV1n26Du00RHFjq247B5O6MZkbW3ovV/0KxSU0Sl0u5EEgPWOj9bKOAM8YQyyGN6cQEt3XePFjJWSMhhTwl8h4cihNKld8unQ7v7j6o6Kl8nd1HEzQGF7Wb8jy0wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AjDyibPm; arc=none smtp.client-ip=45.157.188.8
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHo/NsobH4USKUeSivAw8hs3RIDkeqGABjEXP7nv2pvMJgbUlvifRzdezILF3e6xbM8VU5CNB+xPoUXc4ckzeNlAyNd0ZTHPbBq0+ycGVVYucvF65VJURlGL8libHn/kjEiEaOdKi/sxBvLUekwFe6JKqqKJOtai/O7uMBKaNhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZtVuWqox; arc=none smtp.client-ip=84.16.66.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AjDyibPm"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hzWrH6gp6znjl;
-	Tue,  6 Oct 2026 11:57:03 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZtVuWqox"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hzWrR4sTgz11FR;
+	Tue,  6 Oct 2026 11:57:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1791280623;
-	bh=1EGI+kI25Q0djPAmscqTq4uRG7U5UWcApAaK3bBnxYU=;
+	s=20191114; t=1791280631;
+	bh=ZF+MKPbdq/xFeDXJK7jHWQeOjWVlrjdMKc5KKTcUjl0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AjDyibPm+L1cLECcdRE//QhSnp4n49rK+V+gLT+VYMJDe+RLhwqJXQXnlFgBCpOEx
-	 5wisJSR3iwnuUNJTWRQI04NqJ+xU7As75Asff+ZU4RbJd8jwiJsvsc6IN0eQcAWR8M
-	 YHAiId21yEVh4vy/TZYJY0dTPIA1KjFK2GRzseK4=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hzWrH2WJ2zRPh;
-	Tue,  6 Oct 2026 11:57:03 +0200 (CEST)
-Date: Tue, 6 Oct 2026 11:56:59 +0200
+	b=ZtVuWqoxufXOtjmhAgOrQEUwevtgNtcGMa3UmuZq5UhjSl/SHNwdnh5rQFetxDPGj
+	 YvIYAvuYaaBMVIdT0RMW9ajS3OAqsBBkGBCrDoSvUZ6eXc1ue6HQ/9S5Rg7imxoeBA
+	 HrXU2cY4rKSIZuI3A9YT528FVDY2FXTwi2UECeVo=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hzWrR0NT2zt5g;
+	Tue,  6 Oct 2026 11:57:11 +0200 (CEST)
+Date: Tue, 6 Oct 2026 11:57:10 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 5/8] selftests/landlock: Add namespace restriction
+Subject: Re: [PATCH v4 6/8] selftests/landlock: Add capability restriction
  tests
-Message-ID: <20261006.tooshaPae6ai@digikod.net>
+Message-ID: <20261006.Aiwohkeel3ee@digikod.net>
 References: <20261002124409.1277970-1-mic@digikod.net>
- <20261002124409.1277970-6-mic@digikod.net>
- <20261002125628.94DE41F00898@smtp.kernel.org>
+ <20261002124409.1277970-7-mic@digikod.net>
+ <20261002125356.4C1321F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,80 +47,75 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261002125628.94DE41F00898@smtp.kernel.org>
+In-Reply-To: <20261002125356.4C1321F000FF@smtp.kernel.org>
 X-Infomaniak-Routing: alpha
 
-On Fri, Oct 02, 2026 at 12:56:28PM +0000, sashiko-bot@kernel.org wrote:
+On Fri, Oct 02, 2026 at 12:53:55PM +0000, sashiko-bot@kernel.org wrote:
 > Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Low] selftests/landlock: Data truncation of 64-bit namespace flags in audit log string matching
+> - [Medium] selftests/landlock: host hostname modification in cap_without_nnp test failure
 > --
 > 
-> commit 5fd29f953c165adc6df65241e36e43cef7dbf0ae
+> commit 359c59ecc043d1cac20779ee8cc6bc19e3b8e705
 > Author: Mickaël Salaün <mic@digikod.net>
+> selftests/landlock: Add capability restriction tests
 > 
-> selftests/landlock: Add namespace restriction tests
+> This commit adds tests to exercise capability restrictions enforced by
+> Landlock. It covers various standard capability evaluations, stacking
+> combinations, and non-standard contexts such as enforcing a domain
+> without no_new_privs.
 > 
-> This commit adds extensive tests for the LANDLOCK_PERMISSION_NAMESPACE_USE
-> restriction, covering namespace creation and entry. It includes rule
-> validation, forward compatibility checks, layer stacking, and audit logging.
-> 
-> Link: https://patch.msgid.link/20260726161400.3010511-10-mic@digikod.net
-> 
-> > diff --git a/tools/testing/selftests/landlock/ns_test.c b/tools/testing/selftests/landlock/ns_test.c
+> > diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/selftests/landlock/cap_test.c
 > > new file mode 100644
-> > index 0000000000000..6faafc110844d
+> > index 0000000000000..8673934aac11e
 > > --- /dev/null
-> > +++ b/tools/testing/selftests/landlock/ns_test.c
-> 
+> > +++ b/tools/testing/selftests/landlock/cap_test.c
 > [ ... ]
-> 
-> > +static int matches_log_ns_create(int audit_fd, __u64 ns_type)
+> > +TEST(cap_without_nnp)
 > > +{
-> > +	static const char log_template[] = REGEX_LANDLOCK_PREFIX
-> > +		" blockers=namespace\\.use namespace_type=0x%x namespace_id=0$";
-> > +	char log_match[sizeof(log_template) + 10];
-> > +	int log_match_len;
+> > +	int ruleset_fd;
 > > +
-> > +	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
-> > +				 (unsigned int)ns_type);
-> 
-> [Severity: Low]
-> Does this format string risk truncating the ns_type value? The ns_type
-> parameter is a 64-bit __u64, but it is explicitly cast to unsigned int
-> and formatted with %x. If a namespace flag exceeding 32 bits is ever
-> tested, the upper 32 bits will be truncated, producing an incorrect audit
-> log match string and causing test failures.
-
-The cast is intentional and doe snot truncate an emitted audit value
-(which is 32-bit).
-
-> 
-> > +	if (log_match_len >= sizeof(log_match))
-> > +		return -E2BIG;
+> > +	disable_caps(_metadata);
 > > +
-> > +	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-> > +				  NULL);
+> > +	ruleset_fd = create_cap_ruleset();
+> > +	ASSERT_LE(0, ruleset_fd);
+> > +
+> > +	/* Allow CAP_SYS_CHROOT but not CAP_SYS_ADMIN. */
+> > +	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SYS_CHROOT));
+> > +
+> > +	/*
+> > +	 * Enforce WITHOUT NNP: landlock_restrict_self() succeeds when the
+> > +	 * caller has CAP_SYS_ADMIN (checked before the new domain takes
+> > +	 * effect).
+> > +	 */
+> > +	set_cap(_metadata, CAP_SYS_ADMIN);
+> > +	ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0));
+> > +	EXPECT_EQ(0, close(ruleset_fd));
+> > +
+> > +	/*
+> > +	 * CAP_SYS_ADMIN is still in effective set but Landlock denies it:
+> > +	 * cap_capable() returns 0, then hook_capable() returns -EPERM.
+> > +	 */
+> > +	EXPECT_EQ(-1, sethostname("test", 4));
+> 
+> [Severity: Medium]
+> Will this modify the host system's hostname if the test fails?
+> 
+> The cap_without_nnp test does not appear to isolate its UTS namespace via
+> unshare(CLONE_NEWUTS) before verifying the sethostname() restriction. If the
+> Landlock enforcement does not block the operation during a failing test run,
+> could the sethostname("test", 4) call succeed and unexpectedly change the
+> test machine's global hostname?
+
+I'll fix these issues.
+
+> 
+> > +	EXPECT_EQ(EPERM, errno);
+> > +
+> > +	/* CAP_SYS_CHROOT is allowed by the rule. */
+> > +	set_cap(_metadata, CAP_SYS_CHROOT);
+> > +	EXPECT_EQ(0, chroot("/"));
 > > +}
-> > +
-> > +static int matches_log_ns_setns(int audit_fd, __u64 ns_type, __u64 ns_id)
-> > +{
-> > +	static const char log_template[] = REGEX_LANDLOCK_PREFIX
-> > +		" blockers=namespace\\.use namespace_type=0x%x namespace_id=%llu$";
-> > +	char log_match[sizeof(log_template) + 32];
-> > +	int log_match_len;
-> > +
-> > +	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
-> > +				 (unsigned int)ns_type,
-> > +				 (unsigned long long)ns_id);
-> 
-> [Severity: Low]
-> This seems to have the same truncation issue as matches_log_ns_create()
-> above. The 64-bit ns_type parameter is cast to a 32-bit unsigned int and
-> formatted with %x, which will drop the upper 32 bits.
-
-No issue here as well.
-
 > 
 > -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/20261002124409.1277970-1-mic@digikod.net?part=5
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261002124409.1277970-1-mic@digikod.net?part=6
 > 
