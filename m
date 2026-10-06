@@ -1,250 +1,157 @@
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717E946AA64
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 14:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5803E48D89A
+	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 14:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791297863; cv=none; b=f8zAqTvAnOY3v5RGg8NYGRvnO6+3F/jtkPEOO4clzisL5bNn5p+UjSyJuvFrgBzU9+t9xVmc6WQPxOhVSinth7/3BhyxUoDPjJlfQAvr4nmBiuk+Rm9tncszFsV87CqFHUrbcK3NkF4WY5Gw82zHtOs9mQcSES1We+VSVnt4PkQ=
+	t=1791298702; cv=none; b=RKgy8ZKINmLMx448tH5ZiI7dfDS4NxKkF9y8TlTL+rkFysSNSrfQX2XCz8Cf/Am68VldHbcQh1CVuKdgci36D9gQlAmIq3odvVIqo9o8AmzdPf8DAz+z435hMH2ja8RXXPGjSshyiJI9mfKVvAhjxrSW2YZECUaFlUFvNuzdtUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791297863; c=relaxed/simple;
-	bh=xg4nVjZgK3omQ3IqcCOJ6LqQ7bDNIMVw34gz+6JR8ns=;
+	s=arc-20240116; t=1791298702; c=relaxed/simple;
+	bh=rC3FgFtHopZe9bkYKYGHaMtLlbqNScHvoCGayOGsaLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5eSVrSTsh9bdrOr2hrvJM9WwFU+E6r757Ro68EPRU8563Cu60LjsSUCEjgwS5eScg1gXWY/GqsBf20aFot9k2gbWGyl33aOQNAW3c9p1aaRQi6cjZH4eNKPjaeVb16Xv6++7rQLDrCr0X/X9nDXysUM8xXDRvfxJqk+MYvVf/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ik9V3upG; arc=none smtp.client-ip=74.125.224.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpPE/ttpI1bvrpz2mx6Kr5x2BPe0W7GPJD4MJ8FX9wMqe8OvpNE+X9SaCu6zRSeHaNwjrXPLs+YezTGTxxYr62er8L5QcHxOtEYwqGdDfcgWjB6E+5XONB72zFy1DEnaAYxWzRy5mxTd5W4x59aMq/zz8p9dq0toZjAaSKwhaFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sv+NiSWT; arc=none smtp.client-ip=74.125.224.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ik9V3upG"
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-677d35fd1d2so2278950d50.1
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Oct 2026 07:44:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sv+NiSWT"
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-677b5148acaso836267d50.0
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Oct 2026 07:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791297860; x=1791902660; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=z16WMQi6X5ulLLprpNpp5KM6uOsUPopslq1m3ekUifc=;
-        b=ik9V3upGVtCUpR3/aqNSQoWBARrPlUwfBLwu7x9KrE+mVYYLpj3Ken17EWeqx60NaR
-         +iMWl6b77TTj7G0ski4SJd9YphF139UwmUOg4RDR+H9b4lD7h3VHi6LDwRYFbFY7ZSxg
-         fDjo2LixnKPlr6/BI03F0dIzO+XSdG8B5GiRIM2KYIWPw+9vSUTPyiktFHEq0VGBoF7p
-         846TNxDBByd08hSOj971BuKfkxmHC0W83gGQYyEDLZ3dbnSWHrM6UwrTjQzI9Ko4uiZw
-         SnK809V5siho6qbdricxw+82VnQlVUT07oJDRaFIR0qx/Inuf1uQMAKmybpOBqvd9tLc
-         jkSw==
+        d=gmail.com; s=20251104; t=1791298699; x=1791903499; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=VNKYt0wTzE6E0GOCR28wscOUy/GatbkKqCnu23L+CJY=;
+        b=Sv+NiSWTV7oxkEWoaimiCDTTbmNNQAbchaLogZFbboPDmMTeb9nmr9y2OrD2pSWHBN
+         OuSJfcdL6YMrSMqIUZDa1ggz/eH/c3pz0HNYfWkRnJmlHj1M5whXKkgZDG5sASw6ETGB
+         qjhkns644fcLcnGTpSkIAPXhITwklbL0T8aVniG54/XFW5wgsNwMMIh4EySGQWhm9KHy
+         uiJ4dbfkqRa4oELObGMVqnREaU46HrFW9hB6UKu8Objhd06WdG4woO9AiBDQYZjdu9tq
+         M5Zxt+yMmte2kdrva0zYvDgsUpgXBFyUJvydSxsHQNQZ7KmGAevVT+eolamDkfqyo7tR
+         BwuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791297860; x=1791902660;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=z16WMQi6X5ulLLprpNpp5KM6uOsUPopslq1m3ekUifc=;
-        b=MjlIuDD6VTsPOYhfjY/3ZM03e9yIZ7+IRoPNeaL7sY/1/VGk+VR9GssbyGhsWbb8wz
-         H2dTsyUCNo7LZGsAy0J7ndO+ZvyDdY0RL/CtU7vug3RovjbTWhaw2nN5V4is+S+pfSG3
-         ZWkYo3EUNH+2p5iiyKm/KnD/hRP3v4wyoe0rAvde6NIasiHDtPg+Bk6R26TR45bNsoN6
-         OYBY6A57fW8MgIfwtvsFrmpbUiHFGtpcFMemxni94nzBO/7gi+0sXU5tMohS8BXhAkWH
-         PGr60T0d1BWJBDm1tozaTsjITAUj5JQX+jPXzEL+Q8q8Ua4y5aApBtCnh8V4uyWU7F0d
-         ehPg==
-X-Forwarded-Encrypted: i=1; AKwUvBzfmF8ET0kF5QSMUowdGyWfTXhLSRIfoM8A8Q45DGSZagP8RvNwyw06RNadbPUeIDBTAgrVzC+PIb0+p7BCqW8ZY++8kf4=@vger.kernel.org
-X-Gm-Message-State: AFuF++le2BSxDw6OL0g8GBqdVFfwoWdksM7AQGqmdTP6myY49oKDwcYJ
-	U+80oZeBDUGLsz0r5oL87o7nFxgl6N8wvCPQn420M1eLjYCsISqN6m6K
-X-Gm-Gg: AYBFou3GtAo21Ve2Fuy+4JWh9QIT+rM9MkgsZQrwmObU2Gy4OJx1aXifng8nSMJB2kC
-	waXmg+cwt5RkpNGmWTZ6ZMY5uxlS+HCvqPCWQT3thgeatI42wSrmzy5RmMYJC0rFpE+1AV9Q9kG
-	Q6ZXzS7w7brwTL1RsuRT6LMekO31DgF/kWnFjC3cQs8+Gz7Furilbnf/OcxuANcszlkELSXPtcC
-	2SPuFbTThLkVZYeEURqHMAEkAtYhiuuBp3yt/i+O9NkkX6IMnceQqEpF8vQBtnSYW5YUkRt9yTg
-	hjQpzjn/nbR/J2hh5g6O39DlKer0G0Th1VvnTQpJymPx5khjEObA7zJZ7XjbO13Y20l4h+zJQbB
-	PkV8Gbe8D05NQrY/lZICtjnnCyj7k0TI87AGCZBrtgI6VBOM5q8hR109IA68wrYPF4Ju10byr8v
-	NCjB48bgCrTsLdgDl/SRxnI/r4kGGRAvlh+zQ/Wh20FuQsp5FY2ZqjIQN/gVBbrgbNhCrP8hrgM
-	g==
-X-Received: by 2002:a53:ac85:0:b0:674:11fe:cb0d with SMTP id 956f58d0204a3-678fcf01225mr679592d50.57.1791297860190;
-        Tue, 06 Oct 2026 07:44:20 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791298699; x=1791903499;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=VNKYt0wTzE6E0GOCR28wscOUy/GatbkKqCnu23L+CJY=;
+        b=pywduVyabAMUQwyUavRVO8nq/d3jPn3GE+EwcchAPVJbO1ZPchuzg3bJxLrQqSgfOy
+         fAZtA3GhObRIkcnI8tOrtTPClSAJyRtm+faQFPTKgWReaPHee3DpGbnUFlO6uMdPsmlc
+         b8pJIS3v9MO/IvGh7SK2M/kTaIa2xsAimX3JWwjD8ZMFoD36nWw2ETya1IasROwKxzLH
+         1QPLnenUJcc5HnK95vz8GFWd4aIvMyeFFKRo6GlI1HmByWf9Xw0aHCCYX054BV9lGk54
+         hbrOgFMZAlqY85tCMHolea/4S7xlr/YAvd0dIP+UwJrIVQAEQE3DtQ8iij1jtdxZUZrG
+         Wxzg==
+X-Gm-Message-State: AFq9FYLLHHq5YT8MRUYNvmDA/SRgEoopAIyrnf88uVYEct4ykaI9Y7lD
+	w9vuU3CPlxcOaTLOW8qpAUe7VegFnfaJluSdXjuqjRumdeu8UGBMC+SY
+X-Gm-Gg: AYBFou3xf3rWRY7ZHjHaz7mGC4IBWo9Z11UN8cFel0iZs0Jk0R2bJ1yqvyB11AWyM5k
+	oerxYMGSqF/tclbteEwJ7xpOaj2uEO7bhkirdXIU53B4o/8lR5CdzW3qDYYEoJyRhAcOkYGyXo/
+	k3CAd4dNr3YnCzNRSXlDFvXbcY8GbziPVf0Qp0kMsLbvT7XMNvHmf5T8BgF3oC8bhxsrqdVkDEG
+	ZsWPodZVLR2aRwgkddNJpaXMjFMuxLhucl9y3nf4Th0OcI6+OIZauPYXBR/RFmIz8+NYjXTo3bc
+	6sRAtUKGJd1Ob2nuKXRVHsYFXgj2kx0Rcg19/HkT/UOVL/HWj4/738l0d7phXAVGEw/M04/6k1I
+	qUulTtclxeVxEVqylGEHhuBie92duSic+efoGO+E3BEowmm5JB74+cwwpBLdyAOWOSDIqWkidF9
+	NNjOvyxAax/+k5TeG2aan7564dwWrzI2ME7sGrb0DLIOCHC2HjUAa8EBehWtSi/OAt+YMM6mDKh
+	yo=
+X-Received: by 2002:a53:ac90:0:b0:677:af43:e268 with SMTP id 956f58d0204a3-678fce62364mr739752d50.113.1791298699090;
+        Tue, 06 Oct 2026 07:58:19 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:6dc9:4ffd:1851:60b1])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-677c19b196esm4642908d50.1.2026.10.06.07.44.18
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-677c1b4a383sm4708693d50.7.2026.10.06.07.58.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2026 07:44:19 -0700 (PDT)
-Date: Tue, 6 Oct 2026 10:44:18 -0400
+        Tue, 06 Oct 2026 07:58:18 -0700 (PDT)
+Date: Tue, 6 Oct 2026 10:58:18 -0400
 From: Justin Suess <utilityemal77@gmail.com>
-To: bot+bpf-ci@kernel.org
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	neil@brown.name, mic@digikod.net, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, song@kernel.org, linux-fsdevel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, memxor@gmail.com, jolsa@kernel.org, jlayton@kernel.org, 
-	amir73il@gmail.com, mjguzik@gmail.com, shuah@kernel.org, m@maowtm.org, 
-	martin.lau@kernel.org, mason@kernel.org, ihor.solodrai@linux.dev
-Subject: Re: [RFC PATCH bpf-next 11/12] bpf: add a lockless path ancestor
- iterator
-Message-ID: <asUBWNVtSzLXkXsF@zenbox>
-References: <20261006002020.2890858-12-utilityemal77@gmail.com>
- <ea38d86f4c0b9e3a152efb949421d2af3bcc50c03c620780eddc90ef28a9ad51@mail.kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [RFC PATCH bpf-next 10/12] bpf: support "__uninit" iterator
+ arguments in generic kfuncs
+Message-ID: <asUK2i4229DNzXLI@zenbox>
+References: <20261006002020.2890858-1-utilityemal77@gmail.com>
+ <20261006002020.2890858-11-utilityemal77@gmail.com>
+ <20261006003716.CC7791F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ea38d86f4c0b9e3a152efb949421d2af3bcc50c03c620780eddc90ef28a9ad51@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261006003716.CC7791F000FF@smtp.kernel.org>
 
-On Tue, Oct 06, 2026 at 01:10:47AM +0000, bot+bpf-ci@kernel.org wrote:
-> > bpf: add a lockless path ancestor iterator
+On Tue, Oct 06, 2026 at 12:37:16AM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> - [Medium] bpf: aliased __uninit and __iter arguments bypass verifier initialization checks
+> --
 > 
-> TL;DR:
-> - Verifier may give a plain trusted dentry from the lockless path iterator,
->   risking use-after-free in sleepable kfuncs after RCU exit
-> - A failed legitimize may look like a finished walk, hiding a lost race
+> commit e08b0892f34d46a76c048cb46111b4956bcddfe8
+> Author: Justin Suess <utilityemal77@gmail.com>
 > 
-> > diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> > index 265cb414a08a..9dad65df4267 100644
-> > --- a/fs/bpf_fs_kfuncs.c
-> > +++ b/fs/bpf_fs_kfuncs.c
+> bpf: support "__uninit" iterator arguments in generic kfuncs
+> 
+> This commit allows generic kfuncs to initialize iterator arguments by
+> recognizing the __uninit suffix. It updates process_iter_arg() to treat
+> these marked arguments similarly to how bpf_iter_<type>_new() operates on
+> uninitialized iterator state.
+> 
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 066c4b838b858..3294b2a431674 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
 > 
 > [ ... ]
 > 
-> > @@ -633,6 +656,79 @@ bpf_path_ancestors_pos_flags(struct bpf_iter_path_ancestors *it__iter)
-> 
-> [ ... ]
-> 
-> > +/*
-> > + * Unlike the referenced variant, this hands out the walk's own position:
-> > + * a lockless iteration holds no references to pass on, and the verifier
-> > + * keeps the whole of it inside one RCU read-side critical section.
-> > + */
-> > +__bpf_kfunc struct path *
-> > +bpf_iter_path_ancestors_rcu_next(struct bpf_iter_path_ancestors_rcu *it)
-> > +{
-> > +	return bpf_path_ancestors_step((void *)it);
-> > +}
-> 
-> The commit message says that "nothing read out of the position may be passed
-> to a kfunc demanding a trusted argument", and the comment above struct
-> bpf_iter_path_ancestors says the same.  Does the verifier actually enforce
-> this?
-> 
-> The position returned by bpf_iter_path_ancestors_rcu_next() is typed
-> PTR_TO_BTF_ID | MEM_RCU, because check_kfunc_call() adds MEM_RCU to the
-> iter_next result of a KF_RCU_PROTECTED iterator.  Commit 7ed5aa71ad77 ("bpf:
-> mark struct path trusted") added:
-> 
->     BTF_TYPE_SAFE_TRUSTED(struct path) {
->             struct dentry *dentry;
->     };
-> 
-> In check_ptr_to_btf_access(), the branch taken for
-> is_trusted_reg(env, reg) || is_rcu_reg(reg) applies type_is_trusted() and
-> sets PTR_TRUSTED on a safe-trusted field even when the base pointer is only
-> MEM_RCU.
-> 
-> So loading the dentry field of a lockless position yields a plain
-> PTR_TRUSTED dentry.  It does not keep MEM_RCU, so
-> invalidate_rcu_protected_refs() leaves it alone at bpf_rcu_read_unlock().
-> 
-> The safe-trusted rule for struct path assumes the path pins its dentry.  That
-> holds for the referenced variant, but the lockless walk takes no reference on
-> the dentry, and an ancestor's lifetime is not tied to the original path once
-> a concurrent rename moves the descendant.
-> 
-> After the program leaves the RCU read-side section, could a sleepable kfunc
-> that takes a trusted dentry (the xattr kfuncs in this set, for example) be
-> handed a dentry that has neither a reference nor RCU protection?
-> 
-> Would it work to keep MEM_RCU on fields loaded from a MEM_RCU struct path
-> (for example by applying the struct path safe-trusted rule only to trusted
-> bases), or to avoid exposing struct path as the return type of the lockless
-> iterator?  A negative selftest showing that such a load is rejected would
-> also help.
-This feedback was repeated several times, and it's real (missed this).
-I assumed that the RCU characteristic would propagate, but it does not.
-
-Basically the issue is that the dentry is trusted even if the path is
-under rcu, so it can be stored and becomes a UAF outside the rcu
-critical section for RCU walks.
-
-Two ways this can be handled:
-
-1. Don't mark the dentry as trusted. (patch 4) 
-This is the simplest fix, but limits the utility of this patchset
-as you couldn't use the dentry for kfuncs expecting trusted dentry args,
-including the xattr kfuncs.
-
-2. Propagate MEM_RCU for a __safe_trusted field reached from a MEM_RCU
-base. (as stated in the above suggestion)
-
-More invasive and affects existing BTF definitions. I'd have to dig
-more into this to see what this would affect.
-
-...
-
-Leaning towards 1. 2 can be a follow up series without breaking
-compatibility (path* equivalents of the dentry* kfuncs would work too).
-But if it's desired I can try 2.
-
-> 
-> [ ... ]
-> 
-> > + * Return: 0, -%ENOENT if the lockless iteration was not on a position, or
-> > + * -%ECHILD if it lost the race to acquire one; %BPF_PATH_ANCESTORS_RETRY is
-> > + * then also flagged, and the program has reached no conclusion about the
-> > + * ancestry.  @it__uninit is initialized whatever this returns, so a program
-> > + * need not branch on the result: a walk that could not be escalated simply
-> > + * yields no position.
-> > + */
-> > +__bpf_kfunc int
-> > +bpf_path_ancestors_legitimize(struct bpf_iter_path_ancestors *it__uninit,
-> > +			      struct bpf_iter_path_ancestors_rcu *rcu_it__iter)
-> > +{
-> > +	struct bpf_path_ancestors_kern *rcu_kit = (void *)rcu_it__iter;
-> > +	struct bpf_path_ancestors_kern *kit = (void *)it__uninit;
+> > @@ -8363,8 +8386,16 @@ static int process_iter_arg(struct bpf_verifier_env *env, struct bpf_reg_state *
+> >  	t = btf_type_by_id(meta->btf, btf_id);
+> >  	nr_slots = t->size / BPF_REG_SIZE;
+> >  
+> > -	if (is_iter_new_kfunc(meta)) {
+> > -		/* bpf_iter_<type>_new() expects pointer to uninit iter state */
+> > +	/*
+> > +	 * Whether this argument is the iterator the call initializes, rather
+> > +	 * than an initialized one it operates on.
+> > +	 */
+> > +	init = is_iter_new_kfunc(meta) ||
+> > +	       is_kfunc_arg_iter_init(meta, arg,
+> > +				      &btf_params(meta->func_proto)[arg]);
 > > +
-> > +	/* A zeroed walk makes destroying the iterator a no-op. */
-> > +	memset(kit, 0, sizeof(*kit));
-> > +	kit->step = 1;
-> > +
-> > +	/* Drained, or already failed: nothing to hand over. */
-> > +	if (rcu_kit->step)
-> > +		return -ENOENT;
-> > +	if (!vfs_walk_handover(&kit->aw, &rcu_kit->aw)) {
-> > +		rcu_kit->step = -ECHILD;
-> > +		return -ECHILD;
-> > +	}
-> > +	kit->step = 0;
-> > +	return 0;
-> > +}
+> > +	if (init) {
+> > +		/* expects a pointer to uninit iter state */
 > 
-> When the lockless iteration had already failed with -ECHILD, or when
-> vfs_walk_handover() fails, @it__uninit is left with step == 1.  That is the
-> same state as a referenced walk that has passed the real root, so
-> bpf_iter_path_ancestors_next() returns NULL and bpf_path_ancestors_pos_flags()
-> on that iterator returns 0.
+> [Severity: Medium]
+> Is there a risk of bypassing verifier initialization checks if a BPF program
+> passes aliased registers for these arguments?
 > 
-> The documented contract of bpf_iter_path_ancestors_next() says NULL comes
-> "once the walk has passed the real root - or on an allocation failure ...
-> reported as NOMEM", so a lost race reads as a completed walk.  The kernel-doc
-> above also tells programs they "need not branch on the result".
+> When check_func_args() evaluates kfunc arguments sequentially, an __uninit
+> argument will set init to true here, and process_iter_arg() will immediately
+> mark the stack slots as initialized via mark_stack_slots_iter().
 > 
-> Can a policy program that follows that advice and only inspects the resumed
-> iterator treat a lost race as a finished ancestry walk with no match?
-> BPF_PATH_ANCESTORS_RETRY is flagged only on the lockless iterator, which has
-> to be destroyed before the resumed iteration can run.
+> If a subsequent __iter argument to the same kfunc aliases those exact same
+> stack slots, its is_iter_reg_valid_init() check will incorrectly pass because
+> the previous argument just marked them as initialized. This could allow
+> uninitialized stack memory to be passed where an initialized iterator is
+> expected.
 > 
-> Would setting kit->step = -ECHILD on the destination in both failure paths
-> work?  Stepping would still stop (step != 0), the zeroed walk would keep
-> destroy a no-op, and bpf_path_ancestors_pos_flags() on the resumed iterator
-> would report BPF_PATH_ANCESTORS_RETRY.
+> While this is mitigated in this patch series because the newly introduced
+> kfunc uses different BTF types for its iterators (causing the bypass to fail
+> strict BTF ID checks), does this structure need to be fixed to prevent future
+> issues when kfuncs use matching iterator types?
 > 
-> Separately, when the source had already lost a race, the first check returns
-> -ENOENT rather than -ECHILD, which conflicts with the kernel-doc describing
-> -ENOENT as "not on a position".
+> Should state modifications like mark_stack_slots_iter() be deferred until
+> all arguments are successfully validated, similar to how
+> ARG_PTR_TO_UNINIT_MEM is handled?
 >
-This is also real, just forgot to add kit->step = -ECHILD on the failure
-paths. ~2 lines.
+I can't think of a case where someone would try to make an iter transform 
+kfunc like this with the same BTF types for the args. So this is a
+theoretical nothingburger bug for a theorectical weird kfunc.
+
+Not actioning this for now.
 
 Justin
+> >  		if (!is_iter_reg_valid_uninit(env, reg, nr_slots)) {
+> >  			verbose(env, "expected uninitialized iter_%s as %s\n",
+> >  				iter_type_str(meta->btf, btf_id), reg_arg_name(env, argno));
 > 
-> ---
-> AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-> 
-> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/37395354107
-
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261006002020.2890858-1-utilityemal77@gmail.com?part=10
