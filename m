@@ -1,172 +1,134 @@
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1B7411F9D
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 20:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0DF3C872B
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 20:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791405776; cv=none; b=D5evqFIQ+6MGT2mKC+VUaGPuU++tnfidoqxyVz6xAo0EhJ++3+5DhHKnWf0783i55Izc2vUfh5xfynGH4EGUAdf1XmCBZ/xlXjm/0A99C0yWdd6DN4sVpULsrJKjfO80Bl7E83bvlhLz6MGsfaLY2kluzEA6w8k3Hg+4XUZi5vk=
+	t=1791405934; cv=none; b=tcYjGP9hKS7WOU+KAskABDfJMvDux6KMw79dz2sUpBvJHShD3qMhdptEcf28bgQHL3Thl+Uv5Y0G8R6hnuSZasblZO3k/gmsKT80jgTrGjOYkwenJh5aV8ZhbnGg1ZuWeWstKAw/3CcB1B+kNI/1SpNH8Qo7TiW9yLBwIEVDXh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791405776; c=relaxed/simple;
-	bh=qcrvjeZJeNSTn9Fz8mvN7hQmR3JSJ7hXiLENlRyYO9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I/3NpPxLUqQG8BFCR6S8JKuq2jzF8xkG6HP8wmST5Aqft/4dTLiqf1Ql6FfCo0lc0oaEzgGDWxLaGJSIUFKHGXvEBrPWb54RiL+Kae+k7E7eNiR386uPc498vwRgUHhKAmJw/ruNnPcRNrX1tq6NdeIGq0IzYiAZcTRKYciiXOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=trailofbits.com; spf=pass smtp.mailfrom=trailofbits.com; dkim=pass (2048-bit key) header.d=trailofbits.com header.i=@trailofbits.com header.b=VhwGenem; arc=none smtp.client-ip=74.125.82.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=trailofbits.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trailofbits.com
+	s=arc-20240116; t=1791405934; c=relaxed/simple;
+	bh=XklnFHmbHQS7VZkDuG150iHCHuym7kKaiF9qMmPfxWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ijjtJN9BfWnDjnbdXsQ3IIuPujox3cjWwu8d/If9UOrV1hdJY/UN4DF8mfGdIKXSxTFYZs8uHKvHqWu88+atuqGIdSHe4xdjh69DZMqROQnoiPV4GXwvZrY1ytta6Gb15ezeM1Rjwukc6yJNhA8eziEQs7ocZgou2MCiqHzHqaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGDn3ug8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=trailofbits.com header.i=@trailofbits.com header.b="VhwGenem"
-Received: by mail-dl1-f47.google.com with SMTP id a92af1059eb24-14394530ec6so2288980c88.1
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Oct 2026 13:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=trailofbits.com; s=google; t=1791405773; x=1792010573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=aWyewnJ/gWz839fiiYscHDhAW+308Oy+O5Fj0veyk7Y=;
-        b=VhwGenemPVKHfXNyFOpuH2EVRsR0zGQZwpRahxi+WfPxdaTTfDBbw8BGHe2jTyLsTq
-         zLXluYYsJcYRXOFZyr3yhA9u79ao79LdwfBJX5SuNZvOaz8GDbkAfPnRX1HOcSe4off3
-         oJJDqXvaznaVZ9Q7FuOfQ7oPEVRhUJ/f0M5XFUs3+K0m+5PpCy50VFzxJY61nIbauSo0
-         dIOBHoFQivF8ivpuODq2hiCP4JIhS69xxdCKKh3bFnYtlWSI7GTiiasLrlDaslEo0d11
-         rHOTdL2D9vyGlEQxRL3rcYi4h+hwY0M+XJrL8oVaGV2KrNt2wc+ECf7HBuIUbVN1Kr8m
-         o8mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791405773; x=1792010573;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=aWyewnJ/gWz839fiiYscHDhAW+308Oy+O5Fj0veyk7Y=;
-        b=Db676E4XxDvoS8KAv1gw5pSJj+8rn3PhAfyFKbuG9SvKFUxO8Gd2leZmhbc7MLMCHr
-         hejUbRaLf9v5q612ld3Z/XUq2D6hPQmiOKsh0QKdhoCtLrMfc9WllYS3JpCJeowH2HWQ
-         /NbgtyUzuIDod5EgSIJphgZqVvaOBSlq61v9mvms1/v5GxFtVKUQnIt3kzjevR0fYPs4
-         JqoQXXb6Z8GfqG/hIWXaAnAf5PQzJhP1DuI/VwfNQU6o0vg/TxYxiCQo5poTqj15b8Mc
-         NwpS9bzNog3J2LEEXEq0oF5Az9niMjIa2YuunetDdstVRj//9VjY8sny4shx7Bg9WXam
-         4FDA==
-X-Forwarded-Encrypted: i=1; AKwUvBzLzAjc/8bMKWH1tAWOq+RzghMqHXDuyHEKNYFfAE44caPU2YTDkyDruBqqI0zFAUHdQAT8IqM5HG+tn3hI518IjxAyWMs=@vger.kernel.org
-X-Gm-Message-State: AFuF++lCItfLF36/z1UryOnezppchivDC4dFnTaqlAxdSI52MyVxW7GF
-	0/gv/nDrfVqZ7196wJL+iRpdFJ/jKzPESBCzNUKaPgUxdfXP9f66MjEy95i06cTF640=
-X-Gm-Gg: AYBFou19ASuplONjhAhO2sBTqTgZ1aIftujH2K+xItMm8gvv8H3sPT64/iZBb9EfuiL
-	914NmbKpy5skUlIltxWQ4ptAm+H4EVFwzoBzp/s37Ibu8azM9cf/m/ztV2iTUrfzT0UhDt8H7wV
-	R27LYIl8LLQCckw9ErL2ww5i8fX+cqKUboFAp3gexlhngncU1hKaOXpqdmiSVQjqxIwzG/R0Hjq
-	u5xoP7gfH+bxEqvikC7BTepAl7093yNoNjmjRTavaz+HDMnQLf/YpN41DIMxaKXWQ1B0iC3xw2u
-	C+1t7ctvCIf4Zbmf6YxmpJSLlIMOy9BJjbJw6a48w3swLXJNfzD8rFlYyy6TzpR30e4dchHRcF1
-	TjrTcKsaEknIhhcetIwvDchId4RVm47LKwx+bX4b1QKPHv7hHPOvob4ZILLIZMhH0961tRQNghM
-	kpsRORJjG1zYyqCwBGH9ic64Zl4Tc2WrDMHX1BTK1hRbNg3fLQ1aE+9i4xf0zTv2Nz/Css88OlS
-	zHMvWXKFYwwZx3FO9iqXtPpQl98AcnEA5ZPqvEuy3T0nDHrCaFs8U3kRHbOj8waQTQ0GG8=
-X-Received: by 2002:a05:701b:241a:b0:152:92c6:8b10 with SMTP id a92af1059eb24-16208ebdcd2mr3213456c88.45.1791405773303;
-        Wed, 07 Oct 2026 13:42:53 -0700 (PDT)
-Received: from localhost.localdomain ([2603:8001:5f01:8bab:7854:1520:fd4f:2a94])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-16167ef2e54sm7586938c88.10.2026.10.07.13.42.52
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 07 Oct 2026 13:42:52 -0700 (PDT)
-From: Artem Dinaburg <artem@trailofbits.com>
-To: stable@vger.kernel.org
-Cc: Artem Dinaburg <artem@trailofbits.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Helge Deller <deller@kernel.org>,
-	Helge Deller <deller@gmx.de>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Georgia Garcia <georgia.garcia@canonical.com>
-Subject: [PATCH 6.6.y 2/2] apparmor: Fix & Optimize table creation from possibly unaligned memory
-Date: Wed,  7 Oct 2026 16:42:23 -0400
-Message-ID: <20261007204226.47033-3-artem@trailofbits.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261007204226.47033-1-artem@trailofbits.com>
-References: <20261007204226.47033-1-artem@trailofbits.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGDn3ug8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65AB21F00899
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 20:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791405933;
+	bh=vH1JfG3bndKx8TMAH3C7J9XtsPB7MG47a4kraAsYAVA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=SGDn3ug8Ut0TqoATGFX6VVPqLPozQOAOEtm1SFimcttB2+db5sxEUbAo2zQmFXREW
+	 U+ArjwD5yt7tVJdeTFk8haRWsPZh4CDfRwnYlFm4jQ/NPEzizFK1ylZppRcO02k1zt
+	 GgdboDvL+mXpNQksyJNkVu1hUtPJyGiNJFGUyfODolz/zIhpawuTOpkjANksLESxPX
+	 pwAP9+B/6gi5LlHxeU9dXGQ/IUOfoofBBqfz5t4wmj0EzPlleebel/NTebsuKkA+TH
+	 dyHER3vJFzom+r6OpfOV/2Jyj79L85KNi8LvPWSktViRY/yN5MMDmSrkOYu0TLIuTk
+	 zOZcu8jBlaCTQ==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-48e94879f02so897398fac.0
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Oct 2026 13:45:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw3XDvvZqHApK3gN3vD7ExKQgFva3S+frtIb19G1aoRLLmRgewof/Hcs5IhtfqnWBzr3rPzkQXYPBFT3j/8s9fbHfgPors=@vger.kernel.org
+X-Gm-Message-State: AFuF++mi92uXmjCn6ygYiB9KD2qmbO51GSIa5GziK8Tnsgw2T+5kE2Zw
+	sx1uhd+KyTr3Jpf7JMeHPQfEo50HbAbjZ3+QCjSNOdZ9zQeVuJ1gcNWAAPXFKwt9ePWjnizbqDW
+	jjc3nBtjb1zHnZG78aWT3bFjUFvplKTE=
+X-Received: by 2002:a05:6870:891d:b0:48f:e0f6:c45e with SMTP id
+ 586e51a60fabf-4a2596a2130mr3260410fac.44.1791405932610; Wed, 07 Oct 2026
+ 13:45:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <179138670045.80227.16292613517250896744@gmail.com>
+In-Reply-To: <179138670045.80227.16292613517250896744@gmail.com>
+From: Eric Dumazet <edumazet@kernel.org>
+Date: Wed, 7 Oct 2026 22:45:21 +0200
+X-Gmail-Original-Message-ID: <CAL4WiirbJrQThGS4BUo=a=AV9ckJk2AyedO8AgJgozjHOwu5Vw@mail.gmail.com>
+X-Gm-Features: AclHuK_2K5aXaZQQbDLyAem3QMNCwXVR5Lav3TazV6a0LVSPtYk80Kv8XKrwBkg
+Message-ID: <CAL4WiirbJrQThGS4BUo=a=AV9ckJk2AyedO8AgJgozjHOwu5Vw@mail.gmail.com>
+Subject: Re: [PATCH net] calipso: update payload_len when removing the CALIPSO option
+To: Joas Antonio dos Santos <joasantonio108@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Alice Mikityanska <alice.kernel@fastmail.im>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Helge Deller <deller@kernel.org>
+Le mer. 7 oct. 2026 =C3=A0 17:26, Joas Antonio dos Santos
+<joasantonio108@gmail.com> a =C3=A9crit :
+>
+> calipso_skbuff_delattr() removes the CALIPSO option from the hop-by-hop
+> extension header, or the whole extension header if CALIPSO is its only
+> option, and pulls the skb by the removed length.  It never updates
+> ipv6hdr->payload_len, so after a successful removal the header still
+> claims the original length.
+>
+> calipso_skbuff_setattr() already adjusts payload_len by the length it
+> adds; the delete path was missed.
+>
+> This is reached on the forward path when a packet carrying CALIPSO is
+> sent to a destination mapped to an unlabeled NetLabel domain.  The
+> forwarded packet then has a payload_len larger than its real payload
+> by the removed length (8 to 264 bytes), and the receiver drops it as
+> truncated.
+>
+> Adjust payload_len after the header is moved.
+>
+> Fixes: 2917f57b6bc1 ("calipso: Allow the lsm to label the skbuff directly=
+.")
+> Signed-off-by: Joas Antonio dos Santos <joasantonio108@gmail.com>
+> Assisted-by: Claude:claude-opus-5-5
+> ---
+> Found by code review.  Compile-tested only (arm64, W=3D1); not runtime-te=
+sted.
 
-[ Upstream commit 6fc367bfd4c8886e6b1742aabbd1c0bdc310db3a ]
+The analysis looks right to me, but this means removing the label on
+the forward path has been broken since 2016 for every packet that is
+not resegmented later (SYN, UDP, ICMPv6...).
 
-Source blob may come from userspace and might be unaligned.
-Try to optize the copying process by avoiding unaligned memory accesses.
+For a patch targeting net and stable, we would really like to see it
+exercised at least once. Please run a forwarding setup with an
+unlabeled destination (the NetLabel tests in selinux-testsuite could
+be a starting point) and describe what you tested in the changelog.
 
-- Added Fixes tag
-- Added "Fix &" to description as this doesn't just optimize but fixes
-        a potential unaligned memory access
-Fixes: e6e8bf418850d ("apparmor: fix restricted endian type warnings for dfa unpack")
-Signed-off-by: Helge Deller <deller@gmx.de>
-[jj: remove duplicate word "convert" in comment trigger checkpatch warning]
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Assisted-by: LLM
-Signed-off-by: Artem Dinaburg <artem@trailofbits.com>
----
-This is patch 2 of 2 in the ordered 6.6.y backport series.
-This change addresses CVE-2026-45893. The userspace policy blob may be
-unaligned, so typed __be16 and __be32 array loads can fault.
-The source diff is identical to upstream. 
+>
+>  net/ipv6/calipso.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+> index c6a34334e..c072eca50 100644
+> --- a/net/ipv6/calipso.c
+> +++ b/net/ipv6/calipso.c
+> @@ -1428,6 +1428,9 @@ static int calipso_skbuff_delattr(struct sk_buff *s=
+kb)
+>                 skb_pull(skb, delta);
+>                 memmove((char *)ip6_hdr + delta, ip6_hdr, size);
+>                 skb_reset_network_header(skb);
+> +               ip6_hdr =3D ipv6_hdr(skb);
+> +               ip6_hdr->payload_len =3D
+> +                       htons(ntohs(ip6_hdr->payload_len) - delta);
 
-The fix is already present in 6.12.y, 6.18.y, and 7.2.y, but not in 6.6.y.
-This fix also affects 6.1.y, which will need a separate backport; this
-submission contains only the 6.6.y patch.
+This is not correct for BIG TCP.
 
- security/apparmor/include/match.h | 12 +++++++-----
- security/apparmor/match.c         |  7 +++----
- 2 files changed, 10 insertions(+), 9 deletions(-)
+GRO can aggregate TCP packets carrying identical extension headers,
+and ipv6_gro_complete() uses ipv6_set_payload_len(), which stores 0
+when the packet is bigger than IPV6_MAXPLEN.
 
-diff --git a/security/apparmor/include/match.h b/security/apparmor/include/match.h
-index a86f74b59360..14c0401f97c1 100644
---- a/security/apparmor/include/match.h
-+++ b/security/apparmor/include/match.h
-@@ -102,16 +102,18 @@ struct aa_dfa {
- 	struct table_header *tables[YYTD_ID_TSIZE];
- };
- 
--#define byte_to_byte(X) (X)
--
- #define UNPACK_ARRAY(TABLE, BLOB, LEN, TTYPE, BTYPE, NTOHX)	\
- 	do { \
- 		typeof(LEN) __i; \
- 		TTYPE *__t = (TTYPE *) TABLE; \
- 		BTYPE *__b = (BTYPE *) BLOB; \
--		for (__i = 0; __i < LEN; __i++) { \
--			__t[__i] = NTOHX(__b[__i]); \
--		} \
-+		BUILD_BUG_ON(sizeof(TTYPE) != sizeof(BTYPE)); \
-+		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) \
-+			memcpy(__t, __b, (LEN) * sizeof(BTYPE)); \
-+		else /* copy & convert from big-endian */ \
-+			for (__i = 0; __i < LEN; __i++) { \
-+				__t[__i] = NTOHX(&__b[__i]); \
-+			} \
- 	} while (0)
- 
- static inline size_t table_size(size_t len, size_t el_size)
-diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-index 19b44e705b26..0a3307cd4107 100644
---- a/security/apparmor/match.c
-+++ b/security/apparmor/match.c
-@@ -67,14 +67,13 @@ static struct table_header *unpack_table(char *blob, size_t bsize)
- 		table->td_flags = th.td_flags;
- 		table->td_lolen = th.td_lolen;
- 		if (th.td_flags == YYTD_DATA8)
--			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
--				     u8, u8, byte_to_byte);
-+			memcpy(table->td_data, blob, th.td_lolen);
- 		else if (th.td_flags == YYTD_DATA16)
- 			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
--				     u16, __be16, be16_to_cpu);
-+				     u16, __be16, get_unaligned_be16);
- 		else if (th.td_flags == YYTD_DATA32)
- 			UNPACK_ARRAY(table->td_data, blob, th.td_lolen,
--				     u32, __be32, be32_to_cpu);
-+				     u32, __be32, get_unaligned_be32);
- 		else
- 			goto fail;
- 		/* if table was vmalloced make sure the page tables are synced
--- 
-2.39.5
+For such a forwarded packet, the above would write
+htons(65536 - delta), and ipv6_payload_len() would no longer fall
+back to skb->len. nf_tables, conntrack and sch_cake rely on it.
+
+Something like this instead:
+
+ip6_hdr =3D ipv6_hdr(skb);
+/* BIG TCP packets have payload_len =3D=3D 0 */
+if (ip6_hdr->payload_len)
+be16_add_cpu(&ip6_hdr->payload_len, -delta);
+
+calipso_skbuff_setattr() has the same issue with its
+htons(payload + len_delta), this can be addressed in a separate patch.
+
+Thanks.
