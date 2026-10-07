@@ -1,169 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF38B47D93E
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0020A49158D
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 15:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791368592; cv=none; b=NhdUlDi7v/E+k3cOhPAZcVhzHko2kJVB7+AHHw23qE4MKxAzwORAMS98UkijX56tczkkyYwLAh9nB8NVW77JRg16R6QXnAuSn+qFjpKRyHVIPtiQp1aFcoLhxMX7Nmfp8yXTIgMWfMmhMJHxccUjFlwYS94Gag6i910UtIXIS2s=
+	t=1791386599; cv=none; b=EcxnsShJnZqndJe73l6fyoQm24N5SJOWKwIclhnr2UPuUqu1tIBBybgGQEl8f7bLjr8iiheKqrjMOubPRbCLT+dx0ttGpjhOXLVMAOo7rjc08JMv2nvCpOMDhJo8r1ov61Anex8ikbQyWyGpQxHE/ycOanhTJGL8tMS4T7abUVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791368592; c=relaxed/simple;
-	bh=7LXa9jAIWaJicEpLRNDp2oa9EShQMNavouOLnu8HwHY=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=Z2t26fghDNpdQasjJDHajgbEPdW1CFb//Tw1rJgWA0bqIJCR5UngVb+iCp3xG/vy/56XpmsP/PjZRAL1ij9mAgEP3SiwbOVuPYNRoK0vw0M2AEH27IB3GuXlKZC+vMjeVoIhwVA1+UfrBJxYD2hHusnrNK0zieC683x8tL2M+nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkpPlKNG; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkpPlKNG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619281F0089B
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791368582;
-	bh=uZ7xKmnQCKm8x9X1CiEV8/ykCfkQxlE7KqUe5JID2EE=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=IkpPlKNGx5L/G8Ttnw0DBxHt2F4vNBFETdBxM57aCbX8w/0gCkw+2JLgA7M3/bX5O
-	 w7lDcVMlp/oCIiChPVXbmVVx0p+fKVAnEZw9us8pRivgIOcl5DHQ3i9lL9gDNCLBPI
-	 Zoz79705zBcPMmwp9OuEQ3ohofAA+4FqCoEzCnb8mdNobPgBy0wJV2N/aMvXqRMYX1
-	 KhI2NRUCrAZRiO9VVT72wjfdpa9x7gtrgb1O4tObipp3E3O9Orj0h0UqzD4BfQTSs1
-	 E2jhM8zq9ognGHDVKI7pBzwgmNkfXjTHRS9pI+2rk/FMwIUawiheIVHNDTycfg7J/D
-	 CKSiDXEBGb7TA==
-Message-ID: <sashiko-outbox-162856@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 5/8] selftests/landlock: Add namespace restriction
- tests
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261007100255.1333386-6-mic@digikod.net>
-References: <20261007100255.1333386-1-mic@digikod.net>
- <20261007100255.1333386-6-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 07 Oct 2026 10:23:01 +0000
+	s=arc-20240116; t=1791386599; c=relaxed/simple;
+	bh=GFKQAZKlyiSGFkpFpEpvWJ0JU6emZfe4uUabjYweHdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=FF+TJZf8XihA1bxyJCAU1j14OJ6CeAHQi6uOaxWYMDsPcQYiH1igXl7h0XX1hBBXLWbTsEBWjOri7Jf7mXT8+eBx3eYLXl4IsnJ9lJWKlNa++eNUMZnjssK5mqJXNyxQ/4p1GqiuA5tnJGMr0K7cvc0cit0dMJEg4nGGe5jUYVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 697FMVdv042115;
+	Thu, 8 Oct 2026 00:22:31 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 697FMURA042078
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 8 Oct 2026 00:22:31 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <100e7540-6918-4b48-99ba-9e96ab7706c4@I-love.SAKURA.ne.jp>
+Date: Thu, 8 Oct 2026 00:22:27 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ smack_inode_permission (4)
+To: syzbot <syzbot+fc1d5d9a7ebabbc27458@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, jfs-discussion@lists.sourceforge.net
+References: <6ac1be3e.9ad129c8.3858c0.0025.GAE@google.com>
+Content-Language: en-US
+Cc: casey@schaufler-ca.com, jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        serge@hallyn.com
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <6ac1be3e.9ad129c8.3858c0.0025.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav114.rs.sakura.ne.jp
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [Medium] selftests: Build failure due to missing AT_RECURSIVE macro defin=
-ition
-- [Low] selftests: Missing clear_cap() for CAP_SYS_CHROOT in combined_cap_n=
-s test
-- [Low] selftests: is_in_init_user_ns() misidentifies user namespaces in un=
-privileged containers
---
+C repro is at https://syzkaller.appspot.com/ai_job?id=35b0b5a6-7e19-40a7-af3b-871da805fc98
 
-commit aa1731ea4300b766831441aec03fce370fdad94e
-Author: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+#syz set subsystems: jfs
 
-selftests/landlock: Add namespace restriction tests
-
-Add tests covering LANDLOCK_PERMISSION_NAMESPACE_USE (namespace creation
-via unshare/clone and namespace entry via setns) and its interaction
-with LANDLOCK_PERMISSION_CAPABILITY_USE.
-
-> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/se=
-lftests/landlock/common.h
-> --- a/tools/testing/selftests/landlock/common.h
-> +++ b/tools/testing/selftests/landlock/common.h
-> @@ -130,6 +130,29 @@ static void __maybe_unused clear_ambient_cap(
->  	EXPECT_EQ(0, cap_get_ambient(cap));
->  }
-> =20
-> +/*
-> + * Returns true if the current process is in the initial user namespace.
-> + * Compares the readlink targets of /proc/self/ns/user and /proc/1/ns/us=
-er.
-> + */
-> +static bool __maybe_unused is_in_init_user_ns(void)
-> +{
-[ ... ]
-> +	if (self_len !=3D init_len)
-> +		return false;
-> +
-> +	return memcmp(self_buf, init_buf, self_len) =3D=3D 0;
-> +}
-
-[Severity: Low]
-Is it possible for this check to misidentify the initial user namespace when
-running in an unprivileged container?
-
-In a container with its own PID namespace, PID 1 refers to the container's
-init, which shares the container's user namespace. This causes the function
-to incorrectly return true.
-
-This can result in the test proceeding and attempting host-only operations:
-
-> diff --git a/tools/testing/selftests/landlock/ns_test.c b/tools/testing/s=
-elftests/landlock/ns_test.c
-> new file mode 100644
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/ns_test.c
-[ ... ]
-> +FIXTURE_SETUP(ns_audit)
-> +{
-> +	ASSERT_TRUE(is_in_init_user_ns());
-> +
-> +	disable_caps(_metadata);
-> +
-> +	set_cap(_metadata, CAP_AUDIT_CONTROL);
-> +	self->audit_fd =3D audit_init_with_exe_filter(&self->audit_filter);
-> +	EXPECT_LE(0, self->audit_fd);
-
-If the environment is misidentified, audit_init_with_exe_filter() will fail
-with a misleading -EPERM error instead of explicitly failing the environment
-check or skipping the test cleanly.
-
-[ ... ]
-> +TEST(combined_cap_ns)
-> +{
-[ ... ]
-> +	/* CAP_SYS_ADMIN use allowed by capability rule. */
-> +	set_cap(_metadata, CAP_SYS_ADMIN);
-> +	EXPECT_EQ(0, sethostname("test", 4));
-> +	clear_cap(_metadata, CAP_SYS_ADMIN);
-> +
-> +	/* CAP_SYS_CHROOT denied (not in allowed capability rules). */
-> +	set_cap(_metadata, CAP_SYS_CHROOT);
-> +	EXPECT_EQ(-1, chroot("/"));
-> +	EXPECT_EQ(EPERM, errno);
-
-[Severity: Low]
-Should clear_cap(_metadata, CAP_SYS_CHROOT) be called after this check to
-avoid leaving the capability unintentionally active for the remainder of the
-test?
-
-[ ... ]
-> +TEST_F(ns_mount_fd, open_tree_clone)
-> +{
-[ ... ]
-> +	set_cap(_metadata, CAP_SYS_ADMIN);
-> +	fd =3D sys_open_tree(AT_FDCWD, "/",
-> +			   OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC | AT_RECURSIVE);
-
-[Severity: Medium]
-Will this fail to compile on older distributions due to a missing
-AT_RECURSIVE definition?
-
-sys_open_tree() is called with the AT_RECURSIVE flag, but the file includes
-<fcntl.h> instead of the kernel's <linux/fcntl.h>. Older glibc versions do
-not define AT_RECURSIVE in their userspace headers.
-
-Without an explicit fallback definition or an inclusion of <linux/fcntl.h>,
-compiling these selftests could result in an 'AT_RECURSIVE undeclared' erro=
-r.
-
-This also applies to the usage in open_tree_namespace:
-
-> +TEST_F(ns_mount_fd, open_tree_namespace)
-> +{
-[ ... ]
-> +	set_cap(_metadata, CAP_SYS_ADMIN);
-> +	fd =3D sys_open_tree(AT_FDCWD, "/",
-> +			   OPEN_TREE_NAMESPACE | OPEN_TREE_CLOEXEC |
-> +				   AT_RECURSIVE);
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261007100255.1333=
-386-1-mic@digikod.net?part=3D5
+On 2026/10/04 11:47, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    ce1e0223d8ad Merge tag 'devicetree-fixes-for-7.3-2' of git..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12555b15580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=718e346eb0b8f38
+> dashboard link: https://syzkaller.appspot.com/bug?extid=fc1d5d9a7ebabbc27458
+> compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/4167e1ad25c1/disk-ce1e0223.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a0a74c8dec59/vmlinux-ce1e0223.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/f6caa72edd70/bzImage-ce1e0223.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+fc1d5d9a7ebabbc27458@syzkaller.appspotmail.com
+> 
+> ERROR: (device loop4): jfs_readdir: JFS:Dtree error: ino = 2, bn=0, index = 3
+> ERROR: (device loop4): jfs_readdir: JFS:Dtree error: ino = 2, bn=0, index = 5
+> ERROR: (device loop4): jfs_readdir: JFS:Dtree error: ino = 2, bn=0, index = 6
+> Oops: general protection fault, probably for non-canonical address 0xdffffc018bd1a30b: 0000 [#1] SMP KASAN PTI
+> KASAN: probably user-memory-access in range [0x0000000c5e8d1858-0x0000000c5e8d185f]
+> CPU: 1 UID: 0 PID: 5607 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
