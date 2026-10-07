@@ -1,74 +1,74 @@
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6EE2AD35
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 15:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F5F4B44BD
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 15:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791386762; cv=none; b=CupsCsfYaZcLOfv8lEn0eEHr5tchRAhU655ms2bfsFbNljieilOWzKOOqlI+7HFFgIVyeg8bh50t0NCQ6+3lMyfrviXpl/dUfA7um5RB65j0chU51FX07Mv6/uGXB3U5+l5m33T6DLHRb8MsZ9IddjJZ59q2P5voltpnpcRlFig=
+	t=1791386765; cv=none; b=FKuGRK0q/2+mA9Hkb/jrYUuUdcK1bzuaX8bvguy0z6SwGCT9US1wdReGqi/7hhpilvddVx2ALHmEO4XJHTE3F9MESXoykEWomwiN60vUqS6Ajfj+YtS8Lqsxg58L/CekfFQwHzg7rn2L9dZkCqvJqCQJnXVBO7MX0CuruRkETco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791386762; c=relaxed/simple;
-	bh=tvemIKvYgfbYm7QKksQYum/A3YjRyh2EfYOVMIXdi2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=k+WnlaP01L7U18ao+6cHL+xMrhm+7YVUr7QsnSCSbaQDOrutUUjR3s+n2z3c+zQTgxGv2AW2h+xHf/5X2yqzicgnvreHJiL4iIh7Jaeoluam7f4osuthDIxddgvD2fP4AEQ+fQwYkP1qlzeaGBoQS35Z24XC+8e0FFxwR2hejp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKhcFoLy; arc=none smtp.client-ip=74.125.82.179
+	s=arc-20240116; t=1791386765; c=relaxed/simple;
+	bh=N6Mwje/jk5LkEVovjy6c4cdZNQ2w3u+xqBwLIGCWajE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=O7/xelpzC1oXJSCOlWHQ8kh+Uqw7bnup7G8PE/WgsSEtNqqlp4kM21oH866+Up0bZj5gAg5s+BAzSLJDzLHc9f3NMC2/zOUXQoeAJ8fKA8Aac0LunOb2EnY0x3GQx2qPJvpsXlexGEMJ2c+WuZWQLCpMh8Qk+Lh2y7JIsdLrdL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEanHDDi; arc=none smtp.client-ip=74.125.82.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKhcFoLy"
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-35120d43ecaso6247502eec.1
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Oct 2026 08:25:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEanHDDi"
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-34c89609923so2198842eec.1
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Oct 2026 08:26:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791386756; x=1791991556; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791386760; x=1791991560; darn=vger.kernel.org;
         h=mime-version:content-transfer-encoding:content-type:message-id:date
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=MQUOWsr9zvUEMbXYRqNDHSAxRDOWBUts+dm4K0R8YRE=;
-        b=iKhcFoLyFX5JHJEwk08FmbFHu1YBhJEui2yWzIyk9EdHWzhtiSGKvfzSFK9v2aKusE
-         YQDP6YO4qW5zzXLJ2MMVV39FeJHcFOQotK1osjLXeMvLxsLpn7vyogVJoNpwnN4IPlHC
-         J+WLcHY804/KnX2RFPJ50X7PeSuVIhj8G88/zPncaomZ9A+UfV1twTq0GQVK3xPVYy3y
-         2kw1FDjgSCwFyAQ1KITilvz1fvpTWmNJuczGnXpG1SMr8E9UKkngf04EWgCrlme2OUFk
-         XgTZg99GuBuIVoQdEwTlaQ272IFNy99j2BFQLMHhRonmTAkLC82er9YHc5DKScHGkVKA
-         E8wA==
+        bh=r5LK61z8EbTq0+O4wcf4iS1SXssqVs9NYokbeiW5mo0=;
+        b=jEanHDDidr2AKzdsrUJIbz9hKo5jLTF7kVZBSlW+WUK1C6G82M92J9HnKj1QDBB2Ud
+         6g0mqrvNw2LmFn7KrGKeGVLQvLrnszJdkc1c/7wdseCNPes3okO7N95OpnBAqYEWZoa4
+         y/R2M7jY9lZ/PqyH97cNmYICHqpC20VPqYcdS3vt+ZBruQ5VPm2qwAz2uiTrCZfF2Xoc
+         /I89uI5HWHeTdXRZTEBqp+OAfq8Xs5ujG0rgqnLT+qOzD2zulMWtQtBsHyXpu83x2I1N
+         udcXEBD7TsKjiEG2eNm9h5x/cPSM7JPIL8Kq5tvGQgdvH0FSXcbsaNfqdnyNfj3JYCSK
+         ijpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791386756; x=1791991556;
+        d=1e100.net; s=20260707; t=1791386760; x=1791991560;
         h=mime-version:content-transfer-encoding:content-type:message-id:date
          :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=MQUOWsr9zvUEMbXYRqNDHSAxRDOWBUts+dm4K0R8YRE=;
-        b=gnWH5vGzfqpDdt8CJgYN646ci7Hfm1hkq1u8N9yGeCRue4JXMQW+2GLIUsyY8ZwOVR
-         OGjewrdCDAWOckqn/D6Xc8FLjBYxm3nmWXfsoU+glxDGFBGFZARo/FBDwewcNV2JxWhn
-         ccc8xIyY/WBMQPZRlK9XqK5eXJOnDLu6U8xoegPHxv0FCfCqsBXf7LwEnCcgWy/euP9m
-         6OW28tD8kgqEppIFl5e6CCOg1RyMMdCks/0dTl6mvqQ+z5W84YYWzptB28Rp8ym10nqw
-         o9QYmmKmEgIKP/5jI1GQV5jqA6jg8ipmYH4E/vN/fT/7oA/LiCWixnJZgBxOKHEtGrwb
-         fklQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwRtvD4XzpCmrEsxAREeCF/4QYpoJ3GovKGvyCFkow+hZ+S+HznufGEb1BO9MiNtEhYRRF454EDz4svKSdzj9N6TCEar+w=@vger.kernel.org
-X-Gm-Message-State: AFq9FYL+B7IOhidh+bmPmsKJscELBHRJiKQM7NELjW48KzAHpkDQAqjE
-	YJn/gbJTzktU7vKnS7iPdQ7QILX2/e4Rxg3K/eknW/O7+WDGLS3oxCK9
-X-Gm-Gg: AYBFou1wb9yA6si79ZOIqW+YOXaXA7LOcjgwlr3ntgpiYgByN3dZmtNjTuNnTG2Hl6b
-	m6h65bd3GkCauSm7vOYiiqTIVgp+x2HzLpPDvB+INBTazUQTQNRUZ8ObEAtFy7+X8NwOvmXtcuq
-	yUF1bWd3zQzf49KueHwCyGtai5IOmItZirttl9M+ee0PzxHsD+WcFcGnNU9IH9gYDHJSwYjvEZr
-	CpZfoCVwdfVkBQT3pXh8UDFozR1N94tye143ahhT5XhO73oKYN+XDxc7xfLlufAEKyYLSp8jECl
-	CZO5rpDUK/aBQIu9Icf/o1kOsrUO7n5GO5gYy2vDfMmLR/KhAc4B0Z4KiruKin8iCMMqo1hmuI8
-	3sLdYocNHznTQpljuIUXxJlNDiZb6QKspDzTxeDudy6DBFU9t/yhKtovpDTZWwSZ9NuhMTEiNEt
-	bZ8xFQYat/Y+wm/Z2FyWtOd6sRVpU5VWhFXQ2M7Ycz6BNV0hvZgnRTXXpaYV/tBnp7BDw8ksXyl
-	lR4f4Q0bwt4HeHdXUWYnJd6MslpE5N4APQM7qXMCpzQgG2d33JZuleewzAzrqiKIxM+mFI1YY3k
-	LNPdh/V3kBtiUOOfiTQQZxAKzneevICu/l66odfLX3vGYz4S17uVsxfQ4WF5SP0=
-X-Received: by 2002:a05:693c:895c:10b0:34c:7e54:65e6 with SMTP id 5a478bee46e88-3515db9c59bmr2624192eec.5.1791386755664;
-        Wed, 07 Oct 2026 08:25:55 -0700 (PDT)
+        bh=r5LK61z8EbTq0+O4wcf4iS1SXssqVs9NYokbeiW5mo0=;
+        b=iiAU1hhgCfjB4/ScvGkl2irSKV1WBVyPm51omMWnHw2NqI3PQRxmt/skMJiZei3oCL
+         AeWMNYKR4EKkrNbyEwNq+2fO5Q4sL9GfOzzlZjI25IzRRAUOANriZOUiy2m2dOKHSIYW
+         I/aS4uaJbly+dbVJGRy1n9AWcFPJ/ugIYKkiq465lLfnEhzfaN8ASZ3sXSER8QXNdMze
+         GfQGzQwKX8p1kL+rDyuo0upXvfaYoshVUowcNIy1snZmgEUsnHYMmiANlMBLX/8or70k
+         rCV1R9hLd/gdWYGa/GYzwSuSjBbJhRwE8gUlHWSTt8AXniYtcUXQZy8fvTvYn6+4zWXo
+         laZg==
+X-Forwarded-Encrypted: i=1; AKwUvBwtZuoapWyhQOGDGWJUNi2vryY0EX+DMcg1LxE/687EJ97R/inJ7OjOC2KbqIfyN+UdIj7Xet0vS/dYy1fpzQGS0aXxumc=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLrvmRPXS4/5vrxGJ6Srahz3kioZXloSdO4miibM/6B7Mxvkrzz
+	jRQGVW+y1AiXQXgxmBo7984f4XDXDD3vQCuxLsoSSIslnmmC5EtxhAqp
+X-Gm-Gg: AYBFou0M0cYiI8I9apRlC82TtzJjPZpb91PBmvolV6Yz0zNxAg7lXNdVqJF//rohfQE
+	sJGM55cjmGd/ZY8hWL4y1iF4IUcF9XClbY2MS8o1noYxjR/TGM2hRQQ0FwQTu15UKW12VATZb4A
+	fCB/d6S2S2Gq7szP2oeuQ/COOkPfSdCOK7jmWKJV4b4E2Gy0Eeofs/okpyqRQ0T8aN4ZDoNlGpl
+	JR3cFumthdKOoqMqzjPJS7bJxrp3cBHteWIzrdZJhssKinT07JThyH7EMPMaeaeVJniHbI9A08W
+	QkVqS9GplmsyhzeBVcaZNt6DG8o8ExgJ7RO4rbuV6lvrSSD4ZoIHVz6M16oPSPpSu0zfAX+DoLt
+	aZwrCa2738dmrCLHVFp7bTSYe0eDhBCZZeyubRmHOqSI5FA6Sf/U49EOH7rEzDmvCHZIFmH0R1b
+	lKC2gFpHHdQI5mMC/nUQNinP4rA8DU3ZBQcRiYpJeS8v6M1Guk8LkNb6Q7kc7+pnJoEFGRbY9vF
+	TxwN9ZWNAuEbx7zjqtVJ75JOZvr331bRJoMk53W/zEKxu/j1djROkeqshoktm7vMfSj2noGyQT/
+	ScZ4+2c/kE8ty0wJZ7A8J23GLrUK0Ao3IrCDqaaYMrjL94lhIzgC
+X-Received: by 2002:a05:7300:e9cc:10b0:34c:1692:f2d0 with SMTP id 5a478bee46e88-3515dd8201dmr3203304eec.8.1791386734242;
+        Wed, 07 Oct 2026 08:25:34 -0700 (PDT)
 Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([95.173.223.137])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3515af26f10sm9234416eec.13.2026.10.07.08.25.52
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3515af26f10sm9234416eec.13.2026.10.07.08.25.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Oct 2026 08:25:55 -0700 (PDT)
+        Wed, 07 Oct 2026 08:25:33 -0700 (PDT)
 From: Joas Antonio dos Santos <joasantonio108@gmail.com>
 To: Paul Moore <paul@paul-moore.com>
 Cc: David S. Miller <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>,
  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
  Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
  linux-security-module@vger.kernel.org
-Subject: [PATCH net-next] calipso: hash the cache key, not the option start,
- in calipso_cache_add()
+Subject:
+ [PATCH net] calipso: update payload_len when removing the CALIPSO option
 Date: Wed, 07 Oct 2026 12:25:00 -0300
-Message-ID: <179138670045.80227.16155454353416856947@gmail.com>
+Message-ID: <179138670045.80227.16292613517250896744@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -78,38 +78,43 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-calipso_cache_add() stores calipso_ptr + 2 as the cache key, but
-computes entry->hash over calipso_ptr, i.e. starting two bytes earlier
-at the option type and length.  calipso_opt_getattr() looks entries up
-with calipso_cache_check(calipso + 2, calipso[1], ...), which hashes the
-key itself.
+calipso_skbuff_delattr() removes the CALIPSO option from the hop-by-hop
+extension header, or the whole extension header if CALIPSO is its only
+option, and pulls the skb by the removed length.  It never updates
+ipv6hdr->payload_len, so after a successful removal the header still
+claims the original length.
 
-The two hashes only match on a jhash collision, so the CALIPSO label
-cache never hits and every labelled packet takes the full DOI lookup and
-category conversion path.  The memcmp() on the key keeps lookups
-correct, so this is a performance bug only.
+calipso_skbuff_setattr() already adjusts payload_len by the length it
+adds; the delete path was missed.
 
-Hash the stored key, as cipso_v4_cache_add() does for CIPSO.
+This is reached on the forward path when a packet carrying CALIPSO is
+sent to a destination mapped to an unlabeled NetLabel domain.  The
+forwarded packet then has a payload_len larger than its real payload
+by the removed length (8 to 264 bytes), and the receiver drops it as
+truncated.
 
-Fixes: 4fee5242bf41 ("calipso: Add a label cache.")
+Adjust payload_len after the header is moved.
+
+Fixes: 2917f57b6bc1 ("calipso: Allow the lsm to label the skbuff directly.")
 Signed-off-by: Joas Antonio dos Santos <joasantonio108@gmail.com>
 Assisted-by: Claude:claude-opus-5-5
 ---
 Found by code review.  Compile-tested only (arm64, W=1); not runtime-tested.
 
- net/ipv6/calipso.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/calipso.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
-index c072eca50..8c447d860 100644
+index c6a34334e..c072eca50 100644
 --- a/net/ipv6/calipso.c
 +++ b/net/ipv6/calipso.c
-@@ -283,7 +283,7 @@ static int calipso_cache_add(const unsigned char *calipso_ptr,
- 		goto cache_add_failure;
+@@ -1428,6 +1428,9 @@ static int calipso_skbuff_delattr(struct sk_buff *skb)
+ 		skb_pull(skb, delta);
+ 		memmove((char *)ip6_hdr + delta, ip6_hdr, size);
+ 		skb_reset_network_header(skb);
++		ip6_hdr = ipv6_hdr(skb);
++		ip6_hdr->payload_len =
++			htons(ntohs(ip6_hdr->payload_len) - delta);
  	}
- 	entry->key_len = calipso_ptr_len;
--	entry->hash = calipso_map_cache_hash(calipso_ptr, calipso_ptr_len);
-+	entry->hash = calipso_map_cache_hash(entry->key, calipso_ptr_len);
- 	refcount_inc(&secattr->cache->refcount);
- 	entry->lsm_data = secattr->cache;
  
+ 	return 0;
