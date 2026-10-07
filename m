@@ -1,78 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0996F3CD8CC
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 22:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B7D46DFE4
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791326778; cv=none; b=cc6IZ/mFpeA5yd+Y0Akf1Q9tno6hXCO8T9CPavsAdAwmKAJ+oi2i79fM1dSdS0UUF/RXJuI+j3BaqIjQgS6MInNpuSQdLQ4muX1dBHh9588+84+m1H6iyaFmmAq383elq3dBV4aLc3oYN8uzUKjeJd0ubfBNpC6xyL/H/ZHb7YY=
+	t=1791367402; cv=none; b=lYsSWkJdsktr5EYLVWAs5fynbtcYXIy4FTX9ti55MBKwokQKyL/Hho2/G7HkzyfeJL13SCsG5euqzzt0bUF39ghT//8MKA8YGzpOJ8zm2PnQzOUI0Del8cre9tf3rPr+CsE1FozYs5aeXrVgAHR5H/1Ce/zHi/NG/uK24otprm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791326778; c=relaxed/simple;
-	bh=BZdtaEcNbYm0L7uopiOvb/GA5CHoytZ4KU2Yh6RYoR4=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=HEeRDHRS340xYknBdzYNvlRXexZi4JoY7CwK19mXtvuY/TinzK+j40cXSyje5fPMg1WLoDOo/Krf/fMb8XyJzCvL+ESFE3nsOmMX6yUDufFlnNirt0NOnZCz7Y1DscxQa0CgXkCBWvKSWV1VI26X7hl/RrX+yFksyHAQk0eihdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kg1I1e/y; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791367402; c=relaxed/simple;
+	bh=fCP3y+UyE5wBkErl4gEJ4ImbTskW9pwJqn0xpY9ZXOQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JI9LwGV3niEofnCRB0eDswx/8l0Bc+hBDNI4oNBN8O6vo3F2sfqNrvMelL5Dt8Tx+MDwlFwyApbtRxF65lMnhdfSih5DhRYcPt5nkCD+7rrIH4ff6HIkV3htbqVFjMAyOPDcb+q31xTHFgbmQeWzwv7X63MVaHpYQ7WghrS9Y3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TZyMl/xI; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kg1I1e/y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B41B1F0089B
-	for <linux-security-module@vger.kernel.org>; Tue,  6 Oct 2026 22:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791326777;
-	bh=KjOs3jR2y2ulj9WpiDp0LVE8xmHru/IBC+mOJABPm5w=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=kg1I1e/y/KbznlwwlCEfgbl5wJLV+C5Yu4eZCfl2UUzAOBCS5CfjtumP6dA+Zn8Ci
-	 9rR2D07mwoDFQpGt2DlyPCwd/cVVi7+TbEExHiOMjCai+Y8SDFdkPd6W/MHbvFadnr
-	 76D3Aj2wrJ3/qwvPP1+9Kf9jyTqXEozap/ceRBHSzJGn39aZt+L3ZSQq9Z1b1zlVQP
-	 UZgFracivrL3NRhlV98T+UqDKsxM3ET+kigCzQJI002kYO2a5jHbj2lB4lbXqRud3O
-	 MbV70GKjqakzsy7sQzvc3UFwYcO+NV+3WPC4qLA6if5DgAR1VENV52yweajHIV6LSm
-	 nHfP7T/GpMV3Q==
-Message-ID: <sashiko-outbox-162495@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] keys: make keyring indexes independent of kernel
- addresses
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261006223746.48940-1-kylebot@openai.com>
-References: <20261006223746.48940-1-kylebot@openai.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 06 Oct 2026 22:46:17 +0000
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TZyMl/xI"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j07wl0ts2zbyv;
+	Wed,  7 Oct 2026 12:03:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1791367382;
+	bh=i7ufAMCOn1n0AGYSKdW4etgQSu8QLJHfHHn4CH4w3bA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TZyMl/xIy1kr9eAugE6FLGl+oOdZvJjF9lIKetK8TesX9TovfprMiVBoUsNB7RwEH
+	 hHxe5tkxp0NoPOCVUnVq1D09N3/g1vFq15pHNjqTN4oZRTainv9NZ8Tdw9IQrsplOF
+	 0nsSFdZL2RHhJQcrbyslNcQqZ8K5XTieWjXvpazI=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j07wj3NVyzLGs;
+	Wed,  7 Oct 2026 12:03:01 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Daniel Durning <danieldurning.work@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Shervin Oloumi <enlightened@google.com>,
+	Tingmao Wang <m@maowtm.org>,
+	kernel-team@cloudflare.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v5 1/8] landlock: Rename quiet_masks to quiet_access
+Date: Wed,  7 Oct 2026 12:02:44 +0200
+Message-ID: <20261007100255.1333386-2-mic@digikod.net>
+In-Reply-To: <20261007100255.1333386-1-mic@digikod.net>
+References: <20261007100255.1333386-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-> KEYCTL_READ returns the serial numbers in a keyring in associative-array
-> traversal order.  The first word of the index is a public, deterministic
-> hash of the type pointer, domain pointer and description.  An unprivileged
-> user can therefore insert keys with known descriptions, predict their
-> order for each possible KASLR slide, and recover the kernel image address.
-> On an x86-64 build with 16 MiB alignment, 45 user keys suffice to
-> distinguish the candidate slides.
->=20
-> Remove the addresses from the whole index, not just its first hash word.
-> Assign each key type and domain a nonzero 64-bit ID and hash those IDs and
-> the description with a once-initialized SipHash key.  Use the full IDs in
-> the later index chunks as well.  Truncating or hashing the IDs there would
-> lose the guarantee that distinct type/domain/description tuples have a
-> differing index bit.
->=20
-> Allocate IDs lazily since private key types need not be registered.  Cache
-> them in the index key so tree walks and copies of an existing index do not
-> need to dereference a type descriptor that may have been unregistered.
-> Keep the 32-bit chunk layout and diff_objects() bit offsets consistent,
-> and retain the separate root slot for keyrings used by recursive search.
-> The key comparison, permissions and userspace data format are unchanged;
-> only the address-dependent in-memory ordering is replaced.
->=20
-> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> Assisted-by: Codex:gpt-6-astra
-> Signed-off-by: Kyle Zeng <kylebot@openai.com>
+The base stores the fs/net/scope quiet bitmasks in a struct access_masks
+field named quiet_masks.  A following commit adds the sibling struct
+permission_masks field quiet_permission for capabilities and namespaces.
+quiet_masks drops the access category and keeps the type half ("masks"),
+while quiet_permission keeps the category and drops the type half, so
+the two read as an inconsistent pair.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Rename the base field to quiet_access, giving the symmetric,
+category-named pair quiet_access/quiet_permission that also matches the
+UAPI handled_access_*/quiet_access_* naming.  This is a
+no-functional-change rename.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261006223746.4894=
-0-1-kylebot@openai.com?part=3D1
+Cc: Günther Noack <gnoack@google.com>
+Cc: Tingmao Wang <m@maowtm.org>
+Reviewed-by: Tingmao Wang <m@maowtm.org>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since v3:
+https://patch.msgid.link/20260726161400.3010511-5-mic@digikod.net
+- Adapt the rename to the split ruleset/domain and logging code.
+- Add Reviewed-by: Tingmao Wang.
+
+Changes since v2:
+- New patch.
+---
+ security/landlock/domain.c   |  2 +-
+ security/landlock/domain.h   |  4 ++--
+ security/landlock/log.c      |  6 +++---
+ security/landlock/ruleset.h  |  4 ++--
+ security/landlock/syscalls.c | 10 +++++-----
+ 5 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+index 4031b581be07..c66663f8cd8b 100644
+--- a/security/landlock/domain.c
++++ b/security/landlock/domain.c
+@@ -479,7 +479,7 @@ landlock_merge_ruleset(struct landlock_domain *const parent,
+ 		return ERR_PTR(err);
+ 
+ #ifdef CONFIG_SECURITY_LANDLOCK_LOG
+-	new_dom->hierarchy->quiet_masks = ruleset->quiet_masks;
++	new_dom->hierarchy->quiet_access = ruleset->quiet_access;
+ #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
+ 
+ 	return no_free_ptr(new_dom);
+diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+index caa3d19d2c43..03f24382537c 100644
+--- a/security/landlock/domain.h
++++ b/security/landlock/domain.h
+@@ -130,10 +130,10 @@ struct landlock_hierarchy {
+ 		 */
+ 		log_new_exec : 1;
+ 	/**
+-	 * @quiet_masks: Bitmasks of access that should be quieted (i.e. not
++	 * @quiet_access: Bitmasks of access that should be quieted (i.e. not
+ 	 * logged) if the related object is marked as quiet.
+ 	 */
+-	struct access_masks quiet_masks;
++	struct access_masks quiet_access;
+ #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
+ };
+ 
+diff --git a/security/landlock/log.c b/security/landlock/log.c
+index a8578a6f2ce9..3f9ae1bacb23 100644
+--- a/security/landlock/log.c
++++ b/security/landlock/log.c
+@@ -436,7 +436,7 @@ is_denial_quieted(const struct landlock_request *const request,
+ 	if (object_quiet_flag) {
+ 		const access_mask_t quiet_mask =
+ 			pick_access_mask_for_request_type(
+-				request->type, youngest_denied->quiet_masks);
++				request->type, youngest_denied->quiet_access);
+ 
+ 		return (quiet_mask & missing) == missing;
+ 	}
+@@ -447,10 +447,10 @@ is_denial_quieted(const struct landlock_request *const request,
+ 	 */
+ 	switch (request->type) {
+ 	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
+-		return !!(youngest_denied->quiet_masks.scope &
++		return !!(youngest_denied->quiet_access.scope &
+ 			  LANDLOCK_SCOPE_SIGNAL);
+ 	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
+-		return !!(youngest_denied->quiet_masks.scope &
++		return !!(youngest_denied->quiet_access.scope &
+ 			  LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
+ 	/*
+ 	 * Leave LANDLOCK_REQUEST_PTRACE and LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index cf77f1806a95..8ebdd4fa098f 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -182,11 +182,11 @@ struct landlock_ruleset {
+ #endif /* CONFIG_TRACEPOINTS */
+ 
+ 	/**
+-	 * @quiet_masks: Stores the quiet flags for an unmerged ruleset.  For a
++	 * @quiet_access: Stores the quiet flags for an unmerged ruleset.  For a
+ 	 * merged domain, this is stored in each layer's struct
+ 	 * landlock_hierarchy instead.
+ 	 */
+-	struct access_masks quiet_masks;
++	struct access_masks quiet_access;
+ 	/**
+ 	 * @handled_masks: Contains the subset of filesystem and network actions
+ 	 * that are handled by this ruleset.
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 1d02d57f4c48..17d8e9b7b0c6 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -280,9 +280,9 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+ 	if (IS_ERR(ruleset))
+ 		return PTR_ERR(ruleset);
+ 
+-	ruleset->quiet_masks.fs = ruleset_attr.quiet_access_fs;
+-	ruleset->quiet_masks.net = ruleset_attr.quiet_access_net;
+-	ruleset->quiet_masks.scope = ruleset_attr.quiet_scoped;
++	ruleset->quiet_access.fs = ruleset_attr.quiet_access_fs;
++	ruleset->quiet_access.net = ruleset_attr.quiet_access_net;
++	ruleset->quiet_access.scope = ruleset_attr.quiet_scoped;
+ 
+ 	/*
+ 	 * Emits before anon_inode_getfd() installs the file descriptor, while
+@@ -382,7 +382,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
+ 		return -EINVAL;
+ 
+ 	/* Checks for useless quiet flag. */
+-	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_masks.fs)
++	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_access.fs)
+ 		return -EINVAL;
+ 
+ 	/* Gets and checks the new rule. */
+@@ -423,7 +423,7 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
+ 		return -EINVAL;
+ 
+ 	/* Checks for useless quiet flag. */
+-	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_masks.net)
++	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_access.net)
+ 		return -EINVAL;
+ 
+ 	/* Denies inserting a rule with port greater than 65535. */
+-- 
+2.55.0
 
