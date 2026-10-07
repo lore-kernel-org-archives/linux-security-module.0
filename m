@@ -1,74 +1,104 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789653CAE7F
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2D7470E96
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791367912; cv=none; b=MqnrAFFhHT44yh2Sc3yN6ECHMI1M91dGhzHD/XzJF9jqErKRezKYar40HqrFKYjVn7OKeCIST6Omb5nsA5mbKZ9w7ExLNWhMfSBY/bOB13e8gsjhxGFVVht24n2KEJik5IST1I2V6lI2icKILQCbFL5p/EuK1xDD0rIjxBuBCKw=
+	t=1791368024; cv=none; b=mAIJ49p74/zdF00bF/IVLz+k8IEcjpgx+Me+8Vu4V/5j5UBxulEfaBA2kXqNfZOqT3dCeIUifNAKzkAV7OePShd+luisiy3NpJAPE44vwYxuNCAJEcxHIY1ZOevl2I/Pepmngnw7GU/KvMN83cANnRSdrISRRNLwN75Zn2oRKq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791367912; c=relaxed/simple;
-	bh=AIe3GIJgc3KA7H/AwIFgf3HOsnuuETu3c7WaoOs0DpE=;
+	s=arc-20240116; t=1791368024; c=relaxed/simple;
+	bh=WTCZcNWp9LD73G+G9ZroeoanjcxyFiMWxVdyz3ysvSQ=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=b4WtrkpSqL9tYKTG01zpNP9vmnW6MLvL9DK2LUe6oBVvPtlKvqzcFi/zOqtq810T6t9ixckzmDT2Axhnr0YRWyyiS4N2GDh2JzTXR/sngpgr++JuGvp/z75u3jp2t81Cs+YzG6HqOZ3um5okTL7OfM8kVyZkdQOBPd6QhlkHDZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bW4n4yto; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=Khp0IgAv2kKDyiq0lxN5wReilbz/7BKViZ3BoTJnY5M7Kgo1EQex0Z7r7uiVWbT+4qDW9x97kRNfZQjDMfagLVVrEPYqHirFgoez8T00/CEWpWJAplkqrtQAWJibPjHrJnq5ygqMKeR9dhSZwIxuo3x43EYlKkV10M53NhEfqy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5x2IQtY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bW4n4yto"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAEC41F0089C
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:11:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5x2IQtY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 308C71F0089B
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:13:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791367903;
-	bh=3/KGA8bgtALOgM4E/n9IqOhSYVgPbyqFyejOdtQIh2A=;
+	s=k20260515; t=1791368013;
+	bh=H0ogUsk3yLXETZ1kFGN6sxtWD+5k1FJpE4XxoC7sWSU=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=bW4n4ytolDsUiRT70wjBw2EXH+MybEQutbTmfxGTWjVbGPIWdzdo+OdBvVvQAQh2S
-	 S9UMU7f0Yvh8/jXWgEdzt7TGprwzuB4FOSEI3XBszQJ3YvjpS+YFyH7FwzPzBzN6da
-	 4KERiaxKn/hecWDe/flVth+0kQOrZoreVksrqeInGTseEsdj/Cobz9ShiBKls3CPfw
-	 6M8w1C5TDctyPTtaqQUVeN/XSNmol9H0x+eciB4Ewv3zgnEP5tOxQOfvDaRvxQw805
-	 XYnzj0G5uSi6VqpQXQh/rZgkjQdu/3zu9yTMYyeppARAKBW1FexCP/Px/OPACFoD9P
-	 So55dmmMwttog==
-Message-ID: <sashiko-outbox-162845@kernel.org>
+	b=f5x2IQtYXNK5chU1Fc0dDj4JfjjYIHSDZb/bNV64CRfspDyPFRqUw7Eah2hu3+uvp
+	 jo/6NlE1L2Kn3ZFS07WDk9IJ2X3aTZKXewzTqeegpSmnyjIeUY6B7TFqtRu17zEMn2
+	 okuP4mSUu6IIrYfcO7bx/jP3QuIKr+mjEtEVtY1+SOqoPSdk8MeAaa+qSoWvxcXNCu
+	 V00/fAG8bKiwW1p6ed0PMm6dqVn2YNsjy2Z28O3kk6L0y7WzVAg5bxGH0trZZ8Khth
+	 pxIFgLWAqbiV5B5Ph3LSgoonRtOWdCrTa2KG2kDaNE9dknGQPEAxwwAMVaoINdpo4Y
+	 FrfjQ1f054t9A==
+Message-ID: <sashiko-outbox-162847@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 7/8] samples/landlock: Add capability and namespace
- restriction support
+Subject: Re: [PATCH v5 6/8] selftests/landlock: Add capability restriction
+ tests
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261007100255.1333386-8-mic@digikod.net>
+In-Reply-To: <20261007100255.1333386-7-mic@digikod.net>
 References: <20261007100255.1333386-1-mic@digikod.net>
- <20261007100255.1333386-8-mic@digikod.net>
+ <20261007100255.1333386-7-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 07 Oct 2026 10:11:43 +0000
+Date: Wed, 07 Oct 2026 10:13:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> Extend the sandboxer sample to demonstrate the new Landlock capability
-> and namespace restriction features.  LL_CAP takes a colon-delimited list
-> of allowed capabilities.  Numeric values are always accepted; when
-> libcap development files are available, use cap_from_name(3) to accept
-> names too.  Builds without libcap warn when capability settings are
-> used.  This keeps the sample buildable without optional development
-> files.  LL_NS takes a colon-delimited list of allowed namespace types by
-> short name.  Add best-effort degradation for older kernels that predate
-> the LANDLOCK_PERMISSION_* features.
->=20
-> Allow creating user and UTS namespaces but deny network namespaces, as
-> an unprivileged user.  The first command succeeds and sets the hostname
-> inside the new UTS namespace; the second is denied because the network
-> namespace type is not allowed:
->=20
-> [ ... ]
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Tingmao Wang <m@maowtm.org>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] selftests/landlock: uninitialized read of records if audit_count_re=
+cords() fails
+--
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+commit 0b24b77e1134932d1209607c6e9bc067e8fb747d
+Author: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+
+selftests/landlock: Add capability restriction tests
+
+This commit adds tests to exercise LANDLOCK_PERMISSION_CAPABILITY_USE
+enforcement. It covers stacking combinations, non-standard capability
+contexts, and audit and trace scenarios.
+
+> diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/=
+selftests/landlock/cap_test.c
+> new file mode 100644
+> index 0000000000000..07976854ec5a8
+> --- /dev/null
+> +++ b/tools/testing/selftests/landlock/cap_test.c
+> @@ -0,0 +1,1373 @@
+
+[ ... ]
+
+> +TEST_F(cap_audit, denied)
+> +{
+> +	struct audit_records records;
+> +	int ruleset_fd;
+> +	__u64 domain_id;
+
+[ ... ]
+
+> +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+> +	EXPECT_EQ(0, records.access);
+> +	EXPECT_EQ(0, records.domain);
+
+[Severity: Low]
+Does this code read uninitialized stack memory in TEST_F(cap_audit, denied)
+if audit_count_records() fails?
+
+The records structure is declared on the stack without initialization.
+If audit_count_records() returns early with an error, for instance if
+regcomp() fails with -ENOMEM in tools/testing/selftests/landlock/audit.h,
+records.access and records.domain will remain uninitialized.
+
+Because EXPECT_EQ() does not abort test execution upon failure like
+ASSERT_EQ() would, the test will continue and evaluate the uninitialized
+records.access and records.domain fields.
+
+Consider either zero-initializing the records struct upon declaration,
+or replacing EXPECT_EQ with ASSERT_EQ for the audit_count_records() call.
+
+> +}
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261007100255.1333=
-386-1-mic@digikod.net?part=3D7
-
+386-1-mic@digikod.net?part=3D6
