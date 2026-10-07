@@ -1,104 +1,73 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2D7470E96
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDA947ACFD
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791368024; cv=none; b=mAIJ49p74/zdF00bF/IVLz+k8IEcjpgx+Me+8Vu4V/5j5UBxulEfaBA2kXqNfZOqT3dCeIUifNAKzkAV7OePShd+luisiy3NpJAPE44vwYxuNCAJEcxHIY1ZOevl2I/Pepmngnw7GU/KvMN83cANnRSdrISRRNLwN75Zn2oRKq8=
+	t=1791368133; cv=none; b=Wk6z62tm9upkkc2fUqlKmJpNw9nkW2vnOSTbJlMB4QeYfss99iQOyf+0gjLljrmlvw0L5Om3u/q9PehKiDn3rCVbcNz9ovMW2J5nEXnIMpjkdDz+hdJjeFNRa8/p9kz8FWPt4X0B0AfY4yltw5xko41BbJ49wuAtoLJoKaZvbAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791368024; c=relaxed/simple;
-	bh=WTCZcNWp9LD73G+G9ZroeoanjcxyFiMWxVdyz3ysvSQ=;
+	s=arc-20240116; t=1791368133; c=relaxed/simple;
+	bh=PbuUSHskZaeP0Swc/UhjJMs/1XnOOcjkQKa+NFdPs3w=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=Khp0IgAv2kKDyiq0lxN5wReilbz/7BKViZ3BoTJnY5M7Kgo1EQex0Z7r7uiVWbT+4qDW9x97kRNfZQjDMfagLVVrEPYqHirFgoez8T00/CEWpWJAplkqrtQAWJibPjHrJnq5ygqMKeR9dhSZwIxuo3x43EYlKkV10M53NhEfqy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5x2IQtY; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=mA92IGlLnTIi5fIG4EjGLjWHf+tpiuSwBpizo8jqTyjCJ6OygliEPs25x7P7RpdxysFVFCFhP08asFAfg8rsNZZFvTwj9cszcWHUPfKNEv962/WMAXCxKwXQERSi70p3GjqJmTbes0CaAvX5747AWUn9npwkvipupNdKt7h7xO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NB1S7iMe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5x2IQtY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 308C71F0089B
-	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:13:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NB1S7iMe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D2E1F0089B
+	for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2026 10:15:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791368013;
-	bh=H0ogUsk3yLXETZ1kFGN6sxtWD+5k1FJpE4XxoC7sWSU=;
+	s=k20260515; t=1791368125;
+	bh=AXC0zT/g81R+CBEVIEJ4ecy+tbIT+3MF4eZ+OvDwe/Q=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=f5x2IQtYXNK5chU1Fc0dDj4JfjjYIHSDZb/bNV64CRfspDyPFRqUw7Eah2hu3+uvp
-	 jo/6NlE1L2Kn3ZFS07WDk9IJ2X3aTZKXewzTqeegpSmnyjIeUY6B7TFqtRu17zEMn2
-	 okuP4mSUu6IIrYfcO7bx/jP3QuIKr+mjEtEVtY1+SOqoPSdk8MeAaa+qSoWvxcXNCu
-	 V00/fAG8bKiwW1p6ed0PMm6dqVn2YNsjy2Z28O3kk6L0y7WzVAg5bxGH0trZZ8Khth
-	 pxIFgLWAqbiV5B5Ph3LSgoonRtOWdCrTa2KG2kDaNE9dknGQPEAxwwAMVaoINdpo4Y
-	 FrfjQ1f054t9A==
-Message-ID: <sashiko-outbox-162847@kernel.org>
+	b=NB1S7iMeHiFsaYqkcwK6w7YJvdOlFJvI6Rm1MIQSfFeADlCFzIovC2vaUwAbGchp4
+	 uPvSgxFRFYvw1qe2dcdhWr2OBtVSGj1dVjL1wr9f9T7t2f7ngyIOR5NNhFRJJStjbx
+	 orvMeGTup9CukjzhQBXHqTnD3K47KSMxYLrxUuR6Z7OQKo3RpoDunKTKDhj/hHY/Mw
+	 t6l/g+VFmMlIK+YK2Xc5/BCdkGc1exQlDma+P6mNhbvPsiEcPWbn3CrO1gzF3QTtoL
+	 m8sBWH1+IoqMZ//HoYODY266QMqsvftXURDdLfJKBPERc9kghWfJlW3U6pM0VR6dz+
+	 gzeJ2RUUk1C6Q==
+Message-ID: <sashiko-outbox-162850@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 6/8] selftests/landlock: Add capability restriction
- tests
+Subject: Re: [PATCH v5 3/8] landlock: Enforce namespace use restrictions
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261007100255.1333386-7-mic@digikod.net>
+In-Reply-To: <20261007100255.1333386-4-mic@digikod.net>
 References: <20261007100255.1333386-1-mic@digikod.net>
- <20261007100255.1333386-7-mic@digikod.net>
+ <20261007100255.1333386-4-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 07 Oct 2026 10:13:32 +0000
+Date: Wed, 07 Oct 2026 10:15:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] selftests/landlock: uninitialized read of records if audit_count_re=
-cords() fails
---
+> Add Landlock enforcement for namespace use through the LSM
+> namespace_init and namespace_install hooks.  This lets a sandboxed
+> process restrict which namespace types it can create, join, or acquire a
+> file descriptor for, using LANDLOCK_PERMISSION_NAMESPACE_USE and
+> per-type rules.
+>=20
+> Introduce the handled_permissions field in struct landlock_ruleset_attr:
+> each permission gates every use of a kernel-defined category (CLONE_NEW*
+> namespace types, CAP_* capabilities) with complete deny-by-default
+> coverage, so unknown member values need no validation, being denied
+> until a rule allows them.  This UAPI extension advances the Landlock ABI
+> from 11 to 12.
+>=20
+> There is no domain-ancestry bypass and no namespace-creator tracking,
+> only a flat per-layer allowed-types bitmask: hook_namespace_init()
+> [ ... ]
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 
-commit 0b24b77e1134932d1209607c6e9bc067e8fb747d
-Author: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-
-selftests/landlock: Add capability restriction tests
-
-This commit adds tests to exercise LANDLOCK_PERMISSION_CAPABILITY_USE
-enforcement. It covers stacking combinations, non-standard capability
-contexts, and audit and trace scenarios.
-
-> diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/=
-selftests/landlock/cap_test.c
-> new file mode 100644
-> index 0000000000000..07976854ec5a8
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/cap_test.c
-> @@ -0,0 +1,1373 @@
-
-[ ... ]
-
-> +TEST_F(cap_audit, denied)
-> +{
-> +	struct audit_records records;
-> +	int ruleset_fd;
-> +	__u64 domain_id;
-
-[ ... ]
-
-> +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-> +	EXPECT_EQ(0, records.access);
-> +	EXPECT_EQ(0, records.domain);
-
-[Severity: Low]
-Does this code read uninitialized stack memory in TEST_F(cap_audit, denied)
-if audit_count_records() fails?
-
-The records structure is declared on the stack without initialization.
-If audit_count_records() returns early with an error, for instance if
-regcomp() fails with -ENOMEM in tools/testing/selftests/landlock/audit.h,
-records.access and records.domain will remain uninitialized.
-
-Because EXPECT_EQ() does not abort test execution upon failure like
-ASSERT_EQ() would, the test will continue and evaluate the uninitialized
-records.access and records.domain fields.
-
-Consider either zero-initializing the records struct upon declaration,
-or replacing EXPECT_EQ with ASSERT_EQ for the audit_count_records() call.
-
-> +}
+Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261007100255.1333=
-386-1-mic@digikod.net?part=3D6
+386-1-mic@digikod.net?part=3D3
+
