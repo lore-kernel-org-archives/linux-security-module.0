@@ -1,115 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADC54DE739
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 15:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876D44DDB37;
+	Thu,  8 Oct 2026 15:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791473170; cv=none; b=j0xdEcJELnOx9aLk8I43f28itBzyInn0yBq+e12AUXfIfGCPF7SBYTTzy3ouFM9R4u+jzlVOxKrXRIsdxf4/B0qVljPsCcaztAxCosdBH9bVZx21Usr3OO+lNY4ojnulmy1fRTaS+Hos7SJeh34Xlq9a5V+RIRCT0ePn5p+lSBE=
+	t=1791473173; cv=none; b=dN+viY+2OXDvhIG6+gHBi/xZ9jZjAUU7+ulrzA1jcGTGCIYwYn1dMIXaJSCuYctIaEi1A5h49pkkgdj7rMaxM5dCpu6PPoRiSIDICgiXn/a6FUPuZ/z3rSd9yBWLOss1kFShpupQkf8ALf5jet/vYp9652G+SJbcnLAa+ZhvxaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791473170; c=relaxed/simple;
-	bh=g96kn8prlqHLeOWeX0KxA6EkmMdRw+u4MQCAAIEcvLs=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=DYAxZNy9p71uCguJbnt5NG7Tc6b0HWlp83ddY4J/whRq1ZcxN2YEX4ryqhM+y9JlRb1XDrd51VigLQFO+0vitn2Qh2s1ivctPMkMbs2Jw8wjzwtBvYOx1VVFLcq3MLzTtPIRhNUnlM18lF/74iHYzrnyBzapCnVJjzPK++fxA+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwnhQMId; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791473173; c=relaxed/simple;
+	bh=cDyuwEKK8sXGpAj3kWtZyNN+HaU08rNG0W1xctdiPug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=InwyyYOQ8ZytumyQi30SqnNodGgs3ngItd3S3JtJdeitllY0AoqxoiaOWvoAjKytqap9VbW3CxpiSRXDMkh1gx9CEGgM3Ln1Om0gbTGq9srwmOkZ8tt57uRqbFwGFBEIBQgaHEhOdiB/Dm03fIGYQPMgBGBwH6P5L36rS1wkoPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=f9INlEzW; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwnhQMId"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E988D1F000FF
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 15:26:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791473162;
-	bh=jAQp40xtT55e1gxVXYXTs2AKdt3tTJo8clcpD7bg94U=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=JwnhQMIdMSeuU2jG38OarfAW/iS85MpuQ8dBwktfg6b9fHjbAId54bfv3BOd7V3Fv
-	 B0cnkqvWeZKP6sW95UyM9zqJfoyCE2SHrDt8GJDCG97cquknJyCrbR3rhYKYvj6YjF
-	 UoMn1EVyfr0gHkUlxSdx6HY8whgRK6uNYk0SILkt5jbvl+272wlX69ZJNlRDBhdqSG
-	 CHoZ9EYkg6K/Bsnoxoq+jQ6zxlSWxomzNyBaQsxIa8Xqnemkus+dbGLULfb6myCyrr
-	 lpn6/dZXr+fiOKvHTyQvLSL8agljemhUqM7NbK2azsRc7+D9+srrdVcw5rruN82JCu
-	 PidjtIJoXR4oQ==
-Message-ID: <sashiko-outbox-164340@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net] calipso: update payload_len when removing the
- CALIPSO option
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <179138670045.80227.16292613517250896744@gmail.com>
-References: <179138670045.80227.16292613517250896744@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 08 Oct 2026 15:26:01 +0000
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="f9INlEzW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1791473148; bh=cDyuwEKK8sXGpAj3kWtZyNN+HaU08rNG0W1xctdiPug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f9INlEzWvRKdr/Fb3T5Ad0Gww3mff6qF274Hh6qjZDcgZoItXuJ/GPwrJbw9NrxCu
+	 47STDsY6pWekjbCUBwrDFdx59pH6kr/RDs/RRMBMtHMZ+LoiWP16LYuBMFomx+Zmuw
+	 QP7MhJyvW8BAm7eOcPYT2aZUbTGTbgtdzi86Kcm7lAljvdfM+SQWkdu7Cffkp6nlma
+	 uhxKRDvTp1+6vN7KW2xZgC6y/Fk+nciX9qD3LMfa5sUL5ETmVj8kTCeatcIF1eBKFF
+	 F5goSCrada9f7KvJar7ESKWMlbK3JPZwgXg/u1GAr41q2gPb3Kp0hmxegSZ5yAEqDx
+	 A2JaIXt7uutfw==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id A5939196B; Thu,  8 Oct 2026 10:25:48 -0500 (CDT)
+Date: Thu, 8 Oct 2026 10:25:48 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>
+Subject: Re: [RFC PATCH 0/2] keys: Address lookup_user_key() mutability
+Message-ID: <ase1/CnbnqL24SOQ@hallyn.com>
+References: <20260924055521.1981957-1-jarkko@kernel.org>
+ <asKSvjz2YLZhFI4t@kernel.org>
+ <asOhhCION3dwTAo+@hallyn.com>
+ <asPwkdi7ZdO4YoRu@kernel.org>
+ <asVDbPtyCNy210-R@shallyn-amd>
+ <aseoJvcBh0RZ31Uo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aseoJvcBh0RZ31Uo@kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Medium] ipv6: calipso_skbuff_delattr corrupts IPv6 Jumbograms via payloa=
-d_len underflow
-- [Medium] ipv6: calipso: calipso_skbuff_delattr() fails to invalidate CHEC=
-KSUM_COMPLETE
---
+On Thu, Oct 08, 2026 at 05:26:46PM +0300, Jarkko Sakkinen wrote:
+> On Tue, Oct 06, 2026 at 01:52:28PM -0500, Serge Hallyn (AMD) wrote:
+> > On Mon, Oct 05, 2026 at 09:46:41PM +0300, Jarkko Sakkinen wrote:
+> > > On Mon, Oct 05, 2026 at 08:09:24AM -0500, Serge E. Hallyn wrote:
+> > > > On Sun, Oct 04, 2026 at 08:54:06PM +0300, Jarkko Sakkinen wrote:
+> > > > > On Thu, Sep 24, 2026 at 08:55:16AM +0300, Jarkko Sakkinen wrote:
+> > > > > > The main objective in these patches is to remove to unneeded mutability
+> > > > > > from key look ups. It does harm and brings no value so it is pretty obvious
+> > > > > > to me that addressing this harmful behaviour is what we should do.
+> > > > > > 
+> > > > > > I based the first patch on what Jann suggested in [1]. Nothing too clever here
+> > > > > > and I'm ofc open for further suggestions.
+> > > > > > 
+> > > > > > [1] https://lore.kernel.org/keyrings/CAG48ez0XjVSR=M--UBauTm8sJuc+ZbhKzaPa3a6wrSVHyoKevw@mail.gmail.com/
+> > > > > > 
+> > > > > > Jarkko Sakkinen (2):
+> > > > > >   keys: Return user session keyring on lookup
+> > > > > >   keys: Reject keyring creation with overridden credentials
+> > > > > > 
+> > > > > >  Documentation/security/keys/core.rst |  7 ++-
+> > > > > >  security/keys/process_keys.c         | 65 +++++++++++++++-------------
+> > > > > >  2 files changed, 40 insertions(+), 32 deletions(-)
+> > > > > > 
+> > > > > > --
+> > > > > > 2.47.3
+> > > > > > 
+> > > > > 
+> > > > > So.. should I move forward to with non-RFC v2?
+> > > > 
+> > > > Patch 2 absolutely makes sense, "doc, it hurts when I do this", "don't do
+> > > > that then."
+> > > > 
+> > > > Regarding patch 1, that seems like quite a change in behavior, right?  I
+> > > > don't see any docs or comments that promise the current behavior, but
+> > > > has any userspace or subsystem come to depend on it?  I guess that, if so,
+> > > > then it just has to create a link to the user session keyring like pam
+> > > > (according to what I've read) does?
+> > > 
+> > > Thanks a lot of responding.
+> > > 
+> > > I fully agree with you but I'd need help for evaluating things further.
+> > > 
+> > > 1/2 based on Jann's email about the topic and my interpretation of the
+> > > suggestion. I neither used brains nor AI for this and consider the patch
+> > > merely as a conversation starter (and what a great success it was on doing
+> > > that) :-)
+> > 
+> >  :)
+> > 
+> > > All feedback is good feedback at this point. I need supporting code to
+> > > remember/recall later on so at least this serves that purpose.
+> > > 
+> > > Br, Jarkko
+> > 
+> > I've been staring at the before and after code for a bit now.
+> > It does even more than I was thinking :)  But I was trying to
+> > detail the changed behavior (from userspace's pov), and after
+> > several attempts, it seems maybe there actually isn't any.
+> > 
+> > Q: is there any path whereby the 
+> > 
+> > ```
+> >         else if (test_bit(KEY_FLAG_UID_KEYRING,
+> >                                     &ctx.cred->session_keyring->flags) &&
+> >                            lflags & KEY_LOOKUP_CREATE) {
+> > ```
+> > 
+> > case can still happen?  Or was this the only place where we installed
+> > the user_session keyring as session keyring, so that we can drop this
+> > branch?
+> 
+> Right, so *I think* that it is not useful and e.g., PAM uses NULL.
+> 
+> At the same time it is harmless. We could remove it but it would be
+> also uapi change (for granted, useless branch).
 
-commit 8fb4651bac6a1dd9a8a2f7c1f3e21afbeec3108b
-Author: Joas Antonio dos Santos <joasantonio108@gmail.com>
+There's
 
-calipso: update payload_len when removing the CALIPSO option
+https://sources.debian.org/src/e2fsprogs/1.47.4-1/misc/e4crypt.c?hl=568#L568
 
-calipso_skbuff_delattr() removes the CALIPSO option from the hop-by-hop
-extension header, or the whole extension header if CALIPSO is its only
-option, and pulls the skb by the removed length. It never updates
-ipv6hdr->payload_len, so after a successful removal the header still
-claims the original length.
+which bemoans that:
+	 * The fact that the keyctl system call and the add_key system
+	 * call treats KEY_SPEC_SESSION_KEYRING differently when a
+	 * session keyring does not exist is very unfortunate and
+	 * confusing, but so it goes...
 
-> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
-> index c6a34334e657e..c072eca501070 100644
-> --- a/net/ipv6/calipso.c
-> +++ b/net/ipv6/calipso.c
-> @@ -1428,6 +1428,9 @@ static int calipso_skbuff_delattr(struct sk_buff *s=
-kb)
->  		skb_pull(skb, delta);
->  		memmove((char *)ip6_hdr + delta, ip6_hdr, size);
->  		skb_reset_network_header(skb);
+Near as I can tell, add_key just always uses KEY_LOOKUP_CREATE?
 
-[Severity: Medium]
-When delta bytes are removed from the packet, should skb->csum also be
-updated (e.g., via skb_postpull_rcsum()), or should skb->ip_summed be
-cleared to CHECKSUM_NONE?
+And https://sources.debian.org/src/krb5/1.22.1-3/src/lib/krb5/ccache/cc_keyring.c?hl=307#L307
 
-An IPv6 multicast packet arriving with CHECKSUM_COMPLETE can reach the
-NF_INET_FORWARD hook with its checksum state intact, since ip6mr_forward2()
-does not invoke skb_forward_csum().
+I'm not sure whether previous kernels did that, or whether the authors
+mixed up testing with and without KEY_LOOKUP_CREATE.
 
-If SELinux intercepts this via selinux_ip_forward() and triggers
-calipso_skbuff_delattr(), the packet is left with an invalid
-CHECKSUM_COMPLETE state. If the packet is subsequently forwarded into a
-virtual interface like a veth pair, the receiver will drop it due to a
-spurious checksum mismatch.
-
-> +		ip6_hdr =3D ipv6_hdr(skb);
-> +		ip6_hdr->payload_len =3D
-> +			htons(ntohs(ip6_hdr->payload_len) - delta);
-
-[Severity: Medium]
-Can this underflow when ip6_hdr->payload_len is 0, corrupting the IPv6
-Jumbogram length calculation?
-
-For Jumbograms, payload_len is explicitly 0 and the actual length is stored
-in a Hop-by-Hop option. Subtracting delta from 0 underflows the 16-bit
-integer, resulting in a large positive value.
-
-Subsequent IPv6 stack processing will misinterpret this packet as a standard
-IPv6 packet with a large payload rather than reading the Jumbogram option,
-completely corrupting the packet.
-
-While calipso_skbuff_setattr() also incorrectly modifies Jumbogram lengths,
-this underflow logic on the delete path is newly introduced here.
-
->  	}
-> =20
->  	return 0;
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/179138670045.80227.=
-16292613517250896744@gmail.com?part=3D1
+> I could do it but not without any feedback from David.
+> 
+> Br, Jarkko
