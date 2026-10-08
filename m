@@ -1,146 +1,169 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C5F370ADF;
-	Thu,  8 Oct 2026 13:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C1C3876D5
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791467882; cv=none; b=aFiX9QuQ9JuEaS4r7vybTUtySIpLjX+CnuOV7YEcvZLyXxWQlGphREtlUirB8S2ahwsdeHLdKjnry1WIstUO6WvgV35SHE03HodCosx1s3XOBMmGipyFmKN6fLCImDXFjC6L8EXHjHZeYAp3r3o8c4E2yT1g/cL07e/LZQp8UfU=
+	t=1791469608; cv=none; b=RlsQC07UsXkJkMAkEgVjAgidg6So3nFCthhKexxYeXVOxAmwW8csa6GmmjlzwU2mpqTbawKIt5UL/Z/OTbmsNics4vKO7ozBQgL075f6j5PduOezzXS+lHaYOsqJOgiYhfeSXKl+ECbBKF8aE/IozUREvWjY1hp7Nq02Yu1bgg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791467882; c=relaxed/simple;
-	bh=SHCFdRKZHF7nGgyUHMw8RQ1D9D8yAE8LOO7Mn3Jk8H0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4i5HkunZfrN3ALiIEr9ntGnGZAi4UnzlwP+hQlIhC4ROloLWBhlLAkyWyxhSYsvCmbVKHLW2aAiPdD7IHHNZlQlke3F46AR2faJuu8jji/es7flKDCryYr6mpLi9DfIdFCai7AonC+R18bCDTxo4DHW1346k0dnpIUK7Lh/QiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=wimmiNCQ; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+	s=arc-20240116; t=1791469608; c=relaxed/simple;
+	bh=Myio4zy1rcj3M7L4miPMIF/m5+9bCsWUc2GpKi0dF5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T/MMXDavIwZboOEbsC4GjqPK5d56tAUYUhVFdrVdZQNG3dAfPi+V5i466pQ+95bsRBNNM5R4QISOCnJZdyOxVSp1XjO9lg/Mso2uuH6wdNktV4T/ZcL7WEVyRxP7O5Vr3nAWT384OEVehzzOo86X5CtwCD3EOJ75F6v4echDWhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hTUdxb8X; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="wimmiNCQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1791467876; bh=SHCFdRKZHF7nGgyUHMw8RQ1D9D8yAE8LOO7Mn3Jk8H0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wimmiNCQUKqbK364mt2ag1JjHsGSUSjxxoMzawoqnhCzbIKW5NOl0Vewzngef1WBe
-	 6hJZhIUAgom+vaTDdXla+V7aq9vRwDKCNkD9IiF+jy9HZ3N7xQYf+V/IzOC3g2wzFA
-	 tPjSYVNI+gXZZS1DmzLdR4a2SV/kxP4VM6yFARMDB7zydYpCfKaZdMFf0HBebkq73F
-	 k+b+hc/JQfMvDwrlL+uZdpXoimE+F5bG+vKRwvzdmtC31RgskloBCArSzee3FYFglw
-	 /wId3ElTcksGULRbe3QvC8lHn6JzHf6x4jnJg9ydwzwnnJDqCy43p4SH60hUl8DNa5
-	 HqCgD9KYUTUXw==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id DDD43876; Thu,  8 Oct 2026 08:57:56 -0500 (CDT)
-Date: Thu, 8 Oct 2026 08:57:56 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Christian Brauner <brauner@kernel.org>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"Andrew G. Morgan" <morgan@kernel.org>,
-	Serge Hallyn <sergeh@kernel.org>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] capabilities: close the ways around the CAP_SETFCAP
- rule for uid 0
-Message-ID: <asehZEWAwsJcbqvM@hallyn.com>
-References: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTUdxb8X"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a16c399641so30621285e9.2
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 07:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791469604; x=1792074404; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=NzueoD+ES6klpAo68ynClo/FIBtsX+vJEmu8cfaDXg0=;
+        b=hTUdxb8XYtQ8ZFe9YL6Rr9/zgRIqMpFSeorffvJA+Y4vFa+V2BSCsmLeYAm3w1NVEd
+         ZgOGPy2JEGMN2ahJQoAoTwVn3l0MU6lqqmR0V52Attqv2jU2KWVu+0KDIrsZAX9h4CH4
+         5ZsEOajfB3sJc2uKrtz/j7v3hMZKF8k+zhVYEz/h0FiQyUw7Ec/YwIzMiYXZHI07jEFz
+         2HBLJPvLPO9PLmU0smFOxy6FdPe/iB+VgaGSyF9wKgpzyxoSst1c4XY1RVJSST0NAsYb
+         Ib3ZEz83WjLWzcce+9lo1Kdq3Xc7y2xu194IPrczMGl6XNNZcOzc+4TOZe/lyjBOz8UR
+         fQ5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791469604; x=1792074404;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=NzueoD+ES6klpAo68ynClo/FIBtsX+vJEmu8cfaDXg0=;
+        b=LKoVtfM0Xmwv84NwH+bJg+ENe+OZbaSAkxYYwDG5yVE3ZFAvdUdbkEXnEO2IUT4EZ6
+         gD+0rXpZGN7wI8P32Fl5O4Rf05jLIT3fH8kp1X7/f6bEQtKygeeaRq+NVFAiC3upQkVH
+         Lc4MycAEyhk4GR6503HhuxYBBsjt2NeI12PEV0HTtYckoQTMnqdHlozvc3IENpprawYt
+         pK95eWIMG2ztwY2/nau3NFiuhFG+YZJvrWUVrI4foS6/eTl5WFfAP7xnuaVPIFxDA8qM
+         PZejHiP9YAzWGPCV85flmnUQM7hK2/V0HAON+L6V/rMLvdttHSWBfCmLO6xrDIaBIiof
+         wTUw==
+X-Forwarded-Encrypted: i=1; AKwUvBw536xT7hWnpAG6rJAxS2uJy67+NVpltvsTTMclFCFMvAM9idS3sTvwcjJ7ziJh6bSQ5ptU85Qw6koUEy5vxMndnP+PEh4=@vger.kernel.org
+X-Gm-Message-State: AFuF++n4Tf0jEN0/nPE8ZVngP+oF2qTomoIXy9GdpR+dH4kgs37LxPai
+	V28w5+uM0AwlDzU7Qx6sJNYKjE7MZxR9ACwwEOh/RlJdtWIMXNdNfiRp
+X-Gm-Gg: AYBFou1Ig0IyvKjR1IEWPspufmK56v2crj0sGT0RM+dSNBVp/oTetXj/Zler9NzlTxh
+	YGu7ekG+/sBi9VF2HFEtOSfGmM3YXmjHaEXDRhU7n2H7/yXAjhUTb4n/qrZ9g4cVZ27h7rtttYz
+	5AxbwetKMyeg6LdMo7vcdQceAYEvtwINgyvpsNmmk02Tl1kFmSV2eAkx4le8P0TNe2GhEJdNKTE
+	mdW+o0JuP8CKh9xLJEq7Wjfr9DiJaO3hQwDk73+liZBxCQpyA3TuAheVegQvhIuzdMGYOrfsys1
+	1h2feQGh8J4ZflMnqrpf+xo2/Ex3Ys+3uxAFZj3UGbbNtmFFYTf7HJwP+RtSXoRtkphnK1NZadg
+	xC/vaaGhdsDckn+FZwEGzlNBnaLi8TFTDL5KIuIOezwaawjk8Aa6hZTO2nSnmqDGwWUAmOkuL9k
+	7Dz8jNPxYAg7BWIBnczq7hAC41ZPDKR9faIV3XcWDfKriR9OTqPB7LLpwJsRhzUL7x6YDxhAil3
+	H9xXjvV+6V1Chyp9zfhm8pQ
+X-Received: by 2002:a05:600c:818c:b0:499:b65e:49c9 with SMTP id 5b1f17b1804b1-4a180419643mr92571675e9.10.1791469603629;
+        Thu, 08 Oct 2026 07:26:43 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1842ab891sm69494435e9.5.2026.10.08.07.26.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2026 07:26:42 -0700 (PDT)
+From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Wang Yan <wangyan01@kylinos.cn>,
+	linux-kselftest@vger.kernel.org,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH 00/27] landlock: Selftest fixes and cleanups
+Date: Thu,  8 Oct 2026 16:25:29 +0200
+Message-ID: <20261008142604.39107-2-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.56.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 06, 2026 at 03:44:16PM +0000, Josef Bacik wrote:
-> Hello,
-> 
-> Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
-> stops a root task that has given up CAP_SETFCAP from creating a user
-> namespace that maps uid 0 and then writing file capabilities in it that
-> the initial namespace honours.  The check only looks at the task that
-> creates the namespace, so if somebody who did have CAP_SETFCAP created
-> one, there are still several ways around it:
-> 
-> - setns() into their namespace and write uid_map from inside (patch 2)
-> - write "0 0 1" through a uid_map fd that they opened (patch 3)
-> - setns() into a namespace of theirs that already maps uid 0 and set
->   security.capability there, no map write needed (patch 4)
-> - ptrace one of their tasks and have it do any of the above (patch 5)
-> 
-> On an unmodified kernel we took a uid 0 task with CAP_SETFCAP dropped
-> from its permitted, effective and bounding sets and, through each of
-> these, ended up with a file that a uid 1000 user execs with
-> CAP_SYS_ADMIN in its effective set.
-> 
-> Patch 1 adds cred->setfcap_level, which records how far up the
-> namespace tree a task's CAP_SETFCAP reached when it entered its
-> namespace, and patches 2-5 check it.  Patch 4 is the check that closes
-> the class, the map patches make the uid 0 map rule mean what
-> db2e718a4798 meant it to, and patch 5 keeps ptrace from borrowing what
-> the target is entitled to.
-> 
-> This does change behaviour.  Everything new is -EPERM:
-> 
-> - a task that entered a namespace without CAP_SETFCAP outside can't map
->   uid 0 of the outside or write fscaps for that root user anymore
-> - a uid_map fd opened by a task with CAP_SETFCAP can't be used by a
->   task without it to map uid 0
-> - if a privileged task maps "0 0 1" from the parent for a namespace
->   created by a task without CAP_SETFCAP, that namespace can no longer
->   write fscaps honoured outside
-> - PTRACE_ATTACH and PTRACE_TRACEME fail when the tracer gave up
->   CAP_SETFCAP and CAP_SYS_PTRACE, the target didn't, and they share a
->   root user
-> 
-> Rootless containers, privileged runtimes writing the map from the
-> parent, nested unprivileged namespaces and containers that don't map
-> host uid 0 aren't affected.  The ptrace check is one compare for
-> targets in the initial namespace and in namespaces entered without
-> the capability.
-> 
-> Testing: a set of flows run on the base and patched kernels, every
-> bypass route above gets -EPERM with the series and the 16 legitimate
-> flows behave the same.  The capabilities, namespaces, ptrace, pidfd and
-> proc selftests give the same results before and after. Thanks,
-> 
-> Josef
-> 
-> ---
-> Josef Bacik (5):
->       cred: record how far up CAP_SETFCAP reaches
->       userns: don't let setns() lend the right to map uid 0
->       userns: check the writer too before mapping uid 0
->       capabilities: limit fscaps to where CAP_SETFCAP reaches
->       capabilities: don't let ptrace borrow CAP_SETFCAP
+A collection of Landlock Selftest fixes
+=======================================
 
-Thanks, Josef.
+This patch set is bundled together to be slightly less spammy,
+but the patches are mostly independent.  The commits are ordered
+such that the simpler and more orthogonal patches come earlier.
 
-Would you mind describing what other solutions you considered?  I've been
-looking over this set since Tuesday, and finding it hard to reason about.
-(Part of that is certainly the nature of the problem, and it's possible
-that this is the best/simplest solution.)
+The patch set is LLM-assisted (and that turned out to be very useful
+for spotting errors).  Needless to say, I have verified all commits by
+hand, and reworked them where necessary.
 
-If we replaced the userns->parent_could_setfcap bool with a ref to the
-creator's cred, then at both setns and write we could check the actor's
-credentials, right?  There are probably issues with that specific idea,
-but that's why it would be good to see what else you've considered.
+The last few patches are a bit more cross-cutting and probably more
+prone to merge conflicts, as they correct cases where we have been
+using EXPECT and ASSERT in the wrong way (details in the commit
+messages).  I believe that the rationale for each of these is
+reasonable, but I am happy to discuss.
 
-Of course UID 0 will always continue to carry privileges even with an
-empty cap_eff.  Here we're stopping it from writing filecaps to uid 0
-owned files, but if it can open a 0 owned file on the host, like
-/bin/sh or a systemd init file, or ptrace a process (in a child ns that
-maps parent uid 0) doing so, it can still cause damage.  My point being,
-we do need to keep in mind the tradeoff of keeping the code simple
-versus the realistic threat of the problem being addressed.
+Motivation
+==========
 
->  include/linux/capability.h   |   4 ++
->  include/linux/cred.h         |   1 +
->  kernel/user_namespace.c      |  40 +++++++++++----
->  security/commoncap.c         | 119 +++++++++++++++++++++++++++++++++++++++++--
->  security/keys/process_keys.c |   1 +
->  5 files changed, 150 insertions(+), 15 deletions(-)
-> ---
-> base-commit: 7909a3e30a05e40bbc8bfb7f5629ed642abeaab8
-> change-id: 20261006-b4-setfcap-userns-d63185a31ce3
+LLMs (and humans ;-)) have an unfortunate tendency to pick up and
+replicate bad coding style patterns, so I hope that a broader cleanup
+of the test style will avoid this spreading further.
+
+
+When applying this patch set, please base it on a branch that has Wang
+Yan's snprintf() patch in it [1], which I also support as a selftest
+cleanup.
+
+–Günther
+
+[1] https://lore.kernel.org/all/20260626070016.61049-1-wangyan01@kylinos.cn/
+
+Günther Noack (27):
+  selftests/landlock: Propagate grandchild failures in unix_scoping
+  selftests/landlock: Propagate EXPECT failures from forked children
+  selftests/landlock: Check the thread result in audit.thread
+  selftests/landlock: Zero-initialize the buffer in inconsistent_attr
+  selftests/landlock: Fix the openat() success check in fs_bench
+  selftests/landlock: Fix the reported clock tick rate in fs_bench
+  selftests/landlock: Fix the ruleset_fd check in empty_or_same_ruleset
+  selftests/landlock: Handle a missing control message in recv_fd()
+  selftests/landlock: Assert tracefs_extract_field() results that are
+    used
+  selftests/landlock: Assert audit initialization in fixture setups
+  selftests/landlock: Assert helper results that are used afterwards
+  selftests/landlock: Assert audit_count_records() before using its
+    result
+  selftests/landlock: Fix memory leak in audit_init_filter_exe()
+  selftests/landlock: Make audit_message large enough for any exe filter
+  selftests/landlock: Close leaked file descriptors
+  selftests/landlock: Check errno for combined VERSION and ERRATA flags
+  selftests/landlock: Fix SIGURG handler setup in scoped_signal_test
+  selftests/landlock: Fix regex_escape() error handling in
+    matches_log_fs_extra()
+  selftests/landlock: Fix off-by-one in regex_escape()
+  selftests/landlock: Fix the snprintf() error check in
+    matches_log_fs_extra()
+  selftests/landlock: Use _exit() in the named_pipe_ioctl child
+  selftests/landlock: Fix messages and comments in helper programs
+  selftests/landlock: Fix stale comments in common.h and audit.h
+  selftests/landlock: Use ASSERT for syscall failures before errno
+    checks
+  selftests/landlock: Assert WIFEXITED() before checking the exit status
+  selftests/landlock: Use EXPECT for closing FDs and stopping threads
+  selftests/landlock: Use EXPECT for checks that later steps do not need
+
+ tools/testing/selftests/landlock/audit.h      |   20 +-
+ tools/testing/selftests/landlock/audit_test.c |   56 +-
+ tools/testing/selftests/landlock/base_test.c  |  190 +--
+ tools/testing/selftests/landlock/common.h     |   32 +-
+ tools/testing/selftests/landlock/fs_bench.c   |    5 +-
+ tools/testing/selftests/landlock/fs_test.c    | 1300 +++++++++--------
+ tools/testing/selftests/landlock/net_test.c   |   64 +-
+ .../testing/selftests/landlock/ptrace_test.c  |   44 +-
+ .../selftests/landlock/sandbox-and-launch.c   |    6 +-
+ .../landlock/scoped_abstract_unix_test.c      |   45 +-
+ .../selftests/landlock/scoped_signal_test.c   |   23 +-
+ .../testing/selftests/landlock/scoped_test.c  |    2 +-
+ .../selftests/landlock/trace_fs_test.c        |    8 +-
+ tools/testing/selftests/landlock/trace_test.c |   26 +-
+ tools/testing/selftests/landlock/tsync_test.c |   22 +-
+ .../selftests/landlock/wait-pipe-sandbox.c    |   16 +-
+ tools/testing/selftests/landlock/wait-pipe.c  |    2 +-
+ 17 files changed, 952 insertions(+), 909 deletions(-)
+
+-- 
+2.56.0
+
