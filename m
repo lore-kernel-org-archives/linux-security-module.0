@@ -1,177 +1,146 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36501490BF6
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 11:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C5F370ADF;
+	Thu,  8 Oct 2026 13:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791460181; cv=none; b=OiiRPtAAVsc/sxZ2jXzx4P6l/WpM3zoev7a6X9IayvwJPzy8UCkYmsoP9pI+WL0MTImS/3mmKM0Xw8Mmym/Xi2Kh2u+iVadwdtmsPRFhkblvBgQGCNEYsUtO4Nn4bPC3JxSf/J+GxeoZk79GG32wjEnvugB8Jh9kbKmwTEZVxy8=
+	t=1791467882; cv=none; b=aFiX9QuQ9JuEaS4r7vybTUtySIpLjX+CnuOV7YEcvZLyXxWQlGphREtlUirB8S2ahwsdeHLdKjnry1WIstUO6WvgV35SHE03HodCosx1s3XOBMmGipyFmKN6fLCImDXFjC6L8EXHjHZeYAp3r3o8c4E2yT1g/cL07e/LZQp8UfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791460181; c=relaxed/simple;
-	bh=z1Lv6bBiVaV/AE1698NmYcqqikCeK/dLos+yJzskyMo=;
+	s=arc-20240116; t=1791467882; c=relaxed/simple;
+	bh=SHCFdRKZHF7nGgyUHMw8RQ1D9D8yAE8LOO7Mn3Jk8H0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfSJ2Cnx8Z1X1RIyJJ5eA4OGIyNzKcO+wvmKmEZ3rIbt9fqKL+RhNM+I/GFs1gbT+rRhdWMsbD7sptvwqEp8e9AxfZUI9dleYFc1KD7D3nYoSl2s7PuvGLGpfpjKiVuUr9w26JiIKnQK+2ieRco+A8IUhzGZD24NaYqnXE59VAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IrSZL12g; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Um8toQ55; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=s4i5HkunZfrN3ALiIEr9ntGnGZAi4UnzlwP+hQlIhC4ROloLWBhlLAkyWyxhSYsvCmbVKHLW2aAiPdD7IHHNZlQlke3F46AR2faJuu8jji/es7flKDCryYr6mpLi9DfIdFCai7AonC+R18bCDTxo4DHW1346k0dnpIUK7Lh/QiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=wimmiNCQ; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IrSZL12g";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Um8toQ55"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 698BJwAw3846910
-	for <linux-security-module@vger.kernel.org>; Thu, 8 Oct 2026 11:49:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ONa57ks5ga652cPMfwS6ylXGao8ogu8BA+2+sbiyCTI=; b=IrSZL12gPR1LytLM
-	ho2XNe5p3YUC3j0ZfUqlyXFbRCChLsQENBec/V255WXlNHczp1hmsSEbWj7eER8U
-	Zja7MII7BRRhW1CO6eVqdH8PZio6nd9abHOwfUGVNOzji+B9oWMx+L6Ew1wZCZhR
-	OF7S86m6BTQ346R6+H3iarRkO3dxqE+YuG0hLmZi5AoLxk6I7MWqa48c8Y5oXJ1T
-	9tX5cW1V52MKXBZuYfWktQvAq0i1yqSpelG4lY9QYp8eUSCAq51WljxJnTfEFdFc
-	urN2HDvbGs/H4u7tgOZT20Qx0GI7xyRde/3FtLP74wAxBleSvyHI+E7s2PWVZKiK
-	XAquMQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h60sgaaaw-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 11:49:39 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93e49a1d3b1so1170041085a.2
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 04:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791460178; x=1792064978; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ONa57ks5ga652cPMfwS6ylXGao8ogu8BA+2+sbiyCTI=;
-        b=Um8toQ55nZTcEXkbVa+nmJu2n5SCrPnYKoDKzk4PeT/aXDOTKm/2lWyuzzeMeMlTd2
-         NHBXY722b31GJ7Zy1lZ13JUHAkZT2ijDaifZwJamRN0SsgmnBkPDCgHl1Ii7KzfK7Lso
-         qRmorC1BDbewW//I+Qyl6eIlvXqzp1qGvlQDA44N2SHJfDRiZkGjJZHJYZK8AQQzlYja
-         J5Xlg96PBBnr0WJD56KJHkLNT9il+M9ip5zdYbCOvYEVDkHnOi/hZ9p9sQrqMFY74Ml/
-         LAsU6OLs5vG3fjcJafaqNFVh85vABc4WCEwzqG+C+SvqHUZ2nGV3M0CLFjFFNFUMBe1e
-         NNVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791460178; x=1792064978;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=ONa57ks5ga652cPMfwS6ylXGao8ogu8BA+2+sbiyCTI=;
-        b=i15xuX2P1cvCaUBt3NVQSBYPDxHxGaYMuVyhvz9xJ9WZ5ImTZLgNvQhBD0N+6notbX
-         T27VZXPuGKFhYV+RjRE1uHEsKWDhZUlUPaDhRij5tCS04Z2Vdi6cMHVBiBEXGhkKA8n8
-         effRzViGpbZ2r8xHSeEAfTXNdtYXyU3IkPiTByBFruZzKywirnPAZuTGIeFavwWYW6UR
-         +at+CdkCd4oLrjvqKq/jTs4HvBJpOcFOhTQbB/DEmR1E6T1GLJlCE7SYBep9SCphUbX0
-         cKoB9imUic7Y8xHfKhCF/DKjUYiWfbfCLYVcPT4vRLXdN7/UW/wnR4JNtX9bSJsHErWT
-         HAZA==
-X-Forwarded-Encrypted: i=1; AKwUvByCRwSAoaUukslMNYAj+UG17arihkBGfqRQ7ymas+mD5sY4XATEn5J1iCL7eWGGv1P0+wlAtOgOo4bFtiiVUMdQdgJleiY=@vger.kernel.org
-X-Gm-Message-State: AFuF++kEqElL2dP/zJPV4/kDERwHTmlIINSwMp+nB1/Y7WIjJX1kjDVX
-	1BA+HFI6obCQGmvpg7UhqZwHUUb9CzTe3nnYRjmRIqTBOEqDYWl+33wiyj7aQaUiqUm2EbWaTvp
-	HebhXfr4dZmUU+Hndy65sxjN442hiq9OhzKPjA5qvw5qV1zo0EW/RonEyOf38f+fc/EsJ6W2O+D
-	dYtY4=
-X-Gm-Gg: AYBFou18AldVQqUYaHDMY8y1M4/2CuBsd3I4BUlS8/otiTXjJdDq6iJVpibOr0Uzmxm
-	sopEm7hv4ZxF0Y8monTKHHOuSQc8m+Jrx4FIz3IsW48koBqIGYvnPrdZCwn0o2xGRsJaBWxBYqa
-	IPuceQ6vhP0ALWk8PcqyfX3J+WKVSpEyQK8P1Bh0B/eKD3UHGcYoamGvurcNpzDLJqFOcCXWPLu
-	DzxgYPsvGB0+jpyN7eVLGGtDR1fzzuSgTglb7L4GK0hlZJ4NyJgxrSoJ4x6JQhvl9Td+VTMJ4/S
-	70VaVJgkmLTibC9pAU31XYzjJvVLzSD72WgqmbrONsEIVmcn2PxIVwSMFNmQNn8D7PnOxfmSHDR
-	eJkC1DLch578xJyw=
-X-Received: by 2002:a05:620a:271c:b0:939:9edf:edb7 with SMTP id af79cd13be357-93e9b0f3275mr1099344385a.6.1791460178220;
-        Thu, 08 Oct 2026 04:49:38 -0700 (PDT)
-X-Received: by 2002:a05:620a:271c:b0:939:9edf:edb7 with SMTP id af79cd13be357-93e9b0f3275mr1099338485a.6.1791460177532;
-        Thu, 08 Oct 2026 04:49:37 -0700 (PDT)
-Received: from oss.qualcomm.com ([188.27.161.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a183f7ae14sm29634815e9.3.2026.10.08.04.49.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2026 04:49:36 -0700 (PDT)
-Date: Thu, 8 Oct 2026 14:49:34 +0300
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Bill Wendling <morbo@google.com>, Tingmao Wang <m@maowtm.org>,
-        Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Justin Stitt <justinstitt@google.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] landlock: Move the domain layer counter out of the
- anonymous union
-Message-ID: <66usntltyie7ii2rrqajy3izxrvwubwf2vqnery552v3akhwo2@xwb4t76d37wx>
-References: <20261007-b4-landlock-fix-domain-fortify-panic-v1-1-042e9108f5f8@oss.qualcomm.com>
- <CAKwvOd=nPgEm=AZbEu12Eb90GtRUThY6YAjSiHHuNVHP8TZHwg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="wimmiNCQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1791467876; bh=SHCFdRKZHF7nGgyUHMw8RQ1D9D8yAE8LOO7Mn3Jk8H0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wimmiNCQUKqbK364mt2ag1JjHsGSUSjxxoMzawoqnhCzbIKW5NOl0Vewzngef1WBe
+	 6hJZhIUAgom+vaTDdXla+V7aq9vRwDKCNkD9IiF+jy9HZ3N7xQYf+V/IzOC3g2wzFA
+	 tPjSYVNI+gXZZS1DmzLdR4a2SV/kxP4VM6yFARMDB7zydYpCfKaZdMFf0HBebkq73F
+	 k+b+hc/JQfMvDwrlL+uZdpXoimE+F5bG+vKRwvzdmtC31RgskloBCArSzee3FYFglw
+	 /wId3ElTcksGULRbe3QvC8lHn6JzHf6x4jnJg9ydwzwnnJDqCy43p4SH60hUl8DNa5
+	 HqCgD9KYUTUXw==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id DDD43876; Thu,  8 Oct 2026 08:57:56 -0500 (CDT)
+Date: Thu, 8 Oct 2026 08:57:56 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Christian Brauner <brauner@kernel.org>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"Andrew G. Morgan" <morgan@kernel.org>,
+	Serge Hallyn <sergeh@kernel.org>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] capabilities: close the ways around the CAP_SETFCAP
+ rule for uid 0
+Message-ID: <asehZEWAwsJcbqvM@hallyn.com>
+References: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKwvOd=nPgEm=AZbEu12Eb90GtRUThY6YAjSiHHuNVHP8TZHwg@mail.gmail.com>
-X-Proofpoint-GUID: zo8c9qrDP8c9MNLo_yfikci4lLrqSb2e
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA4MDA0NiBTYWx0ZWRfX+fWt8CWq0zN8
- sWsQomBTk8KwljOuD5gBjUIl+dubBqqJMDQz/0vlz+U1e6aWRn61p2zCOqW/GMfLkz7IBIvHfmv
- SkxD67GJtYc2TgNDspw4GJoRpFv8cEQ=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA4MDA0NiBTYWx0ZWRfX2/GTVRFrjp4v
- LnhSiBtmc8sApril6xVpMEuXHeud8/c2EEDLI8uUP0Mrne13JV+duY9BI4y7LKcn1TcOsuAgK0I
- 01nn0UgrimfvhiSNZbSKopJJa4If0iApKZNx17ipeKOSE7KobSPBrKZHjOt6BbI+DjjGQZFBDgG
- yujGwvOXB0SpMvImeQwppbe8Kj+PFZC8XyXfBg1/Vtdwf44yVQXfBEprafewcUAhJniirwm9/ld
- UhdsRwQQxlaHc08hi05UID3In+aV7AIFnck/63ua4C9UrCAZlSfUBFZP5FRZ7RwtFYA966+dh6J
- VSUisZIhZr9KTwZ7bj2y8b5PfZY3zRp9Brz4kwMXowrEJB0bwqgtfCbbbVQvJgP4h6Dk9ECnPlt
- dNHKJ9HdMD4i9iIS9c93YattNqF5p+lBVaphEzBGHN17kARDhC0sEKlOgK75nFQmdqMPtfwO9vp
- IGB1irkpZr0sOpxlbwQ==
-X-Authority-Analysis: v=2.4 cv=DfWCOftW c=1 sm=1 tr=0 ts=6ac78353 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=EiYrS7xXfcF7w+nkr41hpQ==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=65UEQdh2eEdUBxeNKyQA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-ORIG-GUID: zo8c9qrDP8c9MNLo_yfikci4lLrqSb2e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-08_04,2026-10-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 spamscore=0 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610020000 definitions=main-2610080046
+In-Reply-To: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
 
-On 26-10-07 14:49:28, Nick Desaulniers wrote:
-> On Wed, Oct 7, 2026 at 9:28 AM Abel Vesa <abel.vesa@oss.qualcomm.com> wrote:
-> >
-> > With Clang 20 and CONFIG_FORTIFY_SOURCE, stacking Landlock domains can
-> > trigger a fortify panic in the handled_masks copy in inherit_ruleset():
-> >
-> >   __fortify_panic
-> >   landlock_merge_ruleset
-> >   __arm64_sys_landlock_restrict_self
-> >
-> > Clang miscalculates the location of the __counted_by counter in the
+On Tue, Oct 06, 2026 at 03:44:16PM +0000, Josef Bacik wrote:
+> Hello,
 > 
-> Thanks for the patch.
+> Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+> stops a root task that has given up CAP_SETFCAP from creating a user
+> namespace that maps uid 0 and then writing file capabilities in it that
+> the initial namespace honours.  The check only looks at the task that
+> creates the namespace, so if somebody who did have CAP_SETFCAP created
+> one, there are still several ways around it:
 > 
-> Would you consider this a bug in clang, or an error in how the
-> __counted_by attribute is applied?
+> - setns() into their namespace and write uid_map from inside (patch 2)
+> - write "0 0 1" through a uid_map fd that they opened (patch 3)
+> - setns() into a namespace of theirs that already maps uid 0 and set
+>   security.capability there, no map write needed (patch 4)
+> - ptrace one of their tasks and have it do any of the above (patch 5)
 > 
-> If the former, then a bug report against upstream llvm-project/ and a
-> link to that bug report would be appreciated.  Then Bill can take a
-> look.
+> On an unmodified kernel we took a uid 0 task with CAP_SETFCAP dropped
+> from its permitted, effective and bounding sets and, through each of
+> these, ended up with a file that a uid 1000 user execs with
+> CAP_SYS_ADMIN in its effective set.
 > 
-> Or if this was a known issue specific to clang 20, then we should have
-> a link to the fix (or consider bumping counted_by support to the
-> compiler version that is bug free).
+> Patch 1 adds cred->setfcap_level, which records how far up the
+> namespace tree a task's CAP_SETFCAP reached when it entered its
+> namespace, and patches 2-5 check it.  Patch 4 is the check that closes
+> the class, the map patches make the uid 0 map rule mean what
+> db2e718a4798 meant it to, and patch 5 keeps ptrace from borrowing what
+> the target is entitled to.
+> 
+> This does change behaviour.  Everything new is -EPERM:
+> 
+> - a task that entered a namespace without CAP_SETFCAP outside can't map
+>   uid 0 of the outside or write fscaps for that root user anymore
+> - a uid_map fd opened by a task with CAP_SETFCAP can't be used by a
+>   task without it to map uid 0
+> - if a privileged task maps "0 0 1" from the parent for a namespace
+>   created by a task without CAP_SETFCAP, that namespace can no longer
+>   write fscaps honoured outside
+> - PTRACE_ATTACH and PTRACE_TRACEME fail when the tracer gave up
+>   CAP_SETFCAP and CAP_SYS_PTRACE, the target didn't, and they share a
+>   root user
+> 
+> Rootless containers, privileged runtimes writing the map from the
+> parent, nested unprivileged namespaces and containers that don't map
+> host uid 0 aren't affected.  The ptrace check is one compare for
+> targets in the initial namespace and in namespaces entered without
+> the capability.
+> 
+> Testing: a set of flows run on the base and patched kernels, every
+> bypass route above gets -EPERM with the series and the 16 legitimate
+> flows behave the same.  The capabilities, namespaces, ptrace, pidfd and
+> proc selftests give the same results before and after. Thanks,
+> 
+> Josef
+> 
+> ---
+> Josef Bacik (5):
+>       cred: record how far up CAP_SETFCAP reaches
+>       userns: don't let setns() lend the right to map uid 0
+>       userns: check the writer too before mapping uid 0
+>       capabilities: limit fscaps to where CAP_SETFCAP reaches
+>       capabilities: don't let ptrace borrow CAP_SETFCAP
 
-This is a Clang code generation bug, and it is not limited to Clang 20.
-I checked a reduced reproducer with Clang 20.1.2, 21.1.8, 22.1.8 and
-23.1.2. All four reproduce it at both -O0 and -O2.
+Thanks, Josef.
 
-The native x86_64 runtime test returns zero for the dynamic object size
-of the zero-initialized array, despite num_layers being set. The AArch64
-assembly also shows the count being loaded from offset 40 rather than
-num_layers at offset 36. Moving the counter and array out of the union
-makes the reproducer pass with all four versions.
+Would you mind describing what other solutions you considered?  I've been
+looking over this set since Tuesday, and finding it hard to reason about.
+(Part of that is certainly the nature of the problem, and it's possible
+that this is the best/simplest solution.)
 
-It turns out Amaan Qureshi has already reported exactly this Landlock
-issue and proposed an LLVM fix:
+If we replaced the userns->parent_could_setfcap bool with a ref to the
+creator's cred, then at both setns and write we could check the actor's
+credentials, right?  There are probably issues with that specific idea,
+but that's why it would be good to see what else you've considered.
 
-  https://github.com/llvm/llvm-project/pull/228309
+Of course UID 0 will always continue to carry privileges even with an
+empty cap_eff.  Here we're stopping it from writing filecaps to uid 0
+owned files, but if it can open a 0 owned file on the host, like
+/bin/sh or a systemd init file, or ptrace a process (in a child ns that
+maps parent uid 0) doing so, it can still cause damage.  My point being,
+we do need to keep in mind the tradeoff of keeping the code simple
+versus the realistic threat of the problem being addressed.
 
-Thanks,
-Abel
+>  include/linux/capability.h   |   4 ++
+>  include/linux/cred.h         |   1 +
+>  kernel/user_namespace.c      |  40 +++++++++++----
+>  security/commoncap.c         | 119 +++++++++++++++++++++++++++++++++++++++++--
+>  security/keys/process_keys.c |   1 +
+>  5 files changed, 150 insertions(+), 15 deletions(-)
+> ---
+> base-commit: 7909a3e30a05e40bbc8bfb7f5629ed642abeaab8
+> change-id: 20261006-b4-setfcap-userns-d63185a31ce3
