@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6964BD7B2
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722AD4BE456
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791470011; cv=none; b=jSfxU1EOGEWggWu5R/vmQQr0QZCKk8GIGfTZvutCBU4gPVrDRFdnDxMjdHutw4GCgpIZgqfdW6nOjSBFZ9zGPdVh3obAi5ro1gZ0je5Tey1XCt/u6VXrLP+UQ6VHV94grGFUn/xuF9u9BiVQYFMR6rTbplDu4Hnm6ucVG+YCwrc=
+	t=1791470011; cv=none; b=YdqaVAlnKVNXnNjMA/A4P1+GSuD56naUeSscmTaQUu7KuOGP4LbJIUrKBkaIO6zXv20U/uvWI+89xzI8icAznCrgM6E90Xfz9p20SVltcpoKE/tiMu2B7QTCiOgbS2MkFNVOqzaGb9Qqs3jDyzzbcnkctBVoqv2/ZbrdWlParak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1791470011; c=relaxed/simple;
-	bh=IcZYAuRGWrJkhd/EKZrs5S8ILssqkE6hmfG3rkD4UpA=;
+	bh=uid8VYBW6P2tHzci7+zUCGLqW7tGud//G7H9DcQal1c=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=SOMtayb8FWnC5O6rv28lgw6xlD5FmDWy66zNCg9xPc8/zV3K2hrfHPA/TwwTVd90bbkQadi6MrA3GhLypK8IKBJp+NVCtsnVUA15JE9ZZU+FyNJm5G/OHrZYx6fbMiapVAqOXC8Ha+1sz5sfv7SUvfgI722eTxKciQAleUpcQyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTZyvXaz; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=hmMSsJL7kY43KviPtDen61dFLF0f8rELChU5CsNCSsGSv+ucWeDX6BYWzaKpdEAtVy6gB8fy5qCq/b3j2M3jxdzThq7lGcV8jN1MLrSJSSu5+o2n6w/9pNQYur3Z6pj0HsTuDPguODI9AfNR0Fcx+oLlGxz7jFq4YaXulen04I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuZ4KRYm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTZyvXaz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E89C1F000FF
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:33:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuZ4KRYm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25C101F00893
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791470008;
-	bh=Eiqai9tAdvtROFhZkfr8PLFyAH93LofC1pk4SCQSCrw=;
+	s=k20260515; t=1791470009;
+	bh=ZrMAQ+cjVxTE1iIOA7GNdfWkIGe96+tMyiCN7lYl9Mo=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=cTZyvXazdM34qRfHNK7ybzrTTRMLixCIWUanlkwcRNe8OLn0A9/8yYDuIWfSjye1R
-	 X+BgEzjjiMmBurJoGNa1nfnl16QsOZSaysb9zPtu0b0l3G16l3TmOR683khl1o5XZH
-	 CsjoF/FcfUvBgbQBHYgct6fQKN/UKb+mLQh5SHJ8+vAZ9D8ZCLFRzgwbU7DtiPyET0
-	 AyluvaW2rbXj/qseWS2uCOn5hO5SDq4VDxdhDKAfZsSaquSU01vjUG+jXNaAEEBfRw
-	 mBEVMGGOcwVcTXEXpAn0Lgk07ATB+5Y71hUc24cUJbZfqyZL5xkEcIj679hY+pJpL4
-	 RyN27jxSyaSbA==
-Message-ID: <sashiko-outbox-164292@kernel.org>
+	b=YuZ4KRYmjjGGziDEZeRndCXJtnwv3Ka9FUayi0maUjVGDfoIuz4DZ5hWV/MKeoQnG
+	 Tj/g18XYoJayA/NwaqHjDpthyOT9cJvKcZeoPfPrD1HDs1E/Cxwrcr+FcJQORtHo2h
+	 uee46NekHT1mm3jxTbhLOE0BhTz+oFemWuDJ2Xz0hIVwxus0eC+w4OLEhi1SH2Nxwe
+	 9/wOMGvfc7aQb896pLy/k6W/nRCqvvwicuolfgP31hHYsmvUEZK3zVidRFukJ3fCsc
+	 uaDcUr5Mwx5GGm/cigl+dQaUFqZPg+SBIcJ92q0NHJ98MZlTWcGtIZP9YdaAeIeKYU
+	 DDyewPkTc/U7w==
+Message-ID: <sashiko-outbox-164293@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 22/27] selftests/landlock: Fix messages and comments in
- helper programs
+Subject: Re: [PATCH 09/27] selftests/landlock: Assert
+ tracefs_extract_field() results that are used
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261008142604.39107-24-gnoack3000@gmail.com>
+In-Reply-To: <20261008142604.39107-11-gnoack3000@gmail.com>
 References: <20261008142604.39107-2-gnoack3000@gmail.com>
- <20261008142604.39107-24-gnoack3000@gmail.com>
+ <20261008142604.39107-11-gnoack3000@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Thu, 08 Oct 2026 14:33:28 +0000
@@ -44,11 +44,11 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> * sandbox-and-launch: Describe the actual argument order.
-> * sandbox-and-launch, wait-pipe, wait-pipe-sandbox: Report failed
->   read(2) calls as read failures, not write failures.
-> * wait-pipe-sandbox: Terminate error messages with a newline, and fix
->   comments naming "." instead of the opened "/".
+> Several trace tests check tracefs_extract_field() with EXPECT_EQ() and
+> then compare the extracted field.  If the extraction fails, the field
+> buffer is left uninitialized and the following comparison reads it.
+>=20
+> Use ASSERT_EQ() for these calls, as the other trace tests already do.
 >=20
 > Assisted-by: LLM
 > Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
@@ -57,5 +57,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261008142604.3910=
-7-2-gnoack3000@gmail.com?part=3D22
+7-2-gnoack3000@gmail.com?part=3D9
 
