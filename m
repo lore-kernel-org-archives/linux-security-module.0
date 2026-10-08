@@ -1,150 +1,228 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876D44DDB37;
-	Thu,  8 Oct 2026 15:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BC04D0CC3
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 15:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791473173; cv=none; b=dN+viY+2OXDvhIG6+gHBi/xZ9jZjAUU7+ulrzA1jcGTGCIYwYn1dMIXaJSCuYctIaEi1A5h49pkkgdj7rMaxM5dCpu6PPoRiSIDICgiXn/a6FUPuZ/z3rSd9yBWLOss1kFShpupQkf8ALf5jet/vYp9652G+SJbcnLAa+ZhvxaU=
+	t=1791473307; cv=none; b=Xrze8aD0eNbre8A0hFwGCob3t8BEyjHQceaM92goEarezU2rS5zcH9p9FMZ2ip6qqDAdyF2J1zvZH9ppXOq8rcH/LaQ5dxm4TeVgBpxQ6YqqDI9fu5cc5yLywz+DC2h5GiwSaGuDbnRd1W1pvKJLIaPNdwM3a7pbcaQI9gBJyQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791473173; c=relaxed/simple;
-	bh=cDyuwEKK8sXGpAj3kWtZyNN+HaU08rNG0W1xctdiPug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InwyyYOQ8ZytumyQi30SqnNodGgs3ngItd3S3JtJdeitllY0AoqxoiaOWvoAjKytqap9VbW3CxpiSRXDMkh1gx9CEGgM3Ln1Om0gbTGq9srwmOkZ8tt57uRqbFwGFBEIBQgaHEhOdiB/Dm03fIGYQPMgBGBwH6P5L36rS1wkoPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=f9INlEzW; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+	s=arc-20240116; t=1791473307; c=relaxed/simple;
+	bh=lw5jMw8GbgxjgStIOv5agiUnsCdhb70l60n5F3OPbo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=eWKSwPi4pXjTKTXn9Pee+09Nm8HN41DFLN2I0uX1pnXe4tS1awtNF0LElPHtRBfqgtzvbf0RcTw1nXUUgkVoES/n62+tYUy9pX1Ids34wuVAf0XjAPkq9lvNR2FnPJh2LAM994hdZPiOCgwua7/DQec9ICSiVOoLWTE4fwHy2OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9/Wa0m8; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="f9INlEzW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1791473148; bh=cDyuwEKK8sXGpAj3kWtZyNN+HaU08rNG0W1xctdiPug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f9INlEzWvRKdr/Fb3T5Ad0Gww3mff6qF274Hh6qjZDcgZoItXuJ/GPwrJbw9NrxCu
-	 47STDsY6pWekjbCUBwrDFdx59pH6kr/RDs/RRMBMtHMZ+LoiWP16LYuBMFomx+Zmuw
-	 QP7MhJyvW8BAm7eOcPYT2aZUbTGTbgtdzi86Kcm7lAljvdfM+SQWkdu7Cffkp6nlma
-	 uhxKRDvTp1+6vN7KW2xZgC6y/Fk+nciX9qD3LMfa5sUL5ETmVj8kTCeatcIF1eBKFF
-	 F5goSCrada9f7KvJar7ESKWMlbK3JPZwgXg/u1GAr41q2gPb3Kp0hmxegSZ5yAEqDx
-	 A2JaIXt7uutfw==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id A5939196B; Thu,  8 Oct 2026 10:25:48 -0500 (CDT)
-Date: Thu, 8 Oct 2026 10:25:48 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>
-Subject: Re: [RFC PATCH 0/2] keys: Address lookup_user_key() mutability
-Message-ID: <ase1/CnbnqL24SOQ@hallyn.com>
-References: <20260924055521.1981957-1-jarkko@kernel.org>
- <asKSvjz2YLZhFI4t@kernel.org>
- <asOhhCION3dwTAo+@hallyn.com>
- <asPwkdi7ZdO4YoRu@kernel.org>
- <asVDbPtyCNy210-R@shallyn-amd>
- <aseoJvcBh0RZ31Uo@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9/Wa0m8"
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6dde81a6820so4133976eaf.2
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 08:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791473302; x=1792078102; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:content-type:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=E00L9X2RHgWS9tfvtGx8xYe4bHrJKbfrkDRJPi5o0Gg=;
+        b=G9/Wa0m8qHYYu+BwCOyZTdgL57n/aqb9Pczg+nf1CdeTf995HU2eKh72OL5A6d+bAm
+         RzCh3oOGitPvmLIwadbbTWXOQhMAFpSv3chwvSVhQoZSUtgMj1DKmDN1GnWsPE9ViL8e
+         BX/zGX9qN5I0drATpW8ByebE55ysgMa6Z2Zhs3dNxlJZmKNOYCFNJ20Z8hRr7A1BOrJf
+         gDQ+OpZJQaNej61Lj81xIbjHgWpDgsQC96WQFiqAS6GXS6UZuxxfZzvJpj5y++Jgd6TU
+         jYdbn4mge9HNXSL02Hk2dn61ZFSv9loIg/MyDLrgqWwJWB8f+/LdN0MfndUxKw4zD8XM
+         8YcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791473302; x=1792078102;
+        h=mime-version:content-transfer-encoding:content-type:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=E00L9X2RHgWS9tfvtGx8xYe4bHrJKbfrkDRJPi5o0Gg=;
+        b=b7TdNUDvSyv24xb/+RrdX8yhhtz4DGaahv2svQ8wIeXr2kX8611B2aPdkljigA6f63
+         P6+NFCf4SZCRSZqtl9Llf2mnP+fa2ezw2SFcQha6RbYj94Neg31BN9AhreSKrLoGDM2h
+         vbfbopGIA8nTJriPHAWv3knbkKOS9qab+aPwhCO5g0li3+qT3SDFyzRM1id2ewi8QzVl
+         RwWEDCP/mftye1iKf+RpfRO+6jaH92P5kM0CAgHCyE7Og8tTT/OBUV5fQ18hCSAfVBB6
+         wxtbOzoNhJNOrjtnqlgnBAecUo4I/dK+WMorj8uu+/RnaG/wMvilvCwxwq5hMkOl0rIr
+         1snw==
+X-Forwarded-Encrypted: i=1; AKwUvByr1KxpklcsMDNqJr21SNlPSCmxV7WoXoRaOJoST+CFdemVq5hrx+1EsoL12ap/shkjDaztw50f/oIFN5xhLxbFejJaex0=@vger.kernel.org
+X-Gm-Message-State: AFuF++k4jYbKC2TjSABsa47QNZSp0Cax2ElKQyhCZt4qxqOKKvzCWms7
+	aMbSbD3MlKHB2MpFUVFb9PsFTBzWJLAGLU7Ef2jFBpXV0T1bzr2+mERV
+X-Gm-Gg: AYBFou0vVntUK57CEVeaz6+SJerHa2GNC1DpFnfaJqqsqmI5hJM/awMj22NpwcQByun
+	Uhy0XQNLiqCxU1yRTdTmHriVOvwEPtneKdRFNZ2pGoSTBZ82r7gOJgczC5aSmcbYv+VmWjLRHoO
+	/renmfgJM4fWKYVr+YLtqoODTLqMFqdTXQABS6cGBtNaMgUC6wyZB0Ic1OiFuetYmzWw/J9E8ix
+	GqmyuBLRvOgt4vXGgksbNFZLTOGdBQh0v213k1G+saeEvxiLgSLirFul51b0/j1taX+bIi/oTx6
+	7oY4Uz8BQQJYDKOuQj+S/dIOnY+MDP0jZ5Gc6/V9j/o4jGVcL8OGZ5BsVEC9HC6Mw8d6awb4Fke
+	ewA2EeY/MVsAiou7W2GdXRLvBvR4ug/VmOhJfely6vKlxnSnUeILIB+KiZWXV9eQjHY9zR7Q2MM
+	aHgnhyNRovK7gIz4dEaVIaRjeYgaLjRtFIccC16I8ZekqHgW6Ond+exIKKPLX6auuBEf2pZrlxi
+	urtBk7N36nd9TTg6bRjk7TPh8aiZM1/O5A4XnaXiaSJGjie0oek6p6BGFFXNA1tC79Bo/+AfZSg
+	FYhHLDogN12htgJS6NuQX51g4wkUqmujaMDURBabtH/HGDqDoD5mJjTmN9I1RygJZhHswyY=
+X-Received: by 2002:a05:6820:f005:b0:6d8:5491:3753 with SMTP id 006d021491bc7-6e7a60b74a6mr5264621eaf.45.1791473302362;
+        Thu, 08 Oct 2026 08:28:22 -0700 (PDT)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2804:7f0:b100:655c:c517:c6a0:13b2:a6e1])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6e79392d23fsm4265764eaf.6.2026.10.08.08.28.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2026 08:28:21 -0700 (PDT)
+From: Joas Antonio dos Santos <joasantonio108@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Dumazet <edumazet@kernel.org>, David S. Miller <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org, alice.kernel@fastmail.im
+Subject:
+ [PATCH net v2] calipso: update payload_len when removing the CALIPSO option
+Date: Thu, 08 Oct 2026 12:28:12 -0300
+Message-ID: <179147329205.58079.5847298721173675285@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aseoJvcBh0RZ31Uo@kernel.org>
 
-On Thu, Oct 08, 2026 at 05:26:46PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Oct 06, 2026 at 01:52:28PM -0500, Serge Hallyn (AMD) wrote:
-> > On Mon, Oct 05, 2026 at 09:46:41PM +0300, Jarkko Sakkinen wrote:
-> > > On Mon, Oct 05, 2026 at 08:09:24AM -0500, Serge E. Hallyn wrote:
-> > > > On Sun, Oct 04, 2026 at 08:54:06PM +0300, Jarkko Sakkinen wrote:
-> > > > > On Thu, Sep 24, 2026 at 08:55:16AM +0300, Jarkko Sakkinen wrote:
-> > > > > > The main objective in these patches is to remove to unneeded mutability
-> > > > > > from key look ups. It does harm and brings no value so it is pretty obvious
-> > > > > > to me that addressing this harmful behaviour is what we should do.
-> > > > > > 
-> > > > > > I based the first patch on what Jann suggested in [1]. Nothing too clever here
-> > > > > > and I'm ofc open for further suggestions.
-> > > > > > 
-> > > > > > [1] https://lore.kernel.org/keyrings/CAG48ez0XjVSR=M--UBauTm8sJuc+ZbhKzaPa3a6wrSVHyoKevw@mail.gmail.com/
-> > > > > > 
-> > > > > > Jarkko Sakkinen (2):
-> > > > > >   keys: Return user session keyring on lookup
-> > > > > >   keys: Reject keyring creation with overridden credentials
-> > > > > > 
-> > > > > >  Documentation/security/keys/core.rst |  7 ++-
-> > > > > >  security/keys/process_keys.c         | 65 +++++++++++++++-------------
-> > > > > >  2 files changed, 40 insertions(+), 32 deletions(-)
-> > > > > > 
-> > > > > > --
-> > > > > > 2.47.3
-> > > > > > 
-> > > > > 
-> > > > > So.. should I move forward to with non-RFC v2?
-> > > > 
-> > > > Patch 2 absolutely makes sense, "doc, it hurts when I do this", "don't do
-> > > > that then."
-> > > > 
-> > > > Regarding patch 1, that seems like quite a change in behavior, right?  I
-> > > > don't see any docs or comments that promise the current behavior, but
-> > > > has any userspace or subsystem come to depend on it?  I guess that, if so,
-> > > > then it just has to create a link to the user session keyring like pam
-> > > > (according to what I've read) does?
-> > > 
-> > > Thanks a lot of responding.
-> > > 
-> > > I fully agree with you but I'd need help for evaluating things further.
-> > > 
-> > > 1/2 based on Jann's email about the topic and my interpretation of the
-> > > suggestion. I neither used brains nor AI for this and consider the patch
-> > > merely as a conversation starter (and what a great success it was on doing
-> > > that) :-)
-> > 
-> >  :)
-> > 
-> > > All feedback is good feedback at this point. I need supporting code to
-> > > remember/recall later on so at least this serves that purpose.
-> > > 
-> > > Br, Jarkko
-> > 
-> > I've been staring at the before and after code for a bit now.
-> > It does even more than I was thinking :)  But I was trying to
-> > detail the changed behavior (from userspace's pov), and after
-> > several attempts, it seems maybe there actually isn't any.
-> > 
-> > Q: is there any path whereby the 
-> > 
-> > ```
-> >         else if (test_bit(KEY_FLAG_UID_KEYRING,
-> >                                     &ctx.cred->session_keyring->flags) &&
-> >                            lflags & KEY_LOOKUP_CREATE) {
-> > ```
-> > 
-> > case can still happen?  Or was this the only place where we installed
-> > the user_session keyring as session keyring, so that we can drop this
-> > branch?
-> 
-> Right, so *I think* that it is not useful and e.g., PAM uses NULL.
-> 
-> At the same time it is harmless. We could remove it but it would be
-> also uapi change (for granted, useless branch).
+calipso_skbuff_delattr() removes the CALIPSO option from the hop-by-hop
+extension header, or the whole extension header if CALIPSO is its only
+option, and pulls the skb by the removed length.  It never updates
+ipv6hdr->payload_len, so after a successful removal the header still
+claims the original length.
 
-There's
+calipso_skbuff_setattr() already adjusts payload_len by the length it
+adds; the delete path was missed.
 
-https://sources.debian.org/src/e2fsprogs/1.47.4-1/misc/e4crypt.c?hl=568#L568
+This is reached on the forward path when a packet carrying CALIPSO is
+sent to a destination mapped to an unlabeled NetLabel domain.  The
+forwarded packet then has a payload_len larger than its real payload
+by the removed length (8 to 264 bytes), and the receiver drops it as
+truncated.  So removing the label on the forward path has been broken
+for every packet that is not resegmented later (SYN, UDP, ICMPv6...).
 
-which bemoans that:
-	 * The fact that the keyctl system call and the add_key system
-	 * call treats KEY_SPEC_SESSION_KEYRING differently when a
-	 * session keyring does not exist is very unfortunate and
-	 * confusing, but so it goes...
+Adjust payload_len after the header is moved.  BIG TCP packets carry
+payload_len == 0 (see ipv6_set_payload_len()), and ipv6_payload_len()
+then falls back to skb->len, so leave them alone.
 
-Near as I can tell, add_key just always uses KEY_LOOKUP_CREATE?
+Tested with client, router and server network namespaces on one kernel
+(arm64, QEMU): SELinux permissive with a minimal mdp-generated policy
+(network_peer_controls=1), "netlabelctl calipso add pass doi:16", the
+default NetLabel mapping left unlabeled, IPv6 forwarding on the router.
+The client sends 5 UDP datagrams with a CALIPSO hop-by-hop option
+(DOI 16, set through IPV6_HOPOPTS) to the server through the router:
 
-And https://sources.debian.org/src/krb5/1.22.1-3/src/lib/krb5/ccache/cc_keyring.c?hl=307#L307
+  before: router Ip6OutForwDatagrams 5, server receives 0,
+          server Ip6InTruncatedPkts 5
+  after:  router Ip6OutForwDatagrams 5, server receives 5,
+          server Ip6InTruncatedPkts 0
 
-I'm not sure whether previous kernels did that, or whether the authors
-mixed up testing with and without KEY_LOOKUP_CREATE.
+Fixes: 2917f57b6bc1 ("calipso: Allow the lsm to label the skbuff directly.")
+Signed-off-by: Joas Antonio dos Santos <joasantonio108@gmail.com>
+Assisted-by: Claude:claude-opus-5-5
+---
+Changes in v2:
+- Skip the adjustment for BIG TCP packets (payload_len == 0), as
+  suggested by Eric Dumazet.
+- Exercised the forward path and described the test in the changelog.
+- calipso_skbuff_setattr() has the same BIG TCP issue with its
+  htons(payload + len_delta); I will send that as a separate patch.
 
-> I could do it but not without any feedback from David.
-> 
-> Br, Jarkko
+Reproducer for the forward test (as run on 602042bf29f6, arm64, QEMU,
+CONFIG_SECURITY_SELINUX=y, CONFIG_NETLABEL=y, CONFIG_IPV6=y):
+
+  # minimal policy from the kernel tree; an older checkpolicy may need
+  # all policycap lines except network_peer_controls removed
+  # scripts/selinux/mdp/mdp is built by 'make' with SELinux enabled
+  scripts/selinux/mdp/mdp -m policy.conf file_contexts
+  checkpolicy -U allow -M -o policy.33 policy.conf
+
+  # boot with lsm=selinux enforcing=0, then:
+  cat policy.33 > /sys/fs/selinux/load
+  netlabelctl calipso add pass doi:16     # default mapping stays unlabeled
+
+  ip netns add C; ip netns add R; ip netns add S
+  ip link add cr type veth peer name rc
+  ip link add rs type veth peer name sr
+  ip link set cr netns C; ip link set rc netns R
+  ip link set rs netns R; ip link set sr netns S
+  ip -n C -6 addr add fd00:1::2/64 dev cr nodad; ip -n C link set cr up
+  ip -n R -6 addr add fd00:1::1/64 dev rc nodad; ip -n R link set rc up
+  ip -n R -6 addr add fd00:2::1/64 dev rs nodad; ip -n R link set rs up
+  ip -n S -6 addr add fd00:2::2/64 dev sr nodad; ip -n S link set sr up
+  ip -n C -6 route add default via fd00:1::1
+  ip -n S -6 route add default via fd00:2::1
+  ip netns exec R sh -c 'echo 1 > /proc/sys/net/ipv6/conf/all/forwarding'
+
+  # a UDP listener on [::]:9999 in S (I used a small recv loop)
+  ip netns exec C ./calsend fd00:2::2
+  ip netns exec S grep -E 'Ip6InTruncatedPkts|Udp6InDatagrams' /proc/net/snmp6
+
+calsend.c (UDP with a CALIPSO hop-by-hop option, DOI 16, valid CRC):
+
+  /* Send UDP datagrams carrying a CALIPSO hop-by-hop option (DOI 16,
+   * level 0, no categories) with a valid CRC. */
+  #include <arpa/inet.h>
+  #include <netinet/in.h>
+  #include <stdint.h>
+  #include <stdio.h>
+  #include <string.h>
+  #include <sys/socket.h>
+  #include <unistd.h>
+
+  static uint16_t crc_ccitt(uint16_t crc, const uint8_t *p, size_t len)
+  {
+  	while (len--) {
+  		crc ^= *p++;
+  		for (int i = 0; i < 8; i++)
+  			crc = (crc & 1) ? (crc >> 1) ^ 0x8408 : crc >> 1;
+  	}
+  	return crc;
+  }
+
+  int main(int argc, char **argv)
+  {
+  	uint8_t hop[16] = {
+  		0, 1,			/* next header (set by kernel), len 16 */
+  		0x07, 8,		/* CALIPSO, option data length 8 */
+  		0, 0, 0, 16,		/* DOI 16 */
+  		0,			/* compartment length */
+  		0,			/* sensitivity level */
+  		0, 0,			/* CRC */
+  		1, 2, 0, 0,		/* PadN */
+  	};
+  	uint8_t *opt = hop + 2;
+  	uint16_t crc = ~crc_ccitt(0xffff, opt, 10);
+
+  	opt[8] = crc & 0xff;
+  	opt[9] = crc >> 8;
+
+  	struct sockaddr_in6 a = { .sin6_family = AF_INET6, .sin6_port = htons(9999) };
+  	inet_pton(AF_INET6, argv[1], &a.sin6_addr);
+  	int s = socket(AF_INET6, SOCK_DGRAM, 0);
+  	if (setsockopt(s, IPPROTO_IPV6, IPV6_HOPOPTS, hop, sizeof(hop))) {
+  		perror("IPV6_HOPOPTS");
+  		return 1;
+  	}
+  	for (int i = 0; i < 5; i++) {
+  		sendto(s, "calipso", 7, 0, (void *)&a, sizeof(a));
+  		usleep(200000);
+  	}
+  	printf("CALTEST: sent 5 UDP datagrams with CALIPSO to %s\n", argv[1]);
+  	return 0;
+  }
+
+ net/ipv6/calipso.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+index c6a34334e..5a42db4f8 100644
+--- a/net/ipv6/calipso.c
++++ b/net/ipv6/calipso.c
+@@ -1428,6 +1428,10 @@ static int calipso_skbuff_delattr(struct sk_buff *skb)
+ 		skb_pull(skb, delta);
+ 		memmove((char *)ip6_hdr + delta, ip6_hdr, size);
+ 		skb_reset_network_header(skb);
++		ip6_hdr = ipv6_hdr(skb);
++		/* BIG TCP packets have payload_len == 0 */
++		if (ip6_hdr->payload_len)
++			be16_add_cpu(&ip6_hdr->payload_len, -delta);
+ 	}
+ 
+ 	return 0;
+-- 
+2.43.0
+
