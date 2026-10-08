@@ -1,65 +1,65 @@
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F603914E1
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C5339184B
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791469617; cv=none; b=sHZFcmZjfG6VsQsRypRruiMLa0+hCCsNc/F0ErV1kVy9/E5vsEeMrFkugW2bGLRpUrepxrfQTvFNiD92xcOUmWlaZjboExJ12WBiHxcxLTg0r7Os/GeBRYKEoIN5OcnZVok2ZcpfWuWc+bT/kvhCq66QVfzEG7H57DV2Q2fgjBk=
+	t=1791469619; cv=none; b=fyscLjomfhTD6hFboNQlI/RvS20y5iEiXLvN5MDLJuzTfzcAQR8ShUsc4gzJBVH9csxE0hZzs3gq+oY0/9ztm+o7jCuSPZPCF6Sr/1tHtt0Q5GNKYLeEVh+nCWpIfuIQCYvZsfARTHpLL8W07E950wLPt95au1e345BMZehWavk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791469617; c=relaxed/simple;
-	bh=ByrU050C6mWf9A2+Pv2MNQgWCyvpMO6DzWw5vep16/w=;
+	s=arc-20240116; t=1791469619; c=relaxed/simple;
+	bh=HppsflGCCIwHAx6XULz7fkX0Pj1rxIwOFobuHbNL0oY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N8bY3GRyW4W2b+HGZe0nFglKAaZafQ7HettspvEisON3MxAXoZK/I04/VHAA0EOFvX3bSypRJlNIH/RHWYNJZjVeYjQORIEJu2RVuv+52Kp9xpZDYjDoWd2NJzmHj6ree06uCH8Qzr59yBMqkwYFpgq6bWHmUtdBRuNmlhzIm7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVDSBA/7; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version:Content-Type; b=OZmp22J4u4IVdvxKxSFidwPHLymbpBPKGvvq5yGGZ+cMw6FcQ1fqZBUI6WEwojnquiAyNSmnGRCFrQBr57d0vLM9Y6z1gIHxSdQYlTmkB3/v4kqLpfY+kEoSb15N1gtA0h7OGZ0GvI8lUzY6CQX4+Z4beS4xXPStOY56WMexhws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PtFvMoML; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVDSBA/7"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a140e7405dso54147765e9.3
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 07:26:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtFvMoML"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a020e65269so23756745e9.2
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 07:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791469614; x=1792074414; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791469616; x=1792074416; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=mgWv44SDiYSXnWDnIpS+FVJ4yK/DbSj0L12XhfF9ohk=;
-        b=NVDSBA/7fuGf3y10eUO5W/QfL0CcUIMvrE5H/P/h+nVKFoCGdBgXlamGpPOXj+6omP
-         EAasg09BX0YolhKez0BoFdCaJI/zn04HUU7oprU1VpA9zq8eKlPLWWUQn4S3l7oWV1QL
-         oGMy+GaEvyxorSIgELPhCJ7162mAJvn7bmfQYZ73EAUG7S7EZd17BSA384FiXqGq6EjF
-         Mo+6pRlVFFL5tZcRnOnV3bLxHvanQAzGX2XIo7T2b16Y0c+w+MzmZKrDUCtVgy7hByj5
-         h7DAHYYK4KgshLmKto/DbhckIyK4Y4vhsNLOtA1yezOYQBmVZRzxK7dSQivRADWeNw5m
-         nDbQ==
+        bh=/WxZM0oXdnrLJmi3l6rXqt6NynxCjaquqKrnBDeaKe0=;
+        b=PtFvMoML1Ifw17kN2WCECf6uQh+YxPnrmqi2UW4LynPdhMvyBj0JiLWqZLPHdjOrdQ
+         l0yhfODtFAHDbgJqxItOXvLD/udWT2R4UhtifkvGnoPwkJ5kH7gLHdBm2zrbPkHo/lbS
+         Voly42BMLbPPeP9aIiCXvU6zuR0Xr0ov2shOTsUmCbx4aebXTr/SLspQ/oAZ4NWQvL+N
+         C3ugJ5gHVeekdJUSO2LissZzywg2cF9gUIqtlLFj7ZdMqLgHH46H1bD3lNQj7zfI0j/s
+         bF88MIuMczHNVekG9yNm8jXT2+96+0SoqY6uyBapFJfNqvxbne81URrK4Q7CLsF5NYuG
+         iR+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791469614; x=1792074414;
+        d=1e100.net; s=20260707; t=1791469616; x=1792074416;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=mgWv44SDiYSXnWDnIpS+FVJ4yK/DbSj0L12XhfF9ohk=;
-        b=lnlw13+h9y4shU5j7u1z30hDdNwVvq+iGRXaKQJiskRHTxefjB0+JZC6HKiATDSwWY
-         AzPQIjZJG4hiEOrYyyM1cgZhe6pmhUWZ0qe9j6uqWfsEdsowNvxxyv7NEPZEilzbSQSO
-         1rica1I3HrhReEqGBEp9N/euvdsnStNqrSEkcLek0pVBQuCNklEfPL1N2lzc9sYWygR3
-         57s/NuozMDuLPF1u5AL5Kg2S7aKibxa8GQpuoEnUWOPyoH8IABBYyBXaQsBmAOIfUkG1
-         x4lMaWQnF+HZiSzLxH5sWxoZokUGwe5XkpVy7Q1lIiAc0jH9QDRCwIGBk+2wptz6C3Od
-         T/lQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxhiitqI0wG+OFIyq2kV+0nfSjdD2fMX+oP369P6RjuHf0+qDrzeCVtj3xMczxDkwilWBBAUIVosE0KtPD6T/vl68s8A+Q=@vger.kernel.org
-X-Gm-Message-State: AFuF++kzUncCWMISs3mLVwaNwZYrnpeykxSZFEgdk3H8WrUATcintcXL
-	oohj0plPjeaz+i84Q8DzfN2MRDf87d260MsMoFlt8utl9Woq5X2OuNal
-X-Gm-Gg: AYBFou3lVxjIBr/tgnRYqLS9wa2w+DGaHQLaZv627UXR7LUGZ188ilZyq15/55Kf54r
-	yrPDArU8mmviFTiUoIo7J5iQvS9paDvwNaKXYOyYZqHszEIho8BqMWIyK+8Vg1JjBFENsvRxd1v
-	SGMrUQrHmtEYEHLZdHjzEhjNWs+fXmwt/JJGeyxfiKyEKbwTH8oZ06aXGkh0iSq6beWwBVdWVFn
-	mpBBboA1vDOmRwsepz5hSxZsH1llmcjJja3WqxJ6VbLmsO8kXV3JRPrZ4ruu+jyTeaQ+2hQyK/m
-	TMno7uQEkag0qjz7PnM4vfnDNMXuUAy0KUFROAN5WjWw/rPAl92dpbOhAt9dMaESaLighKGt0L6
-	u77Lfg0n8iTxPENwsXbg9baBBy+bxOJISr5eFpoVlTGPtPLoEszsZqmUHVKtcNEa7dSCYB/wFzF
-	wnrzY/GmrrAsfsrYArxMMPy3VNjENt5BfJQaqXGysyGkBQwcGQiFzv31tM62vKNAVjvlbZdKepX
-	N52KWW82A64X64kt56LlHa5P2vAe1YGLA==
-X-Received: by 2002:a05:600c:4ec9:b0:4a0:22d5:908c with SMTP id 5b1f17b1804b1-4a18043c4cfmr97014765e9.12.1791469613900;
-        Thu, 08 Oct 2026 07:26:53 -0700 (PDT)
+        bh=/WxZM0oXdnrLJmi3l6rXqt6NynxCjaquqKrnBDeaKe0=;
+        b=C0fASwIexR1QG+ebxshgJR1NPZIq6yQRMr1n11TqKD/9vPyZmqvhC9KMPxs0gNv/Rt
+         hwdF7nyatHs/sFd4J4Bo2AduhdMVebG6GpxWkthhFBv7j9PqI2Snmxdm/Lhu20NDAFJU
+         Ok/JwdJ98tKffEz4QaDmehWQ1xUWf2zXCnf8K/vBk7sp+AeYU5M03Nfevi+WYeKt6l9L
+         xzYZlNNTqsBXS8hN/j769RSyDYx5ageLMj1W9n/awZigCDbod1j9VCJjUhd06SvzFlcx
+         DnRpAhwRnBMkoLuShMGFtOQaXJr4neXhEraN5W1MyoybF51c7S7sqsvFjcr9MN1yqKdm
+         Wv6A==
+X-Forwarded-Encrypted: i=1; AKwUvByC9aCPhw7AjDckWOYwMndn2pnHApqj2nTDPC5l6dZ64ASrSq6lcvR8otOnXdkRVEqskgwJJw9xS2Z45b5vCvd7532xlmc=@vger.kernel.org
+X-Gm-Message-State: AFuF++lH5X7QuL0WWG18iDakqKEP1gUWMuJx1exDoLJuWxdYMKoyUz9D
+	iVjpscmeOc++wu5KR6zUxtj/yydcBMLgjfNczy4Tuf53kAg1XODc6tO6
+X-Gm-Gg: AYBFou3hX1ZUVtRE86F6YmbK5wSUhr69d52h5XwEixhXHLNvDrmJAIh3LZzaXF03rGv
+	O2eE6ox+7WE37tx57/6zCrYhdB/t+rbMW/k0oKoCKdC4Z+uFxhlXmbZaKSHEZTkRcc54qsBzo21
+	gwrBdk1kTyvhePDwFd1J5KipVhwYxYzR/zFa5yQzTLlMjgqXKiQeNsyRbFVEOUtiOZT+NlIQXeM
+	bdZatdfr0mB+UuV7pLQyyRGLI4xnCqt6rn1F5EyY5txV9UiGoCPQvByYkNkgbQNIOSFjPcO3S7h
+	FvyVdbsE963fZQDxOSV+NNLxwiHoneEOIkZCzDlDkx1wYnk3k5HZrPuc4Cw7SWoaQBW+WDiW7ug
+	sdHHd+4XGQl6tRYKUGmPBfpDyoUTrUBBY1N3+o0e2kiICFjy6nzzqsTdRxmt6z7UWytP1yhpIOv
+	Sf8UlNtwu49uMOTfvPOJ+SD1nMaaqZGJpmjHSI17IX4pwkOZoYQ7Jp79r/cWdkhAYX2eycFYAFS
+	NCjyFyISRNbiopHeg5wQx0=
+X-Received: by 2002:a05:600c:8b63:b0:4a1:7f8e:6e5d with SMTP id 5b1f17b1804b1-4a180310d16mr101781145e9.6.1791469616201;
+        Thu, 08 Oct 2026 07:26:56 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a17fc4a588sm124941545e9.1.2026.10.08.07.26.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1842a3f55sm77439155e9.2.2026.10.08.07.26.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2026 07:26:53 -0700 (PDT)
+        Thu, 08 Oct 2026 07:26:55 -0700 (PDT)
 From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Wang Yan <wangyan01@kylinos.cn>,
@@ -69,9 +69,9 @@ Cc: Wang Yan <wangyan01@kylinos.cn>,
 	Shuah Khan <shuah@kernel.org>,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/27] selftests/landlock: Zero-initialize the buffer in inconsistent_attr
-Date: Thu,  8 Oct 2026 16:25:33 +0200
-Message-ID: <20261008142604.39107-6-gnoack3000@gmail.com>
+Subject: [PATCH 05/27] selftests/landlock: Fix the openat() success check in fs_bench
+Date: Thu,  8 Oct 2026 16:25:34 +0200
+Message-ID: <20261008142604.39107-7-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261008142604.39107-2-gnoack3000@gmail.com>
 References: <20261008142604.39107-2-gnoack3000@gmail.com>
@@ -84,29 +84,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This buffer is passed to landlock_create_ruleset() a bit further down,
-expecting an ENOMSG error.  This is only guaranteed when the buffer is
-zero-initialized.
+fs_bench expects openat() to be denied when Landlock is enabled, but
+only treats a returned FD of 0 as success.  Any other valid FD falls
+through to the errno check, which then reports a stale errno value.
+
+Check for any non-negative FD instead.
 
 Assisted-by: LLM
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/base_test.c | 2 +-
+ tools/testing/selftests/landlock/fs_bench.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index d20ab8f0862c..4e83f9c52a6f 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -25,7 +25,7 @@
- TEST(inconsistent_attr)
- {
- 	const long page_size = sysconf(_SC_PAGESIZE);
--	char *const buf = malloc(page_size + 1);
-+	char *const buf = calloc(1, page_size + 1);
- 	struct landlock_ruleset_attr *const ruleset_attr = (void *)buf;
- 
- 	ASSERT_NE(NULL, buf);
+diff --git a/tools/testing/selftests/landlock/fs_bench.c b/tools/testing/selftests/landlock/fs_bench.c
+index d13a88dcd1ed..78d1efcb2d20 100644
+--- a/tools/testing/selftests/landlock/fs_bench.c
++++ b/tools/testing/selftests/landlock/fs_bench.c
+@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
+ 		fd = openat(curr, "file.txt", O_CREAT | O_TRUNC | O_WRONLY,
+ 			    0600);
+ 		if (use_landlock) {
+-			if (fd == 0)
++			if (fd >= 0)
+ 				errx(1, "openat succeeded, expected EACCES");
+ 			if (errno != EACCES)
+ 				err(1, "openat expected EACCES, but got");
 -- 
 2.56.0
 
