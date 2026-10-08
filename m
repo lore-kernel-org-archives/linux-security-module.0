@@ -1,69 +1,65 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B35538DC73
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 03:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B433B9930;
+	Thu,  8 Oct 2026 05:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791430285; cv=none; b=fG9MYc3LYeqk4efqsPKAX6zSYpO9hwQdz5aTHWnFqO0GhwzhGmrwWuPI+lYn2CNqCgeY79O2305ahZszzOR5REnyn6xWlMSLhrPyehSKN1NaDqXmbRhe+bv6UJVleNoHSVlCvc2fsoO5PDKldssjoIQ+pm7lMlAGrWtB/2FyrYk=
+	t=1791438980; cv=none; b=uwWS3nd2p24iOlcMyyPILZwETv43atvR8jDI0WO/kTiYv2/Gx9gAkstCya2D1BE2Q+hhythlHb/+RXtBeBmrHpSganVQWOPECDhmh6P1LmRcVQO/QnOSTVvxH+fxt6f0oFUcYtzzIPcji4I1WWcBrv76jWMdBmqDWMPponrLv5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791430285; c=relaxed/simple;
-	bh=yzzYNCWe4A870YvOQVWeXlPzoMLQ6/FaRi+ohVtWwPE=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=aZWzQkUeYmN4Y3Pb9xKxZfjyfJd+5gqSxUHZEaTocf+HWtTDskXpPRvAkRTLRgn5OuPGjEzxMInbJV10E9vDRGRjRnnyFhAlUtzVSwb4wxpb8AN0mZvFFIViyG6yYr9MKBe6yRPloyJNJrkxlAB2nsPqlRq7MC2n/yFU9ZbCq+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qzsfklvy; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791438980; c=relaxed/simple;
+	bh=vY6L4NTvm/on6IWMnloYlwQJX0aRNJuGQuYsvtVGC40=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xu0U10B2dMo3DSi2YeW62ceS+YzplKjy67EmeaRRNmDeDhBuNNoKNI4zgQNzf+8fb/CHdHhZZqbzIVsLph9/O2uIbdHL5tS2h4T/zau4F2hDDgw3Zh+EzXjVfefqdAgKQT+VBeMXkPkdzz/rYQw99jyGDosZd7pa4f9f+1B9h9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoT48t5s; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qzsfklvy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0B51F000FF
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 03:31:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoT48t5s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C031F000FF;
+	Thu,  8 Oct 2026 05:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791430284;
-	bh=yzzYNCWe4A870YvOQVWeXlPzoMLQ6/FaRi+ohVtWwPE=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=QzsfklvyF0W8zgvLI3UYC2z1yt78MJONcVx13APCsynLroPUlPo6oVhLXR/VfhAEq
-	 Q94IVv1KSQ/VZAjuz3P7rDBLSz4e1DkHE/9Q/YvkSPl5dgGK0TsquQGrnBwSaW6TZp
-	 x7IGbLTe13q5bLTD4eNrFbHM/WwVW+Q/wVjgX91J5mxc6ro7b6St1k+hNfo3CQbbAR
-	 PYWC0+vk8e2mZJV1Yil3xOK1SJHa6m+umJkcgncjqWJXY1XxJsNW+JhUaPRstqkGI5
-	 YIKk5SYPbdK/pcn/Nj2HPx1cORZJ0Hh13mDk1XnKmqbWsUlX13jjtUm0OcgRu93v9Y
-	 UjeZTL0GMuYCg==
-Message-ID: <sashiko-outbox-163539@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] apparmor: avoid potential double free when remapping
- DFA tables
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261008031533.2205-1-lirongqing@baidu.com>
-References: <20261008031533.2205-1-lirongqing@baidu.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 08 Oct 2026 03:31:23 +0000
+	s=k20260515; t=1791438979;
+	bh=dmxj2lj4Q4GvWHDzZDgnLPWqXygKdSJybIHJoEn8ViA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MoT48t5sVzAyL6W5YLn2of9GYB19+j0/eAmRwyFFwMOrvJ65vFJuVgHI6yng/jxr+
+	 LMTaCdvQ04wGIChcmWYGshD1vb5HOAgk4N3WF8UCkAAfWCidG9s9fblaXFyGb/f44B
+	 c8YeZYxLxxDFDVMuQggqj8qIEQrcsAuD26NtSMmelRzsrI2VkMXgazHSMDIwZtiDcK
+	 ZVbWZ8rO4KLViW7+BtOQcnHv5seRDX/vMwAFKHcdKdit9ZcsBfJNBBaqSFDo69xJo7
+	 5kjthVZgjWEgkNRJbr9YDfS6WcZTehwIlyWQVqOQVtxoJX4gP7eiqw7qcaMixDS/EX
+	 PUpMdB39p1q3A==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: Sasha Levin <sashal@kernel.org>,
+	Artem Dinaburg <artem@trailofbits.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Helge Deller <deller@kernel.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Helge Deller <deller@gmx.de>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Georgia Garcia <georgia.garcia@canonical.com>
+Subject: Re: [PATCH 6.6.y 0/2] apparmor: backport CVE-2026-45893, CVE-2026-46254
+Date: Thu,  8 Oct 2026 01:56:11 -0400
+Message-ID: <2026-10-07-2-daily-reply-0001-apparmor-unaligned-dfa-6.6@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261007204226.47033-1-artem@trailofbits.com>
+References: <20261007204226.47033-1-artem@trailofbits.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> From: Li RongQing <lirongqing@baidu.com>
->=20
-> When unpacking a DFA, aadfaunpack() stores a table in dfa->tables
-> before attempting to remap a 16-bit table to 32-bit.
->=20
-> However, remapdata16todata32() frees the original table when
-> allocation of the new table fails. This leaves the corresponding
-> dfa->tables entry pointing to freed memory. If the unpacking then
-> fails, dfafree() attempts to free the same table again.
->=20
-> Only publish the table to dfa->tables after any required remapping
-> has completed successfully, so that dfa->tables never contains a
-> pointer to a table that has already been freed.
->=20
-> Fixes: 9208c05f9fdf ("apparmor: add support for 2^24 states to the dfa st=
-ate machine.")
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> Could you please consider this series for 6.6.y?
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Queued the series for 6.6, thanks.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261008031533.2205=
--1-lirongqing@baidu.com?part=3D1
-
+-- 
+Thanks,
+Sasha
