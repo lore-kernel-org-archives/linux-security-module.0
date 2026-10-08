@@ -1,65 +1,65 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0655F393DDD
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5189394493
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791469624; cv=none; b=KJB96q/twZMBGbuK1BJtw/lUeYLW1Znin69ElPc2fd60GTDTQco+6jryQrtsolbDzO0uBMUSzUo9B7KY4xiZ+AJCRvQgHysx9anwtgDk667r9o353vIUZZXoTDTwWVXOgBcFaH9qD4X3mK9K4CHrzsZC3evQzJPjWMbfJQAi7QM=
+	t=1791469626; cv=none; b=RBdQVx2hvO3HV6koPSrPIHMG2/oMemFL0Z5Q0HsmmAfTXYFidPEzgd0nqkFBoacfOvtRarXkT/h3lhes2bwHKARK90BkbGM/wtpDBph8yk1vJMPHLKCDxZuEOHh0Xzl58fwGionts2Q2OHa4tEs5/w9lZgZD03WIt/NsUg45Cu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791469624; c=relaxed/simple;
-	bh=80WLb0++Uodb+4HiLcuHEuMzL3GSkL5XLfok3SaeWwM=;
+	s=arc-20240116; t=1791469626; c=relaxed/simple;
+	bh=KsMUuPLgwYCOV9UxYIW28j71QtlkZ2rhkGNJMAEP42s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YLv6q4KVnOp+YOCJhTj0PHzhejjR4OJI8j8rGw53NgtZTUjtueNgESBqjoDZ/Y4wMXgYh7g/praUbaLIyGkTLamS8yIq40SHw+N9+C3VgsO1d9DMNzL6/QhCJvBxSo3wLC7sd+Ek/vOr3xIi3nYfeLMHikwP16obshKpwzP3os0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ObPQuQKy; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version:Content-Type; b=uZvqSHp74XqHc/hw8Nk15nUtif4ywJPwd/odwGPc4CJeb8LNBDL/w1JVncaT2VaB4apOILDfDYNaE98VMKu9UTSrBkbHcllU7NhpP1SKna0/te2TuKZrzzIt1mDnM+iGTqX3OxO93hn856sUERJ7u/P43j3I/TWWJd2+IHbjUjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jrf42L33; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ObPQuQKy"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-48c5358fc28so3363746f8f.0
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 07:27:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrf42L33"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4995b0343c1so44653095e9.3
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 07:27:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791469621; x=1792074421; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791469623; x=1792074423; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=k4xn0TmzK0MZPrjSNCHFh+ucQ9eOJKWbaR6JNjvd9qA=;
-        b=ObPQuQKyHd4VirgpIztB2jiZE5Vg58xIYx8MrUDcvQtU5w4HmeZFG/V6wG6jRpCJyF
-         Qt1lC0++QDJc6BJu1tPJWLv6kc1/43ZGND/zy1lzLXbi+uZDG893m7bG8ikCpixZgzCx
-         2X9kkHMX4sE3GBuiiNFHHpeM4b3wr9fKn9YtLKFLJO3VuQNnfgX2gG0TD0P2YF6ybDcX
-         +mcxMQiiDzNDSUSOg7J/A+d9nleBqHg2l8y9oVFBKpz8ZfSDSQbqmV0pvzfe6lXI7XJi
-         sQJjv9arKKGSL3yBjz08lVp6FjTrih1UbpjPzsaexrAJtikd55TZcXTSR8iTj02+lEbq
-         FglQ==
+        bh=7LUqBhSOfJVHWYAUJBV+3KDwxwiS0DArsjvYAlNe814=;
+        b=jrf42L33W6TSc+3pBsiR1KgnLdn1Q0Ty+QvUZjRcHLU7mvr/M8E8B1ZVt5/psUzFi8
+         vGB4eGAhbsBAx4gI2ldDJi7DEFiDUQAo2vfBSTXJX8myvXbjPJe084onLzKR3Qkth/sx
+         tcfpREawMEtyh/DsGFMP+mWvvyDzZ+JFHIKMtxLIJknztqAwUCPvF87LiZMwWjjebHbp
+         iCDnGs7Xs0726C+zGHmT7oHPypA2sSykomX6XQMj+kzy/z2aT7qrV2C4ASxD9h2TuzEQ
+         fukR4fc5fcZiYvygy/3wYI++zH+HcsFbJEgAH5MiJN4examLzssD90m5DlUcPSc4zekj
+         6BGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791469621; x=1792074421;
+        d=1e100.net; s=20260707; t=1791469623; x=1792074423;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=k4xn0TmzK0MZPrjSNCHFh+ucQ9eOJKWbaR6JNjvd9qA=;
-        b=VrTBKsxM6u8o6FDoWbpm2p0FQY2fW6DX4p6BlQ1YoipJGIJoUxYudlJxFKRTGLG6Qh
-         nztdTYG6nIE7WRwja+h0OyaDA0yqW93c9el8OiOClMHLNvmFAw1mI/0nhYj+SekUGK4W
-         paqYX2mXhlGBXAaaSUiXVRQCPNoHOctAjwJZ/tBLe/tsCPz5/QBfJFKkbJnBQr1CzUrn
-         5LNkKRzsT0ttFlaugHAjRLTlGdbHdLnyHtY6F3DB+GBEPbk903LXj9OfSS+Om2KMNRKv
-         g9CRg8HTqa9LG0E5U6cqdrTlsFPikqUDQ6jF176eJlG9I71LMPmKcbIFzQwVsaQTndV4
-         Dokw==
-X-Forwarded-Encrypted: i=1; AKwUvByYXhC4Lf7yfYdEC0/0YpVMnQ+fpIJpw52vjEOTh8vIj1rZtMSyWVuUZSENM/3x6bg2aNN7CrA50NKVtD6EAVeOOxsadY4=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI2dm+C64MYVTYJMCvF5KE7HXRUM3TeaHECnarLT/f4Lwk4i6OL
-	Mg2FM6zQpRA04OCc5QIyFLdhLBzzXZSqLz0PgC4v8dS6CfXXwZqwMKRI
-X-Gm-Gg: AYBFou3toGqWmGsDPIIkxCMTwY4mJSgvriC2fKwsP+wglSUNi1majlTq7hEzT8H6Ax9
-	cBUw33Vqm1KkwxgrOMwu7aWYStha5FBWWW+6JEmbNRHs9sWa/2ArOX1r+uecDsHsrv82ns67n1G
-	wnsFAgi0AhpK0oEW9I/pYZfiutMbtxfvWScNBmsTgCxCA/vidneZ77POXbgDNswttWORGnS4JgJ
-	8jv6HVxgoyhitVHlIgCIcaR2T34s/CleUfQI6uDur8m2m9rlR58YyiGjfOgSbBk2k6jb5J0Nco0
-	FaoV4IOl+bP5it8ZIFoxFU/z6rq1sYhe9LbHPwK57NPeGum0wDxsZwsewD862AA/xhZpNRXdvyp
-	BmsKtNu6e1OMU81Ro+0q92WC2hO5WMgq1v3bY8eBff0QBaxGRU0Q9J0DdSQgjv1OSSS4KkVXRb+
-	lzXM/IH+PypmZOAUfCv2qqW9ctaY32U5+GKBIHJhAmZMQSimnbsxDhyURSp3FeOwtJJTdv//EG+
-	moAFt7xqo1WdZtMrjT31oQ=
-X-Received: by 2002:a05:6000:4a09:b0:488:8a5d:ffbe with SMTP id ffacd0b85a97d-48c7278924amr11804538f8f.33.1791469620339;
-        Thu, 08 Oct 2026 07:27:00 -0700 (PDT)
+        bh=7LUqBhSOfJVHWYAUJBV+3KDwxwiS0DArsjvYAlNe814=;
+        b=s4xCaXGxoz/SBpGK0RnpajIPvpzuDl127+QozJcHbyZ2dq/vsO6MPIMYI791RJ+M1Q
+         iABJVQAh6LDq9hPRTSn3fUBJcxTB6+JYaCwZljJsBVigSJt+GWD6H8+i6pz9do0bdqkO
+         wdosiVqdVIDwyDKblf+1SdKCMBKjvOLP6CV1wqoKq/wexUqUX7Gwx22wfs4BJ01CjOAj
+         wGPIe8OZ8MulA+dni6FvSYJsvwr6bkWrG8iENlNC2PetvEBtl5NXqCDLPpDdfxvwzFO3
+         bVsR25TIAaoSfEFQaHGl1DDUHjoRn69QGD9d/ItceYv8NKcnS4rYjZRXo+jZteAWWTuE
+         bSVQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwLJqcAxgmvjih0eem0ib0nJgfFn3uXZQHPVuKZ2HEOB4SvU3zWVGTfMoJDuzT65Qh1xHkTwQF3wKegRc/QfN+oxMOHoPw=@vger.kernel.org
+X-Gm-Message-State: AFuF++m6XOTPszTZN7YJ9Qr1KZrvaN3Ca40Sjsy+C0beRR1IMeZpOwcR
+	4EYtCS4+GP7AFlg3tFTc9MwqZ3b5rcUJeN37UQPO987u2soNIHtXAF13
+X-Gm-Gg: AYBFou3z5w90cVk6CgXGrqvDs8gvyq7zmSno3eUTnf/aPM33ScMkXSTPBLMqALAvfOO
+	iZ/XFp9ObgcVZqLb19tDxaTxJOh/Uo4DEFP3pzZjsnS6KNzWbePoeurt7ELlr4Lt5gd+ahNHdK4
+	xrMV4Dk90BntAvgq8+CYeY9RZ7lzSYEn3ctzRXVxVmVPGQUzv6LfAeg3kNOPsvmnqXUeQQQ9NIn
+	xQJNM3FyGhxy/oXHh0ja2gNL31MCo8kHTH0xmf0ltB5d11dErKu/jyTdIsU4Ltj6jy7semk0E34
+	gUD1SiR+Wx4xn1xIH2nZR6oFVZFIdIcUw+0XT9PCw1+AnS+dWPU93BMBic5aKgt5BZR5WPnDlBL
+	iH+e/6C+bsZpGcUHQNXX8WmiHTKSI3+t8rvqxRhjRCgGNK8d12kSHZqqOWMLPEiGDvgDAQelXYm
+	mCCbBRTASYSmb236db64WfQo+tglU6jQKGbdowujwBlayvAZWi6lq9HczIBYB1LmaaFhSd3rykD
+	omI4Xsk+YT3d9LBEwd8pgESyHvtaC9/6Q==
+X-Received: by 2002:a05:600c:548b:b0:4a1:71ab:63ba with SMTP id 5b1f17b1804b1-4a18045f729mr104513565e9.29.1791469623095;
+        Thu, 08 Oct 2026 07:27:03 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48c75b53fb7sm8530232f8f.58.2026.10.08.07.27.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18360c5ebsm57526765e9.3.2026.10.08.07.27.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2026 07:27:00 -0700 (PDT)
+        Thu, 08 Oct 2026 07:27:02 -0700 (PDT)
 From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Wang Yan <wangyan01@kylinos.cn>,
@@ -69,9 +69,9 @@ Cc: Wang Yan <wangyan01@kylinos.cn>,
 	Shuah Khan <shuah@kernel.org>,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 07/27] selftests/landlock: Fix the ruleset_fd check in empty_or_same_ruleset
-Date: Thu,  8 Oct 2026 16:25:36 +0200
-Message-ID: <20261008142604.39107-9-gnoack3000@gmail.com>
+Subject: [PATCH 08/27] selftests/landlock: Handle a missing control message in recv_fd()
+Date: Thu,  8 Oct 2026 16:25:37 +0200
+Message-ID: <20261008142604.39107-10-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261008142604.39107-2-gnoack3000@gmail.com>
 References: <20261008142604.39107-2-gnoack3000@gmail.com>
@@ -84,29 +84,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-ASSERT_LE(-1, ruleset_fd) is always true, so the test does not check
-that creating a ruleset with an empty handled_access_fs fails.  Check
-for -1 instead.
+CMSG_FIRSTHDR() returns NULL when recvmsg(2) did not receive any
+ancillary data, e.g. when the peer closed the socket without sending an
+FD.  recv_fd() dereferences the result unconditionally and crashes
+instead of returning an error.
+
+Return -EIO in that case.
 
 Assisted-by: LLM
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 2 +-
+ tools/testing/selftests/landlock/common.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 6e979cef884d..9884ce9917db 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -1463,7 +1463,7 @@ TEST_F_FORK(layout1, empty_or_same_ruleset)
- 	/* Tests empty handled_access_fs. */
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
--	ASSERT_LE(-1, ruleset_fd);
-+	ASSERT_EQ(-1, ruleset_fd);
- 	ASSERT_EQ(ENOMSG, errno);
+diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+index c5124de68a51..e195c0f48eb3 100644
+--- a/tools/testing/selftests/landlock/common.h
++++ b/tools/testing/selftests/landlock/common.h
+@@ -158,7 +158,7 @@ static int __maybe_unused recv_fd(int usock)
+ 		return -errno;
  
- 	/* Enforces policy which denies read access to all files. */
+ 	cmsg = CMSG_FIRSTHDR(&msg);
+-	if (cmsg->cmsg_len != CMSG_LEN(sizeof(fd_rx)))
++	if (!cmsg || cmsg->cmsg_len != CMSG_LEN(sizeof(fd_rx)))
+ 		return -EIO;
+ 
+ 	memcpy(&fd_rx, CMSG_DATA(cmsg), sizeof(fd_rx));
 -- 
 2.56.0
 
