@@ -1,115 +1,132 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122C438BF7A
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B3E38D017;
+	Thu,  8 Oct 2026 14:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791469610; cv=none; b=nN6ZTpPIxSlGgZVVh+2WsbgzkcDRzOAPaY5sDya8NtIGYcVRC6HIvrpuczWWzn1w3q1uMBK4OJRhiPWvrerpr1phcm+9tItB/TGS56deSRRgUrEnViHXawCU078SY7tOC6q0qCJ4InYXb9Kc3YAMyffO7BTaX7xSv1+gpzRmetk=
+	t=1791469612; cv=none; b=Xum4DXvenm2EEOGcFJYUIDBqQGlG1u6CfpLDHJ+VyPezIPeA5IObOc4v22Qm7rUGPAN+kAstsDla0BvSi+PqFQeiO1cPgAQqnLngaPCkwsSuAVdkzmSZM7Ee6wNQdV92BymuHOUAqhZhL/ILf/c/TKpyTHZlrBMtFIeB57nT+m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791469610; c=relaxed/simple;
-	bh=QaPYYNQyOGRWS80Oiyw0TFXYSpFN2iuoAICrlp5a5BM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AcD8SCier5W9qpJwEFfF7rFFxLGrRNIXy3b/pTcC08n3eW2vE90uuWtF3ZaSksXJOvoqPsCPVUaJxIoB6fM+6/DEIEEI9x8hdTk2gJM+itp/mdb/Z4waZMNS2S8Xwg/wVk2zzGD/GSfe1j4IMBkhN33VaM8nOoefc/vBTTq+aZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4/vmmre; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791469612; c=relaxed/simple;
+	bh=IukXyilmEgZoWq3KSaJZbjN0FMs4uJ/38IUJ1RUbbMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y884GDg2kdaT1ozPytdrxBh8PcqIZw+TZaiBF3KN2ME34O0ytu8zUuD7LDPK5DEbc93OwxU1lckk3jwuYo0qIdgifkllwf+DAuG6EQTKPvdM0h3p/Thv3blFi2qC2Q0J79+5qr5gDicexZ6lQvA88QMDK8KAGxVv2FhoyrJrBrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGshspC2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4/vmmre"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-49d0da752ffso48665235e9.3
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 07:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791469607; x=1792074407; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=43yKwHnHP/WZ1jZvgC+UcjcrGZuSSGiPrkzlw9Y42Ws=;
-        b=H4/vmmreflTCk6hgkiycfgHJnii+outZ89Tz6KkxeIncH3pxB2kFW4N9jXBiNCJv2o
-         YF1u5j1WtIWqxyZ1Y5NuX5a8fwgvkqT2TRFgw+FXhsiE2wyDpiYXwpOXMXy+lG7H5QJb
-         Z99A2moWt863EQckV/lb04kNaJZAAgNrLXNZy6CExUL+qsVnfFOBOh9w+v9Hcw+Iiws/
-         rFqz1Iyh+ylroziZ4abRxUyK+/bK2Tb+N0eSCFwXligRBh2TWn5fHYQGef0voCh5hsfA
-         gjKz3V4gIKVF3DqHS93KA2o1O+YnDmXwHWCggVBAO0jqqziN1OSyezoFZ41AuoHz9kjB
-         //2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791469607; x=1792074407;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=43yKwHnHP/WZ1jZvgC+UcjcrGZuSSGiPrkzlw9Y42Ws=;
-        b=enqLWzxVrG6Jy5Dp0SfI1ib7SfvPvCMY7DkiZczWsitifHyIyv3mBetCgjtD/WsAys
-         fK+DRfiVO2/Hd9kkiGFn9ERx01W7rM6Rz/qaFuYPIpzguEsFqNVL+xm4p1KjenEPV9Pw
-         WNKwz3IcFjcwEmnrS57WDtTajkHXE4g6FwmvsDCPaV27NqvJ2/Phw/hak0JO9vGUmNp6
-         WS4cjhZ+wNmzX6vLUJpFLodefQL/cNKfWYi90/GbQr43Y89+N1/0FKap4WBciHU/P6gC
-         Euo047apCkWpzlBdLByzsZU0AxZzppHWATBpDGIAmn1X3MnKuiBXOOxo0W6GZpBJogzi
-         1SCw==
-X-Forwarded-Encrypted: i=1; AKwUvByAhmoHXE/K2EsW6mEqyangG5/HXwqA4cQEnKfkI2tuEEHkVo1zP5KcIWvhdNTkqJLfCjNTrVcYNP2d09GCR1zSsY51qh4=@vger.kernel.org
-X-Gm-Message-State: AFuF++n7yRxu+tjvL4bLk/qXBMNIZP3CU3BWJY3zR5hLz/CPOLLs4ULW
-	/jd/E1PX9W+shyBZCp1eRqZXcybZUOvsGFh8JmKfShOjQjvCrawCot/C
-X-Gm-Gg: AYBFou0QwyYBoM4OSmN0g57k3f70HKVgH1r3VLpvmyHTCQNhZxrEICuPTpwT5R85qs7
-	KO+ZIW/sMGKsjr98994nimGBpKO903YdLx4DtGQMeSSN9OiKuw5leaPZld8eCDZpC87DLnTIWiQ
-	03ixe1I4apDloG9M6UiZKymP//6NRl9oxDjw9io3/syzrhuhUncR2EVOe9/0wAMCM3aNn1p/LEN
-	TrX9mNWwTYoRhqHz+d29LvWSWtsWaCiRN5otf3ss8kGdvIcEeJ0tTEtJfmRCCWuBpqIJ+Gb4mbC
-	rbl9u1zZ/C5nH9HhQuRUq4uX5aTf3yTfiBtSYTTDUnYMQqsPmcgUpUiYsDQxlzFWtrSSf9J9ueI
-	+KimcmNK3URwy9aSYtZPzcssHbFEfR02JKtkqLLFxPwFGe+SXfRX4A/nnH7c3ZJ2Wnc6KFvp32w
-	7EYIGwjrzn9I2No3+wULgtA+hoamxrUXV7eNY9lA03S9k4h9IN+kdPJ9e65cpK0mTAMrRN1Jizi
-	wQ88nJj1BCrBNVgvfLAILQ=
-X-Received: by 2002:a05:600c:1c22:b0:4a1:7c56:d4e2 with SMTP id 5b1f17b1804b1-4a180424698mr124373615e9.16.1791469607192;
-        Thu, 08 Oct 2026 07:26:47 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48c71d31767sm12022355f8f.51.2026.10.08.07.26.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2026 07:26:45 -0700 (PDT)
-From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Wang Yan <wangyan01@kylinos.cn>,
-	linux-kselftest@vger.kernel.org,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Shuah Khan <shuah@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGshspC2"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 333231F000FF;
+	Thu,  8 Oct 2026 14:26:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791469610;
+	bh=tkaKx5KeXRKx1/U39cqRVHrY2UlQBrJ/1igb3dLP3/4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nGshspC2c1rCeQuzzPX0phBFIpTpYEFjOozcjvcDDi0J4ONMMHFXPat/dQKcZ6FoK
+	 svpRUxKvotIzNtpVsF84m+Z8JnEeYfjeWRGdDv3WjIQzy7Drjp2XEEZm2ves9WY9GZ
+	 MD4itm9mGhNoPWvr7rW+pi2OLRo8zqUSvxt9+lBQp2h5t/+LughzDT6yNWxNW3PALD
+	 jyVcdCCHcse4x9hODSY+Gh28+r7Noi/mEkw7REF7At89Q5TZ7ZJqghwd6PUKSsAKgK
+	 sneepLUoCM77Q7/3UTD5L1ZdjpnHRbPGD2thwMR0waKeC2UVs2bgqlOil1l/H2mjOo
+	 1P55uVoWVO4LA==
+Date: Thu, 8 Oct 2026 17:26:46 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Serge Hallyn (AMD)" <sergeh@kernel.org>,
+	David Howells <dhowells@redhat.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/27] selftests/landlock: Propagate grandchild failures in unix_scoping
-Date: Thu,  8 Oct 2026 16:25:30 +0200
-Message-ID: <20261008142604.39107-3-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261008142604.39107-2-gnoack3000@gmail.com>
-References: <20261008142604.39107-2-gnoack3000@gmail.com>
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>
+Subject: Re: [RFC PATCH 0/2] keys: Address lookup_user_key() mutability
+Message-ID: <aseoJvcBh0RZ31Uo@kernel.org>
+References: <20260924055521.1981957-1-jarkko@kernel.org>
+ <asKSvjz2YLZhFI4t@kernel.org>
+ <asOhhCION3dwTAo+@hallyn.com>
+ <asPwkdi7ZdO4YoRu@kernel.org>
+ <asVDbPtyCNy210-R@shallyn-amd>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <asVDbPtyCNy210-R@shallyn-amd>
 
-scoped_vs_unscoped.unix_scoping starts a child process and a
-grandchild process.  Add the missing check for the grandchild's exit
-status and propagate it upwards.
+On Tue, Oct 06, 2026 at 01:52:28PM -0500, Serge Hallyn (AMD) wrote:
+> On Mon, Oct 05, 2026 at 09:46:41PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Oct 05, 2026 at 08:09:24AM -0500, Serge E. Hallyn wrote:
+> > > On Sun, Oct 04, 2026 at 08:54:06PM +0300, Jarkko Sakkinen wrote:
+> > > > On Thu, Sep 24, 2026 at 08:55:16AM +0300, Jarkko Sakkinen wrote:
+> > > > > The main objective in these patches is to remove to unneeded mutability
+> > > > > from key look ups. It does harm and brings no value so it is pretty obvious
+> > > > > to me that addressing this harmful behaviour is what we should do.
+> > > > > 
+> > > > > I based the first patch on what Jann suggested in [1]. Nothing too clever here
+> > > > > and I'm ofc open for further suggestions.
+> > > > > 
+> > > > > [1] https://lore.kernel.org/keyrings/CAG48ez0XjVSR=M--UBauTm8sJuc+ZbhKzaPa3a6wrSVHyoKevw@mail.gmail.com/
+> > > > > 
+> > > > > Jarkko Sakkinen (2):
+> > > > >   keys: Return user session keyring on lookup
+> > > > >   keys: Reject keyring creation with overridden credentials
+> > > > > 
+> > > > >  Documentation/security/keys/core.rst |  7 ++-
+> > > > >  security/keys/process_keys.c         | 65 +++++++++++++++-------------
+> > > > >  2 files changed, 40 insertions(+), 32 deletions(-)
+> > > > > 
+> > > > > --
+> > > > > 2.47.3
+> > > > > 
+> > > > 
+> > > > So.. should I move forward to with non-RFC v2?
+> > > 
+> > > Patch 2 absolutely makes sense, "doc, it hurts when I do this", "don't do
+> > > that then."
+> > > 
+> > > Regarding patch 1, that seems like quite a change in behavior, right?  I
+> > > don't see any docs or comments that promise the current behavior, but
+> > > has any userspace or subsystem come to depend on it?  I guess that, if so,
+> > > then it just has to create a link to the user session keyring like pam
+> > > (according to what I've read) does?
+> > 
+> > Thanks a lot of responding.
+> > 
+> > I fully agree with you but I'd need help for evaluating things further.
+> > 
+> > 1/2 based on Jann's email about the topic and my interpretation of the
+> > suggestion. I neither used brains nor AI for this and consider the patch
+> > merely as a conversation starter (and what a great success it was on doing
+> > that) :-)
+> 
+>  :)
+> 
+> > All feedback is good feedback at this point. I need supporting code to
+> > remember/recall later on so at least this serves that purpose.
+> > 
+> > Br, Jarkko
+> 
+> I've been staring at the before and after code for a bit now.
+> It does even more than I was thinking :)  But I was trying to
+> detail the changed behavior (from userspace's pov), and after
+> several attempts, it seems maybe there actually isn't any.
+> 
+> Q: is there any path whereby the 
+> 
+> ```
+>         else if (test_bit(KEY_FLAG_UID_KEYRING,
+>                                     &ctx.cred->session_keyring->flags) &&
+>                            lflags & KEY_LOOKUP_CREATE) {
+> ```
+> 
+> case can still happen?  Or was this the only place where we installed
+> the user_session keyring as session keyring, so that we can drop this
+> branch?
 
-Assisted-by: LLM
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- tools/testing/selftests/landlock/scoped_abstract_unix_test.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Right, so *I think* that it is not useful and e.g., PAM uses NULL.
 
-diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-index 5dc0debacb2a..e006dba61652 100644
---- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-+++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-@@ -608,6 +608,11 @@ TEST_F(scoped_vs_unscoped, unix_scoping)
- 		ASSERT_EQ(grand_child, waitpid(grand_child, &status, 0));
- 		EXPECT_EQ(0, close(stream_server_child));
- 		EXPECT_EQ(0, close(dgram_server_child));
-+
-+		if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-+		    WEXITSTATUS(status) != EXIT_SUCCESS)
-+			_metadata->exit_code = KSFT_FAIL;
-+		_exit(_metadata->exit_code);
- 		return;
- 	}
- 	EXPECT_EQ(0, close(pipe_parent[0]));
--- 
-2.56.0
+At the same time it is harmless. We could remove it but it would be
+also uapi change (for granted, useless branch).
 
+I could do it but not without any feedback from David.
+
+Br, Jarkko
