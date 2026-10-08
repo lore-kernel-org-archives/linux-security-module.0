@@ -1,58 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0880039C63E
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6046B640
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791470126; cv=none; b=Wuuvg8RJZcorWqvNFC6E9A2V8kXrQBfmuqk3BQHEPCHnTS5twIRfcNPht8mKKnO4EFO2rMPn1droClAE0Nobxr9gfjBs6MkSoNIWVXhPg3Zz03sEaR+AbikoX3N2kJIVbVnIvNXY3GHpz39cFdK3GjHlw/UrszJ2ObFHQL69VrI=
+	t=1791470133; cv=none; b=MgXu7Juo9ltSRJzoTDuzhD9Z4TYfThpspKrjrWuqw/VXb28fXXs4PMgLqgNa3BB209WefxLaLrG0irTrCFWPRtAaBRMhAr/Zj6+np1Wp2SxadLgTIHYdBCwVPywvB6oseEkLCp+qPVGViyBbw4VjpJ0PBR1spknNWboyd6LiQTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791470126; c=relaxed/simple;
-	bh=t9Y6EFekpTvOvuJ3zF8kMa+Us+7yuhVclUeEo3UvDd0=;
+	s=arc-20240116; t=1791470133; c=relaxed/simple;
+	bh=3yLep9tvTymdoQpyekGhyg+jWDbIZCSU4VEV8VvnLms=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=GQjVo+RPnt4VYeApDvTrZb1AEzUEKtH0XlHJrFgGU8lQHpFTs6zucJd9Ie0RcMPG7kL2/FNYYK9puNx27TWZahs4G7Dte08KV6jXncYmkriNPXLY5tzZGNlwm0Vk8UnjdXK5FZwopVXajqISGFwRJhGyZWBbPUJPkXNXDBrqltA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqRcgOMG; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=kPyB+PbyhEVmgYnUzhW8zF8/4fMQo1Zg+SN9VYd9bdPfGJaFqaFpPtOefxKEp63woFAgvp/AqlDuiNXUhhjsifEN2I/Y8KGE/XnODj6OQ9/frmrDWO2cTlja9TV2OaaMaj2tWELorrSk8/AiLBIpTCPcAJUg7hl68CypfxpRfuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+sS4N69; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqRcgOMG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DB41F000FF
-	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:35:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+sS4N69"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F981F000FF
+	for <linux-security-module@vger.kernel.org>; Thu,  8 Oct 2026 14:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791470125;
-	bh=c2F5SP4fO7XDTdLXTazUBCu5l5dsqH3NBMQTM/K0rGA=;
+	s=k20260515; t=1791470132;
+	bh=umY7hjdkLY6R5x9nnpkmZSXfYy+gbrYXhF1Ba5Iy99E=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=nqRcgOMGsUTRuxNLBisL9zZN+i75+3VRJtiWuTYkklP4e8vfM7m3/wnWWEZQJyFEv
-	 8JF+KS/mCnCkU4hOwEt35/gK0TW11K6E7eQYhhLdOwkAWGrq/8tb0pBMfoMrr75EWa
-	 Woqga3zFCCuG4so6Mw9DrhipBmJKlZrECXZ+dD9fsLWifL0DKEgn3O35Qh4P0xQ2xh
-	 h5prMuMs9XgLL889MqSH9iMDpyEYgyuTzLzQXGhnD+u6X/L2vIfR2NqRHMRyQAQCfm
-	 cd6JDnM+T4/YPtVN0c5KAC7l4M1CmwWGSJGryJl48tI5a+QGc8zF8gz0/0C9B+0m9X
-	 J9iV9pNWgyqMw==
-Message-ID: <sashiko-outbox-164302@kernel.org>
+	b=m+sS4N69wf/4eNw6em/NN6CvvHOIemJsDJklWoVapwUU3u2qcledD+FSK6y5GzCEY
+	 WaEXlhX1YZG3eI3wnvYnKyUduw00ah8pQ4WxcIL6XoDaR3UOWbJryPTEjdYuUIjX+q
+	 Gy7+cDXSHI1s6qBDYJS9VuHABsL1bEWdPC2qbAqFKUcha4ltrgbEY3TkxSq58SCoqE
+	 pe3KD4Ja8nmS6QL6XOCmG9UFvPeHhyW5VLeAWuHwmooUw53unRlvXeR+JDf/83KGSG
+	 SG3Ers1SiJiiQFAkgqDYQ4mA78Mu5l7ro8jZ6Q0n7IIvWd3kmNPw1CYo8CMADMMlI9
+	 DHwQ0DtQMRZSA==
+Message-ID: <sashiko-outbox-164303@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 02/27] selftests/landlock: Propagate EXPECT failures
- from forked children
+Subject: Re: [PATCH 12/27] selftests/landlock: Assert audit_count_records()
+ before using its result
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261008142604.39107-4-gnoack3000@gmail.com>
+In-Reply-To: <20261008142604.39107-14-gnoack3000@gmail.com>
 References: <20261008142604.39107-2-gnoack3000@gmail.com>
- <20261008142604.39107-4-gnoack3000@gmail.com>
+ <20261008142604.39107-14-gnoack3000@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 08 Oct 2026 14:35:25 +0000
+Date: Thu, 08 Oct 2026 14:35:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> A failed ASSERT in a forked child calls abort(), so the parent sees
-> the child die from a signal and the test fails.  A failed EXPECT only
-> sets _metadata->exit_code, and a child that exits with a fixed status
-> of 0 hides that failure from the parent.  The child in
-> trace_fown.deny_scope_fown has this problem.
->=20
-> Exit with _metadata->exit_code in that child.  Do the same in the
-> audit.log_subdomains_off_fork children.  They only use ASSERT for now,
-> but this keeps them correct when a check becomes an EXPECT.
+> audit_count_records() fills in the record counts that are checked right
+> after it, but its return value is checked with EXPECT.  On failure, the
+> counts may be left uninitialized and the following checks are
+> meaningless.  Use ASSERT instead.
 >=20
 > Assisted-by: LLM
 > Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
@@ -61,5 +56,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261008142604.3910=
-7-2-gnoack3000@gmail.com?part=3D2
+7-2-gnoack3000@gmail.com?part=3D12
 
