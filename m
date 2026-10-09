@@ -1,183 +1,282 @@
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC36B4E325F
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 11:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F253D4137;
+	Fri,  9 Oct 2026 13:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791546721; cv=none; b=cFz3wPthRuh1y7EVfspr24DFVZM2gTejkXIhmaBSk8J7VTokXh1fjlnxL0M/1i69U+h5+DtHRvJ4y4p12zzSAqxasgsbj4k6x8TKoS2jF/p0WM3ggZq0X7DKUmbGtWd+8ef1/Jplxn4HkdcNB337W12XOXk/kHL4+WdOsdvsJ4o=
+	t=1791553069; cv=none; b=YUQWyML1jidBYKkpajc4QShOy7rqE1RIlvf8jimOxAfBM4JgxvLDWGODvLbMbIVE7k/1Nwl62hXHJw9NgimonPAskxfeFKPXdLyGkW9VwjgUcgISt9uQEKkHWGhHubKYEgSlhsvM+Auq+/DMR2ahP05ojAe8uQ2qgdC+Jvbp6b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791546721; c=relaxed/simple;
-	bh=9c10fv+8RlbffEaqllSZarWYu0IWQKMv/n0/uRyLBSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qeYjv27+HpCINi0qy5zsGbIuRJTRQ9wMEOP62hVtNWCPiv5wvmgFVppefQwnjFPvYz1k4ekByFG3hZk5OmKCLuv90s72AlIIMWD+nrItH+PPUtsjddp5Ux8wP0Iuv3B6mNokb1KKvja4h1B2MZfNDJ6rpeh0ka8kKJDk/W+vGHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jO6Eh2ZQ; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jO6Eh2ZQ"
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-917a707f37eso44853796d6.0
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Oct 2026 04:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791546707; x=1792151507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=hrr3HiCUZJnv9aA8BpT1SjaAKZ8xaCXAbRRl/khQOqQ=;
-        b=jO6Eh2ZQJWUVs1XkFGOQ2/kkXQqsVbEPVNN3maclXC/GNS0mhJEB4C+Na3oyNMh0bf
-         PgjtmOtYu0AIhLiy4JraPjedasoRm1RjN/ef250aNI/zA4Tmuq4WiT2QBxVMi9brA68N
-         pQEG5tisvimfiiQdObaZSmoTEKX6i6BQI9BA/sfuiuPKQ2s6lztZX0Kx/UbLZwJCel+L
-         Vx2w6J1rjFe1wu8BuV63kPPRyOQ+rPyprI9DV2GjUHSJOErdaO7WIzJMwEtO2RsIi0fJ
-         KKQeGiMBETj2Cxff+ro1B0X8Qc2tXZ/3b5P9Ydyta0sahvmbnNitAo1KvmVYD54toqxW
-         ynVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791546707; x=1792151507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=hrr3HiCUZJnv9aA8BpT1SjaAKZ8xaCXAbRRl/khQOqQ=;
-        b=WIOY3q27ScRTCTCRHgzq33IWDW8aXsSRSn2ZYEBzeEnT+1WgCvizNrxT1fc0WpYEnr
-         iGSzojwfUIvGqhS/v5f0NT7PrsmLDmTgy4Q9T4I8IVyR66ttCxdpgp2rutdGZWDDiCYR
-         kxtblwFA/VPn6krBlJlN4gpWf5Sju5Zg2FlsYhViHy9s0XVRsK3MdFrYlzmzRTiZ8LIN
-         c0P2o1L0ApuLiQ4Ia8UoddPlD/NLkkfMBTO7XKie/ieAQ3lG7eoVZwsTUaSZcnlnQ0iP
-         F4QpVUrL+cQ+vGCHca0hWQ9zUFbXB/BTm/ilcTPjjFRCL7tyK04gCkI+RdL2flUR9ckR
-         ysNQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxQ0uCrtJFnN+ZHFwu7zExT0ZgB2rrK3FftFXAWIEXJzCj9x4gGyf/p2vsuoghK717l61NrDN4iRwtwoKyVvNWy7ZNXQtY=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ7Ig98s1+KaQYRcGxL5KPasueK2ZBPpheeIjzd1FiQXriFZEae
-	xe6YusHHz8SjJM0WgJjxT8geIjX2eYoDKfzv1rmI9p3Lb7BdNOhLa4JZ
-X-Gm-Gg: AYBFou1yawbnJ7wR1tf7MRTwHUB0IrIb7AP3wj1FSRy9NRfpkNCnd08wfW9rHDF0gGW
-	Np9u0LSsY8aaQkcsA7vziqfjBiZgNdhWFlsxl1TtvTVukmXJnfOqThqsnQfLz29TdOinpZEd/b7
-	o4v3Zp9tPsCkHDMAIFWPEiG6IabGTcwkYUsHcCtuFVzf8HJFxl2F5sWSoCv/OhFw7Lvf+wp54Cf
-	RbTBnJXtXjXNRsqPeA+hFmz2g71Km7nDtNNuSTk7EjengyfuhrVuEd4obE9lbVkDCh25KgmYY3C
-	vVfK1c7c8buZexwqfhspGhjlkNHqfH5SJ0ndCmoYbruM4rCvCY+/zfjnc+u1jusptgAxWC8GANq
-	/BZLfkqNrR+XkPR1oRkvi5tBn274DD30NO332Hlpzy3t34BTVJUOG72ktK4aF6ImhWvmCYPcZLb
-	Vy8cFRB/NXkVRMztbLVoWHVT/OM8Pve05sRDdTJadq/P83klDlF2BP6y0inlVFvSwt6eQp5E7uD
-	qsrEwnOtp4ohkJOCui8sIYSQB7vkvp9Hr+QY3s/RARlh2vuSWRMHTZ+FoIPhmXwYhq3SHlyiS8p
-	soqDP7C7QOqU49M=
-X-Received: by 2002:a05:6214:2f05:b0:918:c4b8:fc57 with SMTP id 6a1803df08f44-91b554f1bbcmr27272116d6.9.1791546707414;
-        Fri, 09 Oct 2026 04:51:47 -0700 (PDT)
-Received: from mobile5.tail6e7dd.ts.net (c-68-48-65-54.hsd1.mi.comcast.net. [68.48.65.54])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91b54e7f6aesm16537346d6.2.2026.10.09.04.51.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 04:51:46 -0700 (PDT)
-From: Mike Bommarito <michael.bommarito@gmail.com>
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] landlock: Move the domain layer counter out of the anonymous union
-Date: Fri,  9 Oct 2026 07:51:08 -0400
-Message-ID: <20261009115108.17819-1-michael.bommarito@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261007-b4-landlock-fix-domain-fortify-panic-v1-1-042e9108f5f8@oss.qualcomm.com>
-References: <20261007-b4-landlock-fix-domain-fortify-panic-v1-1-042e9108f5f8@oss.qualcomm.com>
+	s=arc-20240116; t=1791553069; c=relaxed/simple;
+	bh=5RUOn2j9ByX7mIyqkCskuAM0vt40AgTYwVMvNgKiwtM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=H2NMTBHuUUYpt+eBe2ceq/QoXO16cFnbMWOasHXt5y1wER53Vw6D4svEQfb7nyu8yyShljtNtD5M0mNtkZ5FimUPSI5m5OnUYXipMWYTZO/INOE/jLPbFi/1m1Whv070wZjKs+RRdrxqesSSstkZmZdXssTXajbaeu1ZBvZGxvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4j1S4s3RhLz1HCSX;
+	Fri,  9 Oct 2026 21:14:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 5CA084055E;
+	Fri,  9 Oct 2026 21:21:39 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with UTF8SMTPA id GxC2BwCXdy9a6shq3iC9AQ--.33096S2;
+	Fri, 09 Oct 2026 14:21:38 +0100 (CET)
+Message-ID: <2e59cc97ad2e6fe5b9b5a5b5988668da29155703.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: bound line scan in ima_read_policy() to fix OOB
+ read
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Fabrice Derepas <fabrice.derepas@canonical.com>, Mimi Zohar
+	 <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
+ <paul@paul-moore.com>,  James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 09 Oct 2026 15:21:27 +0200
+In-Reply-To: <1911937d73df65f70087c6f9b52798e1a5dfb33f.camel@huaweicloud.com>
+References: <20260814085443.1211989-1-fabrice.derepas@canonical.com>
+	 <1911937d73df65f70087c6f9b52798e1a5dfb33f.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwCXdy9a6shq3iC9AQ--.33096S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuFWfJFy5Zry3Cr1rWw4xtFb_yoWxXw4xpF
+	WvgFy5Ar1DXr17AFs293ZxXF1fK39rGF47G3yrX3W0v3ZxZr1Sg34UKFyS9F1SyryxXr1I
+	vFZ0q39IkF1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGrIkbko8AAAsW
 
-On Wed, Oct 07, 2026 at 07:28:30PM +0300, Abel Vesa wrote:
-> With Clang 20 and CONFIG_FORTIFY_SOURCE, stacking Landlock domains can
-> trigger a fortify panic in the handled_masks copy in inherit_ruleset():
-[...]
-> Based on next-20260930. Validated arm64 Landlock object builds with
-> Clang 20 and GCC 14, with CONFIG_FORTIFY_SOURCE enabled, and checked the
-> counter load in Clang-generated code. Not boot-tested.
+On Wed, 2026-08-26 at 11:51 +0200, Roberto Sassu wrote:
+> On Fri, 2026-08-14 at 10:54 +0200, Fabrice Derepas wrote:
+> > ima_read_policy() loads a policy file with kernel_read_file_from_path()
+> > and splits it into lines with
+> >=20
+> > 	while (size > 0 && (p =3D strsep(&datap, "\n")))
+> >=20
+> > kernel_read_file() allocates the destination with vmalloc(i_size) --
+> > exactly i_size bytes, and writes no NUL terminator. strsep()'s scan for
+> > the next '\n' is not bounded by @size, so when the last line has no
+> > trailing newline the scan runs off the end of the buffer (CWE-125). Whe=
+n
+> > i_size is a multiple of PAGE_SIZE the allocation has no slack and the
+> > read walks into the vmalloc guard page and faults.
+> >=20
+> > Reproduced under KASAN in a VM: writing the path of a page-aligned
+> > policy file with no trailing newline to <securityfs>/ima/policy oopses:
+> >=20
+> >   BUG: unable to handle page fault for address: ffffc90000032000
+> >   #PF: supervisor read access in kernel mode
+> >   RIP: 0010:strsep+0x7a/0xd0
+> >   Call Trace:
+> >    ima_write_policy+0x1f4/0x260
+> >    vfs_write+0x16a/0x6f0
+> >    ksys_write+0xcb/0x160
+> >    do_syscall_64+0xe0/0x5a0
+> >=20
+> > This requires CAP_MAC_ADMIN (the policy file is mode 0200), but a polic=
+y
+> > file that does not end in a newline is an ordinary, non-malicious
+> > condition, so a legitimate policy load can crash the kernel.
+> >=20
+> > Walk the buffer with memchr() bounded by the remaining size instead of
+> > strsep(): terminate each line in place at its newline, and parse a
+> > NUL-terminated copy of a final line that has none. The explicit per-lin=
+e
+> > accounting replaces the old "size -=3D rc" step, whose off-by-one
+> > (ima_parse_add_rule() returns strlen() + 1) made a trailing line withou=
+t a
+> > newline fail with -EINVAL; such a policy now loads. The loop now consum=
+es
+> > the buffer exactly, so the trailing "if (size) return -EINVAL" is dropp=
+ed.
+>=20
+> Looks unnecessarily complicated. I would replicate instead the same
+> behavior of ima_write_policy() to allocate a buffer with an additional
+> byte for the terminator.
+>=20
+> Read the inode size, vmalloc() size + 1, set the terminator, and pass
+> the buffer to kernel_read_file_from_path().
+>=20
+> I would still pass NULL for file_size to save ourselves from rechecking
+> if it changed after the kernel_read_file_from_path() call.
 
-Hi all, hit this issue yesterday on x86_64 (Framework 13, Meteor Lake),
-v7.3-rc5 built with clang 21.1.8 and CONFIG_FORTIFY_SOURCE=y.  I triggered
-it simply by opening the printer settings on 26.04 (through xz, see below).
+Could be simpler...
 
-My build tree was recent v7.3-rc5, so I applied the patch, which was clean,
-and then went through the repro steps after rebuilding.  Everything works
-as expected after 10-15 minutes of use - no crash, no other dmesg/journal
-issues.
+Something like this? (not tested)
 
-I hope you don't mind, but given how irritating it was to track down
-the issue, I am including some of the Claude output below to help others
-find the root cause more quickly if they hit it.  I checked the
-disassembly and ran the tests below myself on this machine.
+diff --git a/security/integrity/ima/ima_fs.c
+b/security/integrity/ima/ima_fs.c
+index 3b8174a91a34..6151f440cd2f 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -528,7 +528,7 @@ static const struct file_operations
+ima_ascii_measurements_staged_ops =3D {
+ static ssize_t ima_read_policy(char *path)
+ {
+ 	void *data =3D NULL;
+-	char *datap;
++	char *datap, *buf =3D NULL;
+ 	size_t size;
+ 	int rc, pathlen =3D strlen(path);
+=20
+@@ -548,6 +548,17 @@ static ssize_t ima_read_policy(char *path)
+ 	rc =3D 0;
+=20
+ 	datap =3D data;
++	if (size && datap[size - 1] !=3D '\n') {
++		buf =3D kmemdup_nul(data, size, GFP_KERNEL);
++		if (!buf) {
++			vfree(data);
++			return -ENOMEM;
++		}
++		datap =3D buf;
++		/* Count the NUL terminator. */
++		size++;
++	}
++
+ 	while (size > 0 && (p =3D strsep(&datap, "\n"))) {
+ 		pr_debug("rule: %s\n", p);
+ 		rc =3D ima_parse_add_rule(p);
+@@ -557,6 +568,7 @@ static ssize_t ima_read_policy(char *path)
+ 	}
+=20
+ 	vfree(data);
++	kfree(buf);
+ 	if (rc < 0)
+ 		return rc;
+ 	else if (size)
 
-<CLAUDE>
-This is easy to hit on a stock desktop.  xz 5.8 sandboxes itself with
-nested landlock_restrict_self() calls, so on an unpatched clang build every
-`xz -d` oopses:
+Roberto
 
-  memcpy: detected buffer overflow: 4 byte write of buffer size 0
-  WARNING: lib/string_helpers.c:1037 at __fortify_report+0x1f/0x60, CPU#6: xz/9888
-  kernel BUG at lib/string_helpers.c:1044!
-  Oops: invalid opcode: 0000 [#1] SMP NOPTI
-  RIP: 0010:__fortify_panic+0x9/0x10
-  Call Trace:
-   landlock_merge_ruleset+0x353/0x360
-   __se_sys_landlock_restrict_self+0x1bf/0x470
-   __x64_sys_landlock_restrict_self+0x16/0x30
-
-On Ubuntu, simply opening GNOME Settings -> Printers runs the CUPS driver
-helpers, which run xz.  With kdump-tools installed (panic_on_oops=1), that
-panics the machine.  Nothing more than an unprivileged process is needed;
-the reproducer below triggers it as a normal user:
-
-  prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-  for (i = 0; i < 2; i++) {
-          struct landlock_ruleset_attr a = {
-                  .handled_access_fs = LANDLOCK_ACCESS_FS_MAKE_REG };
-          int fd = syscall(SYS_landlock_create_ruleset, &a, sizeof(a), 0);
-          syscall(SYS_landlock_restrict_self, fd, 0);  /* i == 1 oopses */
-          close(fd);
-  }
-
-The x86_64 codegen matches your arm64 analysis.  Unpatched, with
-num_layers at 0x24 and handled_masks at 0x28:
-
-  mov    0x28(%rbx),%esi      # "count" read from child->handled_masks[0]
-  shl    $0x2,%rsi
-  cmp    %rdx,%rsi
-  jb     <__fortify_panic>
-
-With the patch, num_layers is at 0x40 and handled_masks at 0x44.  The
-count is loaded from the right field, and clang folds away the fortify
-checks after the WARN_ON_ONCE(child->num_layers <= parent->num_layers):
-
-  mov    0x40(%r12),%edx
-  cmp    %edx,0x40(%rbx)
-  ...
-  call   memcpy
-
-Results after booting the patched kernel, with panic_on_oops=1 and
-kdump loaded (the configuration that used to panic):
-
-  nested restrict reproducer:  both layers succeed
-  echo hello | xz | xz -d:     ok
-  lpinfo -m (CUPS -> xz):      ok
-  fortify reports in dmesg:    none; kernel not tainted
-
-The layout change grows struct landlock_domain from 64 to 72 bytes.  A
-one-layer domain is still a kmalloc-96 allocation (68 bytes before, 76
-after); only stacks of 7 or 8 layers move up to kmalloc-128.  That seems
-fine.
-</CLAUDE>
-
-Since this is reachable from unprivileged userspace on any clang +
-FORTIFY_SOURCE build of 7.3-rc, it would be good to get this in before
-v7.3 final.
-
-Tested-by: Mike Bommarito <michael.bommarito@gmail.com>
+>=20
+> Thanks
+>=20
+> Roberto
+>=20
+> > Fixes: 7429b092811f ("ima: load policy using path")
+> > Assisted-by: copilot-cli:claude-opus-4-6 frama-c
+> > Signed-off-by: Fabrice Derepas <fabrice.derepas@canonical.com>
+> > ---
+> > Tested under KASAN (CONFIG_KASAN_GENERIC + CONFIG_KASAN_VMALLOC) in QEM=
+U,
+> > loading a policy via "echo /path > <securityfs>/ima/policy":
+> >=20
+> >   - page-aligned file, no trailing newline: unpatched -> guard-page oop=
+s
+> >     in strsep()/ima_read_policy() (trace above); patched -> no fault, t=
+he
+> >     load fails cleanly with -EINVAL on the (garbage) content.
+> >   - valid policy with a trailing newline: loads before and after.
+> >   - valid rule with no trailing newline: unpatched -> -EINVAL (the size
+> >     underflow); patched -> loads.
+> >=20
+> > lib/string.o is not KASAN-instrumented, so the over-read is caught by t=
+he
+> > vmalloc guard page rather than a shadow report; the confirmation is the
+> > page-fault oops with strsep()/ima_write_policy() in the trace.
+> >=20
+> >  security/integrity/ima/ima_fs.c | 46 ++++++++++++++++++++++++++-------
+> >  1 file changed, 36 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/i=
+ma_fs.c
+> > index 174a94740..7b530b130 100644
+> > --- a/security/integrity/ima/ima_fs.c
+> > +++ b/security/integrity/ima/ima_fs.c
+> > @@ -526,12 +526,10 @@ static const struct file_operations ima_ascii_mea=
+surements_staged_ops =3D {
+> >  static ssize_t ima_read_policy(char *path)
+> >  {
+> >  	void *data =3D NULL;
+> > -	char *datap;
+> > -	size_t size;
+> > +	char *datap, *eol, *p;
+> > +	size_t size, linelen;
+> >  	int rc, pathlen =3D strlen(path);
+> > =20
+> > -	char *p;
+> > -
+> >  	/* remove \n */
+> >  	datap =3D path;
+> >  	strsep(&datap, "\n");
+> > @@ -546,21 +544,49 @@ static ssize_t ima_read_policy(char *path)
+> >  	rc =3D 0;
+> > =20
+> >  	datap =3D data;
+> > -	while (size > 0 && (p =3D strsep(&datap, "\n"))) {
+> > +	while (size > 0) {
+> > +		eol =3D memchr(datap, '\n', size);
+> > +		linelen =3D eol ? (size_t)(eol - datap) : size;
+> > +
+> > +		if (eol) {
+> > +			/* NUL-terminate the line in place, within bounds. */
+> > +			*eol =3D '\0';
+> > +			p =3D datap;
+> > +		} else {
+> > +			/*
+> > +			 * kernel_read_file_from_path() does not NUL-terminate
+> > +			 * the buffer, and it may be exactly i_size bytes long,
+> > +			 * so a string walk off the end is possible.  The final
+> > +			 * line without a trailing newline has no room for a
+> > +			 * terminator; parse a terminated copy instead.
+> > +			 */
+> > +			p =3D kmemdup_nul(datap, linelen, GFP_KERNEL);
+> > +			if (!p) {
+> > +				rc =3D -ENOMEM;
+> > +				break;
+> > +			}
+> > +		}
+> > +
+> >  		pr_debug("rule: %s\n", p);
+> >  		rc =3D ima_parse_add_rule(p);
+> > +		if (!eol)
+> > +			kfree(p);
+> >  		if (rc < 0)
+> >  			break;
+> > -		size -=3D rc;
+> > +		rc =3D 0;
+> > +
+> > +		datap +=3D linelen;
+> > +		size -=3D linelen;
+> > +		if (eol) {
+> > +			datap++;	/* skip the newline */
+> > +			size--;
+> > +		}
+> >  	}
+> > =20
+> >  	vfree(data);
+> >  	if (rc < 0)
+> >  		return rc;
+> > -	else if (size)
+> > -		return -EINVAL;
+> > -	else
+> > -		return pathlen;
+> > +	return pathlen;
+> >  }
+> > =20
+> >  static ssize_t ima_write_policy(struct file *file, const char __user *=
+buf,
+> >=20
+> > base-commit: d58772d8520c7ef247c4b95c9bd76d3a25da9ff5
+>=20
 
