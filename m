@@ -1,67 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D15D3DAAB8
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25903A1A29
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791523344; cv=none; b=smd9Z+sBj6HNTENZ+Vb7rJqubtUCWs2eAaBJZE8P849eW8FR6fRgSrMdDxgLVyZD2jMHuKAQly9NOZf0QHoUS7JuN+ucyTZyY5WbJjC3dr1z8b53cAvECyWTgq/EjEfDn8xThuGlc9R991srug0VAqrzJ9tx0VVaoXEWvvvFL5g=
+	t=1791523588; cv=none; b=ryyQqELFhUiqHwRPcJ1yMb3f1KsXTMO2/2U9yYG6dH+F+qLLEgXzz6CsxchqiD2quBIaF69KnXuZo3q2fFYZkpSsFA9RpCwAuTDVKlF+HfO6ev046/aDQMbqcRIvXRofw0DPpMCOXZlojJjP4Cngt410tKEO02q08K+XKFLftsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791523344; c=relaxed/simple;
-	bh=e0M3xbP4c24qG1iV2IJWkI6h9WVbeoUvHCCU3EUecAs=;
+	s=arc-20240116; t=1791523588; c=relaxed/simple;
+	bh=1N4xrA+/b8xkSzsUhQQf/hG5DFUQxTs5MnWiVm5KCMw=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=Z7Tv7AW71a2YBoPIKK54g9CmtvgkN+zkg+uQ6jTVkXzRtAwmaKLUcX0hpTm0HfLsV5v2m1Ag/mkhGxNxyvt9Hx8YrryQrbXp3VWGV0WrAGnRb14ereI7aHH8ywDghdyKNExzGmshHUrXjebTUfJ3Fm1/dBf99Eqyf7z2iREJGlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4G5O3GU; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=P88MvGQqYf15hOlmSW9oBH4y1DL53xc5GUZyBfs5BfXPDxlWYHSB7ewgvaqSIhj1YgdO4Sv5YKXc7Wq3JgfkHeCqLxUmSYcSs8LGVKpnkt4QHAzmmpTaQ9BVD4KLWSpMWYCuairC52gyXBL6CkuMg7CJV41JlNBocdlrTTmzewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWKZTI93; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4G5O3GU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D8E1F000FF
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:22:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWKZTI93"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409A01F000FF
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791523343;
-	bh=1kjR1DO6HHgT1aWTh/60lDZtSvZtkbTz99Lfmm0hhC0=;
+	s=k20260515; t=1791523587;
+	bh=/paQOHSabtZ1fNZ5u8yyA4cTGL0Z1o+VzecBlD2UU+A=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=F4G5O3GURWOnAcEm8svpDZ7vQ8i61Sh1lt7OZGNhkV+DP3L2A8U4/OcnwxnWxB87C
-	 hHEn94wpkfj0AeqgwSRPwqU39CjUUYvdvUeitu3HcjgJtc2mxuxGS/p/dIGkGSZDhp
-	 9sNa/hBwObd3LSb7ktv5D7m6qmwkdqBXGX8r5v7anrIaRSOlJZdLcKLw0N4ae3Cv8q
-	 rDqcZYCXvsgupPtExHLelI2r9ODVo36GfGwqtMJ63vxEri7OOGk3t0N6losWvx+yiX
-	 ag1rAajjeDiAIFUrNwyeOup0iDVzvHsq7d5AVYj6XgdgesTw4Wv5gZ4X5craTcdBRE
-	 05RH8p+/W8now==
-Message-ID: <sashiko-outbox-164880@kernel.org>
+	b=ZWKZTI93RGVGAHmeWVe+pvl5y8lxWF7bXnlA56e5OidRpgO3Oh14F2XCvjL2HK3ZB
+	 HvknfgWXkAJWulRX6xEMni1MeDLo//YVoA5QKf8/4AYlKph38siDfor6hmbXuK6AdR
+	 kNR2O1LAPcjP+71GeJvlIaHrn4+ekJnTSTQlO4POLz8NaMbGmYaxk8nzVGmB5DmQO9
+	 Q/QwhmmUYRF8AG6DcIXRLM89eVM01VOZgLFtTxKNwnVx/0s+BhFWK3VKVNpw2Vgrlo
+	 KLRJ65WPIfdF8YCb2ucgtBZ1ov6HBikRgw92s8jOhCEWss2tuKyg927AC611mJ+7vf
+	 EBKrp2CD9kOLg==
+Message-ID: <sashiko-outbox-164891@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] keys: Avoid the owner account dereference in named
- keyring lookup
+Subject: Re: [PATCH v2] keys: Protect the type name while describing a key
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <pm-key-management-objects-candidate-0002-v3-2baa8cad2bb554364e10@gmail.com>
-References: <pm-key-management-objects-candidate-0002-v3-2baa8cad2bb554364e10@gmail.com>
+In-Reply-To: <pm-key-management-objects-candidate-0009-v4-6b537c5732fd957c33fa@gmail.com>
+References: <pm-key-management-objects-candidate-0009-v4-6b537c5732fd957c33fa@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 09 Oct 2026 05:22:22 +0000
+Date: Fri, 09 Oct 2026 05:26:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> Named keyring lookup must keep the storage containing the owner UID
-> alive through the namespace mapping check.  find_keyring_by_name()
-> reads keyring->user->uid under keyring_name_lock, but that lock protects
-> the keyring's name entry and allocation, not its separate key_user.
+> keyctl_describe_key() must keep the key type's name alive until
+> kasprintf() has consumed it. The retained key reference keeps the key
+> and its description alive, but does not pin the module providing its
+> type. The name is passed to kasprintf() without holding key->sem.
 >=20
-> A named session-keyring join can overlap a privileged KEYCTL_CHOWN on
-> another CPU.  If the keyring holds the last reference to its old dynamic
-> key_user and the ownership transfer succeeds, the following ordering is
-> possible:
+> kvasprintf() uses the saved name pointer in two formatting passes, with
+> a GFP_KERNEL allocation between them. With AF_RXRPC=3Dm, a task that
+> passes View permission before type retirement can overlap a privileged
+> module unload in this order:
 >=20
->     Named join                         Chown
->     find_keyring_by_name()              keyctl_chown_key()
->       read_lock(keyring_name_lock)       down_write(key->sem)
->       load old keyring->user
->                                          replace key->user and key->uid
+> 1. KEYCTL_DESCRIBE looks up the key, saves key->type->name in the
+>    kasprintf() arguments and completes the first formatting pass.
+> 2. While the formatter is delayed before its second pass,
+>    af_rxrpc_exit() calls unregister_key_type(), which removes the type
+>    from the registry and waits for key_gc_keytype().
 > [ ... ]
->     Read of size 4 at addr ffff8881128ae2ec by task keycase/500
+>      vsnprintf+0x330/0x1110
 >=20
-> Fixes: 2ea190d0a006 ("keys: skip keys from another user namespace")
+> Fixes: aa9d4437893f ("KEYS: Fix the size of the key description passed to=
+/from userspace")
 > Assisted-by: LLM
 > Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 
@@ -69,5 +69,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/pm-key-management-o=
-bjects-candidate-0002-v3-2baa8cad2bb554364e10@gmail.com?part=3D1
+bjects-candidate-0009-v4-6b537c5732fd957c33fa@gmail.com?part=3D1
 
