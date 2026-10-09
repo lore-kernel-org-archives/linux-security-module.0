@@ -1,118 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664853D5253;
-	Fri,  9 Oct 2026 07:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF803DB300
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 08:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791531732; cv=none; b=eZidsAh9kWOhp3/bc+8cVOkGpzjCuvRBS33wtVYBpWJlU6fBIrCDocfRvt6qdKKZzU1CMjbRWQnK92wWajv0Vfj/OwrYhUv9RFyj0I932tI9Q3docCpeNQySronH7qUfsjwhyoDTd5v7UFeRUJyXfhAcgg35gmeEx42mn/16n1o=
+	t=1791535601; cv=none; b=NshG3eYnPdixlAHeuIeLHkVrBohpT3Y47Z70s9E6uNj1oNZjI9gDXDL7a0qxwC1vYs/98BKMntKNIuVAjsd7MW6pxcYBztYXpRWLDJ+ThWhyo4iQpvBL/Baxtaux2QzRmgKOoVbzzivj6Qzg1A7ccfR/S7GsDBkAtCwZ+KT6M/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791531732; c=relaxed/simple;
-	bh=KK6hcUKNzTpjT+w6oo43Mdn+G6BEcfvhF7hhxgjxngY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckFItoeic3oCGi5azoS3lmT9nbNrxTPQ1/u6bXJEP4DWXtYoQZzgskfk3cdO2CfND3WHihv14jboE2Dr0d5ddz0721lJXhe97W0PQRQC47CzgW3bVDuFQqEyle0OTiJVDUUOyn8Wg/3V9WU4dZ5UTM6DeMfJyiehWTjbGNwRTgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKF431mt; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791535601; c=relaxed/simple;
+	bh=GByZ08qFPSVQ2Pp57befi5j5wUjE7SDpzVp306QsXF4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Hdie6kq5aWL8ZImht+7kY7rJbltHljVwwRIJ4CzH4pjlMcRK2igECj2PpUOpeO2vDhVBgxqzrEG1a3qapkGI4MU2kcs4A/qxAprclGsqzupBAEShdS6J/c7hsUDoZ76k0qA23Xx4rmOfW7F+rf7gvIa63tCzI3BzSLgeA79M0bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20251104.gappssmtp.com header.i=@smartx-com.20251104.gappssmtp.com header.b=KT2Jf3VV; arc=none smtp.client-ip=74.125.82.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKF431mt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC4C1F000FF;
-	Fri,  9 Oct 2026 07:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791531731;
-	bh=rsMBX361Kx8vQKVV8EDRN0Xn/Nazwk8m05yUWcWSqiE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bKF431mtCCHYf2ieQl6MAF9ntDhRWeap5NdD5hWqa5qemmI1u1uieuJcu98D4E3Rn
-	 5vE/DEoYSPXDgjUeOh7NV6MHRk/zK5wcN2bc1VNASWN49xYyizDS7NMRK3zpROSMh6
-	 mOUE3gkK6h+pwFMF25O6lUO1N1rvuUA1bEkpPn7gUWseDUhqGN3jB3GDLTJJCfQDT1
-	 UGVXAx4BlYPjHzofLX0QWC+/0QNKymWEiKcn7w54tXyY2uuRnSPSn4bV0TjcdSlOCK
-	 +A/hkfmtsJJ4EpClcFzqByEfTrbueo7DxsP9sEQv/wDUgPVMsShwGgZhPmj6ljFhkk
-	 nNzm/R7xwQlaA==
-Date: Fri, 9 Oct 2026 09:41:59 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, "Andrew G. Morgan" <morgan@kernel.org>, 
-	Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] capabilities: close the ways around the CAP_SETFCAP
- rule for uid 0
-Message-ID: <20261009-aussicht-wortbruch-bohnenkraut-9e7a1cfd7580@brauner>
-References: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
- <asehZEWAwsJcbqvM@hallyn.com>
- <179147397027.4.15064782992163283819@toxicpanda.com>
- <asfBRYy597qvzdCW@hallyn.com>
+	dkim=pass (2048-bit key) header.d=smartx-com.20251104.gappssmtp.com header.i=@smartx-com.20251104.gappssmtp.com header.b="KT2Jf3VV"
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-34c4a0868b6so5658659eec.0
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Oct 2026 01:46:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20251104.gappssmtp.com; s=20251104; t=1791535598; x=1792140398; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=nl6lGsMqVBD+W3REigF7CuZcaNchMe60i3xLXWgAPS0=;
+        b=KT2Jf3VV+Ku2Lq7YfETGfHTywVv4kBVMSYilCVqRRqwm2hSXPXHoYEJ7DpC0bg77Ak
+         9K8pNSyrGp1pWVxgsBZbItXnQlvKzrJCfXQMxiGplmWSUfajR4C321Uuy0wi8e3QYqJk
+         BKs+rybuTjzp5WsKs/DqK4vqLnNBxjn2FE56zPIWtyZTgGf0kQ9+paKqTKzua7lwSdI5
+         4SeZ0RI4ZSEl2C8D8wTygQQkAEfx4lkB2CpFK8+Cses6cJ5HKOfSdfzfvU6h3P1jNYQi
+         sP7jL+Z6MQAdXT3LA9JLhXtWZivJrpggGFZymDHHeMOldq99ml5ryS++iOQEZWd4doR9
+         ENIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791535598; x=1792140398;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=nl6lGsMqVBD+W3REigF7CuZcaNchMe60i3xLXWgAPS0=;
+        b=BGgXa1cO8oZKyz18Va5s+rUJlIMIcBs4wZQdpgNEr9bmkGQ9Vnwwrlwtvfcv43mwI6
+         Wo/qot8Y1XtW0uWRAAH4+8AXUTbt47SK305DERteu6sffkp9xEHHfJKVMe9cq3kxX+cE
+         h/lGiXuyVi0K1fULIZsVG77ItO8Skwt01a1uQ/H+w4gcLuGNI/u+2bB+rDe+D0M3DpQt
+         kEPj51iithbJnu+xxWZFvki84cf2mv3FnjCExCJoydSkLi+Wr2hLEUMmvc+AsoYyX448
+         A0WXYRWLHOTDxK4M/EjdSYketHe7/MZ+kvlQ8S1LoaGXgDRfgRvFeDuZdCDDR2B13l9z
+         LdJg==
+X-Forwarded-Encrypted: i=1; AKwUvByi/PHYZPQSbTrjj7ZMwYKOgk1qIyrwayUhDuxa3PKF3mkP+2Pr4jcwSSTkaIun4yPQ6DeXciqDfnoROHH6gpyb9m24/oI=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLI4IYpTwRW0a+/CWjYr+iQ4YKPQmpLkrxnRDPmtEwVzCcVX7XO
+	6u/dUUGVySmAPH5r9y0q5thUZikYSzxgbw0D/A6v6VRlVIrG/s+ilzH9UoV9MlsOsNOomci+utB
+	z332PdZNXKA1UY7VyPt1uph1hBA8N0CRGdmbF0YDlP6ASUBaVO5exT5PoZ/uyKEMb7Q0v7fw=
+X-Gm-Gg: AYBFou18fcTnEj80txfbNV3bEx6nQLp1T5/Ck8QruSU0Co3Yf2Bq+vqjqm9aPQXJL42
+	OGiCvni3vguEtBPrudHATeRTRfXMLEwd6NZf34IdmiEWmZiziwG9J5wLpJza9rXkHv7Qvi8n+g5
+	JIWSLW6ci0M882YVGysfVvzAN28V086zWy01tkdAbEvilT5UVccA24irpc5hRbupj1Vpv7HAVxn
+	QzEeOg/zplCw+NVfm6lCsFusHq0O9YdgF7RpyMihE/Jzw39PxtYt+0aqhK+Wx0Z6M4FUHJTNas9
+	vXl8ssgs5x36xTaINfQ35Und6wSp3W7As+RgWPTucyMdI7MyJO4ROwQErMZ1c3U5S2kz8SWW10Y
+	WMrGQYZp/vfi3FVEUr1vAmbDDTGFXEFbXpRJif3HHW8g2T87tseOZR9wrqjQ/VdFTyvAxAgTZdB
+	9enXWZ6kQoIhHciYGPQMJgu2LmRHkYR4k50TC9uwRjrSk37RBDSL5jjKvki+oR6sOnb7o/ih9Qw
+	37TABIjyBg=
+X-Received: by 2002:a05:7301:d198:b0:354:53af:7f2 with SMTP id 5a478bee46e88-35453af114bmr613530eec.11.1791535597166;
+        Fri, 09 Oct 2026 01:46:37 -0700 (PDT)
+Received: from localhost.localdomain ([23.148.204.128])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-354a52463casm2088166eec.22.2026.10.09.01.46.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Oct 2026 01:46:36 -0700 (PDT)
+From: Wang Zhan <wang.zhan@smartx.com>
+To: netdev@vger.kernel.org,
+	Joas Antonio dos Santos <joasantonio108@gmail.com>
+Cc: Wang Zhan <wang.zhan@smartx.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Eric Dumazet <edumazet@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-security-module@vger.kernel.org,
+	Alice Mikityanska <alice.kernel@fastmail.im>
+Subject: Re: [PATCH net] calipso: keep BIG TCP payload_len in calipso_skbuff_setattr()
+Date: Fri,  9 Oct 2026 16:46:16 +0800
+Message-ID: <20261009084616.139462-1-wang.zhan@smartx.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <179147330473.58090.15760316487710432833@gmail.com>
+References: <179147330473.58090.15760316487710432833@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <asfBRYy597qvzdCW@hallyn.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 08, 2026 at 11:13:57AM -0500, Serge Hallyn wrote:
-> On Thu, Oct 08, 2026 at 03:39:30PM +0000, Josef Bacik wrote:
-> > On Thu, Oct 08, 2026 at 08:57:56AM -0500, Serge E. Hallyn wrote:
-> > > Would you mind describing what other solutions you considered?  I've been
-> > > looking over this set since Tuesday, and finding it hard to reason about.
-> > > (Part of that is certainly the nature of the problem, and it's possible
-> > > that this is the best/simplest solution.)
-> > 
-> > Everything we looked at kept the state in the cred.  We model checked
-> > the variants before writing the code, and these fell over:
-> > 
-> > - a bool per cred for "had CAP_SETFCAP over the parent when it entered".
-> >   It breaks on two hops: setns() into a namespace that maps 0, unshare
-> >   again, and the bool says yes for the second namespace.  Hence the
-> >   level.
-> > - checking only at uid_map write time.  That misses setxattr of
-> >   security.capability in a namespace that already maps 0, hence patch 4.
-> > 
-> > We didn't look at keeping the state on the namespace.
-> > 
-> > > If we replaced the userns->parent_could_setfcap bool with a ref to the
-> > > creator's cred, then at both setns and write we could check the actor's
-> > > credentials, right?  There are probably issues with that specific idea,
-> > > but that's why it would be good to see what else you've considered.
-> > 
-> > Checking at write time alone doesn't work: once a task is inside the
-> > namespace its cred says nothing about what it could do outside, so a
-> > joiner and the creator look the same.
-> > 
-> > It does work if setns() refuses to join a namespace that maps, or can
-> > still map, the parent's uid 0 unless the joiner has CAP_SETFCAP over the
-> > parent.  Then everybody in a namespace has the same reach, and it can be
-> 
-> Yeah, that's what I was thinking.  Or even stricter: ensure that to join
-> any user namespace, a process must have a superset of the namespace
-> creator's capabilities.
+On Thu, 08 Oct 2026 12:28:24 -0300 Joas Antonio dos Santos wrote:
+> @@ -1357,8 +1357,9 @@ static int calipso_skbuff_setattr(struct sk_buff *skb,
+>  			sizeof(*ip6_hdr) + start);
+>  		skb_reset_network_header(skb);
+>  		ip6_hdr = ipv6_hdr(skb);
+> -		payload = ntohs(ip6_hdr->payload_len);
+> -		ip6_hdr->payload_len = htons(payload + len_delta);
+> +		/* BIG TCP packets have payload_len == 0 */
+> +		if (ip6_hdr->payload_len)
+> +			be16_add_cpu(&ip6_hdr->payload_len, len_delta);
 
-I think both are fine and I like this proposal.
+Hi,
 
-> 
-> > a level stored on the namespace at create time instead of a cred ref,
-> > which would pin keyrings and the rest for the life of the namespace.
+I think there are boundary cases around IPV6_MAXPLEN: growing past it
+can cause payload_len to overflow, while shrinking below it leaves
+payload_len at zero.
 
-Yeah, that's what I was worrying as well.
-
-Fwiw, this brings me to another general idea of mine: I want to be able
-to pin a "creds" light variant that doesn't pin all the unnecessary cred
-cruft like keyrings that you really don't need in a lot of cases. Like a
-core cred reference that does namespaces uids/gids, caps and ucount but
-drops all the rest.
-
-> > The checks would be setns(), the map write (opener and writer are in the
-> > parent, so a plain capable check), setxattr of security.capability, and
-> > ptrace.
-> > 
-> > The difference in behaviour is that the -EPERM moves to setns(): a root
-> > task without CAP_SETFCAP couldn't enter a root-owned container that maps
-> > host uid 0 at all, where with this series it can enter and is refused
-> > only for the map, fscaps and ptrace.  I can prototype it if you prefer
-> > that.
-> 
-> Sorry let me think about it (or let us talk about it) a bit more.
-
-I think that this is an acceptable restriction. Mapping uid 0 to 0 and
-dropping caps is borderline useless.
+Could we use ipv6_set_payload_len(ip6_hdr, skb->len - sizeof(*ip6_hdr))
+to set the length here? I haven't checked the details, though.
