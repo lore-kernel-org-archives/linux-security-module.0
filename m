@@ -1,282 +1,100 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F253D4137;
-	Fri,  9 Oct 2026 13:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AA84E0B82
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 15:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791553069; cv=none; b=YUQWyML1jidBYKkpajc4QShOy7rqE1RIlvf8jimOxAfBM4JgxvLDWGODvLbMbIVE7k/1Nwl62hXHJw9NgimonPAskxfeFKPXdLyGkW9VwjgUcgISt9uQEKkHWGhHubKYEgSlhsvM+Auq+/DMR2ahP05ojAe8uQ2qgdC+Jvbp6b4=
+	t=1791559709; cv=none; b=AeDemCUI8Qh7A/UnSTEiXuDf1iKr4es+ltpMptJTwWuwNvPlmRTLT2yx+/Ni4P6zKBcfdU0/qfHO5+zKuzRkymM1082rtKleB7t0R1ZDz8dHi7lggz1hcZcu1D5LMeyMWbI9qho/d1tpP209mfd/A+30SKGWcuVXne1UzNxk5C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791553069; c=relaxed/simple;
-	bh=5RUOn2j9ByX7mIyqkCskuAM0vt40AgTYwVMvNgKiwtM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H2NMTBHuUUYpt+eBe2ceq/QoXO16cFnbMWOasHXt5y1wER53Vw6D4svEQfb7nyu8yyShljtNtD5M0mNtkZ5FimUPSI5m5OnUYXipMWYTZO/INOE/jLPbFi/1m1Whv070wZjKs+RRdrxqesSSstkZmZdXssTXajbaeu1ZBvZGxvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4j1S4s3RhLz1HCSX;
-	Fri,  9 Oct 2026 21:14:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 5CA084055E;
-	Fri,  9 Oct 2026 21:21:39 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP2 (Coremail) with UTF8SMTPA id GxC2BwCXdy9a6shq3iC9AQ--.33096S2;
-	Fri, 09 Oct 2026 14:21:38 +0100 (CET)
-Message-ID: <2e59cc97ad2e6fe5b9b5a5b5988668da29155703.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima: bound line scan in ima_read_policy() to fix OOB
- read
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Fabrice Derepas <fabrice.derepas@canonical.com>, Mimi Zohar
-	 <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
- <paul@paul-moore.com>,  James Morris <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 09 Oct 2026 15:21:27 +0200
-In-Reply-To: <1911937d73df65f70087c6f9b52798e1a5dfb33f.camel@huaweicloud.com>
-References: <20260814085443.1211989-1-fabrice.derepas@canonical.com>
-	 <1911937d73df65f70087c6f9b52798e1a5dfb33f.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
+	s=arc-20240116; t=1791559709; c=relaxed/simple;
+	bh=Cqg4ETqiofDWZ8GpXH7BfrffQ5jhKpx+824luu1neTk=;
+	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=cKxQ0hV3eJwOrSBS827UYtIL2R3jSjhYiZI5u8uqJn4EC2IerAJxg77ve9UTjTFlBuCVRlorzmx7B7b7a6jgZlWDwWpUXqJ1LH+lc/YMOQn/i04FnRApinmKwQF8MWbfltpxa4cODl4epBuga3XJknHP0sptW5SVf61LSh4gouo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe0pb3LH; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe0pb3LH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A201A1F000FF
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 15:28:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791559706;
+	bh=I3pwdnC2Wmcw5e9SAMrkAa4BnU0IJwxmG0HjYctzu9A=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=Xe0pb3LHyRf1QLGXC23pSoKJhY4iDIOgdnhklBZ9SzREzUDhSc4WDjCJGupsvLx0f
+	 HUsz49Oj/5H58LhiWhU3pnPdEI6Z9WrYL4cymniq5yIPzn5Zv7/YOzKLMpsmUlgapJ
+	 hjYIPQhdkLs6j2uxUbZq0Uz5igLWE/kwrh1Wiqu6nvRVigYiWo7OD82+VbKXbpFrNi
+	 c2DkTVAAMiSdoYhabhOsS+cct2Th5/7wXlNM/j36zKqW4fGAOn7w+/DWuBtzJ3yhHT
+	 nCSAPCDUYj3kfw01BKLFOjeFFAFnWeumkMNQeXj+xAQL5SoBHaY0pC2d6sWbxZuPxZ
+	 QCZlWkyY0xmVw==
+Message-ID: <sashiko-outbox-165773@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH net v2] calipso: update payload_len when removing the
+ CALIPSO option
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <179147329205.58079.5847298721173675285@gmail.com>
+References: <179147329205.58079.5847298721173675285@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+Date: Fri, 09 Oct 2026 15:28:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwCXdy9a6shq3iC9AQ--.33096S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFWfJFy5Zry3Cr1rWw4xtFb_yoWxXw4xpF
-	WvgFy5Ar1DXr17AFs293ZxXF1fK39rGF47G3yrX3W0v3ZxZr1Sg34UKFyS9F1SyryxXr1I
-	vFZ0q39IkF1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBGrIkbko8AAAsW
 
-On Wed, 2026-08-26 at 11:51 +0200, Roberto Sassu wrote:
-> On Fri, 2026-08-14 at 10:54 +0200, Fabrice Derepas wrote:
-> > ima_read_policy() loads a policy file with kernel_read_file_from_path()
-> > and splits it into lines with
-> >=20
-> > 	while (size > 0 && (p =3D strsep(&datap, "\n")))
-> >=20
-> > kernel_read_file() allocates the destination with vmalloc(i_size) --
-> > exactly i_size bytes, and writes no NUL terminator. strsep()'s scan for
-> > the next '\n' is not bounded by @size, so when the last line has no
-> > trailing newline the scan runs off the end of the buffer (CWE-125). Whe=
-n
-> > i_size is a multiple of PAGE_SIZE the allocation has no slack and the
-> > read walks into the vmalloc guard page and faults.
-> >=20
-> > Reproduced under KASAN in a VM: writing the path of a page-aligned
-> > policy file with no trailing newline to <securityfs>/ima/policy oopses:
-> >=20
-> >   BUG: unable to handle page fault for address: ffffc90000032000
-> >   #PF: supervisor read access in kernel mode
-> >   RIP: 0010:strsep+0x7a/0xd0
-> >   Call Trace:
-> >    ima_write_policy+0x1f4/0x260
-> >    vfs_write+0x16a/0x6f0
-> >    ksys_write+0xcb/0x160
-> >    do_syscall_64+0xe0/0x5a0
-> >=20
-> > This requires CAP_MAC_ADMIN (the policy file is mode 0200), but a polic=
-y
-> > file that does not end in a newline is an ordinary, non-malicious
-> > condition, so a legitimate policy load can crash the kernel.
-> >=20
-> > Walk the buffer with memchr() bounded by the remaining size instead of
-> > strsep(): terminate each line in place at its newline, and parse a
-> > NUL-terminated copy of a final line that has none. The explicit per-lin=
-e
-> > accounting replaces the old "size -=3D rc" step, whose off-by-one
-> > (ima_parse_add_rule() returns strlen() + 1) made a trailing line withou=
-t a
-> > newline fail with -EINVAL; such a policy now loads. The loop now consum=
-es
-> > the buffer exactly, so the trailing "if (size) return -EINVAL" is dropp=
-ed.
->=20
-> Looks unnecessarily complicated. I would replicate instead the same
-> behavior of ima_write_policy() to allocate a buffer with an additional
-> byte for the terminator.
->=20
-> Read the inode size, vmalloc() size + 1, set the terminator, and pass
-> the buffer to kernel_read_file_from_path().
->=20
-> I would still pass NULL for file_size to save ourselves from rechecking
-> if it changed after the kernel_read_file_from_path() call.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] ipv6: calipso_skbuff_delattr corrupts MAC header on bridged packets
+--
 
-Could be simpler...
+commit 9797bee2d14350b4afedb726df3172b004b7badd
+Author: Joas Antonio dos Santos <joasantonio108@gmail.com>
 
-Something like this? (not tested)
+calipso: update payload_len when removing the CALIPSO option
 
-diff --git a/security/integrity/ima/ima_fs.c
-b/security/integrity/ima/ima_fs.c
-index 3b8174a91a34..6151f440cd2f 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -528,7 +528,7 @@ static const struct file_operations
-ima_ascii_measurements_staged_ops =3D {
- static ssize_t ima_read_policy(char *path)
- {
- 	void *data =3D NULL;
--	char *datap;
-+	char *datap, *buf =3D NULL;
- 	size_t size;
- 	int rc, pathlen =3D strlen(path);
-=20
-@@ -548,6 +548,17 @@ static ssize_t ima_read_policy(char *path)
- 	rc =3D 0;
-=20
- 	datap =3D data;
-+	if (size && datap[size - 1] !=3D '\n') {
-+		buf =3D kmemdup_nul(data, size, GFP_KERNEL);
-+		if (!buf) {
-+			vfree(data);
-+			return -ENOMEM;
-+		}
-+		datap =3D buf;
-+		/* Count the NUL terminator. */
-+		size++;
-+	}
-+
- 	while (size > 0 && (p =3D strsep(&datap, "\n"))) {
- 		pr_debug("rule: %s\n", p);
- 		rc =3D ima_parse_add_rule(p);
-@@ -557,6 +568,7 @@ static ssize_t ima_read_policy(char *path)
- 	}
-=20
- 	vfree(data);
-+	kfree(buf);
- 	if (rc < 0)
- 		return rc;
- 	else if (size)
+This commit updates calipso_skbuff_delattr() to adjust the IPv6 payload
+length after removing a CALIPSO option. The patch prevents forwarded packets
+from being dropped as truncated by subtracting the removed length, while
+leaving BIG TCP packets unchanged.
 
-Roberto
+> diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+> index c6a34334e657e..5a42db4f87472 100644
+> --- a/net/ipv6/calipso.c
+> +++ b/net/ipv6/calipso.c
+> @@ -1428,6 +1428,10 @@ static int calipso_skbuff_delattr(struct sk_buff *=
+skb)
+>  		skb_pull(skb, delta);
+>  		memmove((char *)ip6_hdr + delta, ip6_hdr, size);
+>  		skb_reset_network_header(skb);
 
->=20
-> Thanks
->=20
-> Roberto
->=20
-> > Fixes: 7429b092811f ("ima: load policy using path")
-> > Assisted-by: copilot-cli:claude-opus-4-6 frama-c
-> > Signed-off-by: Fabrice Derepas <fabrice.derepas@canonical.com>
-> > ---
-> > Tested under KASAN (CONFIG_KASAN_GENERIC + CONFIG_KASAN_VMALLOC) in QEM=
-U,
-> > loading a policy via "echo /path > <securityfs>/ima/policy":
-> >=20
-> >   - page-aligned file, no trailing newline: unpatched -> guard-page oop=
-s
-> >     in strsep()/ima_read_policy() (trace above); patched -> no fault, t=
-he
-> >     load fails cleanly with -EINVAL on the (garbage) content.
-> >   - valid policy with a trailing newline: loads before and after.
-> >   - valid rule with no trailing newline: unpatched -> -EINVAL (the size
-> >     underflow); patched -> loads.
-> >=20
-> > lib/string.o is not KASAN-instrumented, so the over-read is caught by t=
-he
-> > vmalloc guard page rather than a shadow report; the confirmation is the
-> > page-fault oops with strsep()/ima_write_policy() in the trace.
-> >=20
-> >  security/integrity/ima/ima_fs.c | 46 ++++++++++++++++++++++++++-------
-> >  1 file changed, 36 insertions(+), 10 deletions(-)
-> >=20
-> > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/i=
-ma_fs.c
-> > index 174a94740..7b530b130 100644
-> > --- a/security/integrity/ima/ima_fs.c
-> > +++ b/security/integrity/ima/ima_fs.c
-> > @@ -526,12 +526,10 @@ static const struct file_operations ima_ascii_mea=
-surements_staged_ops =3D {
-> >  static ssize_t ima_read_policy(char *path)
-> >  {
-> >  	void *data =3D NULL;
-> > -	char *datap;
-> > -	size_t size;
-> > +	char *datap, *eol, *p;
-> > +	size_t size, linelen;
-> >  	int rc, pathlen =3D strlen(path);
-> > =20
-> > -	char *p;
-> > -
-> >  	/* remove \n */
-> >  	datap =3D path;
-> >  	strsep(&datap, "\n");
-> > @@ -546,21 +544,49 @@ static ssize_t ima_read_policy(char *path)
-> >  	rc =3D 0;
-> > =20
-> >  	datap =3D data;
-> > -	while (size > 0 && (p =3D strsep(&datap, "\n"))) {
-> > +	while (size > 0) {
-> > +		eol =3D memchr(datap, '\n', size);
-> > +		linelen =3D eol ? (size_t)(eol - datap) : size;
-> > +
-> > +		if (eol) {
-> > +			/* NUL-terminate the line in place, within bounds. */
-> > +			*eol =3D '\0';
-> > +			p =3D datap;
-> > +		} else {
-> > +			/*
-> > +			 * kernel_read_file_from_path() does not NUL-terminate
-> > +			 * the buffer, and it may be exactly i_size bytes long,
-> > +			 * so a string walk off the end is possible.  The final
-> > +			 * line without a trailing newline has no room for a
-> > +			 * terminator; parse a terminated copy instead.
-> > +			 */
-> > +			p =3D kmemdup_nul(datap, linelen, GFP_KERNEL);
-> > +			if (!p) {
-> > +				rc =3D -ENOMEM;
-> > +				break;
-> > +			}
-> > +		}
-> > +
-> >  		pr_debug("rule: %s\n", p);
-> >  		rc =3D ima_parse_add_rule(p);
-> > +		if (!eol)
-> > +			kfree(p);
-> >  		if (rc < 0)
-> >  			break;
-> > -		size -=3D rc;
-> > +		rc =3D 0;
-> > +
-> > +		datap +=3D linelen;
-> > +		size -=3D linelen;
-> > +		if (eol) {
-> > +			datap++;	/* skip the newline */
-> > +			size--;
-> > +		}
-> >  	}
-> > =20
-> >  	vfree(data);
-> >  	if (rc < 0)
-> >  		return rc;
-> > -	else if (size)
-> > -		return -EINVAL;
-> > -	else
-> > -		return pathlen;
-> > +	return pathlen;
-> >  }
-> > =20
-> >  static ssize_t ima_write_policy(struct file *file, const char __user *=
-buf,
-> >=20
-> > base-commit: d58772d8520c7ef247c4b95c9bd76d3a25da9ff5
->=20
+[Severity: High]
+When a bridged IPv6 packet with a CALIPSO option is forwarded, br_netfilter
+feeds it to the NF_INET_FORWARD hook where SELinux may call
+calipso_skbuff_delattr() in net/ipv6/calipso.c. Does shifting the IPv6 head=
+er
+forward by delta bytes here without repositioning the MAC header create a g=
+ap
+that corrupts the MAC header on bridged packets?
 
+Because bridged packets bypass L3 routing and do not go through
+neigh_output(), the bridge's transmission function br_dev_queue_push_xmit()
+unconditionally calls skb_push(skb, ETH_HLEN). Since skb->data is shifted
+by delta bytes during the pull, this incorrectly frames the transmitted MAC
+header starting delta bytes into the original MAC header.
+
+Could this result in the transmission of gap bytes and the loss of the
+destination MAC address, causing severe packet corruption and drops on
+L2 forwarded packets?
+
+> +		ip6_hdr =3D ipv6_hdr(skb);
+> +		/* BIG TCP packets have payload_len =3D=3D 0 */
+> +		if (ip6_hdr->payload_len)
+> +			be16_add_cpu(&ip6_hdr->payload_len, -delta);
+>  	}
+> =20
+>  	return 0;
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/179147329205.58079.=
+5847298721173675285@gmail.com?part=3D1
