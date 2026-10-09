@@ -1,77 +1,78 @@
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C011C3B3C1D
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F5E3D1AA6
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791522674; cv=none; b=aeKwo45JtmUN0zGyS+deb5vEclCaRRtaMU5VO+C7k4pKUr+Eg/5qEyl1H3fPcw/fKcE6lqwj9QM8dKqFoju620W3WkAFPhhyyFlsjAZnWlPz4j2fUp8b9hMSYoMQ3B2RZZSmXgGM2DXiWbca66kaslE3PGO3sFc/yKtm95vOi8M=
+	t=1791522728; cv=none; b=YL1w/cIFt9gEo9joTRJRCR/OW5iGtQl43F1u8VH5YtgfY7i8xzu6ayVQZykKBK2Yc+HYLfIt7v3StEKcpP1rw7qwcjx/fzw0Y+Z1gxiWs4nR4xhD4PL1qWUClHbL+ptLEDvLeLhDD5RHa7PrT07ZZB0mQrixJC7Ct9CNSEvq0gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791522674; c=relaxed/simple;
-	bh=fIG6kNVbSBDcIDJq3p3pVkq328vRxzchYU1SH8Kzvhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TmW52so4/ALyAR44+7l10TxOJBJBE+Eu18YnNVC0eGClC92u5Lnj0qMst9MziB2B6WLi2mcNUD4LfMtCvAT0fkIlJut703EOzHjN6A0e05WdoEmXMIoDw26ITQLjqfZ+SwsUCrHzP/Dkxuq8ipH9IQQQ8dkmXjBUc92iKH4J5UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rthjuziN; arc=none smtp.client-ip=209.85.216.44
+	s=arc-20240116; t=1791522728; c=relaxed/simple;
+	bh=KVSI28pLKveuaijeq+vfPCZEsHZG5fb/0TEQZZOkPdY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BuYzg1z7I/uSdRgz4RnmzZc9puM9Q8rVsU5tW+raWFfg/Bhlx+GoLWIQ26Npu8itM2WZpDEZv14eHdjhrmJWOxklaKrHt/KgmrwyNKbBALKmUx2H0aofiDGtrtKKUMPMGCz6M3dw/s8q2hRoxVulL/atPnTcsseneNaoBy6cyc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBRksm71; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rthjuziN"
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3a49623b865so3740406a91.0
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 22:11:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBRksm71"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cc4aa0246b7so2055663a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 22:12:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791522671; x=1792127471; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791522727; x=1792127527; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=lE3/kQE3CWaeZ8e1J8lpY+d3lLDFtCRTYFUR1YExG5s=;
-        b=rthjuziNL9aQraViHXIBDfRDuuhmkSGKHCDOWWqBy3zIDTVNFKO0DX5orM7oystYm4
-         oTdAmuiZtZG6QTOt+9UVMx5lwI/dM9qMF8l+HBCP0n7WGrXr76wlGPiOM4V1RUsVoNyD
-         GPKnlgqool1h9J3015snqngIBzK0nXoVeNoNP8+cruMee54v//GqUcDdatv/GZquTFNM
-         C1M0+xn8yr6xihflBlhbszh/4nyWgScvOd1wXSnNXjs9iI0tcwTcI+2mo7SLt4Zt2QjZ
-         oM8QBoPItFuQNocyM+VFZPhNXn4vnB1/0zMKvB/ArmO9TO4H7PATCZFAdJ+I65lPoBJI
-         ciCw==
+        bh=009PzhldLqq67bHKwh2PTPo29cF7R0BHqE31k6CYPpc=;
+        b=jBRksm71QWE44dsyAJrnrdMEHmiDlAoXI5ierP9fhHK21eXyEXPsjExs8Xt7BgOheP
+         tQhCR59vFYduQ1h8C3DhiUjCUN8SAL6Z80reGrK7tvezyjxRpH4mMHV/DAaAjrgRwlxx
+         rxAGtad1pG9kj7W11lbNbj2fk3YmoSgnpwdgHPaNHCyHN4XM0FeGOaTeRjdREZFYbAk1
+         bjK5r9usX09ffm2dquYv2ihiFvqbFtsucE6wugTBjfcayGqSO0XGNtu2ERJUH9TQGlNW
+         uTK0RHjf+q9o9ZdEu9HjyQ1bUDjdUJDxq2CskbiQ8ISjUxuNkC/O59FM/fyAVbMG2vl2
+         fs6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791522671; x=1792127471;
+        d=1e100.net; s=20260707; t=1791522727; x=1792127527;
         h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=lE3/kQE3CWaeZ8e1J8lpY+d3lLDFtCRTYFUR1YExG5s=;
-        b=JOPdmRrhjwwFfq8BQTpmhHh1qO04gpmRpmLuv5o6zjFupbyPLuY63Q1VplmnjibgHR
-         yHYOVSlf6xB7Mj7qAB3VgI86AQDejyUUwMk/CWUsaqvPh6hWGO8jvQwXdQa7d+K4xFKc
-         BSG8zDucx2uUFYXzib0rI+mdtLQaH6OzqHNr7Rsqku7ocjJX2U6DI7WPYaUQ7xgIDNMk
-         K6RtY7PX8FyndxDytqxoxU5EVbg8WYwa3jSLJiAi94C4I4rCLueVzRXRtI0CaDHk4TFy
-         eshB+6N3Fg616/mfcwrQ8ZLrZC6/btPRFN8r59vwJIBhSVXy25UEcAV+3rVEnGB9UlVF
-         wXZA==
-X-Forwarded-Encrypted: i=1; AKwUvBy12gGELEu1RLktYNRXGCUrGe0+5fxp+zcnIo2kE45fPTqRGz6UBPzuld+bHhNsf7wAWiLTCnSP7YHS7pminMQIMDLVR2E=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI4PE1AsTtpk89vXfieW12bBNC9tfMMs3OfueCWQIEfqtZ2rkit
-	bSEUOXp+UsgegRFo0Mt4IKPNlja9NSCexoRrSwnNdbSGBAksHsTmkr9g
-X-Gm-Gg: AYBFou0HpDQtB/UXJ+CAfQ6Plcd5VoU5awvGd51wumT5gc3gcHW6E1PsuvtpD1Jvvqn
-	E9o8ppSWOI5ifpWCY1IyeUXVlhUd3EIFv3ph9AKno2apsb4J8ieATrtfcypBE5MWEmh3vH7rGHJ
-	YhD/k4hc0alREhwtbWtIARCSll5X3gYZITLmAJdg39n8k29qO+ZjYmUybSiObzffSvDxCFR8X+7
-	ELlEMhDMbklyNJB9Q+oB0bmK5trST5QtOr58h991WOppXl9lZ9ucOZskGQfR8pQxIaKHS+YIGkh
-	KWbPJkW2le9YHrAIV2iVjjb/+amiGOJBubl0mBe0LWVsdrzlcTAWQ1om3WyiHxa9aQ0jgNkw/88
-	6Eo9YB5VzzEyhQ1fP6lDzph4nyH82T9QzIHjrbB7VbWMVvgvMR0yLpcnDE33Zdc/XPxrLPYP/jn
-	GwIYBFeMil/CFqPRkVLs+pdd+8Mdv+HR+Fu+UM2qzEzqt1fTtGQQZVZyGR5oTQp5Qmhw==
-X-Received: by 2002:a17:90b:1e41:b0:3ab:de4:7fa5 with SMTP id 98e67ed59e1d1-3ab3a9726admr840824a91.56.1791522671042;
-        Thu, 08 Oct 2026 22:11:11 -0700 (PDT)
+        bh=009PzhldLqq67bHKwh2PTPo29cF7R0BHqE31k6CYPpc=;
+        b=M8e/otoS16nafLBEQHBbWOOtvQrqomyRTiNCAvK36V/MKRuntIlxWZy+yrNZtgL6ZX
+         LnFF6xEDp/pThPh9ufgFjwHf1wvfot5m+uY3JhmpM8agYIRCplrHk81fGlCabkO1sPGT
+         AiJTlrJJJs/JaQyXe9m6X2SiGIkdiZy4bOG/Ma/jB/A+Awsp0QUew39hoppcrkqDR/00
+         yQUISSksU5L/o6tIsCoacMpWhoHPml65++tdmLQSR24A3S1F7UVEZKsDwKvr32wCLPf6
+         h76LtovYutznlqZ96AYZZMx13znJ5WwgZ728UqW4T+KpWXlhYlT1eF+dGT9FJFM9RXdO
+         H7KQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwOJRUXSRll3SPU4TDIG7wfgpzrpEUsyqYvjGJez1RhR9uU5SH5ZV/NDQyEFLS6IsqLAsEOpvS085a9OVI21V4A3AB06UA=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJADiOwWGzvFXhalEgwEUR7I5qiTPX7nE+FgXnm/lReMCgvIiVv
+	AABxVEQ1RBKF9dLbaDICVLw3lgyuSVEVhR7O2G2pG3Mufa8vFG0j4D6j
+X-Gm-Gg: AYBFou1FSyoFQ3NtcGHyu8bRz4UqrRGn8tB+I7OXRmWlgVPOGnbmhJhhrJNvtivpRMc
+	bQdGQN0E7sD5Ou+hrLU0e2FIGNH9kXM//MOnP7dKMBCGXUNsxxU1p8aoFj866AIA/UuO2a0A6rX
+	V7ZjanHvJt7iP1Yx46SiEiV3dq7pUUv15pxleJ8zcXbyW0wBO2FXUeLacWS2q/Gqe4tcGTPgchq
+	K0HrYPDlMeIlRcgou2s/Ap+977t1mUdVasUh/GC3hd8ty14pQvNHNzBJdwWV5t+YJyai+1p4JjZ
+	Z7AnN8fwK18wd1Q8D13ufDz13btbPvMbCK8B/Z/49vU6OKNZsG92KtguumOtWTz3FUH673xJ02H
+	b+oFcEo3/1hKq2Kk9WLVpFJV+SM0lL1Hv47hqDwLQrGPJyji3QwYgBYYnQ/vCCNpyvD4qi4Yuig
+	U5bgaFtnMSjXCyQBPhW14ODGspoF9MZo6MwddGwWrCX6vfe8652V6CQ43zkZXwAz3CXUw=
+X-Received: by 2002:a17:90b:3d81:b0:3a8:5f61:1bd4 with SMTP id 98e67ed59e1d1-3ab3ab5cfa5mr726141a91.51.1791522726584;
+        Thu, 08 Oct 2026 22:12:06 -0700 (PDT)
 Received: from localhost ([111.228.63.84])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ab36f73e7fsm1925492a91.0.2026.10.08.22.11.06
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ab38ff0ce7sm1827045a91.15.2026.10.08.22.12.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2026 22:11:10 -0700 (PDT)
+        Thu, 08 Oct 2026 22:12:06 -0700 (PDT)
 From: Cen Zhang <zzzccc427@gmail.com>
 To: dhowells@redhat.com,
 	jarkko@kernel.org,
 	paul@paul-moore.com,
 	jmorris@namei.org,
-	serge@hallyn.com
+	serge@hallyn.com,
+	sergeh@kernel.org
 Cc: keyrings@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	baijiaju1990@gmail.com,
 	jjzuming@gmail.com,
 	zzzccc427@gmail.com
-Subject: [PATCH v2] keys: Protect the type name while describing a key
-Date: Fri,  9 Oct 2026 13:11:03 +0800
-Message-Id: <pm-key-management-objects-candidate-0009-v4-6b537c5732fd957c33fa@gmail.com>
+Subject: [PATCH v2] keys: Avoid the owner account dereference in named keyring lookup
+Date: Fri,  9 Oct 2026 13:11:59 +0800
+Message-Id: <pm-key-management-objects-candidate-0002-v3-2baa8cad2bb554364e10@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -82,68 +83,61 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-keyctl_describe_key() must keep the key type's name alive until
-kasprintf() has consumed it. The retained key reference keeps the key
-and its description alive, but does not pin the module providing its
-type. The name is passed to kasprintf() without holding key->sem.
+Named keyring lookup must keep the storage containing the owner UID
+alive through the namespace mapping check.  find_keyring_by_name()
+reads keyring->user->uid under keyring_name_lock, but that lock protects
+the keyring's name entry and allocation, not its separate key_user.
 
-kvasprintf() uses the saved name pointer in two formatting passes, with
-a GFP_KERNEL allocation between them. With AF_RXRPC=m, a task that
-passes View permission before type retirement can overlap a privileged
-module unload in this order:
+A named session-keyring join can overlap a privileged KEYCTL_CHOWN on
+another CPU.  If the keyring holds the last reference to its old dynamic
+key_user and the ownership transfer succeeds, the following ordering is
+possible:
 
-1. KEYCTL_DESCRIBE looks up the key, saves key->type->name in the
-   kasprintf() arguments and completes the first formatting pass.
-2. While the formatter is delayed before its second pass,
-   af_rxrpc_exit() calls unregister_key_type(), which removes the type
-   from the registry and waits for key_gc_keytype().
-3. The collector takes key->sem for writing, retypes the retained key
-   to key_type_dead and completes retirement. Unregistration and module
-   exit return, allowing free_module() to release the type and name.
-4. The formatter resumes its second pass and reads the saved name from
-   released module storage, which can fault in string().
+    Named join                         Chown
+    find_keyring_by_name()              keyctl_chown_key()
+      read_lock(keyring_name_lock)       down_write(key->sem)
+      load old keyring->user
+                                         replace key->user and key->uid
+                                         up_write(key->sem)
+                                         key_put(key)
+                                         key_user_put(old user): free
+      read old user->uid
+      read_unlock(keyring_name_lock)
 
-Hold key->sem for reading across kasprintf(). The collector then cannot
-retype the key or complete retirement until both formatting passes have
-finished. If retirement wins the lock first, formatting uses the core
-key_type_dead name instead. Release the semaphore immediately after
-kasprintf(), including on allocation failure, before copying to
-userspace.
+Chown neither takes keyring_name_lock nor key_session_mutex, so it can
+free the old account between the pointer load and the UID read.  The
+lookup then reads freed memory even though the keyring itself is alive.
 
-Oops report as below:
+Use keyring->uid for the mapping check.  key_alloc() initializes this
+inline owner UID and keyctl_chown_key() updates it on chown.
+The existing name lock keeps its containing keyring allocated throughout
+the check, so lookup no longer depends on the account's lifetime.  This
+also matches the owner UID used by the permission check.
 
-    BUG: unable to handle page fault for address: fffffbfff8054794
-    #PF: supervisor read access in kernel mode
-    #PF: error_code(0x0000) - not-present page
-    RIP: 0010:string+0x23f/0x470
-    Call Trace:
-     vsnprintf+0x330/0x1110
+KASAN report as below:
 
-Fixes: aa9d4437893f ("KEYS: Fix the size of the key description passed to/from userspace")
+    BUG: KASAN: slab-use-after-free in find_keyring_by_name+0x577/0x5d0
+    Read of size 4 at addr ffff8881128ae2ec by task keycase/500
+
+Fixes: 2ea190d0a006 ("keys: skip keys from another user namespace")
 Assisted-by: LLM
 Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 ---
 Changes in v2:
-- Trim the Oops report to the fault location and vsnprintf frame.
+- Trim the KASAN report to its two-line fault summary.
 
-Link to v1: https://lore.kernel.org/r/pm-key-management-objects-candidate-0009-v3-43bbf21d1c452f23d829@gmail.com
+Link to v1: https://lore.kernel.org/r/pm-key-management-objects-candidate-0002-v2-dd6c20a1d92928b33ab7@gmail.com
 
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index d14ace88e529cb77de5386f1f3a99905d4b7688c..5a5efa26ed0ece3a5ab22e37ad7bda7a5a744b83 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -677,12 +677,14 @@ long keyctl_describe_key(key_serial_t keyid,
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 15bf4af8f28218ec3f12c97630d1c76939af7eca..46f774be72967a9bd16b0ddfdf323eda36edeff4 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -1158,7 +1158,7 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
+ 	 * grants Search permission and that hasn't been revoked
+ 	 */
+ 	list_for_each_entry(keyring, &ns->keyring_name_list, name_link) {
+-		if (!kuid_has_mapping(ns, keyring->user->uid))
++		if (!kuid_has_mapping(ns, keyring->uid))
+ 			continue;
  
- 	/* calculate how much information we're going to return */
- 	ret = -ENOMEM;
-+	down_read(&key->sem);
- 	infobuf = kasprintf(GFP_KERNEL,
- 			    "%s;%d;%d;%08x;",
- 			    key->type->name,
- 			    from_kuid_munged(current_user_ns(), key->uid),
- 			    from_kgid_munged(current_user_ns(), key->gid),
- 			    key->perm);
-+	up_read(&key->sem);
- 	if (!infobuf)
- 		goto error2;
- 	infolen = strlen(infobuf);
+ 		if (test_bit(KEY_FLAG_REVOKED, &keyring->flags))
