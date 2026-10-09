@@ -1,143 +1,149 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8393A9605
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791522469; cv=pass; b=iktX7K7Xlz4QKqoct/lFs2eeEP57tPNaCAeMqgRZuqLySiF4Czga3HkRidmoDGfmXAHrthR5dINms2dnzu6sLep3MAkGJiF1sWGZiCTfQAdXaQFQu9bDrsLDZBraxxA9jjRdk43fVGN1uB/Dsy/X1RTVRLr1LdoxVPlq73t+gaI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791522469; c=relaxed/simple;
-	bh=UCPNgs7T7S7vSxo0RpkwEmW84kuw7TMAkPdpCW+Ocws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EOv6UrzB/Jmjz8x+rsVb6PS4+DCwR7eLKL3Cz0lkeDyllyfBkxavVGmG9DKT10c1PTPNe20mUQRHuyUgL85G1wgU4qVshKAGPAarecLmWF+md1GY7rKBGBwcMve75Q6uzIpWkO8oGkGq2J8ryBGSbZLQOe+3fgsp+q1X0ENWpDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYgM4cQ7; arc=pass smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C011C3B3C1D
+	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 05:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791522674; cv=none; b=aeKwo45JtmUN0zGyS+deb5vEclCaRRtaMU5VO+C7k4pKUr+Eg/5qEyl1H3fPcw/fKcE6lqwj9QM8dKqFoju620W3WkAFPhhyyFlsjAZnWlPz4j2fUp8b9hMSYoMQ3B2RZZSmXgGM2DXiWbca66kaslE3PGO3sFc/yKtm95vOi8M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791522674; c=relaxed/simple;
+	bh=fIG6kNVbSBDcIDJq3p3pVkq328vRxzchYU1SH8Kzvhw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TmW52so4/ALyAR44+7l10TxOJBJBE+Eu18YnNVC0eGClC92u5Lnj0qMst9MziB2B6WLi2mcNUD4LfMtCvAT0fkIlJut703EOzHjN6A0e05WdoEmXMIoDw26ITQLjqfZ+SwsUCrHzP/Dkxuq8ipH9IQQQ8dkmXjBUc92iKH4J5UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rthjuziN; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYgM4cQ7"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-8b05bf699easo30240607b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 22:07:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791522468; cv=none;
-        d=google.com; s=arc-20260327;
-        b=diE7F/53yLs1l01Gi/XE/hRu/BplX3xADnmKAU7hmZQaYUdiACnv97ayfOKJ6L/0kJ
-         Eu2AI+/g5GpCvuti4AOO5zsIOLgt5p+qH+bq8kVB0E9+bNiTd5e6GhhX6Nr/mQooJvDW
-         fvUaVxv9x5y5N084qM9FTbeEA3GihYagwyeh209/PV3GkVOIAYr6A1ZK7hjrz8w15+Mo
-         X1dp5YX8Yhp/iOLpcuy603abOxfNdxJrHARZ4TfasWh4Xa06+MkQZMoJ4kTetl6YwvlN
-         N+VDTZkKj6jzNyxQisKYGq8wNgQ0O0+gJ+s+q07GFGGWeVDQswFBEHtNWPCbmVH+FjaT
-         MRxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=7dtIf3z0dvmVlA//c0wg2QPe+8angNo6UaOAKikdDOs=;
-        fh=pq5WVlJSK8qtIer/Psrjpy5iLFTaHZElevZnWkLs+ms=;
-        b=oO7j8za6Eq5iVAGi2BJM4DLfouS9zBzO+2MFVpjoTv4wUzV8PrF4xspr8bj1yo01bx
-         N1w3mZX5gOtzulIyUOTtE0SdK+MOnxqqmoAB+5KP6DsXiPj+Rn5c47scjZR9ASwwNx4I
-         0zbdglfocYj/+lESnpQSnGYNjJSTxqI7drHh+B835MlOfq+dVIEn8/ujJXPOw7eGalcl
-         2x88xbjbsV5se6YI8HxNcyy3qhG9F9flToNtarBr9CiETwf15B9sUvYbJo+hJVFNRxhN
-         aicsDObeGBeWNargLryThrc12CFO2E0S6iH3KiGFWrvSXMqUcQ4eVhJeb6dk4cTdzgEp
-         ryUg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rthjuziN"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3a49623b865so3740406a91.0
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Oct 2026 22:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791522468; x=1792127268; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=7dtIf3z0dvmVlA//c0wg2QPe+8angNo6UaOAKikdDOs=;
-        b=lYgM4cQ7CxEgMrskLr36CaxFfeibwioXt8yCoC0CfS6Zo2NcA8Q4rwqfuofTFI1Vrw
-         F4w7RNTfmiax16hPrlL0IF8osvzHM4+KW6KaxJv56YoJO5hralzumaLW0CksjvWK1q0z
-         mZh4p51AisS8wem2TYap8nCy4nP/tsjtgDn8110DobsSajHAYWXmJsAsr6hPsGjVJO+y
-         58CeuY3GNlrmP4Lo4aAlN5He+Mg9IxzF9YcvpZxieW+/NN5gGYbVLGGWb8GsId6INjhx
-         djC6q3kWqixOhZXElqFBSyTxrlI2yESqnrS3B+bhGVYkYJ9g/1cIJV3gQpAvcVne5zK6
-         f+2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791522468; x=1792127268;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1791522671; x=1792127471; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7dtIf3z0dvmVlA//c0wg2QPe+8angNo6UaOAKikdDOs=;
-        b=Jx69nQC/1TMLwiXu52wKW/RfEkPPMJfWqV+/O5iHpPkBicHJxtiTTthbDBXrwMormN
-         WNJxpRA1nBRli72xl90wJa3Iyyrj1wq2xErwMzyZOZs4H1aWm3/nwixroTtMKUlFxAOe
-         o4aZ2upmpfglAuZ+VzUFn6e167wZehC6MfzCoUZqfGSojXJsdnz2DUZeG8ehJ19xm0XY
-         +0NPRP4tIgQQd3T+J7PVjLgJ7xhDYbl/8rmBN0G+jI48MNq470/Z/dtw9kXc+Jg4O//Q
-         NxA+k4bDmhXVbYFzOCbPEImRRWf+DJV0LDG4lrk7DpNyVlsGsdE84XJW8wL9KFXKhPl+
-         riSg==
-X-Forwarded-Encrypted: i=1; AKwUvBwQQTj6dHBNB+3n527IpMBFLcYbuH0eE7yTWJWYJlfj4Cb2AfVYgetS/QT2NAnAZLDl/uC+KeMjerDQAPX8efGlXqbGs5g=@vger.kernel.org
-X-Gm-Message-State: AFq9FYL9U/tMbEQ6zG4HKI7k8prF+7eD9rgMAzWKBfoM/O8qe9xc016O
-	NTDnR1LEx94oRMVTYeEVVQ5AmevHXXhyazlMfcQXqqvocuvct3ZOsjbvNRKEli+vFGmUXFQsdKz
-	FRAdWUU/f66/kcPAMzdlE486aLd3bAN8=
-X-Gm-Gg: AYBFou01JpEQYcGPZLN9Es+h5oFSscds/Fn17WOxQqE+SEBQ8K9b163KsOQd5R76NQR
-	E3IzOyYDuJqayw3g6/ymOCOrZQCLxpMTF7Kskk6n0/M0KHpDvylPBK3g4oFO6S9pWDJH+40HCyh
-	AJc/fsPcBjXQnReqCbAtXEE9UUONkur7l4LCcpAz8auv2A2cKU6gmCm8h1TWjyomw5z/cFmhRfk
-	JM0NmIImn8vnO/3sf1kFtQt5zguWy4OQG1hr2gvq1hVz5L+MMhqlq2lUe1bRHjuqU45fmslKBU/
-	MuuH4ialU5vae9O/cRCOQI/r8zM6W9tgjUer8hFmKjJaabkoSZGujqsfVg==
-X-Received: by 2002:a05:690c:a588:b0:8b0:7900:144b with SMTP id
- 00721157ae682-8b07eea68fcmr1801207b3.68.1791522467787; Thu, 08 Oct 2026
- 22:07:47 -0700 (PDT)
+        bh=lE3/kQE3CWaeZ8e1J8lpY+d3lLDFtCRTYFUR1YExG5s=;
+        b=rthjuziNL9aQraViHXIBDfRDuuhmkSGKHCDOWWqBy3zIDTVNFKO0DX5orM7oystYm4
+         oTdAmuiZtZG6QTOt+9UVMx5lwI/dM9qMF8l+HBCP0n7WGrXr76wlGPiOM4V1RUsVoNyD
+         GPKnlgqool1h9J3015snqngIBzK0nXoVeNoNP8+cruMee54v//GqUcDdatv/GZquTFNM
+         C1M0+xn8yr6xihflBlhbszh/4nyWgScvOd1wXSnNXjs9iI0tcwTcI+2mo7SLt4Zt2QjZ
+         oM8QBoPItFuQNocyM+VFZPhNXn4vnB1/0zMKvB/ArmO9TO4H7PATCZFAdJ+I65lPoBJI
+         ciCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791522671; x=1792127471;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=lE3/kQE3CWaeZ8e1J8lpY+d3lLDFtCRTYFUR1YExG5s=;
+        b=JOPdmRrhjwwFfq8BQTpmhHh1qO04gpmRpmLuv5o6zjFupbyPLuY63Q1VplmnjibgHR
+         yHYOVSlf6xB7Mj7qAB3VgI86AQDejyUUwMk/CWUsaqvPh6hWGO8jvQwXdQa7d+K4xFKc
+         BSG8zDucx2uUFYXzib0rI+mdtLQaH6OzqHNr7Rsqku7ocjJX2U6DI7WPYaUQ7xgIDNMk
+         K6RtY7PX8FyndxDytqxoxU5EVbg8WYwa3jSLJiAi94C4I4rCLueVzRXRtI0CaDHk4TFy
+         eshB+6N3Fg616/mfcwrQ8ZLrZC6/btPRFN8r59vwJIBhSVXy25UEcAV+3rVEnGB9UlVF
+         wXZA==
+X-Forwarded-Encrypted: i=1; AKwUvBy12gGELEu1RLktYNRXGCUrGe0+5fxp+zcnIo2kE45fPTqRGz6UBPzuld+bHhNsf7wAWiLTCnSP7YHS7pminMQIMDLVR2E=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI4PE1AsTtpk89vXfieW12bBNC9tfMMs3OfueCWQIEfqtZ2rkit
+	bSEUOXp+UsgegRFo0Mt4IKPNlja9NSCexoRrSwnNdbSGBAksHsTmkr9g
+X-Gm-Gg: AYBFou0HpDQtB/UXJ+CAfQ6Plcd5VoU5awvGd51wumT5gc3gcHW6E1PsuvtpD1Jvvqn
+	E9o8ppSWOI5ifpWCY1IyeUXVlhUd3EIFv3ph9AKno2apsb4J8ieATrtfcypBE5MWEmh3vH7rGHJ
+	YhD/k4hc0alREhwtbWtIARCSll5X3gYZITLmAJdg39n8k29qO+ZjYmUybSiObzffSvDxCFR8X+7
+	ELlEMhDMbklyNJB9Q+oB0bmK5trST5QtOr58h991WOppXl9lZ9ucOZskGQfR8pQxIaKHS+YIGkh
+	KWbPJkW2le9YHrAIV2iVjjb/+amiGOJBubl0mBe0LWVsdrzlcTAWQ1om3WyiHxa9aQ0jgNkw/88
+	6Eo9YB5VzzEyhQ1fP6lDzph4nyH82T9QzIHjrbB7VbWMVvgvMR0yLpcnDE33Zdc/XPxrLPYP/jn
+	GwIYBFeMil/CFqPRkVLs+pdd+8Mdv+HR+Fu+UM2qzEzqt1fTtGQQZVZyGR5oTQp5Qmhw==
+X-Received: by 2002:a17:90b:1e41:b0:3ab:de4:7fa5 with SMTP id 98e67ed59e1d1-3ab3a9726admr840824a91.56.1791522671042;
+        Thu, 08 Oct 2026 22:11:11 -0700 (PDT)
+Received: from localhost ([111.228.63.84])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ab36f73e7fsm1925492a91.0.2026.10.08.22.11.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2026 22:11:10 -0700 (PDT)
+From: Cen Zhang <zzzccc427@gmail.com>
+To: dhowells@redhat.com,
+	jarkko@kernel.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	jjzuming@gmail.com,
+	zzzccc427@gmail.com
+Subject: [PATCH v2] keys: Protect the type name while describing a key
+Date: Fri,  9 Oct 2026 13:11:03 +0800
+Message-Id: <pm-key-management-objects-candidate-0009-v4-6b537c5732fd957c33fa@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <pm-key-management-objects-candidate-0009-v3-43bbf21d1c452f23d829@gmail.com>
- <asfZMToWNmQDTk4W@kernel.org>
-In-Reply-To: <asfZMToWNmQDTk4W@kernel.org>
-From: Cen Zhang <zzzccc427@gmail.com>
-Date: Fri, 9 Oct 2026 13:07:35 +0800
-X-Gm-Features: AclHuK-clEa45iiMBZBHhd7Il41JvNCy-ntPtuIu1Vj_0gM0qBhgbfp7uMK-3Ds
-Message-ID: <CAFRLqsWs0BK+dLJ2D+cFptF6TtgqhPSp5BYOz3K60AyN=oWOPw@mail.gmail.com>
-Subject: Re: [PATCH] keys: Protect the type name while describing a key
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, jjzuming@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Jarkko,
+keyctl_describe_key() must keep the key type's name alive until
+kasprintf() has consumed it. The retained key reference keeps the key
+and its description alive, but does not pin the module providing its
+type. The name is passed to kasprintf() without holding key->sem.
 
-Jarkko Sakkinen <jarkko@kernel.org> =E4=BA=8E2026=E5=B9=B410=E6=9C=889=E6=
-=97=A5=E5=91=A8=E4=BA=94 01:56=E5=86=99=E9=81=93=EF=BC=9A
->
-> Just a small nit. Cut just the snippet of the report that is necessary.
-> >
-> >     BUG: unable to handle page fault for address: fffffbfff8054794
-> >     #PF: supervisor read access in kernel mode
-> >     #PF: error_code(0x0000) - not-present page
-> >     PGD 1a7ff6067 P4D 1a7ff6067 PUD 1a7ff2067 PMD 100b0b067 PTE 0
-> >     Oops: Oops: 0000 [#1] SMP KASAN NOPTI
-> >     CPU: 0 UID: 0 PID: 500 Comm: key-fixture Tainted: G           O    =
-    7.2.0-rc5-pmb-bt-functional-v1+ #1 PREEMPT(lazy)
-> >     Tainted: [O]=3DOOT_MODULE
-> >     Hardware name: QEMU Ubuntu 24.04 PC v2 (i440FX + PIIX, arch_caps fi=
-x, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> >     RIP: 0010:string+0x23f/0x470
-> >     Code: 48 8b 04 24 48 83 c3 01 41 83 c6 01 48 39 c5 74 34 e8 f5 2e 5=
-e fb 48 89 ef 48 83 c5 01 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <42> 0f b6=
- 04 38 38 d0 7f 08 84 c0 0f 85 d6 01 00 00 44 0f b6 65 ff
-> >     RSP: 0018:ffff888116307b80 EFLAGS: 00010246
-> >     RAX: 1ffffffff8054794 RBX: ffff88810a4a52c0 RCX: ffffffff8626be7b
-> >     RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffffc02a3ca0
-> >     RBP: ffffffffc02a3ca1 R08: 0000000000000001 R09: 0000000000000001
-> >     R10: ffffffff893cfe57 R11: ffff88811404d700 R12: 00000000ffffffff
-> >     R13: ffff88810a4a52d4 R14: 0000000000000000 R15: dffffc0000000000
-> >     FS:  00007fad30f2a780(0000) GS:ffff8881fd7d6000(0000) knlGS:0000000=
-000000000
-> >     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >     CR2: fffffbfff8054794 CR3: 0000000104fb7004 CR4: 0000000000770ef0
-> >     PKRU: 55555554
-> >     Call Trace:
-> >      <TASK>
-> >      ? __pfx_string+0x10/0x10
-> >      vsnprintf+0x330/0x1110
->
-> I would cut away the rest (what follows).
+kvasprintf() uses the saved name pointer in two formatting passes, with
+a GFP_KERNEL allocation between them. With AF_RXRPC=m, a task that
+passes View permission before type retirement can overlap a privileged
+module unload in this order:
 
-Thanks for the review. I've trimmed the KASAN report for v2.
+1. KEYCTL_DESCRIBE looks up the key, saves key->type->name in the
+   kasprintf() arguments and completes the first formatting pass.
+2. While the formatter is delayed before its second pass,
+   af_rxrpc_exit() calls unregister_key_type(), which removes the type
+   from the registry and waits for key_gc_keytype().
+3. The collector takes key->sem for writing, retypes the retained key
+   to key_type_dead and completes retirement. Unregistration and module
+   exit return, allowing free_module() to release the type and name.
+4. The formatter resumes its second pass and reads the saved name from
+   released module storage, which can fault in string().
 
-Best regards,
-Cen Zhang
+Hold key->sem for reading across kasprintf(). The collector then cannot
+retype the key or complete retirement until both formatting passes have
+finished. If retirement wins the lock first, formatting uses the core
+key_type_dead name instead. Release the semaphore immediately after
+kasprintf(), including on allocation failure, before copying to
+userspace.
+
+Oops report as below:
+
+    BUG: unable to handle page fault for address: fffffbfff8054794
+    #PF: supervisor read access in kernel mode
+    #PF: error_code(0x0000) - not-present page
+    RIP: 0010:string+0x23f/0x470
+    Call Trace:
+     vsnprintf+0x330/0x1110
+
+Fixes: aa9d4437893f ("KEYS: Fix the size of the key description passed to/from userspace")
+Assisted-by: LLM
+Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
+---
+Changes in v2:
+- Trim the Oops report to the fault location and vsnprintf frame.
+
+Link to v1: https://lore.kernel.org/r/pm-key-management-objects-candidate-0009-v3-43bbf21d1c452f23d829@gmail.com
+
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index d14ace88e529cb77de5386f1f3a99905d4b7688c..5a5efa26ed0ece3a5ab22e37ad7bda7a5a744b83 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -677,12 +677,14 @@ long keyctl_describe_key(key_serial_t keyid,
+ 
+ 	/* calculate how much information we're going to return */
+ 	ret = -ENOMEM;
++	down_read(&key->sem);
+ 	infobuf = kasprintf(GFP_KERNEL,
+ 			    "%s;%d;%d;%08x;",
+ 			    key->type->name,
+ 			    from_kuid_munged(current_user_ns(), key->uid),
+ 			    from_kgid_munged(current_user_ns(), key->gid),
+ 			    key->perm);
++	up_read(&key->sem);
+ 	if (!infobuf)
+ 		goto error2;
+ 	infolen = strlen(infobuf);
