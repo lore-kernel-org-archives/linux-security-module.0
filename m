@@ -1,72 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E824A0915
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 11:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25574D0CDC;
+	Fri,  9 Oct 2026 11:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791545994; cv=none; b=kboSZCJXOKCEzMBS+1OQXdtDlO3qpvnkx0TNLR5Qai+p0uwmmZDNQIQvLD1Q+JJEo/TwhoJfMnOgkqLEyncoLB/8TRZ7Nz3bNExpEp1pVSTLhFu4F85JG4ttiu1Qe3SCjMxGeX0MIpPloDqsLIwsS+S7FOoAfobR79WoAFGkgC8=
+	t=1791546133; cv=none; b=dYHsUMZaxaAX16G5gbbAy+IGPHi0T/bYNSSgDnU67QP8gsFNsDfpCFT/mLrOuk499lwhoYfu7wyn3Up5pWux/mX6HO+ZFB6s0hi/TPcs56nd+SDLrDjYQWKlr4GXugZzxArxrEzCwr1FspGcC2wUxpQitYzw41mMdH7988AmuhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791545994; c=relaxed/simple;
-	bh=BNnTHQwaOl7aiIs0Bz9dpJlbBhfq/OKug/wGeJDcw28=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=onTxvq9VmepvnpBO2NWUHgfHfZAfflPkZuPP333haaj/hh/GCVIgKay0b4Eg42LcGobe7kf6rHlPg0WbENizKbLiMlWn8GaeZ/z4ugWk6g4Vs8KXgayjBM08KpMgDazvy2hPX+cCUy6VpvIy3bxjTXsZ5fXbqnePaF03H5tcTXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwfspaZn; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791546133; c=relaxed/simple;
+	bh=/ytrXwjy/3GbsfN9HIye1HopERZbJiOztI12NgeN7AU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5U8O3K57y2ln0Lcsvgj8DQiNAiAqzI8Myex0dGKH3223igzLdmNJhRgyxmziVwP3qktoSdO8Zjg6U/rVWXfQO+1KtYjTd9OqDF8YFg160SKZfRMk8JuhdX66LeJIOkUi+sXNWlA/zJFKNarQLu/FiBduYMyXt4PpSe7JbvRDmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=F1wVplm4; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwfspaZn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A7D21F000FF
-	for <linux-security-module@vger.kernel.org>; Fri,  9 Oct 2026 11:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791545986;
-	bh=Wrno+A1NjkfvM7mTg9M7IheX8VrZdHqG6I8REA/Sau8=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=LwfspaZn6PRjFSERwS4h/t4abEJrifN5V4c9EVttarZQh98FwdZoBH51kY0spHAxx
-	 dEClWnH16TbYCV8sAtMP+8TIresbDaNOqtIr8NCfPSLfs1x4pUUoH986gpQ5JiWEhf
-	 p59Ix/ekgQblOLB/XUlv68kG+KWBZpA+DALkonwEhTF5jPmdOa1TZnkOuF6wjqhSzy
-	 154byvHVjLfVDu/cSnFmPMBPxR5/6y4JLfzVaFZ4FSp1ukjfxhBNgyx3YuWPC3EG8T
-	 bjxiC6CE5bssbbFr3z4SEfMIAMtUu8GVnAusHdr8mzFDMAqyTfXnk3nv+MW8zGn1oK
-	 AHOR9HkySR42Q==
-Message-ID: <sashiko-outbox-165403@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] evm: check return values of crypto_shash functions
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261009111212.1516243-1-roberto.sassu@huaweicloud.com>
-References: <20261009111212.1516243-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 09 Oct 2026 11:39:46 +0000
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="F1wVplm4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1791546126; x=1823082126;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/ytrXwjy/3GbsfN9HIye1HopERZbJiOztI12NgeN7AU=;
+  b=F1wVplm4M5BZ7FGAskRbyDCs9ImRTcDxOtqHFuSsxShKAZnqceWHiWVJ
+   6A7zf58KVUsVlG1/hYlv12DLhopWNOr4jF0QbSUVM12D5Tn+NtwFLca+c
+   k/QK5h9g2NQo9/1idYLllU3KL4OHp3Q2tBoCs5M1fwHmm/AAtqBtl8uiR
+   rFbEmEhr0ZiL0oGP+l6fQ5Llcp3IF+hRfUDaa6Js9KxPUFzqJl0Y711ll
+   xstdrNpTcwhPsZUyZdDPVfCaZu+NDGoDqq0+F3LWC/7kyC3zHGqlZ9NRW
+   sYf9XSVYVN3jYa44JN0JpSqHFd+inQeIGGG57Wbe0fxGnQyIAj3Anax5l
+   A==;
+X-CSE-ConnectionGUID: 3R8Tm/V9Soa4dBCQpbSVPw==
+X-CSE-MsgGUID: /9iBSp1iTX2vXlosCZDWeQ==
+X-IronPort-AV: E=Sophos;i="6.27,148,1787036400"; 
+   d="scan'208";a="75126207"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2026 04:42:05 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Fri, 9 Oct 2026 04:42:05 -0700
+Received: from DEN-DL-M70577.microsemi.net (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Fri, 9 Oct 2026 04:42:03 -0700
+Date: Fri, 9 Oct 2026 13:42:03 +0200
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Joas Antonio dos Santos <joasantonio108@gmail.com>
+CC: Paul Moore <paul@paul-moore.com>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH net-next] calipso: hash the cache key, not the option
+ start, in calipso_cache_add()
+Message-ID: <20261009114203.e5fhom6ncokmzevv@DEN-DL-M70577.microsemi.net>
+References: <179138670045.80227.16155454353416856947@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <179138670045.80227.16155454353416856947@gmail.com>
 
-> From: Daniel Hodges <git@danielhodges.dev>
->=20
-> The crypto_shash_update() and crypto_shash_final() functions can fail
-> and return error codes, but their return values were not being checked
-> in several places in security/integrity/evm/evm_crypto.c:
->=20
-> - hmac_add_misc() ignored returns from crypto_shash_update() and
->   crypto_shash_final()
-> - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
-> - evm_init_hmac() ignored returns from crypto_shash_update()
->=20
-> If these hash operations fail silently, the resulting HMAC could be
-> invalid or incomplete, which could weaken the integrity verification
-> security that EVM provides.
->=20
-> [ ... ]
-> [roberto.sassu@huawei.com: call hmac_add_misc() in evm_calc_hmac_or_hash()
->  only if no previous error, to avoid overwriting -ENODATA, and jump to out
->  only if hmac_add_misc() fails]
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> calipso_cache_add() stores calipso_ptr + 2 as the cache key, but
+> computes entry->hash over calipso_ptr, i.e. starting two bytes earlier
+> at the option type and length.  calipso_opt_getattr() looks entries up
+> with calipso_cache_check(calipso + 2, calipso[1], ...), which hashes the
+> key itself.
+> 
+> The two hashes only match on a jhash collision, so the CALIPSO label
+> cache never hits and every labelled packet takes the full DOI lookup and
+> category conversion path.  The memcmp() on the key keeps lookups
+> correct, so this is a performance bug only.
+> 
+> Hash the stored key, as cipso_v4_cache_add() does for CIPSO.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+FWIW:
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261009111212.1516=
-243-1-roberto.sassu@huaweicloud.com?part=3D1
+I tested this with a small throwaway KUnit test: put 16 labels into the cache,
+then look each one up again the same way the kernel does when a packet arrives.
+Without the patch none of them were found (0/16), with it all of them were
+(16/16).
 
+Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
