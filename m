@@ -1,130 +1,92 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452EB45FFAE
-	for <linux-security-module@vger.kernel.org>; Sun, 11 Oct 2026 14:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2202547043
+	for <linux-security-module@vger.kernel.org>; Sun, 11 Oct 2026 15:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791730223; cv=none; b=CX+7b2ET85HWBUbdv5bHisZwaWXhi9sAa3O5y+E/kn5Q+LFViFBDThybeGkIqvR6glWUbrPTTwULA5MMSKWD4lW3l8WRPoqDPkXJSDJnALaS8K0ym5z0IMr4PZBz2iyQpRd/v/Wr2vZSUFsKk6f/+Y/AUG4T2xv6TPYV2zTuUZc=
+	t=1791734387; cv=none; b=h9c99waho+kVG7C/0iEGBlxEzXHksbR/u2H2Utw9x70vaSeb1q1C2TLXNDPR3PQltW3oPhGzLQuzhQ6B0DZ0Wt1KEI+9ERSXKQcFMxIfFyFJSIYTB8fzK03X3dq0F0hYWroTItPYvBxXpqGdNn1SZkKfeztpLkmPcWc5vc6KIwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791730223; c=relaxed/simple;
-	bh=451U8wT6306fQVR8c3dY211dJoLz8Bbcz/mm3qFJUQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duQbGFNOmch22ozVcvPza0Zqc0dniVyTGL96rce8fF3r6xLIO8YUvCTPK5af9ZtaWFPcffNmq8LYgKdYHpDE5GYJVjfKrRkYbd0AebU9Qj3bU9khpodks2GEzyVM8FZ8VSMekvUT8LMkZkgjgykWhMR2Wxsc9BC98N80Z/XRTaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=E9lN6Yf5; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1791734387; c=relaxed/simple;
+	bh=tc916MmcKzeiSk4IxVqtEZOAPg8oprGZK7KktYFCscg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rnzNs0bfK6KTgXgc932FlEHJq1KqbeFssAozF9IFBjFTRYw2mYS3WZAj4cXlGiJ6VUgjBD/DaKQy3629jxMA8fg++DRCyCOFoUs5r72VRzF9CQsL3YW4dc7imD42jhMCBiBG1XxKU+GFJb3tDK9va2oCss8WhbykkNl0djCrF8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQW6UiPV; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="E9lN6Yf5"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j2jjK2f4xzk3T;
-	Sun, 11 Oct 2026 16:32:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1791729125;
-	bh=9wL5SmyG8IO2xoRgdgsn4ftkOzFmBpqAbzkKDufb874=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E9lN6Yf5KPacMG7RJkNghhavnhABKEqAaFzJGDMMn1d5vN8TUaqvB+wOSdTWXZif7
-	 btsPeU6wgZPKLQuJu6O4soORJsdvuUGmEnugIw68NiWO9p6qXE2GvPMieq1wIbYJMs
-	 /JpxzgbVuv3eppHbLAWImqeuDYHZH8yysUjELC4g=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j2jjJ1DJLzkrw;
-	Sun, 11 Oct 2026 16:32:04 +0200 (CEST)
-Date: Sun, 11 Oct 2026 16:31:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Tingmao Wang <m@maowtm.org>, 
-	linux-security-module@vger.kernel.org, Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org, 
-	llvm@lists.linux.dev, syzbot+a0eecb22de4d821a9e5d@syzkaller.appspotmail.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQW6UiPV"
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-53397325663so13556031cf.1
+        for <linux-security-module@vger.kernel.org>; Sun, 11 Oct 2026 08:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791734384; x=1792339184; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tc916MmcKzeiSk4IxVqtEZOAPg8oprGZK7KktYFCscg=;
+        b=QQW6UiPViQNiaVVI9bcr9Px9P08cEiKfxJSWdVrBMFS3VX4u9KW2iGIFzt4MDJKz4i
+         t6aecBD++TMJW6V6X3G4n2yJD8eSGXDoq4cTkBPLlMwvlupO2dG0pyhvq944kPIu6M/E
+         WnRB3VQu6UURGkTvGQF2NM1q1fjiQXulSMf+0AQxEYfOwuSdILooD2RQ2zfaoUWrrL38
+         WUj6VE5FKmBZ9ZcbfoLNpYGPCO8AmrgxZ7ZplJmwuMb7BqHWItd5/uTK3ZZETJS19MyE
+         +zYuJwj/Kngsnj4Wl54NMUd5budJ/m4jji1H1k20FPEREA2uFHQtO6KIyL7LR77qyTqH
+         qIuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791734384; x=1792339184;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tc916MmcKzeiSk4IxVqtEZOAPg8oprGZK7KktYFCscg=;
+        b=OtNZT8eItoiOzq0S8KBE0s3F6Kj/kIMkl2BTKVplTk7GNXN+G37IU661HgpffgyZsu
+         moKCtoMAaWzKkbZjfnDzi1E9WzoxpO2XQV1Ycx94gj/H+CP7Z8M9smcNtLXz4N5dj6BE
+         5CkJHCsRj2Xng8PSQReXm1lmvNNqzfJxyVsJQP6QLu/fUInmDxKo3WhOsWl7bhZL4QVc
+         p23p9WwVrbpVVe/53DLfmnwfGkUw3B9bEvM85tgel0kpQ7nx0rAPaCoH0sLrQztbPrit
+         PNY/evXDPA1eXbZkBY8wnHLNtdEje63SLNLse4pD/KDtcuP8WuCMFlsh2HnoAk8RUgqW
+         ldCg==
+X-Forwarded-Encrypted: i=1; AKwUvBx1sYD/+v+qOT3XAtqaNTXSrz+x6f3BOBR0LfbZy8cFaN9OkooJZKj6ehLmp6O1LCqBlONEDuhSjEKTKVPCT1jHecr+X24=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLvTXqcyrDOOs9qdgMsrhjzKUa14PwdPbpUAzkdJOnc1xEri22G
+	T7uJz9xGlBP+fQJuBZDFWlWJWQgw4qp/OxM3fbl+WaDJxEXOtSQMMACd
+X-Gm-Gg: AYBFou3Jr41lUfOkGK0cQOZECLWehuEfrwrLUTHAVnoZXV1CWvdbMxpO2iiFYhWcITV
+	gx5/uuMI1MkRTB1sLaXSuYbyGVxuoSjmpj4r4ms1MrckEBXZ68vaYlUANqUGVjz9oHDTbJS7W+H
+	HrQf/YNQ01SRJTPzVRoMg5QZ8XPxx9leH0CeAf34IUHqhWjoQmR+Twid4V60A4zMJRm8zt+Y9yj
+	iUaphn1WnsfA5+EsTGFc/8L8mhTCAiS6QM2Uh2YPCr0qZUSvXzvAeSdfT3FxdDmOH0zl2mtdZXt
+	82ng46HCbmMQ86vYgzwmG6GHmgbBzUjmiAf7irpOsyDNpm6qKggkUGMZyDlPfsaHNzElCfLHTlf
+	J5lOSka0DVE4xpB4ENAYJ6GKXDyqChGa8+ptBiLG26AL/Jgb8NafG86/Lw7tinKR1Uv+thdbTQT
+	m8dl08QMpbfHP4AI66u8CyXLi865HKD4ZA+gac2NxEtlGd3Dq3Bci90OITsaZTIVzY59PXXCk9
+X-Received: by 2002:a05:622a:54c:b0:533:42e0:a1e3 with SMTP id d75a77b69052e-5359fb6fa39mr134548311cf.34.1791734383760;
+        Sun, 11 Oct 2026 08:59:43 -0700 (PDT)
+Received: from thangnn-ASUS.. ([2a09:bac5:d45a:2646::3d0:17])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5359b7dba11sm59816441cf.26.2026.10.11.08.59.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Oct 2026 08:59:42 -0700 (PDT)
+From: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>
+To: mic@digikod.net
+Cc: gnoack3000@gmail.com,
+	m@maowtm.org,
+	linux-security-module@vger.kernel.org,
+	kees@kernel.org,
+	linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev,
+	syzbot+a0eecb22de4d821a9e5d@syzkaller.appspotmail.com
 Subject: Re: [PATCH] landlock: Drop __counted_by from landlock_domain.layers
-Message-ID: <20261011.oe8teu2LahTh@digikod.net>
-References: <6ac91e98.bbc4c7f9.15faa7.0023.GAE@google.com>
- <20261010164450.194439-1-ngocthang2710.1999@gmail.com>
- <20261011.c1055cd53b32@gnoack.org>
+Date: Sun, 11 Oct 2026 22:59:36 +0700
+Message-ID: <20261011155936.8033-1-ngocthang2710.1999@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261011.oe8teu2LahTh@digikod.net>
+References: <20261011.oe8teu2LahTh@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261011.c1055cd53b32@gnoack.org>
-X-Infomaniak-Routing: alpha
 
-On Sun, Oct 11, 2026 at 03:11:12PM +0200, Günther Noack wrote:
-> On Sat, Oct 10, 2026 at 11:44:49PM +0700, Nguyen Ngoc Thang wrote:
-> > With clang 22 and CONFIG_FORTIFY_SOURCE, the second
-> > landlock_restrict_self() call hits a bogus fortify report in
-> > inherit_ruleset():
-> > 
-> >   memcpy: detected buffer overflow: 16 byte read of buffer size 0
-> >   Call Trace:
-> >    __fortify_panic
-> >    landlock_merge_ruleset+0xc46/0xc90
-> >    __se_sys_landlock_restrict_self+0x2bc/0xd40
-> > 
-> > layers[] lives in an anonymous struct inside the anonymous union
-> > that overlays work_free.  For such a flexible array, clang computes the
-> > address of the __counted_by counter as the start of the array instead of
-> > &num_layers.  The bound is then read from layers[0], i.e. from
-> > the first layer's configuration, which is not a count.  The same layout
-> > crashes clang itself in a standalone test.
-> > 
-> > The annotation was added as documentation, so drop it rather than
-> > restructure the union.  Keep the information in the member comment.
-> > 
-> > Reported-by: syzbot+a0eecb22de4d821a9e5d@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=a0eecb22de4d821a9e5d
-> > Fixes: bd3a19800dd1 ("landlock: Add counted_by in landlock_domain")
-> > Signed-off-by: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>
+Hi Mickaël, Günther,
 
-Thanks for the patch.
+Sounds good, no problem at all. Thanks for the quick review, and
+happy for you to take your version for v7.3-rc7.
 
-> > ---
-> > Reproduced with clang 22.1.8 and FORTIFY_SOURCE on mic/next (64b9e6eff524):
-> > the second landlock_restrict_self() hits the report, while 16 nested
-> > restricts run clean with this patch.  Mickaël, if you prefer to just drop
-> > bd3a19800dd1 from next, that works as well.
-> >  security/landlock/domain.h | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/security/landlock/domain.h b/security/landlock/domain.h
-> > index 60e8eb2d6ac2..4bf1555a4349 100644
-> > --- a/security/landlock/domain.h
-> > +++ b/security/landlock/domain.h
-> > @@ -246,8 +246,12 @@ struct landlock_domain {
-> >  			 * properly handle merged rulesets without overlapping
-> >  			 * access rights.  These layers are set once and never
-> >  			 * changed for the lifetime of the domain.
-> > +			 *
-> > +			 * Not annotated with __counted_by(@num_layers): clang
-> > +			 * miscomputes the counter address for a FAM nested in an
-> > +			 * anonymous struct within a union, which trips FORTIFY.
-> >  			 */
-> > -			struct layer_config layers[] __counted_by(num_layers);
-> > +			struct layer_config layers[];
-> >  		};
-> >  	};
-> >  };
-> > -- 
-> > 2.43.0
-> > 
-> 
-> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-> 
-> I agree - it seems better to drop the __counted_by rather than
-> restructuring the entire struct for that.
-> 
-> Thanks also for adding a comment about it.  The __counted_by() has
-> only been added very recently in September, in commit bd3a19800dd1
-> ("landlock: Add counted_by in landlock_domain").  Better to have a
-> note about it so that we don't accidentally add it back. :)
-
-Actually, I independently wrote a quite similar patch (while traveling),
-but it applies to v7.3-rc5 instead of mic/next.  I removed the patch
-series that I applied on mic/next because it conflicts with my patch and
-I need to send a new version anyway.  If you don't mind, I'll keep
-Günther's Reviewed-by tag and credit other contributors in my patch.
-I'll propose it for v7.3-rc7 (today) because it is trivial and will help
-new patches on top of that.
+Thanks,
+Thang
