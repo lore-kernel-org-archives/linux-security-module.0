@@ -1,119 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA523451B5;
-	Sat, 10 Oct 2026 21:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D063624C8
+	for <linux-security-module@vger.kernel.org>; Sun, 11 Oct 2026 02:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791667465; cv=none; b=Xb9fNAKtK8Xn0UZOfpaAFq89eczIbTrylrGIZa1E4z6y5wEDEJubNkhhuM+gdHSKHje0iIVvzIrqSm3EyLeN3s4Hjjmtwg5jve7pjWafq6WQdrj7ZnIB5pnNzD550TG1xPJhD3AGWYjXbqMvE/jRRDsgmdvBJHleSywg5RCUJak=
+	t=1791687479; cv=none; b=Z338QWp9ixo/e+uuoNZya6hlPD0EF0dE5tX4zBBGGnjkWVgvuNoCTdJ66VqGSp56Yfz4fz1nPhm4iSHAXIPgFKCMacHib57b+C1fAnzKgzJOAwP06pBb+yh4uj01XGAoCxrfXnagKrm3xLUelsyVAZKeP95jftpSlR2MpMwoFf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791667465; c=relaxed/simple;
-	bh=PQIc33haqgfB37R9stfcBA66YFExdO+vCOa5OnWXm/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AkeA8qRdl9jm03lNBz3xi0yYlImI6ymPamMyYV7XozGxMUrKp55UQ9fSMnVfe4Wfu2KKXZImdvNU1SEvLxviw8OlPfm0AabmoP14+sjlIeQ6+T7A6RhxP5MV2Zpf4VsD+hQjp0u2YjajkE7cQ+O0eRxh+UcKEWzGEUYJAdr/L+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwM/2b1e; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791687479; c=relaxed/simple;
+	bh=sghXvtTDPEzJRg8/9muWYo5VMD1FxRyf/W4rKI9KsFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xu5wIJyq3QQqcuC0rGzYofOUulSYB1Grq5/KZhlwsuBUgkXa3c2fzykQIMzFPt5ee1PG4mEycw++WvTDDvRHoLvJApHW/ocYiufewTraKvvBmbvM+hL8nEEnyAUNifRuRH94t6qz3ZRNntZucXES08/5L1/MXOoUn6qJfFemw1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sSPY+QRy; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwM/2b1e"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id C6EF31F000FF;
-	Sat, 10 Oct 2026 21:24:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791667464;
-	bh=QWHSjEKCe02bd/smuesOf/w4AU5v5XzesQ7Kwu/UJXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=AwM/2b1ezf1XGwLA3JWq72alTLNCufFZ+3trhjUQGYCMA2sr2pU6CCyGQ2tOswaio
-	 VPKOGOQUaQgrTO5AX2EMRuRceZBW5eGoTjHVkzycuSDK4sI4CnON5g9x6FHZQ24tny
-	 1UF+39EGSGSAW49E8ipoQ9dxMX9VEviffkA1CPlBaivRWh8VY6CYQA5dMFMgs96QWR
-	 eQj7iHZ1a5drnr5Ba7lbtbWc9cDFa8/1ptN+HP+RG5uLuGkbAYzyBemT6HNAmlZD7w
-	 tTONRBFASI758ZboJdA1gEM2MWus307K2dWIzm1GD8n4dNXqYU0fY4is6mF6TBBx0+
-	 J8dkYJRndbmpQ==
-Date: Sun, 11 Oct 2026 00:24:20 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Cen Zhang <zzzccc427@gmail.com>
-Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com, jjzuming@gmail.com
-Subject: Re: [PATCH] keys: Check the authorization payload in process keyring
- searches
-Message-ID: <asqtBDX8112XvcRT@kernel.org>
-References: <pm-key-management-objects-candidate-0004-v3-598361863b76bc25d58d@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sSPY+QRy"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2e8455755f3so4290975ad.0
+        for <linux-security-module@vger.kernel.org>; Sat, 10 Oct 2026 19:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791687474; x=1792292274; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=sghXvtTDPEzJRg8/9muWYo5VMD1FxRyf/W4rKI9KsFU=;
+        b=sSPY+QRyw9X5FH5owUepnjoeDJ6iXs7R+esYpOFqh6F1/Pg/1vUYI1qd016sQPIE34
+         hyRGpsikP+okyiinphx3LoXI81xyy/HyjooNgrejdF5vT2LdrZyB+kuIXNtRJPrTEHJd
+         cW21tHox37a1IZDfeKDuIvizOcvq1vWF2VXEnstFQc1ZUfx+NhGQLNL+EzhEkWH/3+gy
+         uX3iVRgbrvWgudfgDkM9PpARwY+xX05W42fJApNAJ0Jlf6vLJopeX+5DmmpRNsgF7klz
+         fScTjsibmPbsZ8zqcQUv9SN2lOWJvrBwnqvpb2ucBLwBp21+1OnisWObLhnY3GGqMSEV
+         fDuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791687474; x=1792292274;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sghXvtTDPEzJRg8/9muWYo5VMD1FxRyf/W4rKI9KsFU=;
+        b=Xk+SpdyNAbfQf3owfpdU8v3MvzFgcQV2wq/qi0mdcywBpZRQxfdYgbbly4Kdq20dsi
+         7e8etFxrOnjpojLVIyyFtMvOZReGnK9PthIkVYBU1cb1GImq4zVTkvJtkdIaP3x+B70a
+         Em/9E/qTh2CmIJ9xLooaG8sbZz1LSOyFg//tNGV7yCh3gwcmESiINwbkct3DpvgZOltc
+         WT69Ow3tJv1HkL+VxPO2Ifpj7+/sW3aHOUZI9h6AKxqjtLN7si1zAyITruuzdQEdwM1f
+         fsDhkf7u1GUFKLvLVbF+4eDpyYlxsj8FE+/lBufV5QYgWD9hWcaKshf/WsOdlJcbodJy
+         vNwA==
+X-Forwarded-Encrypted: i=1; AKwUvBwk7dcdas8u0GwlXM5cNSf8PLP9MyojlmIjsaCAOha+afuoLxfeLq940BgELmMb1ZQxxrRlgixQ6HN6srjQEWyjtr/64/I=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIX9XeQDnDjG0OjpYcdzdz4D75WlJKIJ02wOcjvrmW2EIxMB5ct
+	Y+SY/W485Vl9URlXjTssRBWLq1jl9NvGtVwZlFe8f5R1mlM4d8tHxvyJ
+X-Gm-Gg: AYBFou2DIVq3yautVKES2Sbk5ZWXrrUCgHVaASUVZJrDZWQXcE1767onnbw+nuky7ki
+	M/Z5aWWJbfK1AOqkPazy2GBsOaAuxUTQkLVVjvExYbN738/kscRaa4mGGxS+gQlfOz1LDO/a9mG
+	L3RJTAKwoV8yb9ZlEQikkck34lmpRXx+Wtkg+rPubMHAJjnDFNw0eZ5x/ZIaMU0XU807Dk0EaVQ
+	kBzyWTz5m29bQF8gZtXeYVbrsTx8xYlDWLCA98gnDNA0Z+F6I4GJdGG2EelI6N2GzfaAu+LNZaS
+	YeNKe6JB78CoFNVQnynwEXLG+m8a7/R2ZNieQRLJYKKfaShkzFV8qebz180Qse9FJnR8d0u/VHP
+	nW0TrUWVCB80aauIcJR+14SM1VwXLBbSTdDMSB+NXxfKbcx//HMPHPVK+4GMndvDUSgWffrssSp
+	JffAXyNg6J+bDOVz80CAG3eKbl0AYfnHwO2+sgaoG561VB/hh+uEjcRkxPR3qBiINEX28wFrbMd
+	GzXdPxQVf4S
+X-Received: by 2002:a17:90b:4fcd:b0:3a8:6b84:234e with SMTP id 98e67ed59e1d1-3ab3a7467a1mr4832096a91.28.1791687474219;
+        Sat, 10 Oct 2026 19:57:54 -0700 (PDT)
+Received: from thangnn-ASUS.. ([2a09:bac5:d45a:16c8::245:79])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ab39392e9bsm6403592a91.2.2026.10.10.19.57.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Oct 2026 19:57:53 -0700 (PDT)
+From: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>
+To: Nathan Chancellor <nathan@kernel.org>,
+	Alejandro Colomar <alx+linux-hardening@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Tingmao Wang <m@maowtm.org>,
+	linux-security-module@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev,
+	syzbot+a0eecb22de4d821a9e5d@syzkaller.appspotmail.com
+Subject: Re: [PATCH] landlock: Drop __counted_by from landlock_domain.layers
+Date: Sun, 11 Oct 2026 09:57:48 +0700
+Message-ID: <20261011025748.8853-1-ngocthang2710.1999@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261010184640.GA40038@ax162>
+References: <20261010184640.GA40038@ax162>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pm-key-management-objects-candidate-0004-v3-598361863b76bc25d58d@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 09, 2026 at 01:52:16PM +0800, Cen Zhang wrote:
-> An authorization payload and its saved credentials must remain valid
-> while search_process_keyrings_rcu() searches the requestor's keyrings.
-> The function validates the authorization key, then separately loads
-> payload.data[0] and unconditionally reads rka->cred. Validation does
-> not prevent request_key_auth_revoke() from clearing the payload.
-> 
-> A request-key helper can assume authority and fork a descendant that
-> inherits the authorization key. If the descendant misses in its own
-> keyrings, it falls back to the saved requestor credentials. Successful
-> target instantiation invalidates the authorization key without clearing
-> the payload. After the helper exits, UMH_WAIT_PROC returns to the
-> requester, which calls complete_request_key() and revokes that key.
-> 
-> With the descendant paused after validation, the paths can interleave
-> as follows:
-> 
->   1. The descendant enters search_process_keyrings_rcu() under RCU and
->      key_validate() succeeds.
->   2. The helper instantiates the target, invalidates the authorization
->      key, and exits.
->   3. The requester resumes from UMH_WAIT_PROC, calls
->      complete_request_key(), and revokes the authorization key.
->      request_key_auth_revoke() sets its payload pointer to NULL.
->   4. The descendant loads NULL and dereferences rka->cred.
-> 
-> This NULL dereference can oops the kernel. RCU delays payload disposal
-> but does not prevent the pointer from being cleared.
-> 
-> Load the payload with dereference_key_rcu() and require a non-NULL
-> result before validating the authorization key and searching its saved
-> credentials. A non-NULL payload and its credentials remain alive for
-> the caller's RCU read-side section; a cleared payload skips the fallback
-> search and follows the existing error selection.
-> 
-> KASAN report as below:
-> 
->     Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] SMP KASAN NOPTI
->     KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
->     RIP: 0010:search_process_keyrings_rcu+0x32b/0x790
-> 
-> Fixes: e59428f721ee ("keys: Move the RCU locks outwards from the keyring search functions")
-> Assisted-by: LLM
-> Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
-> ---
-> 
-> diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-> index a63c46bb2d148080add6a194579f7b1093c04d82..76da13fa07fab70115966e9ea8360af66390dd85 100644
-> --- a/security/keys/process_keys.c
-> +++ b/security/keys/process_keys.c
-> @@ -556,9 +556,8 @@ key_ref_t search_process_keyrings_rcu(struct keyring_search_context *ctx)
->  	    ) {
->  		const struct cred *cred = ctx->cred;
->  
-> -		if (key_validate(cred->request_key_auth) == 0) {
-> -			rka = ctx->cred->request_key_auth->payload.data[0];
-> -
-> +		rka = dereference_key_rcu(cred->request_key_auth);
-> +		if (rka && key_validate(cred->request_key_auth) == 0) {
->  			//// was search_process_keyrings() [ie. recursive]
->  			ctx->cred = rka->cred;
->  			key_ref = search_cred_keyrings_rcu(ctx);
+Hi Nathan, Alex,
 
-Thanks.
+Thanks for the pointers. I wasn't aware of the earlier thread, so please
+disregard my patch in favor of the one from Qualcomm and the Clang
+version gating of __counted_by.
 
+To answer Alex's question: I only tested with Clang 22.1.8 (Debian
+22.1.8-1~deb13u4, same as the syzbot build). I did not try Clang 23 or
+later, so I can't say whether it is fixed there.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-
-Br, Jarkko
+Thanks,
+Nguyen
