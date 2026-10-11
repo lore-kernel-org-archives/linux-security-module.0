@@ -1,52 +1,46 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A022D97B7
-	for <linux-security-module@vger.kernel.org>; Sun, 11 Oct 2026 16:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEE3345CAB
+	for <linux-security-module@vger.kernel.org>; Sun, 11 Oct 2026 16:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791735373; cv=none; b=X+r8J5JjkG2NUYLkbIgUxGUSaZ+VUEhpIIN6fMvwevZ4Ej28zqCF42jgoGGOyvY14l7Vnq5xWYNwjKm2WQpG4JQBm+S4ML1+4r1GD4MxIzmI1XJ5HdIXf72REizE9ymPnYcB2nszXlG/ZmArcmUcfHav7n0wKdz0sF0xgjRIKQQ=
+	t=1791735392; cv=none; b=KA4fZNrdQbGPet5I9wsMatnCg9lPVm6MUstTgH+2tMKLfgZPSvLfq2B83+vFeMoD3HEAUYDo6NlBAqFMxJxDqUqtchfcFQKjceMms/eZCJqf+IC2GTHbq6It6HrgZ9AtY33JKvaGQMjOEgqxDUiMdWxJnLJ8WemPLSertHmK+1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791735373; c=relaxed/simple;
-	bh=0gcbbUhFnkEOAHXcoqrL/nxc87AsWq7hndb/HXSBGPc=;
+	s=arc-20240116; t=1791735392; c=relaxed/simple;
+	bh=ovEY0YmXMmK0ezy3YpGqWNnkix1ueucSA1nQVcwLbuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N59/a2RQ0L7zSXtSalldsR8Sm7WAWG1fOdijgWL0ZcHNIokyaXXfjfZcWKhuvNAhVm6OeVRS4gfm3zJoZx1NE4BBt3Bem8FbR2AZ/VhgX7+xybda5iNhQbbQl3PeSDFmOnPwOWFUziK5Mpjap2ExvI0ykihBV0Vgqa+PdlpMACg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xW03SEOM; arc=none smtp.client-ip=185.125.25.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1fIvOXeJkb5D0nBBs/5unxiySYpVGrJtTDPJQXjdGbMn6caUrV1T+D/GvoggsWve8rOMPe/EazgMgPbX97V4bdneQv+933rBhSqFvGU+s74CtlZ1r4QNF4CGEOH726Lw6MNGRwce/hZLXSyQ3VZH8WBS+RJKqdARYFxUbDuOOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yBSScj47; arc=none smtp.client-ip=45.157.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xW03SEOM"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j2m1H09kYzMFZ;
-	Sun, 11 Oct 2026 18:16:03 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yBSScj47"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j2m1k4dsKzMyt;
+	Sun, 11 Oct 2026 18:16:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1791735362;
-	bh=LRzweF9m776pC+vECb9bPh0m7QvxZb45aRGomPy602k=;
+	s=20191114; t=1791735386;
+	bh=Q622uaE3XGXd2K8FnZQXv/3KqlO3Eh6HjZtQu239NBA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xW03SEOMSs7p1YonRCDbrzmipShynfQkQIaP5xc54t5EhvVTF+PSaIAsuAbowWyVn
-	 A+BUXH4GV9omNAKetEiPD8mvJ2SXDR/5pzB/+u7iaehWJWPXKYfG7vOxiOdYr1ib+X
-	 xSoNggRFlXnMm+0IsfojlvPPfKnfFNXsUmZTY+zc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4j2m1F4Z6QzdsZ;
-	Sun, 11 Oct 2026 18:16:01 +0200 (CEST)
-Date: Sun, 11 Oct 2026 18:16:00 +0200
+	b=yBSScj47hnFs3bArTJvHbI3mzMZEMI6w7VVhXo/Jo2TQ3g6gpPDm5Qxmqe7oEj8dq
+	 /kTyp8l4g49a3JYSUgM96tkUkjFv8lMouUj8EoHJc6PDOsmQ416ZnnZx2XOTpTjjW4
+	 5SRXCo9MpgKpxPUd1SCYsyDnlg4F8uReIw94ThUs=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4j2m1j616bzt86;
+	Sun, 11 Oct 2026 18:16:25 +0200 (CEST)
+Date: Sun, 11 Oct 2026 18:16:25 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Michael Bommarito <michael.bommarito@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Abel Vesa <abel.vesa@oss.qualcomm.com>, 
-	Bill Wendling <morbo@google.com>, Tingmao Wang <m@maowtm.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Justin Stitt <justinstitt@google.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	llvm@lists.linux.dev, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] landlock: Move the domain layer counter out of the
- anonymous union
-Message-ID: <20261011.Veiquevah3oh@digikod.net>
-References: <20261007-b4-landlock-fix-domain-fortify-panic-v1-1-042e9108f5f8@oss.qualcomm.com>
- <CAKwvOd=nPgEm=AZbEu12Eb90GtRUThY6YAjSiHHuNVHP8TZHwg@mail.gmail.com>
- <66usntltyie7ii2rrqajy3izxrvwubwf2vqnery552v3akhwo2@xwb4t76d37wx>
- <CAKwvOd=E7wgGPf+kgOY8sGi0xO-cFMAJK4PMBFknoEupJi1CXw@mail.gmail.com>
- <20261009204554.GA778522@ax162>
- <EF8E7F67-39BF-4382-AB18-98E9D6111CA5@kernel.org>
- <CAJJ9bXzLgzZG+836_2+pUVOWzndSFNoOh8Xu8Pw++_i1RMJzOg@mail.gmail.com>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Tingmao Wang <m@maowtm.org>, 
+	linux-security-module@vger.kernel.org, Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org, 
+	llvm@lists.linux.dev, syzbot+a0eecb22de4d821a9e5d@syzkaller.appspotmail.com
+Subject: Re: [PATCH] landlock: Drop __counted_by from landlock_domain.layers
+Message-ID: <20261011.queif1Ohf1Uf@digikod.net>
+References: <6ac91e98.bbc4c7f9.15faa7.0023.GAE@google.com>
+ <20261010164450.194439-1-ngocthang2710.1999@gmail.com>
+ <20261011.c1055cd53b32@gnoack.org>
+ <20261011.oe8teu2LahTh@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,28 +50,86 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJJ9bXzLgzZG+836_2+pUVOWzndSFNoOh8Xu8Pw++_i1RMJzOg@mail.gmail.com>
+In-Reply-To: <20261011.oe8teu2LahTh@digikod.net>
 X-Infomaniak-Routing: alpha
 
-Thanks everyone!  We also received another minimal patch that I rebased
-and applied.  See the final commit:
+On Sun, Oct 11, 2026 at 04:32:05PM +0200, Mickaël Salaün wrote:
+> On Sun, Oct 11, 2026 at 03:11:12PM +0200, Günther Noack wrote:
+> > On Sat, Oct 10, 2026 at 11:44:49PM +0700, Nguyen Ngoc Thang wrote:
+> > > With clang 22 and CONFIG_FORTIFY_SOURCE, the second
+> > > landlock_restrict_self() call hits a bogus fortify report in
+> > > inherit_ruleset():
+> > > 
+> > >   memcpy: detected buffer overflow: 16 byte read of buffer size 0
+> > >   Call Trace:
+> > >    __fortify_panic
+> > >    landlock_merge_ruleset+0xc46/0xc90
+> > >    __se_sys_landlock_restrict_self+0x2bc/0xd40
+> > > 
+> > > layers[] lives in an anonymous struct inside the anonymous union
+> > > that overlays work_free.  For such a flexible array, clang computes the
+> > > address of the __counted_by counter as the start of the array instead of
+> > > &num_layers.  The bound is then read from layers[0], i.e. from
+> > > the first layer's configuration, which is not a count.  The same layout
+> > > crashes clang itself in a standalone test.
+> > > 
+> > > The annotation was added as documentation, so drop it rather than
+> > > restructure the union.  Keep the information in the member comment.
+> > > 
+> > > Reported-by: syzbot+a0eecb22de4d821a9e5d@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=a0eecb22de4d821a9e5d
+> > > Fixes: bd3a19800dd1 ("landlock: Add counted_by in landlock_domain")
+> > > Signed-off-by: Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>
+> 
+> Thanks for the patch.
+> 
+> > > ---
+> > > Reproduced with clang 22.1.8 and FORTIFY_SOURCE on mic/next (64b9e6eff524):
+> > > the second landlock_restrict_self() hits the report, while 16 nested
+> > > restricts run clean with this patch.  Mickaël, if you prefer to just drop
+> > > bd3a19800dd1 from next, that works as well.
+> > >  security/landlock/domain.h | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+> > > index 60e8eb2d6ac2..4bf1555a4349 100644
+> > > --- a/security/landlock/domain.h
+> > > +++ b/security/landlock/domain.h
+> > > @@ -246,8 +246,12 @@ struct landlock_domain {
+> > >  			 * properly handle merged rulesets without overlapping
+> > >  			 * access rights.  These layers are set once and never
+> > >  			 * changed for the lifetime of the domain.
+> > > +			 *
+> > > +			 * Not annotated with __counted_by(@num_layers): clang
+> > > +			 * miscomputes the counter address for a FAM nested in an
+> > > +			 * anonymous struct within a union, which trips FORTIFY.
+> > >  			 */
+> > > -			struct layer_config layers[] __counted_by(num_layers);
+> > > +			struct layer_config layers[];
+> > >  		};
+> > >  	};
+> > >  };
+> > > -- 
+> > > 2.43.0
+> > > 
+> > 
+> > Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+> > 
+> > I agree - it seems better to drop the __counted_by rather than
+> > restructuring the entire struct for that.
+> > 
+> > Thanks also for adding a comment about it.  The __counted_by() has
+> > only been added very recently in September, in commit bd3a19800dd1
+> > ("landlock: Add counted_by in landlock_domain").  Better to have a
+> > note about it so that we don't accidentally add it back. :)
+> 
+> Actually, I independently wrote a quite similar patch (while traveling),
+> but it applies to v7.3-rc5 instead of mic/next.  I removed the patch
+> series that I applied on mic/next because it conflicts with my patch and
+> I need to send a new version anyway.  If you don't mind, I'll keep
+> Günther's Reviewed-by tag and credit other contributors in my patch.
+> I'll propose it for v7.3-rc7 (today) because it is trivial and will help
+> new patches on top of that.
+
+Here is my rebase:
 https://git.kernel.org/mic/c/3d8cc52db2f86b624308321c58513019f6b21eec
-
- Mickaël
-
-On Fri, Oct 09, 2026 at 08:02:02PM -0400, Michael Bommarito wrote:
-> On Fri, Oct 9, 2026 at 7:52 PM Kees Cook <kees@kernel.org> wrote:
-> > I'm still catching up from travel, so apologies if this already got checked, but has this been verified against GCC as well? Is it only a Clang problem?
-> >
-> > Regardless, if counted_by is not working for a given compiler version we'll need to exclude its use by version. :(
-> 
-> It is only clang, not gcc.  See my comparison between gcc 15 and clang
-> 21.1.8 output in [1].  I didn't test clang
->  20 or 23 like Abel did, but it seems like we can't gate on any
-> available clang version.
-> 
-> [1] https://github.com/llvm/llvm-project/pull/228309#issuecomment-6080475086
-> 
-> Thanks,
-> Mike
-> 
