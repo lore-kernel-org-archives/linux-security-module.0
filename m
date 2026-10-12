@@ -1,124 +1,123 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC13E49DA
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Oct 2026 13:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791813562; cv=pass; b=MAiWMVxTcPeXqA+zHjHJcV8QsXfRJ/cCAqNB4CUN2VZtWHQP2wgT5dxABJIQR8mNSzPlzRAw7wi48/ulzB9FSSykolBtk2iBMrjwWUbKZXsvXNvOAdy56ZcDubbc9dqJeWXqxgUBuVQvSjSyJ95rJfmEif5uatGz9dToVrfhVsI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791813562; c=relaxed/simple;
-	bh=7+FqPZlbKzDBVAJi5KEqpaoN9YJA+O6TweFmTWZcY/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RWUiFS/ElE11AVrjX0dQjwzo+v1epY2GkDXPz9BFSeaTsq3DJmdPxL7Y764HrE7FEEdXvaS91YjzpP9OyG+JfQ1aYP2ErS6R1kXIe4Mcjcda2wBsfrdTb/NlxJ5TKeOb7qStWh7Mql97Ushjq4e0OrMK5JPkDSwz5Y5MyYW5P5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l59ictqP; arc=pass smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75D534B1AD;
+	Mon, 12 Oct 2026 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791815914; cv=none; b=ljxzC5nH8U9z+BflMBFOCipCPmPce1I9+jCxJu+AXJ1z9fhWBOxre5ucxmy3Ed9pYVuS+9wGy/rLhU9hXsxY93frfVj+m9JlZAunnomuPExWXBAFfHctbkJMlHy+RNGUNQQ5rdBOwGIHQUgz7dM7472fXF5hXrSXKZ2dB3zh4G8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791815914; c=relaxed/simple;
+	bh=fJT2LAsI+66sPFPMBf1dktBnPkHklTuThSGYqJPWSjE=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=sM+BkrmCdOWULKSA3m5kfiRNpvBtK4QCjFpOZLz9JX4J9fb9QRgEXL92R0obFo76NclQSXD/n5xFe+Q1/QpUznPl6iYTB6m28QCg7UJ5o4w0e+e6CursR5GunB6GF/cMBQCbXlklZKrbrQOPUw2I2aGNEDuyb8YdtmisoiYKFTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=AlYcDTV/; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l59ictqP"
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6776efd4ff1so1397482d50.1
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Oct 2026 06:59:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791813560; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Tp/ifQIe5EVZjxND3LjG7JOTMgH3SuaIH8jl8Dt+2R+S51Glum061B6MiewpwZae6X
-         sVBIsqfDEWxemQdAlmqohjRJxhyAqdCxmA529MhatwvT5yqF7hD6nLmTHq6cYwD0r2Y4
-         IfapIa5AE7R5fLC6dS8nhGKGjZW5hweYRyQpuKW0XyxoRgYaAdte3mtp9JvjPTNuVCbT
-         5B5yEZTp1Jw8ohLWn3APtlt+j0MIDnwSuuYv5UD6qv7ZsVEncZ36ZI30SbQqT8Z6LfO7
-         b7zAsbCBDHvszRVcWUaAQT9vk6U8Zq6WSPXMxheSDNin3LM5vJLRpo4/kCaCwime6ONg
-         XZKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=7+FqPZlbKzDBVAJi5KEqpaoN9YJA+O6TweFmTWZcY/g=;
-        fh=QOcf1wEOcOKsEPUqf7lEZ/q4rE/vpoa1f3NzTl00zKA=;
-        b=Ig4cEIkjREprDsDded2TPHeTVHQoBNtfz4zVgtFXbL/TUohsXaphXugit1/RxnmWB0
-         9agCpnFjvhs3Mj8noCnZQU/5NSV/5l9a8bKk7539N+G7hLApS/6kxBd1l3PNdvgwKPWb
-         i39UqG0J0mAeamrokflZ4aDxZ9pcYnEHCmQxzaKRWqtcOKWimw8UdwdUpdTwy7w+YPwf
-         9Yu+szuBQNEbnapavV1OxhM3S53bgAormx5VxEK8cKaiPmEufHJDfG8b/bkmoAKRKsRc
-         vokx+5BK1i5aD7TROo3lMjEXqiSWTb8TYHkvWaYZA8tWKA+XMlv1EQmiKghudpHn0cJN
-         D4EQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791813560; x=1792418360; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=7+FqPZlbKzDBVAJi5KEqpaoN9YJA+O6TweFmTWZcY/g=;
-        b=l59ictqPvgtSdXxtxQityvioB3NKtTTy1otYtzB3WjkLh3dOWALB1x5GdqX4it6MNl
-         4+Oi9gs7LgfRIBPGHP1kg/D2HSW1OfPsQ5jR8arpqYn2rpTptOPR4UuHhYycFFF8ICTX
-         opUk0g0/pCRuHzS3atuvN8UWp5X9/7VD9OtSUc9VtqdBlujlncAaY2SHRMkH3Q5LXpkZ
-         dpGrKeABWrefOeZs7Z16WBcfapLnlh4LTGAcAICSOjsMENWO5a+uFhJfsKnUGAse20D1
-         RGOx5qHzOH+fDHDquWyESnHWVy9R7s4BUm9iFhh7Hkm1ep1Mo4tQVldW3IC9W1FI3J/4
-         I1Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791813560; x=1792418360;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7+FqPZlbKzDBVAJi5KEqpaoN9YJA+O6TweFmTWZcY/g=;
-        b=FYk78oLCyZlqK8TuDg6vgxTgLY2QuwKIFLWq3Neg0YyaiPhoZ04OAXWIc7PVhgLcwc
-         Gz4XMMscWUP6Oz7N44nieiizgTsMQXJjjbOad3rRNlBoyY4jJShoa3JoBXsOa6ledPLO
-         +uSfred9nrRqnt8gzY6MjJQs3JyI5tlqAmSBRoPV1mfa0uq0rtSrOLt75AMF0NVWn61E
-         otF6dYBX7RrCtAQOWWyEen65mEtjKsJQ5wRpzmBR8Hxciv6g3+nOu1zMnDQKSxI7sHa7
-         S9oCaUuK4GI7WAQRIWw8hzE1smu3GNYfNyHm/eaSlRtzWFuBcfoXzQ58WnGzeyohOn4X
-         icrw==
-X-Forwarded-Encrypted: i=1; AKwUvBw9ZPx1tt/wXwZ8iPQ7amxxdBVc9TvChN2S7LNDhqxp4PpCKWTHqz7fa8Xi55nHoCQOaqQGWl+kFOQjyCVGrIr05/l4hEo=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLPODmT+iy0QvpcEOzXgQl0kvtgfK59jveB4NDsU+YZMTpIGJ3j
-	YCFyz9gndYbCkCSD9XzbIq3amZNtSNdfz8K5AI9yL7QNx9FlmOJsJe1S/Mf4/bBbrI6YI64FEpv
-	FBZyy4+YBWKanYCaPLD8xESDjzDZt7Mo=
-X-Gm-Gg: AYBFou1c4mYDJAOCFDrernqblbL+dc7roCsq/nwkj6cnHZH6SBo7mhOe/xlhDycOOwF
-	mZqH14Na1p8VC6TXgfIEAa7VgXk77cz7FUfREaHsjfwPvgY9O269ZjwyP1kNqXaTEUa4v3IMXBL
-	XLJXWtmLbViB4DwmG/x5wZbD0RpPZEOCUqD0m61OxESd00PBCSCiMqwO0xhzpd8RXiJE7uIkVxw
-	Ic3dP/HnJ302GWZueIPm2snOdGPazgrnjOO9bP4m4nPQor9gB+3lysS637kkuxJi4GrSeNSP5S6
-	u9AnYB/GOQxJn1cjwkViUA4LGHoExcd1+yvSnwHT8SZrDcnORFKk9B5lwQ==
-X-Received: by 2002:a53:ac90:0:b0:675:3c10:28a7 with SMTP id
- 956f58d0204a3-67936acfd88mr2947207d50.94.1791813559834; Mon, 12 Oct 2026
- 06:59:19 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="AlYcDTV/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1791815907; bh=LNKxzpmjCEP+a7Nq3MoOesUompTT9/8E11oGyH877mw=;
+	h=From:To:Cc:Subject:Date;
+	b=AlYcDTV/ZJGc7tH9shlyHISH2a2ej7jSMRs4n0K7oDzrA1FoykBJv7TAkKdA6uHel
+	 hsfiW0bAwX1kNzihTAuhUTKwZ0r2Byk4qd4UsvQp63kMPiparYH29nIkcVsiEvFtpK
+	 JnpdfSF+iM7JFERnsvleMXHyF2iqHT4xADctI4S0=
+Received: from [172.18.4.77] ([61.136.26.103])
+	by newxmesmtplogicsvrsza73-0.qq.com (NewEsmtp) with SMTP
+	id 998A66E1; Mon, 12 Oct 2026 22:38:24 +0800
+X-QQ-mid: xmsmtpt1791815906tn2pvg8za
+Message-ID: <tencent_96F9E846FDA4A67FF38C7C393D985A44690A@qq.com>
+X-QQ-XMAILINFO: MqswyhUqVe0CMd58NaO3KRHK5Me+Ff/PQx2OUdIRQGbYr0iTDfhHMoVzJesUVW
+	 YJDax+US8HQK/uWcO2/knzxf0Ueudc9AnOmYNmjrKq7JEPV7ixSNhulbssAhFG7ov2ibB3KGk8S4
+	 BnSkXmKmxWEawPDaZICN4wTqjMZz1HRHpn04btjfWverex5r1DBmfja7yy9tHH9VGoJjO8QHxIY1
+	 2jH5I1BNtfj+EGoVYAWNCdpyWpfnkaiIOFh5HX0wcWhA/f+wEfk+Pmj03ByQEyl2biBxeaNQA5Uu
+	 XeG11SSsBv7yEGFD28746ZNpTRn3IgwE/g9OU02N6fFl4bNtDRbyKGTpyLOR+Hx/9IvxuSe7KsBN
+	 JHIX9WpyI7VSNJqNOlce+vVf16rlkZVd+K+2fPxHeOUFTjwFzYwKIW0SzNeZ8MmPrYXHN7gyE6ka
+	 bXjHMrQImGHGgZKGggly0gCXrdjcNtxogIrZoBWwX9YdxpibYuyf6MaQ7N40C3cUWTKRIupHHvOQ
+	 F0UvgrCdPeAaRVg5ChUHoGCjFFdqMok0z6BzGyqavKywYYLHutTDItzDN40+pxcAZdK69ZIoWsXi
+	 biKTi1xfRNZ5kX6FJpL8/QO2rf6ZEkiVSrx7yO5ygOTqLI2ys/ZtlsgxiL2uf7AckY864TQdYIA2
+	 9Yt3v8D/+C0D5pUY17EUZLOE4DdGkCE9bdKxMurkyLRz0YEnFHDlETYQpmJ385GKGx+kxvpupFhD
+	 CTAuyXMektDavDUCOy8eroqMM/va+qOf4pVfyMayxCsn9r3MUNGzfyREfIgkXDFQhQYERBnLI3s2
+	 UX64Hgq9SS5E2dOnsUXLt4sqWxbBshUQJS8wdIunrOEHAYuA49Te5uCiP4yYWyt6+VqsgpuBKnyw
+	 IqaYXbIfdSFWkm5l92uwpwKqo8NwB9k5Hie8yIhzLnZwXv0rV0y8rQV4J/N2pNajqfUQxRkU2q/X
+	 jZVnrWQ7TUV6/PBnnwLi3mRByNSv83b0ZJBXL3d0L9Ig35vYRzhk5wk/QPz9RZcWeLc87t/I3Seo
+	 YlDdAx3im3j+cqe68peBzOCm3VOVdvoXo5K7wbaPTO09Qn1f/A
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+From: 1sh1ro <yangguikun19@qq.com>
+To: Paul Moore <paul@paul-moore.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Ondrej Mosnacek <omosnacek@gmail.com>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [BUG REPORT] selinux: general protection fault in avtab_search_node() during an AVC lookup
+Date: Mon, 12 Oct 2026 22:38:24 +0800
+X-OQ-MSGID: <20261012223824.41804-2-selinux-avtab@yangguikun19.qq.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <pm-key-management-objects-candidate-0001-v6-9876bf3e2116d47c065e@gmail.com>
- <aszZ3KPvMMHLEJ0s@kernel.org> <aszalro6U6BFO_D3@kernel.org>
- <CAFRLqsUB0MQRoCHg8cXmyofWqbDGyvAr7vV07i0jUpMnSaksVQ@mail.gmail.com> <aszlg2R3E7zqR75r@kernel.org>
-In-Reply-To: <aszlg2R3E7zqR75r@kernel.org>
-From: Cen Zhang <zzzccc427@gmail.com>
-Date: Mon, 12 Oct 2026 21:59:09 +0800
-X-Gm-Features: AclHuK_Z8o-xqZg0jqZI76nVd64T9lr82nl3wJ3vcrRD5bolIQP_kt4ypa7iRSI
-Message-ID: <CAFRLqsW7HEn1=BjHsVNpvqT+Uf8hnxaY=ktsx+5S151KM7mKsw@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: Protect user key quota access during instantiation
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, akpm@osdl.org, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, jjzuming@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Jarkko Sakkinen <jarkko@kernel.org> =E4=BA=8E2026=E5=B9=B410=E6=9C=8812=E6=
-=97=A5=E5=91=A8=E4=B8=80 21:49=E5=86=99=E9=81=93=EF=BC=9A
->
-> While AI assistance is allowed, if this happens as a pattern, it is
-> misuse and eager way to credit without due. I.e., you've done 50%
-> of the work but ignored the human part.
->
-> I.e., you also must understand without AI assistance what
-> the patch does. If you do, it should not a problem to write
-> a commit message tht simply describes what it does.
->
-> To summarize:
->
-> 1. Actual mistakes are fine and then patch just needs to be iterated.
-> 2. Skipping work is not mistake and it is not cool.
->
-> Hope this clears things up.
->
+Hi Paul, Stephen,
 
-Thanks for the guidance. I=E2=80=99ll keep it in mind.
+fuzzing with syzkaller on a 7.3.0-rc5 KASAN kernel (SELinux enabled,
+permissive) produced a general protection fault in avtab_search_node() from
+the AVC lookup path.  The policy's avtab appears to contain garbage: the
+first fault reads a non-canonical address, and it is followed by thousands
+of further Oopses (8850 in this run) as later lookups keep hitting the
+broken structure.
 
-Best regards,
-Cen
+The crash
+---------
+
+Oops: general protection fault, probably for non-canonical address 0xe06f3dc280000000: 0000 [#1] SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0x037a0e1400000000-0x037a0e1400000007]
+CPU: 1 UID: 0 PID: 14271 Comm: systemd-udevd Not tainted 7.3.0-rc5 #2 PREEMPT(lazy)
+Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+RIP: 0010:avtab_search_node+0x24d/0x4d0
+Call Trace:
+ <TASK>
+ cond_compute_av+0x59/0x340
+ context_struct_compute_av+0x7f2/0x11f0
+ security_compute_av+0x558/0xd60
+ avc_compute_av+0x86/0x820
+ avc_perm_nonode+0x9b/0x170
+ avc_has_perm+0x27b/0x2f0
+ selinux_inode_follow_link+0x226/0x380
+ security_inode_follow_link+0x96/0xe0
+ pick_link+0x447/0x1570
+ step_into_slowpath+0x928/0xdd0
+ link_path_walk+0xdae/0x1b20
+ path_lookupat+0x70/0xb80
+ filename_lookup+0x213/0x5e0
+ filename_setxattr+0x89/0x1b0
+ path_setxattrat+0x1cc/0x2a0
+ __x64_sys_setxattr+0xc6/0x140
+ do_syscall_64+0xec/0x4e0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ </TASK>
+
+Context
+-------
+
+- The task is systemd-udevd (uid 0) in setxattr() (ORIG_RAX 0xbc), which
+  follows a symlink while walking the path; the first AVC decision for the
+  symlink hits the corrupt avtab.
+- The same crash appeared on three runs of this fuzzing instance:
+  2026-10-08 23:39 UTC, 2026-10-12 04:50 UTC and 2026-10-12 10:48 UTC.
+- The kernel log of the crashing run shows only avc denials
+  (permissive=1) and no policy (re)load, so the avtab was already corrupt
+  when this lookup happened.  From this run alone I cannot tell whether the
+  corruption originates in SELinux or comes from an unrelated memory
+  corruption bug in the same fuzzing session (that instance also produced
+  unrelated memory-safety crashes around the same time).
+- No reproducer: the instance ran with syzkaller's reproduce disabled.  I
+  can rerun it with reproduce enabled if you would like one.
+
+7.3-rc5 already contains the recent policy-load validation fixes (class and
+permission counts, level category sets, boolean values), so this looks like
+a separate instance of the avtab-corruption family rather than one of those.
+
+Thanks,
+1sh1ro
+
