@@ -1,63 +1,136 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A8723EAAF;
-	Sun, 11 Oct 2026 18:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCADE3537E8;
+	Mon, 12 Oct 2026 00:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791744952; cv=none; b=XLSH93pnFGYKQKOAXxY8s+mAMHThBCfBFPmcXOfoLjoWgWzNCmepXbBphEpLLBD6B9rD8VAmssoQNLW7Xq+vjkZ+te76HOudGMHtRJWuwRm4npBQ99Z/biT+XH+y0TfIkCAtkqVcHe1qyvIkCLe6AN9X7++WyAXUJIkuuOPju6w=
+	t=1791766593; cv=none; b=HF9frpVbIPmSon3L/myLODxnyeOlGpEbqDkn7lCKDCbNbGt8rN7IB7UFiVINHYIkmx7guFkZ28aCnt60Liezu4IcOfHdh1arhJilXtT6Tz1yBHqsoGGM3yGqjdvXshv9DO7GMECn71970vhc6efY3WJESYnhmbOijgXVfb4W+eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791744952; c=relaxed/simple;
-	bh=MeNz6+JDbAELaclLPMD6m81PIVT1ibR1soSUJazcll8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HJBebIViutz3lWBLvGc8TP9yTWs2Z0yb+RoYxkRqMlYq47MBg7EKyuI9Zfy0iEkRi2kCQ1z+W00XLDcX6+tgPJ2sNaXetGXNzwK25db4FO18Bua6FEnkzkVKlI9GmkieUsnI4Qu4LqPt6UqC1vDeUM48RtpJwN+S00nbDdptmxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pl19GyM5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791766593; c=relaxed/simple;
+	bh=fgEYWGJ2o79ZogsVquNbtLGhVkZVUJInYR7e8viFy64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrfIPEpJhqFbub3lxX2VrBwpAJk8MXSpXWmfoJSQq+1LukeydNRu0ZB2Clj5PYCqotz8jdznjaVruli2oSrMnK9vIScb0Dje0HFWAoyhkyQ+99csv3hjrQE3mVzIGz1mfq4zX+AfJ20IdqHSSqJqnjhbn4d+VeTV78Ui/u/NF/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Srp4lxTv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pl19GyM5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43A211F0089B;
-	Sun, 11 Oct 2026 18:55:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Srp4lxTv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BE541F0089D;
+	Mon, 12 Oct 2026 00:56:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791744950;
-	bh=cze08nDY1Zme74NA0RyKNr5Uk1h502wJmXo708vIO9E=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=Pl19GyM5ClKuhiyDveUybfx0eaM64FaKXtbHYWQQrAzpzUStBFwLA3Qs9Zmt0B53m
-	 ++PfkMEVEdYMQ6ihx4DHC+9y2l3yLr9u16lQdxDbpoS7A801lirqMyhvhJ4Sr8NVkv
-	 3rPWSnIwFrTM+0eItiIbdKQCw2F/yVxUEVSdlDD40iY7BuDA4nmC7URoR6zIOzoWE8
-	 2nA8jyDTSLIYlmE/eIyZklvB4jnlWhecKAiDM/blvsS8SNb10XPTw2OVtoYhIa0f8m
-	 WTJvq5Lp9cZXadVq8gSxk7xBPtzsmQhHvcK2cXuARYhAEygBBHEpNtkDS6gf41HQhA
-	 DCk3VlvcIcwFw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3A50038119DB;
-	Sun, 11 Oct 2026 18:55:50 +0000 (UTC)
-Subject: Re: [GIT PULL] Landlock fix for v7.3-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20261011160819.1376118-1-mic@digikod.net>
-References: <20261011160819.1376118-1-mic@digikod.net>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20261011160819.1376118-1-mic@digikod.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.3-rc7
-X-PR-Tracked-Commit-Id: 3d8cc52db2f86b624308321c58513019f6b21eec
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d6d3455d8751854e0d1820f14184682e23ac4475
-Message-Id: <179174494873.2141808.3385832411180590547.pr-tracker-bot@kernel.org>
-Date: Sun, 11 Oct 2026 18:55:48 +0000
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Abel Vesa <abel.vesa@oss.qualcomm.com>, Alejandro Colomar <alx@kernel.org>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>, Kees Cook <kees@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Mike Bommarito <michael.bommarito@gmail.com>, Nathan Chancellor <nathan@kernel.org>, Nguyen Ngoc Thang <ngocthang2710.1999@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, Tingmao Wang <m@maowtm.org>, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, llvm@lists.linux.dev
+	s=k20260515; t=1791766588;
+	bh=hxf53qqklnBrLDOnVa563Rz7Xv1pTGUtJCKz14BmezI=;
+	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To;
+	b=Srp4lxTvswzQGSZurZdIgokznIEj5wyrJNY9T77hd+9PMBPDY7gvvfunlGvn3ilAt
+	 c3UqltVrr8pDMp7TpDjaT+8DWh+uNsnVzDM/cCacLNCkmQrqU91rplRALKRe2zQEwJ
+	 jMlbkTkanGJ47er7L6/E5P3rPXC8cQsk79+DBESejMhm2sHhgCTx5z2mewZh/Q+eCS
+	 F8OdoYFePL+Ri0/RcYD/MmZKZu+FdwiV3IGzDWFNxqUREJ9KJfdvF45vhgPbd5Rpxn
+	 5C0t0G6buQIudJ3rTCmzqaMebg7XdlTR/4PYtBXFKymc2w62JaoqVSbDQu81sYb3fr
+	 9hXGvCVno8tUA==
+Date: Sun, 11 Oct 2026 17:56:27 -0700
+From: Kees Cook <kees@kernel.org>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Alejandro Colomar <alx+linux-hardening@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bill Wendling <morbo@google.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Gow <david@davidgow.net>, Petr Mladek <pmladek@suse.com>,
+	Shuvam Pandey <shuvampandey1@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jiri Kosina <jikos@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Shivaprasad G Bhat <sbhat@linux.ibm.com>,
+	Thorsten Blum <blum@kernel.org>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guangshuo Li <lgs201920130244@gmail.com>,
+	Ira Weiny <iweiny@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	nvdimm@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v4 05/11] seq_buf: Add seq_buf_strlen()
+Message-ID: <20261012005620.466497-kees@kernel.org>
+References: <20261003035906.too.263-kees@kernel.org>
+ <20261003035921.1918874-5-kees@kernel.org>
+ <asEhEe0Urb5Wx7yi@ashevche-desk.local>
+ <202610040023.A3865A6@keescook>
+ <asIPlnb0noMd33rr@ashevche-desk.local>
+ <20261005112209.1e47fa-kees@kernel.org>
+ <asOKvhT01aNb5-Dg@debian>
+ <20261005155839.d5d200-kees@kernel.org>
+ <asPSYn7sLqiH39Fu@debian>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <asPSYn7sLqiH39Fu@debian>
 
-The pull request you sent on Sun, 11 Oct 2026 18:08:19 +0200:
+On Mon, Oct 05, 2026 at 06:43:23PM +0200, Alejandro Colomar wrote:
+> > Yes, though not often: the sched_ext debug dump builds a nested per-CPU
+> > seq_buf from seq_buf_get_buf(), which returns a size of 0 once the dump
+> > buffer has overflowed, and it handles that case on purpose (see the
+> > "$s may already have overflowed" comment in kernel/sched/ext/ext.c).
+>
+> Hmmmm, so IIUC, it is a sentinel value, and not really a buffer size?
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.3-rc7
+It's the real size of what's left. seq_buf_get_buf() hands out the
+unused tail of the seq_buf. Once that has overflowed there is no tail,
+so it returns NULL for the buffer and 0 for the size, and sched_ext
+initializes the nested seq_buf with both. So that case does get the NULL;
+the 0 is how much room it has.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d6d3455d8751854e0d1820f14184682e23ac4475
+> Did you consider not holding the size of the buffer, but rather an end
+> pointer?  It also allows you to find how much you can write to the
+> buffer, but has slightly better semantics: the end doesn't change if you
+> advance the position.  'end' can only change through reallocations
+> (which I don't know if you do in the kernel).
 
-Thank you!
+The size doesn't change either: it is set by seq_buf_init(), and writers
+advance "len", an offset from the start of the buffer. seq_buf never
+reallocates.
+
+An end pointer wouldn't remove the empty case: buffer == end is the same
+condition as size == 0, so the accessors would still need the check. It
+also makes overflow harder to record. seq_buf marks it with len == size +
+1, and the matching position pointer, end + 1, would be weird.
+
+Changing the representation would also means changes outside
+lib/seq_buf.c, since tracing reads seq.len and seq.size directly
+(trace_seq treats a zero size as "not yet initialized", for one). I'm
+not saying that's a good thing to bypass the API, but rather that such
+a change should be its own series.
+
+-Kees
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Kees Cook
