@@ -1,105 +1,175 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9355370ADA;
-	Tue, 13 Oct 2026 14:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7853F871B
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 14:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791900558; cv=none; b=A07iVOSjs9pNL43r0Zx+oB5l42cwbVvvn+5VNyHf+Iuc1+jm+RonG+7CjeQjnh3xJA4IrhyqwCVvFS2Y/GCOEyNeFq2CbGTWDG3Hc+Mi3fZh3AbER4g+FiSRBqg0gwJF25Tm5Ys3QuU+CNdFZB0sWpa2JeZh3m64wKUG1xEZlrc=
+	t=1791900921; cv=none; b=geG4joSasKgw5K8TbEeZXZsoMan8wmQPNRDk8kCfs6bqLN5JmbtEYSEZ8shs4dRlSU8kYfGF12Hhl2SEwL0MzkUzayattZoxZTlzVlQhMrwA+8axBVtQTRWY+pHdEzNBlxIF/2L7vJH3diY1lKn5qItBSUuFSpJa1ODFv08O/gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791900558; c=relaxed/simple;
-	bh=Suo0YfCYPtCoLBJ8iZXRfc+dw40jvIHLkG13JRnjZUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBhfoX/PxLWKD3CamJYY8SUFS7v796gXmZuA7p7WY/dsQHAiTFzzCcntDSp7OD9YeECQrTphJx5lwmcSi+TGysqSWP5mAVhs0AUZC8oco7ucy1IsxYwzpCpwJ7HzT5qESobCaFddKAFDcqM+OLcaQZemvF6CHyOhDAIWw2QuMWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=unknown smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=kL9ibrJg; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
+	s=arc-20240116; t=1791900921; c=relaxed/simple;
+	bh=G3r+JrQBvdMbusJLzq7rvczPnUg0XgTz1KJurpXkLBk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SdeNgLdOHivgRkfFtYzxJ0Ji1ZCA8kiI6GcXAu6ZwPsSDWMkPXBwfmh8gy0I3PGJC9ArM+7YfWLgtjk09MSI/GF5iGB9pWCI8zUG3Dcj8eLP80NeHkYNbdunJ5tIE1GJuTSXQMUWxsCC5z3KpWiugMPSWvVdC5Y14k4IPwDNQY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VLzHzC3F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="kL9ibrJg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1791900547; bh=Suo0YfCYPtCoLBJ8iZXRfc+dw40jvIHLkG13JRnjZUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kL9ibrJga4YY3RAquWvtOegRsAK6JNwI4zXpQH4mv6j2Vsk9CY8qfIhLg/GbWf10M
-	 DeXquRyTooElnL5wcZ6eBAgd3kldWf1/1DVrk/QnE7SSW6X/eN/0nBES3D+BgjTlUU
-	 C/Rx2MZe3C0Slal4i45wXX+ZGEjf9NEkolx65kLPAJurAwcIqT7Fgf9sZxk/YpgtAy
-	 XDKHXmjY/8nxliaKEOZl8gn/L8ISgxycaCqcVMdYGSSfKRj3VaBKUpf5cLXmVPw2xG
-	 o/e7XKeKzb8AwNvzLFiFE90IPPcFzQuMfwogAUoL6N27g/9+hdqYmLbjfnu+6mI3om
-	 KyZ826JuJNe2w==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 2638A6FA; Tue, 13 Oct 2026 09:09:07 -0500 (CDT)
-Date: Tue, 13 Oct 2026 09:09:07 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: kees@kernel.org, akpm@linux-foundation.org, david@kernel.org,
-	ljs@kernel.org, liam@infradead.org, vbabka@kernel.org,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, kprateek.nayak@amd.com, paul@paul-moore.com,
-	jmorris@namei.org, shuah@kernel.org, oleg@redhat.com,
-	brauner@kernel.org, alexjlzheng@tencent.com, jannh@google.com,
-	jaime.saguillo@gmail.com, elver@google.com, blbllhy@gmail.com,
-	bvanassche@acm.org, pjw@kernel.org, broonie@kernel.org,
-	debug@rivosinc.com, tglx@kernel.org, aleksey.oladko@virtuozzo.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, morgan@kernel.org
-Subject: Re: [RFC PATCH v2 0/3] security: Add PR_CAPBSET_DROP_MASK
-Message-ID: <as47g9Ofa7hgDDLp@hallyn.com>
-References: <20260929130200.1638343-1-ruanjinjie@huawei.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VLzHzC3F"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1791900919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UUCK6QgQl7DA2PWtzzRDceLSdUPdXfokVnHPGcq9DBo=;
+	b=VLzHzC3FlL0gePoBZGaT5dAUtvCcc9fgH1oPW3emvKoXfk+O2WxghyB0rJ8fe/IAFR4ikI
+	IHNop+kGMIRVOx7CuLAG+OmiaFw/ypshiO6GurmW5TKIPINjPHbBkcJdaXVVAy+O29RZnw
+	zSHDlyctewbLF8jJo2pxrrw2XhP6RYY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-536-up0FcNekNCivUacI1EW-MQ-1; Tue,
+ 13 Oct 2026 14:15:15 +0000
+X-MC-Unique: up0FcNekNCivUacI1EW-MQ-1
+X-Mimecast-MFC-AGG-ID: up0FcNekNCivUacI1EW-MQ_1791900913
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 86BFD1829E20;
+	Tue, 13 Oct 2026 14:15:13 +0000 (UTC)
+Received: from mpatocka-thinkpadx1carbongen12.rmtcz.csb (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
+	by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAE695BC;
+	Tue, 13 Oct 2026 14:15:10 +0000 (UTC)
+Date: Tue, 13 Oct 2026 16:15:07 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Fan Wu <wufan@kernel.org>
+cc: dm-devel@lists.linux.dev, snitzer@kernel.org, agk@redhat.com, 
+    bmarzins@redhat.com, paul@paul-moore.com, 
+    linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dm-verity: clear LSM integrity state on suspend
+In-Reply-To: <20260921220516.121589-1-wufan@kernel.org>
+Message-ID: <75c7cbec-dbb8-923a-c2ed-da5156538c92@redhat.com>
+References: <20260921220516.121589-1-wufan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260929130200.1638343-1-ruanjinjie@huawei.com>
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-MFC-PROC-ID: DqtTx-XCc0-tEme6Fqs0oRMQFf6dOA1ru4c9Z1eqGQ4_1791900913
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Sep 29, 2026 at 09:01:57PM +0800, Jinjie Ruan wrote:
-> PR_CAPBSET_DROP only affects the calling thread, so dropping capabilities
-> for a whole process means one call per capability per thread.  For a
-> long-lived, multi-threaded process such as gVisor's sentry this is
-> stop-the-world signal delivery and costs milliseconds per sandbox on a
-> many-core host.
-> 
-> This series adds PR_CAPBSET_DROP_MASK, which removes a 64-bit mask of
-> capabilities from the whole thread group in a single call.  The drop is
-> recorded per thread group and folded into the bounding set wherever it
-> gates gaining a capability, so already-running, concurrently-created and
-> later-created threads -- as well as children forked by a sibling -- all
-> observe it.
-> 
-> Trimming 41 capabilities in an arm64 KVM guest goes from ~8.5-23.6ms with
-> the per-thread loop to ~11-14us, independent of the thread count.
-> 
-> Changes in RFC v2:
-> - Solve concurrently clone and concurrently drop mask problem.
-> - Solove sashiko problems in [1].
-> - Link to RFC v1: https://lore.kernel.org/all/20260922095816.1191799-1-ruanjinjie@huawei.com/
-> [1] https://sashiko.dev/#/patchset/20260922095816.1191799-1-ruanjinjie%40huawei.com
+Accepted, thanks.
 
-Sorry, somehow I didn't notice this version until today.  I will take
-a close look later this week.  Thanks.
+I've just deleted the "Fixes:" line, so that it doesn't go into -stable 
+kernels.
 
-> Jinjie Ruan (3):
->   capability: Move mk_kernel_cap() to header
->   security: Add PR_CAPBSET_DROP_MASK for process-wide bounding-set drops
->   selftests: prctl: add process-wide bounding-set drop tests
+Mikulas
+
+
+
+On Mon, 21 Sep 2026, Fan Wu wrote:
+
+> dm-verity publishes its root hash and signature state to LSMs in
+> verity_preresume(). LSMs such as IPE store this information in the block
+> device's security blob and use it to authorize access to files.
 > 
->  fs/proc/array.c                               |   3 +-
->  include/linux/capability.h                    |  10 +
->  include/linux/sched/signal.h                  |   8 +
->  include/uapi/linux/prctl.h                    |   1 +
->  kernel/capability.c                           |   5 -
->  kernel/fork.c                                 |   1 +
->  security/commoncap.c                          |  91 ++-
->  tools/testing/selftests/prctl/Makefile        |  12 +-
->  .../selftests/prctl/cap-bset-drop-test.c      | 641 ++++++++++++++++++
->  9 files changed, 759 insertions(+), 13 deletions(-)
->  create mode 100644 tools/testing/selftests/prctl/cap-bset-drop-test.c
+> The original LSM integration relied on DM_TARGET_IMMUTABLE to prevent
+> verity from being replaced by a different target type. However, DM allows
+> tables containing a DM_TARGET_WILDCARD target to replace immutable
+> targets. The block device can then retain the old integrity state even
+> though its data is no longer verified by dm-verity.
 > 
+> Clear the published root hash and signature state in verity_postsuspend()
+> so that the block device does not retain stale dm-verity attributes after
+> the verity target is replaced.
+> 
+> Fixes: a6af7bc3d72f ("dm-verity: expose root hash digest and signature data to LSMs")
+> Assisted-by: gpt-6-astra
+> Signed-off-by: Fan Wu <wufan@kernel.org>
+> ---
+>  drivers/md/dm-verity-target.c | 39 ++++++++++++++++++++++++++++-------
+>  1 file changed, 32 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index cb105ccc47ec..6d589867623c 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -825,13 +825,6 @@ static int verity_map(struct dm_target *ti, struct bio *bio)
+>  	return DM_MAPIO_SUBMITTED;
+>  }
+>  
+> -static void verity_postsuspend(struct dm_target *ti)
+> -{
+> -	struct dm_verity *v = ti->private;
+> -	flush_workqueue(v->verify_wq);
+> -	dm_bufio_client_reset(v->bufio);
+> -}
+> -
+>  /*
+>   * Status: V (valid) or C (corruption found)
+>   */
+> @@ -1733,6 +1726,11 @@ static int verity_security_set_signature(struct block_device *bdev,
+>  					  v->sig_size);
+>  }
+>  
+> +static void verity_security_clear_signature(struct block_device *bdev)
+> +{
+> +	security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_SIG_VALID, NULL, 0);
+> +}
+> +
+>  #else
+>  
+>  static inline int verity_security_set_signature(struct block_device *bdev,
+> @@ -1741,6 +1739,10 @@ static inline int verity_security_set_signature(struct block_device *bdev,
+>  	return 0;
+>  }
+>  
+> +static inline void verity_security_clear_signature(struct block_device *bdev)
+> +{
+> +}
+> +
+>  #endif /* CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG */
+>  
+>  /*
+> @@ -1779,8 +1781,31 @@ static int verity_preresume(struct dm_target *ti)
+>  	return r;
+>  }
+>  
+> +static void verity_security_clear_integrity(struct dm_target *ti)
+> +{
+> +	struct block_device *bdev = dm_disk(dm_table_get_md(ti->table))->part0;
+> +
+> +	security_bdev_setintegrity(bdev, LSM_INT_DMVERITY_ROOTHASH, NULL, 0);
+> +	verity_security_clear_signature(bdev);
+> +}
+> +
+> +#else
+> +
+> +static inline void verity_security_clear_integrity(struct dm_target *ti)
+> +{
+> +}
+> +
+>  #endif /* CONFIG_SECURITY */
+>  
+> +static void verity_postsuspend(struct dm_target *ti)
+> +{
+> +	struct dm_verity *v = ti->private;
+> +
+> +	flush_workqueue(v->verify_wq);
+> +	dm_bufio_client_reset(v->bufio);
+> +	verity_security_clear_integrity(ti);
+> +}
+> +
+>  static struct target_type verity_target = {
+>  	.name		= "verity",
+>  /* Note: the LSMs depend on the singleton and immutable features */
+> 
+> base-commit: 93f51579e7df248780214094418f205253383cc5
 > -- 
-> 2.34.1
+> 2.55.0
+> 
+
