@@ -1,141 +1,126 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4122545D9A
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 20:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791921818; cv=pass; b=GY8tsiClDSuM8QQ/iJP9lD5gw2QLPSnabwMICAuplU+XJMPfLp44WCg5WuC1OopEPDFvrZZ4m5ZJ6DGAmntnv5fbnZE77m+dDW9ih+p40/99pOZkK3hx2ynofBuO5pJb+39NJ1Z/zKXwgak1noTKNzYCJI+1QbUQIIJpd4EE/Fg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791921818; c=relaxed/simple;
-	bh=wXw6JHPaoi8GZR7MHv9SvzkiwDSQOxjrJsI9ZNtm4ag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HGo3HwJy2qA8eu6U6yptY0GD+o1GrC7Hs3gKuE7SYq6wHUi9aLz3OomRfOAt/73i1dnLqovAfKJE1s7iVch/9T3FCc+Bt7E005icNJB5tRhGDp9oDnPAjTMMbnrIpqsJ+higr24kqEnnRonqhS3di+lj69MqEFTqUCGTPueVYTM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=H68qEmmv; arc=pass smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04182549390
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 20:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791923344; cv=none; b=d8bfxKTBs+X9s/mUjYsF+1EqexY7nNCQkNrZwyCdJf3d6fMoOoRF1kx7ZPw3hJJSL66Sze/98bbhYW70IhqdXu2CUZ/8aqPNmsyDRMur+QX5OJq+RzJm7BiMqqH4/QTkw4HXGKMK0HNakr+pvxq2FMDNnIOABrRJ6gsxqNw/51c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791923344; c=relaxed/simple;
+	bh=6WLrdQptrJArGJMGv3NltYtuEpee2CJJc5BKqgZAghM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z9ohWaOxrsIahJLCjtS4H8FdaQH3BhyGlHEehLSLQdPASXTA9PriJzRKfJqqBUcr70UfqY5kXSh7r1edGQklpqxLLU7Gc29MfKpCrQ3XfEk1e0iPkt0U1eXbvwQz1tErK3HUMZ8Y2dhtuGBBOW0fskRDnWWxTaV1W31EbIhph1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=pass smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b=cmRYMx/f; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="H68qEmmv"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2e61ac64ec3so29320115ad.2
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 13:03:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791921816; cv=none;
-        d=google.com; s=arc-20260327;
-        b=LKMVgFiLLpDrgp8uc9cIMVhBrz2BhaRuIMSwu/3uMNaYKJEPN5TUVZxqVRmXAM/gqS
-         OpCjHPD0nbQHwNl7S8oFYUWlEQ3BmgyXDfFIHqy4ik49p0FWwL9d8ib18gl4BN+Pna1w
-         kycczK2V9NHaXH7mJbsvNBhkxXylvTyUtJxOneZOVvQRylDH/TajNUCMcUE0iHmhnniY
-         JSRqlWw0th6RIZpYqjJiw6kb0hcUPAV69kjWmoQqz3PeoYbqxy0rmAFvU2hIjPRXn+q8
-         OFn0uIDJ8BiXEGkhRJ9r9sXhHCulq+ktMJv6TSQUUqJ9le4r9tDgu7gf6B0f5IhVn1hO
-         rdPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=xFuEyDlYHgdcnxzN9A5B3Rxn2gC4ba2X8EOvUAd6hpo=;
-        fh=2TujbhTr2kX6H32Kw/DLkFCAmEoYEzZfPkkf9Jn97Io=;
-        b=oSKzAaY7tIFNZGuIIgQz8Omk6+xF/zVJmfjWZegIRG0kYUZzmZhnQXDOuiUTJIgChL
-         oNV5rpbuGSRuS4CSHxLIggykHpG0f4n/VdgZ2+AU4kSQvcwyU1Brk/sxo79kffwYTrvg
-         mpmyBIASZuo1cgML8uUua918uUfUSZgGTa6s6YtX447ecxhKEvW1ty+85Ou9sPz9zUd0
-         arEtybXrHYcz6ezV7xB/v6PlhFs/cRAzzvhm3ffdHhkc40hQAIkwVOGSGLkgLhRVRHBD
-         97epleJw+ZrT5ywU9K52r+hltYBpV+MZpBzGoCX31cT7B+/OGh0r6AdidVq3BXkHL6n2
-         uoWg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b="cmRYMx/f"
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-93e7457349eso317629085a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 13:29:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1791921816; x=1792526616; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=toxicpanda.com; s=google; t=1791923342; x=1792528142; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:content-type:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=xFuEyDlYHgdcnxzN9A5B3Rxn2gC4ba2X8EOvUAd6hpo=;
-        b=H68qEmmvpyeJu6G2IWTpJv5xkJLsQricUPc9Ou+f/mdzwVgurR7CgIAJqefXR/HWFv
-         1GS6S2kbzYndfoUwgdNO4oJqEoYcUms6HZZcjVlz2bWIM/kimLfd+ATGU5DAfy8WxRe0
-         ZRy8vvW/qw9GD1Mu4nE7HduUirNj0eQvIxchf7dVa578VTNPl0xAYNJpuVFgzcTwdtvq
-         7Q0tXKG2IOdDJdTxBM9H/3ZoE0N1z7XLxBg4OGLAcwkybTiStZ5KCDQ+LL92UPIHK6qG
-         x6fAHnX0GMekyGe3F4od7NOlepDoTGBP8nKq2XuoV032TaxxzAX5u9Q0tgqsNfVa0r3O
-         HFuQ==
+        bh=dohylkge6OeGVizhzGCANBuwwSEz+KJDIqf/mQitXs8=;
+        b=cmRYMx/fpjMfMXv6/wVBv5oJhiN9q86aQTYmBqJNN2bqq9f8vRJ6Me6D1TNxiDuGV2
+         uLugf+im0ZLsNj+QbBXArtP+LzFQWF4jZ2LGPKQ7SLnoPe6h3WiDfCNEKIopiAGgIZhq
+         HXPtp3e5T6cFlPk9TL+L20YnSwzOPiTI6GVPn1AWROOEIsP90oR9sQUn1gEFaRQvHJ+Y
+         88EikCqPg54See2CAppPtIAHRQJ9bGaFRBlxrcN3IXfrZVxuZUm/McyRPWOKB8cUebOf
+         ZeJqdH5iryIlamTZTkpqvpvSckOfqeOkghpROSKiKipi1hn+/jk0a6v5HVf1aOKM8cLU
+         lTyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791921816; x=1792526616;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1791923342; x=1792528142;
+        h=mime-version:content-transfer-encoding:content-type:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=xFuEyDlYHgdcnxzN9A5B3Rxn2gC4ba2X8EOvUAd6hpo=;
-        b=oV+UPRU8LA2jWUsHq6wkAfgPlR05SXSqLiksCbjtGTaWCSUiMcMaMI0uPqeFcYz87w
-         N5I5VIxDK8jUgoyD/xziY0we3WL8wpV1mJfR8cMmNe81xWqpfiexFYWZFHhytHaOJY3r
-         hzxIknYYWFywoXIHWrGvyDTbiQ9hmPf07p/S1mww6EEsNJwNwkGLAasynOlsOTUw8QEt
-         ICxE7XTm8KhR6ALSGsRCunp/l8nwMUBxpn1dp/XO0ZZFYomjm29QAnUAaYrUNx938r6C
-         H0ZBdbRFFVEeG0snmSBlrcNx05F+Q5BfwFeEchzbCgFg70BYE9HqWQuHz8H0zyRFJJuv
-         no5Q==
-X-Forwarded-Encrypted: i=1; AKwUvBxHnvfqUKodQI0YMvXOuWNBDcTsSMWYzaK+fbMKC8fg4RjGlKHIJyq6TPip42rJO8KcyB3LYPw/+9xysyATFDJnvJWoKJw=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLZdrBOPlXanit73ptXi1cJ+FhgYuwCOwn04gwPIy0IgVIo+636
-	XIO4Hg7eEdRmKH3z5+lP3AejaoVhWv8icX+u3A9vY/4XtJxPedyj68klcrxmHoBvoOk5Y7P0yqr
-	zW0TMx9zrFSN1XYFKB43IDUfINvhEtAF3MQlay4m/
-X-Gm-Gg: AYBFou0LZU2hCpWAhMsdsl1L8Ea7BF1RXCN5QFIyzfZBWYCe/vVZ2c9xlTWHQNfwjjM
-	17WTrTQS1y/LmRP94BM+UkWQLlSNjQbHUXPJmUFkLj8cbYpq5qmqGpUZr1mKMOLJaDQVQTMDUBA
-	JIemenxyJS2r7GanmEKs7DNWoAOybfa8j/XMB3xosObTXyCLg958JP+EXzdFg3M62YxPyUpaKv7
-	q5lz+4DlLvZQyQ7m1T/WaScLA3HCxz8XTLDSrxmFPZjdCRsl/0XqHnId3p1dz4rPhp+59Ojpxli
-	YjK4qW0zXgF+n54qBGxjk7UDX8XqyrJ/VS84sBTbAAHqghYbAbQYxU/D61GSdDKDj3PsozBGHt1
-	Kheho531KVa0=
-X-Received: by 2002:a17:90b:5886:b0:3ab:be66:ddc8 with SMTP id
- 98e67ed59e1d1-3abbe66dfdfmr8069651a91.14.1791921816217; Tue, 13 Oct 2026
- 13:03:36 -0700 (PDT)
+        bh=dohylkge6OeGVizhzGCANBuwwSEz+KJDIqf/mQitXs8=;
+        b=W13JWvwF1w119yO6goFqFChvZyKOmzmatwJpYwTQm7UfU4AgGKlaTk5bxouKPmpi8c
+         mqP/9wbrD4ZbknzzYNLLs1uV3oU6J3LS8Toic71jxE9tf+5LEQwZSGvEE4WVBzQd/3qk
+         kPpLlY0VFz8LFh9QXsFSRtnhCWxS80FgMVl7Qb26j+oswxNjpc5EXQwS0xMaD9rvgapd
+         Wu5ghKVtGbziQPKAVeOxAvGks2zjtnx5s9dW+0ifjb5lztrcaszI5wcPG0DLcJ2p34V4
+         YB8L0S0taCuxTc64MsKiIez4+1CMdRI3TGZiyuxcsc97HX0tOAz+lGXr6CkVPN6c1BT4
+         o8eA==
+X-Forwarded-Encrypted: i=1; AKwUvByfR57R8RptpH0wsMXLL+AwNuA0sjeAfzmG3b0ru3LZkABQwt2xbBgHzDVWjWwRNjKIjlhoCTY0vy/wJ5647KaUTh9I7II=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKhlnjk4rVVsb9A39wUUpnhRHwVdU649wffYOOnl1jiQbndgQYm
+	lPyzXiObH1X2e/IaRmI6kTVzz2fHZxLGoqoN+VQ9E6le2dWYKjnE3sUQm/9wRfjk/vo=
+X-Gm-Gg: AYBFou06V6zwHn2TuT3qpQBeeBMfswXRAN2ILkoxpWAsNTn//KEt28kQ5v84W86SdAd
+	eg+OninDhXVwEvo8seNoCyRMghjJnpoJ5LUJZlFl271AnjgNHLrVNVK5BaNU2nLNImpys6vU9GP
+	nyCzSRvuVx8YYBgel7q6R54JGS0XkFZFrj1XCRbRhD3YPOVGqAZYgTRD/lpQLN2zKIuSJ+/EuI5
+	Msj9wo4GvEz45SWYt1xXtl2p78Q07aLFzxxdy5zFvnzAgok3axXpdHzkMYWAaDyXeHabBN9WYPw
+	yu0M0GXqIioogYAyy7HkGQMnvwi7B7dep/JJtFe86uTeQNSxBFxlsRNeoC20fMWUMNoO2kuv21Y
+	sKGLaD73h6kwHLU/+CRtKKtnm2TZx5lxPZc33NQs8zIsLHkFjYKWJegbGO5Kx769Z4Zc84EfCbF
+	QQ8DhQlUvNGZrOiBlsLJwq96WzfLlB4T4R0Y3zCiUyqyF5FYg693ZXqg+l3HxlsHRlSBJn68gZK
+	Swa3Px+Uy9cptc=
+X-Received: by 2002:a05:620a:2591:b0:93b:d7a3:45d4 with SMTP id af79cd13be357-93ebd29c0bcmr2207495885a.61.1791923341761;
+        Tue, 13 Oct 2026 13:29:01 -0700 (PDT)
+Received: from toxicpanda.com ([153.61.196.253])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93ef5028051sm321623085a.18.2026.10.13.13.29.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 13:29:00 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, "Andrew G. Morgan" <morgan@kernel.org>,
+ Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] capabilities: close the ways around the CAP_SETFCAP
+ rule for uid 0
+Date: Tue, 13 Oct 2026 19:32:13 +0000
+Message-ID: <179191993398.6.7035194670175996999@toxicpanda.com>
+In-Reply-To: <20261009-aussicht-wortbruch-bohnenkraut-9e7a1cfd7580@brauner>
+References: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
+ <asehZEWAwsJcbqvM@hallyn.com>
+ <179147397027.4.15064782992163283819@toxicpanda.com>
+ <asfBRYy597qvzdCW@hallyn.com>
+ <20261009-aussicht-wortbruch-bohnenkraut-9e7a1cfd7580@brauner>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <179138670045.80227.16155454353416856947@gmail.com> <179188620452.191181.12068195457732970673.git-patchwork-notify@kernel.org>
-In-Reply-To: <179188620452.191181.12068195457732970673.git-patchwork-notify@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 13 Oct 2026 16:03:23 -0400
-X-Gm-Features: AclHuK-x8Auj0GJS-cFhNW52kGpl3z0EMRffxOk8nEUcDwL-EM60rfxC-vuurWA
-Message-ID: <CAHC9VhQuBJQmwZDmK+rKFUcfsRkBBjTEP0yGeoTjn-V1qaaLHw@mail.gmail.com>
-Subject: Re: [PATCH net-next] calipso: hash the cache key, not the option
- start, in calipso_cache_add()
-To: Joas Antonio dos Santos <joasantonio108@gmail.com>
-Cc: davem@davemloft.net, edumazet@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 13, 2026 at 6:10=E2=80=AFAM <patchwork-bot+netdevbpf@kernel.org=
-> wrote:
+On Fri, Oct 09, 2026 at 09:41:59AM +0200, Christian Brauner wrote:
+> On Thu, Oct 08, 2026 at 11:13:57AM -0500, Serge Hallyn wrote:
+> > Yeah, that's what I was thinking.  Or even stricter: ensure that to join
+> > any user namespace, a process must have a superset of the namespace
+> > creator's capabilities.
 >
-> Hello:
->
-> This patch was applied to netdev/net-next.git (main)
-> by Paolo Abeni <pabeni@redhat.com>:
->
-> On Wed, 07 Oct 2026 12:25:00 -0300 you wrote:
-> > calipso_cache_add() stores calipso_ptr + 2 as the cache key, but
-> > computes entry->hash over calipso_ptr, i.e. starting two bytes earlier
-> > at the option type and length.  calipso_opt_getattr() looks entries up
-> > with calipso_cache_check(calipso + 2, calipso[1], ...), which hashes th=
-e
-> > key itself.
-> >
-> > The two hashes only match on a jhash collision, so the CALIPSO label
-> > cache never hits and every labelled packet takes the full DOI lookup an=
-d
-> > category conversion path.  The memcmp() on the key keeps lookups
-> > correct, so this is a performance bug only.
-> >
-> > [...]
->
-> Here is the summary with links:
->   - [net-next] calipso: hash the cache key, not the option start, in cali=
-pso_cache_add()
->     https://git.kernel.org/netdev/net-next/c/d538cc3ec0bc
->
-> You are awesome, thank you!
+> I think both are fine and I like this proposal.
 
-My apologies, travel last week for LPC and LSS-EU has me a bit behind,
-but this patch looks good to me.  Thanks for identifying the problem
-and providing a fix!
+One correction to what I wrote: the weaker version isn't enough.  A
+namespace that maps "0 100000 1000" doesn't map the parent's uid 0, so
+it passes that check.  But with an idmapped mount that maps fs 0 to
+100000, a task that joined it can write fscaps that are stored with
+rootid 0 and honoured by the host.  We test that flow.  So it has to be
+Serge's stricter version.
 
-Likely too late, but for the sake of posterity ...
+> I think that this is an acceptable restriction. Mapping uid 0 to 0 and
+> dropping caps is borderline useless.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+That makes the restriction wider than the 0 to 0 case.  A root task
+without CAP_SETFCAP couldn't join an ordinary "0 100000" container
+either.
 
---=20
-paul-moore.com
+setns() also only covers the routes that go through it.  These don't,
+and need their own checks either way:
+
+- writing through a uid_map fd opened by a task with CAP_SETFCAP
+- ptrace and pidfd_getfd of an entitled task from outside
+- a task without CAP_SETFCAP creating its own namespace, which a
+  privileged task then maps "0 0 1" for
+
+So v2 would be a level on the namespace computed at create time, the
+strict setns() check, and the checks at the map write, setxattr and
+ptrace reading the namespace's level instead of the cred's.  If that
+sounds right I'll put it together.
+
+Thanks,
+Josef
