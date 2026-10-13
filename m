@@ -1,75 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786EC40DB4C
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 09:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE763A83B1;
+	Tue, 13 Oct 2026 10:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791884365; cv=none; b=U7caQRPNXbrKxINiS4RJvebcilvbMg2H3j5JYjgA7tUMM5xlwXc5A5hamky4LShL4cyKgD+wgp/QSDw/cBhVKRN66ruZD1HTkFt0rD3T9NYBjj5G5oiWX3muMnNQu0TE2ZLON7HniiEozdnWPqDkIK9XUKzengFus+I5dIRTUSA=
+	t=1791886207; cv=none; b=Nkni5FyGel6ZDcNNtkbmq0ZBd32Ds4AyV2KE4Mh+h7rCWH89ZVhQL1ViIveUnjN9pV1D7/iDgTFY4/z3xefAHPcPh7zvsPMsqcxvHUD7AHsl+HrdeNlGtcla4R8z2BACXutmWT48WsBohLLVdbO86jA1FDISTOjXZ3+bl/J+Wbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791884365; c=relaxed/simple;
-	bh=+vH0T67VtYGl8ArtZDfYACkd+0q6dg/aUzNq2c1ccZ8=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=Ud4eGqhZAeTz0fCHvrF6X95upgQx6t6NEPKI12jOZKfujyNv8UWvHW3f8FZQBN4Uy7wT5Q7uPj12PHTu+Ae2vbu+GXsSbz3JC1hialNvoLsQBxEiSLB7Y115auUAQmrx4ED+3Z8P3SNcLXYa4byDEpagn99nQT/nHxFHW456oHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mh/Elfzr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791886207; c=relaxed/simple;
+	bh=xp+PgL5DDnyHx+ebR4oX4SVhOdKUA4bH8GqZTXmBCC4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=QTdB7tTqmYZF0lNhTzE14GK3mJbjiP2W41NZurKK8Z/4/D7XZ4ux44dkZHIHTDnTil6bxAmJUaJlTwwyNm7BGJ8nUai19UcswG7XPcfOokUMTB77BsCvqmNN2TFpKJ/tP9V2iBA9UY332i7IMEGihQT5Sa7oFduL+eCPgTZxNhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYpD2m2W; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mh/Elfzr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EFD61F000FF
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 09:39:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYpD2m2W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDEE61F000FF;
+	Tue, 13 Oct 2026 10:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791884364;
-	bh=nO5hAj0y94nKBLNC7BwE8wCssEv6wT4jw/jlviHCuwE=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Mh/ElfzrQx17LW1nm19mBZFCCHtVMuUFwmxI4hpG5N8Xs3hKMvGVyNfd4GQYkaRaW
-	 6JSxawBmS3i1KWG3iwdBoRIIFv1Xt5ZeJsx0lwAeGqS+NwTPbM+ghlwnk9wfbhQHmO
-	 J3pae69Qxxj2sQ8Reh/aJsYBlgOSPxFQYaPqSFijODzgjEqCYnaoSkmO7N2c+J3yRC
-	 59uJblzuu5RsHs3sEcn/VXYzovoTXJHadoz2g7oN/LE0Csd/JXNS4vK7zboH72BX7+
-	 rZsgqWFZS3i42BoSm6AuKUHj95ilKeJLzviaBl6xk4wRu7IlOJ/zgg5SB4L2XFl5by
-	 tv022NElTVJUA==
-Message-ID: <sashiko-outbox-169365@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 2/2] keys: Serialize ownership transfers with key
- accounting
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261013090358.1178367-2-nicoyip.dev@gmail.com>
-References: <20261013084056.1070923-1-nicoyip.dev@gmail.com>
- <20261013090358.1178367-2-nicoyip.dev@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 09:39:23 +0000
+	s=k20260515; t=1791886205;
+	bh=5sgeYGqUn15szmOLtnTRbionXGUFCUv4tj8tz96K9lY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=PYpD2m2WaUC1FEEA+nXsFJxmuYvR2LW/+4YkJQQTrUXOTqeoqaM2L08NRRbNn+d81
+	 ChJg54xkk9aK0DoVvgUGIpzuuV21l225kbZyfQIqFXxEhW/Y74NvQxSrw4UxfFPNFO
+	 1b6EZ33Q/VJp6+AhfhRMyqc55tLTOMKBNeytSYUA0BUj2gj+Dezhj1aNgm/iWnIXOF
+	 AytS35OwtSx2TInq/udRC9yHoYC/nlhoy2Ul1u5DF48quorVj12zAhJWA+GuZEb97Y
+	 ZRuZ2une0lk1nvujSGKY3rOLGRlA57hC7SC2CbUysBCvt0GPnHFBoKdUqw9A1oKDpW
+	 KnYDFcl4u1bbA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B44383926662;
+	Tue, 13 Oct 2026 10:10:05 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] calipso: hash the cache key,
+ not the option start,
+ in calipso_cache_add()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <179188620452.191181.12068195457732970673.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Oct 2026 10:10:04 +0000
+References: <179138670045.80227.16155454353416856947@gmail.com>
+In-Reply-To: <179138670045.80227.16155454353416856947@gmail.com>
+To: Joas Antonio dos Santos <joasantonio108@gmail.com>
+Cc: paul@paul-moore.com, davem@davemloft.net, edumazet@kernel.org,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org
 
-> Protecting individual accesses to key->user does not make ownership
-> transfers atomic with accounting updates. keyctl_chown_key() holds
-> key->sem, but instantiation is serialized by key_construction_mutex and
-> need not hold that semaphore. KEY_LOOKUP_PARTIAL also permits chown of
-> an uninstantiated key.
->=20
-> The instantiated-key count can therefore be charged to the wrong owner:
->=20
->   instantiate                       keyctl_chown_key()
->   increment old->nikeys
->                                     observe KEY_IS_UNINSTANTIATED
->                                     skip the nikeys transfer
->                                     replace key->user
->   mark key instantiated
->=20
-> [ ... ]
->=20
-> Fixes: 5801649d8b83 ("[PATCH] keys: let keyctl_chown() change a key's own=
-er")
-> Cc: stable@vger.kernel.org
-> Assisted-by: GPT-6-Astra
-> Signed-off-by: Chengfeng Ye <nicoyip.dev@gmail.com>
+Hello:
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013084056.1070=
-923-1-nicoyip.dev@gmail.com?part=3D2
+On Wed, 07 Oct 2026 12:25:00 -0300 you wrote:
+> calipso_cache_add() stores calipso_ptr + 2 as the cache key, but
+> computes entry->hash over calipso_ptr, i.e. starting two bytes earlier
+> at the option type and length.  calipso_opt_getattr() looks entries up
+> with calipso_cache_check(calipso + 2, calipso[1], ...), which hashes the
+> key itself.
+> 
+> The two hashes only match on a jhash collision, so the CALIPSO label
+> cache never hits and every labelled packet takes the full DOI lookup and
+> category conversion path.  The memcmp() on the key keeps lookups
+> correct, so this is a performance bug only.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] calipso: hash the cache key, not the option start, in calipso_cache_add()
+    https://git.kernel.org/netdev/net-next/c/d538cc3ec0bc
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
