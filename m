@@ -1,74 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD743314B7
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Oct 2026 22:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B977437E5D4
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 08:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791842788; cv=none; b=QqRwY4G47U8YkGdHAzX7jJ96eKNhKxOPanz9CI6SC+PaaqnkzCWF0j+nVdcQxqwd295eYie/c/gvLG6vxF9uq2TXygbsaTWRCt2WXpPeWynU4xrmIJz2bjVqSDCfrA5FVkiEvJN8iR5o3MyZQtXqjyt/uTzulWiKWMwRgbUJb/Y=
+	t=1791880872; cv=none; b=A3nqN837E2efeBL1l7fYeCxmlI2ISijkOrNF10OTIgLL0t2OADqcPADCEeuYnpJL8CEi57FPtUWJjTOsp0F/l68kQhLAP13R342gwO9M3mSPxif/O8BYiTwsL3RjB+OyjwsaX7GVMfraHkoONj8jVsunn5n0V68WZ0/Rf5zEWOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791842788; c=relaxed/simple;
-	bh=OHQOgrfxb6k9VnAbaU0KVDjflNGO6E0VnAomiOvAj7E=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=OPGFjBAIcg78IxXZpeWlWOYbttCnKXghHRP2PA8fZApEG2MNWqrI6O2HwYLp3ld+b+yVsbsKqRndtlzrYaXmxA0W8KbPDq4MC7FkoH8NzGB9ckPeP2CFUhgmuAN6iI5cM+MXtPvA2CFjg/q8x0mzoH5D6R+Ko/X21ksLRLkBWf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBIEUObd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791880872; c=relaxed/simple;
+	bh=wQcsrZGEGoTD8tZ4mSQVDM0CA0NU/hotKN0jq7p84wM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DfJKsgmAs6Bmzqu5rYnNrcCXAzSnUBMVx/MFoR4HAjbw2XDDEjMDTQowG1t3NT9AwYMTNs5TXSnUHQ3vPw8+ddNXlKh5MwJ7mS0jFwaKOugeMS3fLEakStFNkcJ9UI3FMqK3HVJ4nBbuypklStzHVvTRH57okquE2DvYn4AGQe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaU69TOf; arc=none smtp.client-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBIEUObd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C53B1F0089B
-	for <linux-security-module@vger.kernel.org>; Mon, 12 Oct 2026 22:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791842787;
-	bh=VSVXUra5MG+CiNv6b1/Gw9fdDYqO9NwSVBNRu3a0LYQ=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=UBIEUObdYbefWGjovKpq482Tuer4JzG9RPU4gvmJQKsts5oAW5YSedbRiF5OJjnFt
-	 IsxuxbRH3lbCy8j3Bd5ai4i5jQcwcbgaORt94jBG0sBlNJtw58jX5OfIpUk0d+4mhH
-	 Tb7xCvI7FvqCpdpP6+YkvBcjt3uL7mwLiIKC55H1E55RS1EuC3O09oG5Ilfd7yfsUe
-	 VuYXbClCSZysQv3pw4vrOelyskyvQVAniIDtKEctjYZqaxKysZjXK32ciRwqMcVaJm
-	 GSepoWZIx+270ak+5m80/pkeyq5v0W98nLlb2blYz5qOsqY1lLzeYT/dzE3n4NWHKv
-	 x8+T4CY3y55Cw==
-Message-ID: <sashiko-outbox-168671@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] apparmor: fix query_data() output overlapping the
- lookup key
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261012215703.30592-1-cenzhang@linux.microsoft.com>
-References: <20261012215703.30592-1-cenzhang@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 12 Oct 2026 22:06:26 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaU69TOf"
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-3550dd02c9cso207757eec.0
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 01:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791880870; x=1792485670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ogQf9jgUBIrgk7octuKzEMYSBjX+/nz7g2meA6r6ONk=;
+        b=VaU69TOfE1R1ebWFhpl2jndVO6elNYFjpdO3b0KyshipPlbPN7+t0CWZ4hsMcYoHcz
+         eYQQ3kMORsYT4FoEAmpKfmHRMgVM32OELKJZKEMzA6vbLJr1Fkup5mjV3Nb8yxwhoYa2
+         vg6nekYyM1dUeMQi/MNb5ZJMS8k6B9hIqs0WYC+NbeVEfT1bGIDtYetfCnFcaJA8ZK3c
+         iMNwjiOhbTEOEcIDx4MhUnfzMeHOvCwFPqss7Biq6K2JWNxs5Pv7v1H92ja+eoMVPNSg
+         zaCHenbYbuVQPDFFn9gkGcnVKoTpptxMU3kdMbuS5LwDyWC0g0HHaVDNlTOQiK83sFWm
+         6SbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791880870; x=1792485670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ogQf9jgUBIrgk7octuKzEMYSBjX+/nz7g2meA6r6ONk=;
+        b=ywgb9tNYonTDH2KHzBNk/j9T7QWNKij5bAzgExJ18SI1ogizOhOM4TwThtNpmBKAdM
+         zNhWLLvMYkFjyo+J1zhX+ut7jGLIjewE0TaBO7v0uOSAflwbDhEgDgmZT5ug9QGOXVUL
+         cXa8cgkewSUvsGNzItCwjiC+jKb4QTF5ZpvdtMoAfgBHU4xBK4mV2EB1afeELzDvCPjK
+         UJYgeuV0uhEnaSDh9ohzH+wipx0FPYZJssLMi14nmZRMDcVzF4d+qZZiwhPPJ4GUS/3d
+         R9UvJAc5tTs8z+v7Zyp1Myc9NGptSHT+94ovT2MsAxLveynyZIFnBgVaQraiIVGGdPNg
+         JL3g==
+X-Forwarded-Encrypted: i=1; AKwUvBy68y2g0aMx8C5ymPOl8qZOgXWuwyhZON+ncestSyE3OT1ozThnmRRajy2c1/nj127TrXmKeo4JeGABxUVkFkvAlVV/6QA=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKtdWU/LwvcT3hxkApR5fQEkbQ0r26w/IRsZr4CB1SzroUIfVPN
+	rAfyPoBDKVQtTfOltYOzIw5eSELUqgE9PehYdipHUQdutw+SbhYRSX5x
+X-Gm-Gg: AYBFou3jiEmXHFMpmxggFewS9LYon8Gj0QKl8eV/vjIIS75jFLgKWoRXCZumYlXhRQi
+	Um+yu/zqg6zRGnh8tvMyZrQqX5FpCmKs+itI6cZmknExM4NHpjfb5Bz9IeA1p7lmCMqLuW6vxDE
+	TVwsJVcYm1aScUU11MjfPHHzlNujsexZOT4Man6e1N1mwcGimFYdITBhimD2l/LVfImi1hxh4Nv
+	7sKcF4gKWaGEfpE/XP1Rluaq6KQ5L8Ye2e/YB4dQC5QY9zBOHY3bc7AcbSVQloCfKZwK+IYrp1L
+	/gnbnk/dWFlJIi9EL/KuEX0zGezg0UcVaHowVrWftlnJWnjyDVmLXg2ZfRMnRTEyJN4khpRMp+x
+	4jVwwSpkGmjqANTbT0xu1TVO1PSv6S7Ziojx0hINEb2ezzKNiS9W9wr4MuU/IBXVdJ8RMuQArPE
+	e5Wxb/VUZYS7ZTfG5HWpgexKQGMJHXTIUqfEJIXB6LEUGK9U2yqecPzZ1kP2vRiUYs7wxnu3MeO
+	FrCtFknTpqXsV1NYtZXI6fxQ5vIhRbmc1FdyHnAN+04Rz+nSjV5gfxjlVhouYzC
+X-Received: by 2002:a05:693c:6215:b0:35b:cb8a:8ce7 with SMTP id 5a478bee46e88-35bcb8a919dmr6285540eec.1.1791880869459;
+        Tue, 13 Oct 2026 01:41:09 -0700 (PDT)
+Received: from localhost.localdomain (45.78.65.84.16clouds.com. [45.78.65.84])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537cb1e05esm42575464eec.25.2026.10.13.01.41.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 01:41:08 -0700 (PDT)
+From: Chengfeng Ye <nicoyip.dev@gmail.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Chengfeng Ye <nicoyip.dev@gmail.com>
+Subject: [PATCH v4 0/2] keys: Fix quota-owner reads and ownership accounting
+Date: Tue, 13 Oct 2026 16:40:54 +0800
+Message-ID: <20261013084056.1070923-1-nicoyip.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> In query_data(), buf and query point into the same multi_transaction
-> buffer: buf at the start, query a few bytes in, and the lookup key
-> right after the label string that query points to. Reusing the buffer
-> is by design and is safe as long as the query is fully parsed before
-> buf is written to, but the key is not: it is dereferenced on every
-> iteration of label_for_each_confined(), after output has already been
-> written. So when the label has more than one profile with a data
-> table, the data of the first matching profile is written to buf while
-> the key is still needed, and overwrites it if the data is large enough.
-> The later lookups then run on a corrupted key. Besides, if the data has
-> no NUL byte from the key's position to the end of the allocation,
-> strhash() -> strlen() -> jhash() reads past the 4096-byte slab object,
-> triggering an out-of-bound read:
->=20
->   BUG: KASAN: slab-out-of-bounds in jhash+0x595/0x5e0
-> [ ... ]
-> Fixes: 317d9a054e1c ("apparmor: update query interface to support label q=
-ueries")
-> Cc: stable@vger.kernel.org # v4.13+
-> Cc: Francis Perron <francis@akrites.dev>
-> Reported-by: AutonomousCodeSecurity@microsoft.com
-> Signed-off-by: Cen Zhang (Microsoft) <cenzhang@linux.microsoft.com>
+This revision keeps the v3 topic order: the lifetime/namespace-reader fix
+is patch 1, and ownership accounting is patch 2. Each patch can be applied
+independently to the base, and both orders produce the same final tree.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Patch 1 protects only the three quota-owner UID snapshots. It relies on
+key_user_lock already held by lookup and final reference removal. Its
+READ_ONCE() pointer loads pair with a WRITE_ONCE() replacement in chown.
+The reference-release ordering and lock handoff keep a sampled owner alive;
+this does not require patch 2's new accounting critical section. The commit
+message gives the lifetime argument, including a final put by another task.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261012215703.3059=
-2-1-cenzhang@linux.microsoft.com?part=3D1
+Patch 2 serializes chown with quota reservation and positive and negative
+instantiation. Each critical section is complete within this commit.
+Atomic counter operations alone do not serialize owner selection and
+count/state publication with chown, and instantiation does not require the
+target key's semaphore.
+
+The messages explain why keeping a key alive does not pin its former
+quota owner, and why key->sem does not exclude instantiation. They map
+those two requirements to the three reader scopes and four accounting
+scopes, and explain the existing protection at unchanged lifecycle sites.
+All seven scopes in the combined v3 series are retained. Reservation and
+instantiation locking move from v3 1/2 into the complete accounting fix
+in v4 2/2; no lock scope is split between commits.
+
+The procfs changes cover the originally reported proc_keys_start() fault.
+The filters continue to use the quota-owner UID, since key_fsuid_changed()
+can change a thread keyring's key->uid without moving its quota owner.
+
+Changes in v4:
+- Keep the v3 topic order: lifetime/namespace readers in patch 1,
+  accounting in patch 2. Both fixes remain independently applicable.
+- Put every accounting critical section wholly in patch 2.
+- Make patch 1 independent using existing lifetime locking plus explicit
+  pointer access marking.
+- Explain the root cause and every critical section, plus the existing
+  protection at unchanged sites. Keep allocation, notifications and
+  reference release outside the new accounting scopes.
+- Correct the reader patch's Fixes tags to the namespace-filter commits.
+- Rebase onto for-next-keys at 22430ae5d90ab and request fresh review.
+
+Validation:
+- Built security/keys/ with patch 1 only, patch 2 only, and both patches.
+  KEYS, PROC_FS, USER_NS, KEY_NOTIFICATIONS, BIG_KEYS, ENCRYPTED_KEYS and
+  PROVE_LOCKING were enabled. No compiler warnings or errors.
+- Both exported patches pass checkpatch --strict with zero diagnostics.
+- Both patches apply directly to the base. Ordered git am in either order
+  reproduces the expected intermediate and final trees.
+- No new runtime, lockdep or Sashiko run. The KASAN excerpt is historical.
+
+OpenAI Codex assisted with the review audit, series split, pointer access
+marking, commit messages and build checks. The existing author sign-off
+is retained from v3 for human review before submission.
+
+Previous revisions:
+v3: https://lore.kernel.org/r/20260927162528.943886-1-nicoyip.dev@gmail.com/
+v2: https://lore.kernel.org/r/20260904080940.575882-1-nicoyip.dev@gmail.com/
+v1: https://lore.kernel.org/r/20260823170448.3856516-1-nicoyip.dev@gmail.com/
+Review:
+https://lore.kernel.org/r/asL2UQjYCxt9SF9K@kernel.org/
+https://lore.kernel.org/r/asMQMzqVkmYhwgMB@kernel.org/
+https://lore.kernel.org/r/asNCIs3OshLwGWrB@kernel.org/
+
+Chengfeng Ye (2):
+  keys: Protect quota-owner reads in namespace filters
+  keys: Serialize ownership transfers with key accounting
+
+ security/keys/key.c     | 15 +++++++++++++--
+ security/keys/keyctl.c  |  6 +++++-
+ security/keys/keyring.c |  7 ++++++-
+ security/keys/proc.c    | 15 +++++++++++++--
+ 4 files changed, 37 insertions(+), 6 deletions(-)
+
+
+base-commit: 22430ae5d90ab288b0ee2ad99ae941f4a666b694
+-- 
+2.43.0
 
