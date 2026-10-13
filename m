@@ -1,64 +1,63 @@
-Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CAD5218A8
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 16:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEEF5221E4
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 16:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791910118; cv=none; b=ll0Za1UotSP1yiXiJz97/nEEOdEQblzfMXmCGWJAGjmj8Fj/+8jY+uiyyETGJKxX4Fz2l5REBdzmYH1SWbjI61Ig8jeKxstdLsNhPnvMQu+kpxlz4o5pnF2/tMz0fU4AYoI9aGrozLPhfxRcxqoAK3X42lcCR4RIIfXNz8VX9pM=
+	t=1791910121; cv=none; b=KkUAYTpoV9ydxKH8FaeDTyjm9JBzGlfS61xl8p6pQE/8x5A3OAoTAX6S3FpDpnTec7OvENqPhz9n0b9StF/8fDx9Cg0BDy8w+rJHgP7i1qwHYuhMheGJTdSnYDT19+WWwYqY1Trcc9mKsh9187eEgbWh46EW6+enlo8ub53NkyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791910118; c=relaxed/simple;
-	bh=BCAqj/oNSIkxhy9f/faC3Z5BynLYIvDhcZSyMpX87Jg=;
+	s=arc-20240116; t=1791910121; c=relaxed/simple;
+	bh=twaqqsy4JScubQuzgnErtrn8QhXdbphsw1UXkZ9/kZs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RwHbouMJlAGnvD2XjbHM3bnJj/azzul1aU/r39x0yRhMk96MIeaXlFL80URdL0as02fLNpIVigne6jl0IiZ7h3dMUGfHz84db1iig+/BfCZdHYO919p++pOdKfy4U9EygPslJl6eOKsVgUuCtHJlbXxh4cvT27fig6U3artE3FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e78J4nq4; arc=none smtp.client-ip=74.125.224.45
+	 MIME-Version; b=Fqr7myATIR6Hgy8Mr0hv7WBkawS0c0vkfxpMYc/pJg3okLwckGj5b+8af5vnmeA6TK9V9RJhNkgPLOtAORlfOA9qD7755wgbuUE8PP2OzE4n3EtCip505HOUbruSp4UJwFXxlwwI+OlLiTCPuP4jIUpqLkceDzt7vL8Wr61Sj3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rCb+uY+y; arc=none smtp.client-ip=74.125.224.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e78J4nq4"
-Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-677bc4704cbso2847118d50.0
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 09:48:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rCb+uY+y"
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-677bf06de21so2422480d50.3
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 09:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791910114; x=1792514914; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791910118; x=1792514918; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=S2aok334Q7ZttY1fa/TkNexJGvRAyT6M5LhoQHJ0F1s=;
-        b=e78J4nq4/OnDmBZsB8aIb6KwrkysJNsh3ipCQhpk+WdJsGa/VG0V6tHhMrcdDtNwAo
-         okHoz184MZoBXHb/4SGQG/qbyLgJwjncl4KKL+gViRTYSPZ2BpFkdg3jjdgygBHk+KEw
-         PJ6Z5Y6zVDebfOcxQq6V6v9td2WnVEDfv4CVwHf7xfbesWdDKB6A/A0+Uu92xAmKDAAM
-         8A3qQCoaZ0loMYFCvvB0E3MaqBSTMWnqwJ7J0KSVFhMZRbRyE7+H/hSc4E3pA+hjENec
-         YfcweV438BuGdd/vmgzSfj+OanCOkymIIGKz7xYceeyKECIRQRLJ4ZpYGZSGYinzhikh
-         5acA==
+        bh=0sxD+uq/JHtdGPSVPV9/lbl9Bu23cNBYDzbADlnpt2I=;
+        b=rCb+uY+ywn0zSi2kR95yR5yM6UU2HGF8iHYnTUTTcSztxJNmcHj3VJq/nFDhiWMcuK
+         Qnlp3h9lVa8uFQh27oVOXjptMgoF5HQoYPRNQuSezZAlNq2TbdJ9/vfEoGvIDEXewwWw
+         7vVIkyQ+c/8YUoMEKk2sQYf6wcN300Tb272J5PHshqlYbXObqj68UJw7aCxs+YujgXdi
+         nlg67UC1U2J/8bRiKV18EjatD55RaZ1BSTMBvlgceETkJFPmP43vb/0KcLYEgYJ9YINd
+         OA7Gb/7Eglh3ov7bfXGfy11M2EMrBvTrPYfJTMXRKAV9OL05YaYb7GC+G9Ta5o/Kd+ph
+         3LdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791910114; x=1792514914;
+        d=1e100.net; s=20260707; t=1791910118; x=1792514918;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=S2aok334Q7ZttY1fa/TkNexJGvRAyT6M5LhoQHJ0F1s=;
-        b=NzvkInONyZhgFoksJX6nex54wMP7gtMBcz8er82HJ2hnjTwz2TN3Z10NYRsHoEAUgq
-         qe9/hH2yMhCdLSnU5Ln60H/Z2+NEH2LQgfAQT0SnA43vZUEycqo/EMsdkVq7Jy/QqgzU
-         Pin2QspIzGNPtWfE08qmoy6tnTuXPSdZ7C5wbMMPcufcIvQeuDlpWE9u1/7noJKxBxbf
-         7xz8X4nK2anWzTePSYo2uiyFrMON5mOLCB7ZdmXjWHXbCfxi3Qw0mgufUepHa+Vl7qUx
-         DYeojbcF97oVLnIW+rFZpjVkO3VpYVVxhgH9cZr6j65xD6Esb1rx/DTuvyap9G/06NKR
-         1CCw==
-X-Forwarded-Encrypted: i=1; AKwUvByrts/4uyf2KrbnPJX6CQmPpguPbRsWX/WJaZKzyv705jrVTQHxk02TXQ8DJ+UydVdX2n8HhKIavcnAbVjf126Rzkx1DtE=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKg0Pvk4cguq5XPaL7U6K3LwwA3qLJd3SxucqVbgyi2lMNA3It+
-	Akduh1FBd0QPszdQf4Mh1IHwcnDNmRuqTP14gaLQhIsyMDVMvvG49HXp
-X-Gm-Gg: AYBFou28z8CGsi68su/rkuFSh/tyVgwJ/aSFu3ltBfh++TbW7Rz71z4MpY8dkH2FqSq
-	mRNZRcVHoj3mYnA7S5OLk6kCnGsW/nvcjGewFZyH3RnE+UBfcCpyU5uiShk4qfq0fwVqHD3qDSv
-	S0uScYRloxwekeRFdt1hXZY2C30UDiS3a8kf8rVYX2C10V1ue507VcF1wum8TYMz58mJe8boaoa
-	J6QQvrFDQ4KRbIXMzSCsMLUyo4WOQxVicQkIntgzHhT9YIT/kiPyYJlIYBC1f3XsxK8Q5UtG59/
-	gUOaa4KD6ojIsRNi0TsvvkCVMZWQJpas3DoeyhwI9aINhW5ixgpT6khOpj3Igc/VO8GSsxQrbgR
-	CbAvYpV8BuvvnMg2Q7vOpd2qj9fp9NriPqPXhLACo5DN6uFDqs4n0R90GuI3c+03JRLWjStoEes
-	MCL6Jae2najWYIb/qRZY2yXd+EUwmQLqcFBHyG9+9Ep43u0EvX9JP9W60BwBjJRm0iQzrapwO9V
-	fzRl9UxsHk=
-X-Received: by 2002:a05:690e:144d:b0:677:ae40:c403 with SMTP id 956f58d0204a3-679362d060amr4853322d50.89.1791910114264;
-        Tue, 13 Oct 2026 09:48:34 -0700 (PDT)
+        bh=0sxD+uq/JHtdGPSVPV9/lbl9Bu23cNBYDzbADlnpt2I=;
+        b=sddZcbB7TmwHpqyrQute2Wu73WPd4O6EHhw+++wfNPzWtrkzcqLIXwCxNTlW1DcXuh
+         3CKhqgCHDiizlWfhzNr8fF3FvFYXiI8XA5LsEPLC+pNG/34kexxGkqysUpM+sgEYRsf2
+         uzWTTFqQUTlh8RwDetXoUj7SXNdUimB3j7fw/RfzQ3bBD0XMx91Z5S1Cc2br/K9rYJ1i
+         rZ3XDGq1QKG8ibj0DB3rMUwapovDnSoy24lg8xfIP/oF1B5DgzXdEZEDbsKilzo1aWqc
+         AmcAk4u9JQy29aLlXdNcgmjzExnZqpH8goFrjSpyG6jD+VEV50C3d62nXCyu7XmRqa0I
+         SRpg==
+X-Forwarded-Encrypted: i=1; AKwUvBw7wcBN94WwjTaHdoZMoRSE9DGutc+6pJu7j83LMTbX4wBYwiXdhGG82mYeuUc58EJANxKTDkxDnNDo0rNX/BJOqa4RMcs=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKq8j7Td7hlYKkyzP5D+RhxzprjUeHFZH4/CPnjGmstRwCngbIM
+	v2Q7eKmWUJjvNNY2R7mZf+zmIZoum1xY0CUrQBD5bsPBAZXSyhS/yx3g
+X-Gm-Gg: AYBFou1PbSzvCYRje6GCq7HQIKOqE3AAvfsy+77EGYsr0kFZO2/KPfQFHDmtUACmiKP
+	DWV/gC5a4NTk7UgZaEswBhPpB+eBUuQ02Ccf6kAgBNC6P3zQ7CtmNcJLC/WoClGpsEn7qNRzthj
+	Nlk2nZaJaWJcgEGf1eSrSbfWvJtBJJOi+AbVevYXdhNWhqC5ZrsGHUsWcVR/R5DgUat/JYPVrEI
+	6YY9F1RoYMVyvxu9Prc7GxCi+/YI0znPpcV7QclWjjhcNSB7TmQL383VXNJw8lKXDM3kjoEuCS5
+	SGX9dKRd91ATVjKf6S1aZI7N0cmFlQ/gOV6oBLwz1QzA17kVgnalCaOMWecGeJGCX/tDAZUt/RP
+	hcNt1p+nJUiBOGIJ2rO8DnkkXKD0PUo14oeq2LolXwIg+OhHF6NZLscPcPPas2yseoDPzmk+VE1
+	X90h/jT9BYcEe8MBXPf3loafOpNBEXgbKYUzRwNcafQNGwCLzku+kYK3/AEtZaM6T7LnnTwRtb
+X-Received: by 2002:a53:ac8f:0:b0:677:deb1:2af5 with SMTP id 956f58d0204a3-6793600b308mr3381591d50.25.1791910118205;
+        Tue, 13 Oct 2026 09:48:38 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:d326:f863:5ae3:683])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67986a89294sm81136d50.15.2026.10.13.09.48.33
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67986a89294sm81136d50.15.2026.10.13.09.48.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 09:48:33 -0700 (PDT)
+        Tue, 13 Oct 2026 09:48:37 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -89,9 +88,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Shuah Khan <shuah@kernel.org>,
 	Tingmao Wang <m@maowtm.org>,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH bpf-next v1 05/11] bpf: add a path ancestor iterator
-Date: Tue, 13 Oct 2026 12:47:54 -0400
-Message-ID: <20261013164800.2906577-6-utilityemal77@gmail.com>
+Subject: [PATCH bpf-next v1 06/11] selftests/bpf: exercise the path ancestor iterator
+Date: Tue, 13 Oct 2026 12:47:55 -0400
+Message-ID: <20261013164800.2906577-7-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261013164800.2906577-1-utilityemal77@gmail.com>
 References: <20261013164800.2906577-1-utilityemal77@gmail.com>
@@ -103,242 +102,168 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Let BPF programs evaluate a path's ancestry with an open-coded iterator
-over the stepwise vfs_walk_ancestors() engine.  The iteration holds a
-reference on its current position, which is what lets a program sleep
-between positions - a dput() of the last reference may - so the kfuncs
-are KF_SLEEPABLE and the iterator is available to sleepable programs
-only.
+Walk the ancestry of a mkdir's parent directory from a sleepable LSM
+program and check that the iteration reaches the root: the temporary
+directory, its parent and / are visited, no position comes back
+flagged, and the flags read back after the loop show it ended at the
+root rather than on a failed allocation.
 
-bpf_iter_path_ancestors_next() hands each position to the program as an
-acquired reference of its own, to release with bpf_path_put().  The
-walk's own reference moves on with the walk and is dropped at the next
-step, so it cannot be what keeps a position alive: a program that saves
-a position's dentry, or hands one to a sleepable kfunc, needs it to
-outlive the step it came from.  struct path is a value type with nothing
-a BPF reference could be taken on, so an acquired position is a copy of
-its own; the allocation is a sleepable GFP_KERNEL one, and a failure
-ends the iteration with %BPF_PATH_ANCESTORS_NOMEM rather than silently
-truncating the ancestry.
-
-An acquiring KF_ITER_NEXT needs one thing from the verifier: the state
-that assumes the drained, NULL-returning branch must not keep the
-reference the acquire bookkeeping created for the assumed non-NULL
-return.  Open-coded iterators reach that branch through
-process_iter_next_call() rather than through mark_ptr_or_null_regs(),
-which is where a plain KF_ACQUIRE | KF_RET_NULL kfunc releases it.
-
-The per-position VFS flags are not derivable from the position alone -
-whether a disconnected root is a mountpoint a crossing landed on is
-walk state - so they are read with bpf_path_ancestors_pos_flags(),
-which a program needs to reproduce Landlock's evaluation of
-disconnected positions.
-
-The iterator state is deliberately larger than this walk mode needs:
-its size is part of the contract with programs, which size their stack
-slot from it, so growing it later would reject programs built against
-the smaller one.  The walk mode is a parameter of the shared engine for
-the same reason - so that a mode added later is not an ABI change.
+Hold the first position across the rest of the walk and resolve its
+pathname only once the loop is done and the iterator destroyed: the
+acquired reference, not the walk's, is then all that keeps the
+position alive.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- fs/bpf_fs_kfuncs.c    | 147 ++++++++++++++++++++++++++++++++++++++++++
- kernel/bpf/verifier.c |   7 ++
- 2 files changed, 154 insertions(+)
+ .../selftests/bpf/prog_tests/path_ancestors.c | 57 ++++++++++++++
+ .../selftests/bpf/progs/path_ancestors.c      | 74 +++++++++++++++++++
+ 2 files changed, 131 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/path_ancestors.c
+ create mode 100644 tools/testing/selftests/bpf/progs/path_ancestors.c
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 08f0847c4970..02398f5a46d5 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -13,9 +13,13 @@
- #include <linux/kernfs.h>
- #include <linux/lsm_hooks.h>
- #include <linux/mm.h>
-+#include <linux/namei.h>
- #include <linux/net.h>
-+#include <linux/slab.h>
- #include <linux/xattr.h>
- 
-+#include "internal.h"
+diff --git a/tools/testing/selftests/bpf/prog_tests/path_ancestors.c b/tools/testing/selftests/bpf/prog_tests/path_ancestors.c
+new file mode 100644
+index 000000000000..d1bd26bce10b
+--- /dev/null
++++ b/tools/testing/selftests/bpf/prog_tests/path_ancestors.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2026 Justin Suess */
 +
- __bpf_kfunc_start_defs();
- 
- /**
-@@ -500,6 +504,143 @@ __bpf_kfunc struct inode *bpf_real_data_inode(struct file *file)
- 
- __bpf_kfunc_end_defs();
- 
-+enum bpf_path_ancestors_flag {
-+	/* bpf_path_ancestors_pos_flags() bits */
-+	BPF_PATH_ANCESTORS_DISCONNECTED	= (1 << 0),
-+	/* the position is a mountpoint a mount crossing landed on */
-+	BPF_PATH_ANCESTORS_MOUNTPOINT	= (1 << 1),
-+	/* the iteration ended on a failed allocation, not at the root */
-+	BPF_PATH_ANCESTORS_NOMEM	= (1 << 2),
-+};
++#include <sys/stat.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <test_progs.h>
++#include "path_ancestors.skel.h"
 +
-+/*
-+ * Walks over a path's ancestors.
-+ *
-+ * bpf_iter_path_ancestors runs with references.  Its kfuncs are
-+ * sleepable, so the iteration may sleep between positions.
-+ *
-+ * Each position is handed to the program as an acquired reference of its
-+ * own, to release with bpf_path_put().  The walk's own reference moves on
-+ * with the walk, so a position that outlives the step it came from - a
-+ * dentry saved for later, or the path a sleepable kfunc is still working
-+ * on - has to be kept alive by the program's reference rather than by the
-+ * iterator's.
-+ */
-+struct bpf_iter_path_ancestors {
-+	__u64 __opaque[5];
-+} __aligned(8);
-+
-+struct bpf_path_ancestors_kern {
-+	struct vfs_ancestor_walk aw;
-+	int step;	/* last vfs_walk_next() result, or -ENOMEM */
-+} __aligned(8);
-+
-+static int bpf_path_ancestors_new(struct bpf_path_ancestors_kern *kit,
-+				  struct path *path, u64 flags,
-+				  unsigned int walk_flags)
++void test_path_ancestors(void)
 +{
-+	BUILD_BUG_ON(sizeof(struct bpf_path_ancestors_kern) >
-+		     sizeof(struct bpf_iter_path_ancestors));
-+	BUILD_BUG_ON(__alignof__(struct bpf_path_ancestors_kern) !=
-+		     __alignof__(struct bpf_iter_path_ancestors));
++	char base[] = "/tmp/path_ancestors_XXXXXX";
++	struct path_ancestors *skel = NULL;
++	char suba[280], subb[280];
 +
-+	if (flags) {
-+		/* A zeroed walk makes destroying the iterator a no-op. */
-+		memset(kit, 0, sizeof(*kit));
-+		kit->step = 1;
-+		return -EINVAL;
++	if (!ASSERT_OK_PTR(mkdtemp(base), "mkdtemp"))
++		return;
++	snprintf(suba, sizeof(suba), "%s/a", base);
++	snprintf(subb, sizeof(subb), "%s/a/b", base);
++	if (!ASSERT_OK(mkdir(suba, 0755), "mkdir_a"))
++		goto out_rm;
++
++	skel = path_ancestors__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "open_and_load"))
++		goto out_rm;
++	skel->bss->monitored_pid = getpid();
++	if (!ASSERT_OK(path_ancestors__attach(skel), "attach"))
++		goto out;
++
++	/* mkdir b: the hook sees dir == suba, whose ancestry is walked. */
++	if (!ASSERT_OK(mkdir(subb, 0755), "mkdir_b"))
++		goto out;
++
++	/* suba, base, /tmp, / at least. */
++	ASSERT_GE(skel->bss->ref_count, 4, "ref_count");
++	ASSERT_EQ(skel->bss->ref_flags, 0, "ref_flags");
++	/*
++	 * The referenced loop ended at the root, not on an allocation
++	 * failure.
++	 */
++	ASSERT_EQ(skel->bss->end_flags, 0, "end_flags");
++
++	/* The acquired second position, used after its step was taken. */
++	ASSERT_STREQ(skel->bss->second_path, base, "second_path");
++	ASSERT_EQ(skel->bss->second_len, strlen(base) + 1, "second_len");
++
++	/* The first position, used only after the walk itself was gone. */
++	ASSERT_STREQ(skel->bss->first_path, suba, "first_path");
++	ASSERT_EQ(skel->bss->first_len, strlen(suba) + 1, "first_len");
++
++out:
++	path_ancestors__destroy(skel);
++out_rm:
++	rmdir(subb);
++	rmdir(suba);
++	rmdir(base);
++}
+diff --git a/tools/testing/selftests/bpf/progs/path_ancestors.c b/tools/testing/selftests/bpf/progs/path_ancestors.c
+new file mode 100644
+index 000000000000..6287f5099a18
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/path_ancestors.c
+@@ -0,0 +1,74 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2026 Justin Suess */
++
++#include "vmlinux.h"
++#include <errno.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include "bpf_kfuncs.h"
++
++char _license[] SEC("license") = "GPL";
++
++__u32 monitored_pid;
++
++int ref_count;		/* positions seen by the pure referenced walk */
++int ref_flags;		/* pos flags seen by the referenced walk */
++int end_flags;		/* flags after a referenced loop ended: 0 unless NOMEM */
++int second_len;		/* d_path length of the walk's second position */
++int first_len;		/* d_path length of the first position, after the walk */
++char second_path[256];
++char first_path[256];
++
++static bool monitored(void)
++{
++	return (bpf_get_current_pid_tgid() >> 32) == monitored_pid;
++}
++
++SEC("lsm.s/path_mkdir")
++int BPF_PROG(walk_modes, const struct path *dir, struct dentry *dentry,
++	     umode_t mode)
++{
++	struct bpf_iter_path_ancestors it;
++	struct path *pos, *first = NULL;
++
++	/*
++	 * Keep first's init opaque: gcc-bpf otherwise folds it into a
++	 * preceding loop's exit value, which the verifier cannot track.
++	 */
++	barrier_var(first);
++
++	if (!monitored())
++		return 0;
++
++	/*
++	 * Referenced walk: every position comes acquired, so it stays valid
++	 * past the step that yielded it - the first one is held across the
++	 * rest of the walk and used only once the walk is gone.
++	 */
++	bpf_iter_path_ancestors_new(&it, (struct path *)dir, 0);
++	while ((pos = bpf_iter_path_ancestors_next(&it))) {
++		ref_count++;
++		ref_flags |= bpf_path_ancestors_pos_flags(&it);
++		if (!first) {
++			first = pos;
++			continue;
++		}
++		if (ref_count == 2)
++			second_len = bpf_path_d_path(pos, second_path,
++						     sizeof(second_path));
++		bpf_path_put(pos);
 +	}
-+	kit->step = 0;
-+	vfs_walk_start(&kit->aw, path, walk_flags);
++	/* NULL from an allocation failure, not the root, surfaces here. */
++	end_flags |= bpf_path_ancestors_pos_flags(&it);
++	bpf_iter_path_ancestors_destroy(&it);
++	/*
++	 * The walk's own references moved on and the iterator is destroyed:
++	 * the acquired reference is all that keeps the first position alive.
++	 */
++	if (first) {
++		first_len = bpf_path_d_path(first, first_path,
++					    sizeof(first_path));
++		bpf_path_put(first);
++	}
 +	return 0;
 +}
-+
-+/* The walk's own view of the next position, which the step after it ends. */
-+static struct path *bpf_path_ancestors_step(struct bpf_path_ancestors_kern *kit)
-+{
-+	if (kit->step)
-+		return NULL;
-+	kit->step = vfs_walk_next(&kit->aw);
-+	return kit->step ? NULL : &kit->aw.pos;
-+}
-+
-+static u32 bpf_path_ancestors_flags(const struct bpf_path_ancestors_kern *kit)
-+{
-+	u32 flags = 0;
-+
-+	if (kit->step == -ENOMEM)
-+		return BPF_PATH_ANCESTORS_NOMEM;
-+	if (!kit->step) {
-+		if (kit->aw.pos_flags & VFS_WALK_POS_DISCONNECTED)
-+			flags |= BPF_PATH_ANCESTORS_DISCONNECTED;
-+		if (kit->aw.pos_flags & VFS_WALK_POS_MOUNTPOINT)
-+			flags |= BPF_PATH_ANCESTORS_MOUNTPOINT;
-+	}
-+	return flags;
-+}
-+
-+__bpf_kfunc_start_defs();
-+
-+__bpf_kfunc int bpf_iter_path_ancestors_new(struct bpf_iter_path_ancestors *it,
-+					    struct path *path, u64 flags)
-+{
-+	return bpf_path_ancestors_new((void *)it, path, flags, 0);
-+}
-+
-+/**
-+ * bpf_iter_path_ancestors_next - acquire the walk's next position
-+ * @it: the iterator
-+ *
-+ * Return: the next position with a reference held, to release with
-+ * bpf_path_put(), or NULL once the walk has passed the real root - or on
-+ * an allocation failure, which ends the iteration and is reported as
-+ * %BPF_PATH_ANCESTORS_NOMEM by bpf_path_ancestors_pos_flags().
-+ */
-+__bpf_kfunc struct path *
-+bpf_iter_path_ancestors_next(struct bpf_iter_path_ancestors *it)
-+{
-+	struct bpf_path_ancestors_kern *kit = (void *)it;
-+	struct path *pos = bpf_path_ancestors_step(kit);
-+	struct path *held;
-+
-+	if (!pos)
-+		return NULL;
-+	/*
-+	 * The position must outlive the walk's own view of it, so it gets a
-+	 * reference and a struct path of its own to live in: struct path is
-+	 * a value type, with nothing a BPF reference could be taken on
-+	 * otherwise.  Sleepable, so no atomic allocation.
-+	 */
-+	held = kmalloc_obj(*held);
-+	if (!held) {
-+		kit->step = -ENOMEM;
-+		return NULL;
-+	}
-+	*held = *pos;
-+	path_get(held);
-+	return held;
-+}
-+
-+__bpf_kfunc void
-+bpf_iter_path_ancestors_destroy(struct bpf_iter_path_ancestors *it)
-+{
-+	vfs_walk_end(&((struct bpf_path_ancestors_kern *)it)->aw);
-+}
-+
-+__bpf_kfunc u32
-+bpf_path_ancestors_pos_flags(struct bpf_iter_path_ancestors *it__iter)
-+{
-+	return bpf_path_ancestors_flags((void *)it__iter);
-+}
-+
-+__bpf_kfunc void bpf_path_put(struct path *path)
-+{
-+	path_put(path);
-+	kfree(path);
-+}
-+
-+__bpf_kfunc_end_defs();
-+
- BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
- BTF_ID_FLAGS(func, bpf_get_task_exe_file, KF_ACQUIRE | KF_RET_NULL)
- BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
-@@ -513,6 +654,12 @@ BTF_ID_FLAGS(func, bpf_inode_init_xattr)
- #ifdef CONFIG_NET
- BTF_ID_FLAGS(func, bpf_sock_read_xattr, KF_RCU)
- #endif
-+BTF_ID_FLAGS(func, bpf_iter_path_ancestors_new, KF_ITER_NEW | KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, bpf_iter_path_ancestors_next,
-+	     KF_ITER_NEXT | KF_ACQUIRE | KF_RET_NULL | KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, bpf_iter_path_ancestors_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, bpf_path_ancestors_pos_flags)
-+BTF_ID_FLAGS(func, bpf_path_put, KF_RELEASE | KF_SLEEPABLE)
- BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
- 
- /* Side-effecting kfuncs that stay exclusive to LSM programs. */
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2f190abe3448..4b3e1d4f8a80 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -8835,6 +8835,13 @@ static int process_iter_next_call(struct bpf_verifier_env *env, int insn_idx,
- 	/* switch to DRAINED state, but keep the depth unchanged */
- 	/* mark current iter state as drained and assume returned NULL */
- 	cur_iter->iter.state = BPF_ITER_STATE_DRAINED;
-+	/*
-+	 * An acquiring iter_next() hands out nothing once drained: the
-+	 * acquired reference exists only in the forked active state, not on
-+	 * this NULL-returning branch.
-+	 */
-+	if (meta->kfunc_flags & KF_ACQUIRE)
-+		WARN_ON_ONCE(release_reference_nomark(env, cur_fr->regs[BPF_REG_0].id));
- 	__mark_reg_const_zero(env, &cur_fr->regs[BPF_REG_0]);
- 
- 	return 0;
 -- 
 2.55.0
 
