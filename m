@@ -1,60 +1,65 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C5F4B8262
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 16:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E429451E422
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 16:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791910479; cv=none; b=Bitylxhix3evZ0Y1JdyqJAlV9FJobfIXTW6xQWmalYbP+HH9wW2P+jG50zF4JrbdHxY5zPMv/YdKZTygd5ZnOlU7cwVJZegQ27z4c6fWpDCYKm94pQD4nLMBwzOpHvmA9D8Hl2ezeBLdWq7S+V0lPMBsrW5Tp8D1LnTbi5mndos=
+	t=1791910500; cv=none; b=XzLvB1fZOdxSaDQBha3NXgc3vq+tNrPFU6qjP9fj45ukjLp6CrzYrILCCtC4MTQBVsLyNlwa+0PfunFAoQErUg8HfIS0ThlOx+bgjp3NL3/SSByqjv59NIOv0qZMUJRb+v3IY7MpGxJkF1kefMlqf2V2IOO5lU16Vum6V3lQEog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791910479; c=relaxed/simple;
-	bh=JHQcwO9QiD+lGa8VckYlb04zBiyisV18fct2USXZsfM=;
+	s=arc-20240116; t=1791910500; c=relaxed/simple;
+	bh=7xP4y2NKhBmBJHS6FWeKf0tguMYDoZcl/SUA+KKz0f4=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=r7kTBtx/1/OFrk7fFgHfiOTQ7BTIyiaDCUxsehVd9nwbsEiQuqjyt5WNRVHR5M0dsTGGO1YmT2dp8GwlH94p9kc52qTOXIe1gQqTULEocIzi5iKUq9a1+iIC8DaUN97cU2aU7B0ffd+pRUx4RqNCRh/LXyNcJkqejxhnEZkftPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/kCBsrY; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=C1Z6Pp8yFyLIBN/gbhp7dZY5NQBx+z6Xtb4ByPGL90b6mXuOl42EQWNAVejXX+DxamZK+vXZfRIQslZcSXVKPxqqgreyncI26LIPDTlv5PanO0wLyi/K0pBUmc6qJV+O9Lf/uoUPmRvP5OnOgc8/ojm8DgJRkJ2fEWkb8MaU2jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LFCxKmMk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/kCBsrY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B94BD1F000FF
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 16:54:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFCxKmMk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E041F000FF
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 16:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791910477;
-	bh=WGKguqJIivFmEONvKsztHZTNREc7LtEva1tql615yf4=;
+	s=k20260515; t=1791910498;
+	bh=dIEpoDMNTK3LoB4Up7thGeXaQ5E/jAkAtf1Lna9cEwY=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=A/kCBsrYoWN/rScS/OXToRla9UTN68XLohztm46thj0btW/xxRQyPwYJiPLjWcRhv
-	 glqitmhYAhunez7MSSk/8XW4fXlPT61WFsIWDE9jsq7q28JXXn8YWVSkF/M8IUCdb/
-	 WxwFsQrTkp3r1bhu/cdIEQCekReE96UoE+ODqSxRL7Ih/e4tUquWkig49qSx+n7BSu
-	 VB5D2/ZfvpkUwhgBaFATp7z2RJ9Wa4E8sBc6ooAcdus29zFz8UlJB78eg81PCO5W62
-	 KW5Y3LTYCzIt3s6aH1uWnsUMu0C3hbaiULnWGKLEG55B0TKLdzPUA8PwSdb2xA7n5n
-	 hkBFtgCRpIxmg==
-Message-ID: <sashiko-outbox-170169@kernel.org>
+	b=LFCxKmMkxZsgxlQIqISfQVD6UO4YiZPfp4+vquxddfE3DHQM3oSLqpyvhFoCNpEmA
+	 bwk3moRNL1X/RgBIwnXqr+tuWdiJM0sSdXID0kCYOzwHFNBjIQXfGom1VAE9zZrtW6
+	 2KszRAoHnpPRqQ37P/5fSo16AgW3aGmhPl/8LRglX9dmYa8Io3ABbr63iWDr9M9ZhX
+	 Sb3/aCh0yzthHD0p833vuecEKGSSGePshrKmF0FJPUu2Q3vZkaZyrjda8m37yMgXkK
+	 4LTjjhpWe+IaprwH5cSfBWvZLuNMLzOEjoWddkpCME9+NsXj6PQQJovuNUdy5r7tIp
+	 zXjwhQ5+WTcBw==
+Message-ID: <sashiko-outbox-170170@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH bpf-next v1 04/11] namei: expose the stepwise ancestor
- walk to fs/
+Subject: Re: [PATCH bpf-next v1 01/11] namei: introduce __path_walk_parent()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261013164800.2906577-5-utilityemal77@gmail.com>
+In-Reply-To: <20261013164800.2906577-2-utilityemal77@gmail.com>
 References: <20261013164800.2906577-1-utilityemal77@gmail.com>
- <20261013164800.2906577-5-utilityemal77@gmail.com>
+ <20261013164800.2906577-2-utilityemal77@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 16:54:37 +0000
+Date: Tue, 13 Oct 2026 16:54:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> Make vfs_walk_start(), vfs_walk_next() and vfs_walk_end() non-static
-> and declare them in fs/internal.h next to the walk state, so an
-> iterating consumer (BPF) can drive the walk with every step and
-> invariant staying in namei.c.  vfs_walk_ancestors() and its callback
-> contract are unchanged.
+> From: Song Liu <song@kernel.org>
 >=20
+> Factor the step-to-parent logic out of follow_dotdot() into
+> __path_walk_parent(), which walks a plain struct path to its parent,
+> crossing mount trees via choose_mountpoint().
+>=20
+> This will be used by a VFS ancestor walker serving landlock and BPF.
+>=20
+> Suggested-by: Neil Brown <neil@brown.name>
+> Signed-off-by: Song Liu <song@kernel.org>
+> [justin: rebased, kept the helper static to namei.c, dropped the
+>  path_walk_parent() wrapper and the namei.h export]
 > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 
 Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013164800.2906=
-577-1-utilityemal77@gmail.com?part=3D4
+577-1-utilityemal77@gmail.com?part=3D1
 
