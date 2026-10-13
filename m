@@ -1,131 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB63522698;
-	Tue, 13 Oct 2026 17:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA107517BA2
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 17:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791913816; cv=none; b=DmCKeI7NxqKky/vUjbpIshdN3P3kOXgE2NvnKhGnrslzS2gXc41EHUci9NtZUbWySc7Pa+T79yo4wVJxReMPo+PKMQ+4sKW3g0PGdKOGg/Co9UZsmdF1um8O5O/q/3A94IO9R8KgeRnPdBL9C+K2Mp5byHTikvPNFweeHhljtdM=
+	t=1791914213; cv=none; b=aswMardH5eJyQtq1mHCCRlN5/Hr3J3uFllcs9VAjBZZdaROwOYUnnEPLQ3PVYperNQnNXO0TjJ3ttSxDMx2ih1vkC8jSoAGUWgttnZccxfL09LJ9bx1nNwm1FGgnZk+GziiTSLcl/M9c3MK4QDSUk1i0DZN4/wEwSoBoy+njy1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791913816; c=relaxed/simple;
-	bh=Ob5hfSVRBDVFo9k7LYylFgt6ZwRA0BvD9bQTXcqDE6A=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=bEcNpEjyUfso9B6TnIB3w9KMgTlJQVfNYjxxDLC+kgDTf3zHguZSHToMY1S9CdNvxGyHndq0n0Hhs9Y/FZmrKtsjsmBYSoEckR5dOGli0w72S1qZqdMO76+wOu3eoaSY1G5ZzE7rAY9TxLQ6xDHsE5e8TiVPQlJQX0sb1znLAyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkS3R4le; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791914213; c=relaxed/simple;
+	bh=9+xzVzStH5jySgGJiobWKMn8FjA+vNjP/UnkeGKkeQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ba8f6ihdKhS96u3VIwyFo1gxKAalENcZoWqkK5mAenuJoh7+eVqQrHHN/A+4cdEoM4Kv667qKUXvHZP5sZhuNeX910ScgOiTaYxLM7ksrog+OWGvh+p2rrekbyfVZQVB/liGkDfBfwUuCmeGtTJhSCt7CkizQIDYqvcvGe8IZX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KS/v49wQ; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkS3R4le"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859851F000FF;
-	Tue, 13 Oct 2026 17:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791913811;
-	bh=/4OBcQphtPzD4TvEvZfIteR9fXjco/MRVw8nWpXqrVw=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=LkS3R4le+63v5wkxJTVG8Dx4CsBOlu4SrUpA0wXL8a1uk2tJS4QREU/I7idEHhO/0
-	 p5V2Tv3xg/A2Cp2LiEcD5aW0d3861PtOd36ZIAPTg0+hTZT8F9VT865HCnDk+9GlIy
-	 mxSx0w6SPL4i2ST9O9zahMHJadZobnR02xCvpY/drzH+JQtGB3WApOE1BhAew5gxcZ
-	 /6Sk4QTQFT9E+dwM82NSEq5KvZ8onfNKSpEXaa+WieJmy0yf2lKUvJXxAFQhxAn2Sb
-	 mp8eDxXHSjsUnrlLb8Uffw3xIUjMRX2LKtcT27GdNG7KuE0eRYQZz/Hx0WysMUCBPv
-	 9KXOhYv4YpuEA==
-Content-Type: multipart/mixed; boundary="===============3729759909576102404=="
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KS/v49wQ"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-8ab38a051aaso26228897b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 10:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791914211; x=1792519011; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=I3urwFIjeTZMI3nHLcO9T0M+7OUsQOTZbc1ClGXMTLY=;
+        b=KS/v49wQtLRLZZAlQ1bqq2v8qBx0YzbFBZizFvOrznpwGsTKv5wyAYiDJ014m91Y0G
+         D+ATBHnlMiC5tyRQ7F4BfSOOQPVLo43U8pbp3dNLUJA+iaB82NT0dR1pl8je+Nx2kYVb
+         BzQm5634DxkZpDi+jSMGTZkSO7aZ3Bn/cExU3VaDATz6YVx6I1zVN087HN6gHg2LBrl8
+         6ni8oFem8r+vA+0UrQwTWD1NQ8R0NJlFnwktCIl0qCwWvKACU2wloeM3IIpf07MxTSAq
+         kYQ4T4jFkalzhg04TmEL0PlQrzjatgcWReuukDr60DccjSUWVgO0wLSsG2IJzKkuKMXw
+         uzwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791914211; x=1792519011;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=I3urwFIjeTZMI3nHLcO9T0M+7OUsQOTZbc1ClGXMTLY=;
+        b=JR6+k+eSZbQVL7jHs94SauWR6afhJq8qc2egeXShY/YpPSPfeHTyQSZguj362XJlCd
+         jHlj9UyZY99dsuiT52SuUqWeFWiG4sHCvAXm7i+mCtngSzGDNfw8DigLGC0exrTHFz8A
+         9RVYkp+DGikw+RcJsIF+XeojA+AsW1umSE6AIjsr1iaQJsCVjKyBkY+7GFpXUnXAHUqA
+         TQiea9tfBD9zD/Hl9nRrUlD0dy6eZ0W38qio+dShQ7UbMm/MBMU8/R4WeSCwSYBhsNX+
+         +9wXuXbO8Qm52WXJIE7KU5epb2UHBpY5UZGQlZ0/l8Ta1RqEdraqzPe1XjNyMATXg7uv
+         x77g==
+X-Forwarded-Encrypted: i=1; AKwUvBx2To4h+U3sA/CEk6RLhNUP1J7Nu4gZVF7k54TngmcGC0o8tf6qKckHxhl8w6ItKURKOrm5ZYsIe99nQWjb91WohOJZJBU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI1Qnq9Q7SSb8FhaXsE7H6FsD3XHy/kOmTcgE2AzPjI0kQjP4es
+	TR0UOR/tU8YqqhdMliLD4WkrYGR5nMhS0a7G5lR5rUHiJunbCNYLBNXP
+X-Gm-Gg: AYBFou2NqSua3s1qzId2hWIxsJcrZZ8HzaAsako0tZD/Ccoa9figZ1mBgq0GpNT157t
+	UiA4+gWmbfYc5H+VMJLRe5uoEnQTCmZ8xW2JFo1rQXlh1+XUJynkfu6gzGgQ9/ifJ98pJ0hiMA1
+	UZZj3sDdMmz/6fmksChlMLaolmRx3qz8AswF4HoNtDOURKT6YGykY/iIXUp5p6mxRXND4f9sdy2
+	WZMQZqnEEj3DSpE5KlP5tRBhP8ym5pDTTA+YpYBXbuuko0rpHTjUdWAqOjjBffZwmIWXU6YyHhK
+	dw9ltCxCHz3jixsgk0btJl45PTZgWkTfH6uC/gCUv53eeDq8zUEZdvNP0EzwZH/QPPqw61BYBie
+	wZqNhHIjXmNymUBjl3TpkgJukNIgT8AVzyjB17aQDiGaMN/qXUgcpN4VLViFfXKWD+iryIyv5OO
+	nuM4/VR880yYSf8VAFQF/RTUqF6Se1IKG5Lb/h/LOxWBL0xm/W0yXQG9rW29Mn974mLd+LWZM=
+X-Received: by 2002:a05:690c:c505:b0:8b0:a957:80c4 with SMTP id 00721157ae682-8b0a95786f5mr22590897b3.45.1791914210764;
+        Tue, 13 Oct 2026 10:56:50 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:d326:f863:5ae3:683])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8b07f2508e0sm48386227b3.38.2026.10.13.10.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 10:56:50 -0700 (PDT)
+Date: Tue, 13 Oct 2026 13:56:49 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH bpf-next v1 08/11] namei: add an rcu-walk mode to the
+ ancestor walk
+Message-ID: <as5v6B-8O2QQw3zC@zenbox>
+References: <20261013164800.2906577-1-utilityemal77@gmail.com>
+ <20261013164800.2906577-9-utilityemal77@gmail.com>
+ <sashiko-outbox-170183@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <507772738f9dbf7abfad7d2910b6b155517e597dbb076aafb7c9f4bf01e322e7@mail.kernel.org>
-In-Reply-To: <20261013164800.2906577-12-utilityemal77@gmail.com>
-References: <20261013164800.2906577-12-utilityemal77@gmail.com>
-Subject: Re: [PATCH bpf-next v1 11/11] selftests/bpf: exercise the lockless path ancestor iterator
-From: bot+bpf-ci@kernel.org
-To: utilityemal77@gmail.com,brauner@kernel.org,viro@zeniv.linux.org.uk,jack@suse.cz,neil@brown.name,mic@digikod.net,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,song@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,linux-kernel@vger.kernel.org,gnoack@google.com,paul@paul-moore.com,jmorris@namei.org,serge@hallyn.com,martin.lau@linux.dev,eddyz87@gmail.com,yonghong.song@linux.dev,john.fastabend@gmail.com,memxor@gmail.com,jolsa@kernel.org,jlayton@kernel.org,amir73il@gmail.com,mjguzik@gmail.com,shuah@kernel.org,m@maowtm.org,utilityemal77@gmail.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
-Date: Tue, 13 Oct 2026 17:50:08 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <sashiko-outbox-170183@kernel.org>
 
---===============3729759909576102404==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-
-> selftests/bpf: exercise the lockless path ancestor iterator
-
-TL;DR: Commit message and test comment call d_path on the escalated position
-"sleepable work", but bpf_path_d_path() doesn't look KF_SLEEPABLE; it likely
-needs a trusted pointer. Wording only, no code bug suggested.
-
->     selftests/bpf: exercise the lockless path ancestor iterator
+On Tue, Oct 13, 2026 at 05:01:26PM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> - [High] vfs: TOCTOU race in vfs_walk_handover() sequence validation
+> --
+> 
+> commit 1f35bee40e8028ac4b024dd5a54b6bbdbb5b8521
+> Author: Justin Suess <utilityemal77@gmail.com>
+> 
+> namei: add an rcu-walk mode to the ancestor walk
+> 
+> This commit introduces an rcu-walk mode for the stepwise ancestor walk.
+> It adds lockless progression using sequence validation and provides
+> vfs_walk_handover() to transition an unreferenced RCU walk into a
+> referenced walk.
+> 
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> 
+> [ ... ]
+> 
+> > +bool vfs_walk_handover(struct vfs_ancestor_walk *to,
+> > +		       struct vfs_ancestor_walk *from)
+> > +{
+> > +	struct path pos = from->pos;
+> > +	int err;
+> > +
+> > +	err = __legitimize_mnt(pos.mnt, from->m_seq);
+> > +	if (unlikely(err)) {
+> > +		if (err < 0)
+> > +			mnt_undo_legitimize(real_mount(pos.mnt));
+> > +		goto dead;
+> > +	}
+> > +	if (unlikely(read_seqcount_retry(&pos.dentry->d_seq, from->seq) ||
+> > +		     !lockref_get_not_dead(&pos.dentry->d_lockref))) {
+> 
+> [Severity: High]
+> Is there a time-of-check to time-of-use race window here due to the
+> validation order?
+> 
+> Evaluating read_seqcount_retry() before lockref_get_not_dead() seems to leave
+> a gap. If a concurrent rename or unlink mutates the dentry and increments the
+> seqcount right after the sequence check, the subsequent lockref_get_not_dead()
+> might still blindly succeed on the active d_count.
+> 
+> This would yield a stale and unvalidated path position to the referenced
+> walk. Should the lockref acquisition strictly precede sequence validation to
+> ensure the sequence hasn't changed during the reference acquisition?
 >
->     Walk the same ancestry four ways and require the position counts to
->     agree: lockless from a non-sleepable program, where the RCU critical
->     section is implicit; lockless under an explicit bpf_rcu_read_lock();
->     referenced; and the hybrid that walks lockless to the second position,
->     hands it over to a referenced iteration, and resumes there - the
->     escalated position therefore being walked twice, once per mode.
->
->     The sleepable work the escalation exists for (d_path on the escalated
->     position) runs on the resumed iteration's first position, after
->     bpf_rcu_read_unlock(), which is the only place a sleepable kfunc can
->     run at all.
->
->     Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+This is intended and explained in the cover letter note,
+"stuff not changed" bullet one.
 
-The commit message calls d_path on the escalated position "the sleepable
-work the escalation exists for".  Is bpf_path_d_path() a sleepable kfunc?
-
-It is registered without KF_SLEEPABLE in fs/bpf_fs_kfuncs.c, unlike
-bpf_get_dentry_xattr() right next to it:
-
-    BTF_ID_FLAGS(func, bpf_path_d_path)
-    BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE)
-
-The reason the test needs the escalated position for d_path looks like trust
-rather than sleepability.  bpf_iter_path_ancestors_rcu_new() is
-KF_RCU_PROTECTED, so the verifier types the pointer returned by
-bpf_iter_path_ancestors_rcu_next() as PTR_TO_BTF_ID | MEM_RCU.
-bpf_path_d_path() is not KF_RCU, so it needs a trusted argument and would
-reject that pointer.  The previous patch's changelog describes the same
-constraint:
-
-> nothing read out of the position may be passed
-> to a kfunc demanding a trusted argument.
-
-The comment in the test program has the same framing:
-
-> diff --git a/tools/testing/selftests/bpf/progs/path_ancestors.c b/tools/testing/selftests/bpf/progs/path_ancestors.c
-> index 6287f5099a18..3ebf86b23199 100644
-> --- a/tools/testing/selftests/bpf/progs/path_ancestors.c
-> +++ b/tools/testing/selftests/bpf/progs/path_ancestors.c
-
-[ ... ]
-
-> @@ -70,5 +111,36 @@ int BPF_PROG(walk_modes, const struct path *dir, struct dentry *dentry,
-
-[ ... ]
-
-> +	/*
-> +	 * Out of the RCU critical section.  The resumed iteration's first
-> +	 * position is the escalated one, kept alive by the reference the
-> +	 * iteration hands out, so sleepable work can run on it.
-> +	 */
-> +	while ((pos = bpf_iter_path_ancestors_next(&it))) {
-> +		hybrid_count++;
-> +		if (hybrid_count == 3)
-> +			escalated_len = bpf_path_d_path(pos, escalated_path,
-> +							sizeof(escalated_path));
-
-Beyond the iterator's own bpf_iter_path_ancestors_next() and
-bpf_path_put(), does the test run any sleepable work on the escalated
-position?
-
-Could the commit message (and this comment) say that d_path needs a
-trusted/referenced position, or could the test call a KF_SLEEPABLE kfunc
-such as bpf_get_dentry_xattr() on the escalated position so that the
-description matches what is checked?
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/38437592296
---===============3729759909576102404==--
+Justin
+> > +		mnt_undo_legitimize(real_mount(pos.mnt));
+> > +		goto dead;
+> > +	}
+> > +	to->pos = pos;
+> > +	to->flags = 0;
+> > +	to->pos_flags = from->pos_flags;
+> > +	return true;
+> 
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261013164800.2906577-1-utilityemal77@gmail.com?part=8
