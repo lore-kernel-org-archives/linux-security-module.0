@@ -1,74 +1,73 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA107517BA2
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 17:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D53D52FE41
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 18:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791914213; cv=none; b=aswMardH5eJyQtq1mHCCRlN5/Hr3J3uFllcs9VAjBZZdaROwOYUnnEPLQ3PVYperNQnNXO0TjJ3ttSxDMx2ih1vkC8jSoAGUWgttnZccxfL09LJ9bx1nNwm1FGgnZk+GziiTSLcl/M9c3MK4QDSUk1i0DZN4/wEwSoBoy+njy1E=
+	t=1791914411; cv=none; b=l61wJAMRMt276zTgUA2GKgES2sO6fLHvePywd1521YvwxisMqxbtS641kiWGz2p+8uPrZ+5DMwIEW6EontOOZTU0OMvR71H2d+dYhl6qOme8dWD86CqkqGvaXxOpszZobfaCiMuIEG0U/QyVTPOkH3P5UloERFytDHmGanC/T6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791914213; c=relaxed/simple;
-	bh=9+xzVzStH5jySgGJiobWKMn8FjA+vNjP/UnkeGKkeQg=;
+	s=arc-20240116; t=1791914411; c=relaxed/simple;
+	bh=nbgDcnVzZy5v+9x+VotHTcVXQOcWBOh+8O66h1RlO+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ba8f6ihdKhS96u3VIwyFo1gxKAalENcZoWqkK5mAenuJoh7+eVqQrHHN/A+4cdEoM4Kv667qKUXvHZP5sZhuNeX910ScgOiTaYxLM7ksrog+OWGvh+p2rrekbyfVZQVB/liGkDfBfwUuCmeGtTJhSCt7CkizQIDYqvcvGe8IZX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KS/v49wQ; arc=none smtp.client-ip=209.85.128.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDNOuqCqrM5ug2SIu3hmmd6erbdZ8V/ncSkCexWnsVrpn/UpDoIjon3q+BUpBS/ORybeN7g4AeAh86eCjfXL0mJ6xUBPUbgNYTlToE1Owz4lX+2YSjTGme8ZKtdxNE1t8PYT9g9B3YHz6EXIgSeewSAHLiipb03o0hNh/nsnp+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcPYw60J; arc=none smtp.client-ip=74.125.224.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KS/v49wQ"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-8ab38a051aaso26228897b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 10:56:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcPYw60J"
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6711f05fb14so2720527d50.2
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 11:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791914211; x=1792519011; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791914409; x=1792519209; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=I3urwFIjeTZMI3nHLcO9T0M+7OUsQOTZbc1ClGXMTLY=;
-        b=KS/v49wQtLRLZZAlQ1bqq2v8qBx0YzbFBZizFvOrznpwGsTKv5wyAYiDJ014m91Y0G
-         D+ATBHnlMiC5tyRQ7F4BfSOOQPVLo43U8pbp3dNLUJA+iaB82NT0dR1pl8je+Nx2kYVb
-         BzQm5634DxkZpDi+jSMGTZkSO7aZ3Bn/cExU3VaDATz6YVx6I1zVN087HN6gHg2LBrl8
-         6ni8oFem8r+vA+0UrQwTWD1NQ8R0NJlFnwktCIl0qCwWvKACU2wloeM3IIpf07MxTSAq
-         kYQ4T4jFkalzhg04TmEL0PlQrzjatgcWReuukDr60DccjSUWVgO0wLSsG2IJzKkuKMXw
-         uzwQ==
+        bh=h9AuHP9q1EYZ5Uls4Fabp/S6p+sv4isxWlypix7WhUQ=;
+        b=TcPYw60Jtk6AN25tEvsZ3pxax7kG6kayqFOCcgmW+fG656FYBqGsAt8GO1ZZn+y+Ad
+         7MYlKwl7FM9Xe8tG9FcchXmRRHUrePQa9w1eflYjm6DDgZoch2R782GPkvR7CuHgogjx
+         C2lekm4YQBoujenBwsIwuUKj9g7EVRuvbNG845IhNB0u3S1hadoUmCtaUZ92EbA2tshj
+         w7ujfd/pEPgEhNkHv8nuDtov24LQPBDCemzBsbDizZy+doMq8iyzG/4AtBBdAtpNrKtA
+         GDkAioCy/j7duh9tOEE5yojPpAHiLewzNacRqtZxDLDWR5FM8FrJV9gD3+05oSG4TLes
+         MxBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791914211; x=1792519011;
+        d=1e100.net; s=20260707; t=1791914409; x=1792519209;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=I3urwFIjeTZMI3nHLcO9T0M+7OUsQOTZbc1ClGXMTLY=;
-        b=JR6+k+eSZbQVL7jHs94SauWR6afhJq8qc2egeXShY/YpPSPfeHTyQSZguj362XJlCd
-         jHlj9UyZY99dsuiT52SuUqWeFWiG4sHCvAXm7i+mCtngSzGDNfw8DigLGC0exrTHFz8A
-         9RVYkp+DGikw+RcJsIF+XeojA+AsW1umSE6AIjsr1iaQJsCVjKyBkY+7GFpXUnXAHUqA
-         TQiea9tfBD9zD/Hl9nRrUlD0dy6eZ0W38qio+dShQ7UbMm/MBMU8/R4WeSCwSYBhsNX+
-         +9wXuXbO8Qm52WXJIE7KU5epb2UHBpY5UZGQlZ0/l8Ta1RqEdraqzPe1XjNyMATXg7uv
-         x77g==
-X-Forwarded-Encrypted: i=1; AKwUvBx2To4h+U3sA/CEk6RLhNUP1J7Nu4gZVF7k54TngmcGC0o8tf6qKckHxhl8w6ItKURKOrm5ZYsIe99nQWjb91WohOJZJBU=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI1Qnq9Q7SSb8FhaXsE7H6FsD3XHy/kOmTcgE2AzPjI0kQjP4es
-	TR0UOR/tU8YqqhdMliLD4WkrYGR5nMhS0a7G5lR5rUHiJunbCNYLBNXP
-X-Gm-Gg: AYBFou2NqSua3s1qzId2hWIxsJcrZZ8HzaAsako0tZD/Ccoa9figZ1mBgq0GpNT157t
-	UiA4+gWmbfYc5H+VMJLRe5uoEnQTCmZ8xW2JFo1rQXlh1+XUJynkfu6gzGgQ9/ifJ98pJ0hiMA1
-	UZZj3sDdMmz/6fmksChlMLaolmRx3qz8AswF4HoNtDOURKT6YGykY/iIXUp5p6mxRXND4f9sdy2
-	WZMQZqnEEj3DSpE5KlP5tRBhP8ym5pDTTA+YpYBXbuuko0rpHTjUdWAqOjjBffZwmIWXU6YyHhK
-	dw9ltCxCHz3jixsgk0btJl45PTZgWkTfH6uC/gCUv53eeDq8zUEZdvNP0EzwZH/QPPqw61BYBie
-	wZqNhHIjXmNymUBjl3TpkgJukNIgT8AVzyjB17aQDiGaMN/qXUgcpN4VLViFfXKWD+iryIyv5OO
-	nuM4/VR880yYSf8VAFQF/RTUqF6Se1IKG5Lb/h/LOxWBL0xm/W0yXQG9rW29Mn974mLd+LWZM=
-X-Received: by 2002:a05:690c:c505:b0:8b0:a957:80c4 with SMTP id 00721157ae682-8b0a95786f5mr22590897b3.45.1791914210764;
-        Tue, 13 Oct 2026 10:56:50 -0700 (PDT)
+        bh=h9AuHP9q1EYZ5Uls4Fabp/S6p+sv4isxWlypix7WhUQ=;
+        b=r4WUl20feb6H8jYCegPFU0ZLkWuAc3tMvY2UXSmB9Tc4hrn1DKhfogET9gR+9LDzOa
+         I2cDfFahyPIf7WashCpf6g4dM6DX3o+plTRaq1dSvxlDMTN8Q8dYw2qi0iWXIXFaNKxI
+         GhtkJ92/hS+MfHrkaZacFW3OrppA8uhrIG0uEHvPu/FkHS6FHVkTxP7arne1QKgSs4R4
+         k/jfx2SZ8YVz2juLx3/rt+Uz3Kb5bfwrcWHnVdShYP8aioXpn7FWAYHcxGmez4zn4W2v
+         QGj+t9TDVaUnG743I+zTEmXHumZhlJIlOR12zXiC192cwsix7jHp/L8NQmW9dKQmcwRO
+         3iSw==
+X-Forwarded-Encrypted: i=1; AKwUvBxtgW4keIpuf/7jYzPwxzPcUrS3/a6JR2n6uReV+b2p9EnLxtDMwLH4AN4/qI14wkgHoPsz4SJGMaojVkwoyLnjCB4Db2g=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJefupzSaExdVGkIMzCs+xF7Je4hyk+AMGKDA4jbDs7/KHdvu/4
+	HdIyWKFBnnjbd0y3P7Aq/NbWpo+Q7cyHIcXLOckImRN5/VMXg5jejhOrg7VR0g==
+X-Gm-Gg: AYBFou3cc0mF88OqeOKy5cSMSslWxLL63ZKJPaavOUnWV4RdGoSSJ3Ua2cjOC2Hbxq0
+	kYZ5Mh/T6CR+h59avFsT2nezxmlXzWD/eqMydwlQbSCS7j2BhWwW1HOWAkkA+XfGFAnOarvmAeY
+	X3/TK/7/GDKrXiVhm1BMLnOf2LhtkqMUFUoGEkvh9EcLkob0XWDGRgQvDJ9b/9B1QFDID1FJzsW
+	0xUhhOiJ/YdjpFw5JSly6XiKfN/uasfYMfyo9GjgE7TqWSj5b6xW9q3oD27PdDwTwiG0cFe3w3W
+	BXMqMjLd45BMmvioi+t3LQkryKo6G1aZlatFPhcTDgbn8Coi4r0CFkXv1avSKz3xqlkL/O18B6D
+	1vhZmHbz4uTul7KKIDqknRZJRHTzRcOFtDeBq2YNA43VFvn4jnVlC2EUr9CPKAww7yn9GDCUhx5
+	lGx1Ij29Dnb1NZp6QCDlTTAK91WrwgaPe/k/u5KKZjSmeKlxmPTlGThRQ6QV2k/Tb2vSmCh1g=
+X-Received: by 2002:a05:690e:1183:b0:672:ede8:d1f4 with SMTP id 956f58d0204a3-67936062f7cmr4971148d50.62.1791914409230;
+        Tue, 13 Oct 2026 11:00:09 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:d326:f863:5ae3:683])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8b07f2508e0sm48386227b3.38.2026.10.13.10.56.50
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67986a15c13sm145635d50.7.2026.10.13.11.00.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 10:56:50 -0700 (PDT)
-Date: Tue, 13 Oct 2026 13:56:49 -0400
+        Tue, 13 Oct 2026 11:00:08 -0700 (PDT)
+Date: Tue, 13 Oct 2026 14:00:07 -0400
 From: Justin Suess <utilityemal77@gmail.com>
 To: sashiko-reviews@lists.linux.dev
 Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next v1 08/11] namei: add an rcu-walk mode to the
- ancestor walk
-Message-ID: <as5v6B-8O2QQw3zC@zenbox>
+Subject: Re: [PATCH bpf-next v1 05/11] bpf: add a path ancestor iterator
+Message-ID: <as5w8lY-3Z6sVlxe@zenbox>
 References: <20261013164800.2906577-1-utilityemal77@gmail.com>
- <20261013164800.2906577-9-utilityemal77@gmail.com>
- <sashiko-outbox-170183@kernel.org>
+ <20261013164800.2906577-6-utilityemal77@gmail.com>
+ <sashiko-outbox-170194@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -78,68 +77,73 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <sashiko-outbox-170183@kernel.org>
+In-Reply-To: <sashiko-outbox-170194@kernel.org>
 
-On Tue, Oct 13, 2026 at 05:01:26PM +0000, sashiko-bot@kernel.org wrote:
+On Tue, Oct 13, 2026 at 05:11:54PM +0000, sashiko-bot@kernel.org wrote:
 > Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [High] vfs: TOCTOU race in vfs_walk_handover() sequence validation
+> - [High] bpf: deadlock in bpf_iter_path_ancestors_next due to GFP_KERNEL under VFS locks
 > --
 > 
-> commit 1f35bee40e8028ac4b024dd5a54b6bbdbb5b8521
+> commit 0d24b2f0561971ff2a9d89456692d9ec1ea13279
 > Author: Justin Suess <utilityemal77@gmail.com>
 > 
-> namei: add an rcu-walk mode to the ancestor walk
+> bpf: add a path ancestor iterator
 > 
-> This commit introduces an rcu-walk mode for the stepwise ancestor walk.
-> It adds lockless progression using sequence validation and provides
-> vfs_walk_handover() to transition an unreferenced RCU walk into a
-> referenced walk.
+> This commit introduces a sleepable BPF iterator for evaluating a path's
+> ancestry using the stepwise vfs_walk_ancestors() engine. It adds kfuncs
+> to manage the iterator and hands each position to the program as an
+> acquired reference by allocating a copy of the path structure.
 > 
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> 
+> > diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> > index 08f0847c49708..02398f5a46d5a 100644
+> > --- a/fs/bpf_fs_kfuncs.c
+> > +++ b/fs/bpf_fs_kfuncs.c
 > [ ... ]
-> 
-> > +bool vfs_walk_handover(struct vfs_ancestor_walk *to,
-> > +		       struct vfs_ancestor_walk *from)
+> > +__bpf_kfunc struct path *
+> > +bpf_iter_path_ancestors_next(struct bpf_iter_path_ancestors *it)
 > > +{
-> > +	struct path pos = from->pos;
-> > +	int err;
+> > +	struct bpf_path_ancestors_kern *kit = (void *)it;
+> > +	struct path *pos = bpf_path_ancestors_step(kit);
+> > +	struct path *held;
 > > +
-> > +	err = __legitimize_mnt(pos.mnt, from->m_seq);
-> > +	if (unlikely(err)) {
-> > +		if (err < 0)
-> > +			mnt_undo_legitimize(real_mount(pos.mnt));
-> > +		goto dead;
-> > +	}
-> > +	if (unlikely(read_seqcount_retry(&pos.dentry->d_seq, from->seq) ||
-> > +		     !lockref_get_not_dead(&pos.dentry->d_lockref))) {
+> > +	if (!pos)
+> > +		return NULL;
+> > +	/*
+> > +	 * The position must outlive the walk's own view of it, so it gets a
+> > +	 * reference and a struct path of its own to live in: struct path is
+> > +	 * a value type, with nothing a BPF reference could be taken on
+> > +	 * otherwise.  Sleepable, so no atomic allocation.
+> > +	 */
+> > +	held = kmalloc_obj(*held);
 > 
 > [Severity: High]
-> Is there a time-of-check to time-of-use race window here due to the
-> validation order?
+> Can this allocation cause a deadlock if the iterator is used from a sleepable
+> LSM hook?
 > 
-> Evaluating read_seqcount_retry() before lockref_get_not_dead() seems to leave
-> a gap. If a concurrent rename or unlink mutates the dentry and increments the
-> seqcount right after the sequence check, the subsequent lockref_get_not_dead()
-> might still blindly succeed on the active d_count.
+> If a sleepable BPF LSM program is attached to a hook like
+> security_inode_setattr or security_inode_unlink, it is called by the VFS
+> with the inode's i_rwsem held. 
 > 
-> This would yield a stale and unvalidated path position to the referenced
-> walk. Should the lockref acquisition strictly precede sequence validation to
-> ensure the sequence hasn't changed during the reference acquisition?
+> The kmalloc_obj() macro appears to default to GFP_KERNEL allocations, which
+> includes the __GFP_FS flag. Under memory pressure, this could trigger direct
+> memory reclaim.
+> 
+> If reclaim attempts to write back dirty pages or shrink the dcache/icache,
+> it might try to acquire the same i_rwsem, resulting in a deadlock.
 >
-This is intended and explained in the cover letter note,
-"stuff not changed" bullet one.
+Direct reclaim never takes i_rwsem. So this is incorrect.
+
+(Also if that were the case, the mkdir selftest would splat with lockdep)
 
 Justin
-> > +		mnt_undo_legitimize(real_mount(pos.mnt));
-> > +		goto dead;
+> > +	if (!held) {
+> > +		kit->step = -ENOMEM;
+> > +		return NULL;
 > > +	}
-> > +	to->pos = pos;
-> > +	to->flags = 0;
-> > +	to->pos_flags = from->pos_flags;
-> > +	return true;
+> > +	*held = *pos;
+> > +	path_get(held);
+> > +	return held;
+> > +}
 > 
 > -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/20261013164800.2906577-1-utilityemal77@gmail.com?part=8
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261013164800.2906577-1-utilityemal77@gmail.com?part=5
