@@ -1,276 +1,394 @@
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356DE53C3AE
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 22:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636A3541E7C
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 23:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791930147; cv=none; b=FZU3kfgKghQcVAWH6lfLNR5SftfG2zKysZ4s3PJetA/plFfkIzjjzvucuG4EaVe0RQULCMlZezv36TdAFVTIoXORVS9xaB+HTGQ5kJfr6x344UkjndYL0S8fTH89+lyVA6xRPh3UTnAEz9tfUEpDbJlpnIeI9BLIceqJbLM5rYc=
+	t=1791933180; cv=none; b=Uw91MSyAf3aY/Cp8GCgEE+Bv4AP3OeaFVxc8NvRPuDO8U4vQTgZ/P/naynU+kyXe7VRRH2OXWzaJ94vVkeo3z/FR8FEIupzlI0zzbntrqzYn1w85kvYORy0L2Uxg3FWVwGIdmgUFqEnbzkrMdkI2Eo2vREiEdE3JJP94HQLqVfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791930147; c=relaxed/simple;
-	bh=NwIvVIq01Hapz/mS8aATUvaJJsZ0UfcFyYw2G5vyO2c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=d8lIXfkW6AAW6qefr8/xcmWq6Og0gL7y3szoSR0ju4QoEnmEr9pR22jDaKikbg2CJC+kD+zX2rDfUFPPgE0Mg1ooG7KhHPyTDp8Citsy+HRxxRbztFl3YZyJVdiDCDLNjff0bTn3i4yr0bhUKzszm1YOiCuiaSHAlCKuYwRnOKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-4f9b643ae53so3325228b6e.3
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 15:22:26 -0700 (PDT)
+	s=arc-20240116; t=1791933180; c=relaxed/simple;
+	bh=CKznOtFGWWUuBlvYOVXBh3xCJPpaQNhD/UkdbkXdAeU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N7NDYetUfM/2REdEFx/pEHcbN1BggP1Bna/2+Ng2+69FMkDjhrEjYIpjgVm/UJVwTba2Tcq/mZ1J3WOVo0PvgNsTILZppMy6o8SI1G0rXiXieMcmq/B/erm4KFUqOiGfnp4rqQpdwWCzKgTK4pthCrIKkikFf6VC/Tx+y2XVgtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=openai.com; spf=pass smtp.mailfrom=openai.com; dkim=pass (1024-bit key) header.d=openai.com header.i=@openai.com header.b=IkMwYDDc; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=openai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openai.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=openai.com header.i=@openai.com header.b="IkMwYDDc"
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-48eee44b908so2069088fac.1
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 16:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openai.com; s=google; t=1791933177; x=1792537977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5BIzdEVHGf+Qmp+vjPjgix3W7E6X3OkPG3uAO2mnOYw=;
+        b=IkMwYDDc79w7T+iefq3Nri4sNk991COVYXblbzcswA9/i4nhGFmgatoeAl+wsNwkEE
+         lDJCptTpwsyO3hzcsyqV9PmOt/KI6eaMcPul4caEgpY1ObQY9iVXsd/Z3XAvaV/9MPoh
+         SjycTEXhP067PLDpmaW313NLDlPx9UkwTN7Qc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791930145; x=1792534945;
-        h=content-type:to:from:subject:message-id:in-reply-to:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=nC9Y66AUbwP61dNcn7uCl9o6jCbcJ0Xkk9MXOm+DELQ=;
-        b=UK2sjl8afkYllBzumsOYPkrVeGhoAUFSBeR2wXetSu9cFP/ABQp3sxO/CU2OwTAMY0
-         NjGvmtetWfWGSpCVZ+CkLADUEeIv8E8aUxfQEmFip0DcNqD5ZrQxyP8umksQMAp3kYaG
-         MmFOOhMx9/5bblbtNLbr4zMo4siTn/FqyYC+OMvB3sofH6/v3BXL45IUBfxGBAoWWC7D
-         8osuZIhDulUZXByvGRrDZq6T4bVLd7tH9PjXHyPF6HyWSxDMphrS7fq5Ngn1AZXS+RUN
-         jPA7vhlfEEL+KBFDwKWAtdfFnI96Qentneug3Zy1g1UWMZ5dtuhw6Cav+4ZisEB/HQEc
-         ZfuQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx33MtG1QqVD8ApL8+c1IZXMTRa21O+wR+eEanIWicah8Inz6LXuDBybArMCztuhDoM3LMyE9xOwK9H1egrNydsc6mpths=@vger.kernel.org
-X-Gm-Message-State: AFq9FYK8VkJyZ8U7ZSwwWFbX6rimcMS0bCevilZ/Ru44/fdLXkRpf4e3
-	C1eQch/3rfOBKsT39sWUzZHBXzpuvsOZ8KtDeyucnp+EZecJUCRgZN/aEieAjJF6q+Mbn2Jb916
-	xtUmCOdY32c40SPNZRCH9PUO/4TpwwluuxotgfdpZST3bi43bvC97+8Rm8hk=
+        d=1e100.net; s=20260707; t=1791933177; x=1792537977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5BIzdEVHGf+Qmp+vjPjgix3W7E6X3OkPG3uAO2mnOYw=;
+        b=ur3FjlKGyCFTWvTfuzfnQ2Blu9wallvtbDZ8cZz8a0amZbgXt6pgy/sEedRIE9JmYp
+         uduAtl4YS6Hg9SywhtoK7vDCBH0x0aSq4MSYxEjUb1XNa6INE46foxIpBNSkNVM+pMsU
+         Q6h6Mdy5UEbZ8RS03A78dSrC1ojfFhZWfUfDpCwgKJplTI2bw1RyW4Lho6442fqrUyuU
+         BiWk7VuXMhT9Fj8SFDFfRZjefrdOy1CB8CQN85FcA7fGT+6eQbRihZG0LmO5GgI/80t9
+         2g7uOOogXgaU3C5JzriF1qptJwrt1UMSyeEDo8W/72Lv2CGxcd7fDnU2RpFZXSDo2IMu
+         ejBw==
+X-Forwarded-Encrypted: i=1; AKwUvBxdTswLctrmIcwKttxNfNiJIgiyBA6rrZWLleMkaXXQKgdTEewl+cVkr1RVKIj5O/fIgjy5RJEQSbWjSeHjPsbh6LrztO4=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKv9Gf7wuc2zqceWP4qYvN9SFRC3afWxoX7o7gkLQi06rtC8cSA
+	kgKjkjVOp3oUbSyKH/jaAqmyeWRoFsi2xKSbZKymMdE5CcY2aC01Cv/UWSctLz1m4aQ8QKTtWsi
+	WLXjFNbM=
+X-Gm-Gg: AYBFou13IddjRcrjADlXUS0WXnZx2DzM13LFX8tMfr4f7M/gOSHuDnsqYAuMI9CkJcb
+	EJYI/Bw4sQBCBQF+A8W1bRF9caUGWF4qlJIaF6e3OXSZXm+LaJkLcgaM1ghQ9Xlz9CCK6N3Xgn/
+	8JlLAzeAObhMT5t93orctO/TgmRgwML3AADMJFS1OXnlBrt83EUHflmdZJaSNpl6zSeYFCGLjXV
+	gsOA0G6KT97MPrntROQM/o/p2u9AEDsFuacgWhPqKAOCbfanSSLrDlfXIBLRKFdTFTgs2/vEHpE
+	OyC2g2B1nKsB59RM6bL/1nCFz4l6NaJeT0ptcWsEoEMHCANuw57OZwkM9em5l2nUdwjzht3VMoM
+	rczBfsIlSRelwNTsT7a47/2vel5eDsTETn1zsGaRhetrFLgUHAdh+ShMgpt/21+pjbW5vKtWR8T
+	+oEdyKtrLdIwaQoEKZUgBv4OswVyRjE7X62eAXForxaGPXM5Ber+jrgrONxETWZypqF7KQsX3A5
+	iJB8q2L4pSvT+OAp1P0lx2ZAglgPE9IWmaoZBmbKGdP6eJ1WwTW9uqn6urIuDxHchBoYOWNKRSZ
+	AQr+Y17koQ==
+X-Received: by 2002:a05:6870:a0a4:b0:49d:c502:5e2c with SMTP id 586e51a60fabf-4a2a8ab70f3mr12955106fac.48.1791933177070;
+        Tue, 13 Oct 2026 16:12:57 -0700 (PDT)
+Received: from com-75606.corp.openai.org ([199.47.143.7])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4a6dfd0b149sm754783fac.18.2026.10.13.16.12.56
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 13 Oct 2026 16:12:56 -0700 (PDT)
+From: Kyle Zeng <kylebot@openai.com>
+To: keyrings@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	dhowells@redhat.com,
+	jarkko@kernel.org,
+	Kyle Zeng <kylebot@openai.com>
+Subject: [PATCH v2] keys: make keyring indexes independent of kernel addresses
+Date: Tue, 13 Oct 2026 16:12:51 -0700
+Message-ID: <20261013231251.56170-1-kylebot@openai.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:2e4d:b0:4e7:978b:ad91 with SMTP id
- 5614622812f47-50c57695625mr13025422b6e.49.1791930145279; Tue, 13 Oct 2026
- 15:22:25 -0700 (PDT)
-Date: Tue, 13 Oct 2026 15:22:25 -0700
-In-Reply-To: <6a6aad2e.57649fcc.360844.000d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6aceaf21.8cdf6287.1eb53.0174.GAE@google.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- __configfs_open_file (2)
-From: syzbot <syzbot+c87014f645f2fd24312e@syzkaller.appspotmail.com>
-To: a.hindborg@kernel.org, leitao@debian.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+KEYCTL_READ returns the serial numbers in a keyring in associative-array
+traversal order.  The first word of the index is a public, deterministic
+hash of the type pointer, domain pointer and description.  An unprivileged
+user can therefore insert keys with known descriptions, predict their
+order for each possible KASLR slide, and recover the kernel image address.
+On an x86-64 build with 16 MiB alignment, 45 user keys suffice to
+distinguish the candidate slides.
 
-HEAD commit:    24a19b953e2a Linux 7.3-rc7
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=165f3c35580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=129d675874dbf896
-dashboard link: https://syzkaller.appspot.com/bug?extid=c87014f645f2fd24312e
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10cf93d1580000
+Remove the addresses from the whole index, not just its first hash word.
+Assign each key type and domain a nonzero 64-bit ID and hash those IDs and
+the description with a once-initialized SipHash key.  Use the full IDs in
+the later index chunks as well.  Truncating or hashing the IDs there would
+lose the guarantee that distinct type/domain/description tuples have a
+differing index bit.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c87014f645f2fd24312e@syzkaller.appspotmail.com
+Allocate IDs lazily since private key types need not be registered.  Cache
+them in the index key so tree walks and copies of an existing index do not
+need to dereference a type descriptor that may have been unregistered.
+Keep the 32-bit chunk layout and diff_objects() bit offsets consistent,
+and retain the separate root slot for keyrings used by recursive search.
+The key comparison, permissions and userspace data format are unchanged;
+only the address-dependent in-memory ordering is replaced.
 
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor387/5997 is trying to acquire lock:
-ffff888035be1570 (&p->frag_sem){.+.+}-{4:4}, at: __configfs_open_file+0xe8/0x9c0 fs/configfs/file.c:304
-
-but task is already holding lock:
-ffffffff91d84848 (cb_lock){++++}-{4:4}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1217
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (cb_lock){++++}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5942 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5899
-       down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
-       genl_rcv+0x19/0x40 net/netlink/genetlink.c:1217
-       netlink_unicast_kernel net/netlink/af_netlink.c:1338 [inline]
-       netlink_unicast+0x585/0x850 net/netlink/af_netlink.c:1364
-       netlink_sendmsg+0x8b0/0xda0 net/netlink/af_netlink.c:1919
-       sock_sendmsg_nosec net/socket.c:800 [inline]
-       __sock_sendmsg net/socket.c:815 [inline]
-       sock_sendmsg+0x394/0x410 net/socket.c:838
-       splice_to_socket+0xb3c/0x11a0 fs/splice.c:884
-       do_splice_from fs/splice.c:936 [inline]
-       do_splice+0x109c/0x1fa0 fs/splice.c:1349
-       __do_splice+0x33b/0x370 fs/splice.c:1431
-       __do_sys_splice fs/splice.c:1634 [inline]
-       __se_sys_splice fs/splice.c:1616 [inline]
-       __x64_sys_splice+0x187/0x250 fs/splice.c:1616
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&pipe->mutex){+.+.}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5942 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5899
-       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
-       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
-       fifo_open+0x139/0xb40 fs/pipe.c:1235
-       do_dentry_open+0x6ab/0x14d0 fs/open.c:996
-       vfs_open+0x82/0x3f0 fs/open.c:1101
-       do_open fs/namei.c:4866 [inline]
-       path_openat+0x19fa/0x2440 fs/namei.c:5029
-       do_file_open+0x20e/0x430 fs/namei.c:5058
-       file_open_name+0x1c3/0x3e0 fs/open.c:1375
-       filp_open+0x2e/0x50 fs/open.c:1392
-       fsg_lun_open+0x6b/0x7b0 drivers/usb/gadget/function/storage_common.c:194
-       fsg_store_file+0x1e7/0x450 drivers/usb/gadget/function/storage_common.c:455
-       flush_write_buffer fs/configfs/file.c:207 [inline]
-       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x6af/0x1050 fs/read_write.c:687
-       ksys_write+0x12a/0x250 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&common->filesem){+.+.}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5942 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5899
-       down_write+0x8b/0x1f0 kernel/locking/rwsem.c:1631
-       fsg_store_file+0x264/0x450 drivers/usb/gadget/function/storage_common.c:452
-       flush_write_buffer fs/configfs/file.c:207 [inline]
-       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x6af/0x1050 fs/read_write.c:687
-       ksys_write+0x12a/0x250 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&p->frag_sem){.+.+}-{4:4}:
-       check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3209
-       check_prevs_add kernel/locking/lockdep.c:3328 [inline]
-       validate_chain kernel/locking/lockdep.c:3952 [inline]
-       __lock_acquire+0x1528/0x1f40 kernel/locking/lockdep.c:5288
-       lock_acquire kernel/locking/lockdep.c:5942 [inline]
-       lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5899
-       down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
-       __configfs_open_file+0xe8/0x9c0 fs/configfs/file.c:304
-       do_dentry_open+0x6ab/0x14d0 fs/open.c:996
-       vfs_open+0x82/0x3f0 fs/open.c:1101
-       do_open fs/namei.c:4866 [inline]
-       path_openat+0x19fa/0x2440 fs/namei.c:5029
-       do_file_open+0x20e/0x430 fs/namei.c:5058
-       file_open_name+0x1c3/0x3e0 fs/open.c:1375
-       filp_open+0x2e/0x50 fs/open.c:1392
-       kernel_read_file_from_path_initns+0xec/0x240 fs/kernel_read_file.c:159
-       fw_get_filesystem_firmware drivers/base/firmware_loader/main.c:549 [inline]
-       _request_firmware+0x733/0x13c0 drivers/base/firmware_loader/main.c:873
-       request_firmware+0x35/0x50 drivers/base/firmware_loader/main.c:948
-       reg_reload_regdb+0x85/0x460 net/wireless/reg.c:1067
-       genl_family_rcv_msg_doit+0x214/0x300 net/netlink/genetlink.c:1114
-       genl_family_rcv_msg net/netlink/genetlink.c:1194 [inline]
-       genl_rcv_msg+0x560/0x800 net/netlink/genetlink.c:1209
-       netlink_rcv_skb+0x159/0x420 net/netlink/af_netlink.c:2575
-       genl_rcv+0x28/0x40 net/netlink/genetlink.c:1218
-       netlink_unicast_kernel net/netlink/af_netlink.c:1338 [inline]
-       netlink_unicast+0x585/0x850 net/netlink/af_netlink.c:1364
-       netlink_sendmsg+0x8b0/0xda0 net/netlink/af_netlink.c:1919
-       sock_sendmsg_nosec net/socket.c:800 [inline]
-       __sock_sendmsg net/socket.c:815 [inline]
-       sock_sendmsg+0x394/0x410 net/socket.c:838
-       splice_to_socket+0xb3c/0x11a0 fs/splice.c:884
-       do_splice_from fs/splice.c:936 [inline]
-       do_splice+0x109c/0x1fa0 fs/splice.c:1349
-       __do_splice+0x33b/0x370 fs/splice.c:1431
-       __do_sys_splice fs/splice.c:1634 [inline]
-       __se_sys_splice fs/splice.c:1616 [inline]
-       __x64_sys_splice+0x187/0x250 fs/splice.c:1616
-       do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
-       do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &p->frag_sem --> &pipe->mutex --> cb_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(cb_lock);
-                               lock(&pipe->mutex);
-                               lock(cb_lock);
-  rlock(&p->frag_sem);
-
- *** DEADLOCK ***
-
-locks held by syz-executor387/5997: 2, last CPU#0:
- #0: ffff888035fc7860 (&pipe->mutex){+.+.}-{4:4}, at: pipe_lock fs/pipe.c:91 [inline]
- #0: ffff888035fc7860 (&pipe->mutex){+.+.}-{4:4}, at: pipe_lock+0x69/0x80 fs/pipe.c:88
- #1: ffffffff91d84848 (cb_lock){++++}-{4:4}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1217
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5997 Comm: syz-executor387 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x100/0x190 lib/dump_stack.c:120
- print_circular_bug.cold+0x178/0x1be kernel/locking/lockdep.c:2087
- check_noncircular+0x146/0x160 kernel/locking/lockdep.c:2219
- check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3209
- check_prevs_add kernel/locking/lockdep.c:3328 [inline]
- validate_chain kernel/locking/lockdep.c:3952 [inline]
- __lock_acquire+0x1528/0x1f40 kernel/locking/lockdep.c:5288
- lock_acquire kernel/locking/lockdep.c:5942 [inline]
- lock_acquire+0x1d1/0x380 kernel/locking/lockdep.c:5899
- down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
- __configfs_open_file+0xe8/0x9c0 fs/configfs/file.c:304
- do_dentry_open+0x6ab/0x14d0 fs/open.c:996
- vfs_open+0x82/0x3f0 fs/open.c:1101
- do_open fs/namei.c:4866 [inline]
- path_openat+0x19fa/0x2440 fs/namei.c:5029
- do_file_open+0x20e/0x430 fs/namei.c:5058
- file_open_name+0x1c3/0x3e0 fs/open.c:1375
- filp_open+0x2e/0x50 fs/open.c:1392
- kernel_read_file_from_path_initns+0xec/0x240 fs/kernel_read_file.c:159
- fw_get_filesystem_firmware drivers/base/firmware_loader/main.c:549 [inline]
- _request_firmware+0x733/0x13c0 drivers/base/firmware_loader/main.c:873
- request_firmware+0x35/0x50 drivers/base/firmware_loader/main.c:948
- reg_reload_regdb+0x85/0x460 net/wireless/reg.c:1067
- genl_family_rcv_msg_doit+0x214/0x300 net/netlink/genetlink.c:1114
- genl_family_rcv_msg net/netlink/genetlink.c:1194 [inline]
- genl_rcv_msg+0x560/0x800 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x159/0x420 net/netlink/af_netlink.c:2575
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1218
- netlink_unicast_kernel net/netlink/af_netlink.c:1338 [inline]
- netlink_unicast+0x585/0x850 net/netlink/af_netlink.c:1364
- netlink_sendmsg+0x8b0/0xda0 net/netlink/af_netlink.c:1919
- sock_sendmsg_nosec net/socket.c:800 [inline]
- __sock_sendmsg net/socket.c:815 [inline]
- sock_sendmsg+0x394/0x410 net/socket.c:838
- splice_to_socket+0xb3c/0x11a0 fs/splice.c:884
- do_splice_from fs/splice.c:936 [inline]
- do_splice+0x109c/0x1fa0 fs/splice.c:1349
- __do_splice+0x33b/0x370 fs/splice.c:1431
- __do_sys_splice fs/splice.c:1634 [inline]
- __se_sys_splice fs/splice.c:1616 [inline]
- __x64_sys_splice+0x187/0x250 fs/splice.c:1616
- do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
- do_syscall_64+0x123/0x790 arch/x86/entry/syscall_64.c:84
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7180644b5e
-Code: 08 0f 85 f5 e2 ff ff 49 89 fb 48 89 f0 48 89 d7 48 89 ce 4c 89 c2 4d 89 ca 4c 8b 44 24 08 4c 8b 4c 24 10 4c 89 5c 24 08 0f 05 <c3> 90 41 57 41 56 4d 89 c6 41 55 4d 89 cd 41 54 55 53 48 83 ec 08
-RSP: 002b:00007f717cde6f18 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
-RAX: ffffffffffffffda RBX: 00007f717cde76c0 RCX: 00007f7180644b5e
-RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000011
-RBP: 00007f717cde6fe0 R08: 0000000000000014 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000012
-R13: 00007f717cde6f80 R14: 000000000000017e R15: 0000000000000010
- </TASK>
-faux_driver regulatory: loading /lib/firmware/regulatory.db failed with error -26
-faux_driver regulatory: Direct firmware load for regulatory.db failed with error -26
-faux_driver regulatory: Falling back to sysfs fallback for: regulatory.db
-
-
+Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+Assisted-by: Codex:gpt-6-astra
+Signed-off-by: Kyle Zeng <kylebot@openai.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Changes in v2:
+- Use reverse Christmas tree order for local variable declarations,
+  preserving initializer dependencies. No functional changes.
+
+ include/linux/key-type.h |    1 
+ include/linux/key.h      |    5 ++
+ security/keys/keyring.c  |  150 +++++++++++++++++++++++++---------------------
+ 3 files changed, 86 insertions(+), 70 deletions(-)
+
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index bb97bd3e5af4..c4f329b6ae3f 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -161,6 +161,7 @@ struct key_type {
+ 				     const void *in, const void *in2);
+ 
+ 	/* internal fields */
++	atomic64_t		index_id;	/* Opaque keyring index ID */
+ 	struct list_head	link;		/* link in types list */
+ 	struct lock_class_key	lock_class;	/* key->sem lock class */
+ } __randomize_layout;
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 81b8f05c6898..e40b5267658f 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -107,6 +107,7 @@ struct keyring_name;
+ 
+ struct key_tag {
+ 	struct rcu_head		rcu;
++	atomic64_t		index_id;	/* Opaque keyring index ID */
+ 	refcount_t		usage;
+ 	bool			removed;	/* T when subject removed */
+ };
+@@ -129,6 +130,8 @@ struct keyring_index_key {
+ 	struct key_type		*type;
+ 	struct key_tag		*domain_tag;	/* Domain of operation */
+ 	const char		*description;
++	u64			type_id;	/* Cached index IDs */
++	u64			domain_id;
+ };
+ 
+ union key_payload {
+@@ -251,6 +254,8 @@ struct key {
+ 			struct key_type	*type;		/* type of key */
+ 			struct key_tag	*domain_tag;	/* Domain of operation */
+ 			char		*description;
++			u64		type_id;
++			u64		domain_id;
+ 		};
+ 	};
+ 
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 15bf4af8f282..6910ddf00457 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -14,6 +14,9 @@
+ #include <linux/err.h>
+ #include <linux/user_namespace.h>
+ #include <linux/nsproxy.h>
++#include <linux/once.h>
++#include <linux/random.h>
++#include <linux/siphash.h>
+ #include <keys/keyring-type.h>
+ #include <keys/user-type.h>
+ #include <linux/assoc_array_priv.h>
+@@ -147,49 +150,46 @@ static int keyring_instantiate(struct key *keyring,
+ }
+ 
+ /*
+- * Multiply 64-bits by 32-bits to 96-bits and fold back to 64-bit.  Ideally we'd
+- * fold the carry back too, but that requires inline asm.
++ * Give key types and domains address-independent identities.  Zero means that
++ * an ID has not yet been allocated.  As with inode sequence numbers used by
++ * futexes, this relies on the 64-bit counter not wrapping in a machine's
++ * lifetime.
+  */
+-static u64 mult_64x32_and_fold(u64 x, u32 y)
++static u64 key_index_id(atomic64_t *id)
+ {
+-	u64 hi = (u64)(u32)(x >> 32) * y;
+-	u64 lo = (u64)(u32)(x) * y;
+-	return lo + ((u64)(u32)hi << 32) + (u32)(hi >> 32);
++	static atomic64_t next_id;
++	u64 old, new;
++
++	old = atomic64_read(id);
++	if (likely(old))
++		return old;
++
++	do {
++		new = atomic64_inc_return(&next_id);
++	} while (WARN_ON_ONCE(!new));
++
++	old = 0;
++	if (!atomic64_try_cmpxchg_relaxed(id, &old, new))
++		return old;
++	return new;
+ }
+ 
+ /*
+- * Hash a key type and description.
++ * Hash a key type, domain and description.  KEYCTL_READ exposes the tree's
++ * traversal order, so no part of the index may contain kernel addresses.
+  */
+ static void hash_key_type_and_desc(struct keyring_index_key *index_key)
+ {
+ 	const unsigned level_shift = ASSOC_ARRAY_LEVEL_STEP;
+ 	const unsigned long fan_mask = ASSOC_ARRAY_FAN_MASK;
++	static siphash_key_t hash_key __read_mostly;
+-	const char *description = index_key->description;
+-	unsigned long hash, type;
+-	u32 piece;
++	unsigned long hash;
+ 	u64 acc;
+-	int n, desc_len = index_key->desc_len;
+-
+-	type = (unsigned long)index_key->type;
+-	acc = mult_64x32_and_fold(type, desc_len + 13);
+-	acc = mult_64x32_and_fold(acc, 9207);
+-	piece = (unsigned long)index_key->domain_tag;
+-	acc = mult_64x32_and_fold(acc, piece);
+-	acc = mult_64x32_and_fold(acc, 9207);
+-
+-	for (;;) {
+-		n = desc_len;
+-		if (n <= 0)
+-			break;
+-		if (n > 4)
+-			n = 4;
+-		piece = 0;
+-		memcpy(&piece, description, n);
+-		description += n;
+-		desc_len -= n;
+-		acc = mult_64x32_and_fold(acc, piece);
+-		acc = mult_64x32_and_fold(acc, 9207);
+-	}
++
++	get_random_once(&hash_key, sizeof(hash_key));
++	acc = siphash(index_key->description, index_key->desc_len, &hash_key);
++	acc = siphash_3u64(index_key->type_id, index_key->domain_id, acc,
++			   &hash_key);
+ 
+ 	/* Fold the hash down to 32 bits if need be. */
+ 	hash = acc;
+@@ -209,7 +209,7 @@ static void hash_key_type_and_desc(struct keyring_index_key *index_key)
+ 
+ /*
+  * Finalise an index key to include a part of the description actually in the
+- * index key, to set the domain tag and to calculate the hash.
++ * index key, to set the domain tag and index IDs, and to calculate the hash.
+  */
+ void key_set_index_key(struct keyring_index_key *index_key)
+ {
+@@ -225,6 +225,14 @@ void key_set_index_key(struct keyring_index_key *index_key)
+ 			index_key->domain_tag = &default_domain_tag;
+ 	}
+ 
++	/* Preserve the IDs when copying an existing key's index.  In
++	 * particular, its type may already have been unregistered.
++	 */
++	if (!index_key->type_id)
++		index_key->type_id = key_index_id(&index_key->type->index_id);
++	if (!index_key->domain_id)
++		index_key->domain_id = key_index_id(&index_key->domain_tag->index_id);
++
+ 	hash_key_type_and_desc(index_key);
+ }
+ 
+@@ -263,43 +271,50 @@ void key_remove_domain(struct key_tag *domain_tag)
+ /*
+  * Build the next index key chunk.
+  *
++ * The hash and inline description are followed by the 64-bit type and domain
++ * IDs, low word first, and then by the rest of the description.
+  * We return it one word-sized chunk at a time.
+  */
+ static unsigned long keyring_get_key_chunk(const void *data, int level)
+ {
++	const unsigned int id_chunks = sizeof(u64) / sizeof(unsigned long);
+ 	const struct keyring_index_key *index_key = data;
++	int desc_len = index_key->desc_len;
+ 	unsigned long chunk = 0;
+-	const u8 *d;
+-	int desc_len = index_key->desc_len, n = sizeof(chunk);
++	int n = sizeof(chunk);
+ 	unsigned int offset;
++	const u8 *d;
+ 
+ 	level /= ASSOC_ARRAY_KEY_CHUNK_SIZE;
+ 	switch (level) {
+ 	case 0:
+ 		return index_key->hash;
+ 	case 1:
+ 		return index_key->x;
+-	case 2:
+-		return (unsigned long)index_key->type;
+-	case 3:
+-		return (unsigned long)index_key->domain_tag;
+-	default:
+-		level -= 4;
+-		offset = sizeof(index_key->desc) + level * sizeof(long);
+-		if (desc_len <= offset)
+-			return 0;
+-
+-		d = index_key->description + offset;
+-		desc_len -= offset;
+-		if (desc_len > n)
+-			desc_len = n;
+-		d += desc_len;
+-		do {
+-			chunk <<= 8;
+-			chunk |= *--d;
+-		} while (--desc_len > 0);
+-		return chunk;
+ 	}
++
++	level -= 2;
++	if (level < id_chunks)
++		return index_key->type_id >> (level * ASSOC_ARRAY_KEY_CHUNK_SIZE);
++	level -= id_chunks;
++	if (level < id_chunks)
++		return index_key->domain_id >> (level * ASSOC_ARRAY_KEY_CHUNK_SIZE);
++	level -= id_chunks;
++
++	offset = sizeof(index_key->desc) + level * sizeof(long);
++	if (desc_len <= offset)
++		return 0;
++
++	d = index_key->description + offset;
++	desc_len -= offset;
++	if (desc_len > n)
++		desc_len = n;
++	d += desc_len;
++	do {
++		chunk <<= 8;
++		chunk |= *--d;
++	} while (--desc_len > 0);
++	return chunk;
+ }
+ 
+ static unsigned long keyring_get_object_key_chunk(const void *object, int level)
+@@ -330,6 +345,7 @@ static int keyring_diff_objects(const void *object, const void *data)
+ 	const struct keyring_index_key *a = &key_a->index_key;
+ 	const struct keyring_index_key *b = data;
+ 	unsigned long seg_a, seg_b;
+ 	int level, i;
++	u64 diff;
+ 
+ 	level = 0;
+@@ -339,28 +355,22 @@ static int keyring_diff_objects(const void *object, const void *data)
+ 		goto differ;
+ 	level += ASSOC_ARRAY_KEY_CHUNK_SIZE / 8;
+ 
+-	/* The number of bits contributed by the hash is controlled by a
+-	 * constant in the assoc_array headers.  Everything else thereafter we
+-	 * can deal with as being machine word-size dependent.
+-	 */
++	/* The inline description contributes one machine-word-sized chunk. */
+ 	seg_a = a->x;
+ 	seg_b = b->x;
+ 	if ((seg_a ^ seg_b) != 0)
+ 		goto differ;
+ 	level += sizeof(unsigned long);
+ 
+-	/* The next bit may not work on big endian */
+-	seg_a = (unsigned long)a->type;
+-	seg_b = (unsigned long)b->type;
+-	if ((seg_a ^ seg_b) != 0)
+-		goto differ;
+-	level += sizeof(unsigned long);
++	diff = a->type_id ^ b->type_id;
++	if (diff)
++		return level * 8 + __ffs64(diff);
++	level += sizeof(u64);
+ 
+-	seg_a = (unsigned long)a->domain_tag;
+-	seg_b = (unsigned long)b->domain_tag;
+-	if ((seg_a ^ seg_b) != 0)
+-		goto differ;
+-	level += sizeof(unsigned long);
++	diff = a->domain_id ^ b->domain_id;
++	if (diff)
++		return level * 8 + __ffs64(diff);
++	level += sizeof(u64);
+ 
+ 	i = sizeof(a->desc);
+ 	if (a->desc_len <= i)
+-- 
+2.53.0
+
