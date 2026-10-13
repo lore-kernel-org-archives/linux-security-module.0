@@ -1,151 +1,123 @@
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD6D4FD279;
-	Tue, 13 Oct 2026 13:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791896748; cv=none; b=AC+t1mwAa0zGdM6bQK1JF1Xs8QlPbhJ6cb5n4/eT57xbHS/U3/5t9tS/OhcXzGbDB1cPG/rV1Pmxxivmk4nw8+pX/HlQUxSptW1KXaDT71KdKV6bDiKs3wq4QKMG7d0pmwRkYTVAXD+68UyURZlwkQDHy978sff94tXrQ5kHGtQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791896748; c=relaxed/simple;
-	bh=XLVDDsJ9SkLDOPsRoHBlkN1g12Muht7f6+awpZoSXhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bhfQhN9xikyVLan1IQ50lV+T3JTVSQ0tDsHdnRh8bNnJb0Rit2JEFfM1oegD5H9H/pvd9q8VoCfjkQaI0KDykjbxuVOF27d631MWwxSLh7wijGbsxNL1BzdHDK3RTixve5O89wGVsEplrw+Kc3Aw5qjmWjBs52pb6Bn5ThTOR+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=6F7V5ju2; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8014739061C
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 13:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791896852; cv=pass; b=utZ0Q1r0x2BEuT0a/c3azXxY9MXK4+suFbyEfuiokKXLh+se1LHREDHr2X3dEC7UbltQB4xDVnEd4T9b9N/m1yJOkFOItnA/7t5zXNc4Wg53E1MKo4jy77oe0QuayKYEZA1Jato/Cs/Gd/WxJlJ7OwKn4pDZGgPJruhiGB/MSjA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791896852; c=relaxed/simple;
+	bh=6TiVNxxeDpdSAagBOty9+KDqgyZClTo7hXYVmhdgD4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LmApGRU25ITacP8ZTCR8QaIwkW6q2wHGH8/wjkK3GDSwEMaHPqc4rsacPZGygcoEnIHJ/E4rvtmN7TUgnd0gsTx58aAxbL2AEUlMsn78yrs+fhm51rUoEvrLZfYnU6PoK15UYExkyGI0Xn3m/J1oxlWZRJLL3J8yAvalPyxduqo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ChCnLLDN; arc=pass smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="6F7V5ju2"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=wYQuXQ0KfHa17CDRJUy3J57K/iJLMTM6lvkW2CcSDiQ=;
-	b=6F7V5ju2QgWQ9eZjW3MED7pvYgSKl/itfkouUmXO5AnPvg4CViMZ+cJbrkHhH87RerZ3E2r8M
-	GCZPwWzNbKZLEmW98TNci7+YUNiTmHaBGjPkmvgfhRB6SvQAAfJuoDmaTpgxKg9SY9c6ir2ICg/
-	saTm5ZL2eP+7OY3gxwfW1xg=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4j3vQQ6Q24zKm4b;
-	Tue, 13 Oct 2026 20:53:18 +0800 (CST)
-Received: from kwepemo100015.china.huawei.com (unknown [7.202.195.69])
-	by mail.maildlp.com (Postfix) with ESMTPS id 17A474055B;
-	Tue, 13 Oct 2026 21:05:40 +0800 (CST)
-Received: from [10.67.111.244] (10.67.111.244) by
- kwepemo100015.china.huawei.com (7.202.195.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 13 Oct 2026 21:05:39 +0800
-Message-ID: <1451a49c-f37a-486f-ac47-e2ff86fef28a@huawei.com>
-Date: Tue, 13 Oct 2026 21:05:37 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ChCnLLDN"
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6767d92cde6so2538482d50.0
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 06:07:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791896849; cv=none;
+        d=google.com; s=arc-20260327;
+        b=BhKjL3k1ljABTlEiZravg/o7xjH7zcUejzZvsOudnhSF/ZNkJ9i0gWVM29kBlJPDjm
+         6GkECVXNZl0UXKs8Qj0iRRPM9o+5ZNGoUBrIcQHs9kWy8VrKRMSJ5POlhSClktzBHSXW
+         WzkiQEyUK1yeMA7D35WPvTPDpPze1u4Ahptk8Eewn/iEAswHtV1WqxJbdfotXtMqk4ZF
+         zdQLcszRbMyRa0kXlXv9C8hqTk2DQN9FDo5VlvAcA1PB0zvjuQdlhptF6UfToBG54s/V
+         q6pl0qhUjzfB5oKOExRX/hInl0MMFsPsYUJDFro8H7oxnSe6kxIkk/5V03dQLSxUdLfz
+         fitA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=0ncwg+itbdhvll8NWmaHzhsCbDAbH6eG1xlYXFmq6Oc=;
+        fh=VDX932OB5lF6srUPDfrCzpbVLnaDbDPTBveszOzWhhE=;
+        b=UIKXPQlTTDWLQwEHXmBkHg+wzVU8J6H96bJ+O3F1m9yiQdThyfMPxtIXr86E6mEpbu
+         ap6mNCLEfDP4bTzTYbgctswk0P3B6vDkZnwnLbwpOBmdtbWVlt/NqGZOmCqp/iBf5bav
+         CzplTflg46w1lJt8BvnSt9seLnZCHTZac8Qh/sdIrEOQUWAAFCNB4+oTI4EuXeCcvDU3
+         oUdofWi7AdUd+wxU/Da5KgZWpY6eJRF2Hm7ESXjZ6zoakDeMJswlB3R6seGRN1m3FNSN
+         Ajt4tHAJiF0oMMf5n/O8q20EGoePokN1kYOzn+E9Tck/VyyifPaFXH29j9IWIw3ueID/
+         vzUQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791896849; x=1792501649; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0ncwg+itbdhvll8NWmaHzhsCbDAbH6eG1xlYXFmq6Oc=;
+        b=ChCnLLDN0HrodCru/tKtCUmKXKNwgnQaCvvNBUByqdBDCIQ3mkdmJCGpAeX3jAxF+P
+         R+Oo89B+esq6iTJ3eV/5t9BE3qRS4VEfVQi9pgkqVmt4FF9u0zfVTTj7wNlyRpw5BvvI
+         1TEhSMDZDbfk1ZIu5DcPfBqeOQ9+Q5Itab85rR0g7WWrIEfGe/WNZG9HXPiuVwi+skLr
+         jFZPFRbq4J1Qi8pJaIgXl//pZnHFTo44Vhfa1DRyF/xMxs0LWZQs6rQYxpDRpQr18P35
+         WhU23F57sI9D02Hzcp/l5i0TMBs4CxoJxS6IeQ9yyTueHAm8+WDXoDYChnuDJEmpQVhE
+         xF0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791896849; x=1792501649;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=0ncwg+itbdhvll8NWmaHzhsCbDAbH6eG1xlYXFmq6Oc=;
+        b=dr/fgDhDV3aNPqgq0I+draW2w5YXsWrSgTSUIq77/MdHk0R1fKzb4ofaGpIwEN46ge
+         nByeH13uKx262xG+HdLl+cPXL0KU5bjOXVKKcq964wZtm794l7/DZOk4riGQH2/bJpsZ
+         zuYinHl1gKd76f+a5I5vF/0HlOkauZ8P4vmBdCSbuKPrC5WRdn/u6W35oOcn5lPz7e2w
+         TfdTnhuuKi2qNAJuI0L4YUKC6Xa/dz6iB/LF2pvqoyEa9WJst+hUYJk82ti4zsegvFbM
+         BY4VC9v/moaTUsY9JgEfWnHQfB7CKOQIwpt40XDr57QN+Aw7Ov09aW+6jX44aCpq8JnD
+         +vZA==
+X-Forwarded-Encrypted: i=1; AKwUvBw84RF8IuMzQQRVRzmSg11A+lqqk0ogApAT85MZCQOt9WAXEvxfzei7cuixGy4dZ9HXsGiF+/Hdh+2CHSQcW/Lem48WCME=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKJ+sqDAzZqX8RHb4a1lbvFvO8+f7AgMneqlGDAI/U2IgZV/Zo7
+	1fxd3PK6Z4I5vNWUYvQ1hY56uJ16RDS45yvaBnD6/BDziswQS1qU+sNwv/Pvbe5tYkeQokOnxPs
+	HL/1MmscUz7nF9OGwyZSpItz/b/yg/zg=
+X-Gm-Gg: AYBFou1WCE5CjGc39GFYyUCVv0u7O/Wqw705SUxYTBxEoLAEQzH1ZxNRMRz0KiJNBiW
+	3UhuAHHVGdWgAygR58HB22ZSlPu5lcEFaOtFd0Q5zAd7BwtBhKEONPFTk/ZA6o7c3AnrYtIoa/u
+	CPHFqce8ASLFeObgVQP35Dx/CtXY7IdGh4n7I3DfEz5lh8xU6ZARK/mFENoAYc/lAwl6Cn+Srbl
+	DB8+visKTgeeswkZaOWabz1Eh3mu6LIOO5YCE2p2+CIl7bakLeFnqU7XCNSlY/mAvXRS50OZEJJ
+	8i2WuZ+yQbwJJEyZKr8llgRlUmI9WiWIuFbTpA1SNZ6AKbpwGRLh4FMjH0gJ6luvU0Fcj/075uy
+	mmYR+f0r4
+X-Received: by 2002:a53:ac90:0:b0:677:aa92:7596 with SMTP id
+ 956f58d0204a3-679362b5a2amr4638672d50.67.1791896849528; Tue, 13 Oct 2026
+ 06:07:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/3] security: ima: support TSM measurement registers
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-CC: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Eric Snowberg
-	<eric.snowberg@oracle.com>, <linux-integrity@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, Dan Williams <djbw@kernel.org>, Mimi
- Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Catalin
- Marinas <catalin.marinas@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Suzuki
- Poulose <suzuki.poulose@arm.com>, Steven Price <steven.price@arm.com>, Sami
- Mujawar <sami.mujawar@arm.com>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
-	Jiri Pirko <jiri@resnulli.us>
-References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
- <ebe68f6463f8ece8a5cd8ce70bba292ec4f64a41.camel@huaweicloud.com>
- <c4fe5315d70fc162f1e5648e3fccb1676710d5e6.camel@huaweicloud.com>
- <ar5tOUor0bp3MtQ6@e129823.arm.com>
- <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
- <as3uzQ7L6tJ-Lu-Q@e129823.arm.com>
-Content-Language: en-US
-From: GONG Ruiqi <gongruiqi1@huawei.com>
-In-Reply-To: <as3uzQ7L6tJ-Lu-Q@e129823.arm.com>
+References: <20261007-b4-landlock-fix-domain-fortify-panic-v1-1-042e9108f5f8@oss.qualcomm.com>
+ <CAKwvOd=nPgEm=AZbEu12Eb90GtRUThY6YAjSiHHuNVHP8TZHwg@mail.gmail.com>
+ <66usntltyie7ii2rrqajy3izxrvwubwf2vqnery552v3akhwo2@xwb4t76d37wx>
+ <CAKwvOd=E7wgGPf+kgOY8sGi0xO-cFMAJK4PMBFknoEupJi1CXw@mail.gmail.com>
+ <20261009204554.GA778522@ax162> <EF8E7F67-39BF-4382-AB18-98E9D6111CA5@kernel.org>
+ <CAJJ9bXzLgzZG+836_2+pUVOWzndSFNoOh8Xu8Pw++_i1RMJzOg@mail.gmail.com> <20261011.Veiquevah3oh@digikod.net>
+In-Reply-To: <20261011.Veiquevah3oh@digikod.net>
+From: Michael Bommarito <michael.bommarito@gmail.com>
+Date: Tue, 13 Oct 2026 09:07:17 -0400
+X-Gm-Features: AclHuK-jtD50bA_uKkhScngguvSwky5SkR9YZhcx-GIvRlFpZZ6iWS7kxU1PPVI
+Message-ID: <CAJJ9bXwBo2hqcov46pLykJcdWp_fO8r7bXcDEw7JdZjWVkRxaw@mail.gmail.com>
+Subject: Re: [PATCH] landlock: Move the domain layer counter out of the
+ anonymous union
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Abel Vesa <abel.vesa@oss.qualcomm.com>, 
+	Bill Wendling <morbo@google.com>, Tingmao Wang <m@maowtm.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Justin Stitt <justinstitt@google.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemo100015.china.huawei.com (7.202.195.69)
 
-On 10/13/2026 4:41 PM, Yeoreum Yun wrote:
->> On 10/1/2026 10:24 PM, Yeoreum Yun wrote:
->>> Hi Roberto,
->>>
->>>> On Thu, 2026-10-01 at 13:27 +0200, Roberto Sassu wrote:
->>>>> On Wed, 2026-09-30 at 14:43 +0100, Yeoreum Yun wrote:
->>>>>> Confidential computing guests without a TPM can use TSM measurement
->>>>>> registers to record IMA measurement digests instead of TPM PCRs.
->>>>
->>>> + Gong Ruiqi, of course.
->>>>
->>>> Roberto
->>
->> Hi Roberto,
->>
->> [...]Thank you for involving me!
->>
->>>>
->>>>> Hi Yeoreum
->>>>>
->>>>> a similar patch set has been sent to the linux-integrity mailing list:
->>>>>
->>>>> https://lore.kernel.org/linux-integrity/20250630125928.765285-1-gongruiqi1@huawei.com/
->>>>>
->>>>> Could you please work with Gong Ruiqi to have a unified proposal?
->>>>>
->>>>> Thanks
->>>>>
->>>>> Roberto
->>>>>
->>>
->>> Thanks for letting me know and I think the proposal is almost the same
->>> with the different terminology only.
->>>
->>> @Gong, what do you think?
->>
->> Hi Yeoreum,
->>
->> Nice to see this topic picked up again — I'm glad the IMA RoT framework
->> series I posted last year is still of interest.
->>
->> Yes, I'd be happy to work with you on a unified proposal. It's been a
->> while since I last worked on that series, so I'll first revisit my
->> previous patch set, and then follow up with you to discuss the code details.
->>
->> Looking forward to working with you.
->>
->> BR,
->> Ruiqi
-> 
-> Hi Ruiqi :)
-> 
-> Thanks for replying and I'm happy with you too.
-> However, I think we need to rework based on the Jiri's patch [0].
-> 
-> Any thought?
+mic@digikod.net> wrote:
+> Thanks everyone!  We also received another minimal patch that I rebased
+> and applied.  See the final commit:
+> https://git.kernel.org/mic/c/3d8cc52db2f86b624308321c58513019f6b21eec
 
-Hi Yeoreum,
+2x FYI
 
-I'd rather not base our work on Jiri's patch at this stage: it is
-a pre-RFC draft of the new attestation subsystem, whose design is
-itself still in progress. Building upon it instead of current
-mainline would be quite risky — we would be rebasing on a moving
-target, and merging would be blocked until the whole framework
-lands, which is realistically far off.
+1. I boot-tested the clang PR in [1] and confirmed it fixes the issue
+on rc5 and rc6 before your patch
 
-I'd suggest we develop the proposal on current mainline, and
-switch to the new attestation subsystem once it lands. As I
-understand it, for us that is mostly just a matter of switching
-to a different set of APIs.
+2. I boot-tested rc7 after the pull on clang 20 and confirmed we're
+good on this side too
 
-BR,
-Ruiqi
+Thanks!
 
-> 
-> Link: [0] https://github.com/jpirko/linux_mlxsw/tree/wip_attestation_pre_rfc_draft1 
-> 
-> 
-
+[1] https://github.com/llvm/llvm-project/pull/228309
