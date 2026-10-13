@@ -1,160 +1,130 @@
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B977437E5D4
-	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 08:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.181
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808B13B42C7;
+	Tue, 13 Oct 2026 08:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791880872; cv=none; b=A3nqN837E2efeBL1l7fYeCxmlI2ISijkOrNF10OTIgLL0t2OADqcPADCEeuYnpJL8CEi57FPtUWJjTOsp0F/l68kQhLAP13R342gwO9M3mSPxif/O8BYiTwsL3RjB+OyjwsaX7GVMfraHkoONj8jVsunn5n0V68WZ0/Rf5zEWOY=
+	t=1791880920; cv=none; b=SAyUFJ5CGQRQZfExllYFKbrI4y5aKksizcZbwP9a0pzEyE866fER8sHbafsXmh46Rn1GdOdqbfoReIodH/0EJs2fUMaQgNudyTisSvY9euLmUwLawyT3ZfZF6nSBSYvl//SxI9dRPiOdY/DgKLovJ/6ZstGo/BNHG+vO7u+ZpAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791880872; c=relaxed/simple;
-	bh=wQcsrZGEGoTD8tZ4mSQVDM0CA0NU/hotKN0jq7p84wM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DfJKsgmAs6Bmzqu5rYnNrcCXAzSnUBMVx/MFoR4HAjbw2XDDEjMDTQowG1t3NT9AwYMTNs5TXSnUHQ3vPw8+ddNXlKh5MwJ7mS0jFwaKOugeMS3fLEakStFNkcJ9UI3FMqK3HVJ4nBbuypklStzHVvTRH57okquE2DvYn4AGQe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VaU69TOf; arc=none smtp.client-ip=74.125.82.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791880920; c=relaxed/simple;
+	bh=NI8CmL/lnRoC7aE++YpF7fiq+bAGnCCUDMqbYkmDDew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TLLq5FJRA5/x7iyR4SkX3ocsC0RM1sx5yewA5XAgYeWHxORnEf8L7T3LxjVIA0yD0exShE2VpYqk88A0d306lq4ScijplzeaH5ypolXC4CRMYjii+sFvE4IohUJhtRwsuPb+KiZV4NG2pwDA+wLuZo8scIEVFgrus7DF4rn3acU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bZqkt7Lf; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VaU69TOf"
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-3550dd02c9cso207757eec.0
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 01:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791880870; x=1792485670; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ogQf9jgUBIrgk7octuKzEMYSBjX+/nz7g2meA6r6ONk=;
-        b=VaU69TOfE1R1ebWFhpl2jndVO6elNYFjpdO3b0KyshipPlbPN7+t0CWZ4hsMcYoHcz
-         eYQQ3kMORsYT4FoEAmpKfmHRMgVM32OELKJZKEMzA6vbLJr1Fkup5mjV3Nb8yxwhoYa2
-         vg6nekYyM1dUeMQi/MNb5ZJMS8k6B9hIqs0WYC+NbeVEfT1bGIDtYetfCnFcaJA8ZK3c
-         iMNwjiOhbTEOEcIDx4MhUnfzMeHOvCwFPqss7Biq6K2JWNxs5Pv7v1H92ja+eoMVPNSg
-         zaCHenbYbuVQPDFFn9gkGcnVKoTpptxMU3kdMbuS5LwDyWC0g0HHaVDNlTOQiK83sFWm
-         6SbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791880870; x=1792485670;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ogQf9jgUBIrgk7octuKzEMYSBjX+/nz7g2meA6r6ONk=;
-        b=ywgb9tNYonTDH2KHzBNk/j9T7QWNKij5bAzgExJ18SI1ogizOhOM4TwThtNpmBKAdM
-         zNhWLLvMYkFjyo+J1zhX+ut7jGLIjewE0TaBO7v0uOSAflwbDhEgDgmZT5ug9QGOXVUL
-         cXa8cgkewSUvsGNzItCwjiC+jKb4QTF5ZpvdtMoAfgBHU4xBK4mV2EB1afeELzDvCPjK
-         UJYgeuV0uhEnaSDh9ohzH+wipx0FPYZJssLMi14nmZRMDcVzF4d+qZZiwhPPJ4GUS/3d
-         R9UvJAc5tTs8z+v7Zyp1Myc9NGptSHT+94ovT2MsAxLveynyZIFnBgVaQraiIVGGdPNg
-         JL3g==
-X-Forwarded-Encrypted: i=1; AKwUvBy68y2g0aMx8C5ymPOl8qZOgXWuwyhZON+ncestSyE3OT1ozThnmRRajy2c1/nj127TrXmKeo4JeGABxUVkFkvAlVV/6QA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKtdWU/LwvcT3hxkApR5fQEkbQ0r26w/IRsZr4CB1SzroUIfVPN
-	rAfyPoBDKVQtTfOltYOzIw5eSELUqgE9PehYdipHUQdutw+SbhYRSX5x
-X-Gm-Gg: AYBFou3jiEmXHFMpmxggFewS9LYon8Gj0QKl8eV/vjIIS75jFLgKWoRXCZumYlXhRQi
-	Um+yu/zqg6zRGnh8tvMyZrQqX5FpCmKs+itI6cZmknExM4NHpjfb5Bz9IeA1p7lmCMqLuW6vxDE
-	TVwsJVcYm1aScUU11MjfPHHzlNujsexZOT4Man6e1N1mwcGimFYdITBhimD2l/LVfImi1hxh4Nv
-	7sKcF4gKWaGEfpE/XP1Rluaq6KQ5L8Ye2e/YB4dQC5QY9zBOHY3bc7AcbSVQloCfKZwK+IYrp1L
-	/gnbnk/dWFlJIi9EL/KuEX0zGezg0UcVaHowVrWftlnJWnjyDVmLXg2ZfRMnRTEyJN4khpRMp+x
-	4jVwwSpkGmjqANTbT0xu1TVO1PSv6S7Ziojx0hINEb2ezzKNiS9W9wr4MuU/IBXVdJ8RMuQArPE
-	e5Wxb/VUZYS7ZTfG5HWpgexKQGMJHXTIUqfEJIXB6LEUGK9U2yqecPzZ1kP2vRiUYs7wxnu3MeO
-	FrCtFknTpqXsV1NYtZXI6fxQ5vIhRbmc1FdyHnAN+04Rz+nSjV5gfxjlVhouYzC
-X-Received: by 2002:a05:693c:6215:b0:35b:cb8a:8ce7 with SMTP id 5a478bee46e88-35bcb8a919dmr6285540eec.1.1791880869459;
-        Tue, 13 Oct 2026 01:41:09 -0700 (PDT)
-Received: from localhost.localdomain (45.78.65.84.16clouds.com. [45.78.65.84])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537cb1e05esm42575464eec.25.2026.10.13.01.41.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 01:41:08 -0700 (PDT)
-From: Chengfeng Ye <nicoyip.dev@gmail.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-	David Howells <dhowells@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bZqkt7Lf"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FDCC169C;
+	Tue, 13 Oct 2026 01:41:52 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 702B53F66F;
+	Tue, 13 Oct 2026 01:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1791880915; bh=NI8CmL/lnRoC7aE++YpF7fiq+bAGnCCUDMqbYkmDDew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bZqkt7LfHhgrP+LpLkfSWkgVJSZiTZFy4lKziZu5iR37k9EFAy02+ty8P4ISH7oZJ
+	 KekFmta7QOPeZeaIU4GpQdPFpSIaN4Jm43CjCrlwnAe9zBdYufWXPGSmiCV/ITKyn4
+	 5OZk62xDJBVPfh1/7axdbnw2G3tJM7jWkrMYzZEU=
+Date: Tue, 13 Oct 2026 09:41:49 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: GONG Ruiqi <gongruiqi1@huawei.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Chengfeng Ye <nicoyip.dev@gmail.com>
-Subject: [PATCH v4 0/2] keys: Fix quota-owner reads and ownership accounting
-Date: Tue, 13 Oct 2026 16:40:54 +0800
-Message-ID: <20261013084056.1070923-1-nicoyip.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Dan Williams <djbw@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki Poulose <suzuki.poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Sami Mujawar <sami.mujawar@arm.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Jiri Pirko <jiri@resnulli.us>
+Subject: Re: [PATCH RFC 0/3] security: ima: support TSM measurement registers
+Message-ID: <as3uzQ7L6tJ-Lu-Q@e129823.arm.com>
+References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
+ <ebe68f6463f8ece8a5cd8ce70bba292ec4f64a41.camel@huaweicloud.com>
+ <c4fe5315d70fc162f1e5648e3fccb1676710d5e6.camel@huaweicloud.com>
+ <ar5tOUor0bp3MtQ6@e129823.arm.com>
+ <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
 
-This revision keeps the v3 topic order: the lifetime/namespace-reader fix
-is patch 1, and ownership accounting is patch 2. Each patch can be applied
-independently to the base, and both orders produce the same final tree.
+> On 10/1/2026 10:24 PM, Yeoreum Yun wrote:
+> > Hi Roberto,
+> > 
+> >> On Thu, 2026-10-01 at 13:27 +0200, Roberto Sassu wrote:
+> >>> On Wed, 2026-09-30 at 14:43 +0100, Yeoreum Yun wrote:
+> >>>> Confidential computing guests without a TPM can use TSM measurement
+> >>>> registers to record IMA measurement digests instead of TPM PCRs.
+> >>
+> >> + Gong Ruiqi, of course.
+> >>
+> >> Roberto
+> 
+> Hi Roberto,
+> 
+> Thank you for involving me!
+> 
+> >>
+> >>> Hi Yeoreum
+> >>>
+> >>> a similar patch set has been sent to the linux-integrity mailing list:
+> >>>
+> >>> https://lore.kernel.org/linux-integrity/20250630125928.765285-1-gongruiqi1@huawei.com/
+> >>>
+> >>> Could you please work with Gong Ruiqi to have a unified proposal?
+> >>>
+> >>> Thanks
+> >>>
+> >>> Roberto
+> >>>
+> > 
+> > Thanks for letting me know and I think the proposal is almost the same
+> > with the different terminology only.
+> > 
+> > @Gong, what do you think?
+> 
+> Hi Yeoreum,
+> 
+> Nice to see this topic picked up again — I'm glad the IMA RoT framework
+> series I posted last year is still of interest.
+> 
+> Yes, I'd be happy to work with you on a unified proposal. It's been a
+> while since I last worked on that series, so I'll first revisit my
+> previous patch set, and then follow up with you to discuss the code details.
+> 
+> Looking forward to working with you.
+> 
+> BR,
+> Ruiqi
 
-Patch 1 protects only the three quota-owner UID snapshots. It relies on
-key_user_lock already held by lookup and final reference removal. Its
-READ_ONCE() pointer loads pair with a WRITE_ONCE() replacement in chown.
-The reference-release ordering and lock handoff keep a sampled owner alive;
-this does not require patch 2's new accounting critical section. The commit
-message gives the lifetime argument, including a final put by another task.
+Hi Ruiqi :)
 
-Patch 2 serializes chown with quota reservation and positive and negative
-instantiation. Each critical section is complete within this commit.
-Atomic counter operations alone do not serialize owner selection and
-count/state publication with chown, and instantiation does not require the
-target key's semaphore.
+Thanks for replying and I'm happy with you too.
+However, I think we need to rework based on the Jiri's patch [0].
 
-The messages explain why keeping a key alive does not pin its former
-quota owner, and why key->sem does not exclude instantiation. They map
-those two requirements to the three reader scopes and four accounting
-scopes, and explain the existing protection at unchanged lifecycle sites.
-All seven scopes in the combined v3 series are retained. Reservation and
-instantiation locking move from v3 1/2 into the complete accounting fix
-in v4 2/2; no lock scope is split between commits.
+Any thought?
 
-The procfs changes cover the originally reported proc_keys_start() fault.
-The filters continue to use the quota-owner UID, since key_fsuid_changed()
-can change a thread keyring's key->uid without moving its quota owner.
-
-Changes in v4:
-- Keep the v3 topic order: lifetime/namespace readers in patch 1,
-  accounting in patch 2. Both fixes remain independently applicable.
-- Put every accounting critical section wholly in patch 2.
-- Make patch 1 independent using existing lifetime locking plus explicit
-  pointer access marking.
-- Explain the root cause and every critical section, plus the existing
-  protection at unchanged sites. Keep allocation, notifications and
-  reference release outside the new accounting scopes.
-- Correct the reader patch's Fixes tags to the namespace-filter commits.
-- Rebase onto for-next-keys at 22430ae5d90ab and request fresh review.
-
-Validation:
-- Built security/keys/ with patch 1 only, patch 2 only, and both patches.
-  KEYS, PROC_FS, USER_NS, KEY_NOTIFICATIONS, BIG_KEYS, ENCRYPTED_KEYS and
-  PROVE_LOCKING were enabled. No compiler warnings or errors.
-- Both exported patches pass checkpatch --strict with zero diagnostics.
-- Both patches apply directly to the base. Ordered git am in either order
-  reproduces the expected intermediate and final trees.
-- No new runtime, lockdep or Sashiko run. The KASAN excerpt is historical.
-
-OpenAI Codex assisted with the review audit, series split, pointer access
-marking, commit messages and build checks. The existing author sign-off
-is retained from v3 for human review before submission.
-
-Previous revisions:
-v3: https://lore.kernel.org/r/20260927162528.943886-1-nicoyip.dev@gmail.com/
-v2: https://lore.kernel.org/r/20260904080940.575882-1-nicoyip.dev@gmail.com/
-v1: https://lore.kernel.org/r/20260823170448.3856516-1-nicoyip.dev@gmail.com/
-Review:
-https://lore.kernel.org/r/asL2UQjYCxt9SF9K@kernel.org/
-https://lore.kernel.org/r/asMQMzqVkmYhwgMB@kernel.org/
-https://lore.kernel.org/r/asNCIs3OshLwGWrB@kernel.org/
-
-Chengfeng Ye (2):
-  keys: Protect quota-owner reads in namespace filters
-  keys: Serialize ownership transfers with key accounting
-
- security/keys/key.c     | 15 +++++++++++++--
- security/keys/keyctl.c  |  6 +++++-
- security/keys/keyring.c |  7 ++++++-
- security/keys/proc.c    | 15 +++++++++++++--
- 4 files changed, 37 insertions(+), 6 deletions(-)
+Link: [0] https://github.com/jpirko/linux_mlxsw/tree/wip_attestation_pre_rfc_draft1 
 
 
-base-commit: 22430ae5d90ab288b0ee2ad99ae941f4a666b694
 -- 
-2.43.0
-
+Sincerely,
+Yeoreum Yun
