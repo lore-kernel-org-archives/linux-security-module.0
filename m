@@ -1,138 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CF93F104F;
-	Tue, 13 Oct 2026 17:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB63522698;
+	Tue, 13 Oct 2026 17:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791913437; cv=none; b=Zg4yJLN4hMjAt7fchFQ5Vh4zsWdhFk0hhoc5thYOmj/vAXdzQTJRBnoZYYHpWXVaR6lFpUd9XWbB+H6odRsgRefuEOQuq6qjLMoEAnb3D764dz6qQvLKrKkVFCjOyETNhAwIRfC5eX8V9gxn6MfwW8PgvPBOgZaVbCA0A/VpCUg=
+	t=1791913816; cv=none; b=DmCKeI7NxqKky/vUjbpIshdN3P3kOXgE2NvnKhGnrslzS2gXc41EHUci9NtZUbWySc7Pa+T79yo4wVJxReMPo+PKMQ+4sKW3g0PGdKOGg/Co9UZsmdF1um8O5O/q/3A94IO9R8KgeRnPdBL9C+K2Mp5byHTikvPNFweeHhljtdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791913437; c=relaxed/simple;
-	bh=tdUs72401n33j981CWcvSuFtpdGWhvOp52GC9o9iWKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S50YP+iEDrdUBXhq2zXjqJTwJ9WiWReIdCFf9tr/ukMqBKPN6JTCyWBHjZ4n9G7sFsYET6U2eeZAyrrSco7pXinBZcmfbuVzw4NP6RgK3lIcNfSQGvdCduutrTgGbIMGxx2k/bw21ibnS9SY4Z36d8ZG7MB2vF2UWW55qX+O9yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyRyyaQM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791913816; c=relaxed/simple;
+	bh=Ob5hfSVRBDVFo9k7LYylFgt6ZwRA0BvD9bQTXcqDE6A=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=bEcNpEjyUfso9B6TnIB3w9KMgTlJQVfNYjxxDLC+kgDTf3zHguZSHToMY1S9CdNvxGyHndq0n0Hhs9Y/FZmrKtsjsmBYSoEckR5dOGli0w72S1qZqdMO76+wOu3eoaSY1G5ZzE7rAY9TxLQ6xDHsE5e8TiVPQlJQX0sb1znLAyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkS3R4le; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyRyyaQM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140981F000FF;
-	Tue, 13 Oct 2026 17:43:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkS3R4le"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 859851F000FF;
+	Tue, 13 Oct 2026 17:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791913436;
-	bh=PmP+1qDuiByKpC+7bA701v8DM/LXLmC8gESMptbIB2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YyRyyaQMumg0saS/PK8Zl+KD5OQjqU2RN9h0rsXd9QZIj6jrfNHGpNb8VIEniCxsy
-	 y59fSP/9j+GzCkWOMZ8RS6ibouN9BEsrQamk/r56qr+Iyfs7kNZ4q+nBAGyX/HIuP1
-	 ZkXIYa6jcwGW8gWK1IVFcsAJGJRbVWDSYlWf5FQPSiYkiANEcyfeqZogRANMxnEOih
-	 CgIFJSX5akzJUIYutvVBnfgMmDKiB8qwHqeCy7ykkudcH7gAr8lKoof4Xb5WxL7hwq
-	 rfyB51hFxzAytCHyr7BOyI87gO2AsW40aRnMdty5pQnDw/ere9/VZ4Ut4IAt0lq03z
-	 a/faMZxDI57cg==
-Date: Tue, 13 Oct 2026 20:43:52 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chengfeng Ye <nicoyip.dev@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] keys: Fix quota-owner reads and ownership
- accounting
-Message-ID: <as5t2CZmQXP7u39S@kernel.org>
-References: <20261013084056.1070923-1-nicoyip.dev@gmail.com>
+	s=k20260515; t=1791913811;
+	bh=/4OBcQphtPzD4TvEvZfIteR9fXjco/MRVw8nWpXqrVw=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=LkS3R4le+63v5wkxJTVG8Dx4CsBOlu4SrUpA0wXL8a1uk2tJS4QREU/I7idEHhO/0
+	 p5V2Tv3xg/A2Cp2LiEcD5aW0d3861PtOd36ZIAPTg0+hTZT8F9VT865HCnDk+9GlIy
+	 mxSx0w6SPL4i2ST9O9zahMHJadZobnR02xCvpY/drzH+JQtGB3WApOE1BhAew5gxcZ
+	 /6Sk4QTQFT9E+dwM82NSEq5KvZ8onfNKSpEXaa+WieJmy0yf2lKUvJXxAFQhxAn2Sb
+	 mp8eDxXHSjsUnrlLb8Uffw3xIUjMRX2LKtcT27GdNG7KuE0eRYQZz/Hx0WysMUCBPv
+	 9KXOhYv4YpuEA==
+Content-Type: multipart/mixed; boundary="===============3729759909576102404=="
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261013084056.1070923-1-nicoyip.dev@gmail.com>
+Message-Id: <507772738f9dbf7abfad7d2910b6b155517e597dbb076aafb7c9f4bf01e322e7@mail.kernel.org>
+In-Reply-To: <20261013164800.2906577-12-utilityemal77@gmail.com>
+References: <20261013164800.2906577-12-utilityemal77@gmail.com>
+Subject: Re: [PATCH bpf-next v1 11/11] selftests/bpf: exercise the lockless path ancestor iterator
+From: bot+bpf-ci@kernel.org
+To: utilityemal77@gmail.com,brauner@kernel.org,viro@zeniv.linux.org.uk,jack@suse.cz,neil@brown.name,mic@digikod.net,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,song@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,linux-kernel@vger.kernel.org,gnoack@google.com,paul@paul-moore.com,jmorris@namei.org,serge@hallyn.com,martin.lau@linux.dev,eddyz87@gmail.com,yonghong.song@linux.dev,john.fastabend@gmail.com,memxor@gmail.com,jolsa@kernel.org,jlayton@kernel.org,amir73il@gmail.com,mjguzik@gmail.com,shuah@kernel.org,m@maowtm.org,utilityemal77@gmail.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
+Date: Tue, 13 Oct 2026 17:50:08 +0000 (UTC)
 
-On Tue, Oct 13, 2026 at 04:40:54PM +0800, Chengfeng Ye wrote:
-> This revision keeps the v3 topic order: the lifetime/namespace-reader fix
-> is patch 1, and ownership accounting is patch 2. Each patch can be applied
-> independently to the base, and both orders produce the same final tree.
-> 
-> Patch 1 protects only the three quota-owner UID snapshots. It relies on
-> key_user_lock already held by lookup and final reference removal. Its
-> READ_ONCE() pointer loads pair with a WRITE_ONCE() replacement in chown.
-> The reference-release ordering and lock handoff keep a sampled owner alive;
-> this does not require patch 2's new accounting critical section. The commit
-> message gives the lifetime argument, including a final put by another task.
-> 
-> Patch 2 serializes chown with quota reservation and positive and negative
-> instantiation. Each critical section is complete within this commit.
-> Atomic counter operations alone do not serialize owner selection and
-> count/state publication with chown, and instantiation does not require the
-> target key's semaphore.
-> 
-> The messages explain why keeping a key alive does not pin its former
-> quota owner, and why key->sem does not exclude instantiation. They map
-> those two requirements to the three reader scopes and four accounting
-> scopes, and explain the existing protection at unchanged lifecycle sites.
-> All seven scopes in the combined v3 series are retained. Reservation and
-> instantiation locking move from v3 1/2 into the complete accounting fix
-> in v4 2/2; no lock scope is split between commits.
-> 
-> The procfs changes cover the originally reported proc_keys_start() fault.
-> The filters continue to use the quota-owner UID, since key_fsuid_changed()
-> can change a thread keyring's key->uid without moving its quota owner.
-> 
-> Changes in v4:
-> - Keep the v3 topic order: lifetime/namespace readers in patch 1,
->   accounting in patch 2. Both fixes remain independently applicable.
-> - Put every accounting critical section wholly in patch 2.
-> - Make patch 1 independent using existing lifetime locking plus explicit
->   pointer access marking.
-> - Explain the root cause and every critical section, plus the existing
->   protection at unchanged sites. Keep allocation, notifications and
->   reference release outside the new accounting scopes.
-> - Correct the reader patch's Fixes tags to the namespace-filter commits.
-> - Rebase onto for-next-keys at 22430ae5d90ab and request fresh review.
-> 
-> Validation:
-> - Built security/keys/ with patch 1 only, patch 2 only, and both patches.
->   KEYS, PROC_FS, USER_NS, KEY_NOTIFICATIONS, BIG_KEYS, ENCRYPTED_KEYS and
->   PROVE_LOCKING were enabled. No compiler warnings or errors.
-> - Both exported patches pass checkpatch --strict with zero diagnostics.
-> - Both patches apply directly to the base. Ordered git am in either order
->   reproduces the expected intermediate and final trees.
-> - No new runtime, lockdep or Sashiko run. The KASAN excerpt is historical.
-> 
-> OpenAI Codex assisted with the review audit, series split, pointer access
-> marking, commit messages and build checks. The existing author sign-off
-> is retained from v3 for human review before submission.
-> 
-> Previous revisions:
-> v3: https://lore.kernel.org/r/20260927162528.943886-1-nicoyip.dev@gmail.com/
-> v2: https://lore.kernel.org/r/20260904080940.575882-1-nicoyip.dev@gmail.com/
-> v1: https://lore.kernel.org/r/20260823170448.3856516-1-nicoyip.dev@gmail.com/
-> Review:
-> https://lore.kernel.org/r/asL2UQjYCxt9SF9K@kernel.org/
-> https://lore.kernel.org/r/asMQMzqVkmYhwgMB@kernel.org/
-> https://lore.kernel.org/r/asNCIs3OshLwGWrB@kernel.org/
-> 
-> Chengfeng Ye (2):
->   keys: Protect quota-owner reads in namespace filters
->   keys: Serialize ownership transfers with key accounting
-> 
->  security/keys/key.c     | 15 +++++++++++++--
->  security/keys/keyctl.c  |  6 +++++-
->  security/keys/keyring.c |  7 ++++++-
->  security/keys/proc.c    | 15 +++++++++++++--
->  4 files changed, 37 insertions(+), 6 deletions(-)
-> 
-> 
-> base-commit: 22430ae5d90ab288b0ee2ad99ae941f4a666b694
-> -- 
-> 2.43.0
-> 
+--===============3729759909576102404==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-Hi overall this looks good (or better). I'm off work but I'll
-look these up first thing in the morning and likely pick them
-too.
+> selftests/bpf: exercise the lockless path ancestor iterator
 
-Thanks for the patience and hope you understand that my previous
-feedback was meant to be constructive :-)
+TL;DR: Commit message and test comment call d_path on the escalated position
+"sleepable work", but bpf_path_d_path() doesn't look KF_SLEEPABLE; it likely
+needs a trusted pointer. Wording only, no code bug suggested.
 
-Br, Jarkko
+>     selftests/bpf: exercise the lockless path ancestor iterator
+>
+>     Walk the same ancestry four ways and require the position counts to
+>     agree: lockless from a non-sleepable program, where the RCU critical
+>     section is implicit; lockless under an explicit bpf_rcu_read_lock();
+>     referenced; and the hybrid that walks lockless to the second position,
+>     hands it over to a referenced iteration, and resumes there - the
+>     escalated position therefore being walked twice, once per mode.
+>
+>     The sleepable work the escalation exists for (d_path on the escalated
+>     position) runs on the resumed iteration's first position, after
+>     bpf_rcu_read_unlock(), which is the only place a sleepable kfunc can
+>     run at all.
+>
+>     Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+
+The commit message calls d_path on the escalated position "the sleepable
+work the escalation exists for".  Is bpf_path_d_path() a sleepable kfunc?
+
+It is registered without KF_SLEEPABLE in fs/bpf_fs_kfuncs.c, unlike
+bpf_get_dentry_xattr() right next to it:
+
+    BTF_ID_FLAGS(func, bpf_path_d_path)
+    BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE)
+
+The reason the test needs the escalated position for d_path looks like trust
+rather than sleepability.  bpf_iter_path_ancestors_rcu_new() is
+KF_RCU_PROTECTED, so the verifier types the pointer returned by
+bpf_iter_path_ancestors_rcu_next() as PTR_TO_BTF_ID | MEM_RCU.
+bpf_path_d_path() is not KF_RCU, so it needs a trusted argument and would
+reject that pointer.  The previous patch's changelog describes the same
+constraint:
+
+> nothing read out of the position may be passed
+> to a kfunc demanding a trusted argument.
+
+The comment in the test program has the same framing:
+
+> diff --git a/tools/testing/selftests/bpf/progs/path_ancestors.c b/tools/testing/selftests/bpf/progs/path_ancestors.c
+> index 6287f5099a18..3ebf86b23199 100644
+> --- a/tools/testing/selftests/bpf/progs/path_ancestors.c
+> +++ b/tools/testing/selftests/bpf/progs/path_ancestors.c
+
+[ ... ]
+
+> @@ -70,5 +111,36 @@ int BPF_PROG(walk_modes, const struct path *dir, struct dentry *dentry,
+
+[ ... ]
+
+> +	/*
+> +	 * Out of the RCU critical section.  The resumed iteration's first
+> +	 * position is the escalated one, kept alive by the reference the
+> +	 * iteration hands out, so sleepable work can run on it.
+> +	 */
+> +	while ((pos = bpf_iter_path_ancestors_next(&it))) {
+> +		hybrid_count++;
+> +		if (hybrid_count == 3)
+> +			escalated_len = bpf_path_d_path(pos, escalated_path,
+> +							sizeof(escalated_path));
+
+Beyond the iterator's own bpf_iter_path_ancestors_next() and
+bpf_path_put(), does the test run any sleepable work on the escalated
+position?
+
+Could the commit message (and this comment) say that d_path needs a
+trusted/referenced position, or could the test call a KF_SLEEPABLE kfunc
+such as bpf_get_dentry_xattr() on the escalated position so that the
+description matches what is checked?
+
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/38437592296
+--===============3729759909576102404==--
