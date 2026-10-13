@@ -1,130 +1,246 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808B13B42C7;
-	Tue, 13 Oct 2026 08:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97573B6C18
+	for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 09:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791880920; cv=none; b=SAyUFJ5CGQRQZfExllYFKbrI4y5aKksizcZbwP9a0pzEyE866fER8sHbafsXmh46Rn1GdOdqbfoReIodH/0EJs2fUMaQgNudyTisSvY9euLmUwLawyT3ZfZF6nSBSYvl//SxI9dRPiOdY/DgKLovJ/6ZstGo/BNHG+vO7u+ZpAI=
+	t=1791882249; cv=none; b=k4So62eCTg38P5OkUQpIp+upDqqF+Z3xDUsRHx6c+VeBYAAcyFU2RRdm8Gp3Xds0iDdGbjo+zklEbKok4JK30L14rw0ZhaLA1xqUVeYf8A17bHuCBJZj52t/ri0uGqI0pTsvhrnJcDr25ra5688GyfXhdALegNZcdInqcSr+qo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791880920; c=relaxed/simple;
-	bh=NI8CmL/lnRoC7aE++YpF7fiq+bAGnCCUDMqbYkmDDew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLLq5FJRA5/x7iyR4SkX3ocsC0RM1sx5yewA5XAgYeWHxORnEf8L7T3LxjVIA0yD0exShE2VpYqk88A0d306lq4ScijplzeaH5ypolXC4CRMYjii+sFvE4IohUJhtRwsuPb+KiZV4NG2pwDA+wLuZo8scIEVFgrus7DF4rn3acU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bZqkt7Lf; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1791882249; c=relaxed/simple;
+	bh=1oDriChURZPshYQWfLX6W+SoRjzlAPzsgRXYOZsx3JE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fTgRhvuapmWyXqfIInsQ6Vzzf+/rS6XaNom0MiPzPWZW4r/AYmcAlMh/KxTLN9nNvCovhGSAvJVIUWE78csc8y1nSVG4iDQ+lXQSJ1cksC/aoW8ZGymrskqxh6nmUekWlKSCo9N+xgcYbE2bggL+mb9BshAWr4wvfbMtIZ+EepI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZ9DXqXJ; arc=none smtp.client-ip=74.125.82.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bZqkt7Lf"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FDCC169C;
-	Tue, 13 Oct 2026 01:41:52 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 702B53F66F;
-	Tue, 13 Oct 2026 01:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1791880915; bh=NI8CmL/lnRoC7aE++YpF7fiq+bAGnCCUDMqbYkmDDew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bZqkt7LfHhgrP+LpLkfSWkgVJSZiTZFy4lKziZu5iR37k9EFAy02+ty8P4ISH7oZJ
-	 KekFmta7QOPeZeaIU4GpQdPFpSIaN4Jm43CjCrlwnAe9zBdYufWXPGSmiCV/ITKyn4
-	 5OZk62xDJBVPfh1/7axdbnw2G3tJM7jWkrMYzZEU=
-Date: Tue, 13 Oct 2026 09:41:49 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: GONG Ruiqi <gongruiqi1@huawei.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>,
-	Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZ9DXqXJ"
+Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-142eed7df08so228017c88.1
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2026 02:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791882246; x=1792487046; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fLHMgr985P+kVdaCPslV6Iv4+PQzUDULB9m3V+hBlNg=;
+        b=bZ9DXqXJO9Lg/fbejXrUN7kf77Iszki30EVjrVhGEcRGGtUlpv5ixOG133YCwyDb3r
+         NVZvC0SdYnuClogsKEnQ1ZHVNZIDNJ8wrSCxmltvsiW5ir5OqHqIYXjSoJCwVE6paaNP
+         KELLcBqC24OGkmPwSFz0mbDIGBvUbmo2MNCBvf9OVAKFFWcMoa5RKuWrZ3OCa8li0EHV
+         KMMlDKmQIunwnN9VhswhgxoW57rvC2WRh+4jPyTQJQYuIcNBhhgCmVxn3gct7FGTDImq
+         TqDp/UtAlpCu8UPDsB+zYXTKNNYL+/xS1I8fHyHGhdOpmwVlOBmzMxtcDGJAXqwybjxX
+         /q+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791882246; x=1792487046;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=fLHMgr985P+kVdaCPslV6Iv4+PQzUDULB9m3V+hBlNg=;
+        b=AhlphjPR4CcxYZ9TfysWKjc0JB2cFYHiA1ar4FcsEUTh5JhV1VYNsD0iiOVtF2fif3
+         s+qSPalh3mfIstcrI2BSyvzZEyoSRvj4smVom0v01vB0MxXc3L3KED15tYd/Ln/td4Po
+         N1haYP0iToULH9n+mDmuMfW9UpnwPgYtPvSILFay7hpGN+Fi0uUOA0AOfE3OhbbLQBmb
+         a1QQnWay9nW8Lfub3xrfGIEX4CgVRiBjzAcQ0AXXhCvo0W5Mwc3YYqPcbh7ZwVsRyML2
+         uA/VVOgTrdq34T7muleLxgxu3oQ3Vg8zbUsQ6L4TrqxGIBvqVbcvQ3CnpOoMh2aAqbh2
+         DWOg==
+X-Forwarded-Encrypted: i=1; AKwUvBx8HYlC/CDvNtT0snKJtgmHMO6CDZaP0WIsCOSS19i4KojsAimeP+PS4mxUi/fDPMDYYHcIHBFUFuzYSmZLZc8l9K8Tzhk=@vger.kernel.org
+X-Gm-Message-State: AFq9FYItXJoNtMQmheSCCam8yZEFC9DLFjALH1d50e2pyKUJYPRuFaAB
+	0DuviUbcd8bR/o5L/Qc2vb3+PXqzgsKR+/xGCngt+KO1ddL3cdW7r/Nn
+X-Gm-Gg: AYBFou2jEzQCaQ3uA+CqSPbL77IEefIpXHiUoUSuml+C9f3/wV+xo/wGaTq8sdWjMjS
+	4SmcDvpTBi8/d72zDF2XEEi0rJSYMVeznc/NN11uzl8NUBvKmknKwPa+Bos0vimpWP2fNamKwC/
+	Grr6PZqntQuacgfLcHosDnMR/oBG9fXjCcJFtgBtQHzr61ifTzPmBb3VYRUAQUmSh5FABY8HJFf
+	rN9n0/xI6HmWs5+ldTg6AgPKTyt2YyptAPwkhK9ybGCyJwdsxhzeUL3hyJgg0jqO4DoKhHv3pDb
+	gKhvoNF/Ix4JOJ6nqcmxEeEAdN/7OWDYEHf9PJeGUbZ1Ue0kUbEv0O1xksttz/I95yAL0OQFrzj
+	6IcQzunyu3+X/uhMPZUKWdXQWAOpFB9v3Xht8aa0K8yHDao6FfU0MR7TvofWjGDqVV5qWYs/uaN
+	woV/OiOqwKVzPahzkLRnRQmrcxAlSaklD+xY7I3r4ybbYnM7lGQOEQGrtXZ/8KDYFRNTKTMPc3W
+	Gd2fSnk4IvcLcnwbWlvvFrQr1qCj+Zd2823J7HE2oN45XO1LMpHumNCIwQJoE2+
+X-Received: by 2002:a05:701b:2815:b0:14c:cc55:aba1 with SMTP id a92af1059eb24-16a5afe6569mr28530186c88.1.1791882245696;
+        Tue, 13 Oct 2026 02:04:05 -0700 (PDT)
+Received: from localhost.localdomain (45.78.65.84.16clouds.com. [45.78.65.84])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-169a31f6f5csm36281803c88.11.2026.10.13.02.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 02:04:05 -0700 (PDT)
+From: Chengfeng Ye <nicoyip.dev@gmail.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	Dan Williams <djbw@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Sami Mujawar <sami.mujawar@arm.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Jiri Pirko <jiri@resnulli.us>
-Subject: Re: [PATCH RFC 0/3] security: ima: support TSM measurement registers
-Message-ID: <as3uzQ7L6tJ-Lu-Q@e129823.arm.com>
-References: <20260930-ima_tgx_integration_v2-v1-0-722c35370548@arm.com>
- <ebe68f6463f8ece8a5cd8ce70bba292ec4f64a41.camel@huaweicloud.com>
- <c4fe5315d70fc162f1e5648e3fccb1676710d5e6.camel@huaweicloud.com>
- <ar5tOUor0bp3MtQ6@e129823.arm.com>
- <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Chengfeng Ye <nicoyip.dev@gmail.com>
+Subject: [PATCH v4 1/2] keys: Protect quota-owner reads in namespace filters
+Date: Tue, 13 Oct 2026 17:03:57 +0800
+Message-ID: <20261013090358.1178367-1-nicoyip.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261013084056.1070923-1-nicoyip.dev@gmail.com>
+References: <20261013084056.1070923-1-nicoyip.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9e74ff9d-e8a3-425e-bf7c-f973d06e6cdf@huawei.com>
 
-> On 10/1/2026 10:24 PM, Yeoreum Yun wrote:
-> > Hi Roberto,
-> > 
-> >> On Thu, 2026-10-01 at 13:27 +0200, Roberto Sassu wrote:
-> >>> On Wed, 2026-09-30 at 14:43 +0100, Yeoreum Yun wrote:
-> >>>> Confidential computing guests without a TPM can use TSM measurement
-> >>>> registers to record IMA measurement digests instead of TPM PCRs.
-> >>
-> >> + Gong Ruiqi, of course.
-> >>
-> >> Roberto
-> 
-> Hi Roberto,
-> 
-> Thank you for involving me!
-> 
-> >>
-> >>> Hi Yeoreum
-> >>>
-> >>> a similar patch set has been sent to the linux-integrity mailing list:
-> >>>
-> >>> https://lore.kernel.org/linux-integrity/20250630125928.765285-1-gongruiqi1@huawei.com/
-> >>>
-> >>> Could you please work with Gong Ruiqi to have a unified proposal?
-> >>>
-> >>> Thanks
-> >>>
-> >>> Roberto
-> >>>
-> > 
-> > Thanks for letting me know and I think the proposal is almost the same
-> > with the different terminology only.
-> > 
-> > @Gong, what do you think?
-> 
-> Hi Yeoreum,
-> 
-> Nice to see this topic picked up again — I'm glad the IMA RoT framework
-> series I posted last year is still of interest.
-> 
-> Yes, I'd be happy to work with you on a unified proposal. It's been a
-> while since I last worked on that series, so I'll first revisit my
-> previous patch set, and then follow up with you to discuss the code details.
-> 
-> Looking forward to working with you.
-> 
-> BR,
-> Ruiqi
+keyctl_chown_key() replaces key->user under key->sem and drops the
+reference to the previous owner after releasing the semaphore. Readers
+which do not hold that semaphore can still be using the previous owner
+when key_user_put() frees it.
 
-Hi Ruiqi :)
+For example, namespace filtering in /proc/keys can race with chown:
 
-Thanks for replying and I'm happy with you too.
-However, I think we need to rework based on the Jiri's patch [0].
+  /proc/keys reader                 keyctl_chown_key()
+  user = key->user
+                                    key->user = newowner
+                                    key_user_put(old)
+                                      kfree(old)
+  read user->uid
 
-Any thought?
+An earlier instrumented run reported:
 
-Link: [0] https://github.com/jpirko/linux_mlxsw/tree/wip_attestation_pre_rfc_draft1 
+  BUG: KASAN: slab-use-after-free in proc_keys_start+0x353/0x440
+  Read of size 4 at addr ffff8881128abbc0 by task poc/88
+  Call Trace:
+   proc_keys_start+0x353/0x440
+   seq_read_iter+0x25d/0x1190
+   proc_reg_read_iter+0x19e/0x260
+  Allocated by task 86:
+   key_user_lookup+0x1b4/0x540
+   keyctl_chown_key+0x3cc/0xbf0
+  Freed by task 87:
+   kfree+0x149/0x330
+   keyctl_chown_key+0x7b0/0xbf0
 
+Take key_user_lock explicitly while /proc/keys and find_keyring_by_name()
+copy the owner's UID. find_ge_key() is the initial/seek lookup reached
+by the reported proc_keys_start() fault; key_serial_next() applies the
+same UID filter to subsequent entries. find_keyring_by_name() reads the
+same replaceable owner when looking up named keyrings.
 
+key_serial_lock and keyring_name_lock protect these traversals but do
+not exclude chown. Taking key->sem would sleep under those spinlocks.
+The embedded key->user->lock cannot protect the dereference needed to
+acquire it.
+
+key_user_put() already holds key_user_lock for the final reference
+decrement and tree removal. A reader selecting an owner before removal
+blocks its final release until the UID copy finishes. After removal,
+the lock and reference-count ordering make the preceding owner
+replacement visible, including when another task drops the final
+reference. Mark the pointer loads with READ_ONCE() and the chown store
+with WRITE_ONCE(); the existing lifetime locking provides the protection.
+
+Retain the quota-owner UID rather than substituting key->uid, since they
+may differ for thread keyrings.
+
+Other owner accesses already have lifetime protection. key_alloc() uses
+a referenced owner before publishing the key. Final key_put() cannot
+overlap chown, which holds a key reference. key_gc_unused_keys() handles
+unreferenced keys: serial-tree removal excludes /proc/keys readers, and
+keyring_destroy() removes named keyrings under keyring_name_lock before
+the owner reference is dropped. /proc/key-users already holds
+key_user_lock during traversal. Quota reservation and instantiation need
+the separate accounting serialization.
+
+Fixes: 454804ab0302 ("keys: make procfiles per-user-namespace")
+Fixes: 2ea190d0a006 ("keys: skip keys from another user namespace")
+Cc: stable@vger.kernel.org
+Assisted-by: GPT-6-Astra
+Signed-off-by: Chengfeng Ye <nicoyip.dev@gmail.com>
+---
+Changes in v4:
+- Move the quota-reservation and instantiation scopes from v3 1/2 to
+  the complete accounting fix in 2/2; retain the combined lock coverage.
+- Isolate the namespace-reader lifetime fix and make it independent of the
+  accounting patch by relying on existing lookup/final-release locking.
+- Pair READ_ONCE() pointer snapshots with WRITE_ONCE() in chown; explain
+  lifetime ordering and preserve the quota-owner UID filtering semantics.
+- Include analysis of of the other owner access sites in the changelog
+
+v3: https://lore.kernel.org/r/20260927162528.943886-2-nicoyip.dev@gmail.com/
+v2: https://lore.kernel.org/r/20260904080940.575882-1-nicoyip.dev@gmail.com/
+
+ security/keys/keyctl.c  |  2 +-
+ security/keys/keyring.c |  7 ++++++-
+ security/keys/proc.c    | 15 +++++++++++++--
+ 3 files changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index d14ace88e529c..c89a4d6efed40 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1039,3 +1039,3 @@ long keyctl_chown_key(key_serial_t id, uid_t user, gid_t group)
+ 		zapowner = key->user;
+-		key->user = newowner;
++		WRITE_ONCE(key->user, newowner);
+ 		key->uid = uid;
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 15bf4af8f2821..4a13749bc54cd 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -1148,6 +1148,7 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
+ {
+ 	struct user_namespace *ns = current_user_ns();
+ 	struct key *keyring;
++	kuid_t uid;
+ 
+ 	if (!name)
+ 		return ERR_PTR(-EINVAL);
+@@ -1158,7 +1159,11 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
+ 	 * grants Search permission and that hasn't been revoked
+ 	 */
+ 	list_for_each_entry(keyring, &ns->keyring_name_list, name_link) {
+-		if (!kuid_has_mapping(ns, keyring->user->uid))
++		spin_lock(&key_user_lock);
++		uid = READ_ONCE(keyring->user)->uid;
++		spin_unlock(&key_user_lock);
++
++		if (!kuid_has_mapping(ns, uid))
+ 			continue;
+ 
+ 		if (test_bit(KEY_FLAG_REVOKED, &keyring->flags))
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index 4f4e2c1824f18..aa42ea4becec7 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -68,7 +68,13 @@ static struct rb_node *key_serial_next(struct seq_file *p, struct rb_node *n)
+ 	n = rb_next(n);
+ 	while (n) {
+ 		struct key *key = rb_entry(n, struct key, serial_node);
+-		if (kuid_has_mapping(user_ns, key->user->uid))
++		kuid_t uid;
++
++		spin_lock(&key_user_lock);
++		uid = READ_ONCE(key->user)->uid;
++		spin_unlock(&key_user_lock);
++
++		if (kuid_has_mapping(user_ns, uid))
+ 			break;
+ 		n = rb_next(n);
+ 	}
+@@ -80,6 +86,7 @@ static struct key *find_ge_key(struct seq_file *p, key_serial_t id)
+ 	struct user_namespace *user_ns = seq_user_ns(p);
+ 	struct rb_node *n = key_serial_tree.rb_node;
+ 	struct key *minkey = NULL;
++	kuid_t uid;
+ 
+ 	while (n) {
+ 		struct key *key = rb_entry(n, struct key, serial_node);
+@@ -100,7 +107,11 @@ static struct key *find_ge_key(struct seq_file *p, key_serial_t id)
+ 		return NULL;
+ 
+ 	for (;;) {
+-		if (kuid_has_mapping(user_ns, minkey->user->uid))
++		spin_lock(&key_user_lock);
++		uid = READ_ONCE(minkey->user)->uid;
++		spin_unlock(&key_user_lock);
++
++		if (kuid_has_mapping(user_ns, uid))
+ 			return minkey;
+ 		n = rb_next(&minkey->serial_node);
+ 		if (!n)
 -- 
-Sincerely,
-Yeoreum Yun
+2.43.0
+
