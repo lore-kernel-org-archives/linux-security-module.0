@@ -1,40 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2125138D686
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 20:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F09D41F5D7
+	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 20:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792011508; cv=none; b=YHDaozUbYL4FFj2K4vdH+IQO8yAoxU7SomzCjSIKlL+AIr2bRFyqoCBOC0TtzElaN5ScLz3mGN+ZoweQjQDb32dTDcOqInTAbmH6XChO8t+QyvPn8hGwRQZ5xTh79ZYs+pVN8vC3ElltlWS3BpHA/jLVk1aBcYrDyuY9RSSYTLM=
+	t=1792011508; cv=none; b=u3ZkFgRTbgDS4XKHowBZk6eemuu5VfeGZUfhqgFInFB2BH1jM67IlkEVGSAFddLf/KmSM+GcSqUaxhvPXtUAhocsg2Hz+SXur1ysTGp0sSjGJsEDCMsJM8/plwv57OJWLv+5XWHVddtnzvsUmVlK6HclDQEXVKE8fuyYklMJTKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1792011508; c=relaxed/simple;
-	bh=VsBsBX9xPiUJyQZ+ZPNy5rj+Via0wDIUXNqN8zRrtxw=;
+	bh=sarabV8J1cqd6R3UG9N2OYF8JzlIZAiCs79Diby2Yy4=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=Y3/TtAvvFzoZzgPGQEWC8OF3DCRCPUMwKGNvzsxVC7tKGzjx9Q/XX5OViI9tnuCNYMR3SnPjNqSdMo9+OJErEqV8cc6J8NhNZAUC5vODW2l/lNXp7raIO//6V+RldWusNfnIhsAz3UjoVJt76q91OFGYwyShabEUd141kzODCII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8Fbe7qD; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=C6ydegfgWm/Jl+FGXlRVFrG/fGRvaSiAcrfXFZx1toaF971dqo7AeEqXPQ1rAdJQl3jTUyOB7RXQICxkUrFWbNzagCaao2/d5wiZqNnu/E1NQyU+OunGkiBJm0YHrXJiTpXTLidloKc0wEMI6KGKpX2iYO6KO0pAkBURuwkTk0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mahwO6Q1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8Fbe7qD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749651F000C4
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 20:58:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mahwO6Q1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D491F000C5
+	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 20:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792011506;
-	bh=JXLvgaxQz9PrGd4QuuiWdbbTAwbKugPSeOn1R0QUl/M=;
+	s=k20260515; t=1792011507;
+	bh=JCWQKONarus1X07Bn7L19EoIQZzJ1qp7QLtztocVEwc=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=P8Fbe7qDZB/C9n3XGfXmj7rtRzgmOtbx5UNxB/MGtZEY8m6F1Yl8abC5aTqIdHYll
-	 18OfblRtT9eO6jqPP/cdHAxFvqw6csDrd9dABxCfihmGapLVdq/FcUXMxm6m897meB
-	 5iuf5Xpvrz6KEEMDQnnenYjtvXDygddHaxGrCAShTt3xcrd53VdWuC4sZ5ezC0e5dP
-	 slZGkLT4M1bFVBzR2ZfiC0JL7JaaHrLP/dLaE2y4uWz8sTVjCumNHxmklEDsXb0W5e
-	 Mswjrcj2rwuzJ6qibJeQOXKXrmY5+V6d4NbTvhcFBHQkYKF//mAHmvjDeuXxHlFVXJ
-	 oFfVgAYFQvEWQ==
-Message-ID: <sashiko-outbox-171918@kernel.org>
+	b=mahwO6Q1lKE67U77k+w1gqa8RioMBLXflCg0mrINicbyCGcs3Zev5ctdgSanweTPh
+	 YD3gzpPSGSRSUnvwMm1jyXLrxImNXiGoMYgqPxsFsW38pJnPtSZYr+WTL/yoOpGesl
+	 fui5MA4l4EQZis69l9WEh2kB9v6M0wdvaVNBGLswXquJsRUr9glwMu53zp6t7RlhUD
+	 cg5JB7jn5ItjWeOVhjQ46LnLnQSQ+kT6aM92SBDKZQzTJl0C6EcYgVzCZekH5Rdb4+
+	 V6lQRAdKeDOHIe3Ih92CaSRXzfPiPqoVvCFOFy/4nCm04dmLtN80oWFEEapuW556we
+	 jGREPsZS7KxSQ==
+Message-ID: <sashiko-outbox-171919@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/5] userns: check the opener and the writer before
- mapping uid 0
+Subject: Re: [PATCH v2 2/5] userns: don't let setns() lend CAP_SETFCAP
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261014-b4-setfcap-userns-v2-3-fac4d19281d7@toxicpanda.com>
+In-Reply-To: <20261014-b4-setfcap-userns-v2-2-fac4d19281d7@toxicpanda.com>
 References: <20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com>
- <20261014-b4-setfcap-userns-v2-3-fac4d19281d7@toxicpanda.com>
+ <20261014-b4-setfcap-userns-v2-2-fac4d19281d7@toxicpanda.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Wed, 14 Oct 2026 20:58:26 +0000
@@ -44,23 +43,23 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> verify_root_map() looks at the cred that opened the map file: it asks
-> whether it has CAP_SETFCAP over the parent, or, for an opener inside the
-> namespace, whether the creator had.  Two things are missing.
+> Mapping uid 0 of the parent into a user namespace requires CAP_SETFCAP,
+> because a task in such a namespace can write file capabilities that are
+> honoured in the parent.  A task that is already in the namespace has a
+> full capability set there and can't be asked any more, so
+> verify_root_map() goes by what the creator had, now ns->setfcap_level.
 >=20
-> The writer isn't checked.  For every other privileged mapping
-> new_idmap_permitted() wants the capability from the opener and from the
-> task that calls write(), but a map that consists of the single line
-> "0 0 1" takes the unprivileged branch, where only the opener's euid
-> counts.  So an open uid_map file is a token for mapping uid 0:
+> But setns() lets other tasks in, and they get the full set as well:
 >=20
 >   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
->   fd =3D open("/proc/<pid>/uid_map")
->   B gets fd by inheritance
->   or SCM_RIGHTS
->                                     write(fd, "0 0 1")
+>   unshare(CLONE_NEWUSER)
+>                                     setns(A's user ns)
+>                                       allowed, euid =3D=3D ns->owner
+>                                     write "0 0 1" to /proc/self/uid_map
+>                                       ns->setfcap_level is A's -> allowed
+>=20
 > [ ... ]
-> on, now fail with -EPERM.
+> unprivileged users joining their own namespaces, are not affected.
 >=20
 > Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
 > Assisted-by: LLM
@@ -70,5 +69,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261014-b4-setfcap=
--userns-v2-0-fac4d19281d7@toxicpanda.com?part=3D3
+-userns-v2-0-fac4d19281d7@toxicpanda.com?part=3D2
 
