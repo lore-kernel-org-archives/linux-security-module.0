@@ -1,74 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CE92264DB
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 20:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C49736DA15;
+	Wed, 14 Oct 2026 20:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792011290; cv=none; b=ZGF0XXvYLvc+d2940upLVfbm3DfvnXATRy1aaRnc+Q+A6nVfu6SInXegVBYozo/1i8q6PUnMrX2nu5gGRLmHXhhmkEzgaRXbjzp1AgO+d8UvU06fPrQSL7lcYuzpYPy5BN+PYiS1a0UE2yc8Kex1JCMAZfuAYcjXbC3sIywG52o=
+	t=1792011323; cv=none; b=jufbtxCrrT/XxQ3/xGvDV0HLFur0q3D+I37MowMVF39dAuF+qnK3mgxGKVG4MJbJhn8DabZsZXqfAZHj+UahFjvr+kj3c6327q0+SWLgv0eyzo411Up79EpAld5ufjVR+G2xs82uiU+UjgYA96ktoJyP18ithpB4uRe2bXGiQrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792011290; c=relaxed/simple;
-	bh=IRWazKYtjUs+a5TsxRVT/Y2RI7XETSD2ZlGJ3xliqII=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=f9giNtrukTubMQgq4k1uwGAH/jvsttruaMLATt/dtI9f7N2glb1aQttZVb+xpVPa4zzFfFSTH5FnucAE2xwIUE5PVIFYknHPrV6eLcrEIDvkpTho4PYyW8RaSa9VPM6iuKvbZ+fpmLTv37U8rMT+gRYVsDBYYHtQQ3o+Nd8XD+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O23ZOEaB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792011323; c=relaxed/simple;
+	bh=/a0vFGKNS8J55f5tp59ZAWCFIZEuIQGkM8zl71WLuIw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type; b=bMzn/7AGbBarydTUr582eiQOajOsb6ZNYVxhNZH7cT3XaMxYNdKgAlvAtSPHuOrEn0insEYiLZUK3NetOWL1+z8wF/Gh0CfNV3Mud0yL75yYzKVox5x/CWDYpFKj0Ts0lGIohX4ba+/11zTQm/Z+N3IwycqfiEQWW8Kkqzfun48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=XlRJRFmK; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=R2nAz+Zz; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O23ZOEaB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00FD51F000C4
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 20:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792011289;
-	bh=3X3DtXob1Y4K9tuW8OVFgkaHg3LVLkCy0H9YMuDPaLk=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=O23ZOEaBAIQNBbiqhweHPR4CvWYfQvtgmjRG/eksQ9a0qdb00YQ+81fFB3DTRXR7n
-	 hScbArUhZfUcAqbEqiI8Nl7TZ/FHzQt1Ezj/a5mtGzzKg4EgvM1Nty1GUvjQkhKDfs
-	 aG/kxL0DN7FtDs87S61A1NuXLWjgW3MCoxNNn+JL3mYMMqJreREhcqx+XV0anVbqti
-	 PGP+lbjuecliax71DxDfJ2rosUDk2wdLuvqTYh3HtSabs6iE3AgtPsLnoEhs5sOrhP
-	 USiKzZGMc79rgK/RnXW2ik4LvhvszYg/9O5WnL4iLIRhkF9ZEIYyxwPmRzrIQB+p1v
-	 y8/hvVXOY5eGA==
-Message-ID: <sashiko-outbox-171912@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/5] userns: record how far up CAP_SETFCAP reaches
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261014-b4-setfcap-userns-v2-1-fac4d19281d7@toxicpanda.com>
-References: <20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com>
- <20261014-b4-setfcap-userns-v2-1-fac4d19281d7@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 14 Oct 2026 20:54:48 +0000
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="XlRJRFmK";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="R2nAz+Zz"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1792011295; bh=Vmet7sb9fWP6o2etjgcSmBf
+	dmj2UrsHmMtshOnUh8h4=; b=XlRJRFmKhdOBVTd2nw0aF3uBlo6plsAe0nwEHtYPba0F46djfG
+	u3iZWXO3R1biE5N9+cSXlANBefWfMAb71VZOb3ZxsdqiPbOchbeokq7wRC8TInqbxLqvODfsOj7
+	MQxF24PzCqJmU9AD59jQB/XedLDTdB5DwowIdZNYLXv4yQDF9mkdMKmXvxh3QPWI3sMFis3QRjD
+	jPMETVBuYj872ydNOGkPuc9ZtEnJfKvR18iPu9WqhUIPDZaLnh3jGMKy/slHFanq35t87v+spqq
+	gWFU+Fe6EvcF8uYI3tSMzVCvFT2iG50qy1GzOCC2KPNeZ0Fy2tjxeFkVH0ge1XchFGA==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1792011295; bh=Vmet7sb9fWP6o2etjgcSmBf
+	dmj2UrsHmMtshOnUh8h4=; b=R2nAz+ZzOZaugmEHzvxjyHdBx1A8ydUJ3gSWj4aHsxsKWt7XWc
+	ML0qUzngs2s8oCj6GtKkDCyPIdxOnF6CyICg==;
+Date: Wed, 14 Oct 2026 21:54:56 +0100
+From: Bradley Morgan <brads@mainlining.org>
+To: josef@toxicpanda.com
+CC: brauner@kernel.org, dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
+ keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ morgan@kernel.org, paul@paul-moore.com, serge@hallyn.com, sergeh@kernel.org
+Subject: Re: [PATCH v2 2/5] userns: don't let setns() lend CAP_SETFCAP
+In-Reply-To: <20261014-b4-setfcap-userns-v2-2-fac4d19281d7@toxicpanda.com>
+Message-ID: <259B1F19-C945-4855-9B72-06F6AB63649C@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-> create_user_ns() records in ns->parent_could_setfcap whether the creator
-> had CAP_SETFCAP in its effective set, and verify_root_map() trusts that
-> when a task in the new namespace maps the parent's uid 0.  A bool only
-> describes the parent, though.  File capabilities belong to the kuid of a
-> root user, and a namespace that maps the parent's uid 0 shares that kuid
-> with the parent and possibly with ancestors further up, so what matters
-> is how far up the creator's CAP_SETFCAP counted.
->=20
-> Replace the bool with ns->setfcap_level: CAP_SETFCAP held in the
-> namespace counts there and in its ancestors up to the one at that
-> ->level.  cap_setfcap_level() computes it from the creator's cred.  A
-> creator that holds CAP_SETFCAP passes on the setfcap_level of its own
-> namespace, one that doesn't gets the new namespace's own level, and the
-> initial namespace has 0.
->=20
-> verify_root_map() keeps checking the same condition: the bool was false
-> exactly when the level is the namespace's own.
->=20
-> No functional change.
->=20
-> Assisted-by: LLM
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+On 14 October 2026 21:47:47 BST, Josef Bacik <josef@toxicpanda.com> wrote:
+>Mapping uid 0 of the parent into a user namespace requires CAP_SETFCAP,
+>because a task in such a namespace can write file capabilities that are
+>honoured in the parent.  A task that is already in the namespace has a
+>full capability set there and can't be asked any more, so
+>verify_root_map() goes by what the creator had, now ns->setfcap_level.
+>
+>But setns() lets other tasks in, and they get the full set as well:
+>
+>  task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
+>  unshare(CLONE_NEWUSER)
+>                                    setns(A's user ns)
+>                                      allowed, euid == ns->owner
+>                                    write "0 0 1" to /proc/self/uid_map
+>                                      ns->setfcap_level is A's -> allowed
+>
+>or, if A's namespace maps uid 0 already, B sets security.capability on a
+>file.  Either way B ends up with file capabilities that are honoured in
+>the initial namespace, which it could not have written there, nor in a
+>namespace it created itself.
+>
+>Refuse setns() into a user namespace unless the joiner's CAP_SETFCAP
+>reaches at least as far up as the namespace's setfcap_level.  Then every
+>task in a namespace is entitled to what its setfcap_level says, and the
+>checks on the way to file capabilities can go by the namespace.  This
+>has to apply to every user namespace, also to those that don't map the
+>parent's uid 0: through an idmapped mount, a root user that only exists
+>in the namespace can be stored as the parent's.
+>
+>The change in behaviour is that a task without CAP_SETFCAP gets -EPERM
+>when it tries to setns() into a user namespace created by a task that
+>had it, such as a root-created container.  Tasks with CAP_SETFCAP, and
+>unprivileged users joining their own namespaces, are not affected.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Gnarly.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261014-b4-setfcap=
--userns-v2-0-fac4d19281d7@toxicpanda.com?part=3D1
+>
+>Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+>Assisted-by: LLM
 
+Ok.
+
+>Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+>---
+> kernel/user_namespace.c | 7 +++++++
+> 1 file changed, 7 insertions(+)
+>
+>diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+>index a5a94367600d..330085a7d7d4 100644
+>--- a/kernel/user_namespace.c
+>+++ b/kernel/user_namespace.c
+>@@ -1390,6 +1390,13 @@ static int userns_install(struct nsset *nsset, struct ns_common *ns)
+> 	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
+> 		return -EPERM;
+> 
+>+	/* Everybody in the namespace gets CAP_SETFCAP that reaches as far up
+>+	 * as its setfcap_level, so only let in tasks whose own reaches as far.
+>+	 */
+
+Wow!
+
+>+	if (cap_setfcap_level(current_cred(), user_ns->parent) >
+>+	    user_ns->setfcap_level)
+>+		return -EPERM;
+>+
+
+Clean! Please add 
+
+Reviewed-by: Bradley Morgan <brads@mainlining.org>
+
+> 	cred = nsset_cred(nsset);
+> 	if (!cred)
+> 		return -EINVAL;
+>
+>
+
+
+--- Thanks!
+"I'm not a very positive person" - Linus torvalds
