@@ -1,176 +1,231 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4EE53ED04
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 14:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791986874; cv=pass; b=l60C6dxf+KIwebrjXxYAzdrsiagkbbjrAPtxpB5pKJKLMhNDOL7ZoSa7tCNOH1QSPVm16USHAdQycwnRbAiBAe+8Kln+X/lhsQl2/tZQk7+xo7Wb/2IEaYTwhxZ3OgxpMuOQccCOoq+zkv/scdPvx7Xu1qeUS9/SuOfZgRIr5J4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791986874; c=relaxed/simple;
-	bh=Ju4TCHvUQjzrivVHreXOsbIFDljzoatZ5Da/lDsSQWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VBQyhhAjmJqegjX/OjIE8kz346QgBVeD4ThRHJMtuxbtZDdCS0h1F9a07AJFdv1CIB26vxlYT3HEPu2jQ5JkxV8cmsbLd35NncnZCFGyt3biSlLg86VkPCwXReM9WTviUVLQodL9spomizbz613Jpi1YfiqWewpXlFMmDZZLhQo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dUkN7mB8; arc=pass smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dUkN7mB8"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-cc4b1f7e8f4so2576227a12.1
-        for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 07:07:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791986871; cv=none;
-        d=google.com; s=arc-20260327;
-        b=L1lUTIZPgxpiXh5TmLpVNUKJlcYaKVoxGu8FDQ/DndO2oh+W05FYfHgToAOXVfwgCV
-         DfJnu6GmGvCuHFBkxKaDru1E18at4majvZsYZiv7AMx39sFIMgPMmOpCnraqgoawxOE0
-         PvkHhzrJSK+dkiXbEGeyhaw4Jr2z+5ZX2Il4BC19sKEUmB42Qqi6A+xZNk6GBOLXxyN9
-         PX3FIgJD4ZiE1Blk7ObI7gaYpQ3gCxNcKilEoJINGjmWTww/qIGzJOWVVVQCqKXZYb9G
-         GpbbW2USfPudriAHyVSnt6u0TnrjlMPLByehYD1Z0RaJTUTm/M7y19VI/Ke+6hkXMKuN
-         ZF0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=UhgBX9GqYPCtzCE/DAmHkc/tMFE83OUWkvy12Au6Y9I=;
-        fh=5fVM6tVLGWKoQvT5dKGU7lQYHtysI2ozQ2NOGSMgNtk=;
-        b=ruObmNzNN4maptjbL6swyaxdPrpvkbEIoLiOd+d+X0w6SENBac9hl3Lu92Q4/tBDUb
-         4d1KjdG0icoVyQ0A3Bq16I5TE8akXlpdfsGvZq+HC3CyBGxHUZPiCxu6WT35SXMun+rK
-         imESKGtBqKfuoFvvQK957HKCDlEvc+lgUlXkNTgtZaf7dDrbaOpOSD6o1UYBzpR3W/RB
-         ge+uCaL75t5mWFLkfjjHwyQjCqW7Y5VFcfvo93CnomKslh/Rp0Wf/jMS88BMFKVgwmRE
-         HIXtRuTZRDMqtTTPK7JHmifWT/4QIRdlJXIo34F7177ySxM004/NvUpmkX6AziFiZiaS
-         nUKQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1791986870; x=1792591670; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=UhgBX9GqYPCtzCE/DAmHkc/tMFE83OUWkvy12Au6Y9I=;
-        b=dUkN7mB856aMWYzk2mAv2Y2m4zG1a4xeSRddZTuYhgZKusDDQonY235dIoG5o8JKJl
-         QKfySKcXwVicI9gch5/dxIFvAJojQzL6662wKcXuu4woKgZMLRJ/qad1Qy12hIJJJF92
-         ap0aW58U+bM5nXGVO7L3/S2o3U/Kyi3cgwfBeiJYRSMjA7/GK7XHQF2hovcQ9r30LjhF
-         MtBjPUVNrnPtQXrBrGRKYpEqg9QVg5bej6nn+jqbr00k7bX60FRo/nenuMwc00AjgrKz
-         Y5DeP6fJxqbzggFanRCjH84Dbmygd562npSp9dszqhZnUGifPCTVTeXchMJlw+YQwKXj
-         AlxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791986870; x=1792591670;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UhgBX9GqYPCtzCE/DAmHkc/tMFE83OUWkvy12Au6Y9I=;
-        b=BUCbnrpC9o5byQQP6HjIVw7mx/SVHc454SU0ibmSGmGACsRVU/KxQQVlj2DXSSI7IG
-         HnVR8+5DS+Nia2gZY8ToyF1JNhYilegotL4KLDkK77V/xAFVuhze/TZoUYmGabIKSvsB
-         pMPq0S4dNwEHcgzurYU4UGaaFDPawhUU118M+sRlYka0l91Ov03bKj50pwBzkirn2W9j
-         U6pyWQxYHlTKWRzQAA0yi8+RbB2+bT+zkktIyoJqgqFSjEowA8rifxbsrhJGd2w0u5Om
-         rB+DnIhLOhJ9e5Tvxkya/MDGOTDchabrWCIVD5xlbuDoBO2N3Q+r7vJ4Kg/CMlp5mEKR
-         QA+g==
-X-Forwarded-Encrypted: i=1; AKwUvBwVSWQRejDFQY5gbG4+7qwGkwtLprMuPM6l7sEF2Ij1/2iHVM8vASiAgz7eEAkLRjnigvbVGuVVBX8+JvGK/tcWljyjusM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLqMwAHKEI6I2s9dfJ/9kc70PljSw6L/T8sTGI5SpAYTGa/N+H7
-	JFSqFTT5snrX7Z36tY7N9DgRr+CaI5Mb3SIE7St/fwkXXOI40E8Md5QC7SZtT5vd3YB80tT7wv6
-	3ZbCs66I4P09x5eydhlnoJJ9c52DMKZJDBMxBg82W
-X-Gm-Gg: AYBFou1LWD+GMcjZiWQkfObQPFR6zUMy5lTCHsgrgNfXmnsR+fzg/uk88uwjbbb4eeg
-	+suZX9Tk0/tUCy9nVu0XiQYbbyIKUgOLtLMf92A1b/TM9UiEfPdmvPh4UqWliSupqZFpUtRQU8G
-	ynpKdH/mumbnOdLUazj4TDoll8xzbmnQ0j57CqP4h7WwNEaq3i4a1pJri5FzIVrH6HgGz51OiJ1
-	yK/HZbUOnDlv/tDGHgtsFLSsKTXy2eCCLfUh60/vzOkCA3bLmZmfGzp5lTNxsFrKMBznIySNXM6
-	7cm4q/65VyNlwEzFCulIpS8UqXmDyhxnxCoxN1yxAVRes9z7nfCI3ZmjgAABCFh1o4UH5zzvpw4
-	YXuQrpAmAtpc=
-X-Received: by 2002:a05:6a21:a0c:b0:3dd:a196:308f with SMTP id
- adf61e73a8af0-3e16beeee7cmr12019509637.63.1791986870601; Wed, 14 Oct 2026
- 07:07:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD955372D9;
+	Wed, 14 Oct 2026 15:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791990071; cv=none; b=CVNBzW0adE9osn2PO4o/bX+RvWbf28NIb9UKHQKEcCdWXsqUKJvRZm/rM9zmECMvtodkQNlg+BB08E7Qp29zWorJ187/LBNcJ5whPAJyxXd5JrCmOpZ1S4rSyEZzCONqDxGwaauk8qFvEUIBxweHn7sSozyqaGLAbpGaCDoS/ZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791990071; c=relaxed/simple;
+	bh=M1ij2NdJvirJYyaqN35oPvbKa8IoxlIBwgK6zZm4r0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fnl16LI2/hpo6eTbZWQsZQCZCzarIfXj8Cy7uYQ6tDACxsTjtsYzo9FNfVHBFBW3RiUq07zSd6pzVgYD1kEy+T2F2KJP14ot8OwZC3v4B3JjE/wBrIGP25FUs7akhrszHohEg26R6lhO6OGmTQ4vVZuVtsFKse2C0F5Wtb/glSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4j4Z333vcTz1HCF8;
+	Wed, 14 Oct 2026 22:53:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 09B384055C;
+	Wed, 14 Oct 2026 23:01:00 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with UTF8SMTPA id LxC2BwAX6Rgbmc9qaZI3AA--.19900S2;
+	Wed, 14 Oct 2026 16:00:59 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	chleroy@kernel.org,
+	pjw@kernel.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	tglx@kernel.org,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	robh@kernel.org,
+	saravanak@kernel.org
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	zohar@linux.ibm.com,
+	noodles@fb.com,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] kexec: Select ima_get/free_kexec_buffer() with CONFIG_HAVE_IMA_KEXEC(_OF)
+Date: Wed, 14 Oct 2026 17:00:05 +0200
+Message-ID: <20261014150005.138309-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <179156155963.36253.400481753322266658@gmail.com> <20261010090534.317149-1-wang.zhan@smartx.com>
-In-Reply-To: <20261010090534.317149-1-wang.zhan@smartx.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 14 Oct 2026 10:07:39 -0400
-X-Gm-Features: AclHuK-Uxd2Qc-uVsvOHuNpvBEQj9YyXbEeOa-oEAPBD6eBDFm2MCHFuD_v1aJU
-Message-ID: <CAHC9VhTMjeruUxobNKyE=4qmtgcQfd66MdbQY+X346Vn4Yz5ew@mail.gmail.com>
-Subject: Re: [PATCH net v2] calipso: keep BIG TCP payload_len in calipso_skbuff_setattr()
-To: Wang Zhan <wang.zhan@smartx.com>
-Cc: netdev@vger.kernel.org, Joas Antonio dos Santos <joasantonio108@gmail.com>, 
-	Eric Dumazet <edumazet@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-security-module@vger.kernel.org, 
-	Alice Mikityanska <alice.kernel@fastmail.im>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwAX6Rgbmc9qaZI3AA--.19900S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtw1DWry8XFyfZFWkWw4Uurg_yoW7XFWfpw
+	sIyr1UJrZrXFs8t3yqg348Wry5Z3Z7JrW3ur1rC34kZFy3A3yDur1vq3W7ZFyj9rWkKFyx
+	uFyFgFy0gr4UKw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUsPfHUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAGBGrPKR9GdAADsi
 
-On Sat, Oct 10, 2026 at 5:06=E2=80=AFAM Wang Zhan <wang.zhan@smartx.com> wr=
-ote:
-> On Fri, 09 Oct 2026 12:59:19 -0300 Joas Antonio dos Santos wrote:
-> > calipso_skbuff_setattr() adjusts payload_len by the length of the
-> > option it inserts or resizes:
-> >
-> >       payload =3D ntohs(ip6_hdr->payload_len);
-> >       ip6_hdr->payload_len =3D htons(payload + len_delta);
-> >
-> > GRO can build BIG TCP packets larger than IPV6_MAXPLEN, and stores
-> > payload_len =3D=3D 0 for them; ipv6_payload_len() then falls back to
-> > skb->len.  For such a packet forwarded to a destination mapped to
-> > CALIPSO, the code above writes len_delta (or 65536 + len_delta when
-> > shrinking) into payload_len, and ipv6_payload_len() no longer falls
-> > back to skb->len.  nf_tables, conntrack and sch_cake rely on it.
-> >
-> > The same arithmetic also wraps when a packet grows past IPV6_MAXPLEN,
-> > and a BIG TCP packet that shrinks below IPV6_MAXPLEN should get its
-> > real length back.
-> >
-> > Set payload_len from the skb length with ipv6_set_payload_len(), which
-> > stores 0 above IPV6_MAXPLEN and the real length otherwise, as
-> > ipv6_gro_complete() does.  The network header was just reset to
-> > skb->data, so skb->len - sizeof(*ip6_hdr) is the payload length.
-> >
-> > Tested on one kernel (arm64, QEMU) with SELinux permissive, a minimal
-> > mdp-generated policy (network_peer_controls=3D1), "netlabelctl calipso
-> > add pass doi:16" and a NetLabel mapping of fd00:2::/64 to CALIPSO
-> > DOI 16.  calipso_skbuff_setattr() was called through
-> > netlbl_skbuff_setattr() from a test-only debugfs hook (not part of
-> > this patch) adding a level-only label; payload_len after the call:
-> >
-> >   case                         before fix   after fix   real length
-> >   1000, unlabeled                    1016        1016          1016
-> >   70000 GSO, payload_len 0             16           0         70016
-> >   65530 GSO, grows past MAXPLEN        10           0         65546
-> >   65540 GSO with a 24 byte hop
-> >   header, shrinks below MAXPLEN     65528       65532         65532
-> >   1000 with a 24 byte hop header      992         992           992
-> >
-> > (0 means ipv6_payload_len() returns the real length.)  On the forward
-> > path, with a client injecting unlabeled UDP through a router to a
-> > server, the router adds the CALIPSO option and the server delivers all
-> > datagrams (Udp6InDatagrams 5, Ip6InTruncatedPkts 0) with this patch.
-> >
-> > Fixes: 81fbc812132c ("ipv6/gro: insert temporary HBH/jumbo header")
-> > Suggested-by: Eric Dumazet <edumazet@kernel.org>
-> > Suggested-by: Wang Zhan <wang.zhan@smartx.com>
-> > Signed-off-by: Joas Antonio dos Santos <joasantonio108@gmail.com>
-> > Assisted-by: Claude:claude-opus-5-5
->
-> Reviewed-by: Wang Zhan <wang.zhan@smartx.com>
->
-> > @@ -1357,8 +1357,8 @@ static int calipso_skbuff_setattr(struct sk_buff =
-*skb,
-> >                       sizeof(*ip6_hdr) + start);
-> >               skb_reset_network_header(skb);
-> >               ip6_hdr =3D ipv6_hdr(skb);
-> > -             payload =3D ntohs(ip6_hdr->payload_len);
-> > -             ip6_hdr->payload_len =3D htons(payload + len_delta);
-> > +             /* 0 above IPV6_MAXPLEN (BIG TCP), the real length otherw=
-ise */
->
-> nit: consider dropping the comment, it just repeats what
-> ipv6_set_payload_len() does.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Agree with the nit, but otherwise this looks good to me.  Thanks to
-Joas Antonio dos Santos for identifying the problem and working on the
-fix as well as everyone else who took the time to review and comment;
-the help is always appreciated!
+The ima_get/free_kexec_buffer() device tree implementation relies on the
+arch code calling of_kexec_alloc_and_setup_fdt() to pass the information
+about where the IMA kexec buffer is located. Only the arm64, powerpc and
+riscv architectures support that. LoongArch implicitly assumes that the
+device tree implementation is used, but it does not call that function.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+The ima_get/free_kexec_buffer() x86 implementation instead still relies on
+the setup data to pass the kexec buffer information, and is built only if
+CONFIG_OF_FLATTREE is not defined.
 
---=20
-paul-moore.com
+However, if CONFIG_OF_FLATTREE is selected in x86, x86 attempts to use the
+device tree implementations of ima_get/free_kexec_buffer(), which are never
+going to succeed because of_kexec_alloc_and_setup_fdt() is not called for
+that architecture.
+
+Instead, define CONFIG_HAVE_IMA_KEXEC_OF (automatically selects
+HAVE_IMA_KEXEC), select it for the architectures that should use the
+ima_get/free_kexec_buffer() device tree implementation, and enable these
+functions if the new config option is enabled. Set it also on LoongArch, to
+preserve the current behavior and avoid a link failure. LoongArch does not
+pass the buffer location to the next kernel yet; this will be addressed
+separately.
+
+Finally, don't select it for x86, and use x86's own setup_data-based
+implementation regardless of CONFIG_OF_FLATTREE.
+
+Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kexec")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ arch/arm64/Kconfig      | 2 +-
+ arch/loongarch/Kconfig  | 2 +-
+ arch/powerpc/Kconfig    | 2 +-
+ arch/riscv/Kconfig      | 2 +-
+ arch/x86/kernel/setup.c | 2 +-
+ drivers/of/kexec.c      | 4 ++--
+ kernel/Kconfig.kexec    | 4 ++++
+ 7 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index b5a51b0ef944..4b7e248b6c91 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1697,7 +1697,7 @@ config ARCH_SUPPORTS_KEXEC_FILE
+ config ARCH_SELECTS_KEXEC_FILE
+ 	def_bool y
+ 	depends on KEXEC_FILE
+-	select HAVE_IMA_KEXEC if IMA
++	select HAVE_IMA_KEXEC_OF if IMA
+ 
+ config ARCH_SUPPORTS_KEXEC_SIG
+ 	def_bool y
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 2067d1f2ad7a..b5420d482da4 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -690,7 +690,7 @@ config ARCH_SELECTS_KEXEC_FILE
+ 	depends on KEXEC_FILE
+ 	select KEXEC_ELF
+ 	select RELOCATABLE
+-	select HAVE_IMA_KEXEC if IMA
++	select HAVE_IMA_KEXEC_OF if IMA
+ 
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool 64BIT
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 2580e27e4328..096c6061893b 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -643,7 +643,7 @@ config ARCH_SELECTS_KEXEC_FILE
+ 	def_bool y
+ 	depends on KEXEC_FILE
+ 	select KEXEC_ELF
+-	select HAVE_IMA_KEXEC if IMA
++	select HAVE_IMA_KEXEC_OF if IMA
+ 
+ config PPC64_BIG_ENDIAN_ELF_ABI_V2
+ 	# Option is available to BFD, but LLD does not support ELFv1 so this is
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index f8e26c4bed2b..161bf8a65beb 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -1118,7 +1118,7 @@ config ARCH_SUPPORTS_KEXEC_FILE
+ config ARCH_SELECTS_KEXEC_FILE
+ 	def_bool y
+ 	depends on KEXEC_FILE
+-	select HAVE_IMA_KEXEC if IMA
++	select HAVE_IMA_KEXEC_OF if IMA
+ 	select KEXEC_ELF
+ 
+ config ARCH_SUPPORTS_KEXEC_PURGATORY
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index cda6adb9f69c..bc17e353c099 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -421,7 +421,7 @@ static void __init add_early_ima_buffer(u64 phys_addr)
+ #endif
+ }
+ 
+-#if defined(CONFIG_HAVE_IMA_KEXEC) && !defined(CONFIG_OF_FLATTREE)
++#ifdef CONFIG_HAVE_IMA_KEXEC
+ int __init ima_free_kexec_buffer(void)
+ {
+ 	if (!ima_kexec_buffer_size)
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+index 029903b986cb..724f29fef0c0 100644
+--- a/drivers/of/kexec.c
++++ b/drivers/of/kexec.c
+@@ -116,7 +116,7 @@ static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_HAVE_IMA_KEXEC
++#ifdef CONFIG_HAVE_IMA_KEXEC_OF
+ /**
+  * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+  * @addr:	On successful return, set to point to the buffer contents.
+@@ -196,7 +196,7 @@ static void remove_ima_buffer(void *fdt, int chosen_node)
+ 	size_t size;
+ 	const void *prop;
+ 
+-	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
++	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC_OF))
+ 		return;
+ 
+ 	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
+diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+index 15632358bcf7..c6ed60f04ea4 100644
+--- a/kernel/Kconfig.kexec
++++ b/kernel/Kconfig.kexec
+@@ -17,6 +17,10 @@ config KEXEC_ELF
+ config HAVE_IMA_KEXEC
+ 	bool
+ 
++config HAVE_IMA_KEXEC_OF
++	bool
++	select HAVE_IMA_KEXEC
++
+ config KEXEC
+ 	bool "Enable kexec system call"
+ 	depends on ARCH_SUPPORTS_KEXEC
+-- 
+2.43.0
+
