@@ -1,33 +1,33 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCED4A206F
-	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 08:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA284A5EC3
+	for <linux-security-module@vger.kernel.org>; Wed, 14 Oct 2026 08:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791966470; cv=none; b=G+LiZ05Uvg0jCdBKFlzxgvy/EVrZP7/fa4astuPKU0LgrJUTs1jN1QU2k+H34DhnCiUOoq5JpkHJYuypCMoayl5+iPpXRYf6m9P/jly7VUyTeezogO76XerePaSkak17NgBYHNLYnhe5RVXATcNTl3sZkiNVTE0LnqlA8EmNxC8=
+	t=1791966474; cv=none; b=PfeLN1Yih/eSxQkdrz0g/o9A+w8tEWViladLNHqbbZ1yCMAyjkJpfdWgUJoVcAM086UnavLlq1/01uNppTkRWU+hBv6vP+oJZb2OjYv5VnKsNGI4olj9y4I9Thhn3V/84St6eeBpAmi54azj3MiFJ5LJyP1Y4X/ikqzS/YhZwVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791966470; c=relaxed/simple;
-	bh=M5Iw9i7LSjfTpyeFT7IuPFEdOSNuzW7ZHt3UmStmhS8=;
+	s=arc-20240116; t=1791966474; c=relaxed/simple;
+	bh=EcB1oSM3QW7XMtG4DOECU7AHm1TsVwnwYoZmh2DsKGI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c448a2JCBQj3fnV+xCuG2gRl6PqiOz945EQ4+LYSaOpPSyjwyDgOMGNtajUsyvZQZnJgudk8BGEYuUex8BW9ZPstfOqKZJIPcSJaA/6FNQ3/zOQO7PKU4mP6uXiPKhotJfTYq5Ybe717p4RvXPhf091ZESVXCf00mSDuHz6IuOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CfeOOsWH; arc=none smtp.client-ip=45.157.188.11
+	 MIME-Version:Content-Type; b=VdbVPnPoFgUP4TnqTYF23OT0SkMqPgX+6IcvRTZKpyGJf0/w6GJOIHyha08aZr02gNNzbaCbDRbQuGtcn0Q293fY6z0Ihcm6aYTSVjtBZRF06hxqy8cydripg6iCKG2SLSIoLdWjOfMaECK+3TvaaK+y7thsj3VRjt4bVg4LVdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PeNAYGwx; arc=none smtp.client-ip=185.125.25.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CfeOOsWH"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j4PTQ3SwXzm0P;
-	Wed, 14 Oct 2026 10:27:38 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PeNAYGwx"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j4PTL46CpznJh;
+	Wed, 14 Oct 2026 10:27:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1791966458;
-	bh=B55zEZdO+I5Rm1KDnvngD/8PYSutGzA9iiRo6UYe5KQ=;
+	s=20191114; t=1791966454;
+	bh=7znZI0riFyyT2GyavjMspa1Xqe3EncQ+BIXvYofMVwc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CfeOOsWH3caTSt7/Y9DUPAx0Opjl5fTwBMGGHm+XL7PuDciFa21rKovA5xTHeHTIP
-	 ZwP8tnKdTpF13+gKUKz7Ty4la/EAN7gilFRZZpBiRnAluKuIUQoRmBlr3usDLgPnWU
-	 cfJXbvk60wpL2FnOa8HaJjZHOHFHIUmdKhau8CHg=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4j4PTP0vZHz7bD;
-	Wed, 14 Oct 2026 10:27:37 +0200 (CEST)
+	b=PeNAYGwxBHQMOCKJ36Qt3TEX26Z6C3nqgjhOGE5UDv7xVosm4HFnvK2FK55C+MylR
+	 8Mww+8f8w8R3L9uZt3XOGAjB8EmimKdZoM3bXK1oCRpJcL6pjUwNuzzhvoATwavLK6
+	 6x9ghyrCAlR+FFkGcvb4nOPi4QWMNsGL78SFOpfg=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4j4PTJ6wBGzqNj;
+	Wed, 14 Oct 2026 10:27:32 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Christian Brauner <brauner@kernel.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
@@ -46,9 +46,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v6 6/8] selftests/landlock: Add capability restriction tests
-Date: Wed, 14 Oct 2026 10:27:12 +0200
-Message-ID: <20261014082718.1435842-7-mic@digikod.net>
+Subject: [PATCH v6 4/8] landlock: Enforce capability restrictions
+Date: Wed, 14 Oct 2026 10:27:10 +0200
+Message-ID: <20261014082718.1435842-5-mic@digikod.net>
 In-Reply-To: <20261014082718.1435842-1-mic@digikod.net>
 References: <20261014082718.1435842-1-mic@digikod.net>
 Precedence: bulk
@@ -61,29 +61,35 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add tests to exercise LANDLOCK_PERMISSION_CAPABILITY_USE enforcement.  A
-sandboxed process is denied a handled capability when no rule grants it,
-and an explicit rule restores it.  Unknown capability values above
-CAP_LAST_CAP are accepted at rule-add time yet have no runtime effect,
-because deny-by-default still applies once the domain is enforced.
-Stacking tests cover the per-layer allow/deny combinations, including a
-layer that does not handle the permission, and invalid rule attributes
-return the expected errors.
+Add Landlock enforcement for capability use via the LSM capable hook.
+This lets a sandboxed process restrict which Linux capabilities it can
+exercise, using LANDLOCK_PERMISSION_CAPABILITY_USE and per-capability
+rules.
 
-Three tests exercise non-standard capability contexts: enforcing a
-domain via CAP_SYS_ADMIN authorization without no_new_privs, restricting
-capabilities gained through the kernel's user namespace ownership bypass
-(cap_capable_helper), and checking CAP_SYS_ADMIN against a descendant
-user namespace, with an unsandboxed positive control, to confirm the
-decision is independent of the target.
+The check is a flat per-layer allowed-capabilities test, with no
+domain-ancestry bypass, no cross-namespace discriminant, and no
+dependency on the target user namespace.  These categorical denials
+return -EPERM, like the namespace permission introduced by the previous
+commit, and they mirror its per-capability allowed and quiet masks, so
+LANDLOCK_ADD_RULE_QUIET stays rejected for this rule type.  Successful
+capability rules and denials are traced as the previous commit
+describes.
 
-Audit tests verify denied and allowed capabilities, per-member quiet
-interactions, and CAP_OPT_NOAUDIT suppression.  Trace tests cover
-accepted, rejected, and no-op rule adds, and normal, quiet, and
-CAP_OPT_NOAUDIT denials.
+Enforce only at capability exercise time rather than modifying the
+credential's capability sets.  Modifying them would give capget(2) an
+accurate view of usable capabilities, but no LSM other than commoncap
+does so; Landlock follows that convention.  A sandboxed process inside a
+user namespace therefore sees all capabilities via capget(2) but
+receives -EPERM when attempting to use one that is denied.
 
-Test coverage for security/landlock is 91.8% of 2864 lines according to
-LLVM 22.
+An earlier design bypassed this hook for namespace management through a
+domain-ancestry comparison with the namespace creator's stored Landlock
+domain.  That made a Landlock decision depend on kernel namespace state,
+and the ns != cred->user_ns heuristic did not accurately identify
+namespace-management operations.  The flat, namespace-agnostic check
+instead enforces capability and namespace restrictions independently;
+creating a non-user namespace requires an allowed CAP_SYS_ADMIN even
+when combined with CLONE_NEWUSER in one unshare().
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Günther Noack <gnoack@google.com>
@@ -93,1537 +99,868 @@ Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
 Changes since v5:
-https://patch.msgid.link/20261007100255.1333386-7-mic@digikod.net
-- Initialize audit record counts before checking helper failures
-  (reported by Sashiko).
-- Avoid flaky zero-domain assertions when checking that allowed and
-  CAP_OPT_NOAUDIT operations emit no audit access records.
-
-Changes since v4:
-https://patch.msgid.link/20261002124409.1277970-7-mic@digikod.net
-- Isolate cap_without_nnp in a private UTS namespace before the denied
-  sethostname() check, and clear temporary effective capabilities after
-  the related probes (reported by Sashiko for the isolation issue).
+https://patch.msgid.link/20261007100255.1333386-5-mic@digikod.net
+- Keep invalid-input KUnit coverage while dropping assertions about
+  architecture-specific WARN_ON_ONCE() suppression counts (reported by
+  Mark Brown):
+  https://patch.msgid.link/asmHRyx_uDkK-tJs@sirena.co.uk
 
 Changes since v3:
-https://patch.msgid.link/20260726161400.3010511-11-mic@digikod.net
-- Cover the EFAULT result for an invalid capability rule pointer.
-- Drop CAP_AUDIT_CONTROL after cleaning up the audit fixture.
-- Isolate cap_stacking and cap_audit in private UTS namespaces before
-  their successful sethostname() calls.
-- Add trace tests for successful and rejected rules, effective no-ops,
-  and normal, quiet, and CAP_OPT_NOAUDIT denials.
-- Extend audit coverage for normal-denial controls, same-member
-  allow/quiet overlap, and youngest-denier behavior.
-- Test target-user-namespace independence with an unsandboxed positive
-  control.
+https://patch.msgid.link/20260726161400.3010511-9-mic@digikod.net
+- Adapt the capability mask to the ruleset/domain split.
+- Spell out perm as permission in the UAPI constant and members, the
+  internal masks and helpers, and the trace fields, and name the audit
+  blocker capability.use after its domain instead of
+  perm.capability_use.
+- Suppress and assert the expected warnings in the invalid-input KUnit
+  tests.
+- Drop __attribute_const__ from the conversion helpers, which warn on
+  invalid input.
+- Trace successful capability rules and denials.  Successful effective
+  no-ops advance the version, while quiet denials remain trace-visible
+  with logged=0.
+- Tell programs to omit empty rules, complete the rule errors, and
+  explain target-user-namespace independence and the -EPERM convention.
+- Drop Reviewed-by: Tingmao Wang: this version folds the capability
+  trace events into this patch, which her v3 review did not cover; a
+  fresh review is welcome.
 
 Changes since v2:
-https://patch.msgid.link/20260527181127.879771-8-mic@digikod.net
-- Rebased for ABI 11 and the renamed capability rule attribute (perm
-  plus allowed_capabilities/quiet_capabilities).
-- Add per-member quiet audit tests for the capability permission:
-  cap_audit.quieted, plus quiet-only and allow+quiet legs in
-  add_rule_bad_attr and the add_cap_rule_full helper.
-- add_rule_bad_attr: drop the dead quiet_capabilities reset after the
-  allow+quiet rule and reset it explicitly where the following rule
-  needs an allow-only attr, clarifying intent.
-- Strengthen the audit tests with positive controls: cap_audit.quieted
-  and cap_audit.noaudit_probe_not_logged now also assert that a normal
-  (non-quiet, non-noaudit) capability denial in the same domain IS
-  logged, proving suppression is not global.  cap_audit.quieted also
-  asserts the quieted capability is still denied (EPERM), not merely
-  unlogged.
-- Add cap_audit.quiet_unknown_bit_no_effect (an unknown quiet bit does
-  not suppress a known capability denial).
+https://patch.msgid.link/20260527181127.879771-6-mic@digikod.net
+- Rename the capability rule attribute fields (allowed_perm to perm,
+  capabilities to allowed_capabilities) and add a quiet_capabilities
+  bitmask that suppresses the audit records of specific denied
+  capabilities, consuming the shared per-layer quiet member mask in
+  landlock_log_denial(); the rule attribute grows from 16 to 24 bytes.
+- Dropped Reviewed-by: Günther Noack and Tingmao Wang, as this version
+  adds the quiet member mask described above, which their v1 review did
+  not cover.  Fresh review welcome.
 
 Changes since v1:
-https://patch.msgid.link/20260312100444.2609563-8-mic@digikod.net
-- Reflow comments after check-linux.sh comment fixes.
+https://patch.msgid.link/20260312100444.2609563-7-mic@digikod.net
+- Add Reviewed-by: Tingmao Wang.
+- Rename internal struct perm_rules to perm_masks (companion change
+  to the preceding commit).
 - Rename LANDLOCK_PERM_NAMESPACE_ENTER references to
-  LANDLOCK_PERM_NAMESPACE_USE and bump the abi_version expectation
-  to 11 (companion changes to the introducing commit).
-- Add add_rule_unknown_no_runtime_effect: assert that a rule listing
-  only unknown capability bits is accepted at rule-add time but has
-  no runtime effect, so an actual CAP_* exercise (sethostname with
-  CAP_SYS_ADMIN) is still denied by deny-by-default once the domain
-  is enforced.
-- Add cap_stacking parent_denies variant covering the inverse
-  direction of stacking: layer 1 denies CAP_SYS_ADMIN, layer 2
-  allows, capability still denied.  Completes the per-layer walker
-  direction coverage.
-- Assert records.domain == 0 in cap_audit.allowed so the test also
-  checks that no domain-allocation record is emitted when nothing
-  is denied.
+  LANDLOCK_PERM_NAMESPACE_USE (companion change to the introducing
+  commit).
+- Rename struct layer_rights to struct layer_config (companion
+  change to the introducing commit).
+- Clarify in the commit body and hook_capable() kdoc that commoncap
+  (not Landlock) is registered with LSM_ORDER_FIRST.
+- Surface the empty-check semantics in the
+  landlock_capability_attr.capabilities kdoc: a rule that sets only
+  bits unknown to the running kernel (above CAP_LAST_CAP) succeeds
+  but has no runtime effect.
+- Add explicit static_assert that LANDLOCK_NUM_PERM_CAP +
+  LANDLOCK_NUM_PERM_NS fits in a u64, complementing the existing
+  implicit sizeof guard on struct perm_masks.
+- Add Reviewed-by: Günther Noack.
 ---
- tools/testing/selftests/landlock/base_test.c |   19 +
- tools/testing/selftests/landlock/cap_test.c  | 1370 ++++++++++++++++++
- tools/testing/selftests/landlock/trace.h     |   24 +
- 3 files changed, 1413 insertions(+)
- create mode 100644 tools/testing/selftests/landlock/cap_test.c
+ include/linux/landlock.h        |   5 +-
+ include/trace/events/landlock.h |  96 +++++++++++++++++++
+ include/uapi/linux/landlock.h   |  49 ++++++++++
+ security/landlock/Makefile      |   3 +-
+ security/landlock/access.h      |  10 +-
+ security/landlock/audit.c       |   4 +
+ security/landlock/cap.c         | 159 ++++++++++++++++++++++++++++++++
+ security/landlock/cap.h         |  48 ++++++++++
+ security/landlock/domain.h      |   3 +
+ security/landlock/limits.h      |   4 +-
+ security/landlock/log.c         |  10 ++
+ security/landlock/log.h         |   1 +
+ security/landlock/setup.c       |   2 +
+ security/landlock/syscalls.c    |  95 ++++++++++++++++++-
+ security/landlock/trace.c       |  12 +++
+ 15 files changed, 494 insertions(+), 7 deletions(-)
+ create mode 100644 security/landlock/cap.c
+ create mode 100644 security/landlock/cap.h
 
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index 58fe322d8637..89c0d96607de 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -142,6 +142,25 @@ TEST(errata)
- 	ASSERT_EQ(EINVAL, errno);
- }
+diff --git a/include/linux/landlock.h b/include/linux/landlock.h
+index d288e3b6756f..0ee4880988ba 100644
+--- a/include/linux/landlock.h
++++ b/include/linux/landlock.h
+@@ -56,10 +56,13 @@
+ 	_LANDLOCK_NAME_ENTRY(LANDLOCK_SCOPE_SIGNAL, "signal")
  
-+#define PERMISSION_LAST LANDLOCK_PERMISSION_CAPABILITY_USE
+ #define _LANDLOCK_PERMISSION_NAMESPACE_NAME "namespace"
++#define _LANDLOCK_PERMISSION_CAPABILITY_NAME "capability"
+ 
+ #define _LANDLOCK_PERMISSION_LIST(entry) \
+ 	entry(LANDLOCK_PERMISSION_NAMESPACE_USE, "use", \
+-	      _LANDLOCK_PERMISSION_NAMESPACE_NAME)
++	      _LANDLOCK_PERMISSION_NAMESPACE_NAME), \
++	entry(LANDLOCK_PERMISSION_CAPABILITY_USE, "use", \
++	      _LANDLOCK_PERMISSION_CAPABILITY_NAME)
+ 
+ #define _LANDLOCK_PERMISSION_QUALIFIED_ENTRY(mask, action, domain) \
+ 	_LANDLOCK_NAME_ENTRY(mask, domain "." action)
+diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
+index c5a051ede8d9..744ef55ec1de 100644
+--- a/include/trace/events/landlock.h
++++ b/include/trace/events/landlock.h
+@@ -37,6 +37,7 @@ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY);
+ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_FS_ACCESS);
+ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_NET_ACCESS);
+ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_NAMESPACE);
++TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_CAPABILITY);
+ 
+ #ifdef CREATE_TRACE_POINTS
+ 
+@@ -552,6 +553,53 @@ TRACE_EVENT(landlock_add_rule_namespace,
+ 		__entry->quiet_namespace_types)
+ );
+ 
++/**
++ * landlock_add_rule_capability - Capability rule added to a ruleset
++ *
++ * @ruleset: Source ruleset (never NULL).
++ * @flags: Complete validated landlock_add_rule_flags value supplied by this
++ *         successful call, not the rule's accumulated quiet state.
++ * @permissions: Validated permission mask from the rule attribute.
++ * @allowed_capabilities: Effective known capabilities allowed by this call.
++ * @quiet_capabilities: Effective known capabilities quieted by this call.
++ *
++ * Emitted by sys_landlock_add_rule() under the modified ruleset's lock, so
++ * the reported ruleset is a stable snapshot that no concurrent writer can
++ * change.
++ */
++TRACE_EVENT(landlock_add_rule_capability,
 +
-+TEST(ruleset_with_unknown_permission)
-+{
-+	__u64 permission_mask;
++	TP_PROTO(const struct landlock_ruleset *ruleset, u32 flags,
++		 u64 permissions, u64 allowed_capabilities,
++		 u64 quiet_capabilities),
 +
-+	for (permission_mask = 1ULL << 63; permission_mask != PERMISSION_LAST;
-+	     permission_mask >>= 1) {
-+		struct landlock_ruleset_attr ruleset_attr = {
-+			.handled_permissions = permission_mask,
-+		};
++	TP_ARGS(ruleset, flags, permissions, allowed_capabilities,
++		quiet_capabilities),
 +
-+		/* Unknown handled_permissions values must be rejected. */
-+		ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr,
-+						      sizeof(ruleset_attr), 0));
-+		ASSERT_EQ(EINVAL, errno);
-+	}
-+}
++	TP_STRUCT__entry(
++		__field(	u64,		ruleset_id		)
++		__field(	u64,		ruleset_version		)
++		__field(	access_mask_t,	permissions		)
++		__field(	u64,		allowed_capabilities	)
++		__field(	u64,		quiet_capabilities	)
++	),
 +
- /* Tests ordering of syscall argument checks. */
- TEST(create_ruleset_checks_ordering)
- {
-diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/selftests/landlock/cap_test.c
++	TP_fast_assign(
++		lockdep_assert_held(&ruleset->lock);
++		__entry->ruleset_id		= ruleset->id;
++		__entry->ruleset_version	= ruleset->version;
++		__entry->permissions		= permissions;
++		__entry->allowed_capabilities	= allowed_capabilities;
++		__entry->quiet_capabilities	= quiet_capabilities;
++	),
++
++	TP_printk("ruleset=%llx.%llu permissions=%s allowed_capabilities=0x%llx quiet_capabilities=0x%llx",
++		__entry->ruleset_id, __entry->ruleset_version,
++		__print_flags(__entry->permissions, "|",
++			      _LANDLOCK_PERMISSION_NAMES),
++		__entry->allowed_capabilities, __entry->quiet_capabilities)
++);
++
+ /**
+  * landlock_create_domain - New domain created
+  *
+@@ -980,6 +1028,54 @@ TRACE_EVENT(landlock_deny_permission_namespace,
+ 		__entry->namespace_type, __entry->namespace_id)
+ );
+ 
++/**
++ * landlock_deny_permission_capability - Capability use denied
++ *
++ * @hierarchy: Denying domain's hierarchy node (never NULL); its id is the
++ *             domain field.
++ * @same_exec: Whether the current task entered the denying domain itself.
++ * @logged: Whether this denial was selected for audit logging.
++ * @blockers: Request type and final missing permission subset (never NULL).
++ * @capability: CAP_* number that was denied.
++ *
++ * Emitted when a Landlock domain denies capability use, except for checks
++ * made with CAP_OPT_NOAUDIT, which are denied without emitting this event.
++ */
++TRACE_EVENT(landlock_deny_permission_capability,
++
++	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
++		 bool logged, const struct landlock_blockers *blockers,
++		 int capability),
++
++	TP_ARGS(hierarchy, same_exec, logged, blockers, capability),
++
++	TP_STRUCT__entry(
++		__field(	u64,		domain_id	)
++		__field(	bool,		same_exec	)
++		__field(	bool,		logged		)
++		__field(	enum landlock_request_type, blockers_type	)
++		__field(	access_mask_t,	blockers_access	)
++		__field(	int,		capability	)
++	),
++
++	TP_fast_assign(
++		__entry->domain_id	= hierarchy->id;
++		__entry->same_exec	= same_exec;
++		__entry->logged		= logged;
++		__entry->blockers_type	= blockers->type;
++		__entry->blockers_access = blockers->access;
++		__entry->capability	= capability;
++	),
++
++	TP_printk("domain=%llx same_exec=%d logged=%d blockers=%s capability=%d",
++		__entry->domain_id, __entry->same_exec, __entry->logged,
++		__entry->blockers_type == LANDLOCK_REQUEST_CAPABILITY ?
++			__print_flags(__entry->blockers_access, "|",
++				      _LANDLOCK_PERMISSION_BLOCKER_NAMES) :
++			"unknown",
++		__entry->capability)
++);
++
+ /**
+  * landlock_deny_ptrace - Ptrace access denied by a Landlock domain
+  *
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index bb8ec589ddac..3128e58d4b78 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -237,6 +237,11 @@ enum landlock_rule_type {
+ 	 * @LANDLOCK_RULE_NAMESPACE: Type of a &struct landlock_namespace_attr .
+ 	 */
+ 	LANDLOCK_RULE_NAMESPACE,
++	/**
++	 * @LANDLOCK_RULE_CAPABILITY: Type of a &struct
++	 * landlock_capability_attr .
++	 */
++	LANDLOCK_RULE_CAPABILITY,
+ };
+ 
+ /**
+@@ -325,6 +330,42 @@ struct landlock_namespace_attr {
+ 	__u64 quiet_namespace_types;
+ };
+ 
++/**
++ * struct landlock_capability_attr - Capability definition
++ *
++ * Argument of sys_landlock_add_rule() with %LANDLOCK_RULE_CAPABILITY.
++ */
++struct landlock_capability_attr {
++	/**
++	 * @permissions: Must be set to %LANDLOCK_PERMISSION_CAPABILITY_USE.
++	 */
++	__u64 permissions;
++	/**
++	 * @allowed_capabilities: Bitmask of capabilities (``1ULL << CAP_*``) to
++	 * allow under this rule.  Bits above ``CAP_LAST_CAP`` are silently
++	 * ignored for forward compatibility.
++	 */
++	__u64 allowed_capabilities;
++	/**
++	 * @quiet_capabilities: Bitmask of capabilities (``1ULL << CAP_*``)
++	 * whose denial by this layer should not be submitted to audit, even if
++	 * audit logging would normally take place per landlock_restrict_self()
++	 * flags.  Only audit records attributed to this layer are suppressed;
++	 * denial tracepoints still fire (see `Permission flags`_).  Bits also
++	 * set in @allowed_capabilities have no effect, since an allowed
++	 * capability is never denied.  Bits above ``CAP_LAST_CAP`` are silently
++	 * ignored.
++	 *
++	 * At least one of @allowed_capabilities or @quiet_capabilities must be
++	 * non-zero, otherwise the call returns ``-ENOMSG``.  The non-zero check
++	 * runs on the raw input before unknown-bit masking, so a rule that sets
++	 * only bits unknown to the running kernel (above ``CAP_LAST_CAP``)
++	 * succeeds but has no runtime effect.  Programs should omit this rule
++	 * when they neither allow nor quiet a capability.
++	 */
++	__u64 quiet_capabilities;
++};
++
+ /**
+  * DOC: fs_access
+  *
+@@ -577,7 +618,15 @@ struct landlock_namespace_attr {
+  *   Landlock domain that handles this permission is denied from using namespace
+  *   types that are not explicitly allowed by a %LANDLOCK_RULE_NAMESPACE rule.
+  *   Support added in Landlock ABI version 12.
++ * - %LANDLOCK_PERMISSION_CAPABILITY_USE: Restrict the use of specific Linux
++ *   capabilities.  A process in a Landlock domain that handles this permission
++ *   is denied from exercising capabilities that are not explicitly allowed by a
++ *   %LANDLOCK_RULE_CAPABILITY rule.  This hook is purely restrictive: it can
++ *   deny capabilities that the kernel would otherwise grant, but it can never
++ *   grant capabilities that the kernel already denied.  Support added in
++ *   Landlock ABI version 12.
+  */
+ #define LANDLOCK_PERMISSION_NAMESPACE_USE			(1ULL << 0)
++#define LANDLOCK_PERMISSION_CAPABILITY_USE			(1ULL << 1)
+ 
+ #endif /* _UAPI_LINUX_LANDLOCK_H */
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index e88ca842c782..97cf668db165 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -10,7 +10,8 @@ landlock-y := \
+ 	fs.o \
+ 	tsync.o \
+ 	domain.o \
+-	ns.o
++	ns.o \
++	cap.o
+ 
+ landlock-$(CONFIG_INET) += net.o
+ 
+diff --git a/security/landlock/access.h b/security/landlock/access.h
+index e3dbaa29a29f..f9eaa2f53686 100644
+--- a/security/landlock/access.h
++++ b/security/landlock/access.h
+@@ -73,16 +73,24 @@ struct permission_masks {
+ 	 * order.
+ 	 */
+ 	u64 ns_types : LANDLOCK_NUM_NAMESPACE_TYPE;
++	/**
++	 * @caps: Capability member mask, indexed by CAP_* values.
++	 */
++	u64 caps : LANDLOCK_NUM_CAPABILITY;
+ } __packed __aligned(sizeof(u64));
+ 
+ static_assert(sizeof(struct permission_masks) == sizeof(u64));
++/* All permission_masks bitfields must fit in a single u64. */
++static_assert(LANDLOCK_NUM_CAPABILITY + LANDLOCK_NUM_NAMESPACE_TYPE <=
++	      BITS_PER_TYPE(u64));
+ 
+ /**
+  * struct layer_config - Per-layer access configuration
+  *
+  * A ruleset stores one mutable layer and a domain stores a flexible array of
+  * immutable layers.  Unlike filesystem and network access rights, namespace
+- * types use a flat bitmask because their keyspace is small and bounded.
++ * types and capabilities use flat bitmasks because their keyspaces are small
++ * and bounded.
+  */
+ struct layer_config {
+ 	/**
+diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+index 5386f1411ba6..be49ef47b4ea 100644
+--- a/security/landlock/audit.c
++++ b/security/landlock/audit.c
+@@ -81,6 +81,7 @@ get_blocker(const enum landlock_request_type type,
+ 		return scope_strings[BIT_INDEX(LANDLOCK_SCOPE_SIGNAL)];
+ 
+ 	case LANDLOCK_REQUEST_NAMESPACE:
++	case LANDLOCK_REQUEST_CAPABILITY:
+ 		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(permission_strings)))
+ 			return "unknown";
+ 		return permission_strings[access_bit];
+@@ -116,6 +117,9 @@ blocker_prefix(const enum landlock_request_type type)
+ 
+ 	case LANDLOCK_REQUEST_NAMESPACE:
+ 		return _LANDLOCK_PERMISSION_NAMESPACE_NAME ".";
++
++	case LANDLOCK_REQUEST_CAPABILITY:
++		return _LANDLOCK_PERMISSION_CAPABILITY_NAME ".";
+ 	}
+ 
+ 	WARN_ON_ONCE(1);
+diff --git a/security/landlock/cap.c b/security/landlock/cap.c
 new file mode 100644
-index 000000000000..3d7fd02e21ed
+index 000000000000..b4f491b09baa
 --- /dev/null
-+++ b/tools/testing/selftests/landlock/cap_test.c
-@@ -0,0 +1,1370 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/security/landlock/cap.c
+@@ -0,0 +1,159 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Landlock tests - Capability restriction
++ * Landlock - Capability hooks
 + *
 + * Copyright © 2026 Cloudflare, Inc.
 + */
 +
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
 +#include <linux/capability.h>
-+#include <linux/landlock.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sys/mount.h>
-+#include <sys/wait.h>
-+#include <sys/xattr.h>
-+#include <unistd.h>
++#include <linux/cred.h>
++#include <linux/lsm_audit.h>
++#include <linux/lsm_hooks.h>
++#include <uapi/linux/landlock.h>
 +
-+#include "audit.h"
-+#include "common.h"
-+#include "trace.h"
++#include "cap.h"
++#include "cred.h"
++#include "domain.h"
++#include "limits.h"
++#include "log.h"
++#include "ruleset.h"
++#include "setup.h"
 +
-+#define TRACE_TASK "cap_test"
-+
-+static bool list_has_xattr(const char *list, ssize_t len, const char *name)
-+{
-+	const char *p;
-+
-+	for (p = list; p < list + len; p += strlen(p) + 1)
-+		if (strcmp(p, name) == 0)
-+			return true;
-+	return false;
-+}
-+
-+static int create_cap_ruleset(void)
-+{
-+	const struct landlock_ruleset_attr attr = {
-+		.handled_permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
-+	};
-+
-+	return landlock_create_ruleset(&attr, sizeof(attr), 0);
-+}
-+
-+static int add_cap_rule(int ruleset_fd, __u64 cap)
-+{
-+	const struct landlock_capability_attr attr = {
-+		.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
-+		.allowed_capabilities = (1ULL << cap),
-+	};
-+
-+	return landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY, &attr,
-+				 0);
-+}
-+
-+static int add_cap_rule_full(int ruleset_fd, __u64 allowed, __u64 quiet)
-+{
-+	const struct landlock_capability_attr attr = {
-+		.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
-+		.allowed_capabilities = allowed,
-+		.quiet_capabilities = quiet,
-+	};
-+
-+	return landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY, &attr,
-+				 0);
-+}
-+
-+TEST(add_rule_bad_attr)
-+{
-+	const struct landlock_ruleset_attr ns_only_attr = {
-+		.handled_permissions = LANDLOCK_PERMISSION_NAMESPACE_USE,
-+	};
-+	int ruleset_fd;
-+	struct landlock_capability_attr attr = {};
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	/* Invalid rule pointer returns EFAULT. */
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					NULL, 0));
-+	ASSERT_EQ(EFAULT, errno);
-+
-+	/* Empty permissions selector returns ENOMSG. */
-+	attr.permissions = 0;
-+	attr.allowed_capabilities = (1ULL << CAP_NET_RAW);
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&attr, 0));
-+	ASSERT_EQ(ENOMSG, errno);
-+
-+	/* Useless rule: neither allowed nor quiet capabilities set. */
-+	attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
-+	attr.allowed_capabilities = 0;
-+	attr.quiet_capabilities = 0;
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&attr, 0));
-+	ASSERT_EQ(ENOMSG, errno);
-+
-+	/* Quiet-only rule (empty allowed set) is legal. */
-+	attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
-+	attr.allowed_capabilities = 0;
-+	attr.quiet_capabilities = (1ULL << CAP_NET_RAW);
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+				       &attr, 0));
-+
-+	/* Allow and quiet different members in the same rule. */
-+	attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
-+	attr.allowed_capabilities = (1ULL << CAP_SYS_ADMIN);
-+	attr.quiet_capabilities = (1ULL << CAP_NET_RAW);
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+				       &attr, 0));
-+
-+	/* Valid capability selector plus an extra unhandled selector bit. */
-+	attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE |
-+			   LANDLOCK_PERMISSION_NAMESPACE_USE;
-+	attr.allowed_capabilities = (1ULL << CAP_NET_RAW);
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&attr, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* permissions with wrong type. */
-+	attr.permissions = LANDLOCK_PERMISSION_NAMESPACE_USE;
-+	attr.allowed_capabilities = (1ULL << CAP_NET_RAW);
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&attr, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/*
-+	 * Unknown capability bits (e.g. bit 63) are silently accepted for
-+	 * forward compatibility.  Only known bits are stored.
-+	 */
-+	attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
-+	attr.allowed_capabilities = 1ULL << 63;
-+	attr.quiet_capabilities = 0;
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+				       &attr, 0));
-+
-+	/*
-+	 * LANDLOCK_ADD_RULE_QUIET (and any other flag) is filesystem/network
-+	 * only and must be rejected for capability rules, even when every attr
-+	 * field is otherwise valid.
-+	 */
-+	attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
-+	attr.allowed_capabilities = (1ULL << CAP_NET_RAW);
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&attr, LANDLOCK_ADD_RULE_QUIET));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/*
-+	 * Ruleset handles LANDLOCK_PERMISSION_NAMESPACE_USE but not
-+	 * LANDLOCK_PERMISSION_CAPABILITY_USE: adding a capability rule must be
-+	 * rejected.
-+	 */
-+	ruleset_fd =
-+		landlock_create_ruleset(&ns_only_attr, sizeof(ns_only_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+	attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
-+	attr.allowed_capabilities = (1ULL << CAP_NET_RAW);
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&attr, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+}
-+
-+/*
-+ * Unknown capability values above CAP_LAST_CAP are silently accepted
-+ * (allow-list: they have no effect since the kernel never checks them).
-+ */
-+TEST(add_rule_unknown)
-+{
-+	int ruleset_fd;
-+	struct landlock_capability_attr attr = {
-+		.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
-+	};
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	/* Just above CAP_LAST_CAP should succeed. */
-+	attr.allowed_capabilities = (1ULL << (CAP_LAST_CAP + 1));
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+				       &attr, 0));
-+
-+	/* High values (below bit 63) should succeed. */
-+	attr.allowed_capabilities = (1ULL << 62);
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+				       &attr, 0));
-+
-+	EXPECT_EQ(0, close(ruleset_fd));
-+}
-+
-+/*
-+ * A rule that lists only capability bits unknown to the running kernel is
-+ * accepted by landlock_add_rule() but has no runtime effect: once the domain is
-+ * enforced, any actual CAP_* capability is still denied by the per-category
-+ * deny-by-default behaviour.  This documents the forward-compatibility
-+ * contract: unknown bits are silently accepted so the same policy can be loaded
-+ * across kernels, but they never grant a capability that the running kernel
-+ * knows nothing about.
-+ */
-+TEST(add_rule_unknown_no_runtime_effect)
-+{
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
-+	};
-+	struct landlock_capability_attr attr = {
-+		.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
-+		/* Only unknown bits above CAP_LAST_CAP. */
-+		.allowed_capabilities = (1ULL << (CAP_LAST_CAP + 1)) |
-+					(1ULL << 62),
-+	};
-+	int ruleset_fd;
-+
-+	disable_caps(_metadata);
-+
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+				       &attr, 0));
-+
-+	/*
-+	 * Isolate hostname changes and establish a baseline: with CAP_SYS_ADMIN
-+	 * and absent the domain, sethostname(2) succeeds.  This ensures the
-+	 * EPERM below is attributable to Landlock rather than to a missing
-+	 * capability, and fails if the hook always allows.
-+	 */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWUTS));
-+	ASSERT_EQ(0, sethostname("baseline", 8));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/*
-+	 * CAP_SYS_ADMIN is a real, known capability but was not authorised by
-+	 * the rule above; deny-by-default applies.  sethostname(2) requires
-+	 * CAP_SYS_ADMIN.
-+	 */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	EXPECT_EQ(-1, sethostname("test", 4));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/* clang-format off */
-+FIXTURE(cap_enforce) {};
-+/* clang-format on */
-+
-+FIXTURE_VARIANT(cap_enforce)
-+{
-+	const bool is_sandboxed;
-+	const bool handle_caps;
-+	const __u64 allowed_cap;
-+	const int expected_sysadmin;
-+	const int expected_chroot;
++static const struct access_masks cap_permission = {
++	.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
 +};
 +
-+/*
-+ * Unsandboxed baseline: no Landlock domain is enforced.  Both capabilities
-+ * should work normally.
++/**
++ * hook_capable - Deny capability use for Landlock-sandboxed processes
++ *
++ * @cred: Credentials being checked.
++ * @ns: Target user namespace (intentionally ignored; policy depends on the
++ *      acting credentials and @cap, not namespace ownership).
++ * @cap: Capability number (CAP_*).
++ * @opts: Capability check options.  CAP_OPT_NOAUDIT skips the denial record:
++ *        no audit record, no trace event, and no denial count.
++ *
++ * Pure bitmask check: denies the capability if it is not in the layer's allowed
++ * set.  This hook is purely restrictive: commoncap is registered with
++ * LSM_ORDER_FIRST so cap_capable() always runs first, which means Landlock can
++ * deny capabilities that commoncap would allow, but never grant capabilities
++ * that commoncap denied.
++ *
++ * Return: 0 if allowed, -EPERM if capability use is denied.
 + */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_enforce, unsandboxed) {
-+	.is_sandboxed = false,
-+	.handle_caps = false,
-+	.allowed_cap = 0,
-+	.expected_sysadmin = 0,
-+	.expected_chroot = 0,
-+};
-+/* clang-format on */
-+
-+/*
-+ * Denied: capabilities are handled but no rule allows them.  All capability
-+ * checks must be denied by Landlock even if the capability is effective.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_enforce, denied) {
-+	.is_sandboxed = true,
-+	.handle_caps = true,
-+	.allowed_cap = 0,
-+	.expected_sysadmin = EPERM,
-+	.expected_chroot = EPERM,
-+};
-+/* clang-format on */
-+
-+/*
-+ * Allowed: CAP_SYS_ADMIN is allowed by rule, CAP_SYS_CHROOT is not.  Only the
-+ * explicitly allowed capability should succeed.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_enforce, allowed) {
-+	.is_sandboxed = true,
-+	.handle_caps = true,
-+	.allowed_cap = CAP_SYS_ADMIN,
-+	.expected_sysadmin = 0,
-+	.expected_chroot = EPERM,
-+};
-+/* clang-format on */
-+
-+/*
-+ * Unhandled: the ruleset does not handle LANDLOCK_PERMISSION_CAPABILITY_USE at
-+ * all (only handles FS access).  Both capabilities should work since the domain
-+ * does not restrict them.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_enforce, unhandled) {
-+	.is_sandboxed = true,
-+	.handle_caps = false,
-+	.allowed_cap = 0,
-+	.expected_sysadmin = 0,
-+	.expected_chroot = 0,
-+};
-+/* clang-format on */
-+
-+FIXTURE_SETUP(cap_enforce)
++static int hook_capable(const struct cred *cred, struct user_namespace *ns,
++			int cap, unsigned int opts)
 +{
-+	disable_caps(_metadata);
++	const struct landlock_cred_security *subject;
++	size_t denied_layer;
++
++	subject = landlock_get_applicable_subject(cred, cap_permission, NULL);
++	if (!subject)
++		return 0;
++
++	denied_layer = landlock_permission_is_denied(
++		subject->domain, LANDLOCK_PERMISSION_CAPABILITY_USE,
++		landlock_cap_to_bit(cap));
++	if (!denied_layer)
++		return 0;
++
++	if (!(opts & CAP_OPT_NOAUDIT))
++		landlock_log_denial(
++			subject,
++			&(struct landlock_request){
++				.type = LANDLOCK_REQUEST_CAPABILITY,
++				.audit.type = LSM_AUDIT_DATA_CAP,
++				.audit.u.cap = cap,
++				.permission =
++					LANDLOCK_PERMISSION_CAPABILITY_USE,
++				.layer_plus_one = denied_layer,
++			});
++
++	return -EPERM;
 +}
 +
-+FIXTURE_TEARDOWN(cap_enforce)
++static struct security_hook_list landlock_hooks[] __ro_after_init = {
++	LSM_HOOK_INIT(capable, hook_capable),
++};
++
++__init void landlock_add_cap_hooks(void)
 +{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
++			   &landlock_lsmid);
 +}
 +
-+/*
-+ * Capability enforcement: tests the four fundamental enforcement scenarios
-+ * (unsandboxed baseline, denied, allowed, unhandled) using two independent
-+ * capability checks (sethostname for CAP_SYS_ADMIN, chroot for CAP_SYS_CHROOT).
-+ */
-+TEST_F(cap_enforce, use)
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++#include <kunit/test.h>
++
++static void test_cap_to_bit(struct kunit *const test)
 +{
-+	int ruleset_fd;
++	KUNIT_EXPECT_EQ(test, BIT_ULL(0), landlock_cap_to_bit(0));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_NET_RAW),
++			landlock_cap_to_bit(CAP_NET_RAW));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_SYS_ADMIN),
++			landlock_cap_to_bit(CAP_SYS_ADMIN));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_LAST_CAP),
++			landlock_cap_to_bit(CAP_LAST_CAP));
++}
 +
-+	/* Isolate hostname changes from other tests. */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWUTS));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
++static void test_cap_to_bit_invalid(struct kunit *const test)
++{
++	if (!IS_ENABLED(CONFIG_BUG))
++		kunit_skip(test, "requires CONFIG_BUG");
 +
-+	if (variant->is_sandboxed) {
-+		if (variant->handle_caps) {
-+			ruleset_fd = create_cap_ruleset();
-+		} else {
-+			const struct landlock_ruleset_attr attr = {
-+				.handled_access_fs =
-+					LANDLOCK_ACCESS_FS_READ_FILE,
-+			};
-+
-+			ruleset_fd =
-+				landlock_create_ruleset(&attr, sizeof(attr), 0);
-+		}
-+		ASSERT_LE(0, ruleset_fd);
-+
-+		if (variant->allowed_cap)
-+			ASSERT_EQ(0, add_cap_rule(ruleset_fd,
-+						  variant->allowed_cap));
-+
-+		enforce_ruleset(_metadata, ruleset_fd);
-+		EXPECT_EQ(0, close(ruleset_fd));
++	/* clang-format off */
++	kunit_warning_suppress(test) {
++		/* clang-format on */
++		KUNIT_EXPECT_EQ(test, 0ULL, landlock_cap_to_bit(-1));
++		KUNIT_EXPECT_EQ(test, 0ULL,
++				landlock_cap_to_bit(CAP_LAST_CAP + 1));
 +	}
-+
-+	/* Test CAP_SYS_ADMIN via sethostname. */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	if (variant->expected_sysadmin) {
-+		EXPECT_EQ(-1, sethostname("test", 4));
-+		EXPECT_EQ(variant->expected_sysadmin, errno);
-+	} else {
-+		EXPECT_EQ(0, sethostname("test", 4));
-+	}
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	/* Test CAP_SYS_CHROOT via chroot. */
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	if (variant->expected_chroot) {
-+		EXPECT_EQ(-1, chroot("/"));
-+		EXPECT_EQ(variant->expected_chroot, errno);
-+	} else {
-+		EXPECT_EQ(0, chroot("/"));
-+	}
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
 +}
 +
-+/*
-+ * Layer stacking: both layers must allow CAP_SYS_ADMIN for the capability to be
-+ * exercisable.  Variants cover the three per-layer combinations that exercise
-+ * distinct walker paths (allow/deny, allow/allow, deny/allow), an unsandboxed
-+ * baseline, and a mixed-layer case where one layer does not handle
-+ * LANDLOCK_PERMISSION_CAPABILITY_USE at all.
-+ */
-+/* clang-format off */
-+FIXTURE(cap_stacking) {};
-+/* clang-format on */
-+
-+FIXTURE_VARIANT(cap_stacking)
++static void test_caps_to_bits_valid(struct kunit *const test)
 +{
-+	const bool is_sandboxed;
-+	const bool first_layer_allows;
-+	const bool second_layer_allows;
-+	const bool second_layer_is_fs_only;
-+	const int expected_sysadmin;
-+	const int expected_chroot;
-+};
++	KUNIT_EXPECT_EQ(test, (u64)CAP_VALID_MASK,
++			landlock_caps_to_bits(CAP_VALID_MASK));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_NET_RAW),
++			landlock_caps_to_bits(BIT_ULL(CAP_NET_RAW)));
++}
 +
-+/*
-+ * Unsandboxed baseline: no Landlock layers are stacked.  Both capabilities
-+ * should work normally.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_stacking, unsandboxed) {
-+	.is_sandboxed = false,
-+	.first_layer_allows = false,
-+	.second_layer_allows = false,
-+	.expected_sysadmin = 0,
-+	.expected_chroot = 0,
-+};
-+/* clang-format on */
++static void test_caps_to_bits_unknown(struct kunit *const test)
++{
++	if (!IS_ENABLED(CONFIG_BUG))
++		kunit_skip(test, "requires CONFIG_BUG");
 +
-+/* Layer 1 allows CAP_SYS_ADMIN, layer 2 denies -> denied. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_stacking, deny) {
-+	.is_sandboxed = true,
-+	.first_layer_allows = true,
-+	.second_layer_allows = false,
-+	.expected_sysadmin = EPERM,
-+	.expected_chroot = EPERM,
-+};
-+/* clang-format on */
++	/* clang-format off */
++	kunit_warning_suppress(test) {
++		/* clang-format on */
++		KUNIT_EXPECT_EQ(
++			test, 0ULL,
++			landlock_caps_to_bits(BIT_ULL(CAP_LAST_CAP + 1)));
++	}
++}
 +
-+/* Both layers allow CAP_SYS_ADMIN -> sysadmin succeeds, chroot still denied. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_stacking, allow) {
-+	.is_sandboxed = true,
-+	.first_layer_allows = true,
-+	.second_layer_allows = true,
-+	.expected_sysadmin = 0,
-+	.expected_chroot = EPERM,
-+};
-+/* clang-format on */
++static void test_caps_to_bits_zero(struct kunit *const test)
++{
++	KUNIT_EXPECT_EQ(test, 0ULL, landlock_caps_to_bits(0));
++}
 +
-+/*
-+ * Layer 1 denies CAP_SYS_ADMIN, layer 2 allows -> still denied: a child layer
-+ * cannot grant what an ancestor layer withheld.  Complements the
-+ * parent-allows/child-denies variant; together they verify the walker checks
-+ * both layers and accepts only the (allow, allow) cell.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_stacking, parent_denies) {
-+	.is_sandboxed = true,
-+	.first_layer_allows = false,
-+	.second_layer_allows = true,
-+	.expected_sysadmin = EPERM,
-+	.expected_chroot = EPERM,
-+};
-+/* clang-format on */
-+
-+/*
-+ * Mixed layers: first layer handles LANDLOCK_PERMISSION_CAPABILITY_USE (denies
-+ * all caps), second layer is FS-only (does not handle it).  The permission
-+ * walker iterates from youngest (layer 1) to oldest (layer 0) and must skip the
-+ * FS-only layer to find the denying layer beneath.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(cap_stacking, mixed_layers) {
++static struct kunit_case test_cases[] = {
++	/* clang-format off */
++	KUNIT_CASE(test_cap_to_bit),
++	KUNIT_CASE(test_cap_to_bit_invalid),
++	KUNIT_CASE(test_caps_to_bits_valid),
++	KUNIT_CASE(test_caps_to_bits_unknown),
++	KUNIT_CASE(test_caps_to_bits_zero),
++	{}
 +	/* clang-format on */
-+	.is_sandboxed = true,
-+	.first_layer_allows = false,
-+	.second_layer_is_fs_only = true,
-+	.expected_sysadmin = EPERM,
-+	.expected_chroot = EPERM,
 +};
 +
-+FIXTURE_SETUP(cap_stacking)
-+{
-+	disable_caps(_metadata);
-+
-+	/* Isolate every successful sethostname() from the other tests. */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWUTS));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(cap_stacking)
-+{
-+}
-+
-+TEST_F(cap_stacking, two_layers)
-+{
-+	int ruleset_fd;
-+
-+	if (variant->is_sandboxed) {
-+		/*
-+		 * First layer: handles LANDLOCK_PERMISSION_CAPABILITY_USE; rule
-+		 * added per variant.
-+		 */
-+		ruleset_fd = create_cap_ruleset();
-+		ASSERT_LE(0, ruleset_fd);
-+		if (variant->first_layer_allows)
-+			ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SYS_ADMIN));
-+
-+		enforce_ruleset(_metadata, ruleset_fd);
-+		EXPECT_EQ(0, close(ruleset_fd));
-+
-+		if (variant->second_layer_is_fs_only) {
-+			/*
-+			 * Second layer: FS-only (does not handle
-+			 * LANDLOCK_PERMISSION_CAPABILITY_USE).  The permission
-+			 * walker must skip this layer.
-+			 */
-+			const struct landlock_ruleset_attr fs_attr = {
-+				.handled_access_fs =
-+					LANDLOCK_ACCESS_FS_READ_FILE,
-+			};
-+
-+			ruleset_fd = landlock_create_ruleset(
-+				&fs_attr, sizeof(fs_attr), 0);
-+		} else {
-+			/* Second layer: cap allow or deny. */
-+			ruleset_fd = create_cap_ruleset();
-+			if (variant->second_layer_allows)
-+				ASSERT_EQ(0, add_cap_rule(ruleset_fd,
-+							  CAP_SYS_ADMIN));
-+		}
-+		ASSERT_LE(0, ruleset_fd);
-+		enforce_ruleset(_metadata, ruleset_fd);
-+		EXPECT_EQ(0, close(ruleset_fd));
-+	}
-+
-+	/* Test CAP_SYS_ADMIN via sethostname. */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	if (variant->expected_sysadmin) {
-+		EXPECT_EQ(-1, sethostname("test", 4));
-+		EXPECT_EQ(variant->expected_sysadmin, errno);
-+	} else {
-+		EXPECT_EQ(0, sethostname("test", 4));
-+	}
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	/* Test CAP_SYS_CHROOT via chroot. */
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	if (variant->expected_chroot) {
-+		EXPECT_EQ(-1, chroot("/"));
-+		EXPECT_EQ(variant->expected_chroot, errno);
-+	} else {
-+		EXPECT_EQ(0, chroot("/"));
-+	}
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
-+}
-+
-+/*
-+ * Verify that LANDLOCK_PERMISSION_CAPABILITY_USE enforces when the domain is
-+ * applied without no_new_privs, using CAP_SYS_ADMIN for
-+ * landlock_restrict_self() authorization instead.  Privileged processes (e.g.
-+ * container managers) can sandbox themselves this way.
-+ */
-+TEST(cap_without_nnp)
-+{
-+	int ruleset_fd;
-+
-+	disable_caps(_metadata);
-+
-+	/* Isolate an unexpected successful sethostname(). */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWUTS));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	/* Allow CAP_SYS_CHROOT but not CAP_SYS_ADMIN. */
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SYS_CHROOT));
-+
-+	/*
-+	 * Enforce WITHOUT NNP: landlock_restrict_self() succeeds when the
-+	 * caller has CAP_SYS_ADMIN (checked before the new domain takes
-+	 * effect).
-+	 */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, landlock_restrict_self(ruleset_fd, 0));
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/*
-+	 * CAP_SYS_ADMIN is still in effective set but Landlock denies it:
-+	 * cap_capable() returns 0, then hook_capable() returns -EPERM.
-+	 */
-+	EXPECT_EQ(-1, sethostname("test", 4));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	/* CAP_SYS_CHROOT is allowed by the rule. */
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	EXPECT_EQ(0, chroot("/"));
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
-+}
-+
-+/*
-+ * Verify that capabilities gained through user namespace ownership are still
-+ * restricted by LANDLOCK_PERMISSION_CAPABILITY_USE.  When a process creates a
-+ * user namespace, the kernel grants CAP_FULL_SET in the new namespace via
-+ * cap_capable_helper()'s ownership bypass.  Landlock's hook_capable() must
-+ * still deny capabilities not in the allowed set, ensuring that user namespace
-+ * creation cannot be used to escape capability restrictions.
-+ */
-+TEST(cap_userns_ownership_bypass)
-+{
-+	pid_t child;
-+	int status;
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		int ruleset_fd;
-+
-+		disable_caps(_metadata);
-+
-+		ruleset_fd = create_cap_ruleset();
-+		ASSERT_LE(0, ruleset_fd);
-+
-+		/* Allow CAP_SYS_ADMIN only. */
-+		ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SYS_ADMIN));
-+		enforce_ruleset(_metadata, ruleset_fd);
-+		EXPECT_EQ(0, close(ruleset_fd));
-+
-+		/*
-+		 * Create a user namespace.  This is unprivileged and does not
-+		 * require capabilities.  LANDLOCK_PERMISSION_NAMESPACE_USE is
-+		 * not handled so namespace creation is unrestricted.
-+		 */
-+		ASSERT_EQ(0, unshare(CLONE_NEWUSER));
-+
-+		/*
-+		 * After unshare(CLONE_NEWUSER), the kernel set cap_effective =
-+		 * CAP_FULL_SET in the new namespace.  Create a UTS namespace
-+		 * (requires CAP_SYS_ADMIN in the new user NS).  Landlock allows
-+		 * CAP_SYS_ADMIN.
-+		 */
-+		ASSERT_EQ(0, unshare(CLONE_NEWUTS))
-+		{
-+			TH_LOG("unshare(CLONE_NEWUTS): %s", strerror(errno));
-+		}
-+
-+		/*
-+		 * sethostname checks against uts_ns->user_ns, which is now the
-+		 * new user NS.  CAP_SYS_ADMIN is allowed.
-+		 */
-+		EXPECT_EQ(0, sethostname("test", 4));
-+
-+		/*
-+		 * chroot checks against current_user_ns(), which is the new
-+		 * user NS.  The process has CAP_SYS_CHROOT in cap_effective
-+		 * (from user NS creation), so cap_capable() returns 0.  But
-+		 * Landlock denies because no rule allows CAP_SYS_CHROOT.
-+		 */
-+		EXPECT_EQ(-1, chroot("/"));
-+		EXPECT_EQ(EPERM, errno);
-+
-+		_exit(_metadata->exit_code);
-+		return;
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-+	    WEXITSTATUS(status) != EXIT_SUCCESS)
-+		_metadata->exit_code = KSFT_FAIL;
-+}
-+
-+/*
-+ * Verify that capability restrictions do not depend on which user namespace the
-+ * kernel checks.  An actor in the initial user namespace can enter a descendant
-+ * user namespace with CAP_SYS_ADMIN.  With the same Linux capability state,
-+ * handling capability use without an allow rule must deny that target-namespace
-+ * check even though the target differs from current_user_ns().
-+ */
-+TEST(cap_target_userns_independent)
-+{
-+	int sockets[2], status, target_userns_fd;
-+	pid_t actor, target;
-+
-+	disable_caps(_metadata);
-+	ASSERT_EQ(0,
-+		  socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, sockets));
-+
-+	target = fork();
-+	ASSERT_LE(0, target);
-+	if (target == 0) {
-+		int fd;
-+
-+		close(sockets[0]);
-+		if (unshare(CLONE_NEWUSER))
-+			_exit(255);
-+		fd = open("/proc/self/ns/user", O_RDONLY | O_CLOEXEC);
-+		if (fd < 0 || send_fd(sockets[1], fd))
-+			_exit(255);
-+		close(fd);
-+		close(sockets[1]);
-+		_exit(EXIT_SUCCESS);
-+	}
-+
-+	close(sockets[1]);
-+	target_userns_fd = recv_fd(sockets[0]);
-+	ASSERT_LE(0, target_userns_fd);
-+	EXPECT_EQ(0, close(sockets[0]));
-+	ASSERT_EQ(target, waitpid(target, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	for (int sandboxed = 0; sandboxed <= 1; sandboxed++) {
-+		actor = fork();
-+		ASSERT_LE(0, actor);
-+		if (actor == 0) {
-+			int ret, saved_errno;
-+
-+			if (sandboxed) {
-+				int ruleset_fd = create_cap_ruleset();
-+
-+				if (ruleset_fd < 0 ||
-+				    prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) ||
-+				    landlock_restrict_self(ruleset_fd, 0) ||
-+				    close(ruleset_fd))
-+					_exit(255);
-+			}
-+
-+			ret = setns(target_userns_fd, CLONE_NEWUSER);
-+			saved_errno = errno;
-+			_exit(ret ? saved_errno : EXIT_SUCCESS);
-+		}
-+
-+		ASSERT_EQ(actor, waitpid(actor, &status, 0));
-+		ASSERT_TRUE(WIFEXITED(status));
-+		EXPECT_EQ(sandboxed ? EPERM : EXIT_SUCCESS,
-+			  WEXITSTATUS(status));
-+	}
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+	EXPECT_EQ(0, close(target_userns_fd));
-+}
-+
-+/* Audit tests */
-+
-+static int matches_log_cap(int audit_fd, int cap_number)
-+{
-+	static const char log_template[] = REGEX_LANDLOCK_PREFIX
-+		" blockers=capability\\.use capability=%d $";
-+	char log_match[sizeof(log_template) + 10];
-+	int log_match_len;
-+
-+	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
-+				 cap_number);
-+	if (log_match_len >= sizeof(log_match))
-+		return -E2BIG;
-+
-+	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-+				  NULL);
-+}
-+
-+FIXTURE(cap_audit)
-+{
-+	struct audit_filter audit_filter;
-+	int audit_fd;
++static struct kunit_suite test_suite = {
++	.name = "landlock_cap",
++	.test_cases = test_cases,
 +};
 +
-+FIXTURE_SETUP(cap_audit)
-+{
-+	ASSERT_TRUE(is_in_init_user_ns());
++kunit_test_suite(test_suite);
 +
-+	disable_caps(_metadata);
-+
-+	/* Isolate successful sethostname() calls. */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWUTS));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	set_cap(_metadata, CAP_AUDIT_CONTROL);
-+	self->audit_fd = audit_init_with_exe_filter(&self->audit_filter);
-+	EXPECT_LE(0, self->audit_fd);
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
-+}
-+
-+FIXTURE_TEARDOWN(cap_audit)
-+{
-+	set_cap(_metadata, CAP_AUDIT_CONTROL);
-+	EXPECT_EQ(0, audit_cleanup(self->audit_fd, &self->audit_filter));
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
-+}
-+
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+diff --git a/security/landlock/cap.h b/security/landlock/cap.h
+new file mode 100644
+index 000000000000..11208cbf15d2
+--- /dev/null
++++ b/security/landlock/cap.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * Verifies that a denied capability produces the expected audit record with the
-+ * correct capability number and blocker string.
++ * Landlock - Capability hooks
++ *
++ * Copyright © 2026 Cloudflare, Inc.
 + */
-+TEST_F(cap_audit, denied)
-+{
-+	struct audit_records records = {};
-+	int ruleset_fd;
-+	__u64 domain_id;
 +
-+	/* Baseline: chroot works before Landlock. */
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	ASSERT_EQ(0, chroot("/"));
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
++#ifndef _SECURITY_LANDLOCK_CAP_H
++#define _SECURITY_LANDLOCK_CAP_H
 +
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	/* Allow CAP_AUDIT_CONTROL for child-side audit cleanup. */
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
++#include <linux/bitops.h>
++#include <linux/bug.h>
++#include <linux/capability.h>
++#include <linux/types.h>
 +
-+	/* Deny CAP_SYS_CHROOT (no allow rule). */
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	EXPECT_EQ(-1, chroot("/"));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
-+
-+	EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SYS_CHROOT));
-+
-+	/*
-+	 * The domain allocation record is emitted in the same event as the
-+	 * first denial; anchor its status=allocated and enforcing pid.  Both
-+	 * access and domain records are now consumed, so none remain.
-+	 */
-+	EXPECT_EQ(0, matches_log_domain_allocated(self->audit_fd, getpid(),
-+						  &domain_id));
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+	EXPECT_EQ(0, records.domain);
-+}
-+
-+TEST_F(cap_audit, allowed)
-+{
-+	struct audit_records records = {};
-+	int ruleset_fd;
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SYS_ADMIN));
-+	/* Allow CAP_AUDIT_CONTROL for child-side audit cleanup. */
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	EXPECT_EQ(0, sethostname("test", 4));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	/* No records: allowed operations never trigger audit logging. */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+}
-+
-+/* An allowed capability remains allowed when the same rule also quiets it. */
-+TEST_F(cap_audit, allow_and_quiet_same_member)
-+{
-+	struct audit_records records = {};
-+	int ruleset_fd;
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_EQ(0, add_cap_rule_full(ruleset_fd,
-+				       (1ULL << CAP_SYS_ADMIN) |
-+					       (1ULL << CAP_AUDIT_CONTROL),
-+				       1ULL << CAP_SYS_ADMIN));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	EXPECT_EQ(0, sethostname("test", 4));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	/*
-+	 * Quiet is inert for the allowed member: nothing is denied or logged.
-+	 */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+}
-+
-+/*
-+ * A quieted capability denial is still denied (EPERM); only its audit record is
-+ * suppressed.  Quiet-only rule (empty allowed set).
++/**
++ * landlock_cap_to_bit - Convert a capability number to a compact bitmask
++ *
++ * @cap: Capability number (CAP_*).
++ *
++ * Return: BIT_ULL(@cap), or 0 if @cap is invalid (with a WARN).
 + */
-+TEST_F(cap_audit, quieted)
++static inline u64 landlock_cap_to_bit(const int cap)
 +{
-+	struct audit_records records = {};
-+	int ruleset_fd;
-+	__u64 domain_id;
++	if (WARN_ON_ONCE(!cap_valid(cap)))
++		return 0;
 +
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	/* Allow CAP_AUDIT_CONTROL for child-side audit cleanup. */
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
-+	ASSERT_EQ(0,
-+		  add_cap_rule_full(ruleset_fd, 0, (1ULL << CAP_SYS_CHROOT)));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	EXPECT_EQ(-1, chroot("/"));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
-+
-+	/*
-+	 * Positive control: CAP_SYS_ADMIN is denied but not quieted, so its
-+	 * denial IS logged.  This proves quieting is per-member, not global.
-+	 */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	EXPECT_EQ(-1, sethostname("test", 4));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	/*
-+	 * The quieted CAP_SYS_CHROOT denial is suppressed; the CAP_SYS_ADMIN
-+	 * denial is logged.
-+	 */
-+	EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SYS_ADMIN));
-+	EXPECT_EQ(0, matches_log_domain_allocated(self->audit_fd, getpid(),
-+						  &domain_id));
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+	EXPECT_EQ(0, records.domain);
++	return BIT_ULL(cap);
 +}
 +
-+/*
-+ * Only the youngest denying layer decides quieting: a parent cannot silence a
-+ * denial by a deeper layer that handles but does not quiet the capability.
++/**
++ * landlock_caps_to_bits - Validate and mask a capability bitmask
++ *
++ * @capabilities: Bitmask of capabilities (e.g. from user space).
++ *
++ * Return: @capabilities masked to known capabilities.  Warns if unknown bits
++ * are present (callers must pre-mask for user input).
 + */
-+TEST_F(cap_audit, quiet_youngest_layer_wins)
++static inline u64 landlock_caps_to_bits(const u64 capabilities)
 +{
-+	struct audit_records records = {};
-+	int ruleset_fd;
-+	__u64 domain_id;
-+
-+	/* Baseline: commoncap allows chroot before Landlock. */
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	ASSERT_EQ(0, chroot("/"));
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
-+
-+	/* Parent layer: denies and quiets CAP_SYS_CHROOT. */
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_EQ(0, add_cap_rule_full(ruleset_fd, 1ULL << CAP_AUDIT_CONTROL,
-+				       1ULL << CAP_SYS_CHROOT));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/* Child layer: denies CAP_SYS_CHROOT without quieting it. */
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	EXPECT_EQ(-1, chroot("/"));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
-+
-+	/*
-+	 * The child is the youngest denier and does not quiet: log the denial.
-+	 */
-+	EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SYS_CHROOT));
-+	EXPECT_EQ(0, matches_log_domain_allocated(self->audit_fd, getpid(),
-+						  &domain_id));
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+	EXPECT_EQ(0, records.domain);
++	/* Callers pre-mask (CAP_VALID_MASK); the WARN guards future callers. */
++	WARN_ON_ONCE(capabilities & ~CAP_VALID_MASK);
++	return capabilities & CAP_VALID_MASK;
 +}
 +
-+/*
-+ * Quieting an unknown capability bit has no effect: a rule that quiets only a
-+ * bit above CAP_LAST_CAP still logs the denial of a known capability.
-+ */
-+TEST_F(cap_audit, quiet_unknown_bit_no_effect)
++__init void landlock_add_cap_hooks(void);
++
++#endif /* _SECURITY_LANDLOCK_CAP_H */
+diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+index d9e7b96aa639..935e18b12b3c 100644
+--- a/security/landlock/domain.h
++++ b/security/landlock/domain.h
+@@ -377,6 +377,9 @@ landlock_permission_is_denied(const struct landlock_domain *const domain,
+ 		case LANDLOCK_PERMISSION_NAMESPACE_USE:
+ 			allowed = domain->layers[layer].allowed.ns_types;
+ 			break;
++		case LANDLOCK_PERMISSION_CAPABILITY_USE:
++			allowed = domain->layers[layer].allowed.caps;
++			break;
+ 		default:
+ 			WARN_ONCE(1, "Unknown permission %u\n",
+ 				  (unsigned int)permission_bit);
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 767d57799f60..ddd300e10689 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -11,6 +11,7 @@
+ #define _SECURITY_LANDLOCK_LIMITS_H
+ 
+ #include <linux/bitops.h>
++#include <linux/capability.h>
+ #include <linux/limits.h>
+ #include <linux/ns/ns_common_types.h>
+ #include <uapi/linux/landlock.h>
+@@ -32,11 +33,12 @@
+ #define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+ #define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
+ 
+-#define LANDLOCK_LAST_PERMISSION	LANDLOCK_PERMISSION_NAMESPACE_USE
++#define LANDLOCK_LAST_PERMISSION	LANDLOCK_PERMISSION_CAPABILITY_USE
+ #define LANDLOCK_MASK_PERMISSION	((LANDLOCK_LAST_PERMISSION << 1) - 1)
+ #define LANDLOCK_NUM_PERMISSION		__const_hweight64(LANDLOCK_MASK_PERMISSION)
+ 
+ #define LANDLOCK_NUM_NAMESPACE_TYPE	__const_hweight64((u64)CLONE_NS_ALL)
++#define LANDLOCK_NUM_CAPABILITY		(CAP_LAST_CAP + 1)
+ 
+ #define LANDLOCK_NUM_ACCESS_MAX \
+ 	MAX(MAX(LANDLOCK_NUM_ACCESS_FS, LANDLOCK_NUM_ACCESS_NET), LANDLOCK_NUM_SCOPE)
+diff --git a/security/landlock/log.c b/security/landlock/log.c
+index 8cb1dfd0d4ae..43efbb95725c 100644
+--- a/security/landlock/log.c
++++ b/security/landlock/log.c
+@@ -12,6 +12,7 @@
+ 
+ #include "access.h"
+ #include "audit.h"
++#include "cap.h"
+ #include "common.h"
+ #include "cred.h"
+ #include "domain.h"
+@@ -393,6 +394,12 @@ static bool is_valid_request(const struct landlock_request *const request)
+ 		    WARN_ON_ONCE(request->audit.type != LSM_AUDIT_DATA_NS))
+ 			return false;
+ 		break;
++	case LANDLOCK_REQUEST_CAPABILITY:
++		if (WARN_ON_ONCE(request->permission !=
++				 LANDLOCK_PERMISSION_CAPABILITY_USE) ||
++		    WARN_ON_ONCE(request->audit.type != LSM_AUDIT_DATA_CAP))
++			return false;
++		break;
+ 	case LANDLOCK_REQUEST_PTRACE:
+ 	case LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY:
+ 	case LANDLOCK_REQUEST_FS_ACCESS:
+@@ -481,6 +488,9 @@ is_denial_quieted(const struct landlock_request *const request,
+ 	case LANDLOCK_REQUEST_NAMESPACE:
+ 		return !!(youngest_denied->quiet_permission.ns_types &
+ 			  landlock_ns_type_to_bit(request->audit.u.ns.ns_type));
++	case LANDLOCK_REQUEST_CAPABILITY:
++		return !!(youngest_denied->quiet_permission.caps &
++			  landlock_cap_to_bit(request->audit.u.cap));
+ 	/*
+ 	 * Leave LANDLOCK_REQUEST_PTRACE and LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY
+ 	 * unhandled for now - they are never quiet.
+diff --git a/security/landlock/log.h b/security/landlock/log.h
+index a12956cac40e..596feeeb7aa6 100644
+--- a/security/landlock/log.h
++++ b/security/landlock/log.h
+@@ -26,6 +26,7 @@ enum landlock_request_type {
+ 	LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
+ 	LANDLOCK_REQUEST_SCOPE_SIGNAL,
+ 	LANDLOCK_REQUEST_NAMESPACE,
++	LANDLOCK_REQUEST_CAPABILITY,
+ };
+ 
+ struct landlock_blockers {
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index a7ed776b41b4..971419d663bb 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -11,6 +11,7 @@
+ #include <linux/lsm_hooks.h>
+ #include <uapi/linux/lsm.h>
+ 
++#include "cap.h"
+ #include "common.h"
+ #include "cred.h"
+ #include "errata.h"
+@@ -70,6 +71,7 @@ static int __init landlock_init(void)
+ 	landlock_add_fs_hooks();
+ 	landlock_add_net_hooks();
+ 	landlock_add_ns_hooks();
++	landlock_add_cap_hooks();
+ 	landlock_init_id();
+ 	landlock_initialized = true;
+ 	pr_info("Up and running.\n");
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index c37edcc478bc..fb5af318b69b 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -31,6 +31,7 @@
+ #include <linux/uaccess.h>
+ #include <uapi/linux/landlock.h>
+ 
++#include "cap.h"
+ #include "cred.h"
+ #include "domain.h"
+ #include "fs.h"
+@@ -101,8 +102,9 @@ static void build_check_abi(void)
+ 	struct landlock_path_beneath_attr path_beneath_attr;
+ 	struct landlock_net_port_attr net_port_attr;
+ 	struct landlock_namespace_attr namespace_attr;
++	struct landlock_capability_attr capability_attr;
+ 	size_t ruleset_size, path_beneath_size, net_port_size;
+-	size_t namespace_size;
++	size_t namespace_size, capability_size;
+ 
+ 	/*
+ 	 * For each user space ABI structures, first checks that there is no
+@@ -134,6 +136,12 @@ static void build_check_abi(void)
+ 	namespace_size += sizeof(namespace_attr.quiet_namespace_types);
+ 	BUILD_BUG_ON(sizeof(namespace_attr) != namespace_size);
+ 	BUILD_BUG_ON(sizeof(namespace_attr) != 24);
++
++	capability_size = sizeof(capability_attr.permissions);
++	capability_size += sizeof(capability_attr.allowed_capabilities);
++	capability_size += sizeof(capability_attr.quiet_capabilities);
++	BUILD_BUG_ON(sizeof(capability_attr) != capability_size);
++	BUILD_BUG_ON(sizeof(capability_attr) != 24);
+ }
+ 
+ /* Ruleset handling */
+@@ -527,14 +535,88 @@ static int add_rule_namespace(struct landlock_ruleset *const ruleset,
+ 	return 0;
+ }
+ 
++static int add_rule_capability(struct landlock_ruleset *const ruleset,
++			       const void __user *const rule_attr,
++			       const u32 flags)
 +{
-+	struct audit_records records = {};
-+	int ruleset_fd;
-+	__u64 domain_id;
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
-+	/* Quiet only an unknown bit (bit 63 is above CAP_LAST_CAP). */
-+	ASSERT_EQ(0, add_cap_rule_full(ruleset_fd, 0, (1ULL << 63)));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	set_cap(_metadata, CAP_SYS_CHROOT);
-+	EXPECT_EQ(-1, chroot("/"));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_CHROOT);
-+
-+	/* The unknown quiet bit does not suppress the known denial. */
-+	EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SYS_CHROOT));
-+	EXPECT_EQ(0, matches_log_domain_allocated(self->audit_fd, getpid(),
-+						  &domain_id));
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+	EXPECT_EQ(0, records.domain);
-+}
-+
-+/*
-+ * A capability check made with CAP_OPT_NOAUDIT is denied by Landlock but not
-+ * logged: hook_capable() emits no Landlock audit record when the caller passes
-+ * CAP_OPT_NOAUDIT, so the denial is silent here even though CAP_SYS_ADMIN is
-+ * neither allowed nor quieted.  The probe is the
-+ * ns_capable_noaudit(CAP_SYS_ADMIN) call in simple_xattr_list(), reached
-+ * through tmpfs, which decides whether trusted.* xattrs are visible to
-+ * listxattr(2).
-+ */
-+TEST_F(cap_audit, noaudit_probe_not_logged)
-+{
-+	struct audit_records records = {};
-+	int ruleset_fd, fd;
-+	__u64 domain_id;
-+	char list[256];
-+	ssize_t len;
-+
-+	/*
-+	 * Private tmpfs holding a trusted.* xattr so its listxattr(2)
-+	 * visibility depends only on the CAP_SYS_ADMIN noaudit probe.
-+	 */
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+	ASSERT_EQ(0, mount("test", "/tmp", "tmpfs", 0, NULL));
-+	fd = open("/tmp/f", O_CREAT | O_RDWR | O_CLOEXEC, 0600);
-+	ASSERT_LE(0, fd);
-+	ASSERT_EQ(0, fsetxattr(fd, "trusted.landlock_test", "x", 1, 0));
-+
-+	/* Baseline: with CAP_SYS_ADMIN, the trusted xattr is listed. */
-+	len = flistxattr(fd, list, sizeof(list));
-+	ASSERT_LE(0, len);
-+	ASSERT_TRUE(list_has_xattr(list, len, "trusted.landlock_test"));
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	/* Allow CAP_AUDIT_CONTROL for child-side audit cleanup. */
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
-+	/* CAP_SYS_ADMIN is neither allowed nor quieted. */
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	/*
-+	 * CAP_SYS_ADMIN is still effective, but Landlock denies the noaudit
-+	 * probe, so the trusted.* xattr is filtered out of the listing.
-+	 */
-+	len = flistxattr(fd, list, sizeof(list));
-+	ASSERT_LE(0, len);
-+	EXPECT_FALSE(list_has_xattr(list, len, "trusted.landlock_test"));
-+	EXPECT_EQ(0, close(fd));
-+
-+	/* The denied noaudit probe leaves no audit record nor denial. */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+
-+	/*
-+	 * Positive control: a normal (audited) CAP_SYS_ADMIN denial in the same
-+	 * domain IS logged.  This proves the empty record set above is caused
-+	 * by CAP_OPT_NOAUDIT, not by an always-allow or always-silent bug.
-+	 */
-+	EXPECT_EQ(-1, sethostname("test", 4));
-+	EXPECT_EQ(EPERM, errno);
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SYS_ADMIN));
-+	EXPECT_EQ(0, matches_log_domain_allocated(self->audit_fd, getpid(),
-+						  &domain_id));
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+	EXPECT_EQ(0, records.domain);
-+}
-+
-+/* Trace tests */
-+
-+/* clang-format off */
-+FIXTURE(cap_trace) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(cap_trace)
-+{
++	struct landlock_capability_attr cap_attr;
++	access_mask_t mask;
++	u64 allowed_caps, quiet_caps;
 +	int ret;
 +
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
++	/*
++	 * Capability rules support no add-rule flags.  In particular,
++	 * LANDLOCK_ADD_RULE_QUIET is filesystem/network only.
++	 */
++	if (flags)
++		return -EINVAL;
 +
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
++	/* Copies raw user space buffer. */
++	ret = copy_from_user(&cap_attr, rule_attr, sizeof(cap_attr));
++	if (ret)
++		return -EFAULT;
 +
-+	ASSERT_EQ(0, tracefs_enable_event(TRACEFS_CREATE_RULESET_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_enable_event(TRACEFS_ADD_RULE_CAPABILITY_ENABLE,
-+					  true));
-+	ASSERT_EQ(0, tracefs_enable_event(
-+			     TRACEFS_DENY_PERMISSION_CAPABILITY_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
++	/* Informs about useless rule: empty permissions. */
++	if (!cap_attr.permissions)
++		return -ENOMSG;
++
++	/*
++	 * The permissions selector must match
++	 * LANDLOCK_PERMISSION_CAPABILITY_USE.  The valid set is a single bit
++	 * today, so this is an exact match now; the check broadens to a subset
++	 * test once another supported permission is added.
++	 */
++	if (cap_attr.permissions != LANDLOCK_PERMISSION_CAPABILITY_USE)
++		return -EINVAL;
++
++	/*
++	 * Checks that permissions match the ruleset constraints.  This also
++	 * makes quieting require the category to be handled.
++	 */
++	mask = landlock_get_permission_mask(ruleset);
++	if (!(mask & LANDLOCK_PERMISSION_CAPABILITY_USE))
++		return -EINVAL;
++
++	/*
++	 * Informs about useless rule: neither allows nor quiets anything.  A
++	 * quiet-only rule (empty allowed set) is legal.
++	 */
++	if (!cap_attr.allowed_capabilities && !cap_attr.quiet_capabilities)
++		return -ENOMSG;
++
++	/*
++	 * Stores only the capabilities this kernel knows about.  Unknown bits
++	 * are silently accepted for forward compatibility: user space compiled
++	 * against newer headers can pass new CAP_* bits without getting EINVAL
++	 * on older kernels.  Unknown bits have no effect because no hook checks
++	 * them.  The quiet bitmask suppresses logging of denials attributed to
++	 * this layer; see landlock_log_denial().
++	 */
++	allowed_caps = cap_attr.allowed_capabilities & CAP_VALID_MASK;
++	quiet_caps = cap_attr.quiet_capabilities & CAP_VALID_MASK;
++
++	mutex_lock(&ruleset->lock);
++	ruleset->layer.allowed.caps |= landlock_caps_to_bits(allowed_caps);
++#ifdef CONFIG_SECURITY_LANDLOCK_LOG
++	ruleset->quiet_permission.caps |= landlock_caps_to_bits(quiet_caps);
++#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
++#ifdef CONFIG_TRACEPOINTS
++	ruleset->version++;
++#endif /* CONFIG_TRACEPOINTS */
++	trace_landlock_add_rule_capability(ruleset, flags, cap_attr.permissions,
++					   allowed_caps, quiet_caps);
++	mutex_unlock(&ruleset->lock);
++	return 0;
 +}
 +
-+FIXTURE_TEARDOWN(cap_trace)
-+{
-+	if (!self->tracefs_ok)
-+		return;
+ /**
+  * sys_landlock_add_rule - Add a new rule to a ruleset
+  *
+  * @ruleset_fd: File descriptor tied to the ruleset that should be extended
+  *		with the new rule.
+  * @rule_type: Identify the structure type pointed to by @rule_attr:
+- *             %LANDLOCK_RULE_PATH_BENEATH, %LANDLOCK_RULE_NET_PORT, or
+- *             %LANDLOCK_RULE_NAMESPACE.
++ *             %LANDLOCK_RULE_PATH_BENEATH, %LANDLOCK_RULE_NET_PORT,
++ *             %LANDLOCK_RULE_NAMESPACE, or %LANDLOCK_RULE_CAPABILITY.
+  * @rule_attr: Pointer to a rule (matching the @rule_type).
+  * @flags: Must be 0 or %LANDLOCK_ADD_RULE_QUIET.
+  *
+@@ -553,6 +635,8 @@ static int add_rule_namespace(struct landlock_ruleset *const ruleset,
+  *   handled accesses)
+  * - %EINVAL: A nonzero &landlock_namespace_attr.permissions is not
+  *   %LANDLOCK_PERMISSION_NAMESPACE_USE or is not handled by the ruleset;
++ * - %EINVAL: A nonzero &landlock_capability_attr.permissions is not
++ *   %LANDLOCK_PERMISSION_CAPABILITY_USE or is not handled by the ruleset;
+  * - %EINVAL: &landlock_net_port_attr.port is greater than 65535;
+  * - %EINVAL: LANDLOCK_ADD_RULE_QUIET is passed but the ruleset has no
+  *   quiet access bits set for the corresponding rule type.
+@@ -561,6 +645,9 @@ static int add_rule_namespace(struct landlock_ruleset *const ruleset,
+  * - %ENOMSG: &landlock_namespace_attr.permissions is 0, or both
+  *   &landlock_namespace_attr.allowed_namespace_types and
+  *   &landlock_namespace_attr.quiet_namespace_types are 0;
++ * - %ENOMSG: &landlock_capability_attr.permissions is 0, or both
++ *   &landlock_capability_attr.allowed_capabilities and
++ *   &landlock_capability_attr.quiet_capabilities are 0;
+  * - %EBADF: @ruleset_fd is not a file descriptor for the current thread, or a
+  *   member of @rule_attr is not a file descriptor as expected;
+  * - %EBADFD: @ruleset_fd is not a ruleset file descriptor, or a member of
+@@ -595,6 +682,8 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+ 		return add_rule_net_port(ruleset, rule_attr, flags);
+ 	case LANDLOCK_RULE_NAMESPACE:
+ 		return add_rule_namespace(ruleset, rule_attr, flags);
++	case LANDLOCK_RULE_CAPABILITY:
++		return add_rule_capability(ruleset, rule_attr, flags);
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/security/landlock/trace.c b/security/landlock/trace.c
+index 300afcc82220..995c6b948e16 100644
+--- a/security/landlock/trace.c
++++ b/security/landlock/trace.c
+@@ -94,6 +94,18 @@ void landlock_trace_denial(
+ 				request->audit.u.ns.ns_id);
+ 		}
+ 		break;
++	case LANDLOCK_REQUEST_CAPABILITY:
++		if (trace_landlock_deny_permission_capability_enabled()) {
++			const struct landlock_blockers blockers = {
++				.access = missing,
++				.type = request->type,
++			};
 +
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_CREATE_RULESET_ENABLE, false);
-+	tracefs_enable_event(TRACEFS_ADD_RULE_CAPABILITY_ENABLE, false);
-+	tracefs_enable_event(TRACEFS_DENY_PERMISSION_CAPABILITY_ENABLE, false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/*
-+ * Check the permission fields and version history, including two rejected calls
-+ * and two successful calls that do not extend the effective policy: a repeated
-+ * rule and an unknown-only rule.
-+ */
-+TEST_F(cap_trace, rule_events)
-+{
-+	const char *const version_1 =
-+		REGEX_ADD_RULE_CAPABILITY_VERSION(TRACE_TASK, "1");
-+	const char *const version_2 =
-+		REGEX_ADD_RULE_CAPABILITY_VERSION(TRACE_TASK, "2");
-+	const char *const version_3 =
-+		REGEX_ADD_RULE_CAPABILITY_VERSION(TRACE_TASK, "3");
-+	const struct landlock_capability_attr valid_attr = {
-+		.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE,
-+		.allowed_capabilities = 1ULL << CAP_SYS_ADMIN,
-+		.quiet_capabilities = 1ULL << CAP_SYS_CHROOT,
-+	};
-+	const struct landlock_capability_attr invalid_attr = {
-+		.permissions = LANDLOCK_PERMISSION_NAMESPACE_USE,
-+		.allowed_capabilities = 1ULL << CAP_SYS_ADMIN,
-+	};
-+	char expected[32], field[64];
-+	char *buf;
-+	int ruleset_fd;
-+
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+
-+	ASSERT_EQ(0, tracefs_clear_buf());
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_EQ(0, add_cap_rule_full(ruleset_fd, 1ULL << CAP_SYS_ADMIN,
-+				       1ULL << CAP_SYS_CHROOT));
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&invalid_attr, 0));
-+	ASSERT_EQ(EINVAL, errno);
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-+					&valid_attr, LANDLOCK_ADD_RULE_QUIET));
-+	ASSERT_EQ(EINVAL, errno);
-+	ASSERT_EQ(0, add_cap_rule_full(ruleset_fd, 1ULL << CAP_SYS_ADMIN,
-+				       1ULL << CAP_SYS_CHROOT));
-+	ASSERT_EQ(0, add_cap_rule(ruleset_fd, 63));
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	ASSERT_EQ(1,
-+		  tracefs_count_matches(buf, REGEX_CREATE_RULESET(TRACE_TASK)));
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf, REGEX_CREATE_RULESET(TRACE_TASK),
-+			     "handled_permissions", field, sizeof(field)));
-+	EXPECT_STREQ("capability.use", field);
-+
-+	ASSERT_EQ(3,
-+		  tracefs_count_matches(buf, "landlock_add_rule_capability: "));
-+	ASSERT_EQ(3, tracefs_count_matches(
-+			     buf, REGEX_ADD_RULE_CAPABILITY(TRACE_TASK)));
-+	EXPECT_EQ(1, tracefs_count_matches(buf, version_1));
-+	EXPECT_EQ(1, tracefs_count_matches(buf, version_2));
-+	EXPECT_EQ(1, tracefs_count_matches(buf, version_3));
-+
-+	ASSERT_EQ(0, tracefs_extract_field(buf, version_1, "permissions", field,
-+					   sizeof(field)));
-+	EXPECT_STREQ("capability.use", field);
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, version_1, "allowed_capabilities",
-+					field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "0x%llx", 1ULL << CAP_SYS_ADMIN);
-+	EXPECT_STREQ(expected, field);
-+	ASSERT_EQ(0, tracefs_extract_field(buf, version_1, "quiet_capabilities",
-+					   field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "0x%llx", 1ULL << CAP_SYS_CHROOT);
-+	EXPECT_STREQ(expected, field);
-+
-+	/* The rejected calls emit no event and do not consume version 2. */
-+	ASSERT_EQ(0, tracefs_extract_field(buf, version_2, "permissions", field,
-+					   sizeof(field)));
-+	EXPECT_STREQ("capability.use", field);
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, version_2, "allowed_capabilities",
-+					field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "0x%llx", 1ULL << CAP_SYS_ADMIN);
-+	EXPECT_STREQ(expected, field);
-+	ASSERT_EQ(0, tracefs_extract_field(buf, version_2, "quiet_capabilities",
-+					   field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "0x%llx", 1ULL << CAP_SYS_CHROOT);
-+	EXPECT_STREQ(expected, field);
-+
-+	/* The unknown-only call succeeds but contributes no effective bits. */
-+	ASSERT_EQ(0, tracefs_extract_field(buf, version_3, "permissions", field,
-+					   sizeof(field)));
-+	EXPECT_STREQ("capability.use", field);
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, version_3, "allowed_capabilities",
-+					field, sizeof(field)));
-+	EXPECT_STREQ("0x0", field);
-+	ASSERT_EQ(0, tracefs_extract_field(buf, version_3, "quiet_capabilities",
-+					   field, sizeof(field)));
-+	EXPECT_STREQ("0x0", field);
-+
-+	free(buf);
-+}
-+
-+enum cap_trace_denial_kind {
-+	CAP_TRACE_DENY,
-+	CAP_TRACE_DENY_QUIET,
-+	CAP_TRACE_DENY_NOAUDIT,
-+};
-+
-+static void exercise_cap_trace_denial(struct __test_metadata *const _metadata,
-+				      const enum cap_trace_denial_kind kind)
-+{
-+	int ruleset_fd, fd = -1;
-+	char list[256];
-+	ssize_t len;
-+
-+	disable_caps(_metadata);
-+
-+	if (kind == CAP_TRACE_DENY_NOAUDIT) {
-+		set_cap(_metadata, CAP_SYS_ADMIN);
-+		set_cap(_metadata, CAP_SYS_CHROOT);
-+		ASSERT_EQ(0, mount("test", "/tmp", "tmpfs", 0, NULL));
-+		fd = open("/tmp/f", O_CREAT | O_RDWR | O_CLOEXEC, 0600);
-+		ASSERT_LE(0, fd);
-+		ASSERT_EQ(0, fsetxattr(fd, "trusted.landlock_test", "x", 1, 0));
-+
-+		/* Baseline: CAP_SYS_ADMIN exposes the trusted xattr. */
-+		len = flistxattr(fd, list, sizeof(list));
-+		ASSERT_LE(0, len);
-+		ASSERT_TRUE(list_has_xattr(list, len, "trusted.landlock_test"));
-+	} else {
-+		set_cap(_metadata, CAP_SYS_CHROOT);
-+	}
-+
-+	ruleset_fd = create_cap_ruleset();
-+	ASSERT_LE(0, ruleset_fd);
-+	if (kind == CAP_TRACE_DENY_QUIET)
-+		ASSERT_EQ(0, add_cap_rule_full(ruleset_fd, 0,
-+					       1ULL << CAP_SYS_CHROOT));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	if (kind == CAP_TRACE_DENY_NOAUDIT) {
-+		/* Probe CAP_SYS_ADMIN with CAP_OPT_NOAUDIT. */
-+		len = flistxattr(fd, list, sizeof(list));
-+		ASSERT_LE(0, len);
-+		EXPECT_FALSE(
-+			list_has_xattr(list, len, "trusted.landlock_test"));
-+		EXPECT_EQ(0, close(fd));
-+
-+		/* Control: an ordinary denial in the same domain is traced. */
-+		EXPECT_EQ(-1, chroot("/"));
-+		EXPECT_EQ(EPERM, errno);
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		clear_cap(_metadata, CAP_SYS_CHROOT);
-+	} else {
-+		EXPECT_EQ(-1, chroot("/"));
-+		EXPECT_EQ(EPERM, errno);
-+		clear_cap(_metadata, CAP_SYS_CHROOT);
-+	}
-+}
-+
-+static void test_cap_trace_denial(struct __test_metadata *const _metadata,
-+				  const enum cap_trace_denial_kind kind,
-+				  const int expected_capability,
-+				  const char *const expected_logged)
-+{
-+	char expected[16], field[64];
-+	int status;
-+	char *buf;
-+	pid_t child;
-+
-+	ASSERT_EQ(0, tracefs_clear_buf());
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		exercise_cap_trace_denial(_metadata, kind);
-+		_exit(_metadata->exit_code);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+	ASSERT_EQ(1, tracefs_count_matches(
-+			     buf, REGEX_DENY_PERMISSION_CAPABILITY(TRACE_TASK)))
-+	{
-+		TH_LOG("Expected one capability denial event\n%s", buf);
-+	}
-+
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf, REGEX_DENY_PERMISSION_CAPABILITY(TRACE_TASK),
-+			     "domain", field, sizeof(field)));
-+	EXPECT_STRNE("0", field);
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf, REGEX_DENY_PERMISSION_CAPABILITY(TRACE_TASK),
-+			     "same_exec", field, sizeof(field)));
-+	EXPECT_STREQ("1", field);
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf, REGEX_DENY_PERMISSION_CAPABILITY(TRACE_TASK),
-+			     "logged", field, sizeof(field)));
-+	EXPECT_STREQ(expected_logged, field);
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf, REGEX_DENY_PERMISSION_CAPABILITY(TRACE_TASK),
-+			     "blockers", field, sizeof(field)));
-+	EXPECT_STREQ("use", field);
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf, REGEX_DENY_PERMISSION_CAPABILITY(TRACE_TASK),
-+			     "capability", field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "%d", expected_capability);
-+	EXPECT_STREQ(expected, field);
-+
-+	free(buf);
-+}
-+
-+TEST_F(cap_trace, deny)
-+{
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+	test_cap_trace_denial(_metadata, CAP_TRACE_DENY, CAP_SYS_CHROOT, "1");
-+}
-+
-+TEST_F(cap_trace, deny_quiet)
-+{
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+	test_cap_trace_denial(_metadata, CAP_TRACE_DENY_QUIET, CAP_SYS_CHROOT,
-+			      "0");
-+}
-+
-+/*
-+ * A CAP_OPT_NOAUDIT probe is denied without any record.  The audit counterpart
-+ * checks the missing audit record; this one checks that the CAP_SYS_ADMIN probe
-+ * emits no trace event, while the CAP_SYS_CHROOT denial that follows it in the
-+ * same domain still does.
-+ */
-+TEST_F(cap_trace, noaudit_probe_not_traced)
-+{
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+	test_cap_trace_denial(_metadata, CAP_TRACE_DENY_NOAUDIT, CAP_SYS_CHROOT,
-+			      "1");
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/landlock/trace.h b/tools/testing/selftests/landlock/trace.h
-index 568c13d8eee4..36e8f16171b0 100644
---- a/tools/testing/selftests/landlock/trace.h
-+++ b/tools/testing/selftests/landlock/trace.h
-@@ -33,6 +33,8 @@
- 	TRACEFS_LANDLOCK_DIR "/landlock_add_rule_net_port/enable"
- #define TRACEFS_ADD_RULE_NAMESPACE_ENABLE \
- 	TRACEFS_LANDLOCK_DIR "/landlock_add_rule_namespace/enable"
-+#define TRACEFS_ADD_RULE_CAPABILITY_ENABLE \
-+	TRACEFS_LANDLOCK_DIR "/landlock_add_rule_capability/enable"
- #define TRACEFS_CHECK_RULE_FS_ENABLE \
- 	TRACEFS_LANDLOCK_DIR "/landlock_check_rule_inode/enable"
- #define TRACEFS_CHECK_RULE_NET_ENABLE \
-@@ -43,6 +45,8 @@
- 	TRACEFS_LANDLOCK_DIR "/landlock_deny_access_net/enable"
- #define TRACEFS_DENY_PERMISSION_NAMESPACE_ENABLE \
- 	TRACEFS_LANDLOCK_DIR "/landlock_deny_permission_namespace/enable"
-+#define TRACEFS_DENY_PERMISSION_CAPABILITY_ENABLE \
-+	TRACEFS_LANDLOCK_DIR "/landlock_deny_permission_capability/enable"
- #define TRACEFS_DENY_PTRACE_ENABLE \
- 	TRACEFS_LANDLOCK_DIR "/landlock_deny_ptrace/enable"
- #define TRACEFS_DENY_SCOPE_SIGNAL_ENABLE \
-@@ -110,6 +114,17 @@
- #define REGEX_ADD_RULE_NAMESPACE(task) \
- 	REGEX_ADD_RULE_NAMESPACE_VERSION(task, "[0-9]\\+")
- 
-+#define REGEX_ADD_RULE_CAPABILITY_VERSION(task, version) \
-+	TRACE_PREFIX(task)                               \
-+	"landlock_add_rule_capability: "                 \
-+	"ruleset=[0-9a-f]\\+\\." version " "             \
-+	"permissions=[a-z._|]* "                         \
-+	"allowed_capabilities=0x[0-9a-f]\\+ "            \
-+	"quiet_capabilities=0x[0-9a-f]\\+$"
-+
-+#define REGEX_ADD_RULE_CAPABILITY(task) \
-+	REGEX_ADD_RULE_CAPABILITY_VERSION(task, "[0-9]\\+")
-+
- #define REGEX_CREATE_RULESET(task)        \
- 	TRACE_PREFIX(task)                \
- 	"landlock_create_ruleset: "       \
-@@ -173,6 +188,15 @@
- 	"namespace_type=0x[0-9a-f]\\+ "        \
- 	"namespace_id=[0-9]\\+$"
- 
-+#define REGEX_DENY_PERMISSION_CAPABILITY(task)  \
-+	TRACE_PREFIX(task)                      \
-+	"landlock_deny_permission_capability: " \
-+	"domain=[0-9a-f]\\+ "                   \
-+	"same_exec=[01] "                       \
-+	"logged=[01] "                          \
-+	"blockers=[a-z_|]* "                    \
-+	"capability=[0-9]\\+$"
-+
- #define REGEX_DENY_PTRACE(task)      \
- 	TRACE_PREFIX(task)           \
- 	"landlock_deny_ptrace: "     \
++			trace_landlock_deny_permission_capability(
++				youngest_denied, same_exec, logged, &blockers,
++				request->audit.u.cap);
++		}
++		break;
+ 	case LANDLOCK_REQUEST_FS_ACCESS:
+ 	case LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY:
+ 		if (trace_landlock_deny_access_fs_enabled()) {
 -- 
 2.55.0
 
