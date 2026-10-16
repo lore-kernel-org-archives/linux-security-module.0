@@ -1,73 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from r9220.ps.combzmail.jp (r9220.ps.combzmail.jp [160.16.65.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D1E35A3B1
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 04:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C07C3A6B8F
+	for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 05:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.65.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792123633; cv=none; b=DIXCMr0TGaod0Bx2XXbs7uRmf+5kDkt+c5ZPBfVitYk5/tjgygk6kGrbxYIwDwjj6aFWd84Y6U/UzDiNrtA4e5v7JOz3bEF/YtMdF+lY/YdfoZxb/T9OR1YPsjW1vGpl1NsAP/Y1Yn2s6H/X5bOZUYr7AtGsBVUoKTI4Os3GxCg=
+	t=1792129576; cv=none; b=SP0kJzJFvhvNUeNoZmdFSqNGJe4uFLyQuJJogNipTboyM6mqEL2zEHmKQV3w0R7o1zUeFHrxvdtIxYl4gnY/NfHKBCHygMdTqeRwX0GR2ZojYOK91ZQMlGq4bUiD3O7CrdKmPGPr8dPf4hx7BO/sIy92wcbYj6yNDY/bT5ODAQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792123633; c=relaxed/simple;
-	bh=jSxE7p9JWMr64IKjKozJgJlIkpNiz0/rxinP4m5q9aE=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=ZMXnrBBYMLGm4DVc8UWfdJ0sUVvlvJuNfyfG+HK9rtm3CpC0fBJsAUDLzR3cJ50J6pKxf8ZJXHqTzHZ3JpGCMXUSFKEK3Cqf8y7Xb8W7tAAkQ8THF/2Al/1J8MLRJXcHe7lfyZ3N0LMibIQzo7KLVPrWjgUCvUd7oLWCFoMdoVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ft7Z1InX; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ft7Z1InX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08901F000C4
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 04:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792123631;
-	bh=ET++4vkTKowqdG2//iYeOfEycYFyWl9ozbJlO1tToPg=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Ft7Z1InXxYvZidWrgUJjnfb8V5uike/lW0p81eBMLMV7bwNIQHlUoYIxjB8ChT8lu
-	 IMwXFh/ckMikU0lfjKjlMhMX6nCmhEojljrJ6DfETRxN7m5YNf03U8CV62V5HPWjWZ
-	 Xwd0EKDXmSsXMyAVX9huYa2GC6iOihYZ8slAFMqakKl2kdiFqya8VRynvpmrQsUE/0
-	 seNv6cJvKcs24DjWecOWnIErcGL6AqveahWD/sH6gJoYaWwH7KOybREU1K/QpqWLPu
-	 BbJScch2r5vh4F/uxyoix7aCD9x09F0a8AsZjrBITJSOIMPWVlfeim//4Iok0nhpBU
-	 snFcP3cDQv3vg==
-Message-ID: <sashiko-outbox-173727@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] keys: big_key: Reserve the final quota before
- destroying the payload
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261016040004.324286-1-4ncienth@gmail.com>
-References: <20261016040004.324286-1-4ncienth@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 04:07:11 +0000
+	s=arc-20240116; t=1792129576; c=relaxed/simple;
+	bh=ebyI7XDSk1Lx0tbMrXAePp63eNec9TltndH6dU+gpCA=;
+	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=fxYoikpe+usOjQWSr3zybaynPSUDY0buvSDxPXdy+eSjeTlVJhrBogo5ikBhB3ItFWysDkmB0HaKVIJjhubRJ26GweAgah4vam8f/hRr2FmRqwEB6yV06aYGvRGctSvyUR3XcYXGxByHrnqf4bFoefp4Eep9Gi48Rg9optLxOz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chatgpt-event.work; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.65.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chatgpt-event.work
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
+Received: by r9220.ps.combzmail.jp (Postfix, from userid 99)
+	id 312FEC09D1; Fri, 16 Oct 2026 14:45:52 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 r9220.ps.combzmail.jp 312FEC09D1
+To: linux-security-module@vger.kernel.org
+From: AI =?ISO-2022-JP?B?GyRCJSghPCU4JSclcyVIIUMlJCVZJXMlSDt2TDM2SRsoQg==?= <info@chatgpt-event.work>
+X-Ip: 105163600192535
+X-Ip-source: k85gj70348dnsa1qu0p6gd
+Precedence: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?ISO-2022-JP?B?MRskQkZ8JEdESSQkJEQkLxsoQiBDbA==?=
+ =?ISO-2022-JP?B?YXVkZSBDb2RlGyRCJHIzWCRWRn5MZzlWOkIbKEI=?=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-MagazineId: 031q
+X-uId: 6764315443486066694582431009
+X-Sender: CombzMailSender
+X-Url: http://www.combzmail.jp/
+Message-Id: <20261016054605.312FEC09D1@r9220.ps.combzmail.jp>
+Date: Fri, 16 Oct 2026 14:45:52 +0900 (JST)
 
-> A big_key is charged a fixed 16 bytes of key quota, regardless of the
-> actual payload size.  big_key_update() currently reserves the actual new
-> payload length before destroying the old payload, while the subsequent
-> generic_key_instantiate() reserves the fixed quota length.
->=20
-> For an update to a payload shorter than 16 bytes, the first reservation
-> temporarily returns quota.  Another key operation by the same user can
-> consume that quota before generic_key_instantiate() tries to reserve it
-> again.  If that second reservation fails, the key remains instantiated but
-> its old big_key payload has already been destroyed.  Reading a
-> buffer-backed key or revoking a shmem-backed key then dereferences a NULL
-> payload pointer.
->=20
-> On a KASAN build, reading a buffer-backed key reports:
->=20
-> [ ... ]
->=20
-> Fixes: b6f61c314649 ("keys: Implement update for the big_key type")
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Signed-off-by: Daehyeon Ko <4ncienth@gmail.com>
+お世話になります。
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+生成AIで「調べる」「文章をつくる」までは、
+すでに多くの企業が取り組まれています。
+しかし今は、AIが実際の業務そのものを動かす段階に入りました。
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016040004.3242=
-86-1-4ncienth@gmail.com?part=3D1
+今回のセミナーでは、実際の画面をお見せしながら
+以下を０から解説します。
+・AIエージェントとClaude Codeの基本
+・AIでWebサイトをつくる（作成から、公開後の自動更新まで）
+・AIで帳簿を作成する（品番検索・過去の見積書を参照）
+・実務での活用事例（サイトの自動更新、AIでのお問い合わせ対応）
 
+━━━━━━━━━━━━━━━━━━━━━━
+　　1日で追いつく Claude Codeを学ぶ入門講座
+　　― 調べる、作るだけでは終わらない。AIが「実務」を動かす60分。
+
+　日 時：2026年10月23日(金)14:00-15:00
+　　　 　2026年10月28日(水)14:00-15:00
+　　　　 2026年11月11日(水)14:00-15:00
+　会 場：オンライン開催（お申し込みの方に視聴用URLをお送りします）
+　費 用：無料
+
+　▼お申込みはこちら
+　https://chatgpt-event.work/ai-seminar1001/
+━━━━━━━━━━━━━━━━━━━━━━
+
+事前知識は不要です。エンジニアの方でなくても、
+経営者・ご担当者がイメージしやすい言葉でお話しします。
+
+前半ではAIエージェントとClaude Codeの基本を、
+後半は実際の画面を使った実演と活用事例をご紹介しますので、
+自社の業務のどこに使えるのかをそのままお持ち帰りいただけます。
+
+ぜひこの機会にご参加ください。
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+■ AIエージェント事務局
+東京都中央区銀座七丁目１３番６号
+TEL :0120-889-859
+Mail:info@chatgpt-event.work
+-----------------------------------------------------------------------------　
+　メール案内の停止をご希望の方は
+　下記アドレスよりお手続きをお願いいたします。
+　https://chatgpt-event.work/mail/
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
