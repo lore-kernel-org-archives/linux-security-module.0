@@ -1,93 +1,138 @@
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF9949BB61;
-	Fri, 16 Oct 2026 18:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792175349; cv=none; b=jtL2kJFx3QPFbAHfDHaxSNKt4ZTRDvJ2t9NItlBd0TRCcW+7BHywDrKAyy0udFjbPZeKVWnqyGiPA5GPhLuPgaaqJ98wmlj5roiyKTSLVwvH/FqGBCEU2QNAAUKMDZRuMgb6OucyO+v7c32Cf2HsBhHrX7O72O9qhLDfWOwvxcE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792175349; c=relaxed/simple;
-	bh=sU8Huw5FGvFuFeiFie3QNStejqRmTyfwZt88UfwRTJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p8y70wjdWQ3Lm5ewg+Lpx2gcI4ao7t3gz/KgDbNKbogCSZGbok+8O5uSJadp9cpb109+ljS0enEM39JeI9uRJGmcZPT6LvzWrxqYHq0NoYRt9h2GQC3szFvTprqBOsnv7sukQW+0M+H53bkLNOFqJvSUkPoZr05QJBrEVBNpNo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; dkim=pass (1024-bit key) header.d=goodmis.org header.i=@goodmis.org header.b=kSupG2xX; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED83487CDB
+	for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 19:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.177
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792177876; cv=pass; b=JIWjuuAY8xLx3pmcgW/L2GQg/8ynPzCmVL09bszn6HCGO1sbPeUShwdNSjDitvqlSIqgL0HfZ291vKMlUxKz/gIeWOGot7V8vmdy8Y77XRG9aXTyi7FWY62X3D/MW805k55HHiEMFBYxQ/ojN532YnVWgINb+lE4IyYTOQYmHQM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792177876; c=relaxed/simple;
+	bh=qppVgsYFvGGhHcWK5q8fwgXEoXbm8x8Kajt5Kyll45Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GxgCexgAt0/E4orv77ao9c4+JOFLV3kxfPC+OklC99NgLC/HkEnxFAtjwbxvw+KiAU7nrcltc4SS69E2k8JCbZGnO3URczc7uUtMIfGUtpfpBNVrkEjpyLAWK2KJO3bRMAjOfSjN2srVJ4hmKgdS1196iiTxpb2WFpZh0hw+OzA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNYHVnir; arc=pass smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=goodmis.org header.i=@goodmis.org header.b="kSupG2xX"
-Received: from omf17.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 85359A0102;
-	Fri, 16 Oct 2026 18:29:04 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 19AF117;
-	Fri, 16 Oct 2026 18:29:01 +0000 (UTC)
-Date: Fri, 16 Oct 2026 14:28:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Bill Wendling <morbo@google.com>, =?UTF-8?B?R8O8bnRoZXI=?= Noack
- <gnoack@google.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
- bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Andrew Morton
- <akpm@linux-foundation.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, David Gow <david@davidgow.net>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Petr Mladek <pmladek@suse.com>, Shuvam
- Pandey <shuvampandey1@gmail.com>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v5 02/12] seq_buf: Do not pop from an overflowed seq_buf
-Message-ID: <20261016142859.06a43120@gandalf.local.home>
-In-Reply-To: <20261005155708.1471260-2-kees@kernel.org>
-References: <20261005155653.late.426-kees@kernel.org>
-	<20261005155708.1471260-2-kees@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNYHVnir"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-8b0d5ddafbcso2396457b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 12:11:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792177874; cv=none;
+        d=google.com; s=arc-20260327;
+        b=OXxV1/rC/XYs4ElSX3sXidanAtYDDyTUW2thlWXV09q1Yt5yihcZnTViCrZFIbRbVq
+         k8LfWTq9623rR3hkLNmIJg2i/65jhj2DVydbD3nZIdnclXcCh0Hwk5//MPsY6PfiGjjy
+         UBYE08WXdiBQl9u0kQEO/Yggr54Vr35NZXDNz5ok08MNthQ71mFZgmVvSHEDHTN29jgD
+         bjfGixp+3eWegpf7jC4vIrrCuNoI040aaVeddIUCeyozQ9f+tHec7ItlMv6U3tAnPnT5
+         npZnDLpVXibcKD4KRXp4OYVKstY5oodlr93YQeBR+9D6sqvUHEPJ0ghQXTq0dK2gB+Be
+         1X6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=rcM0e5h6kl2DJj3y8GjJ9yn5THeHomwVF5DySO9cYxc=;
+        fh=qRt1tY6xn3W5Ryj6GcxvD7Bf3TCUp/vH7G9eWxydcqs=;
+        b=Swj4Ftt99P7hKPuNeWzyelQM2AFDmfIngu+IDgJ2gGfYECg0naRk6AdW7vCzGfh8fE
+         E+Uq1PJGaHd86ErXlHIuYvPtGH/onPOgQ8E4peWKJq4XGpRswuwbjlnO+lyvQJeER9nt
+         GEN5rkEEWWj4Y+paXNe0n5qcOSUiVRoMJ7thmLQ1UpsJd+K4HiEtPVsh1CItfLEjgyIb
+         NQPLlmMhMtGmIEhJPeH76mlNUd/g3hubAkviYQ64RiMCK4NaxA3uhWxGjGxOeYLYK8m7
+         Ji9couLSp2zAr+SCTI8+sVBqtCxsZA4zDuhV2j8XtS+fMolJtq5hjpGAW3rEuv8mB5wV
+         aAcw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792177874; x=1792782674; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=rcM0e5h6kl2DJj3y8GjJ9yn5THeHomwVF5DySO9cYxc=;
+        b=lNYHVnirjmv/XVzkDQrJJrtTF9KNDAbXxawbFWCxJHjZruMMjPqAmhqeKnvX8Dhuvl
+         FqHZWxxeA1e6BytDa6B6qWm88wVrLzwDEykURFCxQx3GhLCfSWQ8hX24aL5jkY+DOSeW
+         a5LUkceNq6eXRyJXYk91Xsrolvl4ZLVSW09ID+JiLAiBJwZlMk/9roGrfDRIobieGdYA
+         zRTfkxGvy0mJEEGWG7b8rFrA2HM049eB2dHGCNYgNMRsupgebUZYB35BuuWYyM+WZMB3
+         UzicVHJkTFg9yRS0FeittYF0id7wNbKhs14p7mRXpKok2DzsraiYLJVstHVmYBs5nriU
+         CoeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792177874; x=1792782674;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=rcM0e5h6kl2DJj3y8GjJ9yn5THeHomwVF5DySO9cYxc=;
+        b=OsPbYiBK9gbnZHFbc+Nxse3mRodUnPd/2h7tOwxNI157AMXSzSE5KmY2Lv2Gy0jIwn
+         AE+/5IeCoF5VPpOPD3LVvA1zOwMV6cuDFewM6/Qe27L8REQj1/5yppzbtEcpsmIbHY6o
+         ZWWCg95KL+hlv4xD80k/R3a4Du0jzo3Uyyaiz7F3oG3ZxwghJb2xbpmCsbsQwBCngPD3
+         /a8VVhWd19f5UNJdw91fL7NDHM+XYM8pYDWMD4sUzUP/XqjEWM1BBoSBCWCt+GBTUdaZ
+         RRieGmPZmhq9mAmZ2boUymhYgY/SEHqqolcMivGmjSzGgLgP3IJIsvecK9XiKeu4jv0C
+         g+nA==
+X-Forwarded-Encrypted: i=1; AKwUvBxt83EkhBGPBniQzQj9yBloMpHhgNS4yeriqofnjWCxbigF0p/AWhuDN3dHcNRDIMIhaa5K/us2LG25AL3GrCb2YERemRo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJjdVveRRtBRB+WfngId36dmd5/RK0yNQSmGRjyvRSveKFLJsqy
+	ZY63bM0suNmNwU/DS29fRrVtwnN9yB9s2X9xR9LBX9O+ALBzBTBbfLFx4N00V8PdjJBGnEFs666
+	vEv/8pGzRpcOFmHJybkaBKtwjoHP3s2M=
+X-Gm-Gg: AYBFou0+OBAZLvlHBhhk26Mzim2Y157daF7qzaaZHdQp9gzc50V0zf8p7tr+hlMQUST
+	ecRgp/stSLxK+Ks/LBLIPC5Xmt/a9GeIyhkHWOsZB/M0EapowHUPIS2g4JMwxCe+OcUPeSlTnbY
+	ATFL29gUC0HWcjykZXfuKb7l/+2FVY/fA0NwIchUcp3O1vVAFKCvWd9u5zrlLPxVMuhOk2q8J/Z
+	HicEQOESbj6IE3uIsp+ytsM2ToLIcLqcobb1QD9s9pOyzfWxg4D6/+jmYAyUvqRoMNcJPvOVtrc
+	XVu0xdsY/Vuqi2sBOhHe5f+oEak0opXWwV7HsV8j5JCKvkR4TSCuzVYeksmGpl3/KQ==
+X-Received: by 2002:a05:690e:138a:b0:679:c9af:6d51 with SMTP id
+ 956f58d0204a3-679ca86652fmr108710d50.69.1792177873691; Fri, 16 Oct 2026
+ 12:11:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout06
-X-Stat-Signature: b5nkuwouyhdy4u993jis7grybge175xf
-X-Rspamd-Queue-Id: 19AF117
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+fj1YGWdwbFm32+9d6zhiqh+led4Jioec=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=goodmis.org; h=date:from:to:cc:subject:message-id:in-reply-to:references:mime-version:content-type:content-transfer-encoding; s=dkim1; bh=nsnHAZht4xXX+NUY+dLaXZLvYlkPS38RZLvaJ/Efn08=; b=kSupG2xX+nSyKoGHdIOevUk2mVcxCRE1bmLaeggcqQdkCUj17Vt4YprEKYZFC3Mh72j06Yc119wIgVM8sqGGgVeBHcUJs1KYVOvbXKp3SX6/TupSQnRywUFLsRCNal8OrJuHxkR9qb6629LhVvGINhpegY933ODevC5KngvenZM=
-X-HE-Tag: 1792175340-407831
-X-HE-Meta: U2FsdGVkX18lzNMQUpfgWhTfZ2S5QXhKq/p+WHUnR5iO7Un9E9CHipp4Z0C+TZhiJpv7OW61sdClHiB1FnByNoJAJPv6e04xeN5kvFfj7e+Z2ir9uJL/m42Z6kvdZuLttn9l5VMV+hxKaSMaiygUIKrypj62CKZQslnaFljBXuV3R1OVGnoFBChdaKvhW6pLyMI8T8Yj20yTAjw5tHFX9bLhWd8SDG4DNg6fSdLM5aHsvZOJ1k6U210wbRfQQ6EC2kj74XjmDigvgeJZWzYdru0E5t8Vt+ct5vsvxth1inXLWd5A5KgwB5YGmiwQVATbuyKGLFPHqVqTdFKSbf9xm0XidHX6ambNt7HGdNlrZvznmg9e+NyvzRSZE9yRQkaHYG5gWgoZ5w3AqqWlEmsoUHIpTlsHf8xOcokP5JgOre4=
+References: <179216146138.25460.7866279004288174372@gmail.com>
+In-Reply-To: <179216146138.25460.7866279004288174372@gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 16 Oct 2026 15:11:02 -0400
+X-Gm-Features: AclHuK82Reo9t1Q_XYkamM6mGKm-uUZWL-8Kv3QM6WU-oPDk-hAS-2iAswxeKCA
+Message-ID: <CAEjxPJ7fLbBANfjcgN7Xa+axbQFE5ZALWzXxRz_kQ8zGvmw4Rw@mail.gmail.com>
+Subject: Re: [PATCH] selinux: don't label bridged packets in selinux_ip_forward()
+To: Joas Antonio dos Santos <joasantonio108@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnacek@gmail.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Pablo Neira Ayuso <pablo@netfilter.org>, Florian Westphal <fw@strlen.de>, 
+	Phil Sutter <phil@nwl.cc>, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon,  5 Oct 2026 08:56:52 -0700
-Kees Cook <kees@kernel.org> wrote:
+On Fri, Oct 16, 2026 at 10:37=E2=80=AFAM Joas Antonio dos Santos
+<joasantonio108@gmail.com> wrote:
+>
+> With br_netfilter and bridge-nf-call-ip{,6}tables enabled, bridged IP
+> packets go through the NF_INET_FORWARD hook, where selinux_ip_forward()
+> calls selinux_netlbl_skbuff_setsid() and NetLabel may add or remove a
+> CIPSO or CALIPSO option.  cipso_v4_skbuff_setattr(),
+> calipso_skbuff_setattr() and calipso_skbuff_delattr() move the IP
+> header and reset the network header, but the Ethernet header stays
+> where it was; when the bridge pushes it back in front of the packet it
+> picks up stale bytes and the frame goes out with a garbage destination
+> MAC and EtherType.
+>
+> Labeling a bridged packet based on its IP addresses is not what we want
+> here anyway, so leave bridged packets alone.  Add a stub of
+> nf_bridge_info_exists() for CONFIG_BRIDGE_NETFILTER=3Dn.
+>
+> Tested with QEMU, two veths enslaved to a bridge with br_netfilter in
+> the middle, SELinux and a NetLabel DOI 16 configuration, 5 UDP packets
+> per case:
+>
+>   case                                        before        after
+>   CALIPSO packet, unlabeled destination       MAC garbage   5/5
+>   unlabeled IPv6, CALIPSO destination         MAC garbage   5/5
+>   unlabeled IPv4, CIPSO destination           MAC garbage   5/5
+>
+> Routed packets are still labeled (an unlabeled packet forwarded towards
+> a CALIPSO destination gets the option, 5/5).
+>
+> Fixes: 948bf85c1bc9 ("netlabel: Add functionality to set the security att=
+ributes of a packet")
+> Link: https://lore.kernel.org/netdev/CAHC9VhS+bdL_YnLQtd0sPmKKfy9BvS-LWV_=
+6EhAuu4qfUFe_mw@mail.gmail.com/
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Joas Antonio dos Santos <joasantonio108@gmail.com>
+> Assisted-by: Claude:claude-opus-5-5
 
-> When a seq_buf has overflowed, its len is size + 1, so seq_buf_pop()
-> decrements len to size and reads buffer[size], one byte past the end of
-> the buffer. It also leaves len equal to size, which no longer counts as
-> overflowed, so a truncated seq_buf then looks like a complete, full one.
-> 
-> An overflowed seq_buf logically has no last character to pop: the
-> length of what was written has been lost, and the last byte of the
-> buffer may be the NUL written by vsnprintf() or bytes that were never
-> committed. Return -1 for an overflowed seq_buf, as for an empty one,
-> and leave it overflowed, as the rest of the seq_buf API does until
-> seq_buf_clear() or seq_buf_init().
-> 
-> The current callers do not reach this, e.g. trace_syscalls only calls
-> trace_seq_pop() when the trace_seq it pops from has not overflowed, and
-> kernel/bpf/diagnostics.c sets the length from strnlen() before popping.
-> 
-> Add tests for the pop corner cases.
-> 
-> Tests passed under qemu on ARCH=x86_64 with GCC 16.2.0 and CONFIG_KASAN=y,
-> and on big-endian ARCH=s390 with GCC s390x-linux-gnu 16.1.0.
-> 
-> Fixes: 32e0f607ac6a2 ("tracing: Add trace_seq_pop() and seq_buf_pop()")
-> Assisted-by: LLM
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-
-Reviewed-by: Steven Rostedt <rostedt@goodmis.org>
-
--- Steve
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
