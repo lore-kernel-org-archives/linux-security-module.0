@@ -1,115 +1,174 @@
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7C9476056
-	for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2026 23:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA7175A9D;
+	Fri, 16 Oct 2026 00:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792106068; cv=none; b=QZQwFJ5d+qfSHXy5qh2L55B+ii/euVwuloa1V3FLaUF5ZXTVccHc+WppnGuYCiIvMkCyv7NwwF4g+ZXYtmoZd8j8ew3GpHoDMjXU18rtBuSvoktRUVOzwFKQbQWkhdg3LEiPK7wHGDmzGfOJ4dbq+cUIu+eroC0zM9H4nTlFMPY=
+	t=1792109034; cv=none; b=GcEUZbON0Sl7GBhm3Re/lHAxTmhPCRfMEXgo7FTIrzMNjEKdMtdtapWDgLq9Lrw3bLqDYLaaJp9keEkrU8qaHLavRwnM3CAWEj1yxjBy0q9F0C627LQHDpr3Xa7OOtiZC6tVcrDdB8hhPAPkeHife+luiEzYOTgbxcLj3iNRdPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792106068; c=relaxed/simple;
-	bh=G1VWVzqgtNFSdZ3tdadaIkj4EZd0Y1m8BQMjwsAXmlY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iw1qXKpjNy42vSbXKprd7upPOdBuyu+fHTy7lwrovCHij10fTtQow5Xoirudn4iPNmUkUpzpSwIhpfU1MVSrnwCwoWC2QQuNNIEgDvE2Q6Roy9VXpx8AIOGrW18eP6Uth7o+yMPOUu95iuB8EocYrDMH8Wv9I77/LUk6qUGGIlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JdP5ygMa; arc=none smtp.client-ip=74.125.82.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792109034; c=relaxed/simple;
+	bh=/J9vkQnHyxosFoJr9W9QBtjq0YYxgnpGBT61RpVtPOM=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=FDoTwb61XxwCZbfcXsMHOIWKCUXgcscMEil4TFAWQppXdq4oFCB8FjxtcovcS9Sqm0NEgCdPVdxlPOFY3wy2aGLXyjEobPl38ss7JT3ijJg9JOoo7NUgRph5/Xu7eaLmrzoz3QTOL0D2tQP9c6TnwwfeOz4fjjj5asspvndjurg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T8JmhcId; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JdP5ygMa"
-Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso878448eec.0
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2026 16:14:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792106067; x=1792710867; darn=vger.kernel.org;
-        h=mime-version:content-transfer-encoding:content-type:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=jOoDNdgbqEONnRhnyuTwsgaYEHRZvbrYhwZMQUhYOFM=;
-        b=JdP5ygMabZzBXo/EhxT/jY54OXwwD04A5YDYkGO9VGJ8b8ex+IiKtzkqK1jeYDubXT
-         DzU6iWEr9axaUr/iHLODfTVN5O3TezmRwrPsZU8by2WJMnoxetK9POQJFnkjC0jgayPz
-         QYKL2vy+oBJgItG/6kiJ5ONqpgIL8Dmplfw8MDVc8zQg/gQz3gu4w+cqigudhqv6d3L0
-         rsPbhGUtoJ1zEfevk+KeE++FF+RQlb362IOzvGaAgu05XXMsnqViaSH0ywdZyprgaKpL
-         y788N0etBWTBQDpjuzCb3BRLz4/CR27C3FfHAOXhtMm0VcCiy2fbSRzd0qJHdfAssRSU
-         D2WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792106067; x=1792710867;
-        h=mime-version:content-transfer-encoding:content-type:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=jOoDNdgbqEONnRhnyuTwsgaYEHRZvbrYhwZMQUhYOFM=;
-        b=OrA2kZcjPVkuLG+QQiXzSN4g7LKLQTM38GfkNjs2b7MH3Bi4WdV30M9jq/tKHHoV2c
-         rz6sEPiH8fAHSd8Ij1+P/KtJztvWJIBID5dLuJdbwbl7XBg7m8/iBd7Jm+zxbjDiIsQz
-         Oee89rwSRwzKS9a0K56A9bmm9ztauvTJlZzTsdNykqZ/J26ty81yn/hYxsWxdLCnUeeb
-         IdbUGD6LC6udmQGYBKXCVgLVK5Ldnq3eRg7KKVX/SP49U8gOdwac9TZexP98Cr4pw8hK
-         o5qi4RmFV5q9kvEbqRZszuVI0NaC8kgejEobTKP72osL9Y+0o1C7Fl7klhNvYOATUVTm
-         1naA==
-X-Forwarded-Encrypted: i=1; AKwUvBw3x5J5VN2Elpn+wl5FVefcoMq4oVgBBjuw88HJ3+xBKu5T6Q1IcqdAAu3n1Ae1LFn7mxc6VaY0TaL1zvIgOgM3M8mC0zs=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIir9LxgZe2p6rOG2EiXTLK9Ttg9DQmAZ7vvtyaZi2eX0tWI+T5
-	bSblCYIU059MhpPTXi7a3pAeDgD0a2Z2tHDl8rphTIKpoTyPxOLi8vTO
-X-Gm-Gg: AYBFou2Bv9mW4AtDw4l2WWZUSOXnplCsd9Wdf0Js3Y1nIrpSEAcf6JVvogZobvb0w+w
-	JYi6VGnuG+y5q6eOZw14ZazbMDdHehv4jn0u1ODz6ur90JTnNJhNbUhawhUSxzL8Tb6LSkKnyq/
-	Pzw6T4piBjAW5oRClMpWIYtSwYi3hGOcULuQBf+HVt4+l8Lb1Vpxrw/a/wUXl0HlfpkS99jEZks
-	NbKxwoBabArNnYIjjwxPX9G8QXurvSPdcCgSVJbrX+RMIq4JI9eKdLdsfBHl0L/RXOjw7fZfhI2
-	N5Lxmv+703E5CsPnbH4u96ZCikk/QK/lqX4AW9BH04D1E575dH2Pqz8kC7vDrsS5UGfOE64/7n5
-	uKitR0ZUplXus325rHUYIbedkKhKK0BnTtHa44p6S0tN9L00xIon/1Qro2iuQGJI9Hol+0i7Rud
-	4HeZ37BnZs7GraUgqzqDWjsWZhgP6jAbzqymBjV2aSvi4Tvw0+MVefTBbeo4vpX47vqBxISRbYd
-	1G2vagsSFvlrvFglKc4KGpTkTN8XAOZMyP9kwr6aOQQwVXrZImHAc+Mz4z66qILqZF0iQEA5bF7
-	J+/kOaF/cLkVGe27AJGiU2z4kq5LNiaa9zW149f2XbQfC+HTq00KO/CI0Fw/tWvEu7G6SD0=
-X-Received: by 2002:a05:7300:d191:b0:353:7f50:a99b with SMTP id 5a478bee46e88-3537f50ac52mr27374925eec.6.1792106066501;
-        Thu, 15 Oct 2026 16:14:26 -0700 (PDT)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2804:7f0:b100:ece0:446b:100:5c81:b436])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3607bc950f9sm1262967eec.0.2026.10.15.16.14.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 16:14:25 -0700 (PDT)
-From: Joas Antonio dos Santos <joasantonio108@gmail.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, sashiko-reviews@lists.linux.dev,
- linux-security-module@vger.kernel.org, network dev <netdev@vger.kernel.org>
-Subject: Re: [PATCH net v2] calipso: update payload_len when removing the
- CALIPSO option
-Date: Thu, 15 Oct 2026 20:14:21 -0300
-Message-ID: <179210606199.96599.8994346249690707193@gmail.com>
-In-Reply-To: <852c9fb6-6217-440a-968c-b5ab3e22dbc8@redhat.com>
-References: <179147329205.58079.5847298721173675285@gmail.com>
- <sashiko-outbox-165773@kernel.org>
- <CAHC9VhS+bdL_YnLQtd0sPmKKfy9BvS-LWV_6EhAuu4qfUFe_mw@mail.gmail.com>
- <852c9fb6-6217-440a-968c-b5ab3e22dbc8@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T8JmhcId"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69FJSN6v437488;
+	Fri, 16 Oct 2026 00:02:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/J9vkQ
+	nHyxosFoJr9W9QBtjq0YYxgnpGBT61RpVtPOM=; b=T8JmhcIdM+IZlDu1hLe31J
+	m6mbjwcWL7wzOhkhG48GMAQlsaYPR+qFspy9MtxmiqJAc7tEhHppbNKH9Ly6ZtZV
+	VqxL0sG8s2UwXNLFqIJ/BYZUI5pdL3Q7nroUwRsfUZ8NnojGqzqlf4TRT4AYhP4L
+	6FIDNuGbJCz0GmEFk/Hg39Qj1dTW+wDF8Je9F6lhuDnTz0Ez1O9eo34NkYGd3QWl
+	cZT5GXWip3BeiaEHOopn1erdpxY1LeO4vtBHH3q98w6K3sLk76T90ISRopD52k3Y
+	zDVC5jr2MvAZIMwg+xjEXbsZPTVrL2CYSC8Mm8BnPyO6Np9NnZwnVMHA81Yvggnw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4h7dwjc4bu-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 16 Oct 2026 00:02:55 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69FN3x9q1927457;
+	Fri, 16 Oct 2026 00:02:54 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4h9ypq94xa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Oct 2026 00:02:54 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69G02sUl44827056
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 Oct 2026 00:02:54 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18558580DF;
+	Fri, 16 Oct 2026 00:02:54 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 36309580E3;
+	Fri, 16 Oct 2026 00:02:51 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.159.15])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 16 Oct 2026 00:02:51 +0000 (GMT)
+Message-ID: <2dd935d171066eb4f1c251184eee871ad91f46b4.camel@linux.ibm.com>
+Subject: Re: [PATCH] kexec: Select ima_get/free_kexec_buffer() with
+ CONFIG_HAVE_IMA_KEXEC(_OF)
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, catalin.marinas@arm.com,
+        will@kernel.org, mark.rutland@arm.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
+        npiggin@gmail.com, chleroy@kernel.org, pjw@kernel.org,
+        palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+        tglx@kernel.org, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, hpa@zytor.com, robh@kernel.org,
+        saravanak@kernel.org
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        devicetree@vger.kernel.org, noodles@fb.com,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>
+In-Reply-To: <20261014150005.138309-1-roberto.sassu@huaweicloud.com>
+References: <20261014150005.138309-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 15 Oct 2026 20:04:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE1MDA5NCBTYWx0ZWRfX2HSmi+79F5sk
+ F6cJ7NPejHB+7WHifxwy2jTNeN+1trz8LY4O/c9Nrxfke0WNdl7j1Q+67s4DKMWPR6esIHz8ktI
+ K0tq6WDkqAuHdd5alAeGCbELszv+Iy4JZ0+fqSO/L13P8KVSgc+hLSs0BUMcp1abGeEddTWuQ0x
+ DgckQmdPn28cVLNyaRpJNpQgHrkPzvNhtB4BrwiL11DqWhTQ4iKZBnJ6O6YMYp3wIbPkHlbPNTu
+ yuFjLtwZNiUnx0o6/TBRUj7JJDZnA2Psv+zNVmANtyZBcqWuyk14cfQgW2Kd9p6jpMvxEPS0i4P
+ 9izNnrleHEY+3qJ5vxEC5owm2SmqeBCu4OE58PHvT8msLi1bqUTwEmcDI3uhC1lcyvBSJ8AI2/Z
+ P4yU5XoeV0+kwIer2DSUzTnv5W4e9/IuU49Yz1D77lWvgRbiAXpcAuzu2CM8QtMFWDh3J7Pn/95
+ F6Hddu++a3Zm8l5+F0g==
+X-Proofpoint-GUID: NTtm2mgFbtZvv4BT6wKycrFWT1K8ZNoK
+X-Proofpoint-ORIG-GUID: tiREeBn2CptRBXexEe4TPGoQAtBFlstP
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE1MDA5NCBTYWx0ZWRfX/DAorNGlPVs4
+ yv5/RElxR2BVrhNGnK8pZHiy6neDZgmPdHp2jFgKzGeIaabQ9Lw8/ORsLJZrcqeRQhQk4Obp43l
+ W/UyHe4tHhV1wBc+cnuG7GIYhmkZQRE=
+X-Authority-Analysis: v=2.4 cv=btHZl0ai c=1 sm=1 tr=0 ts=6ad169af cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=i0EeH86SAAAA:8
+ a=oj6d6ukrGZa-rDQ9-ikA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-14_01,2026-10-14_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0 adultscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1011 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
+ definitions=main-2610150094
 
-On Thu, 15 Oct 2026, Paolo Abeni wrote:
-> The above looks like a pre-existing issue, the patch itself looks
-> correct, right?
+Hi Roberto,
 
-Hi Paolo, Paul,
+On Wed, 2026-10-14 at 17:00 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Yes, the issue is pre-existing; the delattr patch doesn't change it.
-The skb_pull()/memmove()/skb_reset_network_header() sequence quoted
-by Sashiko predates this patch, which only adjusts payload_len after
-it.
+The first paragraph should explain the problem from a high level: the user-
+visible impact and cause. For example, something like:
 
-I tested Paul's idea on top of both CALIPSO patches (QEMU, veth +
-br0 with bridge-nf-call-ip6tables=1, SELinux + NetLabel CALIPSO
-DOI 16):
+=E2=80=9COn x86, if CONFIG_OF_FLATTREE is enabled, the kernel uses the devi=
+ce tree
+implementation of ima_get/free_kexec_buffer(). However, x86 doesn=E2=80=99t=
+ pass the IMA
+buffer through the device tree, so the buffer is never found and the IMA
+measurement log is not carried over across kexec.=E2=80=9D
 
-- without it, a bridged CALIPSO packet towards an unlabeled
-  destination reaches the peer with a corrupted Ethernet header
-  (garbage dst MAC, ethertype 0x0000) and is dropped; an unlabeled
-  packet towards a CALIPSO-mapped destination never reaches the peer.
-- with the nf_bridge_info_exists() check in selinux_ip_forward()
-  (plus a stub returning false for CONFIG_BRIDGE_NETFILTER=n),
-  5/5 packets are delivered unmodified in both cases.
-- the routed path is unchanged: delattr 5/5, setattr still adds the
-  option 5/5. W=1 is clean with BRIDGE_NETFILTER=y and =n.
+Then continue with the fix: defining CONFIG_HAVE_IMA_KEXEC_OF and selecting=
+ it
+only on the architectures that use the device tree implementation.
 
-Paul, if you like I can send it as a separate selinux patch with your
-Suggested-by.
+thanks,
 
-Thanks,
-Joas
+Mimi
+
+>=20
+> The ima_get/free_kexec_buffer() device tree implementation relies on the
+> arch code calling of_kexec_alloc_and_setup_fdt() to pass the information
+> about where the IMA kexec buffer is located. Only the arm64, powerpc and
+> riscv architectures support that. LoongArch implicitly assumes that the
+> device tree implementation is used, but it does not call that function.
+
+>=20
+> The ima_get/free_kexec_buffer() x86 implementation instead still relies o=
+n
+> the setup data to pass the kexec buffer information, and is built only if
+> CONFIG_OF_FLATTREE is not defined.
+>=20
+> However, if CONFIG_OF_FLATTREE is selected in x86, x86 attempts to use th=
+e
+> device tree implementations of ima_get/free_kexec_buffer(), which are nev=
+er
+> going to succeed because of_kexec_alloc_and_setup_fdt() is not called for
+> that architecture.
+>=20
+> Instead, define CONFIG_HAVE_IMA_KEXEC_OF (automatically selects
+> HAVE_IMA_KEXEC), select it for the architectures that should use the
+> ima_get/free_kexec_buffer() device tree implementation, and enable these
+> functions if the new config option is enabled. Set it also on LoongArch, =
+to
+> preserve the current behavior and avoid a link failure. LoongArch does no=
+t
+> pass the buffer location to the next kernel yet; this will be addressed
+> separately.
+>=20
+> Finally, don't select it for x86, and use x86's own setup_data-based
+> implementation regardless of CONFIG_OF_FLATTREE.
+>=20
+> Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kex=
+ec")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
