@@ -1,174 +1,108 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA7175A9D;
-	Fri, 16 Oct 2026 00:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AA22192FA
+	for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 00:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792109034; cv=none; b=GcEUZbON0Sl7GBhm3Re/lHAxTmhPCRfMEXgo7FTIrzMNjEKdMtdtapWDgLq9Lrw3bLqDYLaaJp9keEkrU8qaHLavRwnM3CAWEj1yxjBy0q9F0C627LQHDpr3Xa7OOtiZC6tVcrDdB8hhPAPkeHife+luiEzYOTgbxcLj3iNRdPM=
+	t=1792111095; cv=none; b=a5T06ZCDyHtay+4hdvQL9iGT12CxM3NLvfaE+xfgL1/rNvWNJIlRS/DVqxcp12c8YaslpvhW+R0GgEH7fx+yqz5pdXZVe6AkN4Ta06goyEQuKipCBfSdfv2WuRrwRb39KuGlKWV1hpozA/jFkc89LAVydLlkSIfxDKHbcUEhywg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792109034; c=relaxed/simple;
-	bh=/J9vkQnHyxosFoJr9W9QBtjq0YYxgnpGBT61RpVtPOM=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=FDoTwb61XxwCZbfcXsMHOIWKCUXgcscMEil4TFAWQppXdq4oFCB8FjxtcovcS9Sqm0NEgCdPVdxlPOFY3wy2aGLXyjEobPl38ss7JT3ijJg9JOoo7NUgRph5/Xu7eaLmrzoz3QTOL0D2tQP9c6TnwwfeOz4fjjj5asspvndjurg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T8JmhcId; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1792111095; c=relaxed/simple;
+	bh=wJv6Oy02ZyVpQIEV4S+JLl2ZMXIUTlylj7/wOCMhJJY=;
+	h=Content-Type:Date:Message-Id:Subject:From:To:Cc:In-Reply-To:
+	 References:MIME-Version; b=JyT9NNJp04fXgsteNWen4vbJIq4xqjjY4RVKaIreVEXLWm3D/zZUF9uO3+pB7VwKx9sEpihrvaxm2q9jSw4rKmEHR6L0lKbVRH1Cj7E+zx0wL6Kv1qZ4vN+g3unEJLzMSoow4vaBd1k15oXfNOuUXqjJ1U6Bg6fiZpZFtXGVQc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3bkIh7E; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T8JmhcId"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69FJSN6v437488;
-	Fri, 16 Oct 2026 00:02:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/J9vkQ
-	nHyxosFoJr9W9QBtjq0YYxgnpGBT61RpVtPOM=; b=T8JmhcIdM+IZlDu1hLe31J
-	m6mbjwcWL7wzOhkhG48GMAQlsaYPR+qFspy9MtxmiqJAc7tEhHppbNKH9Ly6ZtZV
-	VqxL0sG8s2UwXNLFqIJ/BYZUI5pdL3Q7nroUwRsfUZ8NnojGqzqlf4TRT4AYhP4L
-	6FIDNuGbJCz0GmEFk/Hg39Qj1dTW+wDF8Je9F6lhuDnTz0Ez1O9eo34NkYGd3QWl
-	cZT5GXWip3BeiaEHOopn1erdpxY1LeO4vtBHH3q98w6K3sLk76T90ISRopD52k3Y
-	zDVC5jr2MvAZIMwg+xjEXbsZPTVrL2CYSC8Mm8BnPyO6Np9NnZwnVMHA81Yvggnw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4h7dwjc4bu-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 16 Oct 2026 00:02:55 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69FN3x9q1927457;
-	Fri, 16 Oct 2026 00:02:54 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4h9ypq94xa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Oct 2026 00:02:54 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69G02sUl44827056
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Oct 2026 00:02:54 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 18558580DF;
-	Fri, 16 Oct 2026 00:02:54 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36309580E3;
-	Fri, 16 Oct 2026 00:02:51 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.159.15])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 16 Oct 2026 00:02:51 +0000 (GMT)
-Message-ID: <2dd935d171066eb4f1c251184eee871ad91f46b4.camel@linux.ibm.com>
-Subject: Re: [PATCH] kexec: Select ima_get/free_kexec_buffer() with
- CONFIG_HAVE_IMA_KEXEC(_OF)
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, catalin.marinas@arm.com,
-        will@kernel.org, mark.rutland@arm.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
-        npiggin@gmail.com, chleroy@kernel.org, pjw@kernel.org,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-        tglx@kernel.org, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, hpa@zytor.com, robh@kernel.org,
-        saravanak@kernel.org
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        devicetree@vger.kernel.org, noodles@fb.com,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Roberto Sassu
- <roberto.sassu@huawei.com>
-In-Reply-To: <20261014150005.138309-1-roberto.sassu@huaweicloud.com>
-References: <20261014150005.138309-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 Oct 2026 20:04:39 -0400
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3bkIh7E"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2e49fbf92aaso35125515ad.0
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2026 17:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792111094; x=1792715894; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:references:in-reply-to:cc:to
+         :from:subject:message-id:date:content-type:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=wJv6Oy02ZyVpQIEV4S+JLl2ZMXIUTlylj7/wOCMhJJY=;
+        b=a3bkIh7Ee8Kg3CriNDEwX8oGdI8Qdq5fV8e7jXfgg0J1TidIHQ4ixKF3GGM/J9uPaU
+         e9p3Qhm0hYO6htG8BQo38S6WoWM17XaFGJgXz52hh0QoGrW0FDwdFx014NgxccrzmPDu
+         tgbpiLo9zoTQFGvOXV/dtf2i06sLTA0NjLV7QioPqD/w0Lj9OfYijzAFuzNuiRYVAi6d
+         N0MAhUGZZgq6jxOVaP4SUrgfmC9X+wf0hf06uCR2fckrgo66IiFyfvGxl1JjLyDrCPO/
+         S/vw5NXyrspYxKUnw5D8+EHgJ2a0J83wCznPI/OO3Clz8nc6Gz2YW1YzxBTBClAAqsCa
+         L4Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792111094; x=1792715894;
+        h=mime-version:content-transfer-encoding:references:in-reply-to:cc:to
+         :from:subject:message-id:date:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wJv6Oy02ZyVpQIEV4S+JLl2ZMXIUTlylj7/wOCMhJJY=;
+        b=S7gXvCozXldcGI6v8mcR+miKj21oNkSTbxzqy7bh/5m/FrIJjqIQ7mqaits9f8O0Pa
+         Nz3ggDeY540eM1K6RnihOmDPDERB9CfQd8YGAVN0oWyvJraie5ZEeEa5BK+bpbOZAmZF
+         tY0NextJ8cmGMGCZ+ee1Q1VoPYTouracIu6+IqFVh/0AmahxKBPel3UuCrWxKz1m1DDA
+         /4Skz/CxhX4RrLbwJMVEDCVOd9z3W6VSfViXCX9en5UM6y6H4yjkwuvD6SeTYPnA70BV
+         pQW1V4zvDLTuJzIMEM73sWtMcd3MV3TTNc7w3b34v7jC26/FEuIS9oQssiIjRKzdIJ15
+         +zoA==
+X-Forwarded-Encrypted: i=1; AKwUvBxfg2t/y4KPyAFVk3EOQMrzQTA0L3ePIS0yQRT0YH2a3uwZpCZO8GrpOOVwWg3F88kGST4YNRJpQc2wSs9KRPZq+3M+2PE=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJAfM8d2D/UUBpeMz0jwIp/kA9MX8RwVQa7guixhtvv45sDg06l
+	9u6T/YhNXrWKuOVDhS1w8/4SMYfvK8+NULfnMrgmM2zfT6diHNxYNRC0880lmA==
+X-Gm-Gg: AYBFou2uyfRZtQWCl3TZbG9obAnfUqT/pNHD+2utipcZd+VEfFR12A2ICf8kC3jJY9i
+	rQPOyNrGDrTrn/w3m7iqWFlIfy3BZ0cPIvK8L7xYJ/V8ZSDSrgvQ8drCMKkeU8JQ6StX2XEsp87
+	bXR66y3hnrJW/eXT0yosNU2QQzyDv96Q2BNNS3xmc+8niQWKLKEc6U0tkIhKUKQE4m0UMk3Wiwy
+	tNkcEhmDNa6pPFXiy642ztvnj68FxnQ8gQzAqBGdUSyMGwEt2PtiNVzzgEKG5tQtadbLuhgBKzl
+	i/Yf6RFGcEtE15k9bU4JZ+01TUQA/VAaU0kJMO/ThM0IqGrLXGIJPHFWpIM6XwciaBJy8GBD45F
+	9bW6BNK5QUcBPBq+04BIIv9YLxvO5NTJnatdHGC+H25zcZb+Op+++8VK3NZpEOC+pEpS5u2GGZX
+	PFabXmd8QJ5uKCL1KnVd8QhTtk8x4WS2nbmEc7V/lCxSkTcZSevmBmaPYRzP0qEh+9uZ3GKgBs+
+	CL8jskM+hgJO4RZXLBhnGXKYMWWreMqmkKJXAY0G2Y0C1pX5DkbjnvhB93Rj776YPxywM9UobGc
+	7sI=
+X-Received: by 2002:a17:90b:1d4f:b0:3ab:c80:936f with SMTP id 98e67ed59e1d1-3ab3a94ffa7mr15824328a91.16.1792111093664;
+        Thu, 15 Oct 2026 17:38:13 -0700 (PDT)
+Received: from localhost ([153.61.198.253])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac947dfa00sm6462107a91.17.2026.10.15.17.38.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2026 17:38:12 -0700 (PDT)
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 16 Oct 2026 00:38:11 +0000
+Message-Id: <DM5UD20248FG.3BXPS76LK06F5@gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/3] keys: Add well known IDs for
+ fs-verity/dm-verity keys
+From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+To: "Christian Brauner" <brauner@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Alasdair
+ Kergon" <agk@redhat.com>, "Mike Snitzer" <snitzer@kernel.org>, "Mikulas
+ Patocka" <mpatocka@redhat.com>, "Benjamin Marzinski" <bmarzins@redhat.com>,
+ "David Howells" <dhowells@redhat.com>, "Jarkko Sakkinen"
+ <jarkko@kernel.org>, "Paul Moore" <paul@paul-moore.com>, "James Morris"
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Eric Biggers"
+ <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
+ Dunlap" <rdunlap@infradead.org>, "Andrew Halaney" <andrew@amutable.com>
+Cc: <dm-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <bpf@vger.kernel.org>, <fsverity@lists.linux.dev>,
+ <linux-doc@vger.kernel.org>
+In-Reply-To: <20261012-broschen-inanspruchnahme-gebilde-d72cf2b99cda@brauner>
+References: <20261008-ajhalaney-dmverity-key-identifier-v2-0-008456d189cb@amutable.com> <20261012-broschen-inanspruchnahme-gebilde-d72cf2b99cda@brauner>
+X-Mailer: mkdraft (claude review draft; edit before sending)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE1MDA5NCBTYWx0ZWRfX2HSmi+79F5sk
- F6cJ7NPejHB+7WHifxwy2jTNeN+1trz8LY4O/c9Nrxfke0WNdl7j1Q+67s4DKMWPR6esIHz8ktI
- K0tq6WDkqAuHdd5alAeGCbELszv+Iy4JZ0+fqSO/L13P8KVSgc+hLSs0BUMcp1abGeEddTWuQ0x
- DgckQmdPn28cVLNyaRpJNpQgHrkPzvNhtB4BrwiL11DqWhTQ4iKZBnJ6O6YMYp3wIbPkHlbPNTu
- yuFjLtwZNiUnx0o6/TBRUj7JJDZnA2Psv+zNVmANtyZBcqWuyk14cfQgW2Kd9p6jpMvxEPS0i4P
- 9izNnrleHEY+3qJ5vxEC5owm2SmqeBCu4OE58PHvT8msLi1bqUTwEmcDI3uhC1lcyvBSJ8AI2/Z
- P4yU5XoeV0+kwIer2DSUzTnv5W4e9/IuU49Yz1D77lWvgRbiAXpcAuzu2CM8QtMFWDh3J7Pn/95
- F6Hddu++a3Zm8l5+F0g==
-X-Proofpoint-GUID: NTtm2mgFbtZvv4BT6wKycrFWT1K8ZNoK
-X-Proofpoint-ORIG-GUID: tiREeBn2CptRBXexEe4TPGoQAtBFlstP
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE1MDA5NCBTYWx0ZWRfX/DAorNGlPVs4
- yv5/RElxR2BVrhNGnK8pZHiy6neDZgmPdHp2jFgKzGeIaabQ9Lw8/ORsLJZrcqeRQhQk4Obp43l
- W/UyHe4tHhV1wBc+cnuG7GIYhmkZQRE=
-X-Authority-Analysis: v=2.4 cv=btHZl0ai c=1 sm=1 tr=0 ts=6ad169af cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=i0EeH86SAAAA:8
- a=oj6d6ukrGZa-rDQ9-ikA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-14_01,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0 adultscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1011 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610080000
- definitions=main-2610150094
 
-Hi Roberto,
+On Mon, Oct 12, 2026 at 12:38 PM Christian Brauner <brauner@kernel.org> wrote:
+> Applied to the vfs-7.4.keyring branch of the vfs/vfs.git tree.
+> Patches in the vfs-7.4.keyring branch should appear in linux-next soon.
 
-On Wed, 2026-10-14 at 17:00 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+What is this branch based on ?
+v2 was sent against bpf-next, because
+commit 264d8fd2794f ("bpf, keys: Add a bpf keyring for program signature validation")
+is only there.
+All hunks in keyctl.h, key.h and process_keys.c have its lines as
+context, so the patches don't apply to -rc as-is.
+And patch 3 documents KEY_SPEC_BPF_KEYRING.
 
-The first paragraph should explain the problem from a high level: the user-
-visible impact and cause. For example, something like:
+I'm confused.
 
-=E2=80=9COn x86, if CONFIG_OF_FLATTREE is enabled, the kernel uses the devi=
-ce tree
-implementation of ima_get/free_kexec_buffer(). However, x86 doesn=E2=80=99t=
- pass the IMA
-buffer through the device tree, so the buffer is never found and the IMA
-measurement log is not carried over across kexec.=E2=80=9D
-
-Then continue with the fix: defining CONFIG_HAVE_IMA_KEXEC_OF and selecting=
- it
-only on the architectures that use the device tree implementation.
-
-thanks,
-
-Mimi
-
->=20
-> The ima_get/free_kexec_buffer() device tree implementation relies on the
-> arch code calling of_kexec_alloc_and_setup_fdt() to pass the information
-> about where the IMA kexec buffer is located. Only the arm64, powerpc and
-> riscv architectures support that. LoongArch implicitly assumes that the
-> device tree implementation is used, but it does not call that function.
-
->=20
-> The ima_get/free_kexec_buffer() x86 implementation instead still relies o=
-n
-> the setup data to pass the kexec buffer information, and is built only if
-> CONFIG_OF_FLATTREE is not defined.
->=20
-> However, if CONFIG_OF_FLATTREE is selected in x86, x86 attempts to use th=
-e
-> device tree implementations of ima_get/free_kexec_buffer(), which are nev=
-er
-> going to succeed because of_kexec_alloc_and_setup_fdt() is not called for
-> that architecture.
->=20
-> Instead, define CONFIG_HAVE_IMA_KEXEC_OF (automatically selects
-> HAVE_IMA_KEXEC), select it for the architectures that should use the
-> ima_get/free_kexec_buffer() device tree implementation, and enable these
-> functions if the new config option is enabled. Set it also on LoongArch, =
-to
-> preserve the current behavior and avoid a link failure. LoongArch does no=
-t
-> pass the buffer location to the next kernel yet; this will be addressed
-> separately.
->=20
-> Finally, don't select it for x86, and use x86's own setup_data-based
-> implementation regardless of CONFIG_OF_FLATTREE.
->=20
-> Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kex=
-ec")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
