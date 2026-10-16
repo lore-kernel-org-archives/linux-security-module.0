@@ -1,87 +1,74 @@
-Received: from r9220.ps.combzmail.jp (r9220.ps.combzmail.jp [160.16.65.223])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C07C3A6B8F
-	for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 05:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.65.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C688B41A923;
+	Fri, 16 Oct 2026 08:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792129576; cv=none; b=SP0kJzJFvhvNUeNoZmdFSqNGJe4uFLyQuJJogNipTboyM6mqEL2zEHmKQV3w0R7o1zUeFHrxvdtIxYl4gnY/NfHKBCHygMdTqeRwX0GR2ZojYOK91ZQMlGq4bUiD3O7CrdKmPGPr8dPf4hx7BO/sIy92wcbYj6yNDY/bT5ODAQA=
+	t=1792139251; cv=none; b=Jw43Bm5RWnrbgxgc5BU2/BfEJ/FH4YlEb4WcQ6n0eLkuyaIXXTWb32Ke8xSjCJ1P8lZXncD0t2lwQuG2HcocYRgB1DVxR+Rxd2L1scz6qOTeds9+Y0nI9yKC+NhWrmIKqjTi6TmV/1Q2T1w4qX3L4EQxB+BTjOCcgV14LDcJeBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792129576; c=relaxed/simple;
-	bh=ebyI7XDSk1Lx0tbMrXAePp63eNec9TltndH6dU+gpCA=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=fxYoikpe+usOjQWSr3zybaynPSUDY0buvSDxPXdy+eSjeTlVJhrBogo5ikBhB3ItFWysDkmB0HaKVIJjhubRJ26GweAgah4vam8f/hRr2FmRqwEB6yV06aYGvRGctSvyUR3XcYXGxByHrnqf4bFoefp4Eep9Gi48Rg9optLxOz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chatgpt-event.work; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.65.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chatgpt-event.work
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9220.ps.combzmail.jp (Postfix, from userid 99)
-	id 312FEC09D1; Fri, 16 Oct 2026 14:45:52 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9220.ps.combzmail.jp 312FEC09D1
-To: linux-security-module@vger.kernel.org
-From: AI =?ISO-2022-JP?B?GyRCJSghPCU4JSclcyVIIUMlJCVZJXMlSDt2TDM2SRsoQg==?= <info@chatgpt-event.work>
-X-Ip: 105163600192535
-X-Ip-source: k85gj70348dnsa1qu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?MRskQkZ8JEdESSQkJEQkLxsoQiBDbA==?=
- =?ISO-2022-JP?B?YXVkZSBDb2RlGyRCJHIzWCRWRn5MZzlWOkIbKEI=?=
+	s=arc-20240116; t=1792139251; c=relaxed/simple;
+	bh=+H+gcbO8/GdePEPNqNGwAbchsNQcK6/a1jIVjw7YQZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMon0gDfAPRJzG8O3WAr+5tHnoBtf5vJOaEKOnprv31vj0zNNpXm3eL8Uq+x92lthbJdi8hJnCE461ucDkD9GYrQpZaNz4qpf56YfvM1Irmyp/V3WNDSBxQt8Z9H+TmM2k9ozbLJS+bLsSlccU/85H6CJrds/I9GYAx4zBUYUzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lzs4bUl9; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lzs4bUl9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502F21F000C4;
+	Fri, 16 Oct 2026 08:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792139249;
+	bh=43WzBBDSBPDoqOTx2OTFsH6xhSXl8SSUb+vJUiJbtJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Lzs4bUl9+WVWd8J3U435zH6GMfKNGMwrZcogSut62Tucr1JDLK9yzO0N9XgOJ9xj1
+	 ueE97ndDBy3XFCpVxw6jT+SvlPDfhSSBt1KC3SAocfHqdRvdNnp5YsOzWk/d+V0BRN
+	 ywOgjkYd3nw/tZdcF4GKJTw84Tvveaas8aKMipgv/DGkOQ5kpnHtGGKOHBShx9nYgT
+	 iQMB5NABBDaYBIedyjVC2AxN2E4rvEUbswjYIuswGRvhQ0yJeStCP4VGCDpdULPRNl
+	 rYrKJwmnC+gefsx9QSxulci43rgXc1r0RGZd0ljaNQ3tXUftExeDvNqosr62RdyXwc
+	 Lj96KswkODT/Q==
+Date: Fri, 16 Oct 2026 10:27:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Alasdair Kergon <agk@redhat.com>, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, 
+	Benjamin Marzinski <bmarzins@redhat.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Andrew Halaney <andrew@amutable.com>, dm-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, fsverity@lists.linux.dev, linux-doc@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 0/3] keys: Add well known IDs for
+ fs-verity/dm-verity keys
+Message-ID: <20261016-ratlos-endkunde-eindimensional-1fe5eef08d13@brauner>
+References: <20261008-ajhalaney-dmverity-key-identifier-v2-0-008456d189cb@amutable.com>
+ <20261012-broschen-inanspruchnahme-gebilde-d72cf2b99cda@brauner>
+ <DM5UD20248FG.3BXPS76LK06F5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-X-MagazineId: 031q
-X-uId: 6764315443486066694582431009
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20261016054605.312FEC09D1@r9220.ps.combzmail.jp>
-Date: Fri, 16 Oct 2026 14:45:52 +0900 (JST)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DM5UD20248FG.3BXPS76LK06F5@gmail.com>
 
-お世話になります。
+On Fri, Oct 16, 2026 at 12:38:11AM +0000, Alexei Starovoitov wrote:
+> On Mon, Oct 12, 2026 at 12:38 PM Christian Brauner <brauner@kernel.org> wrote:
+> > Applied to the vfs-7.4.keyring branch of the vfs/vfs.git tree.
+> > Patches in the vfs-7.4.keyring branch should appear in linux-next soon.
+> 
+> What is this branch based on ?
+> v2 was sent against bpf-next, because
+> commit 264d8fd2794f ("bpf, keys: Add a bpf keyring for program signature validation")
+> is only there.
+> All hunks in keyctl.h, key.h and process_keys.c have its lines as
+> context, so the patches don't apply to -rc as-is.
+> And patch 3 documents KEY_SPEC_BPF_KEYRING.
 
-生成AIで「調べる」「文章をつくる」までは、
-すでに多くの企業が取り組まれています。
-しかし今は、AIが実際の業務そのものを動かす段階に入りました。
-
-今回のセミナーでは、実際の画面をお見せしながら
-以下を０から解説します。
-・AIエージェントとClaude Codeの基本
-・AIでWebサイトをつくる（作成から、公開後の自動更新まで）
-・AIで帳簿を作成する（品番検索・過去の見積書を参照）
-・実務での活用事例（サイトの自動更新、AIでのお問い合わせ対応）
-
-━━━━━━━━━━━━━━━━━━━━━━
-　　1日で追いつく Claude Codeを学ぶ入門講座
-　　― 調べる、作るだけでは終わらない。AIが「実務」を動かす60分。
-
-　日 時：2026年10月23日(金)14:00-15:00
-　　　 　2026年10月28日(水)14:00-15:00
-　　　　 2026年11月11日(水)14:00-15:00
-　会 場：オンライン開催（お申し込みの方に視聴用URLをお送りします）
-　費 用：無料
-
-　▼お申込みはこちら
-　https://chatgpt-event.work/ai-seminar1001/
-━━━━━━━━━━━━━━━━━━━━━━
-
-事前知識は不要です。エンジニアの方でなくても、
-経営者・ご担当者がイメージしやすい言葉でお話しします。
-
-前半ではAIエージェントとClaude Codeの基本を、
-後半は実際の画面を使った実演と活用事例をご紹介しますので、
-自社の業務のどこに使えるのかをそのままお持ち帰りいただけます。
-
-ぜひこの機会にご参加ください。
-
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-■ AIエージェント事務局
-東京都中央区銀座七丁目１３番６号
-TEL :0120-889-859
-Mail:info@chatgpt-event.work
------------------------------------------------------------------------------　
-　メール案内の停止をご希望の方は
-　下記アドレスよりお手続きをお願いいたします。
-　https://chatgpt-event.work/mail/
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+It's based on the portion of bpf-next that has Daniel's keyring patches.
+Which means I just wait until bpf-next is merged and then send it as a
+follow-up pr.
