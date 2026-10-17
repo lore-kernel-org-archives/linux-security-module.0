@@ -1,139 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D95738F636
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17F424BBEE;
+	Sat, 17 Oct 2026 07:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792223364; cv=none; b=mXcMffv9FaIqnucMnutRw3PxOgsDFE1W7NHka4yHy3uiKikZPz0uiUxoi/DP9eenfGkMa2tiWT5fatCpbbXU5vRrX5l9qJf2Rr0ewEI4pnI7tQXFGqwAECJ55vnJT6EWbZ5r8ljlz18m8EbEEVu1gUI2sIU84HxFTXF8zKmka/Q=
+	t=1792223379; cv=none; b=e/UZvYPDRK+VRAcNNLgs8Wx5ITYnUOTdXVwXMWbRh8kRSkv7+LppNeF1oGoMQS2rfKL+5qo0+IryavcvxwJZoUbFf+NlHm6ndB8BPZ7/+Aanz5qBaMuXYkCjm3dV2p39EXTqXwIWtdOJf/SgnkmjWTHvbcvVJ/a7/Tqtl67fEy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792223364; c=relaxed/simple;
-	bh=q1FeLJyp/npmf+8ffDfR/rgG1AmSVf/75lqdBVEQoIs=;
-	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=RlT0E3/l16Q3axTSxnd8rWiZJanjoG9y/lxX0Y/SK+KkS/z/nbo01Gy1v6DYV2rm5vjsj43nExg8lIzAdeHIiCmltt9rrW9uBb06M4V8lnfDBKSTZ3GOiNfiI56yummvLTqHdox1HtgfzQaUO2aHBh64Rn2g5uhVgir+aJTDgUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRwsAWRF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792223379; c=relaxed/simple;
+	bh=6cslxTpKE7DTbBqDVM3iRN3tpZ/3SnjQURFg7VcJZ7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OgnfjFKYnjlAU4C8D4980DXJGl236cFSMR5n6die9yVXsxFU0HOiQzQ6pNlJLDbrnhd/sQ8+P+hu8R/UDwFc2OsOSe4IGhUIfZ1c3GGUYHI9eA55hRGKTbvsIeG3ar5Pkw7TTcqIVHU3EYzwJYVP6mUavRuOiRMKdAuKvvrDviM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BnyR++cR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRwsAWRF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866AD1F000C4
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:49:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792223362;
-	bh=L2vbGmhabE1G4kOhsVfUiPUDIGY/qR8juAnVHrmbZrw=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=IRwsAWRFzwuRJLpy1K77NcCZFzSgX3e2b53yv731RDPdp8soJg5tGVqlIqgtQYtSX
-	 QxHW4SGZYjxSOUg3nmTjs8IiHeT9K+nSLSqZQ9LQk+7tIe3MI2iP6sO7dnAtLi/vMQ
-	 Vkayb3nzyYvrHsUclC1SYwuP7Yyz1BkUnL19/btqsg71HuQEKZ2QgiAc4ySmu/BfvT
-	 JfiCp19jfCp0kBukBPo5FciWNpwpS5KafBoVqvjUput7joXcWKbkTb6ZUn5qGc43zd
-	 /gr5Ao9ZaXaR6PQ3videZT1UUalo43CFBv5pho+h1SEKMCZ20za1gOKqlHm5lR9sa0
-	 1bmfXKXnTNrQw==
-Message-ID: <sashiko-outbox-175373@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] keys: Protect the read method check against type
- removal
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
-References: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 17 Oct 2026 07:49:22 +0000
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BnyR++cR"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69H7EG0Q096800;
+	Sat, 17 Oct 2026 07:49:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=YGtmJBwKncS1PAThUiWF9iq283hv0ltSY2UFhEGST
+	Pw=; b=BnyR++cRw9tUnJHWX5DmTr2Os/iwMF1c4FW8yTIFEix1KdfrMhMSgX8Dz
+	6TLqT4VnAeo4EZ6Ax+JU+9h+mHy0y2gAZzwTyGJMQYCpUWXUGe3Mtv0+6IjVWejT
+	QRdSWxn/rqw3MpxLvbb3ZRKcC42B5jES46OQthhjuFho8o006Cg+Ut9sWkAcJqOy
+	/NWLl2SozF9IMdm+V8uiOZQe1zgp0Y32mx1Q4EKpv5WmedDoFJSFocFu7IHB2x9F
+	B1XMbcmsIAr5X3BP1z/c6IFntbj3JvwSPjZQkpOuQ9qvo5wCjAkw7Ghf1wf0kmOF
+	jgVrc9vonz8ftB10kuMBopAHPOH8A==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hc0pt8s5x-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sat, 17 Oct 2026 07:49:13 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69H6o5HW729247;
+	Sat, 17 Oct 2026 07:49:12 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hb36wpuuk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 17 Oct 2026 07:49:12 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69H7n8kJ52953590
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 17 Oct 2026 07:49:09 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DC59E20043;
+	Sat, 17 Oct 2026 07:49:08 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CFB9A20040;
+	Sat, 17 Oct 2026 07:49:00 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com (unknown [9.67.66.83])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 17 Oct 2026 07:49:00 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, ritesh.list@gmail.com, sshegde@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+        rnsastry@linux.ibm.com, ssrish@linux.ibm.com
+Subject: [PATCH v3 0/6] Extend PKWM to support user-created wrapping keys
+Date: Sat, 17 Oct 2026 13:18:44 +0530
+Message-ID: <20261017074850.164031-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.56.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE3MDAzMCBTYWx0ZWRfX8+mGcT6BvRW1
+ zuJLWEiN9oB/KMyRIIf/n+acoPjcx46L8HxGkJXtbZbdiUeYQ/fhFz/rLlyIAJk3jwZOcrQUlg1
+ v1mEX8VHZk7pFEIbYbpGv1wfWKQnM4N8/7eVbqzdWKl1EFTzznXT6DzLe+ssrbfmph9MORzG8gn
+ HLsj4EZNzdxP4h/EbNMgsLwNk+buKXZ/s8OciMx2dv+ke/DDsyVMkzoyqMomMU4FH4c7JKkXnEk
+ fUlaGmVHCcLBB2jjK0zTyKaqRE/jRb9Au8d+/IlDvXXVb7FeC0WiLmsFCZAVwK+N63ibccklIPQ
+ 1nrEK56MAVAp0ymP+S2nNcr/BkO0FY2M1NobYfzIe4YhAFXi/0mRqfmgi1yvuIHSVpR9ssiG8Jr
+ 470EyZDqR3sTCpSHi2d42MysXGH4yV5W4mmS4pEZT+gx61W50VyfCpYrnNTULYy5qos0Lfk9sh2
+ frpyKitvd9ckmppzh9Q==
+X-Authority-Analysis: v=2.4 cv=WNvqzXsR c=1 sm=1 tr=0 ts=6ad3287a cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=UMd8ISttMeN8S66s6c4A:9
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE3MDAzMCBTYWx0ZWRfX4yaf8oFa67a9
+ h8EBVoi994u4nJjED2M0/cBs09OfjwYkFsuG+w/fgLNr5228tEkZTE9avjmVWtRrxFTYR59biYg
+ Oi8cGVYFbn9vNsW61yBlIxp+qm9R2Dk=
+X-Proofpoint-GUID: oyrami6cW6x-CayfwHU7c7pVvgygQcB9
+X-Proofpoint-ORIG-GUID: tca4IdchuDNSe4N3CVqNcUUFkAcn0Skj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-17_02,2026-10-14_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 spamscore=0 impostorscore=0 phishscore=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610170030
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] keys: lockdep class use-after-free in keyctl_read_key() after ty=
-pe unload
---
+The PKWM trusted source currently uses a single default wrapping key per
+LPAR. This key is created during trusted source initialization, and all
+trusted keys backed by PKWM are sealed and unsealed using it.
 
-commit 74db11a8500db2209c8e5cbb82e05cfc4e6396ee
-Author: Cen Zhang <zzzccc427@gmail.com>
+Recent versions of PKWM allow users to create and manage their own wrapping
+keys through a set of lifecycle operations. This patch series brings these
+PKWM capabilities into the kernel, allowing users to create, manage, and
+select wrapping keys for sealing and unsealing their trusted keys, rather
+than requiring all trusted keys to use the default wrapping key.
 
-keys: Protect the read method check against type removal
+This series extends PKWM to support user-created wrapping keys. It adds
+the required hcalls, allows users to select a wrapping key by label when
+creating PKWM-backed trusted keys, and introduces a sysfs interface for
+managing wrapping keys from userspace.
 
-This patch acquires key->sem for reading around the key->type->read check
-in keyctl_read_key() so that a concurrent module unload and key garbage
-collection pass cannot free the key type before the read pointer is
-inspected.
+This patchset also includes three fixes: one aligning the PLPKS wrapping
+length types with the underlying hcall interfaces, another preserving the
+original error returned when default wrapping key generation fails, and a
+third clearing sensitive PKWM seal and unseal buffers before freeing them.
 
-> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> index d14ace88e529c..43a5a3c4d1352 100644
-> --- a/security/keys/keyctl.c
-> +++ b/security/keys/keyctl.c
-> @@ -861,10 +861,13 @@ long keyctl_read_key(key_serial_t keyid, char __use=
-r *buffer, size_t buflen)
-> =20
->  	/* the key is probably readable - now try to read it */
->  can_read_key:
-> -	if (!key->type->read) {
-> -		ret =3D -EOPNOTSUPP;
-> +	down_read(&key->sem);
-> +	ret =3D -EOPNOTSUPP;
-> +	if (key->type->read)
-> +		ret =3D 0;
-> +	up_read(&key->sem);
-> +	if (ret)
->  		goto key_put_out;
-> -	}
-> =20
->  	if (!buffer || !buflen) {
->  		/* Get the key length from the read method */
+This series depends on the following PLPKS refactoring and hardening series
+and must be applied on top of it:
 
-[Severity: Medium]
-With CONFIG_LOCKDEP enabled, can acquiring key->sem here trigger a
-use-after-free on the lockdep class if the key's modular key_type has
-already been unregistered and its module unloaded?
+https://lore.kernel.org/all/20260923182816.151451-1-ssrish@linux.ibm.com/
 
-When the key is allocated in security/keys/key.c:key_alloc(), key->sem is
-bound to the key type's lock_class in the module's data section:
+Changelog:
 
-    init_rwsem(&key->sem);
-    lockdep_set_class(&key->sem, &type->lock_class);
+v2 -> v3:
+- Moved most of the refactoring and hardening patches into a separate
+  series:
+  https://lore.kernel.org/all/20260923182816.151451-1-ssrish@linux.ibm.com/
+- Added a fix to clear sensitive PKWM seal and unseal buffers before
+  freeing them
+- Retained Nageswara's Tested-by tag
+- Refined error handling and documented default wrapping key restrictions
 
-If a reader task in keyctl_read_key() holds a reference to the key after
-lookup_user_key() and is delayed before reaching can_read_key:, a
-concurrent module unload can run unregister_key_type() ->
-key_gc_keytype() -> key_garbage_collector() in security/keys/gc.c:
+v1 -> v2:
+- Addressed parameter validation issues reported by Nageswara
+- Tweaked PLPKS_WRAPKEY_SYSFS Kconfig help text
+- Added two preparatory bug-fix patches
+- Cc'd stable@vger.kernel.org where applicable
 
-destroy_dead_key:
-    spin_unlock(&key_serial_lock);
-    kdebug("destroy key %d", key->serial);
-    down_write(&key->sem);
-    key->type =3D &key_type_dead;
-    if (key_gc_dead_keytype->destroy)
-        key_gc_dead_keytype->destroy(key);
-    memset(&key->payload, KEY_DESTROY, sizeof(key->payload));
-    up_write(&key->sem);
+Srish Srinivasan (6):
+  pseries/plpks: fix length types for wrapping operations
+  keys/trusted_keys: propagate wrapping key generation errors
+  keys/trusted_keys: clear sensitive PKWM buffers
+  pseries/plpks: add HCALLs for PKWM wrapping key life cycle management
+  keys/trusted_keys: enable PKWM wrapping key selection by label
+  pseries/plpks/wrapkey: expose PKWM wrapping key management to
+    userspace via sysfs
 
-That down_write(&key->sem) populates key->sem.dep_map.class_cache[0] with
-the module's lock_class, and key->type is switched to key_type_dead
-without resetting the lockdep class on key->sem. Once
-unregister_key_type() returns, free_module() -> lockdep_free_key_range()
--> zap_class() clears the class bit in lock_classes_in_use, sets
-class->key =3D NULL, and queues the struct lock_class onto
-free_lock_classes.
+ .../ABI/testing/sysfs-firmware-plpks          | 116 ++++
+ Documentation/arch/powerpc/papr_hcalls.rst    |  33 ++
+ .../security/keys/trusted-encrypted.rst       |   4 +-
+ arch/powerpc/include/asm/hvcall.h             |   5 +-
+ arch/powerpc/include/asm/plpks.h              |  40 +-
+ arch/powerpc/platforms/pseries/Kconfig        |  15 +
+ arch/powerpc/platforms/pseries/Makefile       |   1 +
+ arch/powerpc/platforms/pseries/plpks-sysfs.c  |  11 +
+ .../platforms/pseries/plpks-wrapkey-sysfs.c   | 399 ++++++++++++++
+ arch/powerpc/platforms/pseries/plpks.c        | 502 ++++++++++++++++--
+ include/keys/trusted_pkwm.h                   |   3 +
+ security/keys/trusted-keys/trusted_pkwm.c     |  48 +-
+ 12 files changed, 1126 insertions(+), 51 deletions(-)
+ create mode 100644 arch/powerpc/platforms/pseries/plpks-wrapkey-sysfs.c
 
-Previously, if retyping and module unload finished before can_read_key:,
-keyctl_read_key() saw key_type_dead.read =3D=3D NULL without taking key->se=
-m.
-With this change (or in __keyctl_read_key() if the module unloads after
-can_read_key:), calling down_read(&key->sem) enters
-kernel/locking/lockdep.c:__lock_acquire() with the dangling
-key->sem.dep_map.class_cache[0] pointer:
+-- 
+2.52.0
 
-    if (subclass < NR_LOCKDEP_CACHING_CLASSES)
-        class =3D lock->class_cache[subclass];
-    ...
-    if (DEBUG_LOCKS_WARN_ON(!test_bit(class_idx, lock_classes_in_use)))
-        return 0;
-
-Could this hit DEBUG_LOCKS_WARN_ON(!test_bit(class_idx,
-lock_classes_in_use)) or corrupt lockdep state if the lock_class entry
-has been reallocated?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/pm-key-management-o=
-bjects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com?part=3D1
