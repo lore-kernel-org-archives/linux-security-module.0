@@ -1,67 +1,68 @@
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF48C3AFB1B
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 03:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBACD3B2FD8
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 03:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792206014; cv=none; b=maJywgXPHHsqRF2C0WuSzqsRVKnPdpzOMmJUnxuQb70xwTShzOnawu8l1utqDKD5gJhx5yFn86I+UMyJrcJldZwphYR+6phUDJMwEKnVIjxPUd03tsqDBeRgeaoRpSrXnHfEGe/L7/W4LJDD7eN1uZtbOAHmmZnh5MpUEcztzC8=
+	t=1792206030; cv=none; b=a2Lh6wZUBAHdBY6xtLuFILE+lXIUGzc2imld6IsdpoPEd/+vUJ1lOMnOICT/bwody0WX7E4wXkXCZo9tO0ysVmLjGo8QwfZori7EJfFrrrRMLLdfulYQZeWx7M2DNuM+7sC4GQZY22+JmaJcYb/VTKZ8wT5GUfbBTmwSgRLdL5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792206014; c=relaxed/simple;
-	bh=RnyUtaj56FacvXKJT/5BOE5uL4aLHIIMeKqQgZyyy3w=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=lnWccWJnPNyun88RNZpqj3mJrPFi9dWoz/emDKvPUZU23Ytx1c5aigSSPmQFkdH2PpeyO1YcIQ6ZyX6LxUIpkP+eydv8Bu1O6afS4UY6WyLy2MO/0dqu5nEW7JJJ+k4C5BOFHlG8QMCcIsA6GSSnuNKvpvbwpuW3xB3O/KkTmgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SkyKkWWj; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1792206030; c=relaxed/simple;
+	bh=jCC6ab41skgLb0cxJd1pnHPhJfxTxprmPUo+gGC848Y=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=JGpHutznswbV1szsMfo4AhJ1ifdDasy69+FcrcIIXvXSn+FFXfa7eMlEi0uatnCbsMDV2E6Drxh4xSMRMmnDBl6KxtHTuw5nUoeYsQ+a6RhwtXybV5jX1gZV6bUuTBZbCpBNkt/dbodeHRWoAPkzN0IDNbQgc617m/gsWLQMF2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e+S9ns2+; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SkyKkWWj"
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-93ece7a73b9so64973985a.3
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 20:00:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e+S9ns2+"
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-93e63522076so34975985a.1
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 20:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1792206006; x=1792810806; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1792206012; x=1792810812; darn=vger.kernel.org;
         h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=H7TFgfiFf6FEXV3J7Inq1lkdC8JNBzhySk1rzqW+t48=;
-        b=SkyKkWWj35bDcts8jT/Vm8ebaAmtwQIQ2aldBjUveWiFsnhPtE2VD0UHBM2h+63BMI
-         wHOSrBjN5DZr4EyOYc8VMQCHCVh6mueA0IX4/i0giSK7bBzkRGGMQautk4BBAOOt21Ig
-         vLVnT5fVS/TGo9mBBCDKKU1YvI+9gtXlIu6P0/e9MklAsUxTO2VxMtF9f9hV73u9pKwy
-         GQaIZa7rkJRP6gHb7/nORUOF/hLYirjJcN81gf/LRtgiCva7zkj8K4RYXuSCv/EinZsi
-         kS9sy+YCmmbIM68+/qDwnjh4g8AFfUwZnkv0fujgMWfSt856edmHxDNlOiGuDoWOoNjy
-         +LuQ==
+        bh=MrxhfZ+QmZki79F0++sY9fiUJbLb6IXyxjTdrcANp3E=;
+        b=e+S9ns2+0PoMo7VYuo2xsSakPjFtifh55pkLs1zeD5JsRD/fdjaKVzJB/77TuCaG7Y
+         IXuNrAvf/P0LlRiUQY0c4NFlrpUT2oNfDX0OsIadsrTScdfJiYjh1z+qleR0oDDWtdeM
+         aHNzz+cGF0gnZcotGh+AfNctym2RODUsTl4U8OUnFoypiYMAthEayAfJeWrCcidF7+i8
+         hd4rhr938eISH76PoN2Mu+WMbJ24K6dFxZT4KFi7w56GN2lq3g1EPp4FsE+OetwhgiU9
+         /D2MgCOjA64mVR3Xh+IbDvBluWFXprfcGPj6AX0jXhM6xBv4v5Dem4mMQDK5umwjLBAi
+         pJPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792206006; x=1792810806;
+        d=1e100.net; s=20260707; t=1792206012; x=1792810812;
         h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=H7TFgfiFf6FEXV3J7Inq1lkdC8JNBzhySk1rzqW+t48=;
-        b=YCpcS73MXoJE8PC56wE9GJ/fGbf11cwuNGkvfknBIxWv1+42pMEGvwtSvUzUvqu+rl
-         URyzwIjMkV56ITE/uq5slshJqBRiof4Haw15rvBK262/nxfP3ojCYn2pdd/4S5zNswHg
-         cjgnmcSM4xvVXl14IfaqVpovDTUrA5OYjrmesneXZAz9Oy6RRWluWiwo0SDaw5pviAj5
-         mUhN6/XPYee7EwAWljnuopUkS2lsRZgSDilCqHcrdB+FHQWR5TdKpGkDaTGjYi5UnRq8
-         ETPRwnWMTZ0Lude1gKRAUhTGeQnWX2fhy+0xZ/sgalZsEaIf78QfBPP+De2zOIK1BZ4X
-         72og==
-X-Forwarded-Encrypted: i=1; AKwUvBxTFhp4BqmA9hecmul4OrtgXqlhtpFx4M67JzAxFlAzJq0yiNWTq0BkLg7to49QJFvsn0cJqNtPbwgpH7IkWDWKDTj1/Hg=@vger.kernel.org
-X-Gm-Message-State: AFq9FYL1TU/ugF5lHdfbZGdbdFgUB/PHnMxgErDWqMzaq0J0w370ihUC
-	WCA33moy56rEjEx9fE1+Qibtbgr01hzqyLLeF2Us75NVQpoZMBviDiy/EnCeWczL7A==
-X-Gm-Gg: AYBFou2KgzM8gR70ruJAlKR+l8IChWXVotgdb9cjuwzYFDQfzUf9LAECrjZy/7h7Zb5
-	HPvDh/jZ+DkLV7FqmwBBLQNuT7rhp3lGhvaHHtpm0Gp/15IQEwbgLn74J+rG5F+hYFeUQb1ipPf
-	8iFjCSI9PUgkPNdtoJstN/F98Z2hw6hWb2/+Ib6ALNSsAUVuTVKKTxhRtqDHcJVAnuixcQmRdvR
-	Xhj91Nb537uqf2Po3kgL3ueNz/4TxprzXd/oH0pAglosz8UiwRArzNtWWrxKJ6Lx4ARK+SIX8nM
-	uHray5Vu3u0MAGBTcNgmpqoiBCRZXuImjTDIj1Kb/TaF8O4QGSoOwhC8bi8KiQIWBMKOMQ+rwta
-	XxClDTs9KV8ZLH349fgyC+mYuvtCVFjd5FHxL+mAt1TOPJy0h7bl/fm8oHeJV+2A6wHLAP4J9gg
-	987FiUQ3sAh+4wK9IR3bNb6zv25J0PKX41Wb5zDAhq2h2IXdiYjEm8x96LLOFdSDLcl7l6FHPyn
-	xBBZHgy5QYsVi3l6x+rGlP0NVLYZOIX62DO3cG4fTAUu6Jfk0VrSbe0JQyoYE0hfAwTwqT4tQ0=
-X-Received: by 2002:a05:620a:439b:b0:939:9edf:edb7 with SMTP id af79cd13be357-93f29b73708mr304873385a.6.1792206006258;
-        Fri, 16 Oct 2026 20:00:06 -0700 (PDT)
+        bh=MrxhfZ+QmZki79F0++sY9fiUJbLb6IXyxjTdrcANp3E=;
+        b=BYyLYX7ZR0ws8CRnp0lzRMHRlrPSASBVlPSuQj+80kWX+iG+KaOA00AQAOlT38j8os
+         Om1yAY1KhK+swo6vrXWPoAUdpzGuu0Y8/rOwv475eaVT+B6WFQcUB9RCZCjTzirrpO/X
+         kWgjl149/Ez10pXNgJkVltkgxb9dSwqlmxFLATr/Z3kEkQ4+bSsr4pK/Ipnueb991bX+
+         dX+2wazaKiOm/Hbo5UFwFAin1oun4hccogZlu6xvizETX+i/do2fBdnTz2KVO5oM95e1
+         HVRjsGSNaa0zCUU5kDafWO1U7UeoTzfNAwTQ1P9l2F6OZCecBbcT5nlzTswJZKXXXfWN
+         mpzg==
+X-Gm-Message-State: AFq9FYKPKYA9IV3CeqDxlWECUNZoQmqF5fU95dEGflPcK12CSsYoe1Hf
+	DX9KEvAnbjI7KrHLdsrqXvOnmgJL3jsuouDIpeCQN19sPu1nY7rPZ8Acjese8GPkkQ160cyO3gW
+	tj71Ftw==
+X-Gm-Gg: AYBFou2LbrpDX/Ckm0ZRKVMSBTKb4bxIh1lPFZnHij3qXb6NYvm9+RMBZuO94VR6FP6
+	ZcVz4x6PbLVKPca6zSexC+C8Xuw5Q/KaknTFsROBzQaY+UxtHFPRAwVJ1FH3U9lxZM0o4trafZE
+	eNbgI4g5sVx+h4R3UDodebwx0QbcV7JKk6tw51eViIRNJMq3hQGiBuVHGYZzIH9oxp4dgvEyF+A
+	x4R9Q8FFVlG+JGRlrGwBVTOdOZZ9Kh0nQU5Fa18RzXrmwneptTZ5EyT6uOU+Xx+nSMcUW2lh4yS
+	jofRG72cT95ZHPi4/aQFtQjb5Jd4ZThgG3OEiMFJ9sc5MrHSWHILSDwY2hK8wMmcymR93ct+Tc8
+	8qseay5XlFh53fpuhy/VA+f0SeI3hqyQrB9+I0oqGX+bwyWPtBJ3WBGM7WPMnaSV2XoBxH37HgC
+	MbdClj6q6OkR4DXct9dbuihbmpwucHTmtyBiJEFIef1ApzGzfvx3T9C6BuW/wS+blEycufZgrzY
+	ApOMfGlvnxDEM/lZjKHj0O1tb8IVw/1xMpbqngxx8UE+aYsCbbBV9hcvaN3k4MJHC/zZH0pJsqB
+	fdODN5jMoQ==
+X-Received: by 2002:a05:620a:4045:b0:93e:c12c:9dc8 with SMTP id af79cd13be357-93f29dc6f38mr318508585a.72.1792206011516;
+        Fri, 16 Oct 2026 20:00:11 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93f1a1850cbsm361980985a.24.2026.10.16.20.00.05
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93f1a1b882asm359713685a.42.2026.10.16.20.00.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 20:00:05 -0700 (PDT)
-Date: Fri, 16 Oct 2026 23:00:05 -0400
-Message-ID: <e30c2a29706391f16d9ac9446907193c@paul-moore.com>
+        Fri, 16 Oct 2026 20:00:10 -0700 (PDT)
+Date: Fri, 16 Oct 2026 23:00:10 -0400
+Message-ID: <bf59b601a40b9955ee8922c5593eeaf0@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20261015
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20261016
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,91 +71,139 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
 Linus,
 
-Thirteen SELinux patches for the Linux v7.4 merge window:
+Sixteen LSM framework patches for the Linux v7.4 merge window:
 
-- Continue to improve the load time validation of SELinux policies
+- Add LSM hooks, object blobs, and audit records for namespaces
 
-While SELinux policy loading remains a privileged operation, we continue
-the recent trend of hardening the policy parsing and validation code in
-the kernel to ensure that invalid, or poorly formatted policies are
-rejected at load time.
+Add the necessary bits to enable LSMs to enforce access controls on the
+management of various kernel namespaces.  While this pull request does
+not contain any in-tree users of these hooks, the Landlock pull request
+for Linux v7.4 will include Landlock support and the next merge window
+will likely include SELinux support as well.  Considering the development
+behind these hooks, I expect that BPF LSM developers will also be making
+use of the namespace hooks, if they haven't already.
 
-- Correctly incorporate "neveraudit" into the xperms code
+- Update the inode LSM hooks to include mount idmaps
 
-This change aligns the xperms neveraudit handling with the conventional
-permission handling code, exiting early from the SELinux auditing
-code when neveraudit is enabled for the domain.
+This allows LSMs to incorporate the mount ID mapping into their access
+control decisions.  While there are no current in-tree users of this,
+it was requested by those developing BPF LSM programs and this pull
+request includes a BPF LSM selftest.
 
-- Mark the selinuxfs "status" and "policy" files immutable
+- Preserve the full 32-bit ioctl command in LSM audit records
 
-These are read-only kernel/userspace interfaces that could successfully
-be opened at the VFS layer through the use of CAP_DAC_OVERRIDE.  With
-this pull request we are marking these two files as immutable so that
-the requests to open these file with write permissions now fail at the
-VFS layer.  This also allows us to drop some of our mmap() checks around
-write permissions as the VFS will now also handle this for us.
+Previously only the low 16 bits were logged, ignoring the direction and
+size information in the upper 16 bits.  The pull request also includes
+a Landlock based selftest to verify the full 32-bit ioctl value.
 
-The existing SELinux permissions checks remain untouched.
+- Ensure we don't call security_backing_file_free() multiple times
 
-- Convert the selinuxfs inode numbers to u64
+Thankfully we don't have a problem with the current code base, but we
+want to fix this behavior now before it becomes a problem.
 
-Bring selinuxfs current with other filesystems in using u64 for inode
-numbering as opposed to the architecture dependent unsigned long.
+- Clarify that only the current task may access current->cred
 
-- Constify a number of the SELinux AVC function parameters
+The current code is a bit misleading around safely accessing the cred
+field in a task struct.  Through comment and code corrections, this pull
+request clarifies that only the task itself may access its cred field.
 
-- Remove a SELinux MLS function that was no longer used
+- Add SLAB_NO_MERGE to the credential object cache
+
+Harden the credential cache by ensuring credential objects live on
+dedicated slab pages.
+
+- Make use of safe memory zero'ing in the LSM Rust bindings
+
+- Update the docs for the current behavior of /sys/kernel/security/lsm
+
+- Update the docs for CONFIG_LSM and the "lsm=" command line option
+
+- Remove unnecessary code 
 
 Paul
 
 --
-The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
+The following changes since commit fd73f4a6659897191fa0d40695fe370925dd3780:
 
-  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
+  Linux 7.3-rc3 (2026-09-13 14:38:02 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20261015
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20261016
 
-for you to fetch changes up to b73b967b0fc44707f39faa4f298f1f9d9b7bfac5:
+for you to fetch changes up to 881f19c2ffbc73f351b257e09c71e6059939b770:
 
-  selinux: validate permissive and neveraudit map types at load
-    (2026-09-30 16:59:44 -0400)
+  lsm: remove redundant NULL check in security_init()
+    (2026-09-29 21:47:20 -0400)
 
 ----------------------------------------------------------------
-selinux/stable-7.4 PR 20261015
+lsm/stable-7.4 PR 20261016
 ----------------------------------------------------------------
 
-Christian Göttsche (8):
-      selinux: constify avc function parameters
-      selinux: reject a policy that both rejects and allows unknown
-         classes
-      selinux: reject duplicate symbol values during policy load
-      selinux: bounds-check filename transition source types at load
-      selinux: check neveraudit in avc_xperms_audit_required()
-      selinux: bounds-check role and user membership bitmaps at load
-      selinux: validate user MLS range and default level at load
-      selinux: validate permissive and neveraudit map types at load
+Benno Lossin (1):
+      rust: lsm: replace `core::mem::zeroed` with `pin_init::zeroed`
 
-Paul Moore (2):
-      selinux: convert selinuxfs inode numbers from unsigned long to u64
-      selinux: avoid 64-bit division of inode numbers
+Cai Xinchen (2):
+      lsm: delete duplicate assignment in lsm_prepare()
+      lsm: don't call security_backing_file_free() multiple times
 
-Stephen Smalley (3):
-      selinux: tighten policydb_context_isvalid() checks
-      selinux: remove unused mls_setup_user_range()
-      selinux: mark status and policy inodes as immutable, drop status
-         mmap write checks
+Christian Brauner (2):
+      ns: Free anonymous mount namespaces via ns_common_free()
+      lsm: add LSM blob and hooks for namespaces
 
- security/selinux/avc.c          |   37 ++++----
- security/selinux/include/avc.h  |    7 -
- security/selinux/selinuxfs.c    |   59 +++++++------
- security/selinux/ss/mls.c       |   38 --------
- security/selinux/ss/mls.h       |    3 
- security/selinux/ss/mls_types.h |    3 
- security/selinux/ss/policydb.c  |  137 ++++++++++++++++++++++++++++----
- 7 files changed, 183 insertions(+), 101 deletions(-)
+Daan De Meyer (2):
+      lsm: expose mount idmaps to inode hooks
+      selftests/bpf: verify mount idmaps reach inode hooks
+
+Jann Horn (1):
+      cred: clarify that task_struct::cred is only for the current task
+
+Lincoln Wallace (2):
+      doc: describe CONFIG_LSM and lsm= as the selection mechanism
+      doc: fix LSM ordering description for /sys/kernel/security/lsm
+
+Mickaël Salaün (3):
+      lsm: add LSM_AUDIT_DATA_NS for namespace audit records
+      lsm: Preserve full ioctl commands in audit records
+      selftests/landlock: Check full ioctl commands in audit records
+
+Mohammed EL Kadiri (1):
+      cred: prevent slab cache merging for cred_jar
+
+Paul Moore (1):
+      lsm: update the BUILD_BUG_ON() in audit_log_lsm_data()
+
+Sang-Heon Jeon (1):
+      lsm: remove redundant NULL check in security_init()
+
+ Documentation/admin-guide/LSM/index.rst           |   20 -
+ fs/cachefiles/security.c                          |    4 
+ fs/namei.c                                        |   18 -
+ fs/namespace.c                                    |    3 
+ include/linux/cred.h                              |   17 -
+ include/linux/lsm_audit.h                         |    7 
+ include/linux/lsm_hook_defs.h                     |   26 -
+ include/linux/lsm_hooks.h                         |    1 
+ include/linux/ns/ns_common_types.h                |    3 
+ include/linux/sched.h                             |    8 
+ include/linux/security.h                          |   78 +++-
+ include/uapi/linux/nsfs.h                         |    1 
+ init/init_task.c                                  |    2 
+ kernel/auditsc.c                                  |    5 
+ kernel/cred.c                                     |    5 
+ kernel/nscommon.c                                 |   17 -
+ kernel/nsproxy.c                                  |    6 
+ rust/kernel/security.rs                           |    3 
+ security/lsm_audit.c                              |    8 
+ security/lsm_init.c                               |    9 
+ security/security.c                               |  115 +++++-
+ security/selinux/hooks.c                          |   25 -
+ security/smack/smack_lsm.c                        |    9 
+ tools/testing/selftests/bpf/prog_tests/test_lsm.c |  231 ++++++++++++++
+ tools/testing/selftests/bpf/progs/lsm.c           |   79 ++++
+ tools/testing/selftests/landlock/fs_test.c        |   10 
+ 26 files changed, 599 insertions(+), 111 deletions(-)
 
 --
 paul-moore.com
