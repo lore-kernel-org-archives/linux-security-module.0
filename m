@@ -1,86 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42E63E6DC9;
-	Sat, 17 Oct 2026 05:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399783EB0F3
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792215768; cv=none; b=dG6Tnsupg6PmzVJMoBhlaej5hM15VDESHoqMbS5c2Sj4C0r6DybGlTsqqpHaEblBxfJjY6O/tL6jQiDliACoI5bn3td+Uega4vl3nGoWVj742Q7iaLUFPa7N3lGe5+vKAfG+3IaSyBTToLQ8ylM9Lw1xwy+MG8xFkAEaJQP9Xuw=
+	t=1792222307; cv=none; b=gR7+RWb+t54rzPU8mdtl1zekoIdZbfKL3iLQrNRNk3x8aimYOPVtljKIlmojH8DPB8o3fn0Ad9VvVcXM+cik1vZN/AKqzscz+IVtItbk1B3m5LNEF9c3fN07mq3VYQ6BKod/Wz8C5A5kJb18xmGGCB3mh1C3FI2L4pT+5ZwKqBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792215768; c=relaxed/simple;
-	bh=gOoUxQcq8z5zTFQajUtP3bngC5FmeZ1Yn5dN4S5TfzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9UG/6vbdF9gX6zV4QI/J8KnewvE/+a3vmskg8CFRwVuKKB6xdaeds+x6HN7UiI4GeSSh1pisp/kSZix+vJBJ4Okouw6aoWA2HYAQJL44Gm6+DHMilA4csfHLtDdeng94WSn71/N4fqW0dlQUeNDGFOORUBnKrqtKg1nNMPbfhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfESymtP; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792222307; c=relaxed/simple;
+	bh=ByjrDEW+cLHIanPR1r9ZCilmfQtfffG3r6vZkp1Qvgs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Bc62muCxvCst8LfXDqnZxRhWPMcPruV7HczZOrJNFxGPS/3q1ExabcK2KG9pla8UtI+bS5G8waJUpIcGy7etyryae9XF7Rmzj3p5mNJ+GdMa1yj9NCPzxCHWJmOcv8pXJOgWU31HS7k+JUbr/Pj2OvdrHnbKcsYCJJeHZ64rPrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e1RSJXnZ; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfESymtP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007821F000C4;
-	Sat, 17 Oct 2026 05:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792215766;
-	bh=JhawJTbNv3fvvJJQx80j2hVI7739vTSfPmLCcJmLHZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WfESymtPUNYy+3x1+3+c9yshOOZexUg1F0oIK0ghIEduke5a+KOJ5+JVSIr7HRqoK
-	 gEkhpmV5fdHwFYQHWtZXI/tNeD9rB5VR0qomw/tMlNaVpNiy84tb6kM0pmdRQ/vucP
-	 C7lPHwzFKJOmVXhFFnxNGONpGcFQyJE0lZ0XBw97M92OM8sVCRJ0jIBJEFqHMGTeEP
-	 C8wDVXEqY0nV2w0MaHXv2nZnvUDOCNYL6zT4CpJPaknDElNbYaINuNjmuJpUYZKvp6
-	 bNGxVvEK5sa88+qvbYliR7gl9GvsXSDviJUUa5r3N71EKutC7/RH5cNzbMA9l0cWvt
-	 AN3P6osBtkBNA==
-Date: Fri, 16 Oct 2026 22:42:44 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/6] keys: reclaim link quota during keyring garbage
- collection
-Message-ID: <20261017054244.GD29318@sol>
-References: <20261016215326.4110064-1-jarkko@kernel.org>
- <20261016215326.4110064-3-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1RSJXnZ"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-89d4030cc57so340350b3a.1
+        for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 00:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792222305; x=1792827105; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8hGJqskAm5ijlynAeAUmg/yteXxLufBW9O9YFEmU6Qk=;
+        b=e1RSJXnZ24+lkTH1+xssf5wkeiBfq8/U7/Az45uAm+zHRUOCnti2GFO+tpQRpoARM8
+         qS/aTL+U8kIr2G5waPe+nVn8M1J+P9ZNNpbpVRfR2WzQEMiDBCL+XSM7DLP/6ICgUVLC
+         bxgt16biVtowpz63XgIVCHuMZGR8T8zPENSF9rU1YG8Von7HB9M+eZZKW868xFcKwRki
+         XQlp48NaN6+5Mq3EV4kmPxMG6Cpv2B4JR1EjAx3967kjsnm88ZlddJeTXMngC1y5ZUyP
+         fsa+8BSZ+VwB0mSXiR2iMVw9M0PUtq+C8X4YlaYvCncLcAjWK8rsiaqSP4ZMcGMqux6s
+         eQ2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792222305; x=1792827105;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=8hGJqskAm5ijlynAeAUmg/yteXxLufBW9O9YFEmU6Qk=;
+        b=HBPg6atUZHM2KMI+4jsMXaAYfqS9HSBHGvSpWsi9t1aF6Wzlp/ly81N9OoAAoMGKlR
+         Rhd+Qk0o2AU0iDvHVzvhyShq1MKYgRhQRNsUfMUASwS8M3urkMuFyDsq79Lvix1Pojsl
+         plCiDTmHpUArDWWUJ8nr5bPMtnE9Pq9zxdYB2xHC6OT0nAegA8dF9cH2BLGFRSudU+D/
+         PVatJ72lUhFrk0yIj96J6VhG3qWv0AYUg31p3PCBURYIKbH1rW4bu6f/tXN2oVQZsseF
+         BPP3oRG00WLqUHMA6guHY31lpwvX5iYWyKOqoWQ8tDR/Rro+KeI6S2/OhLI02+QRcnEJ
+         dSIQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzuBzr4T1uG+mF7GpVasUwHi1q6Ebb9VKR2ou3E68qTrqRK3HngJ+GIRydc2WlgeHLoN6n+uL3FRq549Pr0em8gTW9YGto=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKkIl1ua6YNf/8fZDjwzrmeXarlGjag3lFUcaH1DqERiYymA8Qf
+	nUBLKV2UePjCRR/8orkyDeueGitsyMRKsp5GEbz0rZbbyCotEqMrD9cSEJlh/rYsslxqbg==
+X-Gm-Gg: AYBFou3aJC9scXobNreLk5Br3Hter6IoqWwFfp4CDCmr8lOzyzr6M0jiU3qiCBjyCoH
+	2nP6KN2bqHYCTJ39op5JgXpNi9P4R+LrXylrE1EdTcgSLVv3cKx/utEpxumyDkMUZpscrxgHClX
+	kcYJfOhysnDz+zWMIzadQB2a5PJCRTeE5f+azLkAxpQj3s0YQLyyKhpiYiEiuImMjgutji6iIy9
+	CnXQzFyOsP2hJeFa/aalJPwkyTQ6gVkYjJYwAI3GZwLI4xLOhJEN9R3HzN6UeOI2//v1fQ8shZx
+	vRZ7oJNWVCrhcGYnPRD75IJGoNgItLJyTquFphiQYDy2BqdyFMkab/o72zq9uiftr3rxSpBQhuH
+	OypAOpJDXdsowbV6M5EJFxnAqIiXj500+y0qLGegmtl2UHRyiT093HtjSkuedwx2njZrM6dnSBg
+	AXPwTd3JToKaONwYNRWPQDEoadC0tzb043DcuQOAkSOIfqbRWM+N6MzyCK9mhVMIIscg==
+X-Received: by 2002:a05:6a00:4506:b0:89e:584:bb77 with SMTP id d2e1a72fcca58-8a04d350f4emr1539150b3a.58.1792222305449;
+        Sat, 17 Oct 2026 00:31:45 -0700 (PDT)
+Received: from localhost ([111.228.63.84])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89f5820b344sm2051607b3a.53.2026.10.17.00.31.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Oct 2026 00:31:45 -0700 (PDT)
+From: Cen Zhang <zzzccc427@gmail.com>
+To: dhowells@redhat.com,
+	jarkko@kernel.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	jjzuming@gmail.com,
+	zzzccc427@gmail.com
+Subject: [PATCH] keys: Protect the read method check against type removal
+Date: Sat, 17 Oct 2026 15:30:56 +0800
+Message-Id: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261016215326.4110064-3-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 17, 2026 at 12:53:00AM +0300, Jarkko Sakkinen wrote:
-> Garbage collection removes dead key links without releasing their quota.
-> Repeated collection therefore leaves the owner charged for links that no
-> longer exist, eventually preventing further links with -EDQUOT.
-> 
-> Update the payload reservation from the surviving link count while holding
-> the keyring semaphore. If assoc_array_gc() fails, the tree and its count
-> remain unchanged, so the existing reservation is retained.
-> 
-> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> Assisted-by: LLM
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
->  security/keys/keyring.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index 7143f3079d20..db987c891811 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -1755,6 +1755,8 @@ void keyring_gc(struct key *keyring, time64_t limit)
->  	down_write(&keyring->sem);
->  	assoc_array_gc(&keyring->keys, &keyring_assoc_array_ops,
->  		       keyring_gc_select_iterator, &limit);
-> +	key_payload_reserve(keyring,
-> +			    keyring->keys.nr_leaves_on_tree * KEYQUOTA_LINK_BYTES);
->  	up_write(&keyring->sem);
->  	kleave(" [gc]");
+The key type must remain alive while its read method is checked.
+keyctl_read_key() holds a reference to the key, but checks
+key->type->read without holding key->sem. The reference keeps the key
+alive, but does not pin the module containing its type.
 
-This doesn't actually hold a reference to the keyring, so can't it race
-with key_put() which released the quota already?  Then the quota for a
-link can be released multiple times.
+With AF_RXRPC built as a module, a positive RxRPC key can pass
+key_read_state() and the Read permission or possession checks while
+another task unloads the module. Unload is possible once the module
+refcount reaches zero, e.g. when no RxRPC socket remains open. The
+reader can be delayed between loading key->type and reading its read
+member, allowing this order:
 
-- Eric
+  KEYCTL_READ task                  Module unload and key GC
+  lookup_user_key()
+  key_read_state()
+  key_permission() / is_key_possessed()
+  load key->type
+                                    af_rxrpc_exit()
+                                    unregister_key_type()
+                                    key_gc_keytype() schedules the GC
+                                      pass and waits for it
+                                    GC takes key->sem for writing
+                                    GC retypes key to key_type_dead
+                                    GC releases key->sem
+                                    unregister_key_type() returns
+                                    free_module() frees type storage
+  read saved type's read member
+
+The last access reads freed module storage and can fault in
+keyctl_read_key(). The later read invocation is already protected by
+key->sem and key_validate() in __keyctl_read_key(), but neither covers
+this earlier check.
+
+Take key->sem for reading around the read-method check. The garbage
+collector retypes the key under a write hold on key->sem, so it must
+wait for the check to finish; key_gc_keytype() in turn waits for that
+GC pass before unregister_key_type() returns, so the module text cannot
+be freed until the check has completed. If retyping happens first, the
+check sees key_type_dead, which has no read method. Release the
+semaphore before returning -EOPNOTSUPP or proceeding to buffer
+allocation, preserving the early unsupported-operation result and
+keeping user copies outside the semaphore.
+
+Oops report as below:
+
+    BUG: unable to handle page fault for address: fffffbfff8048bc5
+    #PF: supervisor read access in kernel mode
+    #PF: error_code(0x0000) - not-present page
+    RIP: 0010:keyctl_read_key+0x1aa/0x600
+    Call Trace:
+     __do_sys_keyctl+0x2a7/0x4f0
+
+Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
+Assisted-by: LLM
+
+---
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 5a5efa26ed0e..756368422b7c 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -863,10 +863,13 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 
+ 	/* the key is probably readable - now try to read it */
+ can_read_key:
+-	if (!key->type->read) {
+-		ret = -EOPNOTSUPP;
++	down_read(&key->sem);
++	ret = -EOPNOTSUPP;
++	if (key->type->read)
++		ret = 0;
++	up_read(&key->sem);
++	if (ret)
+ 		goto key_put_out;
+-	}
+ 
+ 	if (!buffer || !buflen) {
+ 		/* Get the key length from the read method */
