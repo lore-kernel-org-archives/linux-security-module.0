@@ -1,122 +1,139 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DB44503B
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792223269; cv=pass; b=MYjOquwXtXw/3kl+r7eZ/vFcMlMLTrL7zGSXFMHOi6/ihoIFDki2gxU+ajbtrrCnbRxcHZMTeyT8MGS6GK6eOyGgcXRdyGRerJJh7g3uFIci0/WlqC1PaS+RAPOYuSW9M5rpx+NDDyJ9VAg2hlAv8wrW0AqYQCz1lkIS5SbolKY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792223269; c=relaxed/simple;
-	bh=eRWmAlIfs3iswnjnTR4TzrAUiVQGOccDgG6x9wZmrjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GGCjp4NdOnAmezJIIJPUPQDsegOR7ulz6br+HbAeiEXLyL2zhzW85W/VKtLImYd0gG4nXO8h0N8z70054c0/CfrIPf5QZdEvfr4EbOV/7qLllbbCeHK59Gt92KoL4x4esGzpHQYLYrOe3cZAyO+H4oDQKTI7mCKemK1oeJOoBXs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehNE3iKR; arc=pass smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D95738F636
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792223364; cv=none; b=mXcMffv9FaIqnucMnutRw3PxOgsDFE1W7NHka4yHy3uiKikZPz0uiUxoi/DP9eenfGkMa2tiWT5fatCpbbXU5vRrX5l9qJf2Rr0ewEI4pnI7tQXFGqwAECJ55vnJT6EWbZ5r8ljlz18m8EbEEVu1gUI2sIU84HxFTXF8zKmka/Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792223364; c=relaxed/simple;
+	bh=q1FeLJyp/npmf+8ffDfR/rgG1AmSVf/75lqdBVEQoIs=;
+	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=RlT0E3/l16Q3axTSxnd8rWiZJanjoG9y/lxX0Y/SK+KkS/z/nbo01Gy1v6DYV2rm5vjsj43nExg8lIzAdeHIiCmltt9rrW9uBb06M4V8lnfDBKSTZ3GOiNfiI56yummvLTqHdox1HtgfzQaUO2aHBh64Rn2g5uhVgir+aJTDgUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRwsAWRF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehNE3iKR"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-8871ada1a26so3974607b3.1
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 00:47:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792223267; cv=none;
-        d=google.com; s=arc-20260327;
-        b=qU+pJOrWadtsKZKY0u8BQCyPHHjGV+4SdobE7QVHrrtCt6jBqxmi7qczZv0EaSQzbA
-         GuNclnq446iphjw08gKIGh5nLHfHlHGx9f+T0U5iOUREMox34qIc0d7RBdsidAXRQWgc
-         3D9s3jqNx/EhapryGMhWVuT7O8KsYr3Ly7KWnRra3s0IIxtwJJnhdtkiE6axdC8cfU4z
-         Uyfo2NpsBYcLS8ZTaZuToHRpQ5v0qc6nD9SXGaq5yfMWca7nfdO6V/OhwPNUPtK08/n6
-         lN4SQMY9xXPa65MK0CCru0Pv9f52+ydNwWreEYYv1X+CkJIClxsnIU80AkGvnUXXyIit
-         ExTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=eRWmAlIfs3iswnjnTR4TzrAUiVQGOccDgG6x9wZmrjY=;
-        fh=toE3tq9a9L4UQTXxu33ZZCcFgjWgdFZpmzhpyokIAu4=;
-        b=Ct5KcrlDZDBBcadeRrT31yYirAcPDz/H0gBKw/Dqel6ZtBTMVh/2mxh48sxolQHJn1
-         L5Cn+Rqsv6F7DZ2sR4cETWGO95zBCZ5r102jRLIsbVQx386zQp0Sv8BBrmxpOgRGOMgj
-         VRO+Nq/Ohvc0ddscuCE1si7x/rnDtE2OE2TBdOh4xkkZmiur57mmBXuWwWInq8NopMff
-         8+rpZbz3qQu+HKM5fAMDN8c3kZv6vd9jlbWYXU7CHP7bzIVCL8+CaCJ6GHe4iMAHwY2y
-         EipfJvrqFfteDnINVhTCvxPt8OLJQs99z1ZbcWHjDE4xs0MV9g9p/xbQnB3nkdMxNJLc
-         gOTA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792223267; x=1792828067; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=eRWmAlIfs3iswnjnTR4TzrAUiVQGOccDgG6x9wZmrjY=;
-        b=ehNE3iKR1FMemamaIhf7rKzmpTd6aUjpZVRlTnXw2rT2KeZFGpgrwgod4rnjB0KvfO
-         O2RP9TFeydIiUuOuRXr9PVaK9SLUsxZ5ioS8yddVbtOZ1jBsLkR7RSGBiIhFZD+R1lxz
-         aoUmGubuN1e70vklWPW3ERDyQC+I8z6DaR2t0h1fWqcxrEgGL1MUZVa0sYhUFA2YP5hk
-         FXUI6VrPBFi3snLVMYVXR4j5vDaGH/n+L1GjQ95+H7A3Kp+du7aa3JLdrUjhyLkzG4H1
-         Pmvy2oL1DK79enzif+W4ZD3rz/3YWvSQSSvDiEVwLJK4Er6SmlVw5AXwvLzSC3DD6mvD
-         y26A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792223267; x=1792828067;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=eRWmAlIfs3iswnjnTR4TzrAUiVQGOccDgG6x9wZmrjY=;
-        b=2KtUURDe9rNoHuqDmxzeHS1PU40JhKzByGqCxFxzlSsmDCJy0n9pF5P3IL6EO7r+ry
-         fZ2WqzdaXysCXE/ypTVfMrmwCxADVLCVy1hMQPpLuXhq0YA+sxx2jOUw1mx0kTcOKrXI
-         7hP0XTZv+9oAraebYcvWeBbR0aFvqlIMPRK76lfTq1i1+H1FEkPSVvWgyzFGhOHHCvdN
-         AT0ZAK/+VT7KybH/YBASXEwZk2rFJ5pO+hvj0tWRcXb3wGZ/CkcFfdhyW6Onp3uxQmn0
-         5fGMKwmFy53gytLUb1hgIA6NJiOAZprxLVBaLGHAbPc1OPsgSnzEU5JeUD4BHPdqKhuf
-         jbOQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzoCfIEci1iSdjrvs5/VL6q2zEPxc2LCn3yw/5UKW6zGM9kvQTjgu7eEvlm3Hx38d8gGKGOz/XuTWSAlDKcybQmhZVgses=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ80kVSXBqV6edaH9VXitNJVWz8tYNwGsS+utVNS0ZyZKSEzgUh
-	ahq17Gwu5/A3LkHZMisdpMjuiowGmuBrQpQJVZ1TFjiV5QEk4+xgh297dL/WkBZ9Sf1q/cidifi
-	EUEs5brYOYeZnwfrPotV3HrYp8ZDTlbCqezEDThBR5DymKqk=
-X-Gm-Gg: AYBFou2wR4C3R6M0QWk1gUbI+uX+H9oi9alyPX4YSxrflcZDageE65j6e8DEtGKG2Cf
-	y9YLmNi46dumgvGZFtoPnzGcRgdKlWb+5XhaCj2rGDCQjIsmxV0bgT2R5rnUFmk8BVhgEbtNp8u
-	qkMTTkNq945DiQ/NbRcpngwoM0AgpVxoswzSGuwAw4AjDatgUFihQ0S+t36uh3P69ZqgDtLKtXa
-	Zaq4dsss3EY6enNNHiVHe5PxbOk5LAGIhDoLoliLZ6o49y/8+kzeoTkUOWdG0msn4lZCmk+6D1m
-	LQuiYXyiFkhPKMPzSxBcdWwswDZMZmqPRKHwE0Wq7QI54IBY+s4FH6Q4653kYRk4CmxS3KuAlMa
-	hiLTNLqWLmQ==
-X-Received: by 2002:a05:690c:f:b0:8b0:ac9e:14f7 with SMTP id
- 00721157ae682-8b0f2164c94mr7719657b3.28.1792223266956; Sat, 17 Oct 2026
- 00:47:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRwsAWRF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866AD1F000C4
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792223362;
+	bh=L2vbGmhabE1G4kOhsVfUiPUDIGY/qR8juAnVHrmbZrw=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=IRwsAWRFzwuRJLpy1K77NcCZFzSgX3e2b53yv731RDPdp8soJg5tGVqlIqgtQYtSX
+	 QxHW4SGZYjxSOUg3nmTjs8IiHeT9K+nSLSqZQ9LQk+7tIe3MI2iP6sO7dnAtLi/vMQ
+	 Vkayb3nzyYvrHsUclC1SYwuP7Yyz1BkUnL19/btqsg71HuQEKZ2QgiAc4ySmu/BfvT
+	 JfiCp19jfCp0kBukBPo5FciWNpwpS5KafBoVqvjUput7joXcWKbkTb6ZUn5qGc43zd
+	 /gr5Ao9ZaXaR6PQ3videZT1UUalo43CFBv5pho+h1SEKMCZ20za1gOKqlHm5lR9sa0
+	 1bmfXKXnTNrQw==
+Message-ID: <sashiko-outbox-175373@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] keys: Protect the read method check against type
+ removal
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
+References: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 17 Oct 2026 07:49:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <pm-key-management-objects-candidate-0002-v3-2baa8cad2bb554364e10@gmail.com>
- <20261017035156.GA29318@sol>
-In-Reply-To: <20261017035156.GA29318@sol>
-From: Cen Zhang <zzzccc427@gmail.com>
-Date: Sat, 17 Oct 2026 15:47:32 +0800
-X-Gm-Features: AclHuK-HpdMP-grbZn8KpuFXmo2CHX60pojXLGdBgVLSQqCwngEWAu1uK5ALbG8
-Message-ID: <CAFRLqsWcV=0MKituMQqALy_2rS3kOPPFpMHxn7yRxoyxOHp6hg@mail.gmail.com>
-Subject: Re: [PATCH v2] keys: Avoid the owner account dereference in named
- keyring lookup
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: dhowells@redhat.com, jarkko@kernel.org, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, sergeh@kernel.org, 
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, jjzuming@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] keys: lockdep class use-after-free in keyctl_read_key() after ty=
+pe unload
+--
 
-Eric Biggers <ebiggers@kernel.org> =E4=BA=8E2026=E5=B9=B410=E6=9C=8817=E6=
-=97=A5=E5=91=A8=E5=85=AD 11:51=E5=86=99=E9=81=93=EF=BC=9A
->
-> Don't key_serial_next() and find_ge_key() (used when reading from
-> /proc/keys) have the same bug?
->
-> - Eric
+commit 74db11a8500db2209c8e5cbb82e05cfc4e6396ee
+Author: Cen Zhang <zzzccc427@gmail.com>
 
-Thansk a lot for the reivew. You're right =E2=80=94 key_serial_next() and
-find_ge_key() have
-the same issue.
+keys: Protect the read method check against type removal
 
-I'll send a follow-up patch to fix those as well.
+This patch acquires key->sem for reading around the key->type->read check
+in keyctl_read_key() so that a concurrent module unload and key garbage
+collection pass cannot free the key type before the read pointer is
+inspected.
 
-Thanks for the catch again.
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index d14ace88e529c..43a5a3c4d1352 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -861,10 +861,13 @@ long keyctl_read_key(key_serial_t keyid, char __use=
+r *buffer, size_t buflen)
+> =20
+>  	/* the key is probably readable - now try to read it */
+>  can_read_key:
+> -	if (!key->type->read) {
+> -		ret =3D -EOPNOTSUPP;
+> +	down_read(&key->sem);
+> +	ret =3D -EOPNOTSUPP;
+> +	if (key->type->read)
+> +		ret =3D 0;
+> +	up_read(&key->sem);
+> +	if (ret)
+>  		goto key_put_out;
+> -	}
+> =20
+>  	if (!buffer || !buflen) {
+>  		/* Get the key length from the read method */
 
-Best regards,
-Cen Zhang
+[Severity: Medium]
+With CONFIG_LOCKDEP enabled, can acquiring key->sem here trigger a
+use-after-free on the lockdep class if the key's modular key_type has
+already been unregistered and its module unloaded?
+
+When the key is allocated in security/keys/key.c:key_alloc(), key->sem is
+bound to the key type's lock_class in the module's data section:
+
+    init_rwsem(&key->sem);
+    lockdep_set_class(&key->sem, &type->lock_class);
+
+If a reader task in keyctl_read_key() holds a reference to the key after
+lookup_user_key() and is delayed before reaching can_read_key:, a
+concurrent module unload can run unregister_key_type() ->
+key_gc_keytype() -> key_garbage_collector() in security/keys/gc.c:
+
+destroy_dead_key:
+    spin_unlock(&key_serial_lock);
+    kdebug("destroy key %d", key->serial);
+    down_write(&key->sem);
+    key->type =3D &key_type_dead;
+    if (key_gc_dead_keytype->destroy)
+        key_gc_dead_keytype->destroy(key);
+    memset(&key->payload, KEY_DESTROY, sizeof(key->payload));
+    up_write(&key->sem);
+
+That down_write(&key->sem) populates key->sem.dep_map.class_cache[0] with
+the module's lock_class, and key->type is switched to key_type_dead
+without resetting the lockdep class on key->sem. Once
+unregister_key_type() returns, free_module() -> lockdep_free_key_range()
+-> zap_class() clears the class bit in lock_classes_in_use, sets
+class->key =3D NULL, and queues the struct lock_class onto
+free_lock_classes.
+
+Previously, if retyping and module unload finished before can_read_key:,
+keyctl_read_key() saw key_type_dead.read =3D=3D NULL without taking key->se=
+m.
+With this change (or in __keyctl_read_key() if the module unloads after
+can_read_key:), calling down_read(&key->sem) enters
+kernel/locking/lockdep.c:__lock_acquire() with the dangling
+key->sem.dep_map.class_cache[0] pointer:
+
+    if (subclass < NR_LOCKDEP_CACHING_CLASSES)
+        class =3D lock->class_cache[subclass];
+    ...
+    if (DEBUG_LOCKS_WARN_ON(!test_bit(class_idx, lock_classes_in_use)))
+        return 0;
+
+Could this hit DEBUG_LOCKS_WARN_ON(!test_bit(class_idx,
+lock_classes_in_use)) or corrupt lockdep state if the lock_class entry
+has been reallocated?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/pm-key-management-o=
+bjects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com?part=3D1
