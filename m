@@ -1,370 +1,113 @@
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390CF483804
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 11:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD33A37DAC2;
+	Sat, 17 Oct 2026 14:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792236389; cv=none; b=toemK9Qeb/+VyH1Wcnp1pOZjUUFLGBKaB2eYMmpyY9tpHWMK4r7oawSDZYcp7ikDLDqZ14CgKDZHViSjm1F5CTn1h/5ingTGqsPJCLzeaZn7T7X7y7TbzXa/N9A3zB2YNpkAtT065d4tv7l8y/ZT4RZL+W8ycoy+nfkdaJG6knE=
+	t=1792247879; cv=none; b=F6kFINst8FdoxuU5udmCJ5zO7xU9ozDFWOAnIH/ilynU8Jm4SmC6PLhSvE0jSBk8A7X4zIUNjR9XRPDMI7tG84XfCWpQwaQiBJvYq9YyxyqeFmg7T3HuRmHOOOk5Itw/5EDPfGxbbsBxDYR7kFnHlaLqRESG5eJ3R0HRvZ5HoC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792236389; c=relaxed/simple;
-	bh=gsribd0HQ70V34cHYt527v1HP/hbNVLeP8tYt+TmdxU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qd3w32f/CQikWV9gPJ8K50hON8Tb/QXjbL/sevmsX8csK4sBKuCuygSVcB0w+nl2s+Af/U/xRYudVox+zR/S+0Iwf8jJ1pzoUzXcvL3zLsGPIrVarEzI3xOSRhFchoVLkJ4/q1wOlq2Bn8cC8iPGTC4M7GIPFaiEeLdnnYP7uT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-4b28dafb8e1so1325177b6e.2
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 04:26:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792236385; x=1792841185;
-        h=content-transfer-encoding:content-type:to:from:subject:message-id
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Vk5FIeZx+LnftjORcYrMxzyaqeVw+XPzBJbPmLQupXo=;
-        b=nWh3oiyJ8WIFbiGVX2YwoU7rdWv6dQssFD4YtcRrpmeBJpoPS7t3kQBtYkYCeXNZdI
-         ibrngdpj+U8dhUSQHhO7YzNR9m2UWdbET/snmUGx5ZChw9AM10awbuV6Nc1/cn+WD4v/
-         hr94bn4tIWgDAZ6pndsg729K23hCMzQffC8Vbu9Yw5MxtgNmsMfWj3FJvR53OsgLFCnr
-         fgQw1CawQz/pg2wqhkQAjE1keHpyoyu/xWyXPSdC2SIbIoH4Qs7+Cu0DT928XfWXYkcl
-         vvfOUOA/lPaDK8ZPypaW79ccgE9McQKg3ocCFejWc4Up9Tj9ko4tpkKzfObcQawP+Ai3
-         eS+Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzZdsQHUJyXmfvpBhU9Xl9Nw0YvLl51WOqSBXS96NsxCGB1xuj47a0oK+UmkTXEsLQMKzHiCmrpiY8XQ+gxy+Mq2wR1pS0=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKeSnvrezIWKcjesokmzA0IRWKD0dlU+pKJspzuNyFvMxUKM2ed
-	PVlryo+Wi0aRQ6aZV9dVl0q8FGGUyRpL1j1ak5n61soqCgZlhv4ez6rJgdC/UJcj9lJjMpt8N6q
-	KYHZ8AQs8U7K1j/NIVQoyXFFOpC6+9plnUbpYCDtXjsXBMa6R78sB7SnK/Bk=
+	s=arc-20240116; t=1792247879; c=relaxed/simple;
+	bh=x/aOhlxGADt+uUWRmu0GwWfYW6nUAyrbkaeIAa3hlB0=;
+	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=SJuRfzVAjdA4QVThzRx5mREL/rZwP0b2de6PKu39puvIMuYN3rXlgo0iCInAMO+ZgHaIaijOv+1WZtThblA6dN8bvRIh0HwEzNPu21GFtCHOWkezbzbu0bjSl17OPVXuBZLJ6iqdOE9He/+C9I3tVAfhoiTSvnFt/tBWDrfMON0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUjuSRmX; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUjuSRmX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A761F000C4;
+	Sat, 17 Oct 2026 14:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792247878;
+	bh=Y8Q4FeE0kHfspVpRiojxBFrzT3w8ffKEJfPLx5saYhA=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=AUjuSRmXJuFSZA5JNXxyGjqxHRQmV8U/GwaSG/iNb6JfJ8ungbTYz1I3gknFWcl9M
+	 SfaXw7WGitVbEvVfE4bkHUGvmopqUa7jEGt+7RBfvc1AK/97r+QNJ9JwA6eVb4CFUo
+	 GC5FIoGlba6zqXf37lNJueC3q5Y/1G2u+5NizLjKnefaRVfn7Il5M/Q9GYDnVHlgWN
+	 vjjb2FQtdcg3IAMkQKBV6U7WBK/lAKnux1Fq2tFQIOs+vUkBKZ/hLiSbp8OcRttAK0
+	 AmPQLJtsFYNoa4SC6fafnK9O/EUS6l7oBJG0c68JsHZGRYyrm9ftVZGUSVGbPJGnlO
+	 yMvDhHUhaYYJQ==
+Message-ID: <sashiko-outbox-175561@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] selinux: don't label bridged packets in
+ selinux_ip_forward()
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+In-Reply-To: <179216146138.25460.7866279004288174372@gmail.com>
+References: <179216146138.25460.7866279004288174372@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 17 Oct 2026 14:37:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1645:b0:4f4:cea0:23 with SMTP id
- 5614622812f47-53ccaf25555mr1825896b6e.14.1792236384987; Sat, 17 Oct 2026
- 04:26:24 -0700 (PDT)
-Date: Sat, 17 Oct 2026 04:26:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6ad35b60.7952420f.283480.0360.GAE@google.com>
-Subject: [syzbot] [keyrings?] [lsm?] BUG: workqueue lockup in key_garbage_collector
-From: syzbot <syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] selinux: NetLabel bypass for routed bridge packets in selinux_ip_f=
+orward()
+--
 
-syzbot found the following issue on:
+commit aa9d29a0c0e705f6d7d92b6c1e12ec004af2b214
+Author: Joas Antonio dos Santos <joasantonio108@gmail.com>
 
-HEAD commit:    7a19f0cc94ad Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.g=
-it for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D16320f01580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D26d6221a572842a=
-c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc15de43f1e7fffbb7=
-b9b
-compiler:       Debian clang version 22.1.8 (1~deb13u4), Debian LLD 22.1.8
-userspace arch: arm64
+selinux: don't label bridged packets in selinux_ip_forward()
 
-Unfortunately, I don't have any reproducer for this issue yet.
+This commit avoids labeling bridged IP packets in selinux_ip_forward() to
+prevent MAC and EtherType corruption when adding or removing CIPSO or
+CALIPSO options. It adds nf_bridge_info_exists() to skip bridged packets
+since labeling based on IP addresses is unwanted there.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/296cd4b77dbf/disk-=
-7a19f0cc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e57669ed895f/vmlinux-=
-7a19f0cc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c679c1ad76d4/Ima=
-ge-7a19f0cc.gz.xz
+Link: https://lore.kernel.org/netdev/CAHC9VhS+bdL_YnLQtd0sPmKKfy9BvS-LWV_6E=
+hAuu4qfUFe_mw@mail.gmail.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 18dd28b2bb13d..735e4889bd5b7 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+[ ... ]
+> @@ -6021,11 +6022,13 @@ static unsigned int selinux_ip_forward(void *priv=
+, struct sk_buff *skb,
+>  				 SECCLASS_PACKET, PACKET__FORWARD_IN, &ad))
+>  			return NF_DROP;
+> =20
+> -	if (netlbl_enabled())
+> -		/* we do this in the FORWARD path and not the POST_ROUTING
+> -		 * path because we want to make sure we apply the necessary
+> -		 * labeling before IPsec is applied so we can leverage AH
+> -		 * protection */
+> +	/* we do this in the FORWARD path and not the POST_ROUTING path
+> +	 * because we want to make sure we apply the necessary labeling
+> +	 * before IPsec is applied so we can leverage AH protection; bridged
+> +	 * packets are skipped as changing their IP options would leave the
+> +	 * Ethernet header behind
+> +	 */
+> +	if (netlbl_enabled() && !nf_bridge_info_exists(skb))
+>  		if (selinux_netlbl_skbuff_setsid(skb, family, peer_sid) !=3D 0)
+>  			return NF_DROP;
 
-BUG: workqueue lockup - pool cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 stuck f=
-or 30s!
-Showing busy workqueues and worker pools:
-workqueue events: flags=3D0x100
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D13 refcnt=3D14
-    in-flight: 10:key_garbage_collector for 51s ,1030:request_firmware_work=
-_func for 87s
-    pending: nsim_dev_hwstats_traffic_work, 2*psi_avgs_work, vmstat_shepher=
-d, 4*ovs_dp_masks_rebalance, 2*psi_avgs_work, delayed_vfree_work
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D12 refcnt=3D13
-    in-flight: 4831:nsim_fib_event_work for 56s ,26:nsim_fib_event_work for=
- 56s
-    pending: 4*nsim_dev_hwstats_traffic_work, 2*psi_avgs_work, 2*ovs_dp_mas=
-ks_rebalance, free_ipc, delayed_vfree_work
-workqueue events_unbound: flags=3D0x2
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D5 refcnt=3D6
-    pending: toggle_allocation_gate, 2*nsim_dev_trap_report_work, flush_mem=
-cg_stats_dwork, nsim_dev_trap_report_work
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D24 refcnt=3D25
-    in-flight: 524:cfg80211_wiphy_work for 56s ,134:cfg80211_wiphy_work for=
- 56s ,12:cfg80211_wiphy_work for 41s ,13:cfg80211_wiphy_work for 57s ,40:cf=
-g80211_wiphy_work for 48s ,1395:cfg80211_wiphy_work for 48s ,41:cfg80211_wi=
-phy_work for 56s ,1171:cfg80211_wiphy_work for 57s cfg80211_wiphy_work
-    pending: 5*cfg80211_wiphy_work, 2*nsim_dev_trap_report_work, 3*cfg80211=
-_wiphy_work, crng_reseed, cfg80211_wiphy_work, 3*macvlan_process_broadcast
-workqueue events_power_efficient: flags=3D0x82
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D6 refcnt=3D7
-    pending: neigh_periodic_work, wg_ratelimiter_gc_entries, neigh_managed_=
-work, fb_flashcursor, neigh_managed_work, gc_worker
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D2 refcnt=3D3
-    pending: neigh_periodic_work, do_cache_clean
-workqueue events_dfl_long: flags=3D0x2
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D5 refcnt=3D6
-    pending: 5*defense_work_handler
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: defense_work_handler
-workqueue mm_percpu_wq: flags=3D0x108
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D3
-    pending: vmstat_update
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D2
-    pending: vmstat_update
-workqueue writeback: flags=3D0x4a
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D4 MAYDAY
-    pending: wb_workfn
-workqueue iou_exit: flags=3D0x2
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: io_ring_exit_work
-workqueue mld: flags=3D0x40108
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D3 MAYDA=
-Y
-    pending: mld_dad_work
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D70 MAYD=
-AY
-    in-flight: 4816:mld_ifc_work for 7s
-    inactive: 3*mld_ifc_work, mld_dad_work, 11*mld_ifc_work, mld_dad_work, =
-6*mld_ifc_work, mld_dad_work, 8*mld_ifc_work, mld_dad_work, 10*mld_ifc_work=
-, mld_dad_work, mld_ifc_work, 2*mld_dad_work, 2*mld_ifc_work, mld_dad_work,=
- mld_ifc_work, mld_dad_work, 13*mld_ifc_work, 2*mld_dad_work
-workqueue ipv6_addrconf: flags=3D0x6000a
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D419 MAYDAY
-    pending: mayday_cursor_func, addrconf_dad_work
-    inactive: 413*addrconf_dad_work
-workqueue bat_events: flags=3D0x6000a
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D45 MAYDAY
-    in-flight: 2856(RESCUER):batadv_tt_purge for 8s
-    pending: mayday_cursor_func
-    inactive: 2*batadv_tt_purge, 4*batadv_mcast_mla_update, batadv_purge_or=
-ig, 3*batadv_iv_send_outstanding_bat_ogm_packet, batadv_purge_orig, 2*batad=
-v_iv_send_outstanding_bat_ogm_packet, 2*batadv_purge_orig, batadv_iv_send_o=
-utstanding_bat_ogm_packet, batadv_purge_orig, batadv_iv_send_outstanding_ba=
-t_ogm_packet, batadv_mcast_mla_update, 8*batadv_iv_send_outstanding_bat_ogm=
-_packet, batadv_dat_purge, batadv_bla_periodic_work, batadv_dat_purge, bata=
-dv_bla_periodic_work, batadv_dat_purge, batadv_bla_periodic_work, batadv_da=
-t_purge, batadv_bla_periodic_work, batadv_dat_purge, batadv_bla_periodic_wo=
-rk, 2*batadv_tt_purge
-workqueue wg-kex-wg0: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg0: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker, wg_packet_tx_worker, wg_packet_decry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D4 refcnt=3D7 MAYDA=
-Y
-    in-flight: 4824:wg_packet_tx_worker for 57s wg_packet_tx_worker
-    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker
-workqueue wg-crypt-wg1: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_tx_worker, wg_packet_decrypt_worker, wg_packet_encry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_decrypt_worker, wg_packet_encrypt_worker
-workqueue wg-kex-wg2: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg2: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
-pt_worker
-workqueue wg-kex-wg0: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg0: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D6 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker, wg_packet_=
-tx_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D3
-    pending: wg_packet_tx_worker, wg_packet_decrypt_worker
-workqueue wg-crypt-wg1: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D3
-    pending: wg_packet_tx_worker, wg_packet_encrypt_worker
-workqueue wg-kex-wg2: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg2: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
-pt_worker
-workqueue wg-kex-wg0: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg0: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker, wg_packet_tx_worker, wg_packet_decry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_tx_worker, wg_packet_decrypt_worker
-workqueue wg-kex-wg0: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg0: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker, wg_packet_tx_worker, wg_packet_decry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_decrypt_worker, wg_packet_encrypt_worker
-workqueue wg-kex-wg1: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg1: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_tx_worker, wg_packet_encrypt_worker, wg_packet_decry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D4 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker
-workqueue wg-kex-wg1: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D2 refcnt=3D3
-    pending: 2*wg_packet_handshake_send_worker
-workqueue wg-crypt-wg1: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_decrypt_worker, wg_packet_encrypt_worker
-workqueue wg-kex-wg2: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg2: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D4 MAYDA=
-Y
-    pending: wg_packet_tx_worker, wg_packet_encrypt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D4 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker
-workqueue wg-crypt-wg2: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D4
-    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
-pt_worker
-workqueue wg-kex-wg0: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg0: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D4
-    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker, wg_packet_=
-tx_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D6 MAYDA=
-Y
-    in-flight: 4832:wg_packet_tx_worker for 56s wg_packet_tx_worker
-    pending: wg_packet_encrypt_worker
-workqueue wg-crypt-wg1: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_tx_worker, wg_packet_encrypt_worker, wg_packet_decry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker
-workqueue wg-kex-wg2: flags=3D0x6
-  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
-    pending: wg_packet_handshake_send_worker
-workqueue wg-crypt-wg2: flags=3D0x128
-  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
-Y
-    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
-pt_worker
-  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D4 MAYDA=
-Y
-    pending: wg_packet_encrypt_worker
-pool 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 hung=3D30s workers=3D6 manag=
-er: 4872 idle: 4314 9 4802
-pool 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 hung=3D7s workers=3D9 manage=
-r: 4925 idle: 24 4817 866
-pool 8: cpus=3D0-1 flags=3D0x6 nice=3D0 hung=3D8s workers=3D9 manager: 1461
-Showing backtraces of busy workers in stalled worker pools:
-pool 2:
-task:kworker/0:1     state:R  running task     stack:0     pid:10    tgid:1=
-0    ppid:2      task_flags:0x4208060 flags:0x00000010
-Workqueue: events key_garbage_collector
-Call trace:
- __switch_to+0x2b4/0x6e4 arch/arm64/kernel/process.c:775 (T)
- context_switch kernel/sched/core.c:5533 [inline]
- __schedule+0x135c/0x2b00 kernel/sched/core.c:7284
- __schedule_loop kernel/sched/core.c:7361 [inline]
- schedule+0x13c/0x20c kernel/sched/core.c:7376
- schedule_timeout+0xc0/0x28c kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:100 [inline]
- __wait_for_common kernel/sched/completion.c:121 [inline]
- wait_for_common+0x220/0x394 kernel/sched/completion.c:132
- wait_for_completion+0x18/0x24 kernel/sched/completion.c:153
- synchronize_rcu_normal+0x28c/0x350 kernel/rcu/tree.c:3355
- synchronize_rcu+0x1f4/0x258 kernel/rcu/tree.c:3413
- key_garbage_collector+0x728/0x894 security/keys/gc.c:297
- process_one_work kernel/workqueue.c:3396 [inline]
- process_scheduled_works+0x91c/0x1250 kernel/workqueue.c:3479
- worker_thread+0x798/0xbd0 kernel/workqueue.c:3560
- kthread+0x304/0x3d4 kernel/kthread.c:436
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:854
-pool 2:
-task:kworker/0:2     state:R  running task     stack:0     pid:1030  tgid:1=
-030  ppid:2      task_flags:0x4208060 flags:0x00000010
-Workqueue: events request_firmware_work_func
-Call trace:
- __switch_to+0x2b4/0x6e4 arch/arm64/kernel/process.c:775 (T)
- context_switch kernel/sched/core.c:5533 [inline]
- __schedule+0x135c/0x2b00 kernel/sched/core.c:7284
- preempt_schedule_common+0xd4/0x190 kernel/sched/core.c:7463
- preempt_schedule+0x60/0x78 kernel/sched/core.c:7487
- __local_bh_enable_ip+0x16c/0x234 kernel/softirq.c:480
- __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:237 [inline]
- _raw_spin_unlock_bh+0x3c/0x4c kernel/locking/spinlock.c:245
- spin_unlock_bh include/linux/spinlock.h:407 [inline]
- restore_regulatory_settings+0x6f0/0x1650 net/wireless/reg.c:3555
- regdb_fw_cb+0x14c/0x1a8 net/wireless/reg.c:1026
- request_firmware_work_func+0xe8/0x24c drivers/base/firmware_loader/main.c:=
-1164
- process_one_work kernel/workqueue.c:3396 [inline]
- process_scheduled_works+0x91c/0x1250 kernel/workqueue.c:3479
- worker_thread+0x798/0xbd0 kernel/workqueue.c:3560
- kthread+0x304/0x3d4 kernel/kthread.c:436
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:854
+[Severity: High]
+Does this logic inadvertently skip NetLabel tagging for packets that are
+legitimately routed rather than just bridged?
 
+If a packet arrives on a bridge port, receives the SKB_EXT_BRIDGE_NF extens=
+ion
+in br_nf_pre_routing(), and is destined for the host's MAC address, it is
+passed up to the local IP stack via br_pass_frame_up().
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Since the bridge extension is not freed on the local input path, the packet
+retains it.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+When the packet is subsequently L3 forwarded via ip_forward(), the
+NF_INET_FORWARD hook calls selinux_ip_forward().
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Because nf_bridge_info_exists(skb) evaluates to true for these routed packe=
+ts,
+it appears SELinux will erroneously skip the NetLabel tagging, potentially
+allowing a remote or local unprivileged attacker to bypass network security
+policies.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/179216146138.25460.=
+7866279004288174372@gmail.com?part=3D1
