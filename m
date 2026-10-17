@@ -1,242 +1,370 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E82C394797
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 10:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390CF483804
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 11:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792232453; cv=none; b=PLRlAEAU9j4CMRir7/8klFe7REGPAXFXS+GZFOjrSF9CMxCb4l2oxmaRR6qknNcPPtesbIsGsCG0OrOkgfIly8eLjhpBgOe4yfxtBXuaO5dVChBNNvPU49j5RIYsvyO2bm3K3opLI3xCOk5Z4YTVvIOB3ZfvnPeIVhLogcA4W9k=
+	t=1792236389; cv=none; b=toemK9Qeb/+VyH1Wcnp1pOZjUUFLGBKaB2eYMmpyY9tpHWMK4r7oawSDZYcp7ikDLDqZ14CgKDZHViSjm1F5CTn1h/5ingTGqsPJCLzeaZn7T7X7y7TbzXa/N9A3zB2YNpkAtT065d4tv7l8y/ZT4RZL+W8ycoy+nfkdaJG6knE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792232453; c=relaxed/simple;
-	bh=9FufBxS18S0dldWgNka4fjZzVhFxBqVzPaTUx6dFpcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENcnCrDCfk2WMt9Ywr+J/SepdsXPnBbyd4G/r9QN7Gul889CbmxthGvo1NAfmoTy4gM9dLhSIldKxJ1nTbeP8BIcrTi4ky9WY0ANmabEnW+ITsB7I19wOGfl0Axd45W3rXe1zj5mTeuWnswwr0v7QeWhpAcnVLBPs99nNmukxx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmH9KjLj; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmH9KjLj"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4a1d484b4a9so9285645e9.0
-        for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 03:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792232450; x=1792837250; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=F90DdJ/nHk53s3oA/K0TXq/qQno+kxaKM9BW1VR7338=;
-        b=RmH9KjLjHdKCuQXt7ujzkZllp07gYV7EsaJcPBPEeQAqieLcLQA3ja0ymH2r/ZHGpE
-         Y6pRGJ6ko3h4XldLt1+fo3VeBMoihEVkiVlZX9D+nO7JMW6cW1FAdSJblL5paDIeLYYi
-         icL6lSfq1Q2WfZiT28KcD42ozT/a8hzNXIZlNHuyXgDHwe3LQJg71bKVWAzjHue0hLIr
-         U7cUGVKf9qU+PMgSzkaeSHL6s4aHh0RlnYDKdyd+yRFFNl1n3wjCFvmsrSTU+mjgqjOq
-         0uAI2GvTHW2bMN/8kmyIRnX81urBkMk0S0CzB3TjAo2fVumkQiwHYtXJkLTeA37O/jA4
-         FB2g==
+	s=arc-20240116; t=1792236389; c=relaxed/simple;
+	bh=gsribd0HQ70V34cHYt527v1HP/hbNVLeP8tYt+TmdxU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qd3w32f/CQikWV9gPJ8K50hON8Tb/QXjbL/sevmsX8csK4sBKuCuygSVcB0w+nl2s+Af/U/xRYudVox+zR/S+0Iwf8jJ1pzoUzXcvL3zLsGPIrVarEzI3xOSRhFchoVLkJ4/q1wOlq2Bn8cC8iPGTC4M7GIPFaiEeLdnnYP7uT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-4b28dafb8e1so1325177b6e.2
+        for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 04:26:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792232450; x=1792837250;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=F90DdJ/nHk53s3oA/K0TXq/qQno+kxaKM9BW1VR7338=;
-        b=VOECerj6YPXoxdF3zfob26bcblhh2NH6lwPeThzdQQFAinzKk3/zRsvo18UGnh8eYX
-         bpDbYR/etXnUDM4r92S3lopKakAv8jtRaCdW012UkWlMHUVgrMvWTa1C2UygWpREsJSZ
-         BeOc/huWOKZLlGGmGdXUs5oFTqGa1yFUiBAiQ6EAr2Z6/nVNoIuUiPZ2mviEQkGqIl0S
-         4AGxTv0g0IeH9QgBKh7RicjGQZYVmcQk6Im8MJMavFsOOY3vkquPVoCASBAOMv4ushTD
-         EAsxtv8hiro9XPl0iG3MW7CNLNRzaCfPKpsD71lflEdYj0qCdg/9gcirHkKD6ruuuctI
-         a0qA==
-X-Forwarded-Encrypted: i=1; AKwUvBz9m8913xIuKIV9qJUmaXZcSFkfvhtPLLrd4kmaAhabkrpSXRbEq5VKf4blclJciF7I46oPXoMQpS5gh9HuX23Cyt8Wk18=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJXizlO1GXXr9PppARiNtm6aGWjaLUkFCTHtDOsZ/dl3oUWUZ4s
-	NyxjVzBl9cNt9brSuSwBdNcEfNGsNw+VYUVVpA4xsTUTD0MtMWOGkqfm
-X-Gm-Gg: AYBFou3tod3OrDVXSejeF9qPSXERZrk+3jQirIoitHxbjUezSueh1GMuv/7+rmYVFUb
-	M5jpwCpechaBHZLG0t247p/W7/SO1b7YUwUjxKionzjCL64L5GpVMAWovLsO5FA4QuwCplcSooi
-	HoarpuuBEhwWbl1lLmdXYpwit1G5gJiraA8VSROD8O4eKutnBVxGxXZq1pgQs0krOFZMCBC5j0l
-	+g1nAr/e3NG+YhFgJF/mntZ9F9KQauOY8kCbGg9VZS0fpouis+uxkTftrO3RvPuX4PwM6yux64L
-	t6HtdRFZv/l65ZsYsJMCRh4scrYk2zXYflyVEzvlIoAWQ0f8Le8aCzcovZS0zpcbR7BwQDT9j+K
-	p0udt75rYw1jax1RNnwepQ4+DUFRl2dE8TaxSPvFljAUEF6k414M3An8VnBv4k58d5+OKRqus8K
-	gT0HJW70sRDC0ke9Ku72KwJ8QfvljuFHsnfsqttqD0hZ+VzvUjJt3OhMjCsHloM0qXHUNsgNCln
-	Ef/chH6Sf2fw0rwjcb72jn7y6gGHevbDA==
-X-Received: by 2002:a05:600c:4e45:b0:4a1:ac66:5f93 with SMTP id 5b1f17b1804b1-4a1d7607475mr50614295e9.8.1792232450432;
-        Sat, 17 Oct 2026 03:20:50 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1c9a6787bsm79353855e9.1.2026.10.17.03.20.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Oct 2026 03:20:48 -0700 (PDT)
-Date: Sat, 17 Oct 2026 12:20:45 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Daniel Durning <danieldurning.work@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Lennart Poettering <lennart@poettering.net>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Shervin Oloumi <enlightened@google.com>,
-	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v6 1/8] landlock: Rename quiet_masks to quiet_access
-Message-ID: <20261017.19431362edfa@gnoack.org>
-References: <20261014082718.1435842-1-mic@digikod.net>
- <20261014082718.1435842-2-mic@digikod.net>
+        d=1e100.net; s=20260707; t=1792236385; x=1792841185;
+        h=content-transfer-encoding:content-type:to:from:subject:message-id
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Vk5FIeZx+LnftjORcYrMxzyaqeVw+XPzBJbPmLQupXo=;
+        b=nWh3oiyJ8WIFbiGVX2YwoU7rdWv6dQssFD4YtcRrpmeBJpoPS7t3kQBtYkYCeXNZdI
+         ibrngdpj+U8dhUSQHhO7YzNR9m2UWdbET/snmUGx5ZChw9AM10awbuV6Nc1/cn+WD4v/
+         hr94bn4tIWgDAZ6pndsg729K23hCMzQffC8Vbu9Yw5MxtgNmsMfWj3FJvR53OsgLFCnr
+         fgQw1CawQz/pg2wqhkQAjE1keHpyoyu/xWyXPSdC2SIbIoH4Qs7+Cu0DT928XfWXYkcl
+         vvfOUOA/lPaDK8ZPypaW79ccgE9McQKg3ocCFejWc4Up9Tj9ko4tpkKzfObcQawP+Ai3
+         eS+Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzZdsQHUJyXmfvpBhU9Xl9Nw0YvLl51WOqSBXS96NsxCGB1xuj47a0oK+UmkTXEsLQMKzHiCmrpiY8XQ+gxy+Mq2wR1pS0=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKeSnvrezIWKcjesokmzA0IRWKD0dlU+pKJspzuNyFvMxUKM2ed
+	PVlryo+Wi0aRQ6aZV9dVl0q8FGGUyRpL1j1ak5n61soqCgZlhv4ez6rJgdC/UJcj9lJjMpt8N6q
+	KYHZ8AQs8U7K1j/NIVQoyXFFOpC6+9plnUbpYCDtXjsXBMa6R78sB7SnK/Bk=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261014082718.1435842-2-mic@digikod.net>
+X-Received: by 2002:a05:6808:1645:b0:4f4:cea0:23 with SMTP id
+ 5614622812f47-53ccaf25555mr1825896b6e.14.1792236384987; Sat, 17 Oct 2026
+ 04:26:24 -0700 (PDT)
+Date: Sat, 17 Oct 2026 04:26:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6ad35b60.7952420f.283480.0360.GAE@google.com>
+Subject: [syzbot] [keyrings?] [lsm?] BUG: workqueue lockup in key_garbage_collector
+From: syzbot <syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 14, 2026 at 10:27:07AM +0200, Mickaël Salaün wrote:
-> The base stores the fs/net/scope quiet bitmasks in a struct access_masks
-> field named quiet_masks.  A following commit adds the sibling struct
-> permission_masks field quiet_permission for capabilities and namespaces.
-> quiet_masks drops the access category and keeps the type half ("masks"),
-> while quiet_permission keeps the category and drops the type half, so
-> the two read as an inconsistent pair.
-> 
-> Rename the base field to quiet_access, giving the symmetric,
-> category-named pair quiet_access/quiet_permission that also matches the
-> UAPI handled_access_*/quiet_access_* naming.  This is a
-> no-functional-change rename.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Tingmao Wang <m@maowtm.org>
-> Reviewed-by: Tingmao Wang <m@maowtm.org>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
-> 
-> Changes since v3:
-> https://patch.msgid.link/20260726161400.3010511-5-mic@digikod.net
-> - Adapt the rename to the split ruleset/domain and logging code.
-> - Add Reviewed-by: Tingmao Wang.
-> 
-> Changes since v2:
-> - New patch.
-> ---
->  security/landlock/domain.c   |  2 +-
->  security/landlock/domain.h   |  4 ++--
->  security/landlock/log.c      |  6 +++---
->  security/landlock/ruleset.h  |  4 ++--
->  security/landlock/syscalls.c | 10 +++++-----
->  5 files changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-> index 4031b581be07..c66663f8cd8b 100644
-> --- a/security/landlock/domain.c
-> +++ b/security/landlock/domain.c
-> @@ -479,7 +479,7 @@ landlock_merge_ruleset(struct landlock_domain *const parent,
->  		return ERR_PTR(err);
->  
->  #ifdef CONFIG_SECURITY_LANDLOCK_LOG
-> -	new_dom->hierarchy->quiet_masks = ruleset->quiet_masks;
-> +	new_dom->hierarchy->quiet_access = ruleset->quiet_access;
->  #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
->  
->  	return no_free_ptr(new_dom);
-> diff --git a/security/landlock/domain.h b/security/landlock/domain.h
-> index 428c1d9890db..61d89261e280 100644
-> --- a/security/landlock/domain.h
-> +++ b/security/landlock/domain.h
-> @@ -130,10 +130,10 @@ struct landlock_hierarchy {
->  		 */
->  		log_new_exec : 1;
->  	/**
-> -	 * @quiet_masks: Bitmasks of access that should be quieted (i.e. not
-> +	 * @quiet_access: Bitmasks of access that should be quieted (i.e. not
->  	 * logged) if the related object is marked as quiet.
->  	 */
-> -	struct access_masks quiet_masks;
-> +	struct access_masks quiet_access;
->  #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
->  };
->  
-> diff --git a/security/landlock/log.c b/security/landlock/log.c
-> index a8578a6f2ce9..3f9ae1bacb23 100644
-> --- a/security/landlock/log.c
-> +++ b/security/landlock/log.c
-> @@ -436,7 +436,7 @@ is_denial_quieted(const struct landlock_request *const request,
->  	if (object_quiet_flag) {
->  		const access_mask_t quiet_mask =
->  			pick_access_mask_for_request_type(
-> -				request->type, youngest_denied->quiet_masks);
-> +				request->type, youngest_denied->quiet_access);
->  
->  		return (quiet_mask & missing) == missing;
->  	}
-> @@ -447,10 +447,10 @@ is_denial_quieted(const struct landlock_request *const request,
->  	 */
->  	switch (request->type) {
->  	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
-> -		return !!(youngest_denied->quiet_masks.scope &
-> +		return !!(youngest_denied->quiet_access.scope &
->  			  LANDLOCK_SCOPE_SIGNAL);
->  	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
-> -		return !!(youngest_denied->quiet_masks.scope &
-> +		return !!(youngest_denied->quiet_access.scope &
->  			  LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
->  	/*
->  	 * Leave LANDLOCK_REQUEST_PTRACE and LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index cf77f1806a95..8ebdd4fa098f 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -182,11 +182,11 @@ struct landlock_ruleset {
->  #endif /* CONFIG_TRACEPOINTS */
->  
->  	/**
-> -	 * @quiet_masks: Stores the quiet flags for an unmerged ruleset.  For a
-> +	 * @quiet_access: Stores the quiet flags for an unmerged ruleset.  For a
->  	 * merged domain, this is stored in each layer's struct
->  	 * landlock_hierarchy instead.
->  	 */
-> -	struct access_masks quiet_masks;
-> +	struct access_masks quiet_access;
->  	/**
->  	 * @handled_masks: Contains the subset of filesystem and network actions
->  	 * that are handled by this ruleset.
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index 1d02d57f4c48..17d8e9b7b0c6 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -280,9 +280,9 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
->  	if (IS_ERR(ruleset))
->  		return PTR_ERR(ruleset);
->  
-> -	ruleset->quiet_masks.fs = ruleset_attr.quiet_access_fs;
-> -	ruleset->quiet_masks.net = ruleset_attr.quiet_access_net;
-> -	ruleset->quiet_masks.scope = ruleset_attr.quiet_scoped;
-> +	ruleset->quiet_access.fs = ruleset_attr.quiet_access_fs;
-> +	ruleset->quiet_access.net = ruleset_attr.quiet_access_net;
-> +	ruleset->quiet_access.scope = ruleset_attr.quiet_scoped;
->  
->  	/*
->  	 * Emits before anon_inode_getfd() installs the file descriptor, while
-> @@ -382,7 +382,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
->  		return -EINVAL;
->  
->  	/* Checks for useless quiet flag. */
-> -	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_masks.fs)
-> +	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_access.fs)
->  		return -EINVAL;
->  
->  	/* Gets and checks the new rule. */
-> @@ -423,7 +423,7 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
->  		return -EINVAL;
->  
->  	/* Checks for useless quiet flag. */
-> -	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_masks.net)
-> +	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_access.net)
->  		return -EINVAL;
->  
->  	/* Denies inserting a rule with port greater than 65535. */
-> -- 
-> 2.55.0
-> 
+Hello,
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    7a19f0cc94ad Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.g=
+it for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D16320f01580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D26d6221a572842a=
+c
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc15de43f1e7fffbb7=
+b9b
+compiler:       Debian clang version 22.1.8 (1~deb13u4), Debian LLD 22.1.8
+userspace arch: arm64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/296cd4b77dbf/disk-=
+7a19f0cc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e57669ed895f/vmlinux-=
+7a19f0cc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c679c1ad76d4/Ima=
+ge-7a19f0cc.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com
+
+BUG: workqueue lockup - pool cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 stuck f=
+or 30s!
+Showing busy workqueues and worker pools:
+workqueue events: flags=3D0x100
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D13 refcnt=3D14
+    in-flight: 10:key_garbage_collector for 51s ,1030:request_firmware_work=
+_func for 87s
+    pending: nsim_dev_hwstats_traffic_work, 2*psi_avgs_work, vmstat_shepher=
+d, 4*ovs_dp_masks_rebalance, 2*psi_avgs_work, delayed_vfree_work
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D12 refcnt=3D13
+    in-flight: 4831:nsim_fib_event_work for 56s ,26:nsim_fib_event_work for=
+ 56s
+    pending: 4*nsim_dev_hwstats_traffic_work, 2*psi_avgs_work, 2*ovs_dp_mas=
+ks_rebalance, free_ipc, delayed_vfree_work
+workqueue events_unbound: flags=3D0x2
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D5 refcnt=3D6
+    pending: toggle_allocation_gate, 2*nsim_dev_trap_report_work, flush_mem=
+cg_stats_dwork, nsim_dev_trap_report_work
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D24 refcnt=3D25
+    in-flight: 524:cfg80211_wiphy_work for 56s ,134:cfg80211_wiphy_work for=
+ 56s ,12:cfg80211_wiphy_work for 41s ,13:cfg80211_wiphy_work for 57s ,40:cf=
+g80211_wiphy_work for 48s ,1395:cfg80211_wiphy_work for 48s ,41:cfg80211_wi=
+phy_work for 56s ,1171:cfg80211_wiphy_work for 57s cfg80211_wiphy_work
+    pending: 5*cfg80211_wiphy_work, 2*nsim_dev_trap_report_work, 3*cfg80211=
+_wiphy_work, crng_reseed, cfg80211_wiphy_work, 3*macvlan_process_broadcast
+workqueue events_power_efficient: flags=3D0x82
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D6 refcnt=3D7
+    pending: neigh_periodic_work, wg_ratelimiter_gc_entries, neigh_managed_=
+work, fb_flashcursor, neigh_managed_work, gc_worker
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D2 refcnt=3D3
+    pending: neigh_periodic_work, do_cache_clean
+workqueue events_dfl_long: flags=3D0x2
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D5 refcnt=3D6
+    pending: 5*defense_work_handler
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: defense_work_handler
+workqueue mm_percpu_wq: flags=3D0x108
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D3
+    pending: vmstat_update
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D2
+    pending: vmstat_update
+workqueue writeback: flags=3D0x4a
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D4 MAYDAY
+    pending: wb_workfn
+workqueue iou_exit: flags=3D0x2
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: io_ring_exit_work
+workqueue mld: flags=3D0x40108
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D3 MAYDA=
+Y
+    pending: mld_dad_work
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D70 MAYD=
+AY
+    in-flight: 4816:mld_ifc_work for 7s
+    inactive: 3*mld_ifc_work, mld_dad_work, 11*mld_ifc_work, mld_dad_work, =
+6*mld_ifc_work, mld_dad_work, 8*mld_ifc_work, mld_dad_work, 10*mld_ifc_work=
+, mld_dad_work, mld_ifc_work, 2*mld_dad_work, 2*mld_ifc_work, mld_dad_work,=
+ mld_ifc_work, mld_dad_work, 13*mld_ifc_work, 2*mld_dad_work
+workqueue ipv6_addrconf: flags=3D0x6000a
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D419 MAYDAY
+    pending: mayday_cursor_func, addrconf_dad_work
+    inactive: 413*addrconf_dad_work
+workqueue bat_events: flags=3D0x6000a
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D45 MAYDAY
+    in-flight: 2856(RESCUER):batadv_tt_purge for 8s
+    pending: mayday_cursor_func
+    inactive: 2*batadv_tt_purge, 4*batadv_mcast_mla_update, batadv_purge_or=
+ig, 3*batadv_iv_send_outstanding_bat_ogm_packet, batadv_purge_orig, 2*batad=
+v_iv_send_outstanding_bat_ogm_packet, 2*batadv_purge_orig, batadv_iv_send_o=
+utstanding_bat_ogm_packet, batadv_purge_orig, batadv_iv_send_outstanding_ba=
+t_ogm_packet, batadv_mcast_mla_update, 8*batadv_iv_send_outstanding_bat_ogm=
+_packet, batadv_dat_purge, batadv_bla_periodic_work, batadv_dat_purge, bata=
+dv_bla_periodic_work, batadv_dat_purge, batadv_bla_periodic_work, batadv_da=
+t_purge, batadv_bla_periodic_work, batadv_dat_purge, batadv_bla_periodic_wo=
+rk, 2*batadv_tt_purge
+workqueue wg-kex-wg0: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg0: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker, wg_packet_tx_worker, wg_packet_decry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D4 refcnt=3D7 MAYDA=
+Y
+    in-flight: 4824:wg_packet_tx_worker for 57s wg_packet_tx_worker
+    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker
+workqueue wg-crypt-wg1: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_tx_worker, wg_packet_decrypt_worker, wg_packet_encry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_decrypt_worker, wg_packet_encrypt_worker
+workqueue wg-kex-wg2: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg2: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
+pt_worker
+workqueue wg-kex-wg0: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg0: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D6 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker, wg_packet_=
+tx_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D3
+    pending: wg_packet_tx_worker, wg_packet_decrypt_worker
+workqueue wg-crypt-wg1: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D3
+    pending: wg_packet_tx_worker, wg_packet_encrypt_worker
+workqueue wg-kex-wg2: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg2: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
+pt_worker
+workqueue wg-kex-wg0: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg0: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker, wg_packet_tx_worker, wg_packet_decry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_tx_worker, wg_packet_decrypt_worker
+workqueue wg-kex-wg0: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg0: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker, wg_packet_tx_worker, wg_packet_decry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_decrypt_worker, wg_packet_encrypt_worker
+workqueue wg-kex-wg1: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg1: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_tx_worker, wg_packet_encrypt_worker, wg_packet_decry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D4 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker
+workqueue wg-kex-wg1: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D2 refcnt=3D3
+    pending: 2*wg_packet_handshake_send_worker
+workqueue wg-crypt-wg1: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_decrypt_worker, wg_packet_encrypt_worker
+workqueue wg-kex-wg2: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg2: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D4 MAYDA=
+Y
+    pending: wg_packet_tx_worker, wg_packet_encrypt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D4 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker
+workqueue wg-crypt-wg2: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D4
+    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
+pt_worker
+workqueue wg-kex-wg0: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg0: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D4
+    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker, wg_packet_=
+tx_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D6 MAYDA=
+Y
+    in-flight: 4832:wg_packet_tx_worker for 56s wg_packet_tx_worker
+    pending: wg_packet_encrypt_worker
+workqueue wg-crypt-wg1: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_tx_worker, wg_packet_encrypt_worker, wg_packet_decry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D2 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker, wg_packet_decrypt_worker
+workqueue wg-kex-wg2: flags=3D0x6
+  pwq 8: cpus=3D0-1 flags=3D0x6 nice=3D0 active=3D1 refcnt=3D2
+    pending: wg_packet_handshake_send_worker
+workqueue wg-crypt-wg2: flags=3D0x128
+  pwq 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 active=3D3 refcnt=3D5 MAYDA=
+Y
+    pending: wg_packet_decrypt_worker, wg_packet_tx_worker, wg_packet_encry=
+pt_worker
+  pwq 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 active=3D1 refcnt=3D4 MAYDA=
+Y
+    pending: wg_packet_encrypt_worker
+pool 2: cpus=3D0 node=3D0 flags=3D0x2 nice=3D0 hung=3D30s workers=3D6 manag=
+er: 4872 idle: 4314 9 4802
+pool 6: cpus=3D1 node=3D0 flags=3D0x2 nice=3D0 hung=3D7s workers=3D9 manage=
+r: 4925 idle: 24 4817 866
+pool 8: cpus=3D0-1 flags=3D0x6 nice=3D0 hung=3D8s workers=3D9 manager: 1461
+Showing backtraces of busy workers in stalled worker pools:
+pool 2:
+task:kworker/0:1     state:R  running task     stack:0     pid:10    tgid:1=
+0    ppid:2      task_flags:0x4208060 flags:0x00000010
+Workqueue: events key_garbage_collector
+Call trace:
+ __switch_to+0x2b4/0x6e4 arch/arm64/kernel/process.c:775 (T)
+ context_switch kernel/sched/core.c:5533 [inline]
+ __schedule+0x135c/0x2b00 kernel/sched/core.c:7284
+ __schedule_loop kernel/sched/core.c:7361 [inline]
+ schedule+0x13c/0x20c kernel/sched/core.c:7376
+ schedule_timeout+0xc0/0x28c kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:100 [inline]
+ __wait_for_common kernel/sched/completion.c:121 [inline]
+ wait_for_common+0x220/0x394 kernel/sched/completion.c:132
+ wait_for_completion+0x18/0x24 kernel/sched/completion.c:153
+ synchronize_rcu_normal+0x28c/0x350 kernel/rcu/tree.c:3355
+ synchronize_rcu+0x1f4/0x258 kernel/rcu/tree.c:3413
+ key_garbage_collector+0x728/0x894 security/keys/gc.c:297
+ process_one_work kernel/workqueue.c:3396 [inline]
+ process_scheduled_works+0x91c/0x1250 kernel/workqueue.c:3479
+ worker_thread+0x798/0xbd0 kernel/workqueue.c:3560
+ kthread+0x304/0x3d4 kernel/kthread.c:436
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:854
+pool 2:
+task:kworker/0:2     state:R  running task     stack:0     pid:1030  tgid:1=
+030  ppid:2      task_flags:0x4208060 flags:0x00000010
+Workqueue: events request_firmware_work_func
+Call trace:
+ __switch_to+0x2b4/0x6e4 arch/arm64/kernel/process.c:775 (T)
+ context_switch kernel/sched/core.c:5533 [inline]
+ __schedule+0x135c/0x2b00 kernel/sched/core.c:7284
+ preempt_schedule_common+0xd4/0x190 kernel/sched/core.c:7463
+ preempt_schedule+0x60/0x78 kernel/sched/core.c:7487
+ __local_bh_enable_ip+0x16c/0x234 kernel/softirq.c:480
+ __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:237 [inline]
+ _raw_spin_unlock_bh+0x3c/0x4c kernel/locking/spinlock.c:245
+ spin_unlock_bh include/linux/spinlock.h:407 [inline]
+ restore_regulatory_settings+0x6f0/0x1650 net/wireless/reg.c:3555
+ regdb_fw_cb+0x14c/0x1a8 net/wireless/reg.c:1026
+ request_firmware_work_func+0xe8/0x24c drivers/base/firmware_loader/main.c:=
+1164
+ process_one_work kernel/workqueue.c:3396 [inline]
+ process_scheduled_works+0x91c/0x1250 kernel/workqueue.c:3479
+ worker_thread+0x798/0xbd0 kernel/workqueue.c:3560
+ kthread+0x304/0x3d4 kernel/kthread.c:436
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:854
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
