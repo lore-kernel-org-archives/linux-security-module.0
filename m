@@ -1,59 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572503A16AE
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D98E3A9628
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792223662; cv=none; b=a3/4d0wAMwcOwkQBEApuoBHpnKAe3brzeh7U0ig91H+CC68Y33Ckvi62d987ePJB1Dmnypa6VuJmPWdcd0Lqge6j3jvL6V+8oH+TXG7zR5/X3jbQHGfYbRQzxJy4Hk7Y1ljH5AlK8eyeLucCHPhjKCjbDSBvwO8vfz10mAGbNFI=
+	t=1792223683; cv=none; b=PziqE5XiqV6po9HTgeokhqaqA6pAeXmMJ/K5AOLMmLExX+0fEEHq7VaRLcG5AGJQr5ckFiG+1jCRYJtecDG6iy2OAN/Kn+O0QgtBHcL3MIbzRX+G0zV1QbbNmNRqtFPOhhM3zRQyQDV0cr0pj8a7u9um8AgcKto6Or6o8fv6beE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792223662; c=relaxed/simple;
-	bh=/c0JgevYLdfjkR51sNSxlC0Dhx1I6M9s3Qi6Z5Hhhmc=;
+	s=arc-20240116; t=1792223683; c=relaxed/simple;
+	bh=7WKC97l/+4LzrNMTvjN2gUWC6Li7BE7+Zsq6XcXQSGM=;
 	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=cJupu/z1AcEYxugoWvzSXHbUXNp1i9CgyNqXfxZOzOnZu3oZFe39WQlzn9NsqkTTtdhlm8OowqeiHg+WngxcB01Cc3dMe0XXoKVpLRtE2B5kNaj5rXkQJQ1zRu2mXnH2fwGDzJp/V1i4lsmEmTAU94g6XiUHuNajf8Z0CZ473UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0vk94X7; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=g9avoNiphnMW1iDXsU6y/SkCQBn3mjuToSBIspfBcfsHVNUW5j1T6qBc19CImwzPBUSeHuL3/Zw0oUDOVXwSSyvZ4glNtgH6DPLdnUvWjXhXTYHv9uqpUJ2dkhFC6++54VUAi3qa1nYDnr7HvYYaxHNaGffiyWC9tKCcbWeUDnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMpk18tB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0vk94X7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAA8D1F000C4
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:54:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMpk18tB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B1681F000C4
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 07:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792223661;
-	bh=/c0JgevYLdfjkR51sNSxlC0Dhx1I6M9s3Qi6Z5Hhhmc=;
+	s=k20260515; t=1792223681;
+	bh=7WKC97l/+4LzrNMTvjN2gUWC6Li7BE7+Zsq6XcXQSGM=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=m0vk94X7bcp9e3XMT7XSVTE+X5R+0eJI+8hxgoobe4SWB093c5gWRUuVczVGxbttj
-	 SXG7AKUPEHNyQdwtXPmTUxzwdrvySL3JRYdh6MnIMJiJtbO3eSV1SLLQquhqk8FSy4
-	 bPnQVEyua78514NHUdoq5jailTGQzdRoObaVLiHxwRS7U7ocwa1qHI0lxpxxIWI6LQ
-	 UAGlglR6cj5GBWHUBD1RWui6VIe31jbPjXJmVyZ7FJsRuynnJESbV7MCgJpztnqQ3y
-	 mTzgkPcZnOyUG6PEju6pTEedyGojExLsszhrpaV1UIVKK4bvTiRK+fvZdYRAJBXnRm
-	 J0ueyUV03x4qw==
-Message-ID: <sashiko-outbox-175379@kernel.org>
+	b=mMpk18tBYERN9IuGeBA+Ez/jEnjRk5ezXzyxJRmEFwvQr3oN+0qk58uK9Z7WUOrOS
+	 BipoyATIjezY76Ntq2rd5EhpN/OPGdamnVmLvo+LI1GDj7bLfidFTAZ0250EvfIn/U
+	 WOcsQsmY/+xLiLFaelDf3DGusknE3LJ51/ngf93ImlIjJc9M7IHedY68G7wH4FXrSn
+	 zfJiR6OZzUpZdMGpVbYX4k6uYOE3HwAKF1rBTiibRL0BIpRLeibL1zbbiNEOs8ma0A
+	 E7KrwgG0FNBQ2McBwRlxhbU2tG2nGyLBmm+2gg4mJsC5iOZEQakXx9XMJToYA9Q8Mo
+	 yKb6+EhanKAEQ==
+Message-ID: <sashiko-outbox-175381@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 1/6] pseries/plpks: fix length types for wrapping
- operations
+Subject: Re: [PATCH v3 3/6] keys/trusted_keys: clear sensitive PKWM buffers
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261017074850.164031-2-ssrish@linux.ibm.com>
+In-Reply-To: <20261017074850.164031-4-ssrish@linux.ibm.com>
 References: <20261017074850.164031-1-ssrish@linux.ibm.com>
- <20261017074850.164031-2-ssrish@linux.ibm.com>
+ <20261017074850.164031-4-ssrish@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 17 Oct 2026 07:54:20 +0000
+Date: Sat, 17 Oct 2026 07:54:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-> The object wrapping and unwrapping hcalls use 64-bit length values, but
-> plpks_wrap_object() and plpks_unwrap_object() currently use u32 for the
-> input and output length parameters. As a result, the interfaces cannot
-> represent the full range of values supported by the hcalls.
+> The input buffer to PKWM seal and the output buffer from PKWM unseal
+> contain plaintext trusted-key payload data. Freeing these buffers with
+> kfree(), without wiping the contents, can leave sensitive key material
+> in memory.
 >=20
-> Use u64 for the length parameters to align them with the underlying hcall
-> interfaces. Update the PKWM consumer accordingly.
+> Use kfree_sensitive() to wipe the sensitive key material when freeing
+> these buffers.
 >=20
-> Fixes: 133aa79e211d ("pseries/plpks: add HCALLs for PowerVM Key Wrapping =
-Module")
 > Fixes: c99fcb0d735b ("keys/trusted_keys: establish PKWM as a trusted sour=
 ce")
 > Cc: stable@vger.kernel.org # 7.0
@@ -63,5 +60,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261017074850.1640=
-31-1-ssrish@linux.ibm.com?part=3D1
+31-1-ssrish@linux.ibm.com?part=3D3
 
