@@ -1,169 +1,160 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AECD3822A3
-	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 01:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF48C3AFB1B
+	for <linux-security-module@vger.kernel.org>; Sat, 17 Oct 2026 03:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792201294; cv=none; b=WXpZVxG9DbK+r5pbEAVFRKRQsKeImqB91X+d3MTzmNM8sVci4dvHC17XsDwcqSMT0VKvlN123kVRJ00/yxznoW0/Sm7nT87aCF1B7PAAvnC7AwpC4nDJ9yBlAaGmqJMG13N7FFQPB7Ylvs/atOZORze3DY56yBOpg7XxjKQXaDs=
+	t=1792206014; cv=none; b=maJywgXPHHsqRF2C0WuSzqsRVKnPdpzOMmJUnxuQb70xwTShzOnawu8l1utqDKD5gJhx5yFn86I+UMyJrcJldZwphYR+6phUDJMwEKnVIjxPUd03tsqDBeRgeaoRpSrXnHfEGe/L7/W4LJDD7eN1uZtbOAHmmZnh5MpUEcztzC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792201294; c=relaxed/simple;
-	bh=SJ3H0Y4897knyxt2qKcz8RPoXZ35/4HPpfjfIvJjpcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7nf1HcgTMw+qe+Hg+8pPZSJOHzBU/6Inxy7RmaF73PFmSAK3IQJdTyIdrqkALCQ8T6TbnhDceCMPTfCpUi+G2cAXemGjfgR2UqF1m6VOMndmMsAG3JEaecxUouMF+ubuxDWVhxm8TMKiySaVUKX0DrkLNS+1gh8PVG7euSH//w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJACF1Sd; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792206014; c=relaxed/simple;
+	bh=RnyUtaj56FacvXKJT/5BOE5uL4aLHIIMeKqQgZyyy3w=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=lnWccWJnPNyun88RNZpqj3mJrPFi9dWoz/emDKvPUZU23Ytx1c5aigSSPmQFkdH2PpeyO1YcIQ6ZyX6LxUIpkP+eydv8Bu1O6afS4UY6WyLy2MO/0dqu5nEW7JJJ+k4C5BOFHlG8QMCcIsA6GSSnuNKvpvbwpuW3xB3O/KkTmgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SkyKkWWj; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJACF1Sd"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-8ab37e44643so3385507b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 18:41:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SkyKkWWj"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-93ece7a73b9so64973985a.3
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Oct 2026 20:00:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792201292; x=1792806092; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=hOS+ZBBODn2ZAo/hVEDHsyHqOP2bTURk/CP3sWDEYqs=;
-        b=bJACF1SdIpbNlmBWfrx+OQSv7Xa1thhKmm+daP5SDhPcOBa6w9giZSBc4AISsa8PIa
-         1CeQ0BuTtcXsATycLdEjD0EuqUGdD1/LMLF4Zr03epGd+GzvWENlSNTqv7sZEabPuHmi
-         VwMcju1dUgbLwwH4PzRriozQPFvfT1vU1u1eCdgxjqZhqNnQ+RjlEIdwQFyyo4SN3oMe
-         v4HJMixrYXUYVdHNFY+fByW/pQieq3RzGVB6doc5pbZo7Lxt5axqIBf2ZTDMHa61pM9A
-         3qzvcQdZv4gpLZaZj9nDcl9cK/K3oR3jpKMeWLIPfWghZHlAoYjGiFGxK+PSVdYKs3VZ
-         Tvbg==
+        d=paul-moore.com; s=google; t=1792206006; x=1792810806; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=H7TFgfiFf6FEXV3J7Inq1lkdC8JNBzhySk1rzqW+t48=;
+        b=SkyKkWWj35bDcts8jT/Vm8ebaAmtwQIQ2aldBjUveWiFsnhPtE2VD0UHBM2h+63BMI
+         wHOSrBjN5DZr4EyOYc8VMQCHCVh6mueA0IX4/i0giSK7bBzkRGGMQautk4BBAOOt21Ig
+         vLVnT5fVS/TGo9mBBCDKKU1YvI+9gtXlIu6P0/e9MklAsUxTO2VxMtF9f9hV73u9pKwy
+         GQaIZa7rkJRP6gHb7/nORUOF/hLYirjJcN81gf/LRtgiCva7zkj8K4RYXuSCv/EinZsi
+         kS9sy+YCmmbIM68+/qDwnjh4g8AFfUwZnkv0fujgMWfSt856edmHxDNlOiGuDoWOoNjy
+         +LuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792201292; x=1792806092;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hOS+ZBBODn2ZAo/hVEDHsyHqOP2bTURk/CP3sWDEYqs=;
-        b=E56Jv7MZPjHticgMrGBVSBJLD41bwdu5o8t4WJtZcj9icFxFraR082RY25cMtXrn1x
-         ABXEd+4/dUh+8SiTaFiwzQVmVrsv4KIqRaPL9QdD5UEFvwrMfzRVxMlZ5Svefwfnrhwg
-         tU4afeJiW+Sp6DKBf8uehmD4B+/Wij/wcAvWirLbECeRqOAL8MZV/Ab+nJy5iw1klpPt
-         bcQ1F5ekte7ilI8H+CnFawML9jbmEbnhYd3E/CrpoOgTggTCsMIkgX2BS3yO9ILkwxUM
-         tTKp/Xpu7WcBWduFTkYRp1+YFsa5Cf3OWUpgMf3zb8QcBMXXYLWmXSpz3VtNKR0l3Nxq
-         cTmw==
-X-Forwarded-Encrypted: i=1; AKwUvBxXxrM7Tekv+cD9SeloAEzgktBPabEJbJYqQEVCbRHpRLW685jE5EgQfFTzH4DQr0WKS9RFnXLu5BtuJD3F/H0QDR5H3Ak=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIco69CRliAUDDaP4LONRWoG0RgKkY+HwXH0HMNZGCDcrQ6dqdi
-	bNtngr1m6Pj7qYIw5wlB3FNIN3gcdjUcvjLDh6S+4E92lN9CXFhF5IrH
-X-Gm-Gg: AYBFou01acZXBo1WNp7oVQPlNNUq/Cdr4dBzt1boUUJaET5k0rnLDJJJCMn+LOJ8rPu
-	BqqWduFsaR0D0e7RSIJTJzHb8mRxQYJ1MA6yVcwLCXccElFCKbchUbTxNNdt4RgKM/GQl/XGQ7G
-	Y9g2+CisMTn9Oqz7cYMG0cMGwN0h659JDg46TFerPbRQjCUh02jPl63Odq8svCn/2H6sXIqEIqK
-	rxw7YUCrdhMf/9IDGExLKovT9FW5j2jCFxEkqLfRpc1b8ZZR6ry/3zLnaiNi2ZCFhVJ7BrHjUwZ
-	CEUwNfGvthVjiC6Vxda0nzWMeUKjLIC1aKfMDSqC26T5w8Hn5Iwm9p3cBJC8fMZiIKHIbIHvT6s
-	QWuvVYwYiziFNowJNe+R363AEShkLNStTiHuEtU0TFHPHmxHM8EOi4OalEDjhCl2SMRmG4c0/oR
-	IEu67b7GNHo19xL1zXZpSd/uPFy+BFRMLWUAnyOkglplVvoALBNVmpXW2Ua5UPIfccIV52Iyim
-X-Received: by 2002:a05:690c:6d84:b0:8ab:41a5:63c with SMTP id 00721157ae682-8b0f2433bd5mr5404137b3.108.1792201291989;
-        Fri, 16 Oct 2026 18:41:31 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:e60c:1742:d962:6aa4])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-679b1e4083esm1786175d50.9.2026.10.16.18.41.31
+        d=1e100.net; s=20260707; t=1792206006; x=1792810806;
+        h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=H7TFgfiFf6FEXV3J7Inq1lkdC8JNBzhySk1rzqW+t48=;
+        b=YCpcS73MXoJE8PC56wE9GJ/fGbf11cwuNGkvfknBIxWv1+42pMEGvwtSvUzUvqu+rl
+         URyzwIjMkV56ITE/uq5slshJqBRiof4Haw15rvBK262/nxfP3ojCYn2pdd/4S5zNswHg
+         cjgnmcSM4xvVXl14IfaqVpovDTUrA5OYjrmesneXZAz9Oy6RRWluWiwo0SDaw5pviAj5
+         mUhN6/XPYee7EwAWljnuopUkS2lsRZgSDilCqHcrdB+FHQWR5TdKpGkDaTGjYi5UnRq8
+         ETPRwnWMTZ0Lude1gKRAUhTGeQnWX2fhy+0xZ/sgalZsEaIf78QfBPP+De2zOIK1BZ4X
+         72og==
+X-Forwarded-Encrypted: i=1; AKwUvBxTFhp4BqmA9hecmul4OrtgXqlhtpFx4M67JzAxFlAzJq0yiNWTq0BkLg7to49QJFvsn0cJqNtPbwgpH7IkWDWKDTj1/Hg=@vger.kernel.org
+X-Gm-Message-State: AFq9FYL1TU/ugF5lHdfbZGdbdFgUB/PHnMxgErDWqMzaq0J0w370ihUC
+	WCA33moy56rEjEx9fE1+Qibtbgr01hzqyLLeF2Us75NVQpoZMBviDiy/EnCeWczL7A==
+X-Gm-Gg: AYBFou2KgzM8gR70ruJAlKR+l8IChWXVotgdb9cjuwzYFDQfzUf9LAECrjZy/7h7Zb5
+	HPvDh/jZ+DkLV7FqmwBBLQNuT7rhp3lGhvaHHtpm0Gp/15IQEwbgLn74J+rG5F+hYFeUQb1ipPf
+	8iFjCSI9PUgkPNdtoJstN/F98Z2hw6hWb2/+Ib6ALNSsAUVuTVKKTxhRtqDHcJVAnuixcQmRdvR
+	Xhj91Nb537uqf2Po3kgL3ueNz/4TxprzXd/oH0pAglosz8UiwRArzNtWWrxKJ6Lx4ARK+SIX8nM
+	uHray5Vu3u0MAGBTcNgmpqoiBCRZXuImjTDIj1Kb/TaF8O4QGSoOwhC8bi8KiQIWBMKOMQ+rwta
+	XxClDTs9KV8ZLH349fgyC+mYuvtCVFjd5FHxL+mAt1TOPJy0h7bl/fm8oHeJV+2A6wHLAP4J9gg
+	987FiUQ3sAh+4wK9IR3bNb6zv25J0PKX41Wb5zDAhq2h2IXdiYjEm8x96LLOFdSDLcl7l6FHPyn
+	xBBZHgy5QYsVi3l6x+rGlP0NVLYZOIX62DO3cG4fTAUu6Jfk0VrSbe0JQyoYE0hfAwTwqT4tQ0=
+X-Received: by 2002:a05:620a:439b:b0:939:9edf:edb7 with SMTP id af79cd13be357-93f29b73708mr304873385a.6.1792206006258;
+        Fri, 16 Oct 2026 20:00:06 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93f1a1850cbsm361980985a.24.2026.10.16.20.00.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2026 18:41:31 -0700 (PDT)
-Date: Fri, 16 Oct 2026 21:41:30 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, NeilBrown <neil@brown.name>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Tingmao Wang <m@maowtm.org>
-Subject: Re: [PATCH bpf-next v1 00/11] fs: unified VFS ancestor walk for
- Landlock and BPF
-Message-ID: <atLLcqIiYEw4HYo7@zenbox>
-References: <20261013164800.2906577-1-utilityemal77@gmail.com>
- <DM6PICFFAU5Z.14KOZT5YJO7MA@gmail.com>
+        Fri, 16 Oct 2026 20:00:05 -0700 (PDT)
+Date: Fri, 16 Oct 2026 23:00:05 -0400
+Message-ID: <e30c2a29706391f16d9ac9446907193c@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20261015
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PICFFAU5Z.14KOZT5YJO7MA@gmail.com>
 
-On Sat, Oct 17, 2026 at 01:02:40AM +0000, Alexei Starovoitov wrote:
-> On Tue, Oct 13, 2026 at 12:47 PM Justin Suess <utilityemal77@gmail.com> wrote:
-> > The structure is unchanged from the RFC [2]: a stepwise engine private
-> > to namei.c, a callback front-end for in-kernel callers (Landlock
-> > is converted, fixing the follow_up() race Al reported, hence the
-> > Fixes: tag on patch 3), and open-coded BPF iterators over the engine in
-> > referenced and rcu flavors, with bpf_path_ancestors_legitimize()
-> > escalating from the latter to the former mid-walk.  Patch 1 is carried
-> > from Song's series.  See the RFC cover for the full background and API
-> > listing.
-> 
-> Song's series stopped at
-> "It is a conceptual dead-end to expose these two modes via separate APIs
-> and leak this implementation detail into non-core code. It will not
-> happen as far as I'm concerned."
-> VFS_WALK_RCU, -ECHILD to the caller, two bpf iterators and the
-> legitimize kfunc are that leak.
-It's a leak alright!
+Linus,
 
-The problem I run into is that the RCU walk and refwalk have different
-contexts. Currently the KF_RCU_PROTECTED on
-bpf_iter_path_ancestors_rcu_new and the KF_SLEEPABLE on
-bpf_iter_path_ancestors_new
+Thirteen SELinux patches for the Linux v7.4 merge window:
 
-Unfortunately, if you wanted to make one set of iterator kfuncs for both
-APIs you'd have to make the assumption that the inner loop
-always runs under the non-sleepable KF_RCU_PROTECTED conditions, the
-strictest of the two iteration modes. (KF_RCU_PROTECTED context is stricter subset
-of KF_SLEEPABLE context)
+- Continue to improve the load time validation of SELinux policies
 
-So it would just be KF_RCU_PROTECTED regardless of whether it's RCU
-walk or refwalk... so no sleepable dentry xattr kfuncs would be
-possible.
+While SELinux policy loading remains a privileged operation, we continue
+the recent trend of hardening the policy parsing and validation code in
+the kernel to ensure that invalid, or poorly formatted policies are
+rejected at load time.
 
-There's nothing wrong with that (callers can break out of loop and do
-sleepable work) but it is a tradeoff. And you couldn't carry the
-acquired references to the paths outside the loop.
+- Correctly incorporate "neveraudit" into the xperms code
 
-So I admittedly designed it as two APIs that leak the rcu/ref context,
-but share the backend API. (the vfs_walk_* stuff)
+This change aligns the xperms neveraudit handling with the conventional
+permission handling code, exiting early from the SELinux auditing
+code when neveraudit is enabled for the domain.
 
-Christian do you have any thoughts on this? I agree, as little
-RCU/refwalk details should be exposed as possible.
+- Mark the selinuxfs "status" and "policy" files immutable
 
-> Landlock still passes flags == 0, so nothing in the kernel walks in
-> rcu mode.
-> Patches 1-3 fix a real race and don't need bpf.
-> Send them to Christian, Al and Mickael on their own.
-> 
-Will do.
+These are read-only kernel/userspace interfaces that could successfully
+be opened at the VFS layer through the use of CAP_DAC_OVERRIDE.  With
+this pull request we are marking these two files as immutable so that
+the requests to open these file with write permissions now fail at the
+VFS layer.  This also allows us to drop some of our mmap() checks around
+write permissions as the VFS will now also handle this for us.
 
-> > Verifier fixes propagating the RCU-ness to trusted fields can be done,
-> > but it's best as a separate series where the idea can be examined more
-> > closely.  Then marking the dentry as trusted will allow you to use the
-> > dentry xattr kfuncs.  Nothing in this series strictly depends on having
-> > a trusted dentry, nor will marking it trusted require changes in this
-> > API.  See my follow up [4].
-> 
-> Then what can a prog do with a position?
-Not a whole lot. bpf_path_d_path maybe.
+The existing SELinux permissions checks remain untouched.
 
-> pos->dentry is untrusted now.
-> Marking it trusted will require changes.
-> d = pos->dentry is not linked to pos. It will stay trusted after
-> bpf_path_put(pos).
-> pos of the rcu iterator points into bpf stack.
-> MEM_RCU propagation fixes neither.
-> What next() should return depends on how the verifier tracks it.
-> Let's do the verifier part first.
-> 
-I submitted two verifier fixes earlier here [1] one for the linking
-the trusted field lifetime to the parent field and one for the MEM_RCU.
+- Convert the selinuxfs inode numbers to u64
 
-[1] https://lore.kernel.org/bpf/20261014173039.3666415-1-utilityemal77@gmail.com/
+Bring selinuxfs current with other filesystems in using u64 for inode
+numbering as opposed to the architecture dependent unsigned long.
 
-Justin
-> pw-bot: cr
+- Constify a number of the SELinux AVC function parameters
+
+- Remove a SELinux MLS function that was no longer used
+
+Paul
+
+--
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
+
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20261015
+
+for you to fetch changes up to b73b967b0fc44707f39faa4f298f1f9d9b7bfac5:
+
+  selinux: validate permissive and neveraudit map types at load
+    (2026-09-30 16:59:44 -0400)
+
+----------------------------------------------------------------
+selinux/stable-7.4 PR 20261015
+----------------------------------------------------------------
+
+Christian Göttsche (8):
+      selinux: constify avc function parameters
+      selinux: reject a policy that both rejects and allows unknown
+         classes
+      selinux: reject duplicate symbol values during policy load
+      selinux: bounds-check filename transition source types at load
+      selinux: check neveraudit in avc_xperms_audit_required()
+      selinux: bounds-check role and user membership bitmaps at load
+      selinux: validate user MLS range and default level at load
+      selinux: validate permissive and neveraudit map types at load
+
+Paul Moore (2):
+      selinux: convert selinuxfs inode numbers from unsigned long to u64
+      selinux: avoid 64-bit division of inode numbers
+
+Stephen Smalley (3):
+      selinux: tighten policydb_context_isvalid() checks
+      selinux: remove unused mls_setup_user_range()
+      selinux: mark status and policy inodes as immutable, drop status
+         mmap write checks
+
+ security/selinux/avc.c          |   37 ++++----
+ security/selinux/include/avc.h  |    7 -
+ security/selinux/selinuxfs.c    |   59 +++++++------
+ security/selinux/ss/mls.c       |   38 --------
+ security/selinux/ss/mls.h       |    3 
+ security/selinux/ss/mls_types.h |    3 
+ security/selinux/ss/policydb.c  |  137 ++++++++++++++++++++++++++++----
+ 7 files changed, 183 insertions(+), 101 deletions(-)
+
+--
+paul-moore.com
