@@ -1,42 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30B2332EAE;
-	Sun, 18 Oct 2026 02:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4334CF496;
+	Sun, 18 Oct 2026 02:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792289764; cv=none; b=b05dWJsaO5QwCwNHSSvKEiFoqbR5a79A1OvSqJY7dYJwBgycUVsqKSQ3EX9ZlrwA2hCiDDPcBGIghBFhxwNqvm8wUhkTvDO/1JTO8XHYGIuc/9lliSn8u93hvjZwaX6XO9CF+z8LJ4nnyJrpSfSr25hydn4WNxIzaXWIAXEKtSA=
+	t=1792290121; cv=none; b=sXF/aGo94giDbLO11opZBl+KSTkQl0AYGQtfWw3L2MqDijlbGj7GttP6MHxB2UqduhQZWGiT7T/oCeEtFL/8HAVH7sJwuGumaEHe2sv9tyNYqYr8O/5Y6OI/80foY+fQkW0djfIT7w6jrJEFmPGzZerH6rcUZ9UZWXKwZw0YwwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792289764; c=relaxed/simple;
-	bh=MCBDNn+GAvMyOiNBMihMyhGU843T71BkR+dn5RvRS08=;
+	s=arc-20240116; t=1792290121; c=relaxed/simple;
+	bh=YigvOe6r5fb0SoNXwtOtI+Uf5J7Z4N3KYja54tlt0W8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g5ggHsnGv2pRbujNhMwNHqK93ilJi7Rr2UjRMjuN4noRZFyJ6g4qR8Ypyk0I0G3j5wl3M23/0LOHnZQ6tr5zdaBcTxjZ95puGGPMO4gJldVtrbA7YnR0H0BCTdaWQ8Hr05x6F4wbstV7fVX5jguvF2xUF86TWymQ8LnSCP8hFGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CK0IWhs/; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=HeK3FYeo22gD8PDeSGkDESSyCNOF23caxBJu0PIzKPwE/PelfKLkZdw5owlYFe3xf5H5Alvnuqha4zCrvBiJGXc1xCi5XT58sssMSFlz7/WvEPC/ATqd/RoqprIG+K/buJdwpc4+TW9LetXzCYcCB3nMru574BlrTFctjBuzz5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaSYBebu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CK0IWhs/"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 095381F000C4;
-	Sun, 18 Oct 2026 02:16:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaSYBebu"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5D2311F000C4;
+	Sun, 18 Oct 2026 02:21:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792289762;
-	bh=D/3OmxhF3KjupCfKBAayd7RQOmw8hHSPmYeQBhfl3T0=;
+	s=k20260515; t=1792290119;
+	bh=xy2v8N4lc3FWiPThm0d4wC/5Rf0Ef0WoaiQ/i8Bm5KU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=CK0IWhs/+gbPpaOUy3bu/ssu+Jq8qYUN3UxkF/RHgNcLkfGTvuJwFq8VC9l2478e7
-	 CBf0VsQqehGmRaWbOTd7Z2sH02Wjkrd2RsNklzk33uld7j2GjzTFx4DyqTnmt3LQLJ
-	 K7hKYgOAZQvtcDkrrfu4QGOFrKlZoBV0aqPVY8yZyF2WomeDo8U2pHAxPYsOF8CO5v
-	 b3ySNzohaTgGaiy2YEoe4Rg/RdbPnAQ9J0k/+KnQ7J02Ew3zHBoAFnLE9jNwgxpHOp
-	 t2lFl3vTaqifGqoRShnHxsMkYg/J8ORw8bwebL2tCEKJZVMv067fNcb2OXK7lXxFLX
-	 w7p6yPs2f6/HQ==
-Date: Sun, 18 Oct 2026 05:15:59 +0300
+	b=EaSYBebuHUV0eLF4gszmrNEWD8UmJElmdte1hKKIj0puvOVCRcrTpNqyYRQ+dElxl
+	 ot59n9D+sFqp6TTXK1I4l53i0MQmoKAgZldOsrA/o1/ZhBPA1CbQ+FiWTTC/ldBzEc
+	 xYsJCv09cdKpl6f2nQQpdf/etA6gJ1O9BNj4wmj3gHi2qoLZ8st1C4Z0tFcYpmfmVY
+	 Eypvzb7Z31GNYXZrLsZI2A0owOmvN8BhN2PdbtO661JVFNenkeYlUk4wjR+rUdHB8m
+	 J6DkZ4ByGhEOWbtqoaxD1jsOMhL7X17nUBzlRkGNqFcGrPjbP6swANF+YuAjTfaQOS
+	 qwBdSuhj1zc/Q==
+Date: Sun, 18 Oct 2026 05:21:56 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Cen Zhang <zzzccc427@gmail.com>
 Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
 	serge@hallyn.com, keyrings@vger.kernel.org,
 	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com, jjzuming@gmail.com
-Subject: Re: [PATCH] keys: Protect the read method check against type removal
-Message-ID: <atQr3xpmgJc5q_t4@kernel.org>
-References: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
- <atQoKlA_JfF6JBmc@kernel.org>
+	ebiggers@kernel.org, baijiaju1990@gmail.com, jjzuming@gmail.com
+Subject: Re: [PATCH] keys: Avoid owner account dereferences in /proc/keys
+Message-ID: <atQtRK3wy6g8YdIV@kernel.org>
+References: <pm-keys-proc-owner-uid-followup-20261017-v2-8f8f34a41eb1bbb94ef0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -45,110 +44,89 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <atQoKlA_JfF6JBmc@kernel.org>
+In-Reply-To: <pm-keys-proc-owner-uid-followup-20261017-v2-8f8f34a41eb1bbb94ef0@gmail.com>
 
-On Sun, Oct 18, 2026 at 05:00:14AM +0300, Jarkko Sakkinen wrote:
-> On Sat, Oct 17, 2026 at 03:30:56PM +0800, Cen Zhang wrote:
-> > The key type must remain alive while its read method is checked.
-> > keyctl_read_key() holds a reference to the key, but checks
-> > key->type->read without holding key->sem. The reference keeps the key
-> > alive, but does not pin the module containing its type.
-> > 
-> > With AF_RXRPC built as a module, a positive RxRPC key can pass
-> > key_read_state() and the Read permission or possession checks while
-> > another task unloads the module. Unload is possible once the module
-> > refcount reaches zero, e.g. when no RxRPC socket remains open. The
-> > reader can be delayed between loading key->type and reading its read
-> > member, allowing this order:
-> > 
-> >   KEYCTL_READ task                  Module unload and key GC
-> >   lookup_user_key()
-> >   key_read_state()
-> >   key_permission() / is_key_possessed()
-> >   load key->type
-> >                                     af_rxrpc_exit()
-> >                                     unregister_key_type()
-> >                                     key_gc_keytype() schedules the GC
-> >                                       pass and waits for it
-> >                                     GC takes key->sem for writing
-> >                                     GC retypes key to key_type_dead
-> >                                     GC releases key->sem
-> >                                     unregister_key_type() returns
-> >                                     free_module() frees type storage
-> >   read saved type's read member
-> > 
-> > The last access reads freed module storage and can fault in
-> > keyctl_read_key(). The later read invocation is already protected by
-> > key->sem and key_validate() in __keyctl_read_key(), but neither covers
-> > this earlier check.
-> > 
-> > Take key->sem for reading around the read-method check. The garbage
-> > collector retypes the key under a write hold on key->sem, so it must
-> > wait for the check to finish; key_gc_keytype() in turn waits for that
-> > GC pass before unregister_key_type() returns, so the module text cannot
-> > be freed until the check has completed. If retyping happens first, the
-> > check sees key_type_dead, which has no read method. Release the
-> > semaphore before returning -EOPNOTSUPP or proceeding to buffer
-> > allocation, preserving the early unsupported-operation result and
-> > keeping user copies outside the semaphore.
-> > 
-> > Oops report as below:
-> > 
-> >     BUG: unable to handle page fault for address: fffffbfff8048bc5
-> >     #PF: supervisor read access in kernel mode
-> >     #PF: error_code(0x0000) - not-present page
-> >     RIP: 0010:keyctl_read_key+0x1aa/0x600
-> >     Call Trace:
-> >      __do_sys_keyctl+0x2a7/0x4f0
-> > 
-> > Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
-> > Assisted-by: LLM
+On Sat, Oct 17, 2026 at 04:16:22PM +0800, Cen Zhang wrote:
+> The namespace filters in find_ge_key() and key_serial_next() read
+> key->user->uid while traversing the serial tree under key_serial_lock.
+> That lock keeps the key allocated, but it does not protect the separate
+> key_user from ownership changes.
 > 
-> Would be better to finish off the work unfinished and fix the patches
-> under circulation instead of spamming new ones while at it. I.e. fix
-> them first and don't starvate us with unfinished patches.
+> A /proc/keys read reaches find_ge_key() through proc_keys_start(), and
+> key_serial_next() through proc_keys_next(). The lock stays held until
+> proc_keys_stop().
 > 
-> If this was merge ready this would be acceptable, but in this even the
-> tags above are in the wrong order. This is not a lottery machine where
-> you dump whatever LLM gives you without your attention, so please don't
-> do that.
+> A successful privileged KEYCTL_CHOWN on the same key replaces key->user
+> under key->sem and drops the old owner's reference after releasing the
+> semaphore. If that was the old dynamic key_user's last reference, a
+> /proc/keys reader can access freed memory:
 > 
-> > 
-> > ---
-> > diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> > index 5a5efa26ed0e..756368422b7c 100644
-> > --- a/security/keys/keyctl.c
-> > +++ b/security/keys/keyctl.c
-> > @@ -863,10 +863,13 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
-> >  
-> >  	/* the key is probably readable - now try to read it */
-> >  can_read_key:
-> > -	if (!key->type->read) {
-> > -		ret = -EOPNOTSUPP;
-> > +	down_read(&key->sem);
-> > +	ret = -EOPNOTSUPP;
-> > +	if (key->type->read)
-> > +		ret = 0;
-> > +	up_read(&key->sem);
-> > +	if (ret)
-> >  		goto key_put_out;
-> > -	}
-> >  
-> >  	if (!buffer || !buflen) {
-> >  		/* Get the key length from the read method */
+>     /proc/keys reader                   KEYCTL_CHOWN
+>     proc_keys_start()                    keyctl_chown_key()
+>       spin_lock(key_serial_lock)          down_write(key->sem)
+>       find_ge_key()
+>         old = minkey->user
+>                                           zapowner = key->user
+>                                           key->user = newowner
+>                                           key->uid = uid
+>                                           up_write(key->sem)
+>                                           key_put(key)
+>                                           key_user_put(zapowner)
+>                                             kfree(zapowner)
+>         read old->uid -> use-after-free
+>     proc_keys_stop()
+>       spin_unlock(key_serial_lock)
 > 
-> Why did you chose this over embedding the check inside __keyctl_read_key()?
+> Use the inline key->uid in both filters, following the approach already
+> used by find_keyring_by_name(). The serial-tree lock keeps the containing
+> key alive, so filtering no longer depends on the quota owner's lifetime.
+> This also uses the same owner UID as proc_keys_show() and the permission
+> check.
 > 
-> I'm assuming you have considered both options.
+> For thread keyrings, key_fsuid_changed() can update key->uid without
+> changing the quota owner. The filters now follow that current owner UID,
+> including when its namespace mapping differs from the quota owner's.
+> 
+> Fixes: 454804ab0302 ("keys: make procfiles per-user-namespace")
+> Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> Assisted-by: LLM
+> Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 
-I.e. to reformalize: how does that change guarantee key->type->read
-validity for the __keyctl_read_key() that follow?
+These tags could be ordered correctly.
 
-My first idea would be put the check inside __keyctl_read_key() 
-while key->sem is taken.
+> 
+> ---
+>  security/keys/proc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/keys/proc.c b/security/keys/proc.c
+> index 4f4e2c1824f1..aea06a74d0fe 100644
+> --- a/security/keys/proc.c
+> +++ b/security/keys/proc.c
+> @@ -68,7 +68,7 @@ static struct rb_node *key_serial_next(struct seq_file *p, struct rb_node *n)
+>  	n = rb_next(n);
+>  	while (n) {
+>  		struct key *key = rb_entry(n, struct key, serial_node);
+> -		if (kuid_has_mapping(user_ns, key->user->uid))
+> +		if (kuid_has_mapping(user_ns, key->uid))
+>  			break;
+>  		n = rb_next(n);
+>  	}
+> @@ -100,7 +100,7 @@ static struct key *find_ge_key(struct seq_file *p, key_serial_t id)
+>  		return NULL;
+>  
+>  	for (;;) {
+> -		if (kuid_has_mapping(user_ns, minkey->user->uid))
+> +		if (kuid_has_mapping(user_ns, minkey->uid))
+>  			return minkey;
+>  		n = rb_next(&minkey->serial_node);
+>  		if (!n)
+> 
+> base-commit: a626e44fd64c456d373ae8c28b939197b9446a02
 
-Please explain because I'm not fully following with that change.
-I could get something wrong but it is against the assumed most 
-common sense fix imaginable.
+I don't want to circulate this further.
+
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 Br, Jarkko
