@@ -1,69 +1,69 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD8C3B4E84
-	for <linux-security-module@vger.kernel.org>; Sun, 18 Oct 2026 17:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE53876A0
+	for <linux-security-module@vger.kernel.org>; Sun, 18 Oct 2026 17:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792344731; cv=none; b=nyiFNVX4SvqHAFwcreR8RI9cfg6J2KE22FlGEEkRhjfm4m5YDsetgh/+wBtT8KNoZaObjZidsaGivRoU1pXecCXtnDknpBNo47XbeJb9fkQ809yUQHvjN2nUEklLZn4hWSpkHiaXB8f6mKtpSbuVqdUgvdmYfkqlbHtezvCVe0w=
+	t=1792344733; cv=none; b=MHhWpeuiD+Gx3y1x+3E2hVx/K3h6K6cyh/VoH4rWcvbwORi1FsNxxgd5j+tG3ygCkfSrPGYp2S8lhpt+mXMpSWMPo0gxOM2sUKzv3zfStIuaEeqmhQB6Kgzog8uVeJnCZ0w9vaYGP7hgdlnzmy0kGizzrjp4OGx+HVrYRwg3Btw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792344731; c=relaxed/simple;
-	bh=8Y4pdoO8o6DG3dxU9nQ9kNWZgM1e4m0YatPzcl98+Nc=;
+	s=arc-20240116; t=1792344733; c=relaxed/simple;
+	bh=wopI36+1f0d7JyRh58bRjbDWEo8uX/kUo9laR2jCIp4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kHlRVecRgr+/RsiAn1/0LxbZSya6VFskiEThgnDgvNNWw5NFHjiPYgs3tFirtwa8T4NTsh03VplyX64sk/vnCt/12NU5gxt2vNy9lSZekMU49omS1ZdxfS4TETmZO7scllAVjTnn9+4H2biqS2mGJf6ebMI3g3Y6ttvEbiB0dA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=pass smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b=CdyGEHLf; arc=none smtp.client-ip=209.85.222.176
+	 In-Reply-To:To:Cc; b=GiTSfeLbETXLzv1tuqgOVtGdIOkayCk5A8pBW0OOyrllNd6QE4McsgDm5Fuc5pUzMmttGc+t4xz1CJfOCon8jvkuQANduG4Av9r/5aDHr9Dr0dmSu2AOJvrCFCDiBttExRb+/lEToXvECZqIxqH0Yv0yEiGOPOtgu+pm0CmsTco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=pass smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b=AkLy6c5n; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b="CdyGEHLf"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-93f3c89594cso25478385a.2
-        for <linux-security-module@vger.kernel.org>; Sun, 18 Oct 2026 10:32:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.b="AkLy6c5n"
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-93f2493c28bso126079885a.0
+        for <linux-security-module@vger.kernel.org>; Sun, 18 Oct 2026 10:32:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1792344729; x=1792949529; darn=vger.kernel.org;
+        d=toxicpanda.com; s=google; t=1792344731; x=1792949531; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=heYAltlYf2s0SUcvKUJj27EViC0/q0e21YMnkOQZEqI=;
-        b=CdyGEHLfUt96NQyLg8/tLKLafwMDl0BRAKhfJOtI+mKRuxsI6qFRgw0jCpKh1D/Ofp
-         IGhp7ZnjZGZ6mqxi84CPMPYe2Ju4/7mij+aD+pgTL5aT/HUIfc8qyw7YBYwwPnN1EocB
-         SdTAYS2y5nko74nw6YwlZjWw0Vk2gzoLOQjAWLpqVdfJIws0J94SOaLDB3byBkJWiMER
-         rHGOZW2/qmacgnTSHdoWwY7OJ22kCK0QEpvymGmAPf3pmfmpNWWfe9Zet2oDpYHayb4Y
-         34O1QSWZhEBd3M3jFmKjkJXkER0iUBb+o+Ut/eAjjCpLQvfJUpGeD4MJbL2XzAc8ZH40
-         WkSg==
+        bh=dTbOUx5g6mCGei5oy9AlTEaE/QrV9Y7tMJhMcaOgj9U=;
+        b=AkLy6c5nncn6P/mSESQYcixFdf4mLlr6M3pAJqOpCKaRTeDFvgxlwUeat066c8hLD8
+         atCUfpVHNN0qnsDYZIqj51BQRa0cm3XxCkWlxKllAmvfHIxancV9VoTLP3mRDpvFY8Vo
+         LFsNRY/jer+EieurxVIUboQnz2AY3Nh+6TEEw+oh/1Be5CzQp6GBbhPO1O8+luoxkToR
+         yK63oKYC9jvGsWvKdq9wsYWHEXochjJTorfFwmA6dKRc9CTqI0QI4bkU0Nmvni3vxYKs
+         K1s2dW0JLHtoK7Bj2n7b6vBYtAvV6pbri0WsejrNZt6r54JeXfXyHHzovzzx/h7FBjei
+         saKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792344729; x=1792949529;
+        d=1e100.net; s=20260707; t=1792344731; x=1792949531;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=heYAltlYf2s0SUcvKUJj27EViC0/q0e21YMnkOQZEqI=;
-        b=SoNDm40PXvVaj27bftWHyIO3bQbXnxBcpTyHYz1b2JQ2QWzeCry4efFOq6rk5QT62L
-         WycngYrU2iIRLR75hNbb2NPnab/TDxxJItc+9gzW5DhfgZl9lD28C2Mo0M8JUcnoL/GF
-         LnVbuVSNH/d+qJ4KsOAZ4d3xJj9cbDnUVf8k8Ioi7y1g4Ii684vhIO+AMnoJ9nlJUzac
-         f1AM4TMEu9HedAMyzfytEaJ6unqbXRYsB2rQpiZkWaRbdCOwGV4pg549J2cmdC8o6Wsa
-         VlwGapqTEMHnJlSqji6tBo8BbgHjGm07uhJPxwG+z1cX9rX2WPZWdh2zP8vFPzfo4ViC
-         4EHw==
-X-Forwarded-Encrypted: i=1; AKwUvBxlcLQcq0Ykphiqcjb4g5fbHnCPaG0nLZA88wwa0y67Rq3or9td9G0swkNe+qKpie5P8dR0xGl6/ylg09epwJEy7TjjXtM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLV8FXEge63cheU9la3jfkYZ21wkHLyPgdIJ+oz65LsSkSrOBlK
-	zvgMa4U6qhP4mCt1u6uSZ9JBXYjxoCuu+gUGF9ofgHlFWXrcqNAzM2np2/eT9saPNYryO3svM8y
-	nw34g
-X-Gm-Gg: AYBFou2Bav3v6AD7EzehcoYDWbxYoa6gyAybTNkQBxJGoZCtj7S5s6epz7zjvNpaINh
-	gXoyXCoKj72dyQRH0eBllBgdAQXV1fbCT+cZ7tt9rfs1LIAUMojhBIMoxzCIE+JEPYLk2NT4pKV
-	UMzqIsaV/80o6gQ01jdk8ehZ6xkx6PdRnA7z9IzrcaoA3KfYK80fFxxLYXuHUNcRgygnO1CHT1x
-	oNz1CnBi84+plDCmUVkRzgYFoYZolJMbBmAA6czhCnTETTyeeShOJRlLVYHYCTeL1sm8YoW/hTF
-	KiQziRVJFo/W4Kdg2emOteKYhfoWxVMCp+mc4NN2lXCId7V7dqF9ZhGpzg0F3OeX5/zV/uvmGWx
-	G1FSUn/EztiP57qMy1cmOP5dsIerjFTWr0jB+1ruaDsIzgy6xBvWpk4haCo812iASU7nSn1/hLr
-	tAp7dkk8vsBIgIX3IT5U03T1GUN6lq6yRi2NgryyxtxeNGTF83ai4ewPSho2MKeanMhOpjnK2Bn
-	vof4v0Qbcxg47A=
-X-Received: by 2002:a05:620a:3715:b0:93e:c12c:9dd3 with SMTP id af79cd13be357-93f29e0afd2mr914791385a.83.1792344728950;
-        Sun, 18 Oct 2026 10:32:08 -0700 (PDT)
-Received: from toxicpanda.com ([153.61.196.243])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93f1a16950dsm746673585a.15.2026.10.18.10.32.08
+        bh=dTbOUx5g6mCGei5oy9AlTEaE/QrV9Y7tMJhMcaOgj9U=;
+        b=zIre7plrt/AZw0ELOcirLk3bVifM9vvloSaPCzVx4HsK5sFFgJ+Xep5lSFikNqcJeC
+         5Nmf0NFRtWQNe/y6gdMQKnprD17gpdKuB39eiTHgWvszUusnS9i8dAzyqe6iON9+Vsaj
+         fyNYyYkLe9mEQ/guujPn7PuwElCXhQJkR2fR3ndFsxKij/6Qwih4Em9GiS0If9daBNuO
+         01gO626XF1n3+Ie5y6wi4WstNrr6NLDF/alvFEQcDul5joFBUhsE1S7nWmiA8J9iRbi3
+         xawmnjbPOGEd16qfz/kUDKhmNPDlicYt1jdRcVddaIGJMMK4i+M9i1P0Cj4MNySD+MKr
+         8QWg==
+X-Forwarded-Encrypted: i=1; AKwUvBydiggMSx0fIrrOdKxvwdX2NMh+civuCMtGTyVT0W7of2FVpFYuSplC3w397Enikp1GeXyOIRb1bkPZCysMgvadjwt92Y8=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIMiVXaImDgkwMS195Hv54bOb5vM3Y3vRmY0Tx80oEWmX9Hnwu7
+	WnmOIz72bU36TOA0/xW6UfhoccBS1ANbVKvFQwYJPVO2UFA7ghbr4wIZmlAFxC0IvMBcjiA9Gmp
+	aOfos
+X-Gm-Gg: AYBFou1QjV7KKbGCKMCBE6uTRLCQ03fVWZuCn//WEG5l+D7sg2Fc2zRgX91oqmdraYs
+	U+iOy4x2HvhgdI8L9LAEvKPnQH/6xZsIH0Jb/koy6X3BjPDLEG7KtSRFRNpSQiShWufm9Fl1GW6
+	1CP8FVffySz6jC2RhRnDYFCJQ5rLK98ZrX4hXUQg9FSemcBF7IZA/GP5LQ7r64wQyxKCCln4eZ7
+	n/3kIPU3Ychchrn3bw67VrtcEDwaBUmgfzwULR2cUryJYnpB8y6GuaAjyMWKY0mIlcgfjGsb9Df
+	qiZucMxy8svwabYdM9rpwcfGDohC9IVlpNBSBq4pOOz8gyXHKHl2O5oywnbfv1Q/TyKwuhmmlJh
+	bmSfc1p/W7V8YqLKT77tMv2HmuSmf0PuVYcwgR30Q0m7csTDazTYNvwcOEFB7CVUhq0JsUaTrMc
+	aqv8rPhj6/QVPK6e+p2ndMYfh2/CMjP29TPWLsHeh5gc2H5tPuI0BkFWHu9ICKCLeKto4XKKzdt
+	dzPyWnRjtJcVdM=
+X-Received: by 2002:a05:620a:2891:b0:93b:d7a2:83d1 with SMTP id af79cd13be357-93f29db6679mr964109985a.64.1792344730777;
+        Sun, 18 Oct 2026 10:32:10 -0700 (PDT)
+Received: from toxicpanda.com ([153.61.196.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93f1cfa8b51sm689579785a.20.2026.10.18.10.32.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Oct 2026 10:32:08 -0700 (PDT)
+        Sun, 18 Oct 2026 10:32:10 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
-Date: Sun, 18 Oct 2026 17:31:48 +0000
-Subject: [PATCH 06/13] MIPS: use cred_ids_allow_sched()
+Date: Sun, 18 Oct 2026 17:31:49 +0000
+Subject: [PATCH 07/13] sys: use cred_ids_allow_sched() for setpriority()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261018-b4-cred-ids-v1-6-7bdf2db4ea9f@toxicpanda.com>
+Message-Id: <20261018-b4-cred-ids-v1-7-7bdf2db4ea9f@toxicpanda.com>
 References: <20261018-b4-cred-ids-v1-0-7bdf2db4ea9f@toxicpanda.com>
 In-Reply-To: <20261018-b4-cred-ids-v1-0-7bdf2db4ea9f@toxicpanda.com>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -80,41 +80,41 @@ To: Christian Brauner <brauner@kernel.org>,
 Cc: Serge Hallyn <sergeh@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-security-module@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openssh-sha256; t=1792344714; l=837;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1792344714; l=789;
  i=josef@toxicpanda.com; h=from:subject:message-id;
- bh=8Y4pdoO8o6DG3dxU9nQ9kNWZgM1e4m0YatPzcl98+Nc=;
+ bh=wopI36+1f0d7JyRh58bRjbDWEo8uX/kUo9laR2jCIp4=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgUBr36M/n0nWN0DNbnxwzIiCZez6MG
  JiruuNaSCI/zXsAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QHZf0IHNIwf7wrO6Y1j4UwsKUNBcMOqzphoWpEgtgup+ODegOLhRBlu/opGGICZhaQf6f0L2pAT
- YdUYU2k+HeQQ=
+ QBkWiicG2j/UXFtUTQjUw20euw1url/UCIDA49IlnH51dOlSU9SQAr+6RKZqkZ5RgcvQKhvaR/C
+ 3sr5kYrKZrQY=
 X-Developer-Key: i=josef@toxicpanda.com; a=openssh;
  fpr=SHA256:C8kOX2QUJCMqnCX+KEeoqRAjLo9L+ELOSH2NSAJHqGA
 
-The FPU affinity code has a copy of check_same_owner() from the scheduler.
-Use the library there as well.
+set_one_prio_perm() makes the two comparisons of check_same_owner(),
+written the other way around. Use the library.
 
-No functional change. Compile tested only.
+No functional change.
 
 Assisted-by: LLM
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- arch/mips/kernel/mips-mt-fpaff.c | 3 +--
+ kernel/sys.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/mips/kernel/mips-mt-fpaff.c b/arch/mips/kernel/mips-mt-fpaff.c
-index 4fead87d2f43..1ac86a897956 100644
---- a/arch/mips/kernel/mips-mt-fpaff.c
-+++ b/arch/mips/kernel/mips-mt-fpaff.c
-@@ -54,8 +54,7 @@ static bool check_same_owner(struct task_struct *p)
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 35b538ba843c..efef06240a8f 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -220,8 +220,7 @@ static bool set_one_prio_perm(struct task_struct *p)
+ {
+ 	const struct cred *cred = current_cred(), *pcred = __task_cred(p);
  
- 	rcu_read_lock();
- 	pcred = __task_cred(p);
--	match = (uid_eq(cred->euid, pcred->euid) ||
--		 uid_eq(cred->euid, pcred->uid));
-+	match = cred_ids_allow_sched(cred, pcred);
- 	rcu_read_unlock();
- 	return match;
- }
+-	if (uid_eq(pcred->uid,  cred->euid) ||
+-	    uid_eq(pcred->euid, cred->euid))
++	if (cred_ids_allow_sched(cred, pcred))
+ 		return true;
+ 	if (ns_capable(pcred->user_ns, CAP_SYS_NICE))
+ 		return true;
 
 -- 
 2.55.0
