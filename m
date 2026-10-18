@@ -1,46 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6911F30BB;
-	Sat, 17 Oct 2026 20:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEF633B6FB;
+	Sun, 18 Oct 2026 02:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792269566; cv=none; b=IrXiNlxxhvdq1SsHceyqiWqI1Q0qSu+hZaqNZvVoS41y5GFsNKWLx6KJwc7iinHZ2+cxXx433HV0empg77E86eI5Zbe0MfIb+wMzG3qxArTP1l/Ibfx6CVzEY1WPr/gnTrjph6sBschQ17Kjk/wm1GFl3JXLnJ3aHYt145tz2h4=
+	t=1792288815; cv=none; b=tn/qLA8wvizRp+LFSEQD+oLDU4UZpPd+uTuAWY+ny57+dzqcxkYCRGitRuovRFiOA0Wbo1zfi1i5FZ8GnPBAT5m/xNO07jRPMRDXdiiRJJOhDW1DqGinXKc9lhybNI8L3LRYc/C5dOPWCfcTlp3axoaxL8ZfY8t0d13KSDXAkF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792269566; c=relaxed/simple;
-	bh=smM3CHUs9M1sqKEz1ShH+cXz9rl6NKZz2SUXLAExoLg=;
+	s=arc-20240116; t=1792288815; c=relaxed/simple;
+	bh=YiO4/TQJ7tRHegRgl99iob/Vjniu6waGoillfU/V2+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CBSZT6rZfIVHCAaSMIEydc3i1DJcsAYVRPll7MyAuQOvRkffNfdsF3m0D2QrzcddNhuNp1gS8EPY6o8gC2iq/CG+2cIYkMWPe8fx/6vaAlTdQ3KfyNSzdbjYLnjzj37N5xgink4grFLzoDLdfGV0Jgz4SDSJjpJrHXYCn+lJPSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VN7nYibv; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlolWfwHhd1AB7BNlqqzAW+i7G9fA/U09gXGdvyeXQYvHDDLSwvTrqkhBwD/nE2RRcK2WR33Gdb4neGxuM1iuZBlcPdAk2fXubjHP6oiq2I6AUCKdGPsJu59jZ1Yq5k6+UXfTrQs/RTeBe4h1u9KULJOgsZUdvBUgp5J19BTg7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBVrK9YD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VN7nYibv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 706551F000C4;
-	Sat, 17 Oct 2026 20:39:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBVrK9YD"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B2A9E1F000C4;
+	Sun, 18 Oct 2026 02:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792269564;
-	bh=1+zVta6ZRFT7GXOMcKiGSvwMYmCClLq2D4/Bh2F8bmU=;
+	s=k20260515; t=1792288814;
+	bh=7nCdyqQEN3kYt2DTyrV3GI5+K6iZG9zsVLaL/EWesB4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VN7nYibvvQdZ15HO/WXBgyMlhHtL07VUIbDxKJlcDiPiQVbmPQW6EG1U/uZxGDQHa
-	 YdVlztMimUphjaIZd946qtgxw00MNk/OVZnzMPW75mbcYudUuTUuWVO8Ksb9TvWwR5
-	 gLXc5oS2HgZSkLJEL72qaLK3vUOzM4sfYPAwWV5VS51ZFG3VzVHeTm2efrCCUX9PgB
-	 RB1/sEEFWuTDtcE93sEr615NCH089cp+gCiq1Mg9Vby47FI2bmGw11HXIE+3eMVmEi
-	 +yn8CnUIM5/qIweesiUzXT4kAUo9L+S9Tsp+XySe+bActcWXUUthvrqXMPOOABK74J
-	 11ZCv7ov7icAw==
-Date: Sat, 17 Oct 2026 23:39:20 +0300
+	b=MBVrK9YDjDD44n6HSwGbR5rqLNuK/Gfd8aDXlXegELmq6vavw/ek7qEqEdUkD+stA
+	 LYu6y2lQGLQtlOdwd3CJ4+wHrgSTz1KSpU6NJtoUc1MiKYrjF3qDHYWj2za+FE+6bG
+	 AfaOzUFjjUesZHoii1KokRF2OSUL4l3O8M2YAZ2x/SaMvglMRbQ4NlzNZHSMgIGnOq
+	 v6TP6YVV7yjkwftTIMsjyGNQWRIG9fA/SKiYQT8Y1Rrh5ZpgT2og5DsOgnkkeQaLiU
+	 M9LX7D83GiJRXgG5RGze3mjMAi15g5X6gZ6V4lEenT/QVDXTy+bh7xO6/cMRy2h5yu
+	 h1FOXHPyj9C4g==
+Date: Sun, 18 Oct 2026 05:00:10 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Daehyeon Ko <4ncienth@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, keyrings@vger.kernel.org,
+To: Cen Zhang <zzzccc427@gmail.com>
+Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, keyrings@vger.kernel.org,
 	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] keys: big_key: Remove the redundant quota reservation
-Message-ID: <atPc-K1wZtS3lP29@kernel.org>
-References: <20261016040004.324286-1-4ncienth@gmail.com>
- <atK0MnGM2h9IH6FD@kernel.org>
- <atK186hMPBhYyPCN@kernel.org>
- <20261017152123.1200429-1-4ncienth@gmail.com>
+	baijiaju1990@gmail.com, jjzuming@gmail.com
+Subject: Re: [PATCH] keys: Protect the read method check against type removal
+Message-ID: <atQoKlA_JfF6JBmc@kernel.org>
+References: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,91 +44,99 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261017152123.1200429-1-4ncienth@gmail.com>
+In-Reply-To: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
 
-On Sun, Oct 18, 2026 at 12:21:23AM +0900, Daehyeon Ko wrote:
-> A big_key is charged a fixed 16 bytes of key quota, regardless of its
-> payload size.  big_key_update() nevertheless reserves the new raw payload
-> length before destroying the old payload, and generic_key_instantiate()
-> then reserves the fixed quota length.
+On Sat, Oct 17, 2026 at 03:30:56PM +0800, Cen Zhang wrote:
+> The key type must remain alive while its read method is checked.
+> keyctl_read_key() holds a reference to the key, but checks
+> key->type->read without holding key->sem. The reference keeps the key
+> alive, but does not pin the module containing its type.
 > 
-> For an update shorter than 16 bytes, the first reservation temporarily
-> returns quota.  Another key operation by the same user can consume that
-> quota before generic_key_instantiate() reserves it again.  If the second
-> reservation fails, the key remains positive after its old payload has been
-> destroyed.  Reading a buffer-backed key or revoking a shmem-backed key then
-> dereferences a NULL payload pointer.
+> With AF_RXRPC built as a module, a positive RxRPC key can pass
+> key_read_state() and the Read permission or possession checks while
+> another task unloads the module. Unload is possible once the module
+> refcount reaches zero, e.g. when no RxRPC socket remains open. The
+> reader can be delayed between loading key->type and reading its read
+> member, allowing this order:
 > 
-> On a KASAN build, reading a buffer-backed key reports:
+>   KEYCTL_READ task                  Module unload and key GC
+>   lookup_user_key()
+>   key_read_state()
+>   key_permission() / is_key_possessed()
+>   load key->type
+>                                     af_rxrpc_exit()
+>                                     unregister_key_type()
+>                                     key_gc_keytype() schedules the GC
+>                                       pass and waits for it
+>                                     GC takes key->sem for writing
+>                                     GC retypes key to key_type_dead
+>                                     GC releases key->sem
+>                                     unregister_key_type() returns
+>                                     free_module() frees type storage
+>   read saved type's read member
 > 
->   BUG: KASAN: null-ptr-deref in big_key_read+0x110/0x310
->   Read of size 64 at addr 0000000000000000
+> The last access reads freed module storage and can fault in
+> keyctl_read_key(). The later read invocation is already protected by
+> key->sem and key_validate() in __keyctl_read_key(), but neither covers
+> this earlier check.
 > 
-> Revoking a shmem-backed key reports, with oops=panic:
+> Take key->sem for reading around the read-method check. The garbage
+> collector retypes the key under a write hold on key->sem, so it must
+> wait for the check to finish; key_gc_keytype() in turn waits for that
+> GC pass before unregister_key_type() returns, so the module text cannot
+> be freed until the check has completed. If retyping happens first, the
+> check sees key_type_dead, which has no read method. Release the
+> semaphore before returning -EOPNOTSUPP or proceeding to buffer
+> allocation, preserving the early unsupported-operation result and
+> keeping user copies outside the semaphore.
 > 
->   KASAN: null-ptr-deref in range [0x68-0x6f]
->   RIP: vfs_truncate+0xa2/0x730
->   big_key_revoke+0xbd/0xe0
->   Kernel panic - not syncing: Fatal exception
+> Oops report as below:
 > 
-> The first reservation is unnecessary.  A positive big_key already has a
-> 16-byte reservation from successful instantiation, so the reservation in
-> generic_key_instantiate() has zero delta and cannot fail after the old
-> payload is destroyed.  A negative key has no old payload to destroy, and
-> generic_key_instantiate() performs the required reservation before
-> publishing the new payload.
+>     BUG: unable to handle page fault for address: fffffbfff8048bc5
+>     #PF: supervisor read access in kernel mode
+>     #PF: error_code(0x0000) - not-present page
+>     RIP: 0010:keyctl_read_key+0x1aa/0x600
+>     Call Trace:
+>      __do_sys_keyctl+0x2a7/0x4f0
 > 
-> Remove the redundant reservation so that the update path adjusts quota only
-> once and cannot expose a temporary quota gap.
-> 
-> Fixes: b6f61c314649 ("keys: Implement update for the big_key type")
-> Cc: stable@vger.kernel.org
+> Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 > Assisted-by: LLM
-> Signed-off-by: Daehyeon Ko <4ncienth@gmail.com>
+
+Would be better to finish off the work unfinished and fix the patches
+under circulation instead of spamming new ones while at it. I.e. fix
+them first and don't starvate us with unfinished patches.
+
+If this was merge ready this would be acceptable, but in this even the
+tags above are in the wrong order. This is not a lottery machine where
+you dump whatever LLM gives you without your attention, so please don't
+do that.
+
+> 
 > ---
-> Changes since v1:
-> - Remove the redundant first reservation instead of changing its length,
->   leaving generic_key_instantiate() as the single quota reservation on the
->   update path, as suggested by Jarkko.
-> - Verify full-quota positive and negative updates separately.  A positive
->   update keeps a zero quota delta; a negative update can still return
->   -EDQUOT before publishing a payload and succeeds after quota is released.
-> 
->  security/keys/big_key.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
-> index 268f702df380e..ef707f2a81a98 100644
-> --- a/security/keys/big_key.c
-> +++ b/security/keys/big_key.c
-> @@ -193,12 +193,6 @@ void big_key_destroy(struct key *key)
->   */
->  int big_key_update(struct key *key, struct key_preparsed_payload *prep)
->  {
-> -	int ret;
-> -
-> -	ret = key_payload_reserve(key, prep->datalen);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	if (key_is_positive(key))
->  		big_key_destroy(key);
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index 5a5efa26ed0e..756368422b7c 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -863,10 +863,13 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
 >  
-> 
-> base-commit: 58161ead29e50d70a317ea26b472e0c7508e69da
-> -- 
-> 2.55.0
-> 
+>  	/* the key is probably readable - now try to read it */
+>  can_read_key:
+> -	if (!key->type->read) {
+> -		ret = -EOPNOTSUPP;
+> +	down_read(&key->sem);
+> +	ret = -EOPNOTSUPP;
+> +	if (key->type->read)
+> +		ret = 0;
+> +	up_read(&key->sem);
+> +	if (ret)
+>  		goto key_put_out;
+> -	}
+>  
+>  	if (!buffer || !buflen) {
+>  		/* Get the key length from the read method */
 
-Well, that made a difference. I've started actively try to look
-for eager tactics, and in this case it turned out to be worth
-it. The first solution was exactly like weighted answer that
-cut the search too early :-) 
+Why did you chose this over embedding the check inside __keyctl_read_key()?
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Thank you.
-
-PS. Not applying til Monday.
+I'm assuming you have considered both options.
 
 Br, Jarkko
