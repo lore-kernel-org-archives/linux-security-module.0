@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792434336;
-	b=jTICPkQeNC19zF4hNwlgEOYbP7PmKBfwOUxfPvlb0JirTfNwrQSRshmyfuEaqSwocOPi
-	 9uD7h8NuhLCF2pK1FhVXDTZJYUwujuGbKTZ0c5QHQxxbHDxHCKjz+V8q+uP7TGH+3e8pG
-	 1jM+w9ir1+R1gnl+H0GID8F5s6dZtwW65AMiTrIbfx6c8wkR/DK9EV8a+IVx2659393/Q
-	 l0+HImbocKoWbnXViVeD7YD6RkHPjLEqkCdMPRxSMhwCu7zKQcMW2ljm1WqEV4sCoD0Py
-	 1TGjdtkqBLJ4pvJ9olG+wAT0WN0cwVT1tCW12QFT73jQvM2lxxI9ELe36Be27Z9Ukpw==
+	t=1792434548;
+	b=fLU5UNWsok4+len1q+VNsXvO4py4ikt7BAY4gQaJaPO51fAGinfhCxk9Jb6ONQkbQ3yL
+	 MU1jQ//2nUzIrmms9cFH5g3DubI8bWSBauzMOoKlHMMnheTjv1Uze/kxwJ66a93Bo2go+
+	 Eo7AYeyiUKoaUNYG0oOnmr3gwCMuM0g0b6KCyP6xWMZE0/lPbOcXkJbqA6kc+c/eWz9Td
+	 ytNg5Z9Srub5FNXIVxjUT+rST2LoLen/CZhsHTMu9hhNiuYAngjVo5gPVkTXsI2rhdHZT
+	 Ovp09atCuE0IkN5/infN+KAfuwnMmz/nUGuUDfhPgoIqavf3f4PyLvZSBxWhLRaU64w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792434336;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=q6pzJekZWjm1Y1x05ARDDWi9B+06lelV8BtLiRiV1CQ=;
-	b=vz7NUodb1mLjOWMrqNiRG5F/Wq3vG1JgpeFG47oFyygLcYSMtcFeHat0GfEyWas3FTab
-	 EbbnPVV9EqVpZGiOilhGqFn9y0m2PI71gNLsaOCGyCFOq1qP0iVx0+dr+4+/pXBMLEXLN
-	 jTTox/FGjgod8Os2DFNSXT4YxN0VFLk2HdivgbqvMYEy7itu71Q+BGQIMi2TUiV/kcW2Q
-	 P4BaemTWTASI58Lc/RPGJjpO2kJXIZB01K6p0kqnpSH489Ic1q4ZcKXIhr4tG4cDGdHu9
-	 gqhqcnh5UPS5eRcC+RPuL5xGa3QcMtAcYaWwCOf2v704vthzyj8NN3fIUCpD8qpLPHQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792434548;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=27il3oOcwKVvNVhkDfMHuekSAptIeJEU0HuNxjreV+k=;
+	b=ZHhzchv8O5lIBOrXO5m9mNPgFDt3NZO6mFeF8w/7dG3CJdqFJ1C1/2SdlGhcBLh6dig6
+	 fGOzNCHLUL7dTqWDKmctFFROJ8ZzZ8l5+mCJ6khADI630srIEr+THvZW8ltRma7xuLJ2D
+	 ALJzy4wddasktTDLzRlivSMoOBIwNEHwRcQMmYZM94lQbMCYnOBUNcpDVSCFRMo6HDDkn
+	 NLccZ9n0T3aGmOiBweIRFvx+fw65Wm66rP+R5RHSI/BYjDQJ+6i3q8e2yW3L4XC84ZRfU
+	 fmwMP/IKvD2+n1has7InQVFnByurrCBoY3Y6yfQRZAOk3E9CeGdK1vuAlNt9yhkDMBw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JnqC03Sh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PIbNthbe;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BB3606A31A
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 18:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 22827606A31A;
+	Mon, 19 Oct 2026 18:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JnqC03Sh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D02F1F000C4
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 18:25:36 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PIbNthbe
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 124C21F000C4;
+	Mon, 19 Oct 2026 18:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792434336;
-	bh=q6pzJekZWjm1Y1x05ARDDWi9B+06lelV8BtLiRiV1CQ=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=JnqC03ShDwmHVWIAAg9jbfvg6RZ02Zm73/rCcukLkGCBZao8Sqdv3sZ8PWXu19eZH
-	 fD6Hudi+UiojXbPUB+SclB28VGeC8fZhwJRMRQEAc92Jo2/4fPTVShiiIhagYOCzrc
-	 cqflXqMnYFNF2GxCeEig6/Cux4SBj13NE/NVRD9/HkdQlNi30FwON6qi+n7cf7+8Pu
-	 0y2gSLR1RVgfzvdqKRU6N5VxwDD1ryqHCEhvgBILGngTX+4BiySQMPt27De3IQTQlQ
-	 poBkOr3X9+TQFlKu//iCHiaVrPJjayEYygV9bzJZ/UM4T3A1RoMvy1no6InXF0YIM9
-	 z8LkN/PmMLRBw==
-Message-ID: <sashiko-outbox-178076@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/6] KEYS: Prevent overflow of user->{qnkeys,qnbytes}
- in key_alloc()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: =?utf-8?b?b3BlbiBsaXN0OlNFQ1VSSVRZIFNVQlNZU1RFTQ==?= <linux-security-module@vger.kernel.org>
-In-Reply-To: <20261019181732.449591-4-jarkko@kernel.org>
+	s=k20260515; t=1792434547;
+	bh=27il3oOcwKVvNVhkDfMHuekSAptIeJEU0HuNxjreV+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PIbNthbeDBD6GZGFfuuN690hURo1zqrCinFmn1QmwDajpKCvt7JBg94SDrGejZmLx
+	 VIVkHFGIky5xdmJuDJ33OiKfwqDcFYktRDn+yNbI3unnr3rQMTHdDX1prrS1yl5aSl
+	 o4wnUVULaynoQz3vjhVVcsL7L3ToTxeH+i+gSdYmG1iwInu2Hhfq5SwL1Q5mSKbS3t
+	 Z+69cT1vnekHTg+ub5P8OUXhJ4rJzB3hjRDyKJbYGTlf4K/V95CYo77iUkDMTq07w5
+	 /2QPY/AY89uWkWSjHIQvK038ZfSsgTEFS0uSVXROEQ32XTSz8vjG9JmzvRLFXuMlA9
+	 nMR60ICmpYqeg==
+Date: Mon, 19 Oct 2026 21:29:03 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] KEYS: rhashtable bug fixes
+Message-ID: <atZhb2Gv9Xbvcjkw@kernel.org>
 References: <20261019181732.449591-1-jarkko@kernel.org>
- <20261019181732.449591-4-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 18:25:35 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,20 +58,46 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261019181732.449591-1-jarkko@kernel.org>
 
-> Add the missing overflow checks for user->qnkeys and user->qnbytes
-> in order keep calculations within INT_MAX range, which is the
-> absolute maximum quota.
->=20
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Fixes: 7e047ef5fe2d ("[PATCH] keys: sort out key quota system")
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Mon, Oct 19, 2026 at 09:17:20PM +0300, Jarkko Sakkinen wrote:
+> My patch set that migrates assoc_array to rhashtable had some LLM
+> scavegend bug fixes. Unfortunately most them where either plain wrong or
+> not in the right scope. The bug fixes in this patch set are by human
+> labour constructed fully but they are derived from what I got out of the
+> original LLM source. Thus, they are tagged as LLM assisted.
+> 
+> Changelog
+> =========
+> 
+> - v2: There was enough tweaks that a sanity check round makes sense just
+>   in case.
+> - v2: Addressed issues pointed out by David.
+> - v1: https://lore.kernel.org/keyrings/20261019142516.300040-1-jarkko@kernel.org/
+> 
+> Jarkko Sakkinen (6):
+>   KEYS: Expand key->{datalen,quotalen} to unsigned int
+>   KEYS: Reject @desclen values >= KEY_MAX_DESC_SIZE in key_alloc()
+>   KEYS: Prevent overflow of user->{qnkeys,qnbytes} in key_alloc()
+>   KEYS: Prevent overflow of quota in key_alloc()
+>   KEYS: Reject @datalen values over INT_MAX
+>   KEYS: Verify the key identity in __keyctl_unlink
+> 
+>  include/linux/key.h     | 6 ++++--
+>  security/keys/key.c     | 9 +++++++++
+>  security/keys/keyctl.c  | 2 --
+>  security/keys/keyring.c | 6 ++++++
+>  4 files changed, 19 insertions(+), 4 deletions(-)
+> 
+> --
+> 2.47.3
+> 
 
-Sashiko has reviewed this patch and found no issues.
+The benefit with this slicing is at least that backport conflicts should
+be easy to resolve, and if I recall correctly all go to v5.10+ stable
+kernels.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019181732.4495=
-91-1-jarkko@kernel.org?part=3D3
-
+Br, Jarkko
