@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792434244;
-	b=xeV47Gx1S/CLgaPfYx7+h5uMjOsgFzSMb6xIlusEx3sPph/yCpgQaKgnwEVO9RjHbYxx
-	 tq26lhNPDxD9xivSzFXTUGVU65WvX7BHQzvnVCenOLDcpzwFF1HNGhu3QKCja8LPcBYIg
-	 QfbF4xAHLjdClYZY6JaCEgYWXwZAuuar3dyV2867JiGMLcVnNLirastquS/7Cp17G3cYz
-	 mrP4TpoFo4Kw81W1Iob5jcDgBThLmkEtRH7dUWL234LvOrl1Rbv3kLUC1HzmV02zU/tsd
-	 4ms0VfuNu/2XVDsBgNbjnGNe3PgWKRGTR/51BuhruIErSi+nx7o19d1rHGHw5zitj9g==
+	t=1792434265;
+	b=kxcxpTygG0AOFxHWw1HyDpSyAtOv1M6FLAVulK/03vg68EE5SEp243jUeBAvv2umfkfQ
+	 ughfjCgXETAsoQbaVkghi1hSBk+sgIJ+uLFu+FXXeZZHYVDjV+tIIEUttmciG96JX28sY
+	 /DU5iDqUHivvqMpfj0TK9wevMvr3B4fjUNfOyMD/t+GHh4Kc6cwvYeqH9HTOvDqEiHKXz
+	 MlZvfJA8CRMqQmGPPdTrq8vayhAlIRAscfrG4WxScAookXRPd3aOMpqora5ZX8CADF2aY
+	 /s49EJiiffeILoAM2L+c4tcDkAKjORfbQUlGfkZNcP8lOJTVarAK1PHqk4wK4UzTX1g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792434244;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792434265;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=7rWwbxGI5xslOZFw/SgYbanVgeyPaBZVrBQDa/7zcCA=;
-	b=bA2EeN4AMzwuHq0qEpH5JV8cxDh7KAJTBhxkksxJFDptUd8N47qdEAYcG01qU/ApUaT1
-	 pK2jeaiPAvdsFrUY//ukMG3qhlVgZ6FZZI5yD6bHQlxxhCNU3bQ8vxxAAd4sGWhmYmGPH
-	 0/7aPhpGotldkt+/JAMnlgGEaEWuk2OAZHJhZaXcOm7171PJXeT2TwAq9sUKa6GgCfuFK
-	 p9/j6LD5vf32pJUnxvM/jE5c1epWVy0zn+DA1dvJ09fKlNT+FxAglW0Hdg1vPFRQiFgy/
-	 v4geAI1WpI6IWsLHf90ai0WK1JT7qk/V2NMMyyVFpMFegjCVWnnbW1sxMPSdZRpQkMw==
+	bh=iQgnrvC4GVRqSYc3S1WZLiW69VRjUsazEMIqNT6ALTY=;
+	b=d5egD+KSD10YknaUuX9alHx1bLswoSfC95NXdVk8hLD6L0CxCNyrf0C3Ucxot0C1VG7J
+	 MzhdVaVnd2/FkoQW1hdRH7gs99qbEDPyW/uRzVpn03EogCUS2Se2ckcWJLmkWLvBpJyG6
+	 QcVHYFtx30g3Y8ysW0S9X4f0KQAFPD3Awbuxl/TYQC4suQaTTeIojehYZLglhLxMX4LLX
+	 pyQjtPColzavp+TwGPOgj/OP2fxYRuorpG5JXBMvITkyMQFZvuz/QRP3/FmPQRTs/JbA2
+	 Retz3vnJHHUmYCBS6lr5x0wK5odoOekm5Ub02WObgEpKhwTzWBpyOKYjB4dAFSknXiA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d6ZjjGnt;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K22PHVZz;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2EF606A31B
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 18:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E512B606A31B
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 18:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d6ZjjGnt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3081F000C4
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 18:24:03 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K22PHVZz
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696F51F000C4
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 18:24:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792434243;
-	bh=7rWwbxGI5xslOZFw/SgYbanVgeyPaBZVrBQDa/7zcCA=;
+	s=k20260515; t=1792434264;
+	bh=iQgnrvC4GVRqSYc3S1WZLiW69VRjUsazEMIqNT6ALTY=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=d6ZjjGntxq+Qx2K+k2tL0X+aI9zsG4qe50HWJ5j5JQdg2PZLu6c+GfoXM6e8uuQkB
-	 5bDel85/kT9kHpgMrQbm+zL+yZ2G9xnN6ADACWiYGgwIdKaBTEyIDFhqZk+vgd+t2U
-	 mx0c23kvFap9m+RIWXKWpfgRL4pX2ba+hoxMN7vfyewtG0YN0MRMiuIsnFFTg8q+A3
-	 mt2U78Oi8zJcUe4HE+9+YPK6Uc1RWvnqysPGE1KIt8SA+ci940jdtzKFO3XvV2+59R
-	 DWEkhwDQLOhtEpNsAHJCjl1CY7AEzcOZBGMHYbjraSGFnM+KMyEaAJ4NJJOZSysaJs
-	 G57xE83jZ5ZFQ==
-Message-ID: <sashiko-outbox-178073@kernel.org>
+	b=K22PHVZz1283f47LROm3aB4GZVpXv6uNrAg6Azg+uv1Nnn4CkvAEMosBRRyv5h6E3
+	 k0fxCDNpAD4I9qvJJc60lixNtDjGxM9er/H1+4iBCFUW9sZVSRgEo6g1cx+alCRrTO
+	 vzfkmsASg3oJxTe73kpTdC47YWh/gfQtGareJS0ujfj+VwO+aLdw3JgKVZPqethBzX
+	 GzVVbXoiXSI2nfKNiEOzyWisltdwV9MO1hx33kGSU1CauGvLkFICAgwl2/Ov5d12EK
+	 IuUAYQgsxTCuuY5n3t5fqWAdNnziI9vmryCLLocDK0kY2i9abqkdMRdsc4Qljcj9H/
+	 59zHqGUeiH1mA==
+Message-ID: <sashiko-outbox-178074@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 5/6] KEYS: Reject @datalen values over INT_MAX
+Subject: Re: [PATCH v2 1/6] KEYS: Expand key->{datalen,quotalen} to unsigned
+ int
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: =?utf-8?b?b3BlbiBsaXN0OlNFQ1VSSVRZIFNVQlNZU1RFTQ==?= <linux-security-module@vger.kernel.org>
-In-Reply-To: <20261019181732.449591-6-jarkko@kernel.org>
+In-Reply-To: <20261019181732.449591-2-jarkko@kernel.org>
 References: <20261019181732.449591-1-jarkko@kernel.org>
- <20261019181732.449591-6-jarkko@kernel.org>
+ <20261019181732.449591-2-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 18:24:03 +0000
+Date: Mon, 19 Oct 2026 18:24:24 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,8 +60,11 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Protect quota from overflowing by rejecting @datalen values that
-> surpass over INT_MAX.
+> In key_alloc() and key_payload_reserve(), key->quotalen and key->datalen
+> can receive values larger than USHRT_MAX.
+>=20
+> Change their types from unsigned short to unsigned int so that they can
+> carry the full payload and avoid truncation.
 >=20
 > Cc: stable@vger.kernel.org
 > Assisted-by: LLM
@@ -72,5 +76,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019181732.4495=
-91-1-jarkko@kernel.org?part=3D5
+91-1-jarkko@kernel.org?part=3D1
 
