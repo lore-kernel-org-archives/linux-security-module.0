@@ -1,111 +1,109 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01018499F31;
-	Mon, 19 Oct 2026 12:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C388E4F4043;
+	Mon, 19 Oct 2026 13:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792411285; cv=none; b=qAUi+2rl0Bf7q9VsqpgP7n1rr2am0pwJZZtV1Il9Y7sX7P4//OM/ZnGGL34U/a8dzdp4yvATxw0zuYiZ3kTZ5GAyc8TnUsXu497kH0oxxUxbe0d/UNA5HAVMZx0AJSnTsCJcaV1qm6DOivBm5tdzfEB990WL1oEqi/E1oL+V4as=
+	t=1792415807; cv=none; b=p9y034GIKmj4+x2ziW0SHvyiIy6KpV+4gM9hwHkf4SpI1WD5bNfXvlk6wmN02Rykiv/Br/YOrfokJtDWhbEBp2w5wD0E0f5eDZcI/DEJ7vTGT4uuIJEFNn/JnaJavg/lZ5aEaSbn/jbmcPsYyQrdRAZjxIa4CWLcNWCO2ECsWMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792411285; c=relaxed/simple;
-	bh=qKmVXnbvrgmbSBXMKmgswg1CPuvbjvxz9Gk4ESPpl6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTVrGakQ/bze64Roy2QzodeeKDsX4QmTMGwTCui47Dv01L06AF0A7Drn5PYfNMazE9xPYYeDkg5b15hKMjX0OMe+MhdgxfwoeUHl+y3zAdZF2QmQ7812vVLkHfJndaTt4aq4Tk0B+sEV0O9BNgugtiey8O1x92P5gnrdR/TVY0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=unknown smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=A/kCnsFd; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
+	s=arc-20240116; t=1792415807; c=relaxed/simple;
+	bh=KEfUjJ+sWeyEpypWIo35O6elA0OeVZ28l/vNOIqBtYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mA5/VZwc5jpK8Yvou1ZFTHU80J2mswJ24LI3Boh1XORYUYOGJ7C3SX5xYGegXqi5nVbI2fdtrTIwxSDnvltkUUHaL/joIQZGSrD+FMg0OC0iXHsb3acLJ3cEb/9DU9OTaiHq+y4juD2qWTHboD48rp66iSVaQvrOSQp+um4GJGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=CGjJxHSS; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="A/kCnsFd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1792411274; bh=qKmVXnbvrgmbSBXMKmgswg1CPuvbjvxz9Gk4ESPpl6A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A/kCnsFdVahR7QfbpjZXgip7cYuAwrFHMy6jj+hQsFjoG2PoZziStt9ULE90JR5ab
-	 /GTr5AxS0qLDW+Paw2sJstgccU4ceyqUhKW/CEuQ3e6PL1H0gGJRCciU1CTZHH7Ned
-	 GTwyWyaz+OdiDM3z4pI/5fu5U/DLiDXbT17lNQ5BCpTCWfhA/YtZBtVx7HYh2XeIe6
-	 F18vEmbSYP1H4KhBuyMBkB8iF/jicUt0cmhMG23gHR5VLoinNgOBW1RY2gDv/8E1db
-	 3g+0YAplb9cOSIjw52WB3Xc54wehX5iuCbZ5zdrGtEB4LQIM+57/+YnRL0ujBD19EK
-	 VUyOr96ayTeSg==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id D8E6CF05; Mon, 19 Oct 2026 07:01:14 -0500 (CDT)
-Date: Mon, 19 Oct 2026 07:01:14 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"Andrew G. Morgan" <morgan@kernel.org>,
-	Serge Hallyn <sergeh@kernel.org>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] capabilities: close the ways around the CAP_SETFCAP
- rule for uid 0
-Message-ID: <atYGiiGPs39lTFQ7@hallyn.com>
-References: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
- <asehZEWAwsJcbqvM@hallyn.com>
- <179147397027.4.15064782992163283819@toxicpanda.com>
- <asfBRYy597qvzdCW@hallyn.com>
- <20261009-aussicht-wortbruch-bohnenkraut-9e7a1cfd7580@brauner>
- <179191993398.6.7035194670175996999@toxicpanda.com>
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="CGjJxHSS"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=KEfUjJ+sWeyEpypWIo35O6elA0OeVZ28l/vNOIqBtYE=;
+	b=CGjJxHSSLnLyFiBJ6fmCvw7MlJSp71N6IQMPcQkTfVBF4w4+qhSNBqybtc2YkWCvE5LwoEOVU
+	nkl6Q6kL3AgrL1evhkMPi2OeyEjemmmAVgbOgxQlks5tBhbrz4Ra7a12Oy27gvkosJfa6xtd7mk
+	IO1wVoLvEGKoMecheF6kbbs=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4j7bfV0G5ZzRhrQ;
+	Mon, 19 Oct 2026 21:16:34 +0800 (CST)
+Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3320840575;
+	Mon, 19 Oct 2026 21:16:37 +0800 (CST)
+Received: from [10.67.110.140] (10.67.110.140) by
+ whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 19 Oct 2026 21:16:30 +0800
+Message-ID: <5e6e9ac9-172e-4434-a333-8bcad9e026de@huawei.com>
+Date: Mon, 19 Oct 2026 21:16:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <179191993398.6.7035194670175996999@toxicpanda.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 09/18] landlock: Add READ_METADATA and
+ WRITE_METADATA access rights
+To: Justin Suess <utilityemal77@gmail.com>
+CC: <mic@digikod.net>, <gnoack@google.com>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <serge@hallyn.com>, <corbet@lwn.net>,
+	<skhan@linuxfoundation.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<andrii@kernel.org>, <eddyz87@gmail.com>, <memxor@gmail.com>,
+	<martin.lau@linux.dev>, <song@kernel.org>, <yonghong.song@linux.dev>,
+	<jolsa@kernel.org>, <emil@etsalapatis.com>, <ihor.solodrai@linux.dev>,
+	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<dakr@kernel.org>, <johan@kernel.org>, <dlemoal@kernel.org>, <hch@lst.de>,
+	<axboe@kernel.dk>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <dhowells@redhat.com>, <code@tyhicks.com>,
+	<linkinjeon@kernel.org>, <sj1557.seo@samsung.com>, <yuezhang.mo@sony.com>,
+	<hirofumi@mail.parknet.co.jp>, <cel@kernel.org>, <jlayton@kernel.org>,
+	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
+	<tom@talpey.com>, <hyc.lee@gmail.com>, <miklos@szeredi.hu>,
+	<amir73il@gmail.com>, <senozhatsky@chromium.org>,
+	<chenxiaosong@chenxiaosong.com>, <kpsingh@kernel.org>, <matt@bobrowski.net>,
+	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <john.johansen@canonical.com>,
+	<georgia.garcia@canonical.com>, <zohar@linux.ibm.com>,
+	<roberto.sassu@huawei.com>, <dmitry.kasatkin@gmail.com>,
+	<eric.snowberg@oracle.com>, <stephen.smalley.work@gmail.com>,
+	<omosnacek@gmail.com>, <casey@schaufler-ca.com>, <takedakn@nttdata.co.jp>,
+	<penguin-kernel@i-love.sakura.ne.jp>, <xiujianfeng@huawei.com>,
+	<nanx95726@gmail.com>, <djwong@kernel.org>, <lujialin4@huawei.com>,
+	<bpf@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<driver-core@lists.linux.dev>, <linux-block@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <netfs@lists.linux.dev>,
+	<ecryptfs@vger.kernel.org>, <exfat@lists.linux.dev>,
+	<linux-nfs@vger.kernel.org>, <ntfs@lists.linux.dev>,
+	<linux-unionfs@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
+	<linux-integrity@vger.kernel.org>, <selinux@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>
+References: <20261015125425.3246251-1-caixinchen1@huawei.com>
+ <20261015125425.3246251-10-caixinchen1@huawei.com> <atI20Vs7Du9-g1Hz@zenbox>
+Content-Language: en-US
+From: Cai Xinchen <caixinchen1@huawei.com>
+In-Reply-To: <atI20Vs7Du9-g1Hz@zenbox>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ whupemk100010.china.huawei.com (7.152.184.41)
 
-On Tue, Oct 13, 2026 at 07:32:13PM +0000, Josef Bacik wrote:
-> On Fri, Oct 09, 2026 at 09:41:59AM +0200, Christian Brauner wrote:
-> > On Thu, Oct 08, 2026 at 11:13:57AM -0500, Serge Hallyn wrote:
-> > > Yeah, that's what I was thinking.  Or even stricter: ensure that to join
-> > > any user namespace, a process must have a superset of the namespace
-> > > creator's capabilities.
-> >
-> > I think both are fine and I like this proposal.
-> 
-> One correction to what I wrote: the weaker version isn't enough.  A
-> namespace that maps "0 100000 1000" doesn't map the parent's uid 0, so
-> it passes that check.  But with an idmapped mount that maps fs 0 to
-> 100000, a task that joined it can write fscaps that are stored with
+Hello Justin,
 
-I actually don't think that's something we should work around here.
+Thank you for the review, and for thinking the implications through so
+carefully -- the concrete scenarios you describe were very helpful to
+settle the design.
 
-Christian, what is your opinion on this?
+I agree it should be a conscious
+decision: the next revision will make the *_METADATA checked at open time
 
-IMO most people should not do id-mapped mounts from host range anyway
-(they should shift a base rootfs to a high range, then do idmapped
-mounts from there),
+and follow the mechanic for the truncate right
 
-> rootid 0 and honoured by the host.  We test that flow.  So it has to be
-> Serge's stricter version.
-> 
-> > I think that this is an acceptable restriction. Mapping uid 0 to 0 and
-> > dropping caps is borderline useless.
-> 
-> That makes the restriction wider than the 0 to 0 case.  A root task
-> without CAP_SETFCAP couldn't join an ordinary "0 100000" container
-> either.
-> 
-> setns() also only covers the routes that go through it.  These don't,
-> and need their own checks either way:
-> 
-> - writing through a uid_map fd opened by a task with CAP_SETFCAP
-> - ptrace and pidfd_getfd of an entitled task from outside
-> - a task without CAP_SETFCAP creating its own namespace, which a
->   privileged task then maps "0 0 1" for
-> 
-> So v2 would be a level on the namespace computed at create time, the
-> strict setns() check, and the checks at the map write, setxattr and
-> ptrace reading the namespace's level instead of the cred's.  If that
-> sounds right I'll put it together.
-
-I still think it would be easier to reason about, long term, if we
-could get away with storing the cap_eff of the process which creates
-the user namespace, and check (ns-targeted) the capabilities of any task
-trying to setns to it against that.
-
-> Thanks,
-> Josef
+On 10/16/2026 10:44 PM, Justin Suess wrote:
+> LANDLOCK_ACCESS_FS_*_METADATA should be checked at open time and follow
+> the mechanic for the truncate right. Otherwise the access for already
+> opened file descriptors would be changed. See hook_file_open in
+> security/landlock/fs.c and this discussion here [1]
+>
+> It should have clear documentation for this as well.
