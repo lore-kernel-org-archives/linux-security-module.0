@@ -1,63 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792446859;
-	b=Xp2VQZyvMhXY5QaNLEjeQLcxA+mbTDTgQrnghyoJwLZghjUwrv1FwSNrNo8uxN0qx3uR
-	 4yRHu9yS9bjPIX7hYS8Md8CtdTy7QjPFiTQQRVf+Pa+Y5ZstJSH7jOMC58jUXFuwp1/X3
-	 p11p65OMjWJrzedRs8DvWXsNAbaeD5iJY1wj9w3ZuV5Gc4Qk8VKkcwWS0kcmETwSVieIb
-	 IeQcTi63E4KoCvxBzEOt7QBi5kddn2/Yapgnq6IOLGFWtJASej9s0D0UD/qH8S0Oa5HWS
-	 Gt7KHx2jmiRDaJdiK/Z5kbcuQfS+HLQUD7Zr0tG9+H5q8uQIMxx/Dg5bOJ9p+v7qo2A==
+	t=1792447041;
+	b=EgpsQCG3YxFD5eSWCE5JzuuG4PphNr0AOIL/pYGxY/cL88QnBvii0LCmrJqXZuToaAXz
+	 Mh5l5jJSZ1AQewIyq/53XL4SeGG+bAWQa9R4JjHbu41YA1owAuLI2qDd4NC4FO/V+n5Ip
+	 rrPu6jeHZOnOvEbsNt9wiBQzEY3w27XZ13DUccarE5MaCGJs+fgq7SsJ+8YoyaZbPid7l
+	 KpAUQl2m/qdAWhf8f0odZ/85mimkVKaKCyNQ5yrYQJi4U67GuomUTXTCRzfLmwrScfAMy
+	 v83O+d7ziw8SrDKWWLZ3SGvu2/jqQ+sfDkZORy3hLdqv0rG65SVJMNW76AY1eYekRFA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792446859;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=9VOqMYgyNn/QmRwvpRSK7qR74louWoMyKZEaojotFbw=;
-	b=jL7OuW+tkYopJGzRsTZ8y9B61026eaMpxAq92ZieffChQFHbZTfJ03UnECmRUAj8Ht+Q
-	 mMiUCagLemuneU84RcqpqK4QUJljTpmmLHROy26+WK3lfEhmtz7RCG4zOvY/SpeUp2uxX
-	 ECPmJ6nkuRUcTGzbaKonBG32HQigbwRqmwFdBrc5u8NHVbrkxMPFgzCcLa+B1g+RmT6NR
-	 /brfO89DmA3B8WUmnIQ5vbq8WMXj12Ww4Y5RkSM+xiJ+qJ26Ka8NonUiuC2EXay+ni9aE
-	 lPZqBeYKBCljvOohZaiIz8Ysn8oqTa3nVjcN58iTGW3FCsAV/VmOEfnNXbhsJxJtPsQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792447041;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=MKj7glC7ZuV0NZIPGzkF3iyF1E2FueFtrb4gt/AWgv8=;
+	b=KO1KQDW211GrhNWxatYpStnhhJiOJ4fYQQHreIkigWYGBn0bejp8qt2pLl6ikY+T6kz7
+	 HRoetuUjN1VktaXuu+a8qeGJnRqmCuWvKf58YM26auF78d/2Oq6DQiOTEZsg5XG4vY6dQ
+	 xag29qemwh6++y3hy93pjTBf34UfMlqHAjeitE6D4ueZ6I4uutpHAzAditmJhmIdTnP8g
+	 mE1QsgqBEz21JT8iNxoXVvAwjcfiD4sJ407EP4bLzg4FfQuRPHaNJlXZELemV73/m73eh
+	 Xx82I0hPMFpVyJtcO4eHE74GLZ0C+mB8zn4r4m+UIj2NdbOxXyVRURrCaKgo+l6gBIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QK7+r4OA;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cZvhIbqq;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id B1F5A606A31A;
-	Mon, 19 Oct 2026 21:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A4E606A31A;
+	Mon, 19 Oct 2026 21:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QK7+r4OA
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B651D1F000C5;
-	Mon, 19 Oct 2026 21:54:17 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cZvhIbqq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EAB31F000C4;
+	Mon, 19 Oct 2026 21:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792446858;
-	bh=9VOqMYgyNn/QmRwvpRSK7qR74louWoMyKZEaojotFbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QK7+r4OA84djCe8sbywz/SfHhL34jL0OcRwYgTQ9E6z/LUAWCITJbcpn7I+qYoF93
-	 ehZleY2Lao9msS4gqzDv6GX+OypO2owkTeLCbzTZV6FEk3hKAzpY8wIDCrvyP0ubEO
-	 a41SJvZKoaOA/4ZICR3sHCNqYKZuFj5cNedlzgmQFyqTix+VGObZsUdrpnoPqRBXvv
-	 WTvh8L/NNWUt9SJgfsvaQQO6d/EEhlW/xYNIC/Se7Qj80qg86hPgZ+BBUCsKF7czRJ
-	 yMiqR5LLyNiHlY2Qm+e6eVsqrxrxEO2u9A0Y8GcogfK3wPbygmGukp9U7RxWpqbVLF
-	 /WNWFs+CkTmUA==
-Date: Tue, 20 Oct 2026 00:54:14 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: manuelh@nvidia.com
-Cc: Fan Wu <wufan@kernel.org>, David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Halaney <andrew@amutable.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/4] IPE: add a dedicated policy keyring
-Message-ID: <ataRhrucvhM8qZAs@kernel.org>
+	s=k20260515; t=1792447040;
+	bh=MKj7glC7ZuV0NZIPGzkF3iyF1E2FueFtrb4gt/AWgv8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=cZvhIbqqbzR6PT3G3hJb6gFymOY2MrJrZal2iS3Mebpg8dmETAV7LHrfxrFLM6e7o
+	 36fmI9/X6vqGQ+puKac1ycq/8kUAlrXDLkzCGHqT4PIs5Z6ZBWcRhnb5ATDLidZYHD
+	 AwSNFEoGHTYJav+0yj7i4ltBBRWiz6k3uiS3rEiD8IHeP16zJuWiMReIsOTIDtlTZ2
+	 Hf3JfvmVc6bxtQDbEQaGlHi1D0IAckUiytSEm93JzcMsyXBBioLgmgwfo1Jf7zZDNu
+	 rFCPKEcUyvWpdEdY6rfNKAoIp5Npzoab1LZxRwi3MrO/XeMUlwzmvn3uLtMnCWcPqT
+	 R05zfwYIV/TKg==
+Message-ID: <sashiko-outbox-178282@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RFC 4/4] selftests/ipe: test the IPE policy keyring
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Manuel Huber" <manuelh@nvidia.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+In-Reply-To: <20261019-b4-ipe-keyring-rfc-v1-4-156f0b93e843@nvidia.com>
 References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
+ <20261019-b4-ipe-keyring-rfc-v1-4-156f0b93e843@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Oct 2026 21:57:19 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -66,75 +59,140 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
 
-On Mon, Oct 19, 2026 at 09:40:24PM +0000, Manuel Huber via B4 Relay wrote:
-> Add a dedicated ".ipe" keyring for IPE policy-signature verification,
-> modeled after the dm-verity keyring, allowing userspace to provision
-> IPE-specific policy-signing certificates. Systems that do not provision
-> the keyring retain their existing behavior.
-> 
-> This RFC is based on commit 48f936e302a9 ("ipe: update the project and
-> test suite links") from ipe/next so review can begin before the
-> prerequisite keyring work reaches that branch. The series will be rebased
-> onto a refreshed ipe/next once that work is available there [1].
-> 
-> The keyring readiness check currently follows the dm-verity and BPF
-> implementations. A parallel keys RFC introduces keyring_is_empty() for
-> this purpose [2]. A later revision will use the helper if it is available
-> in the submission base.
-> 
-> Testing:
-> - Built an x86_64 kernel with GCC 15.2.0 and Clang/LLD 21.1.8.
-> - Passed all 33 IPE parser KUnit assertions.
-> - Passed all 4 sealed-default keyring selftests under QEMU TCG.
-> - Passed all 16 provisioning-mode keyring selftests under QEMU TCG with
->   ipe.keyring_unsealed=1.
-> 
-> [1] https://lore.kernel.org/r/20261008-ajhalaney-dmverity-key-identifier-v2-0-008456d189cb@amutable.com
-> [2] https://lore.kernel.org/r/20261016215326.4110064-5-jarkko@kernel.org
-> 
-> Signed-off-by: Manuel Huber <manuelh@nvidia.com>
-> ---
-> Manuel Huber (4):
->       ipe: add the .ipe policy keyring
->       keys: add KEY_SPEC_IPE_KEYRING
->       Documentation: ipe: document the IPE keyring
->       selftests/ipe: test the IPE policy keyring
-> 
->  Documentation/admin-guide/LSM/ipe.rst           |  41 ++-
->  Documentation/admin-guide/kernel-parameters.txt |   9 +
->  Documentation/security/ipe.rst                  |  16 +-
->  Documentation/security/keys/core.rst            |   9 +
->  MAINTAINERS                                     |   1 +
->  include/linux/key.h                             |   2 +
->  include/uapi/linux/keyctl.h                     |   1 +
->  security/ipe/Makefile                           |   1 +
->  security/ipe/ipe.c                              |   2 +
->  security/ipe/keyring.c                          |  80 ++++++
->  security/ipe/keyring.h                          |  16 ++
->  security/ipe/policy.c                           |  10 +
->  security/keys/process_keys.c                    |  23 ++
->  tools/testing/selftests/Makefile                |   1 +
->  tools/testing/selftests/ipe/Makefile            |   5 +
->  tools/testing/selftests/ipe/config              |   7 +
->  tools/testing/selftests/ipe/test-ipe-keyring.sh | 357 ++++++++++++++++++++++++
->  17 files changed, 575 insertions(+), 6 deletions(-)
-> ---
-> base-commit: 48f936e302a9c48cfc032eb5944c3a6246bc9043
-> change-id: 20261019-b4-ipe-keyring-rfc-b93b9ae129a2
-> 
-> Best regards,
-> -- 
-> Manuel Huber <manuelh@nvidia.com>
-> 
-> 
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Medium] selftests/ipe: missing CONFIG_CRYPTO_SHA256 in config fragment
+- [Low] selftests/ipe: keyctl id check precedes already-provisioned keyring=
+ check
+--
 
-We are in the phase of release cycle that it would be hard to find any
-time to review this properly so might take a while, or I'll review a
-follow-up iteration if other feedback arrives.
+commit 0116188a11e090ec7a12ebe17082312fda668a18
+Author: Manuel Huber <manuelh@nvidia.com>
 
-Br, Jarkko
+selftests/ipe: test the IPE policy keyring
+
+This commit adds a kselftest script and configuration fragment to validate
+IPE policy keyring operations for both sealed and unsealed boot parameter
+states.
+
+> diff --git a/tools/testing/selftests/ipe/config b/tools/testing/selftests=
+/ipe/config
+> new file mode 100644
+> index 0000000000000..498c224d2c182
+> --- /dev/null
+> +++ b/tools/testing/selftests/ipe/config
+> @@ -0,0 +1,7 @@
+> +CONFIG_AUDIT=3Dy
+> +CONFIG_AUDITSYSCALL=3Dy
+> +CONFIG_KEYS=3Dy
+> +CONFIG_PROC_FS=3Dy
+> +CONFIG_SECURITY=3Dy
+> +CONFIG_SECURITYFS=3Dy
+> +CONFIG_SECURITY_IPE=3Dy
+
+[Severity: Medium]
+Should this config fragment also include CONFIG_CRYPTO_SHA256=3Dy (along wi=
+th
+CONFIG_NET=3Dy and CONFIG_SYSFS=3Dy, which CONFIG_AUDIT and CONFIG_SECURITY
+depend on)?
+
+In test-ipe-keyring.sh, generate_keypair() and sign_policy() generate
+RSA-2048 X.509 certificates and PKCS#7 signatures using SHA-256. When a
+signed policy is written to /sys/kernel/security/ipe/new_policy,
+new_policy() -> ipe_new_policy() -> verify_pkcs7_signature() ->
+pkcs7_verify() -> pkcs7_digest() allocates the shash algorithm:
+
+crypto/asymmetric_keys/pkcs7_verify.c:pkcs7_digest() {
+	...
+	tfm =3D crypto_alloc_shash(sinfo->sig->hash_algo, 0, 0);
+	if (IS_ERR(tfm))
+		return (PTR_ERR(tfm) =3D=3D -ENOENT) ? -ENOPKG : PTR_ERR(tfm);
+	...
+}
+
+Although CONFIG_SECURITY_IPE selects CONFIG_CRYPTO_LIB_SHA256,
+CONFIG_PKCS7_MESSAGE_PARSER, and CONFIG_SYSTEM_DATA_VERIFICATION, none of
+those select CONFIG_CRYPTO_SHA256 to register the "sha256" crypto_shash
+algorithm.
+
+Without CONFIG_CRYPTO_SHA256=3Dy, pkcs7_digest() returns -ENOPKG. That caus=
+es
+positive policy loads in test_unsealed_keyring() to fail, and causes the
+negative checks in test_sealed_keyring() and test_unsealed_keyring() to
+falsely pass before ipe_new_policy() ever reaches ipe_keyring_lookup():
+
+security/ipe/policy.c:ipe_new_policy() {
+	...
+		if (rc =3D=3D -ENOKEY || rc =3D=3D -EKEYREJECTED) {
+			keyring =3D ipe_keyring_lookup();
+			if (keyring)
+				rc =3D verify_pkcs7_signature(NULL, 0, new->pkcs7,
+							    pkcs7len, keyring,
+							    VERIFYING_UNSPECIFIED_SIGNATURE,
+							    set_pkcs7_data, new);
+		}
+	...
+}
+
+> diff --git a/tools/testing/selftests/ipe/test-ipe-keyring.sh b/tools/test=
+ing/selftests/ipe/test-ipe-keyring.sh
+> new file mode 100755
+> index 0000000000000..557ccc825fe24
+> --- /dev/null
+> +++ b/tools/testing/selftests/ipe/test-ipe-keyring.sh
+
+[ ... ]
+
+> +	keyctl setperm "$KEY_SPEC_IPE_KEYRING" \
+> +		"$IPE_KEYRING_PERM_LOCKED" >/dev/null 2>&1 ||
+> +		fail "drop mutation permissions from the keyring"
+> +	ktap_test_pass "mutation permissions can be dropped"
+> +
+> +	if keyctl id "$KEY_SPEC_IPE_KEYRING" >/dev/null 2>&1; then
+> +		fail "the special key ID granted possession rights"
+> +	fi
+> +	ktap_test_pass "the special key ID grants no possession rights"
+
+[ ... ]
+
+> +keyring_serial=3D$(keyctl id "$KEY_SPEC_IPE_KEYRING" 2>/dev/null) ||
+> +	skip "KEY_SPEC_IPE_KEYRING does not resolve"
+> +keyring_description=3D$(keyctl describe "$keyring_serial" 2>/dev/null) ||
+> +	skip "cannot describe the IPE keyring"
+> +case "$keyring_description" in
+> +	*"keyring: .ipe") ;;
+> +	*) skip "KEY_SPEC_IPE_KEYRING resolved to an unexpected key" ;;
+> +esac
+> +
+> +keyring_unsealed=3D$(cat /sys/module/ipe/parameters/keyring_unsealed)
+> +case "$keyring_unsealed" in
+> +	Y)
+> +		[ "$(keyring_key_count)" =3D 0 ] ||
+> +			skip "the IPE keyring has already been provisioned"
+> +		test_unsealed_keyring
+> +		;;
+
+[Severity: Low]
+Can the "the IPE keyring has already been provisioned" skip check be
+reached if the keyring was already provisioned and locked?
+
+When the keyring is locked with IPE_KEYRING_PERM_LOCKED (0x08030000),
+KEY_USR_SEARCH is dropped. Because lookup_user_key() returns an unpossessed
+key reference for KEY_SPEC_IPE_KEYRING, running keyctl id on
+KEY_SPEC_IPE_KEYRING fails with -EACCES once locked (as verified in
+test_unsealed_keyring() above).
+
+When test-ipe-keyring.sh is run a second time or on a system where the
+keyring was already provisioned and locked, the initial keyctl id check at
+the top of the script will fail and skip with "KEY_SPEC_IPE_KEYRING does
+not resolve" before reaching the keyring_key_count() check (which uses
+keyctl list and only needs read/view permissions). Should the
+keyring_key_count() check happen before calling keyctl id when
+keyring_unsealed is Y?
+
+[ ... ]
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019-b4-ipe-key=
+ring-rfc-v1-0-156f0b93e843@nvidia.com?part=3D4
