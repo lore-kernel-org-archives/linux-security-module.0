@@ -1,96 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792421849;
-	b=JCrXDdPoVaneI3q22zj/NoJElyQcMzBC1SBlMzkcmiMfC1MHJbgDkAZVblPfCsHEvHr9
-	 T38oqqpIfSbKWDzzXSGnnFFg3uSWRNS3cdeuuXpxnI8SB+zake8VepltRCHP+71+/nzHJ
-	 YdJxrfetCXFxWeTsfcKpGzFQJvp/cRGHMtSmEXNeeD3qe6kBaks6PxqTjF59b7tAT8Odk
-	 sZ2ivEa2s6OxO2ytobyxuN/foGp6oji9kfh3Zzo/FC7gICQOLazG/B4rc7NXNlZiN2cCi
-	 pfEbYy7t7MQGH3EvJxgOxOKpSYbqBXa6/7Zgrxgnl+5Ca1cvjvgSBW2TtgzFex28XPQ==
+	t=1792423639;
+	b=3HN1GsDNa6UjbluPlnH8XKVQHsCQ6KQu5iD/F7E9GVbkWcizhFvfPBKFAxd7K7DXPy7E
+	 2Bjqmwgd6lPqCWppS4kr8GBmuwvZ5IgbLERbgTgPvaL19UYE66dczaWpQADM01+dPdWtN
+	 8lzii9uO4jrUtUBq43AV/QbwSBmcPzS/LJn6k4Cd1h4Z8iip6jHgQlo29B8lixaBBPTvM
+	 eNefJTedETSnDUW5wKREY4VaIJahBY90OhkqIiXZNgFp3HWiW6/ruhzRh29d1G0BLLa2V
+	 PFn7WMdY9xlTyBblmAtVmXCCUkokiM4zdffxqZsMhhnEEXb+T4Y2UWx3o53RCAIXa+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792421849;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=M3PcnN3aKQnlUzuhBU8dosYVkkzA4/AToXSbAxao4Cg=;
-	b=WfTUoNbTYbNdhToS3ewORZFjm/5fZtZi0bP+tOzZzIo1WevGvDeOrjIZxDJJSpQQsNVG
-	 GsIhqbst0weVA5+Dq+m0OH+QNMkvpaQjrdfxYCrV9i/1Lh/yiweyPeOWewT/V7JJGABM1
-	 mOqo5wCINFRSgEawFt0pnfV5SYxUlucx39hxHcfoMJcPcw3p56hNnifY1WkfuSaByLGlX
-	 enVS/bT+1zqNYTF6tGXYudT/e8XWK8qfYerngcJpl/29yBGF0BWZeV1bIIxRj/OgAWzIf
-	 4Xg3bnUeht+IkoydmIBjZZb9M6gdyeacHDjFrQ13Z57cEr5bHBW5qUluOgXMRe5em+A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792423639;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=p/d6RhL2Ea+gK3gLTdz2MSZMEDt3+2TPfT6YsedECQ8=;
+	b=x5B+OrwCI7rOd0UCnmkr3pFvW10PytTpMov1VFc4sIk1+tfnxqY1C2vuOntBplUJv4BR
+	 kLp3m+UJqV/mua4dZSJONZ6ffr7jZrCw6mMVPBUNiCav8XJupoGKNNbnFkK2VgvXoNHum
+	 Kmn2AtCFxv6kZ2ChZ//VwlwXlppkrK3RBZ8wAxjXP5Kt8tLiVYPkjKhPMSKXH/3dfyB7M
+	 LfOoCQLmpBS7LWr/XqpF+erW7CygdUTJuzs/gqgjDzDKgTWsAntRjcrj095dkHhzeLsjb
+	 yg2CkrHEpXcIwQJqE23CPNZRESshwSWe9jpK3Ufz3BunKOcppNmf+SGEjEbdVhuIbMw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=E6LEr8Y5;
-	arc=none smtp.remote-ip=209.85.210.181
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wa4XtKPY;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEEB60740AB
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 14:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5DEEB60740AB
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C4FB660B5044;
+	Mon, 19 Oct 2026 15:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=E6LEr8Y5
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-8a070755c8cso388738b3a.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 07:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792421849; x=1793026649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=M3PcnN3aKQnlUzuhBU8dosYVkkzA4/AToXSbAxao4Cg=;
-        b=E6LEr8Y5Kg2fXeP2nlPF3U7B0wZx2u75WLmFzUTZWMclb0XLuMfgaPUpumZ0nDWcfP
-         ahoYtVu3zhM31RC2xGTem9im3XVFMSziW0xnv1P9Nu3RX8+xJwVuWPqyyI3QCLMhh6Su
-         KVGQ759PrKiVIqWTQ5CIDzCIfcoPOzs1Hw7ZURuOn367urWGrdpGTZpWXYwH3rzom3gf
-         mHJCUVz9+ymm0caUsGGTSWNZR6J15r7iGc1sRLnV2J22kU7OT8L7KFP1334TajEB8Kb9
-         m1QAqnLHLaOWfkOYfoytCf2gV3yea3S/Ft9RqM71ga8gfggAYgiFL9g8fSC71QxnEdaQ
-         xDeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792421849; x=1793026649;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=M3PcnN3aKQnlUzuhBU8dosYVkkzA4/AToXSbAxao4Cg=;
-        b=KxeahILfa2Exx3fmhq3iSH51uzNR0OtbItOIK54ETMBoSrcfMA+kImW9drcsXCNet8
-         K8A1EzGmTMmfdSbu9Ai0VFYFD+cC+4csrgfM64119SsyX2KV2vGj8mJcoOCVqR4DfLiH
-         RFNw3dW4+NGmFvxSZoZ9+lDVvqa2ZQDJY8KobL6GkL6KzvI83XuhyVP9RX7EVmISCesN
-         gSNzht1LkdpOPDK6T/hZDZjRx7X84OcSRRwH04XaFdrU61xKaLkYe1RmZChOzCTNFOtc
-         a5mOtPKlqpCtCFZ4VTX5dySkjzITTj8LYcXO1GmdEu/SVBrmu8LJyYpeJNVLnS231n+w
-         iWDg==
-X-Forwarded-Encrypted: i=1; AKwUvBzxq7BESLQyzmXF07x/fCd/OH16lH8cjcedDYdb576bwtvw2GJsct7PtR6P/b1FlpvoTvbpGvdglebpyhkVc2bC0QtC6Bo=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJbKLcg226PsNkMalyFtCp6iY06B9a7eKw9pU6ceFUdRjSHVmeR
-	LFBw5ADuQ9DY0tUBQezqHECcAm2qlNgJIvXqmpw1dXx/Hi8vfXZd7tHDScphTupuMqamrA==
-X-Gm-Gg: AYBFou2uaJ7+VUHR6sk519rEf4PXIiNBnohFVD8FVeQqE3AZdfiBpjxcuIDLMOubKhI
-	MVRrcc5vdVHCV+3dWF95a9xfWRWsn8vgOqredErhwNctiyFkw5EIoxMX+QsHkIdm6LnEjpBmvGU
-	YQnE6BokKFc4IioG/YETHc0hGtSQR3js2ddfn6umRID8BTn2oAShZswdcw4KbwbaMwBIXiUv8OI
-	kgurKkayBhWbIvqF6dpAHDHDJJP4VeutUdh1sG37dFicoXcyzV/jlhLrS3yq0yfVxqJpaOhy3wa
-	EU33fa08oA1vGLlohpNZl/VEY70cUwPklCsCDAAsbvoRyPmPurJ9dRqNqS/UtKjMuLyLJS70kDe
-	d2dmvqnnY/GrA+W4LV6k8yKfQuEXEWhdK7b3edu7jZMHJNv/lQJ7okZ2hBCv4zQIu8kaYrKMVa1
-	HM/RmhHwWp0oGyfwLNf/NcCgd9m8b2tkDfWZIlyHCnfnAcc3ifCpl3ync9SjsTvpJF4Q==
-X-Received: by 2002:a05:6a00:4acd:b0:878:3538:8f77 with SMTP id d2e1a72fcca58-8a04ce2f07fmr6548575b3a.37.1792421848612;
-        Mon, 19 Oct 2026 07:57:28 -0700 (PDT)
-Received: from localhost ([111.228.63.84])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-89f5735e508sm4143469b3a.28.2026.10.19.07.57.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 07:57:28 -0700 (PDT)
-From: Cen Zhang <zzzccc427@gmail.com>
-To: dhowells@redhat.com,
-	jarkko@kernel.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wa4XtKPY
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1BEB51F000C4;
+	Mon, 19 Oct 2026 15:27:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792423638;
+	bh=p/d6RhL2Ea+gK3gLTdz2MSZMEDt3+2TPfT6YsedECQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Wa4XtKPYJ+VsN4O9LnnUfUlWnBYjMA+2WbPDAeDekCO1892qGW9gpq4arBBxdtyG0
+	 VJg9bZj9lvIYFyWBqYpla8Nz1pSc/ypinDjNVW4GV7BbPxiAki5ehjzhfSg4Y5JjlS
+	 OASniCfLVra6fUeAyap6CVDeC0qiLRM+ly6qbuUZ8bTXH7HVEocHzUHaQ2EiRv22Qz
+	 j8JmOWcd4IgRk+i5ATSlvKlw9K+L9qp+YIo+h1OrvGBTd9Cz6sRcJ2w2jbTUyS6W61
+	 okbMw218xg3P23p/oj1WnRhk82AStrY6Z4WLSnrVwT8yC9xU4FBLxGIz7ir50gZjx/
+	 aw3Z/9sTqcB2g==
+Date: Mon, 19 Oct 2026 18:27:15 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
 Cc: keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	jjzuming@gmail.com,
-	zzzccc427@gmail.com
-Subject: [PATCH v2] keys: Protect the read method check against type removal
-Date: Mon, 19 Oct 2026 22:57:21 +0800
-Message-Id: <pm-key-management-objects-candidate-0010-v7-fc85721ff5cfb9e33ac6@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH 5/6] KEYS: Replace assoc_array with struct
+ keyring_index
+Message-ID: <atY20yF6B6-FpslZ@kernel.org>
+References: <20261016215326.4110064-6-jarkko@kernel.org>
+ <20261016215326.4110064-1-jarkko@kernel.org>
+ <2608630.1792422168@warthog.procyon.org.uk>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -100,88 +63,124 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2608630.1792422168@warthog.procyon.org.uk>
 
-keyctl_read_key() checks key->type->read without holding key->sem.
-A reference keeps the key alive, but does not pin the module containing
-its type. A surviving RxRPC key can therefore be read while AF_RXRPC
-is being unloaded:
+On Mon, Oct 19, 2026 at 04:02:48PM +0100, David Howells wrote:
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> 
+> > Maintain two linked lists in the index:
+> > 
+> > - all: enumerate committed links without retrying hash table walks when
+> >   the table resizes.
+> > - keyrings: visit nested keyrings during recursive search without scanning
+> >   links to other key types.
+> 
+> Do you actually need two lists?  Can you just "sort" the list to put all the
+> keyrings first?
+> 
+> > +			struct keyring_index __rcu *links;
+> 
+> Does that actually need an __rcu mark?  Is it going to get replaced once
+> allocated?
+> 
+> > +struct keyring_link;
+> > +
+> 
+> Somewhere near the top of internal.h, please, not sandwiched in the middle of
+> some func declarations.
+> 
+> > --- a/security/keys/keyring.c
+> > +++ b/security/keys/keyring.c
+> > @@ -14,12 +14,12 @@
+> >  #include <linux/err.h>
+> >  #include <linux/user_namespace.h>
+> >  #include <linux/nsproxy.h>
+> > +#include <keys/keyring-type.h>
+> > +#include <keys/user-type.h>
+> 
+> Why #include user-type.h here?
+> 
+> > +struct keyring_index {
+> > +	struct rhashtable	ht;
+> > +	struct list_head	all;
+> > +	struct list_head	keyrings;
+> > +	unsigned long		nr;		/* Number of committed links */
+> 
+> Given key->serial is 1-INT_MAX, nr probably doesn't need to be unsigned long -
+> otoh, it's not likely to leave a hole, I guess.
+> 
+> > +struct keyring_link {
+> 
+> I wonder if keyring_entry would be a better name, but the docs do mention
+> making and removing links.
+> 
+> > +	unsigned long		hash;
+> > ...
+> > +	struct rcu_head		rcu;
+> 
+> Can they be in a union?  And I would put rcu first as I think there are (or
+> maybe used to be) some things that required it to be first.
+> 
+> > +	struct list_head	keyrings_link;	/* in keyring_index::keyrings */
+> 
+> This may be unnecessary if you can put keyrings at the front of the list.
+> 
+> > +	struct keyring_link	*replaces;	/* Link this one replaces, or NULL */
+> 
+> Please don't put this in keyring_link.  It's only needed by __key_link() and
+> friends and could be passed around in a context struct as the edit script is
+> done now:
+> 
+> 	struct keyring_link_context {
+> 		struct keyring_link *spare;	/* Spare link block */
+> 		struct keyring_link *replace;	/* Link being replaced */
+> 	};
+> 
+> then:
+> 
+> 	 int __key_link_begin(struct key *keyring,
+> 			     const struct keyring_index_key *index_key,
+> 	-		     struct assoc_array_edit **_edit)
+> 	+		     struct keyring_link_context **_edit)
+> 
+> > +/*
+> > + * Remove every link from a keyring.  The caller holds keyring->sem
+> > + * write-locked.  A concurrent RCU reader can see some of the links gone and
+> > + * others not yet.
+> > + */
+> > +static void keyring_remove_all_links(struct key *keyring)
+> > +{
+> > +	struct keyring_index *links = keyring_index_locked(keyring);
+> > +	struct keyring_link *link, *tmp;
+> > +
+> > +	if (!links)
+> > +		return;
+> > +	list_for_each_entry_safe(link, tmp, &links->all, all_link)
+> > +		keyring_remove_link(links, link);
+> >  }
+> > ...
+> >  int keyring_clear(struct key *keyring)
+> >  {
+> > ...
+> > +	keyring_remove_all_links(keyring);
+> 
+> This can be made atomic by replacing the key->links pointer value with NULL
+> (since key->links is marked __rcu), then destroying the content afterwards.
 
-  KEYCTL_READ task                    Module unload and key GC
-  ----------------                   ------------------------
-  lookup_user_key()
-  permission / possession checks
-  load key->type
-                                     af_rxrpc_exit()
-                                       unregister_key_type()
-                                         GC: down_write(key->sem)
-                                         GC: retype to key_type_dead
-                                         GC: up_write(key->sem)
-                                       unregister_key_type() returns
-                                     free_module()
-  read saved type's read member
+Great remarks. I'll try to address them all together when I address
+Eric's remarks and there's been a few cleanups I've made. I'll fuse
+this all together but there's one thing.
 
-The final access can read freed module storage. The read invocation in
-__keyctl_read_key() is already protected by key->sem, but the earlier
-method check is outside that critical section.
+I just sent a patch set, which is a result of going through the
+head of the patch set and hand-crafted bug fixes that make
+sense and dropped false positives. If we could get those ack'd
+soon I could then iterate a cleaner version of this patch
+set.
 
-Move the method check into __keyctl_read_key(), after key_validate() and
-under its existing read hold on key->sem. The check and invocation then
-use the same protected type for length queries and every read retry.
-The GC cannot retype the key until the semaphore is released, and type
-unregistration waits for that GC pass before the module can be freed.
+> 
+> David
+> 
 
-Return -EOPNOTSUPP when validation succeeds and the type has no read
-method. A temporary buffer may now be allocated before this result;
-allocation and copying to userspace remain outside the semaphore.
-
-Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
-Assisted-by: LLM
-Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
-
----
-Changes in v2:
-- Move the method check into __keyctl_read_key() under its existing read
-  hold on key->sem and remove the outer check.
-- Perform key validation before checking and invoking the read method.
-
-Link to v1: https://lore.kernel.org/r/pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com
-
- security/keys/keyctl.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 5a5efa26ed0e..36ffba0ebba6 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -808,8 +808,12 @@ static long __keyctl_read_key(struct key *key, char *buffer, size_t buflen)
- 
- 	down_read(&key->sem);
- 	ret = key_validate(key);
--	if (ret == 0)
--		ret = key->type->read(key, buffer, buflen);
-+	if (ret == 0) {
-+		if (key->type->read)
-+			ret = key->type->read(key, buffer, buflen);
-+		else
-+			ret = -EOPNOTSUPP;
-+	}
- 	up_read(&key->sem);
- 	return ret;
- }
-@@ -863,11 +867,6 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
- 
- 	/* the key is probably readable - now try to read it */
- can_read_key:
--	if (!key->type->read) {
--		ret = -EOPNOTSUPP;
--		goto key_put_out;
--	}
--
- 	if (!buffer || !buflen) {
- 		/* Get the key length from the read method */
- 		ret = __keyctl_read_key(key, NULL, 0);
-
-base-commit: 89f5f41d296889f3b896c3ca67fcdf7d42bbdf10
--- 
-2.43.0
+Br, Jarkko
