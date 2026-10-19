@@ -1,94 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792422182;
-	b=QidnZ6st5YXL6tcI5fih2UFAa8O0xEKY84fUQ7yMezhwL7g/RkqbBkKP3mHsIvDgvWgs
-	 JikohdmFYSklj6Qrhb82whwdXfZU66UfhVMquSmBTazCxjFPEICTh6lipjVfbxbS3QGc3
-	 NnFShXhJbnJbvWQThlzzkCkexEEkARTR6i0aRROG7zoLhF7YoOXxOtCTa4wA/X8WZmn7G
-	 vIuNjf6T3SJ7u2QEHnq1w0SdCPVI6aCmyjxdO5dDcuWorfg5bOsYX0aq+sw7jQYOOalVv
-	 PV4N2LqazEg3DnNw56h2kC9wqxX+kuKfOq6cGwHdLq9uTkxhbXIKm3s/JCIOAymCcpw==
+	t=1792422280;
+	b=2xylC4Vz3SXQG9gtoz1X6+PZbXzx7OZTGxd1/EgTuvTsDN7PE1gU1HXsVL+wMgPFxCmr
+	 5Zs5WmuKi6wCwJonxPvVCvMJQoWbGJ73NOn24bvyzGJwdn2e2vIo3qxLwwLq8Nz9LJo8H
+	 wB4P5GwwxrNmkvYXgmkqWRrV4gEORj83YHEa3vlMbiY2VxAylaksPAb4TqdJhPiFmBq0/
+	 lXNa1bPdiHKeBSj1D5u259NJ43VzpRO7zRD0qa82U4wurSFFlowbkFPK5jKp0qq3FvtR7
+	 1aIzK9cBFJ7ykq7TF2ihwZTQXdlHlv0zZ6jae1fYvTFGfVArS4cQ3LUL2v8vx9X74JA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792422182;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
-	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=Rq4MAL1fQzRXP47VmHrMlaeZyrntTtbpzmgafG5g2JU=;
-	b=MBYxIAVQDidSJq9lrdOFk2NF9dUlxu4T+vBIgrQKSA6oYMphWB4oJ7He5zqDTiCBa1yp
-	 Qps/0beMv4XL5fgAVno57t3k0u3SZouzEtjcWsIE7q4CeNeNGUTaSxcrgqkpbchNZ9OsU
-	 L9I8SbOqbes1gKswwZQGn2vr3ZDUSh/+SFA9sfMRbd1d94O93/q/odb70Otk1SSqGUEqz
-	 hIqZ7vyF6sJEgn67/ExfuvB/5xIvYhwxqvo8y1bQQUsfElCBvOtG9Dyhh2Q5q7giOVk/J
-	 PiFNXYhmXZI9IUPCYGJ3+A/HCd8UWGIKlI4RB417SLQDYFYa/D3HFwqrD07sYJnLJ2Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792422280;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=zNvJXzYLug2XZA/bqHgSbxm9D3Vv00AlwD0l7n/RWi4=;
+	b=4BHbZG+ZijFKXyEzxO1O/Wi3Yj8fUfPrTJX/S+WCXCPfYXiTLv2tQSDhbsIAJWYYuT3o
+	 wO7Avo5TRQzQvuD4FGOu5XaSMxnChI4h3LWKEv51aHomDiucgf5CLTLqTk1cGtwO4DzBe
+	 mUQ5Pa8Hux2aB315N85m/X1fdOFJij5QG8Z9uEZ0nzNz68Bd5/m7u5V+Fz7SOfk0BGNjd
+	 wkG+NNZaaoVuhYCvP9CV2Zid71B3Sza9yM6xS8kFCQOxW9AEYyVYsjKsLKRvYvg/X8laK
+	 I6FvsXOpOdfSPP5Ekjue/b4+sd5mkJfUek12t9xyGNvh/LWyi4J3qZgWMVfZtsrrwTA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.ibm.com;
-	spf=pass smtp.mailfrom=linux.ibm.com;
-	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=KMvz5Aug;
-	arc=none smtp.remote-ip=148.163.156.1
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hvgzHUBl;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11526607BF3C;
-	Mon, 19 Oct 2026 15:03:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11526607BF3C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id AB88F607F49D;
+	Mon, 19 Oct 2026 15:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=KMvz5Aug
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69JEEmAh4015228;
-	Mon, 19 Oct 2026 15:02:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Rq4MAL
-	1fQzRXP47VmHrMlaeZyrntTtbpzmgafG5g2JU=; b=KMvz5Aug2n2vRkVcGW3/ru
-	Sfgfc3WNb+26owQYZ1VW4hhvcwDZjrzlKI4gwk9SuQR80pmQmiZLiMvt82RsRMIX
-	/2lNuNdZLeqwdBFGn+ZUreRWICZjiE9LTk/niDZjUQLbBN5jrfikQL87YGr8me2M
-	5L2E4Dmdn/1WvbpI861pAXULQh3LgtVFvrjf/woVw9vTjE4WZwlcdu8Tfy1HTwa0
-	FeMMHwJ61B4LowszuDzc9wjdzqbi4AN+xePEfDueu9yQPBu/yaeE1J2YGrQ60C67
-	uS+y4QJvMkioIoKATyQQE8BXH0kWM6iZ5uvWMzcnRfquFHNQZ6AzcWXB/KeQPDeg
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hc0r7kv7b-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 19 Oct 2026 15:02:04 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 69JE4sQE3023650;
-	Mon, 19 Oct 2026 15:02:03 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hcnjgx0gf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Oct 2026 15:02:03 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 69JF22gM27722114
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Oct 2026 15:02:03 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BC31E58069;
-	Mon, 19 Oct 2026 15:02:02 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 516BA5805D;
-	Mon, 19 Oct 2026 15:02:02 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.112.91])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 19 Oct 2026 15:02:02 +0000 (GMT)
-Message-ID: <8fc08e24ab4941f6b5e130ce46b7f31b89bed0c4.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: discard modsig on detached-data binding failure
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?J=E9r=E9my?= Jean <Jeremy.Jean@oss.cyber.gouv.fr>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20260924085516.3111521-2-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20260924085516.3111521-2-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 11:03:21 -0400
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hvgzHUBl
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id CCF921F000C5;
+	Mon, 19 Oct 2026 15:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792422279;
+	bh=zNvJXzYLug2XZA/bqHgSbxm9D3Vv00AlwD0l7n/RWi4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hvgzHUBlbu3YWgsiSHdZK2ril1an75VP36T//MLVgAqaN+nVoGSOaayDXxKwt6xHG
+	 yGtBi0O019/laoQkVGPVPQjdjXvxaBPB1B9P1obom79KVXcsFgbySGVNT4oSSdM1z1
+	 fWNs2Lt+RNGWj7BTi8hcKJuD2PnnUeB06xI+pXbCF+Y4vYE98uJNx/H0+M7UJgJitH
+	 OXZMyJP+myazMzin1TM6Yl5zs0ziE+SrN7fzOgqqkrg2IzGqKuuj4DmBc1Aiu/u/RZ
+	 yad/S469zk5K1HT6WX4h1ZB0gX0mwErkH521Ke6a+6n4s8870i2eqv6B/Fskw42AO4
+	 qR1Y8yzjq4M0w==
+Date: Mon, 19 Oct 2026 18:04:35 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Cen Zhang <zzzccc427@gmail.com>
+Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com, jjzuming@gmail.com
+Subject: Re: [PATCH] keys: Protect the read method check against type removal
+Message-ID: <atYxg1rEa5dYM4R5@kernel.org>
+References: <pm-key-management-objects-candidate-0010-v5-c6b7ca2813c6913e500a@gmail.com>
+ <atQoKlA_JfF6JBmc@kernel.org>
+ <atQr3xpmgJc5q_t4@kernel.org>
+ <CAFRLqsX70QUKo5mmp-m3BdSr3q1YaqDw98VLQM=Eo72tditWmw@mail.gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -98,74 +62,149 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDE5MDA1OCBTYWx0ZWRfXyQLMxI+d7h6u
- ZrxYQActJQnL1GF1ZmkPY6cegryhEFx7I7ZUnNUz0f0NK2vUn+hszbf+W3cFi6mQCdPpoZKIVHm
- i0xmK876sxQCOHcE7meKtFZiLPEAMY4=
-X-Authority-Analysis: v=2.4 cv=PrUG/AM3 c=1 sm=1 tr=0 ts=6ad630ec cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=OPNBBWazzn5nCynDWsEA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDE5MDA1OCBTYWx0ZWRfX9JzuUlcI1Xfe
- ro+Ajz9ppyB0jzIw4hWY9AjVs4idZ9wjkaRldGnKS8xmlbewDfi431EWYZ+ria/WkZSSjCmkSMl
- DHLzZ3saN/Q5r6r3GWSaAG+/BXjRCBXblx7wv87aEuaPa3lo5a2qWSobTiwh64qEUNozI1RbJSx
- APoRTG8Mfp2tl20pMgDvk1GDZBAALxAyMzkF/s52zY+H18KQEDJJk5E5J+R+O/ujMkmI/tgtyHi
- t8eoR1apF2/cQkSiX8JoxnfmODEgXpQprLL6iTts7L3ZhsoagUATAcnZailqZ7NykZct0l757Ht
- KMO2xsPkwDjdDzibtvo4wPFKEXnxuL4fgOqV0dOd4nPQDWBXFUgFXNbFLJpPhgWReGrIR0bJ70h
- v1HGxwNqVEwG5BPqg2K/f7Z8xrUh9CDT+6dQNGXi9CZLxQ4idKn784k5oVnEDqrU/uG9960fl3q
- k2sMDmbgOdjCs+PIt3w==
-X-Proofpoint-GUID: OO2VOubz8564iKspuNSSO0ODDnqxq84C
-X-Proofpoint-ORIG-GUID: ryqVHJYewvubwaD0dafVEAzl5VVkg6KE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-19_04,2026-10-14_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 bulkscore=0 impostorscore=0 phishscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610190058
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFRLqsX70QUKo5mmp-m3BdSr3q1YaqDw98VLQM=Eo72tditWmw@mail.gmail.com>
 
-Hi J=C3=A9r=C3=A9my,
+On Mon, Oct 19, 2026 at 10:50:12PM +0800, Cen Zhang wrote:
+> Hi Jarkko,
+> 
+> Jarkko Sakkinen <jarkko@kernel.org> 于2026年10月18日周日 10:16写道：
+> 
+> >
+> > On Sun, Oct 18, 2026 at 05:00:14AM +0300, Jarkko Sakkinen wrote:
+> > > On Sat, Oct 17, 2026 at 03:30:56PM +0800, Cen Zhang wrote:
+> > > > The key type must remain alive while its read method is checked.
+> > > > keyctl_read_key() holds a reference to the key, but checks
+> > > > key->type->read without holding key->sem. The reference keeps the key
+> > > > alive, but does not pin the module containing its type.
+> > > >
+> > > > With AF_RXRPC built as a module, a positive RxRPC key can pass
+> > > > key_read_state() and the Read permission or possession checks while
+> > > > another task unloads the module. Unload is possible once the module
+> > > > refcount reaches zero, e.g. when no RxRPC socket remains open. The
+> > > > reader can be delayed between loading key->type and reading its read
+> > > > member, allowing this order:
+> > > >
+> > > >   KEYCTL_READ task                  Module unload and key GC
+> > > >   lookup_user_key()
+> > > >   key_read_state()
+> > > >   key_permission() / is_key_possessed()
+> > > >   load key->type
+> > > >                                     af_rxrpc_exit()
+> > > >                                     unregister_key_type()
+> > > >                                     key_gc_keytype() schedules the GC
+> > > >                                       pass and waits for it
+> > > >                                     GC takes key->sem for writing
+> > > >                                     GC retypes key to key_type_dead
+> > > >                                     GC releases key->sem
+> > > >                                     unregister_key_type() returns
+> > > >                                     free_module() frees type storage
+> > > >   read saved type's read member
+> > > >
+> > > > The last access reads freed module storage and can fault in
+> > > > keyctl_read_key(). The later read invocation is already protected by
+> > > > key->sem and key_validate() in __keyctl_read_key(), but neither covers
+> > > > this earlier check.
+> > > >
+> > > > Take key->sem for reading around the read-method check. The garbage
+> > > > collector retypes the key under a write hold on key->sem, so it must
+> > > > wait for the check to finish; key_gc_keytype() in turn waits for that
+> > > > GC pass before unregister_key_type() returns, so the module text cannot
+> > > > be freed until the check has completed. If retyping happens first, the
+> > > > check sees key_type_dead, which has no read method. Release the
+> > > > semaphore before returning -EOPNOTSUPP or proceeding to buffer
+> > > > allocation, preserving the early unsupported-operation result and
+> > > > keeping user copies outside the semaphore.
+> > > >
+> > > > Oops report as below:
+> > > >
+> > > >     BUG: unable to handle page fault for address: fffffbfff8048bc5
+> > > >     #PF: supervisor read access in kernel mode
+> > > >     #PF: error_code(0x0000) - not-present page
+> > > >     RIP: 0010:keyctl_read_key+0x1aa/0x600
+> > > >     Call Trace:
+> > > >      __do_sys_keyctl+0x2a7/0x4f0
+> > > >
+> > > > Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
+> > > > Assisted-by: LLM
+> > >
+> > > Would be better to finish off the work unfinished and fix the patches
+> > > under circulation instead of spamming new ones while at it. I.e. fix
+> > > them first and don't starvate us with unfinished patches.
+> > >
+> > > If this was merge ready this would be acceptable, but in this even the
+> > > tags above are in the wrong order. This is not a lottery machine where
+> > > you dump whatever LLM gives you without your attention, so please don't
+> > > do that.
+> > >
+> > > >
+> > > > ---
+> > > > diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> > > > index 5a5efa26ed0e..756368422b7c 100644
+> > > > --- a/security/keys/keyctl.c
+> > > > +++ b/security/keys/keyctl.c
+> > > > @@ -863,10 +863,13 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+> > > >
+> > > >     /* the key is probably readable - now try to read it */
+> > > >  can_read_key:
+> > > > -   if (!key->type->read) {
+> > > > -           ret = -EOPNOTSUPP;
+> > > > +   down_read(&key->sem);
+> > > > +   ret = -EOPNOTSUPP;
+> > > > +   if (key->type->read)
+> > > > +           ret = 0;
+> > > > +   up_read(&key->sem);
+> > > > +   if (ret)
+> > > >             goto key_put_out;
+> > > > -   }
+> > > >
+> > > >     if (!buffer || !buflen) {
+> > > >             /* Get the key length from the read method */
+> > >
+> > > Why did you chose this over embedding the check inside __keyctl_read_key()?
+> > >
+> > > I'm assuming you have considered both options.
+> >
+> > I.e. to reformalize: how does that change guarantee key->type->read
+> > validity for the __keyctl_read_key() that follow?
+> >
+> > My first idea would be put the check inside __keyctl_read_key()
+> > while key->sem is taken.
+> >
+> > Please explain because I'm not fully following with that change.
+> > I could get something wrong but it is against the assumed most
+> > common sense fix imaginable.
+> >
+> > Br, Jarkko
+> 
+> Sadly, I focused too narrowly on protecting the early dereference
+> and overlooked the approach you suggested. It does make more
+> sense.
+> 
+> I've removed the outer check in v2 and moved it into __keyctl_read_key(),
+> after key_validate() succeeds and while key->sem remains held. The check
+> and call now run under the same read hold on key->sem, so GC cannot
+> replace key->type between them.
+> 
+> I've also corrected the trailer order.
 
-I'm so sorry for the delay in reviewing v2.  Somehow I missed it.
+Please don't frame ignorance as a problem with focus because this is
+ignorance. And there is no "more" here as your fix was plain dead
+wrong. You cannot compare a working fix and a code change that
+does nothing useful. For me this appears as proxying LLM output
+more than anything else. If doing right thing right is a problem
+for you, stop sending kernel patches.
 
-On Thu, 2026-09-24 at 08:55 +0000, J=C3=A9r=C3=A9my Jean wrote:
-> ima_collect_modsig() supplies the file contents to the parsed PKCS#7
-> message as detached data. If the message already contains embedded data,
-> pkcs7_supply_detached_data() returns -EINVAL, but IMA discards the error.
-> ima_modsig_verify() subsequently verifies that embedded data instead of
-> the file being appraised.
+I hope this changes the course.
 
-Returning the ima_collect_modsig() error code isn't necessary to fix the bu=
-g,
-but is needed to emit an audit message.  In terms of backporting, maybe onl=
-y the
-bug fix should be backported.
+Add my suggested-by tag.
 
->=20
-> Return binding errors and discard the modsig on failure, preserving
-> ordinary hashing and security.ima appraisal. Keep digest export optional:
-> ML-DSA and multiple-signer messages can still verify without it. Leave
-> d-modsig empty when unavailable instead of dropping the measurement.
-> Audit binding errors separately so O_DIRECT does not hide their cause.
+> 
+> Best regards,
+> Cen Zhang
 
-Is "binding errors" something that AI suggested?  I'm not familiar with thi=
-s
-terminology.  Please reword the sentence.
+Br, Jarkko
 
->=20
-> Fixes: 15588227e086 ("ima: Collect modsig")
-> Assisted-by: LLM
-
-At the recent "maintainers summit" it was decided to remove "Assisted-by".
-
-> Signed-off-by: J=C3=A9r=C3=A9my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
-
-Other than splitting the patch, it looks good.
-
-thanks,
-
-Mimi
+Br, Jarkko
