@@ -1,99 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B4156DCDD;
-	Mon, 19 Oct 2026 14:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7714DCB07
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 14:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792419967; cv=none; b=lrgUPDAOZv4FW3XOx+IghBwZJC5O/her8HmuV4oQdmIRVn4zx9YJUgIUtWZPuCmG8zHND5Xp49ZzqwEpu+zN00torOfwfZ4UKB0gFbHor0zqX5FEfXaWAwDf6qArFCEj24ZKXQ9kkAVp8k/1Wt8pkwsJB4luRGZCQ/UBp0VlsFA=
+	t=1792419996; cv=none; b=SPY2OTxSsrxW0J0wZVd3pAaDVSJcxw0eL/H5KS6GsFFxPlK4WvPJSG5vP5lOcWbmW7PfAfi3mQ/1L8YC9RRadoFyoLOzfEzcs/eil5KytP8nyjp0c5Bv+XxsV/vpUkeiCRjQrngSgBX8EAhX9chdzNOakXqcpE2rOEUYaSKuwAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792419967; c=relaxed/simple;
-	bh=koZeMyxGNBlOTT1LjPvu2Qikkq5hyG+Vr4MPSrsGO6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Viksvd/GjdMTP6hscZqBjAdaH4FeVcIT2glt64M1a7w2eSwMkDK1Z9vP1qR7q09G5B9Hqik1iWcuUdjA4Gsv3JYLj5PJ1FlX6+4Eut5BbWBRbuP8xodxtXsb65LEsHFPEDqQdlBP83g4goLVOryoC+eWBwZTJ/EtNLE5wZ9ETs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUP8N/rJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792419996; c=relaxed/simple;
+	bh=wDdY0S9if0PDNq1BQtAPOZpFJ5WB0485YTNUvOqvlOI=;
+	h=Message-ID:From:Subject:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=QTKLjkwUivnTLEVHvS+9FF07KPOSI8MsEZOUTakW+EBK656SexknNY2dNMfFujmIjNM8pWi880mazQtBsXNufLT5UJPM+vDPPiRTstNj+o7fwOjLpgNcB1n5VVvVTG4Q/a+jtwWFcqhHQh+SM2twyFC9IOCgE20qNcrFb3jZgzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbUgqbjI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUP8N/rJ"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1B8571F000C7;
-	Mon, 19 Oct 2026 14:26:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbUgqbjI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBE51F000C4
+	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 14:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792419965;
-	bh=skxcJp9zwrJVgDVjVljLICivl5v/0jQaIPiugtaJATk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=JUP8N/rJY/CDiTnI6wWIvQ4LpUoUCpPNElaVf/Ldbctyu74lex5U+6KF798a3STML
-	 l8TU0YWVCtKTQc7vFl+rWjS0UDldLXQxXYyEzJr85DAA+k5JvdGP5AQucU3LfQpeFn
-	 18QdC5OQx0Xr42dnIMSABFRF/an9bTgMCPVRvh46cegPbZPSVCPBUbZumg96MVB4Jg
-	 N9sycEk1GIfP3zc+fr3l+nhTHHp9Xf/FMm73XglSY8PrJvCvlAnQCJyKoidKqaSLSf
-	 I3vt6Pr5OU4GRb+tID7ibo097AJOLfKQ9iE9E1QZ0TeonPyo87SDjGcMdP+4Yfnsts
-	 HbVGFyWCa5I8w==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH 8/8] KEYS: Verify the key identity in __keyctl_unlink
-Date: Mon, 19 Oct 2026 17:25:08 +0300
-Message-ID: <20261019142516.300040-9-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261019142516.300040-1-jarkko@kernel.org>
-References: <20261019142516.300040-1-jarkko@kernel.org>
+	s=k20260515; t=1792419995;
+	bh=wDdY0S9if0PDNq1BQtAPOZpFJ5WB0485YTNUvOqvlOI=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=RbUgqbjIUQN1qe8yAMTpmTROHfPNk5/193Pxa3FNDr7C7lkJ6QKbm+26MKwuIVq6q
+	 5UrBrD4FMZDvFdjofuLQFOUCCSuIXH4LV6ZW/N89SBkuuSE5xexxWyI19sZ5iCXAM7
+	 avOHp1CFl0kdJDC3ITBkobNlELsTGv8pqyJ4dlmt7bk40dAmvWceL4u68ahtjOj7g4
+	 /DwrtMCOCrJDEJO5m6MhDqqKdAFiuBXDRmE6qFAwAnoHUpMasNJgLDJyDZuo0uVqnk
+	 GpaZrk1rJylqNyELyA6t13oiM6LzeFTOtlhJdRyFvfKwaS3lDA9aRSVapopuccuzK2
+	 2o3+uJZ+cA4hw==
+Message-ID: <sashiko-outbox-177380@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH AUTOSEL 6.18-6.6] apparmor: fix auditing of mount binary
+ data
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261019135441.1420968-147-sashal@kernel.org>
+References: <20261019135441.1420968-1-sashal@kernel.org>
+ <20261019135441.1420968-147-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Oct 2026 14:26:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Let's define the following preconditions:
+> From: John Johansen <john.johansen@canonical.com>
+>=20
+> [ Upstream commit b9f2181b90ec047488dcb4fb1c631d417aff07e0 ]
+>=20
+> AppArmor only mediates non-binary mount data, and should only
+> audit the mount data if it is non-binary.
+>=20
+> Signed-off-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-- Two keys: A and B.
-- R is a keyring.
-- Both have the same type/description/domain.
+Sashiko has reviewed this patch and found no issues.
 
-Then:
-
-1. KEYCTL_LINK(A, R) => {A}
-1. KEYCTL_LINK(B, R) => {B}
-2. KEYCTL_UNLINK(A, R) => {}
-
-Instead, verify key tidentity before unlinking, and return -ENOENT on
-mismatch.
-
-Cc: stable@vger.kernel.org
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Assisted-by: LLM
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/keyring.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 7143f3079d20..b025331488c5 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -1501,9 +1501,15 @@ static int __key_unlink_begin(struct key *keyring, struct key *key,
- 			      struct assoc_array_edit **_edit)
- {
- 	struct assoc_array_edit *edit;
-+	const void *object;
- 
- 	BUG_ON(*_edit != NULL);
- 
-+	object = assoc_array_find(&keyring->keys, &keyring_assoc_array_ops,
-+				  &key->index_key);
-+	if (!object || keyring_ptr_to_key(object) != key)
-+		return -ENOENT;
-+
- 	edit = assoc_array_delete(&keyring->keys, &keyring_assoc_array_ops,
- 				  &key->index_key);
- 	if (IS_ERR(edit))
--- 
-2.47.3
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019135441.1420=
+968-147-sashal@kernel.org?part=3D1
 
