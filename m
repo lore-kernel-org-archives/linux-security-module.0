@@ -1,56 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792427010;
-	b=gmlKxmjPNSrMaZda7yemKwmu6nhkusk7MLG6iQFIwmoXyUEWmKXT0HeK4Ryx1U1HP3jy
-	 wROoWcz6ymAe6ByA2MVPrTVSnb8RCnHHGLWlquA0pmXb7I+LEfWxtfYJS2yo8d5jlmBMC
-	 6TZ33EoKARdmR9Uc+FxCIbtAjrTZqZVuoFqjFrtzXU0uY/FJof+PE0sglv4tvZbzc1HUn
-	 t1YivuIOMIVmfYGRIKHTGwW0MO1hHYrDvmoTMZO2f3nG7w1cFs7JbdeRnq8ULm7ERQhbR
-	 ywQLGv32RJDf/v1N4NpZwAIqXJ+rRcMDUY/ToqX9vFgV1QxMs+ds4fI+cDK4d1sxfnQ==
+	t=1792427501;
+	b=z9G/3jh6Q3YdrzYstrUn5ehfvz3AQKNrftOD5/e9gkaCJGt37ME678fMygzXJZCJCC3u
+	 qvly840Zu2aFO3T4fgjuaJj5wRbC3ypFL7zV31H4SgTQzpmIaRU80K0Y06uH/55Kk0e1Z
+	 xu5TH/WtBGM5j/5LJBUBjiqgC0TxTUk0cack7a6pW4Gyha3iDoRtrkUvHfwBLWxwPUq1J
+	 IrN0TihucwBdKO55WgEGBwADOD60akibfTvuJ5ogEP7ZfRGxUztcILC+3ELA+oOMk1FZ5
+	 GCQYhwlPoHqOtpmUV1mQSXTj50hUaSKo326ALKn0O0UD0kE80ouAKgHEj6uMKbXVvUg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792427010;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=t8LsP4Mcem69S3npEwb56bDlaAJaVxEbndvu/T5wjIg=;
-	b=iv4xYK4EQVxLWTNXIYtg47IQA0okLmv2mO/Lwy7c04QAG3YmsOd+k/dfht+oqiYcXa4G
-	 J39DNUL0Dpp15ZzrNb35LWNYnod6Az4sGMRnJKCHCL/Z561tTATKLCitlH71Ue5lcVMuD
-	 8NGaLNuxmUEWpc1pIvkGCNOSZcOtf6kspcXpRgR3GxSnUsOMe19HzJluJGPFByyhejI8e
-	 T5Pb0xepdyHL9iQTlWtK1H6+GdD5F+0ihKMZ+RqEQ3e7pfyHAPs67SxRrZ7aBZETaaLma
-	 HBRldqWqneQkPe0D7LzkgANVmg8+71gd3PjVFD1VfVi5mfLppE7wbVXMcZPpn03ffSg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792427501;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=9PTCGIfHqtYqMTLPhP30HbjjDJXCnmWLO/evJguW83U=;
+	b=A2qnZKRqklot8EAuQoOy8+uFGN1kgwWhBSLtOb8NgdCNcI02oKrpE5hD0ULhH5p6ZVYb
+	 q5gMCx6Iu3XVms0Rm+KLKGfPJdHrttMT+aipw0XLnlgWocKsZaLTUdVSuqI9BYGxLnIET
+	 +EEAvSpoQNkl8DMVWuthTfrQC1WhYavFtAMBkLAdTPOjf/SZFigo9RBClaK5m0muHjqj6
+	 xChsQl/zq3iEoGYxDKAACgpLeT7pngbjUPdU3i4sCvz3eWvQB8CrTKFbOhu5JzuHl/OC3
+	 reqqW+1BIBcQW0hq+AKScG//Ynm/iwDbuw/9GS+MGxzleb0ELz5UnY72U1ijUJMIUnw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=is4ov+Sg;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iFNVXkt3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F34606A319
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 16:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7C67D606A323;
+	Mon, 19 Oct 2026 16:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=is4ov+Sg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91361F000C4
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 16:23:29 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iFNVXkt3
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id CE7C11F000C4;
+	Mon, 19 Oct 2026 16:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792427009;
-	bh=t8LsP4Mcem69S3npEwb56bDlaAJaVxEbndvu/T5wjIg=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=is4ov+Sgg/P6YjBMWAgt431SOY9YfgcDdWE2Y7q4uBPaC7yJfL4hQ6YqRK/oMnzKZ
-	 aXz2GxOTzn4q/lb2fXgw4yR4V/wTd9lqk0dTvhpJGwmiHre8sVpab1yn3CZ2K6IbD+
-	 gW+TwuLaDTOgSGSkjFfUA3Ok9Wnv4re/Ir091cGlhtSmq6qW1tnSC+JegDuXiQqr58
-	 8Frps4Qq58W9GKy0g7waeZ2zyvhduheWwubr7b9wgzJOQr83AySg/m6oPrG5yTequn
-	 uUd/XTHDwZ6gJ475LTAx7/YS1jwIATEPVcjSyN3LdpfPKROgmGxfKg+WPZ3EXR3kba
-	 NWK+5Sr8WMcyw==
-Message-ID: <sashiko-outbox-177876@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 8/8] KEYS: Verify the key identity in
- __keyctl_unlink
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: =?utf-8?b?b3BlbiBsaXN0OlNFQ1VSSVRZIFNVQlNZU1RFTQ==?= <linux-security-module@vger.kernel.org>
-In-Reply-To: <20261019142516.300040-9-jarkko@kernel.org>
-References: <20261019142516.300040-1-jarkko@kernel.org>
- <20261019142516.300040-9-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 16:23:29 +0000
+	s=k20260515; t=1792427501;
+	bh=9PTCGIfHqtYqMTLPhP30HbjjDJXCnmWLO/evJguW83U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iFNVXkt3NzfxWDtSAaM/InhkOo/nCE1+EmpW6OvvN9GzTl8FdQWxhE502rkn/5XBn
+	 2u8/ECJGBOb0mh+/HLr2EhKrcM8rIK75WK3kPucBYYngclDbGVgF2hZOifafcvOS7I
+	 A1i/IUzgzl9GtuUSkpEVnsjtAyq/TyRcqC/mYvNRYU9Wrzj4TMBsSHDER9ReYuaaIO
+	 11/Pbg1GhwGZzXniJndLUoOkPeH+XLbmXSIOvXonJrq59kar+hO1RFlqv0emStvhmD
+	 3Df3+zo6gjMrX7/Ln+yhj6TAkUPTsAq8h8wtjDiyE9FItwTDftm8tmswA6SnGGFtLQ
+	 fn1HDovdd7zlg==
+Date: Mon, 19 Oct 2026 19:31:37 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+	stable@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/8] KEYS: Change the type of key->datalen to
+ unsigned int
+Message-ID: <atZF6T5roFnM4nTy@kernel.org>
+References: <20261019142516.300040-3-jarkko@kernel.org>
+ <20261019142516.300040-1-jarkko@kernel.org>
+ <2609766.1792424012@warthog.procyon.org.uk>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,30 +62,24 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2609766.1792424012@warthog.procyon.org.uk>
 
-> Let's define the following preconditions:
->=20
-> - Two keys: A and B.
-> - R is a keyring.
-> - Both have the same type/description/domain.
->=20
-> Then:
->=20
-> 1. KEYCTL_LINK(A, R) =3D> {A}
-> 1. KEYCTL_LINK(B, R) =3D> {B}
-> 2. KEYCTL_UNLINK(A, R) =3D> {}
->=20
-> Instead, verify key tidentity before unlinking, and return -ENOENT on
-> mismatch.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> Assisted-by: LLM
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Mon, Oct 19, 2026 at 04:33:32PM +0100, David Howells wrote:
+> I would merge this with patch 1.
+> 
+> Apart from that:
+> 
+> 	Reviewed-by: David Howells <dhowells@redhat.com>
+> 
+> on both 1 & 2.
+> 
+> David
+> 
 
-Sashiko has reviewed this patch and found no issues.
+I can do that. I went a little over the top with sanity checking
+the slop :-)
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019142516.3000=
-40-1-jarkko@kernel.org?part=3D8
-
+Br, Jarkko
