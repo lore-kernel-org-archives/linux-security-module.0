@@ -1,55 +1,70 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792446605;
-	b=LMGSYSWI1xmjzDFeIf6FfjaQduOpleFekHgv3nRRl8zBIx0osWpXykKMMhdEUpkJcRG4
-	 DgzOhbsXLvU0ynE2nvAdTLWMWCrshssv4SMNNaHc3lumnh58bivb7DqGxV94KMCPvgExz
-	 UwR5Lo1XSBGGd49+j16uUqrdH6pmkKu43/FwCVS7dP3IN2daGMB/KlVN/J3nHXIdzjiEY
-	 JMADrBZqBAaaQsR2fwapK63PAkvP512EmQYWQ2JunznNqzJPOe1WQZr+3pt5qWmLQguf3
-	 I4S3uJaRxq1MNRqRF3TPBZ9oHU5H5pDjxy4cl7sKcUoZPHuOky0lEp+xdbHuGlOvbvA==
+	t=1792446638;
+	b=c5srcP3HP/JspdgbQjbyFQqR80omoNAgCV9gu3okrKMOP8TLAkWefctMWKXYRyY0/9py
+	 UdH+lp6CoAHCkya3RBZhRb0spUmyBjN3NzME9ItVitGjqe9C+wgP6OLEa397+7AMBO3sf
+	 KEZp+o4y/KrOwZ8AHWzngUhz1tBDSvkisnLC8Kl3k4FAA2xWnshmH9GDFuV2X0gEFAS1c
+	 KvjaOCtFuh70dKg4RlF1YA8+5RNIUTYDyCJlz7alzeqMAlD7etYAFV9mtpEOm84F9ZHxJ
+	 mebZ09r2cPSXiyOfNAD6C/VBSik7hddw6Qib7HwSlP97fxZMSkils06kem0e/sI5dOg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792446605;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ukRfUYPbqlSldT7wtoLTXA5lk1MjoDDmz/VymKtc4Ak=;
-	b=gZ8+9QndHw+g8VbpMuDsfvpfSaFKHMRhAXTYIfmDnoJSdvQmiFty83TmVt/FfJFnNUTS
-	 ojFejDbWuusr6UKhDNHKMUFzPDgPCL0F03TuOIqTvuGPT5vY6nDVY5U8ov/L4V38tEOgh
-	 Gt1Pa7E5FBOb0gGyeUgFyjZ2JFrGIm/ARuvTh6Su66nFPPcSxup7wzZKqGdr/RVl5/Sqz
-	 zYbmo9zTXI+e/gfj+Uu4UhnWWmeyLi+NS8fJU6LNipJvpAL5WEN3kEFprhhdpLtLOREcj
-	 VonzXZ1U4aJo8tbnJAndCg6EcX5gut4LZwJjdmJqIqEZ8e41gBc9zM7Wi7iYt+poN1g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792446638;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=9wRdjv0wMNosrnlf6MW1BRBfYfgIR3bLc7ooPSPmATg=;
+	b=qMpZAmSpZiU+Fk8y3eKZf7QJT6p0u06zC+GZAArkTFc18bPm0FjpKRiqFV3YUJraP0vY
+	 xC9D7C+DRSe2lQRlLMhK3wdZFrLCi+2iy5YATzQGqq0Zzn8hVCqSA1O5zgXZLeR+C0J0h
+	 KiH57ObcncClPyGM4N3qW7f45/clWBpzQBqt/mDwvDXpJuDsiCZfZRh5PpCWswOsAuZVA
+	 DnfQjwB46vJ9wxEFId+7Iv3Ts7eZdRQYxJCyFYmciIHFAtUroAlNff8fWUFz66L95/d+P
+	 W+PoBFJ4xHgewnSO+SuQv1Sd6+N77m5OxVolSKMuyFgeVnpPlTjdddsCld0VyFTJ2Ig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Rs4iFl2a;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Lbd+6kjk;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B544606A319
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 21:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id DA353606A319;
+	Mon, 19 Oct 2026 21:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Rs4iFl2a
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B0471F000C4
-	for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 21:50:04 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Lbd+6kjk
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E77301F000C5;
+	Mon, 19 Oct 2026 21:50:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792446604;
-	bh=ukRfUYPbqlSldT7wtoLTXA5lk1MjoDDmz/VymKtc4Ak=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Rs4iFl2asBk6UkOGZ9/Q4Nn6kkJaegwwaVhqxXmDGgv78Occ5ob26DoL+vYlLT0FP
-	 JAN/KUrUEwsn03MvUrGeS++4jpDZR7k5m//A4O/DVDwIvPmMQ1/HlGq68YeYQp42K+
-	 yKyvFKG4u+8AUBjJQvmNwB2l2zDY6U7UR9cBrAN+RBl7bCR+y3XCX/UEMMR3KxVcVA
-	 d4ufNsNy/twGqg3+IMsh2lSVe8d5HRT0hXwY3NBcsOrI+nTiZOCimETnH4p7Ir3yTl
-	 6wuR1T7fk/h89RWgq2fCu1XyUJGOrQ/wlyWN6JlWRGRIJDLNk101BgLOqftHC+sBxv
-	 uLQtLWCnJUKkQ==
-Message-ID: <sashiko-outbox-178276@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 2/4] keys: add KEY_SPEC_IPE_KEYRING
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261019-b4-ipe-keyring-rfc-v1-2-156f0b93e843@nvidia.com>
-References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
- <20261019-b4-ipe-keyring-rfc-v1-2-156f0b93e843@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 21:50:04 +0000
+	s=k20260515; t=1792446637;
+	bh=9wRdjv0wMNosrnlf6MW1BRBfYfgIR3bLc7ooPSPmATg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Lbd+6kjk5noL/yNPdTnfxPBFTi1dI0e5vL0bOfPHwcx9/Yjt+ouzTg8zSFz1BbdN0
+	 wm/6mTcBLj2gDpuTP8PEoMEJdvrzQWuXkQfODIbY0YAxA1jIhFN9/r7/C3mr1Y+Mrc
+	 O3+LfiuY+dgmgiVlr7vw/MEUpB54buc6brWdqF7NAUYjMX1t10tdx11Psf6KdU/dIj
+	 rYdkainDbQHW5RAupyqzVXfdJcnp/G7BGe1FCDmxUgw6G1ddglgvoFzouRthNURPTg
+	 yuKQLi6dqslKrRB/Gj6VCzhqy34XxTJquK7NChKeSWf5uFmB3AdaaEKYQrdb1lS6bW
+	 BwM0gtQI+/qZw==
+Date: Tue, 20 Oct 2026 00:50:33 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, Alex Shi <alexs@kernel.org>,
+	Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH 6/6] lib: Remove unused assoc_array
+Message-ID: <ataQqa4f9XAJQoYO@kernel.org>
+References: <20261016215326.4110064-7-jarkko@kernel.org>
+ <20261016215326.4110064-1-jarkko@kernel.org>
+ <2630215.1792446401@warthog.procyon.org.uk>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,17 +73,22 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2630215.1792446401@warthog.procyon.org.uk>
 
-> From: Manuel Huber <manuelh@nvidia.com>
->=20
-> The IPE policy keyring is allocated unlinked, so userspace would
-> otherwise have to scrape /proc/keys to name it.
->=20
-> Signed-off-by: Manuel Huber <manuelh@nvidia.com>
+On Mon, Oct 19, 2026 at 10:46:41PM +0100, David Howells wrote:
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> 
+> > Drop the obsolete leaf-count reference from a dm-verity test comment.
+> 
+> This might need reworking as a commit message...
 
-Sashiko has reviewed this patch and found no issues.
+Agreed.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019-b4-ipe-key=
-ring-rfc-v1-0-156f0b93e843@nvidia.com?part=3D2
+> 
+> David
+> 
 
+Br, Jarkko
