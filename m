@@ -1,50 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792512596;
-	b=mGrZWJyz1+CmJYsf98KA8E5LPaJKPHqEfL8m4kTYNue9PIsMxCTtilhm8kUPZJ3AyenQ
-	 hhh9rTyRLrU+bgahoP7w1OMs+/IULweWmd6PG/I3B7WVHt3MzNyabF0DWZgLY4GBlcxxf
-	 oFMVtIiAag06+vGO9s83B1aaWSIay6Zl+kNQKGH2qGPwhsxM70rmHNHYJtzOvOwI1Knym
-	 XAQKynaL6yvfS2Hy09bzWmxPSZvBF9Na91EW2gjmUQC67psPeLUJY6u7H6PippQ53qVwZ
-	 k1akKAnwLBXAN7UUfBcToSn+yv0Hj+PuFGO1gn8t2Reh2Es83pcnYk91ZNsjK/t6BtA==
+	t=1792513206;
+	b=lU4dN4QA0TIas3RByTOVoBh+9foMLu32C4p9NX4NaqZ9wHfu3KPnPBK7/fsoB6STulFh
+	 Ruk1IGZ0v6/gPHppxQJI/qY2rSUYsX9O+//U8WVkzFSjJtC7XEgcRK44fEcIEiLYCw0c/
+	 QwokY6VXvVx4edN4rv2aFaNv2GtJZP9Euvim6pqD4FS/d6UZRpHj67E6i4txbI3chFMIV
+	 zr6p0aex6pEyxImW8w3BY569wjalx/rc+AIOQh7Hn0O6pmYIj/reeAjAtj5kPW8bRf6e+
+	 lkQKgTo+qIewEl9gIlzz39NuPCXIuCT9w9B8791oZa7+WgODM7gzOOwK+BZVpgWMhjw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792512596;
-	h=Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=SkddLdbYxFjr6f3gV2lglxwsCWBWEgg7C72bs+eqvCA=;
-	b=y4pvfk1dg/ErYVZl3yI9w/qX4tuvdeDnwtzN0S71XIewxzWUBT9SYzo+XSV9GMtVJiTD
-	 xS6IY90T3ijvRMQtnG2KjX9yYtcz67v+Ldb8/Nk16dt8YEXSiGS39vZWqJZIY+UVdnLR7
-	 TCcNpuICeteQpt00LZyOl/7eqdRLca6BOZFwWxBG0NCTexdRzfUWBlDqAb02PI+Of2AJD
-	 u/QAHLuY5eKe4Trz5M3qEPLWFl/CbfoyHWIGPPDLcghBb11JtQjDzaBpTti2CtUnK0kEP
-	 3FvFy2JtoZC7QXGnWMK8xIcwCf1nLYA/mEmGYkxer00DA5As0QBdVx4R6uSnZydBYXg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792513206;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=3RZb0SnMAOA57yM4atchQ4kYcf66cAOKXvBUnsreAV8=;
+	b=1GxoNY4aeA5z+QplmJlgZBHPFn0kmCORjEhgMh62T19YKvbWgYkLis1dhVdXx30o2dnp
+	 cch7tKjl5Nh4++sEsQtmEV2sgJE36waRXIuqBaB11sAHTatmgybyi7IA3AxzSMilq1cP5
+	 kw4l6zQDku5+9TCvT9hPsPTiE25N+039OqDfKD2js/wE7e2C0tfDSM4NUyFlUvamBw6ye
+	 BTzf79xs2BPm/egTrzDd3Pog2EDyTVzTbdXNrv/toiqQ4ij3fLYJGdV04KwBRqYaRjKlm
+	 o58jjFLGgfTJ4AGJQ6OHi5Vv9GRouppHEIP7M4HoXLwoHsHuO/kBCAXcMoG5sQKWJ9Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b="H2uro9e/";
+	arc=none smtp.remote-ip=209.85.215.182
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 5A259606A319;
-	Tue, 20 Oct 2026 16:09:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6CB671F000C4;
-	Tue, 20 Oct 2026 16:09:55 +0000 (UTC)
-Date: Tue, 20 Oct 2026 19:09:27 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	stable@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] KEYS: Reject @desclen values >= KEY_MAX_DESC_SIZE
- in key_alloc()
-Message-ID: <ateSNxKG_G6WSK1N@kernel.org>
-References: <20261020013903.1244157-1-jarkko@kernel.org>
- <20261020013903.1244157-3-jarkko@kernel.org>
- <atbIP003h_YHofQb@kernel.org>
- <20261020022832.GA3727@sol>
- <atdJC3-PsaNh9PCA@kernel.org>
- <atdl74PtEpLxVPdd@kernel.org>
- <20261020155013.GB699485@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C800606A331
+	for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 16:20:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5C800606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=H2uro9e/
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-cd5c9e52398so1257755a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 09:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792513206; x=1793118006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3RZb0SnMAOA57yM4atchQ4kYcf66cAOKXvBUnsreAV8=;
+        b=H2uro9e/GSZtQibqfeaZa1pdR6pxTxhB/R+lGQeD+iBMbNrUsjlUe6FdxQ3FOwKKk3
+         KlGE92cFlzzwiqXPu250W/9XD2x5ROogQdIcU7Uxs1K5G/A1DxTUdiccO9cdPgqETy3j
+         OOfHJ3FZwjd7QyqVpR/PjuoYBhV8kqKVoKJ/9ijjvvOaZRbcvQ4apAfZhGZkAV3eI8L8
+         TZIyp0fdxlT027WiIFIhHLTJRbWE9lBcltHCJMQ2m/AlDpX8z8+/mnheTqmMas5athpu
+         zMBcWMgZ7valtlVcnZQ9xUI/DLcIbNf+KkbwHM0608cJZHbHIJvlPdXM0BFJ1XzZz/Tj
+         /09w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792513206; x=1793118006;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3RZb0SnMAOA57yM4atchQ4kYcf66cAOKXvBUnsreAV8=;
+        b=aW51BUB5RNGCkI9Z9Hzw+Mm6rJU6Bne9o1QuikSFSlPqHcCtMkVMRcq5Lh/mPBjcQ7
+         VZNVWLddR70Q1ih3sV7aNocbZsOvV4uqVA0pvbEzniiVy66SgpHJV6ETUWLUGqc2oFMs
+         HHXpM61rZKIUz0Pm7D6zqLNGjmBTlU3WAR/B/FhtnkDrbc4PRUYm3jUb/dHs+uXEMxeD
+         LZ9Lw8o+ya4S61dHQM4o4QPGV38h4+ZbKz4DJn7xo0UN53dZaChgANr3gRPcC9ReL8Yj
+         aqbAUQn/3aLt3X+KGyByle6fl8nRRROfHhcFWcTXK3CONkFInWXwPqzx65QuqYWwDwVx
+         Lr9Q==
+X-Forwarded-Encrypted: i=1; AKwUvBweZAbyC1brgvrw5A7l/6c9fO8HDmodhQvE5NX6ZQC4dHOtadIRil66yKzO9PxMwsCaZWaHYijiAUoFAt8j5vnOOr0D2f0=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIJnSr7baH1y+DN8mBRop8NjNhCjmSelUoZhdTkKb1C2I0t/oZi
+	CKZRWq5y9WSRJwvwcDaeeNP9rkp02GaczvhQv+fFdWYP9krAaYDbhvYl
+X-Gm-Gg: AYBFou3jzsZP0PGE6Cs2bwYYMctSC/+uqsOoOT4xUipL3G92bMKG2fG6J4eeejjgHSY
+	y9GpcicIsaUkPakzG/sg9HGoIbjKj7VuqGWZIOtoKn/Bf9SH6cmbw9JiFCeJliQoE0iH/q842US
+	TN5abdi4vt6vdx53sRQkOB4A0WtxX1xRmyIWrTKP7IuCJd8a+aWOmG2l1cpLOKPXuBXxIpEfNjC
+	+E2nSNk2xIprZU4HVVPV4bqbodrf4q3UHBawVwsmvK6RE+nFyh0Qrmhrpi72gYNSQyFzltM1A5P
+	PianSMXprqPIX7FCsxIH4Kie47ywaR5oAALrGW5Wnr1A1Yb90BzAU88OMnaRu+Ri9Igxee9FTQq
+	xol6FHiffu5odNmDejAsS3Yj0cXtESiIibuxag/8ua0KYzeWDclXiP7y5o/0v4UZHBUc6JAq3q7
+	z41FMADixkGo8SiBz6Se6hpI3j3/DQU2ndfKaLrx601maE5CySK1D2dHxScxTltNj31U5HA74nE
+	oWmWsANn7k=
+X-Received: by 2002:a17:90b:1d4d:b0:3ac:8ee5:e00f with SMTP id 98e67ed59e1d1-3acef538914mr9358618a91.57.1792513205657;
+        Tue, 20 Oct 2026 09:20:05 -0700 (PDT)
+Received: from ancienth-X870E-Nova-WiFi ([125.186.72.2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd6549db75asm5009301a12.18.2026.10.20.09.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Oct 2026 09:20:04 -0700 (PDT)
+From: Daehyeon Ko <4ncienth@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] KEYS: trusted: Reject short TPM2 public areas
+Date: Wed, 21 Oct 2026 01:19:54 +0900
+Message-ID: <20261020161954.3956212-1-4ncienth@gmail.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <ateELTsfmHsdCEGL@kernel.org>
+References: <ateELTsfmHsdCEGL@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -54,56 +100,75 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261020155013.GB699485@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 20, 2026 at 03:50:13PM +0000, Eric Biggers wrote:
-> On Tue, Oct 20, 2026 at 04:00:31PM +0300, Jarkko Sakkinen wrote:
-> > On Tue, Oct 20, 2026 at 01:57:19PM +0300, Jarkko Sakkinen wrote:
-> > > > Sure, this fix is still incomplete though, as I mentioned.
-> > > > 
-> > > > Turns out Sashiko found this too; see the comment on
-> > > > https://sashiko.dev/#/patchset/20261020013903.1244157-1-jarkko%40kernel.org
-> > > 
-> > > I did not ignore what you said honestly but I overlooked generated
-> > > descriptions.
-> > > 
-> > > By comparing your v2 response and Sashiko's response and going through the
-> > > code this is the list that I have where similar check should be placed:
-> > > 
-> > > - key_alloc(): before quota calculation (in place)
-> > > - __key_create_or_update():  before assigning index_key.desc_len
-> > > - keyring_search(): before match_preparse
-> > > - request_key_and_link(): before match_preparse 
-> > > - request_key_rcu(): before check_cached_key()
-> > > 
-> > > Some sites might require some minor changes I just wrote the around the
-> > > ballpark locations.
-> > > 
-> > > Did I miss any site that you are aware of?
-> 
-> It looks okay to me.
-> 
-> > - Would it make sense to wrap strlen + check into key_is_valid_desc()?
-> 
-> I don't think it would be very helpful.
+tpm2_load_cmd() reads TPMA_OBJECT with get_unaligned_be32(pub + 4), but
+does not require public_len to cover that field.
 
-I tend to agree.
+A TPM 2.0 ASN.1 key blob with public_len zero makes the read begin at the
+end of the B + 4-byte decoded allocation, causing a four-byte heap
+out-of-bounds read before the TPM command is transmitted. This is reachable
+from an unprivileged add_key() call when TPM trusted keys and a TPM2 device
+are available.
 
-> 
-> > - Would it make sense as a safe-guard to use strnlen(), which is capped
-> >   to KEY_MAX_DESC_SIZE?
-> 
-> Not really needed.  They are NUL-terminated strings anyway.
+This affects v5.13-rc1 and later kernels built with CONFIG_TRUSTED_KEYS=y
+and CONFIG_TRUSTED_KEYS_TPM=y when a TPM2 device is present. A KASAN run
+as UID 1000 with no effective capabilities reported:
 
-This is what I thought based on that in all of the sites I could
-determine where the string is create/sourced.
+BUG: KASAN: slab-out-of-bounds in tpm2_unseal_trusted
+Read of size 4 at addr ffff888106273b48 by task exploit/160
+CPU: 1 UID: 1000 PID: 160 Comm: exploit
+The buggy address belongs to the object at ffff888106273b40
+ which belongs to the cache kmalloc-8 of size 8
+The buggy address is located 0 bytes to the right of
+ allocated 8-byte region [ffff888106273b40, ffff888106273b48)
 
-Just wanted to sanity check so that this does not require too
-many additional iterations.
+TPMT_PUBLIC starts with the two-byte type, two-byte nameAlg and four-byte
+objectAttributes fields. Require public_len to cover all eight bytes before
+reading the attributes.
 
-> 
-> - Eric
+The exact input produced the KASAN read in 3/3 fresh boots. The fixed build
+rejected it with -EINVAL and no KASAN report in 3/3 boots; valid TPM 2.0
+ASN.1 and legacy trusted-key loads continued to succeed.
 
-Br, Jarkko
+The issue was found with an LLM-assisted source audit and validated with an
+end-to-end QEMU and swtpm reproducer.
+
+Fixes: e5fb5d2c5a03 ("security: keys: trusted: Make sealed key properly interoperable")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daehyeon Ko <4ncienth@gmail.com>
+---
+Changes in v2:
+- Describe the wrapper as the TPM 2.0 ASN.1 key format.
+- Explain the eight-byte minimum next to the check.
+- Return -EINVAL for a malformed TPMT_PUBLIC instead of -E2BIG.
+- Replace the obsolete Assisted-by trailer with changelog disclosure.
+
+v1: https://lore.kernel.org/r/20260925095308.3248297-1-4ncienth@gmail.com
+
+ security/keys/trusted-keys/trusted_tpm2.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 30188a0ec6766..fb45795b53327 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -425,6 +425,13 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	if (private_len + 2 + public_len + 2 > blob_len)
+ 		return -E2BIG;
+ 
++	/*
++	 * TPMT_PUBLIC starts with type (2), nameAlg (2), and
++	 * objectAttributes (4), which is read below.
++	 */
++	if (public_len < 8)
++		return -EINVAL;
++
+ 	pub = blob + 2 + private_len + 2;
+ 	/* key attributes are always at offset 4 */
+ 	attrs = get_unaligned_be32(pub + 4);
+
+base-commit: 722658cac48a6ba49f5506fd74d010ad9dbb2f05
+-- 
+2.55.0
+
