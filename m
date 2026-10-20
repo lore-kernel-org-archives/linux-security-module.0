@@ -1,97 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.224.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792504837;
-	b=A/TIYcWEtF3p80t5qn1UP15jTWE2Hr5xEbdSiUpf+UmYIR3aUgiLGr20InMwWhZof+DX
-	 Ewr3g3QxAkwzE/n4BfIrqUVwjxt1yktK9+UfATd6qqTChDU0C0a06eQthpoeDA6yNCdrB
-	 Y9xK69Q7AJ/1ivo717vgErG3wjkqk0VMqZPSme/iZkKqVCFP//0sXfNrnNgUtxWsqQtPQ
-	 A346xFueREYT4ccgJ32GHw7gg0xfMKKeQPvuHyZVpr5teG/qfJj6h//ZHE7syOT+zI/XG
-	 KENT0D8TzD1BJqBWnvPn6lXepyfqnseMRqMYZqG774iMJn3TZAOf+KpnP1iEqjbjgPg==
+	t=1792505157;
+	b=s7UqSsbZBWLreemnK2EZiQZUU+iGTn1lwpwGzglV/hDiGrdARu2QAsZd4lquI5DQmHMI
+	 a9puNGeRisz3v5v0E58zEq2vFriCjwvP2RXfgCWA41osj9QStni5Z8zAAYDvATR3Jczve
+	 jHUiKvG15zldG67RcbdbVVeQlL6S++Z3frVU8DyKbhfqwoGAxFY4QOiPY7cJnQKjxo95x
+	 7py9tILZTxglikurUedaK5eIfeUK2865gMImp1HhVrrXLOG6aDCjwmRID/6BIa0YkfNLX
+	 +NBVZMo1ZrjlsB6/8mhruIMfnD10V4BixTutVc8bQaUikSkV1zrHtE9Aat5RhxzeBog==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792504837;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792505157;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=pvvWiB/HIs4H59vNoAsA0sD6AI7vR7sZ6M7N6d5Xgws=;
-	b=ipnTYNw6lpAKYt2e/rH3hpZNhWtUwzDvLXAdylenidlNmRLJKXpxkqTc9AGfA0AUqBGV
-	 Tdi/uNlV7Pz7g6zs5OOOBT7CJbEEmYPKNIEoc3pzLJlUEXNOoNiNj3vBr2qjCjR1MdiZ6
-	 ZLg13RRCtgk6wSfF+4VwVSJ3Z0esL7i7jT4YO2zyifMZ50ijuAOH5WhkrDfQ3NhSuexll
-	 UJNmzaMReYe14r0ZxyuWg/zAvjkVkpy0W6TzYi27HYeReTsk9MuLLQ4X/j37cETaYNwuj
-	 t+XEp/MetYbV1ZtmdfGDwTs1mHpTGHA4xczMNTndcVYUZF6gFhgELblrA3bySyz64tQ==
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=LdMIhIlvZTbrlYO+3j4hIx5IHxpdtNc/p0dXdNrCqlg=;
+	b=pRdYo09DYhU0h/bJMgteVCypkR9BI34xVcEIPrVN4v10H+k34YlFk1EgiF9z4etuYaVN
+	 qaRKiaW3jpteQICFQO2U7KcUwWwTalGAHbcfAaiLs7fWphIAts4r/M5i7vXYtQJpTNwjr
+	 PvHmD3O2WVQIBz7xK9be92c98cVDb0mGSviM4rK4IfUrRpTXH5T6C3QThqw1Fx0EVbPJY
+	 z9zTLfU/Yz3xqyhCOF4vsP7vth+wR0K3lZ7mC6LJ4EHdDHUuqrYzRB8j755g5h7uzqyJN
+	 X4Y4dNeLfl6DgHE0lQbxY/ZfO06EWKvtOlIvDPc2Dgx93Vttbc0T4MdauDa1GQyDhHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=spStT64T;
-	arc=none smtp.remote-ip=209.85.208.41
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=NU6pBVdp;
+	arc=none smtp.remote-ip=74.125.224.48
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A3060A263B
-	for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 14:00:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 90A3060A263B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CF060A2639
+	for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 14:05:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 30CF060A2639
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=spStT64T
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6a642495d81so4496174a12.2
-        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 07:00:36 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=NU6pBVdp
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-675676afc3cso3270655d50.3
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 07:05:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792504835; x=1793109635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=pvvWiB/HIs4H59vNoAsA0sD6AI7vR7sZ6M7N6d5Xgws=;
-        b=spStT64TSdX9HNwicqMbVM8oRQSavile+EArNF1PJmJM5guZBb5z331MenwaNSGI+h
-         Fwx00CGIghbLZ2Kms8oTkCLDQ3G+djkxMGWX1MIbd0ftStBUZaSZQg9rYNYvPmCON4lD
-         P9A3oyDZEdeZ/QozuU13RBOh9zXUP8EVrTVnnLrjSV7KyXKpHkb2qqLLC1n/D4zCaqC3
-         mY72cQZ2Ll96uqONMO3UEiZawQ4Kdg1JgraQt0Gpd0mdJJnDE/RNrRTSy/aRokPc56Rh
-         mcU7nvVCV8BHtum4PuVWw+ANTq5p5e09x9l0PMv7+dLYfHNJ9Zn95sV9a9F9ZfSRm+ns
-         d8Hg==
+        d=gmail.com; s=20251104; t=1792505156; x=1793109956; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=LdMIhIlvZTbrlYO+3j4hIx5IHxpdtNc/p0dXdNrCqlg=;
+        b=NU6pBVdpXdS4zzTYissdBw/MDiiN5o5TlNwj//ZWFnIayDvxx9gDu9+hdW70Te0AMR
+         lJOPDNX3EmmlHKf5SjsRkfUSpS3+vwRua3DVosyQsGKHGKo8S+9RGOYoBbLl8ZOPexOA
+         xzzglLS59r9xTw+UX43wdSNz+zCsYBznrlPO1wxAJjJ4ycSSJkzbxvTL8dKWPvUT1ygb
+         zxmJFdEkKjhoPc+3QVIuFZWAzX+hKcUJT4cDBEGwXNO0XgunVCxvpiHtJFEnynNZm9WC
+         9StBMW9IYTJjpXxeP7pcleHsubJyMN/oKAkLJ5fmcxcdypeboIphMuGXqduwxNwTdvi8
+         u7vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792504835; x=1793109635;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=pvvWiB/HIs4H59vNoAsA0sD6AI7vR7sZ6M7N6d5Xgws=;
-        b=0HCMed3gbOgC62cx3VRmGobKnCEnOdWM7tRWWk/3ohO4g1YWWH6673OuYDcrx1KGSy
-         P8M8MzNIqkalYMiuK0Hge9yeGnqi/WSGjr0RG28X3RIaWVAdiJ3bJJtY/U5IWLGI8qRI
-         jpxSgLdhefYSS3TrijYAI4skxTwspFkHXl8suRWrgPbChDRxm6GG9pMFWuFpGdB3H15y
-         CAh3lvAvbPGToL3gKVqiHGla2J4+h7AWG+YTeY6pvhL5wGW9Cu7r4zTk6WAELPdeeduy
-         KcdJAXyLPdxP3w/UzTpV1AVT7gfLExn4Sr/kC+CX5CCFQKhVADGd1nTYyPuf7QAE1AVH
-         GPIQ==
-X-Forwarded-Encrypted: i=1; AKwUvByQ39L6jn8uV6i5Y8QdXdRDWPFKz0mhYIxevWB8sSwL0CMyPUJ4xnEuDcdPOORgHHjlYnHKFTvBJGjTftJoxj4HVF/2nKc=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLhD33k9bYxYj4BaP+1YPALBPN7k9DaOcqPseRToQ1wi7uuPfCs
-	59IdU9JAGU6xTPBCFJY2oETinLlsTpjob4WzJmPPoTS5UdyjkiPWUe/B
-X-Gm-Gg: AYBFou2Qnjl7TjLcGBBosgpY217AzzjA4zNYbM5wU/Q7QcHvr5oLF00VDu6UqPKJDNc
-	8ViOlNrmfG46EoW7j7jfJyJcc1NsyKDeF9mnoMTYAHrk4P7OGn5lPFGyfUrP9QGaUjmPwt8jQWA
-	ldF1OYfGHw+HN8I02FRMzPF5r5UmgQ7CTx5DMFloh5ipyEraULiPTfG8UaYNb2IxmljW9wTXWXu
-	UVHXyGAR/9HE44gDMM227cfLRHwUu/X8hNun74LyvM9uV0dEmb3Fcu7jrYfOeZ54Ux8EVA+C6Lk
-	7qWlEmvDy78/TeTA3cEd8lJbLdgalpUJDrICPy2O6scYA/y2c74VtEsaoy++CGYMNLxjTt9lgcg
-	Z3jYRVPTcK5FTpHIJ3fEKeQL/pIYVotomnhesK09YpsiejSFJYwPi3D6UHHFN3HsfB3FGxc3SVb
-	+JmIM9tLwv58bWr/6PN5JfZhi4XkENh93xGR8Bc6qOaLuTIS9E2uz/kRrBLp/kKwrKa8kE5dmSr
-	51P66Gr2GGrnEGkT4y4dncwW7nFNyUCBV6wWqw3aVKd/02VtKldXFCos5H7PgolDcfdqR+f2gIO
-	T2qXl5EeO6xUFU/0dYO0CequGQ+r6ZcsoRoqhUpgyxs=
-X-Received: by 2002:a05:6402:249c:b0:6b3:bca6:b480 with SMTP id 4fb4d7f45d1cf-6b3bca6bacfmr6223968a12.44.1792504834506;
-        Tue, 20 Oct 2026 07:00:34 -0700 (PDT)
-Received: from Martyna-s-A34.localdomain (ip-80-113-116-3.ip.prioritytelecom.net. [80.113.116.3])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b38a1c6364sm5431458a12.14.2026.10.20.07.00.32
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 20 Oct 2026 07:00:34 -0700 (PDT)
-From: Michail Andreas Michalopoulos <mike.michalo@gmail.com>
-To: John Johansen <john.johansen@canonical.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>
-Cc: apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Michail Andreas Michalopoulos <mike.michalo@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] apparmor: check address length before reading AF_UNSPEC bind address
-Date: Tue, 20 Oct 2026 16:00:30 +0200
-Message-ID: <20261020140030.92643-1-mike.michalo@gmail.com>
-X-Mailer: git-send-email 2.56.0
+        d=1e100.net; s=20260707; t=1792505156; x=1793109956;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=LdMIhIlvZTbrlYO+3j4hIx5IHxpdtNc/p0dXdNrCqlg=;
+        b=LIv6M+sU/vq+m780al0STeJMjETpSTrrGxtWBuKVZMme2aPPtFMvMA2iatm1qgItrY
+         G2k0+l32+m+o6FLGNk7zhyNFkWQOEqI0Dj2Sxk7lBbEl90XPnsEf/RM+ZYH8gmgvVfFY
+         NPxg9sd52t9i/n4VzrgyCyVKoTGqOFqSonosASxgz1SiehcVN8cU6Mf3lBhxXQfV9iCl
+         ecrS0boM668mvpjQZUjbq03nIzYnG+2EOWCOI9MLJY9RIAZHRed5KvpdrE66DiEmb4gX
+         OOwdBTkCqmrHQFhQJnGklOIoiF8ZxavB2+cLnTMFElptFV+Yk3t7PEB/0KGDqctHbgBI
+         9MCQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxZTU8dTyttN1VXQK+HJK9e8+WnttUXY/e/b7XRLv/kHJuOzi5bovjRBOcvrmbj9pfoK4XDO5jX3LLh38QRSKgpQTkDzbo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYL85aMqwlHS7z2HAvShQEgsAofdbzvDCnEB2Eh47XMEtLhc7uz3
+	hflAtSq3Fs7667CoXETlf+1DUMGVwenOBymgeIMhKlF+a5dq6e4bHrBj
+X-Gm-Gg: AYBFou3ax43W1evKLCjW3T36EYbMT0+tNvJHUDy7u7/K088eXaQwTS08xYALm9HNkYy
+	L48i8Zz4Zt9rFJOb4fZNUmYJhrfNkINryFd2+k1kbEIvIyectyoTb32X0GnOl8TPwnWuDcwFvro
+	LM7knxMB/JsQTJraWAwAbDFkh2oMDYz71lFq+IVil4oa6aazE+GKm/EN4dbPHjwgK4WoPsqA47N
+	hJMRFgktn474Bnk5Tu+MGP+UpO/eIRd+Kuiamq6H/L8XRWR0hKKBLI1KxDis8EGCZiP0EW0exmL
+	JyU2i/9QkaUFLJ/bG/lDFTw92Q3fdaZH/tmnbr1B969VrMgoOzmqpUCjPrFwEPe0WidBumdmnyS
+	by3JZFVpn5mmgydf4l8Zdk9pW9uVcBtS2Sik4QSSe8WUabUrSbwpgyvNbIpocRNYTASxAVSxZSk
+	UbuB08yULWx+F5VKsQXQWhS0FZQlUqA9PCUnLj+/cZmoFQUD10H6d1XDJKjsmY91TNZjn2s3A=
+X-Received: by 2002:a05:690e:1443:b0:679:aeed:8900 with SMTP id 956f58d0204a3-679ca7343eamr4757054d50.22.1792505156161;
+        Tue, 20 Oct 2026 07:05:56 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:8701:205:573e:17eb])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-679b1c94c25sm5269200d50.3.2026.10.20.07.05.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Oct 2026 07:05:55 -0700 (PDT)
+Date: Tue, 20 Oct 2026 10:05:54 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, NeilBrown <neil@brown.name>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH bpf-next v1 00/11] fs: unified VFS ancestor walk for
+ Landlock and BPF
+Message-ID: <atdw4wVVarvwgRH0@zenbox>
+References: <20261013164800.2906577-1-utilityemal77@gmail.com>
+ <DM6PICFFAU5Z.14KOZT5YJO7MA@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -101,54 +108,65 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM6PICFFAU5Z.14KOZT5YJO7MA@gmail.com>
 
-bind_map_addr() handles AF_UNSPEC on an IPv4 socket by reading
-addr4->sin_addr.s_addr to check for INADDR_ANY. At that point the only
-length check done is addrlen >= offsetofend(struct sockaddr, sa_family),
-i.e. 2 bytes, while sin_addr sits at offset 4. move_addr_to_kernel()
-copies only addrlen bytes into the on-stack sockaddr_storage, so a
-bind() with a short AF_UNSPEC address makes AppArmor branch on bytes the
-caller never supplied.
+On Sat, Oct 17, 2026 at 01:02:40AM +0000, Alexei Starovoitov wrote:
+> On Tue, Oct 13, 2026 at 12:47 PM Justin Suess <utilityemal77@gmail.com> wrote:
+> > The structure is unchanged from the RFC [2]: a stepwise engine private
+> > to namei.c, a callback front-end for in-kernel callers (Landlock
+> > is converted, fixing the follow_up() race Al reported, hence the
+> > Fixes: tag on patch 3), and open-coded BPF iterators over the engine in
+> > referenced and rcu flavors, with bpf_path_ancestors_legitimize()
+> > escalating from the latter to the former mid-walk.  Patch 1 is carried
+> > from Song's series.  See the RFC cover for the full background and API
+> > listing.
+> 
+> Song's series stopped at
+> "It is a conceptual dead-end to expose these two modes via separate APIs
+> and leak this implementation detail into non-core code. It will not
+> happen as far as I'm concerned."
+> VFS_WALK_RCU, -ECHILD to the caller, two bpf iterators and the
+> legitimize kfunc are that leak.
+Following up on this, plan is I'll submit v2 of the verifier fixes
+series and get that finished first.
 
-Depending on those bytes, a confined task gets -EAFNOSUPPORT instead of
-the -EINVAL that inet_bind_sk() returns for the same request. Kernels
-built with CONFIG_INIT_STACK_ALL_ZERO read zeroes and happen to behave
-correctly.
+Then after that I'll do a redesign around a single iterator
+implementation that decides the walk type and abstracts away the details.
+It will be KF_RCU_PROTECTED and callers will need to break out of the
+loop to do sleepable work. They'll be able to acquire the path
+references with a kfunc to take them out of the loop.
 
-Check the length first, as inet_bind_sk() does, and as the AF_INET6
-case above already does for inet6_bind_sk().
+That drops the __uninit iterator changes and the legitimize kfunc as
+well.
 
-Fixes: 89ac6aa752ec ("apparmor: push inet mediation into profile callbacks, and improve auditing")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Signed-off-by: Michail Andreas Michalopoulos <mike.michalo@gmail.com>
----
-Tested on v7.3 built with CONFIG_INIT_STACK_NONE in QEMU, with a task
-confined by a profile allowing all network access, calling bind() on an
-AF_INET UDP socket with {.sa_family = AF_UNSPEC} and addrlen 2 and 4
-(200 times each, after leaving a non-zero address in the kernel buffer):
-unpatched returns -EAFNOSUPPORT every time, patched returns -EINVAL
-every time, matching unconfined tasks. Other AF_UNSPEC, AF_INET and
-AF_INET6 bind cases behave identically with and without the patch.
----
- security/apparmor/af_inet.c | 3 +++
- 1 file changed, 3 insertions(+)
+> Landlock still passes flags == 0, so nothing in the kernel walks in
+> rcu mode.
+Mickaël would you be interested in the hybrid walk conversion as part
+of this series? Or prefer sleepable walk be retained for now and
+converted later?
 
-diff --git a/security/apparmor/af_inet.c b/security/apparmor/af_inet.c
-index 516c9016537c..a617f8058634 100644
---- a/security/apparmor/af_inet.c
-+++ b/security/apparmor/af_inet.c
-@@ -196,6 +196,9 @@ static int bind_map_addr(const struct sock *sk, struct sockaddr *addr,
- 		 * AF_UNSPEC if the address is INADDR_ANY
- 		 */
- 		addr4 = (struct sockaddr_in *)addr;
-+		/* Length check from inet_bind_sk() */
-+		if (addrlen < sizeof(struct sockaddr_in))
-+			return -EINVAL;
- 		if (addr4->sin_addr.s_addr != htonl(INADDR_ANY))
- 			return -EAFNOSUPPORT;
- 		family = AF_INET;
--- 
-2.56.0
-
+Justin
+> Patches 1-3 fix a real race and don't need bpf.
+> Send them to Christian, Al and Mickael on their own.
+> 
+> > Verifier fixes propagating the RCU-ness to trusted fields can be done,
+> > but it's best as a separate series where the idea can be examined more
+> > closely.  Then marking the dentry as trusted will allow you to use the
+> > dentry xattr kfuncs.  Nothing in this series strictly depends on having
+> > a trusted dentry, nor will marking it trusted require changes in this
+> > API.  See my follow up [4].
+> 
+> Then what can a prog do with a position?
+> pos->dentry is untrusted now.
+> Marking it trusted will require changes.
+> d = pos->dentry is not linked to pos. It will stay trusted after
+> bpf_path_put(pos).
+> pos of the rcu iterator points into bpf stack.
+> MEM_RCU propagation fixes neither.
+> What next() should return depends on how the verifier tracks it.
+> Let's do the verifier part first.
+> 
+> pw-bot: cr
