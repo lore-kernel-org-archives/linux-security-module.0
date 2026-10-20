@@ -1,56 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792461074;
-	b=NX7RZyI9HdA6lmKhoAgjrVo21vSiPnEYAwivgoK9aLTyy0Lwzk5HW5IxRqJbSlYx3HDh
-	 waBwKQPLlMKTpa37tSuBRBxiRGtI+UkZBlTQxIUDC+/ybBgnFglwwZ5GuZJcuJxc97ztm
-	 HEx62pSdO6zIr5zgT9RIr2gtnXiENZ8Tz3kvL9BXYIIcSpTNq+nk1ElWVZaiM8WBnqMtE
-	 EV6L+e8wN0xK+WCDh2EBZy5B+Fgi+CYbrgvo18E4E8GsIn6ZeBkaiu0PmNVLooz4PkW0a
-	 g7Si2pA7QuLfPUedwPxhIZiaaGAjKDRNwLszs8Qvo4+E/YCmcWbXTnr7h6wakJ0PzKA==
+	t=1792462966;
+	b=L9Ma2kvo3JapCofsmDuv6Dw1aw/e2T/JCeb4JEFpBOeZaV3uOTnZBse5M3JQ3SZ0EPFt
+	 eQB3yndYX8+j6ksutH/RHYlgcHVSSjSGcX9nFzlh+yYfB1FrIPbvyb41FQmqo4F2Vj+8w
+	 4yhMOwBkbbPWQJkjgDQ7j6+AHopBE5iFKEwVNyKucUaf3mb5vqWHkknzQIqoPIKQFRep1
+	 /AR8vTZPAPXZt8l1rfxffkAuIbg6daJHK6Qy0hsvsloUKtyHK4osGgsUlh2ayJnwtl63c
+	 Lf9AljPwwssCO3N9b8w93kJzXiAHuXQq+3CXl3ZHs+C1m1uPuO0aDw5DOxre3mSI00g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792461074;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=P6YDnfoK9CDF0pnTZdUop+GCy67FiDRHVc4G0uu9GEs=;
-	b=Y3mgkBWHkzoENk3FMdFBI54E77NpEqWDdqSI9jM49XH7i/oqmJcWOvJoneXglmQ2hVN1
-	 1pPvLP6c2N5VVKrm0FoqktDaF8KAKVbfQQ0Y3unK4OPtp0liJmcpxoxA0vTP8zQ3/CLpN
-	 iOdA4qkG24VeYIk70TS6LxPGQABIdgsvLpP4cyp6FOnKVPdxLgFNruAz0pKfARQRM4Un2
-	 IU99zSBvmXp00CE7xD1O+JQ5cUPRp7wBcoFIuSO/+5UJ5iTBKaIPDc1i1wSI2dgz82o8M
-	 slERSd++JP2e12gfioV5Q7NbX1dCI4anm0sCrsyccmqXSCV+inr2O4WDmtECE0iwCQA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792462966;
+	h=Received:DKIM-Signature:Received:X-Gm-Message-State:X-Received:
+	 MIME-Version:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=eI64DZ+ukr7FZWp/2WNMGTkGtr8XOw1qflCT06bI7PE=;
+	b=15+i7WTWdKk3wZUhfnib2iC0dNulT/P9Ao1jS8yKf3Rr1H4J6YxyGVouTa+v18bK+wug
+	 ORq6R3qUnvcIiPsCd6es2vACBlGHZLNSdRgNoVRbqADonxJI/hIFbrzXnlHvU6hHxFLpL
+	 xq1+AHy6erhUlrRUi6TDOZIugvSzlitQBaOJ+bMQNk2ToxY9yiKtueX/XD+GdWG4+sWnk
+	 HSsLLVYWeq35Xs4ypq3eDiPtv6uxNmvcL5oKnY8VFOCWXvrM8Y+W4bsgDzKEBeVZqWkvM
+	 NshFLYdMuxlXDzXWxs5asF+/EGaU3HCc5BmsGx8P22cNXz+Z/+VONNUxW//ojw6mrzQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Vy31K1/g";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jDQJBgiA;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38640606A31B
-	for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 01:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2ED606A319
+	for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 02:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vy31K1/g
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501171F000C4
-	for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 01:51:13 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jDQJBgiA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4F71F000C6
+	for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2026 02:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792461073;
-	bh=P6YDnfoK9CDF0pnTZdUop+GCy67FiDRHVc4G0uu9GEs=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Vy31K1/ggiUh4sWkhzPsnKLAm9vhc30ZL3lWjwbA0JfU0ditx3zvWnPxjLms3wWEv
-	 qPxq1OOHnFw940qBFr5q0FKPwhcgSw5qgurYqdxkeQkg2CZ54AWdM7+x5NtUWD5wOT
-	 kxH21UyfxGA5qUzTUHYPLrxGZU3DNs4CXfSl977z4qU4SHTCplHf1YjaqnKSt4+33G
-	 3iwPOG6BZi/Cq4i78Rb5yJrXosmsoFlc5upeay1HJ3LwvJBpUD/Vu8nWp9UMSrK8o4
-	 zv6p44EqdtAOAocrAYHXlqWFIzv9hqedbteiqJHJFX95BHMiEf+GLOC/jGwPtIx4B7
-	 fKPEwNGBVaviQ==
-Message-ID: <sashiko-outbox-178417@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/3] KEYS: Reject @desclen values >=
- KEY_MAX_DESC_SIZE in key_alloc()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: =?utf-8?b?b3BlbiBsaXN0OlNFQ1VSSVRZIFNVQlNZU1RFTQ==?= <linux-security-module@vger.kernel.org>
-In-Reply-To: <20261020013903.1244157-3-jarkko@kernel.org>
-References: <20261020013903.1244157-1-jarkko@kernel.org>
- <20261020013903.1244157-3-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 20 Oct 2026 01:51:12 +0000
+	s=k20260515; t=1792462965;
+	bh=eI64DZ+ukr7FZWp/2WNMGTkGtr8XOw1qflCT06bI7PE=;
+	h=From:Date:Subject:To:Cc;
+	b=jDQJBgiA232TrP5tV+A18OEWQtfyuZw184HXAcJ0PlhTza2l/si6mq3RTjAKlyMeu
+	 xIGtykNH2zYUY4quTgB49XQPDs3jTe8tek9xIb38pQcAgm5iJt9Qi5MmTZIc9M3dvG
+	 ceVHr3Hl0PnoluoisYxg1usKy98pxedsqvrWRGWdupv5ch1DLxhsBJI74VyAoZSq1O
+	 LTE8hMhTQcPJfMAT3lL+lhsunRyCow3tUSGeelke0IZC5+8xHUYm3kV5/VnowZsea6
+	 O70vLM7Q7ar5PWLAHTTWoKt24TwP8yWqjljZ45hnJ/mB3Oyf+ri8yqPXgYcZxVvdJH
+	 XtA5r3gF3oJ5w==
+Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-157fe9d771bso1478621c88.0
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2026 19:22:45 -0700 (PDT)
+X-Gm-Message-State: AFq9FYIHQtlPFY4h7htOcbo9E0/NitGWdbTtt3MPufZ9pyrdAXgF2hPs
+	WW/kQRv4VhAapeYxgkZgQeVlJq2xhZzxelzadPdReLi19M+Ue+FWvCp6T1VhOIa49En8EwCVOin
+	6kfrxtyIJG/zOsEjEqNwD3HFd+FeITMI=
+X-Received: by 2002:a05:701b:21c7:b0:151:ece6:b171 with SMTP id
+ a92af1059eb24-18512c38171mr12004012c88.14.1792462965049; Mon, 19 Oct 2026
+ 19:22:45 -0700 (PDT)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,111 +56,82 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+From: Fan Wu <wufan@kernel.org>
+Date: Mon, 19 Oct 2026 19:22:33 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkFZqpVB5+Bvj0OQhVkkRWfQQ2Rh1F_fnDxZfxeMrKo=bg@mail.gmail.com>
+X-Gm-Features: AclHuK_ulsMvo3NRF65SP5skc32sV2D3MuD3iJFiTNo86No41tRVlWmCTs3EuWU
+Message-ID: <CAKtyLkFZqpVB5+Bvj0OQhVkkRWfQQ2Rh1F_fnDxZfxeMrKo=bg@mail.gmail.com>
+Subject: [GIT PULL] IPE update for 7.4
+To: torvalds@linux-foundation.org
+Cc: linux-security-module@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Critical] keys: u16 desc_len truncation in __key_create_or_update() befo=
-re key_alloc()
+Hi Linus,
+
+Seven IPE patches for the Linux v7.4 merge window:
+
+- Fix an extra empty audit record on enforcement changes
+
+ipe_audit_enforce() started an audit buffer but logged the state change
+with audit_log(), which emits its own record.  Ending the unused buffer
+produced an additional empty AUDIT_MAC_STATUS record every time the
+enforcement state was changed.
+
+- Keep the name and token tables in sync with their enums
+
+The audit name tables now use designated initializers, so each name
+stays bound to its enum value, and static assertions on the policy
+parser token tables break the build if an enum value is added without
+a matching token.
+
+- Constify token_default() and correct a comment about policy text
+  ownership, with no functional changes
+
+- Fix an invalid sgid value in an audit event example in the docs
+
+- Point the docs to the new IPE website and test suite repository
+
+These commits have been tested in linux-next for weeks without
+any issues.
+
+Thanks,
+Fan
+
 --
+The following changes since commit c03c1a14507dfaf8b856c2608f9ac216021fc222:
 
-commit e17213de3a1a23830538a740d7a666ca408d3916
-Author: Jarkko Sakkinen <jarkko@kernel.org>
+  Linux 7.3 (2026-10-18 13:14:58 -1000)
 
-KEYS: Reject @desclen values >=3D KEY_MAX_DESC_SIZE in key_alloc()
+are available in the Git repository at:
 
-This commit moves KEY_MAX_DESC_SIZE to include/linux/key.h and rejects
-descriptions with length at or above KEY_MAX_DESC_SIZE in key_alloc() to
-prevent overflowing the 16-bit desc_len field in struct keyring_index_key.
+  git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git
+tags/ipe-pr-20261019
 
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index a438c4508595d..aa0112a693e68 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -245,6 +245,8 @@ struct key *key_alloc(struct key_type *type, const ch=
-ar *desc,
->  	}
-> =20
->  	desclen =3D strlen(desc);
-> +	if (desclen >=3D KEY_MAX_DESC_SIZE)
-> +		goto error;
->  	quotalen =3D desclen + 1 + type->def_datalen;
-> =20
->  	/* get hold of the key tracking for this user */
+for you to fetch changes up to e2f08fadb48509c239e47cdaf81438c162395932:
 
-[Severity: Critical]
-Is checking desclen in key_alloc() too late when a key is created or
-updated through __key_create_or_update()?
+  ipe: update the project and test suite links (2026-10-19 17:21:22 -0700)
 
-In security/keys/key.c, __key_create_or_update() can obtain
-index_key.description from index_key.type->preparse(&prep) (for example,
-via add_key() with a NULL description and the "asymmetric" key type, where
-x509_key_preparse() in crypto/asymmetric_keys/x509_public_key.c constructs
-prep.description from the X.509 subject and hex-encoded serial or skid
-without bounding it to KEY_MAX_DESC_SIZE) or from an in-kernel caller of
-key_create_or_update().
+----------------------------------------------------------------
+ipe/stable-7.4 PR 20261019
 
-Before calling key_alloc(), __key_create_or_update() assigns the length
-directly into the 16-bit index_key.desc_len field and passes index_key to
-the keyring lookup and linking helpers:
+----------------------------------------------------------------
+Fan Wu (6):
+      ipe: constify token_default()
+      ipe: use designated initializers for audit name tables
+      ipe: check parser token table sizes
+      ipe: correct policy text ownership comment
+      ipe: fix enforcement audit
+      ipe: update the project and test suite links
 
-security/keys/key.c:__key_create_or_update() {
-	if (index_key.type->preparse) {
-		ret =3D index_key.type->preparse(&prep);
-		if (ret < 0) {
-			key_ref =3D ERR_PTR(ret);
-			goto error_free_prep;
-		}
-		if (!index_key.description)
-			index_key.description =3D prep.description;
-		key_ref =3D ERR_PTR(-EINVAL);
-		if (!index_key.description)
-			goto error_free_prep;
-	}
-	index_key.desc_len =3D strlen(index_key.description);
-	key_set_index_key(&index_key);
+Manuel Ebner (1):
+      ipe: fix invalid sgid value in audit event documentation
 
-	ret =3D __key_link_lock(keyring, &index_key);
-	if (ret < 0) {
-		key_ref =3D ERR_PTR(ret);
-		goto error_free_prep;
-	}
-
-	ret =3D __key_link_begin(keyring, &index_key, &edit);
-	...
-	key_ref =3D find_key_to_update(keyring_ref, &index_key);
-	if (key_ref)
-		goto found_matching_key;
-	...
-	key =3D key_alloc(index_key.type, index_key.description,
-			cred->fsuid, cred->fsgid, cred, perm, flags, NULL);
-}
-
-If strlen(index_key.description) is 65536 (which x509_key_preparse() can
-produce from a ~33 KB certificate payload because bin2hex() doubles the
-serial or skid length), truncating it to the u16 index_key.desc_len yields
-0 and hits BUG_ON(index_key->desc_len =3D=3D 0) in __key_link_begin() in
-security/keys/keyring.c before key_alloc() is ever reached:
-
-security/keys/keyring.c:__key_link_begin() {
-	...
-	BUG_ON(index_key->desc_len =3D=3D 0);
-}
-
-Similarly, if strlen(index_key.description) is >=3D KEY_MAX_DESC_SIZE and n=
-ot
-a multiple of 65536, the unvalidated or truncated desc_len is used by
-key_set_index_key(), __key_link_begin(), and find_key_to_update(), which
-can match and update an existing key with that shorter prefix via
-goto found_matching_key without calling key_alloc(). Other paths that
-populate struct keyring_index_key directly, such as keyring_search() in
-security/keys/keyring.c and request_key_and_link() / request_key_rcu() in
-security/keys/request_key.c, also assign index_key.desc_len =3D
-strlen(description) without checking against KEY_MAX_DESC_SIZE.
-
-Should the KEY_MAX_DESC_SIZE check also be enforced in
-__key_create_or_update() (and other struct keyring_index_key initialization
-paths) before assigning index_key.desc_len?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261020013903.1244=
-157-1-jarkko@kernel.org?part=3D2
+ Documentation/admin-guide/LSM/ipe.rst |  6 +++---
+ Documentation/security/ipe.rst        |  2 +-
+ security/ipe/audit.c                  | 52
+++++++++++++++++++++++------------------------------
+ security/ipe/policy.c                 |  2 +-
+ security/ipe/policy_parser.c          | 10 +++++++++-
+ 5 files changed, 36 insertions(+), 36 deletions(-)
