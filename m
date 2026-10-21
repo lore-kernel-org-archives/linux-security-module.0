@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=173.212.254.19
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792552639;
-	b=OUpWa4EcfJOGLnu/sqnvDgAD9HKZkvlUQ0ppK0NFUENIN4WAoQXExTEauEC8qpg4e3mf
-	 0QEIqYKuu1PXXoj6j0yLqSvdLxOIaRuJu21ngPkSr8L/7VJX/CMZLn0bqtZnFMdZ91G8J
-	 B4da2XrLnjMJV/TZnFQ+1goA2s0msYDxOZdSSnggzdCk/h0vzc3vW8XZYZOlv8Aq+RRzn
-	 KvWmO4n0MddtiwAFp3WbgDc/x/ZKBJ6FkVRnIUVYGTVn4n6JVsrcxD6HABlIBDYw+rONt
-	 Y1gQOTIr68zUpfNizuW98n9DX3YlqNmYja+wRKYC19Xvrww7YXt3wQ6rgUSrIfOutbA==
+	t=1792552629;
+	b=Wulik+IFOG69T6YesJ7wZxEqO/wcHz8rkGrr8D2YAtRmcWusunmLhDAkveN2bwje3ST/
+	 nEUXxJuJYn9zQLeydz7umdfLzl93eQjkojEzmwkbCC82lJ4XgvxygvJcjRVmCqiUkuH42
+	 PtBn6LJB5actBNV0+cCIabIwcbqGaYsNSpiDQ1yaJYhwdTZKYvsfpp5IhkYwvrFcZOwPb
+	 dwsrzlycnsDMxuf8hi/LV9pjz1UitZQ8/eLH8KeHxuR+8AXPnCdVEoAsHVJnrUhLU5enD
+	 xkh+dudQGg/E92zNEccQdo2k5z4cPcxPzSb7pR6lh4Rb0yegQp+k1Kuykiv/4wAzGsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792552639;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792552629;
 	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:In-Reply-To:
 	 References:From:Subject:To:Cc:Date;
-	bh=gfFBA8LH4gfsSKNHEPmNQ/vWCOtrs7FdgWk9k3JrBHg=;
-	b=Yba0laho60HZzfL9vOFJfOjRp4UV7VKZnh75x3NSp6aAmFo7gz+GvzV0ez2c19Uwoa9a
-	 9DSyMZG3LxQGxjEDiYtYcd9KPTRI0Snzu1Rq7YlWXTgjIVA8suxKxN4A8cnq4ECKwmQI5
-	 BlsoG+YmZ98PxevXR1ypiq6bEnYSbuZnmk2Xf5FIIZIK7afGvo/y66/5L06o/QVBrcPW1
-	 L2NYzboz2Zdkhb6JK06S7g/LEJ+ugahH1ImVS/mHe6co51Y7rRI2eiPw4OBqeSRqYF6S/
-	 3j/vC3y4J4Y/1EtzLq4eRryrn4K00QrC6noZiV9X+YOekPPWunjtjeBZjdbjW6F4Y/Q==
+	bh=FoLPiglPVl+us8byBrCSfkhrNtfDFOmejE84GKuPLI4=;
+	b=pEhqURwOHzzvNmBxnVqaXKIsSbGZu9reFpyyFEJRQmmUXoJdcNBmpe3YpcA9FSwtz4p7
+	 hvmBf9bYxIvnBCk5srkgsSyuFXXZyu7GwMxhp3xr6hL6vWMxjf29fo5vYMd7XqQIy6jE1
+	 XWXOitTHvE+J+j1ZmcatFIXlB+PVcyWZaVTxzjK3AUqIkcnNJ0LaSN7yxzlcBiBie9YGX
+	 16UHmiNpB3jo8krURJ0ZE2MaCqWkNndf4jsoC8p8ciFOygh4VDPfUbDbdeJdZe1BoifkE
+	 wBVexiX/cJUqZVuRTi3lBQKeTrv7Gb47SZZmOdJQpbCG65ZHR5zIs0hKPdpofcg/7GA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=tuxist.de;
 	spf=fail smtp.mailfrom=tuxist.de;
-	dkim=pass header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=W4BT9TNR;
+	dkim=pass header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=C3J+2AEb;
 	arc=none smtp.remote-ip=173.212.254.19
 Received: from groupware.tuxist.de (groupware.tuxist.de [173.212.254.19])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0926460A382C;
-	Wed, 21 Oct 2026 03:17:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0926460A382C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D5860A3804;
+	Wed, 21 Oct 2026 03:17:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01D5860A3804
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tuxist.de
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=tuxist.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=W4BT9TNR
+	dkim=pass (2048-bit key, unprotected) header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=C3J+2AEb
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tuxist.de; s=201705;
-	t=1792552637; bh=c/MatJ7zCmct39K83og7TVItx3cItrvprM66Ihgbc+M=;
+	t=1792552627; bh=ahHoP+KmbDaq9577t3A0gEq/i+cqumLAzataSt6r+6c=;
 	h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-	b=W4BT9TNRFBeCPYk+tKtWArqh4Ur5DtLo0vljyceBtP8rbavEfHigwo1frJ3i62gYx
-	 z3krisNdVJ37oqMsaK2uyqmWlj6j5QRmocqzrfCSlVaqAvdn3FKeDZ06WL8JdAekBj
-	 E7aIKHC3FMOIOS6+6iOaSGE3W0UvLoa7fVNArUs6w3C4w28+pp0TpyIfGYnkbePujE
-	 16fIfgDl5Cn9Nm9qlMDXuTLW1NKDlP+Y5bs4b4R+tLarpLnDRLArLHntkMoIxtIP6z
-	 1Inqg2AngQKfLy0kxk0oelvGjx6iRqmwZ+SAdL2RVR8iQHys3D5Y0RxckrhsVDOmsM
-	 eQW3xgoajXseg==
+	b=C3J+2AEby3bLJTrGHPCSjycXT81E/5aDLawJ2xISQvBK61i9IDIPm6YIPoaXeHgqX
+	 0cipNhvyMNcVHOLKRdJqr3ZAzf07fD9STA2bdUEP7JL0AvdfBwXDUkOJ4n0oQ4lYrI
+	 42bpYDCofI3uf5AQzJkIc0BIJ5Qd7pQ9Tdqy4QGMHuTHgn0ZbZN++xe/0RWIapOa3o
+	 g23X6hU8LtdtJy7KHeut9KO72V3dMhWvgJlIy3UkIcj3e6RmcGPbxEtTNEVaN2hWBn
+	 rWHygFseUiWCwLshJLkRc6I6b+DZo5KrEFdVkynl5ZS/Lc7SD4S/rSHSSoMKPiI4Sf
+	 buEXQedcnWrbQ==
 Received: from [10.1.1.106] (unknown [10.1.2.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by groupware.tuxist.de (Postfix) with ESMTPSA id 71B0F8A091B;
-	Wed, 21 Oct 2026 05:17:16 +0200 (CEST)
-Message-ID: <98758113db07083faeb158948b6b3362c2795231.1792552161.git.jan.koester@tuxist.de>
+	by groupware.tuxist.de (Postfix) with ESMTPSA id 7988A8A090D;
+	Wed, 21 Oct 2026 05:17:06 +0200 (CEST)
+Message-ID: <1ced8bf416de4e9600904aafeefd29ed20fd2064.1792552161.git.jan.koester@tuxist.de>
 In-Reply-To: <cover.1792552161.git.jan.koester@tuxist.de>
 References: <cover.1792552161.git.jan.koester@tuxist.de>
 From: Jan Koester <jan.koester@tuxist.de>
-Subject: [RFC PATCH v2 34/41] ext4: store ACLs with UUID and GUID entries on
- uid_r filesystems
+Subject: [RFC PATCH v2 31/41] ext4: add the uid_r feature for UUID and GUID
+ owners
 To: Christian Brauner <brauner@kernel.org>,
     Alexander Viro <viro@zeniv.linux.org.uk>,
     "Serge E. Hallyn" <serge@hallyn.com>
@@ -70,7 +70,7 @@ Cc: Jan Kara <jack@suse.cz>,
     audit@vger.kernel.org,
     keyrings@vger.kernel.org,
     linux-kernel@vger.kernel.org
-Date: Wed, 21 Oct 2026 05:15:54 +0200
+Date: Wed, 21 Oct 2026 05:15:51 +0200
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -80,275 +80,289 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-ACLs whose ACL_USER or ACL_GROUP entries are UUIDs or GUIDs are written
-in a new on-disk format, EXT4_ACL_VERSION_R: the short entries stay as
-they are, the user and group entries carry an EXT4_ID_R_* kind and 16
-bytes of id. Only such ACLs use it, and only uid_r filesystems can have
-them (set_posix_acl() refuses them elsewhere); all other ACLs keep
-EXT4_ACL_VERSION.
+Add a read-only compatible feature, uid_r, that lets inodes have UUID
+and GUID owners and groups. The inode gains i_uid_r_type and
+i_gid_r_type (0: the classic i_uid/i_gid apply) and 16 bytes for each
+id after i_projid, which grows i_extra_isize from 32 to 68 bytes; only
+filesystems with the feature reserve the room in new inodes, others
+keep the old size.
+
+For a UUID or GUID the classic fields hold 0xffffffff. Kernels without
+the feature may only mount read-only, and see such files as owned by an
+id nobody has.
+
+With the feature the superblock gets SB_I_UID_R. Inodes from before it,
+or with in-inode xattrs in the way, are expanded when they get such an
+owner, as for project ids; -EOVERFLOW if that fails. The feature needs
+inodes of at least 196 bytes, so in practice 256.
 
 Assisted-by: Claude:claude-opus-5-5
 
 Signed-off-by: Jan Koester <jan.koester@tuxist.de>
 ---
- fs/ext4/acl.c | 109 +++++++++++++++++++++++++++++++++++++++-----------
- fs/ext4/acl.h |  34 +++++++++++++---
- 2 files changed, 115 insertions(+), 28 deletions(-)
+ fs/ext4/ext4.h  |  26 ++++++++++-
+ fs/ext4/inode.c | 115 +++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/ext4/super.c |  16 ++++++-
+ 3 files changed, 152 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ext4/acl.c b/fs/ext4/acl.c
-index 3bffe862f9..27f8a1b503 100644
---- a/fs/ext4/acl.c
-+++ b/fs/ext4/acl.c
-@@ -6,6 +6,7 @@
-  */
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 724a27e8be..1cba42b410 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -850,8 +850,29 @@ struct ext4_inode {
+ 	__le32  i_crtime_extra; /* extra FileCreationtime (nsec << 2 | epoch) */
+ 	__le32  i_version_hi;	/* high 32 bits for 64-bit version */
+ 	__le32	i_projid;	/* Project ID */
++	/* uid_r feature: a UUID or GUID owner and group, see EXT4_ID_R_* */
++	__u8	i_uid_r_type;	/* kind of i_uid_r, EXT4_ID_R_LEGACY: i_uid */
++	__u8	i_gid_r_type;	/* kind of i_gid_r, EXT4_ID_R_LEGACY: i_gid */
++	__le16	i_id_r_reserved;
++	__u8	i_uid_r[16];	/* UUID (RFC 9562 order) or GUID owner */
++	__u8	i_gid_r[16];	/* UUID (RFC 9562 order) or GUID group */
+ };
  
- #include <linux/quotaops.h>
-+#include <linux/unaligned.h>
- #include "ext4_jbd2.h"
- #include "ext4.h"
- #include "xattr.h"
-@@ -14,22 +15,41 @@
- /*
-  * Convert from filesystem to in-memory representation.
-  */
-+/* The id of an ACL_USER or ACL_GROUP entry of EXT4_ACL_VERSION_R */
-+static int ext4_acl_id_from_disk(const ext4_acl_entry_r *entry, u32 *type,
-+				 u32 *legacy, uuid_t *id)
++/*
++ * Kinds of i_uid_r/i_gid_r. For a UUID or GUID the classic i_uid/i_gid
++ * fields hold 0xffffffff, which kernels without uid_r -- they may only
++ * mount read-only -- see as an id nobody has.
++ */
++#define EXT4_ID_R_LEGACY	0
++#define EXT4_ID_R_UUID		1
++#define EXT4_ID_R_GUID		2
++
++/* i_extra_isize of inodes without and with the uid_r fields */
++#define EXT4_EXTRA_ISIZE_BASE	(offsetofend(struct ext4_inode, i_projid) - \
++				 EXT4_GOOD_OLD_INODE_SIZE)
++#define EXT4_EXTRA_ISIZE_UID_R	(sizeof(struct ext4_inode) - \
++				 EXT4_GOOD_OLD_INODE_SIZE)
++
+ #define EXT4_EPOCH_BITS 2
+ #define EXT4_EPOCH_MASK ((1 << EXT4_EPOCH_BITS) - 1)
+ #define EXT4_NSEC_MASK  (~0UL << EXT4_EPOCH_BITS)
+@@ -2214,6 +2235,7 @@ static inline struct mapping_metadata_bhs *ext4_i_metadata_bhs(
+ #define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
+ #define EXT4_FEATURE_RO_COMPAT_ORPHAN_PRESENT	0x10000 /* Orphan file may be
+ 							   non-empty */
++#define EXT4_FEATURE_RO_COMPAT_UID_R		0x20000 /* UUID and GUID owners */
+ 
+ #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
+ #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
+@@ -2313,6 +2335,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
+ EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
+ EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
+ EXT4_FEATURE_RO_COMPAT_FUNCS(orphan_present,	ORPHAN_PRESENT)
++EXT4_FEATURE_RO_COMPAT_FUNCS(uid_r,		UID_R)
+ 
+ EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
+ EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
+@@ -2373,7 +2396,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		CASEFOLD)
+ 					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
+ 					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
+ 					 EXT4_FEATURE_RO_COMPAT_VERITY |\
+-					 EXT4_FEATURE_RO_COMPAT_ORPHAN_PRESENT)
++					 EXT4_FEATURE_RO_COMPAT_ORPHAN_PRESENT |\
++					 EXT4_FEATURE_RO_COMPAT_UID_R)
+ 
+ #define EXTN_FEATURE_FUNCS(ver) \
+ static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 26f0f9714f..bed8d535a6 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4780,6 +4780,75 @@ static int ext4_inode_blocks_set(struct ext4_inode *raw_inode,
+ 	return 0;
+ }
+ 
++/*
++ * uid_r: a UUID or GUID owner and group live in i_uid_r and i_gid_r of
++ * inodes with room for them; i_uid and i_gid then hold 0xffffffff.
++ */
++static int ext4_inode_set_id_r(struct inode *inode, struct ext4_inode *raw_inode)
 +{
-+	*type = le32_to_cpu(entry->e_type);
-+	if (*type > EXT4_ID_R_GUID)
-+		return -EINVAL;
-+	*legacy = get_unaligned_le32(entry->e_id);
-+	memcpy(id->b, entry->e_id, sizeof(id->b));
++	struct ext4_inode_info *ei = EXT4_I(inode);
++	bool fits = EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE &&
++		    EXT4_FITS_IN_INODE(raw_inode, ei, i_gid_r);
++	bool legacy = uid_is_legacy(inode->i_uid) && gid_is_legacy(inode->i_gid);
++
++	if (!legacy && (!ext4_has_feature_uid_r(inode->i_sb) || !fits))
++		return -EOVERFLOW;
++	if (!fits || !ext4_has_feature_uid_r(inode->i_sb))
++		return 0;
++
++	raw_inode->i_id_r_reserved = 0;
++	if (uid_is_legacy(inode->i_uid)) {
++		raw_inode->i_uid_r_type = EXT4_ID_R_LEGACY;
++		memset(raw_inode->i_uid_r, 0, sizeof(raw_inode->i_uid_r));
++	} else {
++		BUILD_BUG_ON(KID_UUID != EXT4_ID_R_UUID ||
++			     KID_GUID != EXT4_ID_R_GUID);
++		raw_inode->i_uid_r_type = inode->i_uid.type;
++		memcpy(raw_inode->i_uid_r, inode->i_uid.uuid.b,
++		       sizeof(raw_inode->i_uid_r));
++	}
++	if (gid_is_legacy(inode->i_gid)) {
++		raw_inode->i_gid_r_type = EXT4_ID_R_LEGACY;
++		memset(raw_inode->i_gid_r, 0, sizeof(raw_inode->i_gid_r));
++	} else {
++		raw_inode->i_gid_r_type = inode->i_gid.type;
++		memcpy(raw_inode->i_gid_r, inode->i_gid.uuid.b,
++		       sizeof(raw_inode->i_gid_r));
++	}
 +	return 0;
 +}
 +
- static struct posix_acl *
- ext4_acl_from_disk(const void *value, size_t size)
- {
- 	const char *end = (char *)value + size;
- 	int n, count;
- 	struct posix_acl *acl;
-+	size_t entry_size = sizeof(ext4_acl_entry);
-+	bool r = false;
- 
- 	if (!value)
- 		return NULL;
- 	if (size < sizeof(ext4_acl_header))
- 		 return ERR_PTR(-EINVAL);
--	if (((ext4_acl_header *)value)->a_version !=
--	    cpu_to_le32(EXT4_ACL_VERSION))
-+	if (((ext4_acl_header *)value)->a_version ==
-+	    cpu_to_le32(EXT4_ACL_VERSION_R)) {
-+		r = true;
-+		entry_size = sizeof(ext4_acl_entry_r);
-+	} else if (((ext4_acl_header *)value)->a_version !=
-+		   cpu_to_le32(EXT4_ACL_VERSION)) {
- 		return ERR_PTR(-EINVAL);
++static int ext4_inode_get_id_r(struct inode *inode, struct ext4_inode *raw_inode)
++{
++	struct ext4_inode_info *ei = EXT4_I(inode);
++	uuid_t id;
++
++	if (!ext4_has_feature_uid_r(inode->i_sb) ||
++	    EXT4_INODE_SIZE(inode->i_sb) <= EXT4_GOOD_OLD_INODE_SIZE ||
++	    !EXT4_FITS_IN_INODE(raw_inode, ei, i_gid_r))
++		return 0;
++
++	if (raw_inode->i_uid_r_type > EXT4_ID_R_GUID ||
++	    raw_inode->i_gid_r_type > EXT4_ID_R_GUID) {
++		ext4_error_inode(inode, __func__, __LINE__, 0,
++				 "iget: bad uid_r kind %u/%u",
++				 raw_inode->i_uid_r_type,
++				 raw_inode->i_gid_r_type);
++		return -EFSCORRUPTED;
 +	}
- 	value = (char *)value + sizeof(ext4_acl_header);
--	count = ext4_acl_count(size);
-+	count = ext4_acl_count_e(size, entry_size);
- 	if (count < 0)
- 		return ERR_PTR(-EINVAL);
- 	if (count == 0)
-@@ -55,21 +75,33 @@ ext4_acl_from_disk(const void *value, size_t size)
- 			break;
- 
- 		case ACL_USER:
--			value = (char *)value + sizeof(ext4_acl_entry);
-+		case ACL_GROUP: {
-+			u32 type = EXT4_ID_R_LEGACY, legacy;
-+			uuid_t id;
++	if (raw_inode->i_uid_r_type != EXT4_ID_R_LEGACY) {
++		memcpy(id.b, raw_inode->i_uid_r, sizeof(id.b));
++		inode->i_uid = raw_inode->i_uid_r_type == EXT4_ID_R_UUID ?
++			       KUIDT_INIT_UUID(id) : KUIDT_INIT_GUID(*(guid_t *)&id);
++	}
++	if (raw_inode->i_gid_r_type != EXT4_ID_R_LEGACY) {
++		memcpy(id.b, raw_inode->i_gid_r, sizeof(id.b));
++		inode->i_gid = raw_inode->i_gid_r_type == EXT4_ID_R_UUID ?
++			       KGIDT_INIT_UUID(id) : KGIDT_INIT_GUID(*(guid_t *)&id);
++	}
++	return 0;
++}
 +
-+			value = (char *)value + entry_size;
- 			if ((char *)value > end)
- 				goto fail;
--			acl->a_entries[n].e_uid =
--				make_kuid(&init_user_ns,
--					  le32_to_cpu(entry->e_id));
--			break;
--		case ACL_GROUP:
--			value = (char *)value + sizeof(ext4_acl_entry);
--			if ((char *)value > end)
-+			legacy = le32_to_cpu(entry->e_id);
-+			if (r && ext4_acl_id_from_disk((void *)entry, &type,
-+						       &legacy, &id))
- 				goto fail;
--			acl->a_entries[n].e_gid =
--				make_kgid(&init_user_ns,
--					  le32_to_cpu(entry->e_id));
-+			if (acl->a_entries[n].e_tag == ACL_USER)
-+				acl->a_entries[n].e_uid =
-+					type == EXT4_ID_R_LEGACY ?
-+					make_kuid(&init_user_ns, legacy) :
-+					type == EXT4_ID_R_UUID ?
-+					KUIDT_INIT_UUID(id) :
-+					KUIDT_INIT_GUID(*(guid_t *)&id);
-+			else
-+				acl->a_entries[n].e_gid =
-+					type == EXT4_ID_R_LEGACY ?
-+					make_kgid(&init_user_ns, legacy) :
-+					type == EXT4_ID_R_UUID ?
-+					KGIDT_INIT_UUID(id) :
-+					KGIDT_INIT_GUID(*(guid_t *)&id);
- 			break;
-+		}
+ static int ext4_fill_raw_inode(struct inode *inode, struct ext4_inode *raw_inode)
+ {
+ 	struct ext4_inode_info *ei = EXT4_I(inode);
+@@ -4792,8 +4861,10 @@ static int ext4_fill_raw_inode(struct inode *inode, struct ext4_inode *raw_inode
+ 	err = ext4_inode_blocks_set(raw_inode, ei);
  
- 		default:
- 			goto fail;
-@@ -87,19 +119,38 @@ ext4_acl_from_disk(const void *value, size_t size)
- /*
-  * Convert from in-memory to filesystem representation.
+ 	raw_inode->i_mode = cpu_to_le16(inode->i_mode);
++	/* a UUID or GUID owner: 0xffffffff here, the id in i_uid_r */
+ 	i_uid = i_uid_read(inode);
+ 	i_gid = i_gid_read(inode);
++	err = err ?: ext4_inode_set_id_r(inode, raw_inode);
+ 	i_projid = from_kprojid(&init_user_ns, ei->i_projid);
+ 	if (!(test_opt(inode->i_sb, NO_UID32))) {
+ 		raw_inode->i_uid_low = cpu_to_le16(low_16_bits(i_uid));
+@@ -5435,6 +5506,9 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 	}
+ 	i_uid_write(inode, i_uid);
+ 	i_gid_write(inode, i_gid);
++	ret = ext4_inode_get_id_r(inode, raw_inode);
++	if (ret)
++		goto bad_inode;
+ 	ei->i_projid = make_kprojid(&init_user_ns, i_projid);
+ 	set_nlink(inode, le16_to_cpu(raw_inode->i_links_count));
+ 
+@@ -5547,8 +5621,7 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 		if (ei->i_extra_isize == 0) {
+ 			/* The extra space is currently unused. Use it. */
+ 			BUILD_BUG_ON(sizeof(struct ext4_inode) & 3);
+-			ei->i_extra_isize = sizeof(struct ext4_inode) -
+-					    EXT4_GOOD_OLD_INODE_SIZE;
++			ei->i_extra_isize = EXT4_SB(inode->i_sb)->s_want_extra_isize;
+ 		} else {
+ 			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
+ 			if (ret)
+@@ -6006,6 +6079,40 @@ static void ext4_wait_for_tail_page_commit(struct inode *inode)
+  *
+  * Called with inode->i_rwsem down.
   */
-+/* An ACL_USER or ACL_GROUP id into an entry of EXT4_ACL_VERSION_R */
-+static void ext4_acl_id_to_disk(ext4_acl_entry_r *entry, u32 type, u32 legacy,
-+				const uuid_t *id)
-+{
-+	entry->e_type = cpu_to_le32(type);
-+	memset(entry->e_id, 0, sizeof(entry->e_id));
-+	if (type == EXT4_ID_R_LEGACY)
-+		put_unaligned_le32(legacy, entry->e_id);
-+	else
-+		memcpy(entry->e_id, id->b, sizeof(entry->e_id));
-+}
-+
 +/*
-+ * ACLs with UUID or GUID entries (only on uid_r filesystems, see
-+ * set_posix_acl()) are written as EXT4_ACL_VERSION_R, others as before.
++ * An inode from before uid_r, or with in-inode xattrs in the way, may
++ * lack room for i_uid_r and i_gid_r: make it, before it gets a UUID or
++ * GUID owner or group.
 + */
- static void *
- ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
- {
- 	ext4_acl_header *ext_acl;
- 	char *e;
- 	size_t n;
-+	bool r = posix_acl_has_id_r(acl);
-+	size_t entry_size = r ? sizeof(ext4_acl_entry_r) : sizeof(ext4_acl_entry);
- 
--	*size = ext4_acl_size(acl->a_count);
-+	*size = ext4_acl_size_e(acl->a_count, entry_size);
- 	ext_acl = kmalloc(sizeof(ext4_acl_header) + acl->a_count *
--			sizeof(ext4_acl_entry), GFP_NOFS);
-+			entry_size, GFP_NOFS);
- 	if (!ext_acl)
- 		return ERR_PTR(-ENOMEM);
--	ext_acl->a_version = cpu_to_le32(EXT4_ACL_VERSION);
-+	ext_acl->a_version = cpu_to_le32(r ? EXT4_ACL_VERSION_R :
-+					     EXT4_ACL_VERSION);
- 	e = (char *)ext_acl + sizeof(ext4_acl_header);
- 	for (n = 0; n < acl->a_count; n++) {
- 		const struct posix_acl_entry *acl_e = &acl->a_entries[n];
-@@ -108,14 +159,26 @@ ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
- 		entry->e_perm = cpu_to_le16(acl_e->e_perm);
- 		switch (acl_e->e_tag) {
- 		case ACL_USER:
--			entry->e_id = cpu_to_le32(
--				from_kuid(&init_user_ns, acl_e->e_uid));
--			e += sizeof(ext4_acl_entry);
-+			if (r)
-+				ext4_acl_id_to_disk((void *)entry,
-+						    acl_e->e_uid.type,
-+						    from_kuid(&init_user_ns, acl_e->e_uid),
-+						    &acl_e->e_uid.uuid);
-+			else
-+				entry->e_id = cpu_to_le32(
-+					from_kuid(&init_user_ns, acl_e->e_uid));
-+			e += entry_size;
- 			break;
- 		case ACL_GROUP:
--			entry->e_id = cpu_to_le32(
--				from_kgid(&init_user_ns, acl_e->e_gid));
--			e += sizeof(ext4_acl_entry);
-+			if (r)
-+				ext4_acl_id_to_disk((void *)entry,
-+						    acl_e->e_gid.type,
-+						    from_kgid(&init_user_ns, acl_e->e_gid),
-+						    &acl_e->e_gid.uuid);
-+			else
-+				entry->e_id = cpu_to_le32(
-+					from_kgid(&init_user_ns, acl_e->e_gid));
-+			e += entry_size;
- 			break;
- 
- 		case ACL_USER_OBJ:
-diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
-index 0c5a79c3b5..48bc352ec7 100644
---- a/fs/ext4/acl.h
-+++ b/fs/ext4/acl.h
-@@ -8,6 +8,8 @@
- #include <linux/posix_acl_xattr.h>
- 
- #define EXT4_ACL_VERSION	0x0001
-+/* uid_r: ACL_USER and ACL_GROUP entries are ext4_acl_entry_r */
-+#define EXT4_ACL_VERSION_R	0x0002
- 
- typedef struct {
- 	__le16		e_tag;
-@@ -20,11 +22,23 @@ typedef struct {
- 	__le16		e_perm;
- } ext4_acl_entry_short;
- 
-+/*
-+ * EXT4_ACL_VERSION_R: e_type an EXT4_ID_R_* kind, a classic id in the
-+ * first four bytes of e_id (little endian), a UUID or GUID all of it
-+ */
-+typedef struct {
-+	__le16		e_tag;
-+	__le16		e_perm;
-+	__le32		e_type;
-+	__u8		e_id[16];
-+} ext4_acl_entry_r;
-+
- typedef struct {
- 	__le32		a_version;
- } ext4_acl_header;
- 
--static inline size_t ext4_acl_size(int count)
-+/* @entry: sizeof(ext4_acl_entry) or, for EXT4_ACL_VERSION_R, of _r */
-+static inline size_t ext4_acl_size_e(int count, size_t entry)
- {
- 	if (count <= 4) {
- 		return sizeof(ext4_acl_header) +
-@@ -32,11 +46,11 @@ static inline size_t ext4_acl_size(int count)
- 	} else {
- 		return sizeof(ext4_acl_header) +
- 		       4 * sizeof(ext4_acl_entry_short) +
--		       (count - 4) * sizeof(ext4_acl_entry);
-+		       (count - 4) * entry;
- 	}
- }
- 
--static inline int ext4_acl_count(size_t size)
-+static inline int ext4_acl_count_e(size_t size, size_t entry)
- {
- 	ssize_t s;
- 	size -= sizeof(ext4_acl_header);
-@@ -46,12 +60,22 @@ static inline int ext4_acl_count(size_t size)
- 			return -1;
- 		return size / sizeof(ext4_acl_entry_short);
- 	} else {
--		if (s % sizeof(ext4_acl_entry))
-+		if (s % entry)
- 			return -1;
--		return s / sizeof(ext4_acl_entry) + 4;
-+		return s / entry + 4;
- 	}
- }
- 
-+static inline size_t ext4_acl_size(int count)
++static int ext4_make_room_for_id_r(struct mnt_idmap *idmap,
++				   struct inode *inode, struct iattr *attr)
 +{
-+	return ext4_acl_size_e(count, sizeof(ext4_acl_entry));
++	struct ext4_iloc iloc;
++	bool legacy = true;
++	int err;
++
++	if (attr->ia_valid & ATTR_UID)
++		legacy = uid_is_legacy(from_vfsuid(idmap, i_user_ns(inode),
++						   attr->ia_vfsuid));
++	if (attr->ia_valid & ATTR_GID)
++		legacy &= gid_is_legacy(from_vfsgid(idmap, i_user_ns(inode),
++						    attr->ia_vfsgid));
++	if (legacy)
++		return 0;
++	if (!ext4_has_feature_uid_r(inode->i_sb))
++		return -EOVERFLOW;
++
++	err = ext4_get_inode_loc(inode, &iloc);
++	if (err)
++		return err;
++	if (EXT4_FITS_IN_INODE(ext4_raw_inode(&iloc), EXT4_I(inode), i_gid_r)) {
++		brelse(iloc.bh);
++		return 0;
++	}
++	err = ext4_expand_extra_isize(inode, EXT4_EXTRA_ISIZE_UID_R, &iloc);
++	return err ? -EOVERFLOW : 0;
 +}
 +
-+static inline int ext4_acl_count(size_t size)
-+{
-+	return ext4_acl_count_e(size, sizeof(ext4_acl_entry));
-+}
-+
- #ifdef CONFIG_EXT4_FS_POSIX_ACL
+ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 struct iattr *attr)
+ {
+@@ -6045,6 +6152,10 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	    i_gid_needs_update(idmap, attr, inode)) {
+ 		handle_t *handle;
  
- /* acl.c */
++		error = ext4_make_room_for_id_r(idmap, inode, attr);
++		if (error)
++			return error;
++
+ 		/* (user+group)*(old+new) structure, inode write (sb,
+ 		 * inode block, ? - but truncate inode update has it) */
+ 		handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index d636b89090..34ac087c32 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4613,9 +4613,17 @@ static int ext4_inode_info_init(struct super_block *sb,
+ 		sb->s_time_min = EXT4_TIMESTAMP_MIN;
+ 	}
+ 
++	if (ext4_has_feature_uid_r(sb) &&
++	    sbi->s_inode_size < EXT4_GOOD_OLD_INODE_SIZE + EXT4_EXTRA_ISIZE_UID_R) {
++		ext4_msg(sb, KERN_ERR, "uid_r needs inodes of at least %zu bytes",
++			 EXT4_GOOD_OLD_INODE_SIZE + EXT4_EXTRA_ISIZE_UID_R);
++		return -EINVAL;
++	}
++
+ 	if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE) {
+-		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
+-			EXT4_GOOD_OLD_INODE_SIZE;
++		/* room for the uid_r fields in new inodes only if needed */
++		sbi->s_want_extra_isize = ext4_has_feature_uid_r(sb) ?
++			EXT4_EXTRA_ISIZE_UID_R : EXT4_EXTRA_ISIZE_BASE;
+ 		if (ext4_has_feature_extra_isize(sb)) {
+ 			unsigned v, max = (sbi->s_inode_size -
+ 					   EXT4_GOOD_OLD_INODE_SIZE);
+@@ -5437,6 +5445,10 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 	/* HSM events are allowed by default. */
+ 	sb->s_iflags |= SB_I_ALLOW_HSM;
+ 
++	/* uid_r: inodes can have UUID and GUID owners */
++	if (ext4_has_feature_uid_r(sb) && !test_opt(sb, NO_UID32))
++		sb->s_iflags |= SB_I_UID_R;
++
+ 	err = ext4_check_feature_compatibility(sb, es, silent);
+ 	if (err)
+ 		goto failed_mount;
 -- 
 2.56.0
 
