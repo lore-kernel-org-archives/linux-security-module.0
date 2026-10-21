@@ -1,101 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.171
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792601509;
-	b=1/nYMVNygfZ2XB6is/HoXNzR2iaBVgpPHbSTBrvJg2cbbjA9ilhGn/QUVFXM9ilGL+WI
-	 5pntjJUGZr4FbX8K6OaMRbuCRVdcQWpevMQXSmnPBV3lz9xhiFFW0x2rYIduwliiCklVc
-	 l0ifORZG2Coh+9uIzTVtiHRdo4xBKz9CYR9cjrnoJYsSQsVC1yr/f1N9YD6jnhZ8MxFf7
-	 yluk7IPa0OCPk80+QdklFZNJnQuQPaUxolm9FPxa16T8CIV+B8Yv6o+Su/zWamnmNSoYq
-	 RrY46zUH+3Ao6kzEGlJmcg5BPFoZDTo0bYscUlcgOpHARyS9IxoEFKrgPwcXqnfqFFg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792601509;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.224.53
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792601872;
+	b=tUMEiXqGfOLKBJ5CMVIRlJvUmyduSp3CCeHG6lzrlG9rf+BgfzdLbWbZCvvskNkgiefy
+	 hBv4vtI6st5q3YwLHtNSHkJl0eWOGuFyYYZJtjH07E80thVwQM2KCa/BohA3tsaRBgwnF
+	 iLOkzxY7Ov8Z0UCOjHZQksV1gpGefldOUXg6FMjd44a51a40HfOQOwMEZ2WbMy9letbZB
+	 3knBFxbpj/TTx7W7QlCDg5euQQJ6TDgukdkwNsFTkuNBoH0aEaNofd3T8tRO9hp3h+A4w
+	 oKG7NvOA5eBv3nJFMo434kjkBTwspZbnKIvMa+vegTmhO6bhdbf/wOa1X1CdpKu3xhQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792601872;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
-	b=3whhIef4PXp342wfcXNeODgdyKEaYXuw7MDWyEC78m0Rvtnbawonhtn2FWNdu/nMBVdq
-	 NYGmMhLy5z6c6W5qqbDn4SYjvoPOU+vsaSklr246V0IZqTUAAaXZ+L+smoW8V+5w9GFV2
-	 qUTai60Ogi5beHImWBPdxBs/S8ogx4HiNWgV/DAoLC1lQfFSx+ZT3pJmmeHbIXTdqDtcC
-	 mIWoVjJc6mH/blHk8d4aoBsiZbHxAdfz/MZLcgDg5IsRLooLmx6IBS5SVVhH5+eYXEAlM
-	 MAkTIaHbxnfdxCK6EXfZpG5YD2f6hEh3YwLYagxqLCHcEXsWRA2bqYaAITgXcOCwYLA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=paul-moore.com;
-	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=IjY+GqWy;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.171
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=Wrl1hkgNQocQ50RbdUgeab14QR/zpMpNR80bbfzJVRw=;
+	b=BW7MiA2uMiKM3cm8tIkOqGPsxKZbu5Ou4ZAeuyh+4Cu87l7l3HscvxjhqpNcXf/Ig516
+	 LLYGlTJhe1EhAg7A3JaoU8v2CL2bgaVhHnLj0v/uBS7nK1ZkeyeezvTDAPrz/oQehz6xY
+	 Dmbak0JFxXEDkGc7m2nHafF1sYoBqhMS1bufbrEQ+fAZC4rr1iln2eg7FumXPMvq9mazf
+	 kazBx+f8ZOMNYrJGIq3qpj3TwgX6ESFsEZMcpvDu5+hrGvEAo0//FCK89qW3kllMWmWWw
+	 VYqQg72GxBgthbqJWae8TxRTDUWp10fHq/aF750ASXPBO2K7YiA3UHlYH8InNxidaBA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=armoriq.io;
+	spf=pass smtp.mailfrom=armoriq.io;
+	dkim=pass header.d=armoriq-io.20251104.gappssmtp.com header.i=@armoriq-io.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b="ecJ3/BLc";
+	arc=none smtp.remote-ip=74.125.224.53
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162C3606A31D
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 16:51:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 162C3606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE1C606A31A
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 16:57:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5FE1C606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armoriq.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armoriq.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=IjY+GqWy
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-cc4ca696de6so528149a12.2
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 09:51:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792601507; cv=none;
-        d=google.com; s=arc-20260327;
-        b=HNza5074wPoTvKswCj/+7pAqgtwgJ81YR6rycQxC6JPITgbzsq55S2jB0n/VT4l/Vm
-         mxoyMz53JAgBrqEbkWN6L6OXAfVACnDl9A5bGYlckMU0MID8bhsGzX2NXq0AudYiU/bi
-         WWsoKXlB9UBGMcolAzBTUpWChTx1Xrt3rMVcQrr806EhmX6Lkx5mB5AjaOyb/CKdY8Xx
-         jppjP6vUdenvbVbO/rycjr4N7jJvQm5FW6wEHAGEhxUxxqeXjIHVvFAhHI7SUTelok6G
-         sCvWrSn7Qn4WBCkxV4H9kLneeS/LmIQ7HCmTmjiAyLfOPuAVo1L7Twkd8cPnTJpPqspk
-         mpsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
-        fh=ypdZQ/GIx+64yXGXX8rRP66hNOralaj9qCFar/4itAM=;
-        b=L6NSnt1NB1Xw7mFRWMYikV0/5wKCgbKq1rN3IM6XDjr5Vb3OxhMfMNkGCSwx9q01HZ
-         9UtkzSwbeq/0iILrJnayek1BJyEx/J7ORex8TFpxQMUxNbbYLxV/89EK7eeBGXSovfdy
-         mJPmwWu1zLfTo4Rwk0ousbS5uFPInwWT8SQLBpNRMRuc2vE7dUthtr47a3/35wtgB+as
-         Z1F9h4GssgOQnncGAvp+Cyj61PJbLJVG5C+yl9YMiR71HCtLI08H7o3jJUkugGxIeO85
-         SKx7tZtA1M9/5/nI9NaksQDkxMObnX3JDSeUN5pMWYoOiA38Vj5ABGiN6Oz1aAAUOvTb
-         3a5w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=armoriq-io.20251104.gappssmtp.com header.i=@armoriq-io.20251104.gappssmtp.com header.a=rsa-sha256 header.s=20251104 header.b=ecJ3/BLc
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-6798d4ab549so960583d50.0
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 09:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1792601507; x=1793206307; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
-        b=IjY+GqWyFsNApys1mFNaLpUe5Gb0T0eiWpXRqwguELZkO/6GMlW5MGLgxtcb09NTmh
-         OmSwbge3z0LVW0xi+7CpV8QvKgiRUpsMtRGvmgg8qxBvc5jjXYlzpoNkCzfNBAEwDQ40
-         wNNxyldEcULAnGOug9VS2bG65dXNR/mE46at5JcPgLJWv3O6ZhjEfjVOx0KdNPSWEHno
-         KSs2G3y3N9SwBG5NM5nfzf5/ynFgtWgQ3CLXM7K+hSUVcPTdng4aUdz3+cuYZFPbi1eS
-         ik03fYSF9K8HzXuBFVgMWtrD+TskuLJyDjiFDi0Uy/ej0ytsAm/0is3kvUh3PE/JmgqY
-         Kg0Q==
+        d=armoriq-io.20251104.gappssmtp.com; s=20251104; t=1792601870; x=1793206670; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Wrl1hkgNQocQ50RbdUgeab14QR/zpMpNR80bbfzJVRw=;
+        b=ecJ3/BLcdDo0hwe0Voqxkj3GWbMNNB3JG/+deM/4A6R1lB+aqx3TOsTX4SwKd2qCIG
+         Intc+zHP0tWLWS/4iuS5mDzvKXyBtThLWW0jk5mlS+JFn6KYQo5Zh7Jn0zErvRI3iDlv
+         uUH1IympoPSBiVpg1oW7LwKZ20LH7yCXH55AHNyfPUsCopVCDOfBuhjarDYHIUMaTblC
+         tuceB/MqKnLVpWi77wXHPM1MULmllyXIf5CtoI5lChe94DPnzkgGzSwsHom3w9n7AdxM
+         rGjBzt5jXz26IeIaOjsLq0ZT0lgnEn7O8dxWuWNsQt+Pe1mhafkzidya3X+O9xNehjFr
+         CbDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792601507; x=1793206307;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
-        b=Qgrdz8IlMhxzVAp33lVRUogbVvA9uEZknLymVuaSrUW1MIPlwPYyGOn0X8yBRJ08PP
-         k1Hqzlh6iPzcpMbgezOJHE98OMiUI93Af8g9RYv6DAM9r6L2efz6KV5lF6c3zMrkcsh3
-         M1Wz/fwBBClRBQ+3xBb4azJmJYTp8BN+q6u0FMDAvsLe7VGksimUQCOLJjs4oywXLWuZ
-         vfzeR1JzQyrXXwxQLxXPBNwOIY7Uhv38WCG4Yq8dyCRW3f6g8mBgJHZLoEsGpMx8BIE7
-         bOpIwqmq38Tm6gUSI/Px/pkoVdmFPIOqeNzyiPV2+OgIiv/tSJswRey6fpfTIcSZBtRP
-         //jA==
-X-Forwarded-Encrypted: i=1; AKwUvBz4TZvHG3tZJhFNNQf8OyFCt0pa8noQ9TB0x3aBP3ItZiMHN/hvsy8TvCp+dMH0wLpT8uR+jjScDvVrGz/5C3Ga0TbJaFE=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJbX7IrAPlQjhx85q2qWaFLqbzRcSmUlac6pZEGC3kWCH5t+ekL
-	+CtoiN85ysgpDkjrc1u9TCunHdpr2GF99LoNU9+waooaiXa+YC6fdCDi0Ild8BYKi9zWqGAOZjz
-	9RRz7qZ2E5jB3bvKatd/Zq1gUOW5Jefw1P4nQNA5k3AevdkV2v1taDQ==
-X-Gm-Gg: AYBFou3iuv+pcNRTJi992CwBoKYyu2HbsyAs2Es361jhNzOtF8erlGG2ZnwX4t8VZS3
-	qXlfryV4sl3VWgfDUt/f0wKHQnchsICBhVicfZ7CfFOD4SUtcTh57PUqiuFHcdQxzpOHJ4x8oGa
-	0DMJ37I0mGx8ZAEvCMydbSq2WcmJHZ9nSVPooPqoDkZdYmuxe4nJc93LlI2F4w3LpV0oA8XJ2NB
-	UhLx0CJBIVy+liYuCpDos0tjYzJ2YvyUPB4jwJ6EWxoFt0KMTIQ4LjqVYtHq7hAp+TENbFfZkIW
-	yebGP+8pdVoQ+1Sm/K55AiKeCXgNTVHaQ60pXbSPUP/IaZiY17c5ue3nQJ6sCA+eZuY0prJQ5Ct
-	n5fgaYqs3OcncTxCEeo2bC5tlq4pFNRUt9QVnjmYr8l6MYURoWpLXYCwTaNjtRyFafYbWSrsvO/
-	YQDrCq0Us1X+nacw==
-X-Received: by 2002:a05:6a21:4506:b0:3e2:5d7f:f630 with SMTP id
- adf61e73a8af0-3e287ef2e13mr2253079637.54.1792601507303; Wed, 21 Oct 2026
- 09:51:47 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1792601870; x=1793206670;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Wrl1hkgNQocQ50RbdUgeab14QR/zpMpNR80bbfzJVRw=;
+        b=hxOKp4EjDlq81e93Ftz4wFryNyyKfRiwP++G82wmGou4DeTaFoZDVXKG5Ejlcutcj9
+         YSnMJbuYXMRPxFt3++n3FkqGFAXzeWKbQ2H1ivczeMQ1PF2OKYUS3+7ptNmTOrynw/ag
+         e0WufYvmIm6RnDpNiXhwkfdN1PlGkVFCTDHz/80BtLM0S9Ant+gQCF74p7JpE2VURm/D
+         Y5mX2zeo6TD5vIEbuJfdEPfOjnAtt6E31j9no2cOI4Rzt6WObeIIR9RnC5pwU0o1/iDy
+         F7kgn+n/pokUKuU/rG6VtEt7H24qGwwZ+1ZzAY5QzTxqV++m2/8YkGS+F+8QTyc0Euto
+         OOrw==
+X-Gm-Message-State: AFq9FYKNTVZDXnuXcbXENKld2kzxtmuFDGiU9+g85jFxVQwkGrDqv5T3
+	XmNYdB3faHuLO+Df7IdlMdhN9qJ6ePI+0vYBNrwEdOXkhjMXrDiPaydjN37/sKxJFFZo
+X-Gm-Gg: AYBFou0FWhkQxAgGgGxBgT6aZS4s3/Dy7TolAxxO+jJ1mEwvrSlea0pnVs1NRT714f7
+	tnl8biT5rzTuHV+ebiF+aARGbbGVEklBVriKRjiX6nlQ429L0MlT7wPOIS1jMkIeokouKkbpSIR
+	gghcZanaVejoOMqJj0JkbRXsL0LebCTGg1txq6atNBpMObTMvJJxhHUP4B6Uor8mAlYIiobn5QJ
+	PH9SvIYGz1+JSNeyqRiv1/gQ6+LCQBQqbTOGGc9WAE3QpyZlM9aD6dCLpMOmdj+BIPxoz3ErMto
+	nzIOqqZyY1NppPDI5cW0lbq1h7vUnk0SO5q8WpTMVL2ZbdMEmfiTHJY6O8vesH2yrj+m8TwRxgS
+	gM4jGtyd5Ja/YX5Xd4xXooFUXj93V+4+bU5swEiyNgvTf5fbFDkwbMnIbF8NBW6eRPFNuqqkK+S
+	p/J/hGUx+6unyu6NoFBbNqH0ifGkRVUpWrvRh4hXWtilh8l9mHdeIcp3XQXYHFzLqDHy0RmzXMZ
+	FeSwKM7BrxNAO+BKH/aVcBch3p2D/rnsvXAXSHw+9B7Nhc+Hbw75Y+xWTJL9ypTp4zEihLtrtRe
+	1/g+99IfBboTCJU4MfgxLReTmw9tnaw5IAnJLsVZlZbLkmWSOclnbt1ZCGZwG7I9UEPsi2k4
+X-Received: by 2002:a05:690e:4395:b0:679:b87d:6f7b with SMTP id 956f58d0204a3-67a0e4d43a7mr1148532d50.42.1792601869931;
+        Wed, 21 Oct 2026 09:57:49 -0700 (PDT)
+Received: from CC-KJQTV599DQ.lawn.gatech.edu ([2610:148:205a:0:adab:fd33:8207:cba3])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8b1301045a3sm14277117b3.28.2026.10.21.09.57.49
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 21 Oct 2026 09:57:49 -0700 (PDT)
+From: Ketan Bhardwaj <ketan@armoriq.io>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"HARIHARA SUDHAN . R" <harisudhan@armoriq.io>,
+	Ketan Bhardwaj <ketan@armoriq.io>
+Subject: [RFC PATCH] docs: security: Describe the Kernel Assurance Plane design
+Date: Wed, 21 Oct 2026 12:57:48 -0400
+Message-ID: <20261021165748.19304-1-ketan@armoriq.io>
+X-Mailer: git-send-email 2.51.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,259 +101,365 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
- <20261019-b4-ipe-keyring-rfc-v1-1-156f0b93e843@nvidia.com>
- <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org> <20261021-groll-donnerstag-erfuhren-ce34a0ed4e97@brauner>
-In-Reply-To: <20261021-groll-donnerstag-erfuhren-ce34a0ed4e97@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Oct 2026 12:51:35 -0400
-X-Gm-Features: AclHuK9u4zlqRR8k7l_xhgTD3syw8PvB14c-IIpaLUltSW6zS4RYc3Du7nPPmmQ
-Message-ID: <CAHC9VhTHUU0h9k74CMT6wYhMwyY3YhbSSFwJoDTvoFRyTFVZwg@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
-To: Christian Brauner <brauner@kernel.org>
-Cc: Fan Wu <wufan@kernel.org>, manuelh@nvidia.com, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Andrew Halaney <andrew@amutable.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, linux-security-module@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 21, 2026 at 9:54=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> On Mon, Oct 19, 2026 at 04:15:57PM -0700, Fan Wu wrote:
-> > On 10/19/2026 2:40 PM, Manuel Huber via B4 Relay wrote:
-> > > From: Manuel Huber <manuelh@nvidia.com>
-> > >
-> > > Add a dedicated .ipe keyring for IPE policy signature verification,
-> > > modeled after the .dm-verity and .bpf keyring implementations.
-> > >
-> > > With this, userspace can provision its own keys into the keyring,
-> > > then restrict it and activate it for IPE policy signature verificatio=
-n.
-> > >
-> > > This enables scenarios in which a trusted userspace component generat=
-es
-> > > an IPE policy, and creates an ephemeral policy-signing key pair,
-> > > provisions its public certificate, and restricts the IPE keyring duri=
-ng
-> > > the early lifetime of a system. The trusted component can then sign t=
-he
-> > > IPE policy, destroy the private key, and load and activate the policy=
-.
-> > > During that phase, the system is considered in a trusted state wherea=
-s
-> > > the system transitions into a possibly untrusted state afterwards,
-> > > running arbitrary user-provided applications. In such a scenario, the
-> > > trusted userspace component could reside on a dm-verity protected
-> > > rootfs disk, and applications would reside on additional dm-verity
-> > > protected disks. The latter disks would be dynamically attached and
-> > > their dm-verity root hashes and/or signatures not known a priori to
-> > > launching the system.
-> > >
-> >
-> > You might need to explain why the existing keyrings, i.e. builtin/secon=
-dary/platform cannot be used in your scenario. Like the firmware is not tru=
-sted?
-> >
-> > > A concrete usage scenario could be Kata Containers, which enables
-> > > running Kubernetes pods in ephemeral, headless utility VMs, possibly
-> > > without systemd. The rootfs disk is static and known beforehand, but
-> > > containerd's image layers might be acquired and transported into the
-> > > VM using the erofs snapshotter and dynamic block device attachment
-> > > using dm-verity.
-> > >
-> > > Signed-off-by: Manuel Huber <manuelh@nvidia.com>
-> > > ---
-> > >  Documentation/admin-guide/kernel-parameters.txt |  9 +++
-> > >  security/ipe/Makefile                           |  1 +
-> > >  security/ipe/ipe.c                              |  2 +
-> > >  security/ipe/keyring.c                          | 79 +++++++++++++++=
-++++++++++
-> > >  security/ipe/keyring.h                          | 16 +++++
-> > >  security/ipe/policy.c                           | 10 ++++
-> > >  6 files changed, 117 insertions(+)
-> > >
-> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Docume=
-ntation/admin-guide/kernel-parameters.txt
-> > > index e75344f4e0cd..fd508dd779ed 100644
-> > > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > @@ -2733,6 +2733,15 @@ Kernel parameters
-> > >                     Determine whether IPE starts in permissive (0) or
-> > >                     enforce (1) mode. The default is enforce.
-> > >
-> > > +   ipe.keyring_unsealed=3D
-> > > +                   [IPE]
-> > > +                   Format: <bool>
-> > > +                   When set to 1, leave the IPE policy keyring
-> > > +                   unsealed after initialization so userspace can pr=
-ovision
-> > > +                   keys. Once the keyring is nonempty and restricted=
-, it is
-> > > +                   searched during policy-signature verification. Th=
-e default
-> > > +                   is 0, which creates the keyring restricted and em=
-pty.
-> > > +
-> >
-> > I would prefer a Kconfig CONFIG_SECURITY_IPE_KEYRING default to N inste=
-ad, like the fsverity keyring. In the kconfig you can also describe in whic=
-h cases should this option be turned on.
-> >
-> > >     ipe.success_audit=3D
-> > >                     [IPE]
-> > >                     Format: <bool>
-> > > diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-> > > index 2ffabfa63fe9..109e736696a5 100644
-> > > --- a/security/ipe/Makefile
-> > > +++ b/security/ipe/Makefile
-> > > @@ -20,6 +20,7 @@ obj-$(CONFIG_SECURITY_IPE) +=3D \
-> > >     hooks.o \
-> > >     fs.o \
-> > >     ipe.o \
-> > > +   keyring.o \
-> >
-> > with Kconfig this can be obj-$(CONFIG_IPE_KEYRING) +=3D keyring.o
-> >
-> > >     policy.o \
-> > >     policy_fs.o \
-> > >     policy_parser.o \
-> > > diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-> > > index 495bb765de1b..f5232f850dc2 100644
-> > > --- a/security/ipe/ipe.c
-> > > +++ b/security/ipe/ipe.c
-> > > @@ -7,6 +7,7 @@
-> > >  #include "ipe.h"
-> > >  #include "eval.h"
-> > >  #include "hooks.h"
-> > > +#include "keyring.h"
-> > >
-> > >  extern const char *const ipe_boot_policy;
-> > >  bool ipe_enabled;
-> > > @@ -97,4 +98,5 @@ DEFINE_LSM(ipe) =3D {
-> > >     .init =3D ipe_init,
-> > >     .blobs =3D &ipe_blobs,
-> > >     .initcall_fs =3D ipe_init_securityfs,
-> > > +   .initcall_late =3D ipe_keyring_init,
-> > >  };
-> > > diff --git a/security/ipe/keyring.c b/security/ipe/keyring.c
-> > > new file mode 100644
-> > > index 000000000000..ea8d164b62a6
-> > > --- /dev/null
-> > > +++ b/security/ipe/keyring.c
-> > > @@ -0,0 +1,79 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Copyright (C) 2026 NVIDIA CORPORATION & AFFILIATES. All rights re=
-served.
-> > > + */
-> > > +
-> > > +#include <linux/cred.h>
-> > > +#include <linux/err.h>
-> > > +#include <linux/key.h>
-> > > +#include <linux/moduleparam.h>
-> > > +
-> > > +#include "ipe.h"
-> > > +#include "keyring.h"
-> > > +
-> > > +static struct key *ipe_keyring __ro_after_init;
-> >
-> > You can remove static here then the other ipe code can directly use the=
- variable instead of a function call.
-> >
-> > > +
-> > > +static bool ipe_keyring_unsealed __ro_after_init;
-> > > +
-> > > +/* Set the right module name for built-in parameters. */
-> > > +#ifdef KBUILD_MODNAME
-> > > +#undef KBUILD_MODNAME
-> > > +#define KBUILD_MODNAME "ipe"
-> > > +#endif
-> > > +
-> > > +module_param_named(keyring_unsealed, ipe_keyring_unsealed, bool, 044=
-4);
-> > > +MODULE_PARM_DESC(keyring_unsealed, "Leave the IPE keyring unsealed")=
-;
-> > > +
-> >
-> > ...
-> >
-> > > +
-> > > +/**
-> > > + * ipe_keyring_init() - Allocate and configure the IPE keyring.
-> > > + *
-> > > + * Return: Always %0. A failure leaves IPE without its dedicated key=
-ring.
-> > > + */
-> > > +int __init ipe_keyring_init(void)
-> > > +{
-> > > +   struct key *keyring;
-> > > +   int rc;
-> > > +
-> > > +   keyring =3D keyring_alloc(".ipe", GLOBAL_ROOT_UID, GLOBAL_ROOT_GI=
-D,
-> > > +                           current_cred(),
-> > > +                           KEY_POS_SEARCH |
-> > > +                           KEY_USR_VIEW | KEY_USR_READ | KEY_USR_WRI=
-TE |
-> > > +                           KEY_USR_SEARCH | KEY_USR_SETATTR,
-> > > +                           KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
-> > > +   if (IS_ERR(keyring)) {
-> > > +           pr_err("failed to allocate keyring: %ld\n", PTR_ERR(keyri=
-ng));
-> > > +           return 0;
-> >
-> > You might need to panic here like the fsverity kerying.
-> >
-> > > +   }
-> > > +
-> > > +   if (!ipe_keyring_unsealed) {
-> > > +           rc =3D keyring_restrict(make_key_ref(keyring, true), NULL=
-, NULL);
-> > > +           if (rc) {
-> > > +                   pr_err("failed to restrict keyring: %d\n", rc);
-> > > +                   key_revoke(keyring);
-> > > +                   key_put(keyring);
-> > > +                   return 0;
-> > > +           }
-> > > +   }
-> >
-> > This looks kind of awkward, like if unseal is not set, it can create an=
- empty keyring then immediately seal it. I would switch to the fsverity's a=
-pproach to let userspace seal it.
->
-> Please don't start breaking an established pattern that works well.
-> We're now using this with both bpf and dm-verity with
-> systemd-keyring-setup.
+Describe the Kernel Assurance Plane (KAP) design for review, with no code.
 
-Just a quick point of clarification, you're using the pattern you
-described for other keyrings, not necessarily a dedicated IPE keyring
-described in this patchset, correct?
+Agents and other long-running tasks act on behalf of an objective that a
+user approved. Linux decides whether a task may perform an operation,
+but not whether the operation still belongs to that objective. Seccomp,
+LSM profiles, namespaces and cgroups cannot hold several objectives apart
+inside one environment, or revoke one objective's authority while its
+task runs.
 
-I know you/Lennart/systemd made the decision to implement your own
-version of IPE instead of working with Fan to augment the existing
-implementation to meet your needs, so I'm not sure if you've also done
-something with an out-of-tree patch, BPF, etc. to implement your own
-keyring.
+KAP introduces objective-scoped authority as a kernel subsystem. The
+document covers Intent Lineage Groups, the authority model and the
+control plane under /sys/kernel/security/kap, where igroups are created
+with mkdir as cgroups are. For each design decision it lists the
+alternatives considered, and it ends with the questions on which
+maintainer feedback is wanted. Code follows once the design has been
+discussed.
 
-> The point is that the keyring is intentionally
-> inactive unless it is sealed and restricted. That is part of the
-> security model. fsverity is used as soon as any key is enrolled which
-> doesn't give userspace a throwaway the key moment.
+Assisted-by: Claude
+Co-developed-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
+Signed-off-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
+Assisted-by: Codex
+Signed-off-by: Ketan Bhardwaj <ketan@armoriq.io>
+---
+ Documentation/ABI/testing/securityfs-kap |  99 ++++++++++++
+ Documentation/admin-guide/LSM/index.rst  |   1 +
+ Documentation/security/index.rst         |   1 +
+ Documentation/security/kap.rst           | 191 +++++++++++++++++++++++
+ 4 files changed, 292 insertions(+)
+ create mode 100644 Documentation/ABI/testing/securityfs-kap
+ create mode 100644 Documentation/security/kap.rst
 
-As far as I'm concerned the decision of how IPE uses an IPE keyring is
-up to Fan.  Of course, fitting in with existing norms is important,
-but if it causes IPE or existing IPE uses a lot of pain, that can a
-good reason to diverge from those solutions.  These days everyone is
-going to implement whatever they please, but if you have
-needs/requirements about how you want things to behave in LSM land, I
-think it would be helpful to engage with us before you make a decision
-and then start pleading with the LSM folks to adopt your approach.
+diff --git a/Documentation/ABI/testing/securityfs-kap b/Documentation/ABI/testing/securityfs-kap
+new file mode 100644
+index 00000000..89223a93
+--- /dev/null
++++ b/Documentation/ABI/testing/securityfs-kap
+@@ -0,0 +1,99 @@
++What:		/sys/kernel/security/kap/
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Kernel Assurance Plane control directory in securityfs.
++		The ABI is experimental and intended for RFC review.
++
++What:		/sys/kernel/security/kap/kap.default
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Read or write "open" or "closed". When closed, a task
++		outside the initial PID namespace that is bound to no igroup
++		cannot start a program.
++
++What:		/sys/kernel/security/kap/igroups/
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Directory of Intent Lineage Groups. Create an igroup with
++		mkdir, as a cgroup is created.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.install
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Write the lineage root, authority epoch, optional expiry and
++		transition, and the authority as one key=value document in a
++		single write. The fields commit together or not at all.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.procs
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Write a pid to bind a task to the igroup. Reads return bound
++		pids.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.lineage_root
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Read or write the opaque lineage root for the igroup.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.authority_epoch
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Read or write the current authority epoch. A lower value is
++		refused. Bound tasks whose recorded epoch is stale fail KAP
++		checks closed.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.authority
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Read or write the compiled authority snapshot for the igroup.
++		The RFC prototype accepts a text predicate payload with typed
++		allow and deny arrays.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.expires_at
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Read or write the authority expiry in seconds since the Unix
++		epoch, or 0 for none. An expiry already in the past is
++		refused. Once it passes, every check for the igroup fails
++		closed.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.transition
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Write transition records. Sequence numbers must increase
++		monotonically to prevent replay.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.mode
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Read or write igroup mode. Supported values are "enforce" and
++		"revoked". A revoked igroup refuses every operation.
++
++What:		/sys/kernel/security/kap/igroups/<igroup>/kap.events
++Date:		October 2026
++KernelVersion:	RFC
++Contact:	Ketan Bhardwaj <ketan@armoriq.io>
++Description:
++		Read recent KAP decisions as JSON lines.
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index b44ef68f..4a299993 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -48,4 +48,5 @@ subdirectories.
+    Yama
+    SafeSetID
+    ipe
++   kap
+    landlock
+diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
+index 00650dcf..937193b1 100644
+--- a/Documentation/security/index.rst
++++ b/Documentation/security/index.rst
+@@ -18,6 +18,7 @@ Security Documentation
+    siphash
+    tpm/index
+    digsig
++   kap
+    landlock
+    secrets/index
+    ipe
+diff --git a/Documentation/security/kap.rst b/Documentation/security/kap.rst
+new file mode 100644
+index 00000000..43099a5a
+--- /dev/null
++++ b/Documentation/security/kap.rst
+@@ -0,0 +1,191 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++======================
++Kernel Assurance Plane
++======================
++
++Kernel Assurance Plane (KAP) introduces objective-scoped authority as a kernel
++subsystem. Intent Lineage Groups (igroups) are its core kernel object, LSM hooks
++are its enforcement mechanism, and securityfs is its control-plane interface.
++
++This document describes the design for review. It does not add code. It lists
++the alternatives that were considered for each decision and the questions on
++which maintainer feedback is wanted.
++
++Motivation
++==========
++
++A task increasingly runs on behalf of an objective that a user approved, for
++example an AI agent asked to fix a failing test. Over hours it starts programs,
++reads and writes files and opens connections. Linux decides whether the task
++may perform each operation. It does not decide whether the operation still
++belongs to the objective the task was started for.
++
++Existing mechanisms cover parts of this. Seccomp filters syscalls but cannot see
++paths or objectives. LSM profiles, such as AppArmor or SELinux, are attached to
++programs or labels, not to an objective, and cannot be narrowed for one task
++while it runs. Namespaces and cgroups partition resources rather than
++authority. None of them lets several objectives run in one environment, each
++held to its own authority, or fails a task closed the moment its authority is
++revoked.
++
++Model
++=====
++
++``igroup``
++  Intent Lineage Group, the unit KAP enforces. An igroup owns an authority
++  snapshot, a lineage root, the current epoch, an optional expiry, a transition
++  sequence, its bound tasks and an event log. A task is bound by writing its pid
++  to the igroup, and membership follows fork, exec and setns.
++
++``authority snapshot``
++  The predicate set for one igroup epoch, with typed ``allow`` and ``deny``
++  arrays for exec, file, network connect, credential, IPC, namespace,
++  descriptor, procfs, executable memory, BPF, ptrace and io_uring checks. File
++  predicates also govern rename, link, unlink, mkdir, rmdir, mknod, symlink and
++  truncate, so a file cannot be moved into a denied path. A deny wins over an
++  allow, and an operation no predicate allows is refused. The snapshot is
++  compiled once when it is installed.
++
++``epoch``
++  Monotonic authority generation. Installing a higher epoch fails every task
++  still bound to an older one closed from its next check.
++
++``lineage root``
++  Opaque identifier supplied by userspace that ties the installed authority to
++  a committed execution lineage.
++
++The kernel does not parse planning or policy languages. A privileged userspace
++runtime validates those artifacts and installs kernel-ready state. Tasks that
++are bound to no igroup are not affected, and every KAP check returns early for
++them.
++
++Control plane
++=============
++
++KAP state lives under ``/sys/kernel/security/kap``::
++
++  /sys/kernel/security/kap/
++    kap.default
++    igroups/            created with mkdir, as cgroups are
++      <igroup>/
++        kap.install
++        kap.procs
++        kap.lineage_root
++        kap.authority_epoch
++        kap.authority
++        kap.expires_at
++        kap.transition
++        kap.mode
++        kap.events
++        kap.igfd
++
++``kap.default``
++  ``open`` (the default) or ``closed``. When closed, a task outside the initial
++  PID namespace that is bound to no igroup cannot start a program, so a bind
++  that failed cannot leave a workload running without authority.
++
++``kap.install``
++  Write the lineage root, epoch, optional expiry and transition, and the
++  authority as one ``key=value`` document in a single write. They commit
++  together or not at all.
++
++``kap.procs``
++  Write a pid to bind a task to the igroup. Reads return bound pids.
++
++``kap.lineage_root``, ``kap.authority``
++  Read or write the lineage root or the compiled authority snapshot.
++
++``kap.authority_epoch``, ``kap.expires_at``
++  Read or write the epoch, or the expiry in seconds since the Unix epoch (0 for
++  none). A lower epoch, or an expiry already in the past, is refused.
++
++``kap.transition``
++  Write transition records with monotonically increasing sequence numbers.
++
++``kap.mode``
++  ``enforce`` or ``revoked``. A revoked igroup refuses every operation.
++
++``kap.events``
++  Read recent decisions as JSON lines, each with the decision, operation,
++  target, reason, igroup, epoch and lineage root.
++
++``kap.igfd``
++  Reserved for future igroup file descriptors.
++
++Design decisions
++================
++
++Where the control plane lives
++-----------------------------
++
++Igroups are created and destroyed by userspace, so the control plane needs
++directories that userspace can create. securityfs does not allow userspace
++mkdir.
++
++Considered:
++
++* A dedicated filesystem mounted at ``/sys/fs/kap``. This was the v1 interface.
++  It works, but puts security state outside securityfs, where the other LSMs
++  keep theirs.
++* securityfs with control files, for example writing a name to a ``create`` file
++  to make an igroup. This keeps everything in securityfs but replaces mkdir and
++  rmdir with a private protocol that every tool has to learn.
++
++Chosen: a small internal filesystem that the kernel mounts itself and links
++under securityfs, the approach AppArmor uses for policy namespaces
++(``apparmorfs``, linked as ``/sys/kernel/security/apparmor/policy``). Users only
++see paths under securityfs, and an igroup is created with mkdir, the way a
++cgroup is.
++
++Igroups rather than a cgroup controller
++---------------------------------------
++
++Considered: making KAP a cgroup controller, since igroups are created like
++cgroups and follow the process tree.
++
++Chosen: a separate hierarchy. A container usually places all of its tasks in
++one cgroup, while several objectives can run inside it, each needing its own
++authority. Tying authority to resource partitioning would prevent that, and
++authority must also follow setns, which cgroup membership does not.
++
++A static LSM rather than BPF LSM programs
++-----------------------------------------
++
++Considered: implementing the checks as BPF LSM programs.
++
++Chosen: a built-in LSM. Igroup membership, epochs and inheritance across fork,
++exec and setns are kernel object state with fixed semantics that reviewers can
++audit in one place. BPF LSM also needs ``CONFIG_BPF_LSM`` and BTF, which many
++minimal guest kernels used for sandboxed agents do not enable.
++
++Policy stays in userspace
++-------------------------
++
++Considered: parsing a policy language in the kernel.
++
++Chosen: the kernel accepts only a compiled predicate snapshot. Planning,
++policy validation and signature checks stay in privileged userspace, and the
++snapshot is compiled into per-kind pattern sets once at install time.
++
++Questions for maintainers
++=========================
++
++1. Is an internal filesystem linked under securityfs, as AppArmor does,
++   acceptable for a control plane that needs userspace mkdir?
++2. Should igroup removal follow cgroups, with rmdir allowed once no task is
++   bound?
++3. Is a separate igroup hierarchy the right call, or should this be a cgroup
++   controller despite the cases above?
++4. The predicate format is text and experimental. Is a binary format preferred,
++   or reuse of an existing ruleset format such as Landlock's?
++5. The series adds hooks on namespace and io_uring paths that existing LSM
++   hooks do not fully cover. Are those acceptable, or are there existing hooks
++   that should be used instead?
++6. The LSM ID is provisional and should be confirmed.
++
++RFC status
++==========
++
++This interface is experimental. The RFC is intended to make the authority and
++lineage model reviewable, not to freeze the userspace ABI.
 
---=20
-paul-moore.com
+base-commit: f47d223627f80cb7a1eb14c585fe6cb35de5e984
+-- 
+2.51.0
+
