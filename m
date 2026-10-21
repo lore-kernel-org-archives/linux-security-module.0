@@ -1,76 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792578331;
-	b=EjVzvbXI2YAzzrCLsIYrfiWEnd927BfHxKr3trAVqtA0xeUH1X+eY+ZQ1tNmQ3/oZkd/
-	 AG6Rvngehp2HdbB6EBonC6VPmHMZzSOXETGaIjq26xWm/q0yBcFeF1qHDxx1/UIZ3I3D+
-	 c+KoYKbiTwjqnvGMdwegLkRdjWMC2j4bqjZyAv3Y9g6ZxOGMRhl9FtHHvRJ4FXwAleb2E
-	 f/8UKmzHMwmX/BmfSz1Bp2elPrNlryd3/Umz/s+7XVGaUWow0rdSCbYxixeJ5koIbMd5S
-	 1WsRw1qGpd9BSWZ6OJEuUmouul55SxUcpEuCK95De5AM/rqx85QPKe0sLZYtVOdFxVw==
+	t=1792578534;
+	b=Z7MNBSpeLAUVqwI1nRJM2/0WG6/lLwEm51HCQrhAJGyYfZ8JKNEf2slU9H5bJ9oIDHqr
+	 yRzw2wu2tcQ3v6Fd5s1J/3jfiSI/GkunhLwodxuy7CuptmAeGHXVevSlfeajtsSFUxslM
+	 1w8XnXbO55ZX5/9gVwg7tLZLN+gPIq0XQ5OX1ykfkP84rHEkL5qA6+XRIuLnrMIhrm13b
+	 MY3ZfyvBCv62YJnHz1tZynE/blWKqnN3kptTKKAMod5L6HpFaB2xPKCwpHv8lhAYH8BPA
+	 Rr5R9JX81MqjRkpWeXaxLE7c85cHUwIhfOFS34EZJAwjC5ZpuvXytUEzkHJ+9lr3kGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792578331;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792578534;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=fyUFCbuePzC+XG2QW79bsjnDsYBX6lH465Zgu9TmAmA=;
-	b=T2aptLONDZ2m5Bod8KFCpux1s6M9OaOa1yPs22mnoS5ue0+JTk1mN0AnlVruz1JdNdjn
-	 KD9IO4KYJJyJAXQHgBhVaRFTDfaSCx9MGomCYtaD9fze25gP5h4wPjoICXDw5B0FkjLnG
-	 Vxl+ptGIJe3wpnkY7i6mKdzZcSE8WozuQaWKTGgAiD3ImJYPHrHD35yWs6/Pkr8oC9IlF
-	 rLpYm4t4wUI5AVjaAWUHwbM2zDC5cvQaX3bk6tUsIYdjUobyk7L1UBUXbhA/B5/xwqQsn
-	 rBg3fzJU42xxXsK970nb2+gAtg4Di8dKSVJymu4mO4lJ6I9uNmdO51icOjAzRRKa4hQ==
+	bh=RyNlnTCg8f5jnRjirKufUnFU6MO9l6lq6sjeVEWl6yg=;
+	b=2ppiq38xkUomtfQVJrEckNOmntHG+mNUzD2ntGMgvzoBjSQAfsxCG8NtIpnYOcPGM2Ke
+	 CtokzYvPqFwq+8KbuL7tFSjJFeEKVJVCsrM1CiQ24WT3KHjFQnKMR5/UQpN0K4Ecc8ozh
+	 tf0vI8JwBDjJ5HRQsFvTmfyXztyYfju5C+ydIVgBZ6sOdHvrTCohtIE/XjscRfDCRPQAP
+	 6andBVkicVh2drh5tXBdRU1/SxKV4YtKXhLQIFnjGZkXxTpMHLGszRb8M/fWPxFggV2qd
+	 xY1XRW5OMazU0ma/J5TYEkn1NH1w8dK/QQzyYbC7qZ1BKdwgnj56iXa2Jiqz9kD9Bbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WN+IUwrT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=khVTwex6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB99606A319;
-	Wed, 21 Oct 2026 10:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7608260A2604;
+	Wed, 21 Oct 2026 10:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WN+IUwrT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4A41F000C9;
-	Wed, 21 Oct 2026 10:25:12 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=khVTwex6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0013E1F000CF;
+	Wed, 21 Oct 2026 10:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792578330;
-	bh=fyUFCbuePzC+XG2QW79bsjnDsYBX6lH465Zgu9TmAmA=;
+	s=k20260515; t=1792578529;
+	bh=RyNlnTCg8f5jnRjirKufUnFU6MO9l6lq6sjeVEWl6yg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WN+IUwrT7l8rUPNHcaU/+gEKsExM+ioOu7ktOtPja5M+dDNUVwHb0vzRVzDdLmi2l
-	 ZVZx7zVWlmJhAl69UxYI+zhszNbxVxTNXOBiS7d6CtNd6WfNLIPJPJhmVTj0hz17Wh
-	 CBPrxhvYRreyd+T8w2TaPEcsFSkV4dKf9ocMHO00y4EhqsJSxfLpthpPmknHsz6GHD
-	 XVMxmeCP5wmxvrqe1pag4NI9ASSec8djC8iso0wCeNRusCl3OXQPYTQT30aPNOVjPM
-	 aOLdakMoHfKRaCd3xb8lP0LDs+OVib+4+C4N3+fUQQocX68feX4bzSiBxNtciCBsuG
-	 N0l+7t93qoF8A==
-Date: Wed, 21 Oct 2026 12:25:10 +0200
+	b=khVTwex6HuJEnfARXW1KWD+f7Ysf5SKiY9H9XV2U3S7JxHQmuSvwT/4ZS2f/4VdO+
+	 h7pOJT8bseaZKjMDxBQSn7DpA2lqtFPTi0ch7FnYNswC7YZlibEmBfC78gqGQbRP+v
+	 aOCzkJ1A+kkTuExGRevT+oYALDUEeY5GCEwE8w+g5WG7FK0sS+X1QuH6gsAcc7JE9x
+	 3wc2ArVPZ2j5ac0yLnHg4edaId3P8+TabR6hxTwHYX4xNP8dfbDd7WR9EH7O/4hgVo
+	 uYu0IK9t0JP5i41IdDOs1AIcd9ty6FyaOhZaEmr0Kq/AQv/954NfvBHguOld2t+Nsy
+	 fmR9FNGfELRNw==
+Date: Wed, 21 Oct 2026 12:28:43 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Cai Xinchen <caixinchen1@huawei.com>
-Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, corbet@lwn.net, skhan@linuxfoundation.org, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, 
-	memxor@gmail.com, martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
-	jolsa@kernel.org, emil@etsalapatis.com, ihor.solodrai@linux.dev, 
-	rdunlap@infradead.org, gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	johan@kernel.org, dlemoal@kernel.org, hch@lst.de, axboe@kernel.dk, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, dhowells@redhat.com, code@tyhicks.com, 
-	linkinjeon@kernel.org, sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
-	hirofumi@mail.parknet.co.jp, cel@kernel.org, jlayton@kernel.org, neil@brown.name, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, hyc.lee@gmail.com, 
-	miklos@szeredi.hu, amir73il@gmail.com, senozhatsky@chromium.org, 
-	chenxiaosong@chenxiaosong.com, kpsingh@kernel.org, matt@bobrowski.net, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, john.johansen@canonical.com, 
-	georgia.garcia@canonical.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, stephen.smalley.work@gmail.com, 
-	omosnacek@gmail.com, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, xiujianfeng@huawei.com, nanx95726@gmail.com, djwong@kernel.org, 
-	lujialin4@huawei.com, bpf@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, exfat@lists.linux.dev, 
-	linux-nfs@vger.kernel.org, ntfs@lists.linux.dev, linux-unionfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 -next 00/18] landlock: Add READ_METADATA and
- WRITE_METADATA access rights
-Message-ID: <20261021-neugierig-abgemacht-umbenannt-c77d1addf517@brauner>
-References: <20261015125425.3246251-1-caixinchen1@huawei.com>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, "Andrew G. Morgan" <morgan@kernel.org>, 
+	Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/5] capabilities: close the ways around the CAP_SETFCAP
+ rule for uid 0
+Message-ID: <20261021-beisammen-pokal-unbefangen-436577686165@brauner>
+References: <20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com>
+ <asehZEWAwsJcbqvM@hallyn.com>
+ <179147397027.4.15064782992163283819@toxicpanda.com>
+ <asfBRYy597qvzdCW@hallyn.com>
+ <20261009-aussicht-wortbruch-bohnenkraut-9e7a1cfd7580@brauner>
+ <179191993398.6.7035194670175996999@toxicpanda.com>
+ <atYGiiGPs39lTFQ7@hallyn.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -82,26 +68,61 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261015125425.3246251-1-caixinchen1@huawei.com>
+In-Reply-To: <atYGiiGPs39lTFQ7@hallyn.com>
 
-> - The hooks consistently take struct path rather than struct file.  The
->   VFS call sites involved (chmod(2), chown(2), utimensat(2), xattr(2)
->   and ACL syscalls) operate on paths, and several of them (lstat(2),
->   lchown(2), llistxattr(2), ...) have no struct file to begin with.
+On Mon, Oct 19, 2026 at 07:01:14AM -0500, Serge Hallyn wrote:
+> On Tue, Oct 13, 2026 at 07:32:13PM +0000, Josef Bacik wrote:
+> > On Fri, Oct 09, 2026 at 09:41:59AM +0200, Christian Brauner wrote:
+> > > On Thu, Oct 08, 2026 at 11:13:57AM -0500, Serge Hallyn wrote:
+> > > > Yeah, that's what I was thinking.  Or even stricter: ensure that to join
+> > > > any user namespace, a process must have a superset of the namespace
+> > > > creator's capabilities.
+> > >
+> > > I think both are fine and I like this proposal.
+> > 
+> > One correction to what I wrote: the weaker version isn't enough.  A
+> > namespace that maps "0 100000 1000" doesn't map the parent's uid 0, so
+> > it passes that check.  But with an idmapped mount that maps fs 0 to
+> > 100000, a task that joined it can write fscaps that are stored with
 > 
-> - struct inode_operations->setattr still receives (idmap, dentry, attr).
->   Only the VFS boundary (notify_change()) and the LSM hook layer see the
->   path, which keeps the refactor contained to fs/attr.c and the LSM
->   infrastructure instead of touching every filesystem.
+> I actually don't think that's something we should work around here.
+> 
+> Christian, what is your opinion on this?
 
-I have no problem with that provided:
+I want as little moving parts as possible. :)
 
-* all hooks take a const struct path argument
-* idmaps are passed separately so that VFS and filesystems are
-  guaranteed to see the same idmap
-* nobody gets any guarantees whatsoever wrt to path->mnt aka vfsmount
+> IMO most people should not do id-mapped mounts from host range anyway
+> (they should shift a base rootfs to a high range, then do idmapped
+> mounts from there),
 
-  layout and implementation details might change tomorrow and mounts are
-  subtle beasts so the security layer gets to keep pieces if it does
-  things that the VFS hasn't explicitly sanctioned as a guaranteed
-  property. Things continue to be in flux.
+So that's pretty common though. Doesn't Incus do exactly that? And it
+does write fscaps through onto the host on purpose and restricts access
+to /var/lib/containers via strict DAC.
+
+> > rootid 0 and honoured by the host.  We test that flow.  So it has to be
+> > Serge's stricter version.
+> > 
+> > > I think that this is an acceptable restriction. Mapping uid 0 to 0 and
+> > > dropping caps is borderline useless.
+> > 
+> > That makes the restriction wider than the 0 to 0 case.  A root task
+> > without CAP_SETFCAP couldn't join an ordinary "0 100000" container
+> > either.
+> > 
+> > setns() also only covers the routes that go through it.  These don't,
+> > and need their own checks either way:
+> > 
+> > - writing through a uid_map fd opened by a task with CAP_SETFCAP
+> > - ptrace and pidfd_getfd of an entitled task from outside
+> > - a task without CAP_SETFCAP creating its own namespace, which a
+> >   privileged task then maps "0 0 1" for
+> > 
+> > So v2 would be a level on the namespace computed at create time, the
+> > strict setns() check, and the checks at the map write, setxattr and
+> > ptrace reading the namespace's level instead of the cred's.  If that
+> > sounds right I'll put it together.
+> 
+> I still think it would be easier to reason about, long term, if we
+> could get away with storing the cap_eff of the process which creates
+> the user namespace, and check (ns-targeted) the capabilities of any task
+> trying to setns to it against that.
