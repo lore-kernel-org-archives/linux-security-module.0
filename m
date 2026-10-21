@@ -1,61 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.122
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792590856;
-	b=tIRVry9uLcQhMXXb/Vj8UE/kZgpqkaIt8eVebFfbM2rU7vhlpG9b/xV52FkWJ6BR4WCO
-	 WHwoPj0d4Hu93OR/M8nxrG30dGdyuvd/O8qi/bt6Z2zKKqPcVR8JMICDBU3xnqJV4BCMo
-	 biWKvTmIGZAEAb3GXi90zJ0BVN8pIfTdPnicJDaPsWdrYcT0jrZi1gaZ2JRf7i1mlSzWm
-	 C6INYLwFzxgqD17hBB7R8ews0TI+Ywuv6/qV5UQ7iUwCba0nxbLaPtSEFfd47hKsEfNU7
-	 sml+pPYpi0ZcQUoOw9OhTwX2MqPJx3mQvoDuwivTqO3s+qcllF3c5+jnVqkcwMnOtcQ==
+	t=1792591933;
+	b=vlw1pMwmF9Ep2+JtcTacF7aYJDUAhBHsmoUDVSKWKoiEZgwBVn+5NHxdkyMOffOFhX1P
+	 j4ouYprGMFtaTcCmKfURcC/Ebcuo9rYDq2GcAZwAPTOj+AU2uB4mcjjA1WXwHdWkprxYG
+	 j5QlZV0UwNPYcpW72WPng7JxU1GnkgKYhZy/v01dJjHtJB/wnrRKBcLU+omnWStAOXiyN
+	 ks8FlwkILqjbw9Ll0xTdJkCP0GZ1qrmKNOZ4ZKTgozcGsFY0YMOK3eLXgCYgg3ClxjtAQ
+	 XgB9xSUpqgzyF44JUKI43LQT5DvNFOts+bgmImdHHJVLTaII99hLTKc3u6HE2Rff6DQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792590856;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=FDNNWaOPtMA9qs4CREujGnfrcXs+rMZ9c2Bi8CYQVb0=;
-	b=b8FHg1SsXMRC/++MYW4jUCYS6N0kLoy+hhfhiWiYaHJH5HfeseihL/cDMW958XhfMcfj
-	 qYu1UOrdzETKro0nQz3sHZdIT3ZQFd8TvHY4K/nBS8P/nUvtJxbb3YorEgM3Vbip+Hw/4
-	 58pTKZf6La81OSY++WKrktYiVUhCzyGBuki5pEULEgGzMDCIsK1hXEsN64jrhdUqzklXu
-	 uPB5iV+zToByN5/iIzksofP9cbHuqdhlx2V9PICTXiEiDJHvodMipZm10u7Dra5uUjER8
-	 idcCOfJdaADKfUv87p33Spy4ArNb+EKfFGeOqMpdBvRDqd3eGjMe4n6NjSodRy1x/4w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792591933;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:
+	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
+	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
+	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=SzXQb/ZXDrEukw06IuArBIagX+lqQulNXu92nJyQMUI=;
+	b=Yftyx1pB8jVDNbhj+OOJKtU7MwZIfmHuwcDZKgCS6+zirx4MQhrm2BSHJiYvvLFmSA49
+	 9SZs+hUFPLNBWh6E2vuL6IFAvWklrOdQzckpqpwPbHJtPDNO1SN5NhAVRg/O90DJkd4yy
+	 ytDOQ0mloqjRMiUVZkmlhxLWMGulqxgUzqkVS+hwSyTP/p7S9FaQtjofshv3OwGNzigLC
+	 o6UoaVJB2aUtHSkHDlLt6kg5sqViBmMdVWrFR+vqHvbMgSAjrDb9jmUpJWpOfIiBN7R87
+	 A+U9KHTPnBxbZD0xYnzgPhwlcy/c+XHaeyLKs2RZbrgdJgUWrpCr7TTsshrLjdzaY0w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YGoJ44vj;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=canonical.com;
+	spf=pass smtp.mailfrom=canonical.com;
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=KD8tcyYk;
+	arc=none smtp.remote-ip=185.125.188.122
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D93A606A31E;
-	Wed, 21 Oct 2026 13:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F5A606A319
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 14:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B3F5A606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YGoJ44vj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99DD1F000C5;
-	Wed, 21 Oct 2026 13:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792590855;
-	bh=FDNNWaOPtMA9qs4CREujGnfrcXs+rMZ9c2Bi8CYQVb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YGoJ44vjhGHr+aR0tbIV9YuvFaXJilSwaP7iIwHF22YUtS+pJjG4dUZH3SIAKsgPy
-	 1rIMCeUkr+U+bFVVn1ybFnMl3TJiJ1yF7LtcyJ5ZLKsL6dwgMIe7szO7AeQ/agA5lG
-	 KUZDM0Ll+g3L9bgTCJioNUVgFqnyrUJlzmlBPMGUPyaFtHGAW8VHLEVeLgJVQZzHHi
-	 gbaZO80Lhe8V7RqkHKbZWxo5GGIIwj+FHLK70aAMSzS+4Djfe2wbTDdMqQ/3iQ0ak7
-	 6WcYvKYviL3G2ApmUj4IBSzqIXep7Jud10PEgLW5KVFv1MvW+40z0XsX9tRQvQxcx0
-	 FSzDobcDbR8Iw==
-Date: Wed, 21 Oct 2026 15:54:07 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Fan Wu <wufan@kernel.org>
-Cc: manuelh@nvidia.com, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Andrew Halaney <andrew@amutable.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
-Message-ID: <20261021-groll-donnerstag-erfuhren-ce34a0ed4e97@brauner>
-References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
- <20261019-b4-ipe-keyring-rfc-v1-1-156f0b93e843@nvidia.com>
- <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org>
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=KD8tcyYk
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E174A40264
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 14:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1792591929;
+	bh=SzXQb/ZXDrEukw06IuArBIagX+lqQulNXu92nJyQMUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=KD8tcyYkNHXoqC3vFZQw2WUqKfODUrEA3hSVLppU9rWSSyPUql5NVxYris9Y6lfb9
+	 W4jcoapkYMm2FJVwHcar3G3uVOOx8HJP97kzrCgcRABGcDiC+8TbSpm9g0Q9Z1QyZq
+	 8yVBUdyhMfrzhUsBnrc0/uTi37+3VQudjxQjGDi2luj64Qm6g3cUGLNk4DXc9dSlJn
+	 PbOD6kNYz2nfVM2lkfb8xdv6LXHraUHy31Ld1AqQdApIu2hyG9Sv4HPmBijFxHXkj2
+	 ueHTie9A+SCFGsHAx4EgpbLofajVS4M2DcqmcCjzYMYlHpb6Wo3mi1fskFI7OUaKRd
+	 g8KBMPUzQMuc+wDKr8BQag/Zqp74i/cqVjpTUNfaa/ZYQZTO4ImDCAy3U9VPPi4THB
+	 1kk0FsgLFa+7c4CO6R6OeTLB7fd3U4njh1Vo2l4p0zJ6srnzqVaRfaqEgjOKlg6EVI
+	 y5mJMvuuhC0+W4zm4YpGLzOUwLK/mKao4wzv83BEtxwJ9MASMl1yP7uDqeg9cn/HgB
+	 IzwH3HaOBMffATf7fD/dbH2V+Dnq0zG/1L/rTpL6WScdGOa0/BNlUwiIGC01YUa5Kq
+	 GMVb58/S3CiCgaUiyBOyODH4BFKUE5grAArzkr0jVdD43szCnegce7t/Hwe+l8Q0kn
+	 oCpYy9QrWm0fWIkigssXpci4=
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-5eabb3a1bd8so657377e0c.0
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 07:12:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792591928; x=1793196728;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:from:content-language:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=SzXQb/ZXDrEukw06IuArBIagX+lqQulNXu92nJyQMUI=;
+        b=qJ5Q/hNDTtws6lY1NeCJ7TiSrL9Cf7VA+HcrA2UfD8XIT+H2fzvaBMtG7ku/xA1+xv
+         xEEeGtyG6nYANeOGvYFymJXzTk3mvMdOy0cD6DrlWQRwhtZ3PqLZ/yJAZIqJwXBydIPw
+         cGDYa0nfXChNjDX76Ep5CsJpFp3VzykQ2q+gZUYT0DjhlZ+yET8VERIrKvDN8aRj7m2b
+         7EUc19aD1OzNy1Ypf1J0W6WbzA9+kmHeU/CBL35qsi8hGukBhLOv6q0C+X7iOjr5kKc9
+         +34VXIUTafg9boP39l4OdLqO5pwGx/gkkUPJkaAd2akUdF6coVrwCnaprcgXFX+sIDQS
+         XL4A==
+X-Forwarded-Encrypted: i=1; AKwUvBwxOXqXqiPob2iz0efSBmo+nRcM8xVUcQyAflBtHdjqq0lZhW38/TRYkR8bC1h2CIQ1DqIL83+znyaHnqAin4OymZ4OrVc=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJI+IrLiZGx68FhSL6BEWCDPi5j4X95YzsftvjdRPNTE1kmbPl8
+	Izvpz7eXC+uB6nsP3GaQsaKKplPOfXAffimyzpJguZnMhuFSlS/g3LKdvqrPSnGIgge2KSts5tV
+	zCy5ZeoewgpbqK8Ai6X5he7GxdT6BMetO+fbOUz+Bm9ejq7ECKdLXW10fWbgp6tlUiIfRKNixw4
+	Mlh3f/iKqrziQxSYERcGcxsq0I1uej
+X-Gm-Gg: AYBFou0/5yxMrwJ7UPJ+T0BZoU77wv0WW7GzxV4j7ZJMD1bI1GMx69E1Z9+0AbzMVjr
+	U2hSy2zNN2Ncn9jWwzYKjfC1bdDoKTacjQIKY8F3GNIk/iO3GBMBxSTXGAKTZu/ewmZMOVkpD38
+	/kxAk5RD72zIi4Jy5h6b95R/ABnFmf9sDxj5RZ9oEC+VGctxBDxT/TSi3hLI1kUHxp/lGW0IElr
+	tfxt4fwI6A54qqm0+9cdUttH5Zs4Hgqq1in/MRFV0bbm6B5gDzouvSKJxN2mB8NiQEuY6Gb7nOm
+	0x2Jhgfkt9Zxl7Xqmbv2/2GUcLwC1VEE0v50YdQC6HTptMgnYw+Ge336yFSWpxHqVQs+QzFOOUU
+	j40FkMXodg8in
+X-Received: by 2002:a05:6122:4d09:b0:5ea:e17d:fc73 with SMTP id 71dfb90a1353d-5eaebc1413bmr930787e0c.3.1792591927722;
+        Wed, 21 Oct 2026 07:12:07 -0700 (PDT)
+X-Received: by 2002:a05:6122:4d09:b0:5ea:e17d:fc73 with SMTP id 71dfb90a1353d-5eaebc1413bmr930771e0c.3.1792591927349;
+        Wed, 21 Oct 2026 07:12:07 -0700 (PDT)
+Received: from [172.16.19.55] ([209.178.136.2])
+        by smtp.googlemail.com with ESMTPSA id 71dfb90a1353d-5eae97be251sm3236799e0c.8.2026.10.21.07.12.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2026 07:12:06 -0700 (PDT)
+Message-ID: <b7ef16d3-3c10-4965-923b-ed46863fd3da@canonical.com>
+Date: Wed, 21 Oct 2026 07:12:05 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -65,190 +102,149 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: fix NULL ctx->peer derefs in unix socket ctx
+ updates
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+ Georgia Garcia <georgia.garcia@canonical.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ Aurelien Jarno <aurelien@aurel32.net>
+References: <20260824155822.9214-1-maxime.belair@canonical.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20260824155822.9214-1-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 19, 2026 at 04:15:57PM -0700, Fan Wu wrote:
+On 8/24/26 08:58, Maxime Bélair wrote:
+> aa_unix_file_perm lazily refreshes the AppArmor context cached on a unix
+> socket. Two of the helpers it uses assume ctx->peer has already been set:
 > 
+> 	update_peer_ctx ->  l = aa_label_merge(old, label, GFP_ATOMIC);
+> 	update_sk_ctx   ->  } else if (aa_label_is_subset(plabel, old)) {
 > 
-> On 10/19/2026 2:40 PM, Manuel Huber via B4 Relay wrote:
-> > From: Manuel Huber <manuelh@nvidia.com>
-> > 
-> > Add a dedicated .ipe keyring for IPE policy signature verification,
-> > modeled after the .dm-verity and .bpf keyring implementations.
-> > 
-> > With this, userspace can provision its own keys into the keyring,
-> > then restrict it and activate it for IPE policy signature verification.
-> > 
-> > This enables scenarios in which a trusted userspace component generates
-> > an IPE policy, and creates an ephemeral policy-signing key pair,
-> > provisions its public certificate, and restricts the IPE keyring during
-> > the early lifetime of a system. The trusted component can then sign the
-> > IPE policy, destroy the private key, and load and activate the policy.
-> > During that phase, the system is considered in a trusted state whereas
-> > the system transitions into a possibly untrusted state afterwards,
-> > running arbitrary user-provided applications. In such a scenario, the
-> > trusted userspace component could reside on a dm-verity protected
-> > rootfs disk, and applications would reside on additional dm-verity
-> > protected disks. The latter disks would be dynamically attached and
-> > their dm-verity root hashes and/or signatures not known a priori to
-> > launching the system.
-> > 
+> where @old is ctx->peer. Neither aa_label_merge nor aa_label_is_subset
+> allows NULL. So both fault on the aa_label->size load.
 > 
-> You might need to explain why the existing keyrings, i.e. builtin/secondary/platform cannot be used in your scenario. Like the firmware is not trusted?
+>    BUG: kernel NULL pointer dereference, address: 000000000000004c
+>    RIP: 0010:__aa_label_next_not_in_set+0xb/0xd0
+>    Call Trace:
+>     aa_label_is_subset+0x3f/0x70
+>     aa_unix_file_perm+0x5e8/0x9d0
+>     aa_file_perm+0x45a/0x550
+>     apparmor_file_permission+0x44/0xb0
+>     security_file_permission+0x40/0x100
+>     rw_verify_area+0x56/0x180
+>     vfs_write+0x7c/0x480
+>     ksys_write+0xbf/0xf0
 > 
-> > A concrete usage scenario could be Kata Containers, which enables
-> > running Kubernetes pods in ephemeral, headless utility VMs, possibly
-> > without systemd. The rootfs disk is static and known beforehand, but
-> > containerd's image layers might be acquired and transported into the
-> > VM using the erofs snapshotter and dynamic block device attachment
-> > using dm-verity.
-> > 
-> > Signed-off-by: Manuel Huber <manuelh@nvidia.com>
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt |  9 +++
-> >  security/ipe/Makefile                           |  1 +
-> >  security/ipe/ipe.c                              |  2 +
-> >  security/ipe/keyring.c                          | 79 +++++++++++++++++++++++++
-> >  security/ipe/keyring.h                          | 16 +++++
-> >  security/ipe/policy.c                           | 10 ++++
-> >  6 files changed, 117 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index e75344f4e0cd..fd508dd779ed 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -2733,6 +2733,15 @@ Kernel parameters
-> >  			Determine whether IPE starts in permissive (0) or
-> >  			enforce (1) mode. The default is enforce.
-> >  
-> > +	ipe.keyring_unsealed=
-> > +			[IPE]
-> > +			Format: <bool>
-> > +			When set to 1, leave the IPE policy keyring
-> > +			unsealed after initialization so userspace can provision
-> > +			keys. Once the keyring is nonempty and restricted, it is
-> > +			searched during policy-signature verification. The default
-> > +			is 0, which creates the keyring restricted and empty.
-> > +
+> ctx->peer is only recorded for stream connections and socket pairs.
+> unix_dgram_connect sets unix_peer(sk) without going through that path,
+> so a connected AF_UNIX datagram socket has unix_peer(sk) set while
+> ctx->peer is still NULL, and the first write that needs revalidation
+> reaches the helpers above.
 > 
-> I would prefer a Kconfig CONFIG_SECURITY_IPE_KEYRING default to N instead, like the fsverity keyring. In the kconfig you can also describe in which cases should this option be turned on. 
+> Both derefs date back to the Fixes: commit, but the update_sk_ctx() one
+> was dormant until commit 4483efe4f215 ("apparmor: fix shadowing of plabel
+> that prevents cache from being updated") stopped @plabel being shadowed,
+> which is why bisecting the oops lands there.
 > 
-> >  	ipe.success_audit=
-> >  			[IPE]
-> >  			Format: <bool>
-> > diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-> > index 2ffabfa63fe9..109e736696a5 100644
-> > --- a/security/ipe/Makefile
-> > +++ b/security/ipe/Makefile
-> > @@ -20,6 +20,7 @@ obj-$(CONFIG_SECURITY_IPE) += \
-> >  	hooks.o \
-> >  	fs.o \
-> >  	ipe.o \
-> > +	keyring.o \
+> A NULL @old just means no peer label has been recorded yet, so install
+> the label directly instead of merging or comparing against it.
 > 
-> with Kconfig this can be obj-$(CONFIG_IPE_KEYRING) += keyring.o
-> 
-> >  	policy.o \
-> >  	policy_fs.o \
-> >  	policy_parser.o \
-> > diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-> > index 495bb765de1b..f5232f850dc2 100644
-> > --- a/security/ipe/ipe.c
-> > +++ b/security/ipe/ipe.c
-> > @@ -7,6 +7,7 @@
-> >  #include "ipe.h"
-> >  #include "eval.h"
-> >  #include "hooks.h"
-> > +#include "keyring.h"
-> >  
-> >  extern const char *const ipe_boot_policy;
-> >  bool ipe_enabled;
-> > @@ -97,4 +98,5 @@ DEFINE_LSM(ipe) = {
-> >  	.init = ipe_init,
-> >  	.blobs = &ipe_blobs,
-> >  	.initcall_fs = ipe_init_securityfs,
-> > +	.initcall_late = ipe_keyring_init,
-> >  };
-> > diff --git a/security/ipe/keyring.c b/security/ipe/keyring.c
-> > new file mode 100644
-> > index 000000000000..ea8d164b62a6
-> > --- /dev/null
-> > +++ b/security/ipe/keyring.c
-> > @@ -0,0 +1,79 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-> > + */
-> > +
-> > +#include <linux/cred.h>
-> > +#include <linux/err.h>
-> > +#include <linux/key.h>
-> > +#include <linux/moduleparam.h>
-> > +
-> > +#include "ipe.h"
-> > +#include "keyring.h"
-> > +
-> > +static struct key *ipe_keyring __ro_after_init;
-> 
-> You can remove static here then the other ipe code can directly use the variable instead of a function call. 
-> 
-> > +
-> > +static bool ipe_keyring_unsealed __ro_after_init;
-> > +
-> > +/* Set the right module name for built-in parameters. */
-> > +#ifdef KBUILD_MODNAME
-> > +#undef KBUILD_MODNAME
-> > +#define KBUILD_MODNAME "ipe"
-> > +#endif
-> > +
-> > +module_param_named(keyring_unsealed, ipe_keyring_unsealed, bool, 0444);
-> > +MODULE_PARM_DESC(keyring_unsealed, "Leave the IPE keyring unsealed");
-> > +
-> 
-> ...
-> 
-> > +
-> > +/**
-> > + * ipe_keyring_init() - Allocate and configure the IPE keyring.
-> > + *
-> > + * Return: Always %0. A failure leaves IPE without its dedicated keyring.
-> > + */
-> > +int __init ipe_keyring_init(void)
-> > +{
-> > +	struct key *keyring;
-> > +	int rc;
-> > +
-> > +	keyring = keyring_alloc(".ipe", GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-> > +				current_cred(),
-> > +				KEY_POS_SEARCH |
-> > +				KEY_USR_VIEW | KEY_USR_READ | KEY_USR_WRITE |
-> > +				KEY_USR_SEARCH | KEY_USR_SETATTR,
-> > +				KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
-> > +	if (IS_ERR(keyring)) {
-> > +		pr_err("failed to allocate keyring: %ld\n", PTR_ERR(keyring));
-> > +		return 0;
-> 
-> You might need to panic here like the fsverity kerying.
-> 
-> > +	}
-> > +
-> > +	if (!ipe_keyring_unsealed) {
-> > +		rc = keyring_restrict(make_key_ref(keyring, true), NULL, NULL);
-> > +		if (rc) {
-> > +			pr_err("failed to restrict keyring: %d\n", rc);
-> > +			key_revoke(keyring);
-> > +			key_put(keyring);
-> > +			return 0;
-> > +		}
-> > +	}
-> 
-> This looks kind of awkward, like if unseal is not set, it can create an empty keyring then immediately seal it. I would switch to the fsverity's approach to let userspace seal it.
+> Fixes: 88fec3526e84 ("apparmor: make sure unix socket labeling is correctly updated.")
+> Reported-by: Aurelien Jarno <aurelien@aurel32.net>
+> Closes: https://bugs.debian.org/1145111
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
 
-Please don't start breaking an established pattern that works well.
-We're now using this with both bpf and dm-verity with
-systemd-keyring-setup. The point is that the keyring is intentionally
-inactive unless it is sealed and restricted. That is part of the
-security model. fsverity is used as soon as any key is enrolled which
-doesn't give userspace a throwaway the key moment.
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+this has been pulled into the apparmor tree
+
+> ---
+>   security/apparmor/af_unix.c | 20 ++++++++++++--------
+>   1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/security/apparmor/af_unix.c b/security/apparmor/af_unix.c
+> index b908e744818c..d04d9cd268aa 100644
+> --- a/security/apparmor/af_unix.c
+> +++ b/security/apparmor/af_unix.c
+> @@ -682,7 +682,7 @@ static void update_sk_ctx(struct sock *sk, struct aa_label *label,
+>   		if (old == plabel) {
+>   			rcu_assign_pointer(ctx->peer_lastupdate,
+>   					   aa_get_label(plabel));
+> -		} else if (aa_label_is_subset(plabel, old)) {
+> +		} else if (!old || aa_label_is_subset(plabel, old)) {
+>   			rcu_assign_pointer(ctx->peer_lastupdate,
+>   					   aa_get_label(plabel));
+>   			rcu_assign_pointer(ctx->peer, aa_get_label(plabel));
+> @@ -700,13 +700,17 @@ static void update_peer_ctx(struct sock *sk, struct aa_sk_ctx *ctx,
+>   	spin_lock(&unix_sk(sk)->lock);
+>   	old = rcu_dereference_protected(ctx->peer,
+>   					lockdep_is_held(&unix_sk(sk)->lock));
+> -	l = aa_label_merge(old, label, GFP_ATOMIC);
+> -	if (l) {
+> -		if (l != old) {
+> -			rcu_assign_pointer(ctx->peer, l);
+> -			aa_put_label(old);
+> -		} else
+> -			aa_put_label(l);
+> +	if (!old)
+> +		rcu_assign_pointer(ctx->peer, aa_get_label(label));
+> +	else {
+> +		l = aa_label_merge(old, label, GFP_ATOMIC);
+> +		if (l) {
+> +			if (l != old) {
+> +				rcu_assign_pointer(ctx->peer, l);
+> +				aa_put_label(old);
+> +			} else
+> +				aa_put_label(l);
+> +		}
+>   	}
+>   	spin_unlock(&unix_sk(sk)->lock);
+>   }
+
