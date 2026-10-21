@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=173.212.254.19
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792552568;
-	b=0yxpM2eCZnzi1xKyNrFueADAldz8mzUfqjBOVOG7TwW558EnUrh81fPVgOM2v4sbJe7E
-	 nL+HJSDOsK946XS4bsB+58pZlH7AlVrRSj3Z4JuubQbERIoNUBhpGbIsqS/2HNycbAK5U
-	 Wzx/s0V3ZF3GEYh8Jth/ocEySL1UK+Onc2qOqUHBfCSbFzlJpVULN0VhRP09wJQMeeXqs
-	 I8R/v+GE/gp0dCh6nVxhkcwPHTcwbup6lKt55zNa7r1K/Z30/H+dFfoc94+bmw77WBNAl
-	 V3bLwV1KPSjne1T0FS3aENqzUIvycx79bVqtCAJt0Uiz9SUT7GV2whrMVcDIEZ+CCnA==
+	t=1792552575;
+	b=1p36JJWZaeTjT01OnQniD26jUzO+LZh8bXjTsUVnkxZnf/tsdPI6TUR4kTFM7yXfu5/B
+	 rman9fvjBBVDmAEzzdTi9Rz8yeUCWo/17jGLwdSBdFFTe0MQFsnF8vfuOpDK9qROjD7kI
+	 YGR1yoFXXsY1IW7n41MQHF9XYBZQLYf3kcxhrCMIfI856ztGgfQY0N9Mo6s4ZsSAPIJTL
+	 nE8fT+lesRNxWtV8UUv/LSFS7SF3kwYhIdolDL57gQ+nLmLmSI87xpYjg1NFp9uIgotsW
+	 pi+3pakcXVEH5HvOn03qpgW6CPhA3ziQEatB2Qg8TUEfUK2VKTIxnA85y/yJ2ceY0cA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792552568;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792552575;
 	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:In-Reply-To:
 	 References:From:Subject:To:Cc:Date;
-	bh=ib0nlJadXDep+U14bwYxShdaxBEBbQPpAy7Z/Ymc78U=;
-	b=TvBzOF6RMiYOzZNQS/KJ6MlDurEB7vKTgcQD4PvUrQah4YtHRv3xdvPDhsj0CNc4v6k7
-	 SvlHRbI7+Cp+04AaXq4+MwRJsQUGMsuWm/TpX5KeR8f+nJXeQ7PQUstS73yOthQgdZcyp
-	 wQ/72NXtflqVWmmHTFvRGGvhFks9GVwLXPDq1TVixPJvQndnRC+qFbSjXvriDvsHx2f/9
-	 A+jypv6JN9F29lHiCJ5bCzwRLlLl8eGqczhf4mmxcdxP53eR+p+1YI64WIkkpJKhUEQjq
-	 gHe0Vm9ugj4Fan6B4r+E+du5fKHtJ2HsR5QWBfQ8lKIa5AyTkTNEZ1xFOHlV3vkw1kg==
+	bh=uKOjlqXGHLJlkCL9f8d9rTFDqw8tpf+tLxaHjmSpkKA=;
+	b=0Un7N6cx1zehA3UFalbOhCndMLr7ta6yfoo4eao19b00PIXwxYJTrDupgB42THNs471n
+	 swrUSwaXOCEF3PPkT8DVCxKJzJXPWDzfPRIyAnnwnqU+5fQfQGlQgsAkeVvqpsbhqf4YD
+	 hyB8lcZ+zMei9O5beNeYHKSR+ChT3OBFxk4ftDIBI3L91NCz8mDZHKicA2T9wiY4fesv6
+	 +7vvvB72EC2sM0zfmT1oa10tUqA7Y9yYL8EuO+Uv9CmeKyZWxOTtDJsF4SjVN3gBQAIt6
+	 D88WLLto+iz819lAdKFgY30arcH8I7coXQnrD6NKB01dg4sEre4DPR1Pm3/44TNnQoA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=tuxist.de;
 	spf=fail smtp.mailfrom=tuxist.de;
-	dkim=pass header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=kBnyzixn;
+	dkim=pass header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=Gv9RjMyE;
 	arc=none smtp.remote-ip=173.212.254.19
 Received: from groupware.tuxist.de (groupware.tuxist.de [173.212.254.19])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F4460A3803;
-	Wed, 21 Oct 2026 03:16:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B2F4460A3803
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BC760A3828;
+	Wed, 21 Oct 2026 03:16:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9BC760A3828
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tuxist.de
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=tuxist.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=kBnyzixn
+	dkim=pass (2048-bit key, unprotected) header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=Gv9RjMyE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tuxist.de; s=201705;
-	t=1792552565; bh=/svxbILxTL0TSYd/4NFPp7T2dgkN7SzVLTbqNFSVtUs=;
+	t=1792552572; bh=U300U6JBBikbKqzajlQay6DlU/YNXPzZuXT3M0eIs4w=;
 	h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-	b=kBnyzixnDL7eQ84r0eIxGen66YxJNnYDaNye9yyMZ2/NHe99jzC5joblq2ox6cUYY
-	 Si5eD99tl/eewnwZPi/VH7418FgjuuaYPiEN8fv5qj38ptaJfnbrom9DgibLExDqna
-	 gTrhYCn2TG82pwJ5BKVUBDBxZeBwiR5wb5eJBcyagVkQof2amMQphExTn4jBVwdky/
-	 DF5c1ND/8XfmPMjUAcWLjMS3IOdG2eYlg2ew1jG11VC02BKAIO42IsFZ93s4SPuzmA
-	 0B/rrdhed14oWzsEPOtyBpG9Ko+WugpTBq/hXY7Z1+j6K7vn6fSDjbSpKvb8DGcJ1C
-	 r2BmpYdWGk7qw==
+	b=Gv9RjMyEN8DbUWWtlROM7CV/VPVlno1DteTYy1x7+1M9V/i8RwaxOw6oJzeNuTbLz
+	 ixX2I/stDeS4UAUFFgMCT5fjyvgHP4ZOoLMqw1PfgCw1TPOTmxFWk1dFlVcNHa5fHN
+	 N9BBl/EmRaapJtzyksGHAGehIgqlLcySEG21zDVoIAKQZYkCVQ6lzSyqpTvfVMbZZz
+	 VOAKO5Q8PjSlEH03zYu5l0CF6lVzcrfsbuyqGxOKuBFhNZy9huAnhMvTiNX0YC1Xvi
+	 LxOhMkutE2vjhlCwKBcfVIGkBjX1y4FJTvacXdcTmG5TIYbduv4qONCSz1P9ZMZCeF
+	 5rzVX5lxx9IXQ==
 Received: from [10.1.1.106] (unknown [10.1.2.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by groupware.tuxist.de (Postfix) with ESMTPSA id 2F5978A08DF;
-	Wed, 21 Oct 2026 05:16:05 +0200 (CEST)
-Message-ID: <f9cecad11d5acce30303f25861d7e9f25daecc88.1792552161.git.jan.koester@tuxist.de>
+	by groupware.tuxist.de (Postfix) with ESMTPSA id 277538A092D;
+	Wed, 21 Oct 2026 05:16:12 +0200 (CEST)
+Message-ID: <91ba959f368000c0946cb846af3cbb8c97f7e005.1792552161.git.jan.koester@tuxist.de>
 In-Reply-To: <cover.1792552161.git.jan.koester@tuxist.de>
 References: <cover.1792552161.git.jan.koester@tuxist.de>
 From: Jan Koester <jan.koester@tuxist.de>
-Subject: [RFC PATCH v2 13/41] ublk: refuse unprivileged devices to UUID and
- GUID users
+Subject: [RFC PATCH v2 15/41] SUNRPC: name UUID and GUID users to gssd as
+ uid_r=
 To: Christian Brauner <brauner@kernel.org>,
     Alexander Viro <viro@zeniv.linux.org.uk>,
     "Serge E. Hallyn" <serge@hallyn.com>
@@ -70,7 +70,7 @@ Cc: Jan Kara <jack@suse.cz>,
     audit@vger.kernel.org,
     keyrings@vger.kernel.org,
     linux-kernel@vger.kernel.org
-Date: Wed, 21 Oct 2026 05:15:33 +0200
+Date: Wed, 21 Oct 2026 05:15:35 +0200
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -80,70 +80,107 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-The owner of an unprivileged ublk device is recorded in 32 bit fields of
-struct ublksrv_ctrl_dev_info, and only the owner may open the disk. A
-UUID or GUID user comes out as -1 there, like every other one, so they
-could open each other's devices.
+gssd learns the user of an upcall as a 32 bit uid. UUID and GUID users
+would all reach it as the overflow uid and share its credentials.
 
-Fail the creation of unprivileged devices by such users with
--EOVERFLOW, and never let such a user pass the owner check.
+In the text (v1) upcall, name such a user as uid_r= with the text form
+of the id instead of uid=. gssd versions that don't know uid_r= find no
+uid= and refuse the upcall, so nobody ends up with the overflow uid's
+credentials; where gssd's user namespace can't see the user, the upcall
+names no user at all and fails the same way.
+
+A downcall for such a user starts with uid -1, which is never valid,
+followed by the user as __kernel_uid_r_t; downcalls for classic uids are
+unchanged.
+
+The binary (v0) upcall has room for a 32 bit uid only: fail it with
+-EACCES for UUID and GUID users.
 
 Assisted-by: Claude:claude-opus-5-5
 
 Signed-off-by: Jan Koester <jan.koester@tuxist.de>
 ---
- drivers/block/ublk_drv.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ net/sunrpc/auth_gss/auth_gss.c | 44 +++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 66eb55e716..8125b79c87 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1324,7 +1324,12 @@ static void ublk_free_disk(struct gendisk *disk)
- 	ublk_put_device(ub);
- }
+diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
+index 8ddc65e894..5e9e2cf4e9 100644
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -18,6 +18,7 @@
+ #include <linux/sched.h>
+ #include <linux/pagemap.h>
+ #include <linux/sunrpc/clnt.h>
++#include <linux/uidgid_r.h>
+ #include <linux/sunrpc/auth.h>
+ #include <linux/sunrpc/auth_gss.h>
+ #include <linux/sunrpc/gss_krb5.h>
+@@ -438,10 +439,23 @@ static int gss_encode_v1_msg(struct gss_upcall_msg *gss_msg,
+ 	struct gss_api_mech *mech = gss_msg->auth->mech;
+ 	char *p = gss_msg->databuf;
+ 	size_t buflen = sizeof(gss_msg->databuf);
++	char idbuf[KID_STR_LEN];
+ 	int len;
  
--static void ublk_store_owner_uid_gid(unsigned int *owner_uid,
-+/*
-+ * The owner of an unprivileged device is kept in 32 bits: -EOVERFLOW for
-+ * a UUID or GUID user or group, which all would come out as -1 and so
-+ * pass for each other.
-+ */
-+static int ublk_store_owner_uid_gid(unsigned int *owner_uid,
- 		unsigned int *owner_gid)
- {
- 	kuid_t uid;
-@@ -1334,6 +1339,7 @@ static void ublk_store_owner_uid_gid(unsigned int *owner_uid,
- 
- 	*owner_uid = from_kuid(&init_user_ns, uid);
- 	*owner_gid = from_kgid(&init_user_ns, gid);
-+	return uid_is_legacy(uid) && gid_is_legacy(gid) ? 0 : -EOVERFLOW;
- }
- 
- static int ublk_open(struct gendisk *disk, blk_mode_t mode)
-@@ -1355,9 +1361,8 @@ static int ublk_open(struct gendisk *disk, blk_mode_t mode)
- 	if (ub->dev_info.flags & UBLK_F_UNPRIVILEGED_DEV) {
- 		unsigned int curr_uid, curr_gid;
- 
--		ublk_store_owner_uid_gid(&curr_uid, &curr_gid);
--
--		if (curr_uid != ub->dev_info.owner_uid || curr_gid !=
-+		if (ublk_store_owner_uid_gid(&curr_uid, &curr_gid) ||
-+		    curr_uid != ub->dev_info.owner_uid || curr_gid !=
- 				ub->dev_info.owner_gid)
- 			return -EPERM;
+-	len = scnprintf(p, buflen, "mech=%s uid=%d", mech->gm_name,
+-			from_kuid_munged(userns, gss_msg->uid));
++	/*
++	 * A UUID or GUID user is uid_r= in its text form instead of uid=,
++	 * which gssd versions that don't know it reject rather than taking
++	 * an overflow uid. Where gssd can't see the user at all, there is
++	 * neither, and the upcall fails.
++	 */
++	if (uid_is_legacy(gss_msg->uid))
++		len = scnprintf(p, buflen, "mech=%s uid=%d", mech->gm_name,
++				from_kuid_munged(userns, gss_msg->uid));
++	else if (kuid_has_mapping(userns, gss_msg->uid))
++		len = scnprintf(p, buflen, "mech=%s uid_r=%s", mech->gm_name,
++				kuid_str(gss_msg->uid, idbuf));
++	else
++		len = scnprintf(p, buflen, "mech=%s", mech->gm_name);
+ 	buflen -= len;
+ 	p += len;
+ 	gss_msg->msg.len = len;
+@@ -536,6 +550,15 @@ gss_alloc_msg(struct gss_auth *gss_auth,
+ 	err = vers;
+ 	if (err < 0)
+ 		goto err_free_msg;
++	/*
++	 * The binary v0 upcall is a 32 bit uid: UUID and GUID users would
++	 * all be the overflow uid there and share its credentials.
++	 */
++	if (vers == 0 && !uid_is_legacy(uid)) {
++		put_pipe_version(gss_auth->net);
++		err = -EACCES;
++		goto err_free_msg;
++	}
+ 	gss_msg->pipe = gss_auth->gss_pipe[vers]->pipe;
+ 	INIT_LIST_HEAD(&gss_msg->list);
+ 	rpc_init_wait_queue(&gss_msg->rpc_waitqueue, "RPCSEC_GSS upcall waitq");
+@@ -752,7 +775,22 @@ gss_pipe_downcall(struct file *filp, const char __user *src, size_t mlen)
+ 		goto err;
  	}
-@@ -4744,7 +4749,9 @@ static int ublk_ctrl_add_dev(const struct ublksrv_ctrl_cmd *header)
- 	}
  
- 	/* the created device is always owned by current user */
--	ublk_store_owner_uid_gid(&info.owner_uid, &info.owner_gid);
-+	if (ublk_store_owner_uid_gid(&info.owner_uid, &info.owner_gid) &&
-+	    (info.flags & UBLK_F_UNPRIVILEGED_DEV))
-+		return -EOVERFLOW;
- 
- 	if (header->dev_id != info.dev_id) {
- 		pr_warn("%s: dev id not match %u %u\n",
+-	uid = make_kuid(current_user_ns(), id);
++	/*
++	 * A uid of -1, never valid, is followed by a __kernel_uid_r_t: the
++	 * reply to a uid_r= upcall of a UUID or GUID user.
++	 */
++	if (id == (uid_t)-1) {
++		struct __kernel_uid_r id_r;
++
++		p = simple_get_bytes(p, end, &id_r, sizeof(id_r));
++		if (IS_ERR(p)) {
++			err = PTR_ERR(p);
++			goto err;
++		}
++		uid = make_kuid_r(current_user_ns(), &id_r);
++	} else {
++		uid = make_kuid(current_user_ns(), id);
++	}
+ 	if (!uid_valid(uid)) {
+ 		err = -EINVAL;
+ 		goto err;
 -- 
 2.56.0
 
