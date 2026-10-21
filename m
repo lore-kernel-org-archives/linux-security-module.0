@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792616849;
-	b=KLthIDMunN8wBEhsNWx3W+qP80McxjOYRCGMnhiW1UzE4BahYeqA0getZZ6bR5hQk0rH
-	 LLZF/T25COCiNjJN0dsip4wxyKjpb8/f75HhBxuIpBwRo1JNmtXlAes8THPmkzMmIn0tT
-	 lfenbYDSFEIU1+MAwrnZMnp+HffJ/OusmE2nSHOhfAexTAFK4pA3eDz9y7fi2r6gqt39t
-	 iVa7BNgQ6MowissQmEDtbrZH2DzbICkh12Khx8XBgnjfb8Ueg4sX/HswYQhUY9HGW/qBk
-	 kmJU4Vy4XfCkjEwn7GfHoUVjzggD9WCqVVk/OrUZ9+nOj8Vq4OmGhdadV5iLk93EpUA==
+	t=1792616859;
+	b=wVMw2JDTPsnk+fary5PxBnB1jK7jJ8Q/1MOabaxzAMOnJwyKdzJtGyC2f1rPA6ShIT2O
+	 DBQ5LJBB1mf8QNtyIzfxJ5a9Zp4CWtkJ7hlN0IqA8GKoJLgTolxBKznLZb81iJNU5KKxB
+	 COtPVUT+yn4NO7LB9vIpmvGkuVaPXwjW0sNZMDUgkni1b5+TfxG6/Bc4uI+cqoH2aszvo
+	 rRq+V6EUnxy5plgxPLV+74rRWkzdcFNDeW8kPOEut5gLSKE7GzboLOsBUgT1oo22blSZm
+	 EaBzCt1mJfgTnxPS3GNOmkVCtdFCYvnjL6UKAmpvpzKR1DLjCeQOGMbAGEFRj3pJC3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792616849;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=FYbc5NkIKuLceADs32XiRA2GOTbv4etYMcJmUxCu2eA=;
-	b=HbZFgcKQYevAkooLsjmO9EWzjwVzaps66S+yTVTMCQQj3S7AgL4rivGWn1c72edgpBBe
-	 3jaZouVGnvJw/o56rmUoM9rqMtrgEZvuwAfS88mcfqcfpFb02ug9GC+dpiU3Nk8ts61mF
-	 vb0yhvUqhVgFEYV5i7+PqZsnyspiGkWioBGFFsNHsFhXrFmcxc+iFmcqWd7pTYyluId+M
-	 vOMr5bhFJSldGuZNmR8otXs0kiTW6flpPUCQbE4RWHfs9JegynV0S4nJufXF3vKRJNplv
-	 Wb66S4Z6IsZmcmBTfCcBgoEwemzGkjRvTktnyPni5exAptu80VP1PdSs5NOqGEaKMgA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792616859;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=U28JZfUWwaeywTVTxDJTeCi/ESd+ScF5vSp+cmcmBlc=;
+	b=4i2ODSYS1YU+6TiuElor0iQyNs3paBZE5NhkHCDJGn3+d/yjVIh39hr1v9yx4OnFPwx8
+	 4s01Vxhb7rFPiQRdlOpAEf95rpk+yx43CClRtjHQmfd6lWyojTdtKyL1q8kGZN6ZV0zJW
+	 N3vk93wNM7PFj6m3J02uK1wd0wTdXMu6KInQ5g81NvCtJplQsWtYPGgM/Ir3xYSowKfAj
+	 6cXp6tfFV+4TCGT9zAMBaoKaaSBmLQFvNADbauBVr6G6qOLAsQ5WxnmCl51g6w84fbzWe
+	 e+9AqkAA/eRHHzsEoCbnoxO98acAZ1CwUHz/5wxPylXVwD/QXo1bZvUWDQR4pUMxvDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kbhFAPP1;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YSF28SdS;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 351B7606A31A;
-	Wed, 21 Oct 2026 21:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9BC606A319
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 21:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kbhFAPP1
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 547871F000C1;
-	Wed, 21 Oct 2026 21:07:28 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YSF28SdS
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46A51F000C1
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 21:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792616848;
-	bh=FYbc5NkIKuLceADs32XiRA2GOTbv4etYMcJmUxCu2eA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kbhFAPP1CmNwkpH3mFWZfHbgd+UtfahV7Csjbjz4djbz89vvLbPVEIIwpK02EpT2M
-	 P0gt1VggM/lu6jv+Z2wQYX09MSNqHpQra3pEgJUaKW4Kx67kUX0PpXbtalsLDjKsXq
-	 2Lk/pAPkn0cbuSXcjZeb14x+AypymJ0aetLYd1oEnOHWcQqu5vMIgdqxLp5NKqQ9ee
-	 urOTCZM2niGErqtsNTyEQB+hQRARYNJ6ipEeyRtx4dk5ZLHAx3GcGCVh1Fv0GtOoVO
-	 vlkLYFYOz79thSUlpLb4jBlClEI67fYRjccVzbfpwu1oSjNWbQrHNK5QCNpcaIVB9g
-	 JqnyK6h71z5Cg==
-Date: Thu, 22 Oct 2026 00:07:24 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] KEYS: rhashtable bug fixes
-Message-ID: <atkpjEWI6Ot7FVs3@kernel.org>
-References: <20261020174325.2229448-1-jarkko@kernel.org>
- <atkTgEwRQfh94zeV@kernel.org>
- <20261021200327.GA2210933@google.com>
+	s=k20260515; t=1792616858;
+	bh=U28JZfUWwaeywTVTxDJTeCi/ESd+ScF5vSp+cmcmBlc=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=YSF28SdSomp8QOajXq4q79m022e43QKmWKU4j2AamzxW0ZeZzOTQHHpfvYYwZP2Q9
+	 R9FH2wV/N7wrD/sr7Ig53+WU3p64G7zp12wcHXS943HhZA+A8dMF7aLVnPNQaKHNAe
+	 YvKg8JC2PNhqpUVBorUOKxPP6hUyrxe/wIpxlu5hgHLKamtNBQLR3gDLZ+m3o5riLF
+	 RBE8/s/hbv9jLy6pPqOBzy8G+dA5XOM61OUTrM3UFOOMTETAZoV9F4zRsMhkamoiMQ
+	 ZlmmdZ9s0KoPvWw7TGIqDhrsHNVyhvOHGLph7YdpUaggsauhNUeIEJsUHUQGilEKRv
+	 sJZxPuHU/eqWQ==
+Message-ID: <sashiko-outbox-180684@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 4/5] capabilities: limit fscaps to where CAP_SETFCAP
+ reaches
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261021-b4-setfcap-userns-v3-4-97c7ed4e43e1@toxicpanda.com>
+References: <20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com>
+ <20261021-b4-setfcap-userns-v3-4-97c7ed4e43e1@toxicpanda.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 21 Oct 2026 21:07:38 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,31 +59,130 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261021200327.GA2210933@google.com>
 
-On Wed, Oct 21, 2026 at 08:03:27PM +0000, Eric Biggers wrote:
-> On Wed, Oct 21, 2026 at 10:33:20PM +0300, Jarkko Sakkinen wrote:
-> > On Tue, Oct 20, 2026 at 08:43:18PM +0300, Jarkko Sakkinen wrote:
-> > > My patch set that migrates assoc_array to rhashtable had some LLM
-> > > scavegend bug fixes. Unfortunately most them where either plain wrong or
-> > > not in the right scope. The bug fixes in this patch set are by human
-> > > labour constructed fully but they are derived from what I got out of the
-> > > original LLM source. Thus, they are tagged as LLM assisted.
-> > 
-> > I guess these are ready to be merged? Eric do you have something for
-> > this revision? I already sent -rc1 pull request i.e., I don't mind
-> > to update it if necessary but otherwise I rather would just apply
-> > these.
-> 
-> Looks okay now.
-> 
-> Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> 
-> - Eric
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] capabilities: v2 xattr bypasses setfcap_level check in cap_convert=
+_nscap()
+--
 
-Awesome, thank you.
+commit 06013f196f1052cfc90402268b0b1b3878c33f84
+Author: Josef Bacik <josef@toxicpanda.com>
 
-Br, Jarkko
+capabilities: limit fscaps to where CAP_SETFCAP reaches
+
+This commit updates cap_convert_nscap() in security/commoncap.c to verify
+that both the mount-mapped root uid (vfsrootid) and the filesystem root uid
+(rootid) do not map to uid 0 in a user namespace ancestor above
+task_ns->setfcap_level. This prevents a task that entered a user namespace
+without CAP_SETFCAP from setting file capabilities for an ancestor's root
+user when a privileged task has mapped that uid into the namespace.
+
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index b069142230395..1a419a4a872c8 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -703,10 +703,24 @@ int cap_convert_nscap(const struct mnt_idmap *idmap=
+, struct dentry *dentry,
+>  	if (!vfsuid_valid(vfsrootid))
+>  		return -EINVAL;
+> =20
+> +	/*
+> +	 * The root user may be the root user of ancestors of our namespace as
+> +	 * well.  CAP_SETFCAP that we got for entering it doesn't cover those.
+> +	 * On an idmapped mount the root user is vfsrootid as seen through
+> +	 * this mount and rootid as seen through every other mount of the
+> +	 * filesystem, so both have to stay within reach.
+> +	 */
+> +	if (cap_root_level(vfsuid_into_kuid(vfsrootid), task_ns) <
+> +	    task_ns->setfcap_level)
+> +		return -EPERM;
+> +
+>  	rootid =3D from_vfsuid(idmap, fs_ns, vfsrootid);
+>  	if (!uid_valid(rootid))
+>  		return -EINVAL;
+> =20
+> +	if (cap_root_level(rootid, task_ns) < task_ns->setfcap_level)
+> +		return -EPERM;
+
+[Severity: High]
+Can a v2 xattr bypass these new setfcap_level checks in
+security/commoncap.c:cap_convert_nscap()?
+
+Earlier in cap_convert_nscap(), v2 capabilities take an early return before
+reaching rootid_from_xattr() and the new cap_root_level() checks:
+
+	if (size =3D=3D XATTR_CAPS_SZ_2 && (idmap =3D=3D &nop_mnt_idmap))
+		if (ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP))
+			/* user is privileged, just write the v2 */
+			return size;
+
+Because a task in task_ns has CAP_SETFCAP in task_ns,
+ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP) succeeds whenever fs_ns
+(inode->i_sb->s_user_ns) is task_ns or a descendant of task_ns, regardless
+of task_ns->setfcap_level.
+
+In the scenario from the commit message (task B has uid 0 and CAP_SYS_ADMIN
+without CAP_SETFCAP in init_user_ns, unshares ns1 with ns1->setfcap_level =
+=3D 1,
+and task A writes "0 0 1" to ns1's uid_map), task B can mount a filesystem
+in ns1 (s_user_ns =3D=3D ns1) and write a v2 security.capability xattr
+(size =3D=3D XATTR_CAPS_SZ_2). While a v3 xattr with rootid 0 is rejected w=
+ith
+-EPERM, the v2 write returns early and stores a raw v2 xattr whose root user
+is make_kuid(ns1, 0), which is kuid 0.
+
+If task B in init_user_ns then mounts overlayfs in init_user_ns
+(ovl_sb->s_user_ns =3D=3D &init_user_ns) with that ns1 directory as lowerdi=
+r and
+executes the file in init_user_ns, get_file_caps() checks
+current_in_userns(file->f_path.mnt->mnt_sb->s_user_ns) against
+ovl_sb->s_user_ns (&init_user_ns) and reads the capability through:
+
+  get_vfs_caps_from_disk()
+    __vfs_getxattr()
+      ovl_xattr_get()               [fs/overlayfs/xattrs.c]
+        vfs_getxattr()              [under with_ovl_creds(dentry->d_sb)]
+          cap_inode_getsecurity()   [security/commoncap.c]
+
+In fs/overlayfs/xattrs.c:ovl_xattr_get() (and similarly during copy-up in
+fs/overlayfs/copy_up.c:ovl_copy_xattr()):
+
+	with_ovl_creds(dentry->d_sb)
+		return vfs_getxattr(mnt_idmap(realpath.mnt), realpath.dentry, name, value=
+, size);
+
+And in security/commoncap.c:cap_inode_getsecurity():
+
+	if (is_v2header(size, cap)) {
+		root =3D 0;
+	...
+	kroot =3D make_kuid(fs_ns, root);
+
+cap_inode_getsecurity() resolves kroot to make_kuid(ns1, 0) =3D=3D kuid 0 a=
+nd
+returns a valid v2 capability to get_vfs_caps_from_disk(), granting the file
+capabilities in init_user_ns.
+
+Additionally, if task A maps kuid 0 as a non-zero uid in ns1 (for example,
+"0 1000 1" and "1000 0 1" with ns1->setfcap_level =3D 1), task B in ns1 can
+unshare a child namespace ns2 and map "0 1000 1" in ns2 (permitted by
+verify_root_map() because lower_first is 1000 !=3D 0 in ns1). On a filesyst=
+em
+mounted in ns2 (fs_ns =3D=3D ns2), a caller in ns1 or ns2 writing a v2 xattr
+satisfies ns_capable(ns2, CAP_SETFCAP) and writes an unconverted v2 xattr
+whose root user is make_kuid(ns2, 0) =3D=3D kuid 0 rather than make_kuid(ns=
+1, 0).
+
+Should the v2 fast path in cap_convert_nscap() be moved after the vfsrootid
+and rootid checks (or verify that vfsrootid and rootid match and satisfy
+cap_root_level() >=3D task_ns->setfcap_level before returning size)?
+
+> +
+>  	nsrootid =3D from_kuid(fs_ns, rootid);
+>  	if (nsrootid =3D=3D -1)
+>  		return -EINVAL;
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261021-b4-setfcap=
+-userns-v3-0-97c7ed4e43e1@toxicpanda.com?part=3D4
