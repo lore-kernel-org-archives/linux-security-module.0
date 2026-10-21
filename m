@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792616546;
-	b=lylvVuyVC5rlzuotQ1GIbJTD0+Q6o8lj4/P53/iO328Ay+CwFkVEFZrZBtGw8P0Tkbap
-	 kNtEVSWAtR2ostCFWlfwlouGqTZlbvkuphx82y2ea/aG/OHGNbqEvqNsaeUnpIebmrwEe
-	 giiA0lB/NBgMvGB09SK7CREWYyeiaiHmoFV0JQQPpcJqaA3nZYluoetXcGrfPGpMk2BTu
-	 ZbHsQHNbUJXQN6/nyx353ncgfbBfh4HsDoqtcNnDRhP3QmWNx78QLp7k/Py+j/aeL1eRb
-	 bMnehyz9RRzPTKpj37cqU0olIROJzQ2LYYhh4BWZ9PkWla0TN+ESctZD3PSyd7AfDqQ==
+	t=1792616555;
+	b=2/nRmR80ICZvH0+ZHDr5WnOYpLWd4SGTwpceuDnkOhAJOjQpq9XeYJ4A6lwfsKCUKEIU
+	 ZkP5bRWF6fsqX5SU2eMl52i2UzaJcJ/++0biNPd8LAhE/clGrfC5FXXuUzjhlpyrKQGmb
+	 ImktxQkzMlbSpYlHdiKzArHZaPcAV7y/+lN9P0Q9gU8GEYGfj+4lo34ANpcwMDa8vpzU0
+	 ao5H4Epfmr3ci2wPbB3GVhMwmaG7zQxIuX7ZPN07a537yZCGtHt3E7nFirw+fZR0bqlDq
+	 qm38/hvJ0cm9USWdUGLQhSCZgKKO3yjhlStwKOw5ITYqw4fu1OmUkRZplxw/CBXXwWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792616546;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792616555;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
 	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
 	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
-	bh=6c300qt73sA98//Lr65hEgnfC/Y2y3DlaEkW45zDMNE=;
-	b=cekI9UYr2Bn2k3mZT6aWY2aN8B2qJnGEVqzbSyQXWyPB4cekeSkYJT3tUVayf9MuSru5
-	 XfjU1ciK4TiqJ0jutCWmHWLL8ZBISHeDnfWbVPH7p06TLG/FKde6XLi4wbVAep1Th0XMV
-	 RUDx5ys+r92FrVm+MhetF/gvcbD4TqkI10Ct8sg2fspMFMy91FHRq5JPmX/hy/oWyEaFX
-	 TtoEngoiyfRJa0dzn9S5tQ145CkEG/magwvnt43PSQgKGMlAX6R8SAvg/L+zn3OB4l370
-	 V9DV5IO9mwKYlzk3v2/q0vwxjCH7vs9kb3TGuKDeqL8i7iAwxdt/tyQtyg39rRWjBSg==
+	bh=XkFRux2cvcc2fwND4RnTaahs4/FvfgM3BDyZJBB2wsg=;
+	b=M8CI9eXqsp6f6GivOdJ9w2xmajHLrWMqu+t1KhLOEgonKixQQSa/uYXuUMbmGYBGCs1g
+	 rVuKgws8LuoozRvi7xXcUC340VxfjMzi+lnHjMiCNjA2E2uLXhtzzWTp9L3xDhLQbSmNt
+	 jB9kKuPTus+medRpHXb30pmp2JGFMOa/wUGSfbgInZeAz0e3qRcLA3/WpO2pODRGlKbpl
+	 NGB4W8fBABgu/YE/vPhmSZbyXu34hJqjIAEs1TuXQm8+gkryRZGaOSfBLHqn+ss6hXygp
+	 dVoa33E/n8C//uQiM987pSVFUlcKQ7pR27av8VHMixGIWTtz26OaEnKQsf6tmCXh3LA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.cyber.gouv.fr;
 	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=kOu9SbjX;
+	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=BXQxqPRt;
 	arc=none smtp.remote-ip=51.159.188.251
 Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B16606A322;
-	Wed, 21 Oct 2026 21:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98B16606A322
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFF1606A321;
+	Wed, 21 Oct 2026 21:02:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEFF1606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=kOu9SbjX
+	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=BXQxqPRt
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Sender:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=6c300qt73sA98//Lr65hEgnfC/Y2y3DlaEkW45zDMNE=; b=kOu9SbjXJCir6uD2aanrqVvOXW
-	NeerG8jPaNVpqQrd+nd76HfRtiSLLTpfUza8hiCJPP6DR+ESOU3JGiPC2RbZ4vW1anR0SH5jUWmbC
-	4mEohhljprw7ZjlBDnVBum00wnNn2HPPjOvYu8bRGD5YgU7c/BW9vp6qiCi9+TzQmUnKNyVbTpq0i
-	jwzMh/xmAtym/LkTzUfHdNNuk5KUYUluhEePNEelO8O2069PqKFhNsWVyp7VmHcG8PLudxCFAmwpP
-	ZCtMD0AMp1W2Ugnx3c7tiZZwOi2gXzhFSuB/I3LI1zqa76K5sciGelPSqWMxtoo7+Rltb0iDD9ecV
-	EUFuJhVg==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=XkFRux2cvcc2fwND4RnTaahs4/FvfgM3BDyZJBB2wsg=; b=BXQxqPRthdgJ2wRJewPDhHKdpY
+	61vzI3m2/gZ09FzrAlbPJCjc3ODRVDr54B8RbLtzKtWTJOlm6gG60VmnWhYwt/9bSk7K8wxW6G9VH
+	5TtBf3b6g6cGYQjgUtbtKvwAL3l5UEB4b18iNWzBn9sciMgGLQF7Jg9XCCv1sx1qD90Y+CoJkwR54
+	68A30kuK6Spl08v+OfySX3iHu7tNy5dbVpb0yCqu4ytaVCRdklgu3FBa15/QPF/6jT1/JCfwPiUIi
+	81U4xKxpAui/aXQI14QC4g50S26eqST7MXkFFtY+ABftr8SpEPmon8EyHZOllpLbrU1eC56nXV+H4
+	nrvcM8NQ==;
 Received: from [151.115.150.205] (port=53842 helo=gepetto..)
 	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.100.1)
 	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
-	id 1xJdS5-0000000EZvy-2sVa;
-	Wed, 21 Oct 2026 23:02:23 +0200
+	id 1xJdSF-0000000EZvy-0URC;
+	Wed, 21 Oct 2026 23:02:32 +0200
 From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
 To: Mimi Zohar <zohar@linux.ibm.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
@@ -60,11 +60,14 @@ Cc: Eric Snowberg <eric.snowberg@oracle.com>,
 	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
-Subject: [PATCH v3 0/2] ima: reject modsig when detached data cannot be supplied
-Date: Wed, 21 Oct 2026 21:01:44 +0000
-Message-ID: <20261021210145.1851396-2-Jeremy.Jean@oss.cyber.gouv.fr>
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>,
+	stable@vger.kernel.org
+Subject: [PATCH v3 1/2] ima: discard modsig when detached data cannot be supplied
+Date: Wed, 21 Oct 2026 21:01:46 +0000
+Message-ID: <20261021210145.1851396-4-Jeremy.Jean@oss.cyber.gouv.fr>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261021210145.1851396-2-Jeremy.Jean@oss.cyber.gouv.fr>
+References: <20261021210145.1851396-2-Jeremy.Jean@oss.cyber.gouv.fr>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -91,42 +94,174 @@ ima_collect_modsig() supplies the file contents to the parsed PKCS#7
 message as detached data. If the message already contains embedded data,
 pkcs7_supply_detached_data() returns -EINVAL, but IMA ignores the error.
 ima_modsig_verify() then verifies the embedded data instead of the file
-being appraised. This could bypass the crypto check if one supplies data
-with an already known valid signature.
+being appraised.
 
-Patch 1 fixes the verification path by discarding a modsig if detached
-data cannot be supplied.
+Make ima_collect_modsig() report whether the file data was supplied,
+and discard the modsig if it was not. 
 
-Patch 2 keeps the exact pkcs7_supply_detached_data() error for a
-separate failed-modsig audit record. This part has been split out on
-request from Mimi Zohar so that the verification fix can be backported
-without this audit change.
-
+Fixes: 15588227e086 ("ima: Collect modsig")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
 ---
-Changes in v3:
-- Split the verification fix from the audit change.
-
-Changes in v2:
-- If detached data cannot be supplied, discard the modsig but continue
-  hashing and xattr appraisal.
-- Keep signatures without exported digests; leave d-modsig empty.
-- Audit failure to supply detached data separately, even with O_DIRECT.
 
 v1: https://lore.kernel.org/all/20260822082434.489470-2-Jeremy.Jean@oss.cyber.gouv.fr/
 v2: https://lore.kernel.org/all/20260924085516.3111521-2-Jeremy.Jean@oss.cyber.gouv.fr/
 
-Jérémy Jean (2):
-  ima: discard modsig when detached data cannot be supplied
-  ima: audit failure to supply detached data for modsig
-
  Documentation/security/IMA-templates.rst  |  3 ++-
- security/integrity/ima/ima.h              |  9 ++++----
- security/integrity/ima/ima_api.c          | 28 ++++++++++++++++-------
+ security/integrity/ima/ima.h              |  7 ++++---
+ security/integrity/ima/ima_api.c          | 10 +++++++---
  security/integrity/ima/ima_main.c         |  2 +-
- security/integrity/ima/ima_modsig.c       | 16 +++++++++----
+ security/integrity/ima/ima_modsig.c       | 16 +++++++++++-----
  security/integrity/ima/ima_template_lib.c |  4 ++--
- 6 files changed, 41 insertions(+), 21 deletions(-)
+ 6 files changed, 27 insertions(+), 15 deletions(-)
 
+diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
+index 15b4add314fc..de7a3dfee33d 100644
+--- a/Documentation/security/IMA-templates.rst
++++ b/Documentation/security/IMA-templates.rst
+@@ -69,7 +69,8 @@ descriptors by adding their identifier to the format string
+    algorithm (field format: <hash algo>:digest);
+  - 'd-ngv2': same as d-ng, but prefixed with the "ima" or "verity" digest type
+    (field format: <digest type>:<hash algo>:digest);
+- - 'd-modsig': the digest of the event without the appended modsig;
++ - 'd-modsig': the digest of the event without the appended modsig, empty
++   when no signature digest can be exported;
+  - 'n-ng': the name of the event, without size limitations;
+  - 'sig': the file signature, based on either the file's/fsverity's digest[1],
+    or the EVM portable signature, if 'security.ima' contains a file hash.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 10214f73ca1e..62be9461de88 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -431,7 +431,7 @@ int ima_get_action(struct mnt_idmap *idmap, struct inode *inode,
+ int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
+ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 			    void *buf, loff_t size, enum hash_algo algo,
+-			    struct modsig *modsig);
++			    struct modsig **modsig);
+ void ima_store_measurement(struct ima_iint_cache *iint, struct file *file,
+ 			   const unsigned char *filename,
+ 			   struct evm_ima_xattr_data *xattr_value,
+@@ -559,7 +559,7 @@ static inline void __init init_ima_appraise_lsm(const struct lsm_id *lsmid)
+ #ifdef CONFIG_IMA_APPRAISE_MODSIG
+ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
+ 		    struct modsig **modsig);
+-void ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size);
++bool ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size);
+ int ima_get_modsig_digest(const struct modsig *modsig, enum hash_algo *algo,
+ 			  const u8 **digest, u32 *digest_size);
+ int ima_get_raw_modsig(const struct modsig *modsig, const void **data,
+@@ -572,9 +572,10 @@ static inline int ima_read_modsig(enum ima_hooks func, const void *buf,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline void ima_collect_modsig(struct modsig *modsig, const void *buf,
++static inline bool ima_collect_modsig(struct modsig *modsig, const void *buf,
+ 				      loff_t size)
+ {
++	return false;
+ }
+ 
+ static inline int ima_get_modsig_digest(const struct modsig *modsig,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 122d127e108d..00b83b4538ab 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -235,6 +235,8 @@ static bool ima_get_verity_digest(struct ima_iint_cache *iint,
+  *
+  * Calculate the file hash, if it doesn't already exist,
+  * storing the measurement and i_version in the iint.
++ * If modsig is provided, discard it when detached data cannot be supplied
++ * so ordinary measurement and xattr appraisal can proceed.
+  *
+  * Must be called with iint->mutex held.
+  *
+@@ -242,7 +244,7 @@ static bool ima_get_verity_digest(struct ima_iint_cache *iint,
+  */
+ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 			    void *buf, loff_t size, enum hash_algo algo,
+-			    struct modsig *modsig)
++			    struct modsig **modsig)
+ {
+ 	const char *audit_cause = "failed";
+ 	struct inode *inode = file_inode(file);
+@@ -262,8 +264,10 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
+ 	 * the file digest without collecting the modsig in a previous
+ 	 * measurement rule.
+ 	 */
+-	if (modsig)
+-		ima_collect_modsig(modsig, buf, size);
++	if (modsig && *modsig && !ima_collect_modsig(*modsig, buf, size)) {
++		ima_free_modsig(*modsig);
++		*modsig = NULL;
++	}
+ 
+ 	if (iint->flags & IMA_COLLECTED)
+ 		goto out;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index ab1e53b3210d..561fbd976a91 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -422,7 +422,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 
+ 	hash_algo = ima_get_hash_algo(xattr_value, xattr_len);
+ 
+-	rc = ima_collect_measurement(iint, file, buf, size, hash_algo, modsig);
++	rc = ima_collect_measurement(iint, file, buf, size, hash_algo, &modsig);
+ 	if (rc != 0 && rc != -EBADF && rc != -EINVAL)
+ 		goto out_locked;
+ 
+diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
+index 632c746fd81e..f73d6f1b71c0 100644
+--- a/security/integrity/ima/ima_modsig.c
++++ b/security/integrity/ima/ima_modsig.c
+@@ -96,8 +96,12 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
+  * Since the modsig is part of the file contents, the hash used in its signature
+  * isn't the same one ordinarily calculated by IMA. Therefore PKCS7 code
+  * calculates a separate one for signature verification.
++ *
++ * Digest export is best-effort; not all signatures expose a single digest.
++ *
++ * Return: true if the file data was supplied, false otherwise.
+  */
+-void ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size)
++bool ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size)
+ {
+ 	int rc;
+ 
+@@ -109,11 +113,13 @@ void ima_collect_modsig(struct modsig *modsig, const void *buf, loff_t size)
+ 		sizeof(struct module_signature);
+ 	rc = pkcs7_supply_detached_data(modsig->pkcs7_msg, buf, size);
+ 	if (rc)
+-		return;
++		return false;
++
++	/* Digest export failure does not preclude signature verification. */
++	pkcs7_get_digest(modsig->pkcs7_msg, &modsig->digest,
++			 &modsig->digest_size, &modsig->hash_algo);
+ 
+-	/* Ask the PKCS7 code to calculate the file hash. */
+-	rc = pkcs7_get_digest(modsig->pkcs7_msg, &modsig->digest,
+-			      &modsig->digest_size, &modsig->hash_algo);
++	return true;
+ }
+ 
+ int ima_modsig_verify(struct key *keyring, const struct modsig *modsig)
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 8a89236f926c..1be78612394a 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -478,8 +478,8 @@ int ima_eventdigest_modsig_init(struct ima_event_data *event_data,
+ 		if (rc)
+ 			return rc;
+ 		else if (hash_algo == HASH_ALGO__LAST || cur_digestsize == 0)
+-			/* There was some error collecting the digest. */
+-			return -EINVAL;
++			/* Keep the ordinary measurement without an exported digest. */
++			return 0;
+ 	}
+ 
+ 	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
 -- 
 2.47.3
 
