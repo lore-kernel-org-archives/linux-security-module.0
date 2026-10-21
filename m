@@ -1,64 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.198
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792564125;
-	b=diCOkuYB9JTpfRtBm0jysFPklnTUTT44DadQlwZiUimVAAhtn5Yse3o4mtT960CdsIrF
-	 crUW/SBArCxnzpQjdXtmfbM1y5zHiSIU6sbgjy2GfmiravXmrUnt+TE6lTF5UdNZ3Ze5t
-	 iIzy3ZJJ0gV6NZsj6ySDI8TVmy0Gm5TIL6cAXI+ybAQMvMbgmQsCKnwm13VO5ZHVC32f1
-	 izAKFaJWhIOFYwSPsIHkNf6bc0w1/g9Fp4esnxUF0QN1DSTNX0QxIBNQ40MwA8lD3VGZI
-	 J6oyolV/tr6QyLxJYSMmVA+LoxfqXyn8zqqewlbHDGEMzu/T/RI2bU6P8up9ZM3tvLg==
+	t=1792570808;
+	b=VOwIekuNhQNPWOJWRzqeMw6WpvCTdz2kr42t86KHPK7NOzPi72trpqh6X6sZtoHyT/+Y
+	 HjdfqQxdKako7gC/rgs8OMWve+TIePvP4Pox8j5Og4HTRHx7bIbvbIwskoaywUdn6FHJG
+	 wsAH352jYCKNb94f3kjtfe7g67HtEfFYbyEB6iROk7x9IqsiyQyhAPPtDkUYKeMN0PwsQ
+	 EWdvXgrRRP4DdVc7obzcfQNcVx8IijT9Gy7iG5bvscDldNBwf6LWHS5qxletswHy3Iass
+	 5pc9Ms9azaK1Qs25QU6BGMU3OXVxNyg8WUnJKJ58EFDPpCq7P7MqELulBTLbfnXQExQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792564125;
-	h=Received:DKIM-Signature:Received:Subject:From:In-Reply-To:References:
-	 X-PR-Tracked-List-Id:X-PR-Tracked-Message-Id:X-PR-Tracked-Remote:
-	 X-PR-Tracked-Commit-Id:X-PR-Merge-Tree:X-PR-Merge-Refname:
-	 X-PR-Merge-Commit-Id:Message-Id:Date:To:Cc;
-	bh=/Z1rydeOMWEIkF48pT5N1tfwDZ6mRJN9nE4//O9FEdg=;
-	b=abFpQE1oSg1oMVJDk/zxWlxdpSkCLsVJox+fHiZ0blAvGkSF/Ff2GOm+o1bpG2aVao+B
-	 4AnDYXvSjrayTkqCdwuXK4yCV+LZQ+Pn1rMsmiT1wLJWN/Miwp3kyQBPRh6siq+Ov3u6i
-	 eT8+xpSj7aO5hTaavARPtbwGJILJ2H0z4wRn0bx3Fx5jQ6odkEo+YRbA9L4QW6EdM4WQ6
-	 V2rL5+iV9FAB/lCcql7UWDt0uVNWu6FhvUPP02N4brzcaI0eTOqGZQwMJOR00+nUXQ5T5
-	 ZNwVuizcwut3W8jXV6iLv8iU5CxissLqYIUUgCS+iL12sMosLTBs8x5/Dei56a44zSQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792570808;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:MIME-Version:X-Received:Date:In-Reply-To:
+	 X-Google-Appengine-App-Id:X-Google-Appengine-App-Id-Alias:Message-ID:
+	 Subject:From:To:Cc:Content-Type;
+	bh=yL8VqZDmmjINC1gZOAnpKGJOnANABO0NARhyENP7IpY=;
+	b=Gu+2uX1j903zgO1nZzQYK9hG9rCRP+/nlWTnYvCPQs++0+S9PZX6B5enzUAVjS+M0ppr
+	 ETPQ52PrhTS18xaepdmgaDaSf/tYKGsRBWE5/JJ8xEDrD0887C3tP8zeZI5A9wl3tEYjj
+	 ZAsW2bRExaTN9Ov+EVFZXiSLjSDlykYfBZAwp1XP/tpBYQa7xm+L+r5kdVTs7NGiQgTDw
+	 TQGSC9D0QZAv4uu9bHK6gDjrI8IBLZugPyG+xSitPy+j5begLw74znZ45xScPOzD5YbhM
+	 bn3pKJsjfjZJIYCeYAUIdyfzjdieFN935gSGYXS+qlUkxNX0gp0BHO0A5xKqyClFwBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FZvBpTzC;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=fail header.from=syzkaller.appspotmail.com;
+	spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+	arc=none smtp.remote-ip=209.85.167.198
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A014606A325;
-	Wed, 21 Oct 2026 06:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FZvBpTzC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B871F000CB;
-	Wed, 21 Oct 2026 06:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792564125;
-	bh=/Z1rydeOMWEIkF48pT5N1tfwDZ6mRJN9nE4//O9FEdg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=FZvBpTzClk5RnunFzByZY97t8GWAKktOS6iLG9UN4QL7mRb2a9ls3p9A5xoiVh/BF
-	 qZIVcpicEueogfhvnR51g5N356aYGwQiUoPctiCq+9uXM8lJ5yy6zSYSkhjIa9nDZ+
-	 QgKliDANgSzBWv+QcKtCs25NZndWIZ9ot8JLtZG0YGkQZ/PATGs9K4IRYmMFn3ZrcZ
-	 XGL8h832BuhilnpAJoZUHO3CCNgXT9X6TXoAj5fX/ogwR0rvGX7ljnXp6yiu53IHdW
-	 Go5TPQV7HAto8b2U+PRBdmpxt9CJanJcQ20XyNXRRgvnlLEI/XCQAKUsbDMHXS6Vt0
-	 7YDPy0kGPGtXQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3A4DA3809A24;
-	Wed, 21 Oct 2026 06:28:45 +0000 (UTC)
-Subject: Re: [GIT PULL] selinux/selinux-pr-20261015
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <e30c2a29706391f16d9ac9446907193c@paul-moore.com>
-References: <e30c2a29706391f16d9ac9446907193c@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <e30c2a29706391f16d9ac9446907193c@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20261015
-X-PR-Tracked-Commit-Id: b73b967b0fc44707f39faa4f298f1f9d9b7bfac5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 331eadd85f14bac85663c14c99228f6dedf64d87
-Message-Id: <179256412366.425997.9084383338217041751.pr-tracker-bot@kernel.org>
-Date: Wed, 21 Oct 2026 06:28:43 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23180606A31D
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 08:20:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23180606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-4cbf700ddccso365987b6e.0
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 01:20:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792570807; x=1793175607;
+        h=content-type:cc:to:from:subject:message-id:in-reply-to:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=yL8VqZDmmjINC1gZOAnpKGJOnANABO0NARhyENP7IpY=;
+        b=hIPp98jKpZ9XEqkADg2Z1WOO0F+6WebhcULjVPQ/hCqde7Abk0DuaKsv4yWqwgyS7I
+         kjxsK7k7nxDBZW1ocu1K1rDJG4518Eue+4b7flNuIvVdCXf63AkigrgRJID4DhmR1goM
+         xT7FHJv4BjxzQnDXA+WxCDB7LX3d8Xlp4oeEGqc57SCc49pkhj2nxMkkvlqMbOBVb7Fl
+         /RkZ/o9TztjPqoW0fwok4n2JxeiPKk54j1K7Hr66sLfXYyhQo+8J/OwFoxoVzGplnoej
+         9emzOL3noyXVM2Ih7I2wMlt82UayLzliKxy2ZkLTQacnftaSEP0NT0cHLjwXvz32WR2R
+         W/tA==
+X-Forwarded-Encrypted: i=1; AKwUvBzj18uRjfswsicu1hRe7X4TNkOX7YMcB88LdQRmq8EN4vMboUe6f5/n9YbxyTgU4jy67TBF6hOWZ6uaAmMVGmrmnB32TOg=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKKjLEVvHQMEkO6uVMigYVJb7Bo9g9raTKl8fDNMyB+QIAiU/3v
+	IMKCbqHUDtth+19TvI7ybLEz5qwg3BQMCUv/urWzgVyO7cTtI/dw6YIcppY/WLhwuJUeyiWioi3
+	ZuEDfu9hLfW2j/ZB3yno2DDT+dthbNpojEmt/3KiUTqpRhBOR23hMqScQ3a8=
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,16 +57,110 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+X-Received: by 2002:a05:6808:1818:b0:4d6:90f3:74ae with SMTP id
+ 5614622812f47-5535a773ee7mr837497b6e.46.1792570806989; Wed, 21 Oct 2026
+ 01:20:06 -0700 (PDT)
+Date: Wed, 21 Oct 2026 01:20:06 -0700
+In-Reply-To: <20261019145624.309790-1-jarkko@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6ad875b6.e74039fe.1cb511.0000.GAE@google.com>
+Subject: [syzbot ci] Re: KEYS: Return user session keyring on lookup
+From: syzbot ci <syzbot+ci05eb01a9f28bbd7c@syzkaller.appspotmail.com>
+To: corbet@lwn.net, dhowells@redhat.com, ebiggers@kernel.org, jannh@google.com, 
+	jarkko@kernel.org, jmorris@namei.org, keyrings@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	rdunlap@infradead.org, serge@hallyn.com, skhan@linuxfoundation.org, 
+	stable@vger.kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Fri, 16 Oct 2026 23:00:05 -0400:
+syzbot ci has tested the following series
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20261015
+[v2] KEYS: Return user session keyring on lookup
+https://lore.kernel.org/all/20261019145624.309790-1-jarkko@kernel.org
+* [PATCH v2 1/2] KEYS: Return user session keyring on lookup
+* [PATCH v2 2/2] KEYS: Reject keyring creation with overridden credentials
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/331eadd85f14bac85663c14c99228f6dedf64d87
+and found the following issue:
+general protection fault in keyctl_session_to_parent
 
-Thank you!
+Full report is available here:
+https://ci.syzbot.org/series/7566814a-52ba-4f0b-b506-d7adf67fda29
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+***
+
+general protection fault in keyctl_session_to_parent
+
+tree:      linux-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
+base:      17a7501b9612a52b38bc57e33c7b64636d438bc0
+arch:      amd64
+compiler:  Debian clang version 22.1.8 (1~deb13u4), Debian LLD 22.1.8
+config:    https://ci.syzbot.org/builds/eee373c7-f447-49cf-a350-83830580c7b2/config
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000001b: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x00000000000000d8-0x00000000000000df]
+CPU: 0 UID: 0 PID: 5730 Comm: syz.0.6 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:keyctl_session_to_parent+0x825/0xa30
+Code: 35 3b fd e9 fe fa ff ff e8 38 35 3b fd e9 f4 fa ff ff e8 2e 35 3b fd 48 8b 54 24 20 48 81 c2 d8 00 00 00 48 89 d0 48 c1 e8 03 <0f> b6 04 18 84 c0 0f 85 b2 01 00 00 8b 2a 89 ef 8b 5c 24 1c 89 de
+RSP: 0018:ffffc9000621fc70 EFLAGS: 00010006
+RAX: 000000000000001b RBX: dffffc0000000000 RCX: ffff88810b603c00
+RDX: 00000000000000d8 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff52000c43f7c R12: ffff88811a010000
+R13: 0000000000000000 R14: ffff88810c2631a8 R15: 0000000000000000
+FS:  00007f7f2068b6c0(0000) GS:ffff88818c4bf000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7f2068aff8 CR3: 000000010cae8000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ __se_sys_keyctl+0x780/0x9d0
+ do_syscall_64+0x166/0x520
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7f1f79f559
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7f2068b028 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
+RAX: ffffffffffffffda RBX: 00007f7f1fa26270 RCX: 00007f7f1f79f559
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000012
+RBP: 00007f7f1f836b20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7f1fa26308 R14: 00007f7f1fa26270 R15: 00007ffe789f59b8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:keyctl_session_to_parent+0x825/0xa30
+Code: 35 3b fd e9 fe fa ff ff e8 38 35 3b fd e9 f4 fa ff ff e8 2e 35 3b fd 48 8b 54 24 20 48 81 c2 d8 00 00 00 48 89 d0 48 c1 e8 03 <0f> b6 04 18 84 c0 0f 85 b2 01 00 00 8b 2a 89 ef 8b 5c 24 1c 89 de
+RSP: 0018:ffffc9000621fc70 EFLAGS: 00010006
+RAX: 000000000000001b RBX: dffffc0000000000 RCX: ffff88810b603c00
+RDX: 00000000000000d8 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff52000c43f7c R12: ffff88811a010000
+R13: 0000000000000000 R14: ffff88810c2631a8 R15: 0000000000000000
+FS:  00007f7f2068b6c0(0000) GS:ffff88818c4bf000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7f2068aff8 CR3: 000000010cae8000 CR4: 00000000000006f0
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+
+To test a fix for this bug, please reply with `#syz test`
+(on a separate line) and attach the patch to the email.
+
+Notes:
+- The patch will be applied on top of the tested series (as an
+  incremental fix).
+- To test a new version of the whole series, please send it directly
+  to syzbot@lists.linux.dev.
+- Arguments like custom git repos and branches are not supported.
