@@ -1,66 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=173.212.254.19
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792533711;
-	b=uf/4pysLLkNEHkrc82vkLTT7wbVBWRMTCzAMRYhe7fiU26JNFY2Bz54doMTO4KRsOwt1
-	 +aNlxw2wsQDLDHxOzoi4CIqoCQaShGYfuCf5Zd1H/csJSu42SwShxM/VUzXTLnSWr4SdY
-	 86hKNzGi32PJmZ5n4s6l491ZVF1CxCaRB3p37Rkv5FTx5sNtQXsT2Wo9z3s4EVwmnvv6i
-	 lCi4tmio/i01lPhr0O72fJ7tYH4uiEM27xGzmRktOjdBiJYPTMHqSqae1nDqrGiLdrIlp
-	 jTPdxcbIKk5u0l9ZXScHiNIwxqtU3INsxhTKHtbbdCqizpoP5gbvsQ4NZSVKlCjFwLg==
+	t=1792552532;
+	b=mVdkdy5yEJMiqQex+oUab0nurPZzLG0x8TIz6+JdILr2k7P0oinX5Aj/NyB1t/gk8CwO
+	 COcL+4TzSozMLWstYr0H5dU8fGMVT3fbS65JOOoJK+fK4JyRos0L/40M65+975/bORB4y
+	 YSb8LmL4Jk8s9G58VD7h042AVcMegMz6jojhyAU9toEeZmBOF0X+TqE4DkFZR3wnEBAZv
+	 el7AGt2RE0Mc61IXINB/Rxrmnxom75ZCZbbslELfKh3XSBL/0h6GGvYf6768r4Z29jOuE
+	 7NoKmGPFXXAvBAb/TK7n14g0ERk5U6NG3JNqV57Pd0I4J+anQWCLH5hCzhhBbhHv8UA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792533711;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=GKl02Y5rb43uuw/yEbBq2UtRSEh7f8tkmfQ/G32NXiA=;
-	b=fjZRDdE8KQUwZY4cMpupbva29t6dbqUqpPMNBG6Dy/9hlsIHrSvqHuQql28MB6PVNdN2
-	 IpCHq1s1cJ6sLkuOmB/1Dd2GIWvZY0Kd45AhRJhS0ihvqyMYovhXfNs9yOYryYRqv2Ii0
-	 w9QuV5GVgnRp2XQcuL1CeOKRsGRaZ/hvb9TlEBX+xlfWK7AcOzfY01zOU0kklakr/hbjs
-	 XM+/4z/cW3hPpjfmut5yLiw4KXQd7xpVuC6EBGsmsBJ4SP+NhydVSlzTJEZTu3XndE+qy
-	 rhXuvLTBY/pn6mD0nYN4SmQb0/uEKkcBWEjrW0qHyt7vJb7RESMWsZcUbsUfBS0+yDQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792552532;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:In-Reply-To:
+	 References:From:Subject:To:Cc:Date;
+	bh=2Rr2bO9okDTnKQK7n2lk4waHPtLw2M+XqSbjGvsVjiU=;
+	b=kxJ1KQE/8J0FNYE0omUAQpsrrErDAHQUXyNjbgCjDuGhgYwlxxZeDvJZM5ndKSOJddXA
+	 PSHnh6+DW3Nx9oQIWE4HdCopMxnDgKLwUcymFKjwUIEfNEPJI+tRUSxRKdfDP8xFdZp+b
+	 JSrdYdptZGplT+wMqmLKg7cjUBpPCmeZ5z+4njpO1kB0VbIWw43wtyDFni0qrpY0nFx+7
+	 4YxiFRfRFYNeGOmA15VVESqrLUP6GvxpyQRjdBCEz1DvjlelOhI2iTwNh/FfO64PyZj2A
+	 mxxG+wDbwEGWY3UhTo0KgzXxIzckZKPgBWm7aqbIxzc0dtichn5nZ52ev3j3bApmu/A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X9aAIPC9;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=tuxist.de;
+	spf=fail smtp.mailfrom=tuxist.de;
+	dkim=pass header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=G6WTKipf;
+	arc=none smtp.remote-ip=173.212.254.19
+Received: from groupware.tuxist.de (groupware.tuxist.de [173.212.254.19])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 317B3606A319;
-	Tue, 20 Oct 2026 22:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D25606A31B;
+	Wed, 21 Oct 2026 03:15:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14D25606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tuxist.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=tuxist.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X9aAIPC9
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 343251F000C9;
-	Tue, 20 Oct 2026 22:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792533710;
-	bh=GKl02Y5rb43uuw/yEbBq2UtRSEh7f8tkmfQ/G32NXiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=X9aAIPC9pQTbt8fg+nqcHj/IAhBZFlp2n5G8gTOTHWAg1yB+EHUv3OehhbYc8QO5v
-	 ytsRqPBb7E7SFEs5pslbkgOjjUMBGxZMQFabGWLJao1h63wy4sUtIHEDYB3PE58wmS
-	 MAfGXMHXJqevlseSEGdHLdfoFyShIFuzBTDMQNFc6zXP9zqSKi3MiUQil8DPWKrnHb
-	 6Z874bqWQRsALae7UPzK4dKKn2ufmrkqkWlrqBbe/F429cJnWpfgc1hHg25++bvAzo
-	 FyctzJF/FEiZMCrMJoXDzVQPtgNgrO6kisoK8NLBrOi5nzYKoJAWEZeWlF3m8S/MeM
-	 eiuvR6a1SfdsQ==
-Date: Wed, 21 Oct 2026 01:01:47 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	stable@vger.kernel.org, Paulo Alcantara <pc@manguebit.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)" <linux-cifs@vger.kernel.org>,
-	"moderated list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)" <samba-technical@lists.samba.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] KEYS: Expand key->{datalen,quotalen} to unsigned
- int
-Message-ID: <atfky30OZQ5vsNVs@kernel.org>
-References: <20261020174325.2229448-1-jarkko@kernel.org>
- <20261020174325.2229448-2-jarkko@kernel.org>
- <atfT5WJU_ldjpQOM@kernel.org>
- <20261020214335.GE699485@google.com>
+	dkim=pass (2048-bit key, unprotected) header.d=tuxist.de header.i=@tuxist.de header.a=rsa-sha256 header.s=201705 header.b=G6WTKipf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tuxist.de; s=201705;
+	t=1792552527; bh=ZfG1SosqlxBe8ziMkADyGjmN09svT+4JHhKhTcpS7n0=;
+	h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+	b=G6WTKipfrRpsgqmp7VeEQmAz1k+70ZU6flTO7Z4P5DVP0Ogu11+Hvw/c3+wVLm5Mg
+	 Epk9RoKjnjmkOX3ZYMsICS8LmzzMc488Ty4pxYQIzZx24rafgNgb56wp0ehNDWyU8i
+	 x1juHOsrDZThhoYETUw7hdXH14EUWOnEaq3qfoGueNajXZFnneUDlnGNBkpalIXTPe
+	 fYKKbmo1n7O0T1syFNB6V5cD3DVH7hk0ZZELsEeLICiP3OHi3rPPHnXuQM1vEmr8Ok
+	 XUqJltcsbj0ISJGCGgmQgWy0fvQkzPt9KloCgjiA+n63+5ETdXc+77Cn8nTNq8aJdD
+	 vUqP3agDGkZ0Q==
+Received: from [10.1.1.106] (unknown [10.1.2.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by groupware.tuxist.de (Postfix) with ESMTPSA id F17EB8A08DF;
+	Wed, 21 Oct 2026 05:15:26 +0200 (CEST)
+Message-ID: <423713b22f1cfa384f3df8cddc91e81d35c52d8a.1792552161.git.jan.koester@tuxist.de>
+In-Reply-To: <cover.1792552161.git.jan.koester@tuxist.de>
+References: <cover.1792552161.git.jan.koester@tuxist.de>
+From: Jan Koester <jan.koester@tuxist.de>
+Subject: [RFC PATCH v2 02/41] uapi: add <linux/uidgid_r.h> for 128 bit capable
+ user and group ids
+To: Christian Brauner <brauner@kernel.org>,
+    Alexander Viro <viro@zeniv.linux.org.uk>,
+    "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Jan Kara <jack@suse.cz>,
+    "Theodore Y. Ts'o" <tytso@mit.edu>,
+    Paul Moore <paul@paul-moore.com>,
+    Arnd Bergmann <arnd@arndb.de>,
+    linux-fsdevel@vger.kernel.org,
+    linux-api@vger.kernel.org,
+    linux-security-module@vger.kernel.org,
+    linux-arch@vger.kernel.org,
+    linux-ext4@vger.kernel.org,
+    linux-nfs@vger.kernel.org,
+    linux-cifs@vger.kernel.org,
+    netdev@vger.kernel.org,
+    audit@vger.kernel.org,
+    keyrings@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Date: Wed, 21 Oct 2026 05:15:22 +0200
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -69,70 +79,81 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261020214335.GE699485@google.com>
 
-On Tue, Oct 20, 2026 at 09:43:35PM +0000, Eric Biggers wrote:
-> On Tue, Oct 20, 2026 at 11:49:41PM +0300, Jarkko Sakkinen wrote:
-> > For any kernel patches I've missed all Sashiko reviews so far and have
-> > not taken the feedback into account in anything.
-> > 
-> > There is two issues:
-> > 
-> > 1. I was not subscribed to linux-security-module. I could be and have
-> >    been but probably when I've changed my list subscriptions at some
-> >    point otherwise, I happened not to be.
-> > 2. Even if I was subscribed to linux-security-module, at least I'd
-> >    like to get reviews Cc'd that concern my patches or patches
-> >    sent to me.
-> > 
-> > Now that Eric pointed out Sashiko review I was able to look up this
-> > via web browser:
-> > 
-> > https://lore.kernel.org/linux-security-module/20261020174325.2229448-1-jarkko@kernel.org/T/#mccc5900222fdad9d790be343fcec2a32540ed2fb
-> > 
-> > This is somewhat inconvenient though that it responds like that, and
-> > not to the review thread.
-> > 
-> > Not actually sure how do you write a Sieve filter that automates
-> > relevant-to-me Sashiko emails going into some specific folder but
-> > I'm sure that is somehow possible. I guess I'll start by subscribing
-> > to linux-security-module.
-> 
-> Well, the keyrings mailing list isn't currently opted into Sashiko
-> monitoring or emails.  linux-security-modules is opted in, but it's set
-> to have the Sashiko emails go to only that list.  See
-> https://github.com/sashiko-dev/sashiko/blob/main/projects/linux/mailing_lists.toml
-> 
->     ["linux-security-module@vger.kernel.org"]
->     reply_to = ["list"]
->     positive_review = "all"
-> 
-> (Sashiko defaults to no email, because unfortunately there hasn't yet
-> been consensus in the kernel community to enable it everywhere yet.)
-> 
-> keyrings could be opted in by opening a GitHub pull request that edits
-> that file.  Let me know if you want me to do it.
-> 
-> My preference is what I set the fscrypt and fsverity lists too: enable
-> monitoring of the list and emails of issues found to everyone (but not
-> the noisy positive reviews, i.e. "It looks great!"):
-> 
->     ["linux-fscrypt@vger.kernel.org"]
->     reply_to = ["author", "list", "recipients"]
-> 
-> So for keyrings I suggest we add:
-> 
->     ["keyrings@vger.kernel.org"]
->     reply_to = ["author", "list", "recipients"]
-> 
-> Do you agree with that?
+User and group ids are 32 bit numbers. Identities that come from
+elsewhere -- UUIDs handed out by a directory service, or the GUIDs of a
+Windows domain -- have to be squeezed into that range through mapping
+tables kept in userspace, and the kernel never sees who a process really
+is.
 
-Yeah, that would help, thanks :-)
+Add a tagged id for a new family of system calls (named after the
+classic ones with an _r suffix): a classic 32 bit id, an RFC 9562
+version 4 UUID, or a Microsoft GUID in the byte order Windows stores it
+in. Type 0 is "no id", so a zero-initialized id is never root, and lets
+the set*id_r() calls express "unchanged" without a magic number.
 
-> 
-> - Eric
+The struct has no 64 bit members and the same layout on all ABIs, so
+none of the new calls needs a compat entry point.
 
-Br, Jarkko
+Assisted-by: Claude:claude-opus-5-5
+
+Signed-off-by: Jan Koester <jan.koester@tuxist.de>
+---
+ include/uapi/linux/uidgid_r.h | 45 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 include/uapi/linux/uidgid_r.h
+
+diff --git a/include/uapi/linux/uidgid_r.h b/include/uapi/linux/uidgid_r.h
+new file mode 100644
+index 0000000000..c3b1cb2ae2
+--- /dev/null
++++ b/include/uapi/linux/uidgid_r.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * User and group ids for the *_r system calls: a classic 32 bit id, a
++ * UUID or a Microsoft GUID.
++ *
++ * The classic system calls (getuid(), chown(), ...) keep their 32 bit
++ * ids; for an id that has no 32 bit form they see the overflow id
++ * (/proc/sys/kernel/overflowuid and overflowgid), like the 16 bit system
++ * calls do for ids above 65535.
++ */
++#ifndef _UAPI_LINUX_UIDGID_R_H
++#define _UAPI_LINUX_UIDGID_R_H
++
++#include <linux/types.h>
++
++/*
++ * Kinds of id (__kernel_uid_r_t.type). An all-zero id is UID_R_NONE, so a
++ * zero-initialized id never stands for root.
++ */
++#define UID_R_NONE	0	/* no id: "unchanged" or "not set" */
++#define UID_R_LEGACY	1	/* classic 32 bit id in .legacy */
++#define UID_R_UUID	2	/* RFC 9562 UUID, version 4, in .uuid */
++#define UID_R_GUID	3	/* Microsoft GUID in .guid */
++
++#define UID_R_SIZE	16	/* bytes of .uuid and .guid */
++
++/*
++ * .uuid holds the UUID in network byte order, as RFC 9562 lays it out.
++ * .guid holds the GUID as Windows stores it: Data1, Data2 and Data3 little
++ * endian, Data4 as is.
++ *
++ * Bytes past the member .type selects are reserved and must be zero.
++ */
++typedef struct __kernel_uid_r {
++	__u32 type;
++	union {
++		__u32 legacy;
++		__u8 uuid[UID_R_SIZE];
++		__u8 guid[UID_R_SIZE];
++	};
++} __kernel_uid_r_t;
++
++typedef __kernel_uid_r_t __kernel_gid_r_t;
++
++#endif /* _UAPI_LINUX_UIDGID_R_H */
+-- 
+2.56.0
+
