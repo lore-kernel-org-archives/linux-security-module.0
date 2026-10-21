@@ -1,66 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.8
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792599960;
-	b=xweCnRgZiqMBZflgDkpacC1WUlGUuGImBsJLd0cLYolXLR3RuJ/EykhQ2s+gzH8c61Tw
-	 VQQZXWd9YR1BDRHEFYIgvzl5KlomzMbKzHNVqdH4gLMUdhPUBBn1k9P9nJ/ia24zsZwSt
-	 3ElXyT2RPGkHpEaQU8EFWBna9r7ZBhvhTJ5yamOm9Y86rLZklvNigw7UIHn9clnDfvaVZ
-	 Z/E22Mv3/BBpzPMN3MRMR+oUYByMZJZz8VwfNNfWlan1CYTxFAtoRjtuY0jyOHCBP8+NT
-	 8Uv2LhnpMYQPCH9DtLXlFHgwzQH/kiMFmhk/KZLzg5gr4sYjLCgpVXTgM2DL96u3ziQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792599960;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
-	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Infomaniak-Routing;
-	bh=6aYN/2On4n7HGoJvZTU3OurKvF7SDr35YC5v5eCOowc=;
-	b=Ia+mnVxfobBCuPNbzh3b/Jzntj5jAvRFVL2tZogNvunOYObPzIWFeAfBt/zgGPc0HHvQ
-	 6kv7fVOj8XFKTM87s/MR/iRi0O3Kb1uU2XGbC3UH81/ALRk8uIMVZzEalzTHhtTG2Lyhx
-	 NoNJKeUOEHz+Tq/NBzeDEmA/j1OXAIjzll7DEWpvz6g8B+x88F1fFirbqlDxOG2P9T3ui
-	 vEEHdtLR7RgRCQKj+ZzF3ZucfXuJ5/8mP7oNc9rz1MfSX8TVriQp/4Xb7oL5lUJLjo6BT
-	 /FcU1gvAyJYEtneKx1I+TEksbVx5/uwo7EzNo0HFZd3DwTh5P/zBusMXDQ3YizSLcSQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=EC2wy3Vz;
-	arc=none smtp.remote-ip=185.125.25.8
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.171
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792601509;
+	b=1/nYMVNygfZ2XB6is/HoXNzR2iaBVgpPHbSTBrvJg2cbbjA9ilhGn/QUVFXM9ilGL+WI
+	 5pntjJUGZr4FbX8K6OaMRbuCRVdcQWpevMQXSmnPBV3lz9xhiFFW0x2rYIduwliiCklVc
+	 l0ifORZG2Coh+9uIzTVtiHRdo4xBKz9CYR9cjrnoJYsSQsVC1yr/f1N9YD6jnhZ8MxFf7
+	 yluk7IPa0OCPk80+QdklFZNJnQuQPaUxolm9FPxa16T8CIV+B8Yv6o+Su/zWamnmNSoYq
+	 RrY46zUH+3Ao6kzEGlJmcg5BPFoZDTo0bYscUlcgOpHARyS9IxoEFKrgPwcXqnfqFFg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792601509;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
+	b=3whhIef4PXp342wfcXNeODgdyKEaYXuw7MDWyEC78m0Rvtnbawonhtn2FWNdu/nMBVdq
+	 NYGmMhLy5z6c6W5qqbDn4SYjvoPOU+vsaSklr246V0IZqTUAAaXZ+L+smoW8V+5w9GFV2
+	 qUTai60Ogi5beHImWBPdxBs/S8ogx4HiNWgV/DAoLC1lQfFSx+ZT3pJmmeHbIXTdqDtcC
+	 mIWoVjJc6mH/blHk8d4aoBsiZbHxAdfz/MZLcgDg5IsRLooLmx6IBS5SVVhH5+eYXEAlM
+	 MAkTIaHbxnfdxCK6EXfZpG5YD2f6hEh3YwLYagxqLCHcEXsWRA2bqYaAITgXcOCwYLA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=IjY+GqWy;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.171
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA81B606A31B
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 16:25:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BA81B606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162C3606A31D
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 16:51:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 162C3606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=EC2wy3Vz
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4j8vlx1G6dz13rn;
-	Wed, 21 Oct 2026 18:25:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1792599948;
-	bh=6aYN/2On4n7HGoJvZTU3OurKvF7SDr35YC5v5eCOowc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EC2wy3Vz68NDCTpFJUzbNOPF0ExyqXqmkSSqPJKxsLmkFIaggjI9bgDaYHrXnsE7X
-	 he7TUnCvrwDqBOVaHcBYMyJ28azv87LBzc1dKEFzZ1SAImW3SH+waaIOxKlIcfXsIK
-	 EkkkpTFPrIBd2qBiCXR5XsDsgTs1EGqiRbBd6+TI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4j8vlv58Kvz2Fl;
-	Wed, 21 Oct 2026 18:25:47 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Christian Brauner <brauner@kernel.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Haofeng Li <lihaofeng@kylinos.cn>,
-	Paul Moore <paul@paul-moore.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Wang Yan <wangyan01@kylinos.cn>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [GIT PULL] Landlock update for v7.4-rc1
-Date: Wed, 21 Oct 2026 18:25:38 +0200
-Message-ID: <20261021162538.1852602-1-mic@digikod.net>
+	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=IjY+GqWy
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-cc4ca696de6so528149a12.2
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 09:51:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792601507; cv=none;
+        d=google.com; s=arc-20260327;
+        b=HNza5074wPoTvKswCj/+7pAqgtwgJ81YR6rycQxC6JPITgbzsq55S2jB0n/VT4l/Vm
+         mxoyMz53JAgBrqEbkWN6L6OXAfVACnDl9A5bGYlckMU0MID8bhsGzX2NXq0AudYiU/bi
+         WWsoKXlB9UBGMcolAzBTUpWChTx1Xrt3rMVcQrr806EhmX6Lkx5mB5AjaOyb/CKdY8Xx
+         jppjP6vUdenvbVbO/rycjr4N7jJvQm5FW6wEHAGEhxUxxqeXjIHVvFAhHI7SUTelok6G
+         sCvWrSn7Qn4WBCkxV4H9kLneeS/LmIQ7HCmTmjiAyLfOPuAVo1L7Twkd8cPnTJpPqspk
+         mpsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
+        fh=ypdZQ/GIx+64yXGXX8rRP66hNOralaj9qCFar/4itAM=;
+        b=L6NSnt1NB1Xw7mFRWMYikV0/5wKCgbKq1rN3IM6XDjr5Vb3OxhMfMNkGCSwx9q01HZ
+         9UtkzSwbeq/0iILrJnayek1BJyEx/J7ORex8TFpxQMUxNbbYLxV/89EK7eeBGXSovfdy
+         mJPmwWu1zLfTo4Rwk0ousbS5uFPInwWT8SQLBpNRMRuc2vE7dUthtr47a3/35wtgB+as
+         Z1F9h4GssgOQnncGAvp+Cyj61PJbLJVG5C+yl9YMiR71HCtLI08H7o3jJUkugGxIeO85
+         SKx7tZtA1M9/5/nI9NaksQDkxMObnX3JDSeUN5pMWYoOiA38Vj5ABGiN6Oz1aAAUOvTb
+         3a5w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1792601507; x=1793206307; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
+        b=IjY+GqWyFsNApys1mFNaLpUe5Gb0T0eiWpXRqwguELZkO/6GMlW5MGLgxtcb09NTmh
+         OmSwbge3z0LVW0xi+7CpV8QvKgiRUpsMtRGvmgg8qxBvc5jjXYlzpoNkCzfNBAEwDQ40
+         wNNxyldEcULAnGOug9VS2bG65dXNR/mE46at5JcPgLJWv3O6ZhjEfjVOx0KdNPSWEHno
+         KSs2G3y3N9SwBG5NM5nfzf5/ynFgtWgQ3CLXM7K+hSUVcPTdng4aUdz3+cuYZFPbi1eS
+         ik03fYSF9K8HzXuBFVgMWtrD+TskuLJyDjiFDi0Uy/ej0ytsAm/0is3kvUh3PE/JmgqY
+         Kg0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792601507; x=1793206307;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=13QHzm0bpM59xYS1wnMZEwywD8qK4xxHRhkkWiGn1fY=;
+        b=Qgrdz8IlMhxzVAp33lVRUogbVvA9uEZknLymVuaSrUW1MIPlwPYyGOn0X8yBRJ08PP
+         k1Hqzlh6iPzcpMbgezOJHE98OMiUI93Af8g9RYv6DAM9r6L2efz6KV5lF6c3zMrkcsh3
+         M1Wz/fwBBClRBQ+3xBb4azJmJYTp8BN+q6u0FMDAvsLe7VGksimUQCOLJjs4oywXLWuZ
+         vfzeR1JzQyrXXwxQLxXPBNwOIY7Uhv38WCG4Yq8dyCRW3f6g8mBgJHZLoEsGpMx8BIE7
+         bOpIwqmq38Tm6gUSI/Px/pkoVdmFPIOqeNzyiPV2+OgIiv/tSJswRey6fpfTIcSZBtRP
+         //jA==
+X-Forwarded-Encrypted: i=1; AKwUvBz4TZvHG3tZJhFNNQf8OyFCt0pa8noQ9TB0x3aBP3ItZiMHN/hvsy8TvCp+dMH0wLpT8uR+jjScDvVrGz/5C3Ga0TbJaFE=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJbX7IrAPlQjhx85q2qWaFLqbzRcSmUlac6pZEGC3kWCH5t+ekL
+	+CtoiN85ysgpDkjrc1u9TCunHdpr2GF99LoNU9+waooaiXa+YC6fdCDi0Ild8BYKi9zWqGAOZjz
+	9RRz7qZ2E5jB3bvKatd/Zq1gUOW5Jefw1P4nQNA5k3AevdkV2v1taDQ==
+X-Gm-Gg: AYBFou3iuv+pcNRTJi992CwBoKYyu2HbsyAs2Es361jhNzOtF8erlGG2ZnwX4t8VZS3
+	qXlfryV4sl3VWgfDUt/f0wKHQnchsICBhVicfZ7CfFOD4SUtcTh57PUqiuFHcdQxzpOHJ4x8oGa
+	0DMJ37I0mGx8ZAEvCMydbSq2WcmJHZ9nSVPooPqoDkZdYmuxe4nJc93LlI2F4w3LpV0oA8XJ2NB
+	UhLx0CJBIVy+liYuCpDos0tjYzJ2YvyUPB4jwJ6EWxoFt0KMTIQ4LjqVYtHq7hAp+TENbFfZkIW
+	yebGP+8pdVoQ+1Sm/K55AiKeCXgNTVHaQ60pXbSPUP/IaZiY17c5ue3nQJ6sCA+eZuY0prJQ5Ct
+	n5fgaYqs3OcncTxCEeo2bC5tlq4pFNRUt9QVnjmYr8l6MYURoWpLXYCwTaNjtRyFafYbWSrsvO/
+	YQDrCq0Us1X+nacw==
+X-Received: by 2002:a05:6a21:4506:b0:3e2:5d7f:f630 with SMTP id
+ adf61e73a8af0-3e287ef2e13mr2253079637.54.1792601507303; Wed, 21 Oct 2026
+ 09:51:47 -0700 (PDT)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -70,135 +105,259 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
+ <20261019-b4-ipe-keyring-rfc-v1-1-156f0b93e843@nvidia.com>
+ <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org> <20261021-groll-donnerstag-erfuhren-ce34a0ed4e97@brauner>
+In-Reply-To: <20261021-groll-donnerstag-erfuhren-ce34a0ed4e97@brauner>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 Oct 2026 12:51:35 -0400
+X-Gm-Features: AclHuK9u4zlqRR8k7l_xhgTD3syw8PvB14c-IIpaLUltSW6zS4RYc3Du7nPPmmQ
+Message-ID: <CAHC9VhTHUU0h9k74CMT6wYhMwyY3YhbSSFwJoDTvoFRyTFVZwg@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
+To: Christian Brauner <brauner@kernel.org>
+Cc: Fan Wu <wufan@kernel.org>, manuelh@nvidia.com, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Andrew Halaney <andrew@amutable.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-doc@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 21, 2026 at 9:54=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> On Mon, Oct 19, 2026 at 04:15:57PM -0700, Fan Wu wrote:
+> > On 10/19/2026 2:40 PM, Manuel Huber via B4 Relay wrote:
+> > > From: Manuel Huber <manuelh@nvidia.com>
+> > >
+> > > Add a dedicated .ipe keyring for IPE policy signature verification,
+> > > modeled after the .dm-verity and .bpf keyring implementations.
+> > >
+> > > With this, userspace can provision its own keys into the keyring,
+> > > then restrict it and activate it for IPE policy signature verificatio=
+n.
+> > >
+> > > This enables scenarios in which a trusted userspace component generat=
+es
+> > > an IPE policy, and creates an ephemeral policy-signing key pair,
+> > > provisions its public certificate, and restricts the IPE keyring duri=
+ng
+> > > the early lifetime of a system. The trusted component can then sign t=
+he
+> > > IPE policy, destroy the private key, and load and activate the policy=
+.
+> > > During that phase, the system is considered in a trusted state wherea=
+s
+> > > the system transitions into a possibly untrusted state afterwards,
+> > > running arbitrary user-provided applications. In such a scenario, the
+> > > trusted userspace component could reside on a dm-verity protected
+> > > rootfs disk, and applications would reside on additional dm-verity
+> > > protected disks. The latter disks would be dynamically attached and
+> > > their dm-verity root hashes and/or signatures not known a priori to
+> > > launching the system.
+> > >
+> >
+> > You might need to explain why the existing keyrings, i.e. builtin/secon=
+dary/platform cannot be used in your scenario. Like the firmware is not tru=
+sted?
+> >
+> > > A concrete usage scenario could be Kata Containers, which enables
+> > > running Kubernetes pods in ephemeral, headless utility VMs, possibly
+> > > without systemd. The rootfs disk is static and known beforehand, but
+> > > containerd's image layers might be acquired and transported into the
+> > > VM using the erofs snapshotter and dynamic block device attachment
+> > > using dm-verity.
+> > >
+> > > Signed-off-by: Manuel Huber <manuelh@nvidia.com>
+> > > ---
+> > >  Documentation/admin-guide/kernel-parameters.txt |  9 +++
+> > >  security/ipe/Makefile                           |  1 +
+> > >  security/ipe/ipe.c                              |  2 +
+> > >  security/ipe/keyring.c                          | 79 +++++++++++++++=
+++++++++++
+> > >  security/ipe/keyring.h                          | 16 +++++
+> > >  security/ipe/policy.c                           | 10 ++++
+> > >  6 files changed, 117 insertions(+)
+> > >
+> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Docume=
+ntation/admin-guide/kernel-parameters.txt
+> > > index e75344f4e0cd..fd508dd779ed 100644
+> > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > @@ -2733,6 +2733,15 @@ Kernel parameters
+> > >                     Determine whether IPE starts in permissive (0) or
+> > >                     enforce (1) mode. The default is enforce.
+> > >
+> > > +   ipe.keyring_unsealed=3D
+> > > +                   [IPE]
+> > > +                   Format: <bool>
+> > > +                   When set to 1, leave the IPE policy keyring
+> > > +                   unsealed after initialization so userspace can pr=
+ovision
+> > > +                   keys. Once the keyring is nonempty and restricted=
+, it is
+> > > +                   searched during policy-signature verification. Th=
+e default
+> > > +                   is 0, which creates the keyring restricted and em=
+pty.
+> > > +
+> >
+> > I would prefer a Kconfig CONFIG_SECURITY_IPE_KEYRING default to N inste=
+ad, like the fsverity keyring. In the kconfig you can also describe in whic=
+h cases should this option be turned on.
+> >
+> > >     ipe.success_audit=3D
+> > >                     [IPE]
+> > >                     Format: <bool>
+> > > diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+> > > index 2ffabfa63fe9..109e736696a5 100644
+> > > --- a/security/ipe/Makefile
+> > > +++ b/security/ipe/Makefile
+> > > @@ -20,6 +20,7 @@ obj-$(CONFIG_SECURITY_IPE) +=3D \
+> > >     hooks.o \
+> > >     fs.o \
+> > >     ipe.o \
+> > > +   keyring.o \
+> >
+> > with Kconfig this can be obj-$(CONFIG_IPE_KEYRING) +=3D keyring.o
+> >
+> > >     policy.o \
+> > >     policy_fs.o \
+> > >     policy_parser.o \
+> > > diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+> > > index 495bb765de1b..f5232f850dc2 100644
+> > > --- a/security/ipe/ipe.c
+> > > +++ b/security/ipe/ipe.c
+> > > @@ -7,6 +7,7 @@
+> > >  #include "ipe.h"
+> > >  #include "eval.h"
+> > >  #include "hooks.h"
+> > > +#include "keyring.h"
+> > >
+> > >  extern const char *const ipe_boot_policy;
+> > >  bool ipe_enabled;
+> > > @@ -97,4 +98,5 @@ DEFINE_LSM(ipe) =3D {
+> > >     .init =3D ipe_init,
+> > >     .blobs =3D &ipe_blobs,
+> > >     .initcall_fs =3D ipe_init_securityfs,
+> > > +   .initcall_late =3D ipe_keyring_init,
+> > >  };
+> > > diff --git a/security/ipe/keyring.c b/security/ipe/keyring.c
+> > > new file mode 100644
+> > > index 000000000000..ea8d164b62a6
+> > > --- /dev/null
+> > > +++ b/security/ipe/keyring.c
+> > > @@ -0,0 +1,79 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright (C) 2026 NVIDIA CORPORATION & AFFILIATES. All rights re=
+served.
+> > > + */
+> > > +
+> > > +#include <linux/cred.h>
+> > > +#include <linux/err.h>
+> > > +#include <linux/key.h>
+> > > +#include <linux/moduleparam.h>
+> > > +
+> > > +#include "ipe.h"
+> > > +#include "keyring.h"
+> > > +
+> > > +static struct key *ipe_keyring __ro_after_init;
+> >
+> > You can remove static here then the other ipe code can directly use the=
+ variable instead of a function call.
+> >
+> > > +
+> > > +static bool ipe_keyring_unsealed __ro_after_init;
+> > > +
+> > > +/* Set the right module name for built-in parameters. */
+> > > +#ifdef KBUILD_MODNAME
+> > > +#undef KBUILD_MODNAME
+> > > +#define KBUILD_MODNAME "ipe"
+> > > +#endif
+> > > +
+> > > +module_param_named(keyring_unsealed, ipe_keyring_unsealed, bool, 044=
+4);
+> > > +MODULE_PARM_DESC(keyring_unsealed, "Leave the IPE keyring unsealed")=
+;
+> > > +
+> >
+> > ...
+> >
+> > > +
+> > > +/**
+> > > + * ipe_keyring_init() - Allocate and configure the IPE keyring.
+> > > + *
+> > > + * Return: Always %0. A failure leaves IPE without its dedicated key=
+ring.
+> > > + */
+> > > +int __init ipe_keyring_init(void)
+> > > +{
+> > > +   struct key *keyring;
+> > > +   int rc;
+> > > +
+> > > +   keyring =3D keyring_alloc(".ipe", GLOBAL_ROOT_UID, GLOBAL_ROOT_GI=
+D,
+> > > +                           current_cred(),
+> > > +                           KEY_POS_SEARCH |
+> > > +                           KEY_USR_VIEW | KEY_USR_READ | KEY_USR_WRI=
+TE |
+> > > +                           KEY_USR_SEARCH | KEY_USR_SETATTR,
+> > > +                           KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
+> > > +   if (IS_ERR(keyring)) {
+> > > +           pr_err("failed to allocate keyring: %ld\n", PTR_ERR(keyri=
+ng));
+> > > +           return 0;
+> >
+> > You might need to panic here like the fsverity kerying.
+> >
+> > > +   }
+> > > +
+> > > +   if (!ipe_keyring_unsealed) {
+> > > +           rc =3D keyring_restrict(make_key_ref(keyring, true), NULL=
+, NULL);
+> > > +           if (rc) {
+> > > +                   pr_err("failed to restrict keyring: %d\n", rc);
+> > > +                   key_revoke(keyring);
+> > > +                   key_put(keyring);
+> > > +                   return 0;
+> > > +           }
+> > > +   }
+> >
+> > This looks kind of awkward, like if unseal is not set, it can create an=
+ empty keyring then immediately seal it. I would switch to the fsverity's a=
+pproach to let userspace seal it.
+>
+> Please don't start breaking an established pattern that works well.
+> We're now using this with both bpf and dm-verity with
+> systemd-keyring-setup.
 
-The main change adds composable Landlock controls for namespace types
-and Linux capabilities, thanks to new LSM hooks (merged via the LSM
-tree).  A umount race condition is also fixed.
+Just a quick point of clarification, you're using the pattern you
+described for other keyrings, not necessarily a dedicated IPE keyring
+described in this patchset, correct?
 
-Please pull these changes for v7.4-rc1 .  These commits merge cleanly
-with your master branch.  Kernel changes have been tested in the
-latest linux-next releases, and I recently fixed a new merge conflict
-(see the related merge commit message).
+I know you/Lennart/systemd made the decision to implement your own
+version of IPE instead of working with Fan to augment the existing
+implementation to meet your needs, so I'm not sure if you've also done
+something with an out-of-tree patch, BPF, etc. to implement your own
+keyring.
 
-Test coverage for security/landlock is 91.8% of 2864 lines according to
-LLVM 23, and it was 91.6% of 2625 lines before this PR.
+> The point is that the keyring is intentionally
+> inactive unless it is sealed and restricted. That is part of the
+> security model. fsverity is used as soon as any key is enrolled which
+> doesn't give userspace a throwaway the key moment.
 
-Regards,
- Mickaël
+As far as I'm concerned the decision of how IPE uses an IPE keyring is
+up to Fan.  Of course, fitting in with existing norms is important,
+but if it causes IPE or existing IPE uses a lot of pain, that can a
+good reason to diverge from those solutions.  These days everyone is
+going to implement whatever they please, but if you have
+needs/requirements about how you want things to behave in LSM land, I
+think it would be helpful to engage with us before you make a decision
+and then start pleading with the LSM folks to adopt your approach.
 
---
-The following changes since commit 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907:
-
-  Linux 7.3-rc7 (2026-10-11 20:04:55 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.4-rc1
-
-for you to fetch changes up to 3e271a27c46fd591d1011c7de5a644a41e2010f1:
-
-  landlock: Fix superblock use-after-free in release_inode() (2026-10-20 16:47:24 +0200)
-
-----------------------------------------------------------------
-Landlock update for v7.4-rc1
-
-----------------------------------------------------------------
-Christian Brauner (2):
-      ns: Free anonymous mount namespaces via ns_common_free()
-      lsm: add LSM blob and hooks for namespaces
-
-Günther Noack (1):
-      landlock: Fix superblock use-after-free in release_inode()
-
-Jann Horn (1):
-      cred: clarify that task_struct::cred is only for the current task
-
-Mickaël Salaün (10):
-      lsm: add LSM_AUDIT_DATA_NS for namespace audit records
-      Merge branch 'lsm/dev' into master
-      landlock: Rename quiet_masks to quiet_access
-      landlock: Wrap per-layer access masks in struct layer_config
-      landlock: Enforce namespace use restrictions
-      landlock: Enforce capability restrictions
-      selftests/landlock: Add namespace restriction tests
-      selftests/landlock: Add capability restriction tests
-      samples/landlock: Add capability and namespace restriction support
-      landlock: Add documentation for capability and namespace restrictions
-
-Paul Moore (1):
-      lsm: update the BUILD_BUG_ON() in audit_log_lsm_data()
-
-Wang Yan (1):
-      selftests/landlock: Fix snprintf truncation checks in test files
-
- Documentation/admin-guide/LSM/landlock.rst     |   46 +-
- Documentation/security/landlock.rst            |  177 +-
- Documentation/trace/events-landlock.rst        |   66 +-
- Documentation/userspace-api/landlock.rst       |  243 ++-
- fs/namespace.c                                 |    3 +-
- include/linux/cred.h                           |   17 +-
- include/linux/landlock.h                       |   29 +-
- include/linux/lsm_audit.h                      |    5 +
- include/linux/lsm_hook_defs.h                  |    3 +
- include/linux/lsm_hooks.h                      |    1 +
- include/linux/ns/ns_common_types.h             |    3 +
- include/linux/sched.h                          |    8 +-
- include/linux/security.h                       |   20 +
- include/trace/events/landlock.h                |  244 ++-
- include/uapi/linux/landlock.h                  |  139 +-
- include/uapi/linux/nsfs.h                      |    1 +
- init/init_task.c                               |    2 +-
- kernel/auditsc.c                               |    5 +-
- kernel/cred.c                                  |    2 +-
- kernel/nscommon.c                              |   17 +-
- kernel/nsproxy.c                               |    6 +
- samples/Kconfig                                |   13 +-
- samples/landlock/Makefile                      |    5 +
- samples/landlock/sandboxer.c                   |  269 ++-
- security/landlock/Makefile                     |    4 +-
- security/landlock/access.h                     |   61 +-
- security/landlock/audit.c                      |   32 +-
- security/landlock/cap.c                        |  159 ++
- security/landlock/cap.h                        |   48 +
- security/landlock/cred.h                       |    2 +-
- security/landlock/domain.c                     |   13 +-
- security/landlock/domain.h                     |   97 +-
- security/landlock/fs.c                         |   12 +-
- security/landlock/limits.h                     |    9 +
- security/landlock/log.c                        |   53 +-
- security/landlock/log.h                        |   10 +-
- security/landlock/net.c                        |    2 +-
- security/landlock/ns.c                         |  241 +++
- security/landlock/ns.h                         |   18 +
- security/landlock/ruleset.c                    |   27 +-
- security/landlock/ruleset.h                    |   33 +-
- security/landlock/setup.c                      |    4 +
- security/landlock/syscalls.c                   |  217 +-
- security/landlock/trace.c                      |   27 +-
- security/lsm_audit.c                           |    6 +-
- security/lsm_init.c                            |    5 +-
- security/security.c                            |   72 +
- tools/testing/selftests/landlock/audit_test.c  |    2 +-
- tools/testing/selftests/landlock/base_test.c   |   21 +-
- tools/testing/selftests/landlock/cap_test.c    | 1370 ++++++++++++
- tools/testing/selftests/landlock/common.h      |   13 +
- tools/testing/selftests/landlock/config        |    5 +
- tools/testing/selftests/landlock/fs_test.c     |   13 +-
- tools/testing/selftests/landlock/net_test.c    |    4 +-
- tools/testing/selftests/landlock/ns_test.c     | 2647 ++++++++++++++++++++++++
- tools/testing/selftests/landlock/ptrace_test.c |    2 +-
- tools/testing/selftests/landlock/trace.h       |   52 +-
- tools/testing/selftests/landlock/trace_test.c  |    8 +-
- tools/testing/selftests/landlock/wrappers.h    |   29 +
- 59 files changed, 6437 insertions(+), 205 deletions(-)
- create mode 100644 security/landlock/cap.c
- create mode 100644 security/landlock/cap.h
- create mode 100644 security/landlock/ns.c
- create mode 100644 security/landlock/ns.h
- create mode 100644 tools/testing/selftests/landlock/cap_test.c
- create mode 100644 tools/testing/selftests/landlock/ns_test.c
+--=20
+paul-moore.com
