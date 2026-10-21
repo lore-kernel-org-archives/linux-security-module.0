@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792615460;
-	b=QYzaAf+rzhgw011wqaWBBvcZMHocXi4eWrqx6JH9PwRkiE8e3VxUb9bxXNF9pnBGXqgb
-	 TPAtDs/yo1eueN8jOyqCSBQKH9OJWk7UWFFYrQuz66opKAdJEUQJwWym9ymK63sQETQdu
-	 tXgKizC0sFjZX56fw8J6yiutg6arC8/jBPx5NWR18Xk3rWxXFeZKHVJkVouWjGqLKLTJQ
-	 YGJKYPMLaKz6XdOqZNY8mibHKbaW8TH+8umBD+MDvwyUocnzq5hXG9UoA7AQJMfzs7Z0L
-	 myx8RGGU+OfYnndTBMtF9DNPSawoipoY9aCcEA1R2vD+jwTbpEGsMNOEMOWPWP73czQ==
+	t=1792615705;
+	b=rojder8a16R4jxtu/yT7Ep3/WwHkBcAU8pZrwJrM43i+cBF4DoCjzHDbcu9fL/3PHLKp
+	 v6P4coqkBFf9C8TMWnkOf/jBRIh+AqQleTgIMBqioofqfEABeT0wtxkR5ogWAxjd96hts
+	 4arL3CicDU1W+Hpa71eSzzBivH90xaWUORrhWOgoBkmOtoVLRTHcAPy+0keFVZSAw/i3H
+	 fUTIZqoUwB9iLpsAHOzYmqufrRJoGv8uHnuKIPETRfeKDIEraPhPF412cL36yqQDP9yWF
+	 wm/G5jphyWZ1fsvuT7zl/LsFXDd0Wf3jE8bXVh2o15LNdTlBXvUQigMFH5JYH3LZqVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792615460;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792615705;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=wTeweUMhPR0TJY2YMbNMMXQds8SH2KieYYR9e025KVE=;
-	b=nXbK9qk6CawRorDXXLKDt+0EEMGEE39ifznmVUDgMgVv7tNVN4zCWb55Hb7mY5eNaZ85
-	 3jOb7YWOlsHqiMU48QK1LeeVjvwvav7V1wmMPPc+dkgQPnuKgo30g4cokZesgBnpR6hoY
-	 tymot6k9spBGtP2QRrwRlLQlkHiHX3JhT8F6XwBnPRr5EeF629Sph7shAizUXaIX3GdBP
-	 mlFkvYCigXCf6SxUnB8ngbvsY1DrlsU30i6SEEB/LYIAsGXMdYYL8aa68L1U2u6Qo5SLA
-	 Z+W71Zgd7e48CBBriSRys4qsO3jU8/OEvNON50QhE25qcCi797gvLMSDGRVAJA6AzeA==
+	bh=sjfXzbh9wtDphe8rA+Shh5Iq7IbByneQQJKYVGx6uuk=;
+	b=a9li99KZUZ0veZZLwTaJ1ZF3AGwd/fd9txAlqvsjc4aIs3V+AH73z6ho+VgwV+UJ/d7I
+	 BASFylJoaXst1HUuNRdvbANXp8J4UuRZ9zkyWWYcuNVcszmPZTCfanbn+zH4gQxIdWUZB
+	 +kbDp9ltDydelo5s7sR8s7j3lEBL9Edkn/bjS/RkKaj0wTwSIl/BMOjsAH3mVdAxvO5qx
+	 RvZp53oAfN1URjEmrkFpHJ1zkFiWFNg6E/R4UfcmvyUEEBsbVz5VcgyD4puVpx4LbItYI
+	 1cU3BK5LVumUmNBa7r25MMWx3ftl5vygdPQ4tYMc78pLm1CEP52eaFc+ArRQuFQnNHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CvML0zsF;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ikvHQw57;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D1B606A31A
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 20:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931FF606A319
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 20:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CvML0zsF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A6CF1F000C1
-	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 20:44:19 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ikvHQw57
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAD3C1F000C1
+	for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2026 20:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792615459;
-	bh=wTeweUMhPR0TJY2YMbNMMXQds8SH2KieYYR9e025KVE=;
+	s=k20260515; t=1792615705;
+	bh=sjfXzbh9wtDphe8rA+Shh5Iq7IbByneQQJKYVGx6uuk=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=CvML0zsFwz7UHEp8TWLAY81TuIMLcYU/b/QdUoyDmtsKi/irkdwocuKXSvmbUjTkn
-	 NTKQvs82bFug/wtBm7S59KEF2ZSiAnDtXdeE/7qIdzeqfAHHP3QJAo2ozSyr1hsUut
-	 RHkFB4zNNLwoB53dllesfBtgsWloxq+US+Z2LoDmIP7Bjnf4z0psPoWZWVJBwycOKJ
-	 4SX8Rs4693O7zBRpOBhG+WcKNQhM7ZthB20GvfeSl7OuEfsOCcGvqNRnN+PuhJ5k3A
-	 HdBVi74shU0DbbutIvhUkUmf6OrO1pqyZ721WjSG2Ygl7gN1jHl+4RT9QIkDWxJ98i
-	 wdYlq2w1l3Nog==
-Message-ID: <sashiko-outbox-180646@kernel.org>
+	b=ikvHQw57HgjDhY5BC8ZRoHF9mL/OXLdkSEAKSQbUPtqLp44Y8/jzMSwR6dm6RWVvn
+	 Ilc4wQ0fyhnEo5QJmuikxwW6+cFYSasTRSqXustYFwRcw7c003a6aYeDlgrdOyJ3rA
+	 p4mXo4LpWUG+Yvk2O43Sgh/ch3+Z+uSnZO1IXOV6Dv818KZlers54+ehZT1KvPMAhG
+	 T2b6DR9I9Vrtf8UxYVPy64NWjp2mTwIqKJdP2ZVzjh2MNkzQTDA7xPuje98bVI80sq
+	 wwD68YyD0DftkgbkZ3DmQ/whYti0w/AnkQRfjqbtRleIpndx71kPqZCk4Um8uHEZzt
+	 H3y2APIAc06VA==
+Message-ID: <sashiko-outbox-180650@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 1/5] userns: record how far up CAP_SETFCAP reaches
+Subject: Re: [PATCH v3 2/5] userns: don't let setns() lend CAP_SETFCAP
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261021-b4-setfcap-userns-v3-1-97c7ed4e43e1@toxicpanda.com>
+In-Reply-To: <20261021-b4-setfcap-userns-v3-2-97c7ed4e43e1@toxicpanda.com>
 References: <20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com>
- <20261021-b4-setfcap-userns-v3-1-97c7ed4e43e1@toxicpanda.com>
+ <20261021-b4-setfcap-userns-v3-2-97c7ed4e43e1@toxicpanda.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 21 Oct 2026 20:44:18 +0000
+Date: Wed, 21 Oct 2026 20:48:23 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,27 +59,26 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> create_user_ns() records in ns->parent_could_setfcap whether the creator
-> had CAP_SETFCAP in its effective set, and verify_root_map() trusts that
-> when a task in the new namespace maps the parent's uid 0.  A bool only
-> describes the parent, though.  File capabilities belong to the kuid of a
-> root user, and a namespace that maps the parent's uid 0 shares that kuid
-> with the parent and possibly with ancestors further up, so what matters
-> is how far up the creator's CAP_SETFCAP counted.
+> Mapping uid 0 of the parent into a user namespace requires CAP_SETFCAP,
+> because a task in such a namespace can write file capabilities that are
+> honoured in the parent.  A task that is already in the namespace has a
+> full capability set there and can't be asked any more, so
+> verify_root_map() goes by what the creator had, now ns->setfcap_level.
 >=20
-> Replace the bool with ns->setfcap_level: CAP_SETFCAP held in the
-> namespace counts there and in its ancestors up to the one at that
-> ->level.  cap_setfcap_level() computes it from the creator's cred.  A
-> creator that holds CAP_SETFCAP passes on the setfcap_level of its own
-> namespace, one that doesn't gets the new namespace's own level, and the
-> initial namespace has 0.
+> But setns() lets other tasks in, and they get the full set as well:
 >=20
-> verify_root_map() keeps checking the same condition: the bool was false
-> exactly when the level is the namespace's own.
+>   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
+>   unshare(CLONE_NEWUSER)
+>                                     setns(A's user ns)
+>                                       allowed, euid =3D=3D ns->owner
+>                                     write "0 0 1" to /proc/self/uid_map
+>                                       ns->setfcap_level is A's -> allowed
 >=20
-> No functional change.
+> [ ... ]
 >=20
-> Reviewed-by: Bradley Morgan <brads@mainlining.org>
+> Link: https://lore.kernel.org/all/20261021-bioenergie-allheilmittel-undur=
+chdringlichen-35666eb62cff@brauner/
+> Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
 > Assisted-by: LLM
 > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
@@ -87,5 +86,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261021-b4-setfcap=
--userns-v3-0-97c7ed4e43e1@toxicpanda.com?part=3D1
+-userns-v3-0-97c7ed4e43e1@toxicpanda.com?part=3D2
 
