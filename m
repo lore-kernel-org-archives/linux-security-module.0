@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792683858;
-	b=I7jJB+V2WnBOLsbbsFTXRtVt20War0BIp7oLteneHrlwLVANeFK/x5TI//JHJ1tzBBDh
-	 qVzEJhfsr5vfL0b4Vn28kAx/H9Apq2CX5AEq5uQGnLe/CJkQr/0/1ifELCtdIT/pqfAnl
-	 6/k88JiFOnbucJg7YELtPEcw6xJ9nfDxZT7B/CRVOGP/4pI4DF+0wKVcY5cP+5VpZY6cN
-	 sHM4/jGX4Dox4unkAk618Kj8qWgOGbHpq6/5GzI0YhLMFoLO6cf5aycyMu8jKbis/P71o
-	 CewBIop17neyciwSsFLH2IvU3p2FxkGz3hnA0WAWa3v3zd0nFhRmBgJ6nivrIrJ21Rw==
+	t=1792683868;
+	b=2mduC8AL/j6DKbn6RnQ/SR93XfK79qDeAphCuqsWlYIJiupB43wX3dMAMx+yHn65f53X
+	 0t1M6dmzuGLPz/JsGqF+NAw37aqpf1KnxhyqXAiqNFtQ/z77sJGydCsqM7lsScFekbVv5
+	 oCI5iWzjJAxCzwqkTIKJQy5VNYrmrIaYWCFHar/a8/pz+aRNTnNaWXiR0ZI8SzDkDW7du
+	 ikbaSS90ZtVgayAsKdiMe6/E1A3OHVU8gpDOoyjZfGun3tEkSqb6tIZCDWxsgNB8qgILz
+	 dyKFQ3xBcIkKAaZjotWdYoXkxq1WKsyE2Vtc/vN4hql1tF9iWtrE7dGcZCGpg5wTWZA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792683858;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792683868;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=7djcSuZ+VkivDbF5yVqI2iBloYUAv2eSmgTqsy+UUpo=;
-	b=QUWdYjOyDK4N+2hD+JhwFOIskfaWqY45NCbzmevHYJ8GSSqB10JzgcqXsboK+qoyEu90
-	 SP7Sw3ldjm0WfRrC3Vv7F0pIaxv8OKO4pWotv7AzbI2GH2jr49ti8+0/LxEq/qJKcF3La
-	 jLviILV8k0hyoQCFqmG0cXxV3ns5roZCzctkCmAqO3VyGqD1g3/yjUGJ25ndMZ6g6KF8A
-	 C63C9Xc5BVPSqiOtWzdmQCucG5Gq08yyw3lmkENvHeej06EO+PuHexX5cvOqFBRaqQXiR
-	 ZYbH/aF+7+7JymaGsuaXC2XB4NyjH3RtOW6XcHgD1b5HVRe4/VoZ8Kr9qpDwjXzI4OA==
+	bh=cY1hvaWh6Vk6/nIEt5/9rTdze650y5g5R3I1CecXjyo=;
+	b=qq5mK2orgpx/UfZOGjKigz7Sq+y9MOFuM+2fEbTnwJGJvPZanbNewWJrnbUcb4jPqCUA
+	 SyQG8iDiRQYYy2TFiGalM/X7mprYJh7MBCoYcTHaiCUIBbkWL7CvXFa82eLcpA9dnqRMa
+	 qBqUWl+cuP/Fq7BiGl2zalTijAxyMbbian6lkgj54oP5ARUypL77hmhCDh15CCURuo1EO
+	 QcsPr0cg041hF6ondgamIwoPIe3YdYRkgxjX9DLeil7NZnDPFwFERhG1kH1oAUb7XqbwX
+	 Ew4UkpkF6tWLvPRWsuHBuEF5gKpLmqXA6eFQwhs+m7DiCxckVX+M2THThzNstfFDNOQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W06cjuZW;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="JSUy/MnX";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3116606A31D;
-	Thu, 22 Oct 2026 15:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE316606A322;
+	Thu, 22 Oct 2026 15:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W06cjuZW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966311F01825;
-	Thu, 22 Oct 2026 15:44:15 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JSUy/MnX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71EC1F031E0;
+	Thu, 22 Oct 2026 15:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792683857;
-	bh=7djcSuZ+VkivDbF5yVqI2iBloYUAv2eSmgTqsy+UUpo=;
+	s=k20260515; t=1792683867;
+	bh=cY1hvaWh6Vk6/nIEt5/9rTdze650y5g5R3I1CecXjyo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=W06cjuZWWPxaajUZFU2Wwg4ejVWMo7Bk69w/xcOgiEB0Y2gVKfSCd5Ql1rpFj3/od
-	 Nd0c3Kr4dlmkL1wrd5w2ggFj5zmwDXAr+5ol+TrpBp46qB0G6YAx4RQGBoeDBgDYTC
-	 A4NWE8P1hLktCI+RylJeGRUjk25Qo92EW41R7DzPuQMLDayiWRSC8nV3Fc0jY6OJHr
-	 Z6vFDxxvGXD2fPFJGh2pqtzXVdpfskCPKStKZ50RCrnRB22CEhRmgp4qidPO9V6ExL
-	 igmaN5FbtU8OF+ONrQby7LX/EClvvTrMppuwq2XyZx5Hg7d+ykaouUe2rMAa4slETv
-	 BYzmvkcBcX/OQ==
-Message-ID: <sashiko-outbox-181719@kernel.org>
+	b=JSUy/MnXegcnSG+fWAukS384bsK/wMQrMy5lkpbYQrgfGOExC0iCbDW599V2t85vN
+	 vlzi8IJtSWee8I3GcVM0qy3olrYcraklK8mP7Sanqsn3XZEjm+axsN9qDtq2fh6+/K
+	 lJmjlhjwSdYpMrRg2hpHK5khWNoZID5t9A1/y33+eGFLYna6wHU5alGgecC5p0k2x+
+	 WWO10DiH3C4BP+0kvN1jWvKiP4HYj5MrHGdFfkS4YYoHADaTxvyDgUdHdomvvVMoYh
+	 +j/x+peLVgtFX44NhkG+2mhxRsKxGSYKYAOEmt4m7qrDAyHTdQwnfsYaKbkK5YNFWU
+	 YWux0CxHmkuJw==
+Message-ID: <sashiko-outbox-181724@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC v2 3/8] security: dma-buf: Add dma_buf_charge_task
- LSM hook
+Subject: Re: [PATCH RFC v2 8/8] selftests/dmabuf-heaps: Add dma-buf memcg
+ accounting tests
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  Weiner" <hannes@cmpxchg.org>, =?utf-8?b?TWljaGFsIEtvdXRuw70=?= <mkoutny@suse.com>, "Jonathan
@@ -58,12 +58,12 @@ To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  Khan" <shuah@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
  =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, mripard@kernel.org, echanude@redhat.com, media-ci@linuxtv.org
-In-Reply-To: <20261021-v2_20230123_tjmercier_google_com-v2-3-ef6ee2dd8c5c@redhat.com>
+In-Reply-To: <20261021-v2_20230123_tjmercier_google_com-v2-8-ef6ee2dd8c5c@redhat.com>
 References: <20261021-v2_20230123_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com>
- <20261021-v2_20230123_tjmercier_google_com-v2-3-ef6ee2dd8c5c@redhat.com>
+ <20261021-v2_20230123_tjmercier_google_com-v2-8-ef6ee2dd8c5c@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 22 Oct 2026 15:44:15 +0000
+Date: Thu, 22 Oct 2026 15:44:25 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,211 +73,297 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
 s) to consider:
-- [Critical] dma-buf: heaps: UAF on remote task->mm in dma_heap_ioctl_alloc=
-ate()
-- [High] dma-buf: allocate() runs before memcg charge in dma_heap_ioctl_all=
-ocate()
-- [Medium] dma-buf: heaps: unguarded cgroup symbols in dma_heap_ioctl_alloc=
-ate()
+- [Medium] selftests/dmabuf-heaps: missing skip check in test_xfer_charge_c=
+groupfd_self()
+- [Medium] selftests/dmabuf-heaps: missing cgroup2 and memcg checks in open=
+_self_cgroupfd()
+- [Medium] selftests/dmabuf-heaps: vmtest.sh executes runner from unshared =
+/tmp in guest
+- [Medium] selftests/dmabuf-heaps: vmtest.sh runs vng/make before check_dep=
+s()
 --
 
-commit 4f97d3e850a29378e70a6ab0cb15c71860e1fcea
+commit 0809a03b2fbc81e6f2b637ef5c0744b2c8ae99f1
 Author: Albert Esteve <aesteve@redhat.com>
 
-security: dma-buf: Add dma_buf_charge_task LSM hook
+selftests/dmabuf-heaps: Add dma-buf memcg accounting tests
 
-This commit adds the security_dma_buf_charge_task() LSM hook and calls it
-in dma_heap_ioctl_allocate() when charge_fd refers to a process via pidfd,
-allowing security modules to control cross-cgroup dma-buf charging.
+This commit adds selftests for dma-buf memcg accounting via charge_fd in
+tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c and
+tools/testing/selftests/cgroup/test_memcontrol.c, along with a virtme-ng
+runner script in tools/testing/selftests/dmabuf-heaps/vmtest.sh.
 
-> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-> index be77a4c168ab0..c315739178867 100644
-> --- a/drivers/dma-buf/dma-heap.c
-> +++ b/drivers/dma-buf/dma-heap.c
+> diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/t=
+esting/selftests/dmabuf-heaps/dmabuf-heap.c
+> index 1d49df6719198..b1c58e5883f64 100644
+> --- a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
+> +++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
 
 [ ... ]
 
-> @@ -81,13 +82,14 @@ static struct dma_buf *dma_heap_ioctl_allocate(struct=
- file *file, void *data)
->  {
->  	struct cgroup *cgrp;
->  	struct cgroup_subsys_state *css;
-> +	const struct cred *tcred;
->  	struct dma_heap_allocation_data *heap_allocation =3D data;
->  	struct dma_heap *heap =3D file->private_data;
->  	struct dma_buf *dmabuf;
->  	struct mem_cgroup *memcg =3D NULL;
->  	struct task_struct *task;
->  	unsigned int pidfd_flags;
-> -	int fd;
-> +	int fd, ret;
->  	size_t len;
-> =20
->  	if (heap_allocation->fd)
+> @@ -496,6 +505,213 @@ static void test_alloc_no_fd_leak_on_efault(char *h=
+eap_name)
+
+[ ... ]
+
+> +static int open_self_cgroupfd(void)
+> +{
+> +	char cgroup_path[PATH_MAX];
+> +	char buf[PATH_MAX];
+> +	FILE *f;
+> +
+> +	f =3D fopen("/proc/self/cgroup", "r");
+> +	if (!f)
+> +		return -1;
+> +
+> +	cgroup_path[0] =3D '\0';
+> +	while (fgets(buf, sizeof(buf), f)) {
+> +		char *p =3D buf;
+> +
+> +		if (strncmp(p, "0::", 3) =3D=3D 0) {
+> +			p +=3D 3;
+> +			p[strcspn(p, "\n")] =3D '\0';
+> +			snprintf(cgroup_path, sizeof(cgroup_path),
+> +				 "/sys/fs/cgroup%s", p);
+> +			break;
+> +		}
+> +	}
+> +	fclose(f);
+> +
+> +	if (!cgroup_path[0])
+> +		return -1;
+> +
+> +	return open(cgroup_path, O_RDONLY | O_DIRECTORY);
+> +}
+> +
+> +/*
+> + * Test: allocate charging the calling process's own cgroup via a cgroup=
+fd.
+> + */
+> +static void test_alloc_cgroupfd_self(char *heap_name)
+> +{
+> +	int heap_fd =3D -1, cgroup_fd =3D -1, dmabuf_fd =3D -1, ret;
+> +
+> +	heap_fd =3D dmabuf_heap_open(heap_name);
+> +
+> +	if (!pidfd_alloc_supported(heap_fd)) {
+> +		ksft_test_result_skip("charge_fd not supported by this kernel\n");
+> +		goto out;
+> +	}
+> +
+> +	cgroup_fd =3D open_self_cgroupfd();
+> +	if (cgroup_fd < 0) {
+> +		ksft_test_result_skip("cannot open self cgroupfd\n");
+> +		goto out;
+> +	}
+> +
+> +	ret =3D dmabuf_heap_alloc_pidfd(heap_fd, ONE_MEG, 0, cgroup_fd, &dmabuf=
+_fd);
+> +	ksft_test_result(!ret, "Allocation with cgroupfd %d\n", ret);
+> +	if (dmabuf_fd >=3D 0)
+> +		close(dmabuf_fd);
+> +	close(cgroup_fd);
+> +out:
+> +	close(heap_fd);
+> +}
 
 [Severity: Medium]
-Will this cause a build regression in dma_heap_ioctl_allocate() when
-CONFIG_DMABUF_HEAPS=3Dy is built with CONFIG_MEMCG=3Dn or CONFIG_CGROUPS=3D=
-n?
+Can open_self_cgroupfd() return a directory fd that causes
+test_alloc_cgroupfd_self() and test_xfer_charge_cgroupfd_self() to report a
+hard failure instead of skipping when cgroup v2 or the memory controller is
+not active on that path?
 
-In drivers/dma-buf/dma-heap.c, dma_heap_ioctl_allocate() unconditionally
-references cgroup_get_from_fd(), cgroup_css(), memory_cgrp_subsys,
-css_tryget_online(), and cgroup_put() in the charge_fd resolution block
-(introduced earlier in this series by commit "dma-heap: charge dma-buf
-memory via explicit memcg" and updated here):
+In open_self_cgroupfd(), the 0:: entry from /proc/self/cgroup is appended t=
+o a
+hardcoded /sys/fs/cgroup prefix without checking that /sys/fs/cgroup is a
+cgroup2 mount. On systems using a hybrid hierarchy where /sys/fs/cgroup is a
+tmpfs and unified cgroup v2 is mounted at /sys/fs/cgroup/unified, opening
+/sys/fs/cgroup/ succeeds on tmpfs, and the kernel's cgroup_get_from_fd() th=
+en
+rejects charge_fd with EBADF.
 
-	if (heap_allocation->charge_fd) {
-		cgrp =3D cgroup_get_from_fd(heap_allocation->charge_fd);
-		if (!IS_ERR(cgrp)) {
-			/* charge_fd is a cgroupfd */
-			rcu_read_lock();
-			css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
-			if (!css || !css_tryget_online(css)) {
-				rcu_read_unlock();
-				cgroup_put(cgrp);
-				return ERR_PTR(-ENOENT);
-			}
+Furthermore, unlike the pidfd path in dma_heap_ioctl_allocate() and
+dma_buf_xfer_charge() which resolves the effective memcg via
+get_mem_cgroup_from_mm(task->mm), the cgroupfd path calls
+cgroup_css(cgrp, &memory_cgrp_subsys) directly on the target cgroup and
+returns ENOENT if the memory controller is not enabled for that specific
+cgroup (for example, when the test runs in a non-root cgroup whose parent h=
+as
+not enabled +memory in cgroup.subtree_control).
 
-In drivers/dma-buf/Kconfig, DMABUF_HEAPS only selects DMA_SHARED_BUFFER and
-does not depend on CONFIG_MEMCG or CONFIG_CGROUPS. However, in
-include/linux/cgroup_subsys.h, SUBSYS(memory) (which declares
-memory_cgrp_subsys) is guarded by:
+Should open_self_cgroupfd() verify that the resolved directory is on a
+cgroup2 filesystem with the memory controller enabled, or should the callers
+skip when the ioctl fails with ENOENT or EBADF?
 
-#if IS_ENABLED(CONFIG_MEMCG)
-SUBSYS(memory)
-#endif
-
-Furthermore, in include/linux/cgroup.h, the SUBSYS() declarations along
-with cgroup_get_from_fd(), cgroup_css(), css_tryget_online(), and
-cgroup_put() are only declared inside #ifdef CONFIG_CGROUPS without stub
-definitions when CONFIG_CGROUPS is disabled. Should this path be guarded by
-IS_ENABLED(CONFIG_MEMCG), or should Kconfig dependencies/stubs be added?
-
-> @@ -120,6 +122,14 @@ static struct dma_buf *dma_heap_ioctl_allocate(struc=
-t file *file, void *data)
->  			if (IS_ERR(task))
->  				return ERR_CAST(task);
-> =20
-> +			tcred =3D get_task_cred(task);
-> +			ret =3D security_dma_buf_charge_task(current_cred(), tcred);
-> +			put_cred(tcred);
-> +			if (ret) {
-> +				put_task_struct(task);
-> +				return ERR_PTR(ret);
-> +			}
 > +
->  			memcg =3D get_mem_cgroup_from_mm(task->mm);
+> +/*
+> + * Test: transfer a dma-buf's charge to self cgroup via DMA_BUF_IOCTL_XF=
+ER_CHARGE.
+> + */
+> +static void test_xfer_charge_cgroupfd_self(char *heap_name)
+> +{
+> +	int heap_fd =3D -1, cgroup_fd =3D -1, dmabuf_fd =3D -1, ret;
+> +	struct dma_buf_transfer_charge xfer =3D { 0 };
+> +
+> +	heap_fd =3D dmabuf_heap_open(heap_name);
+> +
+> +	ret =3D dmabuf_heap_alloc(heap_fd, ONE_MEG, 0, &dmabuf_fd);
+> +	if (ret) {
+> +		ksft_test_result_fail("Allocation failed %d\n", ret);
+> +		goto out;
+> +	}
+> +
+> +	cgroup_fd =3D open_self_cgroupfd();
+> +	if (cgroup_fd < 0) {
+> +		ksft_test_result_skip("cannot open self cgroupfd\n");
+> +		close(dmabuf_fd);
+> +		goto out;
+> +	}
+> +
+> +	xfer.charge_fd =3D cgroup_fd;
+> +	ret =3D ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
+> +	ksft_test_result(!ret, "XFER_CHARGE to self cgroupfd %d\n", ret);
+> +
+> +	close(cgroup_fd);
+> +	close(dmabuf_fd);
+>  out:
+>  	close(heap_fd);
+>  }
 
-[Severity: Critical]
-Can passing task->mm directly to get_mem_cgroup_from_mm(task->mm) in
-dma_heap_ioctl_allocate() trigger a use-after-free on struct mm_struct, or
-silently charge the wrong memcg when task->mm is NULL?
+[Severity: Medium]
+Unlike test_alloc_pidfd_self(), test_alloc_pidfd_child(), and
+test_alloc_cgroupfd_self(), test_xfer_charge_cgroupfd_self() does not call
+pidfd_alloc_supported(heap_fd) or check for errno =3D=3D ENOTTY when
+ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer) fails.
 
-When resolving heap_allocation->charge_fd via pidfd_get_task(), the caller
-only holds a reference on task->usage, which does not pin task->mm. After
-security_dma_buf_charge_task() returns 0, dma_heap_ioctl_allocate() reads
-task->mm and passes it to get_mem_cgroup_from_mm(task->mm) without holding
-task_lock(task) or acquiring an mm reference via get_task_mm(task) (a
-pattern introduced in commit "dma-heap: charge dma-buf memory via explicit
-memcg", modified here, and duplicated in commit "dma-buf: transfer memcg
-charges via DMA_BUF_IOCTL_XFER_CHARGE").
-
-If the target task concurrently exits via do_exit() -> exit_mm() in
-kernel/exit.c (or replaces its mm during exec via exec_mmap() ->
-exec_mm_put_old() in fs/exec.c), it clears task->mm under task_lock() and
-drops the last reference via mmput() -> __mmdrop() -> free_mm():
-
-	local_irq_disable();
-	current->mm =3D NULL;
-	membarrier_update_current_mm(NULL);
-	enter_lazy_tlb(mm, current);
-	local_irq_enable();
-	task_unlock(current);
-	mmap_read_unlock(mm);
-	mm_update_next_owner(mm);
-	mmput(mm);
-
-Because mm_cachep is not SLAB_TYPESAFE_BY_RCU and __mmdrop() frees the
-mm_struct immediately without an RCU grace period, get_mem_cgroup_from_mm()
-in mm/memcontrol.c can dereference freed memory at mm->owner:
-
-	rcu_read_lock();
-	do {
-		memcg =3D mem_cgroup_from_task(rcu_dereference(mm->owner));
-
-In addition, if the target task is already a zombie (having completed
-exit_mm() while still reachable via pidfd_get_task()) or a kernel thread,
-task->mm is NULL. Even though get_task_cred(task) and
-security_dma_buf_charge_task() authorized charging the target task,
-get_mem_cgroup_from_mm(NULL) in mm/memcontrol.c takes the !mm fallback:
-
-	if (unlikely(!mm)) {
-		memcg =3D active_memcg();
-		if (unlikely(memcg)) {
-			/* remote memcg must hold a ref */
-			css_get(&memcg->css);
-			return memcg;
-		}
-		mm =3D current->mm;
-		if (unlikely(!mm))
-			return root_mem_cgroup;
-	}
-
-which silently charges current->mm (the allocating caller's own memcg) or
-root_mem_cgroup instead of charging the target task's cgroup or returning
-an error. Should this pin the mm with get_task_mm(task) / mmput(mm) (or
-resolve the memcg from the task under rcu_read_lock() via
-mem_cgroup_from_task())?
-
->  			put_task_struct(task);
->  		}
-
-[Severity: High]
-Should the memcg charge happen before heap->ops->allocate() allocates the
-physical backing pages in dma_heap_ioctl_allocate()?
-
-Immediately following the charge_fd resolution in drivers/dma-buf/dma-heap.=
-c,
-dma_heap_ioctl_allocate() invokes heap->ops->allocate() for the full
-requested len before charging memcg via mem_cgroup_charge_dmabuf():
-
-	dmabuf =3D heap->ops->allocate(heap, len, heap_allocation->fd_flags,
-				     heap_allocation->heap_flags);
-
-	if (IS_ERR(dmabuf)) {
-		mem_cgroup_put(memcg);
-		return dmabuf;
-	}
-
-	if (!memcg && mem_accounting)
-		memcg =3D get_mem_cgroup_from_mm(current->mm);
-
-	if (memcg) {
-		if (!mem_cgroup_charge_dmabuf(dmabuf, memcg, GFP_KERNEL)) {
-			mem_cgroup_put(memcg);
-			dma_buf_put(dmabuf);
-			return ERR_PTR(-ENOMEM);
-		}
-	}
-
-Because commit "memcg: Add MEMCG_DMABUF accounting infrastructure" removed
-__GFP_ACCOUNT from alloc_largest_available() in
-drivers/dma-buf/heaps/system_heap.c:
-
-		flags =3D order_flags[i];
-		page =3D alloc_pages(flags, orders[i]);
-
-system_heap_allocate() allocates and zeroes the entire buffer of size len
-using uncharged alloc_pages() calls before try_charge() is evaluated in
-mem_cgroup_charge_dmabuf(). Can a process inside a memory-limited cgroup
-(or targeting one via charge_fd in DMA_HEAP_IOCTL_ALLOC) use this window to
-exhaust host physical memory and trigger the global OOM killer before the
-cgroup limit check runs?
+On an unpatched kernel where dmabuf_heap_alloc() and open_self_cgroupfd()
+both succeed, won't ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer) retu=
+rn
+-1 with errno =3D=3D ENOTTY and cause ksft_test_result(!ret, ...) to report=
+ a
+failure instead of skipping?
 
 [ ... ]
+
+> diff --git a/tools/testing/selftests/dmabuf-heaps/vmtest.sh b/tools/testi=
+ng/selftests/dmabuf-heaps/vmtest.sh
+> new file mode 100755
+> index 0000000000000..434857b765b84
+> --- /dev/null
+> +++ b/tools/testing/selftests/dmabuf-heaps/vmtest.sh
+> @@ -0,0 +1,205 @@
+
+[ ... ]
+
+> +readonly DMABUF_HEAP_TEST=3D"${SCRIPT_DIR}"/dmabuf-heap
+> +readonly MEMCONTROL_TEST=3D"${CGROUP_DIR}"/test_memcontrol
+> +readonly TMP_DIR=3D$(mktemp -d /tmp/dmabuf-vmtest.XXXXXXXX)
+
+[ ... ]
+
+> +build_selftests() {
+> +	make -C "${KERNEL_CHECKOUT}" headers_install \
+> +		INSTALL_HDR_PATH=3D"${TMP_DIR}/usr" -j"$(nproc)"
+> +
+> +	local khdr=3D"-isystem ${TMP_DIR}/usr/include"
+> +
+> +	if ! make -C "${SCRIPT_DIR}" KHDR_INCLUDES=3D"${khdr}" -j"$(nproc)"; th=
+en
+> +		die "failed to build dmabuf-heaps selftests"
+> +	fi
+> +
+> +	if ! make -C "${CGROUP_DIR}" KHDR_INCLUDES=3D"${khdr}" \
+> +		"${MEMCONTROL_TEST}" -j"$(nproc)"; then
+> +		die "failed to build cgroup/test_memcontrol selftest"
+> +	fi
+> +}
+
+[ ... ]
+
+> +make_runner() {
+> +	# virtme-ng shares the host filesystem, so TMP_DIR is accessible
+> +	# inside the VM at the same absolute path.
+> +	cat > "${TMP_DIR}/run_tests.sh" <<-EOF
+
+[ ... ]
+
+> +	EOF
+> +	chmod +x "${TMP_DIR}/run_tests.sh"
+> +}
+> +
+> +run_vm() {
+> +	local verbose_opt=3D""
+> +	local kernel_opt=3D""
+> +
+> +	${VERBOSE} && verbose_opt=3D"--verbose"
+> +
+> +	# If we are running from within the kernel source tree, use the kernel
+> +	# source tree as the kernel to boot, otherwise use the running kernel.
+> +	if [[ "$(realpath "$(pwd)")" =3D=3D "${KERNEL_CHECKOUT}"* ]]; then
+> +		kernel_opt=3D"${KERNEL_CHECKOUT}"
+> +	fi
+> +
+> +	vng --run ${kernel_opt} ${verbose_opt} --user root --memory 512M \
+> +		--exec "${TMP_DIR}/run_tests.sh"
+> +}
+
+[Severity: Medium]
+Will "${TMP_DIR}/run_tests.sh" be visible inside the guest VM when TMP_DIR =
+is
+created under /tmp?
+
+When virtme-ng boots the guest, virtme-init mounts a fresh tmpfs over /tmp
+inside the VM, which masks the host's /tmp directory unless TMP_DIR is
+explicitly shared via --rodir / --rwdir or created under a shared directory
+such as SCRIPT_DIR. Won't vng --run --exec "${TMP_DIR}/run_tests.sh" fail in
+the guest because /tmp/dmabuf-vmtest.XXXXXXXX/run_tests.sh does not exist
+there?
+
+> +
+> +while getopts :hvbH:p: o
+> +do
+> +	case $o in
+> +	v) VERBOSE=3Dtrue;;
+> +	b) BUILD=3Dtrue;;
+> +	H) BUILD_HOST=3D$OPTARG;;
+> +	p) BUILD_HOST_PODMAN_CONTAINER_NAME=3D$OPTARG;;
+> +	h|*) usage;;
+> +	esac
+> +done
+> +shift $((OPTIND-1))
+> +
+> +trap cleanup EXIT
+> +
+> +check_vng
+> +handle_build
+> +check_deps
+> +make_runner
+> +
+> +echo "Booting VM and running tests..."
+> +run_vm
+
+[Severity: Medium]
+Should check_deps() verify vng and make before check_vng() and handle_build=
+()
+are called?
+
+Right now, if vng or make is not installed, check_vng() runs vng --version
+first and prints a command-not-found error plus an untested-version warning,
+and if -b is passed, handle_build() fails via die() with KSFT_FAIL instead =
+of
+exiting with KSFT_SKIP in check_deps().
+
+Also, in handle_build(), the script uses pushd "${KERNEL_CHECKOUT}" and popd
+to build the kernel, whereas run_vm() only sets kernel_opt=3D"${KERNEL_CHEC=
+KOUT}"
+when $(pwd) is inside KERNEL_CHECKOUT. If vmtest.sh -b is invoked from
+outside KERNEL_CHECKOUT, won't run_vm() ignore the freshly built kernel and
+boot the running host kernel instead? And in build_selftests(), should the
+make headers_install command also be checked for failure before building the
+tests?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261021-v2_2023012=
-3_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com?part=3D3
+3_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com?part=3D8
