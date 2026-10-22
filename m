@@ -1,48 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792639089;
-	b=0dd2VPjmYAJumPmOmIREgcmnWBcL4Zmm79R94HebLEFaxCP40IBAKK6Po64hyPJ3Ypse
-	 YnlrnWcr4JAL5fwg/ePRQpxdFsHziJQHKr278Asp4wT98A7bQTnGZC70/OkTTXzWXl+rG
-	 jwV45Ej+Xc7TJRdKIVKtDVRoHvk+v3benLEy1CExJaYnooXQV7UtxTX88bihcWBbLVSLP
-	 TsbsTCcoSN1zJhfQCNVLka2TatHdXuvymdJAf81oA0Mtrrhurd2P8TLyUsmK2zEKMOVfJ
-	 0AgE7aZDCiYO2tsPkE7Jah24tu8wTDaQuTC55hPUizZGovlJ/P9Y8uvNXzBb4I76SqA==
+	t=1792639074;
+	b=3c7M1DAbfBP8AN9xPpXs/YYBM9L9svERZuBvd0535tlymhWGr2Y9pfe7kf2RrfeXek9/
+	 8U2mcWRmjRpGuRk1NoE8MtqI5u/vBJiq/vZocYXoNxii2ZYkcS54uEcBBgw1eVcF/zmGh
+	 +dna48Y03Gwo2af0hflnGRnpIgUGSimq22tWmQYXosSDt144jEFoaDHHNUqg9QfyjiQep
+	 lF5GzMSSgnHDUAZ16abOApJodsXzLBHOqoYIioRY2H11mdlwZC3bdpzpxyC3lxgGxbm+0
+	 GEPZ60JbG0Wd9GW8tKNvJhLZxBMbsgwcPzdKCLUSjo1qUDZkn26crhGce4ekVnrgVlg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792639089;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792639074;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ZFjaIA/J7e0MzwlmyRRLQRTf1sk/48ff7qMOqEh+5II=;
-	b=kHk+AtDDbAakyHg+wF+2EyyIJ25fMROUjWuktNivWENEh75wso7tsR4eDNWrZJBS0c9B
-	 EYF6m3PykFovtqjO/wMzw0hPO8OiZLUBoCN11gR2E3dfm6XbjJfUFyHj67J5d4B9geRzx
-	 4Kj4IF8x1iWJ/yywayM6PYHH6K6iIo9tIXpHXa442SVbasPZ8IB4R6lx21TaJnZzC6iup
-	 BtilVDD57Y6hyxIxkpzTMsoxb3lotlMJNbfDrPVnypXWnePCKR++mKW+mg4tPjXp7eDg6
-	 kgEMXOnLjM11z5hTTsQWvUNlkDtwrgnaleOCYHEP59qhIV2WDfNbLeAuk/uecaegkHQ==
+	bh=k/aE+v1ni2QF3w8lWv8hqgF7cpkH6/pjpLLb+XgT3bE=;
+	b=2u5Jk6+AlvqWMdo/w4haf37RaFzMXQLc0VQhwcJnRK5yyvcS58ayD5mA+CHVqgd822tk
+	 ZGH2NMrsglHEWX/iVPrZChma/ZloWNbNey9GxlpM+ePWz4JfUASvQHJKU5OuvWP0CugGg
+	 jNhFGnuryc8FuwVyEhHfjFs7LGKTBKyh+Ts2agf88VMXHtmfBv3+C1xOodQ2Xgg4cOUlW
+	 bvSbkKC5gXa1RdElFhRi4D8RKQNyYqwxpHuTwjoxhJFmj2ybwIU4WlhvSem/sEPjiW737
+	 7wLWhSnHsRRvclHSJ79a6tQhD7pEHXNEsIN22YGvP16nGPxNNJojPVLboclg1BurJ8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j9yJoLZu;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Qz/m9TYY";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3376D606A33E;
-	Thu, 22 Oct 2026 03:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316C560A6F64;
+	Thu, 22 Oct 2026 03:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j9yJoLZu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA701F000C3;
-	Thu, 22 Oct 2026 03:18:08 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qz/m9TYY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29FB71F000CA;
+	Thu, 22 Oct 2026 03:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792639089;
-	bh=ZFjaIA/J7e0MzwlmyRRLQRTf1sk/48ff7qMOqEh+5II=;
+	s=k20260515; t=1792639074;
+	bh=k/aE+v1ni2QF3w8lWv8hqgF7cpkH6/pjpLLb+XgT3bE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=j9yJoLZukdK5o1/nV1d+i12HXDEGDNY0GF7DW+VWSkqEMJYlW3oTlALOprksrAga+
-	 KBYrUI9/Z6bndnvoeWaBHKyDhzW0hxUHeJq43O37HYEIqHzHXfUYLgd5sMKtzOi0uf
-	 5KLRSX3gJPxqjjnE6VPEBAZT/XqijX3WPTuRqWGvr9hJPHn2Z9Qu4Aimmbtyv+o3hT
-	 M+KZBsW9v0YHVcuJxFvaxcJg+Pbxuac032Nf4tFFPze7DxbJii7A20afM1kCc0uTo2
-	 XENP2wBvx8ysIulbtpeupy79DqL4EHBh9bUA0QQd4tMK88JbM2rh7KEqnkS/B6LHT7
-	 RQJDNldhL0JCQ==
-Message-ID: <sashiko-outbox-180940@kernel.org>
+	b=Qz/m9TYYiDu6zRbJOCEIhnZEuZr9N7+2dE/KRpqOllgHRLwyctoioHhAtiyOM6clM
+	 bwWia3GXjY90u394vbRWvpeFFuDRQ/CxOLWl4/23hkGkdFXCePwWeYq93YDMf3vjZh
+	 cTs3m+3TNoSJlkEl2izOa8m0OJ9jwOCnVFbqxrvk4M3zB+X8mztUQo/QBB703O5db5
+	 W+XYrJjgN5Bd9q1977vvhsa59Sya6PIJWsO1uXEm4UbtOlxgzOuPSjz+7YWQ/xNHR4
+	 8npA6RVjBkPfok3TtimTMQrpdOVAGrLfYt1BPVLg8t4OCfuLBeuXZeFLFVsc1VqH7/
+	 mTO/mR5xPfVfg==
+Message-ID: <sashiko-outbox-180928@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v2 39/41] ksmbd: log in UUID and GUID users and map
- them to SIDs
+Subject: Re: [RFC PATCH v2 27/41] audit: log UUID and GUID ids in full
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jan Koester" <jan.koester@tuxist.de>, "Christian Brauner" <brauner@kernel.org>, "Alexander
  Viro" <viro@zeniv.linux.org.uk>, "Serge E. Hallyn" <serge@hallyn.com>
@@ -50,12 +49,12 @@ Cc: "Jan Kara" <jack@suse.cz>, =?utf-8?b?VGhlb2RvcmUgWS4gVHMnbw==?= <tytso@mit.e
  Moore" <paul@paul-moore.com>, "Arnd Bergmann" <arnd@arndb.de>, linux-security-module@vger.kernel.org, linux-ext4@vger.kernel.org, audit@vger.kernel.org, keyrings@vger.kernel.org, "Chuck
  Lever" <cel@kernel.org>, "Jeff Layton" <jlayton@kernel.org>, "Anna
  Schumaker" <anna@kernel.org>
-In-Reply-To: <73dfe9aab6c5dd8152fa494d53f470f3bea53127.1792552161.git.jan.koester@tuxist.de>
+In-Reply-To: <875406238f051dbc4b95221b301b311dc0b75f67.1792552161.git.jan.koester@tuxist.de>
 References: <cover.1792552161.git.jan.koester@tuxist.de>
- <73dfe9aab6c5dd8152fa494d53f470f3bea53127.1792552161.git.jan.koester@tuxist.de>
+ <875406238f051dbc4b95221b301b311dc0b75f67.1792552161.git.jan.koester@tuxist.de>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 22 Oct 2026 03:18:07 +0000
+Date: Thu, 22 Oct 2026 03:17:52 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -65,230 +64,113 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] ksmbd: sid_to_id() bypasses make_kuid_r() validation for UUID/GUID=
- SIDs
-- [High] ksmbd: ksmbd_alloc_user() falls back to resp uid/gid when resp_ext=
- is NULL
-- [Low] ksmbd: unused uid and gid fields and helpers in struct ksmbd_user
+- [Medium] audit: xfrm_audit_helper_usrinfo() still logs UUID/GUID auid as =
+4294967295
+- [Medium] audit: Landlock log_domain() still logs UUID/GUID creator uid as=
+ 4294967295
 --
 
-commit a1ea85f35f595431966b4e9bd815708cd849c5bc
+commit 91e2cc101c7d60a9061395bf85632c87b9500902
 Author: Jan Koester <jan.koester@tuxist.de>
 
-ksmbd: log in UUID and GUID users and map them to SIDs
+audit: log UUID and GUID ids in full
 
-This commit adds support for logging in UUID and GUID users and groups via
-ksmbd_login_response_ext and mapping their kuid_t and kgid_t values to and
-from S-1-22-<kind>-w0-w1-w2-w3 SIDs in security descriptors, POSIX ACLs,
-and durable handle owners.
+This commit replaces from_kuid() and from_kgid() calls in audit record
+formatting with KUID_STR() and KGID_STR() so that uuid and guid user and
+group identifiers are logged in their text form rather than as -1
+(4294967295).
 
-[ ... ]
+>     audit: log UUID and GUID ids in full
+>    =20
+>     Audit records print ids with from_kuid(&init_user_ns, ...), which giv=
+es
+>     -1 for a UUID or GUID. 4294967295 is what audit uses for "unset", so a
+>     UUID user's actions would be logged as if there were no login user.
+>    =20
+>     Print all ids in audit records with KUID_STR()/KGID_STR(): classic ids
+>     come out exactly as before (signed where the format was "%d"), UUIDs =
+and
+>     GUIDs in their text form. The binary AUDIT_SIGNAL_INFO reply keeps its
+>     32 bit field.
+>    =20
+>     Assisted-by: Claude:claude-opus-5-5
+>    =20
+>     Signed-off-by: Jan Koester <jan.koester@tuxist.de>
 
-> diff --git a/fs/smb/server/mgmt/user_config.c b/fs/smb/server/mgmt/user_c=
-onfig.c
-> index 5efc3d7455b99..cb175a4c78d83 100644
-> --- a/fs/smb/server/mgmt/user_config.c
-> +++ b/fs/smb/server/mgmt/user_config.c
-> @@ -56,6 +56,8 @@ struct ksmbd_user *ksmbd_alloc_user(struct ksmbd_login_=
-response *resp,
->  	user->flags =3D resp->status;
->  	user->gid =3D resp->gid;
->  	user->uid =3D resp->uid;
-> +	user->kuid =3D make_kuid(&init_user_ns, resp->uid);
-> +	user->kgid =3D make_kgid(&init_user_ns, resp->gid);
->  	user->passkey_sz =3D resp->hash_sz;
->  	user->passkey =3D kmalloc(resp->hash_sz, KSMBD_DEFAULT_GFP);
->  	if (user->passkey)
-> @@ -68,12 +70,38 @@ struct ksmbd_user *ksmbd_alloc_user(struct ksmbd_logi=
-n_response *resp,
->  		goto err_free;
-> =20
->  	if (resp_ext) {
-> -		user->sgid =3D kmemdup(resp_ext->____payload,
-> -				     resp_ext->ngroups * sizeof(gid_t),
-> +		int i;
-> +
-> +		if (resp_ext->flags & KSMBD_LOGIN_EXT_ID_R) {
-> +			/* the user's ids may be UUIDs or GUIDs */
-> +			user->kuid =3D make_kuid_r(&init_user_ns, &resp_ext->uid_r);
-> +			user->kgid =3D make_kgid_r(&init_user_ns, &resp_ext->gid_r);
-> +			if (!uid_valid(user->kuid) || !gid_valid(user->kgid))
-> +				goto err_free;
-> +			user->uid =3D from_kuid_munged(&init_user_ns, user->kuid);
-> +			user->gid =3D from_kgid_munged(&init_user_ns, user->kgid);
-> +		}
+[Severity: Medium]
+Should xfrm_audit_helper_usrinfo() in include/net/xfrm.h also be converted =
+to
+use KUID_STR()?
 
-[Severity: High]
-What happens in ksmbd_alloc_user() in fs/smb/server/mgmt/user_config.c if
-resp->status has KSMBD_USER_FLAG_EXTENSION set, but fetching the login
-extension via ksmbd_ipc_login_request_ext() fails and returns NULL?
+When a task running under a uuid or guid loginuid adds or deletes an ipsec
+policy or state, xfrm_audit_policy_add(), xfrm_audit_policy_delete(),
+xfrm_audit_state_add(), or xfrm_audit_state_delete() calls
+xfrm_audit_helper_usrinfo() with task_valid set to true:
 
-Both callers pass resp_ext directly to ksmbd_alloc_user() without checking
-whether the second IPC request succeeded:
+include/net/xfrm.h:xfrm_audit_helper_usrinfo() {
+	const unsigned int auid =3D from_kuid(&init_user_ns, task_valid ?
+					    audit_get_loginuid(current) :
+					    INVALID_UID);
+	const unsigned int ses =3D task_valid ? audit_get_sessionid(current) :
+		AUDIT_SID_UNSET;
 
-fs/smb/server/mgmt/user_config.c:ksmbd_login_user() {
-	if (resp->status & KSMBD_USER_FLAG_EXTENSION)
-		resp_ext =3D ksmbd_ipc_login_request_ext(account);
-
-	user =3D ksmbd_alloc_user(resp, resp_ext);
+	audit_log_format(audit_buf, " auid=3D%u ses=3D%u", auid, ses);
+	audit_log_task_context(audit_buf);
 }
 
-fs/smb/server/auth.c:ksmbd_krb5_authenticate() {
-	if (resp->login_response.status & KSMBD_USER_FLAG_EXTENSION)
-		resp_ext =3D ksmbd_ipc_login_request_ext(resp->login_response.account);
+Because from_kuid(&init_user_ns, ...) returns (uid_t)-1 for a uuid or guid,
+AUDIT_MAC_IPSEC_EVENT records will still log auid=3D4294967295 (unset) inst=
+ead
+of formatting task_valid ? audit_get_loginuid(current) : INVALID_UID with
+KUID_STR() and %s.
 
-	user =3D ksmbd_alloc_user(&resp->login_response, resp_ext);
-}
+[Severity: Medium]
+What about Landlock domain audit logging in security/landlock/domain.c,
+security/landlock/domain.h, and security/landlock/audit.c?
 
-Per the comment on struct ksmbd_login_response_ext in
-fs/smb/server/ksmbd_netlink.h, resp->uid and resp->gid in the base login
-response are ignored when KSMBD_LOGIN_EXT_ID_R is used. However, if
-ksmbd_ipc_login_request_ext() returns NULL (for example on an IPC error,
-allocation failure, or validation failure in ipc_validate_msg()), the
-if (resp_ext) block is skipped and ksmbd_alloc_user() still succeeds using
-user->kuid and user->kgid initialized from resp->uid and resp->gid.
+When a task with a uuid or guid current_uid() restricts itself via
+landlock_restrict_self() -> landlock_init_hierarchy_log() ->
+get_current_details(), the creator's uid is converted with from_kuid() and
+stored as a 32-bit uid_t in struct landlock_details:
 
-If userspace left resp->uid and resp->gid zeroed in the base response, the
-session will log in as GLOBAL_ROOT_UID and GLOBAL_ROOT_GID (keeping
-filesystem capabilities in __ksmbd_override_fsids()). If resp->uid or
-resp->gid is -1 (or when KSMBD_LOGIN_EXT_ID_R is not set), user->kuid or
-user->kgid becomes INVALID_UID or INVALID_GID because uid_valid() and
-gid_valid() are only checked inside the KSMBD_LOGIN_EXT_ID_R branch.
+security/landlock/domain.h:
+struct landlock_details {
+	struct pid *pid;
+	uid_t uid;
+	char comm[TASK_COMM_LEN];
+	char exe_path[];
+};
 
-Should ksmbd_alloc_user() reject the login when
-resp->status & KSMBD_USER_FLAG_EXTENSION is set but resp_ext is NULL, and
-also check uid_valid(user->kuid) and gid_valid(user->kgid) when
-KSMBD_LOGIN_EXT_ID_R is not set?
-
-[ ... ]
-
-> diff --git a/fs/smb/server/mgmt/user_config.h b/fs/smb/server/mgmt/user_c=
-onfig.h
-> index cc460b4ff7d39..e55470e008f50 100644
-> --- a/fs/smb/server/mgmt/user_config.h
-> +++ b/fs/smb/server/mgmt/user_config.h
-> @@ -13,13 +13,15 @@ struct ksmbd_user {
-> =20
->  	unsigned int		uid;
->  	unsigned int		gid;
-> +	kuid_t			kuid;	/* the user: uid, or a UUID or GUID */
-> +	kgid_t			kgid;
-> =20
->  	char			*name;
-> =20
->  	size_t			passkey_sz;
->  	char			*passkey;
->  	int			ngroups;
-> -	gid_t			*sgid;
-> +	kgid_t			*sgid;
->  };
-> =20
->  static inline bool user_guest(struct ksmbd_user *user)
-
-[Severity: Low]
-This isn't a bug, but now that smb2_open(), process_query_dir_entries(),
-__ksmbd_override_fsids(), ksmbd_vfs_set_durable_owner(), and
-ksmbd_vfs_compare_durable_owner() all use user->kuid and user->kgid, are
-the 32-bit uid and gid fields in struct ksmbd_user (and the user_uid() and
-user_gid() helpers in fs/smb/server/mgmt/user_config.h) still needed, or
-could they be dropped now that they have no remaining readers?
-
-[ ... ]
-
-> diff --git a/fs/smb/server/smbacl.c b/fs/smb/server/smbacl.c
-> index 1fad6ccf3a72a..126264cc0734e 100644
-> --- a/fs/smb/server/smbacl.c
-> +++ b/fs/smb/server/smbacl.c
-
-[ ... ]
-
-> @@ -279,6 +341,42 @@ static int sid_to_id(struct mnt_idmap *idmap,
->  		return -EIO;
->  	}
-> =20
-> +	{
-> +		u8 id[16];
-> +		u32 kind =3D sid_to_id_r(psid, id);
-> +
-> +		if (kind && sidtype =3D=3D SIDOWNER &&
-> +		    (kind =3D=3D SID_UNIX_UUID_USER || kind =3D=3D SID_UNIX_GUID_USER)=
-) {
-> +			kuid_t uid;
-> +
-> +			if (kind =3D=3D SID_UNIX_UUID_USER)
-> +				uid =3D KUIDT_INIT_UUID(*(uuid_t *)id);
-> +			else
-> +				uid =3D KUIDT_INIT_GUID(*(guid_t *)id);
-> +			uid =3D from_vfsuid(idmap, &init_user_ns, VFSUIDT_INIT(uid));
-> +			if (!uid_valid(uid))
-> +				return -EINVAL;
-> +			fattr->cf_uid =3D uid;
-> +			return 0;
-> +		}
-> +		if (kind && sidtype !=3D SIDOWNER &&
-> +		    (kind =3D=3D SID_UNIX_UUID_GROUP || kind =3D=3D SID_UNIX_GUID_GROU=
-P)) {
-> +			kgid_t gid;
-> +
-> +			if (kind =3D=3D SID_UNIX_UUID_GROUP)
-> +				gid =3D KGIDT_INIT_UUID(*(uuid_t *)id);
-> +			else
-> +				gid =3D KGIDT_INIT_GUID(*(guid_t *)id);
-> +			gid =3D from_vfsgid(idmap, &init_user_ns, VFSGIDT_INIT(gid));
-> +			if (!gid_valid(gid))
-> +				return -EINVAL;
-> +			fattr->cf_gid =3D gid;
-> +			return 0;
-> +		}
-> +		if (kind)
-> +			return -EINVAL;
-> +	}
-
-[Severity: High]
-Can sid_to_id() in fs/smb/server/smbacl.c allow an SMB client to persist
-malformed UUIDs or nil GUIDs into inode ownership and POSIX ACLs?
-
-When a client sends an SMB2_SET_INFO or SMB2_CREATE security descriptor
-containing an S-1-22-<kind>-w0-w1-w2-w3 SID (via set_info_sec() ->
-parse_sec_desc() / parse_dacl() -> sid_to_id()), sid_to_id() builds the
-kuid_t or kgid_t directly with KUIDT_INIT_UUID(), KUIDT_INIT_GUID(),
-KGIDT_INIT_UUID(), and KGIDT_INIT_GUID() instead of calling make_kuid_r()
-and make_kgid_r().
-
-Unlike make_kuid_r() and make_kgid_r(), which validate the 16-byte payload
-via kid_r_valid() in kernel/uidgid_r.c:
-
-kernel/uidgid_r.c:kid_r_valid() {
-	switch (id->type) {
+security/landlock/domain.c:get_current_details() {
 	...
-	case UID_R_UUID:
-		return (id->uuid[6] >> 4) =3D=3D 4 && (id->uuid[8] & 0xc0) =3D=3D 0x80;
-	case UID_R_GUID:
-		return memchr_inv(id->guid, 0, UID_R_SIZE);
-	}
-	return false;
+	memcpy(details->exe_path, path_str, path_size);
+	details->pid =3D get_pid(task_tgid(current));
+	details->uid =3D from_kuid(&init_user_ns, current_uid());
+	get_task_comm(details->comm, current);
+	return details;
 }
 
-the uid_valid() and gid_valid() checks in include/linux/uidgid.h
-unconditionally return true for any KID_UUID or KID_GUID:
+When log_domain() in security/landlock/audit.c later emits the
+AUDIT_LANDLOCK_DOMAIN record, it logs hierarchy->details->uid with %u:
 
-include/linux/uidgid.h:uid_valid() {
-	return !uid_is_legacy(uid) || __kuid_val(uid) !=3D (uid_t) -1;
+security/landlock/audit.c:log_domain() {
+	...
+	audit_log_format(
+		ab,
+		"domain=3D%llx status=3Dallocated mode=3Denforcing pid=3D%d uid=3D%u exe=
+=3D",
+		hierarchy->id, pid_nr(hierarchy->details->pid),
+		hierarchy->details->uid);
+	...
 }
 
-As a result, a client can pass a non-v4/non-RFC-9562 UUID (such as
-S-1-22-3-0-0-0-0) or a nil GUID (S-1-22-5-0-0-0-0) and have it stored on
- the inode or in POSIX ACL xattrs, causing subsequent userspace operations
-that validate via kid_r_valid() (such as chown_r() or setxattr() on POSIX
-ACLs) to fail with -EINVAL.
-
-Should sid_to_id() construct these IDs via make_kuid_r() and make_kgid_r()
-so that invalid UUID and GUID payloads are rejected?
-
-[ ... ]
+For a uuid or guid user, from_kuid(&init_user_ns, current_uid()) yields
+(uid_t)-1, causing log_domain() to log uid=3D4294967295. Could struct
+landlock_details store a kuid_t instead and format it with KUID_STR() and
+uid=3D%s in log_domain()?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1792552161.gi=
-t.jan.koester@tuxist.de?part=3D39
+t.jan.koester@tuxist.de?part=3D27
