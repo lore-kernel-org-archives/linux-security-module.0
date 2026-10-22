@@ -1,59 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792707024;
-	b=2ePcJWEPP/DuUHvzO8qW0Fe8JqwuDf0kfFroab+Gq3l+lfQ0OqZakozxm4Nw+/KtzpcA
-	 A/6WzVsEhYS3c0PDLUROadaymAver+Y9iCFvZqEjmemfRKxOreDxPKfr/sjzviRzr8oS+
-	 wvoAbpxcCaEgcFZm7fTIDi5CvpjXpAyqDv28r19GNuNqAuA09A4a17hCVQXZ8u8P3rnhB
-	 xWaK7iAP3TODFamoBKCqpeuywwys4aUHibjop+WVOv4WnIO5J8ETR0trkZTu84UAkKQ7Y
-	 DwQrLBJ+yYrexzH9yesHZw/vH9eNPN8dCL5Cfwp/PDoQp1ntQfXZqoaHeu5Bk0gZqxg==
+	t=1792708935;
+	b=RxYHK6C5biENYfHmsoFaJDKa19LSX52YkvX5JnElFV1Jc2iCv9Lbsr0/7SF7jCCa1Otv
+	 HlB2I1aKTuUrA3mcoXb8sEEWdiSJHVwT7YS2Zd8ORdVJEepmf0Iwytjazm+MY+7y7Wl0U
+	 +l0DgSxPS/VYD0AyU8lqcyyfphuWkuF6b7ni9Y5OhsxnnOteRFJDnJRaqIcx5OV3SBl27
+	 26YsfLkFYvCvkATnotGOCsAxw+ZUZAZ2G/QkdEgiApjMt2+Tbt0xlNnac7Q1oSGQ1Kgx/
+	 JxeC12QwVi/PPPDAi58U/S2/8JlLB/KiKGLrqPNszztwy1IbWROoHIdDcqg35b0aybg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792707024;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=BPD8JkJHXHODhQVF9+MgJdtTWQmQDK/Um3JEAhipQJs=;
-	b=c4LAfCc26hzZW9KxmVjza0+iAq5IoIsj2/zp0Q525NBUtm5tADwr1kkuxphEY1lW6onC
-	 /9d1YX51OrnVf6tBTDEaNrdLyschU6T97mfihfpaBPpbCwR7VB0XB9qEPh3kZi02+SD7U
-	 gnydYrBV36ukEUr/0wHPROHZz4SRalcb+e3KXI/vBeuVqOhqHGUlEqG5Y2CF3ORW6TG0j
-	 iDFi6CqnyT5zFEsxu39pD99ziYpcZ8IH+Yw0rNIoBQ0ETpbNcQpcpz8BDMzSO/zCmqAWy
-	 bqoxXoV5OYyBUn7ZgTTf1+HFwiTJfVG9DpksiOwNqXAd2h9qK2lAmaRap6goztAqslw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792708935;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=qTehDfPNzwUjNcP9cYSYiF6+02tgP2ra+sL/j10HR10=;
+	b=gtoORyvvWn8WRBQ4WzV6xq2J+5ugIUCZBIyswOIOe5MGP6aNFGPJ+nPdMLc0RIuP9qzm
+	 GpORr4fHqGkKc8/mSm3Ea2a/Sz/3Voo3KF6sQYZy8mnOZW1HzAXADtjskAQiDJhAz0YCj
+	 9bnHBUMXYA4pVJ/lqBA7ziMLaZF/4Z84P8VfsugvQaNVUX6WBxPoaxH7zl1/SwX1XUPDc
+	 yjChdBglZI622ZABmpndsrfGtpuW1FcUczWZB+MTYy96wdffdXpHmN9By1yhymBU6DTQt
+	 9tIKRdkcWoW96Yh82oQWj10Xz/CajZU7ZcDDbmIge2BkD1jcsZW8xmePTNjI06/Q12Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QlNUlvej;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=hallyn.com;
+	spf=(null) smtp.mailfrom=hallyn.com;
+	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=fiBB9XTD;
+	arc=none smtp.remote-ip=178.63.66.53
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2D6D7606A31A;
-	Thu, 22 Oct 2026 22:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4489606A31A
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2026 22:42:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A4489606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QlNUlvej
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7C1CB1F01825;
-	Thu, 22 Oct 2026 22:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792707024;
-	bh=BPD8JkJHXHODhQVF9+MgJdtTWQmQDK/Um3JEAhipQJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QlNUlvejXTz9i/tJq5LSyOKBcSqVisbfZC07oj6HSLlYFdHGmt3yXFIeVw8/HWzno
-	 KwlTmvi9vGsB825Uw2O1xybNMPHa3XbdrJokL+chWsCFxT7Og3IqAuO+aoCrxTMwPw
-	 k8g5ALRXNp+qL56olf4lf+rZreH0s7fX7O69+H27TgSP1JWQfGQ41GqZQgndF0Ovkq
-	 fTJhW6S0hVCR4kkeJ8vFHMbDS5ccKCPbxTSabrzC65PmZi8V3OdU5pxkFELMDgpbbV
-	 EQV4zAxT81fp8gelv8YxgzqNXO/6m7ktGz5x70lmSFSbyROCCFg1FpNaF49fO4Jgcp
-	 Phdnxhyva1hvg==
-Date: Fri, 23 Oct 2026 01:10:20 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [RFC PATCH 5/6] KEYS: Replace assoc_array with struct
- keyring_index
-Message-ID: <atqJzKw12w0MFOwQ@kernel.org>
-References: <20261016215326.4110064-1-jarkko@kernel.org>
- <20261016215326.4110064-6-jarkko@kernel.org>
- <20261018070822.GA1904@sol>
+	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=fiBB9XTD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1792708926; bh=I9h9tdKdGcPUZgRr+79Z0rnQgoexEEsUoC5vZDn1gvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fiBB9XTDc2wWOgmidANeLuSw9X1fW+d9SZ8delv4U8IC8T2fLG791wcT1iTVObB6l
+	 53IHXCaB6YN++JD01/vB4nVKm/BVknsRKPJJvFAFr4tNESjdfQI8s0y36O3WkrX5tV
+	 U62MdRcPCJ3sHRGIrzsOt/CwRhksE8NE2yUumDVeBlPoIFA7hnhxMVmNWjsIuo5wb4
+	 pJfHmvR6/Pxy3s8DsZVpMd55CaMM/Z56xDpE5o+czhxUPT3YKZBBYOFk9MZJZP64aV
+	 zky0hy1bCz6BJPM9gtfDL7DzJ1bxdp6HZZcHPeYSIRWtCnAyy6jV7+zY8Tm32rJvQl
+	 1x7C4Q79SYqag==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id F35381793; Thu, 22 Oct 2026 17:42:05 -0500 (CDT)
+Date: Thu, 22 Oct 2026 17:42:05 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Christian Brauner <brauner@kernel.org>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"Andrew G. Morgan" <morgan@kernel.org>,
+	Serge Hallyn <sergeh@kernel.org>,
+	linux-security-module@vger.kernel.org,
+	Bradley Morgan <brads@mainlining.org>
+Subject: Re: [PATCH v4 0/5] capabilities: close the ways around the
+ CAP_SETFCAP rule for uid 0
+Message-ID: <atqRPZfUUUKzebNU@hallyn.com>
+References: <20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -65,17 +71,167 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261018070822.GA1904@sol>
+In-Reply-To: <20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com>
 
-On Sun, Oct 18, 2026 at 12:08:22AM -0700, Eric Biggers wrote:
-> Make 'hash' u32 and make it adjacent to 'is_keyring' to get rid of the
-> hole?
+On Thu, Oct 22, 2026 at 06:36:18PM +0000, Josef Bacik wrote:
+> v1: https://lore.kernel.org/all/20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com/
+> v2: https://lore.kernel.org/all/20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com/
+> v3: https://lore.kernel.org/all/20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com/
 
-The whole 'is_keyring' is completely redundant and more like a glitch
-in this RFC patch (equal to key->type == &key_type_keyring).
+Apologies, but I will likely not be able to look at this closely until the
+week after next.  When I return, I'll take a close look at the newest
+version.
 
-Nothing wrong in the review comment. I just wanted to remark this
-dead obvious fact that I should noticed immediately (doing updates
-ATM) :-)
-
-Br, Jarkko
+> v3->v4:
+> - 4/5: a v2 security.capability xattr skipped the new checks, it was
+>   written as is whenever the writer had CAP_SETFCAP over the
+>   filesystem's namespace.  It now only does that when the filesystem's
+>   root user is within reach, and goes through the v3 conversion and its
+>   checks otherwise (Sashiko).
+> 
+> v2->v3:
+> - The setns() check in 2/5 and the ptrace check in 5/5 only apply to
+>   namespaces that map the root user of an ancestor within the creator's
+>   CAP_SETFCAP, or that have no uid_map yet.  Root users stored through
+>   an idmapped mount are left to whoever sets up the mount, so a root
+>   task without CAP_SETFCAP can join an ordinary "0 100000" container
+>   again (Serge, Christian).
+> - 2/5 adds cred_may_setfcap_userns() for those two checks and
+>   cred_setfcap_reaches() for the uid_map check; nothing outside
+>   create_user_ns() calls cap_setfcap_level() directly (Serge).
+> - Fixed the cap_setfcap_level() kernel-doc, @ns doesn't have to be the
+>   cred's namespace or below; cap_capable() is compared with != 0
+>   (Serge).
+> - Picked up Bradley's Reviewed-by on 1/5 and 3/5, not on 2/5, which
+>   changed.
+> - Rebased onto current vfs.all.
+> 
+> v1->v2:
+> - The state lives on the user namespace now: ns->setfcap_level replaces
+>   ns->parent_could_setfcap, and cred->setfcap_level is gone (Serge,
+>   Christian).
+> - New 2/5: setns() refuses a task whose CAP_SETFCAP doesn't reach as far
+>   up as the namespace's setfcap_level.  It applies to every user
+>   namespace, not only to those that map the parent's uid 0, because of
+>   idmapped mounts (Serge, Christian).
+> - 5/5 asks a tracer for what setns() asks for, also when the namespace
+>   doesn't map an ancestor's root user, again because of idmapped mounts.
+> - Dropped "userns: don't let setns() lend the right to map uid 0", the
+>   setns() check covers it.  Its nested case moved into 3/5, which checks
+>   the opener and the writer.
+> - set_cred_user_ns() isn't touched anymore, so the put-before-use in
+>   userns_install() is gone (Sashiko).
+> - Rebased onto current vfs.all.
+> 
+> What it does now:
+> 
+> Every user namespace gets a setfcap_level when it's created, which is
+> how far up the creator's CAP_SETFCAP counted.  If its tasks can write
+> file capabilities for the root user of an ancestor, because the
+> namespace maps that root user or can still map it, setns() only lets in
+> tasks whose own CAP_SETFCAP reaches that far, and PTRACE_ATTACH asks the
+> tracer for the same.  The checks on the way to file capabilities then go
+> by the namespace instead of the cred: a uid_map write that maps the
+> parent's uid 0 (opener and writer), and setting security.capability.
+> 
+> The visible difference from v1 is the setns() restriction.  A task
+> without CAP_SETFCAP can't join, or attach to tasks in, a namespace that
+> maps the root user of an ancestor, such as host uid 0, and was created
+> by a task that had it.  A task that joins takes on the namespace's
+> reach.  Containers that don't map host uid 0, unprivileged users and
+> anything with CAP_SETFCAP aren't affected.
+> 
+> Testing: the v1 flows plus the setns() and ptrace cases, 41 in all, on
+> vfs.all with and without the series.  For v4 also the v2 xattr route: a
+> task that unshared without CAP_SETFCAP mounts a tmpfs, writes a v2 xattr
+> on it, and an overlay mounted from the initial namespace makes a uid
+> 1000 user run the file with CAP_SYS_ADMIN.  That works without the
+> series and with v3, and gets -EPERM with v4.  Every flow gives what's
+> expected, and the only ones that changed from v2 are the five idmapped
+> mount and "0 100000" container cases, which are allowed again.  The
+> pidfd, namespaces, mount_setattr and ptrace selftests give identical
+> results with and without.  The TLA+ model, which has no idmapped mounts,
+> finds no violation with the narrower checks, and still finds the setns()
+> bypass when the check is taken out.
+> 
+> --- Original email (v1) ---
+> 
+> Hello,
+> 
+> Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+> stops a root task that has given up CAP_SETFCAP from creating a user
+> namespace that maps uid 0 and then writing file capabilities in it that
+> the initial namespace honours.  The check only looks at the task that
+> creates the namespace, so if somebody who did have CAP_SETFCAP created
+> one, there are still several ways around it:
+> 
+> - setns() into their namespace and write uid_map from inside (patch 2)
+> - write "0 0 1" through a uid_map fd that they opened (patch 3)
+> - setns() into a namespace of theirs that already maps uid 0 and set
+>   security.capability there, no map write needed (patch 4)
+> - ptrace one of their tasks and have it do any of the above (patch 5)
+> 
+> On an unmodified kernel we took a uid 0 task with CAP_SETFCAP dropped
+> from its permitted, effective and bounding sets and, through each of
+> these, ended up with a file that a uid 1000 user execs with
+> CAP_SYS_ADMIN in its effective set.
+> 
+> Patch 1 adds cred->setfcap_level, which records how far up the
+> namespace tree a task's CAP_SETFCAP reached when it entered its
+> namespace, and patches 2-5 check it.  Patch 4 is the check that closes
+> the class, the map patches make the uid 0 map rule mean what
+> db2e718a4798 meant it to, and patch 5 keeps ptrace from borrowing what
+> the target is entitled to.
+> 
+> This does change behaviour.  Everything new is -EPERM:
+> 
+> - a task that entered a namespace without CAP_SETFCAP outside can't map
+>   uid 0 of the outside or write fscaps for that root user anymore
+> - a uid_map fd opened by a task with CAP_SETFCAP can't be used by a
+>   task without it to map uid 0
+> - if a privileged task maps "0 0 1" from the parent for a namespace
+>   created by a task without CAP_SETFCAP, that namespace can no longer
+>   write fscaps honoured outside
+> - PTRACE_ATTACH and PTRACE_TRACEME fail when the tracer gave up
+>   CAP_SETFCAP and CAP_SYS_PTRACE, the target didn't, and they share a
+>   root user
+> 
+> Rootless containers, privileged runtimes writing the map from the
+> parent, nested unprivileged namespaces and containers that don't map
+> host uid 0 aren't affected.  The ptrace check is one compare for
+> targets in the initial namespace and in namespaces entered without
+> the capability.
+> 
+> Testing: a set of flows run on the base and patched kernels, every
+> bypass route above gets -EPERM with the series and the 16 legitimate
+> flows behave the same.  The capabilities, namespaces, ptrace, pidfd and
+> proc selftests give the same results before and after. Thanks,
+> 
+> Josef
+> 
+> ---
+> Changes in v4:
+> - Link to v3: https://patch.msgid.link/20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com
+> 
+> Changes in v3:
+> - Link to v2: https://patch.msgid.link/20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com
+> 
+> Changes in v2:
+> - Link to v1: https://patch.msgid.link/20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com
+> 
+> ---
+> Josef Bacik (5):
+>       userns: record how far up CAP_SETFCAP reaches
+>       userns: don't let setns() lend CAP_SETFCAP
+>       userns: check the opener and the writer before mapping uid 0
+>       capabilities: limit fscaps to where CAP_SETFCAP reaches
+>       capabilities: don't let ptrace borrow CAP_SETFCAP
+> 
+>  include/linux/capability.h     |   7 ++
+>  include/linux/user_namespace.h |   7 +-
+>  kernel/user_namespace.c        |  37 +++++++--
+>  security/commoncap.c           | 183 +++++++++++++++++++++++++++++++++++++++--
+>  4 files changed, 214 insertions(+), 20 deletions(-)
+> ---
+> base-commit: 2c3ba1f1cb416b81d617b92a24a4bcaa48d574e3
+> change-id: 20261006-b4-setfcap-userns-d63185a31ce3
