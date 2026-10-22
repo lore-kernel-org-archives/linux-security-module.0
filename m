@@ -1,67 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792678912;
-	b=S7xJFWE9FHuJQ4wjECHdD0M3zbeUgxidSWldLq1skV329yMOrGVEPJmcTPMRhszyjUs7
-	 lw2Hl27o9EzEnvn57sWXlJ+rHL2aNlOvnFQFRA+qUFpf0ZxXUVmbFOTFdlRg5TPInsAuF
-	 /1MexM5jGqpYghxSmZYHE7VonRtUAEuO9heFsFM8PHn1iBBqIYoNr9YLfYtFaEkEAW8cx
-	 NEJX3V9cGEv2oZv+VN0KdOeZHn4v85UsHie9xEkxXzEs7aT+546G9acQr5A/8+ngjzeUO
-	 keeEfUS9/ZgGPXX62hlXFxrfy/XctqRHWA5mTf39GZGCKSGH27mgauDBYEtXB303wUQ==
+	t=1792682475;
+	b=1vpERmPvoNt7RMEwE7gRH1tVkx3E+gnWAzz//GmWubX/NiAu1MX2IB+hNWuMlBhUjCA5
+	 itMXokh+BYv1+f4TgsjpGQfXHn5H7g7D7lQLWdntA+o6krzJ6u4GYdO4/IbfOHb5HRYfu
+	 7rbkBCzzflTpl5XT2A37d2oLpGIRMttL2lhKgLO1Zf5SHU0OKmdAgOgrjczeRavN46IEH
+	 2BCTO+ZS6Z6WvlsbGJlSmuU/mM8eQ3I0VWP8s/xFDeUfUV0w59wqCc/LeLPmA+uy5U+zw
+	 +FeYk0aBPyTbtbe2uZTdnHJ7WIsPWFVvSrvAlijNLlho3RWC5nJcH+G56VfiQC3rxLQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792678912;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=UgVlXRgVv5/x1DXWmVGKmIRruqBZ1ifqROjMLIcwpQI=;
-	b=wERCfMDGYz302LiswWoCJZpsp5xGzMjZeoUSDAIc5L5bLLXtI0nmhXcsc1/5uixNfYwq
-	 f9WmCYUUCJS924kNBYLwuMTrGv3O1w1yfRpt85FMPGWkprueJsBYpMBfWEKirTgPmWsdm
-	 1OOxpQJCdMxjD358UQXAZT54ofX6OwNwgyyjWB/qKqTCPwP0NEC/lltkGXj69Eo3+3Ezh
-	 iHsK8ntZHscNE3mRJcaU/mvvCGPbikz48NHkh/bCiUl9K6wnARdLyVo1xSQlbgjrGz11R
-	 vr/ZkxWwsX5Yrxo9wpBScRPfC4Egn2sZ07A8bpc04Glf5ZCiEMQjivWgcLmxWXvv5nw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792682475;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=QdJ73k0AhMXLQIIEgBRL9OzVnlflz17TLwa1t1F5PFo=;
+	b=j8uvmDuVAVdqzx3G4V/8ausSDIH+Uo92gwz9sgxK9Ijq450uxzu0hXiroliv2d/XS2EU
+	 k/17IGARQAdKrdPGu/UGxXXbmz+FUXh3ENqMhGjo51mrL1Uln3FqgE4YefYA5Zawx7w9r
+	 Svftowgm7CMwqTEk8GjQ9T4pN3aDQPraSWOapBzF4juJmTWQ5MdALqexmiwkSX4seeF5l
+	 5GnNod7uTV5zZU4HH7fa8zxBNPmNpLF9SWqasg00sU9jtJVz5Sd4ObE+r2k4ITVS0/Bep
+	 41ReWCQYoqlwALOfUsnevBs4j2WJgXgUsqtM7o8Y9RqNbas5G9pDbPcGPCSlBCUHJ+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=dniXRB4Z;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D7C606A31A;
-	Thu, 22 Oct 2026 14:21:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 21D7C606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R79Ilk+i;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F0C606ACCF
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2026 15:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=dniXRB4Z
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBCFC2C34;
-	Thu, 22 Oct 2026 07:21:46 -0700 (PDT)
-Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3BA83F7B4;
-	Thu, 22 Oct 2026 07:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1792678910; bh=AjDgKxtJPU0cDSM8jjetpkKUyPIl0mcA2sgghiP/fy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dniXRB4ZD77Kv5qxyizSr8v8KtL/ukXit7rt6xFRKUWRWqRwmE6iH72fHbbiOthgT
-	 t8pkLhHcMrKIjkL9hOIAKcTHcKAD8dALDouiCVdrInxKtCYCKPKtoN/P52CBgRrqBV
-	 0dUXbOk3kfv9WFL09chD0AKAzIdjKVCTHS+KjbMo=
-Date: Thu, 22 Oct 2026 15:21:42 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: will@kernel.org, mark.rutland@arm.com, chenhuacai@kernel.org,
-	kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	npiggin@gmail.com, chleroy@kernel.org, pjw@kernel.org,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	tglx@kernel.org, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, robh@kernel.org,
-	saravanak@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	zohar@linux.ibm.com, noodles@fb.com,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v2] kexec: Select ima_get/free_kexec_buffer() with
- CONFIG_HAVE_IMA_KEXEC(_OF)
-Message-ID: <atob9ulCwxZgyWyL@arm.com>
-References: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R79Ilk+i
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F851F01825;
+	Thu, 22 Oct 2026 15:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792682474;
+	bh=QdJ73k0AhMXLQIIEgBRL9OzVnlflz17TLwa1t1F5PFo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=R79Ilk+iiD5Gmp1hGyRpnYIxVUgSC7PlQESxLcZWtksFNENgNjO4MtMyYJ4TB7cvx
+	 w4dRZWYV2g/BAia+TanbTrVEAQWeAT2pxhghR6R3JHuUjmlOUDiYbXShFgdI1G9MMA
+	 ny07pinW3zz7AavfGwORPavsclzUPguwmN3fE6TuLtX9mlRz8mXpJIP2ecpyc640z2
+	 fJIj8mM62PXJqASZ8XZI1+XaMsC1SRaovNbeikK8A79gbmiWSNBnim3L1y5zuMKKY1
+	 MADhICYaGlZmOlY0LthPHzqLv95jrbMMS2pDDPMHSlzfSqBHKTP3+lVJoKpqaNO5Ek
+	 lwp+uVWyJ1+RQ==
+Date: Thu, 22 Oct 2026 10:21:12 -0500
+From: "Serge Hallyn (AMD)" <sergeh@kernel.org>
+To: Adriano Cordova <adrianox@gmail.com>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2] security: commoncap: clarify CAP_FS_SET comment in
+ cap_task_fix_setuid()
+Message-ID: <atop6FRjWXw9Jc7W@shallyn-amd>
+References: <20260921025209.1023530-1-adrianox@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,33 +60,51 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20260921025209.1023530-1-adrianox@gmail.com>
 
-On Tue, Oct 20, 2026 at 10:37:27AM +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Sun, Sep 20, 2026 at 11:52:08PM -0300, Adriano Cordova wrote:
+> CAP_FS_SET is exactly the set of capabilities that an fsuid of 0
+> historically granted (see CAP_FS_MASK in include/linux/capability.h),
+> so cap_task_fix_setuid() drops that set from the effective set when
+> fsuid leaves 0.  Replace the stale FIXME with this explanation.
 > 
-> On x86, if CONFIG_OF_FLATTREE is enabled, the kernel uses the device tree
-> implementation of ima_get/free_kexec_buffer(). However, x86 passes the IMA
-> buffer location through setup_data, not through the device tree, so the
-> buffer is never found and the IMA measurement list is not carried over
-> across kexec.
-> 
-> Introduce CONFIG_HAVE_IMA_KEXEC_OF (which selects CONFIG_HAVE_IMA_KEXEC)
-> and select it for the architectures that pass the IMA buffer location
-> through the device tree, via of_kexec_alloc_and_setup_fdt() (arm64,
-> powerpc and riscv). Build the device tree implementation of
-> ima_get/free_kexec_buffer() only if the new option is enabled.
-> 
-> Select the new option also on LoongArch, to preserve the current behavior
-> and avoid a link failure. LoongArch does not pass the buffer location to
-> the next kernel yet; this will be addressed separately.
-> 
-> Finally, don't select it for x86, and use x86's own setup_data-based
-> implementation regardless of CONFIG_OF_FLATTREE.
-> 
-> Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kexec")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Adriano Cordova <adrianox@gmail.com>
 
-For arm64:
+Hi,
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+so I had this in the caps-next branch, and was getting ready to send
+a PR...  and was not feeling could about the new text.  It's stating
+the obvious.  Do you mind sending a new version that just drops the
+FIXME an ddoesn't add the new text?
+
+> ---
+> v2: reword the comment to something more concise.
+> 
+>  security/commoncap.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 3399535808fe..1ba2ea2651fc 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -1169,11 +1169,13 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
+>  		break;
+>  
+>  	case LSM_SETID_FS:
+> -		/* juggle the capabilities to follow FSUID changes, unless
+> -		 * otherwise suppressed
+> +		/* Juggle the capabilities to follow FSUID changes, unless
+> +		 * otherwise suppressed.
+>  		 *
+> -		 * FIXME - is fsuser used for all CAP_FS_MASK capabilities?
+> -		 *          if not, we might be a bit too harsh here.
+> +		 * CAP_FS_SET is exactly the set of capabilities that an
+> +		 * fsuid of 0 historically granted (see CAP_FS_MASK in
+> +		 * <linux/capability.h>), so we drop that set when fsuid
+> +		 * leaves 0.
+>  		 */
+>  		if (!issecure(SECURE_NO_SETUID_FIXUP)) {
+>  			kuid_t root_uid = make_kuid(old->user_ns, 0);
+> -- 
+> 2.51.0
+> 
