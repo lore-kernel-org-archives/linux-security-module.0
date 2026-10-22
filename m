@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792683865;
-	b=g74eK6E3E/3qWRPX1t/X9GwUzVUSJrvq+dNfsf7Pjb2LPy0L65t7PtrmirpR7WzmR+R7
-	 f7EMyxVw6ORRQw87SlxVR7xu3zNi1mfIhy4I0sRGiuyacYCgLFmaJq5ggqcD2KxicAZp1
-	 bdxo9vPIP0sYxuo40z1CdJAPs5Vh0iXm3qazwtKZ56Agi+ZDdO7dc6KM0WWOdFVZ/WWSR
-	 I9GJZjOl91BaiYBDOBrW1VCcf1jcvY0l43zbTBUJp67gNrI+lpzCTppIEGDM4AzXJiu1k
-	 kuNixkCGJpDih9pvCKJWQOZXJ6EEJfCe1W0K3hUtJ2tL5w7Xb4cAj6Vd5R1WXLXml+w==
+	t=1792683858;
+	b=I7jJB+V2WnBOLsbbsFTXRtVt20War0BIp7oLteneHrlwLVANeFK/x5TI//JHJ1tzBBDh
+	 qVzEJhfsr5vfL0b4Vn28kAx/H9Apq2CX5AEq5uQGnLe/CJkQr/0/1ifELCtdIT/pqfAnl
+	 6/k88JiFOnbucJg7YELtPEcw6xJ9nfDxZT7B/CRVOGP/4pI4DF+0wKVcY5cP+5VpZY6cN
+	 sHM4/jGX4Dox4unkAk618Kj8qWgOGbHpq6/5GzI0YhLMFoLO6cf5aycyMu8jKbis/P71o
+	 CewBIop17neyciwSsFLH2IvU3p2FxkGz3hnA0WAWa3v3zd0nFhRmBgJ6nivrIrJ21Rw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792683865;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792683858;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=aGgflXK4MfDBHbCEq/XKqDgm4zksQtk/vvp4CoseElg=;
-	b=a+fHRVQMORio8vQdljztk16BYIkE6OFsyYxPnQF/C4TIuT2ed6D3mylCKCRgpERgWMiZ
-	 xykkTDGqDfKKkVcvD5qyUUHPvjdpOPb0a+GhtEM3U7H2mx/8raIwHD3KiPSNiekv/COpK
-	 tB9DM/l8oM+s6bw4PYGsfklCYin/jnnQS48Fpt4yQxwoaUHKTnPm0LCTCTDruTku8gMFn
-	 ixYlLofRTHuZM/hmafEOF8vazHc1v7FegaHU+/nVvAfQnVpBfk2PACpVWQr6hihpx6O3C
-	 rnqEsvweANmLT2hHAtm/noUgLGJ6naFyqbpIKMgyESQev2/GDocGrxDaze8rJWBiGow==
+	bh=7djcSuZ+VkivDbF5yVqI2iBloYUAv2eSmgTqsy+UUpo=;
+	b=QUWdYjOyDK4N+2hD+JhwFOIskfaWqY45NCbzmevHYJ8GSSqB10JzgcqXsboK+qoyEu90
+	 SP7Sw3ldjm0WfRrC3Vv7F0pIaxv8OKO4pWotv7AzbI2GH2jr49ti8+0/LxEq/qJKcF3La
+	 jLviILV8k0hyoQCFqmG0cXxV3ns5roZCzctkCmAqO3VyGqD1g3/yjUGJ25ndMZ6g6KF8A
+	 C63C9Xc5BVPSqiOtWzdmQCucG5Gq08yyw3lmkENvHeej06EO+PuHexX5cvOqFBRaqQXiR
+	 ZYbH/aF+7+7JymaGsuaXC2XB4NyjH3RtOW6XcHgD1b5HVRe4/VoZ8Kr9qpDwjXzI4OA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UGWGvYoD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W06cjuZW;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EA7606A319;
-	Thu, 22 Oct 2026 15:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3116606A31D;
+	Thu, 22 Oct 2026 15:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UGWGvYoD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A581F01825;
-	Thu, 22 Oct 2026 15:44:23 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W06cjuZW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966311F01825;
+	Thu, 22 Oct 2026 15:44:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792683865;
-	bh=aGgflXK4MfDBHbCEq/XKqDgm4zksQtk/vvp4CoseElg=;
+	s=k20260515; t=1792683857;
+	bh=7djcSuZ+VkivDbF5yVqI2iBloYUAv2eSmgTqsy+UUpo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=UGWGvYoDcEERrFFNuzIRMe+Hf24mdTj7fiafXrumfnKc8F8NC6HPokMfkpomF5Qfv
-	 z4CVR+XRg/VqPObsNV0heciMkJ+O30MiWEflS12sEdFpmq6dRCSWDoOGpCf4LD2L+7
-	 RE80Lz5NPJiiWIJpD0SppcJR/28g6cjSyRZ+VeULVk+tFhn7/yLsqBIh90EjrIz8Qo
-	 OOQCtnAWLMD+UBd8PXzuz2jRSZmRs4tl4VBOjo48PcF/xkPm1NyxeuG7o+W1cWdFJK
-	 JFdAi9hW/RY4hAlvYzRg26lbb+nn9/UBpao0sf4mWR4umF2X3cG0KNz3JLiCnaW3Tf
-	 GJCVZ9RmjrUfQ==
-Message-ID: <sashiko-outbox-181723@kernel.org>
+	b=W06cjuZWWPxaajUZFU2Wwg4ejVWMo7Bk69w/xcOgiEB0Y2gVKfSCd5Ql1rpFj3/od
+	 Nd0c3Kr4dlmkL1wrd5w2ggFj5zmwDXAr+5ol+TrpBp46qB0G6YAx4RQGBoeDBgDYTC
+	 A4NWE8P1hLktCI+RylJeGRUjk25Qo92EW41R7DzPuQMLDayiWRSC8nV3Fc0jY6OJHr
+	 Z6vFDxxvGXD2fPFJGh2pqtzXVdpfskCPKStKZ50RCrnRB22CEhRmgp4qidPO9V6ExL
+	 igmaN5FbtU8OF+ONrQby7LX/EClvvTrMppuwq2XyZx5Hg7d+ykaouUe2rMAa4slETv
+	 BYzmvkcBcX/OQ==
+Message-ID: <sashiko-outbox-181719@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC v2 7/8] dma-buf: transfer memcg charges via
- DMA_BUF_IOCTL_XFER_CHARGE
+Subject: Re: [PATCH RFC v2 3/8] security: dma-buf: Add dma_buf_charge_task
+ LSM hook
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  Weiner" <hannes@cmpxchg.org>, =?utf-8?b?TWljaGFsIEtvdXRuw70=?= <mkoutny@suse.com>, "Jonathan
@@ -58,12 +58,12 @@ To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  Khan" <shuah@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
  =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, mripard@kernel.org, echanude@redhat.com, media-ci@linuxtv.org
-In-Reply-To: <20261021-v2_20230123_tjmercier_google_com-v2-7-ef6ee2dd8c5c@redhat.com>
+In-Reply-To: <20261021-v2_20230123_tjmercier_google_com-v2-3-ef6ee2dd8c5c@redhat.com>
 References: <20261021-v2_20230123_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com>
- <20261021-v2_20230123_tjmercier_google_com-v2-7-ef6ee2dd8c5c@redhat.com>
+ <20261021-v2_20230123_tjmercier_google_com-v2-3-ef6ee2dd8c5c@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 22 Oct 2026 15:44:22 +0000
+Date: Thu, 22 Oct 2026 15:44:15 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,351 +73,211 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 6 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [Critical] dma-buf: task->mm UAF and wrong cgroup fallback in dma_buf_xfe=
-r_charge()
-- [Critical] mm: memcontrol: new_memcg UAF race in mem_cgroup_transfer_dmab=
-uf_charge()
-- [High] dma-buf: missing DAC permission checks in dma_buf_xfer_charge()
-- [Medium] dma-buf: double charge and -ENOMEM race in mem_cgroup_transfer_d=
-mabuf_charge()
-- [Medium] dma-buf: broken runtime mem_cgroup_disabled() handling in dma_bu=
-f_xfer_charge()
-- [Low] dma-buf: build failure in dma_buf_xfer_charge() when CONFIG_MEMCG=
-=3Dn
+- [Critical] dma-buf: heaps: UAF on remote task->mm in dma_heap_ioctl_alloc=
+ate()
+- [High] dma-buf: allocate() runs before memcg charge in dma_heap_ioctl_all=
+ocate()
+- [Medium] dma-buf: heaps: unguarded cgroup symbols in dma_heap_ioctl_alloc=
+ate()
 --
 
-commit c7c3a18bea48fc8f09ccf4a84a6aa11e6f991c4c
+commit 4f97d3e850a29378e70a6ab0cb15c71860e1fcea
 Author: Albert Esteve <aesteve@redhat.com>
 
-dma-buf: transfer memcg charges via DMA_BUF_IOCTL_XFER_CHARGE
+security: dma-buf: Add dma_buf_charge_task LSM hook
 
-This commit adds the DMA_BUF_IOCTL_XFER_CHARGE ioctl and
-mem_cgroup_transfer_dmabuf_charge() helper to transfer a dma-buf's memory
-cgroup charge to a target cgroup identified by a cgroupfd or pidfd.
+This commit adds the security_dma_buf_charge_task() LSM hook and calls it
+in dma_heap_ioctl_allocate() when charge_fd refers to a process via pidfd,
+allowing security modules to control cross-cgroup dma-buf charging.
 
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index f31f49ebd0af3..7fa607d9bf657 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -540,6 +540,80 @@ static long dma_buf_import_sync_file(struct dma_buf =
-*dmabuf,
->  }
->  #endif
-> =20
-> +static long dma_buf_xfer_charge(struct dma_buf *dmabuf,
-> +				const void __user *user_data)
-> +{
-> +	struct cgroup *cgrp;
-> +	struct cgroup_subsys_state *css;
-> +	struct dma_buf_transfer_charge arg;
-> +	struct mem_cgroup *memcg;
-> +	struct task_struct *task;
-> +	const struct cred *tcred;
-> +	unsigned int pidfd_flags;
-> +	int ret =3D 0;
-> +
-> +	if (copy_from_user(&arg, user_data, sizeof(arg)))
-> +		return -EFAULT;
-> +
-> +	if (!IS_ENABLED(CONFIG_MEMCG))
-> +		return 0;
-
-[Severity: Low]
-Will drivers/dma-buf/dma-buf.c fail to build in dma_buf_xfer_charge() when
-CONFIG_DMA_SHARED_BUFFER=3Dy and CONFIG_MEMCG=3Dn (or CONFIG_CGROUPS=3Dn)?
-
-Because if (!IS_ENABLED(CONFIG_MEMCG)) is a runtime C conditional rather
-than a preprocessor guard, the compiler still resolves all symbols in the
-rest of dma_buf_xfer_charge().
-
-In include/linux/cgroup_subsys.h, memory_cgrp_subsys is only declared when
-CONFIG_MEMCG is enabled:
-
-    #if IS_ENABLED(CONFIG_MEMCG)
-    SUBSYS(memory)
-    #endif
-
-And when CONFIG_CGROUPS=3Dn, cgroup_get_from_fd(), cgroup_css(),
-css_tryget_online(), and cgroup_put() in include/linux/cgroup.h have no
-stub declarations. Should the body of dma_buf_xfer_charge() be guarded with
-#if IS_ENABLED(CONFIG_MEMCG) instead?
-
-> +
-> +	if (arg.__padding !=3D 0)
-> +		return -EINVAL;
-> +
-> +	cgrp =3D cgroup_get_from_fd(arg.charge_fd);
-> +	if (!IS_ERR(cgrp)) {
-> +		/* charge_fd is a cgroupfd */
-> +		rcu_read_lock();
-> +		css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
-> +		if (!css || !css_tryget_online(css)) {
-> +			rcu_read_unlock();
-> +			cgroup_put(cgrp);
-> +			return -ENOENT;
-> +		}
-
-[Severity: Medium]
-What happens in dma_buf_xfer_charge() when CONFIG_MEMCG=3Dy but memory cgro=
-ups
-are disabled at boot via cgroup_disable=3Dmemory (so mem_cgroup_disabled() =
-is
-true)?
-
-In that configuration, passing a valid cgroupfd causes
-cgroup_css(cgrp, &memory_cgrp_subsys) to return NULL and fail with -ENOENT,
-whereas passing a pidfd calls get_mem_cgroup_from_mm() in mm/memcontrol.c,
-which returns NULL when mem_cgroup_disabled() is true, matches
-dmabuf->memcg =3D=3D NULL, and returns 0.
-
-Similarly, in mm/memcontrol.c, mem_cgroup_transfer_dmabuf_charge() only
-skips try_charge() when mem_cgroup_disabled() is true:
-
-    if (!mem_cgroup_disabled() && try_charge(new_memcg, GFP_KERNEL, nr_page=
-s))
-            return false;
-
-Unlike mem_cgroup_charge_dmabuf(), which returns true immediately when
-mem_cgroup_disabled() is true, mem_cgroup_transfer_dmabuf_charge() still
-proceeds to cmpxchg(), mod_memcg_state(), and refill_stock(). Should both
-dma_buf_xfer_charge() and mem_cgroup_transfer_dmabuf_charge() return early
-when mem_cgroup_disabled() is true?
-
-> +
-> +		memcg =3D mem_cgroup_from_css(css);
-> +		rcu_read_unlock();
-> +
-> +		ret =3D security_dma_buf_charge_cgroup(current_cred(), cgrp);
-> +		cgroup_put(cgrp);
-> +		if (ret) {
-> +			mem_cgroup_put(memcg);
-> +			return ret;
-> +		}
-> +	} else {
-> +		/* charge_fd is a pidfd  */
-> +		task =3D pidfd_get_task(arg.charge_fd, &pidfd_flags);
-> +		if (IS_ERR(task))
-> +			return PTR_ERR(task);
-> +
-> +		tcred =3D get_task_cred(task);
-> +		ret =3D security_dma_buf_charge_task(current_cred(), tcred);
-> +		put_cred(tcred);
-> +		if (ret) {
-> +			put_task_struct(task);
-> +			return ret;
-> +		}
-
-[Severity: High]
-Is a DAC or cgroup permission check needed in dma_buf_xfer_charge() in
-addition to the security_dma_buf_charge_cgroup() and
-security_dma_buf_charge_task() LSM hooks?
-
-In drivers/dma-buf/dma-buf.c, dma_buf_xfer_charge() relies solely on those
-LSM hooks to authorize the transfer:
-
-- In the cgroupfd path, cgroup_get_from_fd(arg.charge_fd) only checks that
-  the file descriptor refers to a cgroup v2 directory, without verifying
-  write access (such as inode_permission() with MAY_WRITE or
-  cgroup_procs_write_permission()). Because /sys/fs/cgroup directories are
-  world-readable (0755) by default, an unprivileged process can open
-  /sys/fs/cgroup or another service's cgroup with O_RDONLY | O_DIRECTORY.
-- In the pidfd path, pidfd_get_task() resolves any pidfd without checking
-  whether current may act on that task (for example via ptrace_may_access()
-  or credential/cgroup authorization).
-
-When CONFIG_SECURITY=3Dn, when no LSM implementing these hooks is active, w=
-hen
-a cgroup directory has no explicit security.selinux xattr, or when two
-cgroups share the same SELinux domain, the hooks return 0. Could an
-unprivileged holder of a dma-buf fd use DMA_BUF_IOCTL_XFER_CHARGE to shift
-its charges to the root cgroup (where try_charge() in
-mem_cgroup_transfer_dmabuf_charge() is a no-op, bypassing its own
-memory.max), or transfer large charges into another cgroup to exhaust its
-memory.max and trigger mem_cgroup_oom()?
-
-> +
-> +		memcg =3D get_mem_cgroup_from_mm(task->mm);
-> +		put_task_struct(task);
-> +	}
-
-[Severity: Critical]
-Can passing task->mm directly to get_mem_cgroup_from_mm(task->mm) in
-dma_buf_xfer_charge() cause a use-after-free or charge the wrong cgroup?
-
-In drivers/dma-buf/dma-buf.c, pidfd_get_task() pins task->usage, but it
-does not pin task->mm or hold task_lock(task). If the target task
-concurrently exits or execs:
-
-    do_exit()
-      exit_mm()
-        task_lock(current);
-        current->mm =3D NULL;
-        ...
-        task_unlock(current);
-        ...
-        mmput(mm); -> __mmdrop(mm) -> free_mm(mm)
-
-or replaces its mm via execve() -> exec_mmap() -> exec_mm_put_old(), the
-old mm_struct can be freed while get_mem_cgroup_from_mm() in mm/memcontrol.c
-dereferences mm->owner:
-
-    rcu_read_lock();
-    do {
-            memcg =3D mem_cgroup_from_task(rcu_dereference(mm->owner));
-
-In addition, if task->mm is already NULL (such as a zombie task that has
-completed exit_mm(), for which pidfd_get_task() still succeeds),
-get_mem_cgroup_from_mm(NULL) in mm/memcontrol.c falls back to the caller's
-context:
-
-    if (unlikely(!mm)) {
-            memcg =3D active_memcg();
-            if (unlikely(memcg)) {
-                    /* remote memcg must hold a ref */
-                    css_get(&memcg->css);
-                    return memcg;
-            }
-            mm =3D current->mm;
-            if (unlikely(!mm))
-                    return root_mem_cgroup;
-    }
-
-Instead of failing when the target task has no mm, this silently attributes
-the dma-buf charge to the caller's own cgroup (or root_mem_cgroup). Should
-dma_buf_xfer_charge() acquire a reference via get_task_mm(task), return an
-error such as -ESRCH when mm is NULL, and call mmput(mm) after
-get_mem_cgroup_from_mm(mm)?
-
-> +
-> +	if (dmabuf->memcg =3D=3D memcg)
-> +		goto skip_transfer;
-> +
-> +	if (!mem_cgroup_transfer_dmabuf_charge(dmabuf, memcg)) {
-> +		ret =3D -ENOMEM;
-> +		goto skip_transfer;
-> +	}
+> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+> index be77a4c168ab0..c315739178867 100644
+> --- a/drivers/dma-buf/dma-heap.c
+> +++ b/drivers/dma-buf/dma-heap.c
 
 [ ... ]
 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e94222237d31a..d994a4b2d35e4 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5688,6 +5688,46 @@ bool mem_cgroup_charge_dmabuf(struct dma_buf *dmab=
-uf, struct mem_cgroup *memcg,
->  	return true;
->  }
+> @@ -81,13 +82,14 @@ static struct dma_buf *dma_heap_ioctl_allocate(struct=
+ file *file, void *data)
+>  {
+>  	struct cgroup *cgrp;
+>  	struct cgroup_subsys_state *css;
+> +	const struct cred *tcred;
+>  	struct dma_heap_allocation_data *heap_allocation =3D data;
+>  	struct dma_heap *heap =3D file->private_data;
+>  	struct dma_buf *dmabuf;
+>  	struct mem_cgroup *memcg =3D NULL;
+>  	struct task_struct *task;
+>  	unsigned int pidfd_flags;
+> -	int fd;
+> +	int fd, ret;
+>  	size_t len;
 > =20
-> +/**
-> + * mem_cgroup_transfer_dmabuf_charge - move a dma-buf charge
-> + * @dmabuf: buffer to transfer charge
-> + * @new_memcg: target memcg; caller must hold a reference
-> + *
-> + * Transfers the charge for @dmabuf to @new_memcg and, on
-> + * success, stores @new_memcg in @dmabuf->memcg.
-> + * Returns %true on success, %false if the charge against @new_memcg
-> + * failed or a concurrent transfer raced on @dmabuf->memcg.
-> + * On failure the caller retains its reference to @new_memcg.
-> + */
-> +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
-> +				       struct mem_cgroup *new_memcg)
-> +{
-> +	struct mem_cgroup *old_memcg =3D READ_ONCE(dmabuf->memcg);
-> +	unsigned int nr_pages =3D PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
-> +
-> +	if (!mem_cgroup_disabled() && try_charge(new_memcg, GFP_KERNEL, nr_page=
-s))
-> +		return false;
-> +
-> +	if (cmpxchg(&dmabuf->memcg, old_memcg, new_memcg) !=3D old_memcg) {
-> +		if (!mem_cgroup_is_root(new_memcg))
-> +			refill_stock(new_memcg, nr_pages);
-> +		return false;
-> +	}
+>  	if (heap_allocation->fd)
 
 [Severity: Medium]
-How does mem_cgroup_transfer_dmabuf_charge() behave when two threads race
-to transfer the same dmabuf?
+Will this cause a build regression in dma_heap_ioctl_allocate() when
+CONFIG_DMABUF_HEAPS=3Dy is built with CONFIG_MEMCG=3Dn or CONFIG_CGROUPS=3D=
+n?
 
-First, dma_buf_xfer_charge() in drivers/dma-buf/dma-buf.c checks
-dmabuf->memcg =3D=3D memcg before calling mem_cgroup_transfer_dmabuf_charge=
-(),
-which then reloads old_memcg =3D READ_ONCE(dmabuf->memcg) without rechecking
-old_memcg =3D=3D new_memcg. If two threads concurrently transfer dmabuf to =
-the
-same target cgroup, both can pass the check in dma_buf_xfer_charge(); after
-the first transfer finishes, the second thread reads
-old_memcg =3D=3D new_memcg and calls try_charge(new_memcg, GFP_KERNEL, nr_p=
-ages)
-before uncharging old_memcg, transiently charging 2 * nr_pages to new_memcg
-and potentially triggering unnecessary reclaim, OOM, or -ENOMEM even though
-dmabuf is already charged to new_memcg.
+In drivers/dma-buf/dma-heap.c, dma_heap_ioctl_allocate() unconditionally
+references cgroup_get_from_fd(), cgroup_css(), memory_cgrp_subsys,
+css_tryget_online(), and cgroup_put() in the charge_fd resolution block
+(introduced earlier in this series by commit "dma-heap: charge dma-buf
+memory via explicit memcg" and updated here):
 
-Second, old_memcg is read before try_charge(new_memcg, GFP_KERNEL, nr_pages=
-),
-which can sleep in direct reclaim. If another transfer updates dmabuf->memcg
-while try_charge() is sleeping, cmpxchg(&dmabuf->memcg, old_memcg, new_memc=
-g)
-fails without retrying, and dma_buf_xfer_charge() returns -ENOMEM to
-userspace even though charging new_memcg succeeded. Should the cmpxchg loop
-retry with the updated old_memcg (and treat old_memcg =3D=3D new_memcg as a
-no-op)?
+	if (heap_allocation->charge_fd) {
+		cgrp =3D cgroup_get_from_fd(heap_allocation->charge_fd);
+		if (!IS_ERR(cgrp)) {
+			/* charge_fd is a cgroupfd */
+			rcu_read_lock();
+			css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
+			if (!css || !css_tryget_online(css)) {
+				rcu_read_unlock();
+				cgroup_put(cgrp);
+				return ERR_PTR(-ENOENT);
+			}
 
+In drivers/dma-buf/Kconfig, DMABUF_HEAPS only selects DMA_SHARED_BUFFER and
+does not depend on CONFIG_MEMCG or CONFIG_CGROUPS. However, in
+include/linux/cgroup_subsys.h, SUBSYS(memory) (which declares
+memory_cgrp_subsys) is guarded by:
+
+#if IS_ENABLED(CONFIG_MEMCG)
+SUBSYS(memory)
+#endif
+
+Furthermore, in include/linux/cgroup.h, the SUBSYS() declarations along
+with cgroup_get_from_fd(), cgroup_css(), css_tryget_online(), and
+cgroup_put() are only declared inside #ifdef CONFIG_CGROUPS without stub
+definitions when CONFIG_CGROUPS is disabled. Should this path be guarded by
+IS_ENABLED(CONFIG_MEMCG), or should Kconfig dependencies/stubs be added?
+
+> @@ -120,6 +122,14 @@ static struct dma_buf *dma_heap_ioctl_allocate(struc=
+t file *file, void *data)
+>  			if (IS_ERR(task))
+>  				return ERR_CAST(task);
+> =20
+> +			tcred =3D get_task_cred(task);
+> +			ret =3D security_dma_buf_charge_task(current_cred(), tcred);
+> +			put_cred(tcred);
+> +			if (ret) {
+> +				put_task_struct(task);
+> +				return ERR_PTR(ret);
+> +			}
 > +
-> +	mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages);
-> +
-> +	if (old_memcg) {
-> +		/* Uncharge old cgroup */
-> +		mod_memcg_state(old_memcg, MEMCG_DMABUF, -nr_pages);
-> +		if (!mem_cgroup_is_root(old_memcg))
-> +			refill_stock(old_memcg, nr_pages);
-> +		/* unref from buffer - buffer keeps new ref to new_memcg */
-> +		mem_cgroup_put(old_memcg);
-> +	}
+>  			memcg =3D get_mem_cgroup_from_mm(task->mm);
 
 [Severity: Critical]
-Could publishing new_memcg into dmabuf->memcg via cmpxchg() before calling
-mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages) lead to a use-after-free
-on new_memcg when two DMA_BUF_IOCTL_XFER_CHARGE calls race?
+Can passing task->mm directly to get_mem_cgroup_from_mm(task->mm) in
+dma_heap_ioctl_allocate() trigger a use-after-free on struct mm_struct, or
+silently charge the wrong memcg when task->mm is NULL?
 
-In mm/memcontrol.c, dma_buf_xfer_charge() holds a single reference to
-new_memcg that is transferred to dmabuf->memcg as soon as cmpxchg()
-succeeds:
+When resolving heap_allocation->charge_fd via pidfd_get_task(), the caller
+only holds a reference on task->usage, which does not pin task->mm. After
+security_dma_buf_charge_task() returns 0, dma_heap_ioctl_allocate() reads
+task->mm and passes it to get_mem_cgroup_from_mm(task->mm) without holding
+task_lock(task) or acquiring an mm reference via get_task_mm(task) (a
+pattern introduced in commit "dma-heap: charge dma-buf memory via explicit
+memcg", modified here, and duplicated in commit "dma-buf: transfer memcg
+charges via DMA_BUF_IOCTL_XFER_CHARGE").
 
-Thread A                              Thread B
-mem_cgroup_transfer_dmabuf_charge()
-  cmpxchg(&dmabuf->memcg,
-          old_memcg, new_memcg)
-                                      mem_cgroup_transfer_dmabuf_charge()
-                                        old_memcg =3D READ_ONCE(dmabuf->mem=
-cg);
-                                        /* old_memcg is new_memcg */
-                                        cmpxchg(&dmabuf->memcg,
-                                                new_memcg, memcg_C)
-                                        mod_memcg_state(new_memcg,
-                                                        MEMCG_DMABUF,
-                                                        -nr_pages);
-                                        refill_stock(new_memcg, nr_pages);
-                                        mem_cgroup_put(new_memcg);
-  mod_memcg_state(new_memcg,
-                  MEMCG_DMABUF,
-                  nr_pages);
+If the target task concurrently exits via do_exit() -> exit_mm() in
+kernel/exit.c (or replaces its mm during exec via exec_mmap() ->
+exec_mm_put_old() in fs/exec.c), it clears task->mm under task_lock() and
+drops the last reference via mmput() -> __mmdrop() -> free_mm():
 
-If new_memcg was concurrently offlined after cgroup_put(cgrp) in
-dma_buf_xfer_charge(), and refill_stock() uncharges directly (for example
-when nr_pages > MEMCG_CHARGE_BATCH), Thread B's mem_cgroup_put(new_memcg)
-can drop the last reference and free new_memcg before Thread A executes
-mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages). Even when new_memcg is
-not freed, Thread B decrements MEMCG_DMABUF before Thread A increments it.
+	local_irq_disable();
+	current->mm =3D NULL;
+	membarrier_update_current_mm(NULL);
+	enter_lazy_tlb(mm, current);
+	local_irq_enable();
+	task_unlock(current);
+	mmap_read_unlock(mm);
+	mm_update_next_owner(mm);
+	mmput(mm);
 
-Would updating mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages) before the
-cmpxchg() (and reverting it if cmpxchg() fails), or serializing transfers,
-avoid exposing new_memcg before its state update completes?
+Because mm_cachep is not SLAB_TYPESAFE_BY_RCU and __mmdrop() frees the
+mm_struct immediately without an RCU grace period, get_mem_cgroup_from_mm()
+in mm/memcontrol.c can dereference freed memory at mm->owner:
+
+	rcu_read_lock();
+	do {
+		memcg =3D mem_cgroup_from_task(rcu_dereference(mm->owner));
+
+In addition, if the target task is already a zombie (having completed
+exit_mm() while still reachable via pidfd_get_task()) or a kernel thread,
+task->mm is NULL. Even though get_task_cred(task) and
+security_dma_buf_charge_task() authorized charging the target task,
+get_mem_cgroup_from_mm(NULL) in mm/memcontrol.c takes the !mm fallback:
+
+	if (unlikely(!mm)) {
+		memcg =3D active_memcg();
+		if (unlikely(memcg)) {
+			/* remote memcg must hold a ref */
+			css_get(&memcg->css);
+			return memcg;
+		}
+		mm =3D current->mm;
+		if (unlikely(!mm))
+			return root_mem_cgroup;
+	}
+
+which silently charges current->mm (the allocating caller's own memcg) or
+root_mem_cgroup instead of charging the target task's cgroup or returning
+an error. Should this pin the mm with get_task_mm(task) / mmput(mm) (or
+resolve the memcg from the task under rcu_read_lock() via
+mem_cgroup_from_task())?
+
+>  			put_task_struct(task);
+>  		}
+
+[Severity: High]
+Should the memcg charge happen before heap->ops->allocate() allocates the
+physical backing pages in dma_heap_ioctl_allocate()?
+
+Immediately following the charge_fd resolution in drivers/dma-buf/dma-heap.=
+c,
+dma_heap_ioctl_allocate() invokes heap->ops->allocate() for the full
+requested len before charging memcg via mem_cgroup_charge_dmabuf():
+
+	dmabuf =3D heap->ops->allocate(heap, len, heap_allocation->fd_flags,
+				     heap_allocation->heap_flags);
+
+	if (IS_ERR(dmabuf)) {
+		mem_cgroup_put(memcg);
+		return dmabuf;
+	}
+
+	if (!memcg && mem_accounting)
+		memcg =3D get_mem_cgroup_from_mm(current->mm);
+
+	if (memcg) {
+		if (!mem_cgroup_charge_dmabuf(dmabuf, memcg, GFP_KERNEL)) {
+			mem_cgroup_put(memcg);
+			dma_buf_put(dmabuf);
+			return ERR_PTR(-ENOMEM);
+		}
+	}
+
+Because commit "memcg: Add MEMCG_DMABUF accounting infrastructure" removed
+__GFP_ACCOUNT from alloc_largest_available() in
+drivers/dma-buf/heaps/system_heap.c:
+
+		flags =3D order_flags[i];
+		page =3D alloc_pages(flags, orders[i]);
+
+system_heap_allocate() allocates and zeroes the entire buffer of size len
+using uncharged alloc_pages() calls before try_charge() is evaluated in
+mem_cgroup_charge_dmabuf(). Can a process inside a memory-limited cgroup
+(or targeting one via charge_fd in DMA_HEAP_IOCTL_ALLOC) use this window to
+exhaust host physical memory and trigger the global OOM killer before the
+cgroup limit check runs?
 
 [ ... ]
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261021-v2_2023012=
-3_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com?part=3D7
+3_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com?part=3D3
