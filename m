@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792695144;
-	b=2OXsG1VIfVcZp5H2nl8+Gmc5cram0x526alHot/7+Fbs/8BMeHwIYsizuLzGf4+2ZKB7
-	 UCyYOgUl+utTu4QnxBm+JnASJzSE2hHu4LETCjE0hA6JQMrdn4aMLP9JRh347p3ebTnoS
-	 GByRlIjLU4A/ObFiTZQMGAXQN9dkpBh33XRiJHKP5tYY1rH4I3//+1j+d+TORxdhPij98
-	 AMol97W1La8y+kYCyCPAPC1M+adm+x8Fs/SjmUX/bwN8yq2cbB5whhCKWGcTGOjs2wYC2
-	 lq71I/zjIo4mQ2OwzGLjvE0BuENMsG0Oaauj/BDhT5jTHWTTBfeqmku0zubg9TrMN0g==
+	t=1792695548;
+	b=D5le8eY1t/0PTvYsc/LwVJero2Csk++OIR9f/CqF7b6XrbBYHZTHMSTW7bmaA3cSnhPD
+	 5Zou/J5eQ7VFAQyxKrBIA5tzU2Vt0VVJCFI/AchU/81hPhfxr40MTc90zomTijWqU5NGq
+	 MRbbSJZA0ZrSe+GqoIvllsKsqparfI+DAqmXlGOBdSRrNOBzREAK15bk/QUKrfRkmE0rv
+	 UCcVB2v3dFGSNQB9m6/hUwiid+oEDRm2fblpxp74cmtUM8j9YYlWi6lG9hYcPtyEw49uq
+	 8X0okqaEi/VsrqC2L175x+bDqm3pn3V0Cr8Xq5MEA8mM8GUTHvbR+erkms6DeUEDhNg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792695144;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792695548;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=hAT0GNMXG6m+Mek3nrFSK4GGcj4sZzFhW/dkEnVrDzk=;
-	b=VruZ+DzmDGo++joatdJHDdShm3YHiXB8WxJvfjmdzel9f2Qr4DZKv//ZAKx+ZH1t2m2B
-	 V3gx+XND+oRrZFHCRT5XhFJ/5BZUZIo4kzMowto1RE9nCLkQ+5Z8VpTAC0s7Yw2249x4M
-	 iGYqtne0khUKS9oFzlE52V76hf1AP3shLWJWo72RVAB0DBlVFMQEjW4mBsyelpNgsTKyc
-	 TnKb0l8NKrSQRGE0XVSLpchb0MVCdirgvskNF1OOyOvI39Ocx9cZjpLKds5mWiP3n/1CZ
-	 6Sr2lv5kGKOXFU5LvpCZb9Mqre1Hft68puNktbAIJGEa7vdQmw5thyadpEhQuIFS4ig==
+	bh=jAolMVMcbzwNHIKjhK2rxeanb0dQbS8V2wAT7ZMbs88=;
+	b=LS+GUajwXfh1HSMUpFiUQffnn87IWUX9SorDeQ0+RiDpB8774qL6NhzloAOxvWKIuJeb
+	 x1bQMv/w1FAOu/MEqtkel7x6otYve1Yr2cpM3G4P8w0ViqW0L3h3NZgHOWKR33pJhKAej
+	 Q7TngwTKfHoZ15ICKuKmBML2C2EcN380USs41U2bhmAZ4jeZR3TaeloQJAJGPqEE7ijm5
+	 Nd7KGvEbUgcSKhqeDNG/cZ8bOh/rE1pvbtcbZVncHjSpV9lorXV8qtb74pf+L2D3S43pf
+	 6NihtIQbo/PBw+vZUBKOEkfJObCwVbAMBdmChMqjUguPloPr7zJl9dUa4/eMb81+OTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=grtZdHFK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aEUKjimJ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B795D606A31A
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2026 18:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF318606A319
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2026 18:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=grtZdHFK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4967E1F01825
-	for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2026 18:52:23 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aEUKjimJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DDC11F01825
+	for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2026 18:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792695143;
-	bh=hAT0GNMXG6m+Mek3nrFSK4GGcj4sZzFhW/dkEnVrDzk=;
+	s=k20260515; t=1792695547;
+	bh=jAolMVMcbzwNHIKjhK2rxeanb0dQbS8V2wAT7ZMbs88=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=grtZdHFKOmlH/jxRBRD2miP61ygw7Be6+vmM/XU1jsrs/sfe2BDT0e+q8E9E8W967
-	 bLr2f3tYOpkdp1c/SSdjTChCZNhVt0k4cKvXQ7iTmyTNKdNDdrokWdH9SOUyjJUFIe
-	 alJ36DA8TNeYCKVvffGaGOGSJ1Z2HchmQEgMTwHeBhF9E3upn8nz6Vi/skqL/Xi7nK
-	 5eSkClJWZBiZLWYFuPSznQ2+7Vs0vha7WtKH0RD0e4OcrptagMxnuWZxwdcnmhy9K+
-	 X1AN+01E0EZdlh/2TINxb22f+cwZ5rdlf34Wsb//smsLGbKwuiDx7ZMc2ZCl0e9WbG
-	 RVXFyZLDvnH0A==
-Message-ID: <sashiko-outbox-181937@kernel.org>
+	b=aEUKjimJ6mmjN2+jWtpbXTsPF6w3pAuFyoqeIbHI1J8JklI1sNPAhkjr/Gguf6UW7
+	 zGfZqUNhzioSbXlJs1U8v8WQTPwtMHRICHcTlK1i1RyKFzj8MBn3ki+0mSC51EnK30
+	 FNLdKbuDm4zKjmCyQfc8VzNojO7hMbEp9wz2kFyCL4aTm72nKfLNTEKenuLzimIcmd
+	 WgjJfFP4r8xc01vELIX6RTiOdao3GuEy8PB3TNOYIuhu+p63hB9nvsyklAvMHGaQPw
+	 nPTKdfrC/mq+iRNNr4CzQjznwORcobx+Wxxjz1hH0lh2Z8KPJfuoBVn+DD+1ghlf4w
+	 2aAgsM64dEccg==
+Message-ID: <sashiko-outbox-181940@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 5/5] capabilities: don't let ptrace borrow
- CAP_SETFCAP
+Subject: Re: [PATCH v4 4/5] capabilities: limit fscaps to where CAP_SETFCAP
+ reaches
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261022-b4-setfcap-userns-v4-5-88aa0ffaa08f@toxicpanda.com>
+In-Reply-To: <20261022-b4-setfcap-userns-v4-4-88aa0ffaa08f@toxicpanda.com>
 References: <20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com>
- <20261022-b4-setfcap-userns-v4-5-88aa0ffaa08f@toxicpanda.com>
+ <20261022-b4-setfcap-userns-v4-4-88aa0ffaa08f@toxicpanda.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 22 Oct 2026 18:52:22 +0000
+Date: Thu, 22 Oct 2026 18:59:07 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,25 +60,25 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Tasks in a user namespace created by a task with CAP_SETFCAP may map uid
-> 0 of the parent and write file capabilities that are honoured there.
-> That is the one privilege they keep outside of their namespace.  setns()
-> no longer lets anybody in who doesn't have it, but the ptrace checks
-> don't know about it: for a target in another user namespace
-> cap_ptrace_access_check() is satisfied with CAP_SYS_PTRACE over the
-> target's namespace, which the owner rule hands to any task with the
-> right euid.
+> Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+> keeps a root process without CAP_SETFCAP from creating a user namespace
+> that maps uid 0, in which it could attach capabilities to a file that
+> are then honoured outside.  But the map doesn't have to be written by
+> that process.  A privileged task can write it from the parent, and the
+> file capabilities are not checked against the outside at all:
 >=20
 >   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
->   unshare(CLONE_NEWUSER)
->                                     ptrace(PTRACE_ATTACH, A)
->                                       uids match, euid =3D=3D ns->owner
->                                     make A write "0 0 1" to its uid_map,
->                                     or set file capabilities
+>                                     unshare(CLONE_NEWUSER)
+>                                       ns->setfcap_level =3D 1
+>   write "0 0 1" to B's uid_map, gid_map
+>     A has CAP_SETFCAP -> allowed
+>                                     setxattr(file, "security.capability")
+>                                       rootid =3D kuid 0
+>   uid 1000 in the initial namespace:
 > [ ... ]
-> tracer can't setns() into either.  PTRACE_MODE_READ is unchanged.
+> an unprivileged user does in its own namespaces.  The rest gets -EPERM.
 >=20
-> Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+> Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
 > Assisted-by: LLM
 > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
@@ -86,5 +86,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261022-b4-setfcap=
--userns-v4-0-88aa0ffaa08f@toxicpanda.com?part=3D5
+-userns-v4-0-88aa0ffaa08f@toxicpanda.com?part=3D4
 
