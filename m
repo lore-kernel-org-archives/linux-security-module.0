@@ -1,59 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792678308;
-	b=Ev66eAb9cU0ECTCThDeuou5XKB6ccGJUHtzBEDIXJlUszcFO/2gLI2b/aKwQik0oTF72
-	 vUeT4v963fHkWbbpMZ+JtjrZRv/YHUk+m3W0zkppx7uH7orC0NfwQWZiTd/oyzOSwquFb
-	 41b4/2h/ygWDys2035v88bMLP4uMqUMKs1g23UFgwTtuqo8lQbPUgsoC7NluUYk2GJ2zp
-	 kJbSCplmOdLm7SgIBlW8fyS+giJS2bxN55nCBaa5Ji9Wgv9FrVovgEBQhNdBJgVaajwMj
-	 rIM64Vi6aGr0Qty8U5QfxnjxCUwA/kmM4/AHsWKLrmcYFdTIQYe+PM2uiFd+3t8IvAg==
+	t=1792678912;
+	b=S7xJFWE9FHuJQ4wjECHdD0M3zbeUgxidSWldLq1skV329yMOrGVEPJmcTPMRhszyjUs7
+	 lw2Hl27o9EzEnvn57sWXlJ+rHL2aNlOvnFQFRA+qUFpf0ZxXUVmbFOTFdlRg5TPInsAuF
+	 /1MexM5jGqpYghxSmZYHE7VonRtUAEuO9heFsFM8PHn1iBBqIYoNr9YLfYtFaEkEAW8cx
+	 NEJX3V9cGEv2oZv+VN0KdOeZHn4v85UsHie9xEkxXzEs7aT+546G9acQr5A/8+ngjzeUO
+	 keeEfUS9/ZgGPXX62hlXFxrfy/XctqRHWA5mTf39GZGCKSGH27mgauDBYEtXB303wUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792678308;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=sdWXqojfjGTSFr00juTUfrNfMW8pB30k4KgMGHp/7Zo=;
-	b=KIGCGsEdUfFznzFh8+F2Vgq3BiWVnmOPTH3rj5hCrT9GubMadns3PZq0kNAQpt1mNqno
-	 r4dJYid7EZ870tj4buBitlxJx6fcbIZYkUiGsOD9/2sCF+u2SUcBgayJoSi6vucadmr8o
-	 DnCGW1nhYaLFvf+SvpRf0zNPB4B4ROQy2GwQQkbPn6wQAO2pfOJfvz878gFiNUI7lhDqp
-	 +gCxL+BUon/nEzMZJjkD0rpJr+tGgfnXFQqOPGZGvaA9KjW/iexCaViMPjdR23aqigFoE
-	 iVWYXniMpZI8W8udBYwcwo6Bn3tbsDyJ1sSJeXsnBCbnlq4RlQEl6VJzff6UXg2KY/w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792678912;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=UgVlXRgVv5/x1DXWmVGKmIRruqBZ1ifqROjMLIcwpQI=;
+	b=wERCfMDGYz302LiswWoCJZpsp5xGzMjZeoUSDAIc5L5bLLXtI0nmhXcsc1/5uixNfYwq
+	 f9WmCYUUCJS924kNBYLwuMTrGv3O1w1yfRpt85FMPGWkprueJsBYpMBfWEKirTgPmWsdm
+	 1OOxpQJCdMxjD358UQXAZT54ofX6OwNwgyyjWB/qKqTCPwP0NEC/lltkGXj69Eo3+3Ezh
+	 iHsK8ntZHscNE3mRJcaU/mvvCGPbikz48NHkh/bCiUl9K6wnARdLyVo1xSQlbgjrGz11R
+	 vr/ZkxWwsX5Yrxo9wpBScRPfC4Egn2sZ07A8bpc04Glf5ZCiEMQjivWgcLmxWXvv5nw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J6NhYbZT;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E4FBC606A31D;
-	Thu, 22 Oct 2026 14:11:47 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=dniXRB4Z;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D7C606A31A;
+	Thu, 22 Oct 2026 14:21:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 21D7C606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J6NhYbZT
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 03AD51F000C1;
-	Thu, 22 Oct 2026 14:11:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792678307;
-	bh=sdWXqojfjGTSFr00juTUfrNfMW8pB30k4KgMGHp/7Zo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=J6NhYbZTtd8QRlgEyiQxDwFVZJT0DMj90sP0MlItMnDIQdbJjW8RGQLtWrI9Mvzgc
-	 QiOzri01afOr/HByryTDifj7XjvzNBwZ4GK5Sn4fHQ7TFJL+u+iVEVD0a/gUmbdg2k
-	 S449PYAF/UcKsKZ9lKkx3M3JLbGtM7B0ZD10DE8tG8gH3QOkqqA1RoOAvpPj+XCSQZ
-	 0fJ1oIDCDHPkXzxo0isGlF8KqIrbdAGfBJo3cIzrEkyapFV+RzJAITklP7DDsMPAfA
-	 beuSjsb0g1PKyVKhw+pqNtCOke51sr0c6sSU9rRQEdApPbKZYv/0vCGxZrCJ/w1fDT
-	 Qkad5XJrZ9uFw==
-Date: Thu, 22 Oct 2026 17:11:43 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [RFC PATCH 5/6] KEYS: Replace assoc_array with struct
- keyring_index
-Message-ID: <atoZnxCgdrs8HNbS@kernel.org>
-References: <20261016215326.4110064-1-jarkko@kernel.org>
- <20261016215326.4110064-6-jarkko@kernel.org>
- <atlJPhTqLaa0EEDa@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=dniXRB4Z
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBCFC2C34;
+	Thu, 22 Oct 2026 07:21:46 -0700 (PDT)
+Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3BA83F7B4;
+	Thu, 22 Oct 2026 07:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1792678910; bh=AjDgKxtJPU0cDSM8jjetpkKUyPIl0mcA2sgghiP/fy8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dniXRB4ZD77Kv5qxyizSr8v8KtL/ukXit7rt6xFRKUWRWqRwmE6iH72fHbbiOthgT
+	 t8pkLhHcMrKIjkL9hOIAKcTHcKAD8dALDouiCVdrInxKtCYCKPKtoN/P52CBgRrqBV
+	 0dUXbOk3kfv9WFL09chD0AKAzIdjKVCTHS+KjbMo=
+Date: Thu, 22 Oct 2026 15:21:42 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: will@kernel.org, mark.rutland@arm.com, chenhuacai@kernel.org,
+	kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	npiggin@gmail.com, chleroy@kernel.org, pjw@kernel.org,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	tglx@kernel.org, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, robh@kernel.org,
+	saravanak@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	zohar@linux.ibm.com, noodles@fb.com,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v2] kexec: Select ima_get/free_kexec_buffer() with
+ CONFIG_HAVE_IMA_KEXEC(_OF)
+Message-ID: <atob9ulCwxZgyWyL@arm.com>
+References: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -65,50 +73,33 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <atlJPhTqLaa0EEDa@kernel.org>
+In-Reply-To: <20261020083727.1906495-1-roberto.sassu@huaweicloud.com>
 
-On Thu, Oct 22, 2026 at 02:22:43AM +0300, Jarkko Sakkinen wrote:
-> On Sat, Oct 17, 2026 at 12:53:03AM +0300, Jarkko Sakkinen wrote:
-> > Linux keyring would be better off without struct assoc_array given the
-> > overhead caused by sole ownership of it. Linux has multiple popular choices
-> > for key-value store and there is nothing special in lib/assoc_array.c that
-> > would make it stand out enough to be ratiaonalize the time spent on
-> > maintaining it.
-> > 
-> > A keyring has a sparse data population, making rhashtable a plausible
-> > choice. Multiple subsystems rely on it, and best of all, rhashtable has
-> > dedicated maintainers.
-> > 
-> > Replace assoc_array with struct keyring_index, allocated for a keyring on
-> > its first link attempt. Initialize its ht member with rhashtable_init()
-> > to store links indexed by key type, domain tag and description.
-> > 
-> > Maintain two linked lists in the index:
-> > 
-> > - all: enumerate committed links without retrying hash table walks when
-> >   the table resizes.
-> > - keyrings: visit nested keyrings during recursive search without scanning
-> >   links to other key types.
-> > 
-> > A key can belong to several keyrings. Represent each link with struct
-> > keyring_link so it has separate hash table and list nodes and holds its
-> > own key reference. Traverse the lists under RCU and defer freeing removed
-> > links and dropping their key references until after a grace period.
-> > 
-> > Assisted-by: LLM
-> > Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Tue, Oct 20, 2026 at 10:37:27AM +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> In addition to addressing Eric's and David's comments, I'll align the
-> change with Kyle's fix (and rewrite the commit message).
+> On x86, if CONFIG_OF_FLATTREE is enabled, the kernel uses the device tree
+> implementation of ima_get/free_kexec_buffer(). However, x86 passes the IMA
+> buffer location through setup_data, not through the device tree, so the
+> buffer is never found and the IMA measurement list is not carried over
+> across kexec.
+> 
+> Introduce CONFIG_HAVE_IMA_KEXEC_OF (which selects CONFIG_HAVE_IMA_KEXEC)
+> and select it for the architectures that pass the IMA buffer location
+> through the device tree, via of_kexec_alloc_and_setup_fdt() (arm64,
+> powerpc and riscv). Build the device tree implementation of
+> ima_get/free_kexec_buffer() only if the new option is enabled.
+> 
+> Select the new option also on LoongArch, to preserve the current behavior
+> and avoid a link failure. LoongArch does not pass the buffer location to
+> the next kernel yet; this will be addressed separately.
+> 
+> Finally, don't select it for x86, and use x86's own setup_data-based
+> implementation regardless of CONFIG_OF_FLATTREE.
+> 
+> Fixes: b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kexec")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-This turned out not to be difficult. I just purposely had retained the
-original behavior of the this patch when I rebased it yesterday until I
-had my keyring PR out so could not know :-)
+For arm64:
 
-Kyle's fix came at really great spot because if it had came after this
-feature had landed stable kernels would need a different fix than the
-mainline (given that they build on top of different data structures).
-
-Br, Jarkko
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
