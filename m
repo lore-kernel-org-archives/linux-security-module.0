@@ -1,67 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.241
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792775738;
-	b=wyQ8+JRYQGg9rGrQG0zj9uG9Rcua26+Deo2h+zNfsBKSVt+NC4XT6ap7+tVvWXiokfwc
-	 5jXFP4bYPKuBJGIZZd+c+Ldft5rZ5A3eIgN0UM3tAA9yED8VM0QNer8IqD+T6VAmBIBB2
-	 oT3I73gn/MpcidcFiXW3TKtrysCt1aPX6oJjAEYNV01DfoHYadOhIa5DI/1gyBaDEbNIN
-	 TtZqXqad9lVzeAYBZPXvz5kZKpWslAytU2kzk3s4vgiOTVbXEpbJv+hxfRIoVtRfCDNnF
-	 6JOGqNuHp3kTg2cKwcS0p00QHeSMGu927t9ZIm4q0ts/Df9tWveopT7A5yleYpSdj4Q==
+	t=1792776623;
+	b=OHXfb45zNJzRMRfOjMmiJ2hgfxzZ41SjCRhV22TgdM2QHhsn3xk4aZtEMdPvcq3qoARL
+	 43Lk8v4QBtg+9c2MNwPusRQ5M/1RpL1WncaCf2zNnlna66Iu/ieoXB58tS3tPGDeAyh8w
+	 rbdN5I400IBx1JJo9KE+VbS9ID8SbvgItxSEsmFcJj6rfkHPS9awXUqL2Be734QTl6JAr
+	 t7DpT06/0wiEP+Oduv6gC7p686EHTmS0vt6NQvQCdPnqV+O5tYlb7BwMHY9zkpS2RfyGv
+	 kVeXDKdMmLeecWb3QSxwM7zd6lYlkFstwRzQykmGDNVLsmUBdhVt7bbJlL9Y3OYYxQw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792775738;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=uOTjqmyRNUWkFdydZyKOHkZPBvFbPtsWEgtGBpk+JSg=;
-	b=okDT8Ps+H260eZkc51EBn8/KrNrzlt0S+QD8COCy9Ohn/LExHv7y9xXyK8PV8yDll8Gt
-	 8WJlS4ff5w1Pn190FNFTgwgvHwCvAqfMEy2Rhbs7pLOeqYnubl6O1H1ybHBUfMPX1K5RO
-	 wAfn32avqL+rSEknh2q7E5MnOWckVjehDbQKvuP5LI89rygrYCV1oTAyktNAM53N2Kypv
-	 Pqp/9/MO6O3t6H3Gsqcq8x83PcaBWtQXy5xCcV1OVqnkyP8adM9mIb1PVJpYY3KacaZGc
-	 26hyr2YKHm9E0D6NDpGswbytepmg3CMj0bMHUh2oVQKctc8H0/R5FWOjxwbA1HP21mA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792776623;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=9TWm1lR2/77ixWUk0wn8e/sarWzldpnztTpDCLDekyo=;
+	b=wM/Dfnz93UDGeJLZZWU0pPOj9CZIQmiP4JxBgou5KMkEeWOKd/y2ck9e5PJ7S8ON1uYn
+	 0SvpMGPLquYTKOf0inhhOa6/mLKmHLfYEiaL99ZVVtxSDsCLRBHitqbScK6PN9s9UuOCW
+	 SjVmDDKE3kEKc3MyYPOK6KiiGg+XUuSKp5u74s/H4aOnRcQXt+CTguSfRjo8drUcTGgYP
+	 UqnrnVUws4pzlOjrQQEHJd4BKBkTSiC989gaj8C6GkPYtnh0AK5jJ1NQD0QcscjNWsHkH
+	 e/o7CwpHsVQefkDWTdWhVKpLYEuQv45g5pGc0PUfv5LKqX47ppc1b8Vy8e+WcUKnw0A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=waldn.net;
-	spf=pass smtp.mailfrom=waldn.net;
-	dkim=pass header.d=waldn.net header.i=@waldn.net header.a=rsa-sha256 header.s=key1 header.b=hXUsRcAY;
-	arc=none smtp.remote-ip=91.218.175.241
-Received: from mta0.migadu.com (out-241.mta0.migadu.com [91.218.175.241])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SSO1J8U6;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED773606A31B
-	for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 17:15:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED773606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=waldn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=waldn.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F6A606A31E
+	for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 17:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=waldn.net header.i=@waldn.net header.a=rsa-sha256 header.s=key1 header.b=hXUsRcAY
-X-Envelope-To: linux-security-module@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=bK4TXPNXctxarcSsHlGeHHSHsHKJGqcOVwvu8B7oRYA=;
- c=simple/simple; d=waldn.net;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1792775736; v=1; x=1793380536;
- b=hXUsRcAYPMTmuSnqXSpWvv1LYNBQ97VYJ4hbo8V5DL03aT8VHsW2fLV769m4UQrOr6TauIPz
- 5rEi2uFrnvZqE/NJ8KGbAYFprrNbZKj18NkWIH+6YcTf8twfssHQFU3UZTqlQj+3ibMad3jfsJ6
- eWZOprP7bI3bkI566EVrfFBJM0GokVhVVQZQNIUXBLnF3BrCmwmV8zxpdALS2QH78zEeMRQpaPT
- dj3B89xfu0Hmam3sGnZ0ibjuPeQKKQqB3T9RDol4R71JG8k6u8GPDWEZh0r8RN/SMbdfadYe1QA
- H+zVBlqYWlK22gfLEWq856eoco/+8icp2Hsl8OiW9N88w==
-X-Envelope-To: linux-security-module@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 118033012f27832e;
-	Fri, 23 Oct 2026 17:15:17 +0000
-X-Mizu-Trace-ID: 118033012f27832e
-X-Migadu-Flow: FLOW_OUT
-From: Amelia Crate <acrate@waldn.net>
-To: Kees Cook <kees@kernel.org>,
-	linux-security-module@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amelia Crate <acrate@waldn.net>
-Subject: [RFC PATCH] loadpin: allow untoggleable enforcement on filesystems which don't appear to be read-only
-Date: Fri, 23 Oct 2026 12:15:08 -0500
-Message-ID: <20261023171508.3460300-1-acrate@waldn.net>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SSO1J8U6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667391F01825
+	for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 17:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792776622;
+	bh=9TWm1lR2/77ixWUk0wn8e/sarWzldpnztTpDCLDekyo=;
+	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
+	b=SSO1J8U6cspON1ZhahixNKWDkTcuhe2YDkjj2IohNdIAOcmQX5ZwTJrrTHHtk/85/
+	 7RzJKCyJ1sgC2YkcBg0u7wsatZbVASvMhtwgEHGCY+CkH8uONZeXdy3hF/Amqve8mz
+	 vKQSSsIIAcWrh6zqJBkFrSDc1HSmTlSdtYGKfJbtxdx0ufC1uwlGecwxTFMZP7EZxa
+	 5nxxTFtKFAhiz5wIGyieiIAfnGZdCiHx6EnDf8f8MqpiW3dBDTWIeiqlhgisgyu4gg
+	 BkQK2xS+TNGVFeOj8Z8Drc9t0KFkoN7oaKXk3tSHBCTALhAEqu0MHuxmv4/gkUjtQu
+	 n6ydNmSEX1bOg==
+Message-ID: <sashiko-outbox-183002@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC PATCH] loadpin: allow untoggleable enforcement on
+ filesystems which don't appear to be read-only
+Reply-To: sashiko-reviews@lists.linux.dev
+To: linux-security-module@vger.kernel.org
+In-Reply-To: <20261023171508.3460300-1-acrate@waldn.net>
+References: <20261023171508.3460300-1-acrate@waldn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 23 Oct 2026 17:30:22 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -70,123 +58,96 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Some filesystems, such as composefs created from layers which are entirely
-read-only, can't be easily detected as a read-only file system. In addition to
-filesystems which are read-only without having a backing read-only block device
-I believe this is also useful for cases where immutability of the filesystem is
-enforced by the hypervisor or the host, such as 9p shares or virtiofs.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] loadpin: force_enforce fails to enable enforce and locks it to 0
+--
 
-It is still desirable to enforce LoadPin and disallow toggling enforcement in these cases.
-This patch gives system administrators a way to disallow toggling LoadPin enforcement even
-when the immutability of a filesystem is unclear.
+commit dc93f122a0f976e677fefeb791538922df5a6557
+Author: Amelia Crate <acrate@waldn.net>
 
-Signed-off-by: Amelia Crate <acrate@waldn.net>
-Assisted-by: Codex:gpt-6
----
- Documentation/admin-guide/LSM/LoadPin.rst     |  8 +++++++-
- .../admin-guide/kernel-parameters.txt         |  7 +++++++
- security/loadpin/loadpin.c                    | 20 ++++++++++++++++++-
- 3 files changed, 33 insertions(+), 2 deletions(-)
+loadpin: allow untoggleable enforcement on filesystems which don't appear t=
+o be read-only
 
-diff --git a/Documentation/admin-guide/LSM/LoadPin.rst b/Documentation/admin-guide/LSM/LoadPin.rst
-index a90fd9dac960..f1e8825d0fe8 100644
---- a/Documentation/admin-guide/LSM/LoadPin.rst
-+++ b/Documentation/admin-guide/LSM/LoadPin.rst
-@@ -16,10 +16,16 @@ boot ("``loadpin.enforce=0``").
- 
- LoadPin starts pinning when it sees the first file loaded. If the
- block device backing the filesystem is not read-only, a sysctl is
--created to toggle pinning: ``/proc/sys/kernel/loadpin/enabled``. (Having
-+created to toggle pinning: ``/proc/sys/kernel/loadpin/enforce``. (Having
- a mutable filesystem means pinning is mutable too, but having the
- sysctl allows for easy testing on systems with a mutable filesystem.)
- 
-+Some filesystems may appear to be mutable, but are in fact read-only.
-+In this case, ``loadpin.force_enforce=1`` can be set to require enforcement
-+of LoadPin on all filesystems. When LoadPin is enabled,
-+``/proc/sys/kernel/loadpin/force_enforce`` reports the state of this option.
-+This option is independent of whether LoadPin is enabled.
-+
- It's also possible to exclude specific file types from LoadPin using kernel
- command line option "``loadpin.exclude``". By default, all files are
- included, but they can be excluded using kernel command line option such
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1b2ae71def21..df8c145cc63d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3540,6 +3540,13 @@ Kernel parameters
- 			Enable Live Update Orchestrator (LUO).
- 			Default: off.
- 
-+	loadpin.force_enforce= [SECURITY]
-+			Format: <bool>
-+			Force LoadPin enforcement until reboot, even when the
-+			pinned filesystem is not backed by a read-only block
-+			device. Requires LoadPin to be enabled in the active LSM list.
-+			Default: off.
-+
- 	lockd.nlm_grace_period=P  [NFS] Assign grace period.
- 			Format: <integer>
- 
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index f71861f98e1a..b260ad299a2c 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -45,6 +45,7 @@ static void report_load(const char *origin, struct file *file, char *operation)
- }
- 
- static int enforce = IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENFORCE);
-+static bool force_enforce __ro_after_init;
- static char *exclude_read_files[READING_MAX_ID];
- static int ignore_read_file_id[READING_MAX_ID] __ro_after_init;
- static struct super_block *pinned_root;
-@@ -60,11 +61,19 @@ static bool loadpin_root_writable;
- static int proc_handler_loadpin(const struct ctl_table *table, int dir,
- 				void *buffer, size_t *lenp, loff_t *ppos)
- {
--	if (!loadpin_root_writable && SYSCTL_USER_TO_KERN(dir))
-+	if ((force_enforce || !loadpin_root_writable) && SYSCTL_USER_TO_KERN(dir))
- 		return -EINVAL;
- 	return proc_dointvec_minmax(table, dir, buffer, lenp, ppos);
- }
- 
-+static int proc_handler_force_enforce(const struct ctl_table *table, int dir,
-+				      void *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	if (SYSCTL_USER_TO_KERN(dir))
-+		return -EPERM;
-+	return proc_dobool(table, dir, buffer, lenp, ppos);
-+}
-+
- static const struct ctl_table loadpin_sysctl_table[] = {
- 	{
- 		.procname       = "enforce",
-@@ -75,6 +84,13 @@ static const struct ctl_table loadpin_sysctl_table[] = {
- 		.extra1         = SYSCTL_ZERO,
- 		.extra2         = SYSCTL_ONE,
- 	},
-+	{
-+		.procname       = "force_enforce",
-+		.data           = &force_enforce,
-+		.maxlen         = sizeof(force_enforce),
-+		.mode           = 0444,
-+		.proc_handler   = proc_handler_force_enforce,
-+	},
- };
- #endif
- 
-@@ -436,6 +452,8 @@ DEFINE_LSM(loadpin) = {
- };
- 
- /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
-+module_param(force_enforce, bool, 0);
-+MODULE_PARM_DESC(force_enforce, "Always enforce module/firmware pinning");
- module_param(enforce, int, 0);
- MODULE_PARM_DESC(enforce, "Enforce module/firmware pinning");
- module_param_array_named(exclude, exclude_read_files, charp, NULL, 0);
--- 
-2.54.0
+This commit adds the loadpin.force_enforce kernel parameter and a
+corresponding read-only sysctl to prevent toggling LoadPin enforcement on
+filesystems that are not backed by a read-only block device.
 
+> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+> index f71861f98e1ab..b260ad299a2cc 100644
+> --- a/security/loadpin/loadpin.c
+> +++ b/security/loadpin/loadpin.c
+> @@ -45,6 +45,7 @@ static void report_load(const char *origin, struct file=
+ *file, char *operation)
+>  }
+> =20
+>  static int enforce =3D IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENFORCE);
+> +static bool force_enforce __ro_after_init;
+>  static char *exclude_read_files[READING_MAX_ID];
+>  static int ignore_read_file_id[READING_MAX_ID] __ro_after_init;
+>  static struct super_block *pinned_root;
+> @@ -60,11 +61,19 @@ static bool loadpin_root_writable;
+>  static int proc_handler_loadpin(const struct ctl_table *table, int dir,
+>  				void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+> -	if (!loadpin_root_writable && SYSCTL_USER_TO_KERN(dir))
+> +	if ((force_enforce || !loadpin_root_writable) && SYSCTL_USER_TO_KERN(di=
+r))
+>  		return -EINVAL;
+>  	return proc_dointvec_minmax(table, dir, buffer, lenp, ppos);
+>  }
+
+[Severity: High]
+What happens when a system is booted with loadpin.force_enforce=3D1 while
+enforce is 0 (for example, when CONFIG_SECURITY_LOADPIN_ENFORCE=3Dn and
+loadpin.enforce=3D1 is not passed on the command line, or when
+loadpin.enforce=3D0 is passed)?
+
+The documentation in Documentation/admin-guide/kernel-parameters.txt states
+that loadpin.force_enforce=3D1 forces LoadPin enforcement until reboot and
+only requires LoadPin to be enabled in the active LSM list, and
+MODULE_PARM_DESC(force_enforce, ...) describes it as "Always enforce
+module/firmware pinning".
+
+However, force_enforce is only checked here in proc_handler_loadpin()
+(under CONFIG_SYSCTL) to reject writes to /proc/sys/kernel/loadpin/enforce.
+It never sets enforce =3D 1 in loadpin_init(), and it is not checked in
+loadpin_check() or loadpin_sb_free_security():
+
+security/loadpin/loadpin.c:loadpin_sb_free_security() {
+	if (!IS_ERR_OR_NULL(pinned_root) && mnt_sb =3D=3D pinned_root) {
+		if (enforce) {
+			pinned_root =3D ERR_PTR(-EIO);
+			pr_info("umount pinned fs: refusing further loads\n");
+		} else {
+			pinned_root =3D NULL;
+		}
+	}
+}
+
+security/loadpin/loadpin.c:loadpin_check() {
+	...
+	if (IS_ERR_OR_NULL(pinned_root) ||
+	    ((load_root !=3D pinned_root) && !dm_verity_loadpin_is_bdev_trusted(lo=
+ad_root->s_bdev))) {
+		if (unlikely(!enforce)) {
+			report_load(origin, file, "pinning-ignored");
+			return 0;
+		}
+
+		report_load(origin, file, "denied");
+		return -EPERM;
+	}
+}
+
+If enforce is 0 at boot and force_enforce is 1, won't LoadPin fail to
+enforce pinning in loadpin_check() and loadpin_sb_free_security(), while
+proc_handler_loadpin() simultaneously blocks userspace from enabling it via
+/proc/sys/kernel/loadpin/enforce, locking LoadPin in non-enforcing mode
+until reboot (and making force_enforce a complete no-op when
+CONFIG_SYSCTL=3Dn)?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261023171508.3460=
+300-1-acrate@waldn.net?part=3D1
