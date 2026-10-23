@@ -1,88 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.175
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792773025;
-	b=SGFKQDjHoZ4M5x+Spcws2sHA9pBIUK3qHrZtoNaJobB5Rtijq9/c8hsAgQiiCzZcbV1/
-	 uqp4xrt5qw06QCTMCnt2EQDR5SyMwF1WkUUaW9j5eYRc9qlfywwWebWKHAUHiVvuQPubf
-	 fClLGZXWTBQWCtNYcAqUOD0CU/C01ACzcsCNLRvvDY99+1weYvR4lD67P2skGMxT2NF8b
-	 Bw8NDctf/14bGM4kcV5wtChKf32l5zvozrGbV3k8MwH0SPA8ZhppLwjJdJ8Qj+Wcc7lB9
-	 V3bABMLQU25AIUdtYQ2mhCyT/nRiFuqhqAq1Ne2Ld/CN7rZoOiZ5+Uq+8Yq6IlipkBQ==
+	t=1792773031;
+	b=0aTjZFxflAPu861/LCmtkHUB8eICd8t02gnE6Gs3NzkAv05DKxttFxKmJ2rKX7Y+CJqQ
+	 hzkyKBygzeHgJT8vmhVLG8RPAHVOsRCm2hYDFw0o+LhMreBmUX/b6yjLdd6xQ7G5dluXM
+	 cDO6mLtGx6ozmw56eIn6B4Z/X19SCYddnT3XnKDbM70mXd4BpeVe5y2wwlubTE2AvRLDo
+	 fUmJLUuWJUtlVyXondNVptMrLM0Z0mcZvcPM3RiNbrWi+V8A2HliyA4n3pDrYEzPI+/8U
+	 T2jCAGja/PpuffVURQNKdYESibv4TkglujiRQbcDjcJ7pQ30kDGZ3j0xZ9zmtAEYxzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792773025;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792773031;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=j9jiZ4x7MQDG/OPAT148x9Ct345CbdnVj/5GsIePkw4=;
-	b=DGcLdJAPpwexvCZYkM98lHbmsxlNaxfLOIBzkiJ9IeCVxkeTarUDqSRjbelXv6SGCINt
-	 UEoTMLF6zjHlTdNaOSVaBQMKCeSdE8PaQeqiolGtua4fcbMseXVUPjzDHsddJnn3FmJxo
-	 JiGMRsQGRZg9REborieevzbxnUzzdY5Px2/96sDJva+le6ijVdv2yDG+ir1+FcwdzafzU
-	 KeNemdBPFTYY+6OQx03fPklEFtbrl5YoiHjxumBGzwIcp5MpkU0Z7sPmkNsEsOoKYw8J4
-	 G+3P0Jhy5dOKeN1pJJ+mvdR+dyueKJz3pNmqeNPK8mEswiiI5cMn1u7iT9mBpQ9xRzg==
+	bh=Qz7r+A/D6KnqK0PO5YdI2E3CPVQcCuCNvAghnich9pU=;
+	b=IG2ywzPSyF4klKcd+5Icp6JTgkwUZ2cgpXgHZ/Bu25IId6VOX/u3x6kRBIFt0WI5Wb3m
+	 K3pDWk6iNNADFBy1Mgo9QapwNACASN1jRTVFVweyq0/1YtACUVgTIX12BZvdA0cDknPcr
+	 9G89cKC5kq/awqrTdrpfM2lniOVpl4EJqxsoPLdcuhFdnh1bD3c8WkbzsvrFg2QYuZW06
+	 dQhaE+3iqa9HuoR7PMkc8u0eLcO8jwZMAp+z/uRUPdbjHnR+3FKwZv7Q3KHJRWz/aLSqv
+	 w5L6ASxoTfsY2R8VsprB8zYOWRUS9jDMByX4FDYyG2jD7lcaODjlR0+wCg3/bDzLIQg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=toxicpanda.com;
 	spf=pass smtp.mailfrom=toxicpanda.com;
-	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=opkP6507;
-	arc=none smtp.remote-ip=209.85.160.181
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=Eg0DI9sn;
+	arc=none smtp.remote-ip=209.85.160.175
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E004606A31F
-	for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 16:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E004606A31F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404A0606A321
+	for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 16:30:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 404A0606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=opkP6507
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-535179e995bso9988431cf.0
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 09:30:24 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=Eg0DI9sn
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-533797e72e8so7051111cf.2
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 09:30:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1792773023; x=1793377823; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=j9jiZ4x7MQDG/OPAT148x9Ct345CbdnVj/5GsIePkw4=;
-        b=opkP65074euOtHIEVpBqGsAKHYNhZKOz1Dtt4iEP3QO2CKMXCZw3vyAn72vgdLPrdl
-         O2c2UFFDwXdas3jlrbfGkAqp/4EXZE9uvMFzZ4VSXwKVxljCsTF4dJXsVbq0PGY7mDy7
-         YT6OxA0oh6TFH/31iu6A3Ar6jIAQQDo/Ksjw2S02uNU5oxehS9cZLLmn+LJudabrG24C
-         iSqlvkXUQFE8r8SHGCL3IBOWzhdC1FM9dfwhxXGWHzZz7MB0iJsBaqYepw5JPMKtEfw8
-         1DkS4yjSTJx18cokPGWOOXPzhdbzYn5hpEyZjQ6ys/D1pJTXbyIaA9HvsEDSgMAKfq2I
-         x3/Q==
+        d=toxicpanda.com; s=google; t=1792773030; x=1793377830; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Qz7r+A/D6KnqK0PO5YdI2E3CPVQcCuCNvAghnich9pU=;
+        b=Eg0DI9snt5My0sv+YEzPYCpV+u/w6o3PwIj2s/JtkMmoJzU5N6Y3sQmwmrVs5eCfST
+         5hCAkRXPtWyk7Xz4w6Ohk25k+nW14MWApZ7Ti9eDCuF1+lKap8MS0kEXmui2WkdM5LNY
+         XM8UwR54MhqsMmExkuTv/ykzg4HPsgHPuCSrt5SBZvhYzzYhPWnEiO3r+UcIgutH78TX
+         xid3EaYb7wg6IColU8rtKtETLMniDB/Xv5k/oBlXP79u2EZi8tSwNDzwqRoHORuvv9X5
+         rcUudSTwhDjS6xTER0AnhlhCnbrikDMJFeD9aii676jErJ5argoG9qNRuJIVRHt4dGL1
+         NxqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792773023; x=1793377823;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=j9jiZ4x7MQDG/OPAT148x9Ct345CbdnVj/5GsIePkw4=;
-        b=NxojHqvDSvVAxcDw89cX2CwvgABjMimU94DLm9cM5aehRQjCDK83u08EwcnR/VEya/
-         nbbEfOAn8kMK6QW8U56io5GM2ykh45o4qXxRJMV1B/+7Se5ToT1zgVigeOQjQfC371MP
-         noOCRK0fii4DgQIhm/o481grO/mXVxlTE197NVz8NlIBwWrF0ZDB18u6oLVYK1yoQQ1+
-         07XvfPf/QJ+9NCYDwINiLXKz61DFFvIwaJqybh2HuJCEwq0v2hMaIZRbFrIgg9BzUDrM
-         p7qxV8sxYibS9dypC23pbWt7pvJR4hevEFezIQKIbndrzdmZSAFH82EHdKotyQWFERnR
-         AhQA==
-X-Forwarded-Encrypted: i=1; AKwUvBzV9Bdm9lWJ97EEjSuS/awOwVzerhd5IEjsuICCLO32t0mltAG98jUgZr4FuAzXe2tzsmFjgXS9HZyptc5l1OmJvqeYjJM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKTMNjNnURRc0zhOHfP2YnYJo5N47wTF3caMxNkoLIaDQnWE+HR
-	rob1eU8jHypj4q3OWtXat3DcmkhsCfdvuF3/Riq/avoHlHBszSds+kleP8UPWDt75yE=
-X-Gm-Gg: AYBFou0fWWfN49/BRiqFTWr8KyLR35H6Rmm3C6E0hS7tAKI+7jk7fIuIo9C7miC2gET
-	HuRbFKlSStytjqtqdKwCAo2gkgjRecxPJ9d8jMREU6SXe08yhAbc3ndLzQB48xDDk2eFDPHPmYm
-	ZytrrPOciWXlkIAFcMnPGz8Nr+SieuN650/0zqdM4FrqcX/tMFNev13mhpkv5i2DAD9G/M6J6pr
-	34fBPYIAKwC3RLQ+9/L1sFxgA6zTzyYlcErd146/JgzNxjxDnKFHTxLxEatb/WPZ9ZeljEhyOpE
-	J5uVLTQyLA7NSvGiQZsKD5pbPr7tgom0AnuLHDqpYHiK/OLYAWqMHZXsvzTuyAm1OItmrTw+aZK
-	48uh00vqZeXoopn0RmWPe+ext9Sadq2vNZBphcRpj5xuvNQVI6D4+ADIdgiGVOxmUYRtUi1RZf7
-	qv3NGtbcj4ya9+bjbWvkILy2Ck/il3He4G3cbf4v5/b+A+QH9ghrANvwOcPPkrWQmheKbMpVrjr
-	ktEjbbgzXc1n56OlAwxe3sJjRz3CkvJWwwE+gyAKktDlBkgjRQecW5xsM6QTGb7HGRXbN3L
-X-Received: by 2002:a05:622a:17c5:b0:536:780e:8f42 with SMTP id d75a77b69052e-536c28e413dmr40716251cf.33.1792773022900;
-        Fri, 23 Oct 2026 09:30:22 -0700 (PDT)
-Received: from toxicpanda.com ([153.61.196.248])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53836bea313sm1433011cf.14.2026.10.23.09.30.20
+        d=1e100.net; s=20260707; t=1792773030; x=1793377830;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Qz7r+A/D6KnqK0PO5YdI2E3CPVQcCuCNvAghnich9pU=;
+        b=1cws/5iZBkrhN2J9T4L0Mhb7nEk+Os6Mpipe2i8OtJO//E/8B9m/FBXHca2+AFj6gN
+         Gj4rsGEHlBlJHY4sXdOSzaxXk1lSO8SXhCnAWyvtEfyEWTGO56dlXZAo7akhXzGDj7zm
+         d2JUvrZEAhS2QdDGkyxONZHaSYcqw+B16aYY341Wyq3kmEgFDA5pEsuy72GHlEWy59Hh
+         K89TC8QkfiHpr6fKb0k4RXw94xOeAHRPToAzzaMuzg7ewYOwjdfbWhINIDABRI2PFd+t
+         enmzsCz6YiCjGm9F4HyaxZP4L0CHwq4Vx4pGMM7PQJ5Okdt8LqOtUChzVb3ITNyckx2P
+         HryQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzp/tSzqNBwroW+SiT888AVz9mJKPHQjqMjOlsFOHd2GZeapAR9OW9fDDFb2FYz0ocySVU6gYre8HZrviiGxrIAFx/2z5I=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKVzSdWRuiaMk06TLVdImlXAS8nc/Wo+AgzhSZYCrgQf03RmyJW
+	6Ajt4rcCBi4DB55bt0zNTx0PLgB7GVwglSJatRaOHuc1bNTf+VY0mMTl+yZiDy/Etoo=
+X-Gm-Gg: AYBFou2KmrkgV83nyXzRzGtN64X7Ig/8QHFLQs2LtxSEE9/Eq5vppUh1cwepKSbVFsS
+	f3S+JPBUMVNXF19PIzGeJE+1cXyzy+v38Ibo5YWF7CF5edQu3IpM/sixuCitmsS9RvzbMhYwun0
+	Exa5EL/01xqT0AMph6+pXF1CHoxBpPIW1U5mlvajRtcvLoKgAcS5YUF9g33TNAvBKENx4uvVAWQ
+	AXb7R76tbnGKmhrx100zX9QNPl8TaEtdlOVtbOyG8W/7pDXNvKoaBx11MxMG6VNxtXc38IS4utj
+	oXyoBBO2mWkBLXn6CXJCGs+TeTlls7T7wSRqioF16goeNNFNeMVXZfR0vurcOlQYl6DhYjh0UTA
+	EVyAGWCkaSsMm+T6DmlULw2YOiiBpzzcz81qFumr9K0L026K1q1/PwHkjjmPgBnsr8koGkApsOP
+	tNnYhToysBjU3INojj33VHhTTv/5MH2UWCdCcFp5jvj1S0paYBR5mEMGQfro6jBn+X2flBtLlQs
+	k3RFFVEm/SLPl3kVyhDTM+3wfRsLlSs0itvums5AXo/KwkLPnuEXQH7QLDlrxbvoEmpRuoR
+X-Received: by 2002:a05:622a:c86:b0:536:2e47:f5ab with SMTP id d75a77b69052e-536c2136769mr38971691cf.9.1792773029863;
+        Fri, 23 Oct 2026 09:30:29 -0700 (PDT)
+Received: from toxicpanda.com ([153.61.196.253])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53836c4c71fsm1340051cf.25.2026.10.23.09.30.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2026 09:30:21 -0700 (PDT)
+        Fri, 23 Oct 2026 09:30:28 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v5 0/5] capabilities: close the ways around the CAP_SETFCAP
- rule for uid 0
-Date: Fri, 23 Oct 2026 16:30:06 +0000
-Message-Id: <20261023-b4-setfcap-userns-v5-0-0620223be951@toxicpanda.com>
+Date: Fri, 23 Oct 2026 16:30:08 +0000
+Subject: [PATCH v5 2/5] userns: don't let setns() lend CAP_SETFCAP
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -94,201 +93,177 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAI+L22oC/33Oy27DIBAF0F+JWJeGV4B01f+osuAx1FQttsCxE
- kX+94K7cVXUzUh3NHN0H6hAjlDQy+GBMiyxxDHVcHo6IDeY9A44+poRI0xSQiS2AheYgzMTvtb
- fVLCXnOqT4dQBR/VvyhDibTPfLj+5XO0HuLlB7cKaAthmk9zQVp/T0YrjtvxNt9shlnnM963gQ
- pv5X5eFYoKDUKDAS0kUe53HW3STSd48u/ELtUIL2zFU9BjWGOOEp2emqVddhu8YRnsMr8xZuVp
- GgOBAu4zYM6zHiMpobQwJoQ4d/jDrun4DXvwNEMoBAAA=
-X-Change-ID: 20261006-b4-setfcap-userns-d63185a31ce3
+Message-Id: <20261023-b4-setfcap-userns-v5-2-0620223be951@toxicpanda.com>
+References: <20261023-b4-setfcap-userns-v5-0-0620223be951@toxicpanda.com>
+In-Reply-To: <20261023-b4-setfcap-userns-v5-0-0620223be951@toxicpanda.com>
 To: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
  Christian Brauner <brauner@kernel.org>
 Cc: James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, 
  Jarkko Sakkinen <jarkko@kernel.org>, "Andrew G. Morgan" <morgan@kernel.org>, 
  Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
  linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Bradley Morgan <brads@mainlining.org>, 
- Josef Bacik <josef@toxicpanda.com>
+ linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openssh-sha256; t=1792773019; l=8618;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1792773019; l=6171;
  i=josef@toxicpanda.com; h=from:subject:message-id;
- bh=2vjA65nk0PA6OKgNJ33Ppv9FKYb5hz2xlQ3RIn7M4DM=;
+ bh=n4GgDASw93W0W4hVR9BfgOUvZQHADy8KOEbGO3+EfSU=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgUBr36M/n0nWN0DNbnxwzIiCZez6MG
  JiruuNaSCI/zXsAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QM4TvJnVu5HMo0JtJ3t7dnfSMT9XZdgH6XEoxL1IpgvmjJuHqPdl1iKmOyCV1o64PSu04/BzNe/
- 795l5zP+howo=
+ QP2Uui21+ven36CKL6xikVUA2x0eTMOw5aUJbW4U7EVNW7o1QZuGQlTLSPgO8CVPWQ1SorTk+55
+ 4NE3zF8AYyAc=
 X-Developer-Key: i=josef@toxicpanda.com; a=openssh;
  fpr=SHA256:C8kOX2QUJCMqnCX+KEeoqRAjLo9L+ELOSH2NSAJHqGA
 
-v1: https://lore.kernel.org/all/20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com/
-v2: https://lore.kernel.org/all/20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com/
-v3: https://lore.kernel.org/all/20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com/
-v4: https://lore.kernel.org/all/20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com/
+Mapping uid 0 of the parent into a user namespace requires CAP_SETFCAP,
+because a task in such a namespace can write file capabilities that are
+honoured in the parent.  A task that is already in the namespace has a
+full capability set there and can't be asked any more, so
+verify_root_map() goes by what the creator had, now ns->setfcap_level.
 
-v4->v5:
-- 3/5: the uid_map check only looked for an extent at the parent's uid
-  0.  The root user of an ancestor can sit at any uid in the parent, so
-  a task without CAP_SETFCAP could map "0 1000 1" under a "1000 0 1"
-  and get host uid 0 as its uid 0 unchecked.  It now finds every
-  ancestor root user the map contains.  4/5 already refused the file
-  capabilities after such a map, so this is the map rule itself
-  (Sashiko).  Dropped Bradley's Reviewed-by on 3/5, which changed.
+But setns() lets other tasks in, and they get the full set as well:
 
-v3->v4:
-- 4/5: a v2 security.capability xattr skipped the new checks, it was
-  written as is whenever the writer had CAP_SETFCAP over the
-  filesystem's namespace.  It now only does that when the filesystem's
-  root user is within reach, and goes through the v3 conversion and its
-  checks otherwise (Sashiko).
+  task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
+  unshare(CLONE_NEWUSER)
+                                    setns(A's user ns)
+                                      allowed, euid == ns->owner
+                                    write "0 0 1" to /proc/self/uid_map
+                                      ns->setfcap_level is A's -> allowed
 
-v2->v3:
-- The setns() check in 2/5 and the ptrace check in 5/5 only apply to
-  namespaces that map the root user of an ancestor within the creator's
-  CAP_SETFCAP, or that have no uid_map yet.  Root users stored through
-  an idmapped mount are left to whoever sets up the mount, so a root
-  task without CAP_SETFCAP can join an ordinary "0 100000" container
-  again (Serge, Christian).
-- 2/5 adds cred_may_setfcap_userns() for those two checks and
-  cred_setfcap_reaches() for the uid_map check; nothing outside
-  create_user_ns() calls cap_setfcap_level() directly (Serge).
-- Fixed the cap_setfcap_level() kernel-doc, @ns doesn't have to be the
-  cred's namespace or below; cap_capable() is compared with != 0
-  (Serge).
-- Picked up Bradley's Reviewed-by on 1/5 and 3/5, not on 2/5, which
-  changed.
-- Rebased onto current vfs.all.
+or, if A's namespace maps uid 0 already, B sets security.capability on a
+file.  Either way B ends up with file capabilities that are honoured in
+the initial namespace, which it could not have written there, nor in a
+namespace it created itself.
 
-v1->v2:
-- The state lives on the user namespace now: ns->setfcap_level replaces
-  ns->parent_could_setfcap, and cred->setfcap_level is gone (Serge,
-  Christian).
-- New 2/5: setns() refuses a task whose CAP_SETFCAP doesn't reach as far
-  up as the namespace's setfcap_level.  It applies to every user
-  namespace, not only to those that map the parent's uid 0, because of
-  idmapped mounts (Serge, Christian).
-- 5/5 asks a tracer for what setns() asks for, also when the namespace
-  doesn't map an ancestor's root user, again because of idmapped mounts.
-- Dropped "userns: don't let setns() lend the right to map uid 0", the
-  setns() check covers it.  Its nested case moved into 3/5, which checks
-  the opener and the writer.
-- set_cred_user_ns() isn't touched anymore, so the put-before-use in
-  userns_install() is gone (Sashiko).
-- Rebased onto current vfs.all.
+Refuse setns() into a user namespace whose tasks can write file
+capabilities for the root user of an ancestor that the joiner's
+CAP_SETFCAP doesn't reach.  That is the case when the namespace maps
+such a root user, or has no uid map yet and its parent maps one.
+cred_may_setfcap_userns() checks it, and cred_setfcap_reaches() is the
+comparison it and the later checks use.  Then every task in such a
+namespace is entitled to what its setfcap_level says, and the checks on
+the way to file capabilities can go by the namespace.
 
-What it does now:
+An idmapped mount can store a root user that the namespace doesn't map,
+for example a "0 100000" container whose rootfs maps 100000 to host uid
+0.  That is a deliberate setup and up to whoever creates the mount, so
+it is not considered here.
 
-Every user namespace gets a setfcap_level when it's created, which is
-how far up the creator's CAP_SETFCAP counted.  If its tasks can write
-file capabilities for the root user of an ancestor, because the
-namespace maps that root user or can still map it, setns() only lets in
-tasks whose own CAP_SETFCAP reaches that far, and PTRACE_ATTACH asks the
-tracer for the same.  The checks on the way to file capabilities then go
-by the namespace instead of the cred: a uid_map write that maps the
-parent's uid 0 (opener and writer), and setting security.capability.
+The change in behaviour is that a task without CAP_SETFCAP gets -EPERM
+when it tries to setns() into a user namespace that maps the root user
+of an ancestor, and was created by a task whose CAP_SETFCAP reached that
+far.  Containers that don't map host uid 0, tasks with CAP_SETFCAP, and
+unprivileged users joining their own namespaces are not affected.
 
-The visible difference from v1 is the setns() restriction.  A task
-without CAP_SETFCAP can't join, or attach to tasks in, a namespace that
-maps the root user of an ancestor, such as host uid 0, and was created
-by a task that had it.  A task that joins takes on the namespace's
-reach.  Containers that don't map host uid 0, unprivileged users and
-anything with CAP_SETFCAP aren't affected.
-
-Testing: the v1 flows plus the setns() and ptrace cases, 41 in all, on
-vfs.all with and without the series.  For v4 also the v2 xattr route: a
-task that unshared without CAP_SETFCAP mounts a tmpfs, writes a v2 xattr
-on it, and an overlay mounted from the initial namespace makes a uid
-1000 user run the file with CAP_SYS_ADMIN.  That works without the
-series and with v3, and gets -EPERM with v4.  For v5 the "0 1000 1"
-under "1000 0 1" map: allowed without the series and with v4, -EPERM
-with v5.  Every flow gives what's expected, and the only ones that
-changed from v2 are the five idmapped mount and "0 100000" container
-cases, which are allowed again.  The pidfd, namespaces, mount_setattr
-and ptrace selftests give identical results with and without.  The TLA+
-model, which has no idmapped mounts, finds no violation with the
-narrower checks, and still finds the setns() bypass when the check is
-taken out.
-
---- Original email (v1) ---
-
-Hello,
-
-Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
-stops a root task that has given up CAP_SETFCAP from creating a user
-namespace that maps uid 0 and then writing file capabilities in it that
-the initial namespace honours.  The check only looks at the task that
-creates the namespace, so if somebody who did have CAP_SETFCAP created
-one, there are still several ways around it:
-
-- setns() into their namespace and write uid_map from inside (patch 2)
-- write "0 0 1" through a uid_map fd that they opened (patch 3)
-- setns() into a namespace of theirs that already maps uid 0 and set
-  security.capability there, no map write needed (patch 4)
-- ptrace one of their tasks and have it do any of the above (patch 5)
-
-On an unmodified kernel we took a uid 0 task with CAP_SETFCAP dropped
-from its permitted, effective and bounding sets and, through each of
-these, ended up with a file that a uid 1000 user execs with
-CAP_SYS_ADMIN in its effective set.
-
-Patch 1 adds cred->setfcap_level, which records how far up the
-namespace tree a task's CAP_SETFCAP reached when it entered its
-namespace, and patches 2-5 check it.  Patch 4 is the check that closes
-the class, the map patches make the uid 0 map rule mean what
-db2e718a4798 meant it to, and patch 5 keeps ptrace from borrowing what
-the target is entitled to.
-
-This does change behaviour.  Everything new is -EPERM:
-
-- a task that entered a namespace without CAP_SETFCAP outside can't map
-  uid 0 of the outside or write fscaps for that root user anymore
-- a uid_map fd opened by a task with CAP_SETFCAP can't be used by a
-  task without it to map uid 0
-- if a privileged task maps "0 0 1" from the parent for a namespace
-  created by a task without CAP_SETFCAP, that namespace can no longer
-  write fscaps honoured outside
-- PTRACE_ATTACH and PTRACE_TRACEME fail when the tracer gave up
-  CAP_SETFCAP and CAP_SYS_PTRACE, the target didn't, and they share a
-  root user
-
-Rootless containers, privileged runtimes writing the map from the
-parent, nested unprivileged namespaces and containers that don't map
-host uid 0 aren't affected.  The ptrace check is one compare for
-targets in the initial namespace and in namespaces entered without
-the capability.
-
-Testing: a set of flows run on the base and patched kernels, every
-bypass route above gets -EPERM with the series and the 16 legitimate
-flows behave the same.  The capabilities, namespaces, ptrace, pidfd and
-proc selftests give the same results before and after. Thanks,
-
-Josef
-
+Link: https://lore.kernel.org/all/20261021-bioenergie-allheilmittel-undurchdringlichen-35666eb62cff@brauner/
+Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+Assisted-by: LLM
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
-Changes in v5:
-- Link to v4: https://patch.msgid.link/20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com
+ include/linux/capability.h |  3 +++
+ kernel/user_namespace.c    |  6 +++++
+ security/commoncap.c       | 58 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 67 insertions(+)
 
-Changes in v4:
-- Link to v3: https://patch.msgid.link/20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 026974a5111b..e4199b03668b 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -224,5 +224,8 @@ int cap_convert_nscap(const struct mnt_idmap *idmap, struct dentry *dentry,
+ 		      const void **ivalue, size_t size);
+ 
+ int cap_setfcap_level(const struct cred *cred, struct user_namespace *ns);
++bool cred_setfcap_reaches(const struct cred *cred, struct user_namespace *ns,
++			  int level);
++bool cred_may_setfcap_userns(const struct cred *cred, struct user_namespace *ns);
+ 
+ #endif /* !_LINUX_CAPABILITY_H */
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index a5a94367600d..7bd3692c2f3e 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -1390,6 +1390,12 @@ static int userns_install(struct nsset *nsset, struct ns_common *ns)
+ 	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
++	/* Tasks in the namespace may have CAP_SETFCAP that counts outside of
++	 * it, so only let in tasks whose own counts as far.
++	 */
++	if (!cred_may_setfcap_userns(current_cred(), user_ns))
++		return -EPERM;
++
+ 	cred = nsset_cred(nsset);
+ 	if (!cred)
+ 		return -EINVAL;
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 4f49dba65426..8a9d998b1897 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -158,6 +158,64 @@ int cap_setfcap_level(const struct cred *cred, struct user_namespace *ns)
+ 	return cred->user_ns->level + 1;
+ }
+ 
++/**
++ * cred_setfcap_reaches - Check how far up CAP_SETFCAP of a cred reaches
++ * @cred: The credentials to use
++ * @ns: The user namespace to look from
++ * @level: The ->level of the ancestor of @ns it has to count in
++ *
++ * Return: true if CAP_SETFCAP of @cred counts in @ns and in its ancestors
++ * up to the one at @level.
++ */
++bool cred_setfcap_reaches(const struct cred *cred, struct user_namespace *ns,
++			  int level)
++{
++	return cap_setfcap_level(cred, ns) <= level;
++}
++
++/*
++ * The topmost ancestor of @ns whose root user tasks in @ns can write file
++ * capabilities for: within @ns->setfcap_level, and mapped into @ns, or into
++ * its parent while @ns has no uid_map yet.  NULL if there is none.  An
++ * idmapped mount can store other root users, but that is up to whoever sets
++ * up the mount.
++ */
++static struct user_namespace *setfcap_top(struct user_namespace *ns)
++{
++	struct user_namespace *seen, *p, *top = NULL;
++
++	if (ns->setfcap_level >= ns->level)
++		return NULL;
++
++	seen = READ_ONCE(ns->uid_map.nr_extents) ? ns : ns->parent;
++	for (p = ns->parent; p; p = p->parent) {
++		if (p->level < ns->setfcap_level)
++			break;
++		if (kuid_has_mapping(seen, make_kuid(p, 0)))
++			top = p;
++	}
++
++	return top;
++}
++
++/**
++ * cred_may_setfcap_userns - Check whether a cred covers what a userns can do
++ * @cred: The credentials to use
++ * @ns: The user namespace
++ *
++ * Tasks in @ns can have CAP_SETFCAP that counts in ancestors of @ns, see
++ * cap_setfcap_level().  Check that CAP_SETFCAP of @cred reaches as far up as
++ * tasks in @ns can make use of theirs.
++ *
++ * Return: true if it does.
++ */
++bool cred_may_setfcap_userns(const struct cred *cred, struct user_namespace *ns)
++{
++	struct user_namespace *top = setfcap_top(ns);
++
++	return !top || cred_setfcap_reaches(cred, ns->parent, top->level);
++}
++
+ /**
+  * cap_settime - Determine whether the current process may set the system clock
+  * @ts: The time to set
 
-Changes in v3:
-- Link to v2: https://patch.msgid.link/20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com
-
-Changes in v2:
-- Link to v1: https://patch.msgid.link/20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com
-
----
-Josef Bacik (5):
-      userns: record how far up CAP_SETFCAP reaches
-      userns: don't let setns() lend CAP_SETFCAP
-      userns: check the opener and the writer before mapping uid 0
-      capabilities: limit fscaps to where CAP_SETFCAP reaches
-      capabilities: don't let ptrace borrow CAP_SETFCAP
-
- include/linux/capability.h     |   6 ++
- include/linux/user_namespace.h |   7 +-
- kernel/user_namespace.c        |  90 ++++++++++++++------
- security/commoncap.c           | 183 +++++++++++++++++++++++++++++++++++++++--
- 4 files changed, 252 insertions(+), 34 deletions(-)
----
-base-commit: 2c3ba1f1cb416b81d617b92a24a4bcaa48d574e3
-change-id: 20261006-b4-setfcap-userns-d63185a31ce3
+-- 
+2.55.0
 
