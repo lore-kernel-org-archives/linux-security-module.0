@@ -1,60 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.241
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792775039;
-	b=ErcVmZUP8c65EWQSS7oseDIaTbOpy5zCft4SLJrfOHZsKD1Beem+Iu8EZVSu8zUOLThc
-	 Xujq7Tb/YM8S34yYrNFDmnFnmVxEzfp/4lEZjAA31miZAJomq/kx0hTBtJ8E0yYygOcar
-	 RjrWd5HiceLT0xXQMh1ZzscwfLW+GDIl0tRBcRIzQcTvd+KQZojhP7C5v/1jDSlh3WJb0
-	 9+Q+pVwupIWNblUfr6vU6LaWzeBzmhnnLgR2iUaZ3MGCymUwGwYpiNbN6ClM9T/GxaAMS
-	 cnSJXCD+Nuz3a1SpJX6dJOwnbTgoS2m89yS1kkXc7E07jOLjL82lTVOvI3qCjWJEUgQ==
+	t=1792775738;
+	b=wyQ8+JRYQGg9rGrQG0zj9uG9Rcua26+Deo2h+zNfsBKSVt+NC4XT6ap7+tVvWXiokfwc
+	 5jXFP4bYPKuBJGIZZd+c+Ldft5rZ5A3eIgN0UM3tAA9yED8VM0QNer8IqD+T6VAmBIBB2
+	 oT3I73gn/MpcidcFiXW3TKtrysCt1aPX6oJjAEYNV01DfoHYadOhIa5DI/1gyBaDEbNIN
+	 TtZqXqad9lVzeAYBZPXvz5kZKpWslAytU2kzk3s4vgiOTVbXEpbJv+hxfRIoVtRfCDNnF
+	 6JOGqNuHp3kTg2cKwcS0p00QHeSMGu927t9ZIm4q0ts/Df9tWveopT7A5yleYpSdj4Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792775039;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ZCC5JOrUNQMIw+oFYvhFNHsJxczmFNPdzGDQMP8ys10=;
-	b=yGEGLdloVRe8nelKX8cT26QnZGS+xDFtQeXRk9+H22aDqnahS34O+bT1dEbIGPSMl2wz
-	 zI/756iQ8FkHtAQ9T3KM91ujzcgvdm4pUovEurrzyUCBoPGuxkdQpj/tkcqr8F9OR53Wi
-	 615Qg3r8Oanu50ygdTuFj48XXxRVDENKkWjoX/l4pgrU5obDC8zk0NFkAWa/CBfRf2dkI
-	 HhoaHVtdJ6o+sapSR1NBQTFBxndYVPzRTw+zkBl3WoQfqOlf++eMKsFXPEYQPYGUrdtGd
-	 Kauf2UrfaS6j/KtFSL94iM2+wOxNH4VXgoveUmoh1X85YyhY54ezZa+i31dDHie/vCA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792775738;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=uOTjqmyRNUWkFdydZyKOHkZPBvFbPtsWEgtGBpk+JSg=;
+	b=okDT8Ps+H260eZkc51EBn8/KrNrzlt0S+QD8COCy9Ohn/LExHv7y9xXyK8PV8yDll8Gt
+	 8WJlS4ff5w1Pn190FNFTgwgvHwCvAqfMEy2Rhbs7pLOeqYnubl6O1H1ybHBUfMPX1K5RO
+	 wAfn32avqL+rSEknh2q7E5MnOWckVjehDbQKvuP5LI89rygrYCV1oTAyktNAM53N2Kypv
+	 Pqp/9/MO6O3t6H3Gsqcq8x83PcaBWtQXy5xCcV1OVqnkyP8adM9mIb1PVJpYY3KacaZGc
+	 26hyr2YKHm9E0D6NDpGswbytepmg3CMj0bMHUh2oVQKctc8H0/R5FWOjxwbA1HP21mA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eB1cnVco;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=waldn.net;
+	spf=pass smtp.mailfrom=waldn.net;
+	dkim=pass header.d=waldn.net header.i=@waldn.net header.a=rsa-sha256 header.s=key1 header.b=hXUsRcAY;
+	arc=none smtp.remote-ip=91.218.175.241
+Received: from mta0.migadu.com (out-241.mta0.migadu.com [91.218.175.241])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CB3606A323;
-	Fri, 23 Oct 2026 17:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED773606A31B
+	for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2026 17:15:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED773606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=waldn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=waldn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eB1cnVco
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 169491F01828;
-	Fri, 23 Oct 2026 17:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792775038;
-	bh=ZCC5JOrUNQMIw+oFYvhFNHsJxczmFNPdzGDQMP8ys10=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=eB1cnVcoJHwz3c3qlpp0xuDwmwy98GL2MrdJOudff26jviK7zMI3W5FT11p58oH/b
-	 U6V6O5R4TRMH11ym6Fnrj8jkDQAyQpO0FbogsoYkG3nsiutQ2/e/4VtIR0LcPAeXHw
-	 lfOyeG/Dh5LAbYRzCgocIlGIej0n0JVtRhsO8s/BQh5LZfWBBE9+PeYmhkS1LTGFZ2
-	 uh+ON9bOiZzw+4XVZDwCER7jNKnXN0svhJl2XikDiWUMM0xWRDCai8Q+tN3BygJzVK
-	 oesh/gTJZlk+RfpLwMnuZ5YDaE7yYB1zelnQFLJMSd92yt42I+AN0pnwg1wsy1KmgR
-	 mreXqIZcm95DA==
-Message-ID: <sashiko-outbox-182977@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 3/5] userns: check the opener and the writer before
- mapping uid 0
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Josef Bacik" <josef@toxicpanda.com>, "Serge Hallyn" <serge@hallyn.com>, "Paul
- Moore" <paul@paul-moore.com>, "Christian Brauner" <brauner@kernel.org>
-Cc: "James Morris" <jmorris@namei.org>, "David Howells" <dhowells@redhat.com>, "Jarkko
- Sakkinen" <jarkko@kernel.org>, "Andrew G. Morgan" <morgan@kernel.org>, "Serge
- Hallyn" <sergeh@kernel.org>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-In-Reply-To: <20261023-b4-setfcap-userns-v5-3-0620223be951@toxicpanda.com>
-References: <20261023-b4-setfcap-userns-v5-0-0620223be951@toxicpanda.com>
- <20261023-b4-setfcap-userns-v5-3-0620223be951@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 23 Oct 2026 17:03:57 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=waldn.net header.i=@waldn.net header.a=rsa-sha256 header.s=key1 header.b=hXUsRcAY
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=bK4TXPNXctxarcSsHlGeHHSHsHKJGqcOVwvu8B7oRYA=;
+ c=simple/simple; d=waldn.net;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1792775736; v=1; x=1793380536;
+ b=hXUsRcAYPMTmuSnqXSpWvv1LYNBQ97VYJ4hbo8V5DL03aT8VHsW2fLV769m4UQrOr6TauIPz
+ 5rEi2uFrnvZqE/NJ8KGbAYFprrNbZKj18NkWIH+6YcTf8twfssHQFU3UZTqlQj+3ibMad3jfsJ6
+ eWZOprP7bI3bkI566EVrfFBJM0GokVhVVQZQNIUXBLnF3BrCmwmV8zxpdALS2QH78zEeMRQpaPT
+ dj3B89xfu0Hmam3sGnZ0ibjuPeQKKQqB3T9RDol4R71JG8k6u8GPDWEZh0r8RN/SMbdfadYe1QA
+ H+zVBlqYWlK22gfLEWq856eoco/+8icp2Hsl8OiW9N88w==
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 118033012f27832e;
+	Fri, 23 Oct 2026 17:15:17 +0000
+X-Mizu-Trace-ID: 118033012f27832e
+X-Migadu-Flow: FLOW_OUT
+From: Amelia Crate <acrate@waldn.net>
+To: Kees Cook <kees@kernel.org>,
+	linux-security-module@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amelia Crate <acrate@waldn.net>
+Subject: [RFC PATCH] loadpin: allow untoggleable enforcement on filesystems which don't appear to be read-only
+Date: Fri, 23 Oct 2026 12:15:08 -0500
+Message-ID: <20261023171508.3460300-1-acrate@waldn.net>
+X-Mailer: git-send-email 2.54.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,166 +70,123 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] userns: missing CAP_SETFCAP check in verify_root_map() for tasks i=
-n map_ns
---
+Some filesystems, such as composefs created from layers which are entirely
+read-only, can't be easily detected as a read-only file system. In addition to
+filesystems which are read-only without having a backing read-only block device
+I believe this is also useful for cases where immutability of the filesystem is
+enforced by the hypervisor or the host, such as 9p shares or virtiofs.
 
-commit 715d4f4455aa94fb0eaba838f8aa378efb3afe54
-Author: Josef Bacik <josef@toxicpanda.com>
+It is still desirable to enforce LoadPin and disallow toggling enforcement in these cases.
+This patch gives system administrators a way to disallow toggling LoadPin enforcement even
+when the immutability of a filesystem is unclear.
 
-userns: check the opener and the writer before mapping uid 0
+Signed-off-by: Amelia Crate <acrate@waldn.net>
+Assisted-by: Codex:gpt-6
+---
+ Documentation/admin-guide/LSM/LoadPin.rst     |  8 +++++++-
+ .../admin-guide/kernel-parameters.txt         |  7 +++++++
+ security/loadpin/loadpin.c                    | 20 ++++++++++++++++++-
+ 3 files changed, 33 insertions(+), 2 deletions(-)
 
-This commit updates verify_root_map() to find the topmost ancestor whose ro=
-ot
-user is included in a new uid_map and checks that both the file opener and =
-the
-writer hold CAP_SETFCAP reaching that ancestor's level.
+diff --git a/Documentation/admin-guide/LSM/LoadPin.rst b/Documentation/admin-guide/LSM/LoadPin.rst
+index a90fd9dac960..f1e8825d0fe8 100644
+--- a/Documentation/admin-guide/LSM/LoadPin.rst
++++ b/Documentation/admin-guide/LSM/LoadPin.rst
+@@ -16,10 +16,16 @@ boot ("``loadpin.enforce=0``").
+ 
+ LoadPin starts pinning when it sees the first file loaded. If the
+ block device backing the filesystem is not read-only, a sysctl is
+-created to toggle pinning: ``/proc/sys/kernel/loadpin/enabled``. (Having
++created to toggle pinning: ``/proc/sys/kernel/loadpin/enforce``. (Having
+ a mutable filesystem means pinning is mutable too, but having the
+ sysctl allows for easy testing on systems with a mutable filesystem.)
+ 
++Some filesystems may appear to be mutable, but are in fact read-only.
++In this case, ``loadpin.force_enforce=1`` can be set to require enforcement
++of LoadPin on all filesystems. When LoadPin is enabled,
++``/proc/sys/kernel/loadpin/force_enforce`` reports the state of this option.
++This option is independent of whether LoadPin is enabled.
++
+ It's also possible to exclude specific file types from LoadPin using kernel
+ command line option "``loadpin.exclude``". By default, all files are
+ included, but they can be excluded using kernel command line option such
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1b2ae71def21..df8c145cc63d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3540,6 +3540,13 @@ Kernel parameters
+ 			Enable Live Update Orchestrator (LUO).
+ 			Default: off.
+ 
++	loadpin.force_enforce= [SECURITY]
++			Format: <bool>
++			Force LoadPin enforcement until reboot, even when the
++			pinned filesystem is not backed by a read-only block
++			device. Requires LoadPin to be enabled in the active LSM list.
++			Default: off.
++
+ 	lockd.nlm_grace_period=P  [NFS] Assign grace period.
+ 			Format: <integer>
+ 
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index f71861f98e1a..b260ad299a2c 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -45,6 +45,7 @@ static void report_load(const char *origin, struct file *file, char *operation)
+ }
+ 
+ static int enforce = IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENFORCE);
++static bool force_enforce __ro_after_init;
+ static char *exclude_read_files[READING_MAX_ID];
+ static int ignore_read_file_id[READING_MAX_ID] __ro_after_init;
+ static struct super_block *pinned_root;
+@@ -60,11 +61,19 @@ static bool loadpin_root_writable;
+ static int proc_handler_loadpin(const struct ctl_table *table, int dir,
+ 				void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	if (!loadpin_root_writable && SYSCTL_USER_TO_KERN(dir))
++	if ((force_enforce || !loadpin_root_writable) && SYSCTL_USER_TO_KERN(dir))
+ 		return -EINVAL;
+ 	return proc_dointvec_minmax(table, dir, buffer, lenp, ppos);
+ }
+ 
++static int proc_handler_force_enforce(const struct ctl_table *table, int dir,
++				      void *buffer, size_t *lenp, loff_t *ppos)
++{
++	if (SYSCTL_USER_TO_KERN(dir))
++		return -EPERM;
++	return proc_dobool(table, dir, buffer, lenp, ppos);
++}
++
+ static const struct ctl_table loadpin_sysctl_table[] = {
+ 	{
+ 		.procname       = "enforce",
+@@ -75,6 +84,13 @@ static const struct ctl_table loadpin_sysctl_table[] = {
+ 		.extra1         = SYSCTL_ZERO,
+ 		.extra2         = SYSCTL_ONE,
+ 	},
++	{
++		.procname       = "force_enforce",
++		.data           = &force_enforce,
++		.maxlen         = sizeof(force_enforce),
++		.mode           = 0444,
++		.proc_handler   = proc_handler_force_enforce,
++	},
+ };
+ #endif
+ 
+@@ -436,6 +452,8 @@ DEFINE_LSM(loadpin) = {
+ };
+ 
+ /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
++module_param(force_enforce, bool, 0);
++MODULE_PARM_DESC(force_enforce, "Always enforce module/firmware pinning");
+ module_param(enforce, int, 0);
+ MODULE_PARM_DESC(enforce, "Enforce module/firmware pinning");
+ module_param_array_named(exclude, exclude_read_files, charp, NULL, 0);
+-- 
+2.54.0
 
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 7bd3692c2f3eb..661d7e9b72d56 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-
-[ ... ]
-
-> @@ -897,42 +937,40 @@ static bool verify_root_map(const struct file *file,
->  			    struct user_namespace *map_ns,
->  			    struct uid_gid_map *new_map)
->  {
-> -	int idx;
->  	const struct user_namespace *file_ns =3D file->f_cred->user_ns;
-> -	struct uid_gid_extent *extent0 =3D NULL;
-> -
-> -	for (idx =3D 0; idx < new_map->nr_extents; idx++) {
-> -		if (new_map->nr_extents <=3D UID_GID_MAP_MAX_BASE_EXTENTS)
-> -			extent0 =3D &new_map->extent[idx];
-> -		else
-> -			extent0 =3D &new_map->forward[idx];
-> -		if (extent0->lower_first =3D=3D 0)
-> -			break;
-> -
-> -		extent0 =3D NULL;
-> -	}
-> +	int level;
-> =20
-> -	if (!extent0)
-> +	level =3D map_root_level(map_ns->parent, new_map);
-> +	if (level =3D=3D INT_MAX)
->  		return true;
-> =20
->  	if (map_ns =3D=3D file_ns) {
->  		/* The process unshared its ns and is writing to its own
->  		 * /proc/self/uid_map.  User already has full capabilites in
->  		 * the new namespace.  Verify that the parent had CAP_SETFCAP
-> -		 * when it unshared.
-> +		 * when it unshared, as far up as those root users go.
->  		 * */
-> -		if (file_ns->setfcap_level >=3D file_ns->level)
-> +		if (file_ns->setfcap_level > level)
->  			return false;
->  	} else {
->  		/* Process p1 is writing to uid_map of p2, who is in a child
->  		 * user namespace to p1's.  Verify that the opener of the map
->  		 * file has CAP_SETFCAP against the parent of the new map
-> -		 * namespace */
-> -		if (!file_ns_capable(file, map_ns->parent, CAP_SETFCAP))
-> +		 * namespace, and as far up as those root users go.
-> +		 */
-> +		if (!file_ns_capable(file, map_ns->parent, CAP_SETFCAP) ||
-> +		    !cred_setfcap_reaches(file->f_cred, map_ns->parent, level))
->  			return false;
->  	}
-> =20
-> -	return true;
-> +	/* The file may have been handed to someone else since it was opened,
-> +	 * so the same goes for the process that is doing the write.
-> +	 */
-> +	if (map_ns =3D=3D current_user_ns())
-> +		return map_ns->setfcap_level <=3D level;
-> +
-> +	return ns_capable(map_ns->parent, CAP_SETFCAP) &&
-> +	       cred_setfcap_reaches(current_cred(), map_ns->parent, level);
->  }
-
-[Severity: High]
-When a task is in map_ns (so map_ns =3D=3D file_ns for the opener or
-map_ns =3D=3D current_user_ns() for the writer), does checking only
-map_ns->setfcap_level <=3D level allow a task that has dropped CAP_SETFCAP =
-in
-map_ns to still map the ancestor root user?
-
-For example, if a process running as uid 0 with CAP_SETFCAP in init_user_ns
-calls unshare(CLONE_NEWUSER), create_user_ns() sets map_ns->setfcap_level t=
-o 0.
-Inside map_ns (before uid_map is written), two cases can occur:
-
-1. Task A opens /proc/self/uid_map and passes the descriptor (by fork or
-   SCM_RIGHTS) to Task B in map_ns, which has dropped CAP_SETFCAP and all
-   other capabilities via capset().
-2. A task in map_ns drops CAP_SETFCAP via capset() while keeping
-   CAP_SYS_ADMIN, and then opens /proc/self/uid_map itself.
-
-When the task without CAP_SETFCAP writes "0 0 1" through:
-
-  proc_uid_map_write()
-    -> map_write()
-      -> new_idmap_permitted()
-        -> verify_root_map()
-
-map_write() only checks file_ns_capable(file, map_ns, CAP_SYS_ADMIN) on the
-opener, and new_idmap_permitted() takes the single-extent unprivileged bran=
-ch
-which only checks uid_eq(ns->owner, cred->euid):
-
-kernel/user_namespace.c:new_idmap_permitted() {
-	if (cap_setid =3D=3D CAP_SETUID && !verify_root_map(file, ns, new_map))
-		return false;
-
-	if ((new_map->nr_extents =3D=3D 1) && (new_map->extent[0].count =3D=3D 1) =
-&&
-	    uid_eq(ns->owner, cred->euid)) {
-		u32 id =3D new_map->extent[0].lower_first;
-		if (cap_setid =3D=3D CAP_SETUID) {
-			kuid_t uid =3D make_kuid(ns->parent, id);
-			if (uid_eq(uid, cred->euid))
-				return true;
-		}
-}
-
-Because verify_root_map() only checks map_ns->setfcap_level <=3D level when
-map_ns =3D=3D file_ns and when map_ns =3D=3D current_user_ns(), the write s=
-ucceeds
-even though the task dropped CAP_SETFCAP. Once "0 0 1" is installed in
-map_ns->uid_map, make_kuid(map_ns, 0) becomes KUIDT_INIT(0) instead of
-INVALID_UID, allowing the task in map_ns to call execve() and regain full
-capabilities (including CAP_SETFCAP) via handle_privileged_root() in
-security/commoncap.c.
-
-Note that cap_setfcap_level() in security/commoncap.c already handles a cred
-whose user_ns is the target namespace by checking whether CAP_SETFCAP is st=
-ill
-raised in cred->cap_effective before returning cred->user_ns->setfcap_level:
-
-security/commoncap.c:cap_setfcap_level() {
-	if (cap_capable(cred, ns, CAP_SETFCAP, CAP_OPT_NOAUDIT) !=3D 0)
-		return ns->level + 1;
-
-	if (cap_raised(cred->cap_effective, CAP_SETFCAP))
-		return cred->user_ns->setfcap_level;
-
-	/* All we have is that we own a child of our namespace. */
-	return cred->user_ns->level + 1;
-}
-
-When map_ns =3D=3D file_ns (or map_ns =3D=3D current_user_ns()), should
-verify_root_map() check file_ns_capable(file, map_ns, CAP_SETFCAP) and
-cred_setfcap_reaches(file->f_cred, map_ns, level) for the opener, and
-ns_capable(map_ns, CAP_SETFCAP) and
-cred_setfcap_reaches(current_cred(), map_ns, level) for the writer?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261023-b4-setfcap=
--userns-v5-0-0620223be951@toxicpanda.com?part=3D3
