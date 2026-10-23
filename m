@@ -1,73 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.15
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792756773;
-	b=s7c4kdtFll7pfOmogi2q4BkBS1CZCbriwxFas5TVr373vEfUPV2KcY5YM9tIuEtzduoG
-	 4qOSSKjZDxgHHon7kTEgkgElj5el8zJVkRxCjLvJ3J3SvSGim0zuKMeItWCWfpsslaOya
-	 wNoDtxJ3VIowU+2r/GKLHtRFsHOSllbfG2BJvTQk8+lifsPPdlHaZ+Dus4SR0h7e3Jnwp
-	 vJh7Jkv+Wh6iGwos3VmYVpMvlGi9cYx9Tb8DGQ5u1JER5YKoW2kxLm+71sNKTIqTrCWZ4
-	 0LsLI4NllLn5wwT4y57VePYAtInEbqteHN46kfOzjvGRjr2FtSa3+RBHQiyvoRQk8QA==
+	t=1792757568;
+	b=slueZnco/0z+zsRjzXga5t/N0J9mAqu7iq2tPMJS3lHKNj7fnOJiAT25TsOtAoqh77KH
+	 4noSdmK7xVqILeJAKFZ8HJ52Gvpqt6gvJKa8JqhqZzl7iaM+yUeTWC6DFfrtDip/gyBr7
+	 KqUdzRW8hTh6pMsF0F7McdbvsfjOBfj5MgWXCR7J/+a7l+WWgJPd1gWsTgxaLdP5ftkHx
+	 znC5gX2bCFDck5VI0y27brR21k8YwI7+p2Nl+Uc3dOPPtf/hxWCxnHfE7bk3mJ33S9Je+
+	 G/qjpuxWj4NdU0iZvm99gHbpQh4oLnNF/X4hNgWBABdD/AW1bzQGF7Vz+2oiaALCRPQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792756773;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Type:Content-Disposition:
-	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
-	bh=5K0OBWvP6XN4AJpcqKwEAeoGjToHWAl6P5TGp/mreF4=;
-	b=pLt2KPW6l8AHF++E9e8/gZbMK9KRsns3Uwuu6m1DJDCscVRC8IXhG1YM034ArUNg/7zq
-	 QRSKpTNFrrGSpS3swcSPv52SuAmRmiVtsJJubeRsPoaqPPebPnfXwXD8pz9fCcUL8IviW
-	 2n6RPkJ1n7l59hwheSAI5i7QfFZfwCvX4vTRDZHnEtOqPkLnXfknviCrKQOw72rICpL81
-	 ffUZPapSAJsOxfS/ia5F7+EXaEe6JQmstLa3z+9DnVUAe29IQ6pHM0mtzDTmbHtD4ikwC
-	 sDIO+EdJCjpqrQOFQyiDT9E/x8sy0oL4a61VGbO8sRUoqYk66dNFpH+1u+o3PC2/4WA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792757568;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Infomaniak-Routing;
+	bh=5Tb+/CVAcY5SOeTTU6JB0JtDtCzoK11pcXkmRemeQxQ=;
+	b=qOi7RlKHyJ6ivMUBkTzzfrIjJL1WEtBEqjOB6KvIGcM8Wj1HR1PwoLfxYDPQVqCwEL06
+	 q33N9HLTmWdhp3Wz4HnIKN8+85q/7rFO/4tES30FFkXEipKb4oVwL3P/BWx1yxHcBDLoK
+	 xs1k8LPvFN/W1Cw4q61lWNELg20RHWB9gOcoAasaFMdW4GSaA6kJOI51tI7J3oS2QKhWO
+	 cuAb0mYKb5177g1vchChi+D16BWasHbkCjCdOmQPRVns82Mx1rWSOcEy96gVf/zJ3Onvb
+	 KVDmGGapmMdx5aWGsG3EfMKjLIK6p+a0e7FHQfn0uu9TrSULrMPB0VLLNPee4RcwXBQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bZ4Z3epe;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=uh5f1b+Z;
+	arc=none smtp.remote-ip=185.125.25.15
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3F4606A330;
-	Fri, 23 Oct 2026 11:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BEB606A31D;
+	Fri, 23 Oct 2026 12:12:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A1BEB606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bZ4Z3epe
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0331F031E1;
-	Fri, 23 Oct 2026 11:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792756772;
-	bh=5K0OBWvP6XN4AJpcqKwEAeoGjToHWAl6P5TGp/mreF4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=bZ4Z3epeXYXwpZ3tWg9wJXUibCizeqWhBcTTOJbFSLHdglyRZwgQqYZHJblL/YKQ4
-	 +bsZRTZUd9IePtONjuD4nlWZMN+AD8tZSZwhk8EXpwGi0kVkUNDxIil2kubIkYd5o1
-	 5fwniwoaauxkMuCt6zbBWE4hVAxxfq6alQ5kAyUXSByAGGXhpyuPE3j+FTjmbDLcHe
-	 Ve5D7JPGvipVQavc2VvLKXnkZtZaA1pNhn9k9rgXnpbc6FAXEc59VJevmUeVRw1FPG
-	 Ifcx//PW8liiNViGTcjjvtWjMSvGDJkHQKdXqoaGVBZ9HC99nbWERAllbMdLGT4IPE
-	 Y5uHX9GvZdniw==
-From: Christian Brauner <brauner@kernel.org>
-To: Fan Wu <wufan@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Manuel Huber <manuelh@nvidia.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Andrew Halaney <andrew@amutable.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	linux-security-module@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
-Date: Fri, 23 Oct 2026 13:59:14 +0200
-Message-ID: <20261023-kettenglied-vorsorge-beharrlich-d4aeb08f69ca@brauner>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <CAKtyLkF3mVu8AXWybMGr3+=0F4OMndcV=M-2m-PGz5afE4H1cw@mail.gmail.com>
-References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com> <20261019-b4-ipe-keyring-rfc-v1-1-156f0b93e843@nvidia.com> <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org> <DM4PR12MB61369D00ED2FCFEDAE0E4597DE652@DM4PR12MB6136.namprd12.prod.outlook.com> <CAKtyLkF3mVu8AXWybMGr3+=0F4OMndcV=M-2m-PGz5afE4H1cw@mail.gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=uh5f1b+Z
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jB22t2KVLzx9n;
+	Fri, 23 Oct 2026 14:12:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1792757557;
+	bh=5Tb+/CVAcY5SOeTTU6JB0JtDtCzoK11pcXkmRemeQxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uh5f1b+ZbD5b6QU7YiELqZMVlC8XKhjucGaizjaffPKtmGAD9fxrhC8Ya1/UAfycG
+	 dO+hZi83WI3mju3r+VPSYWqVI4m06cyXiKQD4KMYkGLccQsk5X5ZEET76oOcWN+lId
+	 X2Fc2/o78BSY9T6pcsT/NGwPS0MmUPOm+FAlg1V4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jB22r3TQnzKqR;
+	Fri, 23 Oct 2026 14:12:36 +0200 (CEST)
+Date: Fri, 23 Oct 2026 14:12:27 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Haofeng Li <lihaofeng@kylinos.cn>, Paul Moore <paul@paul-moore.com>, Tingmao Wang <m@maowtm.org>, 
+	Wang Yan <wangyan01@kylinos.cn>, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [GIT PULL] Landlock update for v7.4-rc1
+Message-ID: <20261023.oHeec1uh0ael@digikod.net>
+References: <20261021162538.1852602-1-mic@digikod.net>
+ <CAG48ez3Rptvjvt=t_YEcBHHwYGD4zmPtc6tk+gPLtorZY7WEFg@mail.gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -79,54 +69,18 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1870; i=brauner@kernel.org; h=from:subject:message-id; bh=odpJiAcrzQlZy6uyTsV28Y4dhy5i8t2c+Ng1Hl1sjjI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTd9pHWqvWTUbFbtl+D08P7wNJZJyuzpGxPsV6TFd9ff +kL502BjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm8tGP4zXo9ZFdblNzEgAub /lk/FwpeYNyembB/gvktYa6Gsw6TXjP8070qzdVjk6FzVsny3bkzGRwPTUPDfz+f3TM9N/2pvFY bCwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3Rptvjvt=t_YEcBHHwYGD4zmPtc6tk+gPLtorZY7WEFg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Oct 22, 2026 at 01:25:36PM -0700, Fan Wu wrote:
-> Also, one thing I missed earlier: before the policy verification call,
-> please also check:
->
-> ipe_keyring->restrict_link->check == restrict_link_reject
->
-> so we make sure the restriction function is the right one.
+On Thu, Oct 22, 2026 at 06:45:59PM +0200, Jann Horn wrote:
+> On Wed, Oct 21, 2026 at 6:28 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > Jann Horn (1):
+> >       cred: clarify that task_struct::cred is only for the current task
+> 
+> FYI, that already is in mainline as
+> https://git.kernel.org/linus/b030ffaedc1d638f232f6992406cdcdcc82d5602,
+> it went through the LSM tree.
 
-I would advise against this. I'll explain why. Which restriction goes
-onto the keyring is intentionally userspace's policy. The two supported
-ones are:
-
-    keyctl restrict_keyring $id
-
-seals the keyring for good. Nothing can ever be added again. And
-
-    keyctl restrict_keyring $id asymmetric key_or_keyring:0:chain
-
-only allows certificates that are signed by a key that is already in
-the keyring.
-
-This allows userspace to enroll a vendor CA during boot and let
-per-image certificates that chain to it be added later after the trusted
-phase.
-
-systemd-keyring-setup uses that second form for .dm-verity, .fs-verity
-and .bpf and then drops KEY_USR_SETATTR, so neither the restriction nor
-the permission mask can be changed anymore while root keeps write
-permission to enroll chained certificates.
-
-Both are proper seals. A restriction can only be set once as afterwards
-keyring_restrict() returns -EEXIST. So there is no way to remove it.
-
-So whoever restricts the keyring is the provisioner and whatever they
-pick is the policy. A random root process after the seal can't extend
-the set of trust anchors either way. With the chain restriction it needs
-a signature from a key that is already trusted.
-
-That's why .dm-verity and .bpf only test that restrict_link is set.
-"Restricted" is the state the kernel knows about. The policy belongs to
-userspace.
-
-So it would be really nice if we could've the same behavior for all
-these keyrings. I think that this is a really nice model and allows
-userspace to have a kernel enforced policy.
-
-Christian
+Yes, that's the same commit, but I needed to include it with a merge
+commit to get a consistent PR.
