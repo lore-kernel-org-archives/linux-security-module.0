@@ -1,63 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792757568;
-	b=slueZnco/0z+zsRjzXga5t/N0J9mAqu7iq2tPMJS3lHKNj7fnOJiAT25TsOtAoqh77KH
-	 4noSdmK7xVqILeJAKFZ8HJ52Gvpqt6gvJKa8JqhqZzl7iaM+yUeTWC6DFfrtDip/gyBr7
-	 KqUdzRW8hTh6pMsF0F7McdbvsfjOBfj5MgWXCR7J/+a7l+WWgJPd1gWsTgxaLdP5ftkHx
-	 znC5gX2bCFDck5VI0y27brR21k8YwI7+p2Nl+Uc3dOPPtf/hxWCxnHfE7bk3mJ33S9Je+
-	 G/qjpuxWj4NdU0iZvm99gHbpQh4oLnNF/X4hNgWBABdD/AW1bzQGF7Vz+2oiaALCRPQ==
+	t=1792758503;
+	b=FLkeHrJp1SEuLmipRNvLrGCYf1ZQJ8ITARAwAlLvEKh3fg9ENSGS/K5otWR54ovG9TN7
+	 NWIx8gfCAGainGq3h57wKd+ehGlD4mGFIIQTQgnLB+RaztzDEvdRQTqFW5hZxADbr9Z9D
+	 WBZmHKlbMg5k7lRYqOIs7iOYPUkkDS5Ar1F2JYRVwN3WNBLxgkhA8go+qOvG4R7JyJur8
+	 06Xb8FIzFU/iEoUlUprXS3wtpel/6L3EFLAjhokbabODhNpoFc3qsCQP+hbqmRqPZ93ry
+	 WLFMoVKLMaYfCrQ4e1HlxNfQLi06bUa1cUuqlENOBGkItOcIGXh2ndm/mjqeX3P+VhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792757568;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 X-Infomaniak-Routing;
-	bh=5Tb+/CVAcY5SOeTTU6JB0JtDtCzoK11pcXkmRemeQxQ=;
-	b=qOi7RlKHyJ6ivMUBkTzzfrIjJL1WEtBEqjOB6KvIGcM8Wj1HR1PwoLfxYDPQVqCwEL06
-	 q33N9HLTmWdhp3Wz4HnIKN8+85q/7rFO/4tES30FFkXEipKb4oVwL3P/BWx1yxHcBDLoK
-	 xs1k8LPvFN/W1Cw4q61lWNELg20RHWB9gOcoAasaFMdW4GSaA6kJOI51tI7J3oS2QKhWO
-	 cuAb0mYKb5177g1vchChi+D16BWasHbkCjCdOmQPRVns82Mx1rWSOcEy96gVf/zJ3Onvb
-	 KVDmGGapmMdx5aWGsG3EfMKjLIK6p+a0e7FHQfn0uu9TrSULrMPB0VLLNPee4RcwXBQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792758503;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=uT0cq+YYt9iTsmejOAfqyZ6JL1fmMxffd0mjPXUhnMU=;
+	b=dVvGIJYRUhpK20ZOmMm6VfG+cvNCDDpRTVPYl2RL2GWjklm6EeX0/zs4rXROCwxQc37Y
+	 ivhGtpy1sc5AIKcuJZs31LsGGCo3LIcMb0BrIyZ9nw375uEjR9wmzly7l2NiAa5fjMiHE
+	 ViV+N4c4/bZvw/gdLIlDe5VbRIP3V41bBoVa6bWUxLMswGGOckcm9H2qdDRd4gOX3nKbD
+	 1qO5jF/OxqskorJkzl1liaswUdKz8+Akbyh8otZHy7NIJI4MJ/o+ti2E8YaMqdrsXV1/f
+	 BYWOQExG4hlec7cOw6rPNwT0CAMUuIQtb8Jc8E2aV8sYCQLov6iIZ/xkygvmr17//3Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=uh5f1b+Z;
-	arc=none smtp.remote-ip=185.125.25.15
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DDzq6gc4;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BEB606A31D;
-	Fri, 23 Oct 2026 12:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A1BEB606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E5047606A31E;
+	Fri, 23 Oct 2026 12:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=uh5f1b+Z
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jB22t2KVLzx9n;
-	Fri, 23 Oct 2026 14:12:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1792757557;
-	bh=5Tb+/CVAcY5SOeTTU6JB0JtDtCzoK11pcXkmRemeQxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uh5f1b+ZbD5b6QU7YiELqZMVlC8XKhjucGaizjaffPKtmGAD9fxrhC8Ya1/UAfycG
-	 dO+hZi83WI3mju3r+VPSYWqVI4m06cyXiKQD4KMYkGLccQsk5X5ZEET76oOcWN+lId
-	 X2Fc2/o78BSY9T6pcsT/NGwPS0MmUPOm+FAlg1V4=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jB22r3TQnzKqR;
-	Fri, 23 Oct 2026 14:12:36 +0200 (CEST)
-Date: Fri, 23 Oct 2026 14:12:27 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Christian Brauner <brauner@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Haofeng Li <lihaofeng@kylinos.cn>, Paul Moore <paul@paul-moore.com>, Tingmao Wang <m@maowtm.org>, 
-	Wang Yan <wangyan01@kylinos.cn>, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [GIT PULL] Landlock update for v7.4-rc1
-Message-ID: <20261023.oHeec1uh0ael@digikod.net>
-References: <20261021162538.1852602-1-mic@digikod.net>
- <CAG48ez3Rptvjvt=t_YEcBHHwYGD4zmPtc6tk+gPLtorZY7WEFg@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DDzq6gc4
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 32FFD1F01825;
+	Fri, 23 Oct 2026 12:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792758502;
+	bh=uT0cq+YYt9iTsmejOAfqyZ6JL1fmMxffd0mjPXUhnMU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=DDzq6gc4JGuLwNYy472vXx82YoSDp9uP7Vut3P92twuZvtO2Idc+Nz6aNSQmUHTc1
+	 5VrHi7w59ZQUxmcNjnUQ/FJ/9pk2OKFdLxzwLujXGeLNla/82WHG8IEH5VKq4u2jwl
+	 J30sA04Ulc0/jN/3LnVxbbdP6xbrxV+1SBUqB3+FO2p5RrWrio/AnqCxMgqqr9kpkI
+	 7VU+Bw86ROs6YG0E46C4DrIkQ+L7DKuuiIhbVAR8hAKmpzjJnrCWqgkX1IhH7/mNus
+	 CaL8uZKuT6lvFTthq2I7WHFMLM9doYvOLFkS7GIkMK3pUIe6l4PDHs++2IFQSiOLvy
+	 fE/5eNfV9vaOA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v2 2/6] KEYS: Reject descriptions larger than KEY_MAX_DESC_SIZE
+Date: Fri, 23 Oct 2026 15:09:22 +0300
+Message-ID: <20261023120953.1206778-3-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261023120953.1206778-1-jarkko@kernel.org>
+References: <20261023120953.1206778-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,20 +67,172 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez3Rptvjvt=t_YEcBHHwYGD4zmPtc6tk+gPLtorZY7WEFg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Thu, Oct 22, 2026 at 06:45:59PM +0200, Jann Horn wrote:
-> On Wed, Oct 21, 2026 at 6:28 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > Jann Horn (1):
-> >       cred: clarify that task_struct::cred is only for the current task
-> 
-> FYI, that already is in mainline as
-> https://git.kernel.org/linus/b030ffaedc1d638f232f6992406cdcdcc82d5602,
-> it went through the LSM tree.
+KEY_MAX_DESC_SIZE includes the trailing NULL character. Descriptions
+generated from payloads and in-kernel paths bypass the userspace limit.
 
-Yes, that's the same commit, but I needed to include it with a merge
-commit to get a consistent PR.
+Reject descriptions at or above KEY_MAX_DESC_SIZE with -EINVAL at the
+following sites:
+
+- key_alloc(): before quota calculation
+- __key_create_or_update(): before key_set_index_key()
+- keyring_search(): before match_preparse
+- request_key_and_link(): before match_preparse
+- request_key_rcu(): before check_cached_key()
+
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Fixes: f771fde82051 ("keys: Simplify key description management")
+Reviewed-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Link: https://lore.kernel.org/r/20261020174325.2229448-3-jarkko@kernel.org
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ include/linux/key.h         |  3 +++
+ security/keys/key.c         | 10 +++++++++-
+ security/keys/keyctl.c      |  2 --
+ security/keys/keyring.c     |  7 ++++++-
+ security/keys/request_key.c | 14 ++++++++++++--
+ 5 files changed, 30 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 26139c3adf62..3b8af14fb323 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -37,6 +37,9 @@ struct net;
+ 
+ #undef KEY_DEBUGGING
+ 
++/* Maximum length of a key description, including the trailing NUL */
++#define KEY_MAX_DESC_SIZE 4096
++
+ #define KEY_POS_VIEW	0x01000000	/* possessor can view a key's attributes */
+ #define KEY_POS_READ	0x02000000	/* possessor can read key payload / view keyring */
+ #define KEY_POS_WRITE	0x04000000	/* possessor can update key payload / add link to keyring */
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 6ebb8691551f..e88548f1a704 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -245,6 +245,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	}
+ 
+ 	desclen = strlen(desc);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		goto error;
+ 	quotalen = desclen + 1 + type->def_datalen;
+ 
+ 	/* get hold of the key tracking for this user */
+@@ -829,6 +831,7 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 	key_ref_t key_ref;
+ 	int ret;
+ 	struct key_restriction *restrict_link = NULL;
++	size_t desclen;
+ 
+ 	/* look up the key type to see if it's one of the registered kernel
+ 	 * types */
+@@ -869,7 +872,12 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 		if (!index_key.description)
+ 			goto error_free_prep;
+ 	}
+-	index_key.desc_len = strlen(index_key.description);
++	desclen = strlen(index_key.description);
++	if (desclen >= KEY_MAX_DESC_SIZE) {
++		key_ref = ERR_PTR(-EINVAL);
++		goto error_free_prep;
++	}
++	index_key.desc_len = desclen;
+ 	key_set_index_key(&index_key);
+ 
+ 	ret = __key_link_lock(keyring, &index_key);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 36ffba0ebba6..d6b10fd67627 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -24,8 +24,6 @@
+ #include <keys/request_key_auth-type.h>
+ #include "internal.h"
+ 
+-#define KEY_MAX_DESC_SIZE 4096
+-
+ static const unsigned char keyrings_capabilities[2] = {
+ 	[0] = (KEYCTL_CAPS0_CAPABILITIES |
+ 	       (IS_ENABLED(CONFIG_PERSISTENT_KEYRINGS)	? KEYCTL_CAPS0_PERSISTENT_KEYRINGS : 0) |
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 7143f3079d20..2c54f7f84c55 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -957,7 +957,6 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
+-		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+@@ -965,8 +964,14 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 		.flags			= KEYRING_SEARCH_DO_STATE_CHECK,
+ 	};
+ 	key_ref_t key;
++	size_t desclen;
+ 	int ret;
+ 
++	desclen = strlen(description);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		return ERR_PTR(-EINVAL);
++	ctx.index_key.desc_len = desclen;
++
+ 	if (recurse)
+ 		ctx.flags |= KEYRING_SEARCH_RECURSE;
+ 	if (type->match_preparse) {
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index fa2bb9f2f538..ef00c2b08fe0 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -584,7 +584,6 @@ struct key *request_key_and_link(struct key_type *type,
+ 		.index_key.type		= type,
+ 		.index_key.domain_tag	= domain_tag,
+ 		.index_key.description	= description,
+-		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+@@ -595,8 +594,14 @@ struct key *request_key_and_link(struct key_type *type,
+ 	};
+ 	struct key *key;
+ 	key_ref_t key_ref;
++	size_t desclen;
+ 	int ret;
+ 
++	desclen = strlen(description);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		return ERR_PTR(-EINVAL);
++	ctx.index_key.desc_len = desclen;
++
+ 	kenter("%s,%s,%p,%zu,%p,%p,%lx",
+ 	       ctx.index_key.type->name, ctx.index_key.description,
+ 	       callout_info, callout_len, aux, dest_keyring, flags);
+@@ -787,7 +792,6 @@ struct key *request_key_rcu(struct key_type *type,
+ 		.index_key.type		= type,
+ 		.index_key.domain_tag	= domain_tag,
+ 		.index_key.description	= description,
+-		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+@@ -797,6 +801,12 @@ struct key *request_key_rcu(struct key_type *type,
+ 	};
+ 	struct key *key;
+ 	key_ref_t key_ref;
++	size_t desclen;
++
++	desclen = strlen(description);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		return ERR_PTR(-EINVAL);
++	ctx.index_key.desc_len = desclen;
+ 
+ 	kenter("%s,%s", type->name, description);
+ 
+-- 
+2.47.3
+
