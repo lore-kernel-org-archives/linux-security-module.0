@@ -1,55 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792879603;
-	b=E+K904+Tljjq6wDvh7zlQet2qQEqoFKkT9Chkg4Igy26zeuaJnKZBGgMvWO4PN5PHb9k
-	 TJSzWXBWHm7B4lE1m4pBIXlzyERQjItcD53VC7kA+McTT1HyGA4XtWO67WXcnLCBR62Vt
-	 WwNvEMTyoIvIFZyXG9wbltd1XUq7rmqxhcmFyOIe08qrCtRIFxLudkt7zN5B1+k5EBNOZ
-	 qB8SXtlgmijjrltONZYYgGgGwObpHrjsMNsDAOl1JfKoiYA24HBDpvBJnof2tOnZoZI1x
-	 EBJLNHDmcjrCBtfrqtvXOM32kyLsnIwsN9nw5m/8jUVJ6u1fOck74s6PCNetW44AGIg==
+	t=1792886387;
+	b=yx144uhI3G2LZbJLL+lGHQ8y1KhExG/OZKRfeCcoPFp7MINtNbG1eYzZrF7exADtNuoC
+	 1m7YpHsRNfv5KR2qGjkimpmeXUcD4jRqTYcy/WzTGgDcDf7yQvWzCOdf1K7mlO2fGVN+4
+	 4b5P/zOzBKh7PzixNDXtALpQBv139I7t65qIbXWi03wTKMd5IvfR6KXrLAI4+Fm8YhqZX
+	 CDVRatCP38LkC+xgXXLvrQcKRjPN57KytulmSvf/6AY1N6TaBOWuLfo/lUyiLBsjvnUzd
+	 azuu9HnZYamk/PZhcVb5qhrxzb+vvLsGavB/hQCRDd6VUQAPTIyBBe4RnvXicZ85x3Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792879603;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=LKrseE+2KGcyPyJteMPo+jT68x2OFUPN+O+cpreY9Ak=;
-	b=xbKfY4kg4Cc0SF6/bot4YFgLbdTbWHT1zt73hHdLUmOiKLbEfOb8ijZ0A6wYR2EJgI4g
-	 nj85FvHR0jmgASzx+uuzZvN/MOO/1kas9fXm8iy68oRSQJIRg+c7lxTEm5luxAaBdkZdg
-	 4WQZvXTBMDc02DrY05sZurFjmPV2/pM5x0gWKEKTNrGbqGPCsiOIHTBOURcU3T2wYPCFf
-	 NnkgCB0byMgXKeByLlV6v1nWnggQqmTfaeAE8VniHKY1JT0VFIfmRyNWzPTi52UJtiZ2E
-	 2t+aCiIKRZ2O9rXo9fLzr+Kb47NwAz7/S9NQHQd746xOPt4URmhBkFoZF5TEiP5tViA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792886387;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Message-Id:
+	 Cc:Subject:From:To:X-Mailer:References:In-Reply-To;
+	bh=kPGkV1PrAtGPm5u8Uv9TfVrX1KaCYLI/ILzCGAHiWVU=;
+	b=UKXZWhdMMIXn+oAHZ0P/x/WknkvhzV4oAjHOBiYivrHODqYRHGciB/73Dyj0zLbPbhkO
+	 PmCiXyeV/kqDtjsALjRCyGN+QI6wtS1OAM+/b1PkeURo11wQZzG+UfhsTa/TUPOlDDfpw
+	 rXSAbJK1knBjcYRhs8hZZM+L9PZFawCOC2fsbd46ZNddL/ZyG9tyYcZ1eOxIWbat+4VRh
+	 31faL4u7shmo6K8gEb51qssOv5+5kll76V0ScEVlYH/RAUnwDcMI3HOPdc2ws7lMDIdX5
+	 4gl5lzCH1wXM/yk8IoIwQ51GaC6WCeUqA3fGU9++uIEJDQxbG6gEbcVvDIx1r/N//Eg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iQ62zilG;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=WloVDXD6;
+	arc=none smtp.remote-ip=74.125.82.170
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3567F606A31A
-	for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2026 22:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F43F606A31B
+	for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2026 23:59:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3F43F606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iQ62zilG
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9B1C1F01825
-	for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2026 22:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792879602;
-	bh=LKrseE+2KGcyPyJteMPo+jT68x2OFUPN+O+cpreY9Ak=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=iQ62zilGQ2QtVH3gAsZpc8qee50ALYZjJZw1pieIEVJwjRJCf/O1vzkzqOWdaqv+L
-	 MBNaDkfO0EQGNp/WxOl9gwVkH2+0gRXhenxvfhPzF+6K4Qs/KHK4WCNp+rKYf9OjtP
-	 v3I9DYDWUbeGEF8xNjYdoc+Awvm4Q+ebaNSpjBAplSSm4Nt28A9bYXo3Hvi8q/Hx0R
-	 rlzKrOVPqucmDO3OmLiLt+YIx5ChpYw4siZbV4ahjROTuKMMg+mxWMPS2a4yj+hJHA
-	 9jKUDRzYPwoi7VEIp8Q6ng43zfzp9U3DmVFIbPxkQr5GwtFDEC5c5uIfQ4yQLNUuAK
-	 pc+x229KIXSGg==
-Message-ID: <sashiko-outbox-183915@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 2/3] landlock: Add access rights on created files
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261024-landlock-created-rights-v1-2-77c8db3f6bd2@gmail.com>
-References: <20261024-landlock-created-rights-v1-0-77c8db3f6bd2@gmail.com>
- <20261024-landlock-created-rights-v1-2-77c8db3f6bd2@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 24 Oct 2026 22:06:42 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=WloVDXD6
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-369f33df08eso588247eec.0
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2026 16:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792886386; x=1793491186; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=kPGkV1PrAtGPm5u8Uv9TfVrX1KaCYLI/ILzCGAHiWVU=;
+        b=WloVDXD6l+pIZoSuUYA2v1ecepRDeOY/98L4cBaFUnmdRioBkEBCuosjzGB95QYmyz
+         cf8ETJoaRyLTbUdk29oQX9Pd06r1pw9ck/OnFGffFOhKUTrOX062tJJ+Emj6X9n+iwAJ
+         AK6kEYIy3QpXVll2lLC6ClP9pCeh48f3w05eYWJUe6DyvQyXU7JT1xcyEiKw4Ez3dSPb
+         WhmyfAbMxa42p9jafEhFxGEKH2Rg5agHKe2/364HccVsMhBwwoSsdvmRH2Ackp2gm6L/
+         CmSuw1hgmsps+o4TngBhrlO4K5xOJDJEjZ1OKNvDTho8AJcC88RM6HNOyVpVrhW9H2Rm
+         u/4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792886386; x=1793491186;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=kPGkV1PrAtGPm5u8Uv9TfVrX1KaCYLI/ILzCGAHiWVU=;
+        b=blh4SgZMjtXLF4HBjprL5krummpNip7RftBslzoAIuOJoAOEv1+4D+zG1S5YTrFgUi
+         yJRz7MDU5dgbbUTaCX8UygQemf0MXfyPAZGlnVg5sUlS5NMq/xtonqUgA2eO9xJZr2IK
+         w6XiWUakpH13u0nb8LOtFDvCOGAXcQQkkwjQCkBLu+aw7GoGCT9Ca4SKFLgWvdG8IHjs
+         lEmeQ59o0vQ4Sju8q7oKJPPCprKk6Yzf6L1LOtCVw8yrlzVxuSEcGGqfcGGV3vWXDSnW
+         +dbvjQ+Q9KynRlx7hvvP2noc22YaZvYUgHbzMTIZxLk2xRkXxwk7TDpvfrLvR7JPtO/y
+         BP+Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzzMCJ4quo4AauvlwfqppCAyzeqx+NEeTQtJdXqIuppgZ9Py9XZ3RACoKKEq5grUnwKrALGeTIejQBkOv7wfwOCc6ajF4Q=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKrYQ8GxHqZ0o5EFE3GjWNkHYumjylrYuZTmVVaeA9B9ODswIao
+	uRQvN/U7PD+sPqxhYFCqIMPRBSLjyemcyKeJ8RTZ/NHXx+YmKssxnP4A
+X-Gm-Gg: AYBFou0lmZlmRhl6uqCVk+kAN2hHW6A+89jFSVskSlyFoCkuamCaNuLIm7HXCq3UnYd
+	DImKq0flPtGmyBDvWqlPQBNWZQOXj8E+ROMQyAygZUjy4V0599G1zwbGJZ0i7CTuVQ+OUToeS2i
+	CALnu3DcGdIfbIVDkMwuPzZxDgSciGbj3jPSeh0i7dmzOUQPI6h1gEeSZR9hwc0eNshaoJcGrRe
+	AZpp5pN/YURcvz/Iehg3RiMB7zHyfh8q8lv2yDYoMw1+jETnb+rwVfY3CExXdPwVflZp7Nzqa1d
+	RmjrBqQj018Q+kuLcD1/hhUxLBegInDkVip6I3nhoH0dSvr7aDdxmrgBa+9CGXIYLvXsuHS/7aA
+	uDvhJRTsGBhHEE0mf59EcuFVEGseEpKF494i5gcDZop8srtqSDNuMGOQ2TbIVWaNwBRLoj7s0cU
+	RtQvTQiruchTNQ/fUYT4DX+BdWPWUJ3V0F9SFO0ohyHxuY+65S+ZjVKCfQVxp1Op18XsOSaXopx
+	0cHCSriYTG2GOS5KLRYCPnW+XIZQXdRrDaFT6vQjbnwTwBMWd4jH8mAdio=
+X-Received: by 2002:a05:7022:e10:b0:14b:cf58:ce15 with SMTP id a92af1059eb24-199377d8c81mr6217789c88.43.1792886385960;
+        Sat, 24 Oct 2026 16:59:45 -0700 (PDT)
+Received: from localhost ([73.222.46.22])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-198a249c331sm24522674c88.17.2026.10.24.16.59.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Oct 2026 16:59:45 -0700 (PDT)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,438 +86,284 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 24 Oct 2026 16:59:44 -0700
+Message-Id: <DMDH6IGUKIG4.PFYGRQT3YJB9@gmail.com>
+Cc: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Shuah Khan" <shuah@kernel.org>, "Jonathan
+ Corbet" <corbet@lwn.net>, "John Ericson" <mail@johnericson.me>,
+ <linux-security-module@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC 0/3] landlock: Add access rights on created files
+From: "Farid Zakaria" <farid.m.zakaria@gmail.com>
+To: "Justin Suess" <utilityemal77@gmail.com>, "Farid Zakaria"
+ <farid.m.zakaria@gmail.com>
+X-Mailer: aerc 0.22.0
+References: <20261024-landlock-created-rights-v1-0-77c8db3f6bd2@gmail.com>
+ <at0agiPbtxz5zD41@zenbox> <at0o7LydcgezBf7D@zenbox>
+In-Reply-To: <at0o7LydcgezBf7D@zenbox>
 
-Thank you for your contribution! Sashiko AI review found 7 potential issue(=
-s) to consider:
-- [Critical] landlock: use-after-free in landlock_unmask_created() during p=
-ath walk
-- [High] landlock: uninitialized layer_masks read in refer_created()
-- [High] landlock: refer_created() mutates state and pins inodes before VFS=
- checks
-- [High] landlock: hook_inode_init_security() pins I_NEW inodes without err=
-or rollback
-- [High] landlock: GFP_KERNEL_ACCOUNT allocation in hook_inode_init_securit=
-y()
-- [Medium] landlock: grant_created() miscomputes reparented access rights
-- [Medium] landlock: missing hook_inode_init_security() calls and unlinked =
-inode pinning
---
+Hi Justin,
 
-commit 5e3bc0f81c353fca29a705bd4d2b123bb4da9434
-Author: Farid Zakaria <farid.m.zakaria@gmail.com>
+Thank you for engaging me on this RFC. Admittedly, I have not followed
+the landlock discussions closely. This was an idea I had concocted while
+thinking how we can make Nix sandboxing faster.
+(I'm also exploring the space with AI - so I'm a landlock newbie but not
+a Nix newbie.)
 
-landlock: Add access rights on created files
+Mickael, et al: I see that sashiko found some legitimate concerns.
+I can fix that up in a V2 if we like the general idea and want to
+continue exploring it.
 
-This commit adds the LANDLOCK_ADD_RULE_CREATED flag for
-LANDLOCK_RULE_PATH_BENEATH rules on directories so that access rights are
-granted on file hierarchies created directly in the directory by tasks in t=
-he
-domain (or nested domains), and bumps the Landlock ABI version to 13.
+On Sat Oct 24, 2026 at 3:03 PM PDT, Justin Suess wrote:
+> On Sat, Oct 24, 2026 at 05:43:26PM -0400, Justin Suess wrote:
+>> On Sat, Oct 24, 2026 at 01:39:16PM -0700, Farid Zakaria wrote:
+>> > This is a proposal for an idea to add support for landlock to work
+>> > better with build systems such as Nix where they want to apply
+>> > restrictions but the paths may not yet exist.
+>> >=20
+>> > TL;DR;
+>> > =3D=3D=3D=3D=3D=3D=3D=3D
+>> >=20
+>> > Landlock rules attach to inodes that exist when a ruleset is built.
+>> > That makes a directory shared between trusted and sandboxed tasks hard
+>> > to confine: the sandbox may create entries there with
+>> > LANDLOCK_ACCESS_FS_MAKE_*, but no rule can name those entries ahead of
+>> > time, and granting read access on the directory to cover them exposes
+>> > every other entry as well. This series adds a rule flag that grants
+>> > access rights on the entries a domain creates in a directory, instead
+>> > of on the directory.
+>> Hi,
+>>=20
+>> I'll chime in since I run nix and have a little bit of familiarity.
+>>=20
+>> Looking at my (admittedly bloated) nix store.
+>>=20
+>> [justin@zenbox ~]$ ls /nix/store | wc -l
+>> 259356
+>>=20
+>> That's a lot of inodes. And a nix derivation creates hundreds if not
+>> thousands potentially throughout it's build.
+>>=20
+>> My main concern is that rulesets are generally considered
+>> immutable after enforcement. This allows for well-defined semantics on
+>> inheritence. This from my understanding would mutate the ruleset after
+>> it's already enforced, so changes wouldn't be copied to inherited
+>> domains automatically.
+>
+> * nvm on this, it looks like you are adding them to a different
+> heirarchy. The point still stands though on the inode pinning, which you
+> pointed out.
+>
+>
 
-> diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-> index 4c0b1f0e1db5d..f8dc771724e14 100644
-> --- a/security/landlock/domain.c
-> +++ b/security/landlock/domain.c
+On the cost:
 
-[ ... ]
+only entries created directly in the directory that has
+the rule get recorded. For Nix that is /nix/store, so a build records
+one entry per output ($out, $dev, ...). Nothing is recorded for
+$out/foo or anything else under $out.
 
-> @@ -198,6 +199,166 @@ bool landlock_unmask_layers(const struct landlock_d=
-omain *const domain,
+Access there is allowed because the path walk at access time reaches
+$out and finds it in the recorded set, the same way a rule on a directory
+covers what is beneath it. Existing store paths are never recorded, so the
+store's size does not matter... right?
 
-[ ... ]
+A bad actor could still create many entries in the store
+(touch /nix/store/junk1 ... junk1000000), and each one stays pinned
+until the domain is freed. I can add a per-domain limit on the number
+of created entries. Nix only needs as many as the derivation has
+outputs ($out, $dev etc..).
 
-> +bool landlock_unmask_created(const struct landlock_domain *const domain,
-> +			     const struct landlock_object *const object,
-> +			     struct layer_masks *masks)
-> +{
-> +	struct landlock_hierarchy *hierarchy =3D domain->hierarchy;
-> +
-> +	if (!masks)
-> +		return true;
-> +
-> +	if (!READ_ONCE(object->created))
-> +		return false;
-> +
-> +	for (size_t i =3D domain->num_layers; i > 0 && hierarchy;
-> +	     i--, hierarchy =3D hierarchy->parent)
-> +		masks->layers[i - 1].access &=3D ~get_created(hierarchy, object);
-> +
-> +	for (size_t i =3D 0; i < ARRAY_SIZE(masks->layers); i++) {
-> +		if (masks->layers[i].access)
-> +			return false;
-> +	}
-> +	return true;
-> +}
-
-[Severity: Critical]
-Can this dereference of object->created in landlock_unmask_created() trigge=
-r a
-use-after-free or grant access to the wrong inode via slab pointer reuse?
-
-During the sleepable path walks in is_access_to_paths_allowed() and
-collect_domain_accesses() in security/landlock/fs.c, get_inode_id() fetches
-the raw object pointer without holding rcu_read_lock() or taking a referenc=
-e:
-
-security/landlock/fs.c:get_inode_id() {
-	...
-	id->key.object =3D rcu_access_pointer(
-		landlock_inode(d_backing_inode(dentry))->object);
-	return !!id->key.object;
-}
-
-Previously, id.key.object was never dereferenced and was only compared
-numerically against domain->rules.root_inode, which is immutable and pins i=
-ts
-objects for the lifetime of the domain.
-
-With unmask_layers_created() passing id.key.object to
-landlock_unmask_created(), if an inode visited during the path walk has a
-landlock_object attached by another ruleset or domain that is concurrently
-freed via landlock_put_object() -> kfree_rcu(object, rcu_free), the RCU gra=
-ce
-period can elapse while the path walk is running. Could READ_ONCE(object->c=
-reated)
-then read from freed slab memory?
-
-Furthermore, because hierarchy->created is updated at runtime by
-landlock_add_created(), if that freed landlock_object slab slot is realloca=
-ted
-for a newly created inode in this domain and inserted into hierarchy->creat=
-ed,
-would get_created(hierarchy, object) match the reused pointer address and
-grant the created inode's rights to the unrelated inode?
-
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 2ab67bcad1983..64a3447254337 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-
-[ ... ]
-
-> @@ -1359,8 +1381,130 @@ static int current_check_refer_path(struct dentry=
- *const old_dentry,
-
-[ ... ]
-
-> +static int grant_created(const struct landlock_domain *const domain,
-> +			 const struct landlock_rule *const rule,
-> +			 struct inode *const inode,
-> +			 const struct layer_masks *const src_masks)
-> +{
-> +	struct landlock_object *object;
-> +	int err =3D 0;
-> +
-> +	object =3D get_inode_object(inode);
-> +	if (IS_ERR(object))
-> +		return PTR_ERR(object);
-> +
-> +	for (size_t i =3D 0; i < rule->num_layers && !err; i++) {
-> +		const struct landlock_layer *const layer =3D &rule->layers[i];
-> +
-> +		if (src_masks &&
-> +		    (src_masks->layers[layer->level - 1].access & layer->access))
-> +			continue;
-> +
-> +		err =3D landlock_add_created(domain, layer->level - 1, object,
-> +					   layer->access);
-> +	}
-> +	landlock_put_object(object);
-> +	return err;
-> +}
-
-[Severity: Medium]
-When reparenting a file or directory via refer_created(), does grant_create=
-d()
-drop the entire layer whenever any single bit of layer->access was not gran=
-ted
-at the source?
-
-In refer_created(), layer_masks (passed as src_masks) holds the access bits
-from rule that were unfulfilled at old_path. Checking:
-
-	if (src_masks &&
-	    (src_masks->layers[layer->level - 1].access & layer->access))
-		continue;
-
-skips the entire layer whenever any bit in layer->access remains unfulfilled
-at the source (for instance, when created_attr.allowed_access is set to
-ruleset_attr.handled_access_fs as shown in the documentation, but the source
-staging directory did not grant LANDLOCK_ACCESS_FS_MAKE_BLOCK or
-LANDLOCK_ACCESS_FS_IOCTL_DEV), rather than granting the intersection of rig=
-hts
-that were already allowed at the source
-(layer->access & ~src_masks->layers[layer->level - 1].access).
-
-Also, when old_dentry is not a directory, refer_created() masks
-access &=3D ACCESS_FILE before calling landlock_init_layer_masks(), leaving
-non-ACCESS_FILE bits zeroed in src_masks, so grant_created() passes the
-unmasked layer->access (including directory access rights) to
-landlock_add_created(). Should this grant only the fulfilled subset of
-applicable rights instead?
-
-> +
-> +/*
-> + * Grants the access rights of @new_dir's LANDLOCK_ADD_RULE_CREATED rule=
- on
-> + * the reparented @old_dentry, for the layers which already granted them=
- at
-> + * its source.  This must only be called once the refer action is allowe=
-d.
-> + */
-> +static int refer_created(struct dentry *const old_dentry,
-> +			 const struct path *const new_dir)
-> +{
-> +	const struct landlock_cred_security *const subject =3D
-> +		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
-> +	/* The mount points are the same for old and new paths, cf. EXDEV. */
-> +	const struct path old_path =3D {
-> +		.mnt =3D new_dir->mnt,
-> +		.dentry =3D old_dentry,
-> +	};
-> +	const struct landlock_rule *rule;
-> +	struct layer_masks layer_masks;
-> +	access_mask_t access =3D 0;
-> +
-> +	if (!subject ||
-> +	    RB_EMPTY_ROOT(&subject->domain->rules.root_inode_created) ||
-> +	    old_dentry->d_parent =3D=3D new_dir->dentry)
-> +		return 0;
-> +
-> +	rule =3D get_created_rule(subject->domain,
-> +				d_backing_inode(new_dir->dentry));
-> +	if (!rule)
-> +		return 0;
-> +
-> +	for (size_t i =3D 0; i < rule->num_layers; i++)
-> +		access |=3D rule->layers[i].access;
-> +
-> +	/* Only compares the access rights which make sense for files. */
-> +	if (!d_is_dir(old_dentry))
-> +		access &=3D ACCESS_FILE;
-> +
-> +	access =3D landlock_init_layer_masks(subject->domain, access,
-> +					   &layer_masks, LANDLOCK_KEY_INODE);
-> +	is_access_to_paths_allowed(subject->domain, &old_path, access,
-> +				   &layer_masks, NULL, NULL, 0, NULL, NULL,
-> +				   NULL);
-> +	return grant_created(subject->domain, rule,
-> +			     d_backing_inode(old_dentry), &layer_masks);
-> +}
-
-[Severity: High]
-Can refer_created() pass an uninitialized layer_masks struct on the stack to
-grant_created()?
-
-When old_dentry is a non-directory (!d_is_dir(old_dentry)), access is masked
-with ACCESS_FILE. If the ruleset handles all ACCESS_FILE rights and the
-LANDLOCK_ADD_RULE_CREATED rule on new_dir only grants directory rights (such
-as LANDLOCK_ACCESS_FS_READ_DIR | LANDLOCK_ACCESS_FS_MAKE_REG), access becom=
-es
-0 after access &=3D ACCESS_FILE.
-
-When access is 0, landlock_init_layer_masks() in security/landlock/domain.c
-returns early without initializing layer_masks:
-
-	if (!access_request)
-		return 0;
-
-and is_access_to_paths_allowed() in security/landlock/fs.c also returns ear=
-ly
-without writing to layer_masks:
-
-	if (!access_request_parent1 && !access_request_parent2)
-		return true;
-
-Wouldn't grant_created() then read uninitialized stack memory from
-src_masks->layers[layer->level - 1].access?
-
-> +
-> +/* Inode hooks */
-> +
-> +static int hook_inode_init_security(struct inode *const inode,
-> +				    struct inode *const dir,
-> +				    const struct qstr *const qstr,
-> +				    struct xattr *const xattrs,
-> +				    int *const xattr_count)
-> +{
-> +	const struct landlock_cred_security *const subject =3D
-> +		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
-> +	const struct landlock_rule *rule;
-> +	int err;
-> +
-> +	if (!subject || !dir ||
-> +	    RB_EMPTY_ROOT(&subject->domain->rules.root_inode_created))
-> +		return -EOPNOTSUPP;
-> +
-> +	rule =3D get_created_rule(subject->domain, dir);
-> +	if (!rule)
-> +		return -EOPNOTSUPP;
-> +
-> +	/* Landlock does not provide any xattr. */
-> +	err =3D grant_created(subject->domain, rule, inode, NULL);
-> +	return err ?: -EOPNOTSUPP;
-> +}
-
-[Severity: High]
-What happens to the newly allocated I_NEW | I_CREATING inode if creation fa=
-ils
-after hook_inode_init_security() pins it in hierarchy->created?
-
-In hook_inode_init_security(), grant_created() calls get_inode_object(inode)
-(which calls ihold(inode), incrementing i_count from 1 to 2) and
-landlock_add_created() (which holds a reference to object in
-hierarchy->created until the domain hierarchy is freed).
-
-If inode creation subsequently fails =E2=80=94 for example, in grant_create=
-d() itself
-when layer 0 succeeds and a subsequent layer fails with -ENOMEM, in a later
-LSM hook or initxattrs() callback inside security_inode_init_security(), wh=
-en
-the filesystem fails to add the directory entry (e.g. -ENOSPC, -EDQUOT,
--EMLINK, -ENOMEM), or when vfs_tmpfile() later fails in may_open() or
-hook_file_open() =E2=80=94 the filesystem's error path calls discard_new_in=
-ode(),
-iget_failed(), or iput():
-
-fs/inode.c:discard_new_inode() {
-	...
-	inode_state_clear(inode, I_NEW);
-	inode_wake_up_bit(inode, __I_NEW);
-	spin_unlock(&inode->i_lock);
-	iput(inode);
-}
-
-Because hierarchy->created still holds a reference to the inode, iput(inode)
-only drops i_count from 2 to 1 instead of running iput_final() -> evict() ->
-remove_inode_hash(). For filesystems that hash new inodes via
-insert_inode_locked() before calling security_inode_init_security() (such as
-ext2, jfs, gfs2, btrfs, or sysv), doesn't this leave an uninstantiated inode
-with I_CREATING set in inode_hashtable until the domain exits, causing
-subsequent allocations of the reused on-disk inode number to fail with -EBU=
-SY
-in insert_inode_locked() or -ESTALE in find_inode_fast()?
-
-[Severity: High]
-Is it safe for hook_inode_init_security() to allocate memory with
-GFP_KERNEL_ACCOUNT via grant_created()?
-
-Filesystems invoke security_inode_init_security() in the middle of inode
-creation while holding internal filesystem transactions, mutexes, glocks, or
-locked metadata folios without memalloc_nofs_save() (for example, jfs_creat=
-e()
-holds a transaction and commit_mutex, f2fs_init_inode_metadata() holds
-f2fs_lock_op() and a locked inode folio, btrfs_create_new_inode() holds a
-transaction handle, and gfs2_create_inode() holds glocks), which is why
-security_inode_init_security() in security/security.c uses GFP_NOFS.
-
-However, hook_inode_init_security() -> grant_created() allocates struct
-landlock_object in get_inode_object() -> landlock_create_object() and struct
-landlock_created in landlock_add_created() using GFP_KERNEL_ACCOUNT (which
-includes __GFP_FS). Can direct reclaim recurse into the filesystem and
-deadlock on those held locks or transactions?
-
-[Severity: Medium]
-Does relying on hook_inode_init_security() miss filesystems that do not call
-security_inode_init_security(), and keep unlinked files' backing storage
-allocated until the domain exits?
-
-First, landlock_append_fs_rule() accepts LANDLOCK_ADD_RULE_CREATED on any
-directory, but security_inode_init_security() is not called at the VFS laye=
-r:
-in ext4, ext2, f2fs, jfs, jffs2, and ubifs it is only compiled in when
-CONFIG_*_FS_SECURITY=3Dy (where CONFIG_EXT4_FS_SECURITY and
-CONFIG_F2FS_FS_SECURITY default to n), and in filesystems without security
-xattr support (such as fuse/virtiofs, nfs, 9p, cifs, vfat, exfat, ntfs3, ud=
-f,
-and nilfs2) it is never called at all. On those filesystems or kernel
-configurations, creating a file with open(O_CREAT | O_RDWR) in a
-LANDLOCK_ADD_RULE_CREATED directory will never trigger
-hook_inode_init_security(), causing the file to be created on disk and then
-rejected with -EACCES in hook_file_open().
-
-Second, because landlock_add_created() pins each created inode via ihold() =
-in
-hierarchy->created until landlock_free_created() runs when the layer's
-hierarchy is freed, iput_final() -> evict() cannot run when created files a=
+>>=20
+>> My other concern is with the overhead of automatically generating an ins=
+erting
+>> a rule for every new inode that gets created. It seems like a complex
+>> way to tackle this problem.
+>>=20
+>> But beyond that, let's go back to your usecase.
+>>=20
+>> ....
+>>=20
+>> Basically from what I'm seeing you want to grant some access to certain
+>> subdirectories (including newly created ones) but exclude others.
+>>=20
+>> Presumably in the nix case, you want to grant /nix/store/{abc,efg,hij} a=
+nd NOT
+>> /nix/store/{xyz}, but still allow /nix/store/{foo} (the derivation
+>> output) to be created and written to. This would allow the nix build to =
+only
+>> have access to certain inputs, while being able to write to the /nix/sto=
 re
-unlinked. If a long-lived sandbox or build daemon creates and unlinks tempo=
-rary
-files in a LANDLOCK_ADD_RULE_CREATED directory, won't their on-disk blocks =
-and
-tmpfs pages remain allocated until every task in that domain layer exits?
+>> and produce an output. This is a valid usecase that Landlock cannot toda=
+y
+>> accomplish.
+>>=20
+>> There was this NO_INHERIT series I proposed a little while back.
+>> [1] It's sort of the inverse of this (removes accesses inherited from
+>> parents rather than granting new access) but would accomplish this
+>> goal.
+>>=20
+>> With NO_INHERIT, you could grant whatever access rights you want by defa=
+ult on
+>> the parent directory, and place NO_INHERIT on any specific entries you
+>> don't want to have inherit those rights.=20
+>>
+> It seems like NO_INHERIT too might scale poorly for the usecase. Since th=
+en
+> you are trading O(store) for O(inputs) so not much better (strictly
+> worse).
+>
+> Thoughts?
+>
+> Justin
 
-> @@ -1623,7 +1767,8 @@ static int hook_path_link(struct dentry *const old_=
-dentry,
->  			  struct dentry *const new_dentry)
->  {
->  	return current_check_refer_path(old_dentry, new_dir, new_dentry, false,
-> -					false, false);
-> +					false, false) ?:
-> +		       refer_created(old_dentry, new_dir);
->  }
-> =20
->  static int hook_path_rename(const struct path *const old_dir,
-> @@ -1632,10 +1777,16 @@ static int hook_path_rename(const struct path *co=
-nst old_dir,
->  			    struct dentry *const new_dentry,
->  			    const unsigned int flags)
->  {
-> +	int err;
-> +
->  	/* old_dir refers to old_dentry->d_parent and new_dir->mnt */
-> -	return current_check_refer_path(old_dentry, new_dir, new_dentry, true,
-> -					!!(flags & RENAME_EXCHANGE),
-> -					!!(flags & RENAME_WHITEOUT));
-> +	err =3D current_check_refer_path(old_dentry, new_dir, new_dentry, true,
-> +				       !!(flags & RENAME_EXCHANGE),
-> +				       !!(flags & RENAME_WHITEOUT));
-> +	if (err || (flags & RENAME_EXCHANGE))
-> +		return err;
-> +
-> +	return refer_created(old_dentry, new_dir);
->  }
+On NO_INHERIT: besides the O(store) cost, other builds keep adding
+paths to the store while this one runs. Those new paths have no
+NO_INHERIT rule, so they would inherit the store-wide access and be
+readable by the build. With the CREATED flag, nothing is readable
+unless a rule covers it.
 
-[Severity: High]
-Doesn't calling refer_created() in hook_path_link() and hook_path_rename()
-permanently grant access rights and pin the inode in hierarchy->created bef=
-ore
-the VFS validates or performs the link or rename?
+>> So for nix use case, you could grant no_inherit on everything except the
+>> inputs you need, then add READ/WRITE/MKDIR etc on /nix/store. The new
+>> directories would inherit this by default, while the ones you added
+>> NO_INHERIT on would be restricted.
+>>=20
+>> Additionally, you should also examine the mutable domains proposal by
+>> Tingmao Wang, which could also facilitate this usecase as well [2] (i.e =
+by
+>> dynamically adding and removing rules with some fanotify/inotify glue).
+>>=20
+>> That being said, neither of these two patchsets / proposals are merged,
+>> and the playing field is still open on this.
+>>=20
+>> So the problem you are pointing to is legitamate, but the solution still
+>> needs to be considered carefully to avoid complexity.
+>>=20
+>> Justin
+>>=20
+>> [1] https://lore.kernel.org/linux-security-module/20260621035223.2651547=
+-1-utilityemal77@gmail.com/
+>> [2] https://lore.kernel.org/linux-security-module/cover.1741047969.git.m=
+@maowtm.org/
+>> > Motivation
+>> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> >=20
+>> > The motivating user is the Nix build sandbox. Every Nix build runs in
+>> > its own sandbox, and a build may only read its declared inputs in
+>> > /nix/store and must be able to write and read back the outputs it
+>> > creates there. Nix enforces this with a private mount namespace: it
+>> > creates an empty store directory and bind-mounts each input path into
+>> > it, one mount per input. Nix has paid this per-input cost since the
+>> > sandbox was introduced [1].
+>> >
+>> > The cost is paid per build and grows with the size of the input
+>> > closure. Nix is moving towards much finer-grained builds (many small
+>> > derivations instead of a few large ones), so the number of sandboxes
+>> > grows while each build's own work shrinks, and the sandbox setup is
+>> > becoming the bottleneck. A typical build has hundreds of inputs; large
+>> > ones have thousands.
+>> >=20
+>> > A microbenchmark sets up and tears down a Nix-like sandbox (user,
+>> > mount, PID, IPC, UTS and network namespaces, pivot_root into a chroot,
+>> > removing the chroot afterwards). It compares one bind mount per input
+>> > with a single bind mount of the whole store plus one Landlock rule per
+>> > input. Median latency per sandbox, one sandbox at a time, Linux 7.1,
+>> > ext4, 16 cores:
+>> >=20
+>> >   inputs   bind mount per input   one bind mount + Landlock   speedup
+>> >       10         3.2 ms                    2.3 ms               1.4x
+>> >      100        11.6 ms                    2.8 ms               4.1x
+>> >     1000        79.3 ms                    6.4 ms              12.4x
+>> >     5000       400.1 ms                   24.4 ms              16.4x
+>> >=20
+>> > With Landlock, an input costs an O_PATH open and a landlock_add_rule()
+>> > call: there is a single mount, and no mountpoint directory to create
+>> > before the build and remove after it (removing the 1000 empty
+>> > mountpoints alone took 17 ms).
+>> >=20
+>> > The single bind mount is only sound if the store listing and the
+>> > undeclared store paths stay unreadable while the build can still use
+>> > its outputs. Without this series, covering the outputs requires a rule
+>> > on /nix/store itself, which makes every store path readable again.
+>> >=20
+>> > [1] https://github.com/NixOS/nix/issues/179
+>> >=20
+>> > Series
+>> > =3D=3D=3D=3D=3D=3D
+>> >=20
+>> > Patch 1 lets an LSM observe inode creation through the
+>> > inode_init_security hook when no LSM provides an xattr. Patch 2 adds
+>> > the LANDLOCK_ADD_RULE_CREATED flag for path-beneath rules and bumps th=
+e
+>> > ABI to 13. Patch 3 adds selftests.
+>> >=20
+>> > Testing
+>> > =3D=3D=3D=3D=3D=3D=3D
+>> >=20
+>> > The series applies to the Landlock next branch (3e271a27c46f) and was
+>> > tested on Linux 7.3 with that branch applied.
+>> >=20
+>> > Without patch 2, the five new tests and the ABI version check fail.
+>> >=20
+>> > Open questions
+>> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> >=20
+>> > - A created inode stays pinned until the layer's hierarchy is freed, s=
+o a
+>> >   sandbox that creates many entries in such a directory keeps them all=
+ in
+>> >   memory. Should this be bounded?
+>> >=20
+>> > - Creation is detected in inode_init_security, so on filesystems that =
+do
+>> >   not call security_inode_init_security() created entries get no right=
+s.
+>> >   Is there a better hook?
+>> >=20
+>> > - Through overlayfs, created entries get no rights either, because the
+>> >   upper inode is created with the mounter's credentials. Should overla=
+yfs
+>> >   be handled, e.g. via security_dentry_create_files_as()?
+>> >=20
+>> > - A file renamed or linked in keeps only the rights it had at its sour=
+ce.
+>> >   Should it get none instead?
+>> >=20
+>> > ---
+>> > Farid Zakaria (3):
+>> >       lsm: Call inode_init_security hooks without xattrs
+>> >       landlock: Add access rights on created files
+>> >       selftests/landlock: Test LANDLOCK_ADD_RULE_CREATED
+>> >=20
+>> >  Documentation/userspace-api/landlock.rst     |  42 +++++
+>> >  include/uapi/linux/landlock.h                |  18 +++
+>> >  security/landlock/domain.c                   | 182 ++++++++++++++++++=
+++-
+>> >  security/landlock/domain.h                   |  28 ++++
+>> >  security/landlock/fs.c                       | 176 ++++++++++++++++++=
++--
+>> >  security/landlock/object.h                   |   6 +
+>> >  security/landlock/ruleset.c                  |   6 +
+>> >  security/landlock/ruleset.h                  |  14 ++
+>> >  security/landlock/syscalls.c                 |  20 ++-
+>> >  security/security.c                          |   9 +-
+>> >  tools/testing/selftests/landlock/base_test.c |   2 +-
+>> >  tools/testing/selftests/landlock/fs_test.c   | 227 ++++++++++++++++++=
++++++++++
+>> >  12 files changed, 703 insertions(+), 27 deletions(-)
+>> > ---
+>> > base-commit: 3e271a27c46fd591d1011c7de5a644a41e2010f1
+>> > change-id: 20261024-landlock-created-rights-9340b00a8c4d
+>> >=20
+>> > Best regards,
+>> > -- =20
+>> > Farid Zakaria <farid.m.zakaria@gmail.com>
+>> >=20
+>> >=20
 
-In fs/namei.c, security_path_link() and security_path_rename() run before
-vfs_link() and vfs_rename():
 
-fs/namei.c:filename_renameat2() {
-	...
-	error =3D security_path_rename(&old_path, rd.old_dentry,
-				     &new_path, rd.new_dentry, flags);
-	if (error)
-		goto exit_unlock;
-
-	error =3D vfs_rename(&rd);
-	...
-}
-
-At the point hook_path_link() and hook_path_rename() run, the VFS has not y=
-et
-checked DAC permissions (may_create(), may_delete_dentry(),
-inode_permission()), file-type constraints (such as S_ISDIR() returning -EP=
-ERM
-in vfs_link(), or -EISDIR / -ENOTDIR / -ENOTEMPTY in vfs_rename()),
-subsequent LSM hooks (security_inode_link(), security_inode_rename()), or t=
-he
-filesystem's ->link() and ->rename() operations.
-
-If vfs_link() or vfs_rename() fails, refer_created() has already inserted
-old_dentry's inode into hierarchy->created and pinned it via ihold(). Could=
- a
-sandboxed task issue a link() or rename() that is guaranteed to fail in the
-VFS (for example, calling link() on a directory, which fails with -EPERM in
-vfs_link(), or renaming onto an incompatible target or DAC-unwritable
-directory) to permanently stamp new_dir's LANDLOCK_ADD_RULE_CREATED rights
-onto an inode in another directory, and then move that inode into a more
-restricted directory while retaining those rights?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261024-landlock-c=
-reated-rights-v1-0-77c8db3f6bd2@gmail.com?part=3D2
