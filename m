@@ -1,56 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792849651;
-	b=yRQ6K1+0IQSsmHuOOcjpAg09nRfI4lFziCocCmnFuC172rpEVKvbnZMCaXa0mnPphh3l
-	 zINnXgvdUPM3Z+cEX5c+s/LfQlnEhCOwJ4JfIltiJrut27yKlrhZjqDJL3cKVKf4Zeb64
-	 1yRyQytnOxOImwlGW43fAiKPUB7g0nvgOKIuTzmIk4s3nWXNWekEpW3pz7Q29Fhtua7H/
-	 5i+zvrKyN1FF0JO38m/01PyvLEJn2Vsb4ji3XSp18l2VLbiOajDhJD65t7uWz/d+jl8uu
-	 BoDeg0giJ+UgacKpjsn8TvIRKa3yRzP9m0PJkvmzFc53ynBkLlH7PJ15Y79W4AZWURg==
+	t=1792852120;
+	b=oXA9N+sCQ1q4X55Awpz/eOJfBz/UhR+ETmE0VGbeRWqCD2u+xAc1we22M1y96LOgYWXX
+	 We26yXjlLCusAUEMtXWgQTAm4D4I7sxVrwM4K98P9atTtmfNVEadHR7nFRIrynd4Xzzy8
+	 Zsei1KntfBIrT22lnhJet01DBTUMpLHE2A/B/o3YDd7cL1W75FSLT1QqayMsRvZeS1Xe0
+	 OgeCJCHTCqJPhlf+v39qe1dpyf6r7XOyvzL6zjt8FcyA2Vc4Qtd2FL/QLpqT3xREjZcQ5
+	 yCYjEy6Xurt2RghF+b4wWN38OpnfI+4foyhH9Ci1BgCpahAmtFwZQfHXv+SQd5fSTdg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792849651;
-	h=DMARC-Filter:DKIM-Signature:Received:MIME-Version:Date:From:To:Cc:
-	 Subject:In-Reply-To:References:User-Agent:Message-ID:X-Sender:
-	 Content-Type:Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
-	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
-	bh=pPBs3xrtR4T4D2lWZ+67aGijmLWPIIJarhkwTdzpy/Q=;
-	b=S8/cEspZUHcAg8IMB5q5WTj+VaVNyshRvf8LoU6ivisei8jAOPH2cUgQ8B1qGILlg+aC
-	 RIYuWQAJ/E9GBiXO4WFb2dd4iIN0jtQwjdtBzHPHTywOwr10dGvWc9RI/phJsIum0U4Rn
-	 aJ0uFvX5Iio2eMWywfA43mmEwKlT53r1ppvaeSD0Grq8EXBX2WHIxYqIRWuZQ98W5gKBc
-	 Q55fpC+yBf4Huj8upDeKUR739UYeo5S6b2l6P0kzVOizdkF6C6nHsJ9g0b/Xrj0ZU0tYa
-	 bpwMgKmdAAJ7V8fEOzMN796L8vVbUWk0WqxI3YYisyzwv/4NuvULM/6FiDW30XjjC9g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792852120;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Z628nHYfCWBiZSp+0Tr5bLdRHNW+dF809qGkRXHjCzA=;
+	b=kSB9+hKOV02r4ZOArPWcbakzB+zouu72Ky2Qw9OHg6PKcIURJlEcG5ovMsCb6c8BeTJV
+	 c+qs/y6YObfHjpk138wkx1E1WW6PS0175kJd8pqscVVmq+l16HWDFO0GOh1cbFl9YyrZg
+	 tFEXu0vrFEywWIAjMMsrPZIudUtL5qmRjW1oP3sF1R0fOkZ7rIYbq7fgmJ2cDrXMAmrm/
+	 xbroRqp6h7GqQ0VQYJDEVatmK+OhfYee0lxbd5usj5qiJpMjbc5VgYG55KMtRr09Egnok
+	 Nh9HoBxljTXcnz1OH/GZug6poT/qfZM1IQBdV3ci6NvbpwExbk/hiFJE2CJkIcF9nFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.cyber.gouv.fr;
-	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=XckZgYqe;
-	arc=none smtp.remote-ip=51.159.188.251
-Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d43tGz5W;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0A7606A31A;
-	Sat, 24 Oct 2026 13:47:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D0A7606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E154A606A31A;
+	Sat, 24 Oct 2026 14:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=XckZgYqe
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:
-	Reply-To:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=pPBs3xrtR4T4D2lWZ+67aGijmLWPIIJarhkwTdzpy/Q=; b=XckZgYqej/AwwA83bB9G8PSH8x
-	B2irdoMwfyhmxTydy72C3bwWvlya4vdOtsW5NOMwDjpN0TXSJgdwLUtPlF59EaBtT/a2uVZJ7/1Lv
-	ro9wxK75mPN7h51h1xW+zyzf8B63+DuHdy4Lsgnrlf4fBbxcehLOy40dVVld7Dvk5s4xgjWD3xyVu
-	/gql9qemQwUvlvOyPbu2X0eQtrYmctNApiEn2EXCUiz2gWCbH1Wztzi/l3gbOTl9ABWJXeKiW13qp
-	30avuO1Xgcr6uwizJ/ilGG1aOc7IwJolyjMGlk+qdR+RS3HuCESWZUCWBBMV7ap88I9XtL2NBi+HR
-	j0VR2wcA==;
-Received: from [::1] (port=52414 helo=pf-012.whm.fr-par.scw.cloud)
-	by pf-012.whm.fr-par.scw.cloud with esmtpa (Exim 4.100.1)
-	(envelope-from <jeremy.jean@oss.cyber.gouv.fr>)
-	id 1xKc5q-00000004iKa-2P5N;
-	Sat, 24 Oct 2026 15:47:28 +0200
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d43tGz5W
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 019A91F01825;
+	Sat, 24 Oct 2026 14:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792852119;
+	bh=Z628nHYfCWBiZSp+0Tr5bLdRHNW+dF809qGkRXHjCzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=d43tGz5W71HBVehKkUyqv+xSEIHwi6vD9Q8RrtEEoXejltcJa/QmnuS4ffEJMGHQV
+	 9BTbdPkvdgu1jsle8CIvBA3uU6OXkoucVNF1Jr6+j/n5RKzCjFDLktqKyjum0LGqzc
+	 rnHmdm4Esk4MCZ6BA1UrFfH2IKs6O6qDH5Lgu1tnuDzJYmClALHuUb8EuwhfQCdwx8
+	 ajgbMZARrfPWhlJbfCAQrouwAKNdbV9UhxZuqHQrONv//X6iVXRDgTdcAhyCYW7QQP
+	 XSS/bXTtqmM1tc6IwnX6quyjss3b57ZNk6dGwImBoFTM7XQ2cmmmgRb2muhzqtvWHz
+	 4A/q5LWJhrW6w==
+Date: Sat, 24 Oct 2026 17:28:35 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 5/6] KEYS: Replace assoc_array with rhashtable
+Message-ID: <atzAk-1IhxTN5nk8@kernel.org>
+References: <20261023120953.1206778-1-jarkko@kernel.org>
+ <20261023120953.1206778-6-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,53 +63,104 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Sat, 24 Oct 2026 15:47:27 +0200
-From: =?UTF-8?Q?J=C3=A9r=C3=A9my_Jean?= <jeremy.jean@oss.cyber.gouv.fr>
-To: =?UTF-8?Q?J=C3=A9r=C3=A9my_Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] ima: discard modsig when detached data cannot be
- supplied
-In-Reply-To: <20261024093918.2929374-2-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20261024093918.2929374-1-Jeremy.Jean@oss.cyber.gouv.fr>
- <20261024093918.2929374-2-Jeremy.Jean@oss.cyber.gouv.fr>
-User-Agent: Roundcube Webmail/1.6.19
-Message-ID: <b7b59b3fb2f0977808ecf5bd32970782@oss.cyber.gouv.fr>
-X-Sender: jeremy.jean@oss.cyber.gouv.fr
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261023120953.1206778-6-jarkko@kernel.org>
 
-On 2026-10-24 11:39, Jérémy Jean wrote:
-> ima_collect_modsig() supplies the file contents to the parsed PKCS#7
-> message as detached data. If the message already contains embedded 
-> data,
-> pkcs7_supply_detached_data() returns -EINVAL, but IMA ignores the 
-> error.
-> ima_modsig_verify() then verifies the embedded data instead of the file
-> being appraised.
-> 
-> Make ima_collect_modsig() report whether the file data was supplied,
-> and discard the modsig if it was not.
-> 
-> Fixes: 15588227e086 ("ima: Collect modsig")
+On Fri, Oct 23, 2026 at 03:09:25PM +0300, Jarkko Sakkinen wrote:
+> @@ -516,8 +507,7 @@ static long keyring_read(const struct key *keyring,
+>  		ctx.buffer = (key_serial_t *)buffer;
+>  		ctx.buflen = buflen;
+>  		ctx.count = 0;
+> -		ret = assoc_array_iterate(&keyring->keys,
+> -					  keyring_read_iterator, &ctx);
+> +		ret = keyring_iterate(keyring, keyring_read_iterator, &ctx);
+>  		if (ret < 0) {
+>  			kleave(" = %ld [iterate]", ret);
+>  			return ret;
+> @@ -525,7 +515,7 @@ static long keyring_read(const struct key *keyring,
+>  	}
+>  
+>  	/* Return the size of the buffer needed */
+> -	ret = keyring->keys.nr_leaves_on_tree * sizeof(key_serial_t);
+> +	ret = keyring_nr_links(keyring) * sizeof(key_serial_t);
+>  	if (ret <= buflen)
+>  		kleave("= %ld [ok]", ret);
+>  	else
 
-The public instance of Sashiko raised some relevant feedbacks for 1/2
-that my local Sashiko run did not see.
-I will address them in a new version.
+I changed this a bit because I wanted to bake cond_resched() between the
+iterations. I'd be interested getting feedback about the change below.
 
-Regards,
-Jérémy
+I.e. in my working branch I have this laid out as follows:
+
+-struct keyring_read_iterator_context {
+-	size_t			buflen;
+-	size_t			count;
+-	key_serial_t		*buffer;
+-};
+-
+-static int keyring_read_iterator(const void *object, void *data)
+-{
+-	struct keyring_read_iterator_context *ctx = data;
+-	const struct key *key = keyring_ptr_to_key(object);
+-
+-	kenter("{%s,%d},,{%zu/%zu}",
+-	       key->type->name, key->serial, ctx->count, ctx->buflen);
+-
+-	if (ctx->count >= ctx->buflen)
+-		return 1;
+-
+-	*ctx->buffer++ = key->serial;
+-	ctx->count += sizeof(key->serial);
+-	return 0;
+-}
+-
+ /*
+  * Read a list of key IDs from the keyring's contents in binary form
+  *
+@@ -503,7 +473,10 @@ static int keyring_read_iterator(const void *object, void *data)
+ static long keyring_read(const struct key *keyring,
+ 			 char *buffer, size_t buflen)
+ {
+-	struct keyring_read_iterator_context ctx;
++	struct keyring_index *links = keyring_index_locked(keyring);
++	struct keyring_link *link;
++	key_serial_t *serials = (key_serial_t *)buffer;
++	size_t count = 0;
+ 	long ret;
+
+ 	kenter("{%d},,%zu", key_serial(keyring), buflen);
+@@ -512,20 +485,18 @@ static long keyring_read(const struct key *keyring,
+ 		return -EINVAL;
+
+ 	/* Copy as many key IDs as fit into the buffer */
+-	if (buffer && buflen) {
+-		ctx.buffer = (key_serial_t *)buffer;
+-		ctx.buflen = buflen;
+-		ctx.count = 0;
+-		ret = assoc_array_iterate(&keyring->keys,
+-					  keyring_read_iterator, &ctx);
+-		if (ret < 0) {
+-			kleave(" = %ld [iterate]", ret);
+-			return ret;
++	if (buffer && buflen && links) {
++		list_for_each_entry(link, &links->list, list) {
++			if (count == buflen / sizeof(*serials))
++				break;
++
++			serials[count++] = keyring_link_key(link)->serial;
++			cond_resched();
+ 		}
+ 	}
+
+ 	/* Return the size of the buffer needed */
+-	ret = keyring->keys.nr_leaves_on_tree * sizeof(key_serial_t);
++	ret = links ? links->nr * sizeof(key_serial_t) : 0;
+ 	if (ret <= buflen)
+ 		kleave("= %ld [ok]", ret);
+ 	else
+
+What do you think about this? I'm worried about blind spot mainly
+because this feels too obvious.
+
+Br, Jarkko
