@@ -1,59 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.62.57.87
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792852120;
-	b=oXA9N+sCQ1q4X55Awpz/eOJfBz/UhR+ETmE0VGbeRWqCD2u+xAc1we22M1y96LOgYWXX
-	 We26yXjlLCusAUEMtXWgQTAm4D4I7sxVrwM4K98P9atTtmfNVEadHR7nFRIrynd4Xzzy8
-	 Zsei1KntfBIrT22lnhJet01DBTUMpLHE2A/B/o3YDd7cL1W75FSLT1QqayMsRvZeS1Xe0
-	 OgeCJCHTCqJPhlf+v39qe1dpyf6r7XOyvzL6zjt8FcyA2Vc4Qtd2FL/QLpqT3xREjZcQ5
-	 yCYjEy6Xurt2RghF+b4wWN38OpnfI+4foyhH9Ci1BgCpahAmtFwZQfHXv+SQd5fSTdg==
+	t=1792854230;
+	b=zwTRYG32nRBXi+Pr66O9QPqypjsv9TZDWPBaPGzW2Aa18ylvQbhQV8o/gHY1pNtnGkyI
+	 CD0MRXCp1uhx1dcX2ab6qbOSVVuxPIZUIzlSAPa9yFPo7I2LWXLzWoahUyW2hWsavVMGL
+	 JiFkjSvZnTdBI8lrN//pD9DoMCX6l716gdarnDP4EbtdsDH/P/qV15E60tY+YQw1lQTeU
+	 DrFuQlq6Dry5Dug5m3Rxq4tJM1LTLc7sK6tenWwJ/sMTpOgWowd2MI/S2V1MYY9WhnkXO
+	 9lfXxzpwzy4/DW5QWVzqa7f3jQ9LQP5fN9Tje6AsrotuAQ2FaDUPkEVa4LARyzY0YqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792852120;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Z628nHYfCWBiZSp+0Tr5bLdRHNW+dF809qGkRXHjCzA=;
-	b=kSB9+hKOV02r4ZOArPWcbakzB+zouu72Ky2Qw9OHg6PKcIURJlEcG5ovMsCb6c8BeTJV
-	 c+qs/y6YObfHjpk138wkx1E1WW6PS0175kJd8pqscVVmq+l16HWDFO0GOh1cbFl9YyrZg
-	 tFEXu0vrFEywWIAjMMsrPZIudUtL5qmRjW1oP3sF1R0fOkZ7rIYbq7fgmJ2cDrXMAmrm/
-	 xbroRqp6h7GqQ0VQYJDEVatmK+OhfYee0lxbd5usj5qiJpMjbc5VgYG55KMtRr09Egnok
-	 Nh9HoBxljTXcnz1OH/GZug6poT/qfZM1IQBdV3ci6NvbpwExbk/hiFJE2CJkIcF9nFw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792854230;
+	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
+	 X-QQ-XMAILINFO:X-QQ-XMRINFO:X-OQ-MSGID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=xk9airSWM+YEyVXP8MNP1OJgA0vrH2iz/FkgQwAQ6qE=;
+	b=4fLgiCuBNXaSS+UmDRXkpJO/nPayBSTXMwJI6h5RK8yA53wQT912kpDvu+AptyPWU8jI
+	 OGwni1to4wQN3LRxQ9aQ+6wOPw1/gRvjoA6V5fY4TwnQVKs46RDavg8x4IZ6qdVtIznda
+	 cWFIEnPZ9LQEbkC2fdo8vf9VtfOMez+nLvf6D5HDGMYipq0yv6ofrZriW0fyMg6oRISC0
+	 p2K1xm6fSF2r7IzA/3cJ1qp+e8IqI0LWfxpSPZPjuC5Nzolg72zeSkB5wnsrZefhOFhCM
+	 ld0nAGWUVgp4foc/oJgkcHemgm4AN3+8UeSCI+1Enk7ruBIKBvwfp/4kHW9pvqccTRA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d43tGz5W;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=qq.com;
+	spf=pass smtp.mailfrom=qq.com;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=fqenK3xx;
+	arc=none smtp.remote-ip=162.62.57.87
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E154A606A31A;
-	Sat, 24 Oct 2026 14:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FB3606A31E;
+	Sat, 24 Oct 2026 15:03:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 65FB3606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d43tGz5W
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 019A91F01825;
-	Sat, 24 Oct 2026 14:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792852119;
-	bh=Z628nHYfCWBiZSp+0Tr5bLdRHNW+dF809qGkRXHjCzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=d43tGz5W71HBVehKkUyqv+xSEIHwi6vD9Q8RrtEEoXejltcJa/QmnuS4ffEJMGHQV
-	 9BTbdPkvdgu1jsle8CIvBA3uU6OXkoucVNF1Jr6+j/n5RKzCjFDLktqKyjum0LGqzc
-	 rnHmdm4Esk4MCZ6BA1UrFfH2IKs6O6qDH5Lgu1tnuDzJYmClALHuUb8EuwhfQCdwx8
-	 ajgbMZARrfPWhlJbfCAQrouwAKNdbV9UhxZuqHQrONv//X6iVXRDgTdcAhyCYW7QQP
-	 XSS/bXTtqmM1tc6IwnX6quyjss3b57ZNk6dGwImBoFTM7XQ2cmmmgRb2muhzqtvWHz
-	 4A/q5LWJhrW6w==
-Date: Sat, 24 Oct 2026 17:28:35 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 5/6] KEYS: Replace assoc_array with rhashtable
-Message-ID: <atzAk-1IhxTN5nk8@kernel.org>
-References: <20261023120953.1206778-1-jarkko@kernel.org>
- <20261023120953.1206778-6-jarkko@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=fqenK3xx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1792854223; bh=xk9airSWM+YEyVXP8MNP1OJgA0vrH2iz/FkgQwAQ6qE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=fqenK3xxW/DxVzJvVMAbKxpRVLAsL4KU/0YPWGQVZ3mpfX7Blf5fVTWYj8luSccRa
+	 RdkA4jPrHC1+oqM1ZrDfek/SOfyJxCyRLDw67NqWAlwIaRmnux9E0B2S2SJuxc+xYw
+	 gwtkXPEk3dazxUr4/sYeHpW1kyJj+ss/xMs2gITo=
+Received: from [192.168.1.9] ([163.125.219.209])
+	by newxmesmtplogicsvrsza53-0.qq.com (NewEsmtp) with SMTP
+	id E88A017; Sat, 24 Oct 2026 23:03:40 +0800
+X-QQ-mid: xmsmtpt1792854220tgi7wo48f
+Message-ID: <tencent_7F10C2E7BB9C4B842554D6E95DE5D1DBD806@qq.com>
+X-QQ-XMAILINFO: N6IfSeM/PG+tBeimLU8RM+bXo26YOiITtRSkyB/D5VVVyRqCiKcT7NyI6qSsg6
+	 Lhnrpui0+7TScq/R7AFJj/z1JwJHXbuA/E6tSpagC14fa2LqfiVGqQtIQatkjM4bUX8YTWy+azLA
+	 uO8bb8EmpvaHJTk7rrXVI8kfyhA0bjwFvvwesQCKmxtUtOEtmvN0dau2Sg+vb/pRErbP+fMzlfaC
+	 hq5PO+40Wbms0xSMpwIeoBPdqHYEspgF+XGKJetCl76ODiH/ee+oNbIT4ZEWneq25QrLCAlL0J7B
+	 uAVzwzPPxLoxC1rvKhF2NfkjsuCw4GAcisN1cDErTPjKKSiIdbKSh0fnpETJPGY9QwcbP8oid17c
+	 3lIGN5OsTW9KTDLQ7fezl+hT1PQXAKOJaKyOqBPsf9A+Ot2F88huW2NOOxQB3F5MgqFVEDwKLLmx
+	 p29tv8xhqlKUAHQNBLU+ApDFnOh9v9mh010jzFq3kL6kZr9BhGr1CtnlnjyhM38/O7306FqAJwCc
+	 9rdelYUvzuh02GBjnkglqyJMh89oNMSgvro6NWBU02B05SkRWIydoRcnJxTjLRY4V3N5JkuLkx43
+	 RyVKxVsA8T1vxO+M6x+pPaGFOvxr+7DaIAcpwRCjvydi8bDf/qxrN30L0n1LdWGURD+h30otTqBS
+	 PKkflHc4hnjCtx5lueQOzQf975jymoQTkppDg5G3MMDSm7CeF0wrJ0iedfCSb24NjemeeY9W0CUn
+	 bLXUc9nTxa2Bx1jqJoKzm7O9V0TF6N7t/QC0fVWz3l7CNiw8mZpzyxo7rACZj6x8ajp/8pWIKlXl
+	 2JF+8I/sX+mkZkS+5NfXw+VICjIsU5+QWULhokS7EX7FtH2S3g9jJIkZbkFIH/mbvy7kciOMwqUd
+	 qp/nyNuK8J2GOjcGQ6KsBx8EoqZKA8rh4cvBXpzPEfDTuU+5W1v6oVpIDRlUZbWMY6X06X6lPhFx
+	 HrRHjUEyoAjv1aKVDy5fpQ0TJ/sgkjq0G5FiYU0XEsCyt6CX7+zFGc5i3K4qLobZjSDoppvPIFMq
+	 Q5710+nT7DLH/BDSSgAn1p5Vm5T7BUGZD1irjgcw0RMxWSJvgVwUTxN/YDt+CcFl0Ye51aCeZFZf
+	 zcIfc7pt9OAC6IFilfahtctDPFX0ZiwjdR+6FA9hJektU4gLmeMJpnBP9izA==
+X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-OQ-MSGID: <b3a2a829-c0d7-4ed2-9409-7086fb65909f@qq.com>
+Date: Sat, 24 Oct 2026 23:07:11 +0800
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,104 +72,73 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261023120953.1206778-6-jarkko@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] docs/zh_CN: add LSM admin-guide Chinese translation
+To: zhuyan2015@qq.com
+Cc: dzm91@hust.edu.cn, skhan@linuxfoundation.org, gnoack@google.com,
+ linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+ alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net, mic@digikod.net
+References: <tencent_001080DF135CEE2CD1B260EFA08E3CC71A09@qq.com>
+From: Yan Zhu <zhuyan2015@qq.com>
+In-Reply-To: <tencent_001080DF135CEE2CD1B260EFA08E3CC71A09@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 23, 2026 at 03:09:25PM +0300, Jarkko Sakkinen wrote:
-> @@ -516,8 +507,7 @@ static long keyring_read(const struct key *keyring,
->  		ctx.buffer = (key_serial_t *)buffer;
->  		ctx.buflen = buflen;
->  		ctx.count = 0;
-> -		ret = assoc_array_iterate(&keyring->keys,
-> -					  keyring_read_iterator, &ctx);
-> +		ret = keyring_iterate(keyring, keyring_read_iterator, &ctx);
->  		if (ret < 0) {
->  			kleave(" = %ld [iterate]", ret);
->  			return ret;
-> @@ -525,7 +515,7 @@ static long keyring_read(const struct key *keyring,
->  	}
->  
->  	/* Return the size of the buffer needed */
-> -	ret = keyring->keys.nr_leaves_on_tree * sizeof(key_serial_t);
-> +	ret = keyring_nr_links(keyring) * sizeof(key_serial_t);
->  	if (ret <= buflen)
->  		kleave("= %ld [ok]", ret);
->  	else
+Ping
 
-I changed this a bit because I wanted to bake cond_resched() between the
-iterations. I'd be interested getting feedback about the change below.
+On 6/12/2026 11:58 PM, Yan Zhu wrote:
+> This patch series adds the Chinese translation for the Linux Security Module
+> (LSM) admin-guide documentation, including the main index and all ten
+> sub-pages: apparmor, LoadPin, SELinux, Smack, tomoyo, Yama, SafeSetID,
+> ipe, and landlock.  The admin-guide toctree is also updated to list the
+> newly translated LSM/index.
+> 
+> The original English documentation was restructured into reStructuredText
+> by Kees Cook in commit 504f231cda56 ("doc: ReSTify and split LSM.txt"),
+> and each sub-page has been kept up-to-date with subsequent mainline changes.
+> 
+> 
+> base: https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git docs-next
+> 
+> 
+> 
+> Yan Zhu (10):
+>    docs/zh_CN: add LSM/index Chinese translation
+>    docs/zh_CN: add LSM/apparmor Chinese translation
+>    docs/zh_CN: add LSM/LoadPin Chinese translation
+>    docs/zh_CN: add LSM/SELinux Chinese translation
+>    docs/zh_CN: add LSM/Smack Chinese translation
+>    docs/zh_CN: add LSM/tomoyo Chinese translation
+>    docs/zh_CN: add LSM/Yama Chinese translation
+>    docs/zh_CN: add LSM/SafeSetID Chinese translation
+>    docs/zh_CN: add LSM/ipe Chinese translation
+>    docs/zh_CN: add LSM/landlock Chinese translation
+> 
+>   .../zh_CN/admin-guide/LSM/LoadPin.rst         |  33 +
+>   .../zh_CN/admin-guide/LSM/SELinux.rst         |  45 ++
+>   .../zh_CN/admin-guide/LSM/SafeSetID.rst       |  82 ++
+>   .../zh_CN/admin-guide/LSM/Smack.rst           | 722 +++++++++++++++++
+>   .../zh_CN/admin-guide/LSM/Yama.rst            |  71 ++
+>   .../zh_CN/admin-guide/LSM/apparmor.rst        |  59 ++
+>   .../zh_CN/admin-guide/LSM/index.rst           |  46 ++
+>   .../zh_CN/admin-guide/LSM/ipe.rst             | 723 ++++++++++++++++++
+>   .../zh_CN/admin-guide/LSM/landlock.rst        | 169 ++++
+>   .../zh_CN/admin-guide/LSM/tomoyo.rst          |  63 ++
+>   .../translations/zh_CN/admin-guide/index.rst  |   3 +-
+>   11 files changed, 2015 insertions(+), 1 deletion(-)
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/SELinux.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/SafeSetID.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/Smack.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/Yama.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/apparmor.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/index.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/ipe.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/landlock.rst
+>   create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
+> 
 
-I.e. in my working branch I have this laid out as follows:
+-- 
+Thanks
+Yan Zhu
 
--struct keyring_read_iterator_context {
--	size_t			buflen;
--	size_t			count;
--	key_serial_t		*buffer;
--};
--
--static int keyring_read_iterator(const void *object, void *data)
--{
--	struct keyring_read_iterator_context *ctx = data;
--	const struct key *key = keyring_ptr_to_key(object);
--
--	kenter("{%s,%d},,{%zu/%zu}",
--	       key->type->name, key->serial, ctx->count, ctx->buflen);
--
--	if (ctx->count >= ctx->buflen)
--		return 1;
--
--	*ctx->buffer++ = key->serial;
--	ctx->count += sizeof(key->serial);
--	return 0;
--}
--
- /*
-  * Read a list of key IDs from the keyring's contents in binary form
-  *
-@@ -503,7 +473,10 @@ static int keyring_read_iterator(const void *object, void *data)
- static long keyring_read(const struct key *keyring,
- 			 char *buffer, size_t buflen)
- {
--	struct keyring_read_iterator_context ctx;
-+	struct keyring_index *links = keyring_index_locked(keyring);
-+	struct keyring_link *link;
-+	key_serial_t *serials = (key_serial_t *)buffer;
-+	size_t count = 0;
- 	long ret;
-
- 	kenter("{%d},,%zu", key_serial(keyring), buflen);
-@@ -512,20 +485,18 @@ static long keyring_read(const struct key *keyring,
- 		return -EINVAL;
-
- 	/* Copy as many key IDs as fit into the buffer */
--	if (buffer && buflen) {
--		ctx.buffer = (key_serial_t *)buffer;
--		ctx.buflen = buflen;
--		ctx.count = 0;
--		ret = assoc_array_iterate(&keyring->keys,
--					  keyring_read_iterator, &ctx);
--		if (ret < 0) {
--			kleave(" = %ld [iterate]", ret);
--			return ret;
-+	if (buffer && buflen && links) {
-+		list_for_each_entry(link, &links->list, list) {
-+			if (count == buflen / sizeof(*serials))
-+				break;
-+
-+			serials[count++] = keyring_link_key(link)->serial;
-+			cond_resched();
- 		}
- 	}
-
- 	/* Return the size of the buffer needed */
--	ret = keyring->keys.nr_leaves_on_tree * sizeof(key_serial_t);
-+	ret = links ? links->nr * sizeof(key_serial_t) : 0;
- 	if (ret <= buflen)
- 		kleave("= %ld [ok]", ret);
- 	else
-
-What do you think about this? I'm worried about blind spot mainly
-because this feels too obvious.
-
-Br, Jarkko
