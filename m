@@ -1,57 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792820633;
-	b=HHij1tEf1Eciq9Sfk/aT+qeRvaF4HNlYXf07jjnSmsQ3MykAjY4luztwtn1X36Lgf5pk
-	 R0Y5kyZhGHwb4Zoup1BobYe6TFb8BETRgzqvYBmB6fnIMowROqAv7h7TMWK9Du3sjEiP7
-	 w61qXgJDcDbasvdaGASL/pZylc44JqlAr/DGnT6J3ZfWzi2KQ5+IJtVGweJibsSPsb28O
-	 rq3lq1aM5L/krlhFjlflagbyu7phv9P9JpLIWwS1PfWpt8i+5hcx3aO5rukZhWVisTicX
-	 YVEqVG/KMmWxKpZ+w//OEOKUZMKggJSqz+zVnC8QwERYDHaYmVR9p2NezHgx534z4ew==
+	t=1792834776;
+	b=sHN03wvCKse858OwWHKKXFbW72AiASe33wDhg2oSXL3MpWmlvtrDmsVjwuCARSxe5hyG
+	 8GiEjFw3k4GhIWrOvL0tajP/UsqGqgBU68yhTI/9tyN67J+C41364jlKZu8umoGoNXdSp
+	 al9luvTd/mIZCUb/AxmKKLdKEHAzVHQRjVU5acii16MV3cj6OLbdg5QWf1brme9Q5jMSY
+	 8uK5375EQ0wmxRM1jGEJo/K2fk8zt6G45loURWLhkPIIwRsoUYKQ+WErH7i3A60xLf4Te
+	 lq6YCgeQo548n7z0k1BjXXUSgNs2wxlTeBoT3tCwgqkA5oH0bTJtDKcqjTjy7tWTHzQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792820633;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Wiy7ZrHhw15Iry1Hperv5vWO08e018Xa7ESlKnGxgP4=;
-	b=p3YNHMdxpC8fh89vtBv0SSsIqsRlYo+FVFbc82i+ZpsdGoYGhGg0vLOFVLjKx7obLxGi
-	 0TdpBEJXCUkqHT8ptMzj7uIrEF/C/xe7pTsl7dVampFgxDTaasJabi0YGChwBE2J7o+Qt
-	 BseBcAaDgJqapdz+E78K+eADlVuX5pcpbZeVNg5RDqPm3ydFsUfqYorP8ETV+UpG+Yw/R
-	 1GbYkl+urTMIbDtUhzlo8b5nZnHGdtxWYwqgSVrffpb2FCG6VPoo/YJHwNb3Og3BIbuqy
-	 N1OdaE2yGY/dT7Xil3lUhngQH4m7hCZP7C5yaouduVCngmpv9A+JToJbuiUfukBupuQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792834776;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
+	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
+	bh=KS31rkiTulpWJCx3QTCIFROUZoxI1bFNTGmeAsZs3cE=;
+	b=fQZWT3Ea4GyhVEcJ2qwqdqrKOlisiOKwZNQI0CKtzPPyvsAm7MYZZ+p5FAPv0bLiKYdk
+	 CXIn60NGfo+tomu/rgiWiKbL5F4v0Ak2X0JppZ6wXKubNxqlq1/Bj8+HU/M3tTQK+Pau0
+	 yF7CL8baBfoVdvWR2cQpTP7/42PBLskjy/EWpQGIR019RFrDapf7EM3flYgCCVmLFvtp5
+	 Il+OWl30+Zuvs71vM6nHIEObe5yNY/rRNKonoO3N7yiZz5FZGtqZm8tEYGmoNuZTMiA7x
+	 QlSR+HciLpmuLGA+ycVf92di7sjQhiOoYVgv+Ey39YQyTxtsGuJ362D0XFLPMgV+Z3g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZkYUYPuX;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.cyber.gouv.fr;
+	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
+	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=Pl24gv1T;
+	arc=none smtp.remote-ip=51.159.188.251
+Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 21CDD606A31A;
-	Sat, 24 Oct 2026 05:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE5E606A31B;
+	Sat, 24 Oct 2026 09:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4FE5E606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZkYUYPuX
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 62E8D1F01825;
-	Sat, 24 Oct 2026 05:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792820632;
-	bh=Wiy7ZrHhw15Iry1Hperv5vWO08e018Xa7ESlKnGxgP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZkYUYPuXAaZTTqsqd1uu/NLftykv0x7JOgv5e7M5ckkrPOc4TPMTJ7NtCQO7QxmQC
-	 gTFMHD+hAtNI40XPWn2N+bnx4Y16EVdXAx5aSb6TC/arDxXko5XsHI+CQm4dFb/IKO
-	 TKFLv+mRF4l2rBh/ecrtoAEOETHZUl9FJhSdw97LUOw+9oBcgi4B/HmlXlYGQ/WCmy
-	 35PTyxmDtadaHZkEUY1QwBFpT0tAF4IYnhwMx74lP6tAa5YlcZ0k8xHukau9BbXT1o
-	 awttVwY7dkmwm09cKUycBSFF5lc++UnLuOyiHcTf2xB1OIJ/9Kx9gf1i9WXfHRmUrX
-	 3tszC9aDWsxeQ==
-Date: Sat, 24 Oct 2026 08:43:49 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eduard Zateev <hackerowskiy@gmail.com>
-Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] keys: use long workqueue for garbage collection
-Message-ID: <atxFldwBDvSALp46@kernel.org>
-References: <20261024042944.52493-1-hackerowskiy@gmail.com>
- <atxAM9JW6oi2MEeT@kernel.org>
- <atxEIlD8yeW30Nwr@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=Pl24gv1T
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Sender:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=KS31rkiTulpWJCx3QTCIFROUZoxI1bFNTGmeAsZs3cE=; b=Pl24gv1T2hbzNxupm5svHroa9r
+	X+nosB8WhrbBMFEN13UXVNmQ21J6Yu2hH8ShKfacGrmdfN9hRIa1FtezUAncA3zepiTpgUohq2l2a
+	MLtvXDqiJXoKkCktiV6Mepn8/eZUrKyCvu70faFj3InmbVcBz95zrMpLiTnPam6R2c6SWvzx8m5Wx
+	fyBh4Er/pxgf/UIxZrs9D50zSc8KNn+nwga4uepqDCpx+qj0yY0tqvvlZNwOTdO3MVqSvlsVDdENC
+	8PfxalZ/ze72FpAmzmP/Wprr2AaQ6hOSPJ9coJ6fGs8qOrVKQNVd2hUsp0L3togk+DqLZ0TBas0z+
+	l/JS8RIQ==;
+Received: from [151.115.150.205] (port=36518 helo=gepetto..)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
+	id 1xKYDo-0000000FNZU-05ud;
+	Sat, 24 Oct 2026 11:39:26 +0200
+From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+Subject: [PATCH v4 0/2] ima: reject modsig when detached data cannot be supplied
+Date: Sat, 24 Oct 2026 09:39:16 +0000
+Message-ID: <20261024093918.2929374-1-Jeremy.Jean@oss.cyber.gouv.fr>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -61,31 +74,64 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <atxEIlD8yeW30Nwr@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Sat, Oct 24, 2026 at 08:37:42AM +0300, Jarkko Sakkinen wrote:
-> On Sat, Oct 24, 2026 at 08:20:55AM +0300, Jarkko Sakkinen wrote:
-> > On Sat, Oct 24, 2026 at 06:29:44AM +0200, Eduard Zateev wrote:
-> > > The key garbage collector can wait for RCU grace periods. This can occupy a
-> > > normal events worker for a long time and contribute to workqueue lockups.
-> > > 
-> > > Queue key GC on system_long_wq because its work may wait for long periods.
-> > > 
-> > > Reported-by: syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com
-> > > Link: https://syzkaller.appspot.com/bug?extid=c15de43f1e7fffbb7b9b
-> > > Signed-off-by: Eduard Zateev <hackerowskiy@gmail.com>
-> > 
-> > This commit message is not huge selling point for any possible argument.
-> 
-> You ignored key_gc_timed_out(), which leaves code to a broken state and
-> switching workqueue is not solving any possible root cause of anything.
-> The long queue exists mostly for the sake of flush_workqueue().
-> 
-> Please stop sending patches like this in the future.
+ima_collect_modsig() supplies the file contents to the parsed PKCS#7
+message as detached data. If the message already contains embedded data,
+pkcs7_supply_detached_data() returns -EINVAL, but IMA ignores the error.
+ima_modsig_verify() then verifies the embedded data instead of the file
+being appraised. This could bypass the crypto check if one supplies data
+with an already known valid signature.
 
-Makes me wonder was this even tried a single time TBH given the obvious
-glitch.  I would bet for no.
+Patch 1 fixes the verification path by discarding a modsig if detached
+data cannot be supplied.
 
-Br, Jarkko
+Patch 2 keeps the exact pkcs7_supply_detached_data() error for a
+separate failed-modsig audit record. This part has been split out on
+request from Mimi Zohar so that the verification fix can be backported
+without this audit change.
+
+---
+Changes in v4:
+- Keep the call to pkcs7_get_digest() unchanged.
+- Adapt the calls to integrity_audit_msg() to ca1e0f3cce8a4.
+
+Changes in v3:
+- Split the verification fix from the audit change.
+
+Changes in v2:
+- If detached data cannot be supplied, discard the modsig but continue
+  hashing and xattr appraisal.
+- Keep signatures without exported digests; leave d-modsig empty.
+- Audit failure to supply detached data separately, even with O_DIRECT.
+
+v1: https://lore.kernel.org/all/20260822082434.489470-2-Jeremy.Jean@oss.cyber.gouv.fr/
+v2: https://lore.kernel.org/all/20260924085516.3111521-2-Jeremy.Jean@oss.cyber.gouv.fr/
+v3: https://lore.kernel.org/all/20261021210145.1851396-2-Jeremy.Jean@oss.cyber.gouv.fr/
+
+Jérémy Jean (2):
+  ima: discard modsig when detached data cannot be supplied
+  ima: audit failure to supply detached data for modsig
+
+ Documentation/security/IMA-templates.rst  |  3 ++-
+ security/integrity/ima/ima.h              |  9 +++----
+ security/integrity/ima/ima_api.c          | 29 ++++++++++++++++-------
+ security/integrity/ima/ima_main.c         |  2 +-
+ security/integrity/ima/ima_modsig.c       | 10 ++++++--
+ security/integrity/ima/ima_template_lib.c |  4 ++--
+ 6 files changed, 39 insertions(+), 18 deletions(-)
+
+-- 
+2.47.3
+
