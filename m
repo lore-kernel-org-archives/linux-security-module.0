@@ -1,83 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792886387;
-	b=yx144uhI3G2LZbJLL+lGHQ8y1KhExG/OZKRfeCcoPFp7MINtNbG1eYzZrF7exADtNuoC
-	 1m7YpHsRNfv5KR2qGjkimpmeXUcD4jRqTYcy/WzTGgDcDf7yQvWzCOdf1K7mlO2fGVN+4
-	 4b5P/zOzBKh7PzixNDXtALpQBv139I7t65qIbXWi03wTKMd5IvfR6KXrLAI4+Fm8YhqZX
-	 CDVRatCP38LkC+xgXXLvrQcKRjPN57KytulmSvf/6AY1N6TaBOWuLfo/lUyiLBsjvnUzd
-	 azuu9HnZYamk/PZhcVb5qhrxzb+vvLsGavB/hQCRDd6VUQAPTIyBBe4RnvXicZ85x3Q==
+	t=1792887121;
+	b=sUNMV/EEQdUyPljyNeDfkpgTe0vb415eoKkZqPA/o2ntVI15LxOM5FwZ5MH+ZVKIqHCB
+	 8qT6KrnqXDUyOw1Zhy5GZb/l7PLF3dTTvv81CUsmN0mdwS1msNrcpeSkyvKjo6c9bEXiQ
+	 MJQ3VD8nrLpF1u7aw1zJYQ6DDmQS4DmE1fDW13EdjdQUHx1fJ45iL+khDJebqj554zcFs
+	 qvgbBEQNDq38pMl7bS325H67Uo2V1HVeCarzYRmTn44ZdpopgTkX5AYW9hq9nO2Q30oLr
+	 uGoaQerX7RpMM8F/uotRWmGXugO2AKgCi1HgCT8wW4Gzw0gSU4EK/WkPJfww2NwCRrA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792886387;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Message-Id:
-	 Cc:Subject:From:To:X-Mailer:References:In-Reply-To;
-	bh=kPGkV1PrAtGPm5u8Uv9TfVrX1KaCYLI/ILzCGAHiWVU=;
-	b=UKXZWhdMMIXn+oAHZ0P/x/WknkvhzV4oAjHOBiYivrHODqYRHGciB/73Dyj0zLbPbhkO
-	 PmCiXyeV/kqDtjsALjRCyGN+QI6wtS1OAM+/b1PkeURo11wQZzG+UfhsTa/TUPOlDDfpw
-	 rXSAbJK1knBjcYRhs8hZZM+L9PZFawCOC2fsbd46ZNddL/ZyG9tyYcZ1eOxIWbat+4VRh
-	 31faL4u7shmo6K8gEb51qssOv5+5kll76V0ScEVlYH/RAUnwDcMI3HOPdc2ws7lMDIdX5
-	 4gl5lzCH1wXM/yk8IoIwQ51GaC6WCeUqA3fGU9++uIEJDQxbG6gEbcVvDIx1r/N//Eg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792887121;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=rIGPAv7/zPFbNwYxOD2kgwfOMkyaHEeBIaAk6kpu4To=;
+	b=jLSgfOC1aIAnQReUx1x7Wt6w+KSnpXRv7brIlMUKErYgv9Tj7DcOeiJwrYL5MkCX71kL
+	 S4rI0R84WPTMn0r0T+00U12mMrTMvj/Pk5F+rW0dmjGI3g0TfQ9kBd7lb21wfRpESGG1D
+	 dgnmAnGfkRhQobCZzgxnOfwuHZD7wS0fIjaPfatkr67Dm66tNXciRRnivoUjmSvaG6VPr
+	 sldC+GzGSQXT9Y52zPj8a9zTBkVtgPJzrBhB0zxnH5h+fSZYfZSMTCCvHivUEvkccHoBb
+	 4N/nJ4SUVwC57oMh2rIAThOAjfqn7CsIKXs387XRQSZ+19ZuWRWjmY4VwXkOfKS0q6A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=WloVDXD6;
-	arc=none smtp.remote-ip=74.125.82.170
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B1zINBwc;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F43F606A31B
-	for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2026 23:59:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3F43F606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 78CA4606A324;
+	Sun, 25 Oct 2026 00:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=WloVDXD6
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-369f33df08eso588247eec.0
-        for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2026 16:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792886386; x=1793491186; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=kPGkV1PrAtGPm5u8Uv9TfVrX1KaCYLI/ILzCGAHiWVU=;
-        b=WloVDXD6l+pIZoSuUYA2v1ecepRDeOY/98L4cBaFUnmdRioBkEBCuosjzGB95QYmyz
-         cf8ETJoaRyLTbUdk29oQX9Pd06r1pw9ck/OnFGffFOhKUTrOX062tJJ+Emj6X9n+iwAJ
-         AK6kEYIy3QpXVll2lLC6ClP9pCeh48f3w05eYWJUe6DyvQyXU7JT1xcyEiKw4Ez3dSPb
-         WhmyfAbMxa42p9jafEhFxGEKH2Rg5agHKe2/364HccVsMhBwwoSsdvmRH2Ackp2gm6L/
-         CmSuw1hgmsps+o4TngBhrlO4K5xOJDJEjZ1OKNvDTho8AJcC88RM6HNOyVpVrhW9H2Rm
-         u/4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792886386; x=1793491186;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=kPGkV1PrAtGPm5u8Uv9TfVrX1KaCYLI/ILzCGAHiWVU=;
-        b=blh4SgZMjtXLF4HBjprL5krummpNip7RftBslzoAIuOJoAOEv1+4D+zG1S5YTrFgUi
-         yJRz7MDU5dgbbUTaCX8UygQemf0MXfyPAZGlnVg5sUlS5NMq/xtonqUgA2eO9xJZr2IK
-         w6XiWUakpH13u0nb8LOtFDvCOGAXcQQkkwjQCkBLu+aw7GoGCT9Ca4SKFLgWvdG8IHjs
-         lEmeQ59o0vQ4Sju8q7oKJPPCprKk6Yzf6L1LOtCVw8yrlzVxuSEcGGqfcGGV3vWXDSnW
-         +dbvjQ+Q9KynRlx7hvvP2noc22YaZvYUgHbzMTIZxLk2xRkXxwk7TDpvfrLvR7JPtO/y
-         BP+Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzzMCJ4quo4AauvlwfqppCAyzeqx+NEeTQtJdXqIuppgZ9Py9XZ3RACoKKEq5grUnwKrALGeTIejQBkOv7wfwOCc6ajF4Q=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKrYQ8GxHqZ0o5EFE3GjWNkHYumjylrYuZTmVVaeA9B9ODswIao
-	uRQvN/U7PD+sPqxhYFCqIMPRBSLjyemcyKeJ8RTZ/NHXx+YmKssxnP4A
-X-Gm-Gg: AYBFou0lmZlmRhl6uqCVk+kAN2hHW6A+89jFSVskSlyFoCkuamCaNuLIm7HXCq3UnYd
-	DImKq0flPtGmyBDvWqlPQBNWZQOXj8E+ROMQyAygZUjy4V0599G1zwbGJZ0i7CTuVQ+OUToeS2i
-	CALnu3DcGdIfbIVDkMwuPzZxDgSciGbj3jPSeh0i7dmzOUQPI6h1gEeSZR9hwc0eNshaoJcGrRe
-	AZpp5pN/YURcvz/Iehg3RiMB7zHyfh8q8lv2yDYoMw1+jETnb+rwVfY3CExXdPwVflZp7Nzqa1d
-	RmjrBqQj018Q+kuLcD1/hhUxLBegInDkVip6I3nhoH0dSvr7aDdxmrgBa+9CGXIYLvXsuHS/7aA
-	uDvhJRTsGBhHEE0mf59EcuFVEGseEpKF494i5gcDZop8srtqSDNuMGOQ2TbIVWaNwBRLoj7s0cU
-	RtQvTQiruchTNQ/fUYT4DX+BdWPWUJ3V0F9SFO0ohyHxuY+65S+ZjVKCfQVxp1Op18XsOSaXopx
-	0cHCSriYTG2GOS5KLRYCPnW+XIZQXdRrDaFT6vQjbnwTwBMWd4jH8mAdio=
-X-Received: by 2002:a05:7022:e10:b0:14b:cf58:ce15 with SMTP id a92af1059eb24-199377d8c81mr6217789c88.43.1792886385960;
-        Sat, 24 Oct 2026 16:59:45 -0700 (PDT)
-Received: from localhost ([73.222.46.22])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-198a249c331sm24522674c88.17.2026.10.24.16.59.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Oct 2026 16:59:45 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B1zINBwc
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A5D2B1F01825;
+	Sun, 25 Oct 2026 00:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792887121;
+	bh=rIGPAv7/zPFbNwYxOD2kgwfOMkyaHEeBIaAk6kpu4To=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=B1zINBwcMH8BoYOnbv+CJZQFhjcHbt8RZR6zkbS0IXyayJ6IIJZURyLi/SrVFddJT
+	 7q+O7BpFM0qF7oPqUAEea59WOX2C30Z5rOOwsMQ5TKbzus8VoBfEnEyM1l/dQedP0E
+	 NN6QQiedP+xoCwb2dw2nKlZP+RTFcHDu4Y4wAxuk6a2ya994bWKhOBOQdq3T0eoeGr
+	 1T02csxorD/Y8bPiPHF9AeBSRVSf2LsOb9s/E/U7PiKu3rnPQNNz08UzTRywSAXLId
+	 GCvYoVr9vkTaV/Oyl2663WNVEJK/BcEths8swgBjPkBfJHDBXt5IF1g9hclyra3I8A
+	 ykpiLSsp595dw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: keyrings@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	Thomas Graf <tgraf@suug.ch>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-crypto@vger.kernel.org (open list:RHASHTABLE),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v3 2/6] KEYS: Reject descriptions larger than KEY_MAX_DESC_SIZE
+Date: Sun, 25 Oct 2026 03:10:10 +0300
+Message-ID: <20261025001105.1824178-3-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261025001105.1824178-1-jarkko@kernel.org>
+References: <20261025001105.1824178-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -86,284 +69,172 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 24 Oct 2026 16:59:44 -0700
-Message-Id: <DMDH6IGUKIG4.PFYGRQT3YJB9@gmail.com>
-Cc: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Shuah Khan" <shuah@kernel.org>, "Jonathan
- Corbet" <corbet@lwn.net>, "John Ericson" <mail@johnericson.me>,
- <linux-security-module@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC 0/3] landlock: Add access rights on created files
-From: "Farid Zakaria" <farid.m.zakaria@gmail.com>
-To: "Justin Suess" <utilityemal77@gmail.com>, "Farid Zakaria"
- <farid.m.zakaria@gmail.com>
-X-Mailer: aerc 0.22.0
-References: <20261024-landlock-created-rights-v1-0-77c8db3f6bd2@gmail.com>
- <at0agiPbtxz5zD41@zenbox> <at0o7LydcgezBf7D@zenbox>
-In-Reply-To: <at0o7LydcgezBf7D@zenbox>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Justin,
+KEY_MAX_DESC_SIZE includes the trailing NULL character. Descriptions
+generated from payloads and in-kernel paths bypass the userspace limit.
 
-Thank you for engaging me on this RFC. Admittedly, I have not followed
-the landlock discussions closely. This was an idea I had concocted while
-thinking how we can make Nix sandboxing faster.
-(I'm also exploring the space with AI - so I'm a landlock newbie but not
-a Nix newbie.)
+Reject descriptions at or above KEY_MAX_DESC_SIZE with -EINVAL at the
+following sites:
 
-Mickael, et al: I see that sashiko found some legitimate concerns.
-I can fix that up in a V2 if we like the general idea and want to
-continue exploring it.
+- key_alloc(): before quota calculation
+- __key_create_or_update(): before key_set_index_key()
+- keyring_search(): before match_preparse
+- request_key_and_link(): before match_preparse
+- request_key_rcu(): before check_cached_key()
 
-On Sat Oct 24, 2026 at 3:03 PM PDT, Justin Suess wrote:
-> On Sat, Oct 24, 2026 at 05:43:26PM -0400, Justin Suess wrote:
->> On Sat, Oct 24, 2026 at 01:39:16PM -0700, Farid Zakaria wrote:
->> > This is a proposal for an idea to add support for landlock to work
->> > better with build systems such as Nix where they want to apply
->> > restrictions but the paths may not yet exist.
->> >=20
->> > TL;DR;
->> > =3D=3D=3D=3D=3D=3D=3D=3D
->> >=20
->> > Landlock rules attach to inodes that exist when a ruleset is built.
->> > That makes a directory shared between trusted and sandboxed tasks hard
->> > to confine: the sandbox may create entries there with
->> > LANDLOCK_ACCESS_FS_MAKE_*, but no rule can name those entries ahead of
->> > time, and granting read access on the directory to cover them exposes
->> > every other entry as well. This series adds a rule flag that grants
->> > access rights on the entries a domain creates in a directory, instead
->> > of on the directory.
->> Hi,
->>=20
->> I'll chime in since I run nix and have a little bit of familiarity.
->>=20
->> Looking at my (admittedly bloated) nix store.
->>=20
->> [justin@zenbox ~]$ ls /nix/store | wc -l
->> 259356
->>=20
->> That's a lot of inodes. And a nix derivation creates hundreds if not
->> thousands potentially throughout it's build.
->>=20
->> My main concern is that rulesets are generally considered
->> immutable after enforcement. This allows for well-defined semantics on
->> inheritence. This from my understanding would mutate the ruleset after
->> it's already enforced, so changes wouldn't be copied to inherited
->> domains automatically.
->
-> * nvm on this, it looks like you are adding them to a different
-> heirarchy. The point still stands though on the inode pinning, which you
-> pointed out.
->
->
+Cc: stable@vger.kernel.org
+Fixes: f771fde82051 ("keys: Simplify key description management")
+Reviewed-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Link: https://lore.kernel.org/r/20261020174325.2229448-3-jarkko@kernel.org
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ include/linux/key.h         |  3 +++
+ security/keys/key.c         | 10 +++++++++-
+ security/keys/keyctl.c      |  2 --
+ security/keys/keyring.c     |  7 ++++++-
+ security/keys/request_key.c | 14 ++++++++++++--
+ 5 files changed, 30 insertions(+), 6 deletions(-)
 
-On the cost:
-
-only entries created directly in the directory that has
-the rule get recorded. For Nix that is /nix/store, so a build records
-one entry per output ($out, $dev, ...). Nothing is recorded for
-$out/foo or anything else under $out.
-
-Access there is allowed because the path walk at access time reaches
-$out and finds it in the recorded set, the same way a rule on a directory
-covers what is beneath it. Existing store paths are never recorded, so the
-store's size does not matter... right?
-
-A bad actor could still create many entries in the store
-(touch /nix/store/junk1 ... junk1000000), and each one stays pinned
-until the domain is freed. I can add a per-domain limit on the number
-of created entries. Nix only needs as many as the derivation has
-outputs ($out, $dev etc..).
-
->>=20
->> My other concern is with the overhead of automatically generating an ins=
-erting
->> a rule for every new inode that gets created. It seems like a complex
->> way to tackle this problem.
->>=20
->> But beyond that, let's go back to your usecase.
->>=20
->> ....
->>=20
->> Basically from what I'm seeing you want to grant some access to certain
->> subdirectories (including newly created ones) but exclude others.
->>=20
->> Presumably in the nix case, you want to grant /nix/store/{abc,efg,hij} a=
-nd NOT
->> /nix/store/{xyz}, but still allow /nix/store/{foo} (the derivation
->> output) to be created and written to. This would allow the nix build to =
-only
->> have access to certain inputs, while being able to write to the /nix/sto=
-re
->> and produce an output. This is a valid usecase that Landlock cannot toda=
-y
->> accomplish.
->>=20
->> There was this NO_INHERIT series I proposed a little while back.
->> [1] It's sort of the inverse of this (removes accesses inherited from
->> parents rather than granting new access) but would accomplish this
->> goal.
->>=20
->> With NO_INHERIT, you could grant whatever access rights you want by defa=
-ult on
->> the parent directory, and place NO_INHERIT on any specific entries you
->> don't want to have inherit those rights.=20
->>
-> It seems like NO_INHERIT too might scale poorly for the usecase. Since th=
-en
-> you are trading O(store) for O(inputs) so not much better (strictly
-> worse).
->
-> Thoughts?
->
-> Justin
-
-On NO_INHERIT: besides the O(store) cost, other builds keep adding
-paths to the store while this one runs. Those new paths have no
-NO_INHERIT rule, so they would inherit the store-wide access and be
-readable by the build. With the CREATED flag, nothing is readable
-unless a rule covers it.
-
->> So for nix use case, you could grant no_inherit on everything except the
->> inputs you need, then add READ/WRITE/MKDIR etc on /nix/store. The new
->> directories would inherit this by default, while the ones you added
->> NO_INHERIT on would be restricted.
->>=20
->> Additionally, you should also examine the mutable domains proposal by
->> Tingmao Wang, which could also facilitate this usecase as well [2] (i.e =
-by
->> dynamically adding and removing rules with some fanotify/inotify glue).
->>=20
->> That being said, neither of these two patchsets / proposals are merged,
->> and the playing field is still open on this.
->>=20
->> So the problem you are pointing to is legitamate, but the solution still
->> needs to be considered carefully to avoid complexity.
->>=20
->> Justin
->>=20
->> [1] https://lore.kernel.org/linux-security-module/20260621035223.2651547=
--1-utilityemal77@gmail.com/
->> [2] https://lore.kernel.org/linux-security-module/cover.1741047969.git.m=
-@maowtm.org/
->> > Motivation
->> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> >=20
->> > The motivating user is the Nix build sandbox. Every Nix build runs in
->> > its own sandbox, and a build may only read its declared inputs in
->> > /nix/store and must be able to write and read back the outputs it
->> > creates there. Nix enforces this with a private mount namespace: it
->> > creates an empty store directory and bind-mounts each input path into
->> > it, one mount per input. Nix has paid this per-input cost since the
->> > sandbox was introduced [1].
->> >
->> > The cost is paid per build and grows with the size of the input
->> > closure. Nix is moving towards much finer-grained builds (many small
->> > derivations instead of a few large ones), so the number of sandboxes
->> > grows while each build's own work shrinks, and the sandbox setup is
->> > becoming the bottleneck. A typical build has hundreds of inputs; large
->> > ones have thousands.
->> >=20
->> > A microbenchmark sets up and tears down a Nix-like sandbox (user,
->> > mount, PID, IPC, UTS and network namespaces, pivot_root into a chroot,
->> > removing the chroot afterwards). It compares one bind mount per input
->> > with a single bind mount of the whole store plus one Landlock rule per
->> > input. Median latency per sandbox, one sandbox at a time, Linux 7.1,
->> > ext4, 16 cores:
->> >=20
->> >   inputs   bind mount per input   one bind mount + Landlock   speedup
->> >       10         3.2 ms                    2.3 ms               1.4x
->> >      100        11.6 ms                    2.8 ms               4.1x
->> >     1000        79.3 ms                    6.4 ms              12.4x
->> >     5000       400.1 ms                   24.4 ms              16.4x
->> >=20
->> > With Landlock, an input costs an O_PATH open and a landlock_add_rule()
->> > call: there is a single mount, and no mountpoint directory to create
->> > before the build and remove after it (removing the 1000 empty
->> > mountpoints alone took 17 ms).
->> >=20
->> > The single bind mount is only sound if the store listing and the
->> > undeclared store paths stay unreadable while the build can still use
->> > its outputs. Without this series, covering the outputs requires a rule
->> > on /nix/store itself, which makes every store path readable again.
->> >=20
->> > [1] https://github.com/NixOS/nix/issues/179
->> >=20
->> > Series
->> > =3D=3D=3D=3D=3D=3D
->> >=20
->> > Patch 1 lets an LSM observe inode creation through the
->> > inode_init_security hook when no LSM provides an xattr. Patch 2 adds
->> > the LANDLOCK_ADD_RULE_CREATED flag for path-beneath rules and bumps th=
-e
->> > ABI to 13. Patch 3 adds selftests.
->> >=20
->> > Testing
->> > =3D=3D=3D=3D=3D=3D=3D
->> >=20
->> > The series applies to the Landlock next branch (3e271a27c46f) and was
->> > tested on Linux 7.3 with that branch applied.
->> >=20
->> > Without patch 2, the five new tests and the ABI version check fail.
->> >=20
->> > Open questions
->> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> >=20
->> > - A created inode stays pinned until the layer's hierarchy is freed, s=
-o a
->> >   sandbox that creates many entries in such a directory keeps them all=
- in
->> >   memory. Should this be bounded?
->> >=20
->> > - Creation is detected in inode_init_security, so on filesystems that =
-do
->> >   not call security_inode_init_security() created entries get no right=
-s.
->> >   Is there a better hook?
->> >=20
->> > - Through overlayfs, created entries get no rights either, because the
->> >   upper inode is created with the mounter's credentials. Should overla=
-yfs
->> >   be handled, e.g. via security_dentry_create_files_as()?
->> >=20
->> > - A file renamed or linked in keeps only the rights it had at its sour=
-ce.
->> >   Should it get none instead?
->> >=20
->> > ---
->> > Farid Zakaria (3):
->> >       lsm: Call inode_init_security hooks without xattrs
->> >       landlock: Add access rights on created files
->> >       selftests/landlock: Test LANDLOCK_ADD_RULE_CREATED
->> >=20
->> >  Documentation/userspace-api/landlock.rst     |  42 +++++
->> >  include/uapi/linux/landlock.h                |  18 +++
->> >  security/landlock/domain.c                   | 182 ++++++++++++++++++=
-++-
->> >  security/landlock/domain.h                   |  28 ++++
->> >  security/landlock/fs.c                       | 176 ++++++++++++++++++=
-+--
->> >  security/landlock/object.h                   |   6 +
->> >  security/landlock/ruleset.c                  |   6 +
->> >  security/landlock/ruleset.h                  |  14 ++
->> >  security/landlock/syscalls.c                 |  20 ++-
->> >  security/security.c                          |   9 +-
->> >  tools/testing/selftests/landlock/base_test.c |   2 +-
->> >  tools/testing/selftests/landlock/fs_test.c   | 227 ++++++++++++++++++=
-+++++++++
->> >  12 files changed, 703 insertions(+), 27 deletions(-)
->> > ---
->> > base-commit: 3e271a27c46fd591d1011c7de5a644a41e2010f1
->> > change-id: 20261024-landlock-created-rights-9340b00a8c4d
->> >=20
->> > Best regards,
->> > -- =20
->> > Farid Zakaria <farid.m.zakaria@gmail.com>
->> >=20
->> >=20
-
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 26139c3adf62..3b8af14fb323 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -37,6 +37,9 @@ struct net;
+ 
+ #undef KEY_DEBUGGING
+ 
++/* Maximum length of a key description, including the trailing NUL */
++#define KEY_MAX_DESC_SIZE 4096
++
+ #define KEY_POS_VIEW	0x01000000	/* possessor can view a key's attributes */
+ #define KEY_POS_READ	0x02000000	/* possessor can read key payload / view keyring */
+ #define KEY_POS_WRITE	0x04000000	/* possessor can update key payload / add link to keyring */
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 6ebb8691551f..e88548f1a704 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -245,6 +245,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	}
+ 
+ 	desclen = strlen(desc);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		goto error;
+ 	quotalen = desclen + 1 + type->def_datalen;
+ 
+ 	/* get hold of the key tracking for this user */
+@@ -829,6 +831,7 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 	key_ref_t key_ref;
+ 	int ret;
+ 	struct key_restriction *restrict_link = NULL;
++	size_t desclen;
+ 
+ 	/* look up the key type to see if it's one of the registered kernel
+ 	 * types */
+@@ -869,7 +872,12 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 		if (!index_key.description)
+ 			goto error_free_prep;
+ 	}
+-	index_key.desc_len = strlen(index_key.description);
++	desclen = strlen(index_key.description);
++	if (desclen >= KEY_MAX_DESC_SIZE) {
++		key_ref = ERR_PTR(-EINVAL);
++		goto error_free_prep;
++	}
++	index_key.desc_len = desclen;
+ 	key_set_index_key(&index_key);
+ 
+ 	ret = __key_link_lock(keyring, &index_key);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 36ffba0ebba6..d6b10fd67627 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -24,8 +24,6 @@
+ #include <keys/request_key_auth-type.h>
+ #include "internal.h"
+ 
+-#define KEY_MAX_DESC_SIZE 4096
+-
+ static const unsigned char keyrings_capabilities[2] = {
+ 	[0] = (KEYCTL_CAPS0_CAPABILITIES |
+ 	       (IS_ENABLED(CONFIG_PERSISTENT_KEYRINGS)	? KEYCTL_CAPS0_PERSISTENT_KEYRINGS : 0) |
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 7143f3079d20..2c54f7f84c55 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -957,7 +957,6 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
+-		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+@@ -965,8 +964,14 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 		.flags			= KEYRING_SEARCH_DO_STATE_CHECK,
+ 	};
+ 	key_ref_t key;
++	size_t desclen;
+ 	int ret;
+ 
++	desclen = strlen(description);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		return ERR_PTR(-EINVAL);
++	ctx.index_key.desc_len = desclen;
++
+ 	if (recurse)
+ 		ctx.flags |= KEYRING_SEARCH_RECURSE;
+ 	if (type->match_preparse) {
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index fa2bb9f2f538..ef00c2b08fe0 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -584,7 +584,6 @@ struct key *request_key_and_link(struct key_type *type,
+ 		.index_key.type		= type,
+ 		.index_key.domain_tag	= domain_tag,
+ 		.index_key.description	= description,
+-		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+@@ -595,8 +594,14 @@ struct key *request_key_and_link(struct key_type *type,
+ 	};
+ 	struct key *key;
+ 	key_ref_t key_ref;
++	size_t desclen;
+ 	int ret;
+ 
++	desclen = strlen(description);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		return ERR_PTR(-EINVAL);
++	ctx.index_key.desc_len = desclen;
++
+ 	kenter("%s,%s,%p,%zu,%p,%p,%lx",
+ 	       ctx.index_key.type->name, ctx.index_key.description,
+ 	       callout_info, callout_len, aux, dest_keyring, flags);
+@@ -787,7 +792,6 @@ struct key *request_key_rcu(struct key_type *type,
+ 		.index_key.type		= type,
+ 		.index_key.domain_tag	= domain_tag,
+ 		.index_key.description	= description,
+-		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+@@ -797,6 +801,12 @@ struct key *request_key_rcu(struct key_type *type,
+ 	};
+ 	struct key *key;
+ 	key_ref_t key_ref;
++	size_t desclen;
++
++	desclen = strlen(description);
++	if (desclen >= KEY_MAX_DESC_SIZE)
++		return ERR_PTR(-EINVAL);
++	ctx.index_key.desc_len = desclen;
+ 
+ 	kenter("%s,%s", type->name, description);
+ 
+-- 
+2.47.3
 
