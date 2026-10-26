@@ -1,126 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793026442;
-	b=wX0jVyFJq+zLcIaaznDvButo6llrY9rIfrS1WzCPkc57a6BHZHvvn8Nu27PiDZveK+Jp
-	 yNaxn8g5IP5pe2RjHeB/kKyimGFCJO6FdzhuR8YgndthWDBy0wgpH9AZgGbJLf5vDoqCe
-	 vdDoUX5ZjxC9d0Zpp+s8H7iEeEgNl91tfSbLy5MoORzeaFbVea8767KuHRiviD2NmEPx3
-	 4IWXr+8Fy37lHpXEdEuyDKppPzXApULtF2CZHBl5jm71G3GJGXpGVGP09225iC0XTQ0en
-	 O3NPTrJfA6l6yDzqerxDrtIESQ+N8hofwlfhAN89YM840A7WFpBGFD010AqM+Tkwuag==
+	t=1793029309;
+	b=hwKGLOnVzGJ6I2rKT4SS6V1g+HCEjF8Ieyq2HGD7uZH/KiFjG7zELtQ0pfbI/eEB0M13
+	 zHLMf5FCSDFWI4ufnC7drVCuwrrvrizzKMaosTqTf67NegPxu4mpsUNJW14sF5IZFx9l+
+	 7Zvzd/q7WgTTJ/qKTzoR7kVhEvlMkGgCpEsbS8qkUXnVlEAB5poCq8SBEntsvswyF+6p4
+	 enWhBdUHmeWecTjCq5nuUFf/MFHpunXNQSYfjVcjqQgXbSATDldT/G+c0u9cD1WazaSsx
+	 yv8YLFeoVb8l7h/HlPUfIBmQXV5SAI2Z670RDwMomBubxqT+QCppGNsBx1BTrzhEcPA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793026442;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 X-Received:Received:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:In-Reply-To:X-Mimecast-Spam-Score:X-Mimecast-MFC-PROC-ID:
-	 X-Mimecast-Originator:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding;
-	bh=OKz8jQo/auRPZNzdWHUdE6yB8Ix7XlP0akY/URWqfWs=;
-	b=cT1SIpOPTk6b35JJcpUOUXJlYI5QdhWuoBZnRUmQDUi+cbN0JuSqhW9RVlRUh3g/gmz5
-	 j1ocCNKCR+o0W2b9Nl2UGJi+WYkOi88Q1YRfptqjy4lI40aOU3IFmTb3ay6fnMaBYhNFJ
-	 tNK19d0D2D6Bhxw75ZJQMPtMEJXWlR3Esx+jmeUXaxj6JqpvS3YADoQIlZVYTn26o8sQL
-	 eLcqDfBmNn+Di0DabVECqKKmQ81K7tumZChzmhV8pOqtOFHLISYrbd4ty+NSlmG0SoSPz
-	 9Lbw86ngUxf6s/zvxoHOIgs89Xq7SVlpwglBNqAXUX8ZS4zNub+c6jm3ID4dcOHTWvQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793029309;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=lo1Co26bSeUKxfLlIH6ftVWFXXXapCMDqueoz1J2jS4=;
+	b=X2VrL01boff3Eb/TQ68TMTuSs3CQYDAB+gDjCxxD7sSnlwEQ9DN8vhMPsaCxDs1KYunm
+	 QS+4B2R5BnjGMrfdAKBoLXyvaBjfyRMKOd5RtGLN002d6Kx+KM6y0v6EL6Y+Irq8nFsOV
+	 BmR+qBFUPXz4ilHvs3lM5/cWrYEWcCXXj7jzGigRAsw9LfDHPinaUqJBWssxnl+LG2PrG
+	 80pra1DtLgsdgaRxc0Z09vypxdeV/IedxBtk2OaXLsInD1y5B+xDYwdx0NhWjZ89zATdh
+	 eA26ltCr6MlpUiCRI+BN3+e0A8rtZvkHxW6U4ivDCfVLWNAYDDT+t4eQSP0C0LRv1VQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ERkprg9R;
-	arc=none smtp.remote-ip=170.10.129.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=toxicpanda.com;
+	spf=pass smtp.mailfrom=toxicpanda.com;
+	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b="CjJ/Hz5A";
+	arc=none smtp.remote-ip=209.85.160.173
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B5C606A31B
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 14:54:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 57B5C606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C97606A321
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 15:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25C97606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ERkprg9R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1793026440;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OKz8jQo/auRPZNzdWHUdE6yB8Ix7XlP0akY/URWqfWs=;
-	b=ERkprg9RQDF0hLYEQEK6W4YCQtJjEBAQ2TsbjX0HNA7pDMMr9hxWvnDrf1AwjvOcUkPO8A
-	i4B0XAr3Rm4srBQh/5THFEiFYLs7Necl9hh9WEIafQRRXJuQAtKtSphr0iU99grbeYdyuW
-	Pjp5DevJWYd9DUES5b6nE5M3FfVpMkQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-15-uO-vwvDDN-2tbRM5yPk83w-1; Mon, 26 Oct 2026 10:53:58 -0400
-X-MC-Unique: uO-vwvDDN-2tbRM5yPk83w-1
-X-Mimecast-MFC-AGG-ID: uO-vwvDDN-2tbRM5yPk83w_1793026438
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4a1e489f97fso33424155e9.0
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 07:53:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793026437; x=1793631237;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=CjJ/Hz5A
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-53664b4860bso33938351cf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 08:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda.com; s=google; t=1793029308; x=1793634108; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=OKz8jQo/auRPZNzdWHUdE6yB8Ix7XlP0akY/URWqfWs=;
-        b=DVbvLCPCmS5mKV6/OtNXtUUAOmOKDj+NINps0htLYBQWrZM5AsWcZmVpLttOj1rinU
-         RVwOHhwLH40sD5mIHKtpo2cGlcpQ36t0E94NdU29hRGhnBEwybCDgILYow8i1sTt+sDz
-         bzihc3RYq8ViJUHCC6naARU2wPUpatOG3W1SDlcN611IhOvTHwlTAg+PImtFAGouQzbZ
-         R78WNT/trsnl2XBg7lJEwoS2KYKRsCU6nore78Z/LhjPtAT1UTQ75KFzlt6/bBO7NXlS
-         xpHpQT+mWxOn6e7nbOJq2go6DS3pHe0M5FcADaJk2z4ENIuKw32kKRXmyAAh1+rzCFwg
-         Pkqg==
-X-Forwarded-Encrypted: i=1; AKwUvBwAz61+YVCfiFBbyRGLX+1ooV+78fui6zjRoTNRK2f6t2A42t9qpCzpRn4RrEiBnGkXDXLLwqaiSlaXlz0DFlr4gkhYUMg=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKBP7N1J2CfHmwKyTDYrG+0DhCZWI+vQx6hJuB29RuN0CNty5CM
-	b52rcmeUG8UnJpJrhvYaXArsVzEW/1ANwhoDYmX/d1IjYO/8Bxno5J7v6ldEzJSiixJnaOy0JQz
-	q5xWZEgB6WA1H9J1v7a0NRlzYxxsFD5mu3HiorFiTIeGXe7rrukJWmQNoq+karv+o3X0756BOMB
-	/Ynw==
-X-Gm-Gg: AYBFou3RI52TAslA5sjVhTdocLpph8vKgeTZ/eOonxx+5jy3rcQzSoFDzW0pR5ZoEuE
-	Yh4FLqkYvx6d7FLad5EKGkdEbFhSYrdM3j8gP71cNum06fLym+qvJYQLCAi20QIvekpwFQ/9LBu
-	kYKnPVPLVGN4DRyriokrjth8ltAQXu0e/5LnzXHmKakbSFQ1RcIPGj36pLaCzxIez5lOAF+gFIq
-	oxZ41BxH4JeE+lbx3F1BerSzKFTOYFCA4+KlOKDmJNXMjg/SJ8t9M8tjx5cjvkiGlwviT1RmyyN
-	qY0XbW5cses8Pzq6Ntd+WOA/9pWpWgTQHEL06HEcRwDWKxxaI26SjuBGVZwkpbDRmic=
-X-Received: by 2002:a05:600c:3487:b0:4a1:fba8:b13d with SMTP id 5b1f17b1804b1-4a35ac8c231mr138381565e9.9.1793026437535;
-        Mon, 26 Oct 2026 07:53:57 -0700 (PDT)
-X-Received: by 2002:a05:600c:3487:b0:4a1:fba8:b13d with SMTP id 5b1f17b1804b1-4a35ac8c231mr138381105e9.9.1793026437038;
-        Mon, 26 Oct 2026 07:53:57 -0700 (PDT)
-Received: from localhost ([46.6.57.114])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a35a0bac37sm213564065e9.6.2026.10.26.07.53.55
+        bh=lo1Co26bSeUKxfLlIH6ftVWFXXXapCMDqueoz1J2jS4=;
+        b=CjJ/Hz5A6Yyt5Bhrd18QDSz5+Aq0mLiokCYaI/51qnZeHvFeKB5T7obiumGZbK7BDs
+         m0paZtG7e3i8PsaXLIFSY4sMcbgdrRAOOnAZhTXnQvkPgCo4H8e645b8gVMAp/+ptGp3
+         JS7QNgUxkxlCvH59t31G64WdpcA5CYx8Rhv39WSKVo65udid2j9CYU92+cTwN0GcZLmY
+         KHCTn9kEGGoBq5gqtjWNVRniE9zXygl54dtKU/TfXdR7w5eWfndVoNJB9L94xG640KVj
+         UyaxkpqNMmR0b1dGkuuYv8t6ZAS+pMnFMBG7rzWWA371Uu/BFT3RL6KVUEy0eJU0DCDB
+         +prQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793029308; x=1793634108;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=lo1Co26bSeUKxfLlIH6ftVWFXXXapCMDqueoz1J2jS4=;
+        b=ZUEiVfajx/O7sUi7IdNdu1VDT5ox9kcCRxbFoD6fMCRmXNnogQuudSHsgY1J/r/iXB
+         b9zCcxnAVNriIYTvmjLbS1JmozPgYGgcIaEzXaybSXcWGwBm3M2rs1VAM/WkDPQffXRb
+         rkTJQfSpb7z0rH5VVOx70iMWW55NFKK5ubHx3KQT4qNhys11DTs4ELdRlYpT6eOohHiS
+         HVYYaEm9zCk/l3fphHBFyyzHVbyt5/Or8lE+rMJnPrrA43fNN0ESq7XMvLc1M/9ifqpZ
+         cf2qbHE1FNYaaobMNK8mu/Dp3vUtKFkeMTAj14RwEO/AVyDSsuSDaDgyApbsvLD7CIJp
+         hKKg==
+X-Forwarded-Encrypted: i=1; AKwUvByDgrTovDyRG1ezyRNIh7nIVlgcht/jAltelycemHqgVJFjNWRdoEPK3Y/lzCVDuSGTPkM4f5xyEnIsH5ZrbIxYznJnBSo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYKcUofEOtfluOE1vgq00GryRMgBk2AUN00R05X3hsmG4VZ4mT8h
+	v7QGGciqGbu6sHzQPg0ZVLkGPyA+V7GmtAidA6x+eFSZ4hAKdzUzwb+RUXH2nWSc2q4=
+X-Gm-Gg: AYBFou0AOtyQdVNsalEJDNEUVTGkUTN93YUxxEmoJFhVoBBMmNAyn4hS8AlxJ+puSnS
+	bmwwVLYUmIk7WP3hS8bHcyVat1Cg+tOdj2g4BWwhhL2hC2NJtBVsABuJfz3hqY6nhWG4RaCxlko
+	zZhcaPH7ReNOT+8xABHqd5uZroI44AqCQrC2ekucCZ6RAkAmHJI6Be4PqkspJ2nIc1RcWABe4G9
+	WunVSPEXxroqDRjfvrj3OSDIe23Q84W+5GmeVpvtN2/PrXnyZlbO4gNpON2rSpOk7LmQqTme5js
+	O854LWIt05hXF6gUzM7JXb8G1oxO2Pbe9+oFj77eWLWfgOhr7b5aQXXnoL+5KQ2h15TWq0z1kDc
+	NxmzrZctFw/Q1BOo7UFN69EF2i1JqOHIVpKphJl1zIeUDR0mE8q04KtOcVMN2IiZqd4tTvYHhEi
+	ANCjUMbtKgh9IQOa461192CBkKMxVr4A/FdVfB70QdbmWd1OWnQsjQ2wtDRf+LRFjDWRo6B+YFB
+	Fjyd/JTbiAbx6JCiDS6cJMimhLf0DyLXTzSqHxOSC8lu+PjbRoR3eNp7wS38xOI92rxIq2/
+X-Received: by 2002:a05:622a:2488:b0:535:bfc:329 with SMTP id d75a77b69052e-5383b5ce214mr117985951cf.61.1793029307757;
+        Mon, 26 Oct 2026 08:41:47 -0700 (PDT)
+Received: from toxicpanda.com ([153.61.196.241])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5383973f314sm56699951cf.24.2026.10.26.08.41.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 07:53:56 -0700 (PDT)
-Date: Mon, 26 Oct 2026 15:53:54 +0100
-From: Albert Esteve <aesteve@redhat.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-	Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>,
-	cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	mripard@kernel.org, echanude@redhat.com
-Subject: Re: [PATCH RFC v2 7/8] dma-buf: transfer memcg charges via
- DMA_BUF_IOCTL_XFER_CHARGE
-Message-ID: <at9pgl9sC8__GHlZ@aesteve-thinkpadp1gen8.rmtes.csb>
-References: <20261021-v2_20230123_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com>
- <20261021-v2_20230123_tjmercier_google_com-v2-7-ef6ee2dd8c5c@redhat.com>
- <9e54354d-b037-47e1-9390-86d5e25444a7@amd.com>
+        Mon, 26 Oct 2026 08:41:46 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+Subject: [PATCH v6 0/6] capabilities: close the ways around the CAP_SETFCAP
+ rule for uid 0
+Date: Mon, 26 Oct 2026 15:41:36 +0000
+Message-Id: <20261026-b4-setfcap-userns-v6-0-25f10b7ca497@toxicpanda.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -130,309 +92,220 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-In-Reply-To: <9e54354d-b037-47e1-9390-86d5e25444a7@amd.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: uTIuhA3chsVOXxo0e2EODEyVb9_omhRF3rhrNyfRUjU_1793026438
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALF032oC/33Oy27DIBAF0F+JWJeGl8Huqv9RZcFjqKlabIFjJ
+ Yr87wV346qom5FmdOfoPlCGFCCjl9MDJVhDDlMsi3w6ITvq+A44uLIjRpikhEhsBM6weKtnfC2
+ /MWMnOe07zakFjsrfnMCH226+XX72fDUfYJcK1YTRGbBJOtqxnj7nsxHn/fibrtkx5GVK973gS
+ qv5X5eVYoK9UKDASUkUe12mW7Czjk4/2+kL1UIrOzBUtBhWGW2FowPrqVNNhh8YRlsML8ygbCk
+ jQHCgTUYcGdZiRGH6XmvifRm9bzLdkeEtpisMkSXBuIGh+9tm27Zvq6xP1hECAAA=
+X-Change-ID: 20261006-b4-setfcap-userns-d63185a31ce3
+To: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
+ Christian Brauner <brauner@kernel.org>
+Cc: James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, 
+ Jarkko Sakkinen <jarkko@kernel.org>, "Andrew G. Morgan" <morgan@kernel.org>, 
+ Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
+ linux-kselftest@vger.kernel.org, Bradley Morgan <brads@mainlining.org>, 
+ Josef Bacik <josef@toxicpanda.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openssh-sha256; t=1793029304; l=9539;
+ i=josef@toxicpanda.com; h=from:subject:message-id;
+ bh=pDF44xAdDeLNnAjZIkEGCwfjtZtRw0H1dx24aBVtyK4=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgUBr36M/n0nWN0DNbnxwzIiCZez6MG
+ JiruuNaSCI/zXsAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QJEtKzgs7AEqEmF8b9zWu4rgSvdnuUmjIwMW5jg3DkSR1Rnup0XAr9mJ4IxxzvHxifXCulDpnKK
+ 1Ixms51jirQ8=
+X-Developer-Key: i=josef@toxicpanda.com; a=openssh;
+ fpr=SHA256:C8kOX2QUJCMqnCX+KEeoqRAjLo9L+ELOSH2NSAJHqGA
 
-On Thu, Oct 22, 2026 at 12:23:57PM +0200, Christian König wrote:
-> On 10/21/26 17:42, Albert Esteve wrote:
-> > dma-heap already supports charging a specific cgroup at allocation
-> > time via charge_fd in DMA_HEAP_IOCTL_ALLOC. However, dma-bufs can
-> > originate from any exporter (DRM, V4L2, etc.), and the allocator may
-> > not know the final owner at allocation time.
-> > 
-> > Add DMA_BUF_IOCTL_XFER_CHARGE to transfer a dma-buf's memcg charge
-> > to a different cgroup after allocation. The target is identified by
-> > charge_fd, which may be a cgroupfd or a pidfd.
-> > 
-> > The transfer charges the new cgroup before uncharging the old one,
-> > preserving the original charge on failure. An atomic cmpxchg on
-> > dmabuf->memcg prevents races with concurrent transfers.
-> > 
-> > Usage example:
-> >   int cg_fd = open("/sys/fs/cgroup/clients/app1", O_RDONLY | O_DIRECTORY);
-> > 
-> >   struct dma_buf_transfer_charge xfer = {
-> >       .charge_fd = cg_fd,
-> >   };
-> >   ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
-> >   /* charge now on app1's cgroup */
-> >   close(cg_fd);
-> > 
-> > Signed-off-by: Albert Esteve <aesteve@redhat.com>
-> > ---
-> >  drivers/dma-buf/dma-buf.c    | 77 ++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/memcontrol.h   |  9 ++++++
-> >  include/uapi/linux/dma-buf.h | 26 +++++++++++++++
-> >  mm/memcontrol.c              | 40 +++++++++++++++++++++++
-> >  4 files changed, 152 insertions(+)
-> > 
-> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> > index f31f49ebd0af..7fa607d9bf65 100644
-> > --- a/drivers/dma-buf/dma-buf.c
-> > +++ b/drivers/dma-buf/dma-buf.c
-> > @@ -540,6 +540,80 @@ static long dma_buf_import_sync_file(struct dma_buf *dmabuf,
-> >  }
-> >  #endif
-> >  
-> 
-> A single line code comment what this is all about would be nice to have.
-> 
-> Some note to look at struct dma_buf_transfer_charge for details is most likely good enough.
+v1: https://lore.kernel.org/all/20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com/
+v2: https://lore.kernel.org/all/20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com/
+v3: https://lore.kernel.org/all/20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com/
+v4: https://lore.kernel.org/all/20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com/
+v5: https://lore.kernel.org/all/20261023-b4-setfcap-userns-v5-0-0620223be951@toxicpanda.com/
 
-Sure, will add it for next version.
+v5->v6:
+- New 6/6: a kselftest with every case the series has been through,
+  48 of them.  Without the series 22 fail, with v5 the 4 below fail.
+- 3/5: a task inside the namespace that is being mapped also has to
+  hold CAP_SETFCAP there to open or write a uid_map that maps an
+  ancestor's root user.  Before, a task that gave up CAP_SETFCAP could
+  write "0 0 1" and get it back from execve() (Sashiko).
+- 4/5: a v2 xattr on a filesystem whose namespace has no uid 0 is
+  refused with -EINVAL instead of stored unconverted, where it was
+  honoured nowhere.  Falling through to the conversion would not do:
+  for a writer outside that namespace it names the writer's root user
+  instead (Sashiko).
 
-> 
-> > +static long dma_buf_xfer_charge(struct dma_buf *dmabuf,
-> > +				const void __user *user_data)
-> > +{
-> > +	struct cgroup *cgrp;
-> > +	struct cgroup_subsys_state *css;
-> > +	struct dma_buf_transfer_charge arg;
-> > +	struct mem_cgroup *memcg;
-> > +	struct task_struct *task;
-> > +	const struct cred *tcred;
-> > +	unsigned int pidfd_flags;
-> > +	int ret = 0;
-> > +
-> > +	if (copy_from_user(&arg, user_data, sizeof(arg)))
-> > +		return -EFAULT;
-> > +
-> > +	if (!IS_ENABLED(CONFIG_MEMCG))
-> > +		return 0;
-> > +
-> > +	if (arg.__padding != 0)
-> > +		return -EINVAL;
-> > +
-> > +	cgrp = cgroup_get_from_fd(arg.charge_fd);
-> > +	if (!IS_ERR(cgrp)) {
-> > +		/* charge_fd is a cgroupfd */
-> > +		rcu_read_lock();
-> > +		css = cgroup_css(cgrp, &memory_cgrp_subsys);
-> > +		if (!css || !css_tryget_online(css)) {
-> > +			rcu_read_unlock();
-> > +			cgroup_put(cgrp);
-> > +			return -ENOENT;
-> > +		}
-> > +
-> > +		memcg = mem_cgroup_from_css(css);
-> > +		rcu_read_unlock();
-> > +
-> > +		ret = security_dma_buf_charge_cgroup(current_cred(), cgrp);
-> > +		cgroup_put(cgrp);
-> > +		if (ret) {
-> 
-> 
-> > +			mem_cgroup_put(memcg);
-> > +			return ret;
-> 
-> Maybe use goto skip_transfer; instead?
+v4->v5:
+- 3/5: the uid_map check only looked for an extent at the parent's uid
+  0.  The root user of an ancestor can sit at any uid in the parent, so
+  a task without CAP_SETFCAP could map "0 1000 1" under a "1000 0 1"
+  and get host uid 0 as its uid 0 unchecked.  It now finds every
+  ancestor root user the map contains.  4/5 already refused the file
+  capabilities after such a map, so this is the map rule itself
+  (Sashiko).  Dropped Bradley's Reviewed-by on 3/5, which changed.
 
-Yeah. This is a copy from the ALLOC part sharing this logic.
-I will refactor all this logic (extracting memcg from the fd)
-into a function in memcontrol to clean up this mess.
+v3->v4:
+- 4/5: a v2 security.capability xattr skipped the new checks, it was
+  written as is whenever the writer had CAP_SETFCAP over the
+  filesystem's namespace.  It now only does that when the filesystem's
+  root user is within reach, and goes through the v3 conversion and its
+  checks otherwise (Sashiko).
 
-> 
-> > +		}
-> > +	} else {
-> > +		/* charge_fd is a pidfd  */
-> > +		task = pidfd_get_task(arg.charge_fd, &pidfd_flags);
-> > +		if (IS_ERR(task))
-> > +			return PTR_ERR(task);
-> > +
-> > +		tcred = get_task_cred(task);
-> > +		ret = security_dma_buf_charge_task(current_cred(), tcred);
-> > +		put_cred(tcred);
-> > +		if (ret) {
-> > +			put_task_struct(task);
-> > +			return ret;
-> > +		}
-> > +
-> > +		memcg = get_mem_cgroup_from_mm(task->mm);
-> > +		put_task_struct(task);
-> > +	}
-> > +
-> > +	if (dmabuf->memcg == memcg)
-> > +		goto skip_transfer;
-> > +
-> > +	if (!mem_cgroup_transfer_dmabuf_charge(dmabuf, memcg)) {
-> > +		ret = -ENOMEM;
-> > +		goto skip_transfer;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +skip_transfer:
-> > +	mem_cgroup_put(memcg);
-> > +	return ret;
-> > +}
-> > +
-> >  static long dma_buf_ioctl(struct file *file,
-> >  			  unsigned int cmd, unsigned long arg)
-> >  {
-> > @@ -590,6 +664,9 @@ static long dma_buf_ioctl(struct file *file,
-> >  		return dma_buf_import_sync_file(dmabuf, (const void __user *)arg);
-> >  #endif
-> >  
-> > +	case DMA_BUF_IOCTL_XFER_CHARGE:
-> > +		return dma_buf_xfer_charge(dmabuf, (const void __user *)arg);
-> > +
-> >  	default:
-> >  		return -ENOTTY;
-> >  	}
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index aa08fbb0c26c..3a6acfda1423 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -674,6 +674,9 @@ int mem_cgroup_swapin_charge_folio(struct folio *folio, unsigned short id,
-> >  bool mem_cgroup_charge_dmabuf(struct dma_buf *dmabuf, struct mem_cgroup *memcg,
-> >  			      gfp_t gfp_mask);
-> >  
-> > +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
-> > +				       struct mem_cgroup *new_memcg);
-> > +
-> >  void __mem_cgroup_uncharge(struct folio *folio);
-> >  
-> >  /**
-> > @@ -1183,6 +1186,12 @@ static inline bool mem_cgroup_charge_dmabuf(struct dma_buf *dmabuf,
-> >  	return true;
-> >  }
-> >  
-> > +static inline bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
-> > +						     struct mem_cgroup *new_memcg)
-> > +{
-> > +	return true;
-> > +}
-> > +
-> >  static inline void mem_cgroup_uncharge(struct folio *folio)
-> >  {
-> >  }
-> > diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
-> > index e827c9d20c5d..4970a7b8e08e 100644
-> > --- a/include/uapi/linux/dma-buf.h
-> > +++ b/include/uapi/linux/dma-buf.h
-> > @@ -168,6 +168,31 @@ struct dma_buf_import_sync_file {
-> >  	__s32 fd;
-> >  };
-> >  
-> > +/**
-> > + * struct dma_buf_transfer_charge - Transfer a dma-buf's memcg charge
-> > + *
-> > + * Any holder of a dma-buf file descriptor can perform a
-> > + * DMA_BUF_IOCTL_XFER_CHARGE to attribute the buffer's memory
-> > + * cost to a specific cgroup, or move it from one cgroup to
-> > + * another.  The ioctl charges the new cgroup before uncharging
-> > + * the old one atomically.  On failure the original charge is
-> > + * preserved.  If the buffer has no existing charge, a new
-> > + * charge is established.
-> > + */
-> > +struct dma_buf_transfer_charge {
-> > +	/**
-> > +	 * @charge_fd: File descriptor identifying the target cgroup.
-> > +	 *
-> > +	 * May be either a pidfd, in which case the charge moves to the
-> > +	 * memory cgroup of the referenced process, or a cgroupfd obtained
-> > +	 * by opening a cgroup v2 directory, in which case the charge moves
-> > +	 * directly to that cgroup's memory controller.
-> > +	 */
-> > +	__u32 charge_fd;
-> > +	/** @__padding: Reserved, must be zero */
-> > +	__u32 __padding;
-> 
-> Maybe rename to flags, put before charge_fd and add "/* unused for now */".
+v2->v3:
+- The setns() check in 2/5 and the ptrace check in 5/5 only apply to
+  namespaces that map the root user of an ancestor within the creator's
+  CAP_SETFCAP, or that have no uid_map yet.  Root users stored through
+  an idmapped mount are left to whoever sets up the mount, so a root
+  task without CAP_SETFCAP can join an ordinary "0 100000" container
+  again (Serge, Christian).
+- 2/5 adds cred_may_setfcap_userns() for those two checks and
+  cred_setfcap_reaches() for the uid_map check; nothing outside
+  create_user_ns() calls cap_setfcap_level() directly (Serge).
+- Fixed the cap_setfcap_level() kernel-doc, @ns doesn't have to be the
+  cred's namespace or below; cap_capable() is compared with != 0
+  (Serge).
+- Picked up Bradley's Reviewed-by on 1/5 and 3/5, not on 2/5, which
+  changed.
+- Rebased onto current vfs.all.
 
-Agreed.
+v1->v2:
+- The state lives on the user namespace now: ns->setfcap_level replaces
+  ns->parent_could_setfcap, and cred->setfcap_level is gone (Serge,
+  Christian).
+- New 2/5: setns() refuses a task whose CAP_SETFCAP doesn't reach as far
+  up as the namespace's setfcap_level.  It applies to every user
+  namespace, not only to those that map the parent's uid 0, because of
+  idmapped mounts (Serge, Christian).
+- 5/5 asks a tracer for what setns() asks for, also when the namespace
+  doesn't map an ancestor's root user, again because of idmapped mounts.
+- Dropped "userns: don't let setns() lend the right to map uid 0", the
+  setns() check covers it.  Its nested case moved into 3/5, which checks
+  the opener and the writer.
+- set_cred_user_ns() isn't touched anymore, so the put-before-use in
+  userns_install() is gone (Sashiko).
+- Rebased onto current vfs.all.
 
-> 
-> > +};
-> > +
-> >  #define DMA_BUF_BASE		'b'
-> >  #define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
-> >  
-> > @@ -179,5 +204,6 @@ struct dma_buf_import_sync_file {
-> >  #define DMA_BUF_SET_NAME_B	_IOW(DMA_BUF_BASE, 1, __u64)
-> >  #define DMA_BUF_IOCTL_EXPORT_SYNC_FILE	_IOWR(DMA_BUF_BASE, 2, struct dma_buf_export_sync_file)
-> >  #define DMA_BUF_IOCTL_IMPORT_SYNC_FILE	_IOW(DMA_BUF_BASE, 3, struct dma_buf_import_sync_file)
-> > +#define DMA_BUF_IOCTL_XFER_CHARGE	_IOW(DMA_BUF_BASE, 4, struct dma_buf_transfer_charge)
-> >  
-> >  #endif
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index e94222237d31..d994a4b2d35e 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -5688,6 +5688,46 @@ bool mem_cgroup_charge_dmabuf(struct dma_buf *dmabuf, struct mem_cgroup *memcg,
-> >  	return true;
-> >  }
-> >  
-> > +/**
-> > + * mem_cgroup_transfer_dmabuf_charge - move a dma-buf charge
-> > + * @dmabuf: buffer to transfer charge
-> > + * @new_memcg: target memcg; caller must hold a reference
-> > + *
-> > + * Transfers the charge for @dmabuf to @new_memcg and, on
-> > + * success, stores @new_memcg in @dmabuf->memcg.
-> > + * Returns %true on success, %false if the charge against @new_memcg
-> > + * failed or a concurrent transfer raced on @dmabuf->memcg.
-> > + * On failure the caller retains its reference to @new_memcg.
-> > + */
-> > +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
-> > +				       struct mem_cgroup *new_memcg)
-> > +{
-> > +	struct mem_cgroup *old_memcg = READ_ONCE(dmabuf->memcg);
-> > +	unsigned int nr_pages = PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
-> 
-> That doesn't work as easily as this.
-> 
-> DMA-buf can contain litterally *anything*, ranging from system memory over device memory all the way to functional HW blocks. In other words doorbell, GWS, GDS, OA, I2C, I2S, any random data consuming or providng HW block...
-> 
-> For memory the "size" is the actually number of bytes the buffer represents, but for everything else it is just an arbitary number given by the exporter. In most cases just 1 or actually number of HW blocks/channels, but for GDS for example it is actually a pretty large number.
+What it does now:
 
-I don't think I was completely aware of all these uses for dma-bufs and
-the specific meanings of the size for all them. Thanks for pointing this
-out.
+Every user namespace gets a setfcap_level when it's created, which is
+how far up the creator's CAP_SETFCAP counted.  If its tasks can write
+file capabilities for the root user of an ancestor, because the
+namespace maps that root user or can still map it, setns() only lets in
+tasks whose own CAP_SETFCAP reaches that far, and PTRACE_ATTACH asks the
+tracer for the same.  The checks on the way to file capabilities then go
+by the namespace instead of the cred: a uid_map write that maps the
+parent's uid 0 (opener and writer), and setting security.capability.
 
-> 
-> Saying that you most likely need some flag from the exporter if charging and/or the changing of charging should be possible or not. Otherwise you can potentially do quite a bunch of nonsense with that.
+The visible difference from v1 is the setns() restriction.  A task
+without CAP_SETFCAP can't join, or attach to tasks in, a namespace that
+maps the root user of an ancestor, such as host uid 0, and was created
+by a task that had it.  A task that joins takes on the namespace's
+reach.  Containers that don't map host uid 0, unprivileged users and
+anything with CAP_SETFCAP aren't affected.
 
-Yes, a flag seems to be simple solution for the problem at hand. I can
-focus on the system heap for now, and it can be easily extended in the
-future for other allocators as needed.
+Testing: 6/6 runs every case on its own, 48 in all, as root in private
+mount namespaces.  On vfs.all without the series 22 of them fail: the
+ways around the rule, and the two v2 xattrs without a root user that are
+now refused; with the series all pass, including the idmapped mount
+ones.  The pidfd, namespaces, mount_setattr and ptrace selftests give
+identical results with and without.  The TLA+ model, which has no
+idmapped mounts, no v2 xattrs and maps only uid 0 of the parent, finds
+no violation with the narrower setns() and ptrace checks, and still
+finds the setns() bypass when the check is taken out.
 
-> 
-> Regards,
-> Christian.
-> 
-> > +
-> > +	if (!mem_cgroup_disabled() && try_charge(new_memcg, GFP_KERNEL, nr_pages))
-> > +		return false;
-> > +
-> > +	if (cmpxchg(&dmabuf->memcg, old_memcg, new_memcg) != old_memcg) {
-> > +		if (!mem_cgroup_is_root(new_memcg))
-> > +			refill_stock(new_memcg, nr_pages);
-> > +		return false;
-> > +	}
-> > +
-> > +	mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages);
-> > +
-> > +	if (old_memcg) {
-> > +		/* Uncharge old cgroup */
-> > +		mod_memcg_state(old_memcg, MEMCG_DMABUF, -nr_pages);
-> > +		if (!mem_cgroup_is_root(old_memcg))
-> > +			refill_stock(old_memcg, nr_pages);
-> > +		/* unref from buffer - buffer keeps new ref to new_memcg */
-> > +		mem_cgroup_put(old_memcg);
-> > +	}
-> > +
-> > +	return true;
-> > +}
-> > +
-> >  /**
-> >   * mem_cgroup_uncharge_dmabuf - uncharge a dma-buf from its memcg
-> >   * @dmabuf: buffer to uncharge
-> > 
-> 
+--- Original email (v1) ---
+
+Hello,
+
+Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+stops a root task that has given up CAP_SETFCAP from creating a user
+namespace that maps uid 0 and then writing file capabilities in it that
+the initial namespace honours.  The check only looks at the task that
+creates the namespace, so if somebody who did have CAP_SETFCAP created
+one, there are still several ways around it:
+
+- setns() into their namespace and write uid_map from inside (patch 2)
+- write "0 0 1" through a uid_map fd that they opened (patch 3)
+- setns() into a namespace of theirs that already maps uid 0 and set
+  security.capability there, no map write needed (patch 4)
+- ptrace one of their tasks and have it do any of the above (patch 5)
+
+On an unmodified kernel we took a uid 0 task with CAP_SETFCAP dropped
+from its permitted, effective and bounding sets and, through each of
+these, ended up with a file that a uid 1000 user execs with
+CAP_SYS_ADMIN in its effective set.
+
+Patch 1 adds cred->setfcap_level, which records how far up the
+namespace tree a task's CAP_SETFCAP reached when it entered its
+namespace, and patches 2-5 check it.  Patch 4 is the check that closes
+the class, the map patches make the uid 0 map rule mean what
+db2e718a4798 meant it to, and patch 5 keeps ptrace from borrowing what
+the target is entitled to.
+
+This does change behaviour.  Everything new is -EPERM:
+
+- a task that entered a namespace without CAP_SETFCAP outside can't map
+  uid 0 of the outside or write fscaps for that root user anymore
+- a uid_map fd opened by a task with CAP_SETFCAP can't be used by a
+  task without it to map uid 0
+- if a privileged task maps "0 0 1" from the parent for a namespace
+  created by a task without CAP_SETFCAP, that namespace can no longer
+  write fscaps honoured outside
+- PTRACE_ATTACH and PTRACE_TRACEME fail when the tracer gave up
+  CAP_SETFCAP and CAP_SYS_PTRACE, the target didn't, and they share a
+  root user
+
+Rootless containers, privileged runtimes writing the map from the
+parent, nested unprivileged namespaces and containers that don't map
+host uid 0 aren't affected.  The ptrace check is one compare for
+targets in the initial namespace and in namespaces entered without
+the capability.
+
+Testing: a set of flows run on the base and patched kernels, every
+bypass route above gets -EPERM with the series and the 16 legitimate
+flows behave the same.  The capabilities, namespaces, ptrace, pidfd and
+proc selftests give the same results before and after. Thanks,
+
+Josef
+
+---
+Changes in v6:
+- Link to v5: https://patch.msgid.link/20261023-b4-setfcap-userns-v5-0-0620223be951@toxicpanda.com
+
+Changes in v5:
+- Link to v4: https://patch.msgid.link/20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com
+
+Changes in v4:
+- Link to v3: https://patch.msgid.link/20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com
+
+Changes in v3:
+- Link to v2: https://patch.msgid.link/20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com
+
+Changes in v2:
+- Link to v1: https://patch.msgid.link/20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com
+
+---
+Josef Bacik (6):
+      userns: record how far up CAP_SETFCAP reaches
+      userns: don't let setns() lend CAP_SETFCAP
+      userns: check the opener and the writer before mapping uid 0
+      capabilities: limit fscaps to where CAP_SETFCAP reaches
+      capabilities: don't let ptrace borrow CAP_SETFCAP
+      selftests/namespaces: test the CAP_SETFCAP rule for user namespaces
+
+ include/linux/capability.h                        |    6 +
+ include/linux/user_namespace.h                    |    7 +-
+ kernel/user_namespace.c                           |   95 +-
+ security/commoncap.c                              |  184 ++-
+ tools/testing/selftests/namespaces/Makefile       |    3 +-
+ tools/testing/selftests/namespaces/config         |    3 +
+ tools/testing/selftests/namespaces/setfcap_test.c | 1362 +++++++++++++++++++++
+ 7 files changed, 1626 insertions(+), 34 deletions(-)
+---
+base-commit: 2c3ba1f1cb416b81d617b92a24a4bcaa48d574e3
+change-id: 20261006-b4-setfcap-userns-d63185a31ce3
 
