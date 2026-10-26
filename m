@@ -1,53 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793021793;
-	b=lClPhfH1a1pvP9moc/OmUnqFddu6maw6YhUYj8OEEfOvajNpWJQK5P2UstspHMLYVLd9
-	 fKV6U4igeRJ2Ihvgfaum5wbDyspNMMA6Ybf74Wa8OTOqevKlzgTi9/ZzAuNo0riHlUCnw
-	 c9NatIJE5aAg+Xy4tijXrgVqWkkGyaNt0QurVlH2mvD5iiY4VEVYbQS1vQ6qEWCMNvQX3
-	 6j6Yg0gA0lK4Q74qvIBtOo2NCd+OsMqkZLrj2SZRQJb/7mB8nNGbQbYRDBN5G+ZyRKOyA
-	 O4XwXJk286O6noEvQ60xOuWgY3AAB6zjLqgzn9Gisrjxqf1I2THeE3H3seQCMmFlK/w==
+	t=1793022347;
+	b=t3BeySFoWQ5IGXPE536WOSaNIzvJgEe882QRIaVb6ksrp7GCuquo9R9mge+GrbaL+ObQ
+	 MzlweVPGuWSRki/sUnlFYAsPY5od+7wQ6VkQQiSX/DZ5j6HJ/w+554uaihlH/a9Z8vL7a
+	 od3asC05H7BPedbUxQSxq2V3VPvfctJJ+6IIX5UNYEAVNTuhPmDQzdDzoni+xaibPIm7p
+	 qciFPHuhU+32nAZIDZM5jeenXhImMEnEeZPzgKJJeryFAWpLTEMi79Sw1UyO9SZ4u2wFU
+	 PE534Djd8RTo6qXy8GHr7vN22On8Dhq/ODQfN5reb/UP4XsUTTwVXnQTXHOqtXHivGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793021793;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=TLbxcjc9HC/bzrb00HtQdr6XFdlMjDXglTQf+OuewPw=;
-	b=nO807PRkicIEn5eFOnZELhzbOVSjLg6s1rqaDq+l8/pO56oDvQ57hMPhRp+wWErTxYR7
-	 m53bBXE7GaOQbKAb/HSQztBJ1EZArgPQOC9fii+VF9mSiodU167dR5Je1MvIPj2yQuph9
-	 5Jx4A5v3UKlmSIXF+PvJhNm2XgQTCpsCr195i/QzOYFKSu7KUyroown8By0TA/3i4ckrn
-	 7ulw2wlL4k36WyIybSaVeulxHd7uMhwYN8/nPPumNBlvgIbE3ZgepOXOZwznT4tVVBKGN
-	 ryPK+KxfTLhA93V+xzYkoeNqSRKjMWWmaUjV/XQ+RMGhrZUkt+FockUMGZm/Z2KGXWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793022347;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=tDqaLcbTN2OgaOmTuOKyz82rz8Tml/tD0giuJ5GNJco=;
+	b=3+MTskxQn8Vga/iIu8EDVHjBc/j6F3FjL4k8Pwe4SutouChw/iwImIAlu4N2rsKUCvCZ
+	 inNEj0jLxK6wdWlfwvnLBW52pwZK67lRDcwWw+YruDfhV4oFnSPKdYa9x0Cv9QqaLCcbT
+	 uDUycD/UJDAE79e7RyjsQ2moGhIlLECoRaTfGwsFf3aK4/fotumYh/aENAsTRGKUx//Jh
+	 5tSxwSfyC9en8UE7ZFQ8gQWo37zXf+3EutuEWefCf/HzkwtfG3JFeiNuwuQ14bYc2b1F6
+	 GceAFAUqJNSi6RdkPV2a7qwtb8GSQPs0WAp9cmQh5BTvuPjH3pTFHRQtKP59sMmrahQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZTPUJtW;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="RA6/3Gvi";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C05E606A31A;
-	Mon, 26 Oct 2026 13:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08011606A31A
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 13:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZTPUJtW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E731F01829;
-	Mon, 26 Oct 2026 13:36:31 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RA6/3Gvi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC061F01825
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 13:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793021793;
-	bh=TLbxcjc9HC/bzrb00HtQdr6XFdlMjDXglTQf+OuewPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XZTPUJtWABGcedlMro6yimEbn8xlo60A7Qc8l4MW5KsLnAVkqewN+JtiFH+BZNwHa
-	 UF8FcEhomFiGAdDhmZ5KthOuCUwLNV7Gt4Tspz2lRzEdjnin1HAk1sN174Cg9GQoii
-	 sqLcXtUONkz34uYcdGsBIaDM85pd7zUPdu/+fUHh1iRWA9OKXaoewsV28FWBd/lUV0
-	 VHaFgYlLzQHlGRJq7i4PwjV+c9lFxajsapWunv9GPOqVRrbLUYg64wg/lVlx6rco8j
-	 uAufYyaGQeWolhc48Sa6TqTzwIr/pioMvBItowZ0vXtudAu5+DQDwz9DTCqxNRalti
-	 /Rev7H41aedTg==
-Date: Mon, 26 Oct 2026 14:36:29 +0100
-From: Andrey Albershteyn <aalbersh@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] fsverity: Explicitly require FMODE_READ to retrieve
- hashes
-Message-ID: <at9WRK2L4GtBjo2v@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
-References: <20261022211522.1489943-1-ebiggers@kernel.org>
+	s=k20260515; t=1793022346;
+	bh=tDqaLcbTN2OgaOmTuOKyz82rz8Tml/tD0giuJ5GNJco=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=RA6/3Gvimi/XRVmvmb5SzKO/MjyfcrfPGgbjAekdp6WFN8o/tooUqJlufR7fW0Obz
+	 dEqtK/cE3LeSEZ9Df99im0J+FBg1IfKEh35YF5u3MIFCWEq4zqshrq1orSrARuWKP4
+	 5rvqJZW8oPQku2ZD/3JFcMVNXDZ4u4EOkQ81tW/HeHyzg7Gh70GN4IPWWoRpvHZ/Xw
+	 um/z5OxPyr0B1fimm48ciyv3pTPRC8HwMovHRZgZqFc9bKEnxNgQKOQpj4p4I7b/up
+	 dSGApypCGttvYQTOoD29ahhwHBSLqxsaBtH2lsRrfXOytWDmpIxtVXRNiLMP9XUJOR
+	 GYXeZHnq7/Zjw==
+Message-ID: <sashiko-outbox-185335@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] apparmor: handle diff-encoded states in leftmatch_fb()
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261026133600.11252-1-invarianztheorem@posteo.com>
+References: <20261026133600.11252-1-invarianztheorem@posteo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 26 Oct 2026 13:45:46 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -56,46 +57,33 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261022211522.1489943-1-ebiggers@kernel.org>
 
-On 2026-10-22 21:15:22, Eric Biggers wrote:
-> The comment in fsverity_ioctl_read_metadata(), which justifies not
-> checking for FMODE_READ, doesn't consider that the nonstandard access
-> mode 3 (ioctl-only) exists.
-> 
-> Opening an ioctl-only fd generally requires read (and write) permission.
-> However, there are gaps with certain LSMs: an ioctl-only fd requests
-> read (and write) permission via security_inode_permission, but not
-> security_file_open.  With certain LSMs relying on the latter, such as
-> Landlock and AppArmor, an ioctl-only fd can be opened without the LSM
-> granting read (and write) permission.
-> 
-> Since FS_IOC_READ_VERITY_METADATA returns hashes of file contents
-> blocks, it should require read permission.  This also applies to
-> FS_IOC_MEASURE_VERITY, which returns a hash for the whole file.
-> 
-> Meanwhile, ioctl-only fds are a rarely-used feature, not known to be
-> used with either ioctl.
-> 
-> Therefore, just disallow these ioctls on ioctl-only file descriptors,
-> similar to what was already done with FS_IOC_ENABLE_VERITY.
-> 
-> More specifically, explicitly check for FMODE_READ.  This also covers
-> write-only fds to non-verity files which otherwise would have failed
-> with ENODATA.  This change in error code for write-only fds should be
-> fine too, as these ioctls cannot be usefully used with write-only fds
-> anyway, but it's worth noting as another technicality.
-> 
-> Fixes: 4dd893d832cf ("fs-verity: implement FS_IOC_MEASURE_VERITY ioctl")
-> Fixes: e17fe6579de0 ("fs-verity: add FS_IOC_READ_VERITY_METADATA ioctl")
+> leftmatch_fb(), used by aa_dfa_leftmatch() and therefore by find_attach()
+> to match profile attachments, open-codes the DFA transition and treats the
+> default transition as final:
+>=20
+> 	if (check[pos] =3D=3D state)
+> 		state =3D next[pos];
+> 	else
+> 		state =3D def[state];
+>=20
+> For a state flagged MATCH_FLAG_DIFF_ENCODE the default state must instead
+> be tried again with the same input character, which is what match_char()
+> does for every other matcher. apparmor_parser emits differentially encoded
+> DFAs by default when the kernel advertises policy/diff_encode, so larger
+> attachment patterns end in a non-accepting state and the exec silently
+> stays unconfined. No conflict is detected, so nothing is audited.
+> [ ... ]
+> Fixes: 21f606610502 ("apparmor: improve overlapping domain attachment res=
+olution")
 > Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> Link: https://gitlab.com/apparmor/apparmor-kernel/-/issues/8
+> Link: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2172229
+> Signed-off-by: Patrick Gr=C3=B6ssing <invarianztheorem@posteo.com>
 
-Looks good too
-Reviewed-by: Andrey Albershteyn <aalbersh@kernel.org>
+Sashiko has reviewed this patch and found no issues.
 
--- 
-- Andrey
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261026133600.1125=
+2-1-invarianztheorem@posteo.com?part=3D1
+
