@@ -1,98 +1,98 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.123
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793042039;
-	b=fSSUf3DNq5Veqt3tlVmt6/Me/zRO8SvFLCDsArJ8dB/sEYvRqrnzqKxCHpX/qGLxpc6g
-	 GTK9c9lxnZO5j8vA8yhhyFEjHwpHWTSn53lnLEwfaD3VeAUaSMf1DWQVpnxum2zqkD2iJ
-	 XHoZU+51qKJAJLnhv0VHiBoMLMwLVePyXX8BaJ0i/eHAtc9Y+o5vItAMPq9qNXHJa2DcY
-	 WLhXB2I3NFW44mQoN8KbopGc4Kecdt7DLIofbKO6fooTijrcq3kryInzxcjQ9Jy6EHvEd
-	 JNbaGJdZQlFKIqwF7+iJQpGBQvkMGsnlTwzyILATTIqVhVJlZaOIQ+PbS4uyJn9VUFQ==
+	t=1793044068;
+	b=hybes4R7x8Ufktj7zUUQhtybZJijz9V7jLe4azA24fnUuzOh6kaHURZtNxg9ztTyiXWW
+	 Bf7jNLLRZCJlMtQ7TQW7fFOuUXzTaKIGwSfconMMjn0Rk/83iEQ/6UhqqnFk5o1RffILz
+	 m4O0aXGwgLHxkIEP+80NSeWVufSb3DOM41E6Yt0mtlGMLZmHz6jDzSr0Ygq7VZVvDMNh0
+	 gucqOj+ODMTuaFinTbe+UeDE4tdVZFdsdVwa8zBSouWH4IJXbBKQZzAO/BJRQLLQyGBpn
+	 siysNRugdUfJjJRZD8Wj5MFoMMuvGVveAnsq3L+8A04bk/TUv43AvlLAmMd3XCUqDzA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793042039;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793044068;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:
 	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
 	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
 	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
 	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=Vgy5tlJ4zIrrzxhPIS7IOokidEWZWzw4PbEzeqfHlqw=;
-	b=T6g7TmciMZ105Q06EeIvjN8fBa9znSo46AEyStOFuSwGK7GDPeGCoalJn5iFL5m4f8aw
-	 yH24W4oBw1viqQQeIBVSEhpA0UI9pWmLTiWP8+YtNNbWzt0MA1ESutOwVO9PiZj+ro4Yn
-	 prrv7roLbJRF1b1u+xMfhXuUUcLS0X6vpXeXV6jikyvUycSQjjF+LIo421O6jqCPYQiMp
-	 6UheXaFTg3JI5LVEYs49YpgEcnvV/bebj0eCS2SywnNjHlvzUceGhCUrewYwnQNM3m8Z3
-	 oowtj0saOeFrHO1FGAx4A23062gpN5/AY16Dn4St1S8WLVO6IvgimKJ9WXiBJ4u85KQ==
+	bh=R31dxPRwAL0rgdgAHSWbnri3dyw9opSnzzBfvu62EX4=;
+	b=xoh2f/qnbBZEoA3QUIz3EOvgkqkkpkSHxonQqfbeo6D4uvgowHj48MNpmHMgVBN/hcQa
+	 anJEQNC4zKBMxmmE0qg66+L4LJGYDHEcrzaKD9wrAznLYMC7mNSGj1KjhDkz+dGD0jHtL
+	 fnEcTxSY7oyCWSjq2cnBfVn6ZtYydnnPci+s+y0uPUhn24d3z7lrzYunIvDOXoPOUVbGX
+	 gKoDj79hVie6esuScdiAO1bZcpw3Aj9AnttyhjEg220Ja9+P7duxLF4w7JuSY9ftXM5a9
+	 hLMjUpxX+gdc6z/CyNvs7yYLn5XV0+po0miMGHcG/tvEiLGWgS0PaBpk9OC1/2044WA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=canonical.com;
 	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=Pn6akygv;
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=YYhrV6OO;
 	arc=none smtp.remote-ip=185.125.188.123
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3729606A31A
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F3729606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87868606A31A
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:47:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 87868606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=Pn6akygv
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com [209.85.128.200])
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=YYhrV6OO
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9B03B3F91E
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:13:50 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EBE1C3F97F
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1793042030;
-	bh=Vgy5tlJ4zIrrzxhPIS7IOokidEWZWzw4PbEzeqfHlqw=;
+	s=20251003; t=1793044064;
+	bh=R31dxPRwAL0rgdgAHSWbnri3dyw9opSnzzBfvu62EX4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=Pn6akygvva0iR8t/ZwQgSf23v849fAyWJlEPupwSjKLMr41/qikCoLLcShD0eLBn1
-	 udrlVdtBnwrtWFBRKbaCztwyTDvoAeGGK6skQgtfsgBUUl1M7RHFSshgz4MmOFBvPf
-	 k7/pUZSaQ8mxyNikFgxpo01NRY0bxVQBfyJUZyM+7+gIsxAbT51R6j4a76MOHTPXKz
-	 UzDvzo/hvdDcsuf90vTonhM0mFv7riUuf9qeYotTWBFJQd2p+xab8yuTsj9582OjAy
-	 bUC8DvWgUyx3Gnce2qRn2Pjl7/BgpYlFjxJX4+p5iiZPtvBPbsorvHhwb3I75oyOs2
-	 WWQgtJs8QmDw10QCZu+jak+pKqu1dv5ema3ePRJLkEDwYdL0Un7A3JQeXMNVU00I4j
-	 OuH1RR4P88ZqDhdk+xKEjhDusTvCy3AVbgKNteQhqU3wfP3BfibQ8ulF1vLu8pQpyq
-	 LhNSjHFrUUHLiqBAdy+YnTYcfr/BhppcUhaElJp+LIRLDULfcWz+AKZj4RWe5fAGyt
-	 C9IO0GYRjxqGEPP0l6OJ33YUVS3h1Qg+JmTaPc2qHYifpBiezNkkN6agWXo+kGusnw
-	 PaxUwPY8+F0GGy2hfXDfxSkuEqbCFYub+1RYTJjqahJRO+qdAmbfF8wvnQ7K0oLoaM
-	 Mc9+UuEOmJeGDLlBBbkL+AoM=
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-8ab43f7f5faso59861627b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 12:13:50 -0700 (PDT)
+	b=YYhrV6OOa57TxbAGhbA4iCPYIMiQgx5HThj7uCkh2pyak9NP3SBtqvMkd17Il1H1k
+	 SrthAQ5mwCaQYsjfYDZYieoeKECrc6t4/m+rT5KfHqAr+nhoDYrexr8YxtIZwfUzFF
+	 zO+i9qnnVf1bOuM13OZCa8xHYYg5Yc5nLU+fCSNboVkCKmlGxObUhXjO/INjWEhsbx
+	 KQOU3a3V+r6NcRbyJ70MMa7zkGXsloiaFYInzh38VhO3IHrrGbwuehQjne96DVZR1p
+	 OZc4lAvMSDG3Z7h+V0XpduYvMFijUwl3REp+DpHGE3quG+wNyFFkCHkLfAJXD8jjey
+	 L3jk7MVecBUcGO1oFauAolY4UgeFgSibca3vu0GyIXFzpBEI/vVq44k95tL5fMD8vs
+	 Q/fD6jvUhDmJZCIFjFjv1lE/5K/4kUIvziX04mMCu/Cv24OB3XF5BxmZ1itV5V8sA9
+	 1XZAnjzjrPZUAn4YvVEkJ5pz7lR+E+HPtjU49IOMbDjyigXN4k/PqR+sQ6N1YBMxQz
+	 D8HhlPPZP+jFm2bn+/w8lYEUOc6JFhhgwp7JhWkJecy/gM03wFl35gP3Ddfi9UzHx3
+	 5aiA3tdhVBYfPOCes3MzsHrqYpgtN+GeYBJ8/UySDw87Y6mmlGXrY4CvV2OnGqIQGl
+	 dSzpXVf/p4qnspgSBQbilTe4=
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-8b155f4eb8eso56105527b3.1
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 12:47:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793042029; x=1793646829;
+        d=1e100.net; s=20260707; t=1793044064; x=1793648864;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=Vgy5tlJ4zIrrzxhPIS7IOokidEWZWzw4PbEzeqfHlqw=;
-        b=N8y9fGdp0mhfoKTh5b2lFyuX/r6kCtQPQOF9LlfLmGqGPUC78MpVIdWGKFsbrmeutb
-         9oE+PYY84+0gBQDtSd0jkC9TlvWlABvNoVHgs3G1o2dgUfccynUHnyy/N4U2a+Klb3CQ
-         r+JBP0K5D8Fvlz35PwN2yRQvEoWRaGF5Polbh7USsvgMYAa349IiFzwifAnkkzKIsO/5
-         z2mB8jhvV0T7aWq4h9aJI/V9iETg/YMcq9T+ZcUtR9cT4cEpS7iaGkX4ida93TnAohHi
-         HyPIFbhZXJVq5+ryTl9z4MvNk0MrhfC/AV6krIS8lcgTZeFnVwTe2RAkIz5r8FDviDW6
-         eXIQ==
-X-Forwarded-Encrypted: i=1; AKwUvByAuB/Z2AcjJ64puhvp1VdeuUubhLc+L3nh5iCQFcHd+Oes0CNoQ292r3zFRQTFwCSrl9iRAtLD0fhfxdOIDAhXnv5Xq2M=@vger.kernel.org
-X-Gm-Message-State: AFq9FYL6+kWb9Z/IgxoLUyvgMhJdoNmePP85dHgmXAJAQJRPO8sRjrUH
-	BfTkMsF89hA0Fb1HWAaDz37UTfUy+BOc0zlicJRClUalFsHLUSuZk6ovMSSf6xEWyy9ESrci79J
-	v6UX3jxVH8qRJ1g9EuFkEKPhmEr0cRQs83I4TMXZGCZC6Jcw78adQAZloIjuwFvoQPn8uOD2lib
-	C4Youu2XTDC697fG0EdQ==
-X-Gm-Gg: AYBFou0rFvYwdTVPkvm/7hJs05n2EB4Ob75ucn1myrg5ujcfyd5rsHNIcaLo6oVxgXk
-	w9KbWzJD1Uh9xQ7llze33h7WqUIRG7qyL7gxTmKZNBU7nDRO9sRsLyrWd1VL0rKC0lWcCv6Lpu0
-	AgwqH+W6spJ8nIl5JPaLX2GVyORjQEu1PxeofcP0WFLHcuvqTjchrRSX8F3kTDi5SuGY1oPeYDq
-	+09oG0+uZvpBKj416dyr8ZTAvuVPD6/h5iVPP2moKb3sC1KTBVor7Po9z5lE4lHmBvCtbf8JEGS
-	E+c2Y59K0A8zWjdQD1jINBl1Wrwc8/qkXdC6eXQzSqsWeEw4GEnu5kz9okPcnzcPpDTqXXn0Wa5
-	zz+57lnLH8/Nz703hPuoL+G4w9xqhN2QlqwW0o4gPFcnELBhHf5U7Oej9
-X-Received: by 2002:a05:690e:438e:b0:679:9afd:c0dd with SMTP id 956f58d0204a3-67a4552069bmr3589003d50.111.1793042029259;
-        Mon, 26 Oct 2026 12:13:49 -0700 (PDT)
-X-Received: by 2002:a05:690e:438e:b0:679:9afd:c0dd with SMTP id 956f58d0204a3-67a4552069bmr3588993d50.111.1793042028912;
-        Mon, 26 Oct 2026 12:13:48 -0700 (PDT)
+        bh=R31dxPRwAL0rgdgAHSWbnri3dyw9opSnzzBfvu62EX4=;
+        b=Zk937S0LatAHtgwGcu6+Gz5FJL1XMXxXmDIVHAYDKo3mluHAMqghNAxNuO6b1VQzr8
+         NCGBM5O+g39EoCzNLecq4dOfz8xFVwuvXZoNGKY/bhjsQlY+IrgRwe/5GMhMewlegooY
+         yE9bfUtCSFcXsnBo8h5nbi5VHTdXPe9ctX8QTJBcNLHhKfOBzC7mMuQP7IRT2ikM5rnf
+         NTgr2LKC0lJNaI4jkBy0tMI+8Lh2w0jkTFmcoIRVwwWyuncDF1jmdhyCNz6vioYt9beK
+         qwXzh2Di9lSWglrLIkRDKUhBcNu0m/9ua4rcPkF4qeYJJOWLkr55AeNhq3fNN3Cj3RC/
+         fJXA==
+X-Forwarded-Encrypted: i=1; AKwUvByPp95kecSUczWc8ZkYpbHvh2shxzhRqFDz6gn3vqrHa71kZouqjbiiI9ufWJ8MKNuAjbmHxdxHu9mv6sOIb06SPq73BUQ=@vger.kernel.org
+X-Gm-Message-State: AFq9FYK3gPYikvBelvnG0dh19YeXvIVp2RlLiRnBt2M47h0IAfbnUgyt
+	vQLFExlsJp7vFQfQLaAHSyNoDHa3x81yYpTY+LV862U3+nPInSNmh/imgXipC1oK24EuQ8eKISK
+	pYYdm+b4EfyA2a5aBhDz0F8q1HvV7gAgDPKHkT6T47pggV1oPD2zusbMQ40LWZzIMW1lXqnWoIp
+	baKzSX6n07kYg0V7RzcQ==
+X-Gm-Gg: AYBFou30d0K2FnEOE+GVk6Dq6gkVDbdtDO/eK/ITe7qINV0MkOaJIJ7hw6FC7g192x1
+	Gjm8aXLluartMOqNWBg8ne4vm03Q5udsdw/wyNUNPxrLNBZ/wKaSZ9D7sCe5sZyT3JqhSmMXUOZ
+	59FmpPGspDfVXD8M1FhYvbUVx90LyXd6zwxf/J1SlBWVPFNgdn1ntPZrYcpK+zv2DzUP4l+D3Ps
+	WO9wwvwGXf4NQlUnlM8xzvqGjDUO6NW/TVXuH8Z6zXPMwKtAPBBt+gsJzjf732itFk9RA+QFu32
+	EL4q3T5qv2kcp+lJP+0pNFjJ8bN0MuCSz0wxiZakpWtlbPn9ndKfjW0mXhS1dBfx82gB8AAupwb
+	img93c6KHAyuUXOP6nFFV6NCBOH505/KCS39b2eA18F35meR5CtChkQBR
+X-Received: by 2002:a05:690c:8e0e:b0:8a8:8dd2:f5b3 with SMTP id 00721157ae682-8b166c16abbmr48032007b3.43.1793044063738;
+        Mon, 26 Oct 2026 12:47:43 -0700 (PDT)
+X-Received: by 2002:a05:690c:8e0e:b0:8a8:8dd2:f5b3 with SMTP id 00721157ae682-8b166c16abbmr48031867b3.43.1793044063317;
+        Mon, 26 Oct 2026 12:47:43 -0700 (PDT)
 Received: from [172.21.9.52] (host-209-35-187-178.broadbandcancun.mx. [209.35.187.178])
-        by smtp.googlemail.com with ESMTPSA id 956f58d0204a3-67a45ff8d6dsm3976103d50.1.2026.10.26.12.13.47
+        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e56ea84sm1127927b3.18.2026.10.26.12.47.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 12:13:48 -0700 (PDT)
-Message-ID: <ffcda856-cffb-4aba-9a7f-fece5ac6419a@canonical.com>
-Date: Mon, 26 Oct 2026 12:13:46 -0700
+        Mon, 26 Oct 2026 12:47:42 -0700 (PDT)
+Message-ID: <3a3c7010-26f6-493e-baf9-6045c0ed2c56@canonical.com>
+Date: Mon, 26 Oct 2026 12:47:41 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -103,15 +103,11 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix NULL peer label deref for connected
- SOCK_DGRAM sockets
-To: Nik Tsytsarkin <nikt@meta.com>,
- Georgia Garcia <georgia.garcia@canonical.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+Subject: Re: [PATCH] apparmor: mediate AF_UNSPEC socket disconnects
+To: shaos <shawnq1@163.com>
+Cc: Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com,
  linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sam Dlinn <sledge@meta.com>
-References: <CAN8mxQpCCO3QNXb0pimRsNqfLs1qS0epZmB59q2sd8QCLhgOpA@mail.gmail.com>
+References: <20261020001256.888314-1-shawnq1@163.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -157,99 +153,71 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <CAN8mxQpCCO3QNXb0pimRsNqfLs1qS0epZmB59q2sd8QCLhgOpA@mail.gmail.com>
+In-Reply-To: <20261020001256.888314-1-shawnq1@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/20/26 10:30, Nik Tsytsarkin wrote:
-> apparmor_sk_alloc_security() initializes ctx->peer and
-> ctx->peer_lastupdate to NULL, and unix_connect_peers() is the only
-> place they are set.  It is called from the unix_stream_connect and
-> socket_socketpair hooks, but not for SOCK_DGRAM sockets paired with
-> connect(2): the dgram connect path only goes through the unix_may_send
-> hook, which does not touch the socket's apparmor context.  So after
-> connect(2) on an AF_UNIX SOCK_DGRAM socket, unix_peer(sk) is set while
-> ctx->peer stays NULL.
+On 10/19/26 17:12, shaos wrote:
+> Hello,
 > 
-> When a confined task later triggers file revalidation on such a
-> socket (its first write(2) on the fd suffices, with or without a
-> profile change in between), aa_unix_file_perm() runs the post-check
-> cache update with peer_sk != NULL and a NULL cached peer label, and
-> both update paths dereference the NULL label:
+> aa_inet_connect_perm() returns success immediately for AF_UNSPEC before checking the active AppArmor profile.  AF_UNSPEC is the socket disconnect operation for TCP and UDP.  A process confined by a profile containing deny network can therefore disconnect inherited sockets even though ordinary socket creation and connect calls are denied.
 > 
->    - update_peer_ctx() calls aa_label_merge(old, label, ...) with
->      old == NULL, which reads old->size;
->    - update_sk_ctx() calls aa_label_is_subset(plabel, old) with
->      old == NULL, which reads old->size via
->      __aa_label_next_not_in_set().
+> HEAD commit:    fe2ec83746e501645709761605c2464a44fd2929
+> git tree:       upstream Linux checkout, local branch master
+> source version: Linux 7.3.0-rc4-70-gfe2ec83746e50
+> compiler:       gcc 11.4.0, GNU ld 2.38 (build details in reproduction notes)
 > 
-> The AA_BUG() NULL assertions in those helpers compile out without
-> CONFIG_SECURITY_APPARMOR_DEBUG_ASSERTS, so production builds oops
-> under spin_lock(&unix_sk(sk)->lock).  An unprivileged confined task
-> can trigger this whenever its profile mediates unix sockets (complain
-> mode included).  Because the oops happens under the unix sock
-> spinlock, the dying task then deadlocks against itself in
-> unix_release_sock() on exit, leaving an unkillable spinning task and
-> an RCU stall on that CPU (and a full crash with panic_on_oops=1).
+> console output:
+> https://gist.githubusercontent.com/shaos26/73b057c77b9ea22d5e6813c259dbf43c/raw/fab5c58d6f184f5fab88a3a31a80c2b919efecf0/console-output.txt
+> reproduction kernel config:
+> https://gist.githubusercontent.com/shaos26/73b057c77b9ea22d5e6813c259dbf43c/raw/b9192c97c92fdd3b59089704bad6fbd0a33ccf06/kernel-config.txt
+> reproducer:
+> https://gist.githubusercontent.com/shaos26/73b057c77b9ea22d5e6813c259dbf43c/raw/92c7dd098a227276fe3daeea45996e2848e66439/poc.c
 > 
->    BUG: kernel NULL pointer dereference, address: 000000000000004c
->    RIP: 0010:aa_label_merge+0x63/0x730
->    Call Trace:
->     aa_unix_file_perm+0x477/0x800
->     aa_file_perm+0x434/0x550
->     common_file_perm+0x58/0x150
->     security_file_permission+0x22/0x50
->     vfs_write+0x76/0x410
->     ksys_write+0xb3/0xd0
+> Build the kernel from HEAD with the attached reproduction config, then make a one-file initramfs.  The PoC mounts sysfs and securityfs itself; DEVTMPFS_MOUNT supplies /dev/console.
 > 
-> Treat a NULL cached peer label as "not initialized yet" in both
-> update helpers: have update_peer_ctx() adopt the checked label
-> instead of merging with the missing old one, and have update_sk_ctx()
-> initialize ctx->peer/ctx->peer_lastupdate when no peer label was
-> recorded.  This lazily completes, at first revalidation, the peer
-> cross-referencing that unix_connect_peers() performs for stream and
-> socketpair sockets.
+>      mkdir -p build rootfs
+>      cp kernel-config.txt build/.config
+>      make O=build olddefconfig
+>      make O=build -j"$(nproc)" bzImage
+>      cc -O2 -static -Wall -Wextra -o poc poc.c
+>      cp poc rootfs/poc
+>      (cd rootfs && find poc | cpio -o -H newc --owner=0:0) | gzip -9 > initramfs.cpio.gz
+>      timeout 900 qemu-system-x86_64 -kernel build/arch/x86/boot/bzImage \
+>          -initrd initramfs.cpio.gz -append "console=ttyS0 rdinit=/poc panic=-1 loglevel=7 lsm=apparmor security=apparmor apparmor=1" \
+>          -nographic -m 1024 -smp 1 -no-reboot 2>&1 | tee console.log
 > 
-> Fixes: c05e705812d1 ("apparmor: add fine grained af_unix mediation")
-> Assisted-by: LLM
-> Signed-off-by: Nik Tsytsarkin (nikt@fb.com)
+> Under the deny-network profile, socket() and connect(AF_INET) returned EACCES, but connect(fd, AF_UNSPEC) returned success and tore down the inherited connection and listener.  Two fresh boots matched.  A one-line control that routed AF_UNSPEC through aa_sk_perm returned EACCES and kept both sockets alive.
+> 
+> Impact and prerequisites:
+> A confined process that inherits a TCP/UDP socket can bypass the profile's network mediation for disconnect and disrupt that socket.  The finding does not permit socket creation, bind, or arbitrary peer connections; no privilege escalation is demonstrated.
+> 
+> Run the normal connect permission check for the AF_UNSPEC disconnect case:
+> 
 
-Hi Nik, thankyou for the patch. This issue has already been addressed
-in the apparmor tree by
+sorry for the lateness of the reply,
 
-f61da65fd09e3 apparmor: fix NULL ctx->peer derefs in unix socket ctx updates
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-> ---
->   security/apparmor/af_unix.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
+> diff --git a/security/apparmor/af_inet.c b/security/apparmor/af_inet.c
+> --- a/security/apparmor/af_inet.c
+> +++ b/security/apparmor/af_inet.c
+> @@ -425,7 +425,7 @@
+>   	if (addrlen < offsetofend(struct sockaddr, sa_family))
+>   		return -EINVAL;
+>   	if (addr->sa_family == AF_UNSPEC)
+> -		return 0;
+> +		return aa_sk_perm(OP_CONNECT, AA_MAY_CONNECT, sock->sk);
+>   
+>   	/* do we need early bailout for !family ... */
+>   	return sk_has_perm2(sock->sk, OP_CONNECT, AA_MAY_CONNECT, profile, ad,
 > 
-> diff --git a/security/apparmor/af_unix.c b/security/apparmor/af_unix.c
-> index b908e744818c..e802538b0e54 100644
-> --- a/security/apparmor/af_unix.c
-> +++ b/security/apparmor/af_unix.c
-> @@ -682,7 +682,7 @@ static void update_sk_ctx(struct sock *sk, struct
-> aa_label *label,
->    if (old == plabel) {
->    rcu_assign_pointer(ctx->peer_lastupdate,
->      aa_get_label(plabel));
-> - } else if (aa_label_is_subset(plabel, old)) {
-> + } else if (!old || aa_label_is_subset(plabel, old)) {
->    rcu_assign_pointer(ctx->peer_lastupdate,
->      aa_get_label(plabel));
->    rcu_assign_pointer(ctx->peer, aa_get_label(plabel));
-> @@ -700,7 +700,11 @@ static void update_peer_ctx(struct sock *sk,
-> struct aa_sk_ctx *ctx,
->    spin_lock(&unix_sk(sk)->lock);
->    old = rcu_dereference_protected(ctx->peer,
->    lockdep_is_held(&unix_sk(sk)->lock));
-> - l = aa_label_merge(old, label, GFP_ATOMIC);
-> + if (old)
-> + l = aa_label_merge(old, label, GFP_ATOMIC);
-> + else
-> + /* connected dgram socket, peer ctx was never initialized */
-> + l = aa_get_label(label);
->    if (l) {
->    if (l != old) {
->    rcu_assign_pointer(ctx->peer, l);
-> --
+> Fixes: 89ac6aa752ec8 ("apparmor: push inet mediation into profile callbacks, and improve auditing")
+> Signed-off-by: shaos <shawnq1@163.com>
+> 
+> Validation: Two fresh vulnerable boots showed socket teardown.  The one-line fixed-kernel control denied the call and preserved both sockets.
+> 
+> Thanks,
+> 
+> shaos
 
