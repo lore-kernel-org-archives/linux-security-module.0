@@ -1,98 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.122
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793044068;
-	b=hybes4R7x8Ufktj7zUUQhtybZJijz9V7jLe4azA24fnUuzOh6kaHURZtNxg9ztTyiXWW
-	 Bf7jNLLRZCJlMtQ7TQW7fFOuUXzTaKIGwSfconMMjn0Rk/83iEQ/6UhqqnFk5o1RffILz
-	 m4O0aXGwgLHxkIEP+80NSeWVufSb3DOM41E6Yt0mtlGMLZmHz6jDzSr0Ygq7VZVvDMNh0
-	 gucqOj+ODMTuaFinTbe+UeDE4tdVZFdsdVwa8zBSouWH4IJXbBKQZzAO/BJRQLLQyGBpn
-	 siysNRugdUfJjJRZD8Wj5MFoMMuvGVveAnsq3L+8A04bk/TUv43AvlLAmMd3XCUqDzA==
+	t=1793044108;
+	b=1zCZswS6welCyB5FzTlE1gRJXslnNNqEjGkJyPzw3kOhGRlbrqxredGrXzPkxA7JNb61
+	 iFM9jIty7j+Q2duMweg+TWUS4vJUlm5b/LZptE9p+7LphvlaC81YeJGJA4uHjrjghTb+d
+	 ie3jumiS+DlGk6u+Ajn7/ekceBaZH4zai1F+Ph3lyszfFtC1uAQa8KZNkNKQNbQyP0Vb7
+	 nxmDeTirDx05GCNeHYaXtikndsLFVtm6Tbx3OtWOVMSwPZd51z3nAvyaSb4Mun6xd0uX6
+	 9svVlLB92FZqz2g6kI3G6V58TPz8U1BFmJuQycZY2G6tO1FNxEvlQeCN08AHcnPgDpA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793044068;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793044108;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:
 	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
 	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
 	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
 	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=R31dxPRwAL0rgdgAHSWbnri3dyw9opSnzzBfvu62EX4=;
-	b=xoh2f/qnbBZEoA3QUIz3EOvgkqkkpkSHxonQqfbeo6D4uvgowHj48MNpmHMgVBN/hcQa
-	 anJEQNC4zKBMxmmE0qg66+L4LJGYDHEcrzaKD9wrAznLYMC7mNSGj1KjhDkz+dGD0jHtL
-	 fnEcTxSY7oyCWSjq2cnBfVn6ZtYydnnPci+s+y0uPUhn24d3z7lrzYunIvDOXoPOUVbGX
-	 gKoDj79hVie6esuScdiAO1bZcpw3Aj9AnttyhjEg220Ja9+P7duxLF4w7JuSY9ftXM5a9
-	 hLMjUpxX+gdc6z/CyNvs7yYLn5XV0+po0miMGHcG/tvEiLGWgS0PaBpk9OC1/2044WA==
+	bh=oOSXH3b8YM+3zQu1xQxJWyhbK4XJyHCVontaJB3DeTU=;
+	b=wfWDY/zsGE3FSBn/PursQdln8XCa5XpY7eAoaiOZtO/9gwiI3MEKwn8HvG48e4MdzvgC
+	 GOs1ngvGYpl1Mu5qzkTaWIHqQYwegM1WEDliiB+vrzbNeRdc2kdc2mWFPi8jBcKCGYoGB
+	 aeoPst0MmKHfNr5kxsFagnr1Yjkjt/OHZllpJOv3G8DIpPQSbGXa2naeS5D2SgTeDK/Ku
+	 rJdNHp/xIqxjOtbiMWVJu+XSOATEpWQ/8CWLFBqEx6AC0ZIu1Uv5KMa4VYKch3YX3wdSN
+	 SKeDHqCJmgFHLY60mtniwkMPdb42SfFEuvKk3zRhfhCDFHiOCWQUGuu3ZcBVmaihfEw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=canonical.com;
 	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=YYhrV6OO;
-	arc=none smtp.remote-ip=185.125.188.123
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=GUIUnTyP;
+	arc=none smtp.remote-ip=185.125.188.122
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87868606A31A
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:47:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 87868606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F26606A31D
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:48:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14F26606A31D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=YYhrV6OO
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=GUIUnTyP
 Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EBE1C3F97F
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:47:44 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F12CA3F57D
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 19:48:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1793044064;
-	bh=R31dxPRwAL0rgdgAHSWbnri3dyw9opSnzzBfvu62EX4=;
+	s=20251003; t=1793044105;
+	bh=oOSXH3b8YM+3zQu1xQxJWyhbK4XJyHCVontaJB3DeTU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=YYhrV6OOa57TxbAGhbA4iCPYIMiQgx5HThj7uCkh2pyak9NP3SBtqvMkd17Il1H1k
-	 SrthAQ5mwCaQYsjfYDZYieoeKECrc6t4/m+rT5KfHqAr+nhoDYrexr8YxtIZwfUzFF
-	 zO+i9qnnVf1bOuM13OZCa8xHYYg5Yc5nLU+fCSNboVkCKmlGxObUhXjO/INjWEhsbx
-	 KQOU3a3V+r6NcRbyJ70MMa7zkGXsloiaFYInzh38VhO3IHrrGbwuehQjne96DVZR1p
-	 OZc4lAvMSDG3Z7h+V0XpduYvMFijUwl3REp+DpHGE3quG+wNyFFkCHkLfAJXD8jjey
-	 L3jk7MVecBUcGO1oFauAolY4UgeFgSibca3vu0GyIXFzpBEI/vVq44k95tL5fMD8vs
-	 Q/fD6jvUhDmJZCIFjFjv1lE/5K/4kUIvziX04mMCu/Cv24OB3XF5BxmZ1itV5V8sA9
-	 1XZAnjzjrPZUAn4YvVEkJ5pz7lR+E+HPtjU49IOMbDjyigXN4k/PqR+sQ6N1YBMxQz
-	 D8HhlPPZP+jFm2bn+/w8lYEUOc6JFhhgwp7JhWkJecy/gM03wFl35gP3Ddfi9UzHx3
-	 5aiA3tdhVBYfPOCes3MzsHrqYpgtN+GeYBJ8/UySDw87Y6mmlGXrY4CvV2OnGqIQGl
-	 dSzpXVf/p4qnspgSBQbilTe4=
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-8b155f4eb8eso56105527b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 12:47:44 -0700 (PDT)
+	b=GUIUnTyPhu6mELzhowXpXOoiIBvtySXVuVfLzXcBjdl9kWnVgUxD2Kr2XJjI7bQUL
+	 qowBgoDuSCQj856GtpZcBXStrjCb7UAnAcPvhH0JJIPcRZbN8RLnY9SMN9L44fkdq3
+	 9NNhKk2AqgWmo3ckjtDw2rckDMD6SN06kYzrBGlLZoufLqybBzuN6VUEMYVJceTVE2
+	 GUzPdX/ETRAo5waveiPd9hiUjn3YGRhiejmY00EbYE3qX29BmvIaJ0ULO07KcE9+CC
+	 k5gpN+2r8I6dPI53wmxVrVYn5vluyX/Ke/cJnWIHcrEDwng7j50XA472irmlU0dss2
+	 skqzqCYc9Pb9Rs3KSmNJL+mJaSsn3jF9K0nmsgrJC9pmQOmU8I7Jg9nLk8hykBW0St
+	 TiUh+PBlBpvIaOP4a/kzIIeJDF2PeKZ0DdTzV85nGWkSDPrW9GK/bnihQcQGCkhXh5
+	 5ZnSCyTBy/03DAIhRU75neywahiWg1s0dh8FsBWdThnujfUYChTGmXUaPp0Fza2mHT
+	 EHd3ZboLex0xt/ngzpqdaObnc2hNsL9R2iYSj+tvW5O9ARJ4JHUkIc/2V8gS7f0Cdq
+	 L/bJ++2LX/hi0gOOVPhaABhFcHtF12pUy+NmyGcmMPN8pqicyTfIEc6zb+zqU8pgPL
+	 acd/iUmFgqrFZiIADyL8SmxM=
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-8b0e878f574so6354317b3.1
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2026 12:48:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793044064; x=1793648864;
+        d=1e100.net; s=20260707; t=1793044104; x=1793648904;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=R31dxPRwAL0rgdgAHSWbnri3dyw9opSnzzBfvu62EX4=;
-        b=Zk937S0LatAHtgwGcu6+Gz5FJL1XMXxXmDIVHAYDKo3mluHAMqghNAxNuO6b1VQzr8
-         NCGBM5O+g39EoCzNLecq4dOfz8xFVwuvXZoNGKY/bhjsQlY+IrgRwe/5GMhMewlegooY
-         yE9bfUtCSFcXsnBo8h5nbi5VHTdXPe9ctX8QTJBcNLHhKfOBzC7mMuQP7IRT2ikM5rnf
-         NTgr2LKC0lJNaI4jkBy0tMI+8Lh2w0jkTFmcoIRVwwWyuncDF1jmdhyCNz6vioYt9beK
-         qwXzh2Di9lSWglrLIkRDKUhBcNu0m/9ua4rcPkF4qeYJJOWLkr55AeNhq3fNN3Cj3RC/
-         fJXA==
-X-Forwarded-Encrypted: i=1; AKwUvByPp95kecSUczWc8ZkYpbHvh2shxzhRqFDz6gn3vqrHa71kZouqjbiiI9ufWJ8MKNuAjbmHxdxHu9mv6sOIb06SPq73BUQ=@vger.kernel.org
-X-Gm-Message-State: AFq9FYK3gPYikvBelvnG0dh19YeXvIVp2RlLiRnBt2M47h0IAfbnUgyt
-	vQLFExlsJp7vFQfQLaAHSyNoDHa3x81yYpTY+LV862U3+nPInSNmh/imgXipC1oK24EuQ8eKISK
-	pYYdm+b4EfyA2a5aBhDz0F8q1HvV7gAgDPKHkT6T47pggV1oPD2zusbMQ40LWZzIMW1lXqnWoIp
-	baKzSX6n07kYg0V7RzcQ==
-X-Gm-Gg: AYBFou30d0K2FnEOE+GVk6Dq6gkVDbdtDO/eK/ITe7qINV0MkOaJIJ7hw6FC7g192x1
-	Gjm8aXLluartMOqNWBg8ne4vm03Q5udsdw/wyNUNPxrLNBZ/wKaSZ9D7sCe5sZyT3JqhSmMXUOZ
-	59FmpPGspDfVXD8M1FhYvbUVx90LyXd6zwxf/J1SlBWVPFNgdn1ntPZrYcpK+zv2DzUP4l+D3Ps
-	WO9wwvwGXf4NQlUnlM8xzvqGjDUO6NW/TVXuH8Z6zXPMwKtAPBBt+gsJzjf732itFk9RA+QFu32
-	EL4q3T5qv2kcp+lJP+0pNFjJ8bN0MuCSz0wxiZakpWtlbPn9ndKfjW0mXhS1dBfx82gB8AAupwb
-	img93c6KHAyuUXOP6nFFV6NCBOH505/KCS39b2eA18F35meR5CtChkQBR
-X-Received: by 2002:a05:690c:8e0e:b0:8a8:8dd2:f5b3 with SMTP id 00721157ae682-8b166c16abbmr48032007b3.43.1793044063738;
-        Mon, 26 Oct 2026 12:47:43 -0700 (PDT)
-X-Received: by 2002:a05:690c:8e0e:b0:8a8:8dd2:f5b3 with SMTP id 00721157ae682-8b166c16abbmr48031867b3.43.1793044063317;
-        Mon, 26 Oct 2026 12:47:43 -0700 (PDT)
+        bh=oOSXH3b8YM+3zQu1xQxJWyhbK4XJyHCVontaJB3DeTU=;
+        b=tjGpctnwXPkor6pHMxxbNi7MSqjCxyoTyJPY8TGzwABiGJvRHbDrQNRWmerWn+HYHj
+         OfTqX7BXbPaLhzeWeWeuAES6+JTOwbd6SWhp3534En9P6sYtGzTyhJCuPtSU2lvGEzfQ
+         dVTYEEYHkgOii++N7R2g4fl7mcaBl6/84MJrLNXVnT5njK6x5vzSuOAsrSYw9aFJXUjh
+         boDg4aCkuD7RC/wQ21awRMlcErVRFzOWO9+4IM6mcEavE5bvmniPD0pQPb9KOMsqPSL6
+         AgeImJtTXp3TTKX816wcSN/8ZWR6Cqnq5ju5p8WAkmWDj3MO8waRgDhDCd6mJrWTnTzl
+         0psg==
+X-Forwarded-Encrypted: i=1; AKwUvBxBWTf1/XzpxvDrIn9uVjJzJh8ovENs1mYRWOkkfSXKYIRmDfbAOQCSxvRDISzq2V4QZpZs8CZYO/sCsAr6d5yAJ/iu8LA=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIAjsI4d8otPRx0bIKI+i9hXIoryga94qYG34srNaw9c9TXkMm6
+	9F5f1rhoVrJTf5njiuFP7IvIa0Z478XhWLqe1/0fQK5W3Z96O95vVRdJA/8MD86lPsWD5/VDTjo
+	j2tS7M5ILgKprQdBTzWtL9I5Vhff5sFU3K7AauVEp3XsY/CeHqAarnOj7vS2YVvMJmudfLe4jhJ
+	wBhgLJ6ZgNsPJIU2JCtw==
+X-Gm-Gg: AYBFou2f26s8WMQ5KG+Y5BXAxSFkQkPo9fxNenUlsbEDD/5hNnuGkM+ze5Jac/vQuxP
+	rJ7XZTOFqMsvcr5cH3oRoemKS1gg5KWA75WMz4S9Xtltt/KpQrCG2/VK7pPW6d9yR/YbMuyRWM4
+	8BwQG+K9iNBriqug81++AZYNNfaj0Si4hFnfYMsWziQwTBF/0sc27eN7bHXiPKWqxocV+xEH9Bd
+	z7U0LsqlmdV4k7kH0fskCNTxC/thQBGlX/3qRg4QZbocJgfuTpY+QwTka+lsg8Mcmjgdf+h9Jyh
+	56K1zfeo4mo+17a5jQVecxaxD08ps0Bev+WxUIUbYCDV7aHe5XvRHz4NRI1keAOp9pD7y+hskYX
+	1HvC8vL1onXoOBhjIBcRIKOrO3Vd6Z+D2tpMmAeOwiR4asWNtyWAcIDM=
+X-Received: by 2002:a05:690c:e3cb:b0:8aa:e4e7:c5a with SMTP id 00721157ae682-8b19c796e7dmr5537847b3.5.1793044103931;
+        Mon, 26 Oct 2026 12:48:23 -0700 (PDT)
+X-Received: by 2002:a05:690c:e3cb:b0:8aa:e4e7:c5a with SMTP id 00721157ae682-8b19c796e7dmr5537737b3.5.1793044103622;
+        Mon, 26 Oct 2026 12:48:23 -0700 (PDT)
 Received: from [172.21.9.52] (host-209-35-187-178.broadbandcancun.mx. [209.35.187.178])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e56ea84sm1127927b3.18.2026.10.26.12.47.42
+        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e566718sm1157977b3.17.2026.10.26.12.48.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 12:47:42 -0700 (PDT)
-Message-ID: <3a3c7010-26f6-493e-baf9-6045c0ed2c56@canonical.com>
-Date: Mon, 26 Oct 2026 12:47:41 -0700
+        Mon, 26 Oct 2026 12:48:23 -0700 (PDT)
+Message-ID: <598098fe-c598-4a67-a60e-849141d27ac1@canonical.com>
+Date: Mon, 26 Oct 2026 12:48:21 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -103,11 +103,15 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: mediate AF_UNSPEC socket disconnects
-To: shaos <shawnq1@163.com>
-Cc: Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261020001256.888314-1-shawnq1@163.com>
+Subject: Re: [PATCH] apparmor: check address length before reading AF_UNSPEC
+ bind address
+To: Michail Andreas Michalopoulos <mike.michalo@gmail.com>,
+ Georgia Garcia <georgia.garcia@canonical.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ stable@vger.kernel.org
+References: <20261020140030.92643-1-mike.michalo@gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -153,71 +157,60 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20261020001256.888314-1-shawnq1@163.com>
+In-Reply-To: <20261020140030.92643-1-mike.michalo@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/19/26 17:12, shaos wrote:
-> Hello,
+On 10/20/26 07:00, Michail Andreas Michalopoulos wrote:
+> bind_map_addr() handles AF_UNSPEC on an IPv4 socket by reading
+> addr4->sin_addr.s_addr to check for INADDR_ANY. At that point the only
+> length check done is addrlen >= offsetofend(struct sockaddr, sa_family),
+> i.e. 2 bytes, while sin_addr sits at offset 4. move_addr_to_kernel()
+> copies only addrlen bytes into the on-stack sockaddr_storage, so a
+> bind() with a short AF_UNSPEC address makes AppArmor branch on bytes the
+> caller never supplied.
 > 
-> aa_inet_connect_perm() returns success immediately for AF_UNSPEC before checking the active AppArmor profile.  AF_UNSPEC is the socket disconnect operation for TCP and UDP.  A process confined by a profile containing deny network can therefore disconnect inherited sockets even though ordinary socket creation and connect calls are denied.
+> Depending on those bytes, a confined task gets -EAFNOSUPPORT instead of
+> the -EINVAL that inet_bind_sk() returns for the same request. Kernels
+> built with CONFIG_INIT_STACK_ALL_ZERO read zeroes and happen to behave
+> correctly.
 > 
-> HEAD commit:    fe2ec83746e501645709761605c2464a44fd2929
-> git tree:       upstream Linux checkout, local branch master
-> source version: Linux 7.3.0-rc4-70-gfe2ec83746e50
-> compiler:       gcc 11.4.0, GNU ld 2.38 (build details in reproduction notes)
+> Check the length first, as inet_bind_sk() does, and as the AF_INET6
+> case above already does for inet6_bind_sk().
 > 
-> console output:
-> https://gist.githubusercontent.com/shaos26/73b057c77b9ea22d5e6813c259dbf43c/raw/fab5c58d6f184f5fab88a3a31a80c2b919efecf0/console-output.txt
-> reproduction kernel config:
-> https://gist.githubusercontent.com/shaos26/73b057c77b9ea22d5e6813c259dbf43c/raw/b9192c97c92fdd3b59089704bad6fbd0a33ccf06/kernel-config.txt
-> reproducer:
-> https://gist.githubusercontent.com/shaos26/73b057c77b9ea22d5e6813c259dbf43c/raw/92c7dd098a227276fe3daeea45996e2848e66439/poc.c
-> 
-> Build the kernel from HEAD with the attached reproduction config, then make a one-file initramfs.  The PoC mounts sysfs and securityfs itself; DEVTMPFS_MOUNT supplies /dev/console.
-> 
->      mkdir -p build rootfs
->      cp kernel-config.txt build/.config
->      make O=build olddefconfig
->      make O=build -j"$(nproc)" bzImage
->      cc -O2 -static -Wall -Wextra -o poc poc.c
->      cp poc rootfs/poc
->      (cd rootfs && find poc | cpio -o -H newc --owner=0:0) | gzip -9 > initramfs.cpio.gz
->      timeout 900 qemu-system-x86_64 -kernel build/arch/x86/boot/bzImage \
->          -initrd initramfs.cpio.gz -append "console=ttyS0 rdinit=/poc panic=-1 loglevel=7 lsm=apparmor security=apparmor apparmor=1" \
->          -nographic -m 1024 -smp 1 -no-reboot 2>&1 | tee console.log
-> 
-> Under the deny-network profile, socket() and connect(AF_INET) returned EACCES, but connect(fd, AF_UNSPEC) returned success and tore down the inherited connection and listener.  Two fresh boots matched.  A one-line control that routed AF_UNSPEC through aa_sk_perm returned EACCES and kept both sockets alive.
-> 
-> Impact and prerequisites:
-> A confined process that inherits a TCP/UDP socket can bypass the profile's network mediation for disconnect and disrupt that socket.  The finding does not permit socket creation, bind, or arbitrary peer connections; no privilege escalation is demonstrated.
-> 
-> Run the normal connect permission check for the AF_UNSPEC disconnect case:
-> 
+> Fixes: 89ac6aa752ec ("apparmor: push inet mediation into profile callbacks, and improve auditing")
+> Cc: stable@vger.kernel.org
+> Assisted-by: LLM
+> Signed-off-by: Michail Andreas Michalopoulos <mike.michalo@gmail.com>
 
 sorry for the lateness of the reply,
 
 Acked-by: John Johansen <john.johansen@canonical.com>
 
+> ---
+> Tested on v7.3 built with CONFIG_INIT_STACK_NONE in QEMU, with a task
+> confined by a profile allowing all network access, calling bind() on an
+> AF_INET UDP socket with {.sa_family = AF_UNSPEC} and addrlen 2 and 4
+> (200 times each, after leaving a non-zero address in the kernel buffer):
+> unpatched returns -EAFNOSUPPORT every time, patched returns -EINVAL
+> every time, matching unconfined tasks. Other AF_UNSPEC, AF_INET and
+> AF_INET6 bind cases behave identically with and without the patch.
+> ---
+>   security/apparmor/af_inet.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
 > diff --git a/security/apparmor/af_inet.c b/security/apparmor/af_inet.c
+> index 516c9016537c..a617f8058634 100644
 > --- a/security/apparmor/af_inet.c
 > +++ b/security/apparmor/af_inet.c
-> @@ -425,7 +425,7 @@
->   	if (addrlen < offsetofend(struct sockaddr, sa_family))
->   		return -EINVAL;
->   	if (addr->sa_family == AF_UNSPEC)
-> -		return 0;
-> +		return aa_sk_perm(OP_CONNECT, AA_MAY_CONNECT, sock->sk);
->   
->   	/* do we need early bailout for !family ... */
->   	return sk_has_perm2(sock->sk, OP_CONNECT, AA_MAY_CONNECT, profile, ad,
-> 
-> Fixes: 89ac6aa752ec8 ("apparmor: push inet mediation into profile callbacks, and improve auditing")
-> Signed-off-by: shaos <shawnq1@163.com>
-> 
-> Validation: Two fresh vulnerable boots showed socket teardown.  The one-line fixed-kernel control denied the call and preserved both sockets.
-> 
-> Thanks,
-> 
-> shaos
+> @@ -196,6 +196,9 @@ static int bind_map_addr(const struct sock *sk, struct sockaddr *addr,
+>   		 * AF_UNSPEC if the address is INADDR_ANY
+>   		 */
+>   		addr4 = (struct sockaddr_in *)addr;
+> +		/* Length check from inet_bind_sk() */
+> +		if (addrlen < sizeof(struct sockaddr_in))
+> +			return -EINVAL;
+>   		if (addr4->sin_addr.s_addr != htonl(INADDR_ANY))
+>   			return -EAFNOSUPPORT;
+>   		family = AF_INET;
 
