@@ -1,98 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.123
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793132413;
-	b=ENrPEAL48u0vAVED1uTBVG5uSnKzbnfamAL2VFTizAR3is06MLfZvAmZdjbFeAdrAuc7
-	 A/xjHCDM428/CP9OErm1uxCXZ8BrVUw1RAYHjNFhFBQKTjIkIuKB/zjQzUfHlyMp8B2Hv
-	 o7qh9c4VfmaH9kVQ8/Sn62VdzoBptvhAGjIHSDOFRGKSQZ0yPe0zM55Y+Ur0LfTE1Jdl1
-	 LELkkX/zsWPW0zoi49EbrAwzOcVvqpO8tPZcUOv7fZQDkud/HT2mnxF5Jo8KAo+EkmLz4
-	 urBCKE+WdYzI5qeftjRdQYhSLWmXluiBU9a3/8yCh4OVIt5iTTBhdxzo3fHd1aFThNw==
+	t=1793132832;
+	b=UdJJvF1dVyZMKSYnevywpSvj1315yfqsUPBFLCvjFLOl1I1i5BR++uVmfUc6NDW4liB/
+	 Om1Ad7XDb7w61BZhnpTORdI+KeiQLyPoSeNM9qXeyscIJS86UG/il9cF2wLdOJFJPBA5R
+	 MxzDfNLuSLn7ijNy7GfWfrNrY+IWW5H/oaAYCTIgMVzIJP4qoJQQ8MW+v3+ltDu6qNvjZ
+	 GS1vfzHICAOhb41624jld56GayZa9aKh6s5LEnMpLZgZRG3sIkOdLHi/kUz98brruZyAt
+	 5UjX8p5Yy8LO3Qq7elDyDSu2ZFwNOs1Hmk18a2SiHbuDQ81enQNHvQBUF97RIIIzwkg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793132413;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793132832;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:
 	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
 	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
 	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
 	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=1nq0z98nuOUnFugo129zrVuABKTo7gElCbo+rq4acFQ=;
-	b=Hov0hLZYpk/5d04gwLc6WSslgsQ/ddDnLWmQ2n+gQKcrYbEMtAFCxVxO6NoE/6vH6LhW
-	 W3iQXP1PM3ocZChaIQl891RoXwgJb9Prk4P8KO+H6tPoKFmrSO2UHe5Rk6M6C9kPB8MyZ
-	 zAQGcQOVMMeYLCEEeEJ7Pb+JDfP9MfB04tlJhjKgxvfMx1LPdCUPPHaurZtbJjhoLHU18
-	 e+mgvTXkjL1zwPQt+Z+c1cZ/0vaXQYp35MZDDVcnVl8X222obuH0POyC8nPLye9/T/ArT
-	 qtHRxldLFiZ0dU7s0+IwN42dPcJ5VTXxuRV7mGHQsb3R4MRw1BIGjP+7PK+9yCF1llA==
+	bh=dAIhWV14mrK0zz/OnYeaXG75ONoFCGEArK6ZD7HRTzc=;
+	b=UPreQbIrWsECcHXVUI+JdX3fNTPd+xp3qMu0HXU8OluuE9KJ3vI3oK6kKGzkwLXv6HnU
+	 7AWRIBS1/gMhgQW7WFIzXj4VTIc6XJgrOt3Zw/VaeVvF9aF60ei9PRGwDEuoIMQOR2um2
+	 9rdbtJoesT5FMuhQPQRVDi8cwSLudFMnBfZNtGQlzGKIJNsep0SbH53FPgZ4IXkYyNbzw
+	 jEkJCM/FxK67VbMBgSuUss0wOfHCcBQH28RY6racayQGmA81n26uOCrBWiOY/mLMCK2WX
+	 iyDwoLo+p/Q7h1+lfUmsTg406c4OZj4OUVJE2d9Vx0QTAPtbAvGxSFVtTnqBrY5MQHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=canonical.com;
 	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=Mqy1N1iz;
-	arc=none smtp.remote-ip=185.125.188.122
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=EUqxkM9z;
+	arc=none smtp.remote-ip=185.125.188.123
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4434606A31D
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 20:20:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E4434606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBAF606A902
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 20:27:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EBBAF606A902
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=Mqy1N1iz
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com [209.85.128.199])
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=EUqxkM9z
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3E2553FE38
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 20:20:04 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0E25F3F846
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 20:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1793132404;
-	bh=1nq0z98nuOUnFugo129zrVuABKTo7gElCbo+rq4acFQ=;
+	s=20251003; t=1793132830;
+	bh=dAIhWV14mrK0zz/OnYeaXG75ONoFCGEArK6ZD7HRTzc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=Mqy1N1izf2DWs5lfn21OChX+GPdYbd1BNya8ARZfGrJH20PAz/tFEI77bEzkeU1DZ
-	 GmUWvdhnwaIvhcfATr0EpnyfwyRCG20b/HeUoPKe3oE8/EQ6tV5I6gDDYiG4Tk0Fn2
-	 tAaGXMiTJJIs66KbpQHX6/QZICSCmJJNEUQUxEhgJpCSnHBLe8TceiHyeOj5T6QLii
-	 93zGi2vn0FCnBAMMPxOE10ELYjNezNc/E/S63fFUwWu8Gwi6eJCROy6/HSsxmD+dlR
-	 HYxTnjilQyhmmdYT2SV4OxL5mxZrImPvMD1sdfs5ZfybYSqd3cTerUR91ntmZhxGVt
-	 rmyhUJyi8xljmFfNOjl9dWRbMcqlXirq4NNrCLmHj19kXXmUL8Glel+ZvrVeJIH2Wj
-	 4nqnIpMsAZPed+xwCMuN9CZRLbi/XTLi6MQ0MpHeKP6O21QOrCt/xLoBYcMT0SZi8M
-	 huzF/RANmPMg+gxk3FJu4EUP9wTfg9hL2YGuRlRaOi93QVgB7WZnTKBwuK8jMKky9l
-	 K+UHOJ2vix7hEFgoN4mjY9IkIMzdWUaOlkfywqYBDEsZm86ejPjHG+VVybQVb2wnCI
-	 nHWULxqdLR7Elq/wQEyexuR11cEmuomCGVoi9Dpt4rPcWPLU4mwWJzPA93pu0NUmUm
-	 Q/7gr/BkLIleVJ8dkPjx4Z/I=
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-869553205a7so3907947b3.1
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 13:20:04 -0700 (PDT)
+	b=EUqxkM9zd03e209GBCH1REUEURQfqN/6VsCzGi9ufv3RM1eev5Z++Q0dUlhD5YfpA
+	 OOQmzvb+CHVWOQ/p8d9aHglkxtEu+fa7rcrsO5kZwV3b0z134vaXCratkW5xEjXKKa
+	 UmmI5f5+94h2bjsnKopmyoddQ4yZugyV72NGLZxNlzdTbMqrx+r3Ktz6NOmxX5rvXG
+	 jGjrsQkGPVPxb7vyk9l53rla50hKVBF65rj8FiLaT7nGOxu5O2HdjDXjK8DFwesyHp
+	 Xq+NdkhltQ6xyKtd+kZ1B5yiWEbUHg3yJqxLfHPAlb7Zwn+1TBICMmsGBgGXMcopVu
+	 3NmFad/SkJtjzCLlwTjCpwrouRPG3PB/SG3cl7gaaww97zylFVEvJeAO9E4JWMjUV3
+	 laG+IPpYT9zPQBh6ad2gdbcs1EjLq0UalWjjYjXUcEdN52lFNPklF3k6u/wPu1tslT
+	 LgEIwbnPklCGJLrEXHccsPvASfaHDb4G68X9PzxUW7X3SWuiItU9w9cg9zLI+ak5sX
+	 m7FP6FRfekpjo2lPTLxZeivlMpt7/1oe07ex/MnnzdXiPl3Y61XLqiV6dvKvkWz2Bw
+	 +WTtZeN660f14r18QIMDaLMl3KWpt2vq1/ywiY1cIprP82a4ajEzsS85YtCOTqtYXt
+	 KnvG6s+qkV9N9BiYysHMI+3k=
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-8b0f1c06332so4071097b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 13:27:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793132403; x=1793737203;
+        d=1e100.net; s=20260707; t=1793132829; x=1793737629;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=1nq0z98nuOUnFugo129zrVuABKTo7gElCbo+rq4acFQ=;
-        b=lQvzWbPMU70vosIckK6xnDePKmijVltV2AIYxXQjZ6KkdchcXzx6DhlS7AtFwdloNg
-         Jbf/7YLDqIdavQ7qaYByIx3PKRlCoyr4dSpiChwU1qxMMNiks5j8XLAUeCurDVxaVdts
-         X+JKSoxoxlHrbLW0qBw7Aiv/wJUDMnuLcr40BX2K812uhzzJIgJXELcJ8ye8gfBEXym+
-         FFtzBaLhAC9zwSdq9GBJPfhQkMXgOcKcj+VifN7XyKrH9rwimdEskvBIm1LW2XpHnT2y
-         a09YgHJtmlcr8hDMqu4lVWu1n9BSbJDUq3zTyy/2RmhpxN7hW2brJQMFtAiqwAnCUMgv
-         d5DA==
-X-Forwarded-Encrypted: i=1; AKwUvBxNMgdAKh59oCvkYJcDoGbypXqbvfeS37lIfuWgyz8PvVmKSXa/vP79JQYaxb0dL703CEyGJpMs80pbPkfE9rhzZoceh/k=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLlA+Qjzu/bdeP9vGebSBIaKMzmb8sDp4z8uQfwG76R+c1b9ajv
-	qIW8mdKm/7IzWbKYpIU8ubx7uNlQOhYge9EClJ7raDBIw7tFCTG4bCsJaor54j7UEirSk/wHbEL
-	8HiGjiQv6tAw035nhc2S3UBPfrRM8Bqjn/qGYHs4EcT+TzHXJCBsx5Nw4m97RaZxZHaZX7UPt1s
-	TLMuxzijVZICmRASfSgg==
-X-Gm-Gg: AYBFou1gspcoTPuR0GgQ+VAPa1Igidn7Tni8S0d8ww9P+gG9+IojzVIDaCMBJylCLtj
-	eQYSXZHY6/LEDWxAjZI/IfCG/LWiW0o5US7EeCIJk/qeYrbEAVueazSlUIgJdWa8MWQY4Sl4LtK
-	82YMc5CK4i7lqb4Fw5RSG70e4qCczQbDvyvXQrCEqlC8g7MkZ/wlnxfQu3jxtsDrfFLi8s/B5io
-	3LhgXJ0kypwyFbOSv+x4xvgvlL2M3n6I5IeLvlPUekYwA8vp0O2S7eeac7S5rpqjCD6GkBVazBi
-	GiMoJYry1Mk31DSNoEZQiutjjOYS7HWyKks0ca76yXtjChBIA0/8JXQwEWVRoxQgosnUL+ahMzB
-	KVL8S9Bz5r5L857ig4mQFK6PsS4pF42oNQLEKJh2LvxrtqT6MV+bpC6A=
-X-Received: by 2002:a05:690c:112:b0:8b0:cd30:ce8f with SMTP id 00721157ae682-8b1b5e6143amr969157b3.49.1793132403116;
-        Tue, 27 Oct 2026 13:20:03 -0700 (PDT)
-X-Received: by 2002:a05:690c:112:b0:8b0:cd30:ce8f with SMTP id 00721157ae682-8b1b5e6143amr969067b3.49.1793132402719;
-        Tue, 27 Oct 2026 13:20:02 -0700 (PDT)
+        bh=dAIhWV14mrK0zz/OnYeaXG75ONoFCGEArK6ZD7HRTzc=;
+        b=ylV9hmeQFyLV1939omwlfVIlt3IXaUMEALbtr+OWnk7n0hQENR1itvgza11cu0dXHg
+         IA+9zv31RLtpSs9VjcncD27i4BitwjWaqs0qtjeWMkHsM2F4kPKEjJ0JjctJJKYgORpW
+         FztP5V+FEZ10E4jL/7gDVx3ASlAXt1Og5iO6mpKo5mJpeFmhVqYyivDsDsRWaq6lfsKv
+         clWVguRIAE01/pGJn9QvzGUM1vQPJbwyDongF/u/9TxwNEX6BkRaZD1ldHZB0cN2b6qP
+         4CEvuWHiJ45QoUM7pyQPTtpg71httFauIjl90dKNnqH77lvkQ1+rgiufHdOkIo79E/Mu
+         3vMg==
+X-Forwarded-Encrypted: i=1; AKwUvBzXm3wbyE89WCTvt3xV4IsYUlNXJd1r5lgPmgNoc8Xq/gbnmdld1xqKEWQucuNLBhDtkyACKTdjvkXjDa539lQCN61FKUQ=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ4TcrnIfdMDmH6qR88iUm+iUHq9jQTl3AL+LRL0Urjh2L+b9oB
+	wot7YXSt+pC1wNk2B2oxwOsEMX/Y+OmoIpc4aFGtpnjdqIp6OpEHwgWgCcLAtjxjLwXilHbarsP
+	LJrGkSCUAgO0hi5XzSh1Gk4EebKaoPlnCZg1PE2Z9fOQWNwPlTzwp4i+1ao6VgW1p5u1cSv2rHs
+	Q26V3fwCBwXrmGGXj87g==
+X-Gm-Gg: AYBFou0kYbOVlT7Ny1Q0g8rTFh92dMYU7qPodnYtZRhkMISuRAA/r8havoBEceHfVlf
+	2U0714EhDmkHbujHgLp24WynR9MDqfz2fdRCyROKQSCkNA1TMM6LvrTsWGjhRrn7ZDcqNhmLVt+
+	SM5uCLm78HOscZwAUAaki+yTifKVAbYDZMYi4uIWFhQTFaqYCFS9QDLejq7DvbR0xsqH3qx1wbK
+	gxiA88yTAOjcjnrzDoZ4ltoXDII6Garbo/vAa2Yg9C3+3/yrr6IY+yTMhS5NmYRDteZ3wk0oGCd
+	1dJV5a67En5L1XnmrXPXO4UfE3WemS0M6XbQikRzUAxo8p3FZVFp/OChl+alqQsfvDM8DoOfmmv
+	zGT1kJOIFguHj8MkaW8Lnu5bTFbhFqYo+/pISGkoE6ngDGSU6L2p6Ef8=
+X-Received: by 2002:a05:690c:6611:b0:8ac:dbb9:2204 with SMTP id 00721157ae682-8b1b5c13144mr958177b3.16.1793132828866;
+        Tue, 27 Oct 2026 13:27:08 -0700 (PDT)
+X-Received: by 2002:a05:690c:6611:b0:8ac:dbb9:2204 with SMTP id 00721157ae682-8b1b5c13144mr958097b3.16.1793132828501;
+        Tue, 27 Oct 2026 13:27:08 -0700 (PDT)
 Received: from [172.21.9.52] (host-209-35-187-178.broadbandcancun.mx. [209.35.187.178])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e56e8fbsm17632417b3.16.2026.10.27.13.20.01
+        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e539e28sm18111507b3.11.2026.10.27.13.27.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2026 13:20:02 -0700 (PDT)
-Message-ID: <247a50dd-9fc3-460d-8ad2-1da34c0c5678@canonical.com>
-Date: Tue, 27 Oct 2026 13:20:01 -0700
+        Tue, 27 Oct 2026 13:27:06 -0700 (PDT)
+Message-ID: <a22ce13f-50a3-41ab-a189-c8749bebf1d7@canonical.com>
+Date: Tue, 27 Oct 2026 13:27:04 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -103,15 +103,12 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: Fix the return value in split_token_from_name()
- kernel-doc
-To: Karl Mehltretter <kmehltretter@gmail.com>,
- Georgia Garcia <georgia.garcia@canonical.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] apparmor: check accept index + 1 is in bounds
+To: Guanglei Zhu <zhugl3@xiaopeng.com>,
+ Georgia Garcia <georgia.garcia@canonical.com>
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20260912000302.34565-1-kmehltretter@gmail.com>
+References: <20260916115307.454593-1-zhugl3@xiaopeng.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -157,42 +154,61 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20260912000302.34565-1-kmehltretter@gmail.com>
+In-Reply-To: <20260916115307.454593-1-zhugl3@xiaopeng.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/11/26 17:03, Karl Mehltretter wrote:
-> split_token_from_name() returns ERR_PTR(-EINVAL) for malformed input,
-> but its kernel-doc describes NULL as the failure result. NULL is instead
-> a successful result when the name following the token is empty.
+On 9/16/26 04:53, Guanglei Zhu wrote:
+> aa_lookup_condperms() returns perms[index + 1] when an accept entry has
+> ACCEPT_FLAG_OWNER set and the subject uid does not match the file uid,
+> so such an entry consumes two slots in the perms table.  But
+> verify_dfa_accept_index() only checks that index is within the perms
+> table, so a policy that sets the owner flag on the last entry is
+> accepted, and the runtime lookup then reads perms[index + 1] one entry
+> past the end of the table.
 > 
-> Document all three results: the name, NULL for an empty name, and an
-> error pointer for malformed input.
+> The perms table is allocated by unpack_perms_table() with a u16 size
+> read from the policy blob, so a crafted policy can place the owner flag
+> at index size - 1 to reach the out-of-bounds read.
 > 
-> Fixes: 63e2b423771a ("AppArmor: userspace interfaces")
-> Assisted-by: LLM
-> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+> Check that index + 1 is also in bounds when the owner flag is set.
+> 
+> Signed-off-by: Guanglei Zhu <zhugl3@xiaopeng.com>
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+so this isn't quite right, the index+1 constraint only applies to some
+of the dfas, it very much depends on how they are used and encoded.
+I am going to take this as is, but add a follow on patch to address
+that the check is actually conditional upon which dfa and the condition
+under which it is loaded.
 
 I have pulled this into the apparmor tree
 
 > ---
->   security/apparmor/procattr.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> Found by code inspection: aa_lookup_condperms() reads perms[index + 1]
+> for owner-conditional entries, but verify_dfa_accept_index() does not
+> bound index + 1.
 > 
-> diff --git a/security/apparmor/procattr.c b/security/apparmor/procattr.c
-> index c07b6e8fd9c93c73ea82361af83337774e6d1bdf..cfc45db43aa0c7418604fbba0e4c30a90f0f6cbd 100644
-> --- a/security/apparmor/procattr.c
-> +++ b/security/apparmor/procattr.c
-> @@ -74,7 +74,8 @@ int aa_getprocattr(struct aa_label *label, char **string, bool newline)
->    * @args: string to parse  (NOT NULL)
->    * @token: stores returned parsed token value  (NOT NULL)
->    *
-> - * Returns: start position of name after token else NULL on failure
-> + * Returns: the name following the token, %NULL if the name is empty, or
-> + * ERR_PTR(-EINVAL) if the input is malformed.
->    */
->   static char *split_token_from_name(const char *op, char *args, u64 *token)
->   {
+>   security/apparmor/policy_unpack.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index f1fc48e72..1ea89e9c5 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -1489,6 +1489,15 @@ static bool verify_dfa_accept_index(const struct aa_dfa *dfa, int table_size)
+>   	for (i = 0; i < dfa->tables[YYTD_ID_ACCEPT]->td_lolen; i++) {
+>   		if (ACCEPT_TABLE(dfa)[i] >= table_size)
+>   			return false;
+> +		/*
+> +		 * Accept indexes for owner-conditional permissions come in
+> +		 * pairs, so the non-owner entry at index + 1 must also be
+> +		 * in bounds.
+> +		 */
+> +		if (dfa->tables[YYTD_ID_ACCEPT2] &&
+> +		    (ACCEPT_TABLE2(dfa)[i] & ACCEPT_FLAG_OWNER) &&
+> +		    ACCEPT_TABLE(dfa)[i] + 1 >= table_size)
+> +			return false;
+>   	}
+>   	return true;
+>   }
 
