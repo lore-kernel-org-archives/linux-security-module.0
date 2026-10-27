@@ -1,98 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.122
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793120872;
-	b=H4vj5ruo+k3yOnzvrVg9Fk5mGCb+5/9rOTUyeVCjp9ZYYXPo53OMWjhkiGkSjGRL7WkE
-	 aM8GCD2aDO2UT1N8ZMpBBUl0v8FGh25+rlLG+T4MNJD1VAoklJ325mMsLMENg2I5DqsMm
-	 Y5XkFygCLqRbZUVgpUFHsBFP8rfEZqT7YC8noYl4tcvLdLeH09KfsQFDIBe7nJ6J0wts8
-	 yc87YzghvVndEqCtuLyB8jNNzjYdEh5T60dQrKzQMg5lbpAtm6pTM6pQnUmI9AYuC5ChL
-	 3TQWjIR4yyEeLysOI03Er+WUhgkNriLzIJdXyUE56WMzBpFWAwosP9yEPOFABnNFE6Q==
+	t=1793121287;
+	b=cUf+Xfx+g3gRu9KwHZs8HKPjYWZHN7pu+GajWxdQCV+uxYJR4dtYyiAVzoFOTw2xFnuF
+	 d9F1NNcWw14iVlbwQOoeEUhoA6oEjXXRRpEwDYigcm3N/4jCgffaMClej5YSbbDElIsCm
+	 xdrs7+bKvs7s4N/oS9qeoASjdTFPFYpT3sA0sD9xNQgWVOtrI1ndbQNeB3KOvVjsnGRbI
+	 SMe73MTL1ENv1SDSl4fcmPOyZk4zqaJvOnJEIqa6RoUwtemLdslqFLPf+/Fz2lMCo/I3J
+	 tAu/Rm8PCPXztM2MbwtjV/E1tzzJG1srSy/gMFDcJFqY15zWYk/xi5OidvKl67dOxXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793120872;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793121287;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:
 	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
 	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
 	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
 	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=Bh2ereZgveIj/jLInyo8zSDhunmqvE23nbEBWuKxdwM=;
-	b=Xu1H56RC/1cUgfTn6rSl9Vz4/rNDy6DJZ8lBZ+vHaun7ZfbceRqkiQJnBjv1PfOqkDPD
-	 C0conFP/YYpI6rzyM2WQrlbSNiYBM4nkVS7f5gcS+waMEWdxhoT06mIkk2g2PzrCUfT25
-	 ozFohAfGMuS2Y/O5uld5n93GpQ0raKdErWJjvR2+dUBa4C+pfFKI/D5pHMo+gYx3RhqMn
-	 FJQ1HRHA+ckc1kj57f3ch3RHjLgHEJgGr1Tu0qtE7IqJBy96XDN3no8NDfJD2smOxSh/L
-	 W727M75iTDc+PBG6gVHaoBJhg1+CY57Nhs6H3pF/hey4I2EyRDG3hsT+dQAnNDxHeUg==
+	bh=gReZVq2L+A9edWEpEVL3xuTz1Tp4ufGvwMsvE+Ou07U=;
+	b=V0nb5YfChNtQh2lPKbwCb2YlJmaK+lO8JAFzvMwFdW7TJHxxGpuHIum5YAM2s8KtxgUf
+	 buxkr92Yw+TWdHMpKXVAMXq24IZbGKCFkCIRovAKD7YBruh2lDm58sjwagz43BpSZ9Dih
+	 i+PiqTp+9xpAhgoSKgV54LbzIcP2XA8H35BciQ4xtuAHH3k0FjTBYCEobpvmyhRuyaQg5
+	 dDSB8UnKfxVO/JfzaGETvGCCDkZyjd7PwDxwdjrqLvUadliorI3LoT+mx9eAGyLsUtbcS
+	 jknKSj0sAl3oaWO+dWbZ3dvo15+x72w4JmhAQlMnl26cvKo4cYjyvjQTNY62LBTKElg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=canonical.com;
 	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=k+ZctrOM;
-	arc=none smtp.remote-ip=185.125.188.123
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=h7Jcpd65;
+	arc=none smtp.remote-ip=185.125.188.122
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04F5606A31E
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 17:07:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C04F5606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4908606A324
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 17:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E4908606A324
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=k+ZctrOM
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com [209.85.128.198])
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=h7Jcpd65
+Received: from mail-yx1-f71.google.com (mail-yx1-f71.google.com [74.125.224.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 12B953F98D
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 17:07:49 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3AA023FE35
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 17:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1793120869;
-	bh=Bh2ereZgveIj/jLInyo8zSDhunmqvE23nbEBWuKxdwM=;
+	s=20251003; t=1793121284;
+	bh=gReZVq2L+A9edWEpEVL3xuTz1Tp4ufGvwMsvE+Ou07U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=k+ZctrOMKuzv8tGsk8RgdsfobklAhJdYPTfLtPaETIArxhgz/U/me8ur2J+tGhl8L
-	 nGz62chI3ea4+Y1sIQPy+Pz1XaR+mHD3VKJ454EmWOsxnPtmW6Q5Tn4INeLW+tujVm
-	 Azuy0ePnxJr26sYAY7EmdBQSctVXMuPA9znLHsXGgbZVy7K931Mm3zj9CR5eE0WAs8
-	 RaCyVsgsOO69pnQQ/29vuLewT59tQt2lcidBe5+nsR8gDz2M+RXGXiutBmuuGTutcl
-	 7YZ+Fx2AARm+um2udMxy2zILh5+YntqOJNF2WuuNggPM6qRX+TRZs28JG+rDs5noKK
-	 Wq65WXSRFfxkWQDdAHUfh0VWlUP/wTTZX1OqtH1EJ6msORANyo8mHZgUp0lvuCCASQ
-	 IKs6RWVgFE3dtmEFqB1uVUx7PLtUbIQmYevfA/e7IZuviKMLCSMpfnXc4+9cGV7ccL
-	 UHn9QR2OGuAwDwi21Yr2xhQt15P8LI2SNTUhzihuDqKXkud4ZEmLnkVqdedSlc992I
-	 f5b4aRJUihA+saj6cEIMZeGCYDqXesLTMEt91qpcE4sDq3tc4YVoqpoP8sxFkmfGdw
-	 T5XcKXFYsJRUhfMkfoIyCTV3kb7G46zMzAg3PDJwZQ/C0nDcbewCcZZvk59z/xqlrr
-	 XsWyHnN4XTuoEf2wrY0QD250=
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-8b12b209c4dso205077b3.2
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 10:07:49 -0700 (PDT)
+	b=h7Jcpd65N1L5TyTrF2i657ggnG3ULrlFgH04MlO2DCa1w11OHp66QOMkvdKB+UZOJ
+	 8MM3sbP1ezxdUXSS/cXBYCnseTFj6KOMg1bSadY3Fk4Bb6r3escEYjEtxk04WYCvMV
+	 moPUdxdxdTKhm7iGexDtempmzgmWEme4Ar4UQW+aNMwKrYhMmsIR7MYjA49yn/wwYE
+	 8k3o6QaOfzV1UZe7dwq1z3PdUbSPGvvbU1NtpfpteeQTM0neiBnetKmTcv1JMfM1ft
+	 0LnsOFtJstba3Uzavay8a4DgcaOpTQYhZK6vEZUeHKOo28o8vjqJSN6xmDr1rp6q3D
+	 U0ZthyzQugPyCq9KcOCmEWVCT/5IpDjl8pm39mbAFEcxCzRqWL8pQL9EYv01IDpF2c
+	 DJCji812zbFDAXMNaPX/F/4iGJAP7h6BnI0EJmEBu/ACfA0gIO3gJFTAMjgCtGBvkv
+	 QPTqw8bwSUCBazNR+TMW7Cw0iQBjUJ5GhulPdolghljZWBmSzYpTT7nj6Z+AiLsLWl
+	 0ytBW3q7l2fdh72hwVM5Ntv+JNRO853OBDqdGSmJTpnSWZ/kFQ+QNnI4crPKui1+yw
+	 WIZla7TeDfbp/x8SEije6o6pWhf+GBlqoUYgXKrLhuKiyXihIqrlMHkKlRl0INuc3B
+	 ISG3uU/WC6VI6MtDkqsDM4dc=
+Received: by mail-yx1-f71.google.com with SMTP id 956f58d0204a3-67a781c1069so143768d50.1
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 10:14:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793120868; x=1793725668;
+        d=1e100.net; s=20260707; t=1793121283; x=1793726083;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=Bh2ereZgveIj/jLInyo8zSDhunmqvE23nbEBWuKxdwM=;
-        b=tr2JQ2k9qA/JRJ7AfsRtoz4cdTmUNl9QyUJDjj5azPYd6Bu4gkiZDTE9WGDXIaq0Ra
-         PVuG/GcLSi8pWAStdb4dnyYmmC4qFG442zRpJfF6WGuPz+LmmIrx46sjRjiGQ2lnKItV
-         VMxkz9wG5I0PR0eXO1Orhr+XcD/ULfOJfXqHMUX+zkHioHJD7jC2/+/UtSOm1Du43NdR
-         ITwdACNxrBbE2pyjeXQumIrQ0sC/mSgt+sHROJ/BPAFutBg6szeu6FMHVNfGggcEtEg4
-         urH1209uMTqYqGZtqfZrb2/K8C/ngiHswim5/M7tvC40WxvoEg4bIdbUJ8b+78yMLNLt
-         Gt5g==
-X-Forwarded-Encrypted: i=1; AKwUvBwbxFfqui9yhZqZ/zKwRouSwdtJ0g6JUtV0JTDW8aYNGDJvLUPc8vAotpwCmKJjF2kxnOu9JNFyyd87zuR9I/n4EGq3NgY=@vger.kernel.org
-X-Gm-Message-State: AFq9FYIJyUbe1c7jIeN9lKsH6xdzzcFwqgeJYq9P8+nA4aIT97pPy8b7
-	+Ez7D9ybH0gEzrxl82vY96Xcv/xbYUrWHlHNqQC297a0w0e1WkJWX/XpeoDcwUJArrhh08f6Lnc
-	TweiPsDYowwGPy+aw0MsKOzwR79GJ1D6u8vuIelFkCFLJw7A5PSAf0pgSpXb4P0vaneJdcaPbPg
-	58/lmS2LTGcYEq8/vfAW+lHJGBfVpP
-X-Gm-Gg: AYBFou0ucr4Ss5q2A7K/MCCnD00uo8VO0qeYXz6w5+1UlEiY991jb7UJS4JA+wM7Rd1
-	ZbAsN0rCnvR7uNcKgxXNX0u3O2wiNPWoAOSLuuwi6lCTEuZn8sfdMwHjNxpTv0ki0vp2h4W+oDz
-	0o04SQD3tchAb6eVeNPAMARATn9fcYsrx6i9qXeKCckcJlwFKtX14TLf7alFeu+fEgbIU8ypvvT
-	IF++sE4uMPsehJHnGTwdrGT0IYcXpYO0SB8hBXmcocNreZbDs1k2VeokS7QwACMETz3W6pEJbwX
-	u+aPQib6AwBZsUQ8t+naQTB5+PshGNmeVBvKNWj+rUBwY+dyAVe+fOZuwKcEq3wgjLWDkaDzQ+U
-	Vu83GkfhiyfL9IJf6zlgmQvy4mznU02TVV4GKb93nfFWA7FTxt1YvaP58
-X-Received: by 2002:a05:690c:39b:b0:8b0:ab57:ec04 with SMTP id 00721157ae682-8b166c623cemr69936637b3.55.1793120867774;
-        Tue, 27 Oct 2026 10:07:47 -0700 (PDT)
-X-Received: by 2002:a05:690c:39b:b0:8b0:ab57:ec04 with SMTP id 00721157ae682-8b166c623cemr69936457b3.55.1793120867401;
-        Tue, 27 Oct 2026 10:07:47 -0700 (PDT)
+        bh=gReZVq2L+A9edWEpEVL3xuTz1Tp4ufGvwMsvE+Ou07U=;
+        b=vXgjxxG7cjW50WKk4NHHzJKpaktPAOUJ6BcbLxCxX1ZiNULsjUdqhMPy7qdblMej/S
+         2/jJei5PcYzmEzPxyV+6EqiHhKYal9vSkYxV+3NqDWe9STZEFGiW8wASJS7m0DUa/VBL
+         vk2trMLeyX7Ao5eyEb54girnkThlZ2w8K932kezkJQ4nB0WQe1sJooEoqjmSAZzlx0yw
+         EwOBp1Q0zKioGtVmVFmE+q4BhGEHIMC7A/nAxcm1DBmsz4sVDLPQJLq2SS9bA6C7u6cJ
+         z6wmxKo8tqqo8kmXTyQtq6LdVW5aYcTAsmLb9e0iD3h65St/fvbxtO/pqyR+D84KQsg4
+         C6ZQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwgcJwsW8VfKTHnlbHPtPc5+R2SlEkuojdEZ2nLO9g+HFaFWqlMfYRfz56b0eI+IvavSzI7rxFKX1455yGTEVPQSC+MbXM=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI+3s79TathOq8EHwbt5Cph5FKadQ5COofEU2M6qdCkosRNHcFR
+	EkZ+R/I4GjRO6U7xBgXuCxAZimXnWvm6d0ezPDU/wBuuIt6jlh+uZ1O/sfNvVsMw2ep3rRC6HGf
+	nnrCYME19rPW9CHgMtNWdOqH2cKfMie70mTR1UvmoRlNqug3C4otCSKwWvJkdWY9zp9K8TFAG0G
+	lHo0ygXtbtx32APdaA15WecWiabtX3
+X-Gm-Gg: AYBFou3uglp84MnHFWjoN3akhpFxHHE77KR+PN8vBR8CcqEHUhvLPjHEB28S6Bk2ZMQ
+	rNHnIkIZ8SAzrwt9WX8zYE6GTpPVnuUspHmZU0jVIxpaU0mLkBXc8pe5kgrQ4tzUTOGrN1QjoVu
+	nHSX8kRO5B445mJJmhR3nyvvcawIr1rPTf1bmkowi7/Fo0Lt79VtXGwa2/YUXqPyIGtMJNnpkD9
+	W1s1TiLOTAWa1z1+43YHrTwjerfUjjQdydUbX8wL0YPZKxb06DKSpXg7Kd1lkgnQFrj2P2iO8Z2
+	bCt0eadQhkvPZUtkbANt9J0zuLDJsNQFEZ+n+pAQby5NDWExz8FjM0CfmsEcmFlNSB/bzFTxlin
+	6H4ZsNmE+k/Uzql5oNa8LDKcPodAgg/YBl8Biz6DhDEpJ3ipPH+ZsafY=
+X-Received: by 2002:a05:690e:450d:20b0:679:c4a2:8bd3 with SMTP id 956f58d0204a3-67a7bc9ae86mr109010d50.41.1793121282934;
+        Tue, 27 Oct 2026 10:14:42 -0700 (PDT)
+X-Received: by 2002:a05:690e:450d:20b0:679:c4a2:8bd3 with SMTP id 956f58d0204a3-67a7bc9ae86mr108997d50.41.1793121282473;
+        Tue, 27 Oct 2026 10:14:42 -0700 (PDT)
 Received: from [172.21.9.52] (host-209-35-187-178.broadbandcancun.mx. [209.35.187.178])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e5a30bfsm15431237b3.24.2026.10.27.10.07.45
+        by smtp.googlemail.com with ESMTPSA id 956f58d0204a3-67a7a19b1d8sm445975d50.22.2026.10.27.10.14.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2026 10:07:45 -0700 (PDT)
-Message-ID: <421eda86-c7c5-4fc6-b190-f57e50d31c5f@canonical.com>
-Date: Tue, 27 Oct 2026 10:07:44 -0700
+        Tue, 27 Oct 2026 10:14:41 -0700 (PDT)
+Message-ID: <2166cb07-3111-48cf-9764-fab8003e94ea@canonical.com>
+Date: Tue, 27 Oct 2026 10:14:40 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -103,11 +103,12 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix table_size() integer overflow on 32 bit
+Subject: Re: [PATCH] apparmor: convert duplicated dfa transitions to
+ match_char()
 To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
  Georgia Garcia <georgia.garcia@canonical.com>
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-References: <20260903072650.13160-1-maxime.belair@canonical.com>
+References: <20260901140740.2629-1-maxime.belair@canonical.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -153,111 +154,169 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20260903072650.13160-1-maxime.belair@canonical.com>
+In-Reply-To: <20260901140740.2629-1-maxime.belair@canonical.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/3/26 00:25, Maxime Bélair wrote:
-> table_size() checks ALIGN(sizeof(struct table_header) + len * el_size, 8)
-> in size_t, where @len is td_lolen, a u32 user-provided value from the
-> policy blob. On 32 bit kernels both operations can overflow.
+On 9/1/26 07:07, Maxime Bélair wrote:
+> For historical reasons several matchers duplicate the dfa character
+> transition instead of using match_char().
 > 
-> Triggering this bug allows to:
->   - overflow a 16 byte allocation with up to 4GiB of policy data
->   - store the table header at address ZERO_SIZE_PTR (kvzalloc(0))
+> This is because aa_dfa_match_until() and aa_dfa_matchn_until() were
+> written on a branch that did not yet have match_char(), and copied code
+> from aa_dfa_match(). leftmatch_fb() used the same pattern.
 > 
-> However, this bug requires CAP_MAC_ADMIN, only affects 32 bit kernels,
-> and the copy runs until the machine is destroyed, so it gives no
-> controllable primitive and is therefore not a security issue.
+> When match_char() added support for diff-encoded states, the change was
+> never ported to these copies.
 > 
-> Compute the size with the checked helpers and return 0 when the result is
-> not representable, so the callers can reject the table. A valid table is
-> never 0 bytes, the header alone is 12.
+> match_char() resolves a diff encoded state by using def[state] and
+> retrying the same character, until it reaches a state with a valid
+> transition. The copies instead do a simple `state = def[state];` after
+> the character is consumed, so on a diff encoded state one byte is dropped
+> and the walk continues from the diff parent in the wrong state.
 > 
-> 64 bit kernels cannot overflow (these structs are 32 bit), and are hence
-> not affected.
+> This makes an unnamed px/Px/cx/Cx transition resolve to no profile, and
+> exec fails with
 > 
-> Fixes: e06f75a6a2b4 ("AppArmor: dfa match engine")
+>    apparmor="DENIED" operation="exec" info="profile transition not found"
+> 
+> Convert the three copies to match_char(). For a dfa with no diff
+> encoded state this is a no-op.
+> 
+> This bug is latent until the kernel advertises policy/diff-encode.
+> 
+> Closes: https://gitlab.com/apparmor/apparmor/-/work_items/663
+> Fixes: 21f606610502 ("apparmor: improve overlapping domain attachment resolution")
+> Fixes: cf65fabc2a2c ("apparmor: add first substr match to dfa")
 > Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
-> ---
->   security/apparmor/include/match.h | 11 ++++++++++-
->   security/apparmor/match.c         |  6 +++++-
->   security/apparmor/policy_unpack.c |  5 +++++
->   3 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/apparmor/include/match.h b/security/apparmor/include/match.h
-> index f7bd7855f1bd..66485f76d331 100644
-> --- a/security/apparmor/include/match.h
-> +++ b/security/apparmor/include/match.h
 
 Acked-by: John Johansen <john.johansen@canonical.com>
 
 I have pulled this into the apparmor tree
 
-
-> @@ -12,6 +12,7 @@
->   #define __AA_MATCH_H
->   
->   #include <linux/kref.h>
-> +#include <linux/overflow.h>
->   
->   #define DFA_NOMATCH			0
->   #define DFA_START			1
-> @@ -120,7 +121,15 @@ struct aa_dfa {
->   
->   static inline size_t table_size(size_t len, size_t el_size)
->   {
-> -	return ALIGN(sizeof(struct table_header) + len * el_size, 8);
-> +	size_t size;
-> +
-> +	/* Need check_*_overflow for 32 bit machines */
-> +	if (check_mul_overflow(len, el_size, &size) ||
-> +	    check_add_overflow(size, sizeof(struct table_header), &size) ||
-> +	    size > SIZE_MAX - 7)
-> +		return 0;
-> +
-> +	return ALIGN(size, 8);
->   }
->   
->   #define aa_state_t unsigned int
+> ---
+>   security/apparmor/match.c | 52 ++++++++++++++-------------------------
+>   1 file changed, 19 insertions(+), 33 deletions(-)
+> 
 > diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> index 7713484f6a36..825811d566b9 100644
+> index 7713484f6a36..5e5030c12393 100644
 > --- a/security/apparmor/match.c
 > +++ b/security/apparmor/match.c
-> @@ -58,7 +58,7 @@ static struct table_header *unpack_table(const char *blob, size_t bsize)
->   	if (th.td_lolen == 0)
->   		goto out;
->   	tsize = table_size(th.td_lolen, th.td_flags);
-> -	if (bsize < tsize)
-> +	if (!tsize || bsize < tsize)
->   		goto out;
+> @@ -614,7 +614,7 @@ aa_state_t aa_dfa_match_until(const struct aa_dfa *dfa, aa_state_t start,
+>   	u32 *next = NEXT_TABLE(dfa);
+>   	u32 *check = CHECK_TABLE(dfa);
+>   	u32 *accept = ACCEPT_TABLE(dfa);
+> -	aa_state_t state = start, pos;
+> +	aa_state_t state = start;
 >   
->   	table = kvzalloc(tsize, GFP_KERNEL);
-> @@ -281,6 +281,10 @@ static struct table_header *remap_data16_to_data32(struct table_header *old)
->   	u32 i;
+>   	if (state == DFA_NOMATCH)
+>   		return DFA_NOMATCH;
+> @@ -625,22 +625,18 @@ aa_state_t aa_dfa_match_until(const struct aa_dfa *dfa, aa_state_t start,
+>   		u8 *equiv = EQUIV_TABLE(dfa);
+>   		/* default is direct to next state */
+>   		while (*str) {
+> -			pos = base_idx(base[state]) + equiv[(u8) *str++];
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			u8 c = equiv[(u8) *str++];
+> +
+> +			match_char(state, def, base, next, check, c);
+>   			if (accept[state])
+>   				break;
+>   		}
+>   	} else {
+>   		/* default is direct to next state */
+>   		while (*str) {
+> -			pos = base_idx(base[state]) + (u8) *str++;
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			u8 c = (u8) *str++;
+> +
+> +			match_char(state, def, base, next, check, c);
+>   			if (accept[state])
+>   				break;
+>   		}
+> @@ -675,7 +671,7 @@ aa_state_t aa_dfa_matchn_until(const struct aa_dfa *dfa, aa_state_t start,
+>   	u32 *next = NEXT_TABLE(dfa);
+>   	u32 *check = CHECK_TABLE(dfa);
+>   	u32 *accept = ACCEPT_TABLE(dfa);
+> -	aa_state_t state = start, pos;
+> +	aa_state_t state = start;
 >   
->   	tsize = table_size(old->td_lolen, YYTD_DATA32);
-> +	if (!tsize) {
-> +		kvfree(old);
-> +		return NULL;
-> +	}
->   	new = kvzalloc(tsize, GFP_KERNEL);
->   	if (!new) {
->   		kvfree(old);
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index f1fc48e72d0e..3c744f99a15c 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -1052,6 +1052,11 @@ static int unpack_pdb(struct aa_ext *e, struct aa_policydb **policy,
->   		u16 tdflags = pdb->dfa->tables[YYTD_ID_ACCEPT]->td_flags;
->   		size_t tsize = table_size(noents, tdflags);
+>   	*retpos = NULL;
+>   	if (state == DFA_NOMATCH)
+> @@ -687,22 +683,18 @@ aa_state_t aa_dfa_matchn_until(const struct aa_dfa *dfa, aa_state_t start,
+>   		u8 *equiv = EQUIV_TABLE(dfa);
+>   		/* default is direct to next state */
+>   		for (; n; n--) {
+> -			pos = base_idx(base[state]) + equiv[(u8) *str++];
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			u8 c = equiv[(u8) *str++];
+> +
+> +			match_char(state, def, base, next, check, c);
+>   			if (accept[state])
+>   				break;
+>   		}
+>   	} else {
+>   		/* default is direct to next state */
+>   		for (; n; n--) {
+> -			pos = base_idx(base[state]) + (u8) *str++;
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			u8 c = (u8) *str++;
+> +
+> +			match_char(state, def, base, next, check, c);
+>   			if (accept[state])
+>   				break;
+>   		}
+> @@ -751,7 +743,7 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
+>   	u32 *base = BASE_TABLE(dfa);
+>   	u32 *next = NEXT_TABLE(dfa);
+>   	u32 *check = CHECK_TABLE(dfa);
+> -	aa_state_t state = start, pos;
+> +	aa_state_t state = start;
 >   
-> +		if (!tsize) {
-> +			*info = "invalid dfa flags table size";
-> +			error = -EPROTO;
-> +			goto fail;
-> +		}
->   		pdb->dfa->tables[YYTD_ID_ACCEPT2] = kvzalloc(tsize, GFP_KERNEL);
->   		if (!pdb->dfa->tables[YYTD_ID_ACCEPT2]) {
->   			*info = "failed to alloc dfa flags table";
+>   	AA_BUG(!dfa);
+>   	AA_BUG(!str);
+> @@ -769,13 +761,10 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
+>   		/* default is direct to next state */
+>   		while (*str) {
+>   			unsigned int adjust;
+> +			u8 c = equiv[(u8) *str++];
+>   
+>   			wb->history[wb->pos] = state;
+> -			pos = base_idx(base[state]) + equiv[(u8) *str++];
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			match_char(state, def, base, next, check, c);
+>   			if (is_loop(wb, state, &adjust)) {
+>   				state = aa_dfa_match(dfa, state, str);
+>   				*count -= adjust;
+> @@ -788,13 +777,10 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
+>   		/* default is direct to next state */
+>   		while (*str) {
+>   			unsigned int adjust;
+> +			u8 c = (u8) *str++;
+>   
+>   			wb->history[wb->pos] = state;
+> -			pos = base_idx(base[state]) + (u8) *str++;
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			match_char(state, def, base, next, check, c);
+>   			if (is_loop(wb, state, &adjust)) {
+>   				state = aa_dfa_match(dfa, state, str);
+>   				*count -= adjust;
 
