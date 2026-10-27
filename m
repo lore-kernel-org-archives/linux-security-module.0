@@ -1,98 +1,161 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.122
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793121287;
-	b=cUf+Xfx+g3gRu9KwHZs8HKPjYWZHN7pu+GajWxdQCV+uxYJR4dtYyiAVzoFOTw2xFnuF
-	 d9F1NNcWw14iVlbwQOoeEUhoA6oEjXXRRpEwDYigcm3N/4jCgffaMClej5YSbbDElIsCm
-	 xdrs7+bKvs7s4N/oS9qeoASjdTFPFYpT3sA0sD9xNQgWVOtrI1ndbQNeB3KOvVjsnGRbI
-	 SMe73MTL1ENv1SDSl4fcmPOyZk4zqaJvOnJEIqa6RoUwtemLdslqFLPf+/Fz2lMCo/I3J
-	 tAu/Rm8PCPXztM2MbwtjV/E1tzzJG1srSy/gMFDcJFqY15zWYk/xi5OidvKl67dOxXg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793121287;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:
-	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
-	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
-	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=gReZVq2L+A9edWEpEVL3xuTz1Tp4ufGvwMsvE+Ou07U=;
-	b=V0nb5YfChNtQh2lPKbwCb2YlJmaK+lO8JAFzvMwFdW7TJHxxGpuHIum5YAM2s8KtxgUf
-	 buxkr92Yw+TWdHMpKXVAMXq24IZbGKCFkCIRovAKD7YBruh2lDm58sjwagz43BpSZ9Dih
-	 i+PiqTp+9xpAhgoSKgV54LbzIcP2XA8H35BciQ4xtuAHH3k0FjTBYCEobpvmyhRuyaQg5
-	 dDSB8UnKfxVO/JfzaGETvGCCDkZyjd7PwDxwdjrqLvUadliorI3LoT+mx9eAGyLsUtbcS
-	 jknKSj0sAl3oaWO+dWbZ3dvo15+x72w4JmhAQlMnl26cvKo4cYjyvjQTNY62LBTKElg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=canonical.com;
-	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=h7Jcpd65;
-	arc=none smtp.remote-ip=185.125.188.122
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.196.68
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793131949;
+	b=1SYHaPpo9buZthMdV7rXAruHAf18rgBMHE5F8hoN7iGFuV5vxGEtsytfg+1bQH0HZm+O
+	 w1QIUxQPZ2isWNlbxBXjWYTrJM5flvp5qtScNzwU0ldPJajOzm7Dsrp9QStM8XXPo9Xxo
+	 l1OPFPDm6LKtEiGXt4QSA0SQ6RD9jd5HCUU3NKQpuEOj5IOOjyYlB86tCheSI5OFbOqey
+	 q+Sm39V3sLlatuDCT95f17HGmp2mE+mhlCwejcAHpClbcywUvfMwGsZZkGpWJZO4WBg9O
+	 KqOB07tl8RJfy7WHuqdHbHYN4E6EeNkbkwSb/Ui90hNwD9A16b/ZxuGnbrE463t5nmA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793131949;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
+	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
+	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
+	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
+	 x-ms-office365-filtering-correlation-id:x-ms-exchange-senderadcheck:
+	 x-ms-exchange-antispam-relay:x-microsoft-antispam:
+	 x-microsoft-antispam-message-info:x-forefront-antispam-report:
+	 x-ms-exchange-antispam-messagedata-chunkcount:
+	 x-ms-exchange-antispam-messagedata-0:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-originalarrivaltime:
+	 X-MS-Exchange-CrossTenant-fromentityheader:
+	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+	 X-MS-Exchange-CrossTenant-userprincipalname:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=Oybe5L6xfI4XZa50mB2aI1YpPe/X9kT3ClR/NEDODWQ=;
+	b=uhW+PDw+Wt3QGYGV9CXEaq26CICWB/DEcDA349wCc/EQ1lcPcl42f9pzqEW+X2Z52D1L
+	 BBvsplGpIRDE5/DkC9X52TwUjO6DEUvJZbjIS/dDVo36izVidMEFzYzSkMUWAJ0eG5ZX4
+	 Xkad7qAgGh3CSxSeor2s/enQn/1poTdmK74wNA1w6RRFn0f4kI22auv/09bnhNoBW4lde
+	 prK4qpWhIpuDDfxwiTCkXOFZM5/tONzZ2c7EWnm4UVg5A48tiViQRIy72u5xGpv8Lt8Oc
+	 QVbcazyMd5n/idKGkbNrYkcUd45FhP07AapvXTJsYEravsnYcYFk9j1c0IdYmA1CKfQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=nvidia.com;
+	spf=fail smtp.mailfrom=nvidia.com;
+	dkim=pass header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=hGfPsc5J;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.93.196.68
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013068.outbound.protection.outlook.com [40.93.196.68])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4908606A324
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 17:14:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E4908606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E8E606A31A;
+	Tue, 27 Oct 2026 20:12:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 22E8E606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=h7Jcpd65
-Received: from mail-yx1-f71.google.com (mail-yx1-f71.google.com [74.125.224.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3AA023FE35
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 17:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1793121284;
-	bh=gReZVq2L+A9edWEpEVL3xuTz1Tp4ufGvwMsvE+Ou07U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=h7Jcpd65N1L5TyTrF2i657ggnG3ULrlFgH04MlO2DCa1w11OHp66QOMkvdKB+UZOJ
-	 8MM3sbP1ezxdUXSS/cXBYCnseTFj6KOMg1bSadY3Fk4Bb6r3escEYjEtxk04WYCvMV
-	 moPUdxdxdTKhm7iGexDtempmzgmWEme4Ar4UQW+aNMwKrYhMmsIR7MYjA49yn/wwYE
-	 8k3o6QaOfzV1UZe7dwq1z3PdUbSPGvvbU1NtpfpteeQTM0neiBnetKmTcv1JMfM1ft
-	 0LnsOFtJstba3Uzavay8a4DgcaOpTQYhZK6vEZUeHKOo28o8vjqJSN6xmDr1rp6q3D
-	 U0ZthyzQugPyCq9KcOCmEWVCT/5IpDjl8pm39mbAFEcxCzRqWL8pQL9EYv01IDpF2c
-	 DJCji812zbFDAXMNaPX/F/4iGJAP7h6BnI0EJmEBu/ACfA0gIO3gJFTAMjgCtGBvkv
-	 QPTqw8bwSUCBazNR+TMW7Cw0iQBjUJ5GhulPdolghljZWBmSzYpTT7nj6Z+AiLsLWl
-	 0ytBW3q7l2fdh72hwVM5Ntv+JNRO853OBDqdGSmJTpnSWZ/kFQ+QNnI4crPKui1+yw
-	 WIZla7TeDfbp/x8SEije6o6pWhf+GBlqoUYgXKrLhuKiyXihIqrlMHkKlRl0INuc3B
-	 ISG3uU/WC6VI6MtDkqsDM4dc=
-Received: by mail-yx1-f71.google.com with SMTP id 956f58d0204a3-67a781c1069so143768d50.1
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 10:14:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793121283; x=1793726083;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=gReZVq2L+A9edWEpEVL3xuTz1Tp4ufGvwMsvE+Ou07U=;
-        b=vXgjxxG7cjW50WKk4NHHzJKpaktPAOUJ6BcbLxCxX1ZiNULsjUdqhMPy7qdblMej/S
-         2/jJei5PcYzmEzPxyV+6EqiHhKYal9vSkYxV+3NqDWe9STZEFGiW8wASJS7m0DUa/VBL
-         vk2trMLeyX7Ao5eyEb54girnkThlZ2w8K932kezkJQ4nB0WQe1sJooEoqjmSAZzlx0yw
-         EwOBp1Q0zKioGtVmVFmE+q4BhGEHIMC7A/nAxcm1DBmsz4sVDLPQJLq2SS9bA6C7u6cJ
-         z6wmxKo8tqqo8kmXTyQtq6LdVW5aYcTAsmLb9e0iD3h65St/fvbxtO/pqyR+D84KQsg4
-         C6ZQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwgcJwsW8VfKTHnlbHPtPc5+R2SlEkuojdEZ2nLO9g+HFaFWqlMfYRfz56b0eI+IvavSzI7rxFKX1455yGTEVPQSC+MbXM=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI+3s79TathOq8EHwbt5Cph5FKadQ5COofEU2M6qdCkosRNHcFR
-	EkZ+R/I4GjRO6U7xBgXuCxAZimXnWvm6d0ezPDU/wBuuIt6jlh+uZ1O/sfNvVsMw2ep3rRC6HGf
-	nnrCYME19rPW9CHgMtNWdOqH2cKfMie70mTR1UvmoRlNqug3C4otCSKwWvJkdWY9zp9K8TFAG0G
-	lHo0ygXtbtx32APdaA15WecWiabtX3
-X-Gm-Gg: AYBFou3uglp84MnHFWjoN3akhpFxHHE77KR+PN8vBR8CcqEHUhvLPjHEB28S6Bk2ZMQ
-	rNHnIkIZ8SAzrwt9WX8zYE6GTpPVnuUspHmZU0jVIxpaU0mLkBXc8pe5kgrQ4tzUTOGrN1QjoVu
-	nHSX8kRO5B445mJJmhR3nyvvcawIr1rPTf1bmkowi7/Fo0Lt79VtXGwa2/YUXqPyIGtMJNnpkD9
-	W1s1TiLOTAWa1z1+43YHrTwjerfUjjQdydUbX8wL0YPZKxb06DKSpXg7Kd1lkgnQFrj2P2iO8Z2
-	bCt0eadQhkvPZUtkbANt9J0zuLDJsNQFEZ+n+pAQby5NDWExz8FjM0CfmsEcmFlNSB/bzFTxlin
-	6H4ZsNmE+k/Uzql5oNa8LDKcPodAgg/YBl8Biz6DhDEpJ3ipPH+ZsafY=
-X-Received: by 2002:a05:690e:450d:20b0:679:c4a2:8bd3 with SMTP id 956f58d0204a3-67a7bc9ae86mr109010d50.41.1793121282934;
-        Tue, 27 Oct 2026 10:14:42 -0700 (PDT)
-X-Received: by 2002:a05:690e:450d:20b0:679:c4a2:8bd3 with SMTP id 956f58d0204a3-67a7bc9ae86mr108997d50.41.1793121282473;
-        Tue, 27 Oct 2026 10:14:42 -0700 (PDT)
-Received: from [172.21.9.52] (host-209-35-187-178.broadbandcancun.mx. [209.35.187.178])
-        by smtp.googlemail.com with ESMTPSA id 956f58d0204a3-67a7a19b1d8sm445975d50.22.2026.10.27.10.14.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2026 10:14:41 -0700 (PDT)
-Message-ID: <2166cb07-3111-48cf-9764-fab8003e94ea@canonical.com>
-Date: Tue, 27 Oct 2026 10:14:40 -0700
+	dkim=pass (2048-bit key, unprotected) header.d=Nvidia.com header.i=@Nvidia.com header.a=rsa-sha256 header.s=selector2 header.b=hGfPsc5J
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oyvAfgEaNesqbjVxVXVpoMzXz6AobLlmYXoRJvA4LyG6Nj6zQui/AjGlWKrRAZaYSQNDu/3H1NZn55/Lw/xGcJpvIktDosv66p4NyfR7CbMefVxUGXUrrsO+XSyJjvx9HzOYRyHKZDmGdtOk23LKUyX1qQUkMHTb2GUwvcoxwvsjs56f/fJG2vNcXGAm9uN3Xzp8PeMNx2SxNfV4Nrh6DrAyTOxHIM/5U7EvqR7x+gBvUoxc5XYSwaa3zNGcbAkURH3jAc1YyHcWrZYdFJ5ontXCu8TUie5xyXXV5rDeWCwpqGn7V4DLidXM16CoK3mem39VPM7U+xCxlE9QkVDWIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Oybe5L6xfI4XZa50mB2aI1YpPe/X9kT3ClR/NEDODWQ=;
+ b=kBMUGHCsrDeeHpYvvQQxfV0YipfbTh1IhlKWxhX/fx4u4V4GWRqEkSF5xx1ezwIFczsuhCrhRH0lYhV6ovBziT78cAeVF/mwKr7dmR4ewL5RCA7c6v0hjCVQSrxLzODjSWnvwnVQdTA6tJ/08+x7bHKkTGWCVlot01mq9kwE4nMruqDvG0MWRV+ekM5To4tnDYDud7fooN0VConKY4Owb3nQqKEe4afmHb4ean/wtBZ9aDv3AZyL9q+iG8wblo4HnJyHqLllBML2PkFlrDE1LTW96ogEDFHet27x4LC7uydCRdyPKyTbrLpK85JKi5tu2Mom95pgZLErYrvmqhGbPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oybe5L6xfI4XZa50mB2aI1YpPe/X9kT3ClR/NEDODWQ=;
+ b=hGfPsc5JvftS0Bz/xtAmU+v3sKvrmPRkIRCB2ZAbUiIb0zfUrDA6nkL0f9+G3gLGyM62O6XPSMZ7+4kDd5gk5Ynj63r+1E6Lnk0oKVkQLKlfu235mFZ0xvmvJAdRU3qwX9jgHJlOOMLrwVg5WkngS74IwgEILkV4Z+V31wpHGxNVyQqpDrEcvAdse9o1kq0mQKaEdESB5j6fOMGeLLq8ZCraikWyiDj09morRZfohbRXNT9QSbvgSyF6Haqw3QYncMVZwsq9SWnnDRILWqwgglZbvvyBsHDO4xYUmkl6QbiLkQ4r3ZNr2JoA0sO2WPX1czBJHA9XqaY57fFLHRykeQ==
+Received: from DM4PR12MB6136.namprd12.prod.outlook.com (2603:10b6:8:a9::14) by
+ SN7PR12MB7153.namprd12.prod.outlook.com (2603:10b6:806:2a4::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Tue, 27 Oct
+ 2026 20:12:25 +0000
+Received: from DM4PR12MB6136.namprd12.prod.outlook.com
+ ([fe80::75c4:de57:e254:243a]) by DM4PR12MB6136.namprd12.prod.outlook.com
+ ([fe80::75c4:de57:e254:243a%4]) with mapi id 15.21.0546.021; Tue, 27 Oct 2026
+ 20:12:25 +0000
+From: Manuel Huber <manuelh@nvidia.com>
+To: Fan Wu <wufan@kernel.org>, David Howells <dhowells@redhat.com>, Jarkko
+ Sakkinen <jarkko@kernel.org>
+CC: Christian Brauner <brauner@kernel.org>, Andrew Halaney
+	<andrew@amutable.com>, Paul Moore <paul@paul-moore.com>, James Morris
+	<jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet
+	<corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan
+	<shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	"linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, "keyrings@vger.kernel.org"
+	<keyrings@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
+Thread-Topic: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
+Thread-Index: AQHdYBKBjBwQ1KDODEujGWIc0cwMXLcFf3KAgAwwgjA=
+Date: Tue, 27 Oct 2026 20:12:25 +0000
+Message-ID:
+ <DM4PR12MB6136C6E1BE1E6D675AFFF0EDDE602@DM4PR12MB6136.namprd12.prod.outlook.com>
+References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
+ <20261019-b4-ipe-keyring-rfc-v1-1-156f0b93e843@nvidia.com>
+ <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org>
+In-Reply-To: <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR12MB6136:EE_|SN7PR12MB7153:EE_
+x-ms-office365-filtering-correlation-id: e309b5ea-0392-4ae6-3550-08df34669e0e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|23010399003|376014|7416014|366016|38070700021|261026121527099003|11063799006|56012099006|261009223027099003|4143699003|261022113327099003|10067099003|261022105027099003|18002099003|22082099003|261026140227099003;
+x-microsoft-antispam-message-info:
+ NSNEYtxYfQzpPPSljt5Ya37WtybBXN9GfgQEPjbT+2Vw8Lo2jdCN3iFE5Y8VPZSkVp8o/Blo0wdFZocy+EaXacZpT1W1885g168TE+4x2T1PGBGgtQRGdcWw8MHy4lTlINWEnJnXhHj8xhh8PftQ8yTED1jDK83JpgICgTpYDvQWqoXnlSnGjozIjVMeNXkbo7KhF55o7lVaMVZMSNC0V+GUvfeZFd+mBqW36xRXCfm5ZBQGpbu9jzbI4FWaSukuw93OmqKWkc7IUk8poPjpsEdaAzT7rDY5bSm3knDZclZM/3UB4n3TsJjEEa84DAm7mlAZ6q52OnoYBUgOQ8YSB8wuzyDAiZ65h2730CQ3KaxW+faD3330YChAbnh6Jio51CiXo8THKMrXwBW5dbPTT4uulkMc07/3uf4XCnLu09y6gsIZOeuBS3flc8DOTuccnFsfS7Lr93a2KuipbDraaHUa2FetdJr1VzDVe4ZvSxzttzbygFu2gbhEMTrjJa+quRpa1ATstXrIWdAEhz55HlAZz/HXw0V6VFXqoJmVlYxyeEiEOqs6pqYoRrFR2UzomD/X5+idxNVGXDo95pSsbc96ibU6sOqHLjBCKMX+Kj2gvgQEXq68F3Vj/p+/SayTfG/wOxFkb7mSBffQPo96I74As6OlgZ3ClE8gyH2FywjwbgMpjZX0Z+/nL0rFrCL+tTPIKWoAhzMKxSycfEEwbg3YElTzCDOkzx4wii3Fwi8=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6136.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(7416014)(366016)(38070700021)(261026121527099003)(11063799006)(56012099006)(261009223027099003)(4143699003)(261022113327099003)(10067099003)(261022105027099003)(18002099003)(22082099003)(261026140227099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?bzJnUGhpNU5QMkdxcFlpM3FKbklZYkZqczd0czNqRkgxdEJZa0Q1OGJJWTRL?=
+ =?utf-8?B?L3ZFcjlCMXhwZHlIR3AvZFdXQjlzbUtuWmpHRjZpVlpKbXg0dGRib2hheW5l?=
+ =?utf-8?B?K2t2cUw0eFljRE9PSG50Zk9JWTM0cDdqYVg5ZXViZkhnV3Bvdi8vcVRNL3A4?=
+ =?utf-8?B?dkMvUUo0emFmSmN2ck95YXhZbXF2citkaE52K2c1akkxZVV0TXFIMGNBN1A5?=
+ =?utf-8?B?WEVWTWxqOU5lZkpzajhxN2c1NS9rVk5JR3ZSeXBoaWdOaWwvQUh2RzE0ZjBT?=
+ =?utf-8?B?S0N3T25MaEFRSkh6M0tQTkQvcnNyKzVhVzRidysydktKSEc5RVRyWFVya0tj?=
+ =?utf-8?B?Szh2Z2F4dG1tNUNNa1EvU3RRVjhRb1E4RTF4dlcrN091S0ltbkl4QXRMdk5Z?=
+ =?utf-8?B?aUVqWTk0TFVRQVhtZWZ0ODUzTGVnaWRRSWxBaStRWlBNMDN6UDdsVlJkei91?=
+ =?utf-8?B?S3NuU0lwbTRLbU1Pa2pWT2VXb28yVXlHTlN5OGNRc0pydytrTTMweXVxMHNm?=
+ =?utf-8?B?azJZaFFoU3Z3QzBHYVNDUGF0N0tUS2xqZG94eUZBNGpTa2hIa3JGNTlCYXk2?=
+ =?utf-8?B?L0xWRXMwdlJTQWJ2aDFlUDNGUGpZYU1hUENGMFhmZ1ZDZDBqVkJlTUFVQ2p4?=
+ =?utf-8?B?Mm5vbnR0WWxNWXgrV1IrTXovZmZ3cURTMlhubXQ3dFh5WFV6WHJIanBFN3pK?=
+ =?utf-8?B?Ry9EWnpqWWhsMnZWbWk1d3dzeW5yMTd3d0FhQ1hrYVR5dHY5V3Z5RHhodFVE?=
+ =?utf-8?B?YWt2SmR5SHRNWUdrekFKNG1PSFRIdDA1UnIxUERlSU1LaW1WcDl2aUxrYWlI?=
+ =?utf-8?B?Ynh4My9PMUhSVFZTOTNLSHExajJRQmhDdCtBM25FOFg5a0RLRG1TZ1BiYkhI?=
+ =?utf-8?B?L3BhWmJkeEEvK3Zya0xWU2k0WThWaHhpeExKWkhwRDVzVjFwK0Q3Q280anli?=
+ =?utf-8?B?WEZhdVBkb3ZZMERxaEEwY2t1SFRqUTVZbFNjZGE2bGFacHdGcFVOWlZ4WFk3?=
+ =?utf-8?B?REtjc1VTdjAyelgzZmlaSExXSG9aYnVBUXR0L2xLM29oL0FTdnlObFNCZkF1?=
+ =?utf-8?B?UnNqdjJQV0I5UnpWZ1Z3YmVxZjZsMWN1UDVYOEhheXQrZkp2K2pzYTBZNlVP?=
+ =?utf-8?B?S1BvQmhHclRzMjBjN1dSWXY5eEJsTnJna1lvNWtUV2U3SmFHNXZHUklTMkJG?=
+ =?utf-8?B?WmpOZGxaaW5ndndEdlQ4cHAzV3Zpd0dVOGRBaU1DdFkrSVVSQXFJOHRCZEFx?=
+ =?utf-8?B?MFhFcFFGRFRPNnhNRFVLZ2dRNnZrWTdKVHM4eHpNVnZ2bzYrOFB2VmVCRHhn?=
+ =?utf-8?B?VWczeEw5YnhRb0xVQ1ZkNHBveTU3UjAxQWR3cDRUVHV5N1hFSmhPUDVZU0RN?=
+ =?utf-8?B?a21mMGJPSUtpUW0vWk9PdkZyWmpKTjhlenBDWVVCM0ZUQUdzU1BmUzErUHRx?=
+ =?utf-8?B?ZkxyaHh1cHZBaUE4Sm93U1RQYThmNU0yZEJvbzh5d2p3USs2SGZxMU04TzRq?=
+ =?utf-8?B?NTVyMjhPZ2ZRVmpFbzFLSjV5OVpHOU95aXlnR0R3QzBSRmNmUzV3TGdrM2dZ?=
+ =?utf-8?B?aDBMWVdYUXRBZlNTb0NQSjA5dSsrc3YydkdvYVVVRy9NRUpQa2FTOGRoS083?=
+ =?utf-8?B?TytUVUwzNkQyMlpMNFcyUDBYcENlTWtkNlNnM1NSUHpRZWMxeVNNb1V0TENZ?=
+ =?utf-8?B?ODBQM05VaVBMaThGa1BtZ0hBM1F1Z0VLTWxOMUpacDNnZEdYRTRXOWFkYUFH?=
+ =?utf-8?B?UFVtSzJMV281Z1lkcWcvcWZHcFhORkdXbms5cGgrZU9rT1dtbU5TM2JoTGto?=
+ =?utf-8?B?ajU2by9UTEdYTmNseHRyd0hKVm4ybitYcHVTakYrRWFZWnZDQ1VKMXBlMmkx?=
+ =?utf-8?B?ZjBqbU9LZE9rSkNGSmpGMVcrWmYwUnhLQUJvTVNDWjdsOEhkaExocjRIVy95?=
+ =?utf-8?B?eVlFUXFMakhFdUZYSXExTDhQNjAwbEF0THVZai9INkxyU0g2Y0xVWURuLytn?=
+ =?utf-8?B?cTdBeFROQWpuRDBPeldFZnNrUXI1THVuSlZCZkt6b1lNYi9mb3BFcHhIOXN3?=
+ =?utf-8?B?SGRmaWUxeE9vY2lLc08wdzFzU1lSMmlieXRtQXZYN2FQdGRkakYxaVA0STho?=
+ =?utf-8?B?bVliSGN6NjI0ZEViazZZTytOVEhmTGJ0WWNQeU1yNFB3eVROOUgzNG1vaWRr?=
+ =?utf-8?B?UXBBbzVsRkVJaFAzR3J3QWNuTnBlQzF6a1M2SWR4TitYWE1LWFJGUDhaQys0?=
+ =?utf-8?B?UnZJUFFNb043aGxnSzVheno5Q2dtL0Z5eE43T3dvQXhqd01IYXJ5NjYwMThP?=
+ =?utf-8?Q?r+Qhv1hgFvQlPdCDYS?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -102,221 +165,36 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: convert duplicated dfa transitions to
- match_char()
-To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
- Georgia Garcia <georgia.garcia@canonical.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-References: <20260901140740.2629-1-maxime.belair@canonical.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20260901140740.2629-1-maxime.belair@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6136.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e309b5ea-0392-4ae6-3550-08df34669e0e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Oct 2026 20:12:25.2166
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ziSszhzqaafmviMjl9zPg137kdv83ZbkYnGB2x92GJOy2RpMX8mywIPtk0WC0btSJDwkzw7NEnUibgkqBU+Fyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7153
 
-On 9/1/26 07:07, Maxime Bélair wrote:
-> For historical reasons several matchers duplicate the dfa character
-> transition instead of using match_char().
-> 
-> This is because aa_dfa_match_until() and aa_dfa_matchn_until() were
-> written on a branch that did not yet have match_char(), and copied code
-> from aa_dfa_match(). leftmatch_fb() used the same pattern.
-> 
-> When match_char() added support for diff-encoded states, the change was
-> never ported to these copies.
-> 
-> match_char() resolves a diff encoded state by using def[state] and
-> retrying the same character, until it reaches a state with a valid
-> transition. The copies instead do a simple `state = def[state];` after
-> the character is consumed, so on a diff encoded state one byte is dropped
-> and the walk continues from the diff parent in the wrong state.
-> 
-> This makes an unnamed px/Px/cx/Cx transition resolve to no profile, and
-> exec fails with
-> 
->    apparmor="DENIED" operation="exec" info="profile transition not found"
-> 
-> Convert the three copies to match_char(). For a dfa with no diff
-> encoded state this is a no-op.
-> 
-> This bug is latent until the kernel advertises policy/diff-encode.
-> 
-> Closes: https://gitlab.com/apparmor/apparmor/-/work_items/663
-> Fixes: 21f606610502 ("apparmor: improve overlapping domain attachment resolution")
-> Fixes: cf65fabc2a2c ("apparmor: add first substr match to dfa")
-> Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I have pulled this into the apparmor tree
-
-> ---
->   security/apparmor/match.c | 52 ++++++++++++++-------------------------
->   1 file changed, 19 insertions(+), 33 deletions(-)
-> 
-> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> index 7713484f6a36..5e5030c12393 100644
-> --- a/security/apparmor/match.c
-> +++ b/security/apparmor/match.c
-> @@ -614,7 +614,7 @@ aa_state_t aa_dfa_match_until(const struct aa_dfa *dfa, aa_state_t start,
->   	u32 *next = NEXT_TABLE(dfa);
->   	u32 *check = CHECK_TABLE(dfa);
->   	u32 *accept = ACCEPT_TABLE(dfa);
-> -	aa_state_t state = start, pos;
-> +	aa_state_t state = start;
->   
->   	if (state == DFA_NOMATCH)
->   		return DFA_NOMATCH;
-> @@ -625,22 +625,18 @@ aa_state_t aa_dfa_match_until(const struct aa_dfa *dfa, aa_state_t start,
->   		u8 *equiv = EQUIV_TABLE(dfa);
->   		/* default is direct to next state */
->   		while (*str) {
-> -			pos = base_idx(base[state]) + equiv[(u8) *str++];
-> -			if (check[pos] == state)
-> -				state = next[pos];
-> -			else
-> -				state = def[state];
-> +			u8 c = equiv[(u8) *str++];
-> +
-> +			match_char(state, def, base, next, check, c);
->   			if (accept[state])
->   				break;
->   		}
->   	} else {
->   		/* default is direct to next state */
->   		while (*str) {
-> -			pos = base_idx(base[state]) + (u8) *str++;
-> -			if (check[pos] == state)
-> -				state = next[pos];
-> -			else
-> -				state = def[state];
-> +			u8 c = (u8) *str++;
-> +
-> +			match_char(state, def, base, next, check, c);
->   			if (accept[state])
->   				break;
->   		}
-> @@ -675,7 +671,7 @@ aa_state_t aa_dfa_matchn_until(const struct aa_dfa *dfa, aa_state_t start,
->   	u32 *next = NEXT_TABLE(dfa);
->   	u32 *check = CHECK_TABLE(dfa);
->   	u32 *accept = ACCEPT_TABLE(dfa);
-> -	aa_state_t state = start, pos;
-> +	aa_state_t state = start;
->   
->   	*retpos = NULL;
->   	if (state == DFA_NOMATCH)
-> @@ -687,22 +683,18 @@ aa_state_t aa_dfa_matchn_until(const struct aa_dfa *dfa, aa_state_t start,
->   		u8 *equiv = EQUIV_TABLE(dfa);
->   		/* default is direct to next state */
->   		for (; n; n--) {
-> -			pos = base_idx(base[state]) + equiv[(u8) *str++];
-> -			if (check[pos] == state)
-> -				state = next[pos];
-> -			else
-> -				state = def[state];
-> +			u8 c = equiv[(u8) *str++];
-> +
-> +			match_char(state, def, base, next, check, c);
->   			if (accept[state])
->   				break;
->   		}
->   	} else {
->   		/* default is direct to next state */
->   		for (; n; n--) {
-> -			pos = base_idx(base[state]) + (u8) *str++;
-> -			if (check[pos] == state)
-> -				state = next[pos];
-> -			else
-> -				state = def[state];
-> +			u8 c = (u8) *str++;
-> +
-> +			match_char(state, def, base, next, check, c);
->   			if (accept[state])
->   				break;
->   		}
-> @@ -751,7 +743,7 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
->   	u32 *base = BASE_TABLE(dfa);
->   	u32 *next = NEXT_TABLE(dfa);
->   	u32 *check = CHECK_TABLE(dfa);
-> -	aa_state_t state = start, pos;
-> +	aa_state_t state = start;
->   
->   	AA_BUG(!dfa);
->   	AA_BUG(!str);
-> @@ -769,13 +761,10 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
->   		/* default is direct to next state */
->   		while (*str) {
->   			unsigned int adjust;
-> +			u8 c = equiv[(u8) *str++];
->   
->   			wb->history[wb->pos] = state;
-> -			pos = base_idx(base[state]) + equiv[(u8) *str++];
-> -			if (check[pos] == state)
-> -				state = next[pos];
-> -			else
-> -				state = def[state];
-> +			match_char(state, def, base, next, check, c);
->   			if (is_loop(wb, state, &adjust)) {
->   				state = aa_dfa_match(dfa, state, str);
->   				*count -= adjust;
-> @@ -788,13 +777,10 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
->   		/* default is direct to next state */
->   		while (*str) {
->   			unsigned int adjust;
-> +			u8 c = (u8) *str++;
->   
->   			wb->history[wb->pos] = state;
-> -			pos = base_idx(base[state]) + (u8) *str++;
-> -			if (check[pos] == state)
-> -				state = next[pos];
-> -			else
-> -				state = def[state];
-> +			match_char(state, def, base, next, check, c);
->   			if (is_loop(wb, state, &adjust)) {
->   				state = aa_dfa_match(dfa, state, str);
->   				*count -= adjust;
-
+T24gTW9uLCBPY3QgMTksIDIwMjYgYXQgMDQ6MTU6NTdQTSAtMDcwMCwgRmFuIFd1IHdyb3RlOg0K
+PiBJIHdvdWxkIHByZWZlciBhIEtjb25maWcgQ09ORklHX1NFQ1VSSVRZX0lQRV9LRVlSSU5HIGRl
+ZmF1bHQgdG8gTiBpbnN0ZWFkLA0KPiBsaWtlIHRoZSBmc3Zlcml0eSBrZXlyaW5nLiBJbiB0aGUg
+a2NvbmZpZyB5b3UgY2FuIGFsc28gZGVzY3JpYmUgaW4gd2hpY2gNCj4gY2FzZXMgc2hvdWxkIHRo
+aXMgb3B0aW9uIGJlIHR1cm5lZCBvbi4NCg0KVGhhbmtzIHRvIGV2ZXJ5b25lIGZvciB0aGUgZGlz
+Y3Vzc2lvbi4gU29tZSBvZiB0aGUgcG9pbnRzIHJhaXNlZCBhcmUNCmFjdGlvbmFibGUsIGJ1dCB0
+d28gcmV2aWV3IHF1ZXN0aW9ucyBzdGlsbCBzZWVtIHRvIGJlIG9wZW46DQoNCjEuIFdoZXRoZXIg
+dG8gdXNlIENPTkZJR19TRUNVUklUWV9JUEVfS0VZUklORyBvciB0aGUgJ3Blci1ib290DQogICBw
+cm92aXNpb25pbmcnIHBhdHRlcm4gd2l0aCBhIGtlcm5lbCBjb21tYW5kLWxpbmUgcGFyYW1ldGVy
+DQoyLiBXaGV0aGVyIElQRSBzaG91bGQgYWNjZXB0IGFueSBpcnJldmVyc2libGUga2V5cmluZyBy
+ZXN0cmljdGlvbiBvcg0KICAgc3BlY2lmaWNhbGx5IG1hbmRhdGUgcmVzdHJpY3RfbGlua19yZWpl
+Y3QuDQoNCkkgd2FudCB0byByZW1haW4gY29tcGxldGVseSBuZXV0cmFsIGhlcmUgYmVjYXVzZSBJ
+IGFtIG9ubHkgYSBwb3RlbnRpYWwNCmZpcnN0LXRpbWUgY29udHJpYnV0b3IsIGFuZCBiZWNhdXNl
+IHRoZSBzY2VuYXJpbyBJIGVsYWJvcmF0ZWQgb24gY2FuIGJlDQpyZWFsaXplZCB3aXRoIGVpdGhl
+ciByZXNvbHV0aW9uLiBGYW4sIHdvdWxkIHlvdSBwcmVmZXIgdGhhdCBJOg0KDQphLiBtb3ZlIGZv
+cndhcmQgd2l0aCBhIG5vbi1SRkMgdjIgaW5jb3Jwb3JhdGluZyB5b3VyIGluaXRpYWwNCiAgIHN1
+Z2dlc3Rpb25zOw0KYi4gcmV2aXNlIHRoZSBzdWdnZXN0aW9ucyBnaXZlbiB0aGUgc3Vic2VxdWVu
+dCBkaXNjdXNzaW9uOyBvcg0KYy4gd2FpdCBmb3IgbW9yZSBpbnB1dCBiZWZvcmUgbWFraW5nIGEg
+ZGVjaXNpb24/DQoNCkFwb2xvZ2llcyBpZiB0aGlzIGZvbGxvdy11cCBjYXVzZXMgdW5uZWNlc3Nh
+cnkgY2h1cm4gYW5kIHR1cm5vdmVycy4gSWYNCnRoZSB0aHJlYWQgcmVtYWlucyBxdWlldCwgSSB3
+aWxsIHByb2NlZWQgd2l0aCAoYSkuDQo=
