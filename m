@@ -1,62 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793113403;
-	b=W5bhRou2dBBwOtLPY+1cZYJ9NoO3zjA7rCeoN4sbY+tK0hvtU5VLwciFqjB4az+38+v6
-	 jRa6qUMy4mIieg676Kp9A6ndIe22Z4pe45+APCJ0x4y7ji4iguP1VhFHUE7MFPMJqJdBx
-	 /LcFOdtiUm+XDU1gs1QmIPN9ki4iXdI57KAsmav3Pfpa4ZARvdlFM2EB9mq1sj7myYSK2
-	 qFR4v3Vq7gUilY072bj9eAGxENQu43Q1AE6l5wJYt4jj+KzIK61klprt0i7sf11/qsvmz
-	 7mN6jmOijl/ByKVtWZ+1q8oFyWHeJXgkNms56CdJCwIdcViV6FleiVGnRA5FeaIj/og==
+	t=1793113412;
+	b=4Rzq6H3xIWNrnDUyj8hyfl4nVOrgLyc9W/fKVfVwzy4s0mOrj58v5ZlvH7w8J7kjQ+8q
+	 7tPp44roeGazHNM8i88E0RpimPW0qA+eDA95iytInh1Jrrn5AeLDE6Htyyu4xN5ZEiatw
+	 gYUVeqew6+pbTiv6I99BLYB5Z4+gOJdkghQC4XrY9Dz1nwLlx1wF8IUBjI1i62jSQ1s9z
+	 tj/Ilf3E7xXd/bJ4nKShpfCc5CBAdr54TqhFGrl2l+ZDsYnGQFFfi2i9DoPIU2+jCrazI
+	 yKCSNsnwDf1jfc+bj+52Ykos0fdRZU/xW8edol+DF5OO/F7VhVTfjVudLqZ/GDEBQfw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793113403;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Ej+2A3eI9QkEIZfLtqDhWXflwH2CM30fmNauKQbThvQ=;
-	b=Nitr5gs2zgRMo3Rtnvmq9AfMGjVJyjvLYGniEEOl+m1xeFPXEbtGj74pAcWg/kcd5iTH
-	 MwhkcPVzd6/0v1fBKQunNCkS0I2z/VMQqilAfCvF3QkxxXbb2aOrU1pQ1MmFVIURhyJPe
-	 YHFhhKnXWueYSlKNBpdqjsLAvFd3lO9FDPECxc7ngCV4ZPm5LnPIOYlU+vnfpp+Ycs9gI
-	 qddx8SiJlibZcH/MLaXHKMRAD3htiYuOB01y7ZIEM9cQoe7E2D8eHsD2PnE+RWcNzHgb0
-	 7oU14stW+gaxKoWx5Bss22tDnRuN4S/OzwDnxsbyUdBeWyehWlYNn3a2myEUKP/YVhg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793113412;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:Received:From:Date:Subject:
+	 MIME-Version:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Developer-Signature:X-Developer-Key:X-Scanned-By:
+	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=LzZU8CvKLVs3hXaJd1ehhwM/trH5Flh5accKi3WkqcE=;
+	b=x0LLTwmRN9hK33nAU/rLaGbsdWh++ocvH/O3jDkiUEYczRpQqUdpQ4hrjGacPnZWLi/0
+	 0rc1VnsmepMpvc9hqcxH3SXPW3GX34ZtbU9eq+H3fdeAdWoqm0J6R2AgI/hB8V243Cm9a
+	 iw8n4/5y8sTFWiHUekaFex1t2596WAZoHcTwCWmMScfYI4pRV1GNnEf8TUxUExsfjMCVZ
+	 ocdf+HAK8RqP3vTWhKcE+vnzdJ3V+5iP3GFwp8x4Kne5NnPFQkeZm14Hnkyyni9bkCdpH
+	 rd7zhwztX87PHGhx90pkpUfAb3ZigyzKnnzy0wVlEaIk0a1OpPkcnUbpsvCnQi60NBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UDNs964I;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=MQ82OMPF;
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB57606A331;
-	Tue, 27 Oct 2026 15:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09FF606A335
+	for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 15:03:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D09FF606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UDNs964I
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C821F01825;
-	Tue, 27 Oct 2026 15:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793113402;
-	bh=Ej+2A3eI9QkEIZfLtqDhWXflwH2CM30fmNauKQbThvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UDNs964InGfq4NmI+D4H6JmyaobQzLcTE30PJnJfMZlFIzKGbmtuUhzYbnv4oRI03
-	 VtpFNEVHvFDphOPyprGts94mgXV3YKbbfMzBt5UE4j0DuIbo+XZcM/sYbZABAeM9nX
-	 PR7nZzincxdDnTTwSoKjwqS3sL/IG3CA4TZyjMinPsPDEaXVLodjBH6pebQSwjp4mG
-	 URJZOf58cy9cO5ywnL3QN5ZDD6CRtry0RVGi56D9KwDs8QCDPchdurnI2XD85ae82T
-	 MX9mYDi62989dPYaLLEgz406J1oq0MULkELtpW67Q24Zk1p2wPrRbHs5ddhSJQBJn0
-	 snLgtX2hBsVjQ==
-Date: Tue, 27 Oct 2026 15:03:13 +0000
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: Chris Down <chris@chrisdown.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	David Hildenbrand <david@kernel.org>, Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@chromium.org>, 
-	Andrey Vagin <avagin@gmail.com>, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 3/3] selftests/mseal_system_mappings: Test vdso unmap and
- remap
-Message-ID: <auC7_5XYr31fimvL@gremlin>
-References: <cover.1793094611.git.chris@chrisdown.name>
- <621847973ba2ec49d0a58e0261da35a9f3a97eda.1793094611.git.chris@chrisdown.name>
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=MQ82OMPF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1793113411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LzZU8CvKLVs3hXaJd1ehhwM/trH5Flh5accKi3WkqcE=;
+	b=MQ82OMPFI/+S0wKDSGon+WcBupYqRGJxDysACVUzlPN4e38OmKGOuHINYvBtxWgeqZYatU
+	8QiyXO/i8BYqBdcArCqVQjz98Up8w5Pd1YlaUMv/htTqKqKEoDQZETiM/mDXhlT249dnUC
+	YZGzAz98rKBiHbXQqwBp9QfZ+UF2QxY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-_rcJR3VEMbmLxcGjpTDg0w-1; Tue,
+ 27 Oct 2026 11:03:26 -0400
+X-MC-Unique: _rcJR3VEMbmLxcGjpTDg0w-1
+X-Mimecast-MFC-AGG-ID: _rcJR3VEMbmLxcGjpTDg0w_1793113400
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2E9B319541A3;
+	Tue, 27 Oct 2026 15:03:19 +0000 (UTC)
+Received: from aesteve-thinkpadp1gen8.rmtes.csb (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F1AE18005AD;
+	Tue, 27 Oct 2026 15:03:10 +0000 (UTC)
+From: Albert Esteve <aesteve@redhat.com>
+Date: Tue, 27 Oct 2026 16:02:44 +0100
+Subject: [PATCH v3 1/8] memcg: Add MEMCG_DMABUF accounting infrastructure
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -66,160 +74,333 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <621847973ba2ec49d0a58e0261da35a9f3a97eda.1793094611.git.chris@chrisdown.name>
+Message-Id: <20261027-v2_20230123_tjmercier_google_com-v3-1-78d2c4cb8647@redhat.com>
+References: <20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com>
+In-Reply-To: <20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com>
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+ "T.J. Mercier" <tjmercier@google.com>, 
+ Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+ =?utf-8?q?Ondrej_Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>, 
+ Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
+ =?utf-8?q?Ondrej_Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>
+Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ op-tee@lists.trustedfirmware.org, Albert Esteve <aesteve@redhat.com>, 
+ echanude@redhat.com, mripard@kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793113379; l=8935;
+ i=aesteve@redhat.com; s=20260827; h=from:subject:message-id;
+ bh=ZjePjINWAv4iLnoa0pS5TThxJ3J4KdpkQLxTA5nSQ28=;
+ b=+VytfxLVLkKBKFzNNAswqwqy8wegZdhZ8RjFSJSmTMbBLEm1glJ9wIaHjikrtr4AWwWNSbxeL
+ bDtPleGM/CaB4HtUmkq+M2DarPtvuP0oyYBi6jRji3zF2mr0j/jNH0G
+X-Developer-Key: i=aesteve@redhat.com; a=ed25519;
+ pk=zI2RBeZgocwYm3AkJW4CtjoJnKoDZrfBl1xe5Ed6h+U=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-MFC-PROC-ID: XA_rBRLdWsO5v-vA_Op_RfWIcWfvpIxsN7WpIyNcm4I_1793113400
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Sorry, in mm we require commit messages. Even for tests :)
+From: "T.J. Mercier" <tjmercier@google.com>
 
-On Tue, Oct 27, 2026 at 07:43:25PM +0800, Chris Down wrote:
-> Signed-off-by: Chris Down <chris@chrisdown.name>
-> ---
->  .../mseal_system_mappings/sysmap_is_sealed.c  | 92 +++++++++++++++++++
->  1 file changed, 92 insertions(+)
->
-> diff --git a/tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c b/tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c
-> index ea75ad537620..83b4fadfbfe7 100644
-> --- a/tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c
-> +++ b/tools/testing/selftests/mseal_system_mappings/sysmap_is_sealed.c
+Introduce a MEMCG_DMABUF stat counter and helpers for
+reserve/commit/cancel and uncharging dma-buf memory against a
+memory cgroup:
 
-Why on earth does 'mseal_system_mappings' have its own directory...??
+The charge is tracked on struct dma_buf via a new memcg pointer. The
+page count is derived internally from PAGE_ALIGN(dmabuf->size), and
+the memcg reference is stored into (or cleared from) dmabuf->memcg by
+the helpers themselves, removing the need for callers to manage those
+details. The release path in dma_buf_release() is reduced to a single
+mem_cgroup_uncharge_dmabuf() call.
 
-Ugh I don't know how I let this stuff go on the original series :/
+This decouples accounting from the backing page allocator, avoiding the
+need for every exporter to pass __GFP_ACCOUNT and enabling cross-cgroup
+charge transfer, which is impractical with page-level accounting.
 
-Please, for the love of all that's sacred, move these tests over to
-tools/selftests/mm/. This is an mm feature, for our sins...
+The next patch wires up the charging policy in the dma-heap ioctl.
 
-You can do the move as a prerequisite patch in the series.
+Signed-off-by: T.J. Mercier <tjmercier@google.com>
+Signed-off-by: Albert Esteve <aesteve@redhat.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst |  4 ++
+ drivers/dma-buf/dma-buf.c               |  3 ++
+ include/linux/dma-buf.h                 |  4 ++
+ include/linux/memcontrol.h              | 36 ++++++++++++++
+ mm/memcontrol.c                         | 87 +++++++++++++++++++++++++++++++++
+ 5 files changed, 134 insertions(+)
 
-(And, again, I really do insist on your change doing some cleanup here as
- well rather than extending this stuff.)
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 86a2a0099178..a3265a4a953e 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1662,6 +1662,10 @@ The following nested keys are defined.
+ 		Amount of memory used for storing in-kernel data
+ 		structures.
+ 
++	  dmabuf (npn)
++		Amount of memory used for exported DMA buffers allocated by the cgroup.
++		Stays with the allocating cgroup regardless of how the buffer is shared.
++
+ 	  workingset_refault_anon
+ 		Number of refaults of previously evicted anonymous pages.
+ 
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 4c9add51f9ef..f31f49ebd0af 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -14,6 +14,7 @@
+ #include <linux/fs.h>
+ #include <linux/slab.h>
+ #include <linux/dma-buf.h>
++#include <linux/memcontrol.h>
+ #include <linux/dma-fence.h>
+ #include <linux/dma-fence-unwrap.h>
+ #include <linux/anon_inodes.h>
+@@ -180,6 +181,8 @@ static void dma_buf_release(struct dentry *dentry)
+ 	 */
+ 	BUG_ON(dmabuf->cb_in.active || dmabuf->cb_out.active);
+ 
++	mem_cgroup_uncharge_dmabuf(dmabuf);
++
+ 	dmabuf->ops->release(dmabuf);
+ 
+ 	if (dmabuf->resv == (struct dma_resv *)&dmabuf[1])
+diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+index d15b2b31d3c9..23ec0ff23fba 100644
+--- a/include/linux/dma-buf.h
++++ b/include/linux/dma-buf.h
+@@ -27,6 +27,7 @@
+ struct device;
+ struct dma_buf;
+ struct dma_buf_attachment;
++struct mem_cgroup;
+ 
+ /**
+  * struct dma_buf_ops - operations possible on struct dma_buf
+@@ -429,6 +430,9 @@ struct dma_buf {
+ 
+ 		__poll_t active;
+ 	} cb_in, cb_out;
++
++	/** @memcg: the cgroup to which this buffer is currently attributed */
++	struct mem_cgroup *memcg;
+ };
+ 
+ /**
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 7d1c0ce189a8..4c8711fcf4fd 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -10,6 +10,9 @@
+ 
+ #ifndef _LINUX_MEMCONTROL_H
+ #define _LINUX_MEMCONTROL_H
++
++struct dma_buf;
++
+ #include <linux/cgroup.h>
+ #include <linux/vm_event_item.h>
+ #include <linux/hardirq.h>
+@@ -40,6 +43,7 @@ enum memcg_stat_item {
+ 	MEMCG_ZSWAP_B,
+ 	MEMCG_ZSWAPPED,
+ 	MEMCG_ZSWAP_INCOMP,
++	MEMCG_DMABUF,
+ 	MEMCG_NR_STAT,
+ };
+ 
+@@ -667,6 +671,12 @@ int mem_cgroup_charge_hugetlb(struct folio* folio, gfp_t gfp);
+ int mem_cgroup_swapin_charge_folio(struct folio *folio, unsigned short id,
+ 				   struct mm_struct *mm, gfp_t gfp);
+ 
++bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t gfp,
++			       unsigned int nr_pages);
++
++void mem_cgroup_commit_dmabuf(struct dma_buf *dmabuf, struct mem_cgroup *memcg,
++			      unsigned int nr_pages);
++
+ void __mem_cgroup_uncharge(struct folio *folio);
+ 
+ /**
+@@ -682,6 +692,10 @@ static inline void mem_cgroup_uncharge(struct folio *folio)
+ 	__mem_cgroup_uncharge(folio);
+ }
+ 
++void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg, unsigned int nr_pages);
++
++void mem_cgroup_uncharge_dmabuf(struct dma_buf *dmabuf);
++
+ void __mem_cgroup_uncharge_folios(struct folio_batch *folios);
+ static inline void mem_cgroup_uncharge_folios(struct folio_batch *folios)
+ {
+@@ -1167,10 +1181,32 @@ static inline int mem_cgroup_swapin_charge_folio(struct folio *folio,
+ 	return 0;
+ }
+ 
++static inline bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg,
++					     gfp_t gfp,
++					     unsigned int nr_pages)
++{
++	return true;
++}
++
++static inline void mem_cgroup_commit_dmabuf(struct dma_buf *dmabuf,
++					    struct mem_cgroup *memcg,
++					    unsigned int nr_pages)
++{
++}
++
++static inline void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg,
++					    unsigned int nr_pages)
++{
++}
++
+ static inline void mem_cgroup_uncharge(struct folio *folio)
+ {
+ }
+ 
++static inline void mem_cgroup_uncharge_dmabuf(struct dma_buf *dmabuf)
++{
++}
++
+ static inline void mem_cgroup_uncharge_folios(struct folio_batch *folios)
+ {
+ }
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 856a7d07586c..bbd46ba40350 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -69,6 +69,7 @@
+ #include <net/ip.h>
+ #include "slab.h"
+ #include "memcontrol-v1.h"
++#include <linux/dma-buf.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -442,6 +443,7 @@ static const unsigned int memcg_stat_items[] = {
+ 	MEMCG_ZSWAP_B,
+ 	MEMCG_ZSWAPPED,
+ 	MEMCG_ZSWAP_INCOMP,
++	MEMCG_DMABUF,
+ };
+ 
+ #define NR_MEMCG_NODE_STAT_ITEMS ARRAY_SIZE(memcg_node_stat_items)
+@@ -1625,6 +1627,7 @@ static const struct memory_stat memory_stats[] = {
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	{ "hugetlb",			NR_HUGETLB			},
+ #endif
++	{ "dmabuf",			MEMCG_DMABUF			},
+ 
+ 	/* The memory events */
+ 	{ "workingset_refault_anon",	WORKINGSET_REFAULT_ANON		},
+@@ -5658,6 +5661,90 @@ void mem_cgroup_flush_workqueue(void)
+ 	flush_workqueue(memcg_wq);
+ }
+ 
++/**
++ * mem_cgroup_reserve_dmabuf - charge a memcg for a dma-buf allocation
++ * @memcg: memcg to charge (may be %NULL)
++ * @gfp_mask: reclaim mode
++ * @nr_pages: number of pages to charge
++ *
++ * Charges @nr_pages against @memcg. Call this before allocating pages so
++ * the cgroup limit is enforced up front. On success the caller must either
++ * call mem_cgroup_commit_dmabuf() to finalize the charge, or
++ * mem_cgroup_cancel_dmabuf() to undo it.
++ *
++ * Returns %true on success, %false if the charge would exceed the limit.
++ */
++bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t gfp_mask,
++			       unsigned int nr_pages)
++{
++	if (!memcg || mem_cgroup_disabled())
++		return true;
++
++	if (try_charge(memcg, gfp_mask, nr_pages))
++		return false;
++
++	return true;
++}
++
++/**
++ * mem_cgroup_commit_dmabuf - finalize a dma-buf charge after export
++ * @dmabuf: the exported dma-buf
++ * @memcg: memcg previously charged via mem_cgroup_reserve_dmabuf()
++ * @nr_pages: same value passed to mem_cgroup_reserve_dmabuf()
++ *
++ * Updates the MEMCG_DMABUF counter and stores @memcg in @dmabuf->memcg,
++ * transferring the caller's reference.
++ */
++void mem_cgroup_commit_dmabuf(struct dma_buf *dmabuf, struct mem_cgroup *memcg,
++			      unsigned int nr_pages)
++{
++	if (!memcg || mem_cgroup_disabled())
++		return;
++
++	mod_memcg_state(memcg, MEMCG_DMABUF, nr_pages);
++	dmabuf->memcg = memcg;
++}
++
++/**
++ * mem_cgroup_cancel_dmabuf - undo a dma-buf charge
++ * @memcg: memcg to uncharge (may be %NULL)
++ * @nr_pages: same value passed to mem_cgroup_reserve_dmabuf()
++ *
++ * Returns @nr_pages of charge to @memcg. Use when the allocation fails
++ * after mem_cgroup_reserve_dmabuf() but before mem_cgroup_commit_dmabuf().
++ */
++void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg, unsigned int nr_pages)
++{
++	if (!memcg)
++		return;
++
++	if (!mem_cgroup_is_root(memcg))
++		refill_stock(memcg, nr_pages);
++}
++
++/**
++ * mem_cgroup_uncharge_dmabuf - uncharge a dma-buf from its memcg
++ * @dmabuf: buffer to uncharge
++ *
++ * Reverses a successful mem_cgroup_commit_dmabuf(). Drops the memcg
++ * reference stored in @dmabuf->memcg and clears the pointer.
++ * Safe to call when @dmabuf->memcg is %NULL.
++ */
++void mem_cgroup_uncharge_dmabuf(struct dma_buf *dmabuf)
++{
++	unsigned int nr_pages;
++	struct mem_cgroup *memcg = dmabuf->memcg;
++
++	if (!memcg)
++		return;
++
++	nr_pages = PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
++	mod_memcg_state(memcg, MEMCG_DMABUF, -nr_pages);
++	mem_cgroup_cancel_dmabuf(memcg, nr_pages);
++	mem_cgroup_put(memcg);
++	dmabuf->memcg = NULL;
++}
++
+ static int __init cgroup_memory(char *s)
+ {
+ 	char *token;
 
-> @@ -10,6 +10,7 @@
->  #include <unistd.h>
->  #include <string.h>
->  #include <stdbool.h>
-> +#include <sys/mman.h>
->  #include <sys/utsname.h>
->  #include <zlib.h>
->
-> @@ -232,4 +233,95 @@ TEST_F(basic, check_sealed)
->  	EXPECT_EQ(expected, sealed);
->  };
->
-> +static bool find_vdso(unsigned long *start, unsigned long *end)
-> +{
-> +	char line[MAX_LINE_LEN];
-> +	bool found = false;
-> +	FILE *maps;
-> +
-> +	maps = fopen("/proc/self/maps", "r");
-> +	if (!maps)
-> +		return false;
-> +
-> +	while (fgets(line, sizeof(line), maps)) {
-> +		if (strstr(line, "[vdso]") &&
-> +		    sscanf(line, "%lx-%lx", start, end) == 2) {
-> +			found = true;
-> +			break;
-> +		}
-> +	}
-> +
-> +	fclose(maps);
-> +	return found;
-> +}
+-- 
+2.55.0
 
-There's shared code for this kind of thing, please don't duplicate a
-/proc/self/maps thing if unnecessary. Also there's a nicer ioctl interface for
-all this.
-
-See vm_utils.[ch].
-
-> +
-> +static int vdso_is_sealed(void)
-> +{
-> +	int sealed = -1;
-> +	FILE *maps;
-> +
-> +	maps = fopen("/proc/self/smaps", "r");
-> +	if (!maps)
-> +		return -1;
-> +	if (has_mapping("[vdso]", maps))
-> +		sealed = mapping_is_sealed(maps);
-> +	fclose(maps);
-> +	return sealed;
-> +}
-> +
-> +/*
-> + * Unmapping or moving [vdso] must fail with EPERM when it is sealed. When it
-> + * is not sealed, it succeeds and leaves glibc with a stale vdso pointer, which
-> + * is fine because each test runs in its own forked child.
-> + */
-> +TEST(vdso_munmap)
-> +{
-> +	int sealed;
-> +	unsigned long start, end;
-> +	int ret;
-> +
-> +	if (!find_vdso(&start, &end))
-> +		SKIP(return, "could not find the mapping, [vdso]");
-> +	sealed = vdso_is_sealed();
-> +	if (sealed < 0)
-> +		SKIP(return, "could not read the [vdso] sealing state");
-> +
-> +	ret = munmap((void *)start, end - start);
-> +	if (sealed) {
-> +		EXPECT_EQ(-1, ret);
-> +		EXPECT_EQ(EPERM, errno);
-> +	} else {
-> +		EXPECT_EQ(0, ret);
-> +	}
-> +	EXPECT_EQ(sealed, find_vdso(&start, &end));
-> +}
-> +
-> +TEST(vdso_mremap)
-> +{
-> +	int sealed;
-> +	unsigned long start, end, size, new_start;
-> +	void *dst, *ret;
-> +
-> +	if (!find_vdso(&start, &end))
-> +		SKIP(return, "could not find the mapping, [vdso]");
-> +	sealed = vdso_is_sealed();
-> +	if (sealed < 0)
-> +		SKIP(return, "could not read the [vdso] sealing state");
-> +	size = end - start;
-> +
-> +	dst = mmap(NULL, size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-> +	ASSERT_NE(MAP_FAILED, dst);
-> +
-> +	ret = mremap((void *)start, size, size, MREMAP_MAYMOVE | MREMAP_FIXED,
-> +		     dst);
-
-I mean arguably this is an mremap test that belongs with mremap? I guess
-debatable...
-
-> +	if (sealed) {
-> +		EXPECT_EQ(MAP_FAILED, ret);
-> +		EXPECT_EQ(EPERM, errno);
-> +	} else {
-> +		EXPECT_EQ(dst, ret);
-> +	}
-> +	ASSERT_TRUE(find_vdso(&new_start, &end));
-> +	EXPECT_EQ(sealed ? start : (unsigned long)dst, new_start);
-> +}
-> +
->  TEST_HARNESS_MAIN
-> --
-> 2.54.0
->
-
-This all just seems like work that should have been done in the past when this
-feature was proposed, and doesn't depend on your changes at all AFAICT? Maybe I
-missed it though.
-
-Valuable in itself, but probably worth sending separately as a result? Otherwise
-it's a little disconnected from the actual change you're making.
-
---
-Cheers, Lorenzo
