@@ -1,105 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.224.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793191380;
-	b=R7XaodXmRfvWZvJUkCWQxp3tNtx4zKO8JXhGtjdUou3bLsVvtUc0hg4HVvzFbKu9VDJv
-	 zjQU3eliPMQfJgF1v1NRj38zxG0Gq1tE/eJrtGSegR0uO4m/T03jjf52DSffnT/ktUrgF
-	 LbARbcodev5hi1tor6zU44jobZesIyYsqojJFe/x/p5YcAfxEIckjC2tZx5rqvMpURogw
-	 aPeBgqHWGNZVJlbIjvolGWunRGhkydaaw3LUkdEJRXurO65cFj/dpncAeyqD4XHa9sDgk
-	 N8hSTjYhvdng1FY8jnRzTFSX0g2ql2eO1oL9GJ8YEbnnaIKu1cSqIytQ5KLGuDyCxtg==
+	t=1793194425;
+	b=N/eTH+MXnSwKHsoouyfcieHNG5sMXJez9ImB5RRQ6Drc6WMCSk6u3AnwJX5xYxR6hEas
+	 pOGSxDlN2Nxf0l8fUprmHGC7UwQyMBA7L0QuCAwpliuVqt0xpmDn5PWl7iw3w/SB2t/b1
+	 O048q0cW4P8j3bXkb5OgM38il1ccW1K4659HeETl+mxmprHW9fnFEtZ/p2INUxPt8VXBk
+	 VNmMFWSPRGYmSu9HUlcE29fbgS+OTVv+BvHKRL+Kyp48aBEew4xWtAU0EKpWIfHprP/QK
+	 kT5vZ97kxArqxxi6jnBrXFpd1CHE0VY9v+eLQjoMLgX8mylhig5Xh84eZQP9BdbvKtA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793191380;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Autocrypt:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=bMwDHB+3ddcFQ1aKjPTDttqfXggRKYnNB2Il1VmUkbE=;
-	b=xWsXEbQrDG8F52t12aLYWZoMlWb/6bwGfYUEQOk3oTDxDCasoKYPojecxETg2GhgcdS8
-	 DZDmodNLEgpb9MoSRjLZYnI251/ia4tdrGq832NrhEBqA7eAf/iDDXbM6DjvgW3J94vw5
-	 4083Tz/N/VjvNghwknkoJqa2IOHmOyym/ACpWdleN77RjBPKUtjgPc658CgsL+IdXKmNZ
-	 6u5mj37wEvAD0f2EoHhC2qfQnQT6o4s0xjlme6FT5K0BTew7Xl3eFZnyvULE2rOOz4Qdx
-	 gD9VRxt78xsSqbd7KZ91Psvw/kNmB+Y2L+X99IAHbgEi3KniCoPgNxAIb7uRuqFrJzg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793194425;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=5qhrixXgJz9/TxX0zDeSD+7uwhcTAxtkmvISQ/Cf0T4=;
+	b=nvP7senssJot0MSfKgPaIeGW8wspHghvCSkPSbDOlGSWMO/WOnkUCsbIt1yMrfQCHGQ8
+	 KL2vzTonW1SJgkT8bZu4kzVmXVQWPcpSv4Erc/7tosyUYJTicGmmvIoCF29/lwpbLfuT+
+	 PFwit2f5OcyIcRVdrx+pFoJK2PMXTuTX+D/UaTexGE8A2o3rdVf/DVr8tsBvafbNx/2zL
+	 k0+W7PnKTkozILYxt0PleLQIiVXbYw5rX3/RlWsiCru9QFnHSLZ25ovfrbf9nh8JrOMGU
+	 jzyJRuzCSl+t6NrBDQ7sHrLSvTd3AY1L3Iyi+bwycSGH9NmAG0ipOCtCmGp5PNg9yOg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=HansenPartnership.com;
-	spf=pass smtp.mailfrom=HansenPartnership.com;
-	dkim=pass header.d=hansenpartnership.com header.i=@hansenpartnership.com header.a=rsa-sha256 header.s=20151216 header.b=OZtKrVBj;
-	arc=none smtp.remote-ip=198.37.111.173
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=armoriq.io;
+	spf=pass smtp.mailfrom=armoriq.io;
+	dkim=pass header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=Mtr5tjUV;
+	arc=none smtp.remote-ip=74.125.224.49
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439AC606A31A;
-	Wed, 28 Oct 2026 12:42:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 439AC606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98349606A326
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 13:33:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98349606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armoriq.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armoriq.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.a=rsa-sha256 header.s=20151216 header.b=OZtKrVBj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1793191377;
-	bh=fOpHXwlwUlS4qieCt/lH6UJKlWGZ1ep1hs8jgE78xrU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=OZtKrVBjbSBB+nGPoP2tKR9rJfuuXNoMVW3RQajFz2ChnghhL0uV/rbRJdFPw3qkn
-	 PGNDiiuCTfTIjxnFi30x3KUnY1Gnn6jxABeXB9vpDN8WiVkX7yiKWpM0mGefImF3X9
-	 +R6vg2QuZz2/37NEHLX3GY44U40Dyz8zICyMuQVk=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:d341::8309])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 2E90E1C012B;
-	Wed, 28 Oct 2026 08:42:57 -0400 (EDT)
-Message-ID: <37b653494cf282c6e428e2ae8fd781a0ea69bf3f.camel@HansenPartnership.com>
-Subject: Re: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Luca Boccassi <luca.boccassi@gmail.com>, Paul Moore
- <paul@paul-moore.com>,  Christian Brauner	 <brauner@kernel.org>
-Cc: Fan Wu <wufan@kernel.org>, Manuel Huber <manuelh@nvidia.com>, David
- Howells	 <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, Andrew
- Halaney	 <andrew@amutable.com>, James Morris <jmorris@namei.org>, "Serge E.
- Hallyn"	 <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kexec@lists.infradead.org, Mike Rapoport <rppt@kernel.org>, Pasha Tatashin	
- <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>,
- Alexander Graf <graf@amazon.com>
-Date: Wed, 28 Oct 2026 08:42:56 -0400
-In-Reply-To: <CAMw=ZnR54hMBwGTps23t9Mm_VO1bAvmeX8uTf_VJ0rJsFNMLuw@mail.gmail.com>
-References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
-		 <20261019-b4-ipe-keyring-rfc-v1-1-156f0b93e843@nvidia.com>
-		 <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org>
-		 <20261021-groll-donnerstag-erfuhren-ce34a0ed4e97@brauner>
-		 <CAHC9VhTHUU0h9k74CMT6wYhMwyY3YhbSSFwJoDTvoFRyTFVZwg@mail.gmail.com>
-		 <20261022-hausbank-dozent-hurtig-9443f3777475@brauner>
-		 <CAHC9VhQ4sdCRvJ+YPZoiQzR_hgQN6-=84qvnTDDGPf=7=L9-jA@mail.gmail.com>
-		 <5143896100674c9fd744c4d7d6ce12232910e789.camel@gmail.com>
-		 <CAMw=ZnR54hMBwGTps23t9Mm_VO1bAvmeX8uTf_VJ0rJsFNMLuw@mail.gmail.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNE
- lecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn
- 1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHU
- RfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8
- X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvd
- HRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGw
- MGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBI
- FCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy0
- 9J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLb
- K0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8
- tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB
- 8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90
- dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeA
- QIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mYBQkbNYS9AAoJEIFK5HwhSFTWBpwIAL5Bk3
- 5FB34U6iHmDzzgdCbxLTs43T/YQyJpcGIvopBvnI/fDY8oSG6Df64/O6B+1R+A8TDp6ZG5ysUWnCC
- 6GuIaEHemBYkitMPglR6+sGCMQY7O0mlsPvdssvKK1KI9Bno4VU6ogaF2qVzefSqg1Djmf/DcsxWP
- rI/jdJ8FB5AYR2rjIdDFc+zRdAJuavo1/anyY2wgpFh/3R8IOYAEfWV9nGgYkf9+tA4EIn1sxE0I3
- L5oW2N3mbyRrkzuBwO8ztMCwqEPk7moWzhokcZqMXiAIahaZdkashJC+s2X2RZSGCy+g+pvY5NN4B
- BVG5XwLgVBqbHMTcxE0fbmPqz+q6O0LEphbWVzIEJvdHRvbWxleSA8amVqYkBoYW5zZW5wYXJ0bmV
- yc2hpcC5jb20+iQFXBBMBCABBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmODZ5ACGwMFCRs1hL0F
- CwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQgUrkfCFIVNZu0Af/TzvL2/NdgAcw9uN3x60H8
- jc4QUq14VpxcFEFEMpcj1morkX/G93V+56HBBaXZj+yK8PhxIA/SIz+sU7C/0YvKuvzakP8ZX/7WJ
- e32SOUtjfr/VTaqjIBzNj6OxLvZpmNbBw7s6DwhhNpHOWqJ/1ml+PtDRDV71IB58yVqQjp1xlNKVl
- ZppcJ5908EJzsFnRIVjiQiDSKoppqB2BCibBbrWcln7CiWMyOC/cco6SIn6twH+f7+aivJ3xGcOE2
- a9gBKF5rNi9TBoX9oyPmshv/TDmnohsVrH7AYXlGYfZTk15SWEiROh1QX8/uD9wl/gcIv5EDUpT/F
- L2jzOsA5663bw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key, unprotected) header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=Mtr5tjUV
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-67a79750749so579394d50.1
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 06:33:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=armoriq-io.20260707.gappssmtp.com; s=20260707; t=1793194423; x=1793799223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5qhrixXgJz9/TxX0zDeSD+7uwhcTAxtkmvISQ/Cf0T4=;
+        b=Mtr5tjUVjoKiIImb9L4oKa8STy6M7NVSE5j5eKs2c8PgmvCmlhe4fn7vJ/1E/4EruS
+         JW7u5L0CGZjitr4ykSHPAt7O+oMIZoaRQRRugRVl9edYbk9v42CC8JsoMWx9XcuaZZm3
+         c0toqQt4eN1nj2krHPrj1HEBCzqfwnfIAyuYYgE5AZ4LiTuJVm07xIkRD6euYgRkdRI/
+         i3pP+ommLCOjbrhFOKo0d2yggDakHwnyiHTaqjF+9bgDiS+Fw9EtN7yQ7JPUfValqAnb
+         D7Wpo8J36xOMHBOpI2+7Xvs8WYCEotXh+Tyj9//QlNgt94R15xvcRHCGZxVhzy3K/FsM
+         T9ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793194423; x=1793799223;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5qhrixXgJz9/TxX0zDeSD+7uwhcTAxtkmvISQ/Cf0T4=;
+        b=YsQZ60PqmijX9ef2A+qkT2XuDpxCAWQK912B8BgB7YmdMXcsiLjlwCP/LRtUD4hv2c
+         yjZ64FrwirhH++U5W9vAbJBiyt+DCxsyU/wawHQ55nIq6J+y8QP8Cs+Cz2SP906VUe/E
+         R4C1Cb/Cfk8sWH0akUAAMwIjvUZICBuTW2eaDEkotv1EZFUTByf+S08Mo8kwowx/Hu9Z
+         pyz9mJd8ZAb5EqL2WJoQQ6/5xcs4DIvvDuNNo/OY1mew3POuZIS6kRqUxC/s61W3T84M
+         jSQJnPxGloLeql/pgJ4giXdLRmFUs84Nk78kcnIGNT8BOix5fMbA6PKIP6Us0SUuwmxO
+         vfnA==
+X-Gm-Message-State: AFq9FYIlSRtNYlb8YzcbJh99gOAiLrz1L0PQRwUCeb5Us6Db8mEBUXqQ
+	zQjVjbDFGZMDmzGQI6fRXtdjbZmhnSRxIT/fZh93QRM9bJeksjmgxX3K5LsaU9e2f7CZ
+X-Gm-Gg: AYBFou3w5JblRsPPm7QRhPX8n3awWESTfJHdglxogvs/Mt4pS8BAEXstlsnAVuGJbGi
+	iB729d5nfCuaVcEsR3gKn0ao3XCCiOVvglY9AUaBjaQX1JrWMPBia9cC/EcqZul6rflMKrf1YV5
+	fueQLtiRW06HyciWqeahJbuD0PKCp3SJXunYkXNB4XaHMnSW0eh8hJcKHb7cEMN/jOa3/q86pyn
+	N2kfm77WSa889oWIrm09g9t6+mD7JfRh6sYrl/PAHJb8Q/lwwJ3PC5ikVyApDpJcqZ3eibp85pr
+	k6qHJIvtYmHTkFoBioCnb5o8m47VxpqxXeVe7EwjebIusa3sa2kM5eDKlAKcniJ6xCc97tBtfIC
+	iNY6tVu8svIsMuLCxa3bGFm/LjswthvYYU0pzgjR3dGsu6AUz7P07cCBwUhNjoIfMCLFFJWCnIE
+	o2HkK7Mc1kvPO2o1jgvu4/3idz+IEA7qpGB4fhLQCoapTgGvRo0f5vXZtdViaL8MYJ3boaNnm3X
+	Tq/e8lo6QywJe2tNAi8rQW3SOPYbPKiE2EIgixYSgaE4o/9LNt0SqI1vczeiNHeVVxu937DzNAN
+	MwaksTD36EtecWVoLT3REgPHP7QmPtEOKap6ECekR/GIrDqSFAD5ZfH/NXLemp/3VClsvIoq3RA
+	93DOaJ92x81ZmHsjZ38E+FPePjly0MNGifRUCuy7kqQuOJLI=
+X-Received: by 2002:a05:690e:4808:b0:679:9bc4:cc03 with SMTP id 956f58d0204a3-67a7bcf715fmr1382145d50.69.1793194423425;
+        Wed, 28 Oct 2026 06:33:43 -0700 (PDT)
+Received: from CC-KJQTV599DQ.attlocal.net ([2600:1702:7b5a:ab90:103d:30e1:1f09:a9ae])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67a79f38dfesm1694911d50.1.2026.10.28.06.33.42
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 28 Oct 2026 06:33:42 -0700 (PDT)
+From: Ketan Bhardwaj <ketan@armoriq.io>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-kernel@vger.kernel.org,
+	"HARIHARA SUDHAN . R" <harisudhan@armoriq.io>,
+	Ketan Bhardwaj <ketan@armoriq.io>
+Subject: [RFC PATCH v2 0/6] security: introduce Kernel Assurance Plane
+Date: Wed, 28 Oct 2026 09:33:29 -0400
+Message-ID: <20261028133335.75899-1-ketan@armoriq.io>
+X-Mailer: git-send-email 2.51.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -109,72 +104,104 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2026-10-27 at 11:07 +0000, Luca Boccassi wrote:
-> On Mon, 26 Oct 2026 at 12:57, <luca.boccassi@gmail.com> wrote:
-> > I think there is one issue with the design pattern where keyrings
-> > are set up in userspace, that I have mentioned a few times already
-> > and I got documented in
-> > https://www.freedesktop.org/software/systemd/man/latest/systemd-system.=
-conf.html#RestrictFileSystemAccess=3D
-> > as well: they are trivially bypassable if the kernel has kexec
-> > enabled and it is signed. The security model relies on the "good"
-> > userspace running first, but if kexec is enabled, there's no
-> > guarantee that will be the case, and as far as I can tell it gives
-> > root trivial capability of overriding it and extending the trust
-> > chain as the attacker wishes.
+Kernel Assurance Plane (KAP) introduces objective-scoped authority as a kernel
+subsystem. Intent Lineage Groups (igroups) are its core kernel object, LSM hooks
+are its enforcement mechanism, and securityfs is its control-plane interface.
 
-The attack sounds doable, but it also seems to be exploiting a gap in
-kexec policy: kexec is supposed to behave like a warm reboot so if boot
-policy requires UKI only then so should kexec and that sounds like the
-thing that should be fixed.
+Linux decides whether a task may perform an operation. It does not decide
+whether the operation still belongs to the objective the task was started for,
+which matters once long-running agents start programs, edit files and open
+connections on a user's behalf. KAP binds a task and its descendants to an
+igroup holding the authority compiled for that objective, and refuses
+operations outside it at existing LSM hooks. Planning and policy validation
+stay in privileged userspace.
 
-What's the mechanism boot uses to ensure UKI only? So we can see if it
-can be adopted to kexec.
+v1 [1] was the design document alone. This version adds the implementation it
+describes. An earlier revision of this code runs on Linux 6.18 as the guest
+kernel of Kata microVMs. There, under nested virtualization and in a single
+run, running the same binary unbound and then bound, enforcement added 154 ns
+to a read and 787 ns to an open, while the unhooked getpid control did not
+move. This version has not been measured yet.
 
-> > IPE specifically was designed to avoid exactly that, and ensure
-> > userspace could not execute untrusted code, even with root
-> > privileges. With this enabled by default, userspace can just load
-> > the same signedkernel image, passing in compromised initrd and
-> > command line, and gain arbitrary code execution on the host, since
-> > only the kernel binary itself is verified, and anything goes for
-> > the rest of the kexec parameters.
+Changes since v1:
 
-Yes, but, it the above kexec policy problem were solved, IPE would just
-work as expected, wouldn't it?  So this seems like a work around for a
-kexec issue rather than a fundamental IPE need.
+* Add the implementation: the LSM and its igroup decision engine (3/6), the
+  securityfs control plane (4/6), and checks on unshare and setns (5/6).
+* Documentation: drop the admin-guide/LSM index entry, which pointed at a
+  page that does not exist (Randy Dunlap). Describe the authority format,
+  kap.igfd, kap.transition and the event fields as implemented, and drop
+  "It does not add code".
+* Add a MAINTAINERS entry (6/6).
 
-> > This is of course not to say this new IPE keyring shouldn't be
-> > added. But perhaps it would be nicer if the default build flag was
-> > mutually exclusive with kexec being enabled? Not sure if that can
-> > be expressed in Kconfig though? default: yes-if-kexec-off, no-if-
-> > kexec-on
+The control plane follows the shape discussed for v1: /sys/kernel/security/kap
+holds kap.default and an igroups link to a small internal filesystem, as
+AppArmor publishes its policy namespaces, so an igroup is created with mkdir as
+a cgroup is.
 
-I wouldn't do this because a) I don't think it's an IPE problem, I
-think it's a kexec one and b) distros get very tetchy about hard to
-solve feature anti dependencies.
+Known gaps, where feedback is welcome:
 
-> > At the very least IMHO this relationship should be documented
-> > explicitly in the kconfig blurb, as it seems to me it's a major
-> > footgun to leave laying around, and users might not necessarily be
-> > aware of it.
+* The authority format is a strict subset of JSON and is experimental.
+* Decisions are serialized by one spinlock, and those that resolve a path
+  allocate a PATH_MAX buffer before taking it. Both are prototype choices.
+* igroups cannot be removed yet, and kap.procs keeps the pids written to it
+  after those tasks exit. A task's binding lives in its task blob and is
+  released with it.
+* A thread created while its process is being bound can miss the binding.
+  cgroups closes the same race with cgroup_threadgroup_rwsem; KAP does not
+  yet.
+* Control writes need CAP_SYS_ADMIN. CAP_MAC_ADMIN may be the better fit.
+* unshare and setns call KAP directly because they have no LSM hook
+  (question 5 in the document).
+* There are no selftests in this series yet. It was built with and without
+  KAP and with networking, namespaces and io_uring disabled, and boot tested
+  in QEMU with lock debugging: the control plane, file and exec decisions,
+  epoch revocation of a running task and kap.default.
+* The LSM ID is provisional and is for the LSM maintainers to confirm.
 
-I'd document the need for trusted userspace on kexec if it was a boot
-requirement, yes.
+[1] https://lore.kernel.org/linux-security-module/20261021165748.19304-1-ketan@armoriq.io/
 
-> KHO/keyring folks, what would you think about preserving sealed
-> keyrings across kexec via KHO so that the chain of trust can't be
-> reset by userspace? Good idea/bad idea/yes send patches/no go
-> away/etc?
+Base commit: 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907 (Linux 7.3-rc7)
 
-Well, yes, we do have a similar problem with the trusted keyrings.=20
-They're actually initialized from the shim created ..RT variables
-(which are volatile, but don't die on kexec).  On first boot they're
-initialized before user space, so we know they came from shim (or
-another trusted component in the boot chain) but if root uses UEFI RT
-services to add to a ..RT keyring, the added key will appear trusted
-after kexec.
+Ketan Bhardwaj (6):
+  docs: security: Describe the Kernel Assurance Plane design
+  security: kap: add the LSM ID and internal headers
+  security: add the Kernel Assurance Plane LSM
+  security: kap: add the securityfs control plane
+  kernel: add KAP checks for unshare and setns
+  MAINTAINERS: add an entry for the Kernel Assurance Plane
 
-Regards,
+ Documentation/ABI/testing/securityfs-kap | 111 +++
+ Documentation/security/index.rst         |   1 +
+ Documentation/security/kap.rst           | 236 ++++++
+ MAINTAINERS                              |  10 +
+ include/linux/kap.h                      |  16 +
+ include/linux/lsm_count.h                |   9 +-
+ include/uapi/linux/lsm.h                 |   1 +
+ kernel/fork.c                            |   4 +
+ kernel/nsproxy.c                         |   5 +
+ security/Kconfig                         |   1 +
+ security/Makefile                        |   1 +
+ security/kap/Kconfig                     |  14 +
+ security/kap/Makefile                    |   2 +
+ security/kap/igroup.c                    | 945 +++++++++++++++++++++++
+ security/kap/kap.h                       | 159 ++++
+ security/kap/kap_lsm.c                   | 866 +++++++++++++++++++++
+ security/kap/kapfs.c                     | 524 +++++++++++++
+ 17 files changed, 2904 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/securityfs-kap
+ create mode 100644 Documentation/security/kap.rst
+ create mode 100644 include/linux/kap.h
+ create mode 100644 security/kap/Kconfig
+ create mode 100644 security/kap/Makefile
+ create mode 100644 security/kap/igroup.c
+ create mode 100644 security/kap/kap.h
+ create mode 100644 security/kap/kap_lsm.c
+ create mode 100644 security/kap/kapfs.c
 
-James
+
+base-commit: 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907
+-- 
+2.51.0
+
