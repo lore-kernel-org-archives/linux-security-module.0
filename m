@@ -1,69 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.197
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793168197;
-	b=s0Wra67KDc2dklsjIHHbCBWSEUBliSCUu/fvKNZzQgzhmFvgpAZhpSkcxLEZ6usGnYpE
-	 Fx/ciOr9ipTC7Y5WnpeolmCMsp+ZgrgKUzdcAijuXS3QlVnGyvtPU6vO0T7vVLmNdw6wu
-	 F+hrq3D4GP/PapJzX4UqjA7y42FMTbCXFRKaHLf0mhUzSZi2mLqb+tGr5/n8joZaZDl3V
-	 F5+k8JrfDyl+i8Ic+Mo5HAJuIoivGLEmzWLHAD7jycn15elkZBwohzUBMpqPM/o37qw5o
-	 SEVWbTEk3PHGE8/55SjTTVW/GnKXB/LKz1RYXk3IzxJvXwiZs7V+/QkOWbsQLk45xBw==
+	t=1793172548;
+	b=fp9TRbJ/7f08zIdB9gZNLKSSLiOG7oHVEmInBCTstZRJ4/e/golF3P7+AukBJ2yxgZV3
+	 JT21tTRjA+fJZBBy9YchMwmhEHC194ewzusQI9ARInmWso6jyQ4xcvW+50a9HpviglEnZ
+	 /6Toya1Ow525LDSMgWWiwz9I3ZOY85xiZZJQAiRlspdgq5/xZWXqXR7N3gQ2F3Gn6Ui0F
+	 vxhd3Qss+cCDOWCBgM8Wy6IiRR0MbcF6SFCVgVCMF/D1GgN+AMAz6rRXP8rTxv9s7CF0v
+	 2nnVYemsMfBXgX1vbal90nT/3H4/djHykiXjiKkro6nSyVrkQv7uFui29eLQXYqUbCw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793168197;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:MIME-Version:X-Received:
-	 In-Reply-To:References:Message-ID:Date:Subject:From:To:Cc:
-	 Content-Type;
-	bh=X4wg8Pbjg2SQve6wgEy6XvKbvCoQemBjrt/2F9Kq2TY=;
-	b=m4gi6yFBgBpKYeoiArdf4U1DmnK/T6Ku0GhaiNorQlwudGXk/ySgu5iHtnU3BjzTW2/8
-	 6U0ZrYepw8AvNKlJZCgXrnb80a5t1kO09xC5p86nP2CurFG0ZZ4hizN8ituMfK2vxhlN5
-	 bs750FTK62aX/v4Rgt3UhUdmV1t64URpJ4/YwB0moV+gWMxC2rFiS79YlYpobDdPQxBIY
-	 hyunrhA4z19Ch7TBKUUQunnEWwowJNQ1oGjxyZZoXsFY8YF8OMekJq/rwG/dL/CO2Yk+T
-	 wkdQHxRRMc1gRfzB3D4nohnJUEZl/MSgu9szXF02uX4HyZdDqUKntrfnD8TXt2HXJNQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793172548;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=N9gBy32Umx1KK8RH0X7KkA8q7a84CegEqG9LxghN33w=;
+	b=W0dwY3OQF/Mwmn7eFdzjdorcxo/MVBZytBxYVQmbVVm78zUCCKp8XKMrbshMv6/6mdRQ
+	 +xshogXrareBQIefU1WCs23KqVGjogCM7YN8+K77VSj8DBhpWVGyeFYxcYOzbOX8WM3KO
+	 sjyAB27wNP0DfCSZxmn0lLY0WRrQQ5t1iwYULlzwTsuBYNiZoEMnmecYoXsRImfIiGnVv
+	 T+GFw4GzPuWs1wIJe+06KfAVF6VkbKIFJIMga3L3KnmAMI65ES1M74hKeUe2ELoJ5uhvE
+	 6ca3rNiFcn3s0PWdD/CGb8K4FvKSEut0aioOvMtxjmrwaI/Qe3z1Apy65ZZKUqqLbVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=flex--jeffxu.bounces.google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=C6Pudu23;
-	arc=none smtp.remote-ip=74.125.82.197
-Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QstgLqVe;
+	arc=none smtp.remote-ip=198.175.65.9
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4FC606A322
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 06:16:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C4FC606A322
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jeffxu.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD73606A31D;
+	Wed, 28 Oct 2026 07:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3DD73606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=C6Pudu23
-Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-35cbea41088so944971eec.1
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2026 23:16:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1793168196; x=1793772996; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:date:message-id:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=X4wg8Pbjg2SQve6wgEy6XvKbvCoQemBjrt/2F9Kq2TY=;
-        b=C6Pudu23merR8N3QUSSvCl7wNv2iJ4wZUywbEvQhTfxkkwUD1bmyJMvQ2INlo/bCI7
-         3J2m8hD96wmYaDz2HNVTnKY7bDC8tFyaNdiOM1QFSV5826GR/S9EbVVncFbiq7dSSy2t
-         w24/QFazfb8wG5dHVpT8H928MituPMKXEXB8snmifr3Gc2O/tC3crUaeuJw9TS9d5Gvn
-         r5pkfFwogZZk3Efst5f17eYYlK22KsZS0vTvX+rFSthgeT4zRTnDzcMhm7e0c3Erq6Sh
-         bhACPNNEje+m79G8yP5AhOuwbfhrViJl3Ag1sVFrnaEc56uj8+6SQualB4meyXj8OWeW
-         6OeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793168196; x=1793772996;
-        h=content-type:cc:to:from:subject:date:message-id:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=X4wg8Pbjg2SQve6wgEy6XvKbvCoQemBjrt/2F9Kq2TY=;
-        b=PXMa7qasn4pKEZvTA14hCFxn4CeHi1TX3m8AFRGr07ETsKRCLGLid4ONcv84feOqSW
-         iQaX5sMFh9k7+cvhhQpkSv8LguQEJ8FD/z8xjSqFTML5wwr+iSJ/iAb3NYijI6SRexLL
-         Tao2W52be67KNjkHOkTJNyMouOMy9creA3hYNxZWenvuN/nApwbEbrGvHJXRAfjSok9U
-         LF/iimC/GIDCV4W1tVxispDVMXTmOrl1/9OIK47Iw+R++UAe6eUff8JOGLFhdEaer2A6
-         JCq7gaq+PQChpU6rDD4VmxPbmvqsdadYHqbS37PfdwVDaEAGPcT+QSo08+3dnmRT1u2u
-         9UzQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx8w3ORA1RkXMvGj7aG76i+oqwPMgrX2BeEnLALUN60VH65OsMdKb61YOBPafeqJm23oxDXnAuO2nDv/KhoGInb1jX3nw8=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLYWd8GrLCbYQiReLX8Lppnsnda5/FQJ1luOI8vHwM3tMqTTip7
-	WrVAvwEtLxqMW2tA1Ww18pX9RUlqJ3VJpdCXZJY2lQWZvb5vM+1gWi1X51nM0YGYIe9dTVGpN1X
-	5eFy0CQ==
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=QstgLqVe
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793172548; x=1824708548;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3rO83+6ZiPbQh0ra3NNYRzFCPQ7QM/wKotP9MQYg5uU=;
+  b=QstgLqVeJIM9cwRtdS+Ad1Eyi6UyD48JScFue+r3BZSIJdoheidfpBGg
+   ZhaIaLYP5EH4zj+8dOo4wUMAiVH+kgXo0LIdAK25y/759o9/onB4Nq6mm
+   2YA+AKI74r/pNdFXvPD4HjRVqwfQ4JQNRKETbhz2d5BARKwIMasohX1L9
+   okTfKZZDZOE2pFXao0zRGX6QRv28XuKFzk/ow7AkUn00fdNiVZEmoOOp4
+   27ipWksY7Klk9IsE4ZupSQnyHdzA5T6q/BFSbxnxxJg5iXxIVWAaw1POA
+   zPEBy3FOe7jCZtU9OshpoCdGDov5Y4nzxOEl5hkgOPcwK5zAsCSijg7tx
+   g==;
+X-CSE-ConnectionGUID: codRlU+ARyS6pZLt8NY9vw==
+X-CSE-MsgGUID: zs7t+fR5TYu4+xb/bd0JDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11948"; a="1767477"
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="1767477"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2026 00:29:07 -0700
+X-CSE-ConnectionGUID: pJBqjxOOQdeCRpcIm+CX0Q==
+X-CSE-MsgGUID: /B5GbNDIRyy+HTbdg+QbCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,182,1787036400"; 
+   d="scan'208";a="4847384"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 28 Oct 2026 00:29:04 -0700
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xLy5k-00000000YRI-1vsi;
+	Wed, 28 Oct 2026 07:29:00 +0000
+Date: Wed, 28 Oct 2026 15:28:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	keyrings@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Thomas Graf <tgraf@suug.ch>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] KEYS: Replace assoc_array with rhashtable
+Message-ID: <202610281546.OMDCubFW-lkp@intel.com>
+References: <20261025001105.1824178-6-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,48 +91,82 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Received: from dyx13.prod.google.com ([2002:a05:693c:820d:b0:36a:1d37:273b])
- (user=jeffxu job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7301:6195:10b0:35d:95e4:267d
- with SMTP id 5a478bee46e88-36a200c3b89mr2179969eec.27.1793168196147; Tue, 27
- Oct 2026 23:16:36 -0700 (PDT)
-In-Reply-To: <auGOXLB1XZFWcTfX@chrisdown.name>
-References: <cover.1793094611.git.chris@chrisdown.name> <5bd3c89d733ad22224f296dfa8900769de937de0.1793094611.git.chris@chrisdown.name>
- <auCxjbvY3qPv1sV6@gremlin> <auDTMb6WMFUpxeZy@chrisdown.name>
- <auDTptDQsB4xBcz7@gremlin> <18e2972cb8520c2e.3137322e32382e342e3434.279dd1.0000sendgmr@google.com>
- <auGNkhSHpBRd2U_5@chrisdown.name> <auGOXLB1XZFWcTfX@chrisdown.name>
-Message-ID: <18e29cf9499c7ec0.3137322e32382e342e3434.2a28ab.0000sendgmr@google.com>
-Date: Wed, 28 Oct 2026 06:16:36 +0000
-Subject: Re: [PATCH 1/3] mseal sysmap: Add mseal_system_mappings= boot parameter
-From: Jeff Xu <jeffxu@google.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Jeff Xu <jeffxu@chromium.org>, Jeff Xu <jeffxu@google.com>, Andrey Vagin <avagin@gmail.com>, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261025001105.1824178-6-jarkko@kernel.org>
 
-Hi Chris,
+Hi Jarkko,
 
-On Wed, Oct 28, 2026 at 01:55:40PM +0800, Chris Down wrote:
-> Chris Down writes:
-> > - Have check_sealed skip as usual when [vdso] isn't sealed and param
-> >   is not set
-> > - A new test, say expect_sealed, fails in the same case
-> > - run_vmtests runs with -T expect_sealed when
-> >   CONFIG_MSEAL_SYSTEM_MAPPINGS=y
+kernel test robot noticed the following build errors:
 
-> Er, the other way around. I meant vm_runtests passes -T expect_sealed
-> _unless_ CONFIG_MSEAL_SYSTEM_MAPPINGS=y.
+[auto build test ERROR on linus/master]
+[cannot apply to akpm-mm/mm-nonmm-unstable manguebit/cifs-next manguebit/cifs-fixes device-mapper-dm/for-next fsverity/for-next fsverity/for-current shuah-kselftest/next shuah-kselftest/fixes dhowells-fs/fscache-next dhowells-fs/keys-next v7.3 next-20261027]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Using kselftest_harness's `-T expect_sealed` together with checking
-`/proc/cmdline` for `no_mseal_sys_mappings` in `check_sealed` sounds
-great to me -- very clean and covers both regression cases without extra
-argument parsing.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jarkko-Sakkinen/KEYS-Expand-key-datalen-quotalen-to-unsigned-int/20261025-031009
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20261025001105.1824178-6-jarkko%40kernel.org
+patch subject: [PATCH v3 5/6] KEYS: Replace assoc_array with rhashtable
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20261028/202610281546.OMDCubFW-lkp@intel.com/config)
+compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project 186e70f4e6a1521991d2340d3d49b23b1beff11f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261028/202610281546.OMDCubFW-lkp@intel.com/reproduce)
 
-Thanks!
-Jeff
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202610281546.OMDCubFW-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> kernel/bpf/keys.c:32:30: error: no member named 'keys' in 'struct key'
+      32 |         if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+         |                        ~~~~~~~~~~~  ^
+>> kernel/bpf/keys.c:32:30: error: no member named 'keys' in 'struct key'
+      32 |         if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+         |                        ~~~~~~~~~~~  ^
+>> kernel/bpf/keys.c:32:30: error: no member named 'keys' in 'struct key'
+      32 |         if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+         |                        ~~~~~~~~~~~  ^
+>> kernel/bpf/keys.c:32:30: error: no member named 'keys' in 'struct key'
+      32 |         if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+         |                        ~~~~~~~~~~~  ^
+>> kernel/bpf/keys.c:32:30: error: no member named 'keys' in 'struct key'
+      32 |         if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+         |                        ~~~~~~~~~~~  ^
+>> kernel/bpf/keys.c:32:30: error: no member named 'keys' in 'struct key'
+      32 |         if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+         |                        ~~~~~~~~~~~  ^
+>> kernel/bpf/keys.c:32:30: error: no member named 'keys' in 'struct key'
+      32 |         if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+         |                        ~~~~~~~~~~~  ^
+   7 errors generated.
+
+
+vim +32 kernel/bpf/keys.c
+
+abaa0835b4f3810 Daniel Borkmann 2026-08-28  25  
+264d8fd2794fabe Daniel Borkmann 2026-08-28  26  struct bpf_key *bpf_lookup_keyring(void)
+264d8fd2794fabe Daniel Borkmann 2026-08-28  27  {
+264d8fd2794fabe Daniel Borkmann 2026-08-28  28  	struct bpf_key *bkey;
+264d8fd2794fabe Daniel Borkmann 2026-08-28  29  
+264d8fd2794fabe Daniel Borkmann 2026-08-28  30  	if (!bpf_keyring)
+264d8fd2794fabe Daniel Borkmann 2026-08-28  31  		return NULL;
+264d8fd2794fabe Daniel Borkmann 2026-08-28 @32  	if (!READ_ONCE(bpf_keyring->keys.nr_leaves_on_tree) ||
+264d8fd2794fabe Daniel Borkmann 2026-08-28  33  	    !READ_ONCE(bpf_keyring->restrict_link))
+264d8fd2794fabe Daniel Borkmann 2026-08-28  34  		return NULL;
+264d8fd2794fabe Daniel Borkmann 2026-08-28  35  
+264d8fd2794fabe Daniel Borkmann 2026-08-28  36  	bkey = kmalloc_obj(*bkey);
+264d8fd2794fabe Daniel Borkmann 2026-08-28  37  	if (!bkey)
+264d8fd2794fabe Daniel Borkmann 2026-08-28  38  		return NULL;
+264d8fd2794fabe Daniel Borkmann 2026-08-28  39  
+264d8fd2794fabe Daniel Borkmann 2026-08-28  40  	bkey->key = bpf_keyring;
+264d8fd2794fabe Daniel Borkmann 2026-08-28  41  	bkey->has_ref = false;
+264d8fd2794fabe Daniel Borkmann 2026-08-28  42  	return bkey;
+264d8fd2794fabe Daniel Borkmann 2026-08-28  43  }
+264d8fd2794fabe Daniel Borkmann 2026-08-28  44  
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
