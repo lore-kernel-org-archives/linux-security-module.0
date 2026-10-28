@@ -1,47 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793199879;
-	b=OLlYYRI00D0r/ijcmy9p/n9iCatjFApCLnx/GoQKbWtJ56RtGj5TP1U/7WsYTntZFxyw
-	 1IPDUYX4Q52Tjn4m/2oSr15EUqV+P+Jd3pTrsg2QW07yAIILAcP97TDd7RBVdYPjedAx/
-	 caOlM2Yo8IdMEgs8tU3wgAe48PmtAXHAkpzG5FxEUhp3jWbAGB88J6ZeH8rTlxh+UqjtM
-	 0Xh5qrjicG7gxBxAi6pJ5PWZ6OQ8zMqlnBy8YHikevSf3UwP2bTWwkL/sB1J/J90QGLgp
-	 wKNYLoXNuPq1xFZmYrQyt1T/BTscj5WZE62DBSwrkxtIwDV9pTAfj4Pm310lyav8rXQ==
+	t=1793199881;
+	b=E1hWWta055BYtdt1fwXVqElFIRI6qiNSo8zcTeNJzcKWvGggzJ2bDHkrbtsgwcSWoGC9
+	 +vGIp4njadRKpON4xdplMlMEyo9UMezeW6XQKP/T9MkLPvLAu7RdudsCPfypR3d8JzjpJ
+	 L9ygAm37Sqj+EwLqX5acrd/Rh2Rf/T4Hmgh3D7DsnE9IxluLqXOt1/IFp2s8e5vV8Lc+A
+	 ujqg+H0mze8GkSUFO3Tm7MnpV12p3r6i0xu9x+fEMBUy8Nx/5ajLpgOBCYjQFxw0qwDVs
+	 n+KaM2Vj/vMgqsVxTM2EFfDYKLKsTmk0K4MP6IYuB4/a3mjyFCtarQrq5E/ql1+bPqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793199879;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793199881;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=1TKqOP98FHIDcaJNoj3/GWwGDtZsh2WFMN9gl9UcQOs=;
-	b=a4UqVkn8GyneSdcT96CbZuJmmdmv36hYtqhRHnSV5EUbBPqU59+qeO9s0GMnG7LTiKkl
-	 azbw7a34/oP/GOf8i5odJTS30xEnfw1X9ucNZcQvE7VGbhcGZrRc33oCC0ppaFfdGmBaI
-	 zr3zrM45hRkY9o6JBlkj8vd9ZlhkvAIkPBOZMAXrN5LLXgJyQU3th8NekUntQ8l2WgHdi
-	 dDtjOjoWRTmyoysoMJ4HrgbA/5edXyJ0Wfec7rwlg9ZIlWqfkZigEJUzOAfOujbHACmb/
-	 +c0PcGbIEUf80F274tflISMuGMOHb+d0Bg7yu/RdZMtjuwHTPqT8GNUQL7v6dCC84EA==
+	bh=mSdqxz6Q37ONxr+q5PLgX5Mx5sgsbL1ZlDMhRwJ4tls=;
+	b=PbwmIaUKm7pb5eJvg9je/6kjJ8givYqD8WSjSA7SjtGMepPB7x5cDjtZBadcXtOIaOWx
+	 MjjRTuuYSpFeW9fP0vAtwwQg/3Ht+qx5fK2QRZh7lnpZUPpMPM50CgIRsOOlnawfPOvbe
+	 Locz229KYJipPBFJT/WuRFeEpj20BPFw9Mw/MQOPaf/n4iHg12MDncp2SGPYw6kIh3Ckx
+	 0/eXJ5WqOljmsw7yUNRtwLiSuBHKzc82jMNfz+ThgmwahHE0fgNnOL8W0hpB0N78Veoey
+	 jRoEeysb7HNF/ujXYDZX/4DL4lkfgYeq0oJZ1grXuqAToD6TsRWhyDQx8mmby+/9Ctw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EIRs14Ak;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ii2Cv1I1;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972D8606A31D;
-	Wed, 28 Oct 2026 15:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9688C606A32D;
+	Wed, 28 Oct 2026 15:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EIRs14Ak
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB0F1F01825;
-	Wed, 28 Oct 2026 15:04:37 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ii2Cv1I1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7631F01829;
+	Wed, 28 Oct 2026 15:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793199879;
-	bh=1TKqOP98FHIDcaJNoj3/GWwGDtZsh2WFMN9gl9UcQOs=;
+	s=k20260515; t=1793199881;
+	bh=mSdqxz6Q37ONxr+q5PLgX5Mx5sgsbL1ZlDMhRwJ4tls=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EIRs14AkkJNqV4FP2ztjO7metvge3koWsF8rvc9H1eOkLYX/cgC+Pq+XLh/h7oAnj
-	 MNEGn9M/5cbtIepg3E5EECqqap8BFEljXDT05wKvMgl+Apv61iiIqUYexNfJTjfmPs
-	 AoRvFUnbC3JIf3GjxOS+wc+ep8hcuNWLd1w3y7jCZ6hnohvFWH1x2A80texn/ET9Kq
-	 yEq4MfQLIx5q38dPZ7eq1EDKuY5cCnLKRotbFLGUKXR/tzKM6v7AlFttlp5sh19hjJ
-	 UBMh1XXQFRZUVF7n1jMrjSfKEDoADfSjdgZdcB6KfU5RvH6Y0q7CasX9j84wOnfCZY
-	 3UAJSV4V6VVAA==
-Message-ID: <sashiko-outbox-188031@kernel.org>
+	b=ii2Cv1I1mFw6z0jUk6ND3vI1KQsc+cPLiCIZMvKnAo54Gp0s/gplwdGsTCOINjF3m
+	 Vyp8TPUP1c89LMrtNfl1SSCyLKR8iCzMdClXf8Ag22Q466Srn6wp0pPBEPe1niet9S
+	 ltmp6epcmx5o/iHtRObx0gat20oSI3vbNsnbdjdF1arYD08Zmh3aUxS6DVRKuWcEhE
+	 +D3p7ka5Cqbc2R7/WvOlKFR5jK2qoxxu/WaG77pXfVBFw+gw6l11JjB/aHP5om3QIg
+	 XPjWzyvY1HOBKSJdOvSWDFjmd3ugT+ApaWExa7poGt1jjmuxkJPlMjdXVPIc7LG6HW
+	 WCOxu4Wy9nCCA==
+Message-ID: <sashiko-outbox-188032@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 6/8] selinux: Restrict dma-buf direct cgroup charging
+Subject: Re: [PATCH v3 7/8] dma-buf: transfer memcg charges via
+ DMA_BUF_IOCTL_XFER_CHARGE
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  Weiner" <hannes@cmpxchg.org>, =?utf-8?b?TWljaGFsIEtvdXRuw70=?= <mkoutny@suse.com>, "Jonathan
@@ -58,12 +59,12 @@ To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, "Jens Wiklander" <jenswi@kernel.org>, "Sumit
  Garg" <sumit.garg@kernel.org>
 Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, op-tee@lists.trustedfirmware.org, echanude@redhat.com, mripard@kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20261027-v2_20230123_tjmercier_google_com-v3-6-78d2c4cb8647@redhat.com>
+In-Reply-To: <20261027-v2_20230123_tjmercier_google_com-v3-7-78d2c4cb8647@redhat.com>
 References: <20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com>
- <20261027-v2_20230123_tjmercier_google_com-v3-6-78d2c4cb8647@redhat.com>
+ <20261027-v2_20230123_tjmercier_google_com-v3-7-78d2c4cb8647@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 15:04:37 +0000
+Date: Wed, 28 Oct 2026 15:04:39 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,106 +74,234 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [High] selinux: selinux_dma_buf_charge_cgroup() bypasses check on genfsco=
-n cgroups
+- [High] dma-buf: unprivileged cgroup escape and OOM via dma_buf_xfer_charg=
+e()
+- [High] dma-buf: race in mem_cgroup_transfer_dmabuf_charge() double-charge=
+s memcg
+- [Medium] dma-buf: broken disabled-memcg handling in dma_buf_xfer_charge()
 --
 
-commit 6b412783b17727c382f1a67078326c58c39264e7
+commit 1660729e62b15fd915c69f26225530bd5ae30ce0
 Author: Albert Esteve <aesteve@redhat.com>
 
-selinux: Restrict dma-buf direct cgroup charging
+dma-buf: transfer memcg charges via DMA_BUF_IOCTL_XFER_CHARGE
 
-This commit implements the selinux_dma_buf_charge_cgroup() LSM hook and adds
-the charge_cgroup permission to the dma_buf security class to control which
-processes may charge dma-buf memory to a cgroup. It reads the target securi=
-ty
-context from the cgroup kernfs node's security.selinux extended attribute a=
-nd
-checks permission via avc_has_perm().
+This commit adds DMA_BUF_IOCTL_XFER_CHARGE to allow transferring a dma-buf's
+memory cgroup charge to a cgroup identified by a cgroupfd or pidfd after
+allocation. It also introduces a memcg_account flag in dma_buf_export_info =
+for
+exporters to opt in to memcg accounting, enabling it for the system heap.
 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 8f39d91eabc97..2f99eaa910af4 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2210,6 +2210,40 @@ static int selinux_dma_buf_charge_task(const struc=
-t cred *from, const struct cre
->  			    SECCLASS_DMA_BUF, DMA_BUF__CHARGE_TASK, NULL);
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index f31f49ebd0af3..07513ecedc105 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -540,6 +540,45 @@ static long dma_buf_import_sync_file(struct dma_buf =
+*dmabuf,
 >  }
+>  #endif
 > =20
-> +#ifdef CONFIG_CGROUPS
-> +static int selinux_dma_buf_charge_cgroup(const struct cred *cred, struct=
- cgroup *cgrp)
+> +/* Transfer a dma-buf's memcg charge; see struct dma_buf_transfer_charge=
+ */
+> +static long dma_buf_xfer_charge(struct dma_buf *dmabuf,
+> +				const void __user *user_data)
 > +{
-> +	u32 cgrp_sid, clen;
-> +	int rc;
-> +	char *context;
+> +	struct dma_buf_transfer_charge arg;
+> +	struct mem_cgroup *memcg;
+> +	int ret =3D 0;
 > +
-> +	rc =3D kernfs_xattr_get(cgrp->kn, XATTR_NAME_SELINUX, NULL, 0);
-> +	if (rc =3D=3D -ENODATA)
+> +	if (copy_from_user(&arg, user_data, sizeof(arg)))
+> +		return -EFAULT;
+> +
+> +	if (!IS_ENABLED(CONFIG_MEMCG))
 > +		return 0;
+> +
+> +	if (arg.flags !=3D 0)
+> +		return -EINVAL;
+> +
+> +	if (!dmabuf->memcg_account)
+> +		return -EOPNOTSUPP;
+
+[Severity: Medium]
+When CONFIG_MEMCG is disabled, should dma_buf_xfer_charge() still validate
+arg.flags and dmabuf->memcg_account, or return -EOPNOTSUPP?
+
+Returning 0 before checking arg.flags !=3D 0 and !dmabuf->memcg_account cau=
+ses
+calls with invalid flags, non-accounting exporters, or invalid file
+descriptors to silently succeed under CONFIG_MEMCG=3Dn, while also leaving =
+the
+!CONFIG_MEMCG stubs for mem_cgroup_get_from_fd() (which returns
+ERR_PTR(-EOPNOTSUPP)) and mem_cgroup_transfer_dmabuf_charge() in
+include/linux/memcontrol.h unreachable.
+
+Also, when CONFIG_MEMCG=3Dy and cgroup_disable=3Dmemory is passed on the ke=
+rnel
+command line (so mem_cgroup_disabled() is true at runtime),
+mem_cgroup_get_from_fd() behaves inconsistently across its two branches:
+
+mm/memcontrol.c:mem_cgroup_get_from_fd() {
+	cgrp =3D cgroup_get_from_fd(fd);
+	if (!IS_ERR(cgrp)) {
+		rcu_read_lock();
+		css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
+		if (!css || !css_tryget_online(css)) {
+			rcu_read_unlock();
+			cgroup_put(cgrp);
+			return ERR_PTR(-ENOENT);
+		}
+...
+	memcg =3D get_mem_cgroup_from_mm(mm);
+	mmput(mm);
+	return memcg;
+}
+
+For a cgroupfd, cgroup_css() is NULL and it returns ERR_PTR(-ENOENT), where=
+as
+for a pidfd, get_mem_cgroup_from_mm() returns NULL rather than an ERR_PTR, =
+so
+dma_buf_xfer_charge() returns 0 for pidfds and -ENOENT for cgroupfds.
+
+> +
+> +	memcg =3D mem_cgroup_get_from_fd(arg.charge_fd);
+> +	if (IS_ERR(memcg))
+> +		return PTR_ERR(memcg);
+> +
+> +	if (dmabuf->memcg =3D=3D memcg)
+> +		goto skip_transfer;
+> +
+> +	if (!mem_cgroup_transfer_dmabuf_charge(dmabuf, memcg)) {
+> +		ret =3D -ENOMEM;
+> +		goto skip_transfer;
+> +	}
 
 [Severity: High]
-Does returning 0 on -ENODATA here bypass the permission check for all cgrou=
-ps
-that carry their default genfscon label (such as cgroup_t)?
+Can an unprivileged holder of a dma-buf file descriptor use
+dma_buf_xfer_charge() to escape its own memory cgroup limit or trigger OOM
+kills in another cgroup?
 
-In selinux_set_mnt_opts(), cgroup and cgroup2 filesystems are configured wi=
-th
-SE_SBGENFS | SE_SBGENFS_XATTR. When a cgroup VFS inode is initialized in
-inode_doinit_with_dentry(), SELinux obtains the default SID from policy via
-selinux_genfs_get_sid() and then checks for an optional xattr override via
-inode_doinit_use_xattr():
+In the call chain:
 
-security/selinux/hooks.c:inode_doinit_with_dentry() {
-	...
-	rc =3D selinux_genfs_get_sid(dentry, sclass,
-				   sbsec->flags, &sid);
-	if (rc) {
-		dput(dentry);
-		goto out;
-	}
+  dma_buf_ioctl()
+    -> dma_buf_xfer_charge()
+      -> mem_cgroup_get_from_fd()
+      -> mem_cgroup_transfer_dmabuf_charge()
+        -> mem_cgroup_reserve_dmabuf(new_memcg, GFP_KERNEL, nr_pages)
+          -> try_charge()
 
-	if ((sbsec->flags & SE_SBGENFS_XATTR) &&
-	    (inode->i_opflags & IOP_XATTR)) {
-		rc =3D inode_doinit_use_xattr(inode, dentry,
-					    sid, &sid);
-	...
-}
+neither dma_buf_xfer_charge() nor mem_cgroup_get_from_fd() checks DAC or
+cgroup delegation/write permissions (such as inode_permission() with MAY_WR=
+ITE
+or cgroup_procs_write_permission()), capabilities, or ptrace_may_access() on
+either the source cgroup (dmabuf->memcg) being uncharged or the target
+cgroup/task (new_memcg) being charged.
 
-When no explicit setxattr() has been performed on the cgroup directory,
-inode_doinit_use_xattr() sees -ENODATA from the underlying kernfs node and
-falls back to def_sid in memory without writing a security.selinux xattr to
-cgrp->kn:
+Because /sys/fs/cgroup directories are normally world-readable (mode 0755, =
+so
+any user can open them with O_RDONLY | O_DIRECTORY) and pidfd_open() can op=
+en
+a pidfd for PID 1 or any visible process without privilege, an unprivileged
+process can resolve a handle to the root cgroup or to another cgroup on the
+system.
 
-security/selinux/hooks.c:inode_doinit_use_xattr() {
-	...
-	if (rc < 0) {
-		kfree(context);
-		if (rc !=3D -ENODATA) {
-			pr_warn("SELinux: %s:  getxattr returned %d for dev=3D%s ino=3D%llu\n",
-				__func__, -rc, inode->i_sb->s_id, inode->i_ino);
-			return rc;
-		}
-		*sid =3D def_sid;
+When SELinux is not active, security_dma_buf_charge_cgroup() and
+security_dma_buf_charge_task() return 0. Even with SELinux enabled,
+selinux_dma_buf_charge_cgroup() returns 0 when the cgroup kernfs node has no
+explicit security.selinux xattr set:
+
+security/selinux/hooks.c:selinux_dma_buf_charge_cgroup() {
+	rc =3D kernfs_xattr_get(cgrp->kn, XATTR_NAME_SELINUX, NULL, 0);
+	if (rc =3D=3D -ENODATA)
 		return 0;
-	}
-	...
 }
 
-Likewise, selinux_kernfs_init_security() sees -ENODATA on the parent kernfs
-node and returns 0 without storing an xattr on newly created child cgroups.
+and neither hook checks permission to uncharge the existing dmabuf->memcg. =
+As
+a result, a confined client receiving a pre-charged dma-buf fd can move the
+charge to the root cgroup to bypass its own memory.max limit, or move the
+charge into a victim cgroup where mem_cgroup_reserve_dmabuf() with GFP_KERN=
+EL
+triggers direct reclaim and the memcg OOM killer.
 
-As a result, unless a cgroup directory has been explicitly relabeled with
-setxattr(), kernfs_xattr_get(cgrp->kn, XATTR_NAME_SELINUX, NULL, 0) will
-return -ENODATA even though the cgroup is labeled cgroup_t via genfscon.
-When userspace passes a cgroup fd via DMA_HEAP_IOCTL_ALLOC or
-DMA_BUF_IOCTL_XFER_CHARGE, mem_cgroup_get_from_fd() invokes
-security_dma_buf_charge_cgroup() -> selinux_dma_buf_charge_cgroup(), which
-will return 0 without calling avc_has_perm(), leaving default-labeled
-cgroup_t cgroups unrestricted?
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 7b841b9057594..3adc84fe6668d 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5786,6 +5786,47 @@ void mem_cgroup_cancel_dmabuf(struct mem_cgroup *m=
+emcg, unsigned int nr_pages)
+>  		refill_stock(memcg, nr_pages);
+>  }
+> =20
+> +/**
+> + * mem_cgroup_transfer_dmabuf_charge - move a dma-buf charge
+> + * @dmabuf: buffer to transfer charge
+> + * @new_memcg: target memcg; caller must hold a reference
+> + *
+> + * Transfers the charge for @dmabuf to @new_memcg and, on
+> + * success, stores @new_memcg in @dmabuf->memcg.
+> + * Returns %true on success, %false if the charge against @new_memcg
+> + * failed or a concurrent transfer raced on @dmabuf->memcg.
+> + * On failure the caller retains its reference to @new_memcg.
+> + */
+> +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
+> +				       struct mem_cgroup *new_memcg)
+> +{
+> +	struct mem_cgroup *old_memcg =3D READ_ONCE(dmabuf->memcg);
+> +	unsigned int nr_pages =3D PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
+> +
+> +	if (mem_cgroup_disabled())
+> +		return true;
+> +
+> +	if (!mem_cgroup_reserve_dmabuf(new_memcg, GFP_KERNEL, nr_pages))
+> +		return false;
+> +
+> +	mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages);
+> +
+> +	if (cmpxchg(&dmabuf->memcg, old_memcg, new_memcg) !=3D old_memcg) {
+> +		mod_memcg_state(new_memcg, MEMCG_DMABUF, -nr_pages);
+> +		mem_cgroup_cancel_dmabuf(new_memcg, nr_pages);
+> +		return false;
+> +	}
+
+[Severity: High]
+What happens if two threads concurrently call DMA_BUF_IOCTL_XFER_CHARGE on =
+the
+same dma-buf?
+
+In dma_buf_xfer_charge(), dmabuf->memcg =3D=3D memcg is checked without
+synchronization before calling mem_cgroup_transfer_dmabuf_charge(), which t=
+hen
+re-reads old_memcg =3D READ_ONCE(dmabuf->memcg) without checking whether
+old_memcg =3D=3D new_memcg.
+
+If thread 1 transfers the buffer to new_memcg after thread 2 passes the
+dmabuf->memcg =3D=3D memcg check in dma_buf_xfer_charge() (or if both threa=
+ds
+concurrently transfer the buffer to the same new_memcg), thread 2 sees
+old_memcg =3D=3D new_memcg and still calls mem_cgroup_reserve_dmabuf(new_me=
+mcg,
+GFP_KERNEL, nr_pages) before uncharging old_memcg. That transiently charges
+2 * nr_pages against new_memcg for the same buffer, which can trigger recla=
+im,
+memcg OOM kills, or -ENOMEM in new_memcg even though the buffer is already
+charged to it.
+
+In addition, old_memcg is read before mem_cgroup_reserve_dmabuf(new_memcg,
+GFP_KERNEL, nr_pages), which can sleep in direct reclaim. If another thread
+updates dmabuf->memcg while mem_cgroup_reserve_dmabuf() is sleeping, the
+cmpxchg(&dmabuf->memcg, old_memcg, new_memcg) fails without retrying against
+the updated old_memcg and returns false, which dma_buf_xfer_charge() reports
+to userspace as -ENOMEM even though charging new_memcg succeeded.
+
+Finally, if mem_cgroup_transfer_dmabuf_charge() is called when
+mem_cgroup_disabled() is true, returning true at the top without storing
+new_memcg in dmabuf->memcg or dropping new_memcg's reference would leak the
+ caller's reference to new_memcg, since callers only call mem_cgroup_put() =
+when
+this function returns false.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-v2_2023012=
-3_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com?part=3D6
+3_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com?part=3D7
