@@ -1,61 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.71
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793218427;
-	b=yZ1FOoAvpzalWRK9CSYdPQDY2X9H70QYNb54s9U6hqPdDNObVAUEQzG17urWJ+YImAgX
-	 Sn15wk0zedSuDs8jFtyc9eTQdRfdbw0f2TeoSyrzKgD1TgVtKKr22CgDMATrK/CrJ+3Em
-	 jMIVBCur/RLMFg1TibSexJJjmTVBo9RGM/8RD+Nfia8vtptH1PYFSq8KF7B9OWua+CKu0
-	 LpHIn4+ElfO9JtkMXaO+WGPo9H0n0cXvEX7920wt8JQAGLFWppD2VBU5tj36QhIpiF458
-	 3DUs2DbeHa1d9AmK9KOaviXrDVrHx05Vr8oi/C2ji/XCzHOKMH2Uvp5AQjsz1+TYrTQ==
+	t=1793225893;
+	b=twIiYZPS4ICavzSQe6bEgveJadu2hw+Ay3YYQooJo3T1naprp8q+2tEPNPKPsYiKysGZ
+	 FrkgAdbP6mlscfc7J3RFtzFa5rMhs53u8udpv551cJFzZylSuErILceLeDqpaiEEfyMEu
+	 tsdNDe7YtJDMJ6QpPzrBMJuF0bEvAnFF6cdprhIWe1jbcEMJegabZbepG4sdFwybsdtUs
+	 Q7/9KgtSj+gB7QL7qpHDfUKJQ4PeianIOag423gzhOJ3GXTCa38Zj2VW3jP+L6oFusmEy
+	 Nyp1g1YgWtvsQbePB6dj3cKCMJuluZoXbUq0N37UGQWLI4QI/8oq4C6BEOqn8/7y5eQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793218427;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=qcNCn3o5PHSz7rHDpFBcCfTyitECJ4mMk4mDBTECIc0=;
-	b=MRKRu1YZanamcbiZ6102GxJyQHMzl+ATAfGZlrN1Hc4xtk02vmYnCAwVXhhhW9cXwycK
-	 IWbLzp95WmbFlEjxm0w0SYG4ecptZ1Vl1kLma4Uts9O6ThwoQfWZcTWSJELJiofr7fl0D
-	 We6R5lSElv9BCT3zx27T/IieNPcjQ2ipWVm4uin3LF+Bl26cKJsjclhakK4cKJz7IbvP/
-	 y/tiSV/IuO9jThWqNEu4TCQ+K1+W9IhnRmWPAPqVJFQ76Ah1Yac9JvLA+VeftcXfZOF5S
-	 ePTQJWp4q7QLYuRynfM249RLNtS6rlcqBYrdxRi1xX7vyqqGXnYW3iUPv8fXKaEXCbA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793225893;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
+	 Mime-Version:References:X-Mailer:Message-ID:Subject:From:To:Cc:
+	 Content-Type;
+	bh=9FCa9rxR0w5Su0OT2TXTOp3Qrhv4gyecy+qhdi4ZgS0=;
+	b=ZikebWBmzjP2scv9nK46e/0hobSl9Y4f6wSYJvaMiO2n6MbBM7teq8dGncxf7XysW140
+	 4Sasj6EleKQ5gx7RatFkEVmxOx6NqX2M07F2jCu1W2bjdiu12BamLArRmOmyRuCKHXQrb
+	 rKfoR5Jg9gh8hIJQ6sDYcQpXcA5lKsMwJCkOrUUuOEohwUZxiWKv09EMAxWvNdezv32nY
+	 EAyMDfG1cO0OjiEdwhQgoeZ1QV4P2bnAS5VrPcTN2IgyyrPg7S7bpsMYCaRA5NSd1fJsl
+	 DRPIfMC5Dv5VmLxf92fXbFl5fhMrmqUnUIVkPd/98GWzH4OtzPpKRg/KgrgIuvpYxJA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A8SiLvNr;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--halg.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=qDCHVDvA;
+	arc=none smtp.remote-ip=209.85.208.71
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2FACA606A324;
-	Wed, 28 Oct 2026 20:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A861606A32A
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:18:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A861606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--halg.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A8SiLvNr
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 4688F1F01829;
-	Wed, 28 Oct 2026 20:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793218426;
-	bh=qcNCn3o5PHSz7rHDpFBcCfTyitECJ4mMk4mDBTECIc0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=A8SiLvNroTPllgxM7/NlCUN5LPANqhn6UynTAq5ihgbboZkFux6BhBkTBjZm3crr9
-	 dZxaHxev/vlaupaACgdv834naSVYBkUmjwfsPLlSW08KoweT/hCn2jJhlFEBBoQp0n
-	 ThnwIDRbeospa50sgUHEaLYo5TdohXooPlJll8bGcGX5NMPkLTkwVsUvTplrrSbSTR
-	 wFSVjQvIZRMzBWSBYAgQARXpltti5u6bQnimxtIRnQ9pmDCxDHDGY4qvncj2r0M5iP
-	 Wy5oqGXTFGtNUiHCP+3VArt+FptWgWlWI612t6R2PoKF6VYZYkHx5SU177/bobDWkp
-	 JXow5JGpoMKZQ==
-Date: Wed, 28 Oct 2026 22:13:43 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: David Howells <dhowells@redhat.com>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, keyrings@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Thomas Graf <tgraf@suug.ch>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] KEYS: Replace assoc_array with rhashtable
-Message-ID: <auJXd718ys6ZaTHj@kernel.org>
-References: <20261025001105.1824178-6-jarkko@kernel.org>
- <202610281546.OMDCubFW-lkp@intel.com>
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=qDCHVDvA
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-6b498035c41so1377926a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 15:18:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1793225892; x=1793830692; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9FCa9rxR0w5Su0OT2TXTOp3Qrhv4gyecy+qhdi4ZgS0=;
+        b=qDCHVDvAeZE6nbJqwRWR2O44xWY+Cp4tlC8bvUrtxDRAWy7MMFL83SYTkz8TNqKsYX
+         gw1vBYGaeYTemXnD8a0lBWoYo28oKE7vPnRudgDUssXwZw1ea/Deh1fJc0mhuqa8rur+
+         ialRmLMoxbR0y1BZDysn0LDoBy0CGo8zQvFvT4e+PLyKzs9aD36pn6eDh3rQ5dmnKbJM
+         /03mF44Ezy6bO32TeK9dJcml4xAYiygRoQDgF2vsi/FTxTi6cOf9+5ACwfOv4IK5MYct
+         0+WvSEOHYhr41BaVAZcR7Z7Juw1D6xHfuNadDPF4b0QOkXCrApVxpNLQWAFKUms3aWjd
+         4goQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793225892; x=1793830692;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9FCa9rxR0w5Su0OT2TXTOp3Qrhv4gyecy+qhdi4ZgS0=;
+        b=faJVrrnymo5wVFplX+Zr5LxuwETetr72aj7ZdmQvEdCWc4Qm2hzCwzkLKd/PUhW9W8
+         tMV4lfDVcgKA2VElukCfuEaNidpoxNHZlhtLbDR26afxruEUNDR012UHmh6IqMl8jQUm
+         DPI0DTDNG7gwZmF+k/pcXLABX8ZFcrN/VgLJCtWDRAcjM4SvReNpsdae9cDlTndYKdUc
+         ZEcWPkh7h6gFQDe/BLO9pLULxUS2QHB8yc2dNGhUwi6X6mfPTK9EgHpVQL4m0dbDhbJH
+         VOrg/17MOV1MEifXjkSVArWuKA2z4AUywOeP4lyD1rrxqKmBfjroJUca7rhFcpK8pUa7
+         J5ug==
+X-Forwarded-Encrypted: i=1; AKwUvBzIV3Fb1yOh1u2EbSAI5nz2enovbXpGlabm3tEw2O/jyCUkhLDj/nKN3WiBPU8dT8GRbMMTzuJDftJz2kemM0ip0m5cIt4=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIqp+ddR3sYgHsSeV/h8r1XZbsY6CgduFDDQP9yXr0Zk5nxrUGg
+	JPq1POAgf/7T8+nJmqEpSRoogmP/UqtnotPuNGnxUl1gg4D32EyryltaZNDE5VQ106kx09nI/w=
+	=
+X-Received: from edt14.prod.google.com ([2002:a05:6402:454e:b0:6b1:c2b6:cf0a])
+ (user=halg job=prod-delivery.src-stubby-dispatcher) by 2002:aa7:cfd3:0:b0:6b4:2aa6:2c07
+ with SMTP id 4fb4d7f45d1cf-6b49cbd8fa6mr2184624a12.14.1793225891454; Wed, 28
+ Oct 2026 15:18:11 -0700 (PDT)
+Date: Wed, 28 Oct 2026 22:16:58 +0000
+In-Reply-To: <20261028221705.3915340-1-halg@google.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,31 +78,188 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202610281546.OMDCubFW-lkp@intel.com>
+Mime-Version: 1.0
+References: <20261028221705.3915340-1-halg@google.com>
+X-Mailer: git-send-email 2.56.0.313.g2479322e68-goog
+Message-ID: <20261028221705.3915340-2-halg@google.com>
+Subject: [PATCH 1/8] net: introduce CLONE_NEWNET_LOOPBACK to auto-enable loopback
+From: "Hallgrimur H. Gunnarsson" <halg@google.com>
+To: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jann Horn <jannh@google.com>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
+	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-api@vger.kernel.org, containers@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "Hallgrimur H. Gunnarsson" <halg@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 28, 2026 at 03:28:38PM +0800, kernel test robot wrote:
-> Hi Jarkko,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on linus/master]
-> [cannot apply to akpm-mm/mm-nonmm-unstable manguebit/cifs-next manguebit/cifs-fixes device-mapper-dm/for-next fsverity/for-next fsverity/for-current shuah-kselftest/next shuah-kselftest/fixes dhowells-fs/fscache-next dhowells-fs/keys-next v7.3 next-20261027]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Jarkko-Sakkinen/KEYS-Expand-key-datalen-quotalen-to-unsigned-int/20261025-031009
-> base:   linus/master
-> patch link:    https://lore.kernel.org/r/20261025001105.1824178-6-jarkko%40kernel.org
-> patch subject: [PATCH v3 5/6] KEYS: Replace assoc_array with rhashtable
-> config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20261028/202610281546.OMDCubFW-lkp@intel.com/config)
-> compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project 186e70f4e6a1521991d2340d3d49b23b1beff11f)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261028/202610281546.OMDCubFW-lkp@intel.com/reproduce)
+New network namespaces start with the loopback interface DOWN by
+default, requiring CAP_NET_ADMIN over the owning user namespace to
+bring it up.
 
-This is expected as at the time when I sent the patch set I did not have 
-BPF changes yet.
+To block external network access while preserving the localhost
+networking that many applications expect, sandboxes (such as bwrap,
+nsjail and minijail) commonly create an isolated network namespace
+with only the loopback interface enabled.
 
-Br, Jarkko
+However, requiring a sandbox to hold CAP_NET_ADMIN in a new user
+namespace solely to bring loopback up conflicts with reducing the
+CAP_NET_ADMIN attack surface.
+
+Today, an unprivileged sandbox or sandbox manager must start with
+CAP_NET_ADMIN in its user namespace to be able to bring up loopback,
+drop it, and then take precautions to block CAP_NET_ADMIN from being
+regained in nested user namespaces (e.g. via seccomp or
+max_user_namespaces limits). This adds considerable complexity just
+to bring up loopback.
+
+Conversely, if CAP_NET_ADMIN is restricted at user namespace creation
+time, tasks inside the new namespace never acquire CAP_NET_ADMIN.
+While this removes the CAP_NET_ADMIN attack surface down the
+namespace hierarchy, it also prevents userspace from bringing loopback
+up, breaking localhost networking for unprivileged sandboxes.
+
+Introduce the CLONE_NEWNET_LOOPBACK flag for clone3() and the
+corresponding UNSHARE_NEWNET_LOOPBACK flag for unshare(). When
+specified, each flag implies CLONE_NEWNET and automatically brings the
+loopback device up in copy_net_ns() before returning the new network
+namespace.
+
+Making this an explicit opt-in preserves default network namespace
+semantics while allowing unprivileged sandboxes to create an isolated
+network namespace with functional localhost networking without ever
+holding CAP_NET_ADMIN.
+
+Signed-off-by: Hallgrimur H. Gunnarsson <halg@google.com>
+---
+ include/uapi/linux/sched.h |  2 ++
+ kernel/fork.c              | 22 ++++++++++++++++++----
+ kernel/nsproxy.c           |  9 +++++++++
+ net/core/net_namespace.c   | 11 +++++++++++
+ 4 files changed, 40 insertions(+), 4 deletions(-)
+
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index 33a4624285cd..efd00d9f8bd3 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -40,6 +40,7 @@
+ #define CLONE_NNP		(1ULL << 35) /* Set no_new_privs on child. */
+ #define CLONE_PIDFD_AUTOKILL	(1ULL << 36) /* Kill child when clone pidfd closes. */
+ #define CLONE_EMPTY_MNTNS	(1ULL << 37) /* Create an empty mount namespace. */
++#define CLONE_NEWNET_LOOPBACK	(1ULL << 38) /* Create network namespace with loopback UP. */
+ 
+ /*
+  * cloning flags intersect with CSIGNAL so can be used with unshare and clone3
+@@ -52,6 +53,7 @@
+  * unshare syscall:
+  */
+ #define UNSHARE_EMPTY_MNTNS 0x00100000 /* Unshare an empty mount namespace. */
++#define UNSHARE_NEWNET_LOOPBACK 0x00200000 /* Unshare network namespace with loopback UP. */
+ 
+ #ifndef __ASSEMBLY__
+ /**
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 416758c8a3d4..c0f7520e754a 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2728,6 +2728,15 @@ pid_t kernel_clone(struct kernel_clone_args *args)
+ 		args->flags = clone_flags;
+ 	}
+ 
++	/*
++	 * Set implied CLONE_NEWNET before copy_process() so that
++	 * security_task_alloc() and other clone_flags checks see it.
++	 */
++	if (clone_flags & CLONE_NEWNET_LOOPBACK) {
++		clone_flags |= CLONE_NEWNET;
++		args->flags = clone_flags;
++	}
++
+ 	/*
+ 	 * For legacy clone() calls, CLONE_PIDFD uses the parent_tid argument
+ 	 * to return the pidfd. Hence, CLONE_PIDFD and CLONE_PARENT_SETTID are
+@@ -3010,7 +3019,8 @@ static bool clone3_args_valid(struct kernel_clone_args *kargs)
+ 	if (kargs->flags &
+ 	    ~(CLONE_LEGACY_FLAGS | CLONE_CLEAR_SIGHAND |
+ 	      CLONE_INTO_CGROUP | CLONE_AUTOREAP | CLONE_NNP |
+-	      CLONE_PIDFD_AUTOKILL | CLONE_EMPTY_MNTNS))
++	      CLONE_PIDFD_AUTOKILL | CLONE_EMPTY_MNTNS |
++	      CLONE_NEWNET_LOOPBACK))
+ 		return false;
+ 
+ 	/*
+@@ -3160,9 +3170,10 @@ void __init proc_caches_init(void)
+  */
+ static int check_unshare_flags(unsigned long unshare_flags)
+ {
+-	if (unshare_flags & ~(CLONE_THREAD|CLONE_FS|CLONE_SIGHAND|
+-				CLONE_VM|CLONE_FILES|CLONE_SYSVSEM|
+-				CLONE_NS_ALL | UNSHARE_EMPTY_MNTNS))
++	if (unshare_flags & ~(CLONE_THREAD | CLONE_FS | CLONE_SIGHAND |
++				CLONE_VM | CLONE_FILES | CLONE_SYSVSEM |
++				CLONE_NS_ALL | UNSHARE_EMPTY_MNTNS |
++				UNSHARE_NEWNET_LOOPBACK))
+ 		return -EINVAL;
+ 	/*
+ 	 * Not implemented, but pretend it works if there is nothing
+@@ -3266,6 +3277,9 @@ int ksys_unshare(unsigned long unshare_flags)
+ 	if (unshare_flags & CLONE_NEWNS)
+ 		unshare_flags |= CLONE_FS;
+ 
++	if (unshare_flags & UNSHARE_NEWNET_LOOPBACK)
++		unshare_flags |= CLONE_NEWNET;
++
+ 	/* No unsharing with overriden fs state */
+ 	VFS_WARN_ON_ONCE(unshare_flags & (CLONE_NEWNS | CLONE_FS) &&
+ 			 current->fs != current->real_fs);
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index d9d3d5973bf5..4e30c6a9f8ed 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -231,6 +231,15 @@ int unshare_nsproxy_namespaces(unsigned long unshare_flags,
+ 		flags |= CLONE_EMPTY_MNTNS;
+ 	}
+ 
++	/*
++	 * Convert the 32-bit UNSHARE_NEWNET_LOOPBACK (which aliases
++	 * CLONE_CHILD_CLEARTID) to the unique 64-bit CLONE_NEWNET_LOOPBACK.
++	 */
++	if (flags & UNSHARE_NEWNET_LOOPBACK) {
++		flags &= ~(u64)UNSHARE_NEWNET_LOOPBACK;
++		flags |= CLONE_NEWNET_LOOPBACK;
++	}
++
+ 	*new_nsp = create_new_namespaces(flags, current, user_ns,
+ 					 new_fs ? new_fs : current->fs);
+ 	if (IS_ERR(*new_nsp)) {
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index da5f881fbd3b..70972639932a 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -596,6 +596,17 @@ struct net *copy_net_ns(u64 flags,
+ 		dec_net_namespaces(ucounts);
+ 		return ERR_PTR(rv);
+ 	}
++
++	if (flags & CLONE_NEWNET_LOOPBACK) {
++		rtnl_net_lock(net);
++		rv = dev_open(net->loopback_dev, NULL);
++		rtnl_net_unlock(net);
++		if (rv < 0) {
++			put_net(net);
++			return ERR_PTR(rv);
++		}
++	}
++
+ 	return net;
+ }
+ 
+-- 
+2.56.0.313.g2479322e68-goog
+
