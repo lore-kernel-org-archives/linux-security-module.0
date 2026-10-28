@@ -1,99 +1,99 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.123
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793227795;
-	b=FuttRBO23Jgo2GQ0MVZXUHM/IrMI3lRvbkQYSGqNxtVdQqfWoohcK56+EnpC2zSOQZdo
-	 0Y/q8fvS6tQSIm5BXOXfFJBDeKciId4VD5LGlluW6So87LsV7D6UQJK5OWkBzSoKs8Nra
-	 nV/gemaPSoP4HDzC36cPlpOxMCYHhztIWUDI5a0QH/9jCyK1kdhNFVMYcNeB8TYLwtv6T
-	 pmBBzv8HMachERA8xRswfY+CKeR4I7rzb/9DwrD7qcqCkKC5BceDXWeTmh0eBj0GVnZaa
-	 NqrncGI1IcRpuSWWHo/YZRsSmkXCvcZ9C5NWFbKKSABfasSkbxE8xl6+/6OHlHv4xCQ==
+	t=1793228086;
+	b=x7Kgcx8qTgHqnVHpKzDWZdu0rsFz9IOq2EAiJNpvB/hwkwlK9/R8jjHbcVqLNrPL6dXN
+	 Qb8fZUyq95V98qNYdjx6gppVYUb5FDL3xTD5A5igUZGS4DI3Sk5tJNAzULWTy6tbQ8EZ1
+	 nwdF2mS+VRPQEbbrJdsBrqhH/W2tjObbPspNmT4/koRdRx9/ZmeWE54CY4YcE1HP85yuj
+	 8oAPZg3qyyI2GEjEwlt2nwu0tQ4LrdvXNZ5shfDlXGgQIbvbBypRBohgEPiMQz1kgSxbd
+	 1ox1xIbPB0RClduk/vgfZhr3LvzzPW0IvIFnlbJXorgWl0Haj+ZHKM21Y2m3VoYmQiA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793227795;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793228086;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:
 	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
 	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
 	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
 	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=9CcVGt9eIzghp0hNtTKb3LNk2YarqbM5XVU8xqD+QMk=;
-	b=Eez48bcFD1ItGWdD9VDAJE6mapRJC/6APZm//IxKJgQvGZEx4qXQHkNSw93ex64iABAS
-	 TuLwN0HleqrpfWWQb0PzByuJGGLhOUlyFatlOHHSbV45P0av1DUgNoDlqcV2TBc/gEwas
-	 /6sI8DwgS6wgkSSLxj/UvPud7omVAWUcJZ8thJH85VIEdMyjdOfsqwchr7pW0DEQ1SQTk
-	 iuMPAwmRfH1GM+Zqx+XZV/i/z5xjiQAhhDuKdTERnXF9N392spbXE4Ij0o4N3+aNXPDrx
-	 HMr+4xnIHYMwLApQ66d2aym7hsmLr+nSUyCGPvRCw10bQjDnxr6nBx7kY/WDk+6wLyQ==
+	bh=jmFCGmNACFlPFrISnOMUVqVZ/JE+SOakAXip1lWiLl8=;
+	b=FTzInSLAxJHDow9G4N9DmRdBcifMRG+VUyjB2SGcmyIsAC31Suh6N+OsN004E6zcCQw4
+	 HrSz46JaCYYXHkCVWDZxCIm8AfEOHy9yc2oUY+tuIjGRHER2fxVJ4aCTSpdRrvmqTDyE3
+	 bxZQFt7ZSoFAOzTb29P+PcyKcNXJHoVbxZpRGRBZd2dg7Vx6nDxTQio/FZVK/LJKvhGOv
+	 wVLlpBPY2HbRs2OpeEz3KYt0SNypZUPKugXoYD133/TCDvWIn1qMXorDkw0/LbSkMOiLO
+	 zP3EN9OH45aYdXb8KtXDdIa09zSDB4nY/QEzUbiCdHaP20yG/oTnLvdmN6qqZWCmGrw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=canonical.com;
 	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=ERXHM8zR;
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=GlNWKs5A;
 	arc=none smtp.remote-ip=185.125.188.123
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A4D606A31E
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:49:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82A4D606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D09D606A323
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:54:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D09D606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=ERXHM8zR
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com [209.85.128.200])
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=GlNWKs5A
+Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com [74.125.224.69])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id F193E3FBFD
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:49:52 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 873C63FBFD
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1793227793;
-	bh=9CcVGt9eIzghp0hNtTKb3LNk2YarqbM5XVU8xqD+QMk=;
+	s=20251003; t=1793228078;
+	bh=jmFCGmNACFlPFrISnOMUVqVZ/JE+SOakAXip1lWiLl8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=ERXHM8zR/+wVMOxPncLY8wuNcrJ8kWg7nKQ46mlvxobzKMP9ovyFPKsOgAKI7Ynmc
-	 OF0blRjPtPv8H2Lf2wXcd2PZ9gzL3qtMD+tuCUldOnSY9GG0fSXGDQw5zGkhcVDWOT
-	 TQts+Oe5oPPcV0/f4fybXiDzqcF0auOBnNh+TdYvesqVX45KBWbURfU1fyYY5kL8Eq
-	 xnX49g6HgaxRKqaAUFLO5PzqolAgREYMqs4WQaLwEwgU3LsZIcT1RkXNq7ZgEXiEXc
-	 5uGnszgj4BQKtTaN2jcC4RA/2CKYGnABuTaZqr1zvp0lFd1MHw4YnnIYe5Hg3znzDP
-	 0Kthr8Mq5wialjiuuun592ICDEDPFXYsuDN5LTPpXBcIiVSnvrMnteNL+mYzA7cpn+
-	 1W+aN6ifwDkriymDHGlpZW9mCWKulemz43NME/EzlAcd4AcKx3ZrdmDYqLScnSVm8D
-	 Td+vTVElNwP1yfp40BgyVBvoV3TCYIoFiXaX6srMJNnmtYkiVA3M9nUNRsSdp51/Kc
-	 ghj0MAF3lCIHGnLwa5WeynJ4XuxlsQd+RcBsMIg0d9JcZdFUK1COU3mfw0QuWYNHVO
-	 qMqAkKJ/91xam2QOv0JaoA+6EMDF/pviTZPctUjmfLWwo+4ptBRPusMbv/NlQa/nQK
-	 6vf5OG/VujDvhCQ9mLXzLnrI=
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-8b0e757e70eso22284217b3.3
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 15:49:52 -0700 (PDT)
+	b=GlNWKs5AA3HFd9yDKNvf8szc4/4ln6F/ZFFj2KISUp6T5GVyxC7XD+jRjP0xgMw14
+	 QQRylVsAjSy44xPODa9nZuyrQ52PiEiDzvRpP2d0jrtay8H/oFlpjI4lix0QF97LU4
+	 Npp53lDoniSjudT8cQEz7UjAx+C6037Do7xWboqTRECefr+ndBzBBJAWrA2wm70cH9
+	 P+EijXweqgJGKqQ4gTWXuFZnrMTXUSiFfoVySB3FXVMfgL28wVv65uO7hNdyygIyhG
+	 0JoDD+kTcghDvtwgDJxZebBdvoKO6k8SaZTTMjwuQEuCfTLZDF1I4Jbi38aO0KLnTf
+	 5F3u656VXa0f/WMpiaweu34ZlilEvjB7VYPoKEquL/+DdhQGcuv0ca5ZFTsrBS53oK
+	 nJQd3GtvmZf14xy0EBp91lFDwe1Fy/GRVTN7xBh/f0f+ixy62ExkgfGPohT4kEJXAD
+	 bwIxIoJf2J4VGli2wvLFIathAnGWKdcj4BmQX/MjQxoWJezxIdckhhp1nWp9b83vvH
+	 sZvSvv5epr8NbIh6Ixpo4pUmIKcHh19va7EAFX2KuFpos/hVVZzDv6jm+XaKlPW3MQ
+	 MvoiIF+96KdFIWe4i8reGAew8azyRoYMSCC9hKr9QQ/LcvBIQ5JGuwkoEZPUE9qUaZ
+	 coPB14Ww6u2J2eNn866FdudI=
+Received: by mail-yx1-f69.google.com with SMTP id 956f58d0204a3-67a781c1069so2512222d50.1
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 15:54:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793227792; x=1793832592;
+        d=1e100.net; s=20260707; t=1793228077; x=1793832877;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=9CcVGt9eIzghp0hNtTKb3LNk2YarqbM5XVU8xqD+QMk=;
-        b=ZoPGpjxvu86RKZGv8lO3P0kSAnca/py/2HzVeF1ryCHhbHiYMIdNLnqL/QjMyegvFV
-         hD5juhip8aO/zviMVm9WhNGqPyd0BRxg+sx9/W8GjM0vcwIjSklVMGrJHC5f3YoThExn
-         Dpd0U6zyw3VCQnd27WKx/ryme4hXkaPJNgmK9KJ5Kl9r/F34XlH5h+3fgtNqjA/chCiY
-         2Px3UwpLEQTg9dwSOgHfvCHMxn7wOTSUOEIUjUQQWvqsAxWz3yY4Ct2J8KY/nWBtt/vn
-         gGJebLSvfTvFSbtQDxW0ko0jbR1nHPynMSTBV5pbvkvS7ngnbpesT1F4dxjGFR1U/nIm
-         NATg==
-X-Forwarded-Encrypted: i=1; AKwUvBzGba0H3tqUCOSF/oWeB3oRIWzX8khPldFfJJX5aoEuHx1qoT5nqNj7FotaXs3Rkasv1p8nh7WOn6XnQPjaCbYjeanWeAk=@vger.kernel.org
-X-Gm-Message-State: AFq9FYJurEQDE4tZfrsHxX4l6pyqYGhnJf7zIJRcfFfL5MdqOQpeYZ7n
-	7xbFRhWc3Pq00kLqWHneYqNS9gFYgt1cJbU5C1oGbYA2P7KCN3ZnjOLpPjfM4vVSHxLHNn/ssKu
-	qm1pDZtzC1CSkzMOeOpnKwZzf06zxUA8k4YteGxdSRgiRaOxZz0jKNGQmRGw/kUlJCUvqfxy90R
-	pXOKe5v0FxHQT+1zAFsA==
-X-Gm-Gg: AYBFou1VC0RZRa5sv839m191R2PsZ8lGLOSqi8HG68w0IZ+Gk4+xZafegcT5UQgMaEv
-	o2x3aKQuJGY7qFJdmmGVehoBOXfeImz1BXJhlgY/D8YRfkoQU8Mn224Aq/D0kFoBcOQ3aD2Gyjp
-	f+TOMummKa5I1KvxWBE/a7M61c8N5V+eZSxLeaKjAth9H0Dhx5uf8tdpWY8YYwRDFi+mZBXV0/Q
-	Z2JKLdXowDqkhaTOs9aR9neTa3jeywokwPhXNs7jHWj2c0GCmGeEIx130oa78yeolvA1WPSZwh3
-	jw3FpuifiZx4kI1680Bsco4GRRW9LArtgx9vrzCleQL3Bo+m29sWyy13swNOpg3O9TVDNrnE0Wj
-	CA8ugwMgRu2izXMZge6uSKjrdkxZRQbH7vyITjsTLjaypQYryJj+pSO+a1pPEK4HjLzFJQJFkw4
-	v29mVXpzj+FzpXuDFXIJwp7QYOOplG
-X-Received: by 2002:a05:690c:418a:b0:8a8:85d7:265 with SMTP id 00721157ae682-8b1b5ba6fdfmr17679577b3.36.1793227791886;
-        Wed, 28 Oct 2026 15:49:51 -0700 (PDT)
-X-Received: by 2002:a05:690c:418a:b0:8a8:85d7:265 with SMTP id 00721157ae682-8b1b5ba6fdfmr17679547b3.36.1793227791517;
-        Wed, 28 Oct 2026 15:49:51 -0700 (PDT)
+        bh=jmFCGmNACFlPFrISnOMUVqVZ/JE+SOakAXip1lWiLl8=;
+        b=R4DnzW1OOYkwicJiCbWaJO45foWGKDPCAcZgzGAMVq0WImfWoF1YS0v8o7uefpL2cC
+         YAAonANDnEId9T6ZPqWJa7bgPtpWzkPkGqV4JLhW9vkdy6p51Nt65DdBmrgLa12MpESe
+         e3OxlsTc+9tcTE3jSAXMVUhMfG6aTaGnjM22vVUynWhhOvrwewEA2bXuA894UgGQewr9
+         69S/WhS66FlHXyKbB7SniB8A5AYlhSio1VAPd0NWr6zXHLDwqG3eCaqMwLmTNbdlD3uG
+         YCUSLGEAVKpZn6vSmVUBJcVAK0Lw4npn7qR2p+d2IvBRh6UrBvHUxcYoMmatpZtiya8d
+         uWyw==
+X-Forwarded-Encrypted: i=1; AKwUvBx7oxUwR/0mpEuH/9ugdNdhyjb/0dAH/AWldjAWR06VaEhOmLaEHrmiPOs1BrtDrwOxV791csPhclNfb7jDN82VECtWUeo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLQE7mjy6h4sZHeoSTuaX7R6J8waoJypIvPvZ0SOXR2gWF1fJe0
+	QNj0obhFRVWl8AnnZOu3JK5hIyqWTOdKh9EqGFSBTMM3pxMwjTt23Wg+Z6aEu+qUU6ke9QuVTuf
+	cAKKJ2k312ttvXk1oINlcy0cokPKrr5WDIM/tzkHrgNC1qHB7WGlkkl50G1WLB/zuj8u/f4QxwY
+	f4pXAsrWa3so05ydlYKQ==
+X-Gm-Gg: AYBFou30gcl67SbfCXDr7BCDmNubFTJQjcdutT83VWvRhOjoEJjZgh0oxrfi2yG+15W
+	Tt0x3rTAkYE4RC0c//QsKE4Yy5yQW2WghGBg3vpuwDapoPZiO1qjIA+61W9+dEqH854cRMYfkx9
+	+REbOYK9CPq4+wKNRb5p+EI37lDZ5tzai3fFPZGQs4ScowBawFcpeSp9yUFOqu54X3O9MrUd507
+	a6kcwkPMEmPJadupzb9NtAxkJqHTxiliyY1SmzReYr3J5K4pBliyA0mPfn17SVIUk186S8dZefH
+	+rYXn4QIZ3/VOmkqeFmUHpo1iMzuU5k5RCklE2VHqZP3SUpCWxuRZ5gfGLa3wiZS5IB2kpFwIgp
+	wXZOhrJS6izAVl/m62USDKecpHy0/wng+i7muqjBOEheFAYffiELJsUj1a0UFb0tqFXmE3tQ4vN
+	134IKHAMHldHt83LzwXOCt0ivqenLnWw==
+X-Received: by 2002:a53:a78c:0:b0:679:5bea:d3e9 with SMTP id 956f58d0204a3-67a7bcbb663mr2324414d50.55.1793228077244;
+        Wed, 28 Oct 2026 15:54:37 -0700 (PDT)
+X-Received: by 2002:a53:a78c:0:b0:679:5bea:d3e9 with SMTP id 956f58d0204a3-67a7bcbb663mr2324396d50.55.1793228076692;
+        Wed, 28 Oct 2026 15:54:36 -0700 (PDT)
 Received: from [172.21.9.52] (host-209-35-187-178.broadbandcancun.mx. [209.35.187.178])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e656162sm36374807b3.44.2026.10.28.15.49.50
+        by smtp.googlemail.com with ESMTPSA id 956f58d0204a3-67a7a07e163sm2391204d50.8.2026.10.28.15.54.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Oct 2026 15:49:51 -0700 (PDT)
-Message-ID: <58cb4243-99ed-4310-99e6-d3a2809655e9@canonical.com>
-Date: Wed, 28 Oct 2026 15:49:49 -0700
+        Wed, 28 Oct 2026 15:54:36 -0700 (PDT)
+Message-ID: <fcab58a3-1a8e-4bac-a96a-1c2f60742d1e@canonical.com>
+Date: Wed, 28 Oct 2026 15:54:34 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,16 +104,13 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix query_data() output overlapping the lookup
- key
-To: "Cen Zhang (Microsoft)" <cenzhang@linux.microsoft.com>,
- Georgia Garcia <georgia.garcia@canonical.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Francis Perron <francis@akrites.dev>,
- AutonomousCodeSecurity@microsoft.com, tgopinath@linux.microsoft.com
-References: <20261012215703.30592-1-cenzhang@linux.microsoft.com>
+Subject: Re: [PATCH] apparmor: handle diff-encoded states in leftmatch_fb()
+To: =?UTF-8?Q?Patrick_Gr=C3=B6ssing?= <invarianztheorem@posteo.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
+ stable@vger.kernel.org
+References: <20261026133600.11252-1-invarianztheorem@posteo.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -159,111 +156,102 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20261012215703.30592-1-cenzhang@linux.microsoft.com>
+In-Reply-To: <20261026133600.11252-1-invarianztheorem@posteo.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/12/26 14:57, Cen Zhang (Microsoft) wrote:
-> In query_data(), buf and query point into the same multi_transaction
-> buffer: buf at the start, query a few bytes in, and the lookup key
-> right after the label string that query points to. Reusing the buffer
-> is by design and is safe as long as the query is fully parsed before
-> buf is written to, but the key is not: it is dereferenced on every
-> iteration of label_for_each_confined(), after output has already been
-> written. So when the label has more than one profile with a data
-> table, the data of the first matching profile is written to buf while
-> the key is still needed, and overwrites it if the data is large enough.
-> The later lookups then run on a corrupted key. Besides, if the data has
-> no NUL byte from the key's position to the end of the allocation,
-> strhash() -> strlen() -> jhash() reads past the 4096-byte slab object,
-> triggering an out-of-bound read:
+On 10/26/26 06:36, Patrick Grössing wrote:
+> leftmatch_fb(), used by aa_dfa_leftmatch() and therefore by find_attach()
+> to match profile attachments, open-codes the DFA transition and treats the
+> default transition as final:
 > 
->    BUG: KASAN: slab-out-of-bounds in jhash+0x595/0x5e0
->    Read of size 1 at addr ff1100001159d000 by task exploit/155
->    CPU: 0 UID: 1000 PID: 155 Comm: exploit Not tainted 7.3.0-rc7 #1
->    Call Trace:
->     jhash+0x595/0x5e0
->     aa_write_access+0x880/0x1400
->     vfs_write+0x26f/0xd20
->     ksys_write+0x115/0x210
+> 	if (check[pos] == state)
+> 		state = next[pos];
+> 	else
+> 		state = def[state];
 > 
-> Writing to the .access file is unprivileged (0666), but triggering this
-> requires loaded profiles that carry a data table, which needs
-> CAP_MAC_ADMIN and is not the case on default distribution policies.
+> For a state flagged MATCH_FLAG_DIFF_ENCODE the default state must instead
+> be tried again with the same input character, which is what match_char()
+> does for every other matcher. apparmor_parser emits differentially encoded
+> DFAs by default when the kernel advertises policy/diff_encode, so larger
+> attachment patterns end in a non-accepting state and the exec silently
+> stays unconfined. No conflict is detected, so nothing is audited.
 > 
-> Fix by copying the key with kstrdup() before writing any output to buf,
-> so the key stays valid across all loop iterations regardless of what
-> gets written to the overlapping buffer.
+> One visible victim is Ubuntu's firefox profile, whose attachment
 > 
-> Fixes: 317d9a054e1c ("apparmor: update query interface to support label queries")
-> Cc: stable@vger.kernel.org # v4.13+
-> Cc: Francis Perron <francis@akrites.dev>
-> Reported-by: AutonomousCodeSecurity@microsoft.com
-> Signed-off-by: Cen Zhang (Microsoft) <cenzhang@linux.microsoft.com>
+>    /{usr/lib/firefox{,-esr,-beta,-devedition,-nightly},opt/firefox}/firefox{,-esr,-bin}
+> 
+> never matches. Firefox then runs unconfined, is moved to unprivileged_userns
+> and is denied CAP_SYS_ADMIN, losing its user namespace sandbox. The same
+> profile compiled with -O no-diff-encode attaches.
+> 
+> Use match_char() in both branches of leftmatch_fb().
+> 
+> Fixes: 21f606610502 ("apparmor: improve overlapping domain attachment resolution")
+> Cc: stable@vger.kernel.org
+> Link: https://gitlab.com/apparmor/apparmor-kernel/-/issues/8
+> Link: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2172229
+> Signed-off-by: Patrick Grössing <invarianztheorem@posteo.com>
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+thank you for the patch, unfortunately this issue has already been addressed
+by daa9ef365c0ed apparmor: convert duplicated dfa transitions to match_char()
 
-this has been pulled into the apparmor tree
 
 > ---
->   security/apparmor/apparmorfs.c | 15 ++++++++++++---
->   1 file changed, 12 insertions(+), 3 deletions(-)
+> Tested on a kernel built from Ubuntu linux 7.0.0-38.38 (upstream 7.0.14):
+> with this patch the diff-encoded reproducer profile from the GitLab issue
+> attaches, and the stock Ubuntu firefox profile attaches to
+> /usr/lib/firefox/firefox-bin (all processes "firefox (unconfined)", no
+> unprivileged_userns denials). Without it both stay unconfined, also on the
+> stock 7.0.0-38-generic kernel. Compile-tested with W=1.
+> Based on apparmor-next as of 2026-10-26.
 > 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 5b42140e12e8..9df06fdd894f 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -919,7 +919,7 @@ static void profile_query_cb(const struct aa_profile *profile,
->   static ssize_t query_data(char *buf, size_t buf_len,
->   			  char *query, size_t query_len)
->   {
-> -	char *out;
-> +	char *out, *keydup;
->   	const char *key;
->   	struct label_it i;
->   	struct aa_label *label, *curr;
-> @@ -941,11 +941,18 @@ static ssize_t query_data(char *buf, size_t buf_len,
->   	if (buf_len < sizeof(bytes) + sizeof(blocks))
->   		return -EINVAL; /* not enough space */
+>   security/apparmor/match.c | 16 +++++-----------
+>   1 file changed, 5 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
+> index 7713484..796126d 100644
+> --- a/security/apparmor/match.c
+> +++ b/security/apparmor/match.c
+> @@ -751,7 +751,7 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
+>   	u32 *base = BASE_TABLE(dfa);
+>   	u32 *next = NEXT_TABLE(dfa);
+>   	u32 *check = CHECK_TABLE(dfa);
+> -	aa_state_t state = start, pos;
+> +	aa_state_t state = start;
 >   
-> +	/* buf overlaps query, keep a copy of the key for the later lookups */
-> +	keydup = kstrdup(key, GFP_KERNEL);
-> +	if (!keydup)
-> +		return -ENOMEM;
-> +
->   	curr = begin_current_label_crit_section(&needput);
->   	label = aa_label_parse(curr, query, GFP_KERNEL, false, false);
->   	end_current_label_crit_section(curr, needput);
-> -	if (IS_ERR(label))
-> +	if (IS_ERR(label)) {
-> +		kfree(keydup);
->   		return PTR_ERR(label);
-> +	}
+>   	AA_BUG(!dfa);
+>   	AA_BUG(!str);
+> @@ -769,13 +769,10 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
+>   		/* default is direct to next state */
+>   		while (*str) {
+>   			unsigned int adjust;
+> +			u8 c = equiv[(u8) *str++];
 >   
->   	/* We are going to leave space for two numbers. The first is the total
->   	 * number of bytes we are writing after the first number. This is so
-> @@ -963,13 +970,14 @@ static ssize_t query_data(char *buf, size_t buf_len,
->   		if (!profile->data)
->   			continue;
+>   			wb->history[wb->pos] = state;
+> -			pos = base_idx(base[state]) + equiv[(u8) *str++];
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			match_char(state, def, base, next, check, c);
+>   			if (is_loop(wb, state, &adjust)) {
+>   				state = aa_dfa_match(dfa, state, str);
+>   				*count -= adjust;
+> @@ -788,13 +785,10 @@ static aa_state_t leftmatch_fb(const struct aa_dfa *dfa, aa_state_t start,
+>   		/* default is direct to next state */
+>   		while (*str) {
+>   			unsigned int adjust;
+> +			u8 c = (u8) *str++;
 >   
-> -		data = rhashtable_lookup_fast(profile->data, &key,
-> +		data = rhashtable_lookup_fast(profile->data, &keydup,
->   					      profile->data->p);
->   
->   		if (data) {
->   			if (out + sizeof(outle32) + data->size > buf +
->   			    buf_len) {
->   				aa_put_label(label);
-> +				kfree(keydup);
->   				return -EINVAL; /* not enough space */
->   			}
->   			outle32 = __cpu_to_le32(data->size);
-> @@ -981,6 +989,7 @@ static ssize_t query_data(char *buf, size_t buf_len,
->   		}
->   	}
->   	aa_put_label(label);
-> +	kfree(keydup);
->   
->   	outle32 = __cpu_to_le32(out - buf - sizeof(bytes));
->   	memcpy(buf, &outle32, sizeof(outle32));
+>   			wb->history[wb->pos] = state;
+> -			pos = base_idx(base[state]) + (u8) *str++;
+> -			if (check[pos] == state)
+> -				state = next[pos];
+> -			else
+> -				state = def[state];
+> +			match_char(state, def, base, next, check, c);
+>   			if (is_loop(wb, state, &adjust)) {
+>   				state = aa_dfa_match(dfa, state, str);
+>   				*count -= adjust;
 
