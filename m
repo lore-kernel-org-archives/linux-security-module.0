@@ -1,53 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.92.39.34
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793204144;
-	b=YEmM++yx20ZOAEzegPTLjlv7BTI48yjjdZdhIVcWCHome/S8QMZLfMtcUswNN6lh6FPu
-	 KB71dCd2gEFBF26NIr2UnjJ7gxtOnqcJcGJwealM9N9LulN8kAUqw85UJIolPLgI1+5gZ
-	 f2xmq/ehWmXQFNRgQ2qUlmE4aP+fYS4fZMSc6JXjCWdYYAKwp7xSSNLtJM7MSmXuXAIJI
-	 zR9nt/y5vGmqZykGfetwZUyXNHgIgObAiTs5D+Ls9+EtMIHZbG58CnC6njuayNfzxVZeR
-	 puAdCyDFWmPPhLugKH3dpWzaF5Q7c95YQCnWNL1em9jNeAV9C9LKdhjhdUvmWz4v1zQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793204144;
-	h=DMARC-Filter:X-QQ-mid:X-QQ-Originating-IP:Received:X-QQ-SSF:
-	 X-QQ-GoodBg:X-BIZMAIL-ID:EX-QQ-RecipientCnt:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
-	 X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:X-QQ-XMRINFO:X-QQ-RECHKSPAM;
-	bh=f0gG/oiTbPwssGFfHpUZ+eJy9vdAJDLgpDX8KfmVcHE=;
-	b=TCIkdDTaYRJExMXBiMKccXAWWyo9BGMrfNt2a8U1fMlQsFmDWgxV5M2BSMe8knDSMKLC
-	 o/MGfR3AEjLirn3ilQXQVbRjN/n6czjhPr4OePfhKC5BwbceQQOLkQU0nWRnzBBYapijF
-	 puxRDp4kJp2U1P0SKlBTMYyl/zpFNvLPMwSsk/cUnDg5LgISOnxtvU8tKgDiiOjvC5zy4
-	 VSzQkVK+rpBMfUS6EoZV1vcDNPWU6xN0A6ag0cb+rY7gv6QKXUBQFC+AzHoIOqQuvfnym
-	 11YkjcVr01GeQcC71EoHTrskh9m2kHTQCCAcY7STK0oXoS86+tFo8WDM7mruQMPG1fg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=yhkylin.cn;
-	spf=none smtp.mailfrom=yhkylin.cn;
-	arc=none smtp.remote-ip=54.92.39.34
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.48
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793205420;
+	b=hDzHuUUEGYUns7raVBB5UfYwJQoj08hmF3u01eq3VNl0u1SMjHeKt8AU7LHMXflTkh5S
+	 Jq/+JofHG4wRoIHGlAq4J/0bHjEtfSI4mYdXasmmUzVKIWUpTqGWsMw8Ay+08kEXzK1e2
+	 cwos0Kri1ZcChD6jUI6QmRhb9islb5WFrl5WALcOwk/Lr3xx6qdyCz2knEbA80Vfo4k8A
+	 7VMgLjm4T613BOMB5Z+m2qHKdpmfuI62Jhcw8lTxlzMkvSL+cl3FkUqzkhIrMyYrHKKWC
+	 /BvgzL9Vgf+JH4ckQKeCpk9JswluniHeDzaWKC3GahD7y75pB5VKMvGS+QbL0tqJVtg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793205420;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=/Mi6YhYpR0p0j3+EqF4sYxSKOA3pyz2Yf6RF0rom5O8=;
+	b=GrQAGIjH+OHqkzaOFF7BE8/ZaVS8y0OP00hgdbqviJ1FgH3sS824gqTTS22qZC/xwjJK
+	 7QVd6n2gG4mHC/HxTeq96LSKflybpn5+NxVm2CkXKmEx6W/U7xkG+yR52YUEgvAVbwhf1
+	 oFTz6M7eXnGUCIYGzjHwe6+Nc4vLbvFOqSYLN0Cex81aKLfUHXBlWGJ9CF+iy6eimmqSl
+	 /qDo+L6fhkgGUx6ecpTo1NULZnv/vVtF1ou2AptzF6vI7nQ1+15e7braeMMWKIeZiFMAB
+	 0gJbYqDGqAUiVhPBwfYeNYWNmz99F2ggdnQBYKwEuQpRS+gXXlOg9cGfC9uOXswLH7Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=armoriq.io;
+	spf=pass smtp.mailfrom=armoriq.io;
+	dkim=pass header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=pO+AIjoj;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.48
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2A6606A329
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 16:15:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB2A6606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yhkylin.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yhkylin.cn
-X-QQ-mid: zesmtpip2t1793204132t7dd59bea
-X-QQ-Originating-IP: H9wdYdlbltiSWYhG/qHgpJqQkHrrsvFZQ13otrk+Hic=
-Received: from tpk-ROG-Zephyrus-M16-GU603ZM-GU ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 29 Oct 2026 00:15:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5573839828363948745
-EX-QQ-RecipientCnt: 4
-From: Tang Pengke <tangpengke@yhkylin.cn>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org,
-	gaolong <gaolong@yhkylin.cn>,
-	Tang Pengke <tangpengke@yhkylin.cn>
-Subject: [PATCH v3] smack: preserve low-integrity labels across file copy via whitelist
-Date: Thu, 29 Oct 2026 00:15:21 +0800
-Message-ID: <684C81A1C8289709+20261028161521.925644-1-tangpengke@yhkylin.cn>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A94F606A325
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 16:36:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5A94F606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armoriq.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armoriq.io
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=pO+AIjoj
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6798af41644so967927d50.2
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 09:36:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793205417; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ZRFWCDf3mF7wMs43f1pSLRMP5xK4NGFRYzUHx2klTOeJfqzSgkvSI44Naq329xtMVZ
+         fK2VOKjFcYEvlNCkmvx7IuQDOMTtP5REr7ojvjBVBjb/OsoqxA/DKtR4wkzr3c8tcgDO
+         6cTSi1wqlMVZc7Xz46FboiPacuTwM4EqqLrLYgXDBnaWUJcV+h3LBWV7ChQ4cJmHY9hT
+         6GWBa8/Mw/F1WG/F98MPFKR9X0uOtSlyVpleiHd0PYsqRthjl6VUJ+SHHcXlrog0di7Q
+         EH/6nPcO3k/aJyc6Zw6VV2vBrLDKj4lMWBHlPNvNWkQrMcHOzdtxIh5wDHb7j71MIOkI
+         FWCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/Mi6YhYpR0p0j3+EqF4sYxSKOA3pyz2Yf6RF0rom5O8=;
+        fh=vkN9t0OI9uXEubt0U5uq1CXm0XeHMxR7x40J+Y+2lKY=;
+        b=ZBkeerPU/a0KSutw0uNCwBJUInL/cm1vlkzykwpbTzbvIwgW3ZOK3/0lijQkBGcljD
+         PWSBUFfrxCeM9dztqNb5nKsspSaz3DEyN5LngSUSoNEi7s8wXzgAGjpKNDZv4wSE+Yuu
+         7q87pMmfUPh6+XwWMPj8icL5ytWXrIR4M1Bk6pqa7203uXlGV/loaLq2lA+7QYfUhjo+
+         n4n6ytCCDDT+SLmhGNtZjlVE5FmQiPSYpGLJ1kb75w5eBkShmCJwLX5cFMbrx/lR2XxB
+         pkPiaks4Loscq9ZVuWOuS6qoiUsHphF22DbYQxiKyo78BJNgCyTqJCdEIb6TzCgSCLQe
+         4EDA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=armoriq-io.20260707.gappssmtp.com; s=20260707; t=1793205417; x=1793810217; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=/Mi6YhYpR0p0j3+EqF4sYxSKOA3pyz2Yf6RF0rom5O8=;
+        b=pO+AIjojAeQbRm+fftAD5MVNIjof/eOOeAz13NM/UJ8p4wKpNsW/+6ADJMWAh96P8E
+         9nzrnlAM20Uq72aW/gWYELah9ofluFGQ7Zf4xrAVf2GXn/NUaC/fr4t/TMFAm6ql/eVv
+         29H4t40KqIHAA47qbJRd9QiIhFOz5t8QoPsKpfKecUn5ZQqpu4umIGZLyVOw/ywp+FEC
+         1zOFdjxcsj3qKHRXsCv4ow6NGUMaj0E8pGiYfb/KS7MR52nfSv2qpsNTaIjdSnA+VLDt
+         HBff84zP55t5JOzsReiLJ5qB0odXAbKK9lYVZ1m0Qp3erY12Qs7LIlJFrD/DvGm2u4a+
+         V/lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793205417; x=1793810217;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/Mi6YhYpR0p0j3+EqF4sYxSKOA3pyz2Yf6RF0rom5O8=;
+        b=AfA9DdCqwOhbhmjavYIdCuMbMx07rwI8QK9Yrafpk/LopFM3K7NAEQmRzBRfrUD3fR
+         A6Gm4TX1J9Q0eAXuNwDXVI45cDHlXPK/uIx9t6WKtOuvVzSMEXTQsjcItIJD3mzgksYP
+         COYRxn4No5njwHySzsffKdsPM4Sw3FldbcM5tCXub2oiPsLXa4NJyStJAUmsACLtVO8c
+         muQy9H6iJsAeyJ1/3WQNoMRC+AhOtV9tgdfu9H0jXommWquEswyjda9JXnhuaST/GDI9
+         dDOpGDveziQE7ZuhvXsto8hqtyXAqGkjlnTj9VWSCPElOccWdgQ22lbyN2UVSG1B7B+7
+         lSig==
+X-Forwarded-Encrypted: i=1; AKwUvBy5VcZwdzxUye0lvxFfdprp32p3Slsr7iYidDxwnKWNtRLfpcjsr4ex9OIbFUMAZN8gQV8BBxlVAzbJAOE2Xe62gmXcEgg=@vger.kernel.org
+X-Gm-Message-State: AFq9FYIRnrP9dugaomj37t2a0VnE90+CU/c/8tXG8oaMTUvG/lG0p/nm
+	3uVPtc+knEsFZU4R20RbD5OdRdGfmmneYksKuFKsl6QxsDYlLM0/xip/k2L0+R1IDtnOGECm8V2
+	Uw3VYQ3EQFC07OagevCyC60NmAPZboJAnzVfGK4bKD90=
+X-Gm-Gg: AYBFou0R1H5vRP6jsbKOH/SwrMx7PL2id0W5mgPx1ZU6wV18aepbK3pcikC+apODNPM
+	HJUtiIhBPfIetfEBIxvPYnLjQ7J3FzWANTKZOQl4d62bnKbbVzYCwiJEqsuxRg932lhCMy2qoco
+	opc51rRIWmoXMTEEyF7EUXICvDLl9XcfrZoTnPyyJduBn3pp6ClfwpSUkROgDBYGqjYs1vql0AT
+	cDC/Ujfm6pLCDsBtxPySeMmy60HviJkslAsWZxc2H1CebQ6LGakIf43LJYgm2H6i3hg98Ga3mVi
+	ifGJ/n3y0W7ndMtwh08/MdtbLNFxTQKJbjz9ygNGnDSy2aPVGiQZqzyX1UYvYtDN7yNEiIQ5eB3
+	qrfPa8IDI36VLNHegDLxMj1yyguT4I8UqWnp+QbCGpD8hW/Y0P/JEejuXtIUkS5dF2cT/Lv787T
+	mbC1Hf7nEqOKXjp+nynr5LOtmWmqu2250oU1fMG4Es+376Y8MA
+X-Received: by 2002:a05:690e:1907:b0:678:fc00:8b1d with SMTP id
+ 956f58d0204a3-67a7b98381cmr2898305d50.11.1793205416561; Wed, 28 Oct 2026
+ 09:36:56 -0700 (PDT)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -57,506 +105,1064 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:yhkylin.cn:qybglogicsvrgz:qybglogicsvrgz5b-1
-X-QQ-XMAILINFO: MPJYVnIUgYPGJTj3djVL/UgH384K7IstCIsi6VliMIT75nQNWN3fYEwf
-	b1+Oj0++GBYrv+/eL+4LFQHRlZn5l+9A/ZIJfTCzGQwnMqVHrS4EbqE7rifu0F0gPeEVgE2
-	TLAriTlEqgi3iu2Ex0R/3XmcR13ZSYyBPFBUc89YZrPSZ72SPZ/YFXt0cF1aXgxnjTWVjb5
-	2TwJZVWeg5vkvXF5VcNr2B717JFyR7YmG7XpLqZzIDNYr6QdTVrLNPT9v5ExqncRkHYPOWb
-	saVJNDhSjLxaq7DYBRuRaANxMyUXT1Tj7+swihbP49Xup6E3GP4/du+ucgkOInsecKB9Do5
-	1H0lzbm9+DZ8tcm7i3zE0K5vLjako8m7BWBlV5FVY2oyTQVyCLc90Wzt5wndRPcIHxxpbnr
-	NtN5Mw7nMd/oaNEBhwM+Ev5BZg7M3D2a90NkjdbQxsCi3OI+cKNsYE7OnWTtabs9nLRiCy8
-	edHIG5dMtujpUKW2tnYtz7E3VdLeeAynv+MmP762/JhNEx3MOy9rouqaS22FRAZGszn5fhZ
-	oCqXbDmkLO+P85POlDBc1dMNBfuqkmCLD2QeMSDVM/DwpHOZnXujUxpdJ1NZ3f37NdZH3w+
-	h832T08w9zQf6M2szn7Zu8e1LpDOgOdaNG042GSelb+GjHMf03zywXVCCecp4rkgzUVB2Or
-	jBR7lLOTdOrTfNXzpQx8qzGJ+oDb1nJlFjqrvoTYgyyIhKu/QyMNhOx7cyJvIhUZOSg2XWZ
-	cLw32k8j0E+vTz8jElzIugjHmft8nCyJ9HXTRu82UzoSpo68iGR+X36jviolbjyFPdO1V7N
-	lfG0v7rSQikIJzt13JzuIXkitjIzL1BheiNLf4n8Y2XtOQkMIEFKz/21+Xr6dI2BaOZ/H/p
-	2Fbfyt/FXdXdXizT0UJJuXjnc7UQrZrCt1Da6mHdfjdsJs+3zjBRsdD+2xpO0ggC9xpZDVU
-	MQG8JOp5XfPMyVZYFWqgkHs+CYJ80oW5GOdtsvcbEmO6o+9NfhXxGyfqxCNhdnUQNKwOaR4
-	iitLPwHYFBYkWQPje4hY8j0tAD/nTC8bjTWiVAAWgItKS8rkTD
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
-X-QQ-RECHKSPAM: 0
+References: <20261028133335.75899-1-ketan@armoriq.io> <20261028133335.75899-2-ketan@armoriq.io>
+ <20261028.ecf3e62c6cf5@gnoack.org> <CAKS=Y5WqExXSEu3PPbFY5J0GDaYJyjxqQc8HYUKAnQ6fpEfAsQ@mail.gmail.com>
+In-Reply-To: <CAKS=Y5WqExXSEu3PPbFY5J0GDaYJyjxqQc8HYUKAnQ6fpEfAsQ@mail.gmail.com>
+From: Ketan Bhardwaj <ketan@armoriq.io>
+Date: Wed, 28 Oct 2026 12:36:42 -0400
+X-Gm-Features: AclHuK-qMO2rcpFvjjILt3QbN76ve3nvqIfklh4CNfb0NTWyJsVagURjyaSRpQQ
+Message-ID: <CAKS=Y5WRbX6fnoNLKjm=3iE3i-V6g=t0oHYu10X_EMjg+O7TWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/6] docs: security: Describe the Kernel Assurance
+ Plane design
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org, 
+	linux-api@vger.kernel.org, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	linux-kernel@vger.kernel.org, "HARIHARA SUDHAN . R" <harisudhan@armoriq.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Files copied from an untrusted channel (USB, network, serial) inherit
-the creating process's Smack label, losing the source's label.  That
-breaks provenance and lets a file from an untrusted source silently
-acquire a trusted label.
+G=C3=BCnther,
 
-Record a "preserve" label when a process opens a whitelisted regular
-file read-only and the read check passes.  The next inode it creates
-inherits that label instead of the process label, unless transmutation
-applies.  The record is one-shot: consumed on creation, dropped when
-transmutation takes precedence, cleared on exec, and not inherited
-across fork.
+Thanks for taking the time to go through this in detail. Your questions
+help identify where the document mixes three things: the objective's
+lifecycle, the policy derived from it, and the mechanisms enforcing that
+policy. We need to distinguish those more clearly.
 
-The record lives in a per-task LSM blob rather than in the cred.  A cred
-is immutable once committed and is shared by every thread of a process;
-writing the record there would be a data race between threads, and one
-thread could consume a label another thread had just recorded.  The
-copy intent belongs to a single thread, so a task blob is the right
-home for it.
+Replies inline.
 
-The preservable labels form a whitelist exposed through
-/smack/preserve-whitelist.  Only untrusted-channel / low-integrity
-labels should be added.  Recording happens only after a successful
-read check, so a process cannot create a file with a label it could
-not read (which would be a write-down primitive), and because the
-whitelist holds only low labels the mechanism can only ever preserve a
-low label, never a system trusted or sensitive one.  An empty
-whitelist is also the fast path in smack_file_open().
+> Can you please also set apart how it is conceptually different to
+> Landlock?
+>
+> Landlock can see paths (unlike Seccomp), and Landlock policies
+> (rulesets) are defined and enforced by unprivileged processes through
+> its userspace API.
+>
+> What is missing in Landlock which does not make it usable for your
+> use case?
 
-Known limitation: the kernel cannot distinguish a copy from an
-unrelated create, so a task that opens a whitelisted file and then
-creates an unrelated file will label the latter with the preserved low
-label.  Restricting the whitelist to low-integrity labels bounds the
-impact.
+Landlock is certainly usable for confining an agent workload. Path-based
+restrictions, inherited confinement, and unprivileged policy installation
+are not distinctions we should claim for KAP.
 
-The whole mechanism is guarded by CONFIG_SECURITY_SMACK_COPYWHITELIST,
-which defaults to no, so the default Smack behavior is unchanged.
+The distinction we are trying to establish is an independently managed
+authority context whose lifetime is associated with an objective, rather
+than a particular process or sandbox instance.
 
-Signed-off-by: Tang Pengke <tangpengke@yhkylin.cn>
----
-Changes in v3:
-- Move the preserve record out of the cred into a per-task LSM blob.
-  A cred is immutable once committed and is shared by all threads of a
-  process; storing the record there raced between threads and violated
-  the immutability contract.
-- Drop a pending record when transmutation applies.  Previously the
-  record survived that path and leaked into the next create in a
-  non-transmutable directory.
-- Clear the record on exec; it is not inherited across fork.
-- Document the known limitation that a create unrelated to the copy
-  still inherits the preserved low label.
+For example, an objective can have several already-running workers. Some
+may have been launched separately by the runtime, rather than being
+descendants of one application process. The objective's authority can
+change while those workers continue running. We want a trusted controller
+to update or revoke that authority, with the kernel checking subsequent
+protected operations against the current state, without requiring the
+workers to cooperate.
 
- security/smack/Kconfig        | 21 ++++++++
- security/smack/smack.h        | 47 +++++++++++++++++
- security/smack/smack_access.c | 77 +++++++++++++++++++++++++++
- security/smack/smack_lsm.c    | 61 +++++++++++++++++++++
- security/smack/smackfs.c      | 99 +++++++++++++++++++++++++++++++++++
- 5 files changed, 305 insertions(+)
+Landlock's documented enforcement API applies restrictions to the
+calling thread, or its thread group with TSYNC, with inheritance for
+future descendants [4]. The interface we are exploring instead lets an
+authorized external controller manage a shared authority context to
+which independently executing tasks are explicitly bound. That is a
+lifecycle and control-model distinction, not a distinction about whether
+paths can be restricted.
 
-diff --git a/security/smack/Kconfig b/security/smack/Kconfig
-index 5a8dfad46..134449fb6 100644
---- a/security/smack/Kconfig
-+++ b/security/smack/Kconfig
-@@ -53,3 +53,24 @@ config SECURITY_SMACK_APPEND_SIGNALS
- 	  to differentiate between delivering a network packet and
- 	  delivering a signal in the Smack rules.
- 	  If you are unsure how to answer this question, answer N.
-+
-+config SECURITY_SMACK_COPYWHITELIST
-+	bool "Preserve low-integrity labels when copying files"
-+	depends on SECURITY_SMACK
-+	default n
-+	help
-+	  Enable a whitelist of labels that are preserved when a file is
-+	  copied. When a process reads a file whose label is on the
-+	  whitelist and then creates a new file, the new file inherits
-+	  the source label instead of the process label. This is useful
-+	  for tracking the provenance of data copied from untrusted
-+	  sources such as removable media or network mounts, where the
-+	  filesystem cannot store a per-file label.
-+
-+	  Only low-integrity labels should be placed on the whitelist,
-+	  so that a process can only ever preserve a low label and never
-+	  a trusted or sensitive one. The whitelist is managed through
-+	  the /smack/preserve-whitelist interface.
-+
-+	  If you are unsure how to answer this question, answer N.
-+
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 9b9eb262f..03c83f338 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -73,6 +73,25 @@ struct smack_known {
- 	struct mutex			smk_rules_lock;	/* lock for rules */
- };
- 
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+/*
-+ * An entry in the preserve whitelist.
-+ *
-+ * The whitelist is the single source of truth for which labels are
-+ * preservable.  Its emptiness is the fast path in smack_file_open(),
-+ * and membership is tested by walking the list.
-+ *
-+ * Only untrusted-channel / low-integrity labels should be added, so a
-+ * process can only ever preserve a low label and never a system trusted
-+ * label (which would be a write-down primitive and let shared-library
-+ * loads pollute the record).
-+ */
-+struct smk_preserve_wl {
-+	struct list_head		list;
-+	struct smack_known		*skp;
-+};
-+#endif
-+
- /*
-  * Maximum number of bytes for the levels in a CIPSO IP option.
-  * Why 23? CIPSO is constrained to 30, so a 32 byte buffer is
-@@ -126,6 +145,19 @@ struct task_smack {
- 	struct list_head	smk_relabel;	/* transit allowed labels */
- };
- 
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+/*
-+ * Per-thread state for a single copy operation.  This is deliberately
-+ * kept out of the cred: credentials are immutable once committed and are
-+ * shared by every thread of a process, while the label to preserve
-+ * belongs to one copy and must not be visible to, or raced by, the other
-+ * threads.
-+ */
-+struct smack_task {
-+	struct smack_known	*smk_preserve;	/* label to inherit on next create */
-+};
-+#endif
-+
- #define	SMK_INODE_INSTANT	0x01	/* inode is instantiated */
- #define	SMK_INODE_TRANSMUTE	0x02	/* directory is transmuting */
- #define	SMK_INODE_CHANGED	0x04	/* smack was transmuted (unused) */
-@@ -312,6 +344,10 @@ bool smack_privileged(int cap);
- bool smack_privileged_cred(int cap, const struct cred *cred);
- void smk_destroy_label_list(struct list_head *list);
- int smack_populate_secattr(struct smack_known *skp);
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+bool smk_preserve_allowed(struct smack_known *skp);
-+void smk_preserve_set(struct smack_known *skp, bool on);
-+#endif
- 
- /*
-  * Shared data.
-@@ -326,6 +362,10 @@ extern struct smack_known *smack_unconfined;
- #endif
- extern int smack_ptrace_rule;
- extern struct lsm_blob_sizes smack_blob_sizes;
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+extern struct list_head smk_preserve_wl;
-+extern struct mutex smk_preserve_wl_lock;
-+#endif
- 
- extern struct smack_known smack_known_floor;
- extern struct smack_known smack_known_hat;
-@@ -352,6 +392,13 @@ static inline struct task_smack *smack_cred(const struct cred *cred)
- 	return cred->security + smack_blob_sizes.lbs_cred;
- }
- 
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+static inline struct smack_task *smack_task(const struct task_struct *task)
-+{
-+	return task->security + smack_blob_sizes.lbs_task;
-+}
-+#endif
-+
- static inline struct smack_known **smack_file(const struct file *file)
- {
- 	return (struct smack_known **)(file->f_security +
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index 350b88d58..5bb75e2ec 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -53,6 +53,83 @@ static u32 smack_next_secid = 10;
- int log_policy = SMACK_AUDIT_DENIED;
- #endif /* CONFIG_AUDIT */
- 
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+/*
-+ * Preserve whitelist: only labels on this list are preserved on copy.
-+ *
-+ * The list is the single source of truth for "which labels are
-+ * preservable". It also lets smack_file_open() take a plain
-+ * list_empty() fast path.
-+ *
-+ * Only untrusted-channel / low-integrity labels should be added, so
-+ * that a process can only ever preserve a low label -- never a system
-+ * trusted or sensitive label -- which would otherwise be a write-down
-+ * primitive (and would let shared-library loads pollute the record).
-+ *
-+ * Entries hold raw smack_known pointers. SMACK global labels are never
-+ * freed at runtime (smk_destroy_label_list frees list elements, not the
-+ * label objects), so these pointers stay valid for the life of the
-+ * system.
-+ */
-+LIST_HEAD(smk_preserve_wl);
-+DEFINE_MUTEX(smk_preserve_wl_lock);
-+
-+bool smk_preserve_allowed(struct smack_known *skp)
-+{
-+	struct smk_preserve_wl *e;
-+
-+	mutex_lock(&smk_preserve_wl_lock);
-+	list_for_each_entry(e, &smk_preserve_wl, list) {
-+		if (e->skp == skp) {
-+			mutex_unlock(&smk_preserve_wl_lock);
-+			return true;
-+		}
-+	}
-+	mutex_unlock(&smk_preserve_wl_lock);
-+	return false;
-+}
-+
-+/*
-+ * Add or remove a label from the preserve whitelist.
-+ *
-+ * The sysfs interface (preserve-whitelist) calls this with on=true for
-+ * a plain label, and on=false for a label prefixed with '-'.
-+ */
-+void smk_preserve_set(struct smack_known *skp, bool on)
-+{
-+	struct smk_preserve_wl *e, *new = NULL;
-+
-+	if (on) {
-+		new = kzalloc_obj(*new, GFP_KERNEL);
-+		if (!new)
-+			return;
-+		new->skp = skp;
-+	}
-+
-+	mutex_lock(&smk_preserve_wl_lock);
-+	if (on) {
-+		list_for_each_entry(e, &smk_preserve_wl, list) {
-+			if (e->skp == skp) {
-+				kfree(new);
-+				new = NULL;
-+				break;
-+			}
-+		}
-+		if (new)
-+			list_add_tail(&new->list, &smk_preserve_wl);
-+	} else {
-+		list_for_each_entry(e, &smk_preserve_wl, list) {
-+			if (e->skp == skp) {
-+				list_del(&e->list);
-+				kfree(e);
-+				break;
-+			}
-+		}
-+	}
-+	mutex_unlock(&smk_preserve_wl_lock);
-+}
-+#endif /* CONFIG_SECURITY_SMACK_COPYWHITELIST */
-+
- /**
-  * smk_access_entry - look up matching access rule
-  * @subject_label: a pointer to the subject's Smack label
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index ff115068c..2ec48b932 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -906,6 +906,11 @@ static int smack_bprm_creds_for_exec(struct linux_binprm *bprm)
- 	struct superblock_smack *sbsp;
- 	int rc;
- 
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+	/* a new program starts with a clean copy record */
-+	smack_task(current)->smk_preserve = NULL;
-+#endif
-+
- 	isp = smack_inode(inode);
- 	if (isp->smk_task == NULL || isp->smk_task == bsp->smk_task)
- 		return 0;
-@@ -1066,6 +1071,26 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
- 		}
- 	}
- 
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+	/*
-+	 * If a whitelisted label was recorded on file open, inherit it so
-+	 * the new file keeps the source's (low-integrity) label across the
-+	 * copy.  Transmutation takes precedence: when it applies the record
-+	 * is dropped, otherwise it would leak into a later create in a
-+	 * non-transmutable directory.
-+	 */
-+	if (trans_cred || (trans_rule && smk_inode_transmutable(dir))) {
-+		smack_task(current)->smk_preserve = NULL;
-+	} else {
-+		struct smack_known *skp = smack_task(current)->smk_preserve;
-+
-+		if (skp != NULL) {
-+			issp->smk_inode = skp;
-+			smack_task(current)->smk_preserve = NULL;
-+		}
-+	}
-+#endif
-+
- 	if (rc == 0)
- 		if (xattr_dupval(xattrs, xattr_count,
- 			    XATTR_SMACK_SUFFIX,
-@@ -2068,6 +2093,39 @@ static int smack_file_open(struct file *file)
- 	smk_ad_setfield_u_fs_path(&ad, file->f_path);
- 	rc = smk_tskacc(tsp, smk_of_inode(inode), MAY_READ, &ad);
- 	rc = smk_bu_credfile(file->f_cred, file, MAY_READ, rc);
-+	if (rc)
-+		return rc;
-+
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+	/*
-+	 * Record a whitelisted label after a successful read check so the
-+	 * next file create (smack_inode_init_security) can inherit it.
-+	 *
-+	 * The record must happen only after the read check passes;
-+	 * otherwise a process without read access to the source could
-+	 * create a file with that label without ever reading it, which
-+	 * would be a write-down primitive.
-+	 *
-+	 * The whitelist must only hold untrusted-channel / low-integrity
-+	 * labels (peripheral, network, serial, and other external
-+	 * sources), never system trusted labels (system binaries, shared
-+	 * libraries, etc.) -- otherwise shared-library loads would pollute
-+	 * the record.  Because of this constraint no library path
-+	 * filtering is needed here: the whitelist check already excludes
-+	 * every non-whitelisted file, including shared libraries.
-+	 *
-+	 * The whitelist is read-only after configuration, so the
-+	 * list_empty() fast path needs no locking.
-+	 */
-+	if (!list_empty(&smk_preserve_wl) &&
-+	    (file->f_flags & O_ACCMODE) == O_RDONLY &&
-+	    S_ISREG(inode->i_mode)) {
-+		struct smack_known *skp = smk_of_inode(inode);
-+
-+		if (smk_preserve_allowed(skp))
-+			smack_task(current)->smk_preserve = skp;
-+	}
-+#endif
- 
- 	return rc;
- }
-@@ -5106,6 +5164,9 @@ static int smack_uring_cmd(struct io_uring_cmd *ioucmd)
- 
- struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+	.lbs_task = sizeof(struct smack_task),
-+#endif
- 	.lbs_file = sizeof(struct smack_known *),
- 	.lbs_inode = sizeof(struct inode_smack),
- 	.lbs_ipc = sizeof(struct smack_known *),
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 6e62dcb36..b1a350365 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -62,6 +62,9 @@ enum smk_inos {
- 	SMK_NET6ADDR	= 23,	/* single label IPv6 hosts */
- #endif /* CONFIG_IPV6 */
- 	SMK_RELABEL_SELF = 24, /* relabel possible without CAP_MAC_ADMIN */
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+	SMK_PRESERVE_WL	= 25,	/* preserve whitelist labels */
-+#endif
- };
- 
- /*
-@@ -2867,6 +2870,97 @@ static const struct file_operations smk_ptrace_ops = {
- 	.llseek		= default_llseek,
- };
- 
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+/*
-+ * Seq_file operations for /smack/preserve-whitelist.
-+ * Iterates the whitelist and shows each preservable label.
-+ */
-+static void *preserve_wl_seq_start(struct seq_file *s, loff_t *pos)
-+{
-+	mutex_lock(&smk_preserve_wl_lock);
-+	return seq_list_start(&smk_preserve_wl, *pos);
-+}
-+
-+static void *preserve_wl_seq_next(struct seq_file *s, void *v, loff_t *pos)
-+{
-+	return seq_list_next(v, &smk_preserve_wl, pos);
-+}
-+
-+static void preserve_wl_seq_stop(struct seq_file *s, void *v)
-+{
-+	mutex_unlock(&smk_preserve_wl_lock);
-+}
-+
-+static int preserve_wl_seq_show(struct seq_file *s, void *v)
-+{
-+	struct smk_preserve_wl *e = list_entry(v, struct smk_preserve_wl, list);
-+
-+	seq_printf(s, "%s\n", e->skp->smk_known);
-+	return 0;
-+}
-+
-+static const struct seq_operations preserve_wl_seq_ops = {
-+	.start = preserve_wl_seq_start,
-+	.next  = preserve_wl_seq_next,
-+	.stop  = preserve_wl_seq_stop,
-+	.show  = preserve_wl_seq_show,
-+};
-+
-+static int smk_open_preserve_wl(struct inode *inode, struct file *file)
-+{
-+	return seq_open(file, &preserve_wl_seq_ops);
-+}
-+
-+static ssize_t smk_write_preserve_wl(struct file *file, const char __user *buf,
-+				     size_t count, loff_t *ppos)
-+{
-+	struct smack_known *skp;
-+	char *data, *label;
-+	bool on = true;
-+
-+	if (!smack_privileged(CAP_MAC_ADMIN))
-+		return -EPERM;
-+
-+	data = memdup_user_nul(buf, count);
-+	if (IS_ERR(data))
-+		return PTR_ERR(data);
-+
-+	label = strim(data);
-+	if (!label[0]) {
-+		kfree(data);
-+		return -EINVAL;
-+	}
-+
-+	/* A leading '-' removes the label (same convention as revoke-subject). */
-+	if (label[0] == '-') {
-+		on = false;
-+		label = strim(label + 1);
-+		if (!label[0]) {
-+			kfree(data);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	skp = smk_find_entry(label);
-+	if (!skp) {
-+		kfree(data);
-+		return -ENOENT;
-+	}
-+
-+	smk_preserve_set(skp, on);
-+	kfree(data);
-+	return count;
-+}
-+
-+static const struct file_operations smk_preserve_wl_ops = {
-+	.open		= smk_open_preserve_wl,
-+	.read		= seq_read,
-+	.write		= smk_write_preserve_wl,
-+	.llseek		= seq_lseek,
-+	.release	= seq_release,
-+};
-+#endif /* CONFIG_SECURITY_SMACK_COPYWHITELIST */
-+
- /**
-  * smk_fill_super - fill the smackfs superblock
-  * @sb: the empty superblock
-@@ -2933,6 +3027,11 @@ static int smk_fill_super(struct super_block *sb, struct fs_context *fc)
- 		[SMK_RELABEL_SELF] = {
- 			"relabel-self", &smk_relabel_self_ops,
- 				S_IRUGO|S_IWUGO},
-+#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-+		[SMK_PRESERVE_WL] = {
-+			"preserve-whitelist", &smk_preserve_wl_ops,
-+				S_IRUGO|S_IWUSR},
-+#endif
- 		/* last one */
- 			{""}
- 	};
--- 
-2.43.0
+The kernel would not interpret the objective. Userspace supplies the
+policy and an association with the objective's authority state. The
+kernel maintains the task binding and enforces that state.
 
+> Obviously, there are missing features that people would want in
+> Landlock, but that's an argument that doesn't count IMHO, since it's
+> still easier to add these features to Landlock than to create a new
+> separate LSM.
+
+Agreed that a list of missing access checks would not justify a separate
+LSM.
+
+Our preference is to keep objective identity, authority generation,
+execution binding, and revocation as an independent abstraction that can
+coexist with different confinement mechanisms. We do not want agent
+runtime frameworks to make the objective's lifecycle specific to one
+sandbox policy implementation.
+
+That does not establish that every part of this RFC is necessary, or that
+the current implementation is the right decomposition. It does establish
+what we would like to preserve while revising it: a common
+authority-lifecycle contract, rather than another collection of sandbox
+rules.
+
+I would appreciate your guidance on what a minimal, independently
+reviewable version of that abstraction would need to demonstrate. I give
+a concrete example below.
+
+> It's unclear to me why procfs is not covered with "file", since you
+> are already doing path-based matching. What operations are restricted
+> by "descriptor" is also unclear to me.
+
+In this implementation, procfs is a separate category selected for paths
+under /proc, with normalization of the current task's numeric PID to
+/proc/self. It is still path-based enforcement. There is no fundamental
+objective-authority requirement for making it a separate category, and
+the documentation should not suggest that it provides a distinct,
+comprehensive procfs security model.
+
+descriptor currently refers to checks at file_receive, using the
+received file's resolved path. It is not a general policy over every
+descriptor operation or a complete implementation of descriptor
+inheritance and transfer semantics.
+
+Regular file use is also checked through file_permission, but that
+should not be conflated with complete descriptor-lifecycle coverage. We
+will update documentation to identify the exact operations covered,
+particularly the distinctions between receiving a descriptor, using an
+existing descriptor, and accessing an existing mapping.
+
+> FWIW since pathname Unix Domain Socket are also addressed by path,
+> we found it useful to express the rules about them with paths as well,
+> in Landlock.
+>
+> In networking and IPC, I am a bit missing how that would work when
+> *offering* a service (listen(), bind()). Do you have thoughts on that?
+
+That makes sense. The current Unix-domain checks use coarse operation
+identifiers, unix:stream_connect and unix:may_send, rather than
+identifying the particular endpoint. They are not sufficient for
+expressing which pathname socket a task may communicate with.
+
+For pathname sockets, using the resolved endpoint is a better direction
+than treating all Unix-domain communication as one permission. Abstract
+sockets would need their own explicit semantics.
+
+The current network implementation covers connect(), not a complete
+service-offering policy. bind(), listen(), and use of accepted or
+already-connected sockets need to be addressed explicitly. A connect
+restriction should not be presented as covering those cases.
+
+These are gaps in the prototype's mediation coverage, not reasons for
+introducing the independent authority object. I should make that
+separation clear in the document.
+
+> What is sysv:flag=3DN? You might be interested in the discussion we had
+> at [1] ... many of its integer identifiers are not FD-like handles,
+> but just live fully accessible to the entire IPC namespace.
+
+It is the flag argument received by the ipc_permission hook. The current
+implementation formats that value into a predicate target; it does not
+use ipcp to identify the particular IPC object.
+
+Your concern applies directly. This does not establish object-scoped
+System V IPC confinement, and those identifiers cannot be treated as
+descriptors carrying an authority association. Thanks for the reference.
+We need either a properly specified object/namespace model and
+corresponding tests, or a much narrower statement of what this check
+provides.
+
+> Can it be turned off as well?
+>
+> You are creating policies through the file system, but you are at the
+> same time restricting access to the file system with these policies.
+> How does that work?
+
+On io_uring, the three checks shown cover override_creds, sqpoll, and
+uring_cmd. They do not provide a blanket disable switch for the interface
+or complete lineage handling for every asynchronous operation. The
+documentation should not imply otherwise.
+
+On KAP itself, a bound task has no per-task opt-out. The current group
+modes are enforce and revoked; enforce means evaluating the installed
+policy, not disabling enforcement. kap.default=3Dopen affects the
+additional check on unbound execution, not enforcement for already-bound
+tasks. If the policy evaluates to true, it is effectively turned off.
+However, thanks
+for the input; we will explore if a blanket turn-off is feasible if
+desired / necessary.
+
+The control-plane writer is a separate trusted runtime component, outside
+the workload's restricted igroup. It installs and updates the policy; the
+managed workload does not manage its own control files. There is no
+blanket exemption allowing a bound workload to access those files.
+
+The administrator remains trusted and can replace policy or change group
+state. Writable control-plane descriptors must also remain with the
+trusted component, not be passed to the managed workload. This is not
+intended to protect against a malicious administrator.
+
+> Chosen: a separate hierarchy. A container usually places all of its
+> tasks in one cgroup, while several objectives can run inside it, each
+> needing its own authority. Tying authority to resource partitioning
+> would prevent that, and authority must also follow setns, which
+> cgroup membership does not.
+>
+> I find both arguments unconvincing.
+
+Thanks for pointing this out you are right. trhe current cgroup argument
+is overstated as written. Userspace can create sub-cgroups and choose
+their membership. Also, entering another cgroup namespace does not itself
+change cgroup membership, so the statement about setns() may not be a
+sound distinction [5].
+
+The reason for wanting an independent association is that resource
+organization and objective-authority organization need not coincide.
+
+For example, one objective may have workers in both interactive and
+background resource groups, while each resource group contains workers
+serving several objectives. Updating the objective's authority should
+not require reorganizing those resource groups.
+
+The intended distinction is therefore not "Linux cannot group tasks by
+something defined in userspace." It already can. It is that we want an
+authority association and lifecycle independent of the resource
+hierarchy.
+
+That is our argument and the one document should make, together
+with an example showing why that independence is useful.
+
+> If it's a BPF program, you can also audit it in one place ... lobbying
+> to get CONFIG_BPF_LSM enabled ... is probably not substantially
+> different than ... CONFIG_KAP_LSM enabled.
+
+Agreed. Auditability and configuration availability are not sufficient
+arguments against BPF LSM. BPF LSM can implement enforcement at security
+hooks, and I should not imply otherwise [6].
+
+What we are seeking is a shared contract for authority-object lifetime,
+task attachment, inheritance, updates, and revocation. A particular BPF
+implementation could implement parts of that contract; the question is
+which semantics should be common rather than independently reconstructed
+by each agent runtime framework.
+
+The built-in implementation makes the proposed contract concrete, but
+its existence is not proof that this is the smallest implementation. I
+would welcome guidance on reducing the mechanism while preserving an
+independent objective-authority abstraction.
+
+> I'm surprised that it's privileged, since existing AI agent software
+> tends to run unprivileged. Who would be operating this and defining
+> the policies?
+>
+> ... are roughly equivalent to the goals that you give to the model
+> in an agent prompt?
+>
+> Does the agent software communicate with a privileged agent? Or does
+> the agent software spawn off namespaces to attain the necessary
+> privileges?
+
+The initial deployment model is a supervised agent runtime, not an
+unprivileged application installing its own sandbox.
+
+A user supplies a task, but that prompt is not itself an authorization
+grant. The trusted runtime combines the task with configured workspace
+access, tool contracts, credential bindings, administrator policy, and
+any required approvals to produce the executable policy.
+
+Our intentd work maintains the objective's current authority and
+lifecycle in userspace. A privileged runtime-side or guest-side component
+installs the resulting state before starting the managed workload. The
+agent itself runs unprivileged. The runtime integration is described in
+[2].
+
+In the submitted control path, writes require authorization against the
+initial user namespace. Creating a new user namespace is not how an
+agent obtains permission to install KAP policy.
+
+This deployment assumption needs to be explicit. It is a different trust
+model from unprivileged self-restriction, not an argument that
+self-restriction is inadequate.
+
+> More of a terminology remark, but when you consider the kernel layer
+> only, it feels like the compiled predicate snapshot *is* the policy
+> that you are enforcing?
+
+Yes. From the kernel's perspective, the predicate snapshot is the policy.
+
+The distinction I intended was between interpreting the objective and
+enforcing the resulting policy. The former stays in userspace. The
+current kernel code also parses and compiles the supplied pattern
+representation, so "policy stays in userspace" may too broad and
+misleading.
+
+A better description is: objective interpretation, authorization
+decisions, and validation of upstream artifacts remain in userspace;
+the kernel enforces the installed policy and its execution binding.
+
+> I don't understand why the JSON format is a question for the kernel
+> review; you can do the interface in a format that is suitable for the
+> kernel, and translate from JSON into that format in userspace ...
+
+Agreed. JSON is a prototype representation, not a requirement of the
+model. Translation from a userspace policy format should happen before
+installation.
+
+The kernel-facing questions should concern a bounded, versioned
+representation, validation, atomic installation, and update semantics.
+They should not require the kernel to accommodate the userspace
+configuration language.
+
+> I believe we added such hooks for the Landlock namespace and
+> capability support.
+
+Thanks for pointing that out. The current linux-next documentation
+describes namespace and capability restrictions, including namespace
+acquisition through unshare(), clone(), and setns() [7]. I will check the
+available hook coverage against the intended base and remove the blanket
+statement that these paths lack hooks.
+
+Direct calls to KAP are not essential to the design. Where the common
+hooks cover the operation, that is the integration point we should use.
+Any remaining coverage gap should be described as a generic hook
+requirement, not as a reason to hardwire KAP into the syscall path.
+
+> I've read the doc, but still don't understand how that model is
+> supposed to work. Do you maybe have a concrete motivational example
+> which defines such a policy and demonstrates why that is different
+> and can not implemented with one of the other LSMs or the BPF-LSM
+> instead?
+
+Yes. Here is a smaller example than the current architectural description.
+
+An agent runtime has two objectives executing in the same environment
+through separate worker processes. Both can initially access a package
+cache and contact a package registry.
+
+The relevant authority contents are:
+
+    Objective O1, generation 7:
+        file access: /workspace, /package-cache
+        network connect: 192.0.2.1:443
+
+    Objective O2, generation 4:
+        file access: /workspace, /package-cache
+        network connect: 192.0.2.1:443
+
+These are abbreviated policy contents, not complete startup grants.
+
+O1 finishes dependency installation and moves to offline testing. O2 is
+still doing package-resolution work. The controller changes only O1:
+
+    Objective O1, generation 8:
+        file access: /workspace
+        network connect: none
+
+A worker created under O1/generation 7 is still alive and may have an
+already-open regular file in /package-cache. We want its next covered
+file-access or connection check to fail without relying on that worker
+to restrict itself. O2's authority should be unaffected.
+
+In the RFC's epoch model, advancing O1's generation invalidates old task
+bindings. Authorized continuations must be explicitly rebound to the
+current generation; old workers do not silently acquire the replacement
+authority. This is fail-closed invalidation at the next covered check,
+not termination of the process, recovery of data already read, or
+cancellation of every operation already in flight.
+
+The RFC still has a disclosed concurrent-binding race and needs
+selftests. I am describing the intended contract and the behavior the
+revised tests should establish, not claiming complete coverage today.
+
+There is a related implementation experience behind this. In our Agent
+Substrate/Kata integration, we had to ensure that a failed
+authority-binding step could not leave the workload running unbound. We
+also initially installed a grant that omitted operations needed during
+startup and stranded the workload. Those experiences are described in
+[2].
+
+Suspend/resume exposed another boundary: a VM snapshot can restore an
+older kernel authority state. Our runtime therefore checks the current
+objective state outside the snapshot before allowing the workload to
+resume [3]. A guest-local epoch alone cannot solve rollback of the entire
+guest. That is a runtime responsibility, not a guarantee supplied by this
+patch series.
+
+These examples motivated separating the objective's authority lifecycle
+from the process and sandbox lifecycle.
+
+They do not demonstrate that equivalent behavior is impossible to
+construct with BPF or another programmable security mechanism.
+The question we are bringing upstream is whether
+this lifecycle deserves a common, independent kernel-visible
+abstraction, rather than remaining runtime-specific coordination around
+separately installed policies.
+
+There is also a distinction between the broader design and this RFC:
+the lineage root is currently an opaque userspace-supplied reference.
+The kernel is not verifying a proof or proving that one policy
+is a valid refinement of another. Those decisions remain trusted
+userspace responsibilities in this version.
+
+Would you suggest a way to present and implement a minimal independent
+authority-domain facility that composes with existing LSM enforcement,
+while keeping objective lifecycle management separate from any
+particular sandbox implementation?
+
+More specifically, would a smaller series focused on task binding and
+inheritance, atomic authority-generation updates, revocation, and a
+narrowly defined set of enforcement points make the model easier to
+evaluate? What comparison and tests would you want to see to assess
+whether that independent abstraction is justified?
+
+We are open to changing the interface and implementation substantially.
+What we would like to preserve is the separation between
+objective-authority management and any one agent runtime framework or
+confinement policy implementation.
+
+I have included the broader motivation in [1] and the implementation
+accounts in [2] and [3] as background. The RFC itself should contain the
+concrete model and evidence needed for review without requiring readers
+to follow those posts.
+
+Thanks again for the detailed feedback.
+
+Ketan
+
+[1] AI agents need an OS-level enforcement primitive:
+https://armoriq.substack.com/p/ai-agents-need-a-os-level-enforcement
+
+[2] From Objective to Syscall: Building the First Intent Container:
+https://armoriq.substack.com/p/from-objective-to-syscall-building
+
+[3] Execution State Can Travel Backward. Authority Cannot:
+https://armoriq.substack.com/p/execution-state-can-travel-backward
+
+[4] Landlock documentation:
+https://docs.kernel.org/userspace-api/landlock.html
+
+[5] Control Group v2 documentation:
+https://docs.kernel.org/admin-guide/cgroup-v2.html
+
+[6] BPF LSM documentation:
+https://docs.kernel.org/bpf/prog_lsm.html
+
+[7] Landlock documentation, linux-next:
+https://docs.kernel.org/next/userspace-api/landlock.html
+
+On Wed, Oct 28, 2026 at 12:03=E2=80=AFPM Ketan Bhardwaj <ketan@armoriq.io> =
+wrote:
+>
+> Hi G=C3=BCnther,
+>
+> Thanks for the detailed feedback. These are great points.
+>
+> I am working on a response to address the conceptual differences with Lan=
+dlock and clarify the points on the control plane, IPC, and the privilege m=
+odel. I will get back to you shortly with more details and a concrete examp=
+le.
+>
+> Best,
+> Ketan
+>
+> On Wed, Oct 28, 2026 at 11:17=E2=80=AFAM G=C3=BCnther Noack <gnoack3000@g=
+mail.com> wrote:
+>>
+>> Hello!
+>>
+>> On Wed, Oct 28, 2026 at 09:33:30AM -0400, Ketan Bhardwaj wrote:
+>> > Describe the Kernel Assurance Plane (KAP) design.
+>> >
+>> > Agents and other long-running tasks act on behalf of an objective that=
+ a
+>> > user approved. Linux decides whether a task may perform an operation,
+>> > but not whether the operation still belongs to that objective. Seccomp=
+,
+>> > LSM profiles, namespaces and cgroups cannot hold several objectives ap=
+art
+>> > inside one environment, or revoke one objective's authority while its
+>> > task runs.
+>> >
+>> > KAP introduces objective-scoped authority as a kernel subsystem. The
+>> > document covers Intent Lineage Groups, the authority model and the
+>> > control plane under /sys/kernel/security/kap, where igroups are create=
+d
+>> > with mkdir as cgroups are. For each design decision it lists the
+>> > alternatives considered, and it ends with the questions on which
+>> > maintainer feedback is wanted.
+>> >
+>> > Assisted-by: Claude
+>> > Co-developed-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
+>> > Signed-off-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
+>> > Assisted-by: Codex
+>> > Signed-off-by: Ketan Bhardwaj <ketan@armoriq.io>
+>> > ---
+>> >  Documentation/ABI/testing/securityfs-kap | 111 +++++++++++
+>> >  Documentation/security/index.rst         |   1 +
+>> >  Documentation/security/kap.rst           | 236 ++++++++++++++++++++++=
++
+>> >  3 files changed, 348 insertions(+)
+>> >  create mode 100644 Documentation/ABI/testing/securityfs-kap
+>> >  create mode 100644 Documentation/security/kap.rst
+>> >
+>> > diff --git a/Documentation/ABI/testing/securityfs-kap b/Documentation/=
+ABI/testing/securityfs-kap
+>> > new file mode 100644
+>> > index 0000000..066de0b
+>> > --- /dev/null
+>> > +++ b/Documentation/ABI/testing/securityfs-kap
+>> > @@ -0,0 +1,111 @@
+>> > +What:                /sys/kernel/security/kap/
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Kernel Assurance Plane control directory in securityfs.
+>> > +             The ABI is experimental and intended for RFC review.
+>> > +
+>> > +What:                /sys/kernel/security/kap/kap.default
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read or write "open" or "closed". When closed, a task
+>> > +             outside the initial PID namespace that is bound to no ig=
+roup
+>> > +             cannot start a program.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Directory of Intent Lineage Groups. Create an igroup wit=
+h
+>> > +             mkdir, as a cgroup is created.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.in=
+stall
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Write the lineage root, authority epoch, optional expiry=
+ and
+>> > +             transition, and the authority as one key=3Dvalue documen=
+t in a
+>> > +             single write. The fields commit together or not at all.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.pr=
+ocs
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Write a pid to bind that process, with all of its thread=
+s,
+>> > +             to the igroup. Reads return the pids written.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.li=
+neage_root
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read or write the opaque lineage root for the igroup.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.au=
+thority_epoch
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read or write the current authority epoch. A lower value=
+ is
+>> > +             refused, and a write clears revoked mode. Bound tasks wh=
+ose
+>> > +             recorded epoch is stale fail KAP checks closed.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.au=
+thority
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read or write the authority document for the igroup, in =
+a
+>> > +             strict subset of JSON, with a "predicates" array, each p=
+redicate having a
+>> > +             "kind" and "allow" and "deny" arrays of patterns. The
+>> > +             Kernel Assurance Plane design document lists the kinds a=
+nd
+>> > +             how patterns match.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.ex=
+pires_at
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read or write the authority expiry in seconds since the =
+Unix
+>> > +             epoch, or 0 for none. An expiry already in the past is
+>> > +             refused. Once it passes, every check for the igroup fail=
+s
+>> > +             closed.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.tr=
+ansition
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Write a transition record whose sequence number is highe=
+r
+>> > +             than the last one, to prevent replay. Reads return the l=
+ast
+>> > +             sequence number.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.mo=
+de
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read or write igroup mode. Supported values are "enforce=
+" and
+>> > +             "revoked". A revoked igroup refuses every operation.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.ev=
+ents
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read recent KAP decisions as JSON lines with the fields
+>> > +             ts_ns, igroup, decision, operation, target, reason, epoc=
+h,
+>> > +             root and pid.
+>> > +
+>> > +What:                /sys/kernel/security/kap/igroups/<igroup>/kap.ig=
+fd
+>> > +Date:                October 2026
+>> > +KernelVersion:       RFC
+>> > +Contact:     Ketan Bhardwaj <ketan@armoriq.io>
+>> > +Description:
+>> > +             Read the igroup's name, epoch and lineage root on one li=
+ne.
+>> > diff --git a/Documentation/security/index.rst b/Documentation/security=
+/index.rst
+>> > index 00650dc..937193b 100644
+>> > --- a/Documentation/security/index.rst
+>> > +++ b/Documentation/security/index.rst
+>> > @@ -18,6 +18,7 @@ Security Documentation
+>> >     siphash
+>> >     tpm/index
+>> >     digsig
+>> > +   kap
+>> >     landlock
+>> >     secrets/index
+>> >     ipe
+>> > diff --git a/Documentation/security/kap.rst b/Documentation/security/k=
+ap.rst
+>> > new file mode 100644
+>> > index 0000000..22c2729
+>> > --- /dev/null
+>> > +++ b/Documentation/security/kap.rst
+>> > @@ -0,0 +1,236 @@
+>> > +.. SPDX-License-Identifier: GPL-2.0
+>> > +
+>> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> > +Kernel Assurance Plane
+>> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> > +
+>> > +Kernel Assurance Plane (KAP) introduces objective-scoped authority as=
+ a kernel
+>> > +subsystem. Intent Lineage Groups (igroups) are its core kernel object=
+, LSM hooks
+>> > +are its enforcement mechanism, and securityfs is its control-plane in=
+terface.
+>> > +
+>> > +This document describes the design for review. It lists the alternati=
+ves that
+>> > +were considered for each decision and the questions on which maintain=
+er feedback
+>> > +is wanted.
+>> > +
+>> > +Motivation
+>> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> > +
+>> > +A task increasingly runs on behalf of an objective that a user approv=
+ed, for
+>> > +example an AI agent asked to fix a failing test. Over hours it starts=
+ programs,
+>> > +reads and writes files and opens connections. Linux decides whether t=
+he task
+>> > +may perform each operation. It does not decide whether the operation =
+still
+>> > +belongs to the objective the task was started for.
+>> > +
+>> > +Existing mechanisms cover parts of this. Seccomp filters syscalls but=
+ cannot see
+>> > +paths or objectives. LSM profiles, such as AppArmor or SELinux, are a=
+ttached to
+>> > +programs or labels, not to an objective, and cannot be narrowed for o=
+ne task
+>> > +while it runs.
+>>
+>> Can you please also set apart how it is conceptually different to
+>> Landlock?
+>>
+>> Landlock can see paths (unlike Seccomp), and Landlock policies
+>> (rulesets) are defined and enforced by unprivileged processes through
+>> its userspace API.  It is already a popular choice for AI agent
+>> sandboxing and orchestration frameworks.
+>>
+>> What is missing in Landlock which does not make it usable for your use
+>> case?
+>>
+>> (Obviously, there are missing features that people would want in
+>> Landlock, but that's an argument that doesn't count IMHO, since it's
+>> still easier to add these features to Landlock than to create a new
+>> separate LSM.)
+>>
+>>
+>> > +Namespaces and cgroups partition resources rather than
+>> > +authority. None of them lets several objectives run in one environmen=
+t, each
+>> > +held to its own authority, or fails a task closed the moment its auth=
+ority is
+>> > +revoked.
+>> > +
+>> > +Model
+>> > +=3D=3D=3D=3D=3D
+>> > +
+>> > +``igroup``
+>> > +  Intent Lineage Group, the unit KAP enforces. An igroup owns an auth=
+ority
+>> > +  snapshot, a lineage root, the current epoch, an optional expiry, a =
+transition
+>> > +  sequence, its bound tasks and an event log. A process is bound by w=
+riting its
+>> > +  pid to the igroup, which binds all of its threads. Children inherit=
+ the
+>> > +  binding, and it is kept across exec and setns.
+>> > +
+>> > +``authority snapshot``
+>> > +  The predicate set for one igroup epoch, with typed ``allow`` and ``=
+deny``
+>> > +  arrays for exec, file, network connect, credential, IPC, namespace,
+>> > +  descriptor, procfs, executable memory, BPF, ptrace and io_uring che=
+cks. File
+>> > +  predicates also govern rename, link, unlink, mkdir, rmdir, mknod, s=
+ymlink and
+>> > +  truncate, so a file cannot be moved into a denied path. A deny wins=
+ over an
+>> > +  allow, and an operation no predicate allows is refused. The snapsho=
+t is
+>> > +  compiled once when it is installed.
+>> > +
+>> > +  In this RFC the snapshot is a document in a strict subset of JSON, =
+with no
+>> > +  whitespace around the ``"predicates"`` and ``"kind"`` keys and no e=
+scaped
+>> > +  quotes::
+>> > +
+>> > +    {"predicates":[{"kind":"file","allow":["/srv/work"],"deny":["/srv=
+/work/keys"]},
+>> > +                   {"kind":"exec","allow":["/usr/bin/*"],"deny":[]}]}
+>> > +
+>> > +  The kinds are ``exec``, ``file``, ``net``, ``cred``, ``ipc``, ``nam=
+espace``,
+>> > +  ``descriptor``, ``procfs``, ``execmem``, ``bpf``, ``ptrace`` and
+>> > +  ``io_uring``. File, descriptor and procfs patterns match a path and
+>> > +  everything below it. Other patterns match exactly, or by prefix whe=
+n they
+>> > +  end in ``*``. A program is allowed by the path it resolves to, and =
+refused
+>> > +  by a deny on either that path or the name it was started with.
+>> > +
+>> > +  Each kind is matched against a target string:
+>> > +
+>> > +  * ``exec``, ``file``, ``descriptor``, ``procfs``: a path. A rename,=
+ link or
+>> > +    other path operation is checked as its parent directory plus its =
+name.
+>>
+>> It's unclear to me why procfs is not covered with "file", since you
+>> are already doing path-based matching.  What operations are restricted
+>> by "descriptor" is also unclear to me.
+>>
+>> > +  * ``execmem``: the path of the mapped file, or ``anonymous``.
+>> > +  * ``net``: the destination address and port, as in ``192.0.2.1:443`=
+`, or
+>> > +    ``family:N`` for an address family other than IPv4 and IPv6. A co=
+nnect
+>> > +    with ``AF_UNSPEC`` is not checked; ``AF_UNIX`` is checked as ``ip=
+c``.
+>> > +  * ``cred``: ``uid=3DU,euid=3DU,suid=3DU,fsuid=3DU``, ``gid=3DG,egid=
+=3DG,sgid=3DG,fsgid=3DG``,
+>> > +    ``groups`` or ``capset``.
+>> > +  * ``ipc``: ``unix:stream_connect``, ``unix:may_send`` or ``sysv:fla=
+g=3DN``.
+>>
+>> FWIW since pathname Unix Domain Socket are also addressed by path, we
+>> found it useful to express the rules about them with paths as well, in
+>> Landlock.
+>>
+>> In networking and IPC, I am a bit missing how that would work when
+>> *offering* a service (listen(), bind()).  Do you have thoughts on
+>> that?
+>>
+>> What is `sysv:flag=3DN`?  You might be interested in the discussion we
+>> had at [1] -- I found System V IPC tricky to restrict, because many of
+>> its integer identifiers are not FD-like handles, but just live fully
+>> accessible to the entire IPC namespace.
+>>
+>> [1] https://lore.kernel.org/all/20260727230833.138165-1-utilityemal77@gm=
+ail.com/
+>>
+>> > +  * ``namespace``: ``TYPE:OPERATION`` for clone, unshare and setns, w=
+here
+>> > +    TYPE is ``mount``, ``pid``, ``net``, ``user``, ``uts``, ``ipc``,
+>> > +    ``cgroup`` or ``time``; ``user`` for creating a user namespace; a=
+nd
+>> > +    ``mount:mount:FSTYPE:PATH``, ``mount:umount:PATH``,
+>> > +    ``mount:pivotroot:OLD:NEW`` and ``mount:move:FROM:TO`` for mounts=
+.
+>> > +  * ``ptrace``: ``same-igroup``, ``igroup=3DNAME`` or ``unconfined``,=
+ for the
+>> > +    other task.
+>> > +  * ``bpf``: ``cmd=3DN``, with ``map_type=3DN`` or ``prog_type=3DN`` =
+when creating
+>> > +    a map or loading a program.
+>> > +  * ``io_uring``: ``override_creds``, ``sqpoll`` or ``uring_cmd``.
+>>
+>> Can it be turned off as well?
+>>
+>>
+>> > +``epoch``
+>> > +  Monotonic authority generation. Installing a higher epoch fails eve=
+ry task
+>> > +  still bound to an older one closed from its next check.
+>> > +
+>> > +``lineage root``
+>> > +  Opaque identifier supplied by userspace that ties the installed aut=
+hority to
+>> > +  a committed execution lineage.
+>> > +
+>> > +The kernel does not parse planning or policy languages. A privileged =
+userspace
+>> > +runtime validates those artifacts and installs kernel-ready state. Ta=
+sks that
+>> > +are bound to no igroup are not checked, except for the exec check tha=
+t
+>> > +``kap.default`` enables.
+>> > +
+>> > +Control plane
+>> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> > +
+>> > +KAP state lives under ``/sys/kernel/security/kap``::
+>> > +
+>> > +  /sys/kernel/security/kap/
+>> > +    kap.default
+>> > +    igroups/            created with mkdir, as cgroups are
+>> > +      <igroup>/
+>> > +        kap.install
+>> > +        kap.procs
+>> > +        kap.lineage_root
+>> > +        kap.authority_epoch
+>> > +        kap.authority
+>> > +        kap.expires_at
+>> > +        kap.transition
+>> > +        kap.mode
+>> > +        kap.events
+>> > +        kap.igfd
+>> > +
+>> > +``kap.default``
+>> > +  ``open`` (the default) or ``closed``. When closed, a task outside t=
+he initial
+>> > +  PID namespace that is bound to no igroup cannot start a program, so=
+ a bind
+>> > +  that failed cannot leave a workload running without authority.
+>> > +
+>> > +``kap.install``
+>> > +  Write the lineage root, epoch, optional expiry and transition, and =
+the
+>> > +  authority as one ``key=3Dvalue`` document in a single write. They c=
+ommit
+>> > +  together or not at all.
+>> > +
+>> > +``kap.procs``
+>> > +  Write a pid to bind that process, with all of its threads, to the i=
+group.
+>> > +  Reads return the pids written.
+>> > +
+>> > +``kap.lineage_root``, ``kap.authority``
+>> > +  Read or write the lineage root or the authority document. A write t=
+o
+>> > +  ``kap.authority`` is compiled before it replaces the current author=
+ity; a
+>> > +  document that does not compile leaves it unchanged.
+>> > +
+>> > +``kap.authority_epoch``, ``kap.expires_at``
+>> > +  Read or write the epoch, or the expiry in seconds since the Unix ep=
+och (0 for
+>> > +  none). A lower epoch, or an expiry already in the past, is refused.=
+ Writing
+>> > +  an epoch, or installing authority, also clears revoked mode.
+>> > +
+>> > +``kap.transition``
+>> > +  Write a transition record whose sequence number is higher than the =
+last one.
+>> > +  Reads return the last sequence number.
+>> > +
+>> > +``kap.mode``
+>> > +  ``enforce`` or ``revoked``. A revoked igroup refuses every operatio=
+n.
+>> > +
+>> > +``kap.events``
+>> > +  Read recent decisions as JSON lines with the fields ``ts_ns``, ``ig=
+roup``,
+>> > +  ``decision``, ``operation``, ``target``, ``reason``, ``epoch``, ``r=
+oot``
+>> > +  (the lineage root) and ``pid``.
+>> > +
+>> > +``kap.igfd``
+>> > +  Read the igroup's name, epoch and lineage root on one line. The nam=
+e is
+>> > +  reserved for future igroup file descriptors.
+>> > +
+>> > +Design decisions
+>> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> > +
+>> > +Where the control plane lives
+>> > +-----------------------------
+>> > +
+>> > +Igroups are created and destroyed by userspace, so the control plane =
+needs
+>> > +directories that userspace can create. securityfs does not allow user=
+space
+>> > +mkdir.
+>> > +
+>> > +Considered:
+>> > +
+>> > +* A dedicated filesystem mounted at ``/sys/fs/kap``, the prototype's =
+first
+>> > +  interface. It works, but puts security state outside securityfs, wh=
+ere the
+>> > +  other LSMs keep theirs.
+>> > +* securityfs with control files, for example writing a name to a ``cr=
+eate`` file
+>> > +  to make an igroup. This keeps everything in securityfs but replaces=
+ mkdir and
+>> > +  rmdir with a private protocol that every tool has to learn.
+>> > +
+>> > +Chosen: a small internal filesystem that the kernel mounts itself and=
+ links
+>> > +under securityfs, the approach AppArmor uses for policy namespaces
+>> > +(``apparmorfs``, linked as ``/sys/kernel/security/apparmor/policy``).=
+ Users only
+>> > +see paths under securityfs, and an igroup is created with mkdir, the =
+way a
+>> > +cgroup is.
+>>
+>> You are creating policies through the file system, but you are at the
+>> same time restricting access to the file system with these policies.
+>> How does that work?
+>>
+>> > +Igroups rather than a cgroup controller
+>> > +---------------------------------------
+>> > +
+>> > +Considered: making KAP a cgroup controller, since igroups are created=
+ like
+>> > +cgroups and follow the process tree.
+>> > +
+>> > +Chosen: a separate hierarchy. A container usually places all of its t=
+asks in
+>> > +one cgroup, while several objectives can run inside it, each needing =
+its own
+>> > +authority. Tying authority to resource partitioning would prevent tha=
+t, and
+>> > +authority must also follow setns, which cgroup membership does not.
+>> > +
+>> > +A static LSM rather than BPF LSM programs
+>> > +-----------------------------------------
+>> > +
+>> > +Considered: implementing the checks as BPF LSM programs.
+>> > +
+>> > +Chosen: a built-in LSM. Igroup membership, epochs and inheritance acr=
+oss fork,
+>> > +exec and setns are kernel object state with fixed semantics that revi=
+ewers can
+>> > +audit in one place. BPF LSM also needs ``CONFIG_BPF_LSM`` and BTF, wh=
+ich many
+>> > +minimal kernels do not enable.
+>>
+>> I find both arguments unconvincing.  If it's a BPF program, you can
+>> also audit it in one place - in the BPF program.  And the lobbying to
+>> get CONFIG_BPF_LSM enabled in these kernels is probably not
+>> substantially different than the lobbying to get CONFIG_KAP_LSM
+>> enabled.
+>>
+>> > +
+>> > +Policy stays in userspace
+>> > +-------------------------
+>> > +
+>> > +Considered: parsing a policy language in the kernel.
+>> > +
+>> > +Chosen: the kernel accepts only a compiled predicate snapshot. Planni=
+ng,
+>> > +policy validation and signature checks stay in privileged userspace, =
+and the
+>> > +snapshot is compiled into per-kind pattern sets once at install time.
+>>
+>> I'm surprised that it's privileged, since existing AI agent software
+>> tends to run unprivileged.  Who would be operating this and defining
+>> the policies?  From your description I would have expected that the
+>> "objectives" that inform the policies are roughly equivalent to the
+>> goals that you give to the model in an agent prompt?  Does the agent
+>> software communicate with a privileged agent?  Or does the agent
+>> software spawn off namespaces to attain the necessary privileges?
+>>
+>> More of a terminology remark, but when you consider the kernel layer
+>> only, it feels like the compiled predicate snapshot *is* the policy
+>> that you are enforcing?
+>>
+>>
+>> > +Questions for maintainers
+>> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>> > +
+>> > +1. Is an internal filesystem linked under securityfs, as AppArmor doe=
+s,
+>> > +   acceptable for a control plane that needs userspace mkdir?
+>> > +2. Should igroup removal follow cgroups, with rmdir allowed once no t=
+ask is
+>> > +   bound?
+>> > +3. Is a separate igroup hierarchy the right call, or should this be a=
+ cgroup
+>> > +   controller despite the cases above?
+>> > +4. The predicate format is a JSON document and experimental. Is a bin=
+ary
+>> > +   format preferred, or reuse of an existing ruleset format such as
+>> > +   Landlock's?
+>>
+>> I don't understand why the JSON format is a question for the kernel
+>> review; you can do the interface in a format that is suitable for the
+>> kernel, and translate from JSON into that format in userspace, not
+>> mixing the layering between that userspace component and kernel space.
+>>
+>>
+>> > +5. unshare and setns have no LSM hook, so the series calls KAP from t=
+hem
+>> > +   directly. Would a hook for namespace transitions be acceptable, or=
+ is there
+>> > +   an existing one that should be used instead?
+>>
+>> I believe we added such hooks for the Landlock namespace and
+>> capability support.
+>>
+>>
+>> > +6. The LSM ID is provisional and should be confirmed.
+>> > +
+>> > +RFC status
+>> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> > +
+>> > +This interface is experimental. The RFC is intended to make the autho=
+rity and
+>> > +lineage model reviewable, not to freeze the userspace ABI.
+>>
+>> I have to admit, I've read the doc, but still don't understand how
+>> that model is supposed to work.  Do you maybe have a concrete
+>> motivational example which defines such a policy and demonstrates why
+>> that is different and can not implemented with one of the other LSMs
+>> or the BPF-LSM instead?
+>>
+>> =E2=80=93G=C3=BCnther
