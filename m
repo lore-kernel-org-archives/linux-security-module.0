@@ -1,99 +1,99 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.123
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793227392;
-	b=327MMlY/gWX7Sy8KvMXXJptp23ryuZU+DOGKoDTvPnArq05vtFqyVDBb3as3lOJPdTR8
-	 +XTuVd9pAh+f12BKUZUXg6LYlq0K9lyZTWkxRG53YxD/l3oHcu4XVvQayxMEOgtyxkw/9
-	 6Ch1iSlpDDn1AQsvUd0be9ProSVGIpfiT5/dxUonPmCNRaRnDRfeJusletTeyXGHCnbfT
-	 u9Yc/qgXObyDUV4AmOdxb+k0A0K+Pv0H4PCqrBqNnxn5i0l5i7F+XhHGZpmAAjFyxx9vj
-	 vR6IDXCi3VJu7Dyt+CumTOIRnHLR6iC5tbt5qkQY3DYvSpH5Qu+axfwkc399XHI3rFw==
+	t=1793227795;
+	b=FuttRBO23Jgo2GQ0MVZXUHM/IrMI3lRvbkQYSGqNxtVdQqfWoohcK56+EnpC2zSOQZdo
+	 0Y/q8fvS6tQSIm5BXOXfFJBDeKciId4VD5LGlluW6So87LsV7D6UQJK5OWkBzSoKs8Nra
+	 nV/gemaPSoP4HDzC36cPlpOxMCYHhztIWUDI5a0QH/9jCyK1kdhNFVMYcNeB8TYLwtv6T
+	 pmBBzv8HMachERA8xRswfY+CKeR4I7rzb/9DwrD7qcqCkKC5BceDXWeTmh0eBj0GVnZaa
+	 NqrncGI1IcRpuSWWHo/YZRsSmkXCvcZ9C5NWFbKKSABfasSkbxE8xl6+/6OHlHv4xCQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793227392;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793227795;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:
 	 X-Google-DKIM-Signature:X-Forwarded-Encrypted:X-Gm-Message-State:
 	 X-Gm-Gg:X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:References:Content-Language:From:Autocrypt:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
 	 Organization:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=WxqDzkpqx1Zw/ddwhxWaFtRopLAQo5taF9tRd8I1ORI=;
-	b=1foAugBcA2r7fS7xL6NO0HIGzfsPZRmLqi9kQvoxusZDb+oo998mc9mR9HRVCDjagOgo
-	 Ms9nqyDig+FR6H4uvZBF1Lju8kM4/81WbLfzBmaTDeypeZzp/IxxqezRVGu1+70RkAGhT
-	 L8I5H41deQhxzQ5eWM2iG7PRkyZ30xEmdzfQ9tJWuJl2oG7hmAoB7KFZjb48z3jkVgOjj
-	 PZrh4LeSiIIXiOSmzOz3ceNj+1enTyk4Lo+uI9W3ea3DHm23niCzlPVEiDn2SeIJtAPvz
-	 yALCqzYCWY/ejFH5Iu0bezmzDCX+eYR8PGeemqKi3JUeDrfUn9RU5H/eVBt/7SA6G0w==
+	bh=9CcVGt9eIzghp0hNtTKb3LNk2YarqbM5XVU8xqD+QMk=;
+	b=Eez48bcFD1ItGWdD9VDAJE6mapRJC/6APZm//IxKJgQvGZEx4qXQHkNSw93ex64iABAS
+	 TuLwN0HleqrpfWWQb0PzByuJGGLhOUlyFatlOHHSbV45P0av1DUgNoDlqcV2TBc/gEwas
+	 /6sI8DwgS6wgkSSLxj/UvPud7omVAWUcJZ8thJH85VIEdMyjdOfsqwchr7pW0DEQ1SQTk
+	 iuMPAwmRfH1GM+Zqx+XZV/i/z5xjiQAhhDuKdTERnXF9N392spbXE4Ij0o4N3+aNXPDrx
+	 HMr+4xnIHYMwLApQ66d2aym7hsmLr+nSUyCGPvRCw10bQjDnxr6nBx7kY/WDk+6wLyQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=canonical.com;
 	spf=pass smtp.mailfrom=canonical.com;
-	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=IHegLAeW;
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=ERXHM8zR;
 	arc=none smtp.remote-ip=185.125.188.123
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7070A606A31A
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:43:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7070A606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A4D606A31E
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:49:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 82A4D606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=IHegLAeW
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=ERXHM8zR
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com [209.85.128.200])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DD16B3FBFC
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:43:02 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id F193E3FBFD
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 22:49:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1793227382;
-	bh=WxqDzkpqx1Zw/ddwhxWaFtRopLAQo5taF9tRd8I1ORI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	s=20251003; t=1793227793;
+	bh=9CcVGt9eIzghp0hNtTKb3LNk2YarqbM5XVU8xqD+QMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=IHegLAeWmk+ti2JGFEAzEoe3PmjpLkx5ZtQdAEESiC0Gdb9vsKRVsRI0COlUcPvnL
-	 E23rLhocaf5ZL4nueHNpmf3cPCfEIo4ONDiUwW79LGSTX8HvpsGW9up0g6xtYFhrjv
-	 TUhSsEBUfyJHIlQJ1rNXZKHH5nhnCfgUO3ApUA4ri/3WXCswg3VDHMyZz7KS9oYDJq
-	 kgaRU1Z4T4xkes4KtHwce5MZYNseENtQCUXtgVxH/0YDTuNGu+/ZbfiuogOuOAC8lP
-	 1wsqSi27NB9RsMZ66Im8H8ajTE1weIzc9pPz4m6ezDMBB0B9pVcnAGmNgvZfgo+LID
-	 yGU3z1Ca+cQh4iCVEOlxBSE8XNrdaX1XEDfrwyNVGh/2WfMrYfpgPBBtY92UaVnJCN
-	 Bo+a1zhRGPuWkm51x8NksAGFY2vOuqOuhZRZremgVHs+aSiY4Kr3wWp14EU36ILN0C
-	 Dic/MqpdBGN6E1E/eckKA9+KxsCaXWP0JYxSOMYBZJDBotqaI7SphOKYw7Enb0tiZl
-	 hdUa2Mkn4MoUJegrTOHyhtrbTwLGn7g6fRhr/7LkOVNH5wdff7d5TfTtBqcmv4qSBb
-	 v1vJfLOMgG5n9SuzJGRI2hC85xL/wypbRiVNN9w1vqC99QhQoPKWM96OxxvufYqvCw
-	 0RSga5uktrBMaCvQUAdJuzMk=
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-8b0cd41e7aaso24617617b3.3
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 15:43:02 -0700 (PDT)
+	b=ERXHM8zR/+wVMOxPncLY8wuNcrJ8kWg7nKQ46mlvxobzKMP9ovyFPKsOgAKI7Ynmc
+	 OF0blRjPtPv8H2Lf2wXcd2PZ9gzL3qtMD+tuCUldOnSY9GG0fSXGDQw5zGkhcVDWOT
+	 TQts+Oe5oPPcV0/f4fybXiDzqcF0auOBnNh+TdYvesqVX45KBWbURfU1fyYY5kL8Eq
+	 xnX49g6HgaxRKqaAUFLO5PzqolAgREYMqs4WQaLwEwgU3LsZIcT1RkXNq7ZgEXiEXc
+	 5uGnszgj4BQKtTaN2jcC4RA/2CKYGnABuTaZqr1zvp0lFd1MHw4YnnIYe5Hg3znzDP
+	 0Kthr8Mq5wialjiuuun592ICDEDPFXYsuDN5LTPpXBcIiVSnvrMnteNL+mYzA7cpn+
+	 1W+aN6ifwDkriymDHGlpZW9mCWKulemz43NME/EzlAcd4AcKx3ZrdmDYqLScnSVm8D
+	 Td+vTVElNwP1yfp40BgyVBvoV3TCYIoFiXaX6srMJNnmtYkiVA3M9nUNRsSdp51/Kc
+	 ghj0MAF3lCIHGnLwa5WeynJ4XuxlsQd+RcBsMIg0d9JcZdFUK1COU3mfw0QuWYNHVO
+	 qMqAkKJ/91xam2QOv0JaoA+6EMDF/pviTZPctUjmfLWwo+4ptBRPusMbv/NlQa/nQK
+	 6vf5OG/VujDvhCQ9mLXzLnrI=
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-8b0e757e70eso22284217b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 15:49:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793227381; x=1793832181;
+        d=1e100.net; s=20260707; t=1793227792; x=1793832592;
         h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:from:content-language:references:to:subject:user-agent
+         :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=WxqDzkpqx1Zw/ddwhxWaFtRopLAQo5taF9tRd8I1ORI=;
-        b=dZaEQ54+6YsnOIyQxTdcrqFvd14VcMIbomrmrpN4WJ7+8524g2iG2rTTpBXrmHeO56
-         yHqGyizvgNB0/12Xyl9bAG5sVupRNHv+z8HETOHEIwv32N8uxKs/M6dUva6HCmx4GZx0
-         mhOcj73LowGQ8qdRnC6WKSlqxMJWkYPUb4dxgsxy6fbYWFqqrZc8vau6SRsbRArFpEW7
-         H+A4kAPgUMXM8W2Z2U+E0njTvukJvj3yKK9tjhBp+z8QEc5cQbZQavTKogC0S1Q825SO
-         Ddaf+VjPpXeqBjPlWwE6vz0kjBDKc0vWg2C2YzcivdyHE3wg7O1fJEtBOkl4SojXgBvy
-         GmyA==
-X-Forwarded-Encrypted: i=1; AKwUvByPoaUSsMv7tefCBhk86ynEHTqjVfd2diYhEf/DM7RlQRXFPvLfAcbyE/zi3fzXAux+bGDWAiZDsTVPDnVxydV27ZKpfQU=@vger.kernel.org
-X-Gm-Message-State: AFq9FYLbwi3UT8qlPdNlSRw5OhP8GCiMQEpRefbb8wWjd7ExNvyrClAP
-	ctiD1V9cpBQ3UdQrToSu82r61OBV9NlYWP1ZYgNJuOSlP3F7uhPPWrhFUVZhcmlZCEZ38/PcUoJ
-	/qJrrR8lNs09KQIZg3alSpWyhxVYMrKIS7T5ArNtFXZ6qnmxoIX38jdjvQ76w1RvJ46WDwGURJb
-	z5WWNACK8uZZFzUmm05A==
-X-Gm-Gg: AYBFou0uJf7uBjc/yFCrtYJKwYKO5Nm5QvznxBB7nUDZ2qZ5om6tp7fNpwQfPAL/DDT
-	j9lO7yQYFoVWoU/9QcqU6KCZhpDJNX1FB+0QPCkYK5pqTHq6sZuh9n9sQKARy1J9Su5+3Mu5YAq
-	jhFvwrI62MdbVIEzjoT6Y5GkEVPDDDVfy6GvVJHMtQRraDKJUwqMh/SnftDLVYFoMe8K15FOFJE
-	AuEtkeM4lwwWftavPvLmevnmbXAdoML13rrqjTzGJNwhFMHy33aSD8sVb81tNOZb+mwAMzrZyQp
-	IGP3xLhYJ/QtFXjO4L2ZdxffZH/8u8gobIGD4mWeN2agfHRvqkT+8CJ1evSol/GjaIijX/MNcBw
-	ZVk966THHj5E/PShoAFfCRuj8zmhjdoYOGiBVwfpl3UIjhGMxVz1p2YI2B16+pNNupfJqC+CYyR
-	O1zTNPkaFA/ajlnEutq/jGo6kYjHim
-X-Received: by 2002:a05:690c:10:b0:8b0:cc41:a12b with SMTP id 00721157ae682-8b1b5cb8325mr25887477b3.38.1793227381674;
-        Wed, 28 Oct 2026 15:43:01 -0700 (PDT)
-X-Received: by 2002:a05:690c:10:b0:8b0:cc41:a12b with SMTP id 00721157ae682-8b1b5cb8325mr25887297b3.38.1793227381162;
-        Wed, 28 Oct 2026 15:43:01 -0700 (PDT)
+        bh=9CcVGt9eIzghp0hNtTKb3LNk2YarqbM5XVU8xqD+QMk=;
+        b=ZoPGpjxvu86RKZGv8lO3P0kSAnca/py/2HzVeF1ryCHhbHiYMIdNLnqL/QjMyegvFV
+         hD5juhip8aO/zviMVm9WhNGqPyd0BRxg+sx9/W8GjM0vcwIjSklVMGrJHC5f3YoThExn
+         Dpd0U6zyw3VCQnd27WKx/ryme4hXkaPJNgmK9KJ5Kl9r/F34XlH5h+3fgtNqjA/chCiY
+         2Px3UwpLEQTg9dwSOgHfvCHMxn7wOTSUOEIUjUQQWvqsAxWz3yY4Ct2J8KY/nWBtt/vn
+         gGJebLSvfTvFSbtQDxW0ko0jbR1nHPynMSTBV5pbvkvS7ngnbpesT1F4dxjGFR1U/nIm
+         NATg==
+X-Forwarded-Encrypted: i=1; AKwUvBzGba0H3tqUCOSF/oWeB3oRIWzX8khPldFfJJX5aoEuHx1qoT5nqNj7FotaXs3Rkasv1p8nh7WOn6XnQPjaCbYjeanWeAk=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJurEQDE4tZfrsHxX4l6pyqYGhnJf7zIJRcfFfL5MdqOQpeYZ7n
+	7xbFRhWc3Pq00kLqWHneYqNS9gFYgt1cJbU5C1oGbYA2P7KCN3ZnjOLpPjfM4vVSHxLHNn/ssKu
+	qm1pDZtzC1CSkzMOeOpnKwZzf06zxUA8k4YteGxdSRgiRaOxZz0jKNGQmRGw/kUlJCUvqfxy90R
+	pXOKe5v0FxHQT+1zAFsA==
+X-Gm-Gg: AYBFou1VC0RZRa5sv839m191R2PsZ8lGLOSqi8HG68w0IZ+Gk4+xZafegcT5UQgMaEv
+	o2x3aKQuJGY7qFJdmmGVehoBOXfeImz1BXJhlgY/D8YRfkoQU8Mn224Aq/D0kFoBcOQ3aD2Gyjp
+	f+TOMummKa5I1KvxWBE/a7M61c8N5V+eZSxLeaKjAth9H0Dhx5uf8tdpWY8YYwRDFi+mZBXV0/Q
+	Z2JKLdXowDqkhaTOs9aR9neTa3jeywokwPhXNs7jHWj2c0GCmGeEIx130oa78yeolvA1WPSZwh3
+	jw3FpuifiZx4kI1680Bsco4GRRW9LArtgx9vrzCleQL3Bo+m29sWyy13swNOpg3O9TVDNrnE0Wj
+	CA8ugwMgRu2izXMZge6uSKjrdkxZRQbH7vyITjsTLjaypQYryJj+pSO+a1pPEK4HjLzFJQJFkw4
+	v29mVXpzj+FzpXuDFXIJwp7QYOOplG
+X-Received: by 2002:a05:690c:418a:b0:8a8:85d7:265 with SMTP id 00721157ae682-8b1b5ba6fdfmr17679577b3.36.1793227791886;
+        Wed, 28 Oct 2026 15:49:51 -0700 (PDT)
+X-Received: by 2002:a05:690c:418a:b0:8a8:85d7:265 with SMTP id 00721157ae682-8b1b5ba6fdfmr17679547b3.36.1793227791517;
+        Wed, 28 Oct 2026 15:49:51 -0700 (PDT)
 Received: from [172.21.9.52] (host-209-35-187-178.broadbandcancun.mx. [209.35.187.178])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e43c9e4sm35900807b3.3.2026.10.28.15.42.59
+        by smtp.googlemail.com with ESMTPSA id 00721157ae682-8b19e656162sm36374807b3.44.2026.10.28.15.49.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Oct 2026 15:42:59 -0700 (PDT)
-Message-ID: <9bb8ebd8-d64d-4cb6-89d4-595a3bc4584b@canonical.com>
-Date: Wed, 28 Oct 2026 15:42:57 -0700
+        Wed, 28 Oct 2026 15:49:51 -0700 (PDT)
+Message-ID: <58cb4243-99ed-4310-99e6-d3a2809655e9@canonical.com>
+Date: Wed, 28 Oct 2026 15:49:49 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,14 +104,16 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: avoid potential double free when remapping DFA
- tables
-To: lirongqing <lirongqing@baidu.com>,
- Georgia Garcia <georgia.garcia@canonical.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261008031533.2205-1-lirongqing@baidu.com>
+Subject: Re: [PATCH] apparmor: fix query_data() output overlapping the lookup
+ key
+To: "Cen Zhang (Microsoft)" <cenzhang@linux.microsoft.com>,
+ Georgia Garcia <georgia.garcia@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Francis Perron <francis@akrites.dev>,
+ AutonomousCodeSecurity@microsoft.com, tgopinath@linux.microsoft.com
+References: <20261012215703.30592-1-cenzhang@linux.microsoft.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -157,57 +159,111 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20261008031533.2205-1-lirongqing@baidu.com>
+In-Reply-To: <20261012215703.30592-1-cenzhang@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/7/26 20:15, lirongqing wrote:
-> From: Li RongQing <lirongqing@baidu.com>
+On 10/12/26 14:57, Cen Zhang (Microsoft) wrote:
+> In query_data(), buf and query point into the same multi_transaction
+> buffer: buf at the start, query a few bytes in, and the lookup key
+> right after the label string that query points to. Reusing the buffer
+> is by design and is safe as long as the query is fully parsed before
+> buf is written to, but the key is not: it is dereferenced on every
+> iteration of label_for_each_confined(), after output has already been
+> written. So when the label has more than one profile with a data
+> table, the data of the first matching profile is written to buf while
+> the key is still needed, and overwrites it if the data is large enough.
+> The later lookups then run on a corrupted key. Besides, if the data has
+> no NUL byte from the key's position to the end of the allocation,
+> strhash() -> strlen() -> jhash() reads past the 4096-byte slab object,
+> triggering an out-of-bound read:
 > 
-> When unpacking a DFA, aadfaunpack() stores a table in dfa->tables
-> before attempting to remap a 16-bit table to 32-bit.
+>    BUG: KASAN: slab-out-of-bounds in jhash+0x595/0x5e0
+>    Read of size 1 at addr ff1100001159d000 by task exploit/155
+>    CPU: 0 UID: 1000 PID: 155 Comm: exploit Not tainted 7.3.0-rc7 #1
+>    Call Trace:
+>     jhash+0x595/0x5e0
+>     aa_write_access+0x880/0x1400
+>     vfs_write+0x26f/0xd20
+>     ksys_write+0x115/0x210
 > 
-> However, remapdata16todata32() frees the original table when
-> allocation of the new table fails. This leaves the corresponding
-> dfa->tables entry pointing to freed memory. If the unpacking then
-> fails, dfafree() attempts to free the same table again.
+> Writing to the .access file is unprivileged (0666), but triggering this
+> requires loaded profiles that carry a data table, which needs
+> CAP_MAC_ADMIN and is not the case on default distribution policies.
 > 
-> Only publish the table to dfa->tables after any required remapping
-> has completed successfully, so that dfa->tables never contains a
-> pointer to a table that has already been freed.
+> Fix by copying the key with kstrdup() before writing any output to buf,
+> so the key stays valid across all loop iterations regardless of what
+> gets written to the overlapping buffer.
 > 
-> Fixes: 9208c05f9fdf ("apparmor: add support for 2^24 states to the dfa state machine.")
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> Fixes: 317d9a054e1c ("apparmor: update query interface to support label queries")
+> Cc: stable@vger.kernel.org # v4.13+
+> Cc: Francis Perron <francis@akrites.dev>
+> Reported-by: AutonomousCodeSecurity@microsoft.com
+> Signed-off-by: Cen Zhang (Microsoft) <cenzhang@linux.microsoft.com>
 
 Acked-by: John Johansen <john.johansen@canonical.com>
 
-I have pulled this into the apparmor tree
+this has been pulled into the apparmor tree
 
 > ---
->   security/apparmor/match.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>   security/apparmor/apparmorfs.c | 15 ++++++++++++---
+>   1 file changed, 12 insertions(+), 3 deletions(-)
 > 
-> diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-> index 7713484..ca30a42 100644
-> --- a/security/apparmor/match.c
-> +++ b/security/apparmor/match.c
-> @@ -397,7 +397,6 @@ struct aa_dfa *aa_dfa_unpack(const void *blob, size_t size, int flags)
->   		/* check for duplicate table entry */
->   		if (dfa->tables[table->td_id])
->   			goto fail;
-> -		dfa->tables[table->td_id] = table;
->   		data += table_size(table->td_lolen, table->td_flags);
->   		size -= table_size(table->td_lolen, table->td_flags);
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 5b42140e12e8..9df06fdd894f 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -919,7 +919,7 @@ static void profile_query_cb(const struct aa_profile *profile,
+>   static ssize_t query_data(char *buf, size_t buf_len,
+>   			  char *query, size_t query_len)
+>   {
+> -	char *out;
+> +	char *out, *keydup;
+>   	const char *key;
+>   	struct label_it i;
+>   	struct aa_label *label, *curr;
+> @@ -941,11 +941,18 @@ static ssize_t query_data(char *buf, size_t buf_len,
+>   	if (buf_len < sizeof(bytes) + sizeof(blocks))
+>   		return -EINVAL; /* not enough space */
 >   
-> @@ -414,9 +413,9 @@ struct aa_dfa *aa_dfa_unpack(const void *blob, size_t size, int flags)
->   				if (!table)
->   					goto fail;
+> +	/* buf overlaps query, keep a copy of the key for the later lookups */
+> +	keydup = kstrdup(key, GFP_KERNEL);
+> +	if (!keydup)
+> +		return -ENOMEM;
+> +
+>   	curr = begin_current_label_crit_section(&needput);
+>   	label = aa_label_parse(curr, query, GFP_KERNEL, false, false);
+>   	end_current_label_crit_section(curr, needput);
+> -	if (IS_ERR(label))
+> +	if (IS_ERR(label)) {
+> +		kfree(keydup);
+>   		return PTR_ERR(label);
+> +	}
+>   
+>   	/* We are going to leave space for two numbers. The first is the total
+>   	 * number of bytes we are writing after the first number. This is so
+> @@ -963,13 +970,14 @@ static ssize_t query_data(char *buf, size_t buf_len,
+>   		if (!profile->data)
+>   			continue;
+>   
+> -		data = rhashtable_lookup_fast(profile->data, &key,
+> +		data = rhashtable_lookup_fast(profile->data, &keydup,
+>   					      profile->data->p);
+>   
+>   		if (data) {
+>   			if (out + sizeof(outle32) + data->size > buf +
+>   			    buf_len) {
+>   				aa_put_label(label);
+> +				kfree(keydup);
+>   				return -EINVAL; /* not enough space */
 >   			}
-> -			dfa->tables[table->td_id] = table;
->   			break;
+>   			outle32 = __cpu_to_le32(data->size);
+> @@ -981,6 +989,7 @@ static ssize_t query_data(char *buf, size_t buf_len,
 >   		}
-> +		dfa->tables[table->td_id] = table;
->   		table = NULL;
 >   	}
->   	error = verify_table_headers(dfa->tables, flags);
+>   	aa_put_label(label);
+> +	kfree(keydup);
+>   
+>   	outle32 = __cpu_to_le32(out - buf - sizeof(bytes));
+>   	memcpy(buf, &outle32, sizeof(outle32));
 
