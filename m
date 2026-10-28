@@ -1,70 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793199883;
-	b=gyBK5qIbJVAAFjkv9RgXgIIr7P80itfm6+/eyRZBuov49CSLxpaEB7nM9B3dExIJZOPt
-	 KuFf7MgkNkATaRLxB8Ywln0xR1uw+1EbNM69dDtYquytGWcsQy/SginZpP4AVYwVSrJ2D
-	 eSO8LnVfHhiQ6YrU5jxzRICV6NIAgERyv6aVUNo3Sb+KeQtf3jMQO7rL/yh+Mauf/gw63
-	 XS+T0xCpp2B3YxV+babTSPc8jiKR5OJgq5gsdwUZTTmuvq0gNgm+HxHtR+fh0I0Yzp+ub
-	 t/o8srQsj2RvOCcwai4WFt31k4HwZGZCRR/2XTomOaDZc13USoQrH4DXSIPD1J7sswQ==
+	t=1793200681;
+	b=Sk7GN2W4xWBHe6dXdy/DZJWWRD7x2yzkOIAtZsKXwkveKlTn/z12KO4hkBTOjNNXIMcR
+	 oQvtDxN9Nrx8uThRGMpzL0GcsYd0ZX0xc+nTCO92tgNHPlr2r7xddgcvea/FTPFzGtugT
+	 /MsbqfL8R5BtXOO6z95iRnWYJksR/bnEzJ9ds6anLF85IddNYpqZVSnat3/JGqVyZXV3Y
+	 eqDC0BJdPLhwIiwY+5r/qo6AhcMWMoAtwX3QmMfDunBBSK8WITZ5nhii4NilB2N+VJoYA
+	 Cdgq1nKRHDrXMWa6n7tDePryZkUJqdYtyVMfkLd8dIIhNEGORwG6HE2jr5cN3enmJ0g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793199883;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=XYaYaDrK6jMizn1+Xu6y1/7dgY3Gd1He8P8gPiz0F7E=;
-	b=kyGlICapXA36Zr1jQL/beph+AzGAf9raBK2eEZHJNh0vN1FYGLw+EjsI+WrO/DAt3ick
-	 bagyxzI/KlqG0UzpQ86hod5ehUedlMQ0ab8Oc7k1ssuWsQ2+gxNIA2LaPNl/GWIxfpf+g
-	 Aljz74trJ9Lo0WlvQDsFoKv4eFmHAACxVIIvqMUIyr7huIW92ggcuSEPLBxI7gbhiWewR
-	 hMsOep80w32Tyx9FUe2EFu5XoerhAoEf9yyIiPSZkR93QE328MSAhHcg3MG2tU6+AvPsf
-	 TUFK2GEMO5EH63iGFFBcyKtMUqkNT+O3dbXdo7C8yfzZBPCUSUetzamlhfu/uDX6+lw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793200681;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=eVF1QZUf7yAkTLXbOCxlRmuE+fwmhZLgRT3c0pAYLpo=;
+	b=hwxxCSgiNFh7D2uFoqk8EGZeqoh+5nCtO+LIPh1e+rsdg0aDBdSCR2S0EqT+UoF4j8dJ
+	 Kt3Tbp0rsyNp3cQbRI8ksv21XxmceImbRpY5szAL4eMj5cECTe2BsUaJA2R5R0C5kmvbI
+	 +uWeoE/+qQHutvylLRtAHcfwiTooeScNfn93u0WDUqVypzFQ31MjtVxam+k+G6vT5vpb1
+	 OU2QHKcvstntVwUC/maqRmYz/UMwcz4SLYO0jGyzoSdTa3S7oTc9swLupAL9u5EEdz47C
+	 4EOvjfJCooOqHHy1/fdw6vfmgxbTTCTXyp2h+GsvMG38eBiYWqAv9d02OVYCNpbQNiw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TZk6euDx;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=I2OPX1PF;
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CE6606A32A;
-	Wed, 28 Oct 2026 15:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003E4606A31E
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 15:17:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 003E4606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TZk6euDx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5521F01825;
-	Wed, 28 Oct 2026 15:04:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793199883;
-	bh=XYaYaDrK6jMizn1+Xu6y1/7dgY3Gd1He8P8gPiz0F7E=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TZk6euDxLh9gazUrboTiSt4GUJlfKEae/MouSn9Wc1Arp91zupsB1k1jDRlMwYJvl
-	 XGSXn+tVICjEwteXiLL5GEpIMJK1gez7aVMIXJdOnatS3FkOITUPgOM5SFZt5efn+o
-	 X/nuKzvjpM8daROqjYI+GonVYeIWie4t/dbaJrA7z52OSXW2p9fNc2Fn/rH7z7RnNQ
-	 MttyTvDiHHm+Z8ddJ1JlOjbvCVRbsfXqQ2bq+teRA2WSr0H7S8MhnUDOusbq+Qsjmt
-	 EMj9sAah6zD3VVv7yFt/wyA41z35mtdy2CVcKLgr5ZWVQdBFxZEhLjchUbjo3JTjO6
-	 24VSn+uFwxIOw==
-Message-ID: <sashiko-outbox-188033@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 8/8] selftests/dmabuf-heaps: Add dma-buf memcg
- accounting tests
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
- Weiner" <hannes@cmpxchg.org>, =?utf-8?b?TWljaGFsIEtvdXRuw70=?= <mkoutny@suse.com>, "Jonathan
- Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Sumit
- Semwal" <sumit.semwal@linaro.org>, =?utf-8?b?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, "Michal
- Hocko" <mhocko@kernel.org>, "Roman Gushchin" <roman.gushchin@linux.dev>, "Shakeel
- Butt" <shakeel.butt@linux.dev>, "Muchun Song" <muchun.song@linux.dev>, "Andrew
- Morton" <akpm@linux-foundation.org>, "Benjamin Gaignard" <benjamin.gaignard@collabora.com>, "Brian
- Starkey" <Brian.Starkey@arm.com>, "John Stultz" <jstultz@google.com>, "T.J.
- Mercier" <tjmercier@google.com>, "Christian Brauner" <brauner@kernel.org>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Stephen Smalley" <stephen.smalley.work@gmail.com>, "Shuah
- Khan" <shuah@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
- =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, "Jens Wiklander" <jenswi@kernel.org>, "Sumit
- Garg" <sumit.garg@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, op-tee@lists.trustedfirmware.org, echanude@redhat.com, mripard@kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20261027-v2_20230123_tjmercier_google_com-v3-8-78d2c4cb8647@redhat.com>
-References: <20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com>
- <20261027-v2_20230123_tjmercier_google_com-v3-8-78d2c4cb8647@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 15:04:41 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=I2OPX1PF
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a7992e2f7dso9502535e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 08:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793200678; x=1793805478; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=eVF1QZUf7yAkTLXbOCxlRmuE+fwmhZLgRT3c0pAYLpo=;
+        b=I2OPX1PF8PLaxhUlmHu9h2D0nhYLPHwI5zlfB7Lci4EblI06BEbpfx5OgZ2rqE1J5E
+         7L848K8CGF4P+jK7xu6I5UqBRnCrJhDH3TwdWWPK0hVYUFs0k/av5uWyGm3LaLmoiS0l
+         /pZC0drqZoLo6fKtdVVMM+Ksu3iSDBgTuNkq3R7oL4xgFPB2l+6ru0DQtuLNOoEQlQ//
+         Y+0EdCVuFzJqxdsGUURYxgYxvmiSXwO+4FAKD+oOtejdGv+0YUKo1EHeJg+UZ+xsegEF
+         fV7cBRRqfeZVliNudhQJW2vRQwMtBFAYNELVpxZHQptzCYaHR480MdIUQdkyocnatCH/
+         w6XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793200678; x=1793805478;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=eVF1QZUf7yAkTLXbOCxlRmuE+fwmhZLgRT3c0pAYLpo=;
+        b=uRLjaO154Qa9MO3PotieZTVbF7bOqqDgt6RWFATPRT8gq7bLsahj/zZokpVFATVZ/Y
+         IvbAUz6ThVw2ONYBlDvK47BvSGekpY3/NImc6TYMe/26xHbWcfddnuHEseqLl3REZeQx
+         DKNudVTbOHpXlv7yTs9F/b0WxetYC67Cq9YPAHkCq3nBGc43S/Tv+Wpr5Dzl/CzxMzR0
+         ZPiW3OH9n8ejdmNWeoMSKvw+tPWCy8QQJiDel9OZfwXkAshnpHIIu5VmeIBzHFPUJ3hZ
+         oud2FTnhF+LjebAMXX+ygeudsmzEPqbv9HV/o9Q4ccmIFiXtXcMa9Y7Y5KOHATmb9eC/
+         nE/Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwExPqXz/ka+WuU27XJ9dBh+QyDG9pWqnGh+vMtXQ6AWEHz3GG935Jrzv7UySsrCHX9J1HKH9E7o7bbHmhJINnKJPzViKc=@vger.kernel.org
+X-Gm-Message-State: AFq9FYK47MFvT6QfWfy2QvZnj7UPAzzYEtmzkYyPAZa/0fjy0OlusqB3
+	WuXFhYFrEEZJlSgRTF8D/pWmhkJfeupoLGSGs7xCnZf1gb5pD70fRIVt
+X-Gm-Gg: AYBFou2f+qtvzdb0LcTUMibvHIYWrG3G0ectajvauGJrB02yQwx5zwUQGtk/JyEXTwa
+	oVsrBMgzWB0Wb77eFSU8Y97CeKt4T+1qYz8ujGeKIafp2KednNpKVxf8/wVD2k4BoX8em+2O0VG
+	sN0JBTm7xQzTnvwRqCuLHmwVUSPhWnzkgGnhjilO8Yv0gL22eJJq0RteKyhQj7yo6AUelDRExno
+	05e2O4sncYpvAziMP0K1XVmlvpEk8StkCM3xsxXAfeA1u23M7B2dDybV445UeEMHn8zo8+0wJTS
+	pwJ2pKZ23GjZA34+2q6qDcwDtkLdyKBoi9lmdMe8MGCNGrBK0Jksq0EPMQMEn8Vds4BgjyYsobD
+	/uL3jbjxCLaO6tYpPsz9GUAM/3c7K1797eDbGWVhHzTbpAoRdMfSsrz2+cQ0LXHEIiYlp4Mc5Ou
+	YjXeNIngobjBgsAkNifTr7KMff48rtDVvqvcDcgleF97nBFWxEzeN2VncgdkmPMd6VqVhYl0Xlw
+	15H93DQdZRDZ/6MkHLWPiF3hyzzMYYGXwtbR7dp/Zg62Xl88J5lkxSz8jkYhJLyGg2R+zex/jSQ
+	1urWXb9BPZDEE8U4JFN3hdPOcGYJyoE8LSMFU+R9H0ggLJ/1IJQd2Q==
+X-Received: by 2002:a05:600c:4e8b:b0:4a5:ef46:1603 with SMTP id 5b1f17b1804b1-4a967202660mr65444905e9.30.1793200677991;
+        Wed, 28 Oct 2026 08:17:57 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a978795f4dsm44632965e9.9.2026.10.28.08.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2026 08:17:56 -0700 (PDT)
+Date: Wed, 28 Oct 2026 16:17:51 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Ketan Bhardwaj <ketan@armoriq.io>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-kernel@vger.kernel.org,
+	"HARIHARA SUDHAN . R" <harisudhan@armoriq.io>
+Subject: Re: [RFC PATCH v2 1/6] docs: security: Describe the Kernel Assurance
+ Plane design
+Message-ID: <20261028.ecf3e62c6cf5@gnoack.org>
+References: <20261028133335.75899-1-ketan@armoriq.io>
+ <20261028133335.75899-2-ketan@armoriq.io>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,358 +107,499 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261028133335.75899-2-ketan@armoriq.io>
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
-s) to consider:
-- [Medium] selftests/dmabuf-heaps: check_deps() runs before handle_build() =
-in vmtest.sh
-- [Medium] selftests/dmabuf-heaps: fail instead of skip on EOPNOTSUPP in XF=
-ER_CHARGE test
-- [Medium] selftests/dmabuf-heaps: pidfd_alloc_supported() treats EOPNOTSUP=
-P as supported
-- [Medium] selftests: dmabuf-heaps: no memory controller check in open_self=
-_cgroupfd()
-- [Medium] selftests: cgroup: MEMCG_DMABUF_WAIT_RETRIES is shorter than 2s =
-rstat FLUSH_TIME
---
+Hello!
 
-commit 764a620a8574ac6b7e6c57e6f71e4c743c373656
-Author: Albert Esteve <aesteve@redhat.com>
-
-selftests/dmabuf-heaps: Add dma-buf memcg accounting tests
-
-This commit adds selftests for dma-buf memcg accounting via charge_fd in
-DMA_HEAP_IOCTL_ALLOC and DMA_BUF_IOCTL_XFER_CHARGE across the dmabuf-heaps
-and cgroup test suites, along with a vmtest.sh runner script.
-
-> diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/tes=
-ting/selftests/cgroup/test_memcontrol.c
-> index 0ed82347044ed..0b41c3c6f62c1 100644
-> --- a/tools/testing/selftests/cgroup/test_memcontrol.c
-> +++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-> @@ -19,10 +19,20 @@
->  #include <errno.h>
->  #include <sys/mman.h>
-> =20
-> +#include <linux/dma-buf.h>
-> +#include <linux/dma-heap.h>
-> +#include <signal.h>
-> +#include <sys/ioctl.h>
-> +
-> +#include "../pidfd/pidfd.h"
->  #include "kselftest.h"
->  #include "cgroup_util.h"
-> =20
-> +#define DMA_HEAP_SYSTEM		"/dev/dma_heap/system"
-> +#define ONE_MEG			(1024 * 1024)
-> +
->  #define MEMCG_SOCKSTAT_WAIT_RETRIES        30
-> +#define MEMCG_DMABUF_WAIT_RETRIES          15
-
-[Severity: Medium]
-Is MEMCG_DMABUF_WAIT_RETRIES (15 retries at 100ms intervals, or 1.4 seconds
-before the final read) long enough to avoid races with the periodic rstat
-flush in test_memcg_dmabuf() and test_memcg_dmabuf_xfer_at_limit()?
-
-In mm/memcontrol.c, reading memory.stat calls mem_cgroup_flush_stats(), whi=
-ch
-only flushes rstat synchronously when stats_updates exceeds
-MEMCG_CHARGE_BATCH * num_online_cpus() (64 * num_online_cpus()):
-
-mm/memcontrol.c:mem_cgroup_flush_stats()
-    if (atomic_long_read(&vmstats->stats_updates) >
-        MEMCG_CHARGE_BATCH * num_online_cpus())
-        ...
-
-Charging or uncharging a ONE_MEG (1 MB) dma-buf in a fresh child cgroup
-updates MEMCG_DMABUF by 256 pages on 4KB-page kernels (or 16 pages on
-64KB-page kernels). When num_online_cpus() >=3D 4 (where 256 > 64 * 4 is fa=
-lse)
-or on >4KB-page kernels, reading memory.stat skips synchronous flushing and
-relies on the periodic deferred work stats_flush_dwork, which runs every
-FLUSH_TIME (2UL * HZ, or 2.0 seconds).
-
-In test_memcg_dmabuf(), even if the first poll for ONE_MEG catches a period=
-ic
-flush, that flush resets stats_updates to 0 and schedules the next
-stats_flush_dwork 2.0 seconds later. Immediately closing dmabuf_fd adds only
-256 to stats_updates, so the subsequent 1.4-second poll for dmabuf =3D=3D 0=
- can
-time out before the next 2.0-second periodic flush runs. Should
-MEMCG_DMABUF_WAIT_RETRIES be at least 30, matching
-MEMCG_SOCKSTAT_WAIT_RETRIES?
-
-> diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/t=
-esting/selftests/dmabuf-heaps/dmabuf-heap.c
-> index 1d49df6719198..90ef14d2ecba0 100644
-> --- a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> +++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-
-[ ... ]
-
-> @@ -496,6 +505,218 @@ static void test_alloc_no_fd_leak_on_efault(char *h=
-eap_name)
-
-[ ... ]
-
-> +/*
-> + * Probe whether the kernel honours charge_fd in DMA_HEAP_IOCTL_ALLOC.
-> + */
-> +static bool pidfd_alloc_supported(int heap_fd)
-> +{
-> +	int devnull_fd, dmabuf_fd =3D -1, ret;
-> +
-> +	devnull_fd =3D open("/dev/null", O_RDONLY);
-> +	if (devnull_fd < 0)
-> +		return false;
-> +
-> +	ret =3D dmabuf_heap_alloc_pidfd(heap_fd, ONE_MEG, 0, devnull_fd, &dmabu=
-f_fd);
-> +	if (dmabuf_fd >=3D 0) {
-> +		close(dmabuf_fd);
-> +		dmabuf_fd =3D -1;
-> +	}
-> +	close(devnull_fd);
-> +	return ret < 0;
-> +}
-
-[Severity: Medium]
-What happens in pidfd_alloc_supported() when the kernel is built with
-CONFIG_MEMCG=3Dn?
-
-In drivers/dma-buf/dma-heap.c, dma_heap_ioctl_allocate() passes a non-zero
-charge_fd to mem_cgroup_get_from_fd():
-
-drivers/dma-buf/dma-heap.c:dma_heap_ioctl_allocate()
-    if (heap_allocation->charge_fd) {
-        memcg =3D mem_cgroup_get_from_fd(heap_allocation->charge_fd);
-        if (IS_ERR(memcg))
-            return ERR_CAST(memcg);
-    }
-
-When CONFIG_MEMCG is disabled, the stub in include/linux/memcontrol.h retur=
-ns
-ERR_PTR(-EOPNOTSUPP):
-
-include/linux/memcontrol.h:mem_cgroup_get_from_fd()
-    static inline struct mem_cgroup *mem_cgroup_get_from_fd(int fd)
-    {
-        return ERR_PTR(-EOPNOTSUPP);
-    }
-
-Because dmabuf_heap_alloc_pidfd() returns -1 with errno =3D=3D EOPNOTSUPP,
-returning ret < 0 causes pidfd_alloc_supported() to return true when
-CONFIG_MEMCG=3Dn, and test_alloc_pidfd_self(), test_alloc_pidfd_child(),
-test_alloc_cgroupfd_self(), and test_xfer_charge_cgroupfd_self() then proce=
-ed
-and report test failures instead of skipping. Should pidfd_alloc_supported()
-also verify that errno !=3D EOPNOTSUPP (or errno =3D=3D EINVAL)?
-
-[ ... ]
-
-> +static int open_self_cgroupfd(void)
-> +{
-> +	char cgroup_path[PATH_MAX];
-> +	char buf[PATH_MAX];
-> +	FILE *f;
-> +
-> +	f =3D fopen("/proc/self/cgroup", "r");
-> +	if (!f)
-> +		return -1;
-> +
-> +	cgroup_path[0] =3D '\0';
-> +	while (fgets(buf, sizeof(buf), f)) {
-> +		char *p =3D buf;
-> +
-> +		if (strncmp(p, "0::", 3) =3D=3D 0) {
-> +			p +=3D 3;
-> +			p[strcspn(p, "\n")] =3D '\0';
-> +			snprintf(cgroup_path, sizeof(cgroup_path),
-> +				 "/sys/fs/cgroup%s", p);
-> +			break;
-> +		}
-> +	}
-> +	fclose(f);
-> +
-> +	if (!cgroup_path[0])
-> +		return -1;
-> +
-> +	return open(cgroup_path, O_RDONLY | O_DIRECTORY);
-> +}
-> +
-> +/*
-> + * Test: allocate charging the calling process's own cgroup via a cgroup=
-fd.
-> + */
-> +static void test_alloc_cgroupfd_self(char *heap_name)
-> +{
-> +	int heap_fd =3D -1, cgroup_fd =3D -1, dmabuf_fd =3D -1, ret;
-> +
-> +	heap_fd =3D dmabuf_heap_open(heap_name);
-> +
-> +	if (!pidfd_alloc_supported(heap_fd)) {
-> +		ksft_test_result_skip("charge_fd not supported by this kernel\n");
-> +		goto out;
-> +	}
-> +
-> +	cgroup_fd =3D open_self_cgroupfd();
-> +	if (cgroup_fd < 0) {
-> +		ksft_test_result_skip("cannot open self cgroupfd\n");
-> +		goto out;
-> +	}
-> +
-> +	ret =3D dmabuf_heap_alloc_pidfd(heap_fd, ONE_MEG, 0, cgroup_fd, &dmabuf=
-_fd);
-> +	ksft_test_result(!ret, "Allocation with cgroupfd %d\n", ret);
-> +	if (dmabuf_fd >=3D 0)
-> +		close(dmabuf_fd);
-> +	close(cgroup_fd);
-> +out:
-> +	close(heap_fd);
-> +}
-
-[Severity: Medium]
-Can test_alloc_cgroupfd_self() and test_xfer_charge_cgroupfd_self() fail wi=
-th
-ENOENT instead of skipping when the test binary is run outside vmtest.sh (f=
-or
-example via make run_tests or vmtest.sh -s) in a cgroup where the memory
-controller is not enabled?
-
-Unlike the pidfd path in mem_cgroup_get_from_fd(), which uses
-get_mem_cgroup_from_mm() and walks up to an online ancestor, the cgroupfd
-path requires the memory controller CSS to be directly enabled on the target
-cgroup itself:
-
-mm/memcontrol.c:mem_cgroup_get_from_fd()
-    cgrp =3D cgroup_get_from_fd(fd);
-    if (!IS_ERR(cgrp)) {
-        rcu_read_lock();
-        css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
-        if (!css || !css_tryget_online(css)) {
-            rcu_read_unlock();
-            cgroup_put(cgrp);
-            return ERR_PTR(-ENOENT);
-        }
-
-When dmabuf-heap runs in a leaf cgroup (such as a standard systemd user or
-service scope) whose parent has not enabled +memory in
-cgroup.subtree_control, or when booted with cgroup_disable=3Dmemory,
-open_self_cgroupfd() still succeeds in opening the directory, and the ioctl
-fails with ENOENT. Should open_self_cgroupfd() check that memory is active =
-in
-that cgroup (or should these two tests skip when the ioctl fails with
-errno =3D=3D ENOENT)?
-
-> +/*
-> + * Test: transfer a dma-buf's charge to self cgroup via DMA_BUF_IOCTL_XF=
-ER_CHARGE.
-> + */
-> +static void test_xfer_charge_cgroupfd_self(char *heap_name)
-> +{
-> +	int heap_fd =3D -1, cgroup_fd =3D -1, dmabuf_fd =3D -1, ret;
-> +	struct dma_buf_transfer_charge xfer =3D { 0 };
-> +
-> +	heap_fd =3D dmabuf_heap_open(heap_name);
-> +
-> +	if (!pidfd_alloc_supported(heap_fd)) {
-> +		ksft_test_result_skip("charge_fd not supported by this kernel\n");
-> +		goto out;
-> +	}
-> +
-> +	ret =3D dmabuf_heap_alloc(heap_fd, ONE_MEG, 0, &dmabuf_fd);
-> +	if (ret) {
-> +		ksft_test_result_fail("Allocation failed %d\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	cgroup_fd =3D open_self_cgroupfd();
-> +	if (cgroup_fd < 0) {
-> +		ksft_test_result_skip("cannot open self cgroupfd\n");
-> +		close(dmabuf_fd);
-> +		goto out;
-> +	}
-> +
-> +	xfer.charge_fd =3D cgroup_fd;
-> +	ret =3D ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
-> +	ksft_test_result(!ret, "XFER_CHARGE to self cgroupfd %d\n", ret);
-
-[Severity: Medium]
-Does test_xfer_charge_cgroupfd_self() report a failure instead of skipping
-when main() iterates over non-system heaps in /dev/dma_heap (such as CMA
-heaps when CONFIG_DMABUF_HEAPS_CMA=3Dy)?
-
-In drivers/dma-buf/dma-heap.c, dma_heap_ioctl_allocate() validates charge_fd
-before calling heap->ops->allocate(), so pidfd_alloc_supported() returns tr=
-ue
-for all heaps. However, in drivers/dma-buf/dma-buf.c, dma_buf_xfer_charge()
-checks whether the exporter enabled memcg accounting on the buffer:
-
-drivers/dma-buf/dma-buf.c:dma_buf_xfer_charge()
-    if (!dmabuf->memcg_account)
-        return -EOPNOTSUPP;
-
-Because only system_heap sets exp_info.memcg_account =3D true (while export=
-ers
-such as cma_heap leave it false), ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARG=
-E,
-&xfer) returns -1 with errno =3D=3D EOPNOTSUPP on those heaps. Should
-test_xfer_charge_cgroupfd_self() call ksft_test_result_skip() when ret < 0
-and errno =3D=3D EOPNOTSUPP?
-
-> diff --git a/tools/testing/selftests/dmabuf-heaps/vmtest.sh b/tools/testi=
-ng/selftests/dmabuf-heaps/vmtest.sh
-> new file mode 100755
-> index 0000000000000..3574b71ca83e8
+On Wed, Oct 28, 2026 at 09:33:30AM -0400, Ketan Bhardwaj wrote:
+> Describe the Kernel Assurance Plane (KAP) design.
+> 
+> Agents and other long-running tasks act on behalf of an objective that a
+> user approved. Linux decides whether a task may perform an operation,
+> but not whether the operation still belongs to that objective. Seccomp,
+> LSM profiles, namespaces and cgroups cannot hold several objectives apart
+> inside one environment, or revoke one objective's authority while its
+> task runs.
+> 
+> KAP introduces objective-scoped authority as a kernel subsystem. The
+> document covers Intent Lineage Groups, the authority model and the
+> control plane under /sys/kernel/security/kap, where igroups are created
+> with mkdir as cgroups are. For each design decision it lists the
+> alternatives considered, and it ends with the questions on which
+> maintainer feedback is wanted.
+> 
+> Assisted-by: Claude
+> Co-developed-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
+> Signed-off-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
+> Assisted-by: Codex
+> Signed-off-by: Ketan Bhardwaj <ketan@armoriq.io>
+> ---
+>  Documentation/ABI/testing/securityfs-kap | 111 +++++++++++
+>  Documentation/security/index.rst         |   1 +
+>  Documentation/security/kap.rst           | 236 +++++++++++++++++++++++
+>  3 files changed, 348 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/securityfs-kap
+>  create mode 100644 Documentation/security/kap.rst
+> 
+> diff --git a/Documentation/ABI/testing/securityfs-kap b/Documentation/ABI/testing/securityfs-kap
+> new file mode 100644
+> index 0000000..066de0b
 > --- /dev/null
-> +++ b/tools/testing/selftests/dmabuf-heaps/vmtest.sh
-
-[ ... ]
-
-> +check_deps() {
-> +	for dep in vng make; do
-> +		if [[ ! -x $(command -v "${dep}") ]]; then
-> +			echo -e "skip:    dependency ${dep} not found!\n"
-> +			exit "${KSFT_SKIP}"
-> +		fi
-> +	done
+> +++ b/Documentation/ABI/testing/securityfs-kap
+> @@ -0,0 +1,111 @@
+> +What:		/sys/kernel/security/kap/
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Kernel Assurance Plane control directory in securityfs.
+> +		The ABI is experimental and intended for RFC review.
 > +
-> +	if ${SHELL_MODE}; then
-> +		return
-> +	fi
+> +What:		/sys/kernel/security/kap/kap.default
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read or write "open" or "closed". When closed, a task
+> +		outside the initial PID namespace that is bound to no igroup
+> +		cannot start a program.
 > +
-> +	if [[ ! -x "${DMABUF_HEAP_TEST}" ]]; then
-> +		printf "skip:    %s not found!" "${DMABUF_HEAP_TEST}"
-> +		printf " Please build the kselftest dmabuf-heaps target (or use -b).\n"
-> +		exit "${KSFT_SKIP}"
-> +	fi
+> +What:		/sys/kernel/security/kap/igroups/
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Directory of Intent Lineage Groups. Create an igroup with
+> +		mkdir, as a cgroup is created.
 > +
-> +	if [[ ! -x "${MEMCONTROL_TEST}" ]]; then
-> +		printf "skip:    %s not found!" "${MEMCONTROL_TEST}"
-> +		printf " Please build the kselftest cgroup target (or use -b).\n"
-> +		exit "${KSFT_SKIP}"
-> +	fi
-> +}
-
-[ ... ]
-
-> +trap cleanup EXIT
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.install
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Write the lineage root, authority epoch, optional expiry and
+> +		transition, and the authority as one key=value document in a
+> +		single write. The fields commit together or not at all.
 > +
-> +check_deps
-> +check_vng
-> +handle_build
-> +make_runner
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.procs
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Write a pid to bind that process, with all of its threads,
+> +		to the igroup. Reads return the pids written.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.lineage_root
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read or write the opaque lineage root for the igroup.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.authority_epoch
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read or write the current authority epoch. A lower value is
+> +		refused, and a write clears revoked mode. Bound tasks whose
+> +		recorded epoch is stale fail KAP checks closed.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.authority
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read or write the authority document for the igroup, in a
+> +		strict subset of JSON, with a "predicates" array, each predicate having a
+> +		"kind" and "allow" and "deny" arrays of patterns. The
+> +		Kernel Assurance Plane design document lists the kinds and
+> +		how patterns match.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.expires_at
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read or write the authority expiry in seconds since the Unix
+> +		epoch, or 0 for none. An expiry already in the past is
+> +		refused. Once it passes, every check for the igroup fails
+> +		closed.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.transition
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Write a transition record whose sequence number is higher
+> +		than the last one, to prevent replay. Reads return the last
+> +		sequence number.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.mode
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read or write igroup mode. Supported values are "enforce" and
+> +		"revoked". A revoked igroup refuses every operation.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.events
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read recent KAP decisions as JSON lines with the fields
+> +		ts_ns, igroup, decision, operation, target, reason, epoch,
+> +		root and pid.
+> +
+> +What:		/sys/kernel/security/kap/igroups/<igroup>/kap.igfd
+> +Date:		October 2026
+> +KernelVersion:	RFC
+> +Contact:	Ketan Bhardwaj <ketan@armoriq.io>
+> +Description:
+> +		Read the igroup's name, epoch and lineage root on one line.
+> diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
+> index 00650dc..937193b 100644
+> --- a/Documentation/security/index.rst
+> +++ b/Documentation/security/index.rst
+> @@ -18,6 +18,7 @@ Security Documentation
+>     siphash
+>     tpm/index
+>     digsig
+> +   kap
+>     landlock
+>     secrets/index
+>     ipe
+> diff --git a/Documentation/security/kap.rst b/Documentation/security/kap.rst
+> new file mode 100644
+> index 0000000..22c2729
+> --- /dev/null
+> +++ b/Documentation/security/kap.rst
+> @@ -0,0 +1,236 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======================
+> +Kernel Assurance Plane
+> +======================
+> +
+> +Kernel Assurance Plane (KAP) introduces objective-scoped authority as a kernel
+> +subsystem. Intent Lineage Groups (igroups) are its core kernel object, LSM hooks
+> +are its enforcement mechanism, and securityfs is its control-plane interface.
+> +
+> +This document describes the design for review. It lists the alternatives that
+> +were considered for each decision and the questions on which maintainer feedback
+> +is wanted.
+> +
+> +Motivation
+> +==========
+> +
+> +A task increasingly runs on behalf of an objective that a user approved, for
+> +example an AI agent asked to fix a failing test. Over hours it starts programs,
+> +reads and writes files and opens connections. Linux decides whether the task
+> +may perform each operation. It does not decide whether the operation still
+> +belongs to the objective the task was started for.
+> +
+> +Existing mechanisms cover parts of this. Seccomp filters syscalls but cannot see
+> +paths or objectives. LSM profiles, such as AppArmor or SELinux, are attached to
+> +programs or labels, not to an objective, and cannot be narrowed for one task
+> +while it runs.
 
-[Severity: Medium]
-If vmtest.sh is invoked with -b on a clean tree where the selftest binaries
-have not been built yet, won't check_deps() exit with KSFT_SKIP before
-handle_build() has a chance to build them?
+Can you please also set apart how it is conceptually different to
+Landlock?
 
-In the main flow, check_deps() runs before handle_build(), and inside
-check_deps() only SHELL_MODE returns early before checking for
-DMABUF_HEAP_TEST and MEMCONTROL_TEST. Should check_deps() also skip the
-binary existence checks when BUILD is true (or run after handle_build())?
+Landlock can see paths (unlike Seccomp), and Landlock policies
+(rulesets) are defined and enforced by unprivileged processes through
+its userspace API.  It is already a popular choice for AI agent
+sandboxing and orchestration frameworks.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-v2_2023012=
-3_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com?part=3D8
+What is missing in Landlock which does not make it usable for your use
+case?
+
+(Obviously, there are missing features that people would want in
+Landlock, but that's an argument that doesn't count IMHO, since it's
+still easier to add these features to Landlock than to create a new
+separate LSM.)
+
+
+> +Namespaces and cgroups partition resources rather than
+> +authority. None of them lets several objectives run in one environment, each
+> +held to its own authority, or fails a task closed the moment its authority is
+> +revoked.
+> +
+> +Model
+> +=====
+> +
+> +``igroup``
+> +  Intent Lineage Group, the unit KAP enforces. An igroup owns an authority
+> +  snapshot, a lineage root, the current epoch, an optional expiry, a transition
+> +  sequence, its bound tasks and an event log. A process is bound by writing its
+> +  pid to the igroup, which binds all of its threads. Children inherit the
+> +  binding, and it is kept across exec and setns.
+> +
+> +``authority snapshot``
+> +  The predicate set for one igroup epoch, with typed ``allow`` and ``deny``
+> +  arrays for exec, file, network connect, credential, IPC, namespace,
+> +  descriptor, procfs, executable memory, BPF, ptrace and io_uring checks. File
+> +  predicates also govern rename, link, unlink, mkdir, rmdir, mknod, symlink and
+> +  truncate, so a file cannot be moved into a denied path. A deny wins over an
+> +  allow, and an operation no predicate allows is refused. The snapshot is
+> +  compiled once when it is installed.
+> +
+> +  In this RFC the snapshot is a document in a strict subset of JSON, with no
+> +  whitespace around the ``"predicates"`` and ``"kind"`` keys and no escaped
+> +  quotes::
+> +
+> +    {"predicates":[{"kind":"file","allow":["/srv/work"],"deny":["/srv/work/keys"]},
+> +                   {"kind":"exec","allow":["/usr/bin/*"],"deny":[]}]}
+> +
+> +  The kinds are ``exec``, ``file``, ``net``, ``cred``, ``ipc``, ``namespace``,
+> +  ``descriptor``, ``procfs``, ``execmem``, ``bpf``, ``ptrace`` and
+> +  ``io_uring``. File, descriptor and procfs patterns match a path and
+> +  everything below it. Other patterns match exactly, or by prefix when they
+> +  end in ``*``. A program is allowed by the path it resolves to, and refused
+> +  by a deny on either that path or the name it was started with.
+> +
+> +  Each kind is matched against a target string:
+> +
+> +  * ``exec``, ``file``, ``descriptor``, ``procfs``: a path. A rename, link or
+> +    other path operation is checked as its parent directory plus its name.
+
+It's unclear to me why procfs is not covered with "file", since you
+are already doing path-based matching.  What operations are restricted
+by "descriptor" is also unclear to me.
+
+> +  * ``execmem``: the path of the mapped file, or ``anonymous``.
+> +  * ``net``: the destination address and port, as in ``192.0.2.1:443``, or
+> +    ``family:N`` for an address family other than IPv4 and IPv6. A connect
+> +    with ``AF_UNSPEC`` is not checked; ``AF_UNIX`` is checked as ``ipc``.
+> +  * ``cred``: ``uid=U,euid=U,suid=U,fsuid=U``, ``gid=G,egid=G,sgid=G,fsgid=G``,
+> +    ``groups`` or ``capset``.
+> +  * ``ipc``: ``unix:stream_connect``, ``unix:may_send`` or ``sysv:flag=N``.
+
+FWIW since pathname Unix Domain Socket are also addressed by path, we
+found it useful to express the rules about them with paths as well, in
+Landlock.
+
+In networking and IPC, I am a bit missing how that would work when
+*offering* a service (listen(), bind()).  Do you have thoughts on
+that?
+
+What is `sysv:flag=N`?  You might be interested in the discussion we
+had at [1] -- I found System V IPC tricky to restrict, because many of
+its integer identifiers are not FD-like handles, but just live fully
+accessible to the entire IPC namespace.
+
+[1] https://lore.kernel.org/all/20260727230833.138165-1-utilityemal77@gmail.com/
+
+> +  * ``namespace``: ``TYPE:OPERATION`` for clone, unshare and setns, where
+> +    TYPE is ``mount``, ``pid``, ``net``, ``user``, ``uts``, ``ipc``,
+> +    ``cgroup`` or ``time``; ``user`` for creating a user namespace; and
+> +    ``mount:mount:FSTYPE:PATH``, ``mount:umount:PATH``,
+> +    ``mount:pivotroot:OLD:NEW`` and ``mount:move:FROM:TO`` for mounts.
+> +  * ``ptrace``: ``same-igroup``, ``igroup=NAME`` or ``unconfined``, for the
+> +    other task.
+> +  * ``bpf``: ``cmd=N``, with ``map_type=N`` or ``prog_type=N`` when creating
+> +    a map or loading a program.
+> +  * ``io_uring``: ``override_creds``, ``sqpoll`` or ``uring_cmd``.
+
+Can it be turned off as well?
+
+
+> +``epoch``
+> +  Monotonic authority generation. Installing a higher epoch fails every task
+> +  still bound to an older one closed from its next check.
+> +
+> +``lineage root``
+> +  Opaque identifier supplied by userspace that ties the installed authority to
+> +  a committed execution lineage.
+> +
+> +The kernel does not parse planning or policy languages. A privileged userspace
+> +runtime validates those artifacts and installs kernel-ready state. Tasks that
+> +are bound to no igroup are not checked, except for the exec check that
+> +``kap.default`` enables.
+> +
+> +Control plane
+> +=============
+> +
+> +KAP state lives under ``/sys/kernel/security/kap``::
+> +
+> +  /sys/kernel/security/kap/
+> +    kap.default
+> +    igroups/            created with mkdir, as cgroups are
+> +      <igroup>/
+> +        kap.install
+> +        kap.procs
+> +        kap.lineage_root
+> +        kap.authority_epoch
+> +        kap.authority
+> +        kap.expires_at
+> +        kap.transition
+> +        kap.mode
+> +        kap.events
+> +        kap.igfd
+> +
+> +``kap.default``
+> +  ``open`` (the default) or ``closed``. When closed, a task outside the initial
+> +  PID namespace that is bound to no igroup cannot start a program, so a bind
+> +  that failed cannot leave a workload running without authority.
+> +
+> +``kap.install``
+> +  Write the lineage root, epoch, optional expiry and transition, and the
+> +  authority as one ``key=value`` document in a single write. They commit
+> +  together or not at all.
+> +
+> +``kap.procs``
+> +  Write a pid to bind that process, with all of its threads, to the igroup.
+> +  Reads return the pids written.
+> +
+> +``kap.lineage_root``, ``kap.authority``
+> +  Read or write the lineage root or the authority document. A write to
+> +  ``kap.authority`` is compiled before it replaces the current authority; a
+> +  document that does not compile leaves it unchanged.
+> +
+> +``kap.authority_epoch``, ``kap.expires_at``
+> +  Read or write the epoch, or the expiry in seconds since the Unix epoch (0 for
+> +  none). A lower epoch, or an expiry already in the past, is refused. Writing
+> +  an epoch, or installing authority, also clears revoked mode.
+> +
+> +``kap.transition``
+> +  Write a transition record whose sequence number is higher than the last one.
+> +  Reads return the last sequence number.
+> +
+> +``kap.mode``
+> +  ``enforce`` or ``revoked``. A revoked igroup refuses every operation.
+> +
+> +``kap.events``
+> +  Read recent decisions as JSON lines with the fields ``ts_ns``, ``igroup``,
+> +  ``decision``, ``operation``, ``target``, ``reason``, ``epoch``, ``root``
+> +  (the lineage root) and ``pid``.
+> +
+> +``kap.igfd``
+> +  Read the igroup's name, epoch and lineage root on one line. The name is
+> +  reserved for future igroup file descriptors.
+> +
+> +Design decisions
+> +================
+> +
+> +Where the control plane lives
+> +-----------------------------
+> +
+> +Igroups are created and destroyed by userspace, so the control plane needs
+> +directories that userspace can create. securityfs does not allow userspace
+> +mkdir.
+> +
+> +Considered:
+> +
+> +* A dedicated filesystem mounted at ``/sys/fs/kap``, the prototype's first
+> +  interface. It works, but puts security state outside securityfs, where the
+> +  other LSMs keep theirs.
+> +* securityfs with control files, for example writing a name to a ``create`` file
+> +  to make an igroup. This keeps everything in securityfs but replaces mkdir and
+> +  rmdir with a private protocol that every tool has to learn.
+> +
+> +Chosen: a small internal filesystem that the kernel mounts itself and links
+> +under securityfs, the approach AppArmor uses for policy namespaces
+> +(``apparmorfs``, linked as ``/sys/kernel/security/apparmor/policy``). Users only
+> +see paths under securityfs, and an igroup is created with mkdir, the way a
+> +cgroup is.
+
+You are creating policies through the file system, but you are at the
+same time restricting access to the file system with these policies.
+How does that work?
+
+> +Igroups rather than a cgroup controller
+> +---------------------------------------
+> +
+> +Considered: making KAP a cgroup controller, since igroups are created like
+> +cgroups and follow the process tree.
+> +
+> +Chosen: a separate hierarchy. A container usually places all of its tasks in
+> +one cgroup, while several objectives can run inside it, each needing its own
+> +authority. Tying authority to resource partitioning would prevent that, and
+> +authority must also follow setns, which cgroup membership does not.
+> +
+> +A static LSM rather than BPF LSM programs
+> +-----------------------------------------
+> +
+> +Considered: implementing the checks as BPF LSM programs.
+> +
+> +Chosen: a built-in LSM. Igroup membership, epochs and inheritance across fork,
+> +exec and setns are kernel object state with fixed semantics that reviewers can
+> +audit in one place. BPF LSM also needs ``CONFIG_BPF_LSM`` and BTF, which many
+> +minimal kernels do not enable.
+
+I find both arguments unconvincing.  If it's a BPF program, you can
+also audit it in one place - in the BPF program.  And the lobbying to
+get CONFIG_BPF_LSM enabled in these kernels is probably not
+substantially different than the lobbying to get CONFIG_KAP_LSM
+enabled.
+
+> +
+> +Policy stays in userspace
+> +-------------------------
+> +
+> +Considered: parsing a policy language in the kernel.
+> +
+> +Chosen: the kernel accepts only a compiled predicate snapshot. Planning,
+> +policy validation and signature checks stay in privileged userspace, and the
+> +snapshot is compiled into per-kind pattern sets once at install time.
+
+I'm surprised that it's privileged, since existing AI agent software
+tends to run unprivileged.  Who would be operating this and defining
+the policies?  From your description I would have expected that the
+"objectives" that inform the policies are roughly equivalent to the
+goals that you give to the model in an agent prompt?  Does the agent
+software communicate with a privileged agent?  Or does the agent
+software spawn off namespaces to attain the necessary privileges?
+
+More of a terminology remark, but when you consider the kernel layer
+only, it feels like the compiled predicate snapshot *is* the policy
+that you are enforcing?
+
+
+> +Questions for maintainers
+> +=========================
+> +
+> +1. Is an internal filesystem linked under securityfs, as AppArmor does,
+> +   acceptable for a control plane that needs userspace mkdir?
+> +2. Should igroup removal follow cgroups, with rmdir allowed once no task is
+> +   bound?
+> +3. Is a separate igroup hierarchy the right call, or should this be a cgroup
+> +   controller despite the cases above?
+> +4. The predicate format is a JSON document and experimental. Is a binary
+> +   format preferred, or reuse of an existing ruleset format such as
+> +   Landlock's?
+
+I don't understand why the JSON format is a question for the kernel
+review; you can do the interface in a format that is suitable for the
+kernel, and translate from JSON into that format in userspace, not
+mixing the layering between that userspace component and kernel space.
+
+
+> +5. unshare and setns have no LSM hook, so the series calls KAP from them
+> +   directly. Would a hook for namespace transitions be acceptable, or is there
+> +   an existing one that should be used instead?
+
+I believe we added such hooks for the Landlock namespace and
+capability support.
+
+
+> +6. The LSM ID is provisional and should be confirmed.
+> +
+> +RFC status
+> +==========
+> +
+> +This interface is experimental. The RFC is intended to make the authority and
+> +lineage model reviewable, not to freeze the userspace ABI.
+
+I have to admit, I've read the doc, but still don't understand how
+that model is supposed to work.  Do you maybe have a concrete
+motivational example which defines such a policy and demonstrates why
+that is different and can not implemented with one of the other LSMs
+or the BPF-LSM instead?
+
+–Günther
