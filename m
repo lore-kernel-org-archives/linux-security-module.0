@@ -1,99 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.175
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793197578;
-	b=4lSP+Vf5/Ynktnh4Cv9yqMYJq6w3ay6u2q40l6MpeEHT+jhsXJ/SJevCdliwhcY7e9+w
-	 9d6UTSKBRO76tNtjFdRyNfKMR5BqnukjDVsQ/18Zuk7zWgehV+Wydn3Wt5dN8aI5cj14z
-	 fUCXe1dTG7vYB3KorzGMmHBLlaTtbLJFjIYp37uwSZkMqqRgMjaphIp2SsUnc14yQlO6c
-	 I/Up2/fNJH76ty1zwD1df5OSSUwl/IxXMl771eP4cXwyfBP0UNHU9TQr7qBn6lwqW40sS
-	 ybKtk7YmNCJWxWCsST2nPwFh3TSYl4wNzsLp6/9hbxtR1u2lifsNFoYXecmodgaGUPg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793197578;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=6CnDrX+La+2Fu6jP7wM+lot0uCoQlPoWp1MsRc4XNYs=;
-	b=3lqQSeVv0GP4scWQyV1y+6kVauTuyChygn5OHtzTbpcaZpjv5B/TuKSaZXz/jDcrpvLU
-	 v0zl3/XxISw1VTGgvsxnr9QWruKJv5efJE22OaQnoyAWKZ5vRoBCg538GBxP3VbJXuIH1
-	 fFuLL2ui45KP4Os2T2j5KizggsChdE5LYcmbMXCbSzN0hHcmKQjQyoUetIjBlvJBHMCn+
-	 gERNP8fWIKGJXhzftfgFfJzhunNcdqqLaC6qInbTOi3CGLiiZVK8+8niuNhUEtqGZpAAS
-	 0ubPaiVR0W/LYQ6JhnXglreIk7x2H49iQTZXei9UN92+4M10Hpn4ZFbyrt8XPbMcJ3A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DfRFAWrm;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.175
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793199874;
+	b=XxxUguDkaNeliO6RtbOqwtp0OQwe6/7mq8AwSqKAsCzmMR3PtAwFT0Bu+YQg+qTGmJb1
+	 98DJ3idb1DaRxQaGKi+xTH+TJ73QpbiaVN2YY5AqV8w8591gzF01PEdCMmfKrB2fHvnhs
+	 QQ6qNUiVvv8PdJWzcZGJZcCZ6QT9tAVjf+cfKD1r5oGL10QMJfpl7NifChMQu3U7YFF11
+	 dUPC9G5D+hFzPZsUiwsobh41gSX5OYAbBMdOkWCqsjjRoRPtuw0SBSjlhLSb6AuBUTplo
+	 BHflkhsDkY65AWaEf/YHqoP5iPXV01Bwfd9hJ4dZ87ljIqvWKQfD0dqFxlkoAIEPDpw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793199874;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=+Rsc9g24MtPLpVFEqmviyx5L0j/Yg5yRWd8d0hmWbnc=;
+	b=rY+3thnbokM1F0FUS9pxccwmYDJgDLk0qz1eCWCF3vd1EpFFs5KxolTfWoXyCxbBFFo2
+	 7+fizBRbm3fQguWvXRGH9ulr9NmNiGoUMk3T6EUOT8z1R16DrcBdrgzdTafsfHbozowEB
+	 Nox3Fia/ahYzQNJMCHkWp6nin3qunx5skIsiJNOHkH/c2LJKsx5I10L13msCauIW+b+4q
+	 GFi5e9KSMMiOooA0HNdKOPF2M3SnWqKCUfRbHUsKDxGhjImLkvKyT551u6WYD0fs44xUx
+	 4ls92B6UPvvmdoJkA9VQyIY7jqWqSx4q3fHAS5S3InowOp94C42R2sU98cHYtn9eQAg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZkxBsnFF;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E48606A31C
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 14:26:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E8E48606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1960F606A338;
+	Wed, 28 Oct 2026 15:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DfRFAWrm
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-8b10ac6ab7bso9093897b3.1
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 07:26:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793197577; cv=none;
-        d=google.com; s=arc-20260327;
-        b=VcyKeumiHqY0fO3DotprXEHTNLV0TNw63J9jWkHEIEW9MBtf0WLvhfeO/ntTB9er46
-         N5vkgmmbwoDqmDey6+oDMs/CBkI8xFFthaRDwuPCFNjQNpy/5kGcgDyrmZfRiEifabs+
-         BIuq7Xn8Y5qj/aA80glBVx1a1eaJt2397r7/1VGnQIjQusuGgdvBqc0/ejnqbI4bNcik
-         A5rRXLHu5BXT1CfxvSTyM5F3NvLPREqdIydEcPN6Tesz5dRjeerdH9ADjD9s1PvwhqJ2
-         fsLiIpIfpmUWN0qvEfhgSiYcJtv15XKExvVfiuw01s8MKHEbmHSzaqzITIe/PctEAl7I
-         Ypjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=6CnDrX+La+2Fu6jP7wM+lot0uCoQlPoWp1MsRc4XNYs=;
-        fh=vW/G7+Z5RmwSy1Bjiy1ourOD5NJp6rYB98XcRGID9XI=;
-        b=leCOx+1RZauVty3O5oRwTd1imIQTFFgf3M7DNuGoPXr2tVtDG8gLXczF5n94B41v6m
-         uDvKzTHyuxUplW/wasSEPb1k/82w9xI1QBoppcEsBlHMNnPqTXjaTuWII5rsRf/dthhI
-         k/zcqRSIP1eWcfRIPD0zaAzJQYrPeCAC/AM6M0F7PaWaI1RBJpRbgiS225q0RqD2sXn5
-         jk0BW3S+DdRg1dPT1nGLwAyL3x1sJpeefnU8cCZ7SQkTs7pXiXVSpo8uAPfEW/+IvhCv
-         DTB/4seyLVFNnwvP+hwCydDafmc0BCNg9xs+wkgdZYaj8N9DQjQd5vN6+flVaWDCiicR
-         dNug==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793197577; x=1793802377; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6CnDrX+La+2Fu6jP7wM+lot0uCoQlPoWp1MsRc4XNYs=;
-        b=DfRFAWrmO+/Bj131K7+MGGvRusTiq7Cc5X579DXdy+WsyQOlHXS84rhXCmVmsKOZC1
-         jfuHEhsyE6S5Hv/g/4Ce6BjpcZobIYAK7e7SRGOKE2sQnrptMyZ/rcfRlucg4dR4ESXM
-         2gkEM+ETeUkrfFJD5xphI1XdRbsTnl/m+NHm4YrmXbfagBxPULfxYRHU88tAoNYxU0fD
-         Sk8MihQlJ6G7wkMm9i9Z8l/r1iyrvuPMo1oPpQz0ZlNwKWJeP4IMCT2IjKSoAP5RqzaI
-         HDHSC06lEs0YPSK/mdKu+B4W4LgKQdZyBezNe4ZWTbOgw79zb6SISHpGLp8kXM1lynRT
-         +z9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793197577; x=1793802377;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=6CnDrX+La+2Fu6jP7wM+lot0uCoQlPoWp1MsRc4XNYs=;
-        b=B3w+L9CzIqsqCKINDW/W2DP2IeOPVOzge1eQ/19XuhIS8/TkNWPHhP87jFPEuQkynf
-         fpvjh81B0ZtIhsbT89e0iLRgLwxZFG1nKzzltQzmPl4GcLibDxvvCOqIpTYTe2JfZsCG
-         Vo1s27nzgkYx3S6DFHmivcuFiCMGfb98JUvM9IQXkLg9niTuq1UWpDaTbEoC6KxUeL3x
-         cviIzf/1nZdpXY2Md3saMehbeNtEaLnavUywqd+iFQuHfX87V7vUoKilMD+aOgWYQSZv
-         ciyW1zvtmW9u7kfnFeI0C4ktqRevCDYDSTFFqRPuJzu5EaL2/CqLpZfP1uVqKcLvOm6p
-         CsQA==
-X-Forwarded-Encrypted: i=1; AKwUvBwn0U9y1M5/VeYOwKnkTH+RDnx9cbkntAXdINGKS7EnmCE8FM4XPasFqpKAGMDjZzJf7q5ijSJkDansTFFEgvy8s0QQ0lI=@vger.kernel.org
-X-Gm-Message-State: AFq9FYI+ahAGeGkW094wnczOZAgNYY8QgT6gHcapzvOpGS0a7GDJhats
-	MuIvEluIrHnc6w3oOBFETPqRR3BoayLJnXPTocQJ6AAcvvvZg3R9nWDw6xT58aFvtJdhEk6Io8b
-	tZqznrFCPrT4Bv2gRjZLYVjy4uz+no7k=
-X-Gm-Gg: AYBFou3a9+6Vju2Buv5yEi+WXBSmJccsUeNCBuCrboD+y6x/Y1/81nBzD/4EuAwahkB
-	icWDVX9eRyDp1jNMgTdQapbCmM0u9MJnpgdA0/KcXu/kVhs+f7+IPpIh5xaYYWJp5tS2xDoivbe
-	9GiH3Qqj+Xz94Rjol9o9JlVz3YkkxYbj/nKAn1PqNlSsKZfll0rTjqViU8jHuXEZLfiQFm+DutH
-	NykqizM97RgIfc3HJYGn6fjNLwNYZE0qUpUTazBlAxqQY2ry1kSYA9soxdbGg/t07ngetZluGYE
-	loZ69DN3kEcwsj0T1H5kmHIM8qlKcQML3vvRKY1oomcR4SHAaqRsrn2ay2biN4lMn9BwP3HlqOP
-	iPlLKGRNGs++sbAG6jJ97k3PcZg3VnohvPaPxG1WSfQMz3BOHMS71h7EMUsjF8wQTv1guW8o=
-X-Received: by 2002:a05:690c:e90d:b0:8b0:d42c:54e9 with SMTP id
- 00721157ae682-8b1b5c9953bmr12024777b3.34.1793197576747; Wed, 28 Oct 2026
- 07:26:16 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZkxBsnFF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D381F031E1;
+	Wed, 28 Oct 2026 15:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793199873;
+	bh=+Rsc9g24MtPLpVFEqmviyx5L0j/Yg5yRWd8d0hmWbnc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ZkxBsnFFHC/9gTRrdBEknTJoTVZswKRDlPDucehz4Dm8MSiKl46eCXT1gByUpUafd
+	 jnnLlwddU9v1iqiS4g5eIh2DqyeNhaseMSbKOJPzpRj4Y1cPELGRH+v/WQSuCyAhWh
+	 f/dC/tZ4EdQ13mxHFfYgAV+Y1a527tVWVLT/liknT+QPmlmamJuQQYsp9NHiqPq7xK
+	 DuwaHnmvGLSZ5yhpngyULqUh69y5/4tUeRPI/7ZillyArv5BpnnLfZQPdBwRXlAS8o
+	 tt8eHigoxeUfc/bo9NX5aRFDlx2pFDSsoLSIQdUALqDrV29y4gIKDqfCikxAeAVEg0
+	 zeS8UrUwPaGyA==
+Message-ID: <sashiko-outbox-188027@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 2/8] dma-heap: charge dma-buf memory via explicit
+ memcg
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
+ Weiner" <hannes@cmpxchg.org>, =?utf-8?b?TWljaGFsIEtvdXRuw70=?= <mkoutny@suse.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Sumit
+ Semwal" <sumit.semwal@linaro.org>, =?utf-8?b?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, "Michal
+ Hocko" <mhocko@kernel.org>, "Roman Gushchin" <roman.gushchin@linux.dev>, "Shakeel
+ Butt" <shakeel.butt@linux.dev>, "Muchun Song" <muchun.song@linux.dev>, "Andrew
+ Morton" <akpm@linux-foundation.org>, "Benjamin Gaignard" <benjamin.gaignard@collabora.com>, "Brian
+ Starkey" <Brian.Starkey@arm.com>, "John Stultz" <jstultz@google.com>, "T.J.
+ Mercier" <tjmercier@google.com>, "Christian Brauner" <brauner@kernel.org>, "Paul
+ Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Stephen Smalley" <stephen.smalley.work@gmail.com>, "Shuah
+ Khan" <shuah@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
+ =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, "Jens Wiklander" <jenswi@kernel.org>, "Sumit
+ Garg" <sumit.garg@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, op-tee@lists.trustedfirmware.org, echanude@redhat.com, mripard@kernel.org, media-ci@linuxtv.org
+In-Reply-To: <20261027-v2_20230123_tjmercier_google_com-v3-2-78d2c4cb8647@redhat.com>
+References: <20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com>
+ <20261027-v2_20230123_tjmercier_google_com-v3-2-78d2c4cb8647@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 28 Oct 2026 15:04:31 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -102,102 +73,269 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261019-b4-ipe-keyring-rfc-v1-0-156f0b93e843@nvidia.com>
- <20261019-b4-ipe-keyring-rfc-v1-1-156f0b93e843@nvidia.com>
- <702ade20-a2f3-4919-97e6-c72faa89399a@kernel.org> <20261021-groll-donnerstag-erfuhren-ce34a0ed4e97@brauner>
- <CAHC9VhTHUU0h9k74CMT6wYhMwyY3YhbSSFwJoDTvoFRyTFVZwg@mail.gmail.com>
- <20261022-hausbank-dozent-hurtig-9443f3777475@brauner> <CAHC9VhQ4sdCRvJ+YPZoiQzR_hgQN6-=84qvnTDDGPf=7=L9-jA@mail.gmail.com>
- <5143896100674c9fd744c4d7d6ce12232910e789.camel@gmail.com>
- <CAMw=ZnR54hMBwGTps23t9Mm_VO1bAvmeX8uTf_VJ0rJsFNMLuw@mail.gmail.com> <37b653494cf282c6e428e2ae8fd781a0ea69bf3f.camel@HansenPartnership.com>
-In-Reply-To: <37b653494cf282c6e428e2ae8fd781a0ea69bf3f.camel@HansenPartnership.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Wed, 28 Oct 2026 14:26:05 +0000
-X-Gm-Features: AclHuK_2pDead4oUBgww1V4NOQP7FrJJqtxPGmwYbVPNkoSmhvEEW-kSQFaRSpM
-Message-ID: <CAMw=ZnQU0PRSn5gh-QNT+GuKroQaRsRUUMDB=rM=LSX+=h-JkQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/4] ipe: add the .ipe policy keyring
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Paul Moore <paul@paul-moore.com>, Christian Brauner <brauner@kernel.org>, Fan Wu <wufan@kernel.org>, 
-	Manuel Huber <manuelh@nvidia.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Andrew Halaney <andrew@amutable.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
-	Mike Rapoport <rppt@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Pratyush Yadav <pratyush@kernel.org>, Alexander Graf <graf@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 28 Oct 2026 at 12:42, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Tue, 2026-10-27 at 11:07 +0000, Luca Boccassi wrote:
-> > On Mon, 26 Oct 2026 at 12:57, <luca.boccassi@gmail.com> wrote:
-> > > I think there is one issue with the design pattern where keyrings
-> > > are set up in userspace, that I have mentioned a few times already
-> > > and I got documented in
-> > > https://www.freedesktop.org/software/systemd/man/latest/systemd-system.conf.html#RestrictFileSystemAccess=
-> > > as well: they are trivially bypassable if the kernel has kexec
-> > > enabled and it is signed. The security model relies on the "good"
-> > > userspace running first, but if kexec is enabled, there's no
-> > > guarantee that will be the case, and as far as I can tell it gives
-> > > root trivial capability of overriding it and extending the trust
-> > > chain as the attacker wishes.
->
-> The attack sounds doable, but it also seems to be exploiting a gap in
-> kexec policy: kexec is supposed to behave like a warm reboot so if boot
-> policy requires UKI only then so should kexec and that sounds like the
-> thing that should be fixed.
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
+- [Critical] dma-heap: missing permission check in mem_cgroup_get_from_fd()
+- [High] dma-buf: system_heap: 32-bit nr_pages truncation in system_heap_al=
+locate()
+- [Medium] mm: memcontrol: missing EXPORT_SYMBOL_GPL() on dmabuf memcg help=
+ers
+- [Medium] mm: memcontrol: mem_cgroup_get_from_fd() returns NULL when memcg=
+ is disabled
+--
 
-I don't think that's the case though, even before KHO/LUO existed,
-kexec has never really behaved like a warm reboot, as for example boot
-services do not run again, so various chains of trusts are not reset
-(eg: a bootloader might now be blocked so warm reboot would not work,
-but kexec would). And since KHO now exists, the difference is even
-greater, as more and more state is retained across the boundary.
+commit 961ee31303129349ee7fa6988bef4bc244f22a61
+Author: Albert Esteve <aesteve@redhat.com>
 
-> What's the mechanism boot uses to ensure UKI only? So we can see if it
-> can be adopted to kexec.
+dma-heap: charge dma-buf memory via explicit memcg
 
-There isn't one, and I don't think there is correlation, as booting a
-UKI is not the only way to boot a system. Eg: this problem applies
-just as well to booting an arm system on uboot. So I really would not
-tie this to UKI or UEFI specifics, it's more generic.
+This commit adds a charge_fd field to struct dma_heap_allocation_data so
+DMA_HEAP_IOCTL_ALLOC can resolve a target cgroup from a pidfd or cgroupfd v=
+ia
+mem_cgroup_get_from_fd() and charge system heap allocations to that memcg.
 
-> > > This is of course not to say this new IPE keyring shouldn't be
-> > > added. But perhaps it would be nicer if the default build flag was
-> > > mutually exclusive with kexec being enabled? Not sure if that can
-> > > be expressed in Kconfig though? default: yes-if-kexec-off, no-if-
-> > > kexec-on
->
-> I wouldn't do this because a) I don't think it's an IPE problem, I
-> think it's a kexec one and b) distros get very tetchy about hard to
-> solve feature anti dependencies.
+[ ... ]
 
-Note that I wasn't suggesting an explicit conflict, but merely to
-model the default values of the kconfigs with such a relationship,
-allowing manually setting any combination the user wants. But it was
-just an idea, maybe it's not worth it, dunno.
+> diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/=
+system_heap.c
+> index c8959eadc71d1..adeea8cd328b8 100644
+> --- a/drivers/dma-buf/heaps/system_heap.c
+> +++ b/drivers/dma-buf/heaps/system_heap.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/err.h>
+>  #include <linux/highmem.h>
+>  #include <linux/mem_encrypt.h>
+> +#include <linux/memcontrol.h>
+>  #include <linux/mm.h>
+>  #include <linux/set_memory.h>
+>  #include <linux/module.h>
+> @@ -388,8 +389,6 @@ static struct page *alloc_largest_available(unsigned =
+long size,
+>  		if (max_order < orders[i])
+>  			continue;
+>  		flags =3D order_flags[i];
+> -		if (mem_accounting)
+> -			flags |=3D __GFP_ACCOUNT;
+>  		page =3D alloc_pages(flags, orders[i]);
+>  		if (!page)
+>  			continue;
+> @@ -401,11 +400,13 @@ static struct page *alloc_largest_available(unsigne=
+d long size,
+>  static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
+>  					    unsigned long len,
+>  					    u32 fd_flags,
+> -					    u64 heap_flags)
+> +					    u64 heap_flags,
+> +					    struct mem_cgroup *memcg)
+>  {
+>  	struct system_heap_buffer *buffer;
+>  	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+>  	unsigned long size_remaining =3D len;
+> +	unsigned int nr_pages =3D PAGE_ALIGN(len) >> PAGE_SHIFT;
 
-> > > At the very least IMHO this relationship should be documented
-> > > explicitly in the kconfig blurb, as it seems to me it's a major
-> > > footgun to leave laying around, and users might not necessarily be
-> > > aware of it.
->
-> I'd document the need for trusted userspace on kexec if it was a boot
-> requirement, yes.
->
-> > KHO/keyring folks, what would you think about preserving sealed
-> > keyrings across kexec via KHO so that the chain of trust can't be
-> > reset by userspace? Good idea/bad idea/yes send patches/no go
-> > away/etc?
->
-> Well, yes, we do have a similar problem with the trusted keyrings.
-> They're actually initialized from the shim created ..RT variables
-> (which are volatile, but don't die on kexec).  On first boot they're
-> initialized before user space, so we know they came from shim (or
-> another trusted component in the boot chain) but if root uses UEFI RT
-> services to add to a ..RT keyring, the added key will appear trusted
-> after kexec.
+[Severity: High]
+Can nr_pages truncate on 64-bit systems when a caller passes a large
+heap_allocation->len via DMA_HEAP_IOCTL_ALLOC?
 
-If it is possible to overwrite the RT variables then yeah it sounds
-like we want to preserve the machine/platform keyrings too via KHO.
+In dma_heap_ioctl_allocate(), heap_allocation->len is page-aligned into a
+size_t len and only checked for zero before being passed to
+system_heap_allocate() as an unsigned long:
+
+drivers/dma-buf/dma-heap.c:dma_heap_ioctl_allocate() {
+	...
+	len =3D PAGE_ALIGN(heap_allocation->len);
+	if (!len) {
+		mem_cgroup_put(memcg);
+		return ERR_PTR(-EINVAL);
+	}
+
+	dmabuf =3D heap->ops->allocate(heap, len, heap_allocation->fd_flags,
+				     heap_allocation->heap_flags, memcg);
+}
+
+In system_heap_allocate(), size_remaining keeps the full 64-bit len, while
+nr_pages is stored in a 32-bit unsigned int. Because __GFP_ACCOUNT is remov=
+ed
+from alloc_largest_available(), cgroup enforcement now relies solely on
+mem_cgroup_reserve_dmabuf(memcg, GFP_KERNEL, nr_pages).
+
+If userspace passes len >=3D (1ULL << (32 + PAGE_SHIFT)) (for example, 16 T=
+iB
+with 4 KiB pages), nr_pages wraps to 0 (or a small value), so
+mem_cgroup_reserve_dmabuf() succeeds without charging the cgroup while the
+while (size_remaining > 0) loop continues allocating uncharged physical pag=
+es
+until global memory exhaustion. In addition, values of nr_pages in
+[0x80000000U, 0xffffffffU] are passed by mem_cgroup_commit_dmabuf() to
+mod_memcg_state(), which takes a signed int val and would corrupt
+MEMCG_DMABUF statistics.
+
+>  	unsigned int max_order =3D orders[0];
+>  	struct system_heap_priv *priv =3D dma_heap_get_drvdata(heap);
+>  	bool cc_shared =3D priv->cc_shared;
+> @@ -416,10 +417,15 @@ static struct dma_buf *system_heap_allocate(struct =
+dma_heap *heap,
+>  	struct page *page, *tmp_page;
+>  	int i, ret =3D -ENOMEM;
+> =20
+> -	buffer =3D kzalloc_obj(*buffer);
+> -	if (!buffer)
+> +	if (!mem_cgroup_reserve_dmabuf(memcg, GFP_KERNEL, nr_pages))
+>  		return ERR_PTR(-ENOMEM);
+> =20
+> +	buffer =3D kzalloc_obj(*buffer);
+> +	if (!buffer) {
+> +		ret =3D -ENOMEM;
+> +		goto cancel_charge;
+> +	}
+> +
+>  	INIT_LIST_HEAD(&buffer->attachments);
+>  	mutex_init(&buffer->lock);
+>  	buffer->heap =3D heap;
+> @@ -478,6 +484,9 @@ static struct dma_buf *system_heap_allocate(struct dm=
+a_heap *heap,
+>  		ret =3D PTR_ERR(dmabuf);
+>  		goto free_pages;
+>  	}
+> +
+> +	mem_cgroup_commit_dmabuf(dmabuf, memcg, nr_pages);
+> +
+>  	return dmabuf;
+> =20
+>  free_pages:
+> @@ -498,6 +507,8 @@ static struct dma_buf *system_heap_allocate(struct dm=
+a_heap *heap,
+>  	list_for_each_entry_safe(page, tmp_page, &pages, lru)
+>  		__free_pages(page, compound_order(page));
+>  	kfree(buffer);
+> +cancel_charge:
+> +	mem_cgroup_cancel_dmabuf(memcg, nr_pages);
+
+[Severity: Medium]
+Will building with CONFIG_DMABUF_HEAPS_SYSTEM=3Dm and CONFIG_MEMCG=3Dy fail=
+ at
+modpost with undefined symbol errors for mem_cgroup_reserve_dmabuf(),
+mem_cgroup_commit_dmabuf(), and mem_cgroup_cancel_dmabuf()?
+
+In drivers/dma-buf/heaps/Kconfig, DMABUF_HEAPS_SYSTEM is tristate, so
+drivers/dma-buf/heaps/system_heap.c can be compiled as a loadable module
+(system_heap.ko). However, mem_cgroup_reserve_dmabuf(),
+mem_cgroup_commit_dmabuf(), and mem_cgroup_cancel_dmabuf() in mm/memcontrol=
+.c
+do not have EXPORT_SYMBOL_GPL() annotations.
+
+Should those symbols be exported (or should the reservation/commit/cancel
+calls live in the built-in drivers/dma-buf/dma-heap.c layer as described in
+the commit message)?
+
+[ ... ]
+
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index bbd46ba40350b..f66254f52b999 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5661,6 +5661,53 @@ void mem_cgroup_flush_workqueue(void)
+>  	flush_workqueue(memcg_wq);
+>  }
+> =20
+> +/**
+> + * mem_cgroup_get_from_fd - resolve a memcg from a cgroupfd or pidfd
+> + * @fd: file descriptor (cgroupfd or pidfd)
+> + *
+> + * Tries @fd as a cgroupfd first; if that fails, tries it as a pidfd.
+> + * On success returns a referenced memcg pointer. On failure returns
+> + * an ERR_PTR.
+> + */
+> +struct mem_cgroup *mem_cgroup_get_from_fd(int fd)
+> +{
+> +	struct cgroup_subsys_state *css;
+> +	struct mem_cgroup *memcg;
+> +	struct cgroup *cgrp;
+> +	struct task_struct *task;
+> +	struct mm_struct *mm;
+> +	unsigned int pidfd_flags;
+> +
+> +	cgrp =3D cgroup_get_from_fd(fd);
+> +	if (!IS_ERR(cgrp)) {
+> +		rcu_read_lock();
+> +		css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
+> +		if (!css || !css_tryget_online(css)) {
+> +			rcu_read_unlock();
+> +			cgroup_put(cgrp);
+> +			return ERR_PTR(-ENOENT);
+> +		}
+> +
+> +		memcg =3D mem_cgroup_from_css(css);
+> +		rcu_read_unlock();
+> +		cgroup_put(cgrp);
+> +		return memcg;
+> +	}
+> +
+> +	task =3D pidfd_get_task(fd, &pidfd_flags);
+> +	if (IS_ERR(task))
+> +		return ERR_CAST(task);
+> +
+> +	mm =3D get_task_mm(task);
+> +	put_task_struct(task);
+> +	if (!mm)
+> +		return ERR_PTR(-ESRCH);
+> +
+> +	memcg =3D get_mem_cgroup_from_mm(mm);
+> +	mmput(mm);
+> +	return memcg;
+> +}
+
+[Severity: Critical]
+What prevents an unprivileged user with access to a dma-heap device from
+passing a cgroupfd (opened with O_RDONLY | O_DIRECTORY or O_PATH on any
+world-readable /sys/fs/cgroup directory) or a pidfd (via pidfd_open() on
+PID 1 or another user's process) as charge_fd to DMA_HEAP_IOCTL_ALLOC?
+
+Through dma_heap_ioctl_allocate() -> mem_cgroup_get_from_fd() and
+system_heap_allocate() -> mem_cgroup_reserve_dmabuf() -> try_charge_memcg(),
+charging to the root cgroup (where mem_cgroup_is_root(memcg) skips page
+counter charging) allows a restricted process to bypass its own memory.max
+and memory.high limits, while charging to another cgroup allows exhausting
+that victim cgroup's quota and triggering mem_cgroup_oom() kills inside it.
+
+Later patches in the series ("security: dma-buf: Add dma_buf_charge_task LSM
+hook", "security: dma-buf: Add dma_buf_charge_cgroup LSM hook", "selinux:
+Restrict cross-cgroup dma-buf charging", and "selinux: Restrict dma-buf
+direct cgroup charging") add LSM hooks and SELinux checks, but there are no
+baseline DAC, capability, ptrace_may_access(), or cgroup write permission
+checks when CONFIG_SECURITY is disabled, when SELinux is not active, or when
+a cgroup directory has no explicit security.selinux xattr (where
+selinux_dma_buf_charge_cgroup() returns 0 on -ENODATA).
+
+Also, when charging a remote memcg via try_charge_memcg() breaches that
+target cgroup's memory.high limit, try_charge_memcg() increments
+current->memcg_nr_pages_over_high and calls __mem_cgroup_handle_over_high(),
+which resolves get_mem_cgroup_from_mm(current->mm) and reclaims from the
+allocating process's own cgroup rather than the remotely charged memcg.
+Should remote charging require appropriate permissions over the target task=
+ or
+cgroup, and how should memory.high reclaim be handled when charging a forei=
+gn
+memcg?
+
+[Severity: Medium]
+In mem_cgroup_get_from_fd(), what happens on the pidfd path when
+CONFIG_MEMCG=3Dy and memory cgroups are disabled at boot via
+cgroup_disable=3Dmemory?
+
+When mem_cgroup_disabled() is true, get_mem_cgroup_from_mm(mm) returns NULL,
+so mem_cgroup_get_from_fd() returns NULL instead of an ERR_PTR as documented
+in its kernel-doc comment.
+
+In dma_heap_ioctl_allocate() (and in dma_buf_ioctl_xfer_charge() later in t=
+he
+series), IS_ERR(memcg) is false for NULL, so a pidfd charge_fd silently fal=
+ls
+through while a cgroupfd charge_fd fails with -ENOENT (because cgroup_css()
+returns NULL when the subsystem is disabled). Should the pidfd path also
+return an ERR_PTR when get_mem_cgroup_from_mm(mm) returns NULL?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-v2_2023012=
+3_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com?part=3D2
