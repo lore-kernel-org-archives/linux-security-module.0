@@ -1,48 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=64.106.246.77
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793174856;
-	b=zA3pWj6hkgpcZFkgVqAaXJaS531xykmfktQErljcf7KYJEiw4luFp5UaNNkSAkBiOUut
-	 rzlj7Vm752BAYvwBCKYNzjC986rI/Ab4qqDX4Vap5/2XfZbyR8RSJZy56U+TBlHqyowJT
-	 oYVR6HkdW7hY7pimF7XgVi8mi8NaNePpQx1TO8B4WQOtF0KwJ2ybv/TaBByvuUSGnofaA
-	 ABQWajLxMgIwjwHQ+ybr6TxtISfVF2Cq3lCTo5Q18rn8OQVvv3/CHia/Tq1R/yhcVXAjK
-	 3DDtAA7//HzWKPwXRakjCseAWUxURv8VDfqD2RgjC1Yd1hKZhY9y9pam+fVOHWVLjxQ==
+	t=1793177188;
+	b=vwHDLF8kYaNVmIUmRweEbOeAj6aPplqGQOgpq5ZW6IuiYFqrbg7sRyiHRVYaYX71iAW8
+	 /Yaj9xB4m21isAmtVCCY1hy7snhNY9iTeuCf2s3ayW4dFdvE83iMz7+hBrCBuhGCRQGzy
+	 UUNM/HgibLeQfmZqjjDhuNKi7QqRwRu+1NE0fIfPZYKWQGm5knNFnXIrGfmPgUx4s/XQP
+	 AV11JGuSRNqgRReEgHzEibNHdM3oZvYpv1IHU2cvldcVQruonV/1xpTiMzEJd8kQxDsFu
+	 f6mnF+E7LxHPqZMdXN5bWIsrsdC2WG4eb/c4sej0+IIC1Sc3ZE4+Fj+H7CfUmrdZbQg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793174856;
-	h=DMARC-Filter:Received:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
-	 X-ClientProxiedBy;
-	bh=h+iT6wmE4ByXBF7sQha5D04NNu/JKAHodJVSAbVAhYQ=;
-	b=XmTqRMaXrjoTZ8lu0xsoFI/FFiaElkWcu17aNqaUF1MNFxqYibI0bUvvvVvi4OTtNizI
-	 J90adbzIvCoL0KNppSojHst6q6dDz6x8V7W0WTF4TvdL5nA/HLnJOzBSOTotql/T5Df03
-	 2M1mcyfCZQlOtl2RjCdkFAKrMZ+qQ0BkYJbrF89S8KV1Wk8hqlKNIkZcAAJJlTQ015N4b
-	 sHY/ypYg/kVWBZth7AXANUlhhWYdp/MOKI2ERcvn92Hs07fGMrImoQB6IJA/mPjkryudi
-	 v3jVfQOIB9iFsbWw9+G6msBvOeiMAOjfU4D/ZRR98S4QvUIYNalTckKOBoRRxuyutzg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793177188;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=gs+YhFCoBHnZOv4LuIMwdM0G4KJHpnh9KcJrGE2LwwQ=;
+	b=XiTwQWV2N+ehmE1JeW8vDHxrUy0h7biV1xpB+7EPqEOEk4ymgJcaLw2PvSRS5R7X6d8R
+	 22sIy25fbLSld9bVksCXyhzO9B9mLBbUFu9qEhtBEmB4BaVKjR5ojyV4WJ0CDAt4VQuGl
+	 mm3bFkd3LTbWSOUh5nLUEbIRMRx68Ykho1Ct5AS5rJHLRJal6DE0Wgmckma8SBezsMxKL
+	 LCQ/Wy3IqKD3QRwgRlrBkbg1Lovn3pSZzlSWhPEOrNX1p/vbkFgMtOwc1dqA0yQ+aBdSg
+	 YNEBo0CGTwXtROwAm6u8T+qkQRKNlZxPW/GyxNrS6OF/kNEkEeTagRWLhLJpy7kaTmA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amlogic.com;
-	spf=pass smtp.mailfrom=amlogic.com;
-	arc=none smtp.remote-ip=64.106.246.77
-Received: from mailsc.amlogic.com (unknown [64.106.246.77])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LNGPyvwe;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F67606A31A;
-	Wed, 28 Oct 2026 08:07:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9F67606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from XA202100-0024.amlogic.com (10.88.19.246) by mailsc.amlogic.com
- (10.8.11.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Wed, 28 Oct
- 2026 01:07:32 -0700
-From: yao zhang1 <yao.zhang1@amlogic.com>
-To: <stable@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-mm@kvack.org>,
-	<linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>,
-	<ebpqwerty472123@gmail.com>, <paul@paul-moore.com>,
-	<stephen.smalley.work@gmail.com>, <yao.zhang1@amlogic.com>
-Subject: [PATCH 5.15.y] mm: call the security_mmap_file() LSM hook in remap_file_pages()
-Date: Wed, 28 Oct 2026 16:07:18 +0800
-Message-ID: <20261028080719.1821-1-yao.zhang1@amlogic.com>
-X-Mailer: git-send-email 2.56.0.windows.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCCD606A31A
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 08:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LNGPyvwe
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3624F1F01825
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 08:46:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793177188;
+	bh=gs+YhFCoBHnZOv4LuIMwdM0G4KJHpnh9KcJrGE2LwwQ=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=LNGPyvweBl7v3hMTtwvCzSC06NZn81xOg3kbelfCUsNqr231sNLl+Rep9ZCOQXpec
+	 xwGlWb0UXt8yBKgyf6G5N0fQ7CacmTJvDODXWup/CERg6I3sZJvhNk1Vx7Yq6eSAM6
+	 whSN0IAszmkWbv0OhY8BO8Z7fQRmKZ7dGRFlxWtaoMgz0UZTv/NFF0THIne/hFI4hx
+	 ronS1bhclX7tDgjRFv1sGRlYM3EJ3dof2EWE10g9+AmBCvDz+T6b0d0EPkgX90aF0z
+	 J03Ri8pDg+ITwr3DNJpmpSfkQ+iqmmXbxKoCLkrzuNLO63TLhBmPCXcabsX7zWt2gp
+	 kdkQkHp6qGFxg==
+Message-ID: <sashiko-outbox-187633@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 1/3] fs: Introduce task path helpers
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261027-pidfd-get-paths-v4-1-e2a6a47e3c95@black-desk.cn>
+References: <20261027-pidfd-get-paths-v4-0-e2a6a47e3c95@black-desk.cn>
+ <20261027-pidfd-get-paths-v4-1-e2a6a47e3c95@black-desk.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 28 Oct 2026 08:46:27 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -51,87 +58,19 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailsh.amlogic.com (10.18.11.5) To mailsc.amlogic.com
- (10.8.11.35)
 
-From: Shu Han <ebpqwerty472123@gmail.com>
+> From: Chen Linxuan <me@black-desk.cn>
+>=20
+> Introduce helpers that acquire a referenced struct path for a task's
+> executable, root, and working directory. Reuse them for procfs task
+> links and AppArmor executable-path handling instead of duplicating file
+> and path reference handling at each call site.
+>=20
+> Signed-off-by: Chen Linxuan <me@black-desk.cn>
 
-commit ea7e2d5e49c05e5db1922387b09ca74aa40f46e2 upstream.
+Sashiko has reviewed this patch and found no issues.
 
-The remap_file_pages syscall handler calls do_mmap() directly, which
-doesn't contain the LSM security check. And if the process has called
-personality(READ_IMPLIES_EXEC) before and remap_file_pages() is called for
-RW pages, this will actually result in remapping the pages to RWX,
-bypassing a W^X policy enforced by SELinux.
-
-So we should check prot by security_mmap_file LSM hook in the
-remap_file_pages syscall handler before do_mmap() is called. Otherwise, it
-potentially permits an attacker to bypass a W^X policy enforced by
-SELinux.
-
-The bypass is similar to CVE-2016-10044, which bypass the same thing via
-AIO and can be found in [1].
-
-The PoC:
-
-$ cat > test.c
-
-int main(void) {
-	size_t pagesz = sysconf(_SC_PAGE_SIZE);
-	int mfd = syscall(SYS_memfd_create, "test", 0);
-	const char *buf = mmap(NULL, 4 * pagesz, PROT_READ | PROT_WRITE,
-		MAP_SHARED, mfd, 0);
-	unsigned int old = syscall(SYS_personality, 0xffffffff);
-	syscall(SYS_personality, READ_IMPLIES_EXEC | old);
-	syscall(SYS_remap_file_pages, buf, pagesz, 0, 2, 0);
-	syscall(SYS_personality, old);
-	// show the RWX page exists even if W^X policy is enforced
-	int fd = open("/proc/self/maps", O_RDONLY);
-	unsigned char buf2[1024];
-	while (1) {
-		int ret = read(fd, buf2, 1024);
-		if (ret <= 0) break;
-		write(1, buf2, ret);
-	}
-	close(fd);
-}
-
-$ gcc test.c -o test
-$ ./test | grep rwx
-7f1836c34000-7f1836c35000 rwxs 00002000 00:01 2050 /memfd:test (deleted)
-
-Link: https://project-zero.issues.chromium.org/issues/42452389 [1]
-Cc: stable@vger.kernel.org
-Signed-off-by: Shu Han <ebpqwerty472123@gmail.com>
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-[PM: subject line tweaks]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-(cherry picked from commit ea7e2d5e49c05e5db1922387b09ca74aa40f46e2)
-Signed-off-by: yao zhang1 <yao.zhang1@amlogic.com>
----
- mm/mmap.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 273e06dad3c6..7f357de8f4d6 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3047,8 +3047,12 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 		flags |= MAP_LOCKED;
- 
- 	file = get_file(vma->vm_file);
-+	ret = security_mmap_file(vma->vm_file, prot, flags);
-+	if (ret)
-+		goto out_fput;
- 	ret = do_mmap(vma->vm_file, start, size,
- 			prot, flags, pgoff, &populate, NULL);
-+out_fput:
- 	fput(file);
- out:
- 	mmap_write_unlock(mm);
--- 
-2.46.0
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261027-pidfd-get-=
+paths-v4-0-e2a6a47e3c95@black-desk.cn?part=3D1
 
