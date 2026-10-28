@@ -1,54 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793157143;
-	b=m4zriJBJXxg8kKNMETWPchp5gh4YKHgrgbLuQnNo/ep4c/e0eWlt2VhvsEUQOByFkVDV
-	 V6dj3cD4wrZhWJhy8tDUcgLJiFqImEuTEEGdJQU05y2BeZTwjWNG9ociX/MTVuvxVOQvP
-	 2/pPSexe4OB30lZxSSLo1vhf3KtRh5ageI+G/jp/wEgq/Ewp4tWkEq6CKk1Yu3R+fp41J
-	 qsE8wETrXaIqQ6Xup/ern+jp0zNwnOdDtPyDobQqvWalfZt+OyEcTlTgYLs/dDN2OXTaC
-	 vPEyk3536PqrMFt1teHoJd/ueFl9IXVrFWVCW+qa80qXD9zbMwnXTey2MJHRdEiwxcg==
+	t=1793157344;
+	b=KdNQZhFyKF8NBIycXd4t8uoUUwjYIYuyCg/fxwHkqKUuKbLN7PB/dEF7T6XUHnbnxbcR
+	 HVNZZ1+ASUQkWJeDjcxFyQhSSV/SXIeJtztyO++t1UShh9A2FiGCAdTNkBmDEwzcj8cIQ
+	 eVIYLjmd8ffn9M8+3HWqaTE/FABvjtXR01m1bXO+Z8xZF0Mtzz4wRsdbTpeEuC0uFaocW
+	 U9CZipYeu1Cp9zG0Opacz9I8kvoKDQm07E3fU2RvLi8SWg2O7KH61rsFEfj+rDUIgl3m9
+	 AOdPsAj0X8704i7OqZPNhvGSO7BYi3jvMnZIeBUWDQDFnHVB0bTafcQbeHrgSSTXNqw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793157143;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Ev8VJBGSxLLAorFgb/gLg/6shahuyTCd4fsCfcg3jEg=;
-	b=TnzdgcEFI4gC5Rs5jcyrFnyjiY3A82xsN7Q2AwkpgAhH0Fhl01J8lNIllw0Sm80AfkuC
-	 LFVhre+kNy2cRQFVoN6XoYyKOKBQ8MbZAfYSiD/6KsnE7wXDnaV6Tq8B8SgpIQASZut4k
-	 MB3gaKd9B6iO1qHKN8loS2PBx7X+PnPmYK6mqtyHLx5FOs1e1ZN2pUClittzhIvSeTL+z
-	 eHf9tIMmP2f+8z56sEluVl6U3L5eMtTgBhUzQ3O7LMNA/aylPogoouKBSQ+4qn+2LyAHM
-	 a2DNDLJMiE2zcW/VkC51j8ghVXEdirDXlGMvyiMVBpxxA+2j84qpdE2fnMl+RtMlWiQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793157344;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=vL8GmYAurpaxhncV/HncQrdnh5DUf3BHiMGC96xTVM4=;
+	b=yX0e9D7mrnh5dToXbvO0fX2GNK6RmHcwV2zVC+qrzT9dPfG5MiTsOzUGD9NOqZJ7wyP5
+	 e8QI1PyAYkDcixgD6HkIpUdpG7U64y0VFoRvMZc+0J0MYn3M0uvgncVyY03Ef1OWCcyOW
+	 ML3qfawffqbUduC4fHejHz2fr5xK5w7yqtJYgUEbrQmM+rFgdQO4RsDOoVIC2rVqUeQZj
+	 ZiB6sZfdxtGpLTG9XNTMFy+AAFOdHO/V3lpjc//R3JDyb9uCc8nZS5/flm/BuyMGVwd+1
+	 yvsZxKdCuB4Rgr7OpuaipXxQ73o3xl3x0z9tbBDs+FkMIGYtygBcaxwqLUiNlJKoK2w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LEdCCA+l;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=klHz1XWg;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA5E606A329
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 03:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 9DA61606A31E;
+	Wed, 28 Oct 2026 03:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LEdCCA+l
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7612C1F01829
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 03:12:22 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=klHz1XWg
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id C06051F01828;
+	Wed, 28 Oct 2026 03:15:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793157142;
-	bh=Ev8VJBGSxLLAorFgb/gLg/6shahuyTCd4fsCfcg3jEg=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=LEdCCA+lTZ396lKBSyseTEzVL3a0bURUlgwPmWe0T4HZEGtrsYf0zCQKQQv1ottup
-	 TdDhRYpbzzeEhYHItr2Xv2wlw7VpqWcvSXqoJNK33/K8AdBY2uhS+ECWkXbjsC6G8z
-	 pc6CgeN4OmghV/m29JYcHz/QEjvLZrHlOHxQrtdAzpIVMCYYSjcWXEL1o3USRlK/2b
-	 5PG2dWF0l5PDT8VvYePjA/hvtaI40dPwUA3cRbDoXS5u0ACWIP94j/K/lAOJ2CUZe0
-	 jQmJ63U3VV5prJ+gjQySbJ18lZHIfi4dnfr7fPMPtVGj1phUCc1wte6jOfy4ugHjps
-	 8rziBSglgJWMQ==
-Message-ID: <sashiko-outbox-187394@kernel.org>
-From: sashiko-bot@kernel.org
+	s=k20260515; t=1793157344;
+	bh=vL8GmYAurpaxhncV/HncQrdnh5DUf3BHiMGC96xTVM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=klHz1XWg8sVLF4LIXA3f7p1BZJkBFDGcxjbqgyS63284ldFIkI/j9fw+84Fuv1j6e
+	 ngV2QPDaE55ZSpqvDEuG/DdBtrLyaicQZ7ZdgEk7jI9yPogS+aT044zVNBbl4zOjXL
+	 r3bqNqZ7V5kbBZB84ljaRi32/BIvrkM/nc3+qRjnqrlDOAa0qbaWYhXLPe/8PA3DdB
+	 MqTrSPlYMCxl+6754+/Os4+m+8e1/6CUL4xNKPC36MjrEBtMTLt7+sQHooFNaEE2lX
+	 OlD1sxcPUzdkNG3ahSrTDe1SJ+KHozZjJ+DFlS+quzxS3vvwvwAphnXmR5XJMko9KA
+	 rE1A7OoupdTsQ==
+Date: Wed, 28 Oct 2026 05:15:40 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2] KEYS: key_garbage_collector(): process in chunks
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: =?utf-8?b?b3BlbiBsaXN0OlNFQ1VSSVRZIFNVQlNZU1RFTQ==?= <linux-security-module@vger.kernel.org>
-In-Reply-To: <20261028025306.2063007-1-jarkko@kernel.org>
+Message-ID: <auFo3KrYXWq3UKmi@kernel.org>
 References: <20261028025306.2063007-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 03:12:22 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -57,34 +61,53 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261028025306.2063007-1-jarkko@kernel.org>
 
+On Wed, Oct 28, 2026 at 04:53:04AM +0200, Jarkko Sakkinen wrote:
 > key_garbage_collector() has a design that is not resistant enough for
 > workqueue lockups. The duration scales up relative to the number of items
 > in the serial tree, which causes a reoccuring theme of being guilty of
 > causing workqueue lockups.
->=20
+> 
 > Resolve the problem by processing in chunks:
->=20
-> 1. Declare a static variable key_gc_work, which owns the garbage collecti=
-on
+> 
+> 1. Declare a static variable key_gc_work, which owns the garbage collection
 >    in-flight state, and key_schedule_gc_work() for re-scheduling the work.
 > 2. Define KEY_GC_CHUNK_SIZE, set to 1024 keys, as the bound for the number
 >    of items scanned and destroyed.
-> 3. Define KEY_GC_DESTROYING to mark resume to destruction without repeati=
-ng
+> 3. Define KEY_GC_DESTROYING to mark resume to destruction without repeating
 >    the RCU grace period. Drain the graveyard before advancing key-type
 >    reaping.
 > 4. Define KEY_GC_REAP_REQUESTED for preserving full-pass requests across
-> [ ... ]
+>    the continuations.
+> 
+> The following test was performed:
+> 
+> 1. Add 499995 "unused" keys.
+> 2. Add 499994 "expiring" keys i.e., keys with expiration times.
+> 3. Clear the first keyring.
+> 4. Wait for the timeouts expire from the second.
+> 
+> When tested with QEMU using x86-64 and aarch64 (emulated) architectures the
+> elapsed the results were the following:
+> 
+> - x86-64: chunk max: 125 ms, total time increase: 5%
 > - aarch64: chunk max: 235 ms, total time increase: 6%
->=20
+> 
 > Tests were performed using a laptop with AMD 4650U (Zen 2 uarch) CPU.
->=20
+> 
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Sashiko has reviewed this patch and found no issues.
+The big picture here is that e.g., [1] might be a good idea (or might
+not) but it would be a mistake to apply the patch before the data flow
+overall has some sanity in it.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028025306.2063=
-007-1-jarkko@kernel.org?part=3D1
+And with, I think, somewhat pretty modest changes the state has been
+put in a nice box :-) Much better shovelling position I'd say.
 
+[1] https://lore.kernel.org/keyrings/20261026031219.2627968-1-jarkko@kernel.org/
+
+Br, Jarkko
