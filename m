@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.224.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793194434;
-	b=eaJEjSx4cMoxYPAI72FJLHOF0DMCbBEXxx5nhXh/MnXkAW3xJmOTr0KcFDP40ss1kx7K
-	 nKdZXq75u41RhAQvvUwkmfv3ptgCpJotU85VaMZk1V6QNhyhJuhEkOurjXV4PtryTWP+i
-	 s8La42sC9AOLs1Mzz1Symx32XJdvRicGAQlFtyDX7L0xBFvhCXzJ8485ZycCfVgErdjs0
-	 4xPbCqVtJiCl/XU42zaS82nlugnFNhqk+X2Bnu3djZI0blU460h+OX2cfiAblDGM+xOVO
-	 n8nutucq7MiL1oA1UG3OSkefcYDdVo22jUzvDdh1ScLG6w8cHQTAysdwE3mXym89i9Q==
+	t=1793194435;
+	b=XkvkWP90V4RyFt16H5pIw0WKFsY5zZroEWn9Vih78OnrKuCKAvbmKEe0B+gPqAPv5STs
+	 9d4OechPFFTD57Bgr1jX7t+LGALGllbM963UHCa+ntbF+oNPvFrZ3aHBUXnpiREkd9tcP
+	 tXA9t3+/ZBMnoU1TeAEIrh8rO2Na5y2pdKb59LeNwnFNIlcUnf+mTr8pqDcC2TQj96zVK
+	 g09oB2mHdnm5/iI0MLSYmL0mSDqBjReVa734/x3t8STZEOO/Uqw3hcZgMwha/qEUXp0OJ
+	 WiygDCDr8hsAZA+DtaaeElxZvgtsefNWgKVjUfU0QtW/9Kc8Bpf3fcrP/9XNDFDF73w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793194434;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793194435;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=26AE5gCYY7baAaN85Lo44cvGROnGllSI8c2v5Y1tIAo=;
-	b=QlvTlyp5Pi/4kw2vBHUYxaYhksQx/ploGt47w5tl8mccxUG2kyPGFNOFr6CjPIN3etdC
-	 29uAKYTwap/v6QUlB/kNuwNmQkEK/vdYVTc4hOHzEdeXArdE3UmvA3ZmJjLhmSnLcC4r3
-	 COU2JytvJm6HsBtQNQWVkuzuip/3TmcByDMoqBCw/DwHItGIiAdOGdvMx/33yxeTfS9Eb
-	 QsXeTUyIx51vxjF0oG+u7O3xNXfDjmGTnPgIZNWKwgN1jJXNaGnbq91u3R22hRzLiQnAr
-	 47AzT90zQ4M5T3Xf9WMDpM5r7HLTK0hX/bnLBwyZf5xOfPylI1SB6zei+EbfeozO5eA==
+	bh=0jiG2rD9So/arZvMAXmt3lPJiORsbNPvj+sHUkRM/lY=;
+	b=0bDzW/6k2/jbNfZC1NbbpEH5haAnaCt9htzz9LxN2fqRQN+xAg9hUd9nYpev6QfZZKDV
+	 4lTs48Pdf43AcLcr9AZuzkdEvIN9wMVSbjAXMKXE3WkrGhJ+AxAVkKCRcOO7TQqi43T1p
+	 sJcX3M6vMl3YsOP5Lts589C5vP5c3Ov6mHY89fldhJtX3dO2qYEzt/LaYZYTMfwoNWi5G
+	 Ei40K6rPjod46IUNYobqdlyZHd3+IbhwHNw9xYW1GyTMwMXLqhmaVzpW73PlGl+RypDrO
+	 053Q2IRUD2HBNosObA+c/lmHF5FkcJRHyyK0oY1xEYgD6pLukubrq1qygJlZpNnYzFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=armoriq.io;
 	spf=pass smtp.mailfrom=armoriq.io;
-	dkim=pass header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=aCMH9Eoj;
-	arc=none smtp.remote-ip=74.125.224.47
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	dkim=pass header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b="dLn/UHz5";
+	arc=none smtp.remote-ip=74.125.224.45
+Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29556606A332
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 13:33:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 29556606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE72606A32D
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 13:33:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8EE72606A32D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armoriq.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armoriq.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=aCMH9Eoj
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-677af43eed4so984986d50.0
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 06:33:53 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=dLn/UHz5
+Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-67a2efec15cso1007141d50.0
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 06:33:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=armoriq-io.20260707.gappssmtp.com; s=20260707; t=1793194432; x=1793799232; darn=vger.kernel.org;
+        d=armoriq-io.20260707.gappssmtp.com; s=20260707; t=1793194434; x=1793799234; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=26AE5gCYY7baAaN85Lo44cvGROnGllSI8c2v5Y1tIAo=;
-        b=aCMH9EojBVOoev1gwWVLKDWex2r3QxcsDWRv9LTIhAkw1jKt2DBrYMCa9W2cVaAUPF
-         txFo4JnAgXMLVXBZx1gel5OGR+YK6C277UdvgZIiBCMkCkDejs8HL/gR+UEyKQ0nvh+Y
-         FlWPjk8md9obSSDhM0jqN887mS2hD2URd4jITGI/cFT5bzVuQxm7CJIhQc5Nd4pbuSTF
-         yyjdQs0Vqh/UUIGFR0a0LKKU+HSvKBzrkqbGBvVQeDIEyeOW3n4+aLUXKmFTeTnIFLB5
-         jbkVeKPR51lpzxfyIBajrLh2hGAqP5v2LGWI9/cw8nAKKP9SESuilCaAa8iPtZ6YWad8
-         AOdQ==
+        bh=0jiG2rD9So/arZvMAXmt3lPJiORsbNPvj+sHUkRM/lY=;
+        b=dLn/UHz5laULvOPw2Z4Il7Aes12V3tgaa7l8ko/Z6TiMfArXMOE0vl5uTrR+SM5+UC
+         UXFW9wsVIwY7y6LQZ8Kp7zfKyM2kDUosLPf1Ulylv65drrBZkQnx9UltIGDC7E6Y8v5X
+         vwnC3zFVtn+PPhm6Xqmb90g5fxvW3ExPK0sCXwdU1j6tyT5zdgBDt3uLraIrJulfCxZu
+         FACMECN/6hf9PgeufeuE3m5Z/5aJMCrCGQdje9ZZQeU4OZytdlGUyRiMn2lENLTUQC0I
+         cX4W5vCVgrdNNQaW6ET7ZfWTwM7jkpctDlFBps+8rRNUpTevoiHxA0NpeASFFj4Jj+Tt
+         BQPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793194432; x=1793799232;
+        d=1e100.net; s=20260707; t=1793194434; x=1793799234;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=26AE5gCYY7baAaN85Lo44cvGROnGllSI8c2v5Y1tIAo=;
-        b=ZBPswhCPvyVvh263a7o7LeIbk6MZ/lx2WvSn08D0jit3QtQyCmn1X/88NRmJ5P4iq8
-         msvJVP5BtpFvg+LdkDKaO9cLlk45qhL9lkNrJJw7zL7kecWbNfxTDy5kIo4H9uU0w6mU
-         qcMaf0G+I61q92eaQ4XDvp+IXpAbk8VNsG9+r+6q5EqStfVOHsR68tM2DSrh1gjf9xmY
-         ufU9cKFWazNlQqAdd3wQSoHc8UR8CZX0rLeK1ZhhVXUnFcAB9h7TayvFSVxEQ5lR0n/D
-         TYFiDTobP/9yzXidaOUOaF9D/dgOfWr8p4JqXnOPAZU6oWa89l5z2/Rx0MUVXTyh/i8+
-         TXKg==
-X-Gm-Message-State: AFq9FYIb7g2woL/4NA6dZmAZQL4WeBu2/YXQJpBtLPRQ5/QnwJuPZc74
-	vgsCGv2VgGiPoVis/HdQXe1ajMGo4WB5qhwb2qsy/NmiZy1Fe86+N7826GLqtbOQsgde
-X-Gm-Gg: AYBFou3yVgqnnpYD6Q4iZOAspvRyS/vem51TYZfM8OM+oJ+nC1oYY0EUn/hA21xlqCD
-	Dqh43oDlRW7+KxlWfGlh6lYFVEw7zkGZ3XYDiw00+O/J9Knk5iV6pCE5n9RgbrG1ktGuUSSD3yK
-	Yom+9EQtVVTCPyXsYJSAMgDMRteoXEhvuGMjpvdw94hdQjpqpdEbSxUGK/1nXGfzE2GFBRjr55A
-	rK8tnESG1wdjzw96clZ+/CV27oktFROWbmZSOJ+U/zwijYqnRAPIj2woqgAYlwSdGNX6mHzvjPu
-	5kpbL9KekEQQICn0wEdcYaVddWr6I9cAwPiUTbnxQof+tfgaMzonZf5ViHf/SdEGc6DPPCelEH3
-	Ipill9rK6m7qDN76eOGyy45oIPXOVlqtleRKxiae9Pj7hxLQnIUNFq2zYKxpsanOpCgCl/Q8cRM
-	Jbbx0wyE0RL1Pnv6SEeSFjhXgd0wGxN0nBKr8D0EUuYQl+8c4xSIRLQvITWCNnxROOM9Oy2X7cy
-	D9D+zsYPbFGFYNO2s6nrQhvHutfw3kR915itzoNKliQgyZh/EFndCoighaGRNvA8M62Yz8bCGaG
-	0qcrSRTeA/M1FtU9z30UWOGnRmuiW5CG8tA+y/mn3uDMF2xOZ6GgwLaAvFuz0zbHlhHlAbP84Be
-	CBYXJ765y4pAvDAaGAWt1D4ymBwqX+LsaC5mOdEtrJlePkgA=
-X-Received: by 2002:a05:690e:4887:10b0:679:ad95:8efc with SMTP id 956f58d0204a3-67a7bce9f9fmr1554734d50.30.1793194432097;
-        Wed, 28 Oct 2026 06:33:52 -0700 (PDT)
+        bh=0jiG2rD9So/arZvMAXmt3lPJiORsbNPvj+sHUkRM/lY=;
+        b=Dj3tWleThggnDRO2XIOdwGZvmIV2T0C/BrVVEGCaKOUeGy1ozZ/6l+M0nfGc7K2Ljz
+         tjOad6yjEPbqXTJWERw2Rt0ClS4L0VwcYUUKoYbeAsTd4t/WEMDa2ZrXPsWF1IwKHt/H
+         R88PHLSsS02y4FLHthTjh0MJJqa2VjjnDdzJCCM/m6xHi/0+KQEbdqwp0xiXqeMwiVWn
+         XUlzJt9EkrlrYXpuYd5y1QmWEOqCOXeEuLHRlg27oG061EGyQAYaPJmy+9NgfJG4ETUa
+         rCIpkUzX3l9LJ1ucWKU4YkCNDkTvvxMUum/hb+0sy0Qb9c9NwKeYJCUI5YOkF7CcpjPD
+         2fOQ==
+X-Gm-Message-State: AFq9FYKdyven1DY9EVwrk+PrzsGc4m5A7lP8GZkoOMberQQp/46JwVqM
+	LeARaIG7tSx+MFbVOiLdvtD/Z1gtKqQW4nMu5pCetwCfeSgBNA0AHZ+CvNSLbJWd7oWE
+X-Gm-Gg: AYBFou1ejabXG9TZ1EwDECZqWmKMawS3BXSogLFyb7WeOrNXkoDYDtlziuiSoInmxdl
+	rKWfy3jttc732x6dIk7M/Xgdz2Ng3d6biGLNn4pIXu25caJFFuEhRUDp2a3JjxJH2CJcA0hBWZD
+	JTk1dE7UiOGLaUWJsk5wEOH2jEjbfr5Sg1tg1NGpwdXd1IM2qpYTs3ZiHFGWNpGfPogv2uw7INq
+	gcvpTHVZfUU0mWSCss5YdC5DXUuBzSn7xPmUiWoyi5biUZqgMpTsKsMqTZxieSPOzco27qmmKku
+	96GojqZHuZ47mVx7FAu5j/b8ET/CTNstVnpTNMALt27x6vSW/AdTXvsi1c+k9haXf6gFV+tC56j
+	xAGcWnaseST+4ZWT3dd+tbk0jEpaAneDt8rzOa+YozcQKuiI+YaHwwcTqu24I0OkLSEGVM0WapY
+	rNTLtaIcAfBugE4sfdeDxqymUXsKnTtyVi6LD1xXHcoDyInoYoHK5+bnJf91I6GOHSudMqHrpNh
+	2hP+/CLdMNKGucy+nkQLN8x4woHWgVyrgy05wPls2BVSKq3B1vbEwQ1ua3G3qzShs1UDAFrtDDh
+	yFdKQV2/85DfLg7GA4y16CtAB/Qhvw98xzzuNsHYIsBYWZGw23bFmvvR40rFLBNtb6px5QQIYqM
+	Ha0f23Ivh1wFLj/fL4vCDcz613ZfWR5s4ozfHtDUF/IuSTL0=
+X-Received: by 2002:a05:690e:4884:20b0:675:449d:3d72 with SMTP id 956f58d0204a3-67a814bcec8mr653958d50.32.1793194433581;
+        Wed, 28 Oct 2026 06:33:53 -0700 (PDT)
 Received: from CC-KJQTV599DQ.attlocal.net ([2600:1702:7b5a:ab90:103d:30e1:1f09:a9ae])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67a79f38dfesm1694911d50.1.2026.10.28.06.33.51
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-67a79f38dfesm1694911d50.1.2026.10.28.06.33.53
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 28 Oct 2026 06:33:51 -0700 (PDT)
+        Wed, 28 Oct 2026 06:33:53 -0700 (PDT)
 From: Ketan Bhardwaj <ketan@armoriq.io>
 To: Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
@@ -93,9 +93,9 @@ Cc: linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"HARIHARA SUDHAN . R" <harisudhan@armoriq.io>,
 	Ketan Bhardwaj <ketan@armoriq.io>
-Subject: [RFC PATCH v2 4/6] security: kap: add the securityfs control plane
-Date: Wed, 28 Oct 2026 09:33:33 -0400
-Message-ID: <20261028133335.75899-5-ketan@armoriq.io>
+Subject: [RFC PATCH v2 5/6] kernel: add KAP checks for unshare and setns
+Date: Wed, 28 Oct 2026 09:33:34 -0400
+Message-ID: <20261028133335.75899-6-ketan@armoriq.io>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20261028133335.75899-1-ketan@armoriq.io>
 References: <20261028133335.75899-1-ketan@armoriq.io>
@@ -110,18 +110,11 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the KAP control plane under /sys/kernel/security/kap.
+Check unshare and setns against the bound task's authority. Neither
+has an LSM hook, so they call KAP directly. Every namespace type is
+checked, and setns checks the type of the namespace it is given.
 
-securityfs has no mkdir, so igroups live in a small internal filesystem
-mounted with kern_mount() and reached through the igroups link in the
-kap directory, as AppArmor publishes its policy namespaces. An igroup is
-created with mkdir, as a cgroup is, and gets one file per control:
-kap.install writes the lineage root, authority epoch, expiry, transition
-and authority in a single write that commits together or not at all,
-and kap.procs binds a task. kap.default sits next to igroups/.
-
-Writes need CAP_SYS_ADMIN. The internal filesystem type is never
-registered, so it cannot be mounted from userspace.
+Unbound tasks are not checked.
 
 Assisted-by: Claude
 Co-developed-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
@@ -129,560 +122,55 @@ Signed-off-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
 Assisted-by: Codex
 Signed-off-by: Ketan Bhardwaj <ketan@armoriq.io>
 ---
- security/kap/Makefile  |   2 +-
- security/kap/kap_lsm.c |   1 +
- security/kap/kapfs.c   | 524 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 526 insertions(+), 1 deletion(-)
- create mode 100644 security/kap/kapfs.c
+ kernel/fork.c    | 4 ++++
+ kernel/nsproxy.c | 5 +++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/security/kap/Makefile b/security/kap/Makefile
-index 40a864c..6ef7c5e 100644
---- a/security/kap/Makefile
-+++ b/security/kap/Makefile
-@@ -1,2 +1,2 @@
- obj-$(CONFIG_SECURITY_KAP) := kap.o
--kap-y := kap_lsm.o igroup.o
-+kap-y := kap_lsm.o igroup.o kapfs.o
-diff --git a/security/kap/kap_lsm.c b/security/kap/kap_lsm.c
-index b148b34..6750114 100644
---- a/security/kap/kap_lsm.c
-+++ b/security/kap/kap_lsm.c
-@@ -862,4 +862,5 @@ DEFINE_LSM(kap) = {
- 	.id = &kap_lsmid,
- 	.blobs = &kap_blob_sizes,
- 	.init = kap_lsm_init,
-+	.initcall_fs = kap_securityfs_init,
- };
-diff --git a/security/kap/kapfs.c b/security/kap/kapfs.c
-new file mode 100644
-index 0000000..36ef1e3
---- /dev/null
-+++ b/security/kap/kapfs.c
-@@ -0,0 +1,524 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Kernel Assurance Plane control plane in securityfs.
-+ *
-+ *   /sys/kernel/security/kap/
-+ *     kap.default
-+ *     igroups/                 link to the root of the internal kapfs mount
-+ *       <igroup>/              created with mkdir, as a cgroup is
-+ *         kap.install
-+ *         kap.procs
-+ *         kap.igfd
-+ *         kap.lineage_root
-+ *         kap.authority_epoch
-+ *         kap.authority
-+ *         kap.expires_at
-+ *         kap.transition
-+ *         kap.mode
-+ *         kap.events
-+ *
-+ * securityfs has no mkdir, so igroups live in a small internal filesystem that
-+ * is mounted with kern_mount() and reached through a link under securityfs.
-+ * AppArmor publishes its policy namespaces the same way.
-+ */
-+
-+#define pr_fmt(fmt) "KAP: " fmt
-+
-+#include <linux/capability.h>
-+#include <linux/ctype.h>
-+#include <linux/dcache.h>
-+#include <linux/errno.h>
-+#include <linux/fs.h>
-+#include <linux/fs_context.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/mount.h>
-+#include <linux/spinlock.h>
-+#include <linux/namei.h>
-+#include <linux/security.h>
-+#include <linux/seq_file.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/timekeeping.h>
-+#include <linux/uaccess.h>
-+
-+#include "kap.h"
-+
-+#define KAPFS_MAGIC 0x4b415046
-+
-+static struct vfsmount *kapfs_mnt;
-+static struct dentry *kap_sfs_dir;
-+static struct dentry *kap_sfs_default;
-+static struct dentry *kap_sfs_igroups;
-+static struct kap_file_ctx kap_default_ctx = { .kind = KAP_FILE_DEFAULT };
-+
-+static const char * const kap_file_names[KAP_FILE_COUNT] = {
-+	[KAP_FILE_PROCS] = "kap.procs",
-+	[KAP_FILE_IGFD] = "kap.igfd",
-+	[KAP_FILE_LINEAGE_ROOT] = "kap.lineage_root",
-+	[KAP_FILE_AUTHORITY_EPOCH] = "kap.authority_epoch",
-+	[KAP_FILE_AUTHORITY] = "kap.authority",
-+	[KAP_FILE_TRANSITION] = "kap.transition",
-+	[KAP_FILE_MODE] = "kap.mode",
-+	[KAP_FILE_EVENTS] = "kap.events",
-+	[KAP_FILE_EXPIRES_AT] = "kap.expires_at",
-+	[KAP_FILE_INSTALL] = "kap.install",
-+};
-+
-+static const umode_t kap_file_modes[KAP_FILE_COUNT] = {
-+	[KAP_FILE_PROCS] = 0600,
-+	[KAP_FILE_IGFD] = 0400,
-+	[KAP_FILE_LINEAGE_ROOT] = 0600,
-+	[KAP_FILE_AUTHORITY_EPOCH] = 0600,
-+	[KAP_FILE_AUTHORITY] = 0600,
-+	[KAP_FILE_TRANSITION] = 0600,
-+	[KAP_FILE_MODE] = 0600,
-+	[KAP_FILE_EXPIRES_AT] = 0600,
-+	[KAP_FILE_INSTALL] = 0200,
-+	[KAP_FILE_EVENTS] = 0400,
-+};
-+
-+static int kapfs_show(struct seq_file *m, void *v)
-+{
-+	struct kap_file_ctx *ctx = m->private;
-+	struct kap_igroup *igroup = ctx->igroup;
-+	struct kap_bound_pid *entry;
-+
-+	spin_lock(&kap_lock);
-+	switch (ctx->kind) {
-+	case KAP_FILE_PROCS:
-+		list_for_each_entry(entry, &igroup->pids, node)
-+			seq_printf(m, "%d\n", entry->pid);
-+		break;
-+	case KAP_FILE_IGFD:
-+		seq_printf(m, "igroup=%s epoch=%llu root=%s\n",
-+			   igroup->name, igroup->epoch, igroup->lineage_root);
-+		break;
-+	case KAP_FILE_LINEAGE_ROOT:
-+		seq_printf(m, "%s\n", igroup->lineage_root);
-+		break;
-+	case KAP_FILE_AUTHORITY_EPOCH:
-+		seq_printf(m, "%llu\n", igroup->epoch);
-+		break;
-+	case KAP_FILE_AUTHORITY:
-+		seq_write(m, igroup->authority, igroup->authority_len);
-+		if (igroup->authority_len && igroup->authority[igroup->authority_len - 1] != '\n')
-+			seq_putc(m, '\n');
-+		break;
-+	case KAP_FILE_TRANSITION:
-+		if (igroup->has_sequence)
-+			seq_printf(m, "last_sequence=%llu\n", igroup->last_sequence);
-+		break;
-+	case KAP_FILE_MODE:
-+		seq_printf(m, "%s\n", igroup->revoked ? "revoked" : "enforce");
-+		break;
-+	case KAP_FILE_EVENTS:
-+		seq_write(m, igroup->events, igroup->events_len);
-+		break;
-+	case KAP_FILE_EXPIRES_AT:
-+		seq_printf(m, "%llu\n", igroup->expires_at);
-+		break;
-+	case KAP_FILE_DEFAULT:
-+		seq_printf(m, "%s\n", kap_default_closed ? "closed" : "open");
-+		break;
-+	default:
-+		break;
-+	}
-+	spin_unlock(&kap_lock);
-+	return 0;
-+}
-+
-+static int kapfs_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, kapfs_show, inode->i_private);
-+}
-+
-+static ssize_t kapfs_write(struct file *file, const char __user *buf, size_t len, loff_t *ppos)
-+{
-+	struct seq_file *seq = file->private_data;
-+	struct kap_file_ctx *ctx = seq->private;
-+	struct kap_igroup *igroup = ctx->igroup;
-+	struct kap_compiled_authority *compiled = NULL;
-+	struct kap_bound_pid *entry = NULL;
-+	struct kap_install_request req;
-+	u64 value = 0;
-+	pid_t pid = 0;
-+	char *tmp;
-+	int rc = 0;
-+
-+	/* The opener's credentials, so a handed-over descriptor gains nothing. */
-+	if (!file_ns_capable(file, &init_user_ns, CAP_SYS_ADMIN))
-+		return -EPERM;
-+	if (len == 0)
-+		return 0;
-+	if (len > (ctx->kind == KAP_FILE_INSTALL ? KAP_MAX_INSTALL_BYTES
-+						 : KAP_MAX_PREDICATE_BYTES))
-+		return -EINVAL;
-+	if (ctx->kind == KAP_FILE_EVENTS || ctx->kind == KAP_FILE_IGFD)
-+		return -EINVAL;
-+
-+	tmp = memdup_user_nul(buf, len);
-+	if (IS_ERR(tmp))
-+		return PTR_ERR(tmp);
-+	kap_trim_newline(tmp);
-+	if (!tmp[0]) {
-+		kfree(tmp);
-+		return len;
-+	}
-+
-+	/* Parse, allocate and compile first: kap_lock is a spinlock. */
-+	switch (ctx->kind) {
-+	case KAP_FILE_PROCS:
-+		rc = kstrtoint(tmp, 10, &pid);
-+		if (!rc) {
-+			entry = kzalloc_obj(*entry, GFP_KERNEL);
-+			if (!entry)
-+				rc = -ENOMEM;
-+		}
-+		break;
-+	case KAP_FILE_LINEAGE_ROOT:
-+		if (strlen(tmp) > KAP_MAX_ROOT_LEN)
-+			rc = -EINVAL;
-+		break;
-+	case KAP_FILE_INSTALL:
-+		rc = kap_install_parse(tmp, &req);
-+		if (!rc)
-+			rc = kap_authority_prepare(req.authority, &compiled);
-+		break;
-+	case KAP_FILE_AUTHORITY:
-+		rc = kap_authority_prepare(tmp, &compiled);
-+		break;
-+	case KAP_FILE_AUTHORITY_EPOCH:
-+	case KAP_FILE_EXPIRES_AT:
-+		rc = kstrtou64(tmp, 10, &value);
-+		break;
-+	case KAP_FILE_TRANSITION:
-+		rc = kap_parse_transition_sequence(tmp, &value);
-+		break;
-+	case KAP_FILE_MODE:
-+		if (!sysfs_streq(tmp, "revoked") && !sysfs_streq(tmp, "enforce"))
-+			rc = -EINVAL;
-+		break;
-+	case KAP_FILE_DEFAULT:
-+		if (!sysfs_streq(tmp, "closed") && !sysfs_streq(tmp, "open"))
-+			rc = -EINVAL;
-+		break;
-+	default:
-+		rc = -EINVAL;
-+		break;
-+	}
-+	if (rc)
+diff --git a/kernel/fork.c b/kernel/fork.c
+index eb198c8..4216a2d 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -52,6 +52,7 @@
+ #include <linux/cpu.h>
+ #include <linux/cgroup.h>
+ #include <linux/security.h>
++#include <linux/kap.h>
+ #include <linux/hugetlb.h>
+ #include <linux/seccomp.h>
+ #include <linux/swap.h>
+@@ -3276,6 +3277,9 @@ int ksys_unshare(unsigned long unshare_flags)
+ 			 current->fs != current->real_fs);
+ 
+ 	err = check_unshare_flags(unshare_flags);
++	if (err)
++		goto bad_unshare_out;
++	err = kap_check_namespace_flags(unshare_flags, "unshare");
+ 	if (err)
+ 		goto bad_unshare_out;
+ 	/*
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index 3fb1595..d41d7f5 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -25,6 +25,7 @@
+ #include <linux/proc_ns.h>
+ #include <linux/file.h>
+ #include <linux/syscalls.h>
++#include <linux/kap.h>
+ #include <linux/cgroup.h>
+ #include <linux/perf_event.h>
+ #include <linux/nstree.h>
+@@ -589,6 +590,10 @@ SYSCALL_DEFINE2(setns, int, fd, int, flags)
+ 	if (err)
+ 		goto out;
+ 
++	err = kap_check_namespace_flags(flags, "setns");
++	if (err)
 +		goto out;
 +
-+	spin_lock(&kap_lock);
-+	switch (ctx->kind) {
-+	case KAP_FILE_PROCS:
-+		rc = kap_bind_pid_locked(igroup, pid, &entry);
-+		break;
-+	case KAP_FILE_LINEAGE_ROOT:
-+		strscpy(igroup->lineage_root, tmp, sizeof(igroup->lineage_root));
-+		break;
-+	case KAP_FILE_INSTALL:
-+		rc = kap_install_locked(igroup, &req, &compiled);
-+		break;
-+	case KAP_FILE_AUTHORITY_EPOCH:
-+		/* Writing an epoch also clears revoked mode. */
-+		if (value < igroup->epoch) {
-+			rc = -ESTALE;
-+		} else {
-+			igroup->epoch = value;
-+			igroup->revoked = false;
-+		}
-+		break;
-+	case KAP_FILE_AUTHORITY: {
-+		struct kap_compiled_authority *old = igroup->compiled;
-+
-+		strscpy(igroup->authority, tmp, sizeof(igroup->authority));
-+		igroup->authority_len = strlen(igroup->authority);
-+		igroup->compiled = compiled;
-+		compiled = old;
-+		break;
-+	}
-+	case KAP_FILE_TRANSITION:
-+		if (igroup->has_sequence && value <= igroup->last_sequence) {
-+			rc = -EALREADY;
-+		} else {
-+			igroup->last_sequence = value;
-+			igroup->has_sequence = true;
-+		}
-+		break;
-+	case KAP_FILE_EXPIRES_AT:
-+		/* An expiry already in the past is refused rather than installed. */
-+		if (value && (u64)ktime_get_real_seconds() >= value)
-+			rc = -ESTALE;
-+		else
-+			igroup->expires_at = value;
-+		break;
-+	case KAP_FILE_MODE:
-+		igroup->revoked = sysfs_streq(tmp, "revoked");
-+		break;
-+	case KAP_FILE_DEFAULT:
-+		WRITE_ONCE(kap_default_closed, sysfs_streq(tmp, "closed"));
-+		break;
-+	default:
-+		break;
-+	}
-+	spin_unlock(&kap_lock);
-+out:
-+	/* Whatever was not consumed: a refused document, or the replaced one. */
-+	kvfree(compiled);
-+	kfree(entry);
-+	kfree(tmp);
-+	return rc ? rc : len;
-+}
-+
-+static const struct file_operations kapfs_fops = {
-+	.owner = THIS_MODULE,
-+	.open = kapfs_open,
-+	.read = seq_read,
-+	.write = kapfs_write,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static struct inode *kapfs_make_inode(struct super_block *sb, umode_t mode)
-+{
-+	struct inode *inode = new_inode(sb);
-+
-+	if (!inode)
-+		return NULL;
-+	inode->i_ino = get_next_ino();
-+	inode->i_mode = mode;
-+	simple_inode_init_ts(inode);
-+	return inode;
-+}
-+
-+static void kapfs_instantiate(struct dentry *dentry, struct inode *inode)
-+{
-+	d_make_persistent(dentry, inode);
-+}
-+
-+/* Names end up in kap.events and the kernel log, so keep them plain. */
-+static bool kapfs_valid_name(const struct qstr *name)
-+{
-+	unsigned int i;
-+
-+	if (name->len == 0 || name->len > KAP_MAX_NAME_LEN || name->name[0] == '.')
-+		return false;
-+	for (i = 0; i < name->len; i++) {
-+		unsigned char c = name->name[i];
-+
-+		if (!isalnum(c) && c != '-' && c != '_' && c != '.')
-+			return false;
-+	}
-+	return true;
-+}
-+
-+/* Returns NULL on success: the passed dentry is the one instantiated. */
-+static struct dentry *kapfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+				  struct dentry *dentry, umode_t mode)
-+{
-+	struct dentry *files[KAP_FILE_COUNT] = {};
-+	struct inode *inodes[KAP_FILE_COUNT] = {};
-+	struct kap_igroup *igroup;
-+	struct inode *inode;
-+	int rc = 0;
-+	int i;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return ERR_PTR(-EPERM);
-+	if (!kapfs_valid_name(&dentry->d_name))
-+		return ERR_PTR(-EINVAL);
-+
-+	/* Allocate everything first, so a failure leaves nothing behind. */
-+	igroup = kvzalloc_obj(*igroup, GFP_KERNEL);
-+	inode = kapfs_make_inode(dir->i_sb, S_IFDIR | 0700);
-+	if (!igroup || !inode) {
-+		rc = -ENOMEM;
-+		goto err;
-+	}
-+	memcpy(igroup->name, dentry->d_name.name, dentry->d_name.len);
-+	INIT_LIST_HEAD(&igroup->pids);
-+	INIT_LIST_HEAD(&igroup->node);
-+	for (i = 0; i < KAP_FILE_COUNT; i++) {
-+		files[i] = d_alloc_name(dentry, kap_file_names[i]);
-+		inodes[i] = kapfs_make_inode(dir->i_sb, S_IFREG | kap_file_modes[i]);
-+		if (!files[i] || !inodes[i]) {
-+			rc = -ENOMEM;
-+			goto err;
-+		}
-+		igroup->files[i].kind = i;
-+		igroup->files[i].igroup = igroup;
-+		inodes[i]->i_fop = &kapfs_fops;
-+		inodes[i]->i_private = &igroup->files[i];
-+	}
-+
-+	spin_lock(&kap_lock);
-+	if (kap_find_igroup_locked(igroup->name))
-+		rc = -EEXIST;
-+	else
-+		list_add_tail(&igroup->node, &kap_igroups);
-+	spin_unlock(&kap_lock);
-+	if (rc)
-+		goto err;
-+
-+	inode->i_op = &simple_dir_inode_operations;
-+	inode->i_fop = &simple_dir_operations;
-+	inc_nlink(inode);
-+	inc_nlink(dir);
-+	/* Lookups in the new directory wait until its files are all there. */
-+	inode_lock(inode);
-+	kapfs_instantiate(dentry, inode);
-+	igroup->dentry = dentry;
-+	for (i = 0; i < KAP_FILE_COUNT; i++)
-+		kapfs_instantiate(files[i], inodes[i]);
-+	inode_unlock(inode);
-+	return NULL;
-+
-+err:
-+	for (i = 0; i < KAP_FILE_COUNT; i++) {
-+		if (inodes[i])
-+			iput(inodes[i]);
-+		if (files[i])
-+			dput(files[i]);
-+	}
-+	if (inode)
-+		iput(inode);
-+	kvfree(igroup);
-+	return ERR_PTR(rc);
-+}
-+
-+static const struct inode_operations kapfs_root_inode_ops = {
-+	.lookup = simple_lookup,
-+	.mkdir = kapfs_mkdir,
-+};
-+
-+static int kapfs_fill_super(struct super_block *sb, struct fs_context *fc)
-+{
-+	struct inode *inode;
-+
-+	sb->s_magic = KAPFS_MAGIC;
-+	inode = kapfs_make_inode(sb, S_IFDIR | 0700);
-+	if (!inode)
-+		return -ENOMEM;
-+	inode->i_op = &kapfs_root_inode_ops;
-+	inode->i_fop = &simple_dir_operations;
-+	inc_nlink(inode);
-+	sb->s_root = d_make_root(inode);
-+	if (!sb->s_root)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+static int kapfs_get_tree(struct fs_context *fc)
-+{
-+	return get_tree_single(fc, kapfs_fill_super);
-+}
-+
-+static const struct fs_context_operations kapfs_context_ops = {
-+	.get_tree = kapfs_get_tree,
-+};
-+
-+static int kapfs_init_fs_context(struct fs_context *fc)
-+{
-+	fc->ops = &kapfs_context_ops;
-+	return 0;
-+}
-+
-+/* Never registered, so it cannot be mounted from userspace. */
-+static struct file_system_type kapfs_type = {
-+	.owner = THIS_MODULE,
-+	.name = "kapfs",
-+	.init_fs_context = kapfs_init_fs_context,
-+	.kill_sb = kill_anon_super,
-+};
-+
-+static const char *kap_igroups_get_link(struct dentry *dentry,
-+					struct inode *inode,
-+					struct delayed_call *done)
-+{
-+	struct path path;
-+	int rc;
-+
-+	if (!dentry)
-+		return ERR_PTR(-ECHILD);
-+	path.mnt = mntget(kapfs_mnt);
-+	path.dentry = dget(kapfs_mnt->mnt_root);
-+	rc = nd_jump_link(&path);
-+	return ERR_PTR(rc);
-+}
-+
-+static int kap_igroups_readlink(struct dentry *dentry, char __user *buffer,
-+				int buflen)
-+{
-+	char name[32];
-+	int rc;
-+
-+	rc = snprintf(name, sizeof(name), "kapfs:[%llu]",
-+		      (unsigned long long)d_inode(kapfs_mnt->mnt_root)->i_ino);
-+	if (rc <= 0 || rc >= sizeof(name))
-+		return -ENOENT;
-+	return readlink_copy(buffer, buflen, name, rc);
-+}
-+
-+static const struct inode_operations kap_igroups_link_iops = {
-+	.readlink = kap_igroups_readlink,
-+	.get_link = kap_igroups_get_link,
-+};
-+
-+int __init kap_securityfs_init(void)
-+{
-+	struct dentry *dent;
-+	int rc;
-+
-+	if (!READ_ONCE(kap_lsm_active))
-+		return 0;
-+
-+	kapfs_mnt = kern_mount(&kapfs_type);
-+	if (IS_ERR(kapfs_mnt)) {
-+		rc = PTR_ERR(kapfs_mnt);
-+		kapfs_mnt = NULL;
-+		goto err;
-+	}
-+	kapfs_mnt->mnt_sb->s_flags &= ~SB_NOUSER;
-+
-+	dent = securityfs_create_dir("kap", NULL);
-+	if (IS_ERR(dent)) {
-+		rc = PTR_ERR(dent);
-+		goto err_unmount;
-+	}
-+	kap_sfs_dir = dent;
-+
-+	dent = securityfs_create_file("kap.default", 0600, kap_sfs_dir,
-+				      &kap_default_ctx, &kapfs_fops);
-+	if (IS_ERR(dent)) {
-+		rc = PTR_ERR(dent);
-+		goto err_remove;
-+	}
-+	kap_sfs_default = dent;
-+
-+	dent = securityfs_create_symlink("igroups", kap_sfs_dir, NULL,
-+					 &kap_igroups_link_iops);
-+	if (IS_ERR(dent)) {
-+		rc = PTR_ERR(dent);
-+		goto err_remove;
-+	}
-+	kap_sfs_igroups = dent;
-+
-+	WRITE_ONCE(kap_ready, true);
-+	pr_info("control plane at /sys/kernel/security/kap\n");
-+	return 0;
-+
-+err_remove:
-+	securityfs_remove(kap_sfs_default);
-+	securityfs_remove(kap_sfs_dir);
-+	kap_sfs_default = NULL;
-+	kap_sfs_dir = NULL;
-+err_unmount:
-+	kern_unmount(kapfs_mnt);
-+	kapfs_mnt = NULL;
-+err:
-+	pr_err("could not create the securityfs control plane: %d\n", rc);
-+	return rc;
-+}
+ 	err = prepare_nsset(flags, &nsset);
+ 	if (err)
+ 		goto out;
 -- 
 2.51.0
 
