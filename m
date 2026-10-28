@@ -1,101 +1,129 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.178
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793203166;
-	b=AfOX8eTxaPVSdSLaYXPmq8c5cpjBX/VsbQnlqMZ83BxuNJeZDHiu/uk/5U3mLsE93pd/
-	 L7Pb2mbpHhSmSL0ZPNE/WfzPjvd/kzjs/OvuV8kDqu0TyOEWorYX909uoycEkNlSQG5Qp
-	 vCseRqS9p55F6DGR0f4bopG8895MJm4/nmGrMc9Q1w7QJqhGvop/3ZMC8rL4XgNbIzFt2
-	 ucOzLzK9P9DJlYnsAowYG+9ZWLOH383LLb5W4NKJiLLhbxDvkg44l3s0K9LZmNm3IR2Ir
-	 hXKKhQzAX/evg/DIJ2nB2JwOHU4VKMfssndoDoxbIpbYsdh/IhZg3DraUbiNsClotig==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793203166;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793203789;
+	b=ZQ94gy8VhSAwDqlRiLzd2TWttD7B5UVQk0DA+sfsZrQLdtpTgz6WarET83o5KwSqTcYt
+	 pQy5VbtuXRaPzaYtrYRbQpchP9XN7pOns8LM4RmHnV8Ep20JRg1o3ty6u7nf89u2n+Tsj
+	 i/eC5cpLDG2hBwGCT4Jhd8nkpo8oz6M+tVnq7rqXUrDe16ufbyg8ZIYFYqXM6HjFZMqzR
+	 cn5/DTFrcySGx3RJnTqI2ZZbTANYi9FbwwYXvlB9bVEhP3K8J3WsFYMigPVS0c15RewRF
+	 gFP8ExJWICEK3jQmuVLUT0t1YcrwqKu6LLZqU8d5F+s4AMn6wJOTTB/ywuWRy+oPqlg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793203789;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Dc4rW2+COMGPVHylYkAJkFpZ/yamBpz19LqtcOFzV+Y=;
-	b=mOPmvcf1hY7Xn/eaVQa3GIfIpzMjDE0e0sn8YE3YUSWVCevcY6y+xTY429POtumW+KRV
-	 sQn7ulIQEtmB92otMydt5ow7K5N6ZfjI9au58YhURPO2cMV7STIfY0yPsGux1qfYmddt2
-	 Nqq5xFldXkV9wTSVgWEgT/3JaUgPL7fb2cBMOOak/uu9AucPswgBwn1FtlK/WLe3HvEdx
-	 mDMNDupWMOyPjNvkkVtAKkurq3mSFwaT0abkqPfJltMVJh5l0KtkYR6pbMt9Wm5Jfk+wA
-	 Wd0WujT0ceviZGQ1+5Jd7rMUuwDFpd7rsxG0U8K829jMEVZZdDnLzOI8umcFqOUN8iA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=paul-moore.com;
-	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=Xde8kH+c;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.178
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 X-Received:Received:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:In-Reply-To:X-Mimecast-Spam-Score:X-Mimecast-MFC-PROC-ID:
+	 X-Mimecast-Originator:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding;
+	bh=imaDU6OqxxyB3WUul5kus+HSiegxiNA7Olof0Bywi2g=;
+	b=2e0Fe0dgmFMhcocBx1KmBecJotmSMjCMnTgUD9calWErTDSXUYjvyuGonK8ryD4SpG1W
+	 /Xll4jzhk3tC2Brr/XxYAxi82bZZKAdM9UxJa/sOARvAAn4Y9s+zrt4MQj3RiPXFNO8AV
+	 dK/S7zn7FQj9NKtmy8VpQ3StF+yBKsN8OTcQrJ50yXG74Kf4PKZLf9RAbwWTCmpF2Nqrc
+	 jx8GQ69FcpBliXX/VG3fyfjHkSy28WOnu5pH4CblQ7o3DBQvdc0O3lFBU135wzbMdPnpC
+	 DUEDdtj2zvlVaWbb/AFkh34t0rzjDIDztfh+AWKBkAWu94SAcHW4s98CXGvc3DQsZnQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=dPEXn1W5;
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD41060A2602
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 15:59:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD41060A2602
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D49C606A320
+	for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 16:09:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2D49C606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=Xde8kH+c
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8a064dcfcfdso484036b3a.2
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 08:59:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793203164; cv=none;
-        d=google.com; s=arc-20260327;
-        b=s32d+jh+S+OGhpFSzsLZJDQ7q3aeAn1j2YmrLRgMTCo9XJlkCiqxTDoUBNjkAMFPxr
-         mVzNk3O34UeMd0i/LpgQfa86dYk/y3/d7+V3wx+MLnO7eXymHfnolq0mbYaJH0r1tw0g
-         fhoWaB/bvTv9YE1I9qI3mYZ5eDlkrqkEaaIFhocRXTJVFix7iZoTqpwWvO2Ml3FYNxB4
-         SsExCSBqksqcpJuEQ/DgwIaw4comCpc+o8Bt4B+Czg6ULSibzWOwR5pRxDQC3coBRNmZ
-         GBGwUC5RrldGxy7Bfbg186PFYof29/oR6w3inXkgFOKDfsXAriAzFSiIXVrlRpRPIt3e
-         g6Bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Dc4rW2+COMGPVHylYkAJkFpZ/yamBpz19LqtcOFzV+Y=;
-        fh=qSo6V0+toGNzBVXKmv/msVydgPvp+QIoC9sgtmqLqvM=;
-        b=bawOrciozaujztoFJbDoc1WUXWHhxy7npFL9vlg0VhFOQiihS6Cya9Y8X68ZpRNvI2
-         +mOXQkckjuXlscLSH4qLOG1BtcTU71+FHuy5wzdKaO6L3b/4GLl3ufKzHckLdn6Uw5p0
-         tmKdAxPdLjsDrECEl6mL3Gq6mCumRhraTdrMFVNlt2ZG9Dw2Oa4cEdwvzTz+3la4ywmR
-         w4yWo3wfq3KwwbOEtOe21kZI5srTvN6XDyeFYZRRUq/3Tv08wphYw93fRZpLk32QXOUe
-         JNg8Dbmm81n+eXAyFKsx1/G0TMg/bhynZL3TeupQUEDiOE/8st0B2iasfi8hjEqQb+uR
-         N0kQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1793203164; x=1793807964; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Dc4rW2+COMGPVHylYkAJkFpZ/yamBpz19LqtcOFzV+Y=;
-        b=Xde8kH+cqlVOr/NMR7Wf2JCxAomM8iaA+yOKnEWQdervZ/w503T0qYZZ6aOIBygAsC
-         qij7djXE5tgEJO6Fg3dvN+llLaU0wfp5K3TXaIKEKfXug0iTHDU8r1pyoHvQ8B8Z6qgt
-         UeXRTBxIPcUoikJFSeVCrlsd1QdQ1PIEIALNNtqalm4GbfnAzTbkILoS8EoRXI+ENlGT
-         pCWcFvtvfNhYIGcmjkVaouZPomu9dr/9De7n53N+UKBzQxVuhbAHnVl9cFD2L8k5xutY
-         S8PhqXCysvqF5qkcIRiApTxBmbXvToeiuo/7lzQYkr6Titoid+3/IYz90R+gzsrC9Oe+
-         jeFg==
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=dPEXn1W5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1793203782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=imaDU6OqxxyB3WUul5kus+HSiegxiNA7Olof0Bywi2g=;
+	b=dPEXn1W5b5WNvLbcG2I76LWotzK2OYBMen9W3iNyYZEe1XuaTbDlsjGx8M+LdMuY7tHujN
+	K2j96mp8XtoNiDIJMC3JrCb8LSbbud51VWjqdVO0nM6xvQrx7qmDuq3cAwZO8Yh8/4p5b/
+	WBXA79NKgJ8cDfP9QWZV04yfcPhzjKI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-yeqEbw2sPymyp9sDgjvFsw-1; Wed, 28 Oct 2026 12:09:41 -0400
+X-MC-Unique: yeqEbw2sPymyp9sDgjvFsw-1
+X-Mimecast-MFC-AGG-ID: yeqEbw2sPymyp9sDgjvFsw_1793203780
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4a9d51dc486so4120335e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 09:09:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793203164; x=1793807964;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Dc4rW2+COMGPVHylYkAJkFpZ/yamBpz19LqtcOFzV+Y=;
-        b=h3mcrQR+6q6stMcJFvUTeBwRlaMw+cSfpIO8YxfJI2cVmLX/zH23r6rGoMihqfpxIe
-         hPzTU7AM14t9VBsQ/ZMNEY3kef0umuAtWQVsjIca3RDs+EImayl7Zzdh9Thpa9P39M8V
-         7LUOTxLXkKc7/pDeTEdESa3cg4iruHZ4IvvCYwAhgDhQnpcCBAVl5tWQoHA5CkOnu8D5
-         +MFMu9HapYwXi3upn9sVtGR9ntNQoGmUi9NZeu9p9jahL+DU0qprFI9DwAIQf6untiHR
-         wF1n9ieHz+HgktQ6OM7Az/XiKsj9q9h/koJ/OF9dLE5WrHN2PzJ0GC+1ZJKgCA+OG6X3
-         3e8Q==
-X-Forwarded-Encrypted: i=1; AKwUvBwZHKChNE+HsDSKDJwNhK7xSzrSxjHi/PUF96jzVRUNs7vCXPiHRQJl5Q93te9PQEXWx9rXhN4QoA2FlN3exVURHTYtMeU=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKB5ohIvwf9ddn4AQHaw5xQxprIEZ9tAGPndzKMDD4ZJLoj8otP
-	Ud0nwzCquzjKljcUVDR6HLiqNlwQgumOjIoVq/ycxloXYDdyko5h87ZAUBrGpjJa5SpSEeb4ova
-	E1DvnFSocdcf7TVgVZiTfLRaJFj00vmr0jjsEkP3l
-X-Gm-Gg: AYBFou1TL41f5+HRYW9oTThPOLVq0Tcdu12M9KlxIstXpEhFoLkTBzKjPRjK2IUPACV
-	HXkpuN5zQLscUy2hwEz3SsqVT7oMAlh6cfk33eGPljX/i7+hgQRvzqB0+Dk/XO0VtHImBxMZL5e
-	2d16iiaY3oY/MLhPXOi6+WGY5sSMPBFN3c2N0XR0+TRKCknUwSAcpBFzcPHJH18fdxczS7z7IHD
-	tmL2kABtZFmZ84UYi9zkH3H0afFGmmXGuT1Hh9pBErLi3FUZ2FkmxEnkRxPt28bXmUsUm1hMfBK
-	y0ONhyHpbc/HaHJP0UD3RnXr+jBydrbrdRyTnf2MK+Dl6cLlOjl+iQBDm58vy+ioi//OFN9ZWal
-	SGRYWMjhidpBffuHSewrcU5ISEnPRFAOKtWvDtNqDCJZSwp6HROB256es9pYdevaoLwmTCfFee5
-	ZIG37fx7tuoKw6xQ==
-X-Received: by 2002:a05:6a21:6f16:b0:3e2:1823:2b4a with SMTP id
- adf61e73a8af0-3e901e829e8mr2186510637.0.1793203163924; Wed, 28 Oct 2026
- 08:59:23 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1793203780; x=1793808580;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=imaDU6OqxxyB3WUul5kus+HSiegxiNA7Olof0Bywi2g=;
+        b=y3muMmXUNi7TveGQhMcg4384ONSSUC+y64JGhhrYUdfwAf/A342noPW0kYZI/ivGS9
+         t0Jx/aOAG3rmBhmffe+PalEIQuKxX8jbPbBNGTsHdJPN+Ip+V3K+/12ND0byYrQqj9Er
+         4/bRdgIwiicIBx9Kfuxz9rFV4+uVqVZcWmhbnqxzBJTMGTHIwGEGqPMJKy0RG+wQ8Zuo
+         5ZyU4eg30D/OneLYKAJqbSIOScyNDx9f14NXTWp3V3I2nuVQ6GznSIX6Ng+Cc8jAJfZ3
+         i3Ry7JXJPbbBHHoP5hQerX4GYOBpva8mqT0/DaQnf3lVPPCsE6boYfnA7rantMfX9gvk
+         bq6w==
+X-Forwarded-Encrypted: i=1; AKwUvBxFz3IuSyhx+wVgmRiKKcoDbt26/P0j7O6Lf1WV0HGCmcmagGF9Cd4qC5cYIAMtIy3WCeRFysPHC4Lr+iVhwKoJ+3mhjuU=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJaZ2/xAwFdP6MUvwbfsUFpPxDFQ3Wp3PqM6SIJYqkFKFLaZBQD
+	KHIX/aJgQ9A74q2X+ADWS613yz1dhrM/l5GWO016zIkbdE1sN7mEwFeyTGyod2RkgoSTa3wgVbS
+	4CAjZ4gfTd7frHVRDR837uDtjRrcpT4n8eB1lAdwD5+720yp7fvDRSgR6ELJqA/+dOc6iqxyVDc
+	lITg==
+X-Gm-Gg: AYBFou2TRRzoQyW5mgLPZMhhU1r5CyO507x8k+2vf/7FoZg9i0dn+xTT6ssZrW/m1yq
+	oSohMlFWU0EYbaUZQmAGir7I8LY0DGhHee8lwfrLnrPYrAop/i8uzKdoi9rCo17bqi2RUOE4oPj
+	ZJnQOaqpdcORenF5gICFET5OC6MchZlKfppt5vimYURpHTV6PefwY0eap47cuMDa/DJ/JNA0oEl
+	pHmaOp9DnpeBkF2iqQQzXB6+aFczAEH3Uic98dykXDjWo66rNniO49jKQmm0t6ox4wO/WWSugH3
+	Z0f3/vJjowlLIZDs4rThL2+zfKophTzRAoKWN1KmJqQj5WNSfrboc8vjDrVjn/+eUE271I11XWp
+	GVPfJcEqWDaMssQuQOyZWbj1PEzqrCqAsDsddNvKhk/U=
+X-Received: by 2002:a05:600c:4f84:b0:4a7:72b1:c8bd with SMTP id 5b1f17b1804b1-4aa8823d762mr103915e9.15.1793203779453;
+        Wed, 28 Oct 2026 09:09:39 -0700 (PDT)
+X-Received: by 2002:a05:600c:4f84:b0:4a7:72b1:c8bd with SMTP id 5b1f17b1804b1-4aa8823d762mr103225e9.15.1793203778959;
+        Wed, 28 Oct 2026 09:09:38 -0700 (PDT)
+Received: from localhost ([139.47.30.142])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4aa7c5063e3sm3064185e9.0.2026.10.28.09.09.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2026 09:09:38 -0700 (PDT)
+Date: Wed, 28 Oct 2026 17:09:37 +0100
+From: Albert Esteve <aesteve@redhat.com>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>,
+	Jens Wiklander <jenswi@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+	echanude@redhat.com, mripard@kernel.org
+Subject: Re: [PATCH v3 7/8] dma-buf: transfer memcg charges via
+ DMA_BUF_IOCTL_XFER_CHARGE
+Message-ID: <auIeQU0nAnOLdKUB@aesteve-thinkpadp1gen8.rmtes.csb>
+References: <20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com>
+ <20261027-v2_20230123_tjmercier_google_com-v3-7-78d2c4cb8647@redhat.com>
+ <d76d8bfe-e955-4e90-9f5f-e3e914c0869c@amd.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,212 +133,322 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-work-security-namespace_free-v1-0-ffa3ebbf71bd@kernel.org>
- <CAHC9VhR4rMydWiD-RFv-ABiYSG_txJuyrtdaowEXPY=CHEvFXA@mail.gmail.com>
- <20261027-heckklappe-halbmarathon-vorsorgen-849ffdc42aac@brauner>
- <CAHC9VhSJMPOY4X78ENEkAiNeVTCpvP76PgVDqTQfwaYfwnYwAQ@mail.gmail.com> <20261028-treiben-probanden-nachkam-e986afed3902@brauner>
-In-Reply-To: <20261028-treiben-probanden-nachkam-e986afed3902@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 28 Oct 2026 11:59:12 -0400
-X-Gm-Features: AclHuK-yJIwoCb3oIYP-IBqXnljTJgelOwPOEoH9t42fOb1qZ8AgXGe1E7dzuKE
-Message-ID: <CAHC9VhQm+swDGvP31aNefwx6qCCy2mk-CjD4i=4kE74eA+e2zQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] ns: fixes for the namespace LSM hooks
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <matt@bobrowski.net>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, netdev@vger.kernel.org, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d76d8bfe-e955-4e90-9f5f-e3e914c0869c@amd.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: kDvd83fsQ4QtZ_fsqqUKdoliFg1ZR2lmyjVzn62iEgU_1793203780
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 28, 2026 at 6:45=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> On Tue, Oct 27, 2026 at 06:37:43PM -0400, Paul Moore wrote:
-> > The hooks were merged into the LSM tree on August 31st, and due to
-> > timing I'm guessing they appeared in linux-next the next day,
-> > September 1st.  Considering the merge window opened on October
-> > 18th/19th, that's conservatively a month and a half during which
-> > testing could have uncovered this issue and the behavior of the hook
-> > could have been changed to accommodate your use-case.
->
-> That's what the rc cycle is for.
+On Wed, Oct 28, 2026 at 10:08:19AM +0100, Christian König wrote:
+> On 10/27/26 16:02, Albert Esteve wrote:
+> > dma-heap already supports charging a specific cgroup at allocation
+> > time via charge_fd in DMA_HEAP_IOCTL_ALLOC. However, dma-bufs can
+> > originate from any exporter (DRM, V4L2, etc.), and the allocator may
+> > not know the final owner at allocation time.
+> > 
+> > Add DMA_BUF_IOCTL_XFER_CHARGE to transfer a dma-buf's memcg charge
+> > to a different cgroup after allocation. The target is identified by
+> > charge_fd, which may be a cgroupfd or a pidfd.
+> > 
+> > The transfer charges the new cgroup before uncharging the old one,
+> > preserving the original charge on failure. An atomic cmpxchg on
+> > dmabuf->memcg prevents races with concurrent transfers.
+> > 
+> > Not all dma-buf exporters back their buffers with reclaimable system
+> > memory. Some represent device registers, VRAM, or carved-out pools
+> > where size is not a meaningful memory cost. Add a memcg_account flag
+> > to dma_buf_export_info that exporters set when their buffers should
+> > participate in memcg accounting. The xfer ioctl returns -EOPNOTSUPP
+> > for buffers that do not set the flag. Currently only the system heap
+> > sets it, other exporters can opt in as needed.
+> > 
+> > Usage example:
+> >   int cg_fd = open("/sys/fs/cgroup/clients/app1", O_RDONLY | O_DIRECTORY);
+> > 
+> >   struct dma_buf_transfer_charge xfer = {
+> >       .charge_fd = cg_fd,
+> >   };
+> >   ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
+> >   /* charge now on app1's cgroup */
+> >   close(cg_fd);
+> > 
+> > Signed-off-by: Albert Esteve <aesteve@redhat.com>
+> > ---
+> >  drivers/dma-buf/dma-buf.c           | 43 +++++++++++++++++++++++++++++++++++++
+> >  drivers/dma-buf/heaps/system_heap.c |  1 +
+> >  include/linux/dma-buf.h             |  5 +++++
+> >  include/linux/memcontrol.h          |  9 ++++++++
+> >  include/uapi/linux/dma-buf.h        | 26 ++++++++++++++++++++++
+> >  mm/memcontrol.c                     | 41 +++++++++++++++++++++++++++++++++++
+> >  6 files changed, 125 insertions(+)
+> > 
+> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> > index f31f49ebd0af..07513ecedc10 100644
+> > --- a/drivers/dma-buf/dma-buf.c
+> > +++ b/drivers/dma-buf/dma-buf.c
+> > @@ -540,6 +540,45 @@ static long dma_buf_import_sync_file(struct dma_buf *dmabuf,
+> >  }
+> >  #endif
+> >  
+> > +/* Transfer a dma-buf's memcg charge; see struct dma_buf_transfer_charge */
+> > +static long dma_buf_xfer_charge(struct dma_buf *dmabuf,
+> > +				const void __user *user_data)
+> > +{
+> > +	struct dma_buf_transfer_charge arg;
+> > +	struct mem_cgroup *memcg;
+> > +	int ret = 0;
+> > +
+> > +	if (copy_from_user(&arg, user_data, sizeof(arg)))
+> > +		return -EFAULT;
+> > +
+> > +	if (!IS_ENABLED(CONFIG_MEMCG))
+> > +		return 0;
+> > +
+> > +	if (arg.flags != 0)
+> > +		return -EINVAL;
+> > +
+> > +	if (!dmabuf->memcg_account)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	memcg = mem_cgroup_get_from_fd(arg.charge_fd);
+> > +	if (IS_ERR(memcg))
+> > +		return PTR_ERR(memcg);
+> > +
+> > +	if (dmabuf->memcg == memcg)
+> > +		goto skip_transfer;
+> > +
+> > +	if (!mem_cgroup_transfer_dmabuf_charge(dmabuf, memcg)) {
+> > +		ret = -ENOMEM;
+> > +		goto skip_transfer;
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +skip_transfer:
+> > +	mem_cgroup_put(memcg);
+> > +	return ret;
+> > +}
+> > +
+> >  static long dma_buf_ioctl(struct file *file,
+> >  			  unsigned int cmd, unsigned long arg)
+> >  {
+> > @@ -590,6 +629,9 @@ static long dma_buf_ioctl(struct file *file,
+> >  		return dma_buf_import_sync_file(dmabuf, (const void __user *)arg);
+> >  #endif
+> >  
+> > +	case DMA_BUF_IOCTL_XFER_CHARGE:
+> > +		return dma_buf_xfer_charge(dmabuf, (const void __user *)arg);
+> > +
+> >  	default:
+> >  		return -ENOTTY;
+> >  	}
+> > @@ -750,6 +792,7 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
+> >  	dmabuf->size = exp_info->size;
+> >  	dmabuf->exp_name = exp_info->exp_name;
+> >  	dmabuf->owner = exp_info->owner;
+> > +	dmabuf->memcg_account = exp_info->memcg_account;
+> 
+> The initial charging should probably be done here as well.
+> 
+> This way DMA-buf heaps only needs to pass in the charge_fd and we can re-use the functionality for other DMA-buf exporters as well.
 
-I believe the understanding is that basic functional testing occurs
-before the RC cycle.  Considering the NULL check causing problems for
-your use case was present in your first RFC posting back in February,
-it's unlikely that you, or anyone in the BPF LSM space, tested this
-prior to the merge window.
+The problem with doing the charge here is that it happens too late.
+That is the reasoning for this proposal to move all the charging logic
+into heap allocators before pages are allocated.
 
-> I'm not asking for changes to behavior
-> of the hooks to accommodate anything.
+What we could do is fill the dmabuf->memcg field when the flag is set
+(i.e., committing into the dmabuf in the patch semantics). But for that
+we'd need adding the memcg we want to charge it to into exp_info in
+order to support charging to cgroups other than the allocator's (for
+the common case would be simpler as we can just look at current).
+Maybe that's what you meant?
 
-The LSM changes in this patchset do change the behavior, that's the
-point.  The security_namespace_free() hook does not call into the
-individual LSM callbacks if no LSM blobs have been requested; what you
-are proposing now is that we change the hook so that the callback is
-always called, regardless of the LSM blob state.
+> 
+> >  	spin_lock_init(&dmabuf->name_lock);
+> >  	init_waitqueue_head(&dmabuf->poll);
+> >  	dmabuf->cb_in.poll = dmabuf->cb_out.poll = &dmabuf->poll;
+> > diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+> > index adeea8cd328b..a764167167ba 100644
+> > --- a/drivers/dma-buf/heaps/system_heap.c
+> > +++ b/drivers/dma-buf/heaps/system_heap.c
+> > @@ -479,6 +479,7 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
+> >  	exp_info.size = buffer->len;
+> >  	exp_info.flags = fd_flags;
+> >  	exp_info.priv = buffer;
+> > +	exp_info.memcg_account = true;
+> >  	dmabuf = dma_buf_export(&exp_info);
+> >  	if (IS_ERR(dmabuf)) {
+> >  		ret = PTR_ERR(dmabuf);
+> > diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+> > index 23ec0ff23fba..ac0ec88cab93 100644
+> > --- a/include/linux/dma-buf.h
+> > +++ b/include/linux/dma-buf.h
+> > @@ -433,6 +433,9 @@ struct dma_buf {
+> >  
+> >  	/** @memcg: the cgroup to which this buffer is currently attributed */
+> >  	struct mem_cgroup *memcg;
+> > +
+> > +	/** @memcg_account: account buffer memory to cgroup */
+> > +	bool memcg_account;
+> >  };
+> >  
+> >  /**
+> > @@ -505,6 +508,7 @@ struct dma_buf_attachment {
+> >   * @flags:	mode flags for the file
+> >   * @resv:	reservation-object, NULL to allocate default one
+> >   * @priv:	Attach private data of allocator to this buffer
+> > + * @memcg_account:	account buffer memory to cgroup
+> >   *
+> >   * This structure holds the information required to export the buffer. Used
+> >   * with dma_buf_export() only.
+> > @@ -517,6 +521,7 @@ struct dma_buf_export_info {
+> >  	int flags;
+> >  	struct dma_resv *resv;
+> >  	void *priv;
+> > +	bool memcg_account;
+> >  };
+> >  
+> >  /**
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index 6b30baa79fa9..36fddafbef4e 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -679,6 +679,9 @@ bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t gfp,
+> >  void mem_cgroup_commit_dmabuf(struct dma_buf *dmabuf, struct mem_cgroup *memcg,
+> >  			      unsigned int nr_pages);
+> >  
+> > +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
+> > +				       struct mem_cgroup *new_memcg);
+> > +
+> >  void __mem_cgroup_uncharge(struct folio *folio);
+> >  
+> >  /**
+> > @@ -1206,6 +1209,12 @@ static inline void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg,
+> >  {
+> >  }
+> >  
+> > +static inline bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
+> > +						     struct mem_cgroup *new_memcg)
+> > +{
+> > +	return true;
+> > +}
+> > +
+> >  static inline void mem_cgroup_uncharge(struct folio *folio)
+> >  {
+> >  }
+> > diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
+> > index e827c9d20c5d..ea957f4b1d38 100644
+> > --- a/include/uapi/linux/dma-buf.h
+> > +++ b/include/uapi/linux/dma-buf.h
+> > @@ -168,6 +168,31 @@ struct dma_buf_import_sync_file {
+> >  	__s32 fd;
+> >  };
+> >  
+> > +/**
+> > + * struct dma_buf_transfer_charge - Transfer a dma-buf's memcg charge
+> > + *
+> > + * Any holder of a dma-buf file descriptor can perform a
+> > + * DMA_BUF_IOCTL_XFER_CHARGE to attribute the buffer's memory
+> > + * cost to a specific cgroup, or move it from one cgroup to
+> > + * another.  The ioctl charges the new cgroup before uncharging
+> > + * the old one atomically.  On failure the original charge is
+> > + * preserved.  If the buffer has no existing charge, a new
+> > + * charge is established.
+> > + */
+> > +struct dma_buf_transfer_charge {
+> > +	/** @flags: Reserved, must be zero */
+> > +	__u32 flags; /* unused for now */
+> > +	/**
+> > +	 * @charge_fd: File descriptor identifying the target cgroup.
+> > +	 *
+> > +	 * May be either a pidfd, in which case the charge moves to the
+> > +	 * memory cgroup of the referenced process, or a cgroupfd obtained
+> > +	 * by opening a cgroup v2 directory, in which case the charge moves
+> > +	 * directly to that cgroup's memory controller.
+> > +	 */
+> > +	__u32 charge_fd;
+> > +};
+> > +
+> >  #define DMA_BUF_BASE		'b'
+> >  #define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
+> >  
+> > @@ -179,5 +204,6 @@ struct dma_buf_import_sync_file {
+> >  #define DMA_BUF_SET_NAME_B	_IOW(DMA_BUF_BASE, 1, __u64)
+> >  #define DMA_BUF_IOCTL_EXPORT_SYNC_FILE	_IOWR(DMA_BUF_BASE, 2, struct dma_buf_export_sync_file)
+> >  #define DMA_BUF_IOCTL_IMPORT_SYNC_FILE	_IOW(DMA_BUF_BASE, 3, struct dma_buf_import_sync_file)
+> > +#define DMA_BUF_IOCTL_XFER_CHARGE	_IOW(DMA_BUF_BASE, 4, struct dma_buf_transfer_charge)
+> >  
+> >  #endif
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 7b841b905759..3adc84fe6668 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -5786,6 +5786,47 @@ void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg, unsigned int nr_pages)
+> >  		refill_stock(memcg, nr_pages);
+> >  }
+> >  
+> > +/**
+> > + * mem_cgroup_transfer_dmabuf_charge - move a dma-buf charge
+> > + * @dmabuf: buffer to transfer charge
+> > + * @new_memcg: target memcg; caller must hold a reference
+> > + *
+> > + * Transfers the charge for @dmabuf to @new_memcg and, on
+> > + * success, stores @new_memcg in @dmabuf->memcg.
+> > + * Returns %true on success, %false if the charge against @new_memcg
+> > + * failed or a concurrent transfer raced on @dmabuf->memcg.
+> > + * On failure the caller retains its reference to @new_memcg.
+> > + */
+> > +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
+> > +				       struct mem_cgroup *new_memcg)
+> 
+> I would make that more generic instead of dmabuf specific. E.g. something like this:
+> 
+> bool mem_cgroup_transfer_charge(struct struct mem_cgroup **ptr_memcg, struct mem_cgroup *new_memcg, enum memcg_stat_item item, unsigned int nr_pages)
 
-> > I know the
-> > Landlock folks were testing the hooks for their usage, but I've gone
-> > back through my inbox and I don't see any reports of BPF LSM failures
-> > using these new hooks in v7.4 until you posted this patchset during
-> > the merge window.
->
-> Because I sent fixes instead of a bug report.
+Ah yes, I like this generalization. And the implementation remains
+mostly the same. Thanks!
 
-... which you sent *after* the merge window opened.  Once again, I see
-no indication that the use case you are concerned about was ever
-tested prior to the merge window.
+> 
+> > +{
+> > +	struct mem_cgroup *old_memcg = READ_ONCE(dmabuf->memcg);
+> 
+> > +	unsigned int nr_pages = PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
+> 
+> This way we can also document in the DMA-buf caller that this conversation must be ok when memcg_account is true.
+> 
+> Regards,
+> Christian.
+> 
+> > +
+> > +	if (mem_cgroup_disabled())
+> > +		return true;
+> > +
+> > +	if (!mem_cgroup_reserve_dmabuf(new_memcg, GFP_KERNEL, nr_pages))
+> > +		return false;
+> > +
+> > +	mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages);
+> > +
+> > +	if (cmpxchg(&dmabuf->memcg, old_memcg, new_memcg) != old_memcg) {
+> > +		mod_memcg_state(new_memcg, MEMCG_DMABUF, -nr_pages);
+> > +		mem_cgroup_cancel_dmabuf(new_memcg, nr_pages);
+> > +		return false;
+> > +	}
+> > +
+> > +	if (old_memcg) {
+> > +		/* Uncharge old cgroup */
+> > +		mod_memcg_state(old_memcg, MEMCG_DMABUF, -nr_pages);
+> > +		mem_cgroup_cancel_dmabuf(old_memcg, nr_pages);
+> > +		mem_cgroup_put(old_memcg);
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> >  /**
+> >   * mem_cgroup_uncharge_dmabuf - uncharge a dma-buf from its memcg
+> >   * @dmabuf: buffer to uncharge
+> > 
+> 
 
-> > The LSM namespace hooks are new to Linux v7.4, they did not exist in
-> > Linus' tree prior to this merge window which is why I consider both
-> > the BPF LSM and Landlock usage of these hooks to be "new".
->
-> Yes, they're new. That's the argument for fixing them now. Not against
-> it. No released kernel has these hooks. Once v7.4 is out every one of
-> these fixes is a behavior change in a released kernel, needs a stable
-> backport that by your own rules doesn't qualify.
->
-> And on top of that nonsense, userspace has to probe for it forever.
-
-It's a one line change in kernel/bpf/bpf_lsm.c to add the
-security_namespace_free() to the existing list of disabled BPF LSM
-callbacks.  No need for a patchset spanning 16 files and over 350
-lines of changes; the BPF LSM callback can be enabled in Linux v7.5
-after it has been properly tested.
-
-It is probably also worth mentioning again to casual observers that
-the LSM hooks, and their associated callbacks, are intentionally not a
-stable API.  LSMs are advised to implement abstractions before
-exposing the hook/callback API directly to user-visible interfaces
-such as configuration policy, policy as code, etc.
-
-> > As mentioned previously, I'm pretty consistent about what goes up to
-> > Linus once the merge window opens: there is the initial pull-request
-> > with the changes from the last development cycle and then after that
-> > I'm pretty strict about only serious bugs/panics and regressions.
->
-> Your README says "serious problems", not panics.
-
-Are we really going to argue about how one defines "serious problems"
-and "panics"?  You'll notice that I've used "serious problems" and
-"panic" somewhat loosely in this email thread because the distinction
-doesn't really apply to our discussion.  The issue you've brought up
-is that a use case that was never tested prior to the merge window
-doesn't work like you want it to work.  There is no kernel panic nor
-any functional regression from previous kernel releases (user visible
-or otherwise).  We'll change how the security_namespace_free() LSM
-hook works for the next release which should give you plenty of time
-to test that it works properly.
-
-> A hook that is
-> exported to bpf as an attach point and never called is a serious
-> problem for an API.
-
-I'll repeat myself again, a little louder for those in the back: the
-LSM hooks and callbacks are not a stable API, if an individual LSM
-needs a stable API to expose to userspace it needs to provide its own
-abstraction layer.
-
-> And it's not how you've handled this before: lsm_get_self_attr() was new
-> in v6.8 and got fixed for apparmor and selinux at v6.8-rc7 (cf. [2]).
-> v7.1-rc5 took Stephen's cred_guard_mutex change for lsm_set_self_attr()
-> without a crash see (cf. [3]).
-
-There is an important difference between those issues and the one
-you've identified with this patchset: lsm_get_self_attr() and
-lsm_set_self_attr() are syscalls while security_namespace_free() is a
-LSM hook.  Linux syscalls are subject to the Linux kernel stable API,
-LSM hooks are not.  Linux syscalls are directly accessible from
-userspace, LSM hooks are not.  We could dive into other minutiae about
-the differences between those issues, but the distinction between
-syscalls and LSM hooks is really the only one that should matter here.
-
-> > Disabling the BPF LSM support for the new hooks in Linux v7.4 should
-> > be relatively easy, much simpler than this patchset, and eliminate any
-> > claimed harm.
->
-> No. That's a change to kernel/bpf/bpf_lsm.c which you don't maintain
-> and the people who do have acked the fixes and asked for the whole
-> series in v7.4.
-
- :D
-
-Instead you're asking someone else to accept your changes in a
-subsystem you don't maintain and when they push back due to lack of
-testing and existing conventions you decide the proper approach is to
-bully them and force the issue with Linus?  I'm used to dealing with
-hypocrisy but this is truly something else ...
-
-> You're proposing to rip working functionality out of someone else's code
-> so you don't have to take a three line deletion. namespace_init and
-> namespace_install work fine for bpf.
->
-> It's also not simpler. The LSM part of this series is deleting three
-> lines I wrote in security.c. The rest is my code and bpf's code with
-> acks. Your version needs a revert in v7.5 so it's two cross-tree changes
-> instead of one.
-
-Adding security_namespace_free() the the disabled BPF LSM hook list
-should be a one line change in Linux v7.4 (maybe three if you need a
-Kconfig conditional for something) and then a one (maybe three) line
-change in Linux v7.5 to allow it again.  Two patches, each at most
-three lines, all contained within the BPF subsystem.
-
-> > Also, as the ongoing friction between the LSM and BPF developers was
-> > brought up, I want to point out that SELinux support for the new LSM
-> > namespace hooks was delayed to Linux v7.5 due to issues uncovered with
-> > these new hooks during the Linux v7.4 development cycle (well before
-> > the merge window opened).
->
-> That's not what happened. Stephen posted the fix on September 16, v3 on
-> September 18. I reviewed it on September 25 and offered to carry it in
-> the namespace tree for v7.4.
->
-> On September 29 you said you'd rather take it through lsm/dev. It's not
-> in lsm/dev. It's not in v7.4. A reviewed fix that was ready three weeks
-> before the merge window didn't get applied. That's the same decision
-> you're making now and it's not a precedent for it.
-
-If you look at that thread, you'll notice I ended my last mail with a
-"Are we all okay with that for this patch?" because I wanted to make
-sure everyone was okay with the patch, and the process before merging
-it.  Stephen answered that he was okay with the approach and you never
-responded; I held the patch back exactly because you never explicitly
-okay'd the approach.  I suspect one could make a lot of interesting
-observations both about how that patch was handled, and how that
-handling is now viewed from different perspectives.
-
-> > I told you "next merge window", which is far from "no".
->
-> For v7.4 it is "no". That's the release these hooks go out in. It means
-> v7.4 ships with a namespace_free hook that never fires and v7.4.y stays
-> that way because by your own rules the fix doesn't qualify for stable.
->
-> > I'll admit to finding it odd that you seem to keep inserting yourself
-> > into that friction point
->
-> A large portion of code where new security functionality is added or
-> modified all of the time is maintained by me and others.
-
-... and when it suits you, or the BPF developers, you override or
-otherwise steal ownership from the LSM space.  We obviously see things
-different here, but if you're trying to convince me that you are doing
-the Right Thing by inserting yourself into some of these discussions,
-e.g. the recent LSM kfunc discussion, you are wasting your time.  To
-borrow a phrase from Alexei's last email on that subject, "I don't
-feel we will converge here".
-
-> You're objection is noted and I'll mention it to Linus and then he can
-> decide.
-
-Please CC the LSM list and me.  I would also encourage you to disclose
-the lack of testing you have done prior to the merge window as well as
-your insistence that the LSM hooks become a stable API; if Linus is
-going to change any of these policies it would be good to know.
-
---
-paul-moore.com
