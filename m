@@ -1,48 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793292088;
-	b=JtIqi+Zhi00Ydhh83Q87Hzcxwsk7owtE8teqmAKsCXZ+vGkDbPRihNn9yDzk2/+/7XWL
-	 ZIDE5uVYtsTSMqroaxKyRLjCwsezzLeQtDxgllpn1U9St75cWZn2AAWpv18UqrjGSMJPw
-	 SfuhIeHAPdZmL62mV9+ZkfGHzr12vuv7hNNw/SgMkoCI9TyQhj1zO+QXBwJCKLO3vQcfN
-	 odK5N0bpNdN+mdiAZ19ketb5gW7Wje120bVWIFhq0E8QXUi4MsvPfEvp4eglZ4lLwPVgD
-	 vL2hY6HvhxTU8RgWoWNXWvj5NHuhfLBZGz7mNv1IPV1VLuHFkvKh5Q+HNGKHPJLzkTQ==
+	t=1793292319;
+	b=dqPA7dnAOTa3Bb6mwJ9gIe0Y3WZl+/izEUpdtFKqPMCzWG4ZX2Kxg2gM/JCYB3hUdvQz
+	 C7vMTxW6dTKn4MXATkOLI4IKt4o4I+OSBsdnf4vC5S5qTnpkrLcmxuaaU2sl26+3v+XzE
+	 847o2iIYQhzL6wKrGo7/1/o2kvOpLq40AlJgHqmgQJ49mMTb+EMlOKPn0xohYmwC7nSHp
+	 d8B5VG+l4NXcIkwyHQ5TUf//5QFbqrPz3xdbV6UVDOYOncT9KKif86r7v3w2umJR7+6WS
+	 P2okF690ErNpj6RCWQLwGYHxWal8v5c5+xp4xCvgQqHRw6fxHzyAL2ry0pYM4VjlEXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793292088;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=67EUHCtqjfB+tccUv3dsIzzhumxwNVJ2yslHfCYJQGw=;
-	b=JjbpWSE/J9Hr+nhuGLuZvbcBXDuBbKfNIi92QS9nmKXgmnytESuPlKw9RDqiykMLKvdE
-	 finivJP4cufu/oSfHkldk3Zwu/vrPx6Q6VHyQt3ZgmHJOdP72+2VdVl5Qf5+JuVHNDK3R
-	 I41tZCoijcDGpQE/ZxBM6eaOH9nv/MIzC5ub0Q4C5V/EDh3bp7mhj72TyvisQVEM76xm8
-	 0jRa2dGfcr0jZg0mOEGh7Fnw/99tWn9mJ11SsgQo35fz2RDe2VkY3UtIoGBdzP6/9CFAF
-	 jDLBtABDP9++ZdR2K0wrQBIQJIr7xBtDTzTZ9glsRoBJvgLOs0NKtQa3giqhvw0rDyw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793292319;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=TwhsF8heRL/FPi+JPE2Ch6ttIpQ7f/8UVa4zHjgf4PQ=;
+	b=YWu8Kd0cI6Ssm3/uRPH9Y+2/1VAeIP5ySIOHZkVmiqJJhveOk+UQzefVcn5IBgFt9srV
+	 EVmAb4WDNJ5uOZpF84oLINOMf3TrmRhPD8Ct3yV+dnmwztygUiuQDpqSg8GxKzJBR04kD
+	 MeyDghOkJmOjMrowrNMc0jiwKCckaKHR5/BiRG3E8epTjkZND5NZk80/mGfs7ZGJjxfGM
+	 T/5twTh2n06vW68yKfXyVpc6Hz4OJCAGM8VSdAxhavH1SQTO5UYYd/Cero2yKokH9/IJ2
+	 vjwmL1mnRvYVCEwf1/I/5vhMVYdiwq5BVdJWR+xfX9TSwuz+OtGVqJN+7SwH5QlTL+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xw6ZHbkE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f8Z77AYC;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E35D606A33D;
-	Thu, 29 Oct 2026 16:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 8FB11606A322;
+	Thu, 29 Oct 2026 16:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xw6ZHbkE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82AC11F01816;
-	Thu, 29 Oct 2026 16:41:25 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f8Z77AYC
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 930B11F031E1;
+	Thu, 29 Oct 2026 16:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793292088;
-	bh=67EUHCtqjfB+tccUv3dsIzzhumxwNVJ2yslHfCYJQGw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Xw6ZHbkEFUGlYZcgEYEkT5Z2AOxg+q8msKR94rB0I8id9fYqWFHd8VXng5aQCEIKd
-	 Vdzqaf95Mfg25eIgtZJapL7w6gdmf98YvewMqBdkHOrRWOrZUwHFV6yFfPVMXRST3F
-	 IRyGtVzMZ9M3O1BHNnN6bpEVpCIybZSDjLf/GHIUpD+F/814h1yT/VHuqppEVKwUMX
-	 W7G3a9mGX7/Wt0fVoXU+vP8c82x7oGdZTRd6ckS/MzuFFAOu9SBFB0AoOewplxoZrB
-	 YMvqOS49jIUyM9Plhj5eAplSWHqvg+hanw5KOKomQIISjXXtL8tFDpA5uo9Hmhw3vH
-	 bie+D0NogZQcw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 29 Oct 2026 17:41:01 +0100
-Subject: [PATCH v2 6/7] lsm: fix the security_namespace_init() kernel-doc
+	s=k20260515; t=1793292319;
+	bh=TwhsF8heRL/FPi+JPE2Ch6ttIpQ7f/8UVa4zHjgf4PQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=f8Z77AYC4GOGpdqb5zuJ7v3xiEJl6d2RJE1EZsme0Ajz14w/zz2gx745j/mNahvqm
+	 83HGTnnnYgWQ7mayeooSAS8dss8w9PipTw2YvoXv9Z92puGhOIb55xj16f76nv/fpm
+	 pGHs0UVknnIsGCAHXQL+WIoCPKoWgtL3v99mY4NxkoDLR/+ygMkz6ciKaGqnPAxYXg
+	 ZgnfP8qcuSHhpHYwQYjzORvYhkprWxe/UxvfH3UNcdK2jAff1KehleBcTrHdR6j/7e
+	 vJLlgM6b3lJiNM+aZme8f3HCv5dCUrH9FE8+kW81QKrlnQx+glgy+Q73byn985p2g4
+	 X6UrgpUHCBAWA==
+Date: Thu, 29 Oct 2026 18:45:15 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>
+Subject: Re: [PATCH v4] KEYS: key_garbage_collector(): process in chunks
+Message-ID: <auN4G05kSzZepLE3@kernel.org>
+References: <20261029140707.2010100-1-jarkko@kernel.org>
+ <auNZIm0meBH7zHQX@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -52,67 +66,45 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261029-work-security-namespace_free-v2-6-65591dbba7b3@kernel.org>
-References: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
-In-Reply-To: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
-To: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Paul Moore <paul@paul-moore.com>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, netdev@vger.kernel.org, 
- Linus Torvalds <torvalds@linux-foundation.org>, 
- "Christian Brauner (Amutable)" <brauner@kernel.org>, stable@kernel.org
-X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1633; i=brauner@kernel.org;
- h=from:subject:message-id; bh=LU/y2L5eVemTv0E47phbRKaXIXa34YzJQ/j0ZrgeaAA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ9Lpc/l33tR/cyqb/pey/I1Ra8+ZOoeMWix9tC+iwLb
- 3pzZ3ZpRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESMTjAy7NzzUba0XzMmceqk
- Uoey1A0z1zY9+ij+WT99lezu179+pTMybD/waE9bmgnzrCaJV7Pk9MtfuZ6aofqWd17D1Wr+8Oz
- 3DAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <auNZIm0meBH7zHQX@kernel.org>
 
-The kernel-doc claims that the owning user namespace is available via
-ns->ops->owner(ns). But security_namespace_init() is called from
-__ns_common_init() before the namespace has been set up. Apart from
-network namespaces the owning user namespace isn't set at that point so
-->owner() returns NULL. And for init_net with CONFIG_NET_NS=n ns->ops
-itself is NULL.
+On Thu, Oct 29, 2026 at 04:33:10PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Oct 29, 2026 at 04:07:05PM +0200, Jarkko Sakkinen wrote:
+> > keygcbench results without the patch:
+> > 
+> > unused:   min=3016.754 avg=11859.097 max=28667.645 var=141391574.712
+> > expired:  min=0.015 avg=12758.165 max=21516.237 var=85158284.646
+> > combined: min=0.015 avg=12308.631 max=28667.645 var=113477010.596
+> > 
+> > keygcbench results with the patch:
+> > 
+> > unused:   min=0.225 avg=13.991 max=853.100 var=858.700
+> > expired:  min=0.016 avg=30.442 max=2791.695 var=14187.539
+> > combined: min=0.016 avg=19.249 max=2791.695 var=5177.436
+> 
+> I personally would optimize all-in for variance because:
+> 
+> 1. It is insignificant drawback for any practical keyring workload
+>    if the total time increases slightly.
+> 2. Latency peaks are a signifiant drawback for any possible latency
+>    sensitive workload running in the system.
+> 
+> What I'm doing now is to find sweet spot chunk size below 1024 where
+> variances reaches its lowest value.
+> 
+> The latency part makes this change more valuable than focusing on
+> only on the regression itself.
 
-What a namespace_init hook can rely on is the namespace type and, now
-that it is allocated before the hook is called, the namespace id. So
-document that instead.
+The best block size 1 and this was actually my guess. Just in case I ran
+the benchmark three times for each 11 block sizes.
 
-No functional changes.
+It is simple refactor to do. I simply substitute KEY_GC_BLOCK_SIZE with
+1 and carefully refactor the constant out.
 
-Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-Cc: <stable@kernel.org> # mainline only
-Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
----
- security/security.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I think that converging to the correct solution through this route was
+worth of the additional trouble because at least now properly sanity
+checked.
 
-diff --git a/security/security.c b/security/security.c
-index 1e76c097b28d..81dac9e48a51 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3382,9 +3382,9 @@ int security_create_user_ns(const struct cred *cred)
-  * security_namespace_init() - Initialize LSM security data for a namespace
-  * @ns: the namespace being initialized
-  *
-- * Initialize the LSM security blob attached to the namespace. The namespace type
-- * is available via ns->ns_type, and the owning user namespace (if any)
-- * via ns->ops->owner(ns).
-+ * Initialize the LSM security blob attached to the namespace. The namespace
-+ * hasn't been set up yet but its type and id are available via ns->ns_type
-+ * and ns->ns_id.
-  *
-  * Return: Returns 0 if successful, otherwise < 0 error code.
-  */
-
--- 
-2.53.0
-
+Br, Jarkko
