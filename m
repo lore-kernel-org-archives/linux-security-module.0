@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793290167;
-	b=brX+xYTEPV115H0UnJxqAe0EevlCtD13XEHy3nnmPSBdS6HaarO+XUvFF/7/1fH+en4M
-	 oZNOik0TQ2hW8Kwuh81qAxn8DJW7XVoLMyx9KuCvnNmd6JjMH77mPKByMDZBdVeTf5xj9
-	 GOFG+d+DUSfAJAdp+/4OvJ0sJfHCkdADIlwMR1WRfTjR2OJI24WPJaWovdXxITfAIGMIo
-	 PZpnHnN+qnvYDcv4kYZ0KcbFp14UPw4G47v1wdFMPpvykATQ7JoywPYMzjFAVklTLjp9o
-	 egpmUlkTOTAxrzpeyFOY7YGDDSGgWfO7oEtG2cTdwIabe0ohGbYj0PXq7c5h1obQayA==
+	t=1793290415;
+	b=kG28bRc2IZEgimAfScGb/B9hgR+vYHQTHtnbAlEJoZK5IhwB4WTGZP7HvKsfUQw4xkZK
+	 aE7cB2tCsVEu7t2NYTks7CbEFJVoJtu3CqwfrRQoaGVoUx1sPysjJcQYM9FdLZjBgAZ5L
+	 spK8M2lF+V8sJpYwnEI3xX6/kVydFK8lih0qVkqrA7JKXk2y3ysu3u0tYR5AUOUp4QMs6
+	 1627rMSKLDdXqb5BSfKy//6NZ8JlccZgdilwG8mEzxhb7uDOMRGt/S7I/AutBEhNqMexh
+	 gIbqWkC7h7o3y7gBtn7StJY0KhSrakPhTVF7JtGBq3b+cbmC2CFlRZ/wZgL5ZfDGKbg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793290167;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793290415;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=tO6g1JASX7rXQj3OY5h1E253G7EzuHoEJJUb09vcGfc=;
-	b=qcyGcZPRQbj2UEpo6Z20cUwtmadqFQCONvSEiMFjXj4j82Bu0y8WbhnEv+ImF4wanxCR
-	 ONrBTkdd4CMvVRSHipr4PKWjpKw1xhIgdRGzHp6Aq1xczLyRc3Xs9OsRruvxz4DDgBnFe
-	 pHygUcPoB4m21imKzYCuBBehSX0rgHCCDYzA1NCCQ9crqsiSbku5F8V5AXXk182c/K230
-	 LS5SUa5gEueoTOPDc8uMk8aOTadCTwJwhmZOM3uFSQHsZXYVi/SQW8vIQMAtODgNskKdq
-	 6BVNKTPT/lvhL1gnp4zg1Fys+XFbwxkVFiXkqvnCuIXMKJqkntLBoDin81trxM8MpbA==
+	bh=vP68phsAvY7aG3S6+yoPsFoCeMDvOnSAllWkqFjMivk=;
+	b=JKEZC7QL6H6KbZpWGuPxbhOcxCz98SPO677OuTYMJsIPQ7wlINtZzfigV3IiHjbmE0Vq
+	 rBHWC0dr48xCZxaINim0K7eezmZ8M81xthd/34uLemXq+zsL9ubcT6cmDYo7qKkyCb/ZQ
+	 +oo7S8QkMoxlrLYpD1/w+EtK9n1ThYIQROY+F1R039sezi2HTmiPubShMg169BCgOqs1D
+	 aSgWDuedXhbwOwPLVZHD/SaujTexU+6fuN8hzKklEwzSRgUbXEyJ2z4lrFBci9jCB8bBV
+	 xYGTH0952iU9rpTFjLv6xds0PO9gELOVB/RN5doAwY8wOHojMyQiC5DL1P4kyAGh9SA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JSYYZ3Da;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CfHE67on;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCE160A6F69
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97210606A31A
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JSYYZ3Da
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64431F01816
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:09:26 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CfHE67on
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54CAB1F01816
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793290166;
-	bh=tO6g1JASX7rXQj3OY5h1E253G7EzuHoEJJUb09vcGfc=;
+	s=k20260515; t=1793290415;
+	bh=vP68phsAvY7aG3S6+yoPsFoCeMDvOnSAllWkqFjMivk=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=JSYYZ3Da5aNpIBnFesiJbIdcizSQzmyRlc8SGRFNIaw9SVntOQslGs8US/7wPq/IF
-	 VgHvKcICums3RGxGZe14ULRQg3oWtN3f+F93CgcwZsogTZaMx8vBQyB3WxQ1p5lWs7
-	 h5ImZocD0txmgR7OoMHDcjXqQimzD1iWujB+b2GhI58+nIbOoDuefu09927aH6gUJ8
-	 LGZuHiLHz0LNROFDinSbz17dOfYYWpnFEFBklEawoDiscQCaLngFz4PkPWmZeVCyxz
-	 RFuvVOIi73f33QGkbxJAJRm5wHHMr7CFok96wLDbl1jzhnE49ZLl+oIRm5NHKsnElJ
-	 nzcV4ffRbC97A==
-Message-ID: <sashiko-outbox-189649@kernel.org>
+	b=CfHE67onXEQuuzbrz1NPyHGxJ4NqeEoVWVydOwz16bmr7aEc0WUo3KvpxHtiFYdFZ
+	 DL0Jby0TDHy1T7Z7GD76epKAW+NYcyN4sGHJde9Kx96cLuUIhQ3tiq6hoZmLdHGwcB
+	 BApB029fKoFN256xQxiyIPOEXOP9TqMed8ZYlBlKQSthM++wcEDEZsFm/4OCS47pD/
+	 UyOO2SL6vUfYsCq09WTcylN4y3K6uEaNAoJbc+xcjADly034ms90l2wNkRtwnhoQjZ
+	 fO3iZvLJBzk8WWTqyDt2+KEN79wMMNA8+VNQAoobB0rhL2gkCKvu/sACHjYuA3WecW
+	 RcpmY3kI8DiwA==
+Message-ID: <sashiko-outbox-189651@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] smack: do not override the subject label in overlayfs
- hooks
+Subject: Re: [PATCH v2] keys: Protect the update method check against type
+ removal
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261029155422.578322-1-m.moscicki2@samsung.com>
-References: <CGME20261029155517eucas1p25b05b501c3f6a8c9b58c145898f6e76e@eucas1p2.samsung.com>
- <20261029155422.578322-1-m.moscicki2@samsung.com>
+In-Reply-To: <pm-keys-update-type-removal-20261029-v7-e79d113bcff91e140d04@gmail.com>
+References: <pm-keys-update-type-removal-20261029-v7-e79d113bcff91e140d04@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 16:09:26 +0000
+Date: Thu, 29 Oct 2026 16:13:34 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,32 +59,31 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Overlayfs performs operations on the upper, lower and work directories
-> with the credentials of the mounter and uses the inode_copy_up() and
-> dentry_create_files_as() hooks only to let the LSM choose the label of
-> the inode it is about to create. Smack implemented both hooks by
-> replacing smk_task in the override credentials, so the label of the
-> copied file, or of the transmuting directory, became the subject of all
-> access checks done in the underlying filesystems on behalf of overlayfs:
-> the lookup and creation of the temporary inode in the workdir, the
-> rename into the upper directory, setting the overlay xattrs.
+> key_update() reads key->type->update, ->def_datalen and ->preparse
+> before it takes key->sem. A reference on the key does not pin the
+> module that provides its type, so KEYCTL_UPDATE can race with the
+> unloading of that module, for example dns_resolver:
 >=20
-> Unless that label happens to have access to the workdir and upper
-> directories, or is allowed to use CAP_MAC_OVERRIDE, these operations
-> fail with EACCES:
->=20
->   lsm=3DSMACK fn=3Dsmack_inode_permission action=3Ddenied subject=3D"some=
-label"
+>   KEYCTL_UPDATE task                  Module unload and key GC
+>   ------------------                  ------------------------
+>   keyctl_update_key()
+>     key_update()
+>       key_permission()
+>       load key->type
+>                                       exit_dns_resolver()
+>                                         unregister_key_type()
+>                                           GC: down_write(&key->sem)
+>                                           GC: retype to key_type_dead
 > [ ... ]
-> Outside overlayfs smk_create is never set, so there is no behaviour
-> change there.
+> the preparsed payload has been freed. Once a key exists, only the GC
+> changes key->type, and it does so with key->sem held for writing.
 >=20
-> Fixes: d6d80cb57be4 ("Smack: Base support for overlayfs")
-> Signed-off-by: Mateusz Moscicki <m.moscicki2@samsung.com>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029155422.5783=
-22-1-m.moscicki2@samsung.com?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/pm-keys-update-type=
+-removal-20261029-v7-e79d113bcff91e140d04@gmail.com?part=3D1
 
