@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793265352;
-	b=kXENxGMUcvKS5l+UyCDvMSovHbbAKWvSKPy0w8i2xlydutKK/NeSYSDrFzUaRyVv2GzF
-	 1sk7H5/cSX3xBlKbkrGgqc/21afr3zth3jwlvLgSt+G9FHub38u68tx7+N34Yp6gdep40
-	 /aXlGQ6k3EjGE50CIJxIVSA90QJIn0uZuLuMYCEy2Zh6dQFxNMB/LzVi5FO2fhGu+Vifg
-	 9nUkNOD3mFl7oRDdmkt5isTZHWqZc/h0NpXnbCUi02yfIIN7b0FpZqMgDfB8Qi1sfaLGD
-	 mFh6oXp2nRqLGmYASGMAJta6Ou0wZo20HjUiCtmZ1E6QYlAEFqDBVVAaq/ya9fm1Ecg==
+	t=1793265388;
+	b=A7MhxM7azyWfDgEvFdYLTQyqcLiHPBNOwDIKPBWAUW64Ox2fe12O7j0tQ2t1rvGnT9ik
+	 c99c8lg1kuiBY1jqmuDtn3G2d8gVxnnUFfxUUCVPV48K7Kt3exjLsR6XE5drpSHkcnpk/
+	 LVqTRne1L4Q4C6mHN0HEWgYGS8KJBInAB8+l/gYRk/u9RdxJLeVan9F62xrkg5Wf3wLMd
+	 YAWPx6DDUm0yVTz6+W3Ao2+AGsaC5G+e4kcF2nrO2HMTdDTuOjEuRMrvqk4QQ7bK6LBoU
+	 Zk5VVzML7eObFu0222bPV5vfVVUXbiEkZvtLVq409Uh1Kowl5DauLEzYVRAknMNOWsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793265352;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793265388;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=YvxwrRsi9DJ63HuWkLKPGzYGzmHIDab3JdLRqCRRUxI=;
-	b=xJVKXHVct+hjHWkv2mDiphabXSodqcPZX2NNknSnrYPLOgG3F0d6SvtL943FxCxtlRP8
-	 ItNoX5Yawb/wKgZnCWrsGyFT80G+GWHamxf0VbKv3EWbCdfElMk+ER6XmlTS/03yJqtmj
-	 e+I8Qz0bFfhWBrUyTWlWU/0l/Jfa+h5ltQr610Onc+S5Sf6t3f3p7KCXBgsW65Lc0Ru/l
-	 IILnM1O1/3O4RG/HXvdvqVc8eeJ6QNZCNRlcuFV+ZQJhL+iU0B8oVhCBe5mgOrKMrMgID
-	 D40idD13vpvR9mAolgIq7evjzo7VHgn7cKJSFaRUqhIYM5ndycD9cONOZhFxSh/3aDA==
+	bh=YNgX5SFBiaSwcUYiUIFMJCezPEVB23e8ZTa3oJkkbD0=;
+	b=S5LfK4SybmKWKh9nlkmDLI7jx/CDm7e0ZKbhpFIgEv2rdd6aVcm1RpqctO8tSW/oADUQ
+	 j/WR3yTTgj3E/HIXaQfyCZVtodSb9CYmotnCxze4D7aJcnTb77Trky8EUAMbhXIgFsuXp
+	 Q5EuKg8Ff2wKvxf6k58MwtrgqFh6HdIjKVm1MDIGkBlFyIBfM2yHCmKvk8oBFCBaR+NPE
+	 Kcu8KTOoWkLNo1djX9ogxWuDNGZ+TjghZsqRhYfE/ZsCiaCPQ2Ti0s/+FLbTAG0KTbt0U
+	 fASQBCtyaAyRtdrznr/bIZE/XQuIRpKdMcsH9GX3KK6e2F9AvQQfJK0nyyyTgJhTI1w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="hi5SHs/Q";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qc5QJZSw;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8FD606A31A;
-	Thu, 29 Oct 2026 09:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8B8606A32A;
+	Thu, 29 Oct 2026 09:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hi5SHs/Q
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC3A1F01825;
-	Thu, 29 Oct 2026 09:15:49 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qc5QJZSw
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F19B1F01825;
+	Thu, 29 Oct 2026 09:16:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793265351;
-	bh=YvxwrRsi9DJ63HuWkLKPGzYGzmHIDab3JdLRqCRRUxI=;
+	s=k20260515; t=1793265387;
+	bh=YNgX5SFBiaSwcUYiUIFMJCezPEVB23e8ZTa3oJkkbD0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=hi5SHs/QhiZ5zOLYZ1BUTOivYLQ+HichWGyXeOxVDvu+pS2E61RaoCzxIYZs70ZPw
-	 f2LcV5Pvng1GucTr1ppsGXeNKvZrvrYLf4gOK7BQ1JcZTOO5dgb6+/Xq3wUgQnpjZh
-	 IuOkQiz+qspqnloDbakygcZ6lnOl2KuE6PiKrlcBaSJiJoix8YWEQidIydEwFnyWKL
-	 4G2ppHSmUrQvm+Y0XOzZMPDCYcN9FJ1Ej3AfSvgwmM0jDGBG6IlJMRYwRyvmkQ0JK/
-	 7IWEBuxO1f1Zid3/aceoHUleTMBqO4q+uUPJSux+nR4fi8cvs8mJDJ2VQRK0OrcOYl
-	 Rfut5junY7jKQ==
-Message-ID: <sashiko-outbox-189013@kernel.org>
+	b=Qc5QJZSwpHJgdtfKCiV3SajWICNMXRPg6ELzvOWJ5HKkW3B377mfi8xb/12Pkf9F/
+	 y1cyPB3nECoJHTXSeJ9l/hGLYPsoWbwaNe+xPkYI2sW66nzzSU/eQed6EnXKCDxotc
+	 YInhS4duiisDGcWl6M5kVbFfTDtqagPwskeQlYyd2PADGH72BTRDlfq2HKi8BQESCZ
+	 /yektBzMjdMy92Qkl3voE42/7DU18fmIWwyz7vQVUpn/EdKRmfOBS1l3AUez/fByy1
+	 45tiMiCZqG8bb5Vnu6b2chTGjmYtgyo/bJa9v3TVse45tqI9f9X/60/R2fZyGXPAsp
+	 BIAFGrYyrTJkw==
+Message-ID: <sashiko-outbox-189015@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 07/14] rtc: add support for x86 macs in macsmc-rtc
+Subject: Re: [RFC PATCH 06/14] leds: add support for macsmc kbl
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Atharva Tiwari" <atharvatiwarilinuxdev@gmail.com>
 Cc: "Bjorn Helgaas" <bhelgaas@google.com>, "Thomas Gleixner" <tglx@kernel.org>, "Ingo
@@ -61,12 +61,12 @@ Cc: "Bjorn Helgaas" <bhelgaas@google.com>, "Thomas Gleixner" <tglx@kernel.org>, 
  Kasatkin" <dmitry.kasatkin@gmail.com>, "Eric Snowberg" <eric.snowberg@oracle.com>, "Paul
  Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
  Hallyn" <serge@hallyn.com>, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org, mfd@lists.linux.dev, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20261029085504.3547-8-atharvatiwarilinuxdev@gmail.com>
+In-Reply-To: <20261029085504.3547-7-atharvatiwarilinuxdev@gmail.com>
 References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
- <20261029085504.3547-8-atharvatiwarilinuxdev@gmail.com>
+ <20261029085504.3547-7-atharvatiwarilinuxdev@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 09:15:49 +0000
+Date: Thu, 29 Oct 2026 09:16:25 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -78,159 +78,192 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 4 potential issue(=
 s) to consider:
-- [High] rtc: macsmc: uninitialized u64 clkl and wrong mask in macsmc_rtc_p=
-robe()
-- [High] rtc: macsmc: positive return on ACPI write failure in macsmc_rtc_s=
-et_time()
-- [Medium] rtc: macsmc: shift underflow when clkr is zero in macsmc_rtc_pro=
-be()
-- [Low] rtc: macsmc: missing kernel-parameters.txt entry for force_clkm
+- [High] leds: macsmc: sleeping SMC write registered as non-blocking bright=
+ness_set
+- [Medium] leds: macsmc: non-standard LED name breaks kbd_backlight discove=
+ry
+- [Medium] leds: macsmc: missing suspend/resume handling loses backlight st=
+ate
+- [Low] leds: macsmc: commit prefix, drv naming, and Makefile sort order vi=
+olations
 --
 
-commit a291b39ce81e3a636ffdc1d72c951eb114ad04ea
+commit 62f13fe6413b6947c13026e13a39c022cd83dde2
 Author: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
 
-rtc: add support for x86 macs in macsmc-rtc
+leds: add support for macsmc kbl
 
-This commit adds support for Intel T2 Macs to the macsmc-rtc driver. On the=
-se
-machines, the driver reads the clock rate and RTC offset from the SMC rather
-than NVMEM, and optionally reads the clock via the asynchronous CLKL SMC ke=
-y.
+This commit adds a LED class driver for the Apple SMC keyboard backlight on
+Intel Macs and registers the macsmc-led MFD cell when the LKSB key is prese=
+nt,
+intended to replace the keyboard backlight support in applesmc.
 
-> diff --git a/drivers/rtc/rtc-macsmc.c b/drivers/rtc/rtc-macsmc.c
-> index 8fe8830669569..37395c64cbb5e 100644
-> --- a/drivers/rtc/rtc-macsmc.c
-> +++ b/drivers/rtc/rtc-macsmc.c
-[ ... ]
-> @@ -20,13 +23,54 @@
->  /* 32768 Hz clock */
->  #define RTC_SEC_SHIFT 15
-> =20
-> +static bool force_clkm;
-> +module_param(force_clkm, bool, 0644);
-> +MODULE_PARM_DESC(force_clkm, "Force CLKM Key, instead of trying to use C=
-LKL");
+>     leds: add support for macsmc kbl
+>    =20
+>     Add a LED class driver to control the keyboard backlight.
+>    =20
+>     This replaces the keyboard backlight support in applesmc.
+>    =20
+>     Signed-off-by: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
 
 [Severity: Low]
-Should the new rtc_macsmc.force_clkm module parameter also be documented in
-Documentation/admin-guide/kernel-parameters.txt?
+This isn't a bug, but should the commit subject follow the LED subsystem
+convention of including the driver prefix and capitalizing the description,
+such as "leds: macsmc: Add support for keyboard backlight"?
 
 [ ... ]
-> @@ -66,14 +121,20 @@ static int macsmc_rtc_set_time(struct device *dev, s=
-truct rtc_time *tm)
->  	u64 ctr =3D 0, off =3D 0;
->  	int ret;
-> =20
-> -	ret =3D apple_smc_read(rtc->smc, SMC_KEY(CLKM), &ctr, RTC_BYTES);
-> +	if (rtc->async_rtc && !force_clkm)
-> +		ret =3D macsmc_rtc_read_clkl(rtc, &ctr);
-> +	else
-> +		ret =3D apple_smc_read(rtc->smc, SMC_KEY(CLKM), &ctr, RTC_BYTES);
->  	if (ret < 0)
->  		return ret;
->  	if (ret !=3D RTC_BYTES)
->  		return -EIO;
-> =20
->  	/* This sets the offset such that the set second begins now */
-> -	off =3D (rtc_tm_to_time64(tm) << RTC_SEC_SHIFT) - ctr;
-> +	off =3D (rtc_tm_to_time64(tm) << rtc->shift) - ctr;
-> +	if (rtc->smc->is_acpi)
-> +		return (apple_smc_write(rtc->smc, SMC_KEY(CLKO), &off, RTC_BYTES) !=3D=
- RTC_BYTES);
 
-[Severity: High]
-What happens when apple_smc_write() fails in macsmc_rtc_set_time()?
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 4d4b089156e24..7c38dbef42390 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -12,6 +12,7 @@ obj-$(CONFIG_LEDS_KUNIT_TEST)		+=3D led-test.o
+>  obj-$(CONFIG_LEDS_88PM860X)		+=3D leds-88pm860x.o
+>  obj-$(CONFIG_LEDS_ACER_A500)		+=3D leds-acer-a500.o
+>  obj-$(CONFIG_LEDS_ADP5520)		+=3D leds-adp5520.o
+> +obj-$(CONFIG_LEDS_MACSMC)		+=3D leds-macsmc.o
+>  obj-$(CONFIG_LEDS_AN30259A)		+=3D leds-an30259a.o
 
-Because struct rtc_class_ops.set_time is expected to return 0 on success and
-a negative error code on failure, returning the boolean comparison result
-evaluates to 1 when apple_smc_write() returns a negative errno or a short
-write.
+[Severity: Low]
+This isn't a bug, but the platform drivers section in drivers/leds/Makefile
+is kept sorted alphabetically. Should leds-macsmc.o be placed in alphabetic=
+al
+order right before leds-max5970.o?
 
-In the rtc_dev_ioctl() -> rtc_set_time() -> macsmc_rtc_set_time() call chai=
-n:
-
-drivers/rtc/interface.c:rtc_set_time() {
-    ...
-	else if (rtc->ops->set_time)
-		err =3D rtc->ops->set_time(rtc->dev.parent, tm);
-    ...
-	return err;
-}
-
-a return value of 1 is either overwritten by 0 if update IRQs are enabled or
-returned to userspace from the RTC_SET_TIME ioctl as a non-negative value,
-causing a failed hardware clock update to be reported as success. Should th=
-is
-propagate negative error codes from apple_smc_write() and return -EIO on a
-size mismatch?
+> diff --git a/drivers/leds/leds-macsmc.c b/drivers/leds/leds-macsmc.c
+> new file mode 100644
+> index 0000000000000..f38ef2113aced
+> --- /dev/null
+> +++ b/drivers/leds/leds-macsmc.c
 
 [ ... ]
-> @@ -102,18 +165,40 @@ static int macsmc_rtc_probe(struct platform_device =
-*pdev)
-[ ... ]
-> +	if (rtc->smc->is_acpi) {
-> +		ret =3D apple_smc_read_u32(rtc->smc, SMC_KEY(CLKR), &clkr);
-> +		if (ret < 0 || clkr =3D=3D 0xFFFFFFFF)
-> +			rtc->shift =3D RTC_SEC_SHIFT;
-> +		else
-> +			rtc->shift =3D ffs(clkr) - 1;
+
+> +static enum led_brightness macsmc_led_get_brightness(struct led_classdev=
+ *cdev)
+> +{
+> +	struct macsmc_led *drv =3D container_of(cdev, struct macsmc_led, cdev);
+> +
+> +	return drv->brightness;
+> +}
+> +
+> +static void macsmc_led_set_brightness(struct led_classdev *cdev, enum le=
+d_brightness value)
+> +{
+> +	struct macsmc_led *drv =3D container_of(cdev, struct macsmc_led, cdev);
+> +
+> +	drv->brightness =3D (u8) value;
+> +
+> +	apple_smc_write_u16(drv->smc, SMC_KEY(LKSB), drv->brightness);
+> +}
+> +
+> +static int macsmc_led_probe(struct platform_device *pdev)
+> +{
+> +	struct macsmc_led *drv;
+
+[Severity: Low]
+This isn't a bug, but could the private data pointer be named ddata instead
+of drv in macsmc_led_get_brightness(), macsmc_led_set_brightness(), and
+macsmc_led_probe() to match the LED subsystem naming convention?
+
+> +
+> +	drv =3D devm_kzalloc(&pdev->dev, sizeof(*drv), GFP_KERNEL);
+> +	if (!drv)
+> +		return -ENOMEM;
+> +
+> +	drv->smc =3D dev_get_drvdata(pdev->dev.parent);
+> +
+> +	drv->cdev.name =3D "macsmc-led";
 
 [Severity: Medium]
-Can clkr be 0 if the SMC returns a zero value for the CLKR key in
-macsmc_rtc_probe()?
+Will setting drv->cdev.name to "macsmc-led" in macsmc_led_probe() cause a
+regression for userspace tools discovering the keyboard backlight?
 
-If apple_smc_read_u32() succeeds with clkr =3D=3D 0, ffs(0) returns 0 and
-ffs(clkr) - 1 underflows the uint8_t field rtc->shift to 255. That causes
-subsequent shifts by rtc->shift in macsmc_rtc_probe(), macsmc_rtc_get_time(=
-),
-and macsmc_rtc_set_time() to shift 64-bit integers by 255 or 271 bits:
+In drivers/hwmon/applesmc.c, which this driver replaces, the LED class devi=
+ce
+is registered with the name "smc::kbd_backlight":
 
-	rtc->rtc_dev->range_min =3D S64_MIN >> (rtc->shift + (64 - RTC_BITS));
-	rtc->rtc_dev->range_max =3D S64_MAX >> (rtc->shift + (64 - RTC_BITS));
+    static struct led_classdev applesmc_backlight =3D {
+        .name            =3D "smc::kbd_backlight",
+        .default_trigger =3D "nand-disk",
+        .brightness_set  =3D applesmc_brightness_set,
+    };
 
-Also, if apple_smc_read_u32() fails after partially modifying clkr, the
-dev_info() call below only checks clkr !=3D 0xFFFFFFFF and will log the
-corrupted clkr value instead of 32768 even though rtc->shift fell back to
-RTC_SEC_SHIFT. Would it make sense to guard against !clkr as well?
+Documentation/leds/leds-class.rst also specifies that keyboard backlight LED
+devices should use kbd_backlight as the function suffix so that userspace
+consumers (such as upower and systemd-backlight) can identify them under
+/sys/class/leds/. Should this keep "smc::kbd_backlight" to preserve UAPI
+compatibility?
 
-> +
-> +		if (apple_smc_key_exists(rtc->smc, SMC_KEY(CLKL))) {
-> +			u64 clkl;
-> +
-> +			ret =3D apple_smc_read(rtc->smc, SMC_KEY(CLKL), &clkl, RTC_BYTES);
-> +			if (ret =3D=3D RTC_BYTES && clkl !=3D 0xFFFFFFFFFFFFFFFFULL)
-> +				rtc->async_rtc =3D true;
-> +		}
+> +	drv->cdev.max_brightness =3D 255;
+> +	drv->cdev.brightness_get =3D macsmc_led_get_brightness;
+> +	drv->cdev.brightness_set =3D macsmc_led_set_brightness;
 
 [Severity: High]
-Does this read uninitialized stack memory and check against the wrong senti=
-nel
-mask in macsmc_rtc_probe()?
+Can registering macsmc_led_set_brightness() on drv->cdev.brightness_set in
+macsmc_led_probe() sleep in atomic context when an atomic LED trigger or
+software blink timer fires?
 
-Here clkl is an uninitialized 8-byte u64 on the stack, but apple_smc_read()
-only writes RTC_BYTES (6 bytes) into &clkl, leaving the upper 2 bytes
-uninitialized when evaluating clkl !=3D 0xFFFFFFFFFFFFFFFFULL.
+When software blinking or an atomic trigger updates the LED, the call chain
+led_timer_function() or led_trigger_event() -> led_set_brightness_nosleep()=
+ ->
+led_set_brightness_nopm() -> __led_set_brightness() invokes the
+brightness_set callback synchronously without deferring to
+set_brightness_work:
 
-In addition, because CLKL is a 48-bit (6-byte) value, its all-ones invalid
-sentinel is 0xffffffffffffULL, as checked in macsmc_rtc_read_clkl():
+    /* Use brightness_set op if available, it is guaranteed not to sleep */
+    if (!__led_set_brightness(led_cdev, value))
+        return;
 
-static int macsmc_rtc_read_clkl(struct macsmc_rtc *rtc, u64 *ctr)
-{
-	u64 request =3D 0xffffffffffffULL;
-	u64 response =3D 0;
-	...
-				if (response !=3D 0xffffffffffffULL) {
-					*ctr =3D response;
-					return RTC_BYTES;
-				}
+However, macsmc_led_set_brightness() calls apple_smc_write_u16() ->
+apple_smc_write():
 
-Even if clkl is zero-initialized to 0, reading 6 bytes of 0xff into it
-produces 0x0000ffffffffffffULL, which will never equal 0xFFFFFFFFFFFFFFFFULL
-and will erroneously set rtc->async_rtc =3D true. Should clkl be initialize=
-d to
-0 and compared against 0xffffffffffffULL?
+    int apple_smc_write(struct apple_smc *smc, smc_key key, const void *buf=
+, size_t size)
+    {
+        guard(mutex)(&smc->mutex);
+        return smc->be->write(smc->be_cookie, key, buf, size);
+    }
+
+This acquires a sleeping mutex and calls apple_smc_acpi_write(), which slee=
+ps
+via wait_for_completion_timeout() and fsleep(). Unlike applesmc, which queu=
+ed
+a work item on a workqueue in applesmc_brightness_set(), this sleeps direct=
+ly
+in the caller's context and also discards any error returned by
+apple_smc_write_u16().
+
+Should macsmc_led_set_brightness() be registered via
+drv->cdev.brightness_set_blocking instead, and return the result of
+apple_smc_write_u16()?
+
+> +	drv->cdev.dev =3D &pdev->dev;
+> +
+> +	return devm_led_classdev_register(&pdev->dev, &drv->cdev);
+> +}
+
+[Severity: Medium]
+Does omitting suspend and resume handling here cause the keyboard backlight
+state to be lost across system suspend or hibernation?
+
+In drivers/hwmon/applesmc.c, applesmc_pm_resume() and applesmc_pm_restore()
+restore the saved brightness to the hardware key on resume:
+
+    static int applesmc_pm_resume(struct device *dev)
+    {
+        if (smcreg.has_key_backlight)
+            applesmc_write_key(BACKLIGHT_KEY, backlight_state, 2);
+        return 0;
+    }
+
+Because macsmc_led_probe() does not set LED_CORE_SUSPENDRESUME in
+drv->cdev.flags (and macsmc_led_driver does not define PM callbacks), the
+keyboard backlight is not turned off on suspend or restored on resume. Note
+ also that if LED_CORE_SUSPENDRESUME is enabled, the custom brightness_get
+callback returning drv->brightness would return 0 during resume after
+led_classdev_suspend() sets the brightness to 0, unless the LED core's
+cached brightness is used instead of a custom brightness_get callback.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029085504.3547=
--1-atharvatiwarilinuxdev@gmail.com?part=3D7
+-1-atharvatiwarilinuxdev@gmail.com?part=3D6
