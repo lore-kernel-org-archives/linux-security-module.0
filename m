@@ -1,108 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793280625;
-	b=oxYq2OYKfVJox8F1eNs7yGZKIGbd3c7bxFtgDq4sEkxrC4/XcUEiiM+Y+pBtdPUVBVvt
-	 W90h9bYKMfGRFdo14YTO6C0hQ76ZZqLE2lUlga5V86PUo47Z5M+nZbriRGS6O8CbIr3u+
-	 nnElu7rBtyL7VPM0CIO6mane9BBUKh8zif2heaUi5o2MOtnMm5ypA2VvXELMUrEVJZNHK
-	 Z0uoKHvJwP7zx3OEaEdGJt1QCAsUXd/L9jVoKoLaSfxughMRezmd17nhr/yCUdbc5CG9U
-	 4p9iU9ZgsB4jo3h5R8vkTQ+s20TJTedt6gjn2QHGTAlUHxv0izqwKnakIcA8gojY9Rw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793280625;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=Mb2nUQU4M00SSUzZJSeoQpnNXAraCq7x3LdAKS30Euw=;
-	b=av59mA0JFVoyz4HJOq9OYY+bqom6HCJpdGpiVJZgY+AAAAPVDwFOBscIb2eE9diepS8a
-	 838mm8Qv1AJ5Ew7hqXjfDP08UFl5ExS2cKSlAhmM755PQbQ8sFnI93jLjEkU1AMzcega6
-	 I+P/CSQSOQqFPMkAYQI6/W7WEU+yng1qLG1kRzE4F5mquQXMfMaeL/nl9G6o74heCvQEa
-	 rpQqU7kMzF8FNOkada1v+mxwpETZCFwUIYkuux5HVTxkEX/osFBJflMCLDKoUROsZnXWa
-	 2Ob+h0uRQla21ncH85NoA+sTZKMIRLVybaHkb40iHT2q74gjkm7C+1c0AnHdWhQsHdA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW;
-	arc=none smtp.remote-ip=192.198.163.8
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.54
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793282135;
+	b=Yi8E3z/pmsIffQ5zFMazW2n7tf2vUvNAOvJOt++c87i88LJ3eQqM3y2uw2whks2at2uC
+	 iXgARmUNPivm4J+YVxVzRpS8g3rr8hzFKTnOl5Xigc5uzUAhnUffq0JqYRLtSKKYPdNBL
+	 RIzFEhAYNafm4v0ih5WQhuF3Nd7GInbnQ9Rnq73q4BPLNl7vjYf8BoFSTYSAPb7aV43a7
+	 jxC8UAL1sMdreXHJRVKUc8VhqIppxQeVwov+/KaOvrNkCWkF79IlqTps1qriEdy2Pirik
+	 gtjAgAPJ535+fWqPXtjaHlTXT7LZE5a7Ke64ZM0VbTct99gP8AvN/8QsSJB3XJjyMlw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793282135;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=LOkDxFfKQ22+zC08HSr87rorXATfktqVfXDKvyMR2PM=;
+	b=G5DtF1NG35nEPrtu/vlPTgmN2+YLlp3RwnlbkorQi1VhBEs/RdRJG/xZQDAmtw/cl91R
+	 7ebgGJHrieGhiC5tediBCNu6asHDXbgpt9akhXwkaPW8ssab2Z9trQNSz7DsBj2L/0T8i
+	 mOFecXgubCeLX0uzskF0Qu10d3Mo2lJxV7pUWb3jKozz91qxHoyiEAiNOMs0fo9MwP2Go
+	 5Fzcz2qMG/swBpV5R9EC/sqYiU7Fm43JFKuyRANssjw4mmL0pG/F4N9yh4DSlW1o98F1X
+	 n/pNTTOQIig0OBzxbMJufnIZNnvidcgxcttydkFcd5enHbdnhK85K2zr+dCo/zA35Ag==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=XGgxo2bz;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.54
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67996606A326;
-	Thu, 29 Oct 2026 13:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67996606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80BF606A334
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 13:55:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E80BF606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793280624; x=1824816624;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XiB/P3z67uNi54hQwr+HoGceAi4KeJ58DpxovBSc0bg=;
-  b=moKhVdIWHTlYBTM27yPpptcYvWfZxeoV5vQDl8tROPJHxcy1XOyrsLiH
-   UEC0pOG8yTIBOxOxX+8Sx3MfPvthNhhSVbg7hmXMLdY75L0ynvudB2qUB
-   xwDw8dlq+JFqmrEH1vF2p5uZ15A+7QpDyhHdm3QkceUndx7CjaFFhUM69
-   MGYS36fDRAR2PqPL1vCXsKjhaE/atqXAWFvoXUpwofjuL2spLHNDxelfM
-   4s5Iqm0+JQ+1YT0Rz6kf+pLQU6USwnYQL+Zb3tysqKRg5FvDcKhZdVdhv
-   IUM8pJpk+riQyMmNtQTeyuROg0DxK1r+WJdKbdMqvpLe47T3qLyVJqwQX
-   A==;
-X-CSE-ConnectionGUID: X1a7bbI8SnWe9Ef4aSkLOQ==
-X-CSE-MsgGUID: CjMqrJc6RY20tCJkecc5HQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1915313"
-X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
-   d="scan'208";a="1915313"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:23 -0700
-X-CSE-ConnectionGUID: pazyI6DLSZO+QuLDn2CgVg==
-X-CSE-MsgGUID: Eiw0OS5rRee86K4uWKSdfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
-   d="scan'208";a="5273644"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.129])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:12 -0700
-Date: Thu, 29 Oct 2026 15:30:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-gpio@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-	mfd@lists.linux.dev, platform-driver-x86@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 03/14] watchdog: add driver for apple smc
-Message-ID: <auNKYRpfqrtKa50O@ashevche-desk.local>
-References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
- <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=XGgxo2bz
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6b1aa27963eso1222182a12.1
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 06:55:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793282128; cv=none;
+        d=google.com; s=arc-20260327;
+        b=rH2a0NxC3MGF4+w4aVA7iA0tV806eZMVeFR7+PuOBAWbKlIoa4qRE8Bbg6LuNroano
+         ZGoAetxyYOJg4d9J9tWuYudM7n7gk/8G9Fz80GgsOQVGiw8A16syCwh+bLcYFd/WtSQd
+         l7V+JFG7wM+thVEHvw/E1sZh+k3cIWJ22oYHI+JrJDfUJOB3qVqxMybvsrbVNKOxFPot
+         Fl5+9oFlVFf9/lM66e/PMwd0H+ac6SjTOXaYIBsx8wir13670qnHDSo3bU3qPlZaOylc
+         gEsU/iRZKOyyvlaXSB0ZkL9/LwENQruItSEZG/cCQ5LRCa1ZwzKTeQUZa8XGT1Brornd
+         G+oQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=LOkDxFfKQ22+zC08HSr87rorXATfktqVfXDKvyMR2PM=;
+        fh=AGPj5dT08UwM3LtdsHwqt51RPf7I2JNEOX9znhCRFos=;
+        b=dQ/NazWMtHz7cUCla81JdUTwyS4GBws6+BA6X32nQxRL1G/8v6Tyrrg7WvhMJ5HKJe
+         wzX7kpgQIdh+g6bX2MKJpik1Lw+SsIDiDphpaoVZFKb5Hc7NOwFzo2bgiYkE4nNm6/m1
+         MLGp5iGJ0clzUL7ypk2mcCDFRvdAMWPOPSmvHDb0cigCNKrx7S5yW7CsSHZT9HaIoXNp
+         9NgnVy8/8jA1OM9k8GA29VNnuFPVTEOOX6tZu6LUL+7pnzmH05HFTRpYQChnkbhkr+Iu
+         W7WiJkBfPD7VaecNe/nxa3hD0nIm/OQs8tE0/7w4J57M6o/4DtCDUtlPOrlupB529nC2
+         lpYw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1793282128; x=1793886928; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=LOkDxFfKQ22+zC08HSr87rorXATfktqVfXDKvyMR2PM=;
+        b=XGgxo2bzPESNJHJj81my6LbAb+llfrYuPn4f1O/RqicgPYqYE4W1n5faJUWGcWshDl
+         fmEoBCnVHMUIfG4P9nVCKK/WGE81mxzrnh1RiycRm0MKvSdx5q+5ox6pSQWgHCfadGZ5
+         I39Ww7Bi8vBcr7MC/jWzWTTyHGKU7x5dy4FFsZp0mRG847VuLXu8LpDLcqowv8NyJ/Kw
+         257yYxHetFdAX+rh00go80ltLQv0jFB6icf8ODp5eHgqWYdU1cxXX0UPBrh3UmjetmjX
+         1hFf8NDiVDIl+AEPnlKitF5h+BHd5r8Bv3yNJ/VU2iX0HpptoJ0CYYtYT6OyqTjyYcPJ
+         nCdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793282128; x=1793886928;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=LOkDxFfKQ22+zC08HSr87rorXATfktqVfXDKvyMR2PM=;
+        b=1an2GRdXJSrT5BQMPFi5GkxfgQv3gj5Ggf6v3guYWImhaHttuU1k0ZodFa+zL2glE6
+         8S0dUUv0S1ur8OLwgLja7E5jDXQnqXz6dOwuah1bysDxCo16rH5Xr69rpunLh2fnfb6o
+         mpuYO5S3/z/D27TSV0jF3i6rl7k2Vl1viXERDTkAI8K06Sbpmm6+tS5CvvuDwtZo+Tju
+         VBzf7EcMFHTBmDwQUXmLIz9PA4/lqqScoTOUTkhXMdSG5Y5q6+t/IdT8W8AScnQmeP+i
+         tv4JTQ+n2tRvERyD0oQ7NN3wv6Orifox/AxmN1GRR9ZIifIy3zt9AyOI9sfdchFwzVx6
+         qaKg==
+X-Forwarded-Encrypted: i=1; AKwUvBwfJUOvrwcEW2ODMhSHTfBS0vZKoEaT0hck8ez+c+7J5JEVpRUQLO5XhQOepF27RjdPvyyh4AtRdd95HMERjGGG5rWKIg4=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLD8NVKG3gNGQl1IKGo+dtNb7UTS6TObaink0ZJfRMYKYT0Q2x7
+	4QNwLi7Dfbz1X8NBLkIbD7HewHnhDP8Kruxqd1PlKRxUD00usIuosaZ6izxk4hHiHy2YECQ/rD9
+	Ux6w7E1cK4/UmPZwSL17SFESKqMD4Q9zImj+GVm54
+X-Gm-Gg: AYBFou0tlFbIgk8K7X3ofrjUkQYuTEcql6cHH9TmRLc3ENrT2PcccDBNAAruFWmhwPK
+	szJ88PIgUwE8+fbWAyHnY1TOZKy3fEfjgwrTN6EXFd3qQyh0OUjx0i+Zw0HQk6nxeFlr8F6rwWT
+	HqMveW5MyiwnsLScibrpe5c3lcJyicUtcm6LwJmX5BHdMkDNGstsK31/C6IebIvybuVkDAvFEgw
+	k6Sx1Fn6LzB12EpYq8w6X7GmDO0exZ1xH7NQPkz/dX7ynNdZ0jltPlnkw9LQCiNNBjq2KdH53ya
+	GYMtbEg5tHd7MOVXXrQ9VHTA/5wvY2LWvs8oRQQXYbY+fDvvajl2rvLptwdL82rukLcC9UHDpG3
+	8c3eFgIH+nVcjhUlOI6FHPmmzgmSU8IbxwcPW8wNVMkegEj4CCRcRXqC+KaZNV963QHsn
+X-Received: by 2002:a05:6402:42ca:b0:6b4:1916:9674 with SMTP id
+ 4fb4d7f45d1cf-6b4b0b1cf55mr2093149a12.5.1793282127811; Thu, 29 Oct 2026
+ 06:55:27 -0700 (PDT)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -112,78 +104,52 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20261029033942.3644-1-q.h.hack.winter@gmail.com>
+In-Reply-To: <20261029033942.3644-1-q.h.hack.winter@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 29 Oct 2026 09:55:11 -0400
+X-Gm-Features: AclHuK-Y0w0OjCWYkE0zaN1q75YJI0QAcartxP4tkuLM1kIc_ZsbNlbuifypUG8
+Message-ID: <CAHC9VhRQ8E7zysipt3Kt44oC9m-eUc78mR5ipR3YQOwuBXAV5g@mail.gmail.com>
+Subject: Re: [PATCH net v4] cipso: fix optlen corruption in cipso_v4_delopt()
+To: Qihang <q.h.hack.winter@gmail.com>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	=?UTF-8?B?THVjYXMgRHVwcsOpLS1SYWJpbm92aWNp?= <omniameasunt@proton.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 29, 2026 at 04:52:00AM -0400, Atharva Tiwari wrote:
-> Add a watchdog driver for the SMC on Intel Macs. It can
-> reset the machine if the system stops responding. It works
-> on both newer and older SMC versions.
+On Wed, Oct 28, 2026 at 11:39=E2=80=AFPM Qihang <q.h.hack.winter@gmail.com>=
+ wrote:
+>
+> cipso_v4_delopt() recomputes the option length by walking the option
+> buffer after the CIPSO option has been moved out.  The walk then reads
+> the stale bytes at the tail of the buffer as option data, and a crafted
+> setsockopt(IP_OPTIONS) buffer can make it treat one of them as an option
+> length, increasing opt->opt.optlen beyond the valid option data.
+>
+> The corrupted length stays on the socket and is later used as the copy
+> length by getsockopt(IP_OPTIONS) and by the udp/raw/ping sendmsg paths,
+> where it exceeds the size of the buffers they copy into.
+>
+> Compute the new length from the intact options before the move and
+> subtract the CIPSO length, and fill the padding with IPOPT_END.
+>
+> Assisted-by: LLM
+> Fixes: 014ab19a69c32 ("selinux: Set socket NetLabel based on connection e=
+ndpoint")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qihang <q.h.hack.winter@gmail.com>
+> ---
+> v4:
+>  - rebased onto net (fcc00b15cb21a)
+>  - reworded the impact paragraph only, no functional change
+>  - first public posting (v1-v3 were reviewed privately)
+>
+>  net/ipv4/cipso_ipv4.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 
-...
+Thanks!
 
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -1810,6 +1810,17 @@ config SIEMENS_SIMATIC_IPC_WDT
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called simatic-ipc-wdt.
->  
-> +config MACSMC_WDT
-> +	tristate "Apple SMC Watchdog"
-> +	depends on X86 && MACSMC_ACPI
-> +	select WATCHDOG_CORE
-> +	help
-> +	  This driver adds support for Watchdogs in Intel macs Using
-> +	  Apple SMC.
-> +
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called macsmc_wdt.
-> +
->  # M68K Architecture
->  
->  config M54xx_WATCHDOG
-> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> index 9ac406677..f142a5d8d 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -158,7 +158,7 @@ obj-$(CONFIG_NIC7018_WDT) += nic7018_wdt.o
->  obj-$(CONFIG_MLX_WDT) += mlx_wdt.o
->  obj-$(CONFIG_KEEMBAY_WATCHDOG) += keembay_wdt.o
->  obj-$(CONFIG_SIEMENS_SIMATIC_IPC_WDT) += simatic-ipc-wdt.o
-> -
-> +obj-$(CONFIG_MACSMC_WDT) += macsmc_wdt.o
->  # M68K Architecture
->  obj-$(CONFIG_M54xx_WATCHDOG) += m54xx_wdt.o
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-In moth files the entries seems misplaced to me. Also, why did you touch
-the blank line?
-
-...
-
-> +struct macsmc_wdt {
-> +	struct apple_smc *smc;
-> +	bool has_oswd; /* Newer version of watchdogs in macsmc */
-> +	struct watchdog_device wdd;
-> +};
-
-Try with `pahole`.
-
-...
-
-> +	.probe = macsmc_wdt_probe,
-> +	.driver = {
-> +		.name = "macsmc-wdt"
-
-Always add a comma to non-terminator entries in the initializers
-(yes, there are some exceptions, but it's not the case here).
-
-> +	},
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+paul-moore.com
