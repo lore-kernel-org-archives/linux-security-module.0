@@ -1,58 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793245572;
-	b=EKRRXoSDcFOng4mteiWH9192laqfwnQmNQRA3OpMXqP5DAnsZt8wePIHoS6vEb18on3L
-	 g3LypXG91mBElQ+HgfGI78BTjzrvvPCMcrJE+OWuBX/x+t4vTACn3GR9ZC2K6/XtvCIng
-	 upoorvuyiIVFZvFy24C1lSl0vi3Q8iTIqkioucIiQ4j+NzWj6RObYlR/gru+BdjOeSnxH
-	 OmmdPWpw8i/4XnkVtrRDJ+J91yRa2NOZZw+pYWc2BmSct8CXEqI1U+izBDaDprWxKUY7U
-	 Phm8t7/KeHs8qiwyhlCAh0vMKMGk/qj6+Y8KuFLPJDRuSDYm3F7l8up4iPXUC49f1YA==
+	t=1793246025;
+	b=41Ysx9gdliTogK5TTTeJPMYDSxemEO8uZ9P4FkdejMYFlUZ0Snu+S70pmz0/yFprpKwi
+	 DFpEuOxugYHEEXNpcl7Cd03hVqqRbBOdyZNTGfQ1EFbrmXT4tnfkbMXEbQdoPx7m1on5x
+	 7dJrYIynTFdWc/wmJnSGR5O4t7nfXAq/0M4tRo3seUg4m2T3LUeh6jrFOqjpdjN0n6lU2
+	 9KIAB2qgpO3K9h8J+PlhtZzdqALC92a7i/j6fsCK69wCdCEhtPDjXpgNL/kS3bWlGPW17
+	 phQHSoGh+xQYOZBlaRZqT/V4RFJwkZoLyQvncL0HqXiD4DEsnwnlWCUSc6H2Xwnz9tw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793245572;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 In-Reply-To:References:Auto-Submitted:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version;
-	bh=Z9zRtXHe/J1k/4/9wAeq1n+PwAt+ioXmV3zyjSNrjDw=;
-	b=kY0RdH+bif3hp1oMZSz9xQcbx3vIn8mbTcAo0h4nIcqOjhhIEmJfJV9ThTiuXv8AVKkS
-	 taQlEij+DnRAsoXlPOOdT0rlsM9of0Q81GA9obRyBq3limS7yF8w2BDDly+OmXqppLeni
-	 kfUveDc74mnZIhCiTEdRySXPagC0NqVP6KkZiOSwdn3C4L9mnPzWwHDcL5c6PE91yrRn7
-	 2QvAs8W/jx/xGrlCOcvmVNygP7XfKTWNU+jb2QqlKGE/QIN/Pvwl/hE4PBzmTPAlwFVtz
-	 PMIkw3IP7GGbkcfybiE0vzqOy62E6vjvY2tHrFNUTOnpeGt47Z0jZhaFefr8QsCpvug==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793246025;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=EOq/tuB2mfzAkSPlyE9r4WmG31u0FB/P97zfyg2zh2g=;
+	b=OV2L3esBYqYpaD3brT4aqxT3VgC+dJFv9BbNgei7wmoA6cByB42syPNvEonYqlFSuvBY
+	 YmlM2U/YLjgUo8zJOKtoiZwJNbRn9wJiucmrvaJAbar/HRHtpnREXRluJNpYilL8egPPB
+	 ZGnoIX1XUjyHfVjZfbz3VmX7/DGDRwBs1dW+GgQ6covIi1VRP1+55BG7G5+zwe4FVQMfS
+	 VKJSS6ddnaOopFNv1gQXb5LgNvTvEfk03iN3Q3Y0h5TU4MLe19B2x9DdxYt7OHt7bNMX5
+	 MA6pPrw2hQ1U+RZNqKKfGPI30dxkO1JTDgpIqOQccpxS2mXWlCH3TcIXWlXP6++VrZQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q28IWFJ8;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S0cwPPPs;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D3F606A31A;
-	Thu, 29 Oct 2026 03:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5B1606A320
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 03:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Q28IWFJ8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633691F01828;
-	Thu, 29 Oct 2026 03:46:11 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S0cwPPPs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C861F031E3
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 03:53:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793245571;
-	bh=Z9zRtXHe/J1k/4/9wAeq1n+PwAt+ioXmV3zyjSNrjDw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Q28IWFJ8cc85Pmvj85keTICXJYvlBpjdY5SvkklhryDAT7W3t4l0NPtW0l2ZeP1HE
-	 SwIeYuUFCM/m3GoKVv1NlT/Sj2YGCIevW25Jn1PY2xQtCllk/1c32Fnr0sDG1D2Vqx
-	 cW4kiL/8Uhw23SulhiHAw/dYcHahdnljgptee1o0JE6HUualMwrzQ1d0x+1cgw017r
-	 5RQk04wN6LMoMgVutHQgN70moX/ltt9MdCbASOpXiSfjIjYpHliatyK6sMp1qdmFoc
-	 /rbICAyzYWf/xfzrVxqihqHnH5ggVzPAIQaz0G7h674Lg4MQsOH7eMox/lLu7iJ3ko
-	 tDQ9zNKsjonDA==
-From: netdev-bot+sinfo@kernel.org
-To: Qihang <q.h.hack.winter@gmail.com>
-Cc: netdev@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
- linux-security-module@vger.kernel.org,
- Lucas =?utf-8?q?Dupr=C3=A9--Rabinovici?= <omniameasunt@proton.me>
-Subject: Re: [PATCH net v4] cipso: fix optlen corruption in cipso_v4_delopt()
-Date: Thu, 29 Oct 2026 03:46:10 +0000
-Message-ID: <179324557093.3327.5514860593383240428@kernel.org>
+	s=k20260515; t=1793246024;
+	bh=EOq/tuB2mfzAkSPlyE9r4WmG31u0FB/P97zfyg2zh2g=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=S0cwPPPsCdasvjUzd4AZfBoj3XPwqMZeKkagekF2FPtnQiY2UienoxcsAWdrUdXH9
+	 dNMY8KqUleHLbKPlIXl3f3kwbj4EX1hb5bayLu8orsakTCWYwK/sn9iNfqQlg479Em
+	 ram4Hcebv4mnmmj7zOcUAttaazMznIypvsbVLlCP16HVj50ZnHIsnhS5WgS22+M8TH
+	 a0LolTLL7SpkyvV6RSWYlB7bP6VyA2qxjJglW7KBdkqtCRvwb4pcNXJ/P0WFARwvsI
+	 FfnJu35Z9pQLELD+OQcxj2e0PE2lDiKhLf7xNnPYNtryuOIsaNk0vAeN96lrKiU/0N
+	 S1m3iXYkve7uw==
+Message-ID: <sashiko-outbox-188686@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH net v4] cipso: fix optlen corruption in
+ cipso_v4_delopt()
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
 In-Reply-To: <20261029033942.3644-1-q.h.hack.winter@gmail.com>
 References: <20261029033942.3644-1-q.h.hack.winter@gmail.com>
-Auto-Submitted: auto-generated
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 29 Oct 2026 03:53:44 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -61,26 +58,29 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
 
-Hi!
+> cipso_v4_delopt() recomputes the option length by walking the option
+> buffer after the CIPSO option has been moved out.  The walk then reads
+> the stale bytes at the tail of the buffer as option data, and a crafted
+> setsockopt(IP_OPTIONS) buffer can make it treat one of them as an option
+> length, increasing opt->opt.optlen beyond the valid option data.
+>=20
+> The corrupted length stays on the socket and is later used as the copy
+> length by getsockopt(IP_OPTIONS) and by the udp/raw/ping sendmsg paths,
+> where it exceeds the size of the buffers they copy into.
+>=20
+> Compute the new length from the intact options before the move and
+> subtract the CIPSO length, and fill the padding with IPOPT_END.
+>=20
+> Assisted-by: LLM
+> Fixes: 014ab19a69c32 ("selinux: Set socket NetLabel based on connection e=
+ndpoint")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qihang <q.h.hack.winter@gmail.com>
 
-This is an automated message. This series looks like a fix, but its
-commit messages seem to be missing some information:
+Sashiko has reviewed this patch and found no issues.
 
- - How the issue was discovered, e.g. hit in production, hit during
-   development, syzbot report, manual code inspection, LLM or static
-   analysis tool scan.
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029033942.3644=
+-1-q.h.hack.winter@gmail.com?part=3D1
 
- - Whether the issue was actually triggered, or is only theoretical
-   (e.g. found by code inspection). If it was triggered please include
-   the symptoms, like the stack trace or error messages.
-
-Please do not repost the series just to address the above. Instead,
-reply to this email with the missing information, so that reviewers
-can take it into account. If the series needs another revision for
-other reasons, please include the information in the commit messages
-then.
-
-The evaluation is done by an LLM so it may be wrong, if you think
-that is the case please reply and explain.
