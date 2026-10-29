@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793265385;
-	b=yKh+q9Edv/HutNnY19ygxqpXktlFyUCSE+EkIFgjz3S/brCk7BLgjXWDApK7tQwkxzQ1
-	 UmlOmjJb/elUAsc2Zz8prwyR5jATvTTMb6HLNp6PQr1JkMP5DCxrXehq/f2gb7dLKYTw0
-	 j+vAo2bXRjtACzLbc9L7j8GhyWCNgTiNdesIX6hV4Ih6TkIFUmimw0UOZNyRc4dtLaxt+
-	 eicC15l7Z5eOqr6FikIya21ftxNASML8OGbO0TotEWbnIhaPSnidT6IPWn7hOsIzhR4o+
-	 ZsF+ppBp4IlxCiZP6MByZy5Z5XnCAtfEDD4QSZz8ALxdS5A5YinjUroW10/EVzwd1Uw==
+	t=1793265476;
+	b=pPv63aNL+Cn03/Q4MIM3RPWtj0bEymKymEexYvu8isRn75+mcDFTg1vtnhqoqDaq06eh
+	 HVpcEc282dKxUC7D1deaKs1LelV0Z4BKcWxDd6jWiYtr9hEvXk7MqbmyJdRZm/HqreoEU
+	 NaaDYZaVY4r0XT2VYCPvys1MZOzVMheAnUYRgQ2jieviQSRv+tzEwuDkbpmaYYM7zu5LC
+	 p+Bm1e+95DuPZmhh4UKfUdeK+LCBA0nwB3va4W4KChfD15zIf3aN4RI2bVYMmg7UyInta
+	 2UsT2HGZWxrGesiwwov8IsqsTOuh1lPII+/k736p1ZlMHx4KZeBOQV2/gQU1MSqYgPw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793265385;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793265476;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=dGHNi/NZnZGReejnQ5XVpgXrV8Ai0qujer2PftKvzu4=;
-	b=X/lZMS4MQzazRyiPUmEIWih63Kf+CkO29KozVMS6kLdq+u/mZpjnf3u7jbNeWKfF0LmW
-	 HyCHSNZdi/V/xt1Zrb9+BJvWwtAr90uCddRgyvJmQ6T5A9TMVZSodavjcvQhn5dvSapZY
-	 e8WbyWgoZHRWjt4NSe3BsyT2RCtjDnuz/8stmv3dOqI6/rsInmLcOfmX0+zC9d6uFL7kO
-	 BIH66J0/XyA32sITw1E3wrjZDt2wAo2RXORtFsFE7AXjO3JM3X3WSjD893KEW4b8svBzM
-	 Mx2+SZINFRsq4x03rcF/A8mYRvFS+TkAa/UXXy6IPDYFtRlx5MXSp1kTK3dkdBnWUmg==
+	bh=yqLFEPCmmvsKMVJ2ItVu5p99SawZ9mACHHkE40wGi2Q=;
+	b=dSzCc4+ME8t72YR0VhCDf2Rsgk0ERt5Zmn0ArVF5u2kFNjwXg303/qxgyusyZtBJpWxK
+	 YaRBIXOB1oZt2twCXNVdsmEhU9D81E2Lv1k3YMA6UKYZXFbYoYasvbA9nwtHf+yXzOISt
+	 puvyZzrn99RWO71eVyV4NLCNvuGO1aWeMHBbBzVkrm7s9lb07AtqleYhNuCqw7YDaSNkJ
+	 dr73gAKE3FDi9cJrl1aS+1rPcGrXk7yvZOdjDE4NOMH+GoyWscc/rLTqoTFoZCW+auKF9
+	 jT/dRVv7YEM/MbJaWjvjF8YLrWe/oCeRfiw7L1RSaJSgLBnrScAao4hKeA0PPrs4M+Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jKUfiBzX;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="nGPGkK/g";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171EC606A31E;
-	Thu, 29 Oct 2026 09:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BD0606A31E;
+	Thu, 29 Oct 2026 09:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jKUfiBzX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EFD1F01825;
-	Thu, 29 Oct 2026 09:16:22 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nGPGkK/g
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A760A1F031E2;
+	Thu, 29 Oct 2026 09:17:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793265384;
-	bh=dGHNi/NZnZGReejnQ5XVpgXrV8Ai0qujer2PftKvzu4=;
+	s=k20260515; t=1793265476;
+	bh=yqLFEPCmmvsKMVJ2ItVu5p99SawZ9mACHHkE40wGi2Q=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=jKUfiBzXW0isL1VxjwcNLWqKKgN54t2RVWOBRihFqvh8HhGryskTaPMxb7zkkklom
-	 P+HPTEl8rFtMuU1aGrZEYiLACeEZscTIUTgo+eYvNXxprKlQg/zJcwl/G+PbmU4QKf
-	 d83A/vvPco4zBc3aKcSRL6jGIWEaemmEH99hhggpMO8c6d7riU6cYie3KBJAKoulVA
-	 D2s41nfJg7JYISdL3HvHJa71FSf6UhWm0eStvpxCBFQPhuesGgGvZcNpXaENDgHIJm
-	 v04l2luYkKnx/BOG8PURuxgZbC+XW0N9vtiUiIshErOnzS6L7azBnHJK8xsUy0KRRF
-	 UsLdmdGqF1h4Q==
-Message-ID: <sashiko-outbox-189014@kernel.org>
+	b=nGPGkK/gAuvjlyGP53jKT/Po+1EKV3LrsoGFLEV5M7xeKa1r+0+i2bZpcZetlIUT8
+	 iZxRtu/kQzGmjKoE/8wx9jEhnVFUaXBepvoMHbsp/LpxUcEh2K+grzwLip2z1kRhCV
+	 LeE4H8gyfRuFZrgETtpocRB0rS4jfYRB2ekfY3hAzKbHcyoJ1U3i696Uj82Dlj2Ow7
+	 nnOFT1+BCF39EWuFn7JKTtXnYpK3AN5rZS/gqkt88g1m8jO5YHmXMYC8wEBi06RFFS
+	 9NbOer3Wfp7TDlKKOI9IuqON961HLGADoDANDap/3XNRrECVzDPqx2HF8+/upiQxdL
+	 X920inhUMwCLQ==
+Message-ID: <sashiko-outbox-189019@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 09/14] treewide: disable other rtc's in t2 macs
+Subject: Re: [RFC PATCH 04/14] iio/light: add new driver for macsmc
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Atharva Tiwari" <atharvatiwarilinuxdev@gmail.com>
 Cc: "Bjorn Helgaas" <bhelgaas@google.com>, "Thomas Gleixner" <tglx@kernel.org>, "Ingo
@@ -61,12 +61,12 @@ Cc: "Bjorn Helgaas" <bhelgaas@google.com>, "Thomas Gleixner" <tglx@kernel.org>, 
  Kasatkin" <dmitry.kasatkin@gmail.com>, "Eric Snowberg" <eric.snowberg@oracle.com>, "Paul
  Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
  Hallyn" <serge@hallyn.com>, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org, mfd@lists.linux.dev, linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20261029085504.3547-10-atharvatiwarilinuxdev@gmail.com>
+In-Reply-To: <20261029085504.3547-5-atharvatiwarilinuxdev@gmail.com>
 References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
- <20261029085504.3547-10-atharvatiwarilinuxdev@gmail.com>
+ <20261029085504.3547-5-atharvatiwarilinuxdev@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 09:16:22 +0000
+Date: Thu, 29 Oct 2026 09:17:52 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -76,116 +76,252 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 5 potential issue(=
 s) to consider:
-- [High] rtc: acpi_tad_probe() and cmos_do_probe() miss CONFIG_MACSMC_ACPI =
-check
-- [High] rtc: cmos_do_probe() leaves x86 CMOS wallclock callbacks active on=
- T2 Macs
+- [High] iio: light: unvalidated drv->size in macsmc_light_read_raw() overf=
+lows buffer
+- [Medium] iio: light: double byte-swap and wrong shift in macsmc_light_rea=
+d_raw()
+- [Medium] iio: light: missing event config callbacks in macsmc_light_info
+- [Medium] iio: light: macsmc_light_probe() unconditionally registers RIGHT=
+_LIGHT channel
+- [Medium] iio: light: macsmc_light_channels omits indexed flag and uses ex=
+tend_name
 --
 
-commit 8f32ab6b5995f6b8ccbfee083b09d400a56632a7
+commit 03cf99563b174ff5a5c22b832e325621b25e1bec
 Author: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
 
-treewide: disable other rtc's in t2 macs
+iio/light: add new driver for macsmc
 
-This commit disables the ACPI TAD real-time clock capability and aborts
-probing the CMOS RTC driver on Apple T2 Macs when CONFIG_RTC_DRV_MACSMC is
-enabled, leaving macsmc-rtc as the active RTC.
+This commit adds an IIO ambient light sensor driver for Apple SMC devices
+with left and right illuminance channels and change event support, and
+registers the corresponding MFD cell in macsmc-core.
 
-> diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
-> index 45459a4cafae3..a137a39e5e67f 100644
-> --- a/drivers/acpi/acpi_tad.c
-> +++ b/drivers/acpi/acpi_tad.c
+> diff --git a/drivers/iio/light/macsmc-light.c b/drivers/iio/light/macsmc-=
+light.c
+> new file mode 100644
+> index 0000000000000..9d4532b34ef05
+> --- /dev/null
+> +++ b/drivers/iio/light/macsmc-light.c
+> @@ -0,0 +1,189 @@
+
 [ ... ]
-> @@ -845,6 +846,9 @@ static int acpi_tad_probe(struct platform_device *pde=
-v)
->  		return -ENODEV;
->  	}
-> =20
-> +	if (IS_ENABLED(CONFIG_RTC_DRV_MACSMC) && has_apple_t2_chip)
-> +		caps &=3D ~ACPI_TAD_RT;
 
-[Severity: High]
-Could checking only IS_ENABLED(CONFIG_RTC_DRV_MACSMC) in acpi_tad_probe()
-and cmos_do_probe() leave T2 Macs without any registered RTC device when
-CONFIG_MACSMC_ACPI is disabled?
+> +static int macsmc_light_read_raw(struct iio_dev *indio_dev,
+> +		const struct iio_chan_spec *chan,
+> +		int *val, int *val2, long mask)
+> +
+> +{
+> +	struct macsmc_light *drv =3D iio_priv(indio_dev);
+> +	u8 buffer[10];
+> +	int ret;
+> +
+> +	if (mask !=3D IIO_CHAN_INFO_RAW)
+> +		return -EINVAL;
+> +
+> +	switch (chan->channel) {
+> +	case LEFT_LIGHT:
+> +		ret =3D apple_smc_read(drv->smc, SMC_KEY(ALV0), buffer, drv->size);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		if (drv->size =3D=3D 10)
+> +			*val =3D be16_to_cpu(get_unaligned_be16(buffer + 6)) >> 10;
 
-In drivers/rtc/Kconfig, RTC_DRV_MACSMC only depends on MFD_MACSMC_CORE:
+[Severity: Medium]
+Does this double-swap the endianness and shift away the sensor reading when
+drv->size =3D=3D 10?
 
-config RTC_DRV_MACSMC
-	tristate "Apple Mac System Management Controller RTC"
-	depends on MFD_MACSMC_CORE
+In include/linux/unaligned.h, get_unaligned_be16() already converts the
+big-endian value to CPU byte order:
 
-However, on x86 T2 Macs, the macsmc-rtc MFD child device is only registered
-via apple_smc_acpi_probe() -> apple_smc_probe(), which requires
-CONFIG_MACSMC_ACPI in drivers/platform/x86/Kconfig:
+static inline u16 get_unaligned_be16(const void *p)
+{
+	return be16_to_cpu(__get_unaligned_t(__be16, p));
+}
 
-config MACSMC_ACPI
-	tristate "Apple SMC (System Management Controller) ACPI Backend"
-	depends on MFD_MACSMC_CORE && ACPI && !SENSORS_APPLESMC
+Passing its return value to be16_to_cpu() swaps the bytes a second time on
+little-endian systems (and triggers a Sparse endianness warning).
 
-When CONFIG_RTC_DRV_MACSMC is enabled alongside CONFIG_SENSORS_APPLESMC (or
-when CONFIG_MACSMC_ACPI is otherwise disabled), macsmc-rtc is never
-instantiated, yet acpi_tad_probe() and cmos_do_probe() will still disable
-both the ACPI TAD RTC and the CMOS RTC.
+In addition, in drivers/hwmon/applesmc.c, applesmc_light_show() handled the
+10-byte ALV0 payload as a 10-bit big-endian value at buffer + 6 and shifted
+it right by 2 only to fit into an 8-bit variable:
 
-Should both checks also verify IS_ENABLED(CONFIG_MACSMC_ACPI)?
+	/* newer macbooks report a single 10-bit bigendian value */
+	if (data_length =3D=3D 10) {
+		left =3D be16_to_cpu(*(__be16 *)(buffer + 6)) >> 2;
+		goto out;
+	}
 
-> diff --git a/drivers/rtc/rtc-cmos.c b/drivers/rtc/rtc-cmos.c
-> index fa04ece151b8b..bdb436e24bb82 100644
-> --- a/drivers/rtc/rtc-cmos.c
-> +++ b/drivers/rtc/rtc-cmos.c
+Shifting a 10-bit value right by 10 bits discards the entire reading. Should
+this just be get_unaligned_be16(buffer + 6) (or shifted right by 2 if 8-bit
+scaling is intended)?
+
+> +		else
+> +			*val =3D buffer[2];
+> +
+> +		break;
+> +	case RIGHT_LIGHT:
+> +		if (drv->size =3D=3D 10) {
+> +			*val =3D 0;
+> +			break;
+> +		}
+> +		ret =3D apple_smc_read(drv->smc, SMC_KEY(ALV1), buffer, drv->size);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		*val =3D buffer[2];
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return IIO_VAL_INT;
+> +}
+
 [ ... ]
-> @@ -944,6 +945,9 @@ cmos_do_probe(struct device *dev, struct resource *po=
-rts, int rtc_irq)
->  		.priv =3D &cmos_rtc,
->  	};
-> =20
-> +	if (IS_ENABLED(CONFIG_RTC_DRV_MACSMC) && has_apple_t2_chip)
+
+> +static const struct iio_event_spec macsmc_light_events[] =3D {
+> +	{
+> +		.type =3D IIO_EV_TYPE_CHANGE,
+> +		.dir =3D IIO_EV_DIR_EITHER,
+> +		.mask_separate =3D BIT(IIO_EV_INFO_ENABLE),
+> +	},
+> +};
+> +
+> +static const struct iio_chan_spec macsmc_light_channels[] =3D {
+> +	{
+> +		.type =3D IIO_LIGHT,
+> +		.channel =3D LEFT_LIGHT,
+> +		.extend_name =3D "left",
+> +		.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),
+> +		.event_spec =3D macsmc_light_events,
+> +		.num_event_specs =3D ARRAY_SIZE(macsmc_light_events),
+> +	},
+> +	{
+> +		.type =3D IIO_LIGHT,
+> +		.channel =3D RIGHT_LIGHT,
+> +		.extend_name =3D "right",
+> +		.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),
+> +		.event_spec =3D macsmc_light_events,
+> +		.num_event_specs =3D ARRAY_SIZE(macsmc_light_events),
+> +	},
+> +};
+
+[Severity: Medium]
+Should macsmc_light_channels set .indexed =3D 1 (and use .read_label instea=
+d of
+the deprecated .extend_name field)?
+
+In drivers/iio/industrialio-core.c, __iio_chan_prefix_emit() only includes
+chan->channel in the sysfs attribute name when chan->indexed is set:
+
+		if (chan->indexed)
+			seq_buf_printf(&s, "%d", chan->channel);
+
+Without .indexed =3D 1, the channel numbers are omitted from the sysfs
+attribute names, whereas macsmc_light_event() pushes events using
+IIO_UNMOD_EVENT_CODE(IIO_LIGHT, LEFT_LIGHT, ...) and
+IIO_UNMOD_EVENT_CODE(IIO_LIGHT, RIGHT_LIGHT, ...) with channel indices 0
+and 1.
+
+> +
+> +static const struct iio_info macsmc_light_info =3D {
+> +	.read_raw =3D macsmc_light_read_raw,
+> +};
+
+[Severity: Medium]
+Does macsmc_light_info need .read_event_config and .write_event_config
+callbacks?
+
+Because macsmc_light_events sets .mask_separate =3D BIT(IIO_EV_INFO_ENABLE),
+the IIO core creates event enable sysfs attributes wired to
+iio_ev_state_show() and iio_ev_state_store() in
+drivers/iio/industrialio-event.c:
+
+	if (!indio_dev->info->write_event_config)
+		return -EINVAL;
+
+and:
+
+	if (!indio_dev->info->read_event_config)
+		return -EINVAL;
+
+With both callbacks left NULL in macsmc_light_info, reading or writing the
+event enable attributes in sysfs will always fail with -EINVAL, and
+macsmc_light_event() pushes events unconditionally regardless of whether
+events are enabled.
+
+> +
+> +static int macsmc_light_probe(struct platform_device *pdev)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct macsmc_light *drv;
+> +	struct apple_smc_key_info info;
+> +	int ret;
+> +
+> +	indio_dev =3D devm_iio_device_alloc(&pdev->dev, sizeof(*drv));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	drv =3D iio_priv(indio_dev);
+> +	drv->smc =3D dev_get_drvdata(pdev->dev.parent);
+> +
+> +	ret =3D apple_smc_get_key_info(drv->smc, SMC_KEY(ALV0), &info);
+> +	if (ret < 0)
 > +		return -ENODEV;
+> +
+> +	drv->size =3D info.size;
 
 [Severity: High]
-When cmos_do_probe() returns -ENODEV here, what happens to the x86
-architectural wallclock callbacks in x86_platform?
+Can an unexpected info.size from the SMC overflow buffer[] or leak
+uninitialized stack memory in macsmc_light_read_raw()?
 
-In arch/x86/kernel/x86_init.c, x86_platform defaults to the legacy CMOS
-routines:
+In macsmc_light_read_raw(), buffer is a 10-byte uninitialized stack array:
 
-	.get_wallclock			=3D mach_get_cmos_time,
-	.set_wallclock			=3D mach_set_cmos_time,
+	u8 buffer[10];
+	...
+	ret =3D apple_smc_read(drv->smc, SMC_KEY(ALV0), buffer, drv->size);
 
-These are invoked by read_persistent_clock64() and
-update_persistent_clock64() in arch/x86/kernel/rtc.c, which call
-mc146818_get_time() and mc146818_set_time() directly on CMOS I/O ports
-0x70/0x71 regardless of whether the rtc-cmos driver probed.
+In drivers/hwmon/applesmc.c, applesmc_light_show() checked that the key
+length did not exceed 10 before reading into buffer. Here drv->size is taken
+directly from info.size without bounds checking. If info.size > 10,
+apple_smc_read() will write past the end of buffer[] on the stack; if
+info.size < 3, reading buffer[2] will return uninitialized stack bytes to
+userspace (and ALV1 is also read using drv->size without checking ALV1's
+own key size).
 
-During NTP synchronization in kernel/time/ntp.c, sync_hw_clock() tries the
-persistent clock before falling back to the RTC class device:
+> +	drv->indio_dev =3D indio_dev;
+> +	drv->nb.notifier_call =3D macsmc_light_event;
+> +	ret =3D blocking_notifier_chain_register(drv->smc->event_handlers, &drv=
+->nb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D devm_add_action_or_reset(&pdev->dev, macsmc_light_unregister_no=
+tifier, drv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	indio_dev->name =3D "macsmc-light";
+> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
+> +	indio_dev->info =3D &macsmc_light_info;
+> +	indio_dev->channels =3D macsmc_light_channels;
+> +	indio_dev->num_channels =3D ARRAY_SIZE(macsmc_light_channels);
 
-	/* Try the legacy RTC first. */
-	res =3D update_persistent_clock64(to_set);
-	if (res !=3D -ENODEV)
-		goto rearm;
+[Severity: Medium]
+Should RIGHT_LIGHT only be registered when a right sensor is actually
+present?
 
-	/* Try the RTC class */
-	res =3D update_rtc(&to_set, &offset_nsec);
-
-Because mach_set_cmos_time() -> mc146818_set_time() writes to the CMOS ports
-and returns 0 (or -EINVAL, never -ENODEV), sync_hw_clock() will take the
-goto rearm path and never call update_rtc() to update macsmc-rtc.
-
-Similarly, timekeeping_init(), timekeeping_suspend(), and
-timekeeping_resume() call read_persistent_clock64(), which will still read
-the non-working CMOS clock via mach_get_cmos_time(). If that returns a
-non-zero timestamp, persistent_clock_exists is set to true and
-timekeeping_rtc_skipsuspend() causes rtc_suspend() to skip macsmc-rtc across
-suspend and resume.
-
-Should x86_platform.get_wallclock and x86_platform.set_wallclock also be
-redirected to x86_init_noop / x86_wallclock_noop on T2 Macs when macsmc-rtc
-is used?
+macsmc_light_probe() unconditionally registers both LEFT_LIGHT and
+RIGHT_LIGHT channels. On systems where drv->size =3D=3D 10, there is only a
+single sensor in ALV0, so the right channel always returns a hardcoded 0 in
+macsmc_light_read_raw() and never receives events in macsmc_light_event().
+On systems where drv->size !=3D 10 but SMC_KEY(ALV1) is absent, reading
+RIGHT_LIGHT in macsmc_light_read_raw() will fail when querying ALV1, while
+macsmc_light_event() will still push change events for RIGHT_LIGHT.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029085504.3547=
--1-atharvatiwarilinuxdev@gmail.com?part=3D9
+-1-atharvatiwarilinuxdev@gmail.com?part=3D4
