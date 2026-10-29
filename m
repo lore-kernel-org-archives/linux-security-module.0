@@ -1,99 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.46
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793306010;
-	b=mYGSh+76w1LAAMZZb9BGIyy++q+iGmjnVOUQ3Wb6JTKm724uJrZ0tiCf+ylNmvG3V/H4
-	 yp7jALUd6kr+Ena1l3Ps/U/JKqPxnuWpB0V8e2jo4bdwkZRO8toL8ejsXstO/j7rJs5TZ
-	 muSpxdyldxPUrt8lRb4zVLqq3iG0SO+k9p040eCx1ptUZ1GR48PyKQPRL+bVZfSFPcYGL
-	 MSXzxG8UmhvIqiSjovCpy1Wixzm655OUirQ2KUBtq0GH7/yJgkQWRKNs9teGBd45MrM88
-	 /z2e4Zq6BJP2tOMRdtIJvE5Mce4Q37MIOm2x/kIega80AuJTNUQ9QJaH8dVw5gV8bsQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793306010;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.170
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793308005;
+	b=hosjDk0ZtPXyCz9qx5hxlk+JFBJ8BUJ/13EhS3kDQHaqm+HVzPb6sC/kWVW+O/Jx/tnL
+	 Lnz9NuY3CbdkYtCQuWg+BVURCZCjnu6MgN7jFnpuXPOAJOy6nuXqEInLEGcSlIzhim3IK
+	 onQWJygyJ6bddAyY/BWJhPxic/sBB9hHR6KhrklX2FKnPH+Twl5DzJmQ5mC621WINd51z
+	 3IQbtaHeVhiORQOT33aRBmNPU1LPt9BLgPPIuWKr2k3cfYS8/bivFsOg4ZYw6tBHXgCzf
+	 sJpkZlyrSMsabl7Binp7YyVY9/DbleRM89xLyBSTlAxZh2DmkteaCYNvcM2uXDbssSA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793308005;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=1FwGxH5RamrY2sgTjs3EG6aOjMo9Ydi6StxHkJqw4Uo=;
-	b=hUtf1jFVcO7+IdMHp1E4xlpgrvkd5QvSaJYrYv4uKTtkHN1tsc64c2TjYPxdekKjZSSO
-	 awiNzOCViwI3fBl260iLSezQd5nwXXbhbRpCxT28mB6Gh0j4cX6j5EGPKdkY9unK0RqFe
-	 Lvt6S3zfhIKRYWTRWlEBkdwgo7O4IN6+y+h6bywFzMErqLL3g8C6SosZN2wCTTK8VNMLy
-	 WNufa9+FKXSgBRlSAoWP3o9+dVewgjRmMrkSPfQgFbNYr9c3QOIikatx+G2RpAYknG5xu
-	 k/Y/Xh/0R6bpV+IAOJEnDzEsPajRNRgrmeIzoW7ch0z1LYfWezl7reuunGgKawmevUg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=amutable.com;
-	spf=pass smtp.mailfrom=amutable.com;
-	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=jzUC4j+m;
-	arc=none smtp.remote-ip=209.85.161.46
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=RvNRAljflILBTk2xcHt7L4MtTrvHvbzoZJJKtwFYnHk=;
+	b=KQnCrZCvwSDhO/MlnzBZYVi4kcdmnIOCBzU1ODq6o4iKlBzCKv8oh71Q0jxonXgiBMru
+	 d6MlEQEYwUnKhpYUoGOQy3MF22mk2MRnQJfno0jOgVltZnLNoNqv9ssoqDGpqLkU2zvD6
+	 Ai1/uILF0+NYzImy6gZ9hx1/NyXboAgV1nVbEHIkh+u273X1HkWjaZruWfQW/e3UAX0qE
+	 cFTp7lcVQkaB4yBzOPVWkbWU/UxaKKD5099N7uztTdlBYdupxXrOpXWHHziVZg6suFlTc
+	 l3l9VyYEGx2Fw6KRbRA7+GfteeI27pfUbcGWe7G0oCbs8NIssqAwHrRGKMbyMa4Vwjw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=SUMWHyeo;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.170
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F21D606A336
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 20:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5F21D606A336
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amutable.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amutable.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953B8606A31C
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 21:06:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 953B8606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=jzUC4j+m
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6de2f213b7aso1266227eaf.0
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 13:33:29 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=SUMWHyeo
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8a05effaf8dso1975369b3a.2
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 14:06:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793308003; cv=none;
+        d=google.com; s=arc-20260327;
+        b=q5W4gq0GI524ThZrC7dxOGjEJLzpPGfaSuyIIy346AOnHK6Cv+J10lzLUH1N6g8POF
+         tg/PAMiKtDIpL5b3eXKAN0SRPF+t/qSVHhpXa5P392goh6Ya4iyjrxd6owrUKaCPdbgD
+         1fAzOWi6ucva+3Py7lSz5bTCW/EZTTRfpVl+7I9bTgBvHzffOeiMyVbqqbA4ou2Yf/8N
+         HnsITpifLuRmxDQHrW3h5T7gs3WMpVTxnuZR9icAL8oxdyE9LHMtBMbMtoBZPaXfUTb7
+         3sRClq5d2Eo8vRTVyg4mESjnDd6GLC89iX6J6kWXZSmzyei5DYF7kEQnKx+g7kOtCpZe
+         Lmlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=RvNRAljflILBTk2xcHt7L4MtTrvHvbzoZJJKtwFYnHk=;
+        fh=qMU72OeGw39cgeWWxWGRDhyixPaVAW6zQxfHcgUvkCI=;
+        b=jLsS0cUgByEyQG2WQkrhdMpOaX/84CtpIfV7qvHI+Q8tDpUwiPUEIQ04a7XRf1cLux
+         ZMgZ3QuWQIqAwY5B5oKyQXD6CKJSnn3hQfKpRAuS1LOIlEunp9TcUnk1xIlEHtz3BHuG
+         LEqbPDMjXMi4tZVYSozrzW9dy0Fc+ndJFTku63rTMhVORFbOANMKddowD2Qm5r5NuBXk
+         vtneb/dnuZy7BSF4lxh4rhHO/u1hnBhYV/hDniQ0aoIpwMPtrlLJ8bW9dNRkByIBoQXU
+         6EP/WZhMswSKmY5owFMGZx/h4biCB2IQlcmsZxYIP9i0J6DOhIpM+T16trrJodZgd4B+
+         XuHQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1793306008; x=1793910808; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=paul-moore.com; s=google; t=1793308003; x=1793912803; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=1FwGxH5RamrY2sgTjs3EG6aOjMo9Ydi6StxHkJqw4Uo=;
-        b=jzUC4j+m5k1GWzE4M+MP1+7CZ24I8OTXJlA+L47TEmbE8YmDlulAMxTxxOUwWkdRHH
-         ZA7UWCWY4UP0IpGp1AHTAIZ3biCBCS3Tm/hc1d7JYAYzBEUgymxOLRamDSR52NWY6yTV
-         Nj/CqyTphrQl74nCEr4jlN0A5maoCINl7zvMB7W8X8TZfTkAJvS2G8HM3Jp5HF69ixuK
-         k8K6KaBp15/F8ksjNkcHk9DTAxy2LvSV5923Kd0H2P6TbZ8q5agmTrdcmkY94F1z8Riv
-         XkPjRnV7/c156Gl2EZ27Xh6M+m8MNab0eP3uNFZbUkpddrNb2ItyVbJgXuN7mAV+JTBo
-         PHqA==
+        bh=RvNRAljflILBTk2xcHt7L4MtTrvHvbzoZJJKtwFYnHk=;
+        b=SUMWHyeoy05LlaPkkQo68Lctqx8jCJMBTP5h1s5JBg1inkctrhBizK7c4vICrVd4ST
+         tFgaTBblbt25voa4mPfQrBUwVI2YrctmrtYJ63fqjqiCjZArQrKO4OKXUqCQLnZIerKB
+         9+pJORukUAKGMBg8JR8BdJgf1joFHY09BQARFm1AoO9N4jDb/hxCp5cBEDF6KEs4eZLA
+         s5zDXJAWJfqzLNKMabhR+qdErWq+anDkdWSt4GGzkvx7RJRsY7B9xG6OwOuuiyrfA07o
+         SZGBXLg0jYjyyW/ttddurHjHLMVw89R1WFqxnex86aQjNutVESFg8w7ztk95DE/2a0uq
+         MykA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793306008; x=1793910808;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1793308003; x=1793912803;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=1FwGxH5RamrY2sgTjs3EG6aOjMo9Ydi6StxHkJqw4Uo=;
-        b=qU+Xclg0umrepVzoTDgUgw8oNmlIhrzmZ8aIBz27oB9pNVAmVrfhHn/zGjBsFTcnhJ
-         ItMY3Ibq8+jLhSZQoRD6DC7GXTcel70jiE9OrtYO0a56Kv8qGOUb2yZvxP8uE9LtArGg
-         2pZg/FllaEoGS03lToBaiOlnTBH94oBEQMwm0wzF45spHsUnK3T6D9yuXkdMFNVXAFs7
-         eDOy10/k1C3ZOs66SL95trnzMKokFs6DMo0uJvQfRd8Noz2t3yG0Y+2S0j36cqPsLDMz
-         1yviTceEVDx+CSWBhvW/qsP0G+OrZxlm3jb2QGGuw8FEwyjzFrnrHHTbVhxhQLNVqVG1
-         kEAA==
-X-Forwarded-Encrypted: i=1; AKwUvBzookxFR0RjPUlibYIRj362RPk132JwqCy2dW4zNVJAbClNY6GlOrbihOEKS7heZxbRZHF3dvMVCJcIP50zd5BJRJ7ZjNA=@vger.kernel.org
-X-Gm-Message-State: AFq9FYKbdRAx1SvPLag8uSM9gs4JMBJNNxbFkwOKFYNxiSot8K/aZ7gs
-	oWE5HNT3Mz2DIWIlQIrOjHQgw+hkHZpv8+4JC7s5FFmxSNglcp00ROfVNvl/46rxHi78
-X-Gm-Gg: AYBFou3QqRcT5Q4TmdkbaahEovakgL7JFxuhJCuui80Udax1YqAUzIYDlqmYAwac8JV
-	ugBZTo/8b5LZujBtXUA2/nFUprpoZqscCW8vjF7o7tDIeI8f6hPtrKFTSbiWNptW5wDOdAkpWLl
-	VT3+hqTDTM7shJtEN3YSC8Mi95HXSwF0grbZx/S+nj1vOJzk93U+4XH4fw3XlxRi4UreHXn2Ugz
-	pQI/VUaKYnrQW4rD4DmDrj5e3Onoet+knDykCEP6N024WZll2fojd5KQBufYpwgkUwThMxqOYGb
-	14akK0gDZqM30Vmsg36WuEHUQo/EJNTZxSC93+VAvGiVhykLg3ouFnxFkcfGmexJk3mRTRnErMx
-	M7jo8PGAG0JtShHF9wQ0Mm0VTOoMc2uLCT+ys05DLh55V2exGwUI9MhpP/8Y+T8JTkDQkIGUuMg
-	rJ5i6dQtJh0M8BH439rztI3cBgIcXzofRpKl3XQJ+HDm2lWfhDYkNuASEaDzp09BBRnqka8EGyP
-	XR8wLnOG5T/q6ENR93HCSnfx9nuG120z1lvro4V185cuY/xLI/vZ9UXDlQiRZyywpsu9DyQbGj+
-	RqYBMtBvGqnUrww4u4T0jGvj
-X-Received: by 2002:a05:6820:240b:b0:6dd:25a3:94dd with SMTP id 006d021491bc7-714f29beb56mr224819eaf.41.1793306008134;
-        Thu, 29 Oct 2026 13:33:28 -0700 (PDT)
-Received: from toolbx ([2600:6c8e:af00:4c:73ea:df46:8ccd:ac9f])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-714f2ce7c9csm260964eaf.5.2026.10.29.13.33.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 13:33:27 -0700 (PDT)
-Date: Thu, 29 Oct 2026 15:33:25 -0500
-From: Andrew Halaney <andrew@amutable.com>
-To: manuelh@nvidia.com
-Cc: Fan Wu <wufan@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Luca Boccassi <luca.boccassi@gmail.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] ipe: add the .ipe policy keyring
-Message-ID: <auOn9CzT_gku-5cH@toolbx>
-References: <20261029-b4-ipe-keyring-rfc-v2-0-77727b205844@nvidia.com>
- <20261029-b4-ipe-keyring-rfc-v2-1-77727b205844@nvidia.com>
+        bh=RvNRAljflILBTk2xcHt7L4MtTrvHvbzoZJJKtwFYnHk=;
+        b=nZpmnHhMTMGTNUD++Lbmt/95cRX5cLX0hRxDbm8f5jOwhMeAf4dvb5vIaqB/ipzAZR
+         oIGzgYBYiUP6IlS2c7gGAf/SDjXpS5xjM7eu7qUKVy3IMbckcFzbUng+RyBQgd7akX2i
+         OWymOWil3v0m/y4GMq1gADFP7LI25Uj/+xod4x/I2J+V5Mh4Jly/sG+kr3QilrO3nLxf
+         /UNtRUgUqS2gehXvNUHNDExSE1izdaiAgQrZPnvEaS1Th7mCl3fJ0b525fp7zcmTvVM8
+         dQgjcy9lt1KyOZTAXA7u7RoLfmb0+ESyLmErKk4gUBtYCuKT7AyODK0DnyJb4KecyR/6
+         YXnQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz8dEa5RAkVZjT1jV/BY6BIPLVfiY1QHxqyon945UhwAbt3ONIMDv/LxNqGuxV2VyIG/fNJQuKYjI6UevocoiuWowluJGo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYLbWIcTqEnAO2gL7X5BUbNeEIpEKmTdlTSbtDxght86xng9knQU
+	gKvNLqkM+ikC2MD8PMcXiPYKeWWNo45GcEnncXZtJ5nB2o70lu9POBMm3R94PpBAmep3whySEAD
+	7pADlTUOg7EjKrnRJWsR3HqJ5nWqF5TMyKXJOD+ky
+X-Gm-Gg: AYBFou0f8C8nnSGcxcJhRR+Owvir+VRuppNhC/3mUgrndNQXWmh3mAg93XrDtStRJMv
+	tjoxDx2NBUShAVqmhhc6CNotZbdSb/CtnZFAeS6HBWzpAYXcpqWNvOy5zrAuEOv1pPvPE1+otD9
+	V5FqvNnXvRKdKqLTaCjTt2nu955Y352gATc+nyirfRRS2G0SyM7pk8rgceRQYdMrg3qP/Zp9SZ0
+	OL/oe6oD5EcMBPMyWztodNQRg9DOVaDeIRVRM4junPHD2+jSb4U6X2sABZLvAtWrHMgyJhdEi55
+	0K6/298T+c+RaW7HAv2P1xlWlwplhRgw/3lL2CJ1InF9F1xE9lD+cCWTlkvHL4Cq4x6lDaXX5zo
+	ymvcCTNQb3LM7Ssu0nxExuhBU86TAs2Ai6MXZ1UPQUad3Zp9T2DDP2XybF7Q/kF29qhQNHly5JI
+	Lov64u2zm6J7b65g==
+X-Received: by 2002:a05:6a00:1491:b0:8a0:5d6f:8a9d with SMTP id
+ d2e1a72fcca58-8a9bcc0e982mr298168b3a.35.1793308002978; Thu, 29 Oct 2026
+ 14:06:42 -0700 (PDT)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -103,64 +105,89 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261029-b4-ipe-keyring-rfc-v2-1-77727b205844@nvidia.com>
+References: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
+In-Reply-To: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 29 Oct 2026 17:06:30 -0400
+X-Gm-Features: AclHuK_BZX5V0V1r5inK-ll44mPJ2Gl9ZXGK3V5AGh6lbgKe2qd3dfFfw4B3CLM
+Message-ID: <CAHC9VhRwD1c1qKK4=Uc8cbMy27iF722C0DZeXy4WGtH-kOBOcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] ns: fixes for the namespace LSM hooks
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, netdev@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 29, 2026 at 12:30:38AM +0000, Manuel Huber via B4 Relay wrote:
-> From: Manuel Huber <manuelh@nvidia.com>
-> 
-> Add a dedicated .ipe keyring for IPE policy signature verification.
-> With this, userspace can provision its own keys into the keyring,
-> then restrict it and activate it for IPE policy signature verification.
-> 
-> Gate creation of the keyring behind a new by-default disabled
-> CONFIG_SECURITY_IPE_KEYRING Kconfig option. When created, the keyring
-> is empty and writable. The keyring is used as a fallback after the
-> existing policy trust sources only when it is created, non-empty, and
-> restricted with restrict_link_reject.
-> 
-> This enables scenarios in which a trusted userspace component generates
-> an IPE policy, and creates an ephemeral policy-signing key pair,
-> provisions its public certificate, and restricts the IPE keyring during
-> the early lifetime of a system. The trusted component can then sign the
-> IPE policy, destroy the private key, and load and activate the policy.
-> During that phase, the system is considered in a trusted state whereas
-> the system transitions into a possibly untrusted state afterwards,
-> running arbitrary user-provided applications. In such a scenario, the
-> trusted userspace component could reside on a dm-verity protected
-> rootfs disk, and applications would reside on additional dm-verity
-> protected disks. The latter disks would be dynamically attached and
-> their dm-verity root hashes and/or signatures not known a priori to
-> launching the system.
+On Thu, Oct 29, 2026 at 12:41=E2=80=AFPM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> I tried to switch systemd-nsresourced over to the namespace_free LSM
+> hook that went in this cycle. I explicitly developed it to work nicely
+> with that. But the version that is merged is broken for that case.
+>
+> The namespace_free hook is never called. security_namespace_free() bails
+> if ns->ns_security is NULL and that's only allocated if an LSM requests
+> a namespace blob. Nobody does. Landlock doesn't care as it only uses
+> namespace_init and namespace_install but a bpf program attached to
+> namespace_free never runs. And it can't work around that either. We
+> could make the bpf LSM request a blob but that would just be a way to
+> make the hook fire. So call it unconditionally like we do for
+> superblocks, files and bpf maps.
+>
+> The bpf LSM also marks the arguments of namespace_init and
+> namespace_free as trusted. Curiously that patch was also dropped.
+>
+> namespace_init is called before the namespace is set up and if anything
+> fails afterwards the namespace is freed without looking at its reference
+> count. namespace_free is called on the way out. There's no kfunc that
+> takes a namespace yet but once there is one a program could take a
+> reference to a namespace that's about to be freed. So add both hooks to
+> untrusted_lsm_hooks.
+>
+> The namespace_init hook also always sees a namespace id of zero because
+> the id is only allocated after the hook has run. The id is the only
+> identifier of a namespace that is never recycled. So it's what a bpf LSM
+> wants to use to track a namespace from namespace_init until
+> namespace_free.
+>
+> The inode number is recycled way too quickly for that. So allocate the
+> id in __ns_common_init() before the hook is called. Then ns_tree_add()
+> doesn't need to allocate ids anymore and ns_tree_add_raw() can go.
+> Landlock now logs that id instead of zero when it denies the creation of
+> a namespace.
+>
+> I'd want to get the whole series into v7.4 since the hooks are new this
+> cycle. Otherwise v7.4 is the only release where namespace_init sees a
+> zero id and where Landlock logs zero for a denied namespace creation.
+> The systemd change I have for this uses the namespace_free hook whenever
+> the kernel has it. On a kernel with the hook but without the first fix
+> it would never learn about dead user namespaces.
 
-Not trying to muddy the water here, but I stared / thought about this
-a while and wonder if I'm missing something below...
+I'm renewing my comments from the v1 patchset (see the link Christian
+provided below) about the LSM framework changes being appropriate for
+Linux v7.5, not Linux v7.4.  It is clear that the BPF LSM use case was
+not tested prior to the merge window so BPF LSM support for these new
+LSM hooks should be deferred to Linux v7.5, allowing for proper
+testing.
 
-With this Kconfig approach, aren't we now saying "if you want to use IPE,
-and you want to ever use this feature, you need to make sure you seal that
-keyring or else someone can replace the IPE policy!"? That seems rather
-easy to foobar, and means to me at most kernels (i.e. distros) won't have
-this enabled which limits how easy this is to use. I know Fan wanted this
-behind some Kconfig to make it controlled by build time, but does it make
-sense to keep the command line option as well to really make this opt-in
-for users who have it enabled at build time? Otherwise you really are gonna
-have to craft a special kernel in my mind.
+Disabling the BPF LSM support for these new hooks can easily be done
+by adding them to the bpf_lsm_disabled_hooks list in the BPF LSM for
+Linux v7.4, and removed in Linux v7.5 when the LSM hooks have been
+changed in a way that is deemed suitable for all LSMs.  The
+bpf_lsm_disabled_hooks change would be substantially smaller than this
+patchset and would be fully contained within the BPF LSM.
 
-Likewise, but more nitpicky, I'm not sure the restrict_link_reject
-requirement buys much over the chain restriction. restrict_link_reject
-stops new keys being added, but pkcs7_validate_trust() walks certs
-embedded in the signature, so whoever holds the private key of any cert
-in .ipe can sign a new leaf, embed it, and have a policy accepted anyway
-I believe. Under both restrictions that basically means "holders of an
-enrolled private key and whoever they delegate to". If the concern is a
-restriction like key_or_keyring:<id> pointing at a writable keyring,
-that seems like a provisioner bug rather than a reason to rule out the
-chain restriction. Am I missing another reason for the stricter check?
-I do realize this is rather pedantic in argument and doesn't have a place
-in the use case described, but I'm wondering if a future use case will
-want such a thing.
+As a reminder, the LSM hooks and their callbacks are not part of the
+kernel's stable API and are subject to change between kernel releases.
+LSMs that wish to provide a stable API need to provide an abstraction
+between the LSM hooks/callbacks and their API; the LSM framework is
+not responsible for ensuring individual LSM API stability.
 
-Thanks,
-Andrew
+> - Link to v1: https://patch.msgid.link/20261026-work-security-namespace_f=
+ree-v1-0-ffa3ebbf71bd@kernel.org
 
+--=20
+paul-moore.com
