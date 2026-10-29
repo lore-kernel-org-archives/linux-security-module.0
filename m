@@ -1,73 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793270702;
-	b=29aSHhEbSCZ31xSBfJv5K9muDjmAIwbI7ONCwTf+UmzIW5XW6AKU6bRP8BvfzpXvUL9S
-	 BmogCBMVyeYEIkrxeDMXMhVqYb0YnzpeGZG2Nqg2w5RpcLmGwZZDtO+A6x4GgaWrVoyC5
-	 LNi84jlRLbDwvx8CtcGIgOrFoD6kDli6fxLlmIiQ+yia97t3rOKgGbftrmML2ZiNwnBt2
-	 bjhM3RlE0RfBy5E/pqbb+0IYIErtM/JGrnW8EVfhq9cLAp5uEjtafP1cc9DCb4VjpDsja
-	 w5bqvFP43KECG/F6Ks08/PntMHFHxBqPhtc9RSJah8wQXUibLGgRPwrcjwTGNc+DBCg==
+	t=1793273284;
+	b=HdCyxbPBgHeNlyG7/uHq+Vl2/pctzsG8r/DicFpaZaBN6M3CACX747jOP4udksXc4y0S
+	 oiFppppVGsKqAHdszbM+q+FFOsiBEg35YqS32Lvk0kWTebJwsB5wJpoe+ZNvG7+CN04lr
+	 i/y7j3CMUGn94SaYI3dNB1Wfiq7b2LL8R+WnuA9hv40syVXpgNH9zzOUPL4c2AtUL1XRO
+	 JubMaeDkC+IjjqUWtiTPj0PeXQTqUnAGF1liZBzzfDbWMcVCZWVhL2FZqLrI5C/cCRJik
+	 y9Ls6eTNiB+tkUloxxtObDq9uehToh2cL7YVFg1fFWHYbHCruOPyqMpfGJLxnx5eIpg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793270702;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=0dCSBHfUVHBP5GH3Zssr2yssdn3VkCL1gUTLqNUcb1c=;
-	b=3g0GjEFfFfK3bdiVjF2Fdb1J/4Gm/QksdLuuGkVBI3y1WFvMmkuKsMhRgl9+7dQ31pTb
-	 x68yyDC9/YCvxZdyjSg8mBO4O9U1DZ2p1uoyLXYbIfuL2fND+gsPh2VZIHqYJIZ4bLEJB
-	 cwtFFLmlqVwI7sQjphZTEKksfsg0+Eeemt80AhFHATnh/GBKRQKNzbjtZU/15ltKI+FWk
-	 PLCQ8z7FaZ4XKK9cMc9zFSWVndQpch6bGIuIoSx3KO2ohdWfVeuRzHnY7vHM5Kp++wBg6
-	 2Oblunedc5SjdW5JBeD7GE9T/DyiDYP8rz1fgDRI3o9N9gZNj+NJfBfjqCn4FBzviwA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793273284;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Infomaniak-Routing;
+	bh=LaD9WrR+AACReb/Fw3idhuufgElFfvZMlx/OJIXbArA=;
+	b=IpmYcTcQ+ME8Q6pNWWjKTMIn1h4g7hwqa8No5xISOp28Ete6qi6vPqmeD+lKJ3Ge08hV
+	 fz2Hik4zkbrhEKUSKFGVluAI6QmWgI4hrSJQkdKjvRaJ7qvaQlCnXtTRViIYrq43he4sx
+	 2V2NPqa28YxsbMn/qwPLLt6QteP0RuGhkYBocklGWFxW5ShQIN6iRvhoh4jcFIGVP2JEf
+	 PdqAvc2xtbwB1hS5Kv8lAqiP3hBx0IqApp3KDL+IDGUTcEjhtcnEux/WXkVSP3SAPCYWo
+	 EUKW7G5h03RVdnP+Jx5QppGPXg5rOpku1wtoXLLL1iiH3WqN+FntoCv8cPlMLbSG++Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nxT2VMz4;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=GzCpnY9w;
+	arc=none smtp.remote-ip=185.125.25.14
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBDD606A31F;
-	Thu, 29 Oct 2026 10:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EA8606A31A
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 11:28:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B4EA8606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nxT2VMz4
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 569071F031E2;
-	Thu, 29 Oct 2026 10:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793270702;
-	bh=0dCSBHfUVHBP5GH3Zssr2yssdn3VkCL1gUTLqNUcb1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nxT2VMz4fnyBGepb2y6DIfK6SE3t2B76Yk1hsA8J6xw19WDTRWQkc5zer0rtHjzZQ
-	 Gb5inbSwozgewNJrlxHySAlYyumEcf2I2H89YJtQ2mKV0FR1qRmlFr6921WsPFWLvf
-	 mDO6xtXeNV75v/I7AsXrq4ElCmke3k3ksppR2nVk6RK7nwvVoDAMyGrK3MqSVHCrLS
-	 tx08eVD4EuQq6XQyn5UuT1nZTBQdXegs6VSSweVrPGuWGxNOLxCoSSp+LhLfxnwPRU
-	 jvL20xWFcOw1tu/0Ngm+yTfllKoTUKGa6bFKvqepHlY87fecj0Xp5xBmzDsbE6PVCD
-	 GcxWud5QzBBKw==
-Date: Thu, 29 Oct 2026 11:44:52 +0100
-From: Alexey Gladkov <legion@kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: "Hallgrimur H. Gunnarsson" <halg@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>, Jann Horn <jannh@google.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	KP Singh <kpsingh@kernel.org>, Jonathan Calmels <jcalmels@3xx0.net>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	containers@lists.linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
- opt-in netns loopback
-Message-ID: <auMjpJwXQJyXr3fW@example.org>
-References: <20261028221705.3915340-1-halg@google.com>
- <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=GzCpnY9w
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jFhmS6Xsvz1cwJ;
+	Thu, 29 Oct 2026 12:27:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1793273272;
+	bh=LaD9WrR+AACReb/Fw3idhuufgElFfvZMlx/OJIXbArA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GzCpnY9wpDf60mcnYuroXbFa9YCakGFBrOjfurb2f7UxJM3jUmzmm71A+H/ex0U95
+	 Ezw0UDC5/DXLdfO9xfh2E7NHLu4mmTw+EV8TXVuVR5Zv2qJiAyasin7EDuqpetc/yo
+	 QmYhNWapgWaCBAEkibByaPzDgOQutFwZnHYo9qng=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jFhmR4mH2z8lf;
+	Thu, 29 Oct 2026 12:27:51 +0100 (CET)
+Date: Thu, 29 Oct 2026 12:27:47 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org, 
+	stable@kernel.org
+Subject: Re: [PATCH 4/8] landlock: pass the namespace id to log to
+ check_ns_type()
+Message-ID: <20261028.oonaisai0Doh@digikod.net>
+References: <20261026-work-security-namespace_free-v1-0-ffa3ebbf71bd@kernel.org>
+ <20261026-work-security-namespace_free-v1-4-ffa3ebbf71bd@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -79,95 +68,99 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
+In-Reply-To: <20261026-work-security-namespace_free-v1-4-ffa3ebbf71bd@kernel.org>
+X-Infomaniak-Routing: alpha
 
-On Wed, Oct 28, 2026 at 03:56:11PM -0700, Andy Lutomirski wrote:
-> On Wed, Oct 28, 2026 at 3:18 PM Hallgrimur H. Gunnarsson
-> <halg@google.com> wrote:
-> >
-> > When an unprivileged process creates a new user namespace, it is granted
-> > a full set of capabilities (CAP_FULL_SET) scoped to that namespace.
-> > While these capabilities are isolated to the namespace, they allow
-> > unprivileged local users to reach deep kernel subsystems (most notably
-> > networking configuration and raw sockets via CAP_NET_ADMIN and
-> > CAP_NET_RAW) that historically assumed a trusted caller and have
-> > accounted for a large share of local privilege escalation
-> > vulnerabilities.
-> >
-> > Many workloads and sandboxes use unprivileged user namespaces strictly
-> > for basic UID/GID, mount, PID, or network isolation and never need
-> > high-risk capabilities like CAP_NET_ADMIN or CAP_NET_RAW. Likewise,
-> > system administrators often want a host-wide policy ceiling restricting
-> > which capabilities unprivileged user namespaces may acquire, without
-> > disabling unprivileged user namespaces altogether.
-> >
-> > Prior work by Jonathan Calmels [1] proposed addressing this via a sixth
-> > per-thread capability set (cap_userns) alongside a global sysctl mask.
-> > During that discussion [1, 2], feedback (e.g. from Casey Schaufler)
-> > suggested that rather than adding another per-thread capability set and
-> > prctl() interface, capability restrictions could be integrated directly
-> > into struct user_namespace and configured via clone3(). At the same
-> > time, as noted in [1], a clone3() flag alone is not sufficient for
-> > administrators who need to enforce a host-wide ceiling on unprivileged
-> > user namespaces without modifying every userspace callsite.
-> >
-> > This series combines both pieces of feedback: it embeds a capability
-> > bounding set (cap_bset) directly into struct user_namespace, reusing
-> > the existing task cap_bset, cap_permitted, and cap_effective sets on
-> > namespace entry, and provides both a system-wide sysctl ceiling for
-> > unprivileged user namespaces and a CLONE_NEWUSER_BSET flag for
-> > voluntary per-namespace restriction via clone3().
+On Mon, Oct 26, 2026 at 10:57:12AM +0100, Christian Brauner wrote:
+> Landlock logs the namespace id when it denies the use of a namespace.
+> check_ns_type() takes it from the namespace itself. When it is called
+> from the namespace_init hook the id is always zero as it is only
+> allocated after the hook has run.
 > 
-> Why should the task's cap masks affect this?  *Maybe* cap_bset makes
-> sense, but I'm struggling a bit to see why cap_permitted and
-> cap_effective should matter.
+> A follow-up patch will allocate the id before the namespace_init hook is
+> called. But a namespace whose creation is denied never becomes visible
+> and the Landlock documentation says that namespace_id is zero for
+> namespace creation (cf. Documentation/admin-guide/LSM/landlock.rst and
+> Documentation/trace/events-landlock.rst). So pass the id to log to
+> check_ns_type() and keep passing zero from hook_namespace_init().
 > 
-> Also, I think that Docker in non-userns mode restricts cap_bset, and
-> the purpose of that restriction is rather at odds with interpreting it
-> as a restriction on newly created user namespaces for purposes of
-> vulnerability mitigation.
+> No functional changes.
 > 
-> >
-> > In addition, because restricting CAP_NET_ADMIN at user namespace
-> > creation time prevents userspace from bringing up the loopback
-> > interface in new network namespaces, the series first introduces
-> > an opt-in flag to automatically enable loopback on network namespace
-> > creation:
-> >
-> > 1. Opt-in loopback activation on netns creation (Patch 1)
-> >
-> >   New network namespaces start with the loopback interface (lo) DOWN by
-> >   default, requiring CAP_NET_ADMIN over the owning user namespace to
-> >   bring it up. To block external network access while preserving
-> >   localhost networking, sandboxes commonly create an isolated network
-> >   namespace with only the loopback interface enabled.
-> >
+> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> Cc: <stable@kernel.org> # mainline only
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> ---
+>  security/landlock/ns.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> The whole unshare/clone flag situation is getting out of hand, IMO.
-> And this new thing makes logical sense but is really about reducing
-> exposure.
-> 
-> Perhaps we should instead have a small list associated with a userns
-> (extensible in the future) of things that the ns's admin (i.e. whoever
-> has CAP_SYS_ADMIN relative to the ns) may do.  That list could
-> include:
-> 
-> - Create loopback with sensible defaults for ipv4 and/or ipv6 (i see
-> no obvious reason to separate them)
-> - Create tun/tap interfaces in that ns (and attach them, etc)
-> 
-> And add a very simple new API to do these things.  Actually, the
-> tun/tap could just use the normal mechanism.
-> 
-> Thoughts?
+> diff --git a/security/landlock/ns.c b/security/landlock/ns.c
+> index cd44c927f83a..39795c4e1404 100644
+> --- a/security/landlock/ns.c
+> +++ b/security/landlock/ns.c
+> @@ -90,15 +90,16 @@ static const struct access_masks ns_permission = {
+>   * check_ns_type - Check namespace use permission
+>   *
+>   * @ns: The namespace being allocated or installed.
+> + * @ns_id: The namespace id to log.
+>   *
+>   * Shared check for namespace_init (creation via clone(2), unshare(2),
+>   * open_tree(2), or fsmount(2)) and namespace_install (use via setns(2)): denies
+>   * when the namespace type is not in the domain's allowed set.  At allocation
+> - * time @ns->ns_id is still zero and is logged as such.
+> + * time the namespace isn't visible yet so @ns_id is zero.
+>   *
+>   * Return: 0 if allowed, -EPERM if denied.
+>   */
+> -static int check_ns_type(struct ns_common *const ns)
+> +static int check_ns_type(struct ns_common *const ns, const u64 ns_id)
+>  {
+>  	const struct landlock_cred_security *subject;
+>  	size_t denied_layer;
+> @@ -121,7 +122,7 @@ static int check_ns_type(struct ns_common *const ns)
+>  				    .permission =
+>  					    LANDLOCK_PERMISSION_NAMESPACE_USE,
+>  				    .audit.u.ns.ns_type = ns->ns_type,
+> -				    .audit.u.ns.ns_id = ns->ns_id,
+> +				    .audit.u.ns.ns_id = ns_id,
+>  				    .layer_plus_one = denied_layer,
+>  			    });
+>  	return -EPERM;
+> @@ -129,13 +130,13 @@ static int check_ns_type(struct ns_common *const ns)
+>  
+>  static int hook_namespace_init(struct ns_common *const ns)
+>  {
+> -	return check_ns_type(ns);
+> +	return check_ns_type(ns, 0);
 
-I think that's an interesting idea. I also think the whole flag issue is
-moving in the wrong direction.
+The use of 0 as a namespace ID in logs was mainly a consequence of the
+hook implementation and the fact that no ID were visible to user space.
+This changes with this series: the kernel allocates a new ID and other
+LSMs see this newly created ID.  Landlock's logs should follow this
+change consistently and always reflect the real namespace ID instead of
+faking it with 0 for namespace creation.
 
-Are you thinking of something like `struct open_how` in openat2,
-or something else?
+Could you please update the doc and tests instead?  The doc should still
+warn that when blocking a namespace creation, the logged namespace ID is
+still not *directly* visible from user space.
 
--- 
-Rgrds, legion
+Being able to differentiate namespace creation (i.e. when a namespace is
+not yet reachable by user space) from a namespace enter operation is
+important for Landlock from an observability point of view.  We then
+need at least the Landlock tracepoints to make this possible.  I'm
+working alongside what you're doing and I'll send patches next week.
 
+>  }
+>  
+>  static int hook_namespace_install(const struct nsset *const nsset,
+>  				  struct ns_common *const ns)
+>  {
+> -	return check_ns_type(ns);
+> +	return check_ns_type(ns, ns->ns_id);
+>  }
+>  
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> 
+> -- 
+> 2.53.0
+> 
+> 
