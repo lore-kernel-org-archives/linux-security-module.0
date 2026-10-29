@@ -1,61 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793284390;
-	b=rYwjf+LxOBO4lgWyb6HJqK2HmrECyUTC3TAPeo3036G5uWhKe3V4SEMy9T5XMTVOSIRj
-	 9wTI4iJiC71Rf34h9BUM+6BhqEkYKK/TwNmg5ix+WwAE5n8chJGald+t2Mg32eHpNdxEH
-	 yvxa/Cby6K+kHVAuWAM80RNiVvyV1s79V2rOKjMvOfG6vBgC8nfdRB8i0lsAzUExEXboq
-	 0rqKuPSj3+F3noGtejBrqF/RIUjcoQGfJVXK9Yk81h/NIgROu7W6K9rYiOo8cHwBCUMpI
-	 uN41eqRR0D/PQOPc4QUpkRkleMkKFBx/AgtrnPTvFWDZYpg6qVPRvbNPNJWz7PVcTGg==
+	t=1793284453;
+	b=GmXIls+FAmcyRvJrUH/fkHeR/5fkg3k55pYH8QTRgrGCS+KVyjwzLTsIZ4srR83PT0+Z
+	 EzSORR71TISYroq4KLjBtX7XribhpPd5DI8HTn/ZLxBSLN99dOb1E1MsfiLLsW7N0PBNE
+	 1DUlpDl/ustA+SIG2fT4m6J/TQjhHFw1qSulPpFf5n+bul1uaM4Y+X4oSqnZ5cFPvy42B
+	 miAtgbclNa/TkonXMrXYe1hcbMbjMGYoBcB1s4u5/L/YUllcD7C6+YOPa8c1RkUPHBdTX
+	 26X74ETdmFlqH+uXrdb/j943Rtiqo9096mjeV+k+7K7a2WwlheqlOhpMYYGi9w7nOMQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793284390;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=PI6XV6wRBKnwx25utlIFilIARw4g6CWAbZMbWDcIpcQ=;
-	b=G5OvUlr9JSTGKjO6O0W4JOHlPsYIZn71RF/QUx5FAEuYTHnxP1aG31qDqiGMhFIJHu45
-	 bYjhQFqz3MXEwhObbqqjujWAMFSE4uDdI/fpBRw5F84qu39RSvQYVZM5itfbKDkGck1VH
-	 6W+KIx72Zb46VQHzDZyr9uCPsOVS2yy3u/Lmu60Iu/dHU+4gAxp5BjtdKF36CdB4w0v2k
-	 xU5K3z9hhbQEsaQIXjbno1Wd2GsCPHO0+/GLb5nzmPQynNUZHKjpt/5H+nRg5D4PP42Xf
-	 GmJZSkOyaMPNe+MIO+4kXhzKqk+kNS3V4GV8/M3lTCwGQe2Z1lr4xO8MUyWimt7d/4A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793284453;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=N75GM6JV3IGplKJi2i4PSaHp2gUTRYn/qtH9tM/9R0E=;
+	b=jHR4XAR3AdR4yVFrUXijTkfr4AK+4UFD5ZJf86P9nDVNFEQyHCq8o7KgMGmVSqVCkmjH
+	 Ls8d8VeHUBDtnNEUe9rWoU9zWwH8pWGzG/xdqro5SEYt0Wde2u7ah9q43UfzHAwa85wPV
+	 62pPxChbTXA6e3kRdu0wlIhqHkfD/7xiNNdmJnf+40NYpy2Q49NV5a2EeXfG6p+AuCY3N
+	 eF2a4xHP+U9XLxOT2pGFqzbrWygZ9hV2o2Wn2a3jmbrIHUe1OFeWYndmLzOghtKncz8j7
+	 rHiSL9KqAN/X5CSXe2sx7r67aAdNiYnOT0KcfixAI0g+iGubGboF2k7wBl5SHEW/WFg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WYNGdT+r;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LnivEmJO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 20680606A31A;
-	Thu, 29 Oct 2026 14:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4315606A31E
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 14:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WYNGdT+r
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2ED241F01825;
-	Thu, 29 Oct 2026 14:33:09 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LnivEmJO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073521F01825
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 14:34:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793284389;
-	bh=PI6XV6wRBKnwx25utlIFilIARw4g6CWAbZMbWDcIpcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WYNGdT+rZn4iYkTdtrdt3yuFvlGqH5uylT98HcZQ3aJNXPlAvgkHO1ioTcugnRfIy
-	 XmIrucKme8qfrUAL7hzh2Q54kdl6bciwVvpW6aM9ObAgOvrd8tN1ovtGCyslVsk30H
-	 Yk0FQtK/OLbXZFW/feOMlCAijzixxNn8zpUnO6NHpzHD843UAlgZOMHvtqbCsdePtz
-	 RFoqmX3AJWuBGJatHpNa9ArDNmDRK4uF5IRckWsthtwAaXt89x5Hie04fUvL7oiGec
-	 H0GJEicq/SXsLHQlsB7ttycEVWzf9by0RKBotVPwPomh+6oqtkGeOgA1KwRBTWwPZv
-	 wiNYp+4z03TPA==
-Date: Thu, 29 Oct 2026 16:33:06 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	syzbot+c15de43f1e7fffbb7b9b@syzkaller.appspotmail.com,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>
-Subject: Re: [PATCH v4] KEYS: key_garbage_collector(): process in chunks
-Message-ID: <auNZIm0meBH7zHQX@kernel.org>
-References: <20261029140707.2010100-1-jarkko@kernel.org>
+	s=k20260515; t=1793284453;
+	bh=N75GM6JV3IGplKJi2i4PSaHp2gUTRYn/qtH9tM/9R0E=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=LnivEmJOTwLBamkiauChcyg8+dpfkCERY6lpYqsN2yAeZLFXWN5n6X/3njlxOpRg9
+	 CFSbBsgZr+IxwVUl3cDVW7tSAnUmiNApOIw6LmXoTWHOi1jk2EQMjPTxgR28JMtPPO
+	 5rCZDfnRDNYnSKu6J79dS+vWCrlOIByxWiDIQwGS1JBZC8QYsNDqvxXbT5SBO0YWSg
+	 JDexuXE3xUw/qyWPtkUUBHGKl8L116Fn71Rf0j/S5DZvDmZZ25YvkEGydMAJCHy1Us
+	 N1wrrgR+gsl7Truqbd950a0CPFjQI1Zdnt7dXegLsZcZ0KjBoyNkID7VTN+8u0ZqSS
+	 1OeKyIya919PQ==
+Message-ID: <sashiko-outbox-189529@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] evm: Bound writes in evm_read_protected_xattrs() to
+ buffer_size
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261029142707.2602008-1-roberto.sassu@huaweicloud.com>
+References: <CAD2AHCbuQyKwR27hNcYRhU7njCeigmQoL9x9i25zb0N5-8Kx+A@mail.gmail.com>
+ <20261029142707.2602008-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 29 Oct 2026 14:34:12 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,35 +59,34 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261029140707.2010100-1-jarkko@kernel.org>
 
-On Thu, Oct 29, 2026 at 04:07:05PM +0200, Jarkko Sakkinen wrote:
-> keygcbench results without the patch:
-> 
-> unused:   min=3016.754 avg=11859.097 max=28667.645 var=141391574.712
-> expired:  min=0.015 avg=12758.165 max=21516.237 var=85158284.646
-> combined: min=0.015 avg=12308.631 max=28667.645 var=113477010.596
-> 
-> keygcbench results with the patch:
-> 
-> unused:   min=0.225 avg=13.991 max=853.100 var=858.700
-> expired:  min=0.016 avg=30.442 max=2791.695 var=14187.539
-> combined: min=0.016 avg=19.249 max=2791.695 var=5177.436
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> ima_eventinodexattrs_init_common() calls evm_read_protected_xattrs()
+> first with a NULL buffer to obtain the required size, allocates a buffer
+> of that size, and then calls it again to fill it. Nothing keeps the
+> result stable between the two calls: a protected xattr may be added to
+> evm_config_xattrnames through the evm_xattrs securityfs file (with
+> CONFIG_EVM_ADD_XATTRS=3Dy), or a protected xattr may be set on, removed
+> from, or changed in the measured file in the meantime.
+>=20
+> However, the 'n' (names) and 'l' (lengths) cases write into the buffer
+> without checking buffer_size, so if the data grew between the two calls,
+> they write past the end of the allocation.
+>=20
+> The 'v' (values) case passes the remaining space to __vfs_getxattr(),
+> [ ... ]
+>=20
+> Fixes: 8314b6732ae4 ("ima: Define new template fields xattrnames, xattrle=
+ngths and xattrvalues")
+> Reported-by: Fabrice Derepas <fabrice.derepas@canonical.com>
+> Closes: https://lore.kernel.org/linux-integrity/CAD2AHCbuQyKwR27hNcYRhU7n=
+jCeigmQoL9x9i25zb0N5-8Kx+A@mail.gmail.com/
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-I personally would optimize all-in for variance because:
+Sashiko has reviewed this patch and found no issues.
 
-1. It is insignificant drawback for any practical keyring workload
-   if the total time increases slightly.
-2. Latency peaks are a signifiant drawback for any possible latency
-   sensitive workload running in the system.
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029142707.2602=
+008-1-roberto.sassu@huaweicloud.com?part=3D1
 
-What I'm doing now is to find sweet spot chunk size below 1024 where
-variances reaches its lowest value.
-
-The latency part makes this change more valuable than focusing on
-only on the regression itself.
-
-Br, Jarkko
