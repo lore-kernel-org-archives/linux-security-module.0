@@ -1,62 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793273284;
-	b=HdCyxbPBgHeNlyG7/uHq+Vl2/pctzsG8r/DicFpaZaBN6M3CACX747jOP4udksXc4y0S
-	 oiFppppVGsKqAHdszbM+q+FFOsiBEg35YqS32Lvk0kWTebJwsB5wJpoe+ZNvG7+CN04lr
-	 i/y7j3CMUGn94SaYI3dNB1Wfiq7b2LL8R+WnuA9hv40syVXpgNH9zzOUPL4c2AtUL1XRO
-	 JubMaeDkC+IjjqUWtiTPj0PeXQTqUnAGF1liZBzzfDbWMcVCZWVhL2FZqLrI5C/cCRJik
-	 y9Ls6eTNiB+tkUloxxtObDq9uehToh2cL7YVFg1fFWHYbHCruOPyqMpfGJLxnx5eIpg==
+	t=1793275096;
+	b=xYVRzTqJeHkPwbOyUfxaSiMEZQAN4x+xeIUIgTD/elAFU08h/aTxnmg4qMtIwyxWidPg
+	 hxz2ez9ZXn7u4BgyVKm5jJL0lQe1NYrH9dxsJNhW2v0Bqt4PQcdNTjUPNkg8rqUKAgE/X
+	 XR3H8yMnxblY1WvhlWEcP8DKZxIDTRs8EawBEVIS/yyL5ROfX8/1YjPpgePV/taucjhx/
+	 FS3mC8nn0P+B78tMGPOP4j07PhFZzWgM3vqv+fPhhfuByZRmknFVX0G3RKst94T64wnhP
+	 I7D194keG1K2CyPYANjXh+vkyHDlui3oA7+Xk1eS39pgB8m+aJ5wdgzuM/JMqsNfwvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793273284;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Infomaniak-Routing;
-	bh=LaD9WrR+AACReb/Fw3idhuufgElFfvZMlx/OJIXbArA=;
-	b=IpmYcTcQ+ME8Q6pNWWjKTMIn1h4g7hwqa8No5xISOp28Ete6qi6vPqmeD+lKJ3Ge08hV
-	 fz2Hik4zkbrhEKUSKFGVluAI6QmWgI4hrSJQkdKjvRaJ7qvaQlCnXtTRViIYrq43he4sx
-	 2V2NPqa28YxsbMn/qwPLLt6QteP0RuGhkYBocklGWFxW5ShQIN6iRvhoh4jcFIGVP2JEf
-	 PdqAvc2xtbwB1hS5Kv8lAqiP3hBx0IqApp3KDL+IDGUTcEjhtcnEux/WXkVSP3SAPCYWo
-	 EUKW7G5h03RVdnP+Jx5QppGPXg5rOpku1wtoXLLL1iiH3WqN+FntoCv8cPlMLbSG++Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793275096;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=VEJxuw7v5WS1JXklJNxWI3IzTNd4l+O1vemEGC9NlII=;
+	b=4NlpcDEceQy9wZqml1643+Aa7v7/9KZO6K2CSGZm8YjbTTV3+PbUBtXcG+ze9lIsQ7nF
+	 RNuwdBAP6GBE69rF160broXg6IpcvnBbVLjyBsRtM/pT0e+WlGWzcq0aTtInBOHbepOSf
+	 sk3Kz0a/9G7WRKpP6Rcs0/tqqeacobD8VdJJSw+NewfpImM6Ll13K0sVO62b9wdgAN+YD
+	 /0qQP7KaU5fgUcvDlXO5La/uPZ7Du9E3qR+8fYNf6nCj+Bigr7/ss1tPKn2/P2hASEPIM
+	 TL85RlKYIVZPh+aLC+LHQIqU9d7jEIdb4ou8kCWlDGFG7hhXQBgHOI8RqFqbNgqmhtA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=GzCpnY9w;
-	arc=none smtp.remote-ip=185.125.25.14
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZxOySYw6;
+	arc=none smtp.remote-ip=209.85.216.52
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EA8606A31A
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 11:28:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B4EA8606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E220606A31C
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 11:58:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9E220606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=GzCpnY9w
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jFhmS6Xsvz1cwJ;
-	Thu, 29 Oct 2026 12:27:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1793273272;
-	bh=LaD9WrR+AACReb/Fw3idhuufgElFfvZMlx/OJIXbArA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GzCpnY9wpDf60mcnYuroXbFa9YCakGFBrOjfurb2f7UxJM3jUmzmm71A+H/ex0U95
-	 Ezw0UDC5/DXLdfO9xfh2E7NHLu4mmTw+EV8TXVuVR5Zv2qJiAyasin7EDuqpetc/yo
-	 QmYhNWapgWaCBAEkibByaPzDgOQutFwZnHYo9qng=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jFhmR4mH2z8lf;
-	Thu, 29 Oct 2026 12:27:51 +0100 (CET)
-Date: Thu, 29 Oct 2026 12:27:47 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org, 
-	stable@kernel.org
-Subject: Re: [PATCH 4/8] landlock: pass the namespace id to log to
- check_ns_type()
-Message-ID: <20261028.oonaisai0Doh@digikod.net>
-References: <20261026-work-security-namespace_free-v1-0-ffa3ebbf71bd@kernel.org>
- <20261026-work-security-namespace_free-v1-4-ffa3ebbf71bd@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ZxOySYw6
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3ac78f4c10bso1004935a91.1
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 04:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793275095; x=1793879895; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=VEJxuw7v5WS1JXklJNxWI3IzTNd4l+O1vemEGC9NlII=;
+        b=ZxOySYw6NYmINxrUznhCRkoVM326b1kMuU0Pzv421sKfplb9XFqTFdPUjFvnQHH07z
+         dU1dUS6CghARvfNo0xujIQxq0UtnRQXho6lVU2aBzH1dV6rzrbMl9qn+62l9uSeWGR/Q
+         /n3DmY+eG/tVIP6NWe7zrqjdPr7Pd76YXeNf5eXZbEqjOJ2PUDQfZEl+Ikp76A9KNXfP
+         QsrWwasvhfhgUFBKNVv9G9xmiIoEyYpocrWbBPlkb8K//1xwGGxZzz9aLI8m4SKuQcNK
+         uF3tVlKFnZbXjuKX6XWmBEdXdDVFdsdYtBZHRWKe4Eb+43avQTJXnvK01TvDRJgQjdgA
+         ES/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793275095; x=1793879895;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=VEJxuw7v5WS1JXklJNxWI3IzTNd4l+O1vemEGC9NlII=;
+        b=H8UWAzX9E33ZWSUoI9w3YJXFdrjFkDmMq3lIYNxz90hT5OMMZMnSwwXIXgXAWab1UC
+         3jmoHsBbzVtzJztTlIIWTY4GjS2GRMHl4p13NfoF1aaZy5x1F3I23/+mB9UGmryZL+T2
+         T8r04nP3Y924gUSl86oFUhZB8cTRjp4dGvrgJUOOUxog5+5DMy372bGLuDhOKM9MbDfB
+         qMusTq0lYo4txRbdmDD34B8TuvSzJblilUx01A7c/DXM9G9fa9g5ksN9xB8WxnqXh20l
+         Y2rh1ZThuniQ5og3qnLqKohsgdBqBNTSdTaXmDWBF26c0wpc/wqqJn/S2IWDWq17Brrd
+         mQbA==
+X-Forwarded-Encrypted: i=1; AKwUvBwJ5dok7hPfhFplEVywXvVpl8QMiJYFwaf0luCjtIgJTlPNT1Jaix990Zq2pAg2hczk2BKAjSA+xn97K+QItode2LSUobQ=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJs7F/jDBP4hYpB0NW6+8SaBJLi8p0EUKVC1/A2SD+wPvau9zJt
+	aEWQT87lK7Tf4qIenfhAo3qgufeXulZULu8/iJALUw6/DuBb7AuYfNzh
+X-Gm-Gg: AYBFou0t7qwD2ZhoiKVhCUjdtQ91rQfWIiK/RVp20ZEvGVDzcvQTWjaUs8leQnoYm7v
+	hjHpoBvWRUbzcEczh0YgY/huriBaVKSj7ID+1EcJ9NJCu5Uj0tBemQa/ISRbECrlv0ICOPIA2zZ
+	a38tarfP96JieVtK5ZnfGvrKBrUYixBI6lJDZ8aehWuXIAerlPZLwctlZIa1R5cHMGKt8VMicrw
+	44I8PFnecBVppedULqQ6iLRPcrw+7XTVNxJh1RwBRXLJqRDZQjE+QS082Gh8c1xPm0kuS/qJCvl
+	eIWm9cMW4TNsBOtKetZ54MqpqsuRuwrxiOBYbYYDxgd37HlSCRdxzNWD6I7nPkdbCDkIjEs6cnX
+	bgLyKc8YySEoLS4YJA4DXkSuFOjn9h1kYXUa4FSc7/nHDBCiFep2MBgJX9S6yio4rhwl9aUSsvi
+	H+4+oT5xCYhRrzjhU7ZUWYLD3Y8cJ0iLgWTZVjuvBo4aahmv83wjHyPHrLzaddZpr0Iwtda5PwA
+	VMU4sxfzDqCI+rJm0uTwqeDQXEiv64RTxnsHm8SpLSfExVMCKMFNmf2W3oAL0PSt4lNqNm7q7EZ
+	cxAJXrAozpYHiQwOjc3k2vmi
+X-Received: by 2002:a17:90b:2710:b0:3ab:ab5a:ef06 with SMTP id 98e67ed59e1d1-3ae57f637cemr3901099a91.12.1793275094915;
+        Thu, 29 Oct 2026 04:58:14 -0700 (PDT)
+Received: from localhost ([111.228.63.84])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae6e8401casm4137834a91.11.2026.10.29.04.58.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2026 04:58:14 -0700 (PDT)
+From: Cen Zhang <zzzccc427@gmail.com>
+To: dhowells@redhat.com,
+	jarkko@kernel.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	jjzuming@gmail.com,
+	zzzccc427@gmail.com
+Subject: [PATCH] keys: Protect the update method check against type removal
+Date: Thu, 29 Oct 2026 19:58:06 +0800
+Message-Id: <pm-keys-update-type-removal-20261029-v6-3d92b2f9693854230a02@gmail.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -66,101 +102,107 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261026-work-security-namespace_free-v1-4-ffa3ebbf71bd@kernel.org>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 26, 2026 at 10:57:12AM +0100, Christian Brauner wrote:
-> Landlock logs the namespace id when it denies the use of a namespace.
-> check_ns_type() takes it from the namespace itself. When it is called
-> from the namespace_init hook the id is always zero as it is only
-> allocated after the hook has run.
-> 
-> A follow-up patch will allocate the id before the namespace_init hook is
-> called. But a namespace whose creation is denied never becomes visible
-> and the Landlock documentation says that namespace_id is zero for
-> namespace creation (cf. Documentation/admin-guide/LSM/landlock.rst and
-> Documentation/trace/events-landlock.rst). So pass the id to log to
-> check_ns_type() and keep passing zero from hook_namespace_init().
-> 
-> No functional changes.
-> 
-> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-> Cc: <stable@kernel.org> # mainline only
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
->  security/landlock/ns.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/landlock/ns.c b/security/landlock/ns.c
-> index cd44c927f83a..39795c4e1404 100644
-> --- a/security/landlock/ns.c
-> +++ b/security/landlock/ns.c
-> @@ -90,15 +90,16 @@ static const struct access_masks ns_permission = {
->   * check_ns_type - Check namespace use permission
->   *
->   * @ns: The namespace being allocated or installed.
-> + * @ns_id: The namespace id to log.
->   *
->   * Shared check for namespace_init (creation via clone(2), unshare(2),
->   * open_tree(2), or fsmount(2)) and namespace_install (use via setns(2)): denies
->   * when the namespace type is not in the domain's allowed set.  At allocation
-> - * time @ns->ns_id is still zero and is logged as such.
-> + * time the namespace isn't visible yet so @ns_id is zero.
->   *
->   * Return: 0 if allowed, -EPERM if denied.
->   */
-> -static int check_ns_type(struct ns_common *const ns)
-> +static int check_ns_type(struct ns_common *const ns, const u64 ns_id)
->  {
->  	const struct landlock_cred_security *subject;
->  	size_t denied_layer;
-> @@ -121,7 +122,7 @@ static int check_ns_type(struct ns_common *const ns)
->  				    .permission =
->  					    LANDLOCK_PERMISSION_NAMESPACE_USE,
->  				    .audit.u.ns.ns_type = ns->ns_type,
-> -				    .audit.u.ns.ns_id = ns->ns_id,
-> +				    .audit.u.ns.ns_id = ns_id,
->  				    .layer_plus_one = denied_layer,
->  			    });
->  	return -EPERM;
-> @@ -129,13 +130,13 @@ static int check_ns_type(struct ns_common *const ns)
->  
->  static int hook_namespace_init(struct ns_common *const ns)
->  {
-> -	return check_ns_type(ns);
-> +	return check_ns_type(ns, 0);
+key_update() reads key->type->update, ->def_datalen and ->preparse
+before it takes key->sem. A reference on the key does not pin the
+module that provides its type, so KEYCTL_UPDATE can race with the
+unloading of that module, for example dns_resolver:
 
-The use of 0 as a namespace ID in logs was mainly a consequence of the
-hook implementation and the fact that no ID were visible to user space.
-This changes with this series: the kernel allocates a new ID and other
-LSMs see this newly created ID.  Landlock's logs should follow this
-change consistently and always reflect the real namespace ID instead of
-faking it with 0 for namespace creation.
+  KEYCTL_UPDATE task                  Module unload and key GC
+  ------------------                  ------------------------
+  keyctl_update_key()
+    key_update()
+      key_permission()
+      load key->type
+                                      exit_dns_resolver()
+                                        unregister_key_type()
+                                          GC: down_write(&key->sem)
+                                          GC: retype to key_type_dead
+                                          GC: up_write(&key->sem)
+                                        unregister_key_type() returns
+                                      free_module()
+      read saved type's update member
 
-Could you please update the doc and tests instead?  The doc should still
-warn that when blocking a namespace creation, the logged namespace ID is
-still not *directly* visible from user space.
+The final access reads freed module memory. With the updating task
+held after the key->type load, it faults:
 
-Being able to differentiate namespace creation (i.e. when a namespace is
-not yet reachable by user space) from a namespace enter operation is
-important for Landlock from an observability point of view.  We then
-need at least the Landlock tracepoints to make this possible.  I'm
-working alongside what you're doing and I'll send patches next week.
+  BUG: unable to handle page fault for address: fffffbfff804107f
+  #PF: supervisor read access in kernel mode
+  RIP: 0010:key_update+0x12d/0x550
+  Call Trace:
+   keyctl_update_key+0x6b/0x110
+   __do_sys_keyctl+0x21d/0x4f0
 
->  }
->  
->  static int hook_namespace_install(const struct nsset *const nsset,
->  				  struct ns_common *const ns)
->  {
-> -	return check_ns_type(ns);
-> +	return check_ns_type(ns, ns->ns_id);
->  }
->  
->  static struct security_hook_list landlock_hooks[] __ro_after_init = {
-> 
-> -- 
-> 2.53.0
-> 
-> 
+This is the same problem that commit 925c84e3cc21 ("keys: Protect the
+read method check against type removal") fixed for KEYCTL_READ.
+
+The encrypted and trusted types can be built as modules and have an
+update method. For them there is a second window: the GC can move the
+key to key_type_dead after the method check and before key_update()
+takes key->sem. key_update() then calls the NULL update method of
+key_type_dead.
+
+Take key->sem before the first access to key->type and hold it until
+the preparsed payload has been freed. Once a key exists, only the GC
+changes key->type, and it does so with key->sem held for writing.
+unregister_key_type() does not return before the GC has done that for
+every key of the type that is still in use, so the type stays valid
+for the whole update. If the GC has already moved the key to
+key_type_dead when key_update() gets key->sem, there is no update
+method and key_update() returns -EOPNOTSUPP.
+
+Assisted-by: LLM
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
+---
+ security/keys/key.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/security/keys/key.c b/security/keys/key.c
+index e88548f1a704..bac2333089fc 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -1101,9 +1101,13 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	/* the GC cannot change the key's type while we hold the semaphore */
++	down_write(&key->sem);
++
+ 	/* attempt to update it if supported */
++	ret = -EOPNOTSUPP;
+ 	if (!key->type->update)
+-		return -EOPNOTSUPP;
++		goto out;
+ 
+ 	memset(&prep, 0, sizeof(prep));
+ 	prep.data = payload;
+@@ -1116,8 +1120,6 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
+ 			goto error;
+ 	}
+ 
+-	down_write(&key->sem);
+-
+ 	ret = key->type->update(key, &prep);
+ 	if (ret == 0) {
+ 		/* Updating a negative key positively instantiates it */
+@@ -1125,11 +1127,11 @@ int key_update(key_ref_t key_ref, const void *payload, size_t plen)
+ 		notify_key(key, NOTIFY_KEY_UPDATED, 0);
+ 	}
+ 
+-	up_write(&key->sem);
+-
+ error:
+ 	if (key->type->preparse)
+ 		key->type->free_preparse(&prep);
++out:
++	up_write(&key->sem);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(key_update);
+
+base-commit: 9a2a4c51dccc3168c3dc949fcbaa360a478fa228
+-- 
+2.43.0
+
