@@ -1,58 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793239404;
-	b=m6SxWvCdzvBLlWlkkp6o/xaZBLaTjYnpMsIvpOV18ArfmyMa33o+t3Tl+J4HOLuSAuL6
-	 957be2DmiSs55qZ4di57CZMe0s/7e7AvtueSAmz76CLinFHyRMzdITnWuIIMBJYzEORGT
-	 U+J7u3V0LkTXYBlUNH2lskRw37fBQRz9BjAyjmX2WLTYGELNGc0DjL9BGoEywRYBwOp2D
-	 pD1f9jUgRymxVLZlX2Uh3+qLl5EDU36FsbEG75J929ctLmKevHsXRKC/gX6TFnQSFD32T
-	 NUYBarLuhZ7FtRJzym4AB/njbtD7EgRVHiu/kR3oeiK7CgPACTR/MHk3RayParfWjyg==
+	t=1793245196;
+	b=XPlHUsyntXB5y5ChcQEcykM6k4TcQCOkKRrXtETd/4sMU9xw2ShzNLsxNxX/06js7XH8
+	 dSFZ11Jw4HU9/9ebmvXAAWn8B33uYg+QlNecKqdyPGU7/SIf3wdJrjsgXNoxNY/YPkhX0
+	 o+/gHKWovuhYPodgzV/tgR0Zl2zMDjW0inVZx5YQd8vwomIt+FEYh6VDIWhUkwoq7HPlh
+	 SNOw7BOKIzFHLt0ysMbQDLYnlyX+bv8oxAjqhmTS3voJZYLlQ+NPy5ZTGdudSOV8rT8we
+	 AjTyGzoZ4/ElhI8vaY4YQQrMDow0g4Bu31kklwnxX8tSLPMRlOCa6FvO/lH7kPBKbcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793239404;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=heCZ3eMofqJRMaoiKgFonBBuGwXdpA0ncbgdWxOVWmI=;
-	b=lWseqUZ0MM2sFYghyufyyO1/1pgGndSnN30iqTEGhaUH1pwmpZ8O8inevZRJaT7PVdym
-	 +k42ZT43sa70/HnmlbFnKVF69l9bDDSv72Xplf8AZiQz/3Lb1Ixd7GeV1iXNTP68qrXCc
-	 s5VEQTMToLX1YeFp3j+/LmvphoHu8TBJsa6q8Xf9/HFBF+TdBd35j3McoOANvqIuCZdm1
-	 yoQy5JBgMneKslO60aHwxbdNwT0gmb/cwTTb/8lqxCo4d/s4fCWN3RGq7TkLuGDxcmvtI
-	 FiTnfzPfmCq3oxd9ebKpqFoKORfKsf75V8JVdWBRK72wcElU6Hm1+QgapUh3fYd0Xwg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793245196;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=AvvcKCfPVMD1PO+LNtg/bz0+Kp3wL3PLnEl4pzf6prs=;
+	b=cqbx+l8gnyzdlhAPFEHapPEDX3YW6c/F5NqXSgl2j5USaDJBWWOuM8/tdKRBmuF390X3
+	 ygQucgbSEIhN0SG4LXVRkT+9GX5hijqtyXB4z+KzSnxf8p/6GQjUf9/sny/NWIJzt4TUp
+	 6mHRaXFxwSELAAmgO2WpSdxd0oiamaZ1hFvzVkNy6sE/xJx12lhR2vSZVZHSFQEclxMyu
+	 B0jpkvNCItl+ybnAu75j736L87OCxHZJUQRfQINYI7UvEbZiyj9ag3NTiKDky7Jx+icLE
+	 qW2EaPdrEhIpB32+ozYCll4im76c5pfVqEiHRhzJeHSsGlg02L2jJtNvxVN2aq8CmDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dqWHOhTT;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yv1xaFV1;
+	arc=none smtp.remote-ip=209.85.214.182
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 39F0C60A3804;
-	Thu, 29 Oct 2026 02:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20F8606A325
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 03:39:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D20F8606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dqWHOhTT
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 673CF1F031EB;
-	Thu, 29 Oct 2026 02:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793239403;
-	bh=heCZ3eMofqJRMaoiKgFonBBuGwXdpA0ncbgdWxOVWmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dqWHOhTTcf6QIuZcK/x0TMs+EcUhDMPp11aPWuxXPxZnyr0IXjFBvYMG+LHgVZ8pe
-	 omDP4ow7pGQx3zhqQWu4Gh8ytUqqD3TlVrwTUR+oAVMK+ntDyPIvCRoYf8l4k1UYBD
-	 fE60x3cb9sdzKump8KVfJcVLpi6jwHu/DFdYgXTvaQ0XQetezeRL4yVqpShyLef1yo
-	 grFjlR7qvJktrnLPyjepzb7BUiqpXd0S9SeDVXrT/zIAhmbz6fkBveZm878qYfaeUC
-	 y1Fe1PBiheKQ28IYyF5rJRIVN91wbkzR419xzOCKXqty+ffSt6t1XvMT0Oh5ePxfBG
-	 Ezy7vNJAJjLzQ==
-Date: Thu, 29 Oct 2026 04:03:19 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] KEYS: key_garbage_collector(): process in chunks
-Message-ID: <auKpZ-BAJ3B18DiX@kernel.org>
-References: <20261028025306.2063007-1-jarkko@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yv1xaFV1
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2e74a32a07fso2554645ad.1
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2026 20:39:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793245195; x=1793849995; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AvvcKCfPVMD1PO+LNtg/bz0+Kp3wL3PLnEl4pzf6prs=;
+        b=yv1xaFV1JgIdj3pYONuZXPUadEphqo10zclxkGanXVfIo1jyBv5EDPfAKGxTzrG1UU
+         ClbtYmODiH4rju8A5h/c3AZiV7oydd459mCTJP0AC4BHZetZctvozhsB3BEhRt2SmgUs
+         WB0em3YY5qnPuKbGraNIjXthL/JiNBCKVBF5dqymbw0I428l68G+CNNCdmI0ojCoVlgQ
+         fD2QfWDNzpin9QgdOqT8eYR6hIkKYpb3e+LS9OFMa7L7WD6cKRvFmnAmkS3vqtCLlbCO
+         lKEyOuD9XflPiplp8/VmKqF18yluUuypt6WJt+MCfJ6m1aInpV9E8N7BExXK31e8Zbvb
+         TcEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793245195; x=1793849995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AvvcKCfPVMD1PO+LNtg/bz0+Kp3wL3PLnEl4pzf6prs=;
+        b=Hu3ks79CTAji0zEhSoC1i27spEPukN57kEL72kA9aaAQ6vrHbnbiZKmTmcNFwiDR5X
+         93uJc3g/yPyxB2rDXYxle0YU6nGh6qiRNvQPLKrPKW08a3U/jB/ejTFz0vT9aqlj0egn
+         g0F+Te/uQ6c6uopKfeTyRx7AZj8aqnFWfdtvf2jbzHOKOTVUpXHEgDbbbB/HrpUQBwNX
+         O0GOn8gmkcmSd8iyaiLGAWIuXrRC6mKNCFYdeHFvJdp23RUeOZc0t0YDlsFugLN8AHXm
+         OB+w1BETIA39ttKywW4b+bejDGKH3cX/mLvwuGkoVL509RHSe1Fit0KQhezYMJALUjeM
+         oQMQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwxIJEpHYrYC64Ywpyf2QT1afaO7lXzZ85IP3sc4Be1T5YiPXOZK2hht++COQ+dlmukA+qEMckusy79VHknd2vPV4vGLpg=@vger.kernel.org
+X-Gm-Message-State: AFq9FYI+yr0kMEc0r/qI/t/h6tfkmR864516W5MnDJcg6LxlLOtzoOM3
+	DtiRsaUyoSyRP5e6xJN+BJcJixyvzf+EgD8SanFwTtvyXHmh5lgXqzcC
+X-Gm-Gg: AYBFou2seZ9erWzvqneMRNCNB0QyvKB8uVj9cdzlCJ7aFX/XwOcqqqXDT/jf/4y/APo
+	Zfe/CtePTmOSpK7M6awz2e6HupNZJBMneVOyrnUq8fccRTib6crOogtS7tNuJhTnnbzcSPdwRWy
+	npTYYf/GBn7AtiZ3Mvwv4fH+AE7S/qtVPHh0y19iwKNEO6//c47Y63QXJFs4APmQ9iU13J2rinS
+	tKAiYKY4+hYNy+qdgZrXa5k/FpthIVeAl/uK08gX3/O+sGg1gWgW06GSt/LAHZm9DPpa52h+wOJ
+	TQIByfGI6/AxTTfebkvNkNRXvOnuotmgTaHNjIlgsovYMDjGfwX144YMsJzisNinFjIgbhjYWuA
+	rDACC47HKm/4fe4eyghtq6yxR59vdX46Ar6MmWOER1nvInk0mjzBYgHf6YDnoITEpwUYvDF6ILy
+	oOktT9UdNYd2Uu7qgwfWMHIBt3nKpTU8lmN7UdY5YU17CTCIUfg/BiQwRW2p5FVAbHy/WsH3Pyj
+	tGMMWmK7hr5BtbWfFLvobNprmVPaZ3+YxIp/VS/irzVcDlsbEIP6AdWy+/62+bMlBWpho4+6nOW
+	m2FkZSGl3eA4og/zLvgjr+AIPVlvNZS/wm0etaAxtaFBJhEugnzD5KjqfH7wZMUkVkNSsQno9ld
+	iondhea6ffR2vsgKdQQzVOvInRS6UG1qDhcR30w==
+X-Received: by 2002:a17:90b:2f10:b0:398:bad2:c10 with SMTP id 98e67ed59e1d1-3ae58316577mr6084276a91.6.1793245195196;
+        Wed, 28 Oct 2026 20:39:55 -0700 (PDT)
+Received: from localhost.localdomain ([139.159.170.84])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae57a2a053sm2311009a91.4.2026.10.28.20.39.52
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 28 Oct 2026 20:39:54 -0700 (PDT)
+From: Qihang <q.h.hack.winter@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org,
+	=?UTF-8?q?Lucas=20Dupr=C3=A9--Rabinovici?= <omniameasunt@proton.me>
+Subject: [PATCH net v4] cipso: fix optlen corruption in cipso_v4_delopt()
+Date: Thu, 29 Oct 2026 11:39:42 +0800
+Message-ID: <20261029033942.3644-1-q.h.hack.winter@gmail.com>
+X-Mailer: git-send-email 2.54.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -62,19 +96,66 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261028025306.2063007-1-jarkko@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 28, 2026 at 04:53:04AM +0200, Jarkko Sakkinen wrote:
-> - x86-64: chunk max: 125 ms, total time increase: 5%
-> - aarch64: chunk max: 235 ms, total time increase: 6%
+cipso_v4_delopt() recomputes the option length by walking the option
+buffer after the CIPSO option has been moved out.  The walk then reads
+the stale bytes at the tail of the buffer as option data, and a crafted
+setsockopt(IP_OPTIONS) buffer can make it treat one of them as an option
+length, increasing opt->opt.optlen beyond the valid option data.
 
-Oops: those are for unused and expired on x86-64.
+The corrupted length stays on the socket and is later used as the copy
+length by getsockopt(IP_OPTIONS) and by the udp/raw/ping sendmsg paths,
+where it exceeds the size of the buffers they copy into.
 
-For emulated aarch64:
+Compute the new length from the intact options before the move and
+subtract the CIPSO length, and fill the padding with IPOPT_END.
 
-- unused: chunk max: 388 ms, total time increase: 8.2%
-- expired: chuk max: 1372 ms, total time increase: 1.5%
+Assisted-by: LLM
+Fixes: 014ab19a69c32 ("selinux: Set socket NetLabel based on connection endpoint")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qihang <q.h.hack.winter@gmail.com>
+---
+v4:
+ - rebased onto net (fcc00b15cb21a)
+ - reworded the impact paragraph only, no functional change
+ - first public posting (v1-v3 were reviewed privately)
 
-Br, Jarkko
+ net/ipv4/cipso_ipv4.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index 1aacbbeffbc64..e65a3f29d2caf 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -2013,6 +2013,10 @@ static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
+ 		cipso_ptr = &opt->opt.__data[cipso_off];
+ 		cipso_len = cipso_ptr[1];
+ 
++		optlen_new = cipso_v4_get_actual_opt_len(opt->opt.__data,
++							 opt->opt.optlen);
++		optlen_new -= cipso_len;
++
+ 		if (opt->opt.srr > opt->opt.cipso)
+ 			opt->opt.srr -= cipso_len;
+ 		if (opt->opt.rr > opt->opt.cipso)
+@@ -2026,11 +2030,12 @@ static int cipso_v4_delopt(struct ip_options_rcu __rcu **opt_ptr)
+ 		memmove(cipso_ptr, cipso_ptr + cipso_len,
+ 			opt->opt.optlen - cipso_off - cipso_len);
+ 
+-		optlen_new = cipso_v4_get_actual_opt_len(opt->opt.__data,
+-							 opt->opt.optlen);
+ 		hdr_delta = opt->opt.optlen;
+ 		opt->opt.optlen = (optlen_new + 3) & ~3;
+ 		hdr_delta -= opt->opt.optlen;
++
++		memset(&opt->opt.__data[optlen_new], IPOPT_END,
++		       opt->opt.optlen - optlen_new);
+ 	} else {
+ 		/* only the cipso option was present on the socket so we can
+ 		 * remove the entire option struct */
+
+base-commit: fcc00b15cb21a6de76826e5012b2c758505f5e65
+-- 
+2.54.0 (Apple Git-157)
+
