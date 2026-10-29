@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793292700;
-	b=Xanx+xJVKEMjxOu43Vnf9O9hTSAWo2YROLN9G9aOdTo1s4oUtipNrX3Q9OvX4OrC5LwL
-	 CSzdHixd0cv7LGbiNYs5ZZ1OzbrJ+nEhWQtvq7uUc3ESD4mGcL49UKQc4DjdFkIAdIoKo
-	 vucCgLMgEEHihGqVK/neykNtHJtdaLN2gGIhWXgRA3JNBMuXJatNqY/bBYDaQYT2bRHQd
-	 1NE3RxM2RMkd2s3d/Pexi4HmSTs8yMmnOmu2yZ9S5lvlzyjiZTbajUTOD6JK/IoXztzuc
-	 q3kgd8tpMg8owGtXxztsJoax6WKJBGA+8Cyp7xCFJKRxHd5jbclb/8iCz8E069lV9Ug==
+	t=1793292904;
+	b=Mds8VXOnB8luEBJqscVm1TzA+m8yaSS7HmJ9XcCVvgoDmWxrBAHBR/AFV+VTQ9poZBro
+	 nKjemay8vQDUk2jTlX5/lXVLgLaPVnQjIlrG3V4m1ISdcLrNXfKgU0nF/BIpFwJ6KsDeX
+	 jDD9zQ17Uw6p5souC7cf+dOtgRY8+tQWipdbDGEJDpfebbNfd1FfeG9d8fPo5TzCOUDU0
+	 /2oBMJRG481PwHbZa98tL4Wg3wTHitUXivfLbAo1BcBMG0vKVnb5JRbC78I6zbXbwOyIw
+	 9DOYpMHFvVFtz9H1QdKUoM5qhizstT84jiz5xnHq37VpAcJ1QqTvoKRy7pxaW9CVOqw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793292700;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793292904;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=EQL0pSt7d6hywKYhBcS2ooXsaH0oFWsdM0MVyh7A410=;
-	b=b9HmD8tGk2FbJfihTBmcv6Xo6Ruu3FjcD2mTRzs1JMFIbcaKvDfp5HEQfGnCWklyJqvo
-	 aA7Gtsu930Sw5A2VkilAlHRjg2dxd/af+W7MuBXk5KrWG2V764M7k7GE3TuiKomlyFWBe
-	 aDYUVVmR8GTBl0aPrT88q5tS1p87qYvo1aaPA2zMzlZw9YU3sLTH6T01tsgWCNYJ/NfWy
-	 1uG+g5egBtJuOYrhvGY3fjhaQS9yH/avbngxB4sL5kq+DcVCcQwcMIlB/HiAFeNerpPnP
-	 vs0Q1iJ8tdqcJM/zOTATniK689S6Y8Qv6+sQjO0eycFJTbbeubLaRP9dlnIi4nWwsDg==
+	bh=yHLa5e9OKQhgmCf9w2Utndr5LZC7/sNj7rvw/iATWcs=;
+	b=phObVBSJ77+5MZhAmRYs+vnxz+0oPbD1VAYoeCi1vkrkM7zWdVMEmLOp5XeRAaU0k28s
+	 0Io6If7FmaU0drcHb5R93PyXxGmvlwXt/Xhtkp8wNQbXY4Yh4OsYvLiif01WAyUFdCmPV
+	 YMktvtZwvsbj3CHtVv/e3OeeXWgxUog07boBlJvu5j/DX7aXpGV4SA1OtXGVQLEzTcwKQ
+	 NqGdGtKyC8mhj6GZlB1Wa0mSpAX1EZ8cDaKaEOEFPUvEUVzLKGNCfNWDi6NQe7He9QHZN
+	 AX2UN6AUhj68Iq/Y05xNJyUkbsqjwHXzepuy6CiAhYThmd/+g1VeAoA6+CrIo4ecU7g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C+yJmkuk;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BOsUUd7r;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDFF606A333
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E559E606A31F
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C+yJmkuk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A95F1F01825
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:51:39 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BOsUUd7r
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD03E1F031E4
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 16:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793292699;
-	bh=EQL0pSt7d6hywKYhBcS2ooXsaH0oFWsdM0MVyh7A410=;
+	s=k20260515; t=1793292903;
+	bh=yHLa5e9OKQhgmCf9w2Utndr5LZC7/sNj7rvw/iATWcs=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=C+yJmkukF2fLAGmR1e+JRLazsBpZ9E5KmzdUkug+2rHe2OcumrTchKVDXpBoolPlw
-	 KhxuPiqPXd5d8iAwbkWQje6twNzCrD9feDvfbmNb3m2kR7UXI5jDQXQjIOlWPXUsdW
-	 q10545+JUObYeSkASzF9RSfm0X/HyntvDxb3x1eOgqsfMPbgDdCwOfDBb0uW3wW+Oi
-	 OkUjavM5M5TQp8EOShmjvwZfjcvEUp9mi0g8YeytkCi/pmgGoMk5s7iIDUEV4G2367
-	 b2m94N03Yzy7uQGM+uhGWMTyf/5M29j+nLYLhQuUlCjY5IU3dCur23WdfaUpnGH8xL
-	 Sx/8QCqFohGJA==
-Message-ID: <sashiko-outbox-189685@kernel.org>
+	b=BOsUUd7ro1uJk/Wz4vGJhClEobTpJg5p6ga4bekhtvQfkPiw9745Xn5O/LgV4nl5F
+	 yH5r2cgxxJRjwzgSiV/xxzHKqFeGQ9VVo8FL+lBPsdoxn1dKrqJWACavxAl928oHwL
+	 U/oPbeNC+g5XNgEt+4SereZsC+Ca0PQsRf1poN0Airm0Cc8MHH5sZBz49+nYdj8kaj
+	 HXz16hksGOl6gLwzSeD4yHfqguoXR1E7MpUli4IGGqA9HssrD60o1YbF9Cl8498iNV
+	 Ibl9dnorORNpZQhoQXywtrX7YBmDXQN8ry/UvOVG+6sPxZyKSkEVmNwmwmPYHhRIGN
+	 5GXE4qMHu2XYw==
+Message-ID: <sashiko-outbox-189690@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 4/7] ns: allocate the namespace id before the
- namespace_init hook
+Subject: Re: [PATCH v2 7/7] selftests/bpf: add a lifecycle test for the
+ namespace LSM hooks
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261029-work-security-namespace_free-v2-4-65591dbba7b3@kernel.org>
+In-Reply-To: <20261029-work-security-namespace_free-v2-7-65591dbba7b3@kernel.org>
 References: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
- <20261029-work-security-namespace_free-v2-4-65591dbba7b3@kernel.org>
+ <20261029-work-security-namespace_free-v2-7-65591dbba7b3@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 29 Oct 2026 16:51:39 +0000
+Date: Thu, 29 Oct 2026 16:55:03 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,31 +60,25 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Currently the namespace id is allocated only after __ns_common_init()
-> has called the namespace_init LSM hook. Most namespace types allocate it
-> in ns_tree_add() right before the namespace is added to the namespace
-> trees. So the namespace_init hook always sees an id of zero.
+> Track new uts, ipc and net namespaces from a bpf LSM by their namespace
+> id and check that:
 >=20
-> The namespace id is the only identifier of a namespace that is never
-> recycled. A bpf LSM wants to use it to track a namespace from
-> namespace_init until namespace_free, e.g., by using it as the key into a
-> map that associates data with the namespace. The inode number doesn't
-> work for that as it is quickly recycled.
+> - namespace_init already sees the id that NS_GET_ID reports
 >=20
-> So allocate the id in __ns_common_init() before calling the
-> namespace_init hook. Every namespace then has its id by the time it is
-> added to the namespace trees. The initial namespaces still get their
-> fixed ids, either statically from NS_COMMON_INIT() or for init_net from
-> [ ... ]
->   after:  @[set]: 200
+> - namespace_init, namespace_install and namespace_free fire exactly once
+>   for each of them
 >=20
-> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-> Cc: <stable@kernel.org> # mainline only
+> The test fails if the namespace_free hook isn't called or if the
+> namespace id is allocated after namespace_init.
+>=20
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
+> Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+> Tested-by: Daniel Borkmann <daniel@iogearbox.net>
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261029-work-secur=
-ity-namespace_free-v2-0-65591dbba7b3@kernel.org?part=3D4
+ity-namespace_free-v2-0-65591dbba7b3@kernel.org?part=3D7
 
