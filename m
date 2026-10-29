@@ -1,100 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.177
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793288981;
-	b=br3TfOwbFGIUvMNcXMVIxQzG7cekZUIKG73I9SQvt0Cgb7U2GDLO3+3RDfukWZJGgFYh
-	 HnthL/9BbhglmlJpSjXqktazukZaI+93PhyOCCUsmicJWDi9EfiedFJm/O2mx170+caZM
-	 3egZrrlrKTSk/jHe17Hrzm95rIdt8Ye4XhteQgvOHyf9bktW4PFpZmmaER4swyX3teh3z
-	 UWa+22aQeh+xKFLNvnt6Aj38wj5bL+yfcJGpZw9D6fbe3W6XERNyetPrz133o0eZjtAyA
-	 P3yfrH1/9qlcna0Rk49ktlR1sKLxRPDcl7XiPHdkbFBexHbTpMhJLUP+Kb4YTanSRuA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793288981;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=/khPgYt+Z8Eyq72Gf1KS1mgbVWdyIQPBrR+ezojWw9k=;
-	b=CL8WThCX43hxk1HlZzlH34rGdFVb6mQ2qUnWj0GZFhHSUwKUmyVgdQjkasTA1xgHscRN
-	 kZydNJk8M56J4izWeSAIQ4SUP6hvknl2fYM9r4Vr/FUe8RRHGMnU5328G1J3eSP7AkK25
-	 TSYMhNhtWMnB092KOeROdo+Oo/TI0XAkwrAlNRQ8HylJvCzP+AQvPALBvGS+DATx64laR
-	 t3jkSl9BPGgrPtBmhkiTJfqB8YGeD8Kc4zch7VlWYVp8qA9khpJKpIx6xE6CkWc+oWXeY
-	 yd3vyHgRPE8mtZfAtOJEwtR9sw0fwD0IZdBtd1LBsLOZuGZgpCHTistUX0otRJVLm9Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dcAaee+S;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.177
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793289321;
+	b=rcsnti1n8Fv+10fYM1P38j6M9szpIAb4aBr5NAtFAqilWoHJptgnyUdhNavFmJrEflx1
+	 eaS/JX2Z/evJQh7hsyVOZYptbcA6QViNdnJbF9FPBGGi1gxA78X8PP75evnB+vzVWzwAD
+	 4gaYSyuUIYxBhbK0OplVbokUUxgR74qlruQJWvLgdjQBENJezTMBoAARrmJxWcq4cJ6Nx
+	 U75apfgG7oemmtzoKzwFWYwJlKuDvcZFDl82Ks9bll09rR1QwEiIuxhy4aMA4BGhCCxJC
+	 4zjJ0kvdgNcogGt2+Lem5quzVQyPYmo7wFviunax9I9glJKfo4SYW4ZOBR+Xkn50KdA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793289321;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
+	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
+	bh=ou5xTWnBV4IN8d+IMd9GAiVukG3GtoBdPbXbect3Eic=;
+	b=n9hMS9y41vZWfI/jXRFmF6eb2KOVHqj96uRDxitiG7ooA2AfEdM+p0996MxmrL80e4H2
+	 ZB/ULSkuhXfosQfhGqwWLEZ7KFJjUIlr0p9F2bZ8b//84pHiEGmqXDM1B4R8SubxWVU97
+	 R948aZUfu+LTuLbHo5CVyslMO/jEYI4c62c9oqskyPxWnbcvvQ4ExMdIaCZUSNAwaKyIt
+	 XJh15G/VjnzU3a3CeTgmozyndsVeM2lMIy1P1Uvr53/xzF/U9Oiv0uKQ8A9g8hpcKoGmr
+	 Or7LS3psjaXRoOdiSLx/qSifkkCjGqjqdOiFMGu8+2xJfNc6SZalaqg/20Si2QZUqxQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=nL4x2PA8;
+	arc=none smtp.remote-ip=210.118.77.11
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB21A606A31F
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 15:49:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CB21A606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A7E606A31A
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 15:55:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68A7E606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dcAaee+S
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-8ab395abf79so21322237b3.0
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 08:49:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793288980; cv=none;
-        d=google.com; s=arc-20260327;
-        b=MKGexXhqhpNjL/KYJFKmXrP8mqb+3JZuyPm++GSozx0Q2h0pnKBrE8BAUU2nn6n/zI
-         4Hv21ndtbMRlYc4BYfOi5fiVjrovV6nQSNVUTHkVdy5c7SreFQo/TBFccGrMnQOhbCDC
-         R33hEuxKZTfPCYtaUFC1IWHjr9vUrzVkLMFUgTUmXzribJ/t/CeLXcjbltwMEmUI97cM
-         IqhCQ9KJayLdMZ+jrHvA6cvVucaYO/NB2F5ZSV0b0IqCXRVZZ/1uohNZv9oI4A2ECdFf
-         nF1VOsN38228ZL/T0T662u5AOQUjMONPDVZFNys2rdTwvcPGBjLEFIaQHBtESTtjq3r1
-         nYMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=/khPgYt+Z8Eyq72Gf1KS1mgbVWdyIQPBrR+ezojWw9k=;
-        fh=Scvw0pj8S4x3J2UADhfMufxdBP7YfcTDrOH7LbuBkXc=;
-        b=r733oHeT/vTUq4fznGVjxnNfE1Zq0QSjQavZmM59075ESu5D9SFJYZPO4x8AsJeJwM
-         XqUF1+AHek8LmrP/K+hA7L0gfwmV+e2WlkKQlUMDNiI5oBmBy+tO651xYCM8yIYkp74o
-         +2PPy0tHESvYv1LghPcUoGYqZhJ1pWqFYgf9Xwe3L/9duMoZ8vWnSr82F8BUYD5oRka2
-         N4eOZPY5Bd1uEwV8/zn4n1kgHYJhqVEQ911llAM6s/yjHMYVblXBGCH0kzmKCIQ1zpLA
-         TlWznbbmMmIqc9CdlCuH6h7DEDpFbA+tiTa0UikGXapXhp5ZGwX0lKgLXKrMvEz0Jux4
-         2c/w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793288980; x=1793893780; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=/khPgYt+Z8Eyq72Gf1KS1mgbVWdyIQPBrR+ezojWw9k=;
-        b=dcAaee+S80BXfYgGuIWlMPBosR9i6QOVqlb3vY8l/9iLrOGFm4+unNUDtzGxGKyFok
-         12itqDDa4OKJG7gxl5X0/Z5LCZ5XMw0rWJ4xOU0k3c4iJ6cNbZgfgoRMJe6YaOpNHua1
-         lV6h4ZR37JaIght9Dl3mG0pPKgqN9UvyZVpy+m8yUwT8n4UtUsVM1dvkwKjzDUnG2PfT
-         YxPF+I4avo3XTgDKQyFs4LDafCmkMUjLyVIW/AOR3KxufhBpfK0ADP3CHeEY5YwlL1Ax
-         yy1ZevKVxXWeX95dN/+heiR4nSOxEhBPanoY6PJM7ZVxGbgFyY6FgcwO2mGaqagjj674
-         zrkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793288980; x=1793893780;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/khPgYt+Z8Eyq72Gf1KS1mgbVWdyIQPBrR+ezojWw9k=;
-        b=DNmNeTSEgkkh8inX33wKlI7C1cq4nciFsGrz17h5b/xhzryhDaBCk+LawnSSPtWqpF
-         R04q32RabmPDjo2/m05zNjkZyDQJm9Hd3DgUWU7Icx9GyavHdeeI4QcBdSzlbg2jlFy8
-         DDDdcfmxIQTnhsCLyO98jgOhHqpFsrxrDXUGPgprHupj1P/UJ9L7rHKsg0xs68DrQC7r
-         z/BeLY70Dh2+Hx9ZI99TwEpZXKMBFWgiFDIk2FJGppbngUWkf1QF96/PzfJZzXzKf5lt
-         A++TvVNadiYUjNnP3CV2ER6DzzCT4CF9fuuQee6ltPamRFdhm9CHY8zM5Pqq/dESRoaU
-         3U1w==
-X-Forwarded-Encrypted: i=1; AKwUvBxxWi3U0uZm3Aed5XAxDSfGmXpCCG57yfA1zl7+RdodwJJ+UumQgI+agX+OGp0e0EPlq8XJb+aXnJXGVSQNJc9yrnPMLXg=@vger.kernel.org
-X-Gm-Message-State: AFq9FYK8pZIhu8TJ/cUpUWVdvH2neEfgbRuUoekk0accB5e9zOxNasg3
-	FaWpgQg5YaZAz8C3Q0A4yu0mBzF4iajwHqPtBRs7WamTkYb4jxp0tZ2nbuoi9Nm5rsldNgRw6BN
-	8eaxsiyO+o0nS/Tt1jmP88+J9xjMj5mo=
-X-Gm-Gg: AYBFou3xTyn54Oqd+0MKs6Y0BK1L1k+PELVn4JCGYhTYge3Th8RupFgIbyaTKSHBNOM
-	FWYg0Fek84fgD90AMeOY7oydDtOH+vFnsPtvfVUsXP5KcYP5NBCj4cdOR45POD3Zfru33+tmEPu
-	YaHxNcs8cwUle1PsLJAo3yroy9eja77xaziiwF/Dm/rmU158h55cmiVbZ5S9qN+5RHzIpUMp0e7
-	R7QKGq698CXiWQrco0JybhLoU1Or+9jnv5nwxd3RPoVCmAfNt7C/2hmeXY7cAT+s3muVSW0rDO9
-	Gaas+/vLXVjlK2uIOmEAmEEm+HPg+3VOldyi6R+k5469LBlky1+QCI2Erz8Ic/y6JoUy+idzZwG
-	2JO/AtOhJt60E65HruIqJJnPsYeI/Q1uddtscc0lqySrP18c7CO9sqg7sbMsf
-X-Received: by 2002:a05:690c:38b:b0:8b0:c71d:2b2b with SMTP id
- 00721157ae682-8b1b5d115f8mr52613777b3.45.1793288979677; Thu, 29 Oct 2026
- 08:49:39 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=nL4x2PA8
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261029155517euoutp0181b577d26b5d5123fd3597f4ea496f85~jCyIQ-E310044800448euoutp01K
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2026 15:55:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261029155517euoutp0181b577d26b5d5123fd3597f4ea496f85~jCyIQ-E310044800448euoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1793289317;
+	bh=ou5xTWnBV4IN8d+IMd9GAiVukG3GtoBdPbXbect3Eic=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=nL4x2PA8l2G1PO47jroQ4w1feEx3uKYifRJ0PABquDh6ARmN+BcH5zbxZSMUTduvi
+	 R1n9+CxS+v0PWMkqPW2G3vqlH17SKqV/c0+wX7Ua+9PEPxiZ1jXyMB5Hqe0s8TM2iT
+	 CCQsv4P2hlNcQig261CMa7lrrZo53dtwQZBVoPrk=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261029155517eucas1p25b05b501c3f6a8c9b58c145898f6e76e~jCyH7dGSK3165531655eucas1p2J;
+	Thu, 29 Oct 2026 15:55:17 +0000 (GMT)
+Received: from AMDC4817.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.132]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20261029155516eusmtip174458744fa8f16b95384d9440e432d5d~jCyHUDtKN0633306333eusmtip1S;
+	Thu, 29 Oct 2026 15:55:16 +0000 (GMT)
+From: Mateusz Moscicki <m.moscicki2@samsung.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Mateusz Moscicki <m.moscicki2@samsung.com>, Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+	<serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, Miklos Szeredi
+	<miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+	linux-security-module@vger.kernel.org, linux-unionfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Karol Lewandowski <k.lewandowsk@samsung.com>
+Subject: [PATCH] smack: do not override the subject label in overlayfs hooks
+Date: Thu, 29 Oct 2026 16:54:22 +0100
+Message-Id: <20261029155422.578322-1-m.moscicki2@samsung.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,47 +74,219 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <pm-keys-update-type-removal-20261029-v6-3d92b2f9693854230a02@gmail.com>
- <auNGzJIWFt64IMWY@kernel.org> <CAFRLqsXdUfqvNyzNpnz=dvgtHrVyRhYoZqt-CQUo98HW7BtNJA@mail.gmail.com>
- <auNghmbNdKLQ2hmH@kernel.org>
-In-Reply-To: <auNghmbNdKLQ2hmH@kernel.org>
-From: Cen Zhang <zzzccc427@gmail.com>
-Date: Thu, 29 Oct 2026 23:49:28 +0800
-X-Gm-Features: AclHuK_tM2GHZqt-tCPoNWRLY1HXoFFSXOkHSMBhJQPhDESUOrTm0WDe9EcLL1A
-Message-ID: <CAFRLqsVKXJxqpPCj2od3AxnbuEa2Y6PMz00kgAq83pMH5Rchmw@mail.gmail.com>
-Subject: Re: [PATCH] keys: Protect the update method check against type removal
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, jjzuming@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20261029155517eucas1p25b05b501c3f6a8c9b58c145898f6e76e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261029155517eucas1p25b05b501c3f6a8c9b58c145898f6e76e
+X-EPHeader: CA
+X-CMS-RootMailID: 20261029155517eucas1p25b05b501c3f6a8c9b58c145898f6e76e
+References: <CGME20261029155517eucas1p25b05b501c3f6a8c9b58c145898f6e76e@eucas1p2.samsung.com>
 
-Hi Jarkko,
+Overlayfs performs operations on the upper, lower and work directories
+with the credentials of the mounter and uses the inode_copy_up() and
+dentry_create_files_as() hooks only to let the LSM choose the label of
+the inode it is about to create. Smack implemented both hooks by
+replacing smk_task in the override credentials, so the label of the
+copied file, or of the transmuting directory, became the subject of all
+access checks done in the underlying filesystems on behalf of overlayfs:
+the lookup and creation of the temporary inode in the workdir, the
+rename into the upper directory, setting the overlay xattrs.
 
-Jarkko Sakkinen <jarkko@kernel.org> =E4=BA=8E2026=E5=B9=B410=E6=9C=8829=E6=
-=97=A5=E5=91=A8=E5=9B=9B 23:04=E5=86=99=E9=81=93=EF=BC=9A
->
-> Yeah, overall I think this is improving and that's why I'm nitpicking
-> stuff. What I would wish that if you could hold with any other fixes up
-> until we've got the previous fully addressed.
->
-> I mean submitting a fix trial that is not correct is not a problem
-> or wrong for that matter. The problem is that if you put stuff out in
-> volumes with patches in various phases, the odds that fix will land
-> to the mainline tree rise.
->
-> This is exactly what I got pissed of last time. Just wanted to this
-> clear this one up. Also, you can use that on-hold time to re-check
-> your unsubmitted patches one more time i.e., do your job better
-> ;-) At leas for me that is something that I want to continuously
-> improve.
->
-> Br, Jarkko
->
+Unless that label happens to have access to the workdir and upper
+directories, or is allowed to use CAP_MAC_OVERRIDE, these operations
+fail with EACCES:
 
-Thanks for the guidence. I will follow that.
+  lsm=SMACK fn=smack_inode_permission action=denied subject="somelabel"
+    object="<mounter label>" requested=x ... name="work"
 
-Best regards,
-Cen Zhang
+With onlycap configured this makes copy-up and creation in transmuting
+directories fail for every label not listed there, and a file labeled
+"*" can never be copied up at all, as a "*" subject is not granted
+access to anything.
+
+Keep smk_task untouched and store the label the new inode should get in
+a new task_smack field, smk_create, consumed by
+smack_inode_alloc_security() and smack_inode_init_security(). This is
+the same split SELinux uses with create_sid. Labels assigned to new and
+copied up inodes do not change; only the subject of the access checks
+done on behalf of overlayfs does, and it is now the mounter, as it is
+for DAC. The transmute handling added in commit 2c085f3a8f23 ("smack:
+Record transmuting in smk_transmuted") is preserved: smk_transmuted is
+compared against smk_create.
+
+Outside overlayfs smk_create is never set, so there is no behaviour
+change there.
+
+Fixes: d6d80cb57be4 ("Smack: Base support for overlayfs")
+Signed-off-by: Mateusz Moscicki <m.moscicki2@samsung.com>
+---
+The analysis, the patch and the reproducer below were drafted with the
+help of Claude Code (Claude Opus 5.5 / Fable 5.1) and then reviewed,
+adjusted and tested by me. Tested before and after the change on a
+6.12-based kernel on Raspberry Pi 4 and on linux-next (next-20261028).
+
+Reproducer (needs root and setfattr/getfattr). The bug only shows when
+the override credentials cannot use CAP_MAC_OVERRIDE, so the script
+sets onlycap to the mounter's label for its duration if it is empty.
+Before the fix both checks print FAIL with EACCES and Smack reports
+"subject=somelabel object=<mounter label> requested=x" on the workdir;
+after the fix both print SUCCESS:
+
+  #!/bin/sh
+  # overlayfs + Smack: copy-up and create run with the label of the copied file
+  # or of the transmuting directory instead of the mounter's label.
+  # Run as root. onlycap must be set, otherwise CAP_MAC_OVERRIDE of the
+  # mounter hides the bug; if it is empty, it is set for the duration of
+  # the test and cleared afterwards.
+  ME=$(cat /proc/self/attr/current)
+  OC=$(cat /sys/fs/smackfs/onlycap)
+  [ -z "$OC" ] && echo "$ME" > /sys/fs/smackfs/onlycap
+  D=/tmp/ovltest
+  rm -rf $D; mkdir -p $D/lower/dir $D/upper $D/work $D/merged
+  echo x > $D/lower/file
+  setfattr -n security.SMACK64 -v somelabel $D/lower/file
+  setfattr -n security.SMACK64 -v somelabel $D/lower/dir
+  setfattr -n security.SMACK64TRANSMUTE -v TRUE $D/lower/dir
+  echo "$ME somelabel rwxat" > /sys/fs/smackfs/load2
+  mount -t overlay overlay \
+  	-o lowerdir=$D/lower,upperdir=$D/upper,workdir=$D/work $D/merged
+  
+  if echo y >> $D/merged/file; then
+  	echo "copy-up of 'somelabel' file: SUCCESS"
+  else
+  	echo "copy-up of 'somelabel' file: FAIL"
+  fi
+  if touch $D/merged/dir/new; then
+  	l=$(getfattr -n security.SMACK64 --only-values --absolute-names \
+  		$D/merged/dir/new)
+  	echo "create in transmuting dir:   SUCCESS (new file labeled '$l')"
+  else
+  	echo "create in transmuting dir:   FAIL"
+  fi
+  
+  umount $D/merged; rm -rf $D
+  echo "$ME somelabel -" > /sys/fs/smackfs/load2
+  [ -z "$OC" ] && echo - > /sys/fs/smackfs/onlycap
+
+ security/smack/smack.h     |  1 +
+ security/smack/smack_lsm.c | 42 +++++++++++++++++++++++++++-----------
+ 2 files changed, 31 insertions(+), 12 deletions(-)
+
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index deb2ef31b63a4..456f282acc251 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -121,6 +121,7 @@ struct task_smack {
+ 	struct smack_known	*smk_task;	/* label for access control */
+ 	struct smack_known	*smk_forked;	/* label when forked */
+ 	struct smack_known	*smk_transmuted;/* label when transmuted */
++	struct smack_known	*smk_create;	/* label for new inodes */
+ 	struct list_head	smk_rules;	/* per task access rules */
+ 	struct mutex		smk_rules_lock;	/* lock for the rules */
+ 	struct list_head	smk_relabel;	/* transit allowed labels */
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index c243adb137402..7bd63005e9631 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -965,6 +965,19 @@ static int smack_bprm_creds_for_exec(struct linux_binprm *bprm)
+  * Inode hooks
+  */
+ 
++/**
++ * smk_of_create - the label new inodes get
++ * @tsp: the task security blob
++ *
++ * Overlayfs sets smk_create in smack_inode_copy_up() and
++ * smack_dentry_create_files_as(), while smk_task stays
++ * the mounter's label used for access control.
++ */
++static struct smack_known *smk_of_create(const struct task_smack *tsp)
++{
++	return tsp->smk_create ? tsp->smk_create : tsp->smk_task;
++}
++
+ /**
+  * smack_inode_alloc_security - allocate an inode blob
+  * @inode: the inode in need of a blob
+@@ -973,7 +986,7 @@ static int smack_bprm_creds_for_exec(struct linux_binprm *bprm)
+  */
+ static int smack_inode_alloc_security(struct inode *inode)
+ {
+-	struct smack_known *skp = smk_of_current();
++	struct smack_known *skp = smk_of_create(smack_cred(current_cred()));
+ 
+ 	init_inode_smack(inode, skp);
+ 	return 0;
+@@ -1030,6 +1043,7 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     struct xattr *xattrs, int *xattr_count)
+ {
+ 	struct task_smack *tsp = smack_cred(current_cred());
++	struct smack_known *skp = smk_of_create(tsp);
+ 	struct inode_smack * const issp = smack_inode(inode);
+ 	struct smack_known *dsp = smk_of_inode(dir);
+ 	int rc = 0;
+@@ -1051,12 +1065,12 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+ 	 * If equal, transmuting already occurred in
+ 	 * smack_dentry_create_files_as(). No need to check again.
+ 	 */
+-	trans_cred = (tsp->smk_task == tsp->smk_transmuted);
++	trans_cred = (skp == tsp->smk_transmuted);
+ 	if (!trans_cred)
+-		trans_rule = smk_rule_transmutes(smk_of_task(tsp), dsp);
++		trans_rule = smk_rule_transmutes(skp, dsp);
+ 
+ 	/*
+-	 * In addition to having smk_task equal to smk_transmuted,
++	 * In addition to having smk_create equal to smk_transmuted,
+ 	 * if the access rule allows transmutation and the directory
+ 	 * requests transmutation then by all means transmute.
+ 	 * Mark the inode as changed.
+@@ -4974,11 +4988,13 @@ static int smack_inode_copy_up(struct dentry *dentry, struct cred **new)
+ 	tsp = smack_cred(new_creds);
+ 
+ 	/*
+-	 * Get label from overlay inode and set it in create_sid
++	 * Get label from overlay inode and set it in smk_create.
++	 * Keep smk_task, overlayfs accesses the underlying
++	 * filesystems with the mounter's credentials.
+ 	 */
+ 	isp = smack_inode(d_inode(dentry));
+ 	skp = isp->smk_inode;
+-	tsp->smk_task = skp;
++	tsp->smk_create = skp;
+ 	*new = new_creds;
+ 	return 0;
+ }
+@@ -5004,10 +5020,12 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ 	struct inode_smack *isp;
+ 
+ 	/*
+-	 * Use the process credential unless all of
+-	 * the transmuting criteria are met
++	 * Label the new inode with the process label unless all of
++	 * the transmuting criteria are met. Keep smk_task, overlayfs
++	 * accesses the underlying filesystems with the mounter's
++	 * credentials.
+ 	 */
+-	ntsp->smk_task = otsp->smk_task;
++	ntsp->smk_create = smk_of_create(otsp);
+ 
+ 	/*
+ 	 * the attribute of the containing directory
+@@ -5020,9 +5038,9 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ 		 * providing access is transmuting use the containing
+ 		 * directory label instead of the process label.
+ 		 */
+-		if (smk_rule_transmutes(otsp->smk_task, isp->smk_inode)) {
+-			ntsp->smk_task = isp->smk_inode;
+-			ntsp->smk_transmuted = ntsp->smk_task;
++		if (smk_rule_transmutes(ntsp->smk_create, isp->smk_inode)) {
++			ntsp->smk_create = isp->smk_inode;
++			ntsp->smk_transmuted = isp->smk_inode;
+ 		}
+ 	}
+ 	return 0;
+-- 
+2.34.1
+
