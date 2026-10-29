@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793292082;
-	b=e6blD2IM0LKdUuEZZ50E8WzTTifHBi1+djBrrtuWTBFFOV6JRVrR5IWPCE1SKwDHss+M
-	 doEYvGRwBoKg2ZHbiPm9DJ12cZ41YzIBMS8tMzhwkP6bVZ6mauJQO5NL/IDU9vb3pV1Fa
-	 2t8bXQMvQX+4CsZX7J3f20jvkvzRCl9Sp8PH0j3Mqg9Xvpydwes3kMGFPM8J5xm6wC0Qe
-	 uHUdvE9lLGafR54tL0NFopkWFQOoFJg1oki14knq4ML9vQnzE6ac/B0KlfGV+65woVddW
-	 yKnvk9WwDlo5NcfN06KyrlQfyU9PzYOgbANpIelCzXImKgPVBNicyk9KDU22p/9j92A==
+	t=1793292079;
+	b=z35TORQvs+BOqrCT4gv+fSsmDPoQAdFepSH8Ytbk7PkgSoKG6Vl5FyKMWI6B/TeVZtbQ
+	 bPklpIdx/yQYgkaCnbJ8SVWvEFPpTH9NuGx4l2WVB541QJEsrLPMUyfDtQOq52r5tudHT
+	 oWnsF3BBeSl8UPaxtLwrs1zdeXQZpP1Xx5tupmx4noUfC+BQTwUo28eUkfo9c0g315wLO
+	 1etQSHQBlSGVxERo5mhpQnnNYmk7k9n7uMPnWQtzuK3Xfna8mdCHsUkOy3maaZjZfmk6w
+	 grkB1AWfjzLwEvUOpHwUxQ5G9lZ5vRI3ah4qXfl0VCMSfaS+mSG0RNX+POgnu03sLZg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793292082;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793292079;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=7Iq8GmvsP83miesExRhF0MVSUGMSngUM8Yu28sJuMzw=;
-	b=4ysBgnHMMkwZZujAOk5lPs7BVwzURFjC1i4Hlc6S5HuPNn6/N2GBc5DUpIcFcNQsNiDf
-	 7uDjQUL95Qf9cMurXb9SwG+iKzLKPq8taCWYcunheqq0ZO50BnFJBDablRSlL4DEcEIuA
-	 /YA+WEsinN0+jRueXeKZn6qOVS+f37MVhEn81yCV6XPZBPY0lfH7uJSg8pezZZBaUWFao
-	 rXkAz3QMm3C7+Vf/GghdBeQwYBWVVMBMZCSajWdVrwd3duR5cTv38C9eOw5oFUmPk5nUe
-	 t7XZgii7tDEtfpQbVIWZlz4jlVuCcgwfovDRMtIo5OR69JkSPG6T7ZU1uPUbEzpHdaQ==
+	bh=kIACSg1GN4/Z1pmDBSV+ZT7hHzXLk1muYGH0ic4mbA0=;
+	b=AChYUGhM2ZHlMH9DhtymoJ3T7c/5qlaE3jB5PIfdY6WhOjFEbhswG+DdYpZSAeIcCI+b
+	 rixF7FfgfIiCMmf3oj0IW4WFgfrHSSLKgRK9C9Z091kFEdg24FGnHdLw7Bcd/maJ8PQTk
+	 DKzcPVmQhxVus31g/sQpkwdMmnBq51RrMRJyN7UAeTWXY+A7d5dZTO+0G/aNF7OiZdk+E
+	 SdWg7Q+CuI/i/8YcHlySJz4xsu9sejU+QxoNnlZDFqImQPo49cNFbyHbtUzSD5taLi4Fg
+	 TvnVzC9YEGT7WxhAMmRmSr0An28FRkWaZk9CdCkXMbNsYdTrAos+2PjVnp/wbNQzhvQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nhehmZlP;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AIv5CIvy;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CD2606A329;
-	Thu, 29 Oct 2026 16:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nhehmZlP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80C91F01816;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC663606A32A;
 	Thu, 29 Oct 2026 16:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AIv5CIvy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3DB01F01824;
+	Thu, 29 Oct 2026 16:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793292081;
-	bh=7Iq8GmvsP83miesExRhF0MVSUGMSngUM8Yu28sJuMzw=;
+	s=k20260515; t=1793292078;
+	bh=kIACSg1GN4/Z1pmDBSV+ZT7hHzXLk1muYGH0ic4mbA0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=nhehmZlPmBl2i/ZSRdSd4RptwD4JlsOBuyFYjmxI1Hb79rq0LxoOCcfhcY7oq8xnI
-	 QWq0ZHdi0WxuVU/rrKrYK3s/fxYIYgGeTYv5Orbq9o7KCNrkO/eG7+Zuu0WKHzHq/a
-	 nAb6s8JUvFS7IZFzRO5cz4dYCARgoFWG+aL7Je/uN3qWryBK1ubZGLlKJ0PmQmrssy
-	 PyxIitR9jRyRxyG8LjotKejPRGINouT/UooodfyX5uBVfQrRsRBHwH7jGmCm8z0BLJ
-	 QM2cNBYfTWWAW6Ia6UHPi4DKKHc2ssbLMoWAKMQRSH83kvrjtM+W1Hxq7Q5D1ANYp9
-	 Boz8KkECxdkeA==
+	b=AIv5CIvyvNfsrxKRklpWYRMnTPnlYr6KJLKVGVWmlBg8XQrT3I+s1xn7dSZq6TkIb
+	 y2jGaOZHkddAxee1QExDx3zc356q27iDokQThCAP2TflaV3wf+yClRNLM+eepLkRUS
+	 BjMpq4a2Hq78GbRS+LgcWGYR0blzE1rNmklJC04fI0f3sTVpt5/adMAoh9w/omXfbB
+	 3+qSIMSkRY+o3uToowP4jDDrNlydAU9zQ9f0djSOlnvV4JC7rVo+dM7Hch+Go2Ml6N
+	 3sJagZGrl464IOHBaejtfUMoJhOSp0dQc7pZfN+anQmMnsyrLJ8hXljubl3a923SQQ
+	 klC36KoQDzfig==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 29 Oct 2026 17:40:59 +0100
-Subject: [PATCH v2 4/7] ns: allocate the namespace id before the
- namespace_init hook
+Date: Thu, 29 Oct 2026 17:40:58 +0100
+Subject: [PATCH v2 3/7] selftests/bpf: add verifier tests for the namespace
+ LSM hooks
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261029-work-security-namespace_free-v2-4-65591dbba7b3@kernel.org>
+Message-Id: <20261029-work-security-namespace_free-v2-3-65591dbba7b3@kernel.org>
 References: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
 In-Reply-To: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
 To: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org
@@ -65,315 +65,136 @@ Cc: linux-security-module@vger.kernel.org,
  =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
  =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, netdev@vger.kernel.org, 
  Linus Torvalds <torvalds@linux-foundation.org>, 
- "Christian Brauner (Amutable)" <brauner@kernel.org>, stable@kernel.org
+ "Christian Brauner (Amutable)" <brauner@kernel.org>
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13208; i=brauner@kernel.org;
- h=from:subject:message-id; bh=AhZa7Mwzf0t0RDNWjCFCmD+tzbn+O4LtavTzDfv4hQk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ9Lpc/dyLwzAIWjqx1pZu3h9lEVAb9mZx0/sOjKS0Nr
- 7kXNX3c31HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRSxkM/7M27RJXvnFgZfTC
- w3Ms1cKOnF8Xvah8rdT5yzoXLLp7HqoyMlw03Ze2X7x2U7VGd5FY9qpntz+GPP/wVizg5marT1o
- 2TXwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5058; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=D7Bu3xuEXKU6T6CnrKC+mtAnsa77aiI5K6zZtrV1+0E=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ9LpfPdJ1RUB0uupeFVyBG1TZp6/ddd3fvqHuhLVdy3
+ 8JD5s/6jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInMW8Hwz4w3qG/G2bk2zy64
+ Vc+Ov/vMvrurmsHc6PiVGYpFPvxqdgz/7Mv/rAtTenpqU0zuzbDmtGDxE2f321zy6phpsDf3WPU
+ XRgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Currently the namespace id is allocated only after __ns_common_init()
-has called the namespace_init LSM hook. Most namespace types allocate it
-in ns_tree_add() right before the namespace is added to the namespace
-trees. So the namespace_init hook always sees an id of zero.
+Add a test kfunc that takes a trusted struct ns_common and check that:
 
-The namespace id is the only identifier of a namespace that is never
-recycled. A bpf LSM wants to use it to track a namespace from
-namespace_init until namespace_free, e.g., by using it as the key into a
-map that associates data with the namespace. The inode number doesn't
-work for that as it is quickly recycled.
+- namespace_init and namespace_free arguments can't be passed to it
 
-So allocate the id in __ns_common_init() before calling the
-namespace_init hook. Every namespace then has its id by the time it is
-added to the namespace trees. The initial namespaces still get their
-fixed ids, either statically from NS_COMMON_INIT() or for init_net from
-ns_common_init(). So ns_tree_add() doesn't need to allocate an id
-anymore. Ids are still handed out in creation order so mnt_ns_loop()
-keeps working. Mount and ipc namespaces already allocated their id right
-after ns_common_init() anyway.
+- namespace_install arguments can
 
-If creating the namespace fails after the id has been allocated the id
-is simply never used.
+The test fails if namespace_init and namespace_free are treated as
+trusted.
 
-Landlock logs the namespace id when it denies the use of a namespace.
-For a denied namespace creation that used to be zero. Now it's the id
-that was allocated for the new namespace. That namespace never becomes
-visible to userspace but it's the same id that other LSMs see in
-namespace_init. Update the Landlock documentation and selftests
-accordingly. The selftests can't know the id of a namespace whose
-creation was denied so they only check that it isn't zero.
-
-While at it, drop ns_tree_gen_id() as it has no users left.
-
-Reproducer, 100 user and uts namespaces:
-
-  bpftrace -e 'fentry:bpf_lsm_namespace_init {
-      @[args.ns->ns_id ? "set" : "zero"] = count(); }' &
-  for i in $(seq 100); do unshare -Uu true; done
-
-  before: @[zero]: 200
-  after:  @[set]: 200
-
-Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-Cc: <stable@kernel.org> # mainline only
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Tested-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 ---
- Documentation/admin-guide/LSM/landlock.rst |  5 +++--
- Documentation/trace/events-landlock.rst    |  5 +++--
- fs/namespace.c                             |  2 --
- include/linux/ns_common.h                  | 16 +++++++++-------
- include/linux/nstree.h                     | 18 +++---------------
- include/trace/events/landlock.h            |  3 ++-
- ipc/namespace.c                            |  1 -
- kernel/nscommon.c                          |  7 +++++--
- net/core/net_namespace.c                   |  2 +-
- security/landlock/ns.c                     |  3 ++-
- tools/testing/selftests/landlock/ns_test.c |  7 +++++--
- 11 files changed, 33 insertions(+), 36 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/verifier.c  |  2 ++
+ .../selftests/bpf/progs/verifier_lsm_namespace.c   | 38 ++++++++++++++++++++++
+ .../testing/selftests/bpf/test_kmods/bpf_testmod.c |  5 +++
+ .../selftests/bpf/test_kmods/bpf_testmod_kfunc.h   |  1 +
+ 4 files changed, 46 insertions(+)
 
-diff --git a/Documentation/admin-guide/LSM/landlock.rst b/Documentation/admin-guide/LSM/landlock.rst
-index 718e0d23ffb5..946f3bf89650 100644
---- a/Documentation/admin-guide/LSM/landlock.rst
-+++ b/Documentation/admin-guide/LSM/landlock.rst
-@@ -73,8 +73,9 @@ AUDIT_LANDLOCK_ACCESS
-           :manpage:`open_tree(2)`, or :manpage:`fsmount(2)`, or joining via
-           :manpage:`setns(2)`);
-           ``namespace_type`` indicates the type (hex ``CLONE_NEW*`` bitmask),
--          and ``namespace_id`` identifies the target namespace for
--          :manpage:`setns(2)` operations (zero for creation)
-+          and ``namespace_id`` identifies the target namespace (for a denied
-+          creation, the namespace never becomes reachable so its ID is not
-+          directly visible from user space)
- 
-     **capability.*** - Capability restrictions (ABI 12+):
-         - capability.use - Capability use was denied;
-diff --git a/Documentation/trace/events-landlock.rst b/Documentation/trace/events-landlock.rst
-index 9ccf2769a2d5..dc5f05a17c2c 100644
---- a/Documentation/trace/events-landlock.rst
-+++ b/Documentation/trace/events-landlock.rst
-@@ -187,8 +187,9 @@ therefore appears as zero while still advancing the ruleset version, and adding
- a member already present still emits an event.
- 
- ``landlock_deny_permission_namespace`` reports the denied raw
--``CLONE_NEW*`` value.  ``namespace_id`` is zero for namespace creation and is
--the exact target namespace ID for :manpage:`setns(2)`.
-+``CLONE_NEW*`` value.  ``namespace_id`` is the exact target namespace ID.  For
-+a denied namespace creation, the namespace never becomes reachable so its ID
-+is not directly visible from user space.
- ``landlock_deny_permission_capability`` reports the denied ``CAP_*`` number.
- Like every denial event, both include the denying domain, ``same_exec``, and
- ``logged``.
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 9f6ec35c7b9c..f81d6a4bc3fe 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4394,8 +4394,6 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
- 		dec_mnt_namespaces(ucounts);
- 		return ERR_PTR(ret);
- 	}
--	ns_tree_gen_id(new_ns);
--
- 	new_ns->is_anon = anon;
- 	refcount_set(&new_ns->passive, 1);
- 	new_ns->mounts = RB_ROOT;
-diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-index c8e227a3f9e2..e8b2bf0da5ed 100644
---- a/include/linux/ns_common.h
-+++ b/include/linux/ns_common.h
-@@ -9,7 +9,8 @@
- #include <uapi/linux/nsfs.h>
- 
- bool is_current_namespace(struct ns_common *ns);
--int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops, int inum);
-+int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops,
-+		     int inum, u64 ns_id);
- void __ns_common_free(struct ns_common *ns);
- struct ns_common *__must_check ns_owner(struct ns_common *ns);
- 
-@@ -41,17 +42,18 @@ static __always_inline bool is_ns_init_id(const struct ns_common *ns)
- 	.ns_owner_root.ns_list_head	= LIST_HEAD_INIT(nsname.ns.ns_owner_root.ns_list_head),		\
- }
- 
--#define ns_common_init(__ns)                     \
--	__ns_common_init(to_ns_common(__ns),     \
--			 ns_common_type(__ns),   \
--			 to_ns_operations(__ns), \
--			 (((__ns) == ns_init_ns(__ns)) ? ns_init_inum(__ns) : 0))
-+#define ns_common_init(__ns)						\
-+	__ns_common_init(to_ns_common(__ns),				\
-+			 ns_common_type(__ns),				\
-+			 to_ns_operations(__ns),			\
-+			 (((__ns) == ns_init_ns(__ns)) ? ns_init_inum(__ns) : 0), \
-+			 (((__ns) == ns_init_ns(__ns)) ? ns_init_id(__ns) : 0))
- 
- #define ns_common_init_inum(__ns, __inum)        \
- 	__ns_common_init(to_ns_common(__ns),     \
- 			 ns_common_type(__ns),   \
- 			 to_ns_operations(__ns), \
--			 __inum)
-+			 __inum, 0)
- 
- #define ns_common_free(__ns) __ns_common_free(to_ns_common((__ns)))
- 
-diff --git a/include/linux/nstree.h b/include/linux/nstree.h
-index 5b64d4572881..3293df17397d 100644
---- a/include/linux/nstree.h
-+++ b/include/linux/nstree.h
-@@ -41,10 +41,6 @@ void ns_tree_node_del(struct ns_tree_node *node, struct ns_tree_root *root);
- 		struct user_namespace *:   &(user_ns_tree),	\
- 		struct uts_namespace *:    &(uts_ns_tree))
- 
--#define ns_tree_gen_id(__ns)                 \
--	__ns_tree_gen_id(to_ns_common(__ns), \
--			 (((__ns) == ns_init_ns(__ns)) ? ns_init_id(__ns) : 0))
--
- u64 __ns_tree_gen_id(struct ns_common *ns, u64 id);
- void __ns_tree_add_raw(struct ns_common *ns, struct ns_tree_root *ns_tree);
- void __ns_tree_remove(struct ns_common *ns, struct ns_tree_root *ns_tree);
-@@ -53,12 +49,6 @@ struct ns_common *__ns_tree_adjoined_rcu(struct ns_common *ns,
- 					 struct ns_tree_root *ns_tree,
- 					 bool previous);
- 
--static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree_root *ns_tree, u64 id)
--{
--	__ns_tree_gen_id(ns, id);
--	__ns_tree_add_raw(ns, ns_tree);
--}
--
- /**
-  * ns_tree_add_raw - Add a namespace to a namespace
-  * @__ns: Namespace to add
-@@ -72,12 +62,10 @@ static inline void __ns_tree_add(struct ns_common *ns, struct ns_tree_root *ns_t
-  * ns_tree_add - Add a namespace to a namespace tree
-  * @__ns: Namespace to add
-  *
-- * This function assigns a new id to the namespace and adds it to the
-- * appropriate namespace tree and list.
-+ * This function adds a namespace to the appropriate namespace tree and
-+ * list. The namespace must already have been assigned an id.
-  */
--#define ns_tree_add(__ns)                                   \
--	__ns_tree_add(to_ns_common(__ns), to_ns_tree(__ns), \
--		      (((__ns) == ns_init_ns(__ns)) ? ns_init_id(__ns) : 0))
-+#define ns_tree_add(__ns) __ns_tree_add_raw(to_ns_common(__ns), to_ns_tree(__ns))
- 
- /**
-  * ns_tree_remove - Remove a namespace from a namespace tree
-diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
-index 6d9d9e7c7ca2..b6fdc6e2eef8 100644
---- a/include/trace/events/landlock.h
-+++ b/include/trace/events/landlock.h
-@@ -987,7 +987,8 @@ TRACE_EVENT(landlock_deny_access_net,
-  * @logged: Whether this denial was selected for audit logging.
-  * @blockers: Request type and final missing permission subset (never NULL).
-  * @namespace_type: CLONE_NEW* namespace type that was denied.
-- * @namespace_id: Namespace ID, or 0 when creation was denied.
-+ * @namespace_id: Namespace ID, not directly visible from user space when
-+ *                creation was denied.
-  *
-  * Emitted when a Landlock domain denies namespace use.
-  */
-diff --git a/ipc/namespace.c b/ipc/namespace.c
-index 75aa7b469348..9084e0643017 100644
---- a/ipc/namespace.c
-+++ b/ipc/namespace.c
-@@ -66,7 +66,6 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
- 	if (err)
- 		goto fail_free;
- 
--	ns_tree_gen_id(ns);
- 	ns->user_ns = get_user_ns(user_ns);
- 	ns->ucounts = ucounts;
- 
-diff --git a/kernel/nscommon.c b/kernel/nscommon.c
-index e72426bba29a..4438c6b663f9 100644
---- a/kernel/nscommon.c
-+++ b/kernel/nscommon.c
-@@ -54,7 +54,8 @@ static void ns_debug(struct ns_common *ns, const struct proc_ns_operations *ops)
- }
- #endif
- 
--int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops, int inum)
-+int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops,
-+		     int inum, u64 ns_id)
- {
- 	int ret = 0;
- 
-@@ -64,7 +65,6 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
- 	ns->ns_security = NULL;
- #endif
- 	ns->ops = ops;
--	ns->ns_id = 0;
- 	ns->ns_type = ns_type;
- 	ns_tree_node_init(&ns->ns_tree_node);
- 	ns_tree_node_init(&ns->ns_unified_node);
-@@ -82,6 +82,9 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
- 	if (ret)
- 		return ret;
- 
-+	/* Allocate the id before the LSM hook so it can track the namespace by it. */
-+	__ns_tree_gen_id(ns, ns_id);
+diff --git a/tools/testing/selftests/bpf/prog_tests/verifier.c b/tools/testing/selftests/bpf/prog_tests/verifier.c
+index 04740ba37e91..3963a4f71d98 100644
+--- a/tools/testing/selftests/bpf/prog_tests/verifier.c
++++ b/tools/testing/selftests/bpf/prog_tests/verifier.c
+@@ -147,6 +147,7 @@
+ #include "verifier_set_retval.skel.h"
+ #include "verifier_lsm.skel.h"
+ #include "verifier_lsm_init_xattr.skel.h"
++#include "verifier_lsm_namespace.skel.h"
+ #include "verifier_jit_inline.skel.h"
+ #include "irq.skel.h"
+ #include "verifier_ctx_ptr_param.skel.h"
+@@ -337,6 +338,7 @@ void test_verifier_bits_iter(void) { RUN(verifier_bits_iter); }
+ void test_verifier_set_retval(void)            { RUN(verifier_set_retval); }
+ void test_verifier_lsm(void)                  { RUN(verifier_lsm); }
+ void test_verifier_lsm_init_xattr(void)       { RUN(verifier_lsm_init_xattr); }
++void test_verifier_lsm_namespace(void)        { RUN_TESTS(verifier_lsm_namespace); }
+ void test_irq(void)			      { RUN(irq); }
+ void test_verifier_mtu(void)		      { RUN(verifier_mtu); }
+ void test_verifier_jit_inline(void)               { RUN(verifier_jit_inline); }
+diff --git a/tools/testing/selftests/bpf/progs/verifier_lsm_namespace.c b/tools/testing/selftests/bpf/progs/verifier_lsm_namespace.c
+new file mode 100644
+index 000000000000..d14fa2363dcc
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/verifier_lsm_namespace.c
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- 	ret = security_namespace_init(ns);
- 	if (ret) {
- 		if (!inum)
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index da5f881fbd3b..ec4077b81389 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -437,7 +437,7 @@ static __net_init int setup_net(struct net *net)
- 	LIST_HEAD(net_exit_list);
- 	int error = 0;
- 
--	net->net_cookie = ns_tree_gen_id(net);
-+	net->net_cookie = to_ns_common(net)->ns_id;
- 
- 	list_for_each_entry(ops, &pernet_list, list) {
- 		error = ops_init(ops, net);
-diff --git a/security/landlock/ns.c b/security/landlock/ns.c
-index cd44c927f83a..06d9784746fe 100644
---- a/security/landlock/ns.c
-+++ b/security/landlock/ns.c
-@@ -94,7 +94,8 @@ static const struct access_masks ns_permission = {
-  * Shared check for namespace_init (creation via clone(2), unshare(2),
-  * open_tree(2), or fsmount(2)) and namespace_install (use via setns(2)): denies
-  * when the namespace type is not in the domain's allowed set.  At allocation
-- * time @ns->ns_id is still zero and is logged as such.
-+ * time @ns->ns_id is already set even though the namespace is not reachable
-+ * from user space yet.
-  *
-  * Return: 0 if allowed, -EPERM if denied.
-  */
-diff --git a/tools/testing/selftests/landlock/ns_test.c b/tools/testing/selftests/landlock/ns_test.c
-index f5d4b86edd30..8f387fc47e21 100644
---- a/tools/testing/selftests/landlock/ns_test.c
-+++ b/tools/testing/selftests/landlock/ns_test.c
-@@ -1899,8 +1899,9 @@ TEST(setns_inherited_fd)
- 
- static int matches_log_ns_create(int audit_fd, __u64 ns_type)
++#include <vmlinux.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++
++#include "bpf_misc.h"
++#include "../test_kmods/bpf_testmod_kfunc.h"
++
++/* The namespace hasn't been set up yet. */
++SEC("lsm/namespace_init")
++__failure __msg("R1 must be referenced or trusted")
++int BPF_PROG(namespace_init_untrusted, struct ns_common *ns)
++{
++	bpf_kfunc_trusted_ns_test(ns);
++	return 0;
++}
++
++/* The namespace is being torn down. */
++SEC("lsm/namespace_free")
++__failure __msg("R1 must be referenced or trusted")
++int BPF_PROG(namespace_free_untrusted, struct ns_common *ns)
++{
++	bpf_kfunc_trusted_ns_test(ns);
++	return 0;
++}
++
++/* setns() holds a reference to a fully set up namespace. */
++SEC("lsm/namespace_install")
++__success
++int BPF_PROG(namespace_install_trusted, const struct nsset *nsset,
++	     struct ns_common *ns)
++{
++	bpf_kfunc_trusted_ns_test(ns);
++	return 0;
++}
++
++char _license[] SEC("license") = "GPL";
+diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+index 6380f52f4dd2..8d6bd2237f34 100644
+--- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+@@ -350,6 +350,10 @@ __bpf_kfunc void bpf_kfunc_trusted_task_test(struct task_struct *ptr)
  {
-+	/* A denied creation logs the ID allocated for the new namespace. */
- 	static const char log_template[] = REGEX_LANDLOCK_PREFIX
--		" blockers=namespace\\.use namespace_type=0x%x namespace_id=0$";
-+		" blockers=namespace\\.use namespace_type=0x%x namespace_id=[1-9][0-9]*$";
- 	char log_match[sizeof(log_template) + 10];
- 	int log_match_len;
- 
-@@ -2538,7 +2539,9 @@ static void test_ns_trace_denial(struct __test_metadata *const _metadata,
- 	ASSERT_EQ(0, tracefs_extract_field(
- 			     buf, REGEX_DENY_PERMISSION_NAMESPACE(TRACE_TASK),
- 			     "namespace_id", field, sizeof(field)));
--	EXPECT_EQ(use_setns ? expected_ns_id : 0, strtoull(field, NULL, 10));
-+	EXPECT_STRNE("0", field);
-+	if (use_setns)
-+		EXPECT_EQ(expected_ns_id, strtoull(field, NULL, 10));
- 
- 	free(buf);
  }
+ 
++__bpf_kfunc void bpf_kfunc_trusted_ns_test(struct ns_common *ptr)
++{
++}
++
+ __bpf_kfunc struct task_struct *bpf_kfunc_trusted_null_test(void)
+ {
+ 	return NULL;
+@@ -1030,6 +1034,7 @@ BTF_ID_FLAGS(func, bpf_kfunc_nested_acquire_zero_offset_test, KF_ACQUIRE)
+ BTF_ID_FLAGS(func, bpf_kfunc_nested_release_test, KF_RELEASE)
+ BTF_ID_FLAGS(func, bpf_kfunc_trusted_vma_test)
+ BTF_ID_FLAGS(func, bpf_kfunc_trusted_task_test)
++BTF_ID_FLAGS(func, bpf_kfunc_trusted_ns_test)
+ BTF_ID_FLAGS(func, bpf_kfunc_trusted_null_test, KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_kfunc_trusted_nullable_test)
+ BTF_ID_FLAGS(func, bpf_kfunc_trusted_num_test)
+diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
+index 3b810f1e438f..bc32c4078d27 100644
+--- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
++++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod_kfunc.h
+@@ -355,6 +355,7 @@ int bpf_kfunc_st_ops_inc10(struct st_ops_args *args) __ksym;
+ 
+ void bpf_kfunc_trusted_vma_test(struct vm_area_struct *ptr) __ksym;
+ void bpf_kfunc_trusted_task_test(struct task_struct *ptr) __ksym;
++void bpf_kfunc_trusted_ns_test(struct ns_common *ptr) __ksym;
+ struct task_struct *bpf_kfunc_trusted_null_test(void) __ksym;
+ void bpf_kfunc_trusted_nullable_test(struct task_struct *ptr__nullable) __ksym;
+ void bpf_kfunc_trusted_num_test(int *ptr) __ksym;
 
 -- 
 2.53.0
