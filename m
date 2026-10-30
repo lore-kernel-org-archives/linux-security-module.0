@@ -1,61 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793390626;
-	b=1dpPyws2rTGae7TWbCtRDv0R8fq+O1YE5i9VSru09QUc6KYqdU1ff2qZCILk3oid+rqa
-	 eaK+CGKFTYx99w5vm6pejCYkkHKCnvyA4BvOPn9x1bMcEFY0egWlcz++3CBHMLR5OM5ru
-	 gJnRr8zQ7gP68bgatYvIN8chOjvIZ81vt1hvrKmbwnH1i4VbfuVfN7HkKo4Vs2HndEbC9
-	 mY22Jn8eYKDETfRaJtyKa5KJjIEmBCDMcuGk0F8NO0qB1bm3UZDjvv+g0q2rNjnEsfNf2
-	 k1y+vX3uM24GcZsscZyVqI/YDk2SCYFa75Y66HQOVp3iDRioHabc0T35TWpDtFfhJOg==
+	t=1793391858;
+	b=so+zxPqhxza+0kEkQP1H2/pZM11cy/GR7bTktAvqg1zeAHeaioH8w6BnCfqKnBpf2QFj
+	 LTrQZyOog+BjkLtUCa/gUvn8HyhYXgCE4hjZ22wEZmlaUQ5vgJwP63p0+CPu4ALqK/LBM
+	 +r/9Pr/PJZnE55UYD1kuXsmyU6HjnHm0BkvdeD2Iidcmtc2L25B1kVXlycXyJ77n7tIVE
+	 u+hg5vay089MMtJc/TJV3k818X2/8asrfTrA6HhWoVrn01iS14TgWUbBUcgHL7NsmXXGI
+	 1Rz3n3GWVJ0GigRF+cjoapJzVPhKf2zsFf751D5cMXanMiwNwjZwxdxrwtSp8y8X1xg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793390626;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793391858;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=LMrpGWdovgMZm3Jh+xDymgzpR6x6xtVPMjUx+UZI4Fc=;
-	b=g8/8Kn6sB4b0MjyR19iFQv63A4TzvfwV9tKBVbajXd4kHs+DtAU8qGYf+QxRRGI+3rdC
-	 c0SZr8qCXSc1ggWBTMoe9Cgouz+xiUJgUMKlC24rzyATdWRYZ4KVuglrMpFJa2J0WxAsv
-	 F2gPG2niG0Xu+vir72JNcSQxw2dreJ+OY42Z2kCTDTRaqmNr5UK1xcwaarvTgHIFcjI3K
-	 Dptw5HHlK0ohTRfJ3Gx/aH6N6W+RoBcbCeJDxpWMNLyQYq22dJuyXX0Z+dBc7Efxl4las
-	 ebugEqU0AXFZK6aqndqjK9fNJwle9avLuq6lrha17SL5O7RpZ6XAsM2UW6tAbkf0bJQ==
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=WC+rINZI/Abs3FuxrW/a0CrEA1iVBadeiLmHbsQKgvY=;
+	b=k8u1HiS2EIKD6/BdOOxUAoYT0zQxalUvBy8RIUz+AVQcv0E4VouL+2rvfZKFd0kry6v2
+	 cokar3N2i4IwVbH/ukIc4HhiecVy37MP2A6n0IrtIWRp4kUzubfsCw4MW0HvBqtEMx3sY
+	 2rHjH4hBU8rkpBSbJXATIxkqIewT2yaUDtkKw76NM6vdaskDYbOx3vVi0vaFcHiT7AMLw
+	 xQ6aWOJhHJ1iIHKBpqdQZT0hrJ+9+cXnJO5r9XTkVOXF8D/43lol/txGOVHycnr7rG2Et
+	 WGNZ7L9kZOU3qcoDTnqZT0x3YStiFMn2fSMYYDw06Q8CGNLzQqlh/G4k0zqCx3renEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f1TKrk6A;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=chGqW+Fu;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 58022606A31A;
-	Fri, 30 Oct 2026 20:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF2F606A31A;
+	Fri, 30 Oct 2026 20:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f1TKrk6A
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6DB5C1F000C1;
-	Fri, 30 Oct 2026 20:03:45 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=chGqW+Fu
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32AD81F000C1;
+	Fri, 30 Oct 2026 20:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793390626;
-	bh=LMrpGWdovgMZm3Jh+xDymgzpR6x6xtVPMjUx+UZI4Fc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=f1TKrk6Aby/BGX2H16b9sfxyMcoJQgwIZ2DVnXbv1K2wZCv27aNccT8u41H8gMORa
-	 F8GU64l5tiid198wyLoIH78SlRdjy9ONQ/Q8X/OFNdjfUfOo/FCBm2aA0g31uCg6OZ
-	 TIm0ff0lXKR513MM9Vi4myfqAFZThFLTniJoRVPHWI6gm4OuE9MLOwvJndQjeUGjxp
-	 e328H9QD3LyQHyISQJVMTBRKJKgE6NsbPEqEcVnC4obxr1Sjwn/EmLUi/yibAG2XsN
-	 MXLpgGICEszd00QqpxOJ/JAKoSgdBDapA6JAFISN03MCEIcXXVbSpeyEUYXubzk1Wi
-	 BAhUiKcAWabBw==
-Date: Fri, 30 Oct 2026 22:03:42 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>
-Subject: Re: [PATCH v6] KEYS: key_garbage_collector(): process in chunks
-Message-ID: <auT4HmJImLQHmsTk@kernel.org>
-References: <20261030160924.2919363-1-jarkko@kernel.org>
- <auTKovajh5MQlbre@kernel.org>
+	s=k20260515; t=1793391857;
+	bh=WC+rINZI/Abs3FuxrW/a0CrEA1iVBadeiLmHbsQKgvY=;
+	h=Date:From:To:Cc:Subject;
+	b=chGqW+FuI7AmI2PLpHQ0vbtXIS+kpFG36nwCXWm+d6UmjhAvs78Vsw+1lIPkobJEn
+	 vzF3qtwn1ur8J89sjm35daORUTn2OUtmopzMWVCCN4sRzK3IPmSgQ/z+D2v2JqEM6A
+	 mGWDKnZFfuqSlgC6CFX6fFmltO3SjNi6xHzqlYM7o3C2nQI2YESzrbcvUJiZsDPFBp
+	 +O1pzPazIn3q9Dn7HcXp4+q/fjgnMLkZQeiyfbEGmB5H6rQsAS56UVwEyDDo2sb2c0
+	 EsekZF8dpsBz7H9uf+41b+NRz2qAkUd4OzldBgNzuPkRp2qawHrMail7/ycnH5ffkF
+	 XU9obUBbeM+OA==
+Date: Fri, 30 Oct 2026 13:24:15 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>, Fan Wu <wufan@kernel.org>
+Subject: [GIT PULL] fsverity fixes for v7.4-rc1
+Message-ID: <20261030202415.GA1967@quark>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,24 +59,47 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <auTKovajh5MQlbre@kernel.org>
 
-On Fri, Oct 30, 2026 at 06:49:45PM +0200, Jarkko Sakkinen wrote:
-> Interesting :-) It has been idential other than block size change
-> for v4, v5 and v6 and updating benchmark result but this is the
-> first version with Sashiko feedback.
-> 
-> Looking into it...
+The following changes since commit 8a36f53fd5ec3eff01f1b637d42cbdc3821d0493:
 
-Couple of things:
+  Merge tag 'mm-stable-2026-10-25-19-27' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2026-10-27 12:23:17 -1000)
 
-1. Sashiko reported issue, which would result key_gc_schedule_links()
-   call in the place of key_gc_schedule_work().
-2. I think it would be best if flags were set in the expired case
-   with a single atomic operation, which does not realize now when
-   key_gc_schedule_links()->key_gc_schedule_work() call path is
-   used.
+are available in the Git repository at:
 
-I'll address the both issues.
+  https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
 
-Br, Jarkko
+for you to fetch changes up to c349b233d6ab0fc3517401a1e2d36f5f90eb8c9b:
+
+  fsverity: Set S_VERITY only after rollback is no longer possible (2026-10-28 10:53:43 -0700)
+
+----------------------------------------------------------------
+
+Fixes for several bugs found by LLMs:
+
+- Fix bypass of IPE's fsverity support, and a use-after-free in
+  certain cases, when FS_IOC_ENABLE_VERITY fails when almost done.
+
+- Fix FS_IOC_MEASURE_VERITY and FS_IOC_READ_VERITY_METADATA to no
+  longer bypass Landlock and AppArmor's read permission checks.
+
+- Be robust against the filesystem returning different values for a
+  file's verity descriptor length in two successive queries.
+
+----------------------------------------------------------------
+Eric Biggers (4):
+      fsverity: Explicitly require FMODE_READ to retrieve hashes
+      fsverity: Be more careful with return value of ->get_verity_descriptor()
+      fsverity: Tell LSMs about signature only after verity is enabled
+      fsverity: Set S_VERITY only after rollback is no longer possible
+
+ Documentation/filesystems/fsverity.rst |  3 ++
+ fs/btrfs/verity.c                      |  7 +++--
+ fs/ext4/verity.c                       |  4 ++-
+ fs/verity/enable.c                     | 20 ++++++++-----
+ fs/verity/fsverity_private.h           |  8 +++++
+ fs/verity/measure.c                    | 10 +++++++
+ fs/verity/open.c                       | 47 +++++++++++++++++------------
+ fs/verity/read_metadata.c              | 14 ++++++---
+ fs/verity/signature.c                  | 55 ++++++++++++++++++++++++----------
+ include/linux/fsverity.h               | 12 ++++----
+ 10 files changed, 126 insertions(+), 54 deletions(-)
