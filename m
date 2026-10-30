@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793356182;
-	b=NQHoQ1vZyyIVmO+dNn9Ijpb8D9miRSN8+q8PzYIZnLeNs7KPapQsXY4XTXCrxvfJE3zH
-	 37VZrouE8azbEn73tecoprhp3aQD6rC0opggkEny+mNO+y3xcOsAPJNv+4QCR6rhDtl3L
-	 dj1Lk569/cAfFhL9zBfM9MP6bhOdjH9IhxEByftNY8eNbioeYFr1smlNTe7anadOvKftl
-	 pjvhu3JX8lRpYw6jrFT/igHCmE5hnpX5GuBkdxEFEL6UpctnWSC2DEjDIw5R3OcFrPbip
-	 tc1fEVD5eJ1QRL3vSe6B5gO6Gj5VDeI+ZCw3D1urVedLcpUXtdvoLCIO3RwizWPdLkQ==
+	t=1793356187;
+	b=Tt9EjESW8rshOWfcfjEiP7AzJoQlAQajlyiLUKItQ1UitnpSgnrMXTJP9OHyMsxyr6uk
+	 xc8o2x8xr4ofoRxsWHUlg9mPNBd4MvC6SW0uegArcUb4l3099/QvkO26nnlRKTirJPQtl
+	 f4xt2Q9hHBWzVUFtrEeOBtNDKh28iY7UiZ0dc/7EYX7dmv9ga9jgZnBtrh631+c9GCobd
+	 1hrYy+gFvuMlE9b4eD6QxYy76i5iliIGlMYKbGu2CjcYMTiCb2ZrBKsxspBudYI85RFI1
+	 z9UrfyTY6FXoV5gTKB1U7U+pVvWU6CNrV0BwyrLaqcCEbGw2WRm4+Aa3XevXgVQJApw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793356182;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793356187;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=PAeWLQYbZsWEJx2JQyHiC0V+8TvVRYkgEsmMfrLUypw=;
-	b=Ohb869DEOmV7m705WXV+lfqci7HY9N8HAXHO/PO5LsQ0pYtziG2gXH3JSNp7S3lwEuVK
-	 8UWE32uADEMRSYoXQd51ITfDkVVXnGrdJiNv2zA++NZzLNHodtW22uFhY3bzmONx63VgM
-	 tMQDryWE0Q/NkjC6X3gg8Erii8MTGjg+IiZFmjNveUzR7u3piy/INZicxEilq+86x0Hnf
-	 Nen6AU/YEgcYYNv27526qB/TnxH0h29DS4aCw14xTQ3SS6kbED/Z8UIWU1LsNPblqIn/N
-	 uIVK2sbvrHkNuidecUBqAXTJvW5QaK1uZLijH0cQGkCaV9BWUcUxBQRGythxuefYqRg==
+	bh=xkeTzRg7O4mTMMjZ2MwaoQ3nLtFqHBdpSz1Yy0A1e/g=;
+	b=QPjKvaoyrAIEdq6QrLzU6/a5zSZn3nt513amkCD6jPqrLk+jTEOMTgI+l03oiMeSa6N/
+	 DT2rLtR8QY3IzXvsVPaul/rDMUuC8W+NKaTig2iTU/cpijsmeFfBn+KZtXG2vRqKdTMce
+	 2wUSLoX9asZpE1CqYwShKx3H9/tV42a4FTCrAleeRkhjumI2cS44FehIP9ShINWtCDjWW
+	 73X1QseGvVw/2PzOVzF5kWEz2D4CH4Z3q6Lr//OGOoqI4ML/+qCvTGIkNzZOpoYIvEvKL
+	 1EwpDqxSveR/0to0UCB7YVOetzIY/qK6fh40Hj5AxvMrrg6sA16zEAk3p2AaR1ALEjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R8BtlEc8;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aXnmRHTX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A5D606A31A
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 10:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3A8606A31A
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 10:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R8BtlEc8
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E981F0093A
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 10:29:41 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aXnmRHTX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C323A1F0093A
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 10:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793356181;
-	bh=PAeWLQYbZsWEJx2JQyHiC0V+8TvVRYkgEsmMfrLUypw=;
+	s=k20260515; t=1793356186;
+	bh=xkeTzRg7O4mTMMjZ2MwaoQ3nLtFqHBdpSz1Yy0A1e/g=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=R8BtlEc85dcU5FWrQHRbrHjf6DOidJ6SmAuxw+km+ODXsdP+pf7UXzq1umwJSbp2/
-	 qegkD8c9tT0q8sZNtkH8wosc5fGdoNZiPPSHetFRasZKPG4I0Fhg+gEqIA6MtnveKT
-	 zgxkIl4CswQTz41qnekWykuwqGkJZeur+h62FTu+HGvM1tA0hDtGPATtHwAH09hElM
-	 mhzM4vzvCug52PreeIlDBFwE9IwlLsHMuD8BLmIpfEL4iXjysj24bq9un1BDeBm65D
-	 1K12bVgYO1WHSvqfpW7MtuS2pyPWCzhuZhxzznw83PwltV7d7PO/LBPv8qvA8tRj33
-	 hekSMxlTukmKg==
-Message-ID: <sashiko-outbox-190830@kernel.org>
+	b=aXnmRHTXSWikL54eTaULqd6vk533VxAKAMIiMhsGdBf6a+W+iObC8j24lbdCB55MK
+	 xaask0D8mRyDGiV3wFwx9gDSwVfljGYrOzw4/4Uq/gk/SiTzG4JUrFAzeRmA9mmW9Y
+	 u24UyMYxlEsmlEcpZuoBdQl3nsMueYJUEwefbKfaQVcddpGG6Cho0bHZMAYpnwsQIT
+	 9rGCnWrIaKTfRI+zJ9waboRukG38JKW4/ORRGpwhbuhyigcG0A3cxm18Mp7ERJnaBS
+	 VShWW7RFbcADeGabOq5ti7APFGj/RIG0vtoPcc9mGNXkIp904q3bvFk8yvM3rvGpdo
+	 o1qeoO+5MUYTA==
+Message-ID: <sashiko-outbox-190831@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/3] landlock: Fix layer composition of
- LANDLOCK_ACCESS_FS_REFER
+Subject: Re: [PATCH 2/3] selftests/landlock: Test that layering does not
+ break refer
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261030102411.12985-2-gnoack3000@gmail.com>
+In-Reply-To: <20261030102411.12985-3-gnoack3000@gmail.com>
 References: <20261030102411.12985-1-gnoack3000@gmail.com>
- <20261030102411.12985-2-gnoack3000@gmail.com>
+ <20261030102411.12985-3-gnoack3000@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 30 Oct 2026 10:29:40 +0000
+Date: Fri, 30 Oct 2026 10:29:46 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,34 +60,20 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> In landlock_get_fs_access_mask(), only add the
-> LANDLOCK_ACCESS_FS_REFER right if any filesystem access rights are
-> handled at all.  This prevents us from accidentally treating
-> non-filesystem layers as if they handled LANDLOCK_ACCESS_FS_REFER.
+> Regression test to exercise that layered Landlock domains do not
+> accidentally deny the LANDLOCK_ACCESS_FS_REFER access right.  This
+> used to be the case when layering a non-filesystem ruleset with a
+> filesystem-enforcing ruleset.  In that case, REFER operations that
+> would have been allowed for the individual rulesets would get denied
+> when layering the same rulesets.
 >=20
-> landlock_get_fs_access_mask() is used when initializing the layer
-> masks for doing access right checks, so this bug meant that we
-> unintentionally denied "refer" (e.g., link, rename) operations in
-> layered cases, where the same operation would have been accepted if
-> only either one of the two layers had been enforced.  If the rulesets
-> individually allow an operation, the composition of these rulesets
-> should also allow it.
->=20
-> The bug only manifests as soon as one other layer handles filesystem
-> access rights.  Otherwise, Landlock filesystem path walk is guarded by
-> an early exit for the case that no filesystem-enforcing layer exists.
->=20
-> Reported-by: Dwi Siswanto <me@dw1.io>
 > Link: https://github.com/landlock-lsm/linux/issues/67
 > Link: https://github.com/landlock-lsm/go-landlock/issues/66
-> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and c=
-onnect")
-> Cc: stable@vger.kernel.org
 > Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030102411.1298=
-5-1-gnoack3000@gmail.com?part=3D1
+5-1-gnoack3000@gmail.com?part=3D2
 
