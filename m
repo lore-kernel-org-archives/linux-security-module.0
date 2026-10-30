@@ -1,54 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793336028;
-	b=NIvgAuAGORFvBofEjuIibgC4Anog8C6ktq2q9ylKB+PFeTWTdHeatYiZaLf+KD6NC5vi
-	 ym4FkHE+HibB7UQfMgd7plkvSujHNORbZFbrA+hoETPQHZoUGr/FBDxcM8ZKTiPpjUN6y
-	 RqmIs0iNZ4eAcKXLROm4wptu2JYl1JNHx/oA7PxP4Rw/IQswGBCnY4AFhDPIXR0Hr8YCr
-	 OndkhcmvtbhU5ZIKOwoZHWb8lDSlYcVNhwH0snGJAryMR+UhZ51NCaCgxIE8xQFWTMLUi
-	 HBiYdFqe3OWTy4fLkI9LuioxRwn2NZm4oYA/RneakC1fHyEMh1zJeE3ZkgtyWoVH4eg==
+	t=1793336029;
+	b=THMAW1JgsrDdONLcrbX3Gqz54eLz7ZPBLnbKQDmK5pNh4anxPeTwZvBqLLm+HYIgUHEQ
+	 W7A9oK+FDn/+5iNI3vWoc27jmBovXOZy3cujDk1jmY5KRQeJQP9IwgQ2Apy63+a1WjiEY
+	 7H6DehPGexYb+BbOotEGOtH5NLx15ZBsnx0XlCJC1Lu/OmM3jszxo2doQMbJI3DiU9wO6
+	 nGBysLuPB0i+qhDtDqg/RRNmBO5ow+7qHbd73cEdY2uXWyd0IxipiIZtxgIWc63pZp7qr
+	 1dE8b32/XHssMYFjVwsZbyoohzIFrNWT0WGio+gEwJ/giUj7LetkDjdwg8qw8kCBvYA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793336028;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793336029;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=9wOHzVxsBoLRaFVvgbr0QXZpoTkZuvLgwLY3MOLzi+o=;
-	b=a48ppfRCpW3p+cMg2L/zYdGrClXA935sBFo6OQIQBi0LVaGuvYJDB7FusRWW6i4UNOzu
-	 /31CkCl0B9zcpIJfdnZ9zHnFZpuvoesmXrRPJ3Rp8B/Rm/OaNlR7xfGfD9e0qg9Zfb6Kp
-	 litmuE644OYiMSeRsWQelVYrCabPAvVYIDT/f37UNMTF17p+sxwQAD3hGYLcSh/nM+PQw
-	 GIh8/m1OjHQinO23ILBaaddXrPcu+lE7CphG/DaJvCvu0LMRyaFC4y1J5Aqz/2IM8gSVC
-	 oPCCFXs0EXTceBrJ9fYDO7MEVANS6Ub5axUrXdjmUow6TVHoJGHCj3MKhml50qcDtcw==
+	bh=ACyemNa54S9RAwf0ubAYUuFxQJx261xLPRB9RUPcGzk=;
+	b=qSFcYu7b59BUqT07GHGFCZ3sD/cI4GCX1QOtcAhLXl7+aXAgqXjBKsSJ6NNvvloGe7Hc
+	 Ss+jnwlcSZ5HpgLFIlGbLDZOoX1nSUF3TI8611MeillyJ9RhismMbt7wXLfTC8eOYTcLl
+	 PTJyqrPIeITmKgT8dpBMgFH3QXhD5QPWsEf8mFnVLEgw0r1XCW0gkKsOjUzjbytsBYIk5
+	 oArWsNPgNkKT0Q0L7tdvI1kHUMv0lO8T9WYRlfij65CjsuNSFgb4gOwc1svnL5kWP+qaw
+	 xwYgkeEC/DSBBDmeTZB0t+z/FQcF2Pahcfg6k1aqD4HNamkTIMZjembc7MulqmxgE3w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z9FxtQdK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dUaGHFRy;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AADF606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60C3606A321
 	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z9FxtQdK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE761F0093A
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:53:47 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dUaGHFRy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842241F000C1
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1793336028;
-	bh=9wOHzVxsBoLRaFVvgbr0QXZpoTkZuvLgwLY3MOLzi+o=;
+	bh=ACyemNa54S9RAwf0ubAYUuFxQJx261xLPRB9RUPcGzk=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Z9FxtQdK/TQccWWYnrjwrYvZTEz8DE68WlTOa6r1V2urJZnE8Ouc6fy0oyym2FcVA
-	 Vr5vhs3SLF1cLXqqvC6VF1rMOlGn/hrpow3Qt67JSOaz/GuGdwosB/TBrmzL2QgvfK
-	 f1bzGpDnfF0jm6EM1m7YHZRFI7iYZ76JoZ0briCiSZybIUROI1ioHj78WPQ/dV/nl1
-	 z/1KtxqtUQcJKUn/TwM3TGaIIcQZBNdvOhlR12VEDnNHsxPAZFirWpkV9ADo7E8129
-	 9n1cb04i/583e01b7NeqfBpl8g7VPtKohfV+spjNCosRrC1EFOz+nmDEsa8L4OIGq9
-	 8is8jsQ9j+uNQ==
-Message-ID: <sashiko-outbox-190352@kernel.org>
+	b=dUaGHFRyQuTn8CiiROrfiqjiF6ayHWo+CeXAAnLd8HQFlPGYTmvhXOnz7hiAlWdfW
+	 8tA7rOTjh9ieO/+LSFCqa+suPcIKRnWMPR1hZiPrZ2/9ahrTflmjmi+sAoNg2B5+x8
+	 KsAMk+aGoJYnL2oFwb6X6nu450lj3agskQ9orPQvi4KDOX1ejfafxrcSBVyDJO8L1g
+	 /U6PhiKETarNwU6DCXWfCJi7hftRZjEA/SC30v92oNlUj6wvHb9s7X6ynybOJpcECR
+	 Y488FOnC+4ZwCMvgH+s8C5l5p4Q8R9p+Q/J2lW9HCn+edsIkGBXKV3xHBCNMQgSt0y
+	 M1UBVT8tEXJNg==
+Message-ID: <sashiko-outbox-190353@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 4/7] selftests/landlock: Add UDP bind/connect tests
+Subject: Re: [PATCH v4 5/7] selftests/landlock: Add tests for sendmsg()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20260502124306.3975990-5-matthieu@buffet.re>
-References: <20260502124306.3975990-5-matthieu@buffet.re>
+In-Reply-To: <20260502124306.3975990-6-matthieu@buffet.re>
+References: <20260502124306.3975990-6-matthieu@buffet.re>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 30 Oct 2026 04:53:47 +0000
+Date: Fri, 30 Oct 2026 04:53:48 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,110 +60,112 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [Medium] The `SO_RCVTIMEO` and `SO_SNDTIMEO` socket timeouts added in `so=
-cket_variant()` are set to an aggressively short 100 milliseconds.
-- [Medium] The patch introduces a file descriptor leak in `TEST_F(port_spec=
-ific, bind_connect_1023)` by overwriting `connect_fd` without closing the p=
-reviously allocated socket.
-- [Low] The 64-bit Landlock access rights bitmasks are assigned to signed 3=
-2-bit `const int` variables, which discards the upper 32 bits.
+- [Medium] Test Hang Vulnerability due to EXPECT_EQ before blocking socket =
+reads
+- [Medium] Stale Data Validation due to missing audit_count_records() call
+- [Low] File descriptor and resource leaks in test paths
 --
 
-commit 9a737284d2bae1dcd34a40323c4679a1e1cb1593
+commit a3c5aefc4ced3649cf0e1efaac53d8674cff7d76
 Author: Matthieu Buffet <matthieu@buffet.re>
 
-selftests/landlock: Add UDP bind/connect tests
-   =20
-Make basic changes to the existing bind() and connect() test suite to
-cover UDP restriction.
+selftests/landlock: Add tests for sendmsg()
+
+This commit adds tests specific to UDP sendmsg() in the protocol_* variants
+to ensure behaviour is consistent across AF_INET, AF_INET6 and AF_UNIX.
 
 > diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/=
 selftests/landlock/net_test.c
-> index 016c7277e370..568a6ed7139c 100644
 > --- a/tools/testing/selftests/landlock/net_test.c
 > +++ b/tools/testing/selftests/landlock/net_test.c
 
 [ ... ]
 
->  static int socket_variant(const struct service_fixture *const srv)
->  {
-> +	/* Arbitrary value just to not block other tests indefinitely. */
-> +	const struct timeval timeout =3D {
-> +		.tv_sec =3D 0,
-> +		.tv_usec =3D 100000,
+> @@ -1119,6 +1274,441 @@ TEST_F(protocol, connect_unspec)
+> +TEST_F(protocol, sendmsg_stream)
+> +{
+
+[ ... ]
+
+> +	/* Send to a truncated (invalid) address. */
+> +	res =3D sendto_variant_addrlen(client_fd, &self->srv0,
+> +				     get_addrlen(&self->srv0, true) - 1, "D", 1,
+> +				     0);
+> +	if (variant->prot.domain =3D=3D AF_UNIX) {
+> +		EXPECT_EQ(-EISCONN, res);
+> +	} else {
+> +		EXPECT_EQ(0, res);
+> +		EXPECT_EQ(1, recv(srv0_fd, read_buf, 1, 0))
+
+If the send operation fails, EXPECT_EQ logs the failure but allows the test
+to continue. Will the subsequent recv() block indefinitely since no data was
+sent, causing the test suite to hang until a timeout occurs?
+
+Should this be ASSERT_EQ instead?
+
+[ ... ]
+
+> +TEST_F(protocol, sendmsg_unspec)
+> +{
+
+[ ... ]
+
+> +	res =3D sendto_variant(client_fd, &self->unspec_srv0, "B", 1, 0);
+> +	if (variant->prot.domain =3D=3D AF_INET6) {
+
+[ ... ]
+
+> +	} else if (variant->prot.domain =3D=3D AF_INET) {
+> +		EXPECT_EQ(0, res);
+> +		EXPECT_EQ(1, read(srv0_fd, read_buf, 1))
+
+Could this read() also block indefinitely if the sendto_variant() above fai=
+ls,
+similar to the recv() in sendmsg_stream?
+
+[ ... ]
+
+> @@ -2342,4 +2938,58 @@ TEST_F(audit, connect)
+> +TEST_F(audit, sendmsg)
+> +{
+> +	const struct landlock_ruleset_attr ruleset_attr =3D {
+> +		.handled_access_net =3D LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP |
+> +				      LANDLOCK_ACCESS_NET_BIND_UDP,
 > +	};
+> +	const struct landlock_net_port_attr rule =3D {
+> +		.allowed_access =3D LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
+> +		.port =3D self->srv1.port,
+> +	};
+> +	const int ruleset_fd =3D
+> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> +	struct audit_records records;
+> +	int sock_fd;
+> +
+> +	/* Sendmsg on stream sockets is never denied. */
+> +	if (variant->prot.type !=3D SOCK_DGRAM)
+> +		return;
 
-Could this 100 millisecond timeout cause false-positive test failures in he=
-avily
-loaded CI environments or nested VMs?
+Does this early return leak the ruleset_fd created just above it?
 
-In test_bind_and_connect(), the parent process calls accept() or read() and
-waits for an unsynchronized forked child process to execute socket(), conne=
-ct(),
-and write(). If process scheduling delays the child, the parent's blocking
-operations might time out and return -EAGAIN.
-
-[ ... ]
-
-> @@ -737,16 +895,20 @@ TEST_F(protocol, connect)
-> =20
->  TEST_F(protocol, bind_unspec)
->  {
-> +	const int bind_access =3D (variant->sandbox =3D=3D TCP_SANDBOX ?
-> +					 LANDLOCK_ACCESS_NET_BIND_TCP :
-> +					 LANDLOCK_ACCESS_NET_BIND_UDP);
-
-Should bind_access use __u64 instead of int?
-
-The 64-bit Landlock access rights bitmasks are assigned to signed 32-bit int
-variables here and in several other tests, which discards the upper 32 bits.
-While current flags use only the lower bits, this type mismatch might risk
-future sign-extension or truncation bugs if Landlock introduces flags using
-higher bits.
+Could the check for SOCK_DGRAM be moved before creating the ruleset?
 
 [ ... ]
 
-> @@ -1815,23 +2035,35 @@ TEST_F(port_specific, bind_connect_1023)
->  	int bind_fd, connect_fd, ret;
-> =20
->  	/* Adds a rule layer with bind and connect actions. */
-> -	if (variant->sandbox =3D=3D TCP_SANDBOX) {
-> +	if (variant->sandbox =3D=3D TCP_SANDBOX ||
-> +	    variant->sandbox =3D=3D UDP_SANDBOX) {
-> +		const int bind_right =3D (variant->sandbox =3D=3D TCP_SANDBOX ?
-> +						LANDLOCK_ACCESS_NET_BIND_TCP :
-> +						LANDLOCK_ACCESS_NET_BIND_UDP);
-> +		const int access_rights =3D
-> +			(variant->sandbox =3D=3D TCP_SANDBOX ?
-> +				 (LANDLOCK_ACCESS_NET_BIND_TCP |
-> +				  LANDLOCK_ACCESS_NET_CONNECT_TCP) :
-> +				 (LANDLOCK_ACCESS_NET_BIND_UDP |
-> +				  LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP));
+> +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+> +	EXPECT_EQ(0, records.access);
+> +	EXPECT_EQ(1, records.domain);
+> +
+> +	/* Check that autobind generates a denied bind event. */
+> +	EXPECT_EQ(-EACCES, sendto_variant(sock_fd, &self->srv1, "A", 1, 0));
+> +	EXPECT_EQ(0, matches_auditlog(self->audit_fd, "net\\.bind_udp", NULL,
+> +				      NULL, NULL));
+> +	EXPECT_EQ(0, records.access);
+> +	EXPECT_EQ(1, records.domain);
 
-Similar to the above, should bind_right and access_rights be defined as __u=
-64
-to match struct landlock_ruleset_attr.handled_access_net?
-
-[ ... ]
-
-> @@ -1867,8 +2104,19 @@ TEST_F(port_specific, bind_connect_1023)
->  	ret =3D bind_variant(bind_fd, &self->srv0);
->  	clear_cap(_metadata, CAP_NET_BIND_SERVICE);
->  	EXPECT_EQ(0, ret);
-> -	EXPECT_EQ(0, listen(bind_fd, backlog));
-> +	if (variant->prot.type =3D=3D SOCK_STREAM)
-> +		EXPECT_EQ(0, listen(bind_fd, backlog));
-> =20
-> +	connect_fd =3D socket_variant(&self->srv0);
-> +	ASSERT_LE(0, connect_fd);
-
-Does this overwrite the connect_fd variable and leak the previously allocat=
-ed
-socket file descriptor without calling close()?
-
-connect_fd appears to be allocated via socket_variant() earlier at the start
-of TEST_F(port_specific, bind_connect_1023).
+Are we checking stale data here? It looks like a call to
+audit_count_records(self->audit_fd, &records) is missing before checking
+records.access and records.domain for this second event.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260502124306.3975=
-990-1-matthieu@buffet.re?part=3D4
+990-1-matthieu@buffet.re?part=3D5
