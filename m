@@ -1,56 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.108.3.162
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793336073;
-	b=pL3ZVKS6KuGDub6LpCXQmrjJvJecMF9tXY5jzwWVFS6BB+OFFAuFtMyih/A+eYv4lx+l
-	 iFPmzzSHSmRZMxs1z9/K2wmPSpR9icJ/vKN1RNmA6yOKnyzpaoUh0dvj0SLkWkTk+X9Ky
-	 d1vRGGSIGSNYX1leGA1MpNHxWSp77kC87WQn3rm7Aqji7MuoEtxkrbO7qVRx8j+UmR3bf
-	 2BhrZeBDWt+U+HvU1R3NFoAmnkIGuaGOhlPQ/G6LUV4qeYrp7BxkvyeCjvkXBHSlYbTzn
-	 151FOW8TS+VyroeDetiYG0IhqkqBoTh+2jWdyrI/CvnDarDaryGdpJYHIAGXSrMV8Fg==
+	t=1793340652;
+	b=V68TZNDth6b9FzaNlpFWHZHSK6vdLoS5IS1iZPWc4yg/MApsdLOGLa9FWK9OkWwbBsnq
+	 MpqvZ+2Sex/pqrQCObg/OpQ/MI8FimdlZVUXCBEryb/fJcqCQMpCdTH3X+8EnUWsTDlVM
+	 Kg9vMWauNIlegcrE/LUwv0Ivz1iu91PkyPBi13wj8OrHJE2GLiDt2vebW6DD0EmbU+v6D
+	 VHbrEnbBVzyWUqhFJf4eRgk/GF4pqFQzdU9HyixeCpMujOv6ECYvMy3X0MWNh8hChU7Z9
+	 eQWKb4DrZtFthAuy3ZtgxlzT8evMApcmcP4V1grebDP+cyGF0uwpfkvfLXWBG6UHc2g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793336073;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Xdm4wVeQcIfh+FOpJaYGM/fMLMKU2FQ3FDhyfaXrPnI=;
-	b=tMqqnceWKbcYv++ChoC2WLP9tleH9By9BGFi7BFyQBVT0le0c8FdCV/qE/BNVkLNq55a
-	 9fhGHVfFSJWZOB9CNCEWOLwhE1mVM1ZEQ+pw1W+lQOQd84M4d8MjRbixlmMbHgEoZZGp0
-	 SIPy1JApKRtn1GmJpfS6F3D3cBxyP5Y/GxhHWhYU8my6mMDwvcg9bHb1e4TMJvk799bIJ
-	 H3ZO3uTsxc+uhJbwp9P7WUQWx0pTgqpoODvgJ1cS6V/MWe6+wSEjEsblsCo9axSsXUN1T
-	 055Q20tnw+gC34nF8tqFw0jv/OLAqb6/fgjl0E1OAwxiAGnhDEV02QoDYypg8t8DlAg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793340652;
+	h=DMARC-Filter:DKIM-Signature:X-SMAIL-HELO:Received:X-Sender:X-Auth-ID:
+	 X-SMAIL-MID:X-SMAIL-UIID:From:To:Cc:Subject:Date:Message-ID:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=eMxOXDCp+lLHimw0Ajvi6bdsS4XBDctUyG1YUtNMsak=;
+	b=XxXhf94iU86xObR3AANfnpt34dGKx/RHL9nmZldgvdnV4poRs3VVK5xGmFaEf8Re2UWu
+	 BlbT95aWJuHil/LhhY7Q39ML0W+kjDmIzvXTSPaX8tN52xSRLTXpiTXEKAp+ZrUGJA0Us
+	 8NGWwTOr3eYRXtngJoKSESWAPPEO713k7IAB076eYZA9Ec8dy3zCwx5Vp/ryof0db+Wsi
+	 8G3VB93NYVzucru8y39PFkUxGpOhzjkINEFZAIVP1Jd9JOeUardk3osC8tJR1ZVDqMaeJ
+	 gA2ebScuokjg/z0hiO38AAfL7sgsdjkIrikfnRwO0e4OD9IOMHZ8EZEA6DsTcFtoadw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LuY0mkhJ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=sina.com;
+	spf=pass smtp.mailfrom=sina.com;
+	dkim=pass header.d=sina.com header.i=@sina.com header.a=rsa-sha256 header.s=201208 header.b=pimCZgrm;
+	arc=none smtp.remote-ip=202.108.3.162
+Received: from mail3-162.sinamail.sina.com.cn (mail3-162.sinamail.sina.com.cn [202.108.3.162])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFF0606A320
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6457E606A31C
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 06:10:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6457E606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LuY0mkhJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670C91F0093A
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793336072;
-	bh=Xdm4wVeQcIfh+FOpJaYGM/fMLMKU2FQ3FDhyfaXrPnI=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=LuY0mkhJSyCLgM6be/SFtPQZF2pWr+1J4sl9pNHlbs1M/gPWmbPBRCAH0ht02/Bkp
-	 1O9n+fiBfXKPewAz5AVLqEKSloj4UgLZORWpxSnuXEZPYOUwrfzo0tCrM6kwS7fwtt
-	 t7qx/FmUjtzytSzpcDHqX/+rBfKoINQglJusl3eo6DAq6m5DY8idZvb68SGpbiXv3U
-	 f3gSH/7ouILymwNNaLU6EXTT8VerADJpbbvJV+4AMO90W8gBB6Pxo0Lf1FRg8QPJ0y
-	 +Mz0IYHST2d1982178WHyQ08kvmVD8BONlfXzqwTnw/A1giHgVOJQiMiwqu+AQIPMT
-	 Y4/QPdYxyN/5w==
-Message-ID: <sashiko-outbox-190476@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 11/13 RFC net-next] net: cipso: guard IPv4 packet
- manipulation functions
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20260712013941.4570-12-fmancera@suse.de>
-References: <20260712013941.4570-1-fmancera@suse.de>
- <20260712013941.4570-12-fmancera@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 30 Oct 2026 04:54:32 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=sina.com header.i=@sina.com header.a=rsa-sha256 header.s=201208 header.b=pimCZgrm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1793340649;
+	bh=eMxOXDCp+lLHimw0Ajvi6bdsS4XBDctUyG1YUtNMsak=;
+	h=From:Subject:Date:Message-ID;
+	b=pimCZgrmnSAq4X4zHwmGbeg0TQBKyAWzrzBm7c0Wv+V0PmESo90ZFNbhfGyoFNcx8
+	 WETgK3dMuQkNHI1uP6lczctlmL57g75/z479y0FvksdVbGKb+22jJqrZahJGDczlFC
+	 Ox1zm1ObaSdE0cw7AlZcSFcBklRqJZAqkcy8iG00=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.254.0.223])
+	by sina.com (10.54.253.34) with ESMTP
+	id 6AE434DC000034D4; Fri, 30 Oct 2026 14:10:40 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8079216291752
+X-SMAIL-UIID: 10D141D9B4E846BC8D24E5D11E86C7F7-20261030-141040-1
+From: Hillf Danton <hdanton@sina.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Morris <jmorris@namei.org>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org
+Subject: Re: [PATCH v5] KEYS: key_garbage_collector(): process in chunks
+Date: Fri, 30 Oct 2026 14:10:06 +0800
+Message-ID: <20261030061030.233-1-hdanton@sina.com>
+In-Reply-To: <auPjLi6xocFw7r-k@kernel.org>
+References: 
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,19 +71,32 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> To enable compiling the network stack without IPv4, the CIPSO functions
-> that manipulate IPv4 options and generate ICMP errors must be bypassed.
->=20
-> Ideally, CIPSO should not be compiled when IPv4 is disabled but
-> currently it is too integrated within netlabel, so let's just bypassed
-> the relevant functions.
->=20
-> Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
-
-Sashiko has reviewed this patch and found no issues.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260712013941.4570=
--1-fmancera@suse.de?part=3D11
-
+On Fri, 30 Oct 2026 02:22:06 +0200 Jarkko Sakkinen wrote:
+> On Fri, Oct 30, 2026 at 02:17:31AM +0200, Jarkko Sakkinen wrote:
+> > On Fri, Oct 30, 2026 at 07:41:48AM +0800, Hillf Danton wrote:
+> > > On Thu, 29 Oct 2026 19:29:17 +0200 Jarkko Sakkinen wrote:
+> > > > key_garbage_collector() has a design that is not resistant enough for
+> > > > workqueue lockups. The duration scales up relative to the number of items
+> > > > in the serial tree, which causes a reoccuring theme of being guilty of
+> > > > causing workqueue lockups.
+> > > >
+> > > Given cond_resched() the gc work is not a cpu hog, and given concurrency
+> > > workqueue can get individual cpu highly overloaded in short time, so what
+> > > you delivered is a half backed croissant, HBC, as you failed to make it
+> > > clear why lockup occurs when the number of gc items rockets up.
+> > 
+> > Please, read:
+> > 
+> > 1. Documentation/process/code-of-conduct-interpretation.rst
+> > 2. Documentation/process/code-of-conduct.rst
+> 
+> And: I'd suggest to do some self-reflection and not use LKML for
+> trolling. There's 4chan, Reddit and other more appriate forums for
+> doing that.
+> 
+Can you answer the simple question, why is your patch correct for curing
+the root cause of the workqueue lockup? Because it has nothing to do with
+trolling.
