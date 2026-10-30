@@ -1,61 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793362188;
-	b=GRSjUabBhRctYGQUlye8SrPNxwn26Ex0/lAlnemFzyNYebGDnA+W2RwxWCRM3qcsmcTS
-	 RpSZM1egVq/EUDIse0gBuNwqf5KbAtqVRCtAFLys+sxTDEaCcNoVWctA9WAzGRDDxDSU6
-	 ps8F5qQTAwjxTa7tbT3Hv7/Iu40XuuMKDTG55JLRTxCj9sEY6FqdoorD700XEQtrdGC2N
-	 TPVi4ajMk9rQMf9vvHDxP6+u2dSP5u+slChpenIMg3cd1s4UeCQb5ulslMam/d+x3QuxH
-	 lHu6Pt6evlfJW1EL3Yk+dEIY0tLeqQiiuMGs5V2LamnWZWHMk64RpPi8+0rg1VWWrgA==
+	t=1793370601;
+	b=qiqZRv+s3M3psT9f+T7zsuuJZ7vCuhb2+FVlc7rRSflrGKuKa/CX77xUJjKR9Qc+w2QD
+	 F14vrVgmKD9p/+9vlNn5zdArBlca7miDMylRJIL+H68XWPsBgYeIpaWBywkFUlYMNg/iz
+	 OVIcL6ktLNfv1Gw7yOCSr+2Q8Ob0blqBN7wNyLXbLDqRzJ852743UmrXG4rXQZc/BdLbe
+	 q2S+B1UZJVZSV0+3whRN0ACA3vflvJVKOGcU48gRJPEg6X4ncG1WUWRxs0PpGU65ATOJ2
+	 ZVKWStYP1SPTZa+fIx48lYorW0MEggTSEmIlfvtmfn5oDecREVomLMlz8gVG1zjYnJA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793362188;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793370601;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Infomaniak-Routing;
-	bh=CHiOHhGM8wF8lZDketcUzQJ4hUyzLdW+kg23E8g6Q8Y=;
-	b=i2ROPCSYEGggblB1MwcGjHyxvBezUJVT9kGTV7zx42tk1coZ/IJ/Owuq5Eq0sUp6kMpX
-	 WU34xyjcQgu+DcsxVtAD78gUpXkICSnMRia5iytLA86Atv56KzQlCCM43yo4iweb7H2h1
-	 VdXSRU0LSYoeHRhob7i01p6zAlWl6n9Y/Mnos516+XSSc18hfBopFpCMtx4vfkk9nUlZ5
-	 Qpuv8L8zfbg4iWj9blw0HsvEM1o11KcYENMoJSU+oNlWXvqPsQwnO8WJXzr9Glh1UTL/I
-	 bg/cCctIRDngxqQpMQkkcQNgX5gtqPtfpbGlGr1EDQjzINV9KyYDw5ow0Z8/WMck0bQ==
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To;
+	bh=mYpdnsyPHrbQlI9gQjpkgVMu6bBztlcU0SAjmRmLasU=;
+	b=rFvWa65Z0L6qNVMJE2qwhWNuLCJ1k9Jgbqg8uzkI8ROZlrYOedLt4BqYeZk4UQ2QLdY8
+	 UCaVbfqcWqXKX+/3OrBZT7LH52jQ/lvrD8b1xDqJXFQo+5q28rwJ/+nhpdVM+dyqKF+HZ
+	 MAUx4EgwQOvz9uEBqgMmY3mh2+YhfI3F8Q7oWfThbC1DgcUd4Ec8X8koWjfl/4xTep5/f
+	 xyeft3v+r2qLwZtxyfdM9RHQyQdFgX19Cr891Wg9z0LHipZWbaWLCOgJCdY1ZoUkU+p9E
+	 bwv6H/rTzFpBPLDz2qyuayGEkfvB/lHWT3L0CoIDPIn6rdPMVvC92Q6oXQ7ojvT1eeQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=hK77lSuE;
-	arc=none smtp.remote-ip=83.166.143.173
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ngWCYSkU;
+	arc=none smtp.remote-ip=209.85.128.49
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DCE606A31D
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 12:09:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A5DCE606A31D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8D9606A31C
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 14:30:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B8D9606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=hK77lSuE
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jGKfB3PMCz2kVC;
-	Fri, 30 Oct 2026 13:09:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1793362178;
-	bh=CHiOHhGM8wF8lZDketcUzQJ4hUyzLdW+kg23E8g6Q8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hK77lSuE5wzFwhCRobE9qXWskjQ3zxNRilzRvFrQtPauZ2z/+6poqRZVQebnFDiJ/
-	 1wzkAGB0/h2FUJeLSQC2e4E48yWXjrgs+Cy+sAJZc51JcSXjfYYSs/oDCVT/jY0PwE
-	 UhjntZlEcLXvsUm91zESPOyaZLrU9HbrzVtBdLNo=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jGKf62QN9zdbQ;
-	Fri, 30 Oct 2026 13:09:34 +0100 (CET)
-Date: Fri, 30 Oct 2026 13:09:29 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Farid Zakaria <farid.m.zakaria@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	John Ericson <mail@johnericson.me>, linux-security-module@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] landlock: Add access rights on created files
-Message-ID: <20261030.ohkopheePh2a@digikod.net>
-References: <20261024-landlock-created-rights-v1-0-77c8db3f6bd2@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ngWCYSkU
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-49d05d51553so4532215e9.2
+        for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 07:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793370600; x=1793975400; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=mYpdnsyPHrbQlI9gQjpkgVMu6bBztlcU0SAjmRmLasU=;
+        b=ngWCYSkU74Iafv0MedQwAlHJOlHRepRvB5FZ5oV9Srvo99S5+oc9wGmemWsPjzOQ3y
+         rEn9cnUi47ubbRcaoqzhY/Zx+b1+cNz0eojrHKKNT4KPJO3C1skgVKRCUduhBlf0X8qr
+         feFF58sjtY2T/S0ORrisK7wNY+iY6Vqa5AbymaqlfyY4AnZqFf2IrKgJzZyRHJ0iX4Ck
+         inSBlTmnLylV/C/X0so1CDGRKzsUWxSVgQshjuby643z4AUhP6nLhyXUZW5ysZ6zom0Q
+         wBW7P5kpWuaRP8vIA1tAzN0oHbowomyx0ilvqo7l47xqowRHmN4OQkZkMU3SWwNkULX0
+         4K7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793370600; x=1793975400;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=mYpdnsyPHrbQlI9gQjpkgVMu6bBztlcU0SAjmRmLasU=;
+        b=nrXSB5h4dllC/kPbfblXkoktDmthSio0Cwyh92ksjzS6pqy9mQcVVnRR0Q9sgwMYGe
+         vO+pFhoGT1SiOVZb9OlVyEVI7P0KdZTClMe29AEQH+IYTxCtSPvWH87FnCZTQWpvpUJC
+         PYB2ur/0YFpK8Yw2ldbQZ3fedbqLnFJOYLJ0h68xs3f+qut7h0UX9nQjolLN3Bpgwb5b
+         wWp+kXwoHhkdFJSNPYGNXfVw+5dh1rHOFs5IVtPPwnZTLWPCgFYPmCytBAHrUEkvNcw/
+         thBFY+FciQcdo5DIg5NEAOVJIzihHhSgUJbxb4wK3F2vDPIbykui+VT59tD19oNhD3Ua
+         R2Rw==
+X-Gm-Message-State: AFq9FYKs426Q04bixlsJw4j/cSGNiObkAyv0LpjITTNqQlE0C5+ZFq3X
+	iMFs9rmq/xYjcDUct+CgvFX9wluIJEj/izC1/J0ORm2rQBDqAyhFJmjH
+X-Gm-Gg: AYBFou2keuNotrbviMazvQGBBuUbbk/cvfYxu65YWbQJ0jsBShC6VvopaifYQJfftA3
+	l+8rI7i/5euEF9D9No4WZMZg/v4g01Gsesl3lH/feS9uk7Ok1aUk/4qn7d+inWLhkHZDh7Og5gW
+	mgsVndjOWXr2psqiIT/ryF1Fhicqwadfwb5ub6YoTS5UzsyPXW6d7YBERPKjB95fTo7hulC+/re
+	cJBeWRyaI8Twa8rFjvRkUD1z3OGDc8Ten1/TYVqrInf8f1l9o7UZIWvQLdjgzHSmlqwDAlKzHIu
+	5R1uKtmi29lbynw0kIZOK6sM814jd3Na+uVrL3hDgMaoqNqBj0kDx9e571mhMBpH5g+D+Z2wG5G
+	968Wh4ycnvgt63NYD2ewcIus6i0WkXLym2tjNUMmIh5EOGMPIZOaYwNE+fG08Pv3M7OfgwUFLSe
+	l5uadvghRU7eyhAtt4CZte+NKue1+S6zdLd8xcwgSbZkgqhj4OR31jeXrjcsNWxM41ZSjBU4fne
+	Mo7zq/wzYyqnBeQp/Qk6Kna4lvOdAb2eHdebpr+jO2vvliPtRPMHKLS22Wg/dKCqS/sokvAfbEj
+	W1QN+Sw+UYosXLkVa707u/r+cmvAmqpo8qPvAhn8w6XfQtTYPeTdcw==
+X-Received: by 2002:a05:600c:3d05:b0:4a1:faa1:3813 with SMTP id 5b1f17b1804b1-4ac187a6960mr55773015e9.27.1793370599597;
+        Fri, 30 Oct 2026 07:29:59 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4abf60f1076sm67672815e9.6.2026.10.30.07.29.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2026 07:29:59 -0700 (PDT)
+Date: Fri, 30 Oct 2026 15:29:56 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Dwi Siswanto <me@dw1.io>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH 0/3] landlock: Fix REFER in layered domains
+Message-ID: <20261030.060f232cddbd@gnoack.org>
+References: <20261030102411.12985-1-gnoack3000@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,156 +97,64 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261024-landlock-created-rights-v1-0-77c8db3f6bd2@gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261030102411.12985-1-gnoack3000@gmail.com>
 
-Hi Farid,
+On Fri, Oct 30, 2026 at 11:24:07AM +0100, Günther Noack wrote:
+> This patchset
+> =============
+> 
+> This patchset fixes the issue in three commits:
+> 
+> 1) The fix, which should be backportable to older kernels
+>    and which is CC'd to stable@.
 
-Thanks for this RFC.  The Nix build sandbox is definitely a valid use
-case for Landlock.
+To be more precise, the fix needs to go in 7.2, 6.18 and 6.12.
+Other stable releases predate 6.7 where the bug was introduced.
 
-I didn't have time to do a full review of your patches yet, but I'll do
-that next week.  In the meantime, I have a few questions:
+It does unfortunately not apply cleanly on the stable kernels 7.2,
+6.18 and 6.12, but I have backported versions.
+
+(Differences: In the stable versions, the affected helper function was
+still in ruleset.h instead of domain.h.  In 6.12, the constant name
+did not have a _ prefix yet.  In 6.12 in the tests, the
+drop_access_rights() helper didn't exist.)
 
 
-On Sat, Oct 24, 2026 at 01:39:16PM -0700, Farid Zakaria wrote:
-> This is a proposal for an idea to add support for landlock to work
-> better with build systems such as Nix where they want to apply
-> restrictions but the paths may not yet exist.
+> 2) Regression selftests.
+> 3) A more elegant fix for newer kernels,
+>    which is intentionally *not* CC'd to stable@,
+>    because it would break on older kernels.
 > 
-> TL;DR;
-> ========
+>    In newer kernels, we already add the "REFER" access right to the
+>    handled access rights when we merge the ruleset into the new
+>    domain, so there is no additional calculation to do for it.
 > 
-> Landlock rules attach to inodes that exist when a ruleset is built.
-> That makes a directory shared between trusted and sandboxed tasks hard
-> to confine: the sandbox may create entries there with
-> LANDLOCK_ACCESS_FS_MAKE_*, but no rule can name those entries ahead of
-> time, and granting read access on the directory to cover them exposes
-> every other entry as well. This series adds a rule flag that grants
-> access rights on the entries a domain creates in a directory, instead
-> of on the directory.
 > 
-> Motivation
-> ==========
-> 
-> The motivating user is the Nix build sandbox. Every Nix build runs in
-> its own sandbox, and a build may only read its declared inputs in
-> /nix/store and must be able to write and read back the outputs it
-> creates there. Nix enforces this with a private mount namespace: it
-> creates an empty store directory and bind-mounts each input path into
-> it, one mount per input. Nix has paid this per-input cost since the
-> sandbox was introduced [1].
-> 
-> The cost is paid per build and grows with the size of the input
-> closure. Nix is moving towards much finer-grained builds (many small
-> derivations instead of a few large ones), so the number of sandboxes
-> grows while each build's own work shrinks, and the sandbox setup is
-> becoming the bottleneck. A typical build has hundreds of inputs; large
-> ones have thousands.
-> 
-> A microbenchmark sets up and tears down a Nix-like sandbox (user,
-> mount, PID, IPC, UTS and network namespaces, pivot_root into a chroot,
-> removing the chroot afterwards). It compares one bind mount per input
-> with a single bind mount of the whole store plus one Landlock rule per
-> input. Median latency per sandbox, one sandbox at a time, Linux 7.1,
-> ext4, 16 cores:
-> 
->   inputs   bind mount per input   one bind mount + Landlock   speedup
->       10         3.2 ms                    2.3 ms               1.4x
->      100        11.6 ms                    2.8 ms               4.1x
->     1000        79.3 ms                    6.4 ms              12.4x
->     5000       400.1 ms                   24.4 ms              16.4x
+> Please let me know what you think!
 
-Did you do this benchmark with this series?  Do you have the related
-code to easily reproduce it?
+P.S. Mickaël: Specifically, I'd like to know whether you think this
+warrants an erratum.  If yes, here is a tentative wording:
 
-> 
-> With Landlock, an input costs an O_PATH open and a landlock_add_rule()
-> call: there is a single mount, and no mountpoint directory to create
-> before the build and remove after it (removing the 1000 empty
-> mountpoints alone took 17 ms).
-> 
-> The single bind mount is only sound if the store listing and the
-> undeclared store paths stay unreadable while the build can still use
-> its outputs. Without this series, covering the outputs requires a rule
-> on /nix/store itself, which makes every store path readable again.
-> 
-> [1] https://github.com/NixOS/nix/issues/179
 
-I'm wondering if the Nix build sandbox can create the store dir per
-build before the actual build.  Isn't already the case with the bind
-mount?
+   Erratum 5: Correct REFER semantics when layering Landlock policies
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-> 
-> Series
-> ======
-> 
-> Patch 1 lets an LSM observe inode creation through the
-> inode_init_security hook when no LSM provides an xattr. Patch 2 adds
-> the LANDLOCK_ADD_RULE_CREATED flag for path-beneath rules and bumps the
-> ABI to 13. Patch 3 adds selftests.
-> 
-> Testing
-> =======
-> 
-> The series applies to the Landlock next branch (3e271a27c46f) and was
-> tested on Linux 7.3 with that branch applied.
-> 
-> Without patch 2, the five new tests and the ABI version check fail.
-> 
-> Open questions
-> ==============
-> 
-> - A created inode stays pinned until the layer's hierarchy is freed, so a
->   sandbox that creates many entries in such a directory keeps them all in
->   memory. Should this be bounded?
+   This fix addresses an issue where, when multiple Landlock ruleset
+   are layered, Landlock would restrict LANDLOCK_ACCESS_FS_REFER
+   operations which would have been allowed by the same rulesets
+   individually.
 
-Only the sandbox creator should pay for the related kernel memory
-allocations, and this should be at creation time.
+   This change ensures that a LANDLOCK_ACCESS_FS_REFER operation is
+   allowed in a layered domain if all of the enforced rulesets allow
+   it individually as well.
 
-Another property that would be nice is that if a sandboxed process can
-create a file, the related policy should also make it possible to delete
-this file.  Is that the case with the current approach?  We need to
-think not only about the lifetime of the sandbox, but about consecutive
-creations of such sandboxes by/for the same program.
+   Impact:
 
-> 
-> - Creation is detected in inode_init_security, so on filesystems that do
->   not call security_inode_init_security() created entries get no rights.
->   Is there a better hook?
-> 
-> - Through overlayfs, created entries get no rights either, because the
->   upper inode is created with the mounter's credentials. Should overlayfs
->   be handled, e.g. via security_dentry_create_files_as()?
-> 
-> - A file renamed or linked in keeps only the rights it had at its source.
->   Should it get none instead?
-> 
-> ---
-> Farid Zakaria (3):
->       lsm: Call inode_init_security hooks without xattrs
->       landlock: Add access rights on created files
->       selftests/landlock: Test LANDLOCK_ADD_RULE_CREATED
-> 
->  Documentation/userspace-api/landlock.rst     |  42 +++++
->  include/uapi/linux/landlock.h                |  18 +++
->  security/landlock/domain.c                   | 182 ++++++++++++++++++++-
->  security/landlock/domain.h                   |  28 ++++
->  security/landlock/fs.c                       | 176 +++++++++++++++++++--
->  security/landlock/object.h                   |   6 +
->  security/landlock/ruleset.c                  |   6 +
->  security/landlock/ruleset.h                  |  14 ++
->  security/landlock/syscalls.c                 |  20 ++-
->  security/security.c                          |   9 +-
->  tools/testing/selftests/landlock/base_test.c |   2 +-
->  tools/testing/selftests/landlock/fs_test.c   | 227 +++++++++++++++++++++++++++
->  12 files changed, 703 insertions(+), 27 deletions(-)
-> ---
-> base-commit: 3e271a27c46fd591d1011c7de5a644a41e2010f1
-> change-id: 20261024-landlock-created-rights-9340b00a8c4d
-> 
-> Best regards,
-> --  
-> Farid Zakaria <farid.m.zakaria@gmail.com>
-> 
-> 
+   This occurs in situations where one of the layers does not handle
+   any filesystem access rights, but one of the other layers does.  In
+   that case, the non-filesystem layer is interpreted to deny the
+   LANDLOCK_ACCESS_FS_REFER right.
+
+
+–Günther
