@@ -1,51 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793336028;
-	b=RWuygGKuYtAc8pvyqrRDV7/ZZFYqh+VXAWcgpn3b4PVPvGmC2zILkAmqC2D+WUco7QKL
-	 pLJLQT5RXb47Wm6ZptH/AcNTmXryQpa/XHmqNi63GtUc9ucbW1IunIwBYHhwye3Ecrixe
-	 lJU1RRFlITGYP9q1bNnfpu0uC3IBgXCyvcLIAD1q7pn8G700+ij/GKESsmInyAKutti+v
-	 EBABQvx7xfCNZT42Hmbndx73nEplbnvZGcpTF8Ojz91dlRPS/MWSW1HkkxUcX7AkFyTMO
-	 UlYeJ8B8I3Wcec+7rFL2GwpvgxdIeltxrlmVHdTkZK3GUKV0w6UZqd+df3EeIbv40nA==
+	b=NIvgAuAGORFvBofEjuIibgC4Anog8C6ktq2q9ylKB+PFeTWTdHeatYiZaLf+KD6NC5vi
+	 ym4FkHE+HibB7UQfMgd7plkvSujHNORbZFbrA+hoETPQHZoUGr/FBDxcM8ZKTiPpjUN6y
+	 RqmIs0iNZ4eAcKXLROm4wptu2JYl1JNHx/oA7PxP4Rw/IQswGBCnY4AFhDPIXR0Hr8YCr
+	 OndkhcmvtbhU5ZIKOwoZHWb8lDSlYcVNhwH0snGJAryMR+UhZ51NCaCgxIE8xQFWTMLUi
+	 HBiYdFqe3OWTy4fLkI9LuioxRwn2NZm4oYA/RneakC1fHyEMh1zJeE3ZkgtyWoVH4eg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793336028;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=UufczwWvT5q8SDe5UnUUcBrkurRuURka5lx5XMwhi0g=;
-	b=Ro2X1lz59uDOFc8jr59gzkoLO2TgNUuTt0Za3bIVoEv/sgOXJ8vzsq/4T4XhkY+ky5ur
-	 uKWEALIICV+CHNpZY9As73stjSSG8M70HA4DgWO/idGSHqJwhn+UtRtvyxejhomneydxk
-	 3kjE/Ung2bPeNhLZ8zmhRa+8PxAnWxH7Ijw+lfHeG2iARZECbvsGQ/px3/PYPOFJWs+v0
-	 Cc40lToL55owt3zUjLjYOWsJ81k3wSMeYepn+X4sBn/trB7aJNeBsaWF0dB4wlwFmcQGe
-	 XGkL/YoMygFIoYBmCn/4tO0py3RrnW3npsJD0joW+WbVpF2LPpQG8ykTUeb8u/4AFFg==
+	bh=9wOHzVxsBoLRaFVvgbr0QXZpoTkZuvLgwLY3MOLzi+o=;
+	b=a48ppfRCpW3p+cMg2L/zYdGrClXA935sBFo6OQIQBi0LVaGuvYJDB7FusRWW6i4UNOzu
+	 /31CkCl0B9zcpIJfdnZ9zHnFZpuvoesmXrRPJ3Rp8B/Rm/OaNlR7xfGfD9e0qg9Zfb6Kp
+	 litmuE644OYiMSeRsWQelVYrCabPAvVYIDT/f37UNMTF17p+sxwQAD3hGYLcSh/nM+PQw
+	 GIh8/m1OjHQinO23ILBaaddXrPcu+lE7CphG/DaJvCvu0LMRyaFC4y1J5Aqz/2IM8gSVC
+	 oPCCFXs0EXTceBrJ9fYDO7MEVANS6Ub5axUrXdjmUow6TVHoJGHCj3MKhml50qcDtcw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kQqBJiCE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z9FxtQdK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B84606A31E
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AADF606A31C
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kQqBJiCE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659651F000C1
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z9FxtQdK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE761F0093A
 	for <linux-security-module@vger.kernel.org>; Fri, 30 Oct 2026 04:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793336027;
-	bh=UufczwWvT5q8SDe5UnUUcBrkurRuURka5lx5XMwhi0g=;
+	s=k20260515; t=1793336028;
+	bh=9wOHzVxsBoLRaFVvgbr0QXZpoTkZuvLgwLY3MOLzi+o=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=kQqBJiCEoyXOqREnpEqrUty9YvUgv1cO0VTm1rEFrHAOVHtIGuJM2irrDtMf5FV56
-	 +bcB1aNdjKBnyM70Ni7xzHMzbBKXYHzlDkhpI7BEOApNKUPpJMwWpTZAq91lDuvPBp
-	 MjF+OHCo6+bmg3P2iOwobx9XiSdgMrDxoJV8yOOCG/tRbrWlz2zF68TgSlXgSmHzgX
-	 I4kq2t0TsSX0Y4MXnVu8lx1cPg5eafxKxubX1SE1m3pPxlCra1tExvB0HvdEvsULTp
-	 SpOl90LafmhEv+kR9FMuAEMYfXQNewxW9jBXlfhoB/iKIZkY18XPrbzF2xcaDLal5t
-	 gqkoxyMPc8OIA==
-Message-ID: <sashiko-outbox-190351@kernel.org>
+	b=Z9FxtQdK/TQccWWYnrjwrYvZTEz8DE68WlTOa6r1V2urJZnE8Ouc6fy0oyym2FcVA
+	 Vr5vhs3SLF1cLXqqvC6VF1rMOlGn/hrpow3Qt67JSOaz/GuGdwosB/TBrmzL2QgvfK
+	 f1bzGpDnfF0jm6EM1m7YHZRFI7iYZ76JoZ0briCiSZybIUROI1ioHj78WPQ/dV/nl1
+	 z/1KtxqtUQcJKUn/TwM3TGaIIcQZBNdvOhlR12VEDnNHsxPAZFirWpkV9ADo7E8129
+	 9n1cb04i/583e01b7NeqfBpl8g7VPtKohfV+spjNCosRrC1EFOz+nmDEsa8L4OIGq9
+	 8is8jsQ9j+uNQ==
+Message-ID: <sashiko-outbox-190352@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 3/7] landlock: Add UDP send access control
+Subject: Re: [PATCH v4 4/7] selftests/landlock: Add UDP bind/connect tests
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20260502124306.3975990-4-matthieu@buffet.re>
-References: <20260502124306.3975990-4-matthieu@buffet.re>
+In-Reply-To: <20260502124306.3975990-5-matthieu@buffet.re>
+References: <20260502124306.3975990-5-matthieu@buffet.re>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Fri, 30 Oct 2026 04:53:47 +0000
@@ -58,110 +58,112 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [Critical] TCP Fast Open (MSG_FASTOPEN) via sendmsg()/sendto() bypasses L=
-ANDLOCK_ACCESS_NET_CONNECT_TCP enforcement.
-- [Medium] Lockless plain reads of concurrently modified socket state (`skc=
-_family` and `inet_num`) introduce data races.
+- [Medium] The `SO_RCVTIMEO` and `SO_SNDTIMEO` socket timeouts added in `so=
+cket_variant()` are set to an aggressively short 100 milliseconds.
+- [Medium] The patch introduces a file descriptor leak in `TEST_F(port_spec=
+ific, bind_connect_1023)` by overwriting `connect_fd` without closing the p=
+reviously allocated socket.
+- [Low] The 64-bit Landlock access rights bitmasks are assigned to signed 3=
+2-bit `const int` variables, which discards the upper 32 bits.
 --
 
-commit b84eacd95b135c773c622b9361a03b428f1f3bce
+commit 9a737284d2bae1dcd34a40323c4679a1e1cb1593
 Author: Matthieu Buffet <matthieu@buffet.re>
 
-landlock: Add UDP send access control
+selftests/landlock: Add UDP bind/connect tests
+   =20
+Make basic changes to the existing bind() and connect() test suite to
+cover UDP restriction.
 
-This patch adds Landlock access control for sending UDP datagrams to
-explicit destinations via sendto() and sendmsg(). It introduces a new
-socket_sendmsg hook that applies the LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP
-policy.
-
-> diff --git a/security/landlock/net.c b/security/landlock/net.c
-> index 045881f81295..8a53aebdb8c6 100644
-> --- a/security/landlock/net.c
-> +++ b/security/landlock/net.c
-
-[ ... ]
-
-> @@ -82,6 +84,35 @@ static int current_check_access_socket(struct socket *=
-const sock,
->  			 * inconsistencies and return -EINVAL if needed.
->  			 */
->  			return 0;
-> +		} else if (access_request =3D=3D
-> +			   LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
-> +			if (sock->sk->__sk_common.skc_family =3D=3D AF_INET6) {
-
-The comment below notes that the socket's family can change under our feet
-due to concurrent setsockopt(IPV6_ADDRFORM) calls. Since this is a plain C
-read of a concurrently modified variable, should we use READ_ONCE() here to
-avoid data races and KCSAN warnings?
-
-Additionally, since skc_family is evaluated multiple times in this function,
-would it be safer to read it once into a local variable to prevent
-inconsistent evaluations due to compiler reloads?
-
-The same question applies to the lockless read of inet_sk(sock->sk)->inet_n=
-um
-in current_check_autobind_udp_socket(), which also acknowledges concurrent
-modifications in its comments.
-
-> +				/*
-> +				 * We cannot allow sending UDP datagrams to an
-> +				 * explicit AF_UNSPEC address on IPv6 sockets,
-> +				 * even if AF_UNSPEC is treated as "no address"
-> +				 * on such sockets (so it should always be allowed).
-> +				 * That's because the socket's family can change under
-> +				 * our feet (if another thread calls setsockopt(IPV6_ADDRFORM))
-> +				 * to IPv4, which would then treat AF_UNSPEC as
-> +				 * AF_INET.
-> +				 */
+> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/=
+selftests/landlock/net_test.c
+> index 016c7277e370..568a6ed7139c 100644
+> --- a/tools/testing/selftests/landlock/net_test.c
+> +++ b/tools/testing/selftests/landlock/net_test.c
 
 [ ... ]
 
-> @@ -299,9 +333,33 @@ static int hook_socket_connect(struct socket *const =
-sock,
->  	return ret;
->  }
+>  static int socket_variant(const struct service_fixture *const srv)
+>  {
+> +	/* Arbitrary value just to not block other tests indefinitely. */
+> +	const struct timeval timeout =3D {
+> +		.tv_sec =3D 0,
+> +		.tv_usec =3D 100000,
+> +	};
+
+Could this 100 millisecond timeout cause false-positive test failures in he=
+avily
+loaded CI environments or nested VMs?
+
+In test_bind_and_connect(), the parent process calls accept() or read() and
+waits for an unsynchronized forked child process to execute socket(), conne=
+ct(),
+and write(). If process scheduling delays the child, the parent's blocking
+operations might time out and return -EAGAIN.
+
+[ ... ]
+
+> @@ -737,16 +895,20 @@ TEST_F(protocol, connect)
 > =20
-> +static int hook_socket_sendmsg(struct socket *const sock,
-> +			       struct msghdr *const msg, const int size)
-> +{
-> +	struct sockaddr *const address =3D msg->msg_name;
-> +	const int addrlen =3D msg->msg_namelen;
-> +	access_mask_t access_request;
-> +	int ret =3D 0;
-> +
-> +	if (sk_is_udp(sock->sk))
-> +		access_request =3D LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
-> +	else
-> +		return 0;
+>  TEST_F(protocol, bind_unspec)
+>  {
+> +	const int bind_access =3D (variant->sandbox =3D=3D TCP_SANDBOX ?
+> +					 LANDLOCK_ACCESS_NET_BIND_TCP :
+> +					 LANDLOCK_ACCESS_NET_BIND_UDP);
 
-Does returning 0 for all non-UDP sockets leave a pre-existing bypass open f=
-or
-TCP Fast Open?
+Should bind_access use __u64 instead of int?
 
-If a sandboxed process calls sendmsg() on an unconnected TCP socket with
-MSG_FASTOPEN and a target address, it routes through sys_sendmsg() to
-security_socket_sendmsg() and then tcp_sendmsg_fastopen(). This entirely
-bypasses the connect() wrapper and the security_socket_connect hook where
-LANDLOCK_ACCESS_NET_CONNECT_TCP is normally enforced.
+The 64-bit Landlock access rights bitmasks are assigned to signed 32-bit int
+variables here and in several other tests, which discards the upper 32 bits.
+While current flags use only the lower bits, this type mismatch might risk
+future sign-extension or truncation bugs if Landlock introduces flags using
+higher bits.
 
-Since this patch introduces the socket_sendmsg hook, could we also evaluate
-TCP sockets here when address !=3D NULL to enforce the
-LANDLOCK_ACCESS_NET_CONNECT_TCP restriction and close this gap?
+[ ... ]
 
-> +
-> +	if (address !=3D NULL)
-> +		ret =3D current_check_access_socket(sock, address, addrlen,
-> +						  access_request, false);
-> +
-> +	if (ret =3D=3D 0)
-> +		ret =3D current_check_autobind_udp_socket(sock);
-> +
-> +	return ret;
-> +}
+> @@ -1815,23 +2035,35 @@ TEST_F(port_specific, bind_connect_1023)
+>  	int bind_fd, connect_fd, ret;
+> =20
+>  	/* Adds a rule layer with bind and connect actions. */
+> -	if (variant->sandbox =3D=3D TCP_SANDBOX) {
+> +	if (variant->sandbox =3D=3D TCP_SANDBOX ||
+> +	    variant->sandbox =3D=3D UDP_SANDBOX) {
+> +		const int bind_right =3D (variant->sandbox =3D=3D TCP_SANDBOX ?
+> +						LANDLOCK_ACCESS_NET_BIND_TCP :
+> +						LANDLOCK_ACCESS_NET_BIND_UDP);
+> +		const int access_rights =3D
+> +			(variant->sandbox =3D=3D TCP_SANDBOX ?
+> +				 (LANDLOCK_ACCESS_NET_BIND_TCP |
+> +				  LANDLOCK_ACCESS_NET_CONNECT_TCP) :
+> +				 (LANDLOCK_ACCESS_NET_BIND_UDP |
+> +				  LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP));
+
+Similar to the above, should bind_right and access_rights be defined as __u=
+64
+to match struct landlock_ruleset_attr.handled_access_net?
+
+[ ... ]
+
+> @@ -1867,8 +2104,19 @@ TEST_F(port_specific, bind_connect_1023)
+>  	ret =3D bind_variant(bind_fd, &self->srv0);
+>  	clear_cap(_metadata, CAP_NET_BIND_SERVICE);
+>  	EXPECT_EQ(0, ret);
+> -	EXPECT_EQ(0, listen(bind_fd, backlog));
+> +	if (variant->prot.type =3D=3D SOCK_STREAM)
+> +		EXPECT_EQ(0, listen(bind_fd, backlog));
+> =20
+> +	connect_fd =3D socket_variant(&self->srv0);
+> +	ASSERT_LE(0, connect_fd);
+
+Does this overwrite the connect_fd variable and leak the previously allocat=
+ed
+socket file descriptor without calling close()?
+
+connect_fd appears to be allocated via socket_variant() earlier at the start
+of TEST_F(port_specific, bind_connect_1023).
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260502124306.3975=
-990-1-matthieu@buffet.re?part=3D3
+990-1-matthieu@buffet.re?part=3D4
