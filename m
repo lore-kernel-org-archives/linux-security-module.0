@@ -1,55 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793440234;
-	b=EMcUrVTysIkLjZ5sBeg6mfEbTe1ihrp1qUD7/HY2SpLB7zMbzbsIWkOHY7XcVLrjhcb/
-	 5CntEw3qr2RbMnWHVJTraC+fLyIx/VNMYfk3xC0BhNczEENwvj6tr7tWy49v1mUSXKSFn
-	 P9Ev5b4fL9mn53dy9gaJPh9bMgP73FXg7++R2kER77qATjDaM350L0fNSPIwbYpxkjSQz
-	 1Z7D6BDPFY9hz5sR0fW9C9SKN0gTOIdgmF9Tu1mmQs+CcuIFdAcfqLtdto5n4AcWqtzq9
-	 2tj0r7lwOKtUdiJH+7DXmFdhEDrDOjE6yb7A9DGMq0XdTzJIZHQHcUggEj46pXzz7Bg==
+	t=1793441513;
+	b=voNQRPQxpRtkmIV2AlOspFkDBEs2lqLoty4RjhSHxTH+foCcu/hFuzIS5qlt2mHqm0s6
+	 XiPmpnZmy1EMPg8/nCREFCjwDTVGRDCTjLUhya4kWCXSFpdXZh6uDtH8JaeEWVxg/8s3X
+	 LSO6Py6AmcbpeTThoE6BqLeBrGd7vSv58dbpFezm+RpuHyVatcoM8H3tX5kYc8EKOz5/E
+	 bfjB2gU4XgMM+FFe8+e9rVIkYB/RBGqpSzFobuS83lHkfOA4MeayOMx8Jy/4eBcydjgZC
+	 1t5efr5amOwIMvTdd+pcwe4lwOqe0s/XYWAt59WqhFNBzhdVpsc5aSKBClRSycARRaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793440234;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=km7+5bxn6+/GEe9g7YXFirTDc3Wlqa6U9gbRkERxxbQ=;
-	b=IKC14bpQ5CY/Sq5vFBtcUPeUCL2Ml/K/gcmZtyYc/I4yr9EmGiJYV3xvwCbbrSqrthFu
-	 yeZP5pH0JM/JZGP3wcVLNjQM2ck0YEZiOgYHlvEadJ9VUClprO8KQXY4QjgDgVGU9H6WH
-	 QoBLz1TghcXGgb37x1RNJmtapVuUq1aEbNFWwJ5yA9a2cUICKjHfzN+PW/GBxgQhyM+go
-	 PhKZYnaPb/RRnsK47sh6FSbA5uZzqSZgiGiVIv3wVs/WBiZ4sE9aA+ka4ymSQ0Y2rBMkp
-	 fTfXWifO2uK8lWuYnjC9DhdSIImFLIqaX8p6FUD5cKKwr64ec+GWr0QcY8hbfXpCDtw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793441513;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=PUPQWrzH+bOmibwWb9YKOya5jmCEqnTEobsOjXEdjes=;
+	b=i0U7K5mdQ1KG5euDdKKfnAzlMg41dpLLt0ahyLzmaMPlqb3Fy+fBqbNRRspkIWiHLbc2
+	 R1i79VmUMCrnu1x1RfBos9ScFYjwqHiZYVKx/4qJ2eQK4cqoJUqHdLtqOi7LkM6taZ97q
+	 tNRd/Pf2kJanGahJaXUY380uzwQU01FyaXsXxRuk76vqbWokea8Ayj+e/bYH8cIGZk/sF
+	 RAKkweyCeLUyTEgZUvOuBoRVkip5f5aQDc+pn02q0IcO6bjseJVbnzxHvGCtn334EJkZk
+	 MFH79nIhVuWjlbi3YTxnNx5KCWuaMRGhIrnlKCVcHgGj0AUK1hwzA5bV4xLpw5ZWRUw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQY6CxfR;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 207C1606A31F;
-	Sat, 31 Oct 2026 09:50:34 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=KGNiNQ14;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1774D606A31A
+	for <linux-security-module@vger.kernel.org>; Sat, 31 Oct 2026 10:11:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1774D606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQY6CxfR
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 72E041F0093A;
-	Sat, 31 Oct 2026 09:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793440234;
-	bh=km7+5bxn6+/GEe9g7YXFirTDc3Wlqa6U9gbRkERxxbQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EQY6CxfRlDxXObDjvGWVxJ4p2ErigmZMcSLrrUq/YxRq4fOP3n5fNlclzftM+gNQ5
-	 v/eHLmhWAlk29TsnQ6fL5gG7nBeGIrQrXJ6Ny7M4G3ik3QY8JzrPRM6yjAjRlTicYN
-	 P8h5Fnn4pPK2XZGKQeZSbAab6K0XnYUzQeh/ums/8takpqFjZ0kjdPIlPetgFsak/w
-	 ai9q8N2HZ9P3NqOgBMRY7mqf8yrSXf5YI8BHLudmeNJbVgthZzA3e0YDs3e+1MPZzl
-	 DjoFYj9+hd0xD4PqPh5ZSqzqVCo+dQJ71LasUHKx8J0m67GQLNkKcDdsZ7z7j6DyVP
-	 fCE4hVa9ZxOlw==
-Date: Sat, 31 Oct 2026 11:50:30 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Cen Zhang <zzzccc427@gmail.com>
-Cc: dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com, jjzuming@gmail.com
-Subject: Re: [PATCH v3] keys: Protect the update method check against type
- removal
-Message-ID: <auW55lFj1MZZcWIo@kernel.org>
-References: <pm-keys-update-type-removal-20261029-v8-a0dbc48c588bf2b6a278@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=KGNiNQ14
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D48D91595;
+	Sat, 31 Oct 2026 03:11:47 -0700 (PDT)
+Received: from NH27D9T0LF.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D18693F59E;
+	Sat, 31 Oct 2026 03:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1793441511; bh=xAiQwUL+HSIwzi/3Ta0D+1DCjOBAp6eJoqy19IadRf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KGNiNQ143pWGjbVWoobTFLwGX1JUFLmZD4mb/axjcRxssvTiKdi/AbsEGMjcJxaWB
+	 enw60j7P30BEoYgWeqsZABcRNl14qHUVVTVkvyL9JNBo9mVNJSRhY1tQiUhS8huJ5F
+	 BPJo1HeGmnXT8U28vtEwdji7BZOUoals6SaSJ4jc=
+Date: Sat, 31 Oct 2026 11:11:43 +0100
+From: Emanuele Rocca <emanuele.rocca@arm.com>
+To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
+	John Johansen <john.johansen@canonical.com>
+Cc: linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com,
+	Aurelien Jarno <aurelien@aurel32.net>
+Subject: Re: [PATCH] apparmor: fix race on NULL ctx->peer in update_sk_ctx()
+Message-ID: <auW-3_OXSxEP5U7c@arm.com>
+References: <20261029140643.4092-1-emanuele.rocca@arm.com>
+ <sashiko-outbox-189513@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -61,28 +63,16 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <pm-keys-update-type-removal-20261029-v8-a0dbc48c588bf2b6a278@gmail.com>
+In-Reply-To: <sashiko-outbox-189513@kernel.org>
 
-On Sat, Oct 31, 2026 at 05:26:36PM +0800, Cen Zhang wrote:
-> +out_free_preparse:
->  	if (key->type->preparse)
->  		key->type->free_preparse(&prep);
-> +
-> +out:
-> +	up_write(&key->sem);
->  	return ret;
->  }
->  EXPORT_SYMBOL(key_update);
-> 
-> base-commit: 9a2a4c51dccc3168c3dc949fcbaa360a478fa228
-> -- 
-> 2.43.0
-> 
+On 2026-10-29 02:26, sashiko-bot@kernel.org wrote:
+> Does this depend on the prerequisite patch referenced in the Link tag
+> (https://lore.kernel.org/all/20260824155822.9214-1-maxime.belair@canonical.com/)
+> that adds the NULL checks on ctx->peer under the socket lock?
 
-Thanks for taking the trouble addressing this part.
+It does, and Maxime's patch has already been merged into the apparmor
+tree, as well as mainline:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4de32fd05ce9e63b492899215ea929e7d306cdab
 
-I'll apply it soon'ish.
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Br, Jarkko
+The patch I'm proposing is still needed to fix the earlier race at the
+beginning of update_sk_ctx. 
