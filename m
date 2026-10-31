@@ -1,48 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793481034;
-	b=k+OxKEjfJPLU0RY74LwBV2cjTlHSkYN0pFKXYHlb6TELVTmr/cmcSVzoS/rr7bogSXLl
-	 rwiXLaEwBC53TlmhBRAfp17sVcvIq1ALyRDses26uClzZBgbJ2qDHBSmbnsCnvHOybg13
-	 pADh0NnFovhU3X3aVtv+ztPmu3iYyloC+tfn8bkPxJfiQZ3EvSyfHLcpfMZ2bZlkYTGwZ
-	 hnNLDUrdM5yC3larbppMYLDX+HAOddgDp5Nb8zQXpMA5zS2eBNjczciC/WyXlCPFOh3Zr
-	 iOLGfn8ASuV3aDbI7QJFPj0IBb0gx+ERf/9HBhQzEUrlrXGQVcf67P3xmYKCrFQG85A==
+	t=1793481037;
+	b=UyiyazOh2WRjwHRaq2kVJtQJ6SCL6A4BDjnMQVoMrbASz8lTciFCTyaUpufvt7Skq3BW
+	 GcDkCR9ILWy9IoG4zJjc/5ntscoulgtIjuuUSBp6BJsjsGywLXqSafVHGx798z43pR1a2
+	 Vc17BlchTowziV3hT/nKPm2J+QTiHBxJF6bJzcx1b5fHwvcHmlrGbM+MGKHUSTCY9aV4b
+	 6/K/wzGEJQy+cfNvUG4lXtcyN7R1BKB6ZaVc2Ra9IE12v6cJdJz568zomrCf8OayPT7WH
+	 9PvwoPWh3C8h0eg1PCtztRyzSPXjoOSSPX0l7h7ZBwvW1TCVrpLmWicXtYggT+yR7HA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793481034;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793481037;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=QmGsf7izUBb/fkI7bQs6MNedebQLL0nz02LTM6vnduI=;
-	b=NPz1R13sZsv9FpHYogY6NJ4uUzQLfyX0Q9jsiNayfZQjl6PSpFZUwKLqhg42Op8bB+2P
-	 ze4mpp7zP4AKWciXrKIVCLnP6SVMJvXddYENH9I0a4GsUtgxoK8C1bFcU/0rKOGJw3h5W
-	 DAXorTFYx9FndVFA70zoxVzpnUgeXiDNGIPOdoiOSH6fiaQnV4HZyNjouSAIZ+oFiw060
-	 tMscVGAHJylaf/eS+uYyavhqmnneHzccUHuiGI6GiDCyAQarnVwV/7uXZ4sYhvztV7v/c
-	 uJYNr+VxBewzLn7XgaR+OAICA5YCTMxrnVuVgkl+F8MAeMFlMx8bahzxKgIT2IepjLA==
+	bh=6x3KS81Te4KDKsrtlqBV3wwienvY6Lov0v5ELrnKB/U=;
+	b=IVc2NRjSVMFnOm2WY6CT2C+w4kO9Zj0969TD6PlEzspX3mGaxBzznP2kVLCX8VPz2mCh
+	 nAZm3u/SdhNg+FAvohRrI9T65hisWvK4DV0DzKtUhukV5BZtLtYf/GrnwgadEDMrxGTSB
+	 Jowx0S24o2MhfzR0NPfj1fRXpFoDiSyXGJcHyDo9/Q2iDNPt0n3iO9mVIfyrzaZKzJfiV
+	 oDT1q8UDlEHq35bGDd97ReVxgs7pPR7r13z7p7Gx80YLKLp3HHegGTVufZS6Rcq0+2pSs
+	 /xj37JCHYqatflN+im8Y/dI55pd+mOaMwRBXGX2R+aURGDPhgrCWp21XZ2O1wu6497A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mhhwtdpO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XTU+82YF;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F0C606A321;
-	Sat, 31 Oct 2026 21:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F371606A31C;
+	Sat, 31 Oct 2026 21:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mhhwtdpO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A691F000C1;
-	Sat, 31 Oct 2026 21:10:32 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XTU+82YF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83F3E1F00919;
+	Sat, 31 Oct 2026 21:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793481034;
-	bh=QmGsf7izUBb/fkI7bQs6MNedebQLL0nz02LTM6vnduI=;
+	s=k20260515; t=1793481036;
+	bh=6x3KS81Te4KDKsrtlqBV3wwienvY6Lov0v5ELrnKB/U=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=mhhwtdpOYeAQNCYpLj+9tsf7o1ZiOpXB7+zTlu59wEr9lxUBfENzzBWOFrHa1EwQA
-	 y/cs13+4YUuEEt351+fzcMSQ/Vqbhy8Xs9msPZ2CbXP6Xen2j/jpm1Xot6Sk7ymYP0
-	 82XabwU2rF7ioDfMfHgJs6HNkGHeIaL6f6FHUdz9zUjhPYkbV8HlLMTg4NxTFyIoM+
-	 4KBbn/QXXJHNEU/FCOnKnZUsVRlikfgAOueUntqH+CP4zWWe9f1qNJoM1djvNnLMJ1
-	 5gWZ7kxlqdoaJlciBp2hp+7sPG0i9APy7/2mv/E35Bzr4aVMBfT2hk7y7PrsPnT6Y7
-	 qvwmNx017E4UQ==
-Message-ID: <sashiko-outbox-192152@kernel.org>
+	b=XTU+82YFl8ci5g9tdM1tlMrGvwu1LkY3ZrRIdpAdEhdOtJH72xWkM+tjj7jzQOfz3
+	 /oHJI9uB6l7DkXstKdikD00iMHQbXASeXsfXqwd7LUxroZRA7ojoV/TxKIDlmWd1Dy
+	 JysYpvNJJj4arzzEBXnUf/SfPj5DX7d0P6EbeG244UqrSoE14SAzFR2hnkojH1XNSz
+	 FL6pFzADH/StMF0+zszl9cnZPPhtrz94KXUKCwvRTK0rg7govWUsf5tMKzOzxjytMA
+	 ra141yh1rszwOOR+HmmJxJsZJP/gyTrQ20yU+fvj6hEnkTfZuhWlRKocuQb9738LXl
+	 MvUSy8WKoJ3qw==
+Message-ID: <sashiko-outbox-192153@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 3/4] initramfs: read metadata from special file
- METADATA!!!
+Subject: Re: [PATCH v5 4/4] gen_init_cpio: add support for file metadata
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Danny Hu" <dannyhu@arista.com>, "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian
  Brauner" <brauner@kernel.org>
@@ -52,12 +51,12 @@ Cc: "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu" <roberto.sassu@huawei.co
  Kondratiuk" <takondra@cisco.com>, "Tianxing Zhang" <zhangtianxing3@huawei.com>, "Zheng
  Zengkai" <zhengzengkai@huawei.com>, zhoushuiqing <zhoushuiqing2@huawei.com>, zhangguangzhi <zhangguangzhi3@huawei.com>, "Jason
  Yan" <yanaijie@huawei.com>, silviu.vlasceanu@huawei.com, hpa@zytor.com, arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com, niveditas98@gmail.com, pierre@arista.com, julien@arista.com, kbharathi@arista.com, erosca@de.adit-jv.com, alexandr.lobakin@intel.com, jim_baxter@mentor.com, linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, bug-cpio@gnu.org, nathan@kernel.org, nsc@kernel.org
-In-Reply-To: <20261030210944.2143778-4-dannyhu@arista.com>
+In-Reply-To: <20261030210944.2143778-5-dannyhu@arista.com>
 References: <20261030210944.2143778-1-dannyhu@arista.com>
- <20261030210944.2143778-4-dannyhu@arista.com>
+ <20261030210944.2143778-5-dannyhu@arista.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 31 Oct 2026 21:10:32 +0000
+Date: Sat, 31 Oct 2026 21:10:34 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,251 +66,108 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] initramfs: METADATA!!! extracted as real file in rootfs by do_name=
-()
-- [High] initramfs: stale metadata flag in do_name() when CopyFile is skipp=
-ed
-- [High] initramfs: uninitialized or stale previous_name_buf in do_parse_me=
-tadata()
-- [High] initramfs: pointer overflow on entry_size check in do_parse_metada=
-ta()
+- [Medium] initramfs: NULL path passed to llistxattr() in write_xattrs()
+- [Low] initramfs: undefined __packed macro in host tool usr/gen_init_cpio.c
 --
 
-commit 5bc33bcd28bade616f8daa53d99ada76540074e5
+commit f793fe8aaa70c6c2c7baf3bf7456e36e56bc7fcf
 Author: Roberto Sassu <roberto.sassu@huawei.com>
 
-initramfs: read metadata from special file METADATA!!!
+gen_init_cpio: add support for file metadata
 
-This commit adds support for extracting file metadata from special CPIO
-archive entries named METADATA!!! that immediately follow the target file.
-When a METADATA!!! entry is encountered, its contents are buffered in
-do_process_metadata() and passed to do_parse_metadata() to apply extended
-attributes to the preceding pathname.
+This commit adds support for including extended attribute (TYPE_XATTR) file
+metadata in initramfs cpio archives as separate METADATA!!! entries when
+configured via CONFIG_INITRAMFS_FILE_METADATA.
 
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index 36254dba78226..a1744cc9523c2 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
+> diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
+> index b7296edc6626f..f07be54c9219e 100644
+> --- a/usr/gen_init_cpio.c
+> +++ b/usr/gen_init_cpio.c
+> @@ -6,6 +6,7 @@
+>  #include <stdbool.h>
+>  #include <sys/types.h>
+>  #include <sys/stat.h>
+> +#include <sys/xattr.h>
+>  #include <string.h>
+>  #include <unistd.h>
+>  #include <time.h>
+> @@ -13,6 +14,7 @@
+>  #include <errno.h>
+>  #include <ctype.h>
+>  #include <limits.h>
+> +#include "../include/linux/initramfs.h"
 
+[Severity: Low]
+Since usr/gen_init_cpio.c is compiled as a host userspace program with HOST=
+CC
+and standard libc headers, is the kernel __packed macro defined when
+including ../include/linux/initramfs.h?
+
+In include/linux/initramfs.h:
+
+	struct metadata_hdr {
+		char c_size[8];     /* total size including c_size field */
+		char c_version;     /* header version */
+		char c_type;        /* metadata type */
+		char c_metadata[];  /* metadata */
+	} __packed;
+
+Without a definition for __packed, the host compiler leaves struct
+metadata_hdr unpacked and instead parses __packed as a tentative definition
+of a global variable named __packed of type struct metadata_hdr.
+
+Should __packed be defined before including initramfs.h (or compiler_attrib=
+utes.h
+included)?
+
+> @@ -37,12 +39,126 @@ static bool do_file_mtime;
 [ ... ]
-
-> @@ -471,6 +472,10 @@ static int __init do_name(void)
->  	if (strcmp(collected, "TRAILER!!!") =3D=3D 0) {
->  		free_hash();
->  		return 0;
-> +	} else if (strcmp(collected, METADATA_FILENAME) =3D=3D 0) {
-> +		metadata =3D 1;
-> +	} else {
-> +		memcpy(previous_name_buf, collected, strlen(collected) + 1);
->  	}
->  	clean_path(collected, mode);
->  	if (S_ISREG(mode)) {
-
-[Severity: High]
-When collected matches METADATA_FILENAME in do_name(), metadata is set to 1,
-but execution then falls through into clean_path(), maybe_link(), and
-filp_open():
-
-init/initramfs.c:do_name() {
-	...
-	if (S_ISREG(mode)) {
-		int ml =3D maybe_link();
-		if (ml >=3D 0) {
-			int openflags =3D O_WRONLY|O_CREAT|O_LARGEFILE;
-			if (ml !=3D 1)
-				openflags |=3D O_TRUNC;
-			wfile =3D filp_open(collected, openflags, mode);
-			...
-			state =3D CopyFile;
-		}
-	}
-}
-
-In do_copy(), xwrite() writes the raw metadata stream into wfile, and neith=
-er
-do_copy() nor unpack_to_rootfs() unlinks METADATA_FILENAME afterwards. Also,
-if multiple METADATA!!! entries share the same inode number with nlink >=3D=
- 2,
-maybe_link() calls clean_path("METADATA!!!", 0) to unlink the file and then
-calls init_link("METADATA!!!", "METADATA!!!"), which fails with -ENOENT and
-returns -1.
-
-Should METADATA!!! entries be consumed in memory without creating and leavi=
-ng
-behind a /METADATA!!! file in rootfs?
-
-[Severity: High]
-What happens if a METADATA_FILENAME entry does not transition state to
-CopyFile in do_name()?
-
-In do_name(), metadata =3D 1 is set before checking S_ISREG(mode), maybe_li=
-nk(),
-and filp_open(), while metadata is only reset to 0 inside
-do_process_metadata() (called from do_copy()) or at the end of
-unpack_to_rootfs().
-
-If an entry named METADATA!!! is not a regular file, or if maybe_link()
-returns -1, or if filp_open() returns an error, do_name() returns with state
-left as SkipIt and metadata still set to 1. When the next regular file in t=
-he
-archive is processed by do_name(), the else branch updates previous_name_buf
-without clearing metadata, causing do_copy() to pass that regular file's
-contents to do_process_metadata() as metadata for itself.
-
-Should metadata be reset at the start of do_name() or only set once the ent=
-ry
-is ready to be processed?
-
-> @@ -508,11 +513,47 @@ static int __init do_name(void)
->  	return 0;
->  }
-> =20
-> +static int __init do_process_metadata(char *buf, int len, bool last)
+> +static int write_xattrs(const char *path)
 > +{
-> +	int ret =3D 0;
+> +	struct metadata_hdr hdr =3D { .c_version =3D 1, .c_type =3D TYPE_XATTR =
+};
+> +	char str[sizeof(hdr.c_size) + 1];
+> +	char *xattr_list, *list_ptr;
+> +	char *xattr_value =3D NULL;
+> +	ssize_t list_len, name_len, value_len, len;
+> +	int ret =3D -EINVAL;
 > +
-> +	if (!metadata_buf) {
-> +		metadata_buf_ptr =3D metadata_buf =3D kmalloc(body_len, GFP_KERNEL);
-> +		if (!metadata_buf_ptr) {
-> +			ret =3D -ENOMEM;
-> +			goto out;
-> +		}
+> +	if (metadata_fd < 0)
+> +		return 0;
 > +
-> +		metadata_len =3D body_len;
-> +	}
+> +	if (path =3D=3D metadata_path)
+> +		return 0;
 > +
-> +	if (metadata_buf_ptr + len > metadata_buf + metadata_len) {
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	memcpy(metadata_buf_ptr, buf, len);
-> +	metadata_buf_ptr +=3D len;
-> +
-> +	if (last)
-> +		do_parse_metadata(previous_name_buf);
+> +	list_len =3D llistxattr(path, NULL, 0);
 
-[Severity: High]
-When do_process_metadata() calls do_parse_metadata(), can the entry_size
-bounds check wrap around on 32-bit architectures?
+[Severity: Medium]
+Can path be NULL when passed to llistxattr() in write_xattrs()?
 
-Looking at do_parse_metadata():
+For non-regular cpio list entries (slink, dir, pipe, sock, and nod), the
+source location field is optional and is omitted in standard list files such
+as usr/default_cpio_list. When location is omitted, cpio_mkslink_line(),
+cpio_mkgeneric_line(), and cpio_mknod_line() pass NULL as location:
 
-init/initramfs.c:do_parse_metadata() {
-	...
-		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-		ret =3D kstrtou32(str, 16, &entry_size);
-		if (ret || buf + entry_size > bufend ||
-		    entry_size < sizeof(*hdr)) {
-			error("malformed xattrs");
-			break;
-		}
+	cpio_mkgeneric_line()
+	  cpio_mkgeneric(name,
+			 nfields =3D=3D 5 ? cpio_replace_env(location) : NULL,
+			 mode, uid, gid)
+	    write_xattrs(location)
 
-		switch (hdr->c_type) {
-		case TYPE_XATTR:
-			do_setxattrs(pathname, buf + sizeof(*hdr),
-				     entry_size - sizeof(*hdr));
-			break;
-	...
-}
+When gen_init_cpio is invoked with -e xattr, metadata_fd is valid and
+write_xattrs() only checks if (metadata_fd < 0) and if (path =3D=3D metadat=
+a_path)
+before calling llistxattr(NULL, NULL, 0).
 
-Because entry_size is a 32-bit unsigned integer parsed from the 8-byte hex
-hdr->c_size field, a large value such as 0xffffffff on a 32-bit system can
-cause buf + entry_size to wrap around the address space to buf - 1, compari=
-ng
-less than or equal to bufend. That passes entry_size - sizeof(*hdr) to
-do_setxattrs(), reading past the end of metadata_buf in strnlen() and
-vfs_setxattr().
+Passing a NULL path to llistxattr() violates the glibc nonnull attribute on
+the first parameter (triggering UBSan failures) and can cause a segmentation
+fault under LD_PRELOAD environments such as fakeroot or pseudo that
+dereference the path string in userspace.
 
-Should do_parse_metadata() check entry_size > bufend - buf instead of
-buf + entry_size > bufend?
-
-> +out:
-> +	if (ret < 0 || last) {
-> +		kfree(metadata_buf);
-> +		metadata_buf =3D NULL;
-> +		metadata =3D 0;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static int __init do_copy(void)
->  {
->  	if (byte_count >=3D body_len) {
->  		if (xwrite(wfile, victim, body_len, &wfile_pos) !=3D body_len)
->  			error("write error");
-> +		if (metadata)
-> +			do_process_metadata(victim, body_len, true);
-> =20
->  		do_utime_path(&wfile->f_path, mtime);
->  		fput(wfile);
-
-[Severity: High]
-In do_copy(), do_process_metadata(victim, body_len, true) is called before =
-the
-data checksum verification:
-
-		if (csum_present && io_csum !=3D hdr_csum)
-			error("bad data checksum");
-
-In 070702 archives with csum_present, doesn't this parse and apply the xatt=
-rs
-via vfs_setxattr() before verifying that io_csum matches hdr_csum?
-
-[ ... ]
-
-> @@ -614,6 +658,7 @@ char * __init unpack_to_rootfs(char *buf, unsigned lo=
-ng len)
->  		char header[CPIO_HDRLEN];
->  		char symlink[PATH_MAX + N_ALIGN(PATH_MAX) + 1];
->  		char name[N_ALIGN(PATH_MAX)];
-> +		char prev_name[PATH_MAX + N_ALIGN(PATH_MAX) + 1];
->  	} *bufs =3D kmalloc_obj(*bufs);
-> =20
->  	if (!bufs)
-> @@ -622,6 +667,7 @@ char * __init unpack_to_rootfs(char *buf, unsigned lo=
-ng len)
->  	header_buf =3D bufs->header;
->  	symlink_buf =3D bufs->symlink;
->  	name_buf =3D bufs->name;
-> +	previous_name_buf =3D bufs->prev_name;
-
-[Severity: High]
-Can do_process_metadata() pass an uninitialized or stale previous_name_buf =
-to
-do_parse_metadata()?
-
-In unpack_to_rootfs(), bufs is allocated with kmalloc_obj(*bufs) without
-initializing bufs->prev_name. If METADATA!!! is the first entry in the
-archive (or is preceded only by TRAILER!!! or entries skipped in do_header(=
-)),
-do_name() sets metadata =3D 1 without writing to previous_name_buf. When
-do_process_metadata() then calls:
-
-do_parse_metadata(previous_name_buf)
-  -> do_setxattrs()
-    -> kern_path(pathname, 0, &path)
-
-kern_path() and pr_debug() read uninitialized memory from bufs->prev_name a=
-nd
-can read past the end of the slab allocation if no NUL terminator is presen=
-t.
-
-Similarly, if the entry immediately before METADATA!!! is skipped in
-do_header() (for example when name_len > PATH_MAX, S_ISLNK(mode) with
-body_len > PATH_MAX, or a non-regular non-symlink entry has body_len > 0) or
-fails to be created in do_name(), previous_name_buf is not cleared and still
-holds the pathname of an earlier file in the archive, so the metadata would=
- be
-applied to the wrong file.
-
-Should previous_name_buf be initialized (and cleared whenever an entry is
-skipped or fails, or after metadata is consumed), and checked before parsing
-metadata?
+Should write_xattrs() also return 0 if !path?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030210944.2143=
-778-1-dannyhu@arista.com?part=3D3
+778-1-dannyhu@arista.com?part=3D4
