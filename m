@@ -1,64 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793438932;
-	b=QqrAaTpYh0soixC75+BFm0llwyESOETytIqaemqoxdbIisCenKdPLjxLByPWAfyFgCVk
-	 EX9hOa5T48PCqDfXCxjnhM9LN7VWVz8F1Sn3lYvinVNJLuQfnx5j9MZszH+ZS6nKhkaPl
-	 2eeNLDIZWeJQ/8StQDmjWNa60GSN5FiE1/B4Bk0Z2Airk6K9EDDlQKRzQq08iT0pTdSOn
-	 k5SHSaS5K/ltGY4WGMXXpUqg6VrQ+SXXYRlwe1GpyuYhjYhXaHmN+Bv46voHJvmwo27vU
-	 pV3Ro6Oys3uTfkEj0yapiCSqZ4rKMao6ccIN/3fjyv/2XblWmGOiQ1Y3hWTaHEqkYQA==
+	t=1793439203;
+	b=43DY9gtdKuODBPRCxIfCKGrk6MuCLWrlAnCpyepgaMhpfamyKSv8d/cwC9zANuisiGR+
+	 DtgVUx5uWHSlxUtfr5ML6RtPFFKSmtVNPCA04QH+cLbK7zlVx1XWWw46anZCLrekNn2uX
+	 +ccCalVI1sd28DD60FAt9W8US6EFsS96J0vwvCmpLTw/qJUslMDpwqLyAzCHl14dcQaDd
+	 0VdcAlMVotFehhNJlq2qk3ftWuN8Hnybkmxs2wVlV8iNmRpb07q7xTgmQ2gMgRr78yHkM
+	 FcEdAtIKuue8ObXO7v7lISjGYoaiphqZGfKQhNQK8/ElHwIPS9cvCwM78jo2AJ7d+wg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793438932;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=hjlx15+/WpY84ogewYYrVLgz+B1Dn4l9XY08MaKTAGg=;
-	b=H0DLHLo42neLfF9jsjawYSOhDT/Y9mHGg3ywP94g5AgNECeNh6zI0hSpsUdvrLuf+gVH
-	 A5x1aaHcijX7ihMSFP48Z9OOM3YoIB60YSoTymX3pltPLmJ9SiuWChS0Ki2CKpJEDe5Ns
-	 aCCPO9TLNYhAyV64c4aYV0Km3VB8XK24OJaNQe9AzTyebnj6xCeToDEemE1US4gx8g/Hi
-	 cm/aHgk0DvSfgR1CX65b5uceGqEzsj9CvPfnaReGm+RKnb3dpXGat1MNmLxHCX6j2Pdsr
-	 3UcK7/gxtm2Go4bfqd/iXhrP2sMcfEh1+HR8SqDGF/FcB/vrE+7BORD+xW2grmNImLQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793439203;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=EPbPk2rFgfqnclTHZzqs8a4qj4IMScH45QhE+gx1RdU=;
+	b=pHEUu2v/PPT16KoGNsWGCGS2je20Ads1JERUUrydmODpDnO4NsyDanLMNeBIYnGtqBxU
+	 6Azh27ixFnFqdLQPZg4woMppdXnPMKs6GV7jqJA6OgujEO+wijLOD/E9ca9/1KYkR0Pgj
+	 Wo0fW/T6Ncj5HaqR1SiPP+Olc2X0pVBUU2uoYVbVsmKC52p22qreiNBUiUDM1bB2HMgQW
+	 yIh0cSWLAYertPontC4euW9ck/tk91DZD9FBl9x1Aql+sLPc4EcqKp6/ChWW1L38YyJoD
+	 8tyVcPGlLyeaEbf22sXVzoqvR1W5jLfch+2f0sZXW23BVK+9+A/JgKoxph+a5ZUEjgg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B2aagzNJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i2C0Bpxe;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 58291606A31C;
-	Sat, 31 Oct 2026 09:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C497606A31A
+	for <linux-security-module@vger.kernel.org>; Sat, 31 Oct 2026 09:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B2aagzNJ
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 72B821F000C1;
-	Sat, 31 Oct 2026 09:28:51 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i2C0Bpxe
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DC101F000C1
+	for <linux-security-module@vger.kernel.org>; Sat, 31 Oct 2026 09:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793438932;
-	bh=hjlx15+/WpY84ogewYYrVLgz+B1Dn4l9XY08MaKTAGg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=B2aagzNJ0u5XHXtRkKA00L0HjBODN++HJK24OwSS1vJiIXGckLB674qBBiVC+JXJK
-	 SiabNm89cVZrXMg/EnMKerCnch0Msw7hUGOZ10uUQYf70j6ZTdZ/L/BENOejpM5mTO
-	 pZGVb1VvR4yz4GB4Ajf/zwo9G9ic1CVvT2xe/oDwjsuNesD3Cejd9waRfJ47jp5Vcb
-	 YRScHYavJt7wa6M+OmwePgWXuFW2XiCyOOq4ZgbG5XirARzqA/y72vWATOATwiTHPo
-	 h6P5d55M69j0lt0XruiLGDLLjWU/sQXIJQuBcQkOM/K4w3CQScuLF3ygtjKKSPDe6U
-	 hMMjoVTEVH13g==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	Anvik Loitongbam <permissiontogallop@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] KEYS: Reject restricted dest_keyring in construct_alloc_key()
-Date: Sat, 31 Oct 2026 11:28:19 +0200
-Message-ID: <20261031092820.497238-2-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261031092820.497238-1-jarkko@kernel.org>
-References: <20261031092820.497238-1-jarkko@kernel.org>
+	s=k20260515; t=1793439203;
+	bh=EPbPk2rFgfqnclTHZzqs8a4qj4IMScH45QhE+gx1RdU=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=i2C0BpxeqenNUXHCK0krCFJGORH5cA4rs90HYjZduu9VZFKArvD/Yvz1ZHspnIxiw
+	 uLD9zX2z769IfG8qz+5OZ7pRiwI+5fZNg22NmUbFxhmpnLFlIhj5g82f5iYNCI6kYm
+	 TVvEJnkvt5bX5Q2UMAC/jnla9oJcIyF8oRfA4oXCQY1TLan5/+ahRw9vX5mWfvqI5S
+	 VHqGSXQyhHQhfbi7xMw050m7ECfrSQiPAKM4MFrO7nBJm7PQAuCrb9qExE95WCjwB+
+	 QXtjyaesMAP7cNpJXK14ZYvyiy4asJSnMqU+oKrrYlYmMGpvyiBBtvrYEqqB+gveY+
+	 a+4fNGRa2Y+fQ==
+Message-ID: <sashiko-outbox-191873@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] keys: Protect the update method check against type
+ removal
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <pm-keys-update-type-removal-20261029-v8-a0dbc48c588bf2b6a278@gmail.com>
+References: <pm-keys-update-type-removal-20261029-v8-a0dbc48c588bf2b6a278@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 31 Oct 2026 09:33:22 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,40 +58,32 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-construct_alloc_key() links keys into dest_keyring without checking
-restrict_link, allowing keys whose key->state reaches KEY_IS_POSITIVE to
-remain in a restricted keyring when instantiated without relinking into
-dest_keyring. Reject restricted destination keyrings with -EPERM after
-__key_link_lock() unless KEY_ALLOC_BYPASS_RESTRICTION is set.
+> key_update() reads key->type->update, ->def_datalen and ->preparse
+> before it takes key->sem. A reference on the key does not pin the
+> module that provides its type, so KEYCTL_UPDATE can race with the
+> unloading of that module, for example dns_resolver:
+>=20
+>   KEYCTL_UPDATE task                  Module unload and key GC
+>   ------------------                  ------------------------
+>   keyctl_update_key()
+>     key_update()
+>       key_permission()
+>       load key->type
+>                                       exit_dns_resolver()
+>                                         unregister_key_type()
+>                                           GC: down_write(&key->sem)
+>                                           GC: retype to key_type_dead
+> [ ... ]
+> the preparsed payload has been freed. Once a key exists, only the GC
+> changes key->type, and it does so with key->sem held for writing.
+>=20
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 5ac7eace2d00 ("KEYS: Add a facility to restrict new links into a keyring")
-Reported-by: Anvik Loitongbam <permissiontogallop@gmail.com>
-Closes: https://lore.kernel.org/keyrings/20261030173930.40948-1-permissiontogallop@gmail.com/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/request_key.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Sashiko has reviewed this patch and found no issues.
 
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 22cd66a44da5..d4611dd7cb49 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -404,6 +404,11 @@ static int construct_alloc_key(struct keyring_search_context *ctx,
- 		ret = __key_link_lock(dest_keyring, &key->index_key);
- 		if (ret < 0)
- 			goto link_lock_failed;
-+
-+		if (dest_keyring->restrict_link && !(flags & KEY_ALLOC_BYPASS_RESTRICTION)) {
-+			ret = -EPERM;
-+			goto link_alloc_failed_unlocked;
-+		}
- 	}
-
- 	/*
---
-2.47.3
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/pm-keys-update-type=
+-removal-20261029-v8-a0dbc48c588bf2b6a278@gmail.com?part=3D1
 
