@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793439274;
-	b=vAiQiW0iFGyvu8fOR/Gqm9NadNhKs/YcjDxtELFu3CKga2V5AAoqFOg0RGaYkotdj8gb
-	 5XcZ3G3Hj8qpFdYu0p9GI+xjn82AXTXmg37Im9VGmUVi1MM9HESan0g/S7Gto1m9HOrPq
-	 Le2Wnbp7uNbNdF1VhQcpR3Pw6BUWRTnHGlyZ+LtCVZxY8227QpmQ/feJDwKYwcZi3m7jR
-	 qeJqoISlqFaSvBnrQazgVYMxNAgLh7t6pnupkQp3v3CXvF36FIC/03X/s7IdkN6aovz8/
-	 tNuhOLoLLDisimTyJ7GHo+VD/hr7IPwCLWQbTivK4xUSQeLttEaGFuDsa8PpjbB54Sg==
+	t=1793439431;
+	b=UKU1Mmmmn04UpbcY13k3060IEkdpvZxJigXaKRAzXv5aHccLf38rfPNfEXrROjscWX3K
+	 TnrBkS5VtTpOjCDXyr7R3pAxOvMAEc4k8Tu0Ajl00mxXFvrY3Ovgo3IMqOW9u3sPgPnqm
+	 6QuxB9TPyQC0ZQzlRDfiOsLb7oaarLBD+hLhCy7/WkSyH6rVCTEWKurG0j/lw2XX388W7
+	 Jcbj5WfWt+ToDiWmjaIQDXAPXjK3nri4w94P0JJZGa2rx4LluUYf4JJ847n8e4y0OYaf3
+	 48ZS0xiTuc+cqGhNot7U9siEgeeCIFn6IZGJQ9Js5ESBUQJu817rDB48X/lnWnwGI5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793439274;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793439431;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=xIw4cd6k8/mh9TVhauXXg6O2QvoZPuSTo/tIRTwG0is=;
-	b=ZmToLMNUNUOQLkhzTxPZAAVorzt0mKqn81QOlo4kY2JGDKJRGZMBudNHcGSeN1OUZMtV
-	 swjqO9nL9+K0wdxuezkQnryHvvbUsG5vyK1MZp23GZp+VfmJmmeBCL57YnrwWWR+efxp2
-	 ebhL5zkpiMVYAGvZGHN/1iAkJG2sNTAIuc3efvOzENbY+Om07rWzYlRxUGrYIfcErx7CU
-	 wdQ/5lsdD1Hg6JPvav63VlK6HrKNSyrMZSqTSNvJymoUtEtqKDMzRrW959khKJur0/Ub3
-	 p60CssqiuOgElWdiZmiEqqcwYkZG00dTIqIwk5RQO4lNtM9Ogcp55yilNSPbLskiJWQ==
+	bh=uMfxOktTB9aM4Blc+ij0IaX2tYhbIEYp+CBQPRS+Jkc=;
+	b=UXqxdE/76Dm//mFw0lvy1vmtMklP6WNU2wCSrQHCamYnLA+fze1sXAFhmRyeF1TONmdH
+	 3fVo50MWIczvuknEVArk7986pNcZLinx+tI2DrFDy5DxoVhKv5avAq0NlTvr57TJHminP
+	 fkpQS8A178YI624m9fEUy8pCsU/ZfQfFSEHYC0gYnbTYpPSIIwbtVKoAzoHly97x2qML4
+	 9D6QbxG7PebATzacc/k94GzY8oO+pfH/Z9c5WvvvQCWY77KMcOVlzWh4VR8ASd8fyoQw3
+	 3gsefyXQMhDXC16dsw/YGPYN16j/XxibYlHEUDrgDnqO9wGVjY/oNWOt1pE8DqVJe/A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="WG1Q/D7n";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ktyu7C0D;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFF7606A31A
-	for <linux-security-module@vger.kernel.org>; Sat, 31 Oct 2026 09:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9372F606A31A
+	for <linux-security-module@vger.kernel.org>; Sat, 31 Oct 2026 09:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WG1Q/D7n
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D32781F000C1
-	for <linux-security-module@vger.kernel.org>; Sat, 31 Oct 2026 09:34:33 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ktyu7C0D
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF621F000C1
+	for <linux-security-module@vger.kernel.org>; Sat, 31 Oct 2026 09:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793439273;
-	bh=xIw4cd6k8/mh9TVhauXXg6O2QvoZPuSTo/tIRTwG0is=;
+	s=k20260515; t=1793439431;
+	bh=uMfxOktTB9aM4Blc+ij0IaX2tYhbIEYp+CBQPRS+Jkc=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=WG1Q/D7n5Pn5AiGrT7hekKULdUny6U3TPqhR2yEDnMLqRlMt7UcbDzYvXpY2KQNpo
-	 Jh6e297EluFlwIwooviN9kbaPx4YDUqzToKVNU9lm/w/puYId2ImWPWMWyuv84/+nj
-	 HB4vt2Rpl+3cmV7/eVNR6IyyVinx7VxTd5FIwczIzbK74Cf8uzVet2wb7mS9fOucUK
-	 4j5EEkMkpq3yW8gi25EnS+A2AbOOo02vTL+OMajpOUi1pWGiAOFY9GKDKQyErZiFa1
-	 jJ65HAKVlcB0L4fJ0zUxVS6CSGjHEAPCxNT71wpkuO6eQIT/z66wQ+fgViwy3/xHVH
-	 tureFUMwqP02g==
-Message-ID: <sashiko-outbox-191874@kernel.org>
+	b=ktyu7C0DQSMg10iEX/LGgKorCithcVAMy776QMf70SBUwcwhw5mSPBf6rttej68Nw
+	 FZ47og/cN2b5pGukQF9drmhv+lObKqUMjcXBSdWtkIbw+Ky9x/rLiVWujDWpMNQJt2
+	 y7+7CtbgAePnMT4/+UIM8lYf34X2CxaZ/veROiDIQn9da3PMZbYhsr352UaqIVdr83
+	 hCPQUvyjHwY61xnOwAhV2J5Hl/IfHGzzUmNZhsRduc6x0j2h7yTZIAGqp+21FSApx6
+	 jtNKAe9iJ3Gq6mHnTcTcUxIPIGmGk0WF3t3L1/4V2nHOHIBEz5zsoziUOlrTI6IAnM
+	 Jol5QnZpwzoYg==
+Message-ID: <sashiko-outbox-191876@kernel.org>
 From: sashiko-bot@kernel.org
 Subject: Re: [PATCH] KEYS: Reject restricted dest_keyring in
  construct_alloc_key()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: =?utf-8?b?b3BlbiBsaXN0OlNFQ1VSSVRZIFNVQlNZU1RFTQ==?= <linux-security-module@vger.kernel.org>
-In-Reply-To: <20261031092820.497238-1-jarkko@kernel.org>
+In-Reply-To: <20261031092820.497238-2-jarkko@kernel.org>
 References: <20261031092820.497238-1-jarkko@kernel.org>
+ <20261031092820.497238-2-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 31 Oct 2026 09:34:33 +0000
+Date: Sat, 31 Oct 2026 09:37:10 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -77,5 +78,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261031092820.4972=
-38-1-jarkko@kernel.org?part=3D1
+38-2-jarkko@kernel.org?part=3D1
 
