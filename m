@@ -1,47 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793481032;
-	b=VNmtIxXQ7nV6+i9JqdWuX8ijdL7K/BP5ybJLtayRwdlis8gqJbxCZ0Y2lCmqZIM7F2UJ
-	 88CkoAnDfRB9mG3ce2wu9OfqbKYJaMTyw/n3P8iD9vp/gBeEC311FhZfTJtFKAtIq+CZS
-	 dcdLersR/h8TZd/V+6S7WgNcJCUl7Jix1bArk9L1XDcIzkyx8DA7D83T5zFfs0/IAiP6q
-	 vGhCF5CHHH0jPGyJEilG7oXEuFqvDKeyWS5kaA3EkQOjAd3yaEsdtJgLia/0onyP0TLaR
-	 TrIWrYVF2NhP+jLL3LMW0Gu21RHjuVvomsw7DYdnwH9xuFjnJ0qGk/riyfIpsZh5QXg==
+	t=1793481034;
+	b=k+OxKEjfJPLU0RY74LwBV2cjTlHSkYN0pFKXYHlb6TELVTmr/cmcSVzoS/rr7bogSXLl
+	 rwiXLaEwBC53TlmhBRAfp17sVcvIq1ALyRDses26uClzZBgbJ2qDHBSmbnsCnvHOybg13
+	 pADh0NnFovhU3X3aVtv+ztPmu3iYyloC+tfn8bkPxJfiQZ3EvSyfHLcpfMZ2bZlkYTGwZ
+	 hnNLDUrdM5yC3larbppMYLDX+HAOddgDp5Nb8zQXpMA5zS2eBNjczciC/WyXlCPFOh3Zr
+	 iOLGfn8ASuV3aDbI7QJFPj0IBb0gx+ERf/9HBhQzEUrlrXGQVcf67P3xmYKCrFQG85A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793481032;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793481034;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=VYn6HO4Ntt0suu764wFEemFVKHyiR2045DMjiOtHR60=;
-	b=gWxqrqYXvTUmSzjN6YQD4n6Krep43hLFj2Ds8nwXcb08E4L6lk/YLdPhx2bPZaET720N
-	 qXl0dvZxNPK/QqEahmark52et1bbkGrFwRKayIi7ER3dcZub3Z6NxkgQkFsH04wtVbIWm
-	 mJIoNLRBMwYXrMgoCfOVrSQyG0jtBLDFoB0v6khYcspEgDmBvlQxM+fqJwYLF5rryx6mH
-	 oS4MNs/AGgzRKNtAurA5oDGmR9j1gxPsCUJNWAjjvzX4bw5AC+Egb5ay0iBb/sFKL98/y
-	 ObBEpcBm8m3HhHWIBCKX/qVQ0Hva01f+NVjq6ryoqFvVZVo6O21reNqtDmYEbN3bU9A==
+	bh=QmGsf7izUBb/fkI7bQs6MNedebQLL0nz02LTM6vnduI=;
+	b=NPz1R13sZsv9FpHYogY6NJ4uUzQLfyX0Q9jsiNayfZQjl6PSpFZUwKLqhg42Op8bB+2P
+	 ze4mpp7zP4AKWciXrKIVCLnP6SVMJvXddYENH9I0a4GsUtgxoK8C1bFcU/0rKOGJw3h5W
+	 DAXorTFYx9FndVFA70zoxVzpnUgeXiDNGIPOdoiOSH6fiaQnV4HZyNjouSAIZ+oFiw060
+	 tMscVGAHJylaf/eS+uYyavhqmnneHzccUHuiGI6GiDCyAQarnVwV/7uXZ4sYhvztV7v/c
+	 uJYNr+VxBewzLn7XgaR+OAICA5YCTMxrnVuVgkl+F8MAeMFlMx8bahzxKgIT2IepjLA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="SOunHr0/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mhhwtdpO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD05606A31A;
-	Sat, 31 Oct 2026 21:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F0C606A321;
+	Sat, 31 Oct 2026 21:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SOunHr0/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AED711F00919;
-	Sat, 31 Oct 2026 21:10:30 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mhhwtdpO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A691F000C1;
+	Sat, 31 Oct 2026 21:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793481032;
-	bh=VYn6HO4Ntt0suu764wFEemFVKHyiR2045DMjiOtHR60=;
+	s=k20260515; t=1793481034;
+	bh=QmGsf7izUBb/fkI7bQs6MNedebQLL0nz02LTM6vnduI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=SOunHr0/cxkiGOn6tIpjJWzLqzd19JvjDnglMARUTBMIE+O+bz5L9v2w3Rw0N0dg4
-	 RpvW0VsCTETVaL+zY/6sOxciEmdB/66Z/01EST32BwUFDGsisVSiRYCgoYMkahuFmU
-	 zdYxRT271DLR/kEhFUv124d1OZMwldDyqsEWcXLovTremP4o3HsZ3rvT8OT6Aya0fH
-	 NBCPX04OMiYr9R3Gpoz4Y6rt+SJIn7xAmZWzstdVaW1vb3h0ZZ+etfhKzbydDKha3i
-	 0Voz+koHCfFXFRiCIsaUF+2hfGQuxjbGmilKOPvLuaQZwWPbfkCIQrPsBIDDWL+cNk
-	 OPO53FiFwvpOA==
-Message-ID: <sashiko-outbox-192151@kernel.org>
+	b=mhhwtdpOYeAQNCYpLj+9tsf7o1ZiOpXB7+zTlu59wEr9lxUBfENzzBWOFrHa1EwQA
+	 y/cs13+4YUuEEt351+fzcMSQ/Vqbhy8Xs9msPZ2CbXP6Xen2j/jpm1Xot6Sk7ymYP0
+	 82XabwU2rF7ioDfMfHgJs6HNkGHeIaL6f6FHUdz9zUjhPYkbV8HlLMTg4NxTFyIoM+
+	 4KBbn/QXXJHNEU/FCOnKnZUsVRlikfgAOueUntqH+CP4zWWe9f1qNJoM1djvNnLMJ1
+	 5gWZ7kxlqdoaJlciBp2hp+7sPG0i9APy7/2mv/E35Bzr4aVMBfT2hk7y7PrsPnT6Y7
+	 qvwmNx017E4UQ==
+Message-ID: <sashiko-outbox-192152@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 2/4] initramfs: add file metadata
+Subject: Re: [PATCH v5 3/4] initramfs: read metadata from special file
+ METADATA!!!
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Danny Hu" <dannyhu@arista.com>, "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian
  Brauner" <brauner@kernel.org>
@@ -51,12 +52,12 @@ Cc: "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu" <roberto.sassu@huawei.co
  Kondratiuk" <takondra@cisco.com>, "Tianxing Zhang" <zhangtianxing3@huawei.com>, "Zheng
  Zengkai" <zhengzengkai@huawei.com>, zhoushuiqing <zhoushuiqing2@huawei.com>, zhangguangzhi <zhangguangzhi3@huawei.com>, "Jason
  Yan" <yanaijie@huawei.com>, silviu.vlasceanu@huawei.com, hpa@zytor.com, arnd@arndb.de, rob@landley.net, james.w.mcmechan@gmail.com, niveditas98@gmail.com, pierre@arista.com, julien@arista.com, kbharathi@arista.com, erosca@de.adit-jv.com, alexandr.lobakin@intel.com, jim_baxter@mentor.com, linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org, bug-cpio@gnu.org, nathan@kernel.org, nsc@kernel.org
-In-Reply-To: <20261030210944.2143778-3-dannyhu@arista.com>
+In-Reply-To: <20261030210944.2143778-4-dannyhu@arista.com>
 References: <20261030210944.2143778-1-dannyhu@arista.com>
- <20261030210944.2143778-3-dannyhu@arista.com>
+ <20261030210944.2143778-4-dannyhu@arista.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 31 Oct 2026 21:10:30 +0000
+Date: Sat, 31 Oct 2026 21:10:32 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -66,171 +67,251 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
 s) to consider:
-- [High] initramfs: pointer arithmetic overflow in do_parse_metadata() boun=
-ds checks
-- [Medium] initramfs: do_setxattrs() rejects POSIX ACLs and skips xattr siz=
-e limits
+- [High] initramfs: METADATA!!! extracted as real file in rootfs by do_name=
+()
+- [High] initramfs: stale metadata flag in do_name() when CopyFile is skipp=
+ed
+- [High] initramfs: uninitialized or stale previous_name_buf in do_parse_me=
+tadata()
+- [High] initramfs: pointer overflow on entry_size check in do_parse_metada=
+ta()
 --
 
-commit a61596ea347667fb16df9d8f6201e38b916f632c
-Author: Mimi Zohar <zohar@linux.vnet.ibm.com>
+commit 5bc33bcd28bade616f8daa53d99ada76540074e5
+Author: Roberto Sassu <roberto.sassu@huawei.com>
 
-initramfs: add file metadata
+initramfs: read metadata from special file METADATA!!!
 
-This commit introduces do_parse_metadata() and do_setxattrs() to parse
-metadata records from a buffer and restore extended attributes onto files
-in the initramfs.
+This commit adds support for extracting file metadata from special CPIO
+archive entries named METADATA!!! that immediately follow the target file.
+When a METADATA!!! entry is encountered, its contents are buffered in
+do_process_metadata() and passed to do_parse_metadata() to apply extended
+attributes to the preceding pathname.
 
 > diff --git a/init/initramfs.c b/init/initramfs.c
-> index ebddde9c8f0d9..36254dba78226 100644
+> index 36254dba78226..a1744cc9523c2 100644
 > --- a/init/initramfs.c
 > +++ b/init/initramfs.c
 
 [ ... ]
 
-> @@ -365,6 +368,90 @@ static int __init maybe_link(void)
+> @@ -471,6 +472,10 @@ static int __init do_name(void)
+>  	if (strcmp(collected, "TRAILER!!!") =3D=3D 0) {
+>  		free_hash();
+>  		return 0;
+> +	} else if (strcmp(collected, METADATA_FILENAME) =3D=3D 0) {
+> +		metadata =3D 1;
+> +	} else {
+> +		memcpy(previous_name_buf, collected, strlen(collected) + 1);
+>  	}
+>  	clean_path(collected, mode);
+>  	if (S_ISREG(mode)) {
+
+[Severity: High]
+When collected matches METADATA_FILENAME in do_name(), metadata is set to 1,
+but execution then falls through into clean_path(), maybe_link(), and
+filp_open():
+
+init/initramfs.c:do_name() {
+	...
+	if (S_ISREG(mode)) {
+		int ml =3D maybe_link();
+		if (ml >=3D 0) {
+			int openflags =3D O_WRONLY|O_CREAT|O_LARGEFILE;
+			if (ml !=3D 1)
+				openflags |=3D O_TRUNC;
+			wfile =3D filp_open(collected, openflags, mode);
+			...
+			state =3D CopyFile;
+		}
+	}
+}
+
+In do_copy(), xwrite() writes the raw metadata stream into wfile, and neith=
+er
+do_copy() nor unpack_to_rootfs() unlinks METADATA_FILENAME afterwards. Also,
+if multiple METADATA!!! entries share the same inode number with nlink >=3D=
+ 2,
+maybe_link() calls clean_path("METADATA!!!", 0) to unlink the file and then
+calls init_link("METADATA!!!", "METADATA!!!"), which fails with -ENOENT and
+returns -1.
+
+Should METADATA!!! entries be consumed in memory without creating and leavi=
+ng
+behind a /METADATA!!! file in rootfs?
+
+[Severity: High]
+What happens if a METADATA_FILENAME entry does not transition state to
+CopyFile in do_name()?
+
+In do_name(), metadata =3D 1 is set before checking S_ISREG(mode), maybe_li=
+nk(),
+and filp_open(), while metadata is only reset to 0 inside
+do_process_metadata() (called from do_copy()) or at the end of
+unpack_to_rootfs().
+
+If an entry named METADATA!!! is not a regular file, or if maybe_link()
+returns -1, or if filp_open() returns an error, do_name() returns with state
+left as SkipIt and metadata still set to 1. When the next regular file in t=
+he
+archive is processed by do_name(), the else branch updates previous_name_buf
+without clearing metadata, causing do_copy() to pass that regular file's
+contents to do_process_metadata() as metadata for itself.
+
+Should metadata be reset at the start of do_name() or only set once the ent=
+ry
+is ready to be processed?
+
+> @@ -508,11 +513,47 @@ static int __init do_name(void)
 >  	return 0;
 >  }
 > =20
-> +static int __init do_setxattrs(char *pathname, char *buf, size_t size)
+> +static int __init do_process_metadata(char *buf, int len, bool last)
 > +{
-> +	struct path path;
-> +	char *xattr_name, *xattr_value;
-> +	uint32_t xattr_name_size, xattr_value_size;
-> +	int ret;
+> +	int ret =3D 0;
 > +
-> +	xattr_name =3D buf;
-> +	xattr_name_size =3D strnlen(xattr_name, size);
-> +	if (xattr_name_size =3D=3D size) {
-> +		error("malformed xattrs");
-> +		return -EINVAL;
+> +	if (!metadata_buf) {
+> +		metadata_buf_ptr =3D metadata_buf =3D kmalloc(body_len, GFP_KERNEL);
+> +		if (!metadata_buf_ptr) {
+> +			ret =3D -ENOMEM;
+> +			goto out;
+> +		}
+> +
+> +		metadata_len =3D body_len;
 > +	}
 > +
-> +	xattr_value =3D xattr_name + xattr_name_size + 1;
-> +	xattr_value_size =3D buf + size - xattr_value;
-> +
-> +	ret =3D kern_path(pathname, 0, &path);
-> +	if (!ret) {
-> +		ret =3D vfs_setxattr(&nop_mnt_idmap, path.dentry, xattr_name, xattr_va=
-lue,
-> +				   xattr_value_size, 0);
-> +
-> +		path_put(&path);
+> +	if (metadata_buf_ptr + len > metadata_buf + metadata_len) {
+> +		ret =3D -EINVAL;
+> +		goto out;
 > +	}
-
-[Severity: Medium]
-What happens when a metadata record in the initramfs contains POSIX ACL
-extended attributes (system.posix_acl_access or system.posix_acl_default),
-or when xattr_name_size or xattr_value_size exceeds the standard VFS
-limits?
-
-In fs/xattr.c, the normal setxattr path (do_setxattr()) checks
-is_posix_acl_xattr() and dispatches POSIX ACLs to do_set_acl(), whereas
-vfs_setxattr() -> __vfs_setxattr_locked() -> __vfs_setxattr_noperm() ->
-__vfs_setxattr() explicitly rejects them:
-
-    if (is_posix_acl_xattr(name))
-        return -EOPNOTSUPP;
-
-Because gen_init_cpio collects all extended attributes via llistxattr()
-and lgetxattr(), any POSIX ACLs packed into the archive will fail to be
-restored on rootfs (when CONFIG_TMPFS_POSIX_ACL=3Dy) with -EOPNOTSUPP.
-
-In addition, unlike import_xattr_name() and setxattr_copy(), which enforce
-a non-empty name up to XATTR_NAME_MAX (255) and a value up to
-XATTR_SIZE_MAX (65536), do_setxattrs() only checks xattr_name_size =3D=3D s=
-ize
-before calling vfs_setxattr(). On tmpfs/rootfs, shmem_xattr_handler_set() ->
-simple_xattr_set() will allocate and insert oversized names or values into
-the inode xattr list, after which userspace getxattr(2) and removexattr(2)
-calls fail with -E2BIG or -ERANGE.
-
-Should do_setxattrs() validate xattr_name_size (1..XATTR_NAME_MAX) and
-xattr_value_size (<=3D XATTR_SIZE_MAX), and dispatch POSIX ACL xattrs via
-vfs_set_acl() (or use the VFS helper that handles both)?
-
 > +
-> +	pr_debug("%s: %s size: %u (ret: %d)\n", pathname, xattr_name,
-> +		 xattr_value_size, ret);
-> +	print_hex_dump_debug("xattr value: ", DUMP_PREFIX_OFFSET,
-> +			     16, 1, xattr_value, xattr_value_size, false);
+> +	memcpy(metadata_buf_ptr, buf, len);
+> +	metadata_buf_ptr +=3D len;
+> +
+> +	if (last)
+> +		do_parse_metadata(previous_name_buf);
+
+[Severity: High]
+When do_process_metadata() calls do_parse_metadata(), can the entry_size
+bounds check wrap around on 32-bit architectures?
+
+Looking at do_parse_metadata():
+
+init/initramfs.c:do_parse_metadata() {
+	...
+		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
+		ret =3D kstrtou32(str, 16, &entry_size);
+		if (ret || buf + entry_size > bufend ||
+		    entry_size < sizeof(*hdr)) {
+			error("malformed xattrs");
+			break;
+		}
+
+		switch (hdr->c_type) {
+		case TYPE_XATTR:
+			do_setxattrs(pathname, buf + sizeof(*hdr),
+				     entry_size - sizeof(*hdr));
+			break;
+	...
+}
+
+Because entry_size is a 32-bit unsigned integer parsed from the 8-byte hex
+hdr->c_size field, a large value such as 0xffffffff on a 32-bit system can
+cause buf + entry_size to wrap around the address space to buf - 1, compari=
+ng
+less than or equal to bufend. That passes entry_size - sizeof(*hdr) to
+do_setxattrs(), reading past the end of metadata_buf in strnlen() and
+vfs_setxattr().
+
+Should do_parse_metadata() check entry_size > bufend - buf instead of
+buf + entry_size > bufend?
+
+> +out:
+> +	if (ret < 0 || last) {
+> +		kfree(metadata_buf);
+> +		metadata_buf =3D NULL;
+> +		metadata =3D 0;
+> +	}
 > +
 > +	return ret;
 > +}
 > +
-> +static int __init __maybe_unused do_parse_metadata(char *pathname)
-> +{
-> +	char *buf =3D metadata_buf;
-> +	char *bufend =3D metadata_buf + metadata_len;
-> +	struct metadata_hdr *hdr;
-> +	char str[sizeof(hdr->c_size) + 1];
-> +	uint32_t entry_size;
-> +
-> +	if (!metadata_len)
-> +		return 0;
-> +
-> +	str[sizeof(hdr->c_size)] =3D 0;
-> +
-> +	while (buf < bufend) {
-> +		int ret;
-> +
-> +		if (buf + sizeof(*hdr) > bufend) {
-> +			error("malformed metadata");
-> +			break;
-> +		}
-> +
-> +		hdr =3D (struct metadata_hdr *)buf;
-> +		if (hdr->c_version !=3D 1) {
-> +			pr_debug("Unsupported header version\n");
-> +			break;
-> +		}
-> +
-> +		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
-> +		ret =3D kstrtou32(str, 16, &entry_size);
-> +		if (ret || buf + entry_size > bufend ||
-> +		    entry_size < sizeof(*hdr)) {
-> +			error("malformed xattrs");
-> +			break;
-> +		}
-> +
-> +		switch (hdr->c_type) {
-> +		case TYPE_XATTR:
-> +			do_setxattrs(pathname, buf + sizeof(*hdr),
-> +				     entry_size - sizeof(*hdr));
-> +			break;
-> +		default:
-> +			pr_debug("Unsupported metadata type\n");
-> +			break;
-> +		}
-> +
-> +		buf +=3D entry_size;
-> +	}
+>  static int __init do_copy(void)
+>  {
+>  	if (byte_count >=3D body_len) {
+>  		if (xwrite(wfile, victim, body_len, &wfile_pos) !=3D body_len)
+>  			error("write error");
+> +		if (metadata)
+> +			do_process_metadata(victim, body_len, true);
+> =20
+>  		do_utime_path(&wfile->f_path, mtime);
+>  		fput(wfile);
 
 [Severity: High]
-Can adding entry_size to buf in do_parse_metadata() overflow pointer
-arithmetic and bypass the bounds check?
+In do_copy(), do_process_metadata(victim, body_len, true) is called before =
+the
+data checksum verification:
 
-kstrtou32(str, 16, &entry_size) parses an 8-character hex value from
-hdr->c_size into a 32-bit unsigned integer up to 0xffffffff. On 32-bit
-architectures (where kernel virtual addresses reside in the upper address
-space, such as >=3D 0xc0000000 or >=3D 0x80000000), or on 64-bit architectu=
-res
-if metadata_buf lies in the top 4 GiB of the address space, adding a large
-entry_size to buf wraps around the address space to an address lower than
-bufend.
+		if (csum_present && io_csum !=3D hdr_csum)
+			error("bad data checksum");
 
-When that wraparound occurs, both buf + entry_size > bufend and
-entry_size < sizeof(*hdr) evaluate to false, passing a huge out-of-bounds
-length (entry_size - sizeof(*hdr)) to do_setxattrs() for strnlen(),
-vfs_setxattr(), and print_hex_dump_debug(), and then advancing buf to the
-wrapped address below bufend.
+In 070702 archives with csum_present, doesn't this parse and apply the xatt=
+rs
+via vfs_setxattr() before verifying that io_csum matches hdr_csum?
 
-Since the loop condition while (buf < bufend) guarantees bufend > buf,
-should the bounds checks compare sizes against bufend - buf instead, i.e.
-bufend - buf < sizeof(*hdr) and entry_size > bufend - buf?
+[ ... ]
+
+> @@ -614,6 +658,7 @@ char * __init unpack_to_rootfs(char *buf, unsigned lo=
+ng len)
+>  		char header[CPIO_HDRLEN];
+>  		char symlink[PATH_MAX + N_ALIGN(PATH_MAX) + 1];
+>  		char name[N_ALIGN(PATH_MAX)];
+> +		char prev_name[PATH_MAX + N_ALIGN(PATH_MAX) + 1];
+>  	} *bufs =3D kmalloc_obj(*bufs);
+> =20
+>  	if (!bufs)
+> @@ -622,6 +667,7 @@ char * __init unpack_to_rootfs(char *buf, unsigned lo=
+ng len)
+>  	header_buf =3D bufs->header;
+>  	symlink_buf =3D bufs->symlink;
+>  	name_buf =3D bufs->name;
+> +	previous_name_buf =3D bufs->prev_name;
+
+[Severity: High]
+Can do_process_metadata() pass an uninitialized or stale previous_name_buf =
+to
+do_parse_metadata()?
+
+In unpack_to_rootfs(), bufs is allocated with kmalloc_obj(*bufs) without
+initializing bufs->prev_name. If METADATA!!! is the first entry in the
+archive (or is preceded only by TRAILER!!! or entries skipped in do_header(=
+)),
+do_name() sets metadata =3D 1 without writing to previous_name_buf. When
+do_process_metadata() then calls:
+
+do_parse_metadata(previous_name_buf)
+  -> do_setxattrs()
+    -> kern_path(pathname, 0, &path)
+
+kern_path() and pr_debug() read uninitialized memory from bufs->prev_name a=
+nd
+can read past the end of the slab allocation if no NUL terminator is presen=
+t.
+
+Similarly, if the entry immediately before METADATA!!! is skipped in
+do_header() (for example when name_len > PATH_MAX, S_ISLNK(mode) with
+body_len > PATH_MAX, or a non-regular non-symlink entry has body_len > 0) or
+fails to be created in do_name(), previous_name_buf is not cleared and still
+holds the pathname of an earlier file in the archive, so the metadata would=
+ be
+applied to the wrong file.
+
+Should previous_name_buf be initialized (and cleared whenever an entry is
+skipped or fails, or after metadata is consumed), and checked before parsing
+metadata?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261030210944.2143=
-778-1-dannyhu@arista.com?part=3D2
+778-1-dannyhu@arista.com?part=3D3
