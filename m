@@ -1,61 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.127.231.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793499927;
-	b=mD7m4q9+n1HUgwmwIffU1MT/74WOPWoQrzfy6EODPfMfOfKaddruI3uEYq6Bd2M4FVDj
-	 MOHdqKhhpY9LYH2URWrGZ2NQp/x8d9HsPDONGkRRaP4UAB4kxp2rKSAuQQiG13NDrF7jD
-	 5nwJXRin1SiTnb5fi1LmkIh7mXa64dFyfWMeSdTSWq+WVuHpvmTgaPb4baNlGCkvr75WA
-	 OZdHa6Q/Rf+0lOi5ArG0vuyKdNcWFz6NfDHc3LNXLYXngxw9drafThw58ZKNMK1W/ZDoY
-	 dpHcNV+ZEtHu4uM5UKVsqMfv7o+kuF+gUzcRFSn6OLDGeM7vYKKrukWSH0xN/ZUlWcA==
+	t=1793537482;
+	b=ZuuUEPFtTME8i6+V1a0teN8m1YWpdUK5CgXMp8a09hAijnuaM2xgboesT+RasINlYL65
+	 FzEs4NDoQ68GojAlRSBUYGyWGWytifmL5vQ/msGK4XFaBIWmT/bvK+MbcWwx8JKQ3PMPd
+	 uNTgHQ1DgBqLKf8TRDroLfBKXbHvnKMrNaiZME8hyV62v5k3Xfu347D/kq5N8tOIJkV9Y
+	 U72klhYfifKnG6VfIWySI0S/t0PfYaSp85l+Qi6NmL7vcRyCaXYIkwGa1szJ5+aGT0HkG
+	 tbTYzowD/8LZ6tBWW0espY1ZjzDNnRabf0Rx2hf1mms7acthkedPrdAOwcj52VvubiQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793499927;
-	h=DMARC-Filter:DKIM-Signature:DKIM-Signature:Date:From:To:CC:Subject:
-	 In-Reply-To:Message-ID:MIME-Version:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793537482;
+	h=DMARC-Filter:DKIM-Signature:From:Message-Id:Content-Type:
+	 X-Lms-Return-Path:Date:Mime-Version:Received:To:Subject:
+	 X-Original-From:Cc:In-Reply-To:References:X-Mailer:
 	 Content-Transfer-Encoding;
-	bh=CJMLFsc+Wp5rV2c+umm5ckbj8CU/O6an9rX8Xcr8JyQ=;
-	b=HZC/hzfBBrNbhb0cmLi7RMW/DsmqI5ueEcLtjVv54ejAv+SiIs33M+woPijLIg9nnK/g
-	 Am5JhAjqBRTFWe07EmTjVw2vK7m8UO6z2qUyQ74vgY9Hb7zpGyshpdvqsrmF0KM/rvPd8
-	 vJC/g3ys2lRZDLAvYWj8JaMHM0nJYzz9MrNublSCGXFyCNq68LbQUKGnGSQ93BRj21Sp5
-	 HRTdodIwUM1Ljpi4b81pTtMAfQembgBo4johExjyaDhumlEbUwJuBQYeW2xO/Y4gfuCEl
-	 I/PfOLr3x2VlKvsl5iuK0ddbd5wFEWwDMztB0rnVIVkHNWdCdZW2m/xRzHsYrzflGEg==
+	bh=bTf75aymh5jBl9eu/8t3zOznHSc9aBSs8jDGsG1P1tY=;
+	b=lBxiXOwxYkJdXGkze39PzjIYRpsOIhyu/F41Jzgr4ijwKyzlTYfMSq9ll4CwMdzgzyON
+	 ShANkLep06l2/22Zfb/dX5zYNMfblGkQYVF7YjaN+Z460RxYsmNl/rsLp8EYWr1Y0TAxC
+	 ojKd1GpmzQ3bmWriymwP9a1DvwY4wc10fULEiJGO+IMIF4/5t6k6dTKyI9n0pEkbsMQ+A
+	 bsS6t+UJ3a/kySq7l4GZrVPm+OhiInZXpsmYW13O5YVyYVwIVDkBnkerGGsWi6vyggQcv
+	 YDC6kLZ9veyi7G6EdJSEgBWtfUtet0J/InryZMCNkOnT4LgFC/FIEyScyQ8S6//wTEw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mainlining.org;
-	spf=pass smtp.mailfrom=mainlining.org;
-	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=gZSe0UzB;
-	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b=Q7hj8aUo;
-	arc=none smtp.remote-ip=5.75.144.95
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=dw1.io;
+	spf=pass smtp.mailfrom=dw1.io;
+	dkim=pass header.d=dw1.io header.i=@dw1.io header.a=rsa-sha256 header.s=lark2403231520 header.b=sdU6Q6pT;
+	arc=none smtp.remote-ip=209.127.231.45
+Received: from va-2-45.ptr.blmpb.com (va-2-45.ptr.blmpb.com [209.127.231.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0589D606A326;
-	Sun,  1 Nov 2026 02:25:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0589D606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA93606A324
+	for <linux-security-module@vger.kernel.org>; Sun,  1 Nov 2026 12:51:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DFA93606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dw1.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dw1.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=gZSe0UzB;
-	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b=Q7hj8aUo
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1793499922; bh=CJMLFsc+Wp5rV2c+umm5ckb
-	j8CU/O6an9rX8Xcr8JyQ=; b=gZSe0UzBKFHOSmxVaKMuF5KkHPoiZkHiO2TjFnpPzweOb2S7TV
-	1YqIzfPKV4RO0VKP/h1JGjQCXLhnhoNsIAAgoe3at9GlmgH/9Yl7BCJLKHhQc+9fw9xGoi7h4Kc
-	8TtKtpFtG2pHODXxLNXWrNVfUH9IGaJ7XzgGBPNz3oRjiW4IDc/0VZmuzr84Pw/R4cNXKkWul3D
-	dV5GUkPgwfRA1fUE7J1a1RY8mTVvK9fKMFECRzFZ50L1FOsgeWA7j8CyzFoWn+zldUWglmVZqRP
-	1J5OJPJbAMMv4/gG6zm3LjJuJK+DsUxONgBChJgnt+MoQCZCSeL5JUb7RwomBSnh17Q==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1793499922; bh=CJMLFsc+Wp5rV2c+umm5ckb
-	j8CU/O6an9rX8Xcr8JyQ=; b=Q7hj8aUouRCHU3VRq2jR1Y88iG/nqfjV+L0ZK+TpKVFBajtQoC
-	1gWehF1X/hxHJjuBebwnNrM88S3vqPwNR0CA==;
-Date: Sun, 01 Nov 2026 02:25:23 +0000
-From: Bradley Morgan <brads@mainlining.org>
-To: bbnpreetsingh@gmail.com
-CC: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- paul@paul-moore.com, sergeh@kernel.org,
- syzbot+557fdc985d6ac3831e14@syzkaller.appspotmail.com,
- syzbot+ee58b040032d8bed63d9@syzkaller.appspotmail.com
-Subject: Re: [PATCH] cred: mark the copy in prepare_creds() as a data race
-In-Reply-To: <20261030033308.7-1-bbnpreetsingh@gmail.com>
-Message-ID: <A25971F6-A534-495D-A115-72B4BAF7EFE4@mainlining.org>
+	dkim=pass (2048-bit key, unprotected) header.d=dw1.io header.i=@dw1.io header.a=rsa-sha256 header.s=lark2403231520 header.b=sdU6Q6pT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=lark2403231520; d=dw1.io; t=1793537477; h=from:subject:mime-version:
+ from:date:message-id:subject:to:cc:reply-to:content-type:mime-version:
+ in-reply-to:message-id;
+ bh=bTf75aymh5jBl9eu/8t3zOznHSc9aBSs8jDGsG1P1tY=;
+ b=sdU6Q6pTGdFUiNvz8IAK8o+7wxAQnpL+weLfM5dx470v01aoKYvx6t70phjo3GEa+LQdB+
+ J0in4GLb+O7zD3Zpc/tes5MlBsbrEu7kGe0hlxTXlrLoF78+g2MOtzIxOstI0igjeAtgYN
+ FyadbUTvfzrkLgatCN+wSN/0LbcQe0Ohg6ENFX43yJhiPPHMZM5BAO1tu+n1UdKA84p1xJ
+ 6Lo42L+PBnHbNWv0ekumgAh6Q3SMuNTNL2wBYJRXXtdhjBPQrqdYQrZjv9/2WTQOUCApCG
+ CVhtcLF3EpvjNg5P0hbgvYS8726UYpzw69zPiMSLMx4zB48SOjjUqVUjK227zQ==
+From: "Dwi Siswanto" <me@dw1.io>
+Message-Id: <20261101125114.19009-1-me@dw1.io>
+Content-Type: text/plain; charset=UTF-8
+X-Lms-Return-Path: <lba+26ae735c4+e72af5+vger.kernel.org+me@dw1.io>
+Date: Sun,  1 Nov 2026 19:47:50 +0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,100 +57,68 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Received: from dwis-macbook-pro.tail904ed7.ts.net ([168.107.87.239]) by smtp.larksuite.com with ESMTPS; Sun, 01 Nov 2026 12:51:16 +0000
+To: =?utf-8?q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Subject: Re: [PATCH 1/3] landlock: Fix layer composition of LANDLOCK_ACCESS_FS_REFER
+X-Original-From: Dwi Siswanto <me@dw1.io>
+Cc: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	<linux-security-module@vger.kernel.org>, <stable@vger.kernel.org>, 
+	"Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, 
+	"Konstantin Meskhidze" <konstantin.meskhidze@huawei.com>, 
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <20261030102411.12985-2-gnoack3000@gmail.com>
+References: <20261030102411.12985-1-gnoack3000@gmail.com> <20261030102411.12985-2-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 7bit
 
-On 30 October 2026 03:33:08 GMT, Babanpreet Singh <bbnpreetsingh@gmail.com>
-wrote:
+I saw the docs still describe the old one. include/uapi/linux/landlock.h
+says:
 
-Well! Okay then. Nearly missed this (sigh)
+   * For historical reasons, the %LANDLOCK_ACCESS_FS_REFER right is always denied
+   * by default, even when its bit is not set in @handled_access_fs.
 
->prepare_creds() copies the old cred while other tasks may be changing
->its refcount. Mark as data race.
+and, for LANDLOCK_ACCESS_FS_REFER itself:
 
-It's not the ref count,
+   *   This is the only access right which is denied by default by any ruleset,
+   *   even if the right is not specified as handled at ruleset creation time.
 
-Both reports show a 4 byte write 168 bytes into the object:
+So ruleset that handles no filesystem access right never denies
+LANDLOCK_ACCESS_FS_REFER -- alone or layered.
 
-write to 0xffff888103d7fbe8 of 4 bytes
+Also, the comment above _LANDLOCK_ACCESS_FS_INITIALLY_DENIED in access.h
+has the same problem:
 
-read to  0xffff888103d7fb40 of 184 bytes
+   * All access rights that are denied by default whether they are handled or not
+   * by a ruleset/layer.  This must be ORed with all domain->handled_masks[]
+   * entries when we need to get the absolute handled access masks, see
+   * landlock_upgrade_handled_access_masks().
 
-0xfbe8 - 0xfb40 = 0xa8. usage is an atomic_long_t at offset 0, so a hit
-there would be 8 bytes at the very start of the struct. What actually
-raced is this line of get_cred_many(),
+After this patch, the mask only applies to layers that handle filesystem
+access, and after patch 3, nothing ORs it in at read time. *Someone* who
+follows the comment could bring the bug back.
 
- nonconst_cred->non_rcu = 0;
+> +	access_mask_t handled = domain->handled_masks[layer_level].fs;
+> +
+> +	/*
+> +	 * Handles all initially denied by default access rights, but only for
+> +	 * layers handling filesystem accesses.
+> +	 */
+> +	if (handled)
+> +		handled |= _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+> +
+> +	return handled;
 
-a plain write to a published cred. The atomic_long_add() under it never
-shows up, iirc KCSAN models the atomic fine. So non_rcu in the subject
-and the description, thats what the fix is about.
+nit: I believe landlock_upgrade_handled_access_masks() already has the
+same "only if fs is non-zero" rule, so this could be
 
+	return landlock_upgrade_handled_access_masks(
+		domain->handled_masks[layer_level]).fs;
 
+Which keep the rule in one place. It matters little if patch 3 goes in
+on top, and 6.12 doesn't have the helper. What do you think?
 
->
->Reported-by: syzbot+ee58b040032d8bed63d9@syzkaller.appspotmail.com
->Closes: https://syzkaller.appspot.com/bug?extid=ee58b040032d8bed63d9
->Reported-by: syzbot+557fdc985d6ac3831e14@syzkaller.appspotmail.com
->Closes: https://syzkaller.appspot.com/bug?extid=557fdc985d6ac3831e14
->Assisted-by: Claude:claude-opus-5-5
->Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
->---
->Compile tested with gcc and clang; the KCSAN instrumentation of
->kernel/cred.o was checked before and after.
-
-Sooo? What was the after? Could you have said something like "This bug
-isn't reproduced any longer, tested by soandso"
-
-
-
-> kernel/cred.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/kernel/cred.c b/kernel/cred.c
->index d01df40a9a386..d212db445c138 100644
->--- a/kernel/cred.c
->+++ b/kernel/cred.c
->@@ -189,7 +189,7 @@ struct cred *prepare_creds(void)
-> 	kdebug("prepare_creds() alloc %p", new);
-> 
-> 	old = task->cred;
->-	memcpy(new, old, sizeof(struct cred));
->+	data_race(memcpy(new, old, sizeof(struct cred)));
-
-Hmmm. Comment..?
-
-WARNING: data_race without comment
-#12: FILE: kernel/cred.c:192:
-+ data_race(memcpy(new, old, sizeof(struct cred)));
-
-The docs says it plain: "Applications of
-data_race() should have a comment so as to document the reasoning behind
-why it was deemed safe."
-
-I suggest
-
-
-/*
-  * The only fields a published cred can still change are non_rcu and
-  * usage, and both get set fresh just below. Keeping a copied non_rcu
-  * would be wrong anyway, __put_cred() then skips the grace period.
-  */
- data_race(memcpy(new, old, sizeof(struct cred)));
-
-Feel free to bikeshed
-
-prepare_kernel_cred() ALSO does the same copy further down the same file,
-*new = *old, off get_task_cred(daemon). Same race, untouched. Did you mean
-to leave it out, or has syzbot just not hit it yet?
-
-> 
-> 	new->non_rcu = 0;
-> 	atomic_long_set(&new->usage, 1);
->
->base-commit: 881f19c2ffbc73f351b257e09c71e6059939b770
->
-
---- Thanks!
+Best!
+Dwi
