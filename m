@@ -1,81 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=5.75.144.95
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793497118;
-	b=iBZj4RXBewisOAdtOftUv2+ywrYRsQ37SShQgf9IEJ377UcD3h8xpwOvWdmJvuR00WLp
-	 bv3FRFEDb8nqNX69csjKhFH25U+q29J52o0Lweyq+eMwEg3myGpC4KIokTANXCpN3RY9E
-	 l6Z/yrV9xmjZTNfUqGRaw1+PIfpNhlWG9mQ8rSGpVRAIiPQ9XZFCcEGrXSvdWKWUe8CuL
-	 K39m0FtrVOHmZB7QeSYc9tbrett05wahuVxlvQRlDHY8qbYoitB9TWnrDKrs8D0t9rQP0
-	 t/kqRbCuehkVmMRcbZpPMz1FsBq9CRg3hYuxl34L4dLMxAuTqpMsrn3zHfBvRPfJqcA==
+	t=1793499927;
+	b=mD7m4q9+n1HUgwmwIffU1MT/74WOPWoQrzfy6EODPfMfOfKaddruI3uEYq6Bd2M4FVDj
+	 MOHdqKhhpY9LYH2URWrGZ2NQp/x8d9HsPDONGkRRaP4UAB4kxp2rKSAuQQiG13NDrF7jD
+	 5nwJXRin1SiTnb5fi1LmkIh7mXa64dFyfWMeSdTSWq+WVuHpvmTgaPb4baNlGCkvr75WA
+	 OZdHa6Q/Rf+0lOi5ArG0vuyKdNcWFz6NfDHc3LNXLYXngxw9drafThw58ZKNMK1W/ZDoY
+	 dpHcNV+ZEtHu4uM5UKVsqMfv7o+kuF+gUzcRFSn6OLDGeM7vYKKrukWSH0xN/ZUlWcA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793497118;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793499927;
+	h=DMARC-Filter:DKIM-Signature:DKIM-Signature:Date:From:To:CC:Subject:
+	 In-Reply-To:Message-ID:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=wkggvdD4Daf1drrMBcb90xMWnEWnBOyml4nDOqyyoZg=;
-	b=3fY7g2vUT4wcov7H8TuV2W9MvImf5//vz+5QG1eQIHo/n2iyedEqRSuKA7edQkjY+R8/
-	 QMSrpUYsmowJ+2Ma5rzeI2ltYvAxNHMR6xQjnoVYX/HKxoKdmSniBkiDHiMTblCdDLBu2
-	 0aSlbjg/dJFXVY6cQnguIWjq0Eyl8jjeZyFxSQlF7JwPm/XueMBynApq6KSkmDdXGoEXd
-	 YOnF6NVk66H+5qjfW/NGgYHVT/m1gLHlFpmFvVvPMbZNu9SAw09e5GnMTjmiSibuJjlO2
-	 /Z3zgamX9VCXSsLzzVmh0cvUwyX8R2VLaXkhDbSXmDYTcb9C/8yBlSbu43KLOmfnHbg==
+	bh=CJMLFsc+Wp5rV2c+umm5ckbj8CU/O6an9rX8Xcr8JyQ=;
+	b=HZC/hzfBBrNbhb0cmLi7RMW/DsmqI5ueEcLtjVv54ejAv+SiIs33M+woPijLIg9nnK/g
+	 Am5JhAjqBRTFWe07EmTjVw2vK7m8UO6z2qUyQ74vgY9Hb7zpGyshpdvqsrmF0KM/rvPd8
+	 vJC/g3ys2lRZDLAvYWj8JaMHM0nJYzz9MrNublSCGXFyCNq68LbQUKGnGSQ93BRj21Sp5
+	 HRTdodIwUM1Ljpi4b81pTtMAfQembgBo4johExjyaDhumlEbUwJuBQYeW2xO/Y4gfuCEl
+	 I/PfOLr3x2VlKvsl5iuK0ddbd5wFEWwDMztB0rnVIVkHNWdCdZW2m/xRzHsYrzflGEg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="L/0GaqtI";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mainlining.org;
+	spf=pass smtp.mailfrom=mainlining.org;
+	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=gZSe0UzB;
+	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b=Q7hj8aUo;
+	arc=none smtp.remote-ip=5.75.144.95
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD50606A31A;
-	Sun,  1 Nov 2026 01:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0589D606A326;
+	Sun,  1 Nov 2026 02:25:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0589D606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L/0GaqtI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 258EE1F000C1;
-	Sun,  1 Nov 2026 01:38:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793497117;
-	bh=wkggvdD4Daf1drrMBcb90xMWnEWnBOyml4nDOqyyoZg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=L/0GaqtIo4ljcF6HhkiYfZqgqFfzu7sb2NkCwbaTtE2OUjTcTLJRXTyZtUK1Narrr
-	 BtQLDj7zRIIYxbD8+FBD4wlKou3nEAPke635eAz7vVjuDKwzzXPCAQT16jTp9CgGL0
-	 ba2LaOoHCP9feeoX8BP8LKv4yveSZWwZo6yHjtlYIjXCx4V0POS1oHKma+w2QDRFaw
-	 bFs3gxmRlx8fBdDMx60B/RskaLNeuJ3lyaYWZfLal9k+4P7aIxa899xvKOLsT5R/bB
-	 bFVyAcYisN4dpM7gjUbRJx96JJ4SZsMz1PSkwib+7dreMZmtGyU+hikjLVEkCGsSCI
-	 8TqVyGhsXxtwg==
-Date: Sun, 1 Nov 2026 01:38:17 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
- <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski
- <brgl@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau
- <j@jannau.net>, Neal Gompa <neal@gompa.dev>, Guenter Roeck
- <linux@roeck-us.net>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Griffin
- Kroah-Hartman <griffin@kroah.com>, Hans de Goede <hansg@kernel.org>, Ilpo
- =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Sebastian Reichel
- <sre@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim
- Van Sebroeck <wim@linux-watchdog.org>, Jarkko Sakkinen <jarkko@kernel.org>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-leds@vger.kernel.org, mfd@lists.linux.dev,
- platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 14/14] mfd/macsmc: add ioctl to access smc keys
-Message-ID: <20261101013817.22d67ea7@jic23-hlaptop>
-In-Reply-To: <20261029085504.3547-15-atharvatiwarilinuxdev@gmail.com>
-References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
-	<20261029085504.3547-15-atharvatiwarilinuxdev@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key, unprotected) header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=gZSe0UzB;
+	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b=Q7hj8aUo
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1793499922; bh=CJMLFsc+Wp5rV2c+umm5ckb
+	j8CU/O6an9rX8Xcr8JyQ=; b=gZSe0UzBKFHOSmxVaKMuF5KkHPoiZkHiO2TjFnpPzweOb2S7TV
+	1YqIzfPKV4RO0VKP/h1JGjQCXLhnhoNsIAAgoe3at9GlmgH/9Yl7BCJLKHhQc+9fw9xGoi7h4Kc
+	8TtKtpFtG2pHODXxLNXWrNVfUH9IGaJ7XzgGBPNz3oRjiW4IDc/0VZmuzr84Pw/R4cNXKkWul3D
+	dV5GUkPgwfRA1fUE7J1a1RY8mTVvK9fKMFECRzFZ50L1FOsgeWA7j8CyzFoWn+zldUWglmVZqRP
+	1J5OJPJbAMMv4/gG6zm3LjJuJK+DsUxONgBChJgnt+MoQCZCSeL5JUb7RwomBSnh17Q==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1793499922; bh=CJMLFsc+Wp5rV2c+umm5ckb
+	j8CU/O6an9rX8Xcr8JyQ=; b=Q7hj8aUouRCHU3VRq2jR1Y88iG/nqfjV+L0ZK+TpKVFBajtQoC
+	1gWehF1X/hxHJjuBebwnNrM88S3vqPwNR0CA==;
+Date: Sun, 01 Nov 2026 02:25:23 +0000
+From: Bradley Morgan <brads@mainlining.org>
+To: bbnpreetsingh@gmail.com
+CC: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ paul@paul-moore.com, sergeh@kernel.org,
+ syzbot+557fdc985d6ac3831e14@syzkaller.appspotmail.com,
+ syzbot+ee58b040032d8bed63d9@syzkaller.appspotmail.com
+Subject: Re: [PATCH] cred: mark the copy in prepare_creds() as a data race
+In-Reply-To: <20261030033308.7-1-bbnpreetsingh@gmail.com>
+Message-ID: <A25971F6-A534-495D-A115-72B4BAF7EFE4@mainlining.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -85,25 +65,99 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 29 Oct 2026 04:52:11 -0400
-Atharva Tiwari <atharvatiwarilinuxdev@gmail.com> wrote:
+On 30 October 2026 03:33:08 GMT, Babanpreet Singh <bbnpreetsingh@gmail.com>
+wrote:
 
-> Add a /dev/smc device so userspace can talk to the SMC
-> directly. Some keys that need to be written aren't handled by
-> any driver, or affect several drivers at once, so they
-> can't be exposed cleanly through the kernel interfaces.
+Well! Okay then. Nearly missed this (sigh)
+
+>prepare_creds() copies the old cred while other tasks may be changing
+>its refcount. Mark as data race.
+
+It's not the ref count,
+
+Both reports show a 4 byte write 168 bytes into the object:
+
+write to 0xffff888103d7fbe8 of 4 bytes
+
+read to  0xffff888103d7fb40 of 184 bytes
+
+0xfbe8 - 0xfb40 = 0xa8. usage is an atomic_long_t at offset 0, so a hit
+there would be 8 bytes at the very start of the struct. What actually
+raced is this line of get_cred_many(),
+
+ nonconst_cred->non_rcu = 0;
+
+a plain write to a published cred. The atomic_long_add() under it never
+shows up, iirc KCSAN models the atomic fine. So non_rcu in the subject
+and the description, thats what the fix is about.
+
+
+
+>
+>Reported-by: syzbot+ee58b040032d8bed63d9@syzkaller.appspotmail.com
+>Closes: https://syzkaller.appspot.com/bug?extid=ee58b040032d8bed63d9
+>Reported-by: syzbot+557fdc985d6ac3831e14@syzkaller.appspotmail.com
+>Closes: https://syzkaller.appspot.com/bug?extid=557fdc985d6ac3831e14
+>Assisted-by: Claude:claude-opus-5-5
+>Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
+>---
+>Compile tested with gcc and clang; the KCSAN instrumentation of
+>kernel/cred.o was checked before and after.
+
+Sooo? What was the after? Could you have said something like "This bug
+isn't reproduced any longer, tested by soandso"
+
+
+
+> kernel/cred.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/kernel/cred.c b/kernel/cred.c
+>index d01df40a9a386..d212db445c138 100644
+>--- a/kernel/cred.c
+>+++ b/kernel/cred.c
+>@@ -189,7 +189,7 @@ struct cred *prepare_creds(void)
+> 	kdebug("prepare_creds() alloc %p", new);
 > 
-> Keys already managed by kernel drivers can't be written this
-> way, to avoid conflicts.
+> 	old = task->cred;
+>-	memcpy(new, old, sizeof(struct cred));
+>+	data_race(memcpy(new, old, sizeof(struct cred)));
 
-If this isn't matching some legacy interface, then we need more
-on what these do.  Maybe they are suited to some other kernel
-interface? In particular they might need the various controls
-on how destructive they are that something like fwctl brings.
+Hmmm. Comment..?
 
-Generally an arbitrary opaque path to firmware isn't a good idea...
+WARNING: data_race without comment
+#12: FILE: kernel/cred.c:192:
++ data_race(memcpy(new, old, sizeof(struct cred)));
 
-Jonathan
+The docs says it plain: "Applications of
+data_race() should have a comment so as to document the reasoning behind
+why it was deemed safe."
+
+I suggest
+
+
+/*
+  * The only fields a published cred can still change are non_rcu and
+  * usage, and both get set fresh just below. Keeping a copied non_rcu
+  * would be wrong anyway, __put_cred() then skips the grace period.
+  */
+ data_race(memcpy(new, old, sizeof(struct cred)));
+
+Feel free to bikeshed
+
+prepare_kernel_cred() ALSO does the same copy further down the same file,
+*new = *old, off get_task_cred(daemon). Same race, untouched. Did you mean
+to leave it out, or has syzbot just not hit it yet?
+
+> 
+> 	new->non_rcu = 0;
+> 	atomic_long_set(&new->usage, 1);
+>
+>base-commit: 881f19c2ffbc73f351b257e09c71e6059939b770
+>
+
+--- Thanks!
