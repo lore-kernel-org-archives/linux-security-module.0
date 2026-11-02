@@ -1,55 +1,133 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793610395;
-	b=aH0uiVYOKex0A36cjiJIJ6JWK2j3QcrmMRp5PsZBHfDslDFFoEcL/OA5qCCWo9lt3qri
-	 1obtreGgSqgWW3xXgLPZHGJdWSmHpoL9pSin1+66Qp85JCLCl3RgGyAgJbsCj2ppHAqfG
-	 CEE6Q4lCx//jjppTVURUh7nOP3vh1jT94Ld2ad584TIvjuzVyJbcivpOfVwHxOXR3Self
-	 CX/GbbW/vcAJ2m0ns+cIqroaoQS0eE+hOVwp5IUhItN76O9Xkp8BJiZF3Rwd2IxngZqJo
-	 vTxaJ4dEieaDp6v+D8Paqnmr3h10XsgYJglhbS6tkUaCTkxC9qtnXUbFlpSqabuKEOA==
+	t=1793612765;
+	b=f6pSMyR1U+LZ2pfmMiQmUurcRL14cFNlDGmIcyB/jQHxbbky1001PEVjlxutPbqDVV7d
+	 ml1T25fafFk9NHG9K8asJxS2c+4tMyt69lr90QcLkCxkAHfGUvnIaYxBtbYE43baKxWR9
+	 6l0SPQmGOQDV5Sn5Y7hS45aGE3m28YFnp5gPV3TMQUi2qkpduq40V5rx3Mz69dWyDASKJ
+	 QdXalYiT4tMxFldPbDmEGeBYS1iGgwP+ZgVXmEbeU40ELv/lknJZHJSPobsK8u/TXimAA
+	 VFxtz33QgpDdMGV6MA7m8wDx7QP4m56dEDg3SpEp2LafrGr/NXc0mp99K4o16AmjpMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793610395;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Y+y0UJ/VFbHvyvcpiEXZxEflf7CaEDVpg1HI1NsgPdM=;
-	b=m4P2p+TxXuSzdoacL+Dr8q5ysls5GkzoR97XoK/g4tHczXWRfG3GXLGDXx1It3bUPZRT
-	 QSDPttIem2NoFibOoNT+xuMYwPTROprxhUPKFhb0RRVD4AXhXjEyGC7A9SdaVfL/QVJvC
-	 is0PoGPQeEevg30gVBNOWYHKz0DtEnROqqvqHhlhdmEVcPs6n/9Ma881P+UxDVmgdMf37
-	 LLDAgxpnVLm0MFs4R1xByEf5l2f9NqcpIhFZcBsrsCtO+IJDvpQdorF5oRBaUVO8aVKEv
-	 3C56Gw7pyE3r3swOrVw3tUBsvCLH1j6zhFZLfwqlQFGLMiDeo+1XJY8Mctdv6SNMqpQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793612765;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 X-Received:Received:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:In-Reply-To:X-Mimecast-Spam-Score:X-Mimecast-MFC-PROC-ID:
+	 X-Mimecast-Originator:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding;
+	bh=DGADPf1s/Hceud+YrgbPtgRU1aDRhCryTUpted2/1fo=;
+	b=qM6Md/gaVyy1OD6eGHyvQvlMmSIONdQP2I5QLMSyIMHF21MeYWieYtYvwqzrTpRpwTtI
+	 Wd3aXfEa9KCNswVb6Io/WgA/nsy42sjhZXYK5CgIVF9Pn/bq5S+JO4O/sE7Qyrtb2OOCz
+	 xOUqQV6p+sCUUgR/M4yi1w7ZbUtsb2FBAJCWclE3P2/1p3p4UJsGXROuGanF6aGI03HUH
+	 zCp38ksjNqQnrJNI4YcCHfcffI7sULM67ie6XiKUZbr31ezZzEjhgQd8GyxT1/1UacGV1
+	 4WH4ZAry6OiFlg/FWSZKea793crGI9myqazTpIVp6lGLuZKrp5rwgV+dcnIFEgwp6rA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jtFE1FWw;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TzVlSzAC;
+	arc=none smtp.remote-ip=170.10.129.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364BB606A324
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 09:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A808606A32E
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 09:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A808606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jtFE1FWw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F7D1F00919
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 09:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793610394;
-	bh=Y+y0UJ/VFbHvyvcpiEXZxEflf7CaEDVpg1HI1NsgPdM=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=jtFE1FWwQXC9uWtYnSYzHT8Y2MZVplNdIKKkzxUR59KaOw4CJ7qpwABjZVSoCH2vA
-	 KCX5rBF/2gf2U8nBfHscJPyTEMxaq6LCikw49ocKZKKfkmFQa7b49hRzTrHQDkPxAK
-	 iHNmgIoUwKyF4BRkDigECuTf5cxOC0tCvVgLdpVea3r2nGsuTjFCaIqiSNQGkuP752
-	 KOJxhaBvWw1IcbXAqrPXtlr/RnrJWnYyc0m+1jdukqFVoldwoPtySdp5Pl609GH6mV
-	 GiJHkAS0RBn77moxFKmDZoh5pap7wJHWiH20bJgqzQn/88XC5t9EPcnIkaztdVxr8A
-	 swABx2yq1y3nw==
-Message-ID: <sashiko-outbox-193154@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4] smack: preserve low-integrity labels across file
- copy via whitelist
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <E15125BD8A613CBE+20261102083948.205176-1-tangpengke@yhkylin.cn>
-References: <E15125BD8A613CBE+20261102083948.205176-1-tangpengke@yhkylin.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 09:06:33 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TzVlSzAC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1793612763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DGADPf1s/Hceud+YrgbPtgRU1aDRhCryTUpted2/1fo=;
+	b=TzVlSzACeapsQeFb9LirF5esTJ42gCmMZ/mO0tT3UjYdQYZRsleQgbC5YfNdrEKwPeOM85
+	4jpvUkqm+BY6+mn+UxZSaJTiGPWPgPBxd4kcUUC8HoDaxf+54YVza6zK+EhIzQ4OhmMpv0
+	ugh4/5zZ0DauTjHsw2AKAU6+LEqZru0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-79-IIUjuuvlNmuSTTn19XgFqw-1; Mon, 02 Nov 2026 04:46:01 -0500
+X-MC-Unique: IIUjuuvlNmuSTTn19XgFqw-1
+X-Mimecast-MFC-AGG-ID: IIUjuuvlNmuSTTn19XgFqw_1793612761
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-48e17d30a79so1373684f8f.3
+        for <linux-security-module@vger.kernel.org>; Mon, 02 Nov 2026 01:46:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793612760; x=1794217560;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=DGADPf1s/Hceud+YrgbPtgRU1aDRhCryTUpted2/1fo=;
+        b=bHo6HKI8hvEDo/RBtnaVdlK+PyORzoX02dNUSBXiCyR9+7u4ZM2jVMy2+7MS9m/0nj
+         ZAL/5iz4Aqu6Cf5ftgAi/xq7ydgDtmxlBqx1aefKEWmmXJn9B1ecmS5maPwbZSBppxMt
+         uYKD03j/HOa0waMrSfVAi8uQZvLgyzcvGew2qkhpcUcIc4wEbZSLgJQ155N363t7FstY
+         gFHWc5XVZPivJogi73VzF2PFhuufxcibSoN763zjSCNHtlRBGMZ+thSLT2MorIBrrbg3
+         eXAjz4TO5d9q4gVK49k8RLPHCcs5vGAIgzIXjL2nW+4BDvrnlJ/8DkvjeL4wf1vNb+me
+         3m6A==
+X-Forwarded-Encrypted: i=1; AKwUvBx8QfRaO2brQ61mdZ99ipmI/clQbDSFKkOjvsqzA6EkTzCMZT6k4HrClgH5uoVKRw1VMRl8Bwwy4Vz+nJ81ePZB5IgeaAo=@vger.kernel.org
+X-Gm-Message-State: AFq9FYJH+mQXI5F9TEHsi+SIh/x1JDegEWeM1iCEaFuJIR6Wdzj84664
+	NoeJ0b2w4X0UZaHGwKopJoGKvLEyrKYouxxTeQMiOV2+9cHX1L5AmogtLdPR5loE+0sBDIyaFiO
+	CGuXBB3JszqeuxkNB5CIKT+lskYJ/ILhIBdchhmKMyUJ8HQzy5ujP7Plv9yo/CPw5t1JPhVPunV
+	CBaA==
+X-Gm-Gg: AYBFou3qGUamm9gneRCoRCEVU1qzE5ZG6968Uxrb8J3CYnwDwvo13TAHl+Nmj3GUcwb
+	ZbsUIB5f4j6CudsX2wlbEPmTGsgPfBMf6WSEGd8nQxU4QEefvHUvRZi8LDAK/eJdwX8v/63q4t8
+	PJBelAcrLerFFvV/HOpGer0Ba5haubN4juKrH0BYkN6zi/+AGWuJfhprfbh0mImpgxTso6la3yT
+	wNYSu17TC7kCWB7JtSblTdsAlKrjrbuNNDAD9TwWd5FSsHxeO3x+eNgRqU50I9Cy+KXaBv4ctSS
+	VXT4llPY/XqC1554t2bRRf2zzpidgAzvh0CJ+mUDjTrfgGUnmDucLltYV6QZeEY94ODPRvYTE9p
+	hrsgIWXkX/egZJCzbm9EOWhfll+pXDecpTj1n0/DyiQ==
+X-Received: by 2002:a05:600c:3b88:b0:4a1:cf60:dcc3 with SMTP id 5b1f17b1804b1-4ac187a6ffcmr228127125e9.29.1793612760265;
+        Mon, 02 Nov 2026 01:46:00 -0800 (PST)
+X-Received: by 2002:a05:600c:3b88:b0:4a1:cf60:dcc3 with SMTP id 5b1f17b1804b1-4ac187a6ffcmr228126125e9.29.1793612759656;
+        Mon, 02 Nov 2026 01:45:59 -0800 (PST)
+Received: from localhost ([139.47.30.142])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e77409821sm15084520f8f.0.2026.11.02.01.45.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2026 01:45:58 -0800 (PST)
+Date: Mon, 2 Nov 2026 10:45:57 +0100
+From: Albert Esteve <aesteve@redhat.com>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>,
+	Jens Wiklander <jenswi@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+	echanude@redhat.com, mripard@kernel.org
+Subject: Re: [PATCH v3 7/8] dma-buf: transfer memcg charges via
+ DMA_BUF_IOCTL_XFER_CHARGE
+Message-ID: <auhb1W6CRi0vo0Tq@aesteve-thinkpadp1gen8.rmtes.csb>
+References: <20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com>
+ <20261027-v2_20230123_tjmercier_google_com-v3-7-78d2c4cb8647@redhat.com>
+ <d76d8bfe-e955-4e90-9f5f-e3e914c0869c@amd.com>
+ <auIeQU0nAnOLdKUB@aesteve-thinkpadp1gen8.rmtes.csb>
+ <9ebce3f2-f7a0-46a9-bad7-39059b99423f@amd.com>
+ <auNzHjhT5xezyZ4I@aesteve-thinkpadp1gen8.rmtes.csb>
+ <08705a7a-86aa-4b43-a22a-e80a572010f2@amd.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,591 +136,414 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+In-Reply-To: <08705a7a-86aa-4b43-a22a-e80a572010f2@amd.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: L2iJUchGSa7ZD1KMqi6TtW5uu9ic6GStmwNHXEoAPYc_1793612761
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 9 potential issue(=
-s) to consider:
-- [Critical] smack: UAF and NULL deref in smack_file_free_security() on fil=
-e release
-- [High] smack: missing MAY_WRITE check and O_RDWR handling in smack_file_o=
-pen()
-- [High] smack: OverlayFS copy-up state corruption via smk_copy_up task flag
-- [High] smack: ineffective FMODE_EXEC check in smack_file_open() corrupts =
-smk_preserve on exec
-- [Medium] smack: unlocked write to isp->smk_inode in smk_relabel_on_releas=
-e()
-- [Medium] smack: flawed source file tracking via smk_preserve_inode on fil=
-e free
-- [Medium] smack: smk_tskacc() =3D=3D 0 check in smack_inode_init_security(=
-) and smack_file_open() breaks bringup/unconfined mode
-- [Medium] smack: broken length limit and label parsing in smk_write_preser=
-ve_wl()
-- [Medium] smack: smk_preserve is not cleared on label transition in do_set=
-attr()
---
+On Fri, Oct 30, 2026 at 11:14:50AM +0100, Christian König wrote:
+> On 10/29/26 17:23, Albert Esteve wrote:
+> > On Thu, Oct 29, 2026 at 03:16:12PM +0100, Christian König wrote:
+> >> On 10/28/26 17:09, Albert Esteve wrote:
+> >>> On Wed, Oct 28, 2026 at 10:08:19AM +0100, Christian König wrote:
+> >>>> On 10/27/26 16:02, Albert Esteve wrote:
+> >>>>> dma-heap already supports charging a specific cgroup at allocation
+> >>>>> time via charge_fd in DMA_HEAP_IOCTL_ALLOC. However, dma-bufs can
+> >>>>> originate from any exporter (DRM, V4L2, etc.), and the allocator may
+> >>>>> not know the final owner at allocation time.
+> >>>>>
+> >>>>> Add DMA_BUF_IOCTL_XFER_CHARGE to transfer a dma-buf's memcg charge
+> >>>>> to a different cgroup after allocation. The target is identified by
+> >>>>> charge_fd, which may be a cgroupfd or a pidfd.
+> >>>>>
+> >>>>> The transfer charges the new cgroup before uncharging the old one,
+> >>>>> preserving the original charge on failure. An atomic cmpxchg on
+> >>>>> dmabuf->memcg prevents races with concurrent transfers.
+> >>>>>
+> >>>>> Not all dma-buf exporters back their buffers with reclaimable system
+> >>>>> memory. Some represent device registers, VRAM, or carved-out pools
+> >>>>> where size is not a meaningful memory cost. Add a memcg_account flag
+> >>>>> to dma_buf_export_info that exporters set when their buffers should
+> >>>>> participate in memcg accounting. The xfer ioctl returns -EOPNOTSUPP
+> >>>>> for buffers that do not set the flag. Currently only the system heap
+> >>>>> sets it, other exporters can opt in as needed.
+> >>>>>
+> >>>>> Usage example:
+> >>>>>   int cg_fd = open("/sys/fs/cgroup/clients/app1", O_RDONLY | O_DIRECTORY);
+> >>>>>
+> >>>>>   struct dma_buf_transfer_charge xfer = {
+> >>>>>       .charge_fd = cg_fd,
+> >>>>>   };
+> >>>>>   ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
+> >>>>>   /* charge now on app1's cgroup */
+> >>>>>   close(cg_fd);
+> >>>>>
+> >>>>> Signed-off-by: Albert Esteve <aesteve@redhat.com>
+> >>>>> ---
+> >>>>>  drivers/dma-buf/dma-buf.c           | 43 +++++++++++++++++++++++++++++++++++++
+> >>>>>  drivers/dma-buf/heaps/system_heap.c |  1 +
+> >>>>>  include/linux/dma-buf.h             |  5 +++++
+> >>>>>  include/linux/memcontrol.h          |  9 ++++++++
+> >>>>>  include/uapi/linux/dma-buf.h        | 26 ++++++++++++++++++++++
+> >>>>>  mm/memcontrol.c                     | 41 +++++++++++++++++++++++++++++++++++
+> >>>>>  6 files changed, 125 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> >>>>> index f31f49ebd0af..07513ecedc10 100644
+> >>>>> --- a/drivers/dma-buf/dma-buf.c
+> >>>>> +++ b/drivers/dma-buf/dma-buf.c
+> >>>>> @@ -540,6 +540,45 @@ static long dma_buf_import_sync_file(struct dma_buf *dmabuf,
+> >>>>>  }
+> >>>>>  #endif
+> >>>>>  
+> >>>>> +/* Transfer a dma-buf's memcg charge; see struct dma_buf_transfer_charge */
+> >>>>> +static long dma_buf_xfer_charge(struct dma_buf *dmabuf,
+> >>>>> +				const void __user *user_data)
+> >>>>> +{
+> >>>>> +	struct dma_buf_transfer_charge arg;
+> >>>>> +	struct mem_cgroup *memcg;
+> >>>>> +	int ret = 0;
+> >>>>> +
+> >>>>> +	if (copy_from_user(&arg, user_data, sizeof(arg)))
+> >>>>> +		return -EFAULT;
+> >>>>> +
+> >>>>> +	if (!IS_ENABLED(CONFIG_MEMCG))
+> >>>>> +		return 0;
+> >>>>> +
+> >>>>> +	if (arg.flags != 0)
+> >>>>> +		return -EINVAL;
+> >>>>> +
+> >>>>> +	if (!dmabuf->memcg_account)
+> >>>>> +		return -EOPNOTSUPP;
+> >>>>> +
+> >>>>> +	memcg = mem_cgroup_get_from_fd(arg.charge_fd);
+> >>>>> +	if (IS_ERR(memcg))
+> >>>>> +		return PTR_ERR(memcg);
+> >>>>> +
+> >>>>> +	if (dmabuf->memcg == memcg)
+> >>>>> +		goto skip_transfer;
+> >>>>> +
+> >>>>> +	if (!mem_cgroup_transfer_dmabuf_charge(dmabuf, memcg)) {
+> >>>>> +		ret = -ENOMEM;
+> >>>>> +		goto skip_transfer;
+> >>>>> +	}
+> >>>>> +
+> >>>>> +	return 0;
+> >>>>> +
+> >>>>> +skip_transfer:
+> >>>>> +	mem_cgroup_put(memcg);
+> >>>>> +	return ret;
+> >>>>> +}
+> >>>>> +
+> >>>>>  static long dma_buf_ioctl(struct file *file,
+> >>>>>  			  unsigned int cmd, unsigned long arg)
+> >>>>>  {
+> >>>>> @@ -590,6 +629,9 @@ static long dma_buf_ioctl(struct file *file,
+> >>>>>  		return dma_buf_import_sync_file(dmabuf, (const void __user *)arg);
+> >>>>>  #endif
+> >>>>>  
+> >>>>> +	case DMA_BUF_IOCTL_XFER_CHARGE:
+> >>>>> +		return dma_buf_xfer_charge(dmabuf, (const void __user *)arg);
+> >>>>> +
+> >>>>>  	default:
+> >>>>>  		return -ENOTTY;
+> >>>>>  	}
+> >>>>> @@ -750,6 +792,7 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
+> >>>>>  	dmabuf->size = exp_info->size;
+> >>>>>  	dmabuf->exp_name = exp_info->exp_name;
+> >>>>>  	dmabuf->owner = exp_info->owner;
+> >>>>> +	dmabuf->memcg_account = exp_info->memcg_account;
+> >>>>
+> >>>> The initial charging should probably be done here as well.
+> >>>>
+> >>>> This way DMA-buf heaps only needs to pass in the charge_fd and we can re-use the functionality for other DMA-buf exporters as well.
+> >>>
+> >>> The problem with doing the charge here is that it happens too late.
+> >>> That is the reasoning for this proposal to move all the charging logic
+> >>> into heap allocators before pages are allocated.
+> >>
+> >> Oh, that is a really good point we need to talk about.
+> >>
+> >> DMA-buf heaps is actually a rather simple use case, but we have way more complex things.
+> >>
+> >> For example in some use cases the backing store of a DMA-buf is only allocated on first use and only then it needs to be comitted to it's memcg or dmem.
+> > 
+> > Yes. The idea is focus on heaps for now. But the uAPI is actually
+> > agnostic of the time when the charge happens. When we deal with
+> > lazy-allocation in the future we can just call the reserve/cancel
+> > helpers wherever is more appropiate. As long as the pages are not
+> > allocated, exporters do not set dmabuf->memcg, and XFER does not
+> > work (returns -EOPNOTSUPP).
+> 
+> Yeah exactly that's the reason why I'm raising this topic. That approach won't work in all cases.
+> 
+> See userspace is not aware that the kernel is delaying allocation or that the kernel is allocating the backing store asynchroniously in a background worker for example.
+> 
+> So returning -EOPNOTSUPP when the backing store is not allocated yet and might be allocated later on is rather questionable uAPI because that is racy by design.
 
-commit 1679e7f1a74f034307cf0eb6fcf662b9a39ad174
-Author: Tang Pengke <tangpengke@yhkylin.cn>
+Ah! I see what you meant now.
 
-smack: preserve low-integrity labels across file copy via whitelist
+> >>
+> >> I don't mind implementing it for DMA-buf heaps first, but we should have the uAPI and it's handling so solid that it also works for future use cases.
+> > 
+> > Agreed. I think we should cover all usecases with the current status.
+> > Your feedback helped a lot in getting there!
+> 
+> I mean we can postpone that until we finally need it, but essentially we need to be able to distinct between charging, e.g. making sure the cgroup has enough free limit, and committing, e.g. allowing the resource to be reclaimed.
+> 
+> And then it is possible that when the memcg of a DMA-buf changes that only the charging changes, but there isn't any comitted backing store yet...
 
-This commit introduces a whitelist mechanism under
-CONFIG_SECURITY_SMACK_COPYWHITELIST that records a whitelisted Smack label =
-on
-read-only file opens and applies it to the next file created or overwritten
-with O_TRUNC by the same task. The whitelist is managed via
-/smack/preserve-whitelist.
+Right. That would need adding a specific flag for committed pages or
+a similar solution. When transfering an uncommited dmabuf only the
+charge moves (limit reservation and dmabuf->memcg), the stat is
+untouched. Once the backing store exists, the exporter commits, it
+sets the flag and bumps MEMCG_DMABUF stat. For memory where its
+backing store can go away (e.g., dynamic dma-buf sharing), it can
+have a mirror function that drops the stat but keeps the charge.
+That would resolve the -EOPNOTSUPP thingy, as transfer succeeds
+when dmabuf->memcg is set even for uncommitted pages.
 
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 8e88ac65fd7fc..ff3d0b2f76332 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -953,6 +953,23 @@ static int smack_bprm_creds_for_exec(struct linux_bi=
-nprm *bprm)
->  	return 0;
->  }
-> =20
-> +#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-> +/**
-> + * smack_bprm_committing_creds - exec is about to commit the new creds
-> + * @bprm: the exec information
-> + *
-> + * Every failure path has been passed at this point, so a pending copy
-> + * record is stale.  Clearing it here rather than in the earlier
-> + * bprm_creds_for_exec hook matters: that hook also runs for
-> + * AT_EXECVE_CHECK and for execs that fail afterwards, and clearing there
-> + * would drop the record even though no exec happened.
-> + */
-> +static void smack_bprm_committing_creds(const struct linux_binprm *bprm)
-> +{
-> +	smack_task(current)->smk_preserve =3D NULL;
-> +}
-> +#endif
+My question would be if all exporters know when memory is committed.
+For those that only get, e.g., a firmware handle and cannot observe
+the allocation, I guess the buffer can just remain reserved without
+even being committed. Or in case of protected memory like OP-TEE
+they would not even opt-in to begin with.
 
-[Severity: Medium]
-While smack_bprm_committing_creds() clears smk_preserve on exec, what happe=
-ns
-when a task changes its active Smack label without exec via do_setattr() in
-security/smack/smack_lsm.c (through smack_setprocattr() on
-/proc/self/attr/current or smack_setselfattr())?
+I do not mind adding that for next version, or leaving it for when
+lazy exporters actually opt-in. It is not a big change either way.
+Although, it may look weird while the system heap is the only user
+and commits right away. But either way I can try to document the
+flag / explain this discussion in the commit.
 
-Because smk_preserve lives in the per-task blob rather than struct cred,
-do_setattr() updates tsp->smk_task and calls commit_creds(new) while leaving
-smack_task(current)->smk_preserve and smk_preserve_inode intact across the
-domain transition.
+> 
+> >>> What we could do is fill the dmabuf->memcg field when the flag is set
+> >>> (i.e., committing into the dmabuf in the patch semantics). But for that
+> >>> we'd need adding the memcg we want to charge it to into exp_info in
+> >>> order to support charging to cgroups other than the allocator's (for
+> >>> the common case would be simpler as we can just look at current).
+> >>> Maybe that's what you meant?
+> >>
+> >> At least for the DMA-buf heaps use case that sounds reasonable for now.
+> > 
+> > Thanks! Next version will have the flag removed and just use
+> > dmabuf->memcg as indicator, set within dma_buf_export().
+> > Also, `nr_pages` will be computed within dma_buf_export(), the
+> > contract being that exporters setting exp_info.memcg assert that
+> > size reflects actual system memory bytes.
+> 
+> Thinking more about it I would also put changing dmabuf->memcg under the dmabuf->resv lock instead of doing it with cmpxchg.
+> 
+> We don't need it currently, but the dmabuf->resv lock is used for all state changes of the DMA-buf object and this operation is not performance critical in any way possible.
+> 
+> If there is a problem with locking order we at least get lockdep screaming at us very early and not when we want to extend the functionality in the future.
 
-If a task running with label L1 opens a whitelisted file W with O_RDONLY
-(passing the MAY_READ check for L1) and then transitions to label L2 via
-do_setattr() (including unprivileged transitions permitted by
-/smack/relabel-self), a subsequent file creation in
-smack_inode_init_security() will only check MAY_WRITE for L2 without
-verifying that L2 had MAY_READ on W. Similarly, a subsequent O_WRONLY |
-O_TRUNC open in smack_file_open() will compare tgt =3D=3D smk_of_task(tsp) =
-against
-the new label L2 and relabel an L2-owned file with the leftover preserve
-record from L1.
+Sure, will do.
 
-Should do_setattr() also clear smk_preserve and smk_preserve_inode (and
-should smack_bprm_committing_creds() clear smk_preserve_inode and smk_copy_=
-up
-as well)?
+BR,
+Albert.
 
-[ ... ]
+> 
+> Regards,
+> Christian.
+> 
+> > 
+> >>
+> >> Regards,
+> >> Christian.
+> >>
+> >>>
+> >>>>
+> >>>>>  	spin_lock_init(&dmabuf->name_lock);
+> >>>>>  	init_waitqueue_head(&dmabuf->poll);
+> >>>>>  	dmabuf->cb_in.poll = dmabuf->cb_out.poll = &dmabuf->poll;
+> >>>>> diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+> >>>>> index adeea8cd328b..a764167167ba 100644
+> >>>>> --- a/drivers/dma-buf/heaps/system_heap.c
+> >>>>> +++ b/drivers/dma-buf/heaps/system_heap.c
+> >>>>> @@ -479,6 +479,7 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
+> >>>>>  	exp_info.size = buffer->len;
+> >>>>>  	exp_info.flags = fd_flags;
+> >>>>>  	exp_info.priv = buffer;
+> >>>>> +	exp_info.memcg_account = true;
+> >>>>>  	dmabuf = dma_buf_export(&exp_info);
+> >>>>>  	if (IS_ERR(dmabuf)) {
+> >>>>>  		ret = PTR_ERR(dmabuf);
+> >>>>> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+> >>>>> index 23ec0ff23fba..ac0ec88cab93 100644
+> >>>>> --- a/include/linux/dma-buf.h
+> >>>>> +++ b/include/linux/dma-buf.h
+> >>>>> @@ -433,6 +433,9 @@ struct dma_buf {
+> >>>>>  
+> >>>>>  	/** @memcg: the cgroup to which this buffer is currently attributed */
+> >>>>>  	struct mem_cgroup *memcg;
+> >>>>> +
+> >>>>> +	/** @memcg_account: account buffer memory to cgroup */
+> >>>>> +	bool memcg_account;
+> >>>>>  };
+> >>>>>  
+> >>>>>  /**
+> >>>>> @@ -505,6 +508,7 @@ struct dma_buf_attachment {
+> >>>>>   * @flags:	mode flags for the file
+> >>>>>   * @resv:	reservation-object, NULL to allocate default one
+> >>>>>   * @priv:	Attach private data of allocator to this buffer
+> >>>>> + * @memcg_account:	account buffer memory to cgroup
+> >>>>>   *
+> >>>>>   * This structure holds the information required to export the buffer. Used
+> >>>>>   * with dma_buf_export() only.
+> >>>>> @@ -517,6 +521,7 @@ struct dma_buf_export_info {
+> >>>>>  	int flags;
+> >>>>>  	struct dma_resv *resv;
+> >>>>>  	void *priv;
+> >>>>> +	bool memcg_account;
+> >>>>>  };
+> >>>>>  
+> >>>>>  /**
+> >>>>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> >>>>> index 6b30baa79fa9..36fddafbef4e 100644
+> >>>>> --- a/include/linux/memcontrol.h
+> >>>>> +++ b/include/linux/memcontrol.h
+> >>>>> @@ -679,6 +679,9 @@ bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t gfp,
+> >>>>>  void mem_cgroup_commit_dmabuf(struct dma_buf *dmabuf, struct mem_cgroup *memcg,
+> >>>>>  			      unsigned int nr_pages);
+> >>>>>  
+> >>>>> +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
+> >>>>> +				       struct mem_cgroup *new_memcg);
+> >>>>> +
+> >>>>>  void __mem_cgroup_uncharge(struct folio *folio);
+> >>>>>  
+> >>>>>  /**
+> >>>>> @@ -1206,6 +1209,12 @@ static inline void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg,
+> >>>>>  {
+> >>>>>  }
+> >>>>>  
+> >>>>> +static inline bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
+> >>>>> +						     struct mem_cgroup *new_memcg)
+> >>>>> +{
+> >>>>> +	return true;
+> >>>>> +}
+> >>>>> +
+> >>>>>  static inline void mem_cgroup_uncharge(struct folio *folio)
+> >>>>>  {
+> >>>>>  }
+> >>>>> diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
+> >>>>> index e827c9d20c5d..ea957f4b1d38 100644
+> >>>>> --- a/include/uapi/linux/dma-buf.h
+> >>>>> +++ b/include/uapi/linux/dma-buf.h
+> >>>>> @@ -168,6 +168,31 @@ struct dma_buf_import_sync_file {
+> >>>>>  	__s32 fd;
+> >>>>>  };
+> >>>>>  
+> >>>>> +/**
+> >>>>> + * struct dma_buf_transfer_charge - Transfer a dma-buf's memcg charge
+> >>>>> + *
+> >>>>> + * Any holder of a dma-buf file descriptor can perform a
+> >>>>> + * DMA_BUF_IOCTL_XFER_CHARGE to attribute the buffer's memory
+> >>>>> + * cost to a specific cgroup, or move it from one cgroup to
+> >>>>> + * another.  The ioctl charges the new cgroup before uncharging
+> >>>>> + * the old one atomically.  On failure the original charge is
+> >>>>> + * preserved.  If the buffer has no existing charge, a new
+> >>>>> + * charge is established.
+> >>>>> + */
+> >>>>> +struct dma_buf_transfer_charge {
+> >>>>> +	/** @flags: Reserved, must be zero */
+> >>>>> +	__u32 flags; /* unused for now */
+> >>>>> +	/**
+> >>>>> +	 * @charge_fd: File descriptor identifying the target cgroup.
+> >>>>> +	 *
+> >>>>> +	 * May be either a pidfd, in which case the charge moves to the
+> >>>>> +	 * memory cgroup of the referenced process, or a cgroupfd obtained
+> >>>>> +	 * by opening a cgroup v2 directory, in which case the charge moves
+> >>>>> +	 * directly to that cgroup's memory controller.
+> >>>>> +	 */
+> >>>>> +	__u32 charge_fd;
+> >>>>> +};
+> >>>>> +
+> >>>>>  #define DMA_BUF_BASE		'b'
+> >>>>>  #define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
+> >>>>>  
+> >>>>> @@ -179,5 +204,6 @@ struct dma_buf_import_sync_file {
+> >>>>>  #define DMA_BUF_SET_NAME_B	_IOW(DMA_BUF_BASE, 1, __u64)
+> >>>>>  #define DMA_BUF_IOCTL_EXPORT_SYNC_FILE	_IOWR(DMA_BUF_BASE, 2, struct dma_buf_export_sync_file)
+> >>>>>  #define DMA_BUF_IOCTL_IMPORT_SYNC_FILE	_IOW(DMA_BUF_BASE, 3, struct dma_buf_import_sync_file)
+> >>>>> +#define DMA_BUF_IOCTL_XFER_CHARGE	_IOW(DMA_BUF_BASE, 4, struct dma_buf_transfer_charge)
+> >>>>>  
+> >>>>>  #endif
+> >>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> >>>>> index 7b841b905759..3adc84fe6668 100644
+> >>>>> --- a/mm/memcontrol.c
+> >>>>> +++ b/mm/memcontrol.c
+> >>>>> @@ -5786,6 +5786,47 @@ void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg, unsigned int nr_pages)
+> >>>>>  		refill_stock(memcg, nr_pages);
+> >>>>>  }
+> >>>>>  
+> >>>>> +/**
+> >>>>> + * mem_cgroup_transfer_dmabuf_charge - move a dma-buf charge
+> >>>>> + * @dmabuf: buffer to transfer charge
+> >>>>> + * @new_memcg: target memcg; caller must hold a reference
+> >>>>> + *
+> >>>>> + * Transfers the charge for @dmabuf to @new_memcg and, on
+> >>>>> + * success, stores @new_memcg in @dmabuf->memcg.
+> >>>>> + * Returns %true on success, %false if the charge against @new_memcg
+> >>>>> + * failed or a concurrent transfer raced on @dmabuf->memcg.
+> >>>>> + * On failure the caller retains its reference to @new_memcg.
+> >>>>> + */
+> >>>>> +bool mem_cgroup_transfer_dmabuf_charge(struct dma_buf *dmabuf,
+> >>>>> +				       struct mem_cgroup *new_memcg)
+> >>>>
+> >>>> I would make that more generic instead of dmabuf specific. E.g. something like this:
+> >>>>
+> >>>> bool mem_cgroup_transfer_charge(struct struct mem_cgroup **ptr_memcg, struct mem_cgroup *new_memcg, enum memcg_stat_item item, unsigned int nr_pages)
+> >>>
+> >>> Ah yes, I like this generalization. And the implementation remains
+> >>> mostly the same. Thanks!
+> >>>
+> >>>>
+> >>>>> +{
+> >>>>> +	struct mem_cgroup *old_memcg = READ_ONCE(dmabuf->memcg);
+> >>>>
+> >>>>> +	unsigned int nr_pages = PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
+> >>>>
+> >>>> This way we can also document in the DMA-buf caller that this conversation must be ok when memcg_account is true.
+> >>>>
+> >>>> Regards,
+> >>>> Christian.
+> >>>>
+> >>>>> +
+> >>>>> +	if (mem_cgroup_disabled())
+> >>>>> +		return true;
+> >>>>> +
+> >>>>> +	if (!mem_cgroup_reserve_dmabuf(new_memcg, GFP_KERNEL, nr_pages))
+> >>>>> +		return false;
+> >>>>> +
+> >>>>> +	mod_memcg_state(new_memcg, MEMCG_DMABUF, nr_pages);
+> >>>>> +
+> >>>>> +	if (cmpxchg(&dmabuf->memcg, old_memcg, new_memcg) != old_memcg) {
+> >>>>> +		mod_memcg_state(new_memcg, MEMCG_DMABUF, -nr_pages);
+> >>>>> +		mem_cgroup_cancel_dmabuf(new_memcg, nr_pages);
+> >>>>> +		return false;
+> >>>>> +	}
+> >>>>> +
+> >>>>> +	if (old_memcg) {
+> >>>>> +		/* Uncharge old cgroup */
+> >>>>> +		mod_memcg_state(old_memcg, MEMCG_DMABUF, -nr_pages);
+> >>>>> +		mem_cgroup_cancel_dmabuf(old_memcg, nr_pages);
+> >>>>> +		mem_cgroup_put(old_memcg);
+> >>>>> +	}
+> >>>>> +
+> >>>>> +	return true;
+> >>>>> +}
+> >>>>> +
+> >>>>>  /**
+> >>>>>   * mem_cgroup_uncharge_dmabuf - uncharge a dma-buf from its memcg
+> >>>>>   * @dmabuf: buffer to uncharge
+> >>>>>
+> >>>>
+> >>>
+> >>
+> > 
+> 
 
-> @@ -1075,6 +1128,33 @@ static int smack_inode_init_security(struct inode =
-*inode, struct inode *dir,
->  		}
->  	}
-> =20
-> +#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-> +	/*
-> +	 * If a whitelisted label was recorded on file open, inherit it so
-> +	 * the new file keeps the source's (low-integrity) label across the
-> +	 * copy.  Two cases take precedence, and the record is one-shot so
-> +	 * it is dropped either way:
-> +	 *
-> +	 *  - a copy-up, which must keep the lower label untouched;
-> +	 *  - a transmutation, otherwise the record would leak into a later
-> +	 *    create in a non-transmutable directory.
-> +	 *
-> +	 * The record is only inherited when the task may also write the
-> +	 * label.  A task that can read skp but not write it must not be
-> +	 * able to mint a file carrying skp -- that would be a write into a
-> +	 * domain the policy keeps it out of.
-> +	 */
-> +	if (!copy_up) {
-> +		struct smack_known *skp =3D smack_task(current)->smk_preserve;
-> +
-> +		if (skp !=3D NULL && !transmutes &&
-> +		    smk_tskacc(tsp, skp, MAY_WRITE, NULL) =3D=3D 0)
-> +			issp->smk_inode =3D skp;
-> +		smack_task(current)->smk_preserve =3D NULL;
-> +		smack_task(current)->smk_preserve_inode =3D NULL;
-> +	}
-> +#endif
-
-[Severity: Medium]
-Does checking smk_tskacc(tsp, skp, MAY_WRITE, NULL) =3D=3D 0 here in
-smack_inode_init_security() (and in the overwrite check in smack_file_open(=
-))
-break label preservation when CONFIG_SECURITY_SMACK_BRINGUP is enabled?
-
-In security/smack/smack_access.c, smk_access() and smk_tskacc() return
-positive values (SMACK_BRINGUP_ALLOW, SMACK_UNCONFINED_SUBJECT, or
-SMACK_UNCONFINED_OBJECT) when access is granted via a bringup rule or an
-unconfined label, which other hooks normalize to 0 via the smk_bu_* helpers.
-
-When MAY_WRITE is permitted via bringup or unconfined mode, VFS permission
-checks succeed, but smk_tskacc(..., MAY_WRITE, NULL) =3D=3D 0 evaluates to =
-false
-and drops smk_preserve without applying the label. Should these checks test
->=3D 0 or pass the result through a bringup helper?
-
-[ ... ]
-
-> @@ -2077,10 +2157,160 @@ static int smack_file_open(struct file *file)
->  	smk_ad_setfield_u_fs_path(&ad, file->f_path);
->  	rc =3D smk_tskacc(tsp, smk_of_inode(inode), MAY_READ, &ad);
->  	rc =3D smk_bu_credfile(file->f_cred, file, MAY_READ, rc);
-> +	if (rc)
-> +		return rc;
-> +
-> +#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-> +	struct smack_task *stp =3D smack_task(current);
-> +
-
-[ ... ]
-
-> +	if (!(file->f_mode & (FMODE_CREATED | FMODE_EXEC)) &&
-> +	    !list_empty(&smk_preserve_wl) &&
-> +	    (file->f_flags & O_ACCMODE) =3D=3D O_RDONLY &&
-> +	    S_ISREG(inode->i_mode)) {
-> +		struct smack_known *skp =3D smk_of_inode(inode);
-> +
-> +		if (smk_preserve_allowed(skp)) {
-> +			stp->smk_preserve =3D skp;
-> +			stp->smk_preserve_inode =3D inode;
-> +		}
-> +	}
-
-[Severity: High]
-As reported by Sashiko on v3 [1], does testing file->f_mode & FMODE_EXEC in
-smack_file_open() actually filter out exec opens?
-
-In fs/exec.c, do_open_execat() sets open_flag =3D O_LARGEFILE | O_RDONLY |
-__FMODE_EXEC. However, init_file() initializes f->f_mode using
-OPEN_FMODE(flags), which masks with O_ACCMODE (0x3) and strips FMODE_EXEC:
-
-include/linux/fs.h:
-    #define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE) | \
-                                                (flag & __FMODE_NONOTIFY)))
-
-Because file->f_mode & FMODE_EXEC is always 0, opening a whitelisted regular
-file via do_open_execat() or open_exec() still sets stp->smk_preserve and
-stp->smk_preserve_inode. If a task has an open whitelisted file and invokes
-execveat() with AT_EXECVE_CHECK or a failing execve() on a whitelisted file,
-do_open_execat() overwrites stp->smk_preserve_inode and then closes the
-temporary exec file, causing smack_file_free_security() to clear both
-stp->smk_preserve and stp->smk_preserve_inode while the original source file
-remains open.
-
-Should this check test file->f_flags & __FMODE_EXEC instead (similar to
-AppArmor, Landlock, and TOMOYO)?
-
-> +
-> +	/*
-> +	 * An overwrite skips inode_init_security(), so hand the record to
-> +	 * the file and apply it on release.  O_TRUNC is still set here:
-> +	 * do_dentry_open() prunes it only after security_file_open(), and
-> +	 * handle_truncate() runs later still.  That is why the
-> +	 * file_truncate hook cannot serve instead -- by then the flag is
-> +	 * gone and ftruncate(2) is indistinguishable.
-> +	 *
-> +	 * Only a file carrying the task's own label, or a preservable one,
-> +	 * is relabelled; a trusted file keeps its label.
-> +	 */
-> +	if (stp->smk_preserve !=3D NULL &&
-> +	    !(file->f_mode & FMODE_CREATED) &&
-> +	    (file->f_flags & O_ACCMODE) =3D=3D O_WRONLY &&
-> +	    (file->f_flags & O_TRUNC) &&
-> +	    S_ISREG(inode->i_mode)) {
-> +		struct smack_known *tgt =3D smk_of_inode(inode);
-> +
-> +		if ((tgt =3D=3D smk_of_task(tsp) || smk_preserve_allowed(tgt)) &&
-> +		    smk_tskacc(tsp, tgt, MAY_WRITE, NULL) =3D=3D 0)
-> +			*smack_file_overwrite(file) =3D stp->smk_preserve;
-> +		stp->smk_preserve =3D NULL;
-> +		stp->smk_preserve_inode =3D NULL;
-> +	}
-> +#endif
-> =20
->  	return rc;
->  }
-
-[Severity: High]
-As reported by Sashiko on v3 [2], doesn't the overwrite path in
-smack_file_open() check MAY_WRITE against the target label tgt instead of t=
-he
-preserved label stp->smk_preserve, and miss overwrites opened with O_RDWR |
-O_TRUNC?
-
-In smack_inode_init_security(), inheriting skp =3D stp->smk_preserve requir=
-es
-MAY_WRITE on skp so a task with only MAY_READ on skp cannot mint a file in
-that domain. Here in smack_file_open(), smk_tskacc(tsp, tgt, MAY_WRITE, NUL=
-L)
-checks MAY_WRITE on the target file's existing label tgt (which is trivially
-allowed when tgt =3D=3D smk_of_task(tsp)) and never checks MAY_WRITE on
-stp->smk_preserve. A task with MAY_READ but not MAY_WRITE on a whitelisted
-label skp can open a file carrying skp with O_RDONLY, then open its own file
-with O_WRONLY | O_TRUNC, write arbitrary content, and close it to relabel t=
-he
-file to skp via __vfs_setxattr_noperm().
-
-In addition, checking (file->f_flags & O_ACCMODE) =3D=3D O_WRONLY misses ex=
-isting
-files overwritten with O_RDWR | O_TRUNC, leaving the overwritten target file
-with its old label and leaving stp->smk_preserve armed for a later unrelated
-create.
-
-> =20
-> +#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-> +/**
-> + * smk_relabel_on_release - give a file the label of what was copied int=
-o it
-> + * @file: the file being released
-> + * @skp: label to apply
-> + *
-> + * Write the xattr before adopting the label in memory, so a failed write
-> + * leaves the inode matching the disk.
-> + *
-> + * __vfs_setxattr_noperm() skips security_inode_setxattr() on purpose:
-> + * vfs_setxattr() would reach smack_inode_setxattr() and demand
-> + * CAP_MAC_ADMIN, while the label was already vetted in smack_file_open()
-> + * against a narrower rule.
-> + */
-> +static void smk_relabel_on_release(struct file *file, struct smack_known=
- *skp)
-> +{
-> +	struct dentry *dentry =3D file->f_path.dentry;
-> +	struct inode *inode =3D d_inode(dentry);
-> +	struct inode_smack *isp =3D smack_inode(inode);
-> +	int rc;
-> +
-> +	if (isp->smk_inode =3D=3D skp)
-> +		return;
-> +
-> +	/*
-> +	 * __vfs_setxattr_noperm() requires the inode lock: filesystems such
-> +	 * as UBIFS assert inode_is_locked() in their xattr_set handler.
-> +	 * __fput() runs from task_work, so taking the lock here is safe.
-> +	 */
-> +	inode_lock(inode);
-> +	rc =3D __vfs_setxattr_noperm(file_mnt_idmap(file), dentry,
-> +				   XATTR_NAME_SMACK,
-> +				   skp->smk_known, strlen(skp->smk_known), 0);
-> +	inode_unlock(inode);
-> +
-> +	if (rc =3D=3D 0)
-> +		isp->smk_inode =3D skp;
-> +}
-> +#endif
-
-[Severity: Medium]
-In smk_relabel_on_release(), is it safe to assign isp->smk_inode =3D skp af=
-ter
-calling inode_unlock(inode)?
-
-Inside __vfs_setxattr_noperm(), security_inode_post_setxattr() ->
-smack_inode_post_setxattr() (or security_inode_setsecurity() ->
-smack_inode_setsecurity()) already updates isp->smk_inode while holding
-inode_lock(inode). Writing isp->smk_inode =3D skp again after inode_unlock(=
-inode)
-races with any concurrent setxattr() or removexattr() that acquires the ino=
-de
-lock right after it is dropped, potentially leaving isp->smk_inode out of
-sync with the on-disk xattr.
-
-> +
-> +#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-> +/**
-> + * smack_file_free_security - finish a copy, drop stale records
-> + * @file: the file being freed
-> + *
-> + * Two records can be outstanding:
-> + *
-> + *  - the overwrite label, kept in the file blob.  Its contents are
-> + *    complete and the inode lock is gone, so this is the first safe
-> + *    point to write it back;
-> + *  - a source record, kept in the task blob, whose source is released
-> + *    before any create consumed it.  It is stale; dropping it keeps an
-> + *    unrelated later create from inheriting a label it never read.
-> + *
-> + * The task blob lookup uses current.  fput() normally defers to
-> + * task_work on the closing task, which is correct; should it fall back
-> + * to ____fput() from a workqueue the lookup misses and the stale record
-> + * survives until the next open of a whitelisted file replaces it.  The
-> + * overwrite record is unaffected because it lives in the file blob.
-> + */
-> +static void smack_file_free_security(struct file *file)
-> +{
-> +	struct inode *inode =3D file_inode(file);
-> +	struct smack_task *stp =3D smack_task(current);
-> +	struct smack_known *skp =3D *smack_file_overwrite(file);
-> +
-> +	if (skp !=3D NULL) {
-> +		*smack_file_overwrite(file) =3D NULL;
-> +		smk_relabel_on_release(file, skp);
-> +	}
-> +
-> +	if (stp->smk_preserve_inode =3D=3D inode) {
-> +		stp->smk_preserve =3D NULL;
-> +		stp->smk_preserve_inode =3D NULL;
-> +	}
-> +}
-> +#endif
-
-[Severity: Critical]
-Can running smk_relabel_on_release() from smack_file_free_security() (via t=
-he
-file_free_security hook) trigger a NULL pointer dereference or use-after-fr=
-ee?
-
-First, in fs/file_table.c:__fput(), the file's write access, dentry
-reference, and mount reference are all dropped before file_free() calls
-security_file_free() -> smack_file_free_security():
-
-fs/file_table.c:__fput() {
-    ...
-    put_file_access(file);
-    dput(dentry);
-    if (unlikely(mode & FMODE_NEED_UNMOUNT))
-        dissolve_on_fput(mnt);
-    else
-        mntput(mnt);
-out:
-    file_free(file);
-}
-
-If the overwritten file was unlinked or renamed over while open, dput(dentr=
-y)
-drops the last reference to the dentry, clears dentry->d_inode to NULL, cal=
-ls
-iput(), and frees the dentry before smack_file_free_security() runs.
-smk_relabel_on_release() then accesses the freed dentry/mnt and dereferences
-d_inode(dentry) =3D=3D NULL. Even when the dentry stays cached, calling
-__vfs_setxattr_noperm() after put_file_access() and mntput() performs a
-filesystem xattr write after mnt_want_write() protection has already been
-released.
-
-Second, in fs/open.c:do_dentry_open(), security_file_open(f) runs before
-fsnotify_open_perm_and_set_mode(), break_lease(), and f->f_op->open(). If
-smack_file_open() sets *smack_file_overwrite(file) =3D stp->smk_preserve an=
-d a
-later step in do_dentry_open() fails, the cleanup_all / cleanup_file path
-clears f->__f_path.dentry =3D NULL and f->f_inode =3D NULL:
-
-fs/open.c:do_dentry_open() {
-    ...
-cleanup_file:
-    path_put(&f->f_path);
-    f->__f_path.mnt =3D NULL;
-    f->__f_path.dentry =3D NULL;
-    f->f_inode =3D NULL;
-    return error;
-}
-
-When the caller then frees f via fput_close() -> file_free() ->
-security_file_free(), smk_relabel_on_release() reads dentry =3D
-file->f_path.dentry (NULL) and crashes at d_inode(dentry). And if do_open()
-fails after vfs_open() (for example in handle_truncate()), fput_close() will
-relabel the untouched file on disk even though the open failed.
-
-Third, in fs/file_table.c:init_file(), security_file_alloc(f) runs before
-f->f_inode =3D NULL is initialized; if another stacked LSM fails in
-file_alloc_security, security_file_alloc() calls security_file_free(f) ->
-smack_file_free_security(f), which reads uninitialized slab memory via
-file_inode(file).
-
-[Severity: Medium]
-Also in smack_file_free_security(), doesn't clearing stp->smk_preserve when
-stp->smk_preserve_inode =3D=3D inode break copy programs that close the sou=
-rce
-file before creating the destination file?
-
-When a task calls close(src_fd), fput_close() schedules ____fput via
-task_work_add(..., TWA_RESUME), which runs before the close() syscall retur=
-ns
-to userspace. A process that opens a whitelisted file O_RDONLY, reads its
-contents into a buffer, closes src_fd, and then opens the destination file
-with O_CREAT | O_WRONLY will have stp->smk_preserve cleared on close(src_fd)
-before the destination file is created.
-
-Similarly, if a task opens the same whitelisted inode twice (for example, o=
-ne
-fd to inspect headers and a second fd to copy) and closes the first fd while
-the second remains open, freeing the first struct file matches
-stp->smk_preserve_inode =3D=3D inode and clears stp->smk_preserve. Converse=
-ly, if
-the struct file is duplicated across fork() or dup() and another task drops
-the final file reference, stp->smk_preserve_inode is left dangling on the
-original task.
-
-[ ... ]
-
-> @@ -5014,6 +5244,15 @@ static int smack_inode_copy_up(struct dentry *dent=
-ry, struct cred **new)
->  	isp =3D smack_inode(d_inode(dentry));
->  	skp =3D isp->smk_inode;
->  	tsp->smk_task =3D skp;
-> +#ifdef CONFIG_SECURITY_SMACK_COPYWHITELIST
-> +	/*
-> +	 * The copy-up creates upper inodes through the normal create
-> +	 * path.  Tell smack_inode_init_security() to leave those alone:
-> +	 * they must keep the lower label, and a pending copy record
-> +	 * would otherwise be consumed by an internal overlayfs create.
-> +	 */
-> +	smack_task(current)->smk_copy_up =3D true;
-> +#endif
->  	*new =3D new_creds;
->  	return 0;
->  }
-
-[Severity: High]
-As reported by Sashiko on v3 [3], can tracking OverlayFS copy-up with a
-one-shot smk_copy_up boolean in smack_task(current) still corrupt task state
-and inode labels?
-
-1. In ovl_copy_up_workdir() and ovl_copy_up_tmpfile(),
-ovl_prepare_copy_up_creds() calls security_inode_copy_up() ->
-smack_inode_copy_up(), setting smack_task(current)->smk_copy_up =3D true. I=
-f a
-subsequent step fails before security_inode_init_security() is reached (for
-example in another LSM's inode_copy_up hook, ovl_start_creating_temp(),
-may_create_dentry(), security_inode_create(), or inode_permission() in
-vfs_tmpfile()), smack_inode_init_security() never runs to consume
-smk_copy_up. The temporary copy-up creds are reverted, but smk_copy_up
-remains true on current, causing the task's next unrelated file or directory
-creation to skip both transmutation and smk_preserve handling.
-
-2. When copying up a directory with OverlayFS index=3Don in
-ovl_copy_up_workdir(), ovl_create_temp() creates the upper directory (which
-consumes smk_copy_up =3D false in smack_copy_up_begin()) and then
-ovl_create_index() calls ovl_create_temp() a second time to create the index
-entry with smk_copy_up =3D=3D false, consuming current's pending smk_preser=
-ve on
-the internal index inode. Internal workdir creations that do not call
-security_inode_copy_up() (such as ovl_whiteout() and ovl_clear_empty()) also
-enter smack_inode_init_security() with smk_copy_up =3D=3D false.
-
-3. In smack_file_open(), the !(file->f_mode & (FMODE_CREATED | FMODE_EXEC))
-check does not exclude FMODE_BACKING or internal OverlayFS O_RDONLY opens.
-During regular file copy-up, ovl_copy_up_file() and ovl_sync_file() open and
-close the lower/upper files with O_RDONLY, which runs smack_file_open() and
-smack_file_free_security() and clobbers or clears current's pending
-smk_preserve record. Furthermore, creating a file on OverlayFS with O_RDONLY
-| O_CREAT consumes smk_preserve in smack_inode_init_security(), and then
-ovl_open_realfile() opens the upper backing file via backing_file_open()
-(which sets FMODE_BACKING without FMODE_CREATED), re-arming smk_preserve in
-smack_file_open().
-
-[ ... ]
-
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index a72bc7fabea99..a726957c434d3 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-
-[ ... ]
-
-> +static ssize_t smk_write_preserve_wl(struct file *file, const char __use=
-r *buf,
-> +				     size_t count, loff_t *ppos)
-> +{
-> +	struct smack_known *skp;
-> +	char *data, *label;
-> +	bool on =3D true;
-> +	int rc;
-> +
-> +	if (!smack_privileged(CAP_MAC_ADMIN))
-> +		return -EPERM;
-> +
-> +	if (*ppos !=3D 0)
-> +		return -EINVAL;
-> +
-> +	if (count =3D=3D 0 || count > SMK_LONGLABEL)
-> +		return -EINVAL;
-> +
-> +	data =3D memdup_user_nul(buf, count);
-> +	if (IS_ERR(data))
-> +		return PTR_ERR(data);
-> +
-> +	label =3D strim(data);
-> +	if (!label[0]) {
-> +		kfree(data);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* A leading '-' removes the label (same convention as revoke-subject).=
- */
-> +	if (label[0] =3D=3D '-') {
-> +		on =3D false;
-> +		label =3D strim(label + 1);
-> +		if (!label[0]) {
-> +			kfree(data);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Import the label when adding.  Boot-time policy may name a label
-> +	 * that no inode, rule or mount has referenced yet, in which case it
-> +	 * is not in smack_known_hash.  Removal only needs the existing entry.
-> +	 */
-> +	if (on) {
-> +		skp =3D smk_import_entry(label, 0);
-> +		if (IS_ERR(skp)) {
-> +			rc =3D PTR_ERR(skp);
-> +			kfree(data);
-> +			return rc;
-> +		}
-> +	} else {
-> +		skp =3D smk_find_entry(label);
-> +		if (!skp) {
-> +			kfree(data);
-> +			return -ENOENT;
-> +		}
-> +	}
-> +
-> +	rc =3D smk_preserve_set(skp, on);
-> +	kfree(data);
-> +	return rc ? rc : count;
-> +}
-
-[Severity: Medium]
-In smk_write_preserve_wl(), does rejecting count > SMK_LONGLABEL before
-stripping the '-' prefix prevent removing a maximum-length (255-character)
-Smack label when written with a trailing newline?
-
-Adding a 255-character label with a newline uses 256 bytes (SMK_LONGLABEL),
-which succeeds, but removing that same label with a leading '-' and trailing
-newline requires 257 bytes (SMK_LONGLABEL + 1) and fails with -EINVAL.
-
-Also, when on is true, smk_import_entry(label, 0) calls smk_parse_label_len=
-(),
-which stops at the first whitespace or invalid character (such as '/', '"',
-'\\', or '\'') and returns the prefix length rather than failing. Without
-checking that the parsed label length matches strlen(label) (as do_setattr()
-does in security/smack/smack_lsm.c), won't writing a string containing an
-invalid character or multiple space/newline-separated labels silently
-import and whitelist only the truncated prefix while returning count?
-
-[1] https://lore.kernel.org/r/684C81A1C8289709+20261028161521.925644-1-tang=
-pengke@yhkylin.cn
-[2] https://lore.kernel.org/r/684C81A1C8289709+20261028161521.925644-1-tang=
-pengke@yhkylin.cn
-[3] https://lore.kernel.org/r/684C81A1C8289709+20261028161521.925644-1-tang=
-pengke@yhkylin.cn
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/E15125BD8A613CBE+20=
-261102083948.205176-1-tangpengke@yhkylin.cn?part=3D1
