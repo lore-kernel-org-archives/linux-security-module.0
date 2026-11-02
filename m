@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793631986;
-	b=euaTgIrwALmBUU+uTHM+sZoQyOs6HUHz1WA62SO53cX8+rTV+D+ChSaXSpulXglrpM2D
-	 kEK2TdJThrrdwHENl6HSiznICtDzUWKExn5Oz9EIs8TIcppEhzOzA2hwLL5KSrFcK7WV3
-	 OK+aczCf62CFEF+yYJlIzD4w5doidFPuw0jz2cg1tYHrcxksVMRdy2tAEc5nN5pgOm0Yr
-	 9m+UeKiyOzi+Lb1arLP7n9pdE57Iz9Z9OFjSMJqBzjNWUfbueerWHVjUL0NHv8+5eDXpp
-	 djDVBA7+uEot6bYjKNxgbiCnBDU3FjJjYF8Zldqz5cnaI1vYx81vkb1fe4csvRp4sDA==
+	t=1793632170;
+	b=RbmI7iS27lkMZK4Z/CLCrhp2bxRTBa0N39us8T/s77MDN4NPzMsKXGh/RU3fwSnDAMMQ
+	 Heo3aYzKwUalaQNmw3Iod0KByv8800+im7JOekHGSFwPVBp3Vba6rqlBiSE1+u6ClIm96
+	 QGUPXQiXLASqBLFKftIePD4O0gmbO/H4zBEVO04JNodPC18xcbeQDF+dO8TpYEO1EfuW/
+	 exx00NmE9Zq3NPMnINCAFp4ERUcf4aTFJNO3qzyiAeUkhVqlrGaHvm2B4L6stmhfVjVli
+	 SxhICUtNkFaYFr/0qCpVoJg/OXvnYIzpy/Ti/KMs4I7TogbDvYNFJVsdEvROn8V0Ibw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793631986;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793632170;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/a30Vf+SagCwyLK/5U9Nmrh9Uh1r/ystun2GMTX+zes=;
-	b=W6G9/9AUNSw6YxbdwHNjR29maDDbziO3aLTTP64r2kbu/6So4TngT+svTZPhrl+2t8cU
-	 ud1k8pLkxS/sW+ISzZPdwFh7bfZ+oe8W9JIVubTMlIMieSaEHym8R8vWdu/jLryutHfe+
-	 0ePBIDDoyrfHfnnJwDrhVEBfBWvo0QKubJqE74+DY6TM7sfiPHUBjO63PsaTg3+sw34uQ
-	 vSaUFYSPIn0FVNlOBFAzg0PAHH5md+95FVsR3FyXVTIbl+ZLf3rENkFi+bSzUP7gYvSp0
-	 jxSx3WcEfGlxP3LYj6IUp4PDXdMiG5wb6uCw6QD0kUy2kQ21TJPrTYLrOqZdDU9fStQ==
+	bh=8vICE+7hcXSeAZX1Z36Sd6XyIa6fnGpMmUf4HKMKuzo=;
+	b=5N/eqs42EfJkTHEZhF+vOIQ3esPkC0HRihTFArrD96ViWDz+nMI7DR3loVF1n73B+lif
+	 f6Hlbv6T9/HChEJJBi2dECYhKEXPfjiNPaFBUIWEbiK/eFB/DdRnW8zrqyI6TJKkVWKH4
+	 uBKDnrB0GdthPLXju8DDZyXIOO8ItJKRqQXOgB+yLNrQfjPf7ZIaGJmks0Fo1XMwKSkoW
+	 mdIuusjThxhRyM2S4p9EStvkmSVBWcFwQWGQPev2umMF4ibsBcnnCPvgatKso/2qI1QT9
+	 7eMGwJwKzpiMzM/zLxMxcoZoEE2IfwctPY83SH4BHalOC+H3OmhuXrjo70aqXrFHS8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oifvYLSb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ns9m4vKO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7789C60722B5
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38339606B901
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oifvYLSb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F471F00A16
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:06:25 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ns9m4vKO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F094B1F00A16
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793631985;
-	bh=/a30Vf+SagCwyLK/5U9Nmrh9Uh1r/ystun2GMTX+zes=;
+	s=k20260515; t=1793632170;
+	bh=8vICE+7hcXSeAZX1Z36Sd6XyIa6fnGpMmUf4HKMKuzo=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=oifvYLSbvsjuTECeZiuJ8lDUROtODICyLQZo76vHd6ujKD8mx5xV5r/N0Bu+wsUyT
-	 HPsRsnY4LQn+6d+c1xqumk4ZLnqhi79+rn2/108RgQ62IMI+NXBld7rQ6fcAfhjpYb
-	 AN9OuZnMB6YJOzcFIN6p79OSsSmeiRooNxpBVk6VSKacPZXRFxT8o+Dvq5Amy4usbP
-	 IHspe1qKGHvT+9hdMnekpsx+TRM+hJ/wUek4M61xnQsw80VivOgK5fbienxFyoFZFO
-	 tnHjlnpTHUraM5QMQSoSh4ysbjMGmgqip0wP3R0nsgILVSPGFV6BL8hM5LM1WoZY2a
-	 cxnwinKQ83u1w==
-Message-ID: <sashiko-outbox-193631@kernel.org>
+	b=ns9m4vKOrfPat41sCkWw0o3XNuUhhbaPVG5mjcqvEy/8869KSxn/jeFT5UM1E5hfz
+	 z+pLzp+NmoIPiFzw/wowMHBw2HFpM+fWq9RhhwofBngkWwgJK+inPXHk8KjJDWJdW6
+	 xSaQ3GmyMIJsC4r2u9IkqSdQ26lO8HJrSQSfGSJAFOvwWfQSY9a4b6t/DjjxBUY9pU
+	 v5FnQjYgWT/zbob11r74utsdMwApqeMlS09t+vGv96JeIQM5QcHK0ESTFLVwc16LkM
+	 ytlnG7Wio9J16nOb5hqNlzIlA5iFjHtBSzuCSMdWLc6wS7f3UU2oVXIbV3KdeIyXs0
+	 g98xx7yy8qg6A==
+Message-ID: <sashiko-outbox-193635@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/4] Landlock: Enforce MAKE_REG for POSIX message
- queue creation
+Subject: Re: [PATCH v2 3/4] Landlock: Add POSIX message queue scoping
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261102144708.920232-3-webprosto@gmail.com>
+In-Reply-To: <20261102144708.920232-4-webprosto@gmail.com>
 References: <20261102144708.920232-1-webprosto@gmail.com>
- <20261102144708.920232-3-webprosto@gmail.com>
+ <20261102144708.920232-4-webprosto@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 15:06:25 +0000
+Date: Mon, 02 Nov 2026 15:09:29 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,161 +59,336 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+Thank you for your contribution! Sashiko AI review found 5 potential issue(=
 s) to consider:
-- [High] landlock: incompatible hook_inode_create() signature omits mnt_idm=
-ap
-- [High] landlock: user-triggerable WARN_ON_ONCE() in hook_inode_create()
-- [High] landlock: hook_inode_create() breaks VFS create on mounted mqueuefs
-- [Low] landlock: unnamed parameter in hook_inode_create() breaks gnu11 bui=
-ld
+- [High] landlock: premature creator domain clearing in hook_inode_unlink()
+- [Medium] landlock: ignored allocation failure in hook_d_instantiate() lea=
+ves queue untagged
+- [Medium] selftests/landlock: missing ENOSYS skip checks when CONFIG_POSIX=
+_MQUEUE=3Dn
+- [Low] landlock: build failure in landlock_check_posix_mqueue_open() witho=
+ut tracepoints
+- [Low] Documentation: landlock: section title underline too short in landl=
+ock.rst
 --
 
-commit 8666d4a55fba496ff4bfd048b949b769a8d57ec6
+commit 672099a186033eeb6307163bb1baca6370e0b662
 Author: Oxana Kharitonova <webprosto@gmail.com>
 
-Landlock: Enforce MAKE_REG for POSIX message queue creation
+Landlock: Add POSIX message queue scoping
 
-This commit adds an inode_create LSM hook in Landlock to enforce
-LANDLOCK_ACCESS_FS_MAKE_REG when creating POSIX message queues before the
-queue is created in the mqueue filesystem. It also documents the behavior a=
-nd
-adds selftests for POSIX message queue creation and opening.
+This commit introduces Posix message queue scoping in Landlock (ABI 13) to
+restrict opening queues to those created within the scoping domain or its
+descendants. It also adds audit logging, a denial trace event, documentatio=
+n,
+and selftests.
+
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/use=
+rspace-api/landlock.rst
+> index 1fb91884cb8af..fa65fa4aad02e 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+
+[ ... ]
+
+> @@ -1075,6 +1121,14 @@ fd-reference acquisition (:manpage:`open_tree(2)`,=
+ :manpage:`fsmount(2)`) with
+>  the new ``LANDLOCK_PERMISSION_NAMESPACE_USE`` permission flag and
+>  ``LANDLOCK_RULE_NAMESPACE`` rule type.
+> =20
+> +POSIX message queue scoping (ABI < 13)
+> +-------------------------------------
+
+[Severity: Low]
+This isn't a bug, but the hyphen underline here is 37 characters while the
+heading above it is 38 characters. Should an extra hyphen be added so htmld=
+ocs
+builds do not emit a title underline warning?
 
 > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 2ab67bcad1983..d5dcb19d5eb19 100644
+> index d5dcb19d5eb19..e9c52332dfcde 100644
 > --- a/security/landlock/fs.c
 > +++ b/security/landlock/fs.c
-[ ... ]
-> @@ -1676,6 +1677,35 @@ static int hook_path_truncate(const struct path *c=
-onst path)
->  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+> @@ -53,6 +53,7 @@
+>  #include "object.h"
+>  #include "ruleset.h"
+>  #include "setup.h"
+> +#include "task.h"
+> =20
+>  #include <trace/events/landlock.h>
+> =20
+> @@ -1374,6 +1375,80 @@ static void hook_inode_free_security_rcu(void *ino=
+de_security)
+>  	WARN_ON_ONCE(inode_sec->object);
 >  }
 > =20
 > +/*
-> + * Unlike regular file creation, mq_open(2) calls vfs_mkobj() directly a=
-nd
-> + * therefore does not trigger the path_mknod hook.  Use the mqueuefs mou=
-nt
-> + * associated with the current IPC namespace to recover the parent path.
+> + * Tag a newly created POSIX message queue with its creator's domain.
+> + *
+> + * This is the earliest reachable point with both the creator's context =
+and a
+> + * fully initialized inode.
 > + */
-> +static int hook_inode_create(struct inode *const dir,
-> +			     struct dentry *const dentry, const umode_t)
-
-[Severity: High]
-Does hook_inode_create() in security/landlock/fs.c have the wrong function
-signature for the inode_create LSM hook?
-
-In include/linux/lsm_hook_defs.h, inode_create is declared with four
-parameters, starting with const struct mnt_idmap *idmap:
-
-    LSM_HOOK(int, 0, inode_create, const struct mnt_idmap *idmap,
-             struct inode *dir, struct dentry *dentry, umode_t mode)
-
-Because hook_inode_create() omits the leading idmap parameter, registering =
-it
-via LSM_HOOK_INIT(inode_create, hook_inode_create) in landlock_hooks fails =
-to
-build with -Werror=3Dincompatible-pointer-types when CONFIG_SECURITY_LANDLO=
-CK is
-enabled (and would cause the mnt_idmap pointer to be passed as dir at
-runtime).
-
-[Severity: Low]
-Also in hook_inode_create() in security/landlock/fs.c, the trailing
-const umode_t parameter omits the parameter name.
-
-Because the kernel builds with -std=3Dgnu11 and supports GCC 8.1 and later,
-while unnamed parameters in function definitions are a C23 feature only
-supported starting in GCC 11, won't this fail to compile on GCC 8 through 10
-with a "parameter name omitted" error?
-
+> +static void hook_d_instantiate(struct dentry *const dentry,
+> +			       struct inode *const inode)
 > +{
-> +	struct ipc_namespace *ipc_ns;
-> +	struct vfsmount *mnt;
-> +	struct path parent;
+> +	struct landlock_domain *dom;
+> +	struct landlock_object *object;
 > +
-> +	if (!landlock_is_posix_mqueue_fs(dir))
-> +		return 0;
+> +	if (!landlock_is_posix_mqueue_inode(inode))
+> +		return;
 > +
-> +	if (!current->nsproxy)
-> +		return 0;
-> +	ipc_ns =3D current->nsproxy->ipc_ns;
-> +	if (!ipc_ns)
-> +		return 0;
-> +	mnt =3D ipc_ns->mq_mnt;
-> +	if (WARN_ON_ONCE(!mnt || mnt->mnt_sb !=3D dir->i_sb))
-> +		return 0;
+> +	dom =3D landlock_get_current_domain();
+> +	if (!dom)
+> +		return;
+> +
+> +	object =3D get_inode_object(inode);
+> +	if (IS_ERR(object))
+> +		return;
 
-[Severity: High]
-Can an unprivileged user trigger this WARN_ON_ONCE() in hook_inode_create()
-(and bypass the check) by creating a file on a mounted mqueue filesystem fr=
-om
-another IPC namespace?
+[Severity: Medium]
+What happens if get_inode_object(inode) fails to allocate memory in
+hook_d_instantiate() when a task in a scoped domain creates a queue via
+mq_open()?
 
-Although mq_open(2) calls vfs_mkobj(), mqueue_dir_inode_operations in
-ipc/mqueue.c also defines .create =3D mqueue_create:
+Because security_d_instantiate() is a void hook called from:
 
-    static const struct inode_operations mqueue_dir_inode_operations =3D {
-        .lookup =3D simple_lookup,
-        .create =3D mqueue_create,
-        .unlink =3D mqueue_unlink,
-    };
+    mqueue_create_attr()
+      d_make_persistent()
+        security_d_instantiate()
+          hook_d_instantiate()
 
-This means VFS creation paths on a mounted mqueue filesystem also reach
-security_inode_create() -> hook_inode_create():
+the allocation failure is ignored and the new queue is linked into mqueuefs
+with no creator domain attached. Immediately afterwards, mqueue_file_open()
+calls dentry_open() -> hook_file_open() -> landlock_check_posix_mqueue_open=
+(),
+which sees creator_domain =3D=3D NULL, treats the queue as created outside =
+any
+Landlock domain, and denies the creator's own mq_open() with EPERM while
+leaving the untagged queue behind in the namespace.
 
-    openat(O_CREAT) -> do_filp_open() -> path_openat() -> lookup_open()
-      -> may_o_create() -> security_inode_create()
-
-    mknodat(S_IFREG) -> filename_mknodat() -> vfs_create()
-      -> security_inode_create()
-
-If a process unshares into a new IPC namespace (for example via
-unshare(CLONE_NEWUSER | CLONE_NEWIPC)) while retaining access to a mounted
-mqueue filesystem from a previous IPC namespace (such as /dev/mqueue or an
-open directory fd), dir->i_sb belongs to the mount's IPC namespace whereas
-current->nsproxy->ipc_ns->mq_mnt->mnt_sb belongs to the new IPC namespace.
-Calling open() with O_CREAT or mknod() with S_IFREG on that mount will then
-cause mnt->mnt_sb !=3D dir->i_sb and fire WARN_ON_ONCE().
+Could the object allocation or tagging be performed in a fallible creation
+hook (or preallocated before d_instantiate) so that allocation failure abor=
+ts
+queue creation cleanly instead of leaving an untagged queue?
 
 > +
-> +	parent.mnt =3D mnt;
-> +	parent.dentry =3D dentry->d_parent;
-> +	return current_check_access_path(&parent, LANDLOCK_ACCESS_FS_MAKE_REG);
+> +	spin_lock(&object->lock);
+> +	if (WARN_ON_ONCE(object->domain)) {
+> +		spin_unlock(&object->lock);
+> +		landlock_put_object(object);
+> +		return;
+> +	}
+> +
+> +	landlock_get_domain(dom);
+> +	object->domain =3D dom;
+> +	spin_unlock(&object->lock);
+> +}
+> +
+> +/*
+> + * Drop the reference retained by hook_d_instantiate() for a POSIX messa=
+ge
+> + * queue once its sole name is unlinked.
+> + */
+> +static int hook_inode_unlink(struct inode *const dir,
+> +			     struct dentry *const dentry)
+> +{
+> +	const struct inode *const inode =3D d_backing_inode(dentry);
+> +	struct landlock_domain *domain;
+> +	struct landlock_object *object;
+> +
+> +	if (!landlock_is_posix_mqueue_inode(inode))
+> +		return 0;
+> +
+> +	rcu_read_lock();
+> +	object =3D rcu_dereference(landlock_inode(inode)->object);
+> +	/* The temporary reference protects against concurrent object release. =
+*/
+> +	if (!object || !refcount_inc_not_zero(&object->usage)) {
+> +		rcu_read_unlock();
+> +		return 0;
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	spin_lock(&object->lock);
+> +	domain =3D object->domain;
+> +	object->domain =3D NULL;
+> +	spin_unlock(&object->lock);
+> +
+> +	/* Drop the temporary reference acquired by refcount_inc_not_zero(). */
+> +	landlock_put_object(object);
+> +	if (domain) {
+> +		landlock_put_domain_deferred(domain);
+> +		/* Drops the reference retained by hook_d_instantiate(). */
+> +		landlock_put_object(object);
+> +	}
+> +
+> +	return 0;
 > +}
 
 [Severity: High]
-When a Landlock-restricted task creates a queue via open(O_CREAT) or
-mknod(S_IFREG) on a mounted mqueue filesystem (such as /dev/mqueue), does
-constructing parent with ipc_ns->mq_mnt in hook_inode_create() break rules
-attached to ancestor directories like /dev or /?
+Can clearing object->domain inside hook_inode_unlink() strip the creator
+domain from a queue that remains linked or open?
 
-During open(O_CREAT) or mknod(S_IFREG) on /dev/mqueue/q, the VFS first chec=
-ks
-security_path_mknod() with the real user mount path, which walks up across =
-the
-/dev/mqueue mountpoint to /dev and / via follow_up() in
-is_access_to_paths_allowed():
+In fs/namei.c:vfs_unlink(), security_inode_unlink() is a pre-unlink
+permission check:
 
-    jump_up:
-        if (walker_path.dentry =3D=3D walker_path.mnt->mnt_root) {
-            if (follow_up(&walker_path)) {
-                /* Ignores hidden mount points. */
-                goto jump_up;
-            } else {
-                break;
-            }
-        }
+    vfs_unlink()
+      security_inode_unlink(dir, dentry)
+      try_break_deleg(dir, ...)
+      try_break_deleg(target, ...)
+      dir->i_op->unlink(dir, dentry)
 
-However, may_o_create() and vfs_create() then call security_inode_create() =
-->
-hook_inode_create(), which replaces the mount with the internal kernel mount
-ipc_ns->mq_mnt. Because ipc_ns->mq_mnt is unattached, follow_up() returns
-false at mnt_root and stops the walk before reaching /dev or /, causing
-current_check_access_path() to deny the creation with -EACCES unless a rule
-was added directly on /dev/mqueue itself.
+If Landlock runs before another stacked security module (such as SELinux,
+AppArmor, Smack, or BPF LSM in the default lsm order) and that subsequent
+module denies the unlink, or if try_break_deleg() fails, hook_inode_unlink()
+has already cleared object->domain =3D NULL and dropped the retained refere=
+nces,
+even though vfs_unlink() aborts and the queue remains linked in mqueuefs.
+
+Similarly, even when vfs_unlink() succeeds, the queue inode stays alive whi=
+le
+open file descriptors exist and can be reopened by tasks in the creator's
+domain via /proc/<pid>/fd/<n>.
+
+Because landlock_check_posix_mqueue_open() treats creator_domain =3D=3D NUL=
+L as
+an unsandboxed creator, any subsequent open of that queue by the creator's
+own scoped domain (or a scoped ancestor domain) will be denied with EPERM.
+Should the creator domain stay attached for the lifetime of the inode rather
+than being cleared in hook_inode_unlink()?
+
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index d9eae86fc5529..0daa7edff2d7e 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -522,6 +522,72 @@ static int hook_file_send_sigiotask(struct task_stru=
+ct *tsk,
+>  	return -EPERM;
+>  }
+> =20
+> +static const struct access_masks posix_mqueue_scope =3D {
+> +	.scope =3D LANDLOCK_SCOPE_POSIX_MSG_QUEUE,
+> +};
+> +
+> +/**
+> + * landlock_check_posix_mqueue_open - Deny opening a POSIX message queue
+> + * created by a task from a different (non-ancestor) domain
+> + *
+> + * @file: The mqueuefs file being opened.
+> + *
+> + * Return: -EPERM if the open must be denied, 0 otherwise.
+> + */
+> +int landlock_check_posix_mqueue_open(struct file *const file)
+> +{
+
+[ ... ]
+
+> +	landlock_log_denial(subject, &(struct landlock_request) {
+> +		.type =3D LANDLOCK_REQUEST_SCOPE_POSIX_MSG_QUEUE,
+> +		.other_domain_id =3D creator_domain ? creator_domain->hierarchy->id : =
+0,
+> +		.audit =3D {
+> +			.type =3D LSM_AUDIT_DATA_FILE,
+> +			.u.file =3D file,
+> +		},
+> +		.layer_plus_one =3D handle_layer + 1,
+> +	});
+
+[Severity: Low]
+Does security/landlock/task.c build when tracepoints are disabled?
+
+In security/landlock/log.h, other_domain_id in struct landlock_request is
+guarded by:
+
+    #ifdef CONFIG_TRACEPOINTS
+    	union {
+    		u64 other_domain_id;
+    ...
+
+and in security/landlock/domain.h, creator_domain->hierarchy->id is guarded=
+ by
+#ifdef CONFIG_SECURITY_LANDLOCK_LOG. Because landlock_log_denial() is a sta=
+tic
+inline function when logging is disabled, the compound literal is still
+type-checked by the compiler. Should the .other_domain_id initializer here =
+be
+wrapped in #ifdef CONFIG_TRACEPOINTS like in hook_unix_stream_connect() and
+hook_unix_may_send()?
+
+> diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testin=
+g/selftests/landlock/audit_test.c
+> index 4bea8c880a4d3..a15c1e5d277f3 100644
+> --- a/tools/testing/selftests/landlock/audit_test.c
+> +++ b/tools/testing/selftests/landlock/audit_test.c
+
+[ ... ]
+
+> +/* Checks audit logging and quieting of a denied POSIX message queue ope=
+n. */
+> +TEST_F(posix_mqueue_audit, open)
+> +{
+> +	const struct landlock_ruleset_attr ruleset_attr =3D {
+> +		.scoped =3D LANDLOCK_SCOPE_POSIX_MSG_QUEUE,
+> +		.quiet_scoped =3D variant->quiet_scoped,
+> +	};
+> +	char mq_name[NAME_MAX], log_match[PATH_MAX];
+> +	int pipe_parent[2], pipe_child[2], ruleset_fd, status;
+> +	struct audit_records records;
+> +	char buf;
+> +	pid_t child;
+> +	mqd_t mq;
+> +
+> +	ASSERT_LT(0,
+> +		  snprintf(mq_name, sizeof(mq_name),
+> +			   "/selftests-landlock-audit-mq-tid%d", sys_gettid()));
+> +	mq_unlink(mq_name);
+> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+> +
+> +	child =3D fork();
+> +	ASSERT_LE(0, child);
+> +	if (child =3D=3D 0) {
+> +		EXPECT_EQ(0, close(pipe_parent[1]));
+> +		EXPECT_EQ(0, close(pipe_child[0]));
+> +
+> +		mq =3D mq_open(mq_name, O_CREAT | O_EXCL | O_RDWR, 0600, NULL);
+> +		ASSERT_LE(0, mq);
+
+[ ... ]
+
+> diff --git a/tools/testing/selftests/landlock/scoped_posix_msg_queue_test=
+.c b/tools/testing/selftests/landlock/scoped_posix_msg_queue_test.c
+> new file mode 100644
+> index 0000000000000..4475746081bc3
+> --- /dev/null
+> +++ b/tools/testing/selftests/landlock/scoped_posix_msg_queue_test.c
+
+[ ... ]
+
+> +	if (variant->domain_parent)
+> +		create_scoped_domain(_metadata, LANDLOCK_SCOPE_POSIX_MSG_QUEUE);
+> +
+> +	mq =3D mq_open(self->mq_name, O_CREAT | O_RDWR, 0600, NULL);
+> +	ASSERT_LE(0, mq);
+
+[Severity: Medium]
+In tools/testing/selftests/landlock/scoped_posix_msg_queue_test.c, the later
+tests check whether mq_open() failed with errno =3D=3D ENOSYS and call SKIP=
+() when
+Posix message queue support is not enabled in the kernel, but the first eig=
+ht
+tests (open_parent_queue, open_child_queue, open_existing_queue_with_create,
+unlink_and_recreate_in_sibling_domain, open_queue_after_creator_exits,
+open_queue_from_child_after_creator_exits, posix_mqueue_ipc_namespace_lifet=
+ime,
+and create_and_open_same_domain) along with TEST_F(posix_mqueue_audit, open)
+in tools/testing/selftests/landlock/audit_test.c assert that mq_open()
+succeeds directly.
+
+Should those tests also skip when mq_open() fails with ENOSYS so they do not
+fail on kernels built without Posix message queue support?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261102144708.9202=
-32-1-webprosto@gmail.com?part=3D2
+32-1-webprosto@gmail.com?part=3D3
