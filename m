@@ -1,101 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.49
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793632469;
-	b=x7BOgMvSLQo2l4Hdv1vl/Q7VYUfRddVws4ohE1rrGgfkXEqWFO//8735NUBd8XHHPy1E
-	 LgypeGWFMT8BoTVYHQVGTPqYzEkkGx9BrHaqSOPTU2fnz2p9GKgKiLL4+UCgNRm8vWDVJ
-	 B3w/K65Z2Fz15Kk+z49qFu9za+saf95rF0c/9MPcgW7DIYBdA6I7PVtvlk3Nf8OHqdjeJ
-	 w2hul8X6cV4AeAtcFuumG2n0hNzjsWEMW0aLmGx7OkT7rIJzTvpva/+tak1ebheW38qw1
-	 F5Ol3GxR/xNCifquU3SfLFXjC83v3B1ionlPTJb+mFXxjG+m20kcbr3dF8axAivgZoQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793632469;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
-	b=YlkgtFWEnwsdX8Qij6Jd9gCvwIUVdFnd3pV/e6B3MAq5ts7nuEBECCl4IXrhoQuiEwxW
-	 LpHYnoy12NeIa7rdXPRZKFhc8vhp/RKcbLpZju8cgwg2/i23HmqNJr1OnePTjEXV8lSAD
-	 cetOpElv3SLmgsfzOQgJ1pZOose7GBHyfWDS2YIsRl2qeGPzlNs+YMsDUZ/cR6I+eX3Jw
-	 og2kXMrJt5w40wti80Q1K+6eQEWNGdBiUpiI2TwdQAqhGcDpQP0I10/LJsykXYi+41w7S
-	 4yDk5tlIAVGtSRQ9owGAj+UwS9V0fi12Q0yZcWllhPoR3Dqf9WtEfOdgyF0hhSy9MVA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="UK/Ov2Zm";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.49
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793632954;
+	b=YNRgYhMXWde/GCsPBhNv1JKjpBpG7ZqusympPjzYOB/g+XtB8V1Bv3C3q5+aUeJMyz16
+	 0PlHa3a3BdIP8sdcEQn8AQ2HLWVgiXQkeYiKG0NM1CLfnF5GDy2JpV8+SkUyIri8Bm6EQ
+	 rYhYcjFFnNdApKXteydb/1t80o/vNCKNikb2L5iryquRpGNYQ2KoJYoS6mMQadrwj30Vx
+	 MNZCwIqd77BWngz+K12ibxiSfjoFbOVkIzmQY6Uvcdq2PpElvV01kOJsEpoS97E3Nql9k
+	 BXAa3oK6vCqVHFa3ex/DlGjFsUeJdpiXb1zFWhuXvuBivYNJybjyF/Et9gpTOjXdXeg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793632954;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=ghpxkq4Skg3mUBHamxSj4ym+RFlCOTQsite+G/+1MNU=;
+	b=phKJmdSt6+GNDzLuXbdmgbSLRnn/g0DpAnNvp953gz4IivrZeZImEKYehy+nD/oievD9
+	 WrD612ZE0lY5k1/IPFdNUjMSmGvDXrfeoVX5fK5SdZUr0uBCV2KjK8gR8Vp1y+WhdWUnb
+	 w8e94BJLQ4buGepluEcixbd2Cyohm31FWpkniA637UEV4KPNtfIWBzoN2gVhzK9VLBFHv
+	 tG/Vc73U1LDFQCz6wXaC4NJmOXUyxDlRjxXsoZg2chCTVKTNCeD8mxz900qUUdw9i1+aC
+	 pEQENlKm21pH0xlgsjQjqs96bSo9dZ24OK/xg5k2Dtl4x3qMLaHeEby56yZFhQksARQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="YeNmEW/l";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68209606E020
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:14:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68209606E020
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE9160A5BCF
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=UK/Ov2Zm
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-67b9bd530b7so2053946d50.0
-        for <linux-security-module@vger.kernel.org>; Mon, 02 Nov 2026 07:14:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793632468; cv=none;
-        d=google.com; s=arc-20260327;
-        b=PWLn8Ae/2rnp7HQDmOOmCokNlGwZu9/FzYOzJHdJsKzT8W/xdlCdVZzlnHrMZJjaOU
-         tOuruDyo0fZ3/bZQqZv91kO1oyXC+ZNHdWsCvWXL/POjDIBXv9g8sBFXSW21a30s3CjD
-         L0srATV80/KxZ4KojOomrtUVcvea1lRIsL4wYEWGbmL90yizWU5+itZFYUwpNpplNku7
-         tgm0sUTTWq4gWdXxpBXUX4yykFoce/LpTsMsIN+jH0Yu+stILdpk1XZ/zwoAlleLPDIh
-         5ZW2GdxjvU9vK0DMEeK+vGrxnsmNCKeNa7fVuqwfaZ1fxz57YlYS7l51fmNJgWXrCD1L
-         5SgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
-        fh=34miXD1lnlte6KGI/CFPEfDfgH/iQzvBfn2mJyU20oo=;
-        b=Xn0DKG5Guw8+24QC8yq8ezqfF7itTPiFlG5fK0MgfUz9SPKDW/qTOj+s9NVxs90lVa
-         wZImMokikjEIm6KwIf21wp49Psll1niHRI3Rq13UHJbm+JTFZdZnAS0eNT4ONC8BijDE
-         oaTs6ISaO2LLyLfwuVAkGr9EHIUMQ3AmOyq8/i1yGu8sHmDy/agnvsMD6aYvFrSTDEPZ
-         wu/8ICTgwHBq060wLAJ+vMxNYsv7FlaQTt+c8QuHbr9/Uxpj7Eg4WkKeB41t+3msq3Dy
-         UvF5YHYg10syqcORhFm/yZbb/49KPOPwKkmdE+MLBevwU58CG6fgI340+uHIV/RMWysW
-         Z70Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793632468; x=1794237268; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
-        b=UK/Ov2ZmZrdzn6wtpyN4IuP0s2NI94uQI7yYBJibP6aHf1CPcffmPVYaLkzYSc7pZm
-         Q+awmbVw7SIAx9igzH2GxMbpkJkUZWNm5FYtB1KlYDTmR1d4BJDrwn+eZuXuDN3hfkKi
-         wic6ZSVgM3Y1UqylgTszFO6RuIHOCzlfX7DyBHr6w+fBZfeaHkL3L5lbBc4iRYJCXspt
-         9pzWytIy2fjqQ7RVqjA8Iyg0vs6YCR+ISjcat8IZewOZC+HDkTF+GC7SBwr94lTftIlb
-         iXOhyfTyOpSiHWGkM8CQhvl9wo0AmvYC/zHu1qJMn7diEAHe+U1q3JmLq16spCqaJO9l
-         ToNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793632468; x=1794237268;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
-        b=woPSHoXbnkvHQJ946QSUOoZSf/kumjKwuGfGgBH2NpwwyDV6rtqBPEyx6dw5hfNeyJ
-         F6dyv++uxvk90ycqVqQ0Rsf84B3Qko4aULpY53JUxLWzkZ6bbq1Zpl9eaXrx/vkQWIai
-         aqYTXIfNO6owKEi74zOWfyd9zr7DOkRJfxvoFLyLT7SZHyBpmoeNszvPPvUYUFr7MC42
-         WfdEH2SvCQgD2XbpYCMzY6v7pqQAFh//+jxp7tP4Kaj1liQJq8xhYcN+6SgjlKk1UOgI
-         qy9orIpQ/CU4eSh7RxlFvbH9//1U0SYFUFMGUH4M1ejNCWPj0pFMPYKbkPmZ9ozET8rp
-         6Qcg==
-X-Forwarded-Encrypted: i=1; AKwUvBxT21PUSGNGxUtmK819EKiYIEe1pCXGyMLdSkrjbre+4q/6ivRv3xcO0O52fVDK789wgAInV+CkgGgBWb+kAbXmW4vEeVg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z87jVJEzKw5XF+R2Ax/Sbya5eoaUk+j1Q0hIaXR7in+Jss3D7Ww
-	//DwU2q+R9b9mXIDoBGruINR3T1A80abi5j3z8Mr7w9Vx0cH67J0QEDeok8oxSzbMV0smztHt8n
-	zwbuNfyU2MyoFTc8ct3XtlJPCyX3+yog=
-X-Gm-Gg: AYBFou0GgPJAdpFzE/cVFRYhpbNgiYqT8rhL9MhztFGR+Ko0sTWjRl5mUHshEMW/Jq2
-	gDmVXjSs7d4/AvFAiDJKhh+cI/v5J1OSL9LlpaGZq9ZrV0Exq7Kp8DMj+D0pGlTbDW5Lw0FIePs
-	0pSHNlG4UKk+fsjfiTof1KHrITGMe4v7J983vphQqzjxIdFOhVzuoSg4TMrWw3DeuHKHycP+NKP
-	Ls9MzXmTOA3dL/vUJ/OtlsR3qg+FftNVWQNMQVN5/4OoMRABvv+NvLyRFugBjrG7VuZopi+N/6Z
-	dDyWLRtuviWlw962J0X3yN//hMbzcVoslsix37VCclJwC16N0putP96qaNfkTwcAhNj2Cc2J4k1
-	SQWyQ3HXmLrufCNhe9oKQ7lEWsg5a4A3blqsWGrVWACeIIJDLlX6MicJIZJYZsy9xtDyKBttVE5
-	Mq8vP01IVP6CcMh2omzDXbWxEJ0GWJNwHvmRjVBlrvm/xfzpOnc62dUVEMwg==
-X-Received: by 2002:a05:690e:1201:b0:679:28ad:d8d8 with SMTP id
- 956f58d0204a3-67ba5118897mr8055833d50.104.1793632468374; Mon, 02 Nov 2026
- 07:14:28 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YeNmEW/l
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51981F00A16
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793632953;
+	bh=ghpxkq4Skg3mUBHamxSj4ym+RFlCOTQsite+G/+1MNU=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=YeNmEW/l2DC6/TQ9cH62O/M8A3/FXIunIAbMtpVyEFyN4jb9EFjs+VIYW2PomvKQ4
+	 2kCKuF4RG2jzglVJo/3mxSuhTkvqIeFPqeMZn64pVyv1EWir1G7C5pDKgD0Bj7FKnj
+	 LzSZFuPvF25wsVTCstnhsvxlMhMmhEQbiZQlHjHoJxhkDo/0v0ZQm74EEASvBqnpOZ
+	 C+n2jXMKnlVM0cOPr+apzweWb4+Jmz+vHERVwRve2Z+Kx6EtdpA8EREJ3DS5qa15kf
+	 Utby9LS6RdngZm9kIjNkG5idkZHWeNrRV5BZKPND+e5zulSjGiH418Rei6gGrzvieB
+	 LgSFkTMVIrRkw==
+Message-ID: <sashiko-outbox-193655@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 4/4] samples/landlock: Add POSIX message queue
+ scoping to sandboxer
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261102144708.920232-5-webprosto@gmail.com>
+References: <20261102144708.920232-1-webprosto@gmail.com>
+ <20261102144708.920232-5-webprosto@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 02 Nov 2026 15:22:33 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,154 +59,240 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261102130540.252894-1-omosnacek@gmail.com>
-In-Reply-To: <20261102130540.252894-1-omosnacek@gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 2 Nov 2026 10:14:17 -0500
-X-Gm-Features: AclHuK_S3LwuvSZEIcs1e2WEC4WgX3S0M8bKoabDzHzf2mxELuht56K17Z9rPEg
-Message-ID: <CAEjxPJ4hxdvV-r8chmF3RAi9RJX=-4AqntG01=fWUhh4-xP+ew@mail.gmail.com>
-Subject: Re: [RFC PATCH] af_unix: introduce MSG_CMSG_SEALED
-To: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-Cc: Eric Dumazet <edumazet@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Simon Horman <horms@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	netdev@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, io-uring@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 2, 2026 at 8:05=E2=80=AFAM Ondrej Mosn=C3=A1=C4=8Dek <omosnacek=
-@gmail.com> wrote:
->
-> Currently, when a process receives a file through AF_UNIX's SCM_RIGHTS
-> mechanism, the security_file_receive() LSM hook is calledto allow LSMs
-> like SELinux to validate the receiver's access to the received file
-> (similarly to a process inheriting file descriptors through execve(2)).
->
-> However, there are cases (such as dbus daemon/dbus-broker) where the
-> receiver doesn't intend to access the received file and merely wants to
-> forward it to a third process. In this case the forwarding process would
-> need to have the appropriate r/w access to the file in order to receive
-> it, even though it will never actually acess it. That leads to the
-> security policy having to grant the forwarder access to a potentially
-> wide range of files (in case of dbus-broker basically all files), which
-> is not ideal.
->
-> This patch adds a new CMSG flag MSG_CMSG_SEALED that, when passed to
-> recvmsg(2), wraps any received files into an opaque anonymous inode with
-> the name "[envelope]", skipping the security_file_receive() LSM check.
-> The returned "[envelope]" file descriptor can't be used in any
-> meaningful way other than being passed forward via sendmsg(2) with the
-> MSG_CMSG_SEALED flag. In that case the original file is unwrapped and
-> sent via SCM_RIGHTS to the receiver. The receiver can then either
-> receive the file as normal (subject to the LSM check) or again "sealed"
-> in the "[envelope]" anon inode for further forwarding.
->
-> Note that sending the "[envelope]" file is only allowed with the
-> MSG_CMSG_SEALED flag set, to make the unsealing explicit and avoid
-> unexpected behavior. Attempting to send it without this flag will fail
-> with an error. This also avoids recursive nesting of "[envelope]" files,
-> which would only make this feature harder to audit for possible issues.
->
-> This patch also adds a simple read-only sockopt for UNIX sockets that
-> allows userspace to determine if this feature is present (passing
-> unknown CMSG flags unfortunately doesn't lead to an error currently).
-> The minimal code to do so can look like this:
->
->     #ifndef SO_RIGHTS_SEALED_SUPPORTED
->     #define SO_RIGHTS_SEALED_SUPPORTED 88
->     #endif
->
->     #include <sys/socket.h>
->     #include <unistd.h>
->     #include <stdbool.h>
->
->     bool MSG_CMSG_SEALED_supported(void)
->     {
->         int sock, ret;
->         socklen_t optlen =3D 0;
->
->         sock =3D socket(AF_UNIX, SOCK_STREAM, 0);
->         if (sock < 0) {
->             /* handle error */
->             /* ... */
->         }
->
->         ret =3D getsockopt(sock, SOL_SOCKET, SO_RIGHTS_SEALED_SUPPORTED,
->                          NULL, &optlen);
->         close(sock);
->
->         return ret =3D=3D 0;
->     }
->
-> Related: https://github.com/fedora-selinux/selinux-policy/issues/3286
-> Related: https://github.com/fedora-selinux/selinux-policy/issues/3287
-> Signed-off-by: Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gmail.com>
-> ---
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
+- [High] landlock: user-triggerable WARN_ON_ONCE and wrong mount in hook_in=
+ode_create()
+- [Medium] samples/landlock: commit message example with LL_FS_RW=3D"" deni=
+es mq_open()
+- [Medium] landlock: hook_inode_unlink() clears object->domain before unlin=
+k succeeds
+- [Low] landlock: omitted parameter name in hook_inode_create() breaks GCC =
+< 11 build
+--
 
-> diff --git a/net/core/scm.c b/net/core/scm.c
-> index ae38f3c1165c..08822b2a1f22 100644
-> --- a/net/core/scm.c
-> +++ b/net/core/scm.c
-> @@ -114,10 +127,29 @@ static int scm_fp_copy(struct cmsghdr *cmsg, struct=
- scm_fp_list **fplp)
->
->                 if (fd < 0 || !(file =3D fget_raw(fd)))
->                         return -EBADF;
-> -               /* don't allow io_uring files */
-> -               if (io_is_uring_fops(file)) {
-> -                       fput(file);
-> -                       return -EINVAL;
+commit fb37ae1137756d3c9de1fe75208b0f3f51d1b11c
+Author: Oxana Kharitonova <webprosto@gmail.com>
+
+samples/landlock: Add POSIX message queue scoping to sandboxer
+
+This series adds LANDLOCK_ACCESS_FS_MAKE_REG enforcement for POSIX message
+queue creation, introduces LANDLOCK_SCOPE_POSIX_MSG_QUEUE in ABI 13, and
+updates the Landlock sample sandboxer to support the new scope and audit
+quieting option.
+
+>     samples/landlock: Add POSIX message queue scoping to sandboxer
+>    =20
+>     Add "q" to LL_SCOPED to enable LANDLOCK_SCOPE_POSIX_MSG_QUEUE
+>     and "posix_msg_queue" to LL_QUIET_ACCESS to quiet related audit
+>     denials. Update the supported ABI version to 13 and disable the
+>     new scope when running on older kernels.
+>    =20
+>     For example, on a kernel supporting Landlock ABI 13:
+>    =20
+>       LL_FS_RO=3D"/" LL_FS_RW=3D"" LL_SCOPED=3D"q" \
+>         ./samples/landlock/sandboxer /bin/sh
+>    =20
+>     The resulting shell and its children cannot open POSIX message
+>     queues created outside their Landlock domain. They can create
+>     queues and open queues created within that domain.
+>    =20
+>     Signed-off-by: Oxana Kharitonova <webprosto@gmail.com>
+
+[Severity: Medium]
+Does the example command in the commit message actually allow the shell and
+its children to create or open POSIX message queues?
+
+In samples/landlock/sandboxer.c:main(), ruleset_attr.handled_access_fs is
+unconditionally initialized to access_fs_rw:
+
+	__u64 access_fs_ro =3D ACCESS_FS_ROUGHLY_READ,
+	      access_fs_rw =3D ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
+
+	struct landlock_ruleset_attr ruleset_attr =3D {
+		.handled_access_fs =3D access_fs_rw,
+
+When LL_FS_RW=3D"" is passed, populate_ruleset_fs() returns early without a=
+dding
+any read-write rules:
+
+	if (num_paths =3D=3D 1 && path_list[0][0] =3D=3D '\0') {
+		/*
+		 * Allows to not use all possible restrictions (e.g. use
+		 * LL_FS_RO without LL_FS_RW).
+		 */
+		ret =3D 0;
+		goto out_free_name;
+	}
+
+This leaves LANDLOCK_ACCESS_FS_MAKE_REG and LANDLOCK_ACCESS_FS_WRITE_FILE
+handled and denied everywhere. Creating a queue via mq_open() with O_CREAT
+invokes hook_inode_create(), which checks LANDLOCK_ACCESS_FS_MAKE_REG on
+ipc_ns->mq_mnt and denies creation with EACCES.
+
+In addition, do_mq_open() and hook_inode_create() operate on
+current->nsproxy->ipc_ns->mq_mnt, which is an internal SB_KERNMOUNT mount
+where path traversal in is_access_to_paths_allowed() stops at mq_mnt->mnt_r=
+oot
+(follow_up() returns false) and never reaches "/". Because of that,
+LL_FS_RO=3D"/" does not grant LANDLOCK_ACCESS_FS_READ_FILE to mq_open() eit=
+her;
+wouldn't the mqueue filesystem for the current IPC namespace (such as
+/dev/mqueue) need to be mounted and included in LL_FS_RW for this example to
+work as described?
+
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 2ab67bcad1983..e9c52332dfcde 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+[ ... ]
+> +/*
+> + * Drop the reference retained by hook_d_instantiate() for a POSIX messa=
+ge
+> + * queue once its sole name is unlinked.
+> + */
+> +static int hook_inode_unlink(struct inode *const dir,
+> +			     struct dentry *const dentry)
+> +{
+> +	const struct inode *const inode =3D d_backing_inode(dentry);
+> +	struct landlock_domain *domain;
+> +	struct landlock_object *object;
 > +
-> +               if (sealed) {
-> +                       /* Only allow sealed files */
-> +                       if (file->f_op !=3D &envelope_ops)
-> +                               return -EINVAL;
-
-This leaks a file reference.
-
+> +	if (!landlock_is_posix_mqueue_inode(inode))
+> +		return 0;
 > +
-> +                       file =3D (struct file *)file->private_data;
-
-This fails to take a reference to the underlying file but will later get fp=
-ut().
-
+> +	rcu_read_lock();
+> +	object =3D rcu_dereference(landlock_inode(inode)->object);
+> +	/* The temporary reference protects against concurrent object release. =
+*/
+> +	if (!object || !refcount_inc_not_zero(&object->usage)) {
+> +		rcu_read_unlock();
+> +		return 0;
+> +	}
+> +	rcu_read_unlock();
 > +
-> +                       /*
-> +                        * No need to check for io_uring files here as th=
-e
-> +                        * underlying file had already successfully passe=
-d the
-> +                        * check when it was first sent.
-> +                        */
-> +               } else {
-> +                       /* Don't allow sealed files */
-> +                       if (file->f_op =3D=3D &envelope_ops)
-> +                               return -EINVAL;
+> +	spin_lock(&object->lock);
+> +	domain =3D object->domain;
+> +	object->domain =3D NULL;
+> +	spin_unlock(&object->lock);
+> +
+> +	/* Drop the temporary reference acquired by refcount_inc_not_zero(). */
+> +	landlock_put_object(object);
+> +	if (domain) {
+> +		landlock_put_domain_deferred(domain);
+> +		/* Drops the reference retained by hook_d_instantiate(). */
+> +		landlock_put_object(object);
+> +	}
+> +
+> +	return 0;
+> +}
 
-This also leaks a file reference.
+[Severity: Medium]
+Can clearing object->domain in hook_inode_unlink() strip the creator domain
+from a queue before the unlink actually succeeds, or while the queue inode =
+is
+still alive?
 
-> @@ -365,18 +398,37 @@ static int scm_max_fds(struct msghdr *msg)
->  }
->
->  int scm_recv_one_fd(struct file *f, int __user *ufd, unsigned int flags,
-> -                   bool notrunc)
-> +                   bool notrunc, bool sealed)
->  {
-> +       struct file *f_received;
->         int error;
->
->         if (!ufd)
->                 return -EFAULT;
->
-> -       error =3D security_file_receive(f);
-> -       if (error)
-> -               return notrunc ? put_user(error, ufd) : error;
+In vfs_unlink(), security_inode_unlink(dir, dentry) is a pre-operation
+permission hook invoked before try_break_deleg() and dir->i_op->unlink().
+Because Landlock is ordered before SELinux, Smack, AppArmor, and BPF LSM in
+CONFIG_LSM, hook_inode_unlink() runs first, sets object->domain =3D NULL, a=
+nd
+drops the domain and object references retained by hook_d_instantiate().
 
-Design point: I would suggest adding and using a new LSM hook that
-allows security modules (like SELinux) to still be able to check a
-(new) permission that governs whether a process can pass along these
-sealed fds so that we do not entirely lose control over their use.
+If a subsequent stacked LSM hook or delegation break fails, vfs_unlink()
+aborts and the queue remains linked in mqueuefs with object->domain =3D=3D =
+NULL.
+Any later mq_open() or open() from the creator's domain with
+LANDLOCK_SCOPE_POSIX_MSG_QUEUE enabled will see creator_domain =3D=3D NULL =
+in
+landlock_check_posix_mqueue_open() and fail with -EPERM. The same -EPERM al=
+so
+occurs if an unlinked queue with an open file descriptor is reopened by the
+creator's domain via /proc/self/fd/<fd>.
+
+Should the domain reference instead be released when the underlying inode is
+evicted or released rather than inside the pre-unlink permission hook?
+
+[ ... ]
+> +/*
+> + * Unlike regular file creation, mq_open(2) calls vfs_mkobj() directly a=
+nd
+> + * therefore does not trigger the path_mknod hook.  Use the mqueuefs mou=
+nt
+> + * associated with the current IPC namespace to recover the parent path.
+> + */
+> +static int hook_inode_create(struct inode *const dir,
+> +			     struct dentry *const dentry, const umode_t)
+
+[Severity: Low]
+Does omitting the parameter name for const umode_t in hook_inode_create()
+break builds with older supported GCC versions?
+
+The kernel compiles C sources with -std=3Dgnu11 and supports GCC >=3D 8.1.0,
+whereas unnamed parameters in function definitions are a C23 feature only
+supported by GCC 11 and later (older versions fail with "error: parameter n=
+ame
+omitted").
+
+> +{
+> +	struct ipc_namespace *ipc_ns;
+> +	struct vfsmount *mnt;
+> +	struct path parent;
+> +
+> +	if (!landlock_is_posix_mqueue_fs(dir))
+> +		return 0;
+> +
+> +	if (!current->nsproxy)
+> +		return 0;
+> +	ipc_ns =3D current->nsproxy->ipc_ns;
+> +	if (!ipc_ns)
+> +		return 0;
+> +	mnt =3D ipc_ns->mq_mnt;
+> +	if (WARN_ON_ONCE(!mnt || mnt->mnt_sb !=3D dir->i_sb))
+> +		return 0;
+> +
+> +	parent.mnt =3D mnt;
+> +	parent.dentry =3D dentry->d_parent;
+> +	return current_check_access_path(&parent, LANDLOCK_ACCESS_FS_MAKE_REG);
+> +}
+
+[Severity: High]
+Can hook_inode_create() also be reached via VFS path-based creation on a
+mounted mqueue filesystem, triggering the WARN_ON_ONCE() from unprivileged
+userspace or checking the wrong mount?
+
+In ipc/mqueue.c, mqueue_dir_inode_operations sets .create =3D mqueue_create=
+, so
+calling open(..., O_CREAT, ...) or mknod(..., S_IFREG, ...) on a mounted
+mqueue filesystem (such as /dev/mqueue, which has mode 01777) calls
+security_path_mknod() followed by security_inode_create() ->
+hook_inode_create().
+
+This appears to cause two regressions:
+
+1. A mounted mqueue superblock belongs to the ipc_namespace active at mount
+time (sb->s_fs_info), which need not match current->nsproxy->ipc_ns. An
+unprivileged user can call unshare(CLONE_NEWUSER | CLONE_NEWIPC) while keep=
+ing
+access to the previous IPC namespace's /dev/mqueue mount and call
+open("/dev/mqueue/foo", O_CREAT, 0600). In hook_inode_create(),
+current->nsproxy->ipc_ns->mq_mnt->mnt_sb !=3D dir->i_sb, triggering the
+WARN_ON_ONCE() and returning 0 without enforcing LANDLOCK_ACCESS_FS_MAKE_RE=
+G.
+
+2. Even within the same IPC namespace, if a sandboxed process creates a que=
+ue
+via open("/dev/mqueue/foo", O_CREAT, 0600) or mknod() and its ruleset grants
+LANDLOCK_ACCESS_FS_MAKE_REG on an ancestor directory such as "/" or "/dev"
+rather than directly on the /dev/mqueue root inode, hook_path_mknod() succe=
+eds
+by walking up across the mountpoint via follow_up(). However,
+hook_inode_create() then checks parent.mnt =3D ipc_ns->mq_mnt (an internal
+SB_KERNMOUNT mount where follow_up() stops at the root) and denies the
+creation with -EACCES.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261102144708.9202=
+32-1-webprosto@gmail.com?part=3D4
