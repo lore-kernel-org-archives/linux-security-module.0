@@ -1,55 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793632170;
-	b=RbmI7iS27lkMZK4Z/CLCrhp2bxRTBa0N39us8T/s77MDN4NPzMsKXGh/RU3fwSnDAMMQ
-	 Heo3aYzKwUalaQNmw3Iod0KByv8800+im7JOekHGSFwPVBp3Vba6rqlBiSE1+u6ClIm96
-	 QGUPXQiXLASqBLFKftIePD4O0gmbO/H4zBEVO04JNodPC18xcbeQDF+dO8TpYEO1EfuW/
-	 exx00NmE9Zq3NPMnINCAFp4ERUcf4aTFJNO3qzyiAeUkhVqlrGaHvm2B4L6stmhfVjVli
-	 SxhICUtNkFaYFr/0qCpVoJg/OXvnYIzpy/Ti/KMs4I7TogbDvYNFJVsdEvROn8V0Ibw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793632170;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=8vICE+7hcXSeAZX1Z36Sd6XyIa6fnGpMmUf4HKMKuzo=;
-	b=5N/eqs42EfJkTHEZhF+vOIQ3esPkC0HRihTFArrD96ViWDz+nMI7DR3loVF1n73B+lif
-	 f6Hlbv6T9/HChEJJBi2dECYhKEXPfjiNPaFBUIWEbiK/eFB/DdRnW8zrqyI6TJKkVWKH4
-	 uBKDnrB0GdthPLXju8DDZyXIOO8ItJKRqQXOgB+yLNrQfjPf7ZIaGJmks0Fo1XMwKSkoW
-	 mdIuusjThxhRyM2S4p9EStvkmSVBWcFwQWGQPev2umMF4ibsBcnnCPvgatKso/2qI1QT9
-	 7eMGwJwKzpiMzM/zLxMxcoZoEE2IfwctPY83SH4BHalOC+H3OmhuXrjo70aqXrFHS8A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ns9m4vKO;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.49
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793632469;
+	b=x7BOgMvSLQo2l4Hdv1vl/Q7VYUfRddVws4ohE1rrGgfkXEqWFO//8735NUBd8XHHPy1E
+	 LgypeGWFMT8BoTVYHQVGTPqYzEkkGx9BrHaqSOPTU2fnz2p9GKgKiLL4+UCgNRm8vWDVJ
+	 B3w/K65Z2Fz15Kk+z49qFu9za+saf95rF0c/9MPcgW7DIYBdA6I7PVtvlk3Nf8OHqdjeJ
+	 w2hul8X6cV4AeAtcFuumG2n0hNzjsWEMW0aLmGx7OkT7rIJzTvpva/+tak1ebheW38qw1
+	 F5Ol3GxR/xNCifquU3SfLFXjC83v3B1ionlPTJb+mFXxjG+m20kcbr3dF8axAivgZoQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793632469;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
+	b=YlkgtFWEnwsdX8Qij6Jd9gCvwIUVdFnd3pV/e6B3MAq5ts7nuEBECCl4IXrhoQuiEwxW
+	 LpHYnoy12NeIa7rdXPRZKFhc8vhp/RKcbLpZju8cgwg2/i23HmqNJr1OnePTjEXV8lSAD
+	 cetOpElv3SLmgsfzOQgJ1pZOose7GBHyfWDS2YIsRl2qeGPzlNs+YMsDUZ/cR6I+eX3Jw
+	 og2kXMrJt5w40wti80Q1K+6eQEWNGdBiUpiI2TwdQAqhGcDpQP0I10/LJsykXYi+41w7S
+	 4yDk5tlIAVGtSRQ9owGAj+UwS9V0fi12Q0yZcWllhPoR3Dqf9WtEfOdgyF0hhSy9MVA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="UK/Ov2Zm";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.49
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38339606B901
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68209606E020
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:14:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68209606E020
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ns9m4vKO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F094B1F00A16
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2026 15:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793632170;
-	bh=8vICE+7hcXSeAZX1Z36Sd6XyIa6fnGpMmUf4HKMKuzo=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=ns9m4vKOrfPat41sCkWw0o3XNuUhhbaPVG5mjcqvEy/8869KSxn/jeFT5UM1E5hfz
-	 z+pLzp+NmoIPiFzw/wowMHBw2HFpM+fWq9RhhwofBngkWwgJK+inPXHk8KjJDWJdW6
-	 xSaQ3GmyMIJsC4r2u9IkqSdQ26lO8HJrSQSfGSJAFOvwWfQSY9a4b6t/DjjxBUY9pU
-	 v5FnQjYgWT/zbob11r74utsdMwApqeMlS09t+vGv96JeIQM5QcHK0ESTFLVwc16LkM
-	 ytlnG7Wio9J16nOb5hqNlzIlA5iFjHtBSzuCSMdWLc6wS7f3UU2oVXIbV3KdeIyXs0
-	 g98xx7yy8qg6A==
-Message-ID: <sashiko-outbox-193635@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/4] Landlock: Add POSIX message queue scoping
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261102144708.920232-4-webprosto@gmail.com>
-References: <20261102144708.920232-1-webprosto@gmail.com>
- <20261102144708.920232-4-webprosto@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 15:09:29 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=UK/Ov2Zm
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-67b9bd530b7so2053946d50.0
+        for <linux-security-module@vger.kernel.org>; Mon, 02 Nov 2026 07:14:29 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793632468; cv=none;
+        d=google.com; s=arc-20260327;
+        b=PWLn8Ae/2rnp7HQDmOOmCokNlGwZu9/FzYOzJHdJsKzT8W/xdlCdVZzlnHrMZJjaOU
+         tOuruDyo0fZ3/bZQqZv91kO1oyXC+ZNHdWsCvWXL/POjDIBXv9g8sBFXSW21a30s3CjD
+         L0srATV80/KxZ4KojOomrtUVcvea1lRIsL4wYEWGbmL90yizWU5+itZFYUwpNpplNku7
+         tgm0sUTTWq4gWdXxpBXUX4yykFoce/LpTsMsIN+jH0Yu+stILdpk1XZ/zwoAlleLPDIh
+         5ZW2GdxjvU9vK0DMEeK+vGrxnsmNCKeNa7fVuqwfaZ1fxz57YlYS7l51fmNJgWXrCD1L
+         5SgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
+        fh=34miXD1lnlte6KGI/CFPEfDfgH/iQzvBfn2mJyU20oo=;
+        b=Xn0DKG5Guw8+24QC8yq8ezqfF7itTPiFlG5fK0MgfUz9SPKDW/qTOj+s9NVxs90lVa
+         wZImMokikjEIm6KwIf21wp49Psll1niHRI3Rq13UHJbm+JTFZdZnAS0eNT4ONC8BijDE
+         oaTs6ISaO2LLyLfwuVAkGr9EHIUMQ3AmOyq8/i1yGu8sHmDy/agnvsMD6aYvFrSTDEPZ
+         wu/8ICTgwHBq060wLAJ+vMxNYsv7FlaQTt+c8QuHbr9/Uxpj7Eg4WkKeB41t+3msq3Dy
+         UvF5YHYg10syqcORhFm/yZbb/49KPOPwKkmdE+MLBevwU58CG6fgI340+uHIV/RMWysW
+         Z70Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793632468; x=1794237268; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
+        b=UK/Ov2ZmZrdzn6wtpyN4IuP0s2NI94uQI7yYBJibP6aHf1CPcffmPVYaLkzYSc7pZm
+         Q+awmbVw7SIAx9igzH2GxMbpkJkUZWNm5FYtB1KlYDTmR1d4BJDrwn+eZuXuDN3hfkKi
+         wic6ZSVgM3Y1UqylgTszFO6RuIHOCzlfX7DyBHr6w+fBZfeaHkL3L5lbBc4iRYJCXspt
+         9pzWytIy2fjqQ7RVqjA8Iyg0vs6YCR+ISjcat8IZewOZC+HDkTF+GC7SBwr94lTftIlb
+         iXOhyfTyOpSiHWGkM8CQhvl9wo0AmvYC/zHu1qJMn7diEAHe+U1q3JmLq16spCqaJO9l
+         ToNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793632468; x=1794237268;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=aOdCxZO55hUw/6I077tI6EL/o28ur2wlUbUGRR4UyJU=;
+        b=woPSHoXbnkvHQJ946QSUOoZSf/kumjKwuGfGgBH2NpwwyDV6rtqBPEyx6dw5hfNeyJ
+         F6dyv++uxvk90ycqVqQ0Rsf84B3Qko4aULpY53JUxLWzkZ6bbq1Zpl9eaXrx/vkQWIai
+         aqYTXIfNO6owKEi74zOWfyd9zr7DOkRJfxvoFLyLT7SZHyBpmoeNszvPPvUYUFr7MC42
+         WfdEH2SvCQgD2XbpYCMzY6v7pqQAFh//+jxp7tP4Kaj1liQJq8xhYcN+6SgjlKk1UOgI
+         qy9orIpQ/CU4eSh7RxlFvbH9//1U0SYFUFMGUH4M1ejNCWPj0pFMPYKbkPmZ9ozET8rp
+         6Qcg==
+X-Forwarded-Encrypted: i=1; AKwUvBxT21PUSGNGxUtmK819EKiYIEe1pCXGyMLdSkrjbre+4q/6ivRv3xcO0O52fVDK789wgAInV+CkgGgBWb+kAbXmW4vEeVg=@vger.kernel.org
+X-Gm-Message-State: APuU4Z87jVJEzKw5XF+R2Ax/Sbya5eoaUk+j1Q0hIaXR7in+Jss3D7Ww
+	//DwU2q+R9b9mXIDoBGruINR3T1A80abi5j3z8Mr7w9Vx0cH67J0QEDeok8oxSzbMV0smztHt8n
+	zwbuNfyU2MyoFTc8ct3XtlJPCyX3+yog=
+X-Gm-Gg: AYBFou0GgPJAdpFzE/cVFRYhpbNgiYqT8rhL9MhztFGR+Ko0sTWjRl5mUHshEMW/Jq2
+	gDmVXjSs7d4/AvFAiDJKhh+cI/v5J1OSL9LlpaGZq9ZrV0Exq7Kp8DMj+D0pGlTbDW5Lw0FIePs
+	0pSHNlG4UKk+fsjfiTof1KHrITGMe4v7J983vphQqzjxIdFOhVzuoSg4TMrWw3DeuHKHycP+NKP
+	Ls9MzXmTOA3dL/vUJ/OtlsR3qg+FftNVWQNMQVN5/4OoMRABvv+NvLyRFugBjrG7VuZopi+N/6Z
+	dDyWLRtuviWlw962J0X3yN//hMbzcVoslsix37VCclJwC16N0putP96qaNfkTwcAhNj2Cc2J4k1
+	SQWyQ3HXmLrufCNhe9oKQ7lEWsg5a4A3blqsWGrVWACeIIJDLlX6MicJIZJYZsy9xtDyKBttVE5
+	Mq8vP01IVP6CcMh2omzDXbWxEJ0GWJNwHvmRjVBlrvm/xfzpOnc62dUVEMwg==
+X-Received: by 2002:a05:690e:1201:b0:679:28ad:d8d8 with SMTP id
+ 956f58d0204a3-67ba5118897mr8055833d50.104.1793632468374; Mon, 02 Nov 2026
+ 07:14:28 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,337 +104,154 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <20261102130540.252894-1-omosnacek@gmail.com>
+In-Reply-To: <20261102130540.252894-1-omosnacek@gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Mon, 2 Nov 2026 10:14:17 -0500
+X-Gm-Features: AclHuK_S3LwuvSZEIcs1e2WEC4WgX3S0M8bKoabDzHzf2mxELuht56K17Z9rPEg
+Message-ID: <CAEjxPJ4hxdvV-r8chmF3RAi9RJX=-4AqntG01=fWUhh4-xP+ew@mail.gmail.com>
+Subject: Re: [RFC PATCH] af_unix: introduce MSG_CMSG_SEALED
+To: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
+Cc: Eric Dumazet <edumazet@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Simon Horman <horms@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	netdev@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, io-uring@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
-s) to consider:
-- [High] landlock: premature creator domain clearing in hook_inode_unlink()
-- [Medium] landlock: ignored allocation failure in hook_d_instantiate() lea=
-ves queue untagged
-- [Medium] selftests/landlock: missing ENOSYS skip checks when CONFIG_POSIX=
-_MQUEUE=3Dn
-- [Low] landlock: build failure in landlock_check_posix_mqueue_open() witho=
-ut tracepoints
-- [Low] Documentation: landlock: section title underline too short in landl=
-ock.rst
---
+On Mon, Nov 2, 2026 at 8:05=E2=80=AFAM Ondrej Mosn=C3=A1=C4=8Dek <omosnacek=
+@gmail.com> wrote:
+>
+> Currently, when a process receives a file through AF_UNIX's SCM_RIGHTS
+> mechanism, the security_file_receive() LSM hook is calledto allow LSMs
+> like SELinux to validate the receiver's access to the received file
+> (similarly to a process inheriting file descriptors through execve(2)).
+>
+> However, there are cases (such as dbus daemon/dbus-broker) where the
+> receiver doesn't intend to access the received file and merely wants to
+> forward it to a third process. In this case the forwarding process would
+> need to have the appropriate r/w access to the file in order to receive
+> it, even though it will never actually acess it. That leads to the
+> security policy having to grant the forwarder access to a potentially
+> wide range of files (in case of dbus-broker basically all files), which
+> is not ideal.
+>
+> This patch adds a new CMSG flag MSG_CMSG_SEALED that, when passed to
+> recvmsg(2), wraps any received files into an opaque anonymous inode with
+> the name "[envelope]", skipping the security_file_receive() LSM check.
+> The returned "[envelope]" file descriptor can't be used in any
+> meaningful way other than being passed forward via sendmsg(2) with the
+> MSG_CMSG_SEALED flag. In that case the original file is unwrapped and
+> sent via SCM_RIGHTS to the receiver. The receiver can then either
+> receive the file as normal (subject to the LSM check) or again "sealed"
+> in the "[envelope]" anon inode for further forwarding.
+>
+> Note that sending the "[envelope]" file is only allowed with the
+> MSG_CMSG_SEALED flag set, to make the unsealing explicit and avoid
+> unexpected behavior. Attempting to send it without this flag will fail
+> with an error. This also avoids recursive nesting of "[envelope]" files,
+> which would only make this feature harder to audit for possible issues.
+>
+> This patch also adds a simple read-only sockopt for UNIX sockets that
+> allows userspace to determine if this feature is present (passing
+> unknown CMSG flags unfortunately doesn't lead to an error currently).
+> The minimal code to do so can look like this:
+>
+>     #ifndef SO_RIGHTS_SEALED_SUPPORTED
+>     #define SO_RIGHTS_SEALED_SUPPORTED 88
+>     #endif
+>
+>     #include <sys/socket.h>
+>     #include <unistd.h>
+>     #include <stdbool.h>
+>
+>     bool MSG_CMSG_SEALED_supported(void)
+>     {
+>         int sock, ret;
+>         socklen_t optlen =3D 0;
+>
+>         sock =3D socket(AF_UNIX, SOCK_STREAM, 0);
+>         if (sock < 0) {
+>             /* handle error */
+>             /* ... */
+>         }
+>
+>         ret =3D getsockopt(sock, SOL_SOCKET, SO_RIGHTS_SEALED_SUPPORTED,
+>                          NULL, &optlen);
+>         close(sock);
+>
+>         return ret =3D=3D 0;
+>     }
+>
+> Related: https://github.com/fedora-selinux/selinux-policy/issues/3286
+> Related: https://github.com/fedora-selinux/selinux-policy/issues/3287
+> Signed-off-by: Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gmail.com>
+> ---
 
-commit 672099a186033eeb6307163bb1baca6370e0b662
-Author: Oxana Kharitonova <webprosto@gmail.com>
+> diff --git a/net/core/scm.c b/net/core/scm.c
+> index ae38f3c1165c..08822b2a1f22 100644
+> --- a/net/core/scm.c
+> +++ b/net/core/scm.c
+> @@ -114,10 +127,29 @@ static int scm_fp_copy(struct cmsghdr *cmsg, struct=
+ scm_fp_list **fplp)
+>
+>                 if (fd < 0 || !(file =3D fget_raw(fd)))
+>                         return -EBADF;
+> -               /* don't allow io_uring files */
+> -               if (io_is_uring_fops(file)) {
+> -                       fput(file);
+> -                       return -EINVAL;
+> +
+> +               if (sealed) {
+> +                       /* Only allow sealed files */
+> +                       if (file->f_op !=3D &envelope_ops)
+> +                               return -EINVAL;
 
-Landlock: Add POSIX message queue scoping
+This leaks a file reference.
 
-This commit introduces Posix message queue scoping in Landlock (ABI 13) to
-restrict opening queues to those created within the scoping domain or its
-descendants. It also adds audit logging, a denial trace event, documentatio=
-n,
-and selftests.
+> +
+> +                       file =3D (struct file *)file->private_data;
 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/use=
-rspace-api/landlock.rst
-> index 1fb91884cb8af..fa65fa4aad02e 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
+This fails to take a reference to the underlying file but will later get fp=
+ut().
 
-[ ... ]
+> +
+> +                       /*
+> +                        * No need to check for io_uring files here as th=
+e
+> +                        * underlying file had already successfully passe=
+d the
+> +                        * check when it was first sent.
+> +                        */
+> +               } else {
+> +                       /* Don't allow sealed files */
+> +                       if (file->f_op =3D=3D &envelope_ops)
+> +                               return -EINVAL;
 
-> @@ -1075,6 +1121,14 @@ fd-reference acquisition (:manpage:`open_tree(2)`,=
- :manpage:`fsmount(2)`) with
->  the new ``LANDLOCK_PERMISSION_NAMESPACE_USE`` permission flag and
->  ``LANDLOCK_RULE_NAMESPACE`` rule type.
-> =20
-> +POSIX message queue scoping (ABI < 13)
-> +-------------------------------------
+This also leaks a file reference.
 
-[Severity: Low]
-This isn't a bug, but the hyphen underline here is 37 characters while the
-heading above it is 38 characters. Should an extra hyphen be added so htmld=
-ocs
-builds do not emit a title underline warning?
-
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index d5dcb19d5eb19..e9c52332dfcde 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -53,6 +53,7 @@
->  #include "object.h"
->  #include "ruleset.h"
->  #include "setup.h"
-> +#include "task.h"
-> =20
->  #include <trace/events/landlock.h>
-> =20
-> @@ -1374,6 +1375,80 @@ static void hook_inode_free_security_rcu(void *ino=
-de_security)
->  	WARN_ON_ONCE(inode_sec->object);
+> @@ -365,18 +398,37 @@ static int scm_max_fds(struct msghdr *msg)
 >  }
-> =20
-> +/*
-> + * Tag a newly created POSIX message queue with its creator's domain.
-> + *
-> + * This is the earliest reachable point with both the creator's context =
-and a
-> + * fully initialized inode.
-> + */
-> +static void hook_d_instantiate(struct dentry *const dentry,
-> +			       struct inode *const inode)
-> +{
-> +	struct landlock_domain *dom;
-> +	struct landlock_object *object;
-> +
-> +	if (!landlock_is_posix_mqueue_inode(inode))
-> +		return;
-> +
-> +	dom =3D landlock_get_current_domain();
-> +	if (!dom)
-> +		return;
-> +
-> +	object =3D get_inode_object(inode);
-> +	if (IS_ERR(object))
-> +		return;
+>
+>  int scm_recv_one_fd(struct file *f, int __user *ufd, unsigned int flags,
+> -                   bool notrunc)
+> +                   bool notrunc, bool sealed)
+>  {
+> +       struct file *f_received;
+>         int error;
+>
+>         if (!ufd)
+>                 return -EFAULT;
+>
+> -       error =3D security_file_receive(f);
+> -       if (error)
+> -               return notrunc ? put_user(error, ufd) : error;
 
-[Severity: Medium]
-What happens if get_inode_object(inode) fails to allocate memory in
-hook_d_instantiate() when a task in a scoped domain creates a queue via
-mq_open()?
-
-Because security_d_instantiate() is a void hook called from:
-
-    mqueue_create_attr()
-      d_make_persistent()
-        security_d_instantiate()
-          hook_d_instantiate()
-
-the allocation failure is ignored and the new queue is linked into mqueuefs
-with no creator domain attached. Immediately afterwards, mqueue_file_open()
-calls dentry_open() -> hook_file_open() -> landlock_check_posix_mqueue_open=
-(),
-which sees creator_domain =3D=3D NULL, treats the queue as created outside =
-any
-Landlock domain, and denies the creator's own mq_open() with EPERM while
-leaving the untagged queue behind in the namespace.
-
-Could the object allocation or tagging be performed in a fallible creation
-hook (or preallocated before d_instantiate) so that allocation failure abor=
-ts
-queue creation cleanly instead of leaving an untagged queue?
-
-> +
-> +	spin_lock(&object->lock);
-> +	if (WARN_ON_ONCE(object->domain)) {
-> +		spin_unlock(&object->lock);
-> +		landlock_put_object(object);
-> +		return;
-> +	}
-> +
-> +	landlock_get_domain(dom);
-> +	object->domain =3D dom;
-> +	spin_unlock(&object->lock);
-> +}
-> +
-> +/*
-> + * Drop the reference retained by hook_d_instantiate() for a POSIX messa=
-ge
-> + * queue once its sole name is unlinked.
-> + */
-> +static int hook_inode_unlink(struct inode *const dir,
-> +			     struct dentry *const dentry)
-> +{
-> +	const struct inode *const inode =3D d_backing_inode(dentry);
-> +	struct landlock_domain *domain;
-> +	struct landlock_object *object;
-> +
-> +	if (!landlock_is_posix_mqueue_inode(inode))
-> +		return 0;
-> +
-> +	rcu_read_lock();
-> +	object =3D rcu_dereference(landlock_inode(inode)->object);
-> +	/* The temporary reference protects against concurrent object release. =
-*/
-> +	if (!object || !refcount_inc_not_zero(&object->usage)) {
-> +		rcu_read_unlock();
-> +		return 0;
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	spin_lock(&object->lock);
-> +	domain =3D object->domain;
-> +	object->domain =3D NULL;
-> +	spin_unlock(&object->lock);
-> +
-> +	/* Drop the temporary reference acquired by refcount_inc_not_zero(). */
-> +	landlock_put_object(object);
-> +	if (domain) {
-> +		landlock_put_domain_deferred(domain);
-> +		/* Drops the reference retained by hook_d_instantiate(). */
-> +		landlock_put_object(object);
-> +	}
-> +
-> +	return 0;
-> +}
-
-[Severity: High]
-Can clearing object->domain inside hook_inode_unlink() strip the creator
-domain from a queue that remains linked or open?
-
-In fs/namei.c:vfs_unlink(), security_inode_unlink() is a pre-unlink
-permission check:
-
-    vfs_unlink()
-      security_inode_unlink(dir, dentry)
-      try_break_deleg(dir, ...)
-      try_break_deleg(target, ...)
-      dir->i_op->unlink(dir, dentry)
-
-If Landlock runs before another stacked security module (such as SELinux,
-AppArmor, Smack, or BPF LSM in the default lsm order) and that subsequent
-module denies the unlink, or if try_break_deleg() fails, hook_inode_unlink()
-has already cleared object->domain =3D NULL and dropped the retained refere=
-nces,
-even though vfs_unlink() aborts and the queue remains linked in mqueuefs.
-
-Similarly, even when vfs_unlink() succeeds, the queue inode stays alive whi=
-le
-open file descriptors exist and can be reopened by tasks in the creator's
-domain via /proc/<pid>/fd/<n>.
-
-Because landlock_check_posix_mqueue_open() treats creator_domain =3D=3D NUL=
-L as
-an unsandboxed creator, any subsequent open of that queue by the creator's
-own scoped domain (or a scoped ancestor domain) will be denied with EPERM.
-Should the creator domain stay attached for the lifetime of the inode rather
-than being cleared in hook_inode_unlink()?
-
-> diff --git a/security/landlock/task.c b/security/landlock/task.c
-> index d9eae86fc5529..0daa7edff2d7e 100644
-> --- a/security/landlock/task.c
-> +++ b/security/landlock/task.c
-> @@ -522,6 +522,72 @@ static int hook_file_send_sigiotask(struct task_stru=
-ct *tsk,
->  	return -EPERM;
->  }
-> =20
-> +static const struct access_masks posix_mqueue_scope =3D {
-> +	.scope =3D LANDLOCK_SCOPE_POSIX_MSG_QUEUE,
-> +};
-> +
-> +/**
-> + * landlock_check_posix_mqueue_open - Deny opening a POSIX message queue
-> + * created by a task from a different (non-ancestor) domain
-> + *
-> + * @file: The mqueuefs file being opened.
-> + *
-> + * Return: -EPERM if the open must be denied, 0 otherwise.
-> + */
-> +int landlock_check_posix_mqueue_open(struct file *const file)
-> +{
-
-[ ... ]
-
-> +	landlock_log_denial(subject, &(struct landlock_request) {
-> +		.type =3D LANDLOCK_REQUEST_SCOPE_POSIX_MSG_QUEUE,
-> +		.other_domain_id =3D creator_domain ? creator_domain->hierarchy->id : =
-0,
-> +		.audit =3D {
-> +			.type =3D LSM_AUDIT_DATA_FILE,
-> +			.u.file =3D file,
-> +		},
-> +		.layer_plus_one =3D handle_layer + 1,
-> +	});
-
-[Severity: Low]
-Does security/landlock/task.c build when tracepoints are disabled?
-
-In security/landlock/log.h, other_domain_id in struct landlock_request is
-guarded by:
-
-    #ifdef CONFIG_TRACEPOINTS
-    	union {
-    		u64 other_domain_id;
-    ...
-
-and in security/landlock/domain.h, creator_domain->hierarchy->id is guarded=
- by
-#ifdef CONFIG_SECURITY_LANDLOCK_LOG. Because landlock_log_denial() is a sta=
-tic
-inline function when logging is disabled, the compound literal is still
-type-checked by the compiler. Should the .other_domain_id initializer here =
-be
-wrapped in #ifdef CONFIG_TRACEPOINTS like in hook_unix_stream_connect() and
-hook_unix_may_send()?
-
-> diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testin=
-g/selftests/landlock/audit_test.c
-> index 4bea8c880a4d3..a15c1e5d277f3 100644
-> --- a/tools/testing/selftests/landlock/audit_test.c
-> +++ b/tools/testing/selftests/landlock/audit_test.c
-
-[ ... ]
-
-> +/* Checks audit logging and quieting of a denied POSIX message queue ope=
-n. */
-> +TEST_F(posix_mqueue_audit, open)
-> +{
-> +	const struct landlock_ruleset_attr ruleset_attr =3D {
-> +		.scoped =3D LANDLOCK_SCOPE_POSIX_MSG_QUEUE,
-> +		.quiet_scoped =3D variant->quiet_scoped,
-> +	};
-> +	char mq_name[NAME_MAX], log_match[PATH_MAX];
-> +	int pipe_parent[2], pipe_child[2], ruleset_fd, status;
-> +	struct audit_records records;
-> +	char buf;
-> +	pid_t child;
-> +	mqd_t mq;
-> +
-> +	ASSERT_LT(0,
-> +		  snprintf(mq_name, sizeof(mq_name),
-> +			   "/selftests-landlock-audit-mq-tid%d", sys_gettid()));
-> +	mq_unlink(mq_name);
-> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> +
-> +	child =3D fork();
-> +	ASSERT_LE(0, child);
-> +	if (child =3D=3D 0) {
-> +		EXPECT_EQ(0, close(pipe_parent[1]));
-> +		EXPECT_EQ(0, close(pipe_child[0]));
-> +
-> +		mq =3D mq_open(mq_name, O_CREAT | O_EXCL | O_RDWR, 0600, NULL);
-> +		ASSERT_LE(0, mq);
-
-[ ... ]
-
-> diff --git a/tools/testing/selftests/landlock/scoped_posix_msg_queue_test=
-.c b/tools/testing/selftests/landlock/scoped_posix_msg_queue_test.c
-> new file mode 100644
-> index 0000000000000..4475746081bc3
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/scoped_posix_msg_queue_test.c
-
-[ ... ]
-
-> +	if (variant->domain_parent)
-> +		create_scoped_domain(_metadata, LANDLOCK_SCOPE_POSIX_MSG_QUEUE);
-> +
-> +	mq =3D mq_open(self->mq_name, O_CREAT | O_RDWR, 0600, NULL);
-> +	ASSERT_LE(0, mq);
-
-[Severity: Medium]
-In tools/testing/selftests/landlock/scoped_posix_msg_queue_test.c, the later
-tests check whether mq_open() failed with errno =3D=3D ENOSYS and call SKIP=
-() when
-Posix message queue support is not enabled in the kernel, but the first eig=
-ht
-tests (open_parent_queue, open_child_queue, open_existing_queue_with_create,
-unlink_and_recreate_in_sibling_domain, open_queue_after_creator_exits,
-open_queue_from_child_after_creator_exits, posix_mqueue_ipc_namespace_lifet=
-ime,
-and create_and_open_same_domain) along with TEST_F(posix_mqueue_audit, open)
-in tools/testing/selftests/landlock/audit_test.c assert that mq_open()
-succeeds directly.
-
-Should those tests also skip when mq_open() fails with ENOSYS so they do not
-fail on kernels built without Posix message queue support?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261102144708.9202=
-32-1-webprosto@gmail.com?part=3D3
+Design point: I would suggest adding and using a new LSM hook that
+allows security modules (like SELinux) to still be able to check a
+(new) permission that governs whether a process can pass along these
+sealed fds so that we do not entirely lose control over their use.
