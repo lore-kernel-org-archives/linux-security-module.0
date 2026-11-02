@@ -1,61 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793623269;
-	b=cqavQHMOAxlvBnCt/TFBWH684rB1FH8hk/Z3VkzxT0LtJU/B1XKeb6RUqH2yI8ORilRp
-	 1QZgx8/eR2CYAcn1bo16TUzMtavC3R0S/MyQkqEASG8wdyEKzfDthq9sIz4HGhRivI/mo
-	 rP/0gEyCr6osXQ3JD/l/XM7+9IhTYHzdKzPfb2dxzYWu381BS4FrEXQVTCUSK2Yi0n4Hw
-	 SnyZdPFi358xfobvMjTrpS3AhcrXU7820GBCNwKDeM8/rGvAJvLYp3Sflric9kDievb44
-	 d1qfn2ZVHyj6rstUPjSQzS6zuszmMhGlktecUZv5NdExwszApoK3/ntdR5J7F1xO2nw==
+	t=1793624406;
+	b=JB5GZdiunZ9hvrse+zZfkVnltZugMsqijx1JiiB0jnjIivgrMON/UKjBXO0tuLK9+YoP
+	 OR6zZkodt67yL1y2Zg8pudGcDxiUqgnAEUTxY1v2QN79OQgV841WYfvLGYxGt0rBaI9zR
+	 gMSqyoJUUNEx5WeXqi5dL7hGURUT/LXNP7JFGBU7hR/GwO/FJAWDLOYcDe+J4XIBlp2KE
+	 N1HVexGVdmlR/dZRWmqo3UCHWWE2Yu/Ce3YiaZqtzrsD27j+qiplpvnnEGrHKESYwuoy+
+	 m0hRydFsrYGKNF34TBhAPfFy2ytzKQlFgVNxWUZ5bd7Wn0a+fG2h0poX54CsDNZ6jgQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793623269;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=PiLUQ0nWHS5zwThndIBCzrGp6LTAmh5lgj9gktWhcBo=;
-	b=W9fEAEk8r1DEhFnxsNGJx26/3ieGWs/Ydic8YEotE0duCB133Cdo1z52NxPO70cHGHlV
-	 khgaG4FE7hsD4MmuqXeiubUcHgTcgsK8TWFdz21ZaSYyCKF9wBA26Iq+x+68zC1mLKiCE
-	 u+N0nC0hTsxSTaTP3EKbN+Zn1wWMqeUxOQsdCiQRKYOluaZysR/WqHd6FSKxs5qF3AvfM
-	 pul42z6pQPHV4I1BcXXH08VUOIcfbykAglqWf1titoZgVdiQ4kNYlmi+Ri892pj04dGUr
-	 1crLNLiF5NVTWzv6UxNG4k8FXMlpOExM6zhZUwob9NO9AXYWqzEaJxvtge/QoWfL8Ag==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793624406;
+	h=Received:DKIM-Signature:Received:Content-Type:MIME-Version:
+	 Content-Transfer-Encoding:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc;
+	bh=frhE3W4qDnG3cVd/hHd/v/tb70IxCaC+5G9n7Npi2B0=;
+	b=I4kyZdvqALue0jo7dO7pLW6F9A9qaV4VpISoe2BYwmz3IEglleXIcRnV8RPumShP9FYG
+	 5Z15+MARgKldFwUmEfre1oVW5Y7+f0CRqbb3c/grZbHvje74soAkO5cagkJkNlZL/8xvG
+	 mNBvMOFqREB/h3/GJy7HbEUy7kFvUFafoFmCK0HaBkCCa3yWby517WMkuQxCPL8rMQfRn
+	 0a9qngg1hN+clo6QE9H5Mm0AYqvZAjY06wwZLA00HmnUchPLooFVSTIPu8i3zYV2n96sL
+	 ZFC5wcMsO1r1Bx5TZz6GnMYiGKKyTGW4Lo4LxKBBruhTGyBeeMptOU6keDM8+LWKzDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lB1ILR4E;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YMhM3rQN;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E8BD5606A324;
-	Mon,  2 Nov 2026 12:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67475606A326;
+	Mon,  2 Nov 2026 13:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lB1ILR4E
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 05B051F00A17;
-	Mon,  2 Nov 2026 12:41:07 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YMhM3rQN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1142B1F00A17;
+	Mon,  2 Nov 2026 13:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793623268;
-	bh=PiLUQ0nWHS5zwThndIBCzrGp6LTAmh5lgj9gktWhcBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lB1ILR4EeVVIEFfE5OhyJ+P6ZBavnJ4AFBJgsBvoMeh7fndAXVVl1Ct58qDJkoTwC
-	 DyIOnRiBB5kOwVEK8bsLipfN4BiJSBkcfHZoEFbaWEe59VkV1dejPE0MIxxJ5hQgOW
-	 QlDE3SzREZI7HhHpAD/RsmItLcYaSrwAKn2DShmh86PK38mc+dlgyAI6SX//dn9hKO
-	 gJ9OuZI0YuL6HhucLKsQ5YTL4fZOHChuPxmcR2d1yU/7R9HS7mx08QolNXexvGCJ4T
-	 n/z+miZU7KqwMdbMllTUZfSs6ImA+hDtl6dCxXSbu2ohdG7uRbsi5E4R2Q61Nv8642
-	 mpXlWZht9Beiw==
-Date: Mon, 2 Nov 2026 14:41:04 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/4] KEYS: Pin the backing module for struct key_type
-Message-ID: <auiE4Iabcbro4LiW@kernel.org>
-References: <20261102121518.1197453-1-jarkko@kernel.org>
- <20261102121518.1197453-3-jarkko@kernel.org>
- <sashiko-outbox-193418@kernel.org>
+	s=k20260515; t=1793624406;
+	bh=frhE3W4qDnG3cVd/hHd/v/tb70IxCaC+5G9n7Npi2B0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=YMhM3rQNhLJib3fwaHBjiYulk7/r2by2R19mDpQiPPiMTXW8M1EAcTX7DO8sYmYop
+	 zX0NULhNQQjrYFsMcLHNnJk2Snw5Wklow5AuXkD2KPbZ5VF/baUtzSkPdvQ7usomox
+	 wNSmjEBNFOnM/ffhfs14yQyGP4P6J5Mewr26vdYvFLxpmfJp53+ZZC5g5aDZbAJZd8
+	 wHBn+x6zgxNmZpFQcgZ5ukW4266tFjbLhsmVN0Kf5zvV0AuXfjq6ZkiwP4LIGrF1td
+	 ltb4f9+sYyziY2eQ1wksg431h8kwIv4f6yWLmyJEnK9G3//2dS3PBNOLjEORMiA+bB
+	 REFs/rXNm2zTA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 02F9D380821F;
+	Mon,  2 Nov 2026 13:00:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -65,41 +53,43 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <sashiko-outbox-193418@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v4] cipso: fix optlen corruption in cipso_v4_delopt()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <179362440455.4016458.9024394156701425815.git-patchwork-notify@kernel.org>
+Date: Mon, 02 Nov 2026 13:00:04 +0000
+References: <20261029033942.3644-1-q.h.hack.winter@gmail.com>
+In-Reply-To: <20261029033942.3644-1-q.h.hack.winter@gmail.com>
+To: Qihang <q.h.hack.winter@gmail.com>
+Cc: netdev@vger.kernel.org, paul@paul-moore.com,
+ linux-security-module@vger.kernel.org, omniameasunt@proton.me
 
-On Mon, Nov 02, 2026 at 12:32:55PM +0000, sashiko-bot@kernel.org wrote:
-> drivers/nvme/common/keyring.c:nvme_keyring_exit() {
-> 	unregister_key_type(&nvme_tls_psk_key_type);
-> 	key_revoke(nvme_keyring);
-> 	key_put(nvme_keyring);
-> }
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Dave Miller <davem@davem-thinkpadp1gen8.ibmlond.csb>:
+
+On Thu, 29 Oct 2026 11:39:42 +0800 you wrote:
+> cipso_v4_delopt() recomputes the option length by walking the option
+> buffer after the CIPSO option has been moved out.  The walk then reads
+> the stale bytes at the tail of the buffer as option data, and a crafted
+> setsockopt(IP_OPTIONS) buffer can make it treat one of them as an option
+> length, increasing opt->opt.optlen beyond the valid option data.
 > 
-> fs/nfs/nfs4idmap.c:nfs_idmap_quit() {
-> 	key_revoke(id_resolver_cache->thread_keyring);
-> 	unregister_key_type(&key_type_id_resolver);
-> 	unregister_key_type(&key_type_id_resolver_legacy);
-> 	put_cred(id_resolver_cache);
-> }
+> The corrupted length stays on the socket and is later used as the copy
+> length by getsockopt(IP_OPTIONS) and by the udp/raw/ping sendmsg paths,
+> where it exceeds the size of the buffers they copy into.
 > 
-> fs/smb/client/cifsacl.c:exit_cifs_idmap() {
-> 	key_revoke(root_cred->thread_keyring);
-> 	unregister_key_type(&cifs_idmap_key_type);
-> 	put_cred(root_cred);
-> 	cifs_dbg(FYI, "Unregistered %s key type\n", cifs_idmap_key_type.name);
-> }
-> 
-> net/dns_resolver/dns_key.c:exit_dns_resolver() {
-> 	key_revoke(dns_resolver_cache->thread_keyring);
-> 	unregister_key_type(&key_type_dns_resolver);
-> 	put_cred(dns_resolver_cache);
-> }
+> [...]
 
-I did this on purpose to check which sites Sashiko detects so this was
-expected outcome.
+Here is the summary with links:
+  - [net,v4] cipso: fix optlen corruption in cipso_v4_delopt()
+    https://git.kernel.org/netdev/net/c/1f1f8e8c5176
 
-I'll address all the Sashiko issues and send v2 so that they are out
-of the way.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Br, Jarkko
+
