@@ -1,58 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793621374;
-	b=R8Lj2Cal06GNEdA3gTRefGz73CEUz+VDl2o6pxkuRqochY8lpZPc9jPgxraO11hTt2F/
-	 CFgmLRGS43U8JOzDeMJiaLw4QK9lJ8cgaRfzjXJnejqlTLxAMZqHi/bizTK9/NStYgdiU
-	 BEzgQGRy24tmvbvTT82HhsLrg7AJGHnJBX+f5w/m5zu1X2ozDjRzteJ2Ie5XLEAEGdZ6t
-	 YlkdSokb12RJgLIGJpAGY4qOF7Ny+SO9+0x97c0yhnoEFLp3D/JfTC1Nlp5iixtB9U49c
-	 2b7J3Ty0OinrQd8basInfY2NrV/zGCDoZyPAA7T08tvzhM4ZqwEkWb62VqK5rV26tfg==
+	t=1793621751;
+	b=loMr7+yB4mp4LcTlHqrox54cfJixN+73E5evLVjP0DNVYBJPSjhztgFS5cFoOWKti4Eh
+	 kZZrS3KIQzpS4OEqsWQEOTbH8esoqplVhKlXIpI919wA2KLmSRWKPaK8MkxCowlhLLNN7
+	 kBzxIWA5+8D3+LamDYMmSm7uOOlmWnkg+hQQwIL9HMwRTVwNO2ZoIurknMbo7TFklaTKf
+	 FA9SPXfmCJlDnfebZNodAGS/S8jUf0g9RRNhF4OPpFvayj5reJR3LoJaZUDfoRKYkjl1L
+	 vTf0Sv5GG+OLCV+U0Uhd4vG9dfAmX5IoreJlsrOFlg/jwQ15xjeSmvz0MzGFAgHRuWw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793621374;
-	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-	bh=zDL/1MJP5TL90RnmLlT28rab6xGthMP97p8sOIl7EEQ=;
-	b=Z0VJ+OLjRcoyfkde1zEsa+ctvuAyVWy99tMoA90GYRIiA1ymqhLlkQiHHW0QGatW+Mr8
-	 kvJlMXc+6+xNBECmd2jGrTK9iZm36kQGKS03j+L1iPPh/85JzFi1YQJmFA5IO7g6mEvNL
-	 LKcZ270IYmki4wRPJXN3ZMMI8i6HkD8LP/lYvLEl0H59PmQ1IdZJpkMj/aWLc6JkOlbp+
-	 U03QDA7nDJLYxtfMjL1RO+VEIXnP9uPulEUuyI5V1l7dOAssW5HOaWtUWRepvruiQFDMq
-	 DU20I3sPq5tunqvUwVXWW5/0FlaiwCQ8S7Wfkg7VMfB3fBZc7l0t+IqOTmrchAnO58w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793621751;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=vrjIaaTY4rP5gMOZGPWgOU5H4RXkCNbfFg6zhsfnwrc=;
+	b=flrQEW1q4V8I6X8eQ5QHWjMghtZeXeotzot4+l91vouhQ+Qh9R7XIawvbwcgivoBV8Oy
+	 cQBMQcT2k6mlXWKl1jJIx9T6eU6XoWCNJj1330B6khQ0FR73qKLyAuXTpy80jXg58U8cw
+	 09r5dHlGKymoR4Iwlm5/oPLCuAl0QtJSlOye8TBxG+ODOqZuQlIcuNvEaxGZ0FrBHG5DD
+	 asyZEULAlk+14uAbfCfy0lrKX6UpNPzckEl4+MW9MRmMIub+visVgHLbVMPnqkux7wZWQ
+	 5TaNemyBjdHAdLp1VIOCyc5ygEb4CDH49spKFZEUaoRAbGc4ODF5p4UCsWzIb3t5apg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=huawei.com;
-	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=HvbIScFW;
-	arc=none smtp.remote-ip=113.46.200.216
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MBnPCJBn;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E63C606A324;
-	Mon,  2 Nov 2026 12:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E63C606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 610AF60A3821;
+	Mon,  2 Nov 2026 12:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=HvbIScFW
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=zDL/1MJP5TL90RnmLlT28rab6xGthMP97p8sOIl7EEQ=;
-	b=HvbIScFWhWDTTwdBbxrP3FBKIxxzLq6vdCLd3CxwXmjXza36bZ9JLJ85pSqVCOL7Jc6SJzscn
-	xMecTl8mvn9SMF7bifpcbLHa9B1shrIXtYYwfOzFCGK44CxuVI26qzK2u2jvXMktjmxON+4PGet
-	nycjVKozzc+PHEVs2HJje/8=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4jJ9VD4qJZz1T4GW;
-	Mon,  2 Nov 2026 20:09:08 +0800 (CST)
-Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0AC8203C8;
-	Mon,  2 Nov 2026 20:09:25 +0800 (CST)
-Received: from [10.67.110.140] (10.67.110.140) by
- whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 2 Nov 2026 20:09:24 +0800
-Message-ID: <faee04cc-fb04-4e56-bfe4-1eae5b819137@huawei.com>
-Date: Mon, 2 Nov 2026 20:09:23 +0800
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MBnPCJBn
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 94CFC1F0157A;
+	Mon,  2 Nov 2026 12:15:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793621751;
+	bh=vrjIaaTY4rP5gMOZGPWgOU5H4RXkCNbfFg6zhsfnwrc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MBnPCJBnK/NwKOsP3Pf4GIYNP0+zlX3kckJcBBbg4BswZH72L7APm7vhR0arAf9Ub
+	 qH7yOWu2TFGotE4ucbMiygWCP8BCAoJX02zwcCwOU99rkmdLdEiWlEvlf9tHYVdbhq
+	 Y0seUof8r+Tyr30TymO653OhdmUzOGZY505Vu7e+/vBr4NhEfgsuCrBOZwjGALpm6m
+	 LF/MbWOT0bvtaejHL8PhskffFL/+AaHBPQ2kwferfiYBsmT7SFdC0Of25o/415FpLA
+	 gBg44HMEGqGR9ffTEpYmWjUr/1hKkcBmc7qk5QOj1gh1PTQ+d9pFS8qBus9d2LQkr8
+	 dll/QxWl6jIfQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+	linux-integrity@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED-TEE)
+Subject: [RFC PATCH 1/4] KEYS: trusted: Disable sysfs bind attributes for TEE driver
+Date: Mon,  2 Nov 2026 14:15:12 +0200
+Message-ID: <20261102121518.1197453-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261102121518.1197453-1-jarkko@kernel.org>
+References: <20261102121518.1197453-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -62,48 +71,30 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ima: initialize the real inode attributes of the iint
- cache
-To: Mimi Zohar <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
-	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<amir73il@gmail.com>
-CC: <linux-integrity@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>, <lujialin4@huawei.com>
-References: <20261102024703.816178-1-caixinchen1@huawei.com>
- <cb3ef53e2e5c6d74051528c2b9b9c0a294d6c119.camel@linux.ibm.com>
-Content-Language: en-US
-From: Cai Xinchen <caixinchen1@huawei.com>
-In-Reply-To: <cb3ef53e2e5c6d74051528c2b9b9c0a294d6c119.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- whupemk100010.china.huawei.com (7.152.184.41)
 
-Hi Mimi. Thanks for review.
+trusted_key_exit() calls unregister_key_type() from the TEE client
+driver .remove() callback. Suppress sysfs bind and unbind attributes on
+trusted_key_driver so userspace cannot unbind the driver and unregister
+key_type_trusted while the trusted module remains loaded.
 
-I mistakenly used integrity_inode_attrs_store. In the next version, I 
-will directly use
-memset to initialize the real_inode structure.
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ security/keys/trusted-keys/trusted_tee.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I double checked b836c4d29f27. That commit also added real_ino and 
-real_dev to struct integrity_iinit_cache and started reading them in 
-process_measurement(). However, iinit_init_always() only reset 
-iint->version, leaving real_ino and real_dev stale. After 309e2b775da8, 
-these three variables are encapsulated into integrity_inode_attributes. 
-Therefore, I believe b836c4d29f27 is the appropriate Fixes tag. If I 
-have missed anything, please let me know.
+diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+index 6e465c8bef5e..5d1288189e5c 100644
+--- a/security/keys/trusted-keys/trusted_tee.c
++++ b/security/keys/trusted-keys/trusted_tee.c
+@@ -264,6 +264,7 @@ static struct tee_client_driver trusted_key_driver = {
+ 	.id_table	= trusted_key_id_table,
+ 	.driver		= {
+ 		.name		= DRIVER_NAME,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+ 
+-- 
+2.47.3
 
-On 11/2/2026 7:20 PM, Mimi Zohar wrote:
-> Thanks, Cai.
->
-> Instead of calling integrity_inode_attrs_store(), reset the entire real_inode
-> structure. The store sets dev and ino to the stacked inode’s values, but at
-> allocation time there are no valid real-inode attributes yet, so the fields
-> should be cleared. The patch only works because the stacked and real inodes
-> happen to be on different superblocks.
->
-> The Fixes: tag looks wrong. In b836c4d29f27, real_inode is an unsigned long
-> version and init_always() resets it fully.
