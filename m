@@ -1,53 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793692524;
-	b=xnsXVi0f3EVG6Y6XfEmc968AiZVkyIyJcSfwFHWYMeDgLuS5eFsSsfUy3wVw5satf4NY
-	 kn9vfb3Nn0Va8rUW+uCLVmIYhXqoVr5LLT/RJ3Gqz9/XRjFa4JwMIUrb+XNwedoZ4C/sj
-	 0zX+GqlgresEu7A0os+vXu/8qrSpCLPbZRRhT9PrvbhsNuF8j3VQzdmNUCbfmf2CJt/AV
-	 LDLL+C3jZKBdYbbgT88xcmSLytScYddnEkr1FOLZdmd4vFFXUGRhDo/SlHVUFetUMv1Xo
-	 QKVFPUX8QcPcOdc9CknBnTCq/TCi3Zsbr9G6vStkk/bv4LPzT3223Eqlg32YeItn3Dw==
+	t=1793692525;
+	b=VyQ5tny4HRB4a67BmaYvYvpcBI6v1YAbGKqSMoGJ1g4O7L4LtLxQramWn3gPgo9UxhVp
+	 JIo+o8ScS8fNXKFugynLG+mY2w9N6fkAZ9mTQewSvd4EOBJ2N7EuDbhVjxH5qRmtHyALY
+	 1qGkeIcba3MTAvLeKwcspwQo7yojwgsTq2sFpmCb6JwKaGvXpkcm5WLqVXtEowSRuXVth
+	 MHAY8q/1gd84WR9PXEvEeXZajMiRunb57QrVsbyitsq4fYWl3NJIz4g4+sPTEv3nq9AyQ
+	 2rsbQeZ65ekQRhJCF8PrMWT8MTWtQP2QYk+magaAH/wuLr2lxsOasbV7NizK5KCfZgw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793692524;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793692525;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=bKHWpRlU91D8l+aYd0R+jRxr5tU1AW++y2dyheiIWgg=;
-	b=i90HzocLkbFx+DFmohi2BIIaxM+kqb6xGUUFOVCiMd4T8kF0TG1JRiFhPrH1pr5Fv2aW
-	 Ta4tlhWpbhlV2KZcjOWv5zJXSMV4xsul5M0mG5vvvkwnDYG+k3zjaSEtB68P4gnm1DWSH
-	 tE2HQ1RymASymzJ63dt8+qmyr9l4H2t3Pdf80UNZHDk7Karv7XxQmGUY5L/9vgDPwyTE7
-	 b6fGRiKy9SGRqgSsKq97N2tRRy3M6XAbw2fl93UWE7TKlFqg1dQvkVXRzAXz1nGZXmZf7
-	 88ZDeoipgUr63e+PI3kHgqbfwmVESJrWmA/aEMTh31r2qk4ShbxD2qRDLy3mN9DogYA==
+	bh=2ZOtaHheV5P1mGTk82tnSvSNfXgcxwo8AI1wKRHDRsA=;
+	b=WmSLSoP/Lmf+gVU45Oumf8SlC0jNzLg4HchV8JknJHKPsUf3WS1R7r3R2jp7KLvYjZsQ
+	 ZrjTkvj5p6E4K5WFLhCFq/nmAbItXVcEt81pwoZqScYJ7jhQ23jFXYjc/36uSU1SMUJAN
+	 sGV9WWsvyLaNH8tW6IBt8jDs2OV2RSUlAfqfl0OSXml7He829R0c0DNxfo7EIu5fAg6s3
+	 wcuPUYri9CK4FimVN2QGZK1NA+uNC7fl3MRDWP+Ai6AiobTPZf/bWiTXZ7HOxJRTLRBp4
+	 8cQzA76r5CA2YbxpZaJqHgf9BMYsO55UP9NWlGOlxmTf2p0X+30KL2HOKeZkt9DF7Hg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ReUDPEiQ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hjn3BKf3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25360606A324
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2026 07:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80C4606A32D
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2026 07:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ReUDPEiQ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A736B1F000C1
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2026 07:55:23 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hjn3BKf3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60C4B1F00919
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2026 07:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793692523;
-	bh=bKHWpRlU91D8l+aYd0R+jRxr5tU1AW++y2dyheiIWgg=;
+	s=k20260515; t=1793692524;
+	bh=2ZOtaHheV5P1mGTk82tnSvSNfXgcxwo8AI1wKRHDRsA=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=ReUDPEiQH+y9JZPuDCtzaeZgy+GGtuCevohIAuZy3eEUMuOJm09+wOEglHMPQ81rU
-	 5B1A1O1zYgp1yrK6bTd1OX00F3cbxtJjnDxtpvEAZjZAoqroGH23QeFX3NST+DWe8U
-	 9EJ4xNjMSkAcqukMKNQxLHF971DYkhdR4bO7WSKAsiBkBJRV0GX3qdo5+4OhvvikG/
-	 xMbvFXucdg7UBL8/uF9Uo1g3ZeTUEq/dBRNPeBCfSFPwiRB/1xNjXFjZkb2A5ptfZ4
-	 Y3eaRUo1+BDIR5ZAGOtTUdv2V9ZJxkDHO9NY9L5cE3GDDsQQKozFQg5zhPuk/8GCo7
-	 wILOgLNgtmpsg==
-Message-ID: <sashiko-outbox-194775@kernel.org>
+	b=Hjn3BKf3U/EAeQG5t5Sv1ZbeeBnvTyUbS7LBN6ILrb8+3cEuTUT/MmOWkBLejqF7z
+	 WjDKj2dvST64TwbuW9uPDnOdf0ry4AfNp/GkrnivacW/6/LVVIYxfhvbFQhoogXWJk
+	 V6W7IaFkT1leBwSRgJoXNP7CrfTnqHbRV9Hxjhs/uXsBIoLVoaKz9K6f3WTzutYLaA
+	 faKWshdIUSxk4ANk0OkQoCUgzg4eGlwNP1u3BliH+6mXbtS3hE1cpNfxhzo1hnQTe4
+	 voTte3ZrIo81D7CoWXP7TcLP8709gwsCE6cDcnsZCXPn7lpFwIA0vDEoWTenc1BZVa
+	 C0qgaezmt239A==
+Message-ID: <sashiko-outbox-194776@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH -next 6/9] lockdown: drop an unused include and simplify
- secfs init
+Subject: Re: [PATCH -next 5/9] lsm: remove unused lockdown audit data
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261103082421.3033195-7-caixinchen1@huawei.com>
+In-Reply-To: <20261103082421.3033195-6-caixinchen1@huawei.com>
 References: <20261103082421.3033195-1-caixinchen1@huawei.com>
- <20261103082421.3033195-7-caixinchen1@huawei.com>
+ <20261103082421.3033195-6-caixinchen1@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Tue, 03 Nov 2026 07:55:23 +0000
@@ -60,9 +59,10 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> linux/export.h is not needed since the file has no EXPORT_SYMBOL() usage.
-> Also return the result of securityfs_create_file() directly instead of
-> storing it in a temporary dentry.
+> Commit f5d0e5e9d72d ("selinux: remove the SELinux lockdown
+> implementation") removed the only producer of LSM_AUDIT_DATA_LOCKDOWN.
+> The type, the u.reason union member and the audit formatting case are now
+> dead, so drop them.
 >=20
 > Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
 
@@ -70,5 +70,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103082421.3033=
-195-1-caixinchen1@huawei.com?part=3D6
+195-1-caixinchen1@huawei.com?part=3D5
 
