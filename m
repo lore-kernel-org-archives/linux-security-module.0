@@ -1,63 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793709411;
-	b=OrfVxTfkfRkmZSveonhhhakxewi3hSmnjs6fi8eCiDlVPZVsOgk5mqCQ3BIhJXRhp9le
-	 I49RCShnaqdxos7wDRWN1cKj+3KGK3cinKlwiDoBUJUdSpwtEA7/KiuFa80sWpoGv0Kr5
-	 +hP5xE+4TYjw1tcJVur08Fseabd8Y+09tJ38eJJ1PwKp/Av9qAigu7U+z8sF4DbScw2Kk
-	 tWLbiralBZobXJQh1oxv+5wHplC3JCcQ/4p5b/s9sqoflaX86+vGacu4UfnG8Xnw3VCjJ
-	 vnSaz/jHHaT5Rgezg5WGNvrwALxfb45WOft4k9mvJjIRC1UCdqsPn4QI4ZCLBPEFu4A==
+	t=1793709476;
+	b=hAL7AGAfjgLRQgb5TxmeiE51rGsq68iSMRKYfoZFXl7PfVvOXXDpFIVQxbYv2XSQM1d/
+	 UQD6roX4Z5UlBTs1BWF6lkb5J/i2XSJAh80QqFmxPTuMloKZd6j/v5MVaWjMAO4zu6/7c
+	 UoO/wmFD1YVdQLmYbo7kZvWHad5Jxc8b0mB00B29c/f4m8eW37COrJqUm8M8NW8BxKcMG
+	 BZ5odE6D9b4AW/zf/JS4oLlnz6hwMA5LNZrZsQgJn0SV/qT8SX+tV5WDA3pIipxctniyg
+	 I7J7mME6JZkT2mPRSKEfzXgUTFGlrw5VPQXlc3/q86tu4RnE9e3W8ZOQEpk+nk7+Z0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793709411;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=l+BasF4xXDPI2J5tAri6fY+t51ro5//v86/znFOsFuE=;
-	b=ZwngFUsIEY8WnMN3nwZ838HTm64f22vPAUmETf5MCGZbTxICWmqpUCe9v1iFNPZgApIM
-	 jRzbG6UFJZzGVPnQdU/J9jnckM/Wa3/sH1FAbc+ulkmQT9GMmY6nRNsUsXaqQbT3AOnNY
-	 x8BFUaLbi9O7aASnHR/F9iJs8TDolypYyFwzsrOzoVP1a+n1GCdLa7W1JdGaC5zZVAx1H
-	 UwjyQvF08mIBHB8nLceOqQierj655fmi5Ukla7iDzrFmUb2IUwUtQj1ytPjrnGIY/qkoI
-	 xCW1oqaPcrbVMDL3D21Qe0ndtnv2/emqxB4ge9bFWIhHthYRMwpcjoafsahO4CaYpgQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793709476;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=oV7i9bIc6g6SKXJ1HJf50C8bZZAE2Takb9sNll8AaUA=;
+	b=r+1jV4wo21sclTqao1oYZSV0fzT29rCVU97bIyC6yVkrjmRttCwrfD2Q/s7G/K9hyOwu
+	 XUF6oGmcdlq0nJ/cSW6kI4fmXLfMXmmOiTR/TPBP+jQg+mQdLbk9ctomuIupIL/ozfUKD
+	 gJ0DoAXIbHWdByagEN9fm7KfuZmgZDwQs9aVe+z+f45ceBAi9ZEqu9fO1dWLYNqkANYpZ
+	 NCOj3qhPN5BzEk1dJdG079/SOUNx0hCbWF57mE/5tJMMWH9MlSAehB0aMRygj2A5el2Jo
+	 qe62uJUEdJDqqwwUcikpBN2yknk+4Dg6y3R5eC+S42msouDQy4GA8cAhWOVvaIquqyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TnDfY4+E;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=hallyn.com;
+	spf=(null) smtp.mailfrom=hallyn.com;
+	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=vC9TDmhV;
+	arc=none smtp.remote-ip=178.63.66.53
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 09DF1606A327;
-	Tue,  3 Nov 2026 12:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F20606EEA0;
+	Tue,  3 Nov 2026 12:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C3F20606EEA0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TnDfY4+E
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2B9641F0093A;
-	Tue,  3 Nov 2026 12:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793709410;
-	bh=l+BasF4xXDPI2J5tAri6fY+t51ro5//v86/znFOsFuE=;
-	h=From:To:Cc:Subject:Date;
-	b=TnDfY4+EDuyb4St7rSFJDIUXIjptI+o0jYxDZvn3LSXWNyKTfU9PPss5EO8wjgmVm
-	 oKdiNyYdP6P/Gjx8MPFXFty0gClV6CkfjgowpWL5epHfQOrAJE60Pai8sUw045pHHG
-	 yKgX31UUsr/Y6dFplVA5vP/8P1FlXUn/nOeW/5E/DUDO35V6R2G0VlhPjUywHL2IJD
-	 bPNw1BRu57ChiHJKIBIPGuk6W5GqGsRqn/O9jNN4anUq9pXTLM82024upe3BWDdMoH
-	 IsjiEYPL914BdKam06+PRXj6RlOorZCoU4Btm92sxTSJ+dgTvjfssJaBiCVUWTiN2G
-	 7H/rprom175Cg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS)
-Subject: [PATCH v9] KEYS: key_garbage_collector(): process in chunks
-Date: Tue,  3 Nov 2026 14:36:29 +0200
-Message-ID: <20261030205412.3138975-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=vC9TDmhV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1793709466; bh=srJr0W2zj7CWyIxBRugbw6W/RJOIVVmVJA2BZvprlc4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vC9TDmhVzpFPGgCSMr4165tQq6DCEFta1S319V91nRjNJWVnaElj5EAq2XW2eRHjJ
+	 gGh+I4bOHp/FtOf8Kea16ZVZiBZ+iLnPQwxED32qxh1DgFUkGIPtnmq0RepGmeQJ+l
+	 4iztOzjKyQPMal+wlEpDHPXVZPYZMmQ+r1A0YwDnpjt0prpdx8aH3DoDR5Ll8IkZdg
+	 fcB/kqvpbIl1RI+I4UahFb1R62IqF66zwswBhfdrCuY2o7ADXAPpnWNhmtnnb+e4Q6
+	 hgTFzkN5XOXy7wa91Udr49XuOtsnYjLlHZroXiYyT2j/Kp51c9u6bwkqVdqZ0o8Yn8
+	 F6wDnif+kXC3g==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 326D81B96; Tue,  3 Nov 2026 06:37:46 -0600 (CST)
+Date: Tue, 3 Nov 2026 06:37:46 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: "Hallgrimur H. Gunnarsson" <halg@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jan Kara <jack@suse.cz>, James Morris <jmorris@namei.org>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, Jann Horn <jannh@google.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	KP Singh <kpsingh@kernel.org>, Jonathan Calmels <jcalmels@3xx0.net>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+	containers@lists.linux.dev, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
+ opt-in netns loopback
+Message-ID: <aunVmg42/S2uUDWR@hallyn.com>
+References: <20261028221705.3915340-1-halg@google.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,486 +79,308 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20261103123629.khFxH4JZrg_affHboqbJRBUuRVhBDIszGHJdJ9upcjU@z>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261028221705.3915340-1-halg@google.com>
 
-key_garbage_collector() has a design that is not resistant enough for
-workqueue lockups. The duration scales up relative to the number of items
-in the serial tree, which causes a reoccuring theme of being guilty of
-causing workqueue lockups.
+On Wed, Oct 28, 2026 at 10:16:57PM +0000, Hallgrimur H. Gunnarsson wrote:
+> When an unprivileged process creates a new user namespace, it is granted
+> a full set of capabilities (CAP_FULL_SET) scoped to that namespace.
+> While these capabilities are isolated to the namespace, they allow
+> unprivileged local users to reach deep kernel subsystems (most notably
+> networking configuration and raw sockets via CAP_NET_ADMIN and
+> CAP_NET_RAW) that historically assumed a trusted caller and have
+> accounted for a large share of local privilege escalation
+> vulnerabilities.
+> 
+> Many workloads and sandboxes use unprivileged user namespaces strictly
+> for basic UID/GID, mount, PID, or network isolation and never need
+> high-risk capabilities like CAP_NET_ADMIN or CAP_NET_RAW. Likewise,
+> system administrators often want a host-wide policy ceiling restricting
+> which capabilities unprivileged user namespaces may acquire, without
+> disabling unprivileged user namespaces altogether.
+> 
+> Prior work by Jonathan Calmels [1] proposed addressing this via a sixth
+> per-thread capability set (cap_userns) alongside a global sysctl mask.
+> During that discussion [1, 2], feedback (e.g. from Casey Schaufler)
+> suggested that rather than adding another per-thread capability set and
+> prctl() interface, capability restrictions could be integrated directly
+> into struct user_namespace and configured via clone3(). At the same
+> time, as noted in [1], a clone3() flag alone is not sufficient for
+> administrators who need to enforce a host-wide ceiling on unprivileged
+> user namespaces without modifying every userspace callsite.
+> 
+> This series combines both pieces of feedback: it embeds a capability
+> bounding set (cap_bset) directly into struct user_namespace, reusing
+> the existing task cap_bset, cap_permitted, and cap_effective sets on
+> namespace entry, and provides both a system-wide sysctl ceiling for
+> unprivileged user namespaces and a CLONE_NEWUSER_BSET flag for
+> voluntary per-namespace restriction via clone3().
 
-Resolve the problem by processing in chunks:
+Hi.  Thanks for sending this, and continuing to think about this problem.
 
-1. Declare a static variable key_gc_work, which owns the garbage collection
-   in-flight state, and key_schedule_gc_work() for re-scheduling the work.
-2. Define KEY_GC_CHUNK_SIZE, set to 64 keys, as the bound for the number
-   of items scanned and destroyed.
-3. Define KEY_GC_DESTROYING to mark resume to destruction without repeating
-   the RCU grace period. Drain the graveyard before advancing key-type
-   reaping.
-4. Define KEY_GC_REAP_REQUESTED for preserving full-pass requests across
-   the continuations.
+A few weeks back I had a somewhat different idea for such controls.  I've
+been meaning to start a wider discussion about it, but was traveling for
+a bit.  What I wrote then:
 
-keygcbench results without the patch:
+Generally, if I, or some users I support, need to use unprivileged containers
+or user namespaces, then when an 0day comes along, I can hopefully trust them
+not to exploit it.  The biggest danger comes from the fact that, right now, if
+they can use them, anyone can.  So if someone can trigger some other code running
+as user nginx or something, that can become a root vector.
 
-unused:   min=798.785 avg=4181.989 max=7565.193 var=11446068.927
-expired:  min=0.003 avg=2404.971 max=4111.065 var=3061018.501
-combined: min=0.003 avg=3115.778 max=7565.193 var=7172908.943
+So what if we had a built-in feature or LSM which implemented a credential based
+whitelist, entered at firstboot?  Something like
 
-keygcbench results with the patch:
+```
+# Default deny
+uid == 1000  # approved
+1005 < uid < 1010  # approved
+gid == 1005
+security_label = lxc_user_t  # Not sure how far we want to go with this
+tty # must have a session
+```
 
-unused:   min=0.005 avg=0.125 max=79.590 var=1.088
-expired:  min=0.002 avg=0.196 max=236.207 var=8.121
-combined: min=0.002 avg=0.154 max=236.207 var=3.912
+Now, if you want to use user namespaces for generic sandboxes for all
+users, e.g. to confine browser activity or nginx modules, then this model
+may not fit.  Or rather, it might need a few tweaks.
 
-These results translate to:
+Kees whipped up a proof of concept BPF lsm that implemented this.  A copy
+from his email (and let's call it GPLv2 unless he wants to change it to
+something like MIT) follows:
 
-- 93% drop in the combined variance.
-- 2.2% increase in the total task time.
+Needs:
 
-The value 64 for KEY_GC_CHUNK_SIZE was cherry-picked from the set {1, 2,
-..., 1024} by running the benchmark for each chunk size three times.
-
-At the far left variance is 97% lower but at the same time total time
-grows by 133%, when compared to the selected chunk size. The size was
-picked based on getting a reasonable variance with a minimal throughput
-decline.
-
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/tree/package/keygcbench
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v9:
-- Removed spurious syzkaller tags.
-- Removed Fixes tag. This is better to be treated as improvement as
-  lockups are still very rare and quite artificial.
-- No code changes.
-v8:
-- Call key_schedule_gc_work(false) from key_put() to avoid unnecessary
-  expired-link scans when freeing unreferenced keys, as reported by
-  Sashiko:
-  https://sashiko.dev/#/patchset/20261030202457.3058665-1-jarkko%40kernel.org
-v7:
-- Removed forgotten Closes tag for syzkaller.
-- Sashiko was right in that key_gc_schedule_links() should be called to
-  mark expiry [1]. I fixed up the call site and also added expired bool
-  parameter to key_gc_schedule_work() so that bits can be set in a single
-  atomic operation.
-
-  https://sashiko.dev/#/patchset/20261030160924.2919363-1-jarkko%40kernel.org
-v6:
-- Removed syzkaller references, given feedback:
-  https://lore.kernel.org/keyrings/20261029234149.218-1-hdanton@sina.com/
-v5:
-- Benchmarked all the chunk sizes in {1, 2, ..., 1024} and cherry-picked
-  based on that the chunk size of 64.
-v4:
-- Added syzkaller link, as the resolution can be reasoned from the benchmark
-  results.
-v3:
-- Added new tests results made by using keygcbench.
-- Added link to keygcbench.
-v2:
-- Fixed typo in the commit message.
-- Drop the local variable gc_state.
- security/keys/gc.c       | 162 +++++++++++++++++++++++++--------------
- security/keys/internal.h |   3 +-
- security/keys/key.c      |   4 +-
- security/keys/keyring.c  |   2 +-
- 4 files changed, 107 insertions(+), 64 deletions(-)
-
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index eda445f815d4..ea2efde5f33f 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -10,16 +10,27 @@
- #include <keys/keyring-type.h>
- #include "internal.h"
-
--/*
-- * Delay between key revocation/expiry in seconds
-- */
--unsigned key_gc_delay = 5 * 60;
-+#define KEY_GC_CHUNK_SIZE 64
-
- /*
-  * Reaper for unused keys.
-  */
- static void key_garbage_collector(struct work_struct *work);
--DECLARE_WORK(key_gc_work, key_garbage_collector);
-+
-+static struct {
-+	time64_t start;			/* expiry range start */
-+	time64_t end;			/* expiry range end */
-+	struct rb_node *cursor;		/* serial tree position */
-+	u8 state;			/* state flags */
-+	struct work_struct work;	/* work item */
-+} key_gc_work = {
-+	.work = __WORK_INITIALIZER(key_gc_work.work, key_garbage_collector),
-+};
-+
-+/*
-+ * Delay between key revocation/expiry in seconds
-+ */
-+unsigned int key_gc_delay = 5 * 60;
-
- /*
-  * Reaper for links from keyrings to dead keys.
-@@ -34,6 +45,7 @@ static unsigned long key_gc_flags;
- #define KEY_GC_KEY_EXPIRED	0	/* A key expired and needs unlinking */
- #define KEY_GC_REAP_KEYTYPE	1	/* A keytype is being unregistered */
- #define KEY_GC_REAPING_KEYTYPE	2	/* Cleared when keytype reaped */
-+#define KEY_GC_REAP_REQUESTED	3	/* Another complete pass was requested */
+CONFIG_BPF_LSM=y
+CONFIG_DEBUG_INFO_BTF=y
+FUNCTION_TRACER=y
+DYNAMIC_FTRACE=y
 
 
- /*
-@@ -44,6 +56,21 @@ struct key_type key_type_dead = {
- 	.name = ".dead",
- };
+#!/bin/bash
+# Manage the userns allowlist policy.
+#
+#   policy.sh load                 load, attach and pin (policy still writable)
+#   policy.sh allow-uid UID        add a uid
+#   policy.sh allow-gid GID        add a gid
+#   policy.sh deny-uid  UID        remove a uid (only before "lock")
+#   policy.sh show                 dump the policy
+#   policy.sh failures             who has been denied, and how often
+#   policy.sh lock                 freeze the policy maps, one way
+#   policy.sh unload               detach and unpin everything
+#
+# bpftool takes keys and values as raw bytes in target byte order, so a u32
+# uid has to be written little-endian on x86: uid 1000 is "e8 03 00 00", not
+# "00 00 03 e8". Getting that backwards silently writes a policy for uid
+# 3892510720 instead, which is why this script exists.
+set -eu
 
-+/*
-+ * Schedule a new GC pass or re-schedule an ongoing GC pass.
-+ */
-+void key_schedule_gc_work(bool expired)
-+{
-+	unsigned long flags = BIT(KEY_GC_REAP_REQUESTED);
-+
-+	if (expired)
-+		flags |= BIT(KEY_GC_KEY_EXPIRED);
-+
-+	/* Publish all request flags together, after the caller's updates. */
-+	set_mask_bits(&key_gc_flags, 0, flags);
-+	schedule_work(&key_gc_work.work);
-+}
-+
- /*
-  * Schedule a garbage collection run.
-  * - time precision isn't particularly important
-@@ -57,7 +84,8 @@ void key_schedule_gc(time64_t gc_at)
+BPFFS=${BPFFS:-/sys/fs/bpf}
+DIR=$BPFFS/userns			# pinned maps (a directory)
+LINK=$BPFFS/userns_link			# pinned lsm link (a file)
+OBJ=${OBJ:-$(dirname "$0")/userns_allowlist.bpf.o}
+BPFTOOL=${BPFTOOL:-bpftool}
 
- 	if (gc_at <= now || test_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags)) {
- 		kdebug("IMMEDIATE");
--		schedule_work(&key_gc_work);
-+		/* Catch expirations that became due during the scan. */
-+		key_schedule_gc_work(true);
- 	} else if (gc_at < key_gc_next_run) {
- 		kdebug("DEFERRED");
- 		key_gc_next_run = gc_at;
-@@ -79,15 +107,6 @@ void key_set_expiry(struct key *key, time64_t expiry)
- 	}
- }
+u32_le() {	# 1000 -> "hex e8 03 00 00"
+	printf 'hex %02x %02x %02x %02x' \
+		$(( $1        & 0xff)) $(( ($1 >> 8)  & 0xff)) \
+		$(( ($1 >> 16) & 0xff)) $(( ($1 >> 24) & 0xff))
+}
 
--/*
-- * Schedule a dead links collection run.
-- */
--void key_schedule_gc_links(void)
--{
--	set_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags);
--	schedule_work(&key_gc_work);
--}
--
- /*
-  * Some key's cleanup time was met after it expired, so we need to get the
-  * reaper to go through a cycle finding expired keys.
-@@ -96,7 +115,7 @@ static void key_gc_timer_func(struct timer_list *unused)
- {
- 	kenter("");
- 	key_gc_next_run = TIME64_MAX;
--	key_schedule_gc_links();
-+	key_schedule_gc_work(true);
- }
+# bpftool prints map contents as integers when the object carries BTF and as
+# arrays of hex byte strings when it does not. Handle both.
+decode() {
+	python3 -c '
+import json, sys
+rows = json.load(sys.stdin)
+if not rows:
+    sys.exit("(empty)")
+def val(v):
+    if isinstance(v, list):
+        return int.from_bytes(bytes(int(x, 16) for x in v), "little")
+    return int(v)
+for r in sorted(rows, key=lambda r: -val(r["value"])):
+    print("uid %-8d denied %d time(s)" % (val(r["key"]), val(r["value"])))
+'
+}
 
- /*
-@@ -119,7 +138,7 @@ void key_gc_keytype(struct key_type *ktype)
- 	set_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags);
+case ${1:-} in
+load)
+	mountpoint -q "$BPFFS" 2>/dev/null || mount -t bpf bpf "$BPFFS"
+	# bpftool creates both pin paths itself and fails if either exists, so
+	# do not mkdir them. For a single-program object the program path is a
+	# file (the pinned link); pinmaps is a directory.
+	$BPFTOOL prog load "$OBJ" "$LINK" pinmaps "$DIR" autoattach
+	# "prog load" exits 0 even when the LSM attach failed and it silently
+	# fell back to pinning the program, which leaves the policy loaded but
+	# inert. The only reliable check is that an lsm link now exists.
+	if ! $BPFTOOL link show | grep -q lsm; then
+		echo "ERROR: no lsm link: the program is loaded but NOT enforcing." >&2
+		echo "Needs CONFIG_BPF_LSM=y, CONFIG_DEBUG_INFO_BTF=y and" >&2
+		echo "CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS=y (the last one" >&2
+		echo "requires CONFIG_FUNCTION_TRACER=y), plus bpf in CONFIG_LSM." >&2
+		exit 1
+	fi
+	echo "loaded and enforcing; policy maps under $DIR (not yet frozen)"
+	;;
+allow-uid)
+	$BPFTOOL map update pinned "$DIR/allowed_uids" key $(u32_le "$2") value hex 01
+	;;
+allow-gid)
+	$BPFTOOL map update pinned "$DIR/allowed_gids" key $(u32_le "$2") value hex 01
+	;;
+deny-uid)
+	$BPFTOOL map delete pinned "$DIR/allowed_uids" key $(u32_le "$2")
+	;;
+show)
+	echo "== allowed uids"; $BPFTOOL map dump pinned "$DIR/allowed_uids"
+	echo "== allowed gids"; $BPFTOOL map dump pinned "$DIR/allowed_gids"
+	;;
+failures)
+	# key is the euid that was denied, value is a count
+	$BPFTOOL -j map dump pinned "$DIR/denied_uids" | decode
+	;;
+lock)
+	# Only the policy maps. denied_uids is written by the program, and
+	# program writes bypass the frozen check, so freezing it would lock out
+	# this script without stopping anything.
+	$BPFTOOL map freeze pinned "$DIR/allowed_uids"
+	$BPFTOOL map freeze pinned "$DIR/allowed_gids"
+	echo "policy frozen; allow-uid/allow-gid/deny-uid will now fail with EPERM"
+	echo "even as root. Changing it means 'unload' and 'load' again."
+	;;
+unload)
+	rm -f "$LINK" "$DIR"/allowed_uids "$DIR"/allowed_gids "$DIR"/denied_uids
+	rmdir "$DIR" 2>/dev/null || true
+	echo "unpinned; enforcement stops when the last reference goes away"
+	;;
+*)
+	# the header comment block, however long it grows
+	awk 'NR > 1 && /^#/ { print; next } NR > 1 { exit }' "$0"
+	exit 1
+	;;
+esac
 
- 	kdebug("schedule");
--	schedule_work(&key_gc_work);
-+	key_schedule_gc_work(false);
+# There is no "digest" command, though a frozen policy looks like it should
+# have one. The kernel will hash a frozen map and return it through
+# BPF_OBJ_GET_INFO_BY_FD in info.hash (syscall.c:5433, -EPERM unless
+# map->frozen), but only array maps implement ->map_get_hash(); for a
+# BPF_MAP_TYPE_HASH it fails with -EINVAL however frozen it is. bpftool does
+# not expose info.hash either way. Attesting to this policy would mean
+# reshaping it as arrays -- e.g. a bitmap indexed by uid -- and calling
+# BPF_OBJ_GET_INFO_BY_FD directly.
 
- 	kdebug("sleep");
- 	wait_on_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE,
-@@ -134,7 +153,9 @@ void key_gc_keytype(struct key_type *ktype)
-  */
- static noinline void key_gc_unused_keys(struct list_head *keys)
- {
--	while (!list_empty(keys)) {
-+	unsigned int chunk = KEY_GC_CHUNK_SIZE;
-+
-+	while (!list_empty(keys) && chunk--) {
- 		struct key *key =
- 			list_entry(keys->next, struct key, graveyard_link);
- 		short state = key->state;
-@@ -178,54 +199,64 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
- static void key_garbage_collector(struct work_struct *work)
- {
- 	static LIST_HEAD(graveyard);
--	static u8 gc_state;		/* Internal persistent state */
-+	typeof(key_gc_work) *gc = &key_gc_work;
- #define KEY_GC_REAP_AGAIN	0x01	/* - Need another cycle */
- #define KEY_GC_REAPING_LINKS	0x02	/* - We need to reap links */
-+#define KEY_GC_DESTROYING	0x04	/* - We need to destroy keys */
- #define KEY_GC_REAPING_DEAD_1	0x10	/* - We need to mark dead keys */
- #define KEY_GC_REAPING_DEAD_2	0x20	/* - We need to reap dead key links */
- #define KEY_GC_REAPING_DEAD_3	0x40	/* - We need to reap dead keys */
- #define KEY_GC_FOUND_DEAD_KEY	0x80	/* - We found at least one dead key */
+exit 0
 
--	struct rb_node *cursor;
-+	unsigned int chunk = KEY_GC_CHUNK_SIZE;
- 	struct key *key;
--	time64_t new_timer, limit, expiry;
-+	time64_t expiry;
 
--	kenter("[%lx,%x]", key_gc_flags, gc_state);
-+	kenter("[%lx,%x]", key_gc_flags, gc->state);
 
--	limit = ktime_get_real_seconds();
-+	if (gc->state & KEY_GC_DESTROYING)
-+		goto destroy_keys;
-+	if (gc->cursor) {
-+		spin_lock(&key_serial_lock);
-+		goto continue_scanning;
-+	}
-+
-+	test_and_clear_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags);
-+	gc->start = ktime_get_real_seconds();
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Credential allowlist for unprivileged user namespace creation.
+ *
+ * Default deny. A caller is allowed to create a user namespace if any of:
+ *   - its euid is in allowed_uids
+ *   - its egid is in allowed_gids
+ *   - any of its supplementary groups is in allowed_gids
+ *
+ * The maps are populated once (at first boot, from a config file) and then
+ * frozen with BPF_MAP_FREEZE, after which the kernel refuses further updates
+ * through the syscall interface even from root. Pin the program and the maps
+ * under bpffs so they survive the loader exiting.
+ */
+#include "vmlinux.h"
+#include <errno.h>
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
+#include <bpf/bpf_core_read.h>
 
- 	/* Work out what we're going to be doing in this pass */
--	gc_state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
--	gc_state <<= 1;
-+	gc->state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
-+	gc->state <<= 1;
- 	if (test_and_clear_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags))
--		gc_state |= KEY_GC_REAPING_LINKS;
-+		gc->state |= KEY_GC_REAPING_LINKS;
+char _license[] SEC("license") = "GPL";
 
- 	if (test_and_clear_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags))
--		gc_state |= KEY_GC_REAPING_DEAD_1;
--	kdebug("new pass %x", gc_state);
-+		gc->state |= KEY_GC_REAPING_DEAD_1;
-+	kdebug("new pass %x", gc->state);
+/*
+ * Supplementary groups are walked with a fixed bound so the verifier can
+ * see termination. A caller in more than this many groups falls back to the
+ * euid/egid checks. Raise it, or switch to bpf_loop(), if that matters.
+ */
+#define MAX_SUPP_GROUPS 64
 
--	new_timer = TIME64_MAX;
-+	gc->end = TIME64_MAX;
+struct {
+	__uint(type, BPF_MAP_TYPE_HASH);
+	__uint(max_entries, 1024);
+	__type(key, __u32);		/* uid */
+	__type(value, __u8);
+} allowed_uids SEC(".maps");
 
- 	/* As only this function is permitted to remove things from the key
- 	 * serial tree, if cursor is non-NULL then it will always point to a
- 	 * valid node in the tree - even if lock got dropped.
- 	 */
- 	spin_lock(&key_serial_lock);
--	cursor = rb_first(&key_serial_tree);
-+	gc->cursor = rb_first(&key_serial_tree);
+struct {
+	__uint(type, BPF_MAP_TYPE_HASH);
+	__uint(max_entries, 1024);
+	__type(key, __u32);		/* gid */
+	__type(value, __u8);
+} allowed_gids SEC(".maps");
 
- continue_scanning:
--	while (cursor) {
--		key = rb_entry(cursor, struct key, serial_node);
--		cursor = rb_next(cursor);
-+	while (gc->cursor && chunk) {
-+		key = rb_entry(gc->cursor, struct key, serial_node);
-+		gc->cursor = rb_next(gc->cursor);
-+		chunk--;
+/* Denials, so you can see what a policy would break before enforcing it. */
+struct {
+	__uint(type, BPF_MAP_TYPE_HASH);
+	__uint(max_entries, 4096);
+	__type(key, __u32);		/* uid */
+	__type(value, __u64);		/* count */
+} denied_uids SEC(".maps");
 
- 		if (!test_bit_acquire(KEY_FLAG_USER_ALIVE, &key->flags)) {
- 			/* Clobber key->user after final put seen. */
- 			goto found_unreferenced_key;
- 		}
+static __always_inline int gid_allowed(__u32 gid)
+{
+	return bpf_map_lookup_elem(&allowed_gids, &gid) != NULL;
+}
 
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_1)) {
- 			if (key->type == key_gc_dead_keytype) {
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
-+				gc->state |= KEY_GC_FOUND_DEAD_KEY;
- 				set_bit(KEY_FLAG_DEAD, &key->flags);
- 				key->perm = 0;
- 				goto skip_dead_key;
-@@ -239,24 +270,24 @@ static void key_garbage_collector(struct work_struct *work)
- 		if (expiry != TIME64_MAX) {
- 			if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
- 				expiry += key_gc_delay;
--			if (expiry > limit && expiry < new_timer) {
-+			if (expiry > gc->start && expiry < gc->end) {
- 				kdebug("will expire %x in %lld",
--				       key_serial(key), key->expiry - limit);
--				new_timer = key->expiry;
-+				       key_serial(key), key->expiry - gc->start);
-+				gc->end = key->expiry;
- 			}
- 		}
+SEC("lsm/userns_create")
+int BPF_PROG(userns_allowlist, const struct cred *cred, int ret)
+{
+	struct group_info *gi;
+	__u32 uid, gid;
+	int i, ngroups;
+	__u64 init = 1, *count;
 
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2))
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_2))
- 			if (key->type == key_gc_dead_keytype)
--				gc_state |= KEY_GC_FOUND_DEAD_KEY;
-+				gc->state |= KEY_GC_FOUND_DEAD_KEY;
+	/* Someone before us already objected; do not launder their denial. */
+	if (ret)
+		return ret;
 
--		if ((gc_state & KEY_GC_REAPING_LINKS) ||
--		    unlikely(gc_state & KEY_GC_REAPING_DEAD_2)) {
-+		if ((gc->state & KEY_GC_REAPING_LINKS) ||
-+		    unlikely(gc->state & KEY_GC_REAPING_DEAD_2)) {
- 			if (key->type == &key_type_keyring)
- 				goto found_keyring;
- 		}
+	uid = BPF_CORE_READ(cred, euid.val);
+	if (bpf_map_lookup_elem(&allowed_uids, &uid))
+		return 0;
 
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3))
-+		if (unlikely(gc->state & KEY_GC_REAPING_DEAD_3))
- 			if (key->type == key_gc_dead_keytype)
- 				goto destroy_dead_key;
+	gid = BPF_CORE_READ(cred, egid.val);
+	if (gid_allowed(gid))
+		return 0;
 
-@@ -269,7 +300,11 @@ static void key_garbage_collector(struct work_struct *work)
- 	spin_unlock(&key_serial_lock);
+	/*
+	 * The common deployment is one group that everyone permitted is a
+	 * member of, which for most users is a supplementary group rather
+	 * than their primary one, so egid alone is not enough.
+	 */
+	gi = BPF_CORE_READ(cred, group_info);
+	if (gi) {
+		ngroups = BPF_CORE_READ(gi, ngroups);
+		if (ngroups > MAX_SUPP_GROUPS)
+			ngroups = MAX_SUPP_GROUPS;
 
- maybe_resched:
--	if (cursor) {
-+	if (gc->cursor) {
-+		if (!chunk) {
-+			schedule_work(&key_gc_work.work);
-+			return;
-+		}
- 		cond_resched();
- 		spin_lock(&key_serial_lock);
- 		goto continue_scanning;
-@@ -281,12 +316,12 @@ static void key_garbage_collector(struct work_struct *work)
- 	 */
- 	kdebug("pass complete");
+		for (i = 0; i < MAX_SUPP_GROUPS; i++) {
+			if (i >= ngroups)
+				break;
+			/*
+			 * struct group_info is __randomize_layout and gid[] is
+			 * a flexible array, so this has to go through CO-RE
+			 * rather than any assumed offset.
+			 */
+			if (bpf_core_read(&gid, sizeof(gid), &gi->gid[i].val))
+				break;
+			if (gid_allowed(gid))
+				return 0;
+		}
+	}
 
--	if (new_timer != TIME64_MAX) {
--		new_timer += key_gc_delay;
--		key_schedule_gc(new_timer);
-+	if (gc->end != TIME64_MAX) {
-+		gc->end += key_gc_delay;
-+		key_schedule_gc(gc->end);
- 	}
+	count = bpf_map_lookup_elem(&denied_uids, &uid);
+	if (count)
+		__sync_fetch_and_add(count, 1);
+	else
+		bpf_map_update_elem(&denied_uids, &uid, &init, BPF_NOEXIST);
 
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
-+	if (unlikely(gc->state & KEY_GC_REAPING_DEAD_2) ||
- 	    !list_empty(&graveyard)) {
- 		/* Make sure that all pending keyring payload destructions are
- 		 * fulfilled and that people aren't now looking at dead or
-@@ -297,33 +332,42 @@ static void key_garbage_collector(struct work_struct *work)
- 		synchronize_rcu();
- 	}
-
-+	gc->state |= KEY_GC_DESTROYING;
-+
-+destroy_keys:
- 	if (!list_empty(&graveyard)) {
- 		kdebug("gc keys");
- 		key_gc_unused_keys(&graveyard);
-+		if (!list_empty(&graveyard)) {
-+			schedule_work(&key_gc_work.work);
-+			return;
-+		}
- 	}
-+	gc->state &= ~KEY_GC_DESTROYING;
-
--	if (unlikely(gc_state & (KEY_GC_REAPING_DEAD_1 |
-+	if (unlikely(gc->state & (KEY_GC_REAPING_DEAD_1 |
- 				 KEY_GC_REAPING_DEAD_2))) {
--		if (!(gc_state & KEY_GC_FOUND_DEAD_KEY)) {
-+		if (!(gc->state & KEY_GC_FOUND_DEAD_KEY)) {
- 			/* No remaining dead keys: short circuit the remaining
- 			 * keytype reap cycles.
- 			 */
- 			kdebug("dead short");
--			gc_state &= ~(KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2);
--			gc_state |= KEY_GC_REAPING_DEAD_3;
-+			gc->state &= ~(KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2);
-+			gc->state |= KEY_GC_REAPING_DEAD_3;
- 		} else {
--			gc_state |= KEY_GC_REAP_AGAIN;
-+			gc->state |= KEY_GC_REAP_AGAIN;
- 		}
- 	}
-
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3)) {
-+	if (unlikely(gc->state & KEY_GC_REAPING_DEAD_3)) {
- 		kdebug("dead wake");
- 		clear_and_wake_up_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
- 	}
-
--	if (gc_state & KEY_GC_REAP_AGAIN)
--		schedule_work(&key_gc_work);
--	kleave(" [end %x]", gc_state);
-+	if ((gc->state & KEY_GC_REAP_AGAIN) ||
-+	    test_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags))
-+		schedule_work(&key_gc_work.work);
-+	kleave(" [end %x]", gc->state);
- 	return;
-
- 	/* We found an unreferenced key - once we've removed it from the tree,
-@@ -335,7 +379,7 @@ static void key_garbage_collector(struct work_struct *work)
- 	spin_unlock(&key_serial_lock);
-
- 	list_add_tail(&key->graveyard_link, &graveyard);
--	gc_state |= KEY_GC_REAP_AGAIN;
-+	gc->state |= KEY_GC_REAP_AGAIN;
- 	goto maybe_resched;
-
- 	/* We found a restricted keyring and need to update the restriction if
-@@ -353,7 +397,7 @@ static void key_garbage_collector(struct work_struct *work)
- 	 */
- found_keyring:
- 	spin_unlock(&key_serial_lock);
--	keyring_gc(key, limit);
-+	keyring_gc(key, gc->start);
- 	goto maybe_resched;
-
- 	/* We found a dead key that is still referenced.  Reset its type and
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index b7b622bc36a1..33aa9bce3bb9 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -162,14 +162,13 @@ extern bool lookup_user_key_possessed(const struct key *key,
- extern long join_session_keyring(const char *name);
- extern void key_change_session_keyring(struct callback_head *twork);
-
--extern struct work_struct key_gc_work;
- extern unsigned key_gc_delay;
- extern void keyring_gc(struct key *keyring, time64_t limit);
- extern void keyring_restriction_gc(struct key *keyring,
- 				   struct key_type *dead_type);
- void key_set_expiry(struct key *key, time64_t expiry);
- extern void key_schedule_gc(time64_t gc_at);
--extern void key_schedule_gc_links(void);
-+void key_schedule_gc_work(bool expired);
- extern void key_gc_keytype(struct key_type *ktype);
-
- extern int key_task_permission(const key_ref_t key_ref,
-diff --git a/security/keys/key.c b/security/keys/key.c
-index e88548f1a704..dd7a72c09cc9 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -670,7 +670,7 @@ void key_put(struct key *key)
- 			}
- 			/* Mark key as safe for GC after key->user done. */
- 			clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags);
--			schedule_work(&key_gc_work);
-+			key_schedule_gc_work(false);
- 		}
- 	}
- }
-@@ -1189,7 +1189,7 @@ void key_invalidate(struct key *key)
- 		down_write_nested(&key->sem, 1);
- 		if (!test_and_set_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
- 			notify_key(key, NOTIFY_KEY_INVALIDATED, 0);
--			key_schedule_gc_links();
-+			key_schedule_gc_work(true);
- 		}
- 		up_write(&key->sem);
- 	}
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 5281da9d5bf7..40e3b2b6aca1 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -265,7 +265,7 @@ void key_remove_domain(struct key_tag *domain_tag)
- {
- 	domain_tag->removed = true;
- 	if (!key_put_tag(domain_tag))
--		key_schedule_gc_links();
-+		key_schedule_gc_work(true);
- }
-
- /*
---
-2.47.3
-
+	return -EPERM;
+}
