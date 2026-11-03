@@ -1,64 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793725126;
-	b=Ybch91Qyi0pV/uRAq3RwU0AfJKuZfNBCRRz8UmYUyVHQ19HCHgzN/uruIdQbgi825k1z
-	 4F9Cx7Z7QJhuFmhGKlEMU7/noUEFVBehqWzd6VW2tQqJXVxEupbwxNFsAxiEvEi5oxXol
-	 KVAqGDAA2A+ieQ4NtNWaWL2C5om3QYX9LtqBY6fPvAFxOF08m7ZmUlpMvICiAVnaCZVfc
-	 I5DXRZTJEpYbPui2LlF255hlnAvTu0CHQKq43PDiytZAtIeP9YxXiSk1EoM+13mkerY4F
-	 8MQRbZhXh21aCQlIS/wdGMNoM4vztc2OtahDmHKSX4WjbLDf+brr3KKKsLgAuN/D1Tg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793725126;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=fK4HGLx2bl61G7BQj3adT/NL1+Sgt8o2Uq+I8Yh/8MY=;
-	b=ezbGj1I//qDFahpLsvyRcQt1RJ5I8QFBUby7tYuwbYFjCohOa9+BXfDIAwFCGiS5KQ5l
-	 OW2mwNlZFD099yvxhh62wyyOAYkibIz6NW6g1f48hd+aoe7wAdU6bdHE633XmmXDqHu/M
-	 5RxXXPJfQ0LbX0PejvPXl+uJknvveIIIuBkR8EolaUrERlpN/tlDkL/YVISiokXTEIR7t
-	 KT26M/sbdp8wBIt5I7I0XXUY/vrpR7nkUX0GJyqZREF6YY+cvA0j9jmTdqumDV4Do9AqV
-	 XsrBwJoSIgPlpnVjHSjMtoaR7dABhfxHK0irgXlhW7zgAKW8+NrJEUGLEj6CDRN0dZg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c63b2jI9;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.49
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793731083;
+	b=GoiymVlHGiXzJXrcvQVLx3MKUeP+N1Rr/mDxw+2TAt68FJx60Am/HK+fZ6RSiDByCHFl
+	 Wg7TH204x5MBx92pGScvJnK8O2uLapiie7WtCMCo8XuUOUAtNbXikSGMchB9XNiO610e8
+	 UQCEYQ7Y92ndlH4qrqHGP9AG0PrNN+XllSZfBjmboAB7JBJfBKDxikStqI/I9N7cJRkcM
+	 dyJfzMGx0vDq66CZt7eImUwDgnn5xZ68Gh8GlRT6m0z9EZs39PlOJfqiSKTfKk5SCXCWT
+	 Kzrc/EvLLzO1/vkq8YVb7mMnjJ1u+fnov4bh6bLxrpdO0uA3a9yalr4M9fRcnTZkQdg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793731083;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=fviwjroG//qntBAn39plNVA6JSIngXI7akYS02td+eA=;
+	b=row/RqB8dNLjazGy1wEuM0zpSIhjMgoiIIz9a8vz5b2+GRnu3Y1t4q0eYf2SraSR5n7P
+	 RVAyqEc4nVAgEVwlpm3oAebUHgwMt340hcihTi+PN2gIn9ArNk1KROr9Gsk98C2iWSyZ4
+	 35Xl3B62sfQp+jFoJchqdm2l0WAp0GZxF1ARFWzsk0lk1wpRxO9u8pfLmjxAlJ0+PQP9m
+	 OeGH3L4O4kAS5BDvfLHOskBXqqpuzcJQN3lURsdYvckXXvvNF/fCBuW0KMlJ6h6nZ0xsX
+	 My1Ko+lBVyLzW9hV5+92hSJYbqFc/NHDCpuY89uvfw++ACHyjRa4J4v+Yj9dfW0vv9w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=amacapital.net;
+	spf=pass smtp.mailfrom=amacapital.net;
+	dkim=pass header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nVCsNw0y;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.49
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C5373606A332;
-	Tue,  3 Nov 2026 16:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE76E606A324
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2026 18:38:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE76E606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c63b2jI9
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1AFCB1F00919;
-	Tue,  3 Nov 2026 16:58:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793725125;
-	bh=fK4HGLx2bl61G7BQj3adT/NL1+Sgt8o2Uq+I8Yh/8MY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=c63b2jI9+4FWVTZeH4ddFhEzy4MGXLeB8Xi9Vd1lTCnx117QG8qAcTH7UVak3bxZr
-	 Z5Q4/eIWLw13tisRUunP5XPhFNGy3cWJcRXSIDSS4k1+cFGCPc4PLnQL/zcaasJujs
-	 Ov2dRGFP5/zaJBQ7DELygJWFA151+x9ylnukDsDUSRFAyjd055WI55kOpfw6uBTcpM
-	 B3PDlZnEpTUqQ4s86CV5ng+HT7/ztQzOY/HEG8DxVM0G6JRyNUSIxNojHgeSCNfDS7
-	 1gNMup02LXU+5HVu1fYBiBqJ/+9g3/p1p9hG9EUfE8ZqJCyx3h+ONAMVsu0a4JA9aq
-	 r4vCd5tW+1NXQ==
-Date: Tue, 3 Nov 2026 18:58:41 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 00/11] KEYS: Sanitize the garbage collector
-Message-ID: <auoSwRMIXLajVeWs@kernel.org>
-References: <aun4kXCJDtYomzpu@kernel.org>
- <aunNj35KmcAC4ByH@kernel.org>
- <20261103030226.2685251-1-jarkko@kernel.org>
- <641294.1793700187@dhowells-thinkpadp1gen8.rmtgb.csb>
- <669211.1793714419@dhowells-thinkpadp1gen8.rmtgb.csb>
- <683284.1793719946@dhowells-thinkpadp1gen8.rmtgb.csb>
+	dkim=pass (2048-bit key, unprotected) header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=nVCsNw0y
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5be3ed646a5so4779411e87.1
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Nov 2026 10:38:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793731081; cv=none;
+        d=google.com; s=arc-20260327;
+        b=OJA/mYRoLpiSFHVoW0nEHgY499meCw463ln1/dslX11MC1ktovugNHN9l9ZzIY4owJ
+         B10NsQh17K6LklY0AupJdXS7addEFBQ6UBEscCMRuaYrgwEN/Dc7yU6AMXT9KgU7pT/l
+         fgTDDOrtd7vCW7BAXA5HTpGx8G4eQyeeO/DD3p5QwGT2DHzHWKdi4RCvo+3BKkMVRqza
+         vblYUg2XlhEBA9ehLx9+eiDmTm0ak3VxsGMCjYRchy/miG1QSSjhuL0Gj+AyTd5RqNDf
+         G3fSt4+HOBWiJgseQL6OpwiVXyU6AWYCVAAbI4oVhl4hkRJWBZAKjd8Hby7RfRXnU4Bj
+         9+xA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fviwjroG//qntBAn39plNVA6JSIngXI7akYS02td+eA=;
+        fh=IyledhKrhJFTEEIE22S1VJyGaCQCGxlyVyG5JGM9914=;
+        b=AbPFYKEcO4Iu5bxCoebxroR8WyeRG+iieKQtn5TEpLTeVxjjABFqKMus72R9PzZaVJ
+         XouQi8cHu7Jrr6f/iwxYEnT/vv4PZ9foBRaaXIhFDj0m93s8M2ngmwX4648Rixlu4nD9
+         ueYvljhV+0k+a8OpXKwNZy8LE8fMzpqbOBTBVaY6li42l4bi55O3epdl0UOmWoAsFbqe
+         k9J08ejqZrk0+E86wH7HtSHNxc0kEz6YufaBr8swCS7Hjw+JNgC5JV4Ggg+ykpWxfeQw
+         Q5gmiZuaiPBqi12dUENgdzca6ZShDblLcTNdOkWtsVehD/rA3FtNZQpXuvLqA/tdY7Mh
+         wdyQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20260707.gappssmtp.com; s=20260707; t=1793731081; x=1794335881; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fviwjroG//qntBAn39plNVA6JSIngXI7akYS02td+eA=;
+        b=nVCsNw0y6hskrENSBv8EU3amWuYztT8dLT5p7AwDRfBEJgh5KCH4wcnDy1+4F8oz26
+         mugE2B8LWKKCR0Y9k2Z98xSLZ5eNvcfR272i+te/45lnsb9AWyAtGJcy3D9bL7ir+f71
+         qQpNmsSv7T5esoFkU7QTr7zF74lmigXGg9dzQbwmAGy2M5yd+bQ/6ZIx3r0WugxBJ5RO
+         hJm/oKDuQExrJP3FUtAD2VCpRZdYySsqRCW8MbRDOe9JChKA+5WjiMn7EutjmI1dtjC9
+         TX6PAuZUUq43suQ5ErDcrLsoaFbkM/WfFXDhbG1erayEtyXYdgmMQ2TL7MALbarBBDH6
+         21vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793731081; x=1794335881;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fviwjroG//qntBAn39plNVA6JSIngXI7akYS02td+eA=;
+        b=K7/pgbHkzUOHzhHWRgSdWHA3DTe3tf7OXwGEujjLK4yLEydsgX0cKbRAm0E437hGRd
+         Uyz/z22An4ivJXjcz64UoqJ/1evJo5wuqNHpm0AcIqEF7GVE2rG2E5oO/TcfZMsK+S6O
+         NZaf/+zcpyYcAwG8gitJEAEGWoaFsxCZIwdhybM/AwEt9JfP3IXtVY7HcjDj3Ez59RxZ
+         R3mO4PVI8Xuec8+C2pLHqHRd/66xDmyIadd1xvnM22+DOuPS3nsb4y1tfy567wRF0fXx
+         RlbjhzfVZfSqy0jB4e4UFTFVe8aTJXfFhZmNzHEo7yI9B8H/lZsD8GL2l6vgu6dn0Wxr
+         0mIQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz6dBXXutW1lSjSPAOBq0aWrKg2q3WkMBHGH+lbHpaigHIZ72wNecMns2q33jIys6iXEgR57dWfr06nPG68hEFU6tlacMA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9hGdvdu7O8qW4avGVL0sKRCIyfiPKd/DASDfDvsCr2C9ElVhJK
+	T86pqXorxr/6gv1oQVdxuTCno4/Q3VWgZcYlh9kPywrbcYFbzxDyEpnYHzfWAFebqIYBvc43Jp0
+	6UHu0sGJYSe4g1PwfiThbuOuMVxsWBWwYjh2Pnfyr
+X-Gm-Gg: AYBFou0vawfdGgL8pOEebBAdYerap/INy/yQSI1TjboVP6bbEZgYy3TiT0reL4JMU9H
+	qz6wc6PwMkaUapdUbi/d4vev00BBREodROYIeP3XwPuSQSMj9s0zNEgA7p9YE4xLQn+N+4IlhnI
+	cP9IPR2pt8lfMJQLzqkxdhV7FiChOuWFn9exX5L2S8d2GQrubv/M/ty6MTSMIYC5DiYuIAyTuxR
+	0OZV5xiHkgoWBhyhEs0061Roxw5yTeNDQyfzV1Qoc466MgQ/hAfaZJEfO9q9B2ZqmkjNaBRXiyg
+	t00Iz7dwqhKTmEV3/JwyBKGzq6AkfBdONUk9jg7Uik9o2qtFdC+48BUfBmcQ+fbLLTPi21cFen6
+	B8Ha1ChScur3lzzvVTNSiNJR8ClH3aEdk0Q==
+X-Received: by 2002:a05:6512:3ca7:b0:5bc:e8b0:5652 with SMTP id
+ 2adb3069b0e04-5bfd9589099mr5147409e87.63.1793731080985; Tue, 03 Nov 2026
+ 10:38:00 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -68,180 +104,73 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <683284.1793719946@dhowells-thinkpadp1gen8.rmtgb.csb>
+References: <20261028221705.3915340-1-halg@google.com> <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
+ <auM32mOlBLu6ZUlt@google.com>
+In-Reply-To: <auM32mOlBLu6ZUlt@google.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Tue, 3 Nov 2026 10:37:48 -0800
+X-Gm-Features: AclHuK_sfbKF658HbwyCTsOToNn9cXs0qzXn8uaPUG4vxi_nXA5hXmjvbt4jwHQ
+Message-ID: <CALCETrUD4vh_iSHV7G0bprUFU8=c+ECo701-tXcbQ3UXBWC1ig@mail.gmail.com>
+Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
+ opt-in netns loopback
+To: "Hallgrimur H. Gunnarsson" <halg@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jann Horn <jannh@google.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	KP Singh <kpsingh@kernel.org>, Jonathan Calmels <jcalmels@3xx0.net>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	containers@lists.linux.dev, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 03, 2026 at 03:32:26PM +0000, David Howells wrote:
-> Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> 
-> > > Actually, it can be done if the rxrpc and rxrpc_s key types are moved out
-> > > into their own module upon which rxrpc.ko depends.
-> > 
-> > Hmm... I'll experiment with this, thanks. This was useful.
-> 
-> It's not entirely trivial.  I've attached a patch that makes a start on it,
-> but it needs access to bits of the security class implementations (rxkad and
-> rxgk).  Those bits only parse the key (and in the case of rxgk access the krb5
-> code), so in theory it should be possible to extract them out.
-> 
-> One thing that needs to be considered, though, is the security class selected
-> should really be up to the application, not merely switched on by the
-> security_id.  This is one of the reasons I would like to add an add_key2()
-> syscall that adds an additional parameter string argument.
+On Thu, Oct 29, 2026 at 5:11=E2=80=AFAM Hallgrimur H. Gunnarsson
+<halg@google.com> wrote:
+>
+> On Wed, Oct 28, 2026 at 03:56:11PM -0700, Andy Lutomirski wrote:
 
-Thanks I'll investigate this.
+> >
+> > Why should the task's cap masks affect this?  *Maybe* cap_bset makes
+> > sense, but I'm struggling a bit to see why cap_permitted and
+> > cap_effective should matter.
+>
+> Sorry, the phrasing here may have been misleading. Just to clarify:
+> none of the creating task's capability sets (cap_bset, cap_permitted
+> or cap_effective) are used to restrict the new user namespace.
+>
+> When I wrote "reusing the existing task cap_bset, cap_permitted and
+> cap_effective sets on namespace entry", I was contrasting this with
+> the prior series from 2024 [1], which proposed adding a 6th per-thread
+> capability set to struct cred.
+>
+> In this series, when a task creates or enters a user namespace, we
+> simply initialize its new cred->cap_{bset,permitted,effective} in
+> that namespace to user_ns->cap_bset instead of CAP_FULL_SET.
+>
 
-> 
-> David
-> ---
-> commit 365e715b91b9b2ac3030f51c31ff4de8f24a4e19
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Tue Nov 3 14:15:39 2026 +0000
-> 
->     rxrpc: Move key types to own module
->     
->     Move the rxrpc and rxrpc_s key types to their own module so that if keys
->     pin the module that implements the type, they don't cause outstanding
->     connections to make the module unremovable.
->     
->     Signed-off-by: David Howells <dhowells@redhat.com>
-> 
-> diff --git a/net/Makefile b/net/Makefile
-> index 5b2dd7f07a85..f543097c89b9 100644
-> --- a/net/Makefile
-> +++ b/net/Makefile
-> @@ -30,7 +30,7 @@ obj-$(CONFIG_LAPB)		+= lapb/
->  obj-$(CONFIG_CAN)		+= can/
->  obj-$(CONFIG_BT)		+= bluetooth/
->  obj-$(CONFIG_SUNRPC)		+= sunrpc/
-> -obj-$(CONFIG_AF_RXRPC)		+= rxrpc/
-> +obj-$(CONFIG_RXRPC_KEYS)	+= rxrpc/
->  obj-$(CONFIG_AF_KCM)		+= kcm/
->  obj-$(CONFIG_STREAM_PARSER)	+= strparser/
->  obj-$(CONFIG_ATM)		+= atm/
-> diff --git a/net/rxrpc/Kconfig b/net/rxrpc/Kconfig
-> index 2cebb666dc07..ffd42d71f85a 100644
-> --- a/net/rxrpc/Kconfig
-> +++ b/net/rxrpc/Kconfig
-> @@ -3,6 +3,14 @@
->  # RxRPC session sockets
->  #
->  
-> +config RXRPC_KEYS
-> +	tristate "RxRPC key types"
-> +	select CRYPTO
-> +	select CRYPTO_LIB_DES if RXKAD
-> +	select KEYS
-> +	help
-> +	  Say Y or M here to include support for rxrpc and rxrpc_s key types.
-> +
->  config AF_RXRPC
->  	tristate "RxRPC session sockets"
->  	depends on INET
-> @@ -10,6 +18,7 @@ config AF_RXRPC
->  	select CRYPTO_LIB_DES if RXKAD
->  	select KEYS
->  	select NET_UDP_TUNNEL
-> +	select RXRPC_KEYS
->  	help
->  	  Say Y or M here to include support for RxRPC session sockets (just
->  	  the transport part, not the presentation part: (un)marshalling is
-> diff --git a/net/rxrpc/Makefile b/net/rxrpc/Makefile
-> index f994f9f30a29..196e0ce085ba 100644
-> --- a/net/rxrpc/Makefile
-> +++ b/net/rxrpc/Makefile
-> @@ -3,6 +3,7 @@
->  # Makefile for Linux kernel RxRPC
->  #
->  
-> +obj-$(CONFIG_RXRPC_KEYS) += rxrpc_keys.o
->  obj-$(CONFIG_AF_RXRPC) += rxrpc.o
->  
->  rxrpc-y := \
-> @@ -19,7 +20,6 @@ rxrpc-y := \
->  	input_rack.o \
->  	insecure.o \
->  	io_thread.o \
-> -	key.o \
->  	local_event.o \
->  	local_object.o \
->  	misc.o \
-> @@ -32,7 +32,6 @@ rxrpc-y := \
->  	rtt.o \
->  	security.o \
->  	sendmsg.o \
-> -	server_key.o \
->  	skbuff.o \
->  	txbuf.o \
->  	utils.o
-> @@ -45,5 +44,9 @@ rxrpc-$(CONFIG_RXGK) += \
->  	rxgk_app.o \
->  	rxgk_kdf.o
->  
-> +rxrpc_keys-y := \
-> +	key.o \
-> +	server_key.o
-> +
->  obj-$(CONFIG_RXPERF) += rxperf.o
->  obj-$(CONFIG_KUNIT) += tests/
-> diff --git a/net/rxrpc/key.c b/net/rxrpc/key.c
-> index cbd26da44951..c353a4304788 100644
-> --- a/net/rxrpc/key.c
-> +++ b/net/rxrpc/key.c
-> @@ -893,3 +893,39 @@ static long rxrpc_read(const struct key *key,
->  	_leave(" = %zu", size);
->  	return size;
->  }
-> +
-> +/*
-> + * initialise and register the RxRPC protocol
-> + */
-> +static int __init rxrpc_keys_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = register_key_type(&key_type_rxrpc);
-> +	if (ret < 0) {
-> +		pr_crit("Cannot register client key type\n");
-> +		goto error_key_type;
-> +	}
-> +
-> +	ret = register_key_type(&key_type_rxrpc_s);
-> +	if (ret < 0) {
-> +		pr_crit("Cannot register server key type\n");
-> +		goto error_key_type_s;
-> +	}
-> +
-> +	return 0;
-> +
-> +error_key_type_s:
-> +	unregister_key_type(&key_type_rxrpc);
-> +error_key_type:
-> +	return ret;
-> +}
-> +
-> +static void __exit rxrpc_keys_exit(void)
-> +{
-> +	unregister_key_type(&key_type_rxrpc_s);
-> +	unregister_key_type(&key_type_rxrpc);
-> +}
-> +
-> +module_init(rxrpc_keys_init);
-> +module_exit(rxrpc_keys_exit);
-> diff --git a/net/rxrpc/server_key.c b/net/rxrpc/server_key.c
-> index 3efe104b1930..b5e60a3364ad 100644
-> --- a/net/rxrpc/server_key.c
-> +++ b/net/rxrpc/server_key.c
-> @@ -42,6 +42,7 @@ struct key_type key_type_rxrpc_s = {
->  	.destroy	= rxrpc_destroy_s,
->  	.describe	= rxrpc_describe_s,
->  };
-> +EXPORT_SYMBOL(key_type_rxrpc_s);
->  
->  /*
->   * Vet the description for an RxRPC server key.
-> 
+Okay, this makes *more* sense, but I think it's too weak.
 
+I have a sort-of goal of having the creation of unprivileged
+namespaces be allowed in most contexts by default, *even in Docker*
+(which would involve the Docker team changing their default seccomp
+rules, but that bridge can be crossed later).  (In furtherance of this
+goal, I fixed an ancient bug in newuidmap that gets us quite a bit
+closer a couple weeks ago.)
 
-Br, Jarkko
+But tying this mitigation to a parent userns means that it's
+completely unusable in the single-deep case.
+
+I do have a question about this whole scheme, though: are we talking
+*just* about CAP_NET_ADMIN?  That is, is there any other bit that has
+anywhere near enough security relevance to make this kind of thing
+worthwhile?  Because if it's really just a single bit control, maybe
+we can come up with a nicer scheme.
+
+--=20
+Andy Lutomirski
+AMA Capital Management, LLC
