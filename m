@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793675002;
-	b=JH23PyH1SQGr74Tm5lWwdrHQWhdnj7yOLWw0laB711iTMziFUsgantkUVREq99sF6XMn
-	 EQM4IU5CkKeHnyERLIevLXF5YUpujoZYWeimbEpuDfbcFOA5kgsFXrmvo+Ic3ChXMqFUH
-	 uKYXLyIhYdHUT+UrjgIKJM6oVX9yurY5JrY9vNL4iSb2612x0y37QtQm2X1/YBWN6GkCo
-	 nGQaXdUyAEjBw7WynwAZo3tpsBlvh5RmX27dm+A+hrp/Dh6d7B5TUhK3fXH61RZmt4dcg
-	 nIzHmuiIT+W2gUmdT5eh89Ra5UaquQtiYvciy/N7/sTQ8YYdUT6hyEyOV8e3rXkRpEA==
+	t=1793675016;
+	b=yKFXqpObsmsJ1JuQXraClyZntc02JDcOO8uftsKXnCDMt7t1j2q9NdXUmc2bgZ6duRAG
+	 59R7HwsmKiWxN/2q/OgB4H83XE7gpAbzE9Lhc6oot/iD3YWvban2zhS6OMb0WCwvI6XuC
+	 bZVgPASGQOaAJa0RmBwOtg7oFMXCSmXSGp0k+q97GPmpoXVdr85ivgEu7zEXu/5VJEqqX
+	 a58O3Yc3y45KlqBwhZrLkirGj+lia1dTazJwZYOVjJum8xNCHekzkopaPJPwoCN7MF/gQ
+	 cgLjc3DFL4RCTfH0NRXjWB3aEQ3MDNOmflUEP6dfDiWZbaftPTj48AeLgbKypWYVVGg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793675002;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793675016;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=Sb2XMtjKsz+jI29azHxtIIZugzSbewTBfgbly0UTNlM=;
-	b=RsvukDG6X25F4W2HRntmYUjAbPtzYthkG+x5oRrvEBEQAMoR9Jt78CxUhlIJJzuT1x26
-	 BAPrYG+4bTNab4X7Agtlx/ld6yWFLULNn7ALztUrAgd8Yydhjd+PLY0l+64F3lcQWpVqd
-	 Xepmr/sVG5Jds/IY3Gz8HqBIGqNkOXlg4cxqU7abeoq3qrRrOtnFzwVvJYHbx5WoJY6uW
-	 fPTmKuu5E2JwxWUuXW34YcliNaNrRzd4zQMGO5w4kVUI2t/8T7iKAQgcNt8Vzx6M67sz9
-	 1XPvDXey7JqvO6thQJcvJoB/uyffQdd1TlvY8Egf3y1fTPWwwzsjnZtg/ML65T1XHjQ==
+	bh=EGMzYs8KjARURB9mPV4CRKXaT+7khpj+WmP5njgx1NA=;
+	b=gdHxz0p4QTGfWn7oPE9T9/1fKmpQVvSKQ8K5abfSjWhcXin1Kb6OWP460YBB+/H2u2P+
+	 iiNDxAiKK9mIiz072l4wVIinknpaat3pbg7ez6QYuQqFWuGQJzaxOIKexTS3Baj9JUjPT
+	 CSwI/+Zh65mxNThwPM2B9WCodkekAoCT0iGprqEU/nZYODTuj/Sp+xb88bZx6CeVZIG9m
+	 2u1LsLPWTSJ+9yVA7VPubAvZYosZVAu/guLJxkxWcEifkxBiHWMOvzOwdy7tVp++Hy3eL
+	 rAzS6BSWYj5Vudj3vtLcQ7zDAKm0uDxHz1q6chPzdtD0+YNwag6P+OCgvp74pMQr8Sw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B8ukt+bh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=giNp4H2r;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 4B265606A32D;
-	Tue,  3 Nov 2026 03:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E79E2606D806;
+	Tue,  3 Nov 2026 03:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B8ukt+bh
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5CB4E1F00A15;
-	Tue,  3 Nov 2026 03:03:21 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=giNp4H2r
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 424801F00A02;
+	Tue,  3 Nov 2026 03:03:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793675001;
-	bh=Sb2XMtjKsz+jI29azHxtIIZugzSbewTBfgbly0UTNlM=;
+	s=k20260515; t=1793675015;
+	bh=EGMzYs8KjARURB9mPV4CRKXaT+7khpj+WmP5njgx1NA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=B8ukt+bhl8JyK9XykNxTse88EYFzR6NjbR4YSc7f1QJUPo4SzvzQdTkdXUrct8958
-	 AE4RgEzzZMqAZesur7+M4PbSkcbHqpDap8BAYTYpYCD+Lg5+EMe3HpE5HmPTvkswRv
-	 JxHT6Q3tfKZO09Jhnx/3KuhoU8UFcHzpfF3J41JeWuBg784tMC389l2e47B33Mtw4t
-	 whMjeb9XSKayXCs5bEbgFZU5Je3/zEo6tvJsvzjLISBFP1+xpg8L678VbKqtOS6xFo
-	 JaY5E6tPzkgWjsym0P0/cpibY7KceHlELo7X4ZP2iPsUKwfojMQZqqlf9U6zl/MlcV
-	 p2tMBsieJK6bA==
+	b=giNp4H2r7p4Qp5y2HeJKcuHiiLK4eiwUlC8kQLZHBBBJOA2bpyiYj7oI4y/cAWE4F
+	 dsX5P3bQ7A9e5R1YRX7CsxXachHqkA9XUFJsmCjYe1oo/22SgreMih7twmjiPLqDH7
+	 /H72d5HdIzR+5lpRHI0tODA7HWAXzVhsn6jJZ7WrtG7musgYTLC8hakqh+vxQhyRKm
+	 JCGAl+YfmMCJ9MT7Lxuj41qN8jw8QRRcWyzNDQzhbrpr5W5w8UrZ/jQr9PhSSRWi2j
+	 amhwCLevvOLgtKgurUY+LEP1UZdgvOu3j8+XgBPxhv8508vBPZVLyrEtBMzNrj+TE2
+	 pLafbRpIZleIA==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Eric Biggers <ebiggers@kernel.org>,
@@ -52,13 +52,11 @@ Cc: Eric Biggers <ebiggers@kernel.org>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
 	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH v2 08/11] KEYS: trusted: TEE: Synchronize session lifetime
-Date: Tue,  3 Nov 2026 05:02:13 +0200
-Message-ID: <20261103030226.2685251-9-jarkko@kernel.org>
+Subject: [RFC PATCH v2 11/11] KEYS: key_garbage_collector(): process in chunks
+Date: Tue,  3 Nov 2026 05:02:16 +0200
+Message-ID: <20261103030226.2685251-12-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261103030226.2685251-1-jarkko@kernel.org>
 References: <20261103030226.2685251-1-jarkko@kernel.org>
@@ -73,254 +71,390 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Even with sysfs bind attributes suppressed on trusted_key_driver, the
-parent TEE device can still remove trusted_key_device while live trusted
-keys keep trusted.ko loaded, and init_trusted() updated static calls
-only after backend init() had already registered key_type_trusted.
+key_garbage_collector() has a design that is not resistant enough for
+workqueue lockups. The duration scales up relative to the number of items
+in the serial tree, which causes a reoccuring theme of being guilty of
+causing workqueue lockups.
 
-Update the static calls before invoking backend init() and reset them on
-failure. In the TEE backend, guard session context state with a mutex,
-publish pvt_data.dev before registering key_type_trusted, sanitize
-pvt_data on probe failure and remove, and reject seal/unseal/get_random
-with -ENODEV when no active TEE session is bound.
+Resolve the problem by processing in chunks:
 
+1. Declare a static variable key_gc_work, which owns the garbage collection
+   in-flight state, and key_schedule_gc_work() for re-scheduling the work.
+2. Define KEY_GC_CHUNK_SIZE, set to 64 keys, as the bound for the number
+   of items scanned and destroyed.
+3. Define KEY_GC_DESTROYING to mark resume to destruction without repeating
+   the RCU grace period.
+4. Define KEY_GC_REAP_REQUESTED for preserving full-pass requests across
+   the continuations.
+
+keygcbench results without the patch:
+
+unused:   min=413.359 avg=1817.240 max=3221.120 var=1970880.024
+expired:  min=0.002 avg=1360.124 max=2481.990 var=1055093.994
+combined: min=0.002 avg=1542.970 max=3221.120 var=1471557.422
+
+keygcbench results with the patch:
+
+unused:   min=0.005 avg=0.126 max=54.173 var=0.946
+expired:  min=0.002 avg=0.210 max=216.470 var=7.894
+combined: min=0.002 avg=0.158 max=216.470 var=3.627
+
+These results translate to:
+
+- >99.9% drop in the combined variance.
+- 3.0% increase in the total task time.
+
+The value 64 for KEY_GC_CHUNK_SIZE was cherry-picked from the set {1, 2,
+..., 1024} by running the benchmark for each chunk size three times.
+
+At the far left variance is 97% lower but at the same time total time
+grows by 133%, when compared to the selected chunk size. The size was
+picked based on getting a reasonable variance with a minimal throughput
+decline.
+
+Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/tree/package/keygcbench
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- security/keys/trusted-keys/trusted_core.c | 15 ++--
- security/keys/trusted-keys/trusted_tee.c  | 86 +++++++++++++++++------
- 2 files changed, 75 insertions(+), 26 deletions(-)
+ security/keys/gc.c       | 153 ++++++++++++++++++++++++++-------------
+ security/keys/internal.h |   3 +-
+ security/keys/key.c      |   4 +-
+ security/keys/keyring.c  |   2 +-
+ 4 files changed, 105 insertions(+), 57 deletions(-)
 
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index 0509d9955f2a..11d7d296d063 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -373,14 +373,19 @@ static int __init init_trusted(void)
- 		if (!get_random)
- 			get_random = kernel_get_random;
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 334b86f2c1ca..a7da604bb6af 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -11,16 +11,53 @@
+ #include <keys/keyring-type.h>
+ #include "internal.h"
  
-+		static_call_update(trusted_key_seal, trusted_key_sources[i].ops->seal);
-+		static_call_update(trusted_key_unseal, trusted_key_sources[i].ops->unseal);
-+		static_call_update(trusted_key_get_random, get_random);
-+		migratable = trusted_key_sources[i].ops->migratable;
++#define KEY_GC_CHUNK_SIZE 64
 +
- 		ret = trusted_key_sources[i].ops->init();
- 		if (!ret) {
--			static_call_update(trusted_key_seal, trusted_key_sources[i].ops->seal);
--			static_call_update(trusted_key_unseal, trusted_key_sources[i].ops->unseal);
--			static_call_update(trusted_key_get_random, get_random);
--
- 			trusted_key_exit = trusted_key_sources[i].ops->exit;
--			migratable = trusted_key_sources[i].ops->migratable;
-+		} else {
-+			static_call_update(trusted_key_seal, NULL);
-+			static_call_update(trusted_key_unseal, NULL);
-+			static_call_update(trusted_key_get_random, NULL);
-+			migratable = 0;
- 		}
- 
- 		if (!ret || ret != -ENODEV)
-diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
-index 5d1288189e5c..a2ed16e0db3f 100644
---- a/security/keys/trusted-keys/trusted_tee.c
-+++ b/security/keys/trusted-keys/trusted_tee.c
-@@ -9,6 +9,7 @@
- #include <linux/err.h>
- #include <linux/key-type.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/tee_drv.h>
-@@ -56,6 +57,8 @@ struct trusted_key_tee_private {
- };
- 
- static struct trusted_key_tee_private pvt_data;
-+/* Do not hold this mutex across key type registration or unregistration. */
-+static DEFINE_MUTEX(trusted_key_tee_mutex);
++/*
++ * Reaper for unused keys.
++ */
++static void key_garbage_collector(struct work_struct *work);
++
++static struct {
++	time64_t start;			/* expiry range start */
++	time64_t end;			/* expiry range end */
++	struct rb_node *cursor;		/* serial tree position */
++	u8 state;			/* state flags */
++	struct work_struct work;	/* work item */
++} key_gc_work = {
++	.work = __WORK_INITIALIZER(key_gc_work.work, key_garbage_collector),
++};
++
+ /*
+  * Delay between key revocation/expiry in seconds
+  */
+-unsigned key_gc_delay = 5 * 60;
++unsigned int key_gc_delay = 5 * 60;
  
  /*
-  * Have the TEE seal(encrypt) the symmetric key
-@@ -67,6 +70,12 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 	struct tee_param param[4];
- 	struct tee_shm *reg_shm = NULL;
- 
-+	mutex_lock(&trusted_key_tee_mutex);
-+	if (!pvt_data.ctx) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
+- * Reaper for unused keys.
++ * Reaper for links from keyrings to dead keys.
+  */
+-static void key_garbage_collector(struct work_struct *work);
+-DECLARE_WORK(key_gc_work, key_garbage_collector);
++static void key_gc_timer_func(struct timer_list *);
++static DEFINE_TIMER(key_gc_timer, key_gc_timer_func);
 +
- 	memset(&inv_arg, 0, sizeof(inv_arg));
- 	memset(&param, 0, sizeof(param));
- 
-@@ -74,7 +83,8 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 					      sizeof(p->key) + sizeof(p->blob));
- 	if (IS_ERR(reg_shm)) {
- 		dev_err(pvt_data.dev, "shm register failed\n");
--		return PTR_ERR(reg_shm);
-+		ret = PTR_ERR(reg_shm);
-+		goto out_unlock;
- 	}
- 
- 	inv_arg.func = TA_CMD_SEAL;
-@@ -100,7 +110,8 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
- 	}
- 
- 	tee_shm_free(reg_shm);
--
-+out_unlock:
-+	mutex_unlock(&trusted_key_tee_mutex);
- 	return ret;
- }
- 
-@@ -114,6 +125,12 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
- 	struct tee_param param[4];
- 	struct tee_shm *reg_shm = NULL;
- 
-+	mutex_lock(&trusted_key_tee_mutex);
-+	if (!pvt_data.ctx) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
++static time64_t key_gc_next_run = TIME64_MAX;
++static unsigned long key_gc_flags;
++#define KEY_GC_KEY_EXPIRED	0	/* A key expired and needs unlinking */
++#define KEY_GC_REAP_REQUESTED	1	/* Another complete pass was requested */
 +
- 	memset(&inv_arg, 0, sizeof(inv_arg));
- 	memset(&param, 0, sizeof(param));
- 
-@@ -121,7 +138,8 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
- 					      sizeof(p->key) + sizeof(p->blob));
- 	if (IS_ERR(reg_shm)) {
- 		dev_err(pvt_data.dev, "shm register failed\n");
--		return PTR_ERR(reg_shm);
-+		ret = PTR_ERR(reg_shm);
-+		goto out_unlock;
- 	}
- 
- 	inv_arg.func = TA_CMD_UNSEAL;
-@@ -147,7 +165,8 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
- 	}
- 
- 	tee_shm_free(reg_shm);
--
-+out_unlock:
-+	mutex_unlock(&trusted_key_tee_mutex);
- 	return ret;
- }
- 
-@@ -161,13 +180,20 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
- 	struct tee_param param[4];
- 	struct tee_shm *reg_shm = NULL;
- 
-+	mutex_lock(&trusted_key_tee_mutex);
-+	if (!pvt_data.ctx) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
++/*
++ * Schedule a new GC pass or re-schedule an ongoing GC pass.
++ */
++void key_schedule_gc_work(bool expired)
++{
++	unsigned long flags = BIT(KEY_GC_REAP_REQUESTED);
 +
- 	memset(&inv_arg, 0, sizeof(inv_arg));
- 	memset(&param, 0, sizeof(param));
++	if (expired)
++		flags |= BIT(KEY_GC_KEY_EXPIRED);
++
++	/* Publish all request flags together, after the caller's updates. */
++	set_mask_bits(&key_gc_flags, 0, flags);
++	schedule_work(&key_gc_work.work);
++}
  
- 	reg_shm = tee_shm_register_kernel_buf(pvt_data.ctx, key, key_len);
- 	if (IS_ERR(reg_shm)) {
- 		dev_err(pvt_data.dev, "key shm register failed\n");
--		return PTR_ERR(reg_shm);
-+		ret = PTR_ERR(reg_shm);
-+		goto out_unlock;
- 	}
- 
- 	inv_arg.func = TA_CMD_GET_RANDOM;
-@@ -189,7 +215,8 @@ static int trusted_tee_get_random(unsigned char *key, size_t key_len)
- 	}
- 
- 	tee_shm_free(reg_shm);
--
-+out_unlock:
-+	mutex_unlock(&trusted_key_tee_mutex);
- 	return ret;
- }
- 
-@@ -205,50 +232,67 @@ static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
- static int trusted_key_probe(struct tee_client_device *rng_device)
+ /**
+  * key_gc_flush - Wait for pending key unlinks and garbage collection.
+@@ -32,19 +69,10 @@ void key_gc_flush(void)
  {
- 	struct device *dev = &rng_device->dev;
-+	struct tee_context *ctx;
- 	int ret;
- 	struct tee_ioctl_open_session_arg sess_arg;
+ 	do {
+ 		rcu_barrier();
+-	} while (flush_work(&key_gc_work));
++	} while (flush_work(&key_gc_work.work));
+ }
+ EXPORT_SYMBOL_GPL(key_gc_flush);
  
-+	mutex_lock(&trusted_key_tee_mutex);
-+	if (pvt_data.ctx) {
-+		ret = -EBUSY;
-+		goto out_unlock;
-+	}
-+
- 	memset(&sess_arg, 0, sizeof(sess_arg));
+-/*
+- * Reaper for links from keyrings to dead keys.
+- */
+-static void key_gc_timer_func(struct timer_list *);
+-static DEFINE_TIMER(key_gc_timer, key_gc_timer_func);
+-
+-static time64_t key_gc_next_run = TIME64_MAX;
+-static unsigned long key_gc_flags;
+-#define KEY_GC_KEY_EXPIRED	0	/* A key expired and needs unlinking */
+ /*
+  * Schedule a garbage collection run.
+  * - time precision isn't particularly important
+@@ -58,7 +86,8 @@ void key_schedule_gc(time64_t gc_at)
  
--	pvt_data.ctx = tee_client_open_context(NULL, optee_ctx_match, NULL,
--					       NULL);
--	if (IS_ERR(pvt_data.ctx))
--		return -ENODEV;
-+	ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
-+	if (IS_ERR(ctx)) {
-+		ret = -ENODEV;
-+		goto out_unlock;
-+	}
- 
- 	memcpy(sess_arg.uuid, rng_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
- 	sess_arg.clnt_login = TEE_IOCTL_LOGIN_REE_KERNEL;
- 	sess_arg.num_params = 0;
- 
--	ret = tee_client_open_session(pvt_data.ctx, &sess_arg, NULL);
-+	ret = tee_client_open_session(ctx, &sess_arg, NULL);
- 	if ((ret < 0) || (sess_arg.ret != 0)) {
- 		dev_err(dev, "tee_client_open_session failed, err: %x\n",
- 			sess_arg.ret);
- 		ret = -EINVAL;
- 		goto out_ctx;
+ 	if (gc_at <= now) {
+ 		kdebug("IMMEDIATE");
+-		schedule_work(&key_gc_work);
++		/* Catch expirations that became due during the scan. */
++		key_schedule_gc_work(true);
+ 	} else if (gc_at < key_gc_next_run) {
+ 		kdebug("DEFERRED");
+ 		key_gc_next_run = gc_at;
+@@ -80,15 +109,6 @@ void key_set_expiry(struct key *key, time64_t expiry)
  	}
-+	pvt_data.ctx = ctx;
- 	pvt_data.session_id = sess_arg.session;
--
--	ret = register_key_type(&key_type_trusted);
--	if (ret < 0)
--		goto out_sess;
--
- 	pvt_data.dev = dev;
-+	mutex_unlock(&trusted_key_tee_mutex);
- 
--	return 0;
-+	ret = register_key_type(&key_type_trusted);
-+	if (!ret)
-+		return 0;
- 
--out_sess:
--	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
-+	mutex_lock(&trusted_key_tee_mutex);
-+	tee_client_close_session(ctx, pvt_data.session_id);
- out_ctx:
--	tee_client_close_context(pvt_data.ctx);
--
-+	tee_client_close_context(ctx);
-+	pvt_data.ctx = NULL;
-+	pvt_data.dev = NULL;
-+	pvt_data.session_id = 0;
-+out_unlock:
-+	mutex_unlock(&trusted_key_tee_mutex);
- 	return ret;
  }
  
- static void trusted_key_remove(struct tee_client_device *dev)
+-/*
+- * Schedule a dead links collection run.
+- */
+-void key_schedule_gc_links(void)
+-{
+-	set_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags);
+-	schedule_work(&key_gc_work);
+-}
+-
+ /*
+  * Some key's cleanup time was met after it expired, so we need to get the
+  * reaper to go through a cycle finding expired keys.
+@@ -97,7 +117,7 @@ static void key_gc_timer_func(struct timer_list *unused)
  {
- 	unregister_key_type(&key_type_trusted);
-+
-+	mutex_lock(&trusted_key_tee_mutex);
- 	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
- 	tee_client_close_context(pvt_data.ctx);
-+	pvt_data.ctx = NULL;
-+	pvt_data.dev = NULL;
-+	pvt_data.session_id = 0;
-+	mutex_unlock(&trusted_key_tee_mutex);
+ 	kenter("");
+ 	key_gc_next_run = TIME64_MAX;
+-	key_schedule_gc_links();
++	key_schedule_gc_work(true);
  }
  
- static const struct tee_client_device_id trusted_key_id_table[] = {
+ /*
+@@ -105,7 +125,9 @@ static void key_gc_timer_func(struct timer_list *unused)
+  */
+ static noinline void key_gc_unused_keys(struct list_head *keys)
+ {
+-	while (!list_empty(keys)) {
++	unsigned int chunk = KEY_GC_CHUNK_SIZE;
++
++	while (!list_empty(keys) && chunk--) {
+ 		struct key *key =
+ 			list_entry(keys->next, struct key, graveyard_link);
+ 		struct module *owner = key->type->owner;
+@@ -151,35 +173,46 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
+ static void key_garbage_collector(struct work_struct *work)
+ {
+ 	static LIST_HEAD(graveyard);
+-	u8 gc_state = 0;
++	typeof(key_gc_work) *gc = &key_gc_work;
+ #define KEY_GC_REAP_AGAIN	0x01	/* - Need another cycle */
+ #define KEY_GC_REAPING_LINKS	0x02	/* - We need to reap links */
++#define KEY_GC_DESTROYING	0x04	/* - We need to destroy keys */
+ 
+-	struct rb_node *cursor;
++	unsigned int chunk = KEY_GC_CHUNK_SIZE;
++	unsigned long flags;
+ 	struct key *key;
+-	time64_t new_timer, limit, expiry;
++	time64_t expiry;
+ 
+-	kenter("[%lx]", key_gc_flags);
++	kenter("[%lx,%x]", key_gc_flags, gc->state);
+ 
+-	limit = ktime_get_real_seconds();
++	if (gc->state & KEY_GC_DESTROYING)
++		goto destroy_keys;
++	if (gc->cursor) {
++		spin_lock(&key_serial_lock);
++		goto continue_scanning;
++	}
+ 
+-	if (test_and_clear_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags))
+-		gc_state |= KEY_GC_REAPING_LINKS;
+-	kdebug("new pass %x", gc_state);
++	flags = xchg(&key_gc_flags, 0);
++	gc->start = ktime_get_real_seconds();
++	gc->state = 0;
++	if (flags & BIT(KEY_GC_KEY_EXPIRED))
++		gc->state |= KEY_GC_REAPING_LINKS;
++	kdebug("new pass %x", gc->state);
+ 
+-	new_timer = TIME64_MAX;
++	gc->end = TIME64_MAX;
+ 
+ 	/* As only this function is permitted to remove things from the key
+ 	 * serial tree, if cursor is non-NULL then it will always point to a
+ 	 * valid node in the tree - even if lock got dropped.
+ 	 */
+ 	spin_lock(&key_serial_lock);
+-	cursor = rb_first(&key_serial_tree);
++	gc->cursor = rb_first(&key_serial_tree);
+ 
+ continue_scanning:
+-	while (cursor) {
+-		key = rb_entry(cursor, struct key, serial_node);
+-		cursor = rb_next(cursor);
++	while (gc->cursor && chunk) {
++		key = rb_entry(gc->cursor, struct key, serial_node);
++		gc->cursor = rb_next(gc->cursor);
++		chunk--;
+ 
+ 		if (!test_bit_acquire(KEY_FLAG_USER_ALIVE, &key->flags)) {
+ 			/* Clobber key->user after final put seen. */
+@@ -190,14 +223,14 @@ static void key_garbage_collector(struct work_struct *work)
+ 		if (expiry != TIME64_MAX) {
+ 			if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
+ 				expiry += key_gc_delay;
+-			if (expiry > limit && expiry < new_timer) {
++			if (expiry > gc->start && expiry < gc->end) {
+ 				kdebug("will expire %x in %lld",
+-				       key_serial(key), key->expiry - limit);
+-				new_timer = key->expiry;
++				       key_serial(key), key->expiry - gc->start);
++				gc->end = key->expiry;
+ 			}
+ 		}
+ 
+-		if ((gc_state & KEY_GC_REAPING_LINKS) &&
++		if ((gc->state & KEY_GC_REAPING_LINKS) &&
+ 		    key->type == &key_type_keyring)
+ 			goto found_keyring;
+ 
+@@ -209,7 +242,11 @@ static void key_garbage_collector(struct work_struct *work)
+ 	spin_unlock(&key_serial_lock);
+ 
+ maybe_resched:
+-	if (cursor) {
++	if (gc->cursor) {
++		if (!chunk) {
++			schedule_work(&key_gc_work.work);
++			return;
++		}
+ 		cond_resched();
+ 		spin_lock(&key_serial_lock);
+ 		goto continue_scanning;
+@@ -221,9 +258,9 @@ static void key_garbage_collector(struct work_struct *work)
+ 	 */
+ 	kdebug("pass complete");
+ 
+-	if (new_timer != TIME64_MAX) {
+-		new_timer += key_gc_delay;
+-		key_schedule_gc(new_timer);
++	if (gc->end != TIME64_MAX) {
++		gc->end += key_gc_delay;
++		key_schedule_gc(gc->end);
+ 	}
+ 
+ 	if (!list_empty(&graveyard)) {
+@@ -234,13 +271,25 @@ static void key_garbage_collector(struct work_struct *work)
+ 		 */
+ 		kdebug("gc sync");
+ 		synchronize_rcu();
++	}
++
++	gc->state |= KEY_GC_DESTROYING;
++
++destroy_keys:
++	if (!list_empty(&graveyard)) {
+ 		kdebug("gc keys");
+ 		key_gc_unused_keys(&graveyard);
++		if (!list_empty(&graveyard)) {
++			schedule_work(&key_gc_work.work);
++			return;
++		}
+ 	}
++	gc->state &= ~KEY_GC_DESTROYING;
+ 
+-	if (gc_state & KEY_GC_REAP_AGAIN)
+-		schedule_work(&key_gc_work);
+-	kleave(" [end %x]", gc_state);
++	if ((gc->state & KEY_GC_REAP_AGAIN) ||
++	    test_bit(KEY_GC_REAP_REQUESTED, &key_gc_flags))
++		schedule_work(&key_gc_work.work);
++	kleave(" [end %x]", gc->state);
+ 	return;
+ 
+ 	/* We found an unreferenced key - once we've removed it from the tree,
+@@ -252,7 +301,7 @@ static void key_garbage_collector(struct work_struct *work)
+ 	spin_unlock(&key_serial_lock);
+ 
+ 	list_add_tail(&key->graveyard_link, &graveyard);
+-	gc_state |= KEY_GC_REAP_AGAIN;
++	gc->state |= KEY_GC_REAP_AGAIN;
+ 	goto maybe_resched;
+ 
+ 	/* We found a keyring and we need to check the payload for links to
+@@ -262,6 +311,6 @@ static void key_garbage_collector(struct work_struct *work)
+ 	 */
+ found_keyring:
+ 	spin_unlock(&key_serial_lock);
+-	keyring_gc(key, limit);
++	keyring_gc(key, gc->start);
+ 	goto maybe_resched;
+ }
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 005d609ae2df..976f16baf632 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -161,12 +161,11 @@ extern bool lookup_user_key_possessed(const struct key *key,
+ extern long join_session_keyring(const char *name);
+ extern void key_change_session_keyring(struct callback_head *twork);
+ 
+-extern struct work_struct key_gc_work;
+ extern unsigned key_gc_delay;
+ extern void keyring_gc(struct key *keyring, time64_t limit);
+ void key_set_expiry(struct key *key, time64_t expiry);
+ extern void key_schedule_gc(time64_t gc_at);
+-extern void key_schedule_gc_links(void);
++void key_schedule_gc_work(bool expired);
+ 
+ extern int key_task_permission(const key_ref_t key_ref,
+ 			       const struct cred *cred,
+diff --git a/security/keys/key.c b/security/keys/key.c
+index df6af8066212..374f65c12ac8 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -693,7 +693,7 @@ void key_put(struct key *key)
+ 			}
+ 			/* Mark key as safe for GC after key->user done. */
+ 			clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags);
+-			schedule_work(&key_gc_work);
++			key_schedule_gc_work(false);
+ 		}
+ 	}
+ }
+@@ -1214,7 +1214,7 @@ void key_invalidate(struct key *key)
+ 		down_write_nested(&key->sem, 1);
+ 		if (!test_and_set_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
+ 			notify_key(key, NOTIFY_KEY_INVALIDATED, 0);
+-			key_schedule_gc_links();
++			key_schedule_gc_work(true);
+ 		}
+ 		up_write(&key->sem);
+ 	}
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 294b13829d88..ee6327641356 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -266,7 +266,7 @@ void key_remove_domain(struct key_tag *domain_tag)
+ {
+ 	domain_tag->removed = true;
+ 	if (!key_put_tag(domain_tag))
+-		key_schedule_gc_links();
++		key_schedule_gc_work(true);
+ }
+ 
+ /*
 -- 
 2.47.3
 
