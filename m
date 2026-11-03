@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793674989;
-	b=ZWsVBUb3KH166AlQIW/HeTXSUU8akUXb7eq0GXxkJzGWfMp1znxqK1uBmSXyX9j8OdR3
-	 ytmfbabrl6yxMsn7LPxPWO/k654uOOcbSlgyiBvzpjrYIpImHjp39fzGZNBxLvcMksqDr
-	 vqRSDvbfVGIq30uA+r+hg9XnyotFtxUlqc+ri4jH8FY9BHBT+RRFU65ebuoKZqfdn3Zeb
-	 giSAPWBaxqH97+FBkqVLaQYq7pArlMKM6q+qzPM2Eeos7hdPGqq6YEsCA0uqaPt34c2b8
-	 z3VcjQI59qZjCKEpnZP4KAVkGnjNkwMlGJPhlHB+SqGLl0MCAMvSeHE20SAGA+kGS0A==
+	t=1793675007;
+	b=asdG7Srv7q+z81hpaIaqKKq80mq8MBVB1TN0aB7miPe3jsU9Vk0XFhe5IqRf0Rli9LqC
+	 fWnGgeHYt8cmOAGSSHN1h+AlAMt+UDkBQuD4HRRiV/1Uc4bRsP0ERPEFJDng1UawfXAy9
+	 jZxFCwlZLBBpYx+n3R/YevgCM/0hw2kFFD7aNXB/+kMvmgciNbJZ5Ku0mwsS/y0ycKCKe
+	 V/Yq4oLmojFfibxug4O1dwV6mqHYe0U6/jCWo1vYpEH3PRDfoyp4GVS37VURHk+g3cXVB
+	 EDykfNh7qeZRmAqoJV6WCwxo6rrg8y6BsuPPUoFck2wO9W7LS7eO+E5oB72EH0lTD1Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793674989;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793675007;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=xLbp+xxVl/0FXNA+V2OAjVavj4EIHRzk8LqsslJat+s=;
-	b=YfHtz+pktV/tFcKFB6MQ0sBcG1HDbsrGcSzkJIYvHd4y8WORzsH6ypGgO7jIc12KC2Hk
-	 OuT4rq7Aj9QmdfHxmu1gjpcl3GbrC0IRnZ9c4bCx3WvJsJSQEZmi0GZmqqCkNxulGHqFm
-	 fXEkmdEB5e7E+KM/9bkCxtc2nQj3QKMuiw6PFHCC6+/SmUksDXm0jgcjtXTed4lzJ91b7
-	 Pew+GjIQEWs1uoMysF3U8H7cc4NAEkc7/M+O8o+4pR5IILJQXynsdBzkN4EvJkXCosbwZ
-	 lHoFuWp8IIu0vaEPFXv+tu6siikKyMsgQ1MtrFtSF5m0DAN2j+/BAo40iLr3zaa3bvg==
+	bh=Uqw+5mlwITbWQBp+QPEhRs9ar6zOfcGAmPDQLIQUXow=;
+	b=aZTnH5AZU7DJAPFKcHwCD5rXLYkLr5q9dQvNIPy+DTGGhsc+9p4FulogViShBHFk/qgC
+	 smM4707oXTIeGHSxYKhmiuzBwT42PMGsLjWoTeHicTXKuqbu82jLwDwyvwYW/Yu8O48w/
+	 cNBX3+pMLRH3yiAca9xDqtzfpN7UyAk3TzqwhFObcwPPIPuh+mmIiJxmOMzupRJAvPG21
+	 xG25aWgxP2O1G66WO1AFCUnNP1+fx3vSEL7A2HQ4KKHlIsW3UtAQVGC+27FIqnImXOhoL
+	 DAVMAvrFTZ6VSXneiOG/RODHb37bnwflkVNcHDa1N8n1pHn8/Xvd3aEmcAUUPE1Sw1A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="OyN51/jZ";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K7cX7w9m;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A4C5D606D809;
-	Tue,  3 Nov 2026 03:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id B36B4606D826;
+	Tue,  3 Nov 2026 03:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OyN51/jZ
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 036301F00A1A;
-	Tue,  3 Nov 2026 03:03:07 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K7cX7w9m
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BBF3B1F00A1A;
+	Tue,  3 Nov 2026 03:03:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793674988;
-	bh=xLbp+xxVl/0FXNA+V2OAjVavj4EIHRzk8LqsslJat+s=;
+	s=k20260515; t=1793675006;
+	bh=Uqw+5mlwITbWQBp+QPEhRs9ar6zOfcGAmPDQLIQUXow=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OyN51/jZcNLy8vIwYJ1a34SZA/fa+VYUPK2E7YnpHALmsGXdJOPrnX6nQ7ttwi0JP
-	 6/UGFVYrs/laf0ZnL6JgqQBl3H3bIMCF/crzFu60zg67HZjKGcKDraPCmxedNuMmcK
-	 ZgEr0W13jMtckroXKgZM8k8S2K+2NevCgfnxLI2eHOkSF4RXyBGWqb11BKf7CbIWAY
-	 Bt1ebFAUjlr8AiAVMweLWNfuiquI1RSf1TokXh4b7dzJo4D7s+4OylDLBTyA+CXWD8
-	 4dgn3zpPpA41daBzx+XJassZaTFxu/Bmq8/RHqeihUpPYPql85s7OB1S4WCLH2TJaZ
-	 92gU/eIsLyYKQ==
+	b=K7cX7w9md7w4IY06caeSyAp8ndjv1JWxlzXMmM54qmdBYP0qh5GUkf3s15/v8tbUN
+	 bTiitpxKWkIrLn2Sde7EFjGqJ7FnxiwWdt2Fw+M5/K/1NaVRmgDWZq7+HBgbwR9roa
+	 88DRtwrjdQao7wqpVohWY4iHXluxE+X7FcGEpZgyrm1jGkrhbDykOh2q2l+BtFQ/WC
+	 MVGLAz3uoqdfECY+5OKB3doLKzMGfkdL0GoRHz608UvQ6trTNSwOooMjhFODstVz3C
+	 A2MS/LomsVfWaLEmkfS9Bz4/j436Cs6C5dMB++y67vQZ8GveVABKLSEohhrpgmJDr6
+	 nuh/Y3ZsNavWQ==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Eric Biggers <ebiggers@kernel.org>,
@@ -46,25 +46,17 @@ Cc: Eric Biggers <ebiggers@kernel.org>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	keyrings@vger.kernel.org,
 	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
 	Eric Snowberg <eric.snowberg@oracle.com>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-cifs@vger.kernel.org (open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)),
-	samba-technical@lists.samba.org (moderated list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)),
 	linux-kernel@vger.kernel.org (open list),
 	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [RFC PATCH v2 05/11] smb: client: Clear idmap/SPNEGO caches when the last session is unloaded
-Date: Tue,  3 Nov 2026 05:02:10 +0200
-Message-ID: <20261103030226.2685251-6-jarkko@kernel.org>
+Subject: [RFC PATCH v2 09/11] KEYS: Pin the backing kernel module for a key type
+Date: Tue,  3 Nov 2026 05:02:14 +0200
+Message-ID: <20261103030226.2685251-10-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261103030226.2685251-1-jarkko@kernel.org>
 References: <20261103030226.2685251-1-jarkko@kernel.org>
@@ -79,197 +71,285 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-cifs caches cifs.idmap and cifs.spnego keys in module-owned thread
-keyrings that are only destroyed in module_exit(). Once live keys pin
-the key type, cached entries keep cifs pinned after the last SMB session
-is torn down.
+Add the owner field (populated with THIS_MODULE) to struct key_type.
 
-Serialize session count transitions with a mutex and clear the idmap and
-SPNEGO cache keyrings when the last session is freed.
+Pin the module in key_alloc() and keyring_restrict(), and release it in
+key_gc_unused_keys() and keyring_destroy(), which are wires to the keys
+and restrictions.
+
+Reject module owners still in MODULE_STATE_COMING so that the failed
+module_init() paths cannot leave behind referenced keys.
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- fs/smb/client/cifs_debug.c  |  2 +-
- fs/smb/client/cifs_spnego.c |  8 ++++++++
- fs/smb/client/cifsacl.c     |  8 ++++++++
- fs/smb/client/cifsfs.c      |  4 ++--
- fs/smb/client/cifsglob.h    |  2 +-
- fs/smb/client/cifsproto.h   |  8 ++++++++
- fs/smb/client/misc.c        | 19 +++++++++++++++++--
- 7 files changed, 45 insertions(+), 6 deletions(-)
+ include/linux/key-type.h |  6 ++++-
+ security/keys/gc.c       |  3 +++
+ security/keys/key.c      | 48 ++++++++++++++++++++++++++++++----------
+ security/keys/keyring.c  | 33 ++++++++++++++++++++++-----
+ 4 files changed, 71 insertions(+), 19 deletions(-)
 
-diff --git a/fs/smb/client/cifs_debug.c b/fs/smb/client/cifs_debug.c
-index 577f0ddede90..2eecd2516dfe 100644
---- a/fs/smb/client/cifs_debug.c
-+++ b/fs/smb/client/cifs_debug.c
-@@ -790,7 +790,7 @@ static int cifs_stats_proc_show(struct seq_file *m, void *v)
- 	struct cifs_tcon *tcon;
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index c4f329b6ae3f..9ecec31ad571 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -10,9 +10,11 @@
  
- 	seq_printf(m, "Resources in use\nCIFS Session: %d\n",
--			sesInfoAllocCount.counter);
-+			cifs_ses_alloc_count.counter);
- 	seq_printf(m, "Share (unique mount targets): %d\n",
- 			tconInfoAllocCount.counter);
- 	seq_printf(m, "SMB Request/Response Buffer: %d Pool size: %d\n",
-diff --git a/fs/smb/client/cifs_spnego.c b/fs/smb/client/cifs_spnego.c
-index 44c407275680..3bd272c7d9fe 100644
---- a/fs/smb/client/cifs_spnego.c
-+++ b/fs/smb/client/cifs_spnego.c
-@@ -242,6 +242,14 @@ init_cifs_spnego(void)
- 	return ret;
- }
+ #include <linux/key.h>
+ #include <linux/errno.h>
++#include <linux/init.h>
  
-+void cifs_spnego_clear_cache(void)
-+{
-+	int ret;
-+
-+	ret = keyring_clear(spnego_cred->thread_keyring);
-+	WARN_ON(ret);
-+}
-+
- void
- exit_cifs_spnego(void)
- {
-diff --git a/fs/smb/client/cifsacl.c b/fs/smb/client/cifsacl.c
-index 346899da91eb..7504cedf6417 100644
---- a/fs/smb/client/cifsacl.c
-+++ b/fs/smb/client/cifsacl.c
-@@ -590,6 +590,14 @@ init_cifs_idmap(void)
- 	return ret;
- }
+ #ifdef CONFIG_KEYS
  
-+void cifs_idmap_clear_cache(void)
-+{
-+	int ret;
-+
-+	ret = keyring_clear(root_cred->thread_keyring);
-+	WARN_ON(ret);
-+}
-+
- void
- exit_cifs_idmap(void)
- {
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index 9788052599ce..f8a9a6f7dc49 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -84,7 +84,7 @@ DEFINE_SPINLOCK(GlobalMid_Lock); /* protects above & list operations on midQ ent
- /*
-  *  Global counters, updated atomically
++struct module;
+ struct kernel_pkey_query;
+ struct kernel_pkey_params;
+ 
+@@ -161,6 +163,7 @@ struct key_type {
+ 				     const void *in, const void *in2);
+ 
+ 	/* internal fields */
++	struct module		*owner;
+ 	atomic64_t		index_id;	/* Opaque keyring index ID */
+ 	struct list_head	link;		/* link in types list */
+ 	struct lock_class_key	lock_class;	/* key->sem lock class */
+@@ -168,7 +171,8 @@ struct key_type {
+ 
+ extern struct key_type key_type_keyring;
+ 
+-extern int register_key_type(struct key_type *ktype);
++int __register_key_type(struct key_type *ktype, struct module *owner);
++#define register_key_type(ktype) __register_key_type(ktype, THIS_MODULE)
+ extern void unregister_key_type(struct key_type *ktype);
+ 
+ extern int key_payload_reserve(struct key *key, size_t datalen);
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 3cfbf00085b3..f4ae3e57a4be 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -6,6 +6,7 @@
   */
--atomic_t sesInfoAllocCount;
-+atomic_t cifs_ses_alloc_count;
- atomic_t tconInfoAllocCount;
- atomic_t tcpSesNextId;
- atomic_t tcpSesAllocCount;
-@@ -2024,7 +2024,7 @@ init_cifs(void)
- /*
-  *  Initialize Global counters
-  */
--	atomic_set(&sesInfoAllocCount, 0);
-+	atomic_set(&cifs_ses_alloc_count, 0);
- 	atomic_set(&tconInfoAllocCount, 0);
- 	atomic_set(&tcpSesNextId, 0);
- 	atomic_set(&tcpSesAllocCount, 0);
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index d3ca688b6aba..c6e8d1340517 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -2095,7 +2095,7 @@ extern spinlock_t GlobalMid_Lock; /* protects above & list operations on midQ en
- /*
-  *  Global counters, updated atomically
-  */
--extern atomic_t sesInfoAllocCount;
-+extern atomic_t cifs_ses_alloc_count;
- extern atomic_t tconInfoAllocCount;
- extern atomic_t tcpSesNextId;
- extern atomic_t tcpSesAllocCount;
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index f9ea35597bc2..2930a40d1b67 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -58,8 +58,16 @@ do {									\
- } while (0)
- int init_cifs_idmap(void);
- void exit_cifs_idmap(void);
-+void cifs_idmap_clear_cache(void);
- int init_cifs_spnego(void);
- void exit_cifs_spnego(void);
-+#ifdef CONFIG_CIFS_UPCALL
-+void cifs_spnego_clear_cache(void);
-+#else
-+static inline void cifs_spnego_clear_cache(void)
-+{
-+}
-+#endif
- const char *build_path_from_dentry(struct dentry *direntry, void *page);
- char *__build_path_from_dentry_optional_prefix(struct dentry *direntry,
- 					       void *page, const char *tree,
-diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-index ec28f102ea08..4503434942f9 100644
---- a/fs/smb/client/misc.c
-+++ b/fs/smb/client/misc.c
-@@ -9,6 +9,8 @@
+ 
  #include <linux/slab.h>
- #include <linux/ctype.h>
- #include <linux/mempool.h>
-+#include <linux/key.h>
-+#include <linux/mutex.h>
- #include <linux/vmalloc.h>
- #include "cifsglob.h"
- #include "cifsproto.h"
-@@ -33,6 +35,9 @@ struct tcon_list {
- 	struct cifs_tcon *tcon;
- };
++#include <linux/module.h>
+ #include <linux/security.h>
+ #include <keys/keyring-type.h>
+ #include "internal.h"
+@@ -151,6 +152,7 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
+ 	while (!list_empty(keys)) {
+ 		struct key *key =
+ 			list_entry(keys->next, struct key, graveyard_link);
++		struct module *owner = key->type->owner;
+ 		short state = key->state;
  
-+/* Serialize session admission with the last session's cache clear. */
-+static DEFINE_MUTEX(cifs_session_mutex);
-+
- /* The xid serves as a useful identifier for each incoming vfs request,
-    in a similar way to the mid which is useful to track each sent smb,
-    and CurrentXid can also provide a running counter (although it
-@@ -74,7 +79,6 @@ sesInfoAlloc(void)
+ 		list_del(&key->graveyard_link);
+@@ -179,6 +181,7 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
  
- 	ret_buf = kzalloc_obj(struct cifs_ses);
- 	if (ret_buf) {
--		atomic_inc(&sesInfoAllocCount);
- 		spin_lock_init(&ret_buf->ses_lock);
- 		ret_buf->ses_status = SES_NEW;
- 		++ret_buf->ses_count;
-@@ -84,6 +88,10 @@ sesInfoAlloc(void)
- 		spin_lock_init(&ret_buf->iface_lock);
- 		INIT_LIST_HEAD(&ret_buf->iface_list);
- 		spin_lock_init(&ret_buf->chan_lock);
-+
-+		mutex_lock(&cifs_session_mutex);
-+		atomic_inc(&cifs_ses_alloc_count);
-+		mutex_unlock(&cifs_session_mutex);
+ 		memzero_explicit(key, sizeof(*key));
+ 		kmem_cache_free(key_jar, key);
++		module_put(owner);
  	}
- 	return ret_buf;
  }
-@@ -99,7 +107,6 @@ sesInfoFree(struct cifs_ses *buf_to_free)
- 	}
  
- 	unload_nls(buf_to_free->local_nls);
--	atomic_dec(&sesInfoAllocCount);
- 	kfree(buf_to_free->serverOS);
- 	kfree(buf_to_free->serverDomain);
- 	kfree(buf_to_free->serverNOS);
-@@ -115,6 +122,14 @@ sesInfoFree(struct cifs_ses *buf_to_free)
- 		kref_put(&iface->refcount, release_iface);
- 	spin_unlock(&buf_to_free->iface_lock);
- 	kfree_sensitive(buf_to_free);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 3f1f0fc13710..0b2a03c511e5 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/export.h>
+ #include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/poison.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+@@ -234,19 +235,34 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 
+ 	key = ERR_PTR(-EINVAL);
+ 	if (!desc || !*desc)
+-		goto error;
++		goto out;
 +
-+	mutex_lock(&cifs_session_mutex);
-+	if (atomic_dec_and_test(&cifs_ses_alloc_count)) {
-+		cifs_idmap_clear_cache();
-+		cifs_spnego_clear_cache();
-+		key_gc_flush();
++	/* Failed module initialization ignores outstanding module references. */
++	if ((type->owner && module_is_coming(type->owner)) ||
++	    !try_module_get(type->owner)) {
++		key = ERR_PTR(-ENOENT);
++		goto out;
 +	}
-+	mutex_unlock(&cifs_session_mutex);
- }
++
++	if (restrict_link && restrict_link->keytype &&
++	    ((restrict_link->keytype->owner &&
++	      module_is_coming(restrict_link->keytype->owner)) ||
++	     !try_module_get(restrict_link->keytype->owner))) {
++		key = ERR_PTR(-ENOENT);
++		goto out_put_module;
++	}
  
- struct cifs_tcon *
+ 	if (type->vet_description) {
+ 		ret = type->vet_description(desc);
+ 		if (ret < 0) {
+ 			key = ERR_PTR(ret);
+-			goto error;
++			goto out_put_restrict_module;
+ 		}
+ 	}
+ 
+ 	desclen = strlen(desc);
+ 	if (desclen >= KEY_MAX_DESC_SIZE)
+-		goto error;
++		goto out_put_restrict_module;
+ 	quotalen = desclen + 1 + type->def_datalen;
+ 
+ 	/* get hold of the key tracking for this user */
+@@ -323,8 +339,6 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	refcount_inc(&key->domain_tag->usage);
+ 	atomic_inc(&user->nkeys);
+ 	key_alloc_serial(key);
+-
+-error:
+ 	return key;
+ 
+ security_error:
+@@ -338,7 +352,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	}
+ 	key_user_put(user);
+ 	key = ERR_PTR(ret);
+-	goto error;
++	goto out_put_restrict_module;
+ 
+ no_memory_3:
+ 	kmem_cache_free(key_jar, key);
+@@ -352,13 +366,22 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	key_user_put(user);
+ no_memory_1:
+ 	key = ERR_PTR(-ENOMEM);
+-	goto error;
++	goto out_put_restrict_module;
+ 
+ no_quota:
+ 	spin_unlock_irqrestore(&user->lock, irqflags);
+ 	key_user_put(user);
+ 	key = ERR_PTR(-EDQUOT);
+-	goto error;
++
++out_put_restrict_module:
++	if (restrict_link && restrict_link->keytype)
++		module_put(restrict_link->keytype->owner);
++
++out_put_module:
++	module_put(type->owner);
++
++out:
++	return key;
+ }
+ EXPORT_SYMBOL(key_alloc);
+ 
+@@ -1231,19 +1254,20 @@ int generic_key_instantiate(struct key *key, struct key_preparsed_payload *prep)
+ EXPORT_SYMBOL(generic_key_instantiate);
+ 
+ /**
+- * register_key_type - Register a type of key.
++ * __register_key_type - Register a type of key.
+  * @ktype: The new key type.
++ * @owner: Module owning the key type.
+  *
+  * Register a new key type.
+  *
+  * Returns 0 on success or -EEXIST if a type of this name already exists.
+  */
+-int register_key_type(struct key_type *ktype)
++int __register_key_type(struct key_type *ktype, struct module *owner)
+ {
+ 	struct key_type *p;
+ 	int ret;
+ 
+-	memset(&ktype->lock_class, 0, sizeof(ktype->lock_class));
++	ktype->owner = owner;
+ 
+ 	ret = -EEXIST;
+ 	down_write(&key_types_sem);
+@@ -1264,7 +1288,7 @@ int register_key_type(struct key_type *ktype)
+ 	up_write(&key_types_sem);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(register_key_type);
++EXPORT_SYMBOL(__register_key_type);
+ 
+ /**
+  * unregister_key_type - Unregister a type of key.
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 5281da9d5bf7..1561406b68fa 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/export.h>
+ #include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/security.h>
+@@ -436,6 +437,9 @@ static void keyring_destroy(struct key *keyring)
+ 	if (keyring->restrict_link) {
+ 		struct key_restriction *keyres = keyring->restrict_link;
+ 
++		if (keyres->keytype)
++			module_put(keyres->keytype->owner);
++
+ 		key_put(keyres->key);
+ 		kfree(keyres);
+ 	}
+@@ -1062,7 +1066,7 @@ int keyring_restrict(key_ref_t keyring_ref, const char *type,
+ 
+ 		if (!restrict_type->lookup_restriction) {
+ 			ret = -ENOENT;
+-			goto error;
++			goto out;
+ 		}
+ 
+ 		restrict_link = restrict_type->lookup_restriction(restriction);
+@@ -1070,7 +1074,15 @@ int keyring_restrict(key_ref_t keyring_ref, const char *type,
+ 
+ 	if (IS_ERR(restrict_link)) {
+ 		ret = PTR_ERR(restrict_link);
+-		goto error;
++		goto out;
++	}
++
++	if (restrict_link && restrict_link->keytype &&
++	    ((restrict_link->keytype->owner &&
++	      module_is_coming(restrict_link->keytype->owner)) ||
++	     !try_module_get(restrict_link->keytype->owner))) {
++		ret = -ENOENT;
++		goto out_free_restriction;
+ 	}
+ 
+ 	down_write(&keyring->sem);
+@@ -1088,12 +1100,21 @@ int keyring_restrict(key_ref_t keyring_ref, const char *type,
+ 	up_write(&keyring_serialise_restrict_sem);
+ 	up_write(&keyring->sem);
+ 
+-	if (ret < 0) {
++	if (ret < 0)
++		goto out_put_module;
++
++	goto out;
++
++out_put_module:
++	if (restrict_link && restrict_link->keytype)
++		module_put(restrict_link->keytype->owner);
++
++out_free_restriction:
++	if (restrict_link)
+ 		key_put(restrict_link->key);
+-		kfree(restrict_link);
+-	}
++	kfree(restrict_link);
+ 
+-error:
++out:
+ 	if (restrict_type)
+ 		key_type_put(restrict_type);
+ 
 -- 
 2.47.3
 
