@@ -1,114 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.200.26
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793800319;
-	b=kIQDX7FHPagQtiv8w0dJLmPhCCAbgjjdrNrpV3pHAUJ4+wjS1U6yvmwrUxuXE/0mU62t
-	 y41yIuUFMCwzishko8VW/BcXIfcw2izxUJnlHtepHgajOTB4JrFfkUE44alp9cmoRaYu7
-	 EjaS890jfHhk3CTkNuP/8bCS3hwTSVwG8oyTKrXHZWF9P4KqelVwkiJQ1oXkTjeMxsgp7
-	 6YtehvkiyJOC3s5sPbuv+YUJyuJM3P+8kZ7h7RSyLy7DvsaC+OVeXpbZ7tm5S8/IDZ8Yw
-	 N8+Pul6gX/x/u4ICGr850fvClFNZptVkV4aPJ9fOZdveAoEhJ6/HYH/WV28PjNtjqew==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793800319;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=mQtJKixgze7C+diWpLN9bp2gmSFhvKu0oFRTq7AaEEA=;
-	b=YhofC9YBe9XAagT5Yfwuumxd/JC8kx7mODJy2sZ8J8gLo1AortwrEaCLaMSZe3YIZU7g
-	 Txb2x6ncWxNF4BLcR152yslH+rJ2rrKVjWM1KcvL1cS6k0/ViK2Xxaa67JTgZe/JU4mtM
-	 ihhdaJ9Jb8FwFIts35PvrQFrad7wfst95l7HKY5QQcbwnEAT14bgIaIBQgca11xLfv75g
-	 Nsp5P5TiqYp0d8EjZFm9rBHHe6qlPwmX0se2tbbXMvzSq2iqnYOtD1e7UEydwxEmX+M3b
-	 1nmjy+4tf4HGCG4oty0/neJzuRsSSNqQh9iMzIeKueSYKXZlPtkA6NjDlI95/OUgETw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amd.com;
-	spf=fail smtp.mailfrom=amd.com;
-	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=1OaV7a26;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.200.26
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012026.outbound.protection.outlook.com [40.107.200.26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.49
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793801408;
+	b=v0WqWNuOemU5QJazcAPorBMc/Js4787e22AT0tRA6QWK1do+WbX/csXBzseVZXkvTm1e
+	 F0Rq30MtcgejdctUsn1Ry410s4zFWvD2jDq+NQ6wopp68+9TWESkHnIFBWavfqdkR82dn
+	 u719uvPH8PmasJoZOZW/Qdyg3ueypW7frI7RkfwQlX+OtEra8F6bxtbr158H6ZChLzB/9
+	 WwJE/2+Uk/vk+c3eCiGVR4R90D0Dl9JuftMtzp1RWxCM4H1xuRm8dapDfDjD20p7d63nT
+	 ZQQhM0AS2epd/PbwusLIy1IND/oQ9YWw4LMR3jN4/AvtObq9of30EeGVokKgizAJI0A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793801408;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=GN5BfdRea5fYOeBLCJpptlR+i/h5pRU6WPEvbKGT6ZM=;
+	b=t8dNZhnRlD6GOqvyay5Vm/yRHbEKyO25eaOnqANqbgPG8DXihwTtEM8KP10vxLuUpzN8
+	 bU2ou7aCHK5bbmxNlvAgzwp7aMgyrRlTQKij5DcnX+qcLDigj5MPtvb9OaAmN27kKw6Og
+	 +xioBafAJZZNzjf/toQ6HI65jF2h/n6/oiPiuXIFoUD9TIV9sP+UyaFJgW8wV9BEqn66J
+	 iZBpccOqGAA6EF1GFnmzXblogZAP3RlWIugmgu8OrlVEu7FkvOPC8l8qfZ+evyQQizC+H
+	 NejjeH8XZ5Kzj+pnaf7ooXUPyIf60F5TqH3lGw3EMr1Zh4ohS7xErXHJ4Kzd1EDvixQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=toxicpanda.com;
+	spf=pass smtp.mailfrom=toxicpanda.com;
+	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b="pq3g/bOU";
+	arc=none smtp.remote-ip=209.85.219.49
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827A2606A31B;
-	Wed,  4 Nov 2026 13:51:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 827A2606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17704606A338
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:10:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 17704606A338
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=1OaV7a26
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fwlrplglXoh9OyjK5tR8CAVbMbWktw9uFYFeNSHJvwGJ6DkHw5K7lbE9u/0Tbeg0GuJpfAQ0DM+niGciw4x8V57/ewqSGdo6Uu6Gj7GfEZsxws0lnruQXzrDGFNP+uCFaPnt63QckclpYwFSdePxd3NN7erCxuhk3D0J0dkyHfEboL+7dZrQtoas+CSPVf7pQHO29Jp4vngicwOSs9Iza9Jkn49P1c+sdpJdW/N6BoO/QznG37XJCLicoM9/Atf0ESIlCZdLjLBjfnQ0gtwuB6YclmswwLzgrTghAqSWXgOv4DA1Y1F6306oniarI3zwBqP62bf1bpIUUuhtRUlVXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mQtJKixgze7C+diWpLN9bp2gmSFhvKu0oFRTq7AaEEA=;
- b=d0HeySeTfz4nN+X2kqhvBEsxytSTgVNh3MSxaO9/DsG9ALP2mlHiEvyzQoL6tRGw7w7JPCvBFca2gwurXJWCs0Q22jg5VEJbAlubvmj7zTC8drKFyl7TN+Au4wGjyfvHbJ91GyVN9D47edqL2FpnbVpK8qZlHK46HrhTgxzIuCv1c4I3QUMALPcvj4MXlze6SZUYkLeOoTG8t0lvva4YHeKf8ooCi4dbkMAwpBuWGEh4JtzrZeWXqRSNBELSeuo9L0HUlhMeFyxhRDYmR8hcVr6A+beAnEl0Es75IEWfwEuxHT2xxwf7Aa7fUbFgjJeX5sTy8Uiu8KAThXEnThXk5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mQtJKixgze7C+diWpLN9bp2gmSFhvKu0oFRTq7AaEEA=;
- b=1OaV7a26aooUI4kXc46/YIBQOwvrUIdoGhyzhFxSpxgIEVSt4U2yJeUY/fSt5uSa5+GnmHRtNhKQU4V3Sfrs3Wf6vxVqL52H3qHecHZHh61/Fya8ToXnrPPOZw1D+aM4lJaE/5AgJPEhe+U+obCr80cQ0PbpgDd/hbDHVIqTHk4=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by PH0PR12MB7885.namprd12.prod.outlook.com (2603:10b6:510:28f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Wed, 4 Nov
- 2026 13:51:54 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::ce69:cfae:774d:a65c]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::ce69:cfae:774d:a65c%3]) with mapi id 15.21.0592.007; Wed, 4 Nov 2026
- 13:51:53 +0000
-Message-ID: <fb40349c-18d2-45d6-9278-8f20e1b8dc74@amd.com>
-Date: Wed, 4 Nov 2026 14:51:42 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] dma-buf: transfer memcg charges via
- DMA_BUF_IOCTL_XFER_CHARGE
-To: Albert Esteve <aesteve@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>, Christian Brauner
- <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>,
- Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-mm@kvack.org, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
- op-tee@lists.trustedfirmware.org
-References: <20261104-v2_20230123_tjmercier_google_com-v4-0-1819a017000b@redhat.com>
- <20261104-v2_20230123_tjmercier_google_com-v4-3-1819a017000b@redhat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20261104-v2_20230123_tjmercier_google_com-v4-3-1819a017000b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0334.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ea::10) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=pq3g/bOU
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-91c9cfd8b1bso9344596d6.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 06:10:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda.com; s=google; t=1793801406; x=1794406206; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=GN5BfdRea5fYOeBLCJpptlR+i/h5pRU6WPEvbKGT6ZM=;
+        b=pq3g/bOUfq0Yp9sLjFjCbtvlrE7Qv37AIQDPWErqvoVqdvo9xd9+crfCI1n/K0m2B6
+         /wyj/0wj7PG9On9oxbXiA4rR65b4VsiwfWH27eP7hjSzrTjFaPE5VsCuVLqLFeDollNV
+         sSQkgF5p76zqF8M9G+GCUKOvNgstu4dm2MtmBAlnVSrHvAx2VNh1rsIbm7TLW/4YUnpH
+         2wamaFqvyznTtMzIDz0Caf8OxwRpcmXrUmepVB5vQmVQ2aC5DHcIMLavjRxAG33cfmcv
+         YehJUZYQiSvn32N26c8g4y7N960LtKU/uhkwpOuWWY9Gt8P0rRbNkVIa/+Gz2vV9TBLy
+         qiIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793801406; x=1794406206;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=GN5BfdRea5fYOeBLCJpptlR+i/h5pRU6WPEvbKGT6ZM=;
+        b=bM7o8yqCAFZIJvs0SsQHfxovAVikT4L3Se7oXaUA4Y956uDN306gwkvhE7AB0MLOAP
+         j7KgNw/fUBzWS+V0PGEe1JLTt6+p2apPG820zXbSeAwF3ui2EIQlCePk6MJ1U9qICSHf
+         lNewwAYLdNP/+2hO50jpEPxqvQOf+x9wbgrSf9wf9hc81juTmSPAeQv7fp/xlWW0hrtv
+         DbV8mDvfKnImplicPwxzXBFHWqCpg3NO4I+TI0K44tIPohx0BJT1l+gc+G1a0zA1r5CC
+         9YhSJo1FHwweNC0EM9FRJp0kWABbYZI9fOr3lhn24RZ+grD8oc7pznXZqlzMhjg4zHqr
+         aFPw==
+X-Forwarded-Encrypted: i=1; AKwUvBw4h/xCNJhWbalIYfFmHsuQFM45AtrEER1dN3LHrhb3ep4iryvmEYjapKvzJFCUmq2zLjNbAxRYjZVo5kWa/o1Qa/aO1Fg=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+TxT1qAU1EazDrcFHcDE3/WD/UROjiHAEhvfFNSKcoB+BfsPWZ
+	Er9uzhqLvNIltTXmGESfxcmCmAtTUgygEY1FOBKyp43oF0c4N17U0c/xCEmCAmQbDNU=
+X-Gm-Gg: AYBFou3SXh2P0lvKsQOhzOE3t3is7rvzlmr7Bf/1Bgrb2h9fWEFQJhmZepUXavF6M1c
+	Q/lYNs8BVNg3UQge0b1KBT4tw5NlLclLenBLO+TFS5vLGndlXLg1XxyjvKw/mgy9IsgMAIiNYd0
+	cRT96OudXahJefG/QnkGqQ2GvzVMhMgaBGrCuLlwg2i0q4QwV5AIlNfvsprrvmyNQWn2qQIir8u
+	Q7M0rQ/N3Flo4wXAP7ez9o8OY8bNHtIVKZLUIe3yODZyThyZNcD30mTv4qmSvxSVSo0KQ74cuoC
+	v0U3VhwYjDn7pkY9D8/qxygC4ytoM2xty2J6GjPqDP0Ap5SwOiSalWIPpc2zh+jz+pBaneuThoE
+	P8MYOH48WKR0KU5Dq7WJf+fhLYim8P31JvmnBprsJwiSVPzX4WDwQKnRL+QglLALlHynuMZJBH/
+	i9G0vIwoJp/jIZfUN6qh+7Od7QlKqcM/lhrs9wz7FfdWwpH6k+LqmvJlyF2hieHKkP2Z8vOBh42
+	0FXHfeZoT/pVCz8rQPDAQilsx4/4dXcCIVupJYQU83VzEXzSu4xBibw3pLumE+KWbVgCwy1aleC
+	WbGGJIHPc4t4uakKGrGozZau0n7ucrinTRaC4hSKAIC+hOGhn8umJcO0SQi8xYfscA==
+X-Received: by 2002:a05:6214:5902:b0:91c:7c53:152d with SMTP id 6a1803df08f44-91ca4b2d871mr264201116d6.29.1793801405923;
+        Wed, 04 Nov 2026 06:10:05 -0800 (PST)
+Received: from toxicpanda.com ([153.61.196.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91e7e728f87sm19598316d6.36.2026.11.04.06.10.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 06:10:05 -0800 (PST)
+Date: Wed, 4 Nov 2026 14:09:52 +0000
+From: Josef Bacik <josef@toxicpanda.com>
+To: "Hallgrimur H. Gunnarsson" <halg@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jann Horn <jannh@google.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
+	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	containers@lists.linux.dev, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
+ opt-in netns loopback
+Message-ID: <orevqgwqw53sxc3tii5zr6x7veu3p5nr3ndkndegpikfogmqy6@j5agkwrxcksj>
+References: <20261028221705.3915340-1-halg@google.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -118,323 +108,141 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH0PR12MB7885:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd9bb6a9-3177-4234-7703-08df3a7ac85d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|7416014|261022105027099003|261021123027099003|261021121427099003|261026121527099003|261009223027099003|921020|261026140227099003|261028144727099003|261102123227099003|261102130727099003|4143699003|11063799006|10067099003|56012099006|22082099003|18002099003|261009221227099003;
-X-Microsoft-Antispam-Message-Info:
-	96/w4GoXA1uytAjAlaICjVANUoJGVhgUQ+B3edILtpMDdjhiIjrsi46l2ZvZbjLMyVtOK5RW6WCckTqoBlY6+3IUXaDW3P6593qCDRzUVJDSbEuOrZvslLqH5q3g4Tecn72FKzZ0S29pe4QfjmTpa5OnM2rMhSXbD/hpbbEXsfmSZMt6aukZ8wF0GlWPYCPN52PMLFrTk7biBJOUrj1D+aZ2hMLA3g5Th6CDqkZAV0qypC4qV+36Na1itA0xq8ixdMfx6EFHEMSS65pAQxqF1/hwEAnrs5rRxKJl4GyUtwed0jd2ZkbRXOidjMnSyx3FzAgAiXqIv9kAms1vTRcix3IAbuIZ9FLLfXDhDq9JApTwC+M1pYchghPpXHzPSiFZVc/h0sy07s8m0cVbQ7+x6vXykGfZscTQ3E1FDfrpmRMPSDVYYOx+kk1qbzHRGk4S8w7z57H1B2s6maq1axZIhQwTe0NNnFHAjmTC43ArwnooMsNRuZsW073HDWp1/ErBrdzlRpJBQ6MJ6KX2nJrALIvtsKU4IFcm+arQD6SB9nONco4NjD1YCuHYivFh/XEYogsrI8RT61L00ZqYfLqyXgYvkkSwjjxc2bQ/R4TwDvMi+c32ap+8oHdINZUQe0wNkrKVl5ubWP7eFPVf5hIYRQtvQIWAEgImiXiLqDezdG/82ORn6zwq7EoIuayAIVO1+JgCCb0c8wHjj6dxtwNhPw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(7416014)(261022105027099003)(261021123027099003)(261021121427099003)(261026121527099003)(261009223027099003)(921020)(261026140227099003)(261028144727099003)(261102123227099003)(261102130727099003)(4143699003)(11063799006)(10067099003)(56012099006)(22082099003)(18002099003)(261009221227099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Tml0N01Kd2FnaFJ2bjMwTDI0VUY1d2FKNklkWnRjdnJlc2d1ZjdpUy8rdlo3?=
- =?utf-8?B?RVIvd243dmE2OVpNSXVONGdxVFRva3pKeDM5ZmVBZVF4WkFyZmMySDU0RitH?=
- =?utf-8?B?YnVTeEVXTk5FWkU3Z21ZeEtIeEVhcHhJZ3dwSThyV3FOeEMzQXgreG9QTjRG?=
- =?utf-8?B?ODR3V1c5c1lib2lSNWtsRDRoc3U0eWRoNTdOWU10dUZYcVFTdmh6TjFiOThm?=
- =?utf-8?B?Y2p0N3QyL3VXQUdwVXFpa1hJMVJsQi91aG5EdTEyaVBhV0tuT1l4alp1U1Uz?=
- =?utf-8?B?L3VYTDNWUE9UTkhndmxDdXNwNjVkcXJuc3NIOFNCVWZRSzJvdXk0QXRrZnE4?=
- =?utf-8?B?OVl2cmdIditoOHZsdEpaTmpjUGd2Q2VzNWNodHdwQTJYRm54K3RKK3FaNEV4?=
- =?utf-8?B?NnNUSHZWRDhvRitLcUVtOEt1NUY4UDVBalZrakFoRHgvWm5vbU1vdU51cWIx?=
- =?utf-8?B?VkNUd1ZYd21SUlZ0Q2RrV2dVT2tycVV6dUI3ZWZEQnZHRzFGbllGS0k1bkVq?=
- =?utf-8?B?eTF1dnJKUnpiVi9ndkRpNFgwM2swTDFaWncra2V3NHRVMC90UGczZnA2cE5q?=
- =?utf-8?B?QTVzTDZYemZiZHlOY2ljZHlBMU9BcWhxUlJ0R093c3B2cUpmL3YvMDN6bGN2?=
- =?utf-8?B?M3dWWXBZTCtNMzVMaHNmYmgxUSsrNmM1TStQMk9yR0F0N1h5bVc0cDUweWMw?=
- =?utf-8?B?bTZ5MUxPT1U3cXJCU2pjdVZ6eHpCbDlnUnYva3g1Mk01U2FXbDdkN2YxZWlz?=
- =?utf-8?B?ZnFtYWRpMGk3ZTNDMlpXQy9GanFra3A5bFIzQW9QeE5nSngyT05GQXdUUHBp?=
- =?utf-8?B?V0l0cEZpUnBDY3VxSXRzRittSEM5OXBoSzFlQ1l5REsvVjRpdldSZjIrSmV0?=
- =?utf-8?B?RHQwMXFxYjVaNkNSN2ZXcWxMOWxoSnlENnd1T2RVWjFVSlNQYTNMbzdzdUEz?=
- =?utf-8?B?RWsvY2s0UXZpcHNQaHdoRjc5bTJWaW5zNG8rVDh4NGo1dC9zWnlMYjBzV3NF?=
- =?utf-8?B?QVlCR3NGWGtCRFdEMU00akorRUdpQmdKZ05qdFdXa3RCamJtNTFZMzI4bnJI?=
- =?utf-8?B?aEhiWHI1UEVadENCejNiekhzRXpLb1EzU2lFSjFTYTVzeWhnSUh3VGtZT25U?=
- =?utf-8?B?VUVPSWo2U2RHbW9pM3FEWlg2QjdoeitQTE5SSnZEakl4Q2p2ekVnZXo0bFdP?=
- =?utf-8?B?SjZ4QU8rVWF1V2ZOU2lBVlRib1JNUXpSSFR1NFZhTm5yK2trOTRjU0x3cnZO?=
- =?utf-8?B?RjI4ZWViWk0vNktHNzNqS1pnRUZPaEdxSHZIaTBnL2dDUEZiM2IyVVNYTno1?=
- =?utf-8?B?TG1IMzlkZGxsVmxhUWN4RDlvSHVrUVdBRDBwRDFoaXFWeVF0VUwzVUVEbncy?=
- =?utf-8?B?bE8xMGVXZEpITzJaVUFPOWtZV3N5L0lPeTRwTDVHZUxYdkNybzhYR01xNlI2?=
- =?utf-8?B?Q3BUWnlZWVNsQjd4ZmdsNEJQWFgzN1RNOXNqNGUrMHZhK293QktRaU0yaHZ6?=
- =?utf-8?B?VGNvcllrb1piNVY0blBaSmQzOU12OE1oZWx6MnFMY2lrd0xRYkNlVjIxWHVR?=
- =?utf-8?B?NUpRWFI4VFhHTE5FdFZ1UldDZ3o0VDBVZGUvZHpNalE5VE50K0cxQ2QrcHRw?=
- =?utf-8?B?SitsNzNnRXdGR0pnN25LYlhuWFZ5Nm1DTEFFek5xemFYUWJYcnEvWWFoOVFq?=
- =?utf-8?B?S2lpeFpQTlpOaUI0SG93YnN5czVQamxxdGdIOEpBQ3A5cXNSWW1xb3NUNGlG?=
- =?utf-8?B?M0JpVFBEWUVNYUxzKzRFRDJNWERQZGxFcFdnSml5VTBpUnAzYWIyakVVWnF0?=
- =?utf-8?B?YVVIRUg4Q3paOXlMaldzVFUzTWRnL3U3ZlNSbVMrM0JuVFdiNVlFcnJ1V3lR?=
- =?utf-8?B?dk9Rb1N5MVluVURvRkNKWW9RQXJrRHdKc00rdnA3MG5KQnhqNHdacXVVcmgw?=
- =?utf-8?B?aWV0UEorVGs3dDdZSmNubHdkWUN4NUtHc1VIZk5HRzlSbllwZ0xSN3RKdG54?=
- =?utf-8?B?b21meUl1K1FrUVFKalNPZS8zTi9FM2xPQ3ZseGNTUGNFNlRSZmlLZFZ4aW8v?=
- =?utf-8?B?UmJtdG1GbVhoeFdvZWpkZHh6RTYvUnRSdnRkNCtESkxMeExKTFVSSTNCUXlS?=
- =?utf-8?B?VVJ2eDZiVkxkWWRrb0NZMGNXMVNKcC9sREZwcDV6bVhmSWFDUnF0Z0VlREQ1?=
- =?utf-8?B?QnM2ZW9RNWVWN0hoM2RVNzhqSWNaSWVLU08ydkN5MHVyc1p3MTF5dEZwOXgz?=
- =?utf-8?B?Ry80amUzVEJYWjJqdmwxbWFsWkVTTGxTWkFsWk5qMmpjallCdmFuRTFKeWJY?=
- =?utf-8?Q?2Pylw29bJiUZ3VhooJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd9bb6a9-3177-4234-7703-08df3a7ac85d
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2026 13:51:53.3435
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6IadmT3l8oiO2qnIkVu2dbS/48UcoHNhnw+j+DT0Zya9ULx2PgyZc+8BlUvhXyMR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7885
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261028221705.3915340-1-halg@google.com>
 
-On 11/4/26 12:09, Albert Esteve wrote:
-> dma-heap already supports charging a specific cgroup at allocation
-> time via charge_fd in DMA_HEAP_IOCTL_ALLOC. However, dma-bufs can
-> originate from any exporter (DRM, V4L2, etc.), and the allocator may
-> not know the final owner at allocation time.
+On Wed, Oct 28, 2026 at 10:16:57PM +0000, Hallgrimur H. Gunnarsson wrote:
+> When an unprivileged process creates a new user namespace, it is granted
+> a full set of capabilities (CAP_FULL_SET) scoped to that namespace.
+> While these capabilities are isolated to the namespace, they allow
+> unprivileged local users to reach deep kernel subsystems (most notably
+> networking configuration and raw sockets via CAP_NET_ADMIN and
+> CAP_NET_RAW) that historically assumed a trusted caller and have
+> accounted for a large share of local privilege escalation
+> vulnerabilities.
 > 
-> Add DMA_BUF_IOCTL_XFER_CHARGE to transfer a dma-buf's memcg charge
-> to a different cgroup after allocation. The target is identified by
-> charge_fd, which may be a cgroupfd or a pidfd.
+> Many workloads and sandboxes use unprivileged user namespaces strictly
+> for basic UID/GID, mount, PID, or network isolation and never need
+> high-risk capabilities like CAP_NET_ADMIN or CAP_NET_RAW. Likewise,
+> system administrators often want a host-wide policy ceiling restricting
+> which capabilities unprivileged user namespaces may acquire, without
+> disabling unprivileged user namespaces altogether.
 > 
-> The transfer charges the new cgroup before uncharging the old one,
-> preserving the original charge on failure. Concurrent transfers are
-> serialized by the dma-buf reservation lock, so lockdep covers the
-> locking order of the charge path early. The transfer implementation
-> is generic (mem_cgroup_transfer_charge) and not dma-buf specific, so
-> it can be reused by other subsystems.
+> Prior work by Jonathan Calmels [1] proposed addressing this via a sixth
+> per-thread capability set (cap_userns) alongside a global sysctl mask.
+> During that discussion [1, 2], feedback (e.g. from Casey Schaufler)
+> suggested that rather than adding another per-thread capability set and
+> prctl() interface, capability restrictions could be integrated directly
+> into struct user_namespace and configured via clone3(). At the same
+> time, as noted in [1], a clone3() flag alone is not sufficient for
+> administrators who need to enforce a host-wide ceiling on unprivileged
+> user namespaces without modifying every userspace callsite.
 > 
-> Not all dma-buf exporters back their buffers with reclaimable system
-> memory. Some represent device registers, VRAM, or carved-out pools
-> where size is not a meaningful memory cost. The xfer ioctl returns
-> -EOPNOTSUPP for buffers whose memcg is not set. Exporters opt in by
-> passing a memcg through dma_buf_export_info at export time. Currently
-> only the system heap sets it, other exporters can opt in as needed.
+> This series combines both pieces of feedback: it embeds a capability
+> bounding set (cap_bset) directly into struct user_namespace, reusing
+> the existing task cap_bset, cap_permitted, and cap_effective sets on
+> namespace entry, and provides both a system-wide sysctl ceiling for
+> unprivileged user namespaces and a CLONE_NEWUSER_BSET flag for
+> voluntary per-namespace restriction via clone3().
 > 
-> Usage example:
->   int cg_fd = open("/sys/fs/cgroup/clients/app1", O_RDONLY | O_DIRECTORY);
+> In addition, because restricting CAP_NET_ADMIN at user namespace
+> creation time prevents userspace from bringing up the loopback
+> interface in new network namespaces, the series first introduces
+> an opt-in flag to automatically enable loopback on network namespace
+> creation:
 > 
->   struct dma_buf_transfer_charge xfer = {
->       .charge_fd = cg_fd,
->   };
->   ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
->   /* charge now on app1's cgroup */
->   close(cg_fd);
+> 1. Opt-in loopback activation on netns creation (Patch 1)
 > 
-> Signed-off-by: Albert Esteve <aesteve@redhat.com>
-> ---
->  drivers/dma-buf/dma-buf.c    | 42 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/dma-buf.h      |  3 ++-
->  include/linux/memcontrol.h   | 13 +++++++++++++
->  include/uapi/linux/dma-buf.h | 26 ++++++++++++++++++++++++++
->  mm/memcontrol.c              | 42 ++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 125 insertions(+), 1 deletion(-)
+>   New network namespaces start with the loopback interface (lo) DOWN by
+>   default, requiring CAP_NET_ADMIN over the owning user namespace to
+>   bring it up. To block external network access while preserving
+>   localhost networking, sandboxes commonly create an isolated network
+>   namespace with only the loopback interface enabled.
 > 
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index 837666273550..3bd26fbb1109 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -540,6 +540,45 @@ static long dma_buf_import_sync_file(struct dma_buf *dmabuf,
->  }
->  #endif
->  
-> +/* Transfer a dma-buf's memcg charge; see struct dma_buf_transfer_charge */
-> +static long dma_buf_xfer_charge(struct dma_buf *dmabuf,
-> +				const void __user *user_data)
-> +{
-> +	struct dma_buf_transfer_charge arg;
-> +	struct mem_cgroup *memcg;
-> +	unsigned int nr_pages = PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
-> +	int ret = 0;
-> +
-> +	if (copy_from_user(&arg, user_data, sizeof(arg)))
-> +		return -EFAULT;
-> +
-> +	if (!IS_ENABLED(CONFIG_MEMCG))
-> +		return 0;
-> +
-> +	if (arg.flags != 0)
-> +		return -EINVAL;
-> +
-> +	memcg = mem_cgroup_get_from_fd(arg.charge_fd);
-> +	if (IS_ERR(memcg))
-> +		return PTR_ERR(memcg);
-> +
-> +	dma_resv_lock(dmabuf->resv, NULL);
-> +
-> +	if (!dmabuf->memcg) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out;
-> +	}
-> +
-> +	if (dmabuf->memcg != memcg &&
-> +	    !mem_cgroup_transfer_charge(&dmabuf->memcg, memcg, MEMCG_DMABUF, nr_pages))
-
-Please move the calculation of nr_pages after taking the dma_resv_lock().
-
-We currently don't have anybody dynamically changing DMA-buf sizes but just to be on the save side.
-
-With that done Reviewed-by: Christian König <christian.koenig@amd.com>
-
-Regards,
-Christian.
-
-> +		ret = -ENOMEM;
-> +
-> +out:
-> +	dma_resv_unlock(dmabuf->resv);
-> +	mem_cgroup_put(memcg);
-> +	return ret;
-> +}
-> +
->  static long dma_buf_ioctl(struct file *file,
->  			  unsigned int cmd, unsigned long arg)
->  {
-> @@ -590,6 +629,9 @@ static long dma_buf_ioctl(struct file *file,
->  		return dma_buf_import_sync_file(dmabuf, (const void __user *)arg);
->  #endif
->  
-> +	case DMA_BUF_IOCTL_XFER_CHARGE:
-> +		return dma_buf_xfer_charge(dmabuf, (const void __user *)arg);
-> +
->  	default:
->  		return -ENOTTY;
->  	}
-> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-> index 85dd747c9b36..b01149d26b44 100644
-> --- a/include/linux/dma-buf.h
-> +++ b/include/linux/dma-buf.h
-> @@ -507,7 +507,8 @@ struct dma_buf_attachment {
->   * @priv:	Attach private data of allocator to this buffer
->   * @memcg:	memcg to charge for this buffer's memory. Set only for
->   *		buffers backed by system memory where @size reflects the
-> - *		actual allocation in bytes.
-> + *		actual allocation in bytes. Enables charge transfer via
-> + *		DMA_BUF_IOCTL_XFER_CHARGE.
->   *
->   * This structure holds the information required to export the buffer. Used
->   * with dma_buf_export() only.
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index f8ec751b7d7b..af02d9777fe9 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -676,6 +676,11 @@ struct mem_cgroup *mem_cgroup_get_from_fd(int fd);
->  bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t gfp,
->  			       unsigned int nr_pages);
->  
-> +bool mem_cgroup_transfer_charge(struct mem_cgroup **ptr_memcg,
-> +				struct mem_cgroup *new_memcg,
-> +				enum memcg_stat_item item,
-> +				unsigned int nr_pages);
-> +
->  void __mem_cgroup_uncharge(struct folio *folio);
->  
->  /**
-> @@ -1197,6 +1202,14 @@ static inline void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg,
->  {
->  }
->  
-> +static inline bool mem_cgroup_transfer_charge(struct mem_cgroup **ptr_memcg,
-> +					      struct mem_cgroup *new_memcg,
-> +					      enum memcg_stat_item item,
-> +					      unsigned int nr_pages)
-> +{
-> +	return true;
-> +}
-> +
->  static inline void mem_cgroup_uncharge(struct folio *folio)
->  {
->  }
-> diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-buf.h
-> index e827c9d20c5d..0aaf2e7d593b 100644
-> --- a/include/uapi/linux/dma-buf.h
-> +++ b/include/uapi/linux/dma-buf.h
-> @@ -168,6 +168,31 @@ struct dma_buf_import_sync_file {
->  	__s32 fd;
->  };
->  
-> +/**
-> + * struct dma_buf_transfer_charge - Transfer a dma-buf's memcg charge
-> + *
-> + * Any holder of a dma-buf file descriptor can perform a
-> + * DMA_BUF_IOCTL_XFER_CHARGE to attribute the buffer's memory
-> + * cost to a specific cgroup, or move it from one cgroup to
-> + * another.  The ioctl charges the new cgroup before uncharging
-> + * the old one atomically.  On failure the original charge is
-> + * preserved.  If the buffer has no existing memcg charge, the
-> + * ioctl returns -EOPNOTSUPP.
-> + */
-> +struct dma_buf_transfer_charge {
-> +	/** @flags: Reserved, must be zero */
-> +	__u32 flags; /* unused for now */
-> +	/**
-> +	 * @charge_fd: File descriptor identifying the target cgroup.
-> +	 *
-> +	 * May be either a pidfd, in which case the charge moves to the
-> +	 * memory cgroup of the referenced process, or a cgroupfd obtained
-> +	 * by opening a cgroup v2 directory, in which case the charge moves
-> +	 * directly to that cgroup's memory controller.
-> +	 */
-> +	__u32 charge_fd;
-> +};
-> +
->  #define DMA_BUF_BASE		'b'
->  #define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct dma_buf_sync)
->  
-> @@ -179,5 +204,6 @@ struct dma_buf_import_sync_file {
->  #define DMA_BUF_SET_NAME_B	_IOW(DMA_BUF_BASE, 1, __u64)
->  #define DMA_BUF_IOCTL_EXPORT_SYNC_FILE	_IOWR(DMA_BUF_BASE, 2, struct dma_buf_export_sync_file)
->  #define DMA_BUF_IOCTL_IMPORT_SYNC_FILE	_IOW(DMA_BUF_BASE, 3, struct dma_buf_import_sync_file)
-> +#define DMA_BUF_IOCTL_XFER_CHARGE	_IOW(DMA_BUF_BASE, 4, struct dma_buf_transfer_charge)
->  
->  #endif
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 17fdefc56b97..3e717b5663c8 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5752,6 +5752,48 @@ void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg, unsigned int nr_pages)
->  }
->  EXPORT_SYMBOL_GPL(mem_cgroup_cancel_dmabuf);
->  
-> +/**
-> + * mem_cgroup_transfer_charge - move a charge between memcgs
-> + * @ptr_memcg: pointer to the memcg to transfer from
-> + * @new_memcg: target memcg; caller must hold a reference
-> + * @item: stat counter to adjust
-> + * @nr_pages: number of pages to transfer
-> + *
-> + * Transfers @nr_pages of charge from *@ptr_memcg to @new_memcg and, on
-> + * success, stores @new_memcg in *@ptr_memcg.
-> + *
-> + * Updates to *@ptr_memcg must be serialized by the caller.
-> + * Returns %true on success, %false if the charge against @new_memcg
-> + * failed.
-> + */
-> +bool mem_cgroup_transfer_charge(struct mem_cgroup **ptr_memcg,
-> +				struct mem_cgroup *new_memcg,
-> +				enum memcg_stat_item item,
-> +				unsigned int nr_pages)
-> +{
-> +	struct mem_cgroup *old_memcg = *ptr_memcg;
-> +
-> +	if (!new_memcg || mem_cgroup_disabled())
-> +		return true;
-> +
-> +	if (try_charge(new_memcg, GFP_KERNEL, nr_pages))
-> +		return false;
-> +
-> +	mod_memcg_state(new_memcg, item, nr_pages);
-> +	css_get(&new_memcg->css);
-> +	*ptr_memcg = new_memcg;
-> +
-> +	if (old_memcg) {
-> +		/* Uncharge old cgroup */
-> +		mod_memcg_state(old_memcg, item, -nr_pages);
-> +		if (!mem_cgroup_is_root(old_memcg))
-> +			refill_stock(old_memcg, nr_pages);
-> +		mem_cgroup_put(old_memcg);
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  /**
->   * mem_cgroup_uncharge_dmabuf - uncharge a dma-buf from its memcg
->   * @dmabuf: buffer to uncharge
+>   However, requiring a sandbox to hold CAP_NET_ADMIN in a new user
+>   namespace solely to bring loopback up conflicts with reducing the
+>   CAP_NET_ADMIN attack surface. Today, an unprivileged sandbox must
+>   start with CAP_NET_ADMIN to bring loopback up, drop it, and then
+>   block CAP_NET_ADMIN from being regained in nested user namespaces
+>   (e.g. via seccomp or max_user_namespaces limits). Conversely, when
+>   CAP_NET_ADMIN is restricted at user namespace creation time (via the
+>   sysctl ceiling or CLONE_NEWUSER_BSET introduced in Patches 2-3, or
+>   via LSMs such as Landlock), tasks inside the new namespace never
+>   acquire CAP_NET_ADMIN and cannot bring loopback up from userspace,
+>   breaking localhost networking for unprivileged sandboxes.
+> 
+>   Introduce the CLONE_NEWNET_LOOPBACK flag for clone3() and the
+>   corresponding UNSHARE_NEWNET_LOOPBACK flag for unshare(), which imply
+>   CLONE_NEWNET and automatically bring the loopback device up in
+>   copy_net_ns() before returning the new network namespace. Making this
+>   an explicit opt-in preserves default network namespace semantics
+>   while allowing unprivileged sandboxes to create an isolated network
+>   namespace with functional localhost networking without ever holding
+>   CAP_NET_ADMIN.
+> 
+> 2. Per-user-namespace capability bounding set & sysctl ceiling (Patch 2)
+> 
+>   Add cap_bset to struct user_namespace (initialized to CAP_FULL_SET in
+>   init_user_ns) and introduce a system-wide sysctl ceiling for
+>   unprivileged users at:
+>     /proc/sys/kernel/unprivileged_userns_caps_allowed
+>   (defaulting to CAP_FULL_SET).
+> 
+>   When a new user namespace is created:
+>   - Privileged creators (holding CAP_SYS_ADMIN in the parent user
+>     namespace) inherit cap_bset from the parent user namespace.
+>   - Unprivileged creators (lacking CAP_SYS_ADMIN in the parent user
+>     namespace) have the child namespace's bounding set constrained by
+>     the sysctl ceiling combined with any effective capabilities the
+>     creator already holds in the parent namespace:
+>         child_bset = parent_bset & (sysctl_ceiling | creator_effective)
+>     Allowing the creator to retain capabilities it already holds in the
+>     parent namespace ensures that a process granted a specific
+>     capability (e.g. CAP_NET_ADMIN) does not lose it when creating a
+>     nested user namespace.
+> 
+>   When a task enters a user namespace via clone()/unshare() or
+>   setns(), its cap_bset, cap_permitted, and cap_effective sets are
+>   clamped to user_ns->cap_bset. In addition, cap_capable_helper() is
+>   updated so that implicit capabilities granted to the parent-namespace
+>   owner of a user namespace are likewise bounded by the owned
+>   namespace's cap_bset.
+> 
+> 3. Per-namespace restriction via clone3() (Patch 3)
+> 
+>   Introduce CLONE_NEWUSER_BSET and add cap_bset to struct clone_args.
+>   When specified alongside CLONE_NEWUSER, the new user namespace's
+>   bounding set is further intersected with the requested cap_bset mask,
+>   allowing container runtimes and sandboxes to drop unneeded capabilities
+>   from a user namespace at creation time even when permitted by the
+>   global sysctl.
+> 
+> 4. Introspection via NS_USER_GET_INFO (Patch 4)
+> 
+>   While tasks inside a user namespace see their initial ceiling in
+>   /proc/<pid>/status (CapBnd), threads may subsequently drop
+>   individual capabilities from their per-thread bounding set. Add
+>   an extensible NS_USER_GET_INFO ioctl on userns file descriptors
+>   to allow userspace to directly query a user namespace's cap_bset.
+> 
+> 5. Selftests (Patches 5-8)
+> 
+>   Add kselftest suites covering CLONE_NEWNET_LOOPBACK, the sysctl
+>   ceiling, creator capability retention, nested monotonicity,
+>   parent-owner bounding, CLONE_NEWUSER_BSET and NS_USER_GET_INFO.
 > 
 
+FYI I'm doing something similar with cells
+(https://github.com/josefbacik/linux/tree/cells) that gives the same
+sort of discrete control over the different parts of the network.
+
+I super dislike this mapping of user to capabilities, as you said it
+creates this hodgepodge of areas that need to be updated and just
+creates more possibility of escapes where we get it wrong.
+
+Extending userns makes sense in the current landscape, but I'd rather
+get away from using arbitrary user ids + a capability set as a control
+for what a task can do. Thanks,
+
+Josef
