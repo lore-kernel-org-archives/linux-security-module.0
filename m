@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793826834;
-	b=foP8P+ywgwVG1ebIKHB5nExOvTaVb6mr1U8BKPKDe24CgImMFN/G33Ft11EAfd7HznGo
-	 w2lM/oapDlY24exRNaVxgQf9Zi8XbvOM5PSBqYPcCLBNadWQlpaO0838Iy4cFPkDSl2fY
-	 7cV7jpH6+Dm630O+leGNd0BLT4fNmA71ffANGTu+bZ3gxogXQNp6RSLiouAea0Blj0D9p
-	 wgbdN+FLwG57f1yilUiQdKU63qRe0ISOlzSgXncBrSI6vUCkuAGOrUm73MBJbjfW4A/f6
-	 uU8X7zBzfrsZskc9DpfHigcvnWJY9XIJQ3VT6AxfwLtPDNcjV4U5Q3O5EcTP2mhk8Nw==
+	t=1793826835;
+	b=eAiiy4Tdjnsl3zQA8HO57NQ0Zb8mJHYx8U1r0rnchfujR2II5hH4g6E50fG2lKrcMojO
+	 VKUAkIb4LJIVwX3aWK52sM82/YNv50HH4UJRuloeVZMZUjNUYhrBCkI/0jeOvIqcxOAim
+	 csdC9F7MYWPkEz6F+CgfnGZkM402/Tes1GwjXS+sfEjTVmIqkH0Ry3KV5i0vAleioY4li
+	 M+4LUJP1DF+zrEZtWUBnETHYDOYQAx+x2B9n+na7/ICfTo1NKWS0KtTmzj97mNRu6p7Kp
+	 1BIGlrzZlBizNIpsImFmijskb88nnCw7nlAzrooyuIkgHyFlLezhDlFC+q+8B82Tpsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793826834;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793826835;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/gqan+KugEk1wbUPFNpcL9mi+MNMlTj15UZIPIn9WeI=;
-	b=bi7xhaYdUpi2O5Jgo/T9y3yfLare8zPodsqW2TKknq7wiT9PYgybJziXO9JBeFQy0EHf
-	 xSe7zBGjzwfF53Ln72a5H/EjoWjKdOMwzCi7dgJeGCTtpRK1vbiId9f7llzwBYycvE9yf
-	 qaYMYw9IigpEhemTn1jM0Ax9gWhjAf7OToQzrbUI8Cu9p7MLTH/pzdoQErsAPb+9O1Qse
-	 7Z8U/e1RUCI8jL0d3jIpR9FKjLteSlglpP3V97Kob/puYRORnQtmY1aK4OMW19c2jGhce
-	 gV1TdQnkPfcXeeKJnmF/5hU5FM6aslXqmcq7bTp2j0KpVGQ9iHN4HDHZzfwzV3aBpNg==
+	bh=NHNgjOp5VuTj1KYuO+WAQoJ3HbaK2qkFN8ohURO0ReY=;
+	b=gUxWxwPUiLNYkh/Uo6dksKCubbyhMVO1jfUmhwN3SPOHmNIkR4Pew1Mmk1OIH4cO1CWc
+	 KaYx7N8C21ZDidYrc7856eoT9Q6sgpe3wD3qd8Fbfaf51KkkZ7LtW1yfeHwZ3WQnrTyQO
+	 eTWzMIBDHYcYjHHoDPH4tooZ3AR4YAOvZY6sI7/j4X/S6uqDYmNv9/rgTJ4XUmXwPAlRc
+	 nid7rtbH9gTGhqmpMGH6gZz5yCky/JAD4HjKpmUJACbqLoPQ8RlxExWWQZRFgxWc4C5pE
+	 y5t0HwwTCq9XjsZHZsm6FSWJ2C34czTXnPmrNXEMGHp2UQoRp4Dl3xsKUXfmaQkFJwg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jfbWyrqm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tgdov9uH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01206072F79
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C5E6072F7C
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jfbWyrqm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90B261F00919
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:13:53 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tgdov9uH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2A31F00A1F
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:13:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793826833;
-	bh=/gqan+KugEk1wbUPFNpcL9mi+MNMlTj15UZIPIn9WeI=;
+	s=k20260515; t=1793826834;
+	bh=NHNgjOp5VuTj1KYuO+WAQoJ3HbaK2qkFN8ohURO0ReY=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=jfbWyrqmfDPawR475OcJd+TGWCNf04zRr0oGWBvpz9dptqhAJgV8B5+O+Wxzl6jZ2
-	 FK+Zxz3H7J5X7/TRhjH1VRULL9Swot7jWNdwU7Spa3iQUCjVtz4LEC9OARYQ2/+Csy
-	 Z3/6nDqVl4dk7qnuJoa/To/yU7qVlW6BaPh+MlWWW344MK/hUikKqjKc+ZzYpZI45r
-	 8QEX9nURIFcV8mnSBKo44cGRvQgsOtpPUs2eAnyBAADnwGqbVZxtQVZjupXjN2NxmD
-	 rW1tq+BViOtiwsFFtiF1m4wgx3VW3d8/f2tiwS9WIgUpVZHSkvjJaw9OAffZ+Zwol5
-	 BdOAfdk4UE4Cw==
-Message-ID: <sashiko-outbox-198059@kernel.org>
+	b=Tgdov9uHKIeDlGsaAVK6drajzTx33a9kt6fEp+ttHH/i2u/BRbv3pMszEJd0VUqpX
+	 slhva6pawGjIulgRphL8bwAJO/2QP42hyyOrvMiQ4PicE7yPfpD6eUIe4BSuZD6Jya
+	 /vhOkes/PK15Lark/KvoB9/X7UE2YVTyyLx6JSg9AauWPTyoVBqTEoJ8GvLDtWT3P0
+	 odTGQDVKmQGHvDllC+noaR7Ad/JbCcSINfI9fDUn3ln3Y319wsRom+9gSGK7SKaY0v
+	 oZBkf/4VL87WF1Ji1vyS+aDayTRm/oRhu6u9We3GOaVS9E1p3VDZXESkOdmoV1dpTE
+	 3kX7Dt+WlXpXQ==
+Message-ID: <sashiko-outbox-198060@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 13/27] selftests/landlock: Fix memory leak in
- audit_init_filter_exe()
+Subject: Re: [PATCH v2 01/27] selftests/landlock: Propagate grandchild
+ failures in unix_scoping
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104-selftests-refactor-v2-13-c52f23f7ce33@gmail.com>
+In-Reply-To: <20261104-selftests-refactor-v2-1-c52f23f7ce33@gmail.com>
 References: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
- <20261104-selftests-refactor-v2-13-c52f23f7ce33@gmail.com>
+ <20261104-selftests-refactor-v2-1-c52f23f7ce33@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Wed, 04 Nov 2026 21:13:53 +0000
@@ -60,8 +60,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> audit_init_filter_exe() does not free the buffer returned by realpath(3)
-> when the path is too long.
+> scoped_vs_unscoped.unix_scoping starts a child process and a
+> grandchild process.  Add the missing check for the grandchild's exit
+> status and propagate it upwards.
 >=20
 > Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
 
@@ -69,5 +70,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-selftests-=
-refactor-v2-0-c52f23f7ce33@gmail.com?part=3D13
+refactor-v2-0-c52f23f7ce33@gmail.com?part=3D1
 
