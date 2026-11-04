@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793802483;
-	b=SW88ZbYh34guyd5aiBmJUIiesPoXLCSq1pPlvbL9HCYUiOjQQTo5MCGqcLpcVpOkwS1N
-	 5mzjB8906QIli9JgpH6dQlbEO0YmXP4E65CXSmxRqLnMlCntrY80A+h3pPDjlbRjW1bd8
-	 2udcd0dHXHivYB7sEVA+++jcSNec1m2FQPEpUcwT96+oSqosm2FQIgEAvvT6v3rc/MZT/
-	 ZdH78wQ++qNVpj8KlKPS/b+4gUij49MpBVwCaIjjM+Vqpu1a3lB9T+TxrYjqxz0osp2D2
-	 u0qHPsuId4nSgjgCO0b3vJ/yupEK66O0WlTmvG+49mVVwmvgz6RI2IGukjybsBXw9Vg==
+	t=1793802488;
+	b=WbKZTowJNbGz/15sNlYCbdCw3+tH0c0sVgrAao7LsVtdL77c6GjBxWoll3eFWBeKfVkX
+	 sNxvprMB94VBqUNLl4zBUovx5tXAYrHoJakhRd0lMkB2DceVXOrTwtOxxXwTy0gl1dnLe
+	 TlseWVNLmxEd+8uJtrxaOlXhiK8MVzHvP5uF3fn1Bi73dS8J4BsAZFHnd9x/BNzXBUFC/
+	 MN5taJlpAYoiIe5t2mfLkiGSY1b9uw372jqhLnzwD6GMpkRap2rvQYe6POENPBgNP3yZV
+	 cibhjvxnuYyTfamWDxFV//GfBQU4dfLps3OQu4mD3jJRCxKoB+B12PRJYgklFPXW8ZA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793802483;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793802488;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=OYSPCaBzMkfb2mAiMZjut7V9po11C4dM4B773ZJgUUs=;
-	b=1m6f5ISUOFKVQgGuhdm519MAxALo0LVvg4vVEtfCsrb4ujcMoelDiNYqa2c1R04US1p7
-	 eoVxOh+u5ZJjAouXyfMLogeRwJtnO3k4iC4B9y17IuPfUTN9N0dHDRocPsIw3Z5Ibdlmf
-	 nWyO4t8X1Y4Nsa0qHCmZ7IJJnv/28Fl521gBGCKi0J/tKn3qpQQ1Kt8KWtEHfXwOQqwvf
-	 UfwKo4hhxYOZznZZEXP1k9fCDXHpq8mLmP3fyEgCrVtLZbT3/P7sC8qbRpLnkngUhjlwM
-	 5d+0iV3JXg0uOI97rd8GsqsQO0K3b1LBM9URGygZki4soUHG96RGglR6aBIaFhJyoTQ==
+	bh=sJPpFu092lfH0xBoBg9xVSD7qIH2dK6htUWfNLYu8uo=;
+	b=yY2I+MDJF/J6SAzsScRmaXlXMi+nOe4h5EHoQcqVGDd90+dOENTNYW0xXQqL19buaJRS
+	 U4gxWW6j1WnbvaEEBOhfS8SepCQI3eQvyksFkuMgUr+F7drjDZnjQlnm7M7YvOhE7QAlM
+	 12ms7nWTaS6vd6ZDW8ueblysxxZqXaU/Ya2trEUx5OkeMJzztMH9HUwgSlkD6RJjp1q/l
+	 Y4K7vBfqSlDtCLjS8nco7ENpuoudFBLE127THCK++mH7C2gM/klEEq08L1A/f8G0hChjg
+	 rX1bs0fN1E65nPm0US3K77XUL/9blIxZDkCR25Q/2Dx7JvYf+6eLF9M7V2VhGuOWq+A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=agD8Fb7S;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P8NnKk+Q;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD00606A326
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3807606A326
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=agD8Fb7S
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 279351F000C1
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:28:02 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P8NnKk+Q
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B53D51F000C1
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793802482;
-	bh=OYSPCaBzMkfb2mAiMZjut7V9po11C4dM4B773ZJgUUs=;
+	s=k20260515; t=1793802487;
+	bh=sJPpFu092lfH0xBoBg9xVSD7qIH2dK6htUWfNLYu8uo=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=agD8Fb7SL2epKt1oFnxWtLJQcKfocpRqQBcz9K3mSne7DTHfwqRwgDg57RmfUSCpq
-	 VF7AliRRIz6zYG5m1ltnIz3/+xgIKaxxStMpjgLJNRmjUC5wxe9/36CMgUsoP02zYz
-	 u46oBkXBf/GLTbNUibSRlNqgEb14lSn59YE3IoVt4NflgqluWFBMdqrpK0E0cgjmKZ
-	 wulTj/hdWkMquH5xwpLBl5SZiqN5RvRLXqRGXM0G8zNxg5oju+A5ETl5WtuATX3GJW
-	 oPeKJ/l+da+HBStT/y1F4nrgtby1MsAAGfg5vMe5YdB68LjQpCbDi8+X9TW9oCvUqY
-	 iYqcelfJASeXQ==
-Message-ID: <sashiko-outbox-197432@kernel.org>
+	b=P8NnKk+QiqbZQXWnbAJU3Nhhnvsag7MT35xRfatgO9K7Uv0YQNIwjbGTIHzfEdPjv
+	 gMb3q22WQJUDq5kfAHxv9hy44MjJ8F9I7fpz1dQMmyVVEP9y6tj1RJxP4siZejsoHl
+	 kh8zZeK6vW9z1RlcaWvO2dklqo9HekNsrp+s53gQdiC+T1gO158fE21xN+aAYLNOvr
+	 3SYk+3BsjN58eqI2lpapakAaHvcse+kDSnxFhZ4maymI9nQ8QlFMBpQpkJtZ6xo5kK
+	 idKPI+PSY1jhWd52Tu+DVxbhX7nFrWWCFn+1CIw63MQQ87SgRTlBvD/MIqaORwNbly
+	 wFQFoNU2fIyuw==
+Message-ID: <sashiko-outbox-197433@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 07/13] sys: use cred_ids_allow_sched() for
- setpriority()
+Subject: Re: [PATCH v2 08/13] sys: use cred_ids_allow_control() for
+ prlimit()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104-b4-cred-ids-v2-7-956213608f16@toxicpanda.com>
+In-Reply-To: <20261104-b4-cred-ids-v2-8-956213608f16@toxicpanda.com>
 References: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
- <20261104-b4-cred-ids-v2-7-956213608f16@toxicpanda.com>
+ <20261104-b4-cred-ids-v2-8-956213608f16@toxicpanda.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 14:28:01 +0000
+Date: Wed, 04 Nov 2026 14:28:07 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,8 +60,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> set_one_prio_perm() makes the two comparisons of check_same_owner(),
-> written the other way around. Use the library.
+> check_prlimit_permission() wants the real uid and gid of the caller to be
+> all three of the uids and gids of the target. Use the library.
 >=20
 > No functional change.
 >=20
@@ -71,5 +71,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-b4-cred-id=
-s-v2-0-956213608f16@toxicpanda.com?part=3D7
+s-v2-0-956213608f16@toxicpanda.com?part=3D8
 
