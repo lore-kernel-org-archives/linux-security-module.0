@@ -1,41 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793759157;
-	b=Vn7Vpcu79MJFpeEfGYlb1pcSGnOoDJqci50uEXb3lOGBH58yJ7gQyBzmBDWCqqs2Xtv8
-	 47e5GboQkXGijL/A48BNKudDJ1U2TJT8srFxJNWslNcBFHb+btSv5bxMHj51gr9V0va/m
-	 3IcfeUjpWH6kkGnGpc1E8wufgXwE/xa/mkV5j7tN5FikFmyTw2wWvol1ZfcturBHdAv0p
-	 niaOagaAvyjTGmLnJmhT3rW1hthCPtdOHkQ0AXnT1aUcImuLO1gWj49GeDmpkhSZ1z2Hk
-	 b5gXfpbeFLUs/NA4nj/kfJu0NfARVb+0zfbADTv/o3JHqPX09BLWeW5VdUjDhkEDsSA==
+	t=1793761383;
+	b=FoDfnrXhKJJE36gOH7xEQcYqM2q7HCu3bBsv/IkMKirpD4pqxk/AfNx153JEuX0F4Ws4
+	 5E5tg0Me5P0x0W2Svzd/cxdnoV9/kWt1mChSTjXddx5+H8Xp9hTYUZUk8FyR5UMrmqOp0
+	 iJ5QkNZFS0SD9OfIgrEVrum9MVHsoY/CHrmvxHuugyV3WLABqSaKg0I7GCyB8zzW7BS+n
+	 MoH+GBlwDU0s/RhV3uHDXeeH1lfv6DIR5a5VZunZ23sfPtEAwLyGJ4iquqkCkx5UUa8DE
+	 nqiGKtGXm6acXp/SNlicF6MLSjCSMvrxBggM7p5YGtR+0jsbec3ZBoCcJ/1F58GYXlg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793759157;
-	h=DMARC-Filter:Received:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
-	 X-CM-SenderInfo;
-	bh=HhUw5YLUukraJ9A5Hj83RTutdKmDXAieilZGGjQwU1U=;
-	b=1Wa08oQKnyHCcZVNIs+lWXAdLxb9MtUyiWzvClsznRUrm/G/BfOHHcth7LvHCBSBeGfs
-	 WmlIVhtcZ6fxtbpc+JaTJXe34Xc4GkumAK5AOqc89zGICys2UE/WIuEtYQ2EGMHiE0Ec5
-	 8RqxTGASUxLyHxNOMsVk//reanVHSMwIzmmuQquAr83yMcBL7mflbVKZAQsd/fEmBCNrQ
-	 xi9TUoODdPhLEOSGaNL36NQK4PGn2XX+lo9wthwMes+AVkyYAMoomBw/BlqYNaMT0evXV
-	 W1pO0ErT6wJE2Eb3VZr2tMheS/i7yUPMyvMPDZi+m4agZzWZXTO5tUJA7IQBsUsiuew==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793761383;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=wzYU+r3uXDCSd9JLoGVlj0wSnW9MxzPziNGy8n9n1BQ=;
+	b=IupXmJjsLBoQYYfDBwF7zYNR5Lve4lGjdGtnN0yZlBZKHHyaRV4vZl9oWR2Kp/rAD2Sv
+	 EpKJyXdspopu0wWZG8/4MgqlOQClx+w0zgQ47TWgwNCz8ueyC6F1C/UxQjwkwVuM3OrvR
+	 dvP7fIBUja4Hu44Su8DIndyiqnFNVazvrX04TKoYwPn1jju8BDy+Impw6PQWScC4a9WFD
+	 9O9U0F51SJ3ooi3nBbKuIYGuRvo70eJso0nffe5mNT2jjrjcdq6yBq7uRNMuRBvVVN+LM
+	 c1DhQ8pfDwKhlh7wfX1WMHbHrCLL/zH1S0cHT+8PwUmC96YXI+MBFseDxgQUObNu/zQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=hust.edu.cn;
-	spf=pass smtp.mailfrom=hust.edu.cn;
-	arc=none smtp.remote-ip=13.75.44.102
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00440606A31B;
-	Wed,  4 Nov 2026 02:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 00440606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app2 (Coremail) with UTF8SMTP id IQEQrMD2HXeol+pqUXtwAA--.31840S2;
-	Wed, 04 Nov 2026 10:25:44 +0800 (CST)
-Received: from [100.81.40.43] (unknown [10.12.191.55])
-	by gateway (Coremail) with SMTP id _____wDn0Dail+pqcvIYAA--.18318S2;
-	Wed, 04 Nov 2026 10:25:40 +0800 (CST)
-Message-ID: <6c2103dc-4eec-4b70-9b68-6fa907bffcc4@hust.edu.cn>
-Date: Wed, 4 Nov 2026 10:25:38 +0800
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HPCMRMb9;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11347606A31B;
+	Wed,  4 Nov 2026 03:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HPCMRMb9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5856B1F000C1;
+	Wed,  4 Nov 2026 03:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793761382;
+	bh=wzYU+r3uXDCSd9JLoGVlj0wSnW9MxzPziNGy8n9n1BQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=HPCMRMb94lkZhlGSSEtXKpBe6iujZuU5Zmp3Rwm3Wj5K1EWMK4JSFTs4tXJdngkgL
+	 QYP1vAd+IHROie1Dx+GqDhWxSuaG8B2KwnqgC0hR4C9Nxmp++VwtRRRHo1+euB7oiv
+	 uJtotO1cpNZVsFqrzHweCoQTjAYNAKhLHShFRdtBz/29LJ5V6cYsTp/neqxEimYoeH
+	 CNq4kC9XGZpTTPMh1d4fwqa6TB3gDeje2uzrE/kg5wyJU9jE9RTusEJR1r5xuwHtIv
+	 pS9rE9THX3HNdRmW2zq9yI3if4RFm+LQ1p0jIbWRHRmHPvJP8DUv7kN3+kvoTTeYU3
+	 RkImXJs+U36dA==
+Message-ID: <sashiko-outbox-196565@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC PATCH v2 01/11] KEYS: Add key_gc_flush() for draining RCU
+ callbacks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "David Howells" <dhowells@redhat.com>
+Cc: "Eric Biggers" <ebiggers@kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, keyrings@vger.kernel.org, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>, "Eric
+ Snowberg" <eric.snowberg@oracle.com>, "Paul Moore" <paul@paul-moore.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ =?utf-8?b?b3BlbiBsaXN0OlNFQ1VSSVRZIFNVQlNZU1RFTQ==?= <linux-security-module@vger.kernel.org>
+In-Reply-To: <20261103030226.2685251-2-jarkko@kernel.org>
+References: <20261103030226.2685251-1-jarkko@kernel.org>
+ <20261103030226.2685251-2-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 04 Nov 2026 03:03:01 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -44,117 +64,100 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] docs/zh_CN: add LSM admin-guide Chinese translation
-To: Yan Zhu <zhuyan2015@qq.com>
-Cc: skhan@linuxfoundation.org, gnoack@google.com, linux-doc@vger.kernel.org,
- linux-security-module@vger.kernel.org, alexs@kernel.org,
- si.yanteng@linux.dev, corbet@lwn.net, mic@digikod.net
-References: <tencent_001080DF135CEE2CD1B260EFA08E3CC71A09@qq.com>
- <tencent_7F10C2E7BB9C4B842554D6E95DE5D1DBD806@qq.com>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <tencent_7F10C2E7BB9C4B842554D6E95DE5D1DBD806@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:IQEQrMD2HXeol+pqUXtwAA--.31840S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4xAF1kGr1UJw43ZryfXrb_yoW5trW3p3
-	Z7KryfKasrCrn3Grs7CF47XFW7tF48G3s8K3W3t3WFy3WktrsYqr4j9ryqgFZxXr48X3W8
-	XrW5KF1Uuw4UZrJanT9S1TB71UUUUbUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQCb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCY02
-	Avz4vE-syl42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr
-	4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxG
-	rwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
-	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
-	z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUsqjgDUUUU
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] KEYS: premature return in key_gc_flush() when key_gc_work queues=
+ RCU
+--
 
-On 10/24/26 11:07 PM, Yan Zhu wrote:
-> Ping
->
-> On 6/12/2026 11:58 PM, Yan Zhu wrote:
->> This patch series adds the Chinese translation for the Linux Security 
->> Module
->> (LSM) admin-guide documentation, including the main index and all ten
->> sub-pages: apparmor, LoadPin, SELinux, Smack, tomoyo, Yama, SafeSetID,
->> ipe, and landlock.  The admin-guide toctree is also updated to list the
->> newly translated LSM/index.
->>
->> The original English documentation was restructured into 
->> reStructuredText
->> by Kees Cook in commit 504f231cda56 ("doc: ReSTify and split LSM.txt"),
->> and each sub-page has been kept up-to-date with subsequent mainline 
->> changes.
->>
->>
+commit e02fb1ccece5874817985c8b64ba41bf90bc5796
+Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-Hi Yan Zhu,
+KEYS: Add key_gc_flush() for draining RCU callbacks
 
-I have replied in the single patch thread. Please double check them and 
-reply there.
+This commit introduces key_gc_flush() to drain RCU callbacks and flush
+key_gc_work until no further garbage collection passes remain queued. This
+provides callers clearing an internal key cache before module unload with a
+synchronous barrier for key destruction.
 
-Dongliang Mu
+> diff --git a/security/keys/gc.c b/security/keys/gc.c
+> index eda445f815d47..3cfbf00085b3d 100644
+> --- a/security/keys/gc.c
+> +++ b/security/keys/gc.c
+> @@ -21,6 +21,20 @@ unsigned key_gc_delay =3D 5 * 60;
+>  static void key_garbage_collector(struct work_struct *work);
+>  DECLARE_WORK(key_gc_work, key_garbage_collector);
+> =20
+> +/**
+> + * key_gc_flush - Wait for pending key unlinks and garbage collection.
+> + *
+> + * Drain RCU callbacks from keyring edits and wait for the key garbage
+> + * collector work item to finish reaping unreferenced keys.
+> + */
+> +void key_gc_flush(void)
+> +{
+> +	do {
+> +		rcu_barrier();
+> +	} while (flush_work(&key_gc_work));
+> +}
+> +EXPORT_SYMBOL_GPL(key_gc_flush);
 
+[Severity: Medium]
+Can key_gc_flush() return prematurely before keys invalidated by
+key_invalidate() or key_remove_domain() are unlinked and reaped?
 
->> base: https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git 
->> docs-next
->>
->>
->>
->> Yan Zhu (10):
->>    docs/zh_CN: add LSM/index Chinese translation
->>    docs/zh_CN: add LSM/apparmor Chinese translation
->>    docs/zh_CN: add LSM/LoadPin Chinese translation
->>    docs/zh_CN: add LSM/SELinux Chinese translation
->>    docs/zh_CN: add LSM/Smack Chinese translation
->>    docs/zh_CN: add LSM/tomoyo Chinese translation
->>    docs/zh_CN: add LSM/Yama Chinese translation
->>    docs/zh_CN: add LSM/SafeSetID Chinese translation
->>    docs/zh_CN: add LSM/ipe Chinese translation
->>    docs/zh_CN: add LSM/landlock Chinese translation
->>
->>   .../zh_CN/admin-guide/LSM/LoadPin.rst         |  33 +
->>   .../zh_CN/admin-guide/LSM/SELinux.rst         |  45 ++
->>   .../zh_CN/admin-guide/LSM/SafeSetID.rst       |  82 ++
->>   .../zh_CN/admin-guide/LSM/Smack.rst           | 722 +++++++++++++++++
->>   .../zh_CN/admin-guide/LSM/Yama.rst            |  71 ++
->>   .../zh_CN/admin-guide/LSM/apparmor.rst        |  59 ++
->>   .../zh_CN/admin-guide/LSM/index.rst           |  46 ++
->>   .../zh_CN/admin-guide/LSM/ipe.rst             | 723 ++++++++++++++++++
->>   .../zh_CN/admin-guide/LSM/landlock.rst        | 169 ++++
->>   .../zh_CN/admin-guide/LSM/tomoyo.rst          |  63 ++
->>   .../translations/zh_CN/admin-guide/index.rst  |   3 +-
->>   11 files changed, 2015 insertions(+), 1 deletion(-)
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/SELinux.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/SafeSetID.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/Smack.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/Yama.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/apparmor.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/index.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/ipe.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/landlock.rst
->>   create mode 100644 
->> Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
->>
->
+Unlike keyring_clear(), which queues assoc_array_rcu_cleanup() via call_rcu=
+()
+synchronously before returning, key_invalidate() schedules key_gc_work to
+reap links first:
 
+security/keys/key.c:key_invalidate() {
+	if (!test_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
+		down_write_nested(&key->sem, 1);
+		if (!test_and_set_bit(KEY_FLAG_INVALIDATED, &key->flags)) {
+			notify_key(key, NOTIFY_KEY_INVALIDATED, 0);
+			key_schedule_gc_links();
+		}
+		up_write(&key->sem);
+	}
+}
+
+When key_garbage_collector() runs the link-reaping pass at found_keyring, it
+calls keyring_gc() -> assoc_array_gc() -> assoc_array_apply_edit(), which
+queues assoc_array_rcu_cleanup() via call_rcu() without setting
+KEY_GC_REAP_AGAIN:
+
+security/keys/gc.c:key_garbage_collector() {
+	/* We found a keyring and we need to check the payload for links to
+	 * dead or expired keys.  We don't flag another reap immediately as we
+	 * have to wait for the old payload to be destroyed by RCU before we
+	 * can reap the keys to which it refers.
+	 */
+found_keyring:
+	spin_unlock(&key_serial_lock);
+	keyring_gc(key, limit);
+	goto maybe_resched;
+}
+
+Because key_gc_flush() calls rcu_barrier() before flush_work(&key_gc_work),
+if key_invalidate() is followed by key_gc_flush(), the RCU callback is not
+queued yet when the first rcu_barrier() starts. If key_gc_work runs
+keyring_gc(), queues edit->rcu via call_rcu() after rcu_barrier() has alrea=
+dy
+passed that CPU (or returned), and finishes before flush_work(&key_gc_work)
+is reached, flush_work(&key_gc_work) sees the work item is already idle and
+returns false.
+
+At that point the loop exits while assoc_array_rcu_cleanup() is still pendi=
+ng
+in RCU, key_put() has not been called on the unlinked key, and
+key_gc_unused_keys() has not reaped it.
+
+Should flush_work(&key_gc_work) be called before rcu_barrier() in the loop
+so that any pending link-reaping pass queues its RCU callbacks before
+rcu_barrier() waits for them?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261103030226.2685=
+251-1-jarkko@kernel.org?part=3D1
