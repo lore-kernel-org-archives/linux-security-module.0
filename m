@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.175
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793802310;
-	b=uCHGiKPp29aVALS0rvTNj9HHPIo75rYpegyykj79+xBOEsOI8kmcCCSlQctYjDID+vSm
-	 l2MZ1MxLKx2KjqGVOSLv4K4qsyXBDcukocJ60GVtIbuq9CWgiONp+XBFrkkTKa3bMu/VB
-	 e5K1C4cw2Ngsg9UQHd/mN+XeM6LKkW9u/ElJxyRa1vKHZ7wLKmHeCa0WcNLk/gnHCRxcq
-	 llDLk0T5xMql2LIU2TyT8tt4hraahqr6bOQnYewr2QmhsCEQf7rfVNiBw4whnYg6oD6Ig
-	 QY7e/4qy4LUfMv55jpUMRLGuwPpdC92gAW0FUd7IA9/JvOIfXsRB/YXk2/MVYJMD3lg==
+	t=1793802313;
+	b=UxCmmTcbuq/v8Ar6NTRWDH9YXBBb4JTP2aQBXucWji9KPO12sOXd7hepwdIBInraJ8pA
+	 aZQpbHbhtWgF7epP2cHVykF/AOSvMtXgCbuiVLgtGV+A5nYaZATqJxi92LHeTt0pRsfVi
+	 I4AHtAT84tYiU5hzn6GDISKTzZ3EDLpMDfRyQb00MckYoJGIRUihN1j72GPLCf+ZIMyfI
+	 +i6cQerMe28AoCB7/LjLpzA39M3wUpuE3F1DWbD0oqn0vUf4cyE9zpy8+Mb65xhzwYb8E
+	 juBg822Bj1ggBeKYYseUViwMOMrRqMKRSTCQDT/XzJIfshaw+pvQFRz3zEABbgouOOw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793802310;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793802313;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=tXSVOWbTASTrx3VWAw2GnqycsSMwDyX6sPcpsk3+i/o=;
-	b=vvxMn6E0nwbb/fTj/GwYsdM+AqigRIRQaTI5rPqHBrfFtjRt2IWiqPVu3Vy67XmaM2Q4
-	 AiQVjABVACYDYLtqWVSertuS8s2NedIRHfaT/8y3+V36qhzfaw8JokvY6W9BRM0ExeutP
-	 L6z/dgo1/d6iQZbrTqABWWKaoBKe31zU4QkiONEXK/ECgxu7uzlLF8NFLVID0Py7vA3Vb
-	 o7DxIW+a04BqzEeOaUsDlQzss19rlgNk2k2zMtu08wlhZinLi2dkyTifN81+0yJTVD6rY
-	 Md/WcvPANW15hQAqWTvKqtdtCUDh4T9s09Q9Eb8gBS6lOqXQD9RLVfxzOsqjkcHXKAA==
+	bh=hG5TpvKc4RXZNEF5W2j4YHWwCvUbIigtvZnxNoygjVI=;
+	b=MkYht5FwAK2mkQWmt1E2KF1kLzeDkrlCmJIC3FeUfDKoQQVQL2GXhXGYz0ARNADsvdtu
+	 afeic/bZpgXTtAa/huR1JG9c0mUC0ceuvexTFHYuimUFS8c/3gZ9tL2qXQ0OkqqMrAAR5
+	 vFtgmmDRzfdPan8AOpUdcGmpLSKho0ChorNIDv+QEgulFRVvndlMhQhGu3ZwkssoKpVni
+	 TBbAty1I2DvU/uqgrfCpJK1kJ5PciFCAJMTYjQQjuEQTyUGW9NuCzavw2GYNcCDOH8D5r
+	 vLiAV9Si18qQrwu/N5AHAjLussvkOHkBVT+CnnKE32F/rm3ttpWun7tJkAoLVPy5a+A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=toxicpanda.com;
 	spf=pass smtp.mailfrom=toxicpanda.com;
-	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=V1W92qgg;
-	arc=none smtp.remote-ip=209.85.219.42
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=Me5us99O;
+	arc=none smtp.remote-ip=209.85.222.175
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC42606A330
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:25:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7AC42606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988BB606A328
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:25:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 988BB606A328
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=V1W92qgg
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-91bb5795792so8729676d6.2
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 06:25:10 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=Me5us99O
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-93f2b8cf037so65650585a.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 06:25:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1793802309; x=1794407109; darn=vger.kernel.org;
+        d=toxicpanda.com; s=google; t=1793802312; x=1794407112; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=tXSVOWbTASTrx3VWAw2GnqycsSMwDyX6sPcpsk3+i/o=;
-        b=V1W92qggbYZSKAJCPGsrdYUPj4V7bLC9pjgO9f2qlaofm6igVAT7h0TzehwC5LPW7o
-         suT+f/VRGIgcfonqFmV0UN89XIj8ZMg7afvw1be0humu3G/SVHZui+J7EqAbq8D3jVsv
-         /ZUGWTT6zdgyTevlcBxI5ucdfMasHCX5w/l7r07U+1TlSgv/YbCCtjiactJ9Z7q1zHSD
-         pXtAs14Ww6E8d1+zuMKS+eKNc+89r3OT/upqvBw9PQuKoERQSgCrl5qSFOSN7VUj3C2Z
-         r7r2/4mc7mcXCaJgHQjBpiocBKtuDF+df/ArC3I3lv9djbvQW4cfasiiHzt0lKaBA8yq
-         yvpA==
+        bh=hG5TpvKc4RXZNEF5W2j4YHWwCvUbIigtvZnxNoygjVI=;
+        b=Me5us99ORyikGlYv32KXXwL+de+2DN3/mIdVzQKsvY5g3V3q9glYRRmjw3EbJzrJwL
+         6o+1aefKoApCTSMWYITTEgfkkX9OrVom9BZiuJc6HIver/ePVrBAyvSDKusN/sqWLAoR
+         LW/PLyQW/pYMUV/nrLqY02Rwy2Gs765GuqLR7BtR3GRoM/N8ZLElpJhW5WKk1WtiAtLt
+         qvU3T1vGe0lUiGFAo7ueOSNKUEdrDOW8qeHJeqWxB/7So7I2Z2CfFiX24nl6K/TmJl10
+         wED5NLEW4WtPF/joR1Q46CF0ro+Y6jz+bxk864OcPZ/E7SVAWH2GvBSY4s9G8IzQkA9I
+         nWMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793802309; x=1794407109;
+        d=1e100.net; s=20260707; t=1793802312; x=1794407112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=tXSVOWbTASTrx3VWAw2GnqycsSMwDyX6sPcpsk3+i/o=;
-        b=qv9BVKAMSnqetQLpw2X2nBb69nhEcOID3opJVckNnxIb3VWVJa+Mgb5LCtAlpqxdov
-         U/Z+iItRowubu2Q6DrZaVVCGyQ6n1c8RL3UW3hYBuWFVMimF8PZYaEtGpJumwQa0p03D
-         KaCkNekL0JTZFLRpRPTKix5+VgT7Ceo6Bi1rxoFu/IK4HU4h3XT82gLvKMICH6Jj/NE6
-         DRYWNy4G3me7qa9hwXDCEswucqCNzCyW9nuxSp4MnhCJxAFT7/vcsLHYiVrnMZQBE96g
-         Z8TnKumHVdKyMMKFCt/OzFOsfjjZAgwhmeGptDBtmm5H2W0qlFoXof/89LrsA2cxj2m1
-         +WPg==
-X-Forwarded-Encrypted: i=1; AKwUvBz7/Q5YKxINbQ8qSKef/D0hy4Q35TLBuCkmwtKP4bSzHHH4Y247HmOQ68F9McLeKVMj2HqGO4+8CSyose6w0VKGq/V8LYg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z998RcDoXN2aoMZlIFxTPIDQ2uILifktJ/jKTzg85/8x5bl2xSA
-	4lX6QQnjUZDjSRhSrzZ7JytaKwMZm6lYAxE9+AXsuEzLE1xrfulTNc0ZWRcR00UPh5s=
-X-Gm-Gg: AYBFou3Pmb97k8DqwwojtFGy+KHozC5EcweMlsu8ntW5pwaA+yWNzf78vC24PKUmvCz
-	0kuanLYLBBZqebTXot3QwA6bMGVa+j9WVg6OnrIcZwaQg6bK7uzmyE2mW0WhdxorJKQRVnqPDwS
-	Ky0vRSjMKvXNduWO481NwWPizNKWexs3IpYSFzH71clPafbr8oAFGSMrekePF0gHslsiBJtOX9L
-	OIYSCQEAnnx4qzV+bvhFpZgfYTNOXvYgFiQnZ4jimHozA53TPZSVnwo3QK9OMrIPS8jpa4RFruF
-	msY+RwFUoI8ba07S5Ojn/7fPiqJ8zh1fsc9Np4YDo9fc8fjcGfDReKal68ejvtGPqQkKtytjkN+
-	q8QAy0PAdHt2qwkqOejLJ9eRq1SQJy4NtNR35D3g3ZC9IyIy/TzrYIvdTzf4rTAWbLCI95N/4ip
-	G1ySvO0RNTnl3eOopOwRpSPkGbAY9ogq7FLUDyrdMnbElncrjUOvDt25pbeiWyt4qQ60NyUcQtV
-	R1UHRfqAAAtkWszEzSMXtNpxSt78sQKe1eDbsKOoLPpJNccY/HxaDcqdncrBHS/w3CmL7TYBk/K
-	J0kPI9uzB24TAH4wdSwRW02Drv3smf1AW7OPjyPdbXG4/A==
-X-Received: by 2002:a05:620a:2a03:b0:93e:c12c:9dd2 with SMTP id af79cd13be357-9442178fc95mr2431154785a.82.1793802309425;
-        Wed, 04 Nov 2026 06:25:09 -0800 (PST)
-Received: from toxicpanda.com ([153.61.196.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-945d482eb96sm212222885a.23.2026.11.04.06.25.07
+        bh=hG5TpvKc4RXZNEF5W2j4YHWwCvUbIigtvZnxNoygjVI=;
+        b=MGQYbX90qt+HDQ1vPIVPVvvYUsap6ZZBo/YYM2PmHLiKe+B0I1IhJAHvJNvUDK/eR+
+         Xk13Q24Tr0unx/uviK/h60Gv8RWNpLb5Ga0Ppy54E7UqOYjAmd8ZKQwb4uF7KrYHXr/R
+         M3t666wjCE0ndgbYbIhifG92WkQ3fxNOzlq9tSzg0YXMe+mWHEykPWcr28mnvrayYocI
+         14I4rPLbdFuPYT+otE16RivAT8IZPUQM41JJjKIB5vpFD1PNhLPZEtMHOYv98Du6T/Yu
+         QnsuXKFGi68vl0y48mEFHMY+fEXMDQjUpD1wnffDM43Tqlmx/kDhDSL4HGg1WS67mrUN
+         ebSA==
+X-Forwarded-Encrypted: i=1; AKwUvBwuN2ZqIW/Yl9dcSLMh1QfR2IRtgp4opPjCTvJBWgBHfqfC+/c2ImZR0EnJsoRByGEijePbe7+gjJP0DwbZYKEv3UhmVVE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8Zj4dg9G3IhkifcGcsyZlf9vvf3i8KNyHeq2BduoDz1sgYBcQl
+	+va0J/N0sICexi1oIaj/e3UsWVHuYYwQNVyfIm3S6cpTkdLoykIPaimKJObfnLJwfBM=
+X-Gm-Gg: AYBFou34INFSMRiODaOQntFMRWQXN77AwzmUvtcW/tHClwCf2yPq2nDB68hICluywfu
+	+/r0+OlKApO8mI1fHhrSbTDL2kHpmLbqjkAzrEAorVr/hLrdRuu+DkQlIRQCT7HyXFYfuDeziLT
+	neDnmCeSBbS/WG9jiiplvIuMJWaRzR/8FFWHyj/FdnmLMnLKglR3Ed0WJXMBCwZ1VHby7Dr5Rt/
+	DaxFtTXXk/KNnrcfFg+aCVMvefho7Tx0JR3kO2dVr2wW1DiVTNj/yRs3EidA0rseJU4w+40I/un
+	RZHe5u0r5APERPRriFBdCDBEdXSJkbGGhwNkSCGr2Fo9hzWBjKcfTlF1JW0iScw8MAIQXW97Lfg
+	W1+q/zUqWkcmclbB4wv5V68vVx5namr2E0enm4o/7nni+LG9FA/hViu5jXtRKG3W2ctTatqqS5A
+	W0tzj1Tpz0HdvP8kcEkLBz3h5l3kmb/8h4G8xi4+nnHPzKdCaOBQafxAHxzvW6p2p5IWFHUHNMe
+	w6+ek0pamwKT3ONWgB4Mh8Kgsx3QnIgqpeG2x+eP5DKfn0tpzkMho+lZEqmszlru17WjNE88PJk
+	LDyFwreXOraJw+wMNnQomrzzKqNRRDFyjn/z3NfHOyEMhg==
+X-Received: by 2002:a05:620a:19a5:b0:940:f224:5a85 with SMTP id af79cd13be357-944217ea7f2mr2751408785a.71.1793802311660;
+        Wed, 04 Nov 2026 06:25:11 -0800 (PST)
+Received: from toxicpanda.com ([153.61.196.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-945d483d762sm211949985a.27.2026.11.04.06.25.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 06:25:08 -0800 (PST)
+        Wed, 04 Nov 2026 06:25:10 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
-Date: Wed, 04 Nov 2026 14:24:37 +0000
-Subject: [PATCH v2 10/13] cgroup/v1: use cred_ids_allow_move()
+Date: Wed, 04 Nov 2026 14:24:38 +0000
+Subject: [PATCH v2 11/13] fs/resctrl: use cred_ids_allow_move()
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -94,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261104-b4-cred-ids-v2-10-956213608f16@toxicpanda.com>
+Message-Id: <20261104-b4-cred-ids-v2-11-956213608f16@toxicpanda.com>
 References: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
 In-Reply-To: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -102,41 +102,41 @@ To: Christian Brauner <brauner@kernel.org>,
 Cc: Serge Hallyn <sergeh@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-security-module@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openssh-sha256; t=1793802280; l=834;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1793802280; l=938;
  i=josef@toxicpanda.com; h=from:subject:message-id;
- bh=2GqVTJZoW+5QW5iLTOH/2OThCJUTSIt5jDc9Dw7O+kY=;
+ bh=spH7I2p6KlxAWtKZEKyVCuKK4ojI0D9bbJfweH6j3lY=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgUBr36M/n0nWN0DNbnxwzIiCZez6MG
  JiruuNaSCI/zXsAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QPTBmC9zKa3anuEfG2w9gFULzvnccPiFkknC+4fFymZXCOg9EHFh34w97JqgtGlrXApZa/nsl/p
- IW4jGufbWggE=
+ QH5hz21Zf0jQmKY+SmyRld9bkbHzoU5X3h1MbybRG+3C4m7r9/TrMSg5RPbgUNqsIz2rKJMNin3
+ xmVcg48bAeQA=
 X-Developer-Key: i=josef@toxicpanda.com; a=openssh;
  fpr=SHA256:C8kOX2QUJCMqnCX+KEeoqRAjLo9L+ELOSH2NSAJHqGA
 
-Use the library in __cgroup1_procs_write(). That euid 0 may move anybody
-is part of the rule.
+rdtgroup_task_write_permission() makes the comparisons of the cgroup v1
+code, euid 0 included. Use the library.
 
 No functional change.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- kernel/cgroup/cgroup-v1.c | 4 +---
+ fs/resctrl/rdtgroup.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index 7f55a7bc8402..216a2dcdde86 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -521,9 +521,7 @@ static ssize_t __cgroup1_procs_write(struct kernfs_open_file *of,
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index 57ab090072c2..6b7b7daa9fd3 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -732,9 +732,7 @@ static int rdtgroup_task_write_permission(struct task_struct *task,
+ 	 * Even if we're attaching all tasks in the thread group, we only
+ 	 * need to check permissions on one of them.
  	 */
- 	cred = of->file->f_cred;
- 	tcred = get_task_cred(task);
 -	if (!uid_eq(cred->euid, GLOBAL_ROOT_UID) &&
 -	    !uid_eq(cred->euid, tcred->uid) &&
--	    !uid_eq(cred->euid, tcred->suid))
-+	if (!cred_ids_allow_move(cred, tcred))
- 		ret = -EACCES;
- 	put_cred(tcred);
- 	if (ret)
+-	    !uid_eq(cred->euid, tcred->suid)) {
++	if (!cred_ids_allow_move(cred, tcred)) {
+ 		rdt_last_cmd_printf("No permission to move task %d\n", task->pid);
+ 		ret = -EPERM;
+ 	}
 
 -- 
 2.55.0
