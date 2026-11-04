@@ -1,88 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793826540;
-	b=mAZfw1WOR3zNYC0MmdWcgiNep3zHsjcupoPGmoANXHqTexGTaIHS9Qc9vPyA5xGXYpoM
-	 1kJ/sPuD/NaPGuFL+mP8W7p1msxIQkxfW0D7euo4/S75qXx1DUD9Md5gJqZgsVvyDs+yG
-	 swnI2/ZmCfyiMKTT10AUtx0JZumyj6gJ75soSCiBZZUBp37QT3SEXoGqupDKePZjIsq4D
-	 gYuMbxLTf4GBtfFS6CwLZY216NeCsU+PnFe4P99pf9JoIspFqP3Uwi/3fm1laEfzkLLXu
-	 codGKk0NT31SZGspjS5ImL4AuOlsm5Ur47ADiQ+nNGtRMCeXyxJyUmaHZTts9BDpK3w==
+	t=1793826544;
+	b=qcsg1CFdJxqCC7dqpNiaSjnj2Qjc8XxNGVgQcSiTDFWlRsRaGyXv79wd0ItjK+M35lHz
+	 n8UEYiGTyxe/kL2zJy0HW+cTCfWBbmCQSYs52kly4pfuP4a9wsBGZAvedHogeu1JeFF4l
+	 ep+Odlu2gWTFa40IPSGTIjjwQ2CjC8kWqzWvS+UK70ivkENytTWyqWsDbqz2eVBBa4Hw6
+	 npm2Jtd4Oe0ZSAPYJBQrbWvAt+jbPCdYSROKAYti8wMYmLW/FYIHZ3oyDMwtuqAgVXCZ/
+	 qKUxRdr6Bd7IWpbxekK4o/tPnZZV92z4j6Tgxqwt9kpboES83E4IRASvCQ8rpusgwkg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793826540;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793826544;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=eVQTW/JXU3QoFsiEVwefLqQuHI3QztXWs28WnRbhTu0=;
-	b=A97qKWLbV7AJw6gDw622cgLJnrVB6Jv2GZ+u74TrNhsmnAF8N7LiFK8EG8EEpjb78HSC
-	 U3xve8+WFVy63AuqistEceRU/xTV/D8coIhYQ6CA59FpesnqUIjz14MhUiGmFf8yxOApB
-	 BG9t1edLTu32tZzAGIOg64n2lbb+ioMVP0vZPFi4iCiPsXZoGj6TSE1ouqlziobhPuwLB
-	 vKetwD8Ediq9QOLphVoQy40mAVT2rnPUrwKMaTqKtY1fKJBc2czZlFVvjqzOzrXWsvH/C
-	 /fnIFRp+J0HVyf4UQvMeB8Z/dHdZhZHhqjz/om2Q2zRyXAeMBF6dNlrpMIJHHbNTC4A==
+	bh=KJjJiozm3d0rM1mQcNRsH5gFVPVJYU6IQSIk1eq0QT0=;
+	b=3TwVNv4PowhGzp9xT8jX2Y3iIb09/660G3ninQK7bNS8xNBVvjVT4hH33yM3yxbCb0pM
+	 ZxWqmeNY0HBDXS3FCdY134Y2PSP8iW3G5+tyMjvTmPMUaPWefse6ST2jA96ihPky6ONRc
+	 YthG84tw6Bg7FptP0oYyOYZRtTq57LDquUGpJoiW32eTaUcGpIqLL39zIOBVl60be/gUB
+	 AVph2HhdDNf/auRBy2lpZwQ7TzSMrhXyN3jJkUgHk/HTLnLO7qAEiCFLKZmEZ6qxMEVeH
+	 aRi5sfjlHJW73TjM3uWDX3yhKrPPoGKw67jV/K14QSIUwy+RqzlhTJGhTmee+mcptIA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fLSgcH4i;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AyYn8msc;
+	arc=none smtp.remote-ip=209.85.221.48
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7349F607E70F
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:09:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7349F607E70F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E71607E73F
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:09:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E4E71607E73F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=fLSgcH4i
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4ac95761c85so8560985e9.2
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 13:09:00 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AyYn8msc
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48e46e449e8so726507f8f.3
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 13:09:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793826539; x=1794431339; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793826542; x=1794431342; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=eVQTW/JXU3QoFsiEVwefLqQuHI3QztXWs28WnRbhTu0=;
-        b=fLSgcH4i/dzvkJSRKSDMNrc6SjSUPCpo58LZ4L7HayI6Xp9uXKaWbXBFNzxdk/xC7l
-         74+r684UMRnZgko5aoMtN2Ip+omTLmmoZFPmOKhHWZRjAcTyUL65zl/E6yX7suI4ayuN
-         a3mCtguZb1xBJoR9OZ/FJBTc487bLDZxdUFgeddjL7dxYAj4IsPdTZ827tLQEPkTBypI
-         JARrhXiSsJ2v0KK+y4KhZv679QGGdPXapFc+0h4jdISXOspNpbIrCOW/bdwqjhcRP4MT
-         h4M06dT/S5UWD0LwmIwN88BpRoAt/s29QO1DQYvz/wyQPem648MgJVTyF0ZakMSMyZyd
-         15tg==
+        bh=KJjJiozm3d0rM1mQcNRsH5gFVPVJYU6IQSIk1eq0QT0=;
+        b=AyYn8mscU8vUqS3lRk7C3LFoBrszPG9ICQkVOCkMxJXvaekNRR0xpbc6+vCL1FQJKa
+         Cz+4cqtqSgh3cEVlOxS7KLGNTKMlEaZfTflp4mjNKTaufuYIEmE7GilVQThsmTHxsdw8
+         mR9aOEDFEm3mHx8fKOxslo1wiESEmEcRbupWQvwldeiSdUIaZwY3jMUz25D9W491wcWg
+         igeGPpMojr0XznbN3znlufssneYVn87FqDrH+aWxEjsqoD4rEGUC+5ph3HuH5cDFb55i
+         TJ0QQZeRltXKxKCBn/17WGHGB21CigXEXoHSIeJk7OhjzwGP/VJpEFaf8MduY/QcRZgo
+         5O8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793826539; x=1794431339;
+        d=1e100.net; s=20260707; t=1793826542; x=1794431342;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=eVQTW/JXU3QoFsiEVwefLqQuHI3QztXWs28WnRbhTu0=;
-        b=MGjwEWImvtZM4g7qpQlHPGgDAndz8hkYQREacgvNvtwnFNbgyq7M4DPjeaV+kOWs/V
-         Lr0gQ84AwvAzKFlygP6h1NnST8knDdOLoehm8GWKGnQB/zdOCVtSbrOzQZrVMOKeFLDS
-         biSkLpsxWe6HkL8TZ9JQ6jA3ADvb7mOzYFuSh9XDvk4Nf4TG1KwOEx+OBZRARvYxnO/h
-         ZSOqsmeAs7O+reMcFdhoCIeB3qgWoyf58pO808QLufUhDynP5qGRJY9JkrO1264DSCN1
-         0b4lrfEw5G4aT2/eb6wFLQOiLcFyGrjBiW0KBRua7Dpq9N+erPwisbwuvm3HiALGvBas
-         JZQA==
-X-Gm-Message-State: APuU4Z805GkL0mB0yWNhA/NKH4Q/0X5F5/0W8qxpVyUAuiPVzwK4wydo
-	Rn+xrIXQC0dHUVy99hdKvWClKLJ2zvSTpplAoKhDlr0qQTqbpHmaDNVA
-X-Gm-Gg: AYBFou2UW6HaFdhlCWp6VFof3GeNgJx2mt04wYM6ATyGDdM42AL8JAYAhnGN3vG0xvn
-	VqVBSvhPrtgv1nE8/WnnXCa380q2d6BWCRi5OUqMQ6F+0hw1W2dTdhrIl6Si2widMtuprUcE03W
-	67cB1zF0g85rf0y6vprcRKVp5hSIQquHf9k9BAWT6+l5nGT/pjzKtoKGeiC4W+QkVsT5aDr0WbU
-	00oghI9qke+/HQ9c8by5hk9juJi8BbD8r653pO9CDGeRp6jBiEWHlB2adEmMkOIrSpjtrTpxkur
-	d/y/aJrpoHSN/z4z79LJyB3yAXUXV21JFw8C6J6wIka/hbpDzMj97DNs8QAS5vWRM0iCp7ATwZf
-	WeQW1HcLn1O+QUl+PR5Pi3JwG+pvyPIyC7wb3EJzYXQev4sdKGpCeyWoXUbz1JDz4gRynjpkGkZ
-	ADZmQvQnWG2v25GhfZsifHkU1gKKN9ktNxCjavR9zmP3PIkC3cez8zcRmR/aIjRLjMnLm2USB0l
-	33Pu6u4inxM79/KHdZloto3/KgVWAJOrP+yZXYylKzJW6kH1vx0wPoxy7Q3OWxl3LSFgCUq+zIq
-	dEpDg24lfYnZh1kwUE/mPxGsketJQeFTtZmmJXf/d2n8H7swq7B2tq/ODv8Y7p0+m88WgDjbQtU
-	=
-X-Received: by 2002:a05:600c:314a:b0:4a2:fd2:985d with SMTP id 5b1f17b1804b1-4ac1775316amr367177345e9.12.1793826538751;
-        Wed, 04 Nov 2026 13:08:58 -0800 (PST)
+        bh=KJjJiozm3d0rM1mQcNRsH5gFVPVJYU6IQSIk1eq0QT0=;
+        b=qTxNM3RedaYQYZWrzHUOuAXsiF+zLRt4JdElfyx4OVVKbf5WovuNQxZe9lyU9y6K8r
+         IGfn7b/m1n/DSKtBAUKQDksYvNat8dFMFWAgDPRLnIZ7zzmeEAf9+p5JNKtAGEuffDjq
+         Fb88VVHHrQKOc4e3y/L/nQ+ckB+aTwBsP9oejgjYtwVBEuw8DVHdTKl3F9kbSFvlRRWK
+         ir9XRebKyE+yTJPQ7m2zXnwIVxkXQ1om/R8KkMbuelvFrmZN6dKzwGjSChjTi7G4pNAm
+         Jo7qbe3CJA7i3+1UHes1ZefrSDKZaZ1o3mZjwdICwD7Dhz7EHqytyVBWw3JbrBUhm6/C
+         Rjbw==
+X-Gm-Message-State: APuU4Z9UJAmA8O4b1c2/XtRvJuVWeDflc16uTrbjx/s/cnHFl9hCsHux
+	ZmDxWc6NiG3vHcYhlGvcIko0grAcNOAsJfo+WB21lGIPb+vnKLQ1PAcx
+X-Gm-Gg: AYBFou1j3PTsOtYXHAulcPMCvHiIsuxHz34PcY7vhWID+P3CdKkazgrqA9wCY/XRnUN
+	Pay7OYyJPJarUltEJFVxAMMlCcWyhoFxh805rGokTSKrm2ud/HIv+tjkKip2lXynS0shD22zkEW
+	ZrGUFh4Xhs+fLBvlP6MQzYEFgJRGjk3uaTIVLTmHvAEK2MmeRcxMdtz1q+R1f6JV9Gms2kBrhmv
+	IKY4wDTSm0i/3UVgHW3H0Y35bzK3AigGRCfR5wuRMFV4oMiJdFGIVYCSW0WpyrNrWOA81LsqXz0
+	2zLz/XUxXtGCAquA/HorETxvfCAL7cOYdtzgMw1pmKFYS2PAbCC2vRM7SvUZt6OgNAR0LC0Hw76
+	vhjPDepqU+MwUkoH3QLtmLBc38eQic/YAB9lv4V+FjjBdWVi3NUBRHyzB9k4ayG/5BHP4Lz9/9U
+	1lNexyGtYhGAB4E6AD/kRtkIe8DH1bNZ79WFEzp6puM27fX05+R6CVGbImfFYjunGmO6bbZRUsL
+	tZVnycJn77QKQa8Zwdmy3urSBgDp8h8rhAx3OSZuScpVWyo6iXxeoHBtWLjlAHXwDkBZUwQlBll
+	u4u31MTAuI4RoQP6EvORbAUTgR22hmJjJ8dcT6CqADP63I0J5/QGCw==
+X-Received: by 2002:a05:6000:2504:b0:48e:5df9:1ec9 with SMTP id ffacd0b85a97d-48e6e500979mr42439584f8f.24.1793826542329;
+        Wed, 04 Nov 2026 13:09:02 -0800 (PST)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48feda2007esm5673249f8f.47.2026.11.04.13.08.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fece99d67sm5897273f8f.24.2026.11.04.13.09.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 13:08:58 -0800 (PST)
+        Wed, 04 Nov 2026 13:09:01 -0800 (PST)
 From: =?utf-8?q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Date: Wed, 04 Nov 2026 22:08:49 +0100
-Subject: [PATCH v2 03/27] selftests/landlock: Check the thread result in
- audit.thread
+Date: Wed, 04 Nov 2026 22:08:51 +0100
+Subject: [PATCH v2 05/27] selftests/landlock: Fix the openat() success
+ check in fs_bench
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -94,7 +93,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20261104-selftests-refactor-v2-3-c52f23f7ce33@gmail.com>
+Message-Id: <20261104-selftests-refactor-v2-5-c52f23f7ce33@gmail.com>
 References: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
 In-Reply-To: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
 To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
@@ -105,39 +104,30 @@ Cc: linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
  =?utf-8?q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
 X-Mailer: b4 0.15.2
 
-thread_audit_test() reports failures through its return value, but
-audit.thread joins the thread with a NULL result pointer, so these
-failures go unnoticed.
+fs_bench expects openat() to be denied when Landlock is enabled, but
+only treats a returned FD of 0 as success.  Any other valid FD falls
+through to the errno check, which then reports a stale errno value.
 
-Check the returned value, as the other thread-based audit tests do.
+Check for any non-negative FD instead.
 
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/audit_test.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/testing/selftests/landlock/fs_bench.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
-index 502a0825d877..81cb31aa32ad 100644
---- a/tools/testing/selftests/landlock/audit_test.c
-+++ b/tools/testing/selftests/landlock/audit_test.c
-@@ -227,6 +227,7 @@ TEST_F(audit, thread)
- 	__u64 allocated_dom = 2;
- 	__u64 deallocated_dom = 3;
- 	pthread_t thread;
-+	void *thread_ret;
- 	int pipe_child[2], pipe_parent[2];
- 	char buffer;
- 	struct thread_data child_data;
-@@ -270,7 +271,8 @@ TEST_F(audit, thread)
- 	/* Signals the thread to exit, which will generate a domain deallocation. */
- 	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
- 	EXPECT_EQ(0, close(pipe_parent[1]));
--	ASSERT_EQ(0, pthread_join(thread, NULL));
-+	ASSERT_EQ(0, pthread_join(thread, &thread_ret));
-+	EXPECT_EQ(NULL, thread_ret);
- 
- 	EXPECT_EQ(0, matches_log_domain_deallocated(
- 			     self->audit_fd, 1, denial_dom, &deallocated_dom));
+diff --git a/tools/testing/selftests/landlock/fs_bench.c b/tools/testing/selftests/landlock/fs_bench.c
+index d13a88dcd1ed..78d1efcb2d20 100644
+--- a/tools/testing/selftests/landlock/fs_bench.c
++++ b/tools/testing/selftests/landlock/fs_bench.c
+@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
+ 		fd = openat(curr, "file.txt", O_CREAT | O_TRUNC | O_WRONLY,
+ 			    0600);
+ 		if (use_landlock) {
+-			if (fd == 0)
++			if (fd >= 0)
+ 				errx(1, "openat succeeded, expected EACCES");
+ 			if (errno != EACCES)
+ 				err(1, "openat expected EACCES, but got");
 
 -- 
 2.56.0
