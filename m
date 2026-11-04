@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793826752;
-	b=TA5yQoW0m1WIR/emSU015JAVszW0RUoG1QdtRovNQV6gojtrMqwDnB7aexmg9UHrgKdg
-	 DVfmnJhYBcBZGoHbNp0By+oz7UP8sHHeNnXEI+zzXhRJ8S6g4Vqr1DQ5+QoJjE3n9HYNt
-	 m2tEySAA+MxK91g14Qon7LA0caUzteaJwo6iSNxmNN6P7VKvGg4xcHMt9E7P2KY+dm5aw
-	 9Tuwhj7YPvWfA8CFxQbeOIbWR2OMBCmfs1ei73ld2LQZ7pqYDvvscrcxPChzMmNlMegJ8
-	 d5QjVMQxPojuwIC1hkwQgDZhBCVbYWNMfbGZ6gac1fResrG0q76JBxFd81zffn1ixSw==
+	t=1793826763;
+	b=x9H3yTih7egONfqmBMOhlpervpltWjSsk4X8xzuE79VdFjl92kMswVtbV8Z2CCWfhr62
+	 3/EFD7mMkmDeWB+Nb6XJbBCkvlvJhzS1cLat/5OKcj0hRSE+wYrUuN6p88YOwB09yHDtA
+	 5X5Yc62XamvLAzwzxoowb686JvadxKvBCBgUm3ALmMLZo9nxSNs2+ermnOAKT+vhOpd7l
+	 9kUsHK7rSjZjC+2H34BxGKTPKdK7NDSGVjjjnlgzgyay6GG7uozWu8rkTtN2lNCHupca7
+	 OiZkypwCLEG8TfSIaXaQ46vN62kPAdgIFMJ936KHRrgDkgHSMRzqWtgaIubzmcPVuyQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793826752;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793826763;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=GzYAym4hkUMXQ0HK0sfNg5pvWjHHlu4TjX/F6CXV/GQ=;
-	b=AYVNS2yr7SF8v9mdLtWn0b7h13GlAL0kEMpill01XCJaifUgic5niJnK1RFOc0V5AF8W
-	 /XlOR/WdZFs8Z/G32Cua7Gz2SjtFzPvc7jrE4P0xmsmprKVa3uEBo0nc8n2ItQR9q7vt/
-	 RTGSJ5f/Ge4D/I5TZTFQA67aY0aiwc7Tw86icTOtAwTYRhr9DWkixSXX7TogL3ZhheKAK
-	 9+LbvZWP/+pYrfvRPGMjI7s3G0WpHzdXGo1DMEsVcN98B2xAF7dkdzp7Ywej0iGFoTgsn
-	 Qkjqw9oSlfE3bthooYAzIFDNOlAVY+0KvNY/HiKF0PJfrZIW8gHWsMnJkgVkM28/iBg==
+	bh=tI1TlOKtwJBjuSpQY+qsgYRJuPDUx9pxx++JBJ78dyk=;
+	b=LZPnNOZNjyO+CMQI6G2M4b4kqMa3ZwbDdZS656OZWUQRBCHh+3QDNGCmhbDMIfkPkQDL
+	 pGQvkTtuFvVtl9ndzcduRrINoBTUHVkS2Pndg90yiCJC0TuS3rdvSyJj6nJ3v/BWU2RD1
+	 HjUFsA4tvn6q0u4pA3w89OwSTaGAI9waOPKRyimDkxobwtbgSpZcrXHYxQvFdghzqRTmp
+	 8BQyiLpoHCqxnYJP1ixotuOklgLPj8WpGXn0mJWNEQ+Dc/IM/RMzjt8xenvLNdwTFLjj+
+	 zYkGwtJMROQm9W7ST+f+OhZtjceokxh1lubkJTAQpZD/Q5W0drVIemgWsyS7eh9Xp3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nidv0DoZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HR0k5S1y;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956D860841BE
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DAB60ABB03
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nidv0DoZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE421F00919
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:12:32 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HR0k5S1y
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF98A1F00A1A
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793826752;
-	bh=GzYAym4hkUMXQ0HK0sfNg5pvWjHHlu4TjX/F6CXV/GQ=;
+	s=k20260515; t=1793826763;
+	bh=tI1TlOKtwJBjuSpQY+qsgYRJuPDUx9pxx++JBJ78dyk=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Nidv0DoZhJDZrKTe30xnJu3mj/WBEYluJWatKC2TEbAla6KgrwdBSkJOq4VvuWiSj
-	 PIbbx5GvewIRV0Y7SG1pehApEhu5n8/+DOVtiYW7mv+cSoCC6SoRrDJk2EUEtWqFMn
-	 aDpsHbzmRg3maWLT8cnMd/TwbG07qxGHE8AQWp9XNIKB2iPaXymjuqkYOjgco2LCbR
-	 8CmyNz1HR1fGHgsjpaVZ8trVtMx4TD8+nMWAC0U22ja0xjWGG+zBOF8+qlte5wj9OP
-	 o5X5SnqqvENjPBNBvaHlRlf2f0yfgPDFMLOM3F8hepWXO/VCem1e8FsAp4t9//bnju
-	 VPttNDmCGR2Pg==
-Message-ID: <sashiko-outbox-198057@kernel.org>
+	b=HR0k5S1yA8rQx+Rn5ZbuRYwacHsEQXrbt1/CC63qPU5Hfi6CpAyc2gcnJRur3NsAQ
+	 NX0wa+FJhigVj5BrlhmNZDD3bdtU/MT6fbiskGu4qvRjkFUme5InxhXSPTVXKPnrfM
+	 Znj1nJSSI1Nj7kehLeffD1TFdUcYqrQt8RqdR1N2PZ5OE0MXn8MHR3OMIWMgqFVkvY
+	 Iup099EtxXlSlbfeIKuAgbKMlfeJblM/Fr44JsUombV+6HkAOQj4HOzFuYXZp4xpcc
+	 51NW9T4cGfsgSeQMmaoyRWty3nABmmYD53n7MyQOytuVZsgQXu2zEXPppftkvij2T2
+	 fNB/yDBoD0paQ==
+Message-ID: <sashiko-outbox-198058@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 04/27] selftests/landlock: Zero-initialize the buffer
- in inconsistent_attr
+Subject: Re: [PATCH v2 09/27] selftests/landlock: Assert
+ tracefs_extract_field() results that are used
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104-selftests-refactor-v2-4-c52f23f7ce33@gmail.com>
+In-Reply-To: <20261104-selftests-refactor-v2-9-c52f23f7ce33@gmail.com>
 References: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
- <20261104-selftests-refactor-v2-4-c52f23f7ce33@gmail.com>
+ <20261104-selftests-refactor-v2-9-c52f23f7ce33@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 21:12:31 +0000
+Date: Wed, 04 Nov 2026 21:12:42 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,9 +60,11 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> This buffer is passed to landlock_create_ruleset() a bit further down,
-> expecting an ENOMSG error.  This is only guaranteed when the buffer is
-> zero-initialized.
+> Several trace tests check tracefs_extract_field() with EXPECT_EQ() and
+> then compare the extracted field.  If the extraction fails, the field
+> buffer is left uninitialized and the following comparison reads it.
+>=20
+> Use ASSERT_EQ() for these calls, as the other trace tests already do.
 >=20
 > Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
 
@@ -70,5 +72,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-selftests-=
-refactor-v2-0-c52f23f7ce33@gmail.com?part=3D4
+refactor-v2-0-c52f23f7ce33@gmail.com?part=3D9
 
