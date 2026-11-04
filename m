@@ -1,101 +1,143 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.170
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793821672;
-	b=hLYZ21nC5EaXi3TL6hruyQzFrdmzdeKlkJcCQdGJ4Vsb6rD00Y1sSohb+kA149kGekto
-	 eg6UM1bxy20rmWsx0yB7RTyJ71BPfwqnY0sTHEXxsoLMwWJa416SrpVKTDn/2FYXM6H3U
-	 z4UMRKPyzjHjDaNg3S+ArC98yC9ZXxzs+VEFvXqgCoT129GvIUShYOVg/8VY5JyvgL0zu
-	 2cvJ9t2bhQbG8M5tPA1FoinHIfNeYbomFqSIQNizvjuLrtaXRkdgEhtnRVYwcK75QT1t8
-	 mJGUDFuWS/KlAPQCA6GI1v62EDIGjtZ8tAceR7875a42s2wXG8RDvtFzOLqw0eT47Lw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793821672;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.44
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793822018;
+	b=TROf9jebmM49z1do8d1NYnwPsiar+AG030uCksFMPH45GnqrgNm/WeSYwq4PTfhPlUsN
+	 Kdjke+0fr8+/XkXsPoJ9At8UTQk+wxjvT92N0MwHy387P3bpvZrRADIi+4GdXNi+jUpf5
+	 KhRhSvV9/LglcDyysjMyZiwRgS5q3tlXxKuF1RsNQo9o6BQma02LsScmtr2PV1sGTAZ5d
+	 ZkKadBKJ+AlqPKZP7K0QAqBJY3/PcTlz99WrO250EhJW8SI408/uorvwBTOJ+PTnB5ZUV
+	 XTQFLE4GmJQOZ4bnqQgaXD5mKZ3OlqvoBzus8WNnzWVpYCzT88wb/I2RbcZNmvK3Bpw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793822018;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=E8RgS9Fy/AEzzzRdR1tDID8pHQZHUShrwVCmHXZNpOM=;
-	b=tbuX8gw92nkeAIupl+FNaas0UtyQ51FF9cjn0EvnVWgHepodZbanSMMjReYDJRIguU8y
-	 23OvfnaBZC2HvhcamTFvmxnrtbMsxct5uC+smVLQ3bT2eSiI4Jo1BbEg6mPGWgFYC22iK
-	 ZQwKgjKKGvitzZ4vMgkSmN2miAfVvtoTOoptcg3BF7/5wqttHG0VrWNineNv9jmqucFlf
-	 sxQ7hZ1crVvdeFFeXJuxttrqFQ6ZL6YDmNpRzA9jTQbBXIgCdHk40sZ66ybQ7EED1mgBm
-	 KV7pSCa7CwPa51iv8u6Y3/VU1YiEPCKvnq7PCq13gvAVEUZfEwTx8aiVkGFzQKqq7hQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b="Pre6/T+K";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.170
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=j77TQJheY9BNkuAUNT0wTTk7+HF7XEvTQj5keMW7u/I=;
+	b=oSh4igaFFxBgmqCzOSBQJb6pN4102gX3CJ3jZLWmI/1Rh+ZdOOURT58T27aiSdJvvSD7
+	 +Flt8lBv/VT3O5YLGY3hcLyxpqRbttoFsfbSsOxDZSq7FfgpnA/om8OgCConBxJoBtfH3
+	 Hi0aHUhWNMmK9Tf04CHMlgPO+zQTCYae7Oh7BcPcbad8NpqwDWK/SgrsZuHViXgAAy/N+
+	 rpbIxafksJeVpPNF8rtDqM7XKlUlTZxB2NI5X8yrJvV5WeX23der2TN9F+9ytPgGw8xdJ
+	 imAHQnbXCbE5wj4C/RHiaGwBwoJucCvgUbbB6g5eLbrKuoP+FzyuFtj2lktNBuoBtPQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=snwKVTUy;
+	arc=none smtp.remote-ip=74.125.82.44
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714D4608ED7A
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 19:47:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 714D4608ED7A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84A7609765E
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 19:53:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C84A7609765E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=Pre6/T+K
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ea7f9c11e6so9675ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 11:47:52 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793821672; cv=none;
-        d=google.com; s=arc-20260327;
-        b=otN2cAon28IDn8wKnnGENIACWaT64TBDjRqqxzTEgzCW9CqR0p+7xcmuSUh03lYrpM
-         WgD5pRNmrTs1LYzH2PztkJfwa+GJ33EKXxySFHdknKe7jPJZxv+enRuQS9oYmaWk7rcZ
-         /Ns77csGmFIS6u+XaGGmrryPkCsEbYe1KagBF0uy6csatXc0v+ixSMCrPhWlC4sfCmSP
-         nHU8sPympqP3cFQ2S/krscPC7NneAN0u3HOd04V0Zmbl29OjOOdmA/nQSvM4OAXu9934
-         ZH+aexwsTvT4l5b9NxaryNXQWz/H8KGYAw/pxkhTbtw81Hbz5dBy9tnm6stYQEnXOlD7
-         tprw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=E8RgS9Fy/AEzzzRdR1tDID8pHQZHUShrwVCmHXZNpOM=;
-        fh=ACDWcN6cUGs0q7bsC6mLSMqJtxskmTQilJqucCEwAEw=;
-        b=PyjKNvln+6v9MdJhU0uoHeXlUca1wWJJQjHg+LIzNYMBYzYSTyrFVCktICbCcNkOX0
-         XI6/wPWzZY6tJ64gynY79yq+lMTBpeYLA9o1axnExYOITtam5iCm9xnc9T5AHjsdb4HG
-         7Go6mxsNMxUyW29Hn0RvUjCMc0trji+vwAXsHKVi42BmcvCoa5dtP2yzVXwmAG922gB9
-         xVK/LpfNtFoVY8gAa2BiRGesyX8Kq2VBKp1FeMrYswZZKk1Id8sd2CptnWcGg+7soPrZ
-         Z/tvM65h8AjK7MVVqxLTvR/bdFRnIFgZySQU13vigwOU6OVBJ7X0yYYKZD+qA0ZpwXfq
-         MHuw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=snwKVTUy
+Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-19305bcb72cso1062201c88.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 11:53:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1793821672; x=1794426472; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=E8RgS9Fy/AEzzzRdR1tDID8pHQZHUShrwVCmHXZNpOM=;
-        b=Pre6/T+KB25HpZOrUgjpGk7BYEiTmgAh2V7MBgC7+kz5pppzdcOtDLW9/HXIsWX7w8
-         JGdka7KX2vYErnklggY1QD/7PyLyt/7Ec9VSaJO+xcCBiNu9Vv539qbGYMEZSuxV85OL
-         Dj/X/xaXNkRWK4mO75s4bFPODgbSekHYekfO3TCgxx5H+mH+X39Y4mde6JGDE6nZiw8l
-         MoCkdlgLpp7ynFSENYC6276qkehDa95pPCMnQVMaKUn2F6BQ09Cl8dg2BqYmiwFft5fT
-         +knGNY3hAj6+johQ1ZGTBdHmwXyucQSoMTFGE5wFKLyPobpz2TXj6zanL0E+H1wfyErJ
-         q0nA==
+        d=gmail.com; s=20260707; t=1793822017; x=1794426817; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=j77TQJheY9BNkuAUNT0wTTk7+HF7XEvTQj5keMW7u/I=;
+        b=snwKVTUy9LvBIeZYEhCXzEnRQp2wodIFGKY4wUJ7ztWzLVbTd1bI4nr3mGXqrQXFPO
+         83/HtfEisb8NH+6TKxRanc+LHldo4EqJ43kuJQJyWdqbEb2qaKJ6REpFD/Jt5EslTB+S
+         zscnal0Mvh+NX91kiP+siOH9v7tqEITC6j8TarPFAWvrj5zWcfX48CLTn8neQnUjk0aG
+         DdWT6beozrR7hgNmLfQYYUBVHi+K7i2h0gb1c9TLmiQO015gt7sDVMBLhaHB5Rgu8J3E
+         vDvOsMZkyxTj1DF9F5rnA3mHVh2Jx0j8rAylzbJGVo40aem9854GCIhJgMsA/lSZgxl8
+         K73A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793821672; x=1794426472;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=E8RgS9Fy/AEzzzRdR1tDID8pHQZHUShrwVCmHXZNpOM=;
-        b=Su26mJOHtuK3T6DqaU3ag0Og4TnRpIvwGpMbKpJu9eY0xkAasuQnL5pvNTtTe7ylBs
-         nJ99ODsJbdh4iPms8aifxB5FwtaMjAsV3TxG/rF+7YJYsvJOqandeqUhMeJijUJeP0SE
-         ADs5kj1zS4FGktgBWHZDl/fVSur7XuoHeX2AQj0VCma3y9ZLdU50SdccBshSemEu26Wf
-         zbPtC00M1LZGYyqAoi2FmYjnuKozDso0RHkRL0lSDNWpRxJUhOh8x5eprCEEwnXPSNua
-         t7bmNuAKpJA4d/ID9cGEmWk5lnBORydLLbtYzSRUVo0epJpciqj+vIgjdGrKE+VDj0xh
-         GxCA==
-X-Forwarded-Encrypted: i=1; AKwUvBz3vQRd+13mn0dCP2ggeFbc+gTtg+2r7m0ZWDzPQFJIaYzlJGUZfoHzhy5cJveSZFPrmoprUxG+KwRs/w93GSzB1VMVKSU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/U5hew3BouU7sJ8GJuT1lLPviIcH0b++aN+gAiK0ANuy8/BFgG
-	SnfbvOu4DD8biz3wkmFE/HnGkzlTcn+OfcjDlm7JfyftKG8QZBrukMGzkd5MU+PTUgoYaoDBdrd
-	ope+uWMl5idSbfbbF0xUc+9FoxzjCKUj1LaMzV7BWcvqc/MYTpmJqD81BM38=
-X-Gm-Gg: AYBFou3bpl21Dq6I3unX5hGfjo7ofbjo1XAIOcj7F6nxcC45XPtE+RZ5UhQ1iBxKO5m
-	FGZU42cPOidzOJcVRsu3DiCz1elBUf/450S/zL1wP3zfgdfsM8J3bb6CqrAt+iaQILs1wx4MC+9
-	kL1c7d+MshSqSbePqs4cCOqsJiINNH072Tsn61hFOiJ1XEspLazA4BtN71/X6YJX8g7A1qFeXjQ
-	Wg6LV565bUGuDPkyioh+F1zksiqAukJwAXjOZDZO5XiSyOnat7ytTZ3ihuJWCjYwLYJlYzFAlDY
-	EJH/lvF4r4xS4czJgBSiUSG1ezQPTBp9t+96iRvAyDMoM8Wu4a6VKUcSZnzkGu+atCiA4BBewKj
-	cRBuHuKBoXTkIO39KVsZmODPA/y39NyJIfLRHQ8r85gn5zb6xkid8Q6i1zhF0Ez7j1yBUIuMuIv
-	10PrzI52cVswEAA0esc0792Gk=
-X-Received: by 2002:a17:903:1a03:b0:2e5:9bdf:6b65 with SMTP id
- d9443c01a7336-2ed25671982mr1025875ad.0.1793821671183; Wed, 04 Nov 2026
- 11:47:51 -0800 (PST)
+        d=1e100.net; s=20260707; t=1793822017; x=1794426817;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=j77TQJheY9BNkuAUNT0wTTk7+HF7XEvTQj5keMW7u/I=;
+        b=MBmy46k9mIV+yorkexD/OyuT0xC2V5m8wIIGGGrpw4zWo83gU5p7ZzM/6sAFlJ9w48
+         dRiQIz2GFVFAuwWfpJwDxIIiv/Yrq4goo7YLOOGmaBIrtp7TE8SRbPKGtmCZ0yHkJBOb
+         LJj6oq+683ybRXO0wz11Tkx9DgS6PeErkWmcfzvsEaiwLM/2edpNuB9ndIjI1NUkINnd
+         OF8lMIVH7OjhO1YS1cW8JzylCaz4l6COGnEIvuTkZUFOQOETjxZ8o+JJgqueTbvS3F8V
+         enCHSzTB9Js06DioEE/mYoh+jE73QrPHK35bY45k9Z2+yVL3DaL9GCXIaPbMwMdOCgMU
+         mqeQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz+zTv2GiA3Jz9iJo0sk49KjUQ73hOuHCBlkmu8mI2XsWRBz0d5PeNgY6jCcUJSKZri5a1I49NI7gGxJaXL+xpF9FKiV3s=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9nd9YvbmYD/aMaQnozRgmUWpCikDA7Yf5iLfWRgyuKJqEvBW2Y
+	alqhYLEl/4hY/vTDoQo8Ok+/cb9XN1SrdnAfn2WIVrnaFd3vWyEPwI8=
+X-Gm-Gg: AYBFou3D4L+nrdVJKf/ynr3NOERkqxY3v5yLNm7MNFnec+YDk2WWQ0JTpg2zKHQikMi
+	f2MGJG+fAZIqICLemI8SYks58VHw/hVYqvJT168UIfw2pAzQEJHaM1Yxh9CnXhQsHkH4Rce6lqd
+	NH+tahXKicfQJjjQ9dFWQgl+XvOJXRufOg7b9ccD5a5c4nK6I9f5EI9llcAOGtnKfj2+PxvrMn7
+	n5hdkS+RmlAMfrt1+hI4QBxTFiWsiOcgmMv6fVW1b0uy3bNKwZ52u0I0TkG1+sjZTmhNDRLHVYz
+	MKkyopi+RjuALB1X/hp2yg8vrsln3TMu0q4oB2343HQaMXrwK4/mqQ47gGCllhj1NJLVj29LBw4
+	b8dduBdFESJtOsi8J+JPKKZktObOuGdnye21NZc2COlny8BpxxGzi6m1D7TKhl3zSwMv/mxZxbn
+	EONZFpNPz9fg9cMCcd9ObGsdtCXaqVbmjVj0kUdmqeddIVDe6pvHWEeKi8JviAHsEfiaZcgqy7y
+	NPemxUhjTHisJAJZ6uebHx3TNkV7NaTNGbuk/YKGjOb2kzIwm2REp8kW2kNU2p5l+IS3CKEFDLs
+	VBWLUgYFiYrcaRBs3ijQBL+qf/wWvfy4Pm5UH5aysIrSlXCIt6xbx0VRJ9B8wl3n
+X-Received: by 2002:a05:701b:4241:20b0:143:2968:564c with SMTP id a92af1059eb24-1ac5b9cb040mr26455364c88.26.1793822016817;
+        Wed, 04 Nov 2026 11:53:36 -0800 (PST)
+Received: from at-Standard-PC-Q35-ICH9-2009 ([106.194.66.249])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245c2d69asm9239684c88.11.2026.11.04.11.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 11:53:36 -0800 (PST)
+From: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+To: jic23@kernel.org
+Cc: alexandre.belloni@bootlin.com,
+	andy@kernel.org,
+	asahi@lists.linux.dev,
+	atharvatiwarilinuxdev@gmail.com,
+	bhelgaas@google.com,
+	bp@alien8.de,
+	brgl@kernel.org,
+	dave.hansen@linux.intel.com,
+	dlechner@baylibre.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	griffin@kroah.com,
+	hansg@kernel.org,
+	hpa@zytor.com,
+	ilpo.jarvinen@linux.intel.com,
+	j@jannau.net,
+	jarkko@kernel.org,
+	jmorris@namei.org,
+	keyrings@vger.kernel.org,
+	lee@kernel.org,
+	lenb@kernel.org,
+	linusw@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux@roeck-us.net,
+	mfd@lists.linux.dev,
+	mingo@redhat.com,
+	neal@gompa.dev,
+	nuno.sa@analog.com,
+	paul@paul-moore.com,
+	pavel@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	rafael@kernel.org,
+	roberto.sassu@huawei.com,
+	serge@hallyn.com,
+	sre@kernel.org,
+	sven@kernel.org,
+	tglx@kernel.org,
+	wim@linux-watchdog.org,
+	x86@kernel.org,
+	zohar@linux.ibm.com
+Subject: [RFC PATCH 14/14] mfd/macsmc: add ioctl to access smc keys
+Date: Wed,  4 Nov 2026 14:53:17 -0500
+Message-ID: <20261104195317.8284-1-atharvatiwarilinuxdev@gmail.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261101013817.22d67ea7@jic23-hlaptop>
+References: <20261101013817.22d67ea7@jic23-hlaptop>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,111 +147,21 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <auS7gAFy13EOp_Zt@google.com>
-In-Reply-To: <auS7gAFy13EOp_Zt@google.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 4 Nov 2026 20:47:14 +0100
-X-Gm-Features: AclHuK91TcmyWyDMmafA8MM2TvukK-iXd9ZaYxJjCOqPlgsZDHPV4sGOrjcK_VE
-Message-ID: <CAG48ez2e607HNArcX_xA9UTv_u1tvThLwW2kDvnejHcx4A80KA@mail.gmail.com>
-Subject: Re: landlock bug: procfs denials because inodes have unstable identity
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 30, 2026 at 4:45=E2=80=AFPM G=C3=BCnther Noack <gnoack@google.c=
-om> wrote:
-> The Landlock LSM lets processes define policies which are attached to
-> struct inode objects internally.  As a consequence, if filesystems
-> forget these inodes and start using new inode objects for the same
-> files or directories later on, these policies do not work as intended
-> any more.
->
-> As it turns out, procfs has that property as well and can lose inode
-> identities over time, even though it does not happen immediately.
+> If this isn't matching some legacy interface, then we need more
+> on what these do.  Maybe they are suited to some other kernel
+> interface? In particular they might need the various controls
+> on how destructive they are that something like fwctl brings.
+> 
+> Generally an arbitrary opaque path to firmware isn't a good idea...
+> 
+> Jonathan
 
-Right; basically, dentries can be dropped from caches while the
-corresponding inodes still exist. In normal filesystems, dentry lookup
-rediscovers already-existing inodes, but procfs calls new_inode() for
-non-persistent dentries from several places without checking whether
-an equivalent inode already exists, which works because procfs doesn't
-really tie any state to inodes. new_inode() is called from these
-places for non-persistent dentries:
+Here its required, if we write CPU/GPU Pstates and PPT to
+some keys (MSTS MSPC HE0N), we can reduce the temp by 10C
+And We can fix the dreaded PROCHOT signals on macs, Giving
+Same temps as macOS.
 
- - proc_pid_make_inode
- - proc_get_inode
- - proc_sys_make_inode
-
-File systems that care about having something like a 1:1 relationship
-between an inode and the object it refers to can instead use
-mechanisms like path_from_stashed() or iget_locked().
-
-> In my understanding, this is not intended.  Landlock has explicit
-> selftests to exercise that Landlock policies work in Procfs.
-
-I think from the procfs perspective, it's currently an intentional
-design choice that simplifies procfs implementation.
-
-> For reference, similar issues have been investigated also for hostfs
-> [1] and 9p [2]:
->
-> [1] https://lore.kernel.org/all/20230309165455.175131-2-mic@digikod.net/
-> [2] https://lore.kernel.org/all/cover.1756935780.git.m@maowtm.org/
->
->
-> Steps to reproduce
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Process A:
->
-> * Enter a Landlock domain where access to /proc/sys/kernel/random
->   (and files below it) is allowed.
-> * Repeatedly open and close the boot_id file from that same directory
->
-> At the same time, the dentry caches get freed up.
-> We can emulate this by writing to /proc/sys/vm/drop_caches from
-> another (root) process:
->
-> # echo 2 > /proc/sys/vm/drop_caches
->
-> Observed result: Process A fails because of a Landlock refusal opening
->   the boot_id file.  When Landlock walks the path for the check, the
->   inodes have now a different identity than before and don't match, so
->   Landlock denies the operation.
->
-> Expected result: Dropping the caches should not affect Landlock's
->   behaviour.
->
-> At the bottom of this email, I am including the source code for a
-> program that does Process A -- you can run this to reproduce, and then
-> write into the drop_caches file from another process as root.
->
->
-> Solution...?
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> I don't have a fix for it yet.
->
-> I am open to suggestions.  Is this feasible to change in procfs?
-
-A landlock domain is supposed to be usable for a hierarchy of multiple
-processes, and for that usecase, if all those processes want a working
-/proc/self, landlock currently can't meaningfully restrict procfs
-beyond what is done implicitly through ptrace access checks, right? I
-think if there is a desire to have fine-grained landlock policies for
-procfs, that would first require some design decisions on how procfs
-peculiarities like per-process directories should be handled.
-I imagine one option would be to add a mechanism that automatically
-grants full access to {procfs mount}/$pid of all in-domain pids, and
-then consider whether sysctls should have persistent dentries or
-something like that?
-
-> =E2=80=94G=C3=BCnther
->
->
->
-> Reproducer program, for easier reproduction (don't forget to drop
-> caches in parallel):
-[...]
+But you and Sasha are right, that exposing all keys is a
+bad idea, so i have restricted writing to some keys only.
