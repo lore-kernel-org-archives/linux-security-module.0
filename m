@@ -1,55 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793771777;
-	b=KLp23mr+XweWAsqoy2f8JVKDmgvEWdT1J6ePAP2yARCCQSsv4Qz8kTQfoJkKqyH5JvDd
-	 7CYYyOL5LjASYeZk5v4HwYEpCCea3Hq3uky7523LoKS4kDjKifrgtWjINgohmgIFXCRc6
-	 ZgTArlKLf64qiNR5IEOA67TBG5YiFoC0A8+GZvbSxzihxP4sYQz7KqVBFpKtzbVvtRJPK
-	 vEHk2ke8YfpfTA4Afb6cGpddK8fmFPBqVD2a9lq9FGdzhiCqplKcegwJD/r7RNZcbw6RO
-	 q9gBXpW5awMJBTGDtZVLGCf0bXQ+VzFl6JB+2+1m3FrsKU8INAaxPXZ7Z35x1ayS9kg==
+	t=1793778316;
+	b=L2JuBztVrW+gdDEojOXuqjxUcQKO1VgwIn+uLeaO5m1qO1NDzfN8sMvQfT9pdCXDGC1/
+	 b3LFFDfCRSB2fk2D39auQFovaqVehdaxNuKrTdfuFcimbGMIjk5kWSJnfIg+ux3fi5fx7
+	 kJ5fgfYsaAYUSUxBDuRjbXhiPwqmzzlZIYjGDHaR4NvBWuMjvZYWS98J2vDSyBdBULsN1
+	 DCDFZy91LLYxE+5vuB31gQIMGVHdQnUiV/I8owAXQ7vtsaMktkH54JVK7fSYL2jj9ddAa
+	 wgOidExcc1Q/U218b78MBTfGEjXCW+uK4SIoTZH4NXJ6Bc+nFJwyMwIhQvfffVXZLEg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793771777;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=xHPyJcYvf1j/SZNHNisUR9Gg3vD2ENM54wGJRAGjrNo=;
-	b=Ntgs2m4x4acO2A5iooTjZNQKbMgg93rXTqOUC8VT0IzUl2d26rdxymIPTbeezHXdBb2V
-	 B3vT2vG8obj/U6o+X2Pj1bbd0eWL/Hfzs81xpJQnfIW+E5wPZmz/G0GGAR7UdRAv4u3vo
-	 jcXv7fC3rKMlr/qxQ8FIC1pvxthHOc8KEMB9hfwjCUfKaw92WckC+0IVTzgdLKlKEJXdW
-	 SHHQ+5OBKnbj1Pc7jZ4U2uPgRdDygpkbsY++RiJGftmE8OsoWJwzGYFCA5BgefOdNiUID
-	 RMJZYbZiEKDiAh4QhuB5jzWc+khTTBjOMYZXs8OGXFlKTOQ+3zhjj1/BTj18nkPLfWg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793778316;
+	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
+	 DKIM-Signature:Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-Spamd-Result:X-Spam-Score:
+	 X-Spam-Level:X-Spam-Flag;
+	bh=0uL0NqpeLBt8HnwEpB7IwwADUyks5hUI5W/+fdeoOD8=;
+	b=pOU9MaeaGCZ6fsa1BqNu9LNQjYUpxeJ5LY4WWdPXMTveUZxBwf9IinkOgkELFDCtd79u
+	 W9YERt5vi3XtYolG3QoTwuZ/ixev/VBKJLl4YeeM2h58FSlveE7L7+W0oFCIG73pPVTZH
+	 np9m/0S1NUOfqsbRCOUxFjepFGmUw0OswrYyITQK+Nw1Soa1Qs/SS5ZFRiqVW+tdIaTcM
+	 yskxplMU0vS6UQlThAdu+Cp4yKhZbJMw6uHvOmIGenD0XS0mknDWRyR61DdDumYTyoYFQ
+	 rJy2udXffohJNTrrcwSISnSLZPqr/lJM7rt+rD5/pmV9v+3B6h+1z1j/KDxx2nNHJ/w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=THk+yRIS;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=suse.de;
+	spf=pass smtp.mailfrom=suse.de;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=wghdtQyh;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=5e+z+Nsh;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=ind5LpWH;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=f7IiroDZ;
+	arc=none smtp.remote-ip=195.135.223.130
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A329606A31B
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 05:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5F8606A335;
+	Wed,  4 Nov 2026 07:45:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1B5F8606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=THk+yRIS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C23321F000C1
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 05:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793771776;
-	bh=xHPyJcYvf1j/SZNHNisUR9Gg3vD2ENM54wGJRAGjrNo=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=THk+yRISu9g2BJSaBAg7Q27Cacm0lDHFkWU2e//596hfJqQPuck+vNm+F8frcfCmU
-	 4lJMNkWCSz0b3bEUs+xbe1AWy7VCbcVUAK4/WraJXqYT+n4e8l/CecxVL6YsHTZ8yo
-	 P0yi61j6y/118hdKPUfxlHkR+6RPc+sgHQiGHtT8nusns89ID4UicRraaLBPoB/zsk
-	 BVvDFyED+gn6YI7GUJnUIiSbt/F9LQvb9Y/xlnLTIcp5ykOJS7P3dc2Eglrhzo7LhD
-	 GJ1CIsR6mKJL/y4ZSkgWaMC5psfJSBBk3+a0fPK65v2ukBrTnB0wGfleMr1fvV4ryY
-	 X25kmehLL4Nlg==
-Message-ID: <sashiko-outbox-196706@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] ima: hold ima_extend_list_mutex while locating the trim
- position
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104053705.3967228-1-liuwb@xiaopeng.com>
-References: <20261104053705.3967228-1-liuwb@xiaopeng.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 05:56:16 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=wghdtQyh;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=5e+z+Nsh;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=ind5LpWH;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=f7IiroDZ
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 25D882205F;
+	Wed,  4 Nov 2026 07:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1793778314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0uL0NqpeLBt8HnwEpB7IwwADUyks5hUI5W/+fdeoOD8=;
+	b=wghdtQyhWEfjtpGbObiLPzLgyFip+CZJswewFMwCM0XMARhG85CBg9faYTlPj4jgvAU7/f
+	dUR2iNw2bTpyosHBV4H7mv73WdXbwItdVo6Vn9giOFxPIkT2fcmD/qm2BQmtxCUpCfcc+f
+	YxS7KFnIbxOQFrCcEmyxN10N61ccOhg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1793778314;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0uL0NqpeLBt8HnwEpB7IwwADUyks5hUI5W/+fdeoOD8=;
+	b=5e+z+NshI0xnLKXjjQEg4AZOt1Yt+Ps62MKeD2xFknD9HXidtU9ceQsNQg4sxxOhNjO6r3
+	FoE6r9cTAcY0xaBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1793778313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0uL0NqpeLBt8HnwEpB7IwwADUyks5hUI5W/+fdeoOD8=;
+	b=ind5LpWHqbJn0QlS3pxCRiSp7gXfjfrg29loUOgSiQCoPL2P9yYDbMNktfRilsgxhmEfte
+	bA9OOt3oQpiTXr0RtNIwTAaOyHXUFtoC+g5+60fT6KTfsmv1VK81iz2BCOhf+NCWb+tVwv
+	hGcmtk5Y3S91m+UFkTYzEC3jtOfGC24=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1793778313;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0uL0NqpeLBt8HnwEpB7IwwADUyks5hUI5W/+fdeoOD8=;
+	b=f7IiroDZAc5A1GyVmAqFVJj7z/lajZ4WLhNVJYJTPecQVeLEEyrQ+YA23/iSnJVYrFESs2
+	Fya6VK2ty3ck/nAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 85CBC134A5;
+	Wed,  4 Nov 2026 07:45:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id V1OCFYji6mqvSgAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 04 Nov 2026 07:45:12 +0000
+Message-ID: <73883d88-b772-4c5a-8f1f-6b12c4501bb5@suse.de>
+Date: Wed, 4 Nov 2026 08:45:11 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,56 +105,89 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 02/11] nvme-keyring: Add a missing key_put() call
+ to nvme_tls_key_lookup()
+To: Jarkko Sakkinen <jarkko@kernel.org>, David Howells <dhowells@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-integrity@vger.kernel.org,
+ Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+ stable@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Hannes Reinecke <hare@kernel.org>,
+ "open list:NVM EXPRESS DRIVER" <linux-nvme@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+References: <20261103030226.2685251-1-jarkko@kernel.org>
+ <20261103030226.2685251-3-jarkko@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20261103030226.2685251-3-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-11.79 / 50.00];
+	SUSE_INTERNAL_BYPASS(-9.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,linux.ibm.com,kernel.dk,lst.de,grimberg.me,huawei.com,gmail.com,oracle.com,paul-moore.com,namei.org,hallyn.com,lists.infradead.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -11.79
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] ima: comment and commit message in ima_queue_delete_partial() cite =
-non-existent ima_extend_list()
---
+On 11/3/26 4:02 AM, Jarkko Sakkinen wrote:
+> Call key_put() before returning -EKEYREVOKED, as the reference count gets
+> incremented by key_lookup().
+> 
+> Cc: stable@vger.kernel.org # v6.12+
+> Fixes: 5bc46b49c828 ("nvme-tcp: check for invalidated or revoked key")
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>   drivers/nvme/common/keyring.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/nvme/common/keyring.c b/drivers/nvme/common/keyring.c
+> index 32d16c53133b..87cb51e1f5a7 100644
+> --- a/drivers/nvme/common/keyring.c
+> +++ b/drivers/nvme/common/keyring.c
+> @@ -35,6 +35,7 @@ struct key *nvme_tls_key_lookup(key_serial_t key_id)
+>   	}
+>   	if (nvme_tls_psk_revoked(key)) {
+>   		pr_err("key id %08x revoked\n", key_id);
+> +		key_put(key);
+>   		return ERR_PTR(-EKEYREVOKED);
+>   	}
+>   	return key;
 
-commit 1fb4a03b7cbb60d3d99dc9d31af10d612ce10f6a
-Author: Weibin Liu <liuwb@xiaopeng.com>
+Reviewed-by: Hannes Reinecke <hare@kernel.org>
 
-ima: hold ima_extend_list_mutex while locating the trim position
+Cheers,
 
-This commit moves the measurement list lookup in ima_queue_delete_partial()
-under ima_extend_list_mutex so that locating the trim position and cutting =
-the
-list are serialized against concurrent writers on separate file descriptors.
-
-> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
-ima_queue.c
-> index 0f1b7e4113c4f..cf8c164eea139 100644
-> --- a/security/integrity/ima/ima_queue.c
-> +++ b/security/integrity/ima/ima_queue.c
-> @@ -427,12 +427,16 @@ int ima_queue_delete_partial(unsigned long req_valu=
-e)
->  	struct ima_queue_entry *qe;
->  	int ret =3D 0;
-> =20
-> +	mutex_lock(&ima_extend_list_mutex);
-> +
->  	/*
-> -	 * list_for_each_entry_rcu() without rcu_read_lock() is fine because
-> -	 * only list append can happen concurrently. No list replace due to the
-> -	 * staging/delete writers mutual exclusion.
-> +	 * The lookup and the cut have to be atomic with respect to other
-> +	 * writers: ima_fs.c serializes open(), but write() can run
-> +	 * concurrently on independently opened descriptors. Holding
-> +	 * ima_extend_list_mutex also excludes ima_extend_list(), so the
-> +	 * plain list traversal is sufficient.
->  	 */
-
-[Severity: Low]
-This isn't a bug, but both the comment in ima_queue_delete_partial() and the
-commit message refer to ima_extend_list(), which does not exist in the tree.
-
-Entries are appended to ima_measurements in ima_add_digest_entry() (called
-from ima_add_template_entry() and ima_restore_measurement_entry()) while
-holding ima_extend_list_mutex. Should the comment and commit message refer =
-to
-ima_add_digest_entry() instead of ima_extend_list()?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104053705.3967=
-228-1-liuwb@xiaopeng.com?part=3D1
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
