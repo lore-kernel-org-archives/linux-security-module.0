@@ -1,89 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793802315;
-	b=t9YvvpTfAyJH1h8uhz8wOl5+LA1FcJwtcVIvOqTtBFf5RMODXcaR76Es/HY89QD18xfu
-	 xlmUzTn6p4sa0JTxSbvq80w+IxGR3/TLFNfJSGJ+JTL9ZASNbWl3psHdpJuwwHnga0Rga
-	 K41VFqBlkLo6cSniiuDedWIHRV7uKYcmkXBnS0n4rPJTwot5Ri9b3OtAHEHF8NXA97XoZ
-	 9kDdZPCE70sloQp3PZj/WkMRDGyiVi1Nbh74EUO+crUOPkXPA4yrV0cIaFR20VGaaQtXs
-	 Nysyvld/FcY8D0YXPVw0MMZ5Qi0GOTHxiPaNhg4CPBjd/lTMwuMLMTtmC4kLtvLWp8g==
+	t=1793802317;
+	b=Xv7pFUtQPiuJsV6LEauCEgpoZh/Pbu5ulurRN/mNWzUK07EiANlNnap5tS5PrsgpYOvZ
+	 Rvv2HVUdahQkXwHHbOLBokHzqHNxY2W3uRxl4yNGnp4gc5OgzS7KV6RhGvckkkv8DWkTg
+	 FrmB9HdyqVA+SwqOdLHX2YEAKDNvwHGsWgF2zKyrI0pN3M2vNmesTcSafYn/hHz37BPpL
+	 MNqATb8eFP8bQaHj9LE3UKs1NqxiHnk3G3Y5e/dBKjsXOQZCVTNppj8RcQvSfqKHvRcrw
+	 I+wyvbeW3nb5K8ttoqy+5B4y9CFdC3G7UY+/YK+aNlWkpDMzTYzycWzBonHg0Xo9ojg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793802315;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793802317;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=8SqVqOor5x0swrcQlWs1oXfTolSQ94eqY4/417d2g/c=;
-	b=x8Hd7SJ5ZHtqRHM/+Rnw+iXsQJSIfzwSx92sWPovZ4O714OjR2RcAwuc/ZGrNjkns7fu
-	 sn+qo7NtYqwVoxV8XzAR9PaylAFA4yBIIsnX/crgc7UlZo8kw4m9f6hYc4X2rjk/5yTiD
-	 zU+dh3+4rYlhfcBOCIra/N0246Hcpyou++5Laz/wI5CGEF3putNwJ/Ptd7iMKifb+fsud
-	 pwj8xehVgC8C/PBcGbDytMBXFtsV2jO+7OkVawtjASAlQZ3y6+i0/u5s3O2ydu9z8lxOh
-	 bL5ZccweRTt7+5Hd1vNF4C+lLsFD18AzBo+9EoAk9nCu2Dj8bqWJLaIxx8CQWapvw0Q==
+	bh=XZBBh+YtyvQM0pdcafD44t8IIIPhs3RkrgdBT3qDgR4=;
+	b=0ym5+ksLSq4MTvw4Ct5u1RmN+g1lSyLQF+DwAywb7o2vyeZNHEu+aBS/YOaI94BgXZB2
+	 eKt1PNiUwTSmmDb3Kj4TwgpA6GR66iJceiknKFTERMpPi9BsGktEDQ1jv1b0+CmVdNeUU
+	 VwxoYXtuVR79MfCdaJ4yf4Hgd7hSwifrak7tMUP1ths97j3jKZeOAtmFIRr+ICd7A66E9
+	 92wlsrFRsdxzF8+AnXypXuKW0V4wrB7Y9k0WpeSz3ecDCm3jxBQHY88vE0STL84eNuBCU
+	 vB49IUH5jDk29smVUiYcfiF60kgUZYrNZxbzibVab4YiD3bxcEyFDnl5Ong0q4sIDWw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=toxicpanda.com;
 	spf=pass smtp.mailfrom=toxicpanda.com;
-	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=TIBS42R6;
-	arc=none smtp.remote-ip=209.85.222.178
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=Hg3tCNnl;
+	arc=none smtp.remote-ip=209.85.219.44
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2220606A326
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:25:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F2220606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E79606A31B
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:25:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 61E79606A31B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=TIBS42R6
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-93e64d52949so69868085a.1
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 06:25:14 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=Hg3tCNnl
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-91c162febb9so7955826d6.3
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 06:25:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1793802314; x=1794407114; darn=vger.kernel.org;
+        d=toxicpanda.com; s=google; t=1793802316; x=1794407116; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=8SqVqOor5x0swrcQlWs1oXfTolSQ94eqY4/417d2g/c=;
-        b=TIBS42R6gagObM3Y6q6MqKNHybNEVYTgSyBBZ65hsLXrQW7m17/l1FXh0IIMSaRa9l
-         2HGpeP60Qr2rWKIaivxQnGpJ2JsFRfb8oplb+qL1Bok3a9S46wuu0sB0ajj8Ukged+Jd
-         pb3jkmdT76RsMMoxdonkRO5TInvbhhS03LbId8qazKg9pgvhGuH/Fbdpc5fOMQ0g4TtD
-         Ms5zGTB4+J6EFElTLuVGl2rID9ixM4XTaCljd2CBc8cfVmmZHHHtmz635XElcGJVAwN1
-         7Q/a+LL0kxDgaUSgcLMEiGvh9cvtdtl0UdXCcut04sGDifS9aZCL9SpIo8BCiykFGyIV
-         V31A==
+        bh=XZBBh+YtyvQM0pdcafD44t8IIIPhs3RkrgdBT3qDgR4=;
+        b=Hg3tCNnlzOc+NfSRMJPD9yjsGgSrDOB/iGXeOelBVQQ/GjiO+hL4fzWBeDcqmKfnt/
+         McwYJR2yfuvJVvm2Pc3WbbsWF4UGkFzg01gBA6IN48KxeeLovLnRgtCzVoSDHFZrqiki
+         4Rx7jcgMv8LDokJ2c+CRCdiINoQE1vs32GjvO27sX6auNg3xKQj7R8iVWL785kNDCek/
+         FJX5V4Y0ga0sL+OEfYaT+umpMi1YgKtqb8Xh134VMEF2COSWKH+wvwDrSw2vHZr0zKDD
+         q1Z8Ku4DIjPuSEG6CZfVeGiX1tUTnQMK78XQwUbdRzdR3dQ6FyaAK8a8js4zqsVjTDz6
+         ZHuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793802314; x=1794407114;
+        d=1e100.net; s=20260707; t=1793802316; x=1794407116;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=8SqVqOor5x0swrcQlWs1oXfTolSQ94eqY4/417d2g/c=;
-        b=ifX6Rz78PDKetEo97/FhailaABiDWwwFygjRiEo8dFv0jf16u344M8IY4fDM/Ba5ZT
-         YD7B9a9FEOP+5qC7oX3c6D19tK0aUAdfBC5/+/C10d8wmKqbJxFWMNYwNsALfVVJi/XR
-         kwFU2TXOITBNrDR4lSnw+751JC+nhgx27fCLkQTtldXmUePtRZnzDcLHz2toHcqUL0KT
-         4AcNDkZDf2JZAsCANsrLJ1P5OSqH8mOwy2j1d838Jc3/+IRE9UkLRJ4u+4YGA+5Q5id/
-         tu8K1x9mrC6/M/iRiRRGoGwnGrAS6jBgTRA+4eoRY1NvepeV0KUuea5A0GG7T7afJd/X
-         cPjQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxNFr/YRhOyYy/DEot+fKZAd+qa3jLbImg8u7qq0ITBOV5tzNUirfJ8/TOIHZWnwlIGD9i3WoXhi2FtNqeMUpnpwCYczVM=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8tGVdoGUwuhouq4/iAR6oI1hJGzktXPBAZmUCxIo76pVHic8Zb
-	l73jwJT0Uws3SKFotQqVbRuXDP5bYOwzp0lVTBGRltZNK0JwWrj3C/SjpSVYXV1uyak6pEmU9N0
-	AmaiA+GNEhA==
-X-Gm-Gg: AYBFou0Spdd/HxII6YuMZG/vBjP1qJAcv7f2Y+u/JY8X1rGqY/j2wbu5mqNS+jWK/qn
-	nwb364KUSiHav2dyfzQqIxegcMmlLZc9qyFHYWxTxwUxpGpCrGUDpteUi0DNZDSIee2u8FOZQyJ
-	E2wv1XIUjU9xisiAgFQD8yuh7uNU5jnoVSqCxOMcYavwBK9XmjVITm/aRl1iEovz9h/R0sl724X
-	t1xR1AkT1oa2SWj0+NjWheAYmxCOhDDV755PqYeSwHT6TlYcwydWhx5p6y0bx7OlgoMLma/Bc8Y
-	MImOUCD2tKcjm3ZQ75mb+uL5N1lJ4sRTem55rmYBAJA+S6vtm1Dr97yN54KSjxrySxqRjenzo2W
-	DURifskfuGLNIEiv2N4Noji9pFD//WrtBYzgYJNF1BGyDgCO6xfTCPMF6SQ6ne0KiCoO9qxz3O7
-	A14OHdI3H6oNfgqgZ4JfVRkTnOO7Y5Me7yA/AJfnvnYol8vfQ0f5ebo6UfvL1RyVz3Vmj4FCrKw
-	omQ+nabPuXScIwnwoVUmzPa0BdUwm/UAFu8nOkiGHanbtzAimzbo6enYp5iiIbqUgPKNSq7Mndx
-	H4vM4Qv5xyCJ1lLgWWoX7DuZNjAm7Vm+GHXxyeuFp2HliQ==
-X-Received: by 2002:a05:620a:272a:b0:93e:c35b:2332 with SMTP id af79cd13be357-9442184e908mr2661347985a.73.1793802314009;
-        Wed, 04 Nov 2026 06:25:14 -0800 (PST)
-Received: from toxicpanda.com ([153.61.196.242])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-945d4898a06sm209917385a.42.2026.11.04.06.25.12
+        bh=XZBBh+YtyvQM0pdcafD44t8IIIPhs3RkrgdBT3qDgR4=;
+        b=0s+W7HBTV4uYiZxmLTJ2PJs2c3vK8fzsVg38cT5v6ZfkEj+Dh+VMTghjBjw8bwzRrU
+         gqZAno1AteiWYIHpdDHTxvm6QUC5n0fS6jFJQzixV0vJ5fSO4+n/Ko7nMOXNKLLgjdLN
+         vI3FMpPbico1wonuqNTvzt6XdVC0bNTRmay+9vfZ4dVnt4E35/49JnH57+18M8/YmaL/
+         TInnHuyJpeY3kmS5UUOhwn1DnQ2on215aILVgBzkLGikZA2ZVZsVTqZX+gQzGKqMEyyq
+         VYpNqJ6gIl5oj5O1cpkWDOj2z/Y4+Oqmz/CO/vbVx7yP09k4EaQQNmReZjVyeUVqO9db
+         it5w==
+X-Forwarded-Encrypted: i=1; AKwUvBw6q2xvXIlLyhnyfV0NaSGK7nWuwHkxXE4wcnpfloR5O/5IAeJ6ERNBkTlO5vXZVTg0/s8ks8OO71Smrtt0nB9rZ7S9XI8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+b24oqdLkExYPFIMzKdUNqtY/M0NVX1bH1OJCp75xFgOnwEIRP
+	qXmic3JxRS9gykADSq7HnpUYpeqVdYAS9yVFE5D+DlqLHp/f1+gbQ8Qz2+71EkNA7oU=
+X-Gm-Gg: AYBFou0RtCqsCo29Csr5jO4/ONpqBTmG31Sbmm+eikHQENeODeqkwYiqQdX/LqClbUc
+	n9OGCqQhRnrqykv8fXaoMBw+se8mo9MdFsiGXSNYSJ7oJDt+vw1kD/Y/rkM1PJOPa/VEZ44mUd5
+	9gxjiPKJVtiFWKyq1A3Uh0v2CHPMumdVhsggz/fLYvg4BDdIVQIxtKb8ZJYWHEzM06sDUc3av6a
+	/fxzHxJfMAfX/HtHlwfDHZ9qM02XVp5gMflTvKNJWPOWvvcEn9CDznJKvsZFIXxomssLkoiCkFD
+	0iPjeRjjxTqi2C7gAVw3GLvRVy/gDnvAS1kaLtQUnrUZNMCqzdJsiFyt1hmha4itckchus1T6OX
+	+JlcMp4K73Y2VJ6GXisLYQMez3fs65lQTftANcvIEJZHax9F32papJzGAkP3KdbTV3/ZlwI4Ixn
+	df5qGQc6xJ8HrDsjEYOOh615zkUBs2+4pFMK9M58txmMJpoA0V9npz2SldmsOhZg9w/tw0HZ/qm
+	UqmotBFf+oxG7p6OHUahf3u3+P74iuY2Mi04wAcgymnKTBCm0rDKctZPB5PObJK49yVy+nBnOj4
+	JnMZrj7bkKjM9eCDYZWMjF2RTCKiVshE+yZdNgUZYhwBWw==
+X-Received: by 2002:a05:6214:c43:b0:91c:6388:a45d with SMTP id 6a1803df08f44-91ca49f1bb7mr266381586d6.5.1793802316221;
+        Wed, 04 Nov 2026 06:25:16 -0800 (PST)
+Received: from toxicpanda.com ([153.61.196.243])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91e7dfb8c99sm20129386d6.11.2026.11.04.06.25.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 06:25:12 -0800 (PST)
+        Wed, 04 Nov 2026 06:25:14 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
-Date: Wed, 04 Nov 2026 14:24:39 +0000
-Subject: [PATCH v2 12/13] ptrace: use cred_ids_allow_control()
+Date: Wed, 04 Nov 2026 14:24:40 +0000
+Subject: [PATCH v2 13/13] keys: use cred_ids_allow_control()
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -95,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261104-b4-cred-ids-v2-12-956213608f16@toxicpanda.com>
+Message-Id: <20261104-b4-cred-ids-v2-13-956213608f16@toxicpanda.com>
 References: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
 In-Reply-To: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -103,70 +102,44 @@ To: Christian Brauner <brauner@kernel.org>,
 Cc: Serge Hallyn <sergeh@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-security-module@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openssh-sha256; t=1793802280; l=2045;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1793802280; l=1044;
  i=josef@toxicpanda.com; h=from:subject:message-id;
- bh=9DmbRYL9nHbIrwEdqslR1HfoLxxnNGAAY3s4ZuSx70k=;
+ bh=wU/wUNQ22CJbdsHXhdyhPKydSjViK+2b9lI6dkA3aJQ=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgUBr36M/n0nWN0DNbnxwzIiCZez6MG
  JiruuNaSCI/zXsAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QCPouo4xXV/GVLy1uelleQqnw8GVnO0OfsD+sD2IlkuRSz25DloSK9u/PQ7MJcxM5iQ+V8UcwcQ
- YmSXy3QPcJAk=
+ QOAYiq0Qci2l7bb+IWY9NmqGqVlOj+7fxxp/4a8VZxK/LQUURR7UVV6elrGIGXXmHSrqT+zywVP
+ V/5MpmjYNogg=
 X-Developer-Key: i=josef@toxicpanda.com; a=openssh;
  fpr=SHA256:C8kOX2QUJCMqnCX+KEeoqRAjLo9L+ELOSH2NSAJHqGA
 
-__ptrace_may_access() picks the filesystem or the real uid and gid of the
-caller by its mode and wants them to be all three of the uids and gids of
-the target. Say which ids it is and use the library.
+KEYCTL_SESSION_TO_PARENT wants the effective uid and gid of the caller to
+be all three of the uids and gids of its parent. Use the library.
 
 No functional change.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- kernel/ptrace.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ security/keys/keyctl.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 3f2fe68ccb14..8024d80f82e3 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -305,8 +305,7 @@ static bool task_still_dumpable(struct task_struct *task, unsigned int mode)
- static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
- {
- 	const struct cred *cred = current_cred(), *tcred;
--	kuid_t caller_uid;
--	kgid_t caller_gid;
-+	enum cred_ids caller_ids;
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 36ffba0ebba6..cf963251a87a 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1692,12 +1692,7 @@ long keyctl_session_to_parent(void)
  
- 	if (!(mode & PTRACE_MODE_FSCREDS) == !(mode & PTRACE_MODE_REALCREDS)) {
- 		WARN(1, "denying ptrace access check without PTRACE_MODE_*CREDS\n");
-@@ -327,8 +326,7 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
- 		return 0;
- 	rcu_read_lock();
- 	if (mode & PTRACE_MODE_FSCREDS) {
--		caller_uid = cred->fsuid;
--		caller_gid = cred->fsgid;
-+		caller_ids = CRED_IDS_FS;
- 	} else {
- 		/*
- 		 * Using the euid would make more sense here, but something
-@@ -338,16 +336,10 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
- 		 * used a syscall that requests access to another process
- 		 * (and not a filesystem syscall to procfs).
- 		 */
--		caller_uid = cred->uid;
--		caller_gid = cred->gid;
-+		caller_ids = CRED_IDS_REAL;
- 	}
- 	tcred = __task_cred(task);
--	if (uid_eq(caller_uid, tcred->euid) &&
--	    uid_eq(caller_uid, tcred->suid) &&
--	    uid_eq(caller_uid, tcred->uid)  &&
--	    gid_eq(caller_gid, tcred->egid) &&
--	    gid_eq(caller_gid, tcred->sgid) &&
--	    gid_eq(caller_gid, tcred->gid))
-+	if (cred_ids_allow_control(cred, caller_ids, tcred))
- 		goto ok;
- 	if (ptrace_has_cap(tcred->user_ns, mode))
- 		goto ok;
+ 	/* the parent must have the same effective ownership and mustn't be
+ 	 * SUID/SGID */
+-	if (!uid_eq(pcred->uid,	 mycred->euid) ||
+-	    !uid_eq(pcred->euid, mycred->euid) ||
+-	    !uid_eq(pcred->suid, mycred->euid) ||
+-	    !gid_eq(pcred->gid,	 mycred->egid) ||
+-	    !gid_eq(pcred->egid, mycred->egid) ||
+-	    !gid_eq(pcred->sgid, mycred->egid))
++	if (!cred_ids_allow_control(mycred, CRED_IDS_EFFECTIVE, pcred))
+ 		goto unlock;
+ 
+ 	/* the keyrings must have the same UID */
 
 -- 
 2.55.0
