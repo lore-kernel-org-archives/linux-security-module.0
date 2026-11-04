@@ -1,101 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.171
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793825915;
-	b=jRi2W8wb/1G/agRVWw7Q2qlxuCe3xs+EGGqVyg//mr3S9EQhCa7T417mjeUK+fLyt+dG
-	 yG6Iz1cA7U825wg/CDjskPCBhdVutlCTIGgq33WgXSDP6NhKBAETRukpdl00FiQFkDoBX
-	 D7pyO/qF2Xij/BLus5O8g0S85i5lgZ/+GSIlEhR3R3yIq4NyuUMjR3LoN56xn6vvuLQUu
-	 o8R5W30ITGYWsJOrBI+9GlWyGp0PNJd0KXu9QUy0OcDXIO2Xx/4H4GJZOOJmcIEjMT56N
-	 mEYbdBXW8CS+k0slbhb6uTdqnhg8+7T0YFpkPFMKIwDZkiL4QcvBEyGdss2XIvwAbTg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793825915;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793826535;
+	b=PZRN3wmds7ZCAwFFHe4lAG0YgNzwztMdqgm3ZlzGJrOO6PR67FeTUSCqL5B7AFpGyn13
+	 yeUqo2KX7DzU8xW67c4GFsEjm0EEYz4wDVCySgqr9Zbb3ZRxO6BerxBrq63CB8t5zbKM3
+	 rZzzjiYpWqwRu5g1sL5LxY97Qqbakfw4xCIxep1xBRmS39H/HCqkodgwFrQ2jmXwBtlOX
+	 4ihtMsvHubhfqMMbL+MmuRno4rEzQILcXByZsPTtTgRsSg5TokvUqTEEXxRF/SvGuGqq8
+	 +C0/jWb5k5oHN2xg8MfR8ENE36OkfyhYIUJCNcRNV/PFI94Ls7ao4fl0w5Y7ky9n/uw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793826535;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=3u4qsRO8g/eT6nt0UNNI3jzlxW5m75Q0zJ98YGBjAV8=;
-	b=US+J2t9oVsbA1mN0Fuy996LtJPfuGLOFskF2jWOetF2lKpjJ+v4Zn9yMAR4FLd0+m88p
-	 fwOMR1tWBKNBWYCjEBkyd4ouUgwcNMnq1xkomKciIg9ZDXRGcCh//HappqLlJk6UNiaQg
-	 5UHZ9RyTPIxWXlUJ7cMhgBHsJwob1fEk2yXGpYrXKCpeie1a8PpM7iL/reR7trGjm6UZn
-	 9RCG7p3vB3V8kFSC+gPjnDeEi4S5Mq50vjlBNhyanmg3RwOMwBtogW+/wELmd+Q8CHTpc
-	 rH1LihuU4Z2U/I6QAsZpBp2LQvFejefQ80vjdw6O5FVRJ0TDizwpGKlmKibeo6BaI3A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=paul-moore.com;
-	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=fR7AJlRX;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.171
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Subject:Date:
+	 Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=4OSWRtRd+V91Vqwy50g3O6DPEqRmvPxAQw2Z2wGJO2E=;
+	b=kAAuBZJCthEG/a6FyGIVySSpvExtujfM7emSqxcOPGgqAVIYgfIVI0YVwDpyO/4GYOLT
+	 vYGdxgfP+u+S0Lr4iMNe3TO09RczjPio8xtoUOr/FHFtnfqrcLY7Joqeu09/21OfYBqei
+	 7mG2asud8pRYx9+nEBdld+0Cs4Q2tzq4RWSmKNLgi3Ri9nci99PlHnvrLzYCIbZgJNAZR
+	 zgKuVCbKTi8AgKclkmqcnlV+Lxq/5cuL6otS2I9ZO0x5TFXh6nxTpnwCUSeSfVjh0hYYf
+	 RSL6HoWdMXOpda3DM43nnhMo3ynDyWchTzGmj2EMkNtY1di/6NP8WQpPx6rN35PaByQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gRxGPTfT;
+	arc=none smtp.remote-ip=209.85.128.47
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B932606C908
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 20:58:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6B932606C908
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A2B6070F1F
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:08:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 17A2B6070F1F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=fR7AJlRX
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-8a39e5161c1so981186b3a.3
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 12:58:34 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793825914; cv=none;
-        d=google.com; s=arc-20260327;
-        b=UjebagGRb29njAXGf3IqqwJi1/1UPEluRHQsEyBFsiJlKi8kZG+zk7kTsVuHdS3/5M
-         POSQWF/IOnDiBS3gSDprE+nUtaav4ZPLgozHoKWY1zShAvpNRFxTt7Y4EVD2dTDdS3zE
-         8AIPUsG/d8bpLyQ+/tiif+h1IpVeE9rv2E89Svt/craAofpV2oKUpL69YTNTLNHICItB
-         uvTYs2OiphjssaYZBc18tgi9WydewIGTNFtJ32I1KRv98w88439dQaCZBMb0CC5VnUaW
-         6Khe42n8LD4iCfSgABvFvVnxSRDj7cyFidsyVTBWplqeFSRMrhHdlc3CeK9ZuMQG/d3Q
-         TH2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=3u4qsRO8g/eT6nt0UNNI3jzlxW5m75Q0zJ98YGBjAV8=;
-        fh=VMmhCvt3YYxQPIhwglk5oq35MfofkUTaSYhlwEe2NCM=;
-        b=XTZuODN+lrCADgM6q8UsqllE/OO1p48toIWf2jhapKR7zyCo3pqqCv7hk0wRsE09KQ
-         hko4565HmkAqZtiidXMN25RV0nL65cymIeoLOSh93v5NFzNyhfgrdsFBhHNZmp/+6AXq
-         vuK3RL+uWffMVHCNjMgELgkLX+IEtenu+mFEAQe0n0iLg6sP2vqfUJTseWEXZhlrpkjJ
-         8AfKZEZJnuNmvIW5Q9bwgFly+hiT3PGREqVhcvbpGKK5li8i167fhfnmx1tmAKOWoeYH
-         84SNWtHd3uKo1Aq1Af2h1X0wf8zBZbZKrE2yOECYm+c1LwQqt6v0paQyUpbDSTgRy1lV
-         mvWg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=gRxGPTfT
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-49d05d51553so7483435e9.2
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 13:08:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1793825914; x=1794430714; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=3u4qsRO8g/eT6nt0UNNI3jzlxW5m75Q0zJ98YGBjAV8=;
-        b=fR7AJlRXxJe+Nou6J/3N5NmbHU+4+tTxjLQ2uPrrKpNl4XdzMgCm6+MYeGk0R7XODW
-         3dVHq2XXYIV5hdgXM+ifxXTnNSWsDA5frsVmV3Knzsrt9WsdDd1+eEWUPQfs5MMfi4ov
-         wkSsA1ztfUBOGACSuUX5K5n6nQeN0WDXTOSEtRnRAz6uPsT0s2SbFer6Zks9YFwy9rbK
-         ZR2qwnep6N0ASSl4ZFxKQKoE0inEizroQP/SYTAPxIDD40CHWgBLUTat3OheGjvbUMWf
-         O57ryQk4WV+NAspycjU6aT0DbFd6GbMHUGe6vaf5lO0CxfMpQ7YeSywFxu32CXG7CADs
-         1xPA==
+        d=gmail.com; s=20260707; t=1793826534; x=1794431334; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=4OSWRtRd+V91Vqwy50g3O6DPEqRmvPxAQw2Z2wGJO2E=;
+        b=gRxGPTfTWalo994sN1tcM8Gk6GH7B3u/3u+F1Kga5xftUlTlJ+u+1yOwZSLEM7R7aJ
+         FROykiffhUmwAaJBOn0r3S4I4IVM6erRuf77jUBCj/eO3FvlzgriebXvlaf/6V2eH3Mo
+         fsMxDzITqnq6BNLn+6zyyLxMSXv7hPNPgabFJN6NqxKx1PMIqDF5W7vE0IYAhha9OD9C
+         RwADQixSQl4Dp1d85S/d/e7/WsvZ4wtQS09FmQnCTMi3VFAuLTPeKr8rK/93/TJ5UHSy
+         SiwtgOkxGsRhFm9044+37iy+D+5GlNp64v4HTtASP34RoGpoImJsKaN9+aBo3owFhhJY
+         Gf1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793825914; x=1794430714;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3u4qsRO8g/eT6nt0UNNI3jzlxW5m75Q0zJ98YGBjAV8=;
-        b=j/R+u3u/w2uSJyEbdjjoCTFlzpdBXNZ6CH6RVfOA2cjSgZcL3O5gc8V/47mH9/HKrs
-         BhksnmjoM+A+Sd5vhDS8LWv9cpE+Viq0CI+5SVdq2i68/9v8LDSLdKxs2ETteRMVTt9P
-         ZYR30zmGLoBYyVg8EgLRbLUADLJEUFFCKece7loorfxy18F0LcPTEkp51/jCT28nOVyy
-         UV7ALVLQcY4BxlWYVZqQKXubEzrhIcWJapKM9fZURHnYtOXo/7VA+GLy43y4P2sMLcp2
-         JsFf5bt871XHaLNe2f9aAhhGibjX0JSIIDKJe+AZG48Be73PX7siya87i8Hg2R+5T7D8
-         gVvw==
-X-Forwarded-Encrypted: i=1; AKwUvBw9qt03ErKKA5fq4vuZww9Zr3ZSnRuC6s44Ru6tgFMTkBJHQ7aixv2tBFHKfG654VcNN78M4e/XuWqyArcW+lFQbcVeQdw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/tBHA8FT1Ehx1ta6oriLRlnTFlsr/U95lqO7M5VG5M+l6gupcs
-	yo9gPRgCgPrivAy1BM1/8mJaJs0GhfwlCdruul88QGu3y+uqeDNtEaF/fX7UouW9ul0TEXPwvD/
-	JktulLjPi/sVCH2zj+EFFKG9vm68wo4zg+bW29NsY
-X-Gm-Gg: AYBFou3BWWAzUUarHt5XjTzAjTFBKmvHxjs1nxmJ9luHUoA0Px45/Z30esE2PPGVJdx
-	26bsOt2cZ/X3/f4m2GJRjyblcF6ep1FuimWkSW//Vyce9DsKB/vzj9jw49eyF1tC5t8zImw8k/l
-	pYmytsp0He/4JvPrwxcSg5z71Z3CWRn+h1x74dxDnLRWKdTaSknDJIXZ4ncERjGwolRP/KD0vH1
-	c3wh9NJNCP38mFysio6K++wPsPOhCfcDVm2T10MgpFUoJ8O475ZOwLzJMcqRyQiNJlT2TFraWZ2
-	Wyr6SHC1853ysaNPKQIbd1uQAnwibC/j8koNJb/pdodWNpMcJ5r6JuRPCo9Tg+UBwQLSq1/mzNd
-	DPN2PSvrFNY6nB5iUELqGWd8/H2JFgD9Vb4jtDhevzOSX1fCkfgHThbV+RbOi1I7ZnRmcn90Yy4
-	qRtiHcX1P92/akmw==
-X-Received: by 2002:a05:6a21:a94:b0:3e2:9f69:35bd with SMTP id
- adf61e73a8af0-3e928cd50f3mr14704044637.34.1793825913688; Wed, 04 Nov 2026
- 12:58:33 -0800 (PST)
+        d=1e100.net; s=20260707; t=1793826534; x=1794431334;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=4OSWRtRd+V91Vqwy50g3O6DPEqRmvPxAQw2Z2wGJO2E=;
+        b=cTQTBK5przhG1GBKqryhf6/xYm5TxBe+kZEIUjR2oGOWrCI7OYNQeLATunNsqaqH1n
+         HTNI6BMGu42yjdrH6vftyWhoRuCTclhdMCtIHylHr2PeLN5ylV90ZK6KiBioJsWOO9BO
+         lNbEmD0ut1xdtFG4qSMjCBuFS8cheNdcVvCafmjP2PRRdsQINZT8oWXcFFnCNB44oTcf
+         7PJGrEy3PUTdSV43j8X9Myznrvyr+CUy5DhwYM7Z4aHelG/3txTsAkfnNCKp18RmDy6E
+         HHxJtFOPk9K6Zuz1uwwHMq0WfkRfDgZNVw/UvU+3ls6FBzMf0y/PUFscYY+4mGWdumA3
+         J3lg==
+X-Gm-Message-State: APuU4Z+uhHlSdDd7tu4EmKAI/40QEyqKI1mf15o+3kScbLsL1YyAkNtC
+	inSHrlD7PH5uikZb+1VulPXJSO24DIWdKib4I2q/SRlNBG7xK2OaKukr
+X-Gm-Gg: AYBFou3dZJ2+KjmrQUR7k11znZSA8YnF2c8KHkXGZh6ZSVNQ5CkxmQPsxBFusoA+qoF
+	0ek6eWwSxWhrZX4iFgkaQWiwjCa5Eirg/+r7xAeEcKh3DTJkllPIJqZYtPBNbkpE6Q+GqptauHi
+	6SECBvs8VJU8YJNgK8Y72XPqS7CjZY6jpcQXMcmHJLvwqbuu1CigAjuGXE597SZjaIsABb6n2Jm
+	T3JWby+6MIyrU0YSNbzMKkgC5xTnnR1bbj98w39q8nRHA3kfNkOH1Sp/9taCx0jc+QqMQTwMj8f
+	1UJ3Rdf1bQY8XUQcXQckiEwrCKR71Cbs3VGBc8QVxcATiYGg6hvk6DvexEAWz3QUjKmRXaW2A1E
+	NaLZybsJzeKGMKDZG7yOC1PyFDqarL8encVyp13Rbh20SecrvF4emb83pAnjLbu0Jwd+6a3ObWw
+	rhCatWlgmBKdctXYfMabkY3nl/w5/Z/sAhi5SfyYlXi4mKIHwufo09I3gX31VKLrs7SjhZoUqkb
+	gQCLCHjjwjKe2nMcIezo3rSfiwHTX+pi1xG2UeRq0uNl/LGCvyI9NvA58H4NEITcWtvVAbkawhy
+	1Q9hHci/z3OGxlSSCGRzcHXEhh0qclE5nC3NYgqCNmalNkS9m7kFuA==
+X-Received: by 2002:a05:600c:8b04:b0:4a1:fb01:13 with SMTP id 5b1f17b1804b1-4ac17a3683bmr391930765e9.18.1793826533442;
+        Wed, 04 Nov 2026 13:08:53 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fed0844c8sm6227254f8f.26.2026.11.04.13.08.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 13:08:53 -0800 (PST)
+From: =?utf-8?q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH v2 00/27] landlock: Selftest fixes and cleanups
+Date: Wed, 04 Nov 2026 22:08:46 +0100
+Message-Id: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,32 +90,132 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261014165532.329933-2-blum@kernel.org>
-In-Reply-To: <20261014165532.329933-2-blum@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 4 Nov 2026 15:58:17 -0500
-X-Gm-Features: AclHuK-sTQRosfk6KioQIcgdkHhd6zNTYpIgrN0o0NCORE_8LHez5kzEc-RAYyk
-Message-ID: <CAHC9VhR8=-yiV5p93sDvmnQZK3QmnDdmZS+J12muxx7VXPq5+g@mail.gmail.com>
-Subject: Re: [PATCH] tomoyo: Use isdigit() in tomoyo_numscan()
-To: Thorsten Blum <blum@kernel.org>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOQQ6CMBBFr0K6tmRaGlBX3sOwKHUKVaGmU4mGc
+ HdbXLh2+fLnvz8LIwwOiR2LhQWcHTk/JZC7gplBTz1yd0nMJMhaCFCc8G4jUiQe0GoTfeCqUaJ
+ DUBKVZan4SIl7bdJz+2V6dlc0MZvyhQ1+5HEIqH9ygL1QsgZVVgcBDZe8n7w2twoATv2o3b00f
+ sztwVGafW8/zyKv/GVo13X9ACDHseb4AAAA
+X-Change-ID: 20261104-selftests-refactor-4741be042e4f
+To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+X-Mailer: b4 0.15.2
 
-On Wed, Oct 14, 2026 at 12:55=E2=80=AFPM Thorsten Blum <blum@kernel.org> wr=
-ote:
->
-> Use isdigit() to replace the open-coded implementation.
->
-> Signed-off-by: Thorsten Blum <blum@kernel.org>
-> ---
->  security/tomoyo/common.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+A collection of Landlock Selftest fixes
+=======================================
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+This patch set is bundled together to be slightly less spammy,
+but the patches are mostly independent.  The commits are ordered
+such that the simpler and more orthogonal patches come earlier.
 
---=20
-paul-moore.com
+The patch set is LLM-assisted (and that turned out to be very useful
+for spotting errors).  Needless to say, I have verified all commits by
+hand, and reworked them where necessary.
+
+The last few patches are a bit more cross-cutting and probably more
+prone to merge conflicts, as they correct cases where we have been
+using EXPECT and ASSERT in the wrong way (details in the commit
+messages).  I believe that the rationale for each of these is
+reasonable, but I am happy to discuss.
+
+Motivation
+==========
+
+LLMs (and humans ;-)) have an unfortunate tendency to pick up and
+replicate bad coding style patterns, so I hope that a broader cleanup
+of the test style will avoid this spreading further.
+
+–Günther
+
+---
+Changes in v2:
+- Rebased onto master (v7.4-rc1-132-g05441d697f7f).
+- Dropped the "Assisted-by: LLM" trailers (not required any more).
+- Applied the same ASSERT/EXPECT rules to the test code that was added
+  in the meantime (cap_test.c and ns_test.c, plus new checks in
+  base_test.c and trace_test.c):
+  - "Assert tracefs_extract_field() results that are used": also the
+    new handled_permissions check in trace.create_ruleset.
+  - "Assert audit initialization in fixture setups": also the
+    cap_audit, ns_audit and ns_proc_open fixtures.
+  - "Assert audit_count_records() before using its result": also in
+    cap_test.c and ns_test.c.
+  - "Use ASSERT for syscall failures before errno checks": also in
+    cap_test.c and ns_test.c.
+  - "Use EXPECT for checks that later steps do not need": also the
+    errno and WEXITSTATUS() checks in cap_test.c and ns_test.c, and the
+    errno check in base_test.c's ruleset_with_unknown_permission.
+- Dropped the note about depending on Wang Yan's snprintf() fix, which
+  has landed as commit 8e4c736cffdd ("selftests/landlock: Fix snprintf
+  truncation checks in test files").
+- Link to v1: https://patch.msgid.link/20261008142604.39107-2-gnoack3000@gmail.com
+
+To: Mickaël Salaün <mic@digikod.net>
+To: Günther Noack <gnoack@google.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Günther Noack (27):
+      selftests/landlock: Propagate grandchild failures in unix_scoping
+      selftests/landlock: Propagate EXPECT failures from forked children
+      selftests/landlock: Check the thread result in audit.thread
+      selftests/landlock: Zero-initialize the buffer in inconsistent_attr
+      selftests/landlock: Fix the openat() success check in fs_bench
+      selftests/landlock: Fix the reported clock tick rate in fs_bench
+      selftests/landlock: Fix the ruleset_fd check in empty_or_same_ruleset
+      selftests/landlock: Handle a missing control message in recv_fd()
+      selftests/landlock: Assert tracefs_extract_field() results that are used
+      selftests/landlock: Assert audit initialization in fixture setups
+      selftests/landlock: Assert helper results that are used afterwards
+      selftests/landlock: Assert audit_count_records() before using its result
+      selftests/landlock: Fix memory leak in audit_init_filter_exe()
+      selftests/landlock: Make audit_message large enough for any exe filter
+      selftests/landlock: Close leaked file descriptors
+      selftests/landlock: Check errno for combined VERSION and ERRATA flags
+      selftests/landlock: Fix SIGURG handler setup in scoped_signal_test
+      selftests/landlock: Fix regex_escape() error handling in matches_log_fs_extra()
+      selftests/landlock: Fix off-by-one in regex_escape()
+      selftests/landlock: Fix the snprintf() error check in matches_log_fs_extra()
+      selftests/landlock: Use _exit() in the named_pipe_ioctl child
+      selftests/landlock: Fix messages and comments in helper programs
+      selftests/landlock: Fix stale comments in common.h and audit.h
+      selftests/landlock: Use ASSERT for syscall failures before errno checks
+      selftests/landlock: Assert WIFEXITED() before checking the exit status
+      selftests/landlock: Use EXPECT for closing FDs and stopping threads
+      selftests/landlock: Use EXPECT for checks that later steps do not need
+
+ tools/testing/selftests/landlock/audit.h           |   20 +-
+ tools/testing/selftests/landlock/audit_test.c      |   56 +-
+ tools/testing/selftests/landlock/base_test.c       |  192 +--
+ tools/testing/selftests/landlock/cap_test.c        |   70 +-
+ tools/testing/selftests/landlock/common.h          |   32 +-
+ tools/testing/selftests/landlock/fs_bench.c        |    5 +-
+ tools/testing/selftests/landlock/fs_test.c         | 1300 ++++++++++----------
+ tools/testing/selftests/landlock/net_test.c        |   64 +-
+ tools/testing/selftests/landlock/ns_test.c         |  124 +-
+ tools/testing/selftests/landlock/ptrace_test.c     |   44 +-
+ .../selftests/landlock/sandbox-and-launch.c        |    6 +-
+ .../selftests/landlock/scoped_abstract_unix_test.c |   45 +-
+ .../selftests/landlock/scoped_signal_test.c        |   23 +-
+ tools/testing/selftests/landlock/scoped_test.c     |    2 +-
+ tools/testing/selftests/landlock/trace_fs_test.c   |    8 +-
+ tools/testing/selftests/landlock/trace_test.c      |   28 +-
+ tools/testing/selftests/landlock/tsync_test.c      |   22 +-
+ .../testing/selftests/landlock/wait-pipe-sandbox.c |   16 +-
+ tools/testing/selftests/landlock/wait-pipe.c       |    2 +-
+ 19 files changed, 1051 insertions(+), 1008 deletions(-)
+---
+base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
+change-id: 20261104-selftests-refactor-4741be042e4f
+
+Best regards,
+--  
+Günther Noack <gnoack3000@gmail.com>
+
