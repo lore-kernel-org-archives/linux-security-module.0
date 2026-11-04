@@ -1,89 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.217.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793802285;
-	b=yyZ13tsugNHDArJBtYAK7U2mIWTMhpleamwvRWv/7JLT7ygqWdAcLQ4aEcftr6LHSzRD
-	 GDN4DBJnxbrZd+QQGCVM95mbcwpikiHud03AGEpep14zeEZ1v8zhLX0j0FufI9ws8NWCh
-	 gWwfvJKad2Way13xVNgVCkFXuGn47PQX2cxraQ+lBOAOQ3d5Li+PRlqzug9D4Leq2ZKi/
-	 ZtCCx/bq3ZX+VYVdQJ8kxsJvngQV/fjdo8VUO+6pUxJWL1lx3elrt6ZFYTH+Pq/lhFJbe
-	 xazplKFZyRBmPJ41FxatpqNs5JKvB+qrQ111R5wxuAG1NwFY/fdpZ/wzXYwCbgq+dbA==
+	t=1793802290;
+	b=NYsU7mB8Lb9jK1gURxuy2Yo090DbtFlIWpIuuDY6CREcdu+TcY2nfFILpyC+MIZOAj3f
+	 GB6yIQrnVau7zq4HwLJurVUTZWp5WtXXGoDnNwJhSOCW1WZ1b/tTsCBlXEDwevubnY0Fc
+	 S0A848ECXLJSJ1S6+y+mnK7zEIB1l14HYru9k6RPjppHcCQOmznUmi2XpgAi2/V66Nhg4
+	 spNSMZRHslFcC9Jp+fYZ3myJF5NwssTtCKoQBtgkL3d+x5Jm6XO74ODAtxb7pwlw6X16x
+	 deK0P7+/tQE1xkk27MCz60SZOJx9tEt/fspHOebODvSFj3OuZ9j6R5aV8bXPWSpQhkA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793802285;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793802290;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=WcIigLb1pFNCZqMfxlwoFOwCJSqFocR8G/Ezr9o8tZY=;
-	b=Io/GlsP03p81RpWEdPuqSw9vAmHnmL9/Afz8pEcHX4VKE+Lbqzev4WUZ6ujLC0DCJps6
-	 tTOMFiZ0jeO4Z68r3zErfq8FUQ513VQofeuCeY0c4RjWXdrtNWLdW1ub2GzD2cnhXrs/q
-	 0YjqoiCO6vmDC04p15GPkDx59tO5CWxNPnMzvODdmECZz7Dp2uY4ydjDJ+5r1b0GVLkS0
-	 STZvqR5k7f0wZGdAnmAndI7oyE6QCcomcYimH8/bkw9jCa174+T/cc6Klt939fBYx4RVK
-	 U7mV6cuV7xtxHA2lnmf2BHQ/UgQqW11UF/48mzB5Y2uMYX9/C16otvi6OrWac1bx3UQ==
+	bh=49oPa45zrh2c1m1GL3JZQ3LJ8IgKAaLTpn11OJ5t0GQ=;
+	b=ryf1lofH43lS+E86i9shV4x3p120L0pWxFFLSGpXERE6Me2msFQnUZHBe1eoSFTLrs3q
+	 CENkD3dDDQ2+r6Yl2e/Q1h/jd4tDDm8B0SpTMR6H1jUbs4Me6dw3mbs4CTZv1sGwu5uP+
+	 inzXEafslRTTxnafnZa4TsugpxdMpccTOEuG+bdq77hCSkEoGlyEtTB9memTP6FPfg/bT
+	 Ns+zSTbwwgC1nyQZv+HB7VtVzk9cW7IxjzYPgEWLjVWM5vPNvzUStwQT+ELEjG8r08d9u
+	 q3Eo4Y4JTjrmEAS9RD7ZipocLXGv173q8ZSTPuWjInBvehFHwgLz1oEmZs/NcsqjNRQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=toxicpanda.com;
 	spf=pass smtp.mailfrom=toxicpanda.com;
-	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=mullxlSc;
-	arc=none smtp.remote-ip=209.85.217.49
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=eImnh9c5;
+	arc=none smtp.remote-ip=209.85.217.48
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E38D606A329
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:24:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4E38D606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B797606A337
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:24:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5B797606A337
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=mullxlSc
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-7c03a445cb8so447518137.0
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 06:24:45 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=eImnh9c5
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-7cc013095d4so174964137.2
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 06:24:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1793802284; x=1794407084; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=WcIigLb1pFNCZqMfxlwoFOwCJSqFocR8G/Ezr9o8tZY=;
-        b=mullxlScGzRvw6CksgxAYaXxTMP1uliThqCz3mKu71K8ASaX6dqX54BWPqSxR4LwvW
-         oMQRjr6/hmbQOI4FPwH5Whx0KeBfJxVP6PEnpQRraswXR8OKAabC8XCUx4gAkw8FCaUG
-         yprOVLxfWAalBKHlBYXWYcZdRt9urtBcQ0n1M8fjl41bZw+wW8vQSBPUoNrZqX45hBqt
-         sPK/zUYlC8nf/gftMzBOMu9F8rPxGPhZQYOTFt/QC1hhheMk+P2pnjCXJo/E08e8mhTp
-         kuF23U48517x7H6IYsn21D6+jnhBF3EHQ+cy+zx8s27f7LmIsl/QSE3LCkPNg/0SFEZ6
-         8HCw==
+        d=toxicpanda.com; s=google; t=1793802289; x=1794407089; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=49oPa45zrh2c1m1GL3JZQ3LJ8IgKAaLTpn11OJ5t0GQ=;
+        b=eImnh9c59XVrGWdrtf3pvi3k1BD+yXh1ZM/l2oiUm/0atnDUtExsgRKGGWZvZ1E+dJ
+         An91u8qzbU2Bq90RBsVykntNa6QkYcff1hrkEN2VPEZlcSVzJxqQObmbHNlJktEt8yIu
+         JoUlvewYYyNEZitAyXiLScsjJTqS6iqa2Yjqc7HjYqQjOV0y5+RPICxrcbHLIGnbV1oe
+         tuMrf/LmL4+WXgbIyGWiNLdmxq+QEoMde0SzlwubTZey/IbSid69F4DNKH14pC5L1FF/
+         aZrd8ElfywePmHHAvDZ1tzQbjHzOa2CdmsYDdX+fhx0CzGSY11E3wYHgU5tMS0IkLIiE
+         0XuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793802284; x=1794407084;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=WcIigLb1pFNCZqMfxlwoFOwCJSqFocR8G/Ezr9o8tZY=;
-        b=wukSzt1aKKwRL+n/V50rEkZVdfvuwitNGTV6KX2EKAds1ydmPqbTSyqsnAmFMW8EUW
-         JWPk38ehhkiwdrQXO4JMJ3+YRTg8XGa6i0OE039NRelua4xe6i7NAhJhVczpxlesMuDb
-         jfe565xSudFuyp4Cyc3hseDgKuKNN7CiHWn9Z5+Dy4U2LTEwGlHr319s1nM4FBSe8muN
-         kKKxwpPE96ImhnglQVYoqD2dNLFr/WJAL+b928nIJVFACaBqB8ABBVwXFo+JJhnerHCj
-         mhBsmrO+ho0pdHhh60Sm8eOwbP8dE2QMdFRq3lD7BH90G0+dyRPTJVYnrPplDoFOQVAA
-         iSfQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxygKhaBAW/hq+m0rQiAUln3TJfZ3A/qSzZ0RIooSpo1OgGVMLMXoDsHLOI7auD9Z/cEp7ctUvk/0f4hpDmMI6hBDDNMS8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8YDx6DYbjKBarBYol9w/QZBijZSA5+2IOBLt19QPbDaeqWvgLc
-	v8uydSx62z7SjRydZPF3Wi8SBZAJIeIajTYbPh13BkesBnXyp8s9HfulGc+4fg1mqVY=
-X-Gm-Gg: AYBFou19zwXa29mOLOUjZ49WhdCptDQpFRuMaOnjHpnhvpY9Hm0row+rheHg1UBBQ64
-	rZKc7PNBJtq5ruYXRXwzTU0NoVdDDna3JgWpIt5k5PMnByasboSNalZQnayrQGuroOVGTMWt/G5
-	yOi30At6LCW8k/rXXcWVkC2EjE6379ESFvqS3PZXGmMu4YjQeYLna2h5wI0NTjO2JlyU561+JFB
-	z5soJyeIhV01sPRJ7qRBdVk08Eaw9LVZjVW4pmMtj17EAwdN1+EDRaSSmziLG4f+NDAAYmpLSGx
-	lFAgMcY6kQthGX6fV71eokjA7pPgoGffG8WPjNga0Vk4V7BdJSVol3H69OYRvkz/TDw0MYsTMV9
-	zlBN7JgIYUar4nb511eAYUQonC7CGs62cOlwMbBVzQCiH8LzI2cReudUaS3l952Z4Iyvq8M4Sj8
-	C+T0o80DVnv+0rdoLGRjNVZ08gbZoU/8errhABirmrZE06LvGUgY52EFpAcn3WyaUWkxOSXB7bV
-	32qRNBCqcoq467JCJydudyFmcShsOIn7cttWo7gF2DkzRe3PhzDqQ+JBFcB92E7Ufy4TJfSuoB8
-	+WNny+Vh7udFmZTTlJ+wJqeYnZJZ9trxzbuoWDxvaq2IDA==
-X-Received: by 2002:a05:6102:14a3:b0:7a1:f951:664f with SMTP id ada2fe7eead31-7d072ca34famr6612993137.22.1793802284101;
-        Wed, 04 Nov 2026 06:24:44 -0800 (PST)
-Received: from toxicpanda.com ([153.61.196.249])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-998d8afd707sm1890331241.5.2026.11.04.06.24.41
+        d=1e100.net; s=20260707; t=1793802289; x=1794407089;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=49oPa45zrh2c1m1GL3JZQ3LJ8IgKAaLTpn11OJ5t0GQ=;
+        b=1VPpOfoLReQtpWP0Fw90VUB65Zl4xm/Zii06w1VJku2sI45pmMKPA0kVbyN7g01cB7
+         0pUlJiP/wwY2C/GuT+a0KaLx8teHJEfVNb8w2GxlbCZzptif9GTNCpxZcKu2mrqz/e7Z
+         msgsoN4QBZIr28AcTUYS3FmQooOPuv7zMAHn0AAnWVFVM/RDbvk6d6hi1zD6GvSopwvt
+         jkjMYgH46HtjAjYfKVSDvLmZACKT/FMDbs6pjS2bg3rMeDTMrLP9pysI8P8erLxOekXW
+         pTSPL3PyIqRioJNEGimVAOuhxrNHgIIQU4njsmPExt3id4BL8LYgkRjE4OKoiaONO0u7
+         qaAA==
+X-Forwarded-Encrypted: i=1; AKwUvBzAbf8TD9T6jJnZgOdQ6Ci4p3bZsr3hRveXWMU82sqa2VCJYRRRR4t3yULfoO014Hgbm50FjOXeOQy57pxB0WDL4mR5eLY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+xqSKPrsiCJYpmwwaGwyrWibvEx/wPxbMmbY3UP+3zK/IjOX8q
+	FeUK0JIUc3J3cp8vzd82C7ExN9mIDfwoIvIMnvZwoZgNfkKSvzVV/T+6ElQ5JhH7Ig8=
+X-Gm-Gg: AYBFou1GF/AJBZB/AwdTWN3ZLkjOOes+5EzFg7p8Oos4AvMNaHAVrUs7RPpi0rB3xQA
+	g5Z0xxGaClMA1nV0Xq2CCdV7EmrssAmyp5bpoUNPEqj4LI1oAUeissDOnCrLvtSpoIuAVzB/1mW
+	vxkU07HeY2Znlbk68n0t/kxJcYciMNL4eUcxqtRz2nk85nYd0D/Mp5rs07k5Af3EROlPrdqwZCY
+	CNfqXxSg/PNddX8JPaBYOLPS/pZzf4+L01UjsCzSHbfS2uZSDxEOmhSnavs2Yb+KExX+Awtkn4p
+	G1mx5qXjCjgRHmRWbPn8/ep2XjRR+kOGP2b0SxomO9PrcrdYoJakyHEDnTsV49Fi1MbEFdlDlFJ
+	khfRBlCRooSkFT8FRqZQ8/9Ep4NWIQQmRUmGDCcQi0sfTmKH+IjeUDn0cJwyCaP1TIaSVNWrHI0
+	tscKUW11/PZwSlVh6QBc6wiw+uZNY3e6o0/pcn9cIZLKSFFjXLMGU/G7XO6c1tbAJmNXV+yQPYP
+	HWvRXy1CTj4hD2VVV/6+H/xYho5iJW2L1G284/vELREYJ1GKsuRWjzrqmrqQ1r5TRV5Tiq9Kryt
+	EdXPJgH30bmnAKrQTKKz+qFk/ZU2gQGVIg2D725Sj0dvtQ==
+X-Received: by 2002:a05:6102:548b:b0:7c3:6466:3155 with SMTP id ada2fe7eead31-7d072d2ca10mr5409983137.33.1793802288828;
+        Wed, 04 Nov 2026 06:24:48 -0800 (PST)
+Received: from toxicpanda.com ([153.61.196.241])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7d2829d28d0sm243565137.2.2026.11.04.06.24.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 06:24:41 -0800 (PST)
+        Wed, 04 Nov 2026 06:24:46 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v2 00/13] cred: gather the "same uid" checks between tasks
- in one place
-Date: Wed, 04 Nov 2026 14:24:27 +0000
-Message-Id: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
+Date: Wed, 04 Nov 2026 14:24:29 +0000
+Subject: [PATCH v2 02/13] cred: add KUnit tests for the id rules
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -95,123 +94,314 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAB1A62oC/22OQQ7CIBBFr9KwFguIWl15D9MFA1OLUSBQm5qmd
- xdq3Ln8L/+/mZkkjBYTOVcziTjaZL3LQWwqonvlbkityZkIJg6c8YaCpDqiyThRBMZBwK7ZC0n
- yIkTs7LTaru03pxfcUQ9FURqgElKIyum+oEeoQdYr/ElLq7dp8PG9PjXyYvt/f+SU0SOYThiQq
- E7dZfCT1UE5o7baP0m7LMsHbZvRkOMAAAA=
-X-Change-ID: 20261018-b4-cred-ids-eb01b2b38524
+Message-Id: <20261104-b4-cred-ids-v2-2-956213608f16@toxicpanda.com>
+References: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
+In-Reply-To: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
 To: Christian Brauner <brauner@kernel.org>, 
  Paul Moore <paul@paul-moore.com>
 Cc: Serge Hallyn <sergeh@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-security-module@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openssh-sha256; t=1793802280; l=4635;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1793802280; l=10174;
  i=josef@toxicpanda.com; h=from:subject:message-id;
- bh=RtFbXTsb4ax6Tfp/6eLFbfuJmJqCalBfXAjUg8YECpE=;
+ bh=PbbC82f2/K/HPbh7V3nbpnG7Z51PQgNDlIQfWE/UMLw=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgUBr36M/n0nWN0DNbnxwzIiCZez6MG
  JiruuNaSCI/zXsAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QDM8d9MBAwfPTbfEuQbbEiQjUIX6mCag8h5NnpfzRPDG6SR+CM8QKQozuO2uDZzUZ8FWgjlLzIA
- fNdnZpDTihgo=
+ QM9PgXsYeAdU1KKlNbIkGtebw+alIpoaAxc2AEKOuGKUYbcSgZ9jFBuaBmoMvz6zlks4Mg2Rp5R
+ I06fiDBfw/AY=
 X-Developer-Key: i=josef@toxicpanda.com; a=openssh;
  fpr=SHA256:C8kOX2QUJCMqnCX+KEeoqRAjLo9L+ELOSH2NSAJHqGA
 
-v1: https://lore.kernel.org/all/20261018-b4-cred-ids-v1-0-7bdf2db4ea9f@toxicpanda.com/
+Hold each of the new functions against the expression it is about to
+replace, word for word as it stands where it is used, for every
+combination of a few ids, 0 among them: 729 combinations of three uids
+each for subject and object, and 4096 of the twelve ids that
+cred_ids_allow_control() can look at.
 
-v1->v2:
-- Rebased onto v7.4-rc1, patch 1 didn't apply any more.
-- Patch 1: VFS_WARN_ON_ONCE() in the default case of
-  cred_ids_allow_control() instead of failing silently (Serge).
-- Dropped the Assisted-by trailers, see 1e035297ffda ("docs: remove
-  Assisted-by references").
-
---- Original email (v1) ---
-
-Hello,
-
-We have a dozen places in the kernel that let one task mess with another
-because they belong to the same user: kill(), SIGIO, the scheduler
-syscalls, setpriority(), ioprio_set(), prlimit(), ptrace, moving a task
-around in cgroup v1 and resctrl, and KEYCTL_SESSION_TO_PARENT.  Every
-one of them open codes a handful of uid_eq() calls on the two creds.
-They come in six flavors that differ in which of the real, effective and
-saved ids they look at, and in whether euid 0 gets a pass, and there is
-nothing that tells you whether two of them differ on purpose or by
-accident.
-
-I tripped over this working on something else that needs to change what
-"the same user" means.  I kept finding another copy I had missed, and
-for this kind of check a copy you missed is a hole.  So this pulls all
-of them into kernel/cred.c, side by side, with a table that says which
-rule looks at what, and converts the callers one at a time.
-
-Nothing is supposed to change.  What each of these means by "the same
-user" is ABI at this point, so every rule is kept exactly as it was,
-warts and all, I have not tried to unify them.  The capability checks
-and the LSM hooks stay with the callers.
-
-The one patch that isn't a straight substitution is the fcntl one.
-F_SETOWN copies the uid and euid of the caller into the fown_struct, and
-the helpers take creds, so it holds a reference on the cred instead, the
-same way struct file does for the opener.  That means the cred sticks
-around until the owner is set again or the file goes away.
-
-For testing, patch 2 is a KUnit test that holds each helper against the
-expression it replaces, verbatim, over every combination of a few ids. I
-also ran kill, setpriority, ioprio_set, sched_setaffinity,
-sched_setscheduler, prlimit, a cgroup v1 move, SIGIO and PTRACE_SEIZE
-for all 64 combinations of real, effective and saved uid of the two
-tasks, on a kernel with and without the series under KASAN and lockdep.
-All 576 results are the same on both, and they match what the table
-says.  The resctrl and usbdevfs (kill_pid_usb_asyncio) callers I have no
-way to exercise, and the MIPS patch is compile tested only.
-
-This is based on vfs.all only because that's what the other work sits
-on. Thanks,
-
-Josef
+That the conversions which follow change nothing then does not have to be
+taken on trust.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
-Changes in v2:
-- Link to v1: https://patch.msgid.link/20261018-b4-cred-ids-v1-0-7bdf2db4ea9f@toxicpanda.com
+ MAINTAINERS         |   1 +
+ kernel/Makefile     |   1 +
+ kernel/cred_kunit.c | 218 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ lib/Kconfig.debug   |  13 ++++
+ 4 files changed, 233 insertions(+)
 
----
-Josef Bacik (13):
-      cred: gather the rules for acting on a task by uid
-      cred: add KUnit tests for the id rules
-      signal: use cred_ids_allow_signal()
-      fcntl: use cred_ids_allow_sigio()
-      sched: use cred_ids_allow_sched()
-      MIPS: use cred_ids_allow_sched()
-      sys: use cred_ids_allow_sched() for setpriority()
-      sys: use cred_ids_allow_control() for prlimit()
-      block: use cred_ids_allow_ioprio()
-      cgroup/v1: use cred_ids_allow_move()
-      fs/resctrl: use cred_ids_allow_move()
-      ptrace: use cred_ids_allow_control()
-      keys: use cred_ids_allow_control()
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 93abbb315065..0bc2c39eb417 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7126,6 +7126,7 @@ S:	Supported
+ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+ F:	include/linux/cred.h
+ F:	kernel/cred.c
++F:	kernel/cred_kunit.c
+ F:	rust/kernel/cred.rs
+ F:	Documentation/security/credentials.rst
+ 
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 4ff92e24680c..da712b4399ff 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -140,6 +140,7 @@ obj-$(CONFIG_RSEQ) += rseq.o
+ obj-$(CONFIG_WATCH_QUEUE) += watch_queue.o
+ 
+ obj-$(CONFIG_RESOURCE_KUNIT_TEST) += resource_kunit.o
++obj-$(CONFIG_CRED_KUNIT_TEST) += cred_kunit.o
+ obj-$(CONFIG_SYSCTL_KUNIT_TEST) += sysctl-test.o
+ obj-$(CONFIG_USER_NS_MAP_KUNIT_TEST) += tests/user_ns_map_kunit.o
+ 
+diff --git a/kernel/cred_kunit.c b/kernel/cred_kunit.c
+new file mode 100644
+index 000000000000..b3a54e8c565f
+--- /dev/null
++++ b/kernel/cred_kunit.c
+@@ -0,0 +1,218 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * KUnit tests for the rules by which the ids of one credential allow it to act
++ * on another, see "One task acting on another" in kernel/cred.c.
++ *
++ * Each rule is held against the expression it replaced, word for word, as it
++ * stood where it was used, for every combination of a few ids.
++ */
++#include <kunit/test.h>
++#include <linux/cred.h>
++#include <linux/uidgid.h>
++
++/* Root, since two of the rules know it, and two others. */
++static const uid_t ids[] = { 0, 1000, 1001 };
++#define NR_IDS	ARRAY_SIZE(ids)
++
++static void set_uids(struct cred *cred, unsigned int *n)
++{
++	cred->uid = KUIDT_INIT(ids[*n % NR_IDS]);
++	*n /= NR_IDS;
++	cred->euid = KUIDT_INIT(ids[*n % NR_IDS]);
++	*n /= NR_IDS;
++	cred->suid = KUIDT_INIT(ids[*n % NR_IDS]);
++	*n /= NR_IDS;
++}
++
++/* NR_IDS to the power of six: three uids each for the subject and the object. */
++#define NR_UID_COMBINATIONS	(NR_IDS * NR_IDS * NR_IDS * NR_IDS * NR_IDS * NR_IDS)
++
++static void uid_combination(unsigned int n, struct cred *cred, struct cred *tcred)
++{
++	memset(cred, 0, sizeof(*cred));
++	memset(tcred, 0, sizeof(*tcred));
++	set_uids(cred, &n);
++	set_uids(tcred, &n);
++}
++
++/* kill_ok_by_cred() and kill_as_cred_perm() */
++static bool old_signal(const struct cred *cred, const struct cred *tcred)
++{
++	return uid_eq(cred->euid, tcred->suid) ||
++	       uid_eq(cred->euid, tcred->uid) ||
++	       uid_eq(cred->uid, tcred->suid) ||
++	       uid_eq(cred->uid, tcred->uid);
++}
++
++/* sigio_perm(), which had the uid and the euid of the owner in @fown */
++static bool old_sigio(const struct cred *fown, const struct cred *cred)
++{
++	return (uid_eq(fown->euid, GLOBAL_ROOT_UID) ||
++		uid_eq(fown->euid, cred->suid) || uid_eq(fown->euid, cred->uid) ||
++		uid_eq(fown->uid,  cred->suid) || uid_eq(fown->uid,  cred->uid));
++}
++
++/* check_same_owner(), twice */
++static bool old_sched(const struct cred *cred, const struct cred *pcred)
++{
++	return (uid_eq(cred->euid, pcred->euid) ||
++		uid_eq(cred->euid, pcred->uid));
++}
++
++/* set_one_prio_perm() */
++static bool old_nice(const struct cred *cred, const struct cred *pcred)
++{
++	if (uid_eq(pcred->uid,  cred->euid) ||
++	    uid_eq(pcred->euid, cred->euid))
++		return true;
++	return false;
++}
++
++/* set_task_ioprio() */
++static bool old_ioprio(const struct cred *cred, const struct cred *tcred)
++{
++	if (!uid_eq(tcred->uid, cred->euid) &&
++	    !uid_eq(tcred->uid, cred->uid))
++		return false;
++	return true;
++}
++
++/* __cgroup1_procs_write() and rdtgroup_task_write_permission() */
++static bool old_move(const struct cred *cred, const struct cred *tcred)
++{
++	if (!uid_eq(cred->euid, GLOBAL_ROOT_UID) &&
++	    !uid_eq(cred->euid, tcred->uid) &&
++	    !uid_eq(cred->euid, tcred->suid))
++		return false;
++	return true;
++}
++
++static void cred_ids_uid_rules(struct kunit *test)
++{
++	struct cred *cred, *tcred;
++	unsigned int n;
++
++	cred = kunit_kzalloc(test, sizeof(*cred), GFP_KERNEL);
++	tcred = kunit_kzalloc(test, sizeof(*tcred), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, cred);
++	KUNIT_ASSERT_NOT_NULL(test, tcred);
++
++	for (n = 0; n < NR_UID_COMBINATIONS; n++) {
++		uid_combination(n, cred, tcred);
++
++		KUNIT_EXPECT_EQ_MSG(test, cred_ids_allow_signal(cred, tcred),
++				    old_signal(cred, tcred), "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test, cred_ids_allow_sigio(cred, tcred),
++				    old_sigio(cred, tcred), "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test, cred_ids_allow_sched(cred, tcred),
++				    old_sched(cred, tcred), "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test, cred_ids_allow_sched(cred, tcred),
++				    old_nice(cred, tcred), "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test, cred_ids_allow_ioprio(cred, tcred),
++				    old_ioprio(cred, tcred), "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test, cred_ids_allow_move(cred, tcred),
++				    old_move(cred, tcred), "combination %u", n);
++	}
++}
++
++/* __ptrace_may_access(), with the ids it picked by its mode */
++static bool old_ptrace(kuid_t caller_uid, kgid_t caller_gid,
++		       const struct cred *tcred)
++{
++	if (uid_eq(caller_uid, tcred->euid) &&
++	    uid_eq(caller_uid, tcred->suid) &&
++	    uid_eq(caller_uid, tcred->uid)  &&
++	    gid_eq(caller_gid, tcred->egid) &&
++	    gid_eq(caller_gid, tcred->sgid) &&
++	    gid_eq(caller_gid, tcred->gid))
++		return true;
++	return false;
++}
++
++/* check_prlimit_permission() */
++static bool old_prlimit(const struct cred *cred, const struct cred *tcred)
++{
++	return (uid_eq(cred->uid, tcred->euid) &&
++		uid_eq(cred->uid, tcred->suid) &&
++		uid_eq(cred->uid, tcred->uid)  &&
++		gid_eq(cred->gid, tcred->egid) &&
++		gid_eq(cred->gid, tcred->sgid) &&
++		gid_eq(cred->gid, tcred->gid));
++}
++
++/* keyctl_session_to_parent() */
++static bool old_session_to_parent(const struct cred *mycred,
++				  const struct cred *pcred)
++{
++	if (!uid_eq(pcred->uid,	 mycred->euid) ||
++	    !uid_eq(pcred->euid, mycred->euid) ||
++	    !uid_eq(pcred->suid, mycred->euid) ||
++	    !gid_eq(pcred->gid,	 mycred->egid) ||
++	    !gid_eq(pcred->egid, mycred->egid) ||
++	    !gid_eq(pcred->sgid, mycred->egid))
++		return false;
++	return true;
++}
++
++/*
++ * Two values for each of twelve ids: uid, euid, fsuid and their gids for the
++ * subject, uid, euid, suid and their gids for the object.
++ */
++#define NR_CONTROL_COMBINATIONS	(1U << 12)
++
++static void cred_ids_control_rule(struct kunit *test)
++{
++	struct cred *cred, *tcred;
++	unsigned int n;
++
++	cred = kunit_kzalloc(test, sizeof(*cred), GFP_KERNEL);
++	tcred = kunit_kzalloc(test, sizeof(*tcred), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, cred);
++	KUNIT_ASSERT_NOT_NULL(test, tcred);
++
++	for (n = 0; n < NR_CONTROL_COMBINATIONS; n++) {
++		cred->uid    = KUIDT_INIT(1000 + !!(n & BIT(0)));
++		cred->euid   = KUIDT_INIT(1000 + !!(n & BIT(1)));
++		cred->fsuid  = KUIDT_INIT(1000 + !!(n & BIT(2)));
++		cred->gid    = KGIDT_INIT(1000 + !!(n & BIT(3)));
++		cred->egid   = KGIDT_INIT(1000 + !!(n & BIT(4)));
++		cred->fsgid  = KGIDT_INIT(1000 + !!(n & BIT(5)));
++		tcred->uid   = KUIDT_INIT(1000 + !!(n & BIT(6)));
++		tcred->euid  = KUIDT_INIT(1000 + !!(n & BIT(7)));
++		tcred->suid  = KUIDT_INIT(1000 + !!(n & BIT(8)));
++		tcred->gid   = KGIDT_INIT(1000 + !!(n & BIT(9)));
++		tcred->egid  = KGIDT_INIT(1000 + !!(n & BIT(10)));
++		tcred->sgid  = KGIDT_INIT(1000 + !!(n & BIT(11)));
++
++		KUNIT_EXPECT_EQ_MSG(test,
++				    cred_ids_allow_control(cred, CRED_IDS_FS, tcred),
++				    old_ptrace(cred->fsuid, cred->fsgid, tcred),
++				    "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test,
++				    cred_ids_allow_control(cred, CRED_IDS_REAL, tcred),
++				    old_ptrace(cred->uid, cred->gid, tcred),
++				    "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test,
++				    cred_ids_allow_control(cred, CRED_IDS_REAL, tcred),
++				    old_prlimit(cred, tcred), "combination %u", n);
++		KUNIT_EXPECT_EQ_MSG(test,
++				    cred_ids_allow_control(cred, CRED_IDS_EFFECTIVE, tcred),
++				    old_session_to_parent(cred, tcred),
++				    "combination %u", n);
++	}
++}
++
++static struct kunit_case cred_ids_cases[] = {
++	KUNIT_CASE(cred_ids_uid_rules),
++	KUNIT_CASE(cred_ids_control_rule),
++	{}
++};
++
++static struct kunit_suite cred_ids_suite = {
++	.name = "cred_ids",
++	.test_cases = cred_ids_cases,
++};
++kunit_test_suite(cred_ids_suite);
++
++MODULE_DESCRIPTION("KUnit tests for the id rules of credentials");
++MODULE_LICENSE("GPL");
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 2d22638ec13a..c548e660dc5c 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2806,6 +2806,19 @@ config HASH_KUNIT_TEST
+ 	  This is intended to help people writing architecture-specific
+ 	  optimized versions. If unsure, say N.
+ 
++config CRED_KUNIT_TEST
++	bool "KUnit test for the id rules of credentials" if !KUNIT_ALL_TESTS
++	depends on KUNIT=y
++	default KUNIT_ALL_TESTS
++	help
++	  This builds the unit test for the rules by which the ids of one
++	  credential allow it to act on another, cred_ids_allow_signal() and
++	  friends. Each rule is held against the expression it replaced.
++	  For more information on KUnit and unit tests in general please refer
++	  to the KUnit documentation in Documentation/dev-tools/kunit/.
++
++	  If unsure, say N.
++
+ config RESOURCE_KUNIT_TEST
+ 	tristate "KUnit test for resource API" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT
 
- Documentation/security/credentials.rst |  19 +++
- MAINTAINERS                            |   1 +
- arch/mips/kernel/mips-mt-fpaff.c       |   3 +-
- block/blk-ioc.c                        |   3 +-
- fs/fcntl.c                             |  19 +--
- fs/resctrl/rdtgroup.c                  |   4 +-
- include/linux/cred.h                   |  20 +++
- include/linux/fs.h                     |   4 +-
- kernel/Makefile                        |   1 +
- kernel/cgroup/cgroup-v1.c              |   4 +-
- kernel/cred.c                          | 162 ++++++++++++++++++++++++
- kernel/cred_kunit.c                    | 218 +++++++++++++++++++++++++++++++++
- kernel/ptrace.c                        |  16 +--
- kernel/sched/syscalls.c                |   3 +-
- kernel/signal.c                        |  10 +-
- kernel/sys.c                           |  10 +-
- lib/Kconfig.debug                      |  13 ++
- security/keys/keyctl.c                 |   7 +-
- security/landlock/fs.h                 |   3 +-
- 19 files changed, 461 insertions(+), 59 deletions(-)
----
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-change-id: 20261018-b4-cred-ids-eb01b2b38524
+-- 
+2.55.0
 
