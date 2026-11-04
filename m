@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793826901;
-	b=uzdT5igJS3/WBH/b0XEeVMpEOjlDwnMftwrcowHsQOs9/CQ6rYSycbRem69LdPWzvqz+
-	 omkYDOlYkJl3KNQmprwVnBQ62Z7TtDd/2/LMFznP+9xgkU6tHh3Le8WX+YVnVzxpH/Dn9
-	 eQtuM0aTSTRaIHtDESTXnkS+eieL6Y7qSQpy/dCFLLPx7mGBsk5kRhXsiLrWq8fG6iyfW
-	 jUL+yIwAn0ttHMfR+wdtqeUQYTMOvDZlYGUizQUhlytzt9wBHXo4giFy5Sn4B1jF6wZLj
-	 Ou8FwccG91EYxRobkFUTXE+ndu/pfFN52czv0Ydu28Q4OfWMOAJD5+G9CMntP+/btPA==
+	t=1793826917;
+	b=07Lq0/YGKUYN0bgmWEBvQsAkIxYdsYIKAdns1W04/EpFMmh3tqOAhW9bDcfdNkLW3yaO
+	 VqBBXPP8XHRLc+S4JZCuf0SY7CYJxhGf15ZsgjGOG0wzR9d1ttTQRRcRLACHuQKob3W6w
+	 3T6X5CJi3Dj9qhjksMETk3Y4gDqkmygSDo23gt63NPZbiEX7d43jCq/k8cWY8AaDUsDaX
+	 yldPxvZ3VPWJ/E2wblVP+vF4xiryucD6pP7tYO78jL3e2cY04TCjpm7eEZc3HFL2pkVDv
+	 jsfwTbR73Fwmndvs7Mz8wqmpvRDz03crIm+xzvJfH4IchDc6FsSmYLrwTFd4MMUGlBA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793826901;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793826917;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=gmDKUyTnarigoJ/YrwVkoD+vUNInwPHPHVAbJkxflRA=;
-	b=GlU2xWdb1ON4r1TqBxlQZ706Ivm+P1UuDgIt5DG0C4OG8fa+YBJB3aR+i9J102dRD5x2
-	 3M/nMjaNSYLfBkznDoiw72w8thSjL6e9pPNl+B42EnAD/xzIMXH6iw7LnGa9X4MUs/u3p
-	 m6BnKLHU6Kx6rNCgFpfnAojIljFA3tjFaPKLb2dbNaDEhoR8Kq2iuWW+2Yss0ax3AMm6c
-	 WdVSQz3QBs3UczvrQELPPzbyDfK/1qxlShschQGASmK2/rpooa+cl7uh/DqpRpDv38yi2
-	 YH83BaTG8+WP8rF6KdPw+wQbE1dIfXwKk/KOEYCQd6KzSEkgaOmFhWy6NaEJV8N9Y8A==
+	bh=ltj/QyGgORq6RmFgw0/SIl+SzAntZzJvPDFmqhIzIIQ=;
+	b=4LhgGEe+AtYcm3vs3EjxPjEXyCckdDJB7eYN0nimo0/5qtZAIceDLtWONThPiMAar0X0
+	 /yRs6ZGIm2WXHAvNQaHMNAM89HKJShEgdXyE5VVOZ62TH+9dMnLl67UZMjPHcllxj2ci4
+	 M3B+iSC+Xdt1Dv1PRDsQ8SMTfwzcMy01kzdZzuK7DAzKe88jDbZHRq6tcMVuo5N92Xt1/
+	 b0+XHFMQuCaSbC8Er8LANnglLM8iUhb02p4PwLN5mt3M2i5NkFKNxoBZsg1am4YsmRD9L
+	 6yCEHWg9pTHbJSNZ013BdIgosMAiIMPmhnZcuL9OFRQVreXUxQXan7idI9L1CMSVFaA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SkCiH6xE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lv3sO5WY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705CB6084B43
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026D26072F82
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SkCiH6xE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4451F0093A
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:15:01 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lv3sO5WY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABECF1F000C1
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793826901;
-	bh=gmDKUyTnarigoJ/YrwVkoD+vUNInwPHPHVAbJkxflRA=;
+	s=k20260515; t=1793826916;
+	bh=ltj/QyGgORq6RmFgw0/SIl+SzAntZzJvPDFmqhIzIIQ=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=SkCiH6xEJt4UnI1RogKAcKwK6rOfPmzkJ4WIzUOCs4918giwEQmyQ/4MFCsSsuFr5
-	 OWqHnxkxcMelGicKSBoouRbylv4alMAOhgeiI8zqfmUr9GckMiDhycEiLRtfKV1SWD
-	 zYrwFkUmoeQfGTcTr+I8YBNRa0KNt8r/4srqjDrpAdEuWCVWSUVND+caY7IHLe505L
-	 ur+97sqKHgf9zy68yc5Y+zghr9mR7wwoJJinBFP3pyGqBN5MwN8nsz7ACAyvImdG5P
-	 FknzofcOdW8VY0NCMUmic5dkv6DWR/hZhm6soZL2+tMwG2Iewyn0ItAv4YJhgZXtIG
-	 aTbTTk4xaf5Pg==
-Message-ID: <sashiko-outbox-198076@kernel.org>
+	b=lv3sO5WYULgIusJ28S6zDZ644XLia7EC6OR/KZbWVSyzKZXF4ihl+utRnNcSM0wt+
+	 Fwqui99jjftXpkGg7vjbSAnYqGC4k8jhC46Te2xrXPw2pTDn38okq+vuCjrWWNBDOQ
+	 gEf57s99p30OKNc5pencgh1a3QFtnGrSoM7cxjeWo9yLZTgz+NMgDvpA7XvBRwKYRZ
+	 VnBeZUjcrI4qJIhQ7v5gaTxMotDL1+JdOUuXu8PBV3L8jlktlrY3jW/ny4DbuYKZi8
+	 MLANHtqo5OQ7qgSYhuVEdxxMgIE4SRag/fIANeVWgp22OcoV/2bbVoU+f5QMxVB3e1
+	 7wc3SpUlyR3KA==
+Message-ID: <sashiko-outbox-198077@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 17/27] selftests/landlock: Fix SIGURG handler setup
- in scoped_signal_test
+Subject: Re: [PATCH v2 21/27] selftests/landlock: Use _exit() in the
+ named_pipe_ioctl child
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104-selftests-refactor-v2-17-c52f23f7ce33@gmail.com>
+In-Reply-To: <20261104-selftests-refactor-v2-21-c52f23f7ce33@gmail.com>
 References: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
- <20261104-selftests-refactor-v2-17-c52f23f7ce33@gmail.com>
+ <20261104-selftests-refactor-v2-21-c52f23f7ce33@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 21:15:00 +0000
+Date: Wed, 04 Nov 2026 21:15:16 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,15 +60,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Drop SA_SIGINFO, and rename the function to setup_sigurg_handler()
-> without the parameter.
->=20
-> * Drop the SA_SIGINFO flag: This flag implies that we use the
->   three-argument sa_sigaction signal handlers, which is not the case
->   here. (c.f. sigaction(2))
-> * Remove the "int signal" argument and rename the function:
->   The function was already specific to SIGURG and this is better
->   communicated through a different name.
+> In the named_pipe_ioctl test, use _exit(2) like in other places.
 >=20
 > Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
 
@@ -76,5 +68,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-selftests-=
-refactor-v2-0-c52f23f7ce33@gmail.com?part=3D17
+refactor-v2-0-c52f23f7ce33@gmail.com?part=3D21
 
