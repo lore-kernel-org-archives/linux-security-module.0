@@ -1,76 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.72
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.154
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793791834;
-	b=pvj7VOQjEZpGxRkmOk3tbBQnUDltHze+XVg8/zeOiTfg0tjUrbbPMMMG8q+4PrxPfSU+
-	 qiT5YxdnxQ6iZPKU6rdw3zwwS9EdyRn3cl5zsogTCf20u9vwiCL2wxq281D7L9iGxeQOd
-	 96XmFmthi1Z8wcLJZkGhwHC+VnIpxfSS1O07MpoRTIXWzKRvzr7U2cFlDIzIGaGP48DuB
-	 6MA66xwunOvv1pLWi7pGSbb3jyFLK70Z5WoX5E4ziNmI2OtoXHk8/8CFOR3wVbq8JyMiv
-	 TwDy/OIe/JL+Xcy4fMll9Kd9U3Ljc8mSRIRykjGLYa5B+BZ+sBNTiRLPcgVY2xJWvLg==
+	t=1793795666;
+	b=Hd+EODyhUvwLtHtTDJftCcQwWAxxybjAa+QImEDqe/s3XwZeq8ucmuIHsX4GoKXSJjhh
+	 B3PLHxcOrmMB6ibd+j8PNqXWymFKU9Oe3h+THENzbXVjbRozq7zc89zURpqA7qaDsSJoX
+	 RPQZh5wNAYZyTx8yk4ZHp9tNkpWYm0rUJHdkt0FeO1XeYu4qlBjSwpX616Itvno3S2aWv
+	 eoZfDAkwtvey0bdrwpl0gghuaCO/r8K1KD9RsYe3wHCtxw0Swwa3zhoUkFe61eEsb7d51
+	 X3pwG3mUPJd13mIA17u/goQDi4nauOTWLQ4P0//JxFp4ULfCCQuApsDbrNBf30KQIfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793791834;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
-	 Mime-Version:References:Message-ID:Subject:From:To:Cc:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=12Z4lOF0jQfTB4x6+mhkZ27w3B4gOwwYBosLZfWaVjk=;
-	b=2vRu7JuVQ1uLcFfVaeXmamDhRgQ8BTZaW3BlZQSBdEL6Zr9fHMIRXXn8gzp6IuKNXd2X
-	 6u0gdHvgfsxCPFzaV40U7QpTt009Z9z3iKLwydDkNSC1WLqTqGgsP+IEMXQQKRKz003O3
-	 cWNiJ2DA/153jWTPFkCcFFx51DHplqiyYE179T8qbxFcpyckSox1u1yO+9i0L9b3z7ked
-	 1gorBqM2uKw16dCS5yPeDC9gR77pUcEJkI7KXxlltNSQPDKsDLKOPezt3pVOxIHS1Mvjb
-	 KfcWdAxbCphmF9sXdnLhlgkpwVJXWIUzTP6g13sTaDW0rV9wn5rFoX8pEKEpC3orUoQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793795666;
+	h=DMARC-Filter:Received:Received:Received:Message-ID:Subject:From:To:
+	 Cc:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version:X-CM-TRANSID:X-Coremail-Antispam:
+	 X-CM-SenderInfo;
+	bh=fbDHR1bhb6fo9f6gQs2i+yeEbU4uHrwRuAQ4UhfQaQQ=;
+	b=tBVEV1oJBlLKQolDAitFlGo0cKpVmvXXZFLMxh/iyuT1mwfi76O1b9e2RlqLXH7C2LcI
+	 qRLQP/LS37zMtRz7ZAyW79CHBwQQDalYoX6b46QL3+W8MtGAaRyLNRr9VZF0wTI4LlQRr
+	 3QyrNbpd6t4AaTbDSAlFvfNUkvt2RYvuKFGHKO7a7jQYFQkILPniWsCtUqzXZJraEjQkF
+	 VlDVn7H27xGk9CFfCht5KUhV1FR+TSgyk/E9gXxvmtrgC8okL7FNs344yAMz2mCXZnaoz
+	 sSS4MJrkzbJKyVRBduMUQsECVHoY8Bh5CPhQ1oLAbL4JNl47M7ZjBiwpmLwAN0dC4BQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=flex--halg.bounces.google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=OxFwYHpZ;
-	arc=none smtp.remote-ip=209.85.218.72
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=huaweicloud.com;
+	spf=pass smtp.mailfrom=huaweicloud.com;
+	arc=none smtp.remote-ip=14.137.139.154
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A757F606A331
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 11:30:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A757F606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--halg.bounces.google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=OxFwYHpZ
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-c49b95262a5so53193066b.3
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 03:30:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1793791832; x=1794396632; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=12Z4lOF0jQfTB4x6+mhkZ27w3B4gOwwYBosLZfWaVjk=;
-        b=OxFwYHpZryXJb9enpLN87kRHPhZ5WBZA/67/YXzaPEYjTTLlymCutEI1uecBPE/BvN
-         huqf7toSWyGVex91ZAogh6DgqKGuOt0mMBn6kABO9B6FhqYW8AjjUa4VQ+ayHjfaXA/R
-         wVlA1/oiUvTChrgsjjjL1YCgMQUeI38CqG2EEPykNUfu1ppbl/V8SEu51MEg8KAcQzwy
-         phahP5oTOjD8rnSCmk6+y6VkWQadghfC1gEExWqEMbyPplT2lqJDDTPGTuZpBEv3iy6d
-         FfsAnJqioiB+zVM0HXxdHfTfpaK/euZmoaLFFdj+oIPkYpGlH4YM41240bEq7B4gWTTM
-         E3lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793791832; x=1794396632;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=12Z4lOF0jQfTB4x6+mhkZ27w3B4gOwwYBosLZfWaVjk=;
-        b=s4Cqd+FEW8Nl43uWVcU4eky6ciQm8npGHqdIIM3Wr2UWwVjyJ52fPb3g2kiL6NXS7i
-         gHAjmrCMVjFRuexhG3h40cNfULSRggRQbeeVuJiN9YZrcHWFJ/BMyGB/Wgnz9Ljx0LFa
-         CES1dcWtBaXiMbYQrNUN706LAaIBi0CMN4PSaKXQ3Y0TxFHM0bU8uESByDQkWPU38XtZ
-         Q1kj8MQqSogLk6Q/hX0Uj/Qjpx9KI7/tXNwEKze2+WiT5IbU7ArGkpbD6PH04buCdVOF
-         YdSRQqJfI4aT7xDIcNOSao5HVKEI0yWY98jljh+hjxwx5npqCfYRDGE0eZNzdAqDlHor
-         YCGw==
-X-Forwarded-Encrypted: i=1; AKwUvBxk3UBKz3ydxYji/K6H+IntU9ZWhuMRr48AyWJPZ6qivClUlzFzDKNnuqVsXu3Qz+UdrejAHEpprfExRagcDxCssP2SeMA=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+bN6OhrzFwsCSb9jE/3GkVibWAuFssHUxiAfmwt2cgKrBCLsf3
-	WcwcXiQB9ojEHOb8iAAmBfVgcuDJzfsuTca/JTNz6mkXsu6ozlhAYfztdk5OcOoBIBUR4+/P1Q=
-	=
-X-Received: from ejbgw4.prod.google.com ([2002:a17:906:f144:b0:c3f:7129:4c10])
- (user=halg job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:18c3:b0:c26:22ae:b66b
- with SMTP id a640c23a62f3a-c4ca7aee966mr1382566266b.15.1793791831732; Wed, 04
- Nov 2026 03:30:31 -0800 (PST)
-Date: Wed, 4 Nov 2026 11:30:31 +0000
-In-Reply-To: <CALCETrUD4vh_iSHV7G0bprUFU8=c+ECo701-tXcbQ3UXBWC1ig@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3735D606A326;
+	Wed,  4 Nov 2026 12:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3735D606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4jKPxy1mxrzsklp;
+	Wed,  4 Nov 2026 20:33:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.218])
+	by mail.maildlp.com (Postfix) with ESMTP id B17FB4055C;
+	Wed,  4 Nov 2026 20:34:13 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by dep2_app2 (Coremail) with UTF8SMTPA id 2hC2B0A2QlA9JutqGi0MAA--.11855S2;
+	Wed, 04 Nov 2026 13:34:13 +0100 (CET)
+Message-ID: <c7c8104ca8734f52a50ac2cfd058d4ce95e1cdbc.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: hold ima_extend_list_mutex while locating the trim
+ position
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Weibin Liu <liuwb@xiaopeng.com>, linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
+	stable@vger.kernel.org, Zhu Guanglei <zhugl3@xiaopeng.com>
+Date: Wed, 04 Nov 2026 13:34:03 +0100
+In-Reply-To: <20261104053705.3967228-1-liuwb@xiaopeng.com>
+References: <20261104053705.3967228-1-liuwb@xiaopeng.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -79,122 +62,137 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-References: <20261028221705.3915340-1-halg@google.com> <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
- <auM32mOlBLu6ZUlt@google.com> <CALCETrUD4vh_iSHV7G0bprUFU8=c+ECo701-tXcbQ3UXBWC1ig@mail.gmail.com>
-Message-ID: <ausXFWLgHabezE7R@google.com>
-Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
- opt-in netns loopback
-From: "Hallgrimur H. Gunnarsson" <halg@google.com>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
-	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jann Horn <jannh@google.com>, "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
-	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-api@vger.kernel.org, containers@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-CM-TRANSID:2hC2B0A2QlA9JutqGi0MAA--.11855S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFW8JrWfJw4DuFyDWF1xZrb_yoWrKF18pa
+	9a9Fy7Kr1kJrWxtw1xG3WfurWruw4kWFWUJrnrG3WDAFW3Jr1jvr13tw1Y9rn5CrZrtF1r
+	tF4aqrZ8Aa1qyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Jr0_Gr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANDWrqozefaQAAsg
 
-On Tue, Nov 03, 2026 at 10:37:48AM -0800, Andy Lutomirski wrote:
-> On Thu, Oct 29, 2026 at 5:11=E2=80=AFAM Hallgrimur H. Gunnarsson
-> <halg@google.com> wrote:
-> >
-> > On Wed, Oct 28, 2026 at 03:56:11PM -0700, Andy Lutomirski wrote:
+On Wed, 2026-11-04 at 13:37 +0800, Weibin Liu wrote:
+> ima_queue_delete_partial() looks up the queue entry at which the
+> measurement list has to be cut without holding ima_extend_list_mutex,
+> and only takes the mutex afterwards for __list_cut_position().  The
+> comment above the cut justifies this with "ima_fs.c enforces
+> single-writer exclusion".
 >=20
-> > >
-> > > Why should the task's cap masks affect this?  *Maybe* cap_bset makes
-> > > sense, but I'm struggling a bit to see why cap_permitted and
-> > > cap_effective should matter.
-> >
-> > Sorry, the phrasing here may have been misleading. Just to clarify:
-> > none of the creating task's capability sets (cap_bset, cap_permitted
-> > or cap_effective) are used to restrict the new user namespace.
-> >
-> > When I wrote "reusing the existing task cap_bset, cap_permitted and
-> > cap_effective sets on namespace entry", I was contrasting this with
-> > the prior series from 2024 [1], which proposed adding a 6th per-thread
-> > capability set to struct cred.
-> >
-> > In this series, when a task creates or enters a user namespace, we
-> > simply initialize its new cred->cap_{bset,permitted,effective} in
-> > that namespace to user_ns->cap_bset instead of CAP_FULL_SET.
-> >
+> That exclusion does not cover the write() path.  ima_measure_lock()
+> registers measure_writer at open() time and even lets the same task
+> open the file again by incrementing measure_writer_extra_writes, while
+> _ima_measurements_write() never checks the caller's identity.  A
+> privileged task can therefore open several descriptors for the
+> measurement list and use them concurrently from its own threads.  Each
+> open() creates a separate struct file, so the f_pos_lock taken by
+> fdget_pos() does not serialize these writers (sharing a single
+> descriptor would be serialized there).
+
+Yes, I assumed the good behavior of the privileged task, but you are
+right that it must be fixed.
+
+> Two racing writers can then resolve the same, or an overlapping, trim
+> position, and the second one dereferences a queue entry that the first
+> one has already detached and handed to ima_queue_delete().  Depending
+> on the interleaving this corrupts the measurement list, reads freed
+> memory in __list_cut_position(), or frees the same entry twice.
 >=20
-> Okay, this makes *more* sense, but I think it's too weak.
+> Reproducer: generate some tens of thousands of measurement records,
+> open() the measurement list for writing several times from one task,
+> then write "20000\n" from that many threads using one descriptor each.
+> KASAN reports a stack-out-of-bounds access in ima_queue_delete(),
+> called from ima_queue_delete_partial().
 >=20
-> I have a sort-of goal of having the creation of unprivileged
-> namespaces be allowed in most contexts by default, *even in Docker*
-> (which would involve the Docker team changing their default seccomp
-> rules, but that bridge can be crossed later).  (In furtherance of this
-> goal, I fixed an ancient bug in newuidmap that gets us quite a bit
-> closer a couple weeks ago.)
+> Move the lookup into the same critical section as the cut, so that the
+> entry stays valid until it has been detached.  Holding
+> ima_extend_list_mutex also excludes ima_extend_list(), so the plain
+> list_for_each_entry() is sufficient and the RCU variant is no longer
+> needed.  Keep the existing error precedence (a short list returns
+> -ENOENT before the suspended check) and keep ima_queue_delete()
+> outside the mutex, since the trimmed list is already private.
+
+Not enough, it does not protect against the read concurrent with
+replacing/cutting the list (originated from the same writer).
+
+A reasonable way to solve the problem would be to introduce an rwsem,
+and wrap the write, read and lseek operations. This restores the
+assumptions the code was written with.
+
+We still need the current exclusion to avoid that a process deletes a
+staged list created by another process.
+
+Thanks
+
+Roberto
+
+> Fixes: fcb0318a2969 ("ima: Support staging and deleting N measurements re=
+cords")
+> Cc: stable@vger.kernel.org # v7.2+
+> Signed-off-by: Weibin Liu <liuwb@xiaopeng.com>
+> Reviewed-by: Zhu Guanglei <zhugl3@xiaopeng.com>
+> Assisted-by: LLM
+> ---
+>  security/integrity/ima/ima_queue.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
 >=20
-> But tying this mitigation to a parent userns means that it's
-> completely unusable in the single-deep case.
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 0f1b7e4113c4..cf8c164eea13 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -427,12 +427,16 @@ int ima_queue_delete_partial(unsigned long req_valu=
+e)
+>  	struct ima_queue_entry *qe;
+>  	int ret =3D 0;
+> =20
+> +	mutex_lock(&ima_extend_list_mutex);
+> +
+>  	/*
+> -	 * list_for_each_entry_rcu() without rcu_read_lock() is fine because
+> -	 * only list append can happen concurrently. No list replace due to the
+> -	 * staging/delete writers mutual exclusion.
+> +	 * The lookup and the cut have to be atomic with respect to other
+> +	 * writers: ima_fs.c serializes open(), but write() can run
+> +	 * concurrently on independently opened descriptors. Holding
+> +	 * ima_extend_list_mutex also excludes ima_extend_list(), so the
+> +	 * plain list traversal is sufficient.
+>  	 */
+> -	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+> +	list_for_each_entry(qe, &ima_measurements, later) {
+>  		size_to_remove +=3D get_binary_runtime_size(qe->entry);
+>  		num_to_remove++;
+> =20
+> @@ -441,18 +445,16 @@ int ima_queue_delete_partial(unsigned long req_valu=
+e)
+>  	}
+> =20
+>  	/* Not enough records to delete. */
+> -	if (req_value_copy > 0)
+> +	if (req_value_copy > 0) {
+> +		mutex_unlock(&ima_extend_list_mutex);
+>  		return -ENOENT;
+> +	}
+> =20
+> -	mutex_lock(&ima_extend_list_mutex);
+>  	if (ima_measurements_suspended) {
+>  		mutex_unlock(&ima_extend_list_mutex);
+>  		return -ESTALE;
+>  	}
+> =20
+> -	/*
+> -	 * qe remains valid because ima_fs.c enforces single-writer exclusion.
+> -	 */
+>  	__list_cut_position(&ima_measurements_trim, &ima_measurements,
+>  			    &qe->later);
+> =20
 
-To clarify, this mitigation isn't exclusively tied to the parent userns.
-If a system administrator wants a host-wide policy, like trimming
-CAP_NET_ADMIN for all unprivileged user namespaces, including
-single-deep Docker containers, then the host-wide sysctl handles this
-seamlessly. Any unprivileged process in init_user_ns calling CLONE_NEWUSER
-is subjected to the sysctl ceiling, effectively stripping CAP_NET_ADMIN
-upon creation.
-
-Where the single-deep case falls short in this series is per-container
-granularity. For flexible configuration on a per-container basis, this
-patch series assumes that containers run in their own user namespace,
-allowing the runtime to bound capabilities at creation time via clone3()
-and have that bound persist down the namespace hierarchy across any nested
-userns creation.
-
-If a container runs in init_user_ns (as in standard Docker) and we want
-to restrict userns capabilities for that specific container without
-relying on a host-wide sysctl, then you are exactly right. We would need
-some kind of cred-based mechanism to pre-configure a restriction for any
-future CLONE_NEWUSER calls within that container.
-
-> I do have a question about this whole scheme, though: are we talking
-> *just* about CAP_NET_ADMIN?  That is, is there any other bit that has
-> anywhere near enough security relevance to make this kind of thing
-> worthwhile?  Because if it's really just a single bit control, maybe
-> we can come up with a nicer scheme.
-
-Yes, primarily CAP_NET_ADMIN, and to a lesser extent CAP_NET_RAW.
-
-If we look at submissions to Google's kernelCTF VRP [1], 90% of the
-exploit submissions in 2026 require CAP_NET_ADMIN (and about 70%
-across all submissions since the program started in 2023).
-
-Restricting these network capabilities when they are not strictly needed
-(e.g. for sandboxing) is the primary motivation behind the series.
-However, I wrote the userns capability bounding as a generic mask so it
-could restrict arbitrary capabilities down the hierarchy, but if the
-preference is to narrow the scope more specifically to trimming
-CAP_NET_ADMIN and CAP_NET_RAW, that's completely fine by me.
-
-If we go that route and want to support the single-deep Docker case, a
-per-task inheritable securebit might be one way to do it, e.g.
-SECBIT_NO_USERNS_NET and SECBIT_NO_USERNS_NET_LOCKED. Docker could then
-set and lock that bit on a container in init_user_ns without needing a
-parent userns.
-
-On userns creation, create_user_ns() could record this restriction on
-struct user_namespace. That could either feed into the userns capability
-bounding set proposed in this series (clearing CAP_NET_ADMIN and
-CAP_NET_RAW from user_ns->cap_bset when the bit is set on the creator),
-or be stored as a single boolean in struct user_namespace if we want to
-keep the mechanism minimal and drop the generic capability mask UAPI.
-In the latter case, we would still need to replicate some of the
-userns capability bounding functionality, e.g. strip CAP_NET_ADMIN and
-CAP_NET_RAW in set_cred_user_ns() on namespace entry, and bound the
-parent-owner check in cap_capable_helper().
-
-[1] https://github.com/google/security-research/tree/master/pocs/linux/kern=
-elctf
