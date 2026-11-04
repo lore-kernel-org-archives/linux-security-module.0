@@ -1,143 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.198
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793822018;
-	b=TROf9jebmM49z1do8d1NYnwPsiar+AG030uCksFMPH45GnqrgNm/WeSYwq4PTfhPlUsN
-	 Kdjke+0fr8+/XkXsPoJ9At8UTQk+wxjvT92N0MwHy387P3bpvZrRADIi+4GdXNi+jUpf5
-	 KhRhSvV9/LglcDyysjMyZiwRgS5q3tlXxKuF1RsNQo9o6BQma02LsScmtr2PV1sGTAZ5d
-	 ZkKadBKJ+AlqPKZP7K0QAqBJY3/PcTlz99WrO250EhJW8SI408/uorvwBTOJ+PTnB5ZUV
-	 XTQFLE4GmJQOZ4bnqQgaXD5mKZ3OlqvoBzus8WNnzWVpYCzT88wb/I2RbcZNmvK3Bpw==
+	t=1793823298;
+	b=3oMLtJoHBfTU9F3oWiCHcLU6NPYSBUrpwN53x+qUCAlNdo3idTjCA+TrYzTiMwALyrlF
+	 Ff4L7iXwy9E6hVRyot+1fgxhTPHonDk4N81kiwIbCq2zhwr/jt3PagmS7HLHGmoW3q2cU
+	 W81SJKXmQbf2VPccrjRrwlgoHPJWObeHhSwm9Jkgn+fIibwustGPVMP3EsE92fPAyz0dj
+	 vs1tIVXKL83KYU6ZJpJtJ/aP2AVtyb0PBcvCmiwve5PmK+PuqVCzpDHtD/BSnSMQXbEwI
+	 28iVG3uVQPiuZVJZBhCbPiebDZ/ZFFIOGwK1oGkgB0i/Ujl1gbjeykYYVE6ePTDbS5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793822018;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793823298;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=j77TQJheY9BNkuAUNT0wTTk7+HF7XEvTQj5keMW7u/I=;
-	b=oSh4igaFFxBgmqCzOSBQJb6pN4102gX3CJ3jZLWmI/1Rh+ZdOOURT58T27aiSdJvvSD7
-	 +Flt8lBv/VT3O5YLGY3hcLyxpqRbttoFsfbSsOxDZSq7FfgpnA/om8OgCConBxJoBtfH3
-	 Hi0aHUhWNMmK9Tf04CHMlgPO+zQTCYae7Oh7BcPcbad8NpqwDWK/SgrsZuHViXgAAy/N+
-	 rpbIxafksJeVpPNF8rtDqM7XKlUlTZxB2NI5X8yrJvV5WeX23der2TN9F+9ytPgGw8xdJ
-	 imAHQnbXCbE5wj4C/RHiaGwBwoJucCvgUbbB6g5eLbrKuoP+FzyuFtj2lktNBuoBtPQ==
+	 X-Forwarded-Encrypted:X-Gm-Message-State:MIME-Version:X-Received:
+	 In-Reply-To:References:Message-ID:Date:Subject:From:To:Cc:
+	 Content-Type;
+	bh=AS/luxCxZZ4IKfwOyJu4Ue765u+vBG+6P6QAZr4AiP8=;
+	b=Nln6Fhniqyi8idt3T+CX13yXCZJjk6fBGhM9ST7UyAQX/oQc/kmLAECb3nHhW6QgZaks
+	 CTgEybXJNIwI8Dnh+yIy04yiRAxA55RS3URcQqIh8mSZSu5YIa8pceEy59YZS50UfBAqJ
+	 i+816WYm536vu8FdilNHC2wP/0sOS61R4/V8uS6Kgy18+jClejFD5S8v3wTcEz4LYaVnG
+	 nxbGDPIxfwzdhWiDJnmxr90BrqtCSvk3rnxRtOtXgrRzI3CizAShfUkk7nTTj0+xfjF4I
+	 eppQkRsCqzfw9ym+C2Uawztb9KM5rDgSM6GldqU+esCDMZ7s3RdIe+g0V4nRoCRzq8A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=snwKVTUy;
-	arc=none smtp.remote-ip=74.125.82.44
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--jeffxu.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=WOmd94Mh;
+	arc=none smtp.remote-ip=74.125.82.198
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84A7609765E
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 19:53:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C84A7609765E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A2160B88D1
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 20:14:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 38A2160B88D1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jeffxu.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=snwKVTUy
-Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-19305bcb72cso1062201c88.1
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 11:53:37 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=WOmd94Mh
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-341eff9e381so1961044eec.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 12:14:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793822017; x=1794426817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=j77TQJheY9BNkuAUNT0wTTk7+HF7XEvTQj5keMW7u/I=;
-        b=snwKVTUy9LvBIeZYEhCXzEnRQp2wodIFGKY4wUJ7ztWzLVbTd1bI4nr3mGXqrQXFPO
-         83/HtfEisb8NH+6TKxRanc+LHldo4EqJ43kuJQJyWdqbEb2qaKJ6REpFD/Jt5EslTB+S
-         zscnal0Mvh+NX91kiP+siOH9v7tqEITC6j8TarPFAWvrj5zWcfX48CLTn8neQnUjk0aG
-         DdWT6beozrR7hgNmLfQYYUBVHi+K7i2h0gb1c9TLmiQO015gt7sDVMBLhaHB5Rgu8J3E
-         vDvOsMZkyxTj1DF9F5rnA3mHVh2Jx0j8rAylzbJGVo40aem9854GCIhJgMsA/lSZgxl8
-         K73A==
+        d=google.com; s=20260707; t=1793823296; x=1794428096; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:date:message-id:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=AS/luxCxZZ4IKfwOyJu4Ue765u+vBG+6P6QAZr4AiP8=;
+        b=WOmd94Mh+1IsHCPkayZDec6JPAxqUizBUQICw7d1GTvFYhvGyIcRDUYVGA4mrhJ2Gw
+         LlwBfvWxf6C/dkbd/wYeCVyGFNqSQNTNemKeHNozM+B3thODy6YTQUG8zPI+Zc0fLAsc
+         ywPjVR6u2U7pkPrIYEEEE7pR/Fv2GUmpGF5C6hZYbFhN+xzjvjlTlZgt1yXCOuMk8ZV8
+         7dgvN0RspKuuDt9X8QL4OxxBptYW7RdbVtxUU3AipSC6ioGA6dVwnv5HTegyIPEZQbol
+         lNJjqnZui4CPRajfzE+ydyWOkaI+BYJB/fWwmMyfr6ch4/bN/0JzLGDra0aJW3LNaEPF
+         9UKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793822017; x=1794426817;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=j77TQJheY9BNkuAUNT0wTTk7+HF7XEvTQj5keMW7u/I=;
-        b=MBmy46k9mIV+yorkexD/OyuT0xC2V5m8wIIGGGrpw4zWo83gU5p7ZzM/6sAFlJ9w48
-         dRiQIz2GFVFAuwWfpJwDxIIiv/Yrq4goo7YLOOGmaBIrtp7TE8SRbPKGtmCZ0yHkJBOb
-         LJj6oq+683ybRXO0wz11Tkx9DgS6PeErkWmcfzvsEaiwLM/2edpNuB9ndIjI1NUkINnd
-         OF8lMIVH7OjhO1YS1cW8JzylCaz4l6COGnEIvuTkZUFOQOETjxZ8o+JJgqueTbvS3F8V
-         enCHSzTB9Js06DioEE/mYoh+jE73QrPHK35bY45k9Z2+yVL3DaL9GCXIaPbMwMdOCgMU
-         mqeQ==
-X-Forwarded-Encrypted: i=1; AKwUvBz+zTv2GiA3Jz9iJo0sk49KjUQ73hOuHCBlkmu8mI2XsWRBz0d5PeNgY6jCcUJSKZri5a1I49NI7gGxJaXL+xpF9FKiV3s=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9nd9YvbmYD/aMaQnozRgmUWpCikDA7Yf5iLfWRgyuKJqEvBW2Y
-	alqhYLEl/4hY/vTDoQo8Ok+/cb9XN1SrdnAfn2WIVrnaFd3vWyEPwI8=
-X-Gm-Gg: AYBFou3D4L+nrdVJKf/ynr3NOERkqxY3v5yLNm7MNFnec+YDk2WWQ0JTpg2zKHQikMi
-	f2MGJG+fAZIqICLemI8SYks58VHw/hVYqvJT168UIfw2pAzQEJHaM1Yxh9CnXhQsHkH4Rce6lqd
-	NH+tahXKicfQJjjQ9dFWQgl+XvOJXRufOg7b9ccD5a5c4nK6I9f5EI9llcAOGtnKfj2+PxvrMn7
-	n5hdkS+RmlAMfrt1+hI4QBxTFiWsiOcgmMv6fVW1b0uy3bNKwZ52u0I0TkG1+sjZTmhNDRLHVYz
-	MKkyopi+RjuALB1X/hp2yg8vrsln3TMu0q4oB2343HQaMXrwK4/mqQ47gGCllhj1NJLVj29LBw4
-	b8dduBdFESJtOsi8J+JPKKZktObOuGdnye21NZc2COlny8BpxxGzi6m1D7TKhl3zSwMv/mxZxbn
-	EONZFpNPz9fg9cMCcd9ObGsdtCXaqVbmjVj0kUdmqeddIVDe6pvHWEeKi8JviAHsEfiaZcgqy7y
-	NPemxUhjTHisJAJZ6uebHx3TNkV7NaTNGbuk/YKGjOb2kzIwm2REp8kW2kNU2p5l+IS3CKEFDLs
-	VBWLUgYFiYrcaRBs3ijQBL+qf/wWvfy4Pm5UH5aysIrSlXCIt6xbx0VRJ9B8wl3n
-X-Received: by 2002:a05:701b:4241:20b0:143:2968:564c with SMTP id a92af1059eb24-1ac5b9cb040mr26455364c88.26.1793822016817;
-        Wed, 04 Nov 2026 11:53:36 -0800 (PST)
-Received: from at-Standard-PC-Q35-ICH9-2009 ([106.194.66.249])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245c2d69asm9239684c88.11.2026.11.04.11.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 11:53:36 -0800 (PST)
-From: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-To: jic23@kernel.org
-Cc: alexandre.belloni@bootlin.com,
-	andy@kernel.org,
-	asahi@lists.linux.dev,
-	atharvatiwarilinuxdev@gmail.com,
-	bhelgaas@google.com,
-	bp@alien8.de,
-	brgl@kernel.org,
-	dave.hansen@linux.intel.com,
-	dlechner@baylibre.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	griffin@kroah.com,
-	hansg@kernel.org,
-	hpa@zytor.com,
-	ilpo.jarvinen@linux.intel.com,
-	j@jannau.net,
-	jarkko@kernel.org,
-	jmorris@namei.org,
-	keyrings@vger.kernel.org,
-	lee@kernel.org,
-	lenb@kernel.org,
-	linusw@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux@roeck-us.net,
-	mfd@lists.linux.dev,
-	mingo@redhat.com,
-	neal@gompa.dev,
-	nuno.sa@analog.com,
-	paul@paul-moore.com,
-	pavel@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	rafael@kernel.org,
-	roberto.sassu@huawei.com,
-	serge@hallyn.com,
-	sre@kernel.org,
-	sven@kernel.org,
-	tglx@kernel.org,
-	wim@linux-watchdog.org,
-	x86@kernel.org,
-	zohar@linux.ibm.com
-Subject: [RFC PATCH 14/14] mfd/macsmc: add ioctl to access smc keys
-Date: Wed,  4 Nov 2026 14:53:17 -0500
-Message-ID: <20261104195317.8284-1-atharvatiwarilinuxdev@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261101013817.22d67ea7@jic23-hlaptop>
-References: <20261101013817.22d67ea7@jic23-hlaptop>
+        d=1e100.net; s=20260707; t=1793823296; x=1794428096;
+        h=content-type:cc:to:from:subject:date:message-id:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AS/luxCxZZ4IKfwOyJu4Ue765u+vBG+6P6QAZr4AiP8=;
+        b=o3+RV7c5hbNJ6yfKRFNePPfof2cT+hoD5IglPNdNdTwgzUbuPAZAKq2gSwUxpyUu/X
+         WC1kvzqJXtxFysvY+LtQCXZrRAdL3LlayGb46ub3mpiLyPMciYRTk66lXzIu48qGXyQk
+         hHqIDRrVNCus99OjiILQjidALpYEDLOt7QS2HoOe5OXHyxEN0dbRZ6qlehC/7TWY7wE6
+         olnqZmrN0JsibovuJ2bfULbXEUZ1lGMKLbiCGVUG8uo6bqHb+miGgmgYCiheZAXAGq1G
+         6p+ReY1wdyKgso/14LFlWtVXg1sKPDKNg5nW+LnmlaFELeuV2Ig+95JWAJMfD1LrtC3u
+         jWEQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzgZMtS9X/mZt+X8YCk1wqmJr89zla7soKDYyFR6+DO99VdCt+wflm+ZA+4rWBWKh0mS3zTkqItubF6tk02nFePEhFQOuI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9FIoF/M1BzhGMac9xzBQxDFk5dGvIcaSfgIG0MiQ5YGOflllZN
+	b+Ic/MtTBtD2Hpf+aExGwp0iP/jOjdeefCtFlvubPdVKSzV1okgfCqGq2k6AW7igVWyFH8WGf14
+	06VB4LA==
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -147,21 +73,52 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: from dybkf8.prod.google.com ([2002:a05:7301:3a88:b0:36a:e67:fbc2])
+ (user=jeffxu job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:1608:b0:185:4ad4:3d15
+ with SMTP id a92af1059eb24-1ac56302329mr19203878c88.1.1793823295901; Wed, 04
+ Nov 2026 12:14:55 -0800 (PST)
+In-Reply-To: <cover.1793718940.git.chris@chrisdown.name>
+References: <cover.1793718940.git.chris@chrisdown.name>
+Message-ID: <18e4f0c895c8d2ed.3137322e32382e342e3434.27cc5b.0000sendgmr@google.com>
+Date: Wed, 04 Nov 2026 20:14:55 +0000
+Subject: Re: [PATCH v2 0/8] mseal sysmap: Choose system mapping sealing at boot
+From: Jeff Xu <jeffxu@google.com>
+To: Chris Down <chris@chrisdown.name>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <liam@infradead.org>, Lorenzo Stoakes <ljs@kernel.org>
+Cc: Jeff Xu <jeffxu@google.com>, David Hildenbrand <david@kernel.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Kees Cook <kees@kernel.org>, Andrey Vagin <avagin@gmail.com>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Shuah Khan <shuah@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andy Lutomirski <luto@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
+	linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-> If this isn't matching some legacy interface, then we need more
-> on what these do.  Maybe they are suited to some other kernel
-> interface? In particular they might need the various controls
-> on how destructive they are that something like fwctl brings.
-> 
-> Generally an arbitrary opaque path to firmware isn't a good idea...
-> 
-> Jonathan
+On Tue, Nov 3, 2026 at 11:17:43PM +0800, Chris Down wrote:
+> System mapping sealing is currently a build time choice. Hosts which
+> want it and hosts which need to move or unmap these mappings therefore
+> need separate kernels, which is not ideal. Let's allow the administrator
+> to choose at boot time.
 
-Here its required, if we write CPU/GPU Pstates and PPT to
-some keys (MSTS MSPC HE0N), we can reduce the temp by 10C
-And We can fix the dreaded PROCHOT signals on macs, Giving
-Same temps as macOS.
+Thanks Chris for the updates and for adding the unsealed boot parameter
+test coverage! The v2 series looks good to me.
 
-But you and Sasha are right, that exposing all keys is a
-bad idea, so i have restricted writing to some keys only.
+Reviewed-by: Jeff Xu <jeffxu@google.com>
