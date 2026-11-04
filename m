@@ -1,55 +1,69 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793802669;
-	b=SGoVU9TbFDFoWUrvWIlheiV/afsV2X8ucUJnrElhqxb+r4fzporkiP2bpJagT1QUB1ZB
-	 Ovpsaoy40OaK/jgA9BguZeZyugB1g942UGERl6RTasqClIfQtu4uLznhVTxD7fMoYVACR
-	 JP2GOTjoK7XeO84aXinVQ/DWZdPELM3MEka44jM24evYvH/QUZJoU4mNLNFzWGT4ptL4B
-	 vGW/m/oXzQ2X1ao0SVkVmzjRWgdgh6HX5VV3c/pVidxnaDLDZomKOrr77/CQ6h9s3JgO1
-	 o7Fy9Jw5iE3CSAYm3hAhkkOFjNjiQETvpjPTbu19CpJmnFlf19Zzcm6yqDp3QcKedVw==
+	t=1793803394;
+	b=MT3Ksfx4+MW3pDzlpkzdkUcsOuFt6swFtGdVgW0ILFgoD/kH5S9R5ifRuHCnxwAqdj6k
+	 mQGIalllyzAFus6WISbC0UTccVvrtMs5uSgQM/SsffAunulCSDWeCbEGoFuMf0ehebpqa
+	 VIj9Bt5sNa4j6jD775SBoKJCrch7ZTwlJblkHPIBBOtQBcoO9XY4h+UtD5UbuUE5jYt8r
+	 WCzxy95NeV4bx+SgXLQhFgqqOFIy2S+syU8sJT2SCA2a36Kv4yfQqRqueedmP0h6qXBAV
+	 hwFeBkkOFdihQfZFPNlXkQBGoajO1syb6IjuudSxtHEAs7jcK8fEIECazJh2nbEkNFA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793802669;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ka3jth5sqNhknTKxVoj+kqorzHZfnShakHmX/maAiWo=;
-	b=KucM3i4DYuvyvMSEqcUZ643mpXB0CoflnNJXIk9NTuadAvLdTq/JaKuJc8TO7M5Vi/vc
-	 g4CoyUlVo3SJ380/UCChvJ686HD+Zep6D1ly280/3OUaV8NM+OgJWztjhm7ft+PUczrMF
-	 zWPi39ZeJDDl3UEL694VAz62su/Hw2NmFBXSRVaMU+pXe1UJvrs7eJd5VJm9atiYvtyOj
-	 7eC2wAknYMTpWQUdDgnHlcYiPgSTexGNNf2vcADfKA1uh4S90QFa8s+Nr9fWZ7X4th25e
-	 TFenw0Z/aq/OtnSfL3BDmDggvVHKaamHhnvnvP/iiLD2lyiZ2sISqrsaJycjktZUJuQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793803394;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=jrtokQE/RgxkkYzzF49cdR+5C0s6jUzSVCuRBLTOprI=;
+	b=HuBzP994nm6TIImgGuGMmvZsj2YJy5nAJ5G7u08b8o7CCDIXztlMX12e++UbxcUNV61o
+	 T6g+ouSxpqaz7F0kkOFjUdlWzl+bxZ9v3Ve16m5xQydxRZvTVrEkapLbtkegOwydOxTM5
+	 5a66uDP78QmwEX8iaQNlp3/8isMP7Dte9uz4bMNNe0TcTe9ukMcHds+KNPmeKguIrnfmn
+	 ZRXnPCr7VHJvaA1Zqm62YurWrK/XzWGXzMaJjZg8xGUyzDxy1T3KPP6M3UW/a7HU84U2N
+	 nJKQDrdKqNakXh7xXay0uA7iXXvqQPDsP0ih77yWKxU19fFimDIsm3dPdi54Qa/R0wA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j4FQ7c12;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=El2cdMbT;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A667606A326
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 3DE7E606A31B;
+	Wed,  4 Nov 2026 14:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=j4FQ7c12
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF06C1F000C1
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:31:08 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=El2cdMbT
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 634411F000C1;
+	Wed,  4 Nov 2026 14:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793802669;
-	bh=ka3jth5sqNhknTKxVoj+kqorzHZfnShakHmX/maAiWo=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=j4FQ7c129g1BGo4BWPkL1x+jFDTxPI5B8mK6oA5pxNSb6xWmqxyghv2CcUlvxTC2R
-	 F+5YIYHZ0UR1ZeJPwcKVi20987VOrQ5kqlQa9XmuX8LiF7te4DIP9tq8numgC62lRy
-	 DyA7elj/dTSbHBq6nutoRX7jDHgFslGa+4dbz7Bm2D7EIGZ04rT4otsyu+00phobul
-	 9GL0doqv1CYQGLMTVa2+s4WiBPDLvwlCYy8mMOtWXTtXMLOtURIXeJrGtUSr7TBleD
-	 JXDBCvESFSJXBSwJ6s2xlS0i5P8sRcS9JAkZy8nLTGnIL6GA7861i4+/LWedOAIsAI
-	 VeyIwsyO91nTQ==
-Message-ID: <sashiko-outbox-197444@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 13/13] keys: use cred_ids_allow_control()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104-b4-cred-ids-v2-13-956213608f16@toxicpanda.com>
-References: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
- <20261104-b4-cred-ids-v2-13-956213608f16@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 14:31:08 +0000
+	s=k20260515; t=1793803393;
+	bh=jrtokQE/RgxkkYzzF49cdR+5C0s6jUzSVCuRBLTOprI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=El2cdMbT9/Ycg08xrNK1h/3RGRI6E2bIZujS+lh5VKjo631kbMKpWQQVdn7QoJ2Y0
+	 TPYardS7GvwoDTTPMVamG4mWjbV0G9qDnW3VCnDCcHY9LRvdfQ70AUif/h9Jf7W8KR
+	 qxoHixYDs9Lriqk0kmSBkxZ/OMs6ndP1LJokWOCb7+R/ThbParGMsbbwixuyths59w
+	 uyuX4WADQ8187FQRsexCeUjQfK65Xn6qtBJH9rKXcvUYlXj+G1pG5q0Y8JLDnbUT+j
+	 gUT5iVsVK149iijFJeaWrRGnjzNbTG9t4G9EIg8v5R7yySvLo1TxPjF7GKUx/H8guT
+	 fdePnMrirXG4A==
+Date: Wed, 4 Nov 2026 16:43:09 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@kernel.org>,
+	linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+	keyrings@vger.kernel.org, stable@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Hannes Reinecke <hare@kernel.org>,
+	"open list:NVM EXPRESS DRIVER" <linux-nvme@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 02/11] nvme-keyring: Add a missing key_put() call
+ to nvme_tls_key_lookup()
+Message-ID: <autEfTlEWj_OrtB5@kernel.org>
+References: <20261103030226.2685251-1-jarkko@kernel.org>
+ <20261103030226.2685251-3-jarkko@kernel.org>
+ <20261103053303.GA1382@lst.de>
+ <aunTlxXbRJ6ZP63h@kernel.org>
+ <20261104090440.GA30968@lst.de>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,17 +72,30 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261104090440.GA30968@lst.de>
 
-> KEYCTL_SESSION_TO_PARENT wants the effective uid and gid of the caller to
-> be all three of the uids and gids of its parent. Use the library.
->=20
-> No functional change.
->=20
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+On Wed, Nov 04, 2026 at 10:04:40AM +0100, Christoph Hellwig wrote:
+> On Tue, Nov 03, 2026 at 02:29:11PM +0200, Jarkko Sakkinen wrote:
+> > And essentially what I would want is key_type_dead not to exist.
+> > 
+> > This version is based on module pinning, and  thus not having that
+> > key_put() would keep key type module alive in that case. However, it
+> > turned out this approach will not fly as AF_RXRPC and DNS resolver will
+> > hit the wall given e.g., the remote pinnings.
+> > 
+> > The approach I'm going for next is to have a type registry instead,
+> > which is independent of the module system (to put story really short).
+> > I think I'm doing this with right process as this really needs a few
+> > trials in order to find patterns that stick.
+> 
+> So what's the plan here.  Should we merge this standalone as a fix,
+> or are you trying to get an entire series in?
+> 
+> If it's useful as a standalone fix, please resend it standalone.
 
-Sashiko has reviewed this patch and found no issues.
+I'll send this as a standalone patch.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-b4-cred-id=
-s-v2-0-956213608f16@toxicpanda.com?part=3D13
-
+Br, Jarkko
