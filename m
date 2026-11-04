@@ -1,87 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793826582;
-	b=Iez/6ylaleo4AQus5WqtW6xK0f/EnCNPScCwt/QlxIwz/z8WRjqbTfKzaHmndl4wplDo
-	 0i/ldPCWOaTXlT8dU7KGv7w0L/r/VrLp35GOKPKwdnmX2GLelS8Wqe6WIUflS6tIo5baE
-	 XpMQKfOKjDM19tfT86ui6JuPTXS3SluuZniW9EaVwdK2kPXB0L+1QF6LcsO3MmunUNpCC
-	 CscOtI3DGdQ/QymcSRk0f7WhtksGwvyP8wWvJFy+Pzd3LtT2rLAoqpbKtiH92LAcGsn5O
-	 rd9gR7KxOl2kl1XjRDA9nICaizle2H3UtD3cRY/oAYpW5jFXaKsntbVZvX/+UD6RCFA==
+	t=1793826583;
+	b=29k1rMLyxNjDpgkEDkY0BS6Tzp4Hkh9U11jG3m/n3U/5hCUBzIy7k+IqmcHnubNsRhvO
+	 xq2Eba2USamuwEwAamogLrRkPyJjiZRu47ng0rwTWze569/aGDH4nw8CIqsRsPwmIG3j+
+	 g7ZozmefjAKgEfC4looNS6xwZt5l0vU/6UxdAkmjmcE4vHTHd53gNJJaTbasj5ZoBhZjL
+	 WAj+40/DUa9Pxdgpnm0s8xY/fioervkjhD5znuhtnsI32l5L640mN4gQ8fmwLI0new6M0
+	 kynoMh+zuC3MJwsSCurTsGVRufgyOxhvix8O1yKd99uKSQwk3LBFOIK9vU+mfpbQBTA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793826582;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793826583;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer;
-	bh=wGIoR4gp9in+6KA2rLo+JQCdAPIELIZ6U8ykblXyZGY=;
-	b=rUujMc6W+V05jULr/GN9VaiRosg790e06fMs0Bx79ZFb6ybszU7jG+I/UnwutZ3+ENvo
-	 PUfiQ5lgbMGgdtOEon8dJTCLDigVVGmxvCqm23bSXG38ynLa6RIrJoIg/C1g5r1CyUlK8
-	 dcd3m6cJPeY+qe+UUPqw/UyhfSAM/Yk2rCSO9ginnnc8+0xLz3klF+/AcZSdRgeNwvYKp
-	 T5XAPCyzU6lNSvetCE1+R7Z/tdIvSHmrTyH+m0AXsjOoYZJpLPXVAvy7m1BEeYaU4a/IG
-	 be0uzF4K9heNxSucnOl8wNt5iVOwp8xx85VDLfAaSa+XaOt3iPRY8Kg9V5L0mAFfuDw==
+	bh=LKarLfxYEUZqeqqLWzc2n+DvjQXfdpA91g/AOtlmbp0=;
+	b=TpBzDN8lybRx7DnnecM23VUcFwbEctZcN4YKUwD3EqTjZ3gsnSrTluYir2ooglW8IjvH
+	 mx0rQ5JGiLgId6BEEG1bLwz8wOpXicLRiX8dNVl60Zjm81a3QJEAAzIw9Sw26/izaBfLj
+	 suWKJ9Jkls7Ov5QhlnECCrmmoo6EyqP1K3I9QuZME+U3MsJCVL1+s9mPLUgOWO4iTw22S
+	 hFnu04SexGNecqnfyu9HGh1Qu1OAwLeahpz1z1oNdwqN1yuDigeKy70dcA20csP/Mc08O
+	 XXdQ8K9G5a76KOMb7uFHvqUNuif87t/JL+75Y+hb60UOhEiqmLdt2U3pUGKxJVDNbsQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=MLfxyyNn;
-	arc=none smtp.remote-ip=209.85.221.44
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QU3uCnBj;
+	arc=none smtp.remote-ip=209.85.221.48
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD742607F2A8
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:09:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CD742607F2A8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7061160EA9B4
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:09:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7061160EA9B4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=MLfxyyNn
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-48e6eb21a8fso554495f8f.1
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 13:09:41 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QU3uCnBj
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48e20ed3b9dso1024594f8f.2
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 13:09:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793826580; x=1794431380; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793826582; x=1794431382; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=wGIoR4gp9in+6KA2rLo+JQCdAPIELIZ6U8ykblXyZGY=;
-        b=MLfxyyNnEZcm5BNvBQl93qnqyelGby9KG1DmschMbVmDIbOW54mBF0Dkyzgm7I3hLG
-         gOeX+pS5P1Iv9wi3WpVNIjLe0xoOtkzydwj59wN2x255Ea8oVvyJSmkGqNsEmVH4cfpw
-         aMdQYaplGYqM/tHOEkiRPHKF2zCJPv9ex0HBmc6Y5LCioAEYXXzkN77/o1/EN1JUa2mE
-         OjLbY4dlqZiv/f/6CENHFs8d3nXO9C9N2DKIebXsTOMIibxvHv8JmbUmAV4RS7X2s8JP
-         LHT6qJG58btj+Pa+EVsCsDFQRsKkAwIBCSChwZOAsX9FYfRQ58RktUM1PM/KofiigjbC
-         3gzQ==
+        bh=LKarLfxYEUZqeqqLWzc2n+DvjQXfdpA91g/AOtlmbp0=;
+        b=QU3uCnBji3jCmsbc6W/xxM7tCpsWe3NmctUtH8kaE62jbt09PpVLnItdbrgNkmSUCZ
+         LdZ5UR8gHdHCE6qvXFxzo11SVQwDEFRIQSkRP/8oxLBKdbcN8sR1jpDOZrzjBlLdQ/7h
+         2vGOGHMRVZXCODU0ykEtVGCaSmbtRh9BW6NlJLGY5OsoFU/iNPqBcyO+a8MR4WpWEDq5
+         lQzSlamHimaotFJ19UUR+p5LztcA+nDaU+Z0+2pfBWz4OP4/xCGSlx3dGDEV1vOwX4nN
+         jg9Zmqp6fa7L4ejxjLMMSayv37cSRyAuY32toltTTnCPvruByENzalD4H2JiSAM7hqKh
+         y/tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793826580; x=1794431380;
+        d=1e100.net; s=20260707; t=1793826582; x=1794431382;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=wGIoR4gp9in+6KA2rLo+JQCdAPIELIZ6U8ykblXyZGY=;
-        b=0X0sLh56nabQ4+Ej03oY9XFGekwKP2CXdPfKZQFjhpMJrHkjAU0GajtbmJxuaNg7YP
-         bH7bWjT7Md7Gtn1cs+G23Fzb6tX8q1B0mbMjZILuoXtZXvHnGGpU3Wmz5X1YJZP9UTDC
-         k63faMVGTggskEci/R635IIzblUdwJcs6dyum2rAdQZRi/R3LVph1JW0LQZo8pVIJJo9
-         Exq9vJpqX7Wqmfrm7ZBrgEBJ5aMvcOUubMnQTGxy+T//9Ev7s/QC/AeOqHkrC532yph5
-         rS3BAYu74Ot4r3IWovi5y68raTxUisbXlf0vyiloaa1c8tLTM9AXGVXfk0J4QXINGo2K
-         Dsqg==
-X-Gm-Message-State: APuU4Z9tTuv2SKoJAF5WuMk8FUaoyUPE9dUWO+5IXdR0I4A3sZlBZBpP
-	zdDl+a/CM6pgKYB8qnxPL8kEbhzQBHQ5zyAHShX0VesEUuZKawrRC/dg
-X-Gm-Gg: AYBFou0bG3GCH5kpfMXrxZslJqV4B2Cqau1a8CSXVteH0lODg30LkcMXXReklga196Q
-	Zl9niMLWNhvsn3HuBhmky6V/Br6N7FX9alwHOq9CR2/D7Hrj9YuDhUMknInkTVq0TCEXp/NdyyF
-	ttOYoEkBF7xckMvv5F9V3cNuH7iSScYB50T7Q6kwctP3hE+Mo+OO0/QYiO97WgybB6Yeb2GW7vJ
-	K7TT8TXyNrAldOsbn/CWSDsEYAb1rR8i5xR02JTSQQ53DBNPFPt5UXorXYpjR21xapyvQCvvS0i
-	kB6ytNoNBnqfuL0oJEj6ZxsUz666a/756mHMCFaUUKrdKQd80m+7bbcxl2snu1gvbEKlOyeaHdX
-	t4uNz6t2rDPmYlb89meERtMV7YC7V6tNMhjSl9QGdoM5qjsC0+MRhT/Nr56I8My/Cr3MHwowjaG
-	ylN17iE0feNVdZXs+NK/5dsxTvl+rwoFq6tSKEGAa7UNzTQvBbrkutH59XKks0ic1ddLkbxJcqS
-	SaKZYPR4Yn9gerez2tjbUY4v3c8erReEa2dY1gKiEmDAYzx3J1GKmTftKuh+UJ672P5UsNc/naN
-	Ou4r3l126Ir4iu/uxON/gHFcB3d2jI9UguwYLq6S0/n5SrDv9qg4Dak=
-X-Received: by 2002:a5d:59ca:0:b0:48f:bcf0:2026 with SMTP id ffacd0b85a97d-48fbcf02289mr9041398f8f.13.1793826580198;
-        Wed, 04 Nov 2026 13:09:40 -0800 (PST)
+        bh=LKarLfxYEUZqeqqLWzc2n+DvjQXfdpA91g/AOtlmbp0=;
+        b=DclueLKbBNyetTlk43E0yipPeE7YOyTBexrfNzZZMoyd7SZgH46/mSGUgPVwZVerz5
+         k+MrUEh0NOaVMfl9ZKlOK37pqxyJEyJz7W98iBlCn//lDhPcjEqTYpUSyqS9KTC65lYx
+         tDma8f2Ede+mPcQZtGcqAsrPzQcROqPHZoLX4SOUAKCGDbZKKbTUTMemJKjyqLnpRW2p
+         0mLwM9coAhLvbtJGA075ZtfZOzHPWpEyAATn2BgknHSgfuonOxChja2G7j9E/gv6Szff
+         AkYC78fn2fOCDLmKvTLLMCxBsv3yLHg5eh8N7JZP5ZcVD2ja4FLTQLiiIKrnpYhcJHj5
+         4vTA==
+X-Gm-Message-State: APuU4Z/6kk35zT3LnoAfl3K8AlqDdIf8/zBBDqzqsNDfbaS0p/Obw0+5
+	siHqMNCO/GL0NOXqlHXe90ldFSlLtaWnraENj3AFCiwbuj6VUV5z7ud/
+X-Gm-Gg: AYBFou0HJDNwq2ysMHHZxn2hu8Ix4NEAguVdPgGq5J4uCirs2WfYuf9xqUKL1MeiFej
+	md7ks3xJkZ6rmLhBFl4wk5eURg4tngmyhHdzXoC8st4YUdexaBxjJVYKCRRunebxg83r/3V5okV
+	qoNgvlpUa+J8zggY3XvW7iC0FYcnltv49o/PCwwWHF3mC2nOBliEDqANggoznIl+Cjcl4TZEBnM
+	TrvWdhR13xCTdHtPY9zY8Fo0r5NTLNE8piZCY/vEFZ/shhEh0tP3SCHKQzThaZ3S49OaJraA5/b
+	xInpD/eQPPs+CCtPjdrnsX9hdDJCKZpXQ/wJLygELISfrmFro9FHQAWr2tU/033sCorwQPtU5aY
+	yYw3M4Pl2mkaqgYdFDGgHLpWZPKFIlCTBsw+ODkDLLQP0qT8x3Ynf81zj9q7l21AW7VHz3SGBmf
+	Ciju4F88h7JS3aDQwfGVPHbV+OtxqY8/sv/6KKCPbUjOFdcUyZJx4a9ruf958iNNk+PRL5em35K
+	0WK01/uQ2Hqu+GYrChpQZ+w6JXpNmUt9eKs3GcXm6wEb6KyqMDbF2QrAVW1+eInNnxGmC2SdWNq
+	4k9kiW1N4OK/54DzB6cbdHq7HhgMwA5ZI0BVfM5HcIgVyV5LRjpf74WROw0di0DQEmP3llDecpQ
+	=
+X-Received: by 2002:a05:6000:2204:b0:490:b23b:8017 with SMTP id ffacd0b85a97d-490b23b812bmr3010592f8f.34.1793826581845;
+        Wed, 04 Nov 2026 13:09:41 -0800 (PST)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48feda207d8sm5568567f8f.52.2026.11.04.13.09.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fe7189883sm6177411f8f.0.2026.11.04.13.09.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 13:09:40 -0800 (PST)
+        Wed, 04 Nov 2026 13:09:41 -0800 (PST)
 From: =?utf-8?q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Date: Wed, 04 Nov 2026 22:09:06 +0100
-Subject: [PATCH v2 20/27] selftests/landlock: Fix the snprintf() error
- check in matches_log_fs_extra()
+Date: Wed, 04 Nov 2026 22:09:07 +0100
+Subject: [PATCH v2 21/27] selftests/landlock: Use _exit() in the
+ named_pipe_ioctl child
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -93,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20261104-selftests-refactor-v2-20-c52f23f7ce33@gmail.com>
+Message-Id: <20261104-selftests-refactor-v2-21-c52f23f7ce33@gmail.com>
 References: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
 In-Reply-To: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
 To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
@@ -104,29 +105,26 @@ Cc: linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
  =?utf-8?q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
 X-Mailer: b4 0.15.2
 
-By storing the snprintf result in a size_t, the chunk_len < 0 check
-could never be true.  Store it in an int instead, matching the return
-type of snprintf().
+In the named_pipe_ioctl test, use _exit(2) like in other places.
 
-Fixes: 316d06b01130 ("selftests/landlock: Add audit tests for filesystem")
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
  tools/testing/selftests/landlock/fs_test.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 10a386a573dd..1e94a3171e02 100644
+index 1e94a3171e02..78b2bf06b6ee 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -7449,7 +7449,7 @@ static int matches_log_fs_extra(struct __test_metadata *const _metadata,
- 				     (extra ? strlen(extra) : 0) + 1;
- 	char log_match[log_match_remaining];
- 	char *log_match_cursor = log_match;
--	size_t chunk_len;
-+	int chunk_len;
- 	ssize_t escaped_len;
+@@ -4272,7 +4272,7 @@ TEST_F_FORK(layout1, named_pipe_ioctl)
+ 	if (child_pid == 0) {
+ 		fd = open(path, O_WRONLY);
+ 		close(fd);
+-		exit(0);
++		_exit(0);
+ 	}
  
- 	chunk_len = snprintf(log_match_cursor, log_match_remaining,
+ 	fd = open(path, O_RDONLY);
 
 -- 
 2.56.0
