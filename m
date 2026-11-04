@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793802540;
-	b=dKQVevtTRMJ5yNnbn8M9DfFQEP6ZMVfIZzxuzp6mMMcB5lvNVnhB4syGiXIMYN2KC5Gp
-	 MGhoBmpXCSSDmsE8KQlMkUi/AEPlkty/mmvgjBBAbetOZFpcKsRfCuCsiggLTdZZf+1l+
-	 0pImyP4KT54aU7XORT0iGTqNIARDv4DndVGO2EeemQFbo0F3uXg6PplbqxPSucZL6l5/j
-	 6UbYxlqRRj9Z07anl+XKm/+FT6JDdTnQxrvcysuQ8w8jFFZtgX+questpi/Mf9S+O0i9k
-	 hJTCklvdoXAD59ju6PWjDYIpa+WeW4UPrglvS6vqlrGpEcAmIul5/1cv/0CqMapOcag==
+	t=1793802541;
+	b=4AQlJUk/fWfKDZPOHGoO9pqpUavrlLrQrza+dpT5KB98BMy3unt702Lnj4jZdMnM+4dC
+	 Rmizwqat5bnm7l7v6EV2yuG9lewOncMeevx4dn1nPCPVkWm/3/oXqPek6Nw6DPDnSgiEM
+	 ndz1sgHhPxR8YCl5ZTX4/JSn4R6BY49oF5KjzCUI5L/gBi/H2x15LBSnjfFGkQ6t/4aRR
+	 7rjTSnYmopRnCJYxX8guNI3W+Xq7MWNv/8TqK7KV3TEC7AKRxgnAFcgi2PEpwad/4P2G8
+	 +6aPeLGk7EC8DSoniTJlvsK0wDRU1JNiBz7esMNEzdeROT7bnahQiv7FNMgFDSpp8rA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793802540;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793802541;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Ld9EyojUDsl8IU0E1bMtT0ZKbJF0aR5+NC5QDCmi9tA=;
-	b=LEbqp5kP8Oih+ge1rI8QXFvfAyY1AZDELNiYJtVR7+tbRIFn1hNCpKHNKXkTsitjFe0f
-	 Dqjr3PLpUcrOX0ruSZDFxdWtJmYAncZO2MyDOJsOZuSNd2VBEXbnqB0VvVieY/g5oFZRl
-	 ybNKAUhMOn6XoEJJ64T7Cb9nifJrRyN0swQl5OyQC/rOq1MqO8n+5CmS4kQ0xW0OJxOdv
-	 LukQVfIjEE734ce431gZfuBOOk3bQn4SkYtGGlA872+9SfzaArnQy/I1SbFQXH6rAyJiz
-	 2sUipgS7qEliK0UQgBYi6VtkUK0+gj8HDS+3BMyfnScYcZ2l8XE62lEogdgd1/yinGA==
+	bh=GaNru9fIr5NdVbJ9OLqBPtVkjey7PYBAN5D3ngG0bsY=;
+	b=Ry1lzAlewtGN4e9P7v+9Rm3drpItIysubimTSoog6ml9H0oZBAfr+OQcOo0wbK6XDdQW
+	 LwSyqSq8U329KOU7bVDJkozyX/hGEuwMNqaDm1nETt7uLujFZ9GHwU/p8O1RrysEcoR7E
+	 OJ2EsyOHE7mYL0wpitIylaSuMSn/T9jEbo9Xq4asheMk2Rqp9wFnorHfmVTOu1qBR6LvD
+	 KPJV/coaeSplH/LyA5UzGcRTGnc5wjsf0UBYGbudAy9HTPSnQvKNDwfD4dbYIeIZ+cBTN
+	 OxmxoR29opucU2T/lnPc0zx6o6if3FXLKx7ccM3QKGd9RZVZg+8yWiIsGV8fD5gucuQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DsN+1h91;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RPGjizZq;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C71606A326
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A97606A32C
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DsN+1h91
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92CCF1F000C1
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:28:59 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RPGjizZq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57B9B1F0093A
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 14:29:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793802539;
-	bh=Ld9EyojUDsl8IU0E1bMtT0ZKbJF0aR5+NC5QDCmi9tA=;
+	s=k20260515; t=1793802540;
+	bh=GaNru9fIr5NdVbJ9OLqBPtVkjey7PYBAN5D3ngG0bsY=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=DsN+1h91J5A9LpRMaqjueRLdah3pAHeyS7yfndlXD3XhO4NnKrKx2AE1JKKSbz9pr
-	 M55iUy/Q0Doir5bKxooGu79xmg0qUC/GGV4LPB6tx+1VlZagDmjY2nJTiPfJT1eX8u
-	 bM4Xhr84FdE6oFRIlMK1Izopf/Z6dy3b3I+TPTuzQpJVVjW6nuEeTcfRNRk9wamVwt
-	 NX3DS6ty3JvaO3Fmj68k8XFTXitHe1P9F/XnM/1rEHtHXCnJm/bR+XiSp9l+jrvank
-	 GGzRqt8yAkM7KYP5UycXIcm4aL5Zh5usjeBhDaNd+1DaMiE7HRRtLoTVox3ms2dHYX
-	 pp7s+xE8wZKEA==
-Message-ID: <sashiko-outbox-197438@kernel.org>
+	b=RPGjizZq9Z7sF9BqR5ev/GsnqnvSq9FVYQLsgbdh8lZsh2KTvuVMpP+C076si8JVy
+	 Fn8oEmPKryqXGlcGtmU9cFfCVWqFamQTa3vidIQlQbjecPB7zz/8rjvz4pdSZF/jlM
+	 Wfa96LFTiXr3xdboN78S79ihYAQf/YqKSryySN7Ops2EAu9gV5y6AihlZNUdq8J/sn
+	 KAeYDsmaLERb+bJaAdcZy3ssKwxiyEkF88y+b2JkwwjKMjB10s51zLpt11ZZ1KeYyg
+	 G1wKnah/EiiN9svLe4+naDIVOYUwJ5bLcgRh30DU53O5OatVLYz9k03jaXWxxvPbSw
+	 a6HBymYXgeVaA==
+Message-ID: <sashiko-outbox-197439@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 11/13] fs/resctrl: use cred_ids_allow_move()
+Subject: Re: [PATCH v2 10/13] cgroup/v1: use cred_ids_allow_move()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104-b4-cred-ids-v2-11-956213608f16@toxicpanda.com>
+In-Reply-To: <20261104-b4-cred-ids-v2-10-956213608f16@toxicpanda.com>
 References: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
- <20261104-b4-cred-ids-v2-11-956213608f16@toxicpanda.com>
+ <20261104-b4-cred-ids-v2-10-956213608f16@toxicpanda.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Wed, 04 Nov 2026 14:28:59 +0000
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> rdtgroup_task_write_permission() makes the comparisons of the cgroup v1
-> code, euid 0 included. Use the library.
+> Use the library in __cgroup1_procs_write(). That euid 0 may move anybody
+> is part of the rule.
 >=20
 > No functional change.
 >=20
@@ -70,5 +70,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-b4-cred-id=
-s-v2-0-956213608f16@toxicpanda.com?part=3D11
+s-v2-0-956213608f16@toxicpanda.com?part=3D10
 
