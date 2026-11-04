@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793826965;
-	b=E6Nn9tftHl6IMZdWIZIUIaYLgZ9iVU1K/51tg3SeIGMpomwS62dh1l52AIwi8kwwu/UT
-	 iUKy805falKFVBcIuDMNMNvUhGV0tRA0WCdvE4TrH1TF0wJnpLvdlfrxhcsxq97CukEOz
-	 mzOa4cJ1MEshRHn7HF5I9b1LFsuuNFqp4QfIruLF9l+T4ONGZikbbZe6F/Bhl5FxjRs6E
-	 VDPYKnomCe1SRemN29bYD5bPDF4kkdDYfnyx8UGI1EVDcRzfyCcYijWpKaBqHLNldxsSh
-	 kC0B8ZZhX5HoyA4TBPl0VYYQ1qq6yirKQnclBHHxx7cNz5aNCrLsIbtbUF03WO8EJiA==
+	t=1793827144;
+	b=b0fP1sMXYoP1vQ62b8K0dBwRNokqb+IOPYiP4XSQMA3shFN3W5PrsSMcKYsxtbWu/p1q
+	 sXW94JenXVjXEZCYPugmq0HMBQrMRM0VkhYLe0rTBxM9m86KrBt1n0MXhRUK4rf2TF2+M
+	 u4KGMCCQs3hY5JinwdRJXCgSwy3R5t29R17eEeQjKVhEi1GVm8R2ANUJ7q1TAtSu2RUhk
+	 r0XPGC/o+boGGDgxcAFP0Jt05MfHD9rmh9m9XTSf/YEavBWcn6z2UH0YEBBg4JjE8F4es
+	 u5wCy3XnHlJjt67n1Pjc1m9PJpXJfIU2ngHadGiXUvWN9rb6DxxPoacdaf5wY5Kb5XQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793826965;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793827144;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=CtjjVBk5Vo8Yc0vlumMV4mrAPcS1VomPPdcDad+aI4A=;
-	b=4gxrgPlB+DSP+/UQje2caqZHs31nIPHY8hdowDYQZJ6nshpYwjGylkdzA/PjnBE3hYUA
-	 J4VEWu+V9tK4yN3TskbifBtfobmj+lM/tsUqulxO+c/KJzcfqLdyaoUExl6w1VvGXthts
-	 vzuvN9SpCKV0ZKOEAw7iTEUFMhv5/sx5b384aox1/Be82zCHCCovRZs3ARy92VG/v1HKC
-	 66Ggzb56DY+F8fgjyyUMYepc7gqIcWXcNvcFv61jRuArVMh+6+3Dmf93lxYSD12yzsLu6
-	 BJUFtbrL2aY8jW7fbBeuIx4+V1DvPZAH94rCjmPMU+Qmg8UNSL09FlE2zHZqC0Nsdcw==
+	bh=PkDzvILJuLoEu9sy75Ht7HncDEVSZR19CHr10HmssjE=;
+	b=sr+ft7s13FSZA8/hXCRGesPxhs1kGsDfP/qv0fMV3HOl5WtRj1gv61M0VuBU/Pl94i2A
+	 FNPscbwMGwtkTDwkG3Wmc301eh8hvzxBFI9kGGTRj5QyhJegPPz7VsaFvm/OtkEiKvofS
+	 gie4R/c61VNozQ/TH6uN2hnDfH+SFIL5iUkmgQLqMUWOKDhDfqKdQXfltCV9q8RGUNOs1
+	 XN4p/t22IoZfWHB47Lyqg1QtL5BSUr4mDAT40jBp4PhuFTVqxROKrGih2b18jV72cw74F
+	 a+DB+mtUK62flxbkWjNsTbztz4PXGjn4y9abWe1NqjvuEMRV+M9AzvgElLnbp0f/TNw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hm9HWeSw;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KzUp3yBt;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978B56070339
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72659606AB30
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hm9HWeSw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08FF71F000C1
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:16:04 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KzUp3yBt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3E81F00A1C
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2026 21:19:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793826965;
-	bh=CtjjVBk5Vo8Yc0vlumMV4mrAPcS1VomPPdcDad+aI4A=;
+	s=k20260515; t=1793827144;
+	bh=PkDzvILJuLoEu9sy75Ht7HncDEVSZR19CHr10HmssjE=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Hm9HWeSwrphIHPqXphLbulKWRfBXtlRdJyUptOamAxX8QQHLlTaE+lBJw5Dl6KlpQ
-	 pERnxOKIZ8LG6t8oaPCUo2UXySQ4eIN/YT0OH+2i/Iwg/F8JlD5rZCcFGoJ+HFgCqv
-	 PTBS5h0swRDIqWeCFr8oFMnoMyXwpolNnRX4mFqz6fDrLU7CEC3eBDHjlFma6Dhckn
-	 PcGqiRfJNjROFIM9U3uYDvqdvqeP1/f+D3ttQgr0Pjb6RDzxwCbLHcz4neFKvAjHBP
-	 8fwMtnVFUIsme/frJFG9ps9FhEgKwt2hQYXAPykaXGjMYiNuxFgK4Lag2ifhBF4b7K
-	 RkHedUdvCCd8Q==
-Message-ID: <sashiko-outbox-198082@kernel.org>
+	b=KzUp3yBtswF3sfwFLU3Kkf2fU8VbxBmE25ejXxD+IpUfF7Cn4JgvLHbGajje3p8gz
+	 Q2RzsskLxWMqZa+31ZLQxS5xgvd8CreOCfBSOdp5dqfYBw2jr1jQ2hf8znal6ACOT2
+	 vu1tgY7v22lQPxR3T+kxxDaNlrYFB4gSYUoHgplNMwXEMlOFrtZq1xs0hqFlAbC/0V
+	 6ZicJDb+ghifechBGr4j3NoTdSOnlRjJWaaXvbIxb/ZOIkobn/2ytLuRpr9rwojLcW
+	 gE46aoTHSg6cwNRI/lL6b/cxb9pJ/aR4qHyuy6VbJebUY/1msE/akOhWLdAmEdsor6
+	 ZeYZm/CWEjZIA==
+Message-ID: <sashiko-outbox-198092@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 20/27] selftests/landlock: Fix the snprintf() error
- check in matches_log_fs_extra()
+Subject: Re: [PATCH v2 18/27] selftests/landlock: Fix regex_escape() error
+ handling in matches_log_fs_extra()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261104-selftests-refactor-v2-20-c52f23f7ce33@gmail.com>
+In-Reply-To: <20261104-selftests-refactor-v2-18-c52f23f7ce33@gmail.com>
 References: <20261104-selftests-refactor-v2-0-c52f23f7ce33@gmail.com>
- <20261104-selftests-refactor-v2-20-c52f23f7ce33@gmail.com>
+ <20261104-selftests-refactor-v2-18-c52f23f7ce33@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 21:16:04 +0000
+Date: Wed, 04 Nov 2026 21:19:03 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,16 +60,18 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> By storing the snprintf result in a size_t, the chunk_len < 0 check
-> could never be true.  Store it in an int instead, matching the return
-> type of snprintf().
+> Use a more conventional error handling interface in regex_escape():
+> Return a ssize_t, which is either the number of bytes in the output,
+> or return -1 and set errno.
 >=20
-> Fixes: 316d06b01130 ("selftests/landlock: Add audit tests for filesystem")
+> Before this change, the (log_match_cursor < 0) check in the call site
+> was never true because log_match_cursor is a pointer.
+>=20
 > Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-selftests-=
-refactor-v2-0-c52f23f7ce33@gmail.com?part=3D20
+refactor-v2-0-c52f23f7ce33@gmail.com?part=3D18
 
