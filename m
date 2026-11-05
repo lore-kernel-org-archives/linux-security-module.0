@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793890483;
-	b=iBhPcGVHszBiTKwxLYUoHqko+aHbCRoc/W3i6rBpUfJnQuuQv0XOxP97TBQKcgnZeHLg
-	 idpXSOcZ14vkt6URQKmV6511AKReE2jnLBlPTMuGnsdsgNLpEp9kihsJTkkZfEr+gtmky
-	 Rvx8vEymdy/TM6BApDJAkWwu9I+UCxuN1won+c7OQYx4GRmwnI34kjSn5NvsLH64uG24F
-	 japXH3P6/8RGbKCdSa/GxuANZHKejDXMp6NBS7clHVi4sS8hA4+kkY6vFpxU86OPzKNwR
-	 Pb9W5DNi4eD1aeS6fgI5F7yC06/4/MnFatW7s21oGOQ8hYqW3V0zNe0ZngADoIRP3cw==
+	t=1793890498;
+	b=lUIMqFESLKpU5C78WDjCzAdwzhzOLxV8Y7Pauf0uOok1ikY7MddCCjgg4z/xYnYQJIds
+	 3hSzUdMKGDHZIvrKwy5aMDPhs2U2duPOfKVy0W9sctTiiKjYVq4I48Z8MiojXQfFPl+Ap
+	 GO6UihSkbKzgD/KaoSQOMf3wZTKdCID69wk0EVyXj1Unr4tuSEWcF2aAvSfuSbic9aiTA
+	 03fyA7wL/xM1WHAcG/igjg1VGYB0u0EJhgjU8BeTllx8mtMlMwXYhm7L2aj4FsJR5VNPk
+	 ehkoaMHO2adZUVKFBhvHmaiUA81gMk9K16xqgarqnck75zcugmr4w5fyZZByOtb7CZg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793890483;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793890498;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=vMg+xGDCIGOm3Y+GE9bqcL7lSc6/F/J4YW0KO6Q/Z5E=;
-	b=VAVjoftI3LwSODRJktUsSs9Jr5MCn26n8fNpcyQwhtKRGNw//2/mPpbkLX3i0aHIkGG/
-	 TQ12Rc7yzFxgB7EadFn9VrIFxRfPgRrAc2EC6gke146NAr3ZBcAE5iwtmZl7F6q4s40Fj
-	 qFu/HNmigZXbX980Z4aAjzwVUpUrpriVvvyAlksOeCgiRe/RcSGlSixYhyXbmLzBKzunp
-	 cjxOMNwIfwPpgT3EwQqTFDnr9u42Uw80XQslUsinXhHJRGUOtowmNrs/to5LEvay6UyBO
-	 Hkxw/YKf3rEpa8EADxTLgIw9ZEQ4wW2be/kCWI9ROy9//ZObeNee8ONTAv48tqnqcAg==
+	bh=cy8bK5niBluspavHCXFiVpHqCWW/yI6KPgwUyq1qrss=;
+	b=CEXhPIvLHqoXicDBeokTIWtjMQO61M4ZYbutL315dt7EHhLY+2DwX021CmvxbQ2wfiz6
+	 a3+OaCGGg8k8ywEbdHU4Ky7pjQn3UwXpLUtj3EmdX2NJG0Wbw10sO1CM0+ny4Qi1ESPDH
+	 OjnQPlcnq7XQ4Y4WguehkT05c3rulaabVcZAKixB+Xe3GjfL3BORo14oFZHmmj8M5lROQ
+	 MbCbJRWdSY+UhboaJ0XLRz6o0u9RvF+votTIGbxDjvt8yqdjtI8PPaImq8BsURrDh7Vtq
+	 96xjWwbZIB5FdFwcRywS2xCWh/ZthuTCTxxK0jPsaN7U2JupwpGVd1hxkjA1YCe4OWg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FrfGZmTO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IonJaSA5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76B2606A328
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A8A606A31B
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FrfGZmTO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6780F1F000C1
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:54:42 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IonJaSA5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 110CB1F000C1
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793890482;
-	bh=vMg+xGDCIGOm3Y+GE9bqcL7lSc6/F/J4YW0KO6Q/Z5E=;
+	s=k20260515; t=1793890498;
+	bh=cy8bK5niBluspavHCXFiVpHqCWW/yI6KPgwUyq1qrss=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=FrfGZmTON6/JOorQzDnT9EEsyKzKqusmHXkcKUhOhQfEH0ze+Ueh1PnlCZF2LJAoP
-	 wlqR5wNjqG3r6ALzbYzDM/15QTvthJkcQkUmrwG/9rF4U6mu85s8AcqA/4CuM8Z7Ox
-	 QrLFcx/Dq33+Ml7n6xA3XCTjjuRwN2howP2xbPM3hellSBYHCIlUXEudASqUv3LPJI
-	 7b7QgL7c7w5rAD2nKES92HzTth593DwpRd//4cyMq8TsGSAXC8tKN411BBh7qT84ue
-	 w8YbwvQFn5y7ePdeTf5aZ6wVfumZbLKQfkKvKLhguaE4SaSwSWeLMZnrZHScso9G00
-	 YoEg/UTiuaWdQ==
-Message-ID: <sashiko-outbox-199273@kernel.org>
+	b=IonJaSA5dxKmMq8MFArRZQKlQkTIYV+fvgtpTfj7haMu8Hera4g9N/BvUIC8y+sOB
+	 rnUfQdswShNmW7xm6SL8G4srQDMeorOKs5Rv+/mFieqNreHIp6FEnDR1HF1OolcgMK
+	 bnhih/OCjrgptD8EribPmgyTC5rdN29FBHxAv5iobedEPpTivH+QgYKjoy+Sh95tpX
+	 336kuFF3P0cGY+MsLdvcgmdu9OY+/9nmozMLswbEo5rm0YoXkNfGwM35hQjkOQsIGf
+	 LO+VKUOMpqNxuMBPVfqR9OKxGhskXRHGzC6FbXuQ4RcHQFl77z3JWyt3h5O5O3MgtB
+	 OWnfq3oVeeGqQ==
+Message-ID: <sashiko-outbox-199274@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 3/9] keys/trusted_keys: clear sensitive PKWM buffers
+Subject: Re: [PATCH v6 2/9] keys/trusted_keys: fix PKWM output buffer
+ cleanup
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261105144320.357260-4-ssrish@linux.ibm.com>
+In-Reply-To: <20261105144320.357260-3-ssrish@linux.ibm.com>
 References: <20261105144320.357260-1-ssrish@linux.ibm.com>
- <20261105144320.357260-4-ssrish@linux.ibm.com>
+ <20261105144320.357260-3-ssrish@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 14:54:41 +0000
+Date: Thu, 05 Nov 2026 14:54:57 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,13 +60,12 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> The input buffer to PKWM seal and the output buffer from PKWM unseal
-> contain plaintext trusted-key payload data. Freeing these buffers with
-> kfree(), without wiping the contents, can leave sensitive key material
-> in memory.
+> The PKWM seal and unseal paths unconditionally free their output buffers,
+> but the PLPKS helpers can return without initializing those pointers.
 >=20
-> Use kfree_sensitive() to wipe the sensitive key material when freeing
-> these buffers.
+> Initialize the output buffer pointers to NULL to make cleanup safe on ear=
+ly
+> failure paths.
 >=20
 > Fixes: c99fcb0d735b ("keys/trusted_keys: establish PKWM as a trusted sour=
 ce")
@@ -76,5 +76,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105144320.3572=
-60-1-ssrish@linux.ibm.com?part=3D3
+60-1-ssrish@linux.ibm.com?part=3D2
 
