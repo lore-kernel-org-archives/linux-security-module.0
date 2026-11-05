@@ -1,70 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793877127;
-	b=Nt0wos5ItmDhtU2/BWBXkkj7ugxth3/2Ucksvv/+tb6GsSJhMH/ZIY1pmuOpLtxqhvF/
-	 uSvGjMSmr34BoxqOKiXljNLIBmiOQL1TtCj5DChVk00Jc6OZ7cnTtZFBE2UEZmG4lYbOW
-	 Uzd1bjgSwwvBaqTdI86MPUqlLkpGPNVT6yVZsX9Zts6DPZH+PPF8PvmeV3fBRgywVeDwX
-	 Kq40/Lj0l7iJf7NC4Wh+sPqfiQPJIDJ+eVroZ2XV3e6aryS7Uiwy333YVxAH6kkWcCOvt
-	 dWAK17pEoVcgiA/07JnQqo0bL0Kd+v+pJqDqjJ9djb1HjK+8+izHB1txggcJaLiaXDQ==
+	t=1793889839;
+	b=y+KN2tvK9hMH2RGcHxwiCiXlA8bDCWXAJpeBQu4q1h5Omw7dffkPi7ADeHX7BAyLmrbQ
+	 iNWTUCGwsvKGsiIJgn9WkLhD80Y1LdK5Jo9IlzZpKF8bvpKnnM/DtK5x0T7wq6ZiCvi8G
+	 GOj+yB/7Uf7MqOs/SPj86I6miZ8kZ5rYzp/GgOY9y+xf/iuL8u7F8fZk5dNHMcTijb7X/
+	 jtaw5HH6cEtulmvJx97l9pXnHglSgh2zNJe8jdAiHBleEVOjkPPIriBD4CTZ3hZXj9RK7
+	 az2I7VCmzS4jka4dIpg+S7Rw4GQM1Kg0tc8r2dV52+n+AvWp7jD6hwBY+2vJcPe0UHg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793877127;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=hcZ6WPxWQqwmRStYl6C8MSMaB4AuiG3AzHw/8ODrNB0=;
-	b=kD+crja8vcAasMCXnoZd9xyoXRLG0AdpBQOLyVucTiQX4Puhip14k6UiZVEfdMdY3/xC
-	 O8LWaMlgq/uU8UjftLaQOvq0khatgHhAfUSZhCs3xMhmmKRFhGgYwfvV6/VfHbQTOO8ob
-	 tMc8bByKpmvthhCumFZwe7Cclewue6mLjb7SddG1198E2sKT53PoiTwhnqcJntDEzS5w8
-	 +aJ8OsGe0LE9QR4+4msyr7S6O+JZ5FQx5SW43jr37FxDnVDhk/u4xOOwMIl9JoTlb2/J0
-	 gjpHftjck7LPBoh8oKGA3v6q6Ie7aCcXaPFeQsIGGu6/IknxXml8h2+ePrK1Iq6EgpA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793889839;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received:Received:Received:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-TM-AS-GCONF:X-Proofpoint-Reinject:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=sQrCRoliZd1zlb3rt/5YQhInFDdr0lZwJn246gGNKTE=;
+	b=frDDThirER4PCL6QFGU1VjZL/N+/uHuYRCaXlS40M639ozhA4Jc8OeQ7bz07JoSGsIUw
+	 kqaiExh6KxwwfqtP4+cvyJ1YqGqm61N07JKSFJcKMF7lZKosJyBIXK8qZxwvxl6ewv/Kv
+	 4lAnQgTmd/2fTpV4POgkfk6PH+OiXrWzeY+W7PIPdKTDblBmwZIaj/8Jh6hywFM5Q7dE5
+	 QKlvzv9cF1wyw4zcJXMl6BVgn22DbSzz9JdEZRPE3LE/eQFNNbKb7gpp3JbRxxOOgadmR
+	 nQ8RQWqSI6o3UBggZdcNbbYDc8WDPna+Oi781dI5mMZmecG8pNN2ZH49IbpW/RRr5WA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ha46cxYz;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linux.ibm.com;
+	spf=pass smtp.mailfrom=linux.ibm.com;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=QWxinNsQ;
+	arc=none smtp.remote-ip=148.163.158.5
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1F7606D81F;
-	Thu,  5 Nov 2026 11:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE59606A328;
+	Thu,  5 Nov 2026 14:43:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2BE59606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ha46cxYz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66FC1F00A02;
-	Thu,  5 Nov 2026 11:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793877127;
-	bh=hcZ6WPxWQqwmRStYl6C8MSMaB4AuiG3AzHw/8ODrNB0=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Ha46cxYz+f5O3PZ62l1EzAf2DcXdcDWFFCYFdsNiJ/EfMHBI9iN8WJBpEa2t/fhbp
-	 YiDJyRyaTJOCXDn5V7ZQEodwI+80StGeRoeKjIa5fpnYD3nvFBIn4/eEas/jUSlsOe
-	 TGo3JnveEd3aciHp+qSkSR+9noMtG6nKmUKsXo41W20ukXVNrlusIeeY/te8Q75sxc
-	 FUjFnZc/8QSWNaBl1g9bnUKYJQTSIIw4Vob18CUplfhJ8L9qaCXRrSjsNLqz+gZkuy
-	 yzsRj22YTXapgoeB58Kugn/8IjRan4j3psVvV6t7Q+Fop0YLlligZr6+nDT9FD1O4E
-	 Q1YdgnuE01paA==
-Message-ID: <sashiko-outbox-198923@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 8/8] selftests/dmabuf-heaps: Add dma-buf memcg
- accounting tests
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
- Weiner" <hannes@cmpxchg.org>, =?utf-8?b?TWljaGFsIEtvdXRuw70=?= <mkoutny@suse.com>, "Jonathan
- Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Sumit
- Semwal" <sumit.semwal@linaro.org>, =?utf-8?b?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, "Michal
- Hocko" <mhocko@kernel.org>, "Roman Gushchin" <roman.gushchin@linux.dev>, "Shakeel
- Butt" <shakeel.butt@linux.dev>, "Muchun Song" <muchun.song@linux.dev>, "Andrew
- Morton" <akpm@linux-foundation.org>, "Benjamin Gaignard" <benjamin.gaignard@collabora.com>, "Brian
- Starkey" <Brian.Starkey@arm.com>, "John Stultz" <jstultz@google.com>, "T.J.
- Mercier" <tjmercier@google.com>, "Christian Brauner" <brauner@kernel.org>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Stephen Smalley" <stephen.smalley.work@gmail.com>, "Shuah
- Khan" <shuah@kernel.org>, "Randy Dunlap" <rdunlap@infradead.org>,
- =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, "Jens Wiklander" <jenswi@kernel.org>, "Sumit
- Garg" <sumit.garg@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, op-tee@lists.trustedfirmware.org, media-ci@linuxtv.org
-In-Reply-To: <20261104-v2_20230123_tjmercier_google_com-v4-8-1819a017000b@redhat.com>
-References: <20261104-v2_20230123_tjmercier_google_com-v4-0-1819a017000b@redhat.com>
- <20261104-v2_20230123_tjmercier_google_com-v4-8-1819a017000b@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 11:12:05 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=QWxinNsQ
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A5AEBVE3166383;
+	Thu, 5 Nov 2026 14:43:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=sQrCRoliZd1zlb3rt/5YQhInFDdr0lZwJn246gGNK
+	TE=; b=QWxinNsQ/dT+S/Sln4aYpQYtPAGzaClCWkV3uad7N7XFMkLS8gDWeRxP/
+	mHlKhSzS+oSdq8RHb9ryvrkJXTZWNHGFggN1q/wHTFeakoJAbobw2QASC3czYnHd
+	1mzmu+r63NTUzk8qGu/HrlI+K2Ki802OJ4gmFB4PIyVQDELpYPd1784+CRjsiQec
+	rGtAWApffSETUWOI9fI7gW0yF4QO8YCcCmoA5Jl7BpshV2lzaHZJQmOZy7azSVnG
+	JQmIjRJecWjyN3mcd97/KGzb5ltZoKvX/jz+kSWge8kbtfUmGZoA75AMjhFtQ/DS
+	jLoJOngLZpYNoLU+hp2FM+AI00s2A==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hn5rj2mnw-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 05 Nov 2026 14:43:36 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6A5EZApf1796824;
+	Thu, 5 Nov 2026 14:43:35 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hrka6tech-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Nov 2026 14:43:35 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6A5EhW0X47120720
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Nov 2026 14:43:32 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12DE220040;
+	Thu,  5 Nov 2026 14:43:32 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BFB7120049;
+	Thu,  5 Nov 2026 14:43:25 +0000 (GMT)
+Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.ibm.com (unknown [9.67.70.234])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Nov 2026 14:43:25 +0000 (GMT)
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, ritesh.list@gmail.com, sshegde@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nayna@linux.ibm.com,
+        rnsastry@linux.ibm.com, ssrish@linux.ibm.com
+Subject: [PATCH v6 0/9] Extend PKWM to support user-created wrapping keys
+Date: Thu,  5 Nov 2026 20:13:11 +0530
+Message-ID: <20261105144320.357260-1-ssrish@linux.ibm.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,305 +94,133 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-ORIG-GUID: 3irOr4P377RmltnbQVN8xsmcAw-fAKDh
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA1MDA1NiBTYWx0ZWRfX8SFuTe989GVG
+ 40LBK1/63bgaBd7jx3pugk9x+q5JorpqVuOq33C1fLVH3np7A1EG0Z852+3mjt//y583hQkhRZK
+ bkhdrXAnd9xJsXm630dyarHnQ/YwKTg=
+X-Authority-Analysis: v=2.4 cv=LokHWXdc c=1 sm=1 tr=0 ts=6aec9619 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=ZmkVjOJ7g21S_g4humkA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA1MDA1NiBTYWx0ZWRfXzxKSvWymtLlt
+ T9OdGfKPq2zWi82MRM4+KACsx1+75qSNPnzusgIPsmBj/icEW1WqnW/qwUHTykntHowp6FcRGE8
+ mNZLh4andbZCfYwohcJ/bqOiwoXZ2BrTTfgbbQRzyrd+ppLv37LX8G8dJpbdXgX8/qAg5OxbtHR
+ 16euz3gl/bsdeh4l4kECd6LlmkUFWL504Kp0nlssMpvs7tAP6/js7M7Ubul9XCqASdirgGpbEE2
+ 8lcO+xkbW9gxOCoQDD67SYeyIKeZa+mvyoip8l3w04lCFcLGNdperQnpazkwKzfDZnlvhce6aAT
+ 9Ya5AwwJkN9NlOinC2mcNbr7dJsisx5tLM6fFX94bYqLkGE6CcgRz8QrPBlldTD/O7guFnhtufZ
+ h08BVjRV0cFKeL3AL8lgLPV3T8sxk2VraK3+BqQDg8/K1kApNVEZ2fb0e4lcUD3pWWSmS52uRGO
+ Sq6efiZjqJn4upivEuQ==
+X-Proofpoint-GUID: Ve7yx-SFnF9ClQIkML5-lQsjtc5od3ap
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-05_03,2026-11-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610300000
+ definitions=main-2611050056
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
-s) to consider:
-- [Medium] selftests/dmabuf-heaps: charge_fd=3D0 and unskipped EOPNOTSUPP i=
-n XFER_CHARGE test
-- [Medium] selftests/dmabuf-heaps: pidfd_alloc_supported() treats EOPNOTSUP=
-P as supported
-- [Medium] selftests/dmabuf-heaps: missing memory controller check in open_=
-self_cgroupfd()
-- [Medium] selftests/dmabuf-heaps: check_deps() runs before handle_build() =
-in vmtest.sh
-- [Low] selftests: cgroup: leak of child_cg on cg_create() failure in test_=
-memcg_dmabuf()
---
+The PKWM trusted source currently uses a single default wrapping key per
+LPAR. This key is created during trusted source initialization, and all
+trusted keys backed by PKWM are sealed and unsealed using it.
 
-commit b3c8a8b74499074e19a368c4979733bfe47e9d56
-Author: Albert Esteve <aesteve@redhat.com>
+Recent versions of PKWM allow users to create and manage their own wrapping
+keys through a set of lifecycle operations. This patch series brings these
+PKWM capabilities into the kernel, allowing users to create, manage, and
+select wrapping keys for sealing their trusted keys, rather than requiring
+all trusted keys to use the default wrapping key.
 
-selftests/dmabuf-heaps: Add dma-buf memcg accounting tests
+This series extends PKWM to support user-created wrapping keys. It adds
+the required HCALLs, allows users to select a wrapping key by label when
+creating PKWM-backed trusted keys, and introduces a sysfs interface for
+managing wrapping keys from userspace.
 
-This commit adds selftests for dma-buf memcg accounting via charge_fd and
-DMA_BUF_IOCTL_XFER_CHARGE in dmabuf-heaps and cgroup/test_memcontrol, along
-with a virtme-ng runner script and Kconfig fragment.
+This patchset also includes six preparatory fixes. These correct double
+conversion of PLPKS write, remove, and wrapping key flush errors; align
+wrapping length types with the underlying HCALL interfaces; preserve the
+original error returned when default wrapping key generation fails;
+initialize PKWM output buffer pointers before cleanup; and clear sensitive
+PKWM seal and unseal buffers before freeing them.
 
-> diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/tes=
-ting/selftests/cgroup/test_memcontrol.c
-> index 0ed82347044ed..3c95bcabee2bd 100644
-> --- a/tools/testing/selftests/cgroup/test_memcontrol.c
-> +++ b/tools/testing/selftests/cgroup/test_memcontrol.c
-[ ... ]
-> +static int test_memcg_dmabuf(const char *root)
-> +{
-[ ... ]
-> +	parent =3D cg_name(root, "dmabuf_memcg_test");
-> +	if (!parent)
-> +		goto cleanup;
-> +
-> +	if (cg_create(parent))
-> +		goto cleanup_parent;
-> +
-> +	if (cg_write(parent, "cgroup.subtree_control", "+memory"))
-> +		goto cleanup_parent;
-> +
-> +	child_cg =3D cg_name(parent, "child");
-> +	if (!child_cg)
-> +		goto cleanup_parent;
-> +
-> +	if (cg_create(child_cg))
-> +		goto cleanup_parent;
-[ ... ]
-> +cleanup_child:
-> +	cg_destroy(child_cg);
-> +	free(child_cg);
-> +cleanup_parent:
-> +	cg_destroy(parent);
-> +	free(parent);
-> +cleanup:
-> +	return ret;
-> +}
+Changelog:
 
-[Severity: Low]
-Does test_memcg_dmabuf() leak the child_cg string buffer if
-cg_create(child_cg) fails?
+v5 -> v6:
+- Hardened wrapping key lifecycle HCALL helpers
+  - Default wrapping key check
+  - Component prefix and wrapping key handling
+  - Label length validation
+  - -ENXIO when revoke/unrevoke are unsupported
+- Rejected non-ASCII characters in wrapping key labels
+- Added stable prerequisite to the wrapping key flush error fix
+- Re-ordered the stable fixes
 
-Jumping to cleanup_parent bypasses free(child_cg) under cleanup_child. Shou=
-ld
-that error path free child_cg (or jump to cleanup_child) before cleaning up
-parent?
+v4 -> v5:
+- Addressed issues reported by Sashiko
+  - Added HCALL-defined length validation for wrapping operations
+  - Cleared stale PLPKS sysfs kobject pointers on initialization failure
+  - Documented "default-wrapping-key" as a reserved label without assuming
+    it exists
+- Dropped Tested-by tags from modified patches
 
-> diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c b/tools/t=
-esting/selftests/dmabuf-heaps/dmabuf-heap.c
-> index 1d49df6719198..90ef14d2ecba0 100644
-> --- a/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-> +++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c
-[ ... ]
-> +/*
-> + * Probe whether the kernel honours charge_fd in DMA_HEAP_IOCTL_ALLOC.
-> + */
-> +static bool pidfd_alloc_supported(int heap_fd)
-> +{
-> +	int devnull_fd, dmabuf_fd =3D -1, ret;
-> +
-> +	devnull_fd =3D open("/dev/null", O_RDONLY);
-> +	if (devnull_fd < 0)
-> +		return false;
-> +
-> +	ret =3D dmabuf_heap_alloc_pidfd(heap_fd, ONE_MEG, 0, devnull_fd, &dmabu=
-f_fd);
-> +	if (dmabuf_fd >=3D 0) {
-> +		close(dmabuf_fd);
-> +		dmabuf_fd =3D -1;
-> +	}
-> +	close(devnull_fd);
-> +	return ret < 0;
-> +}
+v3 -> v4:
+- Addressed issues reported by Sashiko
+  - Fixed double conversion of PLPKS object flush errors
+  - Initialized PKWM output buffer pointers before cleanup
+  - Corrected the documented H_PKS_GET_OBJECTLABELS output field order
+  - Prevented stale policy use and caller data modification during
+    revocation checks
+  - Fixed wrapping key sysfs kobject cleanup
+  - Restricted wrapping key sysfs initialization to pseries
+- Dropped Tested-by tags from modified patches
 
-[Severity: Medium]
-As reported by Sashiko on v3 [1], won't pidfd_alloc_supported() return true
-when CONFIG_MEMCG is disabled?
+v2 -> v3:
+- Moved most of the refactoring and hardening patches into a separate
+  series:
+  https://lore.kernel.org/all/20260923182816.151451-1-ssrish@linux.ibm.com/
+- Added a fix to clear sensitive PKWM seal and unseal buffers before
+  freeing them
+- Added Nageswara's Tested-by tag
+- Refined error handling and documented default wrapping key restrictions
 
-When CONFIG_MEMCG=3Dn, the inline stub in include/linux/memcontrol.h returns
--EOPNOTSUPP for any file descriptor:
+v1 -> v2:
+- Addressed parameter validation issues reported by Nageswara
+- Tweaked PLPKS_WRAPKEY_SYSFS Kconfig help text
+- Added two preparatory bug-fix patches
+- Cc'd stable@vger.kernel.org where applicable
 
-static inline struct mem_cgroup *mem_cgroup_get_from_fd(int fd)
-{
-	return ERR_PTR(-EOPNOTSUPP);
-}
+Srish Srinivasan (9):
+  keys/trusted_keys: propagate wrapping key generation errors
+  keys/trusted_keys: fix PKWM output buffer cleanup
+  keys/trusted_keys: clear sensitive PKWM buffers
+  pseries/plpks: fix double conversion of write and remove flush errors
+  pseries/plpks: fix double conversion of wrapping key flush errors
+  pseries/plpks: fix length types for wrapping operations
+  pseries/plpks: add HCALLs for PKWM wrapping key life cycle management
+  keys/trusted_keys: enable PKWM wrapping key selection by label
+  pseries/plpks/wrapkey: expose PKWM wrapping key management to
+    userspace via sysfs
 
-In dma_heap_ioctl_allocate(), that causes DMA_HEAP_IOCTL_ALLOC to fail with
-ret < 0 and errno =3D=3D EOPNOTSUPP when passed devnull_fd, so
-pidfd_alloc_supported() treats the feature as supported and the subsequent
-tests fail with EOPNOTSUPP instead of skipping.
+ .../ABI/testing/sysfs-firmware-plpks          | 113 ++++
+ Documentation/arch/powerpc/papr_hcalls.rst    |  33 +
+ .../security/keys/trusted-encrypted.rst       |   4 +-
+ arch/powerpc/include/asm/hvcall.h             |   5 +-
+ arch/powerpc/include/asm/plpks.h              |  40 +-
+ arch/powerpc/platforms/pseries/Kconfig        |  15 +
+ arch/powerpc/platforms/pseries/Makefile       |   1 +
+ arch/powerpc/platforms/pseries/plpks-sysfs.c  |  14 +
+ .../platforms/pseries/plpks-wrapkey-sysfs.c   | 408 +++++++++++++
+ arch/powerpc/platforms/pseries/plpks.c        | 576 ++++++++++++++++--
+ include/keys/trusted_pkwm.h                   |   3 +
+ security/keys/trusted-keys/trusted_pkwm.c     |  52 +-
+ 12 files changed, 1203 insertions(+), 61 deletions(-)
+ create mode 100644 arch/powerpc/platforms/pseries/plpks-wrapkey-sysfs.c
 
-Should pidfd_alloc_supported() check ret < 0 && errno !=3D EOPNOTSUPP?
+-- 
+2.52.0
 
-[ ... ]
-> +static int open_self_cgroupfd(void)
-> +{
-> +	char cgroup_path[PATH_MAX];
-> +	char buf[PATH_MAX];
-> +	FILE *f;
-> +
-> +	f =3D fopen("/proc/self/cgroup", "r");
-> +	if (!f)
-> +		return -1;
-> +
-> +	cgroup_path[0] =3D '\0';
-> +	while (fgets(buf, sizeof(buf), f)) {
-> +		char *p =3D buf;
-> +
-> +		if (strncmp(p, "0::", 3) =3D=3D 0) {
-> +			p +=3D 3;
-> +			p[strcspn(p, "\n")] =3D '\0';
-> +			snprintf(cgroup_path, sizeof(cgroup_path),
-> +				 "/sys/fs/cgroup%s", p);
-> +			break;
-> +		}
-> +	}
-> +	fclose(f);
-> +
-> +	if (!cgroup_path[0])
-> +		return -1;
-> +
-> +	return open(cgroup_path, O_RDONLY | O_DIRECTORY);
-> +}
-
-[Severity: Medium]
-As reported by Sashiko on v3 [2], what happens in test_alloc_cgroupfd_self()
-and test_xfer_charge_cgroupfd_self() when the test process runs in a cgroup
-where the memory controller is not enabled in its parent's
-cgroup.subtree_control?
-
-In mm/memcontrol.c:mem_cgroup_get_from_fd(), resolving a cgroup directory fd
-requires an active memory controller CSS on that cgroup and returns -ENOENT
-otherwise:
-
-	cgrp =3D cgroup_get_from_fd(fd);
-	if (!IS_ERR(cgrp)) {
-		rcu_read_lock();
-		css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
-		if (!css || !css_tryget_online(css)) {
-			rcu_read_unlock();
-			cgroup_put(cgrp);
-			return ERR_PTR(-ENOENT);
-		}
-
-Should open_self_cgroupfd() verify that the memory controller is enabled on
-cgroup_path (or should the callers skip on ENOENT) so the tests skip rather
-than fail when run outside vmtest.sh in a non-root cgroup without +memory?
-
-[ ... ]
-> +/*
-> + * Test: transfer a dma-buf's charge to self cgroup via DMA_BUF_IOCTL_XF=
-ER_CHARGE.
-> + */
-> +static void test_xfer_charge_cgroupfd_self(char *heap_name)
-> +{
-> +	int heap_fd =3D -1, cgroup_fd =3D -1, dmabuf_fd =3D -1, ret;
-> +	struct dma_buf_transfer_charge xfer =3D { 0 };
-> +
-> +	heap_fd =3D dmabuf_heap_open(heap_name);
-> +
-> +	if (!pidfd_alloc_supported(heap_fd)) {
-> +		ksft_test_result_skip("charge_fd not supported by this kernel\n");
-> +		goto out;
-> +	}
-> +
-> +	ret =3D dmabuf_heap_alloc(heap_fd, ONE_MEG, 0, &dmabuf_fd);
-> +	if (ret) {
-> +		ksft_test_result_fail("Allocation failed %d\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	cgroup_fd =3D open_self_cgroupfd();
-> +	if (cgroup_fd < 0) {
-> +		ksft_test_result_skip("cannot open self cgroupfd\n");
-> +		close(dmabuf_fd);
-> +		goto out;
-> +	}
-> +
-> +	xfer.charge_fd =3D cgroup_fd;
-> +	ret =3D ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
-> +	ksft_test_result(!ret, "XFER_CHARGE to self cgroupfd %d\n", ret);
-
-[Severity: Medium]
-As reported by Sashiko on v3 [3], won't test_xfer_charge_cgroupfd_self() fa=
-il
-with EOPNOTSUPP under default kernel parameters (dma_heap.mem_accounting=3D=
-0) or
-on heaps that do not set exp_info.memcg (such as CMA heaps)?
-
-Here the buffer is allocated with dmabuf_heap_alloc(), which passes
-charge_fd =3D 0. In drivers/dma-buf/dma-heap.c:dma_heap_ioctl_allocate():
-
-	if (heap_allocation->charge_fd) {
-		memcg =3D mem_cgroup_get_from_fd(heap_allocation->charge_fd);
-		if (IS_ERR(memcg))
-			return ERR_CAST(memcg);
-	}
-
-	if (!memcg && mem_accounting)
-		memcg =3D get_mem_cgroup_from_mm(current->mm);
-
-When charge_fd is 0 and mem_accounting is false (the default), memcg is NUL=
-L,
-and drivers/dma-buf/dma-buf.c:dma_buf_xfer_charge() returns -EOPNOTSUPP when
-dmabuf->memcg is NULL:
-
-	if (!dmabuf->memcg) {
-		ret =3D -EOPNOTSUPP;
-		goto out;
-	}
-
-Similarly, pidfd_alloc_supported() passes for all heaps because charge_fd is
-validated in dma_heap_ioctl_allocate() before heap->ops->allocate(), so
-non-system heaps reach DMA_BUF_IOCTL_XFER_CHARGE with dmabuf->memcg =3D=3D =
-NULL
-and also return -EOPNOTSUPP.
-
-Should test_xfer_charge_cgroupfd_self() allocate the buffer with a charge_fd
-(e.g. via dmabuf_heap_alloc_pidfd()) and skip when DMA_BUF_IOCTL_XFER_CHARGE
-fails with errno =3D=3D EOPNOTSUPP?
-
-> diff --git a/tools/testing/selftests/dmabuf-heaps/vmtest.sh b/tools/testi=
-ng/selftests/dmabuf-heaps/vmtest.sh
-> new file mode 100755
-> index 0000000000000..3574b71ca83e8
-> --- /dev/null
-> +++ b/tools/testing/selftests/dmabuf-heaps/vmtest.sh
-[ ... ]
-> +check_deps() {
-> +	for dep in vng make; do
-> +		if [[ ! -x $(command -v "${dep}") ]]; then
-> +			echo -e "skip:    dependency ${dep} not found!\n"
-> +			exit "${KSFT_SKIP}"
-> +		fi
-> +	done
-> +
-> +	if ${SHELL_MODE}; then
-> +		return
-> +	fi
-> +
-> +	if [[ ! -x "${DMABUF_HEAP_TEST}" ]]; then
-> +		printf "skip:    %s not found!" "${DMABUF_HEAP_TEST}"
-> +		printf " Please build the kselftest dmabuf-heaps target (or use -b).\n"
-> +		exit "${KSFT_SKIP}"
-> +	fi
-> +
-> +	if [[ ! -x "${MEMCONTROL_TEST}" ]]; then
-> +		printf "skip:    %s not found!" "${MEMCONTROL_TEST}"
-> +		printf " Please build the kselftest cgroup target (or use -b).\n"
-> +		exit "${KSFT_SKIP}"
-> +	fi
-> +}
-[ ... ]
-> +trap cleanup EXIT
-> +
-> +check_deps
-> +check_vng
-> +handle_build
-> +make_runner
-
-[Severity: Medium]
-As reported by Sashiko on v3 [4], if vmtest.sh is invoked with -b on a clean
-tree where the selftest binaries have not been built yet, won't check_deps()
-exit with KSFT_SKIP before handle_build() has a chance to compile them?
-
-Should handle_build() run before check_deps() (or should check_deps() skip
-the binary existence checks when BUILD is true)?
-
-[1] https://lore.kernel.org/r/20261027-v2_20230123_tjmercier_google_com-v3-=
-8-78d2c4cb8647@redhat.com
-[2] https://lore.kernel.org/r/20261027-v2_20230123_tjmercier_google_com-v3-=
-8-78d2c4cb8647@redhat.com
-[3] https://lore.kernel.org/r/20261027-v2_20230123_tjmercier_google_com-v3-=
-8-78d2c4cb8647@redhat.com
-[4] https://lore.kernel.org/r/20261027-v2_20230123_tjmercier_google_com-v3-=
-8-78d2c4cb8647@redhat.com
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-v2_2023012=
-3_tjmercier_google_com-v4-0-1819a017000b@redhat.com?part=3D8
