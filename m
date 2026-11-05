@@ -1,48 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793877117;
-	b=Z66E+9LJTZNIS8umLXaoz2dfVi/Run25oeEfSI2SO2NV15Gn+wFjHG5B8i2Eu7htEocS
-	 mFV/J2vJYfwv6H9+PzPTTWUPWW5l5d4UEAMy7NVnocpWVbs7+KL8XEZu8VfYg0i79Zye0
-	 hJ5NBZBCc1yIlpdHjyotc1EFEdphACT00p+ZNKOsbf9k6bkLrJSP2Mz3XyZSr47ZUmBeT
-	 9X+ILudkJ+hxy+GNfAz1Flo7CAJpnCJOfIfF1dMgSPedY5zVUyOxBqdqTVoXBmEk9ntgp
-	 dkOoqBhs74qTr2vhm80Y1HenByBep6ogG9goZlOKwvIWZ8gAw7/EWorTpLjGCLf3Yvg==
+	t=1793877124;
+	b=p6JwyDhPqEifdTMAL9nT1LqCnWdeuY3EvBLqXZTc/0KibIARnSBdJsEuRIrwPp0F0kW7
+	 r8JkquCsUp1dTztX1NhcITy4NXrA6Ywf4I0r5R2FJJNiVSq+9+QtmOyxhAkdcfITe38/6
+	 BykdGzSTwIgyirmDP/bQy7J70GyrBXCrifYSLk5nvAT/Scgm9qwVG353QGqrwztteUeFA
+	 HewrQOJU/BvAp709nx9yk6nIJV2hJcZtuY34bOAx/gQvjA41AJu1N9QAUtdgpHnIC3OP1
+	 CuOCuRyzRTCCQMcLucjyaUikjF3izIPFtDu5OYHY7Ke+L1lo13x2T8PLYs/vHb9Xdsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793877117;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793877124;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=5wL9H11c52K74bWFIToeD2nwJm/S5kppGqdHpQpDG0I=;
-	b=kBF/BSqoi60GYYWJBD0xGmt1SnR7fJZEG7dyJaWyH1D0c1KPeQKyzP6q6e36vEMef2jL
-	 HR3jXzi2qkdU7vx1MW60mFZrIwPIuLPwh29IoeImRYGL2ox6VJ+iV8Zs68OlOR7M98Sz6
-	 rh9AzJK2uA0cggsQ2+PxyupDTzC9E98KlKu8yg3JTt7x3CAucRaxGwJyVc87MoheMDQTb
-	 RCvuT+7spbN8e6z+RYq88+2ewPxjkHTEPdsDUCL8KzY/XfNvsPw7PhXWS+sHD1GqPD7xh
-	 GcWZ816jBf0NLUGtxVoRXWUhvvM4n3Ou2piKfQIBXuWNliU+23RyGz8Gvw8FVy+ZoBw==
+	bh=u4OwYANC6wqKDyPgO6eDc7wNQ6edH7rpigotQa7/OCk=;
+	b=S1z2nAeKQzYHzdAJ8iNu3qaKezN+h+LBmKOEg6wSLhOmJmv55ZFAKvAyJxTNG6IzipvE
+	 UzSHPPe2S137MO2cw82LtcWcMhpLerGoyd4/vts3hcW69Dtyp0bCGYKPsKwFS/Az/0q3J
+	 6Mgotksdw7zodhGM6KqY0akWDx7yYgNUQ5R7lUzeRYQ9Gwfe/IpxuAt+PVFIglMaEuryX
+	 yEm1a3Z1fjvRJz8kuTLxiRme1Z9elp+HOQIbW7szS3jktdaLoyJkIDVv4fAPg/uISlvl/
+	 1rB7JYi8KtjqzAfVuZ1fDDSRbgHk+pEOK4Mz+sj2YBy9tcvHq9aJFATNGEDk58qJOpQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VmI46hVd;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="c2uN/Ng5";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D164D606D80B;
-	Thu,  5 Nov 2026 11:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4025606A334;
+	Thu,  5 Nov 2026 11:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VmI46hVd
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31781F00A1F;
-	Thu,  5 Nov 2026 11:11:54 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c2uN/Ng5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4FBF1F00A18;
+	Thu,  5 Nov 2026 11:12:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793877116;
-	bh=5wL9H11c52K74bWFIToeD2nwJm/S5kppGqdHpQpDG0I=;
+	s=k20260515; t=1793877123;
+	bh=u4OwYANC6wqKDyPgO6eDc7wNQ6edH7rpigotQa7/OCk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=VmI46hVd9YGz27GAlicu7eRmyRYfUiMYWwHh8vat5Po17sPb+MebtSuE73p/uef9a
-	 bi82HORDD5FyjgH0up20UJCTFGGkKmJSiIJhj1CpUAlQZjPYR3a0JFTdFfHLHtp5Ji
-	 4bT/sByYe8c8teDcHOBP1GCeUTXHVP7j4P9dcS2nbGz/XDlXp9/Zj5D7VWr15cDXmj
-	 yu9Scz4G1TzD11Ho+lIbkedRD3ay0Ky0uQvMD22YMX5w+PJs51+dLSm3NpKwVT4Ya6
-	 JRisBkfamAp9lvl9fIB8ZUz/qYK+JvjgN4PhmpnAMGnpq2pFYipDPdVtYp8hAAcMAM
-	 9+N/0uqdac1dA==
-Message-ID: <sashiko-outbox-198917@kernel.org>
+	b=c2uN/Ng5l1zRBU1f6aKBEfZtQoOnizQ0rrFd9kCVSSHUE4EkaG4YPu0DVrXFd/sYf
+	 WQRytoL/bcOM1tMwGTUhoxMGZjd7nrw9Op3dgk7LlqQMSjRvDJDTBSXagtU5aDYa4F
+	 iloIC0z1XqsAvA+wuzjNVVxTNcK1vJS2YM72nD09YWg7Y+1F+DhJmXRU8T8Gy/xhN6
+	 KiQgtSFJ6rsFJt5ladVLcE0huTLON36jq97Rw9RRIPx/9cUI0YxCWADXC+FyRY98yA
+	 EIszDEoo4+ImNGcD/JzSRE7yMABOCWcp+srnamdEnAnuamz3kghzyKLk86XsIYtlff
+	 pshldAJJUYr3g==
+Message-ID: <sashiko-outbox-198921@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 2/8] dma-heap: charge dma-buf memory via explicit
- memcg
+Subject: Re: [PATCH v4 6/8] selinux: Restrict cross-cgroup dma-buf charging
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  Weiner" <hannes@cmpxchg.org>, =?utf-8?b?TWljaGFsIEtvdXRuw70=?= <mkoutny@suse.com>, "Jonathan
@@ -59,12 +58,12 @@ To: "Albert Esteve" <aesteve@redhat.com>, "Tejun Heo" <tj@kernel.org>, "Johannes
  =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, "Jens Wiklander" <jenswi@kernel.org>, "Sumit
  Garg" <sumit.garg@kernel.org>
 Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, op-tee@lists.trustedfirmware.org, media-ci@linuxtv.org
-In-Reply-To: <20261104-v2_20230123_tjmercier_google_com-v4-2-1819a017000b@redhat.com>
+In-Reply-To: <20261104-v2_20230123_tjmercier_google_com-v4-6-1819a017000b@redhat.com>
 References: <20261104-v2_20230123_tjmercier_google_com-v4-0-1819a017000b@redhat.com>
- <20261104-v2_20230123_tjmercier_google_com-v4-2-1819a017000b@redhat.com>
+ <20261104-v2_20230123_tjmercier_google_com-v4-6-1819a017000b@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 11:11:54 +0000
+Date: Thu, 05 Nov 2026 11:12:01 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -74,208 +73,76 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Critical] mm: memcontrol: missing permission checks in mem_cgroup_get_fr=
-om_fd()
-- [High] dma-buf: system_heap: 32-bit nr_pages truncation in system_heap_al=
-locate()
+- [Medium] selinux: one-off dma_buf class instead of general cgroup access =
+control model
 --
 
-commit e390a33c5307a75778a81c2ca5beff0530617904
+commit 675e985fff50ea6716b8c00023a75c07ff345a6f
 Author: Albert Esteve <aesteve@redhat.com>
 
-dma-heap: charge dma-buf memory via explicit memcg
+selinux: Restrict cross-cgroup dma-buf charging
 
-This commit adds a charge_fd field to struct dma_heap_allocation_data so
-that DMA_HEAP_IOCTL_ALLOC can resolve a target pidfd or cgroupfd and charge
-the exported dma-buf memory to that memcg via mem_cgroup_reserve_dmabuf().
-It also removes __GFP_ACCOUNT from system heap page allocations to avoid
-double counting.
+This commit implements the selinux_dma_buf_charge_task() hook and adds a
+new dma_buf object class with a charge_task permission in SELinux to
+restrict cross-cgroup dma-buf memory charging.
 
-> diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/=
-system_heap.c
-> index c8959eadc71d1..2bd245e1eab8f 100644
-> --- a/drivers/dma-buf/heaps/system_heap.c
-> +++ b/drivers/dma-buf/heaps/system_heap.c
-[ ... ]
-> @@ -388,8 +389,6 @@ static struct page *alloc_largest_available(unsigned =
-long size,
->  		if (max_order < orders[i])
->  			continue;
->  		flags =3D order_flags[i];
-> -		if (mem_accounting)
-> -			flags |=3D __GFP_ACCOUNT;
->  		page =3D alloc_pages(flags, orders[i]);
->  		if (!page)
->  			continue;
-> @@ -401,11 +400,13 @@ static struct page *alloc_largest_available(unsigne=
-d long size,
->  static struct dma_buf *system_heap_allocate(struct dma_heap *heap,
->  					    unsigned long len,
->  					    u32 fd_flags,
-> -					    u64 heap_flags)
-> +					    u64 heap_flags,
-> +					    struct mem_cgroup *memcg)
->  {
->  	struct system_heap_buffer *buffer;
->  	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
->  	unsigned long size_remaining =3D len;
-> +	unsigned int nr_pages =3D PAGE_ALIGN(len) >> PAGE_SHIFT;
->  	unsigned int max_order =3D orders[0];
->  	struct system_heap_priv *priv =3D dma_heap_get_drvdata(heap);
->  	bool cc_shared =3D priv->cc_shared;
-> @@ -416,10 +417,15 @@ static struct dma_buf *system_heap_allocate(struct =
-dma_heap *heap,
->  	struct page *page, *tmp_page;
->  	int i, ret =3D -ENOMEM;
-> =20
-> -	buffer =3D kzalloc_obj(*buffer);
-> -	if (!buffer)
-> +	if (!mem_cgroup_reserve_dmabuf(memcg, GFP_KERNEL, nr_pages))
->  		return ERR_PTR(-ENOMEM);
-
-[Severity: High]
-As reported by Sashiko on v3 [1], can truncating nr_pages to a 32-bit
-unsigned int in system_heap_allocate() allow a 64-bit allocation length to
-bypass memcg memory.max limits?
-
-In dma_heap_ioctl_allocate(), heap_allocation->len (__u64) is page-aligned
-into a 64-bit size_t len and only checked for wrap-around to zero before
-being passed as an unsigned long len to system_heap_allocate():
-
-drivers/dma-buf/dma-heap.c:dma_heap_ioctl_allocate() {
-	len =3D PAGE_ALIGN(heap_allocation->len);
-	if (!len) {
-		mem_cgroup_put(memcg);
-		return ERR_PTR(-EINVAL);
-	}
-
-	dmabuf =3D heap->ops->allocate(heap, len, heap_allocation->fd_flags,
-				     heap_allocation->heap_flags, memcg);
-}
-
-In system_heap_allocate(), size_remaining retains the full 64-bit len while
-nr_pages is truncated to unsigned int. Because __GFP_ACCOUNT is removed from
-alloc_largest_available(), mem_cgroup_reserve_dmabuf() becomes the only
-memcg limit check.
-
-On a 64-bit system with 4 KiB pages (PAGE_SHIFT =3D=3D 12), if a user passes
-len =3D (1ULL << 44) (or (1ULL << 44) + PAGE_SIZE), PAGE_ALIGN(len) >>
-PAGE_SHIFT truncates in 32-bit unsigned int nr_pages to 0 (or 1).
-mem_cgroup_reserve_dmabuf() then charges 0 (or 1) pages and succeeds inside
-a restricted cgroup, while the while (size_remaining > 0) loop allocates
-uncharged physical pages for the full 64-bit size_remaining until host RAM
-is exhausted and the global OOM killer is triggered.
-
-Similarly, in dma_buf_export() and mem_cgroup_uncharge_dmabuf(),
-PAGE_ALIGN(size) >> PAGE_SHIFT is stored in an unsigned int nr_pages and
-passed to mod_memcg_state(), which takes a signed int val and can overflow
-to a negative delta when bit 31 of nr_pages is set. Should nr_pages be
-unsigned long (or should len be bounds-checked before converting to page
-counts)?
-
-[ ... ]
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e53dd7eebc3b5..17fdefc56b97f 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5661,6 +5661,53 @@ void mem_cgroup_flush_workqueue(void)
->  	flush_workqueue(memcg_wq);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 30776b0107f29..8f39d91eabc97 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2204,6 +2204,12 @@ static int selinux_capable(const struct cred *cred=
+, struct user_namespace *ns,
+>  	return cred_has_capability(cred, cap, opts, ns =3D=3D &init_user_ns);
 >  }
 > =20
-> +/**
-> + * mem_cgroup_get_from_fd - resolve a memcg from a cgroupfd or pidfd
-> + * @fd: file descriptor (cgroupfd or pidfd)
-> + *
-> + * Tries @fd as a cgroupfd first; if that fails, tries it as a pidfd.
-> + * On success returns a referenced memcg pointer. On failure returns
-> + * an ERR_PTR.
-> + */
-> +struct mem_cgroup *mem_cgroup_get_from_fd(int fd)
+> +static int selinux_dma_buf_charge_task(const struct cred *from, const st=
+ruct cred *to)
 > +{
-> +	struct cgroup_subsys_state *css;
-> +	struct mem_cgroup *memcg;
-> +	struct cgroup *cgrp;
-> +	struct task_struct *task;
-> +	struct mm_struct *mm;
-> +	unsigned int pidfd_flags;
-> +
-> +	cgrp =3D cgroup_get_from_fd(fd);
-> +	if (!IS_ERR(cgrp)) {
-> +		rcu_read_lock();
-> +		css =3D cgroup_css(cgrp, &memory_cgrp_subsys);
-> +		if (!css || !css_tryget_online(css)) {
-> +			rcu_read_unlock();
-> +			cgroup_put(cgrp);
-> +			return ERR_PTR(-ENOENT);
-> +		}
-> +
-> +		memcg =3D mem_cgroup_from_css(css);
-> +		rcu_read_unlock();
-> +		cgroup_put(cgrp);
-> +		return memcg;
-> +	}
-> +
-> +	task =3D pidfd_get_task(fd, &pidfd_flags);
-> +	if (IS_ERR(task))
-> +		return ERR_CAST(task);
-> +
-> +	mm =3D get_task_mm(task);
-> +	put_task_struct(task);
-> +	if (!mm)
-> +		return ERR_PTR(-ESRCH);
-> +
-> +	memcg =3D get_mem_cgroup_from_mm(mm);
-> +	mmput(mm);
-> +	return memcg ?: ERR_PTR(-ENOENT);
+> +	return avc_has_perm(cred_sid(from), cred_sid(to),
+> +			    SECCLASS_DMA_BUF, DMA_BUF__CHARGE_TASK, NULL);
 > +}
+> +
+>  static int selinux_quotactl(int cmds, int type, int id, const struct sup=
+er_block *sb)
+>  {
+>  	const struct cred *cred =3D current_cred();
 
-[Severity: Critical]
-As reported by Sashiko on v3 [2], does mem_cgroup_get_from_fd() allow an
-unprivileged caller to charge dma-buf allocations to arbitrary cgroups
-without permission checks?
+[ ... ]
 
-When dma_heap_ioctl_allocate() calls mem_cgroup_get_from_fd() with a
-user-supplied charge_fd, the target mem_cgroup is resolved either from a
-cgroup v2 directory fd (which can be opened with O_RDONLY | O_DIRECTORY or
-O_PATH on any world-readable /sys/fs/cgroup directory, including the root
-cgroup) or from a pidfd obtained via pidfd_open() for any visible process
-such as PID 1.
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
+de/classmap.h
+> index 90cb61b164256..b4ebedc6e4240 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -181,6 +181,7 @@ const struct security_class_mapping secclass_map[] =
+=3D {
+>  	{ "user_namespace", { "create", NULL } },
+>  	{ "memfd_file",
+>  	  { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL } },
+> +	{ "dma_buf", { "charge_task", NULL } },
 
-Neither path verifies DAC permissions, cgroup write access (such as
-cgroup_may_write() or cgroup_attach_permissions() used by CLONE_INTO_CGROUP
-in cgroup_css_set_fork()), ptrace_may_access(), or capabilities such as
-CAP_SYS_ADMIN / CAP_SYS_RESOURCE.
+[Severity: Medium]
+As reported by Paul Moore on RFC [1], adding a one-off SELinux object class
+and permission for a specific subsystem's cgroup charging (previously
+dma_heap with charge_to, now dma_buf with charge_task in secclass_map[]
+and selinux_dma_buf_charge_task(), along with charge_cgroup in a later
+patch in this series) introduces a narrow, subsystem-specific policy class
+rather than a general cgroup and resource access control model for SELinux.
 
-When system_heap_allocate() then calls mem_cgroup_reserve_dmabuf(memcg,
-GFP_KERNEL, nr_pages) -> try_charge(), targeting root_mem_cgroup returns 0
-immediately and bypasses the caller's memory.max and memory.high limits,
-while targeting another cgroup can trigger reclaim and OOM kills in that
-victim cgroup. In addition, when a remote target memcg exceeds memory.high
-during try_charge_memcg(), the over-high penalty and reclaim in
-__mem_cgroup_handle_over_high() are applied against current->mm's memcg
-rather than the remotely charged memcg.
+Although resolving the target memcg from charge_fd moved into generic
+memcontrol code in mem_cgroup_get_from_fd(), the SELinux hook in
+selinux_dma_buf_charge_task() and class definition in secclass_map[] still
+define a dma-buf-specific class instead of a broader cgroup access control
+abstraction.
 
-Later commits in the series ("security: dma-buf: Add dma_buf_charge_task LSM
-hook", "security: dma-buf: Add dma_buf_charge_cgroup LSM hook", "selinux:
-Restrict cross-cgroup dma-buf charging", and "selinux: Restrict dma-buf
-direct cgroup charging") add LSM hooks and SELinux policy checks, but still
-leave no baseline DAC, capability, cgroup write permission, or
-ptrace_may_access() checks when CONFIG_SECURITY is disabled, when SELinux is
-not the active LSM, or when a cgroup v2 directory uses default genfscon
-labeling without an explicit security.selinux kernfs xattr (where
-selinux_dma_buf_charge_cgroup() sees kernfs_xattr_get() =3D=3D -ENODATA and
-returns 0).
+Should this permission check be designed around a general cgroup or resource
+SELinux object class rather than a one-off dma_buf class?
 
-Should baseline permission checks be enforced before allowing a process to
-charge memory to another task's or cgroup's memcg?
-
-[1] https://lore.kernel.org/r/20261027-v2_20230123_tjmercier_google_com-v3-=
-2-78d2c4cb8647@redhat.com
-[2] https://lore.kernel.org/r/20261027-v2_20230123_tjmercier_google_com-v3-=
-2-78d2c4cb8647@redhat.com
+[1] https://lore.kernel.org/r/16093a0278a6d7d1a0a8bc055c228bed@paul-moore.c=
+om
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104-v2_2023012=
-3_tjmercier_google_com-v4-0-1819a017000b@redhat.com?part=3D2
+3_tjmercier_google_com-v4-0-1819a017000b@redhat.com?part=3D6
