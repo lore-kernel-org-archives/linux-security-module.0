@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793907477;
-	b=c1Z4jMr6w7LE6ioEeWZl+Us1JfbHuFKMnk0012/ZqW+w2xAHqLr4JwYJOwJ9MlMwLu7W
-	 GPPb/p1dClrROBAfXDhEj8+CoXtLVhV1WfZIxA1MGXPtCLzZhlHmxfT6pTIbtnQq54mNL
-	 D8Mm0gxFiwb+b3ymhV8sz2FjPgutD9cDR41XqyzntGqc9kdMPbuma6tIG55rvX+qXB2Yl
-	 twpKJXWgJBVx0T006AphVxRO4oXC0B7ZA5Yo9ifmxXFPV8uzi/exN7AaCHCBTEkyD5p7v
-	 9818jNt0wfF0gkUIP89cYh3FEEP00JlFFnyT0YB4lQ6sayXvJlixxyIJEfn22Y1/+0w==
+	t=1793907478;
+	b=U+2t4v6jVDApbne0T0UaMLu2t/xsvp3GK3Df2JazPNXpfF3cPHnMNidpzCvSVjf2lEw8
+	 sdXt+hejfjH275SWRRXTbIStwPEdAiW1mInQnJG0qaLfxisRfnb8kVBMdCjq9unPKIEaV
+	 +ggcDP9nwFo6tvfg5bhI3pECjUqWjLx5eEpY8qQO5OdfYNciNLmf2E9y3BH0A/yy84pYD
+	 4+NBcB9ScoJkAjDXCUn98jb9Bjdgr4OODuog6mIyyvFDy76S6N/47N9R+R6ctXt/bBVV7
+	 Z32V087jHrw+Cio8pKBCNt59YiAx6qwKi76G+OoFIZfzhzPpe8sVdwkI8TycQWubZjw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793907477;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793907478;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=GEs52XSVkXr3Lysumh8vBcPCuRt3C+96FDYzKDRWk9o=;
-	b=f8xorQ+4yWmNXuGlfy6WEPWXIRJTgznkWyCJz9k6SuTFnmmNhyorIy+kKe3R9i+gXww2
-	 kkm15sDf+JABTT7aSBGECYAbwxxAhDjmCF3y2p+Hodeqppg8Tf7qJp5PBaWmOsq32wmij
-	 fe+zooqJl1DR92QVxHUAbBDqPTGXLQ3O33HNXPtelzrOwdZdRo2DDY1p/8W6qSJ+iVV34
-	 Q7wChRxgHcNEccqAYdXRJPZyceQX+ugv9JFHfjviO6bsodWlZ8K/ZDSqG8m3VacjfkyR+
-	 zL/f/6GDq4Ko7vCZgQHA6vZ4If7ILBMSEMU4Md+62HRGwg0lufDwTqtxK+RzSao9a3A==
+	bh=3AyWWDFVbKJ/DkrPhpXcM2lwKymyXBABHoZtsa2/+w4=;
+	b=XkZvFZ1RqvTmi1RFUJRHha/z5gKmknTjfmTad4gdyvPNQA+Fb2lw1vaZl9g22P+cVc9i
+	 EZ4qoJ53jTTZVKvy/GuMBZOoa3epiy5/KjvAllYEz6sQwUwXOXrumWG8/KFGH8aLsPls8
+	 TXlRXiNFzWUrpwN23vq7Ba1YVDxWFM4ox7CvalNKqIwFzT48+ToyrH5DyXUcsoKkyi6+n
+	 ftjx0u6ekZXylqKoHm2YItnK5HRsTugJkDJB3isHrWlZ9yAgHOcooBhtJ5tsf6ze3mNcs
+	 KjiAbDlAiZuBx4NW2IQaBhko7SiW+qZ8o3TgALham4DRJ0R/Bud0XdNstIlATkkCZfw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=arista.com;
 	spf=pass smtp.mailfrom=arista.com;
-	dkim=pass header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=CpWYY4HP;
-	arc=none smtp.remote-ip=74.125.82.182
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+	dkim=pass header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=cPl6L7vv;
+	arc=none smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70564607B95C
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 19:37:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 70564607B95C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3029E607B972
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 19:37:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3029E607B972
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=CpWYY4HP
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-36f6295304dso169465eec.1
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 11:37:56 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=cPl6L7vv
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-3645f0f3fcdso3706111eec.0
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 11:37:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1793907476; x=1794512276; darn=vger.kernel.org;
+        d=arista.com; s=google; t=1793907477; x=1794512277; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=GEs52XSVkXr3Lysumh8vBcPCuRt3C+96FDYzKDRWk9o=;
-        b=CpWYY4HPqsMqathLuCP0SqyPHsMFAQWoskfk2GdP07u48l12UmKTiwONJuvB++DOZo
-         Yclhv2OYTvpyVQe0nGDznRS9Z3hWx2kbCBFvY0pqnRrXO41EfaKHYTGa75im9YoH0HyQ
-         yVlSieODB043s7YTZG83QMLxA1SHJ8toDshd16zaROUJAf2wNKauWeStmi1bLrH6/8Tz
-         mQQW4N4m8vwam53SdfBwr6BB3a+iuCtW3J6Db2OjYNgcUSfpF/y05AZgZRu+kEXd/N4u
-         Ct4MdT86o/xNJxf/iCp+y8jz1OLKeZSYtEQMz8MNbuIitFs0Ewo+oz4HzT9k1iLJwTE9
-         Ebzg==
+        bh=3AyWWDFVbKJ/DkrPhpXcM2lwKymyXBABHoZtsa2/+w4=;
+        b=cPl6L7vv4IdiTxomRsfBZyJX59O6aKePsnYBsOL+Il0TM2e7QZLMYUoor5RewSvnv7
+         vLLbLRMSyMW/YKWH7JVRt+VA8awqGEfSTnb3NSI212h84khTjynO2iw5mzK2nVh11z5d
+         EZ6tC6WQcQkAThRjYpVZDYHpM0IHCup/ssjDItaCiUmXD6fNSzFXuqyMXfcjXo9Y3C18
+         AjZA2LqCbQEPJQKpzTHX/9JMW5k+59UhN0TUOXzSYbdIuRgq6YZLqhp3MfDyp1FFBB4n
+         21C0wHgHpp9aOnGvecq21MbiLJ846BIuczpuDUnGu78BBlZgT6V+04NGwiDJ3uZbl2e6
+         YlkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793907476; x=1794512276;
+        d=1e100.net; s=20260707; t=1793907477; x=1794512277;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GEs52XSVkXr3Lysumh8vBcPCuRt3C+96FDYzKDRWk9o=;
-        b=V4dZClWqY1sTGGLvr9fQHfjUYAxi6YHlrJ4obSkHEUsfq7FnXPZc5zQZwN38ei9iu5
-         nFXR9P7vjm1YvxMjO/mj/GTDPf0AXvuvTN2kKBWU5h9Cmsqz54VBTe4BTD3KzGZjZMUC
-         SFyDZzHKN6LHIhIXPQ6vc99RwnNvQERGV969mHeVQPtQQMZ3h43iJXCUKRQZ90a6yhYe
-         j4lHt6Hmx7glPeoULkTZ+MPLyfLry1Hf9nRjSz8FJmCYpED2ybZz2wVZDRaMJ2FwKoUc
-         t+NcPKjG0zk6x1HjlqLaPW80O/a1AejN5qqe9MmwDPtCLXnCJQEVmGrEoWJPOnE8o4Br
-         x9tg==
-X-Forwarded-Encrypted: i=1; AKwUvBydT3sA9N1mnW3U1lIJM3US9AX9pZY6//ca7sxqbVxRhDMe6aZb89IYdczEf0gstwjpCX/g7Ot/0EeMfiyvBANs8FbShZs=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/zp7/mFS3WVyDNLs4b2XPbE3pM78u6l45znr88FqtxadJLbSSE
-	qKyji880BWKpuHvj/stbcJvOgiQmE9jfUpykVQfPB64HMhuQZbzeBZS0powzxpbrHQ==
-X-Gm-Gg: AYBFou2oqis0OQPFNPDH4mngnQsCWLfrTlnwZL+AKRg8eIUQ5+pqS1joGE22ibCx6ev
-	ink88XoS3vNRFwFsZyxiZz7d3tGQMF5ZYaV1+Rkdz1kl/BECS/wT9dWt31pWUvB4ZOCHKSQGzNT
-	rRV7AYp8TZL3GG45BMOzDNr58Q6kKp4t3QQRVxJiq1MMBp13476ynu7K6QkXlM1UCV1/MDnr1Fa
-	gzmeR7/dowxZAliaFWmorbZKzzKVoeifRs7sToEHIF0DasD2XN/ouGVMeTSJMQKXHD+M2rFGm99
-	kT3xd5q5mz9vNtbKwXeFTRFMmG2xOxrm+xhgS7dsjhhEnDB8/homoAZB/F3U9g0GHmGJNtGBbxu
-	SDEJFiXuuf3+6/AtLRtR7nYTgOCVLOPqo/9XLrU3TRiVWwE6welFR16hq7BS9ykBkKwv1mvyS/M
-	7p+wpv+w39Qo+BNHbvGoaj8axJS3wE2roCv8zFU/M6IABpPdjX9BmW+JXV0wG2bRHG+84UcAlet
-	JQXDfocsxbWbidH4ySVmi9H1o7zBGH/oLkNDJwKsz4/8y0mUlHnJzdLqGW/h9C6Bwd2KP1/6+75
-	cbf8KjURSdQHLsqZSEZv3139F+YYu89yyXy3VVfHIMU3OUo7LIzB2xUx0PczYO6WO2x7gzKbLPG
-	p8XweB2H4ShxaDTSSOO9tht8=
-X-Received: by 2002:a05:7300:3e97:b0:36d:9900:bb92 with SMTP id 5a478bee46e88-36f75254a98mr150454eec.10.1793907475358;
-        Thu, 05 Nov 2026 11:37:55 -0800 (PST)
+        bh=3AyWWDFVbKJ/DkrPhpXcM2lwKymyXBABHoZtsa2/+w4=;
+        b=jArlP18TEzU3T2rgPPRjaTE0uD5CBTwzu6eujN9dikmociqRHoaZhOl6OjfqbiOdHU
+         gz7We7beaEtHUBDmvyoXIteF/yuOkctoTCR0SPw9hHBrfIZ4i7/UfJ+VQdrCUQOTiQP0
+         6EsVEKn4Y5TRtL+ucQCr9bj7WwRagEovgDBx5/PAgZzEy1AhRPe/SVLHt4DY5JFgg2xB
+         cVmbDdJqynGZgI6VoJpaOJ1skIsrYYOzbKEVpbkPIl7Oz+PZW6TTEmOe8Ym21KiEjduY
+         jyE8uXubw18+W6XeJOuOSj7kSjVvSjtZmMNQfSENQTWewF2KBgoJ9ES9MPgHlc24eC1Z
+         HrBQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxNSP3kzKUFzSNOoS2kUohhkPR3heAVVuFLo7IS3R154VMDcp1wLluETOTlTAH75s2N6+hkfgE4fCI4WoguqJEPm1DKHbU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9O0eRZ87pmKN7/z7PAEwn/f8cWITa+1cEP4IHh21m7bTehneAM
+	s7wroLTZfWAPwMicMIdYBMgDNzE5w3flW8eypDtQFi5FqcVzYRQpnEyb1HvbMqqmrQ==
+X-Gm-Gg: AYBFou2dZncJSD2P8FMg//6NHyiveJ43geDSHNSiV1ZcI4ZbO4FnQs8PDRLkkEP/zzC
+	fvRnCEY++382E0hNcbsMBZXQiRIemFKnClgxJdIgIGv8H5WjtoLaYsvXeNrJzNSlxyVDJSQRWS/
+	uNkRjgtM0Wle2jiap9e2a46mknU3r4to/iISyisbhFR6ia0nDwEAT/jwEGqbuXdWiAeqK8od2YN
+	cdI8edoWKqiR8ilSd6Zw/r8GOK1B7NIADtQ+WY5q2vcTjDz+J1sK4MCV9l7G4x1u+POHS95rq46
+	Y3aHtkd9mgIpBro8tC34rYWNaj9wmN+ADbb+gkbJqPpADocO7vTQl7lzxXaic/CqnelFrmLrB14
+	U2ug88qTPbT8aixfSWQaNzZy37ZoRc6z9/kYML86bhkoGgrh0Ltu9h5/M/1mIHt9ia60GqFPp3K
+	gFlH33tMOw+2nAT8kKrMyeObcoM6qcW3DSkL3BoLh1YSHvDGP4VlEKVlF0y6mv2UmBKso36De+W
+	WDPwlAxq4FTQUpnCFe7mXLb/ziPMbl3lOv6jBGqUadZjMAjlqZaygIIpssOEz348/8JYvsNOopq
+	DDa+nRn45ElwCbAd/eqm8FYKXuvn9s1w7cRE/ADOYrB80YV97CrljjW54jaiQrH5GDGxOERwYgC
+	K0IHVkcyFh3Amgj7X35cZnWA=
+X-Received: by 2002:a05:7301:6285:b0:35c:85fa:5a61 with SMTP id 5a478bee46e88-36f76f0e752mr142560eec.38.1793907476899;
+        Thu, 05 Nov 2026 11:37:56 -0800 (PST)
 Received: from dannyhu-upstreamLinux.sjc.aristanetworks.com ([74.123.28.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36f72ec8a02sm326134eec.11.2026.11.05.11.37.53
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36f72ec8a02sm326134eec.11.2026.11.05.11.37.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 11:37:54 -0800 (PST)
+        Thu, 05 Nov 2026 11:37:56 -0800 (PST)
 From: Danny Hu <dannyhu@arista.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
@@ -110,9 +110,9 @@ Cc: Mimi Zohar <zohar@linux.ibm.com>,
 	linux-api@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bug-cpio@gnu.org
-Subject: [PATCH v6 1/4] ima: skip algorithm availability check until initramfs unpacking is finished
-Date: Thu,  5 Nov 2026 11:37:40 -0800
-Message-ID: <20261105193743.2654656-2-dannyhu@arista.com>
+Subject: [PATCH v6 2/4] initramfs: add file metadata
+Date: Thu,  5 Nov 2026 11:37:41 -0800
+Message-ID: <20261105193743.2654656-3-dannyhu@arista.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20261105193743.2654656-1-dannyhu@arista.com>
 References: <20261105193743.2654656-1-dannyhu@arista.com>
@@ -127,80 +127,230 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With CONFIG_IMA_APPRAISE=y, restoring xattrs during initramfs unpacking
-can deadlock the kernel if the xattr being restored is signed with a hash
-that the kernel does not already have available. This occurs when the
-ima_inode_setxattr() hook calls crypto_has_alg(). crypto_has_alg() may
-synchronously request a module leading to a circular dependency where the
-userspace helper waits for initramfs unpacking to complete while initramfs
-unpacking waits for the userspace helper.
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Guard this crypto availability check in validate_hash_algo() until
-initramfs unpacking is complete. This prevents the kernel from requesting
-a module during unpacking and allows security.ima xattrs to be restored
-even if the hash algorithm is unavailable in the running kernel.
-Essentially, this flag distinguishes restoration of existing metadata
-during initial population from setting/changing an xattr during runtime.
+This patch adds metadata to a file from a supplied buffer. The buffer might
+contains multiple metadata records. The format of each record is:
 
-A benefit of this approach is that once unpacking is complete, all
-subsequent xattr updates go through the same codepath as before which
-preserves the existing behavior during normal userspace operation.
+<metadata len (ASCII, 8 chars)><version><type><metadata>
 
+For now, only the TYPE_XATTR metadata type is supported. The specific
+format of this metadata type is:
+
+<xattr #N name>\0<xattr #N value>
+
+[kamensky: fixed restoring of xattrs for symbolic links by using
+           sys_lsetxattr() instead of sys_setxattr()]
+
+[sassu: removed state management, kept only do_setxattrs(), added support
+        for generic file metadata, replaced sys_lsetxattr() with
+        vfs_setxattr(), added check for entry_size, added check for
+        hdr->c_size, replaced strlen() with strnlen(); moved do_setxattrs()
+        before do_name()]
+
+[zhangguangzhi: fix checkpatch warning EMBEDDED_FILENAME in
+                include/linux/initramfs.h]
+
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Tianxing Zhang <zhangtianxing3@huawei.com>
+Reviewed-by: Jason Yan <yanaijie@huawei.com>
+Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+Signed-off-by: zhoushuiqing <zhoushuiqing2@huawei.com>
+Signed-off-by: zhangguangzhi <zhangguangzhi3@huawei.com>
 Signed-off-by: Danny Hu <dannyhu@arista.com>
 ---
- security/integrity/ima/ima_appraise.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Changes in v6:
+ - Document lack of support for POSIX ACL restoration. The main use case is to
+   restore security.ima xattr for IMA use. POSIX ACL support is out of scope
+   for this patchset
+ - Check xattr name and value lengths to ensure they are valid and do not
+   exceed the limit
+ - Compare metadata header and record sizes against the remaining buffer
+   length to avoid pointer arithmetic overflow in bounds checks
+ - Use the kernel u32 type instead of uint32_t
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 63b0cb957c65..1403f5653973 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -20,6 +20,14 @@
- 
- #include "ima.h"
- 
-+static bool ima_initramfs_populated __ro_after_init =
-+	!IS_ENABLED(CONFIG_BLK_DEV_INITRD);
+Changes in v5:
+ - For debug print in do_setxattrs(), use print_hex_dump_debug() rather
+   than printing the xattr value as a string
+ - Use u32 metadata record lengths and reject records smaller than their
+   header
+
+ include/linux/initramfs.h |  19 +++++++
+ init/initramfs.c          | 103 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 121 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/initramfs.h
+
+diff --git a/include/linux/initramfs.h b/include/linux/initramfs.h
+new file mode 100644
+index 000000000000..9b3839dc88a1
+--- /dev/null
++++ b/include/linux/initramfs.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Include file for file metadata in the initial ram disk.
++ */
++#ifndef _LINUX_INITRAMFS_H
++#define _LINUX_INITRAMFS_H
 +
-+static void ima_notify_initramfs_populated(void)
++#define METADATA_FILENAME "METADATA!!!"
++
++enum metadata_types { TYPE_NONE, TYPE_XATTR, TYPE__LAST };
++
++struct metadata_hdr {
++	char c_size[8];     /* total size including c_size field */
++	char c_version;     /* header version */
++	char c_type;        /* metadata type */
++	char c_metadata[];  /* metadata */
++} __packed;
++
++#endif /*LINUX_INITRAMFS_H*/
+diff --git a/init/initramfs.c b/init/initramfs.c
+index ebddde9c8f0d..d206624d1160 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -10,7 +10,9 @@
+ #include <linux/hex.h>
+ #include <linux/init.h>
+ #include <linux/init_syscalls.h>
++#include <linux/initramfs.h>
+ #include <linux/kstrtox.h>
++#include <linux/limits.h>
+ #include <linux/memblock.h>
+ #include <linux/mm.h>
+ #include <linux/namei.h>
+@@ -22,6 +24,7 @@
+ #include <linux/types.h>
+ #include <linux/umh.h>
+ #include <linux/utime.h>
++#include <linux/xattr.h>
+ 
+ #include <asm/byteorder.h>
+ 
+@@ -189,7 +192,7 @@ static __initdata time64_t mtime;
+ 
+ static __initdata unsigned long ino, major, minor, nlink;
+ static __initdata umode_t mode;
+-static __initdata unsigned long body_len, name_len;
++static __initdata unsigned long body_len, name_len, metadata_len;
+ static __initdata uid_t uid;
+ static __initdata gid_t gid;
+ static __initdata unsigned rdev;
+@@ -264,6 +267,7 @@ static void __init read_into(char *buf, unsigned size, enum state next)
+ }
+ 
+ static __initdata char *header_buf, *symlink_buf, *name_buf;
++static __initdata char *metadata_buf;
+ 
+ static int __init do_start(void)
+ {
+@@ -365,6 +369,103 @@ static int __init maybe_link(void)
+ 	return 0;
+ }
+ 
++static int __init do_setxattrs(char *pathname, char *buf, size_t size)
 +{
-+	ima_initramfs_populated = true;
++	struct path path;
++	char *xattr_name, *xattr_value;
++	u32 xattr_name_size, xattr_value_size;
++	int ret;
++
++	xattr_name = buf;
++	xattr_name_size = strnlen(xattr_name, size);
++	if (xattr_name_size == size) {
++		error("malformed xattrs");
++		return -EINVAL;
++	}
++
++	if (!xattr_name_size || xattr_name_size > XATTR_NAME_MAX) {
++		error("invalid xattr name length");
++		return -EINVAL;
++	}
++
++	xattr_value = xattr_name + xattr_name_size + 1;
++	xattr_value_size = buf + size - xattr_value;
++	if (xattr_value_size > XATTR_SIZE_MAX) {
++		error("xattr value exceeds size limit");
++		return -EINVAL;
++	}
++
++	ret = kern_path(pathname, 0, &path);
++	if (!ret) {
++		/*
++		 * POSIX ACL restoration is currently unsupported.
++		 * vfs_setxattr() rejects POSIX ACL xattrs with -EOPNOTSUPP.
++		 */
++		ret = vfs_setxattr(&nop_mnt_idmap, path.dentry, xattr_name, xattr_value,
++				   xattr_value_size, 0);
++
++		path_put(&path);
++	}
++
++	pr_debug("%s: %s size: %u (ret: %d)\n", pathname, xattr_name,
++		 xattr_value_size, ret);
++	print_hex_dump_debug("xattr value: ", DUMP_PREFIX_OFFSET,
++			     16, 1, xattr_value, xattr_value_size, false);
++
++	return ret;
 +}
 +
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
- static char *ima_appraise_cmdline_default __initdata;
- core_param(ima_appraise, ima_appraise_cmdline_default, charp, 0);
-@@ -738,6 +746,22 @@ static int validate_hash_algo(struct dentry *dentry,
- 		if (likely(xattr_hash_algo == ima_hash_algo))
- 			return 0;
- 
-+		/*
-+		 * IMA validates the crypto algorithm whenever the security.ima
-+		 * xattr is set. Restoring xattrs during initramfs unpacking
-+		 * can call crypto_has_alg() before unpacking has completed.
-+		 *
-+		 * If the algo is unavailable, crypto_has_alg() may
-+		 * synchronously request a module. The userspace helper waits
-+		 * for initramfs unpacking to finish and creates a circular
-+		 * dependency.
-+		 *
-+		 * Skip the algorithm availability check until initramfs is
-+		 * populated to avoid this deadlock.
-+		 */
-+		if (!ima_initramfs_populated)
-+			return 0;
++static int __init __maybe_unused do_parse_metadata(char *pathname)
++{
++	char *buf = metadata_buf;
++	char *bufend = metadata_buf + metadata_len;
++	struct metadata_hdr *hdr;
++	char str[sizeof(hdr->c_size) + 1];
++	u32 entry_size;
 +
- 		/* allow any xattr using an algorithm built in the kernel */
- 		if (crypto_has_alg(hash_algo_name[xattr_hash_algo], 0, 0))
- 			return 0;
-@@ -829,6 +853,7 @@ static struct security_hook_list ima_appraise_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(inode_set_acl, ima_inode_set_acl),
- 	LSM_HOOK_INIT(inode_removexattr, ima_inode_removexattr),
- 	LSM_HOOK_INIT(inode_remove_acl, ima_inode_remove_acl),
-+	LSM_HOOK_INIT(initramfs_populated, ima_notify_initramfs_populated),
- };
++	if (!metadata_len)
++		return 0;
++
++	str[sizeof(hdr->c_size)] = 0;
++
++	while (buf < bufend) {
++		int ret;
++
++		if (bufend - buf < sizeof(*hdr)) {
++			error("malformed metadata");
++			break;
++		}
++
++		hdr = (struct metadata_hdr *)buf;
++		if (hdr->c_version != 1) {
++			pr_debug("Unsupported header version\n");
++			break;
++		}
++
++		memcpy(str, hdr->c_size, sizeof(hdr->c_size));
++		ret = kstrtou32(str, 16, &entry_size);
++		if (ret || entry_size < sizeof(*hdr) ||
++		    entry_size > bufend - buf) {
++			error("malformed xattrs");
++			break;
++		}
++
++		switch (hdr->c_type) {
++		case TYPE_XATTR:
++			do_setxattrs(pathname, buf + sizeof(*hdr),
++				     entry_size - sizeof(*hdr));
++			break;
++		default:
++			pr_debug("Unsupported metadata type\n");
++			break;
++		}
++
++		buf += entry_size;
++	}
++
++	return 0;
++}
++
+ static __initdata struct file *wfile;
+ static __initdata loff_t wfile_pos;
  
- void __init init_ima_appraise_lsm(const struct lsm_id *lsmid)
 -- 
 2.51.0
 
