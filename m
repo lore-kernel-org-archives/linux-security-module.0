@@ -1,92 +1,67 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793914899;
-	b=bqwjbgY1HkwrNCzEhQnUrFPeZT/IWyCILQIdUqZCeQtkuslFUyZNCyFqunr5XzTnAtsr
-	 XqMspzrzh5lFY1UbYEBiU90nd5uzpXmEri9ix6fx/pfrWOOlbZNaWsYXE5rVG8TxsDmtB
-	 S+C+jyyaMCElWl3nNIZNLMMO5nL9Q0R1SduyP7feIZrWyw8frOjEZv5rZgNite8Wd8XuH
-	 P6c3RXGs3Sdc3UEOV1iqXetN0TLDwzO//sd9RlLiqps6agXe0tg9Yz89//Z8ERK8KnSvZ
-	 NmpQ3zk0sa4BqoiKtEyhWT0wlTEepa2J8PBi5Cu8VXsLaHihOS2RBg7dgQHZy5gMS7A==
+	t=1793914974;
+	b=EkiIMOEwMhwQARY4/RSw3B5r11YFdaq4eDgLc4QxOOlh6QSFzAPyrwZAXLELljbtkmNW
+	 EZPSPITtw2oCwSUqEkN0nOAx2SVVowSI7lEGpGP+5Ij0rBuri/k83yqWsmJH5Ftqulq1K
+	 yi+TbIKzb6OewNp7L1EvM5CX9oUqGzuyAsdQtzFUczS6IENvkrtl9q+/N0oQTtqGdoEHu
+	 tTJpj2a/JITqI1hCdOI5h66lBUoIuFg3spX+8Eq/hdxjcHke3Sn06SckaaNxR24UsM3fn
+	 O+oL3W9z4RDG2s7S4VtdHc3HBY0dDQdHG7yooMOczeaFJWCwE8bGScyiRhaUBmMVsJg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793914899;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=OC6xPJuoLtag/UNVUOAoSaQZwd0BWlf5yd9F9l2dg+8=;
-	b=yjM/FLVkfEbOaJB/kS01H1hKB049rjjpKUaVFW/A84Nlzryu0vtRgHDw3MjHNINlZNpy
-	 9a2B7FjZyd1wnR8D/3GRu/ixCoF5yqd3IRPLUuXjFdzmVup1mj5FPhkjWpF3ZkELHggvv
-	 ofxraMHlM0X8h/tCrARdgkJVNAGjzWE6geHIAb9eN9LUhIzu+s+lYZQKbtGWFsOM0JzBV
-	 smAekyJ2mDL1sra2X/w+EvZXA7lT+aKiZVpcDpoWn3WEVmi/HHRhhanMPS2KnNt+wkHPc
-	 bUhK++smEWeaOWBFMjtOLsh9pLnRR+VQY2ypg19g8V43LAwozSgn23DPSM1pWEboYpw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793914974;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=GA54y8x2BTg+d6MyDylKpNDR5NpP0XULvhnGi2Kmvgk=;
+	b=rFkkREu97vTt4ip0DesI8UX8ik/DilBZlrS27gfZ1gTG+kATW8rVYxBd32138E0AdNzp
+	 n1oyW0rN2+xtp+SzBoZAy66I4jwCmQU+zdOKJL79h/BPWZklKkC+DOeYGFE5bOdNE3kwr
+	 4kmgbgzFlaUiZZKEdnJhC1/3NwFM67xQuzaly43nbY1n0Ko/sZ3cCZ8s22lfORMK7fXYG
+	 qWwpvyJkU+YpLszcm1X7G50YxA6M4DVz1ffv5td15MP68TRUdF3z60N7zsmIfozDa2O+U
+	 rxjAeZaYQCdFYot8ADIfQ5t7RxIK4Ja4v2tFwjHfMQzkhCdrEx47TsihBDWI5MoMwkQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ftjSanR5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h7E2MjRH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A05606A329;
-	Thu,  5 Nov 2026 21:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A5F606A31B;
+	Thu,  5 Nov 2026 21:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ftjSanR5
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B05BF1F0089F;
-	Thu,  5 Nov 2026 21:41:34 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h7E2MjRH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A37441F0089F;
+	Thu,  5 Nov 2026 21:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793914898;
-	bh=OC6xPJuoLtag/UNVUOAoSaQZwd0BWlf5yd9F9l2dg+8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ftjSanR5NYRVoTeBKZ9GKKb5Ejk1Wo1LW5KsXglEAcnlyjjvxN2a+oB7TS+tqIO48
-	 mLWMUruChKgreDIeGVIBYX7RKGlsxtvnxnVOabXGjobAB/fVlZBcpRSb4QcmM+aPey
-	 H1GN8tWl7V0jJslBLXgjRHT2fPyQBR4w0/b8W6NY2gw07MVWVDA9NQN/Y11ulVuQIA
-	 85VS68u9z1a4tjmBgnUKmKpo/fWULan3ie+4z30hlSVqrPQol/nhiJzLckViEBmmge
-	 zkrugiLnzvT9AifyLkUuMzOvKx+kKGulAQEqHn+yOT6n1ONFUVd0hOc+ZZVtqSd1Kf
-	 1pcTL4VXazLdw==
-Message-ID: <sashiko-outbox-200257@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 02/13] mm/filemap: convert fault and readahead logic to
- use vma_flags_t
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?TG9yZW56byBTdG9ha2VzIChBUk0p?= <ljs@kernel.org>, "Andrew
- Morton" <akpm@linux-foundation.org>, "David Hildenbrand" <david@kernel.org>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "John Hubbard" <jhubbard@nvidia.com>, "Peter Xu" <peterx@redhat.com>,
- =?utf-8?b?TWF0dGhldyBXaWxjb3ggKE9yYWNsZSk=?= <willy@infradead.org>, "Jan
- Kara" <jack@suse.cz>, "Rik van Riel" <riel@surriel.com>, "Liam R. Howlett" <liam@infradead.org>, "Vlastimil
- Babka" <vbabka@kernel.org>, "Harry Yoo" <harry@kernel.org>, "Jann Horn" <jannh@google.com>, "Lance
- Yang" <lance.yang@linux.dev>, "Zi Yan" <ziy@nvidia.com>, "Matthew Brost" <matthew.brost@intel.com>, "Joshua
- Hahn" <joshua.hahnjy@gmail.com>, "Byungchul Park" <byungchul@sk.com>, "Gregory
- Price" <gourry@gourry.net>, "Ying Huang" <ying.huang@linux.alibaba.com>, "Alistair
- Popple" <apopple@nvidia.com>, "Baolin Wang" <baolin.wang@linux.alibaba.com>, "Nico
- Pache" <nico.pache@linux.dev>, "Ryan Roberts" <ryan.roberts@arm.com>, "Dev
- Jain" <dev.jain@arm.com>, "Barry Song" <baohua@kernel.org>, "Usama Arif" <usama.arif@linux.dev>, "Kiryl
- Shutsemau" <kas@kernel.org>, "Xu Xin" <xu.xin@linux.dev>, "Chengming Zhou" <chengming.zhou@linux.dev>, "Madhavan
- Srinivasan" <maddy@linux.ibm.com>, "Nicholas Piggin" <npiggin@gmail.com>, "Michael
- Ellerman" <mpe@ellerman.id.au>, =?utf-8?b?Q2hyaXN0b3BoZSBMZXJveSAoQ1Mg?=
- =?utf-8?b?R1JPVVAp?= <chleroy@kernel.org>, =?utf-8?b?Uml0ZXNoIEhhcmph?=
- =?utf-8?b?bmkgKElCTSk=?= <ritesh.list@gmail.com>, "Shrikanth Hegde" <sshegde@linux.ibm.com>, "Pedro
- Falcato" <pfalcato@suse.de>, "Kairui Song" <kasong@tencent.com>, "Qi Zheng" <qi.zheng@linux.dev>, "Shakeel
- Butt" <shakeel.butt@linux.dev>, "Axel Rasmussen" <axelrasmussen@google.com>, "Yuanchu
- Xie" <yuanchu@google.com>, "Wei Xu" <weixugc@google.com>, "Baoquan He" <baoquan.he@linux.dev>, "Mike
- Rapoport" <rppt@kernel.org>, "Suren Baghdasaryan" <surenb@google.com>, "Michal
- Hocko" <mhocko@suse.com>, "Leon Romanovsky" <leon@kernel.org>, "SJ Park" <sj@kernel.org>, "Rakie
- Kim" <rakie.kim@sk.com>, "David Rientjes" <rientjes@google.com>, "Alexander
- Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>, "Peter
- Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Arnaldo
- Carvalho de Melo" <acme@kernel.org>, "Namhyung Kim" <namhyung@kernel.org>, "Mark
- Rutland" <mark.rutland@arm.com>, "Alexander Shishkin" <alexander.shishkin@linux.intel.com>, "Jiri
- Olsa" <jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>, "Adrian Hunter" <adrian.hunter@intel.com>, "James
- Clark" <james.clark@linaro.org>, "Masami Hiramatsu" <mhiramat@kernel.org>, "Oleg
- Nesterov" <oleg@redhat.com>, "John Johansen" <john.johansen@canonical.com>, "Georgia
- Garcia" <georgia.garcia@canonical.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Mimi
- Zohar" <zohar@linux.ibm.com>, "Roberto Sassu" <roberto.sassu@huawei.com>, "Dmitry
- Kasatkin" <dmitry.kasatkin@gmail.com>, "Eric Snowberg" <eric.snowberg@oracle.com>, "Fan
- Wu" <wufan@kernel.org>, "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- =?utf-8?b?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
-Cc: linux-mm@kvack.org, kvm@vger.kernel.org, damon@lists.linux.dev, linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-In-Reply-To: <20261105-late-2026-vma-flags-v1-2-0d3cd15ab75f@kernel.org>
-References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
- <20261105-late-2026-vma-flags-v1-2-0d3cd15ab75f@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 21:41:34 +0000
+	s=k20260515; t=1793914974;
+	bh=GA54y8x2BTg+d6MyDylKpNDR5NpP0XULvhnGi2Kmvgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=h7E2MjRHzsJZkvGDDESAY+UXeh0G4esVLHqk/S+8HNlz9r1WdhHmkvveupL4YV5JH
+	 aZ8D0zeTyG1GO2et1ZZ6u7fu2qJO4okJQ2QMOVK75OvR9p1BoNEzK8Wmpt/AF0tYmj
+	 YK30XZ8ubTL66486WYg/p8UzNANqefwYaeH+iacd/cjTzlXxNtiUR+abV845fCkbAK
+	 D0s3JGwezFQH5M7cEetJOMov/9oI8fwAOmqaCsYRcBEYzrj/X+MqJQDbQs3KpiZBMJ
+	 5aVlgGWf2oLFChdGfljLcpKvpYfjhMzvJ2Xk7yrtTFqJtynD7VQ+jV6lUfRGqf2KWt
+	 GjVHcorcI2aVQ==
+Date: Thu, 5 Nov 2026 22:42:45 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Chen Linxuan <me@black-desk.cn>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Kees Cook <kees@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] pidfd: Add task path ioctls
+Message-ID: <20261105-gefolge-rosten-neueinstellung-6223a18aae90@brauner>
+References: <20261027-pidfd-get-paths-v4-0-e2a6a47e3c95@black-desk.cn>
+ <20261027-pidfd-get-paths-v4-3-e2a6a47e3c95@black-desk.cn>
+ <20261105-fotokopien-essen-inbegriff-be31e4f3c8a6@brauner>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -95,104 +70,140 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261105-fotokopien-essen-inbegriff-be31e4f3c8a6@brauner>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] mm/filemap: use-after-free on vma in do_sync_mmap_readahead()
-- [Low] mm/filemap: inner vma declaration shadows outer vma in do_sync_mmap=
-_readahead()
---
+On Thu, Nov 05, 2026 at 10:16:44PM +0100, Christian Brauner wrote:
+> On Tue, Oct 27, 2026 at 04:46:09PM +0800, Chen Linxuan via B4 Relay wrote:
+> > +	case PIDFD_GET_EXE:
+> > +	case PIDFD_GET_CWD:
+> > +	case PIDFD_GET_ROOT:
+> > +		error = pidfd_get_task_path(pidfd_pid(file), cmd, arg, &path);
+> > +		if (error)
+> > +			return error;
+> > +
+> > +		return FD_ADD(O_CLOEXEC,
+> > +			      dentry_open(&path, O_PATH, current_cred()));
+> 
+> So the path we take from the task is a jump target, just like
+> /proc/<pid>/cwd and /proc/<pid>/root are. So complete_walk() runs
+> ->d_weak_revalidate() on them. Without that a stale dentry on nfs or
+> overlayfs turns into a valid O_PATH fd.
+> 
+> And failfs relies on ->d_weak_revalidate() to refuse pinning its root. A
+> task that fchdir()ed into the failfs root can now hand it out through
+> PIDFD_GET_CWD. Which would be breaking a guarantee we give. So we need
+> the same check here. I'm just not yet sure how we best do this.
 
-commit f5f0f8e634a6a2e2b76ad818de67e83f30cb7dea
-Author: Lorenzo Stoakes (ARM) <ljs@kernel.org>
+Ok, just saw that Sashiko also reported that. Hm, so I think we need a
+dedicated "task open" helper. Something like:
 
-mm/filemap: convert fault and readahead logic to use vma_flags_t
+From 59f9a5be6615604ddfbbd6a80f2872ad0c818ae0 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Thu, 5 Nov 2026 22:25:55 +0100
+Subject: [PATCH] pidfd: revalidate task paths before handing them out
 
-This commit replaces direct checks of vm_flags_t values with vma_flags_t
-helpers in the filemap fault and mmap readahead paths.
+PIDFD_GET_EXE, PIDFD_GET_CWD and PIDFD_GET_ROOT sample the task's path
+and open it right away. The path isn't found by a lookup in its parent,
+it's jumped to, exactly like /proc/<pid>/{exe,cwd,root} jump to it. But
+there complete_walk() runs ->d_weak_revalidate() on the jumped dentry
+before the O_PATH open happens and the ioctls don't.
 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index b74bc1e5015c6..d8b538bd14043 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3351,13 +3351,14 @@ static struct file *do_sync_mmap_readahead(struct=
- vm_fault *vmf)
->  	struct address_space *mapping =3D file->f_mapping;
->  	DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
->  	struct file *fpin =3D NULL;
-> -	vm_flags_t vm_flags =3D vmf->vma->vm_flags;
-> +	struct vm_area_struct *vma =3D vmf->vma;
->  	bool force_thp_readahead =3D false;
->  	unsigned int thp_order =3D 0;
->  	unsigned short mmap_miss;
+So on nfs, 9p and overlayfs the ioctls hand out a path that
+/proc/<pid>/cwd would have refused with ESTALE. And they hand out the
+failfs root. The failfs root is only unpinnable because its
+->d_weak_revalidate() refuses every jump to it. After
+fchdir(FD_FAILFS_ROOT) a task can now simply do
 
-[ ... ]
+  ioctl(pidfd_open(getpid(), 0), PIDFD_GET_CWD, 0)
 
-> @@ -3414,7 +3416,7 @@ static struct file *do_sync_mmap_readahead(struct v=
-m_fault *vmf)
->  		 * Fetch two folios so we get the chance to actually
->  		 * readahead, unless we've been told not to.
->  		 */
-> -		if (!(vm_flags & VM_RAND_READ))
-> +		if (!vma_test(vma, VMA_RAND_READ_BIT))
->  			ra->size *=3D 2;
->  		ra->async_size =3D folio_nr_pages;
->  		ra->order =3D thp_order;
+and gets an O_PATH file descriptor to it which no path lookup allows,
+not even with O_PATH.
 
-[Severity: High]
-Can this trigger a use-after-free on vma?
+So add task_path_open() for opening paths handed out by a task. It
+gives the filesystem the same chance to refuse the path that
+complete_walk() gives it and then does the O_PATH open. It's called
+after the target's exec_update_lock has been dropped so a filesystem
+that needs to go on the wire doesn't block the target's exec. There's
+no lookup so there are no lookup flags to pass.
 
-Previously, do_sync_mmap_readahead() cached vmf->vma->vm_flags by value in a
-local variable at entry while the fault lock was held, as introduced by
-commit dcfa24ba6899 ("filemap: Cache the value of vm_flags").
+Fixes: d53dc95eb961 ("pidfd: Add task path ioctls")
+Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+---
+ fs/internal.h |  1 +
+ fs/open.c     | 30 ++++++++++++++++++++++++++++++
+ fs/pidfs.c    |  3 +--
+ 3 files changed, 32 insertions(+), 2 deletions(-)
 
-In the force_thp_readahead block, maybe_unlock_mmap_for_io() is called befo=
-re
-this check:
+diff --git a/fs/internal.h b/fs/internal.h
+index 3f2fbac40f8e..e43ebcfd9846 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -205,6 +205,7 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ int chown_common(const struct path *path, uid_t user, gid_t group);
+ extern int vfs_open(const struct path *, struct file *);
+ int vfs_open_consume(struct path *, struct file *);
++struct file *task_path_open(const struct path *path);
+ 
+ /*
+  * inode.c
+diff --git a/fs/open.c b/fs/open.c
+index e43f02ff64ac..55441ff0525c 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1156,6 +1156,36 @@ struct file *dentry_open(const struct path *path, int flags,
+ }
+ EXPORT_SYMBOL(dentry_open);
+ 
++/**
++ * task_path_open - open a path handed out by a task
++ * @path: the task's path
++ *
++ * Open a task's exe, cwd or root for the caller. The path wasn't found by
++ * a lookup, it's handed out directly, the same way a /proc/<pid>/{exe,cwd,root}
++ * jump lands on it. So give the filesystem the chance to refuse it that
++ * complete_walk() gives it for a jumped dentry.
++ *
++ * Only O_PATH opens are supported. Anything else would need the permission
++ * checks a lookup performs before the open.
++ *
++ * Return: An O_PATH file on success, an error pointer on failure.
++ */
++struct file *task_path_open(const struct path *path)
++{
++	struct dentry *dentry = path->dentry;
++
++	if (unlikely(dentry->d_flags & DCACHE_OP_WEAK_REVALIDATE)) {
++		int status = dentry->d_op->d_weak_revalidate(dentry, 0);
++
++		if (status < 0)
++			return ERR_PTR(status);
++		if (!status)
++			return ERR_PTR(-ESTALE);
++	}
++
++	return dentry_open(path, O_PATH, current_cred());
++}
++
+ struct file *dentry_open_nonotify(const struct path *path, int flags,
+ 				  const struct cred *cred)
+ {
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index f2a113006552..a2a0691cf131 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -775,8 +775,7 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		if (error)
+ 			return error;
+ 
+-		return FD_ADD(O_CLOEXEC,
+-			      dentry_open(&path, O_PATH, current_cred()));
++		return FD_ADD(O_CLOEXEC, task_path_open(&path));
+ 	}
+ 
+ 	ns_common = pidfd_get_namespace(pidfd_pid(file), cmd, arg);
+-- 
+2.53.0
 
-	if (force_thp_readahead) {
-		unsigned long folio_nr_pages =3D 1UL << thp_order;
-
-		fpin =3D maybe_unlock_mmap_for_io(vmf, fpin);
-		ractl._index &=3D ~(folio_nr_pages - 1);
-		ra->size =3D folio_nr_pages;
-		/*
-		 * Fetch two folios so we get the chance to actually
-		 * readahead, unless we've been told not to.
-		 */
-		if (!vma_test(vma, VMA_RAND_READ_BIT))
-			ra->size *=3D 2;
-
-Since maybe_unlock_mmap_for_io() only pins vmf->vma->vm_file and calls
-release_fault_lock(vmf) to drop mmap_lock or the per-VMA lock, isn't vma
-unprotected against concurrent modification or freeing when vma_test(vma,
-VMA_RAND_READ_BIT) dereferences vma->flags?
-
-> @@ -3422,7 +3424,7 @@ static struct file *do_sync_mmap_readahead(struct v=
-m_fault *vmf)
->  		return fpin;
->  	}
-> =20
-> -	if (vm_flags & VM_EXEC) {
-> +	if (vma_test(vma, VMA_EXEC_BIT)) {
->  		/*
->  		 * Allow arch to request a preferred minimum folio order for
->  		 * executable memory. This can often be beneficial to
-
-[Severity: Low]
-Does the newly added outer vma declaration in do_sync_mmap_readahead() cause
-the existing inner declaration in this VMA_EXEC_BIT block to shadow it?
-
-	if (vma_test(vma, VMA_EXEC_BIT)) {
-		...
-		struct vm_area_struct *vma =3D vmf->vma;
-		const unsigned long start =3D vma_start_pgoff(vma);
-		const unsigned long end =3D vma_end_pgoff(vma);
-
-Should the inner vma variable be removed now that vma is declared at functi=
-on
-scope?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105-late-2026-=
-vma-flags-v1-0-0d3cd15ab75f@kernel.org?part=3D2
