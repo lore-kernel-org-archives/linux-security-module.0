@@ -1,78 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793840696;
-	b=kRZOrBMW9JMIAd5IZdjEpQHbEAtCS6EU0Ee84ljwSOeGIA5/ilieJ018NVpb/0ZfUAsT
-	 GUzReFzRoGLAG/IRfcdNo8c796iIya4FxXtq8jFh9WP0pwFT/mOBq2b0GGw9nPyGfLHTv
-	 VKCIE14Qo525+We32A5jib5gpQDFwJl/mSJGk3zPjNnV6jgIP1xwp6YLod77uDTab0IAG
-	 /kckm81mzN7z0WWKf0zQrG5VECM6nsu5otj/NOlKTtTPOPmlDmIjBgkiST8chyQ+kpFPS
-	 vOGbeHMwHlV39aC970acA50g9in6ow72QK4s93v+t0339OeppQwUZl8wfn9Gu8JL2aw==
+	t=1793845485;
+	b=G9sRo8Xhmg+Ahrl81u5cn9Hdb+CEow3f0n+SIW788/fwV0tOIYGB89fN15tXwlXg1TtZ
+	 sbLbLEWdyeBdXGsxxz6K8Q+fi9+QMIjljf3DhRJOULIXH/B0LKP2Suh+QkT9mIY+DV42J
+	 /CAg+FkpLhmKXLCYEBwo076EydRSNlzlOFWeMsODJnWuq2dBQZgw7C97aS1cwtggAWAkN
+	 us4HdUnR3e/YZDi1ldC3T687XB+MaRPtcTuChdgoe479Y5nHoyzu6VCk0UGcm+lxloG9h
+	 bvxK187cvqVEr7jtuxaVZcGIPmysFLXu+3d1oD/IXtbTfgdYbwrynnbumrfvvUfJLMQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793840696;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=vbOSiDhOXUNUobJKPavDdEMcKzCZkS+5o8EgPhWPvSM=;
-	b=J6lEkPz2XIaZaMQKpmsLgkaQK8BkUIWoHoXfGt1soINL9st1zxJ2feIXFWzC1yRnzQ6s
-	 b5JjqH7icHXrZ9lMwhLpfS57ofPq2gLG3lABbtjmxbPY4WNPeS2FBlJ8oAIF39RuTbfyR
-	 NWF+DAFW9xSA67Ch00mYpYxmKxRW4BFUgimVpWIvDSBR/qTe+m5opVmUYvq+brK2XMzcl
-	 sr8aXRg45R0wAI/BUYdWDCsWHYXRbdonZGGvYaVJp3ZgJG+yujlCf31Y7sD/tpADdWA03
-	 4AkZAgI9KwVb2q0C1Hc9xJ0u6Vq8yI1g3EYqILPXfBvWQ13JoPlUxWF9Gq6cv6v8LiA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793845485;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=VUFf6jwNeGXVvbspON82vI4aFLY01le+Nblo8PEzIB4=;
+	b=W+5onOpTPoIKwC6PrfvWXtAWpCJ3jrJ9qrchWuNO4UIg+x/Zk1bEv3w/3V4T3AFcKKNt
+	 mikjkH+D3ij5BC7V6L+aaGTT/W+E5tvXBVrxPJPs5gvMK/+mJr0XrDHKF2luudvIhYceX
+	 I/frT/mms0UucoXQtUz7Tzbnw9VS3qO2Xr27D6BNNfnIBYW4SVyOMfRl3VNedHolx9aKE
+	 gcIgnz0IBHXfT3j+wkBHWXfNSxIYjvmvJp1IDG+/42UjTOb6/tO4mr0VrnHVVsIFLi2Xk
+	 bWN4/6+kDMm+gWKgS1YTW/Lm0jpNpJlMunrvYUcIvu6F6GYHHsS1WCCxGmgjH1HGLUg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m0HcvLYM;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Kooy8NWJ;
+	arc=none smtp.remote-ip=209.85.215.179
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A83A2606A333;
-	Thu,  5 Nov 2026 01:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1F606A328
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 02:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4FD1F606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m0HcvLYM
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9CBFF1F0093A;
-	Thu,  5 Nov 2026 01:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793840695;
-	bh=vbOSiDhOXUNUobJKPavDdEMcKzCZkS+5o8EgPhWPvSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=m0HcvLYMYkaoJF/gyIeviUk7vKDG8LTeM8GuuNUPrh2+PwPwMJg+KMAmLfie04lgC
-	 uWiY1m196LFoEPr4UN4ILRCQTYO2qpihIQA73wRtKJP8bFtmoCsmNsC1vPneuxMySZ
-	 Ydury5Fz95YrhAwGRTsW9IaxkAyYp0+eCGdLrKyYlb0kLOIfNmyUFV2qUWZ0rhXkPe
-	 0lrkYKGcQE6OgI2K9JypGhcV9aAwBy6qS3gU7t0+e+TarrhTm4FBRyHwvM1/KlS8YK
-	 WqqFgSJMDgdhOLXDZOYkDvGyJFfth79kqcDkB0Cg7V9N3Ac8qewmwBukARuOwjjYyP
-	 a65Ed+F9uQSLg==
-Date: Thu, 5 Nov 2026 03:04:51 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org, linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org, samba-technical@lists.samba.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	James Morris <jmorris@namei.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Simon Horman <horms@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>, Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [RFC PATCH v3 00/11] KEYS: Sanitize the garbage collector
-Message-ID: <auvWM6zn1MSP5C5b@kernel.org>
-References: <20261105005311.804098-1-jarkko@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Kooy8NWJ
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cd60c5da24cso889425a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2026 18:24:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793845485; x=1794450285; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=VUFf6jwNeGXVvbspON82vI4aFLY01le+Nblo8PEzIB4=;
+        b=Kooy8NWJcFmw3Z8AeCPgH+MoCRF1OjxPp9Pmw31LD32CQgMJIuqljx0i72RopmbDqI
+         JiiqvLAJFk0EwLa94SAv+JUznGaBJCnLizW7lTFSx5lNRJiLDCEDGSvhRNDDnWTuI95b
+         GvgFcbeBDxyfYEVPx/pYwppXEjoIy/TcKPXs5QK+pL6s6RTwZxd7l+3p+n9vQmvyoAa7
+         qkrsTZYBdwifySuGJFkPUq7S8LJtljSrkVp5KA7pECrLsY2bNztY3uCr8qTsIaWbZsaa
+         70veFGunrWXxMV+K/V5uMW14o4irHArOhs5Dx50SPkuT1Q0g3Z4Ltr6aD7w2xgD2cybw
+         1SPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793845485; x=1794450285;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=VUFf6jwNeGXVvbspON82vI4aFLY01le+Nblo8PEzIB4=;
+        b=F5D3CtLDr1zMoYQWnE8I+cWUm2EHhWSdyxQHYXJ2mh5V7AaGHqt1nn4aBvFkrFuwe8
+         c32EppKi+0e2fPh2a0/RZAr+VkFStqocWUMHefmVoteM6381NwsVgbLESJek6ggElrjr
+         TBGOGf4byQeoparWoVKX1sznDLGPUBPRMC0IuCMLsNs804pSBnVRxn/DXnhB4NLLFdrL
+         sVIv3yPouejtbufhkscX3pnf9QgTSNIBE3VQaO0WI9ftfhS1Arthxc3eTAGX5O2FWWi7
+         vqh1aJIoc1akqNHZHVmAibBkd4/7SLTUVD4hK3cGDJbjnwTtnE2GxlIxoX2+oN6Phn+8
+         Hzmw==
+X-Forwarded-Encrypted: i=1; AKwUvBxJq/4JJGw0tTAqyvMOnvmLgfQnvqpvv3Tz0nT9EgmH8ZgnWLHr56zh79WYgfCUVGjwL0tfXs9KDuYoY0eWV6gw6z7rVlg=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/ZmUgg4zCuTysAwKikDqbLHooXfBl7q+WxSPlN5onOu9xoBsCw
+	17ucudzQXzPo1qLQ/8dXQ2BvLKBEMS/7/HmMqYbUaSQ5EIV8xDRjaJxP
+X-Gm-Gg: AYBFou2jCtUOlrQlfFpOia3vhYmgjWktl/ZLofWGT7GXMRIzoPwehsu+ovVJhDKS56C
+	z41XBDA74U+QfcjstOrOhMm+ZFipPp6+sDxcC1M1+/rpWb2T2ZZfmnJ6k9g/R6AJBGnyh9qoBvL
+	4cO+s8r+vmEuOI/WGMhmw7aMl3kGRnu/tteO+TbXbdEwfoyjt6jgudDztSFAO8WETK1MX5EEmsw
+	2NgUDWo+SKHJOB1Q/o9ekkfwtBg30q3J27tGbDq/RI1MbAmk4s2CVMvqdJvohDAKsfCfYn5kD/q
+	34FAIpgk+XHJ3WSKQ8SPE831gijGx3VIZuHLLqJHIXCX6KhjjxfXZ2fRkbUbaeAz1TBWgYPpQbm
+	zbLQeTIy4Z3cMMNdrxq5VH6vS6om0iUrQN5fpx8TuUx4ed6TJqwYBehjsTU9nQulZBJkCsvC2Ut
+	YmioF/LGDOaizNAwytBxTCgjTCIhHxq8KEIp0g0qzz8KbaLqSdkKEVo8A2VTs8A36Zq8VtZS0RZ
+	CvCrE3fbYFWga2EMg60XFfp+ohiv/es9bPsDZEMES6gPsWxJtzKLhP4vbejZC5AShrtLioYxVFi
+	wgY1ApuMp0rBqxRpRxjdv9PBrPz3444dQGcFCPY7ZYJhG3k=
+X-Received: by 2002:a05:6a21:f11a:b0:3e9:24ea:64fb with SMTP id adf61e73a8af0-3e9289d8f84mr12476900637.41.1793845484456;
+        Wed, 04 Nov 2026 18:24:44 -0800 (PST)
+Received: from ubuntu24.vpn.host.chaitin.net ([124.77.157.93])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cdb46981369sm1577747a12.25.2026.11.04.18.24.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 18:24:44 -0800 (PST)
+From: Yuansheng Yang <0xbeac@gmail.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: dhowells@redhat.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KEYS: Protect pkey method checks against type removal
+Date: Thu,  5 Nov 2026 10:24:39 +0800
+Message-ID: <20261105022439.11846-1-0xbeac@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <auvG1wGifSsoCuaQ@kernel.org>
+References: <aun7J2NGn57RGS5J@kernel.org> <20261104021414.50696-1-0xbeac@gmail.com> <auvG1wGifSsoCuaQ@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -83,42 +104,41 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261105005311.804098-1-jarkko@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 05, 2026 at 02:52:59AM +0200, Jarkko Sakkinen wrote:
-> 1. Replace key_type_dead retyping with module reference pinning so live
->    keys and restrictions keep their backing key_type module loaded until
->    key_gc_unused_keys() or keyring_destroy() completes.
-> 2. Process serial-tree scans and graveyard destruction in fixed 64-key
->    chunks to a bound workqueue execution latency without hurting overall
->    throughput for a significant amount.
-> 
-> The first part has a user-space visible effect: rmmod returns -EBUSY while
-> keys or keyring restrictions still pin the backing module.
-> 
-> Internal key caches or transport state bottlenecks are addressed by either
-> clearing their private caches on last-client teardown or splitting key
-> types into dedicated provider modules.
+On Thu, Nov 05, 2026 at 01:59:19AM +0200, Jarkko Sakkinen wrote:
+> Please respond to any questions *before* sending a follow-up patch by
+> properly using email client and quoting etc.
 
-<samba-technical@lists.samba.org>: host
-    lists-mx.samba.org[2a01:4f8:192:486::1:0] said: 550-Please subscribe the
-    address jarkko@kernel.org to the samba-technical 550-mailing list before
-    posting. See <https://lists.samba.org/mailman/listinfo/samba-technical>.
-    550-You can also write a mail to samba-technical-owner@lists.samba.org and
-    ask 550 to get on the list of accepted non-members to be able to send mail
-    here. (in reply to end of DATA command)
+Sorry. I'll answer the review before sending another revision.
 
-This was accidentally pulled by:
+> > +	if (!params->key->type->asym_query) {
+> 		ret -EOPNOTSUPP;
 
-	./scripts/get_maintainer.pl \
-		--nogit \
-		--nogit-fallback \
-		--norolestats v3-00?[1-9]-*.patch | \
-		awk '{print "Cc: " $0}' | \
-		sed -i '/^Subject:/r /dev/stdin' v3-0000-cover-letter.patch
+I'll move the assignment inside the if block, here and in the other
+method checks.
 
-I'll address this in the next version but perhaps that email should be
-removed from MAINTAINERS? 
+> There should be an empty line prepending the label.
 
-Br, Jarkko
+Will fix throughout.
+
+> >  	if (copy_to_user(_res, &res, sizeof(res)) == 0 &&
+> >  	    clear_user(_res->__spare, sizeof(_res->__spare)) == 0)
+> >  		ret = 0;
+>
+> Why up_read is not here?
+
+To avoid holding key->sem across user memory faults. After asym_query(),
+res is a local copy. Copying it out no longer needs the lock.
+
+> Please figure this part out it does not do a great job minimizing the diff.
+>
+> There were similar repeating issues that I did not specifically point
+> out.
+
+Agreed. I'll keep the switch, allocations and error handling in place.
+I'll move the method checks next to the callbacks under key->sem and use
+shared unlock points. I'll check the other paths for the same issues.
+
+Thanks,
+Yuansheng Yang
