@@ -1,56 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.71
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793908129;
-	b=Hn3L6+2/82glhI/qm3bF7U0QKy2bCKU4f5dbFRzVY45VUm0pQjZPboThb48xPz1PnmZC
-	 LZiPCniucywMivU18BV/+LYbquxsdRL0mLQ4BPcIzrukWhvwQGyEn+aDEPErYhVTujOs2
-	 x0HNz4NnDdqvghggiTNJ6RNBtcVTzhdg4DVmpgP04rAn34CzEPAY/9/bKA2DOUO4kTEFY
-	 qGix7fAxPHevjEKZJuMFsrk8wDT9xQxRx+5xuPHVV0OPwxJtxu48C625NDXb+7ijl8YXP
-	 2kkJk2Cg+0EjxhWG95+/qZaXY9JqfdRIUb9U4dv4+bVKoz7S8obqA7RFS+6/Tbl01nA==
+	t=1793909778;
+	b=K6m4ocvu/dwNGR0+4tAargvr45V7sTZpKnea1wSCerkt4zT4C5ItgJlMg/jCdfIb5KN8
+	 BiXe3tNyTiqUG2+X1IZoqJBuJQ/5Bhvcq8mC+ZdNbTvAfu/eE7qCke4IpXQVbqPxicT7Z
+	 0Q1YkFabcxTvIic/V2k+jxkjv3VbAJ3r4NNL/tjQ9eIJbFPz1dcZd0wRp3S9FgawWe+yy
+	 Y4QCNozKJ15BaczvaGGhfmLXSS3K4PavhKBOEhQajhnG2UXOvxOH7x1k3+MHjiiaJuY/C
+	 evYRhGEIqTbglzidrvOCenlWhHB2A5V6Cac9h5Lzm8kh2msy+AmJMQS9+AyzLEv7ToQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793908129;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=mEaU8KhDbyznopgCo5YMehmg7lxGOkdUSjTHNpdYXVc=;
-	b=J6I+vDk5WxN0MLgdU8zQ0Zc1ZOQOZkjuLZtgV33WjlVezncvCfOrUGWL+4N7ORPgEr4T
-	 sCHWdJ5TOwHUmTmlTjGpqvpszh+ZSrEEym3cDw+Pv/85Qlgn+o5Yk0A0gCeLGSN+PQTzU
-	 opvQZkaBScBSTTkq+dxP5o5CCAvlblDcUNwZaGGXTHmivGMGMw5E/YZoZOdu52VL6oVmi
-	 oG1xDyo4AEm71FtustCwuF+N9BnBmmLx4e+x2wnZzscksvVcuLtM5Kee3yCpEQy44yxV+
-	 V7ymn1oDsipE60FoD7jm5K1Hqy10FRz4ph+TXoLeRisUAwluuYFRfRxj8rYeGnxtRLA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793909778;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
+	 Mime-Version:References:Message-ID:Subject:From:To:Cc:Content-Type;
+	bh=EIQy1/TAGoU8eKcCEo0zLnQFQImrjv7x5uGLH/nZ0FA=;
+	b=JXAuCZU5ycjI2q0ts/RkNu1xsCzqfgZ9ymbsT0VAToWmdaBI9T34maSDziX9cH/DRXOc
+	 e8xqByN0XNllCVKq8eH/Lv7xOqIoM9/XvY0Bzg3j9ZLQ8aIMA4QmntUhf1l5pRilb8WDW
+	 0DYh6JG66dQqqunPxw2IhrIW2vvIu0wZ95G55TcYFptFwZvn1l4ej2yGFMbQxx0aYLKMP
+	 Pcwvg9MFoqQucWTKaZLp2ZNIvHatHjh3aj1VA0iU2FEpCc/ZeFllX58tsQGYC6r3X5lag
+	 MJyKLAS3zlJ0+AZQdKy8QR9dOyEtPKzeNb7dn663MMXM6UCXvZkPqeYJZbUPXY6yK5Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mjBfyZwo;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b="c9gkSRk/";
+	arc=none smtp.remote-ip=209.85.216.71
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C03606D510
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 19:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D51606A335
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 20:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91D51606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mjBfyZwo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2971D1F0089F
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 19:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793908129;
-	bh=mEaU8KhDbyznopgCo5YMehmg7lxGOkdUSjTHNpdYXVc=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=mjBfyZwoFSPLRS+6UnlG73onKSN7j2FXMNiVY2TN5b5fZx8hbAY0x8jv7spnvu30I
-	 q5UiW8fDV9CtjsTpZ95zcKHAfCcMjO44mq5Q7+nDeJAVmnhmoF6VL+VlwnNmSzdPnf
-	 iA6kSc1Uv7FoQxCgPFv8KElEigJiKckQapDnkpmO/63FuTFSaDRhoM1aK+ebsiU2eq
-	 Xk1/4Bemz1TG7uST5/+/kOWEA+GcZo9nz4j06IOimodGk4D6bs1XTI4iqZXpew9pQ0
-	 uyM2fqWwnfT+ZDrSag2lmcGkrztGPYV2bKDP7C9HMbKpbwyqsnsy9/P2mb/qCpMqOa
-	 tDu+xGuUSyRqQ==
-Message-ID: <sashiko-outbox-199985@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4] KEYS: Protect pkey method checks against type
- removal
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261105193632.34363-1-0xbeac@gmail.com>
-References: <auy1ANMSKTXZb8GE@kernel.org>
- <20261105193632.34363-1-0xbeac@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 19:48:48 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=c9gkSRk/
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3b07b06027eso2728140a91.0
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 12:16:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1793909777; x=1794514577; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=EIQy1/TAGoU8eKcCEo0zLnQFQImrjv7x5uGLH/nZ0FA=;
+        b=c9gkSRk/G5cQaDx3BSrZGBoDMCozv4szM8QvS2Th579Qnisyokp/JdrpkjOZDHP45X
+         iTpj6U5QGGnf4wNaEELIgCTz9BACb3zfyo046QWk1uLstSQyRlZKaqFhuH/2RLWqejnQ
+         QAtnKIqy6prKraHvJKKR3ady4Fyn6sBSgjvQhgIlofqXP123yfJzkT8scbG1ZMQtH6FT
+         vBBQSCt7Zdepm2bJggcyD1e6cpvu/9N6zrgr2tvZ0AleLOTZcymiNZ2vLmP6A1WTb8pa
+         sZNviGhek4kHBVs5Q6xsEJSokuDU9xH5nF3FecmRtc5dzrow7+/801IJt181nXWU/7wW
+         Afpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793909777; x=1794514577;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EIQy1/TAGoU8eKcCEo0zLnQFQImrjv7x5uGLH/nZ0FA=;
+        b=ak8z2nSyxIRGN0vn8sZ4onfUcIUtPBmTAkQ2KYmClkRZF71rg7gBgOFicq0sj6t0LV
+         m5A1YgkYc3A3Qp1q0ovsfy5R5sDJK2p+I9FUwvgBAZzZISeThgGTBdjLqbuH2x2IA7/s
+         dpKEFV5bGcTv5p2S2TPpXY3+EUI23nV7Bw04JOm8j6CxAqJzZs9yVD/FEZagtTNwh8bq
+         cc1iyx2PRGMv0iFJ+5jov74jywfDhXtXnu2M7mqpMDZ46JvdHT7gB5Rvq2C5os/roO2v
+         /7mmn/pvq0WKZ2ZIYK6BSbyz6OSAoCFdvyh3Oxdvd/oDWyxq6vcltXX9p32Sa9AwXV7d
+         2EHA==
+X-Forwarded-Encrypted: i=1; AKwUvBx7IhzTZ/Ams8XA6R2n8eZHgSULAhu0m2Vc8nA5Jf8NR1KdDcz8zuf0JoxfOU16RWvAbIXLk975+D/GSi73sZaKZrG4y3M=@vger.kernel.org
+X-Gm-Message-State: APuU4Z94wsU7NmRVWizJrGKDVow7ScovAOemJ2Wd1vUtIeeBYlSwO73c
+	HEz8E/noeNqPYsZlDaACEHdPQk0U3ORfdR7IErfVpN0KLK5BzMeHDVFpyKSKwpnQPWtl5C1rMdZ
+	Mmf1+dw==
+X-Received: from plby6.prod.google.com ([2002:a17:902:ed46:b0:2e9:6f2c:71c3])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:288e:b0:3ac:9669:846b
+ with SMTP id 98e67ed59e1d1-3b0db5f7106mr137314a91.9.1793909776747; Thu, 05
+ Nov 2026 12:16:16 -0800 (PST)
+Date: Thu, 5 Nov 2026 20:16:16 +0000
+In-Reply-To: <20261104150318.1156620-1-edumazet@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,33 +77,50 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+Mime-Version: 1.0
+References: <20261104150318.1156620-1-edumazet@kernel.org>
+Message-ID: <auzkBSLZp4br_6OX@google.com>
+Subject: Re: [PATCH net] calipso: do not charge request socket options to the listener
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: Eric Dumazet <edumazet@kernel.org>
+Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	Sashiko <sashiko-bot@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-> keyctl_pkey_params_get() looks up the key, and keyctl_pkey_query(),
-> keyctl_pkey_e_d_s() and keyctl_pkey_verify() then dereference
-> key->type->asym_* outside key->sem.  A reference keeps the key alive, but
-> does not pin the module providing its type.
->=20
-> unregister_key_type() calls key_gc_keytype(), which retypes every
-> remaining key of the type to key_type_dead under key->sem for writing.
-> The pkey paths read key->type again after their checks, so a concurrent
-> module unload can turn the checked callback into the NULL key_type_dead
-> member and call through a NULL function pointer, e.g.:
->=20
->   KEYCTL_PKEY_SIGN task              Module unload and key GC
->   ------------------------           ------------------------
->   keyctl_pkey_e_d_s()
->     if (!key->type->asym_eds_op)     unregister_key_type()
-> [ ... ]
-> against type removal").
->=20
-> Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops=
- for asymmetric keys [ver #2]")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Yuansheng Yang <0xbeac@gmail.com>
+On Wed, 04 Nov 2026 16:03:18 +0100, Eric Dumazet wrote:
+> calipso_req_setattr() and calipso_req_delattr() allocate ireq->ipv6_opt
+> with ipv6_renew_options(), which charges the listener sk_omem_alloc
+> through sock_kmalloc().
+> 
+> tcp_v6_reqsk_destructor() frees ireq->ipv6_opt without uncharging it,
+> so each request socket leaks its options size from the listener
+> budget. Once sysctl_optmem_max is reached, sock_kmalloc() fails,
+> calipso_req_setattr() returns -ENOBUFS, and tcp_v6_route_req() drops
+> all subsequent SYN packets. __sk_destruct() also reports an optmem
+> leakage when the listener is destroyed.
+> 
+> Uncharging in tcp_v6_reqsk_destructor() would not be correct: after a
+> migration, req->rsk_listener is no longer the socket that was charged.
+> 
+> These options belong to the request socket, there is no reason to
+> charge them to the listener. Change ipv6_renew_options() to use
+> kmalloc() when its sk argument is NULL, and use this from
+> calipso_req_setattr() and calipso_req_delattr(),
+> like cipso_v4_req_setattr() which uses kzalloc().
+> 
+> Note:
+> 
+> After this patch, calipso_req_setattr() and calipso_req_delattr()
+> no longer need the listener. Commit 10876da918fa ("calipso: Fix
+> null-ptr-deref in calipso_req_{set,del}attr().") could be reverted
+> in net-next (also removing the then unused sk variables), so that
+> CALIPSO works with SYN cookies.
+> 
+> Fixes: e1adea927080 ("calipso: Allow request sockets to be relabelled by the lsm.")
+> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> Closes: https://lore.kernel.org/netdev/179378292255.488856.6917577451813010963@kernel.org/
+> Signed-off-by: Eric Dumazet <edumazet@kernel.org>
 
-Sashiko has reviewed this patch and found no issues.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105193632.3436=
-3-1-0xbeac@gmail.com?part=3D1
-
+Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
