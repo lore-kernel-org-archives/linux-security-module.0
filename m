@@ -1,210 +1,113 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=2 smtp.remote-ip=52.101.83.27
-ARC-Seal: i=3; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793899090;
-	b=CEf6Kjsc72Yhd/zNvq7AHnhTPvUDNBS+jnrpjWb9lr0qQNZYlsXl6GqLdv0uQl1E1AKZ
-	 AwlvY/x1rCO2/JPea0p5Y2WsuCIx4BZGmMFjTQn7TvpOHdAw5qMyD2KQWRSvVwgXM22YZ
-	 4g4hRZtFyo81XntM32MXUjqxsD4/quY45EgRVh4+ax71rTb6iTWY39P8czUGnHG+uc5nr
-	 HUtg0QIhX+tqmUbgdBt4O/KE1M4/iebRBY+OjOUaObXv+hJo/qt2IfwG+bAWc/jMVg4s4
-	 PVZcT6wXP4XVqpksBwcYGdgKcMwenLgmcPCNDP4mnPRVR0ybTQKQRy5uSau2SOGKvmw==
-ARC-Message-Signature: i=3; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793899090;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:
-	 DKIM-Signature:Authentication-Results-Original:Received:Received:From:
-	 Date:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:
-	 References:In-Reply-To:To:Cc:X-Mailer:X-ClientProxiedBy:MIME-Version:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 x-checkrecipientrouted:NoDisclaimer:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam-Untrusted:
-	 X-Microsoft-Antispam-Message-Info-Original:
-	 X-Forefront-Antispam-Report-Untrusted:X-Exchange-RoutingPolicyChecked:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:
-	 X-EOPAttributedMessage:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStripped:
-	 X-MS-PublicTrafficType:X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.101.109
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793899342;
+	b=1fpRVWOnH851Meb6vUOQjG8XUSx60F5ONL0zW8T8u2/fO2TpuK8ZY2onM9rnQYgaA32C
+	 hG0RqBiHgveMGmaJEphTj847I/RuqqS3AnXBBS+MfxVjfVlvrrU3WI+c5AXHZEervzkr2
+	 3Cz0HudF9cz038iCVV/sqrKArmGLq0+bzLq84pAk8/oqUarzMZX5tdMkB8wpqObG9oBQ4
+	 iK4tP7zDjBmePBQlJBx5psF5lXaRgyGzJ1n43ElsAwUHGJAzxUIq3ubaCqveI0jjKUT/Z
+	 ofV3e5w7z5vim44uQ7QAvRskqR8RH20XXKjNjWmoJleG9pULfUwYqTb8HgatvXP6+ow==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793899342;
+	h=DMARC-Filter:Received:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:
+	 MIME-Version:X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
 	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
 	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
 	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
 	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
 	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=SqS8iYrVP6Mx9SPLC0ApdwsAnkBqoV6pRSpfL8mSrOE=;
-	b=ia0U9XOoSyF7AiqUpgakVmfAPpLIjOpoqkk/PAxKe3X4eRUMLch3rUFMdcGeVh6CoxbE
-	 wA6/LOdrdM5RWLQiLxYMwLfhga0OGXfQpc41DjuJBreojHIZKbHknBpHOtI+yxAocPjaS
-	 zz8RMy6fNE3Ff+v4x8YcAMI4b+GH450Zt4ZNBc56xSqMyFC4GLEUQYnBy1jvAj+ozMX+S
-	 rbR57TzDVmXen/p1dsEd8uT1oQiHyW2zr0sawUszWhDn2C8NRd+h6DC2m7f+8gzeZQ86o
-	 plhFCGXQDYnbQOzhmpHtkvPfJIk4hEB57RQ8YWYHYytYneZVfxJdBpSNZv4hDmJEd7g==
-ARC-Authentication-Results: i=3; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=selector1 header.b=H9x1E0ei;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=selector1 header.b=H9x1E0ei;
-	arc=pass header.oldest-pass=2 smtp.remote-ip=52.101.83.27
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013027.outbound.protection.outlook.com [52.101.83.27])
+	bh=Rc0wtIy/6o6xnqCrEec5zLi/2wTDYClsRFEZFtvgqJg=;
+	b=V6nLj0Qs3rpiC5oy3N5/Vr1YF6eTzDr77z8yhrKn4ZdDaWNAVGQytBJ92h2bJnPb+ESh
+	 w5ozSyi/ccTUicDjCWyQu8rJ+xkigTA0gKZG+ALbJrZJQXMQljlCGigUMM64Y1z28Lq1u
+	 pACOUWP1y0J1ZXRitdoNqKeDzNFJ2v2506WTwJdZOfQ3R2J+2gcXpffalQa4dN+Da+/EE
+	 OV7cdxzVKE1PlshPPMuhFTTlo10mCXBGVUlIVXqaUPD+/vAeje8H4smN4I9g+2uMQRHei
+	 ypCfZ6xWb0CssLTfZ5QiT8pHZZx0iliuOY9bhSyzEhvYPUcH2FweMsBWaKDGcCfW94Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=atomlin.com;
+	spf=pass smtp.mailfrom=atomlin.com;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.101.109
+Received: from CWXP265CU010.outbound.protection.outlook.com (mail-ukwestazon11022109.outbound.protection.outlook.com [52.101.101.109])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FD5606A337;
-	Thu,  5 Nov 2026 17:18:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 51FD5606A337
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=selector1 header.b=H9x1E0ei;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=selector1 header.b=H9x1E0ei
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=WgIK4XT9geM/owd7j8Dc0Z+Jw+1U95xtZIsRpFCxFOh8iaUR5fNeKiafU9OP5I85k1xzqh1OtHh2dnYyCYXRmCy/NGfXCDtIk9DmY4xiKNKrzrcUkYNl090x7lN5MaoM1y6eiASkCxY3Vz7m95nKBrfT4ayxpUaXGM/T+N4DSoPqk4C0r4PRBhwRWS6mhmJQlvqbsnhlkA2biqvX6eWbGwauzFCH6dePvstu2B5W78T/VDMJZu/3QdeNbCufTrmE3N/G5sWb0tfOz3YIl9F7tabuwAoUPHf0pJVj9+cTX0V5XJguHBU1ODOMGLvu3ANkLbV2SiACb96BurD8TC5Ohw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SqS8iYrVP6Mx9SPLC0ApdwsAnkBqoV6pRSpfL8mSrOE=;
- b=heSzza5WYb/HEeYYYKJvqVpdjsrJLdliN3MP9AB5CM74DzyTD1s8I0wg7pqg+0su/yZW1ue25orLZAcIPUgrbeXdl6LNMp9WZBxZ3nmzyeSQVSBz2oByKw//Z6iBgQd3SdenPlRF5Lcos3xkL9SDWK5gKEOFUImIRkLo/GwHBlXJ+GSCdabOVQrh6N7YZ4973T6nj/+pvV5RK3aZP9HCRbw6N/f0c7Ggb3lfwqtQqZeZrpeFZ0SO8iyJZbYn9ycCMRaFafItKGY73mtBJJM3y3nuvfSfZ65+gH9vpUN4nfcAeRriH4KBlpWcibApw0czxV6QjQIXrK+tTaPsq77GFQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=broadcom.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SqS8iYrVP6Mx9SPLC0ApdwsAnkBqoV6pRSpfL8mSrOE=;
- b=H9x1E0eiFRWlJ2wUj7MWH/xOET4KG0X2Zk6WjVh2meH/KULtcS3+5dqLF5/ngIzWfHybvdMyEQpnjCfeaL93QOy/3UXUV/GH3zjBKgzlJqkE0KoD06q4NAbzz6I3x4b9ERge1yFTHNpYvkXhx4s9VAobsP8zbApaIHsJHMHMnqc=
-Received: from ZR1PEPF000077DF.CHEP278.PROD.OUTLOOK.COM (2603:10a6:918::40d)
- by AM8PR08MB5650.eurprd08.prod.outlook.com (2603:10a6:20b:1d3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.8; Thu, 5 Nov 2026
- 17:17:57 +0000
-Received: from ZR1PEPF0000E6AF.eurprd05.prod.outlook.com (2603:10a6:918::156)
- by ZR1PEPF000077DF.outlook.office365.com (2603:10a6:918::40d) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.10
- via Frontend Transport; Thu, 5 Nov 2026 17:17:57 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 4.158.2.129) smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- ZR1PEPF0000E6AF.mail.protection.outlook.com (10.167.241.86) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.592.5
- via Frontend Transport; Thu, 5 Nov 2026 17:17:56 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C7B606A326;
+	Thu,  5 Nov 2026 17:22:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 37C7B606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yy1PlYrYiIc9F0wSH5V4szydX9eoFFtiSj7n68su3YOo0/j/ERzNsORwXIJ1PKFALB0dVgjGvZkZ+o75+XEj1sTVpy6YE+nNzVsNd195pvJGaMWXYc6aOc4drJxPQdAe1FxyvZTNuDoqiOt/hC2sGfNuQwBWoQpCZwbWNm0J7MXNSjbmRT0F/ySVV2eoenHTSn79iTYqE651DkXGTmzDhrWRYa1bKApsuNBNbILnHFPlvKtHFgLZ9Wu6C9+ceumhZotg5netOGDHMmR7WZhiguiXE18TPfpuMkHhAFzX6VewxFTvpoaGvjdTx7tbmV01nFDkJO+D0w0NelRnW80EbQ==
+ b=TY6qq1pawL8q4B6DNPGFHSbPgqCdGjXy/k/0mJT8189pcOM8p1b0cy4XyJA7kdFzMTV4Ag3nqvq1zyqBZKsStPlwuFN37tZm8mUbFRtZ8gyoqSGCbvUlVFaPPlvEERCGyj0SP2QIxQ7bwSUJtc2N72YuLHxIuyMlZ2Inuxmfrh8DqvCWaMLC1+yvrNG4HfH3ATHXkXy581ejg/QVtphzBo69RKTPZvTFSiEAn6yJCtr/KVckNp9zNrCMvmmXWTPWz5tx4vvnldWnMcc1wfClfa7RyvNDpFdMmpw56Sy7XmCy1ED2qui/CCWRB0u5GFtYANhz4Jzmmu0SWwvC5sjOyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SqS8iYrVP6Mx9SPLC0ApdwsAnkBqoV6pRSpfL8mSrOE=;
- b=jQwT0gRcysyejhaHqr7rZnXIO86RGsnwNZezo9PKf0NejcUsPJZd7Gw37JknvNxnq7QB9cDiBjH14rLgkM6mrUOao2CZ3XWCx9DWX8mPQElrlYN1Chn4cEEmbUpN4LSpCTyn8cWqCHTWaT58FEgqFGls8oeTBvXFTAD3v5Up0P3tN80isoKODGpPYmL/otv1emOkItyDKK+wgoP1O5HbttCUFniVVghxFFAyoPZ02U155zRP8Im1TL7Sze6laRsQNwatM3K387h0toteiwKYImdsxaH+VEVu9b/1JC4pBESwlmOaTJ8TQHBSuIBIuDwin2yOK6UHYhjZFvh2nNFkIw==
+ s=arcselector10001; h=From:Date:Subject:Message-ID:MIME-Version;
+ bh=Rc0wtIy/6o6xnqCrEec5zLi/2wTDYClsRFEZFtvgqJg=;
+ b=jGJVXAOeTVsdXgX/qlPxDwqAxdSBx10EypmHTIzNrm6UKskJZyJJwtkG+Bb4r4/+vLWQvt/F07p9uH2e6FZulMzZRUdYnJq8e9jx0gLuirFa+hTntJfb5HgEIBTu/tW3uq0VfjKPgU7g4vS1vBYi3vRW3vLQC/4EKBDHZlXvxebRjvqjttdJtCY41Q9N1s20OUQYviq99mKm8jTzqhNYM6mHUOxJImgSKB74z3KQ4gWUZEiUxTpkuPs0rVFBAGAhCnTsjYcNM+vGVa6uvq1ufLh7ZpcTw00cyK7OF6QH8kZgBboEPcb1lvl25Z9rupzXzrjYyIHiEfDQcCGos4SGLA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SqS8iYrVP6Mx9SPLC0ApdwsAnkBqoV6pRSpfL8mSrOE=;
- b=H9x1E0eiFRWlJ2wUj7MWH/xOET4KG0X2Zk6WjVh2meH/KULtcS3+5dqLF5/ngIzWfHybvdMyEQpnjCfeaL93QOy/3UXUV/GH3zjBKgzlJqkE0KoD06q4NAbzz6I3x4b9ERge1yFTHNpYvkXhx4s9VAobsP8zbApaIHsJHMHMnqc=
-Authentication-Results-Original: mx.microsoft.com 1; dkim=none (message not
- signed) header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AS8PR08MB10291.eurprd08.prod.outlook.com
- (2603:10a6:20b:629::15) by AM9PR08MB6098.eurprd08.prod.outlook.com
- (2603:10a6:20b:2d9::12) with Microsoft SMTP Server (version=TLS1_2,
+ smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
+ dkim=pass header.d=atomlin.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=atomlin.com;
+Received: from LO2P123MB4190.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:163::8)
+ by LO8P123MB624071.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:80a::14) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.10; Thu, 5 Nov
- 2026 17:17:15 +0000
-Received: from AS8PR08MB10291.eurprd08.prod.outlook.com
- ([fe80::9f01:508:17aa:279c]) by AS8PR08MB10291.eurprd08.prod.outlook.com
- ([fe80::9f01:508:17aa:279c%6]) with mapi id 15.21.0592.007; Thu, 5 Nov 2026
- 17:17:15 +0000
-From: Bence Csokas <bence.csokas@arm.com>
-Date: Thu, 05 Nov 2026 18:16:18 +0100
-Subject: [PATCH 3/3] treewide: Use offsetofp()
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261105-offsetof-v1-3-4153f5c10edc@arm.com>
-References: <20261105-offsetof-v1-0-4153f5c10edc@arm.com>
-In-Reply-To: <20261105-offsetof-v1-0-4153f5c10edc@arm.com>
-To: Chengchang Tang <tangchengchang@huawei.com>, 
- Junxian Huang <huangjunxian6@hisilicon.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
- Leon Romanovsky <leon@kernel.org>, 
- Miri Korenblit <miriam.rachel.korenblit@intel.com>, 
- Jes Sorensen <Jes.Sorensen@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
- Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
- Emil Tsalapatis <emil@etsalapatis.com>, 
- Ihor Solodrai <ihor.solodrai@linux.dev>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Steffen Klassert <steffen.klassert@secunet.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>, Vineet Gupta <vgupta@kernel.org>, 
- Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Philipp Stanner <phasta@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, Lyude Paul <lyude@redhat.com>, 
- Danilo Krummrich <dakr@kernel.org>, Zack Rusin <zack.rusin@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Selvin Xavier <selvin.xavier@broadcom.com>, 
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
- Dexuan Cui <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
- Guenter Roeck <groeck@chromium.org>, Nilesh Javali <njavali@marvell.com>, 
- GR-QLogic-Storage-Upstream@marvell.com, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <mkp@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Paulo Alcantara <pc@manguebit.org>, Namjae Jeon <linkinjeon@kernel.org>, 
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
- Bharath SM <bharathsm@microsoft.com>, Carlos Maiolino <cem@kernel.org>, 
- Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
- Davidlohr Bueso <dave@stgolabs.net>, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
- David Ahern <dsahern@kernel.org>, Ido Schimmel <idosch@nvidia.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- "Geoffrey D. Bennett" <g@b4.vu>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- linux-wireless@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
- linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- intel-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
- linux-hyperv@vger.kernel.org, chrome-platform@lists.linux.dev, 
- linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
- linux-xfs@vger.kernel.org, linux-sound@vger.kernel.org, 
- Bence Csokas <bence.csokas@arm.com>
-X-Mailer: b4 0.15.2
-X-ClientProxiedBy: PA7P264CA0148.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:377::20) To AS8PR08MB10291.eurprd08.prod.outlook.com
- (2603:10a6:20b:629::15)
+ 2026 17:22:17 +0000
+Received: from LO2P123MB4190.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::f71f:a9f:c4de:687a]) by LO2P123MB4190.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::f71f:a9f:c4de:687a%5]) with mapi id 15.21.0592.009; Thu, 5 Nov 2026
+ 17:22:16 +0000
+From: Aaron Tomlin <atomlin@atomlin.com>
+To: tsbogend@alpha.franken.de,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	stephen.smalley.work@gmail.com,
+	casey@schaufler-ca.com,
+	longman@redhat.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: chenridong@huaweicloud.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	kprateek.nayak@amd.com,
+	omosnace@redhat.com,
+	kees@kernel.org,
+	atomlin@atomlin.com,
+	neelx@suse.com,
+	sean@ashe.io,
+	chjohnst@gmail.com,
+	steve@abita.co,
+	mproche@gmail.com,
+	nick.lange@gmail.com,
+	cgroups@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5] security: Expand task_setscheduler LSM hook
+Date: Thu,  5 Nov 2026 12:22:10 -0500
+Message-ID: <20261105172210.76706-1-atomlin@atomlin.com>
+X-Mailer: git-send-email 2.55.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SN7PR04CA0155.namprd04.prod.outlook.com
+ (2603:10b6:806:125::10) To LO2P123MB4190.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:163::8)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -214,860 +117,407 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AS8PR08MB10291:EE_|AM9PR08MB6098:EE_|ZR1PEPF0000E6AF:EE_|AM8PR08MB5650:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8bb78b43-3d04-4b5b-2860-08df3b60bc0e
-x-checkrecipientrouted: true
-NoDisclaimer: true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P123MB4190:EE_|LO8P123MB624071:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a1fd20a-ce0e-438a-8a4e-08df3b6156bb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|23010399003|22082099003|18002099003|921020|11063799006|261009223027099003|3023799007|261026121527099003|56012099006|261026140227099003|261009221227099003|261009223327099003|261009221727099003|261009220027099003|261022105027099003|261021135927099003|261102123227099003|261102130727099003|261021133027099003|261021130227099003|261022113327099003|261026130827099003|261026135527099003|261021123027099003|261021121427099003|261022115727099003|260925021911599003|261022075727099003|261028144727099003|260925022911599003|260925021311599003|10067099003|6133799003;
-X-Microsoft-Antispam-Message-Info-Original:
- HQDMihludKvLxQozMxOIbeA1ImUUqxQacNly018rOIS0QAq72MMhZAumCX3827prmaq0I4WIfhm14Kc5uVJwD6Uwi5CVupG/YWSi4LhDgWaTQ+k4wFgyKlhPZu2rs6UOBt9Hs1NtQxyww8LPzPBzKkSeFgc8JhSF/361F4L45olzjI5r+kNTGSixCvIPx3OYiiM0BMmC4NcTZlw3dKPEq8rvW5LfIKYY1Sd+lnMVwaq6NE+ygk0E0we8mXqEZO0GkqONn3Vu6eT8lGNgaR/KiYT0LBMT5TQJ8bpdKkkCwXSUca2ouyQHo1RGX7GWTZ2eslpzdAdcuEnDKYHyPv8gsE0WVh1eAkTU6oydoKPQ3WLCerMlm75/KZF71GsObZeU4e9PcmfO/DYMzttLhokHEIJ6quljuMrYkOKoOonyH2vh1Xz4QiOQCL1Aasa0l9d7d8ycWoF5j1xgoNWI6xvOwAf0OePI8FKAuNEuKOvoohZSDGJfvETVIxPcSQtJb2PsELFbAuPVQqonp1owCrOAC7CHx4eY+cf/Nm9cPkyQSKTN9vEMx21DnEwQCjSEOID6HitWhjofzClyofb0KRuLeZm5Cy1+RccC8DzS9U5hRzub2L0XEd/Ws81W/K63N1De2e5OHGlu17LoKtT9PnMP//U7mqEXoIRseXSnmYfiSe+e/Oj71Zgn6XXcN/RRJPLQf+ziaYEhRwtIMdqlyUQ5Ng==
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR08MB10291.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(23010399003)(22082099003)(18002099003)(921020)(11063799006)(261009223027099003)(3023799007)(261026121527099003)(56012099006)(261026140227099003)(261009221227099003)(261009223327099003)(261009221727099003)(261009220027099003)(261022105027099003)(261021135927099003)(261102123227099003)(261102130727099003)(261021133027099003)(261021130227099003)(261022113327099003)(261026130827099003)(261026135527099003)(261021123027099003)(261021121427099003)(261022115727099003)(260925021911599003)(261022075727099003)(261028144727099003)(260925022911599003)(260925021311599003)(10067099003)(6133799003);DIR:OUT;SFP:1101;
-X-Exchange-RoutingPolicyChecked:
- YY3OfJkUoM0KdVtBpXEx0rNOwdCtiUgBP2b7abOL+kZgYBR3Jwz0gxg17K0Dlj8m+7CdMNX5ItlDLl8mXURSnWKBll4mgwkaQkT5kMtwkynoQLpa65gAbvKJq553054ZcZimZlSEQB/eBRojUV9pDXJQ4FI0HFwvGcMtgnjGrBpndzhoCUi4drnU/4MffFvvtDKRzpyvXC0rTg0EnKoatfDifDjjDw1uSOgDaCGqhFNesVRJMmkCvMB8nYvxD/JwbUgq+fJDzUu2qrjVjmfvjpgaUp1QTBZCy+x62ZdyjFXqTNj83rhSmXerkbuPVXl+LFu8WGHkofifi2HjKp+6Fw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR08MB6098
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- ZR1PEPF0000E6AF.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	d04951f7-4e9b-476f-f453-08df3b60a31f
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700016|14060799003|35042699022|1800799024|23010399003|6133799003|18002099003|22082099003|10067099003|3023799007|921020|261022105027099003|261102130727099003|56012099006|261026135527099003|261026121527099003|261021135927099003|261021123027099003|261026130827099003|261022075727099003|261102123227099003|261009220027099003|261009223327099003|11063799006|261009221227099003|261021121427099003|261009221727099003|260925021311599003|261009223027099003|261022115727099003|261028144727099003|261026140227099003|261022113327099003|261021130227099003|261021133027099003|260925022911599003|260925021911599003;
+	BCL:0;ARA:13230040|23010399003|376014|7416014|366016|1800799024|6133799003|18002099003|3023799007|921020|261021135927099003|261022113327099003|261022075727099003|10067099003|5023799004|261102123227099003|261026121527099003|261028144727099003|261102125427099003|261026140227099003|261021123027099003|56012099006|261009223027099003|261021121427099003|261022105027099003;
 X-Microsoft-Antispam-Message-Info:
-	fSfLjfSX97nt8lZryCZQrCk5aqmNQk7GROcm/RMvnpMrKMi4ZGx1A8FB4RY2clgKTQ38DtYXg3/8IqqeV5ww0twI7lvQwPkXiBansQrqLbOkJkic6dkC6w/kmxBMT4Q3PIPhxZ4el0YU6hrtu7qbWvWMnDuAgnMMh8AcSBNimt7/vfOvZbI8YjfGWpG6PukcP0OgjFk9h0qAF6bpqFCY+TBfOJQKZwPgdqImSnIKC7GhyvlrrEgaAVf/f39iYOUf1hIfPaodTQB6XziteF6GYchoruYxyx6QkSFIpzF9kNECXCeuDqACC4J/WqCotdkWQPROdonXX1Ynr9bb4xPL0BYzs0gGDEnYizskPDQEK8CHMLH40GbF7V88xMa2HitBteL3No7O7g/jkeW/ucpvhlnd6FEvKe4wGrsBHbSATp9nEMY/khhnle76ZKA5HVrHFSV0tPEye74hoz0a8S5T5CO8LQRjhWJzwj0e6f/ZIwnLuvNWrL8lhV8Cd5fEJr+F0Yym2/r4DhI3F2uVixe57Lb5e+9yCHocPrOph51FKRnCP9eBgp1TqkHlToU4b1XVmN0DmBbs+y4B72xrCrDcKpxyB0HIOcDo5AWmE7QYAmdo+eZuTkSQKWwSmtuBrDN+pQzOsOTWgKrFsU/SVpQ1qYw8w3MCLgSYrdYVcyHvMWsA1sROtmc6zUn2oxcVJFFrx7gO1xIMvbFqC+6XZMH02gW1qWsV67oVUQnhDnW8+o9ZInUYIHT/Jvm+DD4j6DHO
+	p6cVRD6oQbJfSYHJ84c19uqR4HdVFccpCXRWeMA7OnsrQiaziYPW1NwMUhtvXZaCsfgEsrb8hPcnOJUBx+xc4F5VYE328WXFi1CJplvZlOn/eBCKIS6rRFiNEyzMns/7qznweLBnLe0pe17j8jMYBU0pP+/FrUJWX80JSpJbz5rT0x3ypuUhUr8B/kznDQ9sPibClXlw3Nmdfa2WBm67drKpPh73ErArVhK7NbFndwt8CVWpsvEuNqr8d94+DZUCCxQ55nZ397Hu9kuW3JX4g+06CSyW/UTm0sH9+Y8Bg6++ZWoJbr0lmisMu8NAwvjRBUTOXAAUqHba3jLJg0LqRryENVOH/nmJiQ8WOM0A1m3uTIlU+WrTw0EZbHCT/x7pPdRMED7KG7DSYEJ/qCSqzgANcy5PehtqMh8wPCd/bb0fQlj2Pwz+5CmtZKr2KCaG+zqVBiw9PaO64iUhuep97DdbNInD+o+x1/8jJcOndaSvh7R8WZHKibJSIFTuhl9IWktkZGRmLYRX2Db4DqXixVurSk/8bdQzu5cYqnZUbR8mLfl5+cx4hdoU/U7cEm90KXlZRN3WXvncBq25UZXSJXyUdjCvLh/qJWMMgux5S++OrWQJRLS2xhHPny3CiZZyES5PF25mePeVMSs3htkTyJj5f97d/yVonpdAst5lZ7g=
 X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700016)(14060799003)(35042699022)(1800799024)(23010399003)(6133799003)(18002099003)(22082099003)(10067099003)(3023799007)(921020)(261022105027099003)(261102130727099003)(56012099006)(261026135527099003)(261026121527099003)(261021135927099003)(261021123027099003)(261026130827099003)(261022075727099003)(261102123227099003)(261009220027099003)(261009223327099003)(11063799006)(261009221227099003)(261021121427099003)(261009221727099003)(260925021311599003)(261009223027099003)(261022115727099003)(261028144727099003)(261026140227099003)(261022113327099003)(261021130227099003)(261021133027099003)(260925022911599003)(260925021911599003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P123MB4190.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(7416014)(366016)(1800799024)(6133799003)(18002099003)(3023799007)(921020)(261021135927099003)(261022113327099003)(261022075727099003)(10067099003)(5023799004)(261102123227099003)(261026121527099003)(261028144727099003)(261102125427099003)(261026140227099003)(261021123027099003)(56012099006)(261009223027099003)(261021121427099003)(261022105027099003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	tQdP5LXH0XP8xYt7aC8d7I6Tz2ClNgRpeQRdjXa/kNX6D+GGP8pBiN6FpEhsNuRLqKLhNTD6Lxa+sPl7NVxMiIz5ERtO7j8gmWSn/3UcHmgqWdilNyVM2JnN44y2xXxBNmRLq81+jsLRb7gnousT5i1h3erMZ+lTBlMv7GW/SjGFe5lmb9aOfpzv08gpvZccdIuLrNW/cHFYhxHcbUXV+sUYkC9UiWi5dcx2NVDItGh08dEoXp6XCJZWKMLIKHT/0n01KHRu1jmM7pfu0Lbqnae0bf8xxuotBxaseIulnE+jtHSdIYMsIRNd0k8k/PMFuuz9/lE37Lp3pmBjK+CSIa+Du4FOJH8Y+Klz6fFZbxV/SLt8o8fR6yFsv+FijFXaAex+hQtKhH+z+REsVR31a5dsHYn3a9Hzb8iL1V9Ukq7DStuJ3blg1cz3GR58/0t9
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2026 17:17:56.6459
+	=?us-ascii?Q?S+3HrkW5uaJokgM0nAddV8bX6nLj6+f2f+oZvJGeu90lIk5E7EQB+gWZEZUx?=
+ =?us-ascii?Q?0tDxF59g6p7Gyb880e/if5HYil4LkUA9yjjVSXB+R7zUiKGZgTwFpb/Erfjh?=
+ =?us-ascii?Q?rSufmIhNB04WddAPORJzHhsyhNukwFX0WWA3hD5EnadZRC78Qyi/u1pvcuoj?=
+ =?us-ascii?Q?A9p53hRn1W/vDcIbaUzExrmBFczhd0NFHF4g1znKUNa+ije3uukGIgblIqTm?=
+ =?us-ascii?Q?HMElXaDquY7z7BJ5JeVNEiw7qmd2S7LBxlhqtQb4va7nULcbG27LNR3yJgGr?=
+ =?us-ascii?Q?MgZJKxofZW7DuXGN862SS6q6mheGa81bqT1BINh64w37oPZdW+VgMMu4IIES?=
+ =?us-ascii?Q?k1DZTlFVz1oAmEh41WgjMche4uwpk96IYkG5P+9/n+QI7e19NWhCzQO5RVol?=
+ =?us-ascii?Q?eGyaonFPnZoxsE7QpRHPU4m3iNgogB3HKntk8gFyBPlOh13FXLReztAmjckr?=
+ =?us-ascii?Q?G8kXWR//KVic8Q4AwgAihpqGYFLzsRaCBmQ/iwo8hG6yk4VX3sRi5qMap07Z?=
+ =?us-ascii?Q?n9WmpNHpYoDr1inkrjlwnBprCsGNMBiYD5Zb2xp449oqVinTwZSuR1Z8b2IZ?=
+ =?us-ascii?Q?D9EeD6QwgT8lResM7T/dNmghctA43sORcB22LtOz/53T+f3QXDzQjmTkHQ8O?=
+ =?us-ascii?Q?PpJdX44EBOw2C6UWaWoeeZNUr2Qk5kW2DICV2UmmwwshjSHeEZ9tAXxElXxP?=
+ =?us-ascii?Q?sYsRD8k66qLjJMIngIPQQUXsT6Lzm8MiyOQSA0EuTRSel4LTtVpDkTzWGDLG?=
+ =?us-ascii?Q?lzID2r660qzD4qzw4WE2VWK1xIeV7tFdeBuAFdIcMLcn99I4hLL3y8LXAQ1W?=
+ =?us-ascii?Q?4DfTmo2ZDrdrF4HrdA6R2PifFVik1+XKquz4bqnj/gmXoBxGrhP4wMvQxaJw?=
+ =?us-ascii?Q?L/sApPSK8XEaj4bsSL5Z5Yc0ip0pIgEYvngDu7qVhQGm0qfNqXLM8IvLc7wp?=
+ =?us-ascii?Q?FC/yZEvEKHGKexldGHBXk6QOkk5utMAtlo8Ujs3HZP7p5SZ2i9+7o9kihEcz?=
+ =?us-ascii?Q?fM8lYak2n/h5qTx4mVPPBoCWYo/NmraKvRW60dtRmyft2rVp7zzhRdfBLkqa?=
+ =?us-ascii?Q?P1jGvCnh2epQtVLmf5nUIdOt844v2pmBoACDZBU/0ZddxFAleP5YLDNOF6i1?=
+ =?us-ascii?Q?i3HTStG1+9DlI/ZYmh2Qal5rTh43fAXOc1t7sms5gsPc5w6lZjikIiqXK6LT?=
+ =?us-ascii?Q?6QDwDUm5N6ySFvcaDaeqnbNs9W0jGYFRiftSxKdMa3FhSlr8HHF8bbgwFrxL?=
+ =?us-ascii?Q?+s0rtDQuqAq9NG/R1JqTlaYBQPgxDztx0+EUGIM2mZsoD7F+qeC/D+8xtND1?=
+ =?us-ascii?Q?aWl5WqKf1lenMyg+jYc9YdiIi5zceFJ44LXCD3V6epnnYdlP2uCbwFJA7eNj?=
+ =?us-ascii?Q?5re/xkv2AXkxKcZ9LjluP4184R16UghWlzQy/HTY11odb7L1XYgjxKvxUekW?=
+ =?us-ascii?Q?+8IToiQlqIN1/p44hInsTXC5KxCkBrx7K0v4U/zOqpg/LINWYiQYuYYQK2da?=
+ =?us-ascii?Q?oEqlprOZ9YjQGwpPII0/1zgsiMSm8O38MoiYf5vbMA8jjlnFaQ65mFdzUVlM?=
+ =?us-ascii?Q?kNjWQ6b6K/3Fmq13nKMTxp+ubPEKqbMbiUJfglNjrLPXLKjWW0Yrr31L1Umw?=
+ =?us-ascii?Q?hQicYIVLPFVnbGUiplqGewEt/8hFsLfaxfMPs4XTGUTa4jF7dutXHanILfKP?=
+ =?us-ascii?Q?q22vgMe/9HZAbo7t4L2rXaxPti+DEhvcFYsdeKTS8dS2JGgBArSB3YJZjM39?=
+ =?us-ascii?Q?zloXGLwkBA=3D=3D?=
+X-OriginatorOrg: atomlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a1fd20a-ce0e-438a-8a4e-08df3b6156bb
+X-MS-Exchange-CrossTenant-AuthSource: LO2P123MB4190.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2026 17:22:16.5545
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bb78b43-3d04-4b5b-2860-08df3b60bc0e
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	ZR1PEPF0000E6AF.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB5650
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TM0htGxTfAIDOlfEhMZ+LxsnB1Jr1JhQA/ZLzP/ZcPw7i9tucRAJZGdPWwEuxU8sHWFt5jjEtXn+dg8eRAm05A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO8P123MB624071
 
-Generated with the following simple Coccinelle patch:
+At present, the task_setscheduler LSM hook only accepts the target
+task_struct pointer. It lacks visibility into the requested scheduling
+attributes (sched_attr) and the requested CPU affinity mask (cpumask).
+Consequently, security modules are blind to both the target scheduling
+parameters and target CPUs, preventing granular access control decisions
+based on scheduling policy or spatial isolation.
 
-@@
-expression ptr, member;
-@@
-- offsetof(typeof(*ptr), member)
-+ offsetofp(ptr, member)
+In modern multi-tenant and real-time environments, CPU and scheduling
+isolation are critical boundaries. The inability to audit or restrict
+specific scheduling policy changes or CPU pinning requests limits the
+effectiveness of security policies, particularly when attempting to
+shield isolated or cryptographic cores from unprivileged or compromised
+tasks.
 
-Signed-off-by: Bence Csokas <bence.csokas@arm.com>
+This patch expands the security_task_setscheduler() hook signature to
+include pointers to the requested sched_attr and cpumask alongside the
+target task_struct. In __sched_setscheduler(), a local copy of
+sched_attr is populated with the resolved scheduling policy so that
+parameter-only updates (such as sched_setparam() or sched_setattr() with
+SCHED_FLAG_KEEP_POLICY) always pass the effective scheduling policy to
+the hook rather than an internal sentinel. Because this is a shared hook
+used across multiple paths, call sites that do not modify scheduling
+attributes or CPU affinity pass NULL for the respective parameter. To
+protect against unverified dereferences, both parameters are annotated
+with __nullable in the LSM hook definition, ensuring the BPF verifier
+mandates explicit NULL checks for attached eBPF programs.
+
+Historically, SELinux has governed all scheduling alterations under a
+single, monolithic PROCESS__SETSCHED access vector. By inspecting fields
+such as attr->sched_policy or attr->sched_priority, as well as the
+requested cpumask, a security module can introduce granular access
+controls, such as differentiating between standard time-sharing policies
+and latency-sensitive real-time policies.
+
+This change updates all in-tree security modules (capabilities, SELinux,
+and Smack) to accommodate the new parameters mechanically, while
+providing LSMs with the necessary context to enforce strict scheduling
+and affinity policies.
+
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
 ---
- arch/arc/kernel/unwind.c                           |  4 ++--
- drivers/bluetooth/btmrvl_main.c                    | 12 +++++-----
- drivers/dma-buf/dma-resv.c                         |  2 +-
- drivers/firmware/arm_scmi/base.c                   |  2 +-
- drivers/gpu/drm/drm_edid.c                         | 26 +++++++++++-----------
- drivers/gpu/drm/i915/gem/i915_gem_object.c         |  4 ++--
- drivers/gpu/drm/i915/i915_active.c                 |  2 +-
- drivers/gpu/drm/i915/i915_sw_fence_work.c          |  2 +-
- .../gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/gsp.c  |  2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c            | 12 +++++-----
- drivers/infiniband/hw/bnxt_re/qplib_fp.c           |  2 +-
- drivers/media/usb/uvc/uvc_v4l2.c                   |  4 ++--
- drivers/net/hyperv/rndis_filter.c                  |  2 +-
- drivers/net/wireless/intel/iwlwifi/iwl-drv.c       |  2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c     |  2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c        |  2 +-
- drivers/net/wireless/realtek/rtw89/core.c          |  2 +-
- drivers/platform/chrome/cros_ec_lightbar.c         |  4 ++--
- drivers/scsi/qla2xxx/qla_gs.c                      |  2 +-
- drivers/scsi/qla2xxx/qla_mbx.c                     |  2 +-
- drivers/scsi/qla2xxx/qla_os.c                      |  2 +-
- drivers/scsi/qla2xxx/qla_tmpl.c                    |  4 ++--
- drivers/scsi/scsi_transport_fc.c                   |  2 +-
- fs/readdir.c                                       |  2 +-
- fs/smb/client/cifssmb.c                            |  4 ++--
- fs/smb/client/reparse.c                            |  2 +-
- fs/xfs/scrub/attr.c                                |  4 ++--
- fs/xfs/scrub/attr_repair.c                         |  4 ++--
- fs/xfs/scrub/dir.c                                 |  4 ++--
- fs/xfs/scrub/dir_repair.c                          |  4 ++--
- kernel/futex/core.c                                |  2 +-
- net/ipv4/ip_output.c                               |  4 ++--
- net/ipv4/udp.c                                     |  4 ++--
- net/ipv6/udp.c                                     |  4 ++--
- net/mac80211/agg-rx.c                              |  3 +--
- net/mac80211/agg-tx.c                              |  3 +--
- net/mac80211/parse.c                               |  2 +-
- net/mac80211/tdls.c                                |  4 ++--
- sound/usb/mixer_scarlett2.c                        |  2 +-
- 39 files changed, 75 insertions(+), 77 deletions(-)
+Changes since v4:
 
-diff --git a/arch/arc/kernel/unwind.c b/arch/arc/kernel/unwind.c
-index 6fdc751f906e..dae3b5f3dff6 100644
---- a/arch/arc/kernel/unwind.c
-+++ b/arch/arc/kernel/unwind.c
-@@ -310,11 +310,11 @@ static void init_unwind_hdr(struct unwind_table *table,
- 	header->fde_count_enc = DW_EH_PE_abs | DW_EH_PE_data4;
- 	header->table_enc = DW_EH_PE_abs | DW_EH_PE_native;
- 	put_unaligned((unsigned long)table->address, &header->eh_frame_ptr);
--	BUILD_BUG_ON(offsetof(typeof(*header), fde_count)
-+	BUILD_BUG_ON(offsetofp(header, fde_count)
- 		     % __alignof(typeof(header->fde_count)));
- 	header->fde_count = n;
- 
--	BUILD_BUG_ON(offsetof(typeof(*header), table)
-+	BUILD_BUG_ON(offsetofp(header, table)
- 		     % __alignof(typeof(*header->table)));
- 	for (fde = table->address, tableSize = table->size, n = 0;
- 	     tableSize;
-diff --git a/drivers/bluetooth/btmrvl_main.c b/drivers/bluetooth/btmrvl_main.c
-index d449fbdde464..ba23a31ed6d9 100644
---- a/drivers/bluetooth/btmrvl_main.c
-+++ b/drivers/bluetooth/btmrvl_main.c
-@@ -81,7 +81,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 	struct btmrvl_event *event;
- 	int ret = 0;
- 
--	if (skb->len <= offsetof(typeof(*event), data[0]))
-+	if (skb->len <= offsetofp(event, data[0]))
- 		return -EINVAL;
- 
- 	event = (struct btmrvl_event *) skb->data;
-@@ -92,7 +92,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 
- 	switch (event->data[0]) {
- 	case BT_EVENT_AUTO_SLEEP_MODE:
--		if (skb->len <= offsetof(typeof(*event), data[2]))
-+		if (skb->len <= offsetofp(event, data[2]))
- 			return -EINVAL;
- 		if (!event->data[2]) {
- 			if (event->data[1] == BT_PS_ENABLE)
-@@ -107,7 +107,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 		break;
- 
- 	case BT_EVENT_HOST_SLEEP_CONFIG:
--		if (skb->len <= offsetof(typeof(*event), data[3]))
-+		if (skb->len <= offsetofp(event, data[3]))
- 			return -EINVAL;
- 		if (!event->data[3])
- 			BT_DBG("gpio=%x, gap=%x", event->data[1],
-@@ -117,7 +117,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 		break;
- 
- 	case BT_EVENT_HOST_SLEEP_ENABLE:
--		if (skb->len <= offsetof(typeof(*event), data[1]))
-+		if (skb->len <= offsetofp(event, data[1]))
- 			return -EINVAL;
- 		if (!event->data[1]) {
- 			adapter->hs_state = HS_ACTIVATED;
-@@ -131,7 +131,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 		break;
- 
- 	case BT_EVENT_MODULE_CFG_REQ:
--		if (skb->len <= offsetof(typeof(*event), data[2]))
-+		if (skb->len <= offsetofp(event, data[2]))
- 			return -EINVAL;
- 		if (priv->btmrvl_dev.sendcmdflag &&
- 				event->data[1] == MODULE_BRINGUP_REQ) {
-@@ -150,7 +150,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
- 		break;
- 
- 	case BT_EVENT_POWER_STATE:
--		if (skb->len <= offsetof(typeof(*event), data[1]))
-+		if (skb->len <= offsetofp(event, data[1]))
- 			return -EINVAL;
- 		if (event->data[1] == BT_PS_SLEEP)
- 			adapter->ps_state = PS_SLEEP;
-diff --git a/drivers/dma-buf/dma-resv.c b/drivers/dma-buf/dma-resv.c
-index 2365a6d8ca15..83c204458d40 100644
---- a/drivers/dma-buf/dma-resv.c
-+++ b/drivers/dma-buf/dma-resv.c
-@@ -108,7 +108,7 @@ static struct dma_resv_list *dma_resv_list_alloc(unsigned int max_fences)
- 		return NULL;
- 
- 	/* Given the resulting bucket size, recalculated max_fences. */
--	list->max_fences = (size - offsetof(typeof(*list), table)) /
-+	list->max_fences = (size - offsetofp(list, table)) /
- 		sizeof(*list->table);
- 
- 	return list;
-diff --git a/drivers/firmware/arm_scmi/base.c b/drivers/firmware/arm_scmi/base.c
-index a9cea09355ff..3270268e578b 100644
---- a/drivers/firmware/arm_scmi/base.c
-+++ b/drivers/firmware/arm_scmi/base.c
-@@ -340,7 +340,7 @@ static void *scmi_base_fill_custom_report(const struct scmi_protocol_handle *ph,
- 	if (evt_id != SCMI_EVENT_BASE_ERROR_EVENT || sizeof(*p) < payld_sz)
- 		return NULL;
- 
--	expected_sz = offsetof(typeof(*p), msg_reports);
-+	expected_sz = offsetofp(p, msg_reports);
- 	if (payld_sz < expected_sz)
- 		return NULL;
- 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 3148038747b6..b2960eff80cd 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -3124,9 +3124,9 @@ EXPORT_SYMBOL(drm_mode_find_dmt);
- 
- static bool is_display_descriptor(const struct detailed_timing *descriptor, u8 type)
- {
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), pixel_clock) != 0);
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.pad1) != 2);
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.type) != 3);
-+	BUILD_BUG_ON(offsetofp(descriptor, pixel_clock) != 0);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.pad1) != 2);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.type) != 3);
- 
- 	return descriptor->pixel_clock == 0 &&
- 		descriptor->data.other_data.pad1 == 0 &&
-@@ -3135,7 +3135,7 @@ static bool is_display_descriptor(const struct detailed_timing *descriptor, u8 t
- 
- static bool is_detailed_timing_descriptor(const struct detailed_timing *descriptor)
- {
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), pixel_clock) != 0);
-+	BUILD_BUG_ON(offsetofp(descriptor, pixel_clock) != 0);
- 
- 	return descriptor->pixel_clock != 0;
- }
-@@ -3207,8 +3207,8 @@ is_rb(const struct detailed_timing *descriptor, void *data)
- 	if (!is_display_descriptor(descriptor, EDID_DETAIL_MONITOR_RANGE))
- 		return;
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.flags) != 10);
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.formula.cvt.flags) != 15);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.flags) != 10);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.formula.cvt.flags) != 15);
- 
- 	if (descriptor->data.other_data.data.range.flags == DRM_EDID_CVT_SUPPORT_FLAG &&
- 	    descriptor->data.other_data.data.range.formula.cvt.flags & DRM_EDID_CVT_FLAGS_REDUCED_BLANKING)
-@@ -3237,7 +3237,7 @@ find_gtf2(const struct detailed_timing *descriptor, void *data)
- 	if (!is_display_descriptor(descriptor, EDID_DETAIL_MONITOR_RANGE))
- 		return;
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.flags) != 10);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.flags) != 10);
- 
- 	if (descriptor->data.other_data.data.range.flags == DRM_EDID_SECONDARY_GTF_SUPPORT_FLAG)
- 		*res = descriptor;
-@@ -3251,7 +3251,7 @@ drm_gtf2_hbreak(const struct drm_edid *drm_edid)
- 
- 	drm_for_each_detailed_block(drm_edid, find_gtf2, &descriptor);
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.formula.gtf2.hfreq_start_khz) != 12);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.formula.gtf2.hfreq_start_khz) != 12);
- 
- 	return descriptor ? descriptor->data.other_data.data.range.formula.gtf2.hfreq_start_khz * 2 : 0;
- }
-@@ -3263,7 +3263,7 @@ drm_gtf2_2c(const struct drm_edid *drm_edid)
- 
- 	drm_for_each_detailed_block(drm_edid, find_gtf2, &descriptor);
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.formula.gtf2.c) != 13);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.formula.gtf2.c) != 13);
- 
- 	return descriptor ? descriptor->data.other_data.data.range.formula.gtf2.c : 0;
- }
-@@ -3275,7 +3275,7 @@ drm_gtf2_m(const struct drm_edid *drm_edid)
- 
- 	drm_for_each_detailed_block(drm_edid, find_gtf2, &descriptor);
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.formula.gtf2.m) != 14);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.formula.gtf2.m) != 14);
- 
- 	return descriptor ? le16_to_cpu(descriptor->data.other_data.data.range.formula.gtf2.m) : 0;
- }
-@@ -3287,7 +3287,7 @@ drm_gtf2_k(const struct drm_edid *drm_edid)
- 
- 	drm_for_each_detailed_block(drm_edid, find_gtf2, &descriptor);
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.formula.gtf2.k) != 16);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.formula.gtf2.k) != 16);
- 
- 	return descriptor ? descriptor->data.other_data.data.range.formula.gtf2.k : 0;
- }
-@@ -3299,7 +3299,7 @@ drm_gtf2_2j(const struct drm_edid *drm_edid)
- 
- 	drm_for_each_detailed_block(drm_edid, find_gtf2, &descriptor);
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.formula.gtf2.j) != 17);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.formula.gtf2.j) != 17);
- 
- 	return descriptor ? descriptor->data.other_data.data.range.formula.gtf2.j : 0;
- }
-@@ -3312,7 +3312,7 @@ get_timing_level(const struct detailed_timing *descriptor, void *data)
- 	if (!is_display_descriptor(descriptor, EDID_DETAIL_MONITOR_RANGE))
- 		return;
- 
--	BUILD_BUG_ON(offsetof(typeof(*descriptor), data.other_data.data.range.flags) != 10);
-+	BUILD_BUG_ON(offsetofp(descriptor, data.other_data.data.range.flags) != 10);
- 
- 	switch (descriptor->data.other_data.data.range.flags) {
- 	case DRM_EDID_DEFAULT_GTF_SUPPORT_FLAG:
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
-index 9e01f8b2079a..0c05babc6779 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
-@@ -101,8 +101,8 @@ void i915_gem_object_init(struct drm_i915_gem_object *obj,
- 	 * A gem object is embedded both in a struct ttm_buffer_object :/ and
- 	 * in a drm_i915_gem_object. Make sure they are aliased.
- 	 */
--	BUILD_BUG_ON(offsetof(typeof(*obj), base) !=
--		     offsetof(typeof(*obj), __do_not_access.base));
-+	BUILD_BUG_ON(offsetofp(obj, base) !=
-+		     offsetofp(obj, __do_not_access.base));
- 
- 	spin_lock_init(&obj->vma.lock);
- 	INIT_LIST_HEAD(&obj->vma.list);
-diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
-index b2442f05825e..bd2468e34ac8 100644
---- a/drivers/gpu/drm/i915/i915_active.c
-+++ b/drivers/gpu/drm/i915/i915_active.c
-@@ -263,7 +263,7 @@ static struct active_node *__active_lookup(struct i915_active *ref, u64 idx)
- 			return it;
+ - Rebased against v7.4-rc1
+
+ - In __sched_setscheduler(), populate a local copy of sched_attr with
+   the resolved scheduling policy before calling
+   security_task_setscheduler() so parameter-only updates (such as
+   sched_setparam() or sched_setattr() with SCHED_FLAG_KEEP_POLICY) pass
+   the effective policy rather than SETPARAM_POLICY (-1)
+
+ - Clarified the commit message to reflect that both the sched_attr and
+   cpumask parameters are introduced by this patch
+
+ - Link to v4: https://lore.kernel.org/all/20260720014156.459386-1-atomlin@atomlin.com/
+
+Changes since v3:
+
+ - Expanded the task_setscheduler LSM hook to accept the 'sched_attr'
+   payload, enabling BPF and other LSMs to inspect scheduling attributes
+   (Peter Zijlstra)
+
+ - Updated all call sites for security_task_setscheduler() to correctly
+   pass the attr structure when available, or NULL otherwise
+   (Peter Zijlstra)
+
+ - Added the necessary forward declaration for struct sched_attr to
+   include/linux/security.h
+
+ - Link to v3: https://lore.kernel.org/lkml/20260526142838.774711-1-atomlin@atomlin.com/
+
+Changes since v2:
+
+ - Dropped patch 1. This is to be addressed by the cgroup cpuset
+   maintainer (Waiman Long)
+
+ - Dropped patch 3. Will be submitted as a separate patch (Paul Moore)
+
+ - Link to v2: https://lore.kernel.org/lkml/20260509213803.968464-1-atomlin@atomlin.com/
+
+Changes since v1:
+
+ - Reordered the allocation and user-copy of new_mask in the MIPS
+   architecture's mipsmt_sys_sched_setaffinity() to occur before the
+   LSM hook is invoked. This ensures the security modules evaluate a fully
+   populated mask rather than uninitialised memory, while cleanly handling
+   error unwinding
+
+ - Updated cpuset_can_fork() to pass the destination cpuset's effective CPU
+   mask instead of NULL
+
+ - Link to v1: https://lore.kernel.org/lkml/20260509164847.939294-1-atomlin@atomlin.com/
+---
+ arch/mips/kernel/mips-mt-fpaff.c |  2 +-
+ fs/proc/base.c                   |  2 +-
+ include/linux/lsm_hook_defs.h    |  4 +++-
+ include/linux/security.h         | 15 +++++++++++----
+ kernel/cgroup/cpuset.c           |  4 ++--
+ kernel/sched/syscalls.c          |  7 +++++--
+ security/commoncap.c             |  9 +++++++--
+ security/security.c              | 14 +++++++++-----
+ security/selinux/hooks.c         |  4 +++-
+ security/smack/smack_lsm.c       | 13 +++++++++++--
+ 10 files changed, 53 insertions(+), 21 deletions(-)
+
+diff --git a/arch/mips/kernel/mips-mt-fpaff.c b/arch/mips/kernel/mips-mt-fpaff.c
+index 4fead87d2f43..c7a5d55cf7ca 100644
+--- a/arch/mips/kernel/mips-mt-fpaff.c
++++ b/arch/mips/kernel/mips-mt-fpaff.c
+@@ -110,7 +110,7 @@ asmlinkage long mipsmt_sys_sched_setaffinity(pid_t pid, unsigned int len,
+ 		goto out_unlock;
  	}
  
--	BUILD_BUG_ON(offsetof(typeof(*it), node));
-+	BUILD_BUG_ON(offsetofp(it, node));
+-	retval = security_task_setscheduler(p);
++	retval = security_task_setscheduler(p, NULL, new_mask);
+ 	if (retval)
+ 		goto out_unlock;
  
- 	/* While active, the tree can only be built; not destroyed */
- 	GEM_BUG_ON(i915_active_is_idle(ref));
-diff --git a/drivers/gpu/drm/i915/i915_sw_fence_work.c b/drivers/gpu/drm/i915/i915_sw_fence_work.c
-index 366418108f78..4b3c94355ba1 100644
---- a/drivers/gpu/drm/i915/i915_sw_fence_work.c
-+++ b/drivers/gpu/drm/i915/i915_sw_fence_work.c
-@@ -70,7 +70,7 @@ static void fence_release(struct dma_fence *fence)
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c9aebee0a338..d9a3c892586e 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2596,7 +2596,7 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
+ 		}
+ 		rcu_read_unlock();
  
- 	i915_sw_fence_fini(&f->chain);
+-		err = security_task_setscheduler(p);
++		err = security_task_setscheduler(p, NULL, NULL);
+ 		if (err) {
+ 			count = err;
+ 			goto out;
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 87d9d06710cb..411a5b977915 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -256,7 +256,9 @@ LSM_HOOK(int, 0, task_prlimit, const struct cred *cred,
+ 	 const struct cred *tcred, unsigned int flags)
+ LSM_HOOK(int, 0, task_setrlimit, struct task_struct *p, unsigned int resource,
+ 	 struct rlimit *new_rlim)
+-LSM_HOOK(int, 0, task_setscheduler, struct task_struct *p)
++LSM_HOOK(int, 0, task_setscheduler, struct task_struct *p,
++	 const struct sched_attr *attr__nullable,
++	 const struct cpumask *in_mask__nullable)
+ LSM_HOOK(int, 0, task_getscheduler, struct task_struct *p)
+ LSM_HOOK(int, 0, task_movememory, struct task_struct *p)
+ LSM_HOOK(int, 0, task_kill, struct task_struct *p, struct kernel_siginfo *info,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 40831fab5470..b2c43e745447 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -84,6 +84,7 @@ struct audit_krule;
+ struct ns_common;
+ struct user_namespace;
+ struct timezone;
++struct sched_attr;
  
--	BUILD_BUG_ON(offsetof(typeof(*f), dma));
-+	BUILD_BUG_ON(offsetofp(f, dma));
- 	dma_fence_free(&f->dma);
- }
- 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/gsp.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/gsp.c
-index 63aa30f94747..8dafb9bddf23 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/gsp.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/gsp.c
-@@ -1169,7 +1169,7 @@ r535_gsp_shared_init(struct nvkm_gsp *gsp)
- 	cmdq->tx.msgCount = (cmdq->tx.size - cmdq->tx.entryOff) / cmdq->tx.msgSize;
- 	cmdq->tx.writePtr = 0;
- 	cmdq->tx.flags = 1;
--	cmdq->tx.rxHdrOff = offsetof(typeof(*cmdq), rx.readPtr);
-+	cmdq->tx.rxHdrOff = offsetofp(cmdq, rx.readPtr);
- 
- 	msgq = gsp->shm.msgq.ptr;
- 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-index a9136a6523cb..7aa03e0de6f6 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -2609,12 +2609,12 @@ static int vmw_cmd_dx_check_subresource(struct vmw_private *dev_priv,
- 		};
- 	} *cmd;
- 
--	BUILD_BUG_ON(offsetof(typeof(*cmd), r_body.sid) !=
--		     offsetof(typeof(*cmd), sid));
--	BUILD_BUG_ON(offsetof(typeof(*cmd), i_body.sid) !=
--		     offsetof(typeof(*cmd), sid));
--	BUILD_BUG_ON(offsetof(typeof(*cmd), u_body.sid) !=
--		     offsetof(typeof(*cmd), sid));
-+	BUILD_BUG_ON(offsetofp(cmd, r_body.sid) !=
-+		     offsetofp(cmd, sid));
-+	BUILD_BUG_ON(offsetofp(cmd, i_body.sid) !=
-+		     offsetofp(cmd, sid));
-+	BUILD_BUG_ON(offsetofp(cmd, u_body.sid) !=
-+		     offsetofp(cmd, sid));
- 
- 	cmd = container_of(header, typeof(*cmd), header);
- 	return vmw_cmd_res_check(dev_priv, sw_context, vmw_res_surface,
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-index 5301e4f21ade..2d0be579e0b2 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-@@ -780,7 +780,7 @@ int bnxt_qplib_post_srq_recv(struct bnxt_qplib_srq *srq,
- 	srqe->wqe_type = wqe->type;
- 	srqe->flags = wqe->flags;
- 	srqe->wqe_size = wqe->num_sge +
--			((offsetof(typeof(*srqe), data) + 15) >> 4);
-+			((offsetofp(srqe, data) + 15) >> 4);
- 	srqe->wr_id[0] = cpu_to_le32((u32)next);
- 	srq->swq[next].wr_id = wqe->wr_id;
- 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 644c2f1cd8e6..0ea8048d81f3 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -1108,7 +1108,7 @@ static int uvc_v4l2_get_xu_mapping(struct uvc_xu_control_mapping *kp,
- static int uvc_v4l2_put_xu_mapping(const struct uvc_xu_control_mapping *kp,
- 			struct uvc_xu_control_mapping32 __user *up)
- {
--	if (copy_to_user(up, kp, offsetof(typeof(*up), menu_info)) ||
-+	if (copy_to_user(up, kp, offsetofp(up, menu_info)) ||
- 	    put_user(kp->menu_count, &up->menu_count))
- 		return -EFAULT;
- 
-@@ -1147,7 +1147,7 @@ static int uvc_v4l2_get_xu_query(struct uvc_xu_control_query *kp,
- static int uvc_v4l2_put_xu_query(const struct uvc_xu_control_query *kp,
- 			struct uvc_xu_control_query32 __user *up)
- {
--	if (copy_to_user(up, kp, offsetof(typeof(*up), data)))
-+	if (copy_to_user(up, kp, offsetofp(up, data)))
- 		return -EFAULT;
+ enum lsm_event {
+ 	LSM_POLICY_CHANGE,
+@@ -198,7 +199,9 @@ extern int cap_mmap_addr(unsigned long addr);
+ extern int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags);
+ extern int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			  unsigned long arg4, unsigned long arg5);
+-extern int cap_task_setscheduler(struct task_struct *p);
++extern int cap_task_setscheduler(struct task_struct *p,
++				 const struct sched_attr *attr,
++				 const struct cpumask *in_mask);
+ extern int cap_task_setioprio(struct task_struct *p, int ioprio);
+ extern int cap_task_setnice(struct task_struct *p, int nice);
+ extern int cap_vm_enough_memory(struct mm_struct *mm, long pages);
+@@ -537,7 +540,9 @@ int security_task_prlimit(const struct cred *cred, const struct cred *tcred,
+ 			  unsigned int flags);
+ int security_task_setrlimit(struct task_struct *p, unsigned int resource,
+ 		struct rlimit *new_rlim);
+-int security_task_setscheduler(struct task_struct *p);
++int security_task_setscheduler(struct task_struct *p,
++			       const struct sched_attr *attr,
++			       const struct cpumask *in_mask);
+ int security_task_getscheduler(struct task_struct *p);
+ int security_task_movememory(struct task_struct *p);
+ int security_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+@@ -1408,9 +1413,11 @@ static inline int security_task_setrlimit(struct task_struct *p,
  	return 0;
  }
-diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
-index 9b6c44979b4e..edaf1fab04cc 100644
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1041,7 +1041,7 @@ static int rndis_filter_set_packet_filter(struct rndis_device *dev,
- 	set = &request->request_msg.msg.set_req;
- 	set->oid = RNDIS_OID_GEN_CURRENT_PACKET_FILTER;
- 	set->info_buflen = sizeof(u32);
--	set->info_buf_offset = offsetof(typeof(*set), info_buf);
-+	set->info_buf_offset = offsetofp(set, info_buf);
- 	memcpy(set->info_buf, &new_filter, sizeof(u32));
  
- 	ret = rndis_filter_send_request(dev, request);
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-index 0982e60842b1..72e45564b5ef 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
-@@ -736,7 +736,7 @@ static void iwl_parse_dbg_tlv_assert_tables(struct iwl_drv *drv,
- 	u32 length = le32_to_cpu(tlv->length);
- 	u32 addr;
- 
--	if (length < offsetof(typeof(*region), special_mem) +
-+	if (length < offsetofp(region, special_mem) +
- 		     sizeof(region->special_mem))
- 		return;
- 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c b/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c
-index e2382be8edd7..c2f3f2f7d838 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs-fw.c
-@@ -625,7 +625,7 @@ void iwl_mvm_rs_fw_rate_init(struct iwl_mvm *mvm,
- 	cfg_cmd.sta_id = mvm_link_sta->sta_id;
- 
- 	lq_sta = &mvm_link_sta->lq_sta.rs_fw;
--	memset(lq_sta, 0, offsetof(typeof(*lq_sta), pers));
-+	memset(lq_sta, 0, offsetofp(lq_sta, pers));
- 
- 	rcu_read_unlock();
- 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-index d1619a229d8f..4bbcc17d417f 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -2939,7 +2939,7 @@ static void rs_drv_rate_init(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
- 	lockdep_assert_held(&mvmsta->deflink.lq_sta.rs_drv.pers.lock);
- 
- 	/* clear all non-persistent lq data */
--	memset(lq_sta, 0, offsetof(typeof(*lq_sta), pers));
-+	memset(lq_sta, 0, offsetofp(lq_sta, pers));
- 
- 	sband = hw->wiphy->bands[band];
- 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index 58ee5efc3b5e..e839ea321f1a 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -2605,7 +2605,7 @@ static void rtw89_vif_sync_bcn_tsf(struct rtw89_vif_link *rtwvif_link,
+-static inline int security_task_setscheduler(struct task_struct *p)
++static inline int security_task_setscheduler(struct task_struct *p,
++					     const struct sched_attr *attr,
++					     const struct cpumask *in_mask)
  {
- 	struct ieee80211_mgmt *mgmt = (typeof(mgmt))hdr;
+-	return cap_task_setscheduler(p);
++	return cap_task_setscheduler(p, attr, in_mask);
+ }
  
--	if (len < offsetof(typeof(*mgmt), u.beacon.variable))
-+	if (len < offsetofp(mgmt, u.beacon.variable))
- 		return;
+ static inline int security_task_getscheduler(struct task_struct *p)
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 3219f927c35e..d122de948572 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -3267,7 +3267,7 @@ static int cpuset_can_attach(struct cgroup_taskset *tset)
+ 			attach_ctx.old_cs = task_cs(task);
  
- 	WRITE_ONCE(rtwvif_link->sync_bcn_tsf, le64_to_cpu(mgmt->u.beacon.timestamp));
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 96dde19b15fa..f45fa7e069a9 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -460,7 +460,7 @@ static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 	param = (struct ec_params_lightbar *)msg->data;
- 	param->cmd = LIGHTBAR_CMD_SEQ;
- 	param->seq.num = num;
--	msg->outsize = offsetof(typeof(*param), seq) + sizeof(param->seq);
-+	msg->outsize = offsetofp(param, seq) + sizeof(param->seq);
- 	msg->insize = 0;
- 	ret = lb_throttle();
+ 		if (setsched_check) {
+-			ret = security_task_setscheduler(task);
++			ret = security_task_setscheduler(task, NULL, cs->effective_cpus);
+ 			if (ret)
+ 				goto out_unlock;
+ 		}
+@@ -3816,7 +3816,7 @@ static int cpuset_can_fork(struct task_struct *task, struct css_set *cset)
  	if (ret)
-@@ -508,7 +508,7 @@ static ssize_t program_store(struct device *dev, struct device_attribute *attr,
- 		 * Bound the payload strictly by the maximum value the structural
- 		 * size field can natively support.
- 		 */
--		extra_bytes = offsetof(typeof(*param), set_program_ex) +
-+		extra_bytes = offsetofp(param, set_program_ex) +
- 			sizeof(param->set_program_ex);
- 		max_size = min_t(size_t, ec->ec_dev->max_request - extra_bytes,
- 				 type_max(typeof(param->set_program_ex.size)));
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index 20b1aef455c4..470fba1047f3 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -185,7 +185,7 @@ qla2x00_chk_ms_status(scsi_qla_host_t *vha, ms_iocb_entry_t *ms_pkt,
- 				    comp_status, ct_rsp->header.response);
- 				ql_dump_buffer(ql_dbg_disc + ql_dbg_buffer, vha,
- 				    0x2078, ct_rsp,
--				    offsetof(typeof(*ct_rsp), rsp));
-+				    offsetofp(ct_rsp, rsp));
- 				rval = QLA_INVALID_COMMAND;
- 			} else
- 				rval = QLA_SUCCESS;
-diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
-index 59ec5605930b..62086459d60d 100644
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -3225,7 +3225,7 @@ qla2x00_get_link_status(scsi_qla_host_t *vha, uint16_t loop_id,
- 	mbx_cmd_t mc;
- 	mbx_cmd_t *mcp = &mc;
- 	uint32_t *iter = (uint32_t *)stats;
--	ushort dwords = offsetof(typeof(*stats), link_up_cnt)/sizeof(*iter);
-+	ushort dwords = offsetofp(stats, link_up_cnt)/sizeof(*iter);
- 	struct qla_hw_data *ha = vha->hw;
+ 		goto out_unlock;
  
- 	ql_dbg(ql_dbg_mbx + ql_dbg_verbose, vha, 0x1084,
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 3c412c7fb6fe..cbdc22b24227 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -6263,7 +6263,7 @@ void qla24xx_process_purex_rdp(struct scsi_qla_host *vha,
+-	ret = security_task_setscheduler(task);
++	ret = security_task_setscheduler(task, NULL, cs->effective_cpus);
+ 	if (ret)
+ 		goto out_unlock;
  
- 	if (qla25xx_rdp_rsp_reduce_size(vha, purex)) {
- 		rsp_payload_length =
--		    offsetof(typeof(*rsp_payload), optical_elmt_desc);
-+		    offsetofp(rsp_payload, optical_elmt_desc);
- 		ql_dbg(ql_dbg_init, vha, 0x0181,
- 		    "Reducing RSP payload length to %u bytes...\n",
- 		    rsp_payload_length);
-diff --git a/drivers/scsi/qla2xxx/qla_tmpl.c b/drivers/scsi/qla2xxx/qla_tmpl.c
-index f96b9eb15126..6640fe0299dd 100644
---- a/drivers/scsi/qla2xxx/qla_tmpl.c
-+++ b/drivers/scsi/qla2xxx/qla_tmpl.c
-@@ -7,7 +7,7 @@
- #include "qla_tmpl.h"
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index 45a127deeadd..1b3f81e6e18e 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -533,6 +533,8 @@ int __sched_setscheduler(struct task_struct *p,
+ 		return -EINVAL;
  
- #define ISPREG(vha)	(&(vha)->hw->iobase->isp24)
--#define IOBAR(reg)	offsetof(typeof(*(reg)), iobase_addr)
-+#define IOBAR(reg)	offsetofp((reg), iobase_addr)
- #define IOBASE(vha)	IOBAR(ISPREG(vha))
- #define INVALID_ENTRY ((struct qla27xx_fwdt_entry *)0xffffffffffffffffUL)
+ 	if (user) {
++		struct sched_attr lsm_attr = *attr;
++
+ 		retval = user_check_sched_setscheduler(p, attr, policy, reset_on_fork);
+ 		if (retval)
+ 			return retval;
+@@ -540,7 +542,8 @@ int __sched_setscheduler(struct task_struct *p,
+ 		if (attr->sched_flags & SCHED_FLAG_SUGOV)
+ 			return -EINVAL;
  
-@@ -722,7 +722,7 @@ static struct qla27xx_fwdt_entry *
- qla27xx_fwdt_entry_t275(struct scsi_qla_host *vha,
- 	struct qla27xx_fwdt_entry *ent, void *buf, ulong *len)
- {
--	ulong offset = offsetof(typeof(*ent), t275.buffer);
-+	ulong offset = offsetofp(ent, t275.buffer);
- 	ulong length = le32_to_cpu(ent->t275.length);
- 	ulong size = le32_to_cpu(ent->hdr.size);
- 	void *buffer = ent->t275.buffer;
-diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
-index bec6ca38375b..5443ef3978b7 100644
---- a/drivers/scsi/scsi_transport_fc.c
-+++ b/drivers/scsi/scsi_transport_fc.c
-@@ -570,7 +570,7 @@ fc_host_post_fc_event(struct Scsi_Host *shost, u32 event_number,
- 	event->event_code = event_code;
- 	if (data_len)
- 		memcpy(event->event_data_flex, data_buf, data_len);
--	padding = len - offsetof(typeof(*event), event_data_flex) - data_len;
-+	padding = len - offsetofp(event, event_data_flex) - data_len;
- 	memset(event->event_data_flex + data_len, 0, padding);
- 
- 	nlmsg_multicast(scsi_nl_sock, skb, 0, SCSI_NL_GRP_FC_EVENTS,
-diff --git a/fs/readdir.c b/fs/readdir.c
-index f2288841337a..275ed265bcc4 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -22,7 +22,7 @@
- #include <linux/compat.h>
- #include <linux/uaccess.h>
- 
--#define dirent_size(dirent, len) offsetof(typeof(*(dirent)), d_name[len])
-+#define dirent_size(dirent, len) offsetofp((dirent), d_name[len])
- 
- /*
-  * Some filesystems were never converted to '->iterate_shared()'
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index 2936b38de98f..5024643b4bf1 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -3195,7 +3195,7 @@ struct inode *cifs_create_reparse_inode(struct cifs_open_info_data *data,
- 	io_req->ParameterCount = io_req->TotalParameterCount;
- 	io_req->ParameterOffset = cpu_to_le32(0);
- 	io_req->DataCount = io_req->TotalDataCount;
--	io_req->DataOffset = cpu_to_le32(offsetof(typeof(*io_req), Data));
-+	io_req->DataOffset = cpu_to_le32(offsetofp(io_req, Data));
- 	io_req->SetupCount = 4;
- 	io_req->SubCommand = cpu_to_le16(NT_TRANSACT_IOCTL);
- 	io_req->FunctionCode = cpu_to_le32(FSCTL_SET_REPARSE_POINT);
-@@ -5968,7 +5968,7 @@ int CIFSSMBSetPathInfo(const unsigned int xid, struct cifs_tcon *tcon,
- 	param_offset = offsetof(struct smb_com_transaction2_spi_req,
- 				InformationLevel);
- 	offset = param_offset + params;
--	data_offset = (char *)pSMB + offsetof(typeof(*pSMB), hdr.Protocol) + offset;
-+	data_offset = (char *)pSMB + offsetofp(pSMB, hdr.Protocol) + offset;
- 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
- 	pSMB->DataOffset = cpu_to_le16(offset);
- 	pSMB->SetupCount = 1;
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index 3a27773186ae..99d7b3d38aa9 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -1042,7 +1042,7 @@ static int parse_reparse_wsl_symlink(struct reparse_wsl_symlink_data_buffer *buf
- 				     struct cifs_open_info_data *data)
- {
- 	int len = le16_to_cpu(buf->ReparseDataLength);
--	int data_offset = offsetof(typeof(*buf), Target) - offsetof(typeof(*buf), Version);
-+	int data_offset = offsetofp(buf, Target) - offsetofp(buf, Version);
- 	int symname_utf8_len;
- 	__le16 *symname_utf16;
- 	int symname_utf16_len;
-diff --git a/fs/xfs/scrub/attr.c b/fs/xfs/scrub/attr.c
-index f909e2b25158..715b12bc3d7c 100644
---- a/fs/xfs/scrub/attr.c
-+++ b/fs/xfs/scrub/attr.c
-@@ -306,7 +306,7 @@ xchk_xattr_local_entry(
- 	char				*name_end;
- 	unsigned int			namesize;
- 
--	name_end = (char *)lentry + offsetof(typeof(*lentry), nameval[0]);
-+	name_end = (char *)lentry + offsetofp(lentry, nameval[0]);
- 	if (name_end > buf_end) {
- 		xchk_da_set_corrupt(ds, level);
- 		return 0;
-@@ -341,7 +341,7 @@ xchk_xattr_remote_entry(
- 	char				*name_end;
- 	unsigned int			namesize;
- 
--	name_end = (char *)rentry + offsetof(typeof(*rentry), name[0]);
-+	name_end = (char *)rentry + offsetofp(rentry, name[0]);
- 	if (name_end > buf_end) {
- 		xchk_da_set_corrupt(ds, level);
- 		return 0;
-diff --git a/fs/xfs/scrub/attr_repair.c b/fs/xfs/scrub/attr_repair.c
-index 720090895c20..1d852617eda3 100644
---- a/fs/xfs/scrub/attr_repair.c
-+++ b/fs/xfs/scrub/attr_repair.c
-@@ -294,7 +294,7 @@ xrep_xattr_salvage_local_attr(
- 	 * Decode the leaf local entry format.  If something seems wrong, we
- 	 * junk the attribute.
- 	 */
--	name_end = (char *)lentry + offsetof(typeof(*lentry), nameval[0]);
-+	name_end = (char *)lentry + offsetofp(lentry, nameval[0]);
- 	if (name_end > buf_end)
- 		return 0;
- 	value = &lentry->nameval[lentry->namelen];
-@@ -348,7 +348,7 @@ xrep_xattr_salvage_remote_attr(
- 	 * junk the attribute.  Note that we should never find a zero-length
- 	 * remote attribute value.
- 	 */
--	name_end = (char *)rentry + offsetof(typeof(*rentry), name[0]);
-+	name_end = (char *)rentry + offsetofp(rentry, name[0]);
- 	if (name_end > buf_end)
- 		return 0;
- 	namesize = xfs_attr_leaf_entsize_remote(rentry->namelen);
-diff --git a/fs/xfs/scrub/dir.c b/fs/xfs/scrub/dir.c
-index d99e2a732723..69e939a95567 100644
---- a/fs/xfs/scrub/dir.c
-+++ b/fs/xfs/scrub/dir.c
-@@ -364,7 +364,7 @@ xchk_dir_check_entry(
- 	unsigned int			advance;
- 
- 	/* must have namelen */
--	advance = offsetof(typeof(*dep), name);
-+	advance = offsetofp(dep, name);
- 	if (iter_off + advance >= end) {
- 		xchk_fblock_set_corrupt(ds->sc, XFS_DATA_FORK, rec_bno);
- 		return -1;
-@@ -464,7 +464,7 @@ xchk_dir_rec(
- 		int				advance;
- 
- 		/* must have freetag */
--		advance = offsetof(typeof(*dup), length);
-+		advance = offsetofp(dup, length);
- 		if (iter_off + advance >= end) {
- 			xchk_fblock_set_corrupt(ds->sc, XFS_DATA_FORK, rec_bno);
- 			goto out_relse;
-diff --git a/fs/xfs/scrub/dir_repair.c b/fs/xfs/scrub/dir_repair.c
-index 518e15d93d3b..5446687f751e 100644
---- a/fs/xfs/scrub/dir_repair.c
-+++ b/fs/xfs/scrub/dir_repair.c
-@@ -501,7 +501,7 @@ xrep_dir_recover_entry(
- 	int				error;
- 
- 	/* must have namelen */
--	advance = offsetof(typeof(*dep), name);
-+	advance = offsetofp(dep, name);
- 	if (offset + advance >= end)
- 		return 0;
- 
-@@ -546,7 +546,7 @@ xrep_dir_recover_data(
- 			return error;
- 
- 		/* must have freetag */
--		advance = offsetof(typeof(*dup), length);
-+		advance = offsetofp(dup, length);
- 		if (offset + advance >= end)
- 			break;
- 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index a240638f69e5..2ff7361739a6 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -388,7 +388,7 @@ __futex_hash(union futex_key *key, struct futex_private_hash *fph, struct futex_
+-		retval = security_task_setscheduler(p);
++		lsm_attr.sched_policy = policy;
++		retval = security_task_setscheduler(p, &lsm_attr, NULL);
+ 		if (retval)
+ 			return retval;
  	}
- #endif
+@@ -1215,7 +1218,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
+ 			return -EPERM;
+ 	}
  
--	hash = jhash2((u32 *)key, offsetof(typeof(*key), both.offset) / sizeof(u32),
-+	hash = jhash2((u32 *)key, offsetofp(key, both.offset) / sizeof(u32),
- 		      key->both.offset);
+-	retval = security_task_setscheduler(p);
++	retval = security_task_setscheduler(p, NULL, in_mask);
+ 	if (retval)
+ 		return retval;
  
- 	if (node == FUTEX_NO_NODE) {
-diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-index 3396f177a18d..fca96a59e201 100644
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -451,8 +451,8 @@ EXPORT_SYMBOL(ip_output);
+diff --git a/security/commoncap.c b/security/commoncap.c
+index d47ab3022343..0c33f94a5707 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1222,13 +1222,18 @@ static int cap_safe_nice(struct task_struct *p)
+ /**
+  * cap_task_setscheduler - Determine if scheduler policy change is permitted
+  * @p: The task to affect
++ * @attr: Requested scheduling attributes (ignored)
++ * @in_mask: Requested CPU affinity mask (ignored)
+  *
+  * Determine if the requested scheduler policy change is permitted for the
+- * specified task.
++ * specified task. The capabilities security module does not evaluate the
++ * @attr or @in_mask parameters, relying solely on cap_safe_nice().
+  *
+  * Return: 0 if permission is granted, -ve if denied.
   */
- static void ip_copy_addrs(struct iphdr *iph, const struct flowi4 *fl4)
+-int cap_task_setscheduler(struct task_struct *p)
++int cap_task_setscheduler(struct task_struct *p,
++			  const struct sched_attr *attr __always_unused,
++			  const struct cpumask *in_mask __always_unused)
  {
--	BUILD_BUG_ON(offsetof(typeof(*fl4), daddr) !=
--		     offsetof(typeof(*fl4), saddr) + sizeof(fl4->saddr));
-+	BUILD_BUG_ON(offsetofp(fl4, daddr) !=
-+		     offsetofp(fl4, saddr) + sizeof(fl4->saddr));
+ 	return cap_safe_nice(p);
+ }
+diff --git a/security/security.c b/security/security.c
+index f6583d507395..9ca3438ef96a 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -3261,17 +3261,21 @@ int security_task_setrlimit(struct task_struct *p, unsigned int resource,
+ }
  
- 	iph->saddr = fl4->saddr;
- 	iph->daddr = fl4->daddr;
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index 303d0102519a..a8f944f43a30 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -2526,7 +2526,7 @@ static int __udp4_lib_mcast_deliver(struct net *net, struct sk_buff *skb,
- 	hash2 = 0;
- 	hslot = udp_hashslot(udptable, net, hnum);
- 	use_hash2 = hslot->count > 10;
--	offset = offsetof(typeof(*sk), sk_node);
-+	offset = offsetofp(sk, sk_node);
+ /**
+- * security_task_setscheduler() - Check if setting sched policy/param is allowed
++ * security_task_setscheduler() - Check if setting sched policy/param/affinity is allowed
+  * @p: target task
++ * @attr: requested scheduling attributes, or NULL if not changing parameters
++ * @in_mask: requested CPU affinity mask, or NULL if not changing affinity
+  *
+- * Check permission before setting scheduling policy and/or parameters of
+- * process @p.
++ * Check permission before setting the scheduling policy, parameters, and/or
++ * CPU affinity of process @p.
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_task_setscheduler(struct task_struct *p)
++int security_task_setscheduler(struct task_struct *p,
++			       const struct sched_attr *attr,
++			       const struct cpumask *in_mask)
+ {
+-	return call_int_hook(task_setscheduler, p);
++	return call_int_hook(task_setscheduler, p, attr, in_mask);
+ }
  
- 	if (use_hash2) {
- 		hash2_any = ipv4_portaddr_hash(net, htonl(INADDR_ANY), hnum) &
-@@ -2534,7 +2534,7 @@ static int __udp4_lib_mcast_deliver(struct net *net, struct sk_buff *skb,
- 		hash2 = ipv4_portaddr_hash(net, daddr, hnum) & udptable->mask;
- start_lookup:
- 		hslot = &udptable->hash2[hash2].hslot;
--		offset = offsetof(typeof(*sk), __sk_common.skc_portaddr_node);
-+		offset = offsetofp(sk, __sk_common.skc_portaddr_node);
- 	}
+ /**
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 6168dd5f91c2..4fc3e8c51035 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4690,7 +4690,9 @@ static int selinux_task_setrlimit(struct task_struct *p, unsigned int resource,
+ 	return 0;
+ }
  
- 	sk_for_each_entry_offset_rcu(sk, node, &hslot->head, offset) {
-diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-index 59f9872c3552..91bdf3cb506b 100644
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -962,7 +962,7 @@ static int __udp6_lib_mcast_deliver(struct net *net, struct sk_buff *skb,
- 	hash2 = 0;
- 	hslot = udp_hashslot(udptable, net, hnum);
- 	use_hash2 = hslot->count > 10;
--	offset = offsetof(typeof(*sk), sk_node);
-+	offset = offsetofp(sk, sk_node);
- 
- 	if (use_hash2) {
- 		hash2_any = ipv6_portaddr_hash(net, &in6addr_any, hnum) &
-@@ -970,7 +970,7 @@ static int __udp6_lib_mcast_deliver(struct net *net, struct sk_buff *skb,
- 		hash2 = ipv6_portaddr_hash(net, daddr, hnum) & udptable->mask;
- start_lookup:
- 		hslot = &udptable->hash2[hash2].hslot;
--		offset = offsetof(typeof(*sk), __sk_common.skc_portaddr_node);
-+		offset = offsetofp(sk, __sk_common.skc_portaddr_node);
- 	}
- 
- 	sk_for_each_entry_offset_rcu(sk, node, &hslot->head, offset) {
-diff --git a/net/mac80211/agg-rx.c b/net/mac80211/agg-rx.c
-index 01d6703767c6..5b2bd1c495ea 100644
---- a/net/mac80211/agg-rx.c
-+++ b/net/mac80211/agg-rx.c
-@@ -493,8 +493,7 @@ void ieee80211_process_addba_request(struct ieee80211_local *local,
- 		ieee80211_retrieve_addba_ext_data(sta,
- 						  mgmt->u.action.addba_req.variable,
- 						  len -
--						  offsetof(typeof(*mgmt),
--							   u.action.addba_req.variable),
-+						  offsetofp(mgmt, u.action.addba_req.variable),
- 						  &buf_size);
- 
- 	__ieee80211_start_rx_ba_session(sta, dialog_token, timeout,
-diff --git a/net/mac80211/agg-tx.c b/net/mac80211/agg-tx.c
-index f3ecdd8601a0..a49e4798e9fa 100644
---- a/net/mac80211/agg-tx.c
-+++ b/net/mac80211/agg-tx.c
-@@ -990,8 +990,7 @@ void ieee80211_process_addba_resp(struct ieee80211_local *local,
- 
- 	ieee80211_retrieve_addba_ext_data(sta,
- 					  mgmt->u.action.addba_resp.variable,
--					  len - offsetof(typeof(*mgmt),
--							 u.action.addba_resp.variable),
-+					  len - offsetofp(mgmt, u.action.addba_resp.variable),
- 					  &buf_size);
- 
- 	buf_size = min(buf_size, local->hw.max_tx_aggregation_subframes);
-diff --git a/net/mac80211/parse.c b/net/mac80211/parse.c
-index f3c5a9f6ec7c..5eca72f82188 100644
---- a/net/mac80211/parse.c
-+++ b/net/mac80211/parse.c
-@@ -1068,7 +1068,7 @@ ieee802_11_parse_elems_full(struct ieee80211_elems_parse_params *params)
- 	bool inside_multilink = false;
- 
- 	BUILD_BUG_ON(sizeof(empty_non_inheritance) != empty_non_inheritance[1] + 2);
--	BUILD_BUG_ON(offsetof(typeof(*elems_parse), elems) != 0);
-+	BUILD_BUG_ON(offsetofp(elems_parse, elems) != 0);
- 
- 	/* cannot parse for both a specific link and non-transmitted BSS */
- 	if (WARN_ON(params->link_id >= 0 && params->bss))
-diff --git a/net/mac80211/tdls.c b/net/mac80211/tdls.c
-index 68bd64328937..8e80aa1e6e35 100644
---- a/net/mac80211/tdls.c
-+++ b/net/mac80211/tdls.c
-@@ -1767,7 +1767,7 @@ ieee80211_process_tdls_channel_switch_resp(struct ieee80211_sub_if_data *sdata,
- 	struct ieee80211_tdls_data *tf = (void *)skb->data;
- 	bool local_initiator;
- 	struct ieee80211_rx_status *rx_status = IEEE80211_SKB_RXCB(skb);
--	int baselen = offsetof(typeof(*tf), u.chan_switch_resp.variable);
-+	int baselen = offsetofp(tf, u.chan_switch_resp.variable);
- 	struct ieee80211_tdls_ch_sw_params params = {};
- 	int ret;
- 
-@@ -1868,7 +1868,7 @@ ieee80211_process_tdls_channel_switch_req(struct ieee80211_sub_if_data *sdata,
- 	enum nl80211_band band;
- 	struct ieee80211_tdls_data *tf = (void *)skb->data;
- 	struct ieee80211_rx_status *rx_status = IEEE80211_SKB_RXCB(skb);
--	int baselen = offsetof(typeof(*tf), u.chan_switch_req.variable);
-+	int baselen = offsetofp(tf, u.chan_switch_req.variable);
- 	struct ieee80211_tdls_ch_sw_params params = {};
- 	int ret = 0;
- 
-diff --git a/sound/usb/mixer_scarlett2.c b/sound/usb/mixer_scarlett2.c
-index ed5fe746d438..99022e057731 100644
---- a/sound/usb/mixer_scarlett2.c
-+++ b/sound/usb/mixer_scarlett2.c
-@@ -9656,7 +9656,7 @@ static long scarlett2_hwdep_write(struct snd_hwdep *hw,
- 
- 	/* Calculate the maximum permitted in data[] */
- 	const size_t max_data_size = SCARLETT2_FLASH_RW_MAX -
--				     offsetof(typeof(*req), data);
-+				     offsetofp(req, data);
- 
- 	/* If erasing, wait for it to complete */
- 	if (private->flash_write_state ==
-
+-static int selinux_task_setscheduler(struct task_struct *p)
++static int selinux_task_setscheduler(struct task_struct *p,
++				     const struct sched_attr *attr __always_unused,
++				     const struct cpumask *in_mask __always_unused)
+ {
+ 	return avc_has_perm(current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__SETSCHED, NULL);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 28a8e12603ce..a5f0de59dfc0 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2350,10 +2350,19 @@ static int smack_task_getioprio(struct task_struct *p)
+ /**
+  * smack_task_setscheduler - Smack check on setting scheduler
+  * @p: the task object
++ * @attr: Requested scheduling attributes (ignored)
++ * @in_mask: Requested CPU affinity mask (ignored)
+  *
+- * Return 0 if read access is permitted
++ * Evaluate whether the current task has write access to the target task @p
++ * to change its scheduling policy. The Smack security module relies
++ * strictly on label-based access control and does not evaluate CPU
++ * affinity masks or scheduling attributes.
++ *
++ * Return: 0 if write access is permitted
+  */
+-static int smack_task_setscheduler(struct task_struct *p)
++static int smack_task_setscheduler(struct task_struct *p,
++				   const struct sched_attr *attr __always_unused,
++				   const struct cpumask *in_mask __always_unused)
+ {
+ 	return smk_curacc_on_task(p, MAY_WRITE, __func__);
+ }
 -- 
-2.56.0
+2.55.0
 
