@@ -1,96 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793897358;
-	b=tnkrMhQCX7xhGXctMTd6rCjYeFBIriN0MBm9kOwkzyTqAVmpWyhd66Ji2+8VaMhk/c/L
-	 1jh5rhNbaQOQmSwzayB8wZ//EEkpg7FOoGWtFb1utkgmbMzE7WmYCGow1yGP3fdbGd4ml
-	 QnzCiJUJA1iEaS35KeLGKFBuZsyfNDrNThSghlvgAMDNeiKx+CSGalRFXhonLX89VCx1o
-	 trnwZIo00YKlDlf038kRC3K/YtclYDFx9JZW6u9NHB2jmBMBBQmCt1ne8tR5GU7skwS9X
-	 KrjvGmAYmsMo8Z26+1cT3dDdYhJ+Na9RI0I3oey4phlqXcwGxMuQ/xKpAmHrnNwbtuQ==
+	t=1793897733;
+	b=HbYhKMbOAvpOFcHZ+uc8kepK17HBIQxaYy3V5lso1mePYGXZQ+hpg7AQHZWKM9m3cCGH
+	 2ivJ4QxZ92U3jHWnJTIc6pBjhlRVJHXlqkvFxm8z0XzBtm6c5qHOIJOhPc9ofPED9wdaK
+	 rlFOuUAOqTkxmZIDEJqHmH+prJl8gxYeZcMgoyWRzeY2nzdS7avc3w2HUNheGQCpWH2kY
+	 3EovtJ/A+7ogA5JomaBXP380NHTEqMH6pa75N6D6y3yynCIMhYVd97o0UQ1ETUqO0pGPy
+	 G/NFBiNdDblHzJEQ1yVyFHlJeKzQXDMvtt1AIEeD6/iZrZMtl+THuQbqAZZUfv7glqg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793897358;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=gqTrQ7OATcmrAEn19rco0h0DH6w5UCTWYeu8VAqf8sY=;
-	b=hpIyUjayseUAqxnSE6QbShc9QuLMUm5InszWMLhTLPmSYgzn+wWPQWpp9XQwQDCJCi2/
-	 baomQcoXbqhg32ymY1WT99klVWuFS+WAEGomwQbEEf/Y34P5ahcJrBTlgq6NNbVsvfCZV
-	 zqrf4B8J/HhLsuu0jlTPUdp1nq9CVNCiWpKXKrZ+ErPGcgHB9/ODwKPwSNa/PsE9nULNj
-	 qtrl1VxUmibgxhfVruHrKgbXEYohNLcAiEVY6hAwPvqqli8kTsI0bjEn9zBfgqFdKyI9t
-	 VR0/+s9ulA/0nyOhHAg7NHXYfOaPq6XMh68UtaJ/f7QG7zG/vCPmlt2sYWsKueSQcLg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793897733;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=SUDVvYxorptkD2PveS8qsN2gsLXR/qsNmAPJe5jYSL4=;
+	b=HpxhKEoQ9cNHMe21SafNuMBh0rty9ZzTEJBPQmOAnAUwEXdyfWFrZ3sWTGvH3U0qheBc
+	 2lM4UvAw/ItQB8aua++b+1r76wmVIUZln3I2zWTACbjJbJO1mUoUbajttFzbZk8MxC0LS
+	 fbniLT42f+b/8PpVOhwRDgRMZysAQlEJxbmn2dNIwFFdeeMPvrIdMapXgbP0nnXXIfBC1
+	 1d9P5DGWY4ASDbfwcWAEIQ74k8GhoxSSihndq1wgnajrvgUqWihuiDj2fHm8zObe1uX0g
+	 dxTE/+KLrKV76T4jsU1Zyc8SxQHlBGizM3wgdZ8YVTf6gKOp/48lla0BwFS/0R/xSfA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=qkDvoVGQ;
-	arc=none smtp.remote-ip=209.85.222.177
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cxV8wp6J;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEB0606A32E
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 16:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1DEB0606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 835A9606A328;
+	Thu,  5 Nov 2026 16:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=qkDvoVGQ
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-93f259cdc86so203031185a.3
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 08:49:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793897356; x=1794502156; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=gqTrQ7OATcmrAEn19rco0h0DH6w5UCTWYeu8VAqf8sY=;
-        b=qkDvoVGQ4U5/km4c1vjOdA85UjU16WON+xFB9+E5Zr+k2u8jw9fJzFwlrFSe5qk1yI
-         UnCpDV7hwWXrnMl0+AXjHYdGk2xcQXyV4pxItAcjqM/jwxpjhQt2yFnMNuP5D690uxzl
-         4AmKwA/WLy4CckC4LFBVgWXDng/G5MwuH48ll/WcstjbB9HRK65sLIUXo4IMUvMtPOQD
-         I9ILNHEO5wPgF+kxV9y0l3nKxowBATAcJ7481CPWhmAOoQhr8TknLKfDsBwgbpVkc6DW
-         h7pdkedT4C2VUp8NhzgjNsHRisGBPS3I4nO4/QSq39EF19P8lUev0cnaPcguKHWoh7X1
-         FPTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793897356; x=1794502156;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=gqTrQ7OATcmrAEn19rco0h0DH6w5UCTWYeu8VAqf8sY=;
-        b=2fyY6DOtr8CTyaWLvZBq+U+FXgsNXovOarflUoGoAEEwNkVPcab72V5DosdLA0S8CU
-         QGVW7QGXb+jc8rZnX134IfvtsU5g3ZJ8F2OCKdG+5nHZ2f9nVqoCeTesdNQCvQ75dIoK
-         gz949PLhKXK+8CQ5tDZ+BQsXPH/MrtBlvMmhyh4Eh+OYsilBTPhbVlnhZ979OVfKbo5h
-         R+FVunRyQv+2sJoLimYN/17oBlzS4V0SproE/2qfN6sX1EK3qZNIxKxqzUW7Dd+ehypL
-         Iq4SNk622T23+PkgRSahbSScwegSve9m5Y0hbfy0erkrZyzchigyWMUO3RCT+BCiGWFN
-         jVTg==
-X-Forwarded-Encrypted: i=1; AKwUvBxrIs81bujUmct294VEf0UCK5pK+dpakWn4Mnz34o5Vjq98CUceRK0mPtNggYpBVgLe+kGGinfXDdy1uFvvB0a9t8jds+s=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/qVSSvXaY/mbm8E9QNh35MVGJb0tM2tdasou2RTxV28BdNNcww
-	xzCFDJ/EvtFs9mIzfgwRp9/2Rn+7XpCFSMGEWJeftbbhZGfjitAf9AlR
-X-Gm-Gg: AYBFou19Sov/m0Bquh1bgZY6DjX0dlhEadom1soXUqhWY8sqoaIHfhX4B2q9zSgvsS1
-	fyb7jXLY0irYZz47jInlcTPhjSIQZhGszTmq+fTFyw+Lvf1dF/XGEc1fxFCe5RHy7QNvCG3w72g
-	d/v+AW+PxHZZXlAY2ItRLtpESNN89RZso+dYaaFlva5IX6Ic+KFisLthZPg8YwgyGhj9OTQWCbs
-	ninsmO3TVKK3E20rTrmzWViANI3tUFwxKhg90dwfHJAeOsvKXOIIpaIZLZAXNPGwkP7ImXuh4de
-	rDh8ryCSpQXIr+sony1pn3JuMrPPrHO9hgsOkbOqAX2ZSMT4DcJOccsJ8zWkVCrARdUqiWVcese
-	C2mysQDLdV7gYYxTJexGjTEavC95M6W8CYPLmY1xqNj0v7fkzt4pZqord+vCiuc4o2doKpx0Ctk
-	zeY0FtxX5i1bqMQsbJ25ed1pGfzxfX1f711l1Py4oxUkF4hpgn/4JCh7BZiPLJTf4GqPy0CJgQe
-	PdQsZNIOV+AAYknEdjxMzKNAX+VGQG/Xx3YXahUNs9hPiVCZXakLoYezqiR0bgzC8PTFcdW8QCo
-	ndrGes9yRNXzxiYIQ2PhO49ZH5NkHrqYsPwFlUv+H55+xMcPDX8izwMjYEE=
-X-Received: by 2002:a05:620a:390b:b0:93f:18ba:bf78 with SMTP id af79cd13be357-9442184ae09mr3368191685a.69.1793897355883;
-        Thu, 05 Nov 2026 08:49:15 -0800 (PST)
-Received: from i4-l-hqh5357-03.ad.psu.edu ([130.203.139.71])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-945d4899dc6sm498814085a.43.2026.11.05.08.49.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 08:49:15 -0800 (PST)
-From: Shuangpeng Bai <shuangpeng.kernel@gmail.com>
-To: John Johansen <john.johansen@canonical.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>
-Cc: Shuangpeng Bai <shuangpeng.kernel@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cxV8wp6J
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 424731F0093A;
+	Thu,  5 Nov 2026 16:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793897732;
+	bh=SUDVvYxorptkD2PveS8qsN2gsLXR/qsNmAPJe5jYSL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cxV8wp6JmeU3XWHmE5oAaVkY2V4Rqt6nyU8p8GiSo8lpCeBi8wwSW0uN2r/wA2j/3
+	 gvdI8B/vCXv+fQdrx5n51lzEHn2dzBiG6yjw4+idd78hzMNPmFOHLaDhU2Vr8/Sgg0
+	 DkDg6YjRVhaesDv8tTlSZN9dh1FHnN1i9eI5YOzRuExnynkjJqmOJqLCvK97+0kWTd
+	 hFUn26tOrndBfS0BKadmxCgs285JIWHYQSAGyhlV1gOp6qJBxwUJVfnNyKt9M/4Vgk
+	 colZctUdJS684O+sad3StKzy/a62KGhcue2R5f1mo73Ryu5tRyyxbwJn9c6bXASmQa
+	 oVexu1tWR43Cg==
+Date: Thu, 5 Nov 2026 18:55:28 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Yuansheng Yang <0xbeac@gmail.com>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [BUG] apparmor: slab-use-after-free in aa_get_newest_label
-Date: Thu,  5 Nov 2026 11:48:36 -0500
-Message-ID: <20261105164839.66760-1-shuangpeng.kernel@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] KEYS: Protect pkey method checks against type removal
+Message-ID: <auy1ANMSKTXZb8GE@kernel.org>
+References: <auv35Ljgz1OA1zUZ@kernel.org>
+ <9d47e202bd11857b3555e6b95694b3c3a4f2460b.1793852399.git.0xbeac@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -100,118 +60,226 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9d47e202bd11857b3555e6b95694b3c3a4f2460b.1793852399.git.0xbeac@gmail.com>
 
-Hi Kernel Maintainers,
+On Thu, Nov 05, 2026 at 12:38:21PM +0800, Yuansheng Yang wrote:
+> keyctl_pkey_params_get() looks up the key, and keyctl_pkey_query(),
+> keyctl_pkey_e_d_s() and keyctl_pkey_verify() then dereference
+> key->type->asym_* outside key->sem.  A reference keeps the key alive, but
+> does not pin the module providing its type.
+> 
+> unregister_key_type() calls key_gc_keytype(), which retypes every
+> remaining key of the type to key_type_dead under key->sem for writing.
+> The pkey paths read key->type again after their checks, so a concurrent
+> module unload can turn the checked callback into the NULL key_type_dead
+> member and call through a NULL function pointer, e.g.:
+> 
+>   KEYCTL_PKEY_SIGN task              Module unload and key GC
+>   ------------------------           ------------------------
+>   keyctl_pkey_e_d_s()
+>     if (!key->type->asym_eds_op)     unregister_key_type()
+>                                        GC: down_write(&key->sem)
+>                                        GC: retype to key_type_dead
+>                                        GC: up_write(&key->sem)
+>                                      free_module()
+>     in = memdup_user(...)
+>     key->type->asym_eds_op(...)      -> NULL call
+> 
+> In-tree, turris-signing-key provides such methods.
+> 
 
-I hit the following report while testing current upstream kernel:
+Look at this:
 
-KASAN: slab-use-after-free in aa_get_newest_label
+> Hold key->sem for reading around the method check and the matching call,
+> so that the type cannot be retired in between.  Each keyctl handler takes
+> and releases the lock itself; the semaphore is not passed out through the
+> parameter block.  User buffers are copied outside the critical section.
+> 
+> This is the same type-removal problem recently fixed for the read
+> (925c84e3cc21) and update (aef3a8a4f988) methods.
 
-on commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d (7.4.0-rc1)
+I don't think we should be making up random English words for
+well-defined objects.
 
-To help trigger the bug more reliably, I applied a minimal diagnostic patch
-that only adds delays and print statements.
+The first paragraph in this should be replaced with the description how
+keyctl_pkey_params_get and other functions gets modified. I.e., how and
+why they get modified.
 
-The reproducer and .config files are here.
-https://gist.github.com/shuangpengbai/882f46b65965336e669fd5ce0e1ee964
+Also "user buffers", "the semaphore" etc. are hallucinated words with no
+actual meaning. Maybe it is just me but I do personally think that
+key->sem is a better description of key->sem than "the semaphore".
 
-I am happy to test debug patches or provide additional information.
+In the second paragraph I would instead:
 
-Reported-by: Shuangpeng Bai <shuangpeng.kernel@gmail.com>
+	This problem was recently fixed for 925c84e3cc21 ("keys: Protect the
+	read method check against type removal") and ...
 
+The commit message should be useful after the patch has been applied. I.e.
+when a bug is bisected it is useful to check from the commit message what was
+done.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in aa_get_newest_label (security/apparmor/include/label.h:413)
-Read of size 8 at addr ffff888107b7f138 by task bash/346
+The commit message is as import as the code change itself. With a random code
+change you are 50% done.
 
-CPU: 1 UID: 0 PID: 346 Comm: bash Not tainted 7.4.0-rc1-g05441d697f7f-dirty #1 PREEMPT(full) 
-Hardware name: QEMU Ubuntu 24.04 PC v2 (i440FX + PIIX, arch_caps fix, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl (lib/dump_stack.c:94 lib/dump_stack.c:120)
- print_report (mm/kasan/report.c:378 mm/kasan/report.c:482)
- kasan_report (mm/kasan/report.c:595)
- aa_get_newest_label (security/apparmor/include/label.h:413)
- find_attach (security/apparmor/include/policy.h:328 security/apparmor/domain.c:516)
- profile_transition (security/apparmor/domain.c:711)
- apparmor_bprm_creds_for_exec (security/apparmor/domain.c:1045)
- security_bprm_creds_for_exec (security/security.c:793)
- bprm_execve (fs/exec.c:1861)
- do_execveat_common (fs/exec.c:1963)
- __x64_sys_execve (fs/exec.c:2036 fs/exec.c:2030 fs/exec.c:2030)
- do_syscall_64 (arch/x86/entry/syscall_64.c:61 arch/x86/entry/syscall_64.c:84)
- entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:121)
-RIP: 0033:0x7f6def8a9c07
-Code: ff ff 76 e7 f7 d8 64 41 89 00 eb df 0f 1f 80 00 00 00 00 f7 d8 64 41 89 00 eb dc 0f 1f 84 00 00 00 00 00 b8 3b 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 59 62 10 00 f7 d8 64 89 01 48
-RSP: 002b:00007ffef478f408 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
-RAX: ffffffffffffffda RBX: 00005610067400c0 RCX: 00007f6def8a9c07
-RDX: 0000561006743480 RSI: 00005610067430e0 RDI: 00005610067401b0
-RBP: 00005610067401b0 R08: 00005610067430e0 R09: 0000000000000000
-R10: fffffffffffffd8e R11: 0000000000000202 R12: 00005610067401b0
-R13: 00005610067430e0 R14: 0000561006743480 R15: 0000000000000020
- </TASK>
+> 
+> Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops for asymmetric keys [ver #2]")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yuansheng Yang <0xbeac@gmail.com>
+> ---
+> Changes in v3:
+> - Keep the switch, allocations and existing error handling in place.
+> - Use one unlock point per method check/call pair.
+> - Set -EOPNOTSUPP inside the failed checks; add blank lines before labels.
+> - Use my real name in the author and sign-off fields.
+> 
+> v2: https://lore.kernel.org/all/20261104021414.50696-1-0xbeac@gmail.com/
 
-Allocated by task 335 on cpu 1 at 17.192413s:
- kasan_save_track (mm/kasan/common.c:57 mm/kasan/common.c:78)
- __kasan_kmalloc (mm/kasan/common.c:409 mm/kasan/common.c:426)
- aa_alloc_profile (include/linux/slab.h:991 include/linux/slab.h:1312 security/apparmor/policy.c:388)
- aa_unpack (security/apparmor/policy_unpack.c:1160 security/apparmor/policy_unpack.c:1766)
- aa_replace_profiles (security/apparmor/policy.c:1204)
- policy_update (security/apparmor/apparmorfs.c:673)
- profile_load (security/apparmor/apparmorfs.c:691)
- vfs_write (fs/read_write.c:685)
- ksys_write (fs/read_write.c:739)
- do_syscall_64 (arch/x86/entry/syscall_64.c:61 arch/x86/entry/syscall_64.c:84)
- entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:121)
+This makes much more sense than the previous version.
 
-Freed by task 349 on cpu 1 at 18.415536s:
- kasan_save_track (mm/kasan/common.c:57 mm/kasan/common.c:78)
- kasan_save_free_info (mm/kasan/generic.c:584)
- __kasan_slab_free (mm/kasan/common.c:264 mm/kasan/common.c:296)
- kfree (include/linux/kasan.h:235 mm/slub.c:2780 mm/slub.c:6630 mm/slub.c:6923)
- rcu_core (kernel/rcu/tree.c:2650 kernel/rcu/tree.c:2919)
- handle_softirqs (kernel/softirq.c:669)
- __irq_exit_rcu (kernel/softirq.c:703 kernel/softirq.c:542 kernel/softirq.c:786)
- sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1062)
- asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:674)
+> 
+>  security/keys/keyctl_pkey.c | 47 ++++++++++++++++++++++++++++---------
+>  1 file changed, 36 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
+> index 15b6bf6399..40475817dd 100644
+> --- a/security/keys/keyctl_pkey.c
+> +++ b/security/keys/keyctl_pkey.c
+> @@ -100,9 +100,6 @@ static int keyctl_pkey_params_get(key_serial_t id,
+>  		return PTR_ERR(key_ref);
+>  	params->key = key_ref_to_ptr(key_ref);
+>  
+> -	if (!params->key->type->asym_query)
+> -		return -EOPNOTSUPP;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -129,7 +126,16 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	down_read(&params->key->sem);
+> +	if (!params->key->type->asym_query) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_unlock;
+> +	}
+> +
+>  	ret = params->key->type->asym_query(params, &info);
+> +
+> +out_unlock:
 
-Last potentially related work creation:
- kasan_save_stack (mm/kasan/common.c:57)
- kasan_record_aux_stack (mm/kasan/generic.c:556)
- call_rcu (kernel/rcu/tree.c:3287 kernel/rcu/tree.c:3395)
- aa_remove_profiles (include/linux/kref.h:65 security/apparmor/include/policy.h:436 security/apparmor/policy.c:1552)
- profile_remove (security/apparmor/apparmorfs.c:750)
- vfs_write (fs/read_write.c:685)
- ksys_write (fs/read_write.c:739)
- do_syscall_64 (arch/x86/entry/syscall_64.c:61 arch/x86/entry/syscall_64.c:84)
- entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:121)
+out_up_key_sem:
 
-The buggy address belongs to the object at ffff888107b7f000
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 312 bytes inside of
- freed 512-byte region [ffff888107b7f000, ffff888107b7f200)
+> +	up_read(&params->key->sem);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -185,7 +191,16 @@ long keyctl_pkey_query(key_serial_t id,
+>  	if (ret < 0)
+>  		goto error;
+>  
+> +	down_read(&params.key->sem);
+> +	if (!params.key->type->asym_query) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_unlock;
+> +	}
+> +
+>  	ret = params.key->type->asym_query(&params, &res);
+> +
+> +out_unlock:
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x107b7c
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x200000000000040(head|node=0|zone=2)
-page_type: f5(slab)
-raw: 0200000000000040 ffff888100041c80 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 0200000000000040 ffff888100041c80 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 0200000000000002 ffffffffffffff01 00000000ffffffff 00000000ffffffff
-head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+out_up_key_sem:
 
-Memory state around the buggy address:
- ffff888107b7f000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888107b7f080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888107b7f100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                        ^
- ffff888107b7f180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888107b7f200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> +	up_read(&params.key->sem);
+>  	if (ret < 0)
+>  		goto error;
+>  
+> @@ -230,10 +245,6 @@ long keyctl_pkey_e_d_s(int op,
+>  	if (ret < 0)
+>  		goto error_params;
+>  
+> -	ret = -EOPNOTSUPP;
+> -	if (!params.key->type->asym_eds_op)
+> -		goto error_params;
+> -
+>  	switch (op) {
+>  	case KEYCTL_PKEY_ENCRYPT:
+>  		params.op = kernel_pkey_encrypt;
+> @@ -260,7 +271,16 @@ long keyctl_pkey_e_d_s(int op,
+>  	if (!out)
+>  		goto error_in;
+>  
+> +	down_read(&params.key->sem);
+> +	if (!params.key->type->asym_eds_op) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_unlock;
+> +	}
+> +
+>  	ret = params.key->type->asym_eds_op(&params, in, out);
+> +
+> +out_unlock:
 
-Best,
-Shuangpeng
+out_up_key_sem:
+
+> +	up_read(&params.key->sem);
+>  	if (ret < 0)
+>  		goto error_out;
+>  
+> @@ -307,10 +327,6 @@ long keyctl_pkey_verify(const struct keyctl_pkey_params __user *_params,
+>  	if (ret < 0)
+>  		goto error_params;
+>  
+> -	ret = -EOPNOTSUPP;
+> -	if (!params.key->type->asym_verify_signature)
+> -		goto error_params;
+> -
+>  	in = memdup_user(_in, params.in_len);
+>  	if (IS_ERR(in)) {
+>  		ret = PTR_ERR(in);
+> @@ -324,8 +340,17 @@ long keyctl_pkey_verify(const struct keyctl_pkey_params __user *_params,
+>  	}
+>  
+>  	params.op = kernel_pkey_verify;
+> +	down_read(&params.key->sem);
+> +	if (!params.key->type->asym_verify_signature) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_unlock;
+> +	}
+> +
+>  	ret = params.key->type->asym_verify_signature(&params, in, in2);
+>  
+> +out_unlock:
+
+out_up_key_sem:
+
+> +	up_read(&params.key->sem);
+> +
+>  	kfree(in2);
+>  error_in:
+>  	kfree(in);
+
+Exactly at this site I would do just little bit more hygiene work:
+
+	out_up_key_sem
+		/* ... */
+
+	out_free_in:
+		/* ... */
+
+	out_free_params:
+		/* ... */
+
+	/* ... */
+
+This adheres with the  https://docs.kernel.org/process/coding-style.html
+section conventions.
+
+At sites having already out_-labels I would not do extra renaming.
+
+> -- 
+> 2.43.0
+> 
+
+Br, Jarkko
