@@ -1,99 +1,118 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793907398;
-	b=JfjT88sibiznnMc3xsv7BBV8fcD3kZsfuBe5Td+tjim5izHexDeeQRpquPxxR4UwFllC
-	 jrjO3vesZux1f3JfqUYRJHoyR0E2SIgcShHcbz9uyj/l7tCic0Om2KB7LX0PX5R2IwC23
-	 4yAO4fI/OEw6Vgw84BFXW4l2wruz//LZvKopUUrYR+DR1SP/VBevvRRZkVORrRNhXRqMQ
-	 oI7Y88K62Y0SRbkIZvysgb50Zl57yGyThL4I+OEqeHKbFWd1yXL3IZvsugYy3Dv4OQj0y
-	 kGUP9Rm/FaTCGDEijhE50PRGKogYMtwlXlEykOIS2YXn7aBVKe3lwHNwqT55DaAaCGA==
+	t=1793907475;
+	b=HqChU/qethliqFvY6cMUjDz6g91XON09DVa3Jegg1m4TNM5l5FmToNCHI+bcp4Zcds3h
+	 YmQgbd2jp6WE/vgV8xH1iIcAvLs3H8RApDzWxofQB7q48/Zaujl3BKHklkcN2yREWYHZZ
+	 BH80qJKKum9ENwXWabB1AXtvIOycXEZOAJoY4gPVu3UeZgxHzTG+mNls8A0jfuGuZ5Z/y
+	 LS55toFEj+guSOSM9T0gIGlgArh2v5tsrk+ZzXi+FIqpxo8IWLYdiRIGJkRDWC75bPFFo
+	 T9etjmX3Wn6TOKB6LPmKdmjkReH++81GsD9Ubo8CfzwcWguMyMjUvMkWOcpNL0vZe+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793907398;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793907475;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=Varby6vTTgGosmDxdkbVVCPGhFaIy/1zgNtje3gNyzM=;
-	b=NSCP4BrImAXN3Xqxe4fsNBxb0AswwcLJ9Odil35xmaDNuJwu0d9wM12B9BWOFi67pUi7
-	 8TbN88dqJheFZRBES5c23YYp6RjYV5UDdN2LG4bGPcc0STjhGyTZkgrLjtKVaEit+A6rL
-	 eO914j+wtwIiXY25GFWXnFppfPardNz5L9/2VOYPMHOpekafNwMWFX7zFXfZf0BdIw0qU
-	 qJNx+Y4RIZYshfUCVTaKisme67Lwa/yt8W0ngev3equPnHQiPRBQmNsUDZoyotZvkAN4s
-	 yBGhcowIpkAeJd2MxDYSFdnhU+kQCEo5UjkWPfrtcwEssc2xsBBzugUTwYlSCdrZvfg==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=3ALiLRgUIlPUP7r35NUTeM7wiuqIXdzicUpxLmxb19E=;
+	b=TfnEC4SFJ9B7VM+nbuxVM+7mMa6efC84TN+qMLhu8fyjJg06KGvrL9CbnqEKcwTguYnp
+	 kQ9WuAh+HiYLIm3ku9ziOPdeslEQoBaBXYLNRnbzv5ARosPxovuFOX9ge3oHfa3rGThmF
+	 EHfPvQ//Tc5LM1PtCDTvtDyqQiSRoJ3R6yDQORLxxdaR5J2L+3+SkFO8epPwxFql8/TZr
+	 IUhvUE3AgpNO1Lge4rTK34GZwdgcG0fROh06vo0iTowL9dSMts3xN5Jb1/xopehAd2Y6H
+	 VQxE4dsyn8kAUFMet2BjhDlcnNix0+9JZnGZ3KEDgFnyruhQHCjMnFdQQ17pLNz/fdw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="MrvVq/pA";
-	arc=none smtp.remote-ip=209.85.216.53
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dmarc=pass header.from=arista.com;
+	spf=pass smtp.mailfrom=arista.com;
+	dkim=pass header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=CtJWa3tE;
+	arc=none smtp.remote-ip=74.125.82.170
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3575B606A6E0
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 19:36:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3575B606A6E0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD797606B9F2
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 19:37:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD797606B9F2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=MrvVq/pA
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3ac7842c17dso1536712a91.3
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 11:36:38 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=arista.com header.i=@arista.com header.a=rsa-sha256 header.s=google header.b=CtJWa3tE
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-3645f0f3fcdso3706001eec.0
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 11:37:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793907397; x=1794512197; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Varby6vTTgGosmDxdkbVVCPGhFaIy/1zgNtje3gNyzM=;
-        b=MrvVq/pAxeEpkWXJvxeD7gcR/Qrh87bKPPTXZNEO0tG57lXCu9eFrtFxefXkdMbQ+t
-         +FiL/k3Ptej86tBsPDeoLoizkVTIBwROn8QWbNusVRS8R/bCWm9dd6AGcGB7ub/WtPGR
-         UWy3DCVzTTXRt+1WOzTVq60M6NKtxfs+3JKFNAt/gZKsEsjG8TdLG+xv5InLaxogx2T5
-         OmYwab8IEf/IYxJ3jC3/1u/celUFJj8e96sXYWLdq5SO7gk63YV8hC7JdeKci8xMXjEq
-         4nI7GwwwC1aOwO/Mk+UIING/PbLJezKjiIG/tMhS17HnfXM8TKGnyuXPcUMKDSksixfU
-         SLNQ==
+        d=arista.com; s=google; t=1793907474; x=1794512274; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3ALiLRgUIlPUP7r35NUTeM7wiuqIXdzicUpxLmxb19E=;
+        b=CtJWa3tEL/dQ/RdyYOmPv2dc/ZxWSmCzdkel6b5w4cFqUR8L8Yi6Jqvw3+gCKmj1Wb
+         8F2PKydr3mpYlrF8QH3i7YW/bayrWHul9bNjqh+POZbqKFiRA8ayJ67ofnOCXF+sQIcp
+         mYJ3+ovEP8dkI6pcu9/gDn0ViYnsz86zDwEZdGq/yHQDWuWIqJN+tcZFgE8J/4OINklC
+         A3S8WWTFwSLWNOiYD0tjjK366TSXcc98utBOaoeROKpMMcYhCu2LFzpCHZWbEUJoLF8+
+         hpvZa1olcHLdvPqnS1eJtevWQK3BISF3T9V9gHs6DqgAFfkmwshhrXpzShEuswdCN2pq
+         U8qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793907397; x=1794512197;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Varby6vTTgGosmDxdkbVVCPGhFaIy/1zgNtje3gNyzM=;
-        b=zUWZW1XQZxeYLafvIE2b5t3sOFoMfEf4nRRI9mlE4ppm+P1qwOLdJ4CkizovY2Qesl
-         RJ3I3rMqD0PoaufQP6D3TaYWV9RnRPapbEEVkNZfJgxfnBPeO0LD3iuLgp21wcxJ7C6l
-         IHDwF3ODvatEDRqzUaMfLYAbwN9C6IS1U/Z/77olHvMg92bGpR8rpHqj8ZEiPn2X+DoW
-         Qk67UMcBGst9Qaq2+HTLLImZbTNdTW6pPrTJfNFXkcXp0oJM3CPYjVJyaKvaAYeHYYVK
-         Kg5pYnrRUpFHwj2N5CInwZD+pc7KosJW0iR7yfZnelb5OZN2fTVjlivnACfo4rTcBV5A
-         zgqA==
-X-Forwarded-Encrypted: i=1; AKwUvBwNmra/TCRKAH2hvHMTeQ8gwTB2U+flgqDM1ddoCn5HtmcoSn9537Q2WFwaFDIg7uZe+3S9/x/Sdvi+uBukmN0gXQkd8/4=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8P2XhjNdUb+JYECPKWMQC6XAF/HZGW5OYj7wNTreh5BdK1tJ+u
-	IWTHx0C4dGHn7lG0ySHWNPAeMChGHbVS3fv4+/bCnmEFrmD9RcEDmWgU
-X-Gm-Gg: AYBFou1nvouoE//MxMd7ooPdFvtY3hbgGIowAZ1E6bUDAGW0SPPJB+sSlOC9QJblCMQ
-	pisoJwfta0Gxe3YRH8lmj9EPkbbVnbhTChCRCX3vpFKrhvmW8XhZhm7OoZT3rmr5/NRsr7PSg1B
-	aPlXECb26g2c45wHdzgZHx4fgKEq8140cP8bxlFUXu+XCS68wEFA+8+LocpeEuZaXx3RGxhYjxN
-	JXU7nFS4f9pkPDVVTEhX3EQKQpjGXq0EuPUHYC50aokG6oHK2X7Qw5BeSRSJ9b7sfvwD63SOnMI
-	GbP4bRCpqm73R4CdkVV87phRGZnEx1lgWFtJznvGjcSo1Nt2Hc3LUFub6CRtxd+4bNTJ965kp+Y
-	mTQVSyZxEFyqs+UxXvG9euwxOYyrSkN3igQ91CxgalR7m/Xc6QVQ4KEyXCwLzNbIL6mpKmNaSFu
-	eEeRWKhF+KCnjL1DfyuQlWTv6MGMPRZ3BIEPwMczc1molAsJDpBAD8XtEtyFvul7hdelJ1cfY7j
-	5w/2gpy3Y4JBztP8Gxle0/Hoi+A3rl3Sedxlx9O7Wxqj8+VERHM2ErGEahMTFSbsqjZU1dyCx0O
-	nUSi5HgD8jfTLxZ7VsWCjJI2P+cbmIWQOBkhVdqn0USKPibA
-X-Received: by 2002:a17:90b:448f:b0:3ab:9c73:147 with SMTP id 98e67ed59e1d1-3b0db69ee38mr32308a91.14.1793907397392;
-        Thu, 05 Nov 2026 11:36:37 -0800 (PST)
-Received: from ubuntu24.vpn.host.chaitin.net ([124.77.124.225])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b0d7c42932sm499331a91.6.2026.11.05.11.36.34
+        d=1e100.net; s=20260707; t=1793907474; x=1794512274;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3ALiLRgUIlPUP7r35NUTeM7wiuqIXdzicUpxLmxb19E=;
+        b=S3rTh0XYzSdXj3OnXK3Wa4hYbaxfugmS97xSyJaFxq89MEppK7vLn899dbmORYTPHF
+         edvis0mZEKKYIwDFmcDn3W6vTvCB+7ToZ3DM3N27S+oYfYXbiHz/seJ/w5sEmTfnUjhU
+         Ti282ojsoSwGcqEhyqYIGshzwiMqQegAuc9eAHrFUgvIv89CywPKC6ZzgZGSwE/WmVPi
+         K4MxGufEHt6ZZuYjZc7YRNxJeRhFz1BJf9zK+V45xFouPfE8TYAYzRWZE+XRhsw267nJ
+         6YX3D0I0cwhcSdzcJpfS6SjgPQrPVM2TK/1E6wXh6nPuFmit7/VEzAt4+B2nubeDrEUn
+         nNtg==
+X-Forwarded-Encrypted: i=1; AKwUvBwaMr7oHpVFqTTDbZ3krmGYSjxRExJuheetKgjHoIdfI28PO4hr/bGplobUmJ3JZe3bsT40x41Vn5EnejTTIXLQOQGyHKc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/lEwkCM+mxSH3z5FUlRdZkdO/E3IZXQszbY/4jxtTWf4ADs1tt
+	77LBNC6vGLfngii6jF77b2x0C/344Rm7oWAZKeBoPW774Py0K3Mv3ffkNNOD/OUcXQ==
+X-Gm-Gg: AYBFou1Uw4ubRKJq6eQ5GMnVVEomGp0KQ+UqyX8rBC4xpBeDkxQZnre62f3frHEo4Ks
+	J3qCGinSTQyf62eNXeIjx2PppGw379ZkW1RQMZlKamr0P+GO2v4VJuQGqQHqK50iUYjLaWo9WpO
+	y4zknlZLS9i+dEcmguHdDK8kDO9fG/LuGVxpeWLRadx5c90rYjux3a5CCuNwPdLY/sCtGPPZHHX
+	TWPZVTyEl7GgYtKUX3boqZ3clZDZGjXLP12QPW4Rc0EGZ4dRV7FsIwQfIWzJHQZ6v5uNZLlrT4g
+	LCSD8kUGr1cyBZISKpMxX+TzttAlP4ctXUHRj0WsjICuGeXUNB5gyKQOBiyCut/nilimEcSnDcR
+	D/Geo3XWTtNu/1LpXhUe4wtF9CiQEQjHh4g2e4bx/rlBKRzd2mq1aSKf0LyvNJzJgSfeYd7jHP9
+	MJbd9netjJa4ULSnCDztFw6ahdv5mz163DBPyzSzLpvdKIynmmx/4i9EbKsfaQRhr2GZ54ZLSI4
+	2ZbzG7JNb2tySBm3IYZxuK94rXYjUZqG/kIXMDOssn5tRxGGgdww9TGblTXQQx511hf8sqQhzu7
+	SJlq3i5X1jhlW9P6uM47H3M0wtOhu9z3/tcDAxlXC1q0wS4N4XvvxaYTf1Tw+A4W8bxfXIVKwuB
+	XD6QjBKeYXoZTAPm9TaUPy1U=
+X-Received: by 2002:a05:693c:40c8:b0:36d:2b02:86a6 with SMTP id 5a478bee46e88-36f72cc1ae3mr274930eec.4.1793907473472;
+        Thu, 05 Nov 2026 11:37:53 -0800 (PST)
+Received: from dannyhu-upstreamLinux.sjc.aristanetworks.com ([74.123.28.19])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36f72ec8a02sm326134eec.11.2026.11.05.11.37.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 11:36:37 -0800 (PST)
-From: Yuansheng Yang <0xbeac@gmail.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
+        Thu, 05 Nov 2026 11:37:53 -0800 (PST)
+From: Danny Hu <dannyhu@arista.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Jan Kara <jack@suse.cz>,
+	Victor Kamensky <kamensky@cisco.com>,
+	Taras Kondratiuk <takondra@cisco.com>,
+	Zheng Zengkai <zhengzengkai@huawei.com>,
+	zhangguangzhi <zhangguangzhi3@huawei.com>,
+	Danny Hu <dannyhu@arista.com>,
+	Jason Yan <yanaijie@huawei.com>,
+	silviu.vlasceanu@huawei.com,
+	hpa@zytor.com,
+	arnd@arndb.de,
+	james.w.mcmechan@gmail.com,
+	niveditas98@gmail.com,
+	pierre@arista.com,
+	julien@arista.com,
+	kbharathi@arista.com,
+	alexandr.lobakin@intel.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	initramfs@vger.kernel.org,
+	linux-api@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v4] KEYS: Protect pkey method checks against type removal
-Date: Fri,  6 Nov 2026 03:36:31 +0800
-Message-ID: <20261105193632.34363-1-0xbeac@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <auy1ANMSKTXZb8GE@kernel.org>
-References: <auy1ANMSKTXZb8GE@kernel.org>
+	bug-cpio@gnu.org
+Subject: [PATCH v6 0/4] initramfs: add support for xattrs in the initial ram disk
+Date: Thu,  5 Nov 2026 11:37:39 -0800
+Message-ID: <20261105193743.2654656-1-dannyhu@arista.com>
+X-Mailer: git-send-email 2.51.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,190 +124,157 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-keyctl_pkey_params_get() looks up the key, and keyctl_pkey_query(),
-keyctl_pkey_e_d_s() and keyctl_pkey_verify() then dereference
-key->type->asym_* outside key->sem.  A reference keeps the key alive, but
-does not pin the module providing its type.
+This patch set aims at solving the following use case: appraise files from
+the initial ram disk. To do that, IMA checks the signature/hash from the
+security.ima xattr. Unfortunately, this use case cannot be implemented
+currently, as the CPIO format does not support xattrs.
 
-unregister_key_type() calls key_gc_keytype(), which retypes every
-remaining key of the type to key_type_dead under key->sem for writing.
-The pkey paths read key->type again after their checks, so a concurrent
-module unload can turn the checked callback into the NULL key_type_dead
-member and call through a NULL function pointer, e.g.:
+This proposal consists in including file metadata as additional files named
+METADATA!!!, for each file added to the ram disk. The CPIO parser in the
+kernel recognizes these special files from the file name, and calls the
+appropriate parser to add metadata to the previously extracted file. It has
+been proposed to use bit 17:16 of the file mode as a way to recognize files
+with metadata, but both the kernel and the cpio tool declare the file mode
+as unsigned short.
 
-  KEYCTL_PKEY_SIGN task              Module unload and key GC
-  ------------------------           ------------------------
-  keyctl_pkey_e_d_s()
-    if (!key->type->asym_eds_op)     unregister_key_type()
-                                       GC: down_write(&key->sem)
-                                       GC: retype to key_type_dead
-                                       GC: up_write(&key->sem)
-                                     free_module()
-    in = memdup_user(...)
-    key->type->asym_eds_op(...)      -> NULL call
+The changes in v6 address issues identified by the Sashiko AI review.
+v5 revision:
+https://lore.kernel.org/linux-fsdevel/20261030210944.2143778-1-dannyhu@arista.com/.
+The major difference from v5 is that this revision introduces a new state
+in the initramfs parser that specifically handles buffering metadata entries
+in memory. This has the benefit of preventing a metadata file from being
+created in the rootfs, eliminating the need for a metadata flag and
+separates metadata collection from do_copy. Sashiko identified the lack of
+support for POSIX ACL xattr restoration; while this is true, the primary
+use case of this feature is restoration of the security.ima xattr for IMA.
+Therefore, POSIX ACL xattr restoration is out of scope for this patchset
+and can be implemented later on when needed. This revision also adds xattr
+length validation, bounds checks that prevent overflow, improvements to
+tracking of the metadata target and fixes to gen_init_cpio to handle a
+NULL ptr and to define the __packed macro.
 
-In-tree, turris-signing-key provides such methods.
+This v5 revives Roberto Sassu's v4 series posted on May 23, 2019
+(https://lkml.org/lkml/2019/5/23/415). The github issue tracking the
+revival of this patchset is here
+(https://github.com/linux-integrity/linux/issues/11).
+This revision incorporates unpublished changes
+from other contributors that can be found in
+(https://github.com/linux-integrity/linux/tree/initramfs-xattr-v1-devel-v1)
+and adapts the implementation to newer kernel interfaces. Compared with
+v4, this revision adds an IMA deadlock fix for restoring security.ima
+xattrs during initramfs unpacking, switches to a Kconfig choice for
+metadata type selection, and updates gen_initramfs.sh to pass source
+paths to gen_init_cpio for nonregular entries, allowing their xattrs to be
+read from the correct source object that will be included in the archive.
+This revision also includes various improvements to error path cleanup,
+debug output and tool documentation.
 
-Remove the key->type->asym_query check from keyctl_pkey_params_get(): it
-runs without key->sem, so key_gc_keytype() can retype the key right after
-it.  Instead, make keyctl_pkey_params_get_2(), keyctl_pkey_query(),
-keyctl_pkey_e_d_s() and keyctl_pkey_verify() each take key->sem for
-reading, check the key->type->asym_* method they are about to call, call
-it and release key->sem.  As key_gc_keytype() takes key->sem for writing
-before it retypes the key, key->type cannot change between the check and
-the call.  Drop the asym_eds_op and asym_verify_signature checks that
-keyctl_pkey_e_d_s() and keyctl_pkey_verify() did before memdup_user() for
-the same reason; -EOPNOTSUPP is now returned from under key->sem.
-memdup_user(), kmalloc() and copy_to_user() stay outside key->sem, as in
-__keyctl_read_key().
+The difference from v2, v3 (https://lkml.org/lkml/2019/5/9/230,
+https://lkml.org/lkml/2019/5/17/466) is that file metadata are stored in
+separate files instead of a single file. Given that files with metadata
+must immediately follow the files metadata will be added to, image
+generators have to be modified in this version.
 
-This problem was recently fixed for keyctl_read_key() by 925c84e3cc21
-("keys: Protect the read method check against type removal") and for
-key_update() by aef3a8a4f988 ("KEYS: Protect the update method check
-against type removal").
+The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that
+all files have the same name. The file metadata are added to is always the
+previous one, and the image generator in user space will make sure that
+files are in the correct sequence.
 
-Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops for asymmetric keys [ver #2]")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yuansheng Yang <0xbeac@gmail.com>
----
-Changes in v4:
-- Rewrite the commit message: describe what changes in
-  keyctl_pkey_params_get(), keyctl_pkey_params_get_2() and the three
-  keyctl handlers and why, and cite the read/update fixes by subject.
-- Rename the out_unlock labels to out_up_key_sem.
-- Use out_up_key_sem / out_free_in / out_free_params in
-  keyctl_pkey_verify(); leave the other functions' existing labels alone.
-- No functional change relative to v3.
+The difference with another proposal
+(https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+included in an image without changing the image format. Files with metadata
+will appear as regular files. It will be task of the parser in the kernel
+to process them.
 
-v3: https://lore.kernel.org/all/9d47e202bd11857b3555e6b95694b3c3a4f2460b.1793852399.git.0xbeac@gmail.com/
-v2: https://lore.kernel.org/all/20261104021414.50696-1-0xbeac@gmail.com/
+This patch set extends the format of data defined in patch 9/15 of the last
+proposal. It adds header version and type, so that new formats can be
+defined and arbitrary metadata types can be processed.
 
- security/keys/keyctl_pkey.c | 58 +++++++++++++++++++++++++++----------
- 1 file changed, 42 insertions(+), 16 deletions(-)
+The changes introduced by this patch set don't cause any compatibility
+issue: kernels without the metadata parser simply extract the special files
+and don't process metadata; kernels with the metadata parser don't process
+metadata if the special files are not included in the image.
 
-diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-index 15b6bf6399..3e3253330c 100644
---- a/security/keys/keyctl_pkey.c
-+++ b/security/keys/keyctl_pkey.c
-@@ -100,9 +100,6 @@ static int keyctl_pkey_params_get(key_serial_t id,
- 		return PTR_ERR(key_ref);
- 	params->key = key_ref_to_ptr(key_ref);
- 
--	if (!params->key->type->asym_query)
--		return -EOPNOTSUPP;
--
- 	return 0;
- }
- 
-@@ -129,7 +126,16 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
- 	if (ret < 0)
- 		return ret;
- 
-+	down_read(&params->key->sem);
-+	if (!params->key->type->asym_query) {
-+		ret = -EOPNOTSUPP;
-+		goto out_up_key_sem;
-+	}
-+
- 	ret = params->key->type->asym_query(params, &info);
-+
-+out_up_key_sem:
-+	up_read(&params->key->sem);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -185,7 +191,16 @@ long keyctl_pkey_query(key_serial_t id,
- 	if (ret < 0)
- 		goto error;
- 
-+	down_read(&params.key->sem);
-+	if (!params.key->type->asym_query) {
-+		ret = -EOPNOTSUPP;
-+		goto out_up_key_sem;
-+	}
-+
- 	ret = params.key->type->asym_query(&params, &res);
-+
-+out_up_key_sem:
-+	up_read(&params.key->sem);
- 	if (ret < 0)
- 		goto error;
- 
-@@ -230,10 +245,6 @@ long keyctl_pkey_e_d_s(int op,
- 	if (ret < 0)
- 		goto error_params;
- 
--	ret = -EOPNOTSUPP;
--	if (!params.key->type->asym_eds_op)
--		goto error_params;
--
- 	switch (op) {
- 	case KEYCTL_PKEY_ENCRYPT:
- 		params.op = kernel_pkey_encrypt;
-@@ -260,7 +271,16 @@ long keyctl_pkey_e_d_s(int op,
- 	if (!out)
- 		goto error_in;
- 
-+	down_read(&params.key->sem);
-+	if (!params.key->type->asym_eds_op) {
-+		ret = -EOPNOTSUPP;
-+		goto out_up_key_sem;
-+	}
-+
- 	ret = params.key->type->asym_eds_op(&params, in, out);
-+
-+out_up_key_sem:
-+	up_read(&params.key->sem);
- 	if (ret < 0)
- 		goto error_out;
- 
-@@ -305,31 +325,37 @@ long keyctl_pkey_verify(const struct keyctl_pkey_params __user *_params,
- 	ret = keyctl_pkey_params_get_2(_params, _info, KEYCTL_PKEY_VERIFY,
- 				       &params);
- 	if (ret < 0)
--		goto error_params;
--
--	ret = -EOPNOTSUPP;
--	if (!params.key->type->asym_verify_signature)
--		goto error_params;
-+		goto out_free_params;
- 
- 	in = memdup_user(_in, params.in_len);
- 	if (IS_ERR(in)) {
- 		ret = PTR_ERR(in);
--		goto error_params;
-+		goto out_free_params;
- 	}
- 
- 	in2 = memdup_user(_in2, params.in2_len);
- 	if (IS_ERR(in2)) {
- 		ret = PTR_ERR(in2);
--		goto error_in;
-+		goto out_free_in;
- 	}
- 
- 	params.op = kernel_pkey_verify;
-+	down_read(&params.key->sem);
-+	if (!params.key->type->asym_verify_signature) {
-+		ret = -EOPNOTSUPP;
-+		goto out_up_key_sem;
-+	}
-+
- 	ret = params.key->type->asym_verify_signature(&params, in, in2);
- 
-+out_up_key_sem:
-+	up_read(&params.key->sem);
- 	kfree(in2);
--error_in:
-+
-+out_free_in:
- 	kfree(in);
--error_params:
-+
-+out_free_params:
- 	keyctl_pkey_params_free(&params);
- 	return ret;
- }
+From the kernel space perspective, backporting this functionality to older
+kernels would require adapting adding the dedicated CollectMetadata state
+along with the pathname target tracking. From the user space perspective,
+unlike the previous version of the patch set, it is required to modify the
+image generators in order to include metadata as separate files.
+
+Changelog
+
+Changes in v6:
+- Document that POSIX ACL restoration is currently unsupported
+- Validate xattr name and value lengths and compare metadata header and
+  entry sizes to remaining buffer when performing bounds checks to avoid
+  pointer arithmetic overflow
+- Introduce a dedicated CollectMetadata state to consume METADATA!!!
+  entries in memory. This replaces the metadata flag and avoids creating
+  the metadata entry as a file in the rootfs.
+- Verify metadata entry checksums before restoring xattrs
+- Initialize and improve tracking of the previous_name_buf so skipped or failed
+  entries do not leave an uninitialized or stale metadata target
+- Fix gen_init_cpio handling NULL path ptr and define __packed before
+  including the shared metadata header
+
+Changes in v5 relative to v4:
+- Rebase onto vfs.all
+- Add an IMA fix to avoid a deadlock during initramfs metadata restoration
+- Use u32 metadata record lengths and reject records smaller than their
+  header
+- Improve debug output for binary xattr data
+- Cleanup metadata buffers at the end of unpack_to_rootfs() 
+- For CONFIG_INITRAMFS_FILE_METADATA, replace the metadata string prompt
+  with a none/xattr choice
+- Fix resource cleanup and format specifiers in gen_init_cpio
+- Update gen_initramfs.sh to pass source paths to gen_init_cpio.c for
+  nonregular entries (slink, dir, nod). Modify gen_init_cpio to
+  properly collect xattrs from the source object. Without this change,
+  xattrs will not get included for slink, dir and nod.
+- Add documentation of xattr option in usage() for gen_init_cpio
+
+v3:
+- include file metadata as separate files named METADATA!!!
+- add the possibility to include in the ram disk arbitrary metadata types
+
+v2:
+- replace ksys_lsetxattr() with kern_path() and vfs_setxattr()
+  (suggested by Jann Horn)
+- replace ksys_open()/ksys_read()/ksys_close() with
+  filp_open()/kernel_read()/fput()
+  (suggested by Jann Horn)
+- use path variable instead of name_buf in do_readxattrs()
+- set last byte of str to 0 in do_readxattrs()
+- call do_readxattrs() in do_name() before replacing an existing
+  .xattr-list
+- pass pathname to do_setxattrs()
+
+v1:
+- move xattr unmarshaling to CPIO parser
+
+Danny Hu (1):
+  ima: skip algorithm availability check until initramfs unpacking is
+    finished
+
+Mimi Zohar (1):
+  initramfs: add file metadata
+
+Roberto Sassu (2):
+  initramfs: read metadata from special file METADATA!!!
+  gen_init_cpio: add support for file metadata
+
+ include/linux/initramfs.h             |  19 +++
+ init/initramfs.c                      | 206 ++++++++++++++++++++++--
+ security/integrity/ima/ima_appraise.c |  25 +++
+ usr/Kconfig                           |  19 +++
+ usr/Makefile                          |   3 +-
+ usr/gen_init_cpio.c                   | 221 ++++++++++++++++++++++----
+ usr/gen_initramfs.sh                  |  15 +-
+ 7 files changed, 460 insertions(+), 48 deletions(-)
+ create mode 100644 include/linux/initramfs.h
+
+
+base-commit: 2c3ba1f1cb416b81d617b92a24a4bcaa48d574e3
 -- 
-2.43.0
+2.51.0
 
