@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793890330;
-	b=OaEsSonB4GymfYiHfKOvI0VoknBEkssXIHvZ8Xk6OlyLdG+jwu+dcoy4eVnlg0AiCHib
-	 sAxnFOKORRgCaB+aorkHUctPNAYVFl+4F8tPeva2fEuRkZZHeQ1DYT6TUC27Kc/cKSHiC
-	 TjcSN4fFx/JOuobqWzW35oPZ3dbjPK6S8YbRuqGcLb4sRgVtd8IDyCHMgFobj4Uq3qOYf
-	 v452oEGqjE0YqcBcPlnKF3Obh3b1RwhEEuXx5zMowo1KrKL1pXfpwHJGkxKyKFqpHo8sk
-	 LZJfW+Oyyv3Q/Z5Die1WRdLXAWK8p6OfGDduw0X62Kp5UVHHpfaI/RKtMa3lG/ZJsIQ==
+	t=1793890386;
+	b=g6gPFa4amZWUu8PJ9p+rV6CaRJCgK940HNYpPwvRGlAx/GdKrTc2tbFV5L9nmHQnGArs
+	 fw9KX0dMg2AkAhxNrti7Jd9pNYyEtOpFhtC7fKQE+YVLQkTsgs+Y7wReWrZxx3lGqnkB/
+	 IdlcZsHYbFkQG06Px3as6seBo+GasgA4/HO5CE2Mk6soXHaT0/k5pn9fCkmL/YN2y4oOi
+	 E+iKmXP9kaxI8Jl2HInmRKXk1k6YSMyLjEUXWi/RqKeNue7w7It5DFM44pkjIY+7By1Jn
+	 OznDIM0IZ2BicT7+TCBc0E0Zh783wmJpBk5NyWgTZdf6V+RGsCAM5rLXkY88SoDKWFQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793890330;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793890386;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=4q6EEmPSt/SIDy/0wnPi7c7RVzpeXAoeutRYUF8Fw8A=;
-	b=2zwSKQajoGo4JGcgQjCLdBSQjfo/igxRO10Ix5rUQJvMnOWtEJbQlVh82hXREW/rsuno
-	 cEokz3/4ozBgVJbipqhEriCgh8sAQQmWmrZ3bviYoSC+yirUch9g0hWAT0iYQU1+If7+5
-	 wKoTdiR+wBeywWaRJZv7ENcpyv7NLLj28Q3IWLI2JFNowgEp1qdWNikB0JkfZJO6FB1Bc
-	 A+GsD84u+/DWdEmOTo3TzmCHVt9Spb3S6OC/Xm4QMrOvTFSvQaRkXtCnUM47+vJTyuiJe
-	 SPAejmzcQYEgEBGGd5Wj5bd32ab7tinTg4BH32DIWifhrT5IhYR6fuj7btmVV8mEWeg==
+	bh=+6Frxs6rS1KYbetbG7oD6detBnq4Hec8my8RIdSRVCA=;
+	b=kWfhGehtUi9wgHm5jBPgsG/UxHCWZh5Wq5IUlrOac+sbv5j+bLiw+BzAxpgbeTosdBzH
+	 ZqS3XiBnIKbJmmmRSNB6CJmS7oFqrbLB4+41PIhCQLl8R+tovOXnz1ysDeHCbosgYX9Rc
+	 ItmH3OO9ZKV++ZgJX6UfmF2FEfyzLN/vO8EN+oZWQA1ZayciZpZRP5lnopeh9pQhlZcIZ
+	 g03FvryrHaeyVD0ojy+XlzN78p1OZR8WrbgQb/gxPVu7+jO6ZjUWyJjCAsk/LJL0xWEHb
+	 0edFbtz5XRriid3Jd09KmltqXN2jT0xTNT2l84uhSRxZRT9XZ2ojXzC5TOb+x3LxCWQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H6zY+PfI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CZOJaFP8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098F4606A326
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F869606A326
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H6zY+PfI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18C01F000C1
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:52:09 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CZOJaFP8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C321F000C1
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2026 14:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793890329;
-	bh=4q6EEmPSt/SIDy/0wnPi7c7RVzpeXAoeutRYUF8Fw8A=;
+	s=k20260515; t=1793890385;
+	bh=+6Frxs6rS1KYbetbG7oD6detBnq4Hec8my8RIdSRVCA=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=H6zY+PfIbI+87XM5IyUav8RkhQ43t3jURqYb9eB9omZcH8BRxzjaLAMe6X6+PoOQk
-	 sL6AcKaoFTI2lOAdd2lUPjtY+3gjF09O+OIXC1Chw01dFrwMP/ePnXSm1IQX5RccKE
-	 wmnZJT0uq349GT4TqJT1VEEMw7FDrjtmA/w90rjgjcfy2+gTmXItm6b3PYneXMVicy
-	 c0x5LOqhCq91xhsT1gkOUp9iUoGKxtmHoIE3lkqDlGsRTBr7xJg4DRZublW+Sie2F5
-	 Fh8hFEHE0PGrfON9LSvo8lQgY1BTRwJ1IJAedeUKvXPb0D1+Vfgp3t/ZEop6XqVdJ7
-	 +303X7uTG8Eug==
-Message-ID: <sashiko-outbox-199269@kernel.org>
+	b=CZOJaFP8oR12U+IabCl8teTYP4T9JSK3vpt+x0iAipFhmPA4kVanL7+mf2kMhxy/T
+	 yAStaPuEt/KRHpbaK9J1bHmJZfuJthBW+lf65psnkf15NgkJVILeJ9BmR8K0HcE7F9
+	 6ta4tIetYrHmcRsIZV2jpVeFPUUrjMRL2gH2Ciy2xA4ZHWXOhjFrkLurgHIQnu+uzx
+	 6y/+NU8/x3sfXQCuuL32uBmPsrcUgAO9Lw9aKFd07jVHDhw5HOSAo/7+D1hSFgv+oP
+	 GFhrGcFSLiPwt+SPsE9rBQRor11TfHqng5G+Rp9AgzPfjMHG/O6OxysTv95ZL6zmoM
+	 rWfuq/zj+MqFA==
+Message-ID: <sashiko-outbox-199271@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 4/9] pseries/plpks: fix double conversion of write
- and remove flush errors
+Subject: Re: [PATCH v6 1/9] keys/trusted_keys: propagate wrapping key
+ generation errors
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261105144320.357260-5-ssrish@linux.ibm.com>
+In-Reply-To: <20261105144320.357260-2-ssrish@linux.ibm.com>
 References: <20261105144320.357260-1-ssrish@linux.ibm.com>
- <20261105144320.357260-5-ssrish@linux.ibm.com>
+ <20261105144320.357260-2-ssrish@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Nov 2026 14:52:09 +0000
+Date: Thu, 05 Nov 2026 14:53:05 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,23 +60,22 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> plpks_confirm_object_flushed() returns zero or a negative Linux errno.
-> However, plpks_write_var() and plpks_remove_var() pass this return value
-> through pseries_status_to_err(), which treats it as a raw hypervisor stat=
-us
-> and converts it again.
+> plpks_gen_wrapping_key() returns a negative errno when default wrapping k=
+ey
+> generation fails. However, trusted_pkwm_init() returns -EINVAL for all su=
+ch
+> failures, discarding the original error.
 >=20
-> Convert only errors returned by the write and remove HCALLs, and propagate
-> errors from plpks_confirm_object_flushed() unchanged.
+> Propagate the error returned by plpks_gen_wrapping_key() unchanged.
 >=20
-> Fixes: 2454a7af0f2a ("powerpc/pseries: define driver for Platform KeyStor=
-e")
-> Cc: stable@vger.kernel.org # 6.0
+> Fixes: c99fcb0d735b ("keys/trusted_keys: establish PKWM as a trusted sour=
+ce")
+> Cc: stable@vger.kernel.org # 7.0
 > Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105144320.3572=
-60-1-ssrish@linux.ibm.com?part=3D4
+60-1-ssrish@linux.ibm.com?part=3D1
 
