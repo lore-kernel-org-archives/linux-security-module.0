@@ -1,56 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793974099;
-	b=VD6vCHuuZMDtj7jZTbaVIACg4qsCUQAFHyEDbyV26FjEeRNaTOum8CK4JiMoYULz6Kvj
-	 tp/5YujdgfqRygXsE41T09vOdFz4bO61HD/65ezDPLhBCzoysJHSYJfkR7UC4xYGMqAjh
-	 kmGxaadC5Mp4cbduyxu4ULJw9qq118saHqhsCq/vojIql9yw/Vj4zQKe9YmkesO0PxNMw
-	 RIfOw2Vtz5JH/8z9hxT2eFDzg0OKWekStp1m2d9eYzPeNmogJkrUAyZz7bzicGLlXZUZg
-	 lyd1Ko0KJD5zWfQXKUL9d/EpoxmMS9MphWLt9Upn+I7hVzNBkdV6wQhiSEMmuUbFYKw==
+	t=1793975725;
+	b=SyNtHljOLgwNGOO149Ejin+CwMA9bPsLge+xlp7SOXapmMbi4zkvxEZsaswFpulWHTBD
+	 6GX69+k+kU5c9FuhggTJYJqLBBOjzvc3XUu6uEsgyz17p242qTJX2dgs345znulVWz9D8
+	 nsc0bi3Afp2+QKk7qbHT16nXujnvm+Lx1aOVR8Nz0NEoVXfB+qUXhk8wYDVkUHKevp49L
+	 8+OgFH3Q+PPbIHAtL84d3TE1mzvPibycfmK5mQHaQZ3Ezrzwnjuyhchs3AxEgshl2166U
+	 7BF1ViMrG1h5lMMr2aAeu3CmZ0lTivm6CC8GXhv+paJSOlXuLXlv0e9ustaxzBPBxvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793974099;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=hrYX149OSdk3k+YOin/rIkohEIQs6jD419zibT9vgxU=;
-	b=pKoPfBzQbcFXPRzioFIQRcrPDHiaSxxRMlVoGvKNgn4SrjGuw2r3ASvhPcxmv0TP/oY6
-	 NCZ9uBTQvaZlRF5hqJ96MxhJD6Ud50rs7lfp8Ipw2YEkZTIwlZQDCpK2AxrAUTlbdMbqY
-	 gkKtxbxGy+BamlF1OtritTmKeAX+OR1auxAWqyoGarsMZY+giEP4N4TGJY9DVVuKrcOLt
-	 7K7Xqbt4dLpTvw4UMBSOx4UF7ecEo6AFlXWh56Ef6d9uBVRG33iRXCBoVLPIHP/EY/IzW
-	 Mzl+QUDwZcH+3pprTD6q6Mfnk4fpqFZ404UE6RJ3xf7jgQfssUNU6WUTtAxnShOvFqw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793975725;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=dVYlhG5zwe3KP2A+EnIMjZEgzahfx4Lny8jKmNJoSns=;
+	b=yLWGOtmC5Yn7QADGDpaf12wb4p1FOP5A5791hhSwrLQze1JSG/aXpFV5+2+mAWBWkJyU
+	 DT5qCQ1kKeCb0xbWdozEQ/KtJnYEdM102Jw+e+iXTmH/+l/eUGfwPUi8VLst8in3oYeTI
+	 ajH5ewrpNzjWc4xpDGDoJwkwUtsc+L4NgfOlDjjkM0VLA66F7PNb4huLS2pPUI4MU5tyX
+	 4R9heSwmEPuRbO023aX8tBrQfp3Gd8CouW7IJ2EUFNJJoZmbaMFWCmWzmCYIGl2sZLIpt
+	 ier7l2gcQCtFIYhfzCFhMqGBv2xukNFeqT7nsN/LvL7pYf1+jZ8fjlTS7bRi4Kz6UZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh6r6JqT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bbS5o8Rc;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 4B2A3606A326;
-	Fri,  6 Nov 2026 14:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C499F606A326;
+	Fri,  6 Nov 2026 14:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh6r6JqT
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6D1331F008A4;
-	Fri,  6 Nov 2026 14:08:18 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bbS5o8Rc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32EB91F0089F;
+	Fri,  6 Nov 2026 14:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793974099;
-	bh=hrYX149OSdk3k+YOin/rIkohEIQs6jD419zibT9vgxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Fh6r6JqT9W8Hnz3tANti0KLpqS7sv0c9iueIpUquCp04Dn+y2973apbGc9JzFrcGD
-	 w+35nlorw7FqrNrGtSpEuPFV6uzE2NXLVthgnSwTqVW4uFpAk7Ng+5J6g5PYwUG6+a
-	 p/dKC3Rt9SGcj+/0SF7tnZj9WSWRN5Rp4h1xbWb47Z2O8kw3khIQnY3969bABkQLpN
-	 sp59C0skZ56wF2+7VfZcZQv4Vb3USBtN6YJa01erKVQlZP8VF1LBcKND7C2AaVgFHz
-	 PSQrFrUsWH5nNy02ZJPn0LlSgVQWBTXEEUReSTgvuQz22kf8T0dXAW6PpuRgJEWvwd
-	 n90pRF9foNiNg==
-Date: Fri, 6 Nov 2026 16:08:15 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Yuansheng Yang <0xbeac@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4] KEYS: Protect pkey method checks against type removal
-Message-ID: <au3fT5HMq7IF-M3e@kernel.org>
-References: <auy1ANMSKTXZb8GE@kernel.org>
- <20261105193632.34363-1-0xbeac@gmail.com>
+	s=k20260515; t=1793975724;
+	bh=dVYlhG5zwe3KP2A+EnIMjZEgzahfx4Lny8jKmNJoSns=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=bbS5o8RcEMSXv+wnNKUX2QlPsL3eYMot1atUWBvd2g07t7FbPNdIHI1p7vV5CR6HS
+	 zbmWeQpU8ByWX50kTNamEbcSnT1e9HT/c07ylE8QiRp83ZcVf6gJ31FJWS6N7JFrsl
+	 Tooqt0/DM80yb1TjjXEcDHgflkxA/vYfmpwGfidJdjHWpIwpCOUGXUJOALdqb9Nusd
+	 ddqgc4AoOIYX5vLfBxknD9yLoCszK3cdeF/SOm9uZ57yEFqqQdWnI12Oig0UXv2i4K
+	 GuwrCZVcwoRPVBCv4Igxf7uv7q3Ynp3EgEYA3o1Yf5hsmd1qeZqB3nt09CPz5H9und
+	 9eQ13pQ/tn2DA==
+Message-ID: <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
+Date: Fri, 6 Nov 2026 15:35:01 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,216 +51,157 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261105193632.34363-1-0xbeac@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
+To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Rik van Riel <riel@surriel.com>, "Liam R. Howlett" <liam@infradead.org>,
+ Vlastimil Babka <vbabka@kernel.org>, Harry Yoo <harry@kernel.org>,
+ Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>,
+ Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>,
+ Xu Xin <xu.xin@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>,
+ Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>,
+ SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>,
+ David Rientjes <rientjes@google.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, James Clark
+ <james.clark@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Oleg Nesterov <oleg@redhat.com>, John Johansen
+ <john.johansen@canonical.com>, Georgia Garcia
+ <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm@vger.kernel.org, damon@lists.linux.dev,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 06, 2026 at 03:36:31AM +0800, Yuansheng Yang wrote:
-> keyctl_pkey_params_get() looks up the key, and keyctl_pkey_query(),
-> keyctl_pkey_e_d_s() and keyctl_pkey_verify() then dereference
-> key->type->asym_* outside key->sem.  A reference keeps the key alive, but
-> does not pin the module providing its type.
+On 11/5/26 22:30, Lorenzo Stoakes (ARM) wrote:
+> Continue the conversion of legacy vm_flags_t flags to the new vma_flags_t
+> bitmap type.
 > 
-> unregister_key_type() calls key_gc_keytype(), which retypes every
-> remaining key of the type to key_type_dead under key->sem for writing.
-> The pkey paths read key->type again after their checks, so a concurrent
-> module unload can turn the checked callback into the NULL key_type_dead
-> member and call through a NULL function pointer, e.g.:
+> Do some more core mm conversion (we really should be the first to
+> completely move to the new scheme :), but also update some mm-adjacent and
+> otherwise straightforward cases - /proc/$pid/maps and friends, the coredump
+> VMA dump size logic, uprobes, perf and LSM mmap/mprotect hooks.
 > 
->   KEYCTL_PKEY_SIGN task              Module unload and key GC
->   ------------------------           ------------------------
->   keyctl_pkey_e_d_s()
->     if (!key->type->asym_eds_op)     unregister_key_type()
->                                        GC: down_write(&key->sem)
->                                        GC: retype to key_type_dead
->                                        GC: up_write(&key->sem)
->                                      free_module()
->     in = memdup_user(...)
->     key->type->asym_eds_op(...)      -> NULL call
+> This series only makes strictly mechanical changes to keep things gentle
+> during this very busy cycle.
 > 
-> In-tree, turris-signing-key provides such methods.
+> No functional change intended.
 > 
-> Remove the key->type->asym_query check from keyctl_pkey_params_get(): it
-> runs without key->sem, so key_gc_keytype() can retype the key right after
-> it.  Instead, make keyctl_pkey_params_get_2(), keyctl_pkey_query(),
-> keyctl_pkey_e_d_s() and keyctl_pkey_verify() each take key->sem for
-> reading, check the key->type->asym_* method they are about to call, call
-> it and release key->sem.  As key_gc_keytype() takes key->sem for writing
-> before it retypes the key, key->type cannot change between the check and
-> the call.  Drop the asym_eds_op and asym_verify_signature checks that
-> keyctl_pkey_e_d_s() and keyctl_pkey_verify() did before memdup_user() for
-> the same reason; -EOPNOTSUPP is now returned from under key->sem.
-> memdup_user(), kmalloc() and copy_to_user() stay outside key->sem, as in
-> __keyctl_read_key().
-
-This is a transliteration of the source code changes. How this helps me
-to quickly understand them vs reading the source code changes and 
-skipping this?
-
-I'd like to know what is that you are trying to do by doing those
-changes, which is the higher leve question. You should know this
-already. I see pretty much the same thing done for those sites so maybe
-that action is what you want to describe. Action taken, why that action
-won't cause any harm,  enumerate the coverage and address that it is the
-full coverage.
-
-The above looks to me as if someone had literally prompted "translate
-this source code change to English". Neither much effort thinking  done.
-
+> Build tested on x86-64 (allmodconfig, each patch individually), i386,
+> arm64, riscv nommu and ppc64le.
 > 
-> This problem was recently fixed for keyctl_read_key() by 925c84e3cc21
-> ("keys: Protect the read method check against type removal") and for
-> key_update() by aef3a8a4f988 ("KEYS: Protect the update method check
-> against type removal").
-> 
-> Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops for asymmetric keys [ver #2]")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Yuansheng Yang <0xbeac@gmail.com>
+> Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 > ---
-> Changes in v4:
-> - Rewrite the commit message: describe what changes in
->   keyctl_pkey_params_get(), keyctl_pkey_params_get_2() and the three
->   keyctl handlers and why, and cite the read/update fixes by subject.
-> - Rename the out_unlock labels to out_up_key_sem.
-> - Use out_up_key_sem / out_free_in / out_free_params in
->   keyctl_pkey_verify(); leave the other functions' existing labels alone.
-> - No functional change relative to v3.
-> 
-> v3: https://lore.kernel.org/all/9d47e202bd11857b3555e6b95694b3c3a4f2460b.1793852399.git.0xbeac@gmail.com/
-> v2: https://lore.kernel.org/all/20261104021414.50696-1-0xbeac@gmail.com/
-> 
->  security/keys/keyctl_pkey.c | 58 +++++++++++++++++++++++++++----------
->  1 file changed, 42 insertions(+), 16 deletions(-)
-> 
-> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-> index 15b6bf6399..3e3253330c 100644
-> --- a/security/keys/keyctl_pkey.c
-> +++ b/security/keys/keyctl_pkey.c
-> @@ -100,9 +100,6 @@ static int keyctl_pkey_params_get(key_serial_t id,
->  		return PTR_ERR(key_ref);
->  	params->key = key_ref_to_ptr(key_ref);
->  
-> -	if (!params->key->type->asym_query)
-> -		return -EOPNOTSUPP;
-> -
->  	return 0;
->  }
-
-I'd drop this as technically it is not part of the bug fix and then you
-have pretty much symmetric action. Helps at least with the description.
-
->  
-> @@ -129,7 +126,16 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
->  	if (ret < 0)
->  		return ret;
->  
-> +	down_read(&params->key->sem);
-> +	if (!params->key->type->asym_query) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out_up_key_sem;
-> +	}
-> +
->  	ret = params->key->type->asym_query(params, &info);
-> +
-> +out_up_key_sem:
-> +	up_read(&params->key->sem);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -185,7 +191,16 @@ long keyctl_pkey_query(key_serial_t id,
->  	if (ret < 0)
->  		goto error;
->  
-> +	down_read(&params.key->sem);
-> +	if (!params.key->type->asym_query) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out_up_key_sem;
-> +	}
-> +
->  	ret = params.key->type->asym_query(&params, &res);
-> +
-> +out_up_key_sem:
-> +	up_read(&params.key->sem);
->  	if (ret < 0)
->  		goto error;
->  
-> @@ -230,10 +245,6 @@ long keyctl_pkey_e_d_s(int op,
->  	if (ret < 0)
->  		goto error_params;
->  
-> -	ret = -EOPNOTSUPP;
-> -	if (!params.key->type->asym_eds_op)
-> -		goto error_params;
-> -
->  	switch (op) {
->  	case KEYCTL_PKEY_ENCRYPT:
->  		params.op = kernel_pkey_encrypt;
-> @@ -260,7 +271,16 @@ long keyctl_pkey_e_d_s(int op,
->  	if (!out)
->  		goto error_in;
->  
-> +	down_read(&params.key->sem);
-> +	if (!params.key->type->asym_eds_op) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out_up_key_sem;
-> +	}
-> +
->  	ret = params.key->type->asym_eds_op(&params, in, out);
-> +
-> +out_up_key_sem:
-> +	up_read(&params.key->sem);
->  	if (ret < 0)
->  		goto error_out;
->  
-> @@ -305,31 +325,37 @@ long keyctl_pkey_verify(const struct keyctl_pkey_params __user *_params,
->  	ret = keyctl_pkey_params_get_2(_params, _info, KEYCTL_PKEY_VERIFY,
->  				       &params);
->  	if (ret < 0)
-> -		goto error_params;
-> -
-> -	ret = -EOPNOTSUPP;
-> -	if (!params.key->type->asym_verify_signature)
-> -		goto error_params;
-> +		goto out_free_params;
->  
->  	in = memdup_user(_in, params.in_len);
->  	if (IS_ERR(in)) {
->  		ret = PTR_ERR(in);
-> -		goto error_params;
-> +		goto out_free_params;
->  	}
->  
->  	in2 = memdup_user(_in2, params.in2_len);
->  	if (IS_ERR(in2)) {
->  		ret = PTR_ERR(in2);
-> -		goto error_in;
-> +		goto out_free_in;
->  	}
->  
->  	params.op = kernel_pkey_verify;
-> +	down_read(&params.key->sem);
-> +	if (!params.key->type->asym_verify_signature) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out_up_key_sem;
-> +	}
-> +
->  	ret = params.key->type->asym_verify_signature(&params, in, in2);
->  
-> +out_up_key_sem:
-> +	up_read(&params.key->sem);
->  	kfree(in2);
-> -error_in:
-> +
-> +out_free_in:
->  	kfree(in);
-> -error_params:
-> +
-> +out_free_params:
->  	keyctl_pkey_params_free(&params);
->  	return ret;
->  }
-> -- 
-> 2.43.0
+> Lorenzo Stoakes (ARM) (13):
+>       mm/gup: convert GUP code to use vma_flags_t
+>       mm/filemap: convert fault and readahead logic to use vma_flags_t
+>       mm/rmap: convert remaining VMA flag tests to use vma_flags_t
+>       mm/migrate: convert VMA flag tests to use vma_flags_t
+>       mm: convert THP VMA flag tests to use vma_flags_t
+>       mm/ksm: convert VMA flag tests to use vma_flags_t
+>       mm/madvise: convert madvise_vma_behavior() to use vma_flags_t
+>       mm: convert miscellaneous VMA flag tests to use vma_flags_t
+>       fs/proc/task_mmu: convert VMA flag tests to use vma_flags_t
+>       fs/coredump: convert vma_dump_size() to use vma_flags_t
+>       uprobes: convert VMA flag tests to use vma_flags_t
+>       perf: convert VMA flag tests to use vma_flags_t
+>       security: convert VMA flag tests to use vma_flags_t
 > 
 
-Br, Jarkko
+I agree that this should be picked separately. For example, I will pick
+everything that falls into my realm to reduce conflicts.
+
+Ideally, patches really only touch one component.
+
+[PATCH 07/13] mm/madvise: convert madvise_vma_behavior() to use vma_flags_t
+
+is all over the place :)
+
+-- 
+Cheers,
+
+David
