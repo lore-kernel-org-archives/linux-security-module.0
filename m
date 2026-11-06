@@ -1,60 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793937626;
-	b=MucogHqJiIW4m/gRSioUKCtbvOTyV+JLUNipFDe9ljmugaLPCDMGW/MLTCLWGO3GjFnc
-	 noOhAnAX7+u9jyvbdtmVyWeaNYbUf44v7/APiZQFpZH5jbcTHlz+DhJOHSbCCPHl98STx
-	 0TdBaTcpIltfa/KIcrXzREramytE45wefdU/5i6xM+8s235T/cNaEmW2B4ADpE/48ogOS
-	 9QaDX6qTHuh9gEEWh2B07t59T2irmmZSmAG1b9kIc1AqyWTMK0kB3R+nwX4wyv8WYkjKs
-	 pmsUgBZKXwR0gKK+OIjYHhWcgxQk+fbzwUpW+xqnIAYwDMx4N3sCzbi3mpKhaQMP/CA==
+	t=1793937680;
+	b=EPT0Hiwc1sjzPqZxa2RAL0sd+Ge7SyownxFod5AAWR5m1K7Bo1Jeqk8DBniK51G3XwaX
+	 azfWvO78+7d9XjKMIVgDNkC0HwEAJp5znRAFfEQdmjIP6IFp64Y+wwIJgtxcdc4cF9BTM
+	 xGtC2B3SkLDj8kq40ODJpFNkPZecrKKUQ+fYDr1pju8R1+CVdE3UxXplfo5FiR8jrL7OS
+	 sVMOuJrqfjKw638Zb9LvJDC9JIrA6Ck8RSgMQYW6rsyGeyr1z/gZOe62iFEfEzmDjYJK+
+	 pqdADXQYhZK4Bvm595Ba9YW3E/s3JUaccnBMOqyAzVqRKit3r8NcFdkCgUlp0X5edBg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793937626;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=gG4gJBH70vwhLBAwsJc2f1i9/ZRakdwRX/cphXhKEFk=;
-	b=l/Fv+EvLKQcRi5XVHwTk80Z3b/Gz3boeXYr27IEgb0SDTwUt7PwoHcAB4b8SuP6kDiGO
-	 XA3CkvhpIpRluoqn3lgKVMkBXhXI9Z00kcd4IXLnwGeRbpfYk/Fw6oJIPsAAzZSvM5ico
-	 UVnmo1iMHdch3EkAwKo+bCzMZvJQV7SL/Bb+CZoS5kmTAHtr/7E5ac5a/hrUjwiMieq12
-	 DMXEPNFln/FPIlFVouay343P1bYM9ZIIk1+5wjnlfIGBSnDwiQuLJCbsdV467fUgZFuCj
-	 GvlmEMs7oENQWu7ggJ71fUom5laM5Sn+SD+Hk+XrwaT6jMsNYXJkbHhidsgkrWDpsCw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793937680;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=EKI7PGZaHzRnKhw9+Gxl7Ck/B2CGZVJrrWzNjxtIAHE=;
+	b=iVFDS1ShVbdF6oZon2c0GkhbUfMWXCD6yXPScGsrM3jlp06bX7RM4d/HlGJnEKdx/J46
+	 tsUkyT/nsEqdrQBr6Xi5ogbAAPwNPFMpE3CTqOrtDilRv8c9W2j5jbssP7vRXbLq8WiRV
+	 3U6fSqJmqE99XV+fz7sK2rX59H8PN1r5rKD+Lq0zs0z/im6pz51KkKtoEUOupQXACpaMY
+	 lu0MHht8OrqMNcjzHYRgYCRAuz+kuOFMD+g6ZfJeY/ECnce4KBw1WHDnTEo0c1Wedw8af
+	 OjW4Sj+ImjKFVrHvAXjezEMr6BTPmvUgXRypv6y7wUZt+CJxXHV8onPhEezoaYZk7Lw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hallyn.com;
-	spf=(null) smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=mdXfHJVU;
-	arc=none smtp.remote-ip=178.63.66.53
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LNdgrU5z;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5F1606A326;
-	Fri,  6 Nov 2026 04:00:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3A5F1606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4E2606A334
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 04:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=mdXfHJVU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1793937623; bh=VWYqX418nByO0eoQ9OmIikW5u3giy1iv2vfsvfsWcl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mdXfHJVUNstvS7SNDFebCZBeIvf2ahtlMsWniderv+naRr7tXLoWMJ7ZQEix/psmk
-	 wesVHRPhXe31ctoJh2BG//NKeSRePLTCch+8oS3ujHamvSh9U5xT4/K+NXzxiFDR1L
-	 ibJlXHfX4voo1A4UZDeUcrleyQQ7Mbno7X9ZnPohrdeht/qOm60ZkaN6yVKQdf8c1N
-	 80QUx8IDy6zQMoECZLntfc2d8YZuKslHhPjvPxJscDFe6iEgq1eaHCRSgh73Q1wFvN
-	 nbY9Ir1qxDeUwhJtpnJU+29hk0Rks5GhxXea8Z9+r/d1b7kN1PdPDSYAmajXO+v90r
-	 yvz9hgk2nGhVw==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id A5CD7229E; Thu,  5 Nov 2026 22:00:23 -0600 (CST)
-Date: Thu, 5 Nov 2026 22:00:23 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 00/13] cred: gather the "same uid" checks between
- tasks in one place
-Message-ID: <au1Q1+s102IDLWJ0@hallyn.com>
-References: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LNdgrU5z
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3BFE1F008A2
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 04:01:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793937679;
+	bh=EKI7PGZaHzRnKhw9+Gxl7Ck/B2CGZVJrrWzNjxtIAHE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=LNdgrU5zM2nugBvZVCR02iYgDIFmlQHM3kqBcyp/SVdk7mtCDyZg91KEZW9QGqiq4
+	 pTrdL/v5+Sridp9dwQOz13aeDVsJ3H2YdUTQ2WgTqzAN3jOXnwlTOnh17e7nKmSJJS
+	 cBGQ2Hysr/0o2u+C0HNxL4jSArWNZCkAWoE4VqHwdeCR6AmOWsinVXhs4XeD3AnnYL
+	 NyyqQbfWqKaONffmcdGvCd7zgPIyaaZdh/1bZChmRJVWt9bEoba8Mj9VPdtvLQJHSL
+	 LtcLpkBtQervU2s3YqAwlJwk+9qPdvnWWnyivKaN8yf3MXd/mXhVPuD1TG2CyQRZXk
+	 koUxpIOcYqO3g==
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-53fdd2fb171so1784681cf.2
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 20:01:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBxlR5fBwELEyHTm1FdEMeubzAcsPKJGsxqSGBY1mGCPnHUggEZKlLdTbRFXJc0NhFLsnT1C9nYHFHHJW/kQLJraZ45akJ0=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/Tqdm94Vr5FQIZJ2+J0gYjjGRgnCB9QEZRRQjZSKI/ElWezG8X
+	9f3uXZsUhs4XbIar4TVpqhFxrjhoj/5PelV6t+2jfZPjftvGs2+MEubOIVnfS0GogM7fRlQkX0p
+	ojaAijwPe1QnFRig5VNxJg+3DyMKg5KY=
+X-Received: by 2002:a05:620a:688f:b0:93f:5f83:2cbb with SMTP id
+ af79cd13be357-945f33a9aa3mr181925685a.7.1793937678322; Thu, 05 Nov 2026
+ 20:01:18 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,113 +59,74 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261104-b4-cred-ids-v2-0-956213608f16@toxicpanda.com>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org> <20261105-late-2026-vma-flags-v1-5-0d3cd15ab75f@kernel.org>
+In-Reply-To: <20261105-late-2026-vma-flags-v1-5-0d3cd15ab75f@kernel.org>
+From: Barry Song <baohua@kernel.org>
+Date: Fri, 6 Nov 2026 12:01:06 +0800
+X-Gmail-Original-Message-ID: <CAGsJ_4zKtBarGn2gMEH7ckKtLLgugoyPb040Z2KtXX5Feye1Mg@mail.gmail.com>
+X-Gm-Features: AclHuK-043SJnHCawrQog3yw2g1v7cvWQi1ZSPtdBLorMSdL4MZoNdMju91VkJk
+Message-ID: <CAGsJ_4zKtBarGn2gMEH7ckKtLLgugoyPb040Z2KtXX5Feye1Mg@mail.gmail.com>
+Subject: Re: [PATCH 05/13] mm: convert THP VMA flag tests to use vma_flags_t
+To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
+	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, Harry Yoo <harry@kernel.org>, 
+	Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, Zi Yan <ziy@nvidia.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <nico.pache@linux.dev>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+	Baoquan He <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, 
+	SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, John Johansen <john.johansen@canonical.com>, 
+	Georgia Garcia <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm@vger.kernel.org, damon@lists.linux.dev, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 04, 2026 at 02:24:27PM +0000, Josef Bacik wrote:
-> v1: https://lore.kernel.org/all/20261018-b4-cred-ids-v1-0-7bdf2db4ea9f@toxicpanda.com/
-> 
-> v1->v2:
-> - Rebased onto v7.4-rc1, patch 1 didn't apply any more.
-> - Patch 1: VFS_WARN_ON_ONCE() in the default case of
->   cred_ids_allow_control() instead of failing silently (Serge).
-> - Dropped the Assisted-by trailers, see 1e035297ffda ("docs: remove
->   Assisted-by references").
-> 
-> --- Original email (v1) ---
-> 
-> Hello,
-> 
-> We have a dozen places in the kernel that let one task mess with another
-> because they belong to the same user: kill(), SIGIO, the scheduler
-> syscalls, setpriority(), ioprio_set(), prlimit(), ptrace, moving a task
-> around in cgroup v1 and resctrl, and KEYCTL_SESSION_TO_PARENT.  Every
-> one of them open codes a handful of uid_eq() calls on the two creds.
-> They come in six flavors that differ in which of the real, effective and
-> saved ids they look at, and in whether euid 0 gets a pass, and there is
-> nothing that tells you whether two of them differ on purpose or by
-> accident.
-> 
-> I tripped over this working on something else that needs to change what
-> "the same user" means.  I kept finding another copy I had missed, and
-> for this kind of check a copy you missed is a hole.  So this pulls all
-> of them into kernel/cred.c, side by side, with a table that says which
-> rule looks at what, and converts the callers one at a time.
-> 
-> Nothing is supposed to change.  What each of these means by "the same
-> user" is ABI at this point, so every rule is kept exactly as it was,
-> warts and all, I have not tried to unify them.  The capability checks
-> and the LSM hooks stay with the callers.
-> 
-> The one patch that isn't a straight substitution is the fcntl one.
-> F_SETOWN copies the uid and euid of the caller into the fown_struct, and
-> the helpers take creds, so it holds a reference on the cred instead, the
-> same way struct file does for the opener.  That means the cred sticks
-> around until the owner is set again or the file goes away.
-> 
-> For testing, patch 2 is a KUnit test that holds each helper against the
-> expression it replaces, verbatim, over every combination of a few ids. I
-> also ran kill, setpriority, ioprio_set, sched_setaffinity,
-> sched_setscheduler, prlimit, a cgroup v1 move, SIGIO and PTRACE_SEIZE
-> for all 64 combinations of real, effective and saved uid of the two
-> tasks, on a kernel with and without the series under KASAN and lockdep.
-> All 576 results are the same on both, and they match what the table
-> says.  The resctrl and usbdevfs (kill_pid_usb_asyncio) callers I have no
-> way to exercise, and the MIPS patch is compile tested only.
-> 
-> This is based on vfs.all only because that's what the other work sits
-> on. Thanks,
-> 
-> Josef
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
-thanks,
--serge
-
+On Fri, Nov 6, 2026 at 5:33=E2=80=AFAM Lorenzo Stoakes (ARM) <ljs@kernel.or=
+g> wrote:
+>
+> Replace use of the legacy vm_flags_t flags with vma_flags_t values where
+> VMA flags are tested directly in the THP and khugepaged logic.
+>
+> The thp_vma_allowable_orders() family of functions, hugepage_madvise() an=
+d
+> khugepaged_enter_vma() continue to take legacy flags for the time being.
+>
+> Also update BUG_ON()'s to VM_WARN_ON_ONCE() while here.
+>
+> No functional change intended.
+>
+> Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 > ---
-> Changes in v2:
-> - Link to v1: https://patch.msgid.link/20261018-b4-cred-ids-v1-0-7bdf2db4ea9f@toxicpanda.com
-> 
-> ---
-> Josef Bacik (13):
->       cred: gather the rules for acting on a task by uid
->       cred: add KUnit tests for the id rules
->       signal: use cred_ids_allow_signal()
->       fcntl: use cred_ids_allow_sigio()
->       sched: use cred_ids_allow_sched()
->       MIPS: use cred_ids_allow_sched()
->       sys: use cred_ids_allow_sched() for setpriority()
->       sys: use cred_ids_allow_control() for prlimit()
->       block: use cred_ids_allow_ioprio()
->       cgroup/v1: use cred_ids_allow_move()
->       fs/resctrl: use cred_ids_allow_move()
->       ptrace: use cred_ids_allow_control()
->       keys: use cred_ids_allow_control()
-> 
->  Documentation/security/credentials.rst |  19 +++
->  MAINTAINERS                            |   1 +
->  arch/mips/kernel/mips-mt-fpaff.c       |   3 +-
->  block/blk-ioc.c                        |   3 +-
->  fs/fcntl.c                             |  19 +--
->  fs/resctrl/rdtgroup.c                  |   4 +-
->  include/linux/cred.h                   |  20 +++
->  include/linux/fs.h                     |   4 +-
->  kernel/Makefile                        |   1 +
->  kernel/cgroup/cgroup-v1.c              |   4 +-
->  kernel/cred.c                          | 162 ++++++++++++++++++++++++
->  kernel/cred_kunit.c                    | 218 +++++++++++++++++++++++++++++++++
->  kernel/ptrace.c                        |  16 +--
->  kernel/sched/syscalls.c                |   3 +-
->  kernel/signal.c                        |  10 +-
->  kernel/sys.c                           |  10 +-
->  lib/Kconfig.debug                      |  13 ++
->  security/keys/keyctl.c                 |   7 +-
->  security/landlock/fs.h                 |   3 +-
->  19 files changed, 461 insertions(+), 59 deletions(-)
-> ---
-> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-> change-id: 20261018-b4-cred-ids-eb01b2b38524
+
+LGTM,
+Reviewed-by: Barry Song <baohua@kernel.org>
