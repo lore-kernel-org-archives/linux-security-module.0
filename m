@@ -1,59 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793926454;
-	b=F8YhqDfRmyajYdN+5JanaXHCn5jo7GqQWBODo7xqE4bcH9+vRHkC8FIu1+CXn7JBRqOM
-	 tDm+3HtMV6uE+fbYu5hlR0d32PZcrZ2ZDMSq+ay9U4BpwfEAMnPhs+ayMiTFfkNFk/vUB
-	 5N/H3mZhtKFrYfbI1STMdcEAfnrBCiMFxekyUk6Qymu/uzfF+Zhtcwm15glhtnAe3FIer
-	 KBiG9Bwr4VrGWHqVExMYXy+K3ADBkgTqxIZ/R4/ZQx9jSixgwvTECy5GRVlRV8uHOKAjl
-	 iGIC/o/00LKLT0qhakjNdqTtzcvH0f3rJpSE7ROJycsIwkifWbaLsTkq0j33Z9Uq3Xw==
+	t=1793926449;
+	b=kYL+XmbFmfgOQqde9Uns/lVMPajckBkCXAs2Sbb0kMoVkGMyPtmdsVqSAfcPP45kAJvH
+	 tnDaNpHj/cXjM3Exf2c+zE7SvHnHopVV3R+Si83LYOnKWZpVw93JR8w5Qu7/kgiu+fX7H
+	 wrcpxqaPjZ3DoUJZhI3EQUQtXktsMXJGZGexSM9Qg3Wwi8zHzVdh9AXnv896GNCqdfZEE
+	 cBXQum8M8gMXwb4otDhF7QXJ3emxG5F9OfCjIPX+sh71RilBexxm1j5GEF3zVB7zPik7Y
+	 6Y3mY4IXcTwDW6yrplq/WlRFD7owIisCloJzY1w60Qy4U+HsUNVvFX1EEn0/rXrekRA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793926454;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793926449;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=PvTW3GwwUaJm9zceP8HmURXvvculND7vyYy8SiGOeW8=;
-	b=eW+rGbP93I7CpMbEc+WkdRMH0xNNIkDGck1s4xm7iY8/y9RhcyE9is1MST93rnnKLGU4
-	 YMohVkGxyhskvm/+6fSK1wvuHr/GCKnZQZSak+DNAh7WiE8Kz8zgWNV+P5Vj/ZoXvFKYW
-	 sy2U4240CAWoVAunbKzFv8xKlrgq00KfShf+wei59UaEnboRxA8Ji2E2Kc3dfw4yNRCf3
-	 ykvllqORmSl1SMli589M6Z1wpoECcliXJebN4bYy7xqF/uEPY6tNRHNN5PkD6N83EEgAm
-	 7pNR8t3yNzidjt5jiviJLdHAvmjA5JiFC3BbqZ0mY9tRDfvxYhl63T1WxP2zrSVTMfA==
+	bh=OebrSLQ65etwomxUDseEIJVL9D9Oxa+/lHk1B03ekB4=;
+	b=m6C66qmEXGIdbcp+HVKLpPSAcCVn6xqAEF9914Qm1PACtpWL9lbnLZffN2ytqUxlQBQG
+	 urMEVLVzcVqydP/2+Z9G4ZwVVTJA6SPomiPmU7x/2GtLGi9hpy5fmDSsmnn9x90AcqFuT
+	 AkxnxhniQF4V1Q4f0YY327EoZfCM/RnHKceUBlXBs32kGpW4IxpXG5w/EQPWjmAhTKcaA
+	 1BB5n+nf3Ud1Cft7olM246GBZ7l0BbIHdOE0nXgAKsyb0UlATr+KcVyX6u/MB83Iis+C0
+	 r1o7gNqTewgSfK2BTtDcElk4rCSzwS0wblpEvzufUG+v1XxXQUY8mlxWBh2p11roTNw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Kfxj/vAF";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YsqMM4RF;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF51606A31B;
-	Fri,  6 Nov 2026 00:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976D1606A326;
+	Fri,  6 Nov 2026 00:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kfxj/vAF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D608E1F008A1;
-	Fri,  6 Nov 2026 00:54:13 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YsqMM4RF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2354B1F008A4;
+	Fri,  6 Nov 2026 00:54:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793926454;
-	bh=PvTW3GwwUaJm9zceP8HmURXvvculND7vyYy8SiGOeW8=;
+	s=k20260515; t=1793926449;
+	bh=OebrSLQ65etwomxUDseEIJVL9D9Oxa+/lHk1B03ekB4=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Kfxj/vAFt7c0lRuV/CjhosWO4f5u3hnmq/E6203a6Rzezem+mr8E6cCYdGgcH+H3I
-	 PXKOUL3F/vM9aHGb4RKoBtlb9JMl2ZLK9EIxRVMudinJ/mlJtUt6uOHJg7LYjaqcVX
-	 c0mH8qG66dJrz+hG5OJ1Y42PgeFWgTvhW5eTfeHE63xzmW3jbmPpv0lrDxJ7mkCvZ7
-	 /hLQuEq2deiJ7ol23qgXWJD+Xt9cfJGGoY+DyYplH0rABVvD+UaFKedIhJuwoVrHBx
-	 jLIF+dLR20NLzhuqK6twnxVcysVPwxe5nupvmbSYDn8wXE6/5A5gYU91Kmq8+o97cV
-	 OOm5GZ1DA5/ww==
-Message-ID: <sashiko-outbox-200466@kernel.org>
+	b=YsqMM4RFCixLf7PQIvgSzfo/FALSaU6cAfxgyO+0D286DVIi6EV2Jtzv2RFlG8aJs
+	 LA+0YYZRtPr4LA+PLfQ4edzbi39MteXJIGecigmQNjbjWlnnjBWpcLcwuZ7+5ojcM1
+	 g8Bd4Lhbm4TV1HUK3xh9F5V0F0VjXVsi0G1/qmvRxQ6jUuOkkcHuTeAMs3qTNMos26
+	 +xkZERNI0Dx9RPuIiLsZV/NnrSnYtEavpuFiswpU7LR5OBiBj4lm+7KnVnYYbxYkxU
+	 onY9H9hU0JNf+H1ye37VBz/4G3v9pjBqCm34s2+H/U1wqQwCRd9K8DdH8z4Bp3BzzN
+	 oBt0u5tZtcLzQ==
+Message-ID: <sashiko-outbox-200460@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v3 11/11] KEYS: key_garbage_collector(): process in
- chunks
+Subject: Re: [RFC PATCH v3 05/11] s390/cert_store: Start tracking subsystem
+ keys
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org, "Heiko
  Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander
  Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>
-In-Reply-To: <20261105005311.804098-12-jarkko@kernel.org>
+In-Reply-To: <20261105005311.804098-6-jarkko@kernel.org>
 References: <20261105005311.804098-1-jarkko@kernel.org>
- <20261105005311.804098-12-jarkko@kernel.org>
+ <20261105005311.804098-6-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 06 Nov 2026 00:54:13 +0000
+Date: Fri, 06 Nov 2026 00:54:08 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,35 +63,20 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> key_garbage_collector() has a design that is not resistant enough for
-> workqueue lockups. The duration scales up relative to the number of items
-> in the serial tree, which causes a reoccuring theme of being guilty of
-> causing workqueue lockups.
+> cert_store refreshes its keyring by unregistering and then registering
+> again key_type_cert_store_key. Once keys pin to the kernel module of their
+> key type, this is no longer necessary.
 >=20
-> Resolve the problem by processing in chunks:
+> Register key_type_cert_store_key once during init before creating sysfs
+> attributes, and track subsystem-created keys explicitly so that the refre=
+sh
+> operationunlinks and invalidates previous entries directly.
 >=20
-> 1. Declare a static variable key_gc_work, which owns the garbage collecti=
-on
->    in-flight state, and key_schedule_gc_work() for re-scheduling the work.
-> 2. Define KEY_GC_CHUNK_SIZE, set to 64 keys, as the bound for the number
->    of items scanned and destroyed.
-> 3. Define KEY_GC_DESTROYING to mark resume to destruction without repeati=
-ng
->    the RCU grace period.
-> 4. Define KEY_GC_REAP_REQUESTED for preserving full-pass requests across
->    the continuations.
-> [ ... ]
-> decline.
->=20
-> Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their key=
-type is removed")
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-=
-test.git/tree/package/keygcbench
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105005311.8040=
-98-1-jarkko@kernel.org?part=3D11
+98-1-jarkko@kernel.org?part=3D5
 
