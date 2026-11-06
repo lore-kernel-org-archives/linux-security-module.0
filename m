@@ -1,51 +1,48 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.204
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793948601;
-	b=zphFD09zGBQJ3A095Zn8L0OLf9B0RSOmrmDCXkSsaq20a2XETzNeZw0eZxDcXpSx1QYw
-	 stlTztqpuiNz1zfpYWBOl5QXop1K/KA9xLEDyT0IiGADbh+wYvwqzf9wgwScqxxXQFax/
-	 D8ZtLv7bY5lK0nTnNJq4h94MBJe+O1x6o1TwII3dGm4doOtwNuhh2WYAa0UvEESu7WY5K
-	 jTZ1APGmJttjksOY4BRQFh6uP8JU1g9M7aKuXFjOG/yltQWAMfvLKF3uKX8KZ5Z9EXEFv
-	 Vy8mg+IonNouQnW1Mr41oHMdYmdGSBQG7AvBIp0i7IQeUMMc1e3Wn6XPwkntTherr9w==
+	t=1793949140;
+	b=458gQdUIe8scZoGV2CEs44x2Lhug5DAZm8sDVnHG59XRX6Ii0pWvIgifITywVWF7ZdCj
+	 DthXp4jc5LefYlxxB3YbJ212ukAoXkW7JYuoZu09dj1E8D+/S7PFiUXy3ZKEFinwF9C0U
+	 GLJn5XlGjpJEejSNwqNjfpyfEO/la5ums9CpdnJYjXUQcCox5UtaPP5YZOZgqUWtOg4f8
+	 Acul0gfQa8cZzcB9HzbxWDIfcZJv59HlGdoAwbM+euzhsRUn5bPtKI6MYUD9AeVh2js2R
+	 lHHqqKQ5gp/rnoCJG+Za2KAVKRrrAKSTUJ8wnqrkWHa+jfEbwstOpv4bRkU417F5rig==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793948601;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793949140;
 	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
 	 X-Mizu-Trace-ID:X-Migadu-Flow:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=mO1x09i7EnqPJXUwKJeExoIzGQZI3rHtjjcSVoEtSSw=;
-	b=U3/kMoLyZ0XbgAa6M5VHNv9QlugNlke+2peGSk2maSb6Dq4M1Ee1Pi8aXN5soXjM9KPZ
-	 AjDxknEg8HqVZp73t61Nn62s8s4X7XvpKROGoUGVo34fPxgDjhHto6hsDE+myImgLGPv3
-	 vtZkuysK0bSa4mvo8YQ3U1P/j6vfqS2zTPMJ0zDeqNIeV8JJwx3nynpbAjXp5gNjLVWmY
-	 mEDmWcaN+D6kwk/hVZu3lHZzOmHp8Syy+l6V1+XQdgMdAEUgrcYA3ulSjn+wE15cTBjqd
-	 zJli80UdOLNGo+/JwPvk6UYJ60A247fm8nDCwv5UmB9hCQN7DblO/ppqBK5DrJTPYaQ==
+	bh=2tr7RAK1Z1e7MRIJGh8p+CCxNaKqEt5LEou42TFWdC0=;
+	b=H6GK+jNLlmorpo4EhhNpL53KbX1o1cE4QOEbkOZVvAMDsi48pBbeoVrcq8Bkt7qVcWuT
+	 IU5sc/64P0ijNTWuwJPbHFlZLJaZvxlAv3UMA2sWUGY9S/5fSZDLLovBjS3rJHfXm7bP7
+	 yAa5bZ2/jWYyCEE4dhmWuqU4nHONMF6p6No0/foROH0hSx0l26GjmUz4l5eEpJXxUJZyj
+	 VDRKqXY43Gfvd0IIZzVqUppENlnF3B1mm8QZWkiVqRozvEVNTEBDLpvjePT0qnAXClIqQ
+	 dbwyGBaPuMyHOStS31E8KKOSZZ4uZbZgzd1ZM55ScxMPpvy7X0VsqC4X7p5FsZ4VfLA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linux.dev;
 	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=uiwzP25s;
-	arc=none smtp.remote-ip=91.218.175.47
-Received: from mta0.migadu.com (out-47.mta0.migadu.com [91.218.175.47])
+	arc=none smtp.remote-ip=91.218.175.204
+Received: from mta0.migadu.com (out-204.mta0.migadu.com [91.218.175.204])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE4F606A332
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 07:03:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5CE4F606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61125606A32D
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 07:12:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 61125606A32D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=uiwzP25s
 X-Envelope-To: linux-security-module@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=mO1x09i7EnqPJXUwKJeExoIzGQZI3rHtjjcSVoEtSSw=;
+DKIM-Signature: a=rsa-sha256; bh=2tr7RAK1Z1e7MRIJGh8p+CCxNaKqEt5LEou42TFWdC0=;
  c=simple/simple; d=linux.dev;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793948598; v=1; x=1794553398;
- b=uiwzP25szE8R7aqwL388yrOGTv4U7r4B7Y+aJmsOhGmpEl56nTTtuloHNeYlDagsG39M4UYY
- XetFr7qaoASJXkzEHaDo9hMiWjLXhWiSoc/Hdsj1Ki1gHf1h2PBDIQYM4H40LzPWFZJSdCg7FEh
- dxsCHwwGutxk8toJZnLqaDQc=
+ t=1793949131; v=1; x=1794553931;
+ b=hUWosO7VT/rCOyObOqACqZsQEy19bkG1P26xbOjYFvsoQbtiwvyMiwrnRjaYlwh2wYqYwpjv
+ JV3qhCrQks7lpYRfunnGdRIINQ495SS2MPPRiaWzoE+0ql6RTPU1MCiu8zryk/gZqLRS6y3XZJw
+ Uv4Ngz0djRsmju7g3j2Zqqw0=
 X-Envelope-To: linux-security-module@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 54b6ffc0bb54435e;
-	Fri, 06 Nov 2026 07:03:15 +0000
-X-Mizu-Trace-ID: 54b6ffc0bb54435e
+Received: by smtp.migadu.com with ESMTPS id 007461dbe1b04954;
+	Fri, 06 Nov 2026 07:12:09 +0000
+X-Mizu-Trace-ID: 007461dbe1b04954
 X-Migadu-Flow: FLOW_OUT
 From: Lance Yang <lance.yang@linux.dev>
 To: ljs@kernel.org
@@ -137,12 +134,12 @@ Cc: akpm@linux-foundation.org,
 	linux-security-module@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
 	selinux@vger.kernel.org
-Subject: Re: [PATCH 10/13] fs/coredump: convert vma_dump_size() to use vma_flags_t
-Date: Fri,  6 Nov 2026 15:03:07 +0800
-Message-ID: <20261106070307.51561-1-lance.yang@linux.dev>
+Subject: Re: [PATCH 11/13] uprobes: convert VMA flag tests to use vma_flags_t
+Date: Fri,  6 Nov 2026 15:12:00 +0800
+Message-ID: <20261106071200.52897-1-lance.yang@linux.dev>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20261105-late-2026-vma-flags-v1-10-0d3cd15ab75f@kernel.org>
-References: <20261105-late-2026-vma-flags-v1-10-0d3cd15ab75f@kernel.org>
+In-Reply-To: <20261105-late-2026-vma-flags-v1-11-0d3cd15ab75f@kernel.org>
+References: <20261105-late-2026-vma-flags-v1-11-0d3cd15ab75f@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -156,18 +153,13 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, Nov 05, 2026 at 09:31:01PM +0000, Lorenzo Stoakes (ARM) wrote:
->Replace use of the legacy vm_flags_t flags with vma_flags_t values when
->determining how much of a VMA to dump.
->
->The flags copied into struct core_vma_metadata remain legacy flags as they
->are consumed by the binfmt handlers.
+On Thu, Nov 05, 2026 at 09:31:02PM +0000, Lorenzo Stoakes (ARM) wrote:
+>Replace use of the legacy vm_flags_t flags with vma_flags_t values in the
+>uprobes VMA validity checks.
 >
 >No functional change intended.
 >
 >Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
 >---
-
-Nothing jumped out at me, so:
 
 Reviewed-by: Lance Yang <lance.yang@linux.dev>
