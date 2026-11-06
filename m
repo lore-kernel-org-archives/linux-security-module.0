@@ -1,148 +1,148 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.214
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.137.202.133
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793951500;
-	b=VtjHRg2SK5+5YY1J/sOFLzgRlmPeazVued7JjP8oqaAWjFfRjD776WIb5xPHyxqocEQz
-	 8+4JwQUzlmcLO5qeK1mee2Sbo6aQBqj2dlIuaa6fFwJOOlT7Fu6qvWd6lqd+ZYrADNuX0
-	 dimcQSqXYxGaeHpWj2iJWmyFJAOKKypabJ/Z3Xl4JKdUxdXTx7g38KsY8MKqMl5fiugsq
-	 zoL4ZIODC0mCZDY4IH38+/Y/mBv7xTe/qKirDlRxPFkLvVRbpDe+zzelaCWu2f/t6rsTb
-	 ijjifJJWH5xpQQFVWST9YURlVx73tgK/811JnyXSg3nZE8SPgwvsMi8KPtPyY9jXPwA==
+	t=1793952317;
+	b=eaNvDA9Ae7wd/qlWTNBBeZ51HOfyvX2V7iJAoV+aDm2JYbwl831YI+f1fj/krQXbry5X
+	 RrJCLNhNLGOanSBgcB7CLpBi78ZBorKFRjs98eD6qV+1xWQEBRHUG0zJgX2eSBtSEtjHa
+	 2do3HEhmvHsPd3Cwl/8NQYQkercW3csnLzXUlfqqeOqZ5MZ8HsxYTXoV60mKe5TsNmaup
+	 0DjiX4zi6m7X0IevrVgrGvNYSgkBL5SQvbMJJEsfFYJegFfgdJ+lSWGd+b2R3/F7kMXe1
+	 0ztVJ3p9kkWdAsDTQ1TVsniAkInnBwop6FVE8gdXQ1uuFPGZjE/cp4SLamgJlvDizEw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793951500;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=A8L/HnUYVSEblkQSsd0Qj26nxFzNN+cxfs3MphjQg/M=;
-	b=F08/FK4Y0Hh13nX/Xe1bCxkGkKdHD1ym6ozyYFZzf/DPavbk9OmHSINpykSHQbJILkUS
-	 xX9KtnhFlQfWHHZQamLC3k59nHrGorm591Io4WmXrV2rq7YT6SWXik2CirBfc/YF0yb7v
-	 9XmHMVCsmcD45BW6y43mvQXbugljznh04m+cYXPCkS+/5taCI+WDYOhgMM5kFccv+kj3B
-	 O5QEcylN5Y6m2KZ+vzyY1+xLfHOwkT5aZ8zXwZKuDj72RPWIrg3MxufIwyM4C/Zh8EoNC
-	 LZug40VsqM/Kg0y+tUoK03SDJ5TEyxUDNZAoZqsA+JMoGpU6zPG3VpgNKp2nm/es1zQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793952317;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To:X-SRS-Rewrite;
+	bh=x07awLmZl1uGnixljrDMUgu9d0OiWf2Z+sJydT2Lbr0=;
+	b=kK90EZVLQTSrwkKFrGbmMmqDgnougbb6rsjrsuwRR4bQDz3QHyODOlITuadiqtzKqvTT
+	 vutzURAuGDiqDetEp3mhvX+D8txijmGRETEeRi2yoUko0Qy7zvZAGd/h9WkOYMSGusLAt
+	 8sOAJap0TCZ1s/ul2gtdTiYo5Te3noxE8yTdKtTO2Iu9v+MaxIUJzg/GHB0WzQns9BJpY
+	 M7sU6jX1AShAfUqbVPcKhFW9Hn90wQ1ehWHT+VykRoAj+l3HwuHkgOFC2JpGg6QJct+vj
+	 0raXbCpGg6asjsA8GhAooILQr4aBH6hzgglUZmuNN1UwbCiPilj08uoFy/mk4uaLEKw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.dev;
-	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b="A7nV/aWe";
-	arc=none smtp.remote-ip=95.215.58.214
-Received: from mta1.migadu.com (out-214.mta1.migadu.com [95.215.58.214])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=infradead.org;
+	spf=none smtp.mailfrom=bombadil.srs.infradead.org;
+	dkim=pass header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=oiRMln23;
+	arc=none smtp.remote-ip=198.137.202.133
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61E8606A336
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 07:51:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D61E8606A336
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1702A606A328;
+	Fri,  6 Nov 2026 08:05:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1702A606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=A7nV/aWe
-X-Envelope-To: linux-security-module@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=A8L/HnUYVSEblkQSsd0Qj26nxFzNN+cxfs3MphjQg/M=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1793951498; v=1; x=1794556298;
- b=A7nV/aWehS3iF/YdRntSCF4k3F4factkbI1U/trrlw+jIcYTN3RO0mAVKpCv0tZuOjF/y6rn
- K3xiDXkkwDAZYuHixIjaxBlleqF30VvQ4NLDeNKaKCLuvQJ4feRzXVq6WcflBxw7dE+tfJf6Vyw
- OK0M/pssOvlE8nr7xfY2HuIY=
-X-Envelope-To: linux-security-module@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 2a97fd523a3d8c6c;
-	Fri, 06 Nov 2026 07:51:35 +0000
-X-Mizu-Trace-ID: 2a97fd523a3d8c6c
-X-Migadu-Flow: FLOW_OUT
-From: Lance Yang <lance.yang@linux.dev>
-To: ljs@kernel.org
-Cc: akpm@linux-foundation.org,
-	david@kernel.org,
-	jgg@ziepe.ca,
-	jhubbard@nvidia.com,
-	peterx@redhat.com,
-	willy@infradead.org,
-	jack@suse.cz,
-	riel@surriel.com,
-	liam@infradead.org,
-	vbabka@kernel.org,
-	harry@kernel.org,
-	jannh@google.com,
-	lance.yang@linux.dev,
-	ziy@nvidia.com,
-	matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com,
-	byungchul@sk.com,
-	gourry@gourry.net,
-	ying.huang@linux.alibaba.com,
-	apopple@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	nico.pache@linux.dev,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	usama.arif@linux.dev,
-	kas@kernel.org,
-	xu.xin@linux.dev,
-	chengming.zhou@linux.dev,
-	maddy@linux.ibm.com,
-	npiggin@gmail.com,
-	mpe@ellerman.id.au,
-	chleroy@kernel.org,
-	ritesh.list@gmail.com,
-	sshegde@linux.ibm.com,
-	pfalcato@suse.de,
-	kasong@tencent.com,
-	qi.zheng@linux.dev,
-	shakeel.butt@linux.dev,
-	axelrasmussen@google.com,
-	yuanchu@google.com,
-	weixugc@google.com,
-	baoquan.he@linux.dev,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	leon@kernel.org,
-	sj@kernel.org,
-	rakie.kim@sk.com,
-	rientjes@google.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	james.clark@linaro.org,
-	mhiramat@kernel.org,
-	oleg@redhat.com,
-	john.johansen@canonical.com,
-	georgia.garcia@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	wufan@kernel.org,
-	stephen.smalley.work@gmail.com,
-	omosnacek@gmail.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	kvm@vger.kernel.org,
-	damon@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
+	dkim=pass (2048-bit key, unprotected) header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=oiRMln23
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=x07awLmZl1uGnixljrDMUgu9d0OiWf2Z+sJydT2Lbr0=; b=oiRMln23yl/QBuC0DzwXONkLv5
+	qM+sNI41fnd6ZZdtIdfoPIuUSZHjJllyir3jn5dYul9Hhh11zXahz7DjQNGL6kqFmMxym0kEDtOmD
+	JgIADndDf71VAul280x2lDyIVPe6HFQRskf9qC5NU/8P7kjkPPDBDgNWgZKWzmAJG/fm1BZ3LikI4
+	AJReQOjF2xOHtD0/o6EMEslTbPj3TIA0VVZuOvKHyIPeRI6tauCfHZubFGOzh5ORdNmavj6txE4sb
+	V62/yFS1hM13pH3V2NMo05nu4U1qu41e/vy7J1YKCYoB+vzlPGJYOKDkhh/XndWwFf9Phw2nFy/jN
+	8N6Cktqw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.100.1 #2 (Red Hat Linux))
+	id 1xPEvi-0000000BWDm-0Spo;
+	Fri, 06 Nov 2026 08:04:10 +0000
+Date: Fri, 6 Nov 2026 00:04:10 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Bence Csokas <bence.csokas@arm.com>
+Cc: Chengchang Tang <tangchengchang@huawei.com>,
+	Junxian Huang <huangjunxian6@hisilicon.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Jes Sorensen <Jes.Sorensen@gmail.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Vineet Gupta <vgupta@kernel.org>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Selvin Xavier <selvin.xavier@broadcom.com>,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <mkp@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Carlos Maiolino <cem@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	David Ahern <dsahern@kernel.org>, Ido Schimmel <idosch@nvidia.com>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	"Geoffrey D. Bennett" <g@b4.vu>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org,
+	bpf@vger.kernel.org, netdev@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: Re: [PATCH 13/13] security: convert VMA flag tests to use vma_flags_t
-Date: Fri,  6 Nov 2026 15:51:30 +0800
-Message-ID: <20261106075130.55333-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20261105-late-2026-vma-flags-v1-13-0d3cd15ab75f@kernel.org>
-References: <20261105-late-2026-vma-flags-v1-13-0d3cd15ab75f@kernel.org>
+	linux-snps-arc@lists.infradead.org, linux-bluetooth@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	intel-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-hyperv@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+	linux-xfs@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 0/3] Add offsetofp() and offsetofendp() for pointer
+ arithmetic
+Message-ID: <au2J-lMcEn4p4KGR@infradead.org>
+References: <20261105-offsetof-v1-0-4153f5c10edc@arm.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -152,17 +152,18 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261105-offsetof-v1-0-4153f5c10edc@arm.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Thu, Nov 05, 2026 at 06:16:15PM +0100, Bence Csokas wrote:
+> A common usage pattern for offsetof() is the following:
+> 
+>   offsetof(typeof(*ptr), member)
+> 
+> Condense this operation to one macro for a more maintainable code base.
 
-On Thu, Nov 05, 2026 at 09:31:04PM +0000, Lorenzo Stoakes (ARM) wrote:
->Replace use of the legacy vm_flags_t flags with vma_flags_t values in the
->mmap and mprotect LSM hooks of SELinux, AppArmor, IMA and IPE.
->
->No functional change intended.
->
->Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
->---
+What exactly makes non-standard macros with no obvious safety benefit
+more maintainable?
 
-Reviewed-by: Lance Yang <lance.yang@linux.dev>
