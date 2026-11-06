@@ -1,55 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793926203;
-	b=C55OHlMqEMxQU0Gc9uKJGAxh9+XSBg/U8If9YACrB4sE3mKVcirzOAIsfks77SSq+MGx
-	 n20gYtafEeLlR9c4qVJC0tS8FZp5PeWcjwiEMwevNgL7n0sXuAeNEW+lL2blnL3FqQ/m3
-	 p8wqGYRR7toTiw/7utOOSeC1UyoGFr8UfhGyi8egpP921nblYFxxVDZ7LteVgd4gsfvi5
-	 sFBioUJ+0nqbRBqGt3uUNPI8ddBKzFAR6G395q6nPxYcRbs2K2iG/4ci64lFGV5C6a6rd
-	 kZ3wVmLhkeqqbqxWVUS5ETSvj0Gg6aGV+94dZ8C6Eidtn2rOiYk5E8gbQ1lg/EAj1Og==
+	t=1793926444;
+	b=hGNPGDkjseGGNpux4UFqoR22xBr5wSPj7YRe2EkNIaIzGxKlLOvHGjDgA7tx8Vw52Nfq
+	 qXhNlsbSYCwgFUvWrnqXS2mvOtvtpeGW2n8gUjbRphqKt49ai1iAEscuuGu5q3itPOdnJ
+	 jQwRouA3jcF/nVLLH8JlhmICCnKlRHw3gZLPxkEoEbSZdDNTXf2wpv6+jQB9lnoUfzu+4
+	 6WoMZ5maHk6/bfK+V77r6QWM1S1yVPQ8qp70t1BfdRJqth+p+N+BvLTr6ItSCRCc+krWX
+	 oor563zx4pOAA/LHNkT7Q4dusk0DLiSa355K55xTLInmu3dMR3dDCKpcTiANvz729dg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793926203;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=li0w6gdCJPAXfcZnkZrCMDKNOMXUju5VRPPg+VyiW3Y=;
-	b=PC8j+Au03mcYLpDwq6M1KANU/aD1dBgXrEVCStp/QYnn978wRij3xuxDqFSu5IDCIt19
-	 Z5MhpLO6Zau0qrF5oDRJsReABo9tJzdrxitQQza59iqvwzqN4vXZ7w20KwAHE5isGjjZ4
-	 dhCfsgnRdm9mySIfgLj1AzpObmVb8drmyFTFoQgVgly8MqDs7PHGS5awpRsNKHIVVrA5M
-	 kMZrXN/hSlkzD+mmt6ditTOldGcXe+IsptEUBK3hi633SRhEuH8G12EEx6308dUqbBpIS
-	 RedxzZMeZwUWVBtNAJfQULUaFO7j2HpJO+YBVnOY4hiINCvRgaYOM1jf0nsi0GptaFQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793926444;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=rouYHY92xNkFd4x+88QX9zYJ/Mqn2MU5VBHqaRikNLQ=;
+	b=BCxzd08bfvJyc8llFbgWq6gAvmGo1ovYqzkNl7SGfdjpwORVHPJTFPjFn+Pf3hFIzgzt
+	 6bY9eNFzT8Vk0PgkxSBYQt0KL3zhHi4TVvIthKfgnkDYHwbYOyltQNRr6E9O1l7V91vpW
+	 UWgIUCZgbrUqVCmjRhmjha7XzMWktgnAXa8i9bRgdz7/F72qyaOhTcCEVkSCorL9DXkjU
+	 9MFAJYJRyeUDhr5cszr+51EzjYZE9NrFIe/FAJnwKik+9FXHOTGfh6uG8N9DQx64AR+db
+	 eKRb/8HuyfyZMZ8pmAiei/yKvD+nAtzX4rfIDTgiNjujLzXLHpM7r25FZw5xmsK0btQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JBwX3tiS;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BuNFYF5M;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB257606A326
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 00:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA71606A31B;
+	Fri,  6 Nov 2026 00:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JBwX3tiS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0C31F008A3
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 00:50:02 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BuNFYF5M
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBFFE1F0089F;
+	Fri,  6 Nov 2026 00:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793926202;
-	bh=li0w6gdCJPAXfcZnkZrCMDKNOMXUju5VRPPg+VyiW3Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=JBwX3tiSFVz/SCekdDd1xZteE2je6TCPRWCwHiiSLjEN7Y0A/1bkMbssSXyVdf0iz
-	 zHQgL1+4ps43I4bZ3xp23SQXtbxQ6HXtCCnWjmmTceyTb9LqpBu391iElcG24drXTV
-	 Pum4uP+9FgqYbVxobLO4Y8bQb2DzXJY0OsYQVe8l9E13wPg1FCI3TKxWbaS3MhHRdj
-	 Og2zGGwq3GUPk5MP6SwLjRLjPJxvzExuqJ6v+j9fet6x3Y8HiA6EHzLWcMgnHTmMEF
-	 HGKuVupyGbtYpEOPjFoQJxHHrB/0L216vjQPzn/tD7f1F5W9x/5VRTvdajorBhn9PX
-	 aJ6Y3u3yHAyjQ==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-716da696c1aso136745eaf.0
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 16:50:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBxfALiGpsE7pWwWok/TURmW+pTnI759ByAXGb9mjDhmOW4EN3nGZ/t9KU32WMmYg172p2wAAzqNFoYXSbwSj7tVP2L6Jgg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/zFterP2my0HeJBq9bAk7WpaQ8VbYAcNxN7FMsIvrTYMsVFGY5
-	B0HZ5QjRAR806nSIB7du9SBFqrMnWnzTCtUBkTDjxYzav5nfsl4lZ+xPPpGCuaClMr0m1XaAhtA
-	iAQC7uBPLdqE1VAeadZ2EBmNhFmRTCWw=
-X-Received: by 2002:a05:6820:f015:b0:715:2954:68e4 with SMTP id
- 006d021491bc7-716e7942d56mr812677eaf.76.1793926201626; Thu, 05 Nov 2026
- 16:50:01 -0800 (PST)
+	s=k20260515; t=1793926443;
+	bh=rouYHY92xNkFd4x+88QX9zYJ/Mqn2MU5VBHqaRikNLQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=BuNFYF5MZIvaCXib+jQ7prt3pPMcy8I7vBakqsQiqiJot9LuY7hVKu1IN9F6GhX+T
+	 AIfK1qMDYt6uA38BTNEvTbOQsFBgJWVzUmgiYp/KYk+KOE+5BLexB4/2vY9ExmdeZC
+	 kctZRFt+PY1QJKDoPY8fS/tamC3trc78G61tBXOrrtajDFIwRbS7K39TG5BC3E/va3
+	 qlohfAiSPnQQgJlRjvb1HZ8t1aCFi64LQpaTPA/gHF0zX8j/0WSt/2/QrXITV2yLph
+	 e4FGEV5+WCMHN7QMoAlAq5R9m4gKCFrSaFkF1WlpxH1ozp3T8bR7hAB1YH8bd+Poke
+	 BsRuxJ5ux03PA==
+Message-ID: <sashiko-outbox-200456@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC PATCH v3 01/11] KEYS: Add key_gc_flush() for draining RCU
+ callbacks
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jarkko Sakkinen" <jarkko@kernel.org>
+Cc: linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org, "Heiko
+ Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander
+ Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>
+In-Reply-To: <20261105005311.804098-2-jarkko@kernel.org>
+References: <20261105005311.804098-1-jarkko@kernel.org>
+ <20261105005311.804098-2-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 06 Nov 2026 00:54:02 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,65 +62,21 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <20261104150318.1156620-1-edumazet@kernel.org> <CAHC9VhTSCSV-Lic03yzqU=z6OgVZGKUfdUBfYAHnezkTLqOETg@mail.gmail.com>
-In-Reply-To: <CAHC9VhTSCSV-Lic03yzqU=z6OgVZGKUfdUBfYAHnezkTLqOETg@mail.gmail.com>
-From: Eric Dumazet <edumazet@kernel.org>
-Date: Fri, 6 Nov 2026 01:49:50 +0100
-X-Gmail-Original-Message-ID: <CAL4WiirhHK5=CC9=c=XLR5dFgU_EAH6W5tZfcvgBsXdrzRjhgg@mail.gmail.com>
-X-Gm-Features: AclHuK-cUj6ktjY8HuBn4RvzP7D70TC4okO5iksryY4sTrtwiKEXTCYutGdCBV0
-Message-ID: <CAL4WiirhHK5=CC9=c=XLR5dFgU_EAH6W5tZfcvgBsXdrzRjhgg@mail.gmail.com>
-Subject: Re: [PATCH net] calipso: do not charge request socket options to the listener
-To: Paul Moore <paul@paul-moore.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	Sashiko <sashiko-bot@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Le ven. 6 nov. 2026 =C3=A0 01:10, Paul Moore <paul@paul-moore.com> a =C3=A9=
-crit :
->
-> On Wed, Nov 4, 2026 at 10:03=E2=80=AFAM Eric Dumazet <edumazet@kernel.org=
-> wrote:
-> >
-> > calipso_req_setattr() and calipso_req_delattr() allocate ireq->ipv6_opt
-> > with ipv6_renew_options(), which charges the listener sk_omem_alloc
-> > through sock_kmalloc().
-> >
-> > tcp_v6_reqsk_destructor() frees ireq->ipv6_opt without uncharging it,
-> > so each request socket leaks its options size from the listener
-> > budget. Once sysctl_optmem_max is reached, sock_kmalloc() fails,
-> > calipso_req_setattr() returns -ENOBUFS, and tcp_v6_route_req() drops
-> > all subsequent SYN packets. __sk_destruct() also reports an optmem
-> > leakage when the listener is destroyed.
-> >
-> > Uncharging in tcp_v6_reqsk_destructor() would not be correct: after a
-> > migration, req->rsk_listener is no longer the socket that was charged.
-> >
-> > These options belong to the request socket, there is no reason to
-> > charge them to the listener. Change ipv6_renew_options() to use
-> > kmalloc() when its sk argument is NULL, and use this from
-> > calipso_req_setattr() and calipso_req_delattr(),
-> > like cipso_v4_req_setattr() which uses kzalloc().
-> >
-> > Note:
-> >
-> > After this patch, calipso_req_setattr() and calipso_req_delattr()
-> > no longer need the listener. Commit 10876da918fa ("calipso: Fix
-> > null-ptr-deref in calipso_req_{set,del}attr().") could be reverted
-> > in net-next (also removing the then unused sk variables), so that
-> > CALIPSO works with SYN cookies.
->
-> That would be great, are you planning to submit a follow-up patch for
-> that once this lands?  Or is that left for others?  Either answer is
-> fine, just trying to get ahead of any duplicated effort.
->
+> keyring_clear() and key_invalidate() release keyring links via call_rcu(),
+> and key_put() defers final key destruction to key_gc_work.
+>=20
+> Once keys pin their type, callers that clear an internal cache before
+> module unload need a synchronous barrier so module references can be
+> dropped before delete_module() checks the refcount.
+>=20
+> Add key_gc_flush() for flushing the remaining key_gc_work passes.
+>=20
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-I will provide the follow-up patch, thanks !
+Sashiko has reviewed this patch and found no issues.
 
-> Otherwise, this looks good to me, thanks Eric.
->
-> Acked-by: Paul Moore <paul@paul-moore.com>
->
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261105005311.8040=
+98-1-jarkko@kernel.org?part=3D1
+
