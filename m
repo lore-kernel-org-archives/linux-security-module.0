@@ -1,90 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793978548;
-	b=ffkctUyVfLOQw9VQV8MEG3myIs9iNNNarii8gvgA/Nmtxy91XQAtW5dwkBNs1RKeG1oC
-	 uUttN0b2MFF1wXaSRAUWy4gPbEm1TwhjBiKlUs3Of9U2HO0Y9aaSXsMIfFX92l0holULW
-	 StcdTdvIy2dLDxZMQv6e3I8BbNqhEUJXX+6Aywj81BjnTfQJcoCkxKjzxbAUjZxWvx3bl
-	 1HpaDAsUoD4eK+Iz8m3sgld0GuoP9XkVQXFXvxrDeDK16iEpoq9N4YAym79sIQR0TN4su
-	 akrVUsXqEjOBXpNgEwMbvLPBB9lbIZPoztWUKSRywnKJGFCKRs8TUswaqlaqVlgc2Vw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793978548;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=z3y+DELGAxT9V5PmpfgouMZn+gCc4O45ROBPQSi1BPo=;
-	b=zvG/pFCnX+N7P6i/0L8qwFk3gaCDMZRqcH+u65PWyybcl0c3wqFXnuorIBNRP1hVhKeK
-	 jlyONjui4CHYxLfeEEnsGzzLnB+AsOSmTMzl6a5MdGQ6iGDxiIvMkYbknBYkJOjpt2A79
-	 Dz6RFjVa1ujDWoQHB3suVg3Js+XhFuOarcI0WRcYoGnAWcWmRJA3mlIwcYBhnHorG/c51
-	 xZjj8mf3L8QnVuuaYZHMi8hYpPFwD6VmEaErkHX/8l87a9LLh8TpnUpDIKWq6R3AmO7oQ
-	 7iu7flhqx22l8dE1RB5S8Roc0lKmwpTe0Ty259Vwqad+/nPnOiX8UI69o6SlRztdPKg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D0OBt12S;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.43
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793979714;
+	b=jOx9MN8X8ry3Y94t6xQA6HNxaION+9ziOE4unJDaFfKUhN8x6oF+oCvkU6mGpXNTegnR
+	 6fuUAZxjFYebPrHbIRcmkqeJKRaIVYlYWgZGsm0Wo4WJNge8klxcACQ7fYwA5pBMLuxNw
+	 7e/S33hIhSSY54rEHFSei7wLSMHnKx6UBbZ9Ui9Po6zOyXoz7fPQGe+sBD9Zt+Lli+rjm
+	 XIHIpOXErzEK6IX6YF1jHB7AexraPzL0lySH4p2HwVfqGnUJUZ4//wT86/G1qoe/fdRO6
+	 mmD6uDD/vNzjhOpGG8202Dgj+BQBxrQO45lUocydUag+294hbb/3/yBPuUQca+CItGg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793979714;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=f5zCwiaGTsbGPs9eRvMEIe8q2LEwYAAZXAgxvtWlbgM=;
+	b=DB5HQhqcOUAE4ahAzSbrnL7zAdY09Z9lqiKR14LW0RIaKqKdCPWNxRJni1exZiOZY3Ky
+	 VFFbbYaLEmnT+z4GYmm2eMsZqnWQh3ZYMOSvf5tN8IfeqRy3/C88msmiGY6beB6NNcFNF
+	 N9HoSW5HC3JCG771uaia0irB0tMxecPSC60IATudIea4M+EqIW3XSRaZRB6ml8prrbKuG
+	 fEQzd0EEPKmqRNY8gOEELvwFZMiR2NrqNFKOcTnZinOgNkWDVj2nSNfUdTjVmtmEeKjce
+	 NDMU4MVWikwXzb3xf8Q667sv35ZqDmy6EGKaZscOJOkM9OU+QoR6tgKRa3FkZ0aO9aw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=YzzkId+7;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.43
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E95606A32D;
-	Fri,  6 Nov 2026 15:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E131E606A326
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 15:41:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E131E606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=D0OBt12S
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73F71F0089F;
-	Fri,  6 Nov 2026 15:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793978547;
-	bh=z3y+DELGAxT9V5PmpfgouMZn+gCc4O45ROBPQSi1BPo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=D0OBt12S5A0/61ajOHRCOvVj9Y496CxzkIZ539OmP2Egd7lJ1ZTg+93+bz35MlhhQ
-	 aEcmgJvs2K1rXKjoPty9afP418nmgDzNbNz3R49xM82YI+IZppcn7JPT2+rOR1oP3E
-	 aXPgvNxlojcYTHikG/NcZ6k0ko8+NVlu5A2DjoEJYkhK0Y6iRimNr2X51btaRYAQe4
-	 3oYkIoHH1FFpK2QL5UAfs5I6l1ULxHTF3yATZiallmsTHKUql1MDHJSRDkOp7LPZaS
-	 WDiRcIhr4R/mT8uJ1TsaVWpbDwDHCB8mxh70Ac0iVGTP+nI77JgCBpwlXJfuSijYjQ
-	 cOmEIk2xUD+nw==
-Date: Fri, 6 Nov 2026 15:22:08 +0000
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: "David Hildenbrand (Arm)" <david@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
-	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
-	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
-	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Alistair Popple <apopple@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Usama Arif <usama.arif@linux.dev>, 
-	Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
-	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, SJ Park <sj@kernel.org>, 
-	Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, damon@lists.linux.dev, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
-Message-ID: <au3r0-geuwtRYPiC@gremlin>
-References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
- <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=YzzkId+7
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3ac6794fe45so652351a91.0
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Nov 2026 07:41:53 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793979713; cv=none;
+        d=google.com; s=arc-20260327;
+        b=jFnStQVVI8rBEdJkA2sAYnwL1GOnGyvfDO/UO/4kMYPj2Tq84hn9dUY+3cFtaKBRX3
+         iTW0rwK1s9gA2a4/Uq7IFVzCpLhNCVGcAfceU+5OHHMY3DTb6gXCDurMOSGPvCM8HarJ
+         1MJMnnk5tRYyGTnCErCV1mZ16BHwVIExyHpPosx2SCK2cyQuNRoUtez3DRTEYSsbTsk9
+         +GjNlw1ntWIaUBCOxYMAO6dluvakJueMwS3WL6nDzsr/Xf4UESgoUwn4JCJ69k5H0SYd
+         zSgryp58AH+HJb1ujKg9koOFqVZcaMJZe3DJqYPXk9e0z8V8VCMcepn3TzOEcvrqUjdF
+         o+PQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=f5zCwiaGTsbGPs9eRvMEIe8q2LEwYAAZXAgxvtWlbgM=;
+        fh=VoSqqCt1qu83owaXRxbe9rJPRijAAplitilMesLv8wk=;
+        b=jAr/cKSA0Op2KCgPsdNTIvS6lU2HWKpR9me11uDhpGSXYq8waDNgBQcYOyERPWifes
+         LE4l18aIecOXwtY1HpUIG/qFRVujZqq//hSIN1P/oA3Dtt98BdCInu5/+1+FGI7aWvVP
+         S9TLn9/Ba8KWXbLFMwTrEtdR4vesA3MIVIDltdc+9MeHP2g2ZWaUywRnRGVBDQjgS0NR
+         Ca+DogpieeNPLpo2SJ2IlyNXd+YZrSf9yaGmpWMrFXxE1AcNzdkOVVxE0L22MLQMTGax
+         Hvvq2hl18rdSLREuclYu5LWHKPo1SzuIrgW2WgDy9jH54XFsLKnIecu5n4VM8y49X6a5
+         vcXA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1793979713; x=1794584513; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=f5zCwiaGTsbGPs9eRvMEIe8q2LEwYAAZXAgxvtWlbgM=;
+        b=YzzkId+7qJWBrdgBc3KwfkNFPjAIr2flDfLUmoyshQtncc+Ndvd9sON1MwFGvz3rBp
+         VhUf+70b8rH9KxwVnJgIiQ/o3uPTubnnQg4/6C9PTyoSOFCHY23cuoI6OZcK+UoSUnVD
+         XtPEQzgxzHkAgFXXLZHstTRu7Q0W5sZ4WrnTsJlkN+k76PtkLxv2iUv4JboT/5HiggmU
+         cd0o63pDvyV1UoBwxLbT3ijZr2Dxspu/UqNmNP0P8Bx1TbBSh4+hMra38mZz1yWkEPNG
+         X05TDXL5cHFzv6snJstidZle4eSSYbEyRHSCA/H/ky8GhV+s8vXINgjx3rQ0Y0F3UC0T
+         BY9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793979713; x=1794584513;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=f5zCwiaGTsbGPs9eRvMEIe8q2LEwYAAZXAgxvtWlbgM=;
+        b=NW3sK+KcNDpoc4nQ5SXiT5iYNlWcwmOqxJtQqBit6N0jmfH7+ceY7zrgRvK5Uzb7jo
+         3XpSh880Gf6Z8mMHxP4uxNfNzkEycUajMm3gILXmmXNJOpW5ZAabqXnQZyLPGh9oIZYw
+         Flb3dZdLj6Jgygdt0ERWW0UroMniKs4aeFcNj1GmdvlSDYLNlHnRe5euBrrHJG+oEfHC
+         bjxabEj4aSO69adVHgJrcogMRkfDdLfPhVLCa9ydlmTBok60MrUkZ6Ce3ua/FF+qyktz
+         91lGgAyjqFJ8zFuw0fIGiXLqYxEbRotYPfxQrUHR9yI8b+ccjfC4M4WyzUG0SAKmbCQk
+         LLBA==
+X-Forwarded-Encrypted: i=1; AL+hErGkEh0zphEie9DZeXXnJGG262Vf5n2cqBcGblhshBWgaL0oNZXwvDD56+tqYwqm85275XBFZGj4eAa8YpE6OgoNjupydGk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+4D62Szib3IGLVsE5eypxgGfJgl/rBxJhf3n7XOfweSO38kfQD
+	LOiUnlyFyzYJdSbEcdWRV6NELnpZNgw/hBPTBu7a53MpTZJqjVG465S3caagbhPZyadUs8ZxptP
+	TXmK8J4IhrNOsuXNo8UQzDUYNcQFUqzj5KaMoHeXE
+X-Gm-Gg: AYBFou2sJhWKO/IDBYdjXmmy4ZJYOFxWnfg+xfJZn2YODEArjIUJY+xXfkodp/VTuGs
+	bGjkVTToxwFL1czGZe0ue3t51unEOLcOrz9Jl1v6VtOcbMpC+6N32XcUYu4dMMq4ysizA5bPd1q
+	4zrVM9I4W8Xwr7JJEugAuxDRaszE76ocjGbx7VNIAkMVYEWy3eW4li8JfMfS6X3hUTVVOK0xoYB
+	5WrwYUmWb4WALRb+x7io5SPFIDs/mve6VIjJzQ+7SjYc0GbF+1stFnGUTC7pHc5PVzvoBAOHlkt
+	B/L8ZI2/ewBxmfFy/QwLRRYKGkFwxvBo5BelI4zK5Y6aRsN+DnIIwRdVWFxCJUw4Dbvjm6dkQWf
+	sBI6tXhDoY4qbY6nNX9292kRQmmwFbb8+yYyrPyZukdYTzggqTZ+i7sXxDvpBiOIEZscz
+X-Received: by 2002:a17:90a:e7cb:b0:3a8:bd51:205b with SMTP id
+ 98e67ed59e1d1-3b0db6dc4d1mr3040927a91.37.1793979713085; Fri, 06 Nov 2026
+ 07:41:53 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -94,49 +104,75 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org>
+References: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com> <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com>
+In-Reply-To: <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 6 Nov 2026 10:41:40 -0500
+X-Gm-Features: AclHuK_vNxeGvLMu2q-_O9-3vD4QrJi4Z55I0p-SIXPf7gkTSj9ZotO9tBGrYyA
+Message-ID: <CAHC9VhR9sjunJRnM9gy-BkBZkapQTrr8a8FtmaK7JkAmUqTrLA@mail.gmail.com>
+Subject: Re: [BUG] bpf, lsm: new first argument in 7.4 inode hooks silently
+ breaks BPF LSMs
+To: roblabla <linux@roblab.la>
+Cc: Daan De Meyer <daan@amutable.com>, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul.mabileau@harfanglab.fr, 
+	linux-kernel@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 06, 2026 at 03:35:01PM +0100, David Hildenbrand (Arm) wrote:
-> I agree that this should be picked separately. For example, I will pick
-> everything that falls into my realm to reduce conflicts.
-
-Hmm, generally tree-wide mechanical changes are the exception to that rule
-no?
-
-It's going to make the rest of the VMA flags/mmap_prepare conversion really
-quite difficult if I have to chase every single driver maintainer in the
-kernel (literally in both cases pretty much :).
-
-And sometimes there are dependencies which mean you really can't split it
-across trees unless you establish functionality in one cycle and callers in
-another, but that seems a little silly.
-
-I was thinking that once the VMA tree is separate I'd put mechanical
-changes like this through it. Is that not the way to go?
-
+On Fri, Nov 6, 2026 at 8:39=E2=80=AFAM roblabla <linux@roblab.la> wrote:
 >
-> Ideally, patches really only touch one component.
+> Hello,
+> First of all, I'm sorry if I'm sending this email to the wrong mailing li=
+sts, it's my first time reporting a linux issue ^^'.
 
-Right, but sometimes functions are declared in one place and called in
-others. It is impossible to change the signature of one without also touching
-the others.
+Hi,
 
+It looks like you sent this email to the right people/lists, well done
+on the first hurdle :)
+
+> In commit 16959c469f232f5c76cfb628297cafbf6dbdba79 (lsm: expose mount idm=
+aps to inode hooks), merged in 7.4-rc1, a new argument was added in positio=
+n 0 of various inode-related `security_` functions. Specifically, it added =
+this argument to inode_create, inode_link, inode_symlink, inode_mkdir, inod=
+e_mknod and inode_permission.
 >
-> [PATCH 07/13] mm/madvise: convert madvise_vma_behavior() to use vma_flags_t
->
-> is all over the place :)
+> This has the immediate effect of breaking eBPF LSM programs relying on th=
+ese hooks that were compiled with BPF CO-RE and using BPF_CORE_READ.
 
-It's not really all over the place, it's converting vm_flags_t to
-vma_flags_t across madvise.c, which involves changing a few function
-signatures, whose callers must be updated.
+...
 
-I could split it up into 3 patches where 1 does internal-only, one changes 1
-function, and the next changes another, if that works?
+> Now, I'm not sure how the Linux Kernel treats eBPF LSM hooks - if they're=
+ considered part of the userspace that shouldn't be broken. My understandin=
+g is that kprobes are not part of the Linux Kernel stability guarantees, fo=
+r rather obvious reasons (they allow watching the internals of the kernel) =
+- but I'm not sure if this extends to the LSM Hooks. I assume not. Still, t=
+his kind of breakage is really painful for us, and I hope we can find a sol=
+ution.
 
-But there's no way for that change to only touch madvise() given the
-function decl/callers.
+Like kprobes, the LSM hooks are intentionally not part of any stable
+API promise.  While we try not to needlessly churn the LSM hooks, we
+reserve the right to modify parameters, the LSM callbacks associated
+with a hook, and even the basic hook semantics from one kernel release
+to another.  The reasoning is very similar to that of kprobes: the LSM
+hooks are linked to kernel internals and thus need the ability to
+change as the kernel changes.
+
+LSMs that need to provide a stable API must provide an abstraction
+layer between the LSM hook callbacks and their stable API.  The LSM
+framework is not responsible for the stability of individual LSM APIs.
+
+> Could we fix this type of breakage by making sure new arguments are only =
+added at the _end_ of the LSM hooks signatures,
+
+I'm sorry, but I can't make that promise at the LSM framework layer.
+It is impossible to predict how the kernel internals will continue to
+evolve and thus I can't promise how the LSM hooks and callbacks will
+need to change as a result.
+
+Regarding the specifics of how the BPF LSM has dealt with this in the
+past, and any plans for the future, I'll let others speak to that;
+hopefully they will have some tricks you can use to make these
+transitions easier.
 
 --
-Cheers, Lorenzo
+paul-moore.com
