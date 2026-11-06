@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793936863;
-	b=M2jSdtJV4HBlabSiDCsXlXFrZq1ALGdnfQaRrBQCbyZXzvpXzeCxY0yOs9Ir6rh/wAOt
-	 viYTPHwwj7ceQwUoMF4c2fbp1FX7hAoJc5fyhehPKWXzVgWxORE0C1XFT8JgqUtaRzJ6s
-	 Kt5FWnZ1MLgN2/z6gig9pEICbLIpTyohuahyCb5bJe7C0vLgjmgnQtxPki/uSZXrY/X63
-	 o1fbaTjOPpx4w1+bQEVlh2RlFZAnkWZS7ivY/x1bIV5E3Pb7KgbzPoBOZQ98WZDTXfObJ
-	 q0kFh81vyijzOoIFPd+E2L938fz62pJwb/1yYxeOwrvB3hto/cwCuVXig0p3Oj1MpHg==
+	t=1793937442;
+	b=EVb0BjnUpzXGa8I/JUOGk7HB3fye1xvqHjtwWXgh+/fGZ3uIjEHxsu332a81XNoJJCRh
+	 0Jk3Tses+gOBKV2r8kZQ5kZ2ugtQmnscb8az/wZt1I1yQQDYy2WDkmMJk8Iuj4QEiYJTE
+	 f3j2GkFLyqL67zgxLsf3B7PzjlkbHyMTwUQhcru4GD/9t7XE/ydKI/KfcmuDsbhWwyNkQ
+	 B2xt4iYRP8NwzAci99MojmjXBlg3+TKIV8ekFRRFz1iUBw53x4p+FWTcSpVH0DQBcpRx1
+	 EpKzxDIrxckWvZWMo3/S8wGe4dyU9Y9+sZt1dbFbdOhGR4b48qLs4mRBT5QXpcwgdGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793936863;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793937442;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=7itVVRO0OrCMzanAOyJRHIm0MPtgmrlnhYWCxSa5SEs=;
-	b=DeGrfJwtWDNhN2i+xckciryFB+KK7wfxUqHWtr1XT0TtifZs+iQFn6mdWtTIP1FEXiuA
-	 CKFYN2BLslnhWThpBrglwnCPhYr75Y423DrFuUkklQ7X3U8WgDpmpLs8WiVS4l62ksl/F
-	 fa7ZbjO+oxqRJ7fDEjKLe+cdXuuOdUkI4gp5YOnGQoj/iy7CZNDnVfoloHOHpnWq5Y/JW
-	 JIzKRM7zmPZD7Ifutu/nibydVu/Gx8Qq68tRMxk+aZWlCHjkEoswCXRFFi4kX4G514Y6p
-	 Y2k5T9eOEhwRKVd46UhxL/lEThE/z9PgKq9Z6VpAPzkpD2lfuqmI4njgCfxFtnh9RBw==
+	bh=lHXR2FH3bh5spT35/G4nG+cv25q2yTDGLvo0NNx3ZVg=;
+	b=CKH+SFpPDOAgWv/4Mc5e9/WJEyUt+MquEhgY6Ae0sk0ezhpNVl8JosvS5R6ai7yGHSns
+	 1Qp+9KRpgWIgWPnYHHCtQDSjlOYYyRpALWgTpJpL2UjGn4gKuCZSEhwVe4l4zu+YNDXhC
+	 pk2IDzgJ9FvYx3zZRdx1iYuiKx2qZsCBYoX7NZA/2ROL7WlNVMoQhu2JM8hYwvRV5qOO5
+	 MvWHj4suLQ57InHNBXbNLqZ8Pf6fqfbwhGqij83+seF8rrZrmdWxZcZWEHVzxuqfzjAnv
+	 1fcCJqsufPEIpC5XGIau+wHg13/ZHsnd2SUL9ePEmEU6mGzMgngurbTXOCiv/F3h31Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SHNJYmjZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XqiaXlxi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6902606A326
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 03:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56A3606A33B
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 03:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SHNJYmjZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8185A1F008A4
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 03:47:43 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XqiaXlxi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7469A1F00925
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 03:57:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793936863;
-	bh=7itVVRO0OrCMzanAOyJRHIm0MPtgmrlnhYWCxSa5SEs=;
+	s=k20260515; t=1793937441;
+	bh=lHXR2FH3bh5spT35/G4nG+cv25q2yTDGLvo0NNx3ZVg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=SHNJYmjZARW+KMI9weZlYiailG9olXiPUIy9DhCfIwXmV7q4793PyRrLUT1E0bUGo
-	 nmmkSMDlfuESlH1L51OEthu9tEkk2dz2ml2LZ2Yor/qURFWM9SBb47kSDL7kUWgh9C
-	 KsoGQQsyq8SQ3dBpKKj2a0u8iYdYRtyHNqGxCi2IdNRzvx7Jk2ogdHgO1WRtzTr3ck
-	 pbqvm15vJgAS3L3BUo1VvUPFU4RI+LQ3b7/f020/Qst049o3V6Tx1xgJr2l3zMg1Gi
-	 d0CgtsezOi7hf/YovyD6VXycvpTFmxYdwrokEbGNW+riJ23JkFlugyHUX1hoqofhzR
-	 GMHWANQP9U7qA==
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-93a40a9a01aso160561185a.0
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 19:47:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvByQZHtVAdA5FdrTuFMkkIRxr+BKmsEkHV+/6cZMqopFApt4AR3KPCACHl/FmRz4mtH3wZFLQZkyyltdpE8E6oaH2RDg/8o=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9NqwP3jRj/xDQLYyyB7LrTgBhq1qZTJghziM4S9awANZMdoTkb
-	ME1xNpB8WSmd+RiErlwFUiiLyF0V80JT7FzllXDzJS5EnrLH+ap/Y48keKHD+y/774bIqgJt/IS
-	yw9jjIra5Z/ui5Q6qWkh8rpdI4wE0gZc=
-X-Received: by 2002:a05:620a:6ccd:b0:945:d3ba:7d99 with SMTP id
- af79cd13be357-945f3593146mr175996585a.37.1793936862458; Thu, 05 Nov 2026
- 19:47:42 -0800 (PST)
+	b=XqiaXlxiATDzJrgw9f0OYt1TfHLb2ipTeIcKivy65nis0f6TmA/08oHIZ0R0nf5m6
+	 nUvgA0EXaiwf1XpMUGGc013GsyUxECqfq1Uh00oLL7zzVrZ//HgstfV0QrxF9mqluK
+	 NKkBvgk64ubOOcbPj23ww4CMq5VaK+O5NA3iSPWNPiVWpS/jS5m6iqdqtnQXeGv5w0
+	 y48/IZagRGHa+F1jeQ+VqNbGxtUf9G7I+pzA0zivc6NUUr/7OjAG+Y1R8Paj8q4Cin
+	 LMpizKHXpmKlbmYFDP5mLxbU6mR0aZreEhaVl2amkcHQT9fKPqzhlS/9aCSoy1O64o
+	 /7S9mxQbxAZMA==
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-93efc0452b5so15552485a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2026 19:57:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvByxJundiZTp1CE2J4A7J0hdXCG4BBG2kEc78MmvVgY1y0SLQk63Lt6szgsxt5msWDsjQftWOuX7uE2axb3B3Qo5fplXB44=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/shJc2Mshfi0LdMIGwzZbYVwy7caSoe7XdDbXdbOjnDCbNc3qR
+	uDn6A8R6sJfYn53GbY3O/0XAupGkSVx602EeU5bQMyqPi1iGpMyA5lbwQhR/+fpAELgDxyMih3X
+	XbuKVt7Za3J0lFnq8yncOEOISZUr+uNI=
+X-Received: by 2002:a05:620a:6c88:b0:939:b8d6:9b1c with SMTP id
+ af79cd13be357-945f34af2acmr198595685a.19.1793937440071; Thu, 05 Nov 2026
+ 19:57:20 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org> <20261105-late-2026-vma-flags-v1-1-0d3cd15ab75f@kernel.org>
-In-Reply-To: <20261105-late-2026-vma-flags-v1-1-0d3cd15ab75f@kernel.org>
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org> <20261105-late-2026-vma-flags-v1-3-0d3cd15ab75f@kernel.org>
+In-Reply-To: <20261105-late-2026-vma-flags-v1-3-0d3cd15ab75f@kernel.org>
 From: Barry Song <baohua@kernel.org>
-Date: Fri, 6 Nov 2026 11:47:31 +0800
-X-Gmail-Original-Message-ID: <CAGsJ_4wFi9mqSsq9RFoYP8m0GbqU01he_icbP2VLPhBfQAvCOg@mail.gmail.com>
-X-Gm-Features: AclHuK8VX6mOjbrvfm7oXhssK45doLoq2eZ9cV_P4690FurSVGBQe9E3r9SjObI
-Message-ID: <CAGsJ_4wFi9mqSsq9RFoYP8m0GbqU01he_icbP2VLPhBfQAvCOg@mail.gmail.com>
-Subject: Re: [PATCH 01/13] mm/gup: convert GUP code to use vma_flags_t
+Date: Fri, 6 Nov 2026 11:57:08 +0800
+X-Gmail-Original-Message-ID: <CAGsJ_4wCd_j5or0uHwPLq0PUixcXgiFim=_d7uUhUhAuQf0nTQ@mail.gmail.com>
+X-Gm-Features: AclHuK8deEInzaZZJ26UPrq6mS-8I8VnGN9Ocbio_nvLAi7VvywQ3Ss3UdDHcfM
+Message-ID: <CAGsJ_4wCd_j5or0uHwPLq0PUixcXgiFim=_d7uUhUhAuQf0nTQ@mail.gmail.com>
+Subject: Re: [PATCH 03/13] mm/rmap: convert remaining VMA flag tests to use vma_flags_t
 To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
 	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
@@ -111,34 +111,50 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.o
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 6, 2026 at 5:31=E2=80=AFAM Lorenzo Stoakes (ARM) <ljs@kernel.or=
+On Fri, Nov 6, 2026 at 5:32=E2=80=AFAM Lorenzo Stoakes (ARM) <ljs@kernel.or=
 g> wrote:
 >
-> Replace use of the legacy vm_flags_t flags with vma_flags_t values
-> throughout the GUP logic, both for the MMU and nommu variants.
+> Replace the remaining uses of the legacy vm_flags_t flags in the rmap log=
+ic
+> with vma_flags_t values.
 >
 > No functional change intended.
 >
 > Signed-off-by: Lorenzo Stoakes (ARM) <ljs@kernel.org>
+> ---
+
+LGTM,
 
 Reviewed-by: Barry Song <baohua@kernel.org>
 
-> ---
->  mm/gup.c | 45 ++++++++++++++++++++++++---------------------
->  1 file changed, 24 insertions(+), 21 deletions(-)
+>  mm/rmap.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 >
-
-> @@ -1514,9 +1514,8 @@ static bool vma_permits_fault(struct vm_area_struct=
- *vma,
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 1131b76bbbc2..cdc97fec8586 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1196,7 +1196,7 @@ static bool page_mkclean_one(struct folio *folio, s=
+truct vm_area_struct *vma,
+>
+>  static bool invalid_mkclean_vma(struct vm_area_struct *vma, void *arg)
 >  {
->         bool write   =3D !!(fault_flags & FAULT_FLAG_WRITE);
->         bool foreign =3D !!(fault_flags & FAULT_FLAG_REMOTE);
-> -       vm_flags_t vm_flags =3D write ? VM_WRITE : VM_READ;
->
-> -       if (!(vm_flags & vma->vm_flags))
-> +       if (!vma_test(vma, write ? VMA_WRITE_BIT : VMA_READ_BIT))
+> -       if (vma->vm_flags & VM_SHARED)
+> +       if (vma_test(vma, VMA_SHARED_BIT))
 >                 return false;
-
-This also improves readability. Thanks!
-
 >
+>         return true;
+> @@ -1660,7 +1660,8 @@ void folio_add_new_anon_rmap(struct folio *folio, s=
+truct vm_area_struct *vma,
+>          * VM_DROPPABLE mappings don't swap; instead they're just dropped=
+ when
+>          * under memory pressure.
+>          */
+> -       if (!folio_test_swapbacked(folio) && !(vma->vm_flags & VM_DROPPAB=
+LE))
+> +       if (!folio_test_swapbacked(folio) &&
+> +           !vma_test_single_mask(vma, VMA_DROPPABLE))
+
+Right, VMA_DROPPABLE_BIT is not available on
+32-bit architectures, so vma_test() cannot be
+used here.
