@@ -1,93 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793965999;
-	b=ydghxDzr9AdKePQbi0fl8CqNYC74Ec44z4iSDwcAciIw4vaE1gzlpKsRkbfNlw+ti47H
-	 FwZ5ITcp283L1sXECMjV5TmhcixpY0P8l+ro8/Jrrfe0sRpCU9fh/2yKaGZCw6cBvv4BT
-	 lleejAT2NnLEjg2Nk7JKuWcj2fyuXGFgAt9ue7j53bimENwKiTHCfzjeia8Umf/Mc6BGk
-	 bC6YZiZH34wk+q7G0KHFOHk2VbgxkycO/cy1GeusyPonapb0Nx0GlPreUtbuARIv4SyCq
-	 BKV8e+Og2jMer+Y3ebZn4N1FL7yxUMrxaefMDv//3ZEMuhd1+ITKx17wlhkGnge1+iw==
+	t=1793970137;
+	b=2d/RK0dUr2zgGi7tTPctfT+W4T9pusiVyWFfqmRLQ1qJMHo4YgHmiBekMrvFhHK6LUdh
+	 L14XGe3Tokhi+fHYQ3Ec0aBOEvE+58L5tT04Tc62BhYR3cxejrg44qYim+OykBkfPQHBy
+	 sH08bPfWNvs3MX+7w52Wv27/K27U2FN4rTLAOn2yirUQJNvISb8f9kOf9v39myVCXVOS9
+	 ko/QyKzaqu27VpZW2wXtbVZTpmFG0ctoQvTSBLBaNBqosHm0+V3BPAkbm0timVBGLyh6S
+	 tb/Myw8Df7Pda7/hNSNnH3ukR2cX/GSmZI2JWy+5afI8Qw+hLQgpcNrHHLJtgh7LBtA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793965999;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=hqpiqZcrPC9wx5aNBvYP4zckV3Yjf+8M1ASIDcJQ21k=;
-	b=Ag7KfFfmEzUJ4pRmnNb8gXJqMT/W4GIa7fiLz2kg7Mpp1I1vXxJCJ3JTzRYyLIQVNDNm
-	 s2te0wA03btwLQyyv1kd9H1KsI1eum9Cj8lYG8qxwMPrRdrUn/Wm9pukKMaHFfUsqR6y5
-	 diP+eHNqrZId2ayJHgNbyFI0y2AQebz2kozoXW3p5dvYW1+Hl3Gl0ULYQvmYvAn1mVyUO
-	 crIl9k1fCn8X/jDMy6BxMYmyRUHBnOFdtTYmUTxj9uX7tHXzIIbau3KajNahL0pepOb0Q
-	 FEPOl4ojvj5/MBCH9qHwwOaIAUofGPcvy3Gw3PF8WarZP1M8a5UkcHoa4/Oeik7WOjQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793970137;
+	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
+	 DKIM-Signature:Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-Spam-Flag:X-Spam-Level:
+	 X-Spamd-Result:X-Spam-Score;
+	bh=bbUQdEPswgOtS328uqlCGgh3E/GKlV/1cyChz7WH/NU=;
+	b=P6uqFvqN0sh6GaoOjraf5zE03JGHDtACUcUmLEgz7uFFD+vSOcbPn2EBfYDife79/hAu
+	 jYBxmctf6oMznQxw9RzyQijFz93s4/sLR8OIe0cYU6S8zxHYd+gxENFhsUQAhxQInaIOb
+	 QL0m3B9mlv8UGXnmk1c4YOVopwLXQ0cY/UqjozosncROaCWDx97tTKSuQTl2YU9CtTGS4
+	 xKh5waXISuFmbT6LXc2dwkQBTeB31D6DKw0JAecEw7LUVuJ+S/3Y9+SpO6A3VQLlyX7ET
+	 fg4HsU9TAft184uoEbbP/ezNYa3IA9+ABrvAck1xOAkr6/t9yciZ9vEoAlbvvlGM4WQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZASBbMWP;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=suse.de;
+	spf=pass smtp.mailfrom=suse.de;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=SkSGo6sR;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=HWSD5i96;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=SkSGo6sR;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=HWSD5i96;
+	arc=none smtp.remote-ip=195.135.223.131
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E39606A32D;
-	Fri,  6 Nov 2026 11:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC16606A331;
+	Fri,  6 Nov 2026 13:02:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4AC16606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZASBbMWP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D67501F008A2;
-	Fri,  6 Nov 2026 11:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793965998;
-	bh=hqpiqZcrPC9wx5aNBvYP4zckV3Yjf+8M1ASIDcJQ21k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZASBbMWPNza7o7x9E3ufbm4LKePl9d45ui5EyEQj0c6nFYmEnKRqRSm6yN2TUJnIG
-	 x84xkieBm9T900liY371Whv+vlEgtVoIoe8ljwbZ4lwWbM8KpyGnDW53gpM4hXJBWS
-	 OVFW5f4RKVdmXU/CRk9MtOYLRTOVEPMg4cMbwOjQw3CDtAgUhShid4U2o80KoWCvXJ
-	 7iOsi5mT/kqUbrGf15Pj29AgOI3H4VhdUJhDFAAQhNzZE0VHvIyVtlFvkhJjAua2XU
-	 YUPMnsJ4zBwKcR/8IaIsESK7/SOqxLxJHo/P8jZeFAnAF9NyOrBY6sci09ixJJiZ++
-	 qRejsB3E6wJmQ==
-Date: Fri, 6 Nov 2026 11:53:00 +0000
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, Rik van Riel <riel@surriel.com>, 
-	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
-	Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
-	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Alistair Popple <apopple@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, Usama Arif <usama.arif@linux.dev>, 
-	Kiryl Shutsemau <kas@kernel.org>, Xu Xin <xu.xin@linux.dev>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
-	Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, SJ Park <sj@kernel.org>, 
-	Rakie Kim <rakie.kim@sk.com>, David Rientjes <rientjes@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>, 
-	linux-mm@kvack.org, kvm@vger.kernel.org, damon@lists.linux.dev, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 02/13] mm/filemap: convert fault and readahead logic to
- use vma_flags_t
-Message-ID: <au2_PPpdAMgRJZtX@gremlin>
-References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
- <20261105-late-2026-vma-flags-v1-2-0d3cd15ab75f@kernel.org>
- <sashiko-outbox-200257@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=SkSGo6sR;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=HWSD5i96;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=SkSGo6sR;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=HWSD5i96
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9E3DA1F7A1;
+	Fri,  6 Nov 2026 13:02:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1793970133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bbUQdEPswgOtS328uqlCGgh3E/GKlV/1cyChz7WH/NU=;
+	b=SkSGo6sRLpvA2K/beezCVpf5lh166bkmRSUVzATxIn9mGrRmG2+OpOcl3z0xEiMvAZ1ru9
+	0nHHx9LXL41lEUxYRCsEAmo38XIvIXp6BBrRCBeDbrTdAKeB/Ta9XE3OaKlKFCma7npfcR
+	imDrYFmF2PCA7Vp6HKz4bsF6S/Sq6A8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1793970133;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bbUQdEPswgOtS328uqlCGgh3E/GKlV/1cyChz7WH/NU=;
+	b=HWSD5i96OeE8X0hkp6yGWu2eYrss726NPemdGJ029xnxhTprH/7+6wjQApNyquRVkIVqnZ
+	QU8dyGmc82rmdODQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1793970133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bbUQdEPswgOtS328uqlCGgh3E/GKlV/1cyChz7WH/NU=;
+	b=SkSGo6sRLpvA2K/beezCVpf5lh166bkmRSUVzATxIn9mGrRmG2+OpOcl3z0xEiMvAZ1ru9
+	0nHHx9LXL41lEUxYRCsEAmo38XIvIXp6BBrRCBeDbrTdAKeB/Ta9XE3OaKlKFCma7npfcR
+	imDrYFmF2PCA7Vp6HKz4bsF6S/Sq6A8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1793970133;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bbUQdEPswgOtS328uqlCGgh3E/GKlV/1cyChz7WH/NU=;
+	b=HWSD5i96OeE8X0hkp6yGWu2eYrss726NPemdGJ029xnxhTprH/7+6wjQApNyquRVkIVqnZ
+	QU8dyGmc82rmdODQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4F6AF132C9;
+	Fri,  6 Nov 2026 13:02:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xGnEK9PP7WolGQAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 06 Nov 2026 13:02:11 +0000
+Message-ID: <93e6b4e6-43c3-462d-b57c-26676aec85ec@suse.de>
+Date: Fri, 6 Nov 2026 14:02:11 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -97,144 +106,99 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] KEYS: Replace assoc_array with rhashtable
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, David Howells <dhowells@redhat.com>,
+ bpf@vger.kernel.org, dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
+ keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-security-module@vger.kernel.org, Alasdair Kergon <agk@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Benjamin Marzinski
+ <bmarzins@redhat.com>, Daniel Borkmann <daniel@iogearbox.net>,
+ Dongliang Mu <dzm91@hust.edu.cn>, Eduard Zingerman <eddyz87@gmail.com>,
+ Emil Tsalapatis <emil@etsalapatis.com>,
+ Ihor Solodrai <ihor.solodrai@linux.dev>, James Morris <jmorris@namei.org>,
+ Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Paul Moore <paul@paul-moore.com>,
+ Randy Dunlap <rdunlap@infradead.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, Yanteng Si <si.yanteng@linux.dev>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20261105031401.956609-1-jarkko@kernel.org>
+ <20261105031401.956609-3-jarkko@kernel.org>
+ <27015846-0161-4700-b810-4643e1f7b63a@suse.de> <20261106090516.GA1973@sol>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20261106090516.GA1973@sol>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <sashiko-outbox-200257@kernel.org>
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spamd-Result: default: False [-13.29 / 50.00];
+	SUSE_INTERNAL_BYPASS(-9.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[38];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,redhat.com,vger.kernel.org,lists.linux.dev,linux-foundation.org,iogearbox.net,hust.edu.cn,gmail.com,etsalapatis.com,linux.dev,namei.org,lwn.net,paul-moore.com,infradead.org,hallyn.com,linuxfoundation.org,mit.edu];
+	R_RATELIMIT(0.00)[to_ip_from(RLa6okkzyh9jmtq4tcjsqmu7hd)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -13.29
 
-On Thu, Nov 05, 2026 at 09:41:34PM +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
-> - [High] mm/filemap: use-after-free on vma in do_sync_mmap_readahead()
-> - [Low] mm/filemap: inner vma declaration shadows outer vma in do_sync_mmap_readahead()
-> --
->
-> commit f5f0f8e634a6a2e2b76ad818de67e83f30cb7dea
-> Author: Lorenzo Stoakes (ARM) <ljs@kernel.org>
->
-> mm/filemap: convert fault and readahead logic to use vma_flags_t
->
-> This commit replaces direct checks of vm_flags_t values with vma_flags_t
-> helpers in the filemap fault and mmap readahead paths.
->
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index b74bc1e5015c6..d8b538bd14043 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -3351,13 +3351,14 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
-> >  	struct address_space *mapping = file->f_mapping;
-> >  	DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
-> >  	struct file *fpin = NULL;
-> > -	vm_flags_t vm_flags = vmf->vma->vm_flags;
-> > +	struct vm_area_struct *vma = vmf->vma;
-> >  	bool force_thp_readahead = false;
-> >  	unsigned int thp_order = 0;
-> >  	unsigned short mmap_miss;
->
-> [ ... ]
->
-> > @@ -3414,7 +3416,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
-> >  		 * Fetch two folios so we get the chance to actually
-> >  		 * readahead, unless we've been told not to.
-> >  		 */
-> > -		if (!(vm_flags & VM_RAND_READ))
-> > +		if (!vma_test(vma, VMA_RAND_READ_BIT))
-> >  			ra->size *= 2;
-> >  		ra->async_size = folio_nr_pages;
-> >  		ra->order = thp_order;
->
-> [Severity: High]
-> Can this trigger a use-after-free on vma?
->
-> Previously, do_sync_mmap_readahead() cached vmf->vma->vm_flags by value in a
-> local variable at entry while the fault lock was held, as introduced by
-> commit dcfa24ba6899 ("filemap: Cache the value of vm_flags").
->
-> In the force_thp_readahead block, maybe_unlock_mmap_for_io() is called before
-> this check:
->
-> 	if (force_thp_readahead) {
-> 		unsigned long folio_nr_pages = 1UL << thp_order;
->
-> 		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> 		ractl._index &= ~(folio_nr_pages - 1);
-> 		ra->size = folio_nr_pages;
-> 		/*
-> 		 * Fetch two folios so we get the chance to actually
-> 		 * readahead, unless we've been told not to.
-> 		 */
-> 		if (!vma_test(vma, VMA_RAND_READ_BIT))
-> 			ra->size *= 2;
->
-> Since maybe_unlock_mmap_for_io() only pins vmf->vma->vm_file and calls
-> release_fault_lock(vmf) to drop mmap_lock or the per-VMA lock, isn't vma
-> unprotected against concurrent modification or freeing when vma_test(vma,
-> VMA_RAND_READ_BIT) dereferences vma->flags?
->
-> > @@ -3422,7 +3424,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
-> >  		return fpin;
-> >  	}
-> >
-> > -	if (vm_flags & VM_EXEC) {
-> > +	if (vma_test(vma, VMA_EXEC_BIT)) {
-> >  		/*
-> >  		 * Allow arch to request a preferred minimum folio order for
-> >  		 * executable memory. This can often be beneficial to
->
-> [Severity: Low]
-> Does the newly added outer vma declaration in do_sync_mmap_readahead() cause
-> the existing inner declaration in this VMA_EXEC_BIT block to shadow it?
->
-> 	if (vma_test(vma, VMA_EXEC_BIT)) {
-> 		...
-> 		struct vm_area_struct *vma = vmf->vma;
-> 		const unsigned long start = vma_start_pgoff(vma);
-> 		const unsigned long end = vma_end_pgoff(vma);
->
-> Should the inner vma variable be removed now that vma is declared at function
-> scope?
->
-> --
-> Sashiko AI review � https://sashiko.dev/#/patchset/20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org?part=2
+On 11/6/26 10:05 AM, Eric Biggers wrote:
+> On Fri, Nov 06, 2026 at 09:21:32AM +0100, Hannes Reinecke wrote:
+>> While I am pretty much in favour with this approach, is there a specific
+>> reason why siphash has been chosen?
+> 
+> SipHash is the preferred choice for secure hash tables.  It is secure,
+> performs well on short inputs, and doesn't require special instructions.
+> See Documentation/security/siphash.rst
+> 
+>> Would there be a chance to make this configurable?
+>> I do see slight complications when running in secure environments
+>> (ie FIPS-certified environments) where most of the hash functions
+>> might not be available ...
+> 
+> SipHash support is available even when the kernel is booted with fips=1,
+> so there's no issue there.  It's already widely used in the kernel for
+> hash tables, and that hasn't blocked FIPS certifications either.
+> 
+Ah, right. Thanks for the information. Just wanted to cross-check here.
 
-It seems these are valid, oops!
+> Side note: fips=1 actually has little do with security, and in some
+> cases it actually decreases security.  See for example
+> https://lore.kernel.org/linux-crypto/20261026183332.11402-1-ebiggers@kernel.org/
+> where I'm fixing a vulnerability caused by fips=1.
+> 
+Oh, I am fully aware. FIPS is more a rubber-stamp than anything else.
+Unfortunately, a pretty powerful one.
 
-Andrew suggested a fix off-list, and I agreed to this as an in-place fixup to
-avoid respin.
+Cheers,
 
-I have also updated the series locally to reflect this change:
-
-----8<----
- mm/filemap.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/mm/filemap.c~mm-filemap-convert-fault-and-readahead-logic-to-use-vma_flags_t-fix
-+++ a/mm/filemap.c
-@@ -3410,6 +3410,7 @@ static struct file *do_sync_mmap_readahe
-
-	if (force_thp_readahead) {
-		unsigned long folio_nr_pages = 1UL << thp_order;
-+		const bool random_read = vma_test(vma, VMA_RAND_READ_BIT);
-
-		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-		ractl._index &= ~(folio_nr_pages - 1);
-@@ -3418,7 +3419,7 @@ static struct file *do_sync_mmap_readahe
-		 * Fetch two folios so we get the chance to actually
-		 * readahead, unless we've been told not to.
-		 */
--		if (!vma_test(vma, VMA_RAND_READ_BIT))
-+		if (!random_read)
-			ra->size *= 2;
-		ra->async_size = folio_nr_pages;
-		ra->order = thp_order;
-@@ -3438,7 +3439,6 @@ static struct file *do_sync_mmap_readahe
-		 * pad that might exist between sections, which would be a waste
-		 * of memory.
-		 */
--		struct vm_area_struct *vma = vmf->vma;
-		const unsigned long start = vma_start_pgoff(vma);
-		const unsigned long end = vma_end_pgoff(vma);
-		unsigned long ra_end;
-_
-
---
-Cheers, Lorenzo
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
