@@ -1,61 +1,70 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793994956;
-	b=N26v+dyyHIZFgDM5nz81ZUMuI32NPfxAugpUY3iAGuyo412UxU6oafzbuYHWaDv/kqem
-	 SUTThauztpUPzApAJR+zQHoseSxh32a0qVAARai8nDzL3+sG6naJ0uzyjhDZpQAfrWCsX
-	 fmObgYRQmVFqDEErZ/JeLiHnGdyCgoiOnoFbZ3OAiVI05Z61Eu6B99UqnmupbnoCwV9AZ
-	 APugCEmqFHTmK46FLVWguE5tjkdWSXhVMSKaf3nciL75eoKaY4WkqUb5+P38ZswuzJ/fn
-	 D+63D0Tf1LsFUJ2nF12MLmJQk1bzXJYOLtswAgqMCNn7AO85MdiPM/5g2eL7lX6COtw==
+	t=1793995176;
+	b=QU/1PkWmQj+0TOvJK1XRVCyctTRII06byVoPygsck1MYRQf5ghfw5i9b5iSlHXvN0t0m
+	 t+NCdTfN0RrdnwgnFjejomSPd4Lz7vQnLTBRdROCRHnRtCi3bTthjKmJ1p0zoJZ+ezehT
+	 TrOqHbEDYLPpO747fj7OO1bvwpP9aJSHzhuSJy/9jO2SKyFzV+DIxXViLm+BOjtryre7L
+	 DYiXkO16FNAlsjR6wf966acYrIXBgYwIwx2myZfmffHsRffYvWmLy5GT/Z/bjwJsx2T3s
+	 GoWdEV2P1IxvxGLkKlKk6vI0tXFzKR19SIREV1UAJKtCZVkkeAO+979llTqiO81SCnA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793994956;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793995176;
 	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
 	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
 	 In-Reply-To;
-	bh=CuJ09Hb5RQ/Gr3+TQY3Rr3dhL2Ak37LmEQSE2AB39OU=;
-	b=gOPN2E0DtoSnLQDH2nMPULsP+hmwzwcy5pgZGLphXLy4PvlbeJhIf8FLsmhirQtxNszc
-	 kxE1nxQhx7Zf+KxGk2KqvjAuAGor9xc6mugG3gZDIf6mcIispOdVEDh7mu3V8twD91TYY
-	 W4I7U8R5w8Rs/zoh6J8H++OBq1KbsvsUUY50t4PUZqqMr2MRIQmT98ZlhBadcK416Bwo2
-	 QJvJIAHbcjBi7oZAztz0s0KBAkrlEcumEjDQPHxx+Wlap+6cKQQ7PWxyGFQhm4OTeEj35
-	 4kf1qxv1oViKyyTF1svleLbVbUyprQRhh22U+TFCN/RSaOf6vGTA6u/oJIk3SQMQlQg==
+	bh=4JJO7J4fojnA0nt5hwOEl9UDSFikUampjKz664dNgaI=;
+	b=UxnQ84L8ykdngxvojz6bpdDPZBcvEsOUcuYs6V8KAlg6/05+Q3a8uJQ6HUxutiGevRXg
+	 I9Gurp536qurXsqKQ7UNZKYRCFm8mfhGTAbNyTpBZxlt7zQzPIR0vkAlePJd58Nk3v8PT
+	 iGIOk18LL55kD3jaSD8kSNlpQFBNmXVugofDcYEnajulfWdh+G5yboLx4fgMMQUPcxRa+
+	 wU+y9i6gGs5SCO3Y1eHh/shT0+rkHCMOdHwL8LckWqijxqmFwzVPl4JyNmsttJRtq+TSp
+	 Y91av6Xqotm7R3s0f15DVn3IQjf7u1McZhFNNOxcl20t/8HWLe4VHibHnE1BpcilsHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=hallyn.com;
 	spf=pass smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=wDgbD+oR;
+	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=Opz9o4VQ;
 	arc=none smtp.remote-ip=178.63.66.53
 Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCE6606A329;
-	Fri,  6 Nov 2026 19:55:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ABCE6606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92459606A326;
+	Fri,  6 Nov 2026 19:59:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 92459606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=wDgbD+oR
+	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=Opz9o4VQ
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1793994951; bh=yEj9qxIv6iO0flFl1+VBn04EWiczF6hcvkktycY8KmQ=;
+	t=1793995173; bh=I8hBdflsjy5ULST78omV7Oaz6W+NqRtKI6XBIEd0n60=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wDgbD+oR+s+dAjQ9AGmTs7mPN4peMJLX1lwmZUXoPFwjyyuh0kvvB2MQMbxG2jjTC
-	 5c14ClnXyb2V/wkdNvZWZWhXiwmiuGoOj9Q+7kAz1Szh7IlqstMeW9N9DC6QegXnyn
-	 tZ03S2d6ubDTTc0Zcf1PClV/XUNN3GCc35NkATqhd1a9YhN3JRo4fkudNEkx1VUAQP
-	 6SZjV78uDSClDkREaSB6dJWG/DSGceKQinuaBSHWtWtbEKRrAgnthXEyf9Kg1hqi/i
-	 nOzJWaVhjgg9p5D0tpKs7xUM6oniQfxAZc0sgrIu6BOurCH08b80V4wjMIUxE+1ynn
-	 PrnsVugdCdyzQ==
+	b=Opz9o4VQjwN9tzX/hO5eSaQ5FQr2WLZl2g1ulAKlt/I2IxmzJ07EHL9LiEfJOVcZ1
+	 cx+7z1Uy5uM+BDh9hDXSmu4+YnsGU3op5jSCjUG33hSaM+zPGOjky5ElfFMhbwHAT1
+	 13EStbhliD7a6DbxEWKx0jLosOxuuYIn/Huix4qegeXUbaoah8N3m625DbjOYsK+4f
+	 7JNeWuVf9y2lKTxVFGvq2lheqSxd7h16n+LxptqmB8cjs41rJd9N/v+1Wiv0Up6Dmz
+	 pIMe67tgdd44TRJhG2FM9jstawe6mBUAFw5k4oHUGNTZOPLyKwPUmef05sBb2tl67/
+	 +C8idkqAnfGOQ==
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id B6B8A8B5; Fri,  6 Nov 2026 13:55:51 -0600 (CST)
-Date: Fri, 6 Nov 2026 13:55:51 -0600
+	id 952DC8B5; Fri,  6 Nov 2026 13:59:33 -0600 (CST)
+Date: Fri, 6 Nov 2026 13:59:33 -0600
 From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Cai Xinchen <caixinchen1@huawei.com>
-Cc: nicolas.bouchinet@oss.cyber.gouv.fr, xiujianfeng@huawei.com,
-	paul@paul-moore.com, jmorris@namei.org, shuah@kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-	lujialin4@huawei.com
-Subject: Re: [PATCH -next 0/9] lockdown: fix the securityfs interface and add
- tests
-Message-ID: <au4wx1+7+Bkg3wgz@hallyn.com>
-References: <20261103082421.3033195-1-caixinchen1@huawei.com>
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: tsbogend@alpha.franken.de, paul@paul-moore.com, jmorris@namei.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, stephen.smalley.work@gmail.com,
+	casey@schaufler-ca.com, longman@redhat.com, tj@kernel.org,
+	hannes@cmpxchg.org, mkoutny@suse.com, chenridong@huaweicloud.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, kprateek.nayak@amd.com,
+	omosnace@redhat.com, kees@kernel.org, neelx@suse.com, sean@ashe.io,
+	chjohnst@gmail.com, steve@abita.co, mproche@gmail.com,
+	nick.lange@gmail.com, cgroups@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] security: Expand task_setscheduler LSM hook
+Message-ID: <au4xpT1D8WzBxdvY@hallyn.com>
+References: <20261105172210.76706-1-atomlin@atomlin.com>
+ <au4ovp/Ghd25rtfZ@hallyn.com>
+ <kn57okulm7cmodzdzvzqqswzafu3vopsatfcsptyrz5ztknx4w@ngwh6si3zgpo>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,75 +76,60 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261103082421.3033195-1-caixinchen1@huawei.com>
+In-Reply-To: <kn57okulm7cmodzdzvzqqswzafu3vopsatfcsptyrz5ztknx4w@ngwh6si3zgpo>
 
-On Tue, Nov 03, 2026 at 04:24:12PM +0800, Cai Xinchen wrote:
-> The lockdown LSM exposes /sys/kernel/security/lockdown, but the file is
-> not documented and has no selftest.  While looking at the interface we
-> also found a configuration bug and several accumulated cleanups.
+On Fri, Nov 06, 2026 at 02:50:34PM -0500, Aaron Tomlin wrote:
+> On Fri, Nov 06, 2026 at 01:21:34PM -0600, Serge E. Hallyn wrote:
+> > > This change updates all in-tree security modules (capabilities, SELinux,
+> > > and Smack) to accommodate the new parameters mechanically, while
+> > > providing LSMs with the necessary context to enforce strict scheduling
+> > > and affinity policies.
+> > > 
+> > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > 
+> > This seems misleading - Casey explicitly said "for the smack bits".  This
+> > makes it seem like he reviewed and approved of the whole set.
 > 
-> The series is organized as follows:
+> Hi Serge,
 > 
->   - patches 1-2 are small cleanups in lockdown_write(): stop scanning
->     after the matching level and drop an update to a length variable
->     that is not used afterwards.
->   - patch 3 replaces sprintf() with scnprintf() so that the status
->     buffer is bounded explicitly if more levels are added later.
->   - patch 4 makes the LSM select SECURITYFS.  Without it, a kernel
->     built with CONFIG_SECURITYFS=n logs "failed LSM lockdown core
->     initcall with errno -19" and does not create the file advertised
->     by the Kconfig help text.
->   - patch 5 removes LSM_AUDIT_DATA_LOCKDOWN and its formatting code,
->     which became dead when the SELinux lockdown implementation was
->     removed by commit f5d0e5e9d72d.
->   - patches 6-7 drop an unused include, simplify the securityfs
->     registration, and move lockdown_reasons[] next to its only user.
->   - patch 8 documents the ABI and adds the new file to the LOCKDOWN
->     SECURITY MODULE entry in MAINTAINERS.
->   - patch 9 adds a kselftest covering the read format, invalid levels,
->     and the rejection of the current or a lower level.
+> Apologies for that, it was not my intention to misrepresent the scope of
+> Casey's review. The qualifier line was dropped when collecting the trailer.
+> I will update the tag in the next revision to explicitly scope it:
 > 
-> The only functional change is patch 4; the rest are cleanups,
-> documentation, or test coverage.  The selftest never escalates
-> lockdown on the machine where it runs.
+>     Reviewed-by: Casey Schaufler <casey@schaufler-ca.com> # Smack
 > 
-> Cai Xinchen (8):
->   lockdown: Add break in lockdown_write
->   lockdown: bound the status string with scnprintf
->   lockdown: select SECURITYFS
->   lsm: remove unused lockdown audit data
->   lockdown: drop an unused include and simplify secfs init
->   lockdown: move lockdown_reasons next to its only user
->   Documentation/ABI: document the lockdown securityfs file
->   selftests/lsm: add lockdown securityfs test
+> > I see no issues with the commoncap.c and security.c changes, but as
+> > Paul said two versions ago in
+> > https://lore.kernel.org/lkml/CAHC9VhSROg6RGUN4_ZVBoEwYjRnKvyjnkbx2D88c09KiTgY3KQ@mail.gmail.com/
+> > nothing appaers to be using these.  Where is the user?
 > 
-> Kalevi Kolttonen (1):
->   lockdown: remove useless decrement operation
+> The intended consumer is the BPF LSM (via the generated
+> bpf_lsm_task_setscheduler() hook and the __nullable BTF annotations in
 
-In patch 3, it would be nice if we had a BUILD_BUG_ON if
-the temp len became not long enough.  In patch 6, I think
-the original was nicer to read.
+Ah, I see, thanks.
 
-But otherwise, these all look good to me.
-
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
+> include/linux/lsm_hook_defs.h). As discussed with Peter and Paul in the v3
+> thread [1], when sched_setaffinity() is called, the cpuset controller
+> silently intersects and truncates the requested mask without surfacing the
+> original request, and seccomp cannot safely dereference the __user cpumask
+> or sched_attr pointers without TOCTOU races. Exposing the copied-in
+> sched_attr and cpumask to task_setscheduler allows BPF LSM programs to
+> audit or mediate the actual userspace request before it is sanitised or
+> applied.
 > 
->  Documentation/ABI/testing/securityfs-lockdown |  41 ++++
->  MAINTAINERS                                   |   1 +
->  include/linux/lsm_audit.h                     |   2 -
->  include/linux/security.h                      |   2 -
->  security/lockdown/Kconfig                     |   1 +
->  security/lockdown/lockdown.c                  |  63 +++++--
->  security/lsm_audit.c                          |   4 -
->  security/security.c                           |  40 ----
->  tools/testing/selftests/lsm/Makefile          |   3 +-
->  tools/testing/selftests/lsm/common.c          |  35 +++-
->  tools/testing/selftests/lsm/common.h          |   2 +
->  tools/testing/selftests/lsm/lockdown_test.c   | 176 ++++++++++++++++++
->  12 files changed, 300 insertions(+), 70 deletions(-)
->  create mode 100644 Documentation/ABI/testing/securityfs-lockdown
->  create mode 100644 tools/testing/selftests/lsm/lockdown_test.c
+> In my reply to Paul on v3 [1], I mentioned that once the MIPS prerequisite
+> landed, I would include a concrete in-tree demonstration alongside the hook
+> expansion, which I neglected to include in v4 and v5.
 > 
+> Would adding a BPF LSM selftest (under tools/testing/selftests/bpf/) that
+> attaches to lsm/task_setscheduler and exercises both the sched_attr and
+> cpumask parameters (including NULL and non-NULL paths) be sufficient as an
+> in-tree user/test?
+
+Self-tests are good :)
+
+> [1]: https://lore.kernel.org/lkml/ozsngetxq44lahategdi43sqrwdnpotsrebssczymqtkbh7snl@u6ytkznmpne5/
+> 
+> Kind regards,
 > -- 
-> 2.18.0.huawei.25
+> Aaron Tomlin
