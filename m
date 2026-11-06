@@ -1,111 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793972364;
-	b=FSXL4P2i+REiHgYDxFXJyv5Q/J0YB4AggBn/c+8zXkqi/zByt0pZWYWBYdNtN25u4Ycw
-	 Ncnzg7PxRwu8Ir5ZoWFrPai59D6dS+jOp4Yxfh7MPp9tfy8EO1ITTcMp+UnDp6WietD0g
-	 mz3cAups8qSpstplpib2pShQMQ3riRatpQsrnLrqDCRuvwfDJJPNmzDwQn/GJS9tBpaZ2
-	 YccHbk+19+qg76/J3FhAdzm7HnzTwZ8ajYZpSHeLjpvi1ky8k0/DzkNiTOmckyc5MjRLo
-	 fYsVBOpqqluZZTrJLeu+2K2L2zKOmi0bdmguCZ+tP4K5SU+FiyJsP/z2flnVZCnSNDw==
+	t=1793974099;
+	b=VD6vCHuuZMDtj7jZTbaVIACg4qsCUQAFHyEDbyV26FjEeRNaTOum8CK4JiMoYULz6Kvj
+	 tp/5YujdgfqRygXsE41T09vOdFz4bO61HD/65ezDPLhBCzoysJHSYJfkR7UC4xYGMqAjh
+	 kmGxaadC5Mp4cbduyxu4ULJw9qq118saHqhsCq/vojIql9yw/Vj4zQKe9YmkesO0PxNMw
+	 RIfOw2Vtz5JH/8z9hxT2eFDzg0OKWekStp1m2d9eYzPeNmogJkrUAyZz7bzicGLlXZUZg
+	 lyd1Ko0KJD5zWfQXKUL9d/EpoxmMS9MphWLt9Upn+I7hVzNBkdV6wQhiSEMmuUbFYKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793972364;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=ARUfe0oRvQLpktV4/IX4ouOJ+p2Dyv2XxPz/WvTcyHM=;
-	b=jQlhDq3axyRe0NxOApIX4gFV2cR08TVft3gMfMRgc9GpO0SjJ09CSCNfHVARd9DBjEAj
-	 txdHkxX5iBPQngrVpNN9nEeStWDxrdACPR8RmLHgQKrQCrPmwgsGHg2WapW48Kjg3Cy+y
-	 Fxdy6mIdHdK4b7PL7pEqy0WbuVsmegXDpI+32UX0PYbXATso/2NkU+qn2TEzWVtzhTBJ8
-	 YO+E1m20I0kTBF3HzWDnu0HLazYKR4jgHvh/SJ1y0Cc6Hjxz6/gJPn8+rfh7owP9X3e1G
-	 ftBdR4snpD4843Fp7pt0oLjs9GqXnn9aKVq/lpkMvtDSRdWRSph/lcvii86OIDy+B9A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793974099;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=hrYX149OSdk3k+YOin/rIkohEIQs6jD419zibT9vgxU=;
+	b=pKoPfBzQbcFXPRzioFIQRcrPDHiaSxxRMlVoGvKNgn4SrjGuw2r3ASvhPcxmv0TP/oY6
+	 NCZ9uBTQvaZlRF5hqJ96MxhJD6Ud50rs7lfp8Ipw2YEkZTIwlZQDCpK2AxrAUTlbdMbqY
+	 gkKtxbxGy+BamlF1OtritTmKeAX+OR1auxAWqyoGarsMZY+giEP4N4TGJY9DVVuKrcOLt
+	 7K7Xqbt4dLpTvw4UMBSOx4UF7ecEo6AFlXWh56Ef6d9uBVRG33iRXCBoVLPIHP/EY/IzW
+	 Mzl+QUDwZcH+3pprTD6q6Mfnk4fpqFZ404UE6RJ3xf7jgQfssUNU6WUTtAxnShOvFqw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=roblab.la;
-	spf=pass smtp.mailfrom=roblab.la;
-	dkim=pass header.d=roblab.la header.i=@roblab.la header.a=rsa-sha256 header.s=fm2 header.b=P0kS3mNE;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b="n/C6BrD2";
-	arc=none smtp.remote-ip=202.12.124.156
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh6r6JqT;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE8D606A333
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 13:39:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CBE8D606A333
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=roblab.la
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=roblab.la
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 4B2A3606A326;
+	Fri,  6 Nov 2026 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=roblab.la header.i=@roblab.la header.a=rsa-sha256 header.s=fm2 header.b=P0kS3mNE;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=n/C6BrD2
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 89A097A012A
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2026 08:39:21 -0500 (EST)
-Received: from ams-imap-01 ([10.64.2.21])
-  by ams-compute-02.internal (MEProxy); Fri, 06 Nov 2026 08:39:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=roblab.la; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1793972356;
-	 x=1794058756; bh=ARUfe0oRvQLpktV4/IX4ouOJ+p2Dyv2XxPz/WvTcyHM=; b=
-	P0kS3mNEpBv/rTDf6A2rJVYOCsq0JXdjzgKRygbulwUQXO+MoLCAfHN/dQHtCbT1
-	tgnm0g3xOeVyg/BArdxYzR6cD2kdIS7eUOGsnSN9+SifKP8ZCiLQW3XFoeFKoNQ5
-	PAsT6/O7Wc42pJQfqcActKug3PlUDbFvdFvtf0OhCzTv0sO1dWk1w87QLgAXvm07
-	73PtvsfKS8UnjGNw8nWprzM/LkMGXgAsOIscSEi+e1KCh0g++FtppBoUm4Fv6qu6
-	pzKgTZEmsiOCvrpdK4JD8qxP73q1NUwv6pQUi6mtDYdUhx5yXimZJqnLaTAmt15m
-	0zXvBspnaBUU7bY324yFmQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1793972356; x=
-	1794058756; bh=ARUfe0oRvQLpktV4/IX4ouOJ+p2Dyv2XxPz/WvTcyHM=; b=n
-	/C6BrD2TaoAut1HnY1Yh8dc9SLFd65ISP+6xpMI6H2kGmpmoMGyIG3vVr+KmbLdO
-	8KT/HLGUiekOyAWptxqFxygA/2GwYnrC60CkE9ntLXNVVFBa4OesbvRsmVeZtiT1
-	IYRbVD2OSpdaS2wuDdUnpPy6RP+wmSGY2WL/zBUCKg22WGXDcmubPU8fb38QC2DT
-	2C2QXkckhmHSFXYL9msMObq+zf46sC0bnA5iKNAJ9bLcLxo1Mo6vIVKVAv2afYO5
-	1chg/uU8jXfJVzW81yFJinyYTyvQ+OniVrpBPaOZEzEy8TxGUbvEkDjDqUk0nAUM
-	vbSvUVe6/d5dCbn6JCByA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=roblab.la a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1793972356; d=roblab.la;
-	mf=PGxpbnV4QHJvYmxhYi5sYT4=;
-	rt=PGxpbnV4LXNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc+;
-	s=fm2:rsa-sha256:e73TbcGpqKiRhHJhMkFhoc3whANlF9BY5YlUp+UzEiOWvZs
-	eaMgZCl8BzWefFq56bl/Q+RLXaPpITNwmZ7Hoj41c4wDqC4q3yWyfv2Jm1YpDDyt
-	V7BD76C1cSEg6kCRESqAfTlUenRP5q4+VAgrsyJswIcSzdJjxPyty40s5wTEG5UO
-	s8LwSY0rqAKd8+sb1DoIZL+tfbvy3EccZbMhW+S2Pf+kjYsvbUDUswpIH+PzctKi
-	ZfNG1DTi10EaS3pf6U4tDoj0CjUQxcsxERVET9YAr7roUb1xlao0l0dpid55j+ES
-	q7LPrSCQGX1mHZULYkXuGYhmSV9M6WTYcMWWg8g==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:yagw9MK1qx/FsQKMSDEscldkfDLlqZ19o3fNMlgXkAE=:bJ1TY0gyHdq6noIDh4uRoIHjnYHwd2Uk1WKpsqxUygA=;
-X-ME-Sender: <xms:gdjtahRgaEufYkRDWH8tDPS8VfuAogvHN3EUfHU40gdXFV5eFLkzCg>
-    <xme:gdjtalm0wacst6RgzAs8I6cCRdarfR3py1KoyWyohv5HzLxlkHFjldY7EBjLtfVz6
-    yYvfBd6bH9siAps8oSJs3OjkySyf9UPs-pMewR_4G5dU6ECao6HkdfN>
-X-ME-Proxy-Cause: dmFkZTF+FnxZiQiMq7uXLveifAn/SqqWr2J1X2I0ezX+IiJkA5pWaZj1lD5uHJxz5pAlqV
-    09pZ35PV7/ljghZUqCK8RONDe3322gTBYLFE4q3i/14cg1rV7vyCnwYlRQ/f7bGY/Hdzif
-    ZEtcDiGDzezmzLwjqapQHKTtR6EY+cICJ7lvpdmWo3X+PLFwdzwd/Asj2kwkgSrRYrT5LZ
-    odLpIxJ/MwIYrXTy+GaQFG9hgFHvfAdQ5abFbTXZrsTnkfYAQOEFWotTXizzUSEdvZgnwv
-    qG11XFX9Iyu86r0H6dJ6dDNBPQhBDdlbVM1KjIJgdTb9iQ399UB0/1odsYNttn05nohJf8
-    x8aAiQWMOzLYYNpscPd8nBMy7qiOadoSpV5elqgNNWYBX33GvJB2zzl1FJcGPyCjCNCFcY
-    XQ1xBEKTU9bbh9wyHcRR65/v76xKl2KR6O1TFoA++WhP+xrLHCwoPuPFwMS/ou4vi++0sx
-    YFRUNRNUuVijT6O2PPdZwHLqboysKihlyCwPW7799gSmU3fobcotGmVmbejfX/tFuUlKAW
-    KVujFyuBdRsZ9AdC3TiLPUAxEX48YjlNkrls5WfaC8cx2PWUHxOtdUu0qrAICJsABPdbNo
-    Q+tRFd8se3YLK+0VBrke1pekjrWDjNzeGmQVHEsyeFFY69L+iqL+JQVKY09g
-X-ME-Proxy: <xmx:gtjtalVE9GkhLOtvIDdGp388pTemU5ZQ5ZPotnB5vGcPp5swE4BNBA>
-    <xmx:gtjtakpxKtUiNOpB6t85z7v735ntrT8T21dRcAf9odowC8AnGVIw4w>
-    <xmx:gtjtanl2nxSLYLii7Ptk9Ggl1l-OS3YU8vnzlVj22YhpSpBK4K38sA>
-    <xmx:gtjtak1Fy6bX5WGRz7AwswawIsxUClcttmiPfYYO6yXC2XO-wYRSbQ>
-    <xmx:hNjtakBWlnyAmiB8ysLtjowLqEcZpBCWpDuy8tehkxrRhHflQzHbALPZ>
-Feedback-ID: iddd147b3:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 054CAFA0096; Fri,  6 Nov 2026 08:39:13 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fh6r6JqT
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6D1331F008A4;
+	Fri,  6 Nov 2026 14:08:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793974099;
+	bh=hrYX149OSdk3k+YOin/rIkohEIQs6jD419zibT9vgxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Fh6r6JqT9W8Hnz3tANti0KLpqS7sv0c9iueIpUquCp04Dn+y2973apbGc9JzFrcGD
+	 w+35nlorw7FqrNrGtSpEuPFV6uzE2NXLVthgnSwTqVW4uFpAk7Ng+5J6g5PYwUG6+a
+	 p/dKC3Rt9SGcj+/0SF7tnZj9WSWRN5Rp4h1xbWb47Z2O8kw3khIQnY3969bABkQLpN
+	 sp59C0skZ56wF2+7VfZcZQv4Vb3USBtN6YJa01erKVQlZP8VF1LBcKND7C2AaVgFHz
+	 PSQrFrUsWH5nNy02ZJPn0LlSgVQWBTXEEUReSTgvuQz22kf8T0dXAW6PpuRgJEWvwd
+	 n90pRF9foNiNg==
+Date: Fri, 6 Nov 2026 16:08:15 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Yuansheng Yang <0xbeac@gmail.com>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] KEYS: Protect pkey method checks against type removal
+Message-ID: <au3fT5HMq7IF-M3e@kernel.org>
+References: <auy1ANMSKTXZb8GE@kernel.org>
+ <20261105193632.34363-1-0xbeac@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -115,78 +60,216 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: AgAAt5wBJ-mw
-Date: Fri, 06 Nov 2026 14:38:49 +0100
-From: roblabla <linux@roblab.la>
-To: "Daan De Meyer" <daan@amutable.com>, "Paul Moore" <paul@paul-moore.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
- paul.mabileau@harfanglab.fr, linux-kernel@vger.kernel.org,
- "Andrii Nakryiko" <andrii@kernel.org>
-Message-Id: <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com>
-In-Reply-To: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com>
-References: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com>
-Subject: [BUG] bpf, lsm: new first argument in 7.4 inode hooks silently breaks BPF LSMs
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261105193632.34363-1-0xbeac@gmail.com>
 
-Resubmitting as plain text. Sorry for the noise.
+On Fri, Nov 06, 2026 at 03:36:31AM +0800, Yuansheng Yang wrote:
+> keyctl_pkey_params_get() looks up the key, and keyctl_pkey_query(),
+> keyctl_pkey_e_d_s() and keyctl_pkey_verify() then dereference
+> key->type->asym_* outside key->sem.  A reference keeps the key alive, but
+> does not pin the module providing its type.
+> 
+> unregister_key_type() calls key_gc_keytype(), which retypes every
+> remaining key of the type to key_type_dead under key->sem for writing.
+> The pkey paths read key->type again after their checks, so a concurrent
+> module unload can turn the checked callback into the NULL key_type_dead
+> member and call through a NULL function pointer, e.g.:
+> 
+>   KEYCTL_PKEY_SIGN task              Module unload and key GC
+>   ------------------------           ------------------------
+>   keyctl_pkey_e_d_s()
+>     if (!key->type->asym_eds_op)     unregister_key_type()
+>                                        GC: down_write(&key->sem)
+>                                        GC: retype to key_type_dead
+>                                        GC: up_write(&key->sem)
+>                                      free_module()
+>     in = memdup_user(...)
+>     key->type->asym_eds_op(...)      -> NULL call
+> 
+> In-tree, turris-signing-key provides such methods.
+> 
+> Remove the key->type->asym_query check from keyctl_pkey_params_get(): it
+> runs without key->sem, so key_gc_keytype() can retype the key right after
+> it.  Instead, make keyctl_pkey_params_get_2(), keyctl_pkey_query(),
+> keyctl_pkey_e_d_s() and keyctl_pkey_verify() each take key->sem for
+> reading, check the key->type->asym_* method they are about to call, call
+> it and release key->sem.  As key_gc_keytype() takes key->sem for writing
+> before it retypes the key, key->type cannot change between the check and
+> the call.  Drop the asym_eds_op and asym_verify_signature checks that
+> keyctl_pkey_e_d_s() and keyctl_pkey_verify() did before memdup_user() for
+> the same reason; -EOPNOTSUPP is now returned from under key->sem.
+> memdup_user(), kmalloc() and copy_to_user() stay outside key->sem, as in
+> __keyctl_read_key().
 
-Hello,
-First of all, I'm sorry if I'm sending this email to the wrong mailing lists, it's my first time reporting a linux issue ^^'.
+This is a transliteration of the source code changes. How this helps me
+to quickly understand them vs reading the source code changes and 
+skipping this?
 
-In commit 16959c469f232f5c76cfb628297cafbf6dbdba79 (lsm: expose mount idmaps to inode hooks), merged in 7.4-rc1, a new argument was added in position 0 of various inode-related `security_` functions. Specifically, it added this argument to inode_create, inode_link, inode_symlink, inode_mkdir, inode_mknod and inode_permission.
+I'd like to know what is that you are trying to do by doing those
+changes, which is the higher leve question. You should know this
+already. I see pretty much the same thing done for those sites so maybe
+that action is what you want to describe. Action taken, why that action
+won't cause any harm,  enumerate the coverage and address that it is the
+full coverage.
 
-This has the immediate effect of breaking eBPF LSM programs relying on these hooks that were compiled with BPF CO-RE and using BPF_CORE_READ. Those programs don't simply stop loading (which would be fine enough) - instead, they will misinterpret the argument from one type to another, which can cause them to behave erratically. This has already bitten me in the past, when inode_setattr got a similar argument change in Linux 6.9. This caused our eBPF LSM to misbehave and deny actions that should have been ordinarily accepted, leading to huge production outages on our customers' machines.
+The above looks to me as if someone had literally prompted "translate
+this source code change to English". Neither much effort thinking  done.
 
-Here's a simple reproducer that shows the problem (full repro with the loader, makefile and run.sh is at https://github.com/roblabla/kernel-7.4-bpf-bug-reproducer):
+> 
+> This problem was recently fixed for keyctl_read_key() by 925c84e3cc21
+> ("keys: Protect the read method check against type removal") and for
+> key_update() by aef3a8a4f988 ("KEYS: Protect the update method check
+> against type removal").
+> 
+> Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops for asymmetric keys [ver #2]")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yuansheng Yang <0xbeac@gmail.com>
+> ---
+> Changes in v4:
+> - Rewrite the commit message: describe what changes in
+>   keyctl_pkey_params_get(), keyctl_pkey_params_get_2() and the three
+>   keyctl handlers and why, and cite the read/update fixes by subject.
+> - Rename the out_unlock labels to out_up_key_sem.
+> - Use out_up_key_sem / out_free_in / out_free_params in
+>   keyctl_pkey_verify(); leave the other functions' existing labels alone.
+> - No functional change relative to v3.
+> 
+> v3: https://lore.kernel.org/all/9d47e202bd11857b3555e6b95694b3c3a4f2460b.1793852399.git.0xbeac@gmail.com/
+> v2: https://lore.kernel.org/all/20261104021414.50696-1-0xbeac@gmail.com/
+> 
+>  security/keys/keyctl_pkey.c | 58 +++++++++++++++++++++++++++----------
+>  1 file changed, 42 insertions(+), 16 deletions(-)
+> 
+> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
+> index 15b6bf6399..3e3253330c 100644
+> --- a/security/keys/keyctl_pkey.c
+> +++ b/security/keys/keyctl_pkey.c
+> @@ -100,9 +100,6 @@ static int keyctl_pkey_params_get(key_serial_t id,
+>  		return PTR_ERR(key_ref);
+>  	params->key = key_ref_to_ptr(key_ref);
+>  
+> -	if (!params->key->type->asym_query)
+> -		return -EOPNOTSUPP;
+> -
+>  	return 0;
+>  }
 
-```
-#include "vmlinux.h"
-#include <bpf/bpf_helpers.h>
-#include <bpf/bpf_tracing.h>
-#include <bpf/bpf_core_read.h>
+I'd drop this as technically it is not part of the bug fix and then you
+have pretty much symmetric action. Helps at least with the description.
 
-char LICENSE[] SEC("license") = "GPL";
+>  
+> @@ -129,7 +126,16 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	down_read(&params->key->sem);
+> +	if (!params->key->type->asym_query) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_up_key_sem;
+> +	}
+> +
+>  	ret = params->key->type->asym_query(params, &info);
+> +
+> +out_up_key_sem:
+> +	up_read(&params->key->sem);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -185,7 +191,16 @@ long keyctl_pkey_query(key_serial_t id,
+>  	if (ret < 0)
+>  		goto error;
+>  
+> +	down_read(&params.key->sem);
+> +	if (!params.key->type->asym_query) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_up_key_sem;
+> +	}
+> +
+>  	ret = params.key->type->asym_query(&params, &res);
+> +
+> +out_up_key_sem:
+> +	up_read(&params.key->sem);
+>  	if (ret < 0)
+>  		goto error;
+>  
+> @@ -230,10 +245,6 @@ long keyctl_pkey_e_d_s(int op,
+>  	if (ret < 0)
+>  		goto error_params;
+>  
+> -	ret = -EOPNOTSUPP;
+> -	if (!params.key->type->asym_eds_op)
+> -		goto error_params;
+> -
+>  	switch (op) {
+>  	case KEYCTL_PKEY_ENCRYPT:
+>  		params.op = kernel_pkey_encrypt;
+> @@ -260,7 +271,16 @@ long keyctl_pkey_e_d_s(int op,
+>  	if (!out)
+>  		goto error_in;
+>  
+> +	down_read(&params.key->sem);
+> +	if (!params.key->type->asym_eds_op) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_up_key_sem;
+> +	}
+> +
+>  	ret = params.key->type->asym_eds_op(&params, in, out);
+> +
+> +out_up_key_sem:
+> +	up_read(&params.key->sem);
+>  	if (ret < 0)
+>  		goto error_out;
+>  
+> @@ -305,31 +325,37 @@ long keyctl_pkey_verify(const struct keyctl_pkey_params __user *_params,
+>  	ret = keyctl_pkey_params_get_2(_params, _info, KEYCTL_PKEY_VERIFY,
+>  				       &params);
+>  	if (ret < 0)
+> -		goto error_params;
+> -
+> -	ret = -EOPNOTSUPP;
+> -	if (!params.key->type->asym_verify_signature)
+> -		goto error_params;
+> +		goto out_free_params;
+>  
+>  	in = memdup_user(_in, params.in_len);
+>  	if (IS_ERR(in)) {
+>  		ret = PTR_ERR(in);
+> -		goto error_params;
+> +		goto out_free_params;
+>  	}
+>  
+>  	in2 = memdup_user(_in2, params.in2_len);
+>  	if (IS_ERR(in2)) {
+>  		ret = PTR_ERR(in2);
+> -		goto error_in;
+> +		goto out_free_in;
+>  	}
+>  
+>  	params.op = kernel_pkey_verify;
+> +	down_read(&params.key->sem);
+> +	if (!params.key->type->asym_verify_signature) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out_up_key_sem;
+> +	}
+> +
+>  	ret = params.key->type->asym_verify_signature(&params, in, in2);
+>  
+> +out_up_key_sem:
+> +	up_read(&params.key->sem);
+>  	kfree(in2);
+> -error_in:
+> +
+> +out_free_in:
+>  	kfree(in);
+> -error_params:
+> +
+> +out_free_params:
+>  	keyctl_pkey_params_free(&params);
+>  	return ret;
+>  }
+> -- 
+> 2.43.0
+> 
 
-#define EPERM 1
-#define NAME_LEN 32
-
-static const char forbidden[] = "forbidden";
-
-SEC("lsm/inode_create")
-int BPF_PROG(deny_forbidden, struct inode *dir, struct dentry *dentry)
-{
-    char name[NAME_LEN] = {};
-    const unsigned char *name_ptr;
-    unsigned long dir_ino;
-
-    dir_ino = BPF_CORE_READ(dir, i_ino);
-    name_ptr = BPF_CORE_READ(dentry, d_name.name);
-    bpf_probe_read_kernel_str(name, sizeof(name), name_ptr);
-
-    bpf_printk("inode_create: dir ino=%lu name='%s'", dir_ino, name);
-
-    for (int i = 0; i < sizeof(forbidden); i++)
-        if (name[i] != forbidden[i])
-            return 0;
-
-    bpf_printk("inode_create: denied '%s'", name);
-    return -EPERM;
-}
-```
-
-Compile it under a kernel before 7.4 release, then run it on mainline. Here's the output:
-
-- run on 7.1-rc7:  touch forbidden: DENIED   (dir ino=59 name='forbidden')
-- run on 7.4-rc1:  touch forbidden: created  (dir ino=0 name='')
-
-Before Linux 7.4, this program will properly deny the creation of any file named "forbidden". But in 7.4, the name_ptr BPF_CORE_READ will read garbage, and the check will fail. This is a bit of a contrived example, of course, but should show that there's a real problem in the way we handle eBPF loading in the face of changing signatures, that is prone to causing big compatibility issues.
-
-Now, I'm not sure how the Linux Kernel treats eBPF LSM hooks - if they're considered part of the userspace that shouldn't be broken. My understanding is that kprobes are not part of the Linux Kernel stability guarantees, for rather obvious reasons (they allow watching the internals of the kernel) - but I'm not sure if this extends to the LSM Hooks. I assume not. Still, this kind of breakage is really painful for us, and I hope we can find a solution.
-
-Could we fix this type of breakage by making sure new arguments are only added at the _end_ of the LSM hooks signatures, such that eBPF written for an older version of the kernel do not start misinterpreting arguments? eBPFs don't care about having "too few" arguments in the hook, so this would solve the situation.
-
-Separately, I think the current lack of error handling in case of argument mismatch should really be improved. Could we perhaps have a mechanism such that the kernel (or maybe libbpf?) could check the arguments of the eBPF program, and refuse loading if it mismatches what the kernel expects?
-
-Thanks,
-roblabla
+Br, Jarkko
