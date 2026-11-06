@@ -1,54 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793956481;
-	b=cPVtcYokh37wAtUlqYrDYfoD8YjzavV4LV8Ik0TSm68U0z+9Vvj2RfyMbCJh6N/v/L/J
-	 +emLYlY6dZ3urTpiPlOb6LLxBEsvSHN5fe55DPWxPdcxwAM52G5jkHb720U0I7YRcG96P
-	 ANSxr/MuIE4INe1O4TtEwYHSoUriEy1Oek9/3QrOlsXXQPkZeiNRWDEGjvaOWoCR/HXVW
-	 Pfmwsr/oiQHIe3m/XUDkYo3NfHsvVmV+CzTtCFXMuRHY63M6FoyZ7qQyJCZMI1k2WgODd
-	 mXnJmOwEKZ6tp/7y2l9wUviAH1KmfDL8UzUWvFTimhjVktqKoIHzzTfJLQ98vMqC1vw==
+	t=1793959982;
+	b=Z+MhnnWrt6JPuTP4JSsqIj1oHNViJpmCiEG3ua34SX2e2vVTzaTrlN4xnhsznOZ/Mp2w
+	 TFIxz3FAcIioRTbsCYh9CBQNZ6WPT9Ok+h8pWPHRoEi2UXpXmcmDO5PDm5PVMuJP8Njrh
+	 kWFEJ173bLe+0+vNJ5S+hwFA0pRMsYmhQyOIapPXNolRJe+wILJjX76D2ysY6i9PsNgp9
+	 //Rz1heaAVG6idkoChhug24fOGgI7+3o89TLQA8wkbrGr+mDWKRXlLcC+jmz+UErUsosF
+	 MU4ruTNuq1LgPE68OqBgM+ROofJUO4x1jr6QvBhizVegUy4rvKJvktpKKto8fBIOQfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793956481;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793959982;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=4S9LHbn3kaZCl2f8o0GIqwvTmJ5pmKm5hhKwjJdY6Ww=;
-	b=z6T7ncCsKofdf1K9dF2dRvRwuh4z7MgYxVQLBYIW8UBIdCT+bjqd9QdkITF/PkV0iFKX
-	 QCqHZsyuoC2d2v5oVHVjzb/9dYF3EUUcmZeKismcJJhn1w941FJJgAvDBWWh1gJjHQoDz
-	 jZImoVrcaIXVw/xWS9lAwY5nM9rIWQNJfWa/vwZM4kHnNyv4y4F+mMt9YiWKbwwWjGTuy
-	 4lkbnYwNRyqIQ/6/K64euzWN1E+CP6raD5Es0c8HGbpJ+iE/FyIvS6Z0caUvpmtTPXn/g
-	 /yIi+hg0yJtWnzaOZ3Kfpzna5c4U/BMn5xSSPTYi4RcW8BgpmmcwmrVpms1EPY9L82Q==
+	bh=nnzK0BslWJHcXFemGgfYITU9fhviw2smy0wN/ApAn14=;
+	b=hZc5LuKlOx2w2Rj9dJJVWrPOd+rMzUP8RYWAtuGiHC4aOjQowbicne2HE+A55E+sOXzH
+	 ShEe1Q37OPzLq5XxuCXwfDHBqCzrZlNEbhHO8p2UYS/gwAccNrcyilJqxAuoU6UZQCrE5
+	 NnqikgR5l+ROns1KftFoonDvbjHqnJpq+onv5lkp0Sb3j4jmenHD8DFYxmW1ZVtMh8Ghz
+	 TU28JlcNj0Mt9pQ5Jzfdqcw162gxO+xghvhZa95EVpS82A+y9u0f7vpdlBGUc6LaQhmkl
+	 ySipzs+g88lP9YHGk6KbJb79+nhrWnA48URkmAmuWJHtClwdu/PQNG3kV4L3NOpulAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IpwtKnjE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="edM4/p9S";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338A1606A328;
-	Fri,  6 Nov 2026 09:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AFD606A326;
+	Fri,  6 Nov 2026 10:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IpwtKnjE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A451F008A3;
-	Fri,  6 Nov 2026 09:14:38 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=edM4/p9S
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A44D81F0089F;
+	Fri,  6 Nov 2026 10:12:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793956480;
-	bh=4S9LHbn3kaZCl2f8o0GIqwvTmJ5pmKm5hhKwjJdY6Ww=;
+	s=k20260515; t=1793959982;
+	bh=nnzK0BslWJHcXFemGgfYITU9fhviw2smy0wN/ApAn14=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IpwtKnjEfNcgA4M7qps6DEOXJ/chF/wtpVphLblnZlDGWb2nLskbnA4rTJzaEjoke
-	 Cbtdvl/MIqKPTeLh4bIEYhIBqhXATfWd5Ynp/wYBEBl0jRzEcU/4Q/d/JDFquHs9b1
-	 6QJIRLGZWKQk8ZeaO/tOgT2DR98CNcoa6Dg+S7YFVpRNGCGSUXKn7bbN52Yu4Jx0UJ
-	 jgfnuGv1mRtBGa4OJ3g6xRHy4xifEbl8OZg5Ul1lv7VR0puuifx+n7871JirY/A8au
-	 jwrF0y/h3f3N1rzmkNlmPh3Sd3HnrgxKI7QGFNRrLZw2koMsFfrXcYKydNZimW/PWR
-	 ai4EsFy9ojA1g==
-Date: Fri, 6 Nov 2026 10:14:36 +0100
+	b=edM4/p9SW7+S73fDgQfspXTjrIk9baHrV37Kd/QhylG3sLFrLKrn7Hstn6AQsz5uw
+	 UpQitFXbsHcThZxWuXEdgx2CDWhWf6hbi4u2aagagDQcQos8ZBnDTihVAkxsA3Xn2S
+	 DaXEaR4Ddkun5RuUbGazbbXXqJnn4U2NrjbxamgcSa5zL2fHatPp33S0Uil9R6wxXW
+	 6ge5YPJC6yBuH0U/vS7kAmhEAxOiNR4kAK8TFOI7nFk/vAgdTcuJjqV3mfM6VrhrYp
+	 EqVajW7CacXXOnIxA1xdsWgBIymxyAvUB9LHqQ8we47DuLvg13NGqZGYXr7xRTpXPl
+	 +UVOBxUZErwXA==
+Date: Fri, 6 Nov 2026 11:12:53 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Oxana Kharitonova <webprosto@gmail.com>
-Cc: mic@digikod.net, viro@zeniv.linux.org.uk, gnoack@google.com, 
-	utilityemal77@gmail.com, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, landlock@lists.linux.dev
-Subject: Re: [PATCH v2 1/4] ipc: Move MQUEUE_MAGIC to a shared header
-Message-ID: <20261106-boxen-maschinen-triumphieren-4672fe45b595@brauner>
-References: <20261102144708.920232-1-webprosto@gmail.com>
- <20261102144708.920232-2-webprosto@gmail.com>
+To: "Serge E. Hallyn" <serge@hallyn.com>, 
+	"Hallgrimur H. Gunnarsson" <halg@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jann Horn <jannh@google.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
+	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	containers@lists.linux.dev, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
+ opt-in netns loopback
+Message-ID: <20261106-sandalen-monopol-neugierig-23357f8efc64@brauner>
+References: <20261028221705.3915340-1-halg@google.com>
+ <aunVmg42/S2uUDWR@hallyn.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,27 +71,38 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261102144708.920232-2-webprosto@gmail.com>
+In-Reply-To: <aunVmg42/S2uUDWR@hallyn.com>
 
-On Mon, Nov 02, 2026 at 02:45:57PM +0000, Oxana Kharitonova wrote:
-> Move MQUEUE_MAGIC from ipc/mqueue.c to include/linux/ipc_namespace.h so
-> it can be shared by code outside of ipc/mqueue.c without duplicating
-> the constant.
-> 
-> Signed-off-by: Oxana Kharitonova <webprosto@gmail.com>
-> ---
->  include/linux/ipc_namespace.h | 2 ++
->  ipc/mqueue.c                  | 1 -
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
-> index 12faca29bbb9..8a15ffe38e9a 100644
-> --- a/include/linux/ipc_namespace.h
-> +++ b/include/linux/ipc_namespace.h
-> @@ -15,6 +15,8 @@
->  
->  struct user_namespace;
->  
-> +#define MQUEUE_MAGIC 0x19800202
+On Tue, Nov 03, 2026 at 06:37:46AM -0600, Serge E. Hallyn wrote:
+> Kees whipped up a proof of concept BPF lsm that implemented this.  A copy
+> from his email (and let's call it GPLv2 unless he wants to change it to
+> something like MIT) follows:
 
-Should go into include/uapi/linux/magic.h ?
+There's no need to special-case user namespaces for this anymore.
+I've added generic namespace LSM hooks for v7.4-rc1:
+
+* namespace_init()
+* namespace_install() (setns())
+* namespace_free()
+
+called from the common namespace code I added and for every namespace type.
+
+So a policy like this can cover creation and setns() of all namespaces
+and follow a namespace by its id until it's gone.
+
+The catch is that what got merged doesn't work with the bpf LSM right
+now.
+
+namespace_free() is never called unless an LSM allocated a namespace
+blob, namespace_init() sees a namespace id of zero because
+the id is allocated after the hook has run, and the bpf LSM marks the
+namespace arguments of both hooks as trusted although the namespace can
+be freed right after.
+
+I sent fixes for all of that (cf. [1], [2]) (cf. [3]).
+
+[1]: https://lore.kernel.org/all/20261026-work-security-namespace_free-v1-0-ffa3ebbf71bd@kernel.org
+[2]: https://lore.kernel.org/all/20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org
+[3]: https://lore.kernel.org/all/CAHC9VhRwD1c1qKK4=Uc8cbMy27iF722C0DZeXy4WGtH-kOBOcQ@mail.gmail.com
+
+-- 
