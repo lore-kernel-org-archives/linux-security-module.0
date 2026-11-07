@@ -1,96 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.254.200.92
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794061115;
-	b=mu+5JzarT8RpICDzHeS5UQGHFD3BN4BY1bTcElVhmh3JlbuCILv9t4v/4HAisCXxhAJY
-	 77oWXSG8P6JopjDGE/DGVG4sQsIjpTc9Cl7XJQzeDfMjhJLuUfyj+TmxpsQz9FqQa5bQp
-	 9ysm5kS+FDgK8wRfk6qf73LTDLaC4ETXYE1E8Lf2DS0heINmKjXSKydvXuV3yJK/+QqMF
-	 DPIdaomHdGwHDjLmycROFRKS+D5wFK7FsaPgufketUr/GW4c2GXu1QGbZxJzePHIgBy2N
-	 Fkl9mHq6fchjD5D0foLIPhXrTyffFfFX71jR41EAa4HgrGTJjDooyX2fDmg6P3qZRyg==
+	t=1794066611;
+	b=1t6ZGSTrVV3JMNU4wvMiSjim4UqgLK1aluoyuShZx+9WLQE1fBFHfJW2OZmMMQZp0+7v
+	 Ymf2MHz/rWnTLbmtG0eJjyzRhCvgmVF+us97KzQTkwChkO4327MGTKL0iDTZyTDYWybft
+	 UQJoMx6b+HZwDbB3DRpaK2KqTzIe3NMfwUbRWXfqar9dnrcVZSHXLJGQz2fArAStpK+Ur
+	 PhaYvs3Uhhf2H+3SQ6pMzUN77HbAxNys30LcdCQOQI9hYOnqv7yq72P2Gto8b1J957kTh
+	 F0TfR4SL8UCkxxFydViAwYyjBJ1GENAx2rqS3GE/c0hp+uWnM4qSkW04kjCikceH+ew==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794061115;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=KN+qoRD2iK79ZmjSJFmf4z8oGz3kbjrueefoy5xGOR4=;
-	b=1xA3PR8Mv4LlnTNAsx2583i5v2fuisJUq4l9KKH2YtY8a/bkbY35jEQmOlUFrFtiJtb9
-	 EJWhgXlSuwGp2Ov2r1APaNa3O7kTAsxyeDOq6vpmU8HC7kWc8lexSbW7VUU/URDIr8xhZ
-	 Z0JxrBNkw8zs9Bf3HKFgmIgemtb4AI7QQsI2KRZUDjcKwy6cTXc3ozltzVC4T4S/1mKZ0
-	 dNrbHsk3yvzjYE4rSB2jOQ3QR2eYDbdjL1nKMi6/ib4k5VpsK3c3DpKfML/BmTxSAMqHD
-	 q7a0e9BQzIaOxWLJZso3aW9XvLHWz/yCt134zhIbmKxxpyuCKm149LjV+hjP8vxpGRw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794066611;
+	h=DMARC-Filter:DKIM-Signature:X-QQ-mid:X-QQ-Originating-IP:Received:
+	 X-QQ-SSF:X-QQ-GoodBg:X-BIZMAIL-ID:EX-QQ-RecipientCnt:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:
+	 X-QQ-XMRINFO:X-QQ-RECHKSPAM;
+	bh=a8hLGqTcUVX6jf51Hlab86lp0HBCT5hXJnicKBHy0aM=;
+	b=zgg0jSqWGndtPn53jbbBciegVL/wMHw0eJjOkNFk0r66p3lQeb5Nveh7LBVpQuoxZHiF
+	 mS5rg/BmzyRUbiOlrI1zcE2+l4U8zmXbbnn9Ldq3gMfCqKFXrTHl/i0gIhc+V3SRzTyIS
+	 dVkSOtgRQnTXFf3D1avxZCxqYxkuQNgWrt3lJM1x8v+MKEQqKwn0JGAJAleb7/5KO8F60
+	 fmt/sDtl+kcET8lwo/WZeuaE8DFUwjv+E4ien/pIzp3EAvKnCn6MVgrUZ03EnoDpmrxGo
+	 5hKHtXW4mV9agAWLubQ891xX6NJK8Y/dmkPMRD9sLU/KGvT20iPKqIuYiwozOw+scqw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=F+PKwRhx;
-	arc=none smtp.remote-ip=209.85.221.42
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=mail.sustech.edu.cn;
+	spf=pass smtp.mailfrom=mail.sustech.edu.cn;
+	dkim=pass header.d=mail.sustech.edu.cn header.i=@mail.sustech.edu.cn header.a=rsa-sha256 header.s=oemc2211 header.b="ZTT5wO/b";
+	arc=none smtp.remote-ip=54.254.200.92
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE635606EE84
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 14:18:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE635606EE84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2F6606A968;
+	Sat,  7 Nov 2026 15:50:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE2F6606A968
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sustech.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sustech.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=F+PKwRhx
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48e1d0e5dafso289585f8f.1
-        for <linux-security-module@vger.kernel.org>; Sat, 07 Nov 2026 06:18:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794061113; x=1794665913; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=KN+qoRD2iK79ZmjSJFmf4z8oGz3kbjrueefoy5xGOR4=;
-        b=F+PKwRhxrS37tDpFVJF9wVen2ys6lRYtQxqIo/yzBU1NBddhcdQRyoNVCNiJpLy/0t
-         kO7hVIcrmDr1X+PezosRQ8uB4zx/NLYmVvVfmrIHUV/CeF4b0LW3U8kCXd5hw1JaUeSY
-         teR4ru7Qps2A8wBz4V1PYF12AUvPxH+Li5vzol5G7VIlGKUvUEga1oFQJ38uP4ihd1oE
-         5ddKXMBSum1wgsN7GTHNc2nl/jIqjvpzh98miiJmtKNRvZ0cYW/a7pR9f1EZT57iSM30
-         L1sxsNoaeTe6N1MxbNpfYiEfVocDGjSQUaawmpAEFbqgJBYSAGdHaqMzpE9LDc8XhXFv
-         l+uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794061113; x=1794665913;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=KN+qoRD2iK79ZmjSJFmf4z8oGz3kbjrueefoy5xGOR4=;
-        b=SqEZtX4OcGgykCwJnfKhixNq72vkw7tGQNJnwQirUpxyGFOCJMWLCRJA3iVZ4dSc6b
-         Pv5fOZpzMNfa7RlU3xUj7c6szs+uiXYoYNA9O2wEow3h3IjKUHr79J7yX23WsYi7BXkl
-         sM9aPzy9dX6vVbfeJO0Oq847yA2pB7MJQ/npbx1+F+V47lJUi9DHO9JHu0/ZXGkFg4yW
-         LfETEbRoV3eD04L5lK2SVTifC0qKO2dIMW5SeLnPKgJX76AOjnS76HzPGiai2XzLpZZ+
-         o81OWTWDlKvl/8yQNCbs6O1VVcopL+eyvTuSEiUeGB4V+YSTBHhMAyLcdBd9hJ70vhqn
-         sgrw==
-X-Forwarded-Encrypted: i=1; AKwUvBx0pVoBvxLWzF5DkPFYTXtdDZ0eoIAwVWnbIP7z4CbBPBOY8CquzVU006OGIL0hfgGVPJ2T+JdAzzShpQC6DsyX5kAc9T0=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/1bs++n85YCuc8rHzLJAV8CUxVVPiWlqv8hOWrOVIkDQw9QFmO
-	78AjC02feISCs3DLKDRkbnBhZfi40uha3x/WNwQC5Ay9VC6ex35tTC2Y
-X-Gm-Gg: AYBFou2mVV+C8cejJPH6VKGtvnvAgVm+lvkW2MB22OU90Pi0JwnXkAU/c0jv69ljpp7
-	/h9u9risW3WNabpisnewKA89zOxfRhIEmtrWC6HnoJP2WuQlqGYK5d1OObk0V+Pk+mzBLrQz/m1
-	KounElvG0tVvbehJ1AFBW6c69vzT3fgIYwoop3QmKMVvIjTiIbAff7ZR5vv7OTlh4Tkd6UvBWv6
-	lbkZSMklshBJZ6v9ZbsFg4FKQZeZOqGXz6BRDIgZQAGiIFXlvKCk8V1RI4I/rOj/MRz8txbB2fr
-	fiXZR75k+DeoymqYNC2cKYUQevxytQbzsTfU9VoxJYflADUwR9eDVRFrPCbgFN8yPFI17y5k17q
-	IbSgrdlufF8XfgBY4YhjhHEft+8ZN/E3OD91RIkNFOcn2DitjoQ9pxdrp16QITWlG8In3Nm1mJV
-	/LKWYINfFkh/JCgOdZijEyzXAvNDEQJoJWBbbIm6vYit5cg59jfQzD7rehHTkf+OEbDG5q3oo3K
-	eQwr8nJCR/rbfpNiL9+nvYbah23NHWZnpKkXazjQ7QtlORi6QmH7g6Bv6Q3gU1afKNYsQmGqtwG
-	XnYv4eq9sjKoFNH+e7MSUybpXHDcWaST7Yx6RGeRrYHlCr+2j8s6
-X-Received: by 2002:a05:600c:c165:b0:4b0:b9ff:1e7c with SMTP id 5b1f17b1804b1-4b820563f79mr33635055e9.15.1794061113105;
-        Sat, 07 Nov 2026 06:18:33 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7e2e9ad95sm68386835e9.3.2026.11.07.06.18.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2026 06:18:32 -0800 (PST)
-Date: Sat, 7 Nov 2026 15:18:30 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Shi Lecun <shilc2025@mail.sustech.edu.cn>
-Cc: mic <mic@digikod.net>, gnoack <gnoack@google.com>,
-	linux-security-module <linux-security-module@vger.kernel.org>,
-	=?utf-8?B?5byg6ZSL5beNKFpIQU5HIEZlbmd3ZWkp?= <zhangfw@sustech.edu.cn>,
-	Bryam Vargas <hexlabsecurity@proton.me>
-Subject: Re: [RFC] landlock: clarify signal scoping for pre-existing f_owner
- registrations
-Message-ID: <20261107.2f1fa9977739@gnoack.org>
-References: <tencent_1D938EDA50BCDB080CFADC6A@qq.com>
+	dkim=pass (1024-bit key) header.d=mail.sustech.edu.cn header.i=@mail.sustech.edu.cn header.a=rsa-sha256 header.s=oemc2211 header.b=ZTT5wO/b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mail.sustech.edu.cn;
+	s=oemc2211; t=1794066577;
+	bh=a8hLGqTcUVX6jf51Hlab86lp0HBCT5hXJnicKBHy0aM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ZTT5wO/bIPc+vIw5+t8fAvP8FldQKcsRY+z/oGh2WZd+tBgRDZRzel+wgAlQoVbAQ
+	 N4QNoTF+KfBWWCfxOk60/KbuYjb32sKZ5Vp2SG7/LbxIZL/jn28VgK1DYq+jxi6ewI
+	 l2I0ptK73X1FHrBICo1svdMOmHJndDoQ1769Xhr0=
+X-QQ-mid: zesmtpip2t1794066571td3ea9cc1
+X-QQ-Originating-IP: phDs/DuMalRpEh7BGea5/Jd9R2EiCeUZTAG7Z7cEtck=
+Received: from szdytom-matebook.sustech.edu.cn ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sat, 07 Nov 2026 23:49:29 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4737263774154648393
+EX-QQ-RecipientCnt: 17
+From: Shi Lecun <shilc2025@mail.sustech.edu.cn>
+To: John Johansen <john.johansen@canonical.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Seth Arnold <seth.arnold@canonical.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <cel@kernel.org>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Jan Kara <jack@suse.cz>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fengwei Zhang <zhangfw@sustech.edu.cn>
+Subject: [RFC PATCH 0/2] apparmor: mediate asynchronous file signals
+Date: Sat,  7 Nov 2026 23:49:26 +0800
+Message-ID: <9F545A02F22B16BB+20261107154928.3519030-1-shilc2025@mail.sustech.edu.cn>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -100,116 +81,106 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <tencent_1D938EDA50BCDB080CFADC6A@qq.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:mail.sustech.edu.cn:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: NcYDFsAPVUmh+IyD8tJ8wkZhDAXElkM/69TOc1LfqXZnMUCMkXG9w6n+
+	OwLibIsQGhbHCE2eT2E8d+jNQraNYnJmtyN8JlznReiohANOdQLdx3ch7IcFrX5srYaCXC9
+	7t0xgkSOAXYTMV+5vpbPC5peWJNAfGVEuidAV2AOzXvTUo0AyMMav2PuaBkMAYyTyj8XrXA
+	tVvV/sTTaqM3d+Eokx5rt4RO3mZ8kCcHcS1hEBfz6MpAw2x2d6jmeE7RY5Ms6psED2rDkeN
+	RBKAI0laINyWE5+U0KwxDb6PHQeM8qQLgH74w4DPs6RMUtU0+457wdG3lmTsAg0uPfYo33a
+	075dxgOntHAXkQhLaYLSTZJ4Xkp0gI/anulQkgYB2vkXDGGatxeDaYmn2VGZv32gr079wKu
+	dkthTHEbuRI6mXmgmv30IbaSNZ0b1MMkQE+fbZ1YKs2I0bTIJej0rc7VbEe8G/9lor6K+5g
+	IGDQOzptSXZ75L/IeUYaSLQnLVdOwAGXigyitKT/01GvLeD/Q2OcU6cnE1prEjonyUe9bUv
+	0LIP+9WQv5S01UMXXTPDBqAzjVH7/Aki8CkDwJ9Tw+PzSGT/1SH9Bi8cnxWu4bppCVKrMWF
+	dZH2mIEaegoQwQmnd/gyIQAd79a73v7MqQrjdULkdbMzHluNKpLnizYgVogzaEUBMjDMOZ5
+	8ULNrDHNTCi29vqfO1yja7YkdcLzrxiHU5+WQe+CloOEZIfsK5o1c7XqloQJ7cBk8xQiFf2
+	EebeZm85b9DOe9mRCkLuoMGv7CFp57pFKT+cOyWRR2ZqvVywGu9T2CCmxNn+fdn8skG5a1P
+	hfHoK8njp3h/I0DrKi3/Us47ulPDp1ymLGSxbkO+dibJ/1odwR7pprlSLg6hh6Ab93Uqeym
+	HiVwey8lRToE/MgSJ50wm67h2s+zJ8Iwc0QVGytbqVwoGYaCVB++5WRmzh7ZIeDcCRwpBJe
+	61nv47F2p65bEJ3ZRTKZfYFrX+Crj6VuO8jT/TGmGSS1ytbVcaDBgufu9VyuBThWT+MbZ8u
+	w3MJYsb18zCjAradSFY8sDsYBm0EtxFer1sQZW5h+2S869vq8jTO9Tlv9NW+XQTdmuLcHi3
+	otkiuA8y6z7D5XjZ9vw/vo=
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-RECHKSPAM: 0
 
-Hello Shi!
+This series extends AppArmor's signal send/receive mediation to
+file-generated SIGIO and SIGURG notifications and fixes a separate
+missing permission check in the SIGIO fallback path. It is based on
+v7.4-rc1.
 
-On Sat, Nov 07, 2026 at 12:23:35PM +0800, Shi Lecun wrote:
-> While investigating LANDLOCK_SCOPE_SIGNAL, I noticed that the current
-> documentation does not describe how signal scoping interacts with
-> asynchronous notifications registered before the scope is enforced.
-> 
-> A minimal reproducer performs the following steps as an unprivileged user:
-> 
-> 1. Create a pipe and use fcntl(F_SETOWN) to select a same-UID process
->    outside the future Landlock domain as the notification recipient.
-> 2. Configure F_SETSIG and O_ASYNC.
-> 3. Add a Landlock layer handling LANDLOCK_SCOPE_SIGNAL.
-> 4. Write to the pipe.
-> 
-> The configured signal is still delivered to the out-of-domain process.
-> Using F_SETSIG(SIGKILL) makes this especially visible by terminating the
-> recipient.  In contrast:
-> 
-> - kill(2) after enforcing LANDLOCK_SCOPE_SIGNAL fails with EPERM;
-> - registering f_owner after enforcing the scope does not result in
->   out-of-domain signal delivery.
-> 
-> I reproduced this matrix on 7.2.14-arch1-1 with Landlock ABI 10 as UID
-> 1000:
-> 
->   direct kill after scope      victim survives
->   post-scope F_SETOWN          victim survives
->   pre-scope F_SETOWN           victim receives SIGKILL
->   FS layer, F_SETOWN, scope    victim receives SIGKILL
-> 
-> I also inspected a local kernel tree at commit d68ce4e71248.
-> From security/landlock/fs.c and security/landlock/task.c, my
-> understanding is that hook_file_set_fowner() saves the applicable
-> Landlock subject when F_SETOWN is called, and
-> hook_file_send_sigiotask() later checks delivery using that saved
-> subject.  If no signal-scoped domain applied at registration time, the
-> saved domain is NULL and later delivery is not checked against the
-> triggering task's newly added domain.  The usual UID/EUID checks in
-> sigio_perm() still apply.
-> 
-> This also appears to be intentional and covered by the existing
-> fown/sandbox_after_setown variant in
-> tools/testing/selftests/landlock/scoped_signal_test.c, which expects a
-> signal to be received when F_SETOWN happened before sandboxing.  I
-> therefore do not consider this behavior itself to be a signal-scope
-> bypass.
-> 
-> However, Documentation/userspace-api/landlock.rst currently says:
-> 
->   "This limits the sending of signals to target processes which run
->   within the same or a nested Landlock domain."
+On the unmodified kernel, a direct kill() to a task in an enforcing
+profile that denies SIGIO reception fails with EACCES, but the task can
+still receive an asynchronous pipe notification.
 
-Thanks for the investigation!
+File-generated signals use file_send_sigiotask rather than task_kill,
+and AppArmor does not implement file_send_sigiotask. The same gap
+affects sender-side rules and SIGURG. Should AppArmor's signal
+send/receive rules cover this path, or are file-generated notifications
+intentionally outside its signal mediation model?
 
-The F_SETOWN signaling restriction was not initially covered correctly
-by Landlock's signal scoping support, and was discovered and fixed by
-Bryam Vargas in [1].
+Patch 1 records the credentials of the task that sets the file owner
+and uses them as the sender identity at delivery. It resolves the
+newest sender and recipient labels and checks both send and receive
+permissions. The existing fown lock protects the saved credentials;
+the task triggering I/O is not treated as the signal sender.
 
-Another signaling-related report we received was about pseudoterminals,
-with a documentation patch in the same place, in [2].
+Under this model, policy replacement is followed through newest-label
+lookup, but a later change_profile by the owner setter does not change
+the sender label until ownership is set again. Is retaining the setter's
+credentials for the lifetime of the owner registration the intended
+sender model? If not, should an existing registration instead follow
+the setter's profile changes? This is the main question I would like to
+settle before posting a non-RFC version.
 
-It feels that in both the F_SETOWN and the PTY case, the underlying
-rationale is the same though -- a signaling mechanism that was set up
-prior or independent to Landlock enforcement continues to work.
+Patch 2 fixes a separate issue exposed by this mediation: if queuing
+the signal configured with F_SETSIG fails, fcntl falls back to SIGIO
+without checking permission for SIGIO. The patch adds the fallback
+check only when the configured signal differs from SIGIO. It is not
+AppArmor-specific, although runtime testing used AppArmor with patch 1.
+Is rechecking permission for SIGIO immediately before fallback the
+appropriate generic behavior, independent of the LSM enforcing the
+policy?
 
+I found this issue using kemcat, a tool I am developing as part of my
+research. kemcat is a harness that checks whether every security-relevant
+effect is actually mediated by LSM hooks, combining static
+hook/implementation census, ftrace shadow observation, and generated
+effect-class inputs judged by an independent effect oracle.
 
-> Without a lifecycle qualification, this can be read as covering every
-> signal delivered after the scope is enforced, including notifications
-> whose f_owner was registered earlier.  The same section explicitly
-> documents the lifetime exception for previously connected UNIX sockets,
-> but there is no corresponding explanation for asynchronous signals.
-> 
-> Would it make sense to add a paragraph along these lines?
-> 
->   Asynchronous signal notifications associated with a file owner, such
->   as SIGIO and SIGURG, are checked using the Landlock context saved
->   when fcntl(F_SETOWN) sets the notification recipient. Adding a
->   LANDLOCK_SCOPE_SIGNAL restriction later does not apply that new
->   restriction to notifications using the previously saved context.
->   Sandboxes that require signal isolation should therefore enforce
->   the scope before untrusted code can register asynchronous
->   notification recipients, and account for any pre-existing
->   registrations on retained file descriptors.
->
-> Does this accurately describe the intended userspace semantics?
-> If so, I would be happy to send a documentation patch for the IPC
-> scoping section.
+The 19-case reproducer checks the proposed mediated behavior and
+produced these results on x86-64 QEMU/KVM with AppArmor 4.1.8,
+UID/GID 1000 tasks, PROVE_LOCKING and DEBUG_ATOMIC_SLEEP:
 
-Your writeup matches my understanding as well, but I am a bit worried
-that these corner cases start taking more room in the documentation
-than the main point of what that feature does.  How about something
-shorter, maybe:
+  v7.4-rc1:           7/19 passed
+  with patch 1:      18/19 passed (SIGIO fallback)
+  with both patches: 19/19 passed
 
-  For signaling of I/O availability (F_GETSIG(2const)), Landlock
-  checks are done with respect to the Landlock domain at the time of
-  fcntl(F_SETOWN).
+Tests cover send/receive denials, allowed signals, F_SETSIG,
+process-group and TID owners, profile transitions, owner replacement,
+unconfined senders, TCP urgent notifications and queued-signal fallback.
+Builds produced no compiler warnings, and the final guest log contained
+no lockdep or atomic-sleep warnings. The reproducer and complete logs
+are available on request.
 
-?
+I have not run the full AppArmor regression suite or separately tested
+policy reload, stacked profiles, concurrent owner updates, or hardware
+hard-IRQ delivery. Patch 2 has not been runtime-tested with SELinux or
+Smack policies.
 
-It feels better to link to the existing documentation for such
-features instead of trying to describe them correctly.
+This series was developed with LLM assistance.
 
-–Günther
+Shi Lecun (2):
+  apparmor: mediate file-generated signals
+  fcntl: recheck signal permissions before falling back to SIGIO
+
+ fs/fcntl.c                       |  3 +++
+ security/apparmor/include/file.h |  2 ++
+ security/apparmor/lsm.c          | 41 +++++++++++++++++++++++++++++++-
+ 3 files changed, 45 insertions(+), 1 deletion(-)
 
 
-[1] https://lore.kernel.org/all/cover.1780614610.git.hexlabsecurity@proton.me/
-[2] https://lore.kernel.org/all/20260923163321.79770-2-clusk@northecho.dev/
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+-- 
+2.56.0
+
