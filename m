@@ -1,81 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794055457;
-	b=AbnIDA58KFwxpR2O7rbp+q6JGQfh86T58qC+iCWj0D7FwX5UPYBU1YJEUhHLRHNETSnx
-	 RejsgBStFOfLFq8v6eMynwCs+eQ6wM6cRC9T6S9hF0C6u6Qzc+oHgP3w3VF5Ze4mq/xtx
-	 0gMotb79vJVo9BXy5GjjJsJgQ9AV5HuzuGlQIrS7SsGKeILpP5fFWg3HYH83Y03BfIU+H
-	 s9w6XwxrOCa3fCI3hwXnJ/ui/WC1y5FVV+JAK6VzPYSq0kGmew6aafLgckif6+ssjg5uL
-	 TeVjH9UidYcH4F67yVM1ARu8t5Zhf7BJLQ0gT6gU7VrdckSIpPw1JWEsaFC0GtSRdug==
+	t=1794057325;
+	b=FpehswTbrMeFiEPCOei9IVqWyEyJIuIzEykMro1GvXrh9qSD58hRc7tMcS8elI4P2U22
+	 Rmtd4631eBOMnnym3V2ufle8AlrNY9qwoPdlD3a4gKPkwsTJOmVG3UGu+8HM/5vXxcqiy
+	 XTgJihsTHPskKT+TX8/Tm8aQrH6GSC4GISJzaffW/GP6TgEnz8WplBqjEE6Wx/43vp2Sj
+	 71B63Cs3Xt0YGhec0WNxIiSCrRDs68M55KXulBdtl3Z4byLM66OCb7TOdDLIDLe9/ZCOF
+	 sGFGiSLwqblR9PmjfRM+BbTNRunaFgvW22OXQnRboUNmSm2Pn1kge6vUCB6x0zSvg0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794055457;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=dzBwFs2TljpOP5elYmUhvLnbOuXM3QGLPguMHu8Knu4=;
-	b=G0YdbdlyaxA2aKdszaI1WsBtao1QelFu9QxsAUm+ai9es+iXtjzkD1Vtd2f4lz+z8HKt
-	 N75f7OU6EYiIUSoAjiSa0M7QbmrQObkVniLDKvNP4ohMH6gY8jyCAToXDtMnrvVqJrznS
-	 ReUR58xvrXOnYFPmu5hAk2BmsmkepgDUaf9kaO9xOANBL7au8gkB7uL/zbQJ10Z/sAoSb
-	 VLfEd3GZkivRxURstoZcNoq+KDwQBPhaKVNlJgNbDqLd+97uWNFZpm76zGoo2GflbyAG2
-	 VaMEAsSpzJyQ0D9MMfdBRNq2/MM78A8Ju3Xp5+t5/bhRw9XLaQlWd65trugMxmz4uRw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794057325;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=kva36s1/FXbG0PGpansUJI6uoi654aIusMQ5DfEE8Bs=;
+	b=JbUrIuumIn5CfHPhl20JIRfHnAMbSOA/c4Nn5figGrU0rnRoakOrXP7ZY1a/QdmsIQXL
+	 AL0UI44jVaBppFRzrAcLAyo4szciRw1+s8ZWfvyrKfmo9uVxd4nP4P0r6GFwmurQoAKYU
+	 sVGyTA4kXiFBqvXS1ycYWLlUoX+kka5SqffPUkrMUokyo6ajPvsizkSGdmOxS8wpWwebR
+	 lpz2PPDKkV2Q0I/2NCQajHw4K3GmwSKOoHMJd7/w0ibkvjQSLV1//GvckPBtRFY4asuNV
+	 gJet5dtdUbDjU3UJkcJk4aBahZRAQj5weWpsoWQ9YvGOeA9PfcyNKX9iHlydgnlkxBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=egCKZgvR;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SeHLDzZZ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2E64D606A32C;
-	Sat,  7 Nov 2026 12:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 28260606A32F;
+	Sat,  7 Nov 2026 13:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=egCKZgvR
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 076321F0089F;
-	Sat,  7 Nov 2026 12:44:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SeHLDzZZ
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E6B971F008BF;
+	Sat,  7 Nov 2026 13:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794055456;
-	bh=dzBwFs2TljpOP5elYmUhvLnbOuXM3QGLPguMHu8Knu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=egCKZgvR+uM5AdIYnxZkn5qTtOFRr/D3N+7/N7RqicbOfSHrHL2dAv65ZHdA46cvx
-	 H8Aju+BdzWVMfOnqof3bfkSW/intUk7fd7I5A+IhhLXuhZM296Pxee0SYLQ13Ljivm
-	 K4B2f7/mN5ZO7OdxLMTCLSdZHpB9AiwG02mU5KZUvzE21CFWbQ5GYBn2SQCTfKJA/z
-	 Ykpgc4X8/HTtlJ8M3qUB4wDiITeiFk2tMFC2NSwRpGI5uzZOb9Ws0T0UgPYBdAoJWh
-	 0zfw15CJ8okfY7ZIxpgcJ4vg46Zh0SNJrTZdSWnmXTnp9TXAFLf08v4ziCE1Ykqwmi
-	 R7jztThEgO3YA==
-Date: Sat, 7 Nov 2026 14:44:12 +0200
+	s=k20260515; t=1794057324;
+	bh=kva36s1/FXbG0PGpansUJI6uoi654aIusMQ5DfEE8Bs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=SeHLDzZZxsTYIHT6nT1mM2ilENKzCmhbAtRGGnXL4a2quUggaH5yi7fWkkqAHEp9Y
+	 m6ini/VLKJij4XzR164tONQfHc7hY/s2cNgOGHkp3ZTEIfUFDds8J3tKlJPOa75nnh
+	 0vDnQvzotvZpSiGkF6I+8znte0EwEWRiQpJ0r4FmwBr4S/vI+UZbEQUh7LRYxL5uzD
+	 Q8WrcPvQL81CXrKV/9GqZUZ6XXHm3NDkAu5TpQEpGKFCvAPxCwYgQF3sLozOEfsLTv
+	 ZgK9H9C80jpoJP9PcxpCDE3A5V10CbPSzj9iQ+j465JHTQtMs4AQODzLLj/gCF9dN2
+	 djm5iMTHH/B/A==
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, bpf@vger.kernel.org,
-	dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
-	keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+To: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	keyrings@vger.kernel.org,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-s390@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	Alasdair Kergon <agk@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Benjamin Marzinski <bmarzins@redhat.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Ihor Solodrai <ihor.solodrai@linux.dev>,
-	James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
+	netdev@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	James Morris <jmorris@namei.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v5 2/3] KEYS: Replace assoc_array with rhashtable
-Message-ID: <au8dHKGIv2tr_Xom@kernel.org>
-References: <20261105031401.956609-1-jarkko@kernel.org>
- <20261105031401.956609-3-jarkko@kernel.org>
- <20261107032551.GA1990@sol>
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH v4 01/11] KEYS: Add key_gc_flush() for draining RCU callbacks
+Date: Sat,  7 Nov 2026 15:15:02 +0200
+Message-ID: <20261107131512.3603168-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261107131512.3603168-1-jarkko@kernel.org>
+References: <20261107131512.3603168-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -85,38 +92,143 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261107032551.GA1990@sol>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 06, 2026 at 07:25:51PM -0800, Eric Biggers wrote:
-> I don't think the retry loop is actually sufficient or desirable here
-> (though it would be very rare for it to be reached).  It gets reached
-> when there are too many elements in one rhashtable chain.  However,
-> we're already pre-hashing with SipHash, and the rhashtable level hash is
-> passed only the 32-bit SipHash.  Suppose we reach this case because the
-> SipHash values collided: then rhashtable's rehashing would never reduce
-> the chain length, and the -EBUSY would last forever.
-> 
-> I think the right solution is to just set '.insecure_elasticity = true'
-> in the rhashtable_params, to disable the chain length checks.  Those
-> checks make no sense when we're using SipHash anyway.
+keyring_clear() and key_invalidate() release keyring links via call_rcu(),
+and key_put() defers final key destruction to key_gc_work.
 
-Thanks, this is a valid suggestion. I  was thinking about having maximum
-retries but this is much better idea. I'll address this as you proposed.
+Once keys pin their type, callers that clear an internal cache before
+module unload need a synchronous barrier so module references can be
+dropped before delete_module() checks the refcount.
 
+Add key_gc_flush() for flushing the remaining key_gc_work passes.
 
-> 
-> Then the retry loop would not be needed.
-> 
-> (And even for rhashtable users who aren't using SipHash, like
-> fs/verity/, hard-failing insertions if the hash chains gets too long
-> seems wrong.  I mean, imagine if the kernel started refusing to do file
-> operations if one of the hash chains in the VFS hash tables happened to
-> get too long...  But I guess rhashtable was designed for towards
-> networking users who are able to just drop the data without much issue.
-> Plus it predates SipHash existing.)
-> 
-> - Eric
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ include/linux/key.h      |  2 ++
+ security/keys/gc.c       | 21 +++++++++++++++++----
+ security/keys/internal.h |  1 +
+ security/keys/key.c      |  6 +++++-
+ 4 files changed, 25 insertions(+), 5 deletions(-)
 
-Br, Jarkko
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 420412aab926..0f408255f740 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -439,6 +439,7 @@ extern int restrict_link_reject(struct key *keyring,
+ 				struct key *restriction_key);
+ 
+ extern int keyring_clear(struct key *keyring);
++void key_gc_flush(void);
+ 
+ extern key_ref_t keyring_search(key_ref_t keyring,
+ 				struct key_type *type,
+@@ -526,6 +527,7 @@ extern void key_init(void);
+ #define key_free_user_ns(ns)		do { } while(0)
+ #define key_remove_domain(d)		do { } while(0)
+ #define key_lookup(k)			NULL
++#define key_gc_flush()			do { } while (0)
+ 
+ #endif /* CONFIG_KEYS */
+ #endif /* __KERNEL__ */
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index eda445f815d4..9b625436d3b5 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -19,8 +19,21 @@ unsigned key_gc_delay = 5 * 60;
+  * Reaper for unused keys.
+  */
+ static void key_garbage_collector(struct work_struct *work);
++
++struct workqueue_struct *key_gc_wq __ro_after_init;
+ DECLARE_WORK(key_gc_work, key_garbage_collector);
+ 
++/**
++ * key_gc_flush - Drain the garbage collector RCU callbacks
++ */
++void key_gc_flush(void)
++{
++	do {
++		rcu_barrier();
++	} while (flush_work(&key_gc_work));
++}
++EXPORT_SYMBOL_GPL(key_gc_flush);
++
+ /*
+  * Reaper for links from keyrings to dead keys.
+  */
+@@ -57,7 +70,7 @@ void key_schedule_gc(time64_t gc_at)
+ 
+ 	if (gc_at <= now || test_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags)) {
+ 		kdebug("IMMEDIATE");
+-		schedule_work(&key_gc_work);
++		queue_work(key_gc_wq, &key_gc_work);
+ 	} else if (gc_at < key_gc_next_run) {
+ 		kdebug("DEFERRED");
+ 		key_gc_next_run = gc_at;
+@@ -85,7 +98,7 @@ void key_set_expiry(struct key *key, time64_t expiry)
+ void key_schedule_gc_links(void)
+ {
+ 	set_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags);
+-	schedule_work(&key_gc_work);
++	queue_work(key_gc_wq, &key_gc_work);
+ }
+ 
+ /*
+@@ -119,7 +132,7 @@ void key_gc_keytype(struct key_type *ktype)
+ 	set_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags);
+ 
+ 	kdebug("schedule");
+-	schedule_work(&key_gc_work);
++	queue_work(key_gc_wq, &key_gc_work);
+ 
+ 	kdebug("sleep");
+ 	wait_on_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE,
+@@ -322,7 +335,7 @@ static void key_garbage_collector(struct work_struct *work)
+ 	}
+ 
+ 	if (gc_state & KEY_GC_REAP_AGAIN)
+-		schedule_work(&key_gc_work);
++		queue_work(key_gc_wq, &key_gc_work);
+ 	kleave(" [end %x]", gc_state);
+ 	return;
+ 
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index b7b622bc36a1..84f14307552b 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -164,6 +164,7 @@ extern void key_change_session_keyring(struct callback_head *twork);
+ 
+ extern struct work_struct key_gc_work;
+ extern unsigned key_gc_delay;
++extern struct workqueue_struct *key_gc_wq;
+ extern void keyring_gc(struct key *keyring, time64_t limit);
+ extern void keyring_restriction_gc(struct key *keyring,
+ 				   struct key_type *dead_type);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 3f1f0fc13710..3e604d25d35e 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -670,7 +670,7 @@ void key_put(struct key *key)
+ 			}
+ 			/* Mark key as safe for GC after key->user done. */
+ 			clear_bit_unlock(KEY_FLAG_USER_ALIVE, &key->flags);
+-			schedule_work(&key_gc_work);
++			queue_work(key_gc_wq, &key_gc_work);
+ 		}
+ 	}
+ }
+@@ -1294,6 +1294,10 @@ void __init key_init(void)
+ 	key_jar = kmem_cache_create("key_jar", sizeof(struct key),
+ 			0, SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_NO_MERGE, NULL);
+ 
++	key_gc_wq = alloc_workqueue("key_gc", WQ_MEM_RECLAIM | WQ_PERCPU, 0);
++	if (!key_gc_wq)
++		panic("Cannot create key_gc workqueue\n");
++
+ 	/* add the special key types */
+ 	list_add_tail(&key_type_keyring.link, &key_types_list);
+ 	list_add_tail(&key_type_dead.link, &key_types_list);
+-- 
+2.47.3
+
