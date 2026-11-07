@@ -1,71 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794055446;
-	b=Hy09ZBZFqeI+HVLCWMil8HxVJddxmHASzPIAVddT63Brv/pCRSYDVKp02NFKOrwbc9Te
-	 8gWoKzNWzFzqBRw3bVnh4ziSZn/HqLdMMo5Jos3ydTZjuNsiFyOnbZVFKDPw55QzjbOSP
-	 FSiE0qB6GNfpe9VcuuRcNZWwzZYQpLRgtZUabqiDi8lOdUyF3pt1FupEfkIgTuVg4veLZ
-	 6Jn/IfPJG1CFn8uorVDsC6gDFTIy0wZ4VGO6Y8SpCiOMqV04c+xChfcqIgM7DDEpolReG
-	 oYadh7yTdqpqDqhXMiSOobh2T2TOPjYgQqqyfd8GoSK/LGXIeaCd2m0NRWyiwaRA2xw==
+	t=1794055457;
+	b=AbnIDA58KFwxpR2O7rbp+q6JGQfh86T58qC+iCWj0D7FwX5UPYBU1YJEUhHLRHNETSnx
+	 RejsgBStFOfLFq8v6eMynwCs+eQ6wM6cRC9T6S9hF0C6u6Qzc+oHgP3w3VF5Ze4mq/xtx
+	 0gMotb79vJVo9BXy5GjjJsJgQ9AV5HuzuGlQIrS7SsGKeILpP5fFWg3HYH83Y03BfIU+H
+	 s9w6XwxrOCa3fCI3hwXnJ/ui/WC1y5FVV+JAK6VzPYSq0kGmew6aafLgckif6+ssjg5uL
+	 TeVjH9UidYcH4F67yVM1ARu8t5Zhf7BJLQ0gT6gU7VrdckSIpPw1JWEsaFC0GtSRdug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794055446;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 X-Infomaniak-Routing;
-	bh=Iugw2OGAg4mgOCQFETYGOufLLan+evQzLIrMETtF5rY=;
-	b=Td6u2yphQ3WtRSmhh8XxQs9xIzG43/GN4q+Chl3ziS6xCxNCGAYlAlGEcsnV42qT0NAQ
-	 VklwlAVbJdVHzhAOi9Vab+/r2gttkplN8DoxfEujdOJXvczcbxR4lwptvwrYR5KbxRPOZ
-	 1wibHNBdDfZ9DFOGrAssBaSzDw8cdgxLmKNm0m7+n4M7RHlmT6t2Xz+u+g5QoY8B/flak
-	 RyXZyYPbd9l0pYKabgGZhT6/b9AKQUo5J7TRcwx/ibblEVatX72HwluhoQwKrku2D1e0W
-	 3en33NEKJ3HAzX8+eHgxM8u5VU2KbNTZr8m1uc9tn6xTEbPeCdGq7agoXEcWbUVLyhg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794055457;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=dzBwFs2TljpOP5elYmUhvLnbOuXM3QGLPguMHu8Knu4=;
+	b=G0YdbdlyaxA2aKdszaI1WsBtao1QelFu9QxsAUm+ai9es+iXtjzkD1Vtd2f4lz+z8HKt
+	 N75f7OU6EYiIUSoAjiSa0M7QbmrQObkVniLDKvNP4ohMH6gY8jyCAToXDtMnrvVqJrznS
+	 ReUR58xvrXOnYFPmu5hAk2BmsmkepgDUaf9kaO9xOANBL7au8gkB7uL/zbQJ10Z/sAoSb
+	 VLfEd3GZkivRxURstoZcNoq+KDwQBPhaKVNlJgNbDqLd+97uWNFZpm76zGoo2GflbyAG2
+	 VaMEAsSpzJyQ0D9MMfdBRNq2/MM78A8Ju3Xp5+t5/bhRw9XLaQlWd65trugMxmz4uRw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=MFwmpIt1;
-	arc=none smtp.remote-ip=185.125.25.12
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=egCKZgvR;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743CB606A32C
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 12:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 743CB606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2E64D606A32C;
+	Sat,  7 Nov 2026 12:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=MFwmpIt1
-Received: from smtp-4-0001 (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jMG215BSSz67K;
-	Sat,  7 Nov 2026 13:43:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1794055433;
-	bh=Iugw2OGAg4mgOCQFETYGOufLLan+evQzLIrMETtF5rY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MFwmpIt1qZcBPnMoZo1dAkshNSJXJi5Z9XoJgwh9bS2c1ZR9flCVe3Hjn/A6pUe0K
-	 jONZd07fdPGrGe1Zje1niLZpKMS5FxWmfk1m7nkp7PZvsUKFxlpGEJDtqPHUz3VGcr
-	 x1OCZyAWH+FgoxXekhVw3ktb57jEmVWYt/ZOYHdk=
-Received: from unknown by smtp-4-0001 (Postfix) with ESMTPA id 4jMG1y4gD5zb44;
-	Sat,  7 Nov 2026 13:43:50 +0100 (CET)
-Date: Sat, 7 Nov 2026 13:43:46 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: "Hallgrimur H. Gunnarsson" <halg@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
-	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jann Horn <jannh@google.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
-	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	containers@lists.linux.dev, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
- opt-in netns loopback
-Message-ID: <20261107.aighieG4Ami1@digikod.net>
-References: <20261028221705.3915340-1-halg@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=egCKZgvR
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 076321F0089F;
+	Sat,  7 Nov 2026 12:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794055456;
+	bh=dzBwFs2TljpOP5elYmUhvLnbOuXM3QGLPguMHu8Knu4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=egCKZgvR+uM5AdIYnxZkn5qTtOFRr/D3N+7/N7RqicbOfSHrHL2dAv65ZHdA46cvx
+	 H8Aju+BdzWVMfOnqof3bfkSW/intUk7fd7I5A+IhhLXuhZM296Pxee0SYLQ13Ljivm
+	 K4B2f7/mN5ZO7OdxLMTCLSdZHpB9AiwG02mU5KZUvzE21CFWbQ5GYBn2SQCTfKJA/z
+	 Ykpgc4X8/HTtlJ8M3qUB4wDiITeiFk2tMFC2NSwRpGI5uzZOb9Ws0T0UgPYBdAoJWh
+	 0zfw15CJ8okfY7ZIxpgcJ4vg46Zh0SNJrTZdSWnmXTnp9TXAFLf08v4ziCE1Ykqwmi
+	 R7jztThEgO3YA==
+Date: Sat, 7 Nov 2026 14:44:12 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, bpf@vger.kernel.org,
+	dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
+	keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v5 2/3] KEYS: Replace assoc_array with rhashtable
+Message-ID: <au8dHKGIv2tr_Xom@kernel.org>
+References: <20261105031401.956609-1-jarkko@kernel.org>
+ <20261105031401.956609-3-jarkko@kernel.org>
+ <20261107032551.GA1990@sol>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -75,207 +85,38 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261028221705.3915340-1-halg@google.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20261107032551.GA1990@sol>
 
-Hi,
+On Fri, Nov 06, 2026 at 07:25:51PM -0800, Eric Biggers wrote:
+> I don't think the retry loop is actually sufficient or desirable here
+> (though it would be very rare for it to be reached).  It gets reached
+> when there are too many elements in one rhashtable chain.  However,
+> we're already pre-hashing with SipHash, and the rhashtable level hash is
+> passed only the 32-bit SipHash.  Suppose we reach this case because the
+> SipHash values collided: then rhashtable's rehashing would never reduce
+> the chain length, and the -EBUSY would last forever.
+> 
+> I think the right solution is to just set '.insecure_elasticity = true'
+> in the rhashtable_params, to disable the chain length checks.  Those
+> checks make no sense when we're using SipHash anyway.
 
-I think this is mostly solved with Landlock (kernel v7.4), see
-https://docs.kernel.org/userspace-api/landlock.html#capability-and-namespace-restrictions
-and
-https://lore.kernel.org/all/20261014082718.1435842-1-mic@digikod.net/
+Thanks, this is a valid suggestion. I  was thinking about having maximum
+retries but this is much better idea. I'll address this as you proposed.
 
-This approach is agnostic to UID, cgroups, or other ways to identify
-processes, so it should fit any use case.
 
-What is missing is a split of capabilities (e.g. CAP_NET_ADMIN) that
-makes sense from a security and (user) namespace point of view.
+> 
+> Then the retry loop would not be needed.
+> 
+> (And even for rhashtable users who aren't using SipHash, like
+> fs/verity/, hard-failing insertions if the hash chains gets too long
+> seems wrong.  I mean, imagine if the kernel started refusing to do file
+> operations if one of the hash chains in the VFS hash tables happened to
+> get too long...  But I guess rhashtable was designed for towards
+> networking users who are able to just drop the data without much issue.
+> Plus it predates SipHash existing.)
+> 
+> - Eric
 
-Regards,
- Mickaël
-
-On Wed, Oct 28, 2026 at 10:16:57PM +0000, Hallgrimur H. Gunnarsson wrote:
-> When an unprivileged process creates a new user namespace, it is granted
-> a full set of capabilities (CAP_FULL_SET) scoped to that namespace.
-> While these capabilities are isolated to the namespace, they allow
-> unprivileged local users to reach deep kernel subsystems (most notably
-> networking configuration and raw sockets via CAP_NET_ADMIN and
-> CAP_NET_RAW) that historically assumed a trusted caller and have
-> accounted for a large share of local privilege escalation
-> vulnerabilities.
-> 
-> Many workloads and sandboxes use unprivileged user namespaces strictly
-> for basic UID/GID, mount, PID, or network isolation and never need
-> high-risk capabilities like CAP_NET_ADMIN or CAP_NET_RAW. Likewise,
-> system administrators often want a host-wide policy ceiling restricting
-> which capabilities unprivileged user namespaces may acquire, without
-> disabling unprivileged user namespaces altogether.
-> 
-> Prior work by Jonathan Calmels [1] proposed addressing this via a sixth
-> per-thread capability set (cap_userns) alongside a global sysctl mask.
-> During that discussion [1, 2], feedback (e.g. from Casey Schaufler)
-> suggested that rather than adding another per-thread capability set and
-> prctl() interface, capability restrictions could be integrated directly
-> into struct user_namespace and configured via clone3(). At the same
-> time, as noted in [1], a clone3() flag alone is not sufficient for
-> administrators who need to enforce a host-wide ceiling on unprivileged
-> user namespaces without modifying every userspace callsite.
-> 
-> This series combines both pieces of feedback: it embeds a capability
-> bounding set (cap_bset) directly into struct user_namespace, reusing
-> the existing task cap_bset, cap_permitted, and cap_effective sets on
-> namespace entry, and provides both a system-wide sysctl ceiling for
-> unprivileged user namespaces and a CLONE_NEWUSER_BSET flag for
-> voluntary per-namespace restriction via clone3().
-> 
-> In addition, because restricting CAP_NET_ADMIN at user namespace
-> creation time prevents userspace from bringing up the loopback
-> interface in new network namespaces, the series first introduces
-> an opt-in flag to automatically enable loopback on network namespace
-> creation:
-> 
-> 1. Opt-in loopback activation on netns creation (Patch 1)
-> 
->   New network namespaces start with the loopback interface (lo) DOWN by
->   default, requiring CAP_NET_ADMIN over the owning user namespace to
->   bring it up. To block external network access while preserving
->   localhost networking, sandboxes commonly create an isolated network
->   namespace with only the loopback interface enabled.
-> 
->   However, requiring a sandbox to hold CAP_NET_ADMIN in a new user
->   namespace solely to bring loopback up conflicts with reducing the
->   CAP_NET_ADMIN attack surface. Today, an unprivileged sandbox must
->   start with CAP_NET_ADMIN to bring loopback up, drop it, and then
->   block CAP_NET_ADMIN from being regained in nested user namespaces
->   (e.g. via seccomp or max_user_namespaces limits). Conversely, when
->   CAP_NET_ADMIN is restricted at user namespace creation time (via the
->   sysctl ceiling or CLONE_NEWUSER_BSET introduced in Patches 2-3, or
->   via LSMs such as Landlock), tasks inside the new namespace never
->   acquire CAP_NET_ADMIN and cannot bring loopback up from userspace,
->   breaking localhost networking for unprivileged sandboxes.
-> 
->   Introduce the CLONE_NEWNET_LOOPBACK flag for clone3() and the
->   corresponding UNSHARE_NEWNET_LOOPBACK flag for unshare(), which imply
->   CLONE_NEWNET and automatically bring the loopback device up in
->   copy_net_ns() before returning the new network namespace. Making this
->   an explicit opt-in preserves default network namespace semantics
->   while allowing unprivileged sandboxes to create an isolated network
->   namespace with functional localhost networking without ever holding
->   CAP_NET_ADMIN.
-> 
-> 2. Per-user-namespace capability bounding set & sysctl ceiling (Patch 2)
-> 
->   Add cap_bset to struct user_namespace (initialized to CAP_FULL_SET in
->   init_user_ns) and introduce a system-wide sysctl ceiling for
->   unprivileged users at:
->     /proc/sys/kernel/unprivileged_userns_caps_allowed
->   (defaulting to CAP_FULL_SET).
-> 
->   When a new user namespace is created:
->   - Privileged creators (holding CAP_SYS_ADMIN in the parent user
->     namespace) inherit cap_bset from the parent user namespace.
->   - Unprivileged creators (lacking CAP_SYS_ADMIN in the parent user
->     namespace) have the child namespace's bounding set constrained by
->     the sysctl ceiling combined with any effective capabilities the
->     creator already holds in the parent namespace:
->         child_bset = parent_bset & (sysctl_ceiling | creator_effective)
->     Allowing the creator to retain capabilities it already holds in the
->     parent namespace ensures that a process granted a specific
->     capability (e.g. CAP_NET_ADMIN) does not lose it when creating a
->     nested user namespace.
-> 
->   When a task enters a user namespace via clone()/unshare() or
->   setns(), its cap_bset, cap_permitted, and cap_effective sets are
->   clamped to user_ns->cap_bset. In addition, cap_capable_helper() is
->   updated so that implicit capabilities granted to the parent-namespace
->   owner of a user namespace are likewise bounded by the owned
->   namespace's cap_bset.
-> 
-> 3. Per-namespace restriction via clone3() (Patch 3)
-> 
->   Introduce CLONE_NEWUSER_BSET and add cap_bset to struct clone_args.
->   When specified alongside CLONE_NEWUSER, the new user namespace's
->   bounding set is further intersected with the requested cap_bset mask,
->   allowing container runtimes and sandboxes to drop unneeded capabilities
->   from a user namespace at creation time even when permitted by the
->   global sysctl.
-> 
-> 4. Introspection via NS_USER_GET_INFO (Patch 4)
-> 
->   While tasks inside a user namespace see their initial ceiling in
->   /proc/<pid>/status (CapBnd), threads may subsequently drop
->   individual capabilities from their per-thread bounding set. Add
->   an extensible NS_USER_GET_INFO ioctl on userns file descriptors
->   to allow userspace to directly query a user namespace's cap_bset.
-> 
-> 5. Selftests (Patches 5-8)
-> 
->   Add kselftest suites covering CLONE_NEWNET_LOOPBACK, the sysctl
->   ceiling, creator capability retention, nested monotonicity,
->   parent-owner bounding, CLONE_NEWUSER_BSET and NS_USER_GET_INFO.
-> 
-> [1] https://lore.kernel.org/all/20240609104355.442002-1-jcalmels@3xx0.net/
-> [2] https://lwn.net/Articles/978846/
-> 
-> Note on tree routing:
-> 
-> While Patch 1 (CLONE_NEWNET_LOOPBACK) touches net/core/net_namespace.c,
-> most of its changes add clone3()/unshare() flag plumbing in
-> include/uapi/linux/sched.h, kernel/fork.c, and kernel/nsproxy.c, which
-> Patch 3 (CLONE_NEWUSER_BSET) builds directly on top of. To avoid
-> merge conflicts in kernel/fork.c and include/uapi/linux/sched.h, it
-> may be simplest to route the entire series through a single tree, e.g.
-> a namespace branch in vfs.git with Acked-by from the netdev and
-> capabilities/credentials maintainers, or whichever tree the maintainers
-> prefer.
-> 
-> Hallgrimur H. Gunnarsson (8):
->   net: introduce CLONE_NEWNET_LOOPBACK to auto-enable loopback
->   userns: introduce capability bounding set for user namespaces
->   userns: allow restricting capability bounding set via clone3()
->   nsfs: add NS_USER_GET_INFO ioctl to inspect user namespace
->     capabilities
->   selftests/net: add test suite for CLONE_NEWNET_LOOPBACK
->   selftests/capabilities: tests for user namespace capability bounding
->     set
->   selftests/capabilities: add clone3() tests for CLONE_NEWUSER_BSET
->   selftests/nsfs: add tests for NS_USER_GET_INFO ioctl
-> 
->  Documentation/admin-guide/sysctl/kernel.rst   |  37 ++
->  fs/nsfs.c                                     |  29 +
->  include/linux/cred.h                          |   3 +-
->  include/linux/sched/task.h                    |   1 +
->  include/linux/user_namespace.h                |  20 +-
->  include/uapi/linux/nsfs.h                     |  17 +
->  include/uapi/linux/sched.h                    |   9 +
->  kernel/cred.c                                 |  10 +-
->  kernel/fork.c                                 |  38 +-
->  kernel/nsproxy.c                              |   9 +
->  kernel/user.c                                 |   1 +
->  kernel/user_namespace.c                       | 100 +++-
->  net/core/net_namespace.c                      |  11 +
->  security/commoncap.c                          |   8 +-
->  .../testing/selftests/capabilities/.gitignore |   1 +
->  tools/testing/selftests/capabilities/Makefile |   2 +-
->  .../capabilities/userns_bounding_set_test.c   | 566 ++++++++++++++++++
->  .../selftests/clone3/clone3_selftests.h       |   1 +
->  .../selftests/filesystems/nsfs/.gitignore     |   1 +
->  .../selftests/filesystems/nsfs/Makefile       |   4 +-
->  .../selftests/filesystems/nsfs/userns.c       | 120 ++++
->  tools/testing/selftests/net/.gitignore        |   1 +
->  tools/testing/selftests/net/Makefile          |   1 +
->  tools/testing/selftests/net/loopback_netns.c  | 103 ++++
->  24 files changed, 1069 insertions(+), 24 deletions(-)
->  create mode 100644 tools/testing/selftests/capabilities/userns_bounding_set_test.c
->  create mode 100644 tools/testing/selftests/filesystems/nsfs/userns.c
->  create mode 100644 tools/testing/selftests/net/loopback_netns.c
-> 
-> 
-> base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-> -- 
-> 2.56.0.313.g2479322e68-goog
-> 
-> 
+Br, Jarkko
