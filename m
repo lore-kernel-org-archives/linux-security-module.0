@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794079961;
-	b=x0iBoiBN5P8HBAcziH2K/4S4fg3zW0ObURQpDssO3pvF2zfWvJT0u0BAERcfdC0+XHR5
-	 10c82Sawyo0/TZBi0uPKkixw30sT5fVp57uzszyyGeVcao3RkSWzo9tszklx3YCyBqUXu
-	 y/ABroBaW7MrfHVJJBHfSmnzZOBxThPR3wtZEzz/+4ehpUKGUoaeE722M4gL7yNpY6zfD
-	 hDgFf9KM708Ws70stIkDQiGVPnW7C1MqhCHOwEB4aiBZ0FwYaPKp6npE3vodTu/pxGIfr
-	 F1YiUMnyWJLDWGDWyknTtlNz5ugSccojO4/pg2bynOMNOPgkFqglX8xGfl+WQ2QX0Iw==
+	t=1794080117;
+	b=e8pTCx1BSAKT+Gbpdo6uFQKazIR+KKgdGghUjxExcmQrMGMPaHh13+dy1XxVpegBtxUA
+	 tn2YpFK09cH2aAplKGylfCo5mNObH+tsjUXnjvgocewOqqMZ9wxdVPhZhdGEcmpFnB8WW
+	 kRZ2u++KA3fMdjqR6QUAUU+4F9DnoL9nkHp/oWsoH6y2oT8pfYvrXKfRZ21PvjyJ8Q353
+	 n7n+RSG+1rZUcZIuMfrwEn8l/uHyem+X+IhOxIhAvdymjaDtcY2UYvPvxsnfonp4V50CK
+	 Ep7G5C84+DXgdurhmCjLcwJET+OFms7yUijNFDRznaI7cHz3QUOMXYXHjLdAlUuRKjg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794079961;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794080117;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=oQnlKq2Lt0uhmvErL0jQRwMsI5RrZx/DpuJO/TD66qg=;
-	b=G2XSll7YSmCr0HSVfGXqUyw61aIgl9bOR8ffgYldaCymPQ22oONDV0x2Q4IERmPKtGVN
-	 +xcbOdLOvWvTgB5HUp5A6/wX+ecY/4OpkN0UL6RtTRy+S+RvxFwvIWSRLWOlSgQS20rSF
-	 Kle1qIZzg7gBTwLdzlgHAMe2KtdqbW8VCWsw7GB0djUCv9rEj4KmmCJ2cAXM/Imm7F685
-	 PS9cI+m6cA3vLqJXsBYPpkDg+dCECuN/et7IiqgrO9/fgHFgEilQKSIDGAwyVLRyetk4N
-	 hVzejxOd8aMENxltUdeP2nn4XyH4vXyIqCW0sUyB1CptG7xmZnKoVy8NE8a2/n1H6gA==
+	bh=/8Ruryq7aznKxNzfUkhErK+X8cqsD1LlFqaxaDXaAGs=;
+	b=HvNTKR9Nit3BwOwULWC2KsPleCzdtXhmILneeBE3j75m+C8s1tNkSrnsCx1NvioE5dQV
+	 E8fTAEcCQy8i+mMuJpR6OVm2yoUdmCEUpGss0ySLDCjEV5KKnGjxbpHAPoDkfXgjHdxcC
+	 5l0rJxbhyZv2Vp6Ea1D0gRJi5xr+hk+vKQQjOLuFM3H2z590WDEVZf3rFjW3CDq8k0AxZ
+	 kutfxoeovVHcIJOVGziqzzTG9BVWkPJq7hlJmKinj71+lqsdw1ZS5XUVTSAgh697OpX25
+	 k+w463gtTo9A0EqslOgLMiXpmE8GDn0nu4FYK7am9XQg5Qc0E0j/p3A7jjgkBgt8llw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H+BjROdm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CqctjKcC;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6447606A330;
-	Sat,  7 Nov 2026 19:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B737C606A326;
+	Sat,  7 Nov 2026 19:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=H+BjROdm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 568CF1F0089F;
-	Sat,  7 Nov 2026 19:32:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CqctjKcC
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F5E1F008A1;
+	Sat,  7 Nov 2026 19:35:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794079960;
-	bh=oQnlKq2Lt0uhmvErL0jQRwMsI5RrZx/DpuJO/TD66qg=;
+	s=k20260515; t=1794080116;
+	bh=/8Ruryq7aznKxNzfUkhErK+X8cqsD1LlFqaxaDXaAGs=;
 	h=From:To:Cc:Subject:Date;
-	b=H+BjROdmMb4zVJBcX6FSEaE+MJOvo3LFRbtEL819gsabREm4ko/QggB2i8LqjwYL7
-	 a5mroKg2knifyxfMZldJRkE/r4zpL0TcqenwUhY2cK2rW2p59fBc1lOLoghtrNQA6Q
-	 YgtipSVKPUDkOUj1VOQpLLIgn2Dqv7PkX1HEGz7d3woWDB8UEMjWcctFtNkF2dGQgb
-	 JQTGPLUFBhbgpdWfIfVtYi8uwlo8CWzEVKJJGSABHntULt9XNTYoz4b1a66wG0HpbL
-	 sAiRpqAm6UQ6UBlnjmtYPLxHtGSm7rhRFwTSA0AcHqTcPfnve/PpiG55HlzJgDpU5K
-	 oxfwmbeFU9Org==
+	b=CqctjKcCkoRinB4ByRczZUUiGnUtdEluO6YHBvOeupcKxGLWBufmX2kyWxfIF9XPn
+	 LFtG9SzKxu/IHVm0oOXol25OX+EDGx/U29dpZrDOzCQjcOOgjbopNFTAbBSE0Tfuir
+	 3y6nscnXrIomKZ1ZGa/nAn+1JcQQdIoOLIkIlX6R/D2PbDmKlWiValowvg2nSg0wD3
+	 KKFaVRV4p2x/oI6TuHwDifHTXIgnxtZrLcoQsHl3v3PqbphXRxs82f3PfyozqV9VWU
+	 mnrjeZbSxz7LV/x3SDpL73HUPVt5M/ICe+e7sqVZi0MLIi/5ETqgS0hTj2QC5BCj5Q
+	 s0o9Iw9E8ua0A==
 From: Eric Biggers <ebiggers@kernel.org>
 To: stable@vger.kernel.org
 Cc: fsverity@lists.linux.dev,
 	linux-security-module@vger.kernel.org,
 	Eric Biggers <ebiggers@kernel.org>,
 	Fan Wu <wufan@kernel.org>
-Subject: [PATCH 6.18] fsverity: Tell LSMs about signature only after verity is enabled
-Date: Sat,  7 Nov 2026 11:32:26 -0800
-Message-ID: <20261107193226.50975-1-ebiggers@kernel.org>
+Subject: [PATCH 6.12] fsverity: Tell LSMs about signature only after verity is enabled
+Date: Sat,  7 Nov 2026 11:35:13 -0800
+Message-ID: <20261107193513.54738-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -82,6 +82,8 @@ Cc: stable@vger.kernel.org
 Reviewed-by: Fan Wu <wufan@kernel.org>
 Tested-by: Fan Wu <wufan@kernel.org>
 Link: https://patch.msgid.link/20261025204534.122506-1-ebiggers@kernel.org
+(6.12: resolved conflicts with this version storing the fsverity_info
+ pointer in the inode instead of using a hash table)
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
  fs/verity/enable.c           |  8 ++++++
@@ -91,11 +93,11 @@ Signed-off-by: Eric Biggers <ebiggers@kernel.org>
  4 files changed, 65 insertions(+), 15 deletions(-)
 
 diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 95ec42b847972..05fbcae57e5db 100644
+index c284f46d1b535..197564ecd3ef6 100644
 --- a/fs/verity/enable.c
 +++ b/fs/verity/enable.c
-@@ -287,6 +287,14 @@ static int enable_verity(struct file *filp,
- 		 * just after the filesystem has successfully enabled verity.
+@@ -292,6 +292,14 @@ static int enable_verity(struct file *filp,
+ 		 * after the filesystem has successfully enabled verity.
  		 */
  		fsverity_set_info(inode, vi);
 +
@@ -110,10 +112,10 @@ index 95ec42b847972..05fbcae57e5db 100644
  out:
  	kfree(params.hashstate);
 diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index dd20b138d452f..0a2ddca3c838d 100644
+index b3506f56e180b..760f2674c816e 100644
 --- a/fs/verity/fsverity_private.h
 +++ b/fs/verity/fsverity_private.h
-@@ -142,6 +142,8 @@ void __init fsverity_init_info_cache(void);
+@@ -135,6 +135,8 @@ void __init fsverity_init_info_cache(void);
  extern int fsverity_require_signatures;
  int fsverity_verify_signature(const struct fsverity_info *vi,
  			      const u8 *signature, size_t sig_size);
@@ -122,7 +124,7 @@ index dd20b138d452f..0a2ddca3c838d 100644
  
  void __init fsverity_init_signature(void);
  #else /* !CONFIG_FS_VERITY_BUILTIN_SIGNATURES */
-@@ -152,6 +154,12 @@ fsverity_verify_signature(const struct fsverity_info *vi,
+@@ -145,6 +147,12 @@ fsverity_verify_signature(const struct fsverity_info *vi,
  	return 0;
  }
  
@@ -136,10 +138,10 @@ index dd20b138d452f..0a2ddca3c838d 100644
  {
  }
 diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 2aa5eae5a5403..6d87420064850 100644
+index bd0497da5cea3..3cf6453001894 100644
 --- a/fs/verity/open.c
 +++ b/fs/verity/open.c
-@@ -369,6 +369,15 @@ static int ensure_verity_info(struct inode *inode)
+@@ -377,6 +377,15 @@ static int ensure_verity_info(struct inode *inode)
  		goto out_free_desc;
  	}
  
@@ -233,7 +235,7 @@ index 0302a4e506ec4..212e873c84998 100644
  
  void __init fsverity_init_signature(void)
 
-base-commit: c3f63d70f236bb7685e6d11d1d9b5b351552e600
+base-commit: 5c40a1750f44dd6c7292d8c8d0b4ffff1734576e
 -- 
 2.56.0
 
