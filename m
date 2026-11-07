@@ -1,100 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.45
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794077276;
-	b=n7BZMMZfPGypM+3Hpxm2xTzAplZvmo1XHcb6Jww8BrVhIXdovSujk0ZnXZi8KpfLqQJ5
-	 E0DL6nLWbJ0HGNR+ERw9XWk/HQAVVJfV4JQY/pWubgise5qP4JJZMfC8cgm96N7Cfcg33
-	 cOcx+54yZSjsoxRKHNU+ROGSSvuCv2IMsG90jlkxAEbfHffJb2OKMSaFfypRnJILpeC7B
-	 MzIx7M5IubPiXLkDkcw8YZqZ1ukNRiI41f5aQpE2mzjFN2bVTr9kWHOpDuEnWnau1dp8I
-	 FzDVpiODHo/FqKsLALeskvqDP0IFjt9fJUv8scAyV+ObX7cM8R8SIuZ0qsSGJeCEp7g==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794077276;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=DWojXY4nDMT9rtwg6h/b477SwUuLPC3ITyeb/WPBYqc=;
-	b=EPY9UMQhdCunROPLlmXVCkWjjttFsw+upnSGostphstyE6AnXSHCL5NcpWshDxHNX8/a
-	 H056Zt1fge+i++NeuCPkz3WgAcPgLdZmeINPj64USk86g+I6YV3PAU+jXXAZZZgDGD1Pl
-	 JNsHuwiRNZUKkamzWWJk7iU2Tr92NUxamayJoSfa71jJFmMBEKBT4TvXAtUE0cTx0qChQ
-	 N+Za4BVik8GMFmmBUGrkyWSsStLwbgACUlPXuOhUdhvnYSatBWiQqKd1vtB0JvhxNaAR1
-	 hEMPPpOtEr7DtdgjaRNVZgmkUgVH10MovP7j3Bxn1GA/WaUazCgtZ9E51V7xSCERNqw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=amacapital.net;
-	spf=pass smtp.mailfrom=amacapital.net;
-	dkim=pass header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=jDsWkgNe;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.45
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794079628;
+	b=BzmVAzp8mOymRpzljLImzqzOddyb9FQaoUuhV3rrEZcdkG9dc+nuErwDUmtoIm+Sc2fV
+	 BEuTPlE71cBivNrVjMhCckBvk9TlQZVnhedrcRv4eMc576SJpjdnZ/X6S4zkioZRwo611
+	 zqVucwF6GuvbpPM8uiCmEUhxfPMO6kjHjmgeHcCU82gEwH+/NSz6l6Pmd/xX6tJGohdnr
+	 PJWZpiKkfL9oQYYwmD3XRY/mlNTLJwkZTtQjT3a2CV9O54mukzXdZEoMQGVUIp71e5U+H
+	 iH8eskqjI5II+v1z7qINxCumC/+fkZeZnCNWmvBnVd3t595XYYPwqIxRvNI4YHbJlOQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794079628;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=JWUWmDtmMJj9uR+KdODad96y/2aPbtjqytw6K7FIvTo=;
+	b=OaTXM1KMYY+6EN6bMeX1IP9BPlP44YfSSv8Bhpl5nfb3T1P1udtOZx+LqUXJ0MPzgdUz
+	 qcCTelBljkOciC8WL5LEWKt1V7Z4DN9yyRFKMU9BA04HtO9aXAV834drtluH3IvqnslS+
+	 uuylAnFCdKQd5WRbgudSTeriQWirR44cI9zshpsgqyt4tMHHiaDBjJwp3PQLgJ4uraMb9
+	 UyynOQWd9+aRrx9baEqfZiR7rBbNhn2FAOOPTarslLpVYDroS1AQgVAYYftknZ/MfglYM
+	 SN/z8bvqWgRAPrRNWxkapviuxW0L2LQrZ7y/0GMO/aKST2ZL9adRhnD16NwNb7tzWcw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l4qb68Vh;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF69606A32E
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 18:47:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECF69606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480B5606A326;
+	Sat,  7 Nov 2026 19:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=jDsWkgNe
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5bfa65c8617so923630e87.0
-        for <linux-security-module@vger.kernel.org>; Sat, 07 Nov 2026 10:47:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794077274; cv=none;
-        d=google.com; s=arc-20260327;
-        b=jywgQ7AC2psUuLu512leke1MBVYRlfFuwt/YzUxz2wFey0r/FywEmHp/XyCVqAq/vd
-         hry6ELARIV1tE/RriDVU46Tgc8VvAlFP9rGm9of/stFc08PkrPMQY0C0ybkMUZG/tyQM
-         JfVa83cog9ZaU+xLwpgszaqTA/nt18kGXz14FKhgjZycEjRiIYSjI5HPPSYGqu+NPWDD
-         J42qcVzjQJOs9TfudRZ4l69Ch4IYT1+LSCHVgIgfQk9VIh/aIA0JZ3KuGxfzzic3J9hV
-         6blF+MbFUvwC4unUgeXQS6T7vjW6Lws14fKViD69ppn06eCv8VMLngsLlPM7Qo8zCx5E
-         elpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=DWojXY4nDMT9rtwg6h/b477SwUuLPC3ITyeb/WPBYqc=;
-        fh=MjMCC/1Np7jDAXby/WeEpbqnTxE4qb1gncP2FMXXtgc=;
-        b=qJPx177UVYaHrM3ZE+zKkabw4j6csgw4m+4Jlr/QuL+h2D2t7DZO5RiUV/smaglyEl
-         SgqblS1mY0GWwP4/koa9RLfrY+mh17hTaMh65LfRAdDXZe0eby50zukGpZ0RbVbrgQN/
-         2xV8t5XQjE9zQqHYDhSsIkGhlkxqTISDr3R8Gsrhm1k0XYUmc0K23mOp02G5g0vM/gKn
-         JYJFfSgVPFWsGMnpLNaUl3pvY/1PLksmBuK/MziyJfOFsqOCDrZWURM1vVlfO2ds2+rQ
-         ahxgVCBZqm6xN/K8xZH9S0Fl8qaR+/nKCcu6MvYOkdlTnrFqNmqbSUi9C4FKCJkDM2G2
-         KK2A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20260707.gappssmtp.com; s=20260707; t=1794077274; x=1794682074; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DWojXY4nDMT9rtwg6h/b477SwUuLPC3ITyeb/WPBYqc=;
-        b=jDsWkgNeFsbdQ7qKqbpHSGOmDkfyI4OzDS2pJc6+Irn0QHpBxG9wPbmRTDmNnDdzS5
-         db8t7KSVAGcHE/QtRbNhFDCWnX4uqUr1mEeZuLglr9YUDK4k94+gZZ0e2v5XDqaLBMAu
-         GF2mKtLq3tPj9IBZGN3w1gGTAF0jFrsZMFCKcXAmKrirJiOIjEcuysNg1l24IqICP4gV
-         r2UQCTmuYiVAi+q/1GU8UDVYE1+IZodom/D3RIz9GtMMMdasHTqHTXmlylMP0IcXnVJO
-         5lWPTzglrmuISOXtwRoPqefa1QyXnIQk56sGTTb2Rf1nGsDNJzcZ5BPRF2XDpKcZZ3TD
-         g2UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794077274; x=1794682074;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DWojXY4nDMT9rtwg6h/b477SwUuLPC3ITyeb/WPBYqc=;
-        b=BqZuexq4XM0stNcHHYiMSIS+6c2gP+OiH8her54hCk0rREeijQdJft92VBm3W3Ghi3
-         cZIrSRxUFdgX7UKhDdcf2mQz43vNQvApLWA0aGGraNCo/gzKR+fIFS+pR5GaFPp9fUkq
-         GSN5oTUaJ3kWe+JQdHPqoP0+NTtrGlPKtIeDRqvwMyJgMLq9mZgcF8exuhgB7G0nnE99
-         dSqHo2NXc9ATRG3LsWKphHYEvvdu/1LFcUWr54+Sbiv19H5rV9G8IGMVdCPcJGZ185oC
-         ByQvFtoJVfLrQMsE4TadA5SdG2FTUVw5SoKs3J/abqd4RHpgZL2Uio2Pf9ym1c39jGoe
-         ZYaA==
-X-Forwarded-Encrypted: i=1; AL+hErEu/bePuzVOj+zXRj2vmvOKKzGw6Zs2UofR5HQlBmJjXhUODlCzZucSxplY25j0wOMPsLOYF+/yTxgg93SfDKBRpIVkwYQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9heW2MNuKjFoeZ04HkHeSErw783cCGt0u7TN8isg1+dUfH6w3p
-	+bCaHinojpjeZ1HrA2R6ggcSb4hAG5bB+CFnQea0Tncv7i75kpQHdJUyzpAQ3A4/m+3SW++zG2Z
-	d12FTBX9dKQVNGKjfY4UTfyFsYkovG2ZcYao0tMvd
-X-Gm-Gg: AYBFou2hqAiAA3Te5HxUw2v+Ae8/d+YYzSWeXynXg+63AR3Ip45IH+a1JQyNMKdsIay
-	vdEag2itz/oLJdSPp8MCBx/WijIkNjxCTwJfuVcq9plsEoHOHY6DGDUUxEovFpR0/t6ym8lvbNC
-	SloMNHEmwty7Hr2GvgqLiZw8oBOwpaEl7OyQWt8Uf1MFvutIzUEFg19nmVYZgTWnu9NgLX9Uf4T
-	caGIg8xmvOvPLVdwAk1L6EzHUInO+iIwkamjyVSQvZ6foCfiYmRcMpy+NCEt4WRSM/LSx25kI6v
-	NrbJn/Udx6MBjuAAeVlX0EcSzOKCK7GKKI6l0ZItaY1XQW8B1vNhGLjRM4+bMa2J3/MjFdVI42D
-	cg55lWgm6Zmv+5/Q+mrCMg+aJM2bKnzPP2Q==
-X-Received: by 2002:a05:6512:291a:b0:5c0:ca1:9dd7 with SMTP id
- 2adb3069b0e04-5c00ca19f2bmr594320e87.35.1794077274068; Sat, 07 Nov 2026
- 10:47:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l4qb68Vh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B5851F008A3;
+	Sat,  7 Nov 2026 19:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794079627;
+	bh=JWUWmDtmMJj9uR+KdODad96y/2aPbtjqytw6K7FIvTo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=l4qb68Vh5+EpKxfkY8T2j1202etzw9CcaJfnA0gcKPSK2QHF/jdVbFeNxQcShSzl2
+	 kGpXtGW2fD0YNMDmHCEE3KSCdbOQiaNyhgkt6IR9Mflf4BT8u9+mw5mx8X2EiIZj2J
+	 W8W07b0n8ionghCXH/Pzs86IDhVnoJB0NTTVnrhSptFlIBu04i6fwkc33GYm5oDenJ
+	 dpcADsDdrjz0nxyX8rqzWI9tfKG3Iau9FGoEwVkaWYXlv7gP2dIUmvZTJfklUnLWIc
+	 8i4jWo0RR5wZfXr60bMXqdXmQ18dHss7MDPdDsIl+hGwk9ACyEf8QSb02+CeyhY9ai
+	 zAA+05ycOtvEw==
+Message-ID: <1c0b1368-a381-4b25-bba9-7a4f8e92b764@kernel.org>
+Date: Sat, 7 Nov 2026 20:26:29 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,87 +51,181 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261028221705.3915340-1-halg@google.com> <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
- <20261106-befreien-addieren-eislauf-e09212803534@brauner>
-In-Reply-To: <20261106-befreien-addieren-eislauf-e09212803534@brauner>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Sat, 7 Nov 2026 10:47:41 -0800
-X-Gm-Features: AclHuK9s0dgg3FDVqp4WbjYQnA0hebDpEpxOAgz_VjLjRP_HfRjeTpRH9DX274k
-Message-ID: <CALCETrWa1SBLcb5oWjqjgzZvKvCoHjmYFk=Lf5ytEM9uqm5jYA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
- opt-in netns loopback
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Hallgrimur H. Gunnarsson" <halg@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
-	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jann Horn <jannh@google.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	KP Singh <kpsingh@kernel.org>, Jonathan Calmels <jcalmels@3xx0.net>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	containers@lists.linux.dev, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] mm: continue vma_flags_t conversion
+To: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe
+ <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ Rik van Riel <riel@surriel.com>, "Liam R. Howlett" <liam@infradead.org>,
+ Vlastimil Babka <vbabka@kernel.org>, Harry Yoo <harry@kernel.org>,
+ Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>,
+ Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>,
+ Xu Xin <xu.xin@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>,
+ Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>,
+ SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>,
+ David Rientjes <rientjes@google.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, James Clark
+ <james.clark@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Oleg Nesterov <oleg@redhat.com>, John Johansen
+ <john.johansen@canonical.com>, Georgia Garcia
+ <georgia.garcia@canonical.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm@vger.kernel.org, damon@lists.linux.dev,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+References: <20261105-late-2026-vma-flags-v1-0-0d3cd15ab75f@kernel.org>
+ <d0ea7929-7c12-4245-ba3f-6dd5c0269e6b@kernel.org> <au3r0-geuwtRYPiC@gremlin>
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <au3r0-geuwtRYPiC@gremlin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 6, 2026 at 5:13=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Wed, Oct 28, 2026 at 03:56:11PM -0700, Andy Lutomirski wrote:
-> > The whole unshare/clone flag situation is getting out of hand, IMO.
-> > And this new thing makes logical sense but is really about reducing
-> > exposure.
-> >
-> > Perhaps we should instead have a small list associated with a userns
-> > (extensible in the future) of things that the ns's admin (i.e. whoever
-> > has CAP_SYS_ADMIN relative to the ns) may do.  That list could
-> > include:
-> >
-> > - Create loopback with sensible defaults for ipv4 and/or ipv6 (i see
-> > no obvious reason to separate them)
-> > - Create tun/tap interfaces in that ns (and attach them, etc)
-> >
-> > And add a very simple new API to do these things.  Actually, the
->
-> We've had this idea in the past and I think it is reasonable. I had
-> always thought that we should expose a system call to create empty
-> namespaces ot any type. Usually I'd be excited about that but I think
-> that point is a bit moot and I'd really like see whether we can turn
-> cells (or whatever other name) into a first class api.
->
-> The problem I have with the patchset as written is that adds a lot of
-> moving parts. And yes, I find the CLONE_* and UNSHARE_* flags plus
-> sysctl to be suboptimal as well.
->
-> So the TL;DR is that CAP_NET_ADMIN + userns =3D
-> CAP_NET_PRIVILEGE_ESCALATION 10+ years later. And this patchset wants to
-> put it back on a leash.
->
-> So why isn't an aggressively stupid solution to this problem to split a
-> new capability out of CAP_NET_ADMIN so it covers the absolute minimal
-> set of things that should be allowed instead of doing effectively the
-> same thing but split over multiple apis?
+On 11/6/26 16:22, Lorenzo Stoakes (ARM) wrote:
+> On Fri, Nov 06, 2026 at 03:35:01PM +0100, David Hildenbrand (Arm) wrote:
+>> I agree that this should be picked separately. For example, I will pick
+>> everything that falls into my realm to reduce conflicts.
+> 
+> Hmm, generally tree-wide mechanical changes are the exception to that rule
+> no?
 
-Because we don't actually have a clean way to make a list of
-privileges that are, in theory, harmless but are hazardous from an
-attack surface perspective and assign them only to tasks that ought to
-have them.
+I think it really depends. If changes are well standalone, I don't see why it
+couldn't just cleanly go through separate trees.
 
-But maybe we should invent such a thing.  It would be very, very nice.
+Anything that is more involved (like the madvise change), there is not really a
+way around.
 
-Other than that, I agree with you.
+Well, there is: stable topic branch and letting separate trees merge that ...
 
->
-> Anything that is reasonably advanced should not be the kernel's
-> responsibility to delegate. I really think the old privilege model where
-> the kernel grants control over a whole subsystem is inherently flawed
-> and is much better replaced if you have the means to let userspace
-> services grant and delegate resources.
+> 
+> It's going to make the rest of the VMA flags/mmap_prepare conversion really
+> quite difficult if I have to chase every single driver maintainer in the
+> kernel (literally in both cases pretty much :).
+> > And sometimes there are dependencies which mean you really can't split it
+> across trees unless you establish functionality in one cycle and callers in
+> another, but that seems a little silly.
+> 
+> I was thinking that once the VMA tree is separate I'd put mechanical
+> changes like this through it. Is that not the way to go?
 
+Maybe? We'll have to learn. Right now it immediately caused conflicts between
+mine and Andrew's tree.
 
+Because of [PATCH 05/13] mm: convert THP VMA flag tests to use vma_flags_t which
+is THP-only, and feels like it could go straight through one of my trees,
+avoiding conflicts with Andrew's tree. But maybe there is more to it that I am
+missing.
 
---=20
-Andy Lutomirski
-AMA Capital Management, LLC
+I assume stable topic branches would fix that, but they are currently
+unfortunately not on the table ... :)
+
+> 
+>>
+>> Ideally, patches really only touch one component.
+> 
+> Right, but sometimes functions are declared in one place and called in
+> others. It is impossible to change the signature of one without also touching
+> the others.
+
+Yes. Something like that is unavoidable. Or if you need new APIs/
+
+> 
+>>
+>> [PATCH 07/13] mm/madvise: convert madvise_vma_behavior() to use vma_flags_t
+>>
+>> is all over the place :)
+> 
+> It's not really all over the place, it's converting vm_flags_t to
+> vma_flags_t across madvise.c, which involves changing a few function
+> signatures, whose callers must be updated.
+
+Ah, yeah. What on earth does arch/powerpc/kvm/book3s_hv_uvmem.c do with madvise :(
+
+> 
+> I could split it up into 3 patches where 1 does internal-only, one changes 1
+> function, and the next changes another, if that works?
+
+No, these things really have to go in as one unit, no need to split that up.
+
+-- 
+Cheers,
+
+David
