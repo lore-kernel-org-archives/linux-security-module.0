@@ -1,54 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794081723;
-	b=LREnQEIWlDkaqJrY3cOWES0tMtjSEebsIUnNI1EVc9rc9gOSfQTN5pjUJWy/nPDVUt1b
-	 FMwX/Hw021IMMRsCKu+4NWTubDXUH7np69Dekqecy+YsQrirG0PEoCgn5hkTBJ2WDjRSB
-	 7kiWKgeGS+UU08l0VKyX5m4S8YtpM3n4ZRmL1u5LzMyo8Iz+T5hggOIyNmKo+UFnU0/jz
-	 1f+74OJ96RrRAJnrf+Qa8b1n+xfkDm1uf975Pq8EOOAhD4EDAF1Q6C6jGYX4lmDmTcOYo
-	 +Z9e/UPQI6ORz4t0ZHyvQ9pKI8mM0HgQMpJVUVQktUv6u+/hFqX9bRzbpXzeh946hcg==
+	t=1794082196;
+	b=Hf5mFNE+woNxwsLbP831TXM+mKHl6GAV+wdlx8QZXMWwdGMNBDLghlaa7c3LXXJkM0dv
+	 LwRz5bSrMDfMm6p7cdYJ85qincYalueiqEB8PnXWP6SZkSm8XxCU98oMBMYjyWJlHvhbY
+	 Q5LXHwBgjWOlbf5U0EMSmzpsu8HdGhXkzB6teWVaaR2kZR1OX5/3QHITMNJhGjAdUFSPz
+	 Ad7ukdh+X/1hh0Oo7PlSNnLLEQs2u5BfzgXy/ZZsx25HrE7XHCi6Mms4dCsz//MrUx5Ky
+	 zZcykvQYcqbf1cx19zacJ/xcRKoV0DAXriEb0v4uB63DnSlPSxr68dELIiEKZksrVeg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794081723;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=1qf6D2w3Mp9MxIaAzMYblvLR2fR+LWXIi+I7MptclUk=;
-	b=BMxAoffSgpp2jP1+V6LFT2OmurqQFofeIx9E1uosUAzKRiyZ6yCuBD6SAQ9hk8NYVLfq
-	 PvwUSr0JHFBXdy7dvl15dnAoYFSjVgBhkY6xKzHob00hQUsVLnRe+2qjGUt46L3v/zdkn
-	 ppgJvE2hgAaJtKiH9C+7x2BcTQzT/eVmS0xtR7cYjc1w1wKaKnU7UU5+kouc2WoA2gyHM
-	 IZ4N2gGUlVzIQOZU6ZmKEgHFzChWskRlNRvjcwQwg7R0qTdEwQywDWY4NkELw7O1gQVCB
-	 bb8SsvHZqrVAD7cscB2CiXqXMKQB0kGIKfICzrR5UpFh3srS0b1J6eZwLdRKoc2HDMA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794082196;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Xk0X32457iFYN1BGU3GAQStNoc/gho7s4TDAKaTabps=;
+	b=vca6Bs9QKAy3e0rIoMyFU+tW+zZA7xSkMrXg1QvkyE8LmnL4VqwB4UnBR1XywDJ4hbab
+	 Gg/Wc60ugQYt3P/Em6Q9EERgdx/R6e1NWaHZMSuNoRyXXfc73Y5MFr2WjSzjvu44GYqzI
+	 9I3TEJjjtMxZCK9DTQs/LOrWC/XmwMsvr3zF/zk0uO9fQx8ZCqH90Y8AprxWpKIgkwk68
+	 x6UTn8yG8eOqveKRtx0DVb0kjLRTL/nnHcpLxflId5Lh1svT2cweMtk7GBZnhzxYIx2q3
+	 uzt+KHSTkBTV6e2GGW20Qv4ovVcCYoMXeG9/ol/mnEJ9Wop6HTrdhdE62QofrQubn7g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cQ8kf8Mv;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oJk2JMZp;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2517B606A326
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 20:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 94202606A326;
+	Sat,  7 Nov 2026 20:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cQ8kf8Mv
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E68B1F0089F
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 20:02:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oJk2JMZp
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7BEB71F0089F;
+	Sat,  7 Nov 2026 20:09:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794081722;
-	bh=1qf6D2w3Mp9MxIaAzMYblvLR2fR+LWXIi+I7MptclUk=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=cQ8kf8MvZg07XXyf7YtOVFPV2//fhWTgqfEZ0gIKhPEcHrWwk/hnMxg4Bf1kPXgpi
-	 +zaRlFBhEsa+LpwJzKBMWpAS918nbQCdqGNcST0cFYeJlIzd/7ZeNyaQSU7IMjuS1a
-	 vYFO3xDVrabQQwQ1DbHKFtzkEmwygPsQmgG8a6tPFmd4JnBDhlbRUgCm2L5LuHppST
-	 rj1SVkMlrxh2GvAaoyX+XA7xJr5Q1tzSqKP4mFcNDtOJ5k9zGNH/QOfPXHgQifbzKF
-	 hdBRuPHjV4tDOvBsoqZrsM8f9nAeup+zojAEcFBS+U26/ezsIbmZCmSQR6SyvNToqP
-	 WI4MS2wUbakRg==
-Message-ID: <sashiko-outbox-203241@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] evm: fix TOCTOU heap OOB in protected xattr reads
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261107194909.1061154-2-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20261107194909.1061154-2-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 07 Nov 2026 20:02:02 +0000
+	s=k20260515; t=1794082196;
+	bh=Xk0X32457iFYN1BGU3GAQStNoc/gho7s4TDAKaTabps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=oJk2JMZp0MhPfM8rzByqvvNnCZjRq5/RY7VGZe+RGNUqtal6lzJMGADUx0eDfObDF
+	 x2A0zR1atvNeDMgM2ktcKIboDUB9BPMreYceFMHuHIgOmqz2XqRFZpLCVf7lhmzz8G
+	 WDb2lvIBtPuwpxbrOw2n2McsL+/Q8FwD/CzM/s4tZV0HYJj6ZEtsLCF+pTWqRSBmJ8
+	 DQdUEMjqXJ8B+aTq5CDAwsGLoBvaGHMDxag7gChJA6W4qjNCBgKWQT60y7LFKKuQAT
+	 pyd7fSUqhXm7s9byjv7mU1nBJd1UWuousgWCOyt2kj2wppSM8Mmw1UDgm9dTFCV8nt
+	 DYR7iGPZp/JzA==
+Date: Sat, 7 Nov 2026 22:09:52 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: bpf@vger.kernel.org, dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
+	keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ignat Korchagin <ignat@linux.win>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH v6 0/3] KEYS: Replace assoc_array with rhashtable
+Message-ID: <au-FkAtC4Gcw7Bkb@kernel.org>
+References: <20261107195605.3929659-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -57,68 +82,65 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261107195605.3929659-1-jarkko@kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] evm: incomplete TOCTOU bounds check in
-  evm_read_protected_xattrs()
---
+On Sat, Nov 07, 2026 at 09:56:01PM +0200, Jarkko Sakkinen wrote:
+> The keyrings subsystem is the sole user of assoc_array. It has over 1700
+> lines of code, no test suite, and a long history of bugs, with LLMs now
+> finding more.
+> 
+> This unfortunate outcome has evolved over time by large from the shortage
+> of in-kernel callers, time bandwidth and 3rd party contributors.
+> 
+> What the keyrings subsystem needs is just a generic key-value store, which
+> performs well with sparse key sets. Replace assoc_array with an
+> rhashtable-backed keyring index and remove assoc_array from the kernel.
 
-commit 94961f480ee0e6be15409d6ea100ede9af939446
-Author: J=C3=A9r=C3=A9my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+Sashiko: https://sashiko.dev/#/patchset/20261107195605.3929659-1-jarkko%40kernel.org
 
-evm: fix TOCTOU heap OOB in protected xattr reads
+Not addressing this as only one patch changed and the change was
+exactly:
 
-This commit adds bounds checks in evm_read_protected_xattrs() to reject
-protected xattr names, lengths, and values that no longer fit in the
-caller's buffer if an xattr changes between the size query and the read.
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 772fa0e35f9d..6761c6801edc 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -12,7 +12,6 @@
+ #include <linux/security.h>
+ #include <linux/seq_file.h>
+ #include <linux/err.h>
+-#include <linux/delay.h>
+ #include <linux/jhash.h>
+ #include <linux/user_namespace.h>
+ #include <linux/nsproxy.h>
+@@ -101,6 +100,7 @@ static const struct rhashtable_params keyring_link_params = {
+        .min_size               = 4,
+        .nelem_hint             = 3,
+        .automatic_shrinking    = true,
++       .insecure_elasticity    = true,
+ };
 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
-vm_main.c
-> index b59e3f121b8a8..d00b050edb811 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-[ ... ]
-> @@ -407,12 +415,17 @@ int evm_read_protected_xattrs(struct dentry *dentry=
-, u8 *buffer,
->  		case 'v':
->  			size =3D rc;
->  			if (buffer) {
-> +				if (total_size > buffer_size ||
-> +				    size > buffer_size - total_size)
-> +					return -ERANGE;
-> +
->  				rc =3D __vfs_getxattr(dentry,
->  					d_backing_inode(dentry), xattr->name,
->  					buffer + total_size,
->  					buffer_size - total_size);
->  				if (rc < 0)
->  					return rc;
-> +				size =3D rc;
->  			}
->  			break;
+ static struct keyring_index *keyring_index_locked(const struct key *keyring)
+@@ -1225,12 +1225,8 @@ int __key_link_begin(struct key *keyring,
+                if (ret < 0)
+                        goto error;
 
-[Severity: Medium]
-Can total_size still exceed buffer_size when total_size =3D=3D buffer_size =
-and
-an xattr grows from 0 bytes between the two __vfs_getxattr() calls?
+-               do {
+-                       ret = rhashtable_insert_fast(&links->ht, &link->node,
+-                                                    keyring_link_params);
+-                       if (ret == -EBUSY)
+-                               fsleep(100);
+-               } while (ret == -EBUSY);
++               ret = rhashtable_insert_fast(&links->ht, &link->node,
++                                            keyring_link_params);
+                if (ret < 0) {
+                        key_payload_reserve(keyring,
+                                            keyring->datalen - KEYQUOTA_LINK_BYTES);
 
-When the first __vfs_getxattr() returns 0 for an empty xattr and
-total_size =3D=3D buffer_size, the bounds check passes and the second
-__vfs_getxattr() is called with a size argument of
-buffer_size - total_size =3D=3D 0. Many filesystem xattr handlers (such as
-btrfs_getxattr(), xfs_attr_copy_value(), and fuse_getxattr()) treat a zero
-size argument as a length query rather than an empty buffer, so if the
-xattr concurrently grew to N > 0 bytes, __vfs_getxattr() returns N instead
-of -ERANGE.
+So I don't think there are any real issue with the patch set, except I
+will need to rebase the commits to the latest mainline.
 
-Assigning size =3D rc then advances total_size to buffer_size + N, causing
-ima_eventinodexattrs_init_common() -> ima_write_template_field_data() to
-memcpy() past the end of buffer (or dereference ZERO_SIZE_PTR when
-buffer_size =3D=3D 0). Skipping the second __vfs_getxattr() call when size =
-=3D=3D 0
-or checking that rc <=3D buffer_size - total_size would avoid this.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107194909.1061=
-154-2-Jeremy.Jean@oss.cyber.gouv.fr?part=3D1
+Br, Jarkko
