@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794066959;
-	b=37f+Y3opasAUXMW2mMm0FuWxbkog80m85+t/7ayCERVF7l619KnGzY8XGska2quq+EYz
-	 LqzvqSbqcsm+3nXFWEdF4Vc3uXtfu0AzfDEJmZ86skovrMZFlzcf3915V1OiHHIh/bDcu
-	 cOb0Z8p84fxC5fM+PW1ykeQ9PRSR0VA05AmDKGGaOmf8oesafZvHt9fub8IglLh4MBF4h
-	 ByM0VfpobhZzaCC2y/AM4fc2yIosqDwmOKowwSQw/0r26mSfUkerWvEPFH4B2IvwQoVDs
-	 AK6AK4inQ4q1OZr+ImqXywq//lSRXVsfkp9SuWqTMvcUZe2dRAr9uMBlWxYa03fON1g==
+	t=1794067219;
+	b=Ep+YSNNt99VrEpnBACgLoCgeol8nDJzPfgtJ56hyaGaJ2GEXTtJC3QjKEAHNmYciTJtq
+	 E9wUgebhbG+xkbpWmZdTGTDF4xN8EKuOAsKM3iSaZPKaXJdCO3DVPP0P2ih2mDEOyCfZ0
+	 +7xBa7oW81lRdMbYTcfS5NULyXN610DgqUVObdbi9/YnS/V8al94LuIqiUcPHw62Q9ibW
+	 OaAQr9MZisaMN3MQK4dKUcaqDZGGrOCnHlAJ9+9/GiNb5Z5euENBwfG22RG6WA5i0xP/s
+	 GfPLQ+mgHAQDABy00DRsH/UPQNT//IqQZjZUIrjqUuB0/1nVQtmA8TBYeHp49UG74kg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794066959;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794067219;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=83h62mGO7UoY2PmdY1QMZ35Sjt1U6B+DnOerehftN6k=;
-	b=iY2ua6P0TYp0+W5zQYY9V3n55FhgXaUxUj6wQgCrqHxlrqc0dMnFJuYt55h+C0pP4dWX
-	 RFRKQZSsQIygjWI9KnuSWo6l3moPtWjoasklBZU6CY+mCotH6/a39RXZhjeJAo7AW0/ON
-	 cpFE76qMQLI2BvXEKH9XQv/jQJiitudkM9LdaumRaA/dwZWMljIAAS4HNaI5zlrFQVbAv
-	 qrwuictDGYAdhGaAjdDSoWYmkU5gV7Je+lyfLX2SrDTF50B+X5xKnHdQL1F6znrrK3Qf6
-	 uvNp4CDc+q17A512HZAbPReKpPbwSxkwrvkyAlWwzYJHHnZjMu6LA/OwFEPFNd1aQ6w==
+	bh=tJK+b5w1keH5nLvVJXT5cNh8msflrgdpLJSWrIMH3OM=;
+	b=tFgIXzq8u9FA5KLyhf7Cfi4eF5JnDL3DVy3OAF7KQQTxhlGtQF1YRQ6VN0Dxq+RXZW7g
+	 rfy4N0h/nlZfe3mCIe/ZmYGrMEj89BKW51G9bwE/xFkHMkW7+zOnXdn2riR9Zmudx+/1j
+	 sdNUvNbVRdj23QBuTsoyqjCg3pYcYSkIIcp1p0IaFLvMDZxpbJRMlFm78hJ7qPvAW2ZJX
+	 gICTkeFsNIkAt6yEF3zA37lSFHurS7NoKwl3iWWpEX5HY80nD30ujseNbnkt3QrAGeyFC
+	 H4hx2BOwO2Yuz1MhFqRYmGNuE8BSdXzbRyVhh3uLZ6wthJRImPfNJwTnFmhmx4SABWA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g+d7P8uD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KfKknoQk;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68758606A326
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 15:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69E2606A326
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 16:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=g+d7P8uD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE861F0089F
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 15:55:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KfKknoQk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F5981F0089F
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 16:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794066958;
-	bh=83h62mGO7UoY2PmdY1QMZ35Sjt1U6B+DnOerehftN6k=;
+	s=k20260515; t=1794067218;
+	bh=tJK+b5w1keH5nLvVJXT5cNh8msflrgdpLJSWrIMH3OM=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=g+d7P8uDHtQ13HIN4ejW8oVK4WKOUiE6Exe85fYcFah2FH6ae6CZ0k1OqLAU/tegZ
-	 WcwG9R0VZHSI2aqClJqSZr5roHxWZeRHXIKRwwwNEwT8342Vlu679+WU/XXIK9Fr85
-	 hbGimPiBR42FmY73fHi+qT4Qz/KwXzzfReY2tnhFtAHKoWtE1NXr1Nfm6k0XRgMyET
-	 I5esqB18uwozC4unrCkK/TIlk1USqv7f9lJHoOz88b0F2zM/0BiyYmZkcjjDsvZrb/
-	 Z9rsIwIMZCQvP+Ruo8B3vvLjZ6hpWE5yFxnhezs4XMejyXLHDgHbKIRQfbXaVZfK4l
-	 G5lS6gB5ZaLzA==
-Message-ID: <sashiko-outbox-203000@kernel.org>
+	b=KfKknoQkGjymq1PlZBnLBPBHh5SxUZfJin1KLg1BVty2Uf3AMwhDq+LDUt2U3xgfO
+	 8IkwcWjeRFK7Xw1l7AnDgPCSTviaR2JrfAK3j/CJMsVQydiBMl1G9eFdn+3httNGe3
+	 HdTdcrRP3E1JNRhpLqEfqE0tdMghsjQiOOG5aehKHqU2OsJEpNREqWdZpa8G8cnByW
+	 XUrhYeWPt8bDWvUuu2Uoy5WZmzztxDmtXDu9uk2SVEBvCPRBW4RYdwHyefnQ1bOTgY
+	 3EiVs+WqdXX1Mn7V+h0ZPaBRhUKunhmaDQI8pH5dtXCm78volHA/NaD+309dNcvFd1
+	 BnrQQ3c/uDfAg==
+Message-ID: <sashiko-outbox-203004@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 2/2] fcntl: recheck signal permissions before
- falling back to SIGIO
+Subject: Re: [RFC PATCH 1/2] apparmor: mediate file-generated signals
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <4C916018FDDAFB60+20261107154928.3519030-3-shilc2025@mail.sustech.edu.cn>
+In-Reply-To: <B01DC8398B429509+20261107154928.3519030-2-shilc2025@mail.sustech.edu.cn>
 References: <20261107154928.3519030-1-shilc2025@mail.sustech.edu.cn>
- <4C916018FDDAFB60+20261107154928.3519030-3-shilc2025@mail.sustech.edu.cn>
+ <B01DC8398B429509+20261107154928.3519030-2-shilc2025@mail.sustech.edu.cn>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 07 Nov 2026 15:55:58 +0000
+Date: Sat, 07 Nov 2026 16:00:17 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,29 +59,35 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> F_SETSIG allows a file owner to request a signal other than SIGIO.
-> send_sigio_to_task() checks permission for the configured signal, but
-> if queuing fails, it falls back to SIGIO without checking permission
-> for the fallback. Permission for the configured signal does not imply
-> permission for SIGIO.
+> File-generated SIGIO and SIGURG notifications use file_send_sigiotask
+> rather than task_kill. AppArmor does not implement that hook, so its
+> signal send and receive rules are not enforced on this path. A profile
+> that denies SIGIO reception can therefore still receive an asynchronous
+> pipe notification even though a direct kill() is denied.
 >=20
-> Recheck permission before falling back from a different signal to
-> SIGIO. Keep the existing behavior when SIGIO itself has already been
-> checked.
+> Save the credentials of the task that sets the file owner and use them
+> as the sender identity at delivery. Resolve the newest sender and
+> recipient labels, and use aa_may_signal() to enforce both send and
+> receive rules. Treat a zero signal argument as SIGIO.
 >=20
-> This was reproduced on x86-64 QEMU/KVM with AppArmor file signal
-> mediation added: a recipient allowed a real-time signal but denied
-> SIGIO reception and set RLIMIT_SIGPENDING to zero. Queuing the
-> real-time signal failed, and the denied SIGIO was delivered. With this
-> change, the fallback SIGIO is blocked; allowing SIGIO still permits
-> fallback.
+> Use the existing fown lock to protect the saved credentials. Replace
+> the reference when ownership is set again and drop it when the file is
+> destroyed. The task triggering I/O need not be the owner setter, and
+> delivery can run in interrupt context, so current cannot identify the
+> sender.
 >=20
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> QEMU/KVM tests on v7.4-rc1 cover send/receive denials, allowed signals,
+> F_SETSIG, process-group and TID owners, profile transitions, ownership
+> replacement, unconfined senders and TCP urgent notifications. A separate
+> fcntl fix handles the case where queuing a configured signal fails and
+> delivery falls back to an unchecked SIGIO.
+>=20
+> Fixes: cd1dbf76b23d ("apparmor: add the ability to mediate signals")
 > Signed-off-by: Shi Lecun <shilc2025@mail.sustech.edu.cn>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/B01DC8398B429509+20=
-261107154928.3519030-2-shilc2025@mail.sustech.edu.cn?part=3D2
+261107154928.3519030-2-shilc2025@mail.sustech.edu.cn?part=3D1
 
