@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794080265;
-	b=Rrk5zp/yAIHmen3vjk+0qSD2Bhdq6KrPgniZbmHfg9OxWM+hgivguzeaaGJ45w/Mxj19
-	 HOVU7Ovpbt72l9gL9FxPBjv73J+WTGB1LN1QeqaeOMlF0lRbQfuwzIpW7Gors4jr+Dwpv
-	 5bMn/39tv1zj9wpv/64aCuxDgELsd2taiTrJqBPo6Zu7p4hoq4uy9F8/bm0+2TnhEZRZJ
-	 oBX74xunmhVid0sMgZbsz54APW1luXzcmsHaUdYdZ5Qqke4id/p3dm3sit6wzT/TuHcHf
-	 w2H0u0Qmvv9pWA+pWuBkVbfwN0yW8Qwx/2kxCs2iY17c0BeTPI54szMf1QIz59Lb5fQ==
+	t=1794080406;
+	b=VN4Xe7jYqDX7gizsWc4PmXPGh2QyDIm0zxR7RGHvmKeL4/hbMRqOqL0Q6geDjE/QfWAi
+	 r5USaAnzkKWPk0dOWzJrNyqEbKnDWFrGF9BdYHuQ0/hKKCyiXdCPtp1Y6ZJy7e5YKlePc
+	 D7GRpa4GKj6ebtGt8wV6dGdaRE1fDCca4N5kqJafCEAjN15pdAl26ZLd3yE9Cbp3b1Lg7
+	 Qw+XQCk/qRW8SVntsR34t4ffb4WrLrsiOCWtUoWp7Zo7tk4nArkLGAil88Z/jMRxPXiQc
+	 Yrh0pdThsoTrZ8JErWLpwiOhs9JnlAnhi7ZpjjwEZHlMnJuHnzdlE/bTtKMOMToNMvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794080265;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794080406;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ot0GbQaToaR0/YhUNDb/GU7lxRP8gInAC4iA6jbeTAs=;
-	b=W9sq77leKPdDwP8efjZOzqXr6K//zNzuW18o++eqQD6iBEdM/Q5Q52n693NjwJyDCzoL
-	 tetag5bGLsWf3MNByzVodeYjx09Hq/L+C5HKw5RosJN+zTFFIkhHv+ErAM+D2blRU8Bal
-	 NN0SDJ13Z3zRNAZQwyN7MNUs6pSE8VERujoGDNnbbjNE4Bra9UCP69a1+3QYsPK4YI8Nz
-	 TvQRD5zLcn1tz+SvVK8bs8x3/TdHU6YBhiQ8JCGjH/4+AxUydhdv+s7Rw/pN/OOLaKb2J
-	 bRgTdj6MNsh99ZrMaY3dBOrjbZDHEaQ/wAKYXVRZKCxv6Az1xjJekpFYZuwFhVmRYJQ==
+	bh=xxkMYEUl4TLwUUfbwzUjsgbglLKi+uwUGKEqKn4Bc3E=;
+	b=sZ1uItbom4gI/NsZJkl1IK0E1GW+TEKlzdgxM3t0w3PkKIve2NbGXmimcN0qfIZSnX1W
+	 NBnQMq6cs1m/KGWbDm/FtROoszFLXxlgjVLLG7NLM9ID0gCkdwr+b4DwptU13SLy2AIqh
+	 WmdJNITHQrCdCRiH4fsyqrMnMHoC4IEZX9D0fU5RjemkgvwBroVyav8D6nJo9yz4a72aZ
+	 U03GFomalOH2qwOLTG8JnbpTIhj14u0NtcG1+qQrqGu7wJ757TaEUt6r+Qr9Jrh6AyS0Z
+	 q0W4PiMVq4CC/oKJKDePz+tGH86YEZrgY/V21uKefzt8VKMp7Ff6/Z7zGuG6JQQgYQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UhmnALyu;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AbzioATu;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BC3606A326
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 19:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1C2606A326
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 19:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UhmnALyu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F3501F0089F
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 19:37:44 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AbzioATu
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21AB01F0089F
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 19:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794080264;
-	bh=ot0GbQaToaR0/YhUNDb/GU7lxRP8gInAC4iA6jbeTAs=;
+	s=k20260515; t=1794080406;
+	bh=xxkMYEUl4TLwUUfbwzUjsgbglLKi+uwUGKEqKn4Bc3E=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=UhmnALyu5WpAKuraZRHuZortNenrpEvHROlc4mQTExOuL9Du3SBAuA/lckPH1z3oc
-	 dkNeX9FCHaf75X/r4GXEFxrTCYrE405ztRt4/RUaV6z8BfwjJRnPxrJo6uZMLHQPDu
-	 xb0hitSn9+m9KGb+nv40kqlxEA7aYWhfKiK/IjKYR072fqbMsVRw/KYDhqhnmLyQlv
-	 7Oqgyxx2JpG+7QELifTmhtlKXoyGDC7qnjk+19o0X8ZkVYMlQKW+1TQiHfyy/0y2ts
-	 3BXLMoOpQ3y6xoKdJWfXOyp6fCxNFed08vGPPDbnLodS1Ki0k6b6fYI+sBnevXsnfP
-	 D8zxqoEkq0erA==
-Message-ID: <sashiko-outbox-203216@kernel.org>
+	b=AbzioATu/1Rv0pfVNWNMYzqZEJrs+DrM8Y3cQTobbbJzY7xocGxzknZfXPiMDllNb
+	 hoz7XzS5Dd2t4Mzz9Afk/0+H5k5LImIs01z77OJVofkJkj4ui7iqK8uc+6ELQsP7hX
+	 GPRfHwbHDunZ8bjUpOXqwSmOkuRXjvOumXuWiJn+dhI21M9eBGDc8nvicEHiyurU/5
+	 ILtnxrxqJYw6/IY07gTRr0DiTqjydLYtNlsn9Vmf8/lwIke1nCnodBOlubknZbg2n0
+	 l0QsS8FMq7oJbtNefmSTv0LLGVtyReEdAq7nizvK6aQDCICYD5LszF8Xyl6H4W8uiJ
+	 DDhemhnLxlIDA==
+Message-ID: <sashiko-outbox-203217@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 6.18] fsverity: Tell LSMs about signature only after
+Subject: Re: [PATCH 6.12] fsverity: Tell LSMs about signature only after
  verity is enabled
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261107193226.50975-1-ebiggers@kernel.org>
-References: <20261107193226.50975-1-ebiggers@kernel.org>
+In-Reply-To: <20261107193513.54738-1-ebiggers@kernel.org>
+References: <20261107193513.54738-1-ebiggers@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 07 Nov 2026 19:37:44 +0000
+Date: Sat, 07 Nov 2026 19:40:05 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -82,11 +82,13 @@ res to LSMs")
 > Reviewed-by: Fan Wu <wufan@kernel.org>
 > Tested-by: Fan Wu <wufan@kernel.org>
 > Link: https://patch.msgid.link/20261025204534.122506-1-ebiggers@kernel.org
+> (6.12: resolved conflicts with this version storing the fsverity_info
+>  pointer in the inode instead of using a hash table)
 > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107193226.5097=
-5-1-ebiggers@kernel.org?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107193513.5473=
+8-1-ebiggers@kernel.org?part=3D1
 
