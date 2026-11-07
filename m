@@ -1,54 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794093191;
-	b=skUN4HDghk5G0mq2bc8g3kk6A3Cc31DV+hHuOSVviQmVgOZYVO5YTorusehJ859eV6nD
-	 /HRIYlWmBJvKy4dEaet9KrrG0kPKcaM97LKiJ/zvxgk2Z2Mui0RX+lr6tdmhtLWsZ/c8F
-	 fdnK30ZPzRf21otiFbRt2sxsROsVveQfMGcy58aIbEw3Zy9OMUvfb3I58lCQt5mBeI+Ef
-	 3gYRbuorCnwUGCcV11EOiw05PxdExVDntm3s07kRL+36ukUxZOXX04iZzgePjYAduwUtG
-	 ENeKKv4hqvSMHs8xDXtKsY9SZUlXN7yigVcwY5ajBk+EP6hWWUuIkQ4jwwQ6ZL9vyhQ==
+	t=1794095019;
+	b=qh9+EwSyx1uJg8UcDqCUQ4zSU4HWjuP9krLYo688vAduRmhtTsKcCZudSxFXIxa0ehF6
+	 e1Fwucs4du4srU3vSnO0v1VMeW6z5MBtg3m3ovhUuWQ4gppH2VNEBUF+WM7kXUE0GqzJd
+	 LHVFXt0UeIhG7tZRYPQliReRdT+iRH54/5NzDFFRMCNtTo17R0btCNXZ63HUNrcyMVIHw
+	 zU8HryfkpPdc+FuDxGeEZHrBCAjr4ljBK089Eca+yvY3gBGJuIDNwPs7yAAcCGq8Rds06
+	 ZF07jov7EOyDOKA4IfEQxKPs5jStap8SArnmEdbjEaaak3opTeJY95Oy6IxbOMASo0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794093191;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794095019;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=UdepAk6i/WmRSKNK4X+kj/qX7m8JkH4idTw5klDwJpE=;
-	b=HqEnhoQWtxrJ2ll0Ym62PKONN7YRCVg3Dy5YnxsshZ6BuWAP4U8f2OeDavoyXlPD4ZNt
-	 3TIhsHqF5vbuSiWlpmnVzIZYFg1Tx1QwFzeOmWF305UfSTQB9L/IfQOnlxD4KTT4HzH/c
-	 3iavmn5CWcvIFOUXFx8nCCfiJwG1MFiKcCYrGoxOmP9EH6sFs/qVrgkXqqVbVQ3UCPLtb
-	 Y5sTwdkm7GTV9FpEs0d9EZkLDftAfGu7I+u1KUuyP/f+L5YSFBqSNTiqczNoVDKFI9i3n
-	 /Io8SMFlggd4G4bGoY40B4l3wsxobY8pPu0aaP5Glf5/ESn3AT9iLMf0BAd6GqkC7vQ==
+	bh=ShbdDo5reBovOAwCstZCHnAiUGS3u7Fdx9b5pHLHmlQ=;
+	b=KgVLQfVt6iG04kkqH5EIjJ4+dtelzezChtBFZxME7rDN2KQEElxJydnxYDOq+LVe/KED
+	 BGYGf65QHSmzMAzMomCs9R4m/9rIJvH1wFU55HWoipZyARsn/Ly6x6c7wP631FCpbxkyd
+	 ABEBwQHSHBRV07XMvQwBXHTK+v3+Gw4OiwxNKNFAHH35dwVNEZEcEmFPW/MkNMPaxBm2H
+	 MaSIMtoj67fEOu7AiUC/c82fdvx+OZwSExrgXtru9S/ii0O6cDGHq8z71Y1dopYhuEe26
+	 Harqx60+FPenLLbzT1gcqGUDemmQs5Nfzul5eeL0BkYuf1VoKFeziLPwu9Q/R0KbwCQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QgVNsPDn;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="RHd/xxOS";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13973606A326
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 23:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A785D606A333
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 23:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QgVNsPDn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77EFA1F0089F
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 23:13:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RHd/xxOS
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003F71F0089F
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 23:43:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794093190;
-	bh=UdepAk6i/WmRSKNK4X+kj/qX7m8JkH4idTw5klDwJpE=;
+	s=k20260515; t=1794095018;
+	bh=ShbdDo5reBovOAwCstZCHnAiUGS3u7Fdx9b5pHLHmlQ=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=QgVNsPDnOOSZd4hDgP27ytKP65ThS+8afOn9VFU1H77SSCKJX4Dccp0HPMXpEnJqk
-	 UbojGXACoEnm3ELdRZJj/ly1y882YRUsYtqVJBNIlvsiFux1RRyrUuKyw16Fqko5Kt
-	 SKms59+EpUB7p4Z5kfhyosf+Hl6zEcPInsQoyE77JD+2snRrfaJN1J2CSer8yN425I
-	 r3C0LkGi1KUNhT9m0ahFQDzvFJjx+DRUbeas/wgh69zsRvDVahOrzqwMcK+Kip3yXp
-	 Zx1xShutwT8DcNsoS2fKrdD9BX5dIJN8qHt9v6pJjWjChbiRiFjmt/Mo0IKwiVRBTT
-	 tk9FznynbusJw==
-Message-ID: <sashiko-outbox-203376@kernel.org>
+	b=RHd/xxOS0epgRMeSB7SzGWIRGham2CoVb6Q0dBj0cepVNihzKFdwhEiffzfYlRcvJ
+	 VsqAs3FbwBZVd1aHrWlFDrzQPqjew8zNF5OAzebExyQxLEdmXQuwKZe1WIc4w/nFft
+	 ZY6CbMftRej3HinFZGIL6w1EghvXtaf7NUO3U/WfBnF+qUT+BrR8uC71vvsJpY+cvd
+	 5NWWF+LtigSaW2ajfuV010/3jXlBFrjHRjIX+lUxWY3xTYFE6/xdrkAr3Rkw2Oeu6/
+	 97soxmHuELTktrBu0CrY6mw8ayApA4Tpf85bGuTvJ4JfWrB5mdsIf5naWwtY5zUTb5
+	 kiIIptKPg7TNQ==
+Message-ID: <sashiko-outbox-203398@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] evm: fix TOCTOU heap OOB in protected xattr reads
+Subject: Re: [PATCH net 1/2] ipv4: unshare headers before recompiling IP
+ options in ipv4_send_dest_unreach()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20261107230514.1108379-2-Jeremy.Jean@oss.cyber.gouv.fr>
+In-Reply-To: <20261106234313.2537882-2-edumazet@kernel.org>
+References: <20261106234313.2537882-1-edumazet@kernel.org>
+ <20261106234313.2537882-2-edumazet@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 07 Nov 2026 23:13:10 +0000
+Date: Sat, 07 Nov 2026 23:43:37 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,30 +60,71 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> ima_eventinodexattrs_init_common() queries the total size of protected
-> xattrs, allocates that amount, and calls evm_read_protected_xattrs()
-> again to fill the buffer. This creates a TOCTOU window: if the
-> protected xattr changes between the two calls to
-> evm_read_protected_xattrs(), names and lengths are written without
-> checking whether the data still fits in the target buffer. This can
-> yield an OOB heap write that KASAN reports as:
->=20
->   BUG: KASAN: slab-out-of-bounds in evm_read_protected_xattrs+0x15e/0x280
->   Write of size 20 at addr ffff888002c59bcd by task init/62
->=20
-> Reject fields that no longer fit in the target buffer. For xattr
-> values, also check the length returned by the copy before accounting it.
-> This also handles the case where a size of 0 is treated as a length
-> query.
->=20
-> Fixes: 8314b6732ae4e ("ima: Define new template fields xattrnames, xattrl=
-engths and xattrvalues")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: J=C3=A9r=C3=A9my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] ipv4: dangling header pointers in ip_tunnel_xmit() after
+  skb_unclone()
+--
 
-Sashiko has reviewed this patch and found no issues.
+commit b978ee14726a511c1195a618445671504ee53c90
+Author: Eric Dumazet <edumazet@kernel.org>
+
+ipv4: unshare headers before recompiling IP options in ipv4_send_dest_unrea=
+ch()
+
+This commit calls skb_unclone() in ipv4_send_dest_unreach() before
+recompiling IPv4 options so that in-place option updates do not race on
+shared packet headers.
+
+> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+> index 3a90c8d28b940..4d8fcc95c2f46 100644
+> --- a/net/ipv4/route.c
+> +++ b/net/ipv4/route.c
+> @@ -1269,7 +1269,8 @@ static void ipv4_send_dest_unreach(struct sk_buff *=
+skb)
+> =20
+>  	memset(&parm, 0, sizeof(parm));
+>  	if (ip_hdr(skb)->ihl > 5) {
+> -		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
+> +		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4) ||
+> +		    skb_unclone(skb, GFP_ATOMIC))
+>  			return;
+>  		parm.opt.optlen =3D ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
+
+[Severity: High]
+Can calling skb_unclone() here leave dangling header pointers in callers of
+dst_link_failure()?
+
+ip_tunnel_xmit() caches inner_iph into skb->head before calling
+dst_link_failure() -> ipv4_link_failure() -> ipv4_send_dest_unreach(), and
+only calls skb_cow_head() afterwards:
+
+net/ipv4/ip_tunnel.c:ip_tunnel_xmit() {
+	inner_iph =3D (const struct iphdr *)skb_inner_network_header(skb);
+	...
+			dst_link_failure(skb);
+		} else {
+			WRITE_ONCE(tunnel->err_count, 0);
+		}
+	}
+
+	tos =3D ip_tunnel_ecn_encap(tos, inner_iph, skb);
+	ttl =3D tnl_params->ttl;
+	if (ttl =3D=3D 0) {
+		if (payload_protocol =3D=3D htons(ETH_P_IP))
+			ttl =3D inner_iph->ttl;
+}
+
+When a cloned linear skb with IPv4 options (such as a TCP packet or a
+TC-mirred clone transmitted over IPIP, SIT, or NBMA GRE while
+tunnel->err_count > 0) hits dst_link_failure(), skb_unclone() reallocates
+skb->head via pskb_expand_head() and drops the reference to the old buffer.
+After dst_link_failure() returns, ip_tunnel_xmit() dereferences the stale
+inner_iph (and tnl_params from ipgre_xmit()), causing a use-after-free read
+if the other clone was freed.  A similar pattern exists in
+ipip6_tunnel_xmit() with iph6 when skb_unclone() clears skb_cloned(skb) and
+causes the skb_realloc_headroom() branch to be skipped.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107230514.1108=
-379-2-Jeremy.Jean@oss.cyber.gouv.fr?part=3D1
-
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106234313.2537=
+882-1-edumazet@kernel.org?part=3D1
