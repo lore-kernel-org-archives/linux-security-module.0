@@ -1,56 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794152740;
-	b=BDXyYmtTwnK+SRGTtXbUw5oqTW9BWGlzf5KcmxcMkiRTHasyGyJ3hiRZfkVfr7hUTlRO
-	 ZYeYrJEA1FrlwgVWUz+HlcyVOuULUOHi8cQG0RX3JSJjG8McNQCaaIW4CyU8iinmRcTVX
-	 cEPbRsImDtnqxPRYNq3qI6guO8vfumr0jJ6aZlqmXTzKvYMgE/XeQeMell9AHjjI6rfA/
-	 RHwjRlgoF4jPdbVv9khPxGuSVQIyVn4YQ/rb5doj/Di0Dd3CyuMQmlkHc1uzhj6Ibhlzy
-	 ytLvQfNlSwYfgJLkiPnBLLdi6A7I64fXq7zVOs3IDOtYzDek8ZYPweL1zyFiJicSRIg==
+	t=1794154919;
+	b=JXVcO9PwlksKdO6gq3cn10SdWbcX26pXtpl3KW+MpRyKeSWRlaiI17ME90g7fQkN2QXm
+	 0BWY10LJFhkQ+oW6S2lDyx5svg7poeYNWnT8eiFxrQi7GOmbw+hYAG0aZeUJfqiV4xp7L
+	 WSNHC0INuIiPHtZ4z+/00z/XoJY3hAenRG8Y7MqsJbjnqhJxMuxnd0Iw6paL0S46k/0IH
+	 +jaMDYKIceU/8Iw5tYtE68SRg+k8OksBS8bDz9lQHWT3g8tIusOGpzjykqrakPjovyunJ
+	 jFRBj3cFdL4/42HEqY+392xLkLNZIY58B9B8V0PM1B05be25n8XMp273VB0/aLMxpgw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794152740;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Qv6VqrmKg3FKau8lhcdKdMQGVPG34q5ibWj5i/V4Uxk=;
-	b=QF9ZdRKpSMQL1giHRcxMiJh8JR4TyVJyi/rp6Fsgofsu/XGWhP99kYAvYNfkzt4Hc1jn
-	 7GhNiYcm0faBFjNjq8JiuUbAwONDuS2+DMZDJ4VW5ukONSJ020eulFXVmNU9s+pCBl2gD
-	 Xmz3j+A2CDdVx17kytCss21vh9atZqdcASAPvud4vY70/tGd9tVgATl0dskHFM1r6iXjY
-	 z+NfkVNBUlNHBW8XwOZj3xOwZ5eKpOXd4psO2QB96SeBwJdsOUlzVwlFkA7hTu1mtROap
-	 edNuHOTa9AL5OCJuAolQTaUmp7TVqCY8utd4s7Cri3lmxkE6oIUeaXgPDRu73jnjxxw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794154919;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=NqiEvNJc2p38Ujj7TawQCPTCe9qdBp/ccFJptwABHsY=;
+	b=Z/N+qD1WzPR4MLuU4tx8/8C15jdp7z26emn25B6K+OXl+MrmAvwD8pc0W2+B8dgZEdhC
+	 BOb/LDkPtueuT240t03m6arxNxasfNpexHkXVjlFofDk2K/PGLgNyr8n9D4WY3CT2bUpK
+	 7jeZ1JDTmMIS8dDWB6rcyW6LaFV2sYQMymUbveajudpz4bT+0/ogLnULis9pcyIejtnkK
+	 15TcjyX1yK0Vacfc/qIB/3xU6YA98XBgG83cb8KHq9J4TEoZ8WA9bNtEUe6ojvutB8BBa
+	 5FGLCm/SilxMxHiO54KLCRZ/lfAqwFm4Xbud1Wy4oHGWYHbcqEc7CpoFjDJX7lFwTYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a4WU4ZOt;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ByZKqEY2;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 4DA0B606A31C;
-	Sun,  8 Nov 2026 15:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0F1606A31C
+	for <linux-security-module@vger.kernel.org>; Sun,  8 Nov 2026 16:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DD0F1606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a4WU4ZOt
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6081A1F0089F;
-	Sun,  8 Nov 2026 15:45:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794152739;
-	bh=Qv6VqrmKg3FKau8lhcdKdMQGVPG34q5ibWj5i/V4Uxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=a4WU4ZOtyv8lhVPK2R69tPrAh+NxEEVRu8UMt4SZyMqr38wyOnfJOtIfT5REDEUn+
-	 HXMsXb5UV6mK4xkBY8veUl6MU2kI0pFbxqjq20EwXI3h7s698sDZvjYO1d6U6YWQ59
-	 t0aQjKxVasSN+PkO4868zqlWPlHrvYyDGyTynHZDPFMYwp7ysu4fvuiMyxcTFPeZyw
-	 rkQ1uWKKNVC9yldAslb5wIdmqSWzQTOKoySgY3b7gdqJnc/QkyCS0+Tg/joVvXBsgG
-	 NHe8TAKooSalQBBwxMTHu4N4rb9ctbMokq1Wingy44/mDIjKZSu9UN42wTlaXFNBSD
-	 Vs66CIyximNIw==
-Date: Sun, 8 Nov 2026 17:45:36 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Yuansheng Yang <0xbeac@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v5] KEYS: Protect pkey method checks against type removal
-Message-ID: <avCZIMCsZ4um18e-@kernel.org>
-References: <au3fT5HMq7IF-M3e@kernel.org>
- <20261108131417.77287-1-0xbeac@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ByZKqEY2
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a2167bd087so1052895e9.3
+        for <linux-security-module@vger.kernel.org>; Sun, 08 Nov 2026 08:21:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794154917; x=1794759717; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=NqiEvNJc2p38Ujj7TawQCPTCe9qdBp/ccFJptwABHsY=;
+        b=ByZKqEY2fqDhKWoL3BQKBZjth+x/iOlR20ruT+hrURNxCRwqYtsum7eZaEhd63rm50
+         +GHBf5keyZIJ8BcMAlMHs7ZqsCdBnHF5w6cKrAqTxfqgHcqd5LZUhSdc/J/1gf4lqQaX
+         5UsxhwT0VO/ynoe2i+sWqm9U+7By9WCmpaY0Lox+wkZPKASr25srJMuEjQHsG6shkRoX
+         zhsnz6GCHInxjthTYMvu7UTKBmUrrtFOAyIO9PXkdTuZBmhEsZGDOJ3mKNTIsAygQd5g
+         Tjq/dCJww5DtLMaK56lq+wtOcBNcgqgy63lXfEQXZnFZTlaw3naDMUuP1VQzT8d77Qf2
+         yBQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794154917; x=1794759717;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=NqiEvNJc2p38Ujj7TawQCPTCe9qdBp/ccFJptwABHsY=;
+        b=AjrlQSs91QBR56XnEThlDAbv4YeMWVcmlrXVonSap9WTShrPhA+Dy7BxBtJFiVWR7y
+         /6SIDls6pd/6g4rmf6seJTPxVO0AfBOzMKhT9IPBE0su5GnhPUE/V1p9EnPursDvGyae
+         7qegsXECMU7XxnN8hj9JRArBocvcREKpR0p0GpynfiCCP9ro6cajcxTJnG1y1cvC+PUd
+         SoMVPOvUz0hJTrSYdEMbqA25NLP1tEZX0cebggKpek6pHU2XLdHzy+rHKZ+IrkZc24rF
+         DRrfpXCi6yBM/G/hVE5/cqYp8h4dDbwjFJHC9CMZoSZZDYvfGzeE9EPKoLka3J/ORj5E
+         xCfg==
+X-Forwarded-Encrypted: i=1; AL+hErERMI8h7op4Qqj+pqku+7fp4tvodxBgfTdkcrO9r30ONUWmA2ZmPEE9rQ7WPFMbixxo59dO5n8E36trbNoYko++EutX0NA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+hEZbjQi3ZaWEQIC7s/UAhx1HBIxbEm9O3V46NjWSSVzKl9vlt
+	RJnUavGyBNRChU5K67KrfqfT6XQgUgX3G4PXbg14DmNSyH5HnCj6PZWl
+X-Gm-Gg: AYBFou0dWqphKxqGsMF78bPyDwWkMrOc4Bi28p3uUGykpCtf2f0dx4+f/iWKPPK7l27
+	8Fhrf1K+m4S83lXB6aD14ycmYERajttysYhPZJuTnbavQoBR7bM0U2vHFPVnT2Od11YOOzuf3nd
+	gGp3LruDLCUbnhB7hwfcpzBfmEL8Uvn6F1ymgDPSHwogzPW4pRLwvPwQEnmzzWshWI5nrX5Mkol
+	JjcTwrphdbxixkgOq77xavoETIdRQb27iqLKWFshtexVeXFYXNxihe92Mg3YThrg/GUyi+mvOkc
+	QRaRKynHJJbJ4BdHwOv2r63OT0mgxD2T4KtdzxtpLxEy46o4XwcYHmnchxHre7/Q4yd13kjwkL7
+	L61N6WvonmQj6F3MZTZQVaH6iNzv1Ghy8FB9X26BEndPMM6NkWSiOslz8Fy7yt8U7096tn/IC+z
+	UJSuykETrTAcoOSD0XCr212pcjpFhbaXX6tnNd4w0WgSt2EsM1WMqQVuY0QA4DuxukwakRdEpyp
+	pf60bcaPK5sUzeLdkKvI4uWpNJuEKrvRURLq4lkPgmgOu58RGVZmsKsfvMPL+1zrgwmHF2eEu5x
+	lXTIUL9WDME45msHUB3RCwU/n3TjHLEcdmHSTbwsLIRdc2HHdsJC
+X-Received: by 2002:a05:600c:3f16:b0:4a1:fb01:13 with SMTP id 5b1f17b1804b1-4b9633cee64mr34051605e9.18.1794154917053;
+        Sun, 08 Nov 2026 08:21:57 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b7d54d6f93sm272669515e9.0.2026.11.08.08.21.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Nov 2026 08:21:56 -0800 (PST)
+Date: Sun, 8 Nov 2026 17:21:51 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Shi Lecun <shilc2025@mail.sustech.edu.cn>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	gnoack@google.com, Fengwei Zhang <zhangfw@sustech.edu.cn>,
+	Bryam Vargas <hexlabsecurity@proton.me>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: landlock: clarify F_SETOWN signal scoping
+Message-ID: <20261108.5b4268b47da6@gnoack.org>
+References: <20261107.2f1fa9977739@gnoack.org>
+ <4C69C1457B12AD80+20261108055048.3745750-1-shilc2025@mail.sustech.edu.cn>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,94 +104,50 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261108131417.77287-1-0xbeac@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4C69C1457B12AD80+20261108055048.3745750-1-shilc2025@mail.sustech.edu.cn>
 
-On Sun, Nov 08, 2026 at 09:14:17PM +0800, Yuansheng Yang wrote:
-> keyctl_pkey_query(), keyctl_pkey_e_d_s() and keyctl_pkey_verify() check
-> that key->type has the ->asym_*() method they need and call it later,
-> without holding key->sem.  A reference keeps the key alive, but does not
-> pin the module that provides its type.
+On Sun, Nov 08, 2026 at 01:50:48PM +0800, Shi Lecun wrote:
+> The signal scope check for asynchronous I/O notifications uses the
+> Landlock domain saved when fcntl(F_SETOWN) configures the recipient.
+> Adding LANDLOCK_SCOPE_SIGNAL later therefore does not retroactively
+> restrict these pre-existing registrations.
 > 
-> When that module is unloaded, unregister_key_type() waits for the key GC
-> to process every remaining key of the type.  For each such key, the GC
-> takes key->sem for writing, switches key->type to key_type_dead, whose
-> ->asym_*() methods are NULL, and destroys the payload.  If this happens
-> between the check and the call, the keyctl calls a NULL method:
+> Document this boundary in the IPC scoping section and link to the fcntl
+> documentation for I/O availability signaling.
 > 
->   KEYCTL_PKEY_SIGN task              Module unload and key GC
->   ------------------------           ------------------------
->   keyctl_pkey_e_d_s()
->     if (!key->type->asym_eds_op)     unregister_key_type()
->                                        GC: down_write(&key->sem)
->                                        GC: retype to key_type_dead
->                                        GC: up_write(&key->sem)
->                                      free_module()
->     in = memdup_user(...)
->     key->type->asym_eds_op(...)      -> NULL call
+> Link: https://lore.kernel.org/linux-security-module/20261107.2f1fa9977739@gnoack.org/
+> Suggested-by: Günther Noack <gnoack3000@gmail.com>
+> Signed-off-by: Shi Lecun <shilc2025@mail.sustech.edu.cn>
+> ---
+>  Documentation/userspace-api/landlock.rst | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> If it happens while the method is running, the method is left running in
-> freed module text.  In-tree, turris-signing-key provides ->asym_query()
-> and ->asym_eds_op() and can be built as a module.
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index 3d45b956b640..cc9c5b102b8d 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -499,6 +499,10 @@ The operations which can be scoped are:
+>      This limits the sending of signals to target processes which run within the
+>      same or a nested Landlock domain.
+>  
+> +    For signaling of I/O availability (:manpage:`F_GETSIG(2const)`), Landlock
+> +    checks are done with respect to the Landlock domain at the time of
+> +    ``fcntl(F_SETOWN)``.
+> +
+>  ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
+>      This limits the set of abstract :manpage:`unix(7)` sockets to which we can
+>      :manpage:`connect(2)` to socket addresses which were created by a process in
 > 
-> Take key->sem for reading around each ->asym_*() call, and check the
-> method again under it, right before the call.  While key->sem is held,
-> the GC cannot switch the key to key_type_dead, so unregister_key_type(),
-> and with it the module unload, cannot complete: the type, its module and
-> the payload stay in place until the method returns.  If the type is
-> already gone when key->sem is taken, the check finds key_type_dead and
-> the keyctl fails with -EOPNOTSUPP, as it does for any key type without
-> the method.
+> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+> -- 
+> 2.56.0
 > 
-> Otherwise, behaviour is unchanged:
-> 
->  - The existing checks in keyctl_pkey_params_get(), keyctl_pkey_e_d_s()
->    and keyctl_pkey_verify() are kept, so key types without the method
->    still fail at the same point with the same error.  No call relies on
->    them any more.
-> 
->  - memdup_user() and copy_to_user() stay outside key->sem, as in
->    keyctl_read_key(), so no page fault is taken with key->sem held.
-> 
->  - key->sem is only taken for reading, so pkey operations and KEYCTL_READ
->    on the same key still run concurrently.  Writers such as KEYCTL_UPDATE,
->    KEYCTL_REVOKE and KEYCTL_SETPERM now wait for a pkey operation in
->    progress, as they already wait for ->read().  The in-tree ->asym_*()
->    methods do not take key->sem themselves.
-> 
-> Nothing else in the kernel calls these three methods, so the four call
-> sites below are the full coverage:
-> 
->  - keyctl_pkey_query(): ->asym_query() for KEYCTL_PKEY_QUERY
->  - keyctl_pkey_params_get_2(): ->asym_query() to check the buffer sizes
->    for KEYCTL_PKEY_ENCRYPT, _DECRYPT, _SIGN and _VERIFY
->  - keyctl_pkey_e_d_s(): ->asym_eds_op() for KEYCTL_PKEY_ENCRYPT,
->    _DECRYPT and _SIGN
->  - keyctl_pkey_verify(): ->asym_verify_signature() for
->    KEYCTL_PKEY_VERIFY
-> 
-> This problem was recently fixed for keyctl_read_key() by 925c84e3cc21
-> ("keys: Protect the read method check against type removal") and for
-> key_update() by aef3a8a4f988 ("KEYS: Protect the update method check
-> against type removal").
-> 
-> LLM assistants, OpenAI Codex (gpt-6.1-sol) and Anthropic Claude
-> (claude-opus-5-5), found this while looking for other cases of the
-> KEYCTL_READ problem, and drafted this patch and this description.
 
-This paragrah is no longer required and can be removed. I'll make only
-sure that you know what you're doing. LLM is equal to a text editor as
-far as I'm concerned, which also LLM is neither excuse for anything.
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
 
-I think this is fine but there was a Sashiko issue left that
-still needs to be fixed.
+Thanks, looks good!
 
-
-> 
-> Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops for asymmetric keys [ver #2]")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Yuansheng Yang <0xbeac@gmail.com>
-
-
-Br, Jarkko
+–Günther
