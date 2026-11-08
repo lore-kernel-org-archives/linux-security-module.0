@@ -1,59 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794143777;
-	b=kBpXy3W6FYtpEiFuEcmVWIojEOm6UXslGHr70GFcbC5/7tB43YNFYWMPJM91UolDuLXB
-	 6OyPNfOkyyyMFRzVRzAwY9YxxGCmG/0OYGLOTUXwDNEHeAR4UTi9wxBSb7RWYwREjw+E0
-	 hwJeDoX8L878wF/DoiTPzQCjc3IOen3gVy8z7uLwQVcq1CkNT4/wVqiEkc4ewT9Lys/8e
-	 EYz1gpsD8Lk1gHDMj3rImgRTO+PTzKVIf/70wvApD21AmJyBk1hEhCj/96CKPTXD582LR
-	 55t0r27ZY2j+0i3qM3rL0F5C5ciAF/7ztgydX516APB5PPefcja6xX4GqQKa7OI1zag==
+	t=1794143779;
+	b=3o5PfmitmN0XJR1Zp7eQwzqQRO/EV05irlkYtcLnYuLVKwD5wQyIrQyJ/v7aD6o7RuWC
+	 ZwQ/B173rmKaiCw5oZrXVl8JtrVBgkOanuKJmRL1n/7G13ClFtaN+thxeJCVoqSWYAiu8
+	 2gFU7sycqZuojxgEUrB611+YwJP5NdZXa/f2HA+nBG77m67ObXkqgIETq2CyZWghLRQyZ
+	 isXPJ/feiJ8n49Eo/i7mDxe4mvn6AXlOGR8rtvTv+t9bNMilMFSWcTZzYQ7mf9SMcXfC6
+	 UEb3xK4Q8sOjgjy49TII1szC8jqB8HFs4v052W2ZdKlxbhCS7b4+WpcWmLZaarf+jPA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794143777;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794143779;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=c7fmsKxBEu9XSdetq44EUfIGsTDFd9S52O1w5xWtMjE=;
-	b=dCpZvBtGjrxhnWvkz7Lx+42doo69oeLiwD6PzHTlkB4WshH7LwSEMi5AM72auml6ze2J
-	 IfUFCKWbW+hXDCe9mOea6+X3U4zsYZXUfbU0xQAliEkxdUXcrRWdh4labhu0+9ee1Om6i
-	 sSeltTAAM5BdSnK9EfqyV6vVDWSjxz4rn+7eWeKl2hExyn8VXBb1pZV6QIhjPnp/9F14F
-	 I2ThvRIuTpUK2Bu+0DDAFUPWMkAN/5JSnxgXl46T+Sf7lUo2bD+SCHx1OtX1/pgml/R5/
-	 VFCU1BcwqkdcDJk7F/RfVt5428K4MQ0JW9y81g/+qsYkqdmUIZDMnDjPQGwoGPBgDSQ==
+	bh=5oBjsqRcHKXwn9v27T9TAbsEp9oQiLXIPosNJi/cyPw=;
+	b=UgwTUu7+PSnOJivOIsj683DAsIqZjFicjzYXgLb1ndrlNp/MoYpanb9ohSl1vyE19x6E
+	 jLbjq2ISV+Tt/1CgImJ12B+XhY0+ea8paEsqj/kE0XzAumXehH6gDOaq3K6Ib6f1N3AiU
+	 CGRxDFIUJ5HMgL5wOV1Ofh3eRMWCkJixkDAd7QA9lKs7W/KdmYZkhUi2QviaxO9TxgdDd
+	 1h4Xpu3j9w0H6L58+LHeIKTFn54NEMK86ZHvSlkgAEtu3Gp0L7m0IRFFKDG3Arr/3I63i
+	 f+L+kaXC2gAvsnzMEDY/6hGKUciHiTztn9SmikjdSOAJmva+55OMNaLFMzMBZ/Ru0lQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EqI1p+M6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gUyJeWBK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B529606A330;
-	Sun,  8 Nov 2026 13:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F91606A335;
+	Sun,  8 Nov 2026 13:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EqI1p+M6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD4801F0089F;
-	Sun,  8 Nov 2026 13:16:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gUyJeWBK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7341F0089F;
+	Sun,  8 Nov 2026 13:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794143777;
-	bh=c7fmsKxBEu9XSdetq44EUfIGsTDFd9S52O1w5xWtMjE=;
+	s=k20260515; t=1794143778;
+	bh=5oBjsqRcHKXwn9v27T9TAbsEp9oQiLXIPosNJi/cyPw=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EqI1p+M6SNeTdO5Q+O6BbYUzHc3PUP0YdiWcUWiRYg2n8TUVjgEH0qq3+ziLCipyh
-	 01qSof6GOD7QjawnDm2oPefQjjI8Zkb9jqel5O3k+N1vB19ANX+GbfxaT2AxNRe/1W
-	 TWvWcCcLuZKZlE8XfoSiCSB1YrtRPWp1p57dv0kLBGnmZo9aoFBfuaD6IKPrqaPTFy
-	 2uXxhTidoLdXb+uAE/IKAn1/q99Zcu+ashVZwbBzKzCcrrJeylWAfAVdjeYmS4sad3
-	 jHsBtqSa79fJ6PYCIezJwi+eJaBXLL21C9hMRvQ206EqK7g6WdHRv690HtI4uibE+8
-	 p/GiioXi+/P/g==
-Message-ID: <sashiko-outbox-203762@kernel.org>
+	b=gUyJeWBKw5njYrdlkBHMflYHMA9nWIXBr3Mn63hahII4SQK3QTJZBrhZBkYi4nIpN
+	 VtpRoai5RYEzsJitfjhDgTfNFRlxh1Os6Xhmj+GXkuu3FHrlXFK0rZmuH4d3LecvAe
+	 DkHz6knlBft+QZK4pG6Va0i8Bxfw8dkOj5PsIZYd8LZHXsoyqT0CFn8NsRgphboM14
+	 2LCvF1RY3Usw+Uqie4qKSi2in56L/NKUkN/CMBvY3fUeX0rtX/9AnMDmDlDlHuk14e
+	 gco9UeM8veeAOms5cDFwOJxTY5V+ggRzrjyoZO8szJ9Jbh8FfmGvIE+bEb3oNUnM28
+	 3wc0ayg78jnLQ==
+Message-ID: <sashiko-outbox-203764@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 03/11] NFSv4: Clear idmap keyring cache when the last
- client unloads
+Subject: Re: [PATCH v4 05/11] s390/cert_store: Start tracking subsystem keys
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org, "Heiko
  Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander
  Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>
-In-Reply-To: <20261107131512.3603168-4-jarkko@kernel.org>
+In-Reply-To: <20261107131512.3603168-6-jarkko@kernel.org>
 References: <20261107131512.3603168-1-jarkko@kernel.org>
- <20261107131512.3603168-4-jarkko@kernel.org>
+ <20261107131512.3603168-6-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 13:16:16 +0000
+Date: Sun, 08 Nov 2026 13:16:18 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,14 +62,14 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> id_resolver_cache->thread_keyring caches id_resolver_legacy keys up until
-> nfs_idmap_quit() tears down the keyring.
+> cert_store refreshes its keyring by unregistering and then registering
+> again key_type_cert_store_key. Once keys pin to the kernel module of their
+> key type, this is no longer necessary.
 >=20
-> Once keys pin to the kernel module of their key type, the cached keys
-> prevent module_exit() from ever happening.
->=20
-> Track the active idmap instances under a mutex and clear the idmap cache
-> keyring once the last client has been destroyed.
+> Register key_type_cert_store_key once during init before creating sysfs
+> attributes, and track subsystem-created keys explicitly so that the refre=
+sh
+> operationunlinks and invalidates previous entries directly.
 >=20
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
@@ -78,5 +77,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107131512.3603=
-168-1-jarkko@kernel.org?part=3D3
+168-1-jarkko@kernel.org?part=3D5
 
