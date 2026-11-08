@@ -1,56 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794095019;
-	b=T4IA1tyB52fuTE4Q5PTJ6hxgay+3j4QbCmkG42oN/4OLr0ka/jFr6IJAC4P5fhcsm+y3
-	 0UoAPbeL+DWFV2DPf8Vl1eFaif9l7pZBVLG0tGf8Fgk5tIFQdxjeGPt31G8YsSc5hHOwC
-	 wVqXfJTTM/f2SFkmUVJ7+7bodNRITQ7fjYL3ZmuESwRCbedf3C/jUhuWXsvR5R1b80LXa
-	 W9r9Sk07rwqAoV73Z9sEtVQ49mRxPonSzPrBiLCeFEoD+hfP2NQNnzlNCVSjmPHzNUUUq
-	 7K2uxVRcLXCS8fVVEjtbgKzEurIPUCPuvhLlsyFsfJy2VlTV98MmhKqIKLpezavmfuQ==
+	t=1794096738;
+	b=Hq1gzXNcyPla5Hg8ffQPRUO/ueDe20yYal2qOko6io3S+dTyNPABwCVuZrW5Lfk+lIw8
+	 aI75jKAVN65qEmhKm/wFbvHuyXdd3rGvU8ji+6ZlWV9OwdPKXJSZ111aLtt77XGVBLn5h
+	 0yKsqd+/O922C3zVL62oevdYJehRA3Yqe+LfKzSvhrR2cHV4o4e6oWp4NVkXW0LT4FN1/
+	 aY9ZCTDKzpVy9FZ2Ojh3jMlADbdCT2xJ0HtbVtu0AR+uqz50l3ly867YHIhE0o2ZRmv2i
+	 jiUmp7+8cwQ2TFKXu2MERtYe6auittNhLGQURTfQXTeegQNOT0OfgT9czEXCbc+WQtQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794095019;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=dMp0eB38R0Kry5ZDgWTyPiFqDdhNE64cwZDihhe2LYI=;
-	b=5itrQ5bTdLbqNy2q8jt3MPCovh4zzXoBGLvjtniGf/yHFO3PYxr6jfOmT8u6+Zsx3d09
-	 8vwFMzEj6X0iUIQJcZG8mNTzo5lhYqlDkOLhskduy37rDyPFVgD7YwobHAFwJvacyg+g5
-	 evikCKxH/W2WOqBSSr4sfH7oS3n0VEyGt8LbjLkkyFn+Sqnr58eubRIr8U7CWiIrVRROC
-	 mfn1tArAWLMkbWFetG2Wt0uwQjD2IIak2GrAIJpte+bFPz0swTYrQHbMp3T4QG7D2loCq
-	 nLubLwiGVjuS2bALru1LpKOyRw//4wsvsD3j+Ua1W3Er1Bg5Uz12grZBLavkvfE0SPQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794096738;
+	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
+	 In-Reply-To:References:X-sashiko-severity:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version;
+	bh=WT8wm2a9NQoatQNQVc83RmAaqZCdnlsqxrOAjSePHHA=;
+	b=eke32GgvLTocVLHEoL3UrpNR8XNzOo/Uii92kS00tWellhzYQoqWqj9tkR4He5nN+Jvf
+	 09ZYzapZHzMXlfDPjG5gnaLbTW3Ot38ScZ7gYXLzlUvwymbeuwHcIQphOzWa44utNl/Az
+	 hSKsWirRtSQ///R+5Bwy0x/e+w2XxCzMKahiGzI/0cRsdVv8dPWipHKqMjeB7DYTXbeb+
+	 kOGIi7AzrD8ppWt5hptAr0hDkELYvcjefTLsQVXydhypd/FD12PbFFnlAoeq4YSdf7qqO
+	 WdbpN1QXob0MRXCfkWV68ROMw0vxaaEaONcm+81+r9hzb0E5pdrUVvtQ6bAcxG4mdsQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TabMbz16;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AbrbWu6+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB718606A335
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 23:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972A5606A326;
+	Sun,  8 Nov 2026 00:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TabMbz16
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F39D1F008A3
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Nov 2026 23:43:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AbrbWu6+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F9FB1F0089F;
+	Sun,  8 Nov 2026 00:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794095018;
-	bh=dMp0eB38R0Kry5ZDgWTyPiFqDdhNE64cwZDihhe2LYI=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=TabMbz16v1CTmiIBaErfdN864Uzj5rTJtVpjrWIrWNEdRfj6HY+/kuw75wmPWF4Pu
-	 SLXAktPWN+oPMO1Cp6bdRPxUsmILzvTP4EoFWYZohMnySbuG7IWqsQrM6vdmLhWOnq
-	 ueBUCTwQXmsmmAI6obaWpSS+135LbSmtnTANp3/ywEB7j7+lDwrbcxe/NGn14uMrSd
-	 YhiTEuyIqCfUWTQmG2J1+GLMajfG8irIwYntihWpn/JL/IIJ2DUT/3BE/2Nec8y38C
-	 WEvLye4zMDFvYCiNxe0WaK7E39s0CZTbPK9gXxpVJ5cl3Tb6GZMoykEUir8qma3rzY
-	 c92N0hfOgvAeQ==
-Message-ID: <sashiko-outbox-203399@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net 2/2] cipso: unshare headers before recompiling IP
- options in cipso_v4_error()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261106234313.2537882-3-edumazet@kernel.org>
-References: <20261106234313.2537882-1-edumazet@kernel.org>
- <20261106234313.2537882-3-edumazet@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 07 Nov 2026 23:43:38 +0000
+	s=k20260515; t=1794096738;
+	bh=WT8wm2a9NQoatQNQVc83RmAaqZCdnlsqxrOAjSePHHA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=AbrbWu6+5V95/Fdm4zeoHFsRFKalD9iDryE2p6LFwSp5ivwYTG6mLLE849eTx+WAJ
+	 Jnic/mRoRgOT6XE3lzu9DwVZhyNdHIoj8hESMEAxwkknYKVPTwy7aJ7CdF3fsMm4F3
+	 SdOYxKq8w15E4ISLTM0n9hxgHlcz/wXdQmvBIS6HYwa5UPjOWpWjTIJEr+1YqLuUIH
+	 +9gqVl4a/hR7nt59KFAi+kD0nGsggDBWteexko8Tn2kRpn/HSZW2NrWAG35DgBDfbH
+	 SId+Ez1+rY1m2kulhy6rOyncaST7IBSQZJ0yLKsCI5qorfMEf1OyMC3JsIIg6LF3kO
+	 gjlwAT0wZlZyg==
+Subject: Re: [PATCH net 1/2] ipv4: unshare headers before recompiling IP
+ options in ipv4_send_dest_unreach()
+From: netdev-bot+sashiko@kernel.org
+To: edumazet@kernel.org
+Cc: kuba@kernel.org, davem@davemloft.net, pabeni@redhat.com, horms@kernel.org,
+ dsahern@kernel.org, idosch@nvidia.com, paul@paul-moore.com,
+ linux-security-module@vger.kernel.org, kylebot@openai.com,
+ netdev@vger.kernel.org
+Date: Sun, 08 Nov 2026 00:12:17 +0000
+Message-ID: <179409673700.994134.1614691544438367987@kernel.org>
+In-Reply-To: <20261106234313.2537882-2-edumazet@kernel.org>
+References: <20261106234313.2537882-2-edumazet@kernel.org>
+X-sashiko-severity: High
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,33 +63,112 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
 
-> cipso_v4_error() recompiles the IP options of the offending packet with
-> __ip_options_compile() before echoing them in an ICMP error.
-> __ip_options_compile() updates Record Route and Timestamp options in
-> place.
->=20
-> cipso_v4_error() is called from the LSM socket receive hooks through
-> netlbl_skbuff_err(). ip_rcv_options() unshared the IPv4 header earlier,
-> but at socket delivery time the skb can again be a clone sharing its
-> data with other skbs, such as the per-socket clones made for raw sockets
-> or multicast/broadcast delivery. Writing to the options then modifies
-> packet data seen by the other users of the buffer, and a concurrent
-> recompilation would hit the same check-then-write race as the one fixed
-> in ipv4_send_dest_unreach().
->=20
-> Make the header private before recompiling options, as ip_rcv_options()
-> already does. If the copy fails, do not send the ICMP error.
->=20
-> Fixes: 3da1ed7ac398 ("net: avoid use IPCB in cipso_v4_error")
-> Reported-by: Kyle Zeng <kylebot@openai.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: linux-security-module@vger.kernel.org
-> Signed-off-by: Eric Dumazet <edumazet@kernel.org>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue(s) to consider.
 
-Sashiko has reviewed this patch and found no issues.
+Critical: 0 · High: 1 · Medium: 0 · Low: 0
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261106234313.2537=
-882-1-edumazet@kernel.org?part=3D2
+If you believe none of the issues are legitimate, please reply to each
+issue of Medium severity or higher and explain why the AI is wrong.
+If any of them are legitimate and you plan to respin, please let patchwork
+know by including "pw-bot: cr" as a separate line at the end of your reply
+(one such reply per series is enough).
 
+- [High] This patch adds skb_unclone(skb, GFP_ATOMIC) to
+  ipv4_send_dest_unreach() (net/ipv4/route.c:1272-1274).
+
+--
+
+ipv4: unshare headers before recompiling IP options in ipv4_send_dest_unreach()
+
+The patch makes the IPv4 header private with skb_unclone() before
+__ip_options_compile() rewrites Record Route and Timestamp options in
+place in ipv4_send_dest_unreach(). The goal is to stop concurrent
+link-failure processing of clones from changing an option pointer after
+it has been checked. If the copy fails, no ICMP error is sent.
+
+> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+> index 3a90c8d28b940..4d8fcc95c2f46 100644
+> --- a/net/ipv4/route.c
+> +++ b/net/ipv4/route.c
+> @@ -1269,7 +1269,8 @@ static void ipv4_send_dest_unreach(struct sk_buff *skb)
+>  
+>  	memset(&parm, 0, sizeof(parm));
+>  	if (ip_hdr(skb)->ihl > 5) {
+> -		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
+> +		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4) ||
+> +		    skb_unclone(skb, GFP_ATOMIC))
+
+[Severity: High]
+Can this skb_unclone() leave stale header pointers in callers of
+dst_link_failure()?
+
+ipv4_send_dest_unreach() runs as the ipv4 dst_ops->link_failure
+callback. Before this patch, a header that was already linear was never
+reallocated on this path, because pskb_network_may_pull() returns early.
+Now, when the skb is cloned and has options (ihl > 5),
+pskb_expand_head() swaps skb->head and calls skb_release_data() on the
+old head, which drops this skb's reference.
+
+ip_tunnel_xmit() in net/ipv4/ip_tunnel.c saves a raw pointer into the
+head before calling dst_link_failure(), and does not reload it
+afterwards:
+
+ip_tunnel_xmit() {
+    ...
+	inner_iph = (const struct iphdr *)skb_inner_network_header(skb);
+    ...
+			WRITE_ONCE(tunnel->err_count, err_count - 1);
+
+			dst_link_failure(skb);
+    ...
+	tos = ip_tunnel_ecn_encap(tos, inner_iph, skb);
+	ttl = tnl_params->ttl;
+	if (ttl == 0) {
+		if (payload_protocol == htons(ETH_P_IP))
+			ttl = inner_iph->ttl;
+    ...
+}
+
+For header_ops GRE devices, ipgre_xmit() in net/ipv4/ip_gre.c also
+points tnl_params into the head:
+
+	tnl_params = (const struct iphdr *)skb->data;
+
+The call chain is:
+
+ip_tunnel_xmit()->dst_link_failure()->ipv4_link_failure()->
+ipv4_send_dest_unreach()->skb_unclone()->pskb_expand_head()
+
+Cloned skbs do get here. TCP transmits nohdr clones, so
+skb_header_cloned() is false and skb_cow_head() in
+ipgre_xmit()/gre_tap_xmit() does not unclone them, but skb_cloned() is
+still true. An unprivileged user can add RR/TS options with
+setsockopt(IP_OPTIONS). err_count goes up on ICMP errors from remote
+hosts in ipgre_err().
+
+After the expand, the old head stays alive only while the other clone
+holder, such as the TCP rtx queue skb or a tc-mirred original, keeps its
+reference. If the tunnel has a qdisc, the clone can be sent without the
+socket lock, and an ACK on another CPU could free the original. That
+could happen during __icmp_send(), or even inside pskb_expand_head()
+between the skb_cloned() check and skb_release_data().
+
+In that case, are the inner_iph->tos, tnl_params->ttl and inner_iph->ttl
+reads use-after-free reads, with the stale bytes written into the outer
+header's TOS/TTL?
+
+Would it be safer to compile and echo the options from a private copy
+rather than uncloning the caller's skb inside a link_failure callback?
+Another option would be to reload inner_iph and tnl_params in
+ip_tunnel_xmit() after dst_link_failure(). Either way, it seems worth
+checking the other dst_link_failure() callers for the same pattern.
+
+>  			return;
+>  		parm.opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
+>
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261106234313.2537882-1-edumazet%40kernel.org
