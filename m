@@ -1,57 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794139036;
-	b=J/LUumLoGXc8Dk8L4DZS+pSPqZwocL4Jrh9z/XwxoU0f2JHFG6RgHYQlZTly1w4IV9uA
-	 lgJ8Ry+uQzZxhRV4phgL4WusWl2ftJZekNRAeX9c3wpjihNqxj+UY1BM9d3KZ/yRnkVGa
-	 MdpMQ2AnguHQLuUMGHdbosJY28iatfA+i9U3+cCPUbnFsK/w8HpVXeFKSu4gQ5Hz5usuT
-	 6Sakz2oVtDpcpZuMJ0eEu3KLgKuzyEYOQJMIsonap0jJ2R6hRfnfiv3bDphX6q+uicbqK
-	 9C4nEhizIzQKvcXIPp15m0RMCnhnLHwiFKtBg1ZW63VSJ9PjNg5xkdT65ewYH1v+0aw==
+	t=1794142460;
+	b=HANtxk7wE3ye6+ZZS6C7L1Hq3UwVQYaQGE70L/lCXirvr4ogoMCV5JOFZK2qcFDUIm1B
+	 CrZSpLgCKv/stYQiCuvW7H1l/hUdZEt5m39ga71x5uUhu8okl9b3x/NYt9RttwFl3/acV
+	 kdALmsUVOsknOSOM0C83ZcTM+6LZAklNiFksz4RVKYyzMRrm2S5/mydOJaYUox+2mYknO
+	 k4vjBTVxGwOCKkZ9igioBCf9FdqQIIJ9uo+tuFOxC/1w5Zj8uKogALmgtspktfzJTLKJo
+	 3m1kuN6yjzp0Lncz22b6mCNeByanTzoST1WpnQ37aEKwCWTsPM+UGCmIpA92EEJgHhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794139036;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-CM-TRANSID:X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
-	bh=LA04o6F/GVQrfAhvN9QN+XhNGko58dQFSaUFxZw+K0w=;
-	b=FOIxX2sPJdgbK3QTP9ONG5cnVX4mq+gmCnrJoTx19l6yefQ77bdzofyYwNIR5If59tus
-	 VRQz+IPaEMWvD+w+YSTbyDurGQGKDCn9SlBLixEI8MKtRZda5E50vzKpFUWB+L6sCcge4
-	 L/JCkrO8SaxbsFziKxq9+y3HVr813pwy8/qWz/6LTj92qk9BF7zR7rlIgx7nVQJZtKPgh
-	 qqVgWPR6s2BFf61NTUU56PiQN5Pc2pKOkZIY7cFXdXS4CM+P18bxDcg8sedVdI6hnxrGf
-	 D6QMcu+f/dwNfQfYTMEeanCe2rENdPEBSB1GPDyQoSHoC8ygc6cKUtXNGYk/LZB19Hg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794142460;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=S+YnvTW9wjLG9Bb1xdTq3cc7U/wCPzi1Ggn3aEWL+QI=;
+	b=FWJqWWjWaUwe7GA9lwrOYed5+pz7xUe425OBJvRCkwHk9LKOdumAbEZXWROeq9AyPfzo
+	 ZbuW1ezGQ9pfY7iGsKnVok5GXaEPekZQ3IYAmXce/bSlGbU3o5SXApCf2RntyzKUX7GoT
+	 CVu6aXrIcWFjZ8JuuvOuKjX0i+qEP+kJ6Wm9voX3yJYyyE0XeMSyniLXmood4gCRKg4k8
+	 T7DrzNsy5MJetFVYHvasVQJ0XtBrIiIzc9Stz/lht1+4QWNWalFPmm4fCTDTIBVc3nTr8
+	 N7Kz+0/M3zpC4188pA8Kn86aO8Yz3yB1QKooLpkwNN32DUzim5OOsoNA6UkhadbXpkw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iscas.ac.cn;
-	spf=pass smtp.mailfrom=iscas.ac.cn;
-	arc=none smtp.remote-ip=159.226.251.25
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HST+DHzN;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8176E606A321;
-	Sun,  8 Nov 2026 11:57:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8176E606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [172.100.0.8] (unknown [36.110.52.2])
-	by APP-05 (Coremail) with SMTP id zQCowAC3TbONY_Bqd9OaAA--.22241S2;
-	Sun, 08 Nov 2026 19:57:01 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Greg KH <greg@kroah.com>,
- Ryan Lee <ryan.lee@canonical.com>,
- apparmor@lists.ubuntu.com,
- jmorris@namei.org,
- linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- paul@paul-moore.com,
- serge@hallyn.com
-Subject: Re: [PATCH] apparmor: Fix label reference leak in aa_unix_file_perm()
-Date: Sun, 08 Nov 2026 12:40:00 +0000
-Message-ID: <20261108124000.3300202-1-vulab@iscas.ac.cn>
-In-Reply-To: <da2651ff-ecc8-4b7d-b9f3-99f148844ff3@canonical.com>
-References: <20260917164136.2162858-1-vulab@iscas.ac.cn>
- <CAKCV-6uui82r4U3+ab=2ZFQvGQYnxfhYMHJNzLim-HEw6pRp7A@mail.gmail.com>
- <760b1f31-32f6-44c6-8a5b-991f228a327f@canonical.com>
- <2026091851-recent-ungraded-23eb@gregkh>
- <da2651ff-ecc8-4b7d-b9f3-99f148844ff3@canonical.com>
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C8BF0606A31C;
+	Sun,  8 Nov 2026 12:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HST+DHzN
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8DF571F0089F;
+	Sun,  8 Nov 2026 12:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794142459;
+	bh=S+YnvTW9wjLG9Bb1xdTq3cc7U/wCPzi1Ggn3aEWL+QI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HST+DHzNkQ1gw3AIpd5D0TgEIQolNUgaQB9q3S8j8KXW+uTqPNqvM8T0TTL4jFzW+
+	 8fneCgSKng5GEK2sP82/xhwzqlqgXhd3RBI6qsRDgn8dp5gNK1oIL8Ao3I5gcCyL+7
+	 wz4384LrRO97ZlPNnpbvfJ5bwVxJafoDd9PNg8q98LKXIJGZRNtG/CErKEdVDta5c9
+	 te2zVyCjNm05bgFQBEQks//164933xqL3KJltQjDTlEm9OFRN2Fl9el+ZZF8beOPTF
+	 +n4QDzjA9vwmInwZ9d04Lg1Uq07df41UopVKlvjsyABmJ1mge57z7oG8RJ8S7YsLui
+	 86ewMO/v9JKYA==
+Date: Sun, 8 Nov 2026 14:54:15 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, bpf@vger.kernel.org,
+	dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
+	keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Ignat Korchagin <ignat@linux.win>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH v6 0/3] KEYS: Replace assoc_array with rhashtable
+Message-ID: <avBw92ZChNT6E8cZ@kernel.org>
+References: <20261107195605.3929659-1-jarkko@kernel.org>
+ <au-FkAtC4Gcw7Bkb@kernel.org>
+ <20261107204210.GG6049@quark>
+ <avBVgZt92j3OkpOG@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -62,31 +87,33 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:zQCowAC3TbONY_Bqd9OaAA--.22241S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYa7k0a2IF6F4UM7kC6x804xWl1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVWxJr0_Gc
-	WlOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxAIw28I
-	cVCjz48v1sIEY20_Gr43Wr1UJr1l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JF
-	I_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJr
-	UvcSsGvfC2KfnxnUUI43ZEXa7IU1nNVPUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAMFA2rv4qjIgQAAsP
+Content-Disposition: inline
+In-Reply-To: <avBVgZt92j3OkpOG@kernel.org>
 
-Hi John,
+On Sun, Nov 08, 2026 at 12:57:09PM +0200, Jarkko Sakkinen wrote:
+> I think know what is the problem here exactly. It's the prepending bug
+> fixes. Sorry, I only now realized this althouhgh it should be quite
+                                                             ~~
+                                                             have been
+> obvious.
+> 
+> I updated mainline few days for the sake of v7.4-rcX PRs late this
+           ~             ~~~~ 
+	   the           days ago
+			 
+> week (I think it was Thu or Fri) but linux-next was not up to date
+> last time I checked.
+> 
+> One I'm able to send the PR containing the fixes, I'll do that and
+  ~~~
+  Once
+> once that is in the mainline. I'll send a new version of this patch
+                              ~
+			      ,
+> set.
 
-Sorry for the very late reply, and sorry for the confusion. You are right,
-this was already fixed by 4483efe4f2151; I was working from an outdated tree.
+A few keys of my laptop's keyboard were stuck when I wrote this. Thus, I
+had difficulties to write a proper email :-) Now that I'm reading what I
+wrote, the typos started jump into my eyes, so thus the corrections.
 
-Please drop this patch, I am not sending a v2.
-
-Thanks,
-Wentao
-
+Br, Jarkko
