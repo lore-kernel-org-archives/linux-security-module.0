@@ -1,55 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794164469;
-	b=Kwnnk//vcEK4iJy7xfSSFdRtZAFQF9SJSAu6+qPFOfc4Ql764K461UDAoppFcpMMNiN6
-	 p5RTDDaA5793U0FcUk4nf6v1WlY2f4uF1PaLW8P0wIdpJoj0SSFAs1hCD84xMe7FW8ljT
-	 j0csS3YDMRrf+fQHRFqAHwAX58JsA8ArMNCx4pJcPm7Vyijo9bp0EUsq5pEQC0BcZqhZt
-	 10zANl4Sk0jcC+txcQcB/n3CSmyisGvzigwesBFCfj+y6kxYc8BKCAZ++LFQzvkzvDsfZ
-	 ysA8Xm1anoui1EijscQX8epm2gfsHomtK59QTjVStuycILTodzaZtTiHo8H58Rbkf2A==
+	t=1794164749;
+	b=IRwurULyhm+wTumn40tQ8aZhW7htVNwsJCWHZiiQ8SZD2o8oreVMGIPvOFCSfCokjsrd
+	 WexL9fVyOf3U4N4uZpmJqSl/wf9na9IvSd/iu8hNC8HrXCwXwXQfcWv6n+goby+NjGSbS
+	 ZmI7Dae7au3r6ijnVnmiWHZKYXEWpmRPQ0L/GZegC22pIQhJKrJbwnGzjP9BN40XFsguw
+	 29u2qU2bsIPG/SsuppzHtfMINnoj7t1X1KlUn+4sPItv3x8TsIEYwHyvsj57GTNeJ7itt
+	 eIfsxUf/eUldAY2m0qpB+Rn3Wx0Lodt08hlXCaD9ZZ1kGKH6lAZ74ZF/NXcp32+a0Lg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794164469;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=J2OZnMRPZWDr0Ehw9VOaD0buj7IMXLulkbhp4A0eTa4=;
-	b=z8UV5HG9kkGd5EH65b13HIoXcoXWZ67RnSvt4BzrS8oyLz6altbXDU7tC6ehfyHqCadO
-	 opWJpwCc/Y4rVRk+pxoA4l4ZWtr+ITFMoFYvuvmODCNrLSEPgMw4iiYLIv+5gxADIlz+6
-	 QKYy+3IvJOLEeiCm0jOafL9t+Y1Fjjsd1XvHvMnNRUWni3R969hXGm9jSJDW+ybiMfR2g
-	 O40xbM9Smd49PTQT8fTypgKs8onTG50N81/36qwF75YGPDS8lYM5xYjF+iIlYlZRXdSqx
-	 M5/MPy1u0VHAMKyN16AJnO3lLBy5sbbb5Fn73sg4yMHvBtDQNUbEPSZ2DrzCsCijQ5w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794164749;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
+	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
+	bh=rLyxJwr2Q1zmyzbvbW4Jg4mYpaRFZWR35m+j3Gs4cMU=;
+	b=v5MVoTZEb+FNmsW3+mcPNHWosCAG36gbi3T/XyV2QrhOSMaZ1ZOFxtgk7l6o5uEVYxj6
+	 4HUgJMZQTrR+ak9e2t+ysnd4WIV7HPKSvsEJfJZ5TEPtjfVzw3pCvBWsPndRamfT4eBvQ
+	 /wo9PqlY+7h4lPPQnDokEuxUWN8LW4IYmW1Vu7Krjo98TXN6aExyV9ZjmjNkk+yYJhByn
+	 xISvQPLPUg5QWLZ4Brn4SgjlUtsW1lsO82lV6j9Y7LXFOKsaj4XFkooVvJWOncTuMUE9K
+	 Wk6HNRC8fWw0ZuQhuaMf6ilHclbrxgqxfxm1tlYW2S7F7ykJDd1pRMev/XEteWIhtkQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bGCK5gXB;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.cyber.gouv.fr;
+	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
+	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=a5SwbWrC;
+	arc=none smtp.remote-ip=51.159.188.251
+Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id F12ED606A31C;
-	Sun,  8 Nov 2026 19:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FB7606A320;
+	Sun,  8 Nov 2026 19:05:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60FB7606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bGCK5gXB
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id F199B1F0089F;
-	Sun,  8 Nov 2026 19:01:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794164468;
-	bh=J2OZnMRPZWDr0Ehw9VOaD0buj7IMXLulkbhp4A0eTa4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bGCK5gXBoyab/ta/SrHISmqSENnoR5Yy57b6ND2h21QajmEXa4Nzeex3iAw43Wn4y
-	 xr4OGx7G1azZrBkbe6y6guMYZGtnktPN9v9hvve6rFvziMAeifc1S4WBAAwXpP3e/6
-	 Oba+FdG0DW4qYqZ1B6uYGp4P4MYBHDwTiLTDYL83bNnSfwUjp5ooHdCif2LMO9AtoZ
-	 hQdhv2urLRYojj1FTzs3B+gQkwXKVv8NS4ByCfC+Wf9q/YCDdGtLjyn5jHOVBsiURR
-	 wun2eP0y5HxLXrkvPMF6xH+cXDjnpNkMT/i/sHTZXgOIzjsgNRX2NL27O6Un00lDNs
-	 AKsDNIsKrQ41Q==
-Date: Sun, 8 Nov 2026 21:01:04 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Guixiong Wei <weiguixiong@bytedance.com>
-Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: do not let an unmatched key decide the search
- result
-Message-ID: <avDG8G-Jl1YsmfCs@kernel.org>
-References: <20261108131413.12012-2-weiguixiong@bytedance.com>
+	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=a5SwbWrC
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Sender:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=rLyxJwr2Q1zmyzbvbW4Jg4mYpaRFZWR35m+j3Gs4cMU=; b=a5SwbWrCywIz3dU7Pd5cFDAovJ
+	tw1hgr/BiXpgfHmDacdZlRj1+jIEe9f9QDF5XE1GMEQyMAy3ENDUBtM6fwSiIimMTgBcOZzOWKtUX
+	m+9rAKuXEtL7N7bl+bZT7OBAKuOGgyVSsVSNq5O8uufgFwtt40p3BXSI38F7m3t6/HDLkBBBWycqw
+	xhkvHRBjX9rdMgpVQnRmwtiCIXqqH/rpSGY7ixvOEyjv3dtgsbx6Wb5iLvRdNGIAgKcaPyLFzxMZn
+	WUGPxze9Lu+1LYeboGWEw3DI44JTkjYHZnxvSmCCT1HwEv8+VjhioWMfqdXE/Gumlka30XCl4wRVK
+	oZ5TfiAg==;
+Received: from [151.115.150.205] (port=41786 helo=gepetto..)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <Jeremy.Jean@oss.cyber.gouv.fr>)
+	id 1xQ8D4-0000000GibV-17vF;
+	Sun, 08 Nov 2026 20:05:46 +0100
+From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <baoquan.he@linux.dev>,
+	Mike Rapoport <rppt@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org,
+	=?UTF-8?q?J=C3=A9r=C3=A9my=20Jean?= <Jeremy.Jean@oss.cyber.gouv.fr>,
+	stable@vger.kernel.org
+Subject: [PATCH] ima: fix kexec measurement buffer overflow after failed loads
+Date: Sun,  8 Nov 2026 19:04:04 +0000
+Message-ID: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,96 +81,107 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261108131413.12012-2-weiguixiong@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Sun, Nov 08, 2026 at 09:14:12PM +0800, Guixiong Wei wrote:
-> KEYCTL_SEARCH returns -ENOKEY, -EKEYREVOKED, or -EKEYEXPIRED for the key
-> selected by type and description.  keyring_search_iterator() currently
-> records revoked or expired state before asking the key type whether the key
-> matches.
+When kexec_file_load() fails to install a new image, it can leave the
+global IMA scratch buffer larger than the IMA segment of the current
+image. When that image is executed, ima_update_kexec_buffer() copies
+the larger log past the end of its reserved segment. In a test, KASAN
+reports it as:
 
-I don't understand the "asking the key type or" part here. Please,
-explain what you mean.
+  BUG: KASAN: vmalloc-out-of-bounds in ima_update_kexec_buffer+0x265/0x280
+  Write of size 868426 at addr ffffc9000004e000 by task init/1
+  ...
+  Call Trace:
+   ...
+   __asan_memcpy+0x3b/0x60
+   ima_update_kexec_buffer+0x265/0x280
+   ...
+   blocking_notifier_call_chain+0x88/0xb0
+   kernel_restart_prepare+0x18/0x40
+   kernel_kexec+0xe4/0x130
 
-> 
-> Direct lookup visits the indexed description, so that ordering normally
+Limit the dump to the smaller value between the scratch size and the
+installed image segment size. Update the IMA mapping only after
+machine_kexec_post_load() succeeds.
 
-"Direct lookup visits the indexed description"
+Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to execute")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jérémy Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+---
+ kernel/kexec_file.c                | 6 ++++--
+ security/integrity/ima/ima_kexec.c | 8 +++++---
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-I don't honestly understand this type of jargon, which is all over the
-place.
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index b668ce8d68eed..0b3245389b758 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -206,11 +206,13 @@ kimage_validate_signature(struct kimage *image)
+ 
+ static int kexec_post_load(struct kimage *image, unsigned long flags)
+ {
++	int ret = machine_kexec_post_load(image);
++
+ #ifdef CONFIG_IMA_KEXEC
+-	if (!(flags & KEXEC_FILE_ON_CRASH))
++	if (!ret && !(flags & KEXEC_FILE_ON_CRASH))
+ 		ima_kexec_post_load(image);
+ #endif
+-	return machine_kexec_post_load(image);
++	return ret;
+ }
+ 
+ /*
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 0d845693a1f78..f7be8d85bb9a7 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -65,7 +65,6 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
+ 
+ 	ima_free_kexec_file_buf(&ima_kexec_file);
+ 
+-	/* segment size can't change between kexec load and execute */
+ 	ima_kexec_file.buf = vmalloc(segment_size);
+ 	if (!ima_kexec_file.buf)
+ 		return -ENOMEM;
+@@ -98,12 +97,14 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 	struct ima_kexec_hdr khdr;
+ 	int ret = 0;
+ 
+-	/* segment size can't change between kexec load and execute */
+ 	if (!ima_kexec_file.buf) {
+ 		pr_err("Kexec file buf not allocated\n");
+ 		return -EINVAL;
+ 	}
+ 
++	/* A failed replacement load may have resized the scratch buffer. */
++	ima_kexec_file.size = min_t(size_t, ima_kexec_file.size, segment_size);
++
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
+ 	/*
+@@ -239,7 +240,8 @@ static int ima_update_kexec_buffer(struct notifier_block *self,
+ 		return ret;
+ 	}
+ 
+-	ret = ima_dump_measurement_list(&buf_size, &buf, kexec_segment_size);
++	ret = ima_dump_measurement_list(&buf_size, &buf,
++					kexec_image->ima_buffer_size);
+ 
+ 	if (ret)
+ 		pr_err("Dump measurements failed. Error:%d\n", ret);
+-- 
+2.47.3
 
-> does not matter.  Iterative lookup visits every key of the requested type,
-> however.  The in-tree asymmetric id/ex/dn lookups and dns_resolver use this
-> mode.  A revoked key with a different description can therefore make
-> KEYCTL_SEARCH return -EKEYREVOKED instead of continuing the search.  It can
-> also prevent request_key_and_link() from issuing an upcall because that
-> path only upcalls after -EAGAIN.  An unmatched expired key similarly
-> pollutes searches that do not set KEYRING_SEARCH_SKIP_EXPIRED; the request
-> path itself sets that flag.
-> 
-> Run the type comparator before recording state errors, so only a key that
-> matches the caller's criterion can decide the search result.
-
-
-Can you describe instead describe the what goes wrong with an example,
-which does not require much effort:
-
-	keyctl new_session >/dev/null
-	A=$(printf '127.0.0.1\0' | keyctl padd dns_resolver foo @s)
-	keyctl revoke "$A"
-	keyctl search @s dns_resolver bar
-
-Results:
-
-	keyctl_search: Key has been revoked
-
-This example alone is not of course enough because it is lacking
-explanation what goes wrong, which is neither clearly described by
-the commit message but you could add my reported-by because at
-least I constructe a real bug report that justifies this fix.
-
-
-> 
-> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> Signed-off-by: Guixiong Wei <weiguixiong@bytedance.com>
-> ---
->  security/keys/keyring.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index 7143f3079d200..39645b8f9b30c 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -598,6 +598,12 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
->  		return 0;
->  	}
->  
-> +	/* A key the caller did not ask for must not decide the result. */
-> +	if (!ctx->match_data.cmp(key, &ctx->match_data)) {
-> +		kleave(" = 0 [!match]");
-> +		return 0;
-> +	}
-> +
->  	/* skip invalidated, revoked and expired keys */
->  	if (ctx->flags & KEYRING_SEARCH_DO_STATE_CHECK) {
->  		time64_t expiry = READ_ONCE(key->expiry);
-> @@ -617,12 +623,6 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
->  		}
->  	}
->  
-> -	/* keys that don't match */
-> -	if (!ctx->match_data.cmp(key, &ctx->match_data)) {
-> -		kleave(" = 0 [!match]");
-> -		return 0;
-> -	}
-> -
->  	/* key must have search permissions */
->  	if (!(ctx->flags & KEYRING_SEARCH_NO_CHECK_PERM) &&
->  	    key_task_permission(make_key_ref(key, ctx->possessed),
-> -- 
-> 2.55.0
-
-Br, Jarkko
