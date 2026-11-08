@@ -1,60 +1,116 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794165548;
-	b=N9N22Qg7gy+DR3KqAO0pAqW2jXJfxjeipbmtRWO13L6VTMCGQyrlIS4TGlLaqgifmxXd
-	 V9/SWmtgXpGpwdQ6EDIKofIXA+lrDO7PxsJ9sCTAR58R8PUUVz+xLdsBGjT7C5wIRJr6G
-	 lqtRawuJRfjQkEA9xmsjGN7kcbJSeYrN4edm7luaW+262iTLQuELDRT6TYDXH1iSYkTiK
-	 idyGnr4BRqevQ1+aIUg0lfX8kPr9c2aiTRfY4rHLk/X5XkeXbkA6Idf5/7mwcoOmFls3q
-	 +mhU5d9MbgK3IltM42+VVt/pN+nvkT9Kn9eZ8rTbVCLMMNvOUzjD4Xmhrjd0R30l38g==
+	t=1794168330;
+	b=UzONEWi9TYR4p8UdiAB1GLpN6iQ9dEy1M3QYrtN2ZPFHh/kqeFa+AONqiTI3U/FPrG/l
+	 j7/VeEXUo2XufjHBdM7G3f5YEP6eY8hZBT4fH9oeXAmSgJT31n56mumjCpurZ1yTY1SRg
+	 QS0PE+gZgIHt6LtQ0CWPb1O09sutxBpyedYYGuijd1rTdw9kBqlueJKH+VN2GqYLz7ypD
+	 7CeVJ7Pwk73xCu6DyFY3OArB+q/zMJRDlekjE2u7VYS5g2qlnevxVNmiOXWNT8WCzyPbl
+	 y+2vtfpAq5VmX/ZBtqFv21Sv4r5qVR283qKS41ikstIb62lgDbkp5SiMNarQh8SnL6Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794165548;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=NV/yQ+bbys08EWW5BKKubq/IKhYKNF9d2qVqDr2vxDk=;
-	b=R5NhF1sYQWZFgFXS4PjcOTp+hIeOCfbPNvgXTbacK2CC45z16ljwAS/Jc8RBipggb42N
-	 NS0sw7vit6qSvgTlP2C4zZSPWjJWgm9J6cY0l2+gHJzEU08f+fNr/mRstM1e4BTqUWu1i
-	 kIeXSxwCCsMVCUCKerri0Eef8DjdbcM8/EqcOCzRMZxfODw8tfT0hLNDf8YgnpSvVVUzG
-	 3Ei/+TMiNFY92wguOSfrvvdY1bnu6Mt79k5WtlEEIlZ8YqKOUZh3skRmj749dwJz+KVuc
-	 1eD34DX0qOyusdonbyLeWFUTfdphyDpFqMvbXa6mNhn5905gMCtMy7o9xFWwbvhwReQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794168330;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=NsI7ZZLkYjCZutUVEg7TJNtNpCk2xGDMbVs7o+8cm3Y=;
+	b=DKNLssF00sundtfFrDMczDyhytmaZ8Bjpdj8MyBT5B/sySIdJ9Rjl4Iq4EhwBChAvKXS
+	 Ju5PTG7r3/Pa1yGkQJ5UK1E5h2q0E7Bk2WHo4uL62mwR+y5iXtGy+hpOn9knNyhhtb5V4
+	 Aw9BzJuczVzjAHYyRKe/Ar7F2OvGZN7qX1rF2HmF7cfGX2HW9xnbuakXkxztOtRLlA9Lr
+	 yqfa2ddtt5uknEGbuguqYQjNftFVjPwyN/Vp1CxHYUn4iYIgs6CoWwUSvUIOLi6Zbs8mg
+	 7kdzvj4MpPUZrmqOw+CEwIcb/o0EyXeUSv+lTsE6I5++GkJksh50e6z4xOaVJo/pWIw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hxX+GNpp;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ib7c6P66;
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F04B606A320
-	for <linux-security-module@vger.kernel.org>; Sun,  8 Nov 2026 19:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BEA606A326
+	for <linux-security-module@vger.kernel.org>; Sun,  8 Nov 2026 20:05:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53BEA606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hxX+GNpp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 943991F0089F;
-	Sun,  8 Nov 2026 19:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794165548;
-	bh=NV/yQ+bbys08EWW5BKKubq/IKhYKNF9d2qVqDr2vxDk=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=hxX+GNppHjNMZegi7HRZWEUzzzGMaI6R78y5+1t4loK6bjfGWOFqiayMx2v5Uoe02
-	 tpl6pDaRkYM7ubclLKd88zPysesMg+RO37jlnd4FaXCjODt9zwRKRnaiJFOpikW0/j
-	 K+c4coPD3IsTrSJe521w+AgMQx6n4uOgN19spIkSEFmSMLyL3Zo/dHCgd20sbcmk7c
-	 +owr88UnWBmhkvlwfvLxlb1YOv+xMXSZhH0sVdWX/erXuLhbxoRRR2KWIfHmuyVRQZ
-	 K2Sjkd4pZfDF9rimzTUwq2siaPYCk5wI3gD2C3Xdke7ON2QZhENWFHZqvZrFKaV0nt
-	 bLnHEm0kXNQLw==
-Message-ID: <sashiko-outbox-203933@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] ima: fix kexec measurement buffer overflow after failed
- loads
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?SsOpcsOpbXkgSmVhbg==?= <Jeremy.Jean@oss.cyber.gouv.fr>, "Andrew
- Morton" <akpm@linux-foundation.org>, "Baoquan He" <baoquan.he@linux.dev>, "Mike
- Rapoport" <rppt@kernel.org>, "Pasha Tatashin" <pasha.tatashin@soleen.com>, "Pratyush
- Yadav" <pratyush@kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto
- Sassu" <roberto.sassu@huawei.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>
-Cc: "Eric Snowberg" <eric.snowberg@oracle.com>, linux-security-module@vger.kernel.org, kexec@lists.infradead.org
-In-Reply-To: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 19:19:07 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ib7c6P66
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so1548945e9.3
+        for <linux-security-module@vger.kernel.org>; Sun, 08 Nov 2026 12:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794168329; x=1794773129; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=NsI7ZZLkYjCZutUVEg7TJNtNpCk2xGDMbVs7o+8cm3Y=;
+        b=ib7c6P66JcABRQVIYvbAfEuMzOdspSzPtZfn7p5hZaB2Rr9aWYVjAA8lHghOcTHkfP
+         W1IBKWn61CtXgoJPbCEozcqCpgRPGxULcN94D7ITtmHErVGmr3isoGCQ02nfNqhbH+4n
+         lUM22s4MKp/l6fyffg7/TutUQVALjesHSFnC4w+1WVPSvW0J5rknAYGDJAl4xvCRXDT5
+         fBdxAtmJXU6SiF6lguNdvRiiwtq6Km8nyFGsRU6Tq+7fwVjsnnI/ZpxcJdUfsPAfNVOr
+         BXFpKVyK/3a7Qj/Qjq4EwXbAdcjWWztzIsYea9a0P/MiY6n2EtEGPByGhhhA0f0X0qYJ
+         P5GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794168329; x=1794773129;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=NsI7ZZLkYjCZutUVEg7TJNtNpCk2xGDMbVs7o+8cm3Y=;
+        b=x0M1Ipya9JW9I92HoTkq5wuCQO2v5FbsP1O21PPniNfpnjKvF+GCceDrMuQqBevK7X
+         SicnC+dy3ugHNKW1SN7nWNXxN41I/QgJzWnPFlKOvhZzKdFlfcUnnJXeaaZl+woSnwr7
+         y8R03B/KmvGWBQ5y0MqZ/KEZmlJvltVzNZXa/QxDVmhPXvXDOyFnuk5dkT1RZ82+QSn+
+         XSOuL93kt1V/A1sK3gqQUEi1K37peh/qDPaseToQq5d1s3rfsQ5lDPMfOiXtvYbFb0IP
+         l5scaNfEdOULDzA4Yxjn2R17f2JocRdsyGETouMxKu/ko4KVxtNdY1ErMZQjPgRo9sLT
+         hNlw==
+X-Forwarded-Encrypted: i=1; AL+hErGVXGjXTUSYXHOrb2E2ABSqSubU2hpemQL6mKxrTapzG43UxMgZwphqRdnZxyvr6gTlydJTy4QAyynkc+715g5psP4u2rw=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8m98xtGKi3CJZISrssGEvwf05h54wRt4CZqCzHciUuIhhe6PTD
+	ejc29Bhq/j7iF575J7JotxLBQdekRy1KLeokJJF0MPPSgLcX7gfDoxvq
+X-Gm-Gg: AYBFou3+HVBsveTxfek4ib3po5KOM8ZiVHnR24KP38HAtAi9f5iQSnSKkA4j6obt+Ux
+	2uGv0n6ZL3y/BSTrinf9Sg1zVl3W1qQCXhYxOoTYn+VBR2UEy7u0/f1O/C1gO9zY7NVT08IrFN2
+	wvQKzXIAmnMJL7Dhqc+/BbuB6fVd3+gq6BYW0SbmCxNfKUGFYM+h4LXbobNdEXmgkOL3M4o42+M
+	gB09SBnl8nvtchsIL61q++4G7gKVSbLTudpiqJqckk9jLyR5bjHP57L/yKJfR85lgOYrl9Tw1yz
+	LxWLRRjhAKmOHUu7O7UAxBKYwo0WqXMxp7BUWau+Z6D0bk79GEi102HUkj3NpSfSIEjnAdtUZTx
+	BaoMmqKSzn77BnD/rZQ+5TkzkZneDedsQxkqaeOz7p9UfYcdZLFrqSs9wMT3mth+kMxrwtXVbfg
+	YhxFIm1USfrDXXgju5LOSaPWJpbDGc4hkJGOEBpC062nl1DS8xDvJjgsA2P8LnktjMgd+A8WiSu
+	7gCmkx57EcqnzkYiFMly4JS5AvUio1eZWKlhK80IVvwwjYotfp7F9u2enmgmmzEflVcw2JOVR5W
+	ahThAOgK2JAncS3O6KFDJGFB5t7p8DCLsiX4zeA9KTZz94DbXvbzBr9mVjaqZXrPLtaMkZ6q4fd
+	DYX15B2u1SQ==
+X-Received: by 2002:a05:600c:1c0c:b0:49f:ce78:3562 with SMTP id 5b1f17b1804b1-4b963c69d23mr43591205e9.19.1794168328561;
+        Sun, 08 Nov 2026 12:05:28 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49597186ec5sm5768522f8f.33.2026.11.08.12.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Nov 2026 12:05:28 -0800 (PST)
+Date: Sun, 8 Nov 2026 20:05:26 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Hannes Reinecke <hare@suse.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+ David Howells <dhowells@redhat.com>, bpf@vger.kernel.org,
+ dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
+ keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-security-module@vger.kernel.org, Alasdair Kergon <agk@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Benjamin Marzinski <bmarzins@redhat.com>, Daniel Borkmann
+ <daniel@iogearbox.net>, Dongliang Mu <dzm91@hust.edu.cn>, Eduard Zingerman
+ <eddyz87@gmail.com>, Emil Tsalapatis <emil@etsalapatis.com>, Ihor Solodrai
+ <ihor.solodrai@linux.dev>, James Morris <jmorris@namei.org>, Jiri Olsa
+ <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Kumar Kartikeya
+ Dwivedi <memxor@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, Mike
+ Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Paul
+ Moore <paul@paul-moore.com>, Randy Dunlap <rdunlap@infradead.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Shuah Khan <skhan@linuxfoundation.org>, Song
+ Liu <song@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, Yanteng Si
+ <si.yanteng@linux.dev>, Yonghong Song <yonghong.song@linux.dev>, Linus
+ Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v5 2/3] KEYS: Replace assoc_array with rhashtable
+Message-ID: <20261108200526.43579e2a@pumpkin>
+In-Reply-To: <20261106090516.GA1973@sol>
+References: <20261105031401.956609-1-jarkko@kernel.org>
+	<20261105031401.956609-3-jarkko@kernel.org>
+	<27015846-0161-4700-b810-4643e1f7b63a@suse.de>
+	<20261106090516.GA1973@sol>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,37 +119,24 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> When kexec_file_load() fails to install a new image, it can leave the
-> global IMA scratch buffer larger than the IMA segment of the current
-> image. When that image is executed, ima_update_kexec_buffer() copies
-> the larger log past the end of its reserved segment. In a test, KASAN
-> reports it as:
->=20
->   BUG: KASAN: vmalloc-out-of-bounds in ima_update_kexec_buffer+0x265/0x280
->   Write of size 868426 at addr ffffc9000004e000 by task init/1
->   ...
->   Call Trace:
->    ...
->    __asan_memcpy+0x3b/0x60
->    ima_update_kexec_buffer+0x265/0x280
->    ...
->    blocking_notifier_call_chain+0x88/0xb0
->    kernel_restart_prepare+0x18/0x40
->    kernel_kexec+0xe4/0x130
->=20
-> Limit the dump to the smaller value between the scratch size and the
-> installed image segment size. Update the IMA mapping only after
-> machine_kexec_post_load() succeeds.
->=20
-> Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to ex=
-ecute")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: J=C3=A9r=C3=A9my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+On Fri, 6 Nov 2026 01:05:16 -0800
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-Sashiko has reviewed this patch and found no issues.
+> Side note: fips=1 actually has little do with security, and in some
+> cases it actually decreases security.  See for example
+> https://lore.kernel.org/linux-crypto/20261026183332.11402-1-ebiggers@kernel.org/
+> where I'm fixing a vulnerability caused by fips=1.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261108190404.1397=
-829-2-Jeremy.Jean@oss.cyber.gouv.fr?part=3D1
+Then there is the 'fips compliant' server we used for routing 911 calls between
+TDM and VoIP.
+Any kind of PCIe error gets routed out the the motherboard management module
+which then proceeds to inform the kernel with an NMI.
+At which point Linux crashes.
+The NMI is too late to stop the kernel having to handle the ~0 from a read.
+And even happens when there is no driver using that device.
 
+David
