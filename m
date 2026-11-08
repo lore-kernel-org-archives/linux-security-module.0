@@ -1,59 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794143783;
-	b=uYcn4yTlnFOSvHZnO+a7iDUUDyh0SKh+NOs7736+BiS12RDAMxcUuSoRBxb/W46eH+Vq
-	 PvB9NslA1ATMPy0xT0wvCrnUY7IZpttFuASQwIsvhuL3XsoX/86vmMEzqUlFZtdvbGS/c
-	 /ZyBdL8JMzgLa4gt9f/nVTRUagC3JNA2TND/yQqSPqpn4k6pzrpHr3rxi4nTCjdtpQeyG
-	 1FyVrxZ/WmyNTfRLnZabWdWGMWrCCZdhf0mSn8tMd4XeoEdCAeX/CsTbuP8I3e0xQ2iZ/
-	 2x4XW8RfxmRqRE3JX/or4Fd4CxO1nKIAFTKlpMduorglkzgETMvw+fME8bFv7xFe17A==
+	t=1794143778;
+	b=egA8RYXZHEXWFIaTg7yYkiGz/e/iLTxIZu1+xpF5z6OHNW2EXQ+oDo9nXNluqwRm+qSh
+	 Py/k41UZbV4YVWBvxEu9OVJDJyS/lA4KWmguXZG3IFfL4Sbt49B4pV4gmi+C+fRiBvQ9c
+	 jVePNL+yxwkYGe3mJR+/8o2gl0HYgkSZ7hVoF3aV5WZN6Z+w6Ee4mJQ14p28HSn2ckxf2
+	 p8rM7WXPKNg3c6W90NAoA1H9HG6lUhwjZ0QLHqp3FD+9jZeHvHLawuN2YhFuZUwZQSyY0
+	 WqNafbMKtKh78rnrN6WcHO5PWIA5FgoZvPxTlbznvnccHyUrKPv1PVOMsn0YuAoEiAA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794143783;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794143778;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=x0H73APANSkg4hK1fxmyKB5fSeWxT9y1OQF6z8NZOMw=;
-	b=aGohKQEyTQTjO8BQGCFdup13ktIRFXaT5xMEt30bDE3g0OBUBY8nx+p3JNCS1Ltf7d3K
-	 Sxybf7pmGQ2uOm13E/yNjehpdLfEv5RT/ov8ugiM1/U4OLBhYNiwuvA1MsfDBR6LCyl3n
-	 6PVpaleS2qtaqbWgTch4iPjKqF0HIf5+YiS/ZiOLmhoV9kgH7uJ3220AlgXYSFu8tbPGv
-	 cJ6wMVF/zkYEn/qE0M2stTsmFesDdpaFgVit162K4tFD+SgnHTmkTjYa1v+OX7HoE28u2
-	 xngdJnCgQcQEAJIp1o37Nq60XYrUeLA2zDEyC7zD2A4G9r21Qdw6T9SmUrWPhH7O5mw==
+	bh=4UhvmBN4eJC3qpXttruDr7aya3OlSyB+9suuHtI4Wd0=;
+	b=gMFpBANAkMRZZeXyNbXWv706DxbfI6G4xTgnoXcb9NYXxCQMUXHcfM0jXt5SMkjI2qOj
+	 dWDVsM5AVgoYp+6fRab/niM5wX3Jj/zAprqJvBrwK4gjJyB34zlp0fVDL5OcHMl8yBVDZ
+	 4TFFNaLFJdI+lusTvDqVd9kYsd7W9Ijcj3ZmUPAzVD0y+NNz+ov+C12sW7vgI8oW75fz0
+	 C/7qmPYVU/lo0TJ+qvj3duul/fPA3J4I2qW85g5XP0w+gzVw2vFrAnwLkzvKzqLwYwebk
+	 gHK8Iq/Cam6qv6YhA/kK6LusZnRhaSy+G/wCm0ibgL3ECN9PElI0gYTF60vqHCx0GnA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oYdsMeX7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QsXiSvhO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F38C606A31C;
-	Sun,  8 Nov 2026 13:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C44606A330;
+	Sun,  8 Nov 2026 13:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oYdsMeX7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 352DC1F008A1;
-	Sun,  8 Nov 2026 13:16:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QsXiSvhO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABCF01F008A2;
+	Sun,  8 Nov 2026 13:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794143782;
-	bh=x0H73APANSkg4hK1fxmyKB5fSeWxT9y1OQF6z8NZOMw=;
+	s=k20260515; t=1794143778;
+	bh=4UhvmBN4eJC3qpXttruDr7aya3OlSyB+9suuHtI4Wd0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=oYdsMeX7mPMIBVFXjPvWKgCvpoDCFL1kBviYcBXL6c7N5VtNM69LfKMMdFMJIiGJS
-	 d4EXZ/UWszQ4L2JRHTQ3FjnrkGfZcmKYt9PjMEJrYb4o0EmqsPc6C8nChlhvtMIztv
-	 GrS/SBzC4qrE/Lq0olhe2JK1iFRAxuN6yI7v4TXMIoRUahU+/HYNGxI1S0FNmC2aT8
-	 tVWuXvRFizdYu+1cwZbZ8vmJpR1teX9ovYB8d30r3huCpspDlSDUWPAxqcl94QKTr7
-	 zgbZlWWalmQn/9IyugaJD2/XQ24N9eMjWnTcC/iwJXUQRhoXVgiTCwLJYyRBryKPk9
-	 3KIofszJgrjwA==
-Message-ID: <sashiko-outbox-203766@kernel.org>
+	b=QsXiSvhOrlBhfxYn4AZB2Y3p08NGdE7Bm2n74bprITOE8H4WUcRxM3iZgEAioaNEG
+	 F+ipTeYpYsfELW9h1tkOzAGOpL5PTXE55uWjcIUF8z5fTDMdD5I+SY6Q3OzOMHORop
+	 xYix8rhexZW2UgcFKkqOt2tmJ5K4TeUwIJRPSkcYMsNd7KOj6nIOlBD5nIv0JBJ8bJ
+	 nZCUvZsR/oU3fKbLeb7RLZQRLFchkhdvLeRZ49+ZOHgGt7+md7ZdWNm+UfqR8Y/yUt
+	 geatkHT/D0AWbzgzaYozPhJz6hVtfuHmN41o8zYOhNxmZqt9kvMLUf5Y5MpCJGiZ6n
+	 B9MMcLgMqH5pg==
+Message-ID: <sashiko-outbox-203763@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 07/11] KEYS: trusted: TEE: Synchronize session
- lifetime
+Subject: Re: [PATCH v4 04/11] smb: client: Clear idmap/SPNEGO caches when
+ the last session is unloaded
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org, "Heiko
  Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander
  Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>
-In-Reply-To: <20261107131512.3603168-8-jarkko@kernel.org>
+In-Reply-To: <20261107131512.3603168-5-jarkko@kernel.org>
 References: <20261107131512.3603168-1-jarkko@kernel.org>
- <20261107131512.3603168-8-jarkko@kernel.org>
+ <20261107131512.3603168-5-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 13:16:21 +0000
+Date: Sun, 08 Nov 2026 13:16:17 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,18 +63,14 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> While the sysfs bind attributes are now suppressed, the parent TEE device
-> can still remove the device while the instances keep trusted.ko loaded.
+> CIFS caches cifs.idmap and cifs.spnego keys in the module-owned keyrings
+> that are only destroyed in module_exit().
 >=20
-> Update the static calls before invoking backend init() and reset them in
-> the case of a failure.
+> Once keys pin the kernel module of the key type, the cached entries will
+> retain CIFS pinned after the last SMB session has been torned down.
 >=20
-> In the TEE backend, guard session context state with a mutex, publish
-> pvt_data.dev before registering key_type_trusted and sanitize pvt_data on
-> probe failure and removal.
->=20
-> When an active TEE has not been bound, reject seal, unseal and get_random
-> with -ENODEV.
+> Serialize the session count transitions with a mutex and clear the idmap
+> and SPNEGO cache keyrings when the last session is freed.
 >=20
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
@@ -82,5 +78,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107131512.3603=
-168-1-jarkko@kernel.org?part=3D7
+168-1-jarkko@kernel.org?part=3D4
 
