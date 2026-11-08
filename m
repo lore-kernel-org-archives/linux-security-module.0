@@ -1,56 +1,86 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794170077;
-	b=URDG/weoR31ureatvomZekLSds2riBKCVxRd9JfV8l2WQxA9ksxfamSjkM5H0F1bzNYb
-	 vZjK1a46okJxK0q52tINRpMc7dlbdR9FRs9yu7CnernICMfgSSTFOK2Tn/RZm0ONJCuvE
-	 AhYfSiV3UNPmYfdqidwKWgHh9dZO6tytF6gYnNw5ZOCyVYrlpsS+/l9tw+ndGNpvaUiXw
-	 txW0ZlrIJzsF4L1ISKwU95b/LKESx3nBRPW5KDFJX2XFT/zduEHap00FPfMrhrycLXcCX
-	 xvoxBYrnf43Wf3yKs4Z1MEQUmkhNb3akC+Tcd75sMGS377HANhudVZ4PdoxEb+YFk7Q==
+	t=1794176848;
+	b=EfI1RifkS1B7Ueq2T9yRegTFmqBjroY9YzxWu34QCs8Skrzw3Phkzgssmxjv3GvlX8a5
+	 +sYaQc53U9TBJrvF8atAg9Mc917URTlMK/no2tK4fhxKlC7UprtByikZRnAzsQCfpCgF4
+	 E2V3GpB1k7P71p22AoLTYsNfSMn55db61yKnZkNJLSEvkI/DiCJxy2CqvA9F6cXO2rTL+
+	 FKIo9VvXF+CFGjgq19OqC5Rcs2bBpsvYcVXAZ850Gu7EwDI1KKYji2EeArHQtFpEDBhlM
+	 oxBE7bsgC4Sum0M99bFiLXoe8YF2DGMeg0nbrCz0Z7V98pz+YR4HwyjxzIOvoagBvsQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794170077;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=UEkH71RtqHn0k+Vg8B7NO5TU5G1bwUaGPLF37gtPsdQ=;
-	b=307Ka7mvNBipZ8VQTXKp+C5M2hzOyuQ4cdujjatea+aD6bCrBI8xcqJhdfKiJEcMJqf2
-	 UWuhl90Gq2eu8B+Bc3t8K+4Gvq/rN/oZ4Td/fF4E67v8IQeT+L9YMX6xQzSvMGRxVI64E
-	 uH3O4hnJ3yLRjplW3CIzjOnB4woaDTkgS/TVXJ48G/QnQN2GGockVap4q4Z7pq4J7WXRU
-	 vxoDBZa3pzYzJLdmH0SNuAL/rZWteNKTsGRwn2v2VqtyFWMKoGovLhSHE+/Dh9IH8usc1
-	 a9FcWPP4DrtAdiaZqsVbZMWIt6wW9s5TguXv0LPmljXdZEgjqXyP9jih1C5U7JhwtSQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794176848;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=9wA76Ik20K3lvmoeTnCYt3jGXsckv8iSIGtPrk9V5HM=;
+	b=AEHnG8hZkOJzKCpIQO7zEAswqa6pCtVtf88jUrN8AJN8nnSsGz59hyrTfdOYEFUD7htO
+	 l8QG8R69dN0eeR8ERzjs/tFtbIHDuu6psacJftzzqqeW2+QqN9Q35X2dtDCJ+k9iXZzZY
+	 mVz4Nzlsjn4hH3KmeV+tR+BeuQsdXrTFVE08plevWvKgPcw1OeR9tFv+SiCGFtt05cfjk
+	 jO+zk7e9OAQoaAmg/wOYBGvf7RkRKFVsnKt6jq935M0Oj32TdKOD7r/iwn2RhbjiZWGBC
+	 lVJMRdRmXU2B6KJFM06xve5Rrktd4CmxS4V1/Keyw+FtI5myOlhafhgBZx1YQwHl21w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nz7YIh6z;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MHl5J7z5;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9F1606E008
-	for <linux-security-module@vger.kernel.org>; Sun,  8 Nov 2026 20:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id CCB0B606A320;
+	Sun,  8 Nov 2026 22:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nz7YIh6z
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F27451F0089F
-	for <linux-security-module@vger.kernel.org>; Sun,  8 Nov 2026 20:34:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MHl5J7z5
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A600F1F0089F;
+	Sun,  8 Nov 2026 22:27:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794170077;
-	bh=UEkH71RtqHn0k+Vg8B7NO5TU5G1bwUaGPLF37gtPsdQ=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Nz7YIh6z/KjmBH5CCflImbhh50vJoouhLQJ71mZx/4nNsXx9pxCEcCAVFO9f4quAq
-	 NYelQqWKzwO9IDDDCuE959SSXDMvsP6fR9J7nhmHImgt9xoMXeSVX67neIewpLdzfD
-	 ZO5YQsmL3s7toglnE+N7MpATP6Ctb0wz/EcfAF5BbOzFIU6QETQDeULPSS2RJhST8o
-	 6rKJdJyky9mdissdkgqevFLUEhUxA77KDJlxMxpvXOgMFhck8abwC86wdD7WYj3OPD
-	 qCmy/x7xDbotKrGJaReQQAtmo38yKCQ7S5GKTzUj3kn4CjhAqEcK8wcFfm2HYEym9A
-	 Eukk/NganEZ9w==
-Message-ID: <sashiko-outbox-204019@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/4] landlock: Fix layer composition of
- LANDLOCK_ACCESS_FS_REFER
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261108-b4-landlock-refer-nonfs-layer-v2-1-2b405fc1b3aa@gmail.com>
-References: <20261108-b4-landlock-refer-nonfs-layer-v2-0-2b405fc1b3aa@gmail.com>
- <20261108-b4-landlock-refer-nonfs-layer-v2-1-2b405fc1b3aa@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 20:34:36 +0000
+	s=k20260515; t=1794176847;
+	bh=9wA76Ik20K3lvmoeTnCYt3jGXsckv8iSIGtPrk9V5HM=;
+	h=From:To:Cc:Subject:Date;
+	b=MHl5J7z5FLE/MYQrhxhKA/lulPvbS7q685tHJM7Gh3QJmWCgTDE/DWCS2RThfUP7m
+	 77dyu3egSp5CaaPvG/rj5/bSFkd+tF1np+qlly9Bq/SkByftwl2GkbcHPFOEl2CDkh
+	 wC6I2C4GZtDoDkvtwIKO8RprOWzqqWe+ajHGi/tZdLcKfuqML6rfXAYdNjHXtZgec5
+	 SkFuAYYL9bZnLswpKwnYWOc1b/TS/Tdk3PqrzQrjXgIFGKJZWP65P6KcSFVAlyX9Xf
+	 XrBM5lx+ZFFUoLPyGWVnj8DmXa8JMxzZJVRvYsoJmV3S4TEGAUYr2i80c50qwkHKRG
+	 FnrPkPPEExM9w==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	keyrings@vger.kernel.org,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	James Morris <jmorris@namei.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH v5 00/12] KEYS: Sanitize the garbage collector
+Date: Mon,  9 Nov 2026 00:27:06 +0200
+Message-ID: <20261108222719.304712-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,35 +89,158 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> In landlock_get_fs_access_mask(), only add the
-> LANDLOCK_ACCESS_FS_REFER right if any filesystem access rights are
-> handled at all.  This prevents us from accidentally treating
-> non-filesystem layers as if they handled LANDLOCK_ACCESS_FS_REFER.
->=20
-> landlock_get_fs_access_mask() is used when initializing the layer
-> masks for doing access right checks, so this bug meant that we
-> unintentionally denied "refer" (e.g., link, rename) operations in
-> layered cases, where the same operation would have been accepted if
-> only either one of the two layers had been enforced.  If the rulesets
-> individually allow an operation, the composition of these rulesets
-> should also allow it.
->=20
-> The bug only manifests as soon as one other layer handles filesystem
-> access rights.  Otherwise, Landlock filesystem path walk is guarded by
-> an early exit for the case that no filesystem-enforcing layer exists.
->=20
-> Reported-by: Dwi Siswanto <me@dw1.io>
-> Link: https://github.com/landlock-lsm/linux/issues/67
-> Link: https://github.com/landlock-lsm/go-landlock/issues/66
-> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and c=
-onnect")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
+1. Replace key_type_dead retyping with module reference pinning so live
+   keys and restrictions keep their backing key_type module loaded until
+   key_gc_unused_keys() or keyring_destroy() completes.
+2. Process serial-tree scans and graveyard destruction in fixed 64-key
+   chunks to a bound workqueue execution latency without hurting overall
+   throughput for a significant amount.
 
-Sashiko has reviewed this patch and found no issues.
+The first part has a user-space visible effect: rmmod returns -EBUSY while
+keys or keyring restrictions still pin the backing module.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261108-b4-landloc=
-k-refer-nonfs-layer-v2-0-2b405fc1b3aa@gmail.com?part=3D1
+Internal key caches or transport state bottlenecks are addressed by either
+clearing their private caches on last-client teardown or splitting key
+types into dedicated provider modules.
+
+CHANGES
+=======
+
+v5:
+- Another round of fixes resolving Sashiko remarks.
+- Reordered TEE session lifetime synchronization patch before suppressing
+  sysfs bind attributes.
+- Release conn->key in rxrpc_process_event() on init_connection_security()
+  failure
+- Update Documentation/networking/rxrpc.rst to reference
+  net/rxrpc/security.c instead of net/rxrpc/server_key.c.
+- Store the delay-adjusted reap timestamp in gc->end in
+  key_garbage_collector() instead of recording unadjusted key->expiry and
+  adding key_gc_delay a second time.
+
+v4:
+- Replaced WARN_ON() around fallible keyring_clear() in CIFS idmap and
+  SPNEGO cache-clearing helpers with pr_warn_ratelimited().
+- Moved key garbage collection from the shared events workqueue onto a
+  dedicated WQ_MEM_RECLAIM | WQ_PERCPU workqueue (key_gc), allocated in
+  key_init(), so WQ_MEM_RECLAIM workers (nfsiod/cifsiod) and reclaim paths
+  can flush key GC safely.
+
+v3:
+- Split dns_resolver and rxrpc key types into dedicated provider modules
+  (dns_resolver_key.ko and rxrpc_keys.ko) instead of client refcounting,
+  so cached or retained keys do not pin dns_resolver.ko or rxrpc.ko.
+- Dropped the standalone nvme-keyring fix as it was picked up by the
+  subsystem maintainers.
+- Hardened key_gc_flush() to serialize against chunked key_gc_work
+  continuations, and fixed a restriction module reference leak on failed
+  keyring instantiation.
+
+v2:
+- Used v1 as a test probe for Sashiko to detect the corner cases instead
+  of trying to resolve even the known ones beforehand.
+- Converted the client subsystems to be compatible with the module
+  pinning semantics.
+
+VERSIONS
+========
+
+- v4:
+  https://lore.kernel.org/keyrings/20261107131512.3603168-1-jarkko@kernel.org/
+- v3:
+  https://lore.kernel.org/keyrings/20261105005311.804098-1-jarkko@kernel.org/
+- v2:
+  https://lore.kernel.org/linux-integrity/20261103030226.2685251-1-jarkko@kernel.org/
+
+Cc: keyrings@vger.kernel.org
+Cc: linux-afs@lists.infradead.org
+Cc: linux-cifs@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-nfs@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Anna Schumaker <anna@kernel.org>
+Cc: Bharath SM <bharathsm@microsoft.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Eric Dumazet <edumazet@kernel.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Marc Dionne <marc.dionne@auristor.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Paulo Alcantara <pc@manguebit.org>
+Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Shyam Prasad N <sprasad@microsoft.com>
+Cc: Simon Horman <horms@kernel.org>
+Cc: Sumit Garg <sumit.garg@kernel.org>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Tom Talpey <tom@talpey.com>
+Cc: Trond Myklebust <trondmy@kernel.org>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+
+Jarkko Sakkinen (12):
+  KEYS: Add key_gc_flush() for draining RCU callbacks
+  dns_resolver: Move the key type into a separate module
+  NFSv4: Clear idmap keyring cache when the last client unloads
+  smb: client: Clear idmap/SPNEGO caches when the last session is
+    unloaded
+  s390/cert_store: Start tracking subsystem keys
+  KEYS: trusted: TEE: Synchronize session lifetime
+  KEYS: trusted: TEE: Disable sysfs bind attributes
+  rxrpc: Release conn->key when init_connection_security() fails
+  rxrpc: Move key types to their own module
+  KEYS: Pin the backing kernel module for a key type
+  KEYS: Remove key_type_dead
+  KEYS: key_garbage_collector(): process in chunks
+
+ Documentation/networking/rxrpc.rst        |   2 +-
+ arch/s390/kernel/cert_store.c             | 161 +++++-------
+ fs/nfs/nfs4idmap.c                        |  21 ++
+ fs/smb/client/cifs_spnego.c               |  12 +
+ fs/smb/client/cifsacl.c                   |  12 +
+ fs/smb/client/cifsproto.h                 |   8 +
+ fs/smb/client/misc.c                      |  19 +-
+ include/linux/key-type.h                  |   6 +-
+ include/linux/key.h                       |   2 +
+ net/Makefile                              |   4 +-
+ net/dns_resolver/Kconfig                  |  15 ++
+ net/dns_resolver/Makefile                 |   4 +-
+ net/dns_resolver/dns_key.c                |  65 +----
+ net/dns_resolver/dns_query.c              |  64 +++++
+ net/dns_resolver/internal.h               |   5 -
+ net/rxrpc/Kconfig                         |  20 ++
+ net/rxrpc/Makefile                        |   7 +-
+ net/rxrpc/af_rxrpc.c                      |  19 +-
+ net/rxrpc/ar-internal.h                   |  25 +-
+ net/rxrpc/conn_event.c                    |   7 +-
+ net/rxrpc/key.c                           | 122 +++------
+ net/rxrpc/proc.c                          |   2 +-
+ net/rxrpc/rxgk.c                          |  66 -----
+ net/rxrpc/rxkad.c                         |  47 ----
+ net/rxrpc/security.c                      | 184 ++++++++++++++
+ net/rxrpc/server_key.c                    | 260 +++++++++++--------
+ security/keys/gc.c                        | 289 ++++++++++------------
+ security/keys/internal.h                  |   8 +-
+ security/keys/key.c                       |  65 +++--
+ security/keys/keyring.c                   |  88 +++----
+ security/keys/trusted-keys/trusted_core.c |  15 +-
+ security/keys/trusted-keys/trusted_tee.c  |  89 +++++--
+ 32 files changed, 932 insertions(+), 781 deletions(-)
+
+--
+2.47.3
 
