@@ -1,59 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794143778;
-	b=egA8RYXZHEXWFIaTg7yYkiGz/e/iLTxIZu1+xpF5z6OHNW2EXQ+oDo9nXNluqwRm+qSh
-	 Py/k41UZbV4YVWBvxEu9OVJDJyS/lA4KWmguXZG3IFfL4Sbt49B4pV4gmi+C+fRiBvQ9c
-	 jVePNL+yxwkYGe3mJR+/8o2gl0HYgkSZ7hVoF3aV5WZN6Z+w6Ee4mJQ14p28HSn2ckxf2
-	 p8rM7WXPKNg3c6W90NAoA1H9HG6lUhwjZ0QLHqp3FD+9jZeHvHLawuN2YhFuZUwZQSyY0
-	 WqNafbMKtKh78rnrN6WcHO5PWIA5FgoZvPxTlbznvnccHyUrKPv1PVOMsn0YuAoEiAA==
+	t=1794143785;
+	b=pMUxNZk5P8upxMexUA68MhG4xyHQ8VtvRdTzSbeiXsBPJCN7+8bVPRF8KR6OPbltZr+G
+	 vXVTKl0EcQUHgRC4Lroa8vQIiFKrthxhRuzMtav2lLBRzyLKZbuV8xNyQL+xIrO8OGK+q
+	 cgPiS/Qdupwcywe8Xk4Nc+b50p3Qq7PKHKvfBTsGUiwHj8QJRKonuQObdp99IS4yHR5QF
+	 LmiLHDXV8G6Nb1FDOfhiBWxzXy3aKq90kbdmO8bTMl4rCfe3I1+M5HFloodlYpCnpLj+8
+	 sumB51MXeP0wqWqG3/P5inFhtPeOIAtF94SvZ1gmWKeV3x8uTyT0joY6vb7t5ygzPHg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794143778;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794143785;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=4UhvmBN4eJC3qpXttruDr7aya3OlSyB+9suuHtI4Wd0=;
-	b=gMFpBANAkMRZZeXyNbXWv706DxbfI6G4xTgnoXcb9NYXxCQMUXHcfM0jXt5SMkjI2qOj
-	 dWDVsM5AVgoYp+6fRab/niM5wX3Jj/zAprqJvBrwK4gjJyB34zlp0fVDL5OcHMl8yBVDZ
-	 4TFFNaLFJdI+lusTvDqVd9kYsd7W9Ijcj3ZmUPAzVD0y+NNz+ov+C12sW7vgI8oW75fz0
-	 C/7qmPYVU/lo0TJ+qvj3duul/fPA3J4I2qW85g5XP0w+gzVw2vFrAnwLkzvKzqLwYwebk
-	 gHK8Iq/Cam6qv6YhA/kK6LusZnRhaSy+G/wCm0ibgL3ECN9PElI0gYTF60vqHCx0GnA==
+	bh=SL/OwjzPoNUil9HwoepHC0IwSfRTesmXZf+yORcg8YU=;
+	b=dnGaOqdL5Fxu+ThqYlc9TIxKWzAAVTYeLEXKpG/bsBwELHOHJE5pttfsSmMHF8M7W0dT
+	 rI9JiAXCUgW6MAyu3okXU+lRdkMKEPFoyVXkscBHa5wBzFk3FtmXmSDBFq2d/RR/QeTNQ
+	 qBKKRALT7CTpuUl2oLwHF7bZVFKXRaN0C4YQbOaAjslisdUuFOB4elitYgeZ+Yx2+MeNE
+	 cofSUtS3zelfJ0uV2qwk+Gw2zku/8CFd2SOWbtrxOAUCiJlasHfKnYgqTfs4pHSbVerRy
+	 91rCTuBB7WhXWQhUg+r5psqNxeUWdum2FBp0BZ2qjDZ4e75AvL8iCFeworq6R4ApaTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QsXiSvhO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="RB/uxR/j";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C44606A330;
-	Sun,  8 Nov 2026 13:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CA5606A322;
+	Sun,  8 Nov 2026 13:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QsXiSvhO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABCF01F008A2;
-	Sun,  8 Nov 2026 13:16:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RB/uxR/j
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01161F008A1;
+	Sun,  8 Nov 2026 13:16:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794143778;
-	bh=4UhvmBN4eJC3qpXttruDr7aya3OlSyB+9suuHtI4Wd0=;
+	s=k20260515; t=1794143785;
+	bh=SL/OwjzPoNUil9HwoepHC0IwSfRTesmXZf+yORcg8YU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=QsXiSvhOrlBhfxYn4AZB2Y3p08NGdE7Bm2n74bprITOE8H4WUcRxM3iZgEAioaNEG
-	 F+ipTeYpYsfELW9h1tkOzAGOpL5PTXE55uWjcIUF8z5fTDMdD5I+SY6Q3OzOMHORop
-	 xYix8rhexZW2UgcFKkqOt2tmJ5K4TeUwIJRPSkcYMsNd7KOj6nIOlBD5nIv0JBJ8bJ
-	 nZCUvZsR/oU3fKbLeb7RLZQRLFchkhdvLeRZ49+ZOHgGt7+md7ZdWNm+UfqR8Y/yUt
-	 geatkHT/D0AWbzgzaYozPhJz6hVtfuHmN41o8zYOhNxmZqt9kvMLUf5Y5MpCJGiZ6n
-	 B9MMcLgMqH5pg==
-Message-ID: <sashiko-outbox-203763@kernel.org>
+	b=RB/uxR/j2rcR160gfYXMwek7MArFaYxePTLmrGl5pqyYt/JI5Yo3H06d9pS3LOfMc
+	 +mqnTf/qpWQ1LxOEHo4IDomdgdeiLzUKtkXtNajLOl/sx0Ud2A56lKbwdiBtZERfAS
+	 iMXQYkK8Zvb2Wv1xvHLkmyjYejWiI+WsPNYydGyf2OnM5gCgNlDn/iulKPida9lAzW
+	 ElqL9sho3dDv2wexpW8uSboGNcnLPV/TNqJBNVI4rL4d+kuLOre5Kr9yLfglE0tx07
+	 7Zy9OXLQulpHWTdUl5wkTRAAXjO15F2wHdKS2sMfHv+rKegunveKjp5vjBCu+xS/Tz
+	 4fkdwLU/CcROg==
+Message-ID: <sashiko-outbox-203768@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 04/11] smb: client: Clear idmap/SPNEGO caches when
- the last session is unloaded
+Subject: Re: [PATCH v4 09/11] KEYS: Pin the backing kernel module for a key
+ type
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-s390@vger.kernel.org, linux-security-module@vger.kernel.org, "Heiko
  Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander
  Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>
-In-Reply-To: <20261107131512.3603168-5-jarkko@kernel.org>
+In-Reply-To: <20261107131512.3603168-10-jarkko@kernel.org>
 References: <20261107131512.3603168-1-jarkko@kernel.org>
- <20261107131512.3603168-5-jarkko@kernel.org>
+ <20261107131512.3603168-10-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 13:16:17 +0000
+Date: Sun, 08 Nov 2026 13:16:24 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,14 +63,14 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> CIFS caches cifs.idmap and cifs.spnego keys in the module-owned keyrings
-> that are only destroyed in module_exit().
+> Add the owner field (populated with THIS_MODULE) to struct key_type.
 >=20
-> Once keys pin the kernel module of the key type, the cached entries will
-> retain CIFS pinned after the last SMB session has been torned down.
+> Pin the module in key_alloc() and keyring_restrict(), and release it in
+> key_gc_unused_keys() and keyring_destroy(), which are wires to the keys
+> and restrictions.
 >=20
-> Serialize the session count transitions with a mutex and clear the idmap
-> and SPNEGO cache keyrings when the last session is freed.
+> Reject module owners still in MODULE_STATE_COMING so that the failed
+> module_init() paths cannot leave behind referenced keys.
 >=20
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
@@ -78,5 +78,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261107131512.3603=
-168-1-jarkko@kernel.org?part=3D4
+168-1-jarkko@kernel.org?part=3D9
 
