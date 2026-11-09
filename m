@@ -1,76 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794249997;
-	b=S7P9Uxc4Qp2o+Bq64yjXlGh169WMIpt8Pdg5PzQN53qNJdEEha1IiJt6nBMxcY/O+Chs
-	 ltkN5wvchH4FCR1H0wscfpQdcRWBJS2FaFLrGKlZNU+ikKQQA6QDapVhNH9b/bN3Nrwdv
-	 7CcRSX1rTmQvp4ZmrUW7Q8ITOh4x8isRNX8Ibk3VsQxCLzB8rwzZxnC+6qlsK5ohR3ISu
-	 rlXqmranyRHE6Qh4rOp7sWrs6j0bSROwGx8hE1g8x2XM/IhdMB4n3/Ci/DEMPDD/8IAIT
-	 j1FhjGs0q3tseI4Qgimpa+FcSIgAZZaxI0jpRqdejb8rm5xT3rdcUCaq/IWAY/s8IrA==
+	t=1794253745;
+	b=m28jPo7hj/ZIK38S2K9UXet3U1KmXZwbYV1TVHANU3AGXvFCsgLDNZPJQdElny0Swye6
+	 3F5hYXf9YtSAeDtpMV8QXxz/3YOrO7Z95qQtNQi/gkqUDmHS2jkissUxPfJSrw48+29xY
+	 JMINdlUeWQUFMXhga3/HunNJLlFmwVgOU9cYkK2RuKZMHh4sO+4TUg66L911AXiZxtyC1
+	 Ov3hqLK3cZJCOuHRK8ChMEcMkhZdiEpUxN3ceAM5PBLooh0jbemCqKLGpc2mrWm4VrH6x
+	 Ff8ktcq2G+vQ0w/aRFhFvQvcshZuCtc5k8RlR5yIUXZTc4ofb5Rf71AaIXSLcIQjJJg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794249997;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=ruyz/2K4wlVY4cyIFsxKJQ+uv+8W7GCsg6g5SZEw66U=;
-	b=ViM17cQVDaS0UPO0PBh5zvx5qMJXMxj/E0Me1uPSt4/Y9sE5bFcC31lHJZpIQ2EKbRbF
-	 DwrND+nIgrIkvJH7//9RhpPftdREbIl6POA0LQoNZ3p1aRFplh8JBTm2ogq0ZdaiaB0kR
-	 fASQkeQqRsqWnCQyehfW8vufAwjfEdkjoYbzjQPciD3eifWfOcI5mlAIMfEnNzSy1EcmL
-	 mQ7yDj9PMWgxKQ7MDt3MQ5aSkLQSIDep2IdsK64tl5lrHR9/krVhRt0FmxdHwinsYhFcL
-	 M4Dr95IBe8EG4raOsuo1ZEpHhrP7+yOa4QbEgpLXZZ1NvCJp7oKZqCIAvKvyuxp/x/g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794253745;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=ba2Q7AJDVOznKzIVSG4WADmv5TxkLP7hX7pgseAgvN0=;
+	b=iuUTdIGdiYSsrzJSygmRsKOwOrq5j2jldi6UzwYRy1RF+jca7813TuAMc/VlmvDTA6Rr
+	 IZQnKPuR1f056C5mIYHHEXJQIm7XRVNwrLN8HeiCgNxcQoCCIxN/0twfcyzUsiF4ARze6
+	 XC4c/n+IuboDNmFWFbAAz7ay3wDloMvxTEcNkBuHOQzQHai8JqUrCVONg23SpF7JDx9pF
+	 wWuXLdbKCmqVJJSiejjn1NDBqe6l5QoXlAq/fBA2MDb59WPi1y7F/5AKo9wzBjpVQ+XFF
+	 C6lKd21Pdppp7SaYz6tu8DNUlnpnYVA95v/cBRLPkw9pWpgczTegtA++Uf1d1v9MJZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hallyn.com;
-	spf=pass smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=R9+SjjOM;
-	arc=none smtp.remote-ip=178.63.66.53
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=none header.from=cryspen.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1C5606A325;
-	Mon,  9 Nov 2026 18:46:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DD1C5606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=R9+SjjOM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1794249993; bh=6kVwTzI1/KcDLMSc20Gf48sZcIqocBBJVzv0nSohHRs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R9+SjjOMzRhZ05/CIvcJT2p8lmE7XRQKOFIX21zFe9O5hD12H4H1DPMPqDz6CGn/d
-	 +EN7gyBWrcbWHdu58Xgors8T+iHxqYvDpaZLBwZMTV4nKMlOE0JPbIUhUGoav+LpIJ
-	 4cWNeeCAhiLPpXPydpgjO9eowbgGlBdMYCxUUO6GJrf0QUOcyCqBPqWWw3U9/FvmCh
-	 +VJHBAoRWzpOeVcQzbvtlOA/rXPpFxHBCRh1S/bXcX1SbMjIl1MfaCK+LR8WIOMGO5
-	 I5/3Ksz0FyorAPpSh5U4f171zLiOwSWYne3a2fHuMlXz0y1gnhPhbfQErGurC/IGJP
-	 AbMtvKAc199jA==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 8DAE69CE; Mon,  9 Nov 2026 12:46:33 -0600 (CST)
-Date: Mon, 9 Nov 2026 12:46:33 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: kees@kernel.org, akpm@linux-foundation.org, david@kernel.org,
-	Jinjie Ruan <ruanjinjie@huawei.com>, ljs@kernel.org,
-	liam@infradead.org, vbabka@kernel.org, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, kprateek.nayak@amd.com, paul@paul-moore.com,
-	jmorris@namei.org, shuah@kernel.org, brauner@kernel.org,
-	alexjlzheng@tencent.com, jannh@google.com, jaime.saguillo@gmail.com,
-	elver@google.com, blbllhy@gmail.com, bvanassche@acm.org,
-	pjw@kernel.org, broonie@kernel.org, debug@rivosinc.com,
-	tglx@kernel.org, aleksey.oladko@virtuozzo.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, morgan@kernel.org
-Subject: Re: [RFC PATCH v2 2/3] security: Add PR_CAPBSET_DROP_MASK for
- process-wide bounding-set drops
-Message-ID: <avIVCf1ok6Xyfii0@hallyn.com>
-References: <20260929130200.1638343-1-ruanjinjie@huawei.com>
- <20260929130200.1638343-3-ruanjinjie@huawei.com>
- <atjN3JX7sWx9kpQ5@hallyn.com>
- <avHfm5/mVtuN/oPW@hallyn.com>
- <avIKUzCKAkfC-wuk@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423C0606A332
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Nov 2026 19:49:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 423C0606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryspen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4afe2d546f9so18226345e9.3
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Nov 2026 11:49:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794253743; x=1794858543;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ba2Q7AJDVOznKzIVSG4WADmv5TxkLP7hX7pgseAgvN0=;
+        b=dtLMPH+WLgohNFOpBqtx7FkYAyMqFevLa/cDvd6hYKEgCOqEr5a3B65RlVc2whm8nh
+         vRLEZSJoUagfI95hxzBddJr1IZ2unzB1nZU2oGQyA5yA7WZ1qM52yvGu1o/OGifrxYX3
+         ISpHggwuyLrvGBI/Qf52/r51yEQK5uTl1X+CDv2qFCET1uIsNZZT1IRO3LwCRj6Ic8vo
+         yg4L/040XU6HCLX3hPQVHnEljqJabGWtf5kVbaY86tbpYdOeQWg/9COOD9xvo6uDnMjn
+         LmkpR+RjJ8ig6cUhA8eLFvp7ozS08e9l2qrlD9PWs1JCqQBIKEKR710rEUm+Huhkye02
+         iMjw==
+X-Forwarded-Encrypted: i=1; AL+hErFw6AlmMLAffuqL8z3hp1uhk/6LKj39rtB/+VSwP8BLhZK9G+fC+2hXpY2LEg1zN1JIVbrL3fif18rK+Lm4OhV7TvFlY2c=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/1NVT27R3JcmAqPq7VqDfRj8o+xKKKaVc9huh2JxESmZLbBau9
+	w8weGxHW99MZfQEpAddgxyaLwZ3HJMntwfbSYXTxwlyCV5pOQc7kKcv5
+X-Gm-Gg: AYBFou0CJgTB2IJY6EFuAjkKohqeKP2CuSf/dmy63vrGH6nmnSFu8k4LfcFskmFX23V
+	T2YC/vMT1muCnAVA3zHXKg/SlwgL2u4YzkwBKqeQabBcKbpQhLejODZGculXnxnJb9CdFp+Yhv9
+	7X0eTbt61K2d8+XQhTFmvsI2bUayetdvwo382EXrWvWH5dT5/HxHmEmgeBY61dJmeXApLevrLhh
+	ohoXOy3xJJNhV1TzZPXe5WiBH+tCPpDKaNK6BgxC/aSC2KuH7nkepf7CrSWkc0XCETheiBpoSiZ
+	s6EkLwpBCwtraj9XGgs5uRCDHE81zu4DhCuV5VWUd9luKyH7l2GXxZ7XWqC14HLmU5X+VkU0is9
+	jpgqq5GRRBTsA+Wd4IWVo6AG+SK68P95N+l0JTTgRmgv9o+yar6yVeGFVewjTo0pcaj056+EUFs
+	lgsZCWuWqldQkBV1El9mmjetFv6E1XI9vqoLi4GX/50rhbbLd3fBCBr4vmwNg7FwwReHIgd2wxi
+	ipStrQ+Lkxr1JRcsMM/7qsQrD5lZljXUK8xTbZkfczgf9VrD7flHamkChZnBtxIPmSzY4eeChr8
+	vmPR5g1xpesk1JIF3bUbUPdx7wWI/zqj9hxAh32ADFrGTiOFQ2GVK8q3xiRnxL33xEHDxbzuE5o
+	A7XOX7Mplm13TMx6II5bhw7rinTy5rVlC/Sviq7AM2BkUvONchxjftHy60ToMmno=
+X-Received: by 2002:a05:600c:1d29:b0:4a1:f7f4:7cf1 with SMTP id 5b1f17b1804b1-4ba023376d4mr4246085e9.11.1794253742529;
+        Mon, 09 Nov 2026 11:49:02 -0800 (PST)
+Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba02300988sm6618615e9.0.2026.11.09.11.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2026 11:49:01 -0800 (PST)
+Date: Mon, 9 Nov 2026 22:48:58 +0300
+From: Dan Carpenter <dan@cryspen.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Dan Carpenter <error27@gmail.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] keys/trusted/tpm2: rename "bool" to "boolean"
+Message-ID: <avIjqp3n29DKkpPp@stanley.mountain>
+References: <avFcjHwnh9mrOEnz@stanley.mountain>
+ <avHelQ1nxsDVcQkZ@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -82,22 +92,20 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avIKUzCKAkfC-wuk@redhat.com>
+In-Reply-To: <avHelQ1nxsDVcQkZ@kernel.org>
 
-On Mon, Nov 09, 2026 at 07:00:51PM +0100, Oleg Nesterov wrote:
-> On 11/09, Serge E. Hallyn wrote:
-> >
-> > Hi Oleg,
-> >
-> > please see below.  Do you have any issues with this use of sighand?
+On Mon, Nov 09, 2026 at 04:54:13PM +0200, Jarkko Sakkinen wrote:
 > 
-> Hi Serge,
-> 
-> I already tried to look at this patch, but sorry, can't really comment.
-> 
-> I'll try to take another look, but can't promise much, I don't understand
-> the problem space (I could never reallly understand capabilites in details).
+> Are we migrating to C23? I've not followed this too closely.
 
-Thanks.  I'm mainly wondering about the storing of this pending capability
-bounding mask in signal_struct, whether that might have any unexpected
-side effects.
+Google AI says that we will adopt C23 next year or the year after.
+I argued that it would be would be after 2030 but AI said, "No, there
+is too much juicy stuff in C23 for kernel developers to wait so long."
+
+I don't have a pressing need for this patch to be merged.  I was
+just playing with some compiler related tools noticed this.  It's
+the only place in the kernel which uses "bool" as a variable name.
+
+regards,
+dan carpenter
+
