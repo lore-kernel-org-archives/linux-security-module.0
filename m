@@ -1,111 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=134.93.178.243
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794221011;
-	b=t97pTuMEWobgBvb9f6x6W0KPa7Bp5QYQ3J7GlN7VcGNfThJhpH3pmEd1raNNNsmmIixF
-	 tfO2jF2MEt/qdiPmIj3rhDH2a5J7HU3AnotHPcWNf/pL10Zx8Ffu/CClenAVGaLkyDUdy
-	 qgVMS64Z6vHs3uMN2P8GvDbIT0P+eE/9kpABAtInQ87lG78ITUGtHASPmDrUBFEUqzTJe
-	 FtybK+yuYwLp8T8GzaYPr3Ss1UNW6gp+jPVtI7frlryZE+dEz4VZ2IrbKnCe9EIcz0vms
-	 gVH0WpMq+mG8dZLhn04B01AFzuhwVB4hmqVdGS4X5JhspkCVNxQ2qbwul5o/9KHD24A==
+	t=1794222258;
+	b=Tw5VphnAmNWKIFy6Ixtd+HrTisQEu8hq5NLBxaSAK5KRgYL/OeMUM6ObncFtCM6owIHk
+	 +omCfiXPmTY+EGY6ttQTRmGT+JmwuKS0DI9FphJsbRZ9vHhpUxdvQuAOSdCF1Q+WQVpsz
+	 +P1aUCo8VdL1uIHhYaYLsPSW2DW5rCBAdyjzR3WHNkzJwP7C85sC+xRWVRSZSXCDC4/vM
+	 8UZoG5tyo9A7G2j0Q2ZzRvA5q9Rf+nb0UXPGxrETMxaOcG9i/yw0PBxh77G6zZvegtVB+
+	 61aUxfDbO+7nIfrUuneewjz6DxnTnMkvfdQCrIEZON/9V3IXKEahwJrDCLPAAS9zDTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794221011;
-	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To:X-Spam-Flag:X-Spam-Level:X-Spamd-Result:X-Spam-Score;
-	bh=UDca6BQDSujzYN3iXgd+k/sP2oPa3lW0EYEkVXMqZGI=;
-	b=BdOGP8MkMRbGOsOWcJMnpsyeXI7/8tsP6ICUdCJU5VSghLR+uvbYHq5ezwYMkI6FgBBP
-	 aLvEyt2mE8mNGIqqHa7xbw1B46YKd+a0G5ziRBCFtW356trTkCT5gOVIV/j1Sd+cjsMNP
-	 /7SlymzaPEZEpLNEolsRs5buB8v5tu+6vpYIqdKPBr6spEyHZKdQNrFJKPVDELTcwPPIV
-	 AnDDD+MIDxJeN2FkMYaGN5E6icnu78Wy0FQvbw9d9g+8oBkNIcptcxYVkLjirbGvK/oyC
-	 M/gzzNaNw+ye+92xatvyRUbRlylubkndGtIYc4U4JFgMu7etjuLba7U32QlWErhZpPA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794222258;
+	h=DMARC-Filter:X-CSE-ConnectionGUID:X-CSE-MsgGUID:X-IPAS-Result:
+	 IronPort-Data:IronPort-HdrOrdr:X-Talos-CUID:X-Talos-MUID:
+	 X-IronPort-Anti-Spam-Filtered:X-IronPort-AV:Received:Received:From:To:
+	 CC:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy;
+	bh=IAvdkeYbWNqPuHgLOFIbTsl4llsltzOBBEnlGn0o0/Q=;
+	b=GwAK+keBeAZM8vf49TcKOGS+hx+zqxV7RluwghDEZD5GkfhJIPl+lK4zNT6ADiBskJXk
+	 5jRy9uHWKaN2PUosArytUCZLvjeWCdOwxkALRqKGcNNLkxtZLZKZFOSojEubkoBNitom3
+	 sEaqr15Hk/DSA0lmuhbmkMlHGlywKVixFKC+s/PpdFe6w0e2xCT1Y0PRotDF4Gt4VLAo1
+	 Df+Xuiyy3xb9CHJzFIiqw6mVfZTe0ro05HXUdRMzXlWS3Fy5cdhpiueFfLGWm8rRxXsPI
+	 w0pnndKkgxJVrTpLywdEr7ZHyionaf8xHT3WxAAnfQdgh7D3B7RluQJIppX13YclHRA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=suse.cz;
-	spf=pass smtp.mailfrom=suse.cz;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b="bQZO/4ow";
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=cju391Pb;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b="bQZO/4ow";
-	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=cju391Pb;
-	arc=none smtp.remote-ip=195.135.223.131
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=hs-mainz.de;
+	spf=pass smtp.mailfrom=hs-mainz.de;
+	arc=none smtp.remote-ip=134.93.178.243
+Received: from mailgate-3.ZDV.Net (mailgate-3.zdv.net [134.93.178.243])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347A8606A321;
-	Mon,  9 Nov 2026 10:43:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 347A8606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=bQZO/4ow;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=cju391Pb;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=bQZO/4ow;
-	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=cju391Pb
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 68CC51F7DC;
-	Mon,  9 Nov 2026 10:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1794221008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UDca6BQDSujzYN3iXgd+k/sP2oPa3lW0EYEkVXMqZGI=;
-	b=bQZO/4ownfo2yOHaR61k0wnNVBUfekWvdGFDswdi15wmEuCR8Z1/p2ZL6dN64g69FEIkRO
-	PRKrz4vmmMvnPAsZqEGUjbVs1ChGiH4/NjYgeZ09IW9q6Jhz1ig9kodd9g/i2I5zKjXx5F
-	3FFvH4zSFyFct0dpFcx+NtASgf+YDdk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1794221008;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UDca6BQDSujzYN3iXgd+k/sP2oPa3lW0EYEkVXMqZGI=;
-	b=cju391PbLRfEBl3XJCGRIWAIkQf+7o/Sl/VZ1cZw2D761PRg10H9FTP02kRQSC/0Gj8nUX
-	skSOEkBupJ8pXyBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1794221008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UDca6BQDSujzYN3iXgd+k/sP2oPa3lW0EYEkVXMqZGI=;
-	b=bQZO/4ownfo2yOHaR61k0wnNVBUfekWvdGFDswdi15wmEuCR8Z1/p2ZL6dN64g69FEIkRO
-	PRKrz4vmmMvnPAsZqEGUjbVs1ChGiH4/NjYgeZ09IW9q6Jhz1ig9kodd9g/i2I5zKjXx5F
-	3FFvH4zSFyFct0dpFcx+NtASgf+YDdk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1794221008;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UDca6BQDSujzYN3iXgd+k/sP2oPa3lW0EYEkVXMqZGI=;
-	b=cju391PbLRfEBl3XJCGRIWAIkQf+7o/Sl/VZ1cZw2D761PRg10H9FTP02kRQSC/0Gj8nUX
-	skSOEkBupJ8pXyBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E1B3313319;
-	Mon,  9 Nov 2026 10:43:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BRLeLsuj8WpadwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Nov 2026 10:43:23 +0000
-Received: by quack.suse.cz (Postfix, from userid 1000)
-	id 6B4BD21DA3; Mon, 09 Nov 2026 11:43:19 +0100 (CET)
-Date: Mon, 9 Nov 2026 11:43:19 +0100
-From: Jan Kara <jack@suse.cz>
-To: Huang Shijie <huangsj@hygon.cn>
-Cc: axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	zhongyuan@hygon.cn, fangbaoshun@hygon.cn, yingzhiwei@hygon.cn, jack@suse.cz, 
-	agruenba@redhat.com, mic@digikod.net, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, aleksa@amutable.com, legion@kernel.org, 
-	david@kernel.org, sandeen@redhat.com, ebiggers@kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	gfs2@lists.linux.dev, linux-security-module@vger.kernel.org, sunjunchao@bytedance.com
-Subject: Re: [PATCH 1/3] vfs: add inode iteration method super_iter_inodes
-Message-ID: <symrqnxn6tkrahynz7rm5b7n3tolkifpbubmwfd3y6q4q2xnt2@vhh7plsok3kh>
-References: <20261015093854.2082600-1-huangsj@hygon.cn>
- <20261015093854.2082600-2-huangsj@hygon.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93CC606A31C;
+	Mon,  9 Nov 2026 11:04:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E93CC606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hs-mainz.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hs-mainz.de
+X-CSE-ConnectionGUID: E54ZMBywTUO/zkDaGLm1TQ==
+X-CSE-MsgGUID: yIURpLAaRHiP40Wn8DkPug==
+X-IPAS-Result: =?us-ascii?q?A2APBABwp/Fq/z72XgpaglmDTIIJli6eJIF+DwEBAQ4BP?=
+ =?us-ascii?q?RQEAQGFBQKOHic2Bw4BAgQDAgMBAQEBAQEBAQEBAQEKAQEBBQEBAQEBAQYEA?=
+ =?us-ascii?q?YEhhglGDZATBjIBRhALRlYGDoMHAYJ0FL91gQHeSYFuBgkBgUOFdIJuAYUDh?=
+ =?us-ascii?q?XM2gVVEhEA+hCEBAW2FeQSCIoEMl0BICnh4LAFVEw0KCwcFgSVDAzUSKhUjS?=
+ =?us-ascii?q?wUtHYEjIR0XER5YGwYFEiAqQUNbgRKBB12BKyhdAQIfRi0VgXYCglGBI10CA?=
+ =?us-ascii?q?UlBDgdFUwklQxJHJCIIEgkBExosCoEaNTwJJgQ7FQxkCxoFGkcIAgsCDHQoE?=
+ =?us-ascii?q?RATHR4kLwUcJj4bCjYYDUgRLDcVGQQ+bgeSQoIwghxYdRE1H0iWFQGvbzQHg?=
+ =?us-ascii?q?jmBaoFgCAyKMJU6Tapxkk6GOo4Kmw8CBAIEBQIYgW8IggYzGiSDN1IXAg+Wf?=
+ =?us-ascii?q?MVogTUCBwIHDgMLkkgBgR0BAQ?=
+IronPort-Data: A9a23:mT7UGqqGsGZHOcXzWvjWkIJH8GVeBmJ4ZRIvgKrLsJaIsI4StFCzt
+ garIBmFO62PNjf8fYh1Pd+18k0PuJbdnddkHFBorytmRiwa8JacVYWSI27OZC7DdceroGBPt
+ JxCN4aafKjYbVeF/kv9b+e/9RGQ8YnSG9IQ3cadYngZqTdMEXln1FQ73bFp2uaEuPDhayuVo
+ 9T+vsbDD1Gs3j9wIwo85rmKwP9VlK2aVAgw4BpkOpingHeEzyNLVctHdPnoR5fFatA88tCSF
+ rurII6Rpgs1zz91Yvu5n7DydFE9Q7K6FWCmlnpMVqG+tQNJryo037xTHKJ0hZB/0mjhc3hZk
+ b2hhLToIesbFvSkdNc1CnG0JxpD0Zhuo9crF5QdXfu7lCUqe1O0qxln4dpf0Ycwoo6bCkkWn
+ RAUxaxkgh2r34qLLLyHpuZEq5l/HuzBLZwjh1Yn3zL1BNkCRMn/evCfjTNY9G9YasFmD/rAI
+ scJYjoqNlLyTyMJHFoLYH48tL7wwCijNWcE9hTL/8Lb4ECKpOB1+L7sO93Rc93MRthTglSVj
+ mLdumHwAxcIctCSodaA2ij33LWWxHKqMG4UPKyZy8RypHSa/EwSMEFOal3rjfqBl0HrDrqzL
+ GRRoELCt5Ma8E2tU8m4XhukrXGevwINc8RfHvd86wyXzKfQpQGDCQAsXDlBYcYOsM4wWCxs1
+ 1WM2djuAFRHkrSQRGnb3LCIsTS3PSUEBW8LYzQJSxMM+cXlrZsojhPXCN1kFcadlNr/FCvsx
+ HaRpTMlmp0TkMcU2qT99lfC6xqgo5nVVB9z5QzMV36m7wVRa4usZoju4l/ehd5NNoeSCEKHu
+ 2cOltKRxOcUBJqJmWqGR+BlNKmg+vKtKDTBhRtqGJ47+nKm/HvLVYJV5ytkJVxBNM8BdD6vZ
+ 1Xc0StK6YVcMVOqZKtzcoT3AMMvpYDkFNL4RrXPY9FTeJltZUqC+y1zYUO4wW/gig4vnLs5N
+ JPddtyjZV4eCKJ63H+1Sv0b3LsD2C8z3yXQSIr9whDh1qCRDEN5Up8XPEXLY/Ay7Obe5hfZ7
+ ZBZOtfiJwhjbdASqxL/qeY7RW3m51BibXwqg6S7rtK+Hzc=
+IronPort-HdrOrdr: A9a23:93f/DazCXS0knN5j30RYKrPwHb1zdoMgy1knxilNoRw8SKClfq
+ eV7ZAmPH7P+VEssR4b9+xoVJPrfZqYz+8X3WBzB8bGYOCFggqVxehZhOOI/9SjIVydygc079
+ YHT0EUMrLN5DZB4PoTt2KDYq4dKaG8kJxA0t2utktQcQ==
+X-Talos-CUID: =?us-ascii?q?9a23=3AruK6XmhqefTxDlM/F99WVkoLiDJuXyCB/lL6MlC?=
+ =?us-ascii?q?ENEEuWr65QHC0/fpYqp87?=
+X-Talos-MUID: =?us-ascii?q?9a23=3AcBzv5A0eJj0rN5/2p6AM632ppTUj8oWTMlgpuJw?=
+ =?us-ascii?q?8m8i8aXRPPWexjwyqTdpy?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.27,203,1787004000"; 
+   d="scan'208";a="23221199"
+Received: from zdv-exch-2.zdv.net ([10.94.246.62])
+  by mailgate-3.ZDV.Net with ESMTP/TLS/ECDHE-ECDSA-AES256-GCM-SHA384; 09 Nov 2026 12:04:08 +0100
+Received: from MacBook-Pro-von-Nicolai-4.fritz.box (91.37.89.206) by
+ zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Mon, 9 Nov 2026 12:04:08 +0100
+From: Nicolai Kuntze <nicolai.kuntze@hs-mainz.de>
+To: <linux-integrity@vger.kernel.org>
+CC: Mimi Zohar <zohar@linux.ibm.com>, James Bottomley
+	<James.Bottomley@HansenPartnership.com>, Roberto Sassu
+	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric
+ Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] IMA: periodic runtime re-measurement of process .text/GOT
+Date: Mon, 9 Nov 2026 12:03:36 +0100
+Message-ID: <20261109110336.82654-1-nicolai.kuntze@hs-mainz.de>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cf79fc0314c1984e68f683d26cbee3ac0859b5d6.camel@linux.ibm.com>
+References: <20260817102323.35950-1-nicolai.kuntze@hs-mainz.de> <b13a1741eceeba4d4ec50e1c898e011ea81a178b.camel@HansenPartnership.com> <20260822193833.98211-1-nicolai.kuntze@hs-mainz.de> <1805cb973c0e38e1ca8cbeb6dadc4f46f9475a0c.camel@linux.ibm.com> <cf79fc0314c1984e68f683d26cbee3ac0859b5d6.camel@linux.ibm.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -115,158 +98,27 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261015093854.2082600-2-huangsj@hygon.cn>
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spamd-Result: default: False [-12.80 / 50.00];
-	SUSE_INTERNAL_BYPASS(-9.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,hygon.cn:email]
-X-Spam-Score: -12.80
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: zdv-exchfe-1.ZDV.Net (2001:4c80:40:70b:21d:d8ff:feb7:30e1)
+ To zdv-exch-2.ZDV.Net (fd42:4323:8cdd:70e:9a03:9bff:fe77:8f92)
 
-On Thu 15-10-26 17:38:52, Huang Shijie wrote:
-> This will be used to replace the explicit sb->s_inodes iteration,
-> with the caller supplying a callback function and a private data
-> pointer that is passed to the callback along with each inode that is
-> iterated.
-> 
-> A single iteration function, super_iter_inodes(), is provided, with
-> the iteration mode selected by the INO_ITER_F_UNSAFE flag. The
-> INO_ITER_F_REFERENCED flag can additionally restrict the iteration to
-> inodes that still have a reference.
-> 
-> Without INO_ITER_F_UNSAFE, the callback is called with a valid,
-> unlocked and referenced inode, so any inode operation, including
-> blocking operations, is allowed. The iterator is responsible for
-> inode lifecycle management, so the callback only needs to implement
-> the operation it wants to perform on all inodes.
-> 
-> With INO_ITER_F_UNSAFE set, the inodes are iterated without taking a
-> reference and the callback is run in an atomic context that must not
-> block. This mode is for internal VFS use only and runs under a RCU
-> read lock so that the VFS inode is not freed from under the callback.
-> It is needed for operations that require tight control over the state
-> of the inodes they operate on.
-> 
-> This mechanism allows the existing sb->s_inodes iteration models to
-> be maintained, providing a generic implementation for iterating all
-> cached inodes on the superblock.
-> 
-> Signed-off-by: Huang Shijie <huangsj@hygon.cn>
+Mimi,
 
-Some more comments after seeing more conversions:
+Sorry for the long silence, and thank you for the review.
 
-> +static bool super_iter_iget(struct inode *inode, int flags)
-> +{
-> +	bool ret = false;
-> +
+A short status note so the thread is not left hanging: I agree with
+your direction. I am reworking this as an IMA critical-data measurement
+(ima_measure_critical_data()) triggered by the securityfs write, and
+will send a v3 on that basis once it has been tested against the
+integrity tree. 
 
-Here I'd do a lockless icount_read_once(inode) check if INO_ITER_F_REFERENCED
-is set to avoid unnecessary i_lock round trip.
+The question about extending unchanged digests in that mail needs a bit
+of consideration on my end but I agree that my earlier justification
+for it was not correct. 
 
-> +	spin_lock(&inode->i_lock);
-> +	if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE))
-> +		goto out_unlock;
-> +
-> +	if ((flags & INO_ITER_F_REFERENCED) && !icount_read(inode))
-> +		goto out_unlock;
-> +
-> +	__iget(inode);
-> +	ret = true;
-> +out_unlock:
-> +	spin_unlock(&inode->i_lock);
-> +	return ret;
-> +}
-> +
-> +static int generic_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
-> +			       void *private_data, int flags)
-> +{
-> +	struct inode *inode, *old_inode = NULL;
-> +	int ret = INO_ITER_RET_DONE;
-> +
-> +	spin_lock(&sb->s_inode_list_lock);
-> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> +		if (!super_iter_iget(inode, flags))
-> +			continue;
-> +
-> +		spin_unlock(&sb->s_inode_list_lock);
-> +		iput(old_inode);
-> +
-> +		ret = iter_fn(inode, private_data);
-> +
-> +		old_inode = inode;
-> +		if (ret == INO_ITER_RET_ABORT) {
-> +			ret = INO_ITER_RET_DONE;
-> +			goto out_loop;
-> +		}
-> +		if (ret < 0)
-> +			goto out_loop;
-> +
-> +		cond_resched();
-> +		spin_lock(&sb->s_inode_list_lock);
-> +	}
-> +	spin_unlock(&sb->s_inode_list_lock);
-> +out_loop:
-> +	iput(old_inode);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Unsafe iteration for internal VFS use only: @iter_fn runs in atomic
-> + * context with only an inode existence guarantee, so it must not block
-> + * and must perform its own inode state checks. Return INO_ITER_RET_ABORT
-> + * to stop the iteration early.
-> + */
-> +static int generic_iter_inodes_unsafe(struct super_block *sb, ino_iter_fn iter_fn,
-> +				      void *private_data)
-> +{
-> +	struct inode *inode;
-> +	int ret = INO_ITER_RET_DONE;
-> +
-> +	rcu_read_lock();
-> +	spin_lock(&sb->s_inode_list_lock);
-> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> +		ret = iter_fn(inode, private_data);
+One correction: the repository URL in my RFC and in my last message is
+stale. The reference implementation now lives at
+https://gitlab.rlp.net/trusted-computing/memory_attestation
 
-After some thought, I'd probably make this function inline in some VFS
-internal header. That way the compiler can inline everything and avoid the
-extra costs of indirect function calls, etc. These iterators tend to be
-rather lightweight so it would avoid performance regressions from the
-conversion.
-
-I was considering the same for the generic iterator as well but there I
-don't have so strong opinion as the function is already relatively big and
-the callbacks are usually more heavy. Might still be worth some more
-detailed investigation and performance measurements...
-
-> +		if (ret == INO_ITER_RET_ABORT)
-> +			break;
-> +	}
-> +	spin_unlock(&sb->s_inode_list_lock);
-> +	rcu_read_unlock();
-> +
-> +	return ret;
-> +}
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Nicolai (drafted with AI assistance)
