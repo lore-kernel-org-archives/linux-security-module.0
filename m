@@ -1,64 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794229592;
-	b=raEUVtfXKSLPifNyjserEaz/Su8DIPW3S2r047p1g1203ghWBPNc6n7X+f6S4E2dm//1
-	 rpaTa/kq6YIoCYTD8vk3PMJWoVZMTKoh08PGob/xLCnLUo33F9IS2IafElN3Jl8jTDuV1
-	 3zM3aYOp2zNWRW3abNV5E0U/Vvj6m3RTX4kwVDGXb11NycS93eaob2AlVH6eRA3yfIauK
-	 OD8XkKHHIAf+GBNfH270QuwqLnMVSlLY8zhk8lpXpgOFOyiPikVvzNEc2Nk/sQ/E1BBHO
-	 4YxtdizADyU+awuWrjJlqZH0TIlbvk12kvuQ90/6EXs9ffllM4VfaHp5Lv3nClM/Q1Q==
+	t=1794229765;
+	b=bT4Po26jenwBICnhd6KBRHWwNF9k2rIWpN3W9YULj0juuIKsfsgkTTe9CbKcOLsh/Poj
+	 G9oLXHE0Sbp1iKrT3sXXj4eMEMSPnvEeSkOYji0AVek7L3qkhQ84PqhSNzNuiPhjms71X
+	 iwG5Jov+3+IoNobD4boh8Jx9CV4k1AT7GufrCwKxPkhoLcRx6Kb7bHFDewQqN30tw5MH6
+	 xvAGBFaAzAH05ad+rfkGRX99qhG7Zjiz2YsHWRrGjWtjt7kH0hc8Uoc4eeoacmPnuH/uM
+	 xnYxSNojGvXKdZM63pf7zykJ+DEljP0CNXLn4Cviyn6Sb2smesVXuR5uU/dS0/V4M/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794229592;
-	h=DMARC-Filter:Received:Received:Received:Message-ID:Subject:From:To:
-	 Cc:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version:X-CM-TRANSID:X-Coremail-Antispam:
-	 X-CM-SenderInfo;
-	bh=M5XaS0Zod6058OtmcR4y5qY/copfL+BUMUEu0sLQEWQ=;
-	b=ilN+eLuHQ46dlWlaU8/cdgX2I41yZkeX4b0OGt2zB9xls+uHeQoxRAstN9RykIbxk1IM
-	 Uy97OP9FMSCvzgbR79w35gMbiTHJuBO1UacGdHedZliVt1CU8551isuTbWa5+2XE2mwbQ
-	 HGpFmU7lIz4OW5yRYsA3VudviiH9ypb/oxkxtJOK6HHWHyd0lPgewi0W8eg4v5CWWBjcp
-	 D9RG8+KSFf2ni+oZYVWarPKw2A0DYV+L9J+VdzPhJdH94WZT2Tz02Plq2VU7YkgM3sgMs
-	 NB9AoXioHkESpGm7wtL0FG9vIOdR5sBEZ9wx2awUwF4wXM5WBnvUdcQIR/FUdRrDITw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794229765;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=wVb94j5oWA2XXVhXgiQspwdYnM+eA6VBMFxjzm5MA9Y=;
+	b=UWPIWjGOjNRNAtS/j/tsGcTaF3ycwrwfH/DAsL672+iFxR9W+mcjg6dQCQx+XrRbWKc7
+	 JZyijCfSdHYl88qGRaWl9G+zPgpl3MenRh+IL6vqbEBQ4Z8k8zagda+YmyBMoApPb7oYh
+	 rEc+bmAAUqMvjtjivHXAjzbg+i6clAwbGYtByza8Cxy0C3BODi+MN7u4QSf1NcF88fxTS
+	 5t9lsjzKT0tRhrQmYp4+tTcVXMJ8OgjvN7F6mRsMraQ1V1+qXolXJcxTen/K9rrIePOcu
+	 VR2JbBnzP4+caf3wgXpbLocLakqmA6gb80Fu790qVfW8ObCeGGhyPCsDg3BTY9HPjng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=huaweicloud.com;
-	spf=pass smtp.mailfrom=huaweicloud.com;
-	arc=none smtp.remote-ip=14.137.139.46
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DLPmXFJK;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D635D606A325;
-	Mon,  9 Nov 2026 13:06:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D635D606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4jNVQh3QH3zpV2Z;
-	Mon,  9 Nov 2026 21:06:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.157])
-	by mail.maildlp.com (Postfix) with ESMTP id 6F1E340558;
-	Mon,  9 Nov 2026 21:06:27 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by dep2_app1 (Coremail) with UTF8SMTPA id nRC2B0CGaF5JxfFqcoQPAA--.4413S2;
-	Mon, 09 Nov 2026 14:06:26 +0100 (CET)
-Message-ID: <f5b2a9348436f0ac8a11fe1957174de5cbba495b.camel@huaweicloud.com>
-Subject: Re: [PATCH v2] ima: fix races when deleting measurement list entries
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Weibin Liu <liuwb@xiaopeng.com>, linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Steven Chen
- <chenste@linux.microsoft.com>,  stable@vger.kernel.org, Zhu Guanglei
- <zhugl3@xiaopeng.com>
-Date: Mon, 09 Nov 2026 14:06:14 +0100
-In-Reply-To: <179422925743.761920.15976497107095793440@xiaopeng.com>
-References: <20261109123335.432186-1-liuwb@xiaopeng.com>
-	 <95b47e1a0a30022ede9f52ce0e80b0f957097b5b.camel@huaweicloud.com>
-	 <179422925743.761920.15976497107095793440@xiaopeng.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44240606A31C
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Nov 2026 13:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DLPmXFJK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D17001F008A1
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Nov 2026 13:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794229763;
+	bh=wVb94j5oWA2XXVhXgiQspwdYnM+eA6VBMFxjzm5MA9Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=DLPmXFJKejCMvHDvkE6CWbI2QjiTsrr1sVUgRSdZVUQvU3vXSWFhDs/kIgBrlQA+T
+	 8HQVGpt9htTiQE6WGHy7dyZUj0NuLBUN+JBiWdOKuIaFVO8nbMlTPSqfq19GMhyoel
+	 Qvt9EJgErgJraawmcwqiwIO0oh9TC27jkog2N5Xnoccp/pUVQ1M7+XPcuCdYO2D/OV
+	 Uc9TT+1uHqAN84LSnLp+lj+I/9u1zp7vI8j1TOPG4WN5y0pjXkpC5NUcJOKuetXhe8
+	 alM/DXQa5ufkhcXE7EYsV/Cqc0UCMMOHk4MnLRgxi2aGG0FSP7aF5qz163Ac4kor3+
+	 OxsfNWSqV+xKA==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-717034b331dso443260eaf.2
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Nov 2026 05:09:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFE3O/pg84fF8ObSjqrLs+15iqrmMQWOwD6kdJ/xc0wO0fLyKrGDnqWGZpoc4TMGWh0+TCtl3Q/MiF1iPZVXC5X0izMNds=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8nQBuRhmv4Ypy0ak3HivRzQmDxNyCXpU+dwcIE65DoQBF+PdXH
+	4K8IqjUgRGWDUhXqt0/080oJ7YDeFAknJhsutlf9f2Wp8uEZVKdWZa5HCnnIUVScOA4wSCiIoZ2
+	58sd2NSnAbGMSWzvE+H+phXmpBM6qIcA=
+X-Received: by 2002:a05:6820:4a18:b0:702:3087:ca56 with SMTP id
+ 006d021491bc7-7170f25b44dmr1354549eaf.26.1794229763205; Mon, 09 Nov 2026
+ 05:09:23 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -68,35 +59,138 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-CM-TRANSID:nRC2B0CGaF5JxfFqcoQPAA--.4413S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjc
-	xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r1q6r43MxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASDWrxOrlkpAACsH
+References: <20261106234313.2537882-2-edumazet@kernel.org> <179409673700.994134.1614691544438367987@kernel.org>
+In-Reply-To: <179409673700.994134.1614691544438367987@kernel.org>
+From: Eric Dumazet <edumazet@kernel.org>
+Date: Mon, 9 Nov 2026 14:09:11 +0100
+X-Gmail-Original-Message-ID: <CAL4Wiiq67pFNB1r13YxjA4Btabg=mEZb9N7Z4Dqsw+WA_4C2sQ@mail.gmail.com>
+X-Gm-Features: AclHuK-oRMKMgOuax-68pJRAsFibJFXSOgnmPj4y7N8K2Fhs0kFwf1YHobFMK8g
+Message-ID: <CAL4Wiiq67pFNB1r13YxjA4Btabg=mEZb9N7Z4Dqsw+WA_4C2sQ@mail.gmail.com>
+Subject: Re: [PATCH net 1/2] ipv4: unshare headers before recompiling IP
+ options in ipv4_send_dest_unreach()
+To: netdev-bot+sashiko@kernel.org
+Cc: kuba@kernel.org, davem@davemloft.net, pabeni@redhat.com, horms@kernel.org, 
+	dsahern@kernel.org, idosch@nvidia.com, paul@paul-moore.com, 
+	linux-security-module@vger.kernel.org, kylebot@openai.com, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2026-11-09 at 21:00 +0800, Weibin Liu wrote:
-> On Mon, 2026-11-09 at 13:49 +0100, Roberto Sassu wrote:
-> > Is it still true with the new semaphore?
->=20
-> No. That paragraph describes the unpatched code. The patch serializes
-> writers with ima_measurements_rwsem and protects the lookup and cut
-> with ima_extend_list_mutex.
+Le dim. 8 nov. 2026 =C3=A0 01:12, <netdev-bot+sashiko@kernel.org> a =C3=A9c=
+rit :
+>
+> Thank you for your contribution! Sashiko AI review found 1 potential
+> issue(s) to consider.
+>
+> Critical: 0 =C2=B7 High: 1 =C2=B7 Medium: 0 =C2=B7 Low: 0
+>
+> If you believe none of the issues are legitimate, please reply to each
+> issue of Medium severity or higher and explain why the AI is wrong.
+> If any of them are legitimate and you plan to respin, please let patchwor=
+k
+> know by including "pw-bot: cr" as a separate line at the end of your repl=
+y
+> (one such reply per series is enough).
+>
+> - [High] This patch adds skb_unclone(skb, GFP_ATOMIC) to
+>   ipv4_send_dest_unreach() (net/ipv4/route.c:1272-1274).
+>
+> --
+>
+> ipv4: unshare headers before recompiling IP options in ipv4_send_dest_unr=
+each()
+>
+> The patch makes the IPv4 header private with skb_unclone() before
+> __ip_options_compile() rewrites Record Route and Timestamp options in
+> place in ipv4_send_dest_unreach(). The goal is to stop concurrent
+> link-failure processing of clones from changing an option pointer after
+> it has been checked. If the copy fails, no ICMP error is sent.
+>
+> > diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+> > index 3a90c8d28b940..4d8fcc95c2f46 100644
+> > --- a/net/ipv4/route.c
+> > +++ b/net/ipv4/route.c
+> > @@ -1269,7 +1269,8 @@ static void ipv4_send_dest_unreach(struct sk_buff=
+ *skb)
+> >
+> >       memset(&parm, 0, sizeof(parm));
+> >       if (ip_hdr(skb)->ihl > 5) {
+> > -             if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
+> > +             if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4) ||
+> > +                 skb_unclone(skb, GFP_ATOMIC))
+>
+> [Severity: High]
+> Can this skb_unclone() leave stale header pointers in callers of
+> dst_link_failure()?
+>
+> ipv4_send_dest_unreach() runs as the ipv4 dst_ops->link_failure
+> callback. Before this patch, a header that was already linear was never
+> reallocated on this path, because pskb_network_may_pull() returns early.
+> Now, when the skb is cloned and has options (ihl > 5),
+> pskb_expand_head() swaps skb->head and calls skb_release_data() on the
+> old head, which drops this skb's reference.
+>
+> ip_tunnel_xmit() in net/ipv4/ip_tunnel.c saves a raw pointer into the
+> head before calling dst_link_failure(), and does not reload it
+> afterwards:
+>
+> ip_tunnel_xmit() {
+>     ...
+>         inner_iph =3D (const struct iphdr *)skb_inner_network_header(skb)=
+;
+>     ...
+>                         WRITE_ONCE(tunnel->err_count, err_count - 1);
+>
+>                         dst_link_failure(skb);
+>     ...
+>         tos =3D ip_tunnel_ecn_encap(tos, inner_iph, skb);
+>         ttl =3D tnl_params->ttl;
+>         if (ttl =3D=3D 0) {
+>                 if (payload_protocol =3D=3D htons(ETH_P_IP))
+>                         ttl =3D inner_iph->ttl;
+>     ...
+> }
+>
+> For header_ops GRE devices, ipgre_xmit() in net/ipv4/ip_gre.c also
+> points tnl_params into the head:
+>
+>         tnl_params =3D (const struct iphdr *)skb->data;
+>
+> The call chain is:
+>
+> ip_tunnel_xmit()->dst_link_failure()->ipv4_link_failure()->
+> ipv4_send_dest_unreach()->skb_unclone()->pskb_expand_head()
+>
+> Cloned skbs do get here. TCP transmits nohdr clones, so
+> skb_header_cloned() is false and skb_cow_head() in
+> ipgre_xmit()/gre_tap_xmit() does not unclone them, but skb_cloned() is
+> still true. An unprivileged user can add RR/TS options with
+> setsockopt(IP_OPTIONS). err_count goes up on ICMP errors from remote
+> hosts in ipgre_err().
+>
+> After the expand, the old head stays alive only while the other clone
+> holder, such as the TCP rtx queue skb or a tc-mirred original, keeps its
+> reference. If the tunnel has a qdisc, the clone can be sent without the
+> socket lock, and an ACK on another CPU could free the original. That
+> could happen during __icmp_send(), or even inside pskb_expand_head()
+> between the skb_cloned() check and skb_release_data().
+>
+> In that case, are the inner_iph->tos, tnl_params->ttl and inner_iph->ttl
+> reads use-after-free reads, with the stale bytes written into the outer
+> header's TOS/TTL?
+>
+> Would it be safer to compile and echo the options from a private copy
+> rather than uncloning the caller's skb inside a link_failure callback?
+> Another option would be to reload inner_iph and tnl_params in
+> ip_tunnel_xmit() after dst_link_failure(). Either way, it seems worth
+> checking the other dst_link_failure() callers for the same pattern.
 
-Sorry, the comment was not in the right place. Is it still necessary=20
-to take ima_extend_list_mutex to determine the cut position, since now
-writers are serialized with the semaphore?
+Good catch, thanks. Callers of dst_link_failure() such as
+ip_tunnel_xmit() keep pointers into skb->head (inner_iph, and
+tnl_params for GRE devices with header_ops) across the call, so
+ipv4_send_dest_unreach() must not reallocate the caller's skb head.
 
-Roberto
+v2 will compile and echo the options on a private pskb_copy() instead,
+leaving the caller's skb untouched.
 
-
+pw-bot: cr
