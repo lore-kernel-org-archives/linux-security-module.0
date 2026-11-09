@@ -1,58 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794187042;
-	b=bKqOPeDmxK0FZGl+qAxDuM4asbsTAsRiBdCkje3/poLiRjcQfVOJqN/2vi1S9p0UnGps
-	 I5yBTNIm+Q/JV7B9Kk3TiMfWVrPy7E3ZUj33vS0XCNN4iDAYJKntunD4FDgOXAOfheywN
-	 FfXfWlWQPSYAozzuH6IUlFUpvqzLc2ay7By79okaCb25KVwRc9xnWNY/68Gr4e9cDc9jN
-	 Hm59g3P/xpl5I3DlO/EgVD8Wm604gkWWHCcCfTJEkCBMBZCVnf+AFZ17f+AHApSEfkwJf
-	 uTQtLKTNEXYEhVj4SMXAUMe5ycX2yqe2h4R+3wF8LFMiGOKqOVcbMOxpxeLJ4q7Rteg==
+	t=1794187050;
+	b=GlNCic7NejNeVuX+4pgFM0OaK8d6HGsPqxI/r09lCmZILXh+CjFkIwHJY+/Q1Kh5oN2K
+	 ziJGhw3G8IiLezqHYLgAO/zEPxQr2H8vKfVU211M+3oYtf5XSHVwxDR6ATm0KC9jk1tP5
+	 KBqVQamroJIeFu3Y8ID1avX1dh6Net0NNq+ROMW7PuqOQ0bEJAWc0H47H3RxVphY6yk2s
+	 smZkGR2FmWS8ajxic3NSEBVwZOW0CHlQMEs4IblmTmV8rlsYx2ke14AiaqQB5lbwQNH68
+	 RX5I2ciqG/07o7PH6BqV4Ajm8p9PAE/629q+lm17IiytBmX58eLhil2ifnw/XvIsSnA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794187042;
-	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-	bh=yY98EimkYwoSC4veLCocaKOPiAsfw8Chonm7o9A4A9M=;
-	b=rrI70LFnWXYBteD4pRiuygm4mhXJqhhpW9dDgnaapdeAvVQU8m/XjQbhyqsKw7IraYTf
-	 y2myaMRgUBu9MvXAUO47pjc4p6lnfepga7fF6TFe42vGI5xKtXL5yfK1ChJ0HWHgDUQ+v
-	 iL0UzbSxiaSjFC+KDJbZ1hzPH0gfHsxjR0SlEactvJhRl/R66DyZ9Zoxzmu3C6fuKk4Z7
-	 k1VHatVogjg4vrh1u7/FNzL3pAvxcJQNz/z73BpYpm5QggLCMgZeOyIODTPZSceqewBcE
-	 7HfJg2wcURuu5BPJHLCz9emlsOwGQN3LZdrwCIe5807CHgDSSDXri/Eq3REErjo7sdg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794187050;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=O7oAuRffl/WcNwbNnWZJ10eTnJo2fYptt4ijPp2gFFU=;
+	b=Vf6wDVi95A/8PTuZ79u6lwez1gDJQCNVe+flb97zHNzxrdo4Q9M6URrhuEZr9QseyrNT
+	 6vk6Jw8dhfq9QgDk4jyf5CWiGHfEqE9cFLH7ho9rDV00SC4W88RCI6W/5PFlN2eF8GJYh
+	 hyjVzKX/XcN4x4DlSOWTkP4xnDNIBhj9oF56JjMIzt53yrjXJS/YwTGG/JAvGGr7fc8DA
+	 kVYjIPSbV/Q0hsAPor9Sko5DnS0PAey2U6nuCYpQMAUe6QZp4Aou6EynNdKetMYEE50yB
+	 IBsjyH3d6qe+pTeYhEr75PFUYWLh5eRoxxO+iyWYkBP0I0+cwY+gtIbZDP71EQPBi/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=huawei.com;
-	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=qeQgFRRB;
-	arc=none smtp.remote-ip=113.46.200.223
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZK3LVjbQ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B39606A31C;
-	Mon,  9 Nov 2026 01:17:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 02B39606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id EFCE1606A31C;
+	Mon,  9 Nov 2026 01:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=qeQgFRRB
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=yY98EimkYwoSC4veLCocaKOPiAsfw8Chonm7o9A4A9M=;
-	b=qeQgFRRBd00Rn4rcGiGW4cLpU42DjSLiYLuY0iPOxJjAWnf7mo7BPBywaBk6dbPUWAHU7dDoH
-	5Dk0lgW8/XEXIKaJb5jUbAbZdI6PYC+11Vcy1XbFjudWMWJwt82sSUOSfXtHgxtAMTm8KKQSI1X
-	BOb9/Xsi3W61XFBYhWMjjPo=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4jNBhT4PhYzmVcF;
-	Mon,  9 Nov 2026 09:16:57 +0800 (CST)
-Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3ACDA40572;
-	Mon,  9 Nov 2026 09:17:11 +0800 (CST)
-Received: from [10.67.110.140] (10.67.110.140) by
- whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 9 Nov 2026 09:17:09 +0800
-Message-ID: <a890e04e-acbc-472a-ac06-d241c3e9f721@huawei.com>
-Date: Mon, 9 Nov 2026 09:17:08 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZK3LVjbQ
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2849B1F008A1;
+	Mon,  9 Nov 2026 01:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794187049;
+	bh=O7oAuRffl/WcNwbNnWZJ10eTnJo2fYptt4ijPp2gFFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ZK3LVjbQ1iAxN5zB5JTzI6WO/gapbU41fiZkfgWbkSFH0DCq63Q4LPscFsxLl1LOH
+	 yTVxmLpbYum/PiSqRPwcr+Rm5WpmR/clm7qUQa8bgQ+loMwYVlYJTx0hwZfpUHU6+u
+	 TyBQQoY46twxuHcHC8/e8LCaGPBfn5DDmxulT48ujwrmXqMqhaDoS3sQdU92Mo1G8Q
+	 YtFc+IM8dGJGivkWfIlhGcgjaWNZk0AiIo5q9D4v5RUKtKxsiOhq71hSkbLWO9vXlc
+	 N6NNwEukA5krPkItk26iCau5Eb2wG7TNTaLqwaO7bj6TpSywH63jYkLfMT6Ob9YhE8
+	 ITym0pRC7m4pw==
+Date: Mon, 9 Nov 2026 03:17:25 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Guixiong Wei <weiguixiong@bytedance.com>
+Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: do not let an unmatched key decide the search
+ result
+Message-ID: <avEfJT6hg-SCr7SN@kernel.org>
+References: <20261108131413.12012-2-weiguixiong@bytedance.com>
+ <avDG8G-Jl1YsmfCs@kernel.org>
+ <451788d5e97cba38274e663d2b7952c593e959be.f77cb812.a801.42ef.9775.d2480a239fa8@bytedance.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -62,30 +62,92 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 0/9] lockdown: fix the securityfs interface and add
- tests
-To: "Serge E. Hallyn" <serge@hallyn.com>
-CC: <nicolas.bouchinet@oss.cyber.gouv.fr>, <xiujianfeng@huawei.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <shuah@kernel.org>,
-	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<lujialin4@huawei.com>
-References: <20261103082421.3033195-1-caixinchen1@huawei.com>
- <au4wx1+7+Bkg3wgz@hallyn.com>
-Content-Language: en-US
-From: Cai Xinchen <caixinchen1@huawei.com>
-In-Reply-To: <au4wx1+7+Bkg3wgz@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- whupemk100010.china.huawei.com (7.152.184.41)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <451788d5e97cba38274e663d2b7952c593e959be.f77cb812.a801.42ef.9775.d2480a239fa8@bytedance.com>
 
-Hi, Serge. Thanks for review.
+On Mon, Nov 09, 2026 at 09:10:08AM +0800, Guixiong Wei wrote:
+> 
+> > From: "Jarkko Sakkinen"<jarkko@kernel.org>
+> > Date:  Mon, Nov 9, 2026, 03:01
+> > Subject:  Re: [PATCH] KEYS: do not let an unmatched key decide the search result
+> > To: "Guixiong Wei"<weiguixiong@bytedance.com>
+> > Cc: "David Howells"<dhowells@redhat.com>, <keyrings@vger.kernel.org>, "Paul Moore"<paul@paul-moore.com>, "James Morris"<jmorris@namei.org>, "Serge E . Hallyn"<serge@hallyn.com>, <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+> > On Sun, Nov 08, 2026 at 09:14:12PM +0800, Guixiong Wei wrote:
+> > > KEYCTL_SEARCH returns -ENOKEY, -EKEYREVOKED, or -EKEYEXPIRED for the key
+> > > selected by type and description.  keyring_search_iterator() currently
+> > > records revoked or expired state before asking the key type whether the key
+> > > matches.
+> > 
+> > I don't understand the "asking the key type or" part here. Please,
+> > explain what you mean.
+> > 
+> I meant calling ctx->match_data.cmp() to check whether a candidate key
+> matches the search request. For dns_resolver, this calls
+> dns_resolver_cmp() to compare the candidate's description with the
+> requested name. I'll make that explicit in v2.
+> 
+> > > 
+> > > Direct lookup visits the indexed description, so that ordering normally
+> > 
+> > "Direct lookup visits the indexed description"
+> > 
+> > I don't honestly understand this type of jargon, which is all over the
+> > place.
+> > 
+> I meant that assoc_array_find() looks up a candidate using the requested
+> type and description. The dns_resolver search instead walks the keys and
+> checks their descriptions using dns_resolver_cmp().
+> I'll rewrite the commit message around your foo/bar example.
+> 
+> > > does not matter.  Iterative lookup visits every key of the requested type,
+> > > however.  The in-tree asymmetric id/ex/dn lookups and dns_resolver use this
+> > > mode.  A revoked key with a different description can therefore make
+> > > KEYCTL_SEARCH return -EKEYREVOKED instead of continuing the search.  It can
+> > > also prevent request_key_and_link() from issuing an upcall because that
+> > > path only upcalls after -EAGAIN.  An unmatched expired key similarly
+> > > pollutes searches that do not set KEYRING_SEARCH_SKIP_EXPIRED; the request
+> > > path itself sets that flag.
+> > > 
+> > > Run the type comparator before recording state errors, so only a key that
+> > > matches the caller's criterion can decide the search result.
+> > 
+> > 
+> > Can you describe instead describe the what goes wrong with an example,
+> > which does not require much effort:
+> > 
+> >         keyctl new_session >/dev/null
+> >         A=$(printf '127.0.0.1\0' | keyctl padd dns_resolver foo @s)
+> >         keyctl revoke "$A"
+> >         keyctl search @s dns_resolver bar
+> > 
+> > Results:
+> > 
+> >         keyctl_search: Key has been revoked
+> > 
+> Thanks for the reproducer. The expected result is -ENOKEY because "bar"
+> is absent.
+> 
+> When the search encounters "foo", keyring_search_iterator() sets
+> ctx->result to -EKEYREVOKED and skips that candidate before calling
+> dns_resolver_cmp(). It therefore never checks whether "foo" matches
+> "bar".
+> 
+> The walk continues, but in this example it finishes with ctx->result
+> still set to -EKEYREVOKED. My wording "instead of continuing the search"
+> was inaccurate.
+> 
+> The patch moves the match check before the state checks, so "foo" is
+> skipped without changing ctx->result.
+> 
+> > This example alone is not of course enough because it is lacking
+> > explanation what goes wrong, which is neither clearly described by
+> > the commit message but you could add my reported-by because at
+> > least I constructe a real bug report that justifies this fix.
+> Thanks, I will add your Reported-by.
 
-I will change these two patches and send v2 later.
+Yeah, just sorting things out in proper order :-) Do those changes for
+v2 and this should be good to go.
 
-On 11/7/2026 3:55 AM, Serge E. Hallyn wrote:
-> In patch 3, it would be nice if we had a BUILD_BUG_ON if
-> the temp len became not long enough.  In patch 6, I think
-> the original was nicer to read.
+Br, Jarkko
