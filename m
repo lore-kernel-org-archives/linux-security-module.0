@@ -1,54 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.39
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794195203;
-	b=K5gtBe/w9KG04HA3pxaInf1iZ1nl2qDnZcgVx+tYqGHPXmJh39nHGeX90PDRYMWIlVb2
-	 kFgkbeFJvoqfq6MW517OybPwzS4t7hhYGEnMVoiByLdCJqAHlltcCJ3Es+nzNhctscCyC
-	 2l/QcwNI/7KKqcwbHBE5ybKdzjtbpv5JMuKvz4IYWHnJj2rTOyUoO6MEYGHzGVHq/grSm
-	 4r0JuSyTBp1RLuiNdSsfXF+828icl2Pe7gPHpfehLerl+wYu27BWufYoJvstH+2x8h+wu
-	 Vo5BEgtfIRwLj7b8aOb7rhhKUX2yzRmoAT/dHu8cK59DNQ41TQxf3qi/+HlisWQVzjA==
+	t=1794195332;
+	b=zhdOYi9oKHIw6YQIfe2YBbHujkaw56n7moNHtOjO7h+aCzV1T7dWPWSvQeB0twRb94ic
+	 18wd61D1CyV5v2EP+mI3f9QgVrqdZK/unyOdcheIbQnKmx0g+g+QxH8EYF+Fmm80+FCDX
+	 juQnnm+gfqwwr3n+AGzgHS/eJcDHPah940Yr8TGEAiCfUd3Lecpi7xmrdte0JzzEH7jEi
+	 yT/HzSdMMSQQdkEFr4DCOOD9APnBuDlcHKnxypPgYsk1hf+uawyOPJpR4l5F80FMq8Ct7
+	 ePAZYXBJx8SNP8dsCPEN+9TwQOQ2PuHwRvXLVF8Q3ixHEgGM/w+GDQeyMpVPA5Z/0Tg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794195203;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=fSXkQFvYokTP7/zdJJbPcVi6eQ2VnCwRvk+/9wXmlm4=;
-	b=glVvgpCgm4xta6/9k8MH18yf45vvrQtsJb4DXMBEANq3g6ihXD/Ozhs7X3xQlXEG35J4
-	 Xw2RRYbkm8HL8jeiQ77YxbFTuNzsy6dDd/DVhYQacaCSCGHRSSA5tTwoGVCCYXU56UysR
-	 ZYGFDydJIMT93oYpGn3nhX2nAceCiei4WG6TpnL8OGZXayy14DP5uXl7ioPL+Ri65Ic0C
-	 pYzzy+dOnRqfeea9RvYcoobj6Amccrz3wgqXDx5Dbw3z2di+mEgHXuVKgfQNYuC3+pbPF
-	 JQT83IKOINJYZ2eg35istLqOlbHvmROqqYZhq+Ykr5+NWCvQtmzW87UNvvqOQXNDEkQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794195332;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=X0kaGWKc358gw/UbgPW0/LKEZyyNTax69+247fXhcvM=;
+	b=uQ4HiCh4HsCE/U+jKJaYvBBjCiQv0/XVhG2EXKg0d4uSIkufNuzErqzPcNQCI7y3g58W
+	 Yhl+ZaS3ojOLzOVwRaR4h4dW3hVKSxI1k69RiUVl/j0zsgWNXHMwSxNLZGs7CYHm47DZY
+	 bMzKA37eueb/RL7K0+8gonklTIkBGuF7zvWGn8/hdWYDc0GEThKyfK7Rr8niriRBorul9
+	 byypK1dYkwuB1AE5XGQqGUs8pKMuWVDbVq2r3xTNIdhk/SSR5Cn2xLQ9zGD4euhOBNPoL
+	 0uP67ww99v7tj8r08C0RUZSR0w/nnVnnKjZjKLB7ZQRbJh1jvnlNgnKy8kujlQBEibQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.dev;
-	spf=pass smtp.mailfrom=linux.dev;
-	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=r16QktDB;
-	arc=none smtp.remote-ip=91.218.175.39
-Received: from mta0.migadu.com (out-39.mta0.migadu.com [91.218.175.39])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R9Jqamcb;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3CE606A331
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Nov 2026 03:33:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BD3CE606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C0B606A31C
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Nov 2026 03:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=r16QktDB
-X-Envelope-To: linux-security-module@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=fSXkQFvYokTP7/zdJJbPcVi6eQ2VnCwRvk+/9wXmlm4=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1794195200; v=1; x=1794800000;
- b=r16QktDBtgrve2lJtXf+k6gXH2JSF2UEsOe+NTp+H98CZ49wJ1Z7BJczkYK9T6Di3A8RlBwI
- ZmVorwwBFY77q8no22m3Of4AAcVaDARx6SWh9e1i206khZ08QONc2ddINsWniDSlUhMtxdUeT3n
- JGi03KI7efrxXB4Ev5FI0UVQ=
-X-Envelope-To: linux-security-module@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 1b12e287425c2338;
-	Mon, 09 Nov 2026 03:33:19 +0000
-X-Mizu-Trace-ID: 1b12e287425c2338
-X-Migadu-Flow: FLOW_OUT
-Message-ID: <dbdb9385-89cd-4e4f-bfb8-b72510e8801b@linux.dev>
-Date: Mon, 9 Nov 2026 11:33:09 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R9Jqamcb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B6911F0089F
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Nov 2026 03:35:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794195331;
+	bh=X0kaGWKc358gw/UbgPW0/LKEZyyNTax69+247fXhcvM=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=R9JqamcbFAzML3Jzxw293YfV9MMXdrAe1tolKUWCLR8lj2osiESrKB4xPdvIVAcGi
+	 1FvuadcpI1RsB1gVJ8/TfUOpaymZNlfsO6ZWwIhwwDyk8gbKWYaI3Khvv7mwBudcUP
+	 bF3FdX3Lnl8PDj3xv31ctLfDlX9sYB2KI+Hi0ZCa8CCQUZKat7QaJ2GJH4rH+6B3Li
+	 lI61EVDgLr9hDTY+ogzrzYcwmOLIsOWdZ14uBkNq6hMynreBWSB5kn5RsEt3Nh46AK
+	 0lL/WH6McMU5sZR5x6DDCA/rteyn5IRfsdZy4pEoD0c1dmkkzvJd0nf6ZRkIEraU34
+	 t6wMTrz4UvWAg==
+Message-ID: <sashiko-outbox-204373@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] apparmor: fix double d_instantiate() in ns_mkdir_op()
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261109025600.2031008-1-ranhongyun1@huawei.com>
+References: <20261109025600.2031008-1-ranhongyun1@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Nov 2026 03:35:30 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -57,81 +57,22 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 00/14] net: annotate data-races around sysctl
- knobs
-To: Jason Xing <kerneljasonxing@gmail.com>
-Cc: netdev@vger.kernel.org, David Ahern <dsahern@kernel.org>,
- Ido Schimmel <idosch@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Pablo Neira Ayuso <pablo@netfilter.org>, Florian Westphal <fw@strlen.de>,
- Phil Sutter <phil@nwl.cc>, Nikolay Aleksandrov <razor@blackwall.org>,
- Paul Moore <paul@paul-moore.com>, Matthieu Baerts <matttbe@kernel.org>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Julian Anastasov <ja@ssi.bg>, Allison Henderson <achender@kernel.org>,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Xin Long <lucien.xin@gmail.com>, "D. Wythe" <alibuda@linux.alibaba.com>,
- Dust Li <dust.li@linux.alibaba.com>, Sidraya Jayagond
- <sidraya@linux.ibm.com>, Mahanta Jambigi <mjambigi@linux.ibm.com>,
- Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, bridge@lists.linux.dev,
- linux-security-module@vger.kernel.org, mptcp@lists.linux.dev,
- lvs-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
- rds-devel@oss.oracle.com, linux-sctp@vger.kernel.org,
- linux-s390@vger.kernel.org
-References: <20261109025425.328445-1-jiayuan.chen@linux.dev>
- <CAL+tcoDvFNAZubOjw9+Z1eyaVeiBzt_Xg3KMNucY879bg-ZLow@mail.gmail.com>
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-In-Reply-To: <CAL+tcoDvFNAZubOjw9+Z1eyaVeiBzt_Xg3KMNucY879bg-ZLow@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+> ns_mkdir_op() drops inode_lock for simple_pin_fs() and re-acquires it
+> before instantiating the dentry.  A concurrent mkdir() of the same name
+> can pass the VFS negative-dentry checks in that window and also reach
+> d_instantiate(), tripping BUG_ON(!hlist_unhashed(&d_alias)).
+>=20
+> Re-check that the dentry is still negative after re-acquiring inode_lock
+> and return -EEXIST if a concurrent mkdir() won the race.
+>=20
+> Fixes: 4ae47f33354a ("apparmor: add mkdir/rmdir interface to manage polic=
+y namespaces")
+> Signed-off-by: Ran Hongyun <ranhongyun1@huawei.com>
 
-On 11/9/26 11:11 AM, Jason Xing wrote:
-> On Mon, Nov 9, 2026 at 10:55 AM Jiayuan Chen <jiayuan.chen@linux.dev> wrote:
->> While testing the recent sysctl range fixes I noticed that a lot of our
->> sysctl knobs are read with plain loads while the handlers update them
->> with WRITE_ONCE() and no lock, so KCSAN reports them as data races. I
->> then used an LLM to go through every ctl_table under net/ and list the
->> readers that were left behind. This series annotates them with
->> READ_ONCE(), and adds WRITE_ONCE() to a few custom handlers and netlink
->> paths that store to the same fields with plain writes. Most of it is a
->> plain READ_ONCE() at each read; where a function reads the same knob
->> twice to make one decision, it now reads it once into a local, so the
->> comparison and the value it acts on cannot come from two different
->> writes.
->>
->> There are no Fixes tags. Done one knob per patch this would be well over
->> a hundred commits, so I grouped them by subsystem and feature instead to
->> keep the review manageable. If maintainers prefer, I can split it up
->> further with a Fixes tag on each one, as several smaller series.
-> Over the last year, I've been thinking about the annotation stuff
-> especially around sysctls, which, I suppose, shouldn't actually affect
-> the real workload but does affect the outcome of the syzbot.
->
-> Out of sheer curiosity, my question would be what is the point of
-> trying to change all of them? Or what kind of benefits can we get from
-> the big series?
+Sashiko has reviewed this patch and found no issues.
 
-
-Three things:
-
-1. A plain load may be emitted twice by the compiler. ip_error() compares
-peer->rate_tokens against ip_rt_error_cost and then subtracts it again;
-if the sysctl changes in between, the u32 wraps. A few readers have that
-shape and now read the knob once into a local.
-
-2. Tearing is not involved here, all the fields are at most word sized.
-
-3. The rest is the memory model: a lockless read of a field written with
-WRITE_ONCE() is a data race unless it is marked
-(tools/memory-model/Documentation/access-marking.txt). That is what KCSAN
-reports, and why most of the series is plain READ_ONCE().
-
-
-I think the benefit is doing it in one pass.
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109025600.2031=
+008-1-ranhongyun1@huawei.com?part=3D1
 
