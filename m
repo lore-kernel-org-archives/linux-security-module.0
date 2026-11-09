@@ -1,62 +1,108 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794230265;
-	b=5FpBCp2RUukwFIAgd/0jLNYbz0/XKos3IAWSmhahG/LcmGmNOlRVgaj57C1TYqapEX1c
-	 7baAI2chkWC6T5RP3UTHWR6Q5DYIrfY4EZfiLmg20XoD1CAtwWs93v5p0pcWcbhqnNNyU
-	 a6k+PPVt5C74jjkZCkYe7o3HK9MI0o09yQB8dP0TmzUsk5eGL7MVjpBz6ERCEouNH8yCo
-	 7Ej+tvbD1cv09XuOPHzrtqlpch7kHXdirS0n+k47vYLHVSucxIa4IMgF0vd+LPADJ1JeZ
-	 x02y5ykaJ1ISgIjeE3Clnh4rlCeRKsv8k+b/rEO26KVm3kiH61J9T3p5XcEDr+zlsbw==
+	t=1794231072;
+	b=kzZl37a+FglJtDd3hbEQxcoXRX49IpGWFZ648qKGHeQP+Zbta4XTZS03iSXqjjFqgI6a
+	 uQwf6f12oFmZlbkjdeu4/3/UAr623CEqJFjxgSsRiwBY4ufjEVVWcHqvsYZFsEYldBAMs
+	 ZCfoIPCrYAzK7xDfL3DGWrhboZRqzTmVmChqt8tguu7yzJ2SPN81sJB8UR+Na+hZLTnHh
+	 f+v5hiahKSkMOmNXy0615nBqiOuMfahz3b+7Nz+YfwHNyoZtPT+eD/pCga/+JKLzQ5dhz
+	 uDZxvd/EgEB/o/atsLXXd+xqIGGCPT7FsQnHn1ufl58ZQ4LUK0UKgCjlf0SugLOYeCw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794230265;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=wmSKA0NVMNFLjGl+O7ashCzG730qVs4KBuS1dZB2o1Y=;
-	b=InSPbZ8y/Sn0F062bA65XfaDS3tcxD9rvY+b4KQNa/3NEf3RgY04jCVOia0+cP8+LImd
-	 BQdhcI7miwKd9Z9gVyfw/YAbgWpOrqyZ3Q35tONxsjA5vA3jsh+VRb0vyLiU1m4okd33D
-	 cTfoFpF/DZoBmb3ZWDQzt2mPz44q+YWk4PJgxcL4dKktVON8Q1AU+z04ympJmu8SoMkSX
-	 sXTWZ0t79rLfkQCqjRQvMFiTNv4lPKJ5GeR1s7vjTD1qhSKewRKiI6xBs5KlwvDl209W9
-	 yKfWBtFyh1fiXyXYs8LU7bBfGihHPTJ+yrMH5E0QHcY1LlYpwhXHroAKqPQGLQKjrtQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794231072;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=HZb1ecY9gAspjaczVb/ho/JkduHza/gfWZak6QZzsog=;
+	b=C6uDIIIoU9BiCJ0CV8DLmPkkg9RC2jB4EuePHMT8q5gxbCeylY8YJ0fzj/oB3NHuAk1W
+	 dxTiPYTmvHAqU/oKBDPaNHb7etKN3gXfrIIVlVVI5kEi3GhMHctVKPH995S+O2L3uKE6G
+	 DJznco/9A3kWPt2Z3vydT/zYOvGTOvVsa731fwZtCjSOGg7SMzvapZUvecq9ecxZyJ9RE
+	 sAqcXHb73ljluVRWhefXCvgJ6pQEXuI/rF1IQ/yTU4I6iutLx6nmTsNxC+X62Yw7vd0SD
+	 62LVSjDuPLA9oBL+cLV7hpWxIEVTV8Ps69FZY9K+TefwJQx4zMLPYIBELkkr7quXtyQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a2Ulgqs7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=moJaaXVs;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA1F606A325;
-	Mon,  9 Nov 2026 13:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907F7606A31C;
+	Mon,  9 Nov 2026 13:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=a2Ulgqs7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C83C21F0089F;
-	Mon,  9 Nov 2026 13:17:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=moJaaXVs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A331F0089F;
+	Mon,  9 Nov 2026 13:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794230265;
-	bh=wmSKA0NVMNFLjGl+O7ashCzG730qVs4KBuS1dZB2o1Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=a2Ulgqs7zf06D8PuIMyDCuX6l8nysWf52xbXNoKuuFvT5b2fYeMv8QzQTZ8ME21XK
-	 iNc6obiBk+XN71Snf16EIzJfIhOTT+qhwvQevNhEMl6L1cJIiOhknrmKIYqla5UwIp
-	 hHBKj8sj+OUqZlhZ/b+4M0td2Eu7Szr5oQnQ3806z1wXzfLL802V+VxzQQk31auZYD
-	 NnGtnJPmwqSYEE8/tLODbmrQ9Rb8leloURbQprsfp3eSSvhLKmQiWGLp+ncW4N90F8
-	 1bLshwF1gjJRLY6YfJOYb7EnR6pXr4oQcbBbTenBURJ5LKBs975LxG0ECtj6Wswobo
-	 Al7Ay0EnnmRSQ==
-From: Eric Dumazet <edumazet@kernel.org>
-To: "David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org,
-	Kyle Zeng <kylebot@openai.com>
-Subject: [PATCH net v2 1/2] ipv4: recompile IP options on a private copy in ipv4_send_dest_unreach()
-Date: Mon,  9 Nov 2026 14:17:35 +0100
-Message-ID: <20261109131736.3060756-2-edumazet@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261109131736.3060756-1-edumazet@kernel.org>
-References: <20261109131736.3060756-1-edumazet@kernel.org>
+	s=k20260515; t=1794231071;
+	bh=HZb1ecY9gAspjaczVb/ho/JkduHza/gfWZak6QZzsog=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=moJaaXVsjzU7SL4CI8JBlVbPKjmyaTD3NHAgdTnwk/M1L60N+Lk5weuwkobiTd93C
+	 8s5kF6qwjOZc6FI/CH+6n9ves3n9Dt3ncPHme7MMz8CrOWrXu7GVA3alW12QVQxfFC
+	 dYdxN3at+z/1sifp3qbo3ReksK4F/0ytjastLvz2FzQpT5Hf4HIrH6DUDcYCRbwUm+
+	 dEj416YDQH6bI4b6I/NGuMzR1qG7vWeEqkoYkCakzFXeyTPSKb1bte6mOADwhhJ34m
+	 oj57425c6Psc1SXo2+31xoM4HAfQoI0isPU+xPj1eF0X/18EEWq+95be4Si8H/sog8
+	 62xe9bzzf6Bpg==
+From: David Hildenbrand <david@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>, 
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+ Rik van Riel <riel@surriel.com>, "Liam R. Howlett" <liam@infradead.org>, 
+ Vlastimil Babka <vbabka@kernel.org>, Harry Yoo <harry@kernel.org>, 
+ Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
+ Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Byungchul Park <byungchul@sk.com>, 
+ Gregory Price <gourry@gourry.net>, 
+ Ying Huang <ying.huang@linux.alibaba.com>, 
+ Alistair Popple <apopple@nvidia.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Nico Pache <nico.pache@linux.dev>, Ryan Roberts <ryan.roberts@arm.com>, 
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+ Usama Arif <usama.arif@linux.dev>, Kiryl Shutsemau <kas@kernel.org>, 
+ Xu Xin <xu.xin@linux.dev>, Chengming Zhou <chengming.zhou@linux.dev>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Pedro Falcato <pfalcato@suse.de>, 
+ Kairui Song <kasong@tencent.com>, Qi Zheng <qi.zheng@linux.dev>, 
+ Shakeel Butt <shakeel.butt@linux.dev>, 
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+ Wei Xu <weixugc@google.com>, Baoquan He <baoquan.he@linux.dev>, 
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+ Michal Hocko <mhocko@suse.com>, Leon Romanovsky <leon@kernel.org>, 
+ SJ Park <sj@kernel.org>, Rakie Kim <rakie.kim@sk.com>, 
+ David Rientjes <rientjes@google.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ James Clark <james.clark@linaro.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+ John Johansen <john.johansen@canonical.com>, 
+ Georgia Garcia <georgia.garcia@canonical.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ =?utf-8?q?Ondrej_Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>, 
+ "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ kvm@vger.kernel.org, damon@lists.linux.dev, 
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+In-Reply-To: <20261105-late-2026-vma-flags-v1-6-0d3cd15ab75f@kernel.org>
+References: <20261105-late-2026-vma-flags-v1-6-0d3cd15ab75f@kernel.org>
+Subject: Re: [PATCH 06/13] mm/ksm: convert VMA flag tests to use
+ vma_flags_t
+Message-Id: <179423105176.12172.13163434370832642610.b4-ty@b4>
+Date: Mon, 09 Nov 2026 14:30:51 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -66,87 +112,44 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
 
-__ip_options_compile() updates Record Route and Timestamp options in
-place. ipv4_send_dest_unreach() can receive skbs whose data is shared
-with clones (for example TC-mirred copies or TCP transmit clones), and
-pskb_network_may_pull() does not unshare an already linear IPv4 header.
+On Thu, 05 Nov 2026 21:30:57 +0000, Lorenzo Stoakes (ARM) wrote:
+> Replace use of the legacy vm_flags_t flags with vma_flags_t values where
+> KSM tests VMA flags directly.
+> 
+> The ksm_madvise() interface continues to take legacy flags for the time
+> being.
+> 
+> No functional change intended.
+> 
+> [...]
 
-Concurrent link-failure processing of such clones can therefore change
-an option pointer after it has been checked. For example, a Record Route
-pointer can advance during fib_compute_spec_dst() (called from
-spec_dst_fill()), causing the following write to overwrite the next
-option's length. __ip_options_echo() then trusts that length when
-building the ICMP reply, which can overflow both the stack reply-option
-buffer and the cork-option allocation.
+Applied, thanks!
 
-Uncloning the skb is not an option: ipv4_send_dest_unreach() runs as
-the dst_link_failure() callback, and callers such as ip_tunnel_xmit()
-keep pointers into skb->head (inner_iph, and tnl_params for GRE devices
-with header_ops) across the call.
+tree: mm/core.git
+branch: ksm-7.5.misc
 
-Instead, recompile and echo the options on a private pskb_copy(),
-leaving the caller's skb untouched. This also stops rewriting the
-options of a packet the caller may still transmit. If the copy fails,
-do not send the ICMP error.
+Applied patches will appear soon in mm-next, followed by linux-next.
 
-The issue was found by an AI code review agent. It was not reproduced,
-and the fix was only build-tested.
+Please report any outstanding bugs that were missed during review, so we
+can either drop the patch series or decide how to fix it up.
 
-Fixes: ed0de45a1008 ("ipv4: recompile ip options in ipv4_link_failure")
-Reported-by: Kyle Zeng <kylebot@openai.com>
-Signed-off-by: Eric Dumazet <edumazet@kernel.org>
----
-v2: use a private pskb_copy() instead of skb_unclone(), callers of
-    dst_link_failure() cache pointers into skb->head (Sashiko).
-v1: https://lore.kernel.org/netdev/20261106234313.2537882-1-edumazet@kernel.org/
+It is encouraged to provide Acked-bys, Reviewed-bys, and Tested-bys even
+though the patches have already been applied. If possible, patch trailers
+will be updated.
 
- net/ipv4/route.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. Further, this is not a guarantee that the
+patches will go upstream. If in doubt, please check the listed branch.
 
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 3a90c8d28b940bf615c165d9b30ac634943586e1..9af72cb892034deff2bb3169911c02c025d73cf2 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -1256,6 +1256,7 @@ EXPORT_INDIRECT_CALLABLE(ipv4_dst_check);
- 
- static void ipv4_send_dest_unreach(struct sk_buff *skb)
- {
-+	struct sk_buff *nskb = NULL;
- 	struct inet_skb_parm parm;
- 	struct net_device *dev;
- 	int res;
-@@ -1271,6 +1272,16 @@ static void ipv4_send_dest_unreach(struct sk_buff *skb)
- 	if (ip_hdr(skb)->ihl > 5) {
- 		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
- 			return;
-+
-+		/* __ip_options_compile() writes into the options, and
-+		 * callers of dst_link_failure() may cache pointers into
-+		 * skb->head: work on a private copy.
-+		 */
-+		nskb = pskb_copy(skb, GFP_ATOMIC);
-+		if (!nskb)
-+			return;
-+		skb = nskb;
-+
- 		parm.opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
- 
- 		rcu_read_lock();
-@@ -1279,9 +1290,11 @@ static void ipv4_send_dest_unreach(struct sk_buff *skb)
- 		rcu_read_unlock();
- 
- 		if (res)
--			return;
-+			goto out;
- 	}
- 	__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH, 0, &parm);
-+out:
-+	consume_skb(nskb);
- }
- 
- static void ipv4_link_failure(struct sk_buff *skb)
+[06/13] mm/ksm: convert VMA flag tests to use vma_flags_t
+        https://git.kernel.org/mm/core/c/4ec4530e
+
 -- 
-2.53.0
+Cheers,
+
+David
 
