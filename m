@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.224
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794315356;
-	b=uPwqAq4ZePNZcLVA1ilYtRdtXPi8DKAn3IAofGYNBbCeuwVI5c4BlQJ9QrP2IxuTjXZv
-	 WQGIu2xx8BDW/Ihn8vnNJCAonT/Jz6XVZe3yqY6FZve99ebS2Rp00Eg01Pb5crlsPQkQw
-	 BiuRgZqiriWshhy86XsVapN0PVX44lKkYhU3lURSXUX73cFvLzfoyi+AgxJ/VKQNi5QB6
-	 bJbXjq/ViZG5NT3DcpvRcdvmCjHf+08Egqxrn1n7Pr/OL+e679TO07eGghjwWga7Vd7wR
-	 1PM3tukC064uPqQDznJrcvyF2BvybwFOYl+FxAhP+T0mWhJD9MYa3VVK7sODJW4J7fg==
+	t=1794315361;
+	b=sPu2caBAD54va5FbYUIr8UQwUHushFS1wQKL7L7ry1D89sFfYm56oOC4brxYm/jvVkvG
+	 nEz5j3pF4RXwTvIXozC3aF55pAK+CWHTa9FHOU5i6OB5635prz4pprTkmK5uItDeCAg31
+	 dienN7JVWjLUMHzWH31rMB2cH7qAioE4Qj1aIbJxptNgfeZeqSBFa5gCYCbI8EsETC3kY
+	 UCsXS+NNqn4r8FPokiXb84yuxa2nfKGA5O4LXqZW4wbuhSlE64FlmsmXUkLpBEEJXRf28
+	 R8Uzk57jfx5CJPo3bsBA3EMokVsXCsh8Dza0uwelBZwAIvHEdz51dD6evk2zpce+cWg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794315356;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794315361;
 	h=DMARC-Filter:dkim-signature:Received:Received:Received:From:To:CC:
-	 Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 X-Originating-IP:X-ClientProxiedBy;
-	bh=T2dWyS2c9HCj9HQ2w6QNE6Xzgrb9OoKtERWi7W6SZbU=;
-	b=SVnektij1thQUOQe00/wjO/qPevMpvJD1XlhNzV/sZs2pGQKEN95/uptmPmYwfiYOCtH
-	 c394n4Oo8SISKF1xB5q70WeM+WY5F5rujNSDfs68Ks4S4hQvQQVj1sVSKcU8+GqSGhSaw
-	 Ctfjzw3DZIxRtcTW1TGC/2x/VE0SWw0O4FGlQ1DsWvOLC/zi4cKbzm02fS4Lkb370kc6F
-	 vQxc0SuvR/mAJLSLLNjz7aw58GUo+lX6hMzJezWSRovbVK3YJLgwArotYl/BqJsYkDdh/
-	 HWSsSqqeAyXSp/1fEjz5pP9TFhwYomXs1Ji8uuywAOSd/4Xc5vjl2dCRmj0yLRPBXHQ==
+	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Type:X-Originating-IP:X-ClientProxiedBy;
+	bh=Gm+8tToVxO37l40qhkGEFIY1RUf+AkCz+n5M8aC9Rww=;
+	b=lhxTesSMImMsphbw1RToQjt3XSIG98WdF16p0kJ4r5uDPPYdGwc8/kprFYBk98hOmoKT
+	 TJc3rlfOCeIZF9gNscK2dDAIhVLiNRL7XthgAvkOMqt4bz2iOr+wTICjRSiYc2ICME537
+	 lMg1vXzT4vrhusp7iFK9u+Ba+OlJaZZrqDfo9Pm3+Uq12ZAOtEj88SzUmE3pwDEZKACGf
+	 Y7scTFjWdYZmqbsetM2X/R8Q53yviY1TH7h1dZAP7u0oTWIMQp8P5+sglle47cLvT/oGS
+	 ZVzie8zvcndVzNTFaTS7EFRVHvWsV1WS7z4W9gjpVzHwCP9Crw2aYmCy+Er0trJChEg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=huawei.com;
 	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=nySpbsOQ;
-	arc=none smtp.remote-ip=113.46.200.222
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=gvDCp8bc;
+	arc=none smtp.remote-ip=113.46.200.224
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4EF606A33B;
-	Tue, 10 Nov 2026 12:55:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AE4EF606A33B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAB560A380F;
+	Tue, 10 Nov 2026 12:56:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3FAB560A380F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=nySpbsOQ
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=gvDCp8bc
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=T2dWyS2c9HCj9HQ2w6QNE6Xzgrb9OoKtERWi7W6SZbU=;
-	b=nySpbsOQT9cafudOrzG91TTObxit+LIYM3JtT8zs6HTB47Uea2vFyCjBDRpHY6hXAzsNDl7nD
-	CvBLtODiu/qKVYJQB4T/DgE5WL3crgHPipGmLaiB0aRLi4UVFIM+j72y44Bk4UTQxc3XaGeFwww
-	zhnja4Vn7PnYedeFRcK2Tp0=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4jP6881zV5zLlVP;
-	Tue, 10 Nov 2026 20:55:36 +0800 (CST)
+	bh=Gm+8tToVxO37l40qhkGEFIY1RUf+AkCz+n5M8aC9Rww=;
+	b=gvDCp8bcgfOutE/NN5spoGdTmstDuYWqPSbI8e4LMnwbPyABybzBFU3RPAtAPaY8PYxCNmfQg
+	eceGKC03RJlYwG4VyeIVKDf+OOQZI+dpQAE9CvxCEBPHgpDTadwQo1RetI+tYwbv8eVs6q+lLrx
+	Wz1VzgiZXR/XiQk5DsCBF5A=
+Received: from mail.maildlp.com (unknown [172.19.163.15])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4jP68G1FnZz1cynl;
+	Tue, 10 Nov 2026 20:55:42 +0800 (CST)
 Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id E90CC4048B;
-	Tue, 10 Nov 2026 20:55:50 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 1FD794058E;
+	Tue, 10 Nov 2026 20:55:57 +0800 (CST)
 Received: from octopus.huawei.com (10.67.174.191) by
  whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Tue, 10 Nov 2026 20:55:49 +0800
+ 15.2.2562.45; Tue, 10 Nov 2026 20:55:55 +0800
 From: Cai Xinchen <caixinchen1@huawei.com>
 To: <nicolas.bouchinet@oss.cyber.gouv.fr>, <xiujianfeng@huawei.com>,
 	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
@@ -57,10 +57,12 @@ To: <nicolas.bouchinet@oss.cyber.gouv.fr>, <xiujianfeng@huawei.com>,
 CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
 	<lujialin4@huawei.com>
-Subject: [PATCH -next -v2 0/8] lockdown: fix the securityfs interface and add tests
-Date: Tue, 10 Nov 2026 21:28:10 +0800
-Message-ID: <20261110132818.2231593-1-caixinchen1@huawei.com>
+Subject: [PATCH -next -v2 6/8] lockdown: bound the status string with scnprintf
+Date: Tue, 10 Nov 2026 21:28:16 +0800
+Message-ID: <20261110132818.2231593-7-caixinchen1@huawei.com>
 X-Mailer: git-send-email 2.18.0.huawei.25
+In-Reply-To: <20261110132818.2231593-1-caixinchen1@huawei.com>
+References: <20261110132818.2231593-1-caixinchen1@huawei.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -74,92 +76,96 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
  whupemk100010.china.huawei.com (7.152.184.41)
 
-The lockdown LSM provides /sys/kernel/security/lockdown, but the file is
-neither documented nor covered by a selftest.  While reviewing the
-interface, we also found a Kconfig bug and a few accumulated cleanups.
+Use scnprintf() instead of sprintf() when composing the lockdown status
+string in lockdown_read().  The current set of levels fits well within the
+80 byte buffer, but sprintf() provides no protection if more or longer
+labels are added later.  scnprintf() makes the buffer bounds explicit.
 
-The series is organized as follows:
+Store the level label strings in named arrays and point the matching
+lockdown_reasons[] entries at them.  Their sizes are compile-time
+constants, so a BUILD_BUG_ON() can verify that the status buffer is large
+enough for all level labels, their trailing spaces, and the brackets
+around the active one.
 
-  - patches 1-2 are small cleanups in lockdown_write(): stop scanning
-    after the matching level, and drop an update to a length variable
-    that is not used afterwards.
-  - patch 3 makes the LSM select SECURITYFS.  Without it, a kernel built
-    with CONFIG_SECURITYFS=n logs "failed LSM lockdown core initcall with
-    errno -19" and does not create the file advertised by the Kconfig
-    help text.
-  - patch 4 removes LSM_AUDIT_DATA_LOCKDOWN and its formatting code,
-    which became dead when the SELinux lockdown implementation was
-    removed by commit f5d0e5e9d72d.
-  - patch 5 drops an unused include and moves lockdown_reasons[] next to
-    its only user.
-  - patch 6 replaces sprintf() with scnprintf() so that the status
-    buffer
-    is bounded explicitly if more levels are added later, and adds a
-    BUILD_BUG_ON() that checks at compile time that all level labels,
-    their separators, and the terminating NUL still fit.
-  - patch 7 documents the ABI and adds the new file to the LOCKDOWN
-    SECURITY MODULE entry in MAINTAINERS.
-  - patch 8 adds a kselftest covering the read format, invalid levels,
-    the rejection of the current or a lower level, and an upgrade to the
-    next level.
+Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
+---
+ security/lockdown/lockdown.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
-The only functional change is patch 3; the rest are cleanups,
-documentation, or test coverage.
-
-Changes since v1:
-
-  - The scnprintf()/BUILD_BUG_ON() patch now comes after the audit and
-    cleanup patches.
-  - The lockdown_reasons move patch has a corrected commit message: the
-    enum comment already pointed at security/lockdown/lockdown.c.
-  - The ABI documentation now mentions CONFIG_LSM as a way to order
-    lockdown in, and states that the FORCE_* options only take effect
-    when the lockdown LSM is active.
-  - The selftest patch moves the read-format string checks before the
-    active-level checks, corrects the no-downgrade skip message, and adds
-    an upgrade test.  Because that test irreversibly raises the lockdown
-    level, the test is kept out of the default run
-    (TEST_GEN_PROGS_EXTENDED and run_lockdown_test),
-    CONFIG_SECURITY_LOCKDOWN_LSM is enabled in the selftest config
-    fragment, and non-ENOENT read failures now fail instead of being
-    skipped.
-  - The break, decrement, SECURITYFS, and audit patches are unchanged.
-
-The upgrade test irreversibly raises the lockdown level, so lockdown_test
-is built but not run by default.  Use "make run_lockdown_test" to run it
-explicitly, preferably on a disposable test system.  The shared
-selftests/lsm config fragment now enables CONFIG_SECURITY_LOCKDOWN_LSM so
-that the test has something to exercise.
-
-Cai Xinchen (7):
-  lockdown: Add break in lockdown_write
-  lockdown: select SECURITYFS
-  lsm: remove unused lockdown audit data
-  lockdown: drop an unused include and move lockdown_reasons
-  lockdown: bound the status string with scnprintf
-  Documentation/ABI: document the lockdown securityfs file
-  selftests/lsm: add lockdown securityfs test
-
-Kalevi Kolttonen (1):
-  lockdown: remove useless decrement operation
-
- Documentation/ABI/testing/securityfs-lockdown |  43 ++++
- MAINTAINERS                                   |   1 +
- include/linux/lsm_audit.h                     |   2 -
- include/linux/security.h                      |   2 -
- security/lockdown/Kconfig                     |   1 +
- security/lockdown/lockdown.c                  |  70 +++++-
- security/lsm_audit.c                          |   4 -
- security/security.c                           |  40 ---
- tools/testing/selftests/lsm/Makefile          |   8 +
- tools/testing/selftests/lsm/common.c          |  35 ++-
- tools/testing/selftests/lsm/common.h          |   2 +
- tools/testing/selftests/lsm/config            |   1 +
- tools/testing/selftests/lsm/lockdown_test.c   | 230 ++++++++++++++++++
- 13 files changed, 375 insertions(+), 64 deletions(-)
- create mode 100644 Documentation/ABI/testing/securityfs-lockdown
- create mode 100644 tools/testing/selftests/lsm/lockdown_test.c
-
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 84efd533fe5a..26cac7628a48 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -14,13 +14,17 @@
+ #include <linux/lsm_hooks.h>
+ #include <uapi/linux/lsm.h>
+ 
++static const char lockdown_label_none[] = "none";
++static const char lockdown_label_integrity[] = "integrity";
++static const char lockdown_label_confidentiality[] = "confidentiality";
++
+ /*
+  * These are descriptions of the reasons that can be passed to the
+  * security_locked_down() LSM hook, used for the denial message and the
+  * securityfs status file.
+  */
+ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+-	[LOCKDOWN_NONE] = "none",
++	[LOCKDOWN_NONE] = lockdown_label_none,
+ 	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+ 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
+ 	[LOCKDOWN_EFI_TEST] = "/dev/efi_test access",
+@@ -41,7 +45,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+ 	[LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
+ 	[LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
+ 	[LOCKDOWN_XEN_USER_ACTIONS] = "Xen guest user action",
+-	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
++	[LOCKDOWN_INTEGRITY_MAX] = lockdown_label_integrity,
+ 	[LOCKDOWN_KCORE] = "/proc/kcore access",
+ 	[LOCKDOWN_KPROBES] = "use of kprobes",
+ 	[LOCKDOWN_BPF_READ_KERNEL] = "use of bpf to read kernel RAM",
+@@ -50,7 +54,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+ 	[LOCKDOWN_TRACEFS] = "use of tracefs",
+ 	[LOCKDOWN_XMON_RW] = "xmon read and write access",
+ 	[LOCKDOWN_XFRM_SECRET] = "xfrm SA secret",
+-	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
++	[LOCKDOWN_CONFIDENTIALITY_MAX] = lockdown_label_confidentiality,
+ };
+ 
+ static enum lockdown_reason kernel_locked_down;
+@@ -137,6 +141,16 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+ 	char temp[80] = "";
+ 	int i, offset = 0;
+ 
++	/*
++	 * Size the buffer for the worst case: the active level is
++	 * confidentiality, with brackets and trailing spaces, plus the
++	 * terminating NUL.  The label sizeof() values include their own
++	 * NULs, so only three more bytes are needed.
++	 */
++	BUILD_BUG_ON(sizeof(temp) < sizeof(lockdown_label_none) +
++				    sizeof(lockdown_label_integrity) +
++				    sizeof(lockdown_label_confidentiality) + 3);
++
+ 	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
+ 		enum lockdown_reason level = lockdown_levels[i];
+ 
+@@ -144,9 +158,13 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+ 			const char *label = lockdown_reasons[level];
+ 
+ 			if (kernel_locked_down == level)
+-				offset += sprintf(temp+offset, "[%s] ", label);
++				offset += scnprintf(temp + offset,
++						    sizeof(temp) - offset,
++						    "[%s] ", label);
+ 			else
+-				offset += sprintf(temp+offset, "%s ", label);
++				offset += scnprintf(temp + offset,
++						    sizeof(temp) - offset,
++						    "%s ", label);
+ 		}
+ 	}
+ 
 -- 
 2.18.0.huawei.25
 
