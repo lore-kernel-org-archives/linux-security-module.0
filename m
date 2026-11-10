@@ -1,108 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794305680;
-	b=uPWvbxiE0t8mIg0poyMaQmZC1YfZzhK/n3mHUcr+JTtboZFGvV/sAQiSNScUetH8lw/R
-	 fcvqP85clli79xqmIa36LFFp+0nqFVcd41mkeM5fuF1xFFIpCFjrB95Q88nCoeIjo+mOp
-	 OCzMNxFuS3AiA+2qlj84OvLtAtg6+zbHdaS1N0pr/kpa4998RW0l93U5uT+eeH72YoOIi
-	 KqnyJnqkaGJ4u0Mtd2IEpFR4mJMevMDJ3KKCoGPVOzPZSKvGwAZXARv2jpiv8dQgMpNbL
-	 0XX2Vlf0pJ1esKVL3iRhyep/8cepoO5o/3oFJaQWcLvuz8DFvVh6YY2AaMVB+2hI8pA==
+	t=1794308443;
+	b=MpTH5fvHpKghSYnmcnlEzv00zmrN8Rr64VXgnkeZyLUCbuIjUVwKuMaQ3AyrS7fL46sM
+	 wsDDeyDFsHt7jSXOaIh87gU1u/8zkF1GssxM0bVsisy3Xy2Et9pWfJ1QGqpagO8X3Z5Wd
+	 hsdfdeMIDFI9lUtjfDex+snkMw/C+eDxeyNnTeK2L7Xo9xaYPoGFm4imq/gBs+7Sqhy1Q
+	 0lmfF9P40GSgIDVk7kxQEdWAxVRH8vAAUZeZii/FmgAJ9UZrZi9LXPCixdGWpzb9X6mrr
+	 9XeVpYYllsWg2zNBygYkJNrOY2T860VZOxwrBQFjzIwQ0aEr8/Ww2kjQf1n3hfHkhBA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794305680;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794308443;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=9WFltYRvNkpM0HMxRLJxGiCTEiP83WtKPHu+oXy3KTg=;
-	b=1edeftwlXxh7pFBMAkCMZ1qYBX0pR0D0fCzhCmZMxI908BUnJ9z7YQ+oS4rEPWTYweow
-	 Fd0Iy+POZ0OKwH3MK2KdDUvED4HpAVlSVfk20g9uXG0IkTDvJW1hFhgb7s2dIPMmXVYS9
-	 S59mdr66micnhJlQe51h+gzvBCj1DVL2eQGU+fXmKUDW5lWaFszwZCQzUkuaxilE/F2dP
-	 xPYCoNmKb9q2C3xRomYo1q+MGe8RJv5TRlxV5uJd0TyceOMmAZcqvqoXxt1CKfXCxnM/d
-	 6wp6UgfEOlFYovdanPPOusHUkvSGRFz4azTbQDr35o4xWYkgqtP17fjyeqTmJsue6nA==
+	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=Wv2p26gpeUqh9YHe7IUFpRTwcMzkjGJ1jZc1lffjWFU=;
+	b=Ma1lMlpKBnZmN9apc5qzKP+ZM440GRBVcsltvRVbxEAAsy///ggorcoezm8fU9yFsuKN
+	 mpZJMhLZ4b2bg+agMCOIrlFDQSPNf2UPAjhw8GistX9tKa6JbjgRa7MPLvoqWp7Z5AV26
+	 9l6unMI+WBwaf5pjiNUi5qOUrMdj0SGsUPxoVkbhAdCe6EDjJaGXpi8l+6QUAKFD0F+bK
+	 e+LYw3O8BYiwmzWhdatC+dCPuwU/2Nj4e1svE6QoJqBxtyViRm2BRDJ7+UA5xTxG1zrbz
+	 cpFrUmEalokdOz8C+2nrU/xEVc6LKAsAsvqynZ2T/xHW7dhuxfC4H/hq9b94lUvNL0w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DrlQYRb4;
-	arc=none smtp.remote-ip=209.85.208.53
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=UR+oRQEN;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C9D606A335
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 10:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E7C9D606A335
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D9060A3839
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 11:00:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A5D9060A3839
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DrlQYRb4
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6b5973a4b4cso2116650a12.2
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 02:14:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=UR+oRQEN
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a59100fa83so15805355e9.0
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 03:00:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794305678; x=1794910478; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1794308441; x=1794913241; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=9WFltYRvNkpM0HMxRLJxGiCTEiP83WtKPHu+oXy3KTg=;
-        b=DrlQYRb4d+FJBQLFk4gip1vdMb9pZcbFm0QRoW/O9nsnnIGk5B/dcI7komCKzkv/uM
-         Uz0TTkL3EB0XOLA2v0TTxwYvqDOvah1wiwbB4uUsiRRXfj1OcdvtnHWnMQS6yfKTNN5Y
-         2S+sbZpFj/oUd6OIfB1K+t4luOgmpm8MRta8dNUBz+XdEb16ui6jztHrAySR2QYDDBtW
-         UcH7ksMk3kyTCuhLg24n4RSbgP43bR1MD63YWBBHbNHKba+s6Adtgd3r0iiTavTYgvkx
-         vCBmyxhjfzRfUpjuhY0K7x1CK/3uUIf/0FzbTbFW5bHu/k5G1xko0Cr6O3LrrObY61iA
-         y+ww==
+        bh=Wv2p26gpeUqh9YHe7IUFpRTwcMzkjGJ1jZc1lffjWFU=;
+        b=UR+oRQENsNTyw3m8WPRxHakPMD/6M89G2GAH08z8luOgAuTYMwATMm40YkQjUmifrM
+         0I0lYgItJ8iRTCd2Zi7HSPoiCb9Jfm897ztEJX6ly4PAjZK66S7FQpnPTnp4WfOgil71
+         sS6EAeBEnAQXtYBXug/wf3vqUhZlNR/waxaiX4Vbpj2853UP0Pj/t+2kEPD3uzJ4Z75N
+         Vj9xgTWOoMaDcdSmCpYtZWf8y5aFClQ9S7OCYqvtOzp0DKEA6vOIZHfTzdUKMwoECdwy
+         qdoejJJ5aBD9AYCkstvgOzgJOwMHKNFwgSF/h1BLTJc5BS5UWlvnbo/XPoCHV9iRnUUh
+         itTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794305678; x=1794910478;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1794308441; x=1794913241;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=9WFltYRvNkpM0HMxRLJxGiCTEiP83WtKPHu+oXy3KTg=;
-        b=KmEC04kKvIrCJeC7CLbsSFYUK0wMtDLF2+RVG6PolIN0BzNSNfNobAnN4ykqQynGzQ
-         zjJdP2DNKoCZ4UHCuDKYWFRDmsXep4uhsLdc3lWQltm86E7lNkZrP1YRm71qks/zkc7F
-         zvnDo4Av+KM5OI3yPrq4KHGj37Ago+XelNjuUqdX5v0kC5GmmPlf2ekAR+ehbS0kdiiw
-         BAtxkZxlI5T7Hh+7JCzPdnlsQt4EAEChZJeBh/L/p1jwNr2jOSFTyEZmUshQ5Aw1ImSn
-         PFH85E6gHYLDrp0lYe1UYCW4curaXmZYWTZIyTBciU8ckWiquvRt5WCZFUzrwQITSAk9
-         1ZKg==
-X-Forwarded-Encrypted: i=1; AL+hErGJA8r+upegqHREAx4TjXyhx7yR6KF4PwWAwaPzVNam+jgBVP1dDB4zoLPh4Evqx7U9uMjczpK4q/VmJZb3+JhzlxT/fkU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9RqZe65lCVEd5SWoamyWt0BDhBCev1BaR7sZQZMk5NSfRE3GVB
-	5vFp91/6JVieOuuSigYFC4HpVnu89qeBns83UL60zrIKXV7t9usiNkSK
-X-Gm-Gg: AYBFou0WHABFgQZ1Vd/AhV4y9FfAEOH+AadZmZxmBJc/5Us9FTOQil3JSE6iKI4lZb5
-	TkDsGD+ETLJybBrECwfvfl+Ziq3+sq5sRKXN8QvlI9BhZtwTtUtA/Wo+dzw80mBCfA0OPsO3b/y
-	16/9BhdWjehlwNcFZYuKrWAKzmdL3TY5R2sqEWrFbRjopqrXW9pvy+mbk0jLLWivkWtyuTtgwJB
-	7IsPYSerXs7dIYVrY2zIfUcG85eq2DbjQTZvjyOv7e/2q4pYBFettmCEkQFC9fcr2tdDhyJfoal
-	/w1M0w3nPtM1nZtNZAFeHlPyDWrqd/5aH+m4Or8ZVJGE5CkWpGctUJGr+9lcek8hmWWNLEDwkzP
-	59WyLwaJm2HbexPG53ZiegA8WAVNmfHmyB6TvZiEJKI1UFe73cwshDOwnMQ0z8+zs4h5r7oI67l
-	+ciX6KDfB1M6u16jrQuczzbR02WsTuOnYMkZM29UKmd/FaSlhzjrrcagVHGe+Q0tZyJgljmm9kO
-	AlYV/aZ1AWeQguKJORBaSTWuonRYZ0tWtkpeOa+388CmqFAlKY4ZH1MERhGQM5zUI4Cr0l+NYvb
-	S+hg7wL4/wXJsDaID9QSqYvrWb/xaAOFAvKvPOpViDIYQFXW7bJ2Pg40UY0j1hjb6FF36tHSray
-	ZsZ3OBbeQKKOb
-X-Received: by 2002:a17:907:944d:b0:c41:4c20:5a80 with SMTP id a640c23a62f3a-c504963ce05mr189793966b.44.1794305677695;
-        Tue, 10 Nov 2026 02:14:37 -0800 (PST)
-Received: from localhost (178-84-201-199.dynamic.upc.nl. [178.84.201.199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c504a593eacsm90433466b.36.2026.11.10.02.14.36
+        bh=Wv2p26gpeUqh9YHe7IUFpRTwcMzkjGJ1jZc1lffjWFU=;
+        b=HYuproESMFb9cEHY0a3b/CAX08mcIHeZQhps+jrh9GbEFM5Ysvhp5/Ykxonty4TXD9
+         exZ3InPMmvsf7JaoE6S0T7steT2qt2XO5et3gJ+xHoH5sdiycDqa7aPriHYZ/WhDoF/g
+         YaFCL8wBm2W111p6rPtSRPOwcGcxx49pdwKXa6fhBQQc7PRMVGtLURgOP9YZ72GrJI3P
+         GT3fh8N8JoPJoe05r17saSWJAxW1NSo1DC03aIjQ53hPDUTkvqevuxwZp/XfRa14w/Qb
+         q23y68r2BKLpiQ69dgcyCTnenPLSwzPplYDgs+5fUf86vWkwvROt5T1T/tjazh16L6k4
+         O+hA==
+X-Forwarded-Encrypted: i=1; AL+hErG7e7fmIU1vsRQ8LhnMXLDKPnTVnoMZ33GbHcPDM1UaOMYCosbZMNFuU+01i9/Lk0aMkWEZCFbg28Qxnn2LItUMkQZRoGE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+zwEOg+M/F9tcYVg8ydfP/FzdXJt+BEf4oSpipl40EOi5MlABr
+	XkJsBTV4OZHy3G6jQmk1CefoiTQcZSON4aa6THmjZejs0joBAayQvLK7
+X-Gm-Gg: AYBFou2VQ9DVGnk1ITXgm1O7ZBX0ALGSzbtalqmdI7mIrchxvz9Tv3IZZbw0utVbGA1
+	5SUQKRSphQ++uRE/MAQTj1V97oY24FsOTnW/jRd14mEubvnHAy7cA9LEm2doBz7eUS91yTPkifL
+	uaNUS9vB4AuryEXa6z8q6oULoDPPlf9FmzYMN3S03HHikVlITQ7mHaGUB4T/DjdZqi2pWV57yFz
+	x+5vSPWNGACxSp8KHsqSgIR6MRi8+ScOSF9nXmGCcSrNGFASxFOSJbSR4fAaXTJz8EQSbV4pm05
+	bl2vQYJcYv2gc2H8ybfD894RRodCYOGoGYITNQ1/XV3/Z9QUmk0A/sExd4HAv3REe20iKmebmWX
+	07puxPZpfgiX9wSrG2gesmxMgMuY+A8osVSBGZjeNN4PRr0eN6X8eD7MKPn9OVioSzYCsHtxoBz
+	cZwLyj9iKC8dK0unBUcI5/eVtdUfcGW4GOAKrAeGfBx5l8Lceguf/NtoY/lRSBBlQCyYEsyaThr
+	RHGj4UnFDerU5dv1dKskn2vi8fdWGTo33c0kxJLeseZfePhechJmlU2RL2I1Lhf9B4yNea4+4Wm
+	qe2UzkbWXENofgCGZwlchGLsIccBEUPiJN8cZhmhuiX8jI7Pji/qX4OhXmdSETvqXQ==
+X-Received: by 2002:a05:600c:6387:b0:4a2:967:dfb8 with SMTP id 5b1f17b1804b1-4ba02349a18mr35485105e9.20.1794308440720;
+        Tue, 10 Nov 2026 03:00:40 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4ba02381916sm25962625e9.3.2026.11.10.03.00.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2026 02:14:36 -0800 (PST)
-Date: Tue, 10 Nov 2026 11:14:35 +0100
-From: Amir Goldstein <amir73il@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>,
-	Chris Mason <mason@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-	Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-	driver-core@lists.linux.dev, linux-mm@kvack.org,
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, apparmor@lists.ubuntu.com,
-	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-	fuse-devel@lists.linux.dev, linux-efi@vger.kernel.org,
-	xen-devel@lists.xenproject.org, ocfs2-devel@lists.linux.dev,
-	linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-usb@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC 38/41] fuse: refuse files on pseudo filesystems as
- passthrough backing files
-Message-ID: <avLui6Mpf8GbKbtc@amir-ThinkPad-T480>
-References: <20261110-work-loop-pseudo-v1-0-4c998976c6c7@kernel.org>
- <20261110-work-loop-pseudo-v1-38-4c998976c6c7@kernel.org>
+        Tue, 10 Nov 2026 03:00:40 -0800 (PST)
+Date: Tue, 10 Nov 2026 11:00:34 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Dan Carpenter <error27@gmail.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Jarkko Sakkinen
+ <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+ <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] keys/trusted/tpm2: rename "bool" to "boolean"
+Message-ID: <20261110110034.0a46b9f7@pumpkin>
+In-Reply-To: <avFcjHwnh9mrOEnz@stanley.mountain>
+References: <avFcjHwnh9mrOEnz@stanley.mountain>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -112,41 +103,49 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261110-work-loop-pseudo-v1-38-4c998976c6c7@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 10, 2026 at 10:14:54AM +0100, Christian Brauner wrote:
-> The fuse server can register any regular file as a backing file. procfs
-> and binfmt_misc files are already refused by the stacking depth check as
-> both set s_stack_depth to FILESYSTEM_MAX_STACK_DEPTH. sysfs and the
-> other pseudo filesystems aren't. Reads and writes of the fuse file would
-> then be done on the pseudo file with the fuse server's credentials.
-> Refuse files on pseudo filesystems just like loop does.
+On Mon, 9 Nov 2026 08:39:24 +0300
+Dan Carpenter <error27@gmail.com> wrote:
+
+> In C23, "bool" is a keyword so rename this array from bool[] to boolean[]
+> to avoid a conflict.
 > 
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
->  fs/fuse/backing.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  security/keys/trusted-keys/trusted_tpm2.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-> index 8c21a8a74efb..4e4fb810ddaa 100644
-> --- a/fs/fuse/backing.c
-> +++ b/fs/fuse/backing.c
-> @@ -147,6 +147,9 @@ static int fuse_backing_open_file(struct fuse_conn *fc, struct fuse_backing *fb,
->  		if (inode->i_sb->s_stack_depth >= fc->max_stack_depth)
->  			return -ELOOP;
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 30188a0ec676..2d6cc53539c8 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -59,13 +59,13 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+>  			       asn1_oid_len(tpm2key_oid));
 >  
-> +		if (file_is_pseudo(file))
-> +			return -EINVAL;
-> +
->  		fb->type = FUSE_BACKING_PATH;
->  		fb->path = file->f_path;
->  		path_get(&fb->path);
-> 
-> -- 
-> 2.53.0
-> 
+>  	if (private->blobauth_len == 0) {
+> -		unsigned char bool[3], *w = bool;
+> +		unsigned char boolean[3], *w = boolean;
+>  		/* tag 0 is emptyAuth */
+> -		w = asn1_encode_boolean(w, w + sizeof(bool), true);
+> +		w = asn1_encode_boolean(w, w + sizeof(boolean), true);
+>  		if (WARN(IS_ERR(w), "BUG: Boolean failed to encode"))
+>  			return PTR_ERR(w);
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Hmmm... how can that fail?
+bool[] is just "\1\1\1".
+I bet asn1_encode_bool() isn't inlined - where the compiler would optimise
+most of it away.
+
+It is a horrid variable name, asn1_bool_true[] would be better.
+
+David 
+
+>  
+> -		work = asn1_encode_tag(work, end_work, 0, bool, w - bool);
+> +		work = asn1_encode_tag(work, end_work, 0, boolean, w - boolean);
+>  	}
+>  
+>  	/*
 
