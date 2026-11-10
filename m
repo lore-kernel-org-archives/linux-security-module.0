@@ -1,100 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.47
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794322304;
-	b=0ECbfpeI56y7hQi8kGlbgu8wKIrfvOBPtwPqOVvC4zuEeEB1K7w+IximUoa9zAMZu8aa
-	 jSr5l7wIpPnDCP6jmYhcEpLc57fAbetn94n7VI/vNFOu1Ixqj7CpSU4vk2ESTMRY0BUfj
-	 h5ZUuQd7hoekkuy+uzgPUrvKmkjpcNxLAduAgcrbcNdMHxJqTnNEO0Yc6yCLo7G1rgJ2R
-	 zI6bNX0F3jN1OKjzszFD+nqChefJMpnfPYfUsSlkhAIMAtiYLakK9Wj5y11MIAYrAMiVv
-	 XUL7d/EUMl1HaTu2Qhw5IkUuQ4MH3ly9qyvrfZ23iKMvQphrjt2hjdpSlX2xOjOvM7Q==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794322304;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=PXqi9+oAKFvDZXDHBvU0pPg5upNM7EyCnjhoXmEOydk=;
-	b=ZzGqqw3n2xTULrgROL10PQ4jnw/FiIwasUCV5aRw32nF0ocLwkn/IRWpUvJLwUmLhfTX
-	 fjVw/X3FIwsog9vN943HJVTo2iKOVDY68W9U58GenXlwUuMDJDZ1vmLc09OQQaTdDUMC3
-	 t8++LIPNkOSyMeZ0S9O3BX5KLv7Fb2U2OJKWlbYN8R93imZD6NkU0KoIRGp6xiOEO1TFq
-	 XIDyJ6SwM21cNcm3rnRTM2kzDUfba89d5nuDLgXoizQ/lD9qwLJ0xHLFaSGtMkRI9JKZs
-	 QzsRZnzA2FyjFQI1WdB1FVyX9WoQ1umLsM3cO5hkdiFSago0sjKKV+lK0X5Jjk4BS0w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=paul-moore.com;
-	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=IL+8xDhW;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.47
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794322550;
+	b=dsDblc8maMhUxWkIHBpiqZeo5+8IGtg0MoWm+ZIP5+Z+XlFpIhldJvamKbl9ZKYBaRWL
+	 ToNBSXUlQGRokO0hgzUgy3EsX8EC6EQ9kIF/LH1sp2sfsX59nlhCgUhzG3oVyMc3SL5tj
+	 n2S/id8K8YLv/zSLnYTAMnRs5YequrcX0ugiiIou37/s/3bUaqRFIJ8gkOCAbJWIBQSX0
+	 YTeEdJ09FCK0sQgwu3aOFkvmen0Rj7F5MKhz1X5UTe+Q4wfGAgadvG7f9LJ6BK87bA7Nt
+	 ucYJYVmWodKY91oVuYcTaZd36aj/kzKALSfM6a78YcAMKMyDP8cyddjgTFJ5GUEcCcA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794322550;
+	h=Received:DKIM-Signature:Received:Received:X-ME-Sender:
+	 X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
+	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
+	 References:Subject:Content-Type:Content-Transfer-Encoding;
+	bh=zSjXnOetE5oKa5v8S9LBrUhcmgizc8ch93AeD/W6gEI=;
+	b=sjS33hfS4+h+r28VKZdEwQbpSJqKu7nqrcUjvTo7k13tbqBXXDkMwcB9Lhi+Gnqt6lXl
+	 NdHzbCU+5mdYY6Ki6cI16KmUVjJ7QAgIuXLKpJqq0tumLjM0RmlEJaRG6paQPpCjRYeRf
+	 BS3Nl0udRY8OE/8GrjvZ9Y9/E3h77nJq9Mu1RfVtq0xmEKb6oMYC47Y3tWo9Iywzgusaw
+	 xD5VK4dOvXaHNJIwI+ncTJQ0IjauO5AULXxZbeLT8Cog5PcYU1rO4sWJiv27NEj3iDZ7D
+	 9VTJM4drB8h7jOinhSYG93VVnG+2dN2TSwNZUKqcNeWvPk6PmiCuWE6sgHNmQU9soUQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Tcwd7Q8/";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAD0606A32D
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 14:51:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ADAD0606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32DB606A326;
+	Tue, 10 Nov 2026 14:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=IL+8xDhW
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3b179528d56so118207a91.3
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 06:51:43 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794322303; cv=none;
-        d=google.com; s=arc-20260327;
-        b=kA1M1+IN95dtR0yeOSGQ38+gq4Ez7T1R6Cbc78HC9g2FEEppZFsnkppRQCNSR5aTzk
-         jFv6qfQdwGxiqxpqoOGuIosrSpKllfkoQ1gcvQOgZaD2Yd2SBPkC4qyrtrlQAzVpUicA
-         g7F1gytu79afWsZej/Dirl43f5gLCZ9Gu1xH8hBK/5Q5J8aBh3KzaM32GODzyhwvZ6YK
-         CCkZVg6yOxbwhjxXaD3gmEcK/wBVuWWinKaTqUzE4i+MY4WoShakJT1kRcfODt1SY5tC
-         qLPkLOLENRMpZEu8VNmqDVe4fAWKK7kGxxcSQaBqyzXV5njE7w9nLEhvF7wIOTC045GJ
-         BHSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=PXqi9+oAKFvDZXDHBvU0pPg5upNM7EyCnjhoXmEOydk=;
-        fh=9mkx/LszLoHk1o98atRY+e4utOvJzid4cGvDV6ezkDE=;
-        b=iBnn1/XQDyPUQhN6rkhFv7mRDeaB4ud31Ob9Urf+ixEFyFcS+lIsOYxqGZRTMsvX+u
-         ghpgRcvx1DcWG47fXcH600jqvEgUgdIn60kiHQH87mCeCQp6mXIPujLPTRgqBDFwOfq8
-         UcabaRwuosevSOo7SJBg1B18Xd8+MRBAPk6px4Rc9G++SM/6urtdU5/obZOYTq7qM6vU
-         NwiGqvzW367Qhbm8KlifzLeY+QOcVlsXNChgpZFnvXyMsdm3w4mV+2oUTvdz/bCwnCsT
-         9f9PU7lfkJWsv8Bbk31Mrm8N8uR/UQUFUp7KgMUqArkFLdMXn5G6Tsprc2RLdGbYqqaW
-         5xpg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1794322303; x=1794927103; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=PXqi9+oAKFvDZXDHBvU0pPg5upNM7EyCnjhoXmEOydk=;
-        b=IL+8xDhWvbsY97lbmrxhet0Jxm/GEejFE1wA+kHdDdoy3r2HY0qfy9+Zo5tDyA1HCU
-         92dTAWSC18xJKt+nqY3o9ZEOwugPfnvfyKVxgXTJccL+yGQZq3uA5w6FcKOdBgNjQCVS
-         07UkwU1Ush9oWU9aQSyczjXfKDIKK13bz1vvPKKKZnAAbDJNUxO90oBj9mzTVwalm6uJ
-         MzZxNoOFc+uElONJCp/htKG7NEjYziL9FbA761f4NJZqOMyMijk6azV7Si9VVAUAXV+J
-         Tep1WbavDGNkRYBusn+me12VrKAKvlJoaba+qozCGl1bDCWa2Ghni1rfY8UzwuCjm2U4
-         /4Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794322303; x=1794927103;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PXqi9+oAKFvDZXDHBvU0pPg5upNM7EyCnjhoXmEOydk=;
-        b=1T9FG1V7UCqXdi4qUtFK8HhFWMwBbd1wkX+2wZHzXucOI/SG8pSzgKVY+6NjbSV9ud
-         SMHdUwx6f4NJGvi7c6XJlTCFie2x3Q1BVAobrEhOA68vSujN7gk4eNxpFEgD/N/hCnDG
-         l/jNPhW0w+hsLcxl68hvKkJdG29/l/IvRvoXLCPZjdZb9a0qEznnpTQcBMcJCIEUkO/c
-         /KkkbvXwxPIuO9r/MQIKL4Ynggh+ux6p6tI6mAbTBP+4f3X8ppnl8J+9p1nUsEQyQUZ9
-         IG7hdxM+09ADYHvqUbysfvI7IawwbYUDPqnFjVeQRqLmUUCz2Ui1KxZFbZKbeBg8ZDSB
-         e4Jg==
-X-Forwarded-Encrypted: i=1; AL+hErF8Rrvw+Op4qm12B0tZNhh+xR/pHYMzn6nLiZ62Kz3CVorlKqB01MqXWAekho38f39czQFi1z6DN0wjfnUeRASDQPckLOw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+Kil3N4YY0zsZomtYqadkbdnl3DsL/PbehYom7GzWolfzpfc+2
-	wz2ExrqeFVWxeOn5hYkqQr7Mncqmfy5UL8sW54KXC8hdcq/DYEdFbuaucSTJONBoFta0In5SAtT
-	nP9QLAngTm24Jfp7ETsE6/yy5CNzlGl5l9WlAGU8G
-X-Gm-Gg: AYBFou0x18CJjFgomuZ/CKUcFGmOqyW1Atwvxjnava5tZqvKSHj3I0rK1KrwEodwNbr
-	mujoRAa9SV3+VItKMX1F9wZ6xmIug1sZP3NUUmfObdMGAa46//kEQ9seIs4pEfXtZWBer8SiBW+
-	GmBaS5m5SmTarwNeshmrHkMkp4gTMh5GeZZtG8/LFYGsx0bnMLlhy0fJSeA4pVZTFkVwXUi70J1
-	oaN93Zu3hetxeD5CE8b5ZPwLsPiWQLjxJMBbztRL/a5dWsv05sa9gc3AIKHhhhFbN6dRVBfhUnA
-	sHwDa7K3bqb0+r2hM3UTNqckgT3vV8u32DsBfzcMYgyhbeyzDmZot46wMaE9MYC+wevwM5mXUos
-	qIVTw1vlSD3B1KJEALUKpA9xTt2CKHkgFDbk9C5J2n409858P3uMyC4kbAlJP0Gzb2+Kf
-X-Received: by 2002:a17:90b:4a47:b0:3ac:17c:6e89 with SMTP id
- 98e67ed59e1d1-3b166cd4924mr2650628a91.19.1794322302909; Tue, 10 Nov 2026
- 06:51:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tcwd7Q8/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8D71F008A2;
+	Tue, 10 Nov 2026 14:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794322549;
+	bh=zSjXnOetE5oKa5v8S9LBrUhcmgizc8ch93AeD/W6gEI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject;
+	b=Tcwd7Q8/BgCZr0AJA+q53XtkaEXHNBQAptcCIoE3INOkDT8T++JPLwFgnijhu6LIp
+	 QoJCfJqeBNhK26M7LL9xd4MzXxKVISVDOEW1cYrYEyBiFKRmR2hdLsioEex6m+2Rc5
+	 2AgfVzjCsuMDtAVvAKOrFX1qXAfAYeUYjVl2rownrESZ29DXkmWTHYRM7alPMZLQ6M
+	 DZH727vPlYTYzZb+oco6o/Bkhlk4m5LBSezhlvCb0bhHHiXIMbUlIMDObU3PIfYN46
+	 k7napT6YlagBuXnh78UDBF3WtFBwiJfcd2zG9H8WTZ7Zkc62YNaLopDBhwYuzfc472
+	 iPuH2WgxnRVeQ==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id B2761F40069;
+	Tue, 10 Nov 2026 09:55:47 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-10.internal (MEProxy); Tue, 10 Nov 2026 09:55:47 -0500
+X-ME-Sender: <xms:czDzahOxHA_IGoa_FJdwV0BFPQw-nSdKO6kKGUN5puCfrxj2G2sK_w>
+    <xme:czDzauxKYck9zKSqhpZaTHxPL9lIOi42MPCnrNTR7eaQqnpkmbe8dEx0PuhUogQkg
+    tb2W38kOzksOJlDJ4uTGR7-rkbiwtctKuF5oVtOm556TqS1yjjUw9U>
+X-ME-Proxy-Cause: dmFkZTE8jIcOTzT9axQiHwEjJScKTRkNH3ZVhgYbwXrBMnGwr/PZk5kUfGxy+RC0ezRM03
+    2Axgl1A3kstcvJQqQJ+tEirxS634eXBQm2b+wwk+7byJnMoEdYYw7Lfb7185Bnwoliq1Mt
+    XZ8lliUhOZ8AACZwbl4T2Tc7NYRy4GvnOujvSweRGBGAD4OQXGjTipshhA5n2cB6RQlk4p
+    zmTRFZMOMjoY8cueG7e24ndoN2R/gq/lSNUbCVZu/PUOrAg9f6aovYYa9SSKBBYGtgXYMN
+    0qbpFOi4S4kwXDcxuFcZlmK43Jt2p3+0W9uSzX8U3QJynW/odwma6a1hhpAbc8zEaSnbtk
+    CFI/IAk8YwHJ0hyg7qaH8oiiVC3V/1ZiobIhoPO231VrqQk5oaP4jl+jS7yMnBbNxynDhF
+    /tTsfxMaF/A9xwJBu4sKm+3lzwzMEEbqt79mE4Lq/VAgowI2/Z3gVdFMTE48DIB1KcUvAe
+    gGFx1Bx/tQmWXfeE09uUSkiQ2KYN+OrlgTMnrepjVRxO73rY2t7sodPh2AhJIAG1ZYT5ga
+    3nwb3G0mQrnmFOm4Qa4C2JwbajMdJBWMeam4uZKQraajbqcBHzCXvMtQm1fQbm3S2rexTo
+    KA6wW/vDabSoXlut9Nm5uKTSjp20eGQ9lpLOxOz31c8eLm8Mlp10sjOYDNZA
+X-ME-Proxy: <xmx:czDzaoanLMdLTFqhzMhrxv5H09chgFe3GMMhc1XBCkfiMJQ_ckta8Q>
+    <xmx:czDzauzWTK7EYc76X_4JSXvP7e9Yqejr2yggz6O-tuvCpsEWBQGUaQ>
+    <xmx:czDzasWQEDY8T3p3eaJhPzKDKFxYGPCQnFb1-n-prg7tBs3f0gJpWA>
+    <xmx:czDzaqbpJaYjvNkk5zy3xoww5EsXMA5_awnvU25FYCgSdhgQQ41Hfg>
+    <xmx:czDzavOKwCwywHfR1JNgdmNe33GAeUXrw31wmu_3YBRbMsucyl2ChD_t>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7D2B9780070; Tue, 10 Nov 2026 09:55:47 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,72 +77,71 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261110144205.2404088-1-mic@digikod.net>
-In-Reply-To: <20261110144205.2404088-1-mic@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 10 Nov 2026 09:51:31 -0500
-X-Gm-Features: AclHuK9azAwCWCYb7rf35P_Qkz1YTwRFSpYVlH2tFTGhGa4I1jRp_1554UKlQOk
-Message-ID: <CAHC9VhQ7xMe8J+wRYK98Lw-Ff8dg=wJNEWgJp-MOqFixeZkiZQ@mail.gmail.com>
-Subject: Re: [PATCH] userns: Let LSMs deny the CAP_SETFCAP snapshot for
- mapping uid 0
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Josef Bacik <josef@toxicpanda.com>, Serge Hallyn <serge@hallyn.com>, 
-	Christian Brauner <brauner@kernel.org>, James Morris <jmorris@namei.org>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	"Andrew G. Morgan" <morgan@kernel.org>, Serge Hallyn <sergeh@kernel.org>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Bradley Morgan <brads@mainlining.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: AKCAcWHxcB8B
+Date: Tue, 10 Nov 2026 09:55:27 -0500
+From: "Chuck Lever" <cel@kernel.org>
+To: "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: "Jann Horn" <jannh@google.com>, "Chris Mason" <mason@kernel.org>,
+ "Josef Bacik" <josef@toxicpanda.com>, "Christoph Hellwig" <hch@lst.de>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ target-devel@vger.kernel.org, driver-core@lists.linux.dev,
+ linux-mm@kvack.org, bpf@vger.kernel.org,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ fuse-devel@lists.linux.dev, linux-efi@vger.kernel.org,
+ xen-devel@lists.xenproject.org, ocfs2-devel@lists.linux.dev,
+ linux-s390@vger.kernel.org, "Linuxppc Dev" <linuxppc-dev@lists.ozlabs.org>,
+ linux-usb@vger.kernel.org, "Amir Goldstein" <amir73il@gmail.com>,
+ linux-erofs@lists.ozlabs.org, linux-kselftest@vger.kernel.org
+Message-Id: <47b8b8cb-aadb-4f84-aa5c-c5a74d73fac1@app.fastmail.com>
+In-Reply-To: <20261110-work-loop-pseudo-v1-21-4c998976c6c7@kernel.org>
+References: <20261110-work-loop-pseudo-v1-0-4c998976c6c7@kernel.org>
+ <20261110-work-loop-pseudo-v1-21-4c998976c6c7@kernel.org>
+Subject: Re: [PATCH RFC 21/41] nfsd: use fc_init_pseudo()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 10, 2026 at 9:42=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
+
+
+On Tue, Nov 10, 2026, at 4:14 AM, Christian Brauner wrote:
+> Initialize the nfsd filesystem as a pseudo filesystem. This raises
+> SB_I_PSEUDO and also SB_I_NOEXEC and SB_I_NODEV. It never holds
+> executables or device nodes.
 >
-> Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
-> records in parent_could_setfcap whether the creator of a user namespace
-> had CAP_SETFCAP, because a creator writing its own uid_map only has
-> capabilities in the new namespace.  The snapshot uses cap_raised(), so a
-> task whose LSM policy denies CAP_SETFCAP can still map uid 0 in a
-> namespace it creates.
->
-> Use security_capable() against the parent namespace instead: the
-> creator's credentials still belong to it at this point, so commoncap
-> returns the same result, and only LSM denials are added.
->
-> Do not audit this check: creating a user namespace does not use
-> CAP_SETFCAP, and most namespaces never map uid 0.  The uid_map write
-> that later fails has no LSM audit record.
->
-> Checking CAP_SETFCAP when the map is written would not work: the
-> writer's credentials then belong to the new namespace, where commoncap
-> grants the creator all capabilities.
->
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Cc: stable@vger.kernel.org
-> Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 > ---
+>  fs/nfsd/nfsctl.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> This is independent from Josef Bacik's series, which reworks this code
-> to close other ways around the CAP_SETFCAP rule:
-> https://patch.msgid.link/20261027-b4-setfcap-userns-v8-0-2674adc63f3c@tox=
-icpanda.com
+> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> index f32311f2d7cf..ce2666deddbd 100644
+> --- a/fs/nfsd/nfsctl.c
+> +++ b/fs/nfsd/nfsctl.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/ctype.h>
+>  #include <linux/fs_context.h>
+> +#include <linux/pseudo_fs.h>
+> 
+>  #include <linux/sunrpc/cache.h>
+>  #include <linux/sunrpc/svcsock.h>
+> @@ -1375,6 +1376,7 @@ static int nfsd_init_fs_context(struct fs_context *fc)
+>  {
+>  	put_user_ns(fc->user_ns);
+>  	fc->user_ns = get_user_ns(fc->net_ns->user_ns);
+> +	fc_init_pseudo(fc);
+>  	fc->ops = &nfsd_fs_context_ops;
+>  	return 0;
+>  }
 >
-> That series still computes the creator's CAP_SETFCAP with cap_capable()
-> and cap_raised() in cap_setfcap_level(), so it would need the same
-> change.
-> ---
->  include/linux/user_namespace.h | 5 +++--
->  kernel/user_namespace.c        | 8 +++++++-
->  2 files changed, 10 insertions(+), 3 deletions(-)
+> -- 
+> 2.53.0
 
-Looks reasonable to me.
+Acked-by: Chuck Lever <cel@kernel.org>
 
-Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
 
---=20
-paul-moore.com
+-- 
+Chuck Lever (Come to NFS bake-a-thon! https://nfsv4bat.org)
