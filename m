@@ -1,69 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794342815;
-	b=oUNN2nMJVZoKWZ2dmuAauReyvPXnKPt42HC5kYPsoNG/2gh+ZDlMP0BMmWXbvEDWpWs9
-	 1DR77QRpwB/6f9ofVDMWE/kypCLn77BlGncRsDZMOd46bLRtK+AAFko2qxhaDXWikQmtf
-	 eWFGTeLJOT8ctk5dnxU9kirj5wYRaoo0O/PsTVRw03m+bvGV7wZAYaInP8sBjHpcepngX
-	 ZiofJChXo4ZR1m58VRr4BdTz724N5xM1BS7Ar66HsLszVw+cVseDYdKIJkqplM0ehoJ8t
-	 CDNkUxJ6lxPFmUf0vsbcgA6uV7tG4X1mJB/Z4/GloCMfxOl8nKM8zd8JXQ+kbJiN5rA==
+	t=1794342832;
+	b=y2BR+SvzArLJVg5NZvg1fQwhbYEC9skfomkyRtITkFh+bFXjqcnpD/6/WoKFzPhcMXHN
+	 +FCu2yRbcY+ToA/WlUIBNbdAfVdiP7Ybe58wTHJTZsOYZXVC/DVO8EGibEUZtjQh5oAtF
+	 OJ1aN7dRZWaaLisPLJu7NLinNiEdHFDJM5ZuubIg/fsfwxucYBNneq2CsoAPeQma8gpis
+	 poEyItbk19sudl1xm+8p4Xptk2GrZe1JsCvNi5UfGAV2RgprYGbwzON98TuUT5gtdeOR3
+	 ymxrsVG0QCmXJ/GDxmWp00SByzFCY84ramAd2eIYHJ2ll0XfwO4bB5kNG3Wk+iB3zrw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794342815;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794342832;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/8ocYQBe3YFFmUUoCd3DPsEeCobQ/m4s1lpafYEhyRg=;
-	b=X9EOAID8DdGFcoeil1CTesvIx6/NGwxE6dflt97+Z0VKmpetc+6DIbfpgrHZKOu9i1zN
-	 SR25xOiiUkhoegxd3mUv6eB5qUihRvM0MPYjNyDChC3SU6RT7wAjGTJpBN8JRe9dRmKr8
-	 p7INRaVBAEJfrw6Dtw6PiMfxM1ciJFb6IgrNUr/L1DekIRg+zOHykE0B0rrCjW/ohcwJK
-	 H6no8N7Bvb0fhHQ8U8GYP563LOJuNlkDprmc6Q6onK2LQgVj7KhMZBcSfV2Bi+iK12eNk
-	 B2LeRHoQgNQqD8rKPSRCA3810IIz6r7ejgPNs0Jpu53SjWUmLGjoXxBhH24zIkVbPag==
+	bh=0y2bOH35GXA0WqTYKrPvsGwhkw2x8Yice4dmqS6sRZ0=;
+	b=BwJc8A860OcyUlYLFZ4YjdsQIK36O8e56GVeBb2zuDQpj5j0ean2qzUTvsm6/vbXyhBc
+	 FB6zDA3pTIFzVpQ/tGSHasYnwyOs5FiJZ1UgqLIiPWhndkrzQf/+YQi1olbzbfN4b4FpT
+	 +71YGwHbCXNxoh13IpPMMLV96r0dTRVhWGJQ3V6LKGfIJihSwx9Hc9AE7N8JeuEjLP35p
+	 pYF4uEz/xjQoLwwjlx+WMLQA+FjNFJiU4qNwjPLgwEypdK+w+iJ9QR6fke0a1esEhoS+q
+	 V+HT0374d+eQdk1rjGL3w0dC18gHNaZaYBVjtYWmyFT32rOaP8I+nm6Xw2vTWMsIAxg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mi6pzJbm;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E8PthMAh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D03606AD47;
-	Tue, 10 Nov 2026 20:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F0E606A880
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 20:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Mi6pzJbm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9FAE1F0089F;
-	Tue, 10 Nov 2026 20:33:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E8PthMAh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B181F0089F
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 20:33:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794342815;
-	bh=/8ocYQBe3YFFmUUoCd3DPsEeCobQ/m4s1lpafYEhyRg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Mi6pzJbmGbk+Y7lwP1y+fgu4twMGHVAMHHT1GHNSzeJCGFPvQY06WGUh0F8gG2d9B
-	 /46tdmMsmHUyjAa5hnJT820kJxQZpxX3Op1/JyjtNwjI1DdQs62lE+2EBrNXcaitWH
-	 voiG/bXJV3FyiQ3xLYvqu8YrDTYvbmT6E3mNzNYEfh1ZGZyOJPFQ5SN3KXspVAvYbe
-	 C8VwynMbJH3tkME+dSdl17rZ1/txeiLoBCXe9GCVQQ6+b7Q/MFDHi+WSvNvKCLJfOW
-	 EvgMKyHovR3fJ2W47FvmVHz8977Xi3TqMnyedOdXiIFANjpHXT33kCvtB1UL1Epsw/
-	 PIkgit8f9BXUg==
-Message-ID: <sashiko-outbox-207712@kernel.org>
+	s=k20260515; t=1794342831;
+	bh=0y2bOH35GXA0WqTYKrPvsGwhkw2x8Yice4dmqS6sRZ0=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=E8PthMAhEb8JN0bojSSQRKajo1Fh7VumB4MQ1CS93aBG2/yTryPrTiPEnPOk/dqmr
+	 mTRSlqRRpVCzbj9DXvkZETebtSJlFsLAwsEdutUl+ou+QtOkgD12T+7RyTJ7seinKm
+	 jcsGSsi+ocoM3YiATOZRCo9W82i3CfmO5HwQDnEFkIJRqmHFotAD7oPeIZu6D92DvZ
+	 ORnWQQdhQawEGhtqqOKy1r4dYnHlzwqQ8auJzTwtV9tkyH//oOq6+h+rzeL5ZBSzOc
+	 I30/FB92S4pDDbO6msmzBVvHC9Okxln0mFrPUVGl83ZY7DH2+39fVMFPNvdqckrY7d
+	 FW40Lxh2iKv/w==
+Message-ID: <sashiko-outbox-207713@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v3 1/6] docs: security: Describe the Kernel
- Assurance Plane design
+Subject: Re: [PATCH 2/6] landlock: Mediate CAP_SYS_RAWIO for mappings below
+ mmap_min_addr
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "HARIHARA SUDHAN. R" <harisudhan@armoriq.io>, linux-security-module@vger.kernel.org, "Paul
- Moore" <paul@paul-moore.com>, "Kees Cook" <kees@kernel.org>, "James Morris" <jmorris@namei.org>, "Serge
- E . Hallyn" <serge@hallyn.com>
-Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Jonathan Corbet" <corbet@lwn.net>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Peter Zijlstra" <peterz@infradead.org>, "Ingo
- Molnar" <mingo@redhat.com>, "Steven Rostedt" <rostedt@goodmis.org>, "Liam R
- . Howlett" <liam@infradead.org>, "Lorenzo Stoakes" <ljs@kernel.org>, "Vlastimil
- Babka" <vbabka@kernel.org>, "David Hildenbrand" <david@kernel.org>, "Mike
- Rapoport" <rppt@kernel.org>, "Michal Hocko" <mhocko@suse.com>, "Mel Gorman" <mgorman@suse.de>, "Suren
- Baghdasaryan" <surenb@google.com>, "Ben Segall" <bsegall@google.com>, "Dietmar
- Eggemann" <dietmar.eggemann@arm.com>, "Juri Lelli" <juri.lelli@redhat.com>, "K
- Prateek Nayak" <kprateek.nayak@amd.com>, "Valentin Schneider" <vschneid@redhat.com>, "Vincent
- Guittot" <vincent.guittot@linaro.org>, "Shuah Khan" <skhan@linuxfoundation.org>, "Ketan
- Bhardwaj" <ketan@armoriq.io>, bpf@vger.kernel.org, linux-mm@kvack.org
-In-Reply-To: <20261110202246.274-2-harisudhan@armoriq.io>
-References: <20261110202246.274-1-harisudhan@armoriq.io>
- <20261110202246.274-2-harisudhan@armoriq.io>
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261110202436.2408244-3-mic@digikod.net>
+References: <20261110202436.2408244-1-mic@digikod.net>
+ <20261110202436.2408244-3-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 20:33:30 +0000
+Date: Tue, 10 Nov 2026 20:33:50 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,62 +60,40 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] docs: security: kap: contradictory epoch semantics for bound
-  tasks
---
+> Until now, a process in a domain that denies CAP_SYS_RAWIO could still
+> map memory below the vm.mmap_min_addr limit if it held this capability.
+> cap_mmap_addr() is commoncap's mmap_addr hook, and it checks
+> CAP_SYS_RAWIO with cap_capable(), not security_capable(), so the check
+> never reaches hook_capable().  Mapping the lowest pages is what this
+> limit protects against, because it helps to exploit kernel NULL pointer
+> dereferences.
+>=20
+> Add a Landlock mmap_addr hook that checks CAP_SYS_RAWIO against the
+> domain under the same condition as cap_mmap_addr().  With the same
+> vm.mmap_min_addr value, the hook only denies mappings for which
+> commoncap required the capability.  security_mmap_addr() stops at
+> commoncap's error, so processes without the capability get the same
+> result as before.  This also covers the x86 vm86() syscalls, which use
+> the same check for address 0.
+>=20
+> Making cap_mmap_addr() call capable() would also fix this, but it would
+> send every low mapping through the capable hook of all LSMs (SELinux,
+> AppArmor, SafeSetID, BPF LSM programs), adding capability checks that
+> their policies never had to handle.  For instance, SELinux checks
+> mmap_zero in its own mmap_addr hook and keeps it separate from the
+> capability on purpose.  LSMs with their own policy for low mappings
+> implement it in this hook, so Landlock does the same.
+>=20
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Reported-by: Ada Smith <adasmithgt@gmail.com>
+> Fixes: 97c8386f1d74 ("landlock: Enforce capability restrictions")
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 
-commit 77da64268c0c9921ecf4f2c4a0222c86b4687cb2
-Author: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
-
-docs: security: Describe the Kernel Assurance Plane design
-
-This commit adds security documentation and securityfs ABI documentation
-describing the Kernel Assurance Plane (KAP) design, Intent Lineage Groups,
-and control plane files.
-
-> diff --git a/Documentation/security/kap.rst b/Documentation/security/kap.=
-rst
-> new file mode 100644
-> index 0000000000000..e002a081c6607
-> --- /dev/null
-> +++ b/Documentation/security/kap.rst
-
-[ ... ]
-
-> +O1 finishes its first stage. The controller advances O1 to a new authori=
-ty
-> +generation that is narrower: no package cache, no network. It writes the=
- new
-> +authority and a higher epoch to O1's igroup. O2's igroup is untouched.
-> +
-> +From its next check, an already running O1 worker is held to the new aut=
-hority.
-> +It cannot reach the cache or the network even though it could a moment a=
-go, it
-> +was not asked to drop anything, it was not restarted, and O2 is unaffect=
-ed. If
-> +instead the controller revokes O1, the next O1 check fails closed.
-
-[ ... ]
-
-> +``epoch``
-> +  Monotonic authority generation. Installing a higher epoch fails every =
-task
-> +  still bound to an older one closed from its next check.
-
-[Severity: Low]
-Does advancing an igroup's authority_epoch hold already-bound tasks to the
-new authority, or does it cause them to fail every check closed?
-
-The motivating example above states that writing a new authority and a
-higher epoch to O1's igroup holds an already-running O1 worker to the
-narrower authority, whereas the epoch definition here and the
-kap.authority_epoch entry in Documentation/ABI/testing/securityfs-kap say
-that installing a higher epoch causes tasks bound to an older epoch to
-fail KAP checks closed.
+Sashiko has reviewed this patch and found no issues.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110202246.274-=
-1-harisudhan@armoriq.io?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110202436.2408=
+244-1-mic@digikod.net?part=3D2
+
