@@ -1,57 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794317107;
-	b=2gFK0bNuHlfQbw48UTKEKAfRPi2upKteM2AlwLZMQg4lNQnIs0DvXUua3ulf0a0sCl8U
-	 Vi/Y4ieaWmB4rroptu608p3xgzXxCAZxMLV319pG6vh4a7oZ530XL4UP2QutMb5VvtkoK
-	 Qfi+cou3Zoo3qwyu0KMM5kKf1v7GBfKpWu0FDynp1xi8dccZ5gLneOSyvylM7bj946V99
-	 NlsLRTkT9g7uqiaHQC5crwkXJBqY99M6XLMCwoFSn5l1zH0+V7MSnTSFchiAc/B2POYFk
-	 qAWGkUFYUPVd4COkCslUlSk+xW97lUsvX7ltmhMyOl4yAgIQB4tiQ1nndShcFMH9b2w==
+	t=1794318135;
+	b=yBeVJsPc+k9H/XR6IyFimYT8FS4dy9ry7ZI/enVVuKcziekq8Wn6qQ+YPMhBexgzodkh
+	 qS8xyk/1hLkOX/aK6CgWZ5mm7/Nw+XraeJZu8AQiF1I5QYZlhvOTuSCXSZpd4q8ziTYuq
+	 rCMp1Q7Rq0hdeikCx0xafA88hzjg2k9d7e4EQdEZNA8slgsiaTAeXcE3mAmowjmMB/aaV
+	 LJ40EGZ73hrMPzx8ZIv8m7Pg0hSYJsMiINvjtEhp/Vl1101nncNc7MYdo51W52Ez+ickj
+	 Oyhra8F6P0Q97PirGAZ/8VxsYkW+heADxFEXl2mig6gJXl4MtHfsRuqBXV++e98YI8w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794317107;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=nwL7oDo/fKRhHSTpx0EARUKGcl/3YU41/DAa+ZbusHY=;
-	b=oVTQREfmBOyOYRNrRi+nQl/mKv06t+IHPrbMaNvlVAEerygFMss/EzevHLlnpHeOljs+
-	 g9tZ/FHo82lpUFa4iJvudd8oRCiSg7AII9vfpQugnNFgbUW3dLkk182h6M/QNrJpoxcde
-	 koMrVCNq1x4A6sfj5Kceeoyl//TGhytCFFSKxJyRmgDMl4vaEdT9ABf9Bbwm2a36mPbpx
-	 VmE2kC8qkrzY9JuIF7zaDQiSzG56C/0T+DuwF4mXpUSY8SydMZdLwOIr9cdI5BtmmuTHL
-	 DOA7u+DIMf0A7qLyVN5Q2pLg+GHCs5xZe4/+ueoYNMxHZoe6w1BWHyIpmGu031quFLg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794318135;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=eYs+Fegr6eB0PcIdRKpfDtRPaQfHYvt3G6SFzIB7RsU=;
+	b=N+TyVh1choJ7aU0Xe0SgrYliyKlHHlXJ8+f6STu0JZaP+9KRqckzZJEG5RNhj+JF2C9r
+	 z0hESO6KbAxp0J8LJZyRDgcPQlHiRTgotnIO1UpKfm81E4OwWzaQEagqPTXpkUnlUoPiO
+	 UY16l6Kzef2fcB45rcVIciSvbmWOjqZbe3s+YW79n8sjwm0WA9sROex0EjdefBDkopBel
+	 xo9EwldqiOE25sf4f/R3mfn0KIvqEk6t0WiFkxAlREy84LBVMj1GeUU/MYj4NMokw7pEU
+	 y6uVS/RJ1qhNUzUD/uN3JGQtuEgLFOQYBSSgXwJptXnqGyXXopCPxzoxYpQdMSweTYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DhlPEkiI;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=hallyn.com;
+	spf=pass smtp.mailfrom=hallyn.com;
+	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b="OWss4i/Y";
+	arc=none smtp.remote-ip=178.63.66.53
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067C6606A76D;
-	Tue, 10 Nov 2026 13:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3C8606A31C;
+	Tue, 10 Nov 2026 13:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0E3C8606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DhlPEkiI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BF91F0089F;
-	Tue, 10 Nov 2026 13:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794317106;
-	bh=nwL7oDo/fKRhHSTpx0EARUKGcl/3YU41/DAa+ZbusHY=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=DhlPEkiIeerYxLrkLz8nTi63G88j7o3tc77e1yeNnBHWxEDEQx9QL/7FNnRD7ismC
-	 DNB87DSr+U5uxBvq/BG/xjGo7wvjedV4AOupwLqGf/+PFw1FUQ8Nxwyp12OrOO3x1G
-	 9ce+a/bje/G+gRVR1oMNTNxxpqZtefE/iemDPfKPQQSxwI2SW7NaWQ02KHEpeQQh9h
-	 +lLejiQs7RZ0xwAcB+Zm18oa98B23cYTWO+CnPP/xu7+hy2KPI3Pfcx8/e8PgZMOxX
-	 JpS14g9UE86aNnPz2XbzdMYQDP1hAAoMx7y8AnDWjRlBjeCT3s4e8hnQl3U2QSsSPS
-	 8Rdg2FhcPlS9g==
-Message-ID: <sashiko-outbox-207119@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH -next -v2 8/8] selftests/lsm: add lockdown securityfs
- test
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Cai Xinchen" <caixinchen1@huawei.com>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org
-In-Reply-To: <20261110132818.2231593-9-caixinchen1@huawei.com>
+	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=OWss4i/Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1794318130; bh=bcXqt42XRNdswsbMlIOG2xwf1uaEU0fPAUEiWxCSUDU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OWss4i/Yjw9dRrX/LmMsLYgUWxJ+o8/z5DZn9qibpbXXSzkPbDUzYwDYLCIYs1gcx
+	 fEeMyosyxsEliU4a7CKhRtCAgJpAd4xKRfQvdPBogMWiJriO77hH6kNmGuV8+8wL8s
+	 9XYH70cmhye5WlBAdtKFf+mMY7XnwRnE6/u36uVXysk5lebN9EdFUUh0qsPRs9B51m
+	 guCg9DQtsLm29wpsXciDSxRk09AKEV/I+Ta86fX0XjWKs2zNR+Vh1s5chdAoLYrL9b
+	 D0NQ2IzyqjN3e8kjqe2n3NCgFZcewfqvtrEYJRSZr8wdyB5lpuYGUJNtFvUMAK6NKE
+	 qD6nEVIwRnuww==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id E5727B8D; Tue, 10 Nov 2026 07:42:10 -0600 (CST)
+Date: Tue, 10 Nov 2026 07:42:10 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Cai Xinchen <caixinchen1@huawei.com>
+Cc: nicolas.bouchinet@oss.cyber.gouv.fr, xiujianfeng@huawei.com,
+	paul@paul-moore.com, jmorris@namei.org, shuah@kernel.org,
+	kalevi@kolttonen.fi, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org, lujialin4@huawei.com
+Subject: Re: [PATCH -next -v2 6/8] lockdown: bound the status string with
+ scnprintf
+Message-ID: <avMfMnoJUb9bIYbG@hallyn.com>
 References: <20261110132818.2231593-1-caixinchen1@huawei.com>
- <20261110132818.2231593-9-caixinchen1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 13:25:05 +0000
+ <20261110132818.2231593-7-caixinchen1@huawei.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,187 +65,109 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261110132818.2231593-7-caixinchen1@huawei.com>
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Medium] selftests/lsm: missing $(OUTPUT)/ prefix in run_lockdown_test
-  Makefile target
-- [Low] selftests/lsm: skipped downgrade test and duplicated setup in
-  lockdown_test
---
+On Tue, Nov 10, 2026 at 09:28:16PM +0800, Cai Xinchen wrote:
+> Use scnprintf() instead of sprintf() when composing the lockdown status
+> string in lockdown_read().  The current set of levels fits well within the
+> 80 byte buffer, but sprintf() provides no protection if more or longer
+> labels are added later.  scnprintf() makes the buffer bounds explicit.
+> 
+> Store the level label strings in named arrays and point the matching
+> lockdown_reasons[] entries at them.  Their sizes are compile-time
+> constants, so a BUILD_BUG_ON() can verify that the status buffer is large
+> enough for all level labels, their trailing spaces, and the brackets
+> around the active one.
+> 
+> Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
 
-commit 01625a3d98192538ac4075199b3f0186f4e7ed21
-Author: Cai Xinchen <caixinchen1@huawei.com>
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-selftests/lsm: add lockdown securityfs test
+> ---
+>  security/lockdown/lockdown.c | 28 +++++++++++++++++++++++-----
+>  1 file changed, 23 insertions(+), 5 deletions(-)
+> 
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 84efd533fe5a..26cac7628a48 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -14,13 +14,17 @@
+>  #include <linux/lsm_hooks.h>
+>  #include <uapi/linux/lsm.h>
+>  
+> +static const char lockdown_label_none[] = "none";
+> +static const char lockdown_label_integrity[] = "integrity";
+> +static const char lockdown_label_confidentiality[] = "confidentiality";
+> +
+>  /*
+>   * These are descriptions of the reasons that can be passed to the
+>   * security_locked_down() LSM hook, used for the denial message and the
+>   * securityfs status file.
+>   */
+>  static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+> -	[LOCKDOWN_NONE] = "none",
+> +	[LOCKDOWN_NONE] = lockdown_label_none,
+>  	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+>  	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
+>  	[LOCKDOWN_EFI_TEST] = "/dev/efi_test access",
+> @@ -41,7 +45,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+>  	[LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
+>  	[LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
+>  	[LOCKDOWN_XEN_USER_ACTIONS] = "Xen guest user action",
+> -	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+> +	[LOCKDOWN_INTEGRITY_MAX] = lockdown_label_integrity,
+>  	[LOCKDOWN_KCORE] = "/proc/kcore access",
+>  	[LOCKDOWN_KPROBES] = "use of kprobes",
+>  	[LOCKDOWN_BPF_READ_KERNEL] = "use of bpf to read kernel RAM",
+> @@ -50,7 +54,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
+>  	[LOCKDOWN_TRACEFS] = "use of tracefs",
+>  	[LOCKDOWN_XMON_RW] = "xmon read and write access",
+>  	[LOCKDOWN_XFRM_SECRET] = "xfrm SA secret",
+> -	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+> +	[LOCKDOWN_CONFIDENTIALITY_MAX] = lockdown_label_confidentiality,
+>  };
+>  
+>  static enum lockdown_reason kernel_locked_down;
+> @@ -137,6 +141,16 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+>  	char temp[80] = "";
+>  	int i, offset = 0;
+>  
+> +	/*
+> +	 * Size the buffer for the worst case: the active level is
+> +	 * confidentiality, with brackets and trailing spaces, plus the
+> +	 * terminating NUL.  The label sizeof() values include their own
+> +	 * NULs, so only three more bytes are needed.
+> +	 */
+> +	BUILD_BUG_ON(sizeof(temp) < sizeof(lockdown_label_none) +
+> +				    sizeof(lockdown_label_integrity) +
+> +				    sizeof(lockdown_label_confidentiality) + 3);
 
-This commit adds an opt-in kselftest for the /sys/kernel/security/lockdown
-interface along with a shared read_file() helper in common.c and enables
-CONFIG_SECURITY_LOCKDOWN_LSM in the selftest config fragment.
+Awesome, thanks.  It also might be worth it to replace the 80 in temp[80]
+with the calculated size, but this is safe enough.
 
-> diff --git a/tools/testing/selftests/lsm/Makefile b/tools/testing/selftes=
-ts/lsm/Makefile
-> index 3f80c0bc093de..3be7aa42761ce 100644
-> --- a/tools/testing/selftests/lsm/Makefile
-> +++ b/tools/testing/selftests/lsm/Makefile
-> @@ -8,10 +8,18 @@ LOCAL_HDRS +=3D common.h
->  TEST_GEN_PROGS :=3D lsm_get_self_attr_test lsm_list_modules_test \
->  		  lsm_set_self_attr_test
-> =20
-> +# lockdown_test changes the machine's lockdown level, so do not run it
-> +# by default.
-> +TEST_GEN_PROGS_EXTENDED :=3D lockdown_test
 > +
->  include ../lib.mk
-> =20
->  $(OUTPUT)/lsm_get_self_attr_test: lsm_get_self_attr_test.c common.c
->  $(OUTPUT)/lsm_set_self_attr_test: lsm_set_self_attr_test.c common.c
->  $(OUTPUT)/lsm_list_modules_test: lsm_list_modules_test.c common.c
-> +$(OUTPUT)/lockdown_test: lockdown_test.c common.c
-> +
-> +run_lockdown_test: all
-> +	$(call RUN_TESTS, lockdown_test)
-
-[Severity: Medium]
-Does run_lockdown_test fail on out-of-tree builds (such as make O=3D... or
-make OUTPUT=3D...)?
-
-../lib.mk prefixes TEST_GEN_PROGS_EXTENDED with $(OUTPUT)/ and the build
-rule places the binary at $(OUTPUT)/lockdown_test, but run_lockdown_test
-passes a bare lockdown_test to RUN_TESTS.  When OUTPUT points to a separate
-directory, tools/testing/selftests/kselftest/runner.sh looks for
-./lockdown_test in the source directory and fails with "Warning: file
-lockdown_test is missing!".  Passing $(OUTPUT)/lockdown_test (or
-$(TEST_GEN_PROGS_EXTENDED)) to RUN_TESTS avoids this.
-
-[ ... ]
-
-> diff --git a/tools/testing/selftests/lsm/lockdown_test.c b/tools/testing/=
-selftests/lsm/lockdown_test.c
-> new file mode 100644
-> index 0000000000000..fed050551cff2
-> --- /dev/null
-> +++ b/tools/testing/selftests/lsm/lockdown_test.c
-
-[ ... ]
-
-> +TEST(lockdown_no_downgrade)
-> +{
-> +	char before[128], after[128], level[32];
-> +	const char *lower;
-> +	int ret;
-> +
-> +	ret =3D read_lockdown_status(before, sizeof(before));
-> +	if (ret) {
-> +		if (ret > 0)
-> +			SKIP(return, "%s is not present", LOCKDOWN_PATH);
-> +		TH_LOG("cannot read %s: %s", LOCKDOWN_PATH, strerror(errno));
-> +		ASSERT_EQ(0, ret);
-> +	}
-> +	if (geteuid() !=3D 0)
-> +		SKIP(return, "requires root");
-> +	if (status_writable())
-> +		SKIP(return, "cannot open %s for writing: %s",
-> +		     LOCKDOWN_PATH, strerror(errno));
-> +	ASSERT_EQ(0, get_active_level(before, level, sizeof(level)));
-> +
-> +	if (!strcmp(level, "confidentiality"))
-> +		lower =3D "integrity";
-> +	else if (!strcmp(level, "integrity"))
-> +		lower =3D "none";
-> +	else
-> +		SKIP(return, "kernel is not locked down, nothing to downgrade");
-> +
-> +	errno =3D 0;
-> +	ASSERT_EQ(-1, write_status(lower));
-> +	ASSERT_EQ(EPERM, errno);
-> +
-> +	ASSERT_EQ(0, read_file(LOCKDOWN_PATH, after, sizeof(after)));
-> +	ASSERT_STREQ(before, after);
-> +}
-> +
-> +TEST(lockdown_same_level_rejected)
-> +{
-> +	char before[128], after[128], level[32];
-> +	int ret;
-> +
-> +	ret =3D read_lockdown_status(before, sizeof(before));
-> +	if (ret) {
-> +		if (ret > 0)
-> +			SKIP(return, "%s is not present", LOCKDOWN_PATH);
-> +		TH_LOG("cannot read %s: %s", LOCKDOWN_PATH, strerror(errno));
-> +		ASSERT_EQ(0, ret);
-> +	}
-> +	if (geteuid() !=3D 0)
-> +		SKIP(return, "requires root");
-> +	if (status_writable())
-> +		SKIP(return, "cannot open %s for writing: %s",
-> +		     LOCKDOWN_PATH, strerror(errno));
-> +	ASSERT_EQ(0, get_active_level(before, level, sizeof(level)));
-> +
-> +	errno =3D 0;
-> +	ASSERT_EQ(-1, write_status(level));
-> +	ASSERT_EQ(EPERM, errno);
-> +
-> +	ASSERT_EQ(0, read_file(LOCKDOWN_PATH, after, sizeof(after)));
-> +	ASSERT_STREQ(before, after);
-> +}
-> +
-> +/*
-> + * This test raises the lockdown level and cannot undo it, so run it las=
-t.
-> + */
-> +TEST(lockdown_upgrade)
-> +{
-> +	char before[128], after[128], level[32];
-> +	const char *next;
-> +	int ret;
-> +
-> +	ret =3D read_lockdown_status(before, sizeof(before));
-> +	if (ret) {
-> +		if (ret > 0)
-> +			SKIP(return, "%s is not present", LOCKDOWN_PATH);
-> +		TH_LOG("cannot read %s: %s", LOCKDOWN_PATH, strerror(errno));
-> +		ASSERT_EQ(0, ret);
-> +	}
-> +	if (geteuid() !=3D 0)
-> +		SKIP(return, "requires root");
-> +	if (status_writable())
-> +		SKIP(return, "cannot open %s for writing: %s",
-> +		     LOCKDOWN_PATH, strerror(errno));
-> +	ASSERT_EQ(0, get_active_level(before, level, sizeof(level)));
-> +
-> +	if (!strcmp(level, "none"))
-> +		next =3D "integrity";
-> +	else if (!strcmp(level, "integrity"))
-> +		next =3D "confidentiality";
-> +	else
-> +		SKIP(return, "kernel is already at the highest level");
-> +
-> +	errno =3D 0;
-> +	ASSERT_EQ(0, write_status(next));
-> +
-> +	ASSERT_EQ(0, read_file(LOCKDOWN_PATH, after, sizeof(after)));
-> +	ASSERT_EQ(0, get_active_level(after, level, sizeof(level)));
-> +	ASSERT_STREQ(next, level);
-> +}
-
-[Severity: Low]
-Could lockdown_no_downgrade run after lockdown_upgrade so that a single
-invocation of make run_lockdown_test exercises downgrade rejection?
-
-Enabling CONFIG_SECURITY_LOCKDOWN_LSM=3Dy defaults to
-CONFIG_LOCK_DOWN_KERNEL_FORCE_NONE=3Dy, so a freshly booted kernel starts at
-"none".  With the current test order, lockdown_no_downgrade always skips on
-that initial state right before lockdown_upgrade raises the level to
-"integrity"; placing lockdown_no_downgrade after lockdown_upgrade leaves the
-system in the same final state while testing that downgrading from
-"integrity" to "none" fails with EPERM.
-
-Also, the prerequisite checks (read_lockdown_status(), geteuid() !=3D 0,
-status_writable(), and get_active_level()) are duplicated across all four
-write tests and could be shared via FIXTURE() / FIXTURE_SETUP() or a helper.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110132818.2231=
-593-1-caixinchen1@huawei.com?part=3D8
+>  	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
+>  		enum lockdown_reason level = lockdown_levels[i];
+>  
+> @@ -144,9 +158,13 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+>  			const char *label = lockdown_reasons[level];
+>  
+>  			if (kernel_locked_down == level)
+> -				offset += sprintf(temp+offset, "[%s] ", label);
+> +				offset += scnprintf(temp + offset,
+> +						    sizeof(temp) - offset,
+> +						    "[%s] ", label);
+>  			else
+> -				offset += sprintf(temp+offset, "%s ", label);
+> +				offset += scnprintf(temp + offset,
+> +						    sizeof(temp) - offset,
+> +						    "%s ", label);
+>  		}
+>  	}
+>  
+> -- 
+> 2.18.0.huawei.25
+> 
