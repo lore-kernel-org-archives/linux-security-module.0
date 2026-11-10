@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794316668;
-	b=5Djb+5bqb4yM5Meo21pRR9MOVgnRFaVMFmqicKSq+36s/IvlYJ6ONL3bcgLmPaUdXFZ4
-	 EB1QBXptdde13rimdQFTP8eHK6Xpm2c41Hg1pkNr3cxm6hDyGI4RbLyQ1O7hqumwlVAXa
-	 wR7/GxQrJHFxYR02FeV34bmcK7x6SYDaztjY9WedrBbKk1W2HcYUAp7SbEbZk7rFH1xNI
-	 Gm5FBVPLD/0Ybl/ijrbbAqREd1ueq58IgXVCG7ZRSpUErMoqwawQFzo65qEDmJfKK8gr4
-	 kOj2TxoeJzLbcqMZEt/t2T21UzYanOBQarIolQZjJq+/WdLPfocdTRF0vHq2lcrap+g==
+	t=1794316669;
+	b=hxyYlnSnmQWCnDlOIGO/yHH03acAmjQ3V/sQE2i/fP8lTfyRoGiVxeT8hm0AdOU+Sohk
+	 3LuzO1/qedCD228UPZTCiltFKtEeLkI24AN+sK/6VT+cWD8OYQz+XaYG9QnBGEYqkGjCG
+	 F6UL32neUuJiDA7YzRGe+AuvRpV/Ivw9CtVcF8TXuNpNrew7Fc4E4vsizq5slqn5OjafV
+	 iG1wEfsiy5zeGJe75MWJbfX/Th3THRMWcKopvRzNcPq0gKI2vsbX2OMnTXRqBxgRJggFY
+	 q/7nQqypQsjNoU9MR054SSL+tJsSufJw61ElliH1Nxwnr0AUucC5ls4NF7Z6ojtks3w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794316668;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794316669;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=V3mypVxGDqlgDieMzPn6OXajx2jFnizo7jBFFhwBoQQ=;
-	b=SlyWjkKWr422YQaJ1ww+4auhW13SDJM1l6HjwHnr18RFuckf1XtafidT7xa7agl7A1iJ
-	 QA2XTa60ps6SGZzSsAzRO5wsCIxSSnKh8z4MlFoGzcBwpmU/iYrDNQWcp9qkqL6s+jfIx
-	 yxGoHxvMnOQpwfy1wBZjTvwbNEDKY7xJk6W7HwreWR8XzmL8N1k4OC7siqn0cpBiyDwPf
-	 GZbF+hP2l2spGgYs+oZmsMmpYn3++JKCHVkEO1iFD9HDjdN5iWTCbrLK7z2K7GEEjAEKX
-	 bxIJ15oLwFgJNSZdw3Zeb9ubSU6zMPpotGNnXHvVHaupreMfYyAUgGxtMu/ckK+n7jw==
+	bh=RBgNSeAz8msYH6519F4u8kHGkY9+/1pFyTzzR+EfPZI=;
+	b=VpWH+nhCBKCSxKFWaFx+9C/36mB9VIzZZ0apeVb09we1dSVmNMS4P4hUJCXPvCtTu+b2
+	 QphL9IUU833CXpWdlq2WYQCE9L4bi551/OFqaKS9M832+YH55oSBKD4aPXJGOLGFM4rrT
+	 ursKJVX+JpASils5Ibzb7sQ60NYtIqLyDBw65mHIJA/lr5NlPX3gbV1Ty2ktEGwS4yloD
+	 0+dq2aNN0dCNKOtwhhZzJ+Si5n/obqX9sAhjWMHF6EctWStGgi3b22O/uIthvdaxeq1mp
+	 mm9c6jerDFCw+pvufNclKiMG+HYDmXvXk8jBSYT/DHxQEp0Lxwas+6tcQLKcNRHPddQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZbfeYcO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=flLF0fC9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7913C606B2E6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C122B606B6CA
 	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 13:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XZbfeYcO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED9E61F0089F
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 13:17:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=flLF0fC9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EC41F008A2
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 13:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794316668;
-	bh=V3mypVxGDqlgDieMzPn6OXajx2jFnizo7jBFFhwBoQQ=;
+	bh=RBgNSeAz8msYH6519F4u8kHGkY9+/1pFyTzzR+EfPZI=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=XZbfeYcO4RqvwOtMgZUg3wcmIMXYFJy+SO+WmDn9L2Aw+M7dPq7lQfFfW3W4XLwaq
-	 FYF73XxeMv9pAGNGmZfouFScxsAeIHuRE39fvAFIxfOEjZVlokeVFSlw8wyvmj8MQk
-	 SN3+JWLuSJO3L8Bf8XPDJXglR5EMIucLtLASe7nPwyJZKc0DY0bpgKSZwopKdtm5Q7
-	 xDry9kk2Kgl57Opg2Qv8eqemhQE7PuZdvZZyTdTzMkTk9L+B9jvFKD3VUy0o0Wbj9f
-	 HEB3k3bPZgMqtm0nAdEbb7HZTDTysEVj9VhzvQ2JQiZSwb+OtGeyQ/Nc6/cnUGqn9u
-	 d/kNqbv/aawoA==
-Message-ID: <sashiko-outbox-207109@kernel.org>
+	b=flLF0fC9PShe4pn1Zq0Glj0wjxtlnUjrLn21O0j5EwpvY8CsZ2Mi1XVXNFI42TYW1
+	 faJbmbmpuUcyB9WwsiURpEpZVjCeWQdFp26sgePjqbIXD2u33z8UEnrAFxtz/hR2ao
+	 KBZfS1a/+aas8G6b9W1OY4TG8KNpHv9uCiERqmz8rmTw4oZ3DusExuUFNvBXmOpEhU
+	 VvzvvHxhArqpriw/sdC6mCUo27jpVpHVtoIoIPliQgqUSt3WzwLDwhE6z7vjw3nmzp
+	 XLzjkmzb1oiqfNpdGXax7iE5pjdNEegqLMi4wNOEJq3Axn8gsM/yIHMmqO4iEdH6GM
+	 xFR36lAHUh1tQ==
+Message-ID: <sashiko-outbox-207110@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net v2 1/2] ipv4: recompile IP options on a private copy
- in ipv4_send_dest_unreach()
+Subject: Re: [PATCH net v2 2/2] cipso: unshare headers before recompiling IP
+ options in cipso_v4_error()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261109131736.3060756-2-edumazet@kernel.org>
+In-Reply-To: <20261109131736.3060756-3-edumazet@kernel.org>
 References: <20261109131736.3060756-1-edumazet@kernel.org>
- <20261109131736.3060756-2-edumazet@kernel.org>
+ <20261109131736.3060756-3-edumazet@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 13:17:47 +0000
+Date: Tue, 10 Nov 2026 13:17:48 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,90 +60,35 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [High] ipv4: skb->head reallocation and ihl TOCTOU in
-  ipv4_send_dest_unreach()
-- [High] ipv4: uninitialized headroom access after pskb_copy() when
-  network_offset < 0
---
+> cipso_v4_error() recompiles the IP options of the offending packet with
+> __ip_options_compile() before echoing them in an ICMP error.
+> __ip_options_compile() updates Record Route and Timestamp options in
+> place.
+>=20
+> cipso_v4_error() is called from the LSM socket receive hooks through
+> netlbl_skbuff_err(). ip_rcv_options() unshared the IPv4 header earlier,
+> but at socket delivery time the skb can again be a clone sharing its
+> data with other skbs, such as the per-socket clones made for raw sockets
+> or multicast/broadcast delivery. Writing to the options then modifies
+> packet data seen by the other users of the buffer, and a concurrent
+> recompilation would hit the same check-then-write race as the one fixed
+> in ipv4_send_dest_unreach().
+>=20
+> Make the header private before recompiling options, as ip_rcv_options()
+> already does. If the copy fails, do not send the ICMP error.
+>=20
+> The issue was found by an AI code review agent. It was not reproduced,
+> and the fix was only build-tested.
+>=20
+> Fixes: 3da1ed7ac398 ("net: avoid use IPCB in cipso_v4_error")
+> Reported-by: Kyle Zeng <kylebot@openai.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: linux-security-module@vger.kernel.org
+> Signed-off-by: Eric Dumazet <edumazet@kernel.org>
 
-commit 5a814100bdfbbe07fb37410d0b393cb7deb2e38a
-Author: Eric Dumazet <edumazet@kernel.org>
-
-ipv4: recompile IP options on a private copy in ipv4_send_dest_unreach()
-
-This commit uses pskb_copy() in ipv4_send_dest_unreach() so IP options are
-recompiled and echoed on a private skb copy rather than modifying the
-caller's skb.
-
-> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-> index 3a90c8d28b940..9af72cb892034 100644
-> --- a/net/ipv4/route.c
-> +++ b/net/ipv4/route.c
-> @@ -1256,6 +1256,7 @@ EXPORT_INDIRECT_CALLABLE(ipv4_dst_check);
-> =20
->  static void ipv4_send_dest_unreach(struct sk_buff *skb)
->  {
-> +	struct sk_buff *nskb =3D NULL;
->  	struct inet_skb_parm parm;
->  	struct net_device *dev;
->  	int res;
-> @@ -1271,6 +1272,16 @@ static void ipv4_send_dest_unreach(struct sk_buff =
-*skb)
->  	if (ip_hdr(skb)->ihl > 5) {
->  		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
->  			return;
-> +
-> +		/* __ip_options_compile() writes into the options, and
-> +		 * callers of dst_link_failure() may cache pointers into
-> +		 * skb->head: work on a private copy.
-> +		 */
-> +		nskb =3D pskb_copy(skb, GFP_ATOMIC);
-> +		if (!nskb)
-> +			return;
-> +		skb =3D nskb;
-
-[Severity: High]
-Can calling pskb_network_may_pull() on the caller's skb before pskb_copy()
-still reallocate skb->head and cause a use-after-free in callers of
-dst_link_failure()?
-
-Tunnel transmit paths such as ipip_tunnel_xmit() and ipgre_xmit() call
-pskb_inet_may_pull(), which only pulls sizeof(struct iphdr) and leaves IPv4
-options in nonlinear fragments.  When ip_tunnel_xmit() calls
-dst_link_failure(skb) before skb_cow_head(), pskb_network_may_pull(skb,
-ip_hdr(skb)->ihl * 4) pulls the option bytes via __pskb_pull_tail() ->
-pskb_expand_head() on the caller's skb (and pskb_copy() itself can call
-skb_orphan_frags() -> skb_unclone() on a cloned skb with zerocopy frags),
-freeing the old skb->head that ip_tunnel_xmit()'s cached inner_iph and
-tnl_params pointers still reference.
-
-> +
->  		parm.opt.optlen =3D ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
-
-[Severity: High]
-Does re-reading ip_hdr(skb)->ihl after pskb_copy() also allow a TOCTOU race
-when skb->head is shared, or an uninitialized read when
-skb_network_offset(skb) is negative?
-
-If a concurrent clone modifies ip_hdr(skb)->ihl between the check on the
-original skb and pskb_copy(), re-reading ip_hdr(nskb)->ihl without
-re-validating it can underflow parm.opt.optlen or exceed the pulled length
-in nskb, leading to out-of-bounds accesses in __ip_options_compile() and
-__ip_options_echo().
-
-Separately, when a packet is redirected (for example via act_mirred or
-bpf_redirect) to an NBMA GRE device with header_ops set, ipgre_xmit() pulls
-pull_len bytes before gre_build_header() pushes tun_hlen, entering
-ip_tunnel_xmit() -> dst_link_failure() with a negative
-skb_network_offset(skb).  pskb_network_may_pull() accepts negative network
-offsets, but pskb_copy() only copies data starting at skb->data and leaves
-the headroom [nskb->head .. nskb->data] uninitialized while preserving
-nskb->network_header in that headroom.  ip_hdr(nskb) then points into
-uninitialized heap memory, corrupting parm.opt.optlen and causing
-out-of-bounds reads and writes in __ip_options_compile().
+Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109131736.3060=
-756-1-edumazet@kernel.org?part=3D1
+756-1-edumazet@kernel.org?part=3D2
+
