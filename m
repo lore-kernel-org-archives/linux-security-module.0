@@ -1,55 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794344159;
-	b=eWV2cpVHaLTgkFBML2B0LqwJWSF9kwT2iTkouWFKgKh/xEzC1y0ApA0foXv8bZ+McL+M
-	 3L8WPoY2VC4vAYg5x8P1Sc+oVGuWbuKJZoVZZLMpFUqUzOhdpLuRCQ5lC86Y0ypR+yeTo
-	 E1Ba+ojITf0VzM3zmpurJLc3WJY/tmCwDwpMeXYGJeZxwS7Gv7bja0IqDx5jydU2p1c5g
-	 V04dB4oPkNUDEW11HS/tdLFtWpLhHjeW0y0WEhnYQpW1BUTGQQNvOZ2WNrqjA/NniIgzH
-	 S3gpepeEYp3MA4PLxdn0r1AGprDL/V4vP+sq+Yz5Ga7Qb1XmhhlfFBtIq9XHIJozo2A==
+	t=1794344554;
+	b=oAn1hM16Bm6QNelgSPrLboRLpwIRIF0wbvCM9dYUu7DshRFYPOQYzMPEaTW+tBwo898v
+	 mjlzRRrQJ7Qvb9kwfyg2AMpEoVHWw1+O0k8vkOS+F4d4YzpRwddZcRxYBOvijXs1IySow
+	 Cu51uumFak6PvjAkHqBIZOqIeTdu25N3VXyuSeQrixb8Nge+aaSBmLWP8smteP9VO2pX9
+	 NMFkLs5TVrY4BAJx7sAmg59o3VWlafr21jkoFWKi46Inj4xQG+aVpJ7xk6PXVCsFbi+44
+	 2x1ZsCpbZN7Tz7JWqtGVKgKj1D/Ni5s+nYRH3tPBueCxW0yb/30ahXn9bk8tb1/7J6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794344159;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794344554;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=XWeCqKaRYAkU48efvVd5flgmu3pnw2Inqv6lNBBQLRs=;
-	b=dTp3SPNmzygCe5fbSscgQVHqeCy94HG9ZPhMyqxuV25oouBiS5LN7NObY1bjuh1u9b7x
-	 Yw/c5k32aPWs4fH6z0M3Cosfq7cr1e6NwwbzV5ekktIb9BQYB6g/wRpOYzH/Jql8ZyS6I
-	 vMdsym1nua871DgBqp3SVGVqZLBeE+yZu+bbxDPbJF/VDMsoVbLFGLgbar8i4xJ0zaUIf
-	 Rk086zZAiHlbRUHd4kj0ahy2ZgzLbN5GmY+GpqIt0Z6EZwonQEv/tnP04xno9auC0rfQK
-	 KMGtzhlPmS1yndGZTCHsxDoUP9eW59QOxHvXk5k4shVMO+xWGkZ4Y87PU53L48TM8xw==
+	bh=4UELyMN+egwkqi4+h1uopj37GrqBlJgxQd/MGkoSSAk=;
+	b=j5C/0n10dErQdrUHeWo/dxBD9QGsIdkjXr60Ws/BtbdemGr6LRKLX+Ds4ZiuxWrJlQK4
+	 hwq+aSO++tRkgZWmAuudbF/4QYNrQEquMryaH6GE36WLesnGdDwvrm84qonTOxUuLvWyd
+	 t0VzKbOwvUZ3ER0Q4bhvKqQXklsW/lLSnuPcCA2BUVcARg3dEuLoQxp7eZ8j9p8Z/oM+8
+	 Ls87QOTX0oen91db6TpsDFvW7rcre2r2l9N2uh3Y+c91j/QmN0b2v9k8usD69dut0yyD4
+	 18cYLgnfnuZzbEzC9LrbpEdwAKzCta09nN6FOLnS6Bk9WxOuEZZxoxZA/x8YB0jET4Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JYEB1W4c;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UIFweq4W;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750A9606A320
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 20:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA9B606A31C;
+	Tue, 10 Nov 2026 21:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JYEB1W4c
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 754BE1F008A1
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 20:55:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UIFweq4W
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAABA1F0089F;
+	Tue, 10 Nov 2026 21:02:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794344159;
-	bh=XWeCqKaRYAkU48efvVd5flgmu3pnw2Inqv6lNBBQLRs=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=JYEB1W4cZqtgLNdlvjvBQrEXuUd5Zl1XgVb2dUfesOKRki9W1efn8g+PFTveqanc+
-	 sMGouP7A0rwBSH4cpf293XmV4XcFmnw8eBoPmNxhOM2oTmrfbKffobgF9dclhWBlxP
-	 VJ1Uxb4HMXN5AZIKhY1KT3g9SXwKRDxwriQ3S1eb59bi1fTJyeRkULug0l1ZzU7Ngu
-	 vFvKM+wywtXDkPM1K5etWdoDQ+vCUEj9fTpnkCHJTI2o1AQn8nbcsUMOpfkNG4uLbQ
-	 A4zfCQ4N4bixypcwnEe4lkG6QlRi59PbVi/DkUnQ1Im7hM1yoh+IJ7DZACjU27Xkd+
-	 goQ1p8b+RAZcA==
-Message-ID: <sashiko-outbox-207737@kernel.org>
+	s=k20260515; t=1794344554;
+	bh=4UELyMN+egwkqi4+h1uopj37GrqBlJgxQd/MGkoSSAk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=UIFweq4W2ri1jxRcfOJKg5ZmdzmEOQrGrEsZbdNmyGr0UtcosyTUVzd22ZA/rEyu7
+	 KS6BCZAbfGjjc//5/BLGFU96uo/aVTWyHLwGMLiZbew5h9XY42CNE5QbsMXyuZdMNr
+	 WyIay3TNN4CZHsXPrxfpuo0KtfkBf00ODkoCOIkv+I9O74qvzaBs0PnyK9Emhr5UjM
+	 OwMXbcs/G5Efwsjw7KMeU3A2Al6HKhlZqc//puKPjavBsZ9LTc3wsuumXcWcBymlO1
+	 5b4mLD67PaKNu763DE5OUYHup6EIRYm+vsnOXJHrCDsQAiZCSUsc8/uqdj0kjW30Av
+	 970OL0AbtcAiQ==
+Message-ID: <sashiko-outbox-207760@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 6/6] landlock: Fix capability restriction documentation
+Subject: Re: [PATCH 6/6] selftests/landlock: Test capabilities guarding
+ other LSMs' policies
 Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261110202436.2408244-7-mic@digikod.net>
-References: <20261110202436.2408244-1-mic@digikod.net>
- <20261110202436.2408244-7-mic@digikod.net>
+To: =?utf-8?b?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+In-Reply-To: <20261110203042.2410140-7-mic@digikod.net>
+References: <20261110203042.2410140-1-mic@digikod.net>
+ <20261110203042.2410140-7-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 20:55:58 +0000
+Date: Tue, 10 Nov 2026 21:02:33 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,19 +61,79 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Some documented claims about LANDLOCK_PERMISSION_CAPABILITY_USE do not
-> hold for every capability check.  Remove them instead of listing their
-> exceptions, and call it a permission instead of a hook.
->=20
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Fixes: 97c8386f1d74 ("landlock: Enforce capability restrictions")
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] selftests/landlock: missing set_root_euid() in
+  apparmor_policy_load()
+--
 
-Sashiko has reviewed this patch and found no issues.
+commit 04d94a6e7f98554d70c200b902dd42758c1ea088
+Author: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+
+selftests/landlock: Test capabilities guarding other LSMs' policies
+
+This commit adds selftests verifying that Landlock capability restrictions
+on CAP_MAC_ADMIN and CAP_MAC_OVERRIDE apply to Smack label operations and
+AppArmor policy loading, along with an audit test for Smack capability
+denials.
+
+> diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/=
+selftests/landlock/cap_test.c
+> index 741567c5ab417..7f9b7fb2bade8 100644
+> --- a/tools/testing/selftests/landlock/cap_test.c
+> +++ b/tools/testing/selftests/landlock/cap_test.c
+[ ... ]
+> @@ -969,6 +974,180 @@ TEST_F(cap_other_hooks, capset_inheritable)
+[ ... ]
+> +/* AppArmor requires CAP_MAC_ADMIN to load policy. */
+> +TEST_F(cap_other_hooks, apparmor_policy_load)
+> +{
+> +	if (!is_lsm_active(_metadata, LSM_ID_APPARMOR))
+> +		SKIP(return, "AppArmor is not active");
+> +
+> +	if (access(APPARMOR_LOAD_PATH, F_OK)) {
+> +		set_cap(_metadata, CAP_SYS_ADMIN);
+> +		ASSERT_EQ(0, unshare(CLONE_NEWNS));
+> +		ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
+> +		ASSERT_EQ(0, mount("securityfs", "/sys/kernel/security",
+> +				   "securityfs", 0, NULL));
+> +		clear_cap(_metadata, CAP_SYS_ADMIN);
+> +	}
+> +	ASSERT_EQ(0, access(APPARMOR_LOAD_PATH, F_OK));
+> +
+> +	enforce_cap_variant(_metadata, variant, CAP_MAC_ADMIN);
+> +
+> +	EXPECT_EQ(EACCES, write_apparmor_load(_metadata));
+> +
+> +	set_cap(_metadata, CAP_MAC_ADMIN);
+> +	if (variant->is_allowed) {
+> +		EXPECT_EQ(EPROTONOSUPPORT, write_apparmor_load(_metadata));
+> +	} else {
+> +		EXPECT_EQ(EACCES, write_apparmor_load(_metadata));
+> +	}
+> +	clear_cap(_metadata, CAP_MAC_ADMIN);
+> +}
+
+[Severity: Low]
+Does apparmor_policy_load need to call set_root_euid(_metadata) before
+testing write_apparmor_load()?
+
+Writing to /sys/kernel/security/apparmor/.load reaches
+aa_may_manage_policy() -> aa_policy_admin_capable() ->
+aa_policy_view_capable():
+
+security/apparmor/policy.c:aa_policy_view_capable() {
+	...
+	bool root_in_user_ns =3D uid_eq(current_euid(), make_kuid(user_ns, 0)) ||
+			       in_egroup_p(make_kgid(user_ns, 0));
+	...
+}
+
+When cap_test is run as a non-root user with file capabilities,
+root_in_user_ns is false, so write_apparmor_load() returns EACCES instead
+of EPROTONOSUPPORT in the allowed variants even when CAP_MAC_ADMIN is
+effective.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110202436.2408=
-244-1-mic@digikod.net?part=3D6
-
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110203042.2410=
+140-1-mic@digikod.net?part=3D6
