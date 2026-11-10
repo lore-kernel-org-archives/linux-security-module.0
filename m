@@ -1,63 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.204.27.37
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794278315;
-	b=zQmP2mzH2IXCel1W+QoNhlZLoJNhu2dYr2lvbi4uADRBO3T3wIpOPNWoudItttm8garZ
-	 wDokIShToFMOiRVCQKXKlrTgYb968MiwyqKJxz54Z0vlY/+G9IgMwTtqnI67kNXUBv4KR
-	 UTd2iGywF6QvvvWjefw4HZgXOUBDzmZ//EbpTPMG4VRSK5UfC6wdnkWEv8fwnn+lJvql9
-	 lsCrxSmcbj1L6J6o9/H6sUgdRzBrjUqkiHk5geAWxA4bb8Z626mqfEuiPa2bgSSpJ9G0o
-	 DyXpjIP/x6KvhtB5dhksSOKInjzelf83P011AMudly/TYRhyzb6XojnT5USqvZ9Ps+Q==
+	t=1794279683;
+	b=J6SzZPpsnvjH4/84GCecRU+2Z+taV4Un78UuCG6T/fNe/tWs+YDmqLCHJGT39posr+66
+	 Js+B6qJWzHzvHtJh0KAeX5O+o37p9vGyehkCP2/kmcUtOMxZVSEsJSVGwNtRNVSEhXXkc
+	 wjJzYQ6+FkPy/U2aZrGfk9XU0H/kRQa7yIFZB4AKyaaha5RdCimcWAtqbS6Lw1eJYJfef
+	 PWfI3ZiMNg4E5PUtEz5Z/Hhc0EQU8rhm9mVCL8Uv0M7FKPVth8BaQn2OvfnfGzdZAMLhl
+	 29lhsnrK3EDsccZvMhKht6rjXIt+6Wo6j3bJE70SgNRO275Eo3WO8sFjQadAOg4PlPg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794278315;
-	h=DMARC-Filter:Received:Received:Received:Received:Date:From:To:CC:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 X-Originating-IP:X-ClientProxiedBy;
-	bh=wAHGin8u6AIZQh7OflkkxvchjlB5l41zuY+9P+ij+ys=;
-	b=T1/R2mU+MIvz7qvVy02mPHRMid0FSTdRwZ+nV8+Q6e1ibAhJV0lOnuMtwDBY5uXxzyNQ
-	 pTbNX76gVNf5jlRjRKxDLIhzbhrS4bcviKo81eGvL/Uscd9lFv4SfA8hC8FAZkspwTHh3
-	 F7hJYZtUC9N4//brJYoG8Q+Kn99B4nD9IuuUE29cMI1Ry0T/wRo7RUebAix62OKjxK9+g
-	 A60iAKwjzMRJqJbMMH+xRTOlb2/x9nELx9rIj45cO8Dyboos72OaZvENVidBzmsZYza0l
-	 qFTVKPoPqOCNVmRPBLuSGAvJL68SPOoZqucGqvSFlsYFU7RxPDSHgUCpnHs5Gu04WIw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794279683;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=O/bewW18xR2NvS8nckxTcXJjBnu+lrKrh/wIuRHvOUE=;
+	b=N5cmLJBeqONb7/DPbKypPLc53dLPAnUZRFwmak6w0u3VyIacgxMrfH724YKXYD8pr0RW
+	 4Xrf2Vu+lPS3mzZveBsBqBWJYnZSVN5QLKN/fjXj/ssMo7XqqWpdq46J5BSEIvkdoHQwH
+	 qFCZ2T6OTgS5PN8FmZGAT1fWIefcczEDSPK0+1q1Z/otSaSHaoW+JcgO92eS4umBbvPkO
+	 6mGRqwd+7WGK+IVcdTooUxETUHnkXMBlVlHxCmV7TU9zEZgTWh3/kRrciT/5GKgOtCdn/
+	 4EVxuMG3SYTZDG8NlNf3NrBAIRivMP5Tl94xmkySCWZBEOSPafpx2M51SHmqMyalY0g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hygon.cn;
-	spf=pass smtp.mailfrom=hygon.cn;
-	arc=none smtp.remote-ip=101.204.27.37
-Received: from spam01.hygon.cn (unknown [101.204.27.37])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC2D606A325;
-	Tue, 10 Nov 2026 02:38:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9FC2D606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
-Received: from maildlp2.hygon.cn (unknown [127.0.0.1])
-	by spam01.hygon.cn (Postfix) with ESMTP id 4jNrRv4jyTz9j97c;
-	Tue, 10 Nov 2026 10:38:19 +0800 (CST)
-Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
-	by spam01.hygon.cn (Postfix) with ESMTP id 4jNrRs51X7z9j97X;
-	Tue, 10 Nov 2026 10:38:17 +0800 (CST)
-Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
-	by maildlp2.hygon.cn (Postfix) with ESMTPS id 10FAE30A6439;
-	Tue, 10 Nov 2026 10:37:33 +0800 (CST)
-Received: from hsj-2U-Workstation (172.19.24.226) by cncheex04.Hygon.cn
- (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 10 Nov
- 2026 10:38:16 +0800
-Date: Tue, 10 Nov 2026 10:38:14 +0800
-From: Huang Shijie <huangsj@hygon.cn>
-To: Jan Kara <jack@suse.cz>
-CC: <axboe@kernel.dk>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<zhongyuan@hygon.cn>, <fangbaoshun@hygon.cn>, <yingzhiwei@hygon.cn>,
-	<agruenba@redhat.com>, <mic@digikod.net>, <gnoack@google.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<aleksa@amutable.com>, <legion@kernel.org>, <david@kernel.org>,
-	<sandeen@redhat.com>, <ebiggers@kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<gfs2@lists.linux.dev>, <linux-security-module@vger.kernel.org>,
-	<sunjunchao@bytedance.com>
-Subject: Re: [PATCH 1/3] vfs: add inode iteration method super_iter_inodes
-Message-ID: <avKDlkJG0Rj872Cd@hsj-2U-Workstation>
-References: <20261015093854.2082600-1-huangsj@hygon.cn>
- <20261015093854.2082600-2-huangsj@hygon.cn>
- <symrqnxn6tkrahynz7rm5b7n3tolkifpbubmwfd3y6q4q2xnt2@vhh7plsok3kh>
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YqOAa1ab;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBA0606A31C;
+	Tue, 10 Nov 2026 03:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YqOAa1ab
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56FD31F0089F;
+	Tue, 10 Nov 2026 03:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794279682;
+	bh=O/bewW18xR2NvS8nckxTcXJjBnu+lrKrh/wIuRHvOUE=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=YqOAa1abLIiPUBwqcFg0z8OZtrQ+4XAyJbQfrHpyeO6ALmVEB5RMPQoNkrQgAzYMf
+	 jckQqA8rmItUqFCleOPBQAy7g7LnerOoG4vvrmfmFORPtQZHEb5IQtIn9t/jJni1Z4
+	 SIJmjKmgx/90put0ooKweLnyGbA33ndpv3r4Hn55RQUhONGUWNeJiDrYSZRGExe02S
+	 TCBaNdcPEyAwIo8XTgDPebzVTrdmwQRpv2kM/ekRGZLp/Ji4wyDqCOKie45yQ/PyfB
+	 uT51GHwvp0eTwU65LzsUzb7kFP/fhV+9yV7aLGejXrQ2AIj1tqH6q06OEY7DH+jUCB
+	 dcqE7200hQTJQ==
+Message-ID: <sashiko-outbox-206074@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH net-next 01/14] ipv4: annotate data-races around ip_rt_*
+ sysctls
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Cc: linux-security-module@vger.kernel.org, mptcp@lists.linux.dev, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, "Heiko
+ Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander
+ Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>
+In-Reply-To: <20261109025425.328445-2-jiayuan.chen@linux.dev>
+References: <20261109025425.328445-1-jiayuan.chen@linux.dev>
+ <20261109025425.328445-2-jiayuan.chen@linux.dev>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 10 Nov 2026 03:01:21 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -66,108 +62,47 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <symrqnxn6tkrahynz7rm5b7n3tolkifpbubmwfd3y6q4q2xnt2@vhh7plsok3kh>
-X-ClientProxiedBy: cncheex06.Hygon.cn (172.23.18.116) To cncheex04.Hygon.cn
- (172.23.18.114)
 
-在 Mon, Nov 09, 2026 at 11:43:19AM +0100，Jan Kara 写道：
-> On Thu 15-10-26 17:38:52, Huang Shijie wrote:
-> > +static bool super_iter_iget(struct inode *inode, int flags)
-> > +{
-> > +	bool ret = false;
-> > +
-> 
-> Here I'd do a lockless icount_read_once(inode) check if INO_ITER_F_REFERENCED
-> is set to avoid unnecessary i_lock round trip.
-okay. I will add icount_read_once() in later version.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] ipv4: double READ_ONCE() of ip_rt_min_pmtu in
+  __ip_rt_update_pmtu()
+--
 
-> 
-> > +	spin_lock(&inode->i_lock);
-> > +	if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE))
-> > +		goto out_unlock;
-> > +
-> > +	if ((flags & INO_ITER_F_REFERENCED) && !icount_read(inode))
-> > +		goto out_unlock;
-> > +
-> > +	__iget(inode);
-> > +	ret = true;
-> > +out_unlock:
-> > +	spin_unlock(&inode->i_lock);
-> > +	return ret;
-> > +}
-> > +
-> > +static int generic_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
-> > +			       void *private_data, int flags)
-> > +{
-> > +	struct inode *inode, *old_inode = NULL;
-> > +	int ret = INO_ITER_RET_DONE;
-> > +
-> > +	spin_lock(&sb->s_inode_list_lock);
-> > +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> > +		if (!super_iter_iget(inode, flags))
-> > +			continue;
-> > +
-> > +		spin_unlock(&sb->s_inode_list_lock);
-> > +		iput(old_inode);
-> > +
-> > +		ret = iter_fn(inode, private_data);
-> > +
-> > +		old_inode = inode;
-> > +		if (ret == INO_ITER_RET_ABORT) {
-> > +			ret = INO_ITER_RET_DONE;
-> > +			goto out_loop;
-> > +		}
-> > +		if (ret < 0)
-> > +			goto out_loop;
-> > +
-> > +		cond_resched();
-> > +		spin_lock(&sb->s_inode_list_lock);
-> > +	}
-> > +	spin_unlock(&sb->s_inode_list_lock);
-> > +out_loop:
-> > +	iput(old_inode);
-> > +	return ret;
-> > +}
-> > +
-> > +/*
-> > + * Unsafe iteration for internal VFS use only: @iter_fn runs in atomic
-> > + * context with only an inode existence guarantee, so it must not block
-> > + * and must perform its own inode state checks. Return INO_ITER_RET_ABORT
-> > + * to stop the iteration early.
-> > + */
-> > +static int generic_iter_inodes_unsafe(struct super_block *sb, ino_iter_fn iter_fn,
-> > +				      void *private_data)
-> > +{
-> > +	struct inode *inode;
-> > +	int ret = INO_ITER_RET_DONE;
-> > +
-> > +	rcu_read_lock();
-> > +	spin_lock(&sb->s_inode_list_lock);
-> > +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-> > +		ret = iter_fn(inode, private_data);
-> 
-> After some thought, I'd probably make this function inline in some VFS
-> internal header. That way the compiler can inline everything and avoid the
-No problem. 
-I will try to convert it to inline function later.
+commit d59c48746ce88d155c2f7dae0505f71dcceee996
+Author: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-> extra costs of indirect function calls, etc. These iterators tend to be
-> rather lightweight so it would avoid performance regressions from the
-> conversion.
-> 
-> I was considering the same for the generic iterator as well but there I
-> don't have so strong opinion as the function is already relatively big and
-> the callbacks are usually more heavy. Might still be worth some more
-> detailed investigation and performance measurements...
-Yes.
-This function is already big enough.
+ipv4: annotate data-races around ip_rt_* sysctls
 
-Let's keep it as it is.
+This commit wraps lockless reads of the ip_rt_* routing sysctls in
+READ_ONCE() to avoid data races with concurrent sysctl writes.
 
-Thanks
-Huang Shijie
+> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+> index d0a5f6d77094c..83f49b2d4c36a 100644
+> --- a/net/ipv4/route.c
+> +++ b/net/ipv4/route.c
 
+[ ... ]
+
+> @@ -1063,14 +1066,14 @@ static void __ip_rt_update_pmtu(struct rtable *rt=
+, struct flowi4 *fl4, u32 mtu)
+> =20
+>  	rcu_read_lock();
+>  	net =3D dst_dev_net_rcu(dst);
+> -	if (mtu < net->ipv4.ip_rt_min_pmtu) {
+> +	if (mtu < READ_ONCE(net->ipv4.ip_rt_min_pmtu)) {
+>  		lock =3D true;
+> -		mtu =3D min(old_mtu, net->ipv4.ip_rt_min_pmtu);
+> +		mtu =3D min(old_mtu, READ_ONCE(net->ipv4.ip_rt_min_pmtu));
+>  	}
+
+[Severity: Low]
+Should READ_ONCE(net->ipv4.ip_rt_min_pmtu) be cached in a local variable
+here, as done in ip_error()?  If net.ipv4.route.min_pmtu is lowered
+between the two reads, the first load can observe the old higher limit
+while the second observes the new lower value, clamping and locking mtu
+below the incoming packet's reported PMTU.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109025425.3284=
+45-1-jiayuan.chen@linux.dev?part=3D1
