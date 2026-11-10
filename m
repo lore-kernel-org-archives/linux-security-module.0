@@ -1,70 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.204.27.37
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794282966;
-	b=nJ5c5SbnqARlbXeM2yS5CGRJmlUsB1D8sCOEgYun/Kdq6yvwKt76J+eGiBakXINr9wGk
-	 R0VWjF6tkX6yNlqD8uehivvi7ehRv0MdLX57VxZg/fedzqzFGG0PGAElrhtoMWemREHIj
-	 dLzvnf2igEiTqT9C219OOLsNvGLuZvbT9t+7uLl9XwR45Gv3Nr4RLfcgtRsJxYrfzpasJ
-	 NFNec/dnSeIU7hU0tcZZwxKiezoZQoebrYVux5Jym56JQXu8F9y9ZV+D9Mkb0bD2BS3f9
-	 FRi/ZE/ucbtUNy/PPdjT25eysm+0cX1gcwzd4QbAPV1mBrYWoDDT3+7iLtfO+b+Pt6g==
+	t=1794283313;
+	b=LrdtT5Dd7D7ZjZK5N2475GjXaE7Oky204oT7sRqQCvS6+thOrz3xbZ+Nb9p0s3BlIIgJ
+	 jt/rd/QDIedpACvFbh4goBS+AZTMfp+OTOepwQMdjHrLGhqpFDogo3cz+Jyt0uLTJL+qc
+	 aR0KmAkx4QIhxJrN5F7Vq9Jj18TOjUdkNxtTinKo6DTrjjksdcNTrFVU6T5BI0ncd9Mwa
+	 S4bJi6qncXAzjhcq0jj5Ab4PI58QkkSepF2nc0NPJ8BQ5Hp7eAQb9zgZ70Knw2Y5an2Lf
+	 hzeYWoP6E58LJRuxiMQ9gbw/sStZa001gBy8ciBzY0KUVR3So38IGHzVqZY1T4snrug==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794282966;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ySFTRwQkHFGZeTgCE/dxbzfLMGvRiDMXvrnQKuznBws=;
-	b=UAz0gOCNii43FKbExGW2uKBnwjykUfRP5ofEH6gKrTj7EgNm+5bQZkD6a4lLdOtDAbA5
-	 wYDQJl3fj/Ag22fyAqJlaPtDG9vKK6mVHAT8I7kZMFxRZ1kJZSInfxfNc1HCHjtXYQQLl
-	 uAj4OlB4i0t8CQ24PdTbIXVj58UiNvRo6fscnLwrscAodEnRkxkTFaym3b8acLLkyA23F
-	 y49OrxfcxJEx3ScKSyFPifg0ILQtI2VO4We0J85Gg19MuJsLWyrlRQIu2onn/TvzuCWlJ
-	 9QYiQFdSajwyFgGQKs0o1raRdPVlQE9Z/bALmc18NttXnZBkhxBOIbbGqYRYUx3pt1A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794283313;
+	h=DMARC-Filter:Received:Received:Received:Received:Date:From:To:CC:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Originating-IP:X-ClientProxiedBy;
+	bh=Hvig8NCy10BZJadWO3yd2CYf8PCGOn5+JUtgjupFJOs=;
+	b=QUCoso50j1OB0bcLr7MzkXAYctwVbqPQxMfGRj59Y+s9oYPQndt/cnB17MTeJAOOQNwk
+	 yK9sELmSCQlFOEIqnYxLZovS+LecV/T/byCD44uO1GuR1PiudcwggJCGi8xWG2SZVUF/a
+	 5a+pIRby33ugYv6B+ZrIWYD+a1Veq7fEqH0Sh8IwWJgGMRZUmR8TtYitaMIlVRHBD3u9J
+	 7WPtQOAFRGqLsODNhY1F+2Sarpn0CbUn4ZKS2s9rehHyhvAXW6aXhuwiTDhNTzabva7xJ
+	 ODKrhmtesHXi/zELpN5rYEQOQcoYks82lnv8DNmjyPwSGvp6W8jBjJQtU70CAwEwepQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TgEvl0+M;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802E860A2601;
-	Tue, 10 Nov 2026 03:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TgEvl0+M
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407C91F0089F;
-	Tue, 10 Nov 2026 03:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794282966;
-	bh=ySFTRwQkHFGZeTgCE/dxbzfLMGvRiDMXvrnQKuznBws=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TgEvl0+MjLfSmtJNlwoZw16t6z4bqYXcwrqk6WyDApsyr/uRpog50QOCYqcfaDbYZ
-	 FCt9yyV5z7PwpqKgOBk29XEwDzsz4kcw/JgTipw7RdTeoyC9oV1Y2jGIRaEHONpA+F
-	 d5tq+HqbwX1sC70wMHz6C9goeYR+VRkPpTKH0dSrtp3wkKudjrnK7KyxtIVBMVQqrV
-	 rJP4GB9l4/9inBG3KTZYRiieqC1+Xdh8B7Ula0fZYpHIe7L9zGLd+7aHslL5Sb+TQL
-	 KCbOit45g6hbD+2BBQavQ4NlZxDQ9dXl7rjkyUCnBAU0J8yaZvvMbt7SWITYfcJkwH
-	 D4eUkRN6zGxMQ==
-Message-ID: <sashiko-outbox-206155@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 2/3] KEYS: Replace assoc_array with rhashtable
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "David Howells" <dhowells@redhat.com>
-Cc: bpf@vger.kernel.org, dm-devel@lists.linux.dev, fsverity@lists.linux.dev, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, "Alasdair
- Kergon" <agk@redhat.com>, "Alexei Starovoitov" <ast@kernel.org>, "Alex Shi" <alexs@kernel.org>, "Andrew
- Morton" <akpm@linux-foundation.org>, "Andrii Nakryiko" <andrii@kernel.org>, "Benjamin
- Marzinski" <bmarzins@redhat.com>, "Daniel Borkmann" <daniel@iogearbox.net>, "Dongliang
- Mu" <dzm91@hust.edu.cn>, "Eduard Zingerman" <eddyz87@gmail.com>, "Emil
- Tsalapatis" <emil@etsalapatis.com>, "Eric Biggers" <ebiggers@kernel.org>, "Ignat
- Korchagin" <ignat@linux.win>, "Ihor Solodrai" <ihor.solodrai@linux.dev>, "James
- Morris" <jmorris@namei.org>, "Jiri Olsa" <jolsa@kernel.org>, "Jonathan
- Corbet" <corbet@lwn.net>, "Kumar Kartikeya Dwivedi" <memxor@gmail.com>, "Martin
- KaFai Lau" <martin.lau@linux.dev>, "Mike Snitzer" <snitzer@kernel.org>, "Mikulas
- Patocka" <mpatocka@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Shuah
- Khan" <skhan@linuxfoundation.org>, "Song Liu" <song@kernel.org>,
- =?utf-8?b?VGhlb2RvcmUgWS4gVHMnbw==?= <tytso@mit.edu>, "Yanteng Si" <si.yanteng@linux.dev>, "Yonghong
- Song" <yonghong.song@linux.dev>, "Linus Torvalds" <torvalds@linux-foundation.org>
-In-Reply-To: <20261110033738.2495880-3-jarkko@kernel.org>
-References: <20261110033738.2495880-1-jarkko@kernel.org>
- <20261110033738.2495880-3-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 03:56:03 +0000
+	dmarc=pass header.from=hygon.cn;
+	spf=pass smtp.mailfrom=hygon.cn;
+	arc=none smtp.remote-ip=101.204.27.37
+Received: from spam01.hygon.cn (unknown [101.204.27.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D0D606A335;
+	Tue, 10 Nov 2026 04:01:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B2D0D606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp2.hygon.cn (unknown [127.0.0.1])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jNtHz0w7RzCQsZK;
+	Tue, 10 Nov 2026 12:01:35 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jNtHy6HWnzCQsZB;
+	Tue, 10 Nov 2026 12:01:34 +0800 (CST)
+Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
+	by maildlp2.hygon.cn (Postfix) with ESMTPS id 1D73230A6439;
+	Tue, 10 Nov 2026 12:00:50 +0800 (CST)
+Received: from hsj-2U-Workstation (172.19.24.226) by cncheex04.Hygon.cn
+ (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 10 Nov
+ 2026 12:01:33 +0800
+Date: Tue, 10 Nov 2026 12:01:31 +0800
+From: Huang Shijie <huangsj@hygon.cn>
+To: Jan Kara <jack@suse.cz>
+CC: <axboe@kernel.dk>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<zhongyuan@hygon.cn>, <fangbaoshun@hygon.cn>, <yingzhiwei@hygon.cn>,
+	<agruenba@redhat.com>, <mic@digikod.net>, <gnoack@google.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+	<aleksa@amutable.com>, <legion@kernel.org>, <david@kernel.org>,
+	<sandeen@redhat.com>, <ebiggers@kernel.org>, <linux-block@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<gfs2@lists.linux.dev>, <linux-security-module@vger.kernel.org>,
+	<sunjunchao@bytedance.com>
+Subject: Re: [PATCH 2/3] vfs: convert inode iterators to the unsafe
+ super_iter_inodes()
+Message-ID: <avKXG8jGHhokoXtC@hsj-2U-Workstation>
+References: <20261015093854.2082600-1-huangsj@hygon.cn>
+ <20261015093854.2082600-3-huangsj@hygon.cn>
+ <phaorzf3wo3qg3dwxwzemtvc3xk644lecgoeeu3th2zx3cv5ml@xzhc2jw7vobi>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,138 +67,95 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <phaorzf3wo3qg3dwxwzemtvc3xk644lecgoeeu3th2zx3cv5ml@xzhc2jw7vobi>
+X-ClientProxiedBy: cncheex05.Hygon.cn (172.23.18.115) To cncheex04.Hygon.cn
+ (172.23.18.114)
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Medium] keys: missing insecure_elasticity and unbounded -EBUSY loop
-  in __key_link_begin()
-- [Low] keys: mixed goto and delayed __free() initialization in
-  __key_link_begin()
---
+在 Mon, Nov 09, 2026 at 11:08:00AM +0100，Jan Kara 写道：
+> On Thu 15-10-26 17:38:53, Huang Shijie wrote:
+> > Convert VFS internal superblock inode iterators that cannot use
+> > referenced inodes to super_iter_inodes() with INO_ITER_F_UNSAFE set:
+> >   - Dquot removal
+> >   - inode eviction
+> >   - The nr_blockdev_pages()
+> >   - generic_shutdown_super()
+> > 
+> > Signed-off-by: Huang Shijie <huangsj@hygon.cn>
+> 
+> See some comments below.
+> 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index a9d37be390a1..139c56ee9d11 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -853,8 +853,11 @@ static void evict(struct inode *inode)
+> >   * Dispose-list gets a local list with local inodes in it, so it doesn't
+> >   * need to worry about list corruption and SMP locks.
+> >   */
+> > -static void dispose_list(struct list_head *head)
+> > +static bool dispose_list(struct list_head *head)
+> >  {
+> > +	if (list_empty(head))
+> > +		return false;
+> > +
+> >  	while (!list_empty(head)) {
+> >  		struct inode *inode;
+> >  
+> > @@ -864,6 +867,29 @@ static void dispose_list(struct list_head *head)
+> >  		evict(inode);
+> >  		cond_resched();
+> >  	}
+> > +	return true;
+> > +}
+> > +
+> > +static int evict_inode_fn(struct inode *inode, void *data)
+> > +{
+> > +	struct list_head *dispose = data;
+> > +
+> 
+> Here we miss the unlocked check
+>             if (icount_read_once(inode))
+>                     continue;
+Thanks for pointing this.
+	
+> so every inode will now go through the i_lock roundtrip.
+> 
+> > +	spin_lock(&inode->i_lock);
+> > +	if (icount_read(inode) ||
+> > +	    (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE))) {
+> > +		spin_unlock(&inode->i_lock);
+> > +		return INO_ITER_RET_DONE;
+> > +	}
+> > +
+> > +	inode_state_set(inode, I_FREEING);
+> > +	inode_lru_list_del(inode);
+> > +	spin_unlock(&inode->i_lock);
+> > +	list_add(&inode->i_lru, dispose);
+> > +
+> > +	/* Abort so evict_inodes() can dispose of the queued inodes first. */
+> > +	if (need_resched())
+> > +		return INO_ITER_RET_ABORT;
+> > +	return INO_ITER_RET_DONE;
+> >  }
+> 
+> The need_resched() handling needs more thought here. The way you've done it
+> will just abort the iteration, evict gathered inodes and then restart the
+> whole iteration (which will then have to skip again all the inodes we could
+> not evict). Which is not what evict_inodes() does today and we really had
+> to resort to those tricks to avoid softlockups under certain loads.
+> Frankly, this iteration is so special that I'd be willing to leave it
+> unconverted for now rather than trying to bend the general iterator for its
+> needs.
+okay. I will think over it again.
 
-commit 2ac2cea452f12974dec0263462b3e701c718671c
-Author: Jarkko Sakkinen <jarkko@kernel.org>
+If I really cannot find a good way to avoid the softlockups,
+I will keep the code unconverted.
 
-KEYS: Replace assoc_array with rhashtable
+Thanks
+Huang Shijie
 
-This commit replaces the associative array in struct key with a
-keyring_index backed by an rhashtable for direct lookups and an
-RCU-protected list of keyring_link entries for ordered traversal.
 
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index ac48d6204915a..772fa0e35f9db 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -31,25 +33,152 @@
-
-[ ... ]
-
-> +static const struct rhashtable_params keyring_link_params =3D {
-> +	.head_offset		=3D offsetof(struct keyring_link, node),
-> +	.hashfn			=3D keyring_hashfn,
-> +	.obj_hashfn		=3D keyring_obj_hashfn,
-> +	.obj_cmpfn		=3D keyring_obj_cmpfn,
-> +	.min_size		=3D 4,
-> +	.nelem_hint		=3D 3,
-> +	.automatic_shrinking	=3D true,
-> +};
-
-[ ... ]
-
-> @@ -1317,56 +1155,94 @@ int __key_move_lock(struct key *l_keyring, struct=
- key *u_keyring,
-
-[ ... ]
-
->  int __key_link_begin(struct key *keyring,
->  		     const struct keyring_index_key *index_key,
-> -		     struct assoc_array_edit **_edit)
-> +		     struct keyring_edit *edit)
->  {
-> -	struct assoc_array_edit *edit;
-> +	struct keyring_link *link __free(kfree) =3D NULL;
-> +	struct keyring_link *replace;
-> +	struct keyring_index *links;
->  	int ret;
-> =20
->  	kenter("%d,%s,%s,",
->  	       keyring->serial, index_key->type->name, index_key->description);
-> =20
-> -	BUG_ON(index_key->desc_len =3D=3D 0);
-> -	BUG_ON(*_edit !=3D NULL);
-> +	if (WARN_ON(index_key->desc_len =3D=3D 0) || WARN_ON(edit->new))
-> +		return -EINVAL;
-> =20
-> -	*_edit =3D NULL;
-> +	edit->new =3D NULL;
-> +	edit->old =3D NULL;
-> =20
->  	ret =3D -EKEYREVOKED;
->  	if (test_bit(KEY_FLAG_REVOKED, &keyring->flags))
->  		goto error;
-> =20
-> -	/* Create an edit script that will insert/replace the key in the
-> -	 * keyring tree.
-> -	 */
-> -	edit =3D assoc_array_insert(&keyring->keys,
-> -				  &keyring_assoc_array_ops,
-> -				  index_key,
-> -				  NULL);
-> -	if (IS_ERR(edit)) {
-> -		ret =3D PTR_ERR(edit);
-> +	links =3D keyring_get_index(keyring);
-> +	if (IS_ERR(links)) {
-> +		ret =3D PTR_ERR(links);
->  		goto error;
->  	}
-> =20
-> +	ret =3D -ENOMEM;
-> +	link =3D kzalloc_obj(struct keyring_link);
-> +	if (!link)
-> +		goto error;
-
-[Severity: Low]
-This isn't a bug, but per the cleanup.h conventions, link should be
-defined and initialized at its kzalloc_obj() allocation site rather than
-declared as NULL at the top of __key_link_begin() and mixed with goto
-error paths.
-
-> +	link->hash =3D index_key->hash;
-> +
-> +	replace =3D keyring_find_link(links, index_key);
->  	/* If we're not replacing a link in-place then we're going to need some
->  	 * extra quota.
->  	 */
-> -	if (!edit->dead_leaf) {
-> +	if (!replace) {
->  		ret =3D key_payload_reserve(keyring,
->  					  keyring->datalen + KEYQUOTA_LINK_BYTES);
->  		if (ret < 0)
-> -			goto error_cancel;
-> +			goto error;
-> +
-> +		do {
-> +			ret =3D rhashtable_insert_fast(&links->ht, &link->node,
-> +						     keyring_link_params);
-> +			if (ret =3D=3D -EBUSY)
-> +				fsleep(100);
-> +		} while (ret =3D=3D -EBUSY);
-
-[Severity: Medium]
-As reported by Eric Biggers on v5 [1], should keyring_link_params set
-.insecure_elasticity =3D true instead of looping on -EBUSY here?
-
-Without .insecure_elasticity, rhashtable_insert_fast() enforces the
-16-entry bucket chain limit (RHT_ELASTICITY) and returns -EBUSY to trigger
-a rehash.  Because keyring_obj_hashfn() only hashes the 32-bit link->hash
-via jhash_1word(), entries with colliding 32-bit SipHash digests cannot be
-split by rehashing with a new seed, so __key_link_begin() can spin
-indefinitely in this loop while holding keyring->sem.  This was fixed in
-v6 by setting .insecure_elasticity =3D true and dropping the retry loop, but
-appears to have been lost in v7.
-
-[1] https://lore.kernel.org/r/20261107032551.GA1990@sol
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110033738.2495=
-880-1-jarkko@kernel.org?part=3D2
