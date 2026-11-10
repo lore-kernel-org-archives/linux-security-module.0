@@ -1,59 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794279683;
-	b=J6SzZPpsnvjH4/84GCecRU+2Z+taV4Un78UuCG6T/fNe/tWs+YDmqLCHJGT39posr+66
-	 Js+B6qJWzHzvHtJh0KAeX5O+o37p9vGyehkCP2/kmcUtOMxZVSEsJSVGwNtRNVSEhXXkc
-	 wjJzYQ6+FkPy/U2aZrGfk9XU0H/kRQa7yIFZB4AKyaaha5RdCimcWAtqbS6Lw1eJYJfef
-	 PWfI3ZiMNg4E5PUtEz5Z/Hhc0EQU8rhm9mVCL8Uv0M7FKPVth8BaQn2OvfnfGzdZAMLhl
-	 29lhsnrK3EDsccZvMhKht6rjXIt+6Wo6j3bJE70SgNRO275Eo3WO8sFjQadAOg4PlPg==
+	t=1794279684;
+	b=U7xvf2ydfLTu6oyWLh8Og87gbYxpcn3XBKnxU8J2qiWOVCsB9LoRKtIUtztB5jHpinK2
+	 JPz+R8+dLMbDZfrRVvGG4qMOCZ7qUVXBDqNN1C+Dkia8qJFzsLZoda857p+xNPRBYNmHz
+	 HsZNy0qAQgAxf5zbn45r9YvRuOJQyDoIPWJY8tY5QMEqjwh0zhFWTEE4yH/RYXAc7v4gx
+	 SoQGZfWD4A9rjIXfO5STxRiJmie0RHGDJdn/K7o4gsTFln4MSrCWaF5FBfb1/EnyGU/yn
+	 2lzuko6Fl0Jk+xlWdWJep4DrKuxC9zxnW4g3lDItTC2dUnRN6wPomYTcxm4HfdnnScw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794279683;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794279684;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=O/bewW18xR2NvS8nckxTcXJjBnu+lrKrh/wIuRHvOUE=;
-	b=N5cmLJBeqONb7/DPbKypPLc53dLPAnUZRFwmak6w0u3VyIacgxMrfH724YKXYD8pr0RW
-	 4Xrf2Vu+lPS3mzZveBsBqBWJYnZSVN5QLKN/fjXj/ssMo7XqqWpdq46J5BSEIvkdoHQwH
-	 qFCZ2T6OTgS5PN8FmZGAT1fWIefcczEDSPK0+1q1Z/otSaSHaoW+JcgO92eS4umBbvPkO
-	 6mGRqwd+7WGK+IVcdTooUxETUHnkXMBlVlHxCmV7TU9zEZgTWh3/kRrciT/5GKgOtCdn/
-	 4EVxuMG3SYTZDG8NlNf3NrBAIRivMP5Tl94xmkySCWZBEOSPafpx2M51SHmqMyalY0g==
+	bh=ysFIWYjxwHmUcfDEx/hnTIPWBUqFtCli440qKD4Ksfs=;
+	b=yF6+/PwOXMMXl+AX+YjRR4WtviE97w/8MNpc3MNhuiCGo5Br+j13O2Qb/RSce3+XmsOA
+	 BcGrwxXsGcG8FDEQr++XwKs5lbFCisJJ11PfxOyzfleSHQVwO5WvAnRhWAoBQEz0LrvZS
+	 Go1z1gI1MpL5sVWdmyqf/FCFLk4VOvXpO6L7LxLEyoOQe5WPagiOgX0GON8dMNBrdzwYO
+	 Nm+B7wYE81Zvs8nHYqEqJ3d3xFxoYJVVsU49O5tJ1DI/a+r3E3ymrmckeCbtoGhDrSb9f
+	 uXHdva/8s4zbECi2zlKxyEk2nvQCi6pt/2m0WzphtSRF0kfV89CUnQ4JYJbEv4eEL9A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YqOAa1ab;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T5l1EMAY;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBA0606A31C;
-	Tue, 10 Nov 2026 03:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34F0606A331;
+	Tue, 10 Nov 2026 03:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YqOAa1ab
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56FD31F0089F;
-	Tue, 10 Nov 2026 03:01:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T5l1EMAY
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C4271F008A1;
+	Tue, 10 Nov 2026 03:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794279682;
-	bh=O/bewW18xR2NvS8nckxTcXJjBnu+lrKrh/wIuRHvOUE=;
+	s=k20260515; t=1794279683;
+	bh=ysFIWYjxwHmUcfDEx/hnTIPWBUqFtCli440qKD4Ksfs=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=YqOAa1abLIiPUBwqcFg0z8OZtrQ+4XAyJbQfrHpyeO6ALmVEB5RMPQoNkrQgAzYMf
-	 jckQqA8rmItUqFCleOPBQAy7g7LnerOoG4vvrmfmFORPtQZHEb5IQtIn9t/jJni1Z4
-	 SIJmjKmgx/90put0ooKweLnyGbA33ndpv3r4Hn55RQUhONGUWNeJiDrYSZRGExe02S
-	 TCBaNdcPEyAwIo8XTgDPebzVTrdmwQRpv2kM/ekRGZLp/Ji4wyDqCOKie45yQ/PyfB
-	 uT51GHwvp0eTwU65LzsUzb7kFP/fhV+9yV7aLGejXrQ2AIj1tqH6q06OEY7DH+jUCB
-	 dcqE7200hQTJQ==
-Message-ID: <sashiko-outbox-206074@kernel.org>
+	b=T5l1EMAYfi2JDlRal4j5Iuyo6IF8L38uMpSaMYdWkQwgqCrv34Q3uP1+jC5b7Ny47
+	 v9WVV1rKGdkeMSkxBFdAoYuXmPlPoAwGTNi3Ik03lkH0zT3DLQYhfKLzek3AMN3yfi
+	 6PTKf7/pRbsGY0OIJ6d7TsMJbP+j9z/mN0jsnm0AZAFnDdUZPprmZR/gNb1HPco8LQ
+	 /c6i/TWDFZY/I0XQ7O09TIb15fkDrxgoa1xfouc02NMcXSOpV0+OPjn0kHLHQNQSFF
+	 NHC+MstSwMoqYSiaQpUOuImOjm6g1zKKSD0qiQY6/PXdrIKgCte/FaBRGzXQJLYcNX
+	 sQzW6UOh6EQ5Q==
+Message-ID: <sashiko-outbox-206075@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net-next 01/14] ipv4: annotate data-races around ip_rt_*
- sysctls
+Subject: Re: [PATCH net-next 02/14] inet: frags: annotate data-races around
+ fqdir->timeout and fqdir->max_dist
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Cc: linux-security-module@vger.kernel.org, mptcp@lists.linux.dev, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, "Heiko
+Cc: linux-security-module@vger.kernel.org, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, "Heiko
  Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander
  Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>
-In-Reply-To: <20261109025425.328445-2-jiayuan.chen@linux.dev>
+In-Reply-To: <20261109025425.328445-3-jiayuan.chen@linux.dev>
 References: <20261109025425.328445-1-jiayuan.chen@linux.dev>
- <20261109025425.328445-2-jiayuan.chen@linux.dev>
+ <20261109025425.328445-3-jiayuan.chen@linux.dev>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 03:01:21 +0000
+Date: Tue, 10 Nov 2026 03:01:22 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,46 +63,15 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] ipv4: double READ_ONCE() of ip_rt_min_pmtu in
-  __ip_rt_update_pmtu()
---
+> fqdir->timeout and fqdir->max_dist are read without any lock while their
+> sysctl handlers update them with WRITE_ONCE(). Add READ_ONCE() to the
+> readers.
+>=20
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-commit d59c48746ce88d155c2f7dae0505f71dcceee996
-Author: Jiayuan Chen <jiayuan.chen@linux.dev>
-
-ipv4: annotate data-races around ip_rt_* sysctls
-
-This commit wraps lockless reads of the ip_rt_* routing sysctls in
-READ_ONCE() to avoid data races with concurrent sysctl writes.
-
-> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-> index d0a5f6d77094c..83f49b2d4c36a 100644
-> --- a/net/ipv4/route.c
-> +++ b/net/ipv4/route.c
-
-[ ... ]
-
-> @@ -1063,14 +1066,14 @@ static void __ip_rt_update_pmtu(struct rtable *rt=
-, struct flowi4 *fl4, u32 mtu)
-> =20
->  	rcu_read_lock();
->  	net =3D dst_dev_net_rcu(dst);
-> -	if (mtu < net->ipv4.ip_rt_min_pmtu) {
-> +	if (mtu < READ_ONCE(net->ipv4.ip_rt_min_pmtu)) {
->  		lock =3D true;
-> -		mtu =3D min(old_mtu, net->ipv4.ip_rt_min_pmtu);
-> +		mtu =3D min(old_mtu, READ_ONCE(net->ipv4.ip_rt_min_pmtu));
->  	}
-
-[Severity: Low]
-Should READ_ONCE(net->ipv4.ip_rt_min_pmtu) be cached in a local variable
-here, as done in ip_error()?  If net.ipv4.route.min_pmtu is lowered
-between the two reads, the first load can observe the old higher limit
-while the second observes the new lower value, clamping and locking mtu
-below the incoming packet's reported PMTU.
+Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109025425.3284=
-45-1-jiayuan.chen@linux.dev?part=3D1
+45-1-jiayuan.chen@linux.dev?part=3D2
+
