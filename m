@@ -1,76 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.71
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.157
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794324696;
-	b=vcY6uKDlR00BrQ4IW9JKHuNdUE71KASe91n3dlQMj7aewPBHP+T/deyRXuQVbwW5poEj
-	 XkzBx8baUuoN4p35fITg1UAqdSXSGaQWgKqMDaU5jH4eIcNe6vf8+ApiLJ2/VupthU9j3
-	 TP1qwIX0g1PwyE8FY5LE49VKoFrhXje0UgxHqr9XXnO/Fxl5zWUh4WBVZShfyZgJ61E0o
-	 ksOS5akfbpxEsK6zV3hV3lFmP04GBdsFo+rbDvlsVGEsbHQ8ynmxnCNXpjw6CC/K2baQ3
-	 EzdPlzJze2l31n/RXM/ZJDNpAbkQwNl2HDNyLtG62bIA1yKp99Mgvz/yX+Fd5uXsrXg==
+	t=1794325885;
+	b=mzQRK28Zb16HRcf7wmaEx5EEm3J4K7W9w9hlDe+M9/X1U+2F0iLEncacicuP1l1l6hGP
+	 vXBzyKD32K4o3JlzBUHRAAEcMJifKF3X5gvJzeSkeWtEg3wS+anbFyoFskKkZn3wiDYPx
+	 nAACcH6H8vlSoX1EiYsIc4Ux42frW0ZmuSM0ieHRm8ADx08YxkG0YsG1evqFydB1g94rY
+	 OIWGhEkAiiUB9eAdoNx7kgnUQ4ZQ3iTEewGK59S8LDTy6RBixjTTUxnIP1GCV8mQU9S2/
+	 EXnCJajIyTAPaDT7ekVJBKexBHH4lk4xndDWM9/WIAwTL7HAlPS2LP/RDpjWwiBTuBA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794324696;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
-	 Mime-Version:References:Message-ID:Subject:From:To:Cc:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=SJjtzkP+sBHxUstFA6XSyOLuoy/E3cjaVl7XAdp7TZ4=;
-	b=geNlP7OuI9/SWv5DvH+lRlcGt2K4HC1X+EzdLqy2eb3rV/O4LKvG3cLFG5xrmrQZlX0u
-	 0dFn/whReUDy1Yg7VYwfcz92Am1tuTTPPZXpLk8pYrRSAnQtsm+mVuZh8x8bQR9kL7Ns7
-	 18vHP+dhvknTzzKj76kejxNwnFwtU3JHFBFA/UaHKUYNBRNk6AuM/TcEzffOwgIaP0Un4
-	 PhODIorvUrrkIx6Gsveh8k9H4BVtf7nEnCkKXFXZO4HriUwQSeJMUkMV1EhRmVwT3JNms
-	 zmsG12aFBE+oIE5rekSxiON602Uw1LHbNSI3GpUG9Vke2BLrhfgcSOpQHZYlQ4123CQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794325885;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:CC:Subject:In-Reply-To:
+	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=S+yaxY1IOkbr2hblsylEbiBouEaLkWRredpFXFNGEPs=;
+	b=49XE6uiF58ZDtJHWTavXHwn9uy2XBeTosDfpqGQCgtpY4CCbue45L0CvGvibsE3FrYph
+	 Uu3oHDnGPA9a3/1wZ0B8o5Mp5CJBYxnPP2vd+UD2vxU5qhLcghGFNBNRx7q344y3eZDn8
+	 HVsQPeThjC6K2Po3D7104dB2nHCzTey45BJCYHiFI2hUlc8+3X5tI8J6sD19Q/+EkcQ/B
+	 8tSZt/yzmFUmsEPk62SJ0vyuQjQCGBiD0Erw6o9o2A34keFs7JRbLW0P6oWMn9PrNX//6
+	 lU+/9btuMlu0n97S+5my1z/AVbE1F/HH4fzVq5kauTQkNOT3JJafisw6BnMN7Ta5ilw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=flex--halg.bounces.google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=EbaSWAnJ;
-	arc=none smtp.remote-ip=209.85.208.71
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=rld116DC;
+	arc=none smtp.remote-ip=95.215.58.157
+Received: from mta1.migadu.com (out-157.mta1.migadu.com [95.215.58.157])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B02606A32D
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 15:31:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 89B02606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--halg.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFF4606A325
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 15:51:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5EFF4606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=EbaSWAnJ
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-6b3f840cb9cso2626393a12.1
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 07:31:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1794324695; x=1794929495; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=SJjtzkP+sBHxUstFA6XSyOLuoy/E3cjaVl7XAdp7TZ4=;
-        b=EbaSWAnJ7A533qGpAvii2NS3I9zxkDKlvnsqDPtzIBKMTuzOPF5jRLHhwfsyK6diIL
-         2En3fr/6Wz2Zy14HVjG0BjTT6HzN+p6NPYlr8unPhlA6m2umktQnoqp2AYSjldSAJssk
-         xHzbOcqVaFfuuKFkgO7UgDfRrsaoBkRPDiUM6rHPYGDOR3M31dOOpz5vbhmi2t4d+DUT
-         jeFEACxiutXh0J7ifsM5tXZOXkDouo9+ARx8MVQmgZYMid1HxFVWY6jc0+kGfKGLmr9K
-         dwtVL5ln+2ptHee8NSHeS1SxVprCYBr2xvsLYm8F3UiIKYeFqvbgvqwm4UzA816ruQV6
-         HNoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794324695; x=1794929495;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=SJjtzkP+sBHxUstFA6XSyOLuoy/E3cjaVl7XAdp7TZ4=;
-        b=WY2BCcNDtDo4vu9v12ISMGuPUWvuqt3pBEEfQbwN5JvhF4UeM8NUB+eYSpgrxE7LD9
-         lNAM5x+oZVJ5s8aGoXI3zxLt9W69xnnMj1dLIxva6TLxXglHD6dkdxlT66WrXYaP8tuD
-         3VjR1dHDv9Pt6akhVt0xsqI+21hcb+sHTAlgshC+9MbhF1VMu8BM/r/GRpZTv5gZeWpX
-         S8Yds/N9I5PqyzWGYz6uRDeP0gcFU0Y8PnPKSJmA+QVVvk7tgZNZtOG4fpVuXQ00WXK0
-         5p0dYM5MTZo/plT8ZPA2jCcQyv2NO1Xr4/f4Bg+JbRWOBl12oE6IHJKMGcUExSJmzX2o
-         FEbQ==
-X-Forwarded-Encrypted: i=1; AL+hErG32ntLbcIyHyD7BED6UyVAuhjrISEtAZe4+nlzn1HchH4NBjDyCh6vzqO2AQOE3oQAvLTFZq3ICUE0T7iNmYwFTsONT4o=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/P/4RaU0VtZsr4wzA3xJgp0ik6x7QGuYsnED2NZiA27r+FtOwO
-	TbC/sLZmacqW+AEWzMrLLhM6eJh9C6KTddBqKWxFFx4NA+UnyA242d7dhUUBKjjYGIjN24wGXA=
-	=
-X-Received: from edsw12.prod.google.com ([2002:aa7:da4c:0:b0:6b7:834:31d9])
- (user=halg job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:68a:b0:6b7:675e:7a2f
- with SMTP id 4fb4d7f45d1cf-6b7675e7a95mr879624a12.1.1794324694693; Tue, 10
- Nov 2026 07:31:34 -0800 (PST)
-Date: Tue, 10 Nov 2026 15:31:33 +0000
-In-Reply-To: <CALCETrWa1SBLcb5oWjqjgzZvKvCoHjmYFk=Lf5ytEM9uqm5jYA@mail.gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=rld116DC
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=ekUbTVzeA1JNlzfG7xd+5633WBpvGDfH+mmSDR5DYLM=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1794325882; v=1; x=1794930682;
+ b=rld116DCyefpF4HY6HzebCbZOPxDgtBgxSsjhBvC1bllJIxpyyrQhJq+P+PzvTn4OLH4t74n
+ Mc9IMqMWy0YdoXmgUVTTIjmZC8DOoFaUD6ZduG7QNFZskXgOx/QcJ0nYRCt6F/hu0SpO1Vr+WNN
+ IOz/Hc+sRP6qee1SHukxIaG4=
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id ef20ab98b7ec7150;
+	Tue, 10 Nov 2026 15:51:22 +0000
+X-Mizu-Trace-ID: ef20ab98b7ec7150
+X-Migadu-Flow: FLOW_OUT
+Date: Tue, 10 Nov 2026 15:51:18 +0000
+From: Bradley Morgan <bradley.morgan@linux.dev>
+To: mic@digikod.net
+CC: brads@mainlining.org, brauner@kernel.org, dhowells@redhat.com,
+ jarkko@kernel.org, jmorris@namei.org, josef@toxicpanda.com,
+ keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ morgan@kernel.org, paul@paul-moore.com, serge@hallyn.com, sergeh@kernel.org,
+ stable@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_userns=3A_Let_LSMs_deny_the_?=
+ =?US-ASCII?Q?CAP=5FSETFCAP_snapshot_for_mapping_uid_0?=
+In-Reply-To: <20261110144205.2404088-1-mic@digikod.net>
+Message-ID: <80A558D7-7DC3-4780-91F5-990E4917E8A4@linux.dev>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -79,152 +67,93 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-References: <20261028221705.3915340-1-halg@google.com> <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
- <20261106-befreien-addieren-eislauf-e09212803534@brauner> <CALCETrWa1SBLcb5oWjqjgzZvKvCoHjmYFk=Lf5ytEM9uqm5jYA@mail.gmail.com>
-Message-ID: <avM41a80aig2de-R@google.com>
-Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
- opt-in netns loopback
-From: "Hallgrimur H. Gunnarsson" <halg@google.com>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
-	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Jann Horn <jannh@google.com>, "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
-	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-api@vger.kernel.org, containers@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 07, 2026 at 10:47:41AM -0800, Andy Lutomirski wrote:
-> On Fri, Nov 6, 2026 at 5:13=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> >
-> > On Wed, Oct 28, 2026 at 03:56:11PM -0700, Andy Lutomirski wrote:
-> > > The whole unshare/clone flag situation is getting out of hand, IMO.
-> > > And this new thing makes logical sense but is really about reducing
-> > > exposure.
-> > >
-> > > Perhaps we should instead have a small list associated with a userns
-> > > (extensible in the future) of things that the ns's admin (i.e. whoeve=
-r
-> > > has CAP_SYS_ADMIN relative to the ns) may do.  That list could
-> > > include:
-> > >
-> > > - Create loopback with sensible defaults for ipv4 and/or ipv6 (i see
-> > > no obvious reason to separate them)
-> > > - Create tun/tap interfaces in that ns (and attach them, etc)
-> > >
-> > > And add a very simple new API to do these things.  Actually, the
-> >
-> > We've had this idea in the past and I think it is reasonable. I had
-> > always thought that we should expose a system call to create empty
-> > namespaces ot any type. Usually I'd be excited about that but I think
-> > that point is a bit moot and I'd really like see whether we can turn
-> > cells (or whatever other name) into a first class api.
-> >
-> > The problem I have with the patchset as written is that adds a lot of
-> > moving parts. And yes, I find the CLONE_* and UNSHARE_* flags plus
-> > sysctl to be suboptimal as well.
-> >
-> > So the TL;DR is that CAP_NET_ADMIN + userns =3D
-> > CAP_NET_PRIVILEGE_ESCALATION 10+ years later. And this patchset wants t=
-o
-> > put it back on a leash.
-> >
-> > So why isn't an aggressively stupid solution to this problem to split a
-> > new capability out of CAP_NET_ADMIN so it covers the absolute minimal
-> > set of things that should be allowed instead of doing effectively the
-> > same thing but split over multiple apis?
->=20
-> Because we don't actually have a clean way to make a list of
-> privileges that are, in theory, harmless but are hazardous from an
-> attack surface perspective and assign them only to tasks that ought to
-> have them.
+On 10 November 2026 14:42:04 GMT, "Mickaël Salaün" <mic@digikod.net> wrote:
+>Commit db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+>records in parent_could_setfcap whether the creator of a user namespace
+>had CAP_SETFCAP, because a creator writing its own uid_map only has
+>capabilities in the new namespace.  The snapshot uses cap_raised(), so a
+>task whose LSM policy denies CAP_SETFCAP can still map uid 0 in a
+>namespace it creates.
+>
+>Use security_capable() against the parent namespace instead: the
+>creator's credentials still belong to it at this point, so commoncap
+>returns the same result, and only LSM denials are added.
+>
+>Do not audit this check: creating a user namespace does not use
+>CAP_SETFCAP, and most namespaces never map uid 0.  The uid_map write
+>that later fails has no LSM audit record.
+>
+>Checking CAP_SETFCAP when the map is written would not work: the
+>writer's credentials then belong to the new namespace, where commoncap
+>grants the creator all capabilities.
+>
+>Cc: Christian Brauner <brauner@kernel.org>
+>Cc: Josef Bacik <josef@toxicpanda.com>
+>Cc: Paul Moore <paul@paul-moore.com>
+>Cc: Serge Hallyn <serge@hallyn.com>
 
-Exactly. Furthermore, even if we split a minimal capability out of
-CAP_NET_ADMIN, create_user_ns() still grants CAP_FULL_SET to new
-unprivileged user namespaces by default. Without a mechanism to
-withhold capabilities that are namespaced in scope but carry high
-attack surface risk (like CAP_NET_ADMIN and CAP_NET_RAW) and only
-selectively grant them to tasks that really need them, an unprivileged
-userns would still receive the full set of capabilities.
+Reviewed-by: Bradley Morgan <bradley.morgan@linux.dev>
 
-Providing that mechanism is the core goal of the per-userns capability
-bounding set in this series. Even on its own, without any loopback
-changes, it can be configured to prevent unprivileged users from acquiring
-CAP_NET_ADMIN and CAP_NET_RAW when creating a new userns + netns, while
-still supporting sandboxes that use a completely disconnected netns or
-containers whose networking is configured externally.
+I'm logging out of mainlining.org (sigh) anything meant to be cc'ing me,
+e.g: get maintainers should cc the linux.dev email instead, annoying brr.
 
-Finding a solution for loopback simply makes this bounding set more
-practical, as it allows us to also support sandboxes that rely on
-localhost networking without forcing them to retain full CAP_NET_ADMIN.
+>Cc: stable@vger.kernel.org
+>Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+>Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>---
+>
+>This is independent from Josef Bacik's series, which reworks this code
+>to close other ways around the CAP_SETFCAP rule:
+>https://patch.msgid.link/20261027-b4-setfcap-userns-v8-0-2674adc63f3c@toxicpanda.com
+>
+>That series still computes the creator's CAP_SETFCAP with cap_capable()
+>and cap_raised() in cap_setfcap_level(), so it would need the same
+>change.
+>---
+> include/linux/user_namespace.h | 5 +++--
+> kernel/user_namespace.c        | 8 +++++++-
+> 2 files changed, 10 insertions(+), 3 deletions(-)
+>
+>diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+>index 91232053775d..370961fde45f 100644
+>--- a/include/linux/user_namespace.h
+>+++ b/include/linux/user_namespace.h
+>@@ -86,8 +86,9 @@ struct user_namespace {
+> 	kgid_t			group;
+> 	struct ns_common	ns;
+> 	unsigned long		flags;
+>-	/* parent_could_setfcap: true if the creator if this ns had CAP_SETFCAP
+>-	 * in its effective capability set at the child ns creation time. */
+>+	/* parent_could_setfcap: true if the creator of this ns could use
+>+	 * CAP_SETFCAP in the parent ns at the child ns creation time.
+>+	 */
+> 	bool			parent_could_setfcap;
+> 
+> #ifdef CONFIG_KEYS
+>diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+>index cd748e1cbace..57b7f10be74e 100644
+>--- a/kernel/user_namespace.c
+>+++ b/kernel/user_namespace.c
+>@@ -128,7 +128,13 @@ int create_user_ns(struct cred *new)
+> 	if (!ns)
+> 		goto fail_dec;
+> 
+>-	ns->parent_could_setfcap = cap_raised(new->cap_effective, CAP_SETFCAP);
+>+	/*
+>+	 * verify_root_map() relies on this once the creator only has
+>+	 * capabilities in the new namespace.  Let LSMs deny it, but do not
+>+	 * audit: the creator may never map uid 0.
+>+	 */
+>+	ns->parent_could_setfcap =
+>+		!security_capable(new, parent_ns, CAP_SETFCAP, CAP_OPT_NOAUDIT);
+> 
+> 	ret = ns_common_init(ns);
+> 	if (ret)
+>
 
-With a way to withhold CAP_NET_ADMIN from unprivileged userns, splitting
-out a minimal capability (as Christian suggests) is a very appealing way
-to handle the allowed subset for loopback, though the main challenge is
-defining a scope that justifies a capability bit without re-introducing
-LPE risk.
-
-Looking at the CAP_NET_ADMIN LPEs from Google's kernelCTF, most are
-concentrated in netfilter and tc, with a smaller number in virtual
-interfaces and routing. Simply bringing up loopback at netns init
-shouldn't carry any LPE risk, but something like CAP_NET_LOOPBACK_UP
-is obviously too specific to warrant a capability bit. Conversely,
-broadening it into something like CAP_NET_IFCONFIG (allowing link state,
-L3 address and basic route configuration on existing interfaces) might
-justify a bit, but even such a basic subset would still re-introduce
-some LPE risk (see e.g. CVE-2026-53259 / commit f723ccaff2fb),
-although it would drastically reduce the risk by excluding the most
-high-risk components.
-
-Furthermore, I think splitting out a smaller CAP_NET_ADMIN would also
-run into some practical difficulties when it comes to clean enforcement
-in rtnetlink. Currently, rtnetlink_rcv_msg() relies on a coarse
-CAP_NET_ADMIN check at the beginning before any complex message parsing
-occurs. To support more fine-grained capabilities, we would have to push
-these checks much deeper into the stack, spreading security checks
-across many locations, which could easily lead to mistakes.
-
-Given this, I was hoping to have a minimal mechanism to just allow
-bringing up loopback without going for a new capability bit. Ultimately,
-it's a pragmatic judgment call. Maybe something like CAP_NET_IFCONFIG
-offers enough value and risk reduction to be worth the trade-off.
-
-Otherwise, if we want to avoid consuming a capability bit just for
-loopback, we could also consider other alternatives, e.g. a small nsfs
-ioctl on the netns fd (e.g. NS_NET_LOOPBACK_UP). This would align with
-Andy's earlier suggestion of adding a "very simple new API" dedicated
-to these safely scoped operations.
-
-If we drop CLONE_NEWNET_LOOPBACK / UNSHARE_NEWNET_LOOPBACK from this
-series and handle loopback separately, do you think the per-userns
-bounding set is a reasonable approach for withholding capabilities
-(e.g. CAP_NET_ADMIN and CAP_NET_RAW) from unprivileged userns, or
-would you prefer a different mechanism?
-
-I think the single-deep case we were discussing on the other thread
-could also be cleanly built on top of this. The per-userns bounding
-set provides the underlying enforcement mechanism. How we configure
-and trigger that bounding, whether via sysctl and clone3() as proposed
-in this series, or via a per-task securebit to handle single-deep
-containers in init_user_ns as discussed on the other thread, is a
-policy control interface decision that can feed directly into the
-same mechanism.
-
-To address the concern about the number of moving parts, I am also
-happy to simplify the control interfaces. If we decide a per-task
-securebit is the cleanest way to drive this configuration for both
-single-deep and nested cases, we could focus on that and drop the
-clone3() and sysctl from this series entirely, or only expose whatever
-subset you prefer.
-
-Thanks!
-
+--- Thanks!
