@@ -1,55 +1,81 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794290301;
-	b=WcBtQEWsyyVZL4vvLCZcVw9+oaI8Hg9aPH29gkoa7hWTk4E20E9WfIFlG/DWfIJ/ERzJ
-	 KwYjgB5g/mNluefyIdv6YjRJdXYV0E0FIue1/V/sRjrAUAihwrNWPQRel8nMra3g392I4
-	 PNwsi6W4mlCRQsOu73P0OISFjO00DhdmOsvXXnS+qIpp4HR3rNH8t3Uh+QTfKmpV5qMdP
-	 60YZ34I2ehF3l9Jc8baYx2+EajI0NVLhCnM8/f+4xy9OP/HkiXT/WyVk5pa5b1QetZUK5
-	 NUSqO7HFql6kBG8dMbYbG/yAvxfHXNJ55eGTJgOX8jcg/05RqjwteWZRe4g97ToUcgg==
+	t=1794290801;
+	b=bvkR+uUGf6/kjKNJcuD2xtW+5MrZzEqwicSArPhBLijiMXem1FgAEr840wm0wiiSc53S
+	 B384iC949ke3PgIkB38eejMt1n/GVt3r2/OQou9+qEuWPdPGGAWk7Y0Y+Tz+8gqgUv0yr
+	 pH7yB5LN8cpIpsHMYS7KmkXdeZK21jFk1iR1w1wRDsABdufINkg/UP4DYnUvljaJe+6nR
+	 qVFFc3/pSWXdCm7cPTPBLnyI2FuzFwSCp9fI9XQ6gv3R+hm0LmZHXQfp6nJ54sdJewAWQ
+	 qBTZ9oQGYrOpdZfyrBbrLlKUmmgdfGW2lupuLrDhwz+xlWmWscALb8K1TWFcROBu6pA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794290301;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=6ByCSm9RST2TA5u29VJI0CFJqbmfja5WdG0kc0l85Wo=;
-	b=D2ABj6FtmSjSGhcK/CFr0E/f2rZQ2waqMjcj34lw2qBM4vRO6WXXZGHuChdMuP/I6tOB
-	 uNKRVnTlj0VNAX8DSBUpjjIMF0/TZQz3rkZsFw50JixVeNmqSTFT7aAi81WO8LIH2meOS
-	 bj6VljDfrRSScV7k5iTs8Rgp/hAu99EJnvdCIiGuhlHpCzAKN3fDNwSiCOatUhyaq0An/
-	 LERsin6kR/cPNx35rykq4kpQjoe90JnpXthPAlD6BBuxVVBaLWJvZHE+Hij60uyQhbTbZ
-	 8lmwAK4ozjPkNwMeAQ9hW4wefRSZbHP0M4pJp7dwo7UEdwErcG5Wz5Nc0XINxP5I8Mg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794290801;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=Hnh10F1zQfs5wctp+i2aDmqIYavrqW0fRXfCXxRBWTE=;
+	b=Y+IrpMwTBYWDBW7NLei4ErsrHYLdkaPn1wTv5MvWYoNTpjOxJCeF8JCknAZDgkKU8Dqj
+	 Vu+amg0YiKqlxshfaPjOHb5yMlsrc7H/WMJ08E8KzjW/+5L84AQ7/7TflOFIjD/oYIRlW
+	 YFaSgHJX4WjZrTlsyHygfRJdjTEpP/157ss2ClwKTzxgxL969LL88ueNmleCV0xRfqfX6
+	 hKJDRjWHdnMwLTDqRjCsamNAzcZ1TXz14TjFGNkioiDGRRbhpOaTQ46yQBMLG3ZHgiJ4C
+	 DqWWj8xt9WGuXZVnJY6r3Xise0Au1aGhYHoPCaModqa9pYdqa27BcYWMHOc8zm0TQ7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L5+gRK8p;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eb8TtXll;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF759606A321
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 05:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id DC7CA606A321;
+	Tue, 10 Nov 2026 06:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L5+gRK8p
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 695B91F0089F
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 05:58:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eb8TtXll
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9088E1F0089F;
+	Tue, 10 Nov 2026 06:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794290300;
-	bh=6ByCSm9RST2TA5u29VJI0CFJqbmfja5WdG0kc0l85Wo=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=L5+gRK8peE0ScAE1phBLW0P/tAcmxNKjWnaso33PqHe9JfxQuocqiGzUHLzzCTlSy
-	 2OZFANXCg/jwpV0U0z7pbyHoYdSUH4hF2ZMKgQzFxJFBUIwZHIDJgKLrF1gUN4VxDW
-	 iwQo2laSxcm6oahnxk6FY1cGgOpCZhYcCvRiyYtYP0WM4KRsxo1nXGV0Oq/JxtvGbc
-	 bBpzF0J9woNELKPiJJEBKM0u+PkznKS98ZpDM5BlY+icR2s3UqDFcSK0TxqyeI2jUW
-	 g1JXxRlkYY0KSfv+6leCmO2pnGWZyVIyGs5d+lw6VeDncqsTB0QvtM54MajMTX8z4H
-	 aW2AOthiX/uZg==
-Message-ID: <sashiko-outbox-206379@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v9 3/3] lib: Remove assoc_array
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261110053323.2936729-4-jarkko@kernel.org>
+	s=k20260515; t=1794290800;
+	bh=Hnh10F1zQfs5wctp+i2aDmqIYavrqW0fRXfCXxRBWTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eb8TtXllKp/I2wuhSS3q+9ykKbgSIsPs7gk7VfGNWmGNU+WjweUEnFKh9TgZTVkGq
+	 sMrc6PQ+88V8fzudWMldoKc2AVHklkzkYa0+40xfi3AW18Q/K4K9h/OocoZpCsVTc7
+	 P3U7Lk6TDzGXSUBWVX72i99ctq9fxpCEAf7EPOcoxKbQ5HoOJlAOSS9DWUBbMFrSGs
+	 wq0Ih3E/DaXojtDOLNMTToD5a4szza7K5jiOH90rJg25i7q+WgS1YpUPqvG8ck732L
+	 facfIldhFjw/2ZFAetpxsSvQgpdMsJ0r4OYiQPZlv8X139dzSSBMZ5/L3G1OVKmP/B
+	 +37+kwO7JItFQ==
+Date: Tue, 10 Nov 2026 08:06:36 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: bpf@vger.kernel.org, dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
+	keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ignat Korchagin <ignat@linux.win>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v9 2/3] KEYS: Replace assoc_array with rhashtable
+Message-ID: <avK0bC5VmO7LXlfS@kernel.org>
 References: <20261110053323.2936729-1-jarkko@kernel.org>
- <20261110053323.2936729-4-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 05:58:20 +0000
+ <20261110053323.2936729-3-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,16 +84,118 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261110053323.2936729-3-jarkko@kernel.org>
 
-> As assoc_array has no longer in-kernel users, remove assoc_array
-> implementation, includes and documentation.
->=20
-> Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Tue, Nov 10, 2026 at 07:33:22AM +0200, Jarkko Sakkinen wrote:
+>  /*
+>   * Preallocate memory so that a key can be linked into to a keyring.
+>   */
+>  int __key_link_begin(struct key *keyring,
+>  		     const struct keyring_index_key *index_key,
+> -		     struct assoc_array_edit **_edit)
+> +		     struct keyring_edit *edit)
+>  {
+> -	struct assoc_array_edit *edit;
+> +	struct keyring_link *link = NULL;
+> +	struct keyring_link *replace;
+> +	struct keyring_index *links;
+>  	int ret;
+>  
+>  	kenter("%d,%s,%s,",
+>  	       keyring->serial, index_key->type->name, index_key->description);
+>  
+> -	BUG_ON(index_key->desc_len == 0);
+> -	BUG_ON(*_edit != NULL);
+> +	if (WARN_ON(index_key->desc_len == 0) || WARN_ON(edit->new)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+>  
+> -	*_edit = NULL;
+> +	edit->new = NULL;
+> +	edit->old = NULL;
+>  
+> -	ret = -EKEYREVOKED;
+> -	if (test_bit(KEY_FLAG_REVOKED, &keyring->flags))
+> -		goto error;
+> +	if (test_bit(KEY_FLAG_REVOKED, &keyring->flags)) {
+> +		ret = -EKEYREVOKED;
+> +		goto out;
+> +	}
+>  
+> -	/* Create an edit script that will insert/replace the key in the
+> -	 * keyring tree.
+> -	 */
+> -	edit = assoc_array_insert(&keyring->keys,
+> -				  &keyring_assoc_array_ops,
+> -				  index_key,
+> -				  NULL);
+> -	if (IS_ERR(edit)) {
+> -		ret = PTR_ERR(edit);
+> -		goto error;
+> +	links = keyring_get_index(keyring);
+> +	if (IS_ERR(links)) {
+> +		ret = PTR_ERR(links);
+> +		goto out;
+>  	}
+>  
+> -	/* If we're not replacing a link in-place then we're going to need some
+> +	link = kzalloc_obj(struct keyring_link);
+> +	if (!link) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +	link->hash = index_key->hash;
+> +
+> +	replace = keyring_find_link(links, index_key);
+> +
+> +	/*
+> +	 * If we're not replacing a link in-place then we're going to need some
+>  	 * extra quota.
+>  	 */
+> -	if (!edit->dead_leaf) {
+> +	if (!replace) {
+>  		ret = key_payload_reserve(keyring,
+>  					  keyring->datalen + KEYQUOTA_LINK_BYTES);
+>  		if (ret < 0)
+> -			goto error_cancel;
+> +			goto out;
+> +
+> +		ret = rhashtable_insert_fast(&links->ht, &link->node,
+> +					     keyring_link_params);
+> +		if (ret < 0) {
+> +			key_payload_reserve(keyring,
+> +					    keyring->datalen - KEYQUOTA_LINK_BYTES);
+> +			goto out;
+> +		}
+>  	}
+>  
+> -	*_edit = edit;
+> -	kleave(" = 0");
+> -	return 0;
+> +	edit->new = link;
+> +	edit->old = replace;
+> +	ret = 0;
+>  
+> -error_cancel:
+> -	assoc_array_cancel_edit(edit);
+> -error:
+> +out:
+> +	if (ret && link)
+> +		kfree(link);
+>  	kleave(" = %d", ret);
+>  	return ret;
+>  }
 
-Sashiko has reviewed this patch and found no issues.
+No additional Sashiko complains.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110053323.2936=
-729-1-jarkko@kernel.org?part=3D3
+Despite a few unfortunate extra rounds I'm happy how this shaped in the
+end. It has a sane flow now I think.
 
+And it definitely made sense to drop cleanup.h shenanigans from
+__key_link_begin().
+
+Br, Jarkko
