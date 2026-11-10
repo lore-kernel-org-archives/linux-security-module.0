@@ -1,123 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.157.188.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794342269;
-	b=IQZLaNqZaUcR/yO8G38urNmq56KK5G7RJoG+pIC44MXSFx6qCRFPd6jO23AwA3g/TclL
-	 Fh44HKfLj/Zyqmq9QRWP7NVo5rbuOuG3LXeH7yv2rK9mHuyI9BkRqrmvE3LcuFyTLcfq1
-	 d986iJvoLPWrzp4sJ4GOvn9NZXbDKaBxo1ZXe98pk0M0vkDxCiefnRb2HEKGeFiTl23ol
-	 Y8ZU6ZWS0ujujPTejpTpSb+024S6ZRuhTaWNeu2iXu9k+d8hi4fXo8gWZ/suoRxddjnKE
-	 wecuNZKbn9Ks08TWDrA/STy7TdDSCCb0aDOCI+uc28C3Em65SmsQ3Hqae0AmhkU79IA==
+	t=1794342295;
+	b=L9YXbxHQdSiUKFDPcQcVIWswcJAF5MrVGiENxYicTMb0KGAlUmSDAYYpfBeWBOeyJjIU
+	 7q9W5pOfal4TauvThklAhehOR1aimE4nFFYFI8x+cMSJWQzia/SR4T2C028eA26dCkLdz
+	 ESkktZZBC0Pa9UcJoxaUeKADYKR+I4S9kRTKQ5hGtGLciZRhduSmFkLoYdHzAKbYk2CsG
+	 XjCuJvSzCQ35MVyL8LpkfMxyGE8W5saKwCh14Exc+EAh4HOU/KLYb5iMaje6U4a5bAKOn
+	 /D194zocpY7OHTEy5T+pbDRlY76EX8AmsfFerlOBr2tWZpMPlVWUpfwrhC0nzDn7mRw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794342269;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=NNWkhMM9mRV69+bDPtzO7ZmhT8HSmB461wMg2BUz4JA=;
-	b=Vbv5uy1UdHQFh2wJp3BxsVeHsWwSq5BjQqar7R136g6LDf6ygUuOXiAFD6CX+4Yg0sw9
-	 CfASYAv5BCsuQfZP/ylfQYkqNOPhRzKY2fhCvB5mFQh+1fvNW4t0zQgm5durm7ceQVPGg
-	 +m9sw9QuAQRavk6TmQXp4GSNQmyQBGP0g0iUH31D/JMnWbgTfWaRldyNUtv/24cZTIw9L
-	 37EePy545xT4z6I/1Miq0MkflSivUWRYPWuxbTgPhNzXLPxKAhlRa4Q0CZsuC4iI+JnM6
-	 khOGHu7W3S/vKbFa7U5Hd8Eq9aRJkhGFaSIn1FjT77bGflFjPAXnTVXXKBpMWbRqbRw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794342295;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Infomaniak-Routing;
+	bh=dtQBQsLXA/8DRdTm5gm8W/QZSwqaFp+c1ZQKm9GtCgE=;
+	b=aiPjy5eL3NzwksfDkzeG/GfXtloO1e6oG4HmIQ2bi6r+2wG4taUuIwLkJ64O8vrRHcES
+	 tcL9J5CSyIFF8wfN/k/dEx6A933BDEoofW9bhubQJvtVvQNyRVmvqNo4GYVOYn1xjPzDy
+	 gSRgQtbcGCWjIj80MB0pTwLW6B7y5hcLDEJWonNcyfSfqoFHQkDNS2CV3AI1vrKdw2VwK
+	 TAIgNuTzrj7mLBOhx8xhf6oTyoFKPMK0SpKNsWFIm0oXe4xtVtJOnqBFSgiZu2r96I3Tb
+	 9SBDEbEdUVmsPGd+YC3q6XW2tqQWf2sLAHJViY8prIO8S27dEfKvmbu4H+sECMsywQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=armoriq.io;
-	spf=pass smtp.mailfrom=armoriq.io;
-	dkim=pass header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=jcqBjeP9;
-	arc=none smtp.remote-ip=74.125.82.174
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=NBkm4ljE;
+	arc=none smtp.remote-ip=45.157.188.14
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BF660A2609
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 20:24:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 27BF660A2609
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armoriq.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armoriq.io
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F083C606A32A
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 20:24:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F083C606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armoriq-io.20260707.gappssmtp.com header.i=@armoriq-io.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=jcqBjeP9
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-36f6295304dso3277522eec.1
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2026 12:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=armoriq-io.20260707.gappssmtp.com; s=20260707; t=1794342268; x=1794947068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=NNWkhMM9mRV69+bDPtzO7ZmhT8HSmB461wMg2BUz4JA=;
-        b=jcqBjeP9L1xp1JklGYM0b1vT5HG9543QwujHEfMVyjAPCMy1Z6a2WjLK/Tl762SFJi
-         UfnBKtuHG7xIgvrcmWziQRbrx3Rl1pipPKXO3jAvVYOuhTQKXa2xyePhgc4jFBdyGKJV
-         0OveURAQ+4+DKhtsqgMTu+6eiAg5d3BIrjSN4zl8G6KMfMYX5zo9p94MxmLBvOVFsjat
-         FFEeM3SLOz7sUsMavU/8NkBT/oDHo1q+OEuEgBY5m1b8YIWPzvPr9EZWFUkvsmeruKGp
-         RdTI4f0y9C5oqjnmTfd+7FvunT0vn04W+FqOHN0fvZf8UAAhYAx3SKfSg8Jit5ew2VTt
-         +WMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794342268; x=1794947068;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=NNWkhMM9mRV69+bDPtzO7ZmhT8HSmB461wMg2BUz4JA=;
-        b=mC00bJ7GKf0TbcxoHX+OA9NgkO8vMoM2JXryszr9bYS6VRObr5FGpiqVcZvOf0EoLa
-         /5SE67nmiRswosgtSMs/pUAA13A9rRzQLiiH6y2pnknA/mRMmwjdNNM8mURbKq4RhCuf
-         eNm9Gozg6DzVpO3lbXCn64sHL8S3k0FQm1+56jaySVIRwYOoAFPfTkWpYHclc/QOHrXy
-         yQ/RTCogRj+k+saBaqkQ1MFhOYnLd0CmMjqnb34bsx9DlGji9Y4sYlrOl3yTiD0UWURC
-         HzG1xze54+JtYvB7AO9AqvBG1IUYo+BpUrDFd3iIEc6c2Nk+cKGsJBGD2xfH3QdWE8cL
-         bP8g==
-X-Forwarded-Encrypted: i=1; AL+hErE3Nr24SRRxK1dRdhI783lfr4NBkCzXFMJmMuS+0R/KXYgaNDn/6FL4ty5sVRcOc31+d+JZvGJ6soeZy1FW2uVnyaYTF6I=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/lo3986/f3KAH6OK5WAK1fvdP/ZJWfllhKT1Tk6w2W0U3N/w+l
-	Mi/upio1R9oZSyG8WJCg9YesmKpNhD6EqGdW9U3+Su5QlD7LyZr94hBuVgP7XilLnB77
-X-Gm-Gg: AYBFou1mFsjJgKY5Lx35My6RqyD1bUXdx+VSYMvdY/8tbZK94V0MjYq/N7Z76dO40Sq
-	T8YlQb2j6JUVXWnNyUJ1saBsOs2r4S19Z/qO3Zan/N7159m2yfWorPQ7MPX/cKKFw9h04HpPt+b
-	DkLztZ8UFe/yL4xc3Yw4tO7V6kh+ySksOCmg9dN7lAykDtXJtRO7c1LL/W+hifjHkjbbg7B9U86
-	9VmWbB8DolbK5Baptq77zsdQQLPYzlVeBT7As88r2p2ZXFXBREEpI8EcUzQxVHDOQhGISR51Lqr
-	eJX9f+fXhs5A3e4kk4HAG8hdSKEOmoJoQsFpZE2PklkyDUs6vpqzUZAjkdsH/0/HEmcV6xReWxL
-	y9mQL+fNyYQ6iy/V9BBnNicLOa46yK+WufNs4/UHF5iVrzEuzb8jpq0M9Tblp7hKPnVSwK+Vn7r
-	iI6aqImPPoMzHjUWElSy8m0OgaPzPaWH47UB/kmoRLKQjQEa7pFLu0n5Ina2I9Db96qI4kiamMq
-	gtj2rXd2pYdsGerJO7zJSN8uR2d7CG9ZpNKzTR5yMKJlcqjIjYKF4oK6a+y9L+QHP2fomwGZQgd
-	dJKXa96HquNqUkIob+vEOtfo3MhPCjzd5OwPHEOUZdg533vWHUZAu/z5j3T/zy54dvqiiXxH5z1
-	d2oYZA2fahqQB8hu7Meue/nPC+rFYqnxRUz94tuVbeXOzF6lyHzBm1A==
-X-Received: by 2002:a05:7301:488f:b0:376:2859:5b2f with SMTP id 5a478bee46e88-3768675d705mr516619eec.25.1794342268101;
-        Tue, 10 Nov 2026 12:24:28 -0800 (PST)
-Received: from localhost.localdomain ([2409:40f4:147:2742:6545:702a:2431:7dca])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-37520cfe29fsm10076615eec.21.2026.11.10.12.24.17
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 10 Nov 2026 12:24:27 -0800 (PST)
-From: "HARIHARA SUDHAN. R" <harisudhan@armoriq.io>
-To: linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>,
-	Kees Cook <kees@kernel.org>,
+	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=NBkm4ljE
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jPJ6T5CnpzJg3;
+	Tue, 10 Nov 2026 21:24:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1794342289;
+	bh=dtQBQsLXA/8DRdTm5gm8W/QZSwqaFp+c1ZQKm9GtCgE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NBkm4ljEH55q0mZ2ImjQcErIdLPtbr/dDkniCa+E9yd44yEsE2yUsZgrR/y53j5EB
+	 vNS+KIsH052IB09ZlJX08Af8I2yVnjnQivUPxeHQYPtBt5pTrQ/TbmU/XcGu5GRduQ
+	 amjO2eKxkGot61nERtb8vU+MILk3Jtmd9RjQ0jZE=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4jPJ6S4xhlzs5Q;
+	Tue, 10 Nov 2026 21:24:48 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Ada Smith <adasmithgt@gmail.com>,
+	Hungyu Lin <dennylin0707@gmail.com>,
 	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"Liam R . Howlett" <liam@infradead.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	David Hildenbrand <david@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Ketan Bhardwaj <ketan@armoriq.io>,
-	bpf@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-mm@kvack.org,
-	"HARIHARA SUDHAN . R" <harisudhan@armoriq.io>
-Subject: [RFC PATCH v3 6/6] MAINTAINERS: add an entry for the Kernel Assurance Plane
-Date: Wed, 11 Nov 2026 01:52:46 +0530
-Message-ID: <20261110202246.274-7-harisudhan@armoriq.io>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261110202246.274-1-harisudhan@armoriq.io>
-References: <20261110202246.274-1-harisudhan@armoriq.io>
+	Josef Bacik <josef@toxicpanda.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	kernel-team@cloudflare.com,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH 3/6] landlock: Mediate CAP_SETPCAP for inheritable capabilities
+Date: Tue, 10 Nov 2026 21:24:31 +0100
+Message-ID: <20261110202436.2408244-4-mic@digikod.net>
+In-Reply-To: <20261110202436.2408244-1-mic@digikod.net>
+References: <20261110202436.2408244-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -127,39 +71,82 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-Add the KAP maintainers and the files they look after.
+A process in a domain that denies CAP_SETPCAP could still add
+capabilities outside of its permitted set to its inheritable set with
+capset(2), if it held CAP_SETPCAP.  cap_capset() checks CAP_SETPCAP with
+cap_capable() in cap_inh_is_capped(), so the check never reaches
+hook_capable().  Through file inheritable capabilities, such a set can
+grant new permitted capabilities on execve() when no_new_privs is not
+set, which is possible for a domain enforced by a task holding
+CAP_SYS_ADMIN.
 
-Assisted-by: Claude
-Co-developed-by: Ketan Bhardwaj <ketan@armoriq.io>
-Signed-off-by: Ketan Bhardwaj <ketan@armoriq.io>
-Signed-off-by: HARIHARA SUDHAN. R <harisudhan@armoriq.io>
+Add a Landlock capset hook that checks CAP_SETPCAP against the domain
+under the same condition as cap_capset().  As with the mmap_addr hook,
+LSMs implement their own policy in this hook: SELinux checks capset with
+its own permission.
+
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <serge@hallyn.com>
+Reported-by: Ada Smith <adasmithgt@gmail.com>
+Fixes: 97c8386f1d74 ("landlock: Enforce capability restrictions")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ security/landlock/cap.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f53047a..0946d15 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14118,6 +14118,16 @@ W:	https://linuxtv.org
- T:	git git://linuxtv.org/media.git
- F:	drivers/media/radio/radio-keene*
+diff --git a/security/landlock/cap.c b/security/landlock/cap.c
+index 10e1ca772b9c..c89e8d76db8c 100644
+--- a/security/landlock/cap.c
++++ b/security/landlock/cap.c
+@@ -91,6 +91,35 @@ static int hook_capable(const struct cred *cred, struct user_namespace *ns,
+ 	return check_cap(cred, cap, opts);
+ }
  
-+KERNEL ASSURANCE PLANE (KAP)
-+M:	Ketan Bhardwaj <ketan@armoriq.io>
-+M:	HARIHARA SUDHAN. R <harisudhan@armoriq.io>
-+L:	linux-security-module@vger.kernel.org
-+S:	Supported
-+F:	Documentation/ABI/testing/securityfs-kap
-+F:	Documentation/security/kap.rst
-+F:	include/linux/kap.h
-+F:	security/kap/
++/**
++ * hook_capset - Restrict inheritable capability changes
++ *
++ * @new: New credentials (unused).
++ * @old: Current credentials.
++ * @effective: New effective set (unused).
++ * @inheritable: New inheritable set.
++ * @permitted: New permitted set (unused).
++ *
++ * cap_capset() requires CAP_SETPCAP to add inheritable capabilities that are
++ * not in the old permitted set, but calls cap_capable() directly, which skips
++ * hook_capable().  Check the same condition against the domain.  commoncap runs
++ * first, so this only sees requests that commoncap allowed.  capset(2) discards
++ * @new if this hook fails, so nothing is committed.
++ *
++ * Return: 0 if allowed, -EPERM if CAP_SETPCAP use is denied.
++ */
++static int hook_capset(struct cred *new, const struct cred *old,
++		       const kernel_cap_t *effective,
++		       const kernel_cap_t *inheritable,
++		       const kernel_cap_t *permitted)
++{
++	if (cap_issubset(*inheritable,
++			 cap_combine(old->cap_inheritable, old->cap_permitted)))
++		return 0;
 +
- KERNEL AUTOMOUNTER
- M:	Ian Kent <raven@themaw.net>
- L:	autofs@vger.kernel.org
++	return check_cap(old, CAP_SETPCAP, CAP_OPT_NONE);
++}
++
+ /**
+  * hook_mmap_addr - Restrict mappings below dac_mmap_min_addr
+  *
+@@ -113,6 +142,7 @@ static int hook_mmap_addr(unsigned long addr)
+ 
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(capable, hook_capable),
++	LSM_HOOK_INIT(capset, hook_capset),
+ 	LSM_HOOK_INIT(mmap_addr, hook_mmap_addr),
+ };
+ 
 -- 
-2.53.0
+2.56.0
 
