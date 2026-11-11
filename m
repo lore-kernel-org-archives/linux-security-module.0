@@ -1,60 +1,113 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794421698;
-	b=WXeNld8m8MioIVtSzDdy5YrqB0OTc+N5GtAGd2iwjOYbGFBslk3mB/fJVk914YS5O8T1
-	 o7Qg8//pr+E4y+hTaDUcLPXjkqwiembxxMlp0Tj1Yn2vcz5FuQBaC21lvVNF0lvujNVEL
-	 lnsKImOtlNUgnzX5FYKnr/MQXTW9HKvGLz6FfqcNXIUkRoc+lWq3c2EPY1KklxlDRfXeh
-	 D4VRuAko80OG8skeeCYW9+3gLql52gZvOhTwc1JvR/lc5X472KgoC2FNWGYHlKXGPycm8
-	 rJpkV6XAE63R0b6Iv/8O71BHRlA7I02Y+z8gHpM298Y59uPYHCcrxyT4myAeSk1S/aw==
+	t=1794422727;
+	b=kVFduuHJ1E38eMEhVZS71DVZ2WnQXJoutndOooUwCcV9Nvjh9KvKaIvBJrT2AITeBWJn
+	 l1Q+LfwOAbft22yzakyrRJqLIBwMsDGIwafXyAA876lL3NDHJLsXaw9J+e9Bu8MLhIX32
+	 oLi+LgAnjuYoNg3offJ2W8+GnCaoedkjU+NEtUjKXjVJAyt+AlF2gJ42//pSM0eOC5MC1
+	 YxU5e/w+fP2SVMuDgUPvf3ltDoFNc0dbRVdgQqUgKjjx4Yjn2vD7PWG0cBXk8tRs+AmoK
+	 sHbYXP4ADgNtKXm4X5RQ2o+6d5wtW8ElCfi1A7m1F1k1Hvr144VKFF7eV0jrdc0hiQw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794421698;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=GO5yKriuKseN6O1pLOiVfT7JCT95pfrtrxH+15p0okc=;
-	b=gTaxkd8Tf2Wa5J+SoGqCrNmJ+Mo2SrPDOtRirvtn2LBifDOtOEfBuGP+vlew9AdF+soP
-	 xwnkf8eDUgUflaLKX+gv2dSlPriD5CMyJqPmGq7GXI6tMA6R5+JPPBGdwi5rF5OmArgZK
-	 SzdIt7wAyOSb9IPJaB5hsCfZNyLRkdNsFTJoSYh5EQU9P1jFqQYnIiE0B5iSStndoIAka
-	 hztMuDDm8VWMHcoHdR/q9QEOqBnalYeg2Uy7NMQ9eQTA4SaqqWaPGcryNnMsCwcwETWwT
-	 IACfzYvGH5K6jFNDC1Hi5oK4FX/djg7ZD2LC4IBnimdo5gcUn+AEhinIKoVVbQC3lmw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794422727;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
+	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=49MaCQym9slg1wd6k0otIRMRT27LbiHCT0+a1bCeTqo=;
+	b=pV6p6S5jHf2qMnuB/PO7pUbCwC04jpLRIz2GXeZI5hIfQPNUbbMBQ+GRHuc0uwif+piX
+	 i+uxv7O3cTHMQH1KAldyfpumUB2tOmVVZISUpB9jT/TjCFIXA6x+yg92miXm43M2yGe03
+	 PrtHnETMxa+pED2awOKy2tXGYxjYd0cky9yNH9Kg+gA9qBjgS3Uyr3bNcn1+VemyefByY
+	 U0YpXJon1oFnpXydrllDxbzPBmJth7qTaGAzUbSSkp6MN6K3iK4mocS0Zuh6uvzbPx6aX
+	 BAlrN6reb9fB+RE2vH8Cb8EFR2558kf3bZCQEK/jvlMdOOM2Rax7pF2lrLp1wy+bT4Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M4TPyqnP;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linux.ibm.com;
+	spf=pass smtp.mailfrom=linux.ibm.com;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=A4ELrNMy;
+	arc=none smtp.remote-ip=148.163.158.5
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CD7606A321;
-	Wed, 11 Nov 2026 18:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1FD606A32D;
+	Wed, 11 Nov 2026 18:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D1FD606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M4TPyqnP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64EC51F00A05;
-	Wed, 11 Nov 2026 18:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794421698;
-	bh=GO5yKriuKseN6O1pLOiVfT7JCT95pfrtrxH+15p0okc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=M4TPyqnPU7NasQ/rK8N8AaC9osAkcFRF0Emr/g1SmS0UXO5Vvy9k8l/PbCkTFQEDp
-	 ebD8+i93pd4puFJbe3hYVoJEf5e3B+awxvmJzmO4cxSRcjz2qFCEoRTmtgaSlOq8tt
-	 7OVniil0PU7O0aS6xKrRnHWrdZWa3JrvoPMz3UJUcSzbVZ2D3BoaV8mJNFcwU4O42/
-	 x5sUCVKCQCLpQFNTF0sv//TJ+usywHrH6LOwpWCOqZQA5vgjmGAcgagJtKIfiUSTa0
-	 WoBWtClxcQh/1cnJ2Hkzf1opztXDXeVPt3MfoTeoyO+iMeLE+/hEF6RDV7dNaQXElf
-	 F0lFRV1nl8IZA==
-Date: Wed, 11 Nov 2026 12:28:12 -0600
-From: "Serge Hallyn (AMD)" <sergeh@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Ada Smith <adasmithgt@gmail.com>,
-	Hungyu Lin <dennylin0707@gmail.com>,
-	James Morris <jmorris@namei.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,
-	kernel-team@cloudflare.com, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/6] Fix Landlock mediation of commoncap's capability
- checks
-Message-ID: <avSzvNROhDFEzdCl@shallyn-amd>
-References: <20261110202436.2408244-1-mic@digikod.net>
+	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=A4ELrNMy
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABIiSvi672058;
+	Wed, 11 Nov 2026 18:44:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=49MaCQ
+	ym9slg1wd6k0otIRMRT27LbiHCT0+a1bCeTqo=; b=A4ELrNMySsqqi06Tj8LY/0
+	DvvFAT6UPgCLbtdtzfJXgwwy6V0S+NEyHXU76mKcOPVtRO7KDwnhYUjjT3+7A3xm
+	Yebgqh9q7BLWJOimyJFiS3d9bOw4py/3t4laHmE4e82pajRGlUCh7xfPo6LOGaig
+	NHY2zs4QYPehcixAIt+ipmf0uVk3RLXmAdGMH7wR+0Ch/FfbFwmwYSdxJzW2lz+q
+	Y4QIgTlIhRc2l47lgEHkv2mapSnoAH4G/ZZTgKY+8K4bpVTlvm1HBQUpHc91m+0d
+	jkw3hWhWPF0EDjFvhhiP67XmssSn7gj7uq0RctRm3RFqlO1KbaRuibSzvrngYWkA
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hstdgb4yu-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 11 Nov 2026 18:44:47 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABIJuDi3740537;
+	Wed, 11 Nov 2026 18:44:46 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4hvkq0t7mk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Nov 2026 18:44:46 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6ABIijIs25625264
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Nov 2026 18:44:45 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 37C8858060;
+	Wed, 11 Nov 2026 18:44:45 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B9C4B5804E;
+	Wed, 11 Nov 2026 18:44:42 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.123.17])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 11 Nov 2026 18:44:42 +0000 (GMT)
+Message-ID: <eb536f08b27ed28cf490205c57176b7fc8eccfda.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 0/4] initramfs: add support for xattrs in the
+ initial ram disk
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Christian Brauner
+	 <brauner@kernel.org>,
+        Danny Hu <dannyhu@arista.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>, Jan Kara <jack@suse.cz>,
+        Victor
+ Kamensky <kamensky@cisco.com>,
+        Taras Kondratiuk <takondra@cisco.com>,
+        Zheng Zengkai <zhengzengkai@huawei.com>,
+        zhangguangzhi	
+ <zhangguangzhi3@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>, silviu.vlasceanu@huawei.com,
+        hpa@zytor.com, arnd@arndb.de, james.w.mcmechan@gmail.com,
+        niveditas98@gmail.com, pierre@arista.com, julien@arista.com,
+        kbharathi@arista.com, alexandr.lobakin@intel.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bug-cpio@gnu.org
+In-Reply-To: <a9edb8a433e8efcba3d11b2a06fa1063df41a24d.camel@huaweicloud.com>
+References: <20261105193743.2654656-1-dannyhu@arista.com>
+		 <20261110-hengst-tontechnik-ausfuhr-265b06d68611@brauner>
+	 <a9edb8a433e8efcba3d11b2a06fa1063df41a24d.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 11 Nov 2026 13:44:42 -0500
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,70 +117,131 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261110202436.2408244-1-mic@digikod.net>
+User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=J+M/fwnS c=1 sm=1 tr=0 ts=6af4b79f cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=07d9gI8wAAAA:8
+ a=VwQbUJbxAAAA:8 a=oGMlB6cnAAAA:8 a=vpqfxihKAAAA:8 a=pGLkceISAAAA:8
+ a=meKO6n-CRK1YFxY-CrEA:9 a=QEXdDO2ut3YA:10 a=e2CUPOnPG4QKp8I52DXD:22
+ a=NdAtdrkLVvyUPsUoGJp4:22 a=AULIiLoY-XQsE5F6gcqX:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTExMDA3NCBTYWx0ZWRfX3gn636Rji0NZ
+ iSazCfHd8HXcmr4d5jGXXmBYPn05xP83IXxhjJWgXtsiJj2XWUExmGRX/xv9PlqCaHRhCSn2SOe
+ j5LtDKi4Rc8DcKEhpP7RcYKWeHaLZ0ecPaQ8gfSJzAT7t9Z4c6W09cS8Jett6BR4fKtlaHvEsgb
+ b1kL1SWdkRTVnUBfBRk4HAhckbmQPg21AEdFu5zSOO0Tolp1QTigj02PbtGt/BZEgWn5EDMwyaP
+ I6O70FNB873BNEHt0GcnX/O/5ve5Add6ywtZ83eG3LNqs5BwMhpDJCberDh+L/OEKvVGBrJ3m7x
+ XIE7gZcvU2G8HXb/HD2OrKyoNo8kTVnYzNpH+nYk9yPJ9l+D5n1vU848ZwY+uhkUOuG1brxZss0
+ zUaafrXUOy942LMCUgckXVQfA0yP4oRWn2lDFjYhj1fKI3hmcEdVr2Jaf1nyGSzMURDs2FwyCTv
+ s9MeY++t5Ie4lIDFrZg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTExMDA3NCBTYWx0ZWRfX/y+xAAh94onv
+ cLdD7EEkkfO+pTmM/OFNa7h9sGBipx+EUhnDh76AIMXj6ABAP0oRIFN9yeuLUdU7tQbUudaImwI
+ 2JwPY1t126ZMmdL6vm9Xbbyj/BLK6vo=
+X-Proofpoint-GUID: CTJhBYIyODsTvXA5TgxC6EstFdV3S_SH
+X-Proofpoint-ORIG-GUID: VeWHy195uGzXlBEJaEaDPnLzgJqp5EgW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-11_05,2026-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 clxscore=1011 priorityscore=1501 impostorscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611110074
 
-On Tue, Nov 10, 2026 at 09:24:28PM +0100, Mickaël Salaün wrote:
-> Hi,
-> 
-> This is series 1 of 3:
-> 
-> * 1. fix Landlock mediation of commoncap's capability checks;
->   2. fix PR_SET_SECUREBITS mediation and add focused Landlock tests;
->   3. fix Landlock mediation of capabilities guarding LSM policies.
-> 
-> LANDLOCK_PERMISSION_CAPABILITY_USE, merged for v7.4, denies capabilities
-> through the LSM capable hook, but commoncap's mmap_addr, capset and
-> vm_enough_memory hooks call cap_capable() directly.  A domain that
-> denies a capability can therefore still:
-> 
-> - map memory below vm.mmap_min_addr (CAP_SYS_RAWIO), which defeats a
->   mitigation for kernel NULL pointer dereferences;
-> - add inheritable capabilities outside of its permitted set
->   (CAP_SETPCAP), which lets a privileged sandbox without no_new_privs
->   gain capabilities through execve(), although the domain still
->   restricts their use;
-> - use the admin memory reserve with vm.overcommit_memory=2
->   (CAP_SYS_ADMIN).
-> 
-> As SELinux does, patches 2 to 4 add Landlock's own check to these hooks,
-> with commoncap's conditions, so they only deny what commoncap granted
-> because of the capability.  Patch 1 factors out the shared check.  Patch
-> 5 adds tests, including audit tests, that fail without the fixes.  Patch
-> 6 fixes the documentation, which overstated what the permission
-> restricts and how its denials show.
-> 
-> Two other direct capability-set checks are fixed separately:
-> 
-> - PSI triggers (CAP_SYS_RESOURCE):
->   https://patch.msgid.link/20261106120004.90041-1-dennylin0707@gmail.com
-> - user namespace uid 0 mapping (CAP_SETFCAP):
->   https://patch.msgid.link/20261110144205.2404088-1-mic@digikod.net
-> 
-> Regards,
+On Wed, 2026-11-11 at 14:45 +0100, Roberto Sassu wrote:
+> On Tue, 2026-11-10 at 17:21 +0100, Christian Brauner wrote:
+> > On Thu, Nov 05, 2026 at 11:37:39AM -0800, Danny Hu wrote:
+> > > This proposal consists in including file metadata as additional files=
+ named
+> > > METADATA!!!, for each file added to the ram disk. The CPIO parser in =
+the
+> > > kernel recognizes these special files from the file name, and calls t=
+he
+> > > appropriate parser to add metadata to the previously extracted file.
+> >=20
+> > No, sorry. We're not going to do this:
+> >=20
+> > * This is in-band signalling by filename. A METADATA!!! entry changes
+> >   the meaning of whatever came before it in the stream.
+>=20
+> Yes, it is a hack, but such an image is backward compatible with
+> previous versions. There is no new format, version bump, etc.
+>=20
+> >   Which is just the TRAILER!!! nonsense all over again (cf. [1]).
+> >   No cpio tool knows about it and a kernel without this parser silently
+> >   extracts the metadata as junk files.
+>=20
+> METADATA!!! is stored in ramfs/tmpfs if not processed, so it is just a
+> temporary file, like the rest of the initramfs content.
+>=20
+> > * It sets whatever xattrs the archive comes with through vfs_setxattr()
+> >   during early boot. Which is insane.
+>=20
+> Similarly, the archive can already ship arbitrary binaries that get
+> executed as root. If you want, we could restrict it to security.ima and
+> security.evm only.
+>=20
+> >   Not just security.ima but security.capability, security.selinux,
+> >   trusted.* and anything else.
+> >=20
+> >   And we've NAKed this before in 2018 (cf. [2]).
+> >   The magic file name scheme was called a kludge back then too (cf. [3]=
+).
+> >   Nothing about that has changed.
+> >=20
+> > * The initrd is already covered as a whole. Appraising
+> >   individual files inside an image whose integrity is plain weird.
+>=20
+> I agree when the image is prebuilt and has a known reference value. As
+> far as I know, there is no reference value when the initial ram disk is
+> dynamically generated on the host. In the latter case, using finer-
+> granularity measurement/appraisal is the only option.
+>=20
+>=20
+> > * If kernel and initrd are owned by different parties this can be
+> >   done in userspace. A trusted /init can apply xattrs from a manifest
+> >   before it runs anything else. That was pointed out in 2019 already
+> >   (cf. [4], [5], [6]).
+>=20
+> Unless the trusted /init is in the kernel image and launched as User-
+> Mode-Driver (UMD), you need to measure/appraise it, which again
+> requires its signature to be carried in the initial ram disk.
+>=20
+>=20
+> > This has been proposed in some form since 2018 and never found a
+> > maintainer willing to take it. I'm not taking a private cpio extension
+> > into init/initramfs.c either.
+>=20
+> I understand. v3 was close to being upstreamed but then got stuck
+> because nobody was willing to take it, despite all review comments
+> being addressed. In its favor, this extension is harmless. If
+> METADATA!!! is not there, nothing happens. If it is there and not
+> supported, it is a junk file removed together with the rest of the
+> initramfs content.
 
-Acked-by: Serge Hallyn (AMD) <sergeh@kernel.org>
-> 
-> Mickaël Salaün (6):
->   landlock: Factor out capability denial checks
->   landlock: Mediate CAP_SYS_RAWIO for mappings below mmap_min_addr
->   landlock: Mediate CAP_SETPCAP for inheritable capabilities
->   landlock: Mediate CAP_SYS_ADMIN for the admin memory reserve
->   selftests/landlock: Test capability checks outside the capable hook
->   landlock: Fix capability restriction documentation
-> 
->  Documentation/security/landlock.rst         |   8 +-
->  Documentation/userspace-api/landlock.rst    |   8 +-
->  include/uapi/linux/landlock.h               |   6 +-
->  security/landlock/cap.c                     | 110 +++-
->  tools/testing/selftests/landlock/cap_test.c | 535 ++++++++++++++++++++
->  tools/testing/selftests/landlock/common.h   |   4 +-
->  6 files changed, 650 insertions(+), 21 deletions(-)
-> 
-> 
-> base-commit: 7475ea8b58616b33c04afb976cf0fbaad9dd63fb
-> -- 
-> 2.56.0
-> 
+At the time, there was no initramfs maintainer.  At LSF/MM 2018, I brought =
+it up
+[1]. AL said he wasn't the maintainer (and if I touched it, I would become =
+the
+de facto maintainer).                                        =20
+                                                                           =
+    =20
+[1] https://lwn.net/Articles/753276/
+
+Mimi
+
+> > [1]: https://lore.kernel.org/r/d69f329c-8365-bb0e-69ee-774cbea141b2@zyt=
+or.com
+> > [2]: https://lore.kernel.org/r/3d1bfbd7-7d45-4cf1-32d6-7f6985b42393@sch=
+aufler-ca.com
+> > [3]: https://lore.kernel.org/r/f2886ac7-aff9-94bc-5f65-b3b2e946a6ff@sch=
+aufler-ca.com
+> > [4]: https://lore.kernel.org/r/20190512091748.s6fvy2f5p2a2o6ja@isilmar-=
+4.linta.de
+> > [5]: https://lore.kernel.org/r/20190512194322.GA71658@rani.riverdale.la=
+n
+> > [6]: https://lore.kernel.org/r/CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJ=
+JpgM-JqqXfQ@mail.gmail.com
+> >=20
+>=20
