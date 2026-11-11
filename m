@@ -1,68 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794410412;
-	b=gKAPmIAPdEbsZFsmZ9RrGjXE6SujuQSJOuhRC7LqcErh6w+LpWgzPqQlMVTF4ka702SG
-	 07ayTyAGJLuhUOH4uz8dMiWNj+NKmHdY2jNhS3uy4uGO6ufHPx04lZY4niSv9OMfh8wfY
-	 PzNxqSBNhqfIwUeOrA9bmjFGZ8fDTWAqtEdN/G0K/OYgRhes5QnBUKib9rV6Zy+saGZXQ
-	 KWKX0GRu0sETHkHMhdrWAbX3QtzMGdvi4VUyTn/Q7s660ZBWOrdl11ZNXRXSHFGveeTAV
-	 d0c9fB1GTKqbF0+CGcDBcuizuU36wQDp+DzWDJYC5i0KFuqYc/Aq6EXryQINmu2lcKw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794410412;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=+1DCBycizs0FNS95ffvn0ICcr0Hnn6SqaXL7oQg/o08=;
-	b=iB7046F2DBRObIsYNVhXAkFjfDTUb5lJWit6Lg7rNEtK2uUV1aAIG/42UN94ex4IIgH6
-	 k1uNL9x6+JJJLRqB+0sDKvqrGXYrJlyO2bvImh0ZiHichJ3EdTq8HXD0LqYBKCDLlIOFE
-	 LNcq0tTW38RPJxLoFMQH5TPnVb/1dvULlZMeV3WGR9qkXC4xWS8tZZxagNFria8fEv9F5
-	 rtqhr5dRDHvZ8UWfROjxQye7k8ALnQVR0x2ytO1Op0zcOFtZrXBv58eynuSGJVNPX3eXx
-	 2zBMOtuKCCIIJaa4Uz9zJvwsg+UnRedXtvAOqpznF3E1k8i7isebb0j4/G+mMYKNaEA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=InhjEDQu;
-	arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794412623;
+	b=1zzGAYYMKR+O3sSWvMZjCtgAw5+wNQ77e9jV2+SRHejxAIr4PaZ4Dg49C6Cu/4PO1rXm
+	 2TGLyA23VwQlT+37WKQt54vlXCbhbvFumi/0189JHjeC6DUg7lttN4+LqUqMSpjJuEN5B
+	 PIwz/PhGcwSSIfCa6JklFdmKq/67BAjPa/ef7w7rME4fj2/TRf9ISFO215OXUX/1wosIs
+	 oEy23rkMyWsB3uKKOEiGTTjqoJaj7w5MvaNtK3sr99J1aufYEE1MG64OdW1NI+Bqy6fkg
+	 rCvV6wa3DniSwdpuyaOn2FvzEMXlhnuXiqXUsjnWK4l6Cd0UCUMABCU7bKCLNo7Untg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794412623;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=hB3qr0XijsciFSTqEKSx+8DjTeDGtKWKa/wAKflq8fY=;
+	b=k/w1ueTCOEsuIglipdkP45rsVoRGfzShEX7PCQHSf4BeH033YG/DCCvaGYOn75rEQLRW
+	 QaFwAjMlQV62ag8GnqfQMfjYDFCO4SIPG0xcaDgt8U9DU7OdEMrzixNXNxZWTGA9uLy/Y
+	 t5Y89Oeow6hhZwbo8rhlykn6fDU7R/fnjgglVoT4SUNmmouDyrj46CelcPMuYMxMqtxAq
+	 Vo+tWhJtKjY3yfxtKICiljYIQvmho8dpcTC/UZKJGgPS+nPQ0mVbqAUZ/3HoHsI6N8SCI
+	 Jrz1bvjoig1mQM3EkQf+wLNrdnxKcl2AG8XNCNhhqyhl+ewQTP4AIjMOye/uUcPkLqw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mkz4FcqF;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200EF606A326;
-	Wed, 11 Nov 2026 15:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECADE606A32D;
+	Wed, 11 Nov 2026 15:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=InhjEDQu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FDF61F00A06;
-	Wed, 11 Nov 2026 15:20:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mkz4FcqF
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794412622;
+	b=fUqQUrQA7hB3EdmLYXkbEUjqHSMIvCaV3nHgzgjuhFJWjUAomgHQgifzLchrZaYaU3wJ
+	 BqN6KQ7uIKv5bI9RGo2ywbMJG5H+WDaNSaOCosMaNWLI3UBrb2EKCwJRTjOYnYKKw9PC8
+	 o5NoCeO5hjDfyw8oaE9PpE9A2SUigDX5dIWe46z1v7yXh8eCglqgDHp3vMpE3jKchwkkm
+	 2Re0nqdu3OYj7a3jQ/4Y7ag2a+7PoifKZppEB92Wd5nP26xdO372EXp4c+D+bg2gg7y2c
+	 aMAhzk7IcoVYxE37lQz9rmZPui+aeXjCn08Pvc5162kr+Jo04iRUwuAni20KGadjazQ==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794412622;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=hB3qr0XijsciFSTqEKSx+8DjTeDGtKWKa/wAKflq8fY=;
+	b=FQsfeBuVSmZEPuEhU9i8eglrvKEfq+HKQXPCJqfyTaVlmcSmBBEg3Po0mIip0K5XJD47
+	 PPL2LbKIz55IX1OWcax6DllxL7wgm/joOSEzX7F+/LZUJ6Z6f4vMrGqb6GVjHNSYuXzYx
+	 Dc6rwXyAVeHi237GP2+tcxJQ11Yf7h2MT05SHZDv8gTCNNvENVkF72fvQFZW9OOnhRvoo
+	 8Xws4QYtrDxAFnBeEHKCjPqmwp3G/MjdhAuDYGHfsQVqFd+zFJWZJt4DN6vQYaLcmJjqh
+	 Ct71dH0/iYbFT6OQ3peM0orNScjn8KUclXCsvdQTHq++o1VpspfF5DZNFYbK9d3XpLA==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id DBC211F00A05;
+	Wed, 11 Nov 2026 15:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794410411;
-	bh=+1DCBycizs0FNS95ffvn0ICcr0Hnn6SqaXL7oQg/o08=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=InhjEDQuH1m2P9kFzlDGdbDOOuWxtH0LsXmXH060/PyJ7WeBfoqIXupaRw9R0UyRz
-	 ra9dv2xEUke2U+I3d5CM7krrKBbqMuElQStXbHoIUKtNATdV4Ckf5+rTZL+XDSuAko
-	 oEOBdaI0eXTQWfCH/2NUq4fLFNjx82m6IvjtXAO6wg7XcUHQ3T9FNre8K/WW8iecVy
-	 S5DARJ2l3aca1RkWHb6FD0SSQHfP2kPwWC+hH/lsvICBfFdzPav72dQL8z5zPN6ozW
-	 pLfxplSiET47nbs7gxpot8ejl0R1XQCUGMB6KTd/ucQ7CwA7TK09HSCG2CkgLOfso8
-	 bXuRslVF6fzSQ==
-Date: Wed, 11 Nov 2026 16:20:02 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Hallgrimur H. Gunnarsson" <halg@google.com>, 
-	Andy Lutomirski <luto@amacapital.net>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
-	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jann Horn <jannh@google.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
-	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	containers@lists.linux.dev, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
- opt-in netns loopback
-Message-ID: <20261111-behagen-faktisch-entgegen-e2e714373895@brauner>
-References: <20261028221705.3915340-1-halg@google.com>
- <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
- <20261106-befreien-addieren-eislauf-e09212803534@brauner>
- <CALCETrWa1SBLcb5oWjqjgzZvKvCoHjmYFk=Lf5ytEM9uqm5jYA@mail.gmail.com>
- <avM41a80aig2de-R@google.com>
+	s=k20260515; t=1794412622;
+	bh=hB3qr0XijsciFSTqEKSx+8DjTeDGtKWKa/wAKflq8fY=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=mkz4FcqFfpaNw9TRp2Sal4Nhd6pwXiiuNOHTyhIVf8qIc8lHZSjZoEQHbsS6Oy0SL
+	 7krBZQI+qkM0GiBlbuG1ff2NWyvFYD7B2hL1eSSVAC50zESQTJcNsLIWNNFw3l7KT9
+	 Y2Dkcu8Cp18ky8LQqAbN31JAjr30XaXpNI4C3aHLK/7rhWfFPvrvUt40PtnacZALff
+	 o+OxKa/IHkL6Bcbtq7kP+dLIqjFszZnAnQR5XtHMeLYyAIIEja6EfVxdL6pk2zvUd5
+	 RLu+hbALuOjIYBghRKeBbqsOSAOa3JAHWCZeBx0X0SyTcB1UBPEBAb5pV5AQgAb7tT
+	 b25difc71pTiw==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 32F8548F87;
+	Wed, 11 Nov 2026 15:57:01 +0000 (UTC)
+From: Florian Bauckholt via B4 Relay <devnull+florian.bauckholt.cispa.de@kernel.org>
+Subject: [PATCH 0/2] KEYS: two fixes for the asymmetric keyctl operations
+Date: Wed, 11 Nov 2026 16:56:06 +0100
+Message-Id: <20261111-keyctl-pkey-fixes-v1-0-934ebaa267a7@cispa.de>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -72,130 +83,72 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <avM41a80aig2de-R@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzNDINDNTq1MLsnRLQDSummZFanFukZmxqYWiRbmBuZJZkpAfQVFqWAJoLb
+ oWAi/uDQpKzW5BGSQUm0tAM4iKAB1AAAA
+X-Change-ID: 20261111-keyctl-pkey-fixes-26358a8707b6
+To: David Howells <dhowells@redhat.com>, 
+ Jarkko Sakkinen <jarkko@kernel.org>, Lukas Wunner <lukas@wunner.de>, 
+ Ignat Korchagin <ignat@linux.win>, Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Hui Peng <benquike@gmail.com>, 
+ keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Florian Bauckholt <florian.bauckholt@cispa.de>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794412620; l=1414;
+ i=florian.bauckholt@cispa.de; s=20261105; h=from:subject:message-id;
+ bh=GOMrVRBSeE8hLfYs6YtkMRfH5HXSdleUYoeN7mchAzM=;
+ b=ttCpoRZ+CbmvpkYf413TemwqzcVJRwcmDQFBw0RzMU4Y567p7HmCNsBTbuz39K5A+kzj5pEPC
+ UY6g6KZOvd/CwiN08BuJKpNjqRuza+FpOi7QwafT0wnivIQ2G0SvzMu
+X-Developer-Key: i=florian.bauckholt@cispa.de; a=ed25519;
+ pk=n9klXQ+dI45FWy0qWLrGpQfXU5ylIA0SN+uWSmOx3ok=
+X-Endpoint-Received: by B4 Relay for florian.bauckholt@cispa.de/20261105
+ with auth_id=1420
+X-Original-From: Florian Bauckholt <florian.bauckholt@cispa.de>
+Reply-To: florian.bauckholt@cispa.de
 
-On Tue, Nov 10, 2026 at 03:31:33PM +0000, Hallgrimur H. Gunnarsson wrote:
-> If we drop CLONE_NEWNET_LOOPBACK / UNSHARE_NEWNET_LOOPBACK from this
-> series and handle loopback separately, do you think the per-userns
-> bounding set is a reasonable approach for withholding capabilities
-> (e.g. CAP_NET_ADMIN and CAP_NET_RAW) from unprivileged userns, or
-> would you prefer a different mechanism?
+Hi,
 
-Seems ok to me.
+two small fixes for KEYCTL_PKEY_VERIFY and KEYCTL_PKEY_DECRYPT that I
+ran into while doing differential testing of crypto implementations
+with the kernel hooked up via UML:
 
-> To address the concern about the number of moving parts, I am also
-> happy to simplify the control interfaces. If we decide a per-task
-> securebit is the cleanest way to drive this configuration for both
-> single-deep and nested cases, we could focus on that and drop the
-> clone3() and sysctl from this series entirely, or only expose whatever
-> subset you prefer.
+Patch 1 fixes a regression from commit cb481e59ea6c ("KEYS: fix overflow
+in keyctl_pkey_params_get_2()"), which was tagged for stable:
+KEYCTL_PKEY_VERIFY ignores the signature length passed by the caller.
+It also is a prerequisite for making the x962 ECDSA template reject
+signatures that are not DER-encoded, which I'm posting separately to
+linux-crypto.
 
-Just a note on the essay I cut off. I really object to any arguments
-that amount to "it's too much work" propped up by a few thin arguments
-sprinkled in such as rtnetlink.
+Patch 2 fixes PKCS#1 decryption of an empty message returning the
+ciphertext.
 
-I also reject any arguments that amount to underscoping and overscoping
-of the new capability. The scope is clear: empty netns with brought up
-loop device.
+Both changes were part of a patch posted by Hui Peng in September that
+did not get a reply [1]. That patch also changed the out_len checks in
+keyctl_pkey_params_get_2(), which is not included here.
 
-I'm 180 patches deep into fixing procfs and 41 patches deep into
-preventing loop devices from abuse. Either we do the work and get
-something better or we do the same thing we've always done and hope we
-end up happily ever after.
+Thanks!
 
-But again, I'm more focussed on cells so here's what I find acceptable:
+[1] https://lore.kernel.org/all/20260919221742.3709658-1-benquike@gmail.com/
 
-I'd rather go back to what Jonathan proposed in 2024 (cf. [1]). A
-per-task userns capability mask. Serge acked the core of it back
-then. It's at least generic and not just the single securebit capability
-thing. And we'd burn a new bit for every capability that turns out to be
-a problem later.
+---
+Florian Bauckholt (2):
+      KEYS: fix signature length passed to KEYCTL_PKEY_VERIFY
+      KEYS: asymmetric: Fix PKCS#1 decryption of an empty message
 
-Jonathan's version had holes though. The restriction only lived in the
-task's creds so the owner rule and setns() blew this up. So it needs to
-be combined with your per-namespace set. Roughly:
+ crypto/asymmetric_keys/public_key.c | 6 +++---
+ security/keys/keyctl_pkey.c         | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261111-keyctl-pkey-fixes-26358a8707b6
 
-* every task carries a mask, cred->cap_userns, full by default
-  fork, exec, setuid and entering a namespace never change it
-* a new user namespace records
+Best regards,
+--  
+Florian Bauckholt <florian.bauckholt@cispa.de>
 
-        ns->cap_bset = parent->cap_bset &
-                       (cred->cap_userns | cred->cap_permitted);
 
-  once at creation and never changes it again => it's monotonic downwards
-* the creator gets ns->cap_bset instead of CAP_FULL_SET
-* a task that setns()es in later gets
-  ns->cap_bset & (cred->cap_userns | cred->cap_permitted)
-* the owner rule in cap_capable_helper() grants exactly what entering
-  would and otherwise falls through to what the owner has
-
-So caps a task actually has always count as allowed
-=> should check Andy's "only restrict creators that don't have
-   CAP_NET_ADMIN themselves" per capability.
-
-   This amounts to a host-wide default without a sysctl.
-   PID 1 drops CAP_NET_ADMIN and CAP_NET_RAW from its own mask at boot
-   and everything inherits that.
-
-   Root, sudo and setuid-root binaries have those capabilities so
-   nothing changes for them. A regular user doesn't and so their user
-   namespaces come without CAP_NET_ADMIN and CAP_NET_RAW.
-
-   This also covers newgrp, su and sudo -u shells which is where
-   resetting the mask on setuid exec (Which was raised by Serge in the
-   other thread.).
-
-* Root in a container has caps as well so for containers the exemption
-  would be wrong.
-
-  So here we need a a lockable SECURE_NO_USERNS_CAP_RAISE bit thingy.
-  This turns off the exemption and prevents raising the mask.
-
-  Docker lowers the mask, sets and locks the bit, and
-  unshare(CLONE_NEWUSER) in the container doesn't hand out CAP_NET_ADMIN
-  anymore.
-  
-  => no parent user namespace needed for the single-nesting case.
-
-  So a container with CAP_NET_ADMIN lowers its mask before it spawns the
-  nested container => should cover your (3) case.
-
-uAPI is a prctl modeled on the ambient capset:
-* PR_CAP_USERNS with IS_SET, RAISE, LOWER and CLEAR_ALL
-* lowering needs no_new_privs or CAP_SETPCAP
-
-=> handles sendmail-style problem Serge raised on Jonathan's series.
-
-* a new CapUns: line in /proc/<pid>/status
-* new audit mask in AUDIT_CAPSET record
-
-Raising needs the capability in the permitted set.
-
-Fwiw, neither series handles ptrace. A task with a restricted mask can
-attach a less restricted task of the same uid and then make it create
-the namespace.
-
-cap_ptrace_access_check() only compares permitted sets so far. So for
-PTRACE_MODE_ATTACH the tracer must be able to get whatever the tracee
-could get through user namespaces. A tracer that has CAP_SYS_PTRACE
-in its own creds can still attach to anything. But the CAP_SYS_PTRACE
-the caller gets over a user namespace just because it owns it must not
-count. Otherwise a restricted task could attach to a less restricted
-task inside a namespace it owns.
-
-That gets rid of the sysctl, the clone3() field and the clone flags,
-doesn't need a new capability bit, and nothing changes for anyone who
-doesn't opt in, I think.
-
-And that loopback thing should be its own series. Not as an nsfs ioctl
-though. All nsfs ioctls only report namespace state and I'd like to keep
-it that way.
-
-Pipe this through an LLM and make sure it makes sense and covers all
-holes.
-
-Thoughts?
-
-[1]: https://lore.kernel.org/all/20240609104355.442002-1-jcalmels@3xx0.net
