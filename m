@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794415710;
-	b=BLXhtKz3MFmKlI6C6Lz1aVup4qtOOh37vTpIrPNK/yIKuJXLO1qutUMamBybkBLJRPc6
-	 RA4GtQLCjhKNWJWnLG0nZTZ06MZNnITzH522PALSTpFMc90S60osNmvLqG2TxnY3mWS0y
-	 B1jCkof8vMefYgunih1/TVGKwBQKONA+0cJiDM7DE4mO92dGS6hi1jt+SVIddpt3WE4pn
-	 CxFnCIy8atSPGgkJUWJndcKgiTTO00/phEevHXShiWYTQGk5vfw08zOdz/tBW0K3wcVpt
-	 iN+VoUaxE6g1bN9uHRyfzIQBKnRr5gUpeZCDcor8SAiG+d7s7dEUjXuhf4ky0bfM9WA==
+	t=1794416307;
+	b=s3BmxNolP3C8af6XPXK0l+xjCoTMlJMS4WTNFq/CRJJEbCfYoZgJGVdAEeUjwbtzIJBa
+	 hU/ZHI/WD36SR3w5G6AP8p5iKyLTmJ6XCPQsn8lvfeQKqp0Thw4xKStmez7vDdzh7bqZ2
+	 f88VS1Su80uV8rOm9lFu5uj2YUYEiCIQ1w+En2KAcji6E0ekX7rDhmropPaXRWlSONpfc
+	 uYcNJaElB/bl+nXSfxy/I2cvUKenpnlJZJA2NOASf+aooWq5E1rYeSb/YNYmtpYs9QBCA
+	 EvekAwq3NERJfreCTO2xRniwpv5o4coDdFh5TJivbPLYEADtkFwFBLacnfOw37IwzNw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794415710;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794416307;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=vfosLBvh3I/3CmAqO8BeBnJa4BveShcERCHhki8Iw0g=;
-	b=CwebT0AOMlE68zO4NNC/2EzQOZCjwKn/cFyje7CzqFr8pR80faRdxgaGnRJGqcenKjSE
-	 UrpR6KSLnt1aSuDddixJkgHh/OeP86us7yXa0xXVDKqpRFawtWTCsD6mlCPun73WuJt+X
-	 3FWIlvtqsyIaclj8iJdetQrRBvGGl7WMfdgCXKivCXNAovqVO0ywyt/9N8TFL89drunnk
-	 uq4zmhXQ05kU8SWch4YPXO/wJKVasFRHd2LVutqYK2DumJMxqw6bIrFF8TOdz5uWybwgC
-	 ROp/DD4mb9FuSP71jd7frS9WlBoZgb3UKaKZNMHXTxsaD0ANTDP7BlS8pTV1EaSPGDA==
+	bh=3LEM+p8WzV/9ORDagzxLgjYVvMVxrEaCuYPZ0QwoRYg=;
+	b=0r1yJdpJY4P9H0fzaqgeSjLhetU0s3SGBF8Z85UzjdA1t957XozokBTol3IXjYzyR9aN
+	 uZJsBBS15y1Lq9YFVEjGZq8KCg0X3Hi8FjpRggvquWi9D+qLNVOnnpuu1f2ZVC9YIDz6A
+	 lp5681B5icg5WrH/1w0KlLAK7ov0k26GiHy1PXZ0aK4iVeB9xDbXZIE4udU7f5auGaAoM
+	 7RRMB/TaO8onTlHz5XnFbAMBBQek9ZlksxVvswcQ0pwXhSmmRoNfTWq+6Ia2zviENTE2/
+	 5DV6mPuWzdSRlJs/I2BxswOyVtySgCq2u7vf1rqSA1jiQ1PCPEzihq+KvsETpepwW6Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hXL8AT7A;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=neNgJORa;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74564606A885
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2026 16:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FCC606A881
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2026 16:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hXL8AT7A
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA34F1F00A06
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2026 16:48:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=neNgJORa
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA6971F00A08
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2026 16:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794415710;
-	bh=vfosLBvh3I/3CmAqO8BeBnJa4BveShcERCHhki8Iw0g=;
+	s=k20260515; t=1794416306;
+	bh=3LEM+p8WzV/9ORDagzxLgjYVvMVxrEaCuYPZ0QwoRYg=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=hXL8AT7APEGSxLSYHuCKNy2pjGrPPSnwuXsXmxmNjr2sx1vAzN4o2xz4UWHKeD4Tu
-	 vztj3YMbZH6r34XN4himWq/NxSgvcMnMgYBoCDZU8Q/oT4ddDhXntSP7BYIXk/AoDT
-	 JOTUfYfMDQqXddxvXloqWGPrMRk15sKI7cbqejv69bgk5cMXdWCDoRhkwYVieFD4bG
-	 Xmo9ZhgcW61i2QBzhqdLoQGFY/m5F9wWv0Th1T87uUTsk6acgqkWypfujHAnLkvGUG
-	 8G79usNX58tur7PaA12esOde/8ccbFVWfyNy/UyuC/Yb5CJnVFfbFioKoqY+SLTf9u
-	 ZGE1bThNifuAA==
-Message-ID: <sashiko-outbox-209325@kernel.org>
+	b=neNgJORaAb+/rloRVWXG4ne62D9Te4tKje76nZyneEReQbAj3TDjNq3+3N2uQwLob
+	 3KKx1llfB5k6RJuPWHXImgTW1etAeKwaODCo0pIfBBiEas4ZXtQhmojQSU9PwGiQYT
+	 lEbVoJDOtBskd7Uo4Lxz6P9KQj64B/K9jFI91TMkpgMLFNIf32uEo0VucNVyYhKnPY
+	 Pw/LItBbJlQh21fugy/s20LnOYX0OrhfQSeeAop0xWR89e0ON9gVbs6sR7yoGRi7cq
+	 RjAoawP6N7I7ixHtWhlEdf7aLeZzA2b9g3IE0JPKahbB0X7TjmuyY/5PhXPJWYGNVZ
+	 e+IQcH++AKRZg==
+Message-ID: <sashiko-outbox-209349@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] KEYS: asymmetric: Fix PKCS#1 decryption of an empty
- message
+Subject: Re: [PATCH] selftests/capabilities: test_execve: drop supplementary
+ groups
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261111-keyctl-pkey-fixes-v1-2-934ebaa267a7@cispa.de>
-References: <20261111-keyctl-pkey-fixes-v1-0-934ebaa267a7@cispa.de>
- <20261111-keyctl-pkey-fixes-v1-2-934ebaa267a7@cispa.de>
+In-Reply-To: <20261111164645.260593-1-lylin1023@gmail.com>
+References: <20261111164645.260593-1-lylin1023@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Nov 2026 16:48:29 +0000
+Date: Wed, 11 Nov 2026 16:58:26 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,37 +59,33 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> From: Florian Bauckholt <florian.bauckholt@cispa.de>
+> When run as root, test_execve keeps the caller's supplementary groups,
+> which usually include group 0.
 >=20
-> KEYCTL_PKEY_DECRYPT with enc=3Dpkcs1 on a valid ciphertext of an empty
-> message returns the key size instead of 0, and the output buffer is
-> filled with the ciphertext.
+> Since commit 337490f0007f ("exec: Correct the permission check for
+> unsafe exec"), a setgid exec is not an id change if the new egid is
+> already one of the caller's groups. As group 0 is one of them, the
+> ambient capabilities survive exec of the sgidroot helper, and two
+> cases fail:
 >=20
-> crypto_akcipher_sync_encrypt() returns 0 on success, so
-> software_key_eds_op() maps a result of 0 to crypto_akcipher_maxsize().
-> The mapping is applied to decryption as well, but
-> crypto_akcipher_sync_decrypt() returns the length of the plaintext,
-> which is 0 for an empty message. By then crypto_akcipher_sync_post()
-> has copied its scratch buffer to the output. pkcs1pad copied nothing
-> into that buffer, so it still holds the ciphertext.
+>   # [RUN]	Root, gid !=3D 0, +ia, sgidroot =3D> eip
+>   # Wrong ambient state (AT_SECURE is set)
+>   # [RUN]	Non-root +ia, sgidroot =3D> i
+>   # Wrong effective state (AT_SECURE is set)
 >=20
-> Only the caller's own input is returned, so nothing is disclosed, and
-> messages that are not empty are decrypted correctly. An empty message
-> is valid, though: RFC 8017 section 7.2 only limits the message length
-> to k - 11 octets.
+> Clear the supplementary groups before switching UIDs.
 >=20
-> Apply the mapping to encryption only.
+> An AI coding assistant (Claude) was used to analyze the failure and to
+> draft the fix and this changelog. Tested on v7.4-rc2: as root, all 21
+> cases now pass (2 failed before); the unprivileged user namespace path
+> is unchanged.
 >=20
-> Fixes: 63ba4d67594a ("KEYS: asymmetric: Use new crypto interface without =
-scatterlists")
-> Cc: stable@vger.kernel.org # v6.5+
-> Link: https://lore.kernel.org/all/20260919221742.3709658-1-benquike@gmail=
-.com/
-> Signed-off-by: Florian Bauckholt <florian.bauckholt@cispa.de>
+> Fixes: 337490f0007f ("exec: Correct the permission check for unsafe exec")
+> Signed-off-by: Kurt Lin <lylin1023@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261111-keyctl-pke=
-y-fixes-v1-0-934ebaa267a7@cispa.de?part=3D2
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261111164645.2605=
+93-1-lylin1023@gmail.com?part=3D1
 
