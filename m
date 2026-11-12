@@ -1,90 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.50
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794523589;
-	b=Fk2VWG9not6mVty6Fl7rat+uzbx8AOb5pX5+l0gEbvpXGRApetTQtUIU5wLRhsvpEibZ
-	 o2v7hVOHzXz+Qk0VEmiBpXB/juLBoi7yAoi84FCEvTztgEn+xchqH4PyFJDJRt44eAm1q
-	 KPvWd4VtOkgar5ECO1vgMpA7OunuR64lXcjRpqHymVWj44AnvAbW8Ou/XmsfWrApuDpf2
-	 84BsMul+LBteZyOkd9KLmNCiquVbCsZL9NiKkRavAGRA/YT71xufmmrYAgkKO+chMhxKK
-	 fpHn93QU4rkr34Y+H5LkAMdKcfVh96M7fK/47Dt5jpVKwWQ9iGa8kbmGGwF72ttxU6g==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794523589;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.44
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794524445;
+	b=JvfJm2Cxtw7QwCi9zF23PCg2+0PmIePRwrACFwvlMOZdVC/m6H+whLa0B9urDV44P7pB
+	 41enj8PJ19HhWfhM8z4x7fB3JwddorYLbTHIf8pj1x7+W+ov/qLO15inN2ffKnvzzmbf8
+	 rOGfRFXiIn0h9rwno4OM6El3uf0jyiFXn5zTbsscr8hZHrmjd60Nb2hcAhfFXL2eKVn+F
+	 e62bqbkEckB3J+jeb6CVqH5CbujOGoHV0Bn9DrDl9ZmgzXkPhO3kBQ1EEN4r+PQf0jj1I
+	 /llhe7p9sOvKpxdN2JencfBdfNafccklGvPuSQ7NZsa6vss5z8zYuwDNk+9iXHcw7qA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794524445;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Content-Disposition:Message-ID:User-Agent;
-	bh=Qp/CYO9Y9QR0dXHUfw6yCZHzw+ctBhl7YE1TC+1vOS8=;
-	b=uKW8h+MwZeBKyatWAeSePlkzkRKMpnLwWt2ln+OExfExR6KMF4evgEIdyUNMjc7cu2lT
-	 x5XRThrLxrDwFx/NEm0/DyNt1sbfHu+R6a98Bs9+3JlRfIdHX8YfxieZThpIKlxK6UhsJ
-	 kniT0oRyFifDtBUWEXxm8B7XV8uXKM0G8pnDro/ijV897HX/gt06NR0m+yqYSAMaFxUrA
-	 XkoVvZ/6gQCAv6NUmxB4sp9VOKju1K1aok4Vq2oJZZCCAzZgLpxU9jl4uwZ9dhEkEO5Gc
-	 LLwHB8NhloTW1vFJ7+B8Gz2AVVcS9zyytS+8gWG34NvVOhvJdzsHuAUOqoEqNeZj4fA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chrisdown.name;
-	spf=pass smtp.mailfrom=chrisdown.name;
-	dkim=pass header.d=chrisdown.name header.i=@chrisdown.name header.a=rsa-sha256 header.s=google header.b=ebkrXilb;
-	arc=none smtp.remote-ip=209.85.221.50
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=zJauvZE1zf4JwsOOkP65TpK/2FnkZR8UcBkJu4VCs5g=;
+	b=qnWln3Kx2ab94EPsWUcQB7zrZXroDsaJx+DOyy7H4DITQBcrfj8XM0feMN4ou0ECweBQ
+	 DrNrtgRSQ4bK1D0OfL+gpjviIgPqrG2bArJK5s5lubIeYKQsmgPjxOCqaB3C5T7Q6/h8+
+	 6v9L6RDvls+ipomp3esLt7Q9q/J9QYJaXugTGrMwOE7RkeOibXriboGpSZ1EpUNYcbjzV
+	 mpBcpUcNAvw3q+Ch7FiZvuGYzMemGNnZnEbUHXK4vWI3836LTJKRzSfoD7ln5YPEn0PYA
+	 E2jKuq/I2blXaT/g+8kfoCZr4V3buXopKc4R4UkcNlxKaIoKaCKOPJGpudLnE1Okb/g==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=sjDNXoB6;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.44
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FADB606A32D
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 22:46:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FADB606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BA5606A887
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 23:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 22BA5606A887
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.a=rsa-sha256 header.s=google header.b=ebkrXilb
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-492f563d1c6so158084f8f.3
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 14:46:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=sjDNXoB6
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4919a880834so139109f8f.0
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 15:00:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794524443; cv=none;
+        d=google.com; s=arc-20260327;
+        b=A0NhDB8uN+a7f0IhL8lD82KbX//gmdPP/v8nRUx7EwJC5BzBKrk6vCbXoCXsjczhiD
+         9RxR6F2C3frxid65e1Ym6p0727L+07xw1q6LBVcXG22p3WqLI5QfNW6NNhGO/1SshpO7
+         Kbo8toNeYPcletLPmvnNhOQHe9GYePqhSB7fXvzpt5J6t9PZYMI+366A80Dzi/Z4fLcm
+         EIckEx+wSOPWNjSBXIrNa3xowRw9BfCRQGzpSqg4GVfbvAgmOuVnhkizmX5WiOFdu2Nc
+         +EhCxrb1EOAQxM2xpilVQGV7+7RuNxEI9x5WwTNVLNwEdP5h/uBS9548MNpxrCAKl1x1
+         D1EQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=zJauvZE1zf4JwsOOkP65TpK/2FnkZR8UcBkJu4VCs5g=;
+        fh=3XVRsAIqSCi6RApF6wPoymWBL7SzFFY6Nkm4TrL541U=;
+        b=l63OIbNZUwa4Ua9cu+3vKHlk0YPURAEHvixNbrAMxcLw59vFxqwKIuUkWPJV4QB7PE
+         HrWXrf7ljC+1Wks3Bo1h8GVAdpNY0BeKGYvAKePpwaPEQJt65WRodyX0nePbFqJKGnhh
+         sNKQft8NBYiT+gwe8Ja7Ca7s6YGNg2t6yoSoyL6Za/HDuzJjngy0Vc6pruQMsBrMiVUj
+         vaKD9Eodory0CKVMdvW550BQ/YKUNL+Q47jZn/aYO4SabrX+YQy54NrwlGudHXXT8wQE
+         Z/yzcFEoldCCFMHTo49KiTtPiAo6oPBQtIR2rEfuxHDIwCz+xypbr0MabkeiskveTkfq
+         MKcw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google; t=1794523587; x=1795128387; darn=vger.kernel.org;
-        h=user-agent:message-id:content-disposition:content-type:mime-version
-         :references:in-reply-to:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1794524443; x=1795129243; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=Qp/CYO9Y9QR0dXHUfw6yCZHzw+ctBhl7YE1TC+1vOS8=;
-        b=ebkrXilbj9spVaHW9PDW3KQNpqmqI4+4NOB68oQOLq+07vtNzaBA8OzPAUS9CcsePT
-         8Kjg8BdAuCo3mV77DJ+j0I94WcjCRoV9fZV+wxCYZ49UIFzTMPcPTgg29Atqgy9WVWs2
-         OlA64TH/oKxQCTcIaOXxFG9ghWOzXAc97hNLU=
+        bh=zJauvZE1zf4JwsOOkP65TpK/2FnkZR8UcBkJu4VCs5g=;
+        b=sjDNXoB6zcBiHEPu0PrEs2iYorJls7T5etmbz/NfEcTCj55pFun2I3zOD+NvijjUFq
+         D8yiW6Uiq2zT4drRfzL9g5WwSV4ljjPc29uE6wvdNUnHImRqP16nNPnTPWyBCkQzNLHV
+         q5PDapA0AchXZA16ia4F+ggMZ2/zrtRRYTKgp9xjWIRjxGMGoi7faYMHEmlYnUi3aIXa
+         9VxSOqG1BBDzjKyfVJz5o0RTpyFmjH2JMc1a+HIKFSXSXOvPNDQlDazqg0WXpcHJBQhO
+         lhWT9ZptbmEspFpTbPm/7iixxbpoXNroTtUoAf3riQTFMIPr1RwbRNSRLOrkDGXrAmiT
+         onpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794523587; x=1795128387;
-        h=user-agent:message-id:content-disposition:content-type:mime-version
-         :references:in-reply-to:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1794524443; x=1795129243;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Qp/CYO9Y9QR0dXHUfw6yCZHzw+ctBhl7YE1TC+1vOS8=;
-        b=b1PyzZQGmxvfVpDLjKnrynJw7aNhi8xU1u3fLdU8m53VQUdIluoRr5n9DersM0VOPt
-         SS+joXwxCRER7GjKC9cL9xagLSGel6Z3ZqWNKyLnOWvWo7islx+6fQfQS1dvxbc6S/Me
-         D/NILXYE52hEuQNB7/cvfR2NPkd3DElb7i6wk+QXgtBR216g19s71txRfq3yrWGfT30D
-         lFm97paIpK3WQckOqsSDRnBmlx1scBaOUIufMaF5t1moRkGqTO81GaB5W1aN773mfavm
-         85ywQaYIP5lpHbFDuU3V6rnAqPQn3rzw2xKkoDNnhyFg4r6Mz8ZgR7KX9/0cqdg0a8mh
-         PR+w==
-X-Forwarded-Encrypted: i=1; AL+hErFAELYAcX+cUh6tli+KjV/rSSrSO4+AGByemwt115tAo4Pi04BQck8Zwk1apTPg5RnIu1s7i1Fj4MYsBPLXqzb74vmdMCs=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9q+a4YvCWLpXyBRkgjbjeeL1J4w/ixi6kep1VsNhczBKg0Jc8Q
-	w/u7O1HVkJOg8D7I9u/w8e4kDlhJx87zF8MBLukIQWsGLZorT2RnvWvDE44KNK1Arlc=
-X-Gm-Gg: AYBFou2SdjdICPIyDxw1h2nyFYZ+jcNJ2bbvEN1x5PMSTjWtJWa4AGZ8qsmNgmS/0M7
-	kaDlvR47Z7c4+6D1vZgsB34Y9To2xC0g7yxLelAPPKjUKtw817bmM9SG5EA+zrrH18tdw1U7kde
-	TVUMXb8erTGJ8KtOvdY7lJpLighPhPZpcoymwdZPEnN85duHgoYcudXk2dRFP2eYagXBaDdv8mg
-	IgyJQv8Ur9dvU3fK0dkYStrIQ106xB0654kPHkVceDfW3hdw7g28KN7hbM8OEEKr9c4ZEuOHL3G
-	qJ5Y19HHMHHgO0wm91QEML8gMNF7lKqjcvo7T2Vbva43JcXp6Zt56XtrRpEJkKUXYLd0FKdXjQ4
-	I1B3feHzpJrWMsG3e1Jz4MhlPqPRCIPHwisvL1hUKKV4TMeoTR1PNE1kNizg+eZ670Atw/lFKyL
-	rosjeDhO7MFX1eBJPGjwjFwZiaaYMxRTK0ONBeOX/gID40tRGKWBQivonRXTDuCyHOBcRUume1Q
-	jq2WNrckQv8eX4ygN8nDlt7JegsjMNGdeoyf1bOpvJwiKF8FT2oMHZlq3561J1RDLWHoXi9Bnhz
-	ZQpAZrokq55/gY7USm4B+W+kBvkgj22iEdKwbiqeHU35FidGTJffwd2sAjipcKLGvluA+ZN8kie
-	vlkNf9nG4rDx9AqzGl4zUpjYxFX8cyVHiBxI4fBMdASx2mnmQ4AnleeQSDdQaStKUZINFRnQdOr
-	5PZmR2y3+ReFMZJie4Ju62mfa6PFVvYGXjkZBdrUClyvLzrHDF1m5PUEaMJA==
-X-Received: by 2002:a05:6000:2087:b0:488:57ad:d5c8 with SMTP id ffacd0b85a97d-49c6d453dbbmr2169176f8f.3.1794523587286;
-        Thu, 12 Nov 2026 14:46:27 -0800 (PST)
-Received: from [172.18.0.2] ([199.201.64.8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c6020bb0fsm1504046f8f.34.2026.11.12.14.46.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 14:46:26 -0800 (PST)
-Date: Thu, 12 Nov 2026 14:46:15 -0800
-From: Chris Down <chris@chrisdown.name>
-To: Aaron Tomlin <atomlin@atomlin.com>
-Cc: tsbogend@alpha.franken.de, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, stephen.smalley.work@gmail.com, casey@schaufler-ca.com, longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, chenridong@huaweicloud.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, kprateek.nayak@amd.com, omosnace@redhat.com, kees@kernel.org, neelx@suse.com, sean@ashe.io, chjohnst@gmail.com, steve@abita.co, mproche@gmail.com, nick.lange@gmail.com, cgroups@vger.kernel.org, linux-mips@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] security: Expand task_setscheduler LSM hook
-In-Reply-To: <20261105172210.76706-1-atomlin@atomlin.com>
-References: <20261105172210.76706-1-atomlin@atomlin.com>
+        bh=zJauvZE1zf4JwsOOkP65TpK/2FnkZR8UcBkJu4VCs5g=;
+        b=kc2hckkGEx7DhGJqJ2Hw5Fm8jlOjo3bqORwZqNMiBYpp3yZEq2B5+DkxCA1vIaSnaY
+         g3WozB+KYjvxe/caRSuUJpFkXhNIlfVjbVJzj2ClRvVlRWCOni+V9AwMfXaARWfHkdzs
+         Q1PWcg2wxrciOBbOdkqQOo/Ryb91Iq+D9bKDGJYeFCsqRhJJTBr2INOLETGa+fv/vQLR
+         wWKGYJEw2mJT19kly5WREbVEbTk6Kvd6U/n7tcvMXi8BWgjhGiMsKoW0cZEqNSYH5ReW
+         ur/Pz2Bfbhr+pyTv+WMkvwIaqUZc6WYOhODNcCmlEQ6GTkW0AoNPibDr4pLcd4blPXpo
+         5S6A==
+X-Forwarded-Encrypted: i=1; AL+hErE+/KGR1GPhP44tGYGrGmVjpg86qZps/sMOMuqkjwPHSnYUgh+sV9b9SPg9vMn3yMj8r9vEUXAPskBjoaBjyKBhuyQP7j8=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8L4Vx7GDlaenk6iKZ3kqzD66a1H8nUVK77Wk0H5hiw/56Htiu1
+	GQ4mSEX5yqxL21xLO0jZaEEN2zSxR3MhWD0Yd1Pf9iWm1BjeGk688stIBsXi7WueiO2rFdzOPR+
+	v2DMN/6fvJvygA+XyBBz5m4/JypFEG3k=
+X-Gm-Gg: AYBFou2fKBit+Jv/oFvBHmrU3v81OqIq9/UQ7o/lfURc5tmfSPOuaRsotpn8e/4irSW
+	PYiCLGdpxccKWyuagDcPpWW9JgO3FjS5pza0SVH+kM2q8I0U1wY4V8vUeSohOORts4yyF1csCI1
+	1nCKvbNNvMgnGBuceCu5D8+wnVYfWR0NFG/oBknQLmAyKj5M6dr3IVAzevkhYX7gzTF2fFyT0Xa
+	eTmN2+n26wdQzidnHGX6bRR/In7JFeXDgg7faCiBDEdUSXGGc/br4SuvOI+8/Kaa7//RQyqkblK
+	k0uR10hBLeSze8OEy0+e9x1IMYkIVeCuwk4ZlsCwA+Fa4nAv8ahNzIi1NCDxJ43gwY4zZgdr7ZF
+	teSlT6AYVukEGVbDOgtV+XSvepJovWHzd1SAHHbUlEDPstavWhseSwqVYuEA1dte4pU3k9MVBDq
+	ystZQUt/wxxQOUFJVtLZ6XC1hkMqRH+HdtbtnI97Uyr7Q12/J474jAVSUa
+X-Received: by 2002:a05:6000:4916:b0:48e:4300:c6d8 with SMTP id
+ ffacd0b85a97d-49c723fc072mr1488764f8f.35.1794524443278; Thu, 12 Nov 2026
+ 15:00:43 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -94,97 +105,106 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Message-ID: <20261112144615.df72a3bef0a52f3c@chrisdown.name>
-User-Agent: Mutt/2.4.3 (cc9e3943) (2026-10-09)
+References: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com>
+ <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com> <CAHC9VhR9sjunJRnM9gy-BkBZkapQTrr8a8FtmaK7JkAmUqTrLA@mail.gmail.com>
+ <CAEf4BzZKmn6g0SK8OddjKFj_vAmZFvpZv32Hs_S+GHgT7VNfrg@mail.gmail.com> <9d6bdc31-e57c-4187-be78-29d82471f710@app.fastmail.com>
+In-Reply-To: <9d6bdc31-e57c-4187-be78-29d82471f710@app.fastmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Nov 2026 15:00:32 -0800
+X-Gm-Features: AclHuK-Kr9JdTGalkEgmmfAfdsFcOEOJ-nbAKjHr2jm9SnDPJTrEN9CPnUV0p4o
+Message-ID: <CAEf4Bzb+oYDqO20v4YbJ45wdtcGgJT3xVse822P+=oA7fpFAOA@mail.gmail.com>
+Subject: Re: [BUG] bpf, lsm: new first argument in 7.4 inode hooks silently
+ breaks BPF LSMs
+To: roblabla <linux@roblab.la>
+Cc: Paul Moore <paul@paul-moore.com>, Daan De Meyer <daan@amutable.com>, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul.mabileau@harfanglab.fr, 
+	linux-kernel@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Aaron,
+On Mon, Nov 9, 2026 at 7:08=E2=80=AFAM roblabla <linux@roblab.la> wrote:
+>
+> Hi,
+>
+> Thanks for the replies!
+>
+> > LSMs that need to provide a stable API must provide an abstraction
+> > layer between the LSM hook callbacks and their stable API.  The LSM
+> > framework is not responsible for the stability of individual LSM APIs.
+>
+> Understood, that lines up with my expectations. I think the biggest
+> thing here would not necessarily be stability guarantees, but rather to
+> make sure that the eBPFs fail to load when the compatibility is broken.
+> But that's probably a problem for the eBPF side, and not LSM, I assume.
+>
+> > So, in short, would it be possible to send a follow up to Daan's
+> > commit and move `struct mnt_idmap *idmap` to the end of LSM argument
+> > list?
+>
+> If this is possible, that'd be nice so that we avoid this breakage in
+> the short term, since the change isn't in a released kernel yet.
 
-Aaron Tomlin writes:
->In modern multi-tenant and real-time environments, CPU and scheduling
->isolation are critical boundaries. The inability to audit or restrict
->specific scheduling policy changes or CPU pinning requests limits the
->effectiveness of security policies, particularly when attempting to
->shield isolated or cryptographic cores from unprivileged or compromised
->tasks.
+can you please send a patch proposing that and we can continue
+discussion there? please cc me so I can follow along
 
-Peter objected to this paragraph on v3, and you said there that you would
-drop it. What you told him the patch is really for was auditing the
-affinity mask as userspace asked for it, before cpuset intersects it with
-the allowed CPUs, which seccomp can't do because the mask is behind a user
-pointer. That should be in the changelog in place of this paragraph. (I
-object to it as well. Please avoid such LLM grandiosity.)
+>
+> > Having said that, there is a way to handle this, although ugly and
+> > *everyone* using specific LSMs would need to do this on their own.
+> > Instead of using convenience BPF_PROG() macro to define BPF program,
+> > you just use raw `u64 ctx[]` access, and then cast ctx[0] to either
+> > `struct mnt_idmap *` on new kernel, or `struct dentry *` on old
+> > kernel.
+>
+> So, we already do similar tricks in the software we ship (which uses
+> various eBPF program types, not just LSM) to cover kernels 4.11 to 7.3,
+> using a mixture of CO-RE tricks similar to what you describe and
+> per-kernel builds selected at runtime.
+>
+> Here's the problem though: We ship to customers, and we don't control
+> when they upgrade their kernel relative to our agent. When the kernel
+> changes a hook signature, a program built before we could handle that
+> new version still loads fine and just reads the wrong arguments, which
+> causes some really gnarly bugs that can cause really bad breakage (such
+> as accidentally denying events that should have been allowed, often
+> resulting in machines left broken).
+>
+> So what would be really nice is a way to make eBPF code robust against
+> kernel changes such that it either works, or fails to load, but doesn't
+> do the halfway "loads but silently misbehaves". Here are two ideas that
+> have been in the back of my mind that could help solve this issue (though
+> I understand that they may be rather large changes, I'm putting them out
+> there mostly as a conversation starter):
+>
+> 1. Could libbpf/the kernel have a mismatch check on hook arguments? I
+>    understand that libbpf and the verifier don't know the types a
+>    program expects, since BPF_PROG() only casts u64s. But the macro
+>    does know the types at compile time. Could it (or an opt-in variant)
+>    record the expected prototype in the program's BTF, so that libbpf
+>    can compare it against the LSM hook's prototype in vmlinux BTF and
+>    refuse to load on a mismatch?
+>
+> 2. Since kernel BTF has parameter names for the bpf_lsm_* functions,
+>    could we maybe have CO-RE-style relocation to resolve "the argument
+>    named dentry" to the argument index at load time? This way, adding a
+>    new argument could happen anywhere in the argument list without
+>    breaking eBPFs, and removing an argument will (correctly) cause our
+>    eBPF to stop loading. It does mean the eBPF programs must provide the
+>    same argument names, but maybe that's an acceptable tradeoff?
+>
 
->This change updates all in-tree security modules (capabilities, SELinux,
->and Smack) to accommodate the new parameters mechanically, while
->providing LSMs with the necessary context to enforce strict scheduling
->and affinity policies.
+All this is not really an LSM-specific problem, it's a more general
+tracing problem. And even if we have some custom hacky "solution" for
+LSM specifically (but also see my previous replies, it's not something
+that's easy to do either in libbpf nor kernel, IMO), the same problem
+is still present for tracepoints, among other use cases.
 
-An LSM can only enforce an affinity policy through this hook if all possible
-ways of changing a task's affinity go through it, but writes to cpuset.cpus
-don't. With a BPF LSM program on this hook that rejects any mask containing
-CPU 3, sched_setaffinity() to CPU 3 gets EPERM. An unprivileged user with a
-delegated cgroup v2 subtree can still write 3 to the task's cpuset.cpus,
-though, and the task ends up on CPU 3 without the hook being called.
-cpuset_update_tasks_cpumask() just calls set_cpus_allowed_ptr() on every
-task in the cpuset.
+It basically falls on BPF users to keep track of kernel evolution in
+terms of attach points they are depending on. Luckily breakage doesn't
+happen often and usually can be worked around or be adopted to. And so
+far kernel community has been pretty understanding in terms of
+evolution of some pre-existing hooks (like scheduler tracepoint I
+mentioned before, and hopefully in this case with new argument moved
+to the end of argument list).
 
-So what this gives an LSM is visibility into sched_setaffinity() requests
-and cpuset migrations, not control over where a task runs. That may be
-enough for auditing, but the changelog shouldn't promise enforcement. It
-also looks like the kind of gap Paul meant on v3 when he asked how this
-fits into a more comprehensive approach to resource control in the LSM.
-
->-LSM_HOOK(int, 0, task_setscheduler, struct task_struct *p)
->+LSM_HOOK(int, 0, task_setscheduler, struct task_struct *p,
->+	 const struct sched_attr *attr__nullable,
->+	 const struct cpumask *in_mask__nullable)
-
-Since the BPF LSM is the only thing that reads these, please Cc
-bpf@vger.kernel.org and the BPF LSM maintainers (KP Singh and Matt
-Bobrowski) on the next version.
-
-While the __nullable annotations do what you say, and a program that
-dereferences either argument without a NULL check is rejected by the
-verifier here, there is still a problem. Existing programs on this hook
-that follow Documentation/bpf/prog_lsm.rst and pass on the previous
-program's ret now get attr in that slot. One declared as
-
-     int BPF_PROG(x, struct task_struct *p, int ret)
-
-that returns ret when it's non-zero loads and runs fine, but with this
-patch the verifier rejects it. LSM hooks aren't stable ABI, so that may
-well be fine, but the BPF folks should get to say so :-)
-
-> 		if (setsched_check) {
->-			ret = security_task_setscheduler(task);
->+			ret = security_task_setscheduler(task, NULL, cs->effective_cpus);
-
-The kerneldoc you add in security.c says @in_mask is NULL if affinity
-isn't changing, but that isn't what happens in cpuset_can_attach(). On v1
-setsched_check is always true, so moving a task between two cpusets with
-the same cpus and mems still calls the hook with the destination's
-effective_cpus. With a v1 cpuset mount I see the hook get 0xf for a move
-between two cpusets that both have cpus 0-3, and Cpus_allowed_list stays
-at 0-3. On v2 the same happens for moves where only the mems differ.
-
-The hook also can't tell this from a sched_setaffinity() call, since both
-pass a NULL attr and a mask, but here the mask is the destination cpuset's
-configuration, rather than something anyone asked to pin to. Please say
-in the kerneldoc what @in_mask means for cgroup migration and
-CLONE_INTO_CGROUP, so LSM authors don't treat it as a pinning request.
-
->+		lsm_attr.sched_policy = policy;
->+		retval = security_task_setscheduler(p, &lsm_attr, NULL);
-
-For sched_setparam() and SCHED_FLAG_KEEP_POLICY, the reset-on-fork setting
-that gets applied also comes from the task (reset_on_fork is set from
-p->sched_reset_on_fork above), but lsm_attr.sched_flags still belongs to
-the caller. On a task with SCHED_RESET_ON_FORK set, sched_setparam() reaches
-the hook with sched_flags of 0, and sched_getscheduler() still reports
-SCHED_RESET_ON_FORK afterwards. If lsm_attr is meant to show the hook what
-will be applied, SCHED_FLAG_RESET_ON_FORK should follow reset_on_fork as
-well.
-
-Chris
+> Thanks,
+> roblabla
