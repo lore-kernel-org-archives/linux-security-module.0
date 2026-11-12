@@ -1,63 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.110.109.230
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794505094;
-	b=2HCDHh7I1gvLTCWkhGfD5Hc0/vCICAr9bq3YkEXeQeGgLYKiEGbtiXbFFYuRuLmpshEg
-	 3Dsc6S7Koxt0ZkyFGSR5LoJQy40NWeaFbl3vArdRKmmRjz53Ht1JzFvyayYSCngeu2uc7
-	 kMnoDQr6IIWLpORD01HGI2+LPpTk/u8ewJuYAphgMZSbvBq0k6nJN3t4OBPQQytXYLcm2
-	 MpS/XoiS/h9dts/bVbpE9eYIuaL79HsELwLVetuZ7YkRZFIgc52+n/N2I5Kml+dGfnQPY
-	 BAD7DGubr2WbkdoYxWBbJLQHVDzvkC4Kx3OPceU+6rOiP5iDLC3q6bl5Zgja65KpoJg==
+	t=1794505202;
+	b=bNbSEczNg/Gk9yyDFkL6XXKKTsQOlmg/LODcjX4UpBrIYagfvQX4TyxPYVAJfoGbFLTS
+	 OG2c8r8Tg08yTstQi0qHXP9Act3HHJ7JqIDvUs0Gk156lvY2+YDdK3EP0l4/Of27Mtcha
+	 dBdqxeQSema/fS9UjzSCrR0/7X+UXTPe66eVRY+jR3vJpt2fTtt882yGEngjTQqbwUbsY
+	 6RZ4Sw9NUDftzQQue50I7kHeUaKrozaT2ce25uO0ZnsEbtURMgDlY+o8RcjwkT1LW0CM7
+	 PaZD5og5SIQsDiliYF6UKTZpwFbmyVMaUu6sI70OcBz4Cn6JVQ7q5D/Pne/N43eFPYA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794505094;
-	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=pRtBn+7pjGYKzgD5cF7fJ2I/G6Pu/pr0vQaRgejNTy4=;
-	b=XIHvocvS0l/jj8MKhsBQr7rip21tzyQGzrKaA9XEHCfe04GVivnbpjtAG0udkr6wUdm1
-	 4HfiwDQWw4qXQM4Vjf1yxhSt+osxWJp95f5RqCFE3rgn+khs4NPIxxEtsJmWF7U3+NbOF
-	 EmVU0v0MnvdiPe0MXJHO/qc0bvkXarRZengmLU/7g/OwXmlKDbGZqkWKDnU32qagnvhdq
-	 FTt3bnT2CGnaNlle9wr8AoQRHlmJBJIJHVqYlgRfbRSqnooYK6PeEvgce4O1CiMokdRRO
-	 zoeoagRFP2jjMtYm2WXAbgWQPEqJzomLxvPiO3XNS6DZ4fLyrMFLf/iZFMUGRrsvncA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794505202;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=sLnDVXVjRJ7so3dsF80tdrQnGNyLD9hcR3AhHC65nYA=;
+	b=wXGSBrpRB1RVbQjRWBc10HzytDNEria6pPdG75IXtt4Zh67+ceHHDhCLiAvMzW31DWqq
+	 hNMNUGH9OQ3q0rHv1hjvljKQ+zc949HWyt2SUiQ1EUH6D1sWqmdwjUUt3JgQ8P/wSW0Aj
+	 Q5Nkks3/qAbtWy+crqZDyFU4K7IkY/WyQl5mICPQM+cH/1wuAK0l/sCTTlBk/a3rZ3C78
+	 Csm+cBSvWSG9F994R7l7HFuB+zeX2SRU3NAVbDuF8MHHDn+vrlom3lBBYjMwMB+05FZc2
+	 0Pfb2kZqjT46SRhieo1XnI7Q0GU7JREMhJHe5EO1nKnFoF8VtQPUVDEG4dzfBuObwig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=tkos.co.il;
-	spf=pass smtp.mailfrom=tkos.co.il;
-	dkim=pass header.d=tkos.co.il header.i=@tkos.co.il header.a=rsa-sha256 header.s=default header.b="n/HeRCG4";
-	arc=none smtp.remote-ip=84.110.109.230
-Received: from mail.tkos.co.il (unknown [84.110.109.230])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EL0LUO2u;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC58606CFC7
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 17:38:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5FC58606CFC7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DD1606A33E
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 17:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=tkos.co.il header.i=@tkos.co.il header.a=rsa-sha256 header.s=default header.b=n/HeRCG4
-Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.tkos.co.il (Postfix) with ESMTPS id F1D52440F96;
-	Thu, 12 Nov 2026 19:36:11 +0200 (IST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1794504972;
-	bh=np2PnzP0GVtoi2eIe/Gk2P5uCVPb1z3VghJmR+E/n9U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=n/HeRCG4zFwDppRLPdeY/zWVZZSmOCWoCaXv6Yn1o4ZUFp1THWvwusqWSVLtm+hlR
-	 xOozWhnlM4BRtCjKvOI3ak2Kbf02svh1k1Sg3I2OAKeSWIssRiZft6/VjdYQTf2QQU
-	 66jpAj4wWWGP9EDNpKc+902AaVq8KleutUi9h0/FIFVL5AaV4B3Zo2rfQ6jTiOAaFy
-	 KAwyt8TSL5IO7AaWwUvIhJp8LPhvcHwGOvbUfjyLExC9lrSNx36YcmD+LqGvcZmosa
-	 0msGsCjXoowIZ76lx1ibJBPcCwTpTtJvJopx65E7rYR40u6oAyHTZ5zGB42E3WHxMa
-	 Gbua1JpkZg0Pw==
-From: Baruch Siach <baruch@tkos.co.il>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH] security: update lockdown_reasons[] reference
-Date: Thu, 12 Nov 2026 19:37:57 +0200
-Message-ID: <3283a389cc21862ab98eb891436568fc1d23b869.1794505077.git.baruch@tkos.co.il>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EL0LUO2u
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71EFB1F000C4
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 17:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794505201;
+	bh=sLnDVXVjRJ7so3dsF80tdrQnGNyLD9hcR3AhHC65nYA=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=EL0LUO2u5Jw7cauGuCZomfLuFj7m0qgnShLabBd4/kAVm9ezrGpVJMSpoQjVG69rS
+	 tMplTZQ2+IOLLR7ztWYTDz4wqMVmFOBdFqqCmE1bVAPoVGg9lJzQ0Db0MQ+fyQfI83
+	 4fyqQ8cr/JWgv6nwWrjiGNIE8hb63xfVwueFUfUkqIUyl9eQwzkJy3ENby15EZ0Fuy
+	 +XbxkwTVTwiQKXND4h0aOnfoxKwwKd5IQMUyCHD5Y5n3EfjSUq8/FPl2xo65clPx1x
+	 dVCsqmKN2DvPKub3SG7iN8FpcM639l9ZwRuWRSCtBuRrelugGUjGdbp2WYft1yFvmE
+	 8Ck/NNgOZbDHg==
+Message-ID: <sashiko-outbox-211615@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] security: update lockdown_reasons[] reference
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <3283a389cc21862ab98eb891436568fc1d23b869.1794505077.git.baruch@tkos.co.il>
+References: <3283a389cc21862ab98eb891436568fc1d23b869.1794505077.git.baruch@tkos.co.il>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Nov 2026 17:40:01 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -66,32 +57,18 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Commit 59438b46471ae6 ("security,lockdown,selinux: implement SELinux
-lockdown") moved lockdown_reasons[] from security/lockdown/lockdown.c to
-security/security.c. Update the documentation comment to match.
+> Commit 59438b46471ae6 ("security,lockdown,selinux: implement SELinux
+> lockdown") moved lockdown_reasons[] from security/lockdown/lockdown.c to
+> security/security.c. Update the documentation comment to match.
+>=20
+> Fixes: 59438b46471ae6 ("security,lockdown,selinux: implement SELinux lock=
+down")
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 
-Fixes: 59438b46471ae6 ("security,lockdown,selinux: implement SELinux lockdown")
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
- include/linux/security.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sashiko has reviewed this patch and found no issues.
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 40831fab5470..2782ee404f95 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -124,7 +124,7 @@ enum lsm_integrity_type {
-  * so.
-  *
-  * If you add to this, remember to extend lockdown_reasons in
-- * security/lockdown/lockdown.c.
-+ * security/security.c.
-  */
- enum lockdown_reason {
- 	LOCKDOWN_NONE,
--- 
-2.53.0
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/3283a389cc21862ab98=
+eb891436568fc1d23b869.1794505077.git.baruch@tkos.co.il?part=3D1
 
