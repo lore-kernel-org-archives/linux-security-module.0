@@ -1,95 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794493694;
-	b=0XFn/UsR7pC6GL+HQo/dD27a9nArE7nMI72f0Nv/ih2O37i89kTCDSaUbRrwbLpt/Uzj
-	 PFPsgxwyz0D9tdm/6Ip+0tdsWCAnPiNBBg5trXYoZfRyoIscdip65xhXYtWzT85hghU+m
-	 YKIaCgt/BeZnlxWTSEkzTlkf3d8ldKA/+jdhZdfDZxJRez0PKLspVR8o+dukRXQL9JnPv
-	 4GBnsRKr6SWTuzVuwk2v8kJgGI08PYj8P5mXFlS/MgRHdXUYuIKy+FJeJBYjVi51MizGN
-	 HaYfWGIjJQI9kpzq3dW6fZfp/ePNUMy3BT2Jo41mZ1yS6gsIlQCWGWZsFD9Msc/rQJg==
+	t=1794493885;
+	b=Aae3wsEGymBgtk7iC3gK2PonK9LV3A3VbM4jTjaYSlmaq7FljeXOZBmgpaImNPnBN/ub
+	 21k4bgKb61JkWj4KmIe+OQnSE6a8b7ff//p60IvKMh4E9I7H7Q2YFgG47GEn0cBFI18Cv
+	 A7UHQE7+DGJo5YNWS9UWqdbAaX5SQiwnZr1QwdUb2ixQ6QBBPC2m1UpizYCZaGOehNHXH
+	 uaKZIOVELj//mTSIpVMJoOfwuZIDLUOr5Mq8jMoRNjuJ2244vsTiZRI0PEqKY3vjhNrJC
+	 41RbiC56FaSrlJ4CXLGEq6wk5WRQacyGiWIpDYdPAu6nk0af1DX671HL8jfo2/NkEYw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794493694;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 X-Received:Received:Message-ID:Date:MIME-Version:User-Agent:Subject:
-	 To:Cc:References:From:In-Reply-To:X-Mimecast-Spam-Score:
-	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Language:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=Rc9bf8NN613bIi8UJTLUeEhOmQUWktCfilbKq+1NuLg=;
-	b=kqT+cKy2JNDXK1Wwh+vpmgwiJyfgxlm64kFFV6buvKABUDEYoOXfjXEqjc4Yk8lxO5Zu
-	 p8hha39/zITPbWxU1/J2oKaPghUDtftcoCTh777R8ByPnEerycQtWKrT+xOgKixWhmK4r
-	 ZZKZoE4YEfUds/dSPaYgUhHd6lyKt7GAxUdceMrIp8rvu0mT3HDH4+tIL7nuR/2aiVYHE
-	 WZ78U/Fnv3EuiOUoxjFcYmgQPfMs6Pd2CfmVF4ORrRmxxYzoL8ZuGIVvSQu+c30Slw0wZ
-	 tQ+UC8XU7yOR2QdVpmq3lyjWO/olzx53UULwLbP0QO96U4gK1yXbAQ0/nFs9BULB9wg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794493885;
+	h=DMARC-Filter:Received:Received:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
+	 X-CM-SenderInfo;
+	bh=vlI/E+9ZqMQyue2QpJ08GrGohLxg/G6tTl/Pq3uCBfU=;
+	b=bEvzS0E9QSTiPZ7xCCQcYYuAKFK6ZS7Gd9RXWZLZyHngoqyjM8tfLo9MH9Ui/BnxkFYf
+	 vuKqX/ZfC4mDRR6dAWIKwrTO1c/bDerQ27PD99VbzSgZF1buBGuRsgjeyfqUEnWjNIZo7
+	 dnI76FP2twJs8Y5emFOZHw0SkACeIm/Mr+g/tddUz1+WNpv4pCjOXWAR3imxeNConTZdT
+	 7YdzQFGakVa1+vPUNiYSBA6pGQa0IOyPssHXcMGBqfZNNXbQCdejdqaCBoWCng0VuYkic
+	 ss7LlUVB8DRZwM7g4nzPxRZ0trao+u+wuH+Wygv5YuEaocdHudM9hWbthRpd2pfiVlw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Ch0w08DL;
-	arc=none smtp.remote-ip=170.10.129.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dmarc=none header.from=huaweicloud.com;
+	spf=pass smtp.mailfrom=huaweicloud.com;
+	arc=none smtp.remote-ip=14.137.139.46
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E7B606D54F
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 14:28:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 70E7B606D54F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Ch0w08DL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1794493692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rc9bf8NN613bIi8UJTLUeEhOmQUWktCfilbKq+1NuLg=;
-	b=Ch0w08DLquo/MLe3vXT7N8xsd7o/Jq9FqjHyz1ARzFAyef3kblh5ATY7MpfJnBxIzEZ49F
-	YalEFjvhZiqj4z4KN3OH2moAWP2PXWkAVmdctBw67FvjNcbB7TbVw2csrLSceKEYEu0x3Z
-	hAl1PqKM0I2xFzbatiLdwcBtf8zCRBU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-ilYQWqZqNrOfLtSHuJlV9w-1; Thu, 12 Nov 2026 09:28:11 -0500
-X-MC-Unique: ilYQWqZqNrOfLtSHuJlV9w-1
-X-Mimecast-MFC-AGG-ID: ilYQWqZqNrOfLtSHuJlV9w_1794493690
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4b8b3cd61a5so5243595e9.1
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 06:28:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794493690; x=1795098490;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Rc9bf8NN613bIi8UJTLUeEhOmQUWktCfilbKq+1NuLg=;
-        b=oW4E62VoE/Gp71h9+QM5jQXmQv5mMqPSHTskj20FSRY6kbetD5CWgFggPmeQEtwUiH
-         vHCxMALO5rq6t4beLKjzpAwBc0vFc5SqWZ3VAiW3GePXH7Ldb1Uvm9zYjXkt1ojGAfcX
-         IEMF7Y/mxKIgUdGxrDGKmX7Uf095MTM27jewV8hH4xsNN1RuqFyWsJ2TJco/Nxbs3nYL
-         Ei4hiU5Bq6NM0uWD/Q6t3wR08VmPbrZSSnSgwc0AtBJpIHOV+QS/OdnTLEiHDxdKddCt
-         xbKjxWc2UE5WWQ9Y5mumbYio2evwBRUGauZYJFIoEkrMrOfrPYwCORO1XZzhFaW2aAu7
-         GZRA==
-X-Forwarded-Encrypted: i=1; AL+hErF3OtwvndRAZx8mmxF9xhQm3oM7lHs5F4u+mSBtkGrqhL42iWwquKCsLBeJ4cux+K7jWt5xz0oyELzB+Z0n6rirqp12h8k=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+K+2avANu0BGwY0yjDdZKbiGb9aOi8DkKMgQ1/bW03pKS+QZZ2
-	c/FzNwM0eO1PeodMMFphW6QUEyId1JVvfjJAa12zXXP976Fpuo6ZGbkMhqQjg9MFJWfHbwL17Sh
-	IeoK+vcY9F8+/mX12vjWj+CLjSsk14A+8J1C1nk1qg65OuMT8gvJG6m66Elj3FKgxf2zozGiJ7R
-	FJevl3WkMARw==
-X-Gm-Gg: AYBFou2pr3OW3lTg8JuGe1GigNfC+HhJTE5fDZmsaPAZJO9D64cLk3Jc8EEjL/CUq7X
-	WYm1q46cuRi2L3mxUoYEG1Ze/e0QV3KDzbroXN0wRVYQhcuaFOgn3VS22OPaFr/nYoYdJK2Isdv
-	nHntynSE8EXW/R7N2RtGXWtqvbAU8iE2Ou6CnyV3pd7DCcJnvgMhhE46oG+0b2HtaZDlM9dK02m
-	a0b/5MB3F0Rzr3U5o8qNoVxgnmteERMenT8WgO50469bfic301ujWTbGTdscC4HGNLRxZdbxV1N
-	/13jlksz0y8m19pgZsYAM64n2Jiz+iwcZ/TXBQRxwZ9WKMYCFdaIzpRlJTlhdQG0NnzxBezWCcf
-	SaNY8JT4KbaR6G9VIPSd8Oh3BOosS5CAk0I6CK+kJlofOrSJK5tH8OO5jXJUBZYgmYjMiF77EzR
-	ABOqdn/CWE1MfyOnsri35UJQQnMUMxtS7FOLwDrG4FYJvi
-X-Received: by 2002:a05:600c:8183:b0:4a0:20b4:ba93 with SMTP id 5b1f17b1804b1-4bb4e296cd4mr53828335e9.16.1794493689810;
-        Thu, 12 Nov 2026 06:28:09 -0800 (PST)
-X-Received: by 2002:a05:600c:8183:b0:4a0:20b4:ba93 with SMTP id 5b1f17b1804b1-4bb4e296cd4mr53827785e9.16.1794493689324;
-        Thu, 12 Nov 2026 06:28:09 -0800 (PST)
-Received: from [192.168.88.30] (ip231-128-192-82.pool-bba.aruba.it. [82.192.128.231])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb51f3cbf9sm40266145e9.0.2026.11.12.06.28.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 06:28:08 -0800 (PST)
-Message-ID: <2fb8d2d3-9840-4e1f-a02d-877a9b93593a@redhat.com>
-Date: Thu, 12 Nov 2026 15:28:07 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C7D606D544;
+	Thu, 12 Nov 2026 14:31:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 09C7D606D544
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4jQN930MsLzpV6n;
+	Thu, 12 Nov 2026 22:30:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.157])
+	by mail.maildlp.com (Postfix) with ESMTP id 17FFC40009;
+	Thu, 12 Nov 2026 22:31:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by dep2_app1 (Coremail) with UTF8SMTPA id nRC2B0Cmh12pzfVqvJwRAA--.7096S2;
+	Thu, 12 Nov 2026 15:31:13 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	fabrice.derepas@canonical.com
+Cc: linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] ima: Fix out-of-bounds read in ima_read_policy()
+Date: Thu, 12 Nov 2026 15:30:29 +0100
+Message-ID: <20261112143029.4159022-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2e59cc97ad2e6fe5b9b5a5b5988668da29155703.camel@huaweicloud.com>
+References: <2e59cc97ad2e6fe5b9b5a5b5988668da29155703.camel@huaweicloud.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -99,91 +67,99 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/2] ipv4: recompile IP options on a private copy
- in ipv4_send_dest_unreach()
-To: Ido Schimmel <idosch@nvidia.com>, Eric Dumazet <edumazet@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski
- <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
- David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
- Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- Kyle Zeng <kylebot@openai.com>
-References: <20261109131736.3060756-1-edumazet@kernel.org>
- <20261109131736.3060756-2-edumazet@kernel.org>
- <20261112134645.GA3195113@shredder>
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20261112134645.GA3195113@shredder>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: NvA0VDhqb8Mj8pZw8fVEDNqlT-F4Y2RZ_2C9j3qm74A_1794493690
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:nRC2B0Cmh12pzfVqvJwRAA--.7096S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXrW7XryDArWrtw4xJrW7twb_yoW5Xr4kpa
+	98Ka45AryDWry7Crs3CasxXa4Fka93JFWUWayrW3W0vF45ZrnI9w18tFyFgF1Fyr40yryI
+	qrs0gryYk3WqyFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xU4NB_UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABDWr1L0x2ZgACsj
 
-On 11/12/26 14:46, Ido Schimmel wrote:
-> On Mon, Nov 09, 2026 at 02:17:35PM +0100, Eric Dumazet wrote:
->> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
->> index 3a90c8d28b940bf615c165d9b30ac634943586e1..9af72cb892034deff2bb3169911c02c025d73cf2 100644
->> --- a/net/ipv4/route.c
->> +++ b/net/ipv4/route.c
->> @@ -1256,6 +1256,7 @@ EXPORT_INDIRECT_CALLABLE(ipv4_dst_check);
->>   
->>   static void ipv4_send_dest_unreach(struct sk_buff *skb)
->>   {
->> +	struct sk_buff *nskb = NULL;
->>   	struct inet_skb_parm parm;
->>   	struct net_device *dev;
->>   	int res;
->> @@ -1271,6 +1272,16 @@ static void ipv4_send_dest_unreach(struct sk_buff *skb)
->>   	if (ip_hdr(skb)->ihl > 5) {
->>   		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
->>   			return;
->> +
->> +		/* __ip_options_compile() writes into the options, and
->> +		 * callers of dst_link_failure() may cache pointers into
->> +		 * skb->head: work on a private copy.
->> +		 */
->> +		nskb = pskb_copy(skb, GFP_ATOMIC);
->> +		if (!nskb)
->> +			return;
->> +		skb = nskb;
->> +
->>   		parm.opt.optlen = ip_hdr(skb)->ihl * 4 - sizeof(struct iphdr);
->>   
->>   		rcu_read_lock();
->> @@ -1279,9 +1290,11 @@ static void ipv4_send_dest_unreach(struct sk_buff *skb)
->>   		rcu_read_unlock();
->>   
->>   		if (res)
->> -			return;
->> +			goto out;
->>   	}
->>   	__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH, 0, &parm);
->> +out:
->> +	consume_skb(nskb);
->>   }
-> 
-> Not sure that what Sashiko describes can happen today, but I wouldn't
-> rely on the network header not being in the headroom. Something like (on
-> top of your patch):
-> 
-> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-> index 630143ca0f31..77c03620f89d 100644
-> --- a/net/ipv4/route.c
-> +++ b/net/ipv4/route.c
-> @@ -1282,6 +1282,10 @@ static void ipv4_send_dest_unreach(struct sk_buff *skb)
->   		if (!pskb_network_may_pull(skb, ip_hdr(skb)->ihl * 4))
->   			return;
->   
-> +		/* pskb_copy() does not copy the headroom */
-> +		if (skb_network_offset(skb) < 0)
-> +			return;
-> +
->   		/* __ip_options_compile() writes into the options, and
->   		 * callers of dst_link_failure() may cache pointers into
->   		 * skb->head: work on a private copy.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-I think the above makes sense.
+ima_read_policy() reads the policy file with kernel_read_file_from_path()
+and splits it into rules with strsep(). However, the buffer allocated by
+kernel_read_file_from_path() is exactly the size of the file and is not
+NUL-terminated. If the policy file does not end with a newline, strsep()
+scans past the end of the buffer while looking for the next separator. If
+the file size is a multiple of PAGE_SIZE, the scan reaches the vmalloc
+guard page and the kernel oopses.
 
-/P
+If the last byte of the policy is not a newline, parse a NUL-terminated
+copy of the buffer obtained with kmemdup_nul() instead, and account for
+the NUL terminator in the remaining size, since ima_parse_add_rule()
+counts it in the length of the last rule.
+
+As a side effect, a policy whose last rule is not followed by a newline
+is now loaded, instead of being rejected with -EINVAL due to the
+terminator being counted in the length of the last rule but not in the
+file size.
+
+Fixes: 7429b092811f ("ima: load policy using path")
+Reported-by: Fabrice Derepas <fabrice.derepas@canonical.com>
+Closes: https://lore.kernel.org/linux-integrity/20260814085443.1211989-1-fabrice.derepas@canonical.com/
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_fs.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 2a0bca554316..6d5e061f88c2 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -528,7 +528,7 @@ static const struct file_operations ima_ascii_measurements_staged_ops = {
+ static ssize_t ima_read_policy(char *path)
+ {
+ 	void *data = NULL;
+-	char *datap;
++	char *datap, *buf = NULL;
+ 	size_t size;
+ 	int rc, pathlen = strlen(path);
+ 
+@@ -548,6 +548,23 @@ static ssize_t ima_read_policy(char *path)
+ 	rc = 0;
+ 
+ 	datap = data;
++
++	/*
++	 * kernel_read_file_from_path() does not NUL-terminate the buffer.
++	 * If the policy does not end with a newline, parse a NUL-terminated
++	 * copy, so that strsep() does not scan past the end of the buffer.
++	 */
++	if (size && datap[size - 1] != '\n') {
++		buf = kmemdup_nul(data, size, GFP_KERNEL);
++		if (!buf) {
++			vfree(data);
++			return -ENOMEM;
++		}
++		datap = buf;
++		/* Count the NUL terminator, included in ima_parse_add_rule(). */
++		size++;
++	}
++
+ 	while (size > 0 && (p = strsep(&datap, "\n"))) {
+ 		pr_debug("rule: %s\n", p);
+ 		rc = ima_parse_add_rule(p);
+@@ -557,6 +574,7 @@ static ssize_t ima_read_policy(char *path)
+ 	}
+ 
+ 	vfree(data);
++	kfree(buf);
+ 	if (rc < 0)
+ 		return rc;
+ 	else if (size)
+-- 
+2.43.0
 
