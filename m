@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794461807;
-	b=LROZq+jDAVRYjNPVe3NmKuTz9hxAR29nBakvXBn8qpyHpLo6JQxyFYYcY3Etm35Uk5PP
-	 tN4xJFnyLVfCQOD8h/wUZspiwZR/XxBTUty/GLAyXmPWTE0tp3UudFANz5RIZxhB6Jp/S
-	 TZfMXVURahYD0OAUiPSoKIhMj1I3JNgeuorKJUOnBPXFnobHSfDb1LnuSjxKD4P1o0TMm
-	 bwVat2nmTwDFW9mxNE7skDhcsIPufbo2PFmZHVOrclOxI2fyCsY3L/XUY/P0XpZA2iiMe
-	 zke+NZB63L8KoI4pV8holugTwY9F08FqK7j4F18o6cUxMapWNk6ASEnaDbrpLol6dBA==
+	t=1794462136;
+	b=ImUouFLK3AZmsG0qiK4D0RWKhWeiD16r8Ewrnt5bcZ1NPNaN/o9w2eoRilTFDMLMR5k+
+	 FnsAyrAk/9FiPZNdeFBdzkHsaqEQ1gkJl4O+dyRIl2+T88BtvTBWjNDvfSbqAoNMgrkHG
+	 2iA+vxVFaH4CNbZ/KzWfm2x/uojJAWX5DnR6agp4ucmbASxjtvUy8OSChnhoY6/xnKy2b
+	 jP2TejEWfyqmCQetWhOGOyrh5Rq4Y80zPxUdPuzbZmIyD73Vqa5s6ns/jkrmZNYLj2Cic
+	 JP3U8bNMGQTi6NujnDO70tMULUtzUBd+s3LYMB7S1GdOj6WHT+K6+88C45kUbx8lVZw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794461807;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794462136;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=JPOrsiYfVFc6CfxEOLjOLzZuI6+lIW/DS0fuVq5oTLs=;
-	b=FiDMKOB2bHBnchP8LEXeVzkSXyvY8n7S8Xm2YPlNLXL+1pVdHEhqEE2KFH1wFvTPI8zU
-	 uKwGqiBQ7tn+1uMyT6zV+fwRFfRMrry5ZvXRw5c0AsO8HSQdqG1iPJo9YOO5hTGv13duL
-	 u5z5XJvDAs46a/qze0ciV/MUAlOV4bwZYyNJpRJx+DXIiSEVyleBTmqMNJz37MEjDIqrh
-	 riNbaSWb7winOpjZiotV/uxC27wEBLDJD8KsUvlBROGV/c2NExTjRkDd1Y+sL6RAZdp1w
-	 hwc+VXtvxyKzZ4nDorITU5p/ZvLfrbGXsS5i39VxbikdDW5qT8HAb/LVHn+Mofoizvw==
+	bh=tDcHZ3kJ0vKzG31eWVXKvKOE21Wz3lXwXEgrTkyPNrc=;
+	b=YpLz7jmh3EQeJsOrr/bEo4oydcgtN7og+fvJUZehM4kNB91eY6qqStKnRHS6JrEDfzVI
+	 Qyt4c++g+3MAImm2v+ZPTkXhal1FCg0evA4ppIjFDddGoXQQQ+zcmD4Z948QlW9pQ1ZGF
+	 eqCL0xZPuOoVmmLeCWm/sGBNVC8qr+PKE4FxJl42m6GHY9f90qs2wYGK30oBqLspy0Z5z
+	 /Nmlzo2WWIhmiM3u/kwgPBz3gdnmn94heLBiB9tokZwR+zmo9PrqbmYUsMa663cbLVmER
+	 e/BGUb82+EuaQGXnYrSBjXjPqmQHWOF6tGGEZWWE9x8iK91rUAUZZ8hRXHBmDSlLe9Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xf8+YLpU;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7TLH8Zu;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C333606A334
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 05:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09D7606A324
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 05:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xf8+YLpU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 836971F00A05
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 05:36:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7TLH8Zu
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DB61F00A05
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 05:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794461806;
-	bh=JPOrsiYfVFc6CfxEOLjOLzZuI6+lIW/DS0fuVq5oTLs=;
+	s=k20260515; t=1794462136;
+	bh=tDcHZ3kJ0vKzG31eWVXKvKOE21Wz3lXwXEgrTkyPNrc=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Xf8+YLpUVstQo4i1o4tI2ZRKqw8xyBCqgBNN9swnIFpH5fiRA6lEj8w8s1fAnR6VJ
-	 R+EQ2bYKVfzDVeX/0OLU660F0TE+W8/babj/oxqQIKRwuqPvEzkrVAQq4HNHS16p3L
-	 6Zl2ilEUA9FmR9az5mJdjXRPYHnfNiRSA5t83qW7RJFc161D1kwOxf14AbGJWPey0C
-	 CoOEJLuWPirwV/fLdo/gGCg3LFyqaJST9/ZcDFG3cAIZonV9GT1rQukMTQVWrIauwX
-	 Gwr1mI4GsZyDQZxb9NVrIh6fwbWb7nY5hA7Msf/Xmase5dX8FNTS1kE/daDveRbuHL
-	 oOQWWpLms0Yqw==
-Message-ID: <sashiko-outbox-210461@kernel.org>
+	b=k7TLH8ZuzCR6//vUplfs9rDFMyIBUJprG8FVKdzba6H8C/ZY+cb09XpU3r+5wJH39
+	 If+GqMecHyHevqxXoFSuWkzRXMAP0VdGYefFtU8lalxo+kvlALQWcUGfssdaMQJNsF
+	 SK8rxQfLeIAsagBiWsCSeE9IJevPwCHH3rULJxBggDIUAyUZIXDLrCKhNjlHLnLzXl
+	 KZ1ZIl/uBnC+l0l69z6SwAh677MJaRTJjhk+gMKQK+Ft/sjmI7rmcqd+V/t64Tjo38
+	 97fHvWS1Wn+cKxjnB8K9atnGcAyzpc0fBWfbmtBnhAHb8EDiJX2RvAO07QNStOypX7
+	 p6uabHuTuZ7Lw==
+Message-ID: <sashiko-outbox-210473@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v2 1/2] landlock: Fix layer composition of
- LANDLOCK_ACCESS_FS_REFER
+Subject: Re: [RFC PATCH v2 2/2] landlock: Add a test for REFER layer
+ composition with network layer
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261112052713.859515-1-mangosteen922@126.com>
+In-Reply-To: <20261112052713.859515-2-mangosteen922@126.com>
 References: <20261112025528.443654-1-mangosteen922@126.com>
  <20261112052713.859515-1-mangosteen922@126.com>
+ <20261112052713.859515-2-mangosteen922@126.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Nov 2026 05:36:46 +0000
+Date: Thu, 12 Nov 2026 05:42:15 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,46 +61,100 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] landlock: Signed-off-by trailer uses handle instead of real
-  human name
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [High] landlock: use of handle instead of real full name in
+  Signed-off-by
+- [Low] selftests/landlock: redundant dir_s1d3 rule in
+  refer_with_net_layer()
 --
 
-commit 6fdefb3a96cf87892d81d37297b85c7906fe0143
+commit a26cce886a00516c15353a37b118df17895f1736
 Author: pandaWall <mangosteen922@126.com>
 
-> landlock: Fix layer composition of LANDLOCK_ACCESS_FS_REFER
+> landlock: Add a test for REFER layer composition with network layer
 >
-> landlock_get_fs_access_mask() unconditionally ORs
-> _LANDLOCK_ACCESS_FS_INITIALLY_DENIED (i.e. LANDLOCK_ACCESS_FS_REFER)
-> into every layer's handled filesystem mask.  Layers created from
-> rulesets that only handle other rule types (network ports, scopes) or
-> only permissions therefore report REFER as handled even though
-> landlock_upgrade_handled_layer_config() only adds the bit when
-> handled.fs is non-zero, and no filesystem rule can ever clear a bit
-> of such a layer.
+> Check that stacking a network-only ruleset (i.e. a layer handling no
+> filesystem access right) on top of a filesystem ruleset still allows
+> different-parent renames and exchanges allowed by the filesystem layer.
+> Before the fix, such a layer implicitly handled
+> LANDLOCK_ACCESS_FS_REFER and denied these operations with EXDEV.
 >
-> The consequence is that stacking any non-filesystem ruleset on top of
-> a filesystem ruleset makes link(2), rename(2) and
-> renameat2(RENAME_EXCHANGE) fail with -EXDEV/-EACCES even when each
-> ruleset individually allows the operation: landlock_unmask_layers()
-> requires every layer's mask to be cleared, and a non-filesystem
-> layer's mask can never be.
+> Both parent directories get MAKE_REG because each is the destination
+> parent of one rename direction (and of the exchange), as
+> current_check_refer_path() requires the moved file type's access right
+> on both parents.
 >
-> Only implicitly handle REFER for layers that already handle
-> filesystem access rights.
->
-> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and c=
-onnect")
 > Signed-off-by: pandaWall <mangosteen922@126.com>
 
 [Severity: High]
-The Signed-off-by trailer appears to use a handle ("pandaWall") rather than
-a real full name.  Per Documentation/process/submitting-patches.rst, the
-Developer's Certificate of Origin requires a real name and does not allow
-pseudonyms or handles.
+Per Documentation/process/submitting-patches.rst (Developer's Certificate
+of Origin), the Author header and Signed-off-by trailer must use a real
+full human name rather than a single-word handle ("pandaWall").
+
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/s=
+elftests/landlock/fs_test.c
+> index f725882fa4a78..cf11281639c67 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -2570,6 +2570,49 @@ const struct rule layer_dir_s2d1_execute[] =3D {
+>  	{},
+>  };
+> =20
+> +/*
+> + * Tests that a layer not handling filesystem access rights does not
+> + * implicitly handle LANDLOCK_ACCESS_FS_REFER, which would otherwise deny
+> + * different-parent renames and links stacked on top of a filesystem rul=
+eset.
+> + */
+> +TEST_F_FORK(layout1, refer_with_net_layer)
+> +{
+> +	const struct rule layer_fs[] =3D {
+> +		{
+> +			.path =3D dir_s1d2,
+> +			.access =3D LANDLOCK_ACCESS_FS_REFER |
+> +				  LANDLOCK_ACCESS_FS_MAKE_REG,
+> +		},
+> +		{
+> +			.path =3D dir_s1d3,
+> +			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
+> +		},
+> +		{},
+> +	};
+> +	const struct landlock_ruleset_attr ruleset_net =3D {
+> +		.handled_access_net =3D LANDLOCK_ACCESS_NET_BIND_TCP,
+> +	};
+> +
+> +	/*
+> +	 * layer_fs alone: different-parent renames are allowed.  Both
+> +	 * parent directories need MAKE_REG because each is the destination
+> +	 * of one rename direction, and the destination parent of an
+> +	 * exchange.
+> +	 */
+> +	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_REFER |
+> +				      LANDLOCK_ACCESS_FS_MAKE_REG,
+> +		   layer_fs);
+
+[Severity: Low]
+Is the second rule in layer_fs[] on dir_s1d3 redundant?
+
+In layout1, dir_s1d3 (TMP_DIR/s1d1/s1d2/s1d3) is a subdirectory of
+dir_s1d2, so the first rule on dir_s1d2 already grants both
+LANDLOCK_ACCESS_FS_REFER and LANDLOCK_ACCESS_FS_MAKE_REG to dir_s1d3.
+Moreover, current_check_refer_path() requires LANDLOCK_ACCESS_FS_REFER on
+both parent directories, so if dir_s1d3 did not inherit from dir_s1d2, the
+second rule omitting LANDLOCK_ACCESS_FS_REFER would fail with EXDEV.
+
+Because layer_fs[0] grants all handled filesystem rights in the domain on
+dir_s1d2, collect_domain_accesses() in current_check_refer_path() also
+returns true for both allow_parent1 and allow_parent2 and returns 0 early
+before is_access_to_paths_allowed() checks LANDLOCK_ACCESS_FS_MAKE_REG.
+
+Also, placing refer_with_net_layer here separates the
+layer_dir_s1d1_refer, layer_dir_s1d1_execute, and layer_dir_s2d1_execute
+rule definitions right above from the refer_denied_by_default1..4 tests
+below that use them.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112052713.8595=
-15-1-mangosteen922@126.com?part=3D1
+15-1-mangosteen922@126.com?part=3D2
