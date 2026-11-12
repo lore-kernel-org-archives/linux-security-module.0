@@ -1,56 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794488169;
-	b=cLoHSkAS0bBbyMUKXgFKxQ6/tS2kYah7IIW9CPfdb5wU4DhQZ7zmRGEKOV7Jb0y/yw0z
-	 mCZdhYzMKCoRMjxfjJPauDB/m2OQMa7X37TRENgsyu8/2fxCv6jP38l7fIvjYo/cC647p
-	 1/x7c2POCm69fwGSIMSqcsKfpfxOWYxptvd7JrVJz6V6QA+PNHm1+ztrXDZHW1qp49K9/
-	 JUba/UB5TTCmgMZ55gfjS8TR/nNXVg7qv6ZS9HRaJfEPYOFFhaWdJdnLRvWkMXvut3zal
-	 TtkjCHaavov9EwfIMu69Q9Lh5BOgdfi6Iu2lcSjzZhgDdgl5mdcV51Uw15Ym0PRRjuQ==
+	t=1794488581;
+	b=tWUydDuWyltVYkZrDdca+qPwZkdQTBXWM9XS7P/ELXKb6H3a5VEXbDrGZM/ypN8Ech1v
+	 e+vfd5/G8V/E0csxosE/P9Sc7K0dFHfXEIzPJ3v/OqbqRzNUxSdiaml5wa4jhZgb5q4ow
+	 NHlozCvkBAqQ5tISWvSFk51kJIE5STC6xmxYyy1FmFzXFr8xvtY6wm8tpHqErPAfm9mRT
+	 fwxGspkQjK5ShhhT8MYeCk5TqwDe/N6UBG+60z1xNmjiVO59Xnof1QzTlrHeNFY9ITWdB
+	 kIJkBwV73G6Og7xmaEyB7N53xmSSNPWchjewtxfrcYMGm1v5UQt+/m+r2HG23I4I9Fw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794488169;
-	h=DMARC-Filter:DKIM-Signature:Received:MIME-Version:Date:From:To:Cc:
-	 Subject:In-Reply-To:References:User-Agent:Message-ID:X-Sender:
-	 Content-Type:Content-Transfer-Encoding:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-Get-Message-Sender-Via:
-	 X-Authenticated-Sender:X-Source:X-Source-Args:X-Source-Dir;
-	bh=9zpmpXZL2AGBZ7N2dDO3aafaZXcocghDPR43dgCZPFw=;
-	b=rin0bk7nEaLZi4HkMn8iFBcu27Dia5jqVTNiUuLLa9znqq+wDAj1Tr42cTsSWPdoahM4
-	 AX4q5cBkQZRqn2yFoYsFGcJUQBi4GKYb25dmKHaQ4GjBK9Gi19lgOlpHfvqkj8fnXNSgq
-	 SkvK/MqjxOYMwh3JLAoHxGWUyfLi7z4clSd2HjUqjPaAhIMtYxz5G6rSUnZm4XJdTty92
-	 5bvBTdl/KITzhRkX5Ugpqgk1Qm8zOF9cwEVu2BWvN7q/Bu4kDvdWC7yQcD1hongELQuq3
-	 KbIv4/p8d20s6kP5vQAeA0+zpAsLsP8DXLBgOc16DnRomRPyOLcURHX5Qqi1zmYVSqg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794488581;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=PBMXrFHASTKvrJ3Cb5b0x0+RtF3vzzYr8AtwvtbYKsw=;
+	b=eBzqwnKj6nxRAs85F9d91ojB97+YahzPdIXl/RtjQ3NbF/tNRp6AAdXKGpV/pQIG8LC2
+	 w6e20KzXfULHK5lQVuHGplwZ2f75fp2Qnsnxj2H15qk8blvyxVX4dyyYbO+6KTinp1LUT
+	 STXee7gYvX8A8JMglOqwno0Xcr5BZZOWqruowKQ0pmtmj4bjGDKOoWtTOFxRWr6/U7gJi
+	 FWjLDPi0iYdwev/wdfzc9uoY3miudsdS4g4pmpaavtRgcyj3TMURCjAATxwWjjxyD+FRI
+	 QM5sSwSTGpM3sclHhtK0A8eTYxyc5ZdyAJLHXEfFGoQ+6re5KlGR8179qDzteYNYV1w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.cyber.gouv.fr;
-	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=ME2y9xyQ;
-	arc=none smtp.remote-ip=51.159.188.251
-Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jRHY2zLx;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B52606A321;
-	Thu, 12 Nov 2026 12:56:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0B52606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE87606A32D;
+	Thu, 12 Nov 2026 13:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=ME2y9xyQ
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:
-	Reply-To:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=9zpmpXZL2AGBZ7N2dDO3aafaZXcocghDPR43dgCZPFw=; b=ME2y9xyQSgXxQ/87K9tSVQ83O7
-	F2/nflMo9ecPeWDp1J8M4EtGVEIs1AEiHz6LQd1v9htvVHsjsSY2UrEeH9yOH1gw/6RxOfsGcrZHM
-	1BQoJsBMcG+J3UXC35OcOz3qXJgXim4CTnqYStGIitVvQ/LGQpRYB2NjvEAnNgVbfnU0Q88kGHIVS
-	L+Nctk2b3FYbw4P6c9AaTeZIBYJfA4zOhViJEknSQfYjIvKHIqVL43in3T9oLi0hSJmrvM25DJ1MU
-	JQfnrcYzZX/xM+Ho6zCKi8RB7SKoLT/dF2nMh+XgBhn1gZLPT2YfjDp3LoVzVB+VNDnN75edvgIWI
-	kZH9hgYA==;
-Received: from [::1] (port=58526 helo=pf-012.whm.fr-par.scw.cloud)
-	by pf-012.whm.fr-par.scw.cloud with esmtpa (Exim 4.100.1)
-	(envelope-from <jeremy.jean@oss.cyber.gouv.fr>)
-	id 1xRULY-00000003KjR-3O2T;
-	Thu, 12 Nov 2026 13:56:06 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jRHY2zLx
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9FD91F00A05;
+	Thu, 12 Nov 2026 13:02:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794488581;
+	bh=PBMXrFHASTKvrJ3Cb5b0x0+RtF3vzzYr8AtwvtbYKsw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jRHY2zLxOj7WOeDeEhGyK3iIohwoIz8uR9UPmPqVT352H9skpMuFTV9PBQ/6y/1Fx
+	 GzdmrtGGqJQ63ZNgLxvdxP6/TqfDfv+pWpyJzzJjsEy0uLq0gCHvLtP2kFaPaF2gmD
+	 k+82GEbMTwloLecctiZmDuG7AmYK6+EdtzWP4kHBvpz/QaP6+ggdm+v2Euvg+7jxrf
+	 dZ8PsSmiuOYeuKxv4Ga7Hc56IzIDxYY5JTbQN7bguZv3KvKcNni9eKjMhpoB8uQHcL
+	 gImrGD5cw+GOgZatap3BjEF7H+jbUQyRB1xDogkvH5zB1pphPHXsBWhyi9bL21hoJy
+	 iD99ShP63r5Fg==
+Date: Thu, 12 Nov 2026 07:02:54 -0600
+From: "Serge Hallyn (AMD)" <sergeh@kernel.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>, Ada Smith <adasmithgt@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	John Johansen <john.johansen@canonical.com>,
+	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <matt@bobrowski.net>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	apparmor@lists.ubuntu.com, bpf@vger.kernel.org,
+	kernel-team@cloudflare.com, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] capabilities: Check PR_SET_SECUREBITS with
+ ns_capable()
+Message-ID: <avW4_r3IwLTNsXDg@shallyn-amd>
+References: <20261110202811.2409395-1-mic@digikod.net>
+ <20261110202811.2409395-2-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,95 +68,128 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Thu, 12 Nov 2026 13:56:06 +0100
-From: =?UTF-8?Q?J=C3=A9r=C3=A9my_Jean?= <jeremy.jean@oss.cyber.gouv.fr>
-To: Mimi Zohar <zohar@linux.ibm.com>, Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He
- <baoquan.he@linux.dev>, Pasha Tatashin <pasha.tatashin@soleen.com>, Pratyush
- Yadav <pratyush@kernel.org>, Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- kexec@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] ima: fix kexec measurement buffer overflow after failed
- loads
-In-Reply-To: <0d1363e419054c1aa1b0bfee645314c7e4aec0f5.camel@linux.ibm.com>
-References: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
- <0d1363e419054c1aa1b0bfee645314c7e4aec0f5.camel@linux.ibm.com>
-User-Agent: Roundcube Webmail/1.6.20
-Message-ID: <4edd198bb0e2b6010b438701994394e3@oss.cyber.gouv.fr>
-X-Sender: jeremy.jean@oss.cyber.gouv.fr
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: jeremy.jean@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: jeremy.jean@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20261110202811.2409395-2-mic@digikod.net>
 
-On 2026-11-12 03:07, Mimi Zohar wrote:
-> On Sun, 2026-11-08 at 19:04 +0000, JÃ©rÃ©my Jean wrote:
->> When kexec_file_load() fails to install a new image, it can leave the
->> global IMA scratch buffer larger than the IMA segment of the current
->> image. When that image is executed, ima_update_kexec_buffer() copies
->> the larger log past the end of its reserved segment. In a test, KASAN
->> reports it as:
->> 
->>   BUG: KASAN: vmalloc-out-of-bounds in 
->> ima_update_kexec_buffer+0x265/0x280
->>   Write of size 868426 at addr ffffc9000004e000 by task init/1
->>   ...
->>   Call Trace:
->>    ...
->>    __asan_memcpy+0x3b/0x60
->>    ima_update_kexec_buffer+0x265/0x280
->>    ...
->>    blocking_notifier_call_chain+0x88/0xb0
->>    kernel_restart_prepare+0x18/0x40
->>    kernel_kexec+0xe4/0x130
->> 
->> Limit the dump to the smaller value between the scratch size and the
->> installed image segment size. Update the IMA mapping only after
->> machine_kexec_post_load() succeeds.
->> 
->> Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to 
->> execute")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: JÃ©rÃ©my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+On Tue, Nov 10, 2026 at 09:28:06PM +0100, Mickaël Salaün wrote:
+> Per-process securebits were introduced with a direct cap_capable() check
+> for CAP_SETPCAP.  The capable LSM hook and SELinux capability policy
+> already existed, and SELinux forwarded task_prctl operations to
+> commoncap.  The direct call therefore bypassed SELinux policy from the
+> start.  It now also bypasses AppArmor, Landlock, and BPF LSM programs
+> attached to the capable hook.
 > 
-> Thank you for the report. I agree with Mike that the 
-> machine_kexec_post_load()
-> reordering should be a separate patch.
+> A task with CAP_SETPCAP in its effective set can consequently change
+> privileged securebits despite an LSM denial.  This can alter how its
+> capabilities evolve across UID and execution transitions without the
+> expected LSM denial or audit record.
 > 
-> For the overflow, rather than clamping at execute time, how about not 
-> changing
-> ima_kexec_file.size for an image that isn't installed?
+> Use ns_capable(), as cap_prctl_drop() already does for PR_CAPBSET_DROP.
+> Call it only for a no-op, which requires privilege for legacy reasons,
+> or when a privileged bit changes.  Changes limited to
+> SECURE_ALL_UNPRIVILEGED and their lock bits do not need the capability,
+> so they must not invoke an LSM check or set PF_SUPERPRIV.  Successful
+> privileged checks now set PF_SUPERPRIV, as other ns_capable() callers
+> do.  Without other LSMs, the same requests remain allowed as before.
 > 
->   1. Set ima_kexec_file.size only in ima_kexec_post_load(), from
->      image->ima_buffer_size, and stop ima_free_kexec_file_buf() from
->      resetting it.
+> The check now reaches every capable hook before commoncap commits the
+> new credentials.  A later task_prctl hook cannot provide equivalent
+> mediation because commoncap runs first and commits the change itself.
 > 
->   2. Reuse the buffer if size >= segment_size, instead of only if they
->      are equal, so the buffer is never smaller than size. The buffer no
->      longer tracks size, and with staging the list can shrink.
-> 
-> Please don't remove the "segment size can't change between kexec load 
-> and
-> execute" comments. They are still correct.
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: John Johansen <john.johansen@canonical.com>
+> Cc: KP Singh <kpsingh@kernel.org>
+> Cc: Matt Bobrowski <matt@bobrowski.net>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge Hallyn <serge@hallyn.com>
 
-Dear Mimi and Mike,
+The commit message is a bit wordy.  All it really needed to say was
+that 1. s/cap_capable/ns_capable to query other lsms, and 2. move
+the check to a concise helper.  I really do not relish looking through
+a git log where every commit message re-litigates the full history of
+any code that is touched or moved.
 
-Thank you both for your feedback. I tried to took them into 
-consideration
-for the v2 I have just sent. As requested, I split the fixes into 
-different
-commits, and try to address the bigger problem in this new version.
+But it looks good, thanks.
 
-Best regards,
-JÃ©rÃ©my
+Reviewed-by: Serge Hallyn (AMD) <sergeh@kernel.org>
+
+> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Cc: stable@vger.kernel.org
+> Reported-by: Ada Smith <adasmithgt@gmail.com>
+> Fixes: 3898b1b4ebff ("capabilities: implement per-process securebits")
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>  security/commoncap.c | 42 ++++++++++++++++++++----------------------
+>  1 file changed, 20 insertions(+), 22 deletions(-)
+> 
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index d47ab3022343..1947128396e2 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -1283,6 +1283,23 @@ static int cap_prctl_drop(unsigned long cap)
+>  	return commit_creds(new);
+>  }
+>  
+> +/*
+> + * Doing anything with securebits requires privilege (go read about the
+> + * "sendmail capabilities bug"), except for unprivileged bits.  Indeed, the
+> + * SECURE_ALL_UNPRIVILEGED bits are not restrictions enforced by the kernel but
+> + * by user space on itself.  For legacy reasons, a non-change requires
+> + * privilege too.  Only checking CAP_SETPCAP when it is needed keeps LSMs from
+> + * seeing (and logging) a capability check for unprivileged changes.
+> + */
+> +static bool securebits_need_setpcap(unsigned long old, unsigned long new)
+> +{
+> +	const unsigned long unpriv_and_locks = SECURE_ALL_UNPRIVILEGED |
+> +					       SECURE_ALL_UNPRIVILEGED << 1;
+> +	const unsigned long changed = old ^ new;
+> +
+
+FWIW, I think the code was clearer when the !changed was separate with a
+one line comment above it, than rolled into this return.
+
+> +	return !changed || (changed & ~unpriv_and_locks);
+> +}
+> +
+>  /**
+>   * cap_task_prctl - Implement process control functions for this security module
+>   * @option: The process control function requested
+> @@ -1346,28 +1363,9 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  			/* cannot change a locked bit */
+>  			return -EPERM;
+>  
+> -		/*
+> -		 * Doing anything requires privilege (go read about the
+> -		 * "sendmail capabilities bug"), except for unprivileged bits.
+> -		 * Indeed, the SECURE_ALL_UNPRIVILEGED bits are not
+> -		 * restrictions enforced by the kernel but by user space on
+> -		 * itself.
+> -		 */
+> -		if (cap_capable(current_cred(), current_cred()->user_ns,
+> -				CAP_SETPCAP, CAP_OPT_NONE) != 0) {
+> -			const unsigned long unpriv_and_locks =
+> -				SECURE_ALL_UNPRIVILEGED |
+> -				SECURE_ALL_UNPRIVILEGED << 1;
+> -			const unsigned long changed = old->securebits ^ arg2;
+> -
+> -			/* For legacy reason, denies non-change. */
+> -			if (!changed)
+> -				return -EPERM;
+> -
+> -			/* Denies privileged changes. */
+> -			if (changed & ~unpriv_and_locks)
+> -				return -EPERM;
+> -		}
+> +		if (securebits_need_setpcap(old->securebits, arg2) &&
+> +		    !ns_capable(current_user_ns(), CAP_SETPCAP))
+> +			return -EPERM;
+>  
+>  		new = prepare_creds();
+>  		if (!new)
+> -- 
+> 2.56.0
+> 
