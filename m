@@ -1,60 +1,129 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794472489;
-	b=h2y6OSyRLZNLe0Ze44FtXEWJI9/o3ppT12LL/U7nTNnHlVen9FTWu7bjFJAF5+J7XdBU
-	 6WiJSwIg9r5P23sgLyYYB291cOaHvGVapE1xUEp8yRA1rWveTxFacXdStsYM07yk9Rbic
-	 v+93risG2c011pY0imut4PNx/6dmfJ9aQOJ3Og9ynDFT/IEbtFsN71q2PIRBlK85YM5pa
-	 EWRJLxcqkHOqpi9RJhj/QoTaHy/E7mJfibm7MkV0/Yw6TMBb6ClOxOJUSrLVkirxn6XqV
-	 PB+WhZ+Uv3ZqgdcZft6D6YkSl1WR5tKOim48fSFJbTdbg2omCboMA8x0B9l0MQS0Y6Q==
+	t=1794473840;
+	b=auhITUceevfhsw4hy5Uf/tWl87xYwXl4p5UTnNXt1PoNZjGzF8hkssulG2BOrGtmP4Ly
+	 cpCUFyqPjxopBeY7DgLuMmVuxXiTryaK+LBioeYHefhPO5T3qJXFMAyzKv3AxgvNrIaOQ
+	 GGirTjG+bP6Jj55zIRQdaTjI0H3YyrDi56osKhAsEjJDfQLT+tuxTRkfzSXH40qlmQb8T
+	 TvmxRC+vmJYU1GxggmF7xc01OqJPO5+qij086QbAsNKt9av9Pi/9Iw38VooDR5Fe7Xp59
+	 QRy/cH8DfdwN1QCb9sSX5iJ99VhssUplO25OY/6+JXetL/Lhnu+BFdbUndySlyJ9IhQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794472489;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
-	 X-CM-SenderInfo;
-	bh=bv5H8KLOFSHLMNBV9RMl4Vl26jn/RwtJJ2FicmGlj9k=;
-	b=SUZtmqgBqDcPRk+8hSjwJTyahDcJJ+iaXbKfwPiIZ6jp0C6wu6lqEcVQWecVfatqkNSP
-	 uyk8pdFZ1V566u/YzFWT5G+c2LATElAvAORbuetvp8AaSFkKkYDP1PkC2Jg6WTcTIuKqI
-	 cGOMcQ+oh1sIvzb2LuXJ3Mb2SYKg+oe7cTZZL7O4xa94HdUiF5VWweSfsLkvZNCc8zHXu
-	 E3mae1FaLLTr56A4LI4JYfONzATvcl5PEHzDTUAVjyiN1Kchw2tgtzjIPojYnk3tiezoN
-	 JSvQo5VUotVhZabwbD50AslHhdSksiQzR1/Aj038O8CiAqg/06SpmCOBbx9ONonGV3Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794473840;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 X-Received:Received:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:In-Reply-To:X-Mimecast-Spam-Score:X-Mimecast-MFC-PROC-ID:
+	 X-Mimecast-Originator:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding;
+	bh=+IM6c9SQzhSiNLCPJKNescY2jVpZ6DadiC6JkBUJ1jI=;
+	b=mlkdEF4BEgAQesMg/nUjeQRBMc18yAjm7/W3gfuW1VsO1ulLpS0aCQYZmpjVqA7tKmOO
+	 B52cvNDeg9MZUAGVtiJqY4o9dIhe71SGbccB+zNGGj9T6BySKbeejGEwXjxsXeyoaqcoQ
+	 O0TDOFCFclkZoAJIAiwSh9070+RwpfsTemzmdI2oWWYKQlaVjeAnIyitrRBIf8F4ZxOD4
+	 hUn1gq4PEc+pD4a2CCthQ58wlXayT5CFRz66leeTYfWksV7iaP7AxVg2ZYwsjvojVQviQ
+	 P6lAruBIx5PgB7j79Fkc6dfWsk3SxOuC62s78gmuVEn9Y3YZCLJu28GgGmXbwhu2gyw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=126.com;
-	spf=pass smtp.mailfrom=126.com;
-	dkim=pass header.d=126.com header.i=@126.com header.a=rsa-sha256 header.s=s110527 header.b=EHX0ZJkV;
-	arc=none smtp.remote-ip=220.197.31.8
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=C+q8E5O4;
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED85E606B27F;
-	Thu, 12 Nov 2026 08:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED85E606B27F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CB3606A89E
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 08:57:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 86CB3606A89E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.a=rsa-sha256 header.s=s110527 header.b=EHX0ZJkV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
-	Content-Type; bh=bv5H8KLOFSHLMNBV9RMl4Vl26jn/RwtJJ2FicmGlj9k=;
-	b=EHX0ZJkVB1XSf2q74saBxcY+9CEdzgzvUPemEzWBMTfZa3lApxaBw394qtCSKR
-	LjWffz3PXP6WeEodwpzFpHuMd3dMy/KxgHGkJvVpuMMhhNMUiqTgYdZnO8VkD7t/
-	BdRD8luUgrQnrrbB0BSBfun9GDaYhGYThwfBCAIi9fy3k=
-Received: from kylin-pc (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3N64QevVqsM8GDA--.46064S2;
-	Thu, 12 Nov 2026 16:34:26 +0800 (CST)
-From: Panda Chen <mangosteen922@126.com>
-To: mic@digikod.net,
-	gnoack@google.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Panda Chen <mangosteen922@126.com>
-Subject: Re: [PATCH] landlock: Fix layer composition of LANDLOCK_ACCESS_FS_REFER
-Date: Thu, 12 Nov 2026 16:33:26 +0800
-Message-ID: <20261112083334.1332084-1-mangosteen922@126.com>
-X-Mailer: git-send-email @GIT_VERSION@
-In-Reply-To: <20261112025528.443654-1-mangosteen922@126.com>
-References: <20261112025528.443654-1-mangosteen922@126.com>
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=C+q8E5O4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1794473838;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+IM6c9SQzhSiNLCPJKNescY2jVpZ6DadiC6JkBUJ1jI=;
+	b=C+q8E5O4lQJFv4qkiux7KyKKUTozpyGAehRl10GDR8JLSmRBVEmVmnowmsx29TwyDyZWDN
+	fziidfkQ3GXxXGBRFmKwTfwwlAeCJfChorWeTjOu3YqUprll5VSjK3TpNmBOdBfLy7KOmV
+	Q+ZE5KptEiNYmquB/U8cm8jowqoqCLo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-586-dGi62hzWMciStNDiZ_KyUw-1; Thu, 12 Nov 2026 03:57:17 -0500
+X-MC-Unique: dGi62hzWMciStNDiZ_KyUw-1
+X-Mimecast-MFC-AGG-ID: dGi62hzWMciStNDiZ_KyUw_1794473836
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4a359b714f8so31050625e9.2
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 00:57:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794473836; x=1795078636;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=+IM6c9SQzhSiNLCPJKNescY2jVpZ6DadiC6JkBUJ1jI=;
+        b=RIi1aHg3WS2GX8hwULKt3GrGP9E9x2bOELBNwkCdHYVG/f/hrkC7JtN8Hvejf1lZEQ
+         pyWKHe41wBdRnavjBkB8fh59CbMfrMMevBfnuocM0FlqV+2ajzHxPX1O1YBmmjxl2dzA
+         W+XYyJrjwK2l/GeFnQNXTM4HxtJEBDZsFxocdEeGghr4ktPWrGFgqWNwBchjtcsqDpel
+         26PQgq7sUrzCO37RGDD9jMKP+sN/xAuUbVjwfDwUaR1ih0lq6XV/wDY4C28+MWwGN9fM
+         ZuU3FeMqGfCgyaynPIPxcXG80Ug2mncllP7XXkPJ+QbDdny/t88TlnZPJ4agHEgggXr0
+         DWOg==
+X-Forwarded-Encrypted: i=1; AL+hErEqTFcZJJg1mUccMCTCoD6ZOmC1gdkmue8vhGbdlLhw4O/H7BtB0H20Pj3YXug4DXo2QUrXvSQrOlKHXQkIBdC9svR4otI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8BEysvwi/mFLsjeIjuf8UbPMx1IZvZM1aoMUP4FzOOOl2cvyQk
+	PZW0oQPo3yXR0oJTXOPAWGMmaCKGasR6mtAdGP3toz8YLZZ3YkVJXACtAfOJZeIJEoR4UY/CYo9
+	rumqT5Nsv/ytLfO7xQXO+9llwZtZ9DKE9UVz9aL72oNLNdC+SHAmZFkbUOSXhKUHRbk5kov3DPy
+	ycBg==
+X-Gm-Gg: AYBFou0OnlusYGBubfFCFJpvv+VtGsLoo0ATdEK2tie/SOKlLhlbal9eK6H2umhglUu
+	0JJIIkS5oH7jyHRyiWl2aZWB1EeiVWtXUyAKTKdJreQLC2XmqJT20eePtZL7vQu1HXUC2y/2tOg
+	bFuC1GYnRDl2cdCJdm+qVd7UQlBULYhJyQSY0ePYmlcPudi1XTTpAy/XXvJFtuwMST4p20vAEjN
+	LVGRwsgDkcPZIMY4C2092IVU8LoqDsMuCz6dxEyXqPh3nMGjgPb1wwfiMedqCXU5ad2CC+CT01D
+	ctrWl2bwQDJRNeXpxgGAvhDYc27VYtMXZzkbiDL3W9B4ZBZRDStYk1Afl69jTvINblndRmZAvyM
+	+lvd5EDa5AiJW898GO1fgdP6MUNiZUYppFonw0Kv6XHQ=
+X-Received: by 2002:a05:600c:1c0d:b0:4a2:1e1:d55 with SMTP id 5b1f17b1804b1-4ba093a3cf9mr102100665e9.28.1794473835938;
+        Thu, 12 Nov 2026 00:57:15 -0800 (PST)
+X-Received: by 2002:a05:600c:1c0d:b0:4a2:1e1:d55 with SMTP id 5b1f17b1804b1-4ba093a3cf9mr102100215e9.28.1794473835545;
+        Thu, 12 Nov 2026 00:57:15 -0800 (PST)
+Received: from localhost ([139.47.30.142])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb4e251686sm54810695e9.3.2026.11.12.00.57.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2026 00:57:15 -0800 (PST)
+Date: Thu, 12 Nov 2026 09:57:14 +0100
+From: Albert Esteve <aesteve@redhat.com>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+	Ondrej =?utf-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>,
+	Jens Wiklander <jenswi@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, op-tee@lists.trustedfirmware.org
+Subject: Re: [Linaro-mm-sig] [PATCH v4 1/8] memcg: Add MEMCG_DMABUF
+ accounting infrastructure
+Message-ID: <avV_asMMt16Q5S7S@aesteve-thinkpadp1gen8.rmtes.csb>
+References: <20261104-v2_20230123_tjmercier_google_com-v4-0-1819a017000b@redhat.com>
+ <20261104-v2_20230123_tjmercier_google_com-v4-1-1819a017000b@redhat.com>
+ <96d6a6e828310738c0cb4550752a0b5808a81ef9.camel@linux.intel.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,39 +133,325 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
+In-Reply-To: <96d6a6e828310738c0cb4550752a0b5808a81ef9.camel@linux.intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: pV4UhARV9-XNU3zxEZKlczZ0hx2LOGhr75zn3WjJFgQ_1794473836
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3N64QevVqsM8GDA--.46064S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTRzBTUUUUUU
-X-CM-SenderInfo: 5pdqw0pvwhv0qzssqiyswou0bp/xtbBlhK6sGr1ehLgLwAA32
 
-Hello GÃ¼nther,
+On Thu, Nov 12, 2026 at 08:26:35AM +0100, Thomas Hellström wrote:
+> On Wed, 2026-11-04 at 12:09 +0100, Albert Esteve wrote:
+> > From: "T.J. Mercier" <tjmercier@google.com>
+> > 
+> > Introduce a MEMCG_DMABUF stat counter and helpers for charging,
+> > cancelling, and uncharging dma-buf memory against a memory cgroup.
+> > 
+> > The charge is tracked on struct dma_buf via a new memcg pointer.
+> > The memcg reference is stored into (or cleared from) dmabuf->memcg
+> > by the helpers, removing the need for callers to manage those
+> > details. The release path in dma_buf_release() is reduced to a
+> > single mem_cgroup_uncharge_dmabuf() call.
+> > 
+> > Rather than charging at the page level via __GFP_ACCOUNT, which
+> > would require exporters to expose their backing pages for
+> > cross-cgroup transfer via new dma_buf_ops, charges are tracked
+> > externally on struct dma_buf through a single accounting path.
+> > 
+> > The next patch wires up the charging policy in the dma-heap ioctl.
+> > 
+> > Signed-off-by: T.J. Mercier <tjmercier@google.com>
+> > Signed-off-by: Albert Esteve <aesteve@redhat.com>
+> > ---
+> >  Documentation/admin-guide/cgroup-v2.rst |  4 ++
+> >  drivers/dma-buf/dma-buf.c               |  3 ++
+> >  include/linux/dma-buf.h                 |  4 ++
+> >  include/linux/memcontrol.h              | 27 +++++++++++++
+> >  mm/memcontrol.c                         | 70
+> > +++++++++++++++++++++++++++++++++
+> >  5 files changed, 108 insertions(+)
+> > 
+> > diff --git a/Documentation/admin-guide/cgroup-v2.rst
+> > b/Documentation/admin-guide/cgroup-v2.rst
+> > index 86a2a0099178..a3265a4a953e 100644
+> > --- a/Documentation/admin-guide/cgroup-v2.rst
+> > +++ b/Documentation/admin-guide/cgroup-v2.rst
+> > @@ -1662,6 +1662,10 @@ The following nested keys are defined.
+> >  		Amount of memory used for storing in-kernel data
+> >  		structures.
+> >  
+> > +	  dmabuf (npn)
+> > +		Amount of memory used for exported DMA buffers
+> > allocated by the cgroup.
+> > +		Stays with the allocating cgroup regardless of how
+> > the buffer is shared.
+> > +
+> >  	  workingset_refault_anon
+> >  		Number of refaults of previously evicted anonymous
+> > pages.
+> >  
+> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> > index 4c9add51f9ef..1c6b9cee7ac2 100644
+> > --- a/drivers/dma-buf/dma-buf.c
+> > +++ b/drivers/dma-buf/dma-buf.c
+> > @@ -14,6 +14,7 @@
+> >  #include <linux/fs.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/dma-buf.h>
+> > +#include <linux/memcontrol.h>
+> >  #include <linux/dma-fence.h>
+> >  #include <linux/dma-fence-unwrap.h>
+> >  #include <linux/anon_inodes.h>
+> > @@ -182,6 +183,8 @@ static void dma_buf_release(struct dentry
+> > *dentry)
+> >  
+> >  	dmabuf->ops->release(dmabuf);
+> >  
+> > +	mem_cgroup_uncharge_dmabuf(dmabuf);
+> > +
+> >  	if (dmabuf->resv == (struct dma_resv *)&dmabuf[1])
+> >  		dma_resv_fini(dmabuf->resv);
+> >  
+> > diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+> > index d15b2b31d3c9..23ec0ff23fba 100644
+> > --- a/include/linux/dma-buf.h
+> > +++ b/include/linux/dma-buf.h
+> > @@ -27,6 +27,7 @@
+> >  struct device;
+> >  struct dma_buf;
+> >  struct dma_buf_attachment;
+> > +struct mem_cgroup;
+> >  
+> >  /**
+> >   * struct dma_buf_ops - operations possible on struct dma_buf
+> > @@ -429,6 +430,9 @@ struct dma_buf {
+> >  
+> >  		__poll_t active;
+> >  	} cb_in, cb_out;
+> > +
+> > +	/** @memcg: the cgroup to which this buffer is currently
+> > attributed */
+> > +	struct mem_cgroup *memcg;
+> >  };
+> >  
+> >  /**
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index 7d1c0ce189a8..4d1e82cf0833 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -10,6 +10,9 @@
+> >  
+> >  #ifndef _LINUX_MEMCONTROL_H
+> >  #define _LINUX_MEMCONTROL_H
+> > +
+> > +struct dma_buf;
+> > +
+> >  #include <linux/cgroup.h>
+> >  #include <linux/vm_event_item.h>
+> >  #include <linux/hardirq.h>
+> > @@ -40,6 +43,7 @@ enum memcg_stat_item {
+> >  	MEMCG_ZSWAP_B,
+> >  	MEMCG_ZSWAPPED,
+> >  	MEMCG_ZSWAP_INCOMP,
+> > +	MEMCG_DMABUF,
+> >  	MEMCG_NR_STAT,
+> >  };
+> >  
+> > @@ -667,6 +671,9 @@ int mem_cgroup_charge_hugetlb(struct folio*
+> > folio, gfp_t gfp);
+> >  int mem_cgroup_swapin_charge_folio(struct folio *folio, unsigned
+> > short id,
+> >  				   struct mm_struct *mm, gfp_t gfp);
+> >  
+> > +bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t gfp,
+> > +			       unsigned int nr_pages);
+> > +
+> >  void __mem_cgroup_uncharge(struct folio *folio);
+> >  
+> >  /**
+> > @@ -682,6 +689,10 @@ static inline void mem_cgroup_uncharge(struct
+> > folio *folio)
+> >  	__mem_cgroup_uncharge(folio);
+> >  }
+> >  
+> > +void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg, unsigned int
+> > nr_pages);
+> > +
+> > +void mem_cgroup_uncharge_dmabuf(struct dma_buf *dmabuf);
+> > +
+> >  void __mem_cgroup_uncharge_folios(struct folio_batch *folios);
+> >  static inline void mem_cgroup_uncharge_folios(struct folio_batch
+> > *folios)
+> >  {
+> > @@ -1167,10 +1178,26 @@ static inline int
+> > mem_cgroup_swapin_charge_folio(struct folio *folio,
+> >  	return 0;
+> >  }
+> >  
+> > +static inline bool mem_cgroup_reserve_dmabuf(struct mem_cgroup
+> > *memcg,
+> > +					     gfp_t gfp,
+> > +					     unsigned int nr_pages)
+> > +{
+> > +	return true;
+> > +}
+> > +
+> > +static inline void mem_cgroup_cancel_dmabuf(struct mem_cgroup
+> > *memcg,
+> > +					    unsigned int nr_pages)
+> > +{
+> > +}
+> > +
+> >  static inline void mem_cgroup_uncharge(struct folio *folio)
+> >  {
+> >  }
+> >  
+> > +static inline void mem_cgroup_uncharge_dmabuf(struct dma_buf
+> > *dmabuf)
+> > +{
+> > +}
+> > +
+> >  static inline void mem_cgroup_uncharge_folios(struct folio_batch
+> > *folios)
+> >  {
+> >  }
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 856a7d07586c..e53dd7eebc3b 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -69,6 +69,7 @@
+> >  #include <net/ip.h>
+> >  #include "slab.h"
+> >  #include "memcontrol-v1.h"
+> > +#include <linux/dma-buf.h>
+> >  
+> >  #include <linux/uaccess.h>
+> >  
+> > @@ -442,6 +443,7 @@ static const unsigned int memcg_stat_items[] = {
+> >  	MEMCG_ZSWAP_B,
+> >  	MEMCG_ZSWAPPED,
+> >  	MEMCG_ZSWAP_INCOMP,
+> > +	MEMCG_DMABUF,
+> >  };
+> >  
+> >  #define NR_MEMCG_NODE_STAT_ITEMS ARRAY_SIZE(memcg_node_stat_items)
+> > @@ -1625,6 +1627,7 @@ static const struct memory_stat memory_stats[]
+> > = {
+> >  #ifdef CONFIG_HUGETLB_PAGE
+> >  	{
+> > "hugetlb",			NR_HUGETLB			},
+> >  #endif
+> > +	{
+> > "dmabuf",			MEMCG_DMABUF			},
+> >  
+> >  	/* The memory events */
+> >  	{
+> > "workingset_refault_anon",	WORKINGSET_REFAULT_ANON		},
+> > @@ -5658,6 +5661,73 @@ void mem_cgroup_flush_workqueue(void)
+> >  	flush_workqueue(memcg_wq);
+> >  }
+> >  
+> > +/**
+> > + * mem_cgroup_reserve_dmabuf - charge a memcg for a dma-buf
+> > allocation
+> > + * @memcg: memcg to charge (may be %NULL)
+> > + * @gfp_mask: reclaim mode
+> > + * @nr_pages: number of pages to charge
+> > + *
+> > + * Charges @nr_pages against @memcg. Call this before allocating
+> > pages so
+> > + * the cgroup limit is enforced up front. On success the caller must
+> > + * finalize the charge with the MEMCG_DMABUF stat update, or call
+> > + * mem_cgroup_cancel_dmabuf() to undo it.
+> > + *
+> > + * Returns %true on success, %false if the charge would exceed the
+> > limit.
+> > + */
+> > +bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t
+> > gfp_mask,
+> > +			       unsigned int nr_pages)
+> > +{
+> > +	if (!memcg || mem_cgroup_disabled())
+> > +		return true;
+> > +
+> > +	if (try_charge(memcg, gfp_mask, nr_pages))
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
+> > +EXPORT_SYMBOL_GPL(mem_cgroup_reserve_dmabuf);
+> > +
+> > +/**
+> > + * mem_cgroup_cancel_dmabuf - undo a dma-buf charge
+> > + * @memcg: memcg to uncharge (may be %NULL)
+> > + * @nr_pages: same value passed to mem_cgroup_reserve_dmabuf()
+> > + *
+> > + * Returns @nr_pages of charge to @memcg. Use when the allocation
+> > fails
+> > + * after mem_cgroup_reserve_dmabuf().
+> > + */
+> > +void mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg, unsigned int
+> > nr_pages)
+> > +{
+> > +	if (!memcg)
+> > +		return;
+> > +
+> > +	if (!mem_cgroup_is_root(memcg))
+> > +		refill_stock(memcg, nr_pages);
+> > +}
+> > +EXPORT_SYMBOL_GPL(mem_cgroup_cancel_dmabuf);
+> > +
+> > +/**
+> > + * mem_cgroup_uncharge_dmabuf - uncharge a dma-buf from its memcg
+> > + * @dmabuf: buffer to uncharge
+> > + *
+> > + * Reverses a finalized dma-buf charge. Drops the memcg
+> > + * reference stored in @dmabuf->memcg and clears the pointer.
+> > + * Safe to call when @dmabuf->memcg is %NULL.
+> > + */
+> > +void mem_cgroup_uncharge_dmabuf(struct dma_buf *dmabuf)
+> > +{
+> > +	unsigned int nr_pages;
+> > +	struct mem_cgroup *memcg = dmabuf->memcg;
+> > +
+> > +	if (!memcg)
+> > +		return;
+> > +
+> > +	nr_pages = PAGE_ALIGN(dmabuf->size) >> PAGE_SHIFT;
+> > +	mod_memcg_state(memcg, MEMCG_DMABUF, -nr_pages);
+> > +	mem_cgroup_cancel_dmabuf(memcg, nr_pages);
+> > +	mem_cgroup_put(memcg);
+> > +	dmabuf->memcg = NULL;
+> > +}
+> 
+> Instead of keeping a reference on the memcg for the buffer's whole
+> lifetime, shouldn't an obj_cgroup be used, which is reparented when the
+> memcg goes offline?
 
-You are right, and I apologize.
+Good point. I did not think of it, but after a brief check I think it'd
+be the right object to use. I'll switch for the next version.
 
-I was not aware of your patch [1] when I sent mine, and I then made it
-worse: I sent v2 and v3 in quick succession without waiting for review
-feedback, kept replying in the same thread instead of starting a new
-top-level thread, and omitted per-version changelogs under the "---"
-marker.  These were my process mistakes, and I have re-read
-Documentation/process/submitting-patches.rst to make sure I follow the
-documented workflow from now on: wait for feedback, version from v1,
-new top-level threads for new versions, changelog after "---", and my
-real name (Panda Chen) in Author and Signed-off-by.
+> Like in Dave's series here:
+> 
+> https://lore.kernel.org/all/20260706052330.1110909-1-airlied@gmail.com/
 
-On the AI question: I prepared the patches with AI assistance, but the
-sending decisions were mine.  I understand the concern and will review
-each version personally before anything goes out, at a human pace.
+Thanks for the link! I'll use it as reference. I should mention it in the
+cover letter too probably, as that series is related (should be safe as
+far as it does not opt-in for dma-buf-level charging).
 
-Since your fix is already in flight, I am withdrawing my patch.  If it
-is useful to you, please feel free to reuse the regression test from
-my v3 (the selftest that stacks a network-only ruleset on a filesystem
-ruleset and asserts that different-parent renames stay allowed); it
-reproduces the bug on an unfixed kernel.
+BR,
+Albert
 
-Thank you for the patience and the detailed feedback.
-
-Best regards,
-Panda Chen
+> 
+> Thanks,
+> Thomas
+> 
+> 
+> 
+> 
+> > +
+> >  static int __init cgroup_memory(char *s)
+> >  {
+> >  	char *token;
 
