@@ -1,78 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794466783;
-	b=H5p2uFrINRpDSco2pywSUszd0Xv6Ikr1q30TN5y87wmkQc0dUUFP7rxXDEqS6RwJs0yE
-	 ObFBz4QCB2us/bFxl1sFZwG85Tcb2oprFReMrMOWtl1Vat7b3gzm+MadBN8wdiWTAKTxL
-	 OUlSgHylCYMPDivkCJw1RIfOM+AhCc7+ampA7pRYDIEsPAcmUTuDMBhzpXV21mdfgn0aK
-	 Rgr+USVO5xWcE28vSs9cYUsCiKPGI1EJUkFhgDy0HQLusqPibalX3bTbehDrulQ59rzbs
-	 7VnBC0D8YVduhH2SOBILyqX8gMyRoUC/ZtQrNu3y11Q1n6Zd4vmgSNbsvgb3qTNVmRA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794466783;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=rNduiENQ9vhtrjuPl8puxUBgMaXfaonka9e702B4Qpw=;
-	b=fpmFPmhwq/vYbw8XIdBsrhRJdZXv3fzUjLyrz2syvLTrsUQZMoG+M9hkAWLYyTcWJ3IX
-	 3MDuv2ajnZrJ8WGq7QC9uNJoiPRODGusb69P/66GrHi6LiR5sX6ncylxgStpVCm/rvdMa
-	 hCqtzHjkH7W9S6OaIE/RleOumh72XLM61a+wH3KJPOVdljR9A7j6+Bvd29Mff1YE59lRb
-	 Yy1+DMujMA+v2bJsPDzhREtzDwVe/wl3qwEzMjhTK6l7zr7e6xqZ5PVoUFLkmPXMVaeRq
-	 W6h8t87rp6/ypF+l52k/cXMkSpWwMOvsYl/FEprX7k1cTfTlOnEosKurgSAqcfEoJ4A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=glabDw3a;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794466875;
+	b=BiaaLzuQYNvxjjlDyOk8v78RxsgDv6ZlX9Bb4neCplJg7J/TRF6CzMSaosJM6AbZCDBm
+	 FQ/5B/2icNSlCNaE3Qj3slFbtHcNqyyFRg/gSNBgAitfs+swtP6E95tnXoZJHNS2jMv4k
+	 wMju/qpwZeRj/DjUPdjb4n+KouPWYSgNz3/7yFg2XmReEM3OXp1g6QdXLpa40muemuwPY
+	 rRgxLIlKIIX/9HsMURQlVzpajA2JQEdHDCcyWoyCqWZWSPrYogr2us4hM5zWqxPAQ2ecA
+	 Kz/GdrQtXZeQzYTDAHVHC38wmC261LqyQKIPIJk9B1aeiDqSryhu2nNEr6JEwabhYyQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794466875;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=VmYCXkQKeK/n5+56/L/h+bico461SqFiVj3Owracis4=;
+	b=kKkYMqs1kDRxqmFOUSGVShs06ac3/9qan0cZMelZZ9PXvPwMHAuLtsOin4xu8e0GN8FA
+	 8Pbaox21KnKJvk1t8eYUkjTn016zMdgGPtL9TN5x3lhuaJ0t1SLgu2KxdVg1hi0YMgHex
+	 iTl6CaKw7lzkqzLs/JdTabE9cBk2IGAJmW9eb7g5CRVpYu1TnOBDVndZxggunSwZe4hzu
+	 kQGcC7SK6mH6wNwSOp0nD6mIKK7tts4YDgEESMyUnl+kEFD9qSYMS+6mFhFDlVA4ATKXK
+	 wqLW586s/+aHOmGlZKKaAM91BA0fI8i/2dn6M2AaHegueyCOWN+EqfSzwUqPrLPQEIw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eOHSjJ04;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43152606A32A;
-	Thu, 12 Nov 2026 06:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37CF606A336
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 07:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=glabDw3a
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794466782;
-	b=Ndg9ErfyuhV+WsxKY6JFCyjCM1iaNFs1yK/06QOFiFkuL+A1+LWgj2zvFyq9ScFKL6OZ
-	 Y8p8fO0h1ycqkhbGWdx9Y0f3S7M/Xgx9fpD07uhWzqmQBcAvYjTMSlxvjLZZ3O68de7QY
-	 Y37iKw0aGd4COxAmkc1usK9BVclxhM9cBA8frmc7qDO7YNd0/gSNT8I+p3/513KXutUf2
-	 vqe4ABXlW7eaz2g0X8bYdSIJzCNbWoVm99YIPClkds6GoHt1g2ENMzC/B6H4pvOoAWHQF
-	 Kp5dbB9TCvwHXSsbOj2GNo6s2q3JeRE2QT6hSfQJxycUThqRZ7e3QI1xGwy0zQ8o+dw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794466782;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=rNduiENQ9vhtrjuPl8puxUBgMaXfaonka9e702B4Qpw=;
-	b=wBlf7YYL1Tap3CY+KvXEEsDsKODnfv0Tkl+hoGct1RdRoBayYVS/AL+D/jdLeLD6KlW0
-	 Qskij0o80z6E9+lrDXxbn8+4WU8wrgvUtay4wTzvVnBW7WnF8b6QQPRw4WCDkubxuoMYQ
-	 pUzyhEXegn6n61/82PZQ/Dkyx7LBvKEdJoGCFTwdA64pFCQLZdrF0Q2yRlyW65/KXDjTD
-	 xhiqQLCa/5BLTWVyeIvorDNN+w72vgnsM1+bUn/NwgRXd4AwX5gXm95J68BCCqJANRj28
-	 YJljbkoG6hII1/uOvMcmyjzzDgrPTf6vLJP/c5yhWZWdcGcm5eOs+LnnAlF64j1RzuA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 52CA11F00A05;
-	Thu, 12 Nov 2026 06:59:42 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eOHSjJ04
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615DA1F00A05
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 07:01:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794466782;
-	bh=rNduiENQ9vhtrjuPl8puxUBgMaXfaonka9e702B4Qpw=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=glabDw3ad+goMtzBkEd9rQmqMIPvUajUtrkvKhLl2oO8khrQI4lZr5HDzbwYd6kKL
-	 CoKnm6owDfcS3C8R0ANz/yTPI+sMRblN2muX9WsacN595P/svpWVDJPkjlywGHuxzb
-	 iuow6zn+N59w2RsNlpG1wvFDAawb5Z/HZkWZxzH/wG0xylzwZvnPcUejxkJrQB/caD
-	 pWbHxCN9Nuoosg9ErNAS1d/CP1E8R3qNTQ0QxNRIUeIeFRpFmfE/uf8I7GnspO7tOh
-	 DfvOqTI7r2wq6A3YaBaF6NKM66XBLdSYgSIIdFipTQ/xbG9IBGb/eAkUgWFYO0I0a2
-	 LzNg98O6RVsEQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A3F32492F2;
-	Thu, 12 Nov 2026 06:59:41 +0000 (UTC)
-From: Weidong Wang via B4 Relay <devnull+weidongw.illinois.edu@kernel.org>
-Date: Thu, 12 Nov 2026 00:56:11 -0600
-Subject: [PATCH] ima: reject duplicate fsname= in a policy rule
+	s=k20260515; t=1794466874;
+	bh=VmYCXkQKeK/n5+56/L/h+bico461SqFiVj3Owracis4=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=eOHSjJ04vbpiBITZUVRomfwTj0WVRwrwNFE9WrsDjIQxQKUM+5+2fcel6s76Xt4pE
+	 jlj5Xe4i6tPDaZcpVGmZHJmLguNPYwPYshqFO8TzwTMBmlxL+9aWcTbnPjd3Crf0C9
+	 YF/GouKkdDeNmPEQMsK6NtogmaxGZrQ1In10Ni+PNZKbKW7T60FUJamHTIhZ1SqkX/
+	 JGQ9s8sbU3BO7MBFf9GHkvASQ5DfO6csJyBP8INeAqtyTrFCvSMb9UxU/a+BEEAnMy
+	 ch7jd6vRpvJp7CyPyU5ivmQ3gR4WnwGmQAwoSDosPUIeIenwoxqQLtGWl3z3tLUd3q
+	 8ikwx6JLqlHYA==
+Message-ID: <sashiko-outbox-210561@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 2/2] landlock: Add a test for REFER layer composition
+ with network layer
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261112065203.1066536-2-mangosteen922@126.com>
+References: <20261112025528.443654-1-mangosteen922@126.com>
+ <20261112065203.1066536-1-mangosteen922@126.com>
+ <20261112065203.1066536-2-mangosteen922@126.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Nov 2026 07:01:13 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -81,110 +60,104 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261112-c3-n204-v1-1-dd9400b9ece8@illinois.edu>
-X-B4-Tracking: v=1; b=H4sIAAtj9WoC/yXMQQ5AMBCF4avIrDUxQ0pcRSyqBmNR0iIScXfF8
- kv+9y4I7IUD1MkFng8JsrgITBOwk3EjK+mjgTLSiEjK5spRVihTEWNZ6aIrNcR69TzI+T017e+
- wdzPb7Z3DfT+ayAPUawAAAA==
-X-Change-ID: 20261112-c3-n204-a82e17864b76
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijie Zhao <zijie4@illinois.edu>, 
- Weidong Wang <weidongw@illinois.edu>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794466781; l=3130;
- i=weidongw@illinois.edu; s=20261108; h=from:subject:message-id;
- bh=YGNbmdIKoUZltwnBYfWkHQKsciAD4PKBCRhCaE1+1UI=;
- b=4mb0v9yD+DWL94QnJHXjVFAc9KVagxK9XVa02IFOvT8sgRKBXYR4REO5WY7iFuUHoGsCpmAz5
- hptdCWvDfCFCRSHcRMOFTmcIViSfxZYjR7/IMQjnieDszYjTMNYCxoR
-X-Developer-Key: i=weidongw@illinois.edu; a=ed25519;
- pk=DR2S1xPEa5sELrWPfOpvUphJQ2VHC+MDc/wJavE/ifg=
-X-Endpoint-Received: by B4 Relay for weidongw@illinois.edu/20261108 with
- auth_id=1449
-X-Original-From: Weidong Wang <weidongw@illinois.edu>
-Reply-To: weidongw@illinois.edu
-Content-Transfer-Encoding: 7bit
 
-From: Weidong Wang <weidongw@illinois.edu>
+Thank you for your contribution! Sashiko AI review found 3 potential
+issues to consider:
+- [High] selftests/landlock: non-compliant handle pandaWall in
+  Signed-off-by
+- [Medium] selftests/landlock: ungranted MAKE_REG in
+  refer_with_net_layer() fails
+- [Low] selftests/landlock: stray blank line removal before
+  refer_denied_by_default1
+--
 
-ima_parse_rule() stores the fsname= value with kstrdup() but, unlike
-fsmagic=, fs_subtype= and the other options, does not check whether the
-rule already has one. A rule that names fsname= twice overwrites
-entry->fsname and leaks the first string.
+commit d4e80b85fa92ac6a7a9cb938ea00f1dbb1f7a137
+Author: pandaWall <mangosteen922@126.com>
 
-Reject the duplicate with -EINVAL, as fs_subtype= does. Such a rule used
-to be accepted with the last fsname= taking effect; giving the option
-twice was never meaningful, and the other options already reject it.
+> landlock: Add a test for REFER layer composition with network layer
+>
+> Check that stacking a network-only ruleset (i.e. a layer handling no
+> filesystem access right) on top of a filesystem ruleset still allows
+> different-parent renames and exchanges allowed by the filesystem layer.
+> Before the fix, such a layer implicitly handled
+> LANDLOCK_ACCESS_FS_REFER and denied these operations with EXDEV.
+>
+> A single rule on dir_s1d2 is enough: it covers its subdirectory
+> dir_s1d3, and grants all the filesystem access rights handled by the
+> domain on both parents of the tested renames.
+>
+> Signed-off-by: pandaWall <mangosteen922@126.com>
 
-Writing the policy requires CAP_SYS_ADMIN, so the leak is limited to a
-few bytes per malformed rule loaded by a privileged user.
+[Severity: High]
+The Author header and Signed-off-by trailer use a handle ("pandaWall")
+rather than a real full name, as required by the Developer's Certificate of
+Origin in Documentation/process/submitting-patches.rst.
 
-The leak was found by an AI code review agent (an LLM-based bug-finding
-tool developed by Zijie Zhao and the submitter) and confirmed on an
-unmodified kernel, without error injection, on x86_64 under QEMU with
-kmemleak: loading 64 rules with a duplicated fsname= left 64
-unreferenced objects allocated by kstrdup() in ima_parse_rule() (inlined
-into ima_parse_add_rule()); the same rules with a single fsname= left
-none. With this patch the duplicate rules are rejected and kmemleak
-reports nothing; rules with a single fsname= are still accepted.
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/s=
+elftests/landlock/fs_test.c
+> index f725882fa4a78..94b339252f5db 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -2569,7 +2569,6 @@ const struct rule layer_dir_s2d1_execute[] =3D {
+>  	},
+>  	{},
+>  };
+> -
+>  /*
+>   * Tests precedence over renames: denied by default for different parent
+>   * directories, *with* a rule matching a parent directory, but not direc=
+tly
 
-The reproducer, fix and changelog were drafted with AI assistance
-(Claude), then reviewed and tested by the submitter.
+[Severity: Low]
+This isn't a bug, but this hunk removes an unrelated blank line after
+layer_dir_s2d1_execute[], and the commit subject prefix should be
+"selftests/landlock:" to match other commits touching this file.
 
-Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the filesystem name")
-Cc: Zijie Zhao <zijie4@illinois.edu>
-Signed-off-by: Weidong Wang <weidongw@illinois.edu>
----
-Tested on v7.4-rc1 (05441d697f7f), x86_64, QEMU/KVM, kmemleak, booted
-with slab_debug=U. 64 rules written to the IMA policy file at once:
+> @@ -2612,6 +2611,42 @@ TEST_F_FORK(layout1, refer_denied_by_default4)
+>  				layer_dir_s1d1_refer);
+>  }
+> =20
+> +/*
+> + * Tests that a layer not handling filesystem access rights does not
+> + * implicitly handle LANDLOCK_ACCESS_FS_REFER, which would otherwise deny
+> + * different-parent renames and links stacked on top of a filesystem rul=
+eset.
+> + */
+> +TEST_F_FORK(layout1, refer_with_net_layer)
+> +{
+> +	const struct rule layer_fs[] =3D {
+> +		{
+> +			.path =3D dir_s1d2,
+> +			.access =3D LANDLOCK_ACCESS_FS_REFER,
+> +		},
+> +		{},
+> +	};
+> +	const struct landlock_ruleset_attr ruleset_net =3D {
+> +		.handled_access_net =3D LANDLOCK_ACCESS_NET_BIND_TCP,
+> +	};
+> +
+> +	/*
+> +	 * layer_fs alone: different-parent renames are allowed.  A single
+> +	 * rule on dir_s1d2 covers its subdirectory dir_s1d3 as well.
+> +	 */
+> +	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_REFER |
+> +				      LANDLOCK_ACCESS_FS_MAKE_REG,
+> +		   layer_fs);
+> +	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
 
-  trigger  "dont_measure fsname=pocfsA<i> fsname=pocfsB<i>"
-  control  "dont_measure fsname=pocfsA<i>"
+[Severity: Medium]
+Does this test fail on the first test_rename() with EACCES?
 
-               trigger                         control
-  unpatched    accepted; 64 unreferenced       accepted; none
-               objects, all "pocfsA<i>"
-  patched      write rejected; none            accepted; none
+enforce_fs() makes the domain handle both LANDLOCK_ACCESS_FS_REFER and
+LANDLOCK_ACCESS_FS_MAKE_REG, while layer_fs only grants
+LANDLOCK_ACCESS_FS_REFER on dir_s1d2.  When reparenting a regular file
+across directories, current_check_refer_path() also requires
+LANDLOCK_ACCESS_FS_MAKE_REG on the destination parent if the domain handles
+it, so test_rename() and test_exchange() return EACCES before the test can
+reach the network-layer check.  Either layer_fs[0].access needs to include
+LANDLOCK_ACCESS_FS_MAKE_REG, or enforce_fs() should only handle
+LANDLOCK_ACCESS_FS_REFER.
 
-Without slab_debug=U kmemleak reports none of these leaks on this
-kernel: stale pointers in the per-CPU slab sheaves keep the leaked
-strings "referenced". Writing the policy more than once needs
-CONFIG_IMA_WRITE_POLICY=y, which the test kernel has. The code is
-unchanged in mainline, linux-next (next-20261111) and next-integrity.
-
-The reproducer is available on request.
----
- security/integrity/ima/ima_policy.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 2dc1d93aa..f08ca00bd 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1619,6 +1619,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 		case Opt_fsname:
- 			ima_log_string(ab, "fsname", args[0].from);
- 
-+			if (entry->fsname) {
-+				result = -EINVAL;
-+				break;
-+			}
-+
- 			entry->fsname = kstrdup(args[0].from, GFP_KERNEL);
- 			if (!entry->fsname) {
- 				result = -ENOMEM;
-
----
-base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
-change-id: 20261112-c3-n204-a82e17864b76
-
-Best regards,
---  
-Weidong Wang <weidongw@illinois.edu>
-
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112065203.1066=
+536-1-mangosteen922@126.com?part=3D2
