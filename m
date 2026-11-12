@@ -1,102 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794449392;
-	b=R9U4kzNLvWKBy+QY5ifWwAqIzBPIkNLKJKe3eogoYzwVmuH42jv4meFJKB0flgJ2MGih
-	 d2sViiosgeS7QhHh6Hi0EJYpH1x0dFSfJ1NMvnqvRm+Cra5Pl/o1FU40xG4LCjELTLkiQ
-	 9vpdGy+SQv8PDrsR5oOMVe9O+JApMw0wnrJ4IWN1iGM73JHXDkjVuKRD9bqhSXzZQIRY8
-	 AsJwCibh4gl5C26nQVbW9o/+zpccHAl2BmhhXUT1PGJK7PfB7h2UPo/4CcwaZZ93rXASi
-	 sIrzr5Td6cWKsIvVfepr7bwJT5ZXsAGvrSjKIgasLT5YhXFA90XndJMcxpG3u2mZQsg==
+	t=1794452168;
+	b=ANjsO6eqXKqNoaLJMLBM5vVw1onYCGxgnrIJEhAgNY9McVMTUjWiytcXUNYJmxZ72g6w
+	 J1X/nTAqiA3nBiICXB0J/lDDhUrC1H41xe8h5OdDOmXoV67PalChpOY3kiJ59sIUfpZp7
+	 SjFlqoFRnlrtulDylTMV85Zq2GwgUm9apH/2HcovuUocTXkDbO+JzmhhPID5cgYFSPjHc
+	 /aZQbpP8+Mn+nj1eh+8UcLc9XL1xr+ps+YPyZVsh+C2dw2K8br/uUmg9Vz4FQ8jFgsMQp
+	 m3IYwixVT3r0aTnJWRY+yWMab6BNJO1YXLXvw9TCjVUDjYaPW7GAqZFlt/5dhMkM/1w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794449392;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
-	 Received:Received:Received:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-TM-AS-GCONF:X-Proofpoint-Reinject:
-	 X-Authority-Analysis:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
-	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
-	bh=1iu8dF8wc/98Y/bB5y3HpkLA11uus7KR1dgFqBlOtqg=;
-	b=2DUFg6iCMcF1HYZZE6uMSq0/6YXtr5yyxjx6qfhRzJAdibh4++AT57ubxm1DZWmt4iDx
-	 PjOQnFidkO74SVtZ6xgF9RHysYjWOpVXwRAUcyuRuRl7In5EVLPv3WnyyQ3mI90IWv4SC
-	 o2P7kVcywI9rolAC5P/dzL5PUMWi6ryl7E7KoPVjyO77Hcf/tmXMg3Srvvpm62rrwTHY/
-	 FQ3nf/tBxS0AIjVIttuThsmqmLX5Pp0VTkXECnRXONSyaMsVkHm2Dmmcu1bPuUJgQK8lH
-	 LIIp+NTz3cSsVz2+STBkHpnWYu25mo2jKgOsCIgq80ZZUayh6ANFDCfHCNw9EujohqQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794452168;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
+	bh=n5WIXG91W9gLyKmMED8l0xUJtKd4OayeMuFM/2Jyq5o=;
+	b=dq2o6ubgjWt2WKeSQIuxO066q4lf19ambQOdSWvcbcAx5jg1X+k+p16v0JqaSU8vfbgO
+	 vMDQd7ScHrHb+Zfl1mEMdTrXXmnPuhQezpQBS/MlHVqmMkmJryYDtiUNVizSB0xU5MLiB
+	 pDEDs4N+DJZQ5m0h92PnYLt3Xwq6eTzrO7xkzxZccZSKmNAKWBrjsT0rgxOxuo968sbmq
+	 75Gcy8FOk8rtfGm6+NepOKcF6WnEUmvFffAyNDJWGdDs5Olez9J0q+m27MmVfBxqVO2Uy
+	 lifcffDDnlVuBO49aMNMFWueKigPWXmbOTkdaURuHEzuaKE9Ab3S7HOwOLUqck9R3FQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.ibm.com;
-	spf=pass smtp.mailfrom=linux.ibm.com;
-	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=WjfqQPsr;
-	arc=none smtp.remote-ip=148.163.158.5
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dmarc=pass header.from=126.com;
+	spf=pass smtp.mailfrom=126.com;
+	dkim=pass header.d=126.com header.i=@126.com header.a=rsa-sha256 header.s=s110527 header.b=KyuygNCT;
+	arc=none smtp.remote-ip=117.135.210.9
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E969B606A321;
-	Thu, 12 Nov 2026 02:09:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E969B606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972F0606A32D;
+	Thu, 12 Nov 2026 02:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 972F0606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=WjfqQPsr
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABMidDa2306352;
-	Thu, 12 Nov 2026 02:08:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1iu8dF
-	8wc/98Y/bB5y3HpkLA11uus7KR1dgFqBlOtqg=; b=WjfqQPsrJyttWPRWNrMUqd
-	Ar6ImBZJyTwnpXHg07B1wAutdP5g5i1cCQh9b972m2a1rKoKb88QwdB1oV0ATXFA
-	k7hSna1FMbmuFphRC0asqiWyi3haF/gGJLNWsfeSSGOJbfpNTJ80mAkPOZ6PNGJq
-	LyGMPG5x5O7UAJJkB2xsMGwZNK0N7KIMFZu0F0j4esre201vGXqQ4JjrUiUQDxNg
-	+NNAdMcklKrU74/vU2DaTvU3LS4OqaGtXgi9s3CfAtqg2udoZtnw1PfjfhkZmpAf
-	SGiRlaTK0xF3If4ERe0tF1qvX0Wcp6C6GiNimEK+dAIDD87yEupHAhC7C8rb94JQ
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4hssdkw2a2-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 12 Nov 2026 02:08:48 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6ABMZlqY2884944;
-	Thu, 12 Nov 2026 02:08:47 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4hvd51vpd2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Nov 2026 02:08:47 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6AC28lVL33817184
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Nov 2026 02:08:47 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4723058055;
-	Thu, 12 Nov 2026 02:08:47 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0676F58054;
-	Thu, 12 Nov 2026 02:08:46 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.115.82])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 12 Nov 2026 02:08:45 +0000 (GMT)
-Message-ID: <0d1363e419054c1aa1b0bfee645314c7e4aec0f5.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: fix kexec measurement buffer overflow after
- failed loads
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?J=E9r=E9my?= Jean <Jeremy.Jean@oss.cyber.gouv.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He
- <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>,
-        Pasha Tatashin
- <pasha.tatashin@soleen.com>,
-        Pratyush Yadav <pratyush@kernel.org>,
-        Roberto
- Sassu	 <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, stable@vger.kernel.org
-In-Reply-To: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
-References: <20261108190404.1397829-2-Jeremy.Jean@oss.cyber.gouv.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Nov 2026 21:07:59 -0500
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.a=rsa-sha256 header.s=s110527 header.b=KyuygNCT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=n5
+	WIXG91W9gLyKmMED8l0xUJtKd4OayeMuFM/2Jyq5o=; b=KyuygNCTrg80qMUbNz
+	9ABNVq8Eq2/TQz85t61RmEYgWb4V+CZD0IViwsKAUd7cJwU2qlYHJiXThTmRs+nr
+	YG8mOdm2L5aw2J4+BAR6510v6BZC05QVxXyX5VY4cnmP9Xq/UCdkKz1r4lnjbix7
+	hdQSWd2SRryP7CiwEwNHf2pSY=
+Received: from kylin-pc (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3V6qjKvVqzNLGDA--.44259S2;
+	Thu, 12 Nov 2026 10:55:39 +0800 (CST)
+From: pandaWall <mangosteen922@126.com>
+To: mic@digikod.net,
+	gnoack@google.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pandaWall <mangosteen922@126.com>
+Subject: [PATCH] landlock: Fix layer composition of LANDLOCK_ACCESS_FS_REFER
+Date: Thu, 12 Nov 2026 10:55:28 +0800
+Message-ID: <20261112025528.443654-1-mangosteen922@126.com>
+X-Mailer: git-send-email @GIT_VERSION@
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -106,82 +61,119 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=POqaavqC c=1 sm=1 tr=0 ts=6af51fb1 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
- a=9NJ1M8o-uok3-83kKqgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEyMDAwNiBTYWx0ZWRfX4PiV+UtruZPo
- HVVm29HJvtepzmSkRwBT81qxIVou1aGN0e8cmdE4sks5EFwnEzQlf7UY+S/GQfY89oVcb3Z4NEQ
- 3k5s9PvffczKuxADmU6/xN9c+Ts9jlN1HReMxsDpMPqRcc6Y7LTn8Olm1ea2KffdRetYpZ4+Cgj
- oVurO4oXvUs9Q4Ps9kjRHqxSfxV0nn8LNG31IhfATVgtS0eTqw/PUsZGk9qDmQzJkZu4GqwiDS2
- sZtoj9L7rAhwifPg8wmeWruHXVZN9jkEYypDH5UB7xlutnEL8tyv2IW7XJ2cXUoHybABT2w8nmV
- Ygs75f0uwrvlTp91mvKvItpwnODxltIN6ZCXPfr8cL2SPj6dKuzozX9SYwvm7l3utYmYHOuZNVx
- rJFy1lNJUVOVp/49li1Cabk27iUpKATwoRr9E6XxS4x8tHy6H9tmnnSgVDQGnB+MVctnFFhukkh
- JOoVNyoKs+pqWmQg03g==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEyMDAwNiBTYWx0ZWRfX//pdLJv3QyHV
- A+SuMYssSsUozeEaJHaUFTaJ8ZIT9K2HazL4B1RPjzRfTXUxD/cmfIIblHUGQbhAAJwK2BR1Iu4
- CDjJAiKyTiqMQvErxoXKsqTJqSSKahA=
-X-Proofpoint-ORIG-GUID: znoC92lzsjFKVvDY35sb_RwZQDwVlJ1E
-X-Proofpoint-GUID: LV_6VWisdAf53i-Jlzcok5QIWpn60s9N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-11_06,2026-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 impostorscore=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611120006
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3V6qjKvVqzNLGDA--.44259S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGry5WF43Cw45ZFWUtFyxKrg_yoWrAFW5pa
+	yrXr15Kr4xKa4av3W7uwn7uF43Cw4kWw4UWa129ryIy3WUZFn5Grs2gr1UJF4UXr4kZFZY
+	vFWUurWUua1UX3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piYhFrUUUUU=
+X-CM-SenderInfo: 5pdqw0pvwhv0qzssqiyswou0bp/xtbBqgzNw2r1KqygYQAA3w
 
-On Sun, 2026-11-08 at 19:04 +0000, J=C3=A9r=C3=A9my Jean wrote:
-> When kexec_file_load() fails to install a new image, it can leave the
-> global IMA scratch buffer larger than the IMA segment of the current
-> image. When that image is executed, ima_update_kexec_buffer() copies
-> the larger log past the end of its reserved segment. In a test, KASAN
-> reports it as:
->=20
->   BUG: KASAN: vmalloc-out-of-bounds in ima_update_kexec_buffer+0x265/0x28=
-0
->   Write of size 868426 at addr ffffc9000004e000 by task init/1
->   ...
->   Call Trace:
->    ...
->    __asan_memcpy+0x3b/0x60
->    ima_update_kexec_buffer+0x265/0x280
->    ...
->    blocking_notifier_call_chain+0x88/0xb0
->    kernel_restart_prepare+0x18/0x40
->    kernel_kexec+0xe4/0x130
->=20
-> Limit the dump to the smaller value between the scratch size and the
-> installed image segment size. Update the IMA mapping only after
-> machine_kexec_post_load() succeeds.
->=20
-> Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to ex=
-ecute")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: J=C3=A9r=C3=A9my Jean <Jeremy.Jean@oss.cyber.gouv.fr>
+landlock_get_fs_access_mask() unconditionally ORs
+_LANDLOCK_ACCESS_FS_INITIALLY_DENIED (i.e. LANDLOCK_ACCESS_FS_REFER)
+into every layer's handled filesystem mask.  Layers created from
+rulesets that only handle other rule types (network ports, scopes) or
+only permissions therefore report REFER as handled even though
+landlock_upgrade_handled_layer_config() only adds the bit when
+handled.fs is non-zero, and no filesystem rule can ever clear a bit
+of such a layer.
 
-Thank you for the report. I agree with Mike that the machine_kexec_post_loa=
-d()
-reordering should be a separate patch.
+The consequence is that stacking any non-filesystem ruleset on top of
+a filesystem ruleset makes link(2), rename(2) and
+renameat2(RENAME_EXCHANGE) fail with -EXDEV/-EACCES even when each
+ruleset individually allows the operation: landlock_unmask_layers()
+requires every layer's mask to be cleared, and a non-filesystem
+layer's mask can never be.
 
-For the overflow, rather than clamping at execute time, how about not chang=
-ing
-ima_kexec_file.size for an image that isn't installed?
+Only implicitly handle REFER for layers that already handle
+filesystem access rights.
 
-  1. Set ima_kexec_file.size only in ima_kexec_post_load(), from
-     image->ima_buffer_size, and stop ima_free_kexec_file_buf() from
-     resetting it.
+Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+Signed-off-by: pandaWall <mangosteen922@126.com>
 
-  2. Reuse the buffer if size >=3D segment_size, instead of only if they
-     are equal, so the buffer is never smaller than size. The buffer no
-     longer tracks size, and with staging the list can shrink.
+Add a corresponding regression test to the layout1 fs_test suite:
+stacking a network-only ruleset (handled_access_net only) on top of a
+filesystem ruleset allowing REFER and MAKE_REG must not deny
+different-parent rename/exchange.
+---
+ security/landlock/domain.h                 | 15 +++++++--
+ tools/testing/selftests/landlock/fs_test.c | 37 ++++++++++++++++++++++
+ 2 files changed, 49 insertions(+), 3 deletions(-)
 
-Please don't remove the "segment size can't change between kexec load and
-execute" comments. They are still correct.
+diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+index 935e18b12..07d4a23fc 100644
+--- a/security/landlock/domain.h
++++ b/security/landlock/domain.h
+@@ -262,9 +262,18 @@ static inline access_mask_t
+ landlock_get_fs_access_mask(const struct landlock_domain *const domain,
+ 			    const u16 layer_level)
+ {
+-	/* Handles all initially denied by default access rights. */
+-	return domain->layers[layer_level].handled.fs |
+-	       _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
++	access_mask_t handled = domain->layers[layer_level].handled.fs;
++
++	/*
++	 * Only layers that handle filesystem access rights implicitly
++	 * handle REFER.  A layer that handles other rule types (e.g.
++	 * network, scopes) must not imply REFER, otherwise it would
++	 * spuriously deny link and rename operations.
++	 */
++	if (handled)
++		handled |= _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
++
++	return handled;
+ }
+ 
+ static inline access_mask_t
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index f725882fa..5588f0ee5 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -2570,6 +2570,43 @@ const struct rule layer_dir_s2d1_execute[] = {
+ 	{},
+ };
+ 
++/*
++ * Tests that a layer not handling filesystem access rights does not
++ * implicitly handle LANDLOCK_ACCESS_FS_REFER, which would otherwise deny
++ * different-parent renames and links stacked on top of a filesystem ruleset.
++ */
++TEST_F_FORK(layout1, refer_with_net_layer)
++{
++	const struct rule layer_fs[] = {
++		{
++			.path = dir_s1d2,
++			.access = LANDLOCK_ACCESS_FS_REFER,
++		},
++		{
++			.path = dir_s1d3,
++			.access = LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++	const struct landlock_ruleset_attr ruleset_net = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
++	};
++
++	/* layer_fs alone: different-parent rename is allowed. */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_REFER |
++				      LANDLOCK_ACCESS_FS_MAKE_REG,
++		   layer_fs);
++	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
++	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
++	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
++
++	/* Stacks a network-only layer: still allowed. */
++	drop_access_rights(_metadata, &ruleset_net);
++	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
++	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
++	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
++}
++
+ /*
+  * Tests precedence over renames: denied by default for different parent
+  * directories, *with* a rule matching a parent directory, but not directly
+-- 
+2.56.0
 
-Mimi
