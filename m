@@ -1,81 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.7
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794459290;
-	b=4iNhu42vX0R+msbksGQWM0qmDU1gaA/8tO46AICAc4mqlXKwYRm12SBBCFdW3Ydrtl28
-	 JEUlRqcB/GkJ3BN74utxjOqZTxb9+aj9JIpHHrHWpwsAOJnndkkwWTCXFGyvJFffIeehI
-	 gekOauXfJ7zV3Z7VRRzhwwXrmwGa+1mwHo8AQdBd7sZVZSyCHUMNB1AdNFxs484YlqpAH
-	 qSDMMCD8A9dEY++iZkHqEnlTQi8MEDTaGrkp5EBCBhG3+q7K/hFgiOUd66lTHaUV7MAVH
-	 6PAR1ZMA3+5sqO6cFOH+y5v0sLpZvZ0JUnE0G0yMOWQquCF+/8QXHU2pFu6w0slo6rQ==
+	t=1794461277;
+	b=bRHEDyGqPFcwcvvS7n4Z3VuoFL2i9QDfqwmiMdDtiD+FVebLxhBn8uD7WO0mDIEcUyBV
+	 Hkx7jB3XP7+tWABrTHs6jmfXEcGc37fMqJpVN0rZLyW3OXQUinm4EOGhyvptJLWN3n92W
+	 shxFCO0ATnU8Xfyqvh006yjI8ivZfOhB7bzqaiMg8DniImxr9LLhvv/68UZJIZ6C836Mt
+	 ppSajitHgZAG/2UFN0NngXeBKLBM/xeHY1RhBejHQf+5KUnQeE3lxzYOlngFw5iJQRNCc
+	 clX+a3o8T7p78EPB8ZHWQBw3F3Nm7zesDUyvoeQnC7Pf9tYeIBa0LBRtnmcCb0ct1rA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794459290;
-	h=DMARC-Filter:DKIM-Signature:X-Alimail-AntiSpam:Received:Date:From:To:
-	 Cc:Subject:Message-ID:Reply-To:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=/V28rCHXi3T9oO9LFCn5sfVOcz0zmvubCJbcVebXDxQ=;
-	b=xEHiGJOb9wMcknM/xQqVA+uG6A8Dw1YzVX26qlYAbMjn4oioog3Mr3AAKT08BzbQoPlm
-	 e4OxRa1wKaPDLNWamivJj3958wPNvpfHxAP5PxeVSkECNXrHj2oaV/4/lAcCdMRexkeTL
-	 X0FThaqeWpQgmrzDoL3pFzhKNHmoVMUP5vmAd9pZxc8sa/B+aEOPL4ZrFGXYGhwHmntJs
-	 X5hn1wYLE0pkULJeQ3gbW4FqosCURDlMCm0jKcWUUhUDbJTt+ULk7cXmLAc7lHINhDuGf
-	 f8vZSxmm4Eiwpdkimfi00q9bVb/kT200z+62eU59VqS4jJXdgCjPqorqoo3DXRn/iZw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794461277;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-CM-TRANSID:X-Coremail-Antispam:
+	 X-CM-SenderInfo;
+	bh=EffbcejEitpDOf8ri6BW9Q+H6j5n7n7Kbuii1BDruOk=;
+	b=qEMvzYYx3AY1d4NWESVhzRdmCr5ZbQxWTCvFX68qPu4zwtoQr2QElXxu/vhGXuAXTQnI
+	 /el20iMRkhMEld6xlR/imToefzQbcVmeSZkMatAW/O51dP57qbbv6FtFLee7XCR1QOtoh
+	 pgBA7Ro8uwj53gUm35hRgEGkB5GS1t8dyM7JczJvJa899NYvxFyizejGcKLdVl8tn9Oap
+	 fkQTysk6/3Rd7riK0v4ybqa1FNxurh2AU1L+48+jo3CKqDqAMZkpci24CJrw7uTBYNtT9
+	 lzdskVOAIpsIbKpcqny/QfIcHJuYsoU7lIoa7cJgBwzLP4BA5xR9DlObX0508kXjdmA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.alibaba.com;
-	spf=pass smtp.mailfrom=linux.alibaba.com;
-	dkim=pass header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=MXltY6b0;
-	arc=none smtp.remote-ip=115.124.30.100
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dmarc=pass header.from=126.com;
+	spf=pass smtp.mailfrom=126.com;
+	dkim=pass header.d=126.com header.i=@126.com header.a=rsa-sha256 header.s=s110527 header.b=g7USKRC3;
+	arc=none smtp.remote-ip=117.135.210.7
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBCB606A32A;
-	Thu, 12 Nov 2026 04:54:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9FBCB606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180FE606A324;
+	Thu, 12 Nov 2026 05:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 180FE606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.a=rsa-sha256 header.s=default header.b=MXltY6b0
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1794459284; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=/V28rCHXi3T9oO9LFCn5sfVOcz0zmvubCJbcVebXDxQ=;
-	b=MXltY6b02zxJBPSSJCcrFOFIVlsBPwa+MF+BOn7nVcYMoHG/lR/idyOofAtP+7o28bmnleqYQobOuF1X03XhPFzpBC/hqZgH8dTQlrXbc1lMAFQJxWEzyBHEg4X9w+v0wAMn3OjhU+vlgQS7hHIJLJYkmTvC3eWmg5pBomYYpaY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam011083073210;MF=dust.li@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0XEaoXEq_1794459281;
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0XEaoXEq_1794459281 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Nov 2026 12:54:41 +0800
-Date: Thu, 12 Nov 2026 12:54:41 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org
-Cc: David Ahern <dsahern@kernel.org>, Ido Schimmel <idosch@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>, Julian Anastasov <ja@ssi.bg>,
-	Allison Henderson <achender@kernel.org>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Sidraya Jayagond <sidraya@linux.ibm.com>,
-	Mahanta Jambigi <mjambigi@linux.ibm.com>,
-	Tony Lu <tonylu@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>, linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	bridge@lists.linux.dev, linux-security-module@vger.kernel.org,
-	mptcp@lists.linux.dev, lvs-devel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-	linux-sctp@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH net-next 12/14] net/smc: annotate data-races around smc
- sysctls
-Message-ID: <avVGkcI_j0hDPjQB@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20261109025425.328445-1-jiayuan.chen@linux.dev>
- <20261109025425.328445-13-jiayuan.chen@linux.dev>
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.a=rsa-sha256 header.s=s110527 header.b=g7USKRC3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Ef
+	fbcejEitpDOf8ri6BW9Q+H6j5n7n7Kbuii1BDruOk=; b=g7USKRC3+xHXEmpi0p
+	eg3JE5VNJ9ygmYEzK2qv74XumzgLpvP0UKMPMfAXYKGCZnr0WhJt+04pV7UHJvXx
+	h2rOsm5aSjeaavz/QIXN8i1y2ion+ppu/tAm+SAkE8GzEVrV6wpFHq3axKswJq3L
+	CmTR3SE+hYdzvI1i25QN2IRQU=
+Received: from kylin-pc (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3FyY3TvVqG+3LDA--.21631S3;
+	Thu, 12 Nov 2026 13:27:36 +0800 (CST)
+From: pandaWall <mangosteen922@126.com>
+To: mic@digikod.net,
+	gnoack@google.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pandaWall <mangosteen922@126.com>
+Subject: [RFC PATCH v2 2/2] landlock: Add a test for REFER layer composition with network layer
+Date: Thu, 12 Nov 2026 13:27:13 +0800
+Message-ID: <20261112052713.859515-2-mangosteen922@126.com>
+X-Mailer: git-send-email @GIT_VERSION@
+In-Reply-To: <20261112052713.859515-1-mangosteen922@126.com>
+References: <20261112025528.443654-1-mangosteen922@126.com>
+ <20261112052713.859515-1-mangosteen922@126.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -85,123 +65,84 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261109025425.328445-13-jiayuan.chen@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3FyY3TvVqG+3LDA--.21631S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuF1xZryxWF4UXw17Gw4DArb_yoW5Gw43pr
+	WrZ345KF4xKr4aq3WfuFn7uF4Sk3WkXr48GF42g34I9F45uFn8Jrs2qFWUJa17ZrZ3ZrZ8
+	ZayjkrW5ua1UJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRFJPiUUUUU=
+X-CM-SenderInfo: 5pdqw0pvwhv0qzssqiyswou0bp/xtbBqwi9s2r1TkiirQAA37
 
-On 2026-11-09 10:52:11, Jiayuan Chen wrote:
->autocorking_size, smcr_buf_type, smcr_max_links_per_lgr,
->smcr_max_conns_per_lgr and limit_smc_hs are read without any lock while
->their sysctl handlers update them with WRITE_ONCE(), and the SMC netlink
->handlers toggle limit_smc_hs with plain writes. Add READ_ONCE() to the
->readers and WRITE_ONCE() to those handlers.
->
->Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-Acked-by: Dust Li <dust.li@linux.alibaba.com>
+Check that stacking a network-only ruleset (i.e. a layer handling no
+filesystem access right) on top of a filesystem ruleset still allows
+different-parent renames and exchanges allowed by the filesystem layer.
+Before the fix, such a layer implicitly handled
+LANDLOCK_ACCESS_FS_REFER and denied these operations with EXDEV.
 
-Best regards,
-Dust
+Both parent directories get MAKE_REG because each is the destination
+parent of one rename direction (and of the exchange), as
+current_check_refer_path() requires the moved file type's access right
+on both parents.
 
->---
-> net/smc/af_smc.c   | 8 ++++----
-> net/smc/smc_clc.c  | 8 ++++----
-> net/smc/smc_core.c | 2 +-
-> net/smc/smc_tx.c   | 2 +-
-> 4 files changed, 10 insertions(+), 10 deletions(-)
->
->diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
->index d10244af5bd29..9a657172be8f9 100644
->--- a/net/smc/af_smc.c
->+++ b/net/smc/af_smc.c
->@@ -88,7 +88,7 @@ int smc_nl_dump_hs_limitation(struct sk_buff *skb, struct netlink_callback *cb)
-> 		return -ENOMEM;
-> 
-> 	if (nla_put_u8(skb, SMC_NLA_HS_LIMITATION_ENABLED,
->-		       sock_net(skb->sk)->smc.limit_smc_hs))
->+		       READ_ONCE(sock_net(skb->sk)->smc.limit_smc_hs)))
-> 		goto err;
-> 
-> 	genlmsg_end(skb, hdr);
->@@ -102,13 +102,13 @@ int smc_nl_dump_hs_limitation(struct sk_buff *skb, struct netlink_callback *cb)
-> 
-> int smc_nl_enable_hs_limitation(struct sk_buff *skb, struct genl_info *info)
-> {
->-	sock_net(skb->sk)->smc.limit_smc_hs = true;
->+	WRITE_ONCE(sock_net(skb->sk)->smc.limit_smc_hs, true);
-> 	return 0;
-> }
-> 
-> int smc_nl_disable_hs_limitation(struct sk_buff *skb, struct genl_info *info)
-> {
->-	sock_net(skb->sk)->smc.limit_smc_hs = false;
->+	WRITE_ONCE(sock_net(skb->sk)->smc.limit_smc_hs, false);
-> 	return 0;
-> }
-> 
->@@ -411,7 +411,7 @@ void smc_sk_init(struct net *net, struct sock *sk, int protocol)
-> 	spin_lock_init(&smc->conn.send_lock);
-> 	mutex_init(&smc->clcsock_release_lock);
-> 	smc_init_saved_callbacks(smc);
->-	smc->limit_smc_hs = net->smc.limit_smc_hs;
->+	smc->limit_smc_hs = READ_ONCE(net->smc.limit_smc_hs);
-> 	smc->use_fallback = false; /* assume rdma capability first */
-> 	smc->fallback_rsn = 0;
-> 	smc_close_init(smc);
->diff --git a/net/smc/smc_clc.c b/net/smc/smc_clc.c
->index 014d527d5462d..df0afeef67cbd 100644
->--- a/net/smc/smc_clc.c
->+++ b/net/smc/smc_clc.c
->@@ -990,8 +990,8 @@ int smc_clc_send_proposal(struct smc_sock *smc, struct smc_init_info *ini)
-> 	}
-> 	if (smcr_indicated(ini->smc_type_v2)) {
-> 		memcpy(v2_ext->roce, ini->smcrv2.ib_gid_v2, SMC_GID_SIZE);
->-		v2_ext->max_conns = net->smc.sysctl_max_conns_per_lgr;
->-		v2_ext->max_links = net->smc.sysctl_max_links_per_lgr;
->+		v2_ext->max_conns = READ_ONCE(net->smc.sysctl_max_conns_per_lgr);
->+		v2_ext->max_links = READ_ONCE(net->smc.sysctl_max_links_per_lgr);
-> 	}
-> 
-> 	pclc_base->hdr.length = htons(plen);
->@@ -1272,12 +1272,12 @@ int smc_clc_srv_v2x_features_validate(struct smc_sock *smc,
-> 
-> 	if (ini->smcr_version & SMC_V2) {
-> 		ini->max_conns = min_t(u8, pclc_v2_ext->max_conns,
->-				       net->smc.sysctl_max_conns_per_lgr);
->+				       READ_ONCE(net->smc.sysctl_max_conns_per_lgr));
-> 		if (ini->max_conns < SMC_CONN_PER_LGR_MIN)
-> 			return SMC_CLC_DECL_MAXCONNERR;
-> 
-> 		ini->max_links = min_t(u8, pclc_v2_ext->max_links,
->-				       net->smc.sysctl_max_links_per_lgr);
->+				       READ_ONCE(net->smc.sysctl_max_links_per_lgr));
-> 		if (ini->max_links < SMC_LINKS_ADD_LNK_MIN)
-> 			return SMC_CLC_DECL_MAXLINKERR;
-> 	}
->diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
->index 6021322253e93..3d338019a1b8b 100644
->--- a/net/smc/smc_core.c
->+++ b/net/smc/smc_core.c
->@@ -990,7 +990,7 @@ static int smc_lgr_create(struct smc_sock *smc, struct smc_init_info *ini)
-> 		lgr->net = smc_ib_net(lnk->smcibdev);
-> 		lgr_list = &smc_lgr_list.list;
-> 		lgr_lock = &smc_lgr_list.lock;
->-		lgr->buf_type = lgr->net->smc.sysctl_smcr_buf_type;
->+		lgr->buf_type = READ_ONCE(lgr->net->smc.sysctl_smcr_buf_type);
-> 		atomic_inc(&lgr_cnt);
-> 	}
-> 	smc->conn.lgr = lgr;
->diff --git a/net/smc/smc_tx.c b/net/smc/smc_tx.c
->index 0f0c6df3bf2ce..30bffe79d06a3 100644
->--- a/net/smc/smc_tx.c
->+++ b/net/smc/smc_tx.c
->@@ -148,7 +148,7 @@ static bool smc_should_autocork(struct smc_sock *smc)
-> 	int corking_size;
-> 
-> 	corking_size = min_t(unsigned int, conn->sndbuf_desc->len >> 1,
->-			     sock_net(&smc->sk)->smc.sysctl_autocorking_size);
->+			     READ_ONCE(sock_net(&smc->sk)->smc.sysctl_autocorking_size));
-> 
-> 	if (atomic_read(&conn->cdc_pend_tx_wr) == 0 ||
-> 	    smc_tx_prepared_sends(conn) > corking_size)
->-- 
->2.43.0
+Signed-off-by: pandaWall <mangosteen922@126.com>
+---
+ tools/testing/selftests/landlock/fs_test.c | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index f725882fa..cf1128163 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -2570,6 +2570,49 @@ const struct rule layer_dir_s2d1_execute[] = {
+ 	{},
+ };
+ 
++/*
++ * Tests that a layer not handling filesystem access rights does not
++ * implicitly handle LANDLOCK_ACCESS_FS_REFER, which would otherwise deny
++ * different-parent renames and links stacked on top of a filesystem ruleset.
++ */
++TEST_F_FORK(layout1, refer_with_net_layer)
++{
++	const struct rule layer_fs[] = {
++		{
++			.path = dir_s1d2,
++			.access = LANDLOCK_ACCESS_FS_REFER |
++				  LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{
++			.path = dir_s1d3,
++			.access = LANDLOCK_ACCESS_FS_MAKE_REG,
++		},
++		{},
++	};
++	const struct landlock_ruleset_attr ruleset_net = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
++	};
++
++	/*
++	 * layer_fs alone: different-parent renames are allowed.  Both
++	 * parent directories need MAKE_REG because each is the destination
++	 * of one rename direction, and the destination parent of an
++	 * exchange.
++	 */
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_REFER |
++				      LANDLOCK_ACCESS_FS_MAKE_REG,
++		   layer_fs);
++	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
++	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
++	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
++
++	/* Stacks a network-only layer: still allowed. */
++	drop_access_rights(_metadata, &ruleset_net);
++	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
++	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
++	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
++}
++
+ /*
+  * Tests precedence over renames: denied by default for different parent
+  * directories, *with* a rule matching a parent directory, but not directly
+-- 
+2.56.0
+
