@@ -1,47 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794488677;
-	b=U/KJlarGh6NU3PJC1n9KO85iexjTdqzsH/VWmBkybS4t7E9deobFpA+8SUfp5yDen9zt
-	 urlnM5xfrGS85+noXgKjBCBen3KqJ5/7AZat4Pzd0IEOjqLw09LGjfa2gCGmGS6k2Ktx+
-	 Sj70KutYh0/dnL8hUdv6dLj70QZo8aCbmALfJKvuTczYmDNKOpAv+raS1Dkx36hrXrl6M
-	 cQ1UFyfu+1wZUA/sX2wbYhXcPskc1NmoosoSwSUAU349GpeqBJmMS2vgcl9/Cm/LALpgs
-	 x7qYMAHOxumbYxRi+IdjLRzySWSsO0GfR/r9vGudU/f5eyIbwV2cHG2+AlE/3lzVzzw==
+	t=1794488833;
+	b=S3z688sXNSc4M6QCYugK7yC7dIlgt0ovNGikIgDPyw+t4f1dyKFiY8T2msASybOq7skX
+	 O0xuXjsXxHcZ74mxmssUpk6gkyy0tqEKs93DoyFh4zXQHVYcqMPvG5phbrVUoWWdPzU9S
+	 jVglF2xmptEas/LS/XdcH241VM+27bC/tabc8WOTj5UfXc2eUlmeTuy4BcGG3jH+h+cop
+	 LUOJacH1EPW5e+TfoNLJB8mWDqg/TbHxa98m3Ljn6ssymBWjTLiDaHb3QrviZ3IpAxvoM
+	 fTulRG/zccZ83ihBegWnqLoXTx8n3Bk0lRFxeg5Mj1ln3EbrRPk5c6LG4ZD6ApeJsnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794488677;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794488833;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=QAOHUkP8mSVb3HAPGFMParJEVsdRpkeqE84YURBdhqM=;
-	b=Kb2f7kMcT/WJl7AYu72lGuWqNreSG6Z4lTNPqkUv0d7gqfD9+qhuHvTOVQ8Lzxj401lF
-	 MoPANUhigB0pAwNBR6jwpUNHNwBfi/8u9Il+Qnd9yLtdHsLhvUjooNNvZ73foKHxaJ9nO
-	 V41blGwqzb36gdsK8Xx6T+5XkPBlyLpewFFr3Mib0ZUVfI8fYA85x5JC5lvoO9WH7LEBi
-	 uNJwTuFN753OJmR6ekHEcTrJNzAD2sH4x/FqymAd6cgleux3pDb56yORvbdNG38Ruvbkh
-	 4ErShdohhtxkQXlgeHGJ+T1erCObJXpunKYC+bBOizkgwM4bs6z9JpowOYT+M02mcBg==
+	bh=IzbLrr7LpII86auCWYhAT6Y6p+u1NQD5p3z/oEoSjdk=;
+	b=gSv0KR6acnIsFcH/0CC+RpcLV2T1E5CBJhXnXxPLw0tHRj47IwGZuS3EmqmMoQ5fiGTS
+	 b6KxlCuVlrkekeFCVjIcegB6n4KPNQFm1j4cqeZIGa8Tw1zpICSsn9DQC36oVJ7LsUlwF
+	 SyJFiehqbC/bceYHmJ1Ymnwi06S2QV90bdvanGZ6XgoKC6OyHiYMQRbGDjLXcEQW7a3WS
+	 eqGbw2GFGNIYJffqnuOyVckJpRzZkyWL6puVsf3Uhoe+0OahBXJ+p5zpSpshq5M5NnGHW
+	 AimDnE0RPTAkm3g9/0KROQHNm0YvDq7KjsdyjRN6J8xQbKAizHJvUdjbu6K9nlRWf9g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N6PgRtqs;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="HfnNv/WL";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888B8606A880
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 13:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99DB606A31C
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 13:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N6PgRtqs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC231F00A06;
-	Thu, 12 Nov 2026 13:04:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HfnNv/WL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B81F91F00A05;
+	Thu, 12 Nov 2026 13:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794488676;
-	bh=QAOHUkP8mSVb3HAPGFMParJEVsdRpkeqE84YURBdhqM=;
+	s=k20260515; t=1794488833;
+	bh=IzbLrr7LpII86auCWYhAT6Y6p+u1NQD5p3z/oEoSjdk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=N6PgRtqs29KHDXsQ7UeI69eCsrzwKzK8VTk/f3dgFq0YFPGbF0m03vVBQHTM6vZC0
-	 KxgTM5SsaYi4tdYDwzOu+7exKRp/LJEEZhGvARa+QxPbM0Es4Qyj4ECCECCsLJj2Nj
-	 AM2cg5Ylg7RAYsz1okzRNGVkRYu7QvmXHmsA046Nw7wpI6OapmSOQmjA/ZKlKEYUAz
-	 ki6oKczTdol0SkmZKXoK0oLdzA5jLwDwqUdlwhMsOJZ3ugWHrX/UGsclXtCi2Z5YY5
-	 vsLDlm5xORG0V7S/BitxOfJjOXOZgYwYoysEIZCIBaZnQ0s35v1sEo6uRIWWsUPSiy
-	 ZrUIHL6smBQGg==
-Message-ID: <sashiko-outbox-211136@kernel.org>
+	b=HfnNv/WLp+DcMOfcuEHEHMATGGLebAUYiMpEZobW4NtyqVg0B80WjPbBqvAnFh/1b
+	 41RN708d47oBtuV3ft2S9/DP117mqkrTaps52VSR0bP/B1aR0L0A52q7qGive+lyEj
+	 Ituj9mcSUdMn18XEA9VcUmWn44TtvFcar/AVpSMM5RufX/YsLU0ijBKJZmtY38e7ib
+	 oyC4DwC9V7NzKgZGxS6VR0Cd44+UGNs+YQzXuKjMZJG9O/zKLU7PgbgOnAdXra1Ec+
+	 btHaEimtgxADC05Zzsu9DogiqrKLy/sVJrsBkZjEInI2D5+QheHwqlnVsrGwo5D2Ql
+	 /Qi9XBWiImwAQ==
+Message-ID: <sashiko-outbox-211138@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/3] kexec_file: update IMA after machine post-load
+Subject: Re: [PATCH v2 2/3] ima: keep kexec dump state tied to installed
+ image
 Reply-To: sashiko-reviews@lists.linux.dev
 To: =?utf-8?b?SsOpcsOpbXkgSmVhbg==?= <Jeremy.Jean@oss.cyber.gouv.fr>, "Andrew
  Morton" <akpm@linux-foundation.org>, "Baoquan He" <baoquan.he@linux.dev>, "Mike
@@ -49,12 +50,12 @@ To: =?utf-8?b?SsOpcsOpbXkgSmVhbg==?= <Jeremy.Jean@oss.cyber.gouv.fr>, "Andrew
  Yadav" <pratyush@kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto
  Sassu" <roberto.sassu@huawei.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>
 Cc: "Eric Snowberg" <eric.snowberg@oracle.com>, linux-security-module@vger.kernel.org, kexec@lists.infradead.org
-In-Reply-To: <20261112125246.2715174-3-Jeremy.Jean@oss.cyber.gouv.fr>
+In-Reply-To: <20261112125246.2715174-4-Jeremy.Jean@oss.cyber.gouv.fr>
 References: <20261112125246.2715174-2-Jeremy.Jean@oss.cyber.gouv.fr>
- <20261112125246.2715174-3-Jeremy.Jean@oss.cyber.gouv.fr>
+ <20261112125246.2715174-4-Jeremy.Jean@oss.cyber.gouv.fr>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Nov 2026 13:04:35 +0000
+Date: Thu, 12 Nov 2026 13:07:12 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,14 +65,25 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> ima_kexec_post_load() replaces the global IMA mapping with a mapping for
-> the new image. If machine_kexec_post_load() fails, the new image is
-> freed but that mapping remains. The installed image no longer receives
-> the execute-time IMA update, and the notifier can write the
-> measurement list into freed pages.
+> ima_add_kexec_buffer() updates the global measurement scratch buffer
+> and segment size for the new image. If kexec_file_load() fails, the
+> new image is freed but the scratch buffer and segment size remain. When
+> kexec starts the installed image, ima_update_kexec_buffer() dumps the
+> measurement list into the IMA segment. A larger failed segment causes an
+> OOB write, while a smaller one truncates the log and reports the wrong
+> size in the kexec_execute event. KASAN for instsance reports the OOB
+> writes as:
 >=20
-> Call the machine hook first. Return its error before updating IMA so IMA
-> changes the mapping only for an image which will be installed.
+>   BUG: KASAN: vmalloc-out-of-bounds in ima_update_kexec_buffer+0x265/0x280
+>   Write of size 868426 at addr ffffc9000004e000 by task init/1
+>   ...
+>   __asan_memcpy+0x3b/0x60
+>   ima_update_kexec_buffer+0x265/0x280
+>=20
+> Leave installed scratch state unchanged until all later load steps pass.
+> Store new buffers in the candidate and reuse only equal-size installed
+> buffers. Emit kexec_load before those steps with the local size.
+> Allocation failure still omits the optional segment.
 >=20
 > Fixes: 9f0ec4b16f2b ("ima: kexec: move IMA log copy from kexec load to ex=
 ecute")
@@ -82,5 +94,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112125246.2715=
-174-2-Jeremy.Jean@oss.cyber.gouv.fr?part=3D1
+174-2-Jeremy.Jean@oss.cyber.gouv.fr?part=3D2
 
