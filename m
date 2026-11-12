@@ -1,101 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.50
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794469573;
-	b=RNUlncimWXhw+2R1/aT9Yas9Vai2MrkhGdu68tC++gwWCoTUQUtdmcr8N+ZFhi8UU8S3
-	 uhgjlhX3M63yuA3INvn6bi3IdpHvY4rpcabLIh2tcEQzzMKyCvep0V+zP6kfz5zoWNQGg
-	 IWuHWZZfjWzlMxlXJvE8j8h4x624NyAseY3GH0DDl2VvQMzeL5Wf1/KAuhCqqaYLWfoFV
-	 o+9kOVz0I575VgLxOYa6q5Y7/X0pEIjAxk/uJWFuR3gBMk1AMSyCpmx4UxEOiclFLnJ8b
-	 rKMkDUGhen1rIs62cKSyFQHDlJYP5OuK1qv962MkD8NWul0MkefwXqMWtz+Gb4FTFSg==
+	t=1794470753;
+	b=BZaAsQoXvdZrz6EoSPWqt3o+eT3hhs2YQ/WTm6mVV6fPAAAphkKsyiRG8qK3K/qmYGg/
+	 PTD8xBV8nDfB8BqNBo/DU3I/ag69F/bVwsrToUby6uLCn4jNaIQxqRU4TBbhC4qKTXN3R
+	 7R7EyNwBktEp6JJ01zuPa6VgqBhpDI0mPDodwSRMxaIRILvNCY29vMRvrYyX+KtVDhXgt
+	 R4rjgIy60jQjJwd54v2NpMVV/KMOcpycpVXzScFuOZ4t73gkEhxo4Tn4cBuqfdnAV1Yh0
+	 LoLNFZyNQ5Lz9JyRuVO469JEIjqpT0FKXPlSj9A6GZzaa728d5c2KxHesmsmeIUIfaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794469573;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Message-ID:Subject:
-	 From:To:Cc:Date:In-Reply-To:References:Organization:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=U/4tUzC3TLD4FqI4xdC5pvsxvjza6A9soJUP+9C2920=;
-	b=wouxu9ESNGhk6tIqSrPsRDi0Zw2uZq8IrwmxHB4DQyHM9B+BXYrK4fcbGQRIcyAZfBv0
-	 wCtjjPl4+kf5UMT/DXvVuja8mVeJCjo8Mb8dpDmfICzmwTqvFjHrmE82yUbTm0db4OtjI
-	 IzCtKzq29oYNhO9e6H5BRa5x/gsG5wvvb4XnW7uQC9teHi4kKJKYNgD9EjtjNsY8BAwYP
-	 /o4ytzsTDCit6wd9e1AhMr2OQBp0VFRci0YcE3vGjsBGCEqF48+KDV1a3rdgHxULjq+Io
-	 MFbhuxr3RobzS1RTQSdcPCr7c7qWJSIQzmrYGrWi4D2E7Ahyih8yDczYKnEVHzJ7vQQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794470753;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=ArZiWLhorJw5ucRbxV10l7039zDtSIU3wClqZur+OXY=;
+	b=4Kl4urP6JLuYKHYCgXb+h0ERXbFPMch/2hQ0v/4fPYxMJmYK66P38rw95vZUwS7WnVww
+	 /6BYGk5iph/YZeLw+lujZY/2IA9xd4iy4Js2nP47KLdzTqV3s8WZsLsGjMUmSXDDzXoED
+	 znt+XurqMNUacpwYQcwnfxGNuak2khtX76Off28i64TP1+7b149PdFRln6zSUvJ6jfIKl
+	 aBfS+utxo3M4lfdlV6Ozd9X8cZJrv790KyqilKHBQWf89yZsJOHzgyyCrEs+ITbln0Vwd
+	 qkxfk6WU6Q7YdTpT3dUPmDmGQPkrWFQttB7z15cY9giX2LSUZnLgV0gvJjBZtOCHbFQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fogQ1fr0;
-	arc=none smtp.remote-ip=192.198.163.13
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ShXJCZZh;
+	arc=none smtp.remote-ip=209.85.221.50
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20086606A31C;
-	Thu, 12 Nov 2026 07:46:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 20086606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD7606A323
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 08:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6FD7606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=fogQ1fr0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794469573; x=1826005573;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=B8DZ8ac/lvdCsHwLYiCV00yrDKWFEEEp87wCEsDsqUc=;
-  b=fogQ1fr0O47koKlo7t3/U1PYYgrJGevdWYT7W5BHP26SBsf8M3jT1AdM
-   kh3wwHY092bAE5/I41vfw4uSxMtE1Lq8uQ3fsLf0TkUiqTN9qCK9kwzrJ
-   TuGopMNWhznMo9LUs2YG6qqmopKZ5Qxe4SkmG1M7alCNJD84/lcAKk7iO
-   Mkc+giTk0lphFEfzWhOJourp6SfdW4YuD4cVAa7ExY4uoVaxlcPfplXYE
-   C0WzD5kY0myqVG9iriCsXd/yz+eSP7ob3dXgzO9kGhkKnwfDDbcLciOJ1
-   7Pqugw40Vq+GR/yMSNQ3KaqgXcXTokyM9BMnvGYd5BiddQcekko8b2PzT
-   w==;
-X-CSE-ConnectionGUID: GQJcIa4DSdOk3rx9QCmbQg==
-X-CSE-MsgGUID: nE0oYHMQT+ap/49GEztx4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11963"; a="3243957"
-X-IronPort-AV: E=Sophos;i="6.27,209,1787036400"; 
-   d="scan'208";a="3243957"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 23:46:12 -0800
-X-CSE-ConnectionGUID: Vp69MBqRQdu2Arofn2sCCw==
-X-CSE-MsgGUID: tgWbJ6xUQFC8hBm4R0ZRfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,209,1787036400"; 
-   d="scan'208";a="9027153"
-Received: from carterle-desk.ger.corp.intel.com (HELO [10.245.244.5]) ([10.245.244.5])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2026 23:46:05 -0800
-Message-ID: <b77aecccce2dcf9bc42b1a6fccc62d06ccad4741.camel@linux.intel.com>
-Subject: Re: [Linaro-mm-sig] [PATCH v4 3/8] dma-buf: transfer memcg charges
- via DMA_BUF_IOCTL_XFER_CHARGE
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Albert Esteve <aesteve@redhat.com>, Tejun Heo <tj@kernel.org>, Johannes
- Weiner <hannes@cmpxchg.org>, Michal =?ISO-8859-1?Q?Koutn=FD?=
- <mkoutny@suse.com>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
- <skhan@linuxfoundation.org>, Sumit Semwal	 <sumit.semwal@linaro.org>,
- Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>, Michal
- Hocko <mhocko@kernel.org>, Roman Gushchin	 <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song	
- <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey
- <Brian.Starkey@arm.com>, John Stultz	 <jstultz@google.com>, "T.J. Mercier"
- <tjmercier@google.com>, Christian Brauner	 <brauner@kernel.org>, Paul Moore
- <paul@paul-moore.com>, James Morris	 <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>, Stephen Smalley	 <stephen.smalley.work@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Randy Dunlap	 <rdunlap@infradead.org>,
- Ondrej =?UTF-8?Q?Mosn=C3=A1=C4=8Dek?=	 <omosnacek@gmail.com>, Jens
- Wiklander <jenswi@kernel.org>, Sumit Garg	 <sumit.garg@kernel.org>
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org
-Date: Thu, 12 Nov 2026 08:46:02 +0100
-In-Reply-To: <20261104-v2_20230123_tjmercier_google_com-v4-3-1819a017000b@redhat.com>
-References: 
-	<20261104-v2_20230123_tjmercier_google_com-v4-0-1819a017000b@redhat.com>
-	 <20261104-v2_20230123_tjmercier_google_com-v4-3-1819a017000b@redhat.com>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 (3.58.3-2.fc43) 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ShXJCZZh
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-490d59c3f0aso2117377f8f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 00:05:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794470751; x=1795075551; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ArZiWLhorJw5ucRbxV10l7039zDtSIU3wClqZur+OXY=;
+        b=ShXJCZZh3r9hFJDuUtCPJodlUXkqzCQOB1+2EM+MSr2/BQ2FkFGpi3pTNh8on5CIZe
+         NeKY6TOgYXAOV9MBu8ZCuCDVW3yAwkNFoXm4XT0u+zdX3SgHGxcqUP3q1yLvYlH5XNR0
+         L4IWOvBvhJmsslkJWEApkZvYW26ZB4wbfp1gy7orV7SKYNr4MbfW68n+F2/9eSWiKhU3
+         I4HI2plZjvrsHr8QtqDzGKaHnbi+EuaqhixeGOb8ZFGL3gicwGhpvlFsD6E+/c9fLVom
+         3chpV30pWkbX8LF57Km0CQekllGUhf3lmCNsHQp9/sBmyShviBOHBFxDw3lokCUGQWf9
+         Ob9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794470751; x=1795075551;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=ArZiWLhorJw5ucRbxV10l7039zDtSIU3wClqZur+OXY=;
+        b=LMID8GKm0SsdScE9JeFdhLcOZOHo3oR+u7XLzB4BUIkNjC80GxKvjB4tVnhJP10zYi
+         AXfikAf5sFDW9G0cRUZXRWwHJhSSOnE/4FeZlPNNUrnDAms9Fgq2Cte3uiORxMhhylHn
+         x1A3izID0UqB8pW0bmm+QlptNvVemmK6VOkSXCJXUNeCwJUR1ABStWu9b3zaAmB7cFF5
+         ALfC9fXOP2Q+gXwDN9Ic6DVX492buqvglqcbmLcTmhoZG2U+ERUVjIVBQFIUDps7iVH2
+         cq8A2kp5DeZfopjk7G3mgI/MUPkT0cvLUvg0WlWHGHW7V8orNHk0QC+j8aAxGE8eR+Ub
+         xNgA==
+X-Forwarded-Encrypted: i=1; AL+hErHYIKoJKUUEAJUnYSSRgwY9SvF5tLcFO0dcg0xF3OpF1gj5E8WFz8zmgNhltUSGCwnV4OfN0EHIyaAmFDF0Mo2LqgDxZNE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z90SwfveDILVsegy+OqMyh9kMNwbampkZrKmauocXoA9gyCGQai
+	Q87A0PMAOj5haeQsm6YJ5LzBuhRFZjCHL/ETvz4PrKvIJ2Zj9h2p1XQJ
+X-Gm-Gg: AYBFou2GCtZx4IDjwKyp2BeGpou/7rqncHvRkhiRlZmSIzFdeId7C+Rbh9IPj8tHEDz
+	mHzEpEoO/+G7ZCAMZT8xMgMwwd5ivdwy/gk3nbMKsuZgUeT32Z2cOcMe/Rrxxp+QcaLlR/00gjY
+	0TS4lDseI4vS6hzL8At9aSUT5QqeJTvl9hOReKIUgAiLzoq1rlxgLpH5MRJQBCcdJBN0E0tLopy
+	1fVT/wL8mfUk8/w7zB9wr1+lHgLPT6jhLK86yaJvAe16vIxwiauktNfhxd3iLqvQMAkkD2irPZR
+	7tSuGsGsQg0VFIpjWYWdp8CokK9N1rDW8JecvQeRFFSNzEMrIpvM6QEYtM6HM/QB/v16dFia1Ac
+	IzM6PeAUxEz/1nZobDXPpXqA0kAz7bRgqQFLhOcHZr9QTtzb3FFTN9TOQuIQg0T77t7kOJAAb7n
+	Evh7IzeSZX9zyZbZYq+KBLHYkGZ/q5zMB6FyinqfWbZcDG6oWof49kk++3IXT4bTneWJeldwnUP
+	HtQ6R72Msv3mYZHWF3h0Dpjo2D34AZHT2H8LyiKvZxLK9GzBlnLxWkrsJJAPt2BwW8sS7r4MY8l
+	COK9KPN6j8V2cq/1tG6/IPhmKrW/TWE2hVd1BdUZSYWUZLaCsQBuNA==
+X-Received: by 2002:a05:6000:4b0b:b0:492:b5d9:f627 with SMTP id ffacd0b85a97d-499c8796888mr7998443f8f.46.1794470751084;
+        Thu, 12 Nov 2026 00:05:51 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4983585923bsm15722919f8f.11.2026.11.12.00.05.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2026 00:05:50 -0800 (PST)
+Date: Thu, 12 Nov 2026 09:05:49 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: pandaWall <mangosteen922@126.com>
+Cc: mic@digikod.net, gnoack@google.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] landlock: Fix layer composition of
+ LANDLOCK_ACCESS_FS_REFER
+Message-ID: <20261112.cb77bc01c8a6@gnoack.org>
+References: <20261112025528.443654-1-mangosteen922@126.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,292 +98,137 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20261112025528.443654-1-mangosteen922@126.com>
 
-On Wed, 2026-11-04 at 12:09 +0100, Albert Esteve wrote:
-> dma-heap already supports charging a specific cgroup at allocation
-> time via charge_fd in DMA_HEAP_IOCTL_ALLOC. However, dma-bufs can
-> originate from any exporter (DRM, V4L2, etc.), and the allocator may
-> not know the final owner at allocation time.
->=20
-> Add DMA_BUF_IOCTL_XFER_CHARGE to transfer a dma-buf's memcg charge
-> to a different cgroup after allocation. The target is identified by
-> charge_fd, which may be a cgroupfd or a pidfd.
->=20
-> The transfer charges the new cgroup before uncharging the old one,
-> preserving the original charge on failure. Concurrent transfers are
-> serialized by the dma-buf reservation lock, so lockdep covers the
-> locking order of the charge path early. The transfer implementation
-> is generic (mem_cgroup_transfer_charge) and not dma-buf specific, so
-> it can be reused by other subsystems.
->=20
-> Not all dma-buf exporters back their buffers with reclaimable system
-> memory. Some represent device registers, VRAM, or carved-out pools
-> where size is not a meaningful memory cost. The xfer ioctl returns
-> -EOPNOTSUPP for buffers whose memcg is not set. Exporters opt in by
-> passing a memcg through dma_buf_export_info at export time. Currently
-> only the system heap sets it, other exporters can opt in as needed.
->=20
-> Usage example:
-> =C2=A0 int cg_fd =3D open("/sys/fs/cgroup/clients/app1", O_RDONLY |
-> O_DIRECTORY);
->=20
-> =C2=A0 struct dma_buf_transfer_charge xfer =3D {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .charge_fd =3D cg_fd,
-> =C2=A0 };
-> =C2=A0 ioctl(dmabuf_fd, DMA_BUF_IOCTL_XFER_CHARGE, &xfer);
-> =C2=A0 /* charge now on app1's cgroup */
-> =C2=A0 close(cg_fd);
->=20
-> Signed-off-by: Albert Esteve <aesteve@redhat.com>
+On Thu, Nov 12, 2026 at 10:55:28AM +0800, pandaWall wrote:
+> landlock_get_fs_access_mask() unconditionally ORs
+> _LANDLOCK_ACCESS_FS_INITIALLY_DENIED (i.e. LANDLOCK_ACCESS_FS_REFER)
+> into every layer's handled filesystem mask.  Layers created from
+> rulesets that only handle other rule types (network ports, scopes) or
+> only permissions therefore report REFER as handled even though
+> landlock_upgrade_handled_layer_config() only adds the bit when
+> handled.fs is non-zero, and no filesystem rule can ever clear a bit
+> of such a layer.
+> 
+> The consequence is that stacking any non-filesystem ruleset on top of
+> a filesystem ruleset makes link(2), rename(2) and
+> renameat2(RENAME_EXCHANGE) fail with -EXDEV/-EACCES even when each
+> ruleset individually allows the operation: landlock_unmask_layers()
+> requires every layer's mask to be cleared, and a non-filesystem
+> layer's mask can never be.
+> 
+> Only implicitly handle REFER for layers that already handle
+> filesystem access rights.
+> 
+> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+> Signed-off-by: pandaWall <mangosteen922@126.com>
+> 
+> Add a corresponding regression test to the layout1 fs_test suite:
+> stacking a network-only ruleset (handled_access_net only) on top of a
+> filesystem ruleset allowing REFER and MAKE_REG must not deny
+> different-parent rename/exchange.
 > ---
-> =C2=A0drivers/dma-buf/dma-buf.c=C2=A0=C2=A0=C2=A0 | 42
-> ++++++++++++++++++++++++++++++++++++++++++
-> =C2=A0include/linux/dma-buf.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++-
-> =C2=A0include/linux/memcontrol.h=C2=A0=C2=A0 | 13 +++++++++++++
-> =C2=A0include/uapi/linux/dma-buf.h | 26 ++++++++++++++++++++++++++
-> =C2=A0mm/memcontrol.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 42
-> ++++++++++++++++++++++++++++++++++++++++++
-> =C2=A05 files changed, 125 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index 837666273550..3bd26fbb1109 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -540,6 +540,45 @@ static long dma_buf_import_sync_file(struct
-> dma_buf *dmabuf,
-> =C2=A0}
-> =C2=A0#endif
-> =C2=A0
-> +/* Transfer a dma-buf's memcg charge; see struct
-> dma_buf_transfer_charge */
-> +static long dma_buf_xfer_charge(struct dma_buf *dmabuf,
-> +				const void __user *user_data)
-> +{
-> +	struct dma_buf_transfer_charge arg;
-> +	struct mem_cgroup *memcg;
-> +	unsigned int nr_pages =3D PAGE_ALIGN(dmabuf->size) >>
-> PAGE_SHIFT;
-> +	int ret =3D 0;
+>  security/landlock/domain.h                 | 15 +++++++--
+>  tools/testing/selftests/landlock/fs_test.c | 37 ++++++++++++++++++++++
+>  2 files changed, 49 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+> index 935e18b12..07d4a23fc 100644
+> --- a/security/landlock/domain.h
+> +++ b/security/landlock/domain.h
+> @@ -262,9 +262,18 @@ static inline access_mask_t
+>  landlock_get_fs_access_mask(const struct landlock_domain *const domain,
+>  			    const u16 layer_level)
+>  {
+> -	/* Handles all initially denied by default access rights. */
+> -	return domain->layers[layer_level].handled.fs |
+> -	       _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+> +	access_mask_t handled = domain->layers[layer_level].handled.fs;
 > +
-> +	if (copy_from_user(&arg, user_data, sizeof(arg)))
-> +		return -EFAULT;
-> +
-> +	if (!IS_ENABLED(CONFIG_MEMCG))
-> +		return 0;
-> +
-> +	if (arg.flags !=3D 0)
-> +		return -EINVAL;
-> +
-> +	memcg =3D mem_cgroup_get_from_fd(arg.charge_fd);
-> +	if (IS_ERR(memcg))
-> +		return PTR_ERR(memcg);
-> +
-> +	dma_resv_lock(dmabuf->resv, NULL);
-> +
-> +	if (!dmabuf->memcg) {
-> +		ret =3D -EOPNOTSUPP;
-> +		goto out;
-> +	}
-> +
-> +	if (dmabuf->memcg !=3D memcg &&
-> +	=C2=A0=C2=A0=C2=A0 !mem_cgroup_transfer_charge(&dmabuf->memcg, memcg,
-> MEMCG_DMABUF, nr_pages))
-> +		ret =3D -ENOMEM;
-> +
-> +out:
-> +	dma_resv_unlock(dmabuf->resv);
-> +	mem_cgroup_put(memcg);
-> +	return ret;
-> +}
-> +
-> =C2=A0static long dma_buf_ioctl(struct file *file,
-> =C2=A0			=C2=A0 unsigned int cmd, unsigned long arg)
-> =C2=A0{
-> @@ -590,6 +629,9 @@ static long dma_buf_ioctl(struct file *file,
-> =C2=A0		return dma_buf_import_sync_file(dmabuf, (const void
-> __user *)arg);
-> =C2=A0#endif
-> =C2=A0
-> +	case DMA_BUF_IOCTL_XFER_CHARGE:
-> +		return dma_buf_xfer_charge(dmabuf, (const void
-> __user *)arg);
-> +
-> =C2=A0	default:
-> =C2=A0		return -ENOTTY;
-> =C2=A0	}
-> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-> index 85dd747c9b36..b01149d26b44 100644
-> --- a/include/linux/dma-buf.h
-> +++ b/include/linux/dma-buf.h
-> @@ -507,7 +507,8 @@ struct dma_buf_attachment {
-> =C2=A0 * @priv:	Attach private data of allocator to this buffer
-> =C2=A0 * @memcg:	memcg to charge for this buffer's memory. Set only
-> for
-> =C2=A0 *		buffers backed by system memory where @size reflects
-> the
-> - *		actual allocation in bytes.
-> + *		actual allocation in bytes. Enables charge transfer
-> via
-> + *		DMA_BUF_IOCTL_XFER_CHARGE.
-> =C2=A0 *
-> =C2=A0 * This structure holds the information required to export the
-> buffer. Used
-> =C2=A0 * with dma_buf_export() only.
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index f8ec751b7d7b..af02d9777fe9 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -676,6 +676,11 @@ struct mem_cgroup *mem_cgroup_get_from_fd(int
-> fd);
-> =C2=A0bool mem_cgroup_reserve_dmabuf(struct mem_cgroup *memcg, gfp_t gfp,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int nr_pages);
-> =C2=A0
-> +bool mem_cgroup_transfer_charge(struct mem_cgroup **ptr_memcg,
-> +				struct mem_cgroup *new_memcg,
-> +				enum memcg_stat_item item,
-> +				unsigned int nr_pages);
-> +
-> =C2=A0void __mem_cgroup_uncharge(struct folio *folio);
-> =C2=A0
-> =C2=A0/**
-> @@ -1197,6 +1202,14 @@ static inline void
-> mem_cgroup_cancel_dmabuf(struct mem_cgroup *memcg,
-> =C2=A0{
-> =C2=A0}
-> =C2=A0
-> +static inline bool mem_cgroup_transfer_charge(struct mem_cgroup
-> **ptr_memcg,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mem_cgroup
-> *new_memcg,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum memcg_stat_item
-> item,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int nr_pages)
-> +{
-> +	return true;
-> +}
-> +
-> =C2=A0static inline void mem_cgroup_uncharge(struct folio *folio)
-> =C2=A0{
-> =C2=A0}
-> diff --git a/include/uapi/linux/dma-buf.h b/include/uapi/linux/dma-
-> buf.h
-> index e827c9d20c5d..0aaf2e7d593b 100644
-> --- a/include/uapi/linux/dma-buf.h
-> +++ b/include/uapi/linux/dma-buf.h
-> @@ -168,6 +168,31 @@ struct dma_buf_import_sync_file {
-> =C2=A0	__s32 fd;
-> =C2=A0};
-> =C2=A0
-> +/**
-> + * struct dma_buf_transfer_charge - Transfer a dma-buf's memcg
-> charge
-> + *
-> + * Any holder of a dma-buf file descriptor can perform a
-> + * DMA_BUF_IOCTL_XFER_CHARGE to attribute the buffer's memory
-> + * cost to a specific cgroup, or move it from one cgroup to
-> + * another.=C2=A0 The ioctl charges the new cgroup before uncharging
-> + * the old one atomically.=C2=A0 On failure the original charge is
-> + * preserved.=C2=A0 If the buffer has no existing memcg charge, the
-> + * ioctl returns -EOPNOTSUPP.
-> + */
-> +struct dma_buf_transfer_charge {
-> +	/** @flags: Reserved, must be zero */
-> +	__u32 flags; /* unused for now */
-> +	/**
-> +	 * @charge_fd: File descriptor identifying the target
-> cgroup.
-> +	 *
-> +	 * May be either a pidfd, in which case the charge moves to
-> the
-> +	 * memory cgroup of the referenced process, or a cgroupfd
-> obtained
-> +	 * by opening a cgroup v2 directory, in which case the
-> charge moves
-> +	 * directly to that cgroup's memory controller.
+> +	/*
+> +	 * Only layers that handle filesystem access rights implicitly
+> +	 * handle REFER.  A layer that handles other rule types (e.g.
+> +	 * network, scopes) must not imply REFER, otherwise it would
+> +	 * spuriously deny link and rename operations.
 > +	 */
-> +	__u32 charge_fd;
-> +};
+> +	if (handled)
+> +		handled |= _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
 > +
-> =C2=A0#define DMA_BUF_BASE		'b'
-> =C2=A0#define DMA_BUF_IOCTL_SYNC	_IOW(DMA_BUF_BASE, 0, struct
-> dma_buf_sync)
-> =C2=A0
-> @@ -179,5 +204,6 @@ struct dma_buf_import_sync_file {
-> =C2=A0#define DMA_BUF_SET_NAME_B	_IOW(DMA_BUF_BASE, 1, __u64)
-> =C2=A0#define DMA_BUF_IOCTL_EXPORT_SYNC_FILE	_IOWR(DMA_BUF_BASE, 2,
-> struct dma_buf_export_sync_file)
-> =C2=A0#define DMA_BUF_IOCTL_IMPORT_SYNC_FILE	_IOW(DMA_BUF_BASE, 3, struct
-> dma_buf_import_sync_file)
-> +#define DMA_BUF_IOCTL_XFER_CHARGE	_IOW(DMA_BUF_BASE, 4, struct
-> dma_buf_transfer_charge)
-> =C2=A0
-> =C2=A0#endif
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 17fdefc56b97..3e717b5663c8 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5752,6 +5752,48 @@ void mem_cgroup_cancel_dmabuf(struct
-> mem_cgroup *memcg, unsigned int nr_pages)
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_GPL(mem_cgroup_cancel_dmabuf);
-> =C2=A0
-> +/**
-> + * mem_cgroup_transfer_charge - move a charge between memcgs
-> + * @ptr_memcg: pointer to the memcg to transfer from
-> + * @new_memcg: target memcg; caller must hold a reference
-> + * @item: stat counter to adjust
-> + * @nr_pages: number of pages to transfer
-> + *
-> + * Transfers @nr_pages of charge from *@ptr_memcg to @new_memcg and,
-> on
-> + * success, stores @new_memcg in *@ptr_memcg.
-> + *
-> + * Updates to *@ptr_memcg must be serialized by the caller.
-> + * Returns %true on success, %false if the charge against @new_memcg
-> + * failed.
+> +	return handled;
+>  }
+>  
+>  static inline access_mask_t
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index f725882fa..5588f0ee5 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -2570,6 +2570,43 @@ const struct rule layer_dir_s2d1_execute[] = {
+>  	{},
+>  };
+>  
+> +/*
+> + * Tests that a layer not handling filesystem access rights does not
+> + * implicitly handle LANDLOCK_ACCESS_FS_REFER, which would otherwise deny
+> + * different-parent renames and links stacked on top of a filesystem ruleset.
 > + */
-> +bool mem_cgroup_transfer_charge(struct mem_cgroup **ptr_memcg,
-> +				struct mem_cgroup *new_memcg,
-> +				enum memcg_stat_item item,
-> +				unsigned int nr_pages)
+> +TEST_F_FORK(layout1, refer_with_net_layer)
 > +{
-> +	struct mem_cgroup *old_memcg =3D *ptr_memcg;
+> +	const struct rule layer_fs[] = {
+> +		{
+> +			.path = dir_s1d2,
+> +			.access = LANDLOCK_ACCESS_FS_REFER,
+> +		},
+> +		{
+> +			.path = dir_s1d3,
+> +			.access = LANDLOCK_ACCESS_FS_MAKE_REG,
+> +		},
+> +		{},
+> +	};
+> +	const struct landlock_ruleset_attr ruleset_net = {
+> +		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
+> +	};
 > +
-> +	if (!new_memcg || mem_cgroup_disabled())
-> +		return true;
+> +	/* layer_fs alone: different-parent rename is allowed. */
+> +	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_REFER |
+> +				      LANDLOCK_ACCESS_FS_MAKE_REG,
+> +		   layer_fs);
+> +	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
+> +	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
+> +	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
 > +
-> +	if (try_charge(new_memcg, GFP_KERNEL, nr_pages))
-> +		return false;
-> +
-> +	mod_memcg_state(new_memcg, item, nr_pages);
-> +	css_get(&new_memcg->css);
-> +	*ptr_memcg =3D new_memcg;
-> +
-> +	if (old_memcg) {
-> +		/* Uncharge old cgroup */
-> +		mod_memcg_state(old_memcg, item, -nr_pages);
-> +		if (!mem_cgroup_is_root(old_memcg))
-> +			refill_stock(old_memcg, nr_pages);
-> +		mem_cgroup_put(old_memcg);
-> +	}
-> +
-> +	return true;
+> +	/* Stacks a network-only layer: still allowed. */
+> +	drop_access_rights(_metadata, &ruleset_net);
+> +	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
+> +	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
+> +	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
 > +}
+> +
+>  /*
+>   * Tests precedence over renames: denied by default for different parent
+>   * directories, *with* a rule matching a parent directory, but not directly
+> -- 
+> 2.56.0
+> 
 
-=20
-This has the same lifetime issue as patch 1. After a transfer, the
-buffer pins new_memcg until it is released, and with cross-process
-transfers the target may be removed before the
-buffer is. Since this helper is meant to be reused by other subsystems,
-would it be better to have it take and store an obj_cgroup from the
-start?
+The same patch (with the same subject live even) was already sent by me in [1].
+
+If you are serious about sending kernel patches, please:
+
+* Start at patch version 1, not 2.
+* Send new patch versions as top level threads.
+* Wait for feedback before sending V3.
+* Clarify in subsequent versions what the difference to the previous one is.
+* Contributors must use full names in their submissions, as Sashiko also remarked.
+
+This is wrong on multiple levels and looks suspiciously like it was
+lacking human supervision?  In case this was an AI bot, please don't
+let your AI bots loose unsupervised on the kernel mailing lists.
 
 Thanks,
-Thomas
+–Günther
 
 
-> +
-> =C2=A0/**
-> =C2=A0 * mem_cgroup_uncharge_dmabuf - uncharge a dma-buf from its memcg
-> =C2=A0 * @dmabuf: buffer to uncharge
+[1] https://lore.kernel.org/all/20261108-b4-landlock-refer-nonfs-layer-v2-0-2b405fc1b3aa@gmail.com/
