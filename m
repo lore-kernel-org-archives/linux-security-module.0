@@ -1,55 +1,86 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794453451;
-	b=MPZrHo9yHeiYTx44/5ak8l7tHs1pbHdDGUzpZ645M3aL4Nk+dx1m+OyrwqP3W/eSMi4V
-	 pGnmhVTVA+xdNq1+rRfoIHnwLr/Vy3lG2YQiy9GtaW4t1EaAWxHwyNQEE+5gcb/m4m7P2
-	 erAHs+sEYg9pbvIvQlLCiidO/TYqjvVcTXxxATA3eoAV6+u9LrvWKYgzN+I9KRPMOGeVe
-	 xATd8UC+K/GW5y3weGlZHt5Fg3oscuGn6dWRuaNFKlgONWI7kJCd1eCBAtrXhI95BwlD7
-	 I6OsW676+6htimszZKVm68BfWVfA+/NptPqML4mz6u2wnXCLBryCLGL0+okj6AuZzNA==
+	t=1794456168;
+	b=EG7V2QafITKD5MI04cJbFXchY3FvZvMayqwcql7BitZ0X26c9ZAYSd7ygr30yQIl+9PG
+	 S7V5dAjDohSkHY32iQh72l9wID++s2ginXtdJhO59/DFvOcMt+ooWZbE05xMDHYQRFBWu
+	 nFt3XopQDq4cOXn/2k9bY3XCkfH5Dx/z4LkooIU1/tAfP/nO1ArWnt5Pl+Og7yK7KSeKT
+	 NmIQYyWjVhiYSuW3kd79W35ZOzHXmnv4YYwJBmu5Sm96wrf/TdzSV3d4QtJeDpcCF68L/
+	 vGo1U/yDUgrjGzcGQTp0bTqvjSUCeytO4FFD3hO6j0PMm05ib3trdl/ub+SPfHqnzxQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794453451;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=sjucaeflT/4NGz1Z8840lb9pYCgHsVALIanJ4ozgQR0=;
-	b=N0kIpx+HR0+01oWwgaDc7VleGN+nvJZXIaBH/He4R55fJsbLKm7ZFfSlWTEFc4XoSjKN
-	 mcY0PzuUIeaDFVyJOP4v2gLO9tW67YrWKnOJVUvofHg2+epYewl5ftVe4Kz2+M2E4seRM
-	 dPaHLLHKjp2JnvoC2m43k++BQN7U5NcDbyvsZgRTs3Pk5JGGPlwjpCsudEGxRArSRYxxl
-	 s39+ZOcR5A2IX0FjBIbrwpD3cR6OrZidftJZed3Kz2IQdZr1VJKTQSSJ2Tlocb/jLpeLr
-	 wAo/VO6It2DQ/WsX7Hnuzxg5lZTvrZwEeynoehvWh2B47hBjr8lU/qutF01HFAQ3HQA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794456168;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=dgXA4BlYneZfOpECEiIX+smZ2qtO7I+usA3cuFq7GY0=;
+	b=tdWQWjdA/t8qdsT18RZw20OxRJzEs7qZMOpz30ifH0/tOALhLDdjA8L64Ti4DvRpmO6L
+	 TeRtaHh4UAOTYLXl1dA2JeILnk03fLjnYTjQNlqFbrTWOl56yHn5q7V8fmOeDSfzZHS0t
+	 muZih1yPDnQMm41HeLDq3W9B5+5S+WkwwsFFBBU9I0zMq4wwWw4MHcNtgmn8gOtKLh+pv
+	 C1T7kikYB5ycMp7m1l1Q1hdbpE4MLZ1ADgLaho8lRzQJMIgVDvx0tPJONb0ON6U7eBTwe
+	 Pqs7aPRC+Kd+70iXwqwsOKJgg/Ckc9dxfVoi9lnWgTPVMH3BVjTOxD4OI9n6em5Alww==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aPKP48++;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MLBPpLzP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176C3606A32E
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 03:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 883C3606A31C;
+	Thu, 12 Nov 2026 04:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aPKP48++
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971591F00A07
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2026 03:17:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MLBPpLzP
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 58EA71F00A05;
+	Thu, 12 Nov 2026 04:02:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794453450;
-	bh=sjucaeflT/4NGz1Z8840lb9pYCgHsVALIanJ4ozgQR0=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=aPKP48++AKPBZKc9lIYBNQxufXKP4bN78lJ9vCX1dPZumLTVXLeLojuUWwY77hM8o
-	 0H+xlNJI8NaVoh+z0GbgVtjCcgplUvh7w2RnqFzOoasQ1WRd4cgq/9g3MHqUvmueYt
-	 o0AmVHy0Q6qJO/lcIzPxGhYvBvvfqO7SuMEBdQQa57lCrf/qGP//AUByXzZytKezYy
-	 BYrzbs8xV5v4yXEGCQm5B40txMIdbmwtNW1+RSEzZ7k49ukTtc9r6iXXr2U1xZUvid
-	 kaVUYOV7HY7QYYFM7C5CT5f1GFsZ8I5EHE0z1YYCWv0TnKYBxIvKGasaOd9KJNCsax
-	 vt4qTBH5d8S6w==
-Message-ID: <sashiko-outbox-210249@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] landlock: Fix layer composition of
- LANDLOCK_ACCESS_FS_REFER
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261112025528.443654-1-mangosteen922@126.com>
-References: <20261112025528.443654-1-mangosteen922@126.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Nov 2026 03:17:30 +0000
+	s=k20260515; t=1794456168;
+	bh=dgXA4BlYneZfOpECEiIX+smZ2qtO7I+usA3cuFq7GY0=;
+	h=From:To:Cc:Subject:Date;
+	b=MLBPpLzPPj/ohUh12HdOqIIGOP4uCE8J6jhKIXHjO3yDLRNc6v0GHF/7zWnW+NT/B
+	 fdHLDXD8EotMYIf6iLQmvciyxhl1vx11bC0PWGBc00Iyf24fsLvc3M893w/jViSqbh
+	 ZfTCAeBFNVVAml6qzUFeMgCMXBsUCCtfG5f7tDFbr7wgp3nLjgvqysQkcNpibOe/vn
+	 dBprGWCABZw0GIhkaP3eMRYF8G54nZeiaoPwmO31M4QkaG1fLYRJHhxF06f7+paOry
+	 c+Gff+WRf6+5Mgg1rghh//qVZbOUcjJ/FjYDeXU4AunPWuGBMad4hVngU7l8TD/I2l
+	 Fo85SGcuyi3dA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	keyrings@vger.kernel.org,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Bharath SM <bharathsm@microsoft.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	James Morris <jmorris@namei.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Paulo Alcantara <pc@manguebit.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH v6 00/13] KEYS: Sanitize the garbage collector
+Date: Thu, 12 Nov 2026 06:02:29 +0200
+Message-ID: <20261112040242.247168-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,112 +89,168 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [High] landlock: single-word handle in Signed-off-by and text after
-  trailers
-- [Medium] selftests/landlock: missing MAKE_REG on dir_s1d2 breaks
-  refer_with_net_layer
+1. Replace key_type_dead retyping with module reference pinning so live
+   keys and restrictions keep their backing key_type module loaded until
+   key_gc_unused_keys() or keyring_destroy() completes.
+2. Process serial-tree scans and graveyard destruction in fixed 64-key
+   chunks to a bound workqueue execution latency without hurting overall
+   throughput for a significant amount.
+
+The first part has a user-space visible effect: rmmod returns -EBUSY while
+keys or keyring restrictions still pin the backing module.
+
+Internal key caches or transport state bottlenecks are addressed by either
+clearing their private caches on last-client teardown or splitting key
+types into dedicated provider modules.
+
+CHANGES
+=======
+
+v6:
+- Split "KEYS: trusted: TEE: Synchronize session lifetime" into two
+  patches:
+  1. "KEYS: trusted: Update static calls before init"
+  2. "KEYS: trusted: TEE: Synchronize session lifetime"
+  No actual code changes.
+
+v5:
+- Another round of fixes resolving Sashiko remarks.
+- Reordered TEE session lifetime synchronization patch before suppressing
+  sysfs bind attributes.
+- Release conn->key in rxrpc_process_event() on init_connection_security()
+  failure
+- Update Documentation/networking/rxrpc.rst to reference
+  net/rxrpc/security.c instead of net/rxrpc/server_key.c.
+- Store the delay-adjusted reap timestamp in gc->end in
+  key_garbage_collector() instead of recording unadjusted key->expiry and
+  adding key_gc_delay a second time.
+
+v4:
+- Replaced WARN_ON() around fallible keyring_clear() in CIFS idmap and
+  SPNEGO cache-clearing helpers with pr_warn_ratelimited().
+- Moved key garbage collection from the shared events workqueue onto a
+  dedicated WQ_MEM_RECLAIM | WQ_PERCPU workqueue (key_gc), allocated in
+  key_init(), so WQ_MEM_RECLAIM workers (nfsiod/cifsiod) and reclaim paths
+  can flush key GC safely.
+
+v3:
+- Split dns_resolver and rxrpc key types into dedicated provider modules
+  (dns_resolver_key.ko and rxrpc_keys.ko) instead of client refcounting,
+  so cached or retained keys do not pin dns_resolver.ko or rxrpc.ko.
+- Dropped the standalone nvme-keyring fix as it was picked up by the
+  subsystem maintainers.
+- Hardened key_gc_flush() to serialize against chunked key_gc_work
+  continuations, and fixed a restriction module reference leak on failed
+  keyring instantiation.
+
+v2:
+- Used v1 as a test probe for Sashiko to detect the corner cases instead
+  of trying to resolve even the known ones beforehand.
+- Converted the client subsystems to be compatible with the module
+  pinning semantics.
+
+VERSIONS
+========
+
+- v5:
+  https://lore.kernel.org/keyrings/20261108222719.304712-1-jarkko@kernel.org/#t
+- v4:
+  https://lore.kernel.org/keyrings/20261107131512.3603168-1-jarkko@kernel.org/
+- v3:
+  https://lore.kernel.org/keyrings/20261105005311.804098-1-jarkko@kernel.org/
+- v2:
+  https://lore.kernel.org/linux-integrity/20261103030226.2685251-1-jarkko@kernel.org/
+
+Cc: keyrings@vger.kernel.org
+Cc: linux-afs@lists.infradead.org
+Cc: linux-cifs@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-nfs@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Anna Schumaker <anna@kernel.org>
+Cc: Bharath SM <bharathsm@microsoft.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Eric Dumazet <edumazet@kernel.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Marc Dionne <marc.dionne@auristor.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Paulo Alcantara <pc@manguebit.org>
+Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Shyam Prasad N <sprasad@microsoft.com>
+Cc: Simon Horman <horms@kernel.org>
+Cc: Sumit Garg <sumit.garg@kernel.org>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Tom Talpey <tom@talpey.com>
+Cc: Trond Myklebust <trondmy@kernel.org>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+
+Jarkko Sakkinen (13):
+  KEYS: Add key_gc_flush() for draining RCU callbacks
+  dns_resolver: Move the key type into a separate module
+  NFSv4: Clear idmap keyring cache when the last client unloads
+  smb: client: Clear idmap/SPNEGO caches when the last session is
+    unloaded
+  s390/cert_store: Start tracking subsystem keys
+  KEYS: trusted: Update static calls before init
+  KEYS: trusted: TEE: Synchronize session lifetime
+  KEYS: trusted: TEE: Disable sysfs bind attributes
+  rxrpc: Release conn->key when init_connection_security() fails
+  rxrpc: Move key types to their own module
+  KEYS: Pin the backing kernel module for a key type
+  KEYS: Remove key_type_dead
+  KEYS: key_garbage_collector(): process in chunks
+
+ Documentation/networking/rxrpc.rst        |   2 +-
+ arch/s390/kernel/cert_store.c             | 161 +++++-------
+ fs/nfs/nfs4idmap.c                        |  21 ++
+ fs/smb/client/cifs_spnego.c               |  12 +
+ fs/smb/client/cifsacl.c                   |  12 +
+ fs/smb/client/cifsproto.h                 |   8 +
+ fs/smb/client/misc.c                      |  19 +-
+ include/linux/key-type.h                  |   6 +-
+ include/linux/key.h                       |   2 +
+ net/Makefile                              |   4 +-
+ net/dns_resolver/Kconfig                  |  15 ++
+ net/dns_resolver/Makefile                 |   4 +-
+ net/dns_resolver/dns_key.c                |  65 +----
+ net/dns_resolver/dns_query.c              |  64 +++++
+ net/dns_resolver/internal.h               |   5 -
+ net/rxrpc/Kconfig                         |  20 ++
+ net/rxrpc/Makefile                        |   7 +-
+ net/rxrpc/af_rxrpc.c                      |  19 +-
+ net/rxrpc/ar-internal.h                   |  25 +-
+ net/rxrpc/conn_event.c                    |   7 +-
+ net/rxrpc/key.c                           | 122 +++------
+ net/rxrpc/proc.c                          |   2 +-
+ net/rxrpc/rxgk.c                          |  66 -----
+ net/rxrpc/rxkad.c                         |  47 ----
+ net/rxrpc/security.c                      | 184 ++++++++++++++
+ net/rxrpc/server_key.c                    | 260 +++++++++++--------
+ security/keys/gc.c                        | 289 ++++++++++------------
+ security/keys/internal.h                  |   8 +-
+ security/keys/key.c                       |  65 +++--
+ security/keys/keyring.c                   |  88 +++----
+ security/keys/trusted-keys/trusted_core.c |  15 +-
+ security/keys/trusted-keys/trusted_tee.c  |  89 +++++--
+ 32 files changed, 932 insertions(+), 781 deletions(-)
+
 --
+2.47.3
 
-commit cf0aefc20d751516a8f184c3d49843e96b5c3818
-Author: pandaWall <mangosteen922@126.com>
-
-> landlock: Fix layer composition of LANDLOCK_ACCESS_FS_REFER
->
-> landlock_get_fs_access_mask() unconditionally ORs
-> _LANDLOCK_ACCESS_FS_INITIALLY_DENIED (i.e. LANDLOCK_ACCESS_FS_REFER)
-> into every layer's handled filesystem mask.  Layers created from
-> rulesets that only handle other rule types (network ports, scopes) or
-> only permissions therefore report REFER as handled even though
-> landlock_upgrade_handled_layer_config() only adds the bit when
-> handled.fs is non-zero, and no filesystem rule can ever clear a bit
-> of such a layer.
->
-> The consequence is that stacking any non-filesystem ruleset on top of
-> a filesystem ruleset makes link(2), rename(2) and
-> renameat2(RENAME_EXCHANGE) fail with -EXDEV/-EACCES even when each
-> ruleset individually allows the operation: landlock_unmask_layers()
-> requires every layer's mask to be cleared, and a non-filesystem
-> layer's mask can never be.
->
-> Only implicitly handle REFER for layers that already handle
-> filesystem access rights.
->
-> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and c=
-onnect")
-> Signed-off-by: pandaWall <mangosteen922@126.com>
->
-> Add a corresponding regression test to the layout1 fs_test suite:
-> stacking a network-only ruleset (handled_access_net only) on top of a
-> filesystem ruleset allowing REFER and MAKE_REG must not deny
-> different-parent rename/exchange.
-
-[Severity: High]
-Per Documentation/process/submitting-patches.rst, the Signed-off-by:
-trailer and Author header must use a real full name rather than a
-single-word handle or nickname ("pandaWall").  In addition, the final
-paragraph describing the regression test should be placed before the
-Fixes: and Signed-off-by: trailers.
-
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/s=
-elftests/landlock/fs_test.c
-> index f725882fa4a78..5588f0ee58625 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -2570,6 +2570,43 @@ const struct rule layer_dir_s2d1_execute[] =3D {
->  	{},
->  };
-> =20
-> +/*
-> + * Tests that a layer not handling filesystem access rights does not
-> + * implicitly handle LANDLOCK_ACCESS_FS_REFER, which would otherwise deny
-> + * different-parent renames and links stacked on top of a filesystem rul=
-eset.
-> + */
-> +TEST_F_FORK(layout1, refer_with_net_layer)
-> +{
-> +	const struct rule layer_fs[] =3D {
-> +		{
-> +			.path =3D dir_s1d2,
-> +			.access =3D LANDLOCK_ACCESS_FS_REFER,
-> +		},
-> +		{
-> +			.path =3D dir_s1d3,
-> +			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
-> +		},
-> +		{},
-> +	};
-> +	const struct landlock_ruleset_attr ruleset_net =3D {
-> +		.handled_access_net =3D LANDLOCK_ACCESS_NET_BIND_TCP,
-> +	};
-> +
-> +	/* layer_fs alone: different-parent rename is allowed. */
-> +	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_REFER |
-> +				      LANDLOCK_ACCESS_FS_MAKE_REG,
-> +		   layer_fs);
-> +	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
-> +	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
-> +	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
-> +
-> +	/* Stacks a network-only layer: still allowed. */
-> +	drop_access_rights(_metadata, &ruleset_net);
-> +	ASSERT_EQ(0, test_rename(file1_s1d2, file1_s1d3));
-> +	ASSERT_EQ(0, test_rename(file1_s1d3, file1_s1d2));
-> +	ASSERT_EQ(0, test_exchange(file2_s1d2, file2_s1d3));
-> +}
-
-[Severity: Medium]
-Does layer_fs need LANDLOCK_ACCESS_FS_MAKE_REG on dir_s1d2 as well?
-
-In layout1, dir_s1d2 is the parent of dir_s1d3.  Granting MAKE_REG only
-on dir_s1d3 allows renaming into dir_s1d3, which inherits REFER from
-dir_s1d2 when walking up the hierarchy.  However, dir_s1d2 itself lacks
-MAKE_REG, so test_rename(file1_s1d3, file1_s1d2) and
-test_exchange(file2_s1d2, file2_s1d3) both fail with EACCES in
-current_check_refer_path().
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112025528.4436=
-54-1-mangosteen922@126.com?part=3D1
