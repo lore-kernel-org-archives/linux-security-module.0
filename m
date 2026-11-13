@@ -1,61 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.155
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794605982;
-	b=dBz9YtpeIPBTYvQ/jBsG0KnwSvYyizIfrXASnCzWnZ8SzKAzYlzX93N2BlSc44Hn37ET
-	 D42mhQ/lkXAsgK1frZk+wuUUQPsLEvuDCLcKIvxX0mLa53OdFk7+y0W3j0kMJpWsJ7A4d
-	 WEw3aVI8omuHFzIs5oQKLH72vSzAk1NsGH7uIywL93LFJsUGnvezE2autoEtLH0wxx+6v
-	 Brn/Uyu79oQQjk7VlPpXpHBTmJfbdXKt0stfrRKzmozFS/uxKa6vTIHdvqx53WUVZ5By3
-	 hxJ60Qm4Nmn7tBBxkDFCPwPwfHTWTVEx8cSNhAfBz5L/upkht+QtKxsReh3DFSo/ORQ==
+	t=1794606850;
+	b=WfKkz+FtNYjGmMTVC5ghpGby7Z+A2qe/T996pJrXqUrjeAkzYIL4ihkAuTm6JPvcn+A7
+	 rZuspY4T2THLSvC9tT0Od7W6oym5t5SlflRW6xhQSJ6l/q5t4KojpMD5XmA3xeW7NRPEn
+	 f2upaib3T+aWrGJcZzQ9nPfMYh0SW5LSUQmNkVmWuk0N748WxkV+tfHEy2Oe5qyIFi2ll
+	 hOukCdnvxukkf49dD8aKbSe0wN1gKSYC2WZl3msidlpgfPDt/p2tz9gyTuanzOMel/F1C
+	 F9hY08Sbfb+FZOC5KewLAED4/hU+alNeAo4JppPV08BnBtfE2X70s6SaZzJpV4y4G5g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794605982;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=qCl0FM4D5hbd6BuBZCWtuwyK/AdR8J6n7oaD+82ev5E=;
-	b=48hI8r6bvJgfeN7wMNkDX7Oln874un2koc4Gc5q2qgfdtYNLEhGn2Et1iCwOLE1QEKQt
-	 eCE8+cFFKLivdK9M6JbpczcZvd1ys9FXx1HcWoLwyxYO9hnnCbRSEYX4VLo3JoVaoalXX
-	 nHX6ca9rcPQJXPCZMxX3Htr18HXjNskOaWFd1yXaWT8G7yMGtRavJB1OajzAf4Rom0q28
-	 ae2HGiew+eWo9YAsU5ynqit6LpS2NeZ5R0xe8kkTzSXylmKEEWto2D8CJiQbjRjKmD40f
-	 khXGTxw/Xn8XQeuxGb1LitNETB+tmwqji+tq2zjFeBWxnWWAIKDLIR+peoX+pi3+t9g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794606850;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:CC:Subject:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=1CcqFIpasLROjJEwz7TlT9+SP6PGVEwxfn522ZtvnGA=;
+	b=l9BIZs7XJH4OCFlmGtwCKMcSsrYE71FWhu0cxlpQd/lowbRR+rXrLicI8KVEix3+fX8l
+	 uSzbc7foeBazGwbOqfsNgZ/6gdEIsGaKxHdEiBdTn7g3N7OVzznT8fleHgcHvCBrGJhPQ
+	 nZG3tTHQ45lxdyS4MjbgeKBqic86SmNzPZZc/L5+6aOGLdVTzXD8/To6Z6bJmGAuWNe0i
+	 NekzhwaDKd0Nx5lfN5oWw9bAkVN2Ex5cJ+zjRxMmqocEDShOcpVknfAfVWymbGz/sPzaA
+	 MuiGovIJi1h+rftEMWoBZtSFI2V2dl/PYQ7Pae5nuhgqpnfwv+w3q/yb9jwNIpPNGig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hallyn.com;
-	spf=pass smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=LWHHXKvB;
-	arc=none smtp.remote-ip=178.63.66.53
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=m9sO5C1e;
+	arc=none smtp.remote-ip=91.218.175.155
+Received: from mta0.migadu.com (out-155.mta0.migadu.com [91.218.175.155])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25E2606A332;
-	Fri, 13 Nov 2026 21:39:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C25E2606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11779606A332
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 21:54:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11779606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=LWHHXKvB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1794605973; bh=bcJMN9ZOHAZMoUBZwYV1cTt3QNFc63I/onNMzL9vYe0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LWHHXKvBec1e4WC080N0a3TlJmkAMIQnpB8v9zPvHlkQDt13hL2gks1hgyrfpBAv0
-	 dvnsOdfM3MUTvUEF3trF+Vpe6ngoBz6Q0iBK2dmUmMjvFHzVmMACYMptC+XNozCV6s
-	 I4Vt1DCyzPh0HPryV0dWb2WkkEUbXD+PMavaNyQ9dPVd9hdL0b6Pz+ozWjZZgkWdpa
-	 buP958XOaul/2j5bKZu8ber4dZIbuoxzcMlxNsinMCaHmKAiqaiZ1+ZQEPBbB9OvvD
-	 Ba/emKxQN6xKWtoc/L8lvnJPwyHOyoN4G0GZFPpiI0SE4PYHcOuYIH2K6ERgZxRqmO
-	 4azvqg4/p/GjQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 833DC1962; Fri, 13 Nov 2026 15:39:33 -0600 (CST)
-Date: Fri, 13 Nov 2026 15:39:33 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Bradley Morgan <bradley.morgan@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] userns: security: Inform LSMs of capability check during
- userns creation
-Message-ID: <aveDlb6PlPSVoLD9@hallyn.com>
-References: <20261111205814.3282968-1-bradley.morgan@linux.dev>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=m9sO5C1e
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=WDMz8JwS9iO4OEO63+zyUH6bkhQYGGRugg2OY55yg+8=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1794606845; v=1; x=1795211645;
+ b=m9sO5C1eUNNjLfIKQ526P0boL1mDYLXzDzG4HVH3iSoNoWDhxt1wZxN1/uVtsIc3514Jr3tq
+ H8hfG3vVnIFlpsosfweQvGiSv/rmnmxNE6YvC58niotvloUp6LDHtKlom/DINRdV3VjPo1YNYjw
+ /5jEY3I1rgjVYh5zkiy72OJ8=
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id a174c48929158967;
+	Fri, 13 Nov 2026 21:54:05 +0000
+X-Mizu-Trace-ID: a174c48929158967
+X-Migadu-Flow: FLOW_OUT
+Date: Fri, 13 Nov 2026 21:54:04 +0000
+From: Bradley Morgan <bradley.morgan@linux.dev>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Christian Brauner <brauner@kernel.org>,
+ =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ Josef Bacik <josef@toxicpanda.com>, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_userns=3A_security=3A_Inform_LSMs_?=
+ =?US-ASCII?Q?of_capability_check_during_userns_creation?=
+In-Reply-To: <aveDlb6PlPSVoLD9@hallyn.com>
+References: <20261111205814.3282968-1-bradley.morgan@linux.dev> <aveDlb6PlPSVoLD9@hallyn.com>
+Message-ID: <4A0D804A-1199-4402-91EE-E37E8D6EA9E7@linux.dev>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -65,58 +69,70 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261111205814.3282968-1-bradley.morgan@linux.dev>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 11, 2026 at 08:58:14PM +0000, Bradley Morgan wrote:
-> Right now security_capable() gets called in create_user_ns() to snapshot
-> whether the parent could setfcap, but the LSM gets zero context on where
-> the check actually came from. It is the same story as setid: without a
-> dedicated flag, security modules cannot tell this apart from regular
-> capability checks.
-> 
-> Add CAP_OPT_USERNS_CREATE and pass it along from create_user_ns().
+On 13 November 2026 21:39:33 GMT, "Serge E. Hallyn" <serge@hallyn.com>
+wrote:
+>On Wed, Nov 11, 2026 at 08:58:14PM +0000, Bradley Morgan wrote:
+>> Right now security_capable() gets called in create_user_ns() to snapshot
+>> whether the parent could setfcap, but the LSM gets zero context on where
+>> the check actually came from. It is the same story as setid: without a
+>> dedicated flag, security modules cannot tell this apart from regular
+>> capability checks.
+>> 
+>> Add CAP_OPT_USERNS_CREATE and pass it along from create_user_ns().
+>
+>This should be patch 1/N in a set that introduces a user of it
+>in some lsm.
 
-This should be patch 1/N in a set that introduces a user of it
-in some lsm.
+hmm. Did you read Christians suggestion? Let's see if Christian or anyone
+else could suggest a nice little lsm user for this.
 
-> Suggested-by: Christian Brauner <brauner@kernel.org>
-> Link: https://lore.kernel.org/all/20261111-kommt-gischt-ohnedies-469998d2f219@brauner/
-> Signed-off-by: Bradley Morgan <bradley.morgan@linux.dev>
-> ---
-> Thanks Christian for the suggestion :).
-> ---
->  include/linux/security.h | 2 ++
->  kernel/user_namespace.c  | 3 ++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 40831fab54709..d24666a0b4833 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -75,6 +75,8 @@ struct nsset;
->  #define CAP_OPT_NOAUDIT BIT(1)
->  /* If capable is being called by a setid function */
->  #define CAP_OPT_INSETID BIT(2)
-> +/* Is capable being called from the user namespace creation path? */
-> +#define CAP_OPT_USERNS_CREATE BIT(3)
->  
->  /* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
->  #define SECURITY_LSM_NATIVE_LABELS	1
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 57b7f10be74e1..37480f6d8369f 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -134,7 +134,8 @@ int create_user_ns(struct cred *new)
->  	 * audit: the creator may never map uid 0.
->  	 */
->  	ns->parent_could_setfcap =
-> -		!security_capable(new, parent_ns, CAP_SETFCAP, CAP_OPT_NOAUDIT);
-> +		!security_capable(new, parent_ns, CAP_SETFCAP,
-> +				  CAP_OPT_NOAUDIT | CAP_OPT_USERNS_CREATE);
->  
->  	ret = ns_common_init(ns);
->  	if (ret)
-> -- 
-> 2.53.0
+If nobody responds, in coming days, I'll go and find and do a user for it.
+
+>
+>> Suggested-by: Christian Brauner <brauner@kernel.org>
+>> Link:
+>https://lore.kernel.org/all/20261111-kommt-gischt-ohnedies-469998d2f219@brauner/
+>> Signed-off-by: Bradley Morgan <bradley.morgan@linux.dev>
+>> ---
+>> Thanks Christian for the suggestion :).
+>> ---
+>>  include/linux/security.h | 2 ++
+>>  kernel/user_namespace.c  | 3 ++-
+>>  2 files changed, 4 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 40831fab54709..d24666a0b4833 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -75,6 +75,8 @@ struct nsset;
+>>  #define CAP_OPT_NOAUDIT BIT(1)
+>>  /* If capable is being called by a setid function */
+>>  #define CAP_OPT_INSETID BIT(2)
+>> +/* Is capable being called from the user namespace creation path? */
+>> +#define CAP_OPT_USERNS_CREATE BIT(3)
+>>  
+>>  /* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
+>>  #define SECURITY_LSM_NATIVE_LABELS	1
+>> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+>> index 57b7f10be74e1..37480f6d8369f 100644
+>> --- a/kernel/user_namespace.c
+>> +++ b/kernel/user_namespace.c
+>> @@ -134,7 +134,8 @@ int create_user_ns(struct cred *new)
+>>  	 * audit: the creator may never map uid 0.
+>>  	 */
+>>  	ns->parent_could_setfcap =
+>> -		!security_capable(new, parent_ns, CAP_SETFCAP, CAP_OPT_NOAUDIT);
+>> +		!security_capable(new, parent_ns, CAP_SETFCAP,
+>> +				  CAP_OPT_NOAUDIT | CAP_OPT_USERNS_CREATE);
+>>  
+>>  	ret = ns_common_init(ns);
+>>  	if (ret)
+>> -- 
+>> 2.53.0
+>
+
+--- Thanks!
