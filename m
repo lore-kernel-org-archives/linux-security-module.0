@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794587022;
-	b=JUHvjJV0Ppqg8OTja2ZP2aDkrDKZK67qpV85Nu3lc0fF92FKhhEZGvyXBiWU0mQIsCUD
-	 GaTw4EHCg0riaIAyfZrmWYNklCg3DTLP529EN3dqYCU+tJveltdm6pOEEoBXO+oaatzM2
-	 vWIBrKBGusjlVJ5j2Vrk3w05YvmOBzez6kTYfO1YL9Uf2fYAKLDnw3N4JhklSBy1Rn0JW
-	 nICqbiCPkH8ivaPy7QEmD0kCsSseek9Zyj66MaAloZAfd5ZzVpchcbH1geoFHqxO5+gl8
-	 B0/4vcdLHDDsUQ5FkWmbS/vDXUy+m1+wna08Xvfp3cG/750R0FXWAzqLM5KbF0td8IA==
+	t=1794587103;
+	b=LJK5HD7j6rCrMELz9QOqQ+K/SYfl1uwSzgpDAaqwD9ksmfRL2YAOtSsBpi2YGcmct0MD
+	 WFmBa18+ZZ/SxMjo3faONWxak1Ru+HiVCV50+eeHyrNRU2Czm3gPSSYZtmPp9eQuevdcc
+	 RDnMRfriXLzMQkvKV1sfFl1Zecsnk7UgWpq2TpsPkjn/ODGJZUWO4Uj6NiH2OYwfNdCun
+	 POnxZAOyLLVhVSjWcSAapSd0FwoSn+T7vYVp8gzIlSfBFxA/3PO2s9OZMyh5RjFxJun3+
+	 I412Qn+El5rJ27f3YoVHBv1PdwY9KdtwqJQt7dpD2xRXn3xdyd0VCGRto4g3TDbDJdQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794587022;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794587103;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Wybe6/t4TBPK/Mdb/EBU8sVeeHPQ53SC5zJh3UQ9Hqc=;
-	b=vWSUH1QFX9bYLemIo33EuEeNXG5ASthSHzD2+xxlEYS9tPwQl7lQcc3yoXh1tQJpgtF5
-	 NhfHrWk7xnsNAezdKnWaXYFykQmEA0DLeZdepETixv+i/2O9hur5PWT/S0tnW1eIEhYt2
-	 BvP9oKWm4MjZRHwpKH29vJFWs3JzE++p9dXCEv3pdMhuumCZIv90Li55H2hF/i9waFyOp
-	 LFg26tdNpg3zitAmIff/Y6e+InuSIvCaJzGs2MwpTD3ViVzzqJYso6ZrdcfsO4LlhkLXs
-	 0gP7DSxVDudZ8obYU37KQjWGhhsD7YJXHOeXN8UMypSazW0rua6QyaNfgfH2NX3fe+g==
+	bh=QkWetrAcR7fhD7FyEbwBYUxzoS1eX9XmfVypNYl70yA=;
+	b=rMtWLrMZHpvwQN91wr6MLTvvrqFtxdpd1HcP4ItUpAKEt9X4faS2ltBV2CO4lKqekvzt
+	 QGcsg123MpYwUTpTboaeagUzEG2HtqW2CrEggXOZ1zMsDGV/dG7fdBPkhw11mn2YSzpKv
+	 kLha/MOEUdUR65vbDNbnGMAjX8vcGfV5pplxDgPrDDrGIY99np9NjbGBQ0VVl1p4XMOKe
+	 N30/oEkKYpBN8kk0heeJvucTr853/jBdbSvvMuH4qdHSY6ipJwyl1uz+vqVu/nPRFR1Hi
+	 BzzFbeMpo7cv+xtvyDz45TVXWjQnYqV+8PgMm5MEnhQdTd9j30+6DOAWYhf38VHPKmA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MM7NeMXi;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ToiX5P5o;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46356606BAB0
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 16:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7670606A893
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 16:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MM7NeMXi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3FE1F000C4
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 16:23:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ToiX5P5o
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C5C1F000C5
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 16:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794587021;
-	bh=Wybe6/t4TBPK/Mdb/EBU8sVeeHPQ53SC5zJh3UQ9Hqc=;
+	s=k20260515; t=1794587103;
+	bh=QkWetrAcR7fhD7FyEbwBYUxzoS1eX9XmfVypNYl70yA=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=MM7NeMXitRQ30m6MN0FrKzz6lx0H0LjWw+cxWDUykg+SayPCcabsgjSdViSuO2bQq
-	 AtBAoMIOSud/AEynfW21YoRmrrIDko7y1IgYHR/vEWB7OX643Fwoxc85NvTYyYQOWt
-	 goG1c6TRzF8IxsLDbaxeTkX1oN5lQoDTem31lfKuKFpKq79SydckGIMdgxMtzEM3Pa
-	 kzXnMTZPHD6QfpPdsecNHJq167t/eQeT4rp0Bp4vGebf0Al/jq+CXpJLz6CIscmnF0
-	 04eLS2nnV5iXvQCwKFcSKDnv/uRa3apVwy7jIy4S+ak0zlFg6t4UoRP7/bOk30xZWe
-	 FelG7SXd6IcxQ==
-Message-ID: <sashiko-outbox-213189@kernel.org>
+	b=ToiX5P5oiilllPJtJ/blGmk7Pno92PlyfLlFLq2H3PY5yZMhwLLuxW2Lqa22vr1wH
+	 kNkB8bslUrBWVHRbQxXG7I+FLDzikCoWOM4mzdQSHag/H45lYSOjVPVljhVfiNLKUN
+	 5hhXh9mkWKDXWvYCyvUIvbcYomusrnkFJLXA1byYNv02RXGVnzARnxXQ4pu6FtJrvT
+	 uEhD1QqNkSYsr/CXz4XNDI9Hn389AM1fArEQJKtdx5ScWybSFg3OlDgPqumyXcj4S2
+	 GNOP7VcvRs01aXjlsCr0VA82PfD4z7+aj4xga4KZC+UJbJYUQli3laLBt+ivEKUIxS
+	 5ODGemWRssmEw==
+Message-ID: <sashiko-outbox-213192@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v10 3/3] lib: Remove assoc_array
+Subject: Re: [PATCH v10 1/3] KEYS: Introduce keyring_is_empty()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261113161836.3587552-4-jarkko@kernel.org>
+In-Reply-To: <20261113161836.3587552-2-jarkko@kernel.org>
 References: <20261113161836.3587552-1-jarkko@kernel.org>
- <20261113161836.3587552-4-jarkko@kernel.org>
+ <20261113161836.3587552-2-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 16:23:41 +0000
+Date: Fri, 13 Nov 2026 16:25:02 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,15 +59,16 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> As assoc_array has no longer in-kernel users, remove assoc_array
-> implementation, includes and documentation.
+> Introduce keyring_is_empty() in order to decouple for BPF, dm-verity and
+> fs-verity how keyring internally manages the keys.
 >=20
 > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+> Reviewed-by: Ignat Korchagin <ignat@linux.win>
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113161836.3587=
-552-1-jarkko@kernel.org?part=3D3
+552-1-jarkko@kernel.org?part=3D1
 
