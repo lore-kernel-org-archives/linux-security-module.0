@@ -1,47 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.16.62.121
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.227
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794530359;
-	b=3VT9G0kIBBKjenrAdZmHTIoeMKGoctRlmffs/3Z4JLZJGFwbq3Q32Q+fH+ULQt72YANS
-	 SJMAKgJpaHR0MJ9bRfQX/4pyKWM4CJ9mbEKxpk7cA8sZU568YOPVgFjsmsW+VchDgANc0
-	 lYRGhFUQl09CvEysUf7qWoyNOztBoMVXYdW0MSfqisnQLbUFFTa55DMfyXKCUmo7hMGaV
-	 JRbcLixhAc5+J62WH2OSRlzBgQigFvVcR5dEfVe9J8B59X3VOUDwNbnc35l99j0ui4zXF
-	 7IEOhjhPF6ctHeUCmrh+JghimW/cYbG7XLOSRxmvBOjF1o87VXbiKIl6j3pU6TTTXfg==
+	t=1794534190;
+	b=gL3ehlVL/ZQFEdYPRkrs5comBGbdVp9bU9Ft+7cbj3MWAEniMr+eOuVJb7P+CUc3gZd+
+	 TOdRNNU7zRFUKBlLQZj1BZJtxvcmKFNyCFX4KabOQO4ORzC7UyStZBp+YhbiP9TDHCajO
+	 iAQsOmOkuFk+bjayFT70BsSQX7ZICnjhoqBv0mgajuqmWkp2XyagUJMg7ZdM0L9dJOe5e
+	 eJD6DTcZwwVvAAxFNoSQzggI8C/2+0ymGaeMwiwEyyPju2JThgfIZHYIM4iMVnzcGu6dg
+	 mApzRFBZ06QeevMskRP5FeYR2UdijNZZrrmb9NTTT7ysyIx/kYbPC6ByZkcjtJyEZsw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794530359;
-	h=DMARC-Filter:Received:DKIM-Filter:To:From:X-Ip:X-Ip-source:
-	 Precedence:List-Unsubscribe:List-Unsubscribe-Post:Subject:
-	 Mime-Version:Content-Type:Content-Transfer-Encoding:X-MagazineId:
-	 X-uId:X-Sender:X-Url:Message-Id:Date;
-	bh=NOfNgTyd0uEr6RzFm0WGakXbVq4eVhUqaBjZ/gzkpPY=;
-	b=xM5SelsQTztjW4cjH2rLaA7wkeDwbuMXvjVGmK8lN7K95fxcs0hVhygNaFJSi2akOOTl
-	 JHdhjV7DqviiiGHyr/hT0dvjbuCJIOatAsgFdgI9klptBqcoFcSA62jx0s5Oco7tbtBIt
-	 KxVYXNCKYf88XAw96hBMZYmQVqOScLw2Psllqwut5W0E5mQPF8JzYOPf4C4GDmO3cjnN9
-	 ZR5N01GOuX8KR8vEIq/HvP+C4aRIvE+vprIA6vGkCNt1U2mdh+UfQITDU9BRp0jNYqOTJ
-	 Vx0H3kZX2xaWsfa753MHeQdPQ8w7RbVwQP+tvZIgHIx7CxSBeG73glD5pkJ7ZrinkAw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794534190;
+	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+	bh=/mUva7h/RQXajijhNYfuRIEQFHQ8L8xWKkcs+bP4xWM=;
+	b=j9Erg0Ylq/9h9lN7j+uJqRJwKGmGRnkLZ/hQNrxppW29Wb0Zt80m5cqKDUXuwMDwhcPm
+	 fTkPVCuCByZBUM+a1IXR4lJQo0psmkiEp9woxTu2EN6WuedA1bQbiAaQKsH1+4vPCFSHr
+	 E+1uO5J+iWsr3iz1Calbq0F/HGOHCZDCkB3oiqkPjdzYSeKWQVispDi2wcWhhurGRu+tN
+	 Y9M7fszzRvXCE9nmEFGaFWZN5Fsr/KEwFoWwpSChZXFQhLme3aEFngW58dKX97zbP6PyI
+	 viUaj6YziALxhZ8koKOR7sSUsRvXX1EqlOE3AWP5WoWIB5dm7/ualolVo1Da6hsHk6w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=knowledgelink-corp.jp;
-	spf=pass smtp.mailfrom=magerr.combzmail.jp;
-	arc=none smtp.remote-ip=160.16.62.121
-Received: from r9205.ps.combzmail.jp (r9205.ps.combzmail.jp [160.16.62.121])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=huawei.com;
+	spf=pass smtp.mailfrom=huawei.com;
+	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=6kKACfwI;
+	arc=none smtp.remote-ip=113.46.200.227
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com [113.46.200.227])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3DC606A334
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 00:39:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0D3DC606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=knowledgelink-corp.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9205.ps.combzmail.jp (Postfix, from userid 99)
-	id 911BAC6ADB; Fri, 13 Nov 2026 09:33:04 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9205.ps.combzmail.jp 911BAC6ADB
-To: linux-security-module@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCP0BFRCFDMGxITDxSQ0RLIT9NJUolbCVDJTglaiVzJS8bKEI=?= <info@knowledgelink-corp.jp>
-X-Ip: 1527602431519750
-X-Ip-source: k85gj72848dnsad1u0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCPFJEOSROMnE8UiROIVYlKCE8JTkhVyEiGyhC?=
- =?ISO-2022-JP?B?GyRCJCQkRDwtJGEkXiQ5JCshKSFaN1AxRDxUOEJEaiU7GyhC?=
- =?ISO-2022-JP?B?GyRCJV8lSiE8IVsbKEI=?=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80D8606A321
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 01:43:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D80D8606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=6kKACfwI
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=/mUva7h/RQXajijhNYfuRIEQFHQ8L8xWKkcs+bP4xWM=;
+	b=6kKACfwI7/I63VNJn01bDk+tHWkerOM8oiKDJSYLymjB9/LpOSWgoAA+y7lvLpK3LaR+aM7R2
+	xX7nKZfFaYaZ/X4YnGMEtYhNeOOal6hCb8cQogeyC5nmdEqtveftg38ePBjPS34VyUhGpaLAfqA
+	JQnYn2Abm8FL9XYA3LrLMR4=
+Received: from mail.maildlp.com (unknown [172.19.162.92])
+	by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4jQg4m32nZznV75;
+	Fri, 13 Nov 2026 09:43:04 +0800 (CST)
+Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C7CC40586;
+	Fri, 13 Nov 2026 09:42:58 +0800 (CST)
+Received: from [10.67.110.140] (10.67.110.140) by
+ whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Fri, 13 Nov 2026 09:42:57 +0800
+Message-ID: <46115a05-f659-4b47-80c4-c87d426ee105@huawei.com>
+Date: Fri, 13 Nov 2026 09:42:55 +0800
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -50,88 +61,58 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] security: update lockdown_reasons[] reference
+To: Baruch Siach <baruch@tkos.co.il>, Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+CC: <linux-security-module@vger.kernel.org>, Nicolas Bouchinet
+	<nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>
+References: <3283a389cc21862ab98eb891436568fc1d23b869.1794505077.git.baruch@tkos.co.il>
+Content-Language: en-US
+From: Cai Xinchen <caixinchen1@huawei.com>
+In-Reply-To: <3283a389cc21862ab98eb891436568fc1d23b869.1794505077.git.baruch@tkos.co.il>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-MagazineId: 28d1
-X-uId: 6764325137486067654956401040
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20261113003442.911BAC6ADB@r9205.ps.combzmail.jp>
-Date: Fri, 13 Nov 2026 09:33:04 +0900 (JST)
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ whupemk100010.china.huawei.com (7.152.184.41)
 
-　
-　ルールを決めたら、社員は辞めるどころか
-　「迷わなく」なった。
-　
-　これまでに4,800社以上への支援から分かった
-　
-　“凡人”を常勝集団に変える
-　ルールのつくり方を
-　
-　次の朝礼から実践できる形で
-　分かりやすく丁寧にお伝えします。
+Hello, Barush
 
-┏… Overview …………………………………………┓
-　
-　「あいつが辞めたら、うちは回るのか？」
-　
-　　エースに頼らず“凡人”を
-　　常勝集団に変えるルールのつくり方
+lockdown_reasons[] is only used by the lockdown LSM after the audit data 
+was removed from lsm_audit. I have sent a patch [1] to move 
+lockdown_reasons back to security/lockdown/lockdown.c. Of course, the 
+final decision will be made by the maintainers, whether to move it back 
+to lockdown.c or keep it in security.h with only the comments modified.
 
-　　　　　　　　―――
-　　日　時　11月24日（火）13:00-15:00
-　
-　　会　場　Zoom無料開催／定員100名
-　　事務局　ナレッジリンクセミナー窓口
-　
-　　詳細はこちら
-　　https://knowledge-co.jp/rule/
+[1] 
+https://lore.kernel.org/all/20261110132818.2231593-6-caixinchen1@huawei.com/
 
-┗……………………………………………………………┛
-　
-　
-　多くの社長とお話しする中で
-　このようなお悩みをよく伺います。
-　
-　　・エースが辞めたら、売上が大きく落ちる
-　　・朝礼に遅れてくる社員がいても、誰も何も言わない
-　　・同じミスに、毎回説教。その後、自己嫌悪になる
+Best regards.
 
-　研修も、クレドも、評価制度も試した。
-　それでも改善は続かず「結局は人次第なのか」と感じている。
-　
-　
-　そんなお悩みを解決し、成果を生み出す会社に一変させる
-　本質をついた、ルールづくりをお伝えします。
+Cai
 
-　
-― セミナーで得られること ―
-
-　・ルールを増やすと社員は辞めるのか？への答え
-　・「姿勢のルール」の決め方
-　・「完全結果」の指示に書き換える方法
-　・エラー時に上司がかける「一言」
-　
-　
-　いずれも、翌日の朝礼から試していただける内容です。
-　
-　自社の組織に希望を持つための気づきを得られる
-　内容となっておりますので、ぜひご視聴ください。　
-　
-　
-_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-
-　一般社団法人ナレッジリンク
-　東京都千代田区神田小川町1-8-3
-　セミナー窓口：03-5256-7638
-
-……………………………………………………………………
-　メール案内が不要な方にはご迷惑をお掛けしまして
-　大変申し訳ございません。
-　お手数ですが下記URLより手続きをお願い致します。
-　
-　配信の解除依頼はこちら
-　https://fc-knowledgelink-corp.jp/mail/
-
-_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+On 11/13/2026 1:37 AM, Baruch Siach wrote:
+> Commit 59438b46471ae6 ("security,lockdown,selinux: implement SELinux
+> lockdown") moved lockdown_reasons[] from security/lockdown/lockdown.c to
+> security/security.c. Update the documentation comment to match.
+>
+> Fixes: 59438b46471ae6 ("security,lockdown,selinux: implement SELinux lockdown")
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+>   include/linux/security.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 40831fab5470..2782ee404f95 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -124,7 +124,7 @@ enum lsm_integrity_type {
+>    * so.
+>    *
+>    * If you add to this, remember to extend lockdown_reasons in
+> - * security/lockdown/lockdown.c.
+> + * security/security.c.
+>    */
+>   enum lockdown_reason {
+>   	LOCKDOWN_NONE,
