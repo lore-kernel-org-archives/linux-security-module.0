@@ -1,86 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794564173;
-	b=YxOKC4/cqD07wN5cpALIbbB2HzOb5kIDiTG0GikXYPtNEA0uUQY4uSiZR1bhKHJnsNsB
-	 xeWy2AEpVLtOBIgR/RC7NZ3ph+I04dC+8Xf1NbWL4fRXBTev5Bw/zbQJsjBd8eD5+daib
-	 WKepfP45IF46kbQpssubkfkd35Qlon0MtYqwOvWART80xsbpXdClwE33kPXoJnCzCSJfw
-	 rZaZ32JcfGKf20EzsmVnH3NBhkq74wcGf8zS2obSvJIpGlKFLX2nOMkA5T4j3Cv2ygEjW
-	 HWTOELbQryizM5YoxgFcdEKNN0uVxn7Efr58HTLK8zuFzeqVpe3YaBxpImiM9lFksAA==
+	t=1794564190;
+	b=F/fjR3opTq3ArS8tDkVBMHv7CPEUcrhU3Sn7mf0PM9A4EP3n+EDkW1DngNHHr78lSYfM
+	 7xwR/LCvGcyTJ/y4z/OURgLpOoEZfWr+q3rVs7NMk/l3iGb66YbP1C2b8aSPSPxOLcUMl
+	 WK3B8uGdyFam4jsoZ5lBn7VUiiUoRwXEV0mRe/ND0eJGv8r9YNLlf9FM0fuyLJHUJ0pZD
+	 SetGXiT6LtdJL+XXkNZNyUXNCIDhp6e23MApBYiy7G9CSyI/kXadMvFzOWckx8gBQ9LQx
+	 dltBtN7X6PMNSWXtnJ1ETKyejDzGhehXfT+RZXckMRXH5ZjfxE8qJVc4s3P1lMHLYbg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794564173;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794564190;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
 	 Content-Type:Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=QOKRfXbntKilXKCbQIPuMXmISRmnU6cXIBUGi5zYMoA=;
-	b=2Lryk0QA3KQ45oP5xVZ4wyiGm8hjIWARlL+AhaR7chV1iFIg7hzW581IECh4dX89DrbY
-	 OQzoXsAe5xYGnAsj432czkRrcqV+5OE0qx3cDvJhWb1oB4ALurPsu0Qg3uI6AB6ytINQc
-	 dQECiS+lIz9nPcCx4Ntz/oe3OvkITmPsHey/NmwsefJg3bV6sgXp8CDGqfUkPIvWkgzeT
-	 VanrwvfaPLldBbt2xN0ILpAnI1SQdRGPmmOdtIwrBQUxW2WzPUy+hBNuv9dy/ya08RGCF
-	 QgWh7YuV9yG0FUQVkTQl9s8dTzQOf/H8djY7U/g+p+qj1EXWdPsO2LSVM4TpMXlVyeQ==
+	bh=SoW/gPie2WRRtXdhiV6ow6HDYwH4jtR4w1oiMzBwW74=;
+	b=XrlezImU4EvPJEDZ7xYbPCukYoDhjeZ2zos+PtqUAHllf82PYBWn3KQteHtX1oz0G3fI
+	 fQ/Na4p6nbvNhwzOh8lmQER59E1Oep1TYskghgiB4b9lIBB1OxeMI16lyFVAPYz7YnuaJ
+	 BUXVXCkk8nN195gvxrNsPsvb+izqxFOU43sFpw649Cg1JjwZWnMu1vPIRnr2BbokSkduX
+	 ZoN+5XxpY+EdtBD0OMJJ/MqbjwRPRVzCJH8Z6vDAc2llcU6LOepF1QkeACSA0jdgqG3a1
+	 US/2rzSVaCDCe+Uuxk76IXj1A7HddeTo0RcynRRKfmKWXlv2fAUnD/tW3CfjWQCxyCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=amutable.com;
 	spf=pass smtp.mailfrom=amutable.com;
-	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=BrRghWve;
-	arc=none smtp.remote-ip=209.85.208.49
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=PwLaWWEZ;
+	arc=none smtp.remote-ip=209.85.218.44
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24A3606A8B7
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 10:02:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D24A3606A8B7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D392606A8A7
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 10:03:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6D392606A8A7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amutable.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amutable.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=BrRghWve
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6b70880c0a4so1098387a12.2
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 02:02:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=PwLaWWEZ
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c50a4a2132cso50320566b.3
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 02:03:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1794564171; x=1795168971; darn=vger.kernel.org;
+        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1794564188; x=1795168988; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=QOKRfXbntKilXKCbQIPuMXmISRmnU6cXIBUGi5zYMoA=;
-        b=BrRghWveZPMQ2lrGbo6B+XUgpff5EufUxldGFiTipoIaiFawRH8FVJvDBChKSCm+0U
-         qE7NrwVrHQo2b1oiTPINBjADcjfu8j5+2hiB9wPnUB0Sj/3WgVbhatfBxMm3U8N4KnOM
-         ecLP+89NGaRsX9nOgSryY2U8lUIJARrslqQpZFBfoMRf7b7aCNcM2ESlmVVEcyz67Zq1
-         nmg/xl76oWVlPrwozco+e18C71yw30j2TPM9TFHhbc2tHwAu5TUUkKbNr7mrc8DWNqok
-         L5mLyN847Ry543yO7VRmUF69tZ0RGoya4bqZfEDQ44XXZ70j+SgMCotFLrfSWds1gzqN
-         VQzg==
+        bh=SoW/gPie2WRRtXdhiV6ow6HDYwH4jtR4w1oiMzBwW74=;
+        b=PwLaWWEZlovk3BcnO0ZG64105bcHT1OuSddm6BbnvIqxbrPzt9auj7esmk6BNbh6fX
+         VcVz0Fb5EO25ZFbwJkkdsGMVKdakOQPzqU2f6LPhtUiDBhEZmXH+cAuxyn5j0/PSwsaT
+         RO2aU2TU8aCmd84MLoXz7vnHjZWZq5qT0/Sc6gtTAg3UhyfQddRWFsH5ep7YUVPW4oOS
+         ZJYdPFjeA/srAxsT7bXr7CLtpXwYO3HrhRePJ9C+1IlKmxOGPfhyvFsMUb4DHUYdYyHA
+         n68GAxpj0xAii+OfqqKyb+8UpP8WFZF+WeKZ9rpWrZ/4EfgHnKqz0J1mnDjnDglQmq1u
+         ISGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794564171; x=1795168971;
+        d=1e100.net; s=20260707; t=1794564188; x=1795168988;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=QOKRfXbntKilXKCbQIPuMXmISRmnU6cXIBUGi5zYMoA=;
-        b=qfpUyNetaMYAToZcsgsx5Dl2go2LoSxRxfYiRTcix3s/yYs4WtElRW+pa85MkQKs2+
-         CfWfc5YDr/JJa0BEl2sVEvWchR6nIudhHNvud/jIygp4euPKcq+BCzK/HHygdxUqiZh8
-         KiwYZrC6F3b8e3HyAyvffxqSQFbHBvuqC2k8ZXvryoZ8ilqZ4K2fwES9896tKHUYv9Rh
-         buFoP/rMf/wIRpfLwuRtvzqAR3lHTxcLZT+w+iaPNcearAvwZQ0HMTJk7P3kJ3hFM4PJ
-         GRcNWkRutuUiNsM6blzTzKNpWYo/QdPp9cHY+L9gLv/MSYvcYjXPTQ0T02aqFHx7lji+
-         evYQ==
-X-Forwarded-Encrypted: i=1; AL+hErG7eeig3yGIqAdB/jrg0hRsqIBufmqNaBf9SlWCcF0skV/AODNou/IdvXmGs3RMVHfi59YTqe8j5770Jk86gyVO5S9iB3w=@vger.kernel.org
-X-Gm-Message-State: APuU4Z87w8x9hOQMM0BUy6bI9J/srQYg64LRfDGVUWhCd0CgPY6b2WoB
-	qJ+65BNOGsLW5amyW34v9B1nOIZkqkYMc0b3oJbyzRCQvl8OVnzapqsgyufR1s1yjEwW
-X-Gm-Gg: AYBFou2Pe6cu+injfnvyPwG+Uj6Z2Jyg0gamzAq+jb5MBDh3XNyXAsVK0mM3jaArGaF
-	uDtn+i08YYV5QKh5vkG7bygXulY0KuTGDopDQCHbiO/ZJ2CsPVk81O7cM43lq2kBSJZZn2N5DN7
-	6ad5JEMnB8FR06agy8pfRhrs+V3869AFzA8p82uagcudMtnh+48UpA8Bjjjiol+hsKNv9wb+YLT
-	77V35PN7yplIYQXEuJ7ajgnI+SQXAqKCnWhE8tOn9W4+vA905r0rz/VURUJoHqq1i8Wd/fqvPZd
-	HaoC1XMFLxziPHlAXEYnqRRspG/LTOVWP2EaJrA2HfjUs5Ff7XlH0S4t+jx78/HOfnN6Hn/61xn
-	9DRV4sGitkYhqy7ISKKQ02dBoEKzlyETdQ4lYir6k16pjaWX5A41hMbxg7/fdRG6rmduR4juRsD
-	e9cIzuFJZnWXeaEY6pCfX/RJIZ5RYjSpPX7HbpFzReo2M2OeHDtGJK3nnLyfjWoAWybV8BZTgne
-	Nkm6dFDHEwaU1Rr3LgbMQ9tYLNGkV1RrC6fcd+JR5CNd93LqQQkKdzpdUfPfTnV7Qh+0Hw1saF7
-	9sihsIOUTEmyK1XNYLagm86PLr4lvCcQtuirfGgO4ZN5460HxqqjVF8OkepnonQ=
-X-Received: by 2002:aa7:c842:0:b0:6b7:82cf:f69f with SMTP id 4fb4d7f45d1cf-6b7c0ceaefemr1298014a12.41.1794564171137;
-        Fri, 13 Nov 2026 02:02:51 -0800 (PST)
+        bh=SoW/gPie2WRRtXdhiV6ow6HDYwH4jtR4w1oiMzBwW74=;
+        b=R4fTWiCwEvU6ZmIVKSbpvXbeyw46F4b6Gj9eZm6zFmqfwMkYvuZX/+XptsnJaRAV1s
+         Ltayhs3T67IwMWae1birfYJdvWCFR29091kLhjv6DIp2BLoDvnjBYCqqyHUT+bNSPK3G
+         JC6nKLpU6hR3/wGcVfhBbvUe6sXIlH2Qm8nb1wkFSkyE3fQbircFJf1a3+c+OQT/gW2V
+         ob8m7fGoo9uqfnrMQ3xxoGHpmksflH0gMn1eQI4OH/sdnZYDm6iyNKN0MIPcpGZGEtXG
+         Iaitixm7LfBVWlbzW3PdSuzVqwOC4FFp8we/9GMEhY5N5yJiBpo66e8xPhar6lCiqe02
+         xdCQ==
+X-Forwarded-Encrypted: i=1; AL+hErEq4j/mofB8JsOU/+hxcTwJVk4tUWdY90CdF6W62MrSuOoqg6IAH4+qDBR4KCm3441+15OwGboqHB+Wdl/KsG1oGCcl0/o=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9LU2+39YeYs6vb7M1G7CDv8cWWeWahjeyl6AdfizTgTmxNIeT3
+	tJhNP6TbwvpilLYEiX8uJlpet3TqfG8kwsXCrufO5wyBXzjECHPUc61lT7to4uK9K7Li
+X-Gm-Gg: AYBFou2tfBxnh86zfpEdWOlUPXlwOyUUwqVjZPbkyNuS7HM5GPtPESNLsiuasG4ow67
+	2ka2/9rpDaw/B7gdUwc+FdjXa+uzbFEaHmQuW+9PrSIFzrp+9shf751puLjNHsqy/xXxWzhltbF
+	jPwsHn4LgVBgxzfw1u21fAYD29FjaPzHARkob3ElY4VxpBwv+/4No9anHzC9/suHJigcUMztQ7Y
+	0u8Cb7esuDn6j+45UsQuy/sybeS+8zz6E8XJizepG3vMywfh+S/u/GBuomDN81CASeE2ag2+RE7
+	CdBiwsP43AgLDtrG1k0edSPhF92TVJNGXrW+6mXo3VUeVYnQ8PhBsQpAOPnPev0W4AwkQUF/Bb/
+	LGGMPN5F7NOopURH9dNjqVfzT++nzVXjrBBnqVTEtINt4zvC9COwYtImd7ZowpLKttdmRK1RJJ7
+	IaM6fkCztZsJIrfxhjSvMXRCeSmV+CLOjZXvwDn5LOkzLIPCkL9g5BPMQMEwD5roH9NYgY+f5aA
+	HIZJYDqSA5ZA6PEt1anJ2XRTyhPjZiD0dsbdan0zylo/wTrlhTA7HxDHODCge0ycMNpYrdHi7mX
+	T1QCw34NLKMY3a8iB+xqXFseojoUOm3Nc+/yni2g10mYZWIy
+X-Received: by 2002:a17:907:d12:b0:c4c:b4fe:c9e8 with SMTP id a640c23a62f3a-c50963dbee5mr161853166b.38.1794564187801;
+        Fri, 13 Nov 2026 02:03:07 -0800 (PST)
 Received: from [10.0.0.233] (tmo-086-54.customers.d1-online.com. [80.187.86.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b7c262338csm739270a12.33.2026.11.13.02.02.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c5095b3dbaesm74933966b.32.2026.11.13.02.03.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 02:02:50 -0800 (PST)
-Message-ID: <06b194053de4f4b65895248d1f2ba29d42a21b17.camel@amutable.com>
-Subject: Re: [PATCH RFC 06/41] proc: use fc_init_pseudo()
+        Fri, 13 Nov 2026 02:03:07 -0800 (PST)
+Message-ID: <fffc4f7f87fd5f03d1ef409df76f71ddad552213.camel@amutable.com>
+Subject: Re: [PATCH RFC 07/41] binfmt_misc: use fc_init_pseudo()
 From: Alexander Mikhalitsyn <alex@amutable.com>
 To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Cc: Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>, Josef
@@ -98,10 +98,10 @@ Cc: Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>, Josef
  linuxppc-dev@lists.ozlabs.org, 	linux-usb@vger.kernel.org, Amir Goldstein
  <amir73il@gmail.com>, 	linux-erofs@lists.ozlabs.org,
  linux-kselftest@vger.kernel.org
-Date: Fri, 13 Nov 2026 11:02:49 +0100
-In-Reply-To: <20261110-work-loop-pseudo-v1-6-4c998976c6c7@kernel.org>
+Date: Fri, 13 Nov 2026 11:03:05 +0100
+In-Reply-To: <20261110-work-loop-pseudo-v1-7-4c998976c6c7@kernel.org>
 References: <20261110-work-loop-pseudo-v1-0-4c998976c6c7@kernel.org>
-	 <20261110-work-loop-pseudo-v1-6-4c998976c6c7@kernel.org>
+	 <20261110-work-loop-pseudo-v1-7-4c998976c6c7@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-0+deb13u1 
@@ -116,45 +116,46 @@ Precedence: list
 MIME-Version: 1.0
 
 On Tue, 2026-11-10 at 10:14 +0100, Christian Brauner wrote:
-> Initialize procfs as a pseudo filesystem instead of raising
+> Initialize binfmt_misc as a pseudo filesystem instead of raising
 > SB_I_NOEXEC and SB_I_NODEV by hand. This adds SB_I_PSEUDO.
 >=20
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <alex@amutable.com>
 
-> =C2=A0fs/proc/root.c | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> ---
+> =C2=A0fs/binfmt_misc.c | 5 +++--
+> =C2=A01 file changed, 3 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index 7fbbe92bf73a..ca0e75081934 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-> @@ -17,6 +17,7 @@
-> =C2=A0#include <linux/bitops.h>
-> =C2=A0#include <linux/user_namespace.h>
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index d945b4f6e158..7dc233becd98 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -22,6 +22,7 @@
+> =C2=A0#include <linux/file.h>
+> =C2=A0#include <linux/fs.h>
 > =C2=A0#include <linux/fs_context.h>
 > +#include <linux/pseudo_fs.h>
-> =C2=A0#include <linux/mount.h>
-> =C2=A0#include <linux/pid_namespace.h>
-> =C2=A0#include <linux/fs_parser.h>
-> @@ -265,8 +266,6 @@ static int proc_fill_super(struct super_block *s,
-> struct fs_context *fc)
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
+> =C2=A0#include <linux/init.h>
+> =C2=A0#include <linux/kstrtox.h>
+> =C2=A0#include <linux/limits.h>
+> @@ -1575,8 +1576,7 @@ static int bm_fill_super(struct super_block
+> *sb, struct fs_context *fc)
+> =C2=A0	if (user_ns !=3D current_user_ns())
+> =C2=A0		return -EINVAL;
 > =C2=A0
-> -	/* User space would break if executables or devices appear
-> on proc */
-> -	s->s_iflags |=3D SB_I_NOEXEC | SB_I_NODEV;
-> =C2=A0	s->s_flags |=3D SB_NODIRATIME | SB_NOSUID | SB_NOEXEC;
-> =C2=A0	s->s_blocksize =3D 1024;
-> =C2=A0	s->s_blocksize_bits =3D 10;
-> @@ -350,6 +349,7 @@ static int proc_init_fs_context(struct fs_context
-> *fc)
-> =C2=A0	put_user_ns(fc->user_ns);
-> =C2=A0	fc->user_ns =3D get_user_ns(ctx->pid_ns->user_ns);
-> =C2=A0	fc->fs_private =3D ctx;
+> -	/* Never exec off this instance and never let anything stack
+> on it. */
+> -	sb->s_iflags |=3D SB_I_NOEXEC | SB_I_NODEV;
+> +	/* Never let anything stack on this instance. */
+> =C2=A0	sb->s_stack_depth =3D FILESYSTEM_MAX_STACK_DEPTH;
+> =C2=A0
+> =C2=A0	/*
+> @@ -1660,6 +1660,7 @@ static void bm_kill_sb(struct super_block *sb)
+> =C2=A0
+> =C2=A0static int bm_init_fs_context(struct fs_context *fc)
+> =C2=A0{
 > +	fc_init_pseudo(fc);
-> =C2=A0	fc->ops =3D &proc_fs_context_ops;
+> =C2=A0	fc->ops =3D &bm_context_ops;
 > =C2=A0	return 0;
 > =C2=A0}
