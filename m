@@ -1,87 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.225.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794565724;
-	b=1xy2QBCvqS2MCbrfnkVApTjtdUYnpDwMc4AGKpbCkDcGRo7vfkOhNSECKVtQ+ZAqyKDY
-	 BC8/SW043+WHAwJw3c6RGpq7vqXLNq/A2y4ixOgAkeFpy89qJKJl44Ucxfb3MrX2b0/Wb
-	 YBBOsbCyQqdBAbWfH6J1bYkFQbJUALCpi0G4X7V19si9JeJMTDODQjQc4eWi8O4n7FNkw
-	 y68ecEFcaDGgXlz0wggfWNsYWwOBkHKpN+kjsTvdy+ZwfrZus3EPFOi1dbcCaeXo+7EQk
-	 lbvkrjiDI6k+43PuuQxFBt/E8CJaF0kZgecD0iEblU9797Lu5iylpnZD7xtleLAQrTQ==
+	t=1794570657;
+	b=SIG9eti+2xxTIK6Zh//NgTnIs/R9lye6ofLkgXt9A7CmB7oqRRS/YYXGiO5q9OqgNPRu
+	 MN+tVkRkVyqQXIJF9cr9FVpAt09swK1JzucbuShYytOzGhT2/NIVB0Aiy/iIUAYyxa+Ki
+	 /lWAvz7zAmp4b2DU6Pe7uP6qYh68IUWvi8RHznGpc0iUBuO29awPrKlKSreWZSga5QtKI
+	 EU2JFPsaPIFupqf1yELG3YnMQJP6kRxecMKvANC5K4Twx4xyY3CgYKwOpZSd8u7N+FO9f
+	 ys24lnGGFaBkedmvG8IUfqTYQkRtEjWSWeC9uJ41e17TH1GZB8wR3IB9Gr+XgI8xyuQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794565724;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794570657;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
 	 Content-Type:Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=HIAZ+a2RY8snYu8gjwIzGL7aFLB+UDjcbceUrGWDUl0=;
-	b=GhHadvRGxPTp0eLv2G2uIIMpGd8uLfiKrHSIOKUMYsyaPE/d3cm5gxlN3mwnyxJM7QWt
-	 GD2kRYGmBvgT25LgUZbjs8v9zpNeZ0fjQ0sk32G9IdAcNtBxeo9tBQ657/JuxUIm2NVaX
-	 PO6iWSTMYjhZYwni0Bz4LkYhr4Wl1d2BzT5qamJid6i+3AEt9oMCJAScYenyGP3iMrZWO
-	 7/CsdlIycaxgdEnDyXBYN9qA22FXQ93pTMOV7KCxz9KPBi22xzbZU+M8AhXs2lKCYjgoP
-	 cbk8VyoX/bBBSZhnu8i+JMiaJOVlLpQdQd1O4MqffxbvL+lWBjBjQNSOlmNU9l/XCBg==
+	bh=Rk3otRCyAGvYi9qROv1wnRXT7VTrY+ckBcx/ltC2G4s=;
+	b=ePtr8fhiPY3uPkIrdLnqkq7s64u7olQfxZYv/Hv1gNP07/9/MDtNiv+S1aPB4nFiZGCW
+	 P8ZWyLYdmRAF+pj1tL/I8NVB54OZe060Zly1hNRNtsoXEgHfM6QSFFQvrrJfuW/nXjQUA
+	 cuLJs3Qwn+OAv4LYhNNm3eQecZ9wF3H1CB9bEmdvys0llTQBPc9/1+xjYuA8KcB7pvt8S
+	 kZCgwtqdkEGHMIAWUYtgjCkFJhTSRrYhAdHMXqOy+xkFUxjpZ4ajyA+M/5gNmOV4FjCgA
+	 eRzuH87Rh97MFRgvDCYgaMQIT37sQjUnECGzfw9SVs8dQN3fIYZz0PAmu9yAvUEn6jQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=amutable.com;
 	spf=pass smtp.mailfrom=amutable.com;
-	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=QLWbUp+2;
-	arc=none smtp.remote-ip=209.85.128.47
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=CChNvkhE;
+	arc=none smtp.remote-ip=74.125.225.137
+Received: from mail-wm2-f9.google.com (mail-wm2-f9.google.com [74.125.225.137])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9320606A31C
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 10:28:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D9320606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5486C606A31C
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 11:50:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5486C606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amutable.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amutable.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=QLWbUp+2
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4b7252a32c8so11958695e9.0
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 02:28:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=CChNvkhE
+Received: by mail-wm2-f9.google.com with SMTP id 5b1f17b1804b1-4bb5b21feccso490395e9.1
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 03:50:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1794565721; x=1795170521; darn=vger.kernel.org;
+        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1794570655; x=1795175455; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=HIAZ+a2RY8snYu8gjwIzGL7aFLB+UDjcbceUrGWDUl0=;
-        b=QLWbUp+2qzwX+GoUWHB95sxpbKOTowUKZjnO4OEMj4RsWHB//vUyhRWuLB9yqPVjwR
-         fGfqk9OxkJbXk3/6ZWLxC/IKeJNDS3X7DwaIxHW3gRESTvAv4Eekp7DUUiFI0RSTWMhb
-         YiU9Qv30iKrXVu42etYewrW/BDRHybe1f3LGYRy3QFZ2Wnd8qVwamSUTOZX8RhksnWiH
-         hmYW5qsE6/zg5Kf2usKXzo1eH7FntpSlFp2sNzw5FIg/KyF4iGjfFDBfgH19X1pwvutT
-         tSuhIJwUn7q5sVMjoXkVH4kwJhDC2fhwLRQKR4CrsIY9+cK6cretlw8Xmg1Zun/gLJLF
-         1IXA==
+        bh=Rk3otRCyAGvYi9qROv1wnRXT7VTrY+ckBcx/ltC2G4s=;
+        b=CChNvkhEY2fnm1NA2jkEokvYohRLdpKwutBt+CLRBddnfPk6ovoTMele7oTDdxdcUX
+         dwDEtFGovHm2CazQAnXAqb8b84v/czNDTR050RAUIAW5+uvGc2GqnMQU9BTzQ6GYEirY
+         bP7DkWyf5hq2IHTXWwh7RN0BsM97HnP0GVlFUhsfucldgTGtqFIDsYZ8mu6q9jcrEhZ7
+         kpduymYqn5xmZkoT9OsEsy/PAB0mMvIhnXK1oYouEnq55cTgUOgFA24eWNMJ1kb7259D
+         w2kr/+jPWG+KSeu2v3qNEHVR1k0vj+j4OpxopsbKCL1lzP+nz8VxWN9fmZwL3A8HwaQ1
+         5Ybg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794565721; x=1795170521;
+        d=1e100.net; s=20260707; t=1794570655; x=1795175455;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=HIAZ+a2RY8snYu8gjwIzGL7aFLB+UDjcbceUrGWDUl0=;
-        b=ULuwkFxedDZ6wVVN4aYoWwEFgEsdIrNKulnw42AxmGr/JzoJDKPdaIcPKSkQG9n/Lb
-         ibLZns6Acg4YRH7j+ouYs4oumXrEfIJkZSZEqkYDbunHkLJ+7bIRaTi+u9gG+23aCX3C
-         PoImShiscxRG8jcGObJQsYX8OQWQRJmW8M8StODHf5go0DJRB/JsuxMlcZPH10+ZYdxR
-         0aPn0j18TWgFK4RJptCeTPrpGC3GdvDLrFWm5RWcdHu22ox193okq9UeK8gIvQfLT8JQ
-         CRPd5zE5IbPuB39nI7A/UHYarJJj+pZrW3Tv4bEQhCBs6NFLrKrZ1LeYGQ2ECjtv3REX
-         qAWw==
-X-Forwarded-Encrypted: i=1; AL+hErGs2/PR/26dJ8hb0/O0cfpsaEbsCLYHycuU/nL5LuPd/tj3noQc6oVw46QyZzF6BAC6+AlDW0+BuNdHsis3pKDqnmYGx6U=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+LPh50FOcqxmJiFewbymWSps1+BX4B3sfkUt7b3gktvMinu3Tu
-	M3xOsA88cPes/2JzPrJD0FxGgTH4r524hjQGb0bCObBzCo/nlivzmIRCJMvoC1fQzWnu
-X-Gm-Gg: AYBFou0z3Li46Gz9rmCtfXLpQu0lhApd58jjwIh9yN5VDtm4uLKnXSsO1MrkC1idaWt
-	tJlpnXq94Qly5AthB8MWYz47kP86c18+CBSsYjG3kAEeegCatyL0udW/dL6u7t6YaFV12FFTxNn
-	E6vxS8NlsdAloNVQm0s70djOjKWxyBRTkeCGJai5gxUetaxlgnJEmKirbmekg8vhRBhie6vedcM
-	SMwCnXYIFBk4byxYfWCUPVJMXTpPDpJs85F4fhfeYPOSdofGKgpOlx/aD237TDaiXcpz6WJmovF
-	PbhdyR3FcqFhSBpvREdP2OpKp/hXPMtg4Hc1g76pZBzHZy3UaH8SAQ02C89K9Dmg2Urml/Y6hBq
-	t3QcM/rlkCHDlpJH4yxnWPjURJHPPUF0PsX+GnhY9vZfj8klvC44fLEdVBSkjZkb2TZZkQH6z1I
-	qK7p/oA7fubyJfRKPjzWeHmtTro06vEoLmFrFEx92DlVNIsu48c7s0TyyhbnuI5pA+cqpiN0UMl
-	WIaQd2z6lnbNWwkOzHcC/VwV66IeAqv4eUldm/rBS9pHHpSlsDrRM05lwV4ze0nF4fzaiZRLJhU
-	cdC4DYpR1+FhZfV9XM1yq33nhD75ORsMBH4mA5/qaA9dtrj+jm1NBXuzGV1sIrY=
-X-Received: by 2002:a05:600c:428c:b0:4a1:9661:14b5 with SMTP id 5b1f17b1804b1-4bb55aabd53mr26666375e9.29.1794565721222;
-        Fri, 13 Nov 2026 02:28:41 -0800 (PST)
+        bh=Rk3otRCyAGvYi9qROv1wnRXT7VTrY+ckBcx/ltC2G4s=;
+        b=wM7ASSkqGzqkDy6dnN7O6MdxmeBsEzE+UE+jjVk8zvpKo2zGne1ExC9jThrDrzTqS4
+         YNxRVn+66Fc8YvfuFBwNUw6Q2F4ZJvTn00OTHhzkEZYlgN3rP6JsCqN+Sr17hWEmPkZl
+         cI1Cf8fTTnsgyBVFLx86E4ZeF+Qr51XO6CJhwkNJO8GGTfrgkTGfHPFA6SIsXfTj1jsL
+         whq/YeSHXTqTIxPY/+TJaZH0wMjZdqJpTfQmN6Fg1+8BiBibC1I7ZLhi4Yeq0KZamzVs
+         RQ5GnBIfXsMh3nZ+htRamEUwqHM4PSYKy5ssPIkh8dDUs0/FfdFZ2S3XRjDkeJw382mA
+         8Zzw==
+X-Forwarded-Encrypted: i=1; AL+hErGDwOud5gceYaNszkLg/xxJ7Z0lYNVTkZZhmVzfwjwceRDfFfHi6AygJWCIs/eQg4BLengg3858c+21pib+FDjJl3u2LlU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9+ifE07WidNWoVvm4zxhEwdD1S9o2ejsd58VB9K5+CBVX97Lsw
+	BWZcluRv2UuI++fwHYiJrK1HCnAPo4zmEV902tyCpcGgFKXptuuSoYwDYTF8L3z910df
+X-Gm-Gg: AYBFou29jCL3WxhFEs6gNPXkJWpnDUTbukp+tv5cmwgZ1FaVtmB1nwXD+0vizMdn76p
+	e/egeSEilo8gViQP/8GwGMQn9VjvzT2Pz3QLJ0S8v2gx0g3bQY71iDKUC4TnRH+oy5D1UfAJcob
+	7Rn0MWUnahiYsNKLT/Xfd1a8q657S6FvYUtGHma1qhd7K5HtiAarZug7x9TomldcwpBK+Os8nP4
+	2lW1A4Tc706jmSe8ExbLz40uK/MdZA9mrJ2MK3FVdWucr4rP11VGzNkZIbVTyOfFS1umkrOTDNq
+	5SZyGOamxaNKtUnKP3wLvfEaLYQs1RpoKQ+DhnMWGvHN/CMyQU5NupIHf/hWwD15rfyLKAikKa4
+	XPSHc3SMRMklWBw67QoUPuMjWvoVIfe1O0DJchGURm6fkW2iLqUPFDakIkljzNqPBvAiorzV+zl
+	DGvnaQBiyIxa/Q/HGdY7J6nd1QUIKDxkfvVipjN6NSJwRufc4Lq2JjR56iuRyV6+UKkDKE1IvvW
+	FmzQdKSYx3oIIsPhJEpUh0PKqt9bO0Rnc6kdCBAPZi01quhycgaGNEx2DOaLS6HpIo9yZddYb0r
+	D62zJzP5HCDL0YcCZeMx/0+dVUuSIobTxpJkUgQydWf8tMTyGlfnJz/RvboWel8=
+X-Received: by 2002:a05:600c:b95:b0:4a2:d99:3171 with SMTP id 5b1f17b1804b1-4bb55aa3688mr46865575e9.23.1794570654371;
+        Fri, 13 Nov 2026 03:50:54 -0800 (PST)
 Received: from [10.0.0.233] (tmo-086-54.customers.d1-online.com. [80.187.86.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb4e252f7fsm152260095e9.2.2026.11.13.02.28.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb571d7e87sm33015315e9.3.2026.11.13.03.50.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2026 02:28:40 -0800 (PST)
-Message-ID: <ae5a09a7dc0ab5d01e78114c38e90b39af32362c.camel@amutable.com>
-Subject: Re: [PATCH RFC 41/41] selftests/filesystems: add backing file tests
- for pseudo files
+        Fri, 13 Nov 2026 03:50:53 -0800 (PST)
+Message-ID: <ae189903d4cda27130317a9312d94b53d07415ba.camel@amutable.com>
+Subject: Re: [PATCH RFC 00/41] fs: don't use pseudo filesystem files as
+ storage
 From: Alexander Mikhalitsyn <alex@amutable.com>
 To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Cc: Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>, Josef
@@ -98,13 +98,12 @@ Cc: Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>, Josef
  ocfs2-devel@lists.linux.dev, 	linux-s390@vger.kernel.org,
  linuxppc-dev@lists.ozlabs.org, 	linux-usb@vger.kernel.org, Amir Goldstein
  <amir73il@gmail.com>, 	linux-erofs@lists.ozlabs.org,
- linux-kselftest@vger.kernel.org
-Date: Fri, 13 Nov 2026 11:28:38 +0100
-In-Reply-To: <20261110-work-loop-pseudo-v1-41-4c998976c6c7@kernel.org>
+ linux-kselftest@vger.kernel.org, 	stable@vger.kernel.org
+Date: Fri, 13 Nov 2026 12:50:50 +0100
+In-Reply-To: <20261110-work-loop-pseudo-v1-0-4c998976c6c7@kernel.org>
 References: <20261110-work-loop-pseudo-v1-0-4c998976c6c7@kernel.org>
-	 <20261110-work-loop-pseudo-v1-41-4c998976c6c7@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -116,377 +115,229 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 
-On Tue, 2026-11-10 at 10:14 +0100, Christian Brauner wrote:
-> Add tests that files on pseudo filesystems can't be used as storage:
->=20
-> - a procfs file attached read-only to a loop device
-> - sysfs files attached read-only and read-write to a loop device
-> - a sysfs file behind a lower-only overlayfs attached to a loop
-> device
-> - a sysfs file as the backing file of a usb mass storage gadget LUN
-> - a sysfs file as the source of a file-backed erofs mount
->=20
-> And make sure that a memfd and another loop device still work as loop
-> backing files and that loop refuses a backing file that isn't open
-> for
-> reading.
->=20
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+T24gVHVlLCAyMDI2LTExLTEwIGF0IDEwOjE0ICswMTAwLCBDaHJpc3RpYW4gQnJhdW5lciB3cm90
+ZToKPiBMb29wIGhhcHBpbHkgdGFrZXMgYW55IHJlZ3VsYXIgZmlsZSB3aXRoIC0+cmVhZF9pdGVy
+KCkgYXMgYSBiYWNraW5nCj4gZmlsZSBhbmQgYW55IGZpbGUgdGhhdCBhbHNvIGhhcyAtPndyaXRl
+X2l0ZXIoKSBhcyBhIHdyaXRhYmxlIG9uZS4gQQo+IGZldwo+IGV4YW1wbGVzOgo+IAo+ICogL3By
+b2Mva2NvcmUgYXR0YWNoZXMgcmVhZC1vbmx5IGFzIGEgbG9vcCBkZXZpY2UgdGhlIHNpemUgb2Yg
+dGhlCj4gwqAga2VybmVsJ3MgdmlydHVhbCBhZGRyZXNzIHNwYWNlICg2NCBQaUIgd2l0aCA1LWxl
+dmVsIHBhZ2luZykKPiAqIHN5c2ZzIGF0dHJpYnV0ZXMgYXR0YWNoIHJlYWQtd3JpdGUgYXMgNDA5
+NiBieXRlIGxvb3AgZGV2aWNlcwo+ICogdXNpbmcgL3N5cy9rZXJuZWwvbW0vdHJhbnNwYXJlbnRf
+aHVnZXBhZ2UvZW5hYmxlZCBmb3IgdGhlIGxvb3AKPiBkZXZpY2UKPiDCoCBhbmQgd3JpdGluZyBh
+IGJsb2NrIHRvIHRoZSBsb29wIGRldmljZSBjaGFuZ2VzIHRoZSBUSFAgc2V0dGluZwo+IAo+IEl0
+J3Mgbm90IGp1c3Qgc2lsbHkuIEl0J3MgYWJ1c2FibGUgKGlzIHRoYXQgYSB3b3JkPykuIExvb3Ag
+Y2FsbHMKPiAtPnJlYWRfaXRlcigpIGFuZCAtPndyaXRlX2l0ZXIoKSBvZiB0aGUgYmFja2luZyBm
+aWxlIGRpcmVjdGx5IGZyb20KPiBpdHMKPiBrd29ya2VyIHdoaWNoIHJ1bnMgd2l0aCBrZXJuZWwg
+Y3JlZGVudGlhbHMuCj4gCj4gQnV0IHBzZXVkbyBmaWxlcyBlbmZvcmNlIHBhcnQgb2YgdGhlaXIg
+YWNjZXNzIHJ1bGVzIGF0IHJlYWQgYW5kIHdyaXRlCj4gYWdhaW5zdCB0aGUgY2FsbGVyLiBTbyBk
+b3plbnMgb2Ygc3lzZnMgLT5zaG93KCkgYW5kIC0+c3RvcmUoKSBtZXRob2RzCj4gY2FsbCBjYXBh
+YmxlKCkuCj4gCj4gQnV0IHNldHRpbmcgdXAgYSBsb29wIGRldmljZSByZXF1aXJlcyBubyBjYXBh
+YmlsaXRpZXMuIEl0IG9ubHkKPiByZXF1aXJlcwo+IGFjY2VzcyB0byB0aGUgZGV2aWNlIG5vZGVz
+LiBTbyB3aG9ldmVyIGhhcyBhIGxvb3AgZGV2aWNlIHNraXBzIGFsbCBvZgo+IHRoZSBjYXBhYmxl
+KCkgY2hlY2tzLgo+IAo+IEEgY291cGxlIG9mIGZ1biBleGFtcGxlczoKPiAKPiBPbiB2Ny40LXJj
+MSB1aWQgMCB3aXRob3V0IGFueSBjYXBhYmlsaXRpZXMgY2FuJ3Qga2lsbCBhIHByb2Nlc3Mgb2YK
+PiB1aWQKPiAxMDAwIGFuZCBjYW4ndCBwb2lzb24gaXRzIG1lbW9yeSBlaXRoZXI6Cj4gCj4gwqDC
+oMKgICQgZ3JlcCBDYXBFZmYgL3Byb2Mvc2VsZi9zdGF0dXMKPiDCoMKgwqAgQ2FwRWZmOiAwMDAw
+MDAwMDAwMDAwMDAwCj4gwqDCoMKgICQga2lsbCAtOSAzMjcKPiDCoMKgwqAgYmFzaDoga2lsbDog
+KDMyNykgLSBPcGVyYXRpb24gbm90IHBlcm1pdHRlZAo+IMKgwqDCoCAkIGVjaG8gMHgyMjA2ODkw
+MDAgPiAvc3lzL2RldmljZXMvc3lzdGVtL21lbW9yeS9oYXJkX29mZmxpbmVfcGFnZQo+IMKgwqDC
+oCBiYXNoOiBlY2hvOiB3cml0ZSBlcnJvcjogT3BlcmF0aW9uIG5vdCBwZXJtaXR0ZWQKPiAKPiBC
+dXQgcHV0IGhhcmRfb2ZmbGluZV9wYWdlIGJlaGluZCBhIGxvb3AgZGV2aWNlLCB3cml0ZSBhIGJs
+b2NrCj4gY29udGFpbmluZyAweDIyMDY4OTAwMCB0byB0aGUgbG9vcCBkZXZpY2UgYW5kIHRoZSBs
+b29wIHdvcmtlciBoYXBwaWx5Cj4gZG9lcyBpdDoKPiAKPiDCoMKgwqAgTWVtb3J5IGZhaWx1cmU6
+IDB4MjIwNjg5OiByZWNvdmVyeSBhY3Rpb24gZm9yIGRpcnR5IExSVSBwYWdlOgo+IFJlY292ZXJl
+ZAo+IMKgwqDCoCBNQ0U6IEtpbGxpbmcgdmljdGltOjMyNyBkdWUgdG8gaGFyZHdhcmUgbWVtb3J5
+IGNvcnJ1cHRpb24gZmF1bHQKPiBhdCA3ZjQ2OGU5NzIwMDAKPiAKPiBUaGF0IGhhcmRfb2ZmbGlu
+ZV9wYWdlIGlzIGEgd3JpdGUtb25seSBmaWxlIGRvZXNuJ3Qgc3RvcCBsb29wIGZyb20KPiB1c2lu
+ZyBpdCBhcyBhIHdyaXRhYmxlIGJhY2tpbmcgZmlsZSBlaXRoZXIuCj4gCj4gT3RoZXIgZnVuIGV4
+YW1wbGVzOgo+IAo+ICgxKSBzb2Z0LWJsb2NrIHJhZGlvcyB2aWEgL3N5cy9jbGFzcy9yZmtpbGwv
+cmZraWxsKi9zb2Z0Cj4gwqDCoMKgIChDQVBfTkVUX0FETUlOKQo+IAo+ICgyKSBjaGFuZ2UgdGhl
+IHJlYm9vdCBtb2RlIHZpYSAvc3lzL2tlcm5lbC9yZWJvb3QvbW9kZSAoQ0FQX1NZU19CT09UKQo+
+IAo+ICgzKSByZWNvbmZpZ3VyZSBtZCBhcnJheXMgdmlhIC9zeXMvYmxvY2svbWQqL21kLy4gbWRf
+YXR0cl9zdG9yZSgpCj4gwqDCoMKgIHJlcXVpcmVzIENBUF9TWVNfQURNSU4gZm9yIGV2ZXJ5IG1k
+IGF0dHJpYnV0ZS4KPiAKPiAoNCkgcmVjb25maWd1cmUgc2NzaSBkaXNrcyB2aWEgL3N5cy9jbGFz
+cy9zY3NpX2Rpc2svKi9hbGxvd19yZXN0YXJ0Cj4gYW5kCj4gwqDCoMKgIGZyaWVuZHMgKENBUF9T
+WVNfQURNSU4pCj4gCj4gKDUpIHJlYWQgZG1pLXN5c2ZzIGF0dHJpYnV0ZXMgKENBUF9TWVNfQURN
+SU4pCj4gCj4gQW5kIGFuIHVucHJpdmlsZWdlZCBjb250YWluZXIgdGhhdCB3YXMgaGFuZGVkIGEg
+bG9vcCBkZXZpY2UgY2FuCj4gY2hhbmdlCj4gZ3JvX2ZsdXNoX3RpbWVvdXQgb2YgaXRzIG93biBu
+ZXR3b3JrIGRldmljZXMuIFRoYXQgdXN1YWxseSByZXF1aXJlcwo+IENBUF9ORVRfQURNSU4gaW4g
+dGhlIGluaXRpYWwgdXNlciBuYW1lc3BhY2UgKHZpYSBzeXNmcyBhbmQgdmlhCj4gbmV0bGluayku
+Cj4gCj4gSSd2ZSByZXByb2R1Y2VkIHRoYXQgYWxsIG9uIHY3LjQtcmMxLgo+IAo+IEFhYWFuZCB6
+bG9vcCwgdGhlIG52bWUgdGFyZ2V0J3MgZmlsZSBiYWNrZW5kLCB0aGUgc2NzaSB0YXJnZXQncwo+
+IGZpbGVpbwo+IGJhY2tlbmQsIGZ1c2UgcGFzc3Rocm91Z2ggYW5kIHRoZSB1c2IgbWFzcyBzdG9y
+YWdlIGdhZGdldCBoYXZlIHRoZQo+IHNhbWUKPiBwcm9ibGVtLiBlcm9mcyB0YWtlcyBwc2V1ZG8g
+ZmlsZXMgYXMgaW1hZ2VzIGZvciBmaWxlLWJhY2tlZCBtb3VudHMgYXMKPiB3ZWxsLiBJdCByZWFk
+cyB0aGVtIHdpdGggdGhlIG1vdW50ZXIncyBjcmVkZW50aWFscyB0aG91Z2ggc28gdGhhdCdzCj4g
+anVzdAo+IHNpbGx5IGFuZCBub3QgYWJ1c2FibGUuCj4gCj4gRndpdywgZGV2aWNlIG1hcHBlciBk
+b2Vzbid0IG5lZWQgYW55dGhpbmcuIEl0IG9ubHkgdGFrZXMgYmxvY2sKPiBkZXZpY2VzLgo+IG1k
+J3MgZGVwcmVjYXRlZCBiaXRtYXAgZmlsZSBpcyBmaW5lIGFzIHdlbGwuIEl0IG1hcHMgdGhlIGZp
+bGUgd2l0aAo+IGJtYXAoKSB3aGljaCBubyBwc2V1ZG8gZmlsZXN5c3RlbSBpbXBsZW1lbnRzLgo+
+IAo+IFNvIHRoaXMgc2VyaWVzIGFkZHMgU0JfSV9QU0VVRE8gdG8gc3RhdGUgdGhhdCB0aGUgcmVn
+dWxhciBmaWxlcyBvZiBhCj4gZmlsZXN5c3RlbSBhcmUga2VybmVsIGludGVyZmFjZXMgYW5kIG5v
+dCBzdG9yYWdlIGFuZCBtYWtlcyBhbGwgc2V2ZW4KPiByZWZ1c2Ugc3VjaCBmaWxlcy4KPiAKPiBJ
+IGRpZG4ndCB3YW50IHRvIHNwcmlua2xlIFNCX0lfUFNFVURPIG92ZXIgYWxsIHBzZXVkbyBmaWxl
+c3lzdGVtcyBvbmUKPiBieQo+IG9uZS4gSW5zdGVhZCB0aGVyZSdzIG5vdyBhIGNvbW1vbiBpbml0
+aWFsaXphdGlvbiBwb2ludCBmb3IgYWxsIG9mCj4gdGhlbQo+IHZpYSBmY19pbml0X3BzZXVkbygp
+Lgo+IAo+IGluaXRfcHNldWRvKCkgdXNlcyBpdCBmb3IgdGhlIGludGVybmFsIHBzZXVkbyBmaWxl
+c3lzdGVtcyBhbmQgYWxsCj4gbW91bnRhYmxlIHBzZXVkbyBmaWxlc3lzdGVtcyBjYWxsIGl0IGZy
+b20gdGhlaXIgLT5pbml0X2ZzX2NvbnRleHQoKS4KPiAKPiBrZXJuZnMgZG9lcyBpdCBvbmNlIGlu
+IGtlcm5mc19nZXRfdHJlZSgpLiBJdCByYWlzZXMgU0JfSV9QU0VVRE8sCj4gU0JfSV9OT0VYRUMg
+YW5kIFNCX0lfTk9ERVYuIFBzZXVkbyBmaWxlc3lzdGVtcyBuZXZlciBob2xkIGV4ZWN1dGFibGVz
+Cj4gb3IKPiBkZXZpY2Ugbm9kZXMuIFNvbWUgb2YgdGhlbSByYWlzZWQgU0JfSV9OT0VYRUMgYW5k
+IFNCX0lfTk9ERVYgYWxyZWFkeSwKPiBtb3N0IGRpZG4ndC4KPiAKPiBJIHdlbnQgdGhyb3VnaCBl
+dmVyeSBzaW5nbGUgb25lIG9mIHRoZW0uIE5vbmUgb2YgdGhlbSBuZWVkcyB0bwo+IGV4ZWN1dGUK
+PiBhbnl0aGluZy4gVGhlIGZpbGVzIHRoYXQgY2FuIGJlIG1tYXAoKWVkIG1hcCBkYXRhIGFuZCB0
+aGUgdHJhY2luZwo+IHJpbmcKPiBidWZmZXIgcmVmdXNlcyBWTV9FWEVDIGFueXdheS4KPiAKPiBT
+Ql9JX05PREVWIGlzIGNsZWFyZWQgYWdhaW4gYnkgZGV2cHRzLCBiaW5kZXJmcyBhbmQgc2VsaW51
+eGZzLiBUaGUKPiBmaXJzdAo+IHR3byBkaWQgdGhhdCBhbHJlYWR5LiBzZWxpbnV4ZnMgbmVlZHMg
+aXQgYmVjYXVzZSBBbmRyb2lkIGluaXQgb3BlbnMKPiAvc3lzL2ZzL3NlbGludXgvbnVsbCBieSBw
+YXRoIGFzIC9kZXYvbnVsbCBkb2Vzbid0IGV4aXN0IHlldCBhdCB0aGF0Cj4gcG9pbnQuIE5vdGUg
+dGhhdCBzeXN0ZW1kIG1vdW50cyBtb3N0IG9mIHRoZXNlIGZpbGVzeXN0ZW1zIHdpdGggbm9leGVj
+Cj4gYW5kIG5vZGV2IGFscmVhZHkuCj4gCj4gZmlsZV9pc19wc2V1ZG8oKSBsb29rcyBhdCBkX3Jl
+YWxfaW5vZGUoKS4gb3ZlcmxheWZzIGhhcHBpbHkgc3RhY2tzIG9uCj4gdG9wIG9mIHN5c2ZzLCBj
+Z3JvdXAyLCBkZWJ1Z2ZzLCB0cmFjZWZzLCBjb25maWdmcyBhbmQgc2VjdXJpdHlmcyBhbmQKPiBy
+ZWFkcyBvZiBzdWNoIG92ZXJsYXlmcyBmaWxlcyBhcmUgc2VydmVkIGJ5IHRoZSBwc2V1ZG8gZmls
+ZS4gT25seQo+IHByb2Nmcwo+IGFuZCBiaW5mbXRfbWlzYyBhcmUgcmVmdXNlZCBhcyB0aGV5IHNl
+dCBzX3N0YWNrX2RlcHRoIHRvCj4gRklMRVNZU1RFTV9NQVhfU1RBQ0tfREVQVEguCj4gCj4gV2hl
+dGhlciBhbGwgcHNldWRvIGZpbGVzeXN0ZW1zIHNob3VsZCByZWZ1c2Ugc3RhY2tpbmcgaXMgYSBz
+ZXBhcmF0ZQo+IGRpc2N1c3Npb24uIG92ZXJsYXlmcyByZWFkcyB0aGUgbG93ZXIgZmlsZSB3aXRo
+IHRoZSBtb3VudGVyJ3MKPiBjcmVkZW50aWFscyBzbyBhIHJvb3QtbW91bnRlZCBvdmVybGF5ZnMg
+b24gdG9wIG9mIGEgc3lzZnMgZGlyZWN0b3J5Cj4gaGFuZHMgY2FwYWJpbGl0eSBnYXRlZCByZWFk
+cyB0byBldmVyeSByZWFkZXIuIFdpdGggU0JfSV9QU0VVRE8KPiBvdmVybGF5ZnMKPiBjb3VsZCBl
+YXNpbHkgcmVmdXNlIHRoZW0uCj4gCj4gVGhlIGZpcnN0IHRocmVlIHBhdGNoZXMgYXJlIGluZGVw
+ZW5kZW50IGZpeGVzLiBMb29wIG5ldmVyIGNoZWNrZWQKPiB3aGV0aGVyIGl0cyBiYWNraW5nIGZp
+bGUgaXMgb3BlbiBmb3IgcmVhZGluZy4gSXQgcmVsaWVkIG9uCj4gdmZzX2l0ZXJfcmVhZCgpIHJl
+ZnVzaW5nIHN1Y2ggZmlsZXMuIERpcmVjdCBJL08gbmV2ZXIgd2VudCB0aHJvdWdoCj4gdmZzX2l0
+ZXJfcmVhZCgpIGFuZCBzaW5jZSB2Ni4xNSBidWZmZXJlZCBJL08gZG9lc24ndCBlaXRoZXIuIFNv
+Cj4gd2hvZXZlcgo+IGhhcyBhIGxvb3AgZGV2aWNlIGNhbiByZWFkIGZpbGVzIHRoZXkgY291bGQg
+b25seSBvcGVuIGZvciB3cml0aW5nLgo+IEFuZAo+IHRoZSBudm1lIHRhcmdldCdzIGZpbGUgYmFj
+a2VuZCBhbmQgdGhlIHNjc2kgdGFyZ2V0J3MgZmlsZWlvIGJhY2tlbmQKPiBjYWxsCj4gLT5yZWFk
+X2l0ZXIoKSBhbmQgLT53cml0ZV9pdGVyKCkgd2l0aG91dCBjaGVja2luZyB0aGF0IHRoZXkgZXhp
+c3QuCj4gCj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0aWFuIEJyYXVuZXIgKEFtdXRhYmxlKSA8YnJh
+dW5lckBrZXJuZWwub3JnPgo+IC0tLQo+IENocmlzdGlhbiBCcmF1bmVyICg0MSk6Cj4gwqDCoMKg
+wqDCoCBsb29wOiByZWZ1c2UgYmFja2luZyBmaWxlcyB0aGF0IGFyZW4ndCBvcGVuIGZvciByZWFk
+aW5nCj4gwqDCoMKgwqDCoCBudm1ldDogY2hlY2sgdGhhdCB0aGUgZmlsZSBiYWNrZW5kIHN1cHBv
+cnRzIC0+e3JlYWQsd3JpdGV9X2l0ZXIKPiDCoMKgwqDCoMKgIHRhcmdldDogZmlsZWlvOiBjaGVj
+ayB0aGF0IHRoZSBiYWNraW5nIGZpbGUgc3VwcG9ydHMgLQo+ID57cmVhZCx3cml0ZX1faXRlcgo+
+IMKgwqDCoMKgwqAgZnM6IGFkZCBTQl9JX1BTRVVETwo+IMKgwqDCoMKgwqAga2VybmZzOiB1c2Ug
+ZmNfaW5pdF9wc2V1ZG8oKQo+IMKgwqDCoMKgwqAgcHJvYzogdXNlIGZjX2luaXRfcHNldWRvKCkK
+PiDCoMKgwqDCoMKgIGJpbmZtdF9taXNjOiB1c2UgZmNfaW5pdF9wc2V1ZG8oKQo+IMKgwqDCoMKg
+wqAgbXF1ZXVlOiB1c2UgZmNfaW5pdF9wc2V1ZG8oKQo+IMKgwqDCoMKgwqAgYnBmOiB1c2UgZmNf
+aW5pdF9wc2V1ZG8oKSBmb3IgYnBmZnMKPiDCoMKgwqDCoMKgIG51bGxmczogdXNlIGZjX2luaXRf
+cHNldWRvKCkKPiDCoMKgwqDCoMKgIGZhaWxmczogdXNlIGZjX2luaXRfcHNldWRvKCkKPiDCoMKg
+wqDCoMKgIHJ1c3RfYmluZGVyZnM6IHVzZSBmY19pbml0X3BzZXVkbygpCj4gwqDCoMKgwqDCoCBk
+ZXZwdHM6IHVzZSBmY19pbml0X3BzZXVkbygpCj4gwqDCoMKgwqDCoCBkZWJ1Z2ZzOiB1c2UgZmNf
+aW5pdF9wc2V1ZG8oKQo+IMKgwqDCoMKgwqAgdHJhY2VmczogdXNlIGZjX2luaXRfcHNldWRvKCkK
+PiDCoMKgwqDCoMKgIGNvbmZpZ2ZzOiB1c2UgZmNfaW5pdF9wc2V1ZG8oKQo+IMKgwqDCoMKgwqAg
+c2VjdXJpdHlmczogdXNlIGZjX2luaXRfcHNldWRvKCkKPiDCoMKgwqDCoMKgIHNlbGludXg6IHVz
+ZSBmY19pbml0X3BzZXVkbygpIGZvciBzZWxpbnV4ZnMKPiDCoMKgwqDCoMKgIHNtYWNrOiB1c2Ug
+ZmNfaW5pdF9wc2V1ZG8oKSBmb3Igc21hY2tmcwo+IMKgwqDCoMKgwqAgYXBwYXJtb3I6IHVzZSBm
+Y19pbml0X3BzZXVkbygpIGZvciBhcHBhcm1vcmZzCj4gwqDCoMKgwqDCoCBuZnNkOiB1c2UgZmNf
+aW5pdF9wc2V1ZG8oKQo+IMKgwqDCoMKgwqAgc3VucnBjOiB1c2UgZmNfaW5pdF9wc2V1ZG8oKSBm
+b3IgcnBjX3BpcGVmcwo+IMKgwqDCoMKgwqAgZnVzZTogdXNlIGZjX2luaXRfcHNldWRvKCkgZm9y
+IGZ1c2VjdGwKPiDCoMKgwqDCoMKgIGVmaXZhcmZzOiB1c2UgZmNfaW5pdF9wc2V1ZG8oKQo+IMKg
+wqDCoMKgwqAgcHN0b3JlOiB1c2UgZmNfaW5pdF9wc2V1ZG8oKQo+IMKgwqDCoMKgwqAgeGVuZnM6
+IHVzZSBmY19pbml0X3BzZXVkbygpCj4gwqDCoMKgwqDCoCBvcGVucHJvbWZzOiB1c2UgZmNfaW5p
+dF9wc2V1ZG8oKQo+IMKgwqDCoMKgwqAgb2NmczI6IHVzZSBmY19pbml0X3BzZXVkbygpIGZvciBk
+bG1mcwo+IMKgwqDCoMKgwqAgczM5MC9oeXBmczogdXNlIGZjX2luaXRfcHNldWRvKCkKPiDCoMKg
+wqDCoMKgIHBvd2VycGMvc3B1ZnM6IHVzZSBmY19pbml0X3BzZXVkbygpCj4gwqDCoMKgwqDCoCB1
+c2I6IGdhZGdldDogZl9mczogdXNlIGZjX2luaXRfcHNldWRvKCkKPiDCoMKgwqDCoMKgIHVzYjog
+Z2FkZ2V0OiBnYWRnZXRmczogdXNlIGZjX2luaXRfcHNldWRvKCkKPiDCoMKgwqDCoMKgIGZzOiBh
+ZGQgZmlsZV9pc19wc2V1ZG8oKQo+IMKgwqDCoMKgwqAgbG9vcDogcmVmdXNlIGZpbGVzIG9uIHBz
+ZXVkbyBmaWxlc3lzdGVtcyBhcyBiYWNraW5nIGZpbGVzCj4gwqDCoMKgwqDCoCB6bG9vcDogcmVm
+dXNlIHpvbmUgZmlsZXMgb24gcHNldWRvIGZpbGVzeXN0ZW1zCj4gwqDCoMKgwqDCoCBudm1ldDog
+cmVmdXNlIGZpbGVzIG9uIHBzZXVkbyBmaWxlc3lzdGVtcyBhcyBuYW1lc3BhY2UgYmFja2luZwo+
+IGZpbGVzCj4gwqDCoMKgwqDCoCB0YXJnZXQ6IGZpbGVpbzogcmVmdXNlIGZpbGVzIG9uIHBzZXVk
+byBmaWxlc3lzdGVtcyBhcyBiYWNraW5nCj4gZmlsZXMKPiDCoMKgwqDCoMKgIGZ1c2U6IHJlZnVz
+ZSBmaWxlcyBvbiBwc2V1ZG8gZmlsZXN5c3RlbXMgYXMgcGFzc3Rocm91Z2ggYmFja2luZwo+IGZp
+bGVzCj4gwqDCoMKgwqDCoCB1c2I6IGdhZGdldDogZl9tYXNzX3N0b3JhZ2U6IHJlZnVzZSBmaWxl
+cyBvbiBwc2V1ZG8gZmlsZXN5c3RlbXMKPiDCoMKgwqDCoMKgIGVyb2ZzOiByZWZ1c2UgZmlsZXMg
+b24gcHNldWRvIGZpbGVzeXN0ZW1zIGFzIGJhY2tpbmcgZmlsZXMKPiDCoMKgwqDCoMKgIHNlbGZ0
+ZXN0cy9maWxlc3lzdGVtczogYWRkIGJhY2tpbmcgZmlsZSB0ZXN0cyBmb3IgcHNldWRvIGZpbGVz
+Cj4gCj4gwqBhcmNoL3Bvd2VycGMvcGxhdGZvcm1zL2NlbGwvc3B1ZnMvaW5vZGUuY8KgwqDCoMKg
+wqDCoMKgwqDCoCB8wqDCoCAyICsKPiDCoGFyY2gvczM5MC9oeXBmcy9pbm9kZS5jwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDIgKwo+
+IMKgZHJpdmVycy9hbmRyb2lkL2JpbmRlci9ydXN0X2JpbmRlcmZzLmPCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgfMKgwqAgMyArLQo+IMKgZHJpdmVycy9ibG9jay9sb29wLmPCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNiAr
+Cj4gwqBkcml2ZXJzL2Jsb2NrL3psb29wLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDUgKwo+IMKgZHJpdmVycy9udm1lL3Rh
+cmdldC9pby1jbWQtZmlsZS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAg
+MTAgKwo+IMKgZHJpdmVycy90YXJnZXQvdGFyZ2V0X2NvcmVfZmlsZS5jwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMTUgKysKPiDCoGRyaXZlcnMvdXNiL2dhZGdldC9mdW5j
+dGlvbi9mX2ZzLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAyICsKPiDC
+oGRyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9zdG9yYWdlX2NvbW1vbi5jwqDCoMKgwqDCoMKg
+IHzCoMKgIDUgKwo+IMKgZHJpdmVycy91c2IvZ2FkZ2V0L2xlZ2FjeS9pbm9kZS5jwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAyICsKPiDCoGRyaXZlcnMveGVuL3hlbmZz
+L3N1cGVyLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8wqDCoCAyICsKPiDCoGZzL2JpbmZtdF9taXNjLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCA1ICstCj4g
+wqBmcy9jb25maWdmcy9tb3VudC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMiArCj4gwqBmcy9kZWJ1Z2ZzL2lub2Rl
+LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHzCoMKgIDIgKwo+IMKgZnMvZGV2cHRzL2lub2RlLmPCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAg
+MiArCj4gwqBmcy9lZml2YXJmcy9zdXBlci5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMiArCj4gwqBmcy9lcm9mcy9z
+dXBlci5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNiArLQo+IMKgZnMvZmFpbGZzLmPCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgfMKgwqAgMyArLQo+IMKgZnMvZnVzZS9iYWNraW5nLmPCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAg
+MyArCj4gwqBmcy9mdXNlL2NvbnRyb2wuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAyICsKPiDCoGZzL2tlcm5m
+cy9tb3VudC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDQgKy0KPiDCoGZzL2xpYmZzLmPCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8wqDCoCAyICstCj4gwqBmcy9uZnNkL25mc2N0bC5jwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKg
+wqAgMiArCj4gwqBmcy9udWxsZnMuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAzICstCj4g
+wqBmcy9vY2ZzMi9kbG1mcy9kbG1mcy5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMiArCj4gwqBmcy9vcGVucHJvbWZzL2lub2Rl
+LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHzCoMKgIDIgKwo+IMKgZnMvcHJvYy9yb290LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNCAr
+LQo+IMKgZnMvcHN0b3JlL2lub2RlLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMiArCj4gwqBmcy90cmFjZWZz
+L2lub2RlLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHzCoMKgIDIgKwo+IMKgaW5jbHVkZS9saW51eC9mcy5owqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8
+wqAgMTIgKwo+IMKgaW5jbHVkZS9saW51eC9mcy9zdXBlcl90eXBlcy5owqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAxICsKPiDCoGluY2x1ZGUvbGludXgvcHNl
+dWRvX2ZzLmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8wqAgMTEgKwo+IMKgaXBjL21xdWV1ZS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAzICst
+Cj4gwqBrZXJuZWwvYnBmL2lub2RlLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDQgKy0KPiDCoG5ldC9zdW5ycGMv
+cnBjX3BpcGUuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgfMKgwqAgMiArCj4gwqBzZWN1cml0eS9hcHBhcm1vci9hcHBhcm1vcmZzLmPC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDIgKwo+IMKgc2Vj
+dXJpdHkvaW5vZGUuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDIgKwo+IMKgc2VjdXJpdHkvc2VsaW51eC9z
+ZWxpbnV4ZnMuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzC
+oMKgIDUgKwo+IMKgc2VjdXJpdHkvc21hY2svc21hY2tmcy5jwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAyICsKPiDCoHRvb2xzL3Rlc3Rp
+bmcvc2VsZnRlc3RzL2ZpbGVzeXN0ZW1zLy5naXRpZ25vcmXCoMKgwqDCoCB8wqDCoCAxICsKPiDC
+oHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2ZpbGVzeXN0ZW1zL01ha2VmaWxlwqDCoMKgwqDCoMKg
+IHzCoMKgIDIgKy0KPiDCoHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2ZpbGVzeXN0ZW1zL2NvbmZp
+Z8KgwqDCoMKgwqDCoMKgwqAgfMKgwqAgOSArCj4gwqAuLi4vc2VsZnRlc3RzL2ZpbGVzeXN0ZW1z
+L3BzZXVkb19iYWNraW5nX3Rlc3QuY8KgwqDCoCB8IDI3NAo+ICsrKysrKysrKysrKysrKysrKysr
+Kwo+IMKgNDMgZmlsZXMgY2hhbmdlZCwgNDE5IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygt
+KQo+IC0tLQo+IGJhc2UtY29tbWl0OiA2NjI4ZTdkNGM2YjI1YzhkMThmMTM0NWUzYTIwZDIxODI5
+YWFlN2U0Cj4gY2hhbmdlLWlkOiAyMDI2MTEwOS13b3JrLWxvb3AtcHNldWRvLTg5MDg0NDE2OGVm
+MQoKSGkgQ2hyaXN0aWFuLAoKSSB0aGluayB3ZSBzaG91bGQgYWxzbyBjb3ZlciBhY2N0KDIpIGNh
+c2Ugd2l0aCBzb21ldGhpbmcgbGlrZSB0aGlzOgoKZGlmZiAtLWdpdCBhL2tlcm5lbC9hY2N0LmMg
+Yi9rZXJuZWwvYWNjdC5jCmluZGV4IGM0NDBkNDM0NzljYS4uOTE4MzViODRiZTAxIDEwMDY0NAot
+LS0gYS9rZXJuZWwvYWNjdC5jCisrKyBiL2tlcm5lbC9hY2N0LmMKQEAgLTI0NSwxMSArMjQ1LDEw
+IEBAIHN0YXRpYyBpbnQgYWNjdF9vbihjb25zdCBjaGFyIF9fdXNlciAqbmFtZSkKICAgICAgICAg
+ICAgICAgIHJldHVybiAtRUFDQ0VTOwogCiAgICAgICAgLyogRXhjbHVkZSBrZXJuZWwgaW50ZXJu
+YWwgZmlsZXN5c3RlbXMuICovCi0gICAgICAgaWYgKGZpbGVfaW5vZGUoZmlsZSktPmlfc2ItPnNf
+ZmxhZ3MgJiAoU0JfTk9VU0VSIHwKU0JfS0VSTk1PVU5UKSkKKyAgICAgICBpZiAoZmlsZV9pbm9k
+ZShmaWxlKS0+aV9zYi0+c19mbGFncyAmIFNCX0tFUk5NT1VOVCkKICAgICAgICAgICAgICAgIHJl
+dHVybiAtRUlOVkFMOwogCi0gICAgICAgLyogRXhjbHVkZSBwcm9jZnMgYW5kIHN5c2ZzLiAqLwot
+ICAgICAgIGlmIChmaWxlX2lub2RlKGZpbGUpLT5pX3NiLT5zX3R5cGUtPmZzX2ZsYWdzICYKRlNf
+VVNFUk5TX01PVU5UX1JFU1RSSUNURUQpCisgICAgICAgaWYgKGZpbGVfaXNfcHNldWRvKGZpbGUp
+KQogICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7CiAKICAgICAgICBpZiAoIShmaWxlLT5m
+X21vZGUgJiBGTU9ERV9DQU5fV1JJVEUpKQo=
 
-Reviewed-by: Alexander Mikhalitsyn <alex@amutable.com>
-
-> ---
-> =C2=A0tools/testing/selftests/filesystems/.gitignore=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0tools/testing/selftests/filesystems/Makefile=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
-> =C2=A0tools/testing/selftests/filesystems/config=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 9 +
-> =C2=A0.../selftests/filesystems/pseudo_backing_test.c=C2=A0=C2=A0=C2=A0 |=
- 274
-> +++++++++++++++++++++
-> =C2=A04 files changed, 285 insertions(+), 1 deletion(-)
->=20
-> diff --git a/tools/testing/selftests/filesystems/.gitignore
-> b/tools/testing/selftests/filesystems/.gitignore
-> index cf79000e4092..8df38eabb125 100644
-> --- a/tools/testing/selftests/filesystems/.gitignore
-> +++ b/tools/testing/selftests/filesystems/.gitignore
-> @@ -7,3 +7,4 @@ kernfs_test
-> =C2=A0idmapped_tmpfile
-> =C2=A0ustat_test
-> =C2=A0rw_hint_test
-> +pseudo_backing_test
-> diff --git a/tools/testing/selftests/filesystems/Makefile
-> b/tools/testing/selftests/filesystems/Makefile
-> index fbd5c27505ef..0ebb9005bcd2 100644
-> --- a/tools/testing/selftests/filesystems/Makefile
-> +++ b/tools/testing/selftests/filesystems/Makefile
-> @@ -2,7 +2,7 @@
-> =C2=A0
-> =C2=A0CFLAGS +=3D $(KHDR_INCLUDES)
-> =C2=A0TEST_GEN_PROGS :=3D devpts_pts anon_inode_test kernfs_test fclog
-> ustat_test rw_hint_test
-> -TEST_GEN_PROGS +=3D idmapped_tmpfile
-> +TEST_GEN_PROGS +=3D idmapped_tmpfile pseudo_backing_test
-> =C2=A0TEST_GEN_PROGS_EXTENDED :=3D dnotify_test
-> =C2=A0
-> =C2=A0include ../lib.mk
-> diff --git a/tools/testing/selftests/filesystems/config
-> b/tools/testing/selftests/filesystems/config
-> index 9f45bc493a30..228196160d29 100644
-> --- a/tools/testing/selftests/filesystems/config
-> +++ b/tools/testing/selftests/filesystems/config
-> @@ -6,3 +6,12 @@ CONFIG_NET=3Dy
-> =C2=A0CONFIG_NET_NS=3Dy
-> =C2=A0CONFIG_INET=3Dy
-> =C2=A0CONFIG_SYSFS=3Dy
-> +CONFIG_BLK_DEV_LOOP=3Dy
-> +CONFIG_OVERLAY_FS=3Dy
-> +CONFIG_TMPFS=3Dy
-> +CONFIG_CONFIGFS_FS=3Dy
-> +CONFIG_USB_GADGET=3Dy
-> +CONFIG_USB_CONFIGFS=3Dy
-> +CONFIG_USB_CONFIGFS_MASS_STORAGE=3Dy
-> +CONFIG_EROFS_FS=3Dy
-> +CONFIG_EROFS_FS_BACKED_BY_FILE=3Dy
-> diff --git
-> a/tools/testing/selftests/filesystems/pseudo_backing_test.c
-> b/tools/testing/selftests/filesystems/pseudo_backing_test.c
-> new file mode 100644
-> index 000000000000..bc8e17ab8e6e
-> --- /dev/null
-> +++ b/tools/testing/selftests/filesystems/pseudo_backing_test.c
-> @@ -0,0 +1,274 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#define _GNU_SOURCE
-> +
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <limits.h>
-> +#include <sched.h>
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <linux/loop.h>
-> +#include <linux/magic.h>
-> +#include <sys/ioctl.h>
-> +#include <sys/mman.h>
-> +#include <sys/mount.h>
-> +#include <sys/stat.h>
-> +#include <sys/vfs.h>
-> +
-> +#include "kselftest_harness.h"
-> +#include "wrappers.h"
-> +
-> +/*
-> + * Put @fd behind a free loop device. The device is set up with
-> + * LO_FLAGS_AUTOCLEAR and goes away again when it is closed here.
-> + */
-> +static int loop_attach(int fd, bool rw, char *dev, size_t len)
-> +{
-> +	struct loop_config cfg =3D {};
-> +	int ctl, nr, lfd, ret =3D 0;
-> +
-> +	ctl =3D open("/dev/loop-control", O_RDWR | O_CLOEXEC);
-> +	if (ctl < 0)
-> +		return -errno;
-> +	nr =3D ioctl(ctl, LOOP_CTL_GET_FREE);
-> +	if (nr < 0)
-> +		ret =3D -errno;
-> +	close(ctl);
-> +	if (ret)
-> +		return ret;
-> +
-> +	snprintf(dev, len, "/dev/loop%d", nr);
-> +	lfd =3D open(dev, (rw ? O_RDWR : O_RDONLY) | O_CLOEXEC);
-> +	if (lfd < 0)
-> +		return -errno;
-> +
-> +	cfg.fd =3D fd;
-> +	cfg.info.lo_flags =3D LO_FLAGS_AUTOCLEAR;
-> +	if (!rw)
-> +		cfg.info.lo_flags |=3D LO_FLAGS_READ_ONLY;
-> +	if (ioctl(lfd, LOOP_CONFIGURE, &cfg)) {
-> +		ret =3D -errno;
-> +		close(lfd);
-> +	} else {
-> +		ret =3D lfd;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static int attach_path(const char *path, bool rw)
-> +{
-> +	char dev[PATH_MAX];
-> +	int fd, ret;
-> +
-> +	fd =3D open(path, (rw ? O_RDWR : O_RDONLY) | O_CLOEXEC);
-> +	if (fd < 0)
-> +		return -errno;
-> +	ret =3D loop_attach(fd, rw, dev, sizeof(dev));
-> +	close(fd);
-> +	if (ret >=3D 0) {
-> +		close(ret);
-> +		ret =3D 0;
-> +	}
-> +	return ret;
-> +}
-> +
-> +static bool can_use_loop(void)
-> +{
-> +	return geteuid() =3D=3D 0 && access("/dev/loop-control", R_OK |
-> W_OK) =3D=3D 0;
-> +}
-> +
-> +TEST(memfd_backing_file)
-> +{
-> +	char dev[PATH_MAX];
-> +	int fd, lfd;
-> +
-> +	if (!can_use_loop())
-> +		SKIP(return, "loop devices unavailable");
-> +
-> +	fd =3D memfd_create("pseudo_backing_test", MFD_CLOEXEC);
-> +	ASSERT_GE(fd, 0);
-> +	ASSERT_EQ(ftruncate(fd, 1 << 20), 0);
-> +
-> +	lfd =3D loop_attach(fd, true, dev, sizeof(dev));
-> +	ASSERT_GE(lfd, 0);
-> +	EXPECT_EQ(close(lfd), 0);
-> +	EXPECT_EQ(close(fd), 0);
-> +}
-> +
-> +TEST(loop_device_backing_file)
-> +{
-> +	char dev[PATH_MAX], dev2[PATH_MAX];
-> +	int fd, lfd, bfd, lfd2;
-> +
-> +	if (!can_use_loop())
-> +		SKIP(return, "loop devices unavailable");
-> +
-> +	fd =3D memfd_create("pseudo_backing_test", MFD_CLOEXEC);
-> +	ASSERT_GE(fd, 0);
-> +	ASSERT_EQ(ftruncate(fd, 1 << 20), 0);
-> +	lfd =3D loop_attach(fd, true, dev, sizeof(dev));
-> +	ASSERT_GE(lfd, 0);
-> +
-> +	/* A block device stays fine as a backing file. */
-> +	bfd =3D open(dev, O_RDWR | O_CLOEXEC);
-> +	ASSERT_GE(bfd, 0);
-> +	lfd2 =3D loop_attach(bfd, true, dev2, sizeof(dev2));
-> +	ASSERT_GE(lfd2, 0);
-> +
-> +	EXPECT_EQ(close(lfd2), 0);
-> +	EXPECT_EQ(close(bfd), 0);
-> +	EXPECT_EQ(close(lfd), 0);
-> +	EXPECT_EQ(close(fd), 0);
-> +}
-> +
-> +TEST(write_only_backing_file)
-> +{
-> +	char dev[PATH_MAX], path[PATH_MAX];
-> +	int fd, wfd, lfd;
-> +
-> +	if (!can_use_loop())
-> +		SKIP(return, "loop devices unavailable");
-> +
-> +	fd =3D memfd_create("pseudo_backing_test", MFD_CLOEXEC);
-> +	ASSERT_GE(fd, 0);
-> +	ASSERT_EQ(ftruncate(fd, 1 << 20), 0);
-> +
-> +	/* Loop reads from its backing file so it must be open for
-> reading. */
-> +	snprintf(path, sizeof(path), "/proc/self/fd/%d", fd);
-> +	wfd =3D open(path, O_WRONLY | O_CLOEXEC);
-> +	ASSERT_GE(wfd, 0);
-> +
-> +	lfd =3D loop_attach(wfd, true, dev, sizeof(dev));
-> +	if (lfd >=3D 0)
-> +		close(lfd);
-> +	EXPECT_EQ(lfd, -EBADF);
-> +	EXPECT_EQ(close(wfd), 0);
-> +	EXPECT_EQ(close(fd), 0);
-> +}
-> +
-> +TEST(procfs_backing_file)
-> +{
-> +	if (!can_use_loop())
-> +		SKIP(return, "loop devices unavailable");
-> +
-> +	ASSERT_EQ(attach_path("/proc/cpuinfo", false), -EINVAL);
-> +}
-> +
-> +TEST(sysfs_backing_file)
-> +{
-> +	if (!can_use_loop())
-> +		SKIP(return, "loop devices unavailable");
-> +
-> +	ASSERT_EQ(attach_path("/sys/kernel/warn_count", false), -
-> EINVAL);
-> +
-> +	if (access("/sys/kernel/reboot/mode", F_OK))
-> +		SKIP(return, "no /sys/kernel/reboot/mode");
-> +	ASSERT_EQ(attach_path("/sys/kernel/reboot/mode", true), -
-> EINVAL);
-> +}
-> +
-> +TEST(overlayfs_on_sysfs_backing_file)
-> +{
-> +	if (!can_use_loop())
-> +		SKIP(return, "loop devices unavailable");
-> +
-> +	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-> +	ASSERT_EQ(mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL),
-> 0);
-> +	ASSERT_EQ(mount("tmpfs", "/tmp", "tmpfs", 0, NULL), 0);
-> +	ASSERT_EQ(mkdir("/tmp/empty", 0755), 0);
-> +	ASSERT_EQ(mkdir("/tmp/merged", 0755), 0);
-> +
-> +	/* A lower-only overlayfs serves reads from sysfs. */
-> +	if (mount("overlay", "/tmp/merged", "overlay", MS_RDONLY,
-> +		=C2=A0 "lowerdir=3D/sys/kernel:/tmp/empty"))
-> +		SKIP(return, "no overlayfs on top of sysfs: %s",
-> strerror(errno));
-> +
-> +	ASSERT_EQ(attach_path("/tmp/merged/warn_count", false), -
-> EINVAL);
-> +}
-> +
-> +#define CONFIGFS_DIR "/sys/kernel/config"
-> +#define GADGET_DIR CONFIGFS_DIR "/usb_gadget/pseudo_backing_test"
-> +#define MASS_STORAGE_DIR GADGET_DIR "/functions/mass_storage.0"
-> +
-> +TEST(usb_mass_storage_backing_file)
-> +{
-> +	const char *path =3D "/sys/kernel/warn_count";
-> +	struct statfs sfs;
-> +	ssize_t ret;
-> +	int fd, err;
-> +
-> +	if (geteuid())
-> +		SKIP(return, "needs root");
-> +
-> +	/* Mounting configfs on top of itself fails with EBUSY. */
-> +	if (statfs(CONFIGFS_DIR, &sfs) || sfs.f_type !=3D
-> CONFIGFS_MAGIC) {
-> +		ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-> +		ASSERT_EQ(mount(NULL, "/", NULL, MS_REC |
-> MS_PRIVATE, NULL), 0);
-> +		if (mount("configfs", CONFIGFS_DIR, "configfs", 0,
-> NULL))
-> +			SKIP(return, "no configfs: %s",
-> strerror(errno));
-> +	}
-> +
-> +	if (mkdir(GADGET_DIR, 0755))
-> +		SKIP(return, "no usb gadget configfs: %s",
-> strerror(errno));
-> +	if (mkdir(MASS_STORAGE_DIR, 0755)) {
-> +		err =3D errno;
-> +		rmdir(GADGET_DIR);
-> +		SKIP(return, "no usb mass storage function: %s",
-> strerror(err));
-> +	}
-> +
-> +	/* Writing the path opens the LUN's backing file right away.
-> */
-> +	fd =3D open(MASS_STORAGE_DIR "/lun.0/file", O_WRONLY |
-> O_CLOEXEC);
-> +	EXPECT_GE(fd, 0);
-> +	if (fd >=3D 0) {
-> +		ret =3D write(fd, path, strlen(path));
-> +		err =3D errno;
-> +		EXPECT_EQ(ret, -1);
-> +		EXPECT_EQ(err, EINVAL);
-> +		EXPECT_EQ(close(fd), 0);
-> +	}
-> +
-> +	EXPECT_EQ(rmdir(MASS_STORAGE_DIR), 0);
-> +	EXPECT_EQ(rmdir(GADGET_DIR), 0);
-> +}
-> +
-> +TEST(erofs_backing_file)
-> +{
-> +	bool refused =3D false;
-> +	char buf[256];
-> +	int fsfd, ret, err;
-> +	ssize_t n;
-> +
-> +	if (geteuid())
-> +		SKIP(return, "needs root");
-> +
-> +	fsfd =3D sys_fsopen("erofs", FSOPEN_CLOEXEC);
-> +	if (fsfd < 0)
-> +		SKIP(return, "no erofs: %s", strerror(errno));
-> +
-> +	ASSERT_EQ(sys_fsconfig(fsfd, FSCONFIG_SET_STRING, "source",
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "/sys/kernel/warn_count", 0), 0)=
-;
-> +	ret =3D sys_fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL,
-> 0);
-> +	err =3D errno;
-> +	if (ret && err =3D=3D ENOTBLK) {
-> +		close(fsfd);
-> +		SKIP(return, "no file-backed erofs mounts");
-> +	}
-> +	ASSERT_EQ(ret, -1);
-> +	ASSERT_EQ(err, EINVAL);
-> +
-> +	/*
-> +	 * Something that isn't an erofs image fails with EINVAL as
-> well so
-> +	 * check that the source itself was refused.
-> +	 */
-> +	while ((n =3D read(fsfd, buf, sizeof(buf) - 1)) > 0) {
-> +		buf[n] =3D '\0';
-> +		if (strstr(buf, "pseudo filesystem"))
-> +			refused =3D true;
-> +	}
-> +	EXPECT_TRUE(refused);
-> +	EXPECT_EQ(close(fsfd), 0);
-> +}
-> +
-> +TEST_HARNESS_MAIN
