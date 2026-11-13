@@ -1,55 +1,80 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794587103;
-	b=LJK5HD7j6rCrMELz9QOqQ+K/SYfl1uwSzgpDAaqwD9ksmfRL2YAOtSsBpi2YGcmct0MD
-	 WFmBa18+ZZ/SxMjo3faONWxak1Ru+HiVCV50+eeHyrNRU2Czm3gPSSYZtmPp9eQuevdcc
-	 RDnMRfriXLzMQkvKV1sfFl1Zecsnk7UgWpq2TpsPkjn/ODGJZUWO4Uj6NiH2OYwfNdCun
-	 POnxZAOyLLVhVSjWcSAapSd0FwoSn+T7vYVp8gzIlSfBFxA/3PO2s9OZMyh5RjFxJun3+
-	 I412Qn+El5rJ27f3YoVHBv1PdwY9KdtwqJQt7dpD2xRXn3xdyd0VCGRto4g3TDbDJdQ==
+	t=1794587205;
+	b=yHGxPlPTsEx9FHqrXkAf/QsM5+ap5Vv2wnDQ19xH1vKBYOFjOzmeSpRoF/3sdV1FS2WC
+	 KAuM9E7ZG/VueSdUFPU+NgcTXEM9X1E2aG8biHF7beqREDW3DViD+Oz3Egp927q92MEzZ
+	 uq5U5fQzh2+H+tvOVRuP1M6zi48E+6srY/hBZOfZRdkdD+caMQ8V26AiZFWH+VtnpH1yn
+	 8nCildS0GcYd835+JV9J/WfC97ixi65biwHwHftk4EOUcEbxDjda7Tnu4cE/nWbEBmBQb
+	 cXVmrlt30hoyn4eXallKQkb/RtsMDwozHr51wmcZeTnYLJN6CQiLUDoxKiaTWgcql/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794587103;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=QkWetrAcR7fhD7FyEbwBYUxzoS1eX9XmfVypNYl70yA=;
-	b=rMtWLrMZHpvwQN91wr6MLTvvrqFtxdpd1HcP4ItUpAKEt9X4faS2ltBV2CO4lKqekvzt
-	 QGcsg123MpYwUTpTboaeagUzEG2HtqW2CrEggXOZ1zMsDGV/dG7fdBPkhw11mn2YSzpKv
-	 kLha/MOEUdUR65vbDNbnGMAjX8vcGfV5pplxDgPrDDrGIY99np9NjbGBQ0VVl1p4XMOKe
-	 N30/oEkKYpBN8kk0heeJvucTr853/jBdbSvvMuH4qdHSY6ipJwyl1uz+vqVu/nPRFR1Hi
-	 BzzFbeMpo7cv+xtvyDz45TVXWjQnYqV+8PgMm5MEnhQdTd9j30+6DOAWYhf38VHPKmA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794587205;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=7ZfF8luHREto/ub5t5xIcKnzvyfNad3KP1cbQ4+yoxs=;
+	b=TQ42+SvPVDgfofY3wrfBE1O/uKtJZDZ7Rbms3QnWvBxCa1FEf4AncrtzvxieXr9C1xTM
+	 vPLBLIYuZTKcTnMQLRh5ddkcIRMQdJ8vOzOzu4okF47Tz7ZttQ2U088xj1tic6F3zktBZ
+	 p/jDejhnVhTJ3PeF9GVr01VfWGKUOCdZcyGMefDgakqaDl1ehIryKXQlDfXMdStXbAWbT
+	 O+D3BUpjAA7eryt2nrg1jZMFKiOoLKer5J9xKAdl1j+VwBBn/DUQcSOMHYjvsvGISllgj
+	 KiyBJZNX1DTU9TMrZSmTY7i6T5Q90eTVohs0PRsy4vQ8oT7wDlFvXnx81IDnv0eqmyw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ToiX5P5o;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PGdbvyD+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7670606A893
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 16:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 6D136606B2EA;
+	Fri, 13 Nov 2026 16:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ToiX5P5o
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C5C1F000C5
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 16:25:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PGdbvyD+
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5B4821F000C4;
+	Fri, 13 Nov 2026 16:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794587103;
-	bh=QkWetrAcR7fhD7FyEbwBYUxzoS1eX9XmfVypNYl70yA=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=ToiX5P5oiilllPJtJ/blGmk7Pno92PlyfLlFLq2H3PY5yZMhwLLuxW2Lqa22vr1wH
-	 kNkB8bslUrBWVHRbQxXG7I+FLDzikCoWOM4mzdQSHag/H45lYSOjVPVljhVfiNLKUN
-	 5hhXh9mkWKDXWvYCyvUIvbcYomusrnkFJLXA1byYNv02RXGVnzARnxXQ4pu6FtJrvT
-	 uEhD1QqNkSYsr/CXz4XNDI9Hn389AM1fArEQJKtdx5ScWybSFg3OlDgPqumyXcj4S2
-	 GNOP7VcvRs01aXjlsCr0VA82PfD4z7+aj4xga4KZC+UJbJYUQli3laLBt+ivEKUIxS
-	 5ODGemWRssmEw==
-Message-ID: <sashiko-outbox-213192@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v10 1/3] KEYS: Introduce keyring_is_empty()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261113161836.3587552-2-jarkko@kernel.org>
+	s=k20260515; t=1794587205;
+	bh=7ZfF8luHREto/ub5t5xIcKnzvyfNad3KP1cbQ4+yoxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PGdbvyD+2glvNYn4aWF67C5abmwt8X5SusDm06ubZ5KfmfHlvA6WSsotDlfEZ5Jo5
+	 nCkLaoKt0XLmtR1Hi6JkJ61CaAwYpyRTC740e6+kpGsdAxlAuQvQNwET/tXQKB+X3K
+	 /XdbhzeuRy2IFU1d0BiJxGO8t7i/48Vqq1Nsj238jba6JtysSGtxnC0shZNGF8ZtQP
+	 JnsH+OOidLxZFlQ/yFf5c97LWhpISeIeBjbWvvDsigvl9jdT1Taj/lRgvRobfeVEHK
+	 8cfOs6ioXBp1G03RIOuVBD8tQzIiQrwnD8WH+Qj5wr5SMUVr+KhZcoCLQSJoIWTxvm
+	 2JjKLTgq7vBMA==
+Date: Fri, 13 Nov 2026 18:26:41 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: bpf@vger.kernel.org, dm-devel@lists.linux.dev, fsverity@lists.linux.dev,
+	keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>, Alex Shi <alexs@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ignat Korchagin <ignat@linux.win>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	James Morris <jmorris@namei.org>, Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH v10 0/3] KEYS: Replace assoc_array with rhashtable
+Message-ID: <avc6QSzdVwtpUxUf@kernel.org>
 References: <20261113161836.3587552-1-jarkko@kernel.org>
- <20261113161836.3587552-2-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 16:25:02 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,17 +83,22 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261113161836.3587552-1-jarkko@kernel.org>
 
-> Introduce keyring_is_empty() in order to decouple for BPF, dm-verity and
-> fs-verity how keyring internally manages the keys.
->=20
-> Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> Reviewed-by: Ignat Korchagin <ignat@linux.win>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Fri, Nov 13, 2026 at 06:18:33PM +0200, Jarkko Sakkinen wrote:
+> v10:
+> - No changes since the previous round. This is a sanity check round
+>   given the lack of feedback to v9. I'll apply these patch very soon,
+>   unless nothing (relevant) comes up fast.
 
-Sashiko has reviewed this patch and found no issues.
+We're at mid-cycle. Thus, it makes sense to get these changes ASAP to
+-next so that they get more exposure.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113161836.3587=
-552-1-jarkko@kernel.org?part=3D1
+I have one PR waiting for keyrings in queue with a couple of bug fixes.
+As soon as -next is in-sync, I'll send tate PR, apply rhashstable patches
+and make the commits available at -next.
 
+Br, Jarkko
