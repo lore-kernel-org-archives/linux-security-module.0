@@ -1,55 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794675719;
-	b=tRIkYhOp74SGOzqwHp7O7RxsLw4adXyVxXt4FDZ/lOKvLJFFMz6nyP/ILQ6i7/w0G/Mk
-	 oN4raFCKmFUbr9/HROmDWRzvyEeY6qbLKKwGVXxJh4Wp2fnLhmRxkTQD1gbnHK6NhJ52U
-	 YzfaXb+eM+/alXaJVehMBA2/QCmvlN9sWLmycwlhASftUooQBOrDdhH3UOGTJI+osU/Cs
-	 l3e9iBQXomtqWwuTGhDVk+fjTJaR4qf5pgfwVB1kLiGKuy8MzbmPCzvWLrqAns04Eltbg
-	 NSEq/cQyTSsF+EVL4oj9eGHiTYEL1t7VvdUYbo/K7t4PJtdQjhJ6653n5NoDe5v020w==
+	t=1794675860;
+	b=aKdHbWQoc4hmoFElUnRYnklauLS2pXm1+6WHO3KwGDySGxXRmZz/SafUBOL9NzJl8vf/
+	 AFdNGSgbOioZHjo98TUkYHmSN07+gYE45CND/S6+6afPh+lJU+0EIY32KaVQnRjiLo3iQ
+	 lG/81mqIxIc5ieD+HIhpFgXx5nE013FEhK246gCI+p9Vw9jLum5XfKuKjlLWHZmSghAos
+	 cS/LDe9mxmDhXlGc2r2zkF8/DImuITndVsRzc590QduXd9P8CpAp5Xayd+dOsHyYIassZ
+	 LUJI/JlCDtstwlbSxj73Iq4pwr2uipsOqKuoPOsrqwSmy96HL38ds0jPpb3oIbgLk8w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794675719;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=AN4R2fEe8iN7l24j5lfrSTU54BvxacRixVZm+/ukHn8=;
-	b=18i/i2A92kbYYRpPcvK0gAWR8aFQM9DM7DeEh4aeUhgkyWDvIDpdaYZBhWUwmbPwohRT
-	 PvA9t+3A/G7uQgBWDNQPZakHF+QkNGWCZD5BFPv0v1bVpJHSqP81RF+kzxkeyO3j/MC90
-	 gZpYWc02nxTKfMllxdnl2t1UmiyzyXxiEvnEesOdFCD4eQMh+qGgVUH20VSuPB7Z0p7d0
-	 kAGVz7Ed2IPZAoZSptZVroQqf+2CK3679MGxTaivTu3k5DLRysC42ky2SpnkyvqwKDIR5
-	 yvJLkZEaALoJZ7d93SSIwH2T7AcdeU+fCjQQhdG+ZE/xEXI5VmA6yOBV5lJzL09y5hA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794675860;
+	h=Received:DKIM-Signature:Content-Type:MIME-Version:Message-Id:
+	 In-Reply-To:References:Subject:From:To:Cc:Date;
+	bh=P3R1fxnK2fHEw6kEa18V4jQ4Zete2japEw/6tUn8fvc=;
+	b=MVmz9s6+bcJewF9H/erwWGw7+LZBlO8MQCqMK+ToQLyY5Wc8H0xlCsNsqUGd0bbDKcUZ
+	 TYI8ls78yu0H96fxGFEt8Oef95K++hr4a+Y8HAXrcsY0yYEOhba7igUKEJg+EkPhYddAc
+	 0NMdsOyXkGnbZY4MHSyUyGBN4eZfAJ59EGtrm+atjw5Ih4Ax3/YbyChWhhNkYsV4v3kqp
+	 fhaDw+Ze0HfcMbIbFyvY6k6Xb+A1J7Y+ygPgX3KUuZcT1CU4z7Dy4ZCmew5lMj3GbY+MD
+	 ecFjqmvLVUL9npn4uufHnXUxGAqcLwtZ9hP7GCVvJezla2pkzL3EEPhh8QAlVEsCFAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MVnnL85k;
+	dkim=fail reason="signature verification failed" header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RrIO2nnn;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5CD606A330
-	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 17:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FCB606A330;
+	Sat, 14 Nov 2026 17:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MVnnL85k
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA3C81F000C4
-	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 17:01:58 +0000 (UTC)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RrIO2nnn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB051F000C4;
+	Sat, 14 Nov 2026 17:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794675719;
-	bh=AN4R2fEe8iN7l24j5lfrSTU54BvxacRixVZm+/ukHn8=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=MVnnL85knWfRfKDMDvYdTqFcZdRjrYQBHAd9hQx6MMgOh2zdTQwXeKNAlUUygbv4w
-	 bAEFUH/70Gr5Swt2Kdet5ICl9DdiafwV8NDRafiWbu/OFaDKITi7DO/AiCud/sRTeh
-	 vI6Q6Bhhtjo0COgZGrMCuEVDK8Z4bqC5UQu6K/kD35PJhDfVXofoYzDHKyU0BxtT9H
-	 WbzHcmyVIVKk/7KgdE+x7K5JWn4NkdQKgLwWwPJYkeqsxViaAMVXDl/bYhe0hwkuwP
-	 oLMzLHxd4pRLSFIGQrwcffVW3dJTdziQ8CNA3zdcRkzkoYmuOIZOFPUv4tYL8fKwQv
-	 PUxh/aDn4sLfg==
-Message-ID: <sashiko-outbox-214810@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 5/6] KEYS: Replace assoc_array with rhashtable
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261114164139.429814-6-jarkko@kernel.org>
-References: <20261114164139.429814-1-jarkko@kernel.org>
- <20261114164139.429814-6-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Nov 2026 17:01:58 +0000
+	s=k20260515; t=1794675859;
+	bh=P3R1fxnK2fHEw6kEa18V4jQ4Zete2japEw/6tUn8fvc=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=RrIO2nnnCtVuyU/3tU5BytDg8ykluxl0TSYiZA5BT1lRK8o2OWF3fBeB1rSbWbl3f
+	 oGMj5qdXl4Zp2XJuE0GBqah0MoZlbi2OsX01yaNb7uKlHlcY5HcFjvntxwxzB5hex1
+	 Cpn/WU29mb0mmZKZCwijaMvEVfH9YFJ+c4G21hFpOj+tC70+6R+KOgFnq2WfJXVarj
+	 2c+9TWR3EVBBCVH6l3zW2dr9RVyrv1sYjE2ZjziajRktF8WWiiO96gC8DBEiJy6DJn
+	 akiQhO2HK7LBWcznqKceUuWopzvuCqgvBCrWt7w4fLnrVTq1SqD8nXjvkhXR9vBCSb
+	 l6G1S4bCu59cA==
+Content-Type: multipart/mixed; boundary="===============3120634351969932012=="
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,33 +48,85 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Message-Id: <a75e29128bdce3037d830cd6f269f27e01a680e943df2db427a12c99971bc8be@mail.kernel.org>
+In-Reply-To: <20261114161211.376859-6-jarkko@kernel.org>
+References: <20261114161211.376859-6-jarkko@kernel.org>
+Subject: Re: [PATCH v11 5/6] KEYS: Replace assoc_array with rhashtable
+From: bot+bpf-ci@kernel.org
+To: jarkko@kernel.org,dhowells@redhat.com
+Cc: jarkko@kernel.org,bpf@vger.kernel.org,dm-devel@lists.linux.dev,fsverity@lists.linux.dev,keyrings@vger.kernel.org,linux-doc@vger.kernel.org,linux-kernel@vger.kernel.org,linux-kselftest@vger.kernel.org,linux-security-module@vger.kernel.org,agk@redhat.com,agordeev@linux.ibm.com,ast@kernel.org,alexs@kernel.org,anastasia.eskova@ibm.com,akpm@linux-foundation.org,andrii@kernel.org,bmarzins@redhat.com,borntraeger@linux.ibm.com,daniel@iogearbox.net,dzm91@hust.edu.cn,eddyz87@gmail.com,emil@etsalapatis.com,ebiggers@kernel.org,ignat@linux.win,hca@linux.ibm.com,ihor.solodrai@linux.dev,James.Bottomley@HansenPartnership.com,jmorris@namei.org,jolsa@kernel.org,corbet@lwn.net,memxor@gmail.com,torvalds@linux-foundation.org,martin.lau@linux.dev,snitzer@kernel.org,mpatocka@redhat.com,zohar@linux.ibm.com,paul@paul-moore.com,oberpar@linux.ibm.com,rdunlap@infradead.org,roberto.sassu@huawei.com,serge@hallyn.com,skhan@linuxfoundation.org,song@kernel.org,svens@linux.ibm.com,tytso@mit.edu,gor@linux.ibm.com,
+ si.yanteng@linux.dev,yonghong.song@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
+Date: Sat, 14 Nov 2026 17:04:15 +0000 (UTC)
 
-> The keyrings subsystem is the sole user of assoc_array. It has over 1700
-> lines of code, no test suite, and a long history of bugs, with LLMs now
-> finding more.
->=20
-> This unfortunate outcome has evolved over time by large from the shortage
-> of in-kernel callers, time bandwidth and 3rd party contributors.
->=20
-> What the keyrings needs is just a generic key-value store, which performs
-> well with sparse key sets.
->=20
-> Replace struct assoc_array in struct key with struct keyring_index:
->=20
-> - keyring_index: holds an rhashtable for direct lookups, an RCU-protected
->   list of keyring_link entries for stable walks, the active link count, a=
-nd
->   an rcu_work item for deferred teardown.
-> [ ... ]
-> Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+--===============3120634351969932012==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-Sashiko has reviewed this patch and found no issues.
+> KEYS: Replace assoc_array with rhashtable
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261114164139.4298=
-14-1-jarkko@kernel.org?part=3D5
+TL;DR: Not a bug today, but the new keyring_read() comment says the semaphore
+isn't needed; without it, a missed key could possibly leak uninitialized
+kvmalloc() bytes to user space. Comment should say the read lock matters.
 
+> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> --- a/security/keys/keyring.c
+> +++ b/security/keys/keyring.c
+
+[ ... ]
+
+>  /*
+>   * Read a list of key IDs from the keyring's contents in binary form
+>   *
+> - * The keyring's semaphore is read-locked by the caller.  This prevents someone
+> - * from modifying it under us - which could cause us to read key IDs multiple
+> - * times.
+> + * The walk is RCU-protected, so the keyring's semaphore is not required.  A
+> + * keyring modified concurrently may list a key twice or miss one, but it can
+> + * never have a link freed under the walk.
+>   */
+>  static long keyring_read(const struct key *keyring,
+>  			 char *buffer, size_t buflen)
+
+This isn't a bug today, but is the new comment accurate about the
+semaphore not being required?
+
+keyring_read() writes serials while walking the list, and then computes the
+returned length separately from the link count:
+
+    ret = keyring_iterate(keyring, keyring_read_iterator, &ctx);
+    ...
+    ret = keyring_nr_links(keyring) * sizeof(key_serial_t);
+
+keyctl_read_key() kvmalloc()s key_data without zeroing it and copies back
+exactly ret bytes when ret <= buflen:
+
+    key_data = kvmalloc(key_data_len, GFP_KERNEL);
+    ret = __keyctl_read_key(key, key_data, key_data_len);
+    ...
+    if (copy_to_user(buffer, key_data, ret))
+
+Both callers of ->read, __keyctl_read_key() and read_sed_opal_key(), hold
+down_read(&key->sem), and every writer of index->list and index->nr
+(__key_link(), __key_unlink(), keyring_gc(), keyring_clear(),
+keyring_revoke()) holds down_write() on the same semaphore, so the walk
+always writes exactly nr serials.
+
+Without the semaphore, a walk that misses a key, as the comment allows
+(for example a link prepended with list_add_rcu() after the walk has passed
+the head), would leave keyring_nr_links() larger than the number of serials
+written.  Could the uninitialized tail of the kvmalloc() buffer then be
+copied to user space?
+
+The old comment described the requirement correctly.  Could the new comment
+say that the caller's read lock on the semaphore is what keeps the returned
+length consistent with the serials written?
+
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/43615900108
+--===============3120634351969932012==--
