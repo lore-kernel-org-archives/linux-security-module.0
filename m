@@ -1,49 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794636607;
-	b=p2szuHC9Exx0Oyut+fFpmMB+0PoZppeYKU1Y+4S6T3tXXDiOhFXqNnrLGNGa3AcWEPoG
-	 EsBadvCEMjxTnwgXZEDFUWLk11HOiMpN6PhRIqrBt/CywtwCUBsJsgcMZUvx2aSRKMeml
-	 dntiFUiRvdrp9rIEya54hVIwv6YNNPCg56rLTBDvqCvL2Dk4WbocATANN9JnP4KnfM5aT
-	 SG5x+hMGqGxuQ8lW1QChBFtDeJihwhsRJJEsZcbeAWmV2qqy74a8ObeTt4Slm9Ot/55Y8
-	 rGHp0f3CErIkDYn3HOqJyCbxAh7drAwmiMhqH13m3A2JV0P/jsqSdT8A8KkUD8XGQxw==
+	t=1794652724;
+	b=oqawjCYXViBhZDOu54mO4rFz5m3zErSirnUbuzXnMAw5PATI/TruwwQCkwdYiSLiYDWT
+	 87+gx8lEZbzpBfhA+I9R/lP3Tj64Irpw9UlSdc+p4na9S7JCuJzxOJ4l/gtzUEqjOMI7V
+	 DJHN6iX/ivzO7lbnKY46RBEEl0JZ42vbCVul1KDbsbqHvMtBf7fP7k5za24lFJMnv2acy
+	 tc9PFjKvxjpUacndXixORGVwbf0veUq8K7TT9dHn+NvEw19syoMtzELWJVlFAnS85jZU2
+	 MsBpOdAkcOgkFCqLIUggxnTJAqvI4a+i6uFgZcE3+rlJwGd7/bwvyVtmWY/ExSPHbTw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794636607;
-	h=Received:DKIM-Signature:Received:Content-Type:MIME-Version:
-	 Content-Transfer-Encoding:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc;
-	bh=L9h/UAPmbKaXk4/qoOHze3vgmQg4+hfv0Rqo0AleFgg=;
-	b=dgshc7xHE+obHiOULAOuQevdYQ4KPJuMkD+vRkO6eLa9rQB359P3CxqYXsV+X/hAYEu3
-	 l2Y3FiOsnQk3npUwNrKFL+1dUU40wZTjLQpHkXwXIZAx7rJKg06lcsFPC+EydA/2IrkNY
-	 Qi6QowQT1McxmdhN7uW/WCltAXVHXpEAgha9ouQEmx47rTkG1WPSbG3WbOHKhM00utztT
-	 gRZGLjhE0w85PzXjdsZBeUHu89Q30udDTim2Ej6At72AoWuNLOaESgu12/FytFuF3+aRD
-	 LXVQB62uUGPDsXQIthmgu7cFpWe1o/ebYLjUlsGwt7VKgxY63NuGaXlXxqEr/Ghf0VA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794652724;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=f0g6P6hsNAkBmmk1dhVL/yqmLVxvhNEJRF73P8Hffz8=;
+	b=XTRFf3I9lNTiXczV41KEJg/FNuIVqDVo2dmDdYyszYgVrx7yTyVRPsPuZfvPA4veCQgQ
+	 jKr/qKLNzZFhQ2jewlC/ZCTk4+8Poh+6hOz3XN5IEfOlepYONBBN/dZ283nK3OXJNhLZ3
+	 LUjdHWsRXLFyh6UM22W5GyemHIlJGs7c/oztRdwvhrP9kxWVJWRUZdqykh/yKnLFBm5zI
+	 jW/KA9kONTlAz0bqr1L/Ybfmzs2qCgDwTbIVbBI+YVwP1Dtp3zII5gIcV0LHpaX/uQIQh
+	 TF5BkI2HzftmVZuRIitvcviJKbYL8yp7+DQl14DOpUMxZZ2GcSxk2dCywnFttGpRBDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=miP5RfLL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ozu7z0Kj;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F60606A331;
-	Sat, 14 Nov 2026 06:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCDB606A323;
+	Sat, 14 Nov 2026 10:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=miP5RfLL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818521F000C4;
-	Sat, 14 Nov 2026 06:10:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ozu7z0Kj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE541F000C4;
+	Sat, 14 Nov 2026 10:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794636606;
-	bh=L9h/UAPmbKaXk4/qoOHze3vgmQg4+hfv0Rqo0AleFgg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=miP5RfLLvwei/QZ/+fFs90TyUZvbAEXReUZaafBGtp8xAs1/Nhb9sTWfwQ4jVDnrn
-	 HG4jILtrinnkOJXe0RV3ehjAcecFUsYToeVLXuzVNiNPNwp4M502GkB4XuZ5Q65lTE
-	 n50kxFrWoDdh5NNVKoFraAC9uuWE0qDm9V6q0zklrRUmYC69Dc5hN5FYuRbmVtlCLp
-	 Ga+y98ICvBeM/eU8v6E3unN315obWhMolCEH3yt1QCL/iaUBAdfRlxin/FsrEyDlH3
-	 ZjOyfbFyW5ORrRFMhT/ncfJlil10pEhp/AwQrHOdczoSfEDo+xD/8expmX5cesiXW3
-	 O7AOaGAPiM4Rg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 77435380821F;
-	Sat, 14 Nov 2026 06:10:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20260515; t=1794652724;
+	bh=f0g6P6hsNAkBmmk1dhVL/yqmLVxvhNEJRF73P8Hffz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Ozu7z0Kj1tHIOD24bkiz6twDQ59H2LG047bnoA597yeAQD+7loV9AVNQq6/EfNxmA
+	 RAV43n2Xp3rFswhwCvrdVPjCv2twIaBECTwXwjSyPBKOEecSJccYi16iPUffdcy+kX
+	 2KsSYHa0TM5q3kVm9Et0sKjXOYpfJER4fjfggVZYik+Tlk8iLg4VYcTfwPq6hSWTb+
+	 FqNtagBKrLecsr9nZyvU/RGWRSqwrFdabGVO12uSaA2rrQgzv6ROpsZEsD9jdN00pG
+	 9AVp7r2bVcIF0aGX9qNUD3D/9g7VuGmG+jesekdRYeqNRWWlH0zjJp4ZwQJyQCg3y0
+	 VLaLdAkJXNuOg==
+Date: Sat, 14 Nov 2026 11:38:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
+	Chris Mason <mason@kernel.org>, Josef Bacik <josef@toxicpanda.com>, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-scsi@vger.kernel.org, 
+	target-devel@vger.kernel.org, driver-core@lists.linux.dev, linux-mm@kvack.org, 
+	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
+	fuse-devel@lists.linux.dev, linux-efi@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	ocfs2-devel@lists.linux.dev, linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-usb@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	linux-erofs@lists.ozlabs.org, linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH RFC 01/41] loop: refuse backing files that aren't open
+ for reading
+Message-ID: <20261114-erfrieren-vorher-taktieren-ef10b08e210f@brauner>
+References: <20261110-work-loop-pseudo-v1-0-4c998976c6c7@kernel.org>
+ <20261110-work-loop-pseudo-v1-1-4c998976c6c7@kernel.org>
+ <20261111145555.GA9996@lst.de>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -53,49 +68,18 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf] bpf,
- lsm: Mark backing_file_alloc/free LSM hooks as untrusted
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <179463660529.2025154.16083428356016903156.git-patchwork-notify@kernel.org>
-Date: Sat, 14 Nov 2026 06:10:05 +0000
-References: <20261111203614.1221188-1-snizovtsev@cloudlinux.com>
-In-Reply-To: <20261111203614.1221188-1-snizovtsev@cloudlinux.com>
-To: Sergei Nizovtsev <snizovtsev@cloudlinux.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
- stable@vger.kernel.org, kpsingh@kernel.org, matt@bobrowski.net,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com,
- memxor@gmail.com, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, jolsa@kernel.org, emil@etsalapatis.com,
- ihor.solodrai@linux.dev, serge@hallyn.com, amir73il@gmail.com,
- paul@paul-moore.com, brauner@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261111145555.GA9996@lst.de>
 
-Hello:
+On Wed, Nov 11, 2026 at 03:55:55PM +0100, Christoph Hellwig wrote:
+> But i wonder if we want a thin wrapper around ->read_iter/_write_iter
+> to do this check so that it matches the normal read/write path?
 
-This patch was applied to bpf/bpf.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+Yes, I had thought about that as well. We could use
+vfs_iocb_iter_{read,write}() for that but it's not thin at all and
+brings in the LSM into these codepaths where they shouldn't meddle.
 
-On Wed, 11 Nov 2026 21:35:52 +0100 you wrote:
-> The backing_file_alloc and backing_file_free LSM hooks get the backing
-> file as "struct file *backing_file", but its f_path is not populated
-> while they run:
-> 
->  - security_backing_file_alloc() is called from init_backing_file() in
->    alloc_empty_backing_file(), before vfs_open() sets f_path, so
->    backing_file->f_path.dentry is NULL;
->  - security_backing_file_free() can run for a backing file whose open
->    failed and whose f_path was already cleared.
-> 
-> [...]
-
-Here is the summary with links:
-  - [bpf] bpf, lsm: Mark backing_file_alloc/free LSM hooks as untrusted
-    https://git.kernel.org/bpf/bpf/c/ab86b62012b9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+So maybe as a follow-up series with a new
+vfs_iocb_iter_{read,write}_raw() or whatever. Feel free to make a
+suggestion.
