@@ -1,45 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794627149;
-	b=ikjof5ip8ODU3L2hGolAqjpOhn3JQ9MlG+HiIOHvRjf71Ddmv45F1PbaQVHcgrpmhE+C
-	 fb0zNnNTt3XJv6LyG9KephGOV7ZYtaKAQILrm7embcfrl9iPRpoX7/0TPiWbiWW4EJhQS
-	 WLnRTWX1TNa/dSRd8jdKY5WJeK/hCBoP0e8bFxmsUJs+bWfjMGFXYSluLlBXiYAxNcoYI
-	 Vq8d/RwUY5DzRcWt8vkJOledQyoNX88qSfJDi2ZXTtIIIuCRgakwDo8QmU9Z8nkFld5Yb
-	 PyauHJhbP2pUcVowZllcBNnl0VP1GK5BdDQBCuqOZimXykVChK1mH0JVjsfDbWY3clQ==
+	t=1794634145;
+	b=3a+rr9t4yiiSJUViJ84ON1iszNTUkkL/HPx1fXhZrVv84s4i/RRxkHZkgqRPja/Y/Kbi
+	 oHLeB4tSX+9MsJqcqF0B5Run2uTUDv8vdKehtbG3/MXg3wNMJ1nfIBHqdiv47LzpGJZdJ
+	 9OQJj+2pBulT476/GV8d+PsA9V8vh9xWn4km7wWXdeUwThJSpquXMmBTmIkcZltEZwW8x
+	 xFKNCF7/KqDR6ffko7R3kOBFJFWWmSAq6E4LtJG2KUL4EkxVzoIKkYDFPP937TIy0J7QD
+	 vXj+pIoGlrQvB5nc7zIGeUgAmMjSP/TrFOc16M8iUBf4TiCYeDiX4UL1YuoAh2cGaaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794627149;
-	h=Received:DKIM-Signature:Content-Type:MIME-Version:Message-Id:
-	 In-Reply-To:References:Subject:From:To:Cc:Date;
-	bh=hZ/+DLpUIlcbirEPmqeVlKHp9sAsvUE1CUbfS01vK7I=;
-	b=2FSf8QcY6erjWA9bYYaDd2UmRYsglAP4eouYhd+bxmSVYRp99H9zW5GQLShV4yWoqbh2
-	 w+BM+OmU4EJFchMR6451Vf4+QxPNgF5ODWGLbF1o/gUgI09ztdYJQTpwMqBjLKxviqnNU
-	 0HGfHP+ivsR2dSWSztRmK/LvyD5oPnQHsYQCzrt6sVCqC4Fv1JWfyaYXYoBe8aCeNr/l3
-	 5kiEQGOGHphOfy9cOP1N5I2XDLfxMQ0ZfHnaQgbU7NUAW9ZLZSBBRKy2uNCavGHpqdeAC
-	 IVUKrAdSQG6sgtujkM/bJQEneNEzq7AUNvOYLkft/5Jc4mxb6S7cAQDI1KzyPJPJe2Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794634145;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=ve8LQXErwjekEnlC8HaEebRUb/hYJ6j4geIEUpqGkS8=;
+	b=eIIM5/5TS7R2H0HJ3fM0ams0kcz4P+MAnJtAjG2exu6XJE2WVWheWIl6vm7O8LxMncW+
+	 WhH61ajBDXoMzI3BqfBAaHjbdASPQeDCHY0nTfqyiUfZ8p2kjqYgeIz3YImcZNAtjE5tO
+	 AsVle/KmsF2tpE7+pht+q6oASqHuMKn9kBvdDiFBw5jN+RpfflpdlO/mce4dkQYfpWAcu
+	 zFyjdMFM78MpgYk643+nJiPbXKdjRyU1wn0BwAPJcN1YQ4gs6dpeUV2VtJOP3Bd0+oyS+
+	 kxgR0R8SNLf4JCWQaCSTtsNX+gMDrj12szK1ceajPthXw2lDltYqLxz4paQNJx6WnPA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="fSpHT/5Y";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="Orn/JN7t";
+	arc=none smtp.remote-ip=209.85.216.46
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D07606A898;
-	Sat, 14 Nov 2026 03:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E62606A329
+	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 05:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07E62606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fSpHT/5Y
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82EC11F000C4;
-	Sat, 14 Nov 2026 03:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794627149;
-	bh=hZ/+DLpUIlcbirEPmqeVlKHp9sAsvUE1CUbfS01vK7I=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=fSpHT/5YlKnVLQuflwMsI4ithJsCcCowAQeNfKXQn68pyvBjpKOneHjq/7tzigdU/
-	 fBYUSuvX8vs6XD0Sn0kOKRcLcTwIu0Vg+RMZHWWD3GcLzqxkS3cfmNIIqSZYc26qY+
-	 e+zaW8YGi4y83EuS58EkSpi3pyOfNOq8dmKJmiH2jWdqIZtcpzuEOpufh+oDPw55vW
-	 NlHXaKHb0KHbJFsWf1drlXvwoCAnfiwAPpnZUcdaNCSrw/PXdN5K49A1P6Ts/eABr4
-	 bzbs8Ld8g0AH+bTkbgSH6KnYPbPzcnPA9mJWzrtCxdw0ooLNs+ziSbnxkD9zD2M0t9
-	 jQAMzdYVhW1tg==
-Content-Type: multipart/mixed; boundary="===============0128583470197541293=="
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Orn/JN7t
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3ae1da332bcso593161a91.2
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Nov 2026 21:29:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794634144; x=1795238944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ve8LQXErwjekEnlC8HaEebRUb/hYJ6j4geIEUpqGkS8=;
+        b=Orn/JN7t9fOucPl7ceF3yd0u3iQTyWwHzGp8O+tD42xrqqhk4cObgjFazLsmjELN5Y
+         ClCJ3ySaZeW758xChrCK9jipAJIpoNncFYu1MlL6YU1skCWDKKKRFWDKvgB/6sLm+HLv
+         thnevQF3HvvKv9r9AicS54L446SdRWiD3o3ifL85pG/cKBZeCnItidCpFOHE3/6qTLnx
+         CVrV5NJYLFnyOx84bstkwcrQO2toRAUnHtquL1PsGJBVX7NOUmWRUFUH8UYBRQmslFBr
+         AJO10oOglbHsrVld0nQS8k4aqqazwhUN7Pv2gncZcTO4vYpoWltPBi7R1j29zxEDHosR
+         vjkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794634144; x=1795238944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ve8LQXErwjekEnlC8HaEebRUb/hYJ6j4geIEUpqGkS8=;
+        b=rRkP94+tbQvjNGSwxL656O0uLuMGUC0Uh8Zrq0TdnneqbL9H0P7pmOPicTHXR2IGO+
+         Jb6ro3ONAnKrKor5y6KAO+iLlUMmJPl3pfiHX0ma7efK2kla7VcP04j8kpGueIgHDcE0
+         1YOqh9eSlAh1puM3GhWDhmsMhPEslmdmJ/VreMX7um6YauJnGwRg1v3mRjOZF7lNaKC1
+         Ok3S/ia5hBvNFYSFSWauKKYEm9hzYEtxzKENaebM4IFXX0Qg5JtZw1sczt7nBthsQhfl
+         67oJw5fbc5bGkegNVTyKGCbz5floiY5xo8HH1tj+YH6TDyb81ASgnm7L5oX4Flq7I9Ji
+         lBEA==
+X-Forwarded-Encrypted: i=1; AL+hErE8oIgfz2ifhmhOYo9UNWwJn5qzaI6PxQ9xNvKD58/w9i3jMhIHZm+BsItLn7xtNhwg2g+ysKtYJ8eAVT8JUuxRKWfZ1NE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z88BQWhakAV7Qmlyh6O0gFmTlwcAdeHt5U4eYtdvXim2Y9spEhW
+	huwMKmCkih21EDt5e2tQh5icf0jTXs0cdYyOFvuKF+9GMfHbiQiEIXRF
+X-Gm-Gg: AYBFou28JNydRWeJrxeH0LVMXPIFxpeII35AjJulge6r/3vDXfEpEVB9aRQSl1S8VP9
+	g72qSe37puoumlrzAV3H31KWIe27uI6ilU5xfjiCf4RKlSvs/BxcJpNl/SXv6oEwi2YUnMR4hgo
+	/y/R75i/M6M570eIPkK6ysgUcdfZ8tu4K4mEjd4WqwLe7McU5Eys0NUJpuKFgsPJiBOoTmSg/qH
+	kkmAV33fbe1tOaikVSwYJYI3SJpoIunTG9XGNEu0WHFgxgE7GyXctRgseAXkA4YLVAxngrAq/a0
+	RIu3vSe3t7yh67V3cyy4mBJiMxlySvtCHC8jDiLkGXBVrDGmO+8/4ipQAr6LJYKyqGcnfF6ErDJ
+	N4A/EgD+7ZHIjVhxqPtfUGTda5Kpci3Szdo2IStCIkpxsaT9OfMWDXNO79/9t/7+VQ0gb6udVEV
+	EhV7nNAsI70bj4/6STknVhlN9ClgZynLqzem3Mt96wuGWumtit7ExuZu9mrH+BNUwMXYHjOOArq
+	xE99Hn8vOJW2HTP6QlboqoZ7d4CfESoyoMBcgvO93oPnpA9A6PpP/DF8/HEtI5Ql1VSNYYkwSrg
+	XspKhQnWR+tWcZpZpr/OpaRbT8d1N0KOHQmlraOZTP0/5eQlEOHceF7HQtMm3nE=
+X-Received: by 2002:a17:90b:57c7:b0:3ac:9d26:5532 with SMTP id 98e67ed59e1d1-3b1b07fec19mr4789871a91.3.1794634144313;
+        Fri, 13 Nov 2026 21:29:04 -0800 (PST)
+Received: from localhost.localdomain ([108.180.159.198])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1aed76f95sm7157339a91.17.2026.11.13.21.29.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Nov 2026 21:29:03 -0800 (PST)
+From: Babanpreet Singh <bbnpreetsingh@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <sergeh@kernel.org>,
+	Bradley Morgan <brads@mainlining.org>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Babanpreet Singh <bbnpreetsingh@gmail.com>,
+	syzbot+ee58b040032d8bed63d9@syzkaller.appspotmail.com,
+	syzbot+557fdc985d6ac3831e14@syzkaller.appspotmail.com
+Subject: [PATCH v2] cred: annotate data race on non_rcu when copying a cred
+Date: Sat, 14 Nov 2026 05:29:00 +0000
+Message-ID: <20261114052900.7-1-bbnpreetsingh@gmail.com>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -49,95 +99,69 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-Id: <2bd464dd12d81f4d712f7d89f65e0e572c66c9e84acce225d144eef3badc0251@mail.kernel.org>
-In-Reply-To: <20261113161836.3587552-3-jarkko@kernel.org>
-References: <20261113161836.3587552-3-jarkko@kernel.org>
-Subject: Re: [PATCH v10 2/3] KEYS: Replace assoc_array with rhashtable
-From: bot+bpf-ci@kernel.org
-To: jarkko@kernel.org,dhowells@redhat.com
-Cc: jarkko@kernel.org,bpf@vger.kernel.org,dm-devel@lists.linux.dev,fsverity@lists.linux.dev,keyrings@vger.kernel.org,linux-doc@vger.kernel.org,linux-kernel@vger.kernel.org,linux-kselftest@vger.kernel.org,linux-security-module@vger.kernel.org,agk@redhat.com,ast@kernel.org,alexs@kernel.org,akpm@linux-foundation.org,andrii@kernel.org,bmarzins@redhat.com,daniel@iogearbox.net,dzm91@hust.edu.cn,eddyz87@gmail.com,emil@etsalapatis.com,ebiggers@kernel.org,ignat@linux.win,ihor.solodrai@linux.dev,jmorris@namei.org,jolsa@kernel.org,corbet@lwn.net,memxor@gmail.com,torvalds@linux-foundation.org,martin.lau@linux.dev,snitzer@kernel.org,mpatocka@redhat.com,paul@paul-moore.com,rdunlap@infradead.org,serge@hallyn.com,skhan@linuxfoundation.org,song@kernel.org,tytso@mit.edu,si.yanteng@linux.dev,yonghong.song@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
-Date: Sat, 14 Nov 2026 03:32:25 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 
---===============0128583470197541293==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+prepare_creds() copies the current cred while another task can be in
+get_cred() on it, clearing non_rcu. KCSAN reports:
 
-> KEYS: Replace assoc_array with rhashtable
+  BUG: KCSAN: data-race in io_prep_async_work / prepare_creds
 
-TL;DR: keyring_read() now needs keyring->sem, but s390 cert_store calls it
-unlocked; this may trigger a lockdep splat and possibly a use-after-free if a
-link or index is freed during the walk.
+  write to 0xffff8881046cea68 of 4 bytes by task 3646 on cpu 1:
+   get_cred_many include/linux/cred.h:222 [inline]
+   get_cred include/linux/cred.h:238 [inline]
+   io_prep_async_work+0x9b/0x3c0 io_uring/io_uring.c:367
 
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
+  read to 0xffff8881046ce9c0 of 184 bytes by task 3645 on cpu 0:
+   prepare_creds+0x71/0x550 kernel/cred.c:192
 
-[ ... ]
+The race is harmless. non_rcu and usage are the only fields that change
+on a published cred, and both are reset on the new cred right after the
+copy.
 
->  static long keyring_read(const struct key *keyring,
->  			 char *buffer, size_t buflen)
->  {
-> -	struct keyring_read_iterator_context ctx;
-> +	struct keyring_index *links = keyring_index_locked(keyring);
-> +	key_serial_t *serials = (key_serial_t *)buffer;
-> +	struct keyring_link *link;
-> +	size_t count = 0;
->  	long ret;
->  
->  	kenter("{%d},,%zu", key_serial(keyring), buflen);
+Annotate the copy with data_race(). prepare_kernel_cred() makes the
+same copy, so annotate it too and switch it to memcpy() to match.
 
-[ ... ]
-
-> +	if (buffer && buflen && links) {
-> +		list_for_each_entry(link, &links->list, list) {
-> +			if (count == buflen / sizeof(*serials))
-> +				break;
-> +
-> +			serials[count++] = keyring_link_key(link)->serial;
-> +			cond_resched();
-> +		}
->  	}
-
-keyring_index_locked() is rcu_dereference_protected() on
-lockdep_is_held(&keyring->sem), and the list is then walked with plain
-list_for_each_entry() and a cond_resched() per entry.  That is fine when
-the caller holds keyring->sem, as __keyctl_read_key() does.
-
-Is that also true for all callers of the read method?  The s390 certificate
-store calls it with no lock held:
-
-arch/s390/kernel/cert_store.c:invalidate_keyring_keys() {
-    keyring_payload_len = key_type_keyring.read(keyring, NULL, 0);
-    ...
-    rc = key_type_keyring.read(keyring, (char *)key_array,
-                               keyring_payload_len);
-}
-
-The path is refresh_store() -> fill_cs_keyring() -> create_cs_keyring() ->
-cleanup_cs_keys() -> find_cs_keyring() -> invalidate_keyring_keys(), and it
-holds only cs_refresh_lock.
-
-Before this patch the (keyring, NULL, 0) size query only read
-nr_leaves_on_tree, and the real read used assoc_array_iterate(), which has
-no lockdep check and never scheduled.  Now keyring_index_locked() runs at
-function entry, so with CONFIG_PROVE_RCU=y a second cert_store refresh
-looks like it would report a suspicious rcu_dereference_protected() usage.
-
-The walk also runs with neither keyring->sem nor rcu_read_lock(), and
-cond_resched() lets a grace period complete while the walker is sitting on
-a link.  Can a concurrent key_unlink() or keyring_gc() (list_del_rcu() plus
-call_rcu(keyring_link_free_rcu)), or keyring_clear() or keyring_revoke()
-(keyring_index_free() -> queue_rcu_work()), free the link or the whole
-index under the walker?
-
-Should invalidate_keyring_keys() take down_read(&keyring->sem) around its
-two read calls as part of this conversion?
-
-
+Reported-by: syzbot+ee58b040032d8bed63d9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ee58b040032d8bed63d9
+Reported-by: syzbot+557fdc985d6ac3831e14@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=557fdc985d6ac3831e14
+Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
 ---
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+Drafted with Claude, an LLM coding assistant, from the syzbot reports.
 
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/43549115625
---===============0128583470197541293==--
+ kernel/cred.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/cred.c b/kernel/cred.c
+index d01df40a9a386..d9ab1cb4230a8 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -189,7 +189,12 @@ struct cred *prepare_creds(void)
+ 	kdebug("prepare_creds() alloc %p", new);
+ 
+ 	old = task->cred;
+-	memcpy(new, old, sizeof(struct cred));
++	/*
++	 * Another task can be in get_cred() on the old cred, clearing
++	 * non_rcu. That and usage are the only fields that change on a
++	 * published cred, and both are set fresh below.
++	 */
++	data_race(memcpy(new, old, sizeof(struct cred)));
+ 
+ 	new->non_rcu = 0;
+ 	atomic_long_set(&new->usage, 1);
+@@ -573,7 +578,8 @@ struct cred *prepare_kernel_cred(struct task_struct *daemon)
+ 
+ 	old = get_task_cred(daemon);
+ 
+-	*new = *old;
++	/* Same race as in prepare_creds(). */
++	data_race(memcpy(new, old, sizeof(struct cred)));
+ 	new->non_rcu = 0;
+ 	atomic_long_set(&new->usage, 1);
+ 	get_uid(new->user);
+
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+-- 
+2.54.0 (Apple Git-157)
+
