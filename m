@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794675229;
-	b=C7STdXA23/hrkHLB+YM6y90A+/VkmZ6hbH+0RaZVc+3cxYviw9ZMjeUmMSXnIV+GfIhR
-	 +oymLqG3EHAKhy1OLKYhtZQC4fe7dJmvPI6tb4S+fvYqPWZbLy4HELNKLHhVgg82eUU/6
-	 WtBiQpw4GXcqOi2kMX9XhFUXDCNo4uP1TQy2v/2OLh4jk7FphEqAVlZNDKHBObUcSk9SJ
-	 AW06W9hacbPsVj8HGXifN/sgqRC6XQRHergMvIMfK3icZMmrCQLHsg7hX1VJfoaUoWbO4
-	 uFHGXp1ebH55oF2z4YelDagTZuByp9OSYgriRmsyhkqPSCuinBch7ZVVKut6EEcqD4g==
+	t=1794675537;
+	b=To4pfriK2O+VxrwcO4iTzTBTcmJjkQPW3VIV41DPN1FC2rMnJjgFVbLiwL6guaGQDfn1
+	 5H56DRgkfFDFMNMvZE7l0jKs3rBFYDWYb9XgftxTU8+8Anrznmb3sXW3naPmLoqjgttIa
+	 BKw5uV5rAJYClTdkcL6Q+sklA3yULVewBWcvb8QmoQDn507um0nN5x8scKOVOIivyLHMb
+	 tXPxwAg631ZXXS291K5IPZS+fqaDPMJSpxaHFrh/sral0zh7E/6Gifzg6MJeocPHblmIT
+	 is1lK31ownqO/nt9681daqsGUn1fhchM3vMfOzhM2a3QaKiPu0PBwtfHX1hrGCONf+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794675229;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794675537;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Yc4OBxUipu8W97catUYnfLaU2/9RndlwZAZp558Riq8=;
-	b=IilA/WooC8PXWUY/bWUt+H4DfyeTjiJDaUbQSEl+WWkCxc1dbpTSJHHH0QHvzOjLjh1V
-	 XrjfuJx5oR46Qw8sV5oxGVfO4G+J7LoiXht2FtHZfcNNn4TLiDQBQ1+E6WHPEQoAjmEjS
-	 pEf3AWDV9F8KH9yIeYiMt2ts1lRzKDpBhp84v7m8D1H0jnkjjxkTKWe9QaJbeFs0puVDB
-	 HFeNo7MZp19fDwZUvTxMcRafkU0nc1CwOnco12IparYPis6Q+zMwByvbWqzmjpQccfUn1
-	 2Chju+FGdQzXcO08MbRfsImw47SDWB3FG+bGSDgZyp1PuYH7P/ofsr0PwpzxwMJ0eLQ==
+	bh=2eGdT68psL4X8QsS/C8S2q5ZiOqgol/Lo1pzAOBn/PI=;
+	b=Wc9Rbg+TUcDMd7WT+etb8PTWRLzyhR9Yxy88rg1qtVlZd+vTPwf01OArfdn1kn0LqxKb
+	 qmxZXhPF2DVL4Gxypj/SHfLLT7W1qMgz+worK51UTFSosU7xu8qj0tioXI/XQlz6wF6JA
+	 UsUBg36ANAa1Mn0ej6nkGedk6ResCXNcxnSbG8zmZP+dLs3Kg/+Y2myCPRF58Pz/+fx6I
+	 JolVLbhrv19EcURURW9KWqrd7Czg9q8LLD8PK+/LCSPvcr2Uk0/abfng26NnmEmKGidxp
+	 5XdcgVH3NOj4UAl6+Cgx+xbHsmfaueQ4y8ZKOacMs4sMoCVkGwgasExDhQ4PGMnjVEw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RMZ4r0iB;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CiV16Oog;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42FC606A327
-	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 16:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864F6606A329
+	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 16:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RMZ4r0iB
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FDC1F000C4
-	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 16:53:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CiV16Oog
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1102B1F000C4
+	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 16:58:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794675229;
-	bh=Yc4OBxUipu8W97catUYnfLaU2/9RndlwZAZp558Riq8=;
+	s=k20260515; t=1794675537;
+	bh=2eGdT68psL4X8QsS/C8S2q5ZiOqgol/Lo1pzAOBn/PI=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=RMZ4r0iByKag40Ka22UekyQV9UmlOB2bT4D2YcXjLaGbUB6Sqa4DNKvsl6UKeHrA1
-	 cZ/UEBAj013wtUoUOVHhXguIu0NhqbHjiBjMdlfRPq/uhEn305v1eGrMm/TWF7re7S
-	 xpLmbF0dshdI0abv0Ktqj0vFmVjvkgnY5J7oW+BAWRnFEWWRluUqjCp/JIpwpJfKL7
-	 fV2bnsfF7bopWjTW7R/wvj/Q2z94ABxNUGmwKInEJFI6D6AK/wdwXJMeX894+TSXTp
-	 6u24EWwNBR3M8jYP6IXEJQUut89j6zKI/+FVuK/z1mna/iAVh9GWLjBMQaqX/Sh04s
-	 Ey1ZfPthbtZ9g==
-Message-ID: <sashiko-outbox-214790@kernel.org>
+	b=CiV16OoggR+c/CtaqHZUMAbyqLT0ll7MiGoMqaaggWMHInOJAsiLai3ZFw9DQC0HH
+	 MvixO2FD9nQ/ozmv4tVCZg6AjZV8kxZUUCYQdW7nwckZfcWCSx5yM7uXy052ljNmyv
+	 m4MgVWi6lcBe6pNSXii4/3s2mFXsBzPxcfVvuMQU14snM6WAhzJq/1UjWAloPDkBU9
+	 HEMxsUe8JdVJbQntp1k39ljHRz4qrubPC/an4ukJ7yAeWeKO3wWP9I75qO2QZ+LppR
+	 1XABIsKywquS742cw+sI03YoUZurqkj7nd+NdaNfe3J4R3/zeNlynLoUDC/MI5lwBA
+	 uCRllsmClgQxw==
+Message-ID: <sashiko-outbox-214793@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 2/6] s390/cert_store: Return an owned reference from
- find_cs_keyring()
+Subject: Re: [PATCH v12 1/6] s390/cert_store: Pin the user session keyring
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261114164139.429814-3-jarkko@kernel.org>
+In-Reply-To: <20261114164139.429814-2-jarkko@kernel.org>
 References: <20261114164139.429814-1-jarkko@kernel.org>
- <20261114164139.429814-3-jarkko@kernel.org>
+ <20261114164139.429814-2-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Nov 2026 16:53:48 +0000
+Date: Sat, 14 Nov 2026 16:58:56 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,11 +59,17 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Return an owned reference from find_cs_keyring() so that it will not get
-> dropped.
+> The user session keyring stays alive only because the session keyring is
+> pinned by current_cred().
+>=20
+> Pin the reference at:
+>=20
+> 1. find_cs_keyring()
+> 2. cleanup_cs_keys()
+> 3. create_cs_keyring()
 >=20
 > Cc: David Howells <dhowells@redhat.com>
-> Cc: stable@vger.kernel.org # v6.6+
+> Cc: stable@vger.kernel.org # v6.1+
 > Fixes: 8cf57d7217c3 ("s390: add support for user-defined certificates")
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
@@ -72,5 +77,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261114164139.4298=
-14-1-jarkko@kernel.org?part=3D2
+14-1-jarkko@kernel.org?part=3D1
 
