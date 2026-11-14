@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794685034;
-	b=4qzmQ6mB7Rane9CtT3bCIYpJPfI7tTsL1Ekzzg5Pfi26UgbyjUkX6CU+0p3+9qBdxZRO
-	 PMgCzsmwYI83JaCHZhgepVRB3vrSbCqTUMymck4HbSKisbJjfq4q8x9un3akkFqALwy62
-	 Me3lXbKP21hKCwswV38k+WXQ4yrdG6dZEW3UNKJeMmsZXwymiRH+hcobBS52xgrk+Knsb
-	 yUIm55KyWthyOY+M1tLO+5bVbj8oVMTUlLjyxzaHbtIG594Zta2pPvtgqUXU9v+dyU247
-	 kZ4mRWBFhoGSEJ0XKROAtZTC2oZVfo1xdPHQbNk0j1cUX4pX+uy9ws87Xa4M9siSQcQ==
+	t=1794685041;
+	b=tCgjSl/m4LZlE/zEm2o8lsRlITSZh83+k4z+locpfQGe++lzpmzftdxbOLhY0wofz1GH
+	 Gcc0LhXVGS2XzwA0P7eA5q6E7eZxBjGwkUL5lGOw4WRVUgwUhRN3P2VRvPoeZ/IS9uU6n
+	 UaY0Q9rfrm1uX8MKHC2lUyMJZT0YymrvmmUYWXtDfwRdiXJrQtWglTt+Awt3jQvtpkLqR
+	 rSreHEvbiNMHLFYc0JjlN6FSoyAVdfg8WKW16DuE6o0I/xrHoUeRr6V+0AvLXDMvblmgf
+	 vcxkYM77qNmq1WzMDoxlxdDJaScWrEx9QlcPpFMhZZ3Y5GTac2xBZOZjZXJDjjvqpAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794685034;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794685041;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=QGLMHkLcEdF2cQ9KeUVnz9Zxaf64JhgkVwoMNMb4SIk=;
-	b=IwLtmcd7J/fuFgtQKYKby+MF+9/BIeOZbner8pUd0UvoplU43/mORI80iDiu+7e9u6Jl
-	 rFKs9QfM5xfHqJxv1HHXTyKeatbdicCDZT+wBAQYBRMrYRRkDBucZBkXE4naZTlFhh0tY
-	 R+sw2Xdu+KbMDf1RgTzyeONPPG+LhYMJcTJ2lZ9+i6dNdjMEGvVGq6it2sV05cMTG3Tpl
-	 NIoNsWJoXzUohVnmwPpF1ByFLeuO7FB3xvuCtcfkq1baJsTt2dTvEWBwEjG0VfwXcBFw7
-	 a4gej+fh21fo9ZOSudabtEL85hpmnSC7U0isgarGIbjPHfk3GTTtaFL9uumMT/g4xYA==
+	bh=K9K7bqq7xK+KT7MgV6hqZn0DRh0a3ePkLyyaTd2Fqn8=;
+	b=VOokwV0rf1hcKMKuPpzbk3uYyaxiwFXhBo7n+OJGJIvYXhm+Mh3F8sAeV1L2osxvnqZH
+	 hSScUI5p/JRtRqN0yuzYFS8hU9Z+vZLnhwQW2cAB5ZPWE+xV/O1Zlv9pjhs+riSX4DeO6
+	 gLwc7JfMg/jNwmA0WVXzgXpspNXhYLXUeIyYFJGPQYVeZLR6aC1GNIZ9pLqqF1XwEdQ0c
+	 M70+ltoF1A4fOoRiXGQBrNxNC8wtPTWF/j5YYQBPll7A2/cLeyyZen3wlnk0BgEQLZ3VI
+	 qCDr34P+Hke9/kZx7Y1M2EASqNGrugY6Tpyrmjsi7u4t38G/7ckR4Mx4A7ZSEws+cVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A4PY2rb2;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SHpcVMrS;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 41160606A882;
-	Sat, 14 Nov 2026 19:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id B09A4606A89F;
+	Sat, 14 Nov 2026 19:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A4PY2rb2
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1B89E1F000C4;
-	Sat, 14 Nov 2026 19:37:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SHpcVMrS
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A30101F000C6;
+	Sat, 14 Nov 2026 19:37:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794685033;
-	bh=QGLMHkLcEdF2cQ9KeUVnz9Zxaf64JhgkVwoMNMb4SIk=;
+	s=k20260515; t=1794685041;
+	bh=K9K7bqq7xK+KT7MgV6hqZn0DRh0a3ePkLyyaTd2Fqn8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=A4PY2rb2tDOdZKNdHEfOMv9xXAeKcXcftWYLIrhlBPQYbacEynu2g4uOu3GZxc/lI
-	 AzGU9ucDBfGQLX55VxztUfZp4VgPHV2jmxAo8eAXBDvupWdJ47Yr7oMFNRA+Q8lJLv
-	 4vp7vYhcXIfNRyUvouU8ObuAmx0jEIa31BN87kDcxxkSXcawdx2nz3q7Qq/DadOK2N
-	 JFJ39DaKkU8WTXgpTqtM24lb1qiK9vUoKrwCMXiY1lJqHl46FgRvFKKApIHj2SImJr
-	 dRfvZTPrGMDPwcT2CzKp2ElryQNYuslU90LamSkFGjiKcOq/B9XL4cXwmRBI39QFYY
-	 1NZG6vqJH0m3g==
+	b=SHpcVMrSi7UbyrGVVXGvlWEc8UDn2o4HmbUkyBepV6cxUgSUdVSCfK0yfibs5GEoG
+	 rzWn74sw+VxL+A48nKkHQXtkNcHfsly/B+vDo5SbWI9HkpphA9HeSjz+ANAfRVAIfU
+	 BSy2x2Api8pZRFazGQi9VashXZfmT9zNwVfmijfy8XZOxS8b59mFQdG8T+msUZJH4r
+	 P+jy7yvbsFkyS2jrWVCqqj3Ha8jzzdBpZIyDCIMwcfzCAq1TIQ/qa2YaseW73556pE
+	 79SIgCapUPJoYePABLOE9jyz0b7JtUSjWJeh1AXqdRHMT1fGb3u/1cqnITohFqmQKU
+	 Tv+BZGjWJ86eA==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -90,9 +90,9 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Yanteng Si <si.yanteng@linux.dev>,
 	Yonghong Song <yonghong.song@linux.dev>,
 	stable@vger.kernel.org
-Subject: [PATCH v13 2/7] s390/cert_store: Return an owned reference from find_cs_keyring()
-Date: Sat, 14 Nov 2026 21:36:26 +0200
-Message-ID: <20261114193631.731615-3-jarkko@kernel.org>
+Subject: [PATCH v13 4/7] s390/cert_store: Read-lock keyring semaphore in invalidate_keyring_keys()
+Date: Sat, 14 Nov 2026 21:36:28 +0200
+Message-ID: <20261114193631.731615-5-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261114193631.731615-1-jarkko@kernel.org>
 References: <20261114193631.731615-1-jarkko@kernel.org>
@@ -107,77 +107,42 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Return an owned reference from find_cs_keyring() so that it will not get
-dropped.
+key_type->read() requires the caller to hold key->sem for reading.
+Acquire keyring->sem across the two key_type_keyring.read() calls in
+invalidate_keyring_keys() so the keyring cannot be modified between the
+size query and the payload read.
 
 Cc: David Howells <dhowells@redhat.com>
 Cc: stable@vger.kernel.org # v6.6+
 Fixes: 8cf57d7217c3 ("s390: add support for user-defined certificates")
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/s390/kernel/cert_store.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ arch/s390/kernel/cert_store.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/arch/s390/kernel/cert_store.c b/arch/s390/kernel/cert_store.c
-index bb218b42a2c9..0a10b31d68af 100644
+index bec95991edae..7d339fe2f6fc 100644
 --- a/arch/s390/kernel/cert_store.c
 +++ b/arch/s390/kernel/cert_store.c
-@@ -362,17 +362,13 @@ static struct key *find_cs_keyring(void)
- 					&key_type_keyring, CERT_STORE_KEYRING_NAME,
- 					false);
- 	key_put(us_keyring);
--	if (!IS_ERR(cs_keyring_ref)) {
--		cs_keyring = key_ref_to_ptr(cs_keyring_ref);
--		key_ref_put(cs_keyring_ref);
--		goto found;
--	}
-+	if (!IS_ERR(cs_keyring_ref))
-+		return key_ref_to_ptr(cs_keyring_ref);
-+
- 	/* Search default locations: thread, process, session keyrings */
- 	cs_keyring = request_key(&key_type_keyring, CERT_STORE_KEYRING_NAME, NULL);
- 	if (IS_ERR(cs_keyring))
- 		return NULL;
--	key_put(cs_keyring);
--found:
- 	return cs_keyring;
- }
+@@ -319,13 +319,17 @@ static int invalidate_keyring_keys(struct key *keyring)
+ 	struct key *current_key;
+ 	int rc;
  
-@@ -395,14 +391,16 @@ static void cleanup_cs_keys(void)
- 
- 	keyring_clear(cs_keyring);
- 	key_invalidate(cs_keyring);
--	key_put(cs_keyring);
- 
- 	us_keyring = get_user_session_keyring();
--	if (IS_ERR(us_keyring))
-+	if (IS_ERR(us_keyring)) {
-+		key_put(cs_keyring);
- 		return;
++	down_read(&keyring->sem);
+ 	keyring_payload_len = key_type_keyring.read(keyring, NULL, 0);
+ 	num_keys = keyring_payload_len / sizeof(key_serial_t);
+ 	key_array = kzalloc_objs(key_serial_t, num_keys);
+-	if (!key_array)
++	if (!key_array) {
++		up_read(&keyring->sem);
+ 		return -ENOMEM;
 +	}
  
- 	key_unlink(us_keyring, cs_keyring);
- 	key_put(us_keyring);
-+	key_put(cs_keyring);
- }
- 
- static struct key *create_cs_keyring(void)
-@@ -729,13 +727,12 @@ static int fill_cs_keyring(void)
- 		goto cleanup_keys;
- 
- 	rc = add_certificates_to_keyring(vcssb, cs_keyring);
-+	key_put(cs_keyring);
- 	if (rc)
--		goto cleanup_cs_keyring;
-+		goto cleanup_keys;
- 
- 	goto out;
- 
--cleanup_cs_keyring:
--	key_put(cs_keyring);
- cleanup_keys:
- 	cleanup_cs_keys();
- out:
+ 	rc = key_type_keyring.read(keyring, (char *)key_array, keyring_payload_len);
++	up_read(&keyring->sem);
+ 	if (rc != keyring_payload_len) {
+ 		pr_dbf_msg("Couldn't read keyring payload");
+ 		goto out;
 -- 
 2.47.3
 
