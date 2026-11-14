@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794685030;
-	b=b/X2YppUXnzr0MLBtL9DtZJgBQ1Qijx3IOMy5eDD1yqvF94divgo55K4h0uL70k5CZCW
-	 lvQmM0c4qCi5ZwrKDxikHK0/2h5B8/8imOJZSB6b7+Yh39T3wijo9IVRC/Szz7KHQBXvT
-	 sEI0sw0YpYw+ZSoCDoFblbAMQFx0PxyqAepgFimqMc8mgKqtMITTm/J6D1RNH0O0pZixX
-	 jrpTxXCEi/9WGGF2PcMi8g6Ow4U8uDWYFP9gXWOlmkGWPIDeZFmlFlWLsy8w8SLmJxrhF
-	 g4tqzsBV57Lun+hjJ1A7TNEK9pRErplddjmjl+VkSpsIwyLfKVwz11NeX3uLLhYvJHg==
+	t=1794685038;
+	b=pLmRd493TL3PE2pF3TtgHkgLMi/h8HfiBeR+H18X1ozQRAx22knyO7aZ2IhMfSQcyNrU
+	 6c7ONzu9sCvN7amp7Nc9GMyJ5sKJj7b9iiNGasKR9SmVPWZYkIhk1FtEvGk/J9iNKaHnz
+	 ZP1L62zTScyPJpg+k9GtT4w0PpIULLOuL3wi+kX4IsMUvd6YlPIT1qRuEz+Q7hxTNX7zB
+	 uz1cP1Q2NLHSABNn4hoBi0isF2U44npffR1DJG4qfmLa2W5aru2QtWbzfPvQdz0wNfbi9
+	 b40xAMPDdFaafJrAkXDZSGv15CuRHJCn4MxaUdn5ob4ZU2mntSdh8j5IO6qLEbEAWkg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794685030;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794685038;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=I0LV/JQpN8yDGYTTWcI8HQY8CmcG+PtzomAV8QbPhzo=;
-	b=A0kIDkP3vT4/lYDtQIzkHu1WsJezNzLMUYWjglMeltPWv/WDthMsj2UqvA7C79pM6IaU
-	 wDyxEcN2jOYXlpFDiTWWeI5LYwddf6fcNYMFYgNBIDtOnAjbAJkQzXnb25XoQBIg3iMfr
-	 Wkt3po6z5Rv4j7yxpJ/Z81DR5Deq+e+UHPw8jcLZQejU5opkgjBAKHaBFae5t6R1NadOs
-	 i2UaqN/+iQm22C7zXny0EUQ3wZPx8moeVffwlQRJ9zPuvyYIPOwuqdZvnTomzrpxdMMc4
-	 0Y2QHRP6dSFr+Q1uE+vAA+BlArpZhNfdFweGHmpiUHo6QFDWIKzyUkx1rJ1xxuYmDJQ==
+	bh=iKqMVfHU1BuNysZ1d5XUw+mMudQRssNyWcr4sCK+jH8=;
+	b=c1fJJI5fSZvMfBJWpjus7NFP64Ep4NqQHeyQnKb7+zgDG4YeEUOYbAZPKgRZLxd7vbmT
+	 BLID8n7tE3Du54CcboVFILmn1TBaVqQNBUk18E9bPAh9erhDjuxenIuDa1ZKrvn1GZB19
+	 T9UNPcRb+rY4jdCgMGicd6vf+1hRQX14fgpilLt+RpK/v9iBdQYEFxP82BL6OU5u+zk4E
+	 23VaodTvNEpIXEYMzYNQlQm7hTFX/5HdCpS5ojcDUJ0eYA5smdLyeXo5y0QbfbFUSIAL3
+	 fAORTh+ts2oTj8MKu3cJjW8knzMH6MX655NS/zxzNAs4GlC2b1kLZz/zi2ee6rVcXKQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I8M7ZqcX;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aWt5sU3V;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 3FD60606A88A;
-	Sat, 14 Nov 2026 19:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id ED900606A330;
+	Sat, 14 Nov 2026 19:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I8M7ZqcX
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 35DA71F000C9;
-	Sat, 14 Nov 2026 19:37:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aWt5sU3V
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id EA5801F000C4;
+	Sat, 14 Nov 2026 19:37:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794685029;
-	bh=I0LV/JQpN8yDGYTTWcI8HQY8CmcG+PtzomAV8QbPhzo=;
+	s=k20260515; t=1794685037;
+	bh=iKqMVfHU1BuNysZ1d5XUw+mMudQRssNyWcr4sCK+jH8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=I8M7ZqcXPaYP+mdRZNhZxMYywPZJiUvQb+iwmSYQzDymdOdCzutZNYY6iv7UAsLlU
-	 nkWOay5VHOv8GIiILtN1Gn0rByfzGhcthv+PFQXY8SQj15bp29vuvoOoMvIobKQBxY
-	 Ovilwdvw1CMKMxql3+68f5fJCK2OfhNsIU2rB4Mh93Rlx76jJubbwBfwGtiwQxQz8w
-	 1DkLel2vyVYIEaA2nrs9QONzWYUMuh/MGUx8sUp19ovIn3J2hJq1yGbheMoVPNDwHB
-	 qXFXivGOpOlF0sFNj39/AhCvUVIIT4cyVza+onJQwUx7IEg2/YARGsZqnXRKf8Cn/6
-	 UlG5OP0dsHgmw==
+	b=aWt5sU3Vw11O4Aj50AEJ4FXTKi65ACjyVP5/vff5wDsnSJlAAOez5K6ONxMpchwqZ
+	 aS/96pBSMdXm/XoKpstt80SjeNLXVEh//pu/IQKs/QBHpuyXZvlhu/UP5nbRskJvWx
+	 dUFsfyzGxqhjbSqVM/MCCwNLa6itmbnYGoCWcvd9YLAnHGkhotYF49WeVzLyoL6KBw
+	 zDWuBV4YMIhOjNqDWPf9O0+KBLQ6cZAtrHUIH/ocCPoBHpFzataDfS3qL2kL1Jgg51
+	 E7GYPQTlDGWjia5kcTrs1E3YBW05XExAkeFVaIeQTYNQdJ3KpPVIsd/Kmk/kzpb3f9
+	 BfyTBw4tTqz9g==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -90,9 +90,9 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Yanteng Si <si.yanteng@linux.dev>,
 	Yonghong Song <yonghong.song@linux.dev>,
 	stable@vger.kernel.org
-Subject: [PATCH v13 1/7] s390/cert_store: Pin the user session keyring
-Date: Sat, 14 Nov 2026 21:36:25 +0200
-Message-ID: <20261114193631.731615-2-jarkko@kernel.org>
+Subject: [PATCH v13 3/7] s390/cert_store: Skip keys that disappeared during invalidation
+Date: Sat, 14 Nov 2026 21:36:27 +0200
+Message-ID: <20261114193631.731615-4-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261114193631.731615-1-jarkko@kernel.org>
 References: <20261114193631.731615-1-jarkko@kernel.org>
@@ -107,98 +107,48 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The user session keyring stays alive only because the session keyring is
-pinned by current_cred().
-
-Pin the reference at:
-
-1. find_cs_keyring()
-2. cleanup_cs_keys()
-3. create_cs_keyring()
+key_lookup() can return ERR_PTR(-ENOKEY) for an unlinked key. Skip such
+keys instead.
 
 Cc: David Howells <dhowells@redhat.com>
-Cc: stable@vger.kernel.org # v6.1+
+Cc: stable@vger.kernel.org # v6.6+
 Fixes: 8cf57d7217c3 ("s390: add support for user-defined certificates")
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/s390/kernel/cert_store.c | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+ arch/s390/kernel/cert_store.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/arch/s390/kernel/cert_store.c b/arch/s390/kernel/cert_store.c
-index 998f2da56175..bb218b42a2c9 100644
+index 0a10b31d68af..bec95991edae 100644
 --- a/arch/s390/kernel/cert_store.c
 +++ b/arch/s390/kernel/cert_store.c
-@@ -307,7 +307,6 @@ static struct key *get_user_session_keyring(void)
- 			   PTR_ERR(us_keyring_ref));
- 		return ERR_PTR(-ENOKEY);
+@@ -331,17 +331,25 @@ static int invalidate_keyring_keys(struct key *keyring)
+ 		goto out;
  	}
--	key_ref_put(us_keyring_ref);
- 	return key_ref_to_ptr(us_keyring_ref);
- }
  
-@@ -352,11 +351,17 @@ static int invalidate_keyring_keys(struct key *keyring)
- static struct key *find_cs_keyring(void)
- {
- 	key_ref_t cs_keyring_ref;
-+	struct key *us_keyring;
- 	struct key *cs_keyring;
- 
--	cs_keyring_ref = keyring_search(make_key_ref(get_user_session_keyring(), true),
-+	us_keyring = get_user_session_keyring();
-+	if (IS_ERR(us_keyring))
-+		return NULL;
++	rc = 0;
 +
-+	cs_keyring_ref = keyring_search(make_key_ref(us_keyring, true),
- 					&key_type_keyring, CERT_STORE_KEYRING_NAME,
- 					false);
-+	key_put(us_keyring);
- 	if (!IS_ERR(cs_keyring_ref)) {
- 		cs_keyring = key_ref_to_ptr(cs_keyring_ref);
- 		key_ref_put(cs_keyring_ref);
-@@ -373,6 +378,7 @@ static struct key *find_cs_keyring(void)
- 
- static void cleanup_cs_keys(void)
- {
-+	struct key *us_keyring;
- 	struct key *cs_keyring;
- 
- 	cs_keyring = find_cs_keyring();
-@@ -390,20 +396,33 @@ static void cleanup_cs_keys(void)
- 	keyring_clear(cs_keyring);
- 	key_invalidate(cs_keyring);
- 	key_put(cs_keyring);
--	key_unlink(get_user_session_keyring(), cs_keyring);
+ 	for (key_index = 0; key_index < num_keys; key_index++) {
+ 		current_key = key_lookup(key_array[key_index]);
++		if (IS_ERR(current_key))
++			continue;
 +
-+	us_keyring = get_user_session_keyring();
-+	if (IS_ERR(us_keyring))
-+		return;
-+
-+	key_unlink(us_keyring, cs_keyring);
-+	key_put(us_keyring);
- }
+ 		pr_dbf_msg("Invalidating key %08x", current_key->serial);
  
- static struct key *create_cs_keyring(void)
- {
- 	static struct key *cs_keyring;
-+	struct key *us_keyring;
- 
- 	/* Cleanup previous cs_keyring and all associated keys if any. */
- 	cleanup_cs_keys();
-+
-+	us_keyring = get_user_session_keyring();
-+	if (IS_ERR(us_keyring))
-+		return NULL;
-+
- 	cs_keyring = keyring_alloc(CERT_STORE_KEYRING_NAME, GLOBAL_ROOT_UID,
- 				   GLOBAL_ROOT_GID, current_cred(),
- 				   (KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW | KEY_USR_READ,
- 				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_SET_KEEP,
--				   NULL, get_user_session_keyring());
-+				   NULL, us_keyring);
-+	key_put(us_keyring);
- 	if (IS_ERR(cs_keyring)) {
- 		pr_dbf_msg("Can't allocate cert_store keyring");
- 		return NULL;
+ 		key_invalidate(current_key);
+-		key_put(current_key);
+ 		rc = key_unlink(keyring, current_key);
++		if (rc == -ENOENT)
++			rc = 0;
+ 		if (rc) {
+ 			pr_dbf_msg("Couldn't unlink key %08x: %d", current_key->serial, rc);
++			key_put(current_key);
+ 			break;
+ 		}
++		key_put(current_key);
+ 	}
+ out:
+ 	kfree(key_array);
 -- 
 2.47.3
 
