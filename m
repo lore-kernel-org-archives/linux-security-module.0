@@ -1,80 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=66.163.184.207
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794680096;
-	b=rl7xR51fGbskdtjlpt7VuOR988Wfu45Q4fcoghFIywJx6GxJDfnC6G7mM2pvLFVqs3Vp
-	 U3P8P5D25nlw9bXBwBJH3vu0J12E6UBvrKIHLdLoUVAlcgXpJB58cO88vzWAzVpwR/AZV
-	 OERDmmJ+O0iLzxMvG++xEyeHlW7EdiEE6Hj3nTnBuFEQSeCOkzRzXiZN9PNCvDiu3arpQ
-	 FMZWC7plURotkj7TqQzEQcuAgJ4ak+OOTIlE408fIN2YkEAFnzCLWEPv9PEx7Hla6ukUO
-	 aw+umJ7w0Er5G6IgX4QdMK3kenhYkBURRCnQvEfXreXjMOSySNKqQTsTEbdwThPX8OQ==
+	t=1794685026;
+	b=LPL6eyb98Fe+wKU1H3NGs441KLQAism4V2Or9/POYHnW2rFu0IoN1DBWw4Fi0vDA68WL
+	 anjXknt+bQ4TxJWOyq2+jzaPNZ0ojZ4QNchSU8kOeeEr6/UMKU15HxrlrN+LjqZli6Tnq
+	 Lquwn1XT9/lxDDUqE0wD7AMu0cE3Au5uaDYqO3EkEKbvpwWU1oD8QXxJQ8SJdQ4UHnGCh
+	 SdIUhULSJcXuSFGD88w+JMAZezlNFIBBSb4vDL9OP3ZNlZPGKa4vyy3xSyKEW8rFdb+Nb
+	 WjyqisoSl091xrbhSkI42kzeenP15ue89GXczReQPg8ZbjXhiR+iVEP8ZHxItRlrSQA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794680096;
-	h=DMARC-Filter:DKIM-Signature:X-SONIC-DKIM-SIGN:X-YMail-OSG:X-Sonic-MF:
-	 X-Sonic-ID:Received:Received:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-Mailer;
-	bh=BleYk407yT9mH7kAH7nAMJTsO4RLTrDZOb9d/32h1tE=;
-	b=j82a+qOEPczxh6f7PCJdeaKPHv2X5O4sGn+NaNxcWnR78Hgcs4SAC/wJcxVZTys3Mxz4
-	 pEi4aKeJa7q7/u+TIrh798lV0WtmFF9agndU9+YSZepdA93emKcdxr56fkw67+Y+NRq6r
-	 TG4YIvC1hxUs0FZnh+SBeAOehHUWiogN8Vwmlnmhx4lXpZ25xfK0cXY8Qc2nCx6NHvrpc
-	 qTnClRsZu1CrllilBXE8LWKZ7PsfUg8tjTi310/UCccTgTnJElKpyFgeJ2ngCZwhIWbRZ
-	 iPj9Au/AVVTcKc3a3S4O/bQd66aGz92PmHhC037ls5LoG+0rap5hargORKlzmkkQBsw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794685026;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=XneqJcXXDs1SDzljrHLo5NmhOYzTo2Lb8/Pv0fFjlRc=;
+	b=XOUxEwy0hp6jAh7hwdS5qD9GdpWvIsnksL8QugelClw++Tp6aq313WXOk7J6Hg65iKqJ
+	 /nk3aRZAg7/QJ/EvOs+v4nxoQhhcJ/pHY2JP6dwGdu0uzsif33yDBM1HEdhT4OHjJKMQG
+	 ADVkwOcHgV3OzGZZdGB8h/6ei4hl6VUBrQnHoWVFlvCQkn9rCKXpXLvAx//QehAhr1l+r
+	 oQwQ7up7JGktd5vIR3rmf7kzKOT2eq/u+98bZuSbmKE1HEMPi5LRBGDx7ZXo3NjOAA6EA
+	 FIllE5vCcosjNL5vXiaQKs9+xyb46484RezVBwlCheycNzzS314rJlORNgGmsKSySCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=schaufler-ca.com;
-	spf=pass smtp.mailfrom=schaufler-ca.com;
-	dkim=pass header.d=yahoo.com header.i=@yahoo.com header.a=rsa-sha256 header.s=s2048 header.b=NIfahSOe;
-	arc=none smtp.remote-ip=66.163.184.207
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com (sonic301-38.consmr.mail.ne1.yahoo.com [66.163.184.207])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZGvn9b+E;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090AF606A327
-	for <linux-security-module@vger.kernel.org>; Sat, 14 Nov 2026 18:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 090AF606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=schaufler-ca.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A9A4E606A323;
+	Sat, 14 Nov 2026 19:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.a=rsa-sha256 header.s=s2048 header.b=NIfahSOe
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1794680095; bh=BleYk407yT9mH7kAH7nAMJTsO4RLTrDZOb9d/32h1tE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:Content-Type:From:Subject:Reply-To:Content-Type; b=NIfahSOeSP4llq4FDwqsWp7toBqK+uLIN+4XdTnK5YvFZKGfS2khmPygy+ALsjWyO3C4/FZGtqGy7SYEAeoUC2vhyOvGhpLnbbprNd6SiStKpk45n7mVSE5UO62kcHcnW0aaWwAjs7+F3M3ncNnVdtY7XXcu0Jt2lr14r2SmwokPT5izVqgaCO7g9aXsgzaAs4q8Z9oKoby4EI5r6y/NrUtfTmy6BmsFczOFk/QaokmnqugE9mvd22TtR+U8FgibbEYOgaIEOgT7eqMAE6OlIymrbH3hguZnidd2lvS1obBFPeVTLLQzDHxkVH0LY0iWpuA9Yk1KD//6+baPR1Yn+Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1794680095; bh=mOIFE8fX/Gl137wkql/ygLaP/xBkJLcSPKXEuc9rl8h=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=PIznIOLXqv5+vuvIT9e5jp7WkNumn8N9u5uSxLnGOqKYUlxpGUJ88cAMgvK8Hd6imt8NIDLBq18MyrgsQg2A2sKkvY4Ji6PRFfD1M2tSWgc8w5On+b0Z1NnIE9HWUwSxzdo+KyhlVCta+GxJpJPdts4jogCnGIYtLt2YapPHrsTmQ/O2w6fTbJhXpKhR1MchOnp0LibO55VtV4BFcb7Ncz7aXA1HHD+k3+3emUBF8AqQM4jyaC/jV0N5V3XujxNdlC9h2ieQKQNUpSj5ErAM9pQrKwM/junBiQ2qnSY8cL4/Y4cvi1aXV6A0wYeuO4sLs9sRf1jxJm8Cg6fS2IWidQ==
-X-YMail-OSG: YE7jjKAVM1nOAp.RVJwdTtj8.3XQMUJjefbPhiV4FP5SdLjDqAR2iJHN_kUY2s5
- 6veYkZ83WZ_OtTAwAM.2LLQO47t7WhsQREIYOCcXG42SCvraxZGkoLYyHABRWlya5NWFMwSs25X1
- bdKiO3mRySWW4BH7sryxWRTMRVpv2tylfjtNA6KIA7_bgjxjYkLiORpWTJa2mWcHkfcodz947EmG
- zmvMUA9t34X.3pyDriRCr_i6O6HAOrV_Z1aIzoJG4Zjr_N9Vd7sOynwEVqByEyK7Vl5hwuiXosmR
- d.cu22r2YDCihuu.EPj1ZCKuzYqht9Dn28AbXgrBdjmQRJUt7OgnIbzvZKh3tL8IvnM.qU5rWbCy
- aI0bZek21VChUo3wEmVwY6gt1O1XsNC.zgQMXYkpMwkOf.Jl3Jdo3wHu2R.01WtxxcIhqH4A3VI.
- PZoPKroROEbuEub8iyNqJsSPB5WIA99JoyOCdvlsZooS5xdPV8mAscffAYKxKsYXgRCRe1J1fIaz
- .1SPP.h7CIgRU0qmHfgzlrDuQjncWiEbOcK2rN9NdeiN7jDtJwBBbriSvgbmDF3WOEksmEy1TKe6
- 5IbMiO4BQOgFqFkwRaE91L5AH3qbrrUlPWbxfrccx0X4HeNj_OPPHVxXFOtFZC1CjSlydzFBrH4q
- _OF8tp6WGXOFCvAoc5DuWgJfG77Io9T7gvyK1hoCam91nzsOM2KYDKcD.3srNgpm.dMrNjzkBQxn
- 85M75vg4bJ8HYx9VabF9FabIpUmRxEzJeQSTb.z2gVAhYGHvz7YjJfqFabTICVSxnTo9uoInrxW3
- cScmTgj_8WOXFrIw.7VT.ZCvq5vNJ25.KPQqUfZ6uYADlvFsMUAn8PRPoPxuvmI5qx2PIr1dDlSg
- 45TrIE_zkU9YyZrERqtgdynHztlbOnK36GmDA8wTE0qBco9xQ7TS9DVAJRXpQdHa5SSKUgdxub9m
- Xbdd5ZhhWYR6MM0zIjF3pnMCey1Xa9UmcFbzOy29v_pmVLEkyjfxO0QgY3y4hrIwSnV.TtmlKJ00
- 6qmUeZ5rrdr6rNm3xcyvjdni0NqlFB1Ei3_cMvYWk_g7HdHhySSwKy9ccMlo6eIQ1F6z1zJbWjAx
- _rJ6ME2vEL9ABOfyxXDvbHnTUbAFyw5IPxSxPCo8Png0Y6xzpFX3k7U1e3QlAxdNUCw3IPRTeOJf
- bG8blKVniS77v248rHne6Fv5b_ul1.uI9smPAW3DOiTDm2OVFsEzNBI6rZ3zkuL356efZfbSIXKZ
- JHj8ZfJPyoKS4TU2ndmwOLQwZHtKWIM_x2N6TbXmW2gXSA6wYwngmehCo8DVgWkFEmI4wSth6h9b
- 79JaGEQSuRSOmDgFw08LLjPH162COnlz1MNWdk7AyCQh_71PgseAkbLl3IdUiwsGjKL97fS3BUvm
- MxoYGZCGC7PXxInwO31.QwwHefqbH.jtVqMH8WM8LopHp5dR_V.tJD9w3uRpj5awq55pxAwxm.L4
- ARKRoBMKdBczNyTzvByFpe_pUUEJXBUKG16YjRPV5KcRYLYs.9Xsp_krgey1_9gVf5QKuzOKPkkk
- kB.4WfXA5p9hxPy6GrUif6eQSMi_HCUAq2IAMvnqvIwueQx6zn9BehppWe2j5ZiXe4rcsZyDrEzt
- Dch7j4J0McZbsJGq_L4I2ZJWXm6ljC9YMmwGzjrge8.nicJTfjAk8QtqqxY_a4ambjg8RQjOL9Dc
- 8EzkZw4CVKzyY0Ea2Bcn5VIe3TTxkDB1UtUIsS3U06CtwPI1ehNAQZFecbYD5pNULkNHKU6fsZlr
- bVUmp._ZqtZYqW2EKb3WFFn0etATQYHgerTpV_eRtKTcHAKm4mzmfcECmSfGObPlf_UH.xllCx9.
- X714L_Rn_6WqkSR1U0ZbT9nMUP335C6B5uXjxssHiixfNPb6q65QyPHwa8PQp1MX6yZsvJsRUfGL
- plLoE4LlJQ88iCL65q9zgsD0L7CEXHHjfy0GXaKvcfUlwzS9X7oH20DMscbgWuDn5LufThMXMlKR
- 9BmsraA7fwuPGfoSeoGSanyxg7_kMjXu1AaAwdfzH56qgwKP4VOfXzsrRuyQ7.LmnuCqseX9OGas
- y2bD8dWpMeTjGoGmEYevO_zEf8R4kPJIjnY54CVptnVgTQthgziEUstCpmmxcki1nZaPes4k3kFO
- Rvm_ZRwSDETICrVMaBmaG6HWMncQQuN6cuNNCCfQefzsmKWAxsNDLGZTzts7BU6OUnklhB0fzHYj
- pBsfA_0NZJUBCLXP.66c.8hhxxN69zZcPCdNW3_vYc0N2vmW9nxJMRav072zAHbWT8eOvUfGAGvq
- AlJOcf.lTolyRxiez0EKltmSHjA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 6bbeab83-61d7-44aa-ba66-e13ae870518d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Sat, 14 Nov 2026 18:14:55 +0000
-Received: by hermes--production-gq1-fd7994565-ftb5j (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 93152b98dffd162510b663d2c83ea3b9;
-          Sat, 14 Nov 2026 18:14:49 +0000 (UTC)
-Message-ID: <58bb5c0e-6627-488f-a400-bf9cd5b60b22@schaufler-ca.com>
-Date: Sat, 14 Nov 2026 10:14:46 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZGvn9b+E
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7F5541F000C4;
+	Sat, 14 Nov 2026 19:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794685026;
+	bh=XneqJcXXDs1SDzljrHLo5NmhOYzTo2Lb8/Pv0fFjlRc=;
+	h=From:To:Cc:Subject:Date;
+	b=ZGvn9b+ERMnTRFnA/PdLKCjFSduLqh7oholh9nZekcdlH1xxJqnT4IJDxA/m6Ej8i
+	 lb+G7w5dVHHp483lUdvtkvU83zbyoAa+xENfFkg+tCWm/FlOdub0l/usU7tvoxdRYo
+	 WQhCh2w2niI+u+8AUbcQKEGlM/G8gighctRJcJuRd92G4RQ4skmXI+7oe9BOUVhmYE
+	 yKwRKcaTRxU8rGLXbD4cFYirs+ifzkY2IZXDjN6Y5EFoLJB46novD42+r7LVE9fbDy
+	 6tkyVjc+Ut0lBphV7nfiZuxSP64CWdeTCH+5m70LBDHqGuGGJuH/H4+jPaXddEPQGb
+	 bqerfqzg9+fEA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	bpf@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	fsverity@lists.linux.dev,
+	keyrings@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Alex Shi <alexs@kernel.org>,
+	Anastasia Eskova <anastasia.eskova@ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Ignat Korchagin <ignat@linux.win>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Ihor Solodrai <ihor.solodrai@linux.dev>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	James Morris <jmorris@namei.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Song Liu <song@kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: [PATCH v13 0/7] KEYS: Replace assoc_array with rhashtable
+Date: Sat, 14 Nov 2026 21:36:24 +0200
+Message-ID: <20261114193631.731615-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -84,58 +102,224 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] LSM: check if lsmprop_to_secctx call is supported by LSM
-To: Tomasz Unger <tomasz.unger@yahoo.pl>,
- Sebastian Bockholt <sebastian.bockholt@bevuta.com>
-Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com,
- serge@hallyn.com, jmorris@namei.org, audit@vger.kernel.org,
- John Johansen <john.johansen@canonical.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260619171945.1617498-1-sebastian.bockholt@mail.networkname.de>
- <20261111211722.69639-1-tomasz.unger@yahoo.pl>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20261111211722.69639-1-tomasz.unger@yahoo.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.27017 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
 
-On 11/11/2026 1:17 PM, Tomasz Unger wrote:
-> On Fri, 19 Jun 2026 19:19:45 +0200, Sebastian Bockholt wrote:
->> In include/linux/lsm_hook_defs.h, lsmprop_to_secctx is defined with
->> a default return value of -EOPNOTSUPP.
->> The function bpf_lsm_lsmprop_to_secctx, defined in
->> security/bpf/hooks.c, returns the hook's default value. Therefore,
->> directly returning the result of the bpf_lsm_lsmprop_to_secctx call
->> propagates an unchecked EOPNOTSUPP error.
-> [...]
->
->> -		return scall->hl->hook.lsmprop_to_secctx(prop, cp);
->> +		error = scall->hl->hook.lsmprop_to_secctx(prop, cp);
->> +		if (error == -EOPNOTSUPP)
->> +			continue;
->> +		return error;
-> Hi,
->
-> I ran into the same problem independently and would like to revive this
-> patch. It fixes a regression that is still present in v7.4-rc2, in
-> next-20261111 and in the current audit and lsm dev branches.
+The keyrings subsystem is the sole user of assoc_array. It has over 1700
+lines of code, no test suite, and a long history of bugs, with LLMs now
+finding more.
 
-As currently implemented the LSM infrastructure supports only one
-LSM providing conversions between the LSM security state (lsmprop or secid)
-and the security context (secctx). I have been working on removing
-this restriction for the past 16 years. It isn't done, and every time
-someone tries to do something that expects otherwise it breaks. The
-BPF LSM registers hooks that do nothing for (most) every case. That
-only works if the BPF LSM is registered after any LSM that provides
-real hooks. We've told y'all that many times.
+This unfortunate outcome has evolved over time by large from the shortage
+of in-kernel callers, time bandwidth and 3rd party contributors.  What the
+keyrings subsystem needs is just a generic key-value store, which performs
+well with sparse key sets. Replace assoc_array with an rhashtable-backed
+keyring index and remove assoc_array from the kernel.
 
-If you really want the BPF LSM to stack properly you have options.
-You can stop registering hooks that can't function properly in the
-stack you want to use. You can help with getting the stacking complete.
-You can continue to ask for individual tweeks each time they come up.
+CHANGES
+=======
 
-Maybe taking this change is the best we can hope for. My frustration
-level is getting pretty high with the whole situation.
+v13:
+- s390/cert_store: Hold key reference across key_unlink(), and ignore -ENOENT.
+- s390/cert_store: Add "s390/cert_store: Read-lock keyring semaphore in
+  invalidate_keyring_keys()".
+
+v12:
+- Fixed Sashiko reported issues in s390/cert_store patches.
+
+v11:
+- RCU-safe iterator for keyring_read().
+- Addresses s390 issues. I won't carry them for long in the series.
+
+v10:
+- No changes since the previous round. This is a sanity check round
+  given the lack of feedback to v9. I'll apply these patch very soon,
+  unless nothing (relevant) comes up fast.
+
+v9:
+- Replace __free(kfree) with explicit cleanup so early goto out paths
+  cannot bypass initialization of the link pointer. Preserve kleave()
+  tracing on all exit paths.
+
+v8:
+- Fixed broken rebase.
+- Restructured __key_link_begin() a bit as a response to a minor
+  complaint from Sashiko.
+- Fixed a minor glitch in __key_link_begin(): now also first invariant
+  invokes kleave() on failure.
+
+v7:
+- Rebased.
+
+v6:
+- Eric Biggers: Set .insecure_elasticity = true in keyring_link_params and
+  drop the -EBUSY retry loop in __key_link_begin().
+- Addeded Reviewed-by's from Eric Bigger and Ignat Korchagin.
+
+v5:
+- Eric Biggers: Include <linux/jhash.h> explicitly in keyring.c.
+- Eric Biggers: Document why hashing type/domain_tag pointers with SipHash
+  and truncating the digest to 32 bits are safe.
+- Eric Biggers: Rework the commit message for "KEYS: Replace assoc_array
+  with rhashtable", including behavioral and operational changes.
+- Retry rhashtable_insert_fast() on transient -EBUSY in __key_link_begin().
+
+v4:
+- Eric Biggers: Correct the kerneldoc summary for keyring_is_empty().
+- Eric Biggers: Truncate keyring_index_key hash to u32 and drop index_id.
+- Eric Biggers, David Howells: Use a proper struct instead of a two-element
+  array to pass the edits.
+- Eric Biggers: __keyring_link(): Call key_put() in the rollback of
+  rhashtable_replace_fast().
+- Eric Biggers: Retract from using __free(kfree) in keyring_get_index().
+- Eric Biggers: Reuse keyring_link_key() in keyring_obj_cmpfn().
+- Eric Biggers: Document why keyring_index_free() uses queue_rcu_work().
+- Eric Biggers: Fix the commit message for "KEYS: Replace assoc_array with
+  rhashtable".
+
+v3:
+- Since David is away for the next week I decided to address the
+  low hanging fruit that I reported myself.
+- Unified and sanitized function and variable naming and removed
+  unnecessary asymmetry e.g., by renaming keyring_remove_all_links
+  as keyring_index_free, 'links' as 'index' and '_edit' as 'edit'.
+- Flattened the implementation by refactoring out some useless
+  wrappers and other constructs.
+- Addressed continuation after triggered WARN_ON() on at the three
+  sites that I've described in my email response to the previous
+  patch set version.
+- Reworked keyring_read() so that it triggers the scheduler between
+  the iterations.
+- Dropped "Assisted-by: LLM" tag because checkpatch.pl told me so.
+
+v2:
+- Tried to address all the issues pointed out by David and Eric. Tell me
+  if something was ignored, as that would be an unintentional mishap.
+- Updated and trimmed the source code comments.
+- For assoc_array_edit I decided to go with two-element pointer array,
+  which shifts a bit what David suggested.
+- Dropped is_keyring flag. It was so obvious call so I mention it here
+  just in case because too obvious maxes out my self-doubt ;-)
+- Used cleanup.h primitives where I possibly could especially in order
+  to make fallible initializations more bug-resistant.
+- The already-ack'd bug fixes are included but will be dropped as soon
+  as I've sent them over to Linus.
+
+VERSIONS
+========
+
+- v12:
+  https://lore.kernel.org/keyrings/20261114164139.429814-1-jarkko@kernel.org/
+- v11:
+  https://lore.kernel.org/keyrings/20261114161211.376859-1-jarkko@kernel.org/
+- v10:
+  https://lore.kernel.org/keyrings/20261113161836.3587552-1-jarkko@kernel.org/
+- v9:
+  https://lore.kernel.org/keyrings/20261110053323.2936729-1-jarkko@kernel.org/k
+- v8:
+  https://lore.kernel.org/keyrings/20261110044043.2608600-1-jarkko@kernel.org/
+- v7:
+  https://lore.kernel.org/keyrings/20261110033738.2495880-1-jarkko@kernel.org/
+- v6:
+  https://lore.kernel.org/keyrings/20261107195605.3929659-1-jarkko@kernel.org/
+- v5:
+  https://lore.kernel.org/keyrings/20261105031401.956609-1-jarkko@kernel.org/
+- v4:
+  https://lore.kernel.org/keyrings/20261029232437.2581640-1-jarkko@kernel.org/
+- v3:
+  https://lore.kernel.org/keyrings/20261025001105.1824178-1-jarkko@kernel.org/
+- v2:
+  https://lore.kernel.org/keyrings/20261023120953.1206778-1-jarkko@kernel.org/
+- v1:
+  https://lore.kernel.org/keyrings/20261016215326.4110064-1-jarkko@kernel.org/
+
+Cc: bpf@vger.kernel.org
+Cc: dm-devel@lists.linux.dev
+Cc: fsverity@lists.linux.dev
+Cc: keyrings@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Alex Shi <alexs@kernel.org>
+Cc: Anastasia Eskova <anastasia.eskova@ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Benjamin Marzinski <bmarzins@redhat.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Dongliang Mu <dzm91@hust.edu.cn>
+Cc: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Emil Tsalapatis <emil@etsalapatis.com>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Ignat Korchagin <ignat@linux.win>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Ihor Solodrai <ihor.solodrai@linux.dev>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Mike Snitzer <snitzer@kernel.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Song Liu <song@kernel.org>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Yanteng Si <si.yanteng@linux.dev>
+Cc: Yonghong Song <yonghong.song@linux.dev>
+
+Jarkko Sakkinen (7):
+  s390/cert_store: Pin the user session keyring
+  s390/cert_store: Return an owned reference from find_cs_keyring()
+  s390/cert_store: Skip keys that disappeared during invalidation
+  s390/cert_store: Read-lock keyring semaphore in
+    invalidate_keyring_keys()
+  KEYS: Introduce keyring_is_empty()
+  KEYS: Replace assoc_array with rhashtable
+  lib: Remove assoc_array
+
+ Documentation/core-api/assoc_array.rst        |  564 ------
+ Documentation/core-api/index.rst              |    1 -
+ .../zh_CN/core-api/assoc_array.rst            |  473 -----
+ .../translations/zh_CN/core-api/index.rst     |    1 -
+ arch/s390/kernel/cert_store.c                 |   60 +-
+ drivers/md/dm-verity-verify-sig.c             |    2 +-
+ fs/verity/signature.c                         |    2 +-
+ include/keys/keyring-type.h                   |    1 -
+ include/linux/assoc_array.h                   |   88 -
+ include/linux/assoc_array_priv.h              |  178 --
+ include/linux/key-type.h                      |    1 -
+ include/linux/key.h                           |   29 +-
+ kernel/bpf/keys.c                             |    2 +-
+ lib/Kconfig                                   |   14 -
+ lib/Makefile                                  |    1 -
+ lib/assoc_array.c                             | 1724 -----------------
+ security/keys/Kconfig                         |    1 -
+ security/keys/internal.h                      |   14 +-
+ security/keys/key.c                           |   22 +-
+ security/keys/keyring.c                       | 1016 +++++-----
+ security/keys/request_key.c                   |    8 +-
+ .../dm-verity/test-dm-verity-keyring.sh       |    2 +-
+ 22 files changed, 541 insertions(+), 3663 deletions(-)
+ delete mode 100644 Documentation/core-api/assoc_array.rst
+ delete mode 100644 Documentation/translations/zh_CN/core-api/assoc_array.rst
+ delete mode 100644 include/linux/assoc_array.h
+ delete mode 100644 include/linux/assoc_array_priv.h
+ delete mode 100644 lib/assoc_array.c
+
+--
+2.47.3
 
