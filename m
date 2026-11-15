@@ -1,68 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794751191;
-	b=LvCr21HYL5syNnn4I7ngGLPdDOP2C30rrPfYzHW6kOzCkK+ARNKdh3zc3+V/9/JrjZPj
-	 JJjf/Kwsnxz0HSH+miSmRhhmNn5HFuHm4+AgtgdouOYzKzQtUkSzltEjRcqsoNu+xWwQY
-	 RJ06WyLk+OpBMPREKIJ0bZ/779IovRNkgF2ymItzJYla0QiWS52ikus5zp6SUvFUwuo9a
-	 Xp2Bcivmcygo8aMSJO5XB/qrp1clPaOq9M8csMjJYvv7LKkE6Xuh83xx35L8/tcGDRD4u
-	 nxSvu3eJpS3F2lwdwXnnWoNcpYWbiwwVAbldVe6jCyeaZFuI5uhOO1zflnd6VFGsoSg==
+	t=1794751333;
+	b=gOcqrr008jr0lmSy4sQlOfCga4d64py5MxBwfnfrFARwW6yas912Mobv1s6kGKy3CNLH
+	 xnbi2vhAZj6cL1I+fwj73DqcPhmo4uS0j5uzggom1pp9QNB3zQeMOjmyC5rhGak5UoYxg
+	 pIhHb1aCFEtwKKTClRB5rZ/PWg4kbXluMVgc9LmAO9PWmyb7TNjWZkqKyMs1fII0mWTBM
+	 cjlUPuhDTPG5NRtfMdS3ReOR//JgZgv8JPBFCaXAj4ATEmN8eNy0MXQGHnAKtmucnnTTr
+	 Kf7v5NMPPy2snlEEPhcdiJOlJmVyS1FHpOYOT43pXUhHHvuY1AO6AnCn7AN5HlIpCJg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794751191;
-	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
-	 X-QQ-XMAILINFO:X-QQ-XMRINFO:X-OQ-MSGID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=EeqP4pkKpTrcPcDp8zrtcPNrjaDgaSyW6ZXH4x5jWOM=;
-	b=UyOxqloplBhLSiZQyFYZIICYdMRy4Ykh+oqJvOrmVaIc/cH0crSeDOetkOjVtW0/ZLJW
-	 dCCcH+xwMKDDxn99MoEATphjIL4iyrYNl/TSfvMnqY20AJjXys49mJ3QrHn/EdGXpPJiD
-	 CjPTRE0Hrgt7MQIlNfrk+HbpO1rBQ/U50J8iznTnelWhjDIiOsQjhfxg3ultFNuuSumqx
-	 FDtgHzqY+WqKLNEmp8ib4bBOydXeO0PQhk31p+StZjVlYd95zXYro+OgV1hEbKJGoB0/1
-	 th/i9VX89X+YDehrpOv9r5YoIjkNIPZbM+bfYRo87t1MQvxVXs4Jci5Av7m5EwK3K5A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794751333;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=C0hZCZ1HlArCnNua5WGJXPR4s/dAC6fjh9Brf5xLf/I=;
+	b=W/3U+seu0eiSNU1FhefTu/lo879ac/tagtIXPJ+Egy6yptHA16acTNbzsIY8sT8Qkej1
+	 82ZFGcjFLYfCwRjO0nYeNiyg8ggVf1xCSxSzaGRlW0n2beTNTw5adLuBuw2gwFUApebBA
+	 nihxPmruiCGh3vbacdlaGAhqU4bi6NJnt8n82n+TV6YOnI6NLlfN5qlOIUmYSZxmO7TdN
+	 SiIyTb/XBS8AFu24g6OYcmCtDv7LEPttKJNqMiSaZ8xTauRQSq8jki7V4+U/tqfeaijOs
+	 gzLjPtj4IuZhD2xi9BMwdpijlz6UYA3+/qp9oMxUkdjvuOsPCLTatwMcPuaBizJ8lIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=qq.com;
-	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=F63NPrnY;
-	arc=none smtp.remote-ip=162.62.57.137
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lCmT3vgU;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1945A606A31A;
-	Sun, 15 Nov 2026 13:59:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1945A606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C644606A31D;
+	Sun, 15 Nov 2026 14:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=F63NPrnY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1794751178; bh=EeqP4pkKpTrcPcDp8zrtcPNrjaDgaSyW6ZXH4x5jWOM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=F63NPrnYbWi8xCmT6ViM0TKlfZ8psgx5zuYb7GrH2IHdrzBfJ1z6I2KxXipb0x9gR
-	 AyGV2/sO4SQflV3Hqolm3ChE1C/izhzqhHTo0PlytNSNvE9pgpJUfnuFQKOdsmSKvO
-	 OhKM8rUoa6PPgWnpHfCk85M4pbgl+CP//r5F2aDI=
-Received: from [192.168.1.9] ([163.125.232.4])
-	by newxmesmtplogicsvrszb51-0.qq.com (NewEsmtp) with SMTP
-	id EE397A48; Sun, 15 Nov 2026 21:59:35 +0800
-X-QQ-mid: xmsmtpt1794751175tjyn5xa78
-Message-ID: <tencent_EAF72EE1486DCC13E1E47DCFA5CF52290B05@qq.com>
-X-QQ-XMAILINFO: MEDFSjkiIE+fCraagdh9Vk5QeSOL0QSr8z2d/+rq/O2kZnUdvbkH0qyOk8U4cL
-	 /oq5Ia8PwyMFpKK01BdEScMNVumu8TRcBF6cmlPghKBQ8Lnn7l0MoJsOOVKoAJ7jHFJYaEcRBfcr
-	 HNqtMwrbeXUjNhIkNpNBNFX4cEHjsng9TFHX+9yFW/aN0jKdEgs2urZ+d0Lki4I9ZN3iqoRJJvzd
-	 gaBk38PKkPVE9PrNfVFWP6ICWR2xmMYOtl1pLmDJ4GGsScYn/ubm9QawsQT8sbWK4qDiRZ2z3QV/
-	 GObyUwgwosk1elep023cUn05YaG1ozml3Vjujg4oWR5oQFKuc3+fMKhB56rI1K4vgBJhCP6OGY2u
-	 MpvuQ4bgZjFn/oALfjtY24uVUGrZUaMFdIoRzcUy39VrjIuOlGk8n68FioEqoNW/K/JhivF0FHAb
-	 bdHmAYthaDs+X+gieBMdAKEqEfjbYP+Ncbuipin+DwBLkckNrZMBsSiAZvV/Dm4q9K10PALIuGS+
-	 9mCyzGXGlprVNJI4NacisVVic6Amoeh16Ug4eSbZTHsauBDcG2WK3QKEF+dZYF2da57uiOHIETin
-	 vPRhQFJkYwXrXRipiyE/j/IrypLa+mek9gX4yHh8N3OY1oOcRtWtUlkPcr04I1BhYRj9MAODZAhG
-	 U4MCTlnWG5KdQT+HQhF5BjGAkxBhCnYk9z2pb6uD54ycem4vpHvMjY9arZpOVBx6udaizvYC5FUh
-	 PhL2GAzwlPcFRisWVg6yLfIctD7gtlrnPygDv1CDp2JfV4rYHYuZ1M3qEtSYGdTCFhV/P3+gXRLk
-	 hVqvxrwu6Xmxvx3SjBejcWBVCemKlb6djw5i+ENhhGsMyFPq07YQv6Elal2Q4YTxoH/Ny9va0tX+
-	 vMLhR9yBM3sbCdZjzb8PlKA+ifvSYDj7xXnm8saVPBN8Kzf8qkDYu64Dkted2WWf8U6nX6d1kjuD
-	 dQL7utGIgotpzoZ3GFYbWMoyVVwVmrMsh1cd28+2w6EGcGJ+PctEzyNYsTiGRQfWwOulRBRyDWD9
-	 iotP1Zy+swSb6BORUyvlt2JiQhjJBxO68WP44U2/mkmkFyposYsSk9g/zjpwJSMHSinlTIL/cOQb
-	 pHujZIHIxaUoZH/ET6oMEloDj97Q==
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
-X-OQ-MSGID: <f4c4e7c3-7327-4779-a33f-7f4027c5c26e@qq.com>
-Date: Sun, 15 Nov 2026 22:03:43 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lCmT3vgU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E7041F000C4;
+	Sun, 15 Nov 2026 14:02:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794751333;
+	bh=C0hZCZ1HlArCnNua5WGJXPR4s/dAC6fjh9Brf5xLf/I=;
+	h=From:Subject:Date:To:Cc;
+	b=lCmT3vgUByzTeA9R757hy9aa0HZE4kCVK0A5FBSbwAooKZHJJK5oK2QqoPEHWyoRJ
+	 swdVTlXDdJUVBnvWkHnXkipTzyAaAqAS70tC39ZUzbXkKiiE+btYREERd5StseDTbn
+	 zcWzdziNnXo7X8mLYhlfZiPFvM6GhaTPKVNQ4SNKWtudv3284JWjz5NKhzyuvhykbo
+	 ovdYHOZj3BYLhEEY0IXslCiJifUqNJRF1mJ/5GrBXZVB7wuVcQMnbQQ4wxPOeBmK1F
+	 BFH5jgiZxb185bU/PJcIc3uCfdbR8kKmCpMNI1ltjBdq0NvcTQJfswD215TGXdMxuI
+	 HmHiQHeWiNVOg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 00/13] fs: let d_real() fail
+Date: Sun, 15 Nov 2026 15:01:30 +0100
+Message-Id: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -72,65 +53,97 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] docs/zh_CN: add LSM admin-guide Chinese translation
-To: Weijie Yuan <wy@wyuan.org>
-Cc: dzm91@hust.edu.cn, skhan@linuxfoundation.org, gnoack@google.com,
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net, mic@digikod.net
-References: <tencent_001080DF135CEE2CD1B260EFA08E3CC71A09@qq.com>
- <tencent_7F10C2E7BB9C4B842554D6E95DE5D1DBD806@qq.com>
- <aunHXtl-L__1isgc@wyuan.org>
-From: Yan Zhu <zhuyan2015@qq.com>
-In-Reply-To: <aunHXtl-L__1isgc@wyuan.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMWw6CMBBA0a2Q+XYaWoJJ3YoxpI9BqqQ1U0UTw
+ t5p5fPO46yQiQNluDQrMC0hhxRLyFMDbjLxThh8aVCtOkspe/wmfmJaZvQDk5lRSa271o+aXAf
+ l68U0ht9fvN6Ozh/7IPeuTL2wJhNaNtFNdVRBUUBxgKKuYdt2HWulIpoAAAA=
+X-Change-ID: 20261115-work-ovl-d_real-219930df9ec3
+To: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
+Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>, 
+ linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-mm@kvack.org, "Christian Brauner (Amutable)" <brauner@kernel.org>, 
+ stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+X-Mailer: b4 0.17-dev-ce4c1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3833; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=pa24T6yCoOSBNbgGCY6AwfmcBlLS5Ar6zkTbMn0Wgmg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT93O2vqVrhsEVk8w8bwRPB9mu2b58txH/6hPzbCzOYZ
+ 7yfu3bL5Y5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ7DvK8D+374Hlzv9ipvZl
+ Rq1dFcfahVq2mU5V8n4bsrj5WOOGjjhGhnYt3WqWp77Lo13D994t4tVteLmD2d3HMMT838fvTsd
+ uMAAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 11/3/2026 7:37 PM, Weijie Yuan wrote:
-> Yan Zhu <zhuyan2015@qq.com> writes:
-> 
->> Ping
->>
->> On 6/12/2026 11:58 PM, Yan Zhu wrote:
->>> This patch series adds the Chinese translation for the Linux Security Module
->>> (LSM) admin-guide documentation, including the main index and all ten
->>> sub-pages: apparmor, LoadPin, SELinux, Smack, tomoyo, Yama, SafeSetID,
->>> ipe, and landlock.  The admin-guide toctree is also updated to list the
->>> newly translated LSM/index.
->>>
->>> The original English documentation was restructured into reStructuredText
->>> by Kees Cook in commit 504f231cda56 ("doc: ReSTify and split LSM.txt"),
->>> and each sub-page has been kept up-to-date with subsequent mainline changes.
->>>
->>>
->>> base: https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git docs-next
->>>
->>>
->>>
->>> Yan Zhu (10):
->>>     docs/zh_CN: add LSM/index Chinese translation
->>>     docs/zh_CN: add LSM/apparmor Chinese translation
->>>     docs/zh_CN: add LSM/LoadPin Chinese translation
->>>     docs/zh_CN: add LSM/SELinux Chinese translation
->>>     docs/zh_CN: add LSM/Smack Chinese translation
->>>     docs/zh_CN: add LSM/tomoyo Chinese translation
->>>     docs/zh_CN: add LSM/Yama Chinese translation
->>>     docs/zh_CN: add LSM/SafeSetID Chinese translation
->>>     docs/zh_CN: add LSM/ipe Chinese translation
->>>     docs/zh_CN: add LSM/landlock Chinese translation
-> 
-> Hi,
-> 
-> I suspect that your series was long since buried in maintainers' inbox,
-> because your actual patches are not "In-Reply-To" this cover letter.
-> 
-> And I do remember I mentioned it elsewhere that it may has something to
-> do with your QQ email server.  I suggest resending this serie after
-> fixing email stuffs.
+overlayfs looks up the data of a metacopy file in a data-only layer
+lazily and validates its verity digest when it's first needed. Both can
+fail but d_real() has no way to report it. So ovl_d_real() warns and
+hands back the overlayfs dentry and every caller silently works with an
+inode that doesn't host the data:
 
-Thanks for your suggestion. I will resend these patches.
+- uprobes get created just fine and fail later with a bogus -EIO. Every
+  new uprobe warns again for each of them. With panic_on_warn that's a
+  panic.
+- IMA skips detecting changes to the backing file and hands out a cached
+  verdict.
+- IPE evaluates its policy against an inode that has none of the
+  dm-verity or fs-verity properties of the real file.
 
--- 
-Thanks
-Yan Zhu
+And that's not limited to files nobody opened yet. A metadata-only
+copy-up of an open file makes overlayfs validate the digest again.
+
+As Amir pointed out the correct fix is to teach the callers to deal with
+an error. So d_real() may now fail for D_REAL_DATA and all callers
+handle it: uprobes fail when they're created, IMA treats it like failing
+to hash the file, IPE denies and the bpf kfunc returns NULL. Then
+d_real_inode() goes away so nobody can ignore the error again. The first
+patch only drops the WARN.
+
+This came out of the same work as the freeze protection fixes for
+backing files (cf. [1]). I ran into it with the pseudo filesystem
+series (cf. [2]) where file_check_backing() looks at the file hosting
+the data of O_PATH files registered for fuse passthrough. With this
+series it can just return the error. But this stands on its own.
+
+[1]: https://lore.kernel.org/r/20261114-work-fs-frozen_writes-v1-0-f5ae61c898b1@kernel.org
+[2]: https://lore.kernel.org/r/20261114-work-loop-pseudo-v2-0-98639a2286fb@kernel.org
+
+Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+---
+Christian Brauner (13):
+      ovl: don't warn when the lazy lowerdata lookup fails in ovl_d_real()
+      fs: add d_real_data_inode() and d_real_metadata_inode()
+      tracing/uprobes: handle errors from resolving the real inode
+      bpf: handle errors from resolving the real inode in uprobe_multi
+      selftests/bpf: handle d_real_data_inode() errors in bpf_testmod
+      ima: handle errors from resolving the real inode
+      ima,evm: use d_real_metadata_inode()
+      ipe: handle errors from resolving the real inode
+      bpf: return NULL from bpf_real_data_inode() on errors
+      ovl: return the error from the lazy lowerdata lookup in ovl_d_real()
+      fs: remove d_real_inode()
+      selftests/ftrace: add uprobe tests on overlayfs
+      selftests/bpf: add uprobe_multi test on overlayfs without data
+
+ Documentation/filesystems/porting.rst              |  10 ++
+ Documentation/filesystems/vfs.rst                  |   6 +
+ fs/bpf_fs_kfuncs.c                                 |  13 +-
+ fs/overlayfs/super.c                               |  19 ++-
+ include/linux/dcache.h                             |  47 ++++++-
+ kernel/trace/bpf_trace.c                           |   9 +-
+ kernel/trace/trace_probe.h                         |   1 +
+ kernel/trace/trace_uprobe.c                        |  57 +++++++--
+ security/integrity/evm/evm_crypto.c                |   2 +-
+ security/integrity/ima/ima_api.c                   |  17 ++-
+ security/integrity/ima/ima_main.c                  |  11 +-
+ security/ipe/eval.c                                |  15 ++-
+ security/ipe/eval.h                                |   1 +
+ .../selftests/bpf/prog_tests/uprobe_multi_test.c   | 141 +++++++++++++++++++++
+ .../testing/selftests/bpf/test_kmods/bpf_testmod.c |  11 +-
+ .../test.d/dynevent/add_remove_uprobe_overlayfs.tc |  92 ++++++++++++++
+ 16 files changed, 408 insertions(+), 44 deletions(-)
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261115-work-ovl-d_real-219930df9ec3
 
