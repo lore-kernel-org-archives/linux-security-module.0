@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794751581;
-	b=m/jsEt7Lom8382r7wTKJ5zGLRrKTDHdLLpvmjUllNtcEjxroN7OiODcs5P0wc3dxcBJu
-	 9xH/3Bsw2fI4odW9cynsJzo6wCsrfpVsFBysmkm+C2JfIUvbZSvTz8J5nH0BuugSoq3QZ
-	 IVEA0J6YNMwoY2PzHv5JpOovofF7Ghk3+pyGldGgG0yDbF01cyhG0cmY6J1BlUewxKOWI
-	 ILCv5KTTMkcsxV28VpjrFiLB2iDgd21LWm1iqPDrajjs+STFdntU285t28TaHqZnv7KXe
-	 H1mzyIGhcuWX++SjaMd3Ln576/54paC741urE7iSc7hf8Bk0PFMNKKx4BP1oVpbMm2Q==
+	t=1794751633;
+	b=4oCw1bzI64GXPG8IKhQiy5gN9AOl5siImeQ0+ysaFmGRhILuVANpBrK8E7pwdfKNtpU/
+	 Y23yJnV9t5nWjLqTYF6VkS49IdJpuVRy6YSX2slhNSO/TgxeSha7aroMMUn9BF4jvPBkS
+	 8oqrX1L+ujCmQ0XZmkRFTRFJH0yoR3s3xK4bMoxEojC2Ux1a9z2l548X+FX1bb82bKT5Z
+	 0yWFNTetLBb2aGqFrPLtmBgwYxnvyvuoY2QaJJaKyDsbzy2fjp/odvvZLlcrRYWXiOlR+
+	 chGrgDxIMo3Tzsyb49XUDPM4TDz85MsgcR06tqLklGdtzBXz8G3YrouzhRXtL2TZBJw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794751581;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794751633;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=KJJ4WwC3MYxhwLMReonv+6XogyAbjuuw0APxvhwBS2M=;
-	b=B7HdF4IlKXNNKNDcR0RnsM43n95QZ0EL62IP+WD6veFbBE4UXGzzoGkOE6r1G0mUplZa
-	 x9R5lVOEeHjrz2JmUX/KO3+hXq3qKfx0+QpR57UBxOnNmlgJjt4VKpblII+mCf/gwnR4e
-	 W/r4ER7w2LjF11PazBBMK5QrT0Ddgiy+Yu0xfpkjvrKHxnshFHRUNfCboiIY+snv2AmaL
-	 RvihuKr1YsWCDPvJiAgW0+4uwQlvtmPUnzFscHckr8GGMy1BigejptJ5okV3Q9nksluls
-	 2IGWHRqz7AEeC39HPCrbIRCkpaxiOWXtdK9hLnbjii+3MjpoFvQytIztlo1gIoxGJIQ==
+	bh=lfPqxd1lQdBGy62GwelSdK3cpwCMQHmJ16T3QYtjuKw=;
+	b=SYj9HWDYwJLOndvUK21mCjNSh47/pYaeBFtp2bIBZtRfM9LbIKYlsKdA7dykG6Cla+Vc
+	 dDqLM/4gjpmg1+oT9flryM/cPJgbKZ6ZOfkDmJbuvqZ3FZNNjmb/cqNCAAlSbv/jUtsDs
+	 gQo6dmEcGA59iowv/V0sfiP9fuOBuOniumadRExMlPO6iisgiQxsNpxCuY18AU5FytKc4
+	 7v5ZD76426oUEEREvUV9xaq7bzdIKLSgysFuCc/8ScaiVrJEDf0u6THfZpVrjf/OEsLpo
+	 UXtTIts6z624QOuEbUpI4Ac45oHzlH2UJpEgjCz8bR4f+o91Z8x7dXp7JnGa1LEEmVw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JPnKCGTo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JRNsXBos;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4308606A31E
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66CC606A31D
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JPnKCGTo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8B41F000C5
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:06:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JRNsXBos
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA5F1F000C4
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794751581;
-	bh=KJJ4WwC3MYxhwLMReonv+6XogyAbjuuw0APxvhwBS2M=;
+	s=k20260515; t=1794751633;
+	bh=lfPqxd1lQdBGy62GwelSdK3cpwCMQHmJ16T3QYtjuKw=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=JPnKCGToQPgV76UeYOm2KY5uQKr20MCRuIzMpoGZJ/2ndG3PbKCMNHWaYzwOH1non
-	 zMQF2K5B60uyReIvzQY3a5x3dr+jh1yb6gSGIlTmym0+paR0/1PendO8cw+DG9CN/h
-	 FzBLo4mVYAXbSMW8SiltSn20nYW2QKAGvtRPX9TLxEDlIsYvxiWQlHoT2qDoKDPp4S
-	 QqIQJ7tzM3GQ9hiAY+mW2GQNDu8ACulfWvk4vySQbnUnK8FzgXLe5VWQ0iTvxg9ilF
-	 XA7PZ6OWV8vMU2OPwitqYlkO9iJdRM1np3X097Afa1UW50MoxXBY7J3LYOqe633T0A
-	 HhlrpMD1zNakw==
-Message-ID: <sashiko-outbox-215557@kernel.org>
+	b=JRNsXBoscDN/4rrTOt0+E9Pyhl305fgN/RW3FCEA9T8E+sGvpLHAYhGNsGvQ3s4VN
+	 pouR1S9mzdcNINiFNM5gqd4FBzEhmtYd9HhlD8Suo/CH3/W7H8TQs6p+Jw5JDsFtM2
+	 NGMDWJ/I4EyWJpv2F6hgb3OoTcqHHzZ9ni4L1h+1h8N5TD5h+FI89WzTTLtzSMOMFK
+	 23fIWurW8z6aff3X/yqLy/SyiB4zSYgsnqhwFMmh5CYcflyrgg6k05Xse1cqGIBzFs
+	 7iTsgai08QwKqMMZSxtVojH4zig0sHjFp7HlobMvUapFtht+MqdsMIWwQt53elTC8j
+	 /wMoDyrp5zWew==
+Message-ID: <sashiko-outbox-215559@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 04/13] bpf: handle errors from resolving the real inode
- in uprobe_multi
+Subject: Re: [PATCH 11/13] fs: remove d_real_inode()
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261115-work-ovl-d_real-v1-4-ca155efbcb2e@kernel.org>
+In-Reply-To: <20261115-work-ovl-d_real-v1-11-ca155efbcb2e@kernel.org>
 References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org>
- <20261115-work-ovl-d_real-v1-4-ca155efbcb2e@kernel.org>
+ <20261115-work-ovl-d_real-v1-11-ca155efbcb2e@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 14:06:21 +0000
+Date: Sun, 15 Nov 2026 14:07:12 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,17 +59,12 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> d_real() is about to be able to fail for D_REAL_DATA. So switch
-> bpf_uprobe_multi_link_attach() from d_real_inode() to
-> d_real_data_inode() and deal with the error.
+> All callers have been converted to d_real_data_inode() or
+> d_real_metadata_inode(). Remove d_real_inode() so that any user we
+> missed, or one that gets added in another tree, fails to build instead
+> of passing an ERR_PTR() from d_real() to d_inode().
 >=20
-> Currently, the real inode is resolved again for every single uprobe of
-> the link. There's no point in doing that. Resolve it once right after
-> the d_is_reg() check and fail BPF_LINK_CREATE with the error if the data
-> of the file can't be resolved. Then all uprobes of the link are
-> registered on the same inode.
->=20
-> This is a no-op until d_real() can actually fail.
+> Add a porting.rst entry.
 >=20
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
@@ -78,5 +72,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115-work-ovl-d=
-_real-v1-0-ca155efbcb2e@kernel.org?part=3D4
+_real-v1-0-ca155efbcb2e@kernel.org?part=3D11
 
