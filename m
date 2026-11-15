@@ -1,66 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.62.57.210
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794756041;
-	b=R6Tr7bf+f6Bh7cno5ChjLMx/Wz43aS942WuteO163JRUk/ntGUf6jb1680YoV9/rMIc1
-	 O5BFReG5ATwvgBVrjOkHbU4FwmTWBEai7cmE0m7PzGAUCjIIf4PhlSP1y/1ybM2OxgVmR
-	 pfV4HX+33cpLbJpkwd5VGKwC4H9Y5GCPSoQzvIbfQVVFj38Knhxzx5gVSK24PLznv+uR4
-	 58RkWsqnRavlrjv4IPjiLU1QYNH8RabxpfHK+HFe3iHx1LsQFFeiTTSnfoM6bZyKm/Hd1
-	 4f+2gxAqYnCfTzLAGJqp7SBN/djXFG3aDf9pPXqVoTp/JaFKhNbpX1XPUkKUum0dBOQ==
+	b=AyJNneCuKyzuukQQNyMh7I8+Bo7FD5aaAFCVdKG49UlfqOydQomW7P51u04VVHq2Rbjb
+	 fnknldEaYGHl/AFK+09YAyFNPsMJ56YSu5i6k4Omv6M01IxM6inQnqCTDoOCXcXaxKV4h
+	 XRUd3EqDAsxPDiEohDKy1kOIml7x+5WBUt9Wf/eXuKLN3bBmdMvm3SjfSu5QxOGuFN3XE
+	 EcGpKVUSebGjCct5V/7nrnMnDpTvWEEupyUBnyEqKbmQoe3eI/xa8waixpBJoMWx8V7Tq
+	 mVlEvBK2zAhHAP4dOkKqBsogxT4Bz3F1OzNYemuZmU2xRCvs9YQdjTYlJjFOihjSW3Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794756041;
 	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
 	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=UQp8VX9JypZ6E6O1OqUQjFmFxUx8YP9qAGPt+56zDhY=;
-	b=nSSKI16V9PQxYkWeXzf3KpgnKCvIy0w8O1I+r6GbLIg8pCzzcfNVxmExlm3i8iGEzKyt
-	 DkiojAKayqFuTC7SPTXMZYWlS6Vfpjvbq5XEwpNA5Fa0sPoqNiqt/MLJZ4MjlRYLHayRp
-	 mVSmL0ylPmm/fSM/Aw97Dl0+D4noVQAfzT29TuryAMn4N9WICFYN7o2Y+XlZotTXt+Bel
-	 ywTf+tN/2YoQ/XyW1sKIrrbLKw+iH9bCMTIO2TCr/AOT3HzBBPddaPs/p4WUen0dCxG2c
-	 SYCfZuTD3zSQKjSrVxdbcqg128bV4fp0SP3D0Vmdji7gw/eZOfe8zuhfdFDIDPXWFBw==
+	bh=jXrh73iVMql4JAyQujF61e6EHSqzGXNNYYSKJ48BXL4=;
+	b=zGiAmY8SBoBX7qfcK3nyhVcLhy1xBlP9WeChsmnxl80RSymPJf24AwaApgDFPI+Ukp0Z
+	 Ydavw5FrgrXOpfYies81b7WDWxIeTzP5EKKYFqL8jEmyN6p3qu7FxqWYFwANKHHHuO0i4
+	 bZyt2r17mvQ7yMnnvtKv97lQx/a9P2eOhrdwLRjSmfbGGdkm7lY6gwp1lxmtbaSH6rRKS
+	 EV65lyfRfytVDV7Xla2MFDTA8n7W44t/kZPkQV1T95In5jFKlJ9s5mF0h/F1uzHTUWmYw
+	 C6fUPBX0GKa5ub2kCM+j1pskmv7G02eeusNyh6avpWUAHPm3xmwWvhyzv8F7ce3OJhw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=qq.com;
 	spf=pass smtp.mailfrom=qq.com;
-	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=oqOExLhh;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=hTbO5UiV;
 	arc=none smtp.remote-ip=162.62.57.210
 Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA083606A323;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD5B606A31A;
 	Sun, 15 Nov 2026 15:20:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AA083606A323
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DAD5B606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=oqOExLhh
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=hTbO5UiV
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1794756035; bh=UQp8VX9JypZ6E6O1OqUQjFmFxUx8YP9qAGPt+56zDhY=;
+	t=1794756036; bh=jXrh73iVMql4JAyQujF61e6EHSqzGXNNYYSKJ48BXL4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oqOExLhhY7XFS/QhrCO1xEznq+HPjmayWkQTagfCnhIaTP/Tv73ISoXYgSZpKHX74
-	 kBLh84l5qlzaOiweGZkcu4Kxv56E4u+agOkp/S4mPECNCBXXhYij8psPI5KXgVKUqL
-	 mpsfXiGtyEWPJXglD17mOyYJt4J3WC48uZIhTzNk=
+	b=hTbO5UiVvl9PyCtHhoiw0T3ch7j3MEEea6CjejN+aupYSWoa034S0CP6uX+Gg4CBA
+	 f4ONLq2pMYKxQdp43IZ4WOBJs8Bv0XZD2QJOxWaox58NuOyVG3rgdJWoyhRDY+VhYG
+	 Q7hMVUkighoWo8qtE1baNaHr+8REFCCpKu0WdQBA=
 Received: from 172-1-1-128.lightspeed.hstntx.sbcglobal.net.localdomain ([163.125.232.4])
 	by newxmesmtplogicsvrsza53-0.qq.com (NewEsmtp) with SMTP
 	id 5169F010; Sun, 15 Nov 2026 23:20:22 +0800
-X-QQ-mid: xmsmtpt1794756031t4kmq65o6
-Message-ID: <tencent_BC47EB63600886EF052E8C967659A9775108@qq.com>
-X-QQ-XMAILINFO: MKuia7bJYsehC6R58VatiaReU0MeyRveEe1K5pBBEXDSI5KU8nUVvoJsJeQfh7
-	 2S0Yjywwnfb7yTEBvgetTRwBix/+jU+tdOlD7wxGo7QsIcV+Igraj1LoYkYuEafym5Y6cUnXy79I
-	 v18Cmvl83GCuKPRyg8rq67l7g33k9/bQXH4+3hkEJlNCIFgoHTVOLx7bpH3Z30UchjgITYz/n35+
-	 oPGObt9IzaiB4jR4vEbEQOuRojXIyjEjODQ3dllA/VzyK7VZMEmw4ofRSR08+aMUHwlztw5YwsSy
-	 6RdIY3azECJ06YGb7SDmkwz7MQOe6DscGEULefLD3QMoskdJJHfUbww7wx2GTU6MephOFiayxUkl
-	 EWqblYmBbwN95ZoonIhyUpB2gyJxee8cXL9HleDt4Rick0N6sMfJsq+S3fHcjbUtMW8zjhGV9vyd
-	 Y4GUPvcJgm6W5UwnvUgiWlvghEimKEHrXOChq4VPnDJgyvKmWLRvW7sLEYV+OuFaA/9c7V3ain29
-	 5fN9gjZwLF6MJEPwWDi3RTJqBjTUcbvsHNxdPXmfDjIRM0eXxs5+E1Z5jBH9ny4lYhGgqihttevt
-	 LXLE4cFm55gW4UzC592wUTl0z+NAsMH6MInjuDznFymGwjRbnmRI8/grAw16mmTLIT6Fec0c88dy
-	 1Drt6oovbF3XOdOkCW0NOa4TO+mtu/6f34y5hLlSGifJINyaEJ+YzfT5JWhGbXtA18GjUkPhBcXX
-	 A8Aa5qBNVRnmZmKkYW2b3tX7T/bqF4T1SPgkkydjTXLjvFWSc0fp9AkVIcipqurndPjn+x07SIsX
-	 lYFAbh2pKiL6kiiMJpdUoEiPDJiqLRoE6m3UEBS5IlCtcaM25GJTY8bD2eaJH6i+HUUfjw7srNSx
-	 61JTq/YpcBrnCD6xcJPwpz6PGBpAlNSNf5PZFrB16YVXBT+FAIiAtpeEE+4XAMTmxSQepr7pH/qZ
-	 xfETClRBCfjXFIEsG+Tvz++IjJtQz82QqAShdmnshzBgi1R2EWdFlV8fVXFobuf0TNsg7XmFj6er
-	 qJOMRQJEgoOv71POwt89Ep1zXkMIR4/W+1GKqTbyqx7ti1nh3VTX3fEa1u1o0dwShihpgJlm1jhg
-	 CnDHd/sRzF1Y7pwh6/X1zSnsZ16o3JgFVcW/VY3XgCsLl2PPKBozLy/qeohcvRvzTPf0EVsrvFAT
-	 N9rzkU8BfE/cMyL5Y3ixj79ML+IwGPlyiRJDMuyuQ5w+p1dw==
+X-QQ-mid: xmsmtpt1794756033tzuujwsbr
+Message-ID: <tencent_AF8D0120D4BC3FBA2059A26651DC691DE10A@qq.com>
+X-QQ-XMAILINFO: Oc918D08lNHEWFbZXHDuu++pfvXSewi32lsxZkfhhJc2TJPHHcSJVHbtN92QcC
+	 Vkltw03DVlYLumGSsSdi93aPMDfpnukmyB8MkC/xlomMmVC4aGDDhwtsgC2w9AfdVxjZJxDYWvKU
+	 WckolUNgIoE4jBGs2ugKWxdfWEEgK1AC+K6aDeXKcPFph3jWjMRf6HZyGp/TqLo1oDvAAi5hLvhc
+	 JYggh3FgMeI6Qd3lG0rqGa1ZQNGLFOeL0Yj53FXNmpun+Y4Idz7kbx7ECFJoz0icGHkdjJMOgGUf
+	 N36mxuXBH0vM/bINtA/WoiqSwpdXbBNa1GU8gcN0/wYbZ86KdDfKP1dn+/UDWNdwECmQJbdrDiZh
+	 d7f3hN4sD79pLrVz+IlaBU1C1YMQQ/QEEp389N7BTaxUB0znoeDgKi1vc6zcNMSwLjl2UHrsnaB/
+	 xYCbSCz1Yq9aBLMbP+MlhdSzKvW8WDy4wgHPEKjebDHDJDpsE1RF/+w5oI9i+uj/sl12J8ynF2Jy
+	 6t8Uw58DL/eKZlHh07lu/PY2Phrje3GzquARSoGCH6HIJRPmFlMlSAwOBk2OygHsxs7njLHBPKd5
+	 Rx8MfWYrXYkRXyZw3pHuBtEeoDPnae+EiOlyb5Sc6BGK3LbvqdSWN+AxEHBEDFug9SRdu1OwzHck
+	 9fT1U7JQttHOXXEuJF3ATZSlu70tYPVC++KkFP8pCFsCdAQwLLYBlcG2nBHouVtrRwgQm6szqsL0
+	 5DrwPG6Gshl4ByJSPoxjPtrWL2EILaO43LlBRAmeJYy0sHfYCItvI8/0O5lyv2SEciGHmBivLsCX
+	 9i/lDqejG5bxeMlQMK/1tIQR6hYj52MFG0qCUnpUhA0ra4RARBvrIE4JTMKyY4m4huPWUGb5BnZf
+	 osw6w0eBtzCqTS7SuM+DEdhlK2Yy2ObCJtSEq5PhksglpihW85XaZRWOQy7+hplJGordaMrkWEPY
+	 2J8R6mXgmS7icfMveA8oMHtK+mwBTV6lr7+glz4kcv2vFQ7bjQeK8YyKjrGmzBJfz1xmEaWDEkxn
+	 8tw6fAtapsXEVXC/urH0rDia2iKDkDFtS2bc+06a7EcpOsiAYZNxe9AoBiTdorYzHiecSJqdvdkx
+	 OKgO1IxPK57cd8dxfWHpmZV8qWc/BRFu0jxCXERekOK4ojdCSFPg+//y3YFD1cxNP+XJh94J6iMT
+	 AevsnmJhokWS539ZyMSiZSyfihnQLeDJS60dK0Ssh+vt5/adpRXd/STQ3A+J+wOIUWSOA=
 X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
 From: Yan Zhu <zhuyan2015@qq.com>
 To: alexs@kernel.org,
@@ -73,9 +73,9 @@ Cc: dzm91@hust.edu.cn,
 	zhuyan2015@qq.com,
 	linux-doc@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 03/10] docs/zh_CN: add LSM/LoadPin Chinese translation
-Date: Sun, 15 Nov 2026 23:19:59 +0800
-X-OQ-MSGID: <20261115152026.69082-3-zhuyan2015@qq.com>
+Subject: [PATCH 04/10] docs/zh_CN: add LSM/SELinux Chinese translation
+Date: Sun, 15 Nov 2026 23:20:00 +0800
+X-OQ-MSGID: <20261115152026.69082-4-zhuyan2015@qq.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1781105672.git.zhuyan2015@qq.com>
 References: <cover.1781105672.git.zhuyan2015@qq.com>
@@ -91,57 +91,69 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Translate Documentation/admin-guide/LSM/LoadPin.rst into Chinese.
+Translate Documentation/admin-guide/LSM/SELinux.rst into Chinese.
 
-Update the translation through commit 0860b72d535f
-("security/loadpin: Update the changing interface in the source code.")
+Update the translation through commit 17bd3c01667a
+("documentation: add links to SELinux resources")
 
 Assisted-by: Claude:deepseek-4-pro
 Signed-off-by: Yan Zhu <zhuyan2015@qq.com>
 ---
- .../zh_CN/admin-guide/LSM/LoadPin.rst         | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
+ .../zh_CN/admin-guide/LSM/SELinux.rst         | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/SELinux.rst
 
-diff --git a/Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst b/Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
+diff --git a/Documentation/translations/zh_CN/admin-guide/LSM/SELinux.rst b/Documentation/translations/zh_CN/admin-guide/LSM/SELinux.rst
 new file mode 100644
-index 000000000000..d75a06f515f6
+index 000000000000..4962c7c24ec2
 --- /dev/null
-+++ b/Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
-@@ -0,0 +1,33 @@
++++ b/Documentation/translations/zh_CN/admin-guide/LSM/SELinux.rst
+@@ -0,0 +1,45 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +.. include:: ../../disclaimer-zh_CN.rst
 +
-+:Original: Documentation/admin-guide/LSM/LoadPin.rst
++:Original: Documentation/admin-guide/LSM/SELinux.rst
 +:翻译:
 + 朱岩 Yan Zhu <zhuyan2015@qq.com>
 +
 +
 +=======
-+LoadPin
++SELinux
 +=======
 +
-+LoadPin 是一种 Linux 安全模块（LSM），保证所有内核加载的文件（模块、固件等）
-+均来自同一文件系统，并且该文件系统应当以只读设备（如 dm-verity 或 CDROM）为后
-+端存储。这使得在拥有经过验证和/或不可更改的文件系统的系统上，能够在不对每个文
-+件单独签名的前提下，强制模块和固件的加载限制。
++关于 SELinux 内核子系统的信息可以在以下链接获取：
 +
-+该 LSM 在编译时通过 ``CONFIG_SECURITY_LOADPIN`` 进行选择，并且可以在启动时通
-+过内核命令行参数 ``loadpin.enforce`` 进行控制。默认情况下该功能是启用的，亦可
-+在启动时通过 ``loadpin.enforce=0`` 将其关闭。
++    https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git/tree/README.md
 +
-+LoadPin 会在检测到首个文件被加载时开始生效。如果承载该文件系统的块设备不是只
-+读的，系统会创建一个 sysctl 条目 ``/proc/sys/kernel/loadpin/enabled`` 用于切
-+换锁定功能。可写的文件系统意味着锁定功能亦可被修改，但通过 sysctl 可以在可
-+写文件系统上便捷地进行测试。
++    https://github.com/selinuxproject/selinux-kernel/wiki
 +
-+也可以使用内核命令行参数 ``loadpin.exclude`` 将特定文件类型从 LoadPin 中排除。
-+默认情况下所有文件均被包含，但可以通过
-+``loadpin.exclude=kernel-module,kexec-image`` 等方式排除相应类型。这允许在使
-+用 ``CONFIG_MODULE_SIG``、``CONFIG_KEXEC_VERIFY_SIG`` 等机制对内核模块和内核
-+镜像进行校验的同时，仍然利用 LoadPin 保护其他内核加载文件的完整性。有效文件类
-+型的完整列表可在 ``include/linux/kernel_read_file.h`` 中的
-+``kernel_read_file_str`` 找到。
++关于 SELinux 用户空间的资料可以在以下地址找到：
++
++    https://github.com/SELinuxProject/selinux/wiki
++
++如果你想使用 SELinux，通常需要使用发行版提供的策略，或者从以下地址获取最新的
++参考策略：
++
++    https://github.com/SELinuxProject/refpolicy
++
++如果你仅需安装一个用于测试的示例策略，可以使用位于 scripts/selinux 下的
++``mdp`` 工具。注意这要求系统已经安装了 SELinux 用户空间工具，尤其需要
++``checkpolicy`` 来编译内核策略，以及 ``setfiles`` 和 ``fixfiles`` 来为文件系
++统打标签。
++
++    1. 编译内核并启用 SELinux。
++    2. 运行 ``make`` 编译 ``mdp``。
++    3. 确认当前未启用 SELinux 且未加载真实策略。
++       如果已启用，请在继续前重启并在 SELinux 已禁用状态下操作。
++    4. 执行 ``install_policy.sh``::
++
++        cd scripts/selinux
++        sh install_policy.sh
++
++第 4 步会为当前内核生成一个新的示例策略，包含单一的 SELinux 用户、角色和类型。
++它会编译该策略，将 ``SELINUXTYPE`` 设置为 ``dummy``
++（写入 ``/etc/selinux/config``），并将策略以 ``dummy`` 名称安装，同时重新标
++记文件系统。
 -- 
 2.43.0
 
