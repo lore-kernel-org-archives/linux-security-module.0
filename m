@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794751633;
-	b=4oCw1bzI64GXPG8IKhQiy5gN9AOl5siImeQ0+ysaFmGRhILuVANpBrK8E7pwdfKNtpU/
-	 Y23yJnV9t5nWjLqTYF6VkS49IdJpuVRy6YSX2slhNSO/TgxeSha7aroMMUn9BF4jvPBkS
-	 8oqrX1L+ujCmQ0XZmkRFTRFJH0yoR3s3xK4bMoxEojC2Ux1a9z2l548X+FX1bb82bKT5Z
-	 0yWFNTetLBb2aGqFrPLtmBgwYxnvyvuoY2QaJJaKyDsbzy2fjp/odvvZLlcrRYWXiOlR+
-	 chGrgDxIMo3Tzsyb49XUDPM4TDz85MsgcR06tqLklGdtzBXz8G3YrouzhRXtL2TZBJw==
+	t=1794751639;
+	b=UlIr6BDAzrNC4kwpsXi3l4YXAIC2oYE7okupQ6N3pyDett3a5FThx9LyJytonbaISx+R
+	 ANTDYx01eCahAbsCzGMOj2X6iX974O5/QW7GkS9VxrCdFzWDtQffGMXJ/yzRl5iDkCglj
+	 X9+bbp4mE+KiOQYw5aAFdGXI3cO/7zNWuQ+vzAHiPq1YTqqZoX0okqhMctzuiMxBfmtj2
+	 WhHWih/IIKDqVPvTa8qFCh/02dTUpkZiUbJQ3vzmprW1lM3/lQKkuA8RRLgbFD+pdcs1/
+	 dUtliYLIH1n3E4MmGb4jdJv4mRgKgsn1rWxXrrapXLqPyI0kQOZRkmcU0jVbkojOhww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794751633;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794751639;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=lfPqxd1lQdBGy62GwelSdK3cpwCMQHmJ16T3QYtjuKw=;
-	b=SYj9HWDYwJLOndvUK21mCjNSh47/pYaeBFtp2bIBZtRfM9LbIKYlsKdA7dykG6Cla+Vc
-	 dDqLM/4gjpmg1+oT9flryM/cPJgbKZ6ZOfkDmJbuvqZ3FZNNjmb/cqNCAAlSbv/jUtsDs
-	 gQo6dmEcGA59iowv/V0sfiP9fuOBuOniumadRExMlPO6iisgiQxsNpxCuY18AU5FytKc4
-	 7v5ZD76426oUEEREvUV9xaq7bzdIKLSgysFuCc/8ScaiVrJEDf0u6THfZpVrjf/OEsLpo
-	 UXtTIts6z624QOuEbUpI4Ac45oHzlH2UJpEgjCz8bR4f+o91Z8x7dXp7JnGa1LEEmVw==
+	bh=mle4fkTHwOr6Bfzt5dOganiBb84EJpCL5Bebj3hPizw=;
+	b=j9OjJk8UYhyB+ipiLjT34woY5MwHI8L3zjssqj3h8xxqO+mxRq1dNZOdhrw5DKtw1A9z
+	 UD+foYfXm/W0M2pPNwXlZLt5NUTdo+1cKuIVlsjXOOlmmgZb1wcoPjUf8lJjET8kkdR2y
+	 ++jm/2hYFNboor7ZAEZMgElAVl6+zuWKoXEWxtaR/eDTWUlM4KCVhKopXNpOT3mSE21wp
+	 cQWz3OW2wHPIWY9YuRl4PgH+GSmnFX/olYF5eBS+55extm2RhPT8RmciW1QvWrrgnkG3X
+	 slUtkxvCHAidxb7HS8S+TSSjv+SASpBUzonkZ/sC8hJab1DPPj9aBnUciCPulvwoszQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JRNsXBos;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E5+c0hsR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66CC606A31D
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D46D606A31E
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JRNsXBos
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA5F1F000C4
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:07:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E5+c0hsR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 143941F000C4
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794751633;
-	bh=lfPqxd1lQdBGy62GwelSdK3cpwCMQHmJ16T3QYtjuKw=;
+	s=k20260515; t=1794751639;
+	bh=mle4fkTHwOr6Bfzt5dOganiBb84EJpCL5Bebj3hPizw=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=JRNsXBoscDN/4rrTOt0+E9Pyhl305fgN/RW3FCEA9T8E+sGvpLHAYhGNsGvQ3s4VN
-	 pouR1S9mzdcNINiFNM5gqd4FBzEhmtYd9HhlD8Suo/CH3/W7H8TQs6p+Jw5JDsFtM2
-	 NGMDWJ/I4EyWJpv2F6hgb3OoTcqHHzZ9ni4L1h+1h8N5TD5h+FI89WzTTLtzSMOMFK
-	 23fIWurW8z6aff3X/yqLy/SyiB4zSYgsnqhwFMmh5CYcflyrgg6k05Xse1cqGIBzFs
-	 7iTsgai08QwKqMMZSxtVojH4zig0sHjFp7HlobMvUapFtht+MqdsMIWwQt53elTC8j
-	 /wMoDyrp5zWew==
-Message-ID: <sashiko-outbox-215559@kernel.org>
+	b=E5+c0hsRazN9ynDDuLYIsm3VL8/IsoaR2udbLTZPDXi62mEbQFKeDK0LWHUP8Xq6W
+	 YD5E4gScqQ/U40WTX+bfBnyYGsszP7Ez5DqibJRzRmCkNPTaQlCZ9gYc/nFHaS01GO
+	 UdcrqzLn1kydZR4CIJEq6q+mIEpoOpF7QZAuqNMePgqgugxNjGmPXtzoOqn2elftDX
+	 m9geKyJl3bqSOKRg5nBBpBw/XL96YdNzzmDqe4yaxtdJpDEo02dkX79Jar9v8gq3GZ
+	 z8Ta288NY7HqudBUAshR8pQzVAEnGiauGvJc4OSjn65On7Y//vmzjyleMCituB1xxt
+	 ep2Pns0PEeDIw==
+Message-ID: <sashiko-outbox-215561@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 11/13] fs: remove d_real_inode()
+Subject: Re: [PATCH 03/13] tracing/uprobes: handle errors from resolving the
+ real inode
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261115-work-ovl-d_real-v1-11-ca155efbcb2e@kernel.org>
+In-Reply-To: <20261115-work-ovl-d_real-v1-3-ca155efbcb2e@kernel.org>
 References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org>
- <20261115-work-ovl-d_real-v1-11-ca155efbcb2e@kernel.org>
+ <20261115-work-ovl-d_real-v1-3-ca155efbcb2e@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 14:07:12 +0000
+Date: Sun, 15 Nov 2026 14:07:18 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,12 +60,25 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> All callers have been converted to d_real_data_inode() or
-> d_real_metadata_inode(). Remove d_real_inode() so that any user we
-> missed, or one that gets added in another tree, fails to build instead
-> of passing an ERR_PTR() from d_real() to d_inode().
+> d_real() is about to be able to fail for D_REAL_DATA. So switch
+> trace_uprobe from d_real_inode() to d_real_data_inode() and deal with
+> the error.
 >=20
-> Add a porting.rst entry.
+> Currently, nothing checks whether the data can be resolved when a uprobe
+> is created. The first resolution happens in validate_ref_ctr_offset()
+> under event_mutex and the last one when the event is enabled. If the
+> data of a metacopy file in an overlayfs data-only layer can't be found
+> the event is created just fine and enabling it fails later with an -EIO
+> from uprobe_register() because the overlayfs inode has no
+> ->read_folio().
+>=20
+> Instead, resolve the inode hosting the data once in
+> __trace_uprobe_create() right after kern_path(). That happens outside
+> of event_mutex and if it fails the write to uprobe_events or
+> [ ... ]
+> for uprobes created through tracefs.
+>=20
+> This is a no-op until d_real() can actually fail.
 >=20
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
@@ -72,5 +86,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115-work-ovl-d=
-_real-v1-0-ca155efbcb2e@kernel.org?part=3D11
+_real-v1-0-ca155efbcb2e@kernel.org?part=3D3
 
