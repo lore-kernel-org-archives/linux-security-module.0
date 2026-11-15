@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794785756;
-	b=c6oKUy8V2rmXkqCCSMnPi1EW8Bcn5bg1v1TI9nBLJjJQyF9hRifoER6+lmrqTVM6jUgE
-	 MBrCZCPE85C2u/UgypZstKkSbYP2n/MrP5xuUURvmlJHi0v6ob3Q0JapW41skdSi11giJ
-	 GUH3SKyQx8fGAF0iaIiv3EiB/dw3UTF2T0HSc1QObjqp4b71gIXsmHuSZ4UNDBuss6tYn
-	 Ipi7GiV0vhufa4fehN93tXNSKPzj4NSRrEWGzRQfXzcAqSt6kTaSCMF0t8r6JMw2g8cxz
-	 FgUKekrux7EftV58jcmD6QlO9BhhQhEkUshoNVcT1QOLTurWPlSH5L4fhTjsQvmEYQg==
+	t=1794785772;
+	b=RQG5i8o4x2/8N2MNqfCbk3WOxu26rxqESlCVdBhM9z5RjPaMAsyrflMwuVVW8+0JpuEF
+	 uymmYDvinw3qvrFJ8YKsCzyF5MdRzl4IjpK0PfGwN5wJPksY8NYWtwsNfoVTNi63r/Q4y
+	 vVgf2BdIrJdgkfcGMDcTv2D8roAmGmkfwraHAojHsTilh94maWPZhE6Y+etiHP3E3+hkT
+	 mpg+ROPkkYX0l7Ux6579evgnb2+7cYVc37C/izZ4tHhhmEhUo4kzzI8X0VhP5dZGRLj3M
+	 SRNq7AUL7K9QwKAxz+h14MWiPptiBbJKEUZ/z/5kLkIwhi25YHo+JUb5iMh7Kx35S7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794785756;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794785772;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=zOZSExS6D99A+mRC67Izr+rK8eU49523Qp86bvP2s5M=;
-	b=AnIMZXU3ZP6d95Kavqe5hbf8CX99ZuCoqSF7cTJNRRZP0JjIZNK7phIDhbKf4nuOZfaV
-	 VPjv9GVQkcIbtwKXzavV8el32mZ4SgqEHzsEam8x2fmXrKUGcw87UPSzDCM01B+RN38Tg
-	 T7xDXiA7NUa63Raj06PZGh9FgZwhWOSSP+JksTE89EZrpv7zAIkmf5UgfQ8Ma6ElixunY
-	 4DXME3N7sVV/Pt091G/aUmI+CayMmG3niTjf+xURLVXr/57nU3ClOVUquuQu0XJvvtKbM
-	 3TjZwy+6ZEffIhR9z+DxB4pOIaBFvxuRbjMM71vaUarj3XMg+Z0A+IgTo9iWFtR2HTg==
+	bh=sL5yvuHGsnYSKt7xSu0vNsDFpAHGkhQmvgSyjWM0sUA=;
+	b=cBrt4BH+UFzMvbHeXM0e+bQESBIeN01Y0PsLlbA56raiB/JYkHm/YFAvx8Np48Y+BKgH
+	 3dq/0JqRD2UtZ+Yz+y2oPjWaS1m2y9GZOl8TBepVktRgoH5hrtPrYKyFKr2r/JNpZpgws
+	 1SjXIQYBc9q1RLP1B0I/+e0c34ycWETHnVa3QcdFMYeIEjM6JehPhgLRXreC/QMfEEtZA
+	 scDbnsFkVBiUzate/HMmwAIycE28UJKj62gGUrlBQtGvvsjaj3bh2b4ByQvMRnrfS/r05
+	 33WdWI2LgAwTmYbegl+I90hLYDr0neMrxb31OfhmpljiWm9Pjhk9yGjVzqDYQXcT0Hw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="YLkJ/bOD";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E0hTXmVB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3657D606A31F
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 23:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D3D606A31F
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 23:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YLkJ/bOD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E5F1F000C4
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 23:35:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=E0hTXmVB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA121F000C4
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 23:36:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794785756;
-	bh=zOZSExS6D99A+mRC67Izr+rK8eU49523Qp86bvP2s5M=;
+	s=k20260515; t=1794785772;
+	bh=sL5yvuHGsnYSKt7xSu0vNsDFpAHGkhQmvgSyjWM0sUA=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=YLkJ/bODKfw4/0jyRiiaOfhLFabAu0hUldvzb7CIqbnhyzzLOBXh3oNXCh6QDpGpH
-	 LvqwmiBACDXqnu7VGShT67C5DWG3LqGEMgHNOnk/09u9tZmsOo06b8DSfcXPw6dyKV
-	 wmilIEWlfB4tjsTyNgIiuGblG2eLFd98C2/e4qA/XhyNMITdo8kKZjG7NqMG88fX2g
-	 9iuZ0v1AxOgEgBjREuiHMldsemh+suQptnKhaT1Fn1JUGpCaRFw3W7kCxcV9+Q8J+y
-	 tWoj3sXlHTgUOCsTlJoYQGwDsZJ3rNhHjET5ZMcXeJ2mJJDugEU12iD2v3lg3P3S6A
-	 32IhMS0RW3Z9g==
-Message-ID: <sashiko-outbox-215905@kernel.org>
+	b=E0hTXmVBkwFRvFjChbIixtPE5B37QghveOkm8PRlA6qVkMzy6akJDBbLWPhHkCSiU
+	 fsTtOXgwAmcgMv0P5oPPU77JF7JZyrCJ//HAERQxz6r80oxkknsAmwgX0+KAu9HiZW
+	 Sjhbf00ftdyqr3hICW+yDywmZQ0RyoUhQuEYGyMv4Va+7SG0/Fzbc8cya8H9YDJHVS
+	 NE/XYeZZuf+3LIOtbj1IcsTS9yIqQzQK9LIu3t19CvjqctJWQRTpzOCkOnC2M2M+eM
+	 9W5zG7adNk/B4LW0amtzHhadkUzKNmpozBwdzhmia0shYJ6fNIBvfLGMSNgPU2oxVc
+	 6asDgVcmbciug==
+Message-ID: <sashiko-outbox-215906@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/4] tpm2-sessions: Drop TPM2_NAME_SIZE
+Subject: Re: [PATCH v2 3/4] KEYS: trusted: Remove dead branch from
+ tpm2_unseal_cmd
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261115233156.1485238-2-jarkko@kernel.org>
+In-Reply-To: <20261115233156.1485238-4-jarkko@kernel.org>
 References: <20261115233156.1485238-1-jarkko@kernel.org>
- <20261115233156.1485238-2-jarkko@kernel.org>
+ <20261115233156.1485238-4-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 23:35:55 +0000
+Date: Sun, 15 Nov 2026 23:36:11 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,19 +60,19 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> TPM2_NAME_SIZE was left to include/linux/tpm.h when the base definitions
-> were consolidated. Switch struct tpm2_auth to TPM2_MAX_NAME_SIZE and
-> convert TPM2_NAME_SIZE users to TPM2_NULL_NAME_SIZE, removing the
-> redundant TPM2_NAME_SIZE definition.
+> TPM2_Unseal requires TPM2_ST_SESSIONS, and tpm2_unseal_cmd() always does
+> set up either password or HMAC session.
 >=20
-> Cc: stable@vger.kernel.org # v7.3+
-> Fixes: 88c5a62c3af7 ("tpm: Move TPM common base definitions to the comman=
-d header")
+> Remove the branch in tpm2_unseal_cmd() conditionally setting
+> TPM2_ST_NO_SESSIONS. It is faulty but luckily it is never exercised at
+> run-time, and thus does not cause regressions.
+>=20
+> Reviewed-by: Jonathan McDowell <noodles@meta.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115233156.1485=
-238-1-jarkko@kernel.org?part=3D1
+238-1-jarkko@kernel.org?part=3D3
 
