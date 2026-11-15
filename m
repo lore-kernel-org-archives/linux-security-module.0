@@ -1,49 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794751360;
-	b=4VTHpmo0dypQzqdJxjv2Z4IO5ZXch4MZBSlzJ9LBZWvhiWQy94vTpFvoHFm5eRmIPjXy
-	 Edgn9qtMCj6CehTHUu8pewVxS5fP6HL2b+h4AbKDr1WE+ylDFQf4Jk8soWY4z66b5jvRs
-	 Zy9sg8aNWOZg+wvx3F1F5jZMuvgBQqFOoyTdqpku/q9eZ3CGUYLgY+H/v4aI+zLDLVTc0
-	 begzJordT1tIobK4stLvxfBJSXNv+FHCBY7UD60ai5f5wofNx5x47Qkc+Ge7Oz2cWCecD
-	 d9QT4j2WB+veG3P9S05zj8qTtEVdCTXEWPsWrlD/uH8Tcc4CvaRSBoUzCtZ3bJLwa2Q==
+	t=1794751369;
+	b=DeD5C2HmR6BAHej7eHsLPBv4onNLI75x3yggTuIxARFheh8LypO3rOQVT/bbv8M0nRKd
+	 GjXUJnao2/mOcQMSbBSmJAQG6Axvwjt/XaZjOzUKk4IT3Oi9J4nyrhIXgssJnkHGs4rZ+
+	 3Adz4u4K2r6BxzD6j/v7u5+3OVBjJJ10sduaxf2VCnr/zEBlAQWUd78DyZERjd9knMzc6
+	 n7J8xxZ6gpb3gONNmMHO1++0jO28d/066gfFueh6oAcQnLnDH2QE4B3rUYy4cSdghw5Sh
+	 twLjmvtMMBz+7NHHIs+2wTB/TKg25mWp8u5NjcWd6aAl3WpnyTzph74H6Lfo//FDcuA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794751360;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794751369;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=RmUmQueFUIkDd/JCHFltiMkrv2GuUOEp0YdDZHToRTk=;
-	b=niPboxK3ifSwoMDR0oJBGufhgAyNiy0yxXKy5FdV5BK7KyhVx0BNioeHWoDTVlvNZS+5
-	 VaIi5Tl8Cm6EWJVdYoBFLsN/lrVFJ+GwetvMcZ7algbXm4fAqBln2udMcJJGAkw6Soaxc
-	 aNHQ0pZvfLVrOfQ4zZKway/hO74ulC1rUVvvSrpadZ4UQKiZ7pL/ij3cFzJ9p39+7kEjF
-	 u6OTgdkmVrsSjsRuOO0Tk6vu9rYInoJ0K6XcI8JDpTKhcvfmkBfM1PwwVLW/lcOP9W9hu
-	 PQuLQ2eXuDbWAU/t6d3Z0Fd2j0x8x5aD0PFP43jaUeHQhWLLupcgfNiNt1TgCRVmqbQ==
+	bh=oP5zIZCQTcMU9+CPrnID7f1P0LDTPtLFFjYPE0HeKnY=;
+	b=UuQ+wW4mpbCRvDjo6aqdiY45qYJ02QN7Lb6F58Gof6pec6jk3NXOzQkSRnBG1sn0hodj
+	 u/fuahl+pCfrMICcfyJWV1qAaR9OJXozM/hLG+YjMyPU9SF9F2+Mfrqmyr2UxsjQFa8QP
+	 vS3bVqZT1vCInvB43dDzYnS4kn0Kzfgvg9TJlv2nmO/3K7Etn6gh428K7RmSs9laSdi6e
+	 x455X0h4uz19I/AvxbJ9ZUWmHVpXK/gdyWCZY2abHhbyvqiKKLBRqonWmjFm52OgZ4s8s
+	 8/x/QZySeYb5j2iTwEDsZ7Phj8w2KW8ljaVJBP9VdKUnlwZrGjpcdN25eN+3ugaoe/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T1ckdNyE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K5ptMEvX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B52606A334;
-	Sun, 15 Nov 2026 14:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D990606A8B0;
+	Sun, 15 Nov 2026 14:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T1ckdNyE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B30A41F000C7;
-	Sun, 15 Nov 2026 14:02:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K5ptMEvX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3F51F000C4;
+	Sun, 15 Nov 2026 14:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794751360;
-	bh=RmUmQueFUIkDd/JCHFltiMkrv2GuUOEp0YdDZHToRTk=;
+	s=k20260515; t=1794751369;
+	bh=oP5zIZCQTcMU9+CPrnID7f1P0LDTPtLFFjYPE0HeKnY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=T1ckdNyEfHH/g0T9kKl/6vuBCVZ0Hyl6ls82GnvffEHiRaoYRbZHyVoprfjynxKPI
-	 WVI5kZ47lN1ZhnMGADcpO6O21WTP8DSajO1y2R2mbSBOqGqjHxxodT9DITHZDBzgAI
-	 ncEVlTXUGTAKGwHxFZqNfKNWyNBFVBMrUM+Vlfr3xnA8i+J1KdyUzE27IpdudkNsmA
-	 w6Fu4v08wyDVHNfpJ8M0mVZSBFZGTVy42caJdvtAKDez6YzzapbGQhKTdmZ6ivFAJY
-	 jSzUFNzsEixLIL3JyO7hUf6FoYTkjf4XJCj1E3pdVzYV4bRpKzPlGge+KFGMaSToGi
-	 RR3SADGdIz8bQ==
+	b=K5ptMEvXOFu9qpLLiVWzupBP0giX+aKB+gY5mvwLuKtilk1+JXMObMjAgnCUsISCU
+	 2497YIWWQwd+8BSlRCera9VbFkT+iLV7OrAxD9xvA32qYgrG4GyHi9e0wpRENhkD8R
+	 nPUxAuijTqPnVrbls6vpZ06JMNKW8CP0vOWqohnrnB1ow0wpTwR7hTFmZD7NpldVhi
+	 3T7hENFpK/e3YaFEtIf4MfiZqPBE0pk16ewIH+JZi7c6nSNNWuxwKgNrNGWWQdbZNm
+	 RFcJk0PGwXpT6ZV9Gg7UH4l6eS/vOydX1+K8aCZYSS3Oi4ZEhIfYmhFTdv+/eo8ABP
+	 +EVy0uNQY+XuA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Sun, 15 Nov 2026 15:01:39 +0100
-Subject: [PATCH 09/13] bpf: return NULL from bpf_real_data_inode() on
- errors
+Date: Sun, 15 Nov 2026 15:01:42 +0100
+Subject: [PATCH 12/13] selftests/ftrace: add uprobe tests on overlayfs
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +54,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261115-work-ovl-d_real-v1-9-ca155efbcb2e@kernel.org>
+Message-Id: <20261115-work-ovl-d_real-v1-12-ca155efbcb2e@kernel.org>
 References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org>
 In-Reply-To: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
@@ -65,62 +64,130 @@ Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>,
  linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
  linux-mm@kvack.org, "Christian Brauner (Amutable)" <brauner@kernel.org>
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1815; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Sife0/X+A5GvD2c7C2xqh/28wXOwqcHzMdpkKeO2AZA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT93B310pr/0Lf0HRMmn5jweuoV++Uvpz6uKvW6c9l0z
- xNbN4msaR2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATOeLKyHC8ZLX6+plr4n/N
- VtoUNaVp1YmlB/WKC2JKbVi4fnbt43jJ8D/7svaGGTXiBV7hh+4ff+NlpiC+btvN2ts8fL96Jf+
- xr+IAAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4013; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=xU8r7+QeQbm0YiMN28AhupsgwvIfGboboN38EplDOpw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT93B1rLux4aLX3tOn77I7tfTqN3eKmzWFbD1dmk1zHG
+ YoZjyYJd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk1H9GhkkW83jiHk2dIez5
+ x7dQd6vso67TTLpvnMzepxjJvlZ4dJ6RYYpxgVsM+315zvbbl9cw/TxuJZby4xvr37cujL+eHnN
+ R5QMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-d_real() is about to be able to fail for D_REAL_DATA. So switch
-bpf_real_data_inode() from d_real_inode() to d_real_data_inode() and
-return NULL if the data can't be resolved.
+Add uprobe tests on overlayfs with a data-only layer:
 
-The kfunc is already KF_SLEEPABLE | KF_RET_NULL and its documentation
-says it may return NULL. So programs already have to deal with NULL and
-the verifier enforces that. Note that this is the caller that most
-easily ends up with a file whose data was never looked up.
-lsm.s/file_open runs before ovl_open() and lsm.s/file_receive sees
-O_PATH files passed via SCM_RIGHTS.
+- a metacopy file whose redirect points at nothing: creating the probe
+  fails, the error log has the new message and nothing gets tainted by a
+  WARN
 
-Spell that out in the documentation.
+- a metacopy file whose data lives in the data-only layer: the data is
+  looked up when the probe is created and the probe hits when the file
+  is executed
 
-This is a no-op until d_real() can actually fail.
+None of the existing tests puts a uprobe on overlayfs.
 
 Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 ---
- fs/bpf_fs_kfuncs.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ .../test.d/dynevent/add_remove_uprobe_overlayfs.tc | 92 ++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 35ccd98a4de64..ab24e6bcd64c4 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -491,11 +491,20 @@ __bpf_kfunc int bpf_sock_read_xattr(struct socket *sock, const char *name__str,
-  * inode itself is returned; for any file on a non-union filesystem the inode
-  * attached to @file is returned.
-  *
-- * Return: The inode hosting @file's data, or NULL.
-+ * The union/overlay may have to look up the data first, e.g., when @file was
-+ * opened with O_PATH or the program runs before the file is opened. If that
-+ * fails NULL is returned.
-+ *
-+ * Return: The inode hosting @file's data, or NULL if it can't be resolved.
-  */
- __bpf_kfunc struct inode *bpf_real_data_inode(struct file *file)
- {
--	return d_real_inode(file_dentry(file));
-+	struct inode *inode;
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe_overlayfs.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe_overlayfs.tc
+new file mode 100644
+index 0000000000000..a4351e6a3b181
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe_overlayfs.tc
+@@ -0,0 +1,92 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Generic dynamic event - add/remove uprobe events on overlayfs
++# requires: uprobe_events error_log setfattr:program readelf:program
 +
-+	inode = d_real_data_inode(file_dentry(file));
-+	if (IS_ERR(inode))
-+		return NULL;
-+	return inode;
- }
- 
- __bpf_kfunc_end_defs();
++grep -qw overlay /proc/filesystems || modprobe overlay 2> /dev/null || :
++if ! grep -qw overlay /proc/filesystems; then
++  echo "No overlayfs support. skipped."
++  exit_unsupported
++fi
++
++echo 0 > events/enable
++echo > dynamic_events
++
++OVL=$TMPDIR/ovl
++mkdir $OVL
++mount -t tmpfs tmpfs $OVL
++
++cleanup() {
++  echo > uprobe_events
++  umount $OVL/merged 2> /dev/null || :
++  umount $OVL 2> /dev/null || :
++}
++trap cleanup EXIT
++
++mkdir $OVL/lower $OVL/data $OVL/merged
++
++# A metacopy file whose data lives in the data-only layer.
++REALBIN=`readlink -f /bin/sh`
++cp $REALBIN $OVL/data/sh
++truncate -s `stat -c %s $REALBIN` $OVL/lower/sh
++chmod 755 $OVL/lower/sh
++setfattr -n trusted.overlay.metacopy $OVL/lower/sh
++setfattr -n trusted.overlay.redirect -v /sh $OVL/lower/sh
++
++# A metacopy file whose data doesn't exist.
++touch $OVL/lower/broken
++setfattr -n trusted.overlay.metacopy $OVL/lower/broken
++setfattr -n trusted.overlay.redirect -v /missing $OVL/lower/broken
++
++mount -t overlay overlay -o lowerdir=$OVL/lower::$OVL/data $OVL/merged
++
++TAINT_WARN=512
++TAINTED=`cat /proc/sys/kernel/tainted`
++
++# The data of the broken file can't be resolved so the probe must fail
++# right away and not only when it is enabled.
++echo > error_log
++if echo "p:broken $OVL/merged/broken:0x0" >> uprobe_events; then
++  echo "uprobe on a file without data was created"
++  exit_fail
++fi
++grep -q "trace_uprobe: error: Failed to resolve the data of the given file" error_log
++! grep -q broken uprobe_events
++test ! -d events/uprobes/broken
++
++# Get the entry point virtual address from ELF header and convert it to
++# a file offset. See add_remove_uprobe.tc.
++ENTRY=`readelf -hW ${REALBIN} | grep "Entry point" | awk '{print $NF}'`
++ENTRY_DEC=$(printf '%d' "$ENTRY")
++OFFSET=$ENTRY
++while IFS= read -r line; do
++    set -- $line
++    [ "$1" = "LOAD" ] || continue
++    VA_DEC=$(printf '%d' "$3")
++    OFF_DEC=$(printf '%d' "$2")
++    FSZ_DEC=$(printf '%d' "$5")
++    if [ "$ENTRY_DEC" -ge "$VA_DEC" ] && [ "$ENTRY_DEC" -lt "$((VA_DEC + FSZ_DEC))" ]; then
++        OFFSET=$(printf '0x%x' "$((ENTRY_DEC - VA_DEC + OFF_DEC))")
++        break
++    fi
++done << EOF
++$(readelf -lW ${REALBIN} | grep LOAD)
++EOF
++
++# The data of the metacopy file is looked up when the probe is created.
++echo "p:myevent $OVL/merged/sh:${OFFSET}" >> uprobe_events
++grep -q myevent uprobe_events
++test -d events/uprobes/myevent
++
++echo 1 > events/uprobes/myevent/enable
++echo 'ls' | $OVL/merged/sh > /dev/null
++echo 0 > events/uprobes/myevent/enable
++grep -q myevent trace
++
++echo "-:myevent" >> uprobe_events
++! grep -q myevent uprobe_events
++
++# Nothing above may have warned.
++test $((`cat /proc/sys/kernel/tainted` & TAINT_WARN)) -eq $((TAINTED & TAINT_WARN))
++
++clear_trace
 
 -- 
 2.53.0
