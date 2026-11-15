@@ -1,45 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.237
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794753468;
-	b=kP2wCI7ZUcroYv1JifOCnC2P2RPx48pQvTvtijmUs/0KpVmXiqkS7fq4gbpmlnqWWSOH
-	 4715I/0E08v3/I+NUSbbQNP3YNAohU1I/QsKGm37hayyynbxS6lsaVQ3M9DSbyt8S792C
-	 krWQNBa1wsd4WEZKXzOcXuyy9a+x0SzCDDiJ1eF6GZFxJ53oy5WzO+LoHQFGpcq47aa7H
-	 dWGoB8u5ICxkZ2jPOVQjkFRMAFhJUZCO/RdrsCivB+vjLBYfY9Lr+sYMdJ69R4hlhV6f4
-	 G8ilyW1eVXEBwL6UA42jVVLIm10y1E8M23T7GOjRixtCCIzbHng+8Ms56VSVdIcFOSg==
+	t=1794753923;
+	b=2NOjcvfBr8uJBq3UBrcGbUNDnR7rafdHaH1bUvSNoNGqRWBWKoc/ChcYfWMq+MC0dkim
+	 mkrzAPD0RRymQLGqpbqVnmbs3dWEqfm9127rIiZR8lH8mLd2TjBzX8IKM1VTc5h/qRBGl
+	 awvCdOARkVzKWPT+x/eb14YP0pSK9BeNP3bBUKW4umA/q4GCL57VFEGY4GySGX/k2GOYm
+	 pU/JJUT/afmt1URR6DlA8e1LPrf1RTtFSg1TSq1kXAc8ubda4pkk31k4ypX8a1X4YVZ+Z
+	 H0NK7SHyON/sb0NcY64cm5zLNRepsMbRhL/089ofxLmYUX/R0UU9iVaCIcG4xj56Jbg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794753468;
-	h=Received:DKIM-Signature:Content-Type:MIME-Version:Message-Id:
-	 In-Reply-To:References:Subject:From:To:Cc:Date;
-	bh=2aQpD+5wOwFw2m2I7/vgi2Nycby2o3K9U9x+kyRBQZ4=;
-	b=Bz1jCZ9ZUB3HbYsayh/qjIw/0GBFzyJmtQLS3rx/xeJeGFV9EmOcNh384eer9LV96Vfh
-	 YgX0/CajRg107YrWBhc2vOV4R8IHwbuuWmWBtC6TRu2+2+p5fFDAZcBe1QmPnwEm0i7/q
-	 hvVBiNzIKuSnJJZucrxcOzVKosezIjeNwwmDLCfZUpBPhTNu8qskeVAXf3foNBcBqJ8AA
-	 eTHk+5ScdegOyEXy+agGI5jENO2YG+j97rJdEE7sRs9KvLOrlUwpAoFXjxUZU+/aCF4zt
-	 HHUSrzkLrAyrayBKRKC3sZtu2mRb9bRVar0jf3eL8HnjmSFAU+Lt1W2n/Yd11ltidlg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794753923;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=8/WotbWDHEfmRfuiPjuZcwLPMvVS6lQVakAC3VWoLLU=;
+	b=MJc8pdd4XwM1kt4Pu14vZcQ9lsqsmsSkY7ykuwmFdS6PHOzd9+5IBGLG5YrvZHan/fNo
+	 Acm7XzDzgnr2Vkc44Lg9mk1EX2w5QhYMp/ODIb4F8hQ5r3P33ZYSjlG3EGhFX3QGfnd+r
+	 G4P1CuyIr88U1FDDdlLm9WgfsEfKU62M0MfuqMQaRjSe+JY8ZMlfrZ7T0u64E8wWPDOMB
+	 zXLn5tD8uzC7uctYuN5++0BdH1/8KYfxpV9Cjzc27G7RH1ELQCibK6W1yBJqezFucLDQb
+	 rh5BMr+c/klWw3FUPgnLJqdOlVG4cV2D7BoasMPbWHDeQTtFQy6dvsQbLPsbiPAGZMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="F/8qSbuo";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=vqAncgoc;
+	arc=none smtp.remote-ip=91.218.175.237
+Received: from mta0.migadu.com (out-237.mta0.migadu.com [91.218.175.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93337606A31D;
-	Sun, 15 Nov 2026 14:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BAD606A31F
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:45:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C6BAD606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F/8qSbuo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A461F000C5;
-	Sun, 15 Nov 2026 14:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794753468;
-	bh=2aQpD+5wOwFw2m2I7/vgi2Nycby2o3K9U9x+kyRBQZ4=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=F/8qSbuoGQZGQtgBxIr6B2ueFpU95+7qJMwmm8INX1xDHRlTUaSD8BFdbq4CbOxrR
-	 ox1qNccLa8/HK300SOpQmBbk5Qvso5s0ej0nnLzfaw7woW9fsTRsB3fn8XKtg4GZi2
-	 mkIHuNrdV77fS3AS7HGyBsRW6r1I1TVsLts0dAY635e5VsCW997Apri30eUILQ8DE8
-	 6QT8gY4VS7IF4+z6kjL7VWLQ7z0W25C7ZhfXYsY6RHZAfw5JKq52esd/VilnzZerDm
-	 yfh9vV8t3VLyXsXWrgdekBNeTMfP6B4g7EKPziGoUoo9vqTOsFrf/z8rys1tdDFec/
-	 iXGUcM50BmJSQ==
-Content-Type: multipart/mixed; boundary="===============5766711597295612734=="
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=vqAncgoc
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=Lampe3FcPP1WTHHlXMYUS2tntnZofTfaiYWl5Mu2ONA=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1794753920; v=1; x=1795358720;
+ b=vqAncgocWriTzN0GQwLHVQzHJz9ZyGwRHciDgSVGrOZmnN9Pnuhcn6ShMrI+TC7raS3ddDsy
+ Z7mysgH/KHoVoUX9nSHVH7CfPqwY24q2bJXtNH7gmzHt2z2krPt5u4DsjHuXggkJtCq2oaTqnf+
+ chCbM5oRd0bbNCTvnFhE2Gi4=
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 5fc379baf2e39b51;
+	Sun, 15 Nov 2026 14:45:18 +0000
+X-Mizu-Trace-ID: 5fc379baf2e39b51
+X-Migadu-Flow: FLOW_OUT
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: netdev@vger.kernel.org,
+	paul@paul-moore.com
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Huw Davies <huw@codeweavers.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] ipv6, calipso: fix data-race in calipso_cache_add() bucketsize check
+Date: Sun, 15 Nov 2026 22:45:07 +0800
+Message-ID: <20261115144508.71543-1-jiayuan.chen@linux.dev>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -49,96 +71,115 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-Id: <9bacf710b101058735f399d44953a18d1630aec3b6b176fe96215cdd2f0eb7ac@mail.kernel.org>
-In-Reply-To: <20261115-work-ovl-d_real-v1-8-ca155efbcb2e@kernel.org>
-References: <20261115-work-ovl-d_real-v1-8-ca155efbcb2e@kernel.org>
-Subject: Re: [PATCH 08/13] ipe: handle errors from resolving the real inode
-From: bot+bpf-ci@kernel.org
-To: brauner@kernel.org,amir73il@gmail.com,linux-fsdevel@vger.kernel.org
-Cc: chris@chrisdown.name,mszeredi@redhat.com,linux-unionfs@vger.kernel.org,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,linux-trace-kernel@vger.kernel.org,linux-integrity@vger.kernel.org,linux-security-module@vger.kernel.org,linux-mm@kvack.org,brauner@kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
-Date: Sun, 15 Nov 2026 14:37:46 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 
---===============5766711597295612734==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Issue found by sashiko when reviewing my data-races patch [1]. This is
+not a plain READ_ONCE() annotation like the rest of that series but a
+real fix, so it is sent separately.
 
-> ipe: handle errors from resolving the real inode
+calipso_cache_add() reads calipso_cache_bucketsize twice: the "<= 0"
+guard on entry, then the "size < bucketsize" test after taking the
+bucket lock. A writer can flip it to 0 in between:
 
-TL;DR: Behaviour question: the new ipe_evaluate_event() early return for an
-unresolvable real inode skips ipe_audit_match(), so enforce-mode -EACCES and
-permissive-mode allows may leave no IPE audit record. Should it audit?
+  CPU0                                    CPU1
+  calipso_cache_add()
+    calipso_cache_bucketsize == 10 (> 0)
+                                          proc_dointvec()
+                                            calipso_cache_bucketsize = 0
+    spin_lock_bh(&bucket.lock)
+    size(0) < calipso_cache_bucketsize(0) -> false
+    -> else branch, but the bucket is empty
 
-> diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-> --- a/security/ipe/eval.c
-> +++ b/security/ipe/eval.c
+On an empty bucket the else branch takes list.prev (the list head
+itself), list_del()s it and then list_add()s through the now poisoned
+head:
 
-[ ... ]
+ Oops: general protection fault, probably for non-canonical address
+ 0xdead000000000108
+ RIP: 0010:calipso_cache_add+0x2f0/0x380
+ Call Trace:
+  <IRQ>
+  calipso_cache_add+0x4c/0x70
+  netlbl_cache_add+0x4a/0xa0
+  selinux_netlbl_skbuff_getsid+0x1ac/0x280
+  selinux_skb_peerlbl_sid+0x7d/0x100
+  selinux_socket_sock_rcv_skb+0x2d3/0x460
+  security_sock_rcv_skb+0x86/0x150
+  sk_filter_trim_cap+0x56/0x730
+  sock_queue_rcv_skb_reason+0x1e/0x80
+  rawv6_rcv+0x679/0xb20
+  raw6_local_deliver+0x1f0/0x5b0
+  ip6_protocol_deliver_rcu+0x215/0x9a0
+  ip6_input_finish+0xb0/0x1b0
+  ip6_input+0xa8/0x250
+  ipv6_rcv+0x14b/0x1c0
+  __netif_receive_skb_one_core+0x8f/0xe0
+  __netif_receive_skb+0x23/0xb0
+  process_backlog+0x27a/0x950
+  __napi_poll.constprop.0+0x61/0x2c0
+  net_rx_action+0x372/0x800
+  handle_softirqs+0x109/0x570
+  __do_softirq+0x10/0x18
+  do_softirq.part.0+0x47/0xd0
+  </IRQ>
+  <TASK>
+  __local_bh_enable_ip+0xf0/0x120
+  __dev_queue_xmit+0x578/0x23f0
+  neigh_resolve_output+0x278/0x3c0
+  ip6_finish_output2+0x4b1/0xcb0
+  ip6_finish_output+0x2b6/0x6b0
+  ip6_output+0x122/0x400
+  ip6_local_out+0x61/0xb0
+  ip6_send_skb+0xa0/0x260
+  ip6_push_pending_frames+0x2b/0x40
+  rawv6_sendmsg+0x1b7a/0x2750
+  inet_sendmsg+0xa1/0xb0
+  __sys_sendto+0x2fe/0x350
+  __x64_sys_sendto+0x7f/0xb0
+  do_syscall_64+0xe1/0x450
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-> @@ -335,6 +339,15 @@ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
->  		return 0;
->  	}
->  
-> +	/*
-> +	 * Without the inode hosting the data none of the properties of the
-> +	 * file can be evaluated. Refuse it unless IPE is permissive.
-> +	 */
-> +	if (ctx->file_err) {
-> +		rcu_read_unlock();
-> +		return READ_ONCE(enforce) ? -EACCES : 0;
-> +	}
-> +
+Snapshot the sysctl into a local once and use it for both tests, like
+cipso_v4_cache_add() has since commit dd44f04b9214 ("cipso: Fix
+data-races around sysctl.").
 
-Should this path emit an AUDIT_IPE_ACCESS record?
+[1] https://lore.kernel.org/netdev/179428999963.994134.16904544500890053668@kernel.org/
 
-This early return skips the eval: label, so ipe_audit_match() is never
-called.  Every other way ipe_evaluate_event() ends in a denial goes through:
-
-eval:
-	ipe_audit_match(ctx, match_type, action, rule);
-	rcu_read_unlock();
-
-	if (action == IPE_ACTION_DENY)
-		rc = -EACCES;
-
-	if (!READ_ONCE(enforce))
-		rc = 0;
-
-With this patch, in permissive mode a file whose data cannot be resolved
-returns 0 and leaves no record at all, even though
-Documentation/admin-guide/LSM/ipe.rst says that in permissive mode policy
-violations are logged.  In enforce mode the -EACCES has no IPE audit record
-to explain it.  The commit message says "Permissive mode allows it like any
-other denial", but other denials are audited and this one is not.
-
-This path can be reached for an already open file.  ovl_open() verifies
-lowerdata and sets OVL_VERIFIED_DIGEST, but a metacopy copy-up clears that
-flag (ovl_clear_flag(OVL_VERIFIED_DIGEST, inode) in fs/overlayfs/copy_up.c).
-A later mmap(PROT_EXEC) on the open fd then goes:
-
-vm_mmap_pgoff()
-  security_mmap_file()
-    ipe_mmap_file()
-      ipe_build_eval_ctx()
-        d_real_data_inode()
-          ovl_d_real()
-            ovl_verify_lowerdata()
-              ovl_maybe_validate_verity()
-
-which can fail with -EINTR from ovl_inode_lock_interruptible() or with an
-error from ovl_validate_verity(), setting ctx->file_err.  The IMA patch in
-this series (c9952f8fed84) describes the same scenario, and its error path
-in ima_collect_measurement() still calls integrity_audit_msg().
-
-Could this set action = IPE_ACTION_DENY with a suitable match type and jump
-to eval:, or use a dedicated audit helper that records the error, so that
-denials and permissive-mode would-be denials are still logged?  No later
-commit in the series touches security/ipe.
-
-
+Fixes: 4fee5242bf41 ("calipso: Add a label cache.")
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 ---
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+ net/ipv6/calipso.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/43723438893
---===============5766711597295612734==--
+diff --git a/net/ipv6/calipso.c b/net/ipv6/calipso.c
+index e399a42e3083..fb79eccafc02 100644
+--- a/net/ipv6/calipso.c
++++ b/net/ipv6/calipso.c
+@@ -263,13 +263,14 @@ static int calipso_cache_check(const unsigned char *key,
+ static int calipso_cache_add(const unsigned char *calipso_ptr,
+ 			     const struct netlbl_lsm_secattr *secattr)
+ {
++	int bkt_size = READ_ONCE(calipso_cache_bucketsize);
+ 	int ret_val = -EPERM;
+ 	u32 bkt;
+ 	struct calipso_map_cache_entry *entry = NULL;
+ 	struct calipso_map_cache_entry *old_entry = NULL;
+ 	u32 calipso_ptr_len;
+ 
+-	if (!calipso_cache_enabled || calipso_cache_bucketsize <= 0)
++	if (!calipso_cache_enabled || bkt_size <= 0)
+ 		return 0;
+ 
+ 	calipso_ptr_len = calipso_ptr[1];
+@@ -289,7 +290,7 @@ static int calipso_cache_add(const unsigned char *calipso_ptr,
+ 
+ 	bkt = entry->hash & (CALIPSO_CACHE_BUCKETS - 1);
+ 	spin_lock_bh(&calipso_cache[bkt].lock);
+-	if (calipso_cache[bkt].size < calipso_cache_bucketsize) {
++	if (calipso_cache[bkt].size < bkt_size) {
+ 		list_add(&entry->list, &calipso_cache[bkt].list);
+ 		calipso_cache[bkt].size += 1;
+ 	} else {
+-- 
+2.43.0
+
