@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.52
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794754078;
-	b=4KD5cq/2CFAoRB0FaUa3olTjDPajZi3LVFpF9M2FYf8DAM+4UEtI3xk/5jwwwtJZvyRL
-	 mKy1GvexOcvw0J0MxH2l3nqOuEErhH+nLQ4Rt5y9IZToqD8dT4Mbf4jUgDa2BbjZMHsOS
-	 M4BxYh73xq+ET7PAWXcEE04F1RWcvK/Sqw9/cWobHt+PLxPcHjZlTfzy/UB+N3LgCh0yB
-	 d7S7aBWpZEYtZRQxVZk0zIOFfIU/zlGYyROLDiCSjZu80hFqnbchdOYJV5GosgRGgyVTu
-	 3XZy54amxp8X+CMxQKoE1ViINbSqHPbOtp3EP56/B/oXvGN+7qFN5P1paDS1psRoEow==
+	t=1794754132;
+	b=44gl2VFgb/dShk0H6qt/39k3b0Zct6/ODfpchyjvqQCLSi8FGmM5chT0V9KVqSJx9uRq
+	 Up/VzSl+VZR9G6xDqDZ4VIk/tkPh0DT2Io4O2qRQ65SXIooEjAAX9m4PT4g5qdZ1BK5c7
+	 Qt49bap6Tc6WLAxJFYqmAeB/owke05GL9vlmKgOYnEaNw8PxbgT5pT6sLPQi9ZZGZNmMA
+	 LwD25Lr/NW8IFGz1/1hKFzoVPVMvZ1p24S1UwUX9J37Lrm+uUvEOcahOoomRkVm44ZYLw
+	 6RhjWtGkJlwCLfMQOezWoIvR3Pf6xeclj68vkjTPJYDT5yQqi2LAZhz5eJk1BxQxiYA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794754078;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794754132;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=x7HykaAJlgnOpmpM8XJHQMzZjK2dm2wSOUdGIuC/Jng=;
-	b=umCJmV0tptTxkqpkDivLqupNQ1wRdIMtN81QWOg35mzzM+ZPKLHdByYY0cqbdjfVAjAP
-	 qQ0BC9MP01QXzZulZVbiUwaolTyCrHdQSQ6/lQU89XiUeajbh2tDpbiu7vCDURxDUYUKI
-	 FuQFmnXS6S3AgdF0AM4Z11XASBOteMfNjq8kkE1Ri22fj4ZboJTagOGr4rbp93ueg//r9
-	 M96QT419CKUBWVJ2BI3mjYPSjR3ocCU7NsW5QQNySayvJQ3+rn6lNe2Il/CssK8U/a3+c
-	 n3jSaRzUK2IQR31SmkfJ747ABNyFHf7dxAW7PL3tUcPUPZosXE+6QrQKuuhASUvIiwg==
+	bh=C4gZYNSTU3nUDa0BlNRCYypUaVksPX6JgKJOOi2udkU=;
+	b=0lg+JN+6gYlsVM7ej8Y+KscjLeeABUy9FDs4GErLXXkfSOfe9V/6K4FIfmI0uYS3Y9Jn
+	 dSh2wQSRAK/qKtExPqXLI5kl96wdt679zOqWC/U04gppVi6KJ3cOMxarvImsilng2OxQ2
+	 9AMTRaTXAz7UW4jnXAbBa1Dc4v4pew8fOuik3w09CZsLInoIC1NxjZPLzulcai//97+Gr
+	 NkAy7w1HbW9H7OSm/t5ZG9mqAjQuesK5fRxJxSwSKF5TrAkcFbQ0LWyNPqN7YiWAaEMYH
+	 gEfsoB8qIx7PrOf9xw4HR0Zie9I30fLUleZol1Lql5XO+7PJLc4Yib4vnuICMAiBlHg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vdeJy6VC;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.48
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="w5g/XQ3c";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.52
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F83F606A31D
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:47:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2F83F606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716B1606A31F
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 14:48:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 716B1606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vdeJy6VC
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6b56bbf8330so3508249a12.3
-        for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 06:47:57 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794754076; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=w5g/XQ3c
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6b587538a37so3898618a12.2
+        for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 06:48:52 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794754131; cv=none;
         d=google.com; s=arc-20260327;
-        b=nsv2UkhDjbpObAcSuKcW9TpityFTJygqj+sIi9gwUYIIgg5d/gBLSwEmaimWSnEFx/
-         7A0MunIruZVGl4Qy16d8+WFPvOtzU8cGyGOOWcvDAo26bDpZEibFKSn8Rxny5denXzyN
-         M/5cNJibpcmnfKJ35J7q2SYG2ZaT5Ka3oL+NaXtHd8Yt+fERBMaYRRRCcjrnC5K0iVlW
-         fant+Mo+vRkg4fTRoeV6RUE1RNiUgBZYPKUNSJ9nu6EoNSlL1OJO9oxdURjCihWwcqby
-         9FmMoVBiVeilAtb7Gh0B9Bh1sT1EpO3HMTpe/WcHTtxy2dgDO1jy6vWgS0zLyJIGCGb4
-         arkA==
+        b=YteVRHYT1iOO6FeRh/shWTp+fOxeOrHnfjOskITt6fNnh71IENzfdLQo49KIbYYNKt
+         ejBDInLYFytzO18VDrkv0o/vzKePHdTZTrVjRHA7OF/yQbo3KTbwWyvRKCuOszlB0IeE
+         Gb95I/ZxpK0KrWvQB8gbnZH1ZXUjAQRglChAqBntrq8ayBq+Ix5gLIQ3cHzVZDP0NoVT
+         0wQdg9fSVO4/clqw3YVQnr2hlNfT2azyCuCUo4DDyCGMj/8x+CBc7OpnCbFOKU8dp9t0
+         Ktjb5+BNl7RnGWaE7d9zv9DNnrzrP3zncWYHlr2Ez5IoS5uSIUgPiLe8QrJ8e8gzA40U
+         W4OQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=x7HykaAJlgnOpmpM8XJHQMzZjK2dm2wSOUdGIuC/Jng=;
-        fh=6nVqP8aEYQ35EfJQakYGKUke6Iely4ZQEEF+MVm3bhY=;
-        b=J3d+cnVhIpSUrsd1nhlY1xeFtZPlMbGngXzw38Yb76YEF7WYgvzLtl8aCcgcljSkfE
-         PpkKzKycOaOTKiguNpB3wOoi/aLRiyEmomtmuxii6/A+vK+ILs4NXh4EWAaVLdlq3LIZ
-         jN+r6ONESruWmPgvMiPfSC5ZWR/3zuNqb3/TEquE7JJUxeIezr3kyA3XptDylS827Cqx
-         g2RRIGKFDoQKQmlBP6oY3g3x5Mfuk5kOmdjNIEbpYJ4nkP+K0KnZ7zXmvk+LXcB8lU0/
-         5MNoiwT5a3jIFsLj0K0C90CvrQViTl+GD2916h9rKjnePXczATAdy+Z+DQ0z/Du8BK8M
-         ufOQ==;
+        bh=C4gZYNSTU3nUDa0BlNRCYypUaVksPX6JgKJOOi2udkU=;
+        fh=Xkar+rfRS22zCiWvT0+O9qD89oRMAFz5liAj2TceJLc=;
+        b=g/J5+cHsib1J0gXnkn8eKaK2UGYJVTj7KwSvtmY3RaW3Bov7EpE+L/VrxsPyI4kCI4
+         28OIAq8In+HPaq78zxH7Paq+h4hpqL15c/jYHtc09zypyaA/zU1szpr0/WlqQs7WG1lH
+         puf7UqqoHqRpuJxWSsBsAPrat86G1dYHlRlWoWYMzzurZvRHEI0CmfaYRJSh+6gLm/AR
+         aqDFKIJ4hj/V3Fjo4VNoLCgEVKcTpeKvAzg04+WRXKUU742ots6IrUDgoQfbApop/jez
+         KsyMuo1fffWnlz1JnpJIkXbm6c+nI/RV23MtYGhQqDpX8tgi7Vs+aRSgTE4/DMJg5kD1
+         z3SQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794754076; x=1795358876; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794754131; x=1795358931; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=x7HykaAJlgnOpmpM8XJHQMzZjK2dm2wSOUdGIuC/Jng=;
-        b=vdeJy6VCk2IGRpnrLWlGo4pWLhKneS7IPoBk81bLTW0iD2g50lPI0We72sIkSM0SV6
-         cyTbNZB4O3d6VzvDDG9DPV5xAXhxmw4YkAyPQvdWI1M8aVPLRajltXh2AQAOKJY1EPeA
-         J/3fQzDOEdKdl4Og0NnAs1e+UKlTuJcD65e+vWcNglfpyVM0bRYj3j545Ccvj/p07kIf
-         RJxqw4iAkOZDz6lvhqxGAdC4rSJXKnOPRkFB2PlSiergeTKJSozBYsIqbEfROUxsRiwA
-         +nC6LR2BKa2t52tGscFSOG6fqqncSzV6SKT9uOygWHxo9fsmCNg/KFWBsER32dA/LqAU
-         Q4sg==
+        bh=C4gZYNSTU3nUDa0BlNRCYypUaVksPX6JgKJOOi2udkU=;
+        b=w5g/XQ3c9k+Vmzjr8H8faYY5EnV44gyfCeTqkUEnB7IDVxBorehzGxTmotRUcFMd2k
+         yEd9UzOdm44dKGOB9vhvuqA14zDF0izirGlMHcIkPmvfAWV6oC7EWoZSr/n7pMgjOayy
+         4XbbykfX2tOLXKQEY71fD4ubWMAf5smyh0PUCbn4ouKSDid+wdpti8tnvMNzC9U0omm7
+         PfP/4oysMFjcZt/QSyQgeX6xWgKvlNh0WDaR4PRzqjFkBPghAucojPZwp0HxO1dsPk5w
+         0TrSxGukXHJtQczzx+u36Zh+VEpUmtRmnvhCaIPp54UmNZzIkin7PEC6+n43usjPmyxQ
+         Zqdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794754076; x=1795358876;
+        d=1e100.net; s=20260707; t=1794754131; x=1795358931;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=x7HykaAJlgnOpmpM8XJHQMzZjK2dm2wSOUdGIuC/Jng=;
-        b=S8L41g8x+8W+csXG4DkYRv3OKRo/sTS0wUmrNc7xw5Xttplo6mJ2OUWjmnAikJyYU4
-         Mv5zsOKH3WrRsuFt3fDMIekllPI0MPrdH6uZqeYyp2/xhGxfxtJDG9YE5qyoXkly1T77
-         NIRSVfd3oVCaXO+PVH9ciZbsyqDbZsCuu4EPHGsKrNphEEWYjDioAvwcymZspJ13QXIg
-         PYW+8ZTaSGWHxD+dLiGLS2waEK0dCazNWwZaDNQ8T0fRsV/LJEYjUEaOYuMO93XgG78o
-         cBz8VgLzkeHHKI+Oy7HPmkREB6waJwOwa1+ZGvpGt2Z0zaKcyu9lCD2BhPcUBYNhKFs0
-         2C2w==
-X-Forwarded-Encrypted: i=1; AL+hErHt4y8b9bJETMGGZZsMwCoCM8fmTcFY2LPfU5abm2RTVQTLXtvhE/c5S/IkNOIRUGZv2rhogJoJz/vCNyCTlD36J8A5s50=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+dn8Y9f5q5F4SlaMZqP9j7mf5+FXOgn563NzpQMmHnxzAz7bQW
-	aiqfOqxmfABS/Y4nPCYIKF2VHozpO57Iu6E/rVNBPdAsNImCBqDFLLPEcdjV9PJaCwvQHS1cQE1
-	OhWKKmlqb0s+Pq3palwJHB9jkQUl7i38=
-X-Gm-Gg: AYBFou34mA4bTEnK0kNtSm88OCrBi6kbB2UJXhyJCaNZNbfyk5vxNAZFGuu7HR7TMA4
-	zB87fSqKBSuG8CzpZp+2p6v2r4FwXpWGXSxuINpVz5NCm6VIbkvj7aAFJE8CJnNv9Ez7hlQFJL8
-	HQXA2u85hXuX80uT0W7c4MxWVouQL5ZK4iFP+EC7yRdCSyuKUJxLHJdKendmOXpoEzO6RVvqj9q
-	j53jfElGuDY5tiMriUu6F6hJUsRzD2/KyC5Q7syGFOoKb8Z0QtFDN9pIjKL074Kc8exb8gXRMVs
-	/ktId8rQnbSVnlJ1tii62+vgvoYWNW51ERimibKy5ACbwhI32f2kL5iNUJiLNuL2k2TxWaP0h+y
-	sErrKawN6LZa9etdELnJ+DqAv4RrRCSenOrfhIZA2uLmiv6VfBjjaOgsmD+uC7SKU8BLcYw==
-X-Received: by 2002:a05:6402:1d4c:b0:6b7:e12e:7f1f with SMTP id
- 4fb4d7f45d1cf-6b7e12e824fmr3426650a12.10.1794754076394; Sun, 15 Nov 2026
- 06:47:56 -0800 (PST)
+        bh=C4gZYNSTU3nUDa0BlNRCYypUaVksPX6JgKJOOi2udkU=;
+        b=XaVGIVKksuaQCXnQBDxsFbH8b6+qTmB7q1rc+DhI3fpp/qNic/xlbvq2jVA7Pan0f0
+         WhWuE6HQPjJ0EEBr6iZrdAsyKiOjN2zmiiWf+HUzYMe7bfuEq2XHZElnBvqw3d0hB3D4
+         rxrCfaeagKlMEzzTqBvk6GB02uMHkA8VGvYyabXK+M8SpjZhtqiGjX1um75CQR8VD/F2
+         t6dFnKBF8xOs0lUzjLNpYmPIAy4rgHfH5caWx7151uGVDUytCCbJDEGCkgN1BGeDHJjn
+         qE3FdUgvbSvK/W/5322u1F9Dxt67xGYw+gIOuHKP1hWjj6i56Yzn2eu2f2/+6CwcRBHr
+         9Qsw==
+X-Forwarded-Encrypted: i=1; AL+hErEq0oxAWnliO8DC/miTr8GhxILEeSXfytL91kyG/W+sqnVyMqrFr32YIjGNSb6/YmeN1067JO6nv/aADjuR+SZYG1lxLGs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/MEZCq7iMZ1n0osS/QfY2LRSLnS8c8Gp218zEf3WbFWRyZZegP
+	83IfT4uAHzURc6KTBLlWak9fnPDCSfoLcnkyHYthwVMVTtUcrg8Uj2rVb3qRJQUo1ySqXajgKLi
+	TpoRueBs2IFI7O++JOIS4FTi+fdFD9BU=
+X-Gm-Gg: AYBFou1czHStqFatMWAhZ0yYDzEC0fISjgenmXZsQPJQEeqeDOuXUd8QIbKLfaIVDl1
+	22YrDGPQXd8U36gQn/NSTOhWGkGbLMQHjoED48HaJgO4BKtQwE4or8rzccFg+RO+5qyNnTd/beo
+	Lrh7BtobvUCxfXHtKPQrkP/joLIJK0jIEWKYK/GTfZyY/5TuIYdZO50rnP8Fct+MxJcIKEw/on6
+	VULQ39CfduV7I+/aAusxFptrFKD5XXCWKr0aAvW7JNfVhp/CnBHwJyYRBFnkOwbrajfQlXn86tT
+	LQ01cSoGdcqYUOHg0kEhObIM7wYOphppuzuu8819rRt3czZ8KznV4s2SsxkTfyX3jgEhqoxiKFl
+	LAnJka+931QfNAZIFRRnf/sHAsb6xQJteQm4Ty+uTCe2yTBzc6Y718DuVTUkTlKLjCnTQ0w==
+X-Received: by 2002:a05:6402:1944:b0:6b6:edd7:790c with SMTP id
+ 4fb4d7f45d1cf-6b7c0d2c969mr5932123a12.45.1794754130672; Sun, 15 Nov 2026
+ 06:48:50 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,14 +104,13 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org> <20261115-work-ovl-d_real-v1-10-ca155efbcb2e@kernel.org>
-In-Reply-To: <20261115-work-ovl-d_real-v1-10-ca155efbcb2e@kernel.org>
+References: <20261115-work-ovl-d_real-v1-0-ca155efbcb2e@kernel.org> <20261115-work-ovl-d_real-v1-11-ca155efbcb2e@kernel.org>
+In-Reply-To: <20261115-work-ovl-d_real-v1-11-ca155efbcb2e@kernel.org>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 15 Nov 2026 15:47:45 +0100
-X-Gm-Features: AclHuK_at8qVhKBNN0WXPGQ7F2lmyjSQgMjlfNE9nQtuQriTEXeBZE7dwGmSTD8
-Message-ID: <CAOQ4uxggW+UifxBJDY8fAb+g5EWrsD+rELwXa1ngZ_5X_OZx0g@mail.gmail.com>
-Subject: Re: [PATCH 10/13] ovl: return the error from the lazy lowerdata
- lookup in ovl_d_real()
+Date: Sun, 15 Nov 2026 15:48:39 +0100
+X-Gm-Features: AclHuK_loWLpZnEsR5-ArAPNE_f3U8cZmm7GbEpqPveHBdFtxvcWfTtvtccYOKk
+Message-ID: <CAOQ4uxgiwKsadtv1Me3ZkSsTawjNey3wDDWVAnx6U0+Oe+uoQg@mail.gmail.com>
+Subject: Re: [PATCH 11/13] fs: remove d_real_inode()
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Chris Down <chris@chrisdown.name>, 
 	Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
@@ -124,123 +123,72 @@ Content-Transfer-Encoding: quoted-printable
 On Sun, Nov 15, 2026 at 3:02=E2=80=AFPM Christian Brauner <brauner@kernel.o=
 rg> wrote:
 >
-> All callers have been converted to d_real_data_inode() and handle an
-> error now. So return the error from ovl_verify_lowerdata() just like
-> ovl_open() does. The lowerdata dentry missing after a successful
-> ovl_verify_lowerdata() would be an overlayfs bug, so keep warning about
-> that but return -EIO like ovl_open() does when it has no real path.
-> D_REAL_METADATA never looks anything up and still can't fail.
+> All callers have been converted to d_real_data_inode() or
+> d_real_metadata_inode(). Remove d_real_inode() so that any user we
+> missed, or one that gets added in another tree, fails to build instead
+> of passing an ERR_PTR() from d_real() to d_inode().
 >
-> Update the comment in ovl_d_real() and the documentation of d_real() in
-> dcache.h and vfs.rst accordingly.
+> Add a porting.rst entry.
 >
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Link: https://lore.kernel.org/all/CAOQ4uxhGxpBtMZ5kfuzR1tQAewiecoX7UjXQRo=
-91QjJHH9T_Yw@mail.gmail.com
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
-Nice!
-Thanks for cleaning up this mess.
-
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
 > ---
->  Documentation/filesystems/vfs.rst |  6 ++++++
->  fs/overlayfs/super.c              | 17 +++++++++--------
->  include/linux/dcache.h            |  6 ++++++
->  3 files changed, 21 insertions(+), 8 deletions(-)
+>  Documentation/filesystems/porting.rst | 10 ++++++++++
+>  include/linux/dcache.h                | 13 -------------
+>  2 files changed, 10 insertions(+), 13 deletions(-)
 >
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystem=
-s/vfs.rst
-> index 1824462a43711..6953f399672f3 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -1374,6 +1374,12 @@ defined:
->         for returning the real underlying dentry that refers to the inode
->         hosting the file's data or metadata respectively.
->
-> +       For D_REAL_DATA the filesystem may have to look up the data first=
-,
-> +       e.g., for a file that was never opened.  If that fails an ERR_PTR=
-()
-> +       is returned and callers must handle it.  D_REAL_METADATA must not
-> +       fail.  Most callers should use d_real_data_inode() or
-> +       d_real_metadata_inode() instead of calling d_real() directly.
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index c38f5df755bb5..28a24b702f2a6 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -1422,3 +1422,13 @@ helpers take a const struct mnt_idmap *. mnt_idmap=
+() and file_mnt_idmap()
+>  return one. The idmapping is immutable so nothing should have modified i=
+t
+>  anyway. References are taken and dropped via mnt_idmap_get() and
+>  mnt_idmap_put() as before, both accept a const pointer.
 > +
->         For non-regular files, the 'dentry' argument is returned.
->
->  ``d_unalias_trylock``
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 1985b553a47b7..39d4d57dec230 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -42,7 +42,7 @@ static struct dentry *ovl_d_real(struct dentry *dentry,=
- enum d_real_type type)
->         }
->
->         if (!d_is_reg(dentry)) {
-> -               /* d_real_inode() is only relevant for regular files */
-> +               /* d_real() is only relevant for regular files */
->                 return dentry;
->         }
->
-> @@ -57,17 +57,18 @@ static struct dentry *ovl_d_real(struct dentry *dentr=
-y, enum d_real_type type)
->         }
->
->         /*
-> -        * Best effort lazy lookup of lowerdata for D_REAL_DATA case to r=
-eturn
-> -        * the real lowerdata dentry. Callers may ask for files that were=
- never
-> -        * opened, e.g. for uprobes or O_PATH files, so the lookup can fa=
-il
-> -        * here. Return the overlayfs dentry then.
-> +        * Lazy lookup of lowerdata for the D_REAL_DATA case to return th=
-e real
-> +        * lowerdata dentry. Callers may ask for files that were never op=
-ened,
-> +        * e.g., for uprobes or O_PATH files, and the lookup or the verit=
-y
-> +        * validation can fail. Return the error then, just like ovl_open=
-()
-> +        * would. Callers of d_real() have to deal with that.
->          */
->         err =3D ovl_verify_lowerdata(dentry);
->         if (err)
-> -               return dentry;
-> +               return ERR_PTR(err);
->         lower =3D ovl_dentry_lowerdata(dentry);
-> -       if (!lower)
-> -               goto bug;
-> +       if (WARN_ON_ONCE(!lower))
-> +               return ERR_PTR(-EIO);
->
->  real_lower:
->         /* Handle recursion into stacked lower fs */
+> +---
+> +
+> +**mandatory**
+> +
+> +d_real_inode() is gone. d_real() can fail for D_REAL_DATA now and return=
+s an
+> +ERR_PTR() then, e.g., when overlayfs can't look up the data of a metacop=
+y file
+> +in a data-only layer. Use d_real_data_inode(), which returns the inode h=
+osting
+> +the data or an ERR_PTR(), and handle the error. Use d_real_metadata_inod=
+e() for
+> +the inode hosting the metadata. That one never fails.
 > diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index 674bc50b81827..5b3b34d271bd0 100644
+> index 5b3b34d271bd0..2b15179e9baf9 100644
 > --- a/include/linux/dcache.h
 > +++ b/include/linux/dcache.h
-> @@ -638,7 +638,13 @@ static inline struct inode *d_backing_inode(const st=
-ruct dentry *upper)
->   * If dentry is on a union/overlay, then return the underlying, real den=
-try.
->   * Otherwise return the dentry itself.
->   *
-> + * For D_REAL_DATA the union/overlay may have to look up the data first.=
- This
-> + * can sleep and it can fail. D_REAL_METADATA never fails.
-> + *
->   * See also: Documentation/filesystems/vfs.rst
-> + *
-> + * Return: The real dentry, or an ERR_PTR() for D_REAL_DATA if the data =
-can't
-> + * be resolved.
->   */
->  static inline struct dentry *d_real(struct dentry *dentry, enum d_real_t=
-ype type)
->  {
+> @@ -654,19 +654,6 @@ static inline struct dentry *d_real(struct dentry *d=
+entry, enum d_real_type type
+>                 return dentry;
+>  }
+>
+> -/**
+> - * d_real_inode - Return the real inode hosting the data
+> - * @dentry: The dentry to query
+> - *
+> - * If dentry is on a union/overlay, then return the underlying, real ino=
+de.
+> - * Otherwise return d_inode().
+> - */
+> -static inline struct inode *d_real_inode(const struct dentry *dentry)
+> -{
+> -       /* This usage of d_real() results in const dentry */
+> -       return d_inode(d_real((struct dentry *) dentry, D_REAL_DATA));
+> -}
+> -
+>  /**
+>   * d_real_data_inode - Return the real inode hosting the data
+>   * @dentry: The dentry to query
 >
 > --
 > 2.53.0
