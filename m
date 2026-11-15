@@ -1,65 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=79.135.106.28
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794743271;
-	b=BdK9H1y+HNRqD/jOpQfiJ8CK50RxEZMCjwgIS48DNkylfGZf+h7yYt+dLR/rohWShFPk
-	 wfY+Vi1XUiR4xQoz/9dl0reIiXKOG5wLW7gkB4jYbbvKAp0onbjRpWAq3h6DDbAxHfbTR
-	 5/PaQlaVaf7TtFwba6zsHiW9KlQbLjzo0EerdKKIi48ZFuJLc3WH+ltRAnMLBo+gAqRpL
-	 ov61lFfeKEVmTbros4bY5hLqTBfdHKhysZz363XUX2UJKA7MroJWDEdJE++rHrOfqDHYG
-	 NlZSY4qxT1OqOgEdTD541oNseZI8+FDCzpXM+gOKg5I+2qmGEiQp5Da0bFa+VHsozfA==
+	t=1794745071;
+	b=fu6wX/buMJhlF8VTY9S+5H+tctd13fkX76N1CPKluU6oUVq0N1hRn+pgMOxfAyH6PfE6
+	 8Wictwa/Ywko1rf31RW7A6GvU31+chE+yTHk++dsx/s714T/TqPj7mypmJjTpQmUGA2xt
+	 WE9Uss2qRtryQxw3DrvvMgtTWz9Xpd0Jx6HbyZFxGnZcKbxuVT4LMT6MhgMA3k/ryM0f7
+	 IMFfrW2HS33v0gAA5+zWgVj3fpZXiAygohYmJvYpCSBQMjs6bDr7Ih/kDmLU7XLHEo6qh
+	 SyEwUeDQjGYYgp5D+CZYaeIt+MGfcupWmzUCTDJ5kPmkQhH8UATxZNqzSn/aNmKKa5Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794743271;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=dUUoDFkPJkBg6tiiX+gwUNqdlWB0vRGU4J1TlhHh7ZE=;
-	b=iuKSIOwNdjXAi2+nKsqu7pIfpzXuLtuj3wXCa1g9MN5BFnFnH+efqOzfUtJXvT2zUGGl
-	 V9IfHEzKQzynFa9Fuo1ssXUF+7C+Eoevg9R/uDVp3b207QzEgfuu6a4+z5JoRhmzh2QN0
-	 9vJY2NJZgqRfrAE94UuSb7lSNUhcz8q8wGqjWRw5n7k7BXCLYZBSkg22ZgvSiHJnnwpNY
-	 2bXzqhTqJYzU82V3hEswRLXZDMXOPwMPocN2bf1yYrFAEINhs1DN1LNIND4gakdX7BwOF
-	 /NBQXI11IeC+qk96wRGrOuIRB815lx2fweUabl5k2cTyNpurMwEGTlfjb0o79097iFQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794745071;
+	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
+	 Feedback-ID:X-Pm-Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=EluYiwlFKYuh/LI+cnM/6qB8JrNrz30s4NvnPy3YyL0=;
+	b=T4D8TMisCDWr9/et1TMIdB2KRDvO/elmFKwbTp5t9wYDmMcwLxq/CtKGplXGVPVbIWyP
+	 YNQBUzPiioETT1ni8etOEpYw+YtHg3yaw0DJF6yULV9gOEYx67WfoX5vrGcAOHZpYZjRn
+	 ldkmZAtb5vGJtOdYQMLcoKlqVv9g8Iu/dMD20w3SQLXjFnXzVAcnZw1W38dNLS7I/EbhT
+	 YRUg81vsEo1tCkhOEP6ocSjxgbsvm5jp7EoCwZwOd7jSyzfyMZ7dEH9WMlEHh2b2Sgkow
+	 9mZ4ju5M/3Vkxf9VnsZFdtcyf7qr4gtWWy0h9LSMJYXAbZ6jAYXSnyRcxEMofLgB8tw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O5UCROmp;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=pm.me;
+	spf=pass smtp.mailfrom=pm.me;
+	dkim=pass header.d=pm.me header.i=@pm.me header.a=rsa-sha256 header.s=protonmail3 header.b=OUAq5Fc9;
+	arc=none smtp.remote-ip=79.135.106.28
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C6D606A32E;
-	Sun, 15 Nov 2026 11:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1316606A338
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Nov 2026 12:17:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1316606A338
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O5UCROmp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF671F000C4;
-	Sun, 15 Nov 2026 11:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794743270;
-	bh=dUUoDFkPJkBg6tiiX+gwUNqdlWB0vRGU4J1TlhHh7ZE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=O5UCROmpYOxPof//EVMXlzhE8CwpBAuLxySuhjVJTwgdWIcUjDEHfxQDjag+uTRua
-	 Z+qDIjnj4mqHBNrUw8Ko1zjkZMcqAeFq8ldvZlzCVbByFB+ptCuml13g6R68XiAcOc
-	 tTmUPUcRTu4mDvyiHtXFi/q4pZoMhhtkVDTdv1WqLRxEzoDBelkcsk5jYXJt2EAUob
-	 xjg6qsjtw4gR2WGGuYhHVN3Y9VjEoACQTHM3FtneMm5yNVilA99bE1xWageT1rHDiS
-	 UNAqlNNFNjgatsQNOofsxEUu3m18tcJw6JldfrHIojxyBAVmlXl979klg5KOmmNJfI
-	 Ivyq26TJMKVYg==
-Date: Sun, 15 Nov 2026 12:47:41 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Chris Down <chris@chrisdown.name>, linux-fsdevel@vger.kernel.org, 
-	Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-scsi@vger.kernel.org, 
-	target-devel@vger.kernel.org, driver-core@lists.linux.dev, linux-mm@kvack.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
-	fuse-devel@lists.linux.dev, linux-efi@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	ocfs2-devel@lists.linux.dev, linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-usb@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC v2 33/42] fs: add file_check_backing()
-Message-ID: <20261115-boxen-mundschutz-jacht-0ab871beca58@brauner>
-References: <20261114-work-loop-pseudo-v2-0-98639a2286fb@kernel.org>
- <20261114-work-loop-pseudo-v2-33-98639a2286fb@kernel.org>
- <20261114120557.4bc1eb6e57218cdc@chrisdown.name>
- <CAOQ4uxhGxpBtMZ5kfuzR1tQAewiecoX7UjXQRo91QjJHH9T_Yw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.a=rsa-sha256 header.s=protonmail3 header.b=OUAq5Fc9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1794745067; x=1795004267;
+	bh=EluYiwlFKYuh/LI+cnM/6qB8JrNrz30s4NvnPy3YyL0=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=OUAq5Fc9kmK9eU6iD30wyyVivgL5YQ7TnSXW00wEYIR9CYYpjLs54b4s0ZtR9WJ0I
+	 8nbv714q1kGMRxiksvmn5vnC+02HF8sV9rptv6MQRUddkj4/L9UahuAFU7i807wuI/
+	 g3wi3KzbE9oDuPr4GwdIScq0oDZVZP5UQgok5sSV8WvEvawpzZlYCh1IZpM1fnc6b7
+	 MhPy79br/0jiXsgbok4tjLeyTl8B/PCwpH9K7zyIIqPcDukLk9EFMnh+J7o4yv63LH
+	 Rjm/Q3GdsUMgtng5578auYkh881eHnokX3LtOS/kur5gFSo3gJ1jBYphhOkPRAowtX
+	 hAsPrIbzce6UQ==
+Date: Sun, 15 Nov 2026 12:17:40 +0000
+To: David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
+From: Sinan Turunc <enscrpt@pm.me>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] keys: serialise instantiation against keyctl_chown_key
+Message-ID: <20261115121722.206-1-enscrpt@pm.me>
+Feedback-ID: 48393780:user:proton
+X-Pm-Message-ID: 62b592fa9ecff3d6048e83be9e5f68d5467bc76f
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -70,69 +62,103 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhGxpBtMZ5kfuzR1tQAewiecoX7UjXQRo91QjJHH9T_Yw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 15, 2026 at 12:19:57AM +0100, Amir Goldstein wrote:
-> On Sat, Nov 14, 2026 at 9:06 PM Chris Down <chris@chrisdown.name> wrote:
-> >
-> > Hi Christian,
-> >
-> > Christian Brauner writes:
-> > >+      /* Look through stacking filesystems at the inode with the data. */
-> > >+      if (d_real_inode(file->f_path.dentry)->i_sb->s_iflags & SB_I_PSEUDO)
-> > >+              return -EINVAL;
-> >
-> > This looks good in general, but what the bots said about O_PATH files
-> > here is real. With FMODE_PATH this is reached for a file that was never
-> > opened, so on overlayfs nothing has been through ovl_open() to look up
-> > the lowerdata of a metacopy file yet. ovl_d_real() then does the lookup
-> > itself, and when that fails it hits the WARN(1) at its end and returns
-> > the overlayfs dentry, so the check passes as well.
-> >
-> > Only fuse passes FMODE_PATH, so it takes CAP_SYS_ADMIN to get there, but
-> > it's easy to trigger with that. From a quick test with a metacopy file
-> > whose redirect into a data-only layer points at nothing, registering an
-> > O_PATH fd of it with FUSE_DEV_IOC_BACKING_OPEN gives
-> >
-> >      ovl_d_real(/f, 0): real dentry not found
-> >      WARNING: fs/overlayfs/super.c:79 at ovl_d_real+0xc9/0x210
-> >      [...]
-> >       file_check_backing+0x308/0x5e0
-> >       fuse_backing_new+0x219/0x4a0
-> >       fuse_backing_open+0xe8/0x390
-> >       fuse_dev_ioctl+0x53a/0x7d0
-> >
-> > and the ioctl still succeeds. A normal open of that file fails with
-> > ENOENT, so nothing could have used it as a backing file anyway, but with
-> > panic_on_warn this is now a panic.
-> >
-> > Maybe ovl_d_real() should just stop warning when the lookup fails, now
-> > that it has a caller that isn't trace_uprobe?
-> 
-> Yeh I guess that this needs to be a Fixes for lazy data lookup.
+keyctl_chown_key() replaces key->user under key->sem, but the
+instantiation path reads key->user without it: __key_instantiate_and_link()
+and key_reject_and_link() bump key->user->nikeys under
+key_construction_mutex only, and key_payload_reserve(), called from the
+type's instantiate op, reads key->user once for spin_lock_irqsave() and
+again for spin_unlock_irqrestore().
 
-I have a fix for that.
+A chown of an under-construction key that lands between those two reads
+locks the old owner's quota spinlock and unlocks the new owner's.  The
+paravirt unlock slow path reports the unheld unlock and the old lock is
+never released, so the next quota operation on that uid spins with
+interrupts disabled:
 
-> The correct fix would be to teach all the callers to deal with an error.
+  pvqspinlock: lock 0xffff88800f94dc38 has corrupted value 0x0!
+  WARNING: CPU: 2 PID: 215 at kernel/locking/qspinlock_paravirt.h:504 __pv_=
+queued_spin_unlock_slowpath+0x1dc/0x2e0
+  Call Trace:
+   _raw_spin_unlock_irqrestore+0xe/0x30
+   key_payload_reserve+0x230/0x300
+   generic_key_instantiate+0x47/0x230
+   __key_instantiate_and_link+0xbd/0x310
+   key_instantiate_and_link+0x3f0/0x490
+   keyctl_instantiate_key_common+0x246/0x410
 
-I've also implemented that. It wasn't that hard and it's also a bug. Not
-a bad one but still.
+The same unsynchronised read lets the instantiator touch the old
+key_user after the chown has dropped the last reference to it.
 
-> > The check would still pass
-> > for an O_PATH file whose lowerdata couldn't be looked up at that point,
-> > though.
-> 
-> One observation relevant to this patch set is that a datadir layer has no
-> business being a pseudo fs and that can and should be blocked explicitly
-> at overlayfs mount time.
+Hold key->sem for write across the instantiate op and the owner-record
+updates so that instantiation and chown serialise on the lock that
+already protects key->user.  key->sem nests inside key_construction_mutex
+and the destination keyring's semaphore here; nothing takes the
+construction mutex under a key's semaphore.  The acquisition is
+annotated as nested because a keyring instantiated into a keyring shares
+the destination's lock class; the key under construction cannot be a
+destination itself, so no cycle exists.
 
-I agree.
+Reproducer: a request_key() helper that chowns the target key between
+two uids from one thread while instantiating it from another, as root.
+Triggers within tens of milliseconds on 6.12.104 and on mainline.
 
-> The other observation is that fuse_passthrough_open() should probably
-> check the backing_file that was opened for io in addition to checking
-> in fuse_backing_open(), which could have different FMODE and specifically
-> could be FMODE_PATH.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sinan Turunc <enscrpt@pm.me>
+---
+An AI tool helped with the analysis and the patch. I reviewed and
+tested it myself: the unpatched kernel hangs within 40 ms, the patched
+one ran the same workload for 60 s with lockdep on and no report.
 
-Sounds good.
+ security/keys/key.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/security/keys/key.c b/security/keys/key.c
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -439,7 +439,13 @@
+=20
+ =09mutex_lock(&key_construction_mutex);
+=20
+-=09/* can't instantiate twice */
++=09/* can't instantiate twice; key->sem keeps key->user stable against
++=09 * keyctl_chown_key() for the instantiate op and the quota update.
++=09 * Nested: the caller may hold the destination keyring's sem and the
++=09 * key under construction may be a keyring too, but it cannot be
++=09 * anyone's destination yet, so there is no cycle.
++=09 */
++=09down_write_nested(&key->sem, 1);
+ =09if (key->state =3D=3D KEY_IS_UNINSTANTIATED) {
+ =09=09/* instantiate the key */
+ =09=09ret =3D key->type->instantiate(key, prep);
+@@ -469,6 +475,7 @@
+ =09=09=09=09key_set_expiry(key, prep->expiry);
+ =09=09}
+ =09}
++=09up_write(&key->sem);
+=20
+ =09mutex_unlock(&key_construction_mutex);
+=20
+@@ -600,7 +607,8 @@
+=20
+ =09mutex_lock(&key_construction_mutex);
+=20
+-=09/* can't instantiate twice */
++=09/* can't instantiate twice; see __key_instantiate_and_link() */
++=09down_write_nested(&key->sem, 1);
+ =09if (key->state =3D=3D KEY_IS_UNINSTANTIATED) {
+ =09=09/* mark the key as being negatively instantiated */
+ =09=09atomic_inc(&key->user->nikeys);
+@@ -621,6 +629,7 @@
+ =09=09if (authkey)
+ =09=09=09key_invalidate(authkey);
+ =09}
++=09up_write(&key->sem);
+=20
+ =09mutex_unlock(&key_construction_mutex);
+=20
+--=20
+2.56.0
+
