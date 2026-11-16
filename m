@@ -1,49 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794822310;
-	b=4ngSxkdqarjBUhEY69nrVfb0dmOzMOH+hmHfR0WzGU5lGsC434/2obg06f3ySsvE2trH
-	 EGUbnF/YHedYOD5FUVvINGdkZ/8KaJiWlMbmmFlajm7nn65VED4HuEl7XJv96Uj2LgFaH
-	 6jzjVoMIOCsJ7c6eTa9uXNk2nXsDs/AfatrNbJ5WnFhy4WWhSPUNaUyMU4cSQbmNRQfwQ
-	 XOY+SKSgG67WTUYk8PbxNE+Q9I6eWlkXmCaoqhmHZJBJ8+nNrmfsLyrhkTH6UyH6IVn8C
-	 dvBJ5GCI+FiUpAQhbcLFjzvFp8SBvUtnvfAfRfZ17z0BLgXPtkDveEPqowtHMjKiYcw==
+	t=1794822316;
+	b=LEf0JlxFc3/0jJ2GtCQH0qeRX+XxGURnxJulEqkQrQZEGFzW9BKigPQSxKp31yukdPr+
+	 cMijDnUgPvwSp5yg6HuCLkswYMJvC1p+wHp1L/Llw+wYGdTA8XhPWGzcYotBIAXD9h5o/
+	 OCpO1rv2WnLKLLkhBl/z84O3tcjToZTDkohRt8L1zv5sRz1RTy/gq28iKmqQZxWafJJwy
+	 yZihHiwsw3uTgj9OtfcuuU23H10ZBH5ndtDT7tx49e351wRRFMmAQKfXpy3hS0ph84pr3
+	 5Kc/WCqJGAkUYWmVbmyGssv1rQhshOus08BSiL9Dg3YKQUCyPAtwUvKk8APUuxzSrHw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794822310;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794822316;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=7T9ynTkV4YsO/iVdJcFIbPQ2DiH/ucpb0T4B/QE4bOs=;
-	b=B2uQ5+fw40PiBjaI/Xc9ts+dzND5yOOvNJfaVH3bOxMt+07AGrzijCcNdg3PMdf87YSN
-	 UWVvCm+3MUpWdYhadWWBOhPr4/zAvLgX/hZFlnEOfTpdwr7B2BfsukuMRm2ULoL65yDFs
-	 zFjRVY7zeilEBrDDdZN4olJs7UlcgMj4ZHke848Gsfeh1cQGGWbO7LUWwuBj2Pip6NV00
-	 bssJlmOJ7M7ftS6fFIUSLslgSncuPqRIDNapO9hki0FyuXvtIATaLAjgjyaSCLD/FCfEb
-	 iEBUASiBoF/NLmUBsLYNSXMJLyRk6j4zUp8QEYSDbVYBWuPVuPNB2NIE2bCOS4JTyaA==
+	bh=JZBbr+KpgKvtf5CdfCyTEA2njHiE84oBk+6E/JibmWY=;
+	b=gLIq6vfbFuhSQjh7vBelUV7FEoCuNsnkcE1QHYHSccZkE9xZzt8O+AYm3+Cb18akHW9W
+	 6zTGHWkFZR5cr5YsqzexMXEIZDJhHcYTVqiETU+/0fVDq/zOHvVlkmFDk59kLtXIWXWHM
+	 /b3yfxYkYWSY6bKPswxt8Kn89Ooq5miiLml3q+4yHCbYfDFLxlDAlqz5YX17k4Q3YNYsI
+	 cSn8PFixO7q9Zexe1Vly8v3am1h69VhlMFS9h4pRVQdZE2Um8PBUrl/GzHoW7bIMNttXc
+	 OQ4AOpYsjVxo0in111mroonTUAJ8Sa/1Lz0DulUxiP41Kmz1kJ29IGVAccnQ5HkRA2w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ft01kBTQ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B97HKY2P;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54915606A323;
-	Mon, 16 Nov 2026 09:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A271C606A32C;
+	Mon, 16 Nov 2026 09:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ft01kBTQ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF9C1F00925;
-	Mon, 16 Nov 2026 09:45:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=B97HKY2P
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7B121F000CE;
+	Mon, 16 Nov 2026 09:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794822310;
-	bh=7T9ynTkV4YsO/iVdJcFIbPQ2DiH/ucpb0T4B/QE4bOs=;
+	s=k20260515; t=1794822316;
+	bh=JZBbr+KpgKvtf5CdfCyTEA2njHiE84oBk+6E/JibmWY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Ft01kBTQjtb3tTFugCBjTwuW6pw6jQihhhRFYxyr6NHo1/5TUNuslgS38WZ/Y2bvf
-	 M6iYKB+yooVBjT4N1uQ4GKP23TCNj8qA9TMSA2L78LtCv/p+hH2jOeML9EJErrvMnt
-	 4XDb8ED13Oem2tDu1VBeMZb1fddJ4/zYSGTov12PR2CxcRRKBGTcBJTI6FzKdoAoIQ
-	 mHnSiZOcCY4i9HoncVw25osu68F7pWDzyOkVy2sO6WHZXF7anfSm1nmsMbax1qh6df
-	 H8fqLOSgeSolbGyAJWHSXEmJT3aUtLGUkMeylTpYWfwCZjnMEEP709pYIjpJ/zg44P
-	 i11CeNNXJ8ILw==
+	b=B97HKY2PGKEGnNZWH+9w9+0VaaDTFjZeYetWFj6uCjbfmrTo7DbHvFCFzkFFczhnR
+	 HEATw/pGVvMAd4PbreaA6tlPFV+ioe9bWLZlVkGN3Jnc3bu5KhIG9mB2APdMMyEexJ
+	 qxpM2ebSt4BGJesPkEI+dbqVN8D0hh/YnHLDpejcYCUUwCdQtNushOG5qn43SoZCBZ
+	 T7YkZnNrFsMd+FsKCzi0JonosAYo6jife3TfunFHCnFnuoehPzuyK6NruLLkOO/ofc
+	 Fxaa96qcnNpctrcitMhsV1ZgLI/30L4SF5Cp7PNJbK8wcHujVu3YfUMZIPb1LEgfhy
+	 eKAjdrUPsId1g==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 16 Nov 2026 10:44:07 +0100
-Subject: [PATCH v2 10/13] ovl: return the error from the lazy lowerdata
- lookup in ovl_d_real()
+Date: Mon, 16 Nov 2026 10:44:09 +0100
+Subject: [PATCH v2 12/13] selftests/ftrace: add uprobe tests on overlayfs
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +54,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261116-work-ovl-d_real-v2-10-90564c4ae347@kernel.org>
+Message-Id: <20261116-work-ovl-d_real-v2-12-90564c4ae347@kernel.org>
 References: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
 In-Reply-To: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
@@ -65,110 +64,156 @@ Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>,
  linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
  linux-mm@kvack.org, "Christian Brauner (Amutable)" <brauner@kernel.org>
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4078; i=brauner@kernel.org;
- h=from:subject:message-id; bh=mh3e0v2O9oO1OzXvLpc53qgpoN0+L7fgpfypazM4mWQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9ulDlca9adXZ7csyqIIaGjPx7re7H5j698fyI0A/DO
- /6FzN9OdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyk+BHDH45FpfsXbGw/O8Xm
- e/jXvkxGfuawjMhwtusfUl26GCKen2Zk2PCsdAazz5Zni+2jH+XxvddgvSMcq/9PsDVYXPjgSXN
- 1JgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4861; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=tgbFOzNYWl27oUOBkSLrcjFal3oWf5TeuDFachZqNjU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9ulDDvKxedjtHwJmjQZoOpw2Mm44FvtkYPCW/YvU0t
+ +O7P/zU6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIkdcM//0D5/bEbj/Euaou
+ YZqiyh79ScKHDTVunEj884yvMcWzYyYjw2Lpzs0njulOu2m2mKF03+NF2rasHl9jlc5KXNv6aJp
+ 1FTMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-All callers have been converted to d_real_data_inode() and handle an
-error now. So return the error from ovl_verify_lowerdata() just like
-ovl_open() does. The lowerdata dentry missing after a successful
-ovl_verify_lowerdata() would be an overlayfs bug, so keep warning about
-that but return -EIO like ovl_open() does when it has no real path.
-D_REAL_METADATA never looks anything up and still can't fail.
+Add uprobe tests on overlayfs with a data-only layer:
 
-Update the comment in ovl_d_real() and the documentation of d_real() in
-dcache.h and vfs.rst accordingly.
+- a metacopy file whose redirect points at nothing: creating the probe
+  fails, the error log has the new message and nothing gets tainted by a
+  WARN
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Link: https://lore.kernel.org/all/CAOQ4uxhGxpBtMZ5kfuzR1tQAewiecoX7UjXQRo91QjJHH9T_Yw@mail.gmail.com
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+- a metacopy file whose data lives in the data-only layer: the data is
+  looked up when the probe is created and the probe hits when the file
+  is executed
+
+None of the existing tests puts a uprobe on overlayfs.
+
 Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 ---
- Documentation/filesystems/vfs.rst |  7 +++++++
- fs/overlayfs/super.c              | 17 +++++++++--------
- include/linux/dcache.h            |  6 ++++++
- 3 files changed, 22 insertions(+), 8 deletions(-)
+ tools/testing/selftests/ftrace/config              |  3 +
+ .../test.d/dynevent/add_remove_uprobe_overlayfs.tc | 96 ++++++++++++++++++++++
+ 2 files changed, 99 insertions(+)
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 1824462a43711..ff7ea00a42ad7 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -1374,6 +1374,13 @@ defined:
- 	for returning the real underlying dentry that refers to the inode
- 	hosting the file's data or metadata respectively.
- 
-+	For D_REAL_DATA the filesystem may have to look up the data first,
-+	e.g., for a file that was never opened.  If that fails an ERR_PTR()
-+	is returned and callers must handle it.  Callers must handle an
-+	ERR_PTR() for D_REAL_METADATA as well.  Most callers should use
-+	d_real_data_inode() or d_real_metadata_inode() instead of calling
-+	d_real() directly.
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index 29f05f7c6e2ce..05325737e4a5f 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -19,6 +19,7 @@ CONFIG_KPROBE_EVENTS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
++CONFIG_OVERLAY_FS=y
+ CONFIG_PREEMPTIRQ_DELAY_TEST=m
+ CONFIG_PREEMPT_TRACER=y
+ CONFIG_PROBE_EVENTS_BTF_ARGS=y
+@@ -30,6 +31,8 @@ CONFIG_SAMPLE_TRACE_PRINTK=m
+ CONFIG_SCHED_TRACER=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_SYNTH_EVENTS=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_XATTR=y
+ CONFIG_TRACER_SNAPSHOT=y
+ CONFIG_UPROBES=y
+ CONFIG_UPROBE_EVENTS=y
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe_overlayfs.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe_overlayfs.tc
+new file mode 100644
+index 0000000000000..a29065dd76900
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_uprobe_overlayfs.tc
+@@ -0,0 +1,96 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Generic dynamic event - add/remove uprobe events on overlayfs
++# requires: uprobe_events error_log setfattr:program readelf:program
 +
- 	For non-regular files, the 'dentry' argument is returned.
- 
- ``d_unalias_trylock``
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 1985b553a47b7..39d4d57dec230 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -42,7 +42,7 @@ static struct dentry *ovl_d_real(struct dentry *dentry, enum d_real_type type)
- 	}
- 
- 	if (!d_is_reg(dentry)) {
--		/* d_real_inode() is only relevant for regular files */
-+		/* d_real() is only relevant for regular files */
- 		return dentry;
- 	}
- 
-@@ -57,17 +57,18 @@ static struct dentry *ovl_d_real(struct dentry *dentry, enum d_real_type type)
- 	}
- 
- 	/*
--	 * Best effort lazy lookup of lowerdata for D_REAL_DATA case to return
--	 * the real lowerdata dentry. Callers may ask for files that were never
--	 * opened, e.g. for uprobes or O_PATH files, so the lookup can fail
--	 * here. Return the overlayfs dentry then.
-+	 * Lazy lookup of lowerdata for the D_REAL_DATA case to return the real
-+	 * lowerdata dentry. Callers may ask for files that were never opened,
-+	 * e.g., for uprobes or O_PATH files, and the lookup or the verity
-+	 * validation can fail. Return the error then, just like ovl_open()
-+	 * would. Callers of d_real() have to deal with that.
- 	 */
- 	err = ovl_verify_lowerdata(dentry);
- 	if (err)
--		return dentry;
-+		return ERR_PTR(err);
- 	lower = ovl_dentry_lowerdata(dentry);
--	if (!lower)
--		goto bug;
-+	if (WARN_ON_ONCE(!lower))
-+		return ERR_PTR(-EIO);
- 
- real_lower:
- 	/* Handle recursion into stacked lower fs */
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index a75016a713d4a..fd8853622f250 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -638,7 +638,13 @@ static inline struct inode *d_backing_inode(const struct dentry *upper)
-  * If dentry is on a union/overlay, then return the underlying, real dentry.
-  * Otherwise return the dentry itself.
-  *
-+ * For D_REAL_DATA the union/overlay may have to look up the data first. This
-+ * can sleep and it can fail. Callers must handle errors for D_REAL_METADATA
-+ * as well.
-+ *
-  * See also: Documentation/filesystems/vfs.rst
-+ *
-+ * Return: The real dentry, or an ERR_PTR() if it can't be resolved.
-  */
- static inline struct dentry *d_real(struct dentry *dentry, enum d_real_type type)
- {
++grep -qw overlay /proc/filesystems || modprobe overlay 2> /dev/null || :
++if ! grep -qw overlay /proc/filesystems; then
++  echo "No overlayfs support. skipped."
++  exit_unsupported
++fi
++
++echo 0 > events/enable
++echo > dynamic_events
++
++OVL=$TMPDIR/ovl
++mkdir $OVL
++mount -t tmpfs tmpfs $OVL
++
++cleanup() {
++  echo 0 > events/enable
++  echo > uprobe_events
++  umount $OVL/merged 2> /dev/null || :
++  umount $OVL 2> /dev/null || :
++}
++trap cleanup EXIT
++
++mkdir $OVL/lower $OVL/data $OVL/merged
++
++# A metacopy file whose data lives in the data-only layer.
++REALBIN=`readlink -f /bin/sh`
++cp $REALBIN $OVL/data/sh
++truncate -s `stat -c %s $REALBIN` $OVL/lower/sh
++chmod 755 $OVL/lower/sh
++if ! setfattr -n trusted.overlay.metacopy $OVL/lower/sh; then
++  echo "No tmpfs xattr support. skipped."
++  exit_unsupported
++fi
++setfattr -n trusted.overlay.redirect -v /sh $OVL/lower/sh
++
++# A metacopy file whose data doesn't exist.
++touch $OVL/lower/broken
++setfattr -n trusted.overlay.metacopy $OVL/lower/broken
++setfattr -n trusted.overlay.redirect -v /missing $OVL/lower/broken
++
++mount -t overlay overlay -o lowerdir=$OVL/lower::$OVL/data $OVL/merged
++
++TAINT_WARN=512
++TAINTED=`cat /proc/sys/kernel/tainted`
++
++# The data of the broken file can't be resolved so the probe must fail
++# right away and not only when it is enabled.
++echo > error_log
++if echo "p:broken $OVL/merged/broken:0x0" >> uprobe_events; then
++  echo "uprobe on a file without data was created"
++  exit_fail
++fi
++grep -q "trace_uprobe: error: Failed to resolve the data of the given file" error_log
++! grep -q broken uprobe_events
++test ! -d events/uprobes/broken
++
++# Get the entry point virtual address from ELF header and convert it to
++# a file offset. See add_remove_uprobe.tc.
++ENTRY=`readelf -hW ${REALBIN} | grep "Entry point" | awk '{print $NF}'`
++ENTRY_DEC=$(printf '%d' "$ENTRY")
++OFFSET=$ENTRY
++while IFS= read -r line; do
++    set -- $line
++    [ "$1" = "LOAD" ] || continue
++    VA_DEC=$(printf '%d' "$3")
++    OFF_DEC=$(printf '%d' "$2")
++    FSZ_DEC=$(printf '%d' "$5")
++    if [ "$ENTRY_DEC" -ge "$VA_DEC" ] && [ "$ENTRY_DEC" -lt "$((VA_DEC + FSZ_DEC))" ]; then
++        OFFSET=$(printf '0x%x' "$((ENTRY_DEC - VA_DEC + OFF_DEC))")
++        break
++    fi
++done << EOF
++$(readelf -lW ${REALBIN} | grep LOAD)
++EOF
++
++# The data of the metacopy file is looked up when the probe is created.
++echo "p:myevent $OVL/merged/sh:${OFFSET}" >> uprobe_events
++grep -q myevent uprobe_events
++test -d events/uprobes/myevent
++
++echo 1 > events/uprobes/myevent/enable
++echo 'ls' | $OVL/merged/sh > /dev/null
++echo 0 > events/uprobes/myevent/enable
++grep -q myevent trace
++
++echo "-:myevent" >> uprobe_events
++! grep -q myevent uprobe_events
++
++# Nothing above may have warned.
++test $((`cat /proc/sys/kernel/tainted` & TAINT_WARN)) -eq $((TAINTED & TAINT_WARN))
++
++clear_trace
 
 -- 
 2.53.0
