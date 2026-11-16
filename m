@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794822735;
-	b=IbmQEwK4QmqEfXEgUkxAv0sbYPW8skybKVXdCIRQNvTDXsO1mrC1ONBDgc7NyCT1sOpc
-	 TZmwuVGcz2Bx/YHMx7ao9Re+wo+mMcnxbaW+fluZGuKxze2JqAKHyYXXb52N7HePSDJZL
-	 5OJvmq6oemTXGefqB4/GaWN6KsLbjc1pNweq+VW8/vkNz/89vNkOHoFmXskRTNNUF4g7u
-	 Zm+8Xj69icn0J0YO8gU7eFcib3BiOPi+OyAeHbsGGkle341uXTRXDOcue+GLszXs1t8NF
-	 d5cWr9mmkuTyaCu8OPU3KeTXHRxKsFjUDbyQKWChsLmxFC812eHbsleoLNjcNDKE13w==
+	t=1794822802;
+	b=TK6kHXdmPd01/ShtsrAjGlOdk1NNOgGZhMugFI0RPoXLMnmzC4lE8AlE+9uHGjetbUo2
+	 j/jmzWwsd95TbKCKmt95ZSto+2USCTqjHR8KjNh6RKPctuySqZWWpOBgV+jHaOubam/Zw
+	 ShoKG+3y6xSJ0RoBpiV002Ay+hTp1FG3QCbFnyfn/naf4Xf182rd4lKyP0vT8YmnK73fq
+	 Q2INw6ahDVAX6MzK/kMTvP+PAYcI0rro2YZ5S/dyWlkfnBDtG6klKvfoISadL7k2etuXp
+	 Gu5AlT5PQf/sny0fxXv+BJgB1sEThKoBYmbGDPF8+OgRpTOzJt+Vbnpq4tgdHaIijPg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794822735;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794822802;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=IL07gNazwx6XSIK2EbUbjGio0kUPd8wy1npjGCE6I6Y=;
-	b=YlbIcLFYiwL0SXSLqm7h/icx6YBqX+RPMfn1sRC7eZ4YfQmrQlYpzk25EqjZvcQvelr/
-	 R4XhAL2m2/rKeG12ywAdv0hSZu79zoyXmFDjlNrTDVjE0wl0Tqq23D4BhTx2ycmWImvdr
-	 1dkk4uSWwu/eC1x57TiPWzNX8PDKj4KIIl1TCj48DucicWsZl5WKrUhQO2wGWUFP8KFH9
-	 Ku4OC/uRzPcLBW5NsoRwvREOp6bVfEk0Xm+Z06621sAoYbI3b7w43C20X88CyUtUtMW4f
-	 fYr5CTvmvstNh/Rtu7+w1+OIHQ8IF6Grr8Vs4AkzYt7R+e/miJSXlVa/43Rm82C1aiQ==
+	bh=XWuPHZZNQLyzrbhIYN0oISdy9fQIaoRVJT+F9g9FlGs=;
+	b=Am+7WyCVZGccyFLdvvo7FIG1ilcND+QIrq+QYUMfmS4rayPFhCKsZXMJKvHdU+uzfGQb
+	 asCtOtEwD70bPpByYu6/lr2NKUKwEyBhsgoP0xThxcC0MG2F6xgnXESzQZhPmX7hyPStN
+	 mgkThT0d+ux9SqfEFcKqxHqVZUMeQUd0nYalHSeA1VtAZooa0d1749k2SAODTOX0+F7ib
+	 hjR0yv3s9JSRjorB61uv5bpONxa7tdYCwDrxT6oLu6ir6Z78GLn/N/Qu8z5WE0OMryXgi
+	 udDR0dZjmrifQrPIW/BhHLM2vQsVyRphbA9dBXkkzft1ZdFu1chs1u+XRSrPYqtI5+g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cPmZ5dxN;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GKT1+TmS;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C289E606A33F
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 09:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F7606A323
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 09:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cPmZ5dxN
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 569D91F000C5
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 09:52:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GKT1+TmS
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1674D1F000C4
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 09:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794822735;
-	bh=IL07gNazwx6XSIK2EbUbjGio0kUPd8wy1npjGCE6I6Y=;
+	s=k20260515; t=1794822802;
+	bh=XWuPHZZNQLyzrbhIYN0oISdy9fQIaoRVJT+F9g9FlGs=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=cPmZ5dxNAUry5rMIaIBRxAHfrLo0RqKh5uH11hrKopmInxeMOUO7FdyVNJZvciZ7f
-	 7y+NO2ajeqOHlit1kKH6O8fzk+bAPqOFIP22wdyWqnutGqQrQQKs9ssL+cUBataHpL
-	 gRrzABiWxFzUV9gu72lf5DxM7FhsE/jHfA50OpGEQN1H4RIFtTj+bMi3lU81qFw+ZP
-	 /HH5/WB6oeOTXqlDiSR7c6yJcuab/94q9ZbBIjIV3nisC7fmhLyiOM5PRIF3IEs6KJ
-	 dGYA2MzUhZ4muvvYR3TZmtF2Tf5i4DZWp5EtryF+DKQVz4gbkpPDx4PkNANo6AWqoh
-	 Mqytg4o6B9lWg==
-Message-ID: <sashiko-outbox-216656@kernel.org>
+	b=GKT1+TmS41X80BfZWI8ZJO+BDo8hPM/ZnjpgcM8O/0RMeYKCNTFp1xg7fCryWgfhj
+	 /i9vz1+FqAVJYaKH4PsGhVHWXRTx8rz6uURwX/Wbxsh5InxjNuZwyaWX1vWuCz4BAG
+	 skCtvijYYML2X7xUCMasMBWHlykbFVBrk3dWn1mzePJvH7J40CLHy3U1LHFIz/gYBa
+	 ThhgR1KVlQVtpSF5bsRtaGqErFTOXuk1uK3NK3vLXFWBLR/80P+ZNiakvVq0tyY0f8
+	 dh6B8G1i8FP6L7DcdJqVRYUwrc9KdkdbE7mlHG9k+bEXzXIMOpMK5TnIdry559s+Pq
+	 CKgR0nIup08iw==
+Message-ID: <sashiko-outbox-216662@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 07/13] ima,evm: use d_real_metadata_inode()
+Subject: Re: [PATCH v2 12/13] selftests/ftrace: add uprobe tests on
+ overlayfs
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261116-work-ovl-d_real-v2-7-90564c4ae347@kernel.org>
+In-Reply-To: <20261116-work-ovl-d_real-v2-12-90564c4ae347@kernel.org>
 References: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
- <20261116-work-ovl-d_real-v2-7-90564c4ae347@kernel.org>
+ <20261116-work-ovl-d_real-v2-12-90564c4ae347@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Nov 2026 09:52:14 +0000
+Date: Mon, 16 Nov 2026 09:53:21 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,28 +60,23 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> d_real() is about to be able to fail. D_REAL_METADATA never has to look
-> anything up but we don't want to promise that it never fails. So switch
-> the open-coded d_inode(d_real(..., D_REAL_METADATA)) in
-> process_measurement() and evm_calc_hmac_or_hash() over to
-> d_real_metadata_inode() and deal with errors.
+> Add uprobe tests on overlayfs with a data-only layer:
 >=20
-> evm_calc_hmac_or_hash() returns the error so EVM fails to verify the
-> metadata. process_measurement() passes the error on to
-> evm_metadata_changed() which treats it like changed metadata and resets
-> the EVM status. That is needed as evm_verify_hmac() would otherwise hand
-> out a cached INTEGRITY_PASS without looking at the metadata again.
+> - a metacopy file whose redirect points at nothing: creating the probe
+>   fails, the error log has the new message and nothing gets tainted by a
+>   WARN
 >=20
-> This is a no-op as long as overlayfs can't fail D_REAL_METADATA.
+> - a metacopy file whose data lives in the data-only layer: the data is
+>   looked up when the probe is created and the probe hits when the file
+>   is executed
 >=20
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Link: https://lore.kernel.org/all/CAOQ4uxjoHbevvu8auB4m8AVcY9H6uHdDAP6mfi=
-9OOMh+3775xA@mail.gmail.com
+> None of the existing tests puts a uprobe on overlayfs.
+>=20
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261116-work-ovl-d=
-_real-v2-0-90564c4ae347@kernel.org?part=3D7
+_real-v2-0-90564c4ae347@kernel.org?part=3D12
 
