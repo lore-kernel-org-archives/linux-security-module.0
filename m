@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794822280;
-	b=XmKmwVtx+uZEEBCxPVOaNDkF27njbg+5bsvE71q8e0i/uoaub8uIxY2jgRU3yYXRfflZ
-	 /ec+p2ipEXZndhmNxqlicFCtL40/NCvSe49Jcoit+KeCkmOCehkg/RgNOWkR1m1VBcb+1
-	 fuVwOryoo9lBZ7M0OJUVc9+ebkdzrjpdgpLOwJcshRGZWQov+H9jGCFNLAVdgLO48loZ/
-	 7ytfgQ102yNwHgA5jvfQVoyVeWQLEQ4gex2rG9P0eab71BxFEZBmp+RgLAX7qttQfXGIx
-	 FkqovMvqnXhYKyQcMZudiLUdxR7OHa/kDAfieTIipny5uzTeveqRdbVff3ZvhcrfpGA==
+	t=1794822289;
+	b=KSIsmxDlBSRc7H8hi2XVeZmGCDyC15Lh/bFGBntCeB1+JjYg1uyt3bVBCpNUQzqcaPSw
+	 FKlObat+BbzEuhHskKY9oa0SoZb8fw6uZPu2OixEXIFy049/3PCLfMbb7/j7HvaypTfFI
+	 /92k7yZCMGPE6mgGPXN2Nw2d5SzCXGd118zK8Qi2zNoolDEWbBJInjIMVBKZriObplxQk
+	 o03s3n2O59tsImHcusFrfDKStBwWNexs+JVjk+W41/MSP7fj71QgJwG1IXL3rnRShhwbz
+	 e4c7JoxjY9pEGUEH7KqD8txeMVvHlYTw8X+UFaS6k/BfKzLvg24GUIJ5d8uC+MH3s5A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794822280;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794822289;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=pRTBIPRlWjCyGy6DSOqYG8UUMpJ1tanhgwPOwhgNUk0=;
-	b=ONE2W6lBfK3RJwHP4eeXKwHcn72fs5GUkf+kde+XnoESBwb5rxZY0GtynZinGYNDHdjK
-	 oLx1j1NjnlJKp8Xs0ji4+jwjX67rhrn6OWWUavlHRiEMDvNo8aTIy7C0aCgoogy78+4WK
-	 rv+Aw6gm/xE/rDOJF6xCPGQRNpg4gZBYpiyxeG/gQ68PF6o5k18UkZk9GlWc7rSXHLTcx
-	 VKRX4eA5O3gyB9nzjHGuzBqo3S+Qa+hTgdHYoGUPjL7mm9rnzr0lBH/t7FCw22nKBOx3J
-	 qcr1aFVSqT6tasQF1I+DAPGGxb+khZUpvQT1XCO88FkHYOS/2hHjlkScII1eK8C8fyQ==
+	bh=AskB65cJoQPi1ReB9/fhm9DblVUbyR84Mt3cKfNU18o=;
+	b=P36Vw4Jax4HI4oTAORkRjwv6gBxpeOa4heGUiBqThbfXsZG9cabJIVj0PqHDILS3RaHD
+	 pchwr9Syw0NbHMwkyo5NxjN9YegWswIMGzFRUrZtVg7SUTYEzWfaYGQdZNfQ5/givPqhJ
+	 1pqaeHbEwi6+Ir3Gu4i0xfbGjjW3GWgWFNHp/aVqadS7Tgax1kI4d4FiWOZc8Ym2XZw28
+	 6jakAlki5tjd+5w7ZhVWjFu/C1HXBbKy1+dJ1i2H9jnEv/Aqu3N6l+sCxU3CK/219LDIa
+	 MZDmf/8rFHshoGR5QAp7FkC5t3QjG1etdGVYb5rNEKVnE++y0CX91k15S9UxkpLME/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TDt51YLN;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="iI/0Z97T";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DB9606A331;
-	Mon, 16 Nov 2026 09:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D157D606A31C;
+	Mon, 16 Nov 2026 09:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TDt51YLN
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763DF1F000C7;
-	Mon, 16 Nov 2026 09:44:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iI/0Z97T
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9776A1F000CA;
+	Mon, 16 Nov 2026 09:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794822279;
-	bh=pRTBIPRlWjCyGy6DSOqYG8UUMpJ1tanhgwPOwhgNUk0=;
+	s=k20260515; t=1794822289;
+	bh=AskB65cJoQPi1ReB9/fhm9DblVUbyR84Mt3cKfNU18o=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=TDt51YLNjcsMzp8aXE/4qpR56L2VTw3XE0lOPPyc2yStU0KrgrnBfGEChWObjXCUB
-	 WrIpav1ixgpcfR4ZODZByfoK7gNQD4nzjiOEKH46gETUB1txk83a4IzI5/6Ke2cTm+
-	 Jk/2f9UDj0D4dw1fskY/ObWaRKRDp6viyE2ebl80qR8MLrxMV6uAX/8d2erTjukJJ4
-	 UanTjbkjSAKVU1Bt88DtWmus3GDoAPyXhOtWGSWqBbts55ddLulokjpuhHTxPnrM4j
-	 prH19F5n1/C23v7HYBitfujHpZIzQ4XNsAh19O7TXwD1CE1nRtxlZPo1bCJYL35qLv
-	 V5YsINXiIKiew==
+	b=iI/0Z97TWHJleWpplJITR8BJD2TN+kysLffD/3YQi1CrI0V4jhZQmJIVpvC7bmZHV
+	 TM2A1F92pLjx8FyZxIVb025qs6dEIrLMkpEOhwpXqWalNqgCObsQS92c7qgKsOhAtS
+	 NjzAGLscXobqFbaRNu5MHELODgktDkuvis9XMQ+M65lh5FPzLvWIv3ZXvc1HvF/Cmx
+	 Ibsmwpp9zUNOG2yB7hHJ1BFvimgoJ8PUEQD1B1RhStmVOS0tM3vkrptvJWm7f45yVN
+	 RLdzaPkT7LyB7rnec8t/XwNNe8pV+QnH3WAshQ5cVBT4guI0jRCHPvkkku/CTj8PYj
+	 OuiIKWVpkm1EQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 16 Nov 2026 10:43:58 +0100
-Subject: [PATCH v2 01/13] ovl: don't warn when the lazy lowerdata lookup
- fails in ovl_d_real()
+Date: Mon, 16 Nov 2026 10:44:01 +0100
+Subject: [PATCH v2 04/13] bpf: handle errors from resolving the real inode
+ in uprobe_multi
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261116-work-ovl-d_real-v2-1-90564c4ae347@kernel.org>
+Message-Id: <20261116-work-ovl-d_real-v2-4-90564c4ae347@kernel.org>
 References: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
 In-Reply-To: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
@@ -64,90 +64,69 @@ Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>,
  bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
  linux-mm@kvack.org, "Christian Brauner (Amutable)" <brauner@kernel.org>, 
- stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+ Alexei Starovoitov <ast@kernel.org>
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3129; i=brauner@kernel.org;
- h=from:subject:message-id; bh=uYRKZhpxLqg+b2YtgoKzFfW4tIoikMLXLGY4NolC2mc=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9upB/Mvnog+7jLLobGzkPh0yOt7CKEq3b+mdPBrPbN
- Amd7qNPO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSbszwP+wNX+dv2/S6ty8T
- 13f+aN/q/89lzlrngmDGn0uu/RIQms/wv8i129CnNNlBQp354eka2WLrV+IsFnESzvL7v9zYIP+
- dFQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2035; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=w0jMvi6Aqw5YdOXmHKxBMEO2g+Q12/7kbngiQF5xj0Q=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9ulC0Ydnb74y8sqK8fcc3z3rrHDNDYoZzSrDLvWz/h
+ LXSG3yYOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaScISR4fSDtNDa6Mf/Q/j5
+ V9zjnL53d1CB1bMmcyPXupyX1XpHMxn+Cr1fp/5s5tyHt+9GmlpF/7wd+oNj6b/6P63Wu49opv2
+ cyg4A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-ovl_d_real() looks up the data of a metacopy file in a data-only layer
-itself if nothing has done that yet. If that lookup fails it WARN()s and
-returns the overlayfs dentry.
+d_real() is about to be able to fail for D_REAL_DATA. So switch
+bpf_uprobe_multi_link_attach() from d_real_inode() to
+d_real_data_inode() and deal with the error.
 
-Commit 42dd69ae1af4 ("ovl: implement lazy lookup of lowerdata in
-data-only layers") assumed that the file would be read before
-trace_uprobe places a uprobe on it so the data would be there already.
+Currently, the real inode is resolved again for every single uprobe of
+the link. There's no point in doing that. Resolve it once right after
+the d_is_reg() check and fail BPF_LINK_CREATE with the error if the data
+of the file can't be resolved. Then all uprobes of the link are
+registered on the same inode.
 
-But nothing actually guarantees that. trace_uprobe takes the path from
-kern_path() and calls d_real_inode() on it when the event is created and
-again when it is enabled. So a uprobe on a metacopy file whose redirect
-points at nothing warns twice:
+This is a no-op until d_real() can actually fail.
 
-  ovl_d_real(/f, 0): real dentry not found
-  WARNING: fs/overlayfs/super.c:79 at ovl_d_real+0xc9/0x210, CPU#2: sh/279
-  Call Trace:
-   <TASK>
-   __trace_uprobe_create+0x1869/0x25b0
-   trace_probe_create+0xcc/0xe0
-   dyn_event_create+0x46/0x70
-   create_or_delete_trace_uprobe+0x3c/0x70
-   trace_parse_run_command+0x1a6/0x320
-   vfs_write+0x1cd/0xfa0
-   ksys_write+0x116/0x250
-   do_syscall_64+0x10e/0x5e0
-   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-   </TASK>
-
-bpf's uprobe_multi does the same.
-
-A failed lookup isn't a bug though. The data can be missing, its verity
-digest can be wrong or a signal can interrupt the wait for the inode
-lock. ovl_open() simply fails in that case and
-ovl_maybe_lookup_lowerdata() already warns ratelimited about failed
-lookups. So return the overlayfs dentry without warning. That's what the
-WARN() path returned anyway.
-
-Fixes: 42dd69ae1af4 ("ovl: implement lazy lookup of lowerdata in data-only layers")
-Cc: stable@vger.kernel.org # v6.5+
-Reported-by: Sashiko <sashiko-bot@kernel.org>
-Closes: https://lore.kernel.org/all/sashiko-outbox-214581@kernel.org
-Reported-by: Chris Down <chris@chrisdown.name>
-Closes: https://lore.kernel.org/all/20261114120557.4bc1eb6e57218cdc@chrisdown.name
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 ---
- fs/overlayfs/super.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ kernel/trace/bpf_trace.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 08695a99f4f93..1985b553a47b7 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -58,15 +58,13 @@ static struct dentry *ovl_d_real(struct dentry *dentry, enum d_real_type type)
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 2aec56d7f3d3e..15f32b971326e 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -3280,6 +3280,7 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+ 	struct bpf_uprobe *uprobes = NULL;
+ 	struct task_struct *task = NULL;
+ 	unsigned long __user *uoffsets;
++	struct inode *inode;
+ 	u64 __user *ucookies;
+ 	unsigned long size;
+ 	u32 flags, cnt, i;
+@@ -3336,6 +3337,12 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+ 		goto error_path_put;
+ 	}
  
- 	/*
- 	 * Best effort lazy lookup of lowerdata for D_REAL_DATA case to return
--	 * the real lowerdata dentry.  The only current caller of d_real() with
--	 * D_REAL_DATA is d_real_inode() from trace_uprobe and this caller is
--	 * likely going to be followed reading from the file, before placing
--	 * uprobes on offset within the file, so lowerdata should be available
--	 * when setting the uprobe.
-+	 * the real lowerdata dentry. Callers may ask for files that were never
-+	 * opened, e.g. for uprobes or O_PATH files, so the lookup can fail
-+	 * here. Return the overlayfs dentry then.
- 	 */
- 	err = ovl_verify_lowerdata(dentry);
- 	if (err)
--		goto bug;
-+		return dentry;
- 	lower = ovl_dentry_lowerdata(dentry);
- 	if (!lower)
- 		goto bug;
++	inode = d_real_data_inode(path.dentry);
++	if (IS_ERR(inode)) {
++		err = PTR_ERR(inode);
++		goto error_path_put;
++	}
++
+ 	if (pid) {
+ 		rcu_read_lock();
+ 		task = get_pid_task(find_vpid(pid), PIDTYPE_TGID);
+@@ -3394,7 +3401,7 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+ 		      &bpf_uprobe_multi_link_lops, prog, attr->link_create.attach_type);
+ 
+ 	for (i = 0; i < cnt; i++) {
+-		uprobes[i].uprobe = uprobe_register(d_real_inode(link->path.dentry),
++		uprobes[i].uprobe = uprobe_register(inode,
+ 						    uprobes[i].offset,
+ 						    uprobes[i].ref_ctr_offset,
+ 						    &uprobes[i].consumer);
 
 -- 
 2.53.0
