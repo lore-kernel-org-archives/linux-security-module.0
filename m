@@ -1,56 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794823114;
-	b=KvewqYUI/QywprtHB2eHoac4nB8SkeL2FPGnX8Qs5QiwrQVXFdg23LX3gMcXuJ1LS3A8
-	 an8QNIUoGdZuSdivUgSAquxA7YdYdc/eITIIZm5nDaAQa3gLz4HL7KNOeNidgpKJAV8wY
-	 sJak0Er7x83lA/tJRm4ZKKBrSV7+KLSCPU79565JaINxf5ScGsFeeU8C/WCjPKltAm4gr
-	 CUUjpHRWTbmEKBNKr6OvgQ7Orpd73fSs29yKRgTSP+MCT6txbcQwfLNMyr4kaDpoOoEaG
-	 DcpsT/tioRmXvWL6VZ/ZHk/vPzUVT+Fbwxesv4CnOG1CNWXD9ijdzHhMpIckd2iWMVQ==
+	t=1794825397;
+	b=w0agKAs1Ggse8fUCN9iYaeKYRFR1XDvm+Oygx1IctH/l/k+Ssz9VhZaFVW6D/XfM7xlg
+	 VVqRSLdo3mueti6aQ1512Z4f9iSh7No9chGW8sO+d39w9dFrYfZRM86skzIqFIss0py2F
+	 LFgb4D4cWO0mBC1FTBpzNI9y8iZ+vmukU8Du5b0EHuDIOc/Ldu833vA1lphmezH9Ou9rt
+	 JMZFGXLeNTBCEOUF35z+un7b8mg/qNyiD18HfJFVH3SJOUwiO/nKd/lv8buIyB2N1ks1M
+	 sGp0a3UBuEEKpYdDgH99dR2d22XOup23uukks78tb1uLb8ag4iHRuUqKI+N2mPo1yvQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794823114;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=+u1AQ5fOIRemGvMbyAUbDadhBLoJDcms9hs/ombnvck=;
-	b=AbKC7YPbGDxdm8vfupuOd4zCcYaKTRTgxEjAn/v+Qdy5bVInOxbD/qnSLWT0RB3zz/Z3
-	 jHLFvG4YmHAPOg8Q50gCdGVLv9YtGkTuY9DnLy4B7FpkNrOwZm4XYDxVskAGgTii0NiDs
-	 GA3O/iQAE0sWyn2L3Paldnkr6Q7IOz/Q/AvkOJNdq9y3i7sSLardvyQ0xkpezvkSyhjEA
-	 oF4wKZHZY7iPOqE8QoX9LPnbk2DwWhmc5m5g16idNQ+7kLHW+5bbvn1bF4eAtlui/eJJD
-	 VmGmoB+dgd+EHtzE2rStC5EGZld9h86UO5D7VeYhfrsng0hwSVGFyGGP1tUT/GbGN0A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794825397;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-Get-Message-Sender-Via:X-Authenticated-Sender:X-Source:
+	 X-Source-Args:X-Source-Dir;
+	bh=jnKD0Sg1HXJ0QpODcDAb1+nm/wAvXB84pIyCwDBO52w=;
+	b=Sx6V/71cm1mT+BLh/vbVJ6hZRYSbCHSN25A5eKgMYJZ2JiBUR/JCDg5jt2KKLW20ygy6
+	 ugKH2TD9ASz5hu+BEn6+Z3PaA/ewT46yzxAqlYH1AiQQ6VA+GeiAA4FH8G6V86mGUxwco
+	 zlweVeJgMnzwwLChlAlDJE5durnKzoiWakusWGYcYJrm9QxJb8oPoegAja/KqkyB9IRVX
+	 UwfZxrTagQjlsFd5yQJM3yLde7JNJxGZRFuCli108OkTEZ+TRBacDn06+3+cxsRJ9UzxQ
+	 oKwfbDBMxGh5nQs+RbWaabmsuNCP4yhSmWS6KFa8bUdgCwt6tQvcVZGJ94uKK0wYXew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G6ynEg4A;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=oss.cyber.gouv.fr;
+	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
+	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=VB5ZIZJc;
+	arc=none smtp.remote-ip=51.159.188.251
+Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF01606A31C
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 09:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6AF606A880
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 10:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DA6AF606A880
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G6ynEg4A
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D991F000C4
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 09:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794823114;
-	bh=+u1AQ5fOIRemGvMbyAUbDadhBLoJDcms9hs/ombnvck=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=G6ynEg4Axuiwes8cg2j2LaFt2/9gPD4Q+cqzW060Nq43+YU2aPO88hAFgHeevfm7N
-	 7tMPYdX7bklZyWIbSXtdZmzUdEdOJrOWKAHkhXU4Iq+waFs0Z4HTozG3ejCfcF3N/w
-	 xTq6byMtZMnSdEyLszKR/mIL5+JkmD+bHKGqw1q7oVbd4IKD/YWKaO/ut1smtkJ6pS
-	 DoBBNaQ2vSL589iLPlHYweU0UiRjwA78ZHQPOJfOFDL6Q7sLa5rDZ40qqvmYLKYBbl
-	 MZ4zjWXix3bKtz6NTKxjzKel9rlsOWQsuyWLNHuvvejwzTR8FNPDBhHn3UZw9WkTco
-	 9FtVLKe0DIM/g==
-Message-ID: <sashiko-outbox-216682@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 10/13] ovl: return the error from the lazy lowerdata
- lookup in ovl_d_real()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261116-work-ovl-d_real-v2-10-90564c4ae347@kernel.org>
-References: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
- <20261116-work-ovl-d_real-v2-10-90564c4ae347@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Nov 2026 09:58:33 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=VB5ZIZJc
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:Sender:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=jnKD0Sg1HXJ0QpODcDAb1+nm/wAvXB84pIyCwDBO52w=; b=VB5ZIZJcQnnGMeJZ5ZvFY/KwVd
+	nKh28ZgdryuU7CTAwHo5zC1wMl1y5KBSf77QeqC2kHnnGueaBSHDpHi2054MyOhwcoq9GEKovC4kV
+	9uPlwpm2dm5QJWM78j3bzfA22FBtccDjFMsqze/YSvtE1isQDyespzMZyrz9VAlhVLJPyjXMAtWMz
+	P/HmuNt/pTjhWYouIYmPXPM65JOUdy39w7d+/EIpGqMNOLgoWPiAZhuKXeJzTNPlVKvIPOUM5yGOH
+	Vod+HHFj2Pv4iwxpk5NaAciRE9eP8nnL4iV7TM5Yb6AyzlW9z6aUvXUNSrq9iq63Ujj3Axdjln/3s
+	m+7+Jn2Q==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:16639 helo=archlinux)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1xSu4h-00000004Pfx-2NyI;
+	Mon, 16 Nov 2026 11:36:34 +0100
+Date: Mon, 16 Nov 2026 11:36:26 +0100
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+To: Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: Baruch Siach <baruch@tkos.co.il>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] security: update lockdown_reasons[] reference
+Message-ID: <avrcbw4sbtHruptl@archlinux>
+References: <3283a389cc21862ab98eb891436568fc1d23b869.1794505077.git.baruch@tkos.co.il>
+ <9923142e-8775-4a5b-b016-7a2a9b743198@huawei.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,26 +70,37 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9923142e-8775-4a5b-b016-7a2a9b743198@huawei.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-> All callers have been converted to d_real_data_inode() and handle an
-> error now. So return the error from ovl_verify_lowerdata() just like
-> ovl_open() does. The lowerdata dentry missing after a successful
-> ovl_verify_lowerdata() would be an overlayfs bug, so keep warning about
-> that but return -EIO like ovl_open() does when it has no real path.
-> D_REAL_METADATA never looks anything up and still can't fail.
->=20
-> Update the comment in ovl_d_real() and the documentation of d_real() in
-> dcache.h and vfs.rst accordingly.
->=20
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Link: https://lore.kernel.org/all/CAOQ4uxhGxpBtMZ5kfuzR1tQAewiecoX7UjXQRo=
-91QjJHH9T_Yw@mail.gmail.com
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+On Fri, Nov 13, 2026 at 09:50:18AM +0800, Xiu Jianfeng wrote:
+> On 11/13/2026 1:37 AM, Baruch Siach wrote:
+> > Commit 59438b46471ae6 ("security,lockdown,selinux: implement SELinux
+> > lockdown") moved lockdown_reasons[] from security/lockdown/lockdown.c to
+> > security/security.c. Update the documentation comment to match.
+> 
+> Hi Baruch,
+> 
+> Thanks for the patch.
+> 
+> However, Cai already has a patch under review that moves
+> lockdown_reasons[] back to security/lockdown/lockdown.c, and once it
+> gets merged, this issue will no longer exist.
 
-Sashiko has reviewed this patch and found no issues.
+Indeed, we will go through Cai's contribution for this.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261116-work-ovl-d=
-_real-v2-0-90564c4ae347@kernel.org?part=3D10
+Best regards,
 
+Nicolas
