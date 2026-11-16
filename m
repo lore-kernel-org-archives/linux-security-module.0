@@ -1,49 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794822306;
-	b=S6sN+3WT6tvqJ2pxVXMpxiAUP69b6JnMiKUu+ZQBxaWI587HQZ3hXbCUaW4t1dsAeFO9
-	 p6cNckZaKn7kPGyJtCoPSj7asCXZqfVeXFmSsmFJ0q63pC+Qc5kP3wfi12Z2PV1dqt5Yv
-	 +rZgnKTWOtUwCiJ+CgE5V8XYFPil8aU3+awlJn+0DIpcD8ZtyMmPdY2LKKZ+PuOkZdG9f
-	 sas/0VdrfAcnjlzU3CJdKwy2XB15iMbXiwBzY/RVnVUQjJQAK8CKCQByc8Loi5dxwLGx6
-	 gcOv/KslLGKlGdDxpTzmbaDghQDKNY6D0ro8f7uopbKDfFoVXT+KgNblGeBQbfZpdzw==
+	t=1794822313;
+	b=XmrAhT8r9mEmzLHj8VIYrJZtpB+gYtIXZXs3j0C1zh0xExUE78WIihEFEOulPLX53rxF
+	 +sMXlhjBYJNERJoaeq/pJKih/lk+iCnge73k2kXctSY3yF3+4bcqKxdVC0bXB0xWXKKEi
+	 h1ptResCiv5+WlMaN6Vdw5p2MRoWXI47sep88lI+vfkladaKiPJxSCXRkC61VJiVBrn9g
+	 YQ1OPj0qT2L9NS/R9zrClnqPvb92YZYq6jMFScZ5k7YHPbp8VcEoAXGYDPGsmGRxJJDye
+	 kgyVwPGco0BK9mOF5sQJOCbs19qJoZlryG5bVxv5EhHLw6WCP2T/7q2A53pIIcrp6sQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794822306;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794822313;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=7tEmxx2uSoc83gcz1fGmTgu7ng9Xmju5bdiTJa5lEnw=;
-	b=a6Isq+Dzenvm/9gkAgMKedJJGHnZJaOEIC2mQVe4Yp1un9ZUXe7jggSSjM6aB2gAJ/cp
-	 LTQebwTsdz+3EspGJejDbbguJ4G/w+J1FfOExcUdai/9WQdnw8yad206ULA+l57HN54Qk
-	 tvwypzX501Wbw7/XeK6APRcT/A2HrHTyN3zOZTzf78Pz1iUwhtTkGnlmXWWNJRmLKz4W5
-	 OILyX2sPWvrmc5VTkg3orJT88GUNvxWShmVJ1fBaPTP6t7nbcn+xc6K2FdRoGgNjnrU/R
-	 F7nTaWN9mP4o4lRm4u5a2/G0TMMyyZJzPp0tB915pUpJ+qxo960edT4bO2stsKoDqTw==
+	bh=l2n7GYm1kafD6KIKhmQCKvKwi/vqwdo3wJ4VdtgD0Qw=;
+	b=KGMe1imJJgA6/dUP8qKkIE6TPoaHy0VNVJf2xnDDl7IPe3Zsttr6Fo+N801s/dsE3aqV
+	 /XEi9CgB7fxkY7BGt5o1FF8JqPXRwCVVnwY6gzNmXWEjm8ANMRV54XUD3XtVaJv2kFvSK
+	 MsVI7Q744KWCy5J7PgnF2HthF1vzdPF/9Lf1Oq6O5t3oM3iA8yerArw/1f2+69mCATUQO
+	 1N+VX9lFoAd1MSGvTPud5zUhoD/RWgm/FmVl6WpRyF217l2eDt+PaYLXu29ZXLI6wpc/H
+	 sqtP71S3Afu93jcS7MvrqAKf/RmkDAjxoFR17zygP++muJSjiN/Ad95fnRyznuzJuLg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oj+s5Paq;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RByDbBq0;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C21606A88B;
-	Mon, 16 Nov 2026 09:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4FB606A8A1;
+	Mon, 16 Nov 2026 09:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oj+s5Paq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C89141F000C6;
-	Mon, 16 Nov 2026 09:45:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RByDbBq0
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F1C21F000C4;
+	Mon, 16 Nov 2026 09:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794822306;
-	bh=7tEmxx2uSoc83gcz1fGmTgu7ng9Xmju5bdiTJa5lEnw=;
+	s=k20260515; t=1794822313;
+	bh=l2n7GYm1kafD6KIKhmQCKvKwi/vqwdo3wJ4VdtgD0Qw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=oj+s5PaqBt9/DbiWrY22jRs4+Mvji90JmsS6W1OCZBrH6HBD7jp0sGKwdPz2SOnFN
-	 SVE89Qpp8K+XwVSwHW9MeJPGLER2NpRNrmmBWHHGCOoDWnJyQHxZbJCnaDV8mzdqzH
-	 QHWGBe8BBHz/iYDy7cT95p+fnynZ/5LWKioN3whoujaZutdTNezQ5bd5aodsrF5KUX
-	 gR2Az2OgzTO2RUOqA5eZzys5G096xAQwpMqj6zQPGvgB4zIma2NjXapKthcekvwH9u
-	 gOJ21eUzBZefYAqjgQPl6wAj6Hq7CSepBtTkqhR9knPU31mDc92j+AEYafgpcCZw9H
-	 swjYl5SyHWGpA==
+	b=RByDbBq0EnH/k7F/+ia4GduEApm//N0OcqKwmFsf4BT0XxfLJRx9Q/3BNS7AE0kgi
+	 YNRe2S8oM7A51RS1GgyMvY4SbBnOHniLnhgMYI5u4d88fXZ/cS6HDImxjd1u70pcfI
+	 3qzszv+Jp/IPGLXBaWO/1m5y84RQ0ogUVX4W6it4a6dTT2TtyfOt4rURkjxkrSV+PY
+	 iUnyV5fvd++UkXz/kMVXLP2dfExUScApmm2dHIhwMrORjU00/tyJyWVDQkhnW2GwSE
+	 XAjNi4jGRdY3TdBl2NgIpH59Vn7mV0hPJBxddVXePy4vAac9joOWIvxWgrhhO8GWbn
+	 kP4af+FT2lMWQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 16 Nov 2026 10:44:06 +0100
-Subject: [PATCH v2 09/13] bpf: return NULL from bpf_real_data_inode() on
- errors
+Date: Mon, 16 Nov 2026 10:44:08 +0100
+Subject: [PATCH v2 11/13] fs: remove d_real_inode()
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +54,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261116-work-ovl-d_real-v2-9-90564c4ae347@kernel.org>
+Message-Id: <20261116-work-ovl-d_real-v2-11-90564c4ae347@kernel.org>
 References: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
 In-Reply-To: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org
@@ -63,66 +62,73 @@ Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>,
  linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
  bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-mm@kvack.org, "Christian Brauner (Amutable)" <brauner@kernel.org>, 
- Alexei Starovoitov <ast@kernel.org>
+ linux-mm@kvack.org, "Christian Brauner (Amutable)" <brauner@kernel.org>
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1862; i=brauner@kernel.org;
- h=from:subject:message-id; bh=mYuPWfGXzyPhmBavnKn8qYRaH0QvgFc+AD0P8F1FbFg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9ulBRcordIOBXhFTJay2ho2f2H1u/yaOawSLezHbex
- LN9hjMndJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkejcjQ2vpA7OVL63fhMl6
- yUR2RO03/VTiv9Bnh71We1rT9XyTZYwMa7fePri5u+DW+vUH9by5VwSe0mo2nm/1VpZjf7vb99V
- aPAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2354; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=N/tFO/f64vva6VIPqr/EXBSXpu7UN9wS9KMKs7QXnPY=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9ulCtee6L+0rW+dorX9aqKs+8VRlQ9yugY9UnblbjU
+ yKfzirFdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzE9Qojw+LSVZ5KcmcLwvTb
+ 6m6knWfp4kl2Ydyhf+gu3ysG4cMLPjMyLJOLzHx8+snmSTvUROdP2G/9IGvanwi9+5EXNjzRmnf
+ CkhUA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-d_real() is about to be able to fail for D_REAL_DATA. So switch
-bpf_real_data_inode() from d_real_inode() to d_real_data_inode() and
-return NULL if the data can't be resolved.
+All callers have been converted to d_real_data_inode() or
+d_real_metadata_inode(). Remove d_real_inode() so that any user we
+missed, or one that gets added in another tree, fails to build instead
+of passing an ERR_PTR() from d_real() to d_inode().
 
-The kfunc is already KF_SLEEPABLE | KF_RET_NULL and its documentation
-says it may return NULL. So programs already have to deal with NULL and
-the verifier enforces that. Note that this is the caller that most
-easily ends up with a file whose data was never looked up.
-lsm.s/file_open runs before ovl_open() and lsm.s/file_receive sees
-O_PATH files passed via SCM_RIGHTS.
+Add a porting.rst entry.
 
-Spell that out in the documentation.
-
-This is a no-op until d_real() can actually fail.
-
-Acked-by: Alexei Starovoitov <ast@kernel.org>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 ---
- fs/bpf_fs_kfuncs.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ Documentation/filesystems/porting.rst | 10 ++++++++++
+ include/linux/dcache.h                | 13 -------------
+ 2 files changed, 10 insertions(+), 13 deletions(-)
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 35ccd98a4de64..ab24e6bcd64c4 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -491,11 +491,20 @@ __bpf_kfunc int bpf_sock_read_xattr(struct socket *sock, const char *name__str,
-  * inode itself is returned; for any file on a non-union filesystem the inode
-  * attached to @file is returned.
-  *
-- * Return: The inode hosting @file's data, or NULL.
-+ * The union/overlay may have to look up the data first, e.g., when @file was
-+ * opened with O_PATH or the program runs before the file is opened. If that
-+ * fails NULL is returned.
-+ *
-+ * Return: The inode hosting @file's data, or NULL if it can't be resolved.
-  */
- __bpf_kfunc struct inode *bpf_real_data_inode(struct file *file)
- {
--	return d_real_inode(file_dentry(file));
-+	struct inode *inode;
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index c38f5df755bb5..aa0fc43907017 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -1422,3 +1422,13 @@ helpers take a const struct mnt_idmap *. mnt_idmap() and file_mnt_idmap()
+ return one. The idmapping is immutable so nothing should have modified it
+ anyway. References are taken and dropped via mnt_idmap_get() and
+ mnt_idmap_put() as before, both accept a const pointer.
 +
-+	inode = d_real_data_inode(file_dentry(file));
-+	if (IS_ERR(inode))
-+		return NULL;
-+	return inode;
++---
++
++**mandatory**
++
++d_real_inode() is gone. d_real() can fail for D_REAL_DATA now and returns an
++ERR_PTR() then, e.g., when overlayfs can't look up the data of a metacopy file
++in a data-only layer. Use d_real_data_inode(), which returns the inode hosting
++the data or an ERR_PTR(), and handle the error. Use d_real_metadata_inode() for
++the inode hosting the metadata and handle its errors as well.
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index fd8853622f250..fe1aa8fea0c7a 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -654,19 +654,6 @@ static inline struct dentry *d_real(struct dentry *dentry, enum d_real_type type
+ 		return dentry;
  }
  
- __bpf_kfunc_end_defs();
+-/**
+- * d_real_inode - Return the real inode hosting the data
+- * @dentry: The dentry to query
+- *
+- * If dentry is on a union/overlay, then return the underlying, real inode.
+- * Otherwise return d_inode().
+- */
+-static inline struct inode *d_real_inode(const struct dentry *dentry)
+-{
+-	/* This usage of d_real() results in const dentry */
+-	return d_inode(d_real((struct dentry *) dentry, D_REAL_DATA));
+-}
+-
+ /**
+  * d_real_data_inode - Return the real inode hosting the data
+  * @dentry: The dentry to query
 
 -- 
 2.53.0
