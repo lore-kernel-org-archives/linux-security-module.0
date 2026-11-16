@@ -1,64 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.69
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794844426;
-	b=5CUe+BP3OX73rtnD8kam+6ROF5jPNgq0V95Rcu9vJgECvPAQWz/FVyOE6YPRkyEtuZLg
-	 EGfjw7Rh7aGLE0X+XJDI/3kmxI+uE4ZXS8SboPc6c6+r+guX8iNKXAu/5hUq7Wcef/q4q
-	 ZS5sV0aYLKQ+2V5oouVkDhZ8xd3Dc3V2ZZ+Y64lN3d9wzGgQ+IsUSvdChbUrUFt3vYcIJ
-	 5v4enAD9hFdQRN7q+Iy/etgzh7xOOqrVkbQjefLJgtyVXy+XM8wYW9ts9hOvM1Q65AhRb
-	 6heYqBHPy4P34n1/Wkbs4rmHwmr6U7heI51YV8zjly9sIW6dJYAM/E/0klT16nNCDTQ==
+	t=1794847388;
+	b=A2KJ1OpPOKT14T8Svrrwc2ZcpOCgvtiamMaHKgon9P/wjuHJFBZGwy9g26+wfgMrANTr
+	 xm6B77PxHJJHfs7rYopdKhbXQiezZMeZmS0HFRKFLI6SrIaDS9phG7vCPMwzfJacWP5An
+	 R1H6/At4BzPDI4baUK0mcE7o+PSHQvl90AezYxs9hmNlZrpo3IDp9E01KYVUWc6oq9COD
+	 Yi3a6iE8uw90yZcBV5oWHFM53m0YddXdS+m68kOVDDSgC886HViDwjBAxJU3HQfZDT1df
+	 vTvE0LKzu4/zGYBkcw0ZXRXZQD2kF82n5dszB/rxsO7HknNlGBMFh6TFHfXPENHooSQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794844426;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=x2CywPaM2g5NnzDzlfr6I6R7FLOYJMsUt5HyR2scrh4=;
-	b=pf69jmPjpvS8JDNvl1dIxPtvRVHB0dehtXHJv4y3WGqrb+Kzf+s+nJN2tuJ3Y43aJPAT
-	 XSRwEiRa6i1o7ypzOSI3PHg6y/QeixkWaxxnx9wdWuDi/HTmxxyb9XgARjOD55w+gvfcR
-	 qNOoJdmAvEjvLZflifo1a2Fh6RqWDa4Wd07Yd2NcbIrTFS6u5cXhvDJxZyXnQeEVeKElp
-	 W0slu8+SlLdByHu5AeqiYRK5eC+qQ1wm8eF+Gug7SBfk21LPtSxKRzRlPJ6LRMFhj48cd
-	 4D1CG2nCC/CGEwZ6Bn7UCPYmQTbl4LQx61JfXh6xnD3KPVbUy+CAM7hzMJtDQTzIV9Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794847388;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
+	 Mime-Version:References:Message-ID:Subject:From:To:Cc:Content-Type;
+	bh=mDfU+sS9f1CGfQAVDBxxcGKeVZ+qJ/3ua+e3uJH5HXA=;
+	b=Hd7JOjQ2dcQ66X8t9Ur610i9lzp4xR3n41p8M5lDXDx9ScIgIrGEg4I+cs7OtlksOgE3
+	 GNv3K6Sw67dV9yfem2cprKOsT45OhopUOCj4PeBLYbG81VWwtVICnNzcyFm5UrkJJVGGj
+	 p0co+qxKSG9JdZWGCKmhosYSsPIX5h2Ie4rdqOa4H+Bu+/OkbAnmqseY4GM+aPKlZP7X7
+	 zzxFzkASJkyVB4igsjgTHqDp/Dy7wN2WsXL7jbrOtjNs023gDP/1wYih6rI813ru544XB
+	 LKHy8RMUVR2m2qbrpT+Gx8VENMbdVvJKqJqnZl64MkgFs4h2JkjZwvT828I3rWNEnZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SzV35JsA;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--halg.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=IHD+g70C;
+	arc=none smtp.remote-ip=209.85.218.69
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007AE606A331;
-	Mon, 16 Nov 2026 15:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7044E606A31C
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 16:43:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7044E606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--halg.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SzV35JsA
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A121F000CB;
-	Mon, 16 Nov 2026 15:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794844425;
-	bh=x2CywPaM2g5NnzDzlfr6I6R7FLOYJMsUt5HyR2scrh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SzV35JsA+V+Ay/JlfmbHyw8TEEwCyti8oclHTHE0imgrx97/hONEw5501VK69skOH
-	 S8XE5M/0vSh2Le4bJxxpU6BliIEOnJvYj9szavM6P2TnHcYhQ4G4zWhfrmKxaxkvoc
-	 qRuA3BuhR6lNq1ZaH+PcS/4mJ3EXf4wm3u1xfPJLOqtVrT8EOTs3u2HtEVGYsMqJth
-	 TPRPpfh1LBiLdGk1gH5bImnktX7qWe0L3mU1th0caeewo08ajPZ2b1+BQYUXKd88Wt
-	 qb7aXa2Nd4bH8fsJ915ni+G+I9OYFjTGkwMxvbAvTtZMaxx4KiKAxuGNUj70cP9Fg+
-	 wxhCyQFw7A+XQ==
-Date: Mon, 16 Nov 2026 15:53:35 +0000
-From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
-To: "HARIHARA SUDHAN. R" <harisudhan@armoriq.io>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Paul Moore <paul@paul-moore.com>, Kees Cook <kees@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, "Liam R . Howlett" <liam@infradead.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, David Hildenbrand <david@kernel.org>, 
-	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>, 
-	Suren Baghdasaryan <surenb@google.com>, Ben Segall <bsegall@google.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Ketan Bhardwaj <ketan@armoriq.io>, bpf@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH v3 0/6] security: introduce Kernel Assurance Plane
-Message-ID: <avsm6Xg4SFUmF822@gremlin>
-References: <20261110202246.274-1-harisudhan@armoriq.io>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=IHD+g70C
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-c50657eaef0so369701066b.3
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 08:43:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1794847387; x=1795452187; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=mDfU+sS9f1CGfQAVDBxxcGKeVZ+qJ/3ua+e3uJH5HXA=;
+        b=IHD+g70CMjjDb+lNyaZS7FPrR9hKiBjI6am80yEPTtTB9qWtugwit+DSXHqY66L98K
+         8EtcQ72+xPDDvax/dKjPailSRAMm2iFoAICCBJiaKhmJXvLESaGHskyifSodaT1tRs2k
+         FnHt0a2P09ARVfqqIUhh4npU9nurbR746tcMFt5h0VvYTWxJ99h7V4nt5AdC5Xn+RuNw
+         R+UPfCjsMpCI0kZGUr8m/0061Cxdd4HI0FJsop35cbdBWrApwuRCUgB8AqRfgWVySydR
+         5NYVgGLoJ1FeSnqZ87k51s8BnWjIU7UBqdkx4H+pPBId62cZa0wxGpKqydkewL7P/Ubz
+         LItw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794847387; x=1795452187;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=mDfU+sS9f1CGfQAVDBxxcGKeVZ+qJ/3ua+e3uJH5HXA=;
+        b=ngbbOCWIvF+Bpbbx4jes3jQOLO9B4Ux2aS4qSbEhG6SDRiSAGH4pHsTsdSQig8mNJZ
+         m1pUvKYLtDIBdLsPdpQRLc8vnIC6wcR50ycAqh/WNdVc/4V8TGyiyFxgA1qOgpc9yriX
+         dPGZkmB0R4APZRN+zQdQN9LAxxFGi4pKlPxCM1DkUH/gTINsurfpT6Hhfb/2RNQPgQss
+         MWzCp5cW2HNBuL/hs5Nj61QDQT7HfZs9SyHCSwb4uSZ/hS/eAiQJPpadtftUhAQDx8+g
+         XJAPEGh2gXu0JZI/q7YPEVhUeFOGMeuSBfM3JFlmZFQUpIFXWD7PIOteVadLJehLDr4M
+         Lwcw==
+X-Forwarded-Encrypted: i=1; AL+hErEIcwq6we4Mn+rGCo9eioe6ivqfG1kpiHEBtlTnns/CSWi9ecA9N24Aaay1GranasvMnW5yukBhCJw8qYNzkmSz+oTI0QY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8zdsEN2f01Fb7C55//Llgh2AstHoAK3bwgClW7MU6DCFm1p4Zv
+	tuK6JTmz3zuS5k5GdgOVb3ZVy8VPiJZ0CaClnjLoad12LUGxxHrdhmz6QN+1zDrS4EeSXVe0XA=
+	=
+X-Received: from ejja21.prod.google.com ([2002:a17:906:3e95:b0:c3e:edc5:36b1])
+ (user=halg job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:6d08:b0:c34:e9fe:82ed
+ with SMTP id a640c23a62f3a-c50963d803amr901765866b.28.1794847386433; Mon, 16
+ Nov 2026 08:43:06 -0800 (PST)
+Date: Mon, 16 Nov 2026 16:43:05 +0000
+In-Reply-To: <20261111-behagen-faktisch-entgegen-e2e714373895@brauner>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,13 +77,68 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261110202246.274-1-harisudhan@armoriq.io>
+Mime-Version: 1.0
+References: <20261028221705.3915340-1-halg@google.com> <CALCETrW9ygriu54gxiHFLEd5+hJminQo0r8Jwd63wR69Dj4W7w@mail.gmail.com>
+ <20261106-befreien-addieren-eislauf-e09212803534@brauner> <CALCETrWa1SBLcb5oWjqjgzZvKvCoHjmYFk=Lf5ytEM9uqm5jYA@mail.gmail.com>
+ <avM41a80aig2de-R@google.com> <20261111-behagen-faktisch-entgegen-e2e714373895@brauner>
+Message-ID: <avsymRBSulVZfouF@google.com>
+Subject: Re: [PATCH 0/8] userns: per-namespace capability bounding set and
+ opt-in netns loopback
+From: "Hallgrimur H. Gunnarsson" <halg@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jann Horn <jannh@google.com>, "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
+	Jonathan Calmels <jcalmels@3xx0.net>, Casey Schaufler <casey@schaufler-ca.com>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-api@vger.kernel.org, containers@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-No comment on the series, but please please please put a diffstat on the cover
-letter so people can see at a glance what's changed :)
+On Wed, Nov 11, 2026 at 04:20:02PM +0100, Christian Brauner wrote:
+> Just a note on the essay I cut off. I really object to any arguments
+> that amount to "it's too much work" propped up by a few thin arguments
+> sprinkled in such as rtnetlink.
+> 
+> I also reject any arguments that amount to underscoping and overscoping
+> of the new capability. The scope is clear: empty netns with brought up
+> loop device.
 
---
-Cheers, Lorenzo
+Understood, thanks. I'll split the loopback work out into its own
+standalone series and handle it separately, keeping the scope strictly
+defined as you described.
+
+> But again, I'm more focussed on cells so here's what I find acceptable:
+[snip]
+> * a new CapUns: line in /proc/<pid>/status
+> * new audit mask in AUDIT_CAPSET record
+
+Quick question on AUDIT_CAPSET: today it's only emitted on capset() and
+only logs capability sets that capset() can modify (explicitly or
+implicitly like cap_ambient). It does not include cap_bset which is
+modified via prctl(). Since capset() never modifies cap_userns either,
+does it make sense to treat it like cap_bset and leave it out of
+AUDIT_CAPSET, relying on prctl auditing instead?
+
+[snip]
+> That gets rid of the sysctl, the clone3() field and the clone flags,
+> doesn't need a new capability bit, and nothing changes for anyone who
+> doesn't opt in, I think.
+> 
+> And that loopback thing should be its own series. Not as an nsfs ioctl
+> though. All nsfs ioctls only report namespace state and I'd like to keep
+> it that way.
+> 
+> Pipe this through an LLM and make sure it makes sense and covers all
+> holes.
+> 
+> Thoughts?
+
+Thanks for the feedback and the detailed proposal. It looks good to me
+and nicely ties everything together. I'll prepare a V2 for review based
+on this hybrid design.
