@@ -1,105 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.219.43
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794858549;
-	b=XE5DoT2Th+r75ZczBJNlGNeorx2WXVOKDdrB7YjFs2M1YC0EmNf6wTENFyg9wMUvlszK
-	 GJ3mwPvqxWwPDMzkHAVtsznRjmXyyUmBomZo2PvyWCWL8qOkToA5PvKyiHqgCm2QNTQP8
-	 Yck6947WK/hKBhXhmypkFxSiVBlAUmuRJYjO7hYb/LW7/Ud7u1KUntAZVT4/BS2pEqh2o
-	 Dr2ZejZBBNtggFn8smRyYTdXsQAqJfc21TWtXNYKbSsQ4D0SbG6xvBCzyrOQ7VNN86Phe
-	 9UphBwYoVciIfVbPYfAMkz1VqwpL/1GcL594rtD1aA76QrNrlxvlwIf4Uvh4ojuH6MQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794858549;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.50
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794859451;
+	b=Zb/+xHaiXM2TDqSa5ZDE5e4GiTEnyk+LgNLy46KrpkjcJvNpY0gBm1hmjErv7LfM9IVi
+	 T1MpKIiez9AZya9jFaTDh88UKsjWAORS4gL+661RyEEnME9GFjumPtJstal2hIKaTn4eO
+	 HLqBg45wM9rGH4YbIYxYX18oh4PJN7HiHjeijRB9Z6pIvudk1V058Wax13/YtZoqC3eOJ
+	 ykC+Z5tksODS5GkviKmM7DYz8jXSSRAKoDlD1Wi8ynd+v4vh2D/mjBc2TgArMJBPodAzb
+	 g/9MaRwmVwHEdrHG1XB8P9rTo9IADX64NwYxFoluNz4RdsC68gEIpvafCRk8i+w5ASw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794859451;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=JYgfM3NjhEFUFn9lrkoVqv9gAjE144oaGhmBbKw0DZU=;
-	b=ohcMiMHudKfH776K6F+mPxxMR+LL4BpvFZgROswn8gfARejpHfprA+uSu3TGkhZVcWh/
-	 YKghAd5G9oqA2tO3nrlactbsB2XWGmwJBd1Oo2gRhwfylwp4z9pfaReeDeFU5tshbE7AC
-	 Id2U56DwGiCbdvRTWTQrHr2y88K85VxpTkY+QIu0Eq/JKWG4gDoXGC6QTBqaVL621qfCF
-	 DnOGR+mv9wmMWHnzqDH3hDvp4fDi6IORdD8ykogil9TufMu3A91b6Tb5MUWbRV9iD3a0z
-	 9nVAWvf/phFu80yYcONXc+5SADlcKSFWqWvaFmVjU0W1xA5qBVbzTuhnN/wAv8GM+DA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=ziepe.ca;
-	spf=pass smtp.mailfrom=ziepe.ca;
-	dkim=pass header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=RlFsvhsE;
-	arc=none smtp.remote-ip=209.85.219.43
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=FEtpE65JhLGyAYaL/FOW2ebUIws2WwBZ/4Zy8VNXUuw=;
+	b=NibkClpOpqsfsTDgl7z1z7JVd67CesWhmFNLge2zyW/j5hpAInvcMOQ1dh7iK7xhek30
+	 ksUfFCv2LqTOkunx71woLeh1UjWISV9VraO8aprvpxeKtgHqnBrSTWw9CCAGSpMWSGg5Y
+	 EM+Rw4qQ6RyuHd7UcUKJmG9ZO9wndv3cnL4y9cbbXTVOb6PqU2lHDsAZeQXcjaRieOoDw
+	 kSjJcUpqzc+f1TQfFEq2g6rWltKTEBv4cB/zTcwjk9jcc9URkzpuOqtoJlvCCnJcLaW7s
+	 TzGlUILl/z2MFA6GRqbe3Zakge1EL5K1DseETz55F2e9mVhMYgpT0eoHB0SZ2Igy/BA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hnqDx80H;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.50
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47922606A322
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 19:49:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47922606A322
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B231606A338
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 20:04:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5B231606A338
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=RlFsvhsE
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-91eb46044c4so66842516d6.1
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 11:49:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=hnqDx80H
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-498f5fa5103so1736448f8f.2
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 12:04:09 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794859448; cv=none;
+        d=google.com; s=arc-20260327;
+        b=izHB5B/nqej00BwSa61RZtgpN2SE63HRH7GEHlyG3Uszl3zLa7pjpZmMica8ELIVS9
+         iibIlAOFe3RVXB0juNuSHveED8OHW0xZH1PTc2ZVzwdL0yiaFmxXJQfdt5+kYO5vpJAL
+         fSUYbPWu76RgdXy00rvdnN+O34o8fc0zPkH2doqCkHJieWUArBBJWLC/Z+iERd/HpVWg
+         u9aFLIXi7gd4kDpNnYUknQh2xkVHm6dDQsR+8wmrn5fvgcHMutFkZ0s74ZyyWO5GSTTY
+         8jpNAJc96SEKkdU0FxM98x5zxoutPtaHHYUfB4CQ2TNkLnf2ra3xuehA0IjSO6SGmSq7
+         Pc4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=FEtpE65JhLGyAYaL/FOW2ebUIws2WwBZ/4Zy8VNXUuw=;
+        fh=wOolAOz3SPCZokzykQjDYDqwcaz1QyATGyFz8ILwNXI=;
+        b=ba2l510mGk77OKmVAVVZuOl3iDTa3OvTOHBspxhZ4T+79i/dp/0iNBbuV0akkBVFLy
+         wZAAfnYKx5N1U2ZNQilC7pnhpvSLZnACQ/lsxRb6BYMNJ0xmDjB3Uc+uMCmoTbcx1Eac
+         dAVJEYqoTJSuS04vjH9p7VvMQN2CO6cM594Eg2kYrIh2DSwAhpIGqW4PF/mOgu8+RtZM
+         vi0p9h3FPOxT9z2A88i3JT5n4Vq/0efG+8rnaIAISfrJzBu2eEeE0WtZsVAm+DRRE+hM
+         EqGzJXpC67Db9266w+ZrqbdYLPthujp7CNpFE6pKsRcK0kp4RZZIQyoc/IQcOM/Mpnql
+         WW2g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1794858548; x=1795463348; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1794859448; x=1795464248; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=JYgfM3NjhEFUFn9lrkoVqv9gAjE144oaGhmBbKw0DZU=;
-        b=RlFsvhsEKl8YczEStUDBJeHllrFOfIR6vjGNwd76/biP2I1kCjgE9VRwwg2fjXFiER
-         Wzajb3Irdr2N8CSbPSvTRr5jWXP5ulgFMSOBkvDgvxvh7ArkHXjsOhanghA3a+F3u4qJ
-         32pvDn3ODb+dJa73zjDJAXCvecG8vca26Ki/U+YYljPcr1CimqyVXAENEfahq1C1zIn+
-         N7O3F6A9dCgtW+jTy/WROWUf1adGILfOyE6bm2jCx7BtyZFoDZvAU0RV/Lq3/RNxd2KV
-         VMxOveLKWggfNQV5opTqiNXipyTrD7LR4TjpT9tj8CVHDbNWuyRoCfVfpkgAT5HmuuDg
-         Gd3Q==
+        bh=FEtpE65JhLGyAYaL/FOW2ebUIws2WwBZ/4Zy8VNXUuw=;
+        b=hnqDx80H1BHGMZ+jCw863LQE2wm4hG6wTw//ziQNWkZpZIjdyNNCtFJNcbykSvuJWZ
+         RrqgQGru9l+9Rlw9NCoAO7RXSeH6CHzRwb+h6TsbT77V+vTLtC7o5AslWzWJ8+7yhciq
+         sbJxN7Yoz6y6VYO91QUyEDVlXVHt5e/uzOZriYhKEljZIduQH6pNfhdOY5sHlJFueOxf
+         bN/uTLfuNBjnHaTZ+WukZQS/Wa30tWyiKsfqEPmOKtkcPCgN1gGIeLsa9pfco/3ZvP3P
+         koo3Bb9/+esUnHdHS2hTd5qtXE/k/xctadMJUuU/zchcL0VDKvTRNofZgdIQ6mLOou9W
+         X5rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794858548; x=1795463348;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1794859448; x=1795464248;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=JYgfM3NjhEFUFn9lrkoVqv9gAjE144oaGhmBbKw0DZU=;
-        b=YfnxXB7D3jSl9AGIzlU7TFUAr0ICyoJisnbGgO+90OXwD7SSJzvFHbgN4tg5kBMggA
-         Tux2rPF2R8ulkKDi2ejywnIN9UmHbJQ5BB8ZU5Zn5eTz/QWKpMDIFVO+FO85Z0r/xthR
-         lipgB9drUJQCt+tt+FmFxRA2sh4IssnUh3YwMBvkoZJxeqGPDD+WKifyJ9KDZKtK7WFR
-         +vNRU478YipPHRMwO9pEucRPmORXqHwgxqV4oJ/oENr9BasnAMkaudTLMMEKq/2iaMzm
-         sN4ww6LPnQGCbtUiPmuPmaT5TnhFKsImd80Lr1nQf96wZEfRUlpxdFkFSODCKPsXmoOX
-         JBRw==
-X-Forwarded-Encrypted: i=1; AL+hErEMmv1Ld9irlLZMaXPpYhh8IhTgk8/uBYQT7zFHVYwpl+fzBBZV3jjN3xJid6yKWJnox9IH6gczIYU2HZxer5Zy3+hUEOg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8ICDm8pv5vSy+UW+C3MFwZeOYrOw/CMzyJciEB774M6ZwIMVmE
-	nMnsCwLrcjnjImnd3UUVBdul2/ZUrnGdW8fkicOY3mc3SuGT/fNbid7HC1YrayQ/mhvaFFKrIBf
-	f4VF7
-X-Gm-Gg: AZFdTZc3dVD8Edpp+ba18IAUDLhLx5PW6lIF6wOsEsBxrRvUZQX5OcU08viWUGgjhqQ
-	9A6bgaDl67xmmEwb0Vhqp5GlhLe9VtzVxHaQVM8KXWy0lClcxeHQxc2ChP9yGGHkp41DI5j8e2y
-	BJAeK54aSqSbvjwCNoa///won1q/twSbILaftos+l8wwgCjFtQjOxpJK7t1aYuiCzUTdA7HwNeP
-	ZxmEw9V1TIbFibcI2n17oKYT//0SrHV1i2X8pRWaF7EQFRxbA54gnH6RMe4EgB2/wXt2Z3o21wv
-	QawQiUjH9onJ82uLPmE3D0174eqkuaYGkJp0tQM9BMEBB9Qk7yek0qajngxTwUwY0KBkmt5xiJX
-	/IxsZ4IC4vTmXBAKnXeL30dbplVTI89hE7GVa53RWHkFl1f36lfBofz68jrLOXXz+9gGK8Ng41u
-	XJcEinhNeqLowjjwP/VYksT716jRjnERTZHt0g6w+DzjQd6rr4yRJF2V36BwUw2mBI+OdCQyzMP
-	SkdqlE/Ja7MbbheU8TTxCh6gpvm44xcmAIvsPrNr+QttxXJnIyG+3zkPuPPeh67RdRyCVTO6km9
-	T9fzkw==
-X-Received: by 2002:a05:6214:2346:b0:91e:a519:270c with SMTP id 6a1803df08f44-91f241e0c23mr182367506d6.13.1794858548269;
-        Mon, 16 Nov 2026 11:49:08 -0800 (PST)
-Received: from ziepe.ca ([142.166.156.71])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91f23da6adfsm91844916d6.36.2026.11.16.11.49.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 11:49:07 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1xT2hO-0000000ALLf-3aft;
-	Mon, 16 Nov 2026 15:49:06 -0400
-Date: Mon, 16 Nov 2026 15:49:06 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>,
-	"Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/2] lockdown: Prevent booting with lockdown enabled but
- IOMMU disabled
-Message-ID: <20261116194906.GE2452510@ziepe.ca>
-References: <20261102-lockdown-iommu-v1-0-00f3c2be4c9f@kernel.org>
- <44ac3423-0a51-4562-816a-fea881511afa@huawei.com>
- <a444421f-178b-49be-98b7-d34dfb147604@kernel.org>
+        bh=FEtpE65JhLGyAYaL/FOW2ebUIws2WwBZ/4Zy8VNXUuw=;
+        b=WTtlf0bTo3ULQxwVFHuz/xInl/TH7zN1CuLD8t7dqJ6B04tLUTsgAINWo89xXJxiWk
+         DM51I4+KrFBIX6F+UZWtt1rwKv4bibn+fBLFy7GHkrQlfSJuS6lIGPhiN5RsfqlG56b7
+         lwBxCOEtYTJRSI1QQavup2y+yUnmKLVB16Goqj4I0zf/oQMqJxSosvRw/j93FhRrUiMG
+         nV5mICEv3fhec5AJ7wSInhi9QYJxBilvrTKjl0oX23WNiYXJm4PWWBU6rbc2jF7cR9Lp
+         BAhe1WEgtzxBsvwZAGxUZZMHFjIDWBHM49697UIb4vuMTnlXkf4XUc3fpE7P35tLsIB7
+         qHdA==
+X-Forwarded-Encrypted: i=1; AL+hErEIn4fKbi2PuoEkNkzN0zLsJn40RqfpuBvOnaCPHWe1iZgnBzwqPSzX+zzJ0fYqo9b3yEQWnFK6N0Dds6ZxdgCI4coixwU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8gcbj3bOVi6SLrnalUQnnaFXiBi8G5/9YG70de8icNwuEaoI4o
+	d7b0M8dVERB4DeIrw5fT/izz9EB8tulH7P+rIQ4jdCnWpsRDATEaWTcDmB5h7Tw51UX9AlRz2TJ
+	kfkNgsP6Q5+EYif4y4TZOXoitr9Nn92Y=
+X-Gm-Gg: AZFdTZeC2UZBmyph27uXWD1tMcVIyezR3rp9cVKS/YZYcdANIkpcGrXCYfVXUmapzZg
+	99WAgaZvIj7Ov/LEec6cun4XKDZjSCN0H6KcwTVodtbqa3BA5CDorkgNeM4QV/8gAvUbFdc3SZv
+	6ZtxV58HQLmxC2RIpGrxXilkDhLMYLfqGjcusGuxIxAHJjpdYSWeXjgKg2BMtBTvmjL0+riWp+j
+	7EH7DFhrdU7sWUNj0FtdkSULNBI4lnd+4069WC7F6vB23NXYI2ZdLEfQmNOyFoK3M2+GYaLW7/l
+	I++PUU7LICs1yewEFrQ/2Aligt8hCE+SkH/MMtBKfekPg6zDBkBMmNEqvYQwdq0bodIEfhU3vMX
+	CmdXg13nYesTr2fzDYbhCZ5380YGNoXPnuYLql+LSeaNz9vBCYmOBIvwHms69lB7pwKuPkaDe25
+	mwQSmtU8NEieMGifDuPN8=
+X-Received: by 2002:a05:6000:4692:b0:491:3fdd:af34 with SMTP id
+ ffacd0b85a97d-49d61c80db3mr13343868f8f.36.1794859448335; Mon, 16 Nov 2026
+ 12:04:08 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -109,40 +105,81 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a444421f-178b-49be-98b7-d34dfb147604@kernel.org>
+References: <20261116-work-loop-pseudo-v3-0-8cbbea1cf34f@kernel.org> <20261116-work-loop-pseudo-v3-9-8cbbea1cf34f@kernel.org>
+In-Reply-To: <20261116-work-loop-pseudo-v3-9-8cbbea1cf34f@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 16 Nov 2026 12:03:57 -0800
+X-Gm-Features: Aa3M54q6P4M0RFDCKQ8HHGNCWJafItTSPdWR1qNwVGtToDAv2VOv8vDfWHzYR6A
+Message-ID: <CAEf4BzbLFVawibuX0wk=8uzy0WZSYHbkgK55d7rqLab2qAM1Fg@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 09/44] bpf: use fc_init_pseudo() for bpffs
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
+	Chris Mason <mason@kernel.org>, Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-mm@kvack.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
+	fuse-devel@lists.linux.dev, linux-efi@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, ocfs2-devel@lists.linux.dev, 
+	linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-usb@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	linux-erofs@lists.ozlabs.org, linux-kselftest@vger.kernel.org, 
+	Alexander Mikhalitsyn <alex@amutable.com>, Chris Down <chris@chrisdown.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 12, 2026 at 01:27:50PM -0600, Mario Limonciello wrote:
+On Mon, Nov 16, 2026 at 3:21=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> Initialize bpffs as a pseudo filesystem instead of raising
+> SB_I_NOEXEC and SB_I_NODEV by hand. This adds SB_I_PSEUDO.
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Alexander Mikhalitsyn <alex@amutable.com>
+> Reviewed-by: Chris Down <chris@chrisdown.name>
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> ---
+>  kernel/bpf/inode.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
 
-> The problem I see is that in today's day it's incredibly easy to hotplug an
-> external PCIe device and not "realize" that it's malicious.  For example if
-> I leave a dock on my desk and someone inserts malware into it
-> I might think it's perfectly fine.
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-That has nothing to do with lockdown.
-
-We already have indication if a PCIe channel is external and
-pluggable. If you want to demand that such channels have non-identity
-translation that seems like a reasonable thing, but nothing like this
-is handled by LSM today. Nor do I know how you could opt into such a
-mode without causing regressions..
-
-> The current mitigation that exists is that in the Linux ecosystem we don't
-> turn on PCIe tunneling "automatically" unless the IOMMU is active.
-> 
-> Nominally this happens by way of 'bolt' userspace writing a sysfs file after
-> it confirmed IOMMU was enabled both pre-boot and by the kernel.
-
-Yes, and we are working to generalize this kind of flow to all of PCI
-not just thunderbolt.
- 
-> How would you feel about at least blocking the user from turning off IOMMU
-> (if it's present on the system) via the kernel command line while lockdown
-> was enabled?
-
-If you wanted a mode that forced protective iommu translations for
-everything always that could be reasonable, but I don't see how it can
-have anything to do with lockdown without creating regressions.
-
-Jason
+> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> index c6f328e4752e1..57cf3775c0766 100644
+> --- a/kernel/bpf/inode.c
+> +++ b/kernel/bpf/inode.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/fs.h>
+>  #include <linux/fs_context.h>
+> +#include <linux/pseudo_fs.h>
+>  #include <linux/fs_parser.h>
+>  #include <linux/kdev_t.h>
+>  #include <linux/filter.h>
+> @@ -1197,8 +1198,6 @@ static int bpf_fill_super(struct super_block *sb, s=
+truct fs_context *fc)
+>         sb->s_magic =3D BPF_FS_MAGIC;
+>         sb->s_op =3D &bpf_super_ops;
+>         sb->s_xattr =3D bpf_fs_xattr_handlers;
+> -       sb->s_iflags |=3D SB_I_NOEXEC;
+> -       sb->s_iflags |=3D SB_I_NODEV;
+>         sb->s_time_gran =3D 1;
+>
+>         inode =3D bpf_get_inode(sb, NULL, S_IFDIR | 0777);
+> @@ -1261,6 +1260,7 @@ static int bpf_init_fs_context(struct fs_context *f=
+c)
+>         opts->delegate_attachs =3D 0;
+>
+>         fc->s_fs_info =3D opts;
+> +       fc_init_pseudo(fc);
+>         fc->ops =3D &bpf_context_ops;
+>         return 0;
+>  }
+>
+> --
+> 2.53.0
+>
+>
