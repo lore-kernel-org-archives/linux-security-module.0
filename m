@@ -1,63 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.70
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794792391;
-	b=SpuvG4uYnkRZpQTZ4ga/pBEmuC5LIA9idnNgABk/BXJmmyDfHlwDDVDCbXUuerITqzX4
-	 3jg5o/29PPCZVUXOKd2og6h/5PD4oIblbEsDsWHrT5bTxRkVb+yJLcmQiZygPb3G81ZaY
-	 mSxY8UV2pDYKwa4KcfGYQYi0Z06hJgHbozZUz2wt37h/ZF3Pt6MxM0BEvw8yB14hqsBHZ
-	 ISjoVI1RIbmf2/iO/0zYTaBtA4Wj7+IesoUGMw3d2kjoiqEnPOK11mFqwT/EEOLyCNjS6
-	 ZvHQeSSOkp4Gw+5pR+tOi0EMGWMwQ5yjm8atTcG2sT42TMQeJQPozeYp02ZlWwulClw==
+	t=1794792578;
+	b=cZ+P++TEJd8lOv1sffNRY2UcxtZ/wgnYYmesxHau41n4oTxHPSbYGr6X7F9MBtbMWfjA
+	 ohx+xzz7qh83JsV9OJed0aga0YqFfeaL+ocAXm6ncXy4cN82braMLO7guoJ2hvOpYDy1J
+	 R/Do5s2cWYTiPC3W/GzV7CJZqRQMP9keyjUC0+Jhm/m9LehHhwxbbogKgiCzNUBICHkOM
+	 m5kzIN4zDcgHXbyhE2PV1q2JQ67WdBersRc81NlfS7JhKIfbh2HEf1r2LURAQZzhBNC29
+	 y8Z4URhYJ+5Q6I8nGOz3J0gRTAMWnZ8TNm1Vmsv9LE7eF5mac5ngZUHVJG8JnFXU1MA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794792391;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=McGfXmMsJaggyhVO48JgpkG8UhfhlryUQ1Qrm70nqEU=;
-	b=1jKghRCQTeK/VzMWh7VnnGaGbVY8lIKWUoXi51OpmNyQYF35GRZHqVlzqSepmFxY2tNx
-	 hMbzwEUfRjgzBneDP5LpsWp8Ao2yRsqTaQob0zLiteuaQKuW3xEibl83F3y9WeaWnwJFg
-	 kZ/fLuk5IRzLtyn+duNx6yUV2dK8ZlcXpmloutLqGRgiBCKJR/ONYez01z/Zj04OmVEVY
-	 KhBrBRbA5Wtgfda7YMUZIcGE00UAfyoD6rxl4ntKTDZqDKGWhkSnumIKK87FiFWPE+xmM
-	 ogG2vIMMPbHdZppTWCEq4yemzSVuJUzot1IL3Lot0Yvi2qGJxSLq3/LcnXggj8/2RhQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794792578;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=ZY//ANNtprYIt4tMjpsIX55JRTOzZ1NiRRBN9WRZDps=;
+	b=P02mUjIroE0cOBL1lI0HDimkMkwah3nCd2I+w4SNvDhFe92N401jSlq/OYd2SuBtA50R
+	 rWjydSyDHUvgEBFAWb4gwwmgLJO/nH3wqaVfSqYH/AXvanPJDlEYuBfccBYhxnZJNxcBU
+	 4JIMmkM98gXMXkMgXAhPaF3zRzc42FvegPGZ7Sk7CgP63KZOyNYNsvAODLfKQR08TK5UT
+	 TyqNPCxaOoIVbaLeA537XtNGbK3ITwXr/UGRuKMOw9ClAitS9K8P7ZOimAanTTaF6co3L
+	 oZwl4WPyg0Yv7JSL8AVZUoor5sZJ097VCP+20q60BbYn3iholB9yEg8Job0EgAAvS8g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=wyuan.org;
-	spf=pass smtp.mailfrom=wyuan.org;
-	dkim=pass header.d=wyuan.org header.i=@wyuan.org header.a=rsa-sha256 header.s=key1 header.b=TYVUZyWY;
-	arc=none smtp.remote-ip=91.218.175.70
-Received: from mta0.migadu.com (out-70.mta0.migadu.com [91.218.175.70])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="K9oTD7/B";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895E6606A31F
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 01:26:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 895E6606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wyuan.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wyuan.org
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A314D606A31F;
+	Mon, 16 Nov 2026 01:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=wyuan.org header.i=@wyuan.org header.a=rsa-sha256 header.s=key1 header.b=TYVUZyWY
-X-Envelope-To: linux-security-module@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=Je6nTw8zi192wQHqVmmlQ+aCYBg3ySVT0Qp8WfigOvg=;
- c=simple/simple; d=wyuan.org;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1794792388; v=1; x=1795397188;
- b=TYVUZyWYVW4DCPoF5R+8JOGHM1He23YYI0ZUQEepkjqRRLQ4IghlK/euN0903joj5SU0iWjv
- t/azqlxaD24vmul+O3SdYTCRhZ4Tpn5Rb+UupOgWbAm0zoRAujKxOYHew3YZ5cn1oSHxAjYRGBm
- 19uvlSbH6O7HwGkiTCy6s/UGGQdIBv6ypERKkeZTsyqxBrx98luYCS+bUGJDEFKSfHXkfbL4Ifi
- OFaCWhH3DzNWZixxOHzJTcdUDUeuaQxjdyJNLfCgPUkyeeBbWDwYzr7lDGOvedPcbzA/x6+ET17
- 7/O1j1EgbqAd99cNBD6PgU1f329zXvdnx3YXMG9HlexBA==
-X-Envelope-To: linux-security-module@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 329f468c44690c3b;
-	Mon, 16 Nov 2026 01:26:27 +0000
-X-Mizu-Trace-ID: 329f468c44690c3b
-X-Migadu-Flow: FLOW_OUT
-Date: Mon, 16 Nov 2026 09:26:17 +0800
-From: Weijie Yuan <wy@wyuan.org>
-To: Yan Zhu <zhuyan2015@qq.com>
-Cc: alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net, mic@digikod.net,
-	dzm91@hust.edu.cn, skhan@linuxfoundation.org, gnoack@google.com,
-	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 00/10] docs/zh_CN: add LSM admin-guide Chinese translation
-Message-ID: <avpbuYL51UHpbAA_@wyuan.org>
-References: <tencent_5E314704B7770A972FCB82AC81BB91A39307@qq.com>
- <avpSNfL7FCDVyTK4@wyuan.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=K9oTD7/B
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 086B01F000C4;
+	Mon, 16 Nov 2026 01:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794792578;
+	bh=ZY//ANNtprYIt4tMjpsIX55JRTOzZ1NiRRBN9WRZDps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=K9oTD7/B141FLRIuq/Q09hqIcKL0oW6Lc1z2qC4Dgx+AwUWZXbuMQOCAbp2wvwOTY
+	 BrsH0GjPlTi24/KZmUEZEWKSzUqrk3C0/sfe9jvH2eRwydd1vRsWhItlfwH1uMBem5
+	 i2eBhsadY2v+kyykoriQ2n5vZcnmI6jy7bVitXrdf8NvZj5VZLdM9uJYavaF0mW0Sa
+	 ElGnIxq+rPdk68ZE2PM8mtMSA600/kAU/qSurBJgFCh+iphwK3cINBntTd+sa/Bm3r
+	 PQR2vhMzOuN02VvNlIm0dBrK3iTBhr5qKNdAcpoTIZkZe+4KDemhPcb9oGOr/aAuBr
+	 C9N7whCVDq8hg==
+Date: Mon, 16 Nov 2026 03:29:34 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Alec Brown <alec.r.brown@oracle.com>,
+	"Daniel P. Smith" <dpsmith@apertussolutions.com>,
+	David Howells <dhowells@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	James Morris <jmorris@namei.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan McDowell <noodles@earth.li>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Ross Philipson <ross.philipson@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v3 5/5] tpm-buf: Make tpm_buf_read*() fallible
+Message-ID: <avpcfoiUi2nOEuV9@kernel.org>
+References: <20261116005105.1573016-1-jarkko@kernel.org>
+ <20261116005105.1573016-6-jarkko@kernel.org>
+ <sashiko-outbox-215989@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,46 +71,38 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <avpSNfL7FCDVyTK4@wyuan.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <sashiko-outbox-215989@kernel.org>
 
-On Mon, Nov 16, 2026 at 08:45:51AM +0800, Weijie Yuan wrote:
-> On Sun, Nov 15, 2026 at 11:19:56PM +0800, Yan Zhu wrote:
-> > This patch series adds the Chinese translation for the Linux Security Module
-> > (LSM) admin-guide documentation, including the main index and all ten
-> > sub-pages: apparmor, LoadPin, SELinux, Smack, tomoyo, Yama, SafeSetID,
-> > ipe, and landlock.  The admin-guide toctree is also updated to list the
-> > newly translated LSM/index.
-> > 
-> > The original English documentation was restructured into reStructuredText
-> > by Kees Cook in commit 504f231cda56 ("doc: ReSTify and split LSM.txt"),
-> > and each sub-page has been kept up-to-date with subsequent mainline changes.
-> > 
-> > base: https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git docs-next
-> > 
-> > Yan Zhu (10):
-> >   docs/zh_CN: add LSM/index Chinese translation
-> >   docs/zh_CN: add LSM/apparmor Chinese translation
-> >   docs/zh_CN: add LSM/LoadPin Chinese translation
-> >   docs/zh_CN: add LSM/SELinux Chinese translation
-> >   docs/zh_CN: add LSM/Smack Chinese translation
-> >   docs/zh_CN: add LSM/tomoyo Chinese translation
-> >   docs/zh_CN: add LSM/Yama Chinese translation
-> >   docs/zh_CN: add LSM/SafeSetID Chinese translation
-> >   docs/zh_CN: add LSM/ipe Chinese translation
-> >   docs/zh_CN: add LSM/landlock Chinese translation
+On Mon, Nov 16, 2026 at 01:09:31AM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential
+> issue to consider:
+> - [Low] tpm-buf: commit message says @offset instead of @value for
+>   tpm_buf_read*()
+> --
 > 
-> They are still confusingly threaded, and you forgot to name them v2. ;)
-> But anyway..
+> commit 1b879beddad8b2ec7e0adcfdce0e0fbb6825a4f9
+> Author: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> tpm-buf: Make tpm_buf_read*() fallible
+> 
+> This commit changes tpm_buf_read_u8(), tpm_buf_read_u16(), and
+> tpm_buf_read_u32() to return a boolean status and write the read word into
+> an output parameter, updating callers to check for out-of-bounds reads.
+> 
+> > Make tpm_buf_read_u8(), tpm_buf_read_u16() and tpm_buf_read_u32() flows
+> > unambiguous, and fallible by writing the updated offset to @offset.
+> 
+> [Severity: Low]
+> This isn't a bug, but the commit message says @offset where the patch adds
+> a @value output parameter for the read word; @offset was already updated in
+> place before this change.
+> 
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261116005105.1573016-1-jarkko@kernel.org?part=5
 
-Ah, sorry, not v2. If no changes since v1, then name it
-[PATCH RESEND mm/nn] or similar.
+I'll ignore this one.
 
-> By the way, the 'Assisted-by' trailer is no longer needed, but the
-> disclosure is very much appreciated.
-
-If you want to remove the 'Assisted-by' line next, then it could be v2
-as well. ;-)
-
-Thanks.
+Br, Jarkko
