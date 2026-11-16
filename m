@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794827396;
-	b=qTlI7Rxp1/griMt2aAsANIzzyfqfLJs/hUdSpXH6V+4xP5xk+WpxX8VTouSF2HcVHEVh
-	 GFMo/4ZTo/eTr7rDt+NCD4icm9eOHXMvWvamZ71Zb8p8JSdb+BPB84yOamBeD/l8l4enZ
-	 eWgYS/xRfhqu/dZY1MJWHJS8bgjX09l6DAU1qx9wYjMciVTxPDtmcdxQkAieEvHS1R325
-	 7VBipxwtaNzPEL7iospvrs6hortlRkax8NNvwltRY5N2gIj/+Y4nzjWjZLWE0fSy1T7wl
-	 8DvdmwOkPON8iJTwO6puweQ40xtjRRB5eSVSqUcWO8bpAjOupxzqyutpuSGriORWeyw==
+	t=1794827382;
+	b=np9lDtBWKFgxxcRj8J3ZI1RFPdFt1ewt0qV7PjMKJvmJ9d8TAOQFOMVBUSot0gMvfO0k
+	 dAJv6Z/V2PMStFSOs4+L4q6IKLdlAwtImAX37Rm74T55qPsepZWqCwnDbJkL7jduuXlBl
+	 Q0Modpq2v1DvYoSYpMN66q6C9RbZY3sMvAAMlwmu2jYrizXD14ERc4CPvh7XiLzc5gxBL
+	 nSw+CWhdctA+UiS8sX2rVR4MFoLN0GwnLwp7Ku6QbAA0+UHacYadvAA2LTrFQEh1Mdl6x
+	 sWYIOzrVFLwnNFnZ6NSuwYhZYDX+BWP87L9hsMTcqm7l0nFyfcR0nsskVLq94xJh1Tw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794827396;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794827382;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=e7Xf/q0YdYNKT2pliNp65/qzLLmVGTQJhtvNXwy/Qs4=;
-	b=pb+oOKBt0556n4GW1hnP30VTLdoS2YAEUrAKIllxIWhZOraU+AVazCPlSKDcAZdj2xZE
-	 tkulVopwHb/pnwst2Lw/QaVF8vBXVtDuk1GY46gxWHIM1plZfEEOFufUzjAluqDPrxdEk
-	 JuHvhBEq7yrQB+V805+MJdWGzNvTh5LNT7xr55rW53PTIbUB9AT9bo129gO4l7Lcfi/To
-	 ASPosv7qOIsZhkUNiA7nxIpMbjzayIceP3ftel9Tbo6qL3DIPreRyO18cUtevAcVnk/8h
-	 Gm+3W54HMIpUn6jL/3up96prBnYfEMkWOpFN+iPS1NuPsfrXSnANomwxZjq+EcNtLZA==
+	bh=JUBUitc/wTfMb7cZo0KLtSOkDXoKMBIaahrb6Pvq2WU=;
+	b=cIEDQmjrzfsSYXOB1OqAYq0z8GXvvUas0UhmIDo/7DT6I8+EELUSqVR2A3OqbExjy+zu
+	 9Wn/X1HGmZNkUmuivRbRYsUmSTYJ65xEu+IwDe+mJn6jz5XrbcO8yhvPOe2VzAcKeioVt
+	 YXG5+X8WNcVS1WgHjtD4aoAJfHFWjiaUO7OUKAO1OOHyq61Z2bPDsiesGMYuHTgOpiPzM
+	 SktwMUCxhOMJBoDTFmn46s5GTBS1NDVi/0lKGg18YSRgll8EJpOGNH0frSmWMsbXXFkwk
+	 ETaMWhg3OBDasGOdoraXlrgYIid2BjHQE4geezX+QvqDZY+rICYwQ/MK4omfD8corxg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ApAW8mvI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FUIH1F6N;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F98607D22F;
-	Mon, 16 Nov 2026 11:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39F4607B2AA;
+	Mon, 16 Nov 2026 11:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ApAW8mvI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 711F71F000C5;
-	Mon, 16 Nov 2026 11:09:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FUIH1F6N
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C6731F000C4;
+	Mon, 16 Nov 2026 11:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794827396;
-	bh=e7Xf/q0YdYNKT2pliNp65/qzLLmVGTQJhtvNXwy/Qs4=;
+	s=k20260515; t=1794827381;
+	bh=JUBUitc/wTfMb7cZo0KLtSOkDXoKMBIaahrb6Pvq2WU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ApAW8mvIJJifAjWYMUb5gxMXy16DRqJm4u8pkiJ8hSizBB/4pLJGRptA/5U9yNxIa
-	 xMZTa/pyHHSLFSat1QRBXQMIvBBOH46bkiSC+wCMJ30SJAwiKXLJPAdoQxzZ9SEOBZ
-	 G3vlURHcW/ctidW9VnUlrwd1CDDFJU9ArynxTn+S/n0TzxhpLUFcGQr0wD8t5rq7s2
-	 rDIEi8/j9EeeO+fKzBSz/q63y3Cnlcjn2qFJEho4HKBhrjQbr4WZA5duS6SFL965ai
-	 O9BL7oLYto2CBKxBiOiCC10Wh16aWVflnMPiReBgzJqRNlSQVYcwVO7QDBJErdunlS
-	 BdqXVb3PPTzKQ==
+	b=FUIH1F6NGssyVW4COeuJyW+JXf9ZOuXxGiqbs4A0riZEC9KRZSSdvKNcURoDsDRgh
+	 9xYCbzX7EojI2QWlJla3qu7db5L+WQYXUZcNIeoO8I7Bq0+B09BmicfrMgxZ/Ox3on
+	 bFe8B7Gi//6ibg1Rcjs9Q9iX4wuprOmsQHVd3UNmADXkOZuZMUFwH7kba1alb352e9
+	 OJSNgp54/odFq5qdzwapiUJoJRaOPOoAwCSGsb7ksHyXtWMzlopVECEIT0G38kcQBE
+	 pg6QF0PX4eGcaaN9wK+k7kydBrzrK2s+1vVH5dg8hQFATIYPm4jdZtaIfe7R5PvR2a
+	 60xFyqANj+2cg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 16 Nov 2026 12:05:04 +0100
-Subject: [PATCH RFC v3 31/44] usb: gadget: f_fs: use fc_init_pseudo()
+Date: Mon, 16 Nov 2026 12:05:02 +0100
+Subject: [PATCH RFC v3 29/44] s390/hypfs: use fc_init_pseudo()
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -54,7 +54,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261116-work-loop-pseudo-v3-31-8cbbea1cf34f@kernel.org>
+Message-Id: <20261116-work-loop-pseudo-v3-29-8cbbea1cf34f@kernel.org>
 References: <20261116-work-loop-pseudo-v3-0-8cbbea1cf34f@kernel.org>
 In-Reply-To: <20261116-work-loop-pseudo-v3-0-8cbbea1cf34f@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -73,46 +73,44 @@ Cc: Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>,
  linuxppc-dev@lists.ozlabs.org, linux-usb@vger.kernel.org, 
  Amir Goldstein <amir73il@gmail.com>, linux-erofs@lists.ozlabs.org, 
  linux-kselftest@vger.kernel.org, 
- "Christian Brauner (Amutable)" <brauner@kernel.org>, 
- Chris Down <chris@chrisdown.name>
+ "Christian Brauner (Amutable)" <brauner@kernel.org>
 X-Mailer: b4 0.17-dev-ce4c1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1005; i=brauner@kernel.org;
- h=from:subject:message-id; bh=X0J/CLc/AEot0Nag6LzWBIr3X5UH9CZnU81QaK4NiqA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9etwULH6lXr7MsEdu38TG/l+zfsnXlD8WUt5sYCZW3
- Vn9ScCwo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIBCxkZ2p4+qzvcFp18tPiI
- rT/b+7tri/fcdp/2x+vkHoEL9zk/72H4w7PD3/nLRDHRrO6+e50bLORVnr+V233sXs/Uay9DlQN
- bWAE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=900; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=EnQ7f/LKwwXo6PyRpnVfj7bCGw1qYUMZQQO6IXtl1m0=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWT9etzAs//A4QyrntTfr5Y7yH5s6yi2sbvx+oICZxt3h
+ d1kbZ/4jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk8e8HIcCtlltKlLKv9RupJ
+ PUs2C3cvYefO2P3yrXS3UKbMrdVTVjH8M14Z2P06RDR52paz7g98lpWbd4vzSeWeD7J7ZqRssXQ
+ eDwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Initialize functionfs as a pseudo filesystem. This raises SB_I_PSEUDO and
-also SB_I_NOEXEC and SB_I_NODEV. functionfs never holds executables or
+Initialize hypfs as a pseudo filesystem. This raises SB_I_PSEUDO and
+also SB_I_NOEXEC and SB_I_NODEV. hypfs never holds executables or
 device nodes.
 
-Reviewed-by: Chris Down <chris@chrisdown.name>
 Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 ---
- drivers/usb/gadget/function/f_fs.c | 2 ++
+ arch/s390/hypfs/inode.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index c64a268e98a43..a6b3788399a56 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -15,6 +15,7 @@
- /* #define VERBOSE_DEBUG */
- 
- #include <linux/blkdev.h>
+diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
+index 559b011e68800..8662169de477a 100644
+--- a/arch/s390/hypfs/inode.c
++++ b/arch/s390/hypfs/inode.c
+@@ -12,6 +12,7 @@
+ #include <linux/errno.h>
+ #include <linux/fs.h>
+ #include <linux/fs_context.h>
 +#include <linux/pseudo_fs.h>
- #include <linux/dma-buf.h>
- #include <linux/dma-fence.h>
- #include <linux/dma-resv.h>
-@@ -2166,6 +2167,7 @@ static int ffs_fs_init_fs_context(struct fs_context *fc)
- 	ctx->no_disconnect = false;
+ #include <linux/fs_parser.h>
+ #include <linux/namei.h>
+ #include <linux/vfs.h>
+@@ -301,6 +302,7 @@ static int hypfs_init_fs_context(struct fs_context *fc)
+ 	sbi->gid = current_gid();
  
- 	fc->fs_private = ctx;
+ 	fc->s_fs_info = sbi;
 +	fc_init_pseudo(fc);
- 	fc->ops = &ffs_fs_context_ops;
+ 	fc->ops = &hypfs_context_ops;
  	return 0;
  }
 
