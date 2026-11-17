@@ -1,50 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.157.188.14
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794910337;
-	b=JI6Ky4Qm5RzZrJ13tPU+W/k/Wp6NyD2tPRmJU0ThFH1TSLQ64ryQvjD9fJ4BI3NL33+W
-	 C82Zbu928Jw6PmyLDST1Qe3wFrc5jv9oTuP1xvIvU/0TYPmbz2WWuGLWY6sJ3+lMwTFW8
-	 N0QeQ06TAr+22h1wnKIJdtYqwj7pa1FimT9A9DzE++gsZgBMef9IgMmhFWem1Uk00e285
-	 ykiq4cA2O+MkWPT8NuxfiFFMGaW6uJaEM8bftXOXfejnRRLt0hiE4k2k/891Ih5RG5Hc8
-	 wj0XP8du81jfsHDkq/I16kquM42PT4R0REgAlQhND0TVBgOVEoQbepvMJWLGP2FQ6yw==
+	t=1794910338;
+	b=RJglthijU6LKNnBnT0VinrdpNeDDBn7v2Cx2ylKo13HPURfu8WIQsKMZcfnnydg44rsw
+	 8hga6R6tL9B6TMilIJ6iBzhWps+nVzgQUH+Kpw3MfLdg00YkYkaAWV89UiLpg/kTqmprT
+	 ubzuNYThmUKY1qB8qARU7a2FhCHxTy/iCbUMwG6T7vLB3jc7m6105XlOfPcYQnNCdZZnk
+	 fFKP8FiHrPTMr5nnEs1w0SMm9voPQblFlc7sJYrj11cTHMhqfvzNgYsYyxxDTqWQpPz6M
+	 QZJih9ol0SlSTPQgOr58+yDI3g/ZkpaT7iXx9wGnAv2BU9N/qZuXuEtAYNtlaf3L/2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794910337;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794910338;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
-	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Infomaniak-Routing;
-	bh=gyRxjx+N08McOgkiPKprbmzlzILJehlh93QhGWzUcJ0=;
-	b=X4yyrhD7sHm5LhGlcRSMSAy8okN0CNkpaDtQoVLsrCtsR+Itvu6nJamIg7FUU/9aDQY6
-	 K35zpX7CHoQ0j+MBUCSXc1vAh88tgLmt2eiVSvrBqAL0ZXX779N7Lo3jcpF0R1+FXHtV/
-	 an+D9rLvgmfS8SUO4c3c5L0osvDv2671WeN+fRMXrX1Bg2NcOWT120hmn0zaMJKm1/qFP
-	 zIpYxh+vfBfRuJ6XxOP4Yuqqo6DIkItd/raW0LjceF7AF9JjiEYfm+rwXflBowc4IkUQN
-	 6I+gJRa5wCdh0mzqeaiHSzhgz2BrCsim4sYQGcNffctg9WVtbEtmc5fAdIA/Kr1sS2A==
+	 Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Infomaniak-Routing;
+	bh=83Kxt7Zw1FXN0ebXKExPFb8VlShJyGvk3jZKv1m2exI=;
+	b=WKB/s7Fv2KgflmBOWn7PWLyY9ndQOXciShAK9QbXwv1GkeuP65bhTgedWToTIH6cwLWa
+	 5woiUqs72Q36XrA4n+zc/UT6NdLZoqe/7qqnS+skPzdDYz1tlknKwmf1c58XT4OnEsLC2
+	 wrJHj0uf/lhA3bVGDEEmjmac8OVNin+wRbYdqBeByHnZGLMi45JQUzqPQNlKQBQBAZQ1f
+	 o0CCjVARLwE3u0r6BMFdzvbupZ5grSiVg84Hjnvm6F//FwyLvAJRlX5XHddy+8+D6Ibgh
+	 d0r1Xn7MTkfTe7qG7NeIU/ginixWpb5StY+lnNErtZOI2e8/iZEHTVeJywUh0g+0Q8Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=digikod.net;
 	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=nHhOxJr+;
-	arc=none smtp.remote-ip=45.157.188.9
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=M5F7KNgu;
+	arc=none smtp.remote-ip=45.157.188.14
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D41606A32A
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 10:12:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A9D41606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453C7606A323
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 10:12:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 453C7606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=nHhOxJr+
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=M5F7KNgu
 Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jTLBG5SKlzNTN;
-	Tue, 17 Nov 2026 11:12:06 +0100 (CET)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jTLBR1mlVzsgf;
+	Tue, 17 Nov 2026 11:12:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1794910326;
-	bh=gyRxjx+N08McOgkiPKprbmzlzILJehlh93QhGWzUcJ0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nHhOxJr+GK/f4yDEX29tGjMPr8epPdaAJcBdA0eBWY8l6HqTeVxNg536PZQNw+tqT
-	 cxZ64jOrhq2RI5RKKqaSoeNTpcX9bw7JvOnsnXP+Y5Itu6V8/f+egqCFI50qk5btHp
-	 RG3GAU7M2M6nknjCtYHdm5BFUmxDEprBZDRFJbvk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4jTLBD5vtcz999;
-	Tue, 17 Nov 2026 11:12:04 +0100 (CET)
+	s=20191114; t=1794910334;
+	bh=83Kxt7Zw1FXN0ebXKExPFb8VlShJyGvk3jZKv1m2exI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M5F7KNguOLwmOpNWFclMESm8wOtb/tk4wtNH6osz6aoNjFG3xb6GtsHY+1PzU8q0V
+	 +1Q+kfBgmQsWFyU4jvR/Bp/X0CDOE7GJ/gDqhS7JX7yYIb5qACHL6Xcion7cKrCnPD
+	 01qsGFgOl0jJqumaynedo7WSBOtPpuCCTabVKLuY=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4jTLBP6l3Fz8lN;
+	Tue, 17 Nov 2026 11:12:13 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
 Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -58,9 +58,11 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	kernel-team@cloudflare.com,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v2 0/6] Fix Landlock mediation of commoncap's capability checks
-Date: Tue, 17 Nov 2026 11:11:50 +0100
-Message-ID: <20261117101157.2520463-1-mic@digikod.net>
+Subject: [PATCH v2 5/6] selftests/landlock: Test capability checks outside the capable hook
+Date: Tue, 17 Nov 2026 11:11:55 +0100
+Message-ID: <20261117101157.2520463-6-mic@digikod.net>
+In-Reply-To: <20261117101157.2520463-1-mic@digikod.net>
+References: <20261117101157.2520463-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -74,70 +76,440 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Hi,
+Test the capability checks that commoncap makes from LSM hooks other
+than capable and that the previous commits make Landlock restrict:
+mapping below vm.mmap_min_addr (CAP_SYS_RAWIO) and adding inheritable
+capabilities outside of the permitted set (CAP_SETPCAP).
 
-This is series 1 of 3:
+Each test first checks that the operation fails without the capability,
+so that it exercises the capability check, and then checks it with the
+capability effective in four variants: unsandboxed, in a domain that
+denies the capability, in a domain that allows it, and in a domain that
+does not handle capabilities.  The mmap_addr tests map the last page
+below vm.mmap_min_addr, and skip if the architecture rejects it before
+the mmap_addr hook (e.g. 32-bit ARM).
 
-* 1. fix Landlock mediation of commoncap's capability checks;
-  2. fix PR_SET_SECUREBITS mediation and add focused Landlock tests;
-  3. fix Landlock mediation of capabilities guarding LSM policies.
+Audit tests check that these denials are logged, that the admin reserve
+check is not, and that allowed uses log nothing.  The admin reserve
+check has no functional test: it only has an effect with
+vm.overcommit_memory=2, a system-wide setting that a test cannot change
+without racing with other processes.
 
-LANDLOCK_PERMISSION_CAPABILITY_USE, merged for v7.4, denies capabilities
-through the LSM capable hook, but commoncap's mmap_addr, capset and
-vm_enough_memory hooks call cap_capable() directly.  A domain that
-denies a capability can therefore still:
+Add CAP_SETPCAP and CAP_SYS_RAWIO to the capabilities that the tests may
+raise, and drop the stale count from the comment of this list.
 
-- map memory below vm.mmap_min_addr (CAP_SYS_RAWIO), which defeats a
-  mitigation for kernel NULL pointer dereferences;
-- add inheritable capabilities outside of its permitted set
-  (CAP_SETPCAP), which lets a privileged sandbox without no_new_privs
-  gain capabilities through execve(), although the domain still
-  restricts their use;
-- use the admin memory reserve with vm.overcommit_memory=2
-  (CAP_SYS_ADMIN).
+Without the mmap_addr and capset fixes, their denied variants and the
+denial audit test fail.
 
-As SELinux does, patches 2 to 4 add Landlock's own check to these hooks,
-with commoncap's conditions, so they only deny what commoncap granted
-because of the capability.  Patch 1 factors out the shared check.  Patch
-5 adds tests, including audit tests, that fail without the mmap_addr and
-capset fixes; testing the admin reserve would require changing
-system-wide overcommit settings.  Patch 6 fixes the documentation, which
-overstated what the permission restricts and how its denials show.
-
-Two other direct capability-set checks are fixed separately:
-
-- PSI triggers (CAP_SYS_RESOURCE):
-  https://patch.msgid.link/20261106120004.90041-1-dennylin0707@gmail.com
-- user namespace uid 0 mapping (CAP_SETFCAP):
-  https://patch.msgid.link/20261110144205.2404088-1-mic@digikod.net
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <serge@hallyn.com>
+Acked-by: Serge Hallyn (AMD) <sergeh@kernel.org>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
 
 Changes since v1:
-https://patch.msgid.link/20261110202436.2408244-1-mic@digikod.net
+https://patch.msgid.link/20261110202436.2408244-6-mic@digikod.net
 - Replace the admin reserve test, which changed system-wide overcommit
-  settings and was racy, with a comment, and fix the mmap_addr tests on
-  32-bit ARM (reported by Sashiko).
+  settings and was racy (e.g. with swap, as reported by Sashiko), with a
+  comment.
+- Map the last page below vm.mmap_min_addr instead of page 0, and skip
+  when the architecture rejects it, e.g. on 32-bit ARM (reported by
+  Sashiko).
+- Mention CAP_SETPCAP in the commit message (reported by Sashiko).
 - Add Serge Hallyn's Acked-by.
-
-Regards,
-
-Mickaël Salaün (6):
-  landlock: Factor out capability denial checks
-  landlock: Mediate CAP_SYS_RAWIO for mappings below mmap_min_addr
-  landlock: Mediate CAP_SETPCAP for inheritable capabilities
-  landlock: Mediate CAP_SYS_ADMIN for the admin memory reserve
-  selftests/landlock: Test capability checks outside the capable hook
-  landlock: Fix capability restriction documentation
-
- Documentation/security/landlock.rst         |   8 +-
- Documentation/userspace-api/landlock.rst    |   8 +-
- include/uapi/linux/landlock.h               |   6 +-
- security/landlock/cap.c                     | 110 ++++++-
+---
  tools/testing/selftests/landlock/cap_test.c | 336 ++++++++++++++++++++
  tools/testing/selftests/landlock/common.h   |   4 +-
- 6 files changed, 451 insertions(+), 21 deletions(-)
+ 2 files changed, 339 insertions(+), 1 deletion(-)
 
-
-base-commit: 7475ea8b58616b33c04afb976cf0fbaad9dd63fb
+diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/selftests/landlock/cap_test.c
+index 3d7fd02e21ed..39ef57a49dc9 100644
+--- a/tools/testing/selftests/landlock/cap_test.c
++++ b/tools/testing/selftests/landlock/cap_test.c
+@@ -12,7 +12,9 @@
+ #include <linux/landlock.h>
+ #include <sched.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
++#include <sys/mman.h>
+ #include <sys/mount.h>
+ #include <sys/wait.h>
+ #include <sys/xattr.h>
+@@ -738,6 +740,251 @@ TEST(cap_target_userns_independent)
+ 	EXPECT_EQ(0, close(target_userns_fd));
+ }
+ 
++/*
++ * Capability checks that commoncap makes from hooks other than the capable
++ * hook.  Each test first checks that the operation needs the capability, then
++ * checks it with the capability effective.  Variants cover an unsandboxed
++ * baseline, a domain that denies the capability, a domain that allows it, and a
++ * domain that does not handle capabilities.
++ */
++/* clang-format off */
++FIXTURE(cap_other_hooks) {};
++/* clang-format on */
++
++FIXTURE_VARIANT(cap_other_hooks)
++{
++	const bool is_sandboxed;
++	const bool handle_caps;
++	const bool is_allowed;
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(cap_other_hooks, unsandboxed) {
++	.is_sandboxed = false,
++	.handle_caps = false,
++	.is_allowed = true,
++};
++/* clang-format on */
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(cap_other_hooks, denied) {
++	.is_sandboxed = true,
++	.handle_caps = true,
++	.is_allowed = false,
++};
++/* clang-format on */
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(cap_other_hooks, allowed) {
++	.is_sandboxed = true,
++	.handle_caps = true,
++	.is_allowed = true,
++};
++/* clang-format on */
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(cap_other_hooks, unhandled) {
++	.is_sandboxed = true,
++	.handle_caps = false,
++	.is_allowed = true,
++};
++/* clang-format on */
++
++FIXTURE_SETUP(cap_other_hooks)
++{
++	disable_caps(_metadata);
++}
++
++FIXTURE_TEARDOWN(cap_other_hooks)
++{
++}
++
++/*
++ * Creates a ruleset that handles capabilities and allows @cap if @is_allowed,
++ * or, if !@handle_caps, a ruleset that only handles a filesystem access right.
++ * Returns the ruleset FD, or -1 with errno set.
++ */
++static int create_variant_ruleset(const bool handle_caps, const bool is_allowed,
++				  const int cap)
++{
++	const struct landlock_ruleset_attr fs_attr = {
++		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
++	};
++	int ruleset_fd, err;
++
++	if (!handle_caps)
++		return landlock_create_ruleset(&fs_attr, sizeof(fs_attr), 0);
++
++	ruleset_fd = create_cap_ruleset();
++	if (ruleset_fd < 0 || !is_allowed)
++		return ruleset_fd;
++
++	if (add_cap_rule(ruleset_fd, cap)) {
++		err = errno;
++		close(ruleset_fd);
++		errno = err;
++		return -1;
++	}
++	return ruleset_fd;
++}
++
++static void
++enforce_cap_variant(struct __test_metadata *const _metadata,
++		    const FIXTURE_VARIANT(cap_other_hooks) *const variant,
++		    const int cap)
++{
++	int ruleset_fd;
++
++	if (!variant->is_sandboxed)
++		return;
++
++	ruleset_fd = create_variant_ruleset(variant->handle_caps,
++					    variant->is_allowed, cap);
++	ASSERT_LE(0, ruleset_fd);
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++}
++
++static unsigned long read_sysctl(struct __test_metadata *const _metadata,
++				 const char *const path)
++{
++	char buf[32];
++	ssize_t len;
++	int fd;
++
++	fd = open(path, O_RDONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd)
++	{
++		TH_LOG("Failed to open %s: %s", path, strerror(errno));
++	}
++	len = read(fd, buf, sizeof(buf) - 1);
++	ASSERT_LT(0, len);
++	EXPECT_EQ(0, close(fd));
++
++	buf[len] = '\0';
++	return strtoul(buf, NULL, 10);
++}
++
++/*
++ * Returns the last page below the vm.mmap_min_addr sysctl, or MAP_FAILED if
++ * there is none or if the architecture rejects it before the mmap_addr hook
++ * (e.g. below FIRST_USER_ADDRESS on 32-bit ARM).  The caller must not have
++ * CAP_SYS_RAWIO in its effective set.
++ */
++static void *get_low_page(struct __test_metadata *const _metadata)
++{
++	const size_t page_size = sysconf(_SC_PAGESIZE);
++	unsigned long min_addr;
++	void *addr, *ret;
++
++	min_addr = read_sysctl(_metadata, "/proc/sys/vm/mmap_min_addr");
++	if (!min_addr)
++		return MAP_FAILED;
++
++	addr = (void *)((min_addr - 1) & ~(page_size - 1));
++	ret = mmap(addr, page_size, PROT_READ,
++		   MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
++	ASSERT_EQ(MAP_FAILED, ret);
++	if (errno == EINVAL)
++		return MAP_FAILED;
++
++	ASSERT_EQ(EPERM, errno);
++	return addr;
++}
++
++/*
++ * cap_mmap_addr() requires CAP_SYS_RAWIO to map below the vm.mmap_min_addr
++ * sysctl (dac_mmap_min_addr).
++ */
++TEST_F(cap_other_hooks, mmap_min_addr)
++{
++	const size_t page_size = sysconf(_SC_PAGESIZE);
++	void *low_page, *addr;
++
++	low_page = get_low_page(_metadata);
++	if (low_page == MAP_FAILED)
++		SKIP(return, "Cannot map below vm.mmap_min_addr");
++
++	enforce_cap_variant(_metadata, variant, CAP_SYS_RAWIO);
++
++	addr = mmap(low_page, page_size, PROT_READ,
++		    MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
++	EXPECT_EQ(MAP_FAILED, addr);
++	EXPECT_EQ(EPERM, errno);
++
++	set_cap(_metadata, CAP_SYS_RAWIO);
++	addr = mmap(low_page, page_size, PROT_READ,
++		    MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
++	if (variant->is_allowed) {
++		EXPECT_EQ(low_page, addr)
++		{
++			TH_LOG("Failed to map below vm.mmap_min_addr: %s",
++			       strerror(errno));
++		}
++		if (addr != MAP_FAILED)
++			EXPECT_EQ(0, munmap(addr, page_size));
++	} else {
++		EXPECT_EQ(MAP_FAILED, addr);
++		EXPECT_EQ(EPERM, errno);
++		if (addr != MAP_FAILED)
++			munmap(addr, page_size);
++	}
++	clear_cap(_metadata, CAP_SYS_RAWIO);
++}
++
++static int add_inheritable_cap(const cap_value_t cap)
++{
++	cap_t cap_p;
++	int ret, err;
++
++	cap_p = cap_get_proc();
++	if (!cap_p)
++		return -1;
++
++	ret = cap_set_flag(cap_p, CAP_INHERITABLE, 1, &cap, CAP_SET);
++	if (!ret)
++		ret = cap_set_proc(cap_p);
++	err = errno;
++	cap_free(cap_p);
++	errno = err;
++	return ret;
++}
++
++/*
++ * cap_capset() requires CAP_SETPCAP to add an inheritable capability that is
++ * not in the permitted set.  CAP_NET_RAW is in the bounding set, but
++ * disable_caps() does not put it in the permitted set.
++ */
++TEST_F(cap_other_hooks, capset_inheritable)
++{
++	enforce_cap_variant(_metadata, variant, CAP_SETPCAP);
++
++	EXPECT_EQ(-1, add_inheritable_cap(CAP_NET_RAW));
++	EXPECT_EQ(EPERM, errno);
++
++	set_cap(_metadata, CAP_SETPCAP);
++	if (variant->is_allowed) {
++		EXPECT_EQ(0, add_inheritable_cap(CAP_NET_RAW))
++		{
++			TH_LOG("Failed to raise CAP_NET_RAW: %s",
++			       strerror(errno));
++		}
++	} else {
++		EXPECT_EQ(-1, add_inheritable_cap(CAP_NET_RAW));
++		EXPECT_EQ(EPERM, errno);
++	}
++	clear_cap(_metadata, CAP_SETPCAP);
++}
++
++/*
++ * cap_vm_enough_memory() lets CAP_SYS_ADMIN use the vm.admin_reserve_kbytes
++ * reserve, but only with vm.overcommit_memory=2.  The Landlock check of this
++ * reserve has no functional test: it would have to change these system-wide
++ * settings and set a tight commit limit, which could make allocations of other
++ * processes fail and would race with them.  cap_audit.other_hooks checks that
++ * this check is not logged.
++ */
++
+ /* Audit tests */
+ 
+ static int matches_log_cap(int audit_fd, int cap_number)
+@@ -828,6 +1075,95 @@ TEST_F(cap_audit, denied)
+ 	EXPECT_EQ(0, records.domain);
+ }
+ 
++/*
++ * Denials in the capset and mmap_addr paths are audited like capable hook
++ * denials.  The vm_enough_memory hook only withholds the admin reserve, with
++ * CAP_OPT_NOAUDIT, so an accounted mapping made with CAP_SYS_ADMIN effective
++ * leaves no record.
++ */
++TEST_F(cap_audit, other_hooks)
++{
++	const size_t page_size = sysconf(_SC_PAGESIZE);
++	struct audit_records records = {};
++	void *low_page, *addr;
++	int ruleset_fd;
++	__u64 domain_id;
++
++	low_page = get_low_page(_metadata);
++	ruleset_fd = create_cap_ruleset();
++	ASSERT_LE(0, ruleset_fd);
++	/* Allow CAP_AUDIT_CONTROL for child-side audit cleanup. */
++	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++
++	set_cap(_metadata, CAP_SETPCAP);
++	EXPECT_EQ(-1, add_inheritable_cap(CAP_NET_RAW));
++	EXPECT_EQ(EPERM, errno);
++	clear_cap(_metadata, CAP_SETPCAP);
++	EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SETPCAP));
++	EXPECT_EQ(0, matches_log_domain_allocated(self->audit_fd, getpid(),
++						  &domain_id));
++
++	if (low_page != MAP_FAILED) {
++		set_cap(_metadata, CAP_SYS_RAWIO);
++		addr = mmap(low_page, page_size, PROT_READ,
++			    MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
++		EXPECT_EQ(MAP_FAILED, addr);
++		EXPECT_EQ(EPERM, errno);
++		clear_cap(_metadata, CAP_SYS_RAWIO);
++		EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SYS_RAWIO));
++	}
++
++	set_cap(_metadata, CAP_SYS_ADMIN);
++	addr = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
++		    MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++	EXPECT_NE(MAP_FAILED, addr);
++	clear_cap(_metadata, CAP_SYS_ADMIN);
++	if (addr != MAP_FAILED)
++		EXPECT_EQ(0, munmap(addr, page_size));
++
++	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
++	EXPECT_EQ(0, records.access);
++	EXPECT_EQ(0, records.domain);
++}
++
++/* Allowed capability uses in the capset and mmap_addr paths. */
++TEST_F(cap_audit, other_hooks_allowed)
++{
++	const size_t page_size = sysconf(_SC_PAGESIZE);
++	struct audit_records records = {};
++	void *low_page, *addr;
++	int ruleset_fd;
++
++	low_page = get_low_page(_metadata);
++	ruleset_fd = create_cap_ruleset();
++	ASSERT_LE(0, ruleset_fd);
++	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SETPCAP));
++	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_SYS_RAWIO));
++	/* Allow CAP_AUDIT_CONTROL for child-side audit cleanup. */
++	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++
++	set_cap(_metadata, CAP_SETPCAP);
++	EXPECT_EQ(0, add_inheritable_cap(CAP_NET_RAW));
++	clear_cap(_metadata, CAP_SETPCAP);
++
++	if (low_page != MAP_FAILED) {
++		set_cap(_metadata, CAP_SYS_RAWIO);
++		addr = mmap(low_page, page_size, PROT_READ,
++			    MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
++		EXPECT_EQ(low_page, addr);
++		clear_cap(_metadata, CAP_SYS_RAWIO);
++		if (addr != MAP_FAILED)
++			EXPECT_EQ(0, munmap(addr, page_size));
++	}
++
++	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
++	EXPECT_EQ(0, records.access);
++}
++
+ TEST_F(cap_audit, allowed)
+ {
+ 	struct audit_records records = {};
+diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+index e29406900c04..a6fdfb422fad 100644
+--- a/tools/testing/selftests/landlock/common.h
++++ b/tools/testing/selftests/landlock/common.h
+@@ -36,7 +36,7 @@ static const char bin_wait_pipe_sandbox[] = "./wait-pipe-sandbox";
+ static void _init_caps(struct __test_metadata *const _metadata, bool drop_all)
+ {
+ 	cap_t cap_p;
+-	/* Only these three capabilities are useful for the tests. */
++	/* Only these capabilities are useful for the tests. */
+ 	const cap_value_t caps[] = {
+ 		/* clang-format off */
+ 		CAP_AUDIT_CONTROL,
+@@ -44,9 +44,11 @@ static void _init_caps(struct __test_metadata *const _metadata, bool drop_all)
+ 		CAP_MKNOD,
+ 		CAP_NET_ADMIN,
+ 		CAP_NET_BIND_SERVICE,
++		CAP_SETPCAP,
+ 		CAP_SETUID,
+ 		CAP_SYS_ADMIN,
+ 		CAP_SYS_CHROOT,
++		CAP_SYS_RAWIO,
+ 		/* clang-format on */
+ 	};
+ 	const unsigned int noroot = SECBIT_NOROOT | SECBIT_NOROOT_LOCKED;
 -- 
 2.56.0
 
