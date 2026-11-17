@@ -1,55 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=52.59.177.22
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794872060;
-	b=kmJ3i7U8Axz9bz1pjoFLczflEKNC6Px84w4Y9DJWiQyR3/OLecKddzfb3c9oFFO0l11g
-	 3SWyq23v+a1U22JE5cJ3JfqAk1cPdqwVdgE8qiPoebxTkDnaDXmjsqKm7IhWqOIj4D8ef
-	 DVoSVsnYXaxg8AhM/BBlEcIIgEViuP+ndglFTGvBTfWGzH0hKQ4uKO2IulOwNBwVWXrkC
-	 iP98D5PMRntk53c35guDeAaw7alzO23pmkb6dQusK2H0m66XjVs+3hdiDZuC4XGtBvfbG
-	 gfAKK7tfmkYfqRNMQBZJ/HSZWglczK8Gna1S5/gVJhAnBXZRaHDlMjFIMm1Ajk90wvQ==
+	t=1794881559;
+	b=NTUorK0zWRVHq6QB/IiWHtL10/T7xxGWLim0hjsq4vzvkjFdwG+U4Q2zDKReZ+f3815x
+	 zJbqQYV0feqwvoYNFuR1vEMrOXLW9iFQX8lvnbvQp2BEb6y731Xoa8F1uFDiel9dApF1l
+	 TeaTEW+9KuB6opx2hjBsiidewlNSDZU+y3TH12qwOG9xE3aHVgyyOHBc+UPZARIWroul1
+	 O96CkdPxG+PmeJCNnp5CxIV7UqXrjOXpA4quKViivAOPYc8NZevERjhzABbmCqlL806yt
+	 Syk2sMMHsvRK9Ye91ahsDmWa39OIqd3BdxbjcrIL8SC9DQoCGqwD+4T8Liaq5TPZR/Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794872060;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=GwvR45k8zPfj3VTiaJFvI3ldl23A4KkDbuYMS4+sMDo=;
-	b=ZPwODjXt1PXgJxBfJasmVyiSmocq3Df3C8zglDXOLm720h0OeaXLLykkdyJxxHdmdUmk
-	 VKu8j1GEx4vTAYNFXSpcdg4dhebcKocGG10osqEgQeeQQDifhsQKnEw1474i3oezUET/b
-	 KRzOC35Nx2bH/58aV6zzjzu6Dm8ralLZF3qXgf/aKCYcaVQkSegNUNaVcPgSv/ta3Q4+R
-	 j3eMRk2uYlftWaZ0biH4Tj5coWAxDW7Azd7vzz1YsLd7wAX3b3r7Jfa3tbdwAqF/kR56R
-	 hIY49258s/jNcIMywnllYupD8BIaSqdMeJGFejS0sjHzz3aHNKFIS4/1ZRM6gOu0+8g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794881559;
+	h=DMARC-Filter:X-QQ-mid:X-QQ-Originating-IP:Received:X-QQ-SSF:
+	 X-QQ-GoodBg:X-BIZMAIL-ID:EX-QQ-RecipientCnt:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:X-QQ-XMRINFO:X-QQ-RECHKSPAM;
+	bh=Hu1od8+lCznHEOv79xf7ZnVgX/h5koJBmJSgkBfKPa0=;
+	b=Q1h/Hm1Kq1CWhfmCoK1sb60T+azO2kR4+C0PFNBL9PIqbq1T9ix38rZhElLd+18RmLo/
+	 xo/WeI5/NppXnHhH7F90Hi2vZp/VyB53AjUnNGzhRxeBkk0uKVROxWq7mps55iHSZMsqR
+	 acm9MiFkFxuZIPAPRJ+FZQWRgEc1a0vuJe82hFVR63ShVGZefPfZJBBYwzSyrtCzJF/R0
+	 r82/Ghnk8TZzblNvlN9ptKW15vBWeQZnLK7tyJ388MpEdqcUd64FfvkLKwe5/kmYmL1hu
+	 pj6uBI+aX4TbRjYVXKef8MDUL5H27MYH7KxPIEi4rzGQ5yJVOMWWrZih34PcuEXCR8g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I61G43U2;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=kylinsec.com.cn;
+	spf=pass smtp.mailfrom=kylinsec.com.cn;
+	arc=none smtp.remote-ip=52.59.177.22
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3240606A31C
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 23:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I61G43U2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A811F000C5
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Nov 2026 23:34:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794872060;
-	bh=GwvR45k8zPfj3VTiaJFvI3ldl23A4KkDbuYMS4+sMDo=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=I61G43U2FKULKCSzg+sUjnfKZKxsWaG4d2E5UI9T65K4YzP4kz52Pk6Hr5Mf9K+n1
-	 16x2uubY7DqfY4bjXSpYPu87JGaogOKYKU/mcywfzfixOob+lj+6xUE6jb34N4/ZHd
-	 6RzgpohHfc8ej1OTONKJ91r5e7v8DlOMhnkWy4MNH/gtPr5HCSqlozdTGYGjHvdpC1
-	 TyzBXXYPUixxyeT+b+78O+QAHttwLZqC+ogKyaB6GjZJ3UowQlyf57JDLrWzEsDEb4
-	 TulJ0DW2D6FeLFMmyBmA2I/talhri61FdWS4FhCeMLn8/vJ+et9Gf/K/+nF6YiPY9v
-	 QuajDoLymiwiQ==
-Message-ID: <sashiko-outbox-217897@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] landlock: Add missing EINVAL case in the doc for
- landlock_add_rule
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261116233139.206924-1-m@maowtm.org>
-References: <20261116233139.206924-1-m@maowtm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Nov 2026 23:34:17 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42514606A31C;
+	Tue, 17 Nov 2026 02:12:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 42514606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinsec.com.cn
+X-QQ-mid: esmtpsz19t1794881473t486d8fe4
+X-QQ-Originating-IP: avSySWkYbX0rQq5RXysYH62VZfq27zIoxR0GTnw15HE=
+Received: from kylin-ThinkBook-14-G5-ABP ( [111.8.45.130])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 17 Nov 2026 10:11:10 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10544378180861782766
+EX-QQ-RecipientCnt: 7
+From: Hongjian Dai <daihongjian@kylinsec.com.cn>
+To: casey@schaufler-ca.com
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hongjian Dai <daihongjian@kylinsec.com.cn>
+Subject: [PATCH v2] smackfs: fix IPv6 netlabel prefix mask for non-16-aligned lengths
+Date: Tue, 17 Nov 2026 10:11:08 +0800
+Message-ID: <49DF0992E528A465+20261117021108.209924-1-daihongjian@kylinsec.com.cn>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,16 +59,61 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:kylinsec.com.cn:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: MIXpHopat2Ia8CP/ahrKqazNJKlcR0VI3sLwLA5Rwkh2HabYVCWfKQQL
+	L3wYzA8q0QvskftSp/t3b5C1/QLKMU0N7XZDEsNzgrinudMnMwv4TzvecQqQHMu1+fQXVkc
+	XonqJ+gMTfnXeqSFdWJFHveu74Ju6hQBqLcd0l5Bjm0kgGJ4EaU9E7I9rIS098pH2rEP2LT
+	OT/u99j81AzUZsnMWxwcvzPs60onvzqqiter1JysvwaCuVHWzzzck9VcDxUU397Yaz1WT06
+	/YX8mojsDq61Gga9a2rZVzsbwdIey6ezIiJqhqtxTpy+XfoTwYaHfBTjl+/tVoElSqNL35F
+	ZU8mvPaKTI3futgqwzyVIFPthAcaDgQL0LW1w1aohEH42uaWJZ6BGXyITBMANoc1o3+Gct5
+	N/ShahkNcKzw1L1479Z7dyXHhXWONwidjQCDT5K6uHi8JUraUHiFlnpKuVfumGNWtghJtIB
+	FCUZc+bW8UYeK7KvtgMdxqZAokgyOL7I3YrxZQBC3JRzSl11jo76ma9LOkKj+oYvhMBY9mU
+	KoitoO9suE+gs+T5H6IRP+XqGp6BC6SrbAtfZZy7l4tkRFzAstm4Is9rYBVTzBqtBWKY3F2
+	HXrNmuJDjxRLuFgfI7plAIe7HP618gjvmiqnQMsYGawzQ0S77ZbwZz8o6x/1syyfKepogUC
+	v4Fk4ojRKo5XhNDPgLcdGF3+dRrWvIYsbyKX8Ojc3EYFwFB6OHj6RSiwJ/Iti/gSvncUR7r
+	O9piDzKRVbwBfm6vLXL7C5sYL4gp3Cj9BO4GoUC7tYiH2z/2PefsuHpM5PrBre8B7RXkYtg
+	2Ll8mYl4AskXKzHjy0FDJAkie1+V9LATOB8xiJT0hRZRlt4T/bjF8oa+uXKqjf4+EZUuek5
+	8w81IuwRZIM3kXp87aKRoANi1hfwwGoGQ4csb/m5AqTrzZclkwpU0poLjpX1x6Ax1rKm/GS
+	amRNKtvgPlga3JrRpyicUJYUkVMOqZhYsP8gdh0l3viOf4LRx6NTLT4ruhQ5iUxbX99+YAP
+	fPWRkv96cyNm/Gu2htz97bNtuBDSt4ZdyOpWjOacqcpkBG3M3aqtqAW262wRSu7I7N4yshq
+	A==
+X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-QQ-RECHKSPAM: 0
 
-> This is another way it can return EINVAL but is not documented.  Document=
-ing
-> it is useful to help rule out errors.
->=20
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
+smk_write_net6addr() builds the partial-word mask as (1 << m) - 1,
+which keeps the low m bits instead of the high m bits (e.g. /33
+yields 0x0001 instead of 0x8000), and stores it without htons()
+while the address words are in network byte order. Any prefix with
+mask % 16 != 0 is truncated to the wrong network and mislabeled.
 
-Sashiko has reviewed this patch and found no issues.
+Take the high m bits and convert to network byte order, matching
+how newname words are stored with htons().
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261116233139.2069=
-24-1-m@maowtm.org?part=3D1
+Fixes: 21abb1ec414c ("Smack: IPv6 host labeling")
+Signed-off-by: Hongjian Dai <daihongjian@kylinsec.com.cn>
+---
+Link: https://lore.kernel.org/linux-security-module/A82C90B4956EE3A9+20260922144738.9594-1-daihongjian@kylinsec.com.cn/
+v2: Added missing Signed-off-by tag (as requested by Casey).
+---
+ security/smack/smackfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index a72bc7fabea9..6d680424a8c3 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -1506,7 +1506,7 @@ static ssize_t smk_write_net6addr(struct file *file, const char __user *buf,
+ 			fullmask.s6_addr16[i] = 0xffff;
+ 			m -= 16;
+ 		} else if (m > 0) {
+-			fullmask.s6_addr16[i] = (1 << m) - 1;
++			fullmask.s6_addr16[i] = htons(0xffff << (16 - m));
+ 			m = 0;
+ 		} else
+ 			fullmask.s6_addr16[i] = 0;
+-- 
+2.53.0
 
