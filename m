@@ -1,82 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794913858;
-	b=uIALsYU/cpVE5ApG7mX0E4VaEA5MolocAQWMHLWD6EXFMbh8xADEbu49Ci140mRVbx7c
-	 fjKxBb/K1VSKyxWQ3W4/EC4UkZ1zWSYlE72p3Y5T4tfCLtQBrZlP3ff6HwGQIBowWSFj5
-	 ///Plv1dBe+D/0TjzH07o30PStW2Ku7iYb25fcGBpLB9O5q2bhPgw1VwiV1674aIP9TOe
-	 OWP0rh6uYRnxGavhufOm8PFgr9rkVU5WdUDH0avmAs+bkZnXbZqU66bpqpiba6ct+hLFN
-	 7SYcanOZuexMROJkXIuwuKtQ3Efp0K5gdUM6loeyeJ+w74ObeP3rYTh5QKCOl7+Om0g==
+	t=1794918386;
+	b=aYSTVDPoMnym16urhvlXn2h9WFMGb140FLWUB6Skv8KznyvmiE2EmpXdMdu7w4kr450p
+	 L0BTAd9mCveamI6K52H1sbN9FETlpCEaEHt/StR+HEzllvxETdUoJ2ME1fzbtiXNX6bWh
+	 v4P34fMNsqxkgzgJYmeldcrnkU03XC835+NpkF5dBdzjA+XSbARehYQEr0SMi38ZGPDm+
+	 qOuTj5fL/7OpzXu9OIKkM2PyrbG1aFMtxFk4lCpfMPUbC7JEgp+U5+HrNVMVrGh79H4Cd
+	 yc/6qlgHFUkxKIYMWefahNgYrbQy3a3VmD6Jajw9339k+VhoeksN0DlGxeKsstmcPRw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794913858;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=dvoI2Z2WNg5T4pHtVZggNJofexwqVtIKLoTu7i4tUi0=;
-	b=G2b/9z5viFU/OrLsQRUFG6gSlkJg/kLJW7+ZzWzv9T3bisQeRdCIv96dHln3jo4wvgGg
-	 Vk9iHy4kAzqh1ag+OE3yuiy1QFKc7JuxleSAPWYQfaIIghz9e0KfXkb9oC4TYgOfjyP+E
-	 Kl9/fyuQSR/+uI/v50IpWw0spni9r+PMGg8NnNZFKdG/mtdYlze8wklBg9a/V3t0YP6dW
-	 xmWXUv36XqcGXxGox6MBpKz76QrmgS6RP+RzQ+Aq8WbHR+KS65CVa2bpK6pTJ1XsrNVc4
-	 gSdIfkRoZ54PuGGSnTe0JGnY3wxjf0/LQwlT8r7d7CL21SijYbjuL6xwO24Lh8u18zw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794918386;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 X-Received:Received:Message-ID:Date:MIME-Version:User-Agent:Subject:
+	 To:Cc:References:From:In-Reply-To:X-Mimecast-Spam-Score:
+	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Language:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=JhEF3QYgCBT5k7drshdDG8SKBLfKYdoUoRI0T7Kouwk=;
+	b=2ehIoqhSIk8yrHdj8uSdVn4YoE/MAr+nhRVZLDgJhE3flquaJP5Jb5SR6e3uPM1rwGFX
+	 p2po/FGi7WZZoRgOnDjWNLrwnnNg7UVwsAD4Ji57ucMssIYgBKog5CYRVzOhaohZ3RtOl
+	 OwoFFTlHgrCzlzKoVsFvznFOQAyOfWaQ1WLy3SWO8sSvyfmQ3e3/jaQ3hBu0BM/s69zwh
+	 40dJ41jcVaLE8gPufeoDQos+mQOeCcL9wUNNm7brWbltH/8s79zePigdFfqyAAC6egNBd
+	 LxQkOpWOSA9pJ4f74+okYsG62YdBmYIf8+r2+uuT7oBvbyFzjf4mAenMQ+GmPiXilQw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jzh263Ql;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Re81gehC;
+	arc=none smtp.remote-ip=170.10.129.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 16C1E606A31C;
-	Tue, 17 Nov 2026 11:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A32606A323
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 12:26:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93A32606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jzh263Ql
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E7C381F000C5;
-	Tue, 17 Nov 2026 11:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794913857;
-	bh=dvoI2Z2WNg5T4pHtVZggNJofexwqVtIKLoTu7i4tUi0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Jzh263Ql3sBter/ir2vEmp5ydzrO1Ocnawrz5yyuG8H2PDbQVGRjsJXHQWpO0WGc1
-	 0Md5oRqYRswExKLjJJOhnfgc9Ra9y4DdR/o+KFMDN0Dc9pwJZRZFgLkYyiPjCWvYkq
-	 HWtKlatBkGAq5Lcfkr+wGDncmORVwP8qu2nxVmXzyf7USdQI+q7v9wSvOEn59jsXTP
-	 TkzX70xBQ6eNPKsGdV5CZuoOp28EROPCKU1y+ni3GR6GTAk5lP4pTWXA+pVVeuckB+
-	 ujIkONmElPUvhm86ckJvNb/akAMGbPgn/MU/kqFLEE6MJv3eGg8kmt5ISV5nOJSVBr
-	 d/ByM9U/IzS4Q==
-Date: Tue, 17 Nov 2026 13:10:54 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ben Segall <bsegall@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Juri Lelli <juri.lelli@redhat.com>, Kees Cook <kees@kernel.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Liam R. Howlett" <liam@infradead.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>, Neal Gompa <neal@gompa.dev>,
-	Paul Moore <paul@paul-moore.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	John Johansen <john.johansen@canonical.com>
-Subject: Re: [RFC PATCH 00/13] Namespace for namespace roots
-Message-ID: <avw2PlAWYbPtZzhE@kernel.org>
-References: <20261117050841.3289652-1-jarkko@kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=Re81gehC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1794918384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhEF3QYgCBT5k7drshdDG8SKBLfKYdoUoRI0T7Kouwk=;
+	b=Re81gehCZ1PHaOLfqlohfNTAeFiyuygY7XqGFzmmtBbKKDws/IXQKiBjM071xinvLcYodu
+	86jH6eStHehKFzeNjdffLWhcNPf3YO3Xv/Cxuca86yI8H5wnEt1cmdayiuY59LHh4MqMa8
+	PfZ5ujOTHOfUfJdp/8Tv3riUwWMy3X8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-621-OUpwOjXhOZeqbkV9GEKuPQ-1; Tue, 17 Nov 2026 07:26:23 -0500
+X-MC-Unique: OUpwOjXhOZeqbkV9GEKuPQ-1
+X-Mimecast-MFC-AGG-ID: OUpwOjXhOZeqbkV9GEKuPQ_1794918382
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4bb67b2c00cso4603225e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 04:26:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794918382; x=1795523182;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=JhEF3QYgCBT5k7drshdDG8SKBLfKYdoUoRI0T7Kouwk=;
+        b=huizmd2toi3jNHyLlvG7UKk11y85Z6f3dhiCT4hGLQYxKsTNBT9f4AyApSEj2OYPn4
+         Nzr0yfseiR8VRqImkdIKGEwVy6NuSdwTtX+G6L9pNrgP1wVUKyct6BU2tasaAy/89ziO
+         7irxgXMO6lMIjJc9PinGjXngQvskVmiyne9fmTxdsSp/laFnpTcYUrGQuKt2URFGWlug
+         1mouFWMOHw9UiAvidU4qNa6kJopRAv2OmizT0bZ8G0DrLSiDHpZGv1wQfVj/NRSR2CK5
+         PS6Wbq/guuKhfFRvHaEU/G7GLu+18Jxqh3munPB7h1UcDoMVTmsTL0QI5Z9UUHwouUXT
+         N/tQ==
+X-Forwarded-Encrypted: i=1; AL+hErGJYIFSLVqTH3HCIZrfsGPJmWEQ6YMtm89pTSgaVLmQa7tQ17RBW5lyXLXCKn5qFf88sd4M0WIFtv1Bzearv4un1ft+Dqs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9Av9YMIa5oYxYT2qimP6BfvsRUFS8MpzaE6i0Ku2GtU9kk2Ydp
+	xqsT+GHqJz+G325+C3ewbwUs5HyoTvtyWOpJYp8R1UcoQddY1tfOrRObaKQUeHy+cUYG9HVNVcx
+	dH9Y5BnaJg+KJSqh+2Ff9Xp97YTb9RGelqoLXFiCRBMyAXYE8DtJASEIRP+ts6cqKDjW3NsxmBE
+	ecww==
+X-Gm-Gg: AYBFou0xPl80Vpr0dpx0o4FwRTmqMSF4rlOMbMxJ3mCc5bcQOFwApSuTaZ+6nVL4Nmz
+	VZsva8ZCLvm4iHO0/D/IzX5tMv3ntP+7CRfcxnXDrVMXQ5IJ7PmUPP6lr0+Ga5OI8VNERPmHpkZ
+	RdS80wI5tf2A/U0+MGRhP2BCFwtRAOV/dL/wMjELj0zlsh4HKIA1Sgx5+uGNAQJQAjdaetffAxV
+	LuPfc5xFwooJKFEByIUDmJDYFN9cLvdKk05JKyrgEDQOe+u2d6GuZ2mYrXN6FMlBEjyxE4GjlvV
+	Q97O9UAkV+JJcuAliLC6WDEwPSBnIeGyfRzM01SB6pVpbb1G+vvmLLhLyuPiu2+s/Td/vM9SMxF
+	hmu1Q5qSrStzBbJAXf1b7YnAn16idN43dJ0PzVR2awuPr3TyzB8AyD2rzlnDZuyY/C7SyeBAyX1
+	TtXB7aYBoPcUXKJMwykafDthUWPtHk4OI3fRmhjHJNtRYA
+X-Received: by 2002:a05:600c:5012:b0:4b4:a551:681a with SMTP id 5b1f17b1804b1-4bb7837264cmr54139535e9.3.1794918381863;
+        Tue, 17 Nov 2026 04:26:21 -0800 (PST)
+X-Received: by 2002:a05:600c:5012:b0:4b4:a551:681a with SMTP id 5b1f17b1804b1-4bb7837264cmr54138805e9.3.1794918381402;
+        Tue, 17 Nov 2026 04:26:21 -0800 (PST)
+Received: from [192.168.88.30] (ip231-128-192-82.pool-bba.aruba.it. [82.192.128.231])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb783f7eecsm114134115e9.3.2026.11.17.04.26.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Nov 2026 04:26:20 -0800 (PST)
+Message-ID: <cbaa372f-6ec1-4ceb-a012-30eaac5ae8eb@redhat.com>
+Date: Tue, 17 Nov 2026 13:26:19 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -86,193 +99,106 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261117050841.3289652-1-jarkko@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] ipv6, calipso: fix data-race in calipso_cache_add()
+ bucketsize check
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org,
+ paul@paul-moore.com
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Huw Davies <huw@codeweavers.com>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261115144508.71543-1-jiayuan.chen@linux.dev>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20261115144508.71543-1-jiayuan.chen@linux.dev>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: aFQhki_VfphLkxJFR5vZyEXtgMljqSs7iNIm5B7h36Q_1794918382
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Possibly also:
+On 11/15/26 15:45, Jiayuan Chen wrote:
+> Issue found by sashiko when reviewing my data-races patch [1]. This is
+> not a plain READ_ONCE() annotation like the rest of that series but a
+> real fix, so it is sent separately.
+> 
+> calipso_cache_add() reads calipso_cache_bucketsize twice: the "<= 0"
+> guard on entry, then the "size < bucketsize" test after taking the
+> bucket lock. A writer can flip it to 0 in between:
+> 
+>    CPU0                                    CPU1
+>    calipso_cache_add()
+>      calipso_cache_bucketsize == 10 (> 0)
+>                                            proc_dointvec()
+>                                              calipso_cache_bucketsize = 0
+>      spin_lock_bh(&bucket.lock)
+>      size(0) < calipso_cache_bucketsize(0) -> false
+>      -> else branch, but the bucket is empty
+> 
+> On an empty bucket the else branch takes list.prev (the list head
+> itself), list_del()s it and then list_add()s through the now poisoned
+> head:
+> 
+>   Oops: general protection fault, probably for non-canonical address
+>   0xdead000000000108
+>   RIP: 0010:calipso_cache_add+0x2f0/0x380
+>   Call Trace:
+>    <IRQ>
+>    calipso_cache_add+0x4c/0x70
+>    netlbl_cache_add+0x4a/0xa0
+>    selinux_netlbl_skbuff_getsid+0x1ac/0x280
+>    selinux_skb_peerlbl_sid+0x7d/0x100
+>    selinux_socket_sock_rcv_skb+0x2d3/0x460
+>    security_sock_rcv_skb+0x86/0x150
+>    sk_filter_trim_cap+0x56/0x730
+>    sock_queue_rcv_skb_reason+0x1e/0x80
+>    rawv6_rcv+0x679/0xb20
+>    raw6_local_deliver+0x1f0/0x5b0
+>    ip6_protocol_deliver_rcu+0x215/0x9a0
+>    ip6_input_finish+0xb0/0x1b0
+>    ip6_input+0xa8/0x250
+>    ipv6_rcv+0x14b/0x1c0
+>    __netif_receive_skb_one_core+0x8f/0xe0
+>    __netif_receive_skb+0x23/0xb0
+>    process_backlog+0x27a/0x950
+>    __napi_poll.constprop.0+0x61/0x2c0
+>    net_rx_action+0x372/0x800
+>    handle_softirqs+0x109/0x570
+>    __do_softirq+0x10/0x18
+>    do_softirq.part.0+0x47/0xd0
+>    </IRQ>
+>    <TASK>
+>    __local_bh_enable_ip+0xf0/0x120
+>    __dev_queue_xmit+0x578/0x23f0
+>    neigh_resolve_output+0x278/0x3c0
+>    ip6_finish_output2+0x4b1/0xcb0
+>    ip6_finish_output+0x2b6/0x6b0
+>    ip6_output+0x122/0x400
+>    ip6_local_out+0x61/0xb0
+>    ip6_send_skb+0xa0/0x260
+>    ip6_push_pending_frames+0x2b/0x40
+>    rawv6_sendmsg+0x1b7a/0x2750
+>    inet_sendmsg+0xa1/0xb0
+>    __sys_sendto+0x2fe/0x350
+>    __x64_sys_sendto+0x7f/0xb0
+>    do_syscall_64+0xe1/0x450
+>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Snapshot the sysctl into a local once and use it for both tests, like
+> cipso_v4_cache_add() has since commit dd44f04b9214 ("cipso: Fix
+> data-races around sysctl.").
+> 
+> [1] https://lore.kernel.org/netdev/179428999963.994134.16904544500890053668@kernel.org/
+> 
+> Fixes: 4fee5242bf41 ("calipso: Add a label cache.")
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+LGTM, but let's wait for Paul's explicit ack.
 
-	Cc: John Johansen <john.johansen@canonical.com>
+@Paul: please LMK if you prefer we apply this kind of
+simple, clean fixes directly.
 
-The cc list was generated via:
+Thanks,
 
-	./scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats 00[0-9][1-9]*.patch |  awk '{print "Cc: " $0}' | sort
+Paolo
 
-Br, Jarkko
-
-On Tue, Nov 17, 2026 at 07:08:28AM +0200, Jarkko Sakkinen wrote:
-> OVERVIEW
-> ========
-> 
-> The problem that root namespaces try to resolve is starting a container
-> from a root mount tree that is pre-populated before any process is allowed
-> to run, without inheriting any host mount-tree ancestors.
-> 
-> Work on this feature started originally in 2025 from David Howells'
-> container object patch set [1], but I turned container objects into a
-> namespace of namespace roots and built a new implementation around this
-> premise.
-> 
-> In early 2026, the patch set was left to gather dust in my kernel tree
-> [2]. Then, the other day I saw [3] as was shocked by its over the top
-> complexity and thus, here we are.
-> 
-> Not doubling the number of container frameworks inside Linux kernel is at
-> least a benefit over container object based solutions. Parallel plumbing is
-> an inherent flaw of container objects, and it directly affects on
-> development and maintenance cost of container runtimes.
-> 
-> Also, thanks to better scoped implementation surface, verifying rootns
-> correctness is factors easier than with container objects, and even my
-> early kselftest is meaningful. We know what and where we are testing,
-> which is always great.
-> 
-> Finally, it is more compatible with pre-existing container tooling
-> whereas container objects would have much higher cost.
-> 
-> [1] https://lore.kernel.org/all/155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk/
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=rootns
-> [3] https://lore.kernel.org/linux-fsdevel/20261105-b4-cells-v3-0-bc9095937a84@toxicpanda.com/
-> 
-> IMPLEMENTATION
-> ==============
-> 
-> rootns_create() allocates a rootns object backed by a pollable anonymous
-> inode fd, pinning dedicated empty mount (CLONE_EMPTY_MNTNS) and PID
-> namespaces along with any optional namespaces selected in flags.
-> 
-> Before entry, a manager prepares the mount tree through the control fd:
-> FSCONFIG_SET_ROOTNS binds a newly opened fs_context to the target rootns,
-> and move_mount(..., MOVE_MOUNT_T_ROOTNS_ROOT) installs "/" onto the nullfs
-> root once and attaches relative submounts beneath it.
-> 
-> rootns_enter() forks a child directly into the rootns credentials,
-> nsproxy, and root path without mutating the caller in place. The first
-> entrant becomes PID 1; once it exits and zap_pid_ns_processes() reaps all
-> members, poll() reports EPOLLHUP and rootns_wait() returns init's status
-> and rusage. rootns_kill() walks pid_ns->idr under RCU to signal member
-> thread groups.
-> 
-> Namespaces allocated by member tasks inherit the owning rootns ID in
-> __ns_common_init() so intra-rootns clone(), unshare(), open_tree(), and
-> setns() work while foreign setns() calls fail with -EPERM.
-> 
-> Cc: linux-api@vger.kernel.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: David Hildenbrand <david@kernel.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-> Cc: "Liam R. Howlett" <liam@infradead.org>
-> Cc: Lorenzo Stoakes <ljs@kernel.org>
-> Cc: Manfred Spraul <manfred@colorfullife.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Neal Gompa <neal@gompa.dev>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Serge Hallyn <sergeh@kernel.org>
-> Cc: Shuah Khan <skhan@linuxfoundation.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Vlastimil Babka <vbabka@kernel.org>
-> 
-> Jarkko Sakkinen (13):
->   nsproxy: Pass nsproxy to create_new_namespaces()
->   rootns: Add core infrastructure for root namespaces
->   rootns: Track init lifecycle via copy_process() and pid_namespace
->   rootns: Add rootns_create() system call
->   rootns: Add rootns_wait() system call
->   rootns: Add rootns_kill() system call
->   rootns: Add rootns_enter() system call
->   fs: Support FSCONFIG_SET_ROOTNS in fsconfig()
->   fs: Support installing rootns mount trees via move_mount()
->   arch: Wire up rootns system calls
->   docs: Document root namespace uAPI
->   selftests/rootns: Add root namespace test suite
->   MAINTAINERS: Add entry for ROOT NAMESPACE
-> 
->  Documentation/userspace-api/index.rst       |    1 +
->  Documentation/userspace-api/rootns.rst      |   35 +
->  MAINTAINERS                                 |   11 +
->  arch/alpha/kernel/syscalls/syscall.tbl      |    4 +
->  arch/arm/tools/syscall.tbl                  |    4 +
->  arch/arm64/tools/syscall_32.tbl             |    4 +
->  arch/m68k/kernel/syscalls/syscall.tbl       |    4 +
->  arch/microblaze/kernel/syscalls/syscall.tbl |    4 +
->  arch/mips/kernel/syscalls/syscall_n32.tbl   |    4 +
->  arch/mips/kernel/syscalls/syscall_n64.tbl   |    4 +
->  arch/mips/kernel/syscalls/syscall_o32.tbl   |    4 +
->  arch/parisc/kernel/syscalls/syscall.tbl     |    4 +
->  arch/powerpc/kernel/syscalls/syscall.tbl    |    4 +
->  arch/s390/kernel/syscalls/syscall.tbl       |    4 +
->  arch/sh/kernel/syscalls/syscall.tbl         |    4 +
->  arch/sparc/kernel/syscalls/syscall.tbl      |    4 +
->  arch/x86/entry/syscalls/syscall_32.tbl      |    4 +
->  arch/x86/entry/syscalls/syscall_64.tbl      |    4 +
->  arch/xtensa/kernel/syscalls/syscall.tbl     |    4 +
->  fs/fsopen.c                                 |   74 +-
->  fs/namespace.c                              |  176 ++-
->  fs/proc/root.c                              |   13 +
->  include/linux/compat.h                      |    4 +
->  include/linux/cred.h                        |    4 +-
->  include/linux/fs_context.h                  |    3 +
->  include/linux/ns/ns_common_types.h          |    4 +
->  include/linux/nsproxy.h                     |   27 +-
->  include/linux/pid_namespace.h               |    4 +
->  include/linux/rootns.h                      |   87 ++
->  include/linux/sched/task.h                  |    4 +
->  include/linux/syscalls.h                    |    5 +
->  include/uapi/asm-generic/unistd.h           |   12 +-
->  include/uapi/linux/mount.h                  |    4 +-
->  include/uapi/linux/rootns.h                 |   38 +
->  init/Kconfig                                |    9 +
->  ipc/mqueue.c                                |   12 +
->  kernel/Makefile                             |    2 +
->  kernel/cred.c                               |   70 +-
->  kernel/fork.c                               |   29 +-
->  kernel/nscommon.c                           |    8 +
->  kernel/nsproxy.c                            |   49 +-
->  kernel/pid_namespace.c                      |    2 +
->  kernel/rootns.c                             |  599 +++++++++
->  kernel/sys_ni.c                             |    7 +
->  scripts/syscall.tbl                         |    4 +
->  tools/testing/selftests/Makefile            |    1 +
->  tools/testing/selftests/rootns/.gitignore   |    2 +
->  tools/testing/selftests/rootns/Makefile     |    5 +
->  tools/testing/selftests/rootns/config       |    9 +
->  tools/testing/selftests/rootns/smoke.c      | 1254 +++++++++++++++++++
->  50 files changed, 2559 insertions(+), 73 deletions(-)
->  create mode 100644 Documentation/userspace-api/rootns.rst
->  create mode 100644 include/linux/rootns.h
->  create mode 100644 include/uapi/linux/rootns.h
->  create mode 100644 kernel/rootns.c
->  create mode 100644 tools/testing/selftests/rootns/.gitignore
->  create mode 100644 tools/testing/selftests/rootns/Makefile
->  create mode 100644 tools/testing/selftests/rootns/config
->  create mode 100644 tools/testing/selftests/rootns/smoke.c
-> 
-> --
-> 2.47.3
-> 
