@@ -1,86 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.176
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794958483;
-	b=jvrS/D0JdgDV4CtJfatsSPVsavG9em+IJ1x09Gz5XnBvL2OPtWy9ck5o9C5N3dkRTWq1
-	 BCrB/bAd8OsXKnMPGk3f5b+8cLabw242JJciOiG9QgHRkFaXfuvcaNaJgn5TfVEyEnYpy
-	 TY+GZW5yCKOxDP7p/sQGuhTZR/uS7woFvcIA2IJKLh8zhirDaYmOgwvOMUKnABgxZW+5G
-	 ++0k6h+TQDwTjVqvSNje3vn+8IW89mEDVn4acn+unVI3zTfr1M3CkKcZwbtDJYpIJ9yz9
-	 InVpIwyitklEnDM4e8pzkm43wj9HG5L5Lfuon/OzhbIIeKNFi9psdnt4k2f5wyLP5TQ==
+	t=1794958486;
+	b=vW2VfzfyA0iMaWXfq3sxHjPn+K80K2+oqUOldo7+oYMjqmJ5XtXCDMBX7V+QdC7rudfT
+	 s89+5UetHouOX+9av2EnFVr8j1uuo23gtUj1ZMyStAL8fJuwqERdkTtbUOdhgXQ4dnuXi
+	 QbDHvDPf4KSAZpSgUjaL7awTH8JzOyN7x1uBBP6T7BuXAFSHqoI6LMdZf3DGausjXECOS
+	 6F3366bo/xrmSpla72j/UQSbbjjZaS3QlAU2vTvflhZzFVOpiaZN+uNZy8kHgEa8IvgHa
+	 7Na1dmhBV60DSHcf9Zva2s6eISxmbuS4vfuQQNA48hGb7FxDKakNNS/ReQFodoU+5tA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794958483;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794958486;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Date:Message-ID:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:From:To:
 	 Cc:Subject:References:In-Reply-To;
-	bh=mxCH98lD8Ul9vSPCZMv+h4ue3Gw/ScCzx5yCrbCmDBE=;
-	b=3mHpDonEedA0J9RZ4iac8x1sKCTYAPbNXoUyr7OsArF7AmzbRMeYP/OtBi1NsAm7TGQd
-	 7Cq6xjsBA/b+wcaji32XIZscSHwtGzlBpkUc4Gw/mKJ+h5DVBrbiLeL/TK7EeZ34zdvF2
-	 MYCR8QpX3pvdrl4qL4IaOLpGe/2dpRyZopdGgUK2R2gpczA/2pj3j+yVboyxkfx5i/u4r
-	 V8B4Pdp2+kpNYQwWpbHeZg4wjZHlVMTqX1+6ej4rNUXyFyXa+oODo1RLTm7Wck9KLrveX
-	 RkujIjOmZKDZdskMIzcXbJ7nArFMIkOun/oNVwk34pWRlITKNXRMSAUItZGxyg2dNLw==
+	bh=id7sxPUZ1q5vwEsAL+ZQA4c7CaWDRU0GTvUGmQVP1r4=;
+	b=ybAtfKjM6hlEpidzCC9263aIRnFYWmYbbqzYYSb7YqZT6W87B8OILWM3fws1R14WGINJ
+	 mrghvo9XEUWZCBIH0ULS+eF7bVXlJJ5nhpdDgsz5wxa05j6ZUCK4z1ydCIW7EB5PCKGL4
+	 Vza9DTMDRx3W2h25DDR/GiWZ8oo5n+btXCEsdoI9PIlkHJNSW+0La/b7/nMbnr50ga3TG
+	 8gNt1/eR20fr9X1HqkwNevs5W9VsvxgRV/w/nAX7igfCgM07VJNjPFVTHnBppbd5MgSQc
+	 WEXWNf1S3exo83JAOQgtIgi+tPzyDoT4Fo8rfA+xv1Y2by1PIRoUy9x0FO1HuXw3fyg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=paul-moore.com;
 	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b="C1/HoDQL";
-	arc=none smtp.remote-ip=209.85.222.170
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=PRr5dLBj;
+	arc=none smtp.remote-ip=209.85.222.176
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE711606A330
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 23:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE711606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A547606A32F
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 23:34:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A547606A32F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=C1/HoDQL
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-93f2b8cf037so34788285a.1
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 15:34:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=PRr5dLBj
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-93f22a8515eso37987285a.2
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 15:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1794958482; x=1795563282; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1794958484; x=1795563284; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-type:mime-version:message-id:date:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=mxCH98lD8Ul9vSPCZMv+h4ue3Gw/ScCzx5yCrbCmDBE=;
-        b=C1/HoDQLJzzckFRnS+9k64TFool5JeA6PubBeU/laVzL/w4ah7odPpMpBEDO4oTDek
-         tzvkSLyjXBT1ae6muzrpU+3lix8bwV+w5XzoROoTQVFQ75pZIhaZnTEzTzkvFRP9MXet
-         cswYz9mJhJ6jqtYt4JjUilPe5tWe18DSDwlcWvq99KCO8DgF8mM2v9dS3T/+DCZLJVWq
-         S4BilbEvdhkOpMHkOUTOKfcBRLK371Ffu7Ts5wblHKU+7z+VA6XukkrcJsEnIUrr5zDJ
-         9evsjeK1bGn1T3KaRJrNNmPDwV+QAIp1I3m7emtneedTTpgn6usGNwt5x6nS7sEasDi8
-         n6vA==
+        bh=id7sxPUZ1q5vwEsAL+ZQA4c7CaWDRU0GTvUGmQVP1r4=;
+        b=PRr5dLBjAs05ylRi2AXLL0lTt2IRquA8ljp3pqeJPErlk/8PgAPrbJeb5L3wCfYpa4
+         XDYg/SSGs1hy4t8K+/Pp2PiFQx3NJhZscZFEkHYDBy/vZZXIK8wPt1b8bU/aiP11Aror
+         r2GnSzAJl8YAMrvOZ9zn1J7tRliIlMrZCaSyvO1BKafTr1o5vnDRkuheZbUs3qaGJKbw
+         GZZ0QuyXsQLRhhKtgXaxoG43vf79JCmBRlf2ehljTRfDruOrXulaw85CZqHDE9ak195A
+         eJ6eF8rJUuh1V7SM65zr4OBPFIDmlixPlsEtIh2VtMq10Xt4Rwuc5EzZPn5JnzwasjJF
+         zOlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794958482; x=1795563282;
+        d=1e100.net; s=20260707; t=1794958484; x=1795563284;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-type:mime-version:message-id:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=mxCH98lD8Ul9vSPCZMv+h4ue3Gw/ScCzx5yCrbCmDBE=;
-        b=w481n25XC7eMbbeR2/qp7Bmv1klZCfeFmTUw+FE0pkvz+A4/HwVlCaYm9cZ0W6XiNQ
-         rzM/JEJDVQjUbsAb8FqkTt2oLFxR5U5QkZvWsJs0l4Skp1/kaYG8G8Ym9RFIg39PbSCX
-         +4RW90WPSLzgirWZUtU6l9raz5nbg3Lje0qOSww9Wzj9oaZ/qnrfKZJEALSgp7EdgBe2
-         q5S/n9mHspODC2TvYVhYP09WbySVwfHad18Cx+tzSf2Iu9/CCHZSwpJq3Pj5VK1R9JqP
-         TmyuLviSJVk1mWH6SKN1M/5WLPimbh+tJg2GJsjXtA1z86YeV2lv75lNXQ3sP+x9FB3+
-         iwGA==
-X-Gm-Message-State: APuU4Z8ryYr/p+L95xhwY6zBpHTzaIJhoY0a/Wp250EN2zkEWcAE4Hgt
-	51Zv3yVVAJsmqQPOtt4tLALOk8X2vnQhf8ztdas1tqCkcXTpnyWOAaB83qNFWMtqdw==
-X-Gm-Gg: AYBFou2U3XgsuhE077DyyY+qSNNNubB3xdxvxcf4bDYW2BaGcICkl7kJjflUyCVBm70
-	Kv9+KGjgTe4WXvyQz1xYYFcCqhgJnh0tcYCv6kk9IaBc7l3/+iABLV6hPxC2HOMFcrRVkKsVbIf
-	bzdp1c0SUoVh8neWaXiiDjUHCwDzY2x6WP9T3YPc7w6W0Ol9z9nh192XvYUhR5bwCLnoizFJv9y
-	xGcBvQLiAtHgMOvtET0raWO6YjqdsV2D8V5RoW0LrbvTqksYqXpAjzvsKsn1QUmb9WMx7V8WOOL
-	rSGUpdD8jpIiQSB71Hwn7cg/EUv8RUC7QAUj1AXgopiPcz86cPY2+ckACn0qjwKvBpi9DCTNSsF
-	7gBDdAhim/xsh5d9M2sAB+D1mWYjnD8H8dRkpY+TAe8CAZe01NgnpEdIj1Lg+7RK7nyros42W7A
-	sG75cFj3IjreGwbdef/jT+95f6Lk88qgjBk/zAcbywNNWgn9XeTJ/Y06HDipoVoBacxv+R7lkrU
-	Uzm6tGWWsPUjG9jhw81l6CjfVLuk0sJCUz/+gn+e2sQPwkT4UN4T0pE368RBI6bJqvTFBI5CJKK
-	YKn/hTA+QmRQvkXBr5VwtbF1L8dlbZ+u1gQgsYJBWxkR0S9y8OxdODN7p+b8/RUFS+Sw0fF8Gic
-	3H+xjNvTPqFpTABiZQKCXveWvoF5V2owFiWNZ69Zx67WDzDx6UNg=
-X-Received: by 2002:a05:620a:2556:b0:93f:19fe:e6ca with SMTP id af79cd13be357-9499972c8e6mr213324085a.43.1794958481841;
-        Tue, 17 Nov 2026 15:34:41 -0800 (PST)
+        bh=id7sxPUZ1q5vwEsAL+ZQA4c7CaWDRU0GTvUGmQVP1r4=;
+        b=Vdnz4YhvAKiL4g/8g9flz4SlPWwXTzMUfgJ83LCX7ept8JXwxEIsF5GLgliKOsjYAV
+         +Q51xK+/kuNsWgGNrtU21CXYzUdxckZhyUFlWkOqfjyvcSkXgYhA40cnTWC/cCZkLqrW
+         t+EsEzF0CjEg5T/qe/WexOLhVzRaVulDQNrk4rp9SSLV4ccccxlyLemxeiBqyUEqqrHz
+         wSqx1C/At9PMBmetIjSfLwlXq3j23rIxLUVW7mKYMW2RxVK1bHaoXaGYTqWbtPrLzgCu
+         0aB0O0WzuSt3bl8C7ThjSpqrMUidEk2wZ4ja04FIZkb6RQRG8D7jc7M+sIdfBHuDhBh8
+         TskQ==
+X-Gm-Message-State: APuU4Z8L6BX3pV9vT2D5kDqhk13y25lppvB0zaXaU8qLh/D1Y1bLDy5+
+	wy1Vn/rcuR5jhm8N7ZeU3CENmKNFWlmbAkSSGor7Wtpqj2qHc+Wk6fnZK6yikIfKGw==
+X-Gm-Gg: AYBFou3BqmWPmiT5Q3eG9R3uOLzy4e+ASzoDWk7f93JYLboHkI5zfCufkRGP5J2bVMu
+	yEA6udF/PoHrw4HXQ9JndvBbcvK5CGedpukSrKw1fzS080asJeNuCVoB41fpH38FpY7XkMnb4T+
+	IFixYRMOGjkgybtuUMQJYaK+gyP4j1gLCP04ftlY9EN79Kg0oMe0mRYfrza34NgDjOKv/UoR67W
+	W2/lj5q0FxwK+IYfq8KUZv5ygF9j4kN5j3EceV2cdKWtGO2LOei6uwxfyz1s7UJN9ct385Lqr3t
+	eCg3cigWek4QxfPkCfnP9yLykxj1XdoUz/xobrfzLMDNLNR4SBZIdcbkoEvR0n3Ylg7yhYRVm3S
+	BZF5dHuw+48+2vqqupgXjx7dzP9cXkfXmj83+Y01Cx3DjlCLhrF38PDiRxlBKL0dbLcApRv8QY5
+	SbkNJzOZUz1JrSK1T77yVS5nBlj7cVss52CQebeXhxsDQ1LZUbc0zbdM/c1Z/aa3oXLAS7trJtP
+	7GOb+eDN3R7za/116fzFnQZhOzaonalUXBUYJvPuRcRpiFymTXCl2hDShlv/MUsFPbwBfLLkXMr
+	29uyp+EKjPgQxdSoGDW0N4SWW4dVi7Z0ksiIR9eLHZzeNbTcZt303kvKgq/3tyibLL7M4EIkF63
+	klePtUypx+w3eSR6uCiiG5aU+pol+Ntg=
+X-Received: by 2002:a05:620a:2906:b0:944:dbd:8253 with SMTP id af79cd13be357-949995ee428mr247457685a.59.1794958484257;
+        Tue, 17 Nov 2026 15:34:44 -0800 (PST)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9499b721861sm42496085a.11.2026.11.17.15.34.39
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9499b7c9a65sm41585085a.34.2026.11.17.15.34.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 15:34:40 -0800 (PST)
-Date: Tue, 17 Nov 2026 18:34:38 -0500
-Message-ID: <7dc91c090b4f8254f8b6fbe2ec36060f@paul-moore.com>
+        Tue, 17 Nov 2026 15:34:42 -0800 (PST)
+Date: Tue, 17 Nov 2026 18:34:41 -0500
+Message-ID: <7a012ff555beb43b389ba5ab96e25ba3@paul-moore.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -96,72 +96,67 @@ X-Mailer: pstg-pwork:20261117_1552/pstg-lib:20261117_1552/pstg-pwork:20261117_15
 From: Paul Moore <paul@paul-moore.com>
 To: sashiko-bot@kernel.org, "Christian Brauner" <brauner@kernel.org>
 Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-s390@vger.kernel.org, linux-usb@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>, "Vasily Gorbik" <gor@linux.ibm.com>, "Alexander Gordeev" <agordeev@linux.ibm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>, "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>, "Joseph Qi" <joseph.qi@linux.alibaba.com>
-Subject: Re: [PATCH RFC v3 17/44] securityfs: use fc_init_pseudo()
-References: <20261116-work-loop-pseudo-v3-17-8cbbea1cf34f@kernel.org>
-In-Reply-To: <20261116-work-loop-pseudo-v3-17-8cbbea1cf34f@kernel.org>
+Subject: Re: [PATCH RFC v3 18/44] selinux: use fc_init_pseudo() for selinuxfs
+References: <20261116-work-loop-pseudo-v3-18-8cbbea1cf34f@kernel.org>
+In-Reply-To: <20261116-work-loop-pseudo-v3-18-8cbbea1cf34f@kernel.org>
 
 On Nov 16, 2026 sashiko-bot@kernel.org wrote:
 > 
-> Initialize securityfs as a pseudo filesystem. This raises SB_I_PSEUDO
-> and SB_I_NOEXEC. securityfs never holds executables.
+> Initialize selinuxfs as a pseudo filesystem. This raises SB_I_PSEUDO and
+> SB_I_NOEXEC. selinuxfs never holds executables. SB_I_NOEXEC also
+> refuses PROT_EXEC mappings but the status and policy files are only
+> ever mapped for reading.
 > 
-> But securityfs needs device nodes. AppArmor puts a .null device node
-> into securityfs. On exec it replaces file descriptors the new profile
-> isn't allowed to use with that node and opens it via dentry_open() which
-> doesn't care about SB_I_NODEV. Such a file descriptor can still be
-> reopened through /proc/<pid>/fd/<nr> though and that's what opening
-> /dev/stderr does. The node itself can also be opened by path as
-> /sys/kernel/security/apparmor/.null. Both go through may_open_dev()
-> which refuses device nodes with SB_I_NODEV raised. So clear SB_I_NODEV
-> again in securityfs_fill_super().
+> But selinuxfs needs device nodes. The kernel replaces file descriptors
+> with /sys/fs/selinux/null on exec via dentry_open() which doesn't care
+> about SB_I_NODEV. Android init however opens /sys/fs/selinux/null by
+> path as /dev/null doesn't exist yet at that point. So clear SB_I_NODEV
+> again in sel_fill_super().
 > 
 > Reviewed-by: Alexander Mikhalitsyn <alex@amutable.com>
 > Reviewed-by: Chris Down <chris@chrisdown.name>
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> Tested-by: Chris Down <chris@chrisdown.name>
 > ---
->  security/inode.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  security/selinux/selinuxfs.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/security/inode.c b/security/inode.c
-> index 0804023676741..edaebf0f1972d 100644
-> --- a/security/inode.c
-> +++ b/security/inode.c
-> @@ -14,6 +14,7 @@
->  #include <linux/kobject.h>
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 310e19efff1d0..d7ae853b6d685 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/vmalloc.h>
 >  #include <linux/fs.h>
 >  #include <linux/fs_context.h>
 > +#include <linux/pseudo_fs.h>
+>  #include <linux/hex.h>
 >  #include <linux/mount.h>
->  #include <linux/pagemap.h>
->  #include <linux/init.h>
-> @@ -49,6 +50,8 @@ static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  		return error;
+>  #include <linux/mutex.h>
+> @@ -1852,6 +1853,9 @@ static int sel_fill_super(struct super_block *sb, struct fs_context *fc)
+>  		/* last one */ {"", NULL, 0}
+>  	};
 >  
->  	sb->s_op = &securityfs_super_operations;
-> +	/* Userspace may open AppArmor's .null device node by path. */
+> +	/* Android init opens the null device below by path. */
 > +	sb->s_iflags &= ~SB_I_NODEV;
 
-AppArmor itself does a dentry_open() on its null device to effectively
-block inheritence of open files if not permitted by policy.  SELinux
-basically does the same thing, in fact AppArmor's aa_inherit_files()
-is based on SELinux's flush_unauthorized_files() according to the
-comments.
+See my comment in patch 17/44, this is also used internally in the
+flush_unauthorized_files() function.  Once again I would prefer the
+comment to be changed to the following:
 
-Anyway, I'd suggest changing your comment to something like the
-following, but it's not critical.
-
-  /* Allow for LSM specific null device nodes */
+  /* allow for the /sys/fs/selinux/null device node */
 
 Acked-by: Paul Moore <paul@paul-moore.com>
 
->  	return 0;
->  }
-> @@ -64,6 +67,7 @@ static const struct fs_context_operations securityfs_context_ops = {
+>  	ret = selinux_fs_info_create(sb);
+>  	if (ret)
+>  		goto err;
+> @@ -1955,6 +1959,7 @@ static const struct fs_context_operations sel_context_ops = {
 >  
->  static int securityfs_init_fs_context(struct fs_context *fc)
+>  static int sel_init_fs_context(struct fs_context *fc)
 >  {
 > +	fc_init_pseudo(fc);
->  	fc->ops = &securityfs_context_ops;
+>  	fc->ops = &sel_context_ops;
 >  	return 0;
 >  }
 > 
