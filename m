@@ -1,87 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794904111;
-	b=qYY3kDPs2JUlHT4POG62MHhXUTbkLAwUocOOjwWTwozicM5gDFTw2ky6sAKPIeMkKTUR
-	 n0Z7PowfF1FU2ycGjr+r6S2nAjPvkr62dzZGeToiFiN7YPiCqLzBG3BE+hMzGTKlfGU0c
-	 VvxeaFoSDGRZRHSe5BwM8Iiu5D50ad7UaLDFZ3JUM1Tw1NazwJw54ipc3Je4Y6eHjEk3P
-	 DeP0LfUZxOidRBL6eVuOObEOWT9K4snwVl+iYD+0Ypdt43d2qj7QKGfm1YYLDADJ5NV6A
-	 5M23Z9+8d9LmZKcyf5bRL6DeCA/4ZrJug0W43Kvo65r+pP1SG0CenOTBZwu7bQA+X1Q==
+	t=1794904346;
+	b=PmYh8ty4crRWR50bOFWzEON+MRqZdDa/TD/1aZwo9kJBFD+iyPEKFMWxw4PN7bp6QMDr
+	 E060tJKZzc2k03RyAEr4y0tAQlfDl+kVpSXC8/hIHVpDF9dA/3RADD0XisB4jDh2ONN0h
+	 br+v213T/sB3DYvOcQ7bVhg9/9dgRTQ2/qWU8fnI9O3DwboEneYoBXEkzEFLy2XTTmd5K
+	 od0yuHXafPHzjnZaeV5i/pNn69EplkE6CxgS5NLJJbBoI2nxDtPeJyO9gJyUHejHCRhYv
+	 2RPr0jgp8LW53OCxz/+6oVCRfYbi1dVdD7SY6mGBFC6gvH4A4dlyp0nGesFruqjd3tA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794904111;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794904346;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
 	 Content-Type:Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=80nJ9mfJsz3UGKSZAnLQ0A7kD85nyx4H/r5vYSV/3QM=;
-	b=O+FNOrJk/pOQsNBq0tbDUqea9ES77GX2E2Jh1YyAc7QYMBPjLq3Lpql4/RKaR8dTyQyM
-	 YtNB9IGGz7n06wUkk8UQS9fZg6Xi/SjVEqr4oIfU3FktDFpNFPoLAdfboM+QM/CVAt3T9
-	 YTfpV+lnf6Sbrbboc0dU04zFkDIrIoN7Wa9YIHptkecz6Ar63aCbEWBs25n+FV6VwLG8E
-	 lvCO7ZwIFQQaKeV/wfHiwulC7WT2DG3PmLfOAbHLcV7/YTVxNkcYsJK8/+c5UJutK8Z00
-	 nwCKTlQELy23GmIlM8DIS1hOsCZOOb3AbI/iwXLF8t36sc3UkQJ5OlXnvtJccbIQteA==
+	bh=iGZ2JImQ8AaSp09QdDpLN1PoylGc+Kk+7WphF44IQ4E=;
+	b=EwqtZGTMH5sFeXOmHy+oivmMTfaUwccn6xcPFhBYONopEzCOqVvNPAl8eTqtFdwp8sCR
+	 lsEXf5DMAwoQMbYUK87nmRLDAvKyoqMwnPrTLJ0MPtyW0uL7yDxccygwu4+U3Kgd9WIox
+	 HsQVWXcZMEt0Bz40qL9ihuuDFF29LrVKYXc7l8xIkKaH1zuK0jkq599WyDM7dOAUbM+sU
+	 oQ8cb8cSP1aqgaHI62tk5PmN//n9DAXmx16GmdTHQT49JNgb7xwrXhM5GjFOadQ5M/+bD
+	 wlQmz9R0rLaPj2CmQ5ki1H60IDi4X+fKfDLfj8+jAjwyDMqaoXRIS+Q0jDc7/R2mnLQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=amutable.com;
 	spf=pass smtp.mailfrom=amutable.com;
-	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b="lDHE/E60";
-	arc=none smtp.remote-ip=209.85.128.53
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=EFPX8Vuf;
+	arc=none smtp.remote-ip=209.85.221.52
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B6760A2610
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 08:28:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F2B6760A2610
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D426B606A89C
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 08:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D426B606A89C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amutable.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amutable.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=lDHE/E60
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so27360705e9.3
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 00:28:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=EFPX8Vuf
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4a3e706b5dfso178011f8f.2
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 00:32:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1794904108; x=1795508908; darn=vger.kernel.org;
+        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1794904343; x=1795509143; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=80nJ9mfJsz3UGKSZAnLQ0A7kD85nyx4H/r5vYSV/3QM=;
-        b=lDHE/E60fAF7y/GcfWe7zssqpibfABjaDWc4DbPAbANFwY7mipSCQzk/tGna/Yk9Yp
-         5M31Ja6Q4S90Eg4jWdoE2GH6TurYV9Y9Yxd6SoBGFySZlSGgcD3Nf8Ac20Morq/IEeLi
-         HZNDCkpilOoqmPVEk/N5paMQG+RjNO9OhPzIDtVn6k+5pNMY8rSlnV+zGCrptyxwBw8i
-         uHdMwH/Pby0zhrQLCKl2b6izfUmExSZrUoQCnWP4NFP78u9vhGGyVwUcvE3no1VAV9ln
-         DDlxdlg3j7mlBLcF1wQFzdXfstbmRKgVspXMjOajtHMeg5NsSNAba7k+RMZ1HFntU+s+
-         8A0g==
+        bh=iGZ2JImQ8AaSp09QdDpLN1PoylGc+Kk+7WphF44IQ4E=;
+        b=EFPX8Vuf7iz+NzEUQG+pPgjK/MbrESqv3n9ATmra3Zopp4tpstszPHFfE2sR6EI1XH
+         /MuIqTxoWkMXSLrvcYnqUGQvNVGY6YndEf7Smwels/t/G0PiJAqa5YTB3/XSR2c5vF/4
+         5S685rADCuM7kD+KTHsn5xD0Bbvj+kfNJN7h3Eeu6Tgpz77cxc6E5ixV5T0A3r/KAOuP
+         +pclbSVYUTOzYQ2RRiRVVs4C5Z7y/NhXCRc6Of4Q0fL8jD/Em4FfidsaQN0h6TdkChBo
+         DufH5bn8tmF4fp27j4WWCE7M7sjar8yCORXmuz1wFPQxfWworU2xHCWyEC/YN83R4E+t
+         3i9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794904108; x=1795508908;
+        d=1e100.net; s=20260707; t=1794904343; x=1795509143;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=80nJ9mfJsz3UGKSZAnLQ0A7kD85nyx4H/r5vYSV/3QM=;
-        b=Bo1bUDi2nRuLVePrGxjbxddQz5j4jY8Xvyn1yC1Jh6Ac2iVmmy+PoclITYEkYjBx7A
-         y1Km8qq4x/6cznbvI1s4yK3Jf0nJ9KM7HHJt8dOYSwsMzxFVOt5vZH2olBPH75i4qyl4
-         KObHG2MBS+LNXPl55u9/j4daZiKWEMz+FVn66HIvu38GfmmwQNBePJjkQIDYHh27c4nb
-         hIfB2FvByaNaTJmTGX6gF443t2hV2LkRqeCuL6kEpWQ9o42Eja3J7A67mDqv473LS/lt
-         0PP/a0bgbs4dXkJOXM996rydXZ1fGbck5jK1HOO6XLVirYnIPYAKkDo/EtGL+94qPyb5
-         TKzA==
-X-Forwarded-Encrypted: i=1; AL+hErEQTfNb1YtzKUZv9b24RKGgZ+HB92frXYPcYWw53gWfLo7Cn+YMMtMyagnmBGAj5c2Cw8gWscfb//p7QfMI1/w78NvqyDw=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9qbFxSzHr5QXWovco6VyaOo0iGi7TzMononpgOYx5heLCA7OVP
-	HS7ajgNrm0TXX8KcTgW9Fw1oMOOxJvKmJX0H8413eJ6Glxjd+yG1hwzXT0txtXgj4K6r
-X-Gm-Gg: AYBFou2DdPmLjsihSYMorSp1UvWSKxIDIYCDZAmbtlamyL/bJOKOXXszL3U2O3XzNjk
-	EaZqHAxRt6bNTkDbhterPDjkbKUR+FuSNsP4sG0M3Fkb4ZGxKzqBi1HC2S+V+EDHBg2qEYLSGuj
-	A+ZPaLndEp5dsjR9nbmubFqdJMh5GNMsFFdichpUDelkSBZ3eMS/lsded8WKsOENwDXI5JgttHv
-	bqLlTUHOY/29gweBqhSeWK8xHCT+KpGZGUGtZ16uDfiZTv2pMPyKjRV/NNIrt86ggI4Bp3Hz2rR
-	/PtYFrSEkp8upkc84IHoEz5PZDCNzS/G0chuNdzaiPZfmrO29Uqsq2/EPKKtHvUhSGDjVvHtrFv
-	JyAF0ckyXVZ8jwPtYFKD5HBeYNPtg3Hy3qYuNiI/anNA0WF46Z8Mj2SFg9uRAPv19n/GtjJPjC8
-	5X8CfW6Yl4Qswp/t5PsO9i3m8eJFEv9wf6o51z/S4Mojy3OG1oYpE48AtL6U/FZt9aNcwQXcIYW
-	n8bTdvopQhqchkXs+gA3KtDngIOE4tbSs6DSC0AQSe3oAM4Itsul4apqSXySUZbWYE34BNAryoc
-	OYYwmb+7YT5NNbOQlvvI1tpZsH9jh8kWh2Yd2aEDgn9/ZPhqvuZ2uLah4GMoSUKLZUSGiaCizQf
-	xymrxJ12KpZxWjBofznyOjK0UEQLaE/JaUVJiktAMo/ZqESZESIIiR7FC
-X-Received: by 2002:a05:600c:6286:b0:4a1:7e77:c382 with SMTP id 5b1f17b1804b1-4bb55a5d634mr255399085e9.5.1794904108278;
-        Tue, 17 Nov 2026 00:28:28 -0800 (PST)
+        bh=iGZ2JImQ8AaSp09QdDpLN1PoylGc+Kk+7WphF44IQ4E=;
+        b=hyLV++TlcOJK0TmlfxI1gtDRtp0LtJfvXGODIk/iLHQAxU0xt5+whYZSIvFnHjb/uF
+         t68KcuyvyrlO79p1eb++FgaOtscOO7oqvtmSbdqtjrM4DjyVXNYyGVH6fm+fW0KDHGwi
+         n7yqC2jv+73iLg7Ipp7iU5oZrF/eVGziQWt9s/STyvYjvK8RXPzui/gNZMu811kOT+kx
+         0MMi8slGjuSC2jqjTN+RCU/Xx5eCqJstmO7uL0JPAu7kCP6+6KK/jzShRb+9EXtdrTf5
+         W9sN7QrMdM890QzjFzBHjJL5kA7fuyjcDKBQu7najXn2trvf2gyChMCIuJDsIr7GDxmf
+         PaOA==
+X-Forwarded-Encrypted: i=1; AL+hErHHa8EqegqNTObaqMJw6R+inQJgvRINmnQBVmNb3Oeecq1eDdkQb8vfe4EoxibBdsVeHu1SqZDv7YlsNtzEfR1h2cdJzJk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/826dC3aEYIDO9cHCCjM33wq38+aNEVdDR8o1zUtTZuQY2u3Y5
+	TxaI/uy2EZT8Qp9L4o3asUVensRFzu0Zg4ljMnHVUvgUlWIlUPCkaFaGFpcD1y8pSKfZ
+X-Gm-Gg: AZFdTZdrwmpJfdtb6FdgpyQOsRh/mHJ1cURf+/fc50YbZsiwwZ+WddO2L1+l8Ebw3PO
+	bD9w+Bv355CcTCpgEehz4JJestt2RR6YXFaNc0ycWxOKPA5dnl6NUtQSTRDIhXi+xjUp1TTzfPj
+	KfN9hzq8QvaBInVbaLeOBszn89FNB+3X6VQ7f20mKjc4YaQvihql+TmWbak5wn7ohV4RtOESl7i
+	VYHhFspcBmN4yO9xOZyWVJDw/jBjW2pBHxCMkVli/ALwkzTdDiCjgf+5QtdXaiiqrcvLHPJa8cC
+	S78GPc/5G+Bp5D0P1c28uog8ZJ/3Qnvxjyk2z2Cp627pxdc2/abpDfxtzrGqcYU/DYtl1e2Ofrz
+	C7D6JknkdpMou+RU2wP13caveIh3fKreC4H3jfvi58DwRgvj8qtk5l2sNOhY98sCdA2qXMABH6a
+	DCdEg5K3t5TeBlTIt3LhgY0gKzqzt1XQ2t8Mzx9962Uofx1DiOoh2eGm6mdqerv+qYij+LbRsqv
+	6KxgZU+x/6Jp9EFz5yWqWXLOb0ZA/eZWpGvAjM0YO+ddtmNvDg67qCwb6NGHUWTaPnCbGQ7OYQf
+	f2ZBdPbHYrFsdj4Adm4B1TSGA4Quy4ITn5DFDCciYa0+DVlMaKL1x+4/ybgJFDi5s9a/cnR85rM
+	X+bBq7issDKbK1LsmLVgxPARlCva6aZ5Kf4S1rhOjeTWg4h52dS2LiZoF
+X-Received: by 2002:a05:6000:3108:b0:48d:f9dd:e3de with SMTP id ffacd0b85a97d-49c7353c415mr27089117f8f.45.1794904343236;
+        Tue, 17 Nov 2026 00:32:23 -0800 (PST)
 Received: from ?IPv6:2003:cf:572c:2800:de4c:6789:33ce:97c2? (p200300cf572c2800de4c678933ce97c2.dip0.t-ipconnect.de. [2003:cf:572c:2800:de4c:6789:33ce:97c2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb78422d2dsm75197335e9.10.2026.11.17.00.28.26
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c608d10b2sm43646659f8f.44.2026.11.17.00.32.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 00:28:27 -0800 (PST)
-Message-ID: <afc070a816e3ae5eb3c9e2d62d4f25c59ee61df2.camel@amutable.com>
-Subject: Re: [PATCH RFC v3 26/44] xenfs: use fc_init_pseudo()
+        Tue, 17 Nov 2026 00:32:22 -0800 (PST)
+Message-ID: <fd39200976086130cc82d59699a988fc3e0689cf.camel@amutable.com>
+Subject: Re: [PATCH RFC v3 27/44] openpromfs: use fc_init_pseudo()
 From: Alexander Mikhalitsyn <alex@amutable.com>
 To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Cc: Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>, Josef
@@ -98,11 +98,11 @@ Cc: Jann Horn <jannh@google.com>, Chris Mason <mason@kernel.org>, Josef
  ocfs2-devel@lists.linux.dev, 	linux-s390@vger.kernel.org,
  linuxppc-dev@lists.ozlabs.org, 	linux-usb@vger.kernel.org, Amir Goldstein
  <amir73il@gmail.com>, 	linux-erofs@lists.ozlabs.org,
- linux-kselftest@vger.kernel.org, Chris Down	 <chris@chrisdown.name>
-Date: Tue, 17 Nov 2026 09:28:26 +0100
-In-Reply-To: <20261116-work-loop-pseudo-v3-26-8cbbea1cf34f@kernel.org>
+ linux-kselftest@vger.kernel.org
+Date: Tue, 17 Nov 2026 09:32:20 +0100
+In-Reply-To: <20261116-work-loop-pseudo-v3-27-8cbbea1cf34f@kernel.org>
 References: <20261116-work-loop-pseudo-v3-0-8cbbea1cf34f@kernel.org>
-	 <20261116-work-loop-pseudo-v3-26-8cbbea1cf34f@kernel.org>
+	 <20261116-work-loop-pseudo-v3-27-8cbbea1cf34f@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-0+deb13u1 
@@ -116,41 +116,39 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 
-On Mon, 2026-11-16 at 12:04 +0100, Christian Brauner wrote:
-> Initialize xenfs as a pseudo filesystem. This raises SB_I_PSEUDO and
-> also SB_I_NOEXEC and SB_I_NODEV. xenfs never holds executables or
+On Mon, 2026-11-16 at 12:05 +0100, Christian Brauner wrote:
+> Initialize openpromfs as a pseudo filesystem. This raises SB_I_PSEUDO
+> and
+> also SB_I_NOEXEC and SB_I_NODEV. openpromfs never holds executables
+> or
 > device nodes.
 >=20
-> SB_I_NOEXEC also refuses PROT_EXEC mappings. xenfs maps the xenstore
-> page and guest memory through privcmd, both data.
->=20
-> Reviewed-by: Chris Down <chris@chrisdown.name>
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
 Reviewed-by: Alexander Mikhalitsyn <alex@amutable.com>
 
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 > ---
-> =C2=A0drivers/xen/xenfs/super.c | 2 ++
+> =C2=A0fs/openpromfs/inode.c | 2 ++
 > =C2=A01 file changed, 2 insertions(+)
 >=20
-> diff --git a/drivers/xen/xenfs/super.c b/drivers/xen/xenfs/super.c
-> index 37ea7c5c03469..aba7d038ed735 100644
-> --- a/drivers/xen/xenfs/super.c
-> +++ b/drivers/xen/xenfs/super.c
-> @@ -15,6 +15,7 @@
-> =C2=A0#include <linux/module.h>
+> diff --git a/fs/openpromfs/inode.c b/fs/openpromfs/inode.c
+> index fb8d84bdedfb2..6cd02d456bac9 100644
+> --- a/fs/openpromfs/inode.c
+> +++ b/fs/openpromfs/inode.c
+> @@ -10,6 +10,7 @@
+> =C2=A0#include <linux/string.h>
 > =C2=A0#include <linux/fs.h>
 > =C2=A0#include <linux/fs_context.h>
 > +#include <linux/pseudo_fs.h>
-> =C2=A0#include <linux/magic.h>
+> =C2=A0#include <linux/init.h>
+> =C2=A0#include <linux/slab.h>
+> =C2=A0#include <linux/seq_file.h>
+> @@ -419,6 +420,7 @@ static const struct fs_context_operations
+> openpromfs_context_ops =3D {
 > =C2=A0
-> =C2=A0#include <xen/xen.h>
-> @@ -80,6 +81,7 @@ static const struct fs_context_operations
-> xenfs_context_ops =3D {
-> =C2=A0
-> =C2=A0static int xenfs_init_fs_context(struct fs_context *fc)
+> =C2=A0static int openpromfs_init_fs_context(struct fs_context *fc)
 > =C2=A0{
 > +	fc_init_pseudo(fc);
-> =C2=A0	fc->ops =3D &xenfs_context_ops;
+> =C2=A0	fc->ops =3D &openpromfs_context_ops;
 > =C2=A0	return 0;
 > =C2=A0}
