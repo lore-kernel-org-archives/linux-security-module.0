@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794923744;
-	b=vCo1BxqZHBKB/n7XSiJTlmqv0n3UgXKP1sepqc0PBRYJVOVSAttzYfockE8y/3Fjdlsy
-	 XF+Mw4KTZHwS4z9S+gCMAKS8kIqkwgNu0y7fUShxxPFXKAwk3qVSe21U0Yhj33tZUxmIA
-	 Rr2d/zQd1fOVUmfdQogC1dJdOsge1nyBjHvGx8uKRLfrf6d476gftFrdu2Bl0dsKb2F2K
-	 lKkNwdK8XJl3eXW3TLlKzXUpeNBuF3ScHSbGH3OIVLbAaeIbBU575pSv8Qba+PB6HGp8i
-	 YoTtTj8bSV0fxNjVNVBfce7MIy7miNHVWGwSyW4RK7AVCOuziTY1ccUcfSc1LLPyxMQ==
+	t=1794923745;
+	b=ivgv4geNlck48pbOeuQ6WoCOqsmpI8Xe8DnQlMUpIHMgGGMsy7BMg/ydQouOSZMk3c4f
+	 im1GKKoeEdPYh6ZWKCUV6YRV52jggIngaB4dNQnEGk0P0237m2OFONCQYd5rjySHvy4XO
+	 31nx3IsuMAlFbL5ClDy4gxnpUDJrhSgtjGu0PvU9nFjWeM2YrfAzm/xmVRpdpjUrqmJcg
+	 cT3chs8BmuDzo4mM9DUVb4br1QZZaBqjjzwAYp+ZP3emC8JIRgtmfx3NkC0y5MnAH9ZKZ
+	 xCh9jnJgp1ovVNfEt92SVPTPepoUX98w1ZwiqxLaNhivBfxzxsXtxzF5kDEc4F02iwA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794923744;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794923745;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=niVdYB4wbPRQ2ZdsM52+vL8om1VHOJ58KAgDPTb/zU4=;
-	b=bjmnILceN8NIzkyuOjJwaLD/wikd3BJsIpIsE5ghaBpFqZVhUl72Mig/OxEx1ibnZAB2
-	 3qyWQNP9IpbPB1QqRF1qmFBuCOeTLBLU9iB8D0CfqjgU5DeFJOwqfP+5q6mzlBrS6g+1W
-	 Dw2G1zULDZzoAUs+KlUSWGcUzHnEj+Zy8EFGfVpRezgIQYhKAJZ8vIh67QsnoqTlfAwzh
-	 yPF689Cz10nP7jS8tVwaO++eAfhUyUxYrb4E/uiyp3MLZFHreo4urD/Ft44JYC4EdqLXg
-	 TcUt4+EAp4vQMAYtBVOTQhWuyINhzpb8K+aORWJ4m+VBn2B3pGb217pw+0iP3d6lR6w==
+	bh=gzsTcO3lQpYoueyt0qieEGQXTz7ACczsI6cHAN+Ap1g=;
+	b=5oAh2Yabr7g9w0xFO09w0OHnbUhpBfBssKy17/PV88pxKD9gaod56QeSPjUi+WtzsX4E
+	 FraPwxID0+cSJ4uIGgQ4T7Olj7t5K7SUXAO8o7Ovbyis8hcLhSdNxUjT5PVGX3bv6ZewY
+	 JA/DEQBpTTmIYcDGUIpDYedZk9O2OLAu8A5+LCsM1MSlknxoSdv/evKLozTOPmx71eoCs
+	 DqezIi1S2Zkj4dB6iGIwQ5/qzTkFkz1R3cH53eAkNcrzY022mi7S6sKQqKBnoTV27V273
+	 981EuyP/r77Kp0eO3VC9EjYRYci+fq/b1cb5MdYwM6YQphp8eRWOa+SQYXpIMZVSqZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MIxiCHlS;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SFMGt0Df;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5264B606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9555606A32C
 	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 13:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MIxiCHlS
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103C41F000C4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SFMGt0Df
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83B01F000C4
 	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 13:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794923744;
-	bh=niVdYB4wbPRQ2ZdsM52+vL8om1VHOJ58KAgDPTb/zU4=;
+	bh=gzsTcO3lQpYoueyt0qieEGQXTz7ACczsI6cHAN+Ap1g=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=MIxiCHlS9l6F3FbbAyM2/KqS1sxt1grxwXL3HG/vtN/edueBez3DF9M6ehfN8vgSz
-	 3Y+dE37RUzPoWwkV+50rG23jv2dM14PYlCzleRoSlyDSmKgsnlL9EiOpk6UuEIHQds
-	 YGnuh9wC/0BFCkI+UmYW818gSizi+2tcx4IMRbS1bNzuvCHcgZaHzD6epZsTingo6V
-	 x15cDsDxHdqgfp3MT7Sd09y/sTmKdBSUjK94g+puulUS20eOBETS9SCHzk+xdP7crI
-	 gYCocJIQn2eXB72FLEBpiIhVxOCapWz3YWUCG6f+T1mNZksEkY5330mfJ/0qrrhRnn
-	 KA8wQg2z1PfAw==
-Message-ID: <sashiko-outbox-218908@kernel.org>
+	b=SFMGt0DfHwuwI9trZ19kdSkQCSDW1K/yfCWoX2CGi2b0MX0SVagP2Cd3H7aegCOK3
+	 FTqGWcB6WaMn41CN2RtoCAIjCRcIWA7ma7U/XNbV8CfG3i9fuhidzS63fbPlvYlxLa
+	 xp/DIKZE8uF+TGA0VblC8d2lVB/ua6Z1UBnfMj+xGuuw+MDW9IoRfT+8f/tpBoBA39
+	 6ekdD5r/PCwMUuwwTyD1pespRAWjPOFijtzJKuV4et/dKMK7rp9Wol0lUsUmqgGgYW
+	 hBeW7hNZEQad+9ySRhGc2sl0G/7Cs92Yc8oq2qF6NelD6QC01cdHVuwHcRfbeRS/9U
+	 jOzf9MSTKxN1w==
+Message-ID: <sashiko-outbox-218909@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/4] apparmor: make the feature tables build without
- kernel headers
+Subject: Re: [PATCH 1/4] apparmor: move the feature tables to a header
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261117135042.78238-3-maxime.belair@canonical.com>
+In-Reply-To: <20261117135042.78238-2-maxime.belair@canonical.com>
 References: <20261117135042.78238-1-maxime.belair@canonical.com>
- <20261117135042.78238-3-maxime.belair@canonical.com>
+ <20261117135042.78238-2-maxime.belair@canonical.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 13:55:43 +0000
+Date: Tue, 17 Nov 2026 13:55:44 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,15 +59,17 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> The feature tables are about to be built into a host program, and a
-> host program cannot include kernel headers, see commit 541b57e31368
-> ("selinux: do not include <linux/*.h> headers from host programs").
+> The tables that describe the securityfs features directory are spread
+> over apparmorfs.c, capability.c, net.c and resource.c. Move them to
+> include/features.h, so that a later patch can also build them into a
+> host program, which writes the feature set to a file when the kernel
+> is built.
 >=20
-> Move AA_SFS_SIG_MASK next to the signal table, and give the tables
-> copies of MAX_OOB_SUPPORTED and VFS_CAP_FLAGS_MASK, which apparmorfs.c
-> checks against the originals with static_assert().
+> Three of the tables use a generated mask. Collect the masks in
+> feature_masks.h, apart from the name tables they are generated with.
 >=20
-> The content of the features directory does not change.
+> The entries are moved as they are, and the content of the features
+> directory does not change.
 >=20
 > Signed-off-by: Maxime B=C3=A9lair <maxime.belair@canonical.com>
 
@@ -76,5 +77,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117135042.7823=
-8-1-maxime.belair@canonical.com?part=3D2
+8-1-maxime.belair@canonical.com?part=3D1
 
