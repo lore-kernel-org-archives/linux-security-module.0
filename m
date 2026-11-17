@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794910630;
-	b=Z8DkdqgycXbn4bw8iDJNyxIdBfaSroi0IbMSxWfpwGs3vgqbChr/21qLYF3AW25hTYG3
-	 /9b/ujR2wWlEHiJPIKw1yxSbLAsjUiGUOqhT6o7tHoNUCQarC1o2fmx8gVyKmgE0n2XXg
-	 B7o2QLL39hcIlP9rTSgy+6B0ZbqTsIBNmd/7UKJPR87/0iQIgz4tvqj00Y6lyMgtHbV+3
-	 QS0xJVahmD5M2dZmPzFjmcCjlAISRrzTM2ScAqEJEkK+eKyg1hH0fyBdjQRAW5znxX8Ug
-	 hfQ1btTCrAxAshll/5ljOb9skRbQGle8LlqDE5eb/vOJ7qcucXy12xZIMYSIpR7NKlg==
+	t=1794910665;
+	b=2KPmJqrWY/XesFYXBpBmMv5sJd1SEkTipCeEmWtZZG8YEx31zg+ocnEtjdAWHYnvKZam
+	 YRZFWyg7vTgoH2/sGsescxk4MAbShk2tJc0IngVnB5quZIloFGeUPWK0luGePJBRUVvA4
+	 PjfsE0yW1TRR3yiG1bhxwtQPnU+JczqELcDvA1KG07iygq/Dj9xgCq8Jqjk3UPtJV42hD
+	 V0Wx9HgqtIIUNM8LoRnvu4vxw65LEETyw6pT5s8Vzyr16StTso/869Q1+5oV/8ZFiQMM2
+	 48XI7mrHorGK9qZNQQGR34y++iVN1hnEVOZgQMJx2ZpAvZqp1XB9oiMa+BNKnCfmhMQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794910630;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794910665;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=88moVf/k6LZAEhLRj8NnvP7Y/mrqhih9DGgdZ45nZ5I=;
-	b=O+DsSstnTupjSWyEgsstLuNnMwdTrECjpUUgTId8VRXyYYS3/52xTodaWk+pB16crMZb
-	 KpPCkz1fOpjuf/JGbNTSY2v5ajC2DK32QEcFtHaOy3FkDoE7MszBJV+79h1+w5+vedbX6
-	 gEIDxYgmqotwQvI3nnRhl7o5mkuoW5ZasfdHcV9+Zj6DFKb0Nwe7wC6xOPIaf18f6vpJ/
-	 TaecjDaQFDim1GssAzji+t61xZV0RrBd7vdva1dyI6nC9ZwkGyLuRTMQyJIAo6RjtS1UB
-	 fbdd/jC+BGDsKiK66hQIKK9y0nFokOad05AEjT5tUH2JfFW919umgDbpiZ3qu8dnNQA==
+	bh=ySuzHjmG4uRFGXyGfa/u993RjgUB2Ug0Tu3eHKgx3Xk=;
+	b=OqZYF2ExQVcB7KS3A5xFd9B+M0WdjgJlVFoE7DZTQlNK0FnN9dChywxDwEz7P3OJ3126
+	 B9XY2jhzuT0Rjskj4GwJ38M7i3Wh1H4sP2rtMbRJOrMg8gRAQrmE7/f9WnnA/kZS4PmWZ
+	 BgHUhokqTfuoLZBkdUbiFHRQQR/UUZ+49LHwcs1t6DofOXq2VSvt0sMFCqjVeTcDmVX04
+	 y6pzPT7xTVPHBKBet4olQdADnr9Q4Tx9PS3mn5GHFj2LjpJaJe+LBmFLklfdVU7MhfM/r
+	 o6lxyVbtczPWvFPCde6jLlMzRFZtG0MQ/S/70fdIHc7ztCrsgkpJjXbCVsjKkL0efKA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ozOxGmnI;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N7ZZkp0w;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703FF606A31C
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 10:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E0C606A899
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 10:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ozOxGmnI
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E27921F000C5
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 10:17:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N7ZZkp0w
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 930911F000C5
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 10:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794910630;
-	bh=88moVf/k6LZAEhLRj8NnvP7Y/mrqhih9DGgdZ45nZ5I=;
+	s=k20260515; t=1794910665;
+	bh=ySuzHjmG4uRFGXyGfa/u993RjgUB2Ug0Tu3eHKgx3Xk=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=ozOxGmnIBhv4X0DpqJN4ZPzZ+ooizg3CEPH9Kpu40NyntLsN+pHrPRAR0NLPv407W
-	 68FACzzizGCAQrwsHuLK4lTjY18trxnP4V8qYlwHO0sDpgKk00VrbjxSZvJph3/w3c
-	 xBVVmpCNgXt3BTD4dpfpazSc4RFEIAq6IOPay9OuG7COLc6hQ0bXIW0zjntrZpBN95
-	 qpEY7LU7AxFHGmC6EEaOlnh63h7Ywng5JgWr6sRq5nVeKdzJ2IsV1ojK5kQSxfpLMh
-	 3t9gv3+ETM9l9he0R+3+oFnUVBUEUrgUJ7JtTAQDkZsdlgAuFTFq8/KePJ7PsTyzK8
-	 vuSPaxqkRq+Hg==
-Message-ID: <sashiko-outbox-218584@kernel.org>
+	b=N7ZZkp0wN8hEB5JpGt0E3/RJFrW/VViQ3mMGWfuBCI7hTzXUbvBcX4GBc5dhI5Ft6
+	 TQ4CUXzaP+y/sjqHEeksFdL6Cj4X7o2EtGz/18Uh+1zTOeg0iBf353l+hApfy8QaD1
+	 gMdm2jHTdTwJrR419IPgxV4kyPLfOnHSuZ/Tj783ARPKgYaEQiDj2aR5FKjmp0WgCg
+	 FEkJxBWLBwn3TGLHW8rh374QnPBIcLjTHIIWXlWg/clizxbinPTat8LmHKT6cCeiNa
+	 oo7W+yFADkhKWqwpNVj4V4+wMteXoLo6zcjeOQV38/1MfkjQBi6Hn/Z516yHxzMHR3
+	 tUx6CMTTXMmLQ==
+Message-ID: <sashiko-outbox-218585@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 6/6] landlock: Fix capability restriction
- documentation
+Subject: Re: [PATCH v2 3/6] landlock: Mediate CAP_SETPCAP for inheritable
+ capabilities
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261117101157.2520463-7-mic@digikod.net>
+In-Reply-To: <20261117101157.2520463-4-mic@digikod.net>
 References: <20261117101157.2520463-1-mic@digikod.net>
- <20261117101157.2520463-7-mic@digikod.net>
+ <20261117101157.2520463-4-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 10:17:09 +0000
+Date: Tue, 17 Nov 2026 10:17:45 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,9 +60,19 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Some documented claims about LANDLOCK_PERMISSION_CAPABILITY_USE do not
-> hold for every capability check.  Remove them instead of listing their
-> exceptions, and call it a permission instead of a hook.
+> A process in a domain that denies CAP_SETPCAP could still add
+> capabilities outside of its permitted set to its inheritable set with
+> capset(2), if it held CAP_SETPCAP.  cap_capset() checks CAP_SETPCAP with
+> cap_capable() in cap_inh_is_capped(), so the check never reaches
+> hook_capable().  Through file inheritable capabilities, such a set can
+> grant new permitted capabilities on execve() when no_new_privs is not
+> set, which is possible for a domain enforced by a task holding
+> CAP_SYS_ADMIN.
+>=20
+> Add a Landlock capset hook that checks CAP_SETPCAP against the domain
+> under the same condition as cap_capset().  As with the mmap_addr hook,
+> LSMs implement their own policy in this hook: SELinux checks capset with
+> its own permission.
 >=20
 > Cc: G=C3=BCnther Noack <gnoack@google.com>
 > Cc: Paul Moore <paul@paul-moore.com>
@@ -75,5 +85,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117101157.2520=
-463-1-mic@digikod.net?part=3D6
+463-1-mic@digikod.net?part=3D3
 
