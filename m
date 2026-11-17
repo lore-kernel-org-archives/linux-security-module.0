@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794892161;
-	b=Q1RO9NNgDoseEwB6QC0JlZzJtiwM5ZzgWgnwJkvO7VgUcpGHVJ244i5ipZjGyQvujCsg
-	 fon7MMJ7L7P6GUsK6P/kl5B+GyObPtPWijfwUFGiOkGGSOW5bRG5IuryExm38yGqiLDnS
-	 uyMsH2PwLs8jSCdl1ZJ3XIakZzwV83qwav8mi85rO1jn+uKH0MqqW2hH4/NFvysmgYTj9
-	 lNY0qhiL38kHbiG/9DEMWYFyFGiBbelLApB5ZLnRiAvZvV8+Xefmc6waZQYiOEPQN5bIw
-	 P0sd25nEwhEez5lqyB0THTWEH59Rwa7Dge2+ihBTyfPeGyentaEa30ydDwgpiKhCIYQ==
+	t=1794892157;
+	b=NXMrTG5gQa9NlEDPNDqwQ55b/ZCWpTs5H8q6LykCLcpudgz0+LMBsqZMUgrff6yLhMsW
+	 GNl2TJFhCS6MUYPr4TKcosEKRXRu/WzT/BUqGWPtO06vmM8VwKF9ztQSLfCkpYfeZiFwu
+	 cAiZOhvYzvDm1D6rsvsYeaZQ3gLOYotbbb2m908Je58UWHvx2adzAPs7Hr/7SwEN5FVsW
+	 iw1QMZ05jNC8aWhu1DadJBpdDrOdY4rrfCdlcOZsvuW+jSut7F2fvr66EI32+YeyUoSzf
+	 YfwYqOIo8Dhuk0+Xsjwrezw/w3+ty2AY9cXOrpXPIuh5Pv2hNiLBL75/40CzpSbTW3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794892161;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794892157;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=iu+uxrfotj0rxH3AuEVj7wlPdAFspDk2RjLn23cBba4=;
-	b=YJePFxYHWjtljkLXKFT9s4ysCKLNQ/Zh8RDkLODA9FZ5gp2yF1lKSgH26LyXx6K6EPDB
-	 3Z8F1XLYD2CPAut2OrijlxFQdw+uCbqE+Wl43pci1u/O9G3TcmqDDq+ORkaXzkbkRvVrY
-	 pOX8gLJNmj7ZeEHUXLzG9He8zW0731kDxOWo+7ekhay3ydcBLMNl4zfa6/Pyniq/g8WGV
-	 xtye8/x0J1u//OVdCWzD790vdly4qJPyGfiqmfd08DY9pcfIl2XnuQYyRv4NmIkWVa4NW
-	 pt5KrdVo7NYEgkc1qKw27ymJo/AwxsydQHXCCo/6GmLtIkt+sTZv6JpQ9lUe2fLAZQg==
+	bh=M4WiZXeWPQ82N84Y9nCYX/jyLTp3H2fM/Z2HLE6k9xc=;
+	b=d9IfR4zz8RnXl16Ry4pf1tQ3UXquBTJ2z4yZbI2m6e4ylX7PtWxsLtG16Sf51/mP5NFi
+	 OJyRy+wOvDGIDF9kCj+gjmUUFprv+4dPeHiacGb7c9ACGo6rBKx4VRRn17VmUFtHQ34x+
+	 l8O6cZjm9IUqnvWfzBVov0imSDDC/n5owTWY+N/w3j363oHgMZwoiRy+PVH66nBZH/VnI
+	 cUlB9/RqW2AcioFnQ+vQe0CE9ouQGhvSq2k3r/FtN7cTVeLt6R/8BSpn4hynjKaRxAR2F
+	 UG7kjZPWE0GTT1LAtL+9BaTjOOXN2PQlWPFCPAzGdeiz0Rt2YOk2ZyXD5/s9090BIuQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BWmdOeBx;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PFkmYOpx;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id F2AE7606A330;
-	Tue, 17 Nov 2026 05:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2FF70606A33D;
+	Tue, 17 Nov 2026 05:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BWmdOeBx
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id DED041F00926;
-	Tue, 17 Nov 2026 05:09:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PFkmYOpx
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 0C71F1F000C5;
+	Tue, 17 Nov 2026 05:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794892160;
-	bh=iu+uxrfotj0rxH3AuEVj7wlPdAFspDk2RjLn23cBba4=;
+	s=k20260515; t=1794892156;
+	bh=M4WiZXeWPQ82N84Y9nCYX/jyLTp3H2fM/Z2HLE6k9xc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BWmdOeBxRHtsQTn3yh/Lk+S1imLxjjdPJA6A+zflyXOlhZGRWTHvdWXaQ/tmvvI8E
-	 v9umuSX4tyamF7WhrA9t4x6SP6xViDLF/9xNVyzf0g8TrQCXwiThrPsREEuULgVTeS
-	 pO5HQYcjCuZeAtmdWUeCEg3mMs5Q/ngWCdr8YRVs3gayyH8dofvw2z5gL9dN5N5tWX
-	 JQ6zpEcD4X+sQ/dH/Cyi/FlQ4d20BVwuVNZRB0h/ASoEaABqsC7GhJOCri9eM8a9A1
-	 NkO5MijmF7iHhNGHYVmBuqY81NYnNy1M5g/udkANaaHpbHAiB2fxRAWefIHrz+VrA1
-	 jU1tzVfs2hTxA==
+	b=PFkmYOpx5IlDGTqSLyBxzl0YGEVuzBQ/YoQ2N5n8lG0o76l/IccpEZ+g9YIKuhUS9
+	 1mRRfxoAuMpy5IBKekHBNF3vJBo0pC86ymq4qIcoY7WycPrNT8M6NvRQ5xpJ0LSQUc
+	 r+rbWUSCbYsFd7vLHdp8c1Vy7u7DHF1ouqXcswCHYhzUQcXoM9JdTWwi/KtD8SVM9j
+	 7k/xBzsWI4gr0hUO5p69q0WWkeqJLRReX5VLQwRjXixV+HCmvrT8bnH1M6pmn5IS6I
+	 OrnITKzXqfafipjW4dMenD0trkGdHA6tLrVmkytTo/Zt1TGrK6st50zdqCPFOMu8t9
+	 1DoNLssoRLLgg==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -80,9 +80,9 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Vincent Guittot <vincent.guittot@linaro.org>,
 	Vlastimil Babka <vbabka@kernel.org>
-Subject: [RFC PATCH 08/13] fs: Support FSCONFIG_SET_ROOTNS in fsconfig()
-Date: Tue, 17 Nov 2026 07:08:36 +0200
-Message-ID: <20261117050841.3289652-9-jarkko@kernel.org>
+Subject: [RFC PATCH 07/13] rootns: Add rootns_enter() system call
+Date: Tue, 17 Nov 2026 07:08:35 +0200
+Message-ID: <20261117050841.3289652-8-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261117050841.3289652-1-jarkko@kernel.org>
 References: <20261117050841.3289652-1-jarkko@kernel.org>
@@ -97,282 +97,663 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-fsopen() initializes a filesystem context from current's user, network,
-PID, and IPC namespaces, preventing an external manager from creating
-proc, mqueue, or userns-owned superblocks bound to an unentered root
-namespace.
+Multithreaded userspace daemons cannot call setns(CLONE_NEWUSER) or
+safely mutate process-wide filesystem state in place before spawning a
+child into a target namespace set.
 
-Add FSCONFIG_SET_ROOTNS so callers holding CAP_SYS_ADMIN in the target
-rootns user namespace can bind a newly opened fs_context to that rootns
-once before offering parameters. Update fc->net_ns, switch fc->user_ns
-for non-global FS_USERNS_MOUNT or FS_USERNS_DELEGATABLE filesystems
-whose mounter fsuid/fsgid map into the rootns user namespace, and pass
-the rootns to ->set_rootns() for proc and mqueue.
+Add the rootns_enter() system call to fork a child process directly into
+a rootns whose root mount has been installed. Transition the rootns from
+ROOTNS_READY through ROOTNS_FORKING to ROOTNS_RUNNING for the first
+process so it becomes PID 1, serialize concurrent entrants on waitq
+until bootstrap resolves, and admit subsequent callers into the running
+PID namespace until teardown begins.
+
+Require CAP_SYS_ADMIN in the target user namespace, forbid credential or
+PR_SET_NO_NEW_PRIVS privilege escalation, and require an ancestor PID
+namespace so the caller receives a valid child PID. Inherit rootns
+provenance in __ns_common_init() so intra-rootns clone(), unshare(),
+open_tree(), and setns() work while foreign setns() calls fail with
+-EPERM.
 
 Co-developed-by: David Howells <dhowells@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- fs/fsopen.c                | 74 +++++++++++++++++++++++++++++++++++---
- fs/proc/root.c             | 13 +++++++
- include/linux/fs_context.h |  3 ++
- include/uapi/linux/mount.h |  1 +
- ipc/mqueue.c               | 12 +++++++
- 5 files changed, 99 insertions(+), 4 deletions(-)
+ include/linux/cred.h               |   4 +-
+ include/linux/ns/ns_common_types.h |   4 +
+ include/linux/nsproxy.h            |   3 +-
+ include/linux/rootns.h             |   9 ++
+ include/linux/sched/task.h         |   4 +
+ include/linux/syscalls.h           |   1 +
+ kernel/cred.c                      |  70 ++++++++++----
+ kernel/fork.c                      |  29 ++++--
+ kernel/nscommon.c                  |   8 ++
+ kernel/nsproxy.c                   |  15 ++-
+ kernel/rootns.c                    | 142 +++++++++++++++++++++++++++++
+ kernel/sys_ni.c                    |   1 +
+ 12 files changed, 260 insertions(+), 30 deletions(-)
 
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index 70024870fefa..98d407fd249b 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -13,9 +13,14 @@
- #include <linux/security.h>
- #include <linux/anon_inodes.h>
- #include <linux/namei.h>
-+#include <linux/capability.h>
-+#include <linux/nsproxy.h>
-+#include <linux/rootns.h>
-+#include <linux/user_namespace.h>
- #include <linux/file.h>
- #include <uapi/linux/mount.h>
- #include <linux/audit.h>
-+#include <net/net_namespace.h>
- #include "internal.h"
- #include "mount.h"
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 49c26af37349..9849366fd44b 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -19,6 +19,7 @@
  
-@@ -41,6 +46,48 @@ static inline const char *fetch_message_locked(struct fc_log *log, size_t len,
- 	return p;
+ struct cred;
+ struct inode;
++struct rootns;
+ 
+ extern struct task_struct init_task;
+ 
+@@ -152,7 +153,8 @@ struct cred {
+ 
+ extern void __put_cred(struct cred *);
+ extern void exit_creds(struct task_struct *);
+-extern int copy_creds(struct task_struct *, u64);
++int copy_creds(struct task_struct *tsk, u64 clone_flags,
++	       struct rootns *rootns);
+ extern const struct cred *get_task_cred(struct task_struct *);
+ extern struct cred *cred_alloc_blank(void);
+ extern struct cred *prepare_creds(void);
+diff --git a/include/linux/ns/ns_common_types.h b/include/linux/ns/ns_common_types.h
+index 47a5cfe2326a..3bfc8f24ea92 100644
+--- a/include/linux/ns/ns_common_types.h
++++ b/include/linux/ns/ns_common_types.h
+@@ -105,6 +105,7 @@ extern const struct proc_ns_operations utsns_operations;
+  * @stashed: cached dentry to be used by the vfs
+  * @ops: namespace operations
+  * @inum: namespace inode number (quickly recycled for non-initial namespaces)
++ * @rootns_id: rootns provenance tag, if the namespace was created by a rootns
+  * @__ns_ref: main reference count (do not use directly)
+  * @ns_tree: namespace tree nodes and active reference count
+  */
+@@ -118,6 +119,9 @@ struct ns_common {
+ 	unsigned int inum;
+ #ifdef CONFIG_SECURITY
+ 	void *ns_security;
++#endif
++#ifdef CONFIG_ROOTNS
++	u64 rootns_id;
+ #endif
+ 	struct ns_tree;
+ 	struct rcu_head ns_rcu;
+diff --git a/include/linux/nsproxy.h b/include/linux/nsproxy.h
+index 7d0b636387c6..3724d6ba238c 100644
+--- a/include/linux/nsproxy.h
++++ b/include/linux/nsproxy.h
+@@ -116,7 +116,8 @@ struct nsproxy *create_new_namespaces(u64 flags,
+ 				      struct nsproxy *ns,
+ 				      struct user_namespace *user_ns,
+ 				      struct fs_struct *new_fs);
+-int copy_namespaces(u64 flags, struct task_struct *tsk);
++int copy_namespaces(u64 flags, struct task_struct *tsk,
++		    struct rootns *rootns);
+ void switch_cred_namespaces(const struct cred *old, const struct cred *new);
+ void exit_nsproxy_namespaces(struct task_struct *tsk);
+ void get_cred_namespaces(struct task_struct *tsk);
+diff --git a/include/linux/rootns.h b/include/linux/rootns.h
+index b8437bf21830..eab49d025c93 100644
+--- a/include/linux/rootns.h
++++ b/include/linux/rootns.h
+@@ -14,6 +14,7 @@
+ 
+ struct cred;
+ struct file;
++struct ns_common;
+ struct nsproxy;
+ struct pid;
+ struct pid_namespace;
+@@ -32,6 +33,7 @@ enum rootns_state {
+  */
+ struct rootns {
+ 	refcount_t		usage;
++	u64			id;
+ 	int			exit_code;	/* The exit code of 'init' */
+ 	struct rusage		rusage;		/* Resource usage of 'init' */
+ 	const struct cred	*cred;		/* Creds for this rootns, including userns */
+@@ -50,6 +52,7 @@ void put_rootns(struct rootns *c);
+ bool is_rootns_file(struct file *file);
+ void copy_rootns(struct task_struct *tsk, struct rootns *rootns);
+ void exit_rootns(struct pid_namespace *pid_ns, struct task_struct *tsk);
++bool rootns_may_setns(struct rootns *rootns, struct ns_common *ns);
+ #else
+ static inline struct rootns *get_rootns(struct rootns *c)
+ {
+@@ -73,6 +76,12 @@ static inline void exit_rootns(struct pid_namespace *pid_ns,
+ 			       struct task_struct *tsk)
+ {
+ }
++
++static inline bool rootns_may_setns(struct rootns *rootns,
++				    struct ns_common *ns)
++{
++	return true;
++}
+ #endif /* CONFIG_ROOTNS */
+ 
+ #endif /* _LINUX_ROOTNS_H */
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 90ed5bc3c7af..a3401e726a82 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -16,6 +16,7 @@ struct task_struct;
+ struct rusage;
+ union thread_union;
+ struct css_set;
++struct rootns;
+ 
+ /* All the bits taken by the old clone syscall. */
+ #define CLONE_LEGACY_FLAGS 0xffffffffULL
+@@ -44,6 +45,9 @@ struct kernel_clone_args {
+ 	void *fn_arg;
+ 	struct cgroup *cgrp;
+ 	struct css_set *cset;
++#ifdef CONFIG_ROOTNS
++	struct rootns *rootns;
++#endif
+ 	unsigned int kill_seq;
+ };
+ 
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index a854d248c8a3..f361dcc74a39 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1010,6 +1010,7 @@ asmlinkage long sys_rootns_create(unsigned int flags);
+ asmlinkage long sys_rootns_wait(int rootnsfd, int __user *status,
+ 				unsigned int options, struct rusage __user *ru);
+ asmlinkage long sys_rootns_kill(int rootnsfd, int sig);
++asmlinkage long sys_rootns_enter(int rootnsfd);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/kernel/cred.c b/kernel/cred.c
+index d01df40a9a38..97d334db7758 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -15,10 +15,12 @@
+ #include <linux/key.h>
+ #include <linux/keyctl.h>
+ #include <linux/init_task.h>
++#include <linux/rootns.h>
+ #include <linux/security.h>
+ #include <linux/binfmts.h>
+ #include <linux/cn_proc.h>
+ #include <linux/uidgid.h>
++#include <linux/user_namespace.h>
+ 
+ #if 0
+ #define kdebug(FMT, ...)						\
+@@ -162,24 +164,8 @@ struct cred *cred_alloc_blank(void)
+ 	return NULL;
  }
  
+-/**
+- * prepare_creds - Prepare a new set of credentials for modification
+- *
+- * Prepare a new set of task credentials for modification.  A task's creds
+- * shouldn't generally be modified directly, therefore this function is used to
+- * prepare a new copy, which the caller then modifies and then commits by
+- * calling commit_creds().
+- *
+- * Preparation involves making a copy of the objective creds for modification.
+- *
+- * Returns a pointer to the new creds-to-be if successful, NULL otherwise.
+- *
+- * Call commit_creds() or abort_creds() to clean up.
+- */
+-struct cred *prepare_creds(void)
++static struct cred *dup_creds(const struct cred *old)
+ {
+-	struct task_struct *task = current;
+-	const struct cred *old;
+ 	struct cred *new;
+ 
+ 	new = kmem_cache_alloc(cred_jar, GFP_KERNEL);
+@@ -188,7 +174,6 @@ struct cred *prepare_creds(void)
+ 
+ 	kdebug("prepare_creds() alloc %p", new);
+ 
+-	old = task->cred;
+ 	memcpy(new, old, sizeof(struct cred));
+ 
+ 	new->non_rcu = 0;
+@@ -221,6 +206,25 @@ struct cred *prepare_creds(void)
+ 	abort_creds(new);
+ 	return NULL;
+ }
++
 +/**
-+ * DOC: FSCONFIG_SET_ROOTNS
++ * prepare_creds - Prepare a new set of credentials for modification
 + *
-+ * ``fsconfig(fsfd, FSCONFIG_SET_ROOTNS, NULL, NULL, rootnsfd)`` binds a newly
-+ * opened filesystem context to @rootnsfd once before any parameters are
-+ * supplied (subsequent calls fail with ``-EBUSY``).
++ * Prepare a new set of task credentials for modification.  A task's creds
++ * shouldn't generally be modified directly, therefore this function is used to
++ * prepare a new copy, which the caller then modifies and then commits by
++ * calling commit_creds().
 + *
-+ * The caller must hold ``CAP_SYS_ADMIN`` in the target ``rootns`` user
-+ * namespace. ``fc->net_ns`` is switched to the ``rootns`` network namespace,
-+ * ``fc->user_ns`` is delegated for non-global ``FS_USERNS_MOUNT`` or
-+ * ``FS_USERNS_DELEGATABLE`` filesystems when the mounter ``fsuid``/``fsgid``
-+ * map into the target user namespace, and ``proc`` and ``mqueue`` contexts
-+ * bind to the target ``rootns`` PID and IPC namespaces.
++ * Preparation involves making a copy of the objective creds for modification.
++ *
++ * Returns a pointer to the new creds-to-be if successful, NULL otherwise.
++ *
++ * Call commit_creds() or abort_creds() to clean up.
 + */
-+static int fsconfig_set_rootns(struct fs_context *fc, struct fs_parameter *param)
++struct cred *prepare_creds(void)
 +{
-+	struct user_namespace *user_ns;
-+	struct rootns *c;
++	return dup_creds(current->cred);
++}
+ EXPORT_SYMBOL(prepare_creds);
+ 
+ /*
+@@ -251,6 +255,25 @@ struct cred *prepare_exec_creds(void)
+ 	return new;
+ }
+ 
++static bool cred_cap_issubset(const struct cred *set,
++			      const struct cred *subset);
 +
-+	if (!is_rootns_file(param->file))
-+		return -EINVAL;
++static bool may_enter_rootns_creds(const struct cred *old,
++				   const struct cred *target)
++{
++	if (cred_cap_issubset(old, target) &&
++	    uid_eq(old->euid, target->euid) &&
++	    gid_eq(old->egid, target->egid))
++		return true;
 +
-+	c = param->file->private_data;
-+	user_ns = c->cred->user_ns;
-+	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
-+		return -EPERM;
++	if (task_no_new_privs(current) || old->user_ns == target->user_ns)
++		return false;
 +
-+	put_net(fc->net_ns);
-+	fc->net_ns = get_net(c->ns->net_ns);
-+	if (!fc->global &&
-+	    (fc->fs_type->fs_flags & (FS_USERNS_MOUNT | FS_USERNS_DELEGATABLE)) &&
-+	    kuid_has_mapping(user_ns, fc->cred->fsuid) &&
-+	    kgid_has_mapping(user_ns, fc->cred->fsgid)) {
-+		put_user_ns(fc->user_ns);
-+		fc->user_ns = get_user_ns(user_ns);
-+	}
-+	if (fc->ops->set_rootns)
-+		fc->ops->set_rootns(fc, c);
-+	fc->phase = FS_CONTEXT_CREATE_PARAMS;
-+	return 0;
++	return ns_capable(target->user_ns->parent, CAP_SYS_ADMIN) &&
++	       ns_capable(target->user_ns->parent, CAP_SETUID) &&
++	       ns_capable(target->user_ns->parent, CAP_SETGID);
 +}
 +
  /*
-  * Allow the user to read back any error, warning or informational messages.
-  * Only one message is returned for each read(2) call.
-@@ -147,7 +194,7 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
- 	if (IS_ERR(fc))
- 		return PTR_ERR(fc);
+  * Copy credentials for the new process created by fork()
+  *
+@@ -260,7 +283,8 @@ struct cred *prepare_exec_creds(void)
+  * The new process gets the current process's subjective credentials as its
+  * objective and subjective credentials
+  */
+-int copy_creds(struct task_struct *p, u64 clone_flags)
++int copy_creds(struct task_struct *p, u64 clone_flags,
++	       struct rootns *rootns)
+ {
+ 	struct cred *new;
+ 	int ret;
+@@ -283,7 +307,13 @@ int copy_creds(struct task_struct *p, u64 clone_flags)
+ 		return 0;
+ 	}
  
--	fc->phase = FS_CONTEXT_CREATE_PARAMS;
-+	fc->phase = FS_CONTEXT_CREATE_NS;
+-	new = prepare_creds();
++	if (rootns) {
++		if (!may_enter_rootns_creds(current_cred(), rootns->cred))
++			return -EPERM;
++		new = dup_creds(rootns->cred);
++	} else {
++		new = prepare_creds();
++	}
+ 	if (!new)
+ 		return -ENOMEM;
  
- 	ret = fscontext_alloc_log(fc);
- 	if (ret < 0)
-@@ -222,7 +269,8 @@ static int vfs_cmd_create(struct fs_context *fc, bool exclusive)
- 	struct super_block *sb;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 99e22b3cd213..5e23d36b7ac3 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1632,8 +1632,20 @@ enum copy_fs_flags_t {
+ 	COPY_FS_IDLE	= (1 << 1),
+ };
+ 
++#ifdef CONFIG_ROOTNS
++static inline struct rootns *clone_args_rootns(const struct kernel_clone_args *args)
++{
++	return args->rootns;
++}
++#else
++static inline struct rootns *clone_args_rootns(const struct kernel_clone_args *args)
++{
++	return NULL;
++}
++#endif
++
+ static int copy_fs(u64 clone_flags, struct task_struct *tsk,
+-		   enum copy_fs_flags_t flags)
++		   enum copy_fs_flags_t flags, struct rootns *rootns)
+ {
+ 	struct fs_struct *fs;
+ 
+@@ -1649,7 +1661,7 @@ static int copy_fs(u64 clone_flags, struct task_struct *tsk,
+ 		if (current->nsproxy->mnt_ns != &init_mnt_ns)
+ 			return -EINVAL;
+ 		fs = userspace_init_fs;
+-	} else if (flags & COPY_FS_IDLE) {
++	} else if (flags & COPY_FS_IDLE || rootns) {
+ 		fs = &init_fs;
+ 	} else {
+ 		fs = current->fs;
+@@ -1671,6 +1683,10 @@ static int copy_fs(u64 clone_flags, struct task_struct *tsk,
+ 	tsk->real_fs = tsk->fs = copy_fs_struct(fs);
+ 	if (!tsk->fs)
+ 		return -ENOMEM;
++	if (rootns) {
++		set_fs_root(tsk->fs, &rootns->root);
++		set_fs_pwd(tsk->fs, &rootns->root);
++	}
+ 	return 0;
+ }
+ 
+@@ -2186,7 +2202,7 @@ __latent_entropy struct task_struct *copy_process(
+ #ifdef CONFIG_PROVE_LOCKING
+ 	DEBUG_LOCKS_WARN_ON(!p->softirqs_enabled);
+ #endif
+-	retval = copy_creds(p, clone_flags);
++	retval = copy_creds(p, clone_flags, clone_args_rootns(args));
+ 	if (retval < 0)
+ 		goto bad_fork_free;
+ 
+@@ -2317,7 +2333,8 @@ __latent_entropy struct task_struct *copy_process(
+ 		goto bad_fork_cleanup_semundo;
+ 	retval = copy_fs(clone_flags, p,
+ 			 (args->umh ? COPY_FS_UMH : 0) |
+-			 (args->idle ? COPY_FS_IDLE : 0));
++			 (args->idle ? COPY_FS_IDLE : 0),
++			 clone_args_rootns(args));
+ 	if (retval)
+ 		goto bad_fork_cleanup_semundo;
+ 	retval = copy_sighand(clone_flags, p);
+@@ -2329,7 +2346,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	retval = copy_mm(clone_flags, p);
+ 	if (retval)
+ 		goto bad_fork_cleanup_signal;
+-	retval = copy_namespaces(clone_flags, p);
++	retval = copy_namespaces(clone_flags, p, clone_args_rootns(args));
+ 	if (retval)
+ 		goto bad_fork_cleanup_mm;
+ 	retval = copy_io(clone_flags, p);
+@@ -2566,7 +2583,7 @@ __latent_entropy struct task_struct *copy_process(
+ 			attach_pid(p, PIDTYPE_TGID);
+ 			attach_pid(p, PIDTYPE_PGID);
+ 			attach_pid(p, PIDTYPE_SID);
+-			copy_rootns(p, NULL);
++			copy_rootns(p, clone_args_rootns(args));
+ 			__this_cpu_inc(process_counts);
+ 		} else {
+ 			current->signal->nr_threads++;
+diff --git a/kernel/nscommon.c b/kernel/nscommon.c
+index 4438c6b663f9..d7e857a417f7 100644
+--- a/kernel/nscommon.c
++++ b/kernel/nscommon.c
+@@ -2,8 +2,10 @@
+ /* Copyright (c) 2025 Christian Brauner <brauner@kernel.org> */
+ 
+ #include <linux/ns_common.h>
++#include <linux/nsproxy.h>
+ #include <linux/nstree.h>
+ #include <linux/proc_ns.h>
++#include <linux/rootns.h>
+ #include <linux/security.h>
+ #include <linux/user_namespace.h>
+ #include <linux/vfsdebug.h>
+@@ -57,6 +59,9 @@ static void ns_debug(struct ns_common *ns, const struct proc_ns_operations *ops)
+ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops,
+ 		     int inum, u64 ns_id)
+ {
++#ifdef CONFIG_ROOTNS
++	struct rootns *rootns = task_rootns(current);
++#endif
+ 	int ret = 0;
+ 
+ 	refcount_set(&ns->__ns_ref, 1);
+@@ -66,6 +71,9 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
+ #endif
+ 	ns->ops = ops;
+ 	ns->ns_type = ns_type;
++#ifdef CONFIG_ROOTNS
++	ns->rootns_id = rootns ? rootns->id : 0;
++#endif
+ 	ns_tree_node_init(&ns->ns_tree_node);
+ 	ns_tree_node_init(&ns->ns_unified_node);
+ 	ns_tree_node_init(&ns->ns_owner_node);
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index a76837b3ee33..0c6407757d89 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -169,13 +169,21 @@ struct nsproxy *create_new_namespaces(u64 flags,
+ /*
+  * called from clone.  This now handles copy for nsproxy and all
+  * namespaces therein.
++ *
++ * Namespaces derived from a rootns member inherit the same rootns domain.
+  */
+-int copy_namespaces(u64 flags, struct task_struct *tsk)
++int copy_namespaces(u64 flags, struct task_struct *tsk,
++		    struct rootns *rootns)
+ {
+ 	struct nsproxy *old_ns = tsk->nsproxy;
+ 	struct user_namespace *user_ns = task_cred_xxx(tsk, user_ns);
+ 	struct nsproxy *new_ns;
+ 
++	if (rootns) {
++		get_nsproxy(rootns->ns);
++		tsk->nsproxy = rootns->ns;
++		return 0;
++	}
+ 	if (likely(!(flags & (CLONE_NS_ALL & ~CLONE_NEWUSER)))) {
+ 		if ((flags & CLONE_VM) ||
+ 		    likely(old_ns->time_ns_for_children == old_ns->time_ns)) {
+@@ -196,7 +204,7 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
+ 		(CLONE_NEWIPC | CLONE_SYSVSEM))
+ 		return -EINVAL;
+ 
+-	new_ns = create_new_namespaces(flags, tsk->nsproxy, user_ns, tsk->fs);
++	new_ns = create_new_namespaces(flags, old_ns, user_ns, tsk->fs);
+ 	if (IS_ERR(new_ns))
+ 		return  PTR_ERR(new_ns);
+ 
+@@ -391,6 +399,9 @@ static inline int validate_ns(struct nsset *nsset, struct ns_common *ns)
+ {
  	int ret;
  
--	if (fc->phase != FS_CONTEXT_CREATE_PARAMS)
-+	if (fc->phase != FS_CONTEXT_CREATE_NS &&
-+	    fc->phase != FS_CONTEXT_CREATE_PARAMS)
- 		return -EBUSY;
- 
- 	if (!mount_capable(fc))
-@@ -298,9 +346,16 @@ static int vfs_fsconfig_locked(struct fs_context *fc, int cmd,
- 		return vfs_cmd_create(fc, true);
- 	case FSCONFIG_CMD_RECONFIGURE:
- 		return vfs_cmd_reconfigure(fc);
-+	case FSCONFIG_SET_ROOTNS:
-+		if (fc->phase != FS_CONTEXT_CREATE_NS)
-+			return -EBUSY;
-+		return fsconfig_set_rootns(fc, param);
++	if (!rootns_may_setns(task_rootns(current), ns))
++		return -EPERM;
 +
- 	default:
--		if (fc->phase != FS_CONTEXT_CREATE_PARAMS &&
--		    fc->phase != FS_CONTEXT_RECONF_PARAMS)
-+		if (fc->phase == FS_CONTEXT_CREATE_NS)
-+			fc->phase = FS_CONTEXT_CREATE_PARAMS;
-+		else if (fc->phase != FS_CONTEXT_CREATE_PARAMS &&
-+			 fc->phase != FS_CONTEXT_RECONF_PARAMS)
- 			return -EBUSY;
- 
- 		return vfs_parse_fs_param(fc, param);
-@@ -390,6 +445,10 @@ SYSCALL_DEFINE5(fsconfig,
- 		if (!_key || _value || aux < 0)
- 			return -EINVAL;
- 		break;
-+	case FSCONFIG_SET_ROOTNS:
-+		if (_key || _value || aux < 0)
-+			return -EINVAL;
-+		break;
- 	case FSCONFIG_CMD_CREATE:
- 	case FSCONFIG_CMD_CREATE_EXCL:
- 	case FSCONFIG_CMD_RECONFIGURE:
-@@ -457,6 +516,12 @@ SYSCALL_DEFINE5(fsconfig,
- 			goto out_key;
- 		param.dirfd = aux;
- 		break;
-+	case FSCONFIG_SET_ROOTNS:
-+		ret = -EBADF;
-+		param.file = fget(aux);
-+		if (!param.file)
-+			goto out_key;
-+		break;
- 	default:
- 		break;
- 	}
-@@ -482,6 +547,7 @@ SYSCALL_DEFINE5(fsconfig,
- 			putname(param.name);
- 		break;
- 	case FSCONFIG_SET_FD:
-+	case FSCONFIG_SET_ROOTNS:
- 		if (param.file)
- 			fput(param.file);
- 		break;
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 7fbbe92bf73a..5976029ad3f8 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -15,6 +15,8 @@
- #include <linux/sched/stat.h>
- #include <linux/module.h>
- #include <linux/bitops.h>
-+#include <linux/nsproxy.h>
-+#include <linux/rootns.h>
- #include <linux/user_namespace.h>
- #include <linux/fs_context.h>
- #include <linux/mount.h>
-@@ -323,6 +325,16 @@ static int proc_get_tree(struct fs_context *fc)
- 	return get_tree_nodev(fc, proc_fill_super);
- }
- 
-+static void proc_set_rootns(struct fs_context *fc, struct rootns *rootns)
-+{
-+	struct proc_fs_context *ctx = fc->fs_private;
-+
-+	put_pid_ns(ctx->pid_ns);
-+	ctx->pid_ns = get_pid_ns(rootns->ns->pid_ns_for_children);
-+	put_user_ns(fc->user_ns);
-+	fc->user_ns = get_user_ns(ctx->pid_ns->user_ns);
-+}
-+
- static void proc_fs_context_free(struct fs_context *fc)
- {
- 	struct proc_fs_context *ctx = fc->fs_private;
-@@ -334,6 +346,7 @@ static void proc_fs_context_free(struct fs_context *fc)
- static const struct fs_context_operations proc_fs_context_ops = {
- 	.free		= proc_fs_context_free,
- 	.parse_param	= proc_parse_param,
-+	.set_rootns	= proc_set_rootns,
- 	.get_tree	= proc_get_tree,
- 	.reconfigure	= proc_reconfigure,
- };
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index d1727dffecc5..cb978273c8bc 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -21,6 +21,7 @@ struct file_system_type;
- struct mnt_namespace;
- struct net;
- struct pid_namespace;
-+struct rootns;
- struct super_block;
- struct user_namespace;
- struct vfsmount;
-@@ -36,6 +37,7 @@ enum fs_context_purpose {
-  * Userspace usage phase for fsopen/fspick.
+ 	ret = security_namespace_install(nsset, ns);
+ 	if (ret)
+ 		return ret;
+diff --git a/kernel/rootns.c b/kernel/rootns.c
+index f59b2fe9910d..e286c1e753b7 100644
+--- a/kernel/rootns.c
++++ b/kernel/rootns.c
+@@ -3,6 +3,28 @@
+  * Copyright (C) 2017-2019 Red Hat, Inc. All Rights Reserved.
   */
- enum fs_context_phase {
-+	FS_CONTEXT_CREATE_NS,		/* Set namespaces for sb creation */
- 	FS_CONTEXT_CREATE_PARAMS,	/* Loading params for sb creation */
- 	FS_CONTEXT_CREATING,		/* A superblock is being created */
- 	FS_CONTEXT_AWAITING_MOUNT,	/* Superblock created, awaiting fsmount() */
-@@ -117,6 +119,7 @@ struct fs_context_operations {
- 	int (*dup)(struct fs_context *fc, struct fs_context *src_fc);
- 	int (*parse_param)(struct fs_context *fc, struct fs_parameter *param);
- 	int (*parse_monolithic)(struct fs_context *fc, void *data);
-+	void (*set_rootns)(struct fs_context *fc, struct rootns *rootns);
- 	int (*get_tree)(struct fs_context *fc);
- 	int (*reconfigure)(struct fs_context *fc);
- };
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index ac865edac517..cb55cfcfc92e 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -105,6 +105,7 @@ enum fsconfig_command {
- 	FSCONFIG_CMD_CREATE	= 6,	/* Create new or reuse existing superblock */
- 	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
- 	FSCONFIG_CMD_CREATE_EXCL = 8,	/* Create new superblock, fail if reusing existing superblock */
-+	FSCONFIG_SET_ROOTNS	= 9,	/* Set a rootns, supplied by fd */
- };
  
- /*
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 322c3dd98c44..a85ca188d370 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -32,6 +32,7 @@
- #include <linux/mutex.h>
- #include <linux/nsproxy.h>
- #include <linux/pid.h>
-+#include <linux/rootns.h>
- #include <linux/ipc_namespace.h>
- #include <linux/user_namespace.h>
- #include <linux/slab.h>
-@@ -400,6 +401,16 @@ static struct inode *mqueue_get_inode(struct super_block *sb,
- 	return ERR_PTR(ret);
- }
- 
-+static void mqueue_set_rootns(struct fs_context *fc, struct rootns *rootns)
-+{
-+	struct mqueue_fs_context *ctx = fc->fs_private;
++/**
++ * DOC: Overview
++ *
++ * A root namespace binds an isolated namespace set, a root mount tree, owner
++ * credentials, and an init process behind a pollable control file descriptor:
++ *
++ * 1. ``rootns_create()`` allocates a detached ``rootns`` with dedicated empty
++ *    mount and PID namespaces and returns its control fd.
++ * 2. Userspace configures and installs ``"/"`` via ``FSCONFIG_SET_ROOTNS``
++ *    and ``MOVE_MOUNT_T_ROOTNS_ROOT``, then attaches relative submounts.
++ * 3. ``rootns_enter()`` forks processes into the ``rootns``; the first call
++ *    commits PID 1 while concurrent bootstrap callers wait killably.
++ * 4. When PID 1 exits, the PID namespace zaps and reaps all remaining tasks,
++ *    ``poll()`` reports ``EPOLLHUP``, and ``rootns_wait()`` returns the exit
++ *    status and ``rusage``.
++ *
++ * Every namespace allocated by a member task inherits the ``rootns``
++ * provenance ID in ``__ns_common_init()``. ``setns()`` permits joining
++ * namespaces carrying the same provenance ID (or already attached to the
++ * caller) and rejects foreign namespaces with ``-EPERM``.
++ */
 +
-+	put_ipc_ns(ctx->ipc_ns);
-+	ctx->ipc_ns = get_ipc_ns(rootns->ns->ipc_ns);
-+	put_user_ns(fc->user_ns);
-+	fc->user_ns = get_user_ns(ctx->ipc_ns->user_ns);
+ #include <linux/poll.h>
+ #include <linux/wait.h>
+ #include <uapi/linux/wait.h>
+@@ -14,6 +36,10 @@
+ #include <linux/slab.h>
+ #include <linux/syscalls.h>
+ #include <linux/uaccess.h>
++#include <linux/mnt_namespace.h>
++#include <linux/utsname.h>
++#include <linux/ipc_namespace.h>
++#include <linux/cgroup_namespace.h>
+ #include <linux/nsproxy.h>
+ #include <linux/ns_common.h>
+ #include <linux/nsfs.h>
+@@ -22,8 +48,40 @@
+ #include <linux/user_namespace.h>
+ #include <linux/compat.h>
+ #include <linux/idr.h>
++#include <linux/atomic.h>
++#include <net/net_namespace.h>
+ #include <uapi/linux/rootns.h>
+ 
++static atomic64_t rootns_id = ATOMIC64_INIT(0);
++
++static void rootns_tag_namespaces(struct rootns *c, const struct nsproxy *old)
++{
++	struct nsproxy *ns = c->ns;
++
++	if (c->cred->user_ns != current_user_ns())
++		c->cred->user_ns->ns.rootns_id = c->id;
++	from_mnt_ns(ns->mnt_ns)->rootns_id = c->id;
++	ns->pid_ns_for_children->ns.rootns_id = c->id;
++	if (ns->uts_ns != old->uts_ns)
++		ns->uts_ns->ns.rootns_id = c->id;
++	if (ns->ipc_ns != old->ipc_ns)
++		ns->ipc_ns->ns.rootns_id = c->id;
++	if (ns->cgroup_ns != old->cgroup_ns)
++		ns->cgroup_ns->ns.rootns_id = c->id;
++	if (ns->net_ns != old->net_ns)
++		ns->net_ns->ns.rootns_id = c->id;
 +}
 +
- static int mqueue_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	struct inode *inode;
-@@ -1613,6 +1624,7 @@ static const struct super_operations mqueue_super_ops = {
++bool rootns_may_setns(struct rootns *rootns, struct ns_common *ns)
++{
++	if (!ns)
++		return false;
++	if (!rootns || is_current_namespace(ns))
++		return true;
++
++	return ns->rootns_id == rootns->id;
++}
++
+ /*
+  * Get a reference to a rootns.
+  */
+@@ -216,6 +274,7 @@ static struct rootns *create_rootns(unsigned int flags)
+ 	spin_lock_init(&c->lock);
+ 	refcount_set(&c->usage, 1);
+ 	c->flags = flags;
++	c->id = atomic64_inc_return(&rootns_id);
  
- static const struct fs_context_operations mqueue_fs_context_ops = {
- 	.free		= mqueue_fs_context_free,
-+	.set_rootns	= mqueue_set_rootns,
- 	.get_tree	= mqueue_get_tree,
- };
+ 	cred = create_rootns_creds(flags);
+ 	if (IS_ERR(cred)) {
+@@ -249,6 +308,7 @@ static struct rootns *create_rootns(unsigned int flags)
+ 	c->ns = ns;
+ 	ns->rootns = c;
+ 	ns->pid_ns_for_children->rootns = c;
++	rootns_tag_namespaces(c, current->nsproxy);
+ 	nsproxy_ns_active_get(ns);
  
+ 	return c;
+@@ -455,3 +515,85 @@ SYSCALL_DEFINE2(rootns_kill, int, rootnsfd, int, sig)
+ 
+ 	return rootns_kill_members(fd_file(f)->private_data, sig);
+ }
++
++/**
++ * sys_rootns_enter - Fork a child process into an existing root namespace
++ * @rootnsfd: Root namespace control file descriptor
++ *
++ * Fork the calling process into @rootnsfd. The first caller bootstraps PID 1
++ * of the rootns PID namespace while concurrent bootstrap callers wait
++ * killably; subsequent callers join the running PID namespace until teardown
++ * begins. Requires %CAP_SYS_ADMIN in the target user namespace, an ancestor
++ * active PID namespace, and no credential or %PR_SET_NO_NEW_PRIVS escalation.
++ *
++ * Return: Caller-visible child PID in the parent, 0 in the child, %-ENOENT
++ * before ``"/"`` is installed, %-EXDEV if the caller's active PID namespace is
++ * not an ancestor, %-EPERM on disallowed credentials, or %-ESRCH on teardown.
++ */
++SYSCALL_DEFINE1(rootns_enter, int, rootnsfd)
++{
++	CLASS(fd, f)(rootnsfd);
++	struct kernel_clone_args args = {
++		.exit_signal = SIGCHLD,
++	};
++	struct pid_namespace *pid_ns;
++	bool bootstrapping = false;
++	struct rootns *rootns;
++	pid_t ret;
++
++	if (fd_empty(f))
++		return -EBADF;
++	if (!is_rootns_file(fd_file(f)))
++		return -EINVAL;
++
++	rootns = fd_file(f)->private_data;
++	if (!ns_capable(rootns->cred->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
++
++	pid_ns = rootns->ns->pid_ns_for_children;
++	if (!pidns_is_ancestor(pid_ns, task_active_pid_ns(current)))
++		return -EXDEV;
++
++	for (;;) {
++		scoped_guard(spinlock, &rootns->lock) {
++			switch (rootns->state) {
++			case ROOTNS_EMPTY:
++				return -ENOENT;
++			case ROOTNS_READY:
++				WRITE_ONCE(rootns->state, ROOTNS_FORKING);
++				bootstrapping = true;
++				break;
++			case ROOTNS_FORKING:
++				break;
++			case ROOTNS_RUNNING:
++				if (!(READ_ONCE(pid_ns->pid_allocated) & PIDNS_ADDING))
++					return -ESRCH;
++				break;
++			case ROOTNS_DEAD:
++				return -ESRCH;
++			}
++			if (rootns->state != ROOTNS_FORKING || bootstrapping)
++				break;
++		}
++
++		ret = wait_event_killable(rootns->waitq,
++					  READ_ONCE(rootns->state) != ROOTNS_FORKING);
++		if (ret)
++			return ret;
++	}
++
++	args.rootns = rootns;
++	ret = kernel_clone(&args);
++	if (ret < 0 && bootstrapping) {
++		scoped_guard(spinlock, &rootns->lock) {
++			if (rootns->state == ROOTNS_FORKING)
++				WRITE_ONCE(rootns->state, ROOTNS_READY);
++		}
++		wake_up_all(&rootns->waitq);
++	} else if (ret == -ENOMEM &&
++		   !(READ_ONCE(pid_ns->pid_allocated) & PIDNS_ADDING)) {
++		return -ESRCH;
++	}
++
++	return ret;
++}
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index fba44c49ddbb..3fd6376ddbe7 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -404,3 +404,4 @@ COND_SYSCALL(rootns_create);
+ COND_SYSCALL(rootns_wait);
+ COND_SYSCALL_COMPAT(rootns_wait);
+ COND_SYSCALL(rootns_kill);
++COND_SYSCALL(rootns_enter);
 -- 
 2.47.3
 
