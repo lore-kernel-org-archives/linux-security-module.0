@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.48
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794937360;
-	b=x4BPBFxjOz39+ZThoLP3R9PS13V27Un7dBcEQV6YqLuj3H0bgw6NRc7DlTjCyLIfwAxG
-	 hRPOwJJJv1PAQVMEV5rTyPRXeIA7u8g+JZFDsa5UYvUNpL6CLHXGJdb56eQ8rbc7mNd2p
-	 mBTVNebBEUoOEZ1ngNu0dRAa6KITbSnz1Cw980zG5c/Nv5tKbb8PJOy0wwDNWT6RfVp/X
-	 wsxZRJAW6QTV6myFo08BWt/T2iZN6mnsp48dUoPEX5TTxP+/ny/YuwduLM2QFmjLiOuqN
-	 n8yj84JjLZX84o3EsD4R58BSeOktcGLO3UU8CK5mk9aDOltwLPEmCxUVOmJ5KxLYh6A==
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.208.176
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1794937497;
+	b=xn0RSCfYvkyS233qrvBnH0ZKJpRgtn+qdX6hZyrLMiu5uWJTHT87gNTuUE8Kvn1QMwzV
+	 ZHQRIO0np+JjoN1znzRSpinBrufRrbWwFICpU8YI3hdyfiA44nfazNSZZVPwqylkpsM0K
+	 Q1qA+yfc8poc6JuALHwCm6T2o5Gntg72l+mxrcii05z2RvEgwsEQqak5wOEQSAmHnZAI+
+	 v4FYXqDbIqr2qPlgtvRMB4BIU6o2pTEfw5V08eHs68LYjn9VyFY/4xvcQ88ZjxGztJVZg
+	 PjQWHi63GTSakPLf1wZitGB2caEX9ZQZA3YffsHMN8aU5qEZWGZKj+7qOoZ0v4yzWjg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794937360;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794937497;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=C0Br6uNbCeSZG/D0SaMC7uBQz4y4PQvjObMC5HHmvxw=;
-	b=2YTeEc9zdwkK/3SNOVqghKV6HFcCP3pFJmOjJnlBK3t2B9rAmVA5uzL7dSqRUP+Eb0F5
-	 BH0+sZ6Mn/TLOFzAPyHtvZEel4t/4FEOWdUSi1H8CTxpgJmeJSUZlrWaQE/7ix0SQDCwR
-	 pnT+8bEdSpr4EsBzqEUD6t4p+Rb6mKjAfuqOAovs72CnYqcl48y534OBMK2h1e4fFJGqK
-	 u0zf+Irk2gmZI/oH3pfLaCErV0Lclcpnn2ZtgePTGKDWz5CJt5vvEH4+EKsxTUYZGdBwY
-	 rbFwG9QNja9FjDmHWtrffF1CKVDIYoTFaRsxTfuPWH4cWwXjHj30OjsZex++diCeOSw==
+	bh=eNNOnQUc8HQHxzszI7I5Z5MCWmY2JGLCloKQuWJY2Z0=;
+	b=zly9aqptApnDD5HQGmuDfYr++VdLbuJhhmWllQ/EtL9UeIShnet1p7CbbeQkccmFJoZI
+	 kGl2uq0fu/46Um2lO7jJv5AIolY/aAWuxPP5z2ycrWwZBBKBOjyUsGIxZMfxf00/tWHXv
+	 oL6qMbkpMkZmkUl1bN4Z/Co6PQA80hgVbGUq+fWlhwT5t9/+WH/LabeQA10F5PeELKJYX
+	 k8fyoFaX2+ra1nOeE0ieqsIhlxdUqgtMOwafLAbiuFuStAXfwXKEH+bWwUCgIS6vorrrQ
+	 9SMzigBSB+uAw3cm2WSg9+Z2svpC/tIRpSRfsQ+7B+vkLAnsKrgGwX4zsq/9+uyWvgA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=none header.from=amacapital.net;
 	spf=pass smtp.mailfrom=amacapital.net;
-	dkim=pass header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=EEvWGAFb;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.48
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=oAFIhfOA;
+	arc=fail smtp.remote-ip=209.85.208.176
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE48606A32C
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 17:42:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8FE48606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E54606A32F
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 17:44:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 52E54606A32F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=EEvWGAFb
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5bcdae234ecso3173e87.3
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 09:42:40 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794937359; cv=none;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=oAFIhfOA
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3ae0d0b9db2so1488331fa.1
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 09:44:57 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794937495; cv=none;
         d=google.com; s=arc-20260327;
-        b=EGlaEbaPRRFMpNSM+zuOnM40k1OHVL81GCxD5+hHYIkLQdqSEZ9z/iA32opK4hR7dj
-         epvxIlOW0lkNXCb92FoL0gw7Ggtu5w3FX7aUacs9iC+WR3uy5TlHA9ga9wRhGwJw00LU
-         WO210rrVNqrU4RL7G/nRshZDq/Oo/is/rRB3gFSCuA+BliqIHPqnZfCIZ4oJk5cFHnR/
-         GT9kxZOYzQVIzGUdKGc3lR6POOWQJivEiVCzsASrzBKiJP8Yc66tnsyoEBfu7I2QBium
-         LLbQ6itevC3hQIt/UA3D//i/B6ns3TyRgkpOfZZ50RUAiY79RO2uMMvfYkRa/qFcBhXt
-         P58A==
+        b=YycsAkCd5fLCQ8rw9EnUEzTCzGjXLQ69ULsSPtk2kxVMJzWpBgAZ/szMn6EtxtBJ0k
+         YDlD5x8UzOVR0rBUh8R8E4DnHijQhoAmLsUTGAf8QsGuDRuY4jGazva1n97JCJsLusY5
+         hHbJMZUdTGlLXt0enZAiPvdqsJt74xk0ALhGBv0BXxDcW648fPRnp87ce5WsntqPwAHD
+         Hk9sU5GhLC97HS6krhP0JM2JzVDvT+2CbnA0PgbxuduLbtUjKjzySeUAZ9/w8bsN4jlu
+         l0GkQzfFG/BRipDz43twM5Jh6BIQUkcreZHNA0SbvADoQyDG7TxbszHLudJuFcZ2+aOZ
+         6qzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=C0Br6uNbCeSZG/D0SaMC7uBQz4y4PQvjObMC5HHmvxw=;
-        fh=l5GXUFFoiURXMG7Uxx5f4dxFdr0NWgGmH4L+QB4vYno=;
-        b=LLrEbM5s14M5m6BW2G8CJFEJubiiVK0alcNmKnx7rlNBEc3pfn1ytw2vo/6JvmL+9p
-         8iWyFhrT8duOG01ZVsaIpYYp7j2kkjj0fBmeu1EhGGJNXDEbSQgxvzrD9zph7TtcyVT4
-         BGvYJftIdFpwd1ol8rN4Ti+L/anfYaNmiUlOQCAgYTeeB4QSNM/cAIEkDCIG4puEw8JC
-         ZsdmYef0YbHnJUNoAFkV5VB6/ANJ9KXXxembJuGq36HPT61c/Swf4enxFi0UxozzTStA
-         chGmjoHNl3YDcDFqbC9P5DvawZ7oM4z9S0oJH5AGO6cbtbkgrrtqHduXtkevQtDFgT9Z
-         /a4w==;
+        bh=eNNOnQUc8HQHxzszI7I5Z5MCWmY2JGLCloKQuWJY2Z0=;
+        fh=rBGW5Ko2lj77mCMaWGfZ818v98PTUIoRq1ZeZTTCSDg=;
+        b=d9vYTenTGfWqqBNhBIOj71MmU3yjbfAjetgvuScPBApPrzx7Ym1IpUL725nn428B/i
+         XFHiEY+aCjbfw6piBg/d6GjQ7YdmXOQso6cbpWAnciK+VtEEv2QKLuUKQTiMWDygOsMb
+         Sp644O1s9EdRkCHt5lqDDjek9ZlOeYbwzvZ1SHildmEjeok+GBlivqPfkksbQZDi1aLQ
+         uDDiN/tH7pUcOta0zxRjId2VVxNtCxQ28OGDUp5VlbbFazsXbNbsMUaKqroEa69JuxT2
+         VOVvoWMYokviBrTOVhuC1wemZVycj01inkM3288tNP7HEy9XI/1hK2enctY4Re7r7pKL
+         pghw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20260707.gappssmtp.com; s=20260707; t=1794937359; x=1795542159; darn=vger.kernel.org;
+        d=amacapital-net.20260707.gappssmtp.com; s=20260707; t=1794937495; x=1795542295; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=C0Br6uNbCeSZG/D0SaMC7uBQz4y4PQvjObMC5HHmvxw=;
-        b=EEvWGAFbOmPz0e1bruaOl0rjybH0s4KDHt1ZdsIprIDdOYSYYFkdgv0P5ZbqLm9wOt
-         QUKZ38KmXI7yBp+GV0/eyJrlR0x9jaOEr3Ii55nnjpnVrQIiwkaoActJokk0nmQSZd7G
-         61WKKrB70e3ufmKjp4oHO9TAABVl1efKkOpBvtOYK6RF6gVHy0E+rjZz0xIx57DanHDh
-         1TInlFBGPv/IJYMg1cTj312Sc7q2gHY8Ugtu6+Jpk/LKIOoiULHPpgJvsVB0ghEN1g8q
-         2dPQMdyQdgbZ8hjQrp+yJxxt3I0107KE+viwJ2hHYYVk4FGOG+dWGVAy9wgHIHfa0LWA
-         TeLQ==
+        bh=eNNOnQUc8HQHxzszI7I5Z5MCWmY2JGLCloKQuWJY2Z0=;
+        b=oAFIhfOAkcB0Dg4mKVfkuis2uNtcfHHW1ME1slyaFUO4AI5iAHAmrY1Nw3LuN2VQnC
+         6IGXyvAYklXrHuXDFIJP+OpIvCKpQXcsR6yhi7y7UMeoYZWd0Rkq8srCeIQr3Ut6yHo9
+         s3QMrLw8d+7yQo0fv8lDR6N1UWY7BgFBjya/tZ7WAbd98chUjwhGKhZVz4B8CNKS2JVt
+         s01yrFYXNsMtBbhpU0mHCjFVPEb/8RNf03yXDk0jC6t71dtVUAnUQlSNlv3yrv5kFy/Z
+         7TcwXV5Nfa08sHn/NIrA4+u1dyH1Y1UL/1CiJgo3Ncba+UeXkhzzSc1rUH+9TFU6YyuR
+         ZiXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794937359; x=1795542159;
+        d=1e100.net; s=20260707; t=1794937495; x=1795542295;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=C0Br6uNbCeSZG/D0SaMC7uBQz4y4PQvjObMC5HHmvxw=;
-        b=CSq4ubMYLNjBYg/b41Ld6WncFKMopk7ag1TlhXEdJVOOvNk55r9fsEzAdQZXgR6PA8
-         aH+JrKH9b/JBbg+9jptGNtyCwPlFU4PwBGCMss6t0FnbQYli3hGH9PbyZ3s7vEwq005L
-         n7XO0pMhyZvJ0q4vGZ49qsEpklOFZOFB/y+xaEWdwIBBXymbVrTed22lacuTlO2i/liF
-         HX9SMzc4zjjg2lMSBlmORfxMNGaExBKcmnJzSI1tQaxxDEFvizfqaaJSLd5bhBwTG30i
-         nzbFrt6CXAK3XltWIIlogiVzbQSrB9CbNYnFZbhaquZDknKcsG6/PYAFJqhVYUTjK0jA
-         LwHQ==
-X-Forwarded-Encrypted: i=1; AL+hErHApaSFUxKSTZPjCIH05HLMIA9Fmjt20lb3JY6jmxz3mSGkL2pS/byE2z+JP4Gv1Z28QYqi+kmxbsj285m8XvqQLsBTM+s=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+8pi02yK7mQdpzymHoHHvVsy1EDPY0/OQygXMvkPt7EN7PIc3P
-	2a2/UTb8tG79LkKRPKBqx58lYqtuNpiRSkB6O7NiPtWLZUPBWQOhpKJzPGUsESfRdxLyLCqCLS8
-	IMzfnW5lOA69u03QmBRk7vxZxEfiGIssCU5Lo758I
-X-Gm-Gg: AYBFou3mGTryByku4qAGq20jhjvtAB9xhzM67ZwGgkr5/E+NcWuIyayBcIP1Nr3V1/K
-	6qOeaXP+93OZRkcOkT9KO77kBtzFTGiYg7PjUA5RqnUl5pT/cV9cS3qtMohSSsWxlWvvJdClO2C
-	HLJNJSsqaUhXTr/Es1eedXhyMZCjeoozDfr9+Z4eqlLzMvs7gCytqk53omC7ru4kRdoJLatyBKt
-	z8fq017PaGR96PgeSOvrw+se49x3Y8CvlSmjAFRfdt9wl/zhibn++IgPYsQGQ4IMZanETw0emci
-	VBnqmKg6cET0iwhsBET21kFvNUxVjlhWT/FuR72Z4861BkAAsvaARHEYKi5z9AjpCshPJj0zBNS
-	FdWZOjxImF5umtd2BJx3E0BEIZlmRq2Sfsg==
-X-Received: by 2002:ac2:4bc9:0:b0:5c1:4ccf:f0b8 with SMTP id
- 2adb3069b0e04-5c170a0bb3cmr7252657e87.16.1794937358574; Tue, 17 Nov 2026
- 09:42:38 -0800 (PST)
+        bh=eNNOnQUc8HQHxzszI7I5Z5MCWmY2JGLCloKQuWJY2Z0=;
+        b=ROSvUE7t8X6nNqxju5roj+cliEaWpOmNwKcdUry36htqLVdAWNXOxb36+FpGI0djRA
+         gmvktw61xb8cOKr8Kbz0O+9T+JHq2SeEmMcWSybsjTFWKq9J4nQm3JYKmK27GQKsKLeG
+         gXhU25AKMIOinACmsmG+7l9LFrJeex83T+8n84WS1oFe29DH8oBspEdA86F0kElLs5pw
+         66f+5yzFMGlBqOImP0ucHl3gSTJmTpgeoE6MztF5urW+eFMjK186ApHQYixXgTBu0XLY
+         6c4RaTWQZCFmi5rWA5jHkobdJ/NwU8iehRWXaRLi710L4IP6o/1dyyKn7cksZXrxG0Fo
+         AzoA==
+X-Forwarded-Encrypted: i=1; AL+hErGZpEhEp1dPqbpJ3HVXzqJ3q6Npryo6r/qHJq6t3SFrTjciLOq3JBzsIVLKXqHFAsh16xXXonYZHigpywB1BR4pu31x4YQ=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/TBEbB/g50QvbvEEhSdlQCgufEQRWM8G+NqriZ2F+QUXqmLSxR
+	rdHp/hMAJbAnlo2WSsn6Q5KVD5ySjPCkkMNDppZUxypezTrCpr7fVpKISJBo5VfIlQsol3ZzVQA
+	icW7qjZQ+rIUmA0o3gTwCfdNMpyazPsQYvsCgZdCN
+X-Gm-Gg: AYBFou30uh4X4arUUaqjnJs9616zDcP7KYVaNLCQEjRtPOKx69AWQYJeT/sN7szkURk
+	Hzw3MJtc9dVL2yOOkUGWDglDNj+oxVb2jvLni1BOVK2U8eG86OIpDZrvyDY1hcpN113vuiMJZiG
+	vHHRtAGfSvCKmi6obqSxGXVK0wVOU1RDQRh7E59DpbRLjFKsjrikOyIl0faLKX9IkDaZ/tzziDi
+	Z68XegyQIWifxRxCdAiAwNR8p8z72VLaHMOCSaEwMurGfZZSS4uW1CvsVYTLkQiNCY09+FkPd99
+	LSoA11cagE/BbVvqIXdOzspiiaTU7QH4ILwOGqkDuHdOKIFIL9NTfr9AnMVUGdJ3NMB7p6oyP8g
+	0AvKYTOOLdQDxCdrOJGQEEC/4bGs8GlvIiIS+wvCgTO+M9/L+rSznNjo=
+X-Received: by 2002:ac2:51c6:0:b0:5bf:b945:4334 with SMTP id
+ 2adb3069b0e04-5c170a15b78mr6210350e87.67.1794937495491; Tue, 17 Nov 2026
+ 09:44:55 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,13 +104,13 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261117050841.3289652-1-jarkko@kernel.org> <20261117050841.3289652-8-jarkko@kernel.org>
-In-Reply-To: <20261117050841.3289652-8-jarkko@kernel.org>
+References: <20261117050841.3289652-1-jarkko@kernel.org>
+In-Reply-To: <20261117050841.3289652-1-jarkko@kernel.org>
 From: Andy Lutomirski <luto@amacapital.net>
-Date: Tue, 17 Nov 2026 09:42:26 -0800
-X-Gm-Features: Aa3M54o6AJsup2EB_D5C3UIkkriS8wK22wW9apyv8KKATx5_DoWBh2HrH9mfDyU
-Message-ID: <CALCETrWtbUFQGDOCHkxAN9O4i29ixfL5KKF1Cqw2-CjxKwC6gQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 07/13] rootns: Add rootns_enter() system call
+Date: Tue, 17 Nov 2026 09:44:43 -0800
+X-Gm-Features: Aa3M54pzaE332pTi53D1YpA5VO7WahNUrZvzEHccu8lFNhASVJD5SKW-Zdzq05g
+Message-ID: <CALCETrUBUnJVhiMkft6hTZZMe8nTpMBRTGY2v=9x5ETBSvmPZQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/13] Namespace for namespace roots
 To: Jarkko Sakkinen <jarkko@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -134,29 +134,76 @@ Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 16, 2026 at 9:09=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
+On Mon, Nov 16, 2026 at 9:08=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
  wrote:
 >
-> Multithreaded userspace daemons cannot call setns(CLONE_NEWUSER) or
-> safely mutate process-wide filesystem state in place before spawning a
-> child into a target namespace set.
+> OVERVIEW
+> =3D=3D=3D=3D=3D=3D=3D=3D
 >
-> Add the rootns_enter() system call to fork a child process directly into
-> a rootns whose root mount has been installed. Transition the rootns from
-> ROOTNS_READY through ROOTNS_FORKING to ROOTNS_RUNNING for the first
-> process so it becomes PID 1, serialize concurrent entrants on waitq
-> until bootstrap resolves, and admit subsequent callers into the running
-> PID namespace until teardown begins.
+> The problem that root namespaces try to resolve is starting a container
+> from a root mount tree that is pre-populated before any process is allowe=
+d
+> to run, without inheriting any host mount-tree ancestors.
 >
-> Require CAP_SYS_ADMIN in the target user namespace, forbid credential or
-> PR_SET_NO_NEW_PRIVS privilege escalation
+> Work on this feature started originally in 2025 from David Howells'
+> container object patch set [1], but I turned container objects into a
+> namespace of namespace roots and built a new implementation around this
+> premise.
+>
+> In early 2026, the patch set was left to gather dust in my kernel tree
+> [2]. Then, the other day I saw [3] as was shocked by its over the top
+> complexity and thus, here we are.
+>
+> Not doubling the number of container frameworks inside Linux kernel is at
+> least a benefit over container object based solutions. Parallel plumbing =
+is
+> an inherent flaw of container objects, and it directly affects on
+> development and maintenance cost of container runtimes.
+>
+> Also, thanks to better scoped implementation surface, verifying rootns
+> correctness is factors easier than with container objects, and even my
+> early kselftest is meaningful. We know what and where we are testing,
+> which is always great.
+>
+> Finally, it is more compatible with pre-existing container tooling
+> whereas container objects would have much higher cost.
+>
+> [1] https://lore.kernel.org/all/155059610368.17079.2220554006494174417.st=
+git@warthog.procyon.org.uk/
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.gi=
+t/log/?h=3Drootns
+> [3] https://lore.kernel.org/linux-fsdevel/20261105-b4-cells-v3-0-bc909593=
+7a84@toxicpanda.com/
+>
+> IMPLEMENTATION
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> rootns_create() allocates a rootns object backed by a pollable anonymous
+> inode fd, pinning dedicated empty mount (CLONE_EMPTY_MNTNS) and PID
+> namespaces along with any optional namespaces selected in flags.
+>
+> Before entry, a manager prepares the mount tree through the control fd:
+> FSCONFIG_SET_ROOTNS binds a newly opened fs_context to the target rootns,
+> and move_mount(..., MOVE_MOUNT_T_ROOTNS_ROOT) installs "/" onto the nullf=
+s
+> root once and attaches relative submounts beneath it.
+>
+> rootns_enter() forks a child directly into the rootns credentials,
+> nsproxy, and root path without mutating the caller in place. The first
+> entrant becomes PID 1; once it exits and zap_pid_ns_processes() reaps all
+> members, poll() reports EPOLLHUP and rootns_wait() returns init's status
+> and rusage. rootns_kill() walks pid_ns->idr under RCU to signal member
+> thread groups.
 
-Why are you disallowing this if no_new_privs?
-
-This isn't necessarily a showstopper, but fork() is really quite slow
-in many cases.  It would be nice to have a more spawn-like API
-available.  I assume it's possible to open a file in the target's
-mountns by some sane API even without entering that mountns, as a side
-effect of how the fsopen / move_mount mechanism works.
+Can you clarify what this new API actually does?  I've read this three
+times, and the best understanding I've come up with is that you've
+designed a way to create a group of namespaces identified by an fd and
+you're adding an API to configure and enter them cleanly.  Which
+sounds very sensible.  But I'm completely confused as to why a
+namespace needs to be owned by a "rootns" or why that ownership
+affects even newly created sub-namespaces.
 
 --Andy
+--=20
+Andy Lutomirski
+AMA Capital Management, LLC
