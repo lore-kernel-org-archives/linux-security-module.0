@@ -1,52 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=62.149.156.72
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.188.120
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794921699;
-	b=2ii0j/0alCsYj4XuvhscGuezuKJlqMbY8ix2hJo+dYjm+FZ+YbbR0Q1kxNXtJkwQEG5R
-	 LQ929UXvS6NZnhHfarbN+HGOs89CwH94e+iGB2In573cbzJYXIPoNEikzu1ZxhRlkkwo6
-	 3X1nwG5hWibl4PjWNAfY1sgBfcC08niVcYsDaGTK89BlVIIIv0BjRNXUAdailWYHp+zLx
-	 KiBvqga2Qn3hTWCJ2KZEKQ3mGpAl3ee5ebUPlUPF4p74Vd7QrCmneDGx1jSqLFqqUThDW
-	 +WXqACsHPMaX/7YFLH9if1bWRbEtl19MuPGvhYQ3xkQxTMn666EI5FY/5WIC3tL5IoA==
+	t=1794923480;
+	b=A7hmDtJ7empudBNTCtlRyJDy0IK9wvWC2xGom+NS9Tgege9Q+ygpNZwVN6Qu3og74kH7
+	 RQNZ8FaFYROTBkxc6LpbI3+Jb/HpF6qN/K3gowEx1pYJmVtH39eJdVWkyWIckNULAAUCR
+	 sYO9vn9g2bZ12gNKAVFTbbAtbErO0CJ0ei5Z30IwXa5DXb4cw2vl6NoWDufBqb5mYiJFH
+	 XEc0aqVeGXTQgmiBDgnUBJB24eonICID9XA0QvEn0XIugubCFCEWoZ80gFoS4w+yX91FM
+	 kAbyvDZVBTiEh8cjxLAwevI9GkYg2PHTWiw54iBQij4cfyK8PXb3VvzmYvp1bG8XvWQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794921699;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:Content-Language:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-CMAE-Envelope;
-	bh=CWKy/Xe5D3WLDxIMxxMZifmNFWiFuSMPKw85DviN7N8=;
-	b=RNBP/8LSRKK9+ZXJpRXs6SQOtxmKfOUlMCWFVvcdSyUsRvnLBPJ2zStrazLoJpcTIGt9
-	 1B0obCQmMapKihfJ8eRCiict89mSEfaHryOWnfK2i14kUbBCc7QRos7jQVPIG+jT5oDY0
-	 ep36hnokF+4vZkMwbP5SdpKTQpGgZGvlogKGNDu7dojmUL3c/5MEbUpwMjau4EUC6EYV0
-	 sTuz7ZyQl4hPBDXsu50EyROaVn4DDRcoY8umJmOaC4z9gq2e4XJBXThtAfwmHjw96zSXU
-	 GJeXVyOtIpTooulE3FceaHsnOoxsid6gW/wbChzERG5U12PQiARkHArvNVLQbCtqh/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794923480;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=An62cQp4PQGRTZyLaanT29NwoMwFeQNXdZh52ZkyRjQ=;
+	b=CxvD8f3WCd9W6qP2tzM4Uwuqq6BFSiYU5oZhc3Lf+GEQUV3MpBLwYxDdfI53R87g6LcL
+	 Xmkg6Sj4TcBZiobPrzy+o5rCG12iOAUzGxmeMkQpD0iVnxvbPCHSh9C4XKpnSYGjnwmHc
+	 ghUZugvDZlXjRNNGhYlAgnjB56Q8+KqBfCnfP15YTwLx3PauRc3f3jujnyX8zqyJq5KE3
+	 6vk0n/8i332mTKrV/iK5RVJITHXHroCIr6/Vqde8ZOpeAjo2pGuHykCWmwcYzt2CpZeTT
+	 h2DPA6/15elY7i0fa3jvIguBazfd8EC/k9zIIw/ETfoTQyLrsQX1jVwC4LxlvH2HRqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=enneenne.com;
-	spf=pass smtp.mailfrom=enneenne.com;
-	dkim=pass header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b=D3LHUF9a;
-	arc=none smtp.remote-ip=62.149.156.72
-Received: from smtpcmd0872.aruba.it (smtpcmd0872.aruba.it [62.149.156.72])
+	dmarc=pass header.from=canonical.com;
+	spf=pass smtp.mailfrom=canonical.com;
+	dkim=pass header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=YCBhdle6;
+	arc=none smtp.remote-ip=185.125.188.120
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEEE606A339
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 13:21:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EEEEE606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC777606A31C
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 13:51:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AC777606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b=D3LHUF9a
-Received: from [192.168.0.186] ([101.57.122.26])
-	by Aruba SMTP with ESMTPSA
-	id TJ7nx1DnacPcsTJ7nxe0qW; Tue, 17 Nov 2026 14:21:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1794921689; bh=oT2PXSW88ArmQaqNSfEwrssUL0dmXrSRZQiuFx9AOd0=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=D3LHUF9aQVXKQ9UYUAuA7NcPsl7BxfeUkL4oPBUdEqZXYDqb3z7e6J1CpDrKNvAaW
-	 FjXwqAeTCHmUYrrMsoTo9ECEVQSofvqgnLkdS16Huf5+yxZ36R6EkrMC1lwJPKt/dP
-	 W5Yv3mmn4/UEChNu7vuU6HPWQ7WotSwx9EBRzr/ilp803lg6O9lBrSeJc4kTtuW5T9
-	 JMRv6rH/v/F9jevkqU6/KbzUxwECPrTwg3y4tU/Oqod3O6X4vdWq+sdE+zr+7lJ63R
-	 smxM4IyZIlcdPa4oVOV/2RZkjbTo4owA78Gutm179EV2aTRPTlI117fu7Jmbr/WRft
-	 V6RJOdFZJ80bA==
-Message-ID: <0e20f799-e389-40d2-aaee-2f174748faae@enneenne.com>
-Date: Tue, 17 Nov 2026 14:21:26 +0100
+	dkim=pass (4096-bit key, unprotected) header.d=canonical.com header.i=@canonical.com header.a=rsa-sha256 header.s=20251003 header.b=YCBhdle6
+Received: from sec-questing-amd64 (lfbn-idf3-1-218-1.w90-22.abo.wanadoo.fr [90.22.217.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6D3F13FA3E;
+	Tue, 17 Nov 2026 13:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1794923471;
+	bh=An62cQp4PQGRTZyLaanT29NwoMwFeQNXdZh52ZkyRjQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=YCBhdle68T1Ml3NYLXgMPNKGZw7zpEM5htQCjihcuNkytIn646aPFY5kzv4PmnURu
+	 uM50kzJoFxsg3W4r9Dxmoqg0h0fHEyOZYGG1BVz2ip7PD9cV4NLxqJBA0DjwruskTn
+	 RjAY1Vns5NuumNhMWK6za351zEo32s2yIyjJgi3Orpn3JxZ0d51bfKDTDB6tXGnlFL
+	 CvovNJIycQPZY1gHVDyysFAej3K5RcZu9iuySKmD1Pi36S0C7Dn6dqd4d2baBLUDJx
+	 c3b9sn7bMXWD4hkmffUshRLf8TvrNxDUXG8OyqLBkG8uj88K2MzQVaZrAsGCXZpxVn
+	 s7PgMpcSFc5MjmeeeOaojNH0KulrBbxvddhlWtuLoP7Q6U/8yaAI8Miy4auynRAHra
+	 KPLug8R7n07Zajtd50rJMU3XlCI51MrGmFgru9Mq9EV7bW1d5dlyk5x79aCvOy75CP
+	 EzV1fNmVeKJu52PQESzGSUwSPfWkouGnmtMm+lkQuYJSHbpGzeAP0BArThHCocNLW+
+	 E1WIdeGQFkNv0o1be74AmUCICyPE0qz2i9fJhOSFkXims7dwv6t5F4Q2n9Pu5o3UN5
+	 UoTNn2osRNQDWF6E3QyOTMGNK+ThIzqtZypt5jYe6Ou+2grMBVUI+ypxmrm83x9EHT
+	 Xba68YOS3TLuCGEvWDr3crNI=
+From: =?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
+To: John Johansen <john.johansen@canonical.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>
+Cc: apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	=?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
+Subject: [PATCH 0/4] apparmor: provide the kernel feature set at build time
+Date: Tue, 17 Nov 2026 14:50:06 +0100
+Message-ID: <20261117135042.78238-1-maxime.belair@canonical.com>
+X-Mailer: git-send-email 2.51.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -56,121 +73,54 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] KEYS: fix signature length passed to
- KEYCTL_PKEY_VERIFY
-Content-Language: en-US
-To: Florian Bauckholt <florian.bauckholt@cispa.de>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Lukas Wunner <lukas@wunner.de>, Ignat Korchagin <ignat@linux.win>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Hui Peng <benquike@gmail.com>,
- Stefan Berger <stefanb@linux.ibm.com>, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20261111-keyctl-pkey-fixes-v1-0-934ebaa267a7@cispa.de>
- <20261111-keyctl-pkey-fixes-v1-1-934ebaa267a7@cispa.de>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20261111-keyctl-pkey-fixes-v1-1-934ebaa267a7@cispa.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfDg+biMxW//ioyRGFd9IFIlidEW1a2KiKD2evhiscr/Ncy3LgypJUgynMd+o8RcM6m0eFTTCJ1Y8aXl826d0s2qqGHBPJuRg8drh+k/ewjJ5c2Ng73LR
- N1Sj2F7NHEHNenpSVYzQjg322kfqmTdrNt6CuKC306/WtrTJ4wHiazfLjV8+mQgXARt9KWCyR8mz5Q2XRks657UfSiRgqNd1ZYLcQs9OlasaNk6dGFhFFmoc
- Z2FUAQk5bG+wrDzFA+GhruflgGh4nb6+rZh82j3ZE2lkIL8s4ax2X0j+qB2EBx5WDzCUIs7cD//QfBopsXqJhBSSY3asWR4psvoAO2V5DCHwWR+8fqzwZVQ3
- zWxAZXS6nvWdCV8z6ZLxLGXwOheVDOkyjoT0+v3JinadqrBrK6t/n0Okxk/VuHAFPtIkkfgYq6Vy4j1IGNdU24E9idR72uM67iouzpuPw9J6Jja6IaR1wbL+
- jAB4i0/IEubK9G0Zzhd8ALVt+hyPUT9Av/tFfSpZWWpWweuUW5FLEiP95GfseydpODLCfV771PTvl/oMXt1dYSIj2lWGReGq2vVbifJoiSfW5HnLMG2dyhXC
- jiMSlAznQPDMk5GEpsO0TNidxiRm6MzTbXqm5/7lWUZAXsLBql/Qex9lAVI7JZpTq7q4veUjqLK1gtQYpyUcvHc47fqhA5ay/gp+aB5BS/wfb4HHJJChllbv
- HUgKPjrfCjq0IoHhg1AENiug5UQqKvMh
+Content-Transfer-Encoding: 8bit
 
-On 11/11/2026 16:56, Florian Bauckholt wrote:
-> Commit cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
-> made keyctl_pkey_params_get_2() set params->out_len to the maximum
-> output size of the operation instead of the size provided by the caller.
-> It does so for KEYCTL_PKEY_VERIFY as well, but verify has no output
-> buffer: out_len shares a union with in2_len, the length of the
-> signature.
-> 
-> As a result keyctl_pkey_verify() ignores the signature length passed by
-> the caller. It copies max_sig_size bytes from the signature pointer and
-> passes max_sig_size as the signature size to the verification.
-> 
-> This makes no difference for signatures that are always max_sig_size
-> bytes long, such as RSA. A shorter signature, e.g. a DER-encoded ECDSA
-> signature, is followed by whatever is behind it in the caller's memory,
-> or the call fails with -EFAULT if that memory is not readable. The
-> x962 ECDSA template currently ignores data following the signature,
-> which hides the problem.
+AppArmor policy is compiled in user space for the feature set of the
+kernel, and the cache of compiled policy is keyed on that set. The set
+can only be read from /sys/kernel/security/apparmor/features once the
+kernel runs, so the first boot into a kernel with a new feature set
+compiles all of the policy.
 
-The test suite of craf (https://github.com/giometti/crypto-afalg,
-test3008) hits this with RSA too: it cuts a genuine 256-byte RSA-2048
-PKCS#1 signature to 255 bytes and expects the verify to fail. On
-Ubuntu's 6.8.0-147 kernel, which carries the stable backport of
-cb481e59ea6c, the cut signature verifies about once in 256 runs. Over
-2000 runs per build:
+Every entry of the feature set is a build-time constant. This series
+writes the set to a file when the kernel is built and installs it as
 
-    plain: ok=1991 ko=9
-    asan: ok=1997 ko=3
+  /lib/modules/<release>/apparmor/features
 
-and a failing run prints (line wrapped here):
+so that user space can compile the policy when the kernel is installed,
+and the first boot takes it from the cache.
 
-    libkcrypto  [pkey-cert]: kc-check pkey-verify cert:test3008.cert
-        enc=pkcs1 hash=sha256 test3008.d256 test3008.bad: exit 0, not 1:
-    KO!
+Patches 1 and 2 prepare the feature tables to be built into a host
+program, patch 3 writes the file with that program, and patch 4
+installs it with the modules.
 
-To reproduce it (the count printed is the number of failures; here it
-gave 3 out of 1000 runs):
+The file is identical to the output of "aa-features-abi -x" on the
+booted kernel.
 
-    git clone https://github.com/giometti/crypto-afalg
-    cd crypto-afalg/tests
-    export TESTS_TMPDIR=$(mktemp -d)
-    for i in $(seq 1000); do ./do_test.sh 3008; done | grep -c 'KO!'
+Maxime Bélair (4):
+  apparmor: move the feature tables to a header
+  apparmor: make the feature tables build without kernel headers
+  apparmor: write the feature set to a file at build time
+  kbuild: install the AppArmor feature set with the modules
 
-I also replayed the inputs of one failing run on a UML kernel of
-current mainline (666539eecdf4, after v7.4-rc3): the 255-byte signature
-verifies 20 times out of 20, and with your patch applied it is refused
-20 times out of 20.
-
-Maybe it is worth saying so in the commit message, since this is going
-to stable?
-
-I'll send my Tested-by once test3008 has run 2000 times on a kernel
-with your patch applied.
-
-> 
-> Use the length provided by the caller, which has already been checked
-> against max_sig_size.
-> 
-> Fixes: cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/all/20260919221742.3709658-1-benquike@gmail.com/
-> Signed-off-by: Florian Bauckholt <florian.bauckholt@cispa.de>
-> ---
->  security/keys/keyctl_pkey.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-> index 15b6bf6399b5..794fa3d01911 100644
-> --- a/security/keys/keyctl_pkey.c
-> +++ b/security/keys/keyctl_pkey.c
-> @@ -160,7 +160,7 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
->  		    uparams.in2_len > info.max_sig_size)
->  			return -EINVAL;
->  
-> -		params->out_len = info.max_sig_size;
-> +		params->in2_len = uparams.in2_len;
->  		break;
->  	default:
->  		return -EOPNOTSUPP;
->
-
-Ciao,
-
-Rodolfo
+ Documentation/admin-guide/LSM/apparmor.rst |  15 ++
+ scripts/Makefile.modinst                   |   6 +
+ security/apparmor/.gitignore               |   3 +
+ security/apparmor/Makefile                 |  25 ++-
+ security/apparmor/apparmorfs.c             | 127 +--------------
+ security/apparmor/capability.c             |   6 -
+ security/apparmor/gen_features.c           | 100 ++++++++++++
+ security/apparmor/include/capability.h     |   2 -
+ security/apparmor/include/features.h       | 173 +++++++++++++++++++++
+ security/apparmor/include/net.h            |   3 -
+ security/apparmor/include/resource.h       |   2 -
+ security/apparmor/include/task.h           |   4 -
+ security/apparmor/net.c                    |  15 --
+ security/apparmor/resource.c               |   5 -
+ 14 files changed, 328 insertions(+), 158 deletions(-)
+ create mode 100644 security/apparmor/gen_features.c
+ create mode 100644 security/apparmor/include/features.h
 
 -- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+2.51.0
+
