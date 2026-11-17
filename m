@@ -1,72 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=51.159.188.251
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.157.188.9
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794905403;
-	b=fIPTVwMAIOne8XCRsfgq3eFxSb5GMH0QdEjJg1NtDrhMNFYDWHJ7iBQsiP2mr7xbsNXd
-	 0bIrkJeREl3yGDAIc2KI5Zv4z+yg2ivTynYr8TfLJsB3AFc1rnlwQKy/yVHkVpuVe5wVh
-	 bqIpysZbGrV5ZXmtKa67T1S+CKsyrIIiBYleSIq8NNkOB31Y5cdYizyNQlFUz9NBy0X05
-	 ZhBSkgd4G6+4pDvXwhKFk7ttgFfcFpkXqU1/3mM2T+mHktPPJwksv9+l9NBKCNRD7B7mn
-	 8esfJFaveyu3FbyMBGrZ/BSl71eCAyWHh7ToGU0jqsmzpN8B/ZXqszu0//ZlraFvDfQ==
+	t=1794910337;
+	b=JI6Ky4Qm5RzZrJ13tPU+W/k/Wp6NyD2tPRmJU0ThFH1TSLQ64ryQvjD9fJ4BI3NL33+W
+	 C82Zbu928Jw6PmyLDST1Qe3wFrc5jv9oTuP1xvIvU/0TYPmbz2WWuGLWY6sJ3+lMwTFW8
+	 N0QeQ06TAr+22h1wnKIJdtYqwj7pa1FimT9A9DzE++gsZgBMef9IgMmhFWem1Uk00e285
+	 ykiq4cA2O+MkWPT8NuxfiFFMGaW6uJaEM8bftXOXfejnRRLt0hiE4k2k/891Ih5RG5Hc8
+	 wj0XP8du81jfsHDkq/I16kquM42PT4R0REgAlQhND0TVBgOVEoQbepvMJWLGP2FQ6yw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794905403;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-Get-Message-Sender-Via:X-Authenticated-Sender:X-Source:
-	 X-Source-Args:X-Source-Dir;
-	bh=4Jaothk9pIoXzn6khKlhOzHzJccnvdvTdTICicAJwj4=;
-	b=5CptZDqS6YaE2xdP+1KjEpuabpIK9iBVnbJV/dI6/v4Ur3jKHyBLVGHuwPdv3XfwsAHH
-	 jSKTEHo5tmnF9bFlOR6BuzBhxLv/k6BsO3D+cCVeVA1IQlUmMojTMcD6/thY9eTkAt1TB
-	 f3K79/fo78Mc3h4aooqnl4jiPqNfkflxJ7QiNJUMa3K6Xt64ZbkJGvsCWkMrCBtCQ3h/L
-	 sVl8Zaw3drPcfssse86LQTcj1PdEKmPkdjardveKVnVS+JCpAhW/dzSkOmLYnWQzu+gbY
-	 Kn9zmXMEt/MVafF1ieX/eBFhHyBtXajwIeHtRwdOxRZbbSHOLfLeTh8r6SMNHV9HXRQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794910337;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
+	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Infomaniak-Routing;
+	bh=gyRxjx+N08McOgkiPKprbmzlzILJehlh93QhGWzUcJ0=;
+	b=X4yyrhD7sHm5LhGlcRSMSAy8okN0CNkpaDtQoVLsrCtsR+Itvu6nJamIg7FUU/9aDQY6
+	 K35zpX7CHoQ0j+MBUCSXc1vAh88tgLmt2eiVSvrBqAL0ZXX779N7Lo3jcpF0R1+FXHtV/
+	 an+D9rLvgmfS8SUO4c3c5L0osvDv2671WeN+fRMXrX1Bg2NcOWT120hmn0zaMJKm1/qFP
+	 zIpYxh+vfBfRuJ6XxOP4Yuqqo6DIkItd/raW0LjceF7AF9JjiEYfm+rwXflBowc4IkUQN
+	 6I+gJRa5wCdh0mzqeaiHSzhgz2BrCsim4sYQGcNffctg9WVtbEtmc5fAdIA/Kr1sS2A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.cyber.gouv.fr;
-	spf=pass smtp.mailfrom=oss.cyber.gouv.fr;
-	dkim=pass header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b="Q/JBmfvY";
-	arc=none smtp.remote-ip=51.159.188.251
-Received: from oss.cyber.gouv.fr (oss.cyber.gouv.fr [51.159.188.251])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=nHhOxJr+;
+	arc=none smtp.remote-ip=45.157.188.9
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CF2606A886;
-	Tue, 17 Nov 2026 08:50:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 86CF2606A886
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D41606A32A
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 10:12:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A9D41606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.a=rsa-sha256 header.s=default header.b=Q/JBmfvY
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:Sender:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=4Jaothk9pIoXzn6khKlhOzHzJccnvdvTdTICicAJwj4=; b=Q/JBmfvYble2Erof+KIjVlEQWH
-	WHx8qahHtJKFGLW174pzXsTqwioJXsbLwyC0H6/8PobJk2DS0aev1PKga/utBNayesJO0eY+YGU1c
-	G4rqVHkcqG+C0lTCf5RQ022GBESPwRUlVyCvRDuB40AeB7d09d4jlp/DqpjLacnmWjXXvudfgxLKV
-	Yvs2o5mCFHK7wBsIRN7hcbvrjaLA3dYUATZ32R2RLuGYZA19ORDc/7fJkw4MEg1Nrjw4xPUnWi4kG
-	cWUt6bFOQmR22B132HAx5LVG2aaMbWzPieLknw/wwk2aX05gRCymrrJmsSeVCUBkl+yK5dgXuFtQS
-	YqZ83Gdg==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:31494 helo=archlinux)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1xTEt2-00000002fyt-1LRX;
-	Tue, 17 Nov 2026 09:49:54 +0100
-Date: Tue, 17 Nov 2026 09:49:49 +0100
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, 
-	"Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/2] lockdown: Prevent booting with lockdown enabled but
- IOMMU disabled
-Message-ID: <avwUNw2if5GIPA11@archlinux>
-References: <20261102-lockdown-iommu-v1-0-00f3c2be4c9f@kernel.org>
- <44ac3423-0a51-4562-816a-fea881511afa@huawei.com>
- <a444421f-178b-49be-98b7-d34dfb147604@kernel.org>
- <avr31i6M5PqKk_Vf@archlinux>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=nHhOxJr+
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jTLBG5SKlzNTN;
+	Tue, 17 Nov 2026 11:12:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1794910326;
+	bh=gyRxjx+N08McOgkiPKprbmzlzILJehlh93QhGWzUcJ0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nHhOxJr+GK/f4yDEX29tGjMPr8epPdaAJcBdA0eBWY8l6HqTeVxNg536PZQNw+tqT
+	 cxZ64jOrhq2RI5RKKqaSoeNTpcX9bw7JvOnsnXP+Y5Itu6V8/f+egqCFI50qk5btHp
+	 RG3GAU7M2M6nknjCtYHdm5BFUmxDEprBZDRFJbvk=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4jTLBD5vtcz999;
+	Tue, 17 Nov 2026 11:12:04 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Ada Smith <adasmithgt@gmail.com>,
+	Hungyu Lin <dennylin0707@gmail.com>,
+	James Morris <jmorris@namei.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	kernel-team@cloudflare.com,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v2 0/6] Fix Landlock mediation of commoncap's capability checks
+Date: Tue, 17 Nov 2026 11:11:50 +0100
+Message-ID: <20261117101157.2520463-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -76,54 +70,74 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <avr31i6M5PqKk_Vf@archlinux>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Mon, Nov 16, 2026 at 02:29:01PM +0100, Nicolas Bouchinet wrote:
-> > 
-> > How would you feel about at least blocking the user from turning off IOMMU
-> > (if it's present on the system) via the kernel command line while lockdown
-> > was enabled?
-> > 
-> > Thinking about the case where most distros enable lockdown by default, this
-> > will strenghten it's use without much downside that I can see.
-> > 
-> > At least on a properly configured system that contains an IOMMU it would
-> > prevent a user from subverting lockdown with a malicious device during the
-> > boot sequence.
-> 
-> I do agree with you, it could be a great addition. With Lockdown enabled
-> as an early LSM (CONFIG_SECURITY_LOCKDOWN_LSM_EARLY), this might be
-> feasible before boot parameter parsing. Lockdown already locks unsafe
-> module parameters.
-> 
-> If I remember correctly on distro's that have a Lockdown patch that
-> enables it if secure boot is enabled, it should also be called before
-> early param parsing.
-> 
-> But taking this threat into account also brings other questions.
-> i.e, a physical attacker with root access on a system where Lockdown is
-> enabled and with a bootchain configured with shim+MOK is able to change
-> kernel cmdline, generate a MOK and sign a compromised kernel
-> binary. Thus defeating lockdown purpose.
-> 
-> In order to take the physical attacker into account, a securely
-> configured bootchain where the kernel image can't be tampered with and
-> where an attacker is not able to inject it owns certificates/hash in
-> db/MOK is mandatory so that Lockdown makes sense.
+Hi,
 
-To be perfectly clear, my intention was not to suggest including a
-physical attacker in the Lockdown threat model, but rather to provide
-examples of how such an attacker could bypass Lockdown through other
-exploitation paths.
+This is series 1 of 3:
+
+* 1. fix Landlock mediation of commoncap's capability checks;
+  2. fix PR_SET_SECUREBITS mediation and add focused Landlock tests;
+  3. fix Landlock mediation of capabilities guarding LSM policies.
+
+LANDLOCK_PERMISSION_CAPABILITY_USE, merged for v7.4, denies capabilities
+through the LSM capable hook, but commoncap's mmap_addr, capset and
+vm_enough_memory hooks call cap_capable() directly.  A domain that
+denies a capability can therefore still:
+
+- map memory below vm.mmap_min_addr (CAP_SYS_RAWIO), which defeats a
+  mitigation for kernel NULL pointer dereferences;
+- add inheritable capabilities outside of its permitted set
+  (CAP_SETPCAP), which lets a privileged sandbox without no_new_privs
+  gain capabilities through execve(), although the domain still
+  restricts their use;
+- use the admin memory reserve with vm.overcommit_memory=2
+  (CAP_SYS_ADMIN).
+
+As SELinux does, patches 2 to 4 add Landlock's own check to these hooks,
+with commoncap's conditions, so they only deny what commoncap granted
+because of the capability.  Patch 1 factors out the shared check.  Patch
+5 adds tests, including audit tests, that fail without the mmap_addr and
+capset fixes; testing the admin reserve would require changing
+system-wide overcommit settings.  Patch 6 fixes the documentation, which
+overstated what the permission restricts and how its denials show.
+
+Two other direct capability-set checks are fixed separately:
+
+- PSI triggers (CAP_SYS_RESOURCE):
+  https://patch.msgid.link/20261106120004.90041-1-dennylin0707@gmail.com
+- user namespace uid 0 mapping (CAP_SETFCAP):
+  https://patch.msgid.link/20261110144205.2404088-1-mic@digikod.net
+
+Changes since v1:
+https://patch.msgid.link/20261110202436.2408244-1-mic@digikod.net
+- Replace the admin reserve test, which changed system-wide overcommit
+  settings and was racy, with a comment, and fix the mmap_addr tests on
+  32-bit ARM (reported by Sashiko).
+- Add Serge Hallyn's Acked-by.
+
+Regards,
+
+Mickaël Salaün (6):
+  landlock: Factor out capability denial checks
+  landlock: Mediate CAP_SYS_RAWIO for mappings below mmap_min_addr
+  landlock: Mediate CAP_SETPCAP for inheritable capabilities
+  landlock: Mediate CAP_SYS_ADMIN for the admin memory reserve
+  selftests/landlock: Test capability checks outside the capable hook
+  landlock: Fix capability restriction documentation
+
+ Documentation/security/landlock.rst         |   8 +-
+ Documentation/userspace-api/landlock.rst    |   8 +-
+ include/uapi/linux/landlock.h               |   6 +-
+ security/landlock/cap.c                     | 110 ++++++-
+ tools/testing/selftests/landlock/cap_test.c | 336 ++++++++++++++++++++
+ tools/testing/selftests/landlock/common.h   |   4 +-
+ 6 files changed, 451 insertions(+), 21 deletions(-)
+
+
+base-commit: 7475ea8b58616b33c04afb976cf0fbaad9dd63fb
+-- 
+2.56.0
+
