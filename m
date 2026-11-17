@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794927104;
-	b=r6solIwhpn8frg8SfJUU9JfdF1UHFl0KG/dw9Xv2pqhp6bCc18ogKQGIxkA4m37Nnwzw
-	 Q9sBTFeINjkvBizg787JZzJ7YJxaPDreumnDhncxoE1XonMPyFummY8Y0ONgAoVaMXWUi
-	 tGDNtz8Md9aAK9izcj7ja/GEFm9/T7p8KKuPpayyaD7UwOZaf7jefPg5jUj+nkD5cbVK4
-	 niiC2sBNhFCSbHx7VSBj+CNDRR/NkRZolwMFijEI4dttCC5jZ4e+Vg0A5x56XWjmTgLHi
-	 D0IW/l8ofp6z7ngNJGekxyMqpUJ47DKQYi7jskT9/cIK/YfZQXS1rUm+mjmQLhZORBg==
+	t=1794927243;
+	b=HcxwQvZsk9JNAQbKqtTauz8HdXNPV035JDXOEnJurj3Ox5/S67suK0ldSwae3BirNX4C
+	 XS04A50Ny3Uxe9aqSZnjy6HU1eNnQrSJsUD1iKhCZG31vrUn5porjfGr3J93U4HjHKeQ0
+	 TEjIlaT/cyGPc8vh6z1B5I7xEOOvpjnPM6IA7VjKxQw6Nr2IZFIj8pIJ9rQeUJ0J+3nYB
+	 Y3Sos2ZUBSmGYvW7S++HtuZMJgPiVUZzD4lSe3g5OVAuQQYo5TznFh2IfInEIKedEMR7c
+	 OOTIvmwBGbNP/Y8zIgFg0YIe8fQ3+8BjZpJttKQTbNYP15THGlBQpTt8Co8xVmLPYsA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794927104;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=9r0CTQwqOc/EuPRU6kz4jyqdws2NOCL2inigCOrimVI=;
-	b=iznQXVCcOQxiq355NQvq8104BtIeMd1mHcHYliYObwSEs6qy4Y4mEDKQU7CesUzfyGQT
-	 YMV+mQmKd/aXZvpgN2w5TkhzJzHfSxV6vUv6AhT5T6wtss/sEFQ84TKCUtDLSRzuPj4kI
-	 /K68jAUC3Eibn8F21UOkkloeAXMcD/0pUoyVe498ny4qj1kXHLr3+Mm3hlCNo2PzG/Xjg
-	 rAUsgliYrkRPYOsuDQlm54C2zqA9prpNnfUb2k6LF8EW15KaBOZp0radkKrQJaiYhMSqc
-	 GqEjt09WYS4+rLzUAMz+LURQZBnxI5eF9jOByiLSmrVFxW3nsfpahx/5xBHApxv6PmQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794927243;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=2AcM92XwkeB/9GLpKxLhBOpnc+KvX4qwBiVBcCFW2+8=;
+	b=xcbcuU38XQjl91rNHT5pXBdc5wNjZpoQvbrTLFB8dHB0Zanul+kWmz708ga7TKK+Utga
+	 VlOvUouBYeK3+NDbdO+7FafYFJtybZDkkGJEcsp4l8w8gWmLWMUukZyH88HkIM8TPezNL
+	 mK3JLs2IzPQIq1tAWJ1ZG1CfSSrnycU2A0ED8NFLUlsIPcINkwFHstb27G+/dNQ7GrOKn
+	 0DkboT7DwXFguCfEcO5c+khPlqHjn2rF3mWN3FmjUSH9zQ2rk9Ik7D54krkt3mmfNz+JF
+	 Pu0azBbvEwN5DxFdmG/lMF8ewSrYUc+UxG3NsE2eV/YxwHdZFmDJpBUkprtMMzt3Hug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZshAAOGr;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IYjQ197p;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957CE606A331;
-	Tue, 17 Nov 2026 14:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A3E76606A31C;
+	Tue, 17 Nov 2026 14:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZshAAOGr
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526A71F000C9;
-	Tue, 17 Nov 2026 14:51:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IYjQ197p
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id ED2451F000C4;
+	Tue, 17 Nov 2026 14:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794927104;
-	bh=9r0CTQwqOc/EuPRU6kz4jyqdws2NOCL2inigCOrimVI=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=ZshAAOGrbnG7zV2a/gpAnRe5NT3oXZ2bPLAM+aoPm84WafaWuQHuUtUCU569lhICp
-	 mcPjm++bu+964H7Y8GyrSJ4sEnUKhkFp/RKoc4fQXg4UC8gQN/KGcq5qXPZNFWIy8O
-	 jqfdGw78CdtkycLG49MhU50vypqmqODOWAKSk33FO4FQZtDS4dUJYCXvRiabTLZOX5
-	 UG+NX7cHg2MlIUTTurzPlX703xMpADBZIUXikv29Jv6ai/5RzNbw588wNm4BvU3cPz
-	 OY/4NVBk4ziaSZ0X62bfH9YGzxSGiwwZ/lKUABL/YhpqEcVrTFbyYultWwuP+evey+
-	 8pZo5qGZWvEHg==
-Message-ID: <sashiko-outbox-218993@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH -next -v4 07/17] LSM: pass struct path and struct file
- to the inode fileattr hooks
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-In-Reply-To: <20261117150542.1169451-8-caixinchen1@huawei.com>
-References: <20261117150542.1169451-1-caixinchen1@huawei.com>
- <20261117150542.1169451-8-caixinchen1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 14:51:43 +0000
+	s=k20260515; t=1794927243;
+	bh=2AcM92XwkeB/9GLpKxLhBOpnc+KvX4qwBiVBcCFW2+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IYjQ197p7q4UE7qFSVEXelN7gmm/CXY5s2z/UVhq1+9ix0FVmXnAhJfCBk7LKbH5/
+	 pULorTc/ddlA6iArQg0zCwka8oVADy/wc2xKR8ccUQmWPLlE3/O096qMAhCHayC25g
+	 xMpDi1F3Vcs3q4YbYdEDvhbahPcCr7N8nFt72FEjwqBUDkS+Afbrjop0XECeKxpsgG
+	 U1JGs8Bh05lte4yWdsoXytMLsy8RZUDZxEjZNmVKBQyuRmU7CipWWY9rUZt/H7aYKl
+	 z1BoN3rGInLoQPlVXd6gBlASX6swJLoAYxu8IxtqDepzK+EeZoqZcn4tSgnEWM3ap9
+	 S5MOGS4sZPjcw==
+Date: Tue, 17 Nov 2026 16:53:59 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Sinan Turunc <enscrpt@pm.me>
+Cc: David Howells <dhowells@redhat.com>, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] keys: serialise key instantiation against
+ keyctl_chown_key()
+Message-ID: <avxqh6gZjjJQ3a17@kernel.org>
+References: <20261117123353.1822-1-enscrpt@pm.me>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,29 +58,26 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261117123353.1822-1-enscrpt@pm.me>
 
-> Switch vfs_fileattr_get(), vfs_fileattr_set(), the inode_file_getattr and
-> inode_file_setattr hooks and their SELinux implementations to take a
-> const struct path, and pass the struct file through which the operation
-> is requested when there is one.
->=20
-> vfs_fileattr_get() keeps checking i_op->fileattr_get before calling the
-> hook, so the -ENOIOCTLCMD fallback used by the ioctls is unchanged.  Add
-> an unchecked __vfs_fileattr_get() for the internal users: nfsd's casefold
-> probe, and the read of the current attributes in do_vfs_fileattr_set(),
-> which is authorized as a whole by the set hook.  ksmbd keeps using the
-> checked helpers, passing the file it holds or NULL for path-only probes;
-> stacking filesystems do the same, so overlayfs keeps its existing
-> file:ioctl/file:open workaround until the LSM semantics are agreed on.
->=20
-> Add strong definitions of the two bpf_lsm_* stubs naming the file
-> argument file__nullable.
->=20
-> Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
+On Tue, Nov 17, 2026 at 12:34:12PM +0000, Sinan Turunc wrote:
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 3f1f0fc..df31d10 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -441,6 +441,7 @@ static int __key_instantiate_and_link(struct key *key,
+>  	ret = -EBUSY;
+>  
 
-Sashiko has reviewed this patch and found no issues.
+Hold on a moment. I have 1/2 for this.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117150542.1169=
-451-1-caixinchen1@huawei.com?part=3D7
+I was going to make it as a review comment but it is separate bug.
 
+I'll response and  attach my fix as soon as I get it done, and after
+that you should send a two-patch patch set with my patch as 1/2, and
+yours as 2/2.
+
+Br, Jarkko
