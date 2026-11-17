@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794945964;
-	b=WNCdyw70CTu15P2AsJW3u/UQE4IDVrAuHp0S+PKn/lggq0GSF2IIEUdDS4+gKRG8o0Od
-	 0aBQsbIwhuVueTDLAnRHO3oZNfiCqAggxXTAXKvjLIayl0soTW/eYsbZnWsVqIa4yyebR
-	 Unqwr7Ia4GxWjC0q4YPjEy2kgkuyYtbusli9TkG2GEKEbl66lUJkfhCcUCOWStpDTuxIX
-	 RkKcbQaqUC5WYCWOP7od82tcUp+VF5HFDK0uNdL6p30sAbEjlhZwyhNZPphsywl/v4RUe
-	 8C+F7DBNtG2EMLxO0kuH+9EpqUO/SSM3UqyFXIQs3KgV00nRzXdHYkcCc7KaNdMoFUw==
+	t=1794946387;
+	b=z3sPO2UYMWp2jelr6t6/4E7jbOC+RQarAUeMKIesFXxY/2kGPuNmk3XNTFy6cko4Mfh5
+	 gxgxaRCRycHjvdDEXVzPqJjx/nBaqu6SFXLy8Z0cJiM529/eD6e7RsPI0kDMolTtLxKBD
+	 l7MryyNFVYZMFOhBtgNWtIJ0WkaeT9/C6ptn/JWuqgPw+ID6Cxia3gzGLhLHIuVine3GF
+	 HbNd11a+RGr551318Zx7dGLcoqTqZe0WiwGgcvEXFhO9vm6+mXLzxF1BS1fl7qYys485I
+	 nX4XCYFrhjRSjdYRJcSt0TtnUi8Oqo8UAyYsGn9FVCwnBuEjfYLJALMxvDXsgvPhqng==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794945964;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794946387;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=j5GmHmdoSihEqhVppVfspertnRhstGlqNjvS7J83Byw=;
-	b=Wxf561yk8gUJpO22pWDXCULYaE4IisjOfh+NsO28+SGWIAedpvqjiewfE4SIUZ5c71IV
-	 2Fi98D3FFeoIhnKwNU8lCNmRW3N6G6HlDgdSdv4SlyWQ4N+TTpqzSzDWLeQn4ngn6fZPA
-	 ZHwBjk++M6p2LQjVlyjkwEz9b+TwSTCMYMHi24pZj4Dqq+F7jpe+n4Y66w/y4wcjLqAOZ
-	 /BC6UJZaHPn4s/C0ycqZRHpxPLxPBsjwPHJNDL/r/9MZ3e8vLXHyvJ6iPoXYkGh0g2KtW
-	 iVu4dEzC622Z9QqSYaFKuXZQN4+Ht8fdC5gu+jaL3e1x0LAYxgrYuYb2Tj7MT2UWyJQ==
+	bh=3zy69YfXxNZbYneZq3uOSoSBp90VScg6lpheFQ6zW/o=;
+	b=L7AKJrEmJYZGnmWe4WBk+s2uuYwbv0dMv0OUlv4sOAf86hTw9QzV1/oUHl9nra16nI+m
+	 UaTla/xYOoX+S+Kr6k0LLCx6BHPSg9rp88P7KyuMnhb5gjeK2VTz22F/XsW/PJzNWaTK6
+	 K7nCea6n9pd/XCwYmJ4rOJxT4cI0wJzFSuSNrNdKMEZI0PNVFIL2HXD8BI1OXNpCwpURJ
+	 kz4lh7+MPxmDTrLKJuXCfZVn2M/1qSvMll8sntdq+5ZDmuBPZdgchPcQa1SDWai3/4bp0
+	 YROeaqjkFz8HZuJxuH2IcAAJ7cEZ/XnY7PzYIbU4LQnIX90McX+pn+ILYjgat0bZZyw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nPt+h3vO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VeCfAgyD;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7C4606A331
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 20:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AEC606A331
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 20:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nPt+h3vO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80C6F1F000C4
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 20:06:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VeCfAgyD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C17241F000C7
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2026 20:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794945963;
-	bh=j5GmHmdoSihEqhVppVfspertnRhstGlqNjvS7J83Byw=;
+	s=k20260515; t=1794946386;
+	bh=3zy69YfXxNZbYneZq3uOSoSBp90VScg6lpheFQ6zW/o=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=nPt+h3vOGg6MAVtIA2ihimawmOFvoZPqewTM7Uipk68Hda5Ovn+W2phK3RE198zTM
-	 eQxJy/VB5UFSQGokV9WBM5voN6wQv9TQjG6bTTO8TLNATc1jZjOIxYkZm6fTv1DdGg
-	 n0ePl6VVAGOIfq++Ui5h44wwYfefZMpsvmn+ChdWfZ5h6wzOmelgWQsbQoOT+0YmWk
-	 is3DW7M44QVa59kM/pkUQX4kSMSDqE/cBwzYQ8tWnF7BqJIiBPJ3hLjJE7PTf0yiOh
-	 jqGKpohuhFeS+7RWjp2I0mtg6rEnQpt5f0YFIvt/vcPLsJ1rDva+1Bak4XwCiCWSd2
-	 m9rnDGhe9ge5g==
-Message-ID: <sashiko-outbox-219557@kernel.org>
+	b=VeCfAgyDzLoBgY9wXZO3yah+woutpvVvpasHdy6Pp6JQG9/h20/chSFH4I2hVLXVt
+	 mP1/NDD2rUML1QfNXs/W5p5ZkMeuWlhLtE1N8AA2YFMN9rKS5QQ8/HMdREjEZ1PBdU
+	 QA4Wc8csTftfT0q+Kg2rHktg4VBk0yrUffpdeZBVgu0gGFavREcb4VEKOHKMa0VEFg
+	 PuucTdUN2EmdhHNMTTF9iirfvFy81AsjMVRFV9nia7Gvsq0AzsqwORQtxhstNdAPuS
+	 nXNiXtObJckdxDovlY+ionNtIYAve1vm54CMP1Gk19Wgk9F5mFvnarZwDkxagqOHRK
+	 cDqRkkit2e3EQ==
+Message-ID: <sashiko-outbox-219577@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v11 1/3] userns: don't let setns() lend CAP_SETFCAP
+Subject: Re: [PATCH v11 2/3] capabilities: don't let ptrace borrow
+ CAP_SETFCAP
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261117-b4-setfcap-userns-v11-1-2be11a2c32f4@toxicpanda.com>
+In-Reply-To: <20261117-b4-setfcap-userns-v11-2-2be11a2c32f4@toxicpanda.com>
 References: <20261117-b4-setfcap-userns-v11-0-2be11a2c32f4@toxicpanda.com>
- <20261117-b4-setfcap-userns-v11-1-2be11a2c32f4@toxicpanda.com>
+ <20261117-b4-setfcap-userns-v11-2-2be11a2c32f4@toxicpanda.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 20:06:03 +0000
+Date: Tue, 17 Nov 2026 20:13:06 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,21 +60,21 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> A uid 0 task that gave up CAP_SETFCAP can get it back by joining a user
-> namespace that another root task created.  Commit db2e718a4798
-> ("capabilities: require CAP_SETFCAP to map uid 0") keeps such a task
-> from mapping uid 0 into a namespace it creates itself, because tasks in
-> that namespace could then write file capabilities for its root user.
-> setns() gives a joiner a full capability set in the namespace too, so
-> it can do the same there:
+> A uid 0 task that gave up CAP_SETFCAP and CAP_SYS_PTRACE can still
+> attach to a task in a user namespace that another root task created,
+> and have it write file capabilities for its root user.  For a target in
+> a child namespace cap_ptrace_access_check() asks for CAP_SYS_PTRACE over
+> that namespace, and cap_capable() grants every capability there to a
+> task whose euid owns it, whatever it gave up:
 >=20
->   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
->   unshare(CLONE_NEWUSER)
->                                     setns(A's user ns)
->                                       allowed, euid =3D=3D ns->owner
->                                     write "0 0 1" to /proc/self/uid_map
->                                       A had CAP_SETFCAP -> allowed
+>   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP,
+>   unshare(CLONE_NEWUSER)              no CAP_SYS_PTRACE
+>                                     ptrace(PTRACE_ATTACH, A)
+>                                       euid =3D=3D ns->owner -> allowed
+>                                     make A write "0 0 1" to its uid_map,
+>                                     or set file capabilities
 >=20
+> The same goes for /proc/<pid>/mem, process_vm_writev() and
 > [ ... ]
 >=20
 > Suggested-by: Serge Hallyn <serge@hallyn.com>
@@ -86,5 +87,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117-b4-setfcap=
--userns-v11-0-2be11a2c32f4@toxicpanda.com?part=3D1
+-userns-v11-0-2be11a2c32f4@toxicpanda.com?part=3D2
 
