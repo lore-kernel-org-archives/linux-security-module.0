@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794892145;
-	b=5bYlUCMAffEx4v08wkIjeAWFOtPRyQH7OU7NZ4Ue+zgQNg2Tev4RGnTCcEZf7Ah/38Ki
-	 MkhTNs4Myk38gl9Vf9W0zErbE9L/t6ZhK/SMbslb+ac44lXguf0XQPJYuWAp8DxEtOx3+
-	 JO36WaSn9zyBOXraV9CejIKV4YTFxYky17CczJEbD2xC5VLZTli/oMPRVUsjBuUjooP/9
-	 r3B0qA+3ONoU+FI20rk7QA6cgWjxf8rNttnmSlago5M5hVItZFkyd2YSmYEXEYThnWBtI
-	 4C78h53xlQoX3hMQzlHKefga7PmXfcw7E/i90C0mZH3lbHSgHkXt0YsQco5A4njNPsw==
+	t=1794892165;
+	b=nvLv3BkzeQesNbR/BhNN4RT9gMQ4H6CD7GYgdd4SRyUFIpYGC1dNaXPW0woDAI7p7CQw
+	 46aIct5Wsien2a8dSqBaHxnusT08vQuiaTviQBgbOmXhE1sNUtD+21Ix4jU6+keKvRLpi
+	 COuy7Md0WjKt8yEmhIlHSu+7y6Cystf2PUVTFh+KJ+zC8sNZH78skJVF9UGawm+DCP8G+
+	 tyKe4WiaiCr9fsJVpYhgweBqsSz+yetO8XT/GtEKuy/1B/sRDhX0FZUCztJSZRm3b8jtG
+	 x16/P0Jhap0ZhKoYJer3KJ0/b0/tKcufuFXlnGlh9pe1qVK7HZEuFW57Zb/PcVLUIfQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794892145;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794892165;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=CS+W/Sr3iq8tSqh2G3aDEjOmCeOgF+I/s/FCQs9Mcyo=;
-	b=HMS3bjSacQ+MkFKNs9lPteqd8PY8FS61cZdH3YMKdxwiN/kHSeDnOCHObEWrtLvHEgmL
-	 LG4pSSs6cApGWQJvf6D+kIiE7PEVlwXoMEztEsVLMcJH7gHNZn1N7NkHhUWP2UOE3XkL/
-	 rCwbDPMrV+bsGF78q4BRQVSUR08Y+bYU1ymxVqmXpMJYS5lapwcTueTuqjTFdF0nt2ghm
-	 Re9Xd+oQyi37+uhcQcm8YCgbBrnTOlkMOZWnDQXLIgTr90FUO10yCvXal6FCS6goD2deZ
-	 jbsvx2RNmTEYzrTNachyGVFFS56jC529PDOrRgTREDR4mEpTB5NnVqPPdASb5EhjQKg==
+	bh=0dpYOS74VmeR9JdaAV9IMhj38c9fVT11bZNNcUusrF8=;
+	b=HJsP5uLXoZDrgdSPWIkM5m8S53DHlbi8boP5L4+si8jCbfLSI8tJC7MgFJSGNQ9cO5BC
+	 DszzP+uDAYfKonBxslXrP+No/SF2L/MzvFJ5D6xsi93d2reFb9d2aFLsLy09AKanLMItp
+	 1SeuiYsjH8CHyEJmq+d5Bt5n3Ga10fxxHl6ygQ295PR4eOEAF6vFwEfqxQhkyQLi28ytt
+	 pER4EO8LfYP91WAxc8tGImUpeaMSsx5UoRsYq1SyDm7Pe2jiW4RBOC3ijDfF+xswsGzMi
+	 7YBChyFYmON2Pu4C1BLMfI5LnnW7ePJVJBaW4gra1bVySJ6Fs5+AysUfRanz6QG/3kg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HXVxRvh5;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i8TiOZgM;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 899E2606A329;
-	Tue, 17 Nov 2026 05:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E0A2B606A32C;
+	Tue, 17 Nov 2026 05:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HXVxRvh5
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5D36D1F000C8;
-	Tue, 17 Nov 2026 05:09:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i8TiOZgM
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B4AEE1F000C6;
+	Tue, 17 Nov 2026 05:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794892145;
-	bh=CS+W/Sr3iq8tSqh2G3aDEjOmCeOgF+I/s/FCQs9Mcyo=;
+	s=k20260515; t=1794892164;
+	bh=0dpYOS74VmeR9JdaAV9IMhj38c9fVT11bZNNcUusrF8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=HXVxRvh5/fiQop5nr2M8zWvioC2N9tW9u+UlSmlPu6c5FtuV19rqyyUABQtbAy9rd
-	 JxPzVmZz1Nhxzw6AE/6Yx+i+c4hVipACpTZSGz9rr9vwXaPz242LAZ8RHQU4Xtv7Fb
-	 n0UoBPbdv4yQRjAoum2DKxTzpnYn5AhB4NP7UkG41uyFtK48cxIAcj6LG2W4MIrHMf
-	 og1HbN12g+TnlNsRUIi5aNGEHxECitxOMbV7L0yubwBNNBu6RFhmQnKzWuTGI4ikGY
-	 Rpf3jdre8anNqWDp5hafEPQdb2oA0SzBDF9d7Jg+TFhywxgT9q5CcVx8bcHAQNFHSX
-	 d/rSDkUFNyBOA==
+	b=i8TiOZgMa44R1DQTr5fAylPQ4VmV7b7vW5IA+/fwv6dvlZ6RVoxG3rIWJvnm9x8Lq
+	 Bs6aFom3w5MFJA/Lco7quHmBx7cuKavP+a5G4xE42bnr4nxG6OyZfr2X8iLUK9e3Qa
+	 J5nG+vu5m/qWMBqV+hfxzD9wLNN9HdioathUmoz+S+Uw9bgVYyvo53p4QRW7Fi+N6e
+	 T2zwXblc1NVEYbLfHEdW5prB8tkum9d6Vn5F258yWysZu6pxazzwLGNewK48HofodM
+	 pSV7JSX3/PjLGp4ZoCG100eg29+oL6aOTYLP1P1BkyXftsmdjn7cFZao5x6oK/FUD9
+	 puhF5awvumSTg==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -80,9 +80,9 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Vincent Guittot <vincent.guittot@linaro.org>,
 	Vlastimil Babka <vbabka@kernel.org>
-Subject: [RFC PATCH 04/13] rootns: Add rootns_create() system call
-Date: Tue, 17 Nov 2026 07:08:32 +0200
-Message-ID: <20261117050841.3289652-5-jarkko@kernel.org>
+Subject: [RFC PATCH 09/13] fs: Support installing rootns mount trees via move_mount()
+Date: Tue, 17 Nov 2026 07:08:37 +0200
+Message-ID: <20261117050841.3289652-10-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261117050841.3289652-1-jarkko@kernel.org>
 References: <20261117050841.3289652-1-jarkko@kernel.org>
@@ -97,198 +97,296 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Setting up an isolated namespace environment from a multithreaded
-manager process currently requires helper processes to call unshare()
-and pass file descriptors back over sockets.
+A newly created rootns starts with an empty nullfs-rooted mount
+namespace, and move_mount() only resolves target paths against the
+caller's own filesystem view.
 
-Add the rootns_create() system call to allocate a detached rootns
-instance with dedicated empty mount (CLONE_EMPTY_MNTNS) and PID
-namespaces and return its control file descriptor. Create fresh optional
-namespaces selected in flags while inheriting unset ones from the
-caller, and pin active references for the lifetime of the rootns. Leave
-the newly created rootns in ROOTNS_EMPTY until userspace installs a root
-mount.
+Add MOVE_MOUNT_T_ROOTNS_ROOT to populate a rootns mount tree through its
+file descriptor before or after entry. Installing "/" attaches a
+detached anonymous mount tree onto the nullfs root of the rootns mount
+namespace once and transitions the rootns to ROOTNS_READY; relative
+target paths attach anonymous mounts underneath the installed rootns
+root while verifying the destination mount namespace.
+
+Allocate fsmount() anonymous namespaces in fc->user_ns, check target
+user namespace CAP_SYS_ADMIN for MOVE_MOUNT_T_ROOTNS_ROOT instead of
+caller may_mount(), and lock moved mount trees when crossing user
+namespace boundaries.
 
 Co-developed-by: David Howells <dhowells@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- include/linux/syscalls.h |   1 +
- kernel/rootns.c          | 140 +++++++++++++++++++++++++++++++++++++++
- kernel/sys_ni.c          |   3 +
- 3 files changed, 144 insertions(+)
+ fs/namespace.c             | 176 ++++++++++++++++++++++++++++++++-----
+ include/uapi/linux/mount.h |   3 +-
+ 2 files changed, 155 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 552d9710a0d5..272d54bddbe2 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1006,6 +1006,7 @@ asmlinkage long sys_lsm_get_self_attr(unsigned int attr, struct lsm_ctx __user *
- asmlinkage long sys_lsm_set_self_attr(unsigned int attr, struct lsm_ctx __user *ctx,
- 				      u32 size, u32 flags);
- asmlinkage long sys_lsm_list_modules(u64 __user *ids, u32 __user *size, u32 flags);
-+asmlinkage long sys_rootns_create(unsigned int flags);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index aecd05ac0170..5376d0230899 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -34,6 +34,7 @@
+ #include <linux/mnt_idmapping.h>
+ #include <linux/pidfs.h>
+ #include <linux/nstree.h>
++#include <linux/rootns.h>
  
- /*
-  * Architecture-specific system calls
-diff --git a/kernel/rootns.c b/kernel/rootns.c
-index e3b203322ae2..904d75ce9d90 100644
---- a/kernel/rootns.c
-+++ b/kernel/rootns.c
-@@ -145,3 +145,143 @@ void exit_rootns(struct pid_namespace *pid_ns, struct task_struct *tsk)
- 	wake_up_poll(&c->waitq, EPOLLHUP);
- 	put_rootns(c);
+ #include "pnode.h"
+ #include "internal.h"
+@@ -2564,6 +2565,8 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
+ enum mnt_tree_flags_t {
+ 	MNT_TREE_BENEATH = BIT(0),
+ 	MNT_TREE_PROPAGATION = BIT(1),
++	MNT_TREE_ROOTNS = BIT(2),
++	MNT_TREE_ROOTNS_INIT = BIT(3),
+ };
+ 
+ /**
+@@ -3781,6 +3784,7 @@ static int do_move_mount(const struct path *old_path,
+ 	struct mount *old = real_mount(old_path->mnt);
+ 	int err;
+ 	bool beneath = flags & MNT_TREE_BENEATH;
++	bool lock_tree;
+ 
+ 	if (!path_mounted(old_path))
+ 		return -EINVAL;
+@@ -3792,7 +3796,13 @@ static int do_move_mount(const struct path *old_path,
+ 	if (IS_ERR(mp.parent))
+ 		return PTR_ERR(mp.parent);
+ 
+-	if (check_mnt(old)) {
++	if (flags & MNT_TREE_ROOTNS) {
++		if (!anon_ns_root(old) || old->mnt_ns == mp.parent->mnt_ns)
++			return -EINVAL;
++		if ((flags & MNT_TREE_ROOTNS_INIT) &&
++		    mp.parent != real_mount(new_path->mnt))
++			return -EBUSY;
++	} else if (check_mnt(old)) {
+ 		/* if the source is in our namespace... */
+ 		/* ... it should be detachable from parent */
+ 		if (!mnt_has_parent(old) || IS_MNT_LOCKED(old))
+@@ -3845,7 +3855,16 @@ static int do_move_mount(const struct path *old_path,
+ 	if (mount_is_ancestor(old, mp.parent))
+ 		return -ELOOP;
+ 
+-	return attach_recursive_mnt(old, &mp);
++	lock_tree = (flags & MNT_TREE_ROOTNS) &&
++		    old->mnt_ns->user_ns != mp.parent->mnt_ns->user_ns;
++	err = attach_recursive_mnt(old, &mp);
++	if (!err && lock_tree) {
++		scoped_guard(mount_writer) {
++			lock_mnt_tree(old);
++			old->mnt.mnt_flags |= MNT_LOCKED;
++		}
++	}
++	return err;
  }
-+
-+/*
-+ * Create credentials for a rootns. Drop keyrings from the new credential to
-+ * avoid unnecessary pinning.
-+ */
-+static const struct cred *create_rootns_creds(unsigned int flags)
+ 
+ static int do_move_mount_old(const struct path *path, const char *old_name)
+@@ -4699,7 +4718,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 		return FD_ADD((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0,
+ 			      open_new_namespace(&new_path, MOUNT_COPY_NEW));
+ 
+-	ns = alloc_mnt_ns(current->nsproxy->mnt_ns->user_ns, true);
++	ns = alloc_mnt_ns(fc->user_ns, true);
+ 	if (IS_ERR(ns))
+ 		return PTR_ERR(ns);
+ 	mnt = real_mount(new_path.mnt);
+@@ -4739,6 +4758,127 @@ static inline int vfs_move_mount(const struct path *from_path,
+ 	return do_move_mount(from_path, to_path, mflags);
+ }
+ 
++static int lookup_move_mount_from(int from_dfd,
++				  const char __user *from_pathname,
++				  unsigned int flags, struct path *from_path)
 +{
-+	struct cred *new;
-+	int ret;
++	unsigned int uflags = 0;
++	unsigned int lflags = 0;
 +
-+	new = prepare_creds();
-+	if (!new)
-+		return ERR_PTR(-ENOMEM);
++	if (flags & MOVE_MOUNT_F_EMPTY_PATH)
++		uflags = AT_EMPTY_PATH;
 +
-+#ifdef CONFIG_KEYS
-+	key_put(new->thread_keyring);
-+	new->thread_keyring = NULL;
-+	key_put(new->process_keyring);
-+	new->process_keyring = NULL;
-+	key_put(new->session_keyring);
-+	new->session_keyring = NULL;
-+	key_put(new->request_key_auth);
-+	new->request_key_auth = NULL;
-+#endif
-+	if (!(flags & ROOTNS_USER))
-+		return new;
++	CLASS(filename_maybe_null, from_name)(from_pathname, uflags);
++	if (!from_name && from_dfd >= 0) {
++		CLASS(fd_raw, f_from)(from_dfd);
++		if (fd_empty(f_from))
++			return -EBADF;
 +
-+	ret = create_user_ns(new);
-+	if (ret < 0)
-+		goto err;
-+	new->euid = new->user_ns->owner;
-+	new->egid = new->user_ns->group;
-+
-+	new->uid = new->euid;
-+	new->suid = new->euid;
-+	new->fsuid = new->euid;
-+	new->gid = new->egid;
-+	new->sgid = new->egid;
-+	new->fsgid = new->egid;
-+	ret = set_cred_ucounts(new);
-+	if (ret < 0)
-+		goto err;
-+	return new;
-+
-+err:
-+	abort_creds(new);
-+	return ERR_PTR(ret);
-+}
-+
-+/*
-+ * Create a new rootns.
-+ */
-+static struct rootns *create_rootns(unsigned int flags)
-+{
-+	u64 clone_flags = CLONE_NEWNS | CLONE_EMPTY_MNTNS | CLONE_NEWPID;
-+	const struct cred *cred;
-+	struct nsproxy *ns;
-+	struct rootns *c;
-+	int ret;
-+
-+	c = kzalloc_obj(*c, GFP_KERNEL);
-+	if (!c)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init_waitqueue_head(&c->waitq);
-+	spin_lock_init(&c->lock);
-+	refcount_set(&c->usage, 1);
-+	c->flags = flags;
-+
-+	cred = create_rootns_creds(flags);
-+	if (IS_ERR(cred)) {
-+		ret = PTR_ERR(cred);
-+		goto err_put;
-+	}
-+	c->cred = cred;
-+	ns_ref_active_get(cred->user_ns);
-+
-+	if (!ns_capable(cred->user_ns, CAP_SYS_ADMIN)) {
-+		ret = -EPERM;
-+		goto err_put;
++		*from_path = fd_file(f_from)->f_path;
++		path_get(from_path);
++		return 0;
 +	}
 +
-+	if (flags & ROOTNS_CGROUP)
-+		clone_flags |= CLONE_NEWCGROUP;
-+	if (flags & ROOTNS_UTS)
-+		clone_flags |= CLONE_NEWUTS;
-+	if (flags & ROOTNS_IPC)
-+		clone_flags |= CLONE_NEWIPC;
-+	if (flags & ROOTNS_NET)
-+		clone_flags |= CLONE_NEWNET;
-+
-+	ns = create_new_namespaces(clone_flags, current->nsproxy, cred->user_ns,
-+				   NULL);
-+	if (IS_ERR(ns)) {
-+		ret = PTR_ERR(ns);
-+		goto err_put;
-+	}
-+
-+	c->ns = ns;
-+	ns->rootns = c;
-+	ns->pid_ns_for_children->rootns = c;
-+	nsproxy_ns_active_get(ns);
-+
-+	return c;
-+
-+err_put:
-+	put_rootns(c);
-+	return ERR_PTR(ret);
++	if (flags & MOVE_MOUNT_F_SYMLINKS)
++		lflags |= LOOKUP_FOLLOW;
++	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)
++		lflags |= LOOKUP_AUTOMOUNT;
++	return filename_lookup(from_dfd, from_name, lflags, from_path, NULL);
 +}
 +
 +/**
-+ * sys_rootns_create - Create a detached root namespace
-+ * @flags: Combination of &enum rootns_flags values
++ * DOC: MOVE_MOUNT_T_ROOTNS_ROOT
 + *
-+ * Allocate a detached root namespace with dedicated empty mount and PID
-+ * namespaces plus any optional namespaces requested in @flags.
++ * ``MOVE_MOUNT_T_ROOTNS_ROOT`` installs detached anonymous mount trees into a
++ * target ``rootns`` control fd supplied as ``to_dfd``:
 + *
-+ * Return: Control file descriptor on success, negative error code on failure.
++ * 1. ``to_pathname`` of ``"/"`` attaches the initial root mount onto the
++ *    ``nullfs`` root of the ``rootns`` mount namespace at most once and
++ *    transitions the ``rootns`` to ``ROOTNS_READY``.
++ * 2. Relative ``to_pathname`` values resolve beneath the installed ``rootns``
++ *    root inside the ``rootns`` mount namespace.
++ * 3. Capability is checked against ``CAP_SYS_ADMIN`` in the target ``rootns``
++ *    user namespace, and source trees crossing user namespace boundaries are
++ *    locked with ``MNT_LOCKED`` and locked mount flags.
 + */
-+SYSCALL_DEFINE1(rootns_create, unsigned int, flags)
++static int move_mount_rootns(int from_dfd, const char __user *from_pathname,
++			     int to_dfd, const char __user *to_pathname,
++			     unsigned int flags, enum mnt_tree_flags_t mflags)
 +{
-+	struct rootns *c;
-+	int fd;
++	struct path from_path __free(path_put) = {};
++	struct path to_path __free(path_put) = {};
++	struct mnt_namespace *rootns_mnt_ns;
++	unsigned int lflags;
++	struct rootns *rootns;
++	bool is_root;
++	int ret;
 +
-+	if (flags & ~ROOTNS_ALL_FLAGS)
++	CLASS(filename_maybe_null, to_name)(to_pathname, AT_EMPTY_PATH);
++	if (IS_ERR(to_name))
++		return PTR_ERR(to_name);
++	if (!to_name)
 +		return -EINVAL;
-+	if (unlikely(!current->nsproxy))
-+		return -EOPNOTSUPP;
 +
-+	c = create_rootns(flags);
-+	if (IS_ERR(c))
-+		return PTR_ERR(c);
++	CLASS(fd, f_rootns)(to_dfd);
++	if (fd_empty(f_rootns))
++		return -EBADF;
++	if (!is_rootns_file(fd_file(f_rootns)))
++		return -EINVAL;
 +
-+	fd = anon_inode_getfd("rootns", &rootns_fops, c,
-+			      O_RDWR | (flags & ROOTNS_CLOSE_ON_EXEC ? O_CLOEXEC : 0));
-+	if (fd < 0)
-+		put_rootns(c);
++	rootns = fd_file(f_rootns)->private_data;
++	if (!ns_capable(rootns->cred->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
 +
-+	return fd;
++	rootns_mnt_ns = rootns->ns->mnt_ns;
++	is_root = to_name->name[0] == '/' && to_name->name[1] == '\0';
++	if (is_root) {
++		if (flags & MOVE_MOUNT_BENEATH)
++			return -EINVAL;
++		if (READ_ONCE(rootns->state) != ROOTNS_EMPTY)
++			return -EBUSY;
++
++		to_path.mnt = mntget(&rootns_mnt_ns->root->mnt);
++		to_path.dentry = dget(rootns_mnt_ns->root->mnt.mnt_root);
++		mflags |= MNT_TREE_ROOTNS_INIT;
++	} else {
++		if (to_name->name[0] == '/')
++			return -EINVAL;
++
++		scoped_guard(spinlock, &rootns->lock) {
++			if (rootns->state == ROOTNS_EMPTY)
++				return -ENOENT;
++		}
++
++		lflags = 0;
++		if (flags & MOVE_MOUNT_T_SYMLINKS)
++			lflags |= LOOKUP_FOLLOW;
++		if (flags & MOVE_MOUNT_T_AUTOMOUNTS)
++			lflags |= LOOKUP_AUTOMOUNT;
++		ret = filename_lookup(AT_FDCWD, to_name, lflags, &to_path,
++				      &rootns->root);
++		if (ret)
++			return ret;
++		if (real_mount(to_path.mnt)->mnt_ns != rootns_mnt_ns)
++			return -EINVAL;
++	}
++
++	ret = lookup_move_mount_from(from_dfd, from_pathname, flags,
++				     &from_path);
++	if (ret)
++		return ret;
++
++	ret = vfs_move_mount(&from_path, &to_path, mflags | MNT_TREE_ROOTNS);
++	if (!ret && is_root) {
++		scoped_guard(spinlock, &rootns->lock) {
++			path_get(&from_path);
++			rootns->root = from_path;
++			WRITE_ONCE(rootns->state, ROOTNS_READY);
++		}
++	}
++
++	return ret;
 +}
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index c8be0abaa407..4a6c4337cc74 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -398,3 +398,6 @@ COND_SYSCALL(rseq_slice_yield);
- 
- COND_SYSCALL(uretprobe);
- COND_SYSCALL(uprobe);
 +
-+/* kernel/rootns.c */
-+COND_SYSCALL(rootns_create);
+ /*
+  * Move a mount from one place to another.  In combination with
+  * fsopen()/fsmount() this is used to install a new mount and in combination
+@@ -4758,7 +4898,7 @@ SYSCALL_DEFINE5(move_mount,
+ 	enum mnt_tree_flags_t mflags = 0;
+ 	int ret = 0;
+ 
+-	if (!may_mount())
++	if (!(flags & MOVE_MOUNT_T_ROOTNS_ROOT) && !may_mount())
+ 		return -EPERM;
+ 
+ 	if (flags & ~MOVE_MOUNT__MASK)
+@@ -4771,6 +4911,13 @@ SYSCALL_DEFINE5(move_mount,
+ 	if (flags & MOVE_MOUNT_SET_GROUP)	mflags |= MNT_TREE_PROPAGATION;
+ 	if (flags & MOVE_MOUNT_BENEATH)		mflags |= MNT_TREE_BENEATH;
+ 
++	if (unlikely(flags & MOVE_MOUNT_T_ROOTNS_ROOT)) {
++		if (flags & (MOVE_MOUNT_T_EMPTY_PATH | MOVE_MOUNT_SET_GROUP))
++			return -EINVAL;
++		return move_mount_rootns(from_dfd, from_pathname,
++					 to_dfd, to_pathname, flags, mflags);
++	}
++
+ 	uflags = 0;
+ 	if (flags & MOVE_MOUNT_T_EMPTY_PATH)
+ 		uflags = AT_EMPTY_PATH;
+@@ -4794,25 +4941,8 @@ SYSCALL_DEFINE5(move_mount,
+ 			return ret;
+ 	}
+ 
+-	uflags = 0;
+-	if (flags & MOVE_MOUNT_F_EMPTY_PATH)
+-		uflags = AT_EMPTY_PATH;
+-
+-	CLASS(filename_maybe_null,from_name)(from_pathname, uflags);
+-	if (!from_name && from_dfd >= 0) {
+-		CLASS(fd_raw, f_from)(from_dfd);
+-		if (fd_empty(f_from))
+-			return -EBADF;
+-
+-		return vfs_move_mount(&fd_file(f_from)->f_path, &to_path, mflags);
+-	}
+-
+-	lflags = 0;
+-	if (flags & MOVE_MOUNT_F_SYMLINKS)
+-		lflags |= LOOKUP_FOLLOW;
+-	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)
+-		lflags |= LOOKUP_AUTOMOUNT;
+-	ret = filename_lookup(from_dfd, from_name, lflags, &from_path, NULL);
++	ret = lookup_move_mount_from(from_dfd, from_pathname, flags,
++				     &from_path);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index cb55cfcfc92e..7224a43af51d 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -75,9 +75,10 @@
+ #define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
+ #define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
+ #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
++#define MOVE_MOUNT_T_ROOTNS_ROOT	0x00000080 /* Set as rootns root */
+ #define MOVE_MOUNT_SET_GROUP		0x00000100 /* Set sharing group instead */
+ #define MOVE_MOUNT_BENEATH		0x00000200 /* Mount beneath top mount */
+-#define MOVE_MOUNT__MASK		0x00000377
++#define MOVE_MOUNT__MASK		0x000003f7
+ 
+ /*
+  * fsopen() flags.
 -- 
 2.47.3
 
