@@ -1,87 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.168
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795021716;
-	b=FB+wv+mmD5Iiv+KTYSowvVVpd/bE7O9gMpjzE5Tjy+GsSaWK5NUk4v+s19IU6JEi5SVN
-	 AT66201R7mSFeyIipqfjcV8TwxSoKDoEGiDmDjhTfJFSaqcTDNUlwstAir9XTjt/7SxOJ
-	 5NFHHFD1g8GS3CI/3szQ0+pNn4CvUUWq6kv1/G1z2Lr7gOkS3tx9c/aBU/K/HtdGlFVvd
-	 gsMsgdjYdCgviScTWczyGhF+o7sIKNBfvtRxLmXM6WLjmXDEe7lShaPgMrugt96Z6FHdX
-	 vpKqZx7Vm+GixYfYLi/oNLEA6UzOjJ0lwkGxvlYPKo4RemIu6LnSvvkchpFQ72MLfMg==
+	t=1795021900;
+	b=OWHEydgvi3uBEazd2M+7HZaOrD82OGDVp+5yk5pMqLwTfGxpPdMsYaxHmgkHJs9cUjsy
+	 wuw0wJ6dtqUGubkFyH2vEStYgOpHIfRu3s67h6oFYOe/xbxx/18Gu7MpAhWAN3XglV8tp
+	 xkPXpzWMF4gW5AH3YEXZt+bhbMsLC6FDhuW1DCahquuGEtTzvsmRV3dnJvynWgr7f+ymr
+	 JgA8JwY9UDOfaZc8NSa7HZqQ0sVbe08fJ24AS6L4khhUL+LALn0RtZOgdHnck09SLJ3GD
+	 xU4z/A2pQM01dMYwJus5B5yxDIXg9eXhYSgqa+sZi2v+O23aZq0fDJFc65udbH2ArVA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795021716;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=zINOi7QPXEvi98cbqP6TjwwtqfWoUArKawL5JYAavAU=;
-	b=kg5HCxech1uO+62kY+Va49GwEugkM/31UGlftPXBcNj6eUyvcZ9D1V4Ae7Srt6xz4/Nw
-	 g8JbI/o+V4x22PRJmZ/zxd4g2psQmvVv3ZcVL00KL7fck5JJ+Q5VrcMUmp8mu4jjKBuwA
-	 9FTRwcs85/nK/FNtsYyMljcR16VMS6vQcKPlSyGZ6Bv7n35kxY+SHcBDMBmAUyIrNbTdB
-	 hEmBH0fgBcOMsT4MGPdBvDOK2+nJv8mkE43m9U+iqX1lLJkmEZOv0jK11SBAqdhVYuXhV
-	 H4rD/O35mM2I/jWKRquXzUMcjP+N0Kax2ZZ7DJ1+t8FilhP2dN8flkisqsUas+XHSng==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795021900;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Infomaniak-Routing;
+	bh=7jx+RlrY6hDpG8QT3cFVyASFCwKqa6uSd484Aq4omxY=;
+	b=goiiyd0B3kieNeHK5AKE3lcMBA4e6WOqRRJyWws/HTfh0k9CCZuC4W4FbN18j5XFvOh+
+	 Wic/VY1fTFSWOTw3MNqCWaBRXYKTFqZjPzrjawYL6b/qWCMG/0KykiaXFaJe1mZ26Hxdk
+	 dFJAPe824QaaQ+Z/mOjF3RYVoOfEjYVkGu+pl+kB+vaqEH7vmHoVw60CmHd/QPvpdJQds
+	 JG+SyYJtPkwxG7GnXp7CqONC8vd8zreWDzgZlEgq896N063ypNom1leVGs1DrMtD89e9g
+	 UKq0AM28CbK9ScM2yfZqmcHeuAM0piu2+ZHn5K0lqbmqpoMCGNV1OoOU4g23jJNaP7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ai7InkSx;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=zu2Jn0fa;
+	arc=none smtp.remote-ip=84.16.66.168
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id CE4C8606A31C;
-	Wed, 18 Nov 2026 17:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81C8606A334
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 17:11:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D81C8606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ai7InkSx
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id CEC651F000C6;
-	Wed, 18 Nov 2026 17:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795021716;
-	bh=zINOi7QPXEvi98cbqP6TjwwtqfWoUArKawL5JYAavAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ai7InkSxjpjgivgeXU6eK1BzM9SMFaBHZ97FKtVTgzZrgbTvyMLm/yoQ5iDK2F15o
-	 iTRkDOM5FMMC7Su4PQB1NNwWaeJVN/3Q/mYacYUCeTZRfLZiNbc0Psa/woPxI9priV
-	 o794AiIxzMMqwmGdfxK1sVY51lnnoLeRxopyMxm3Fw2Wn75jZxgMjWDWGbfvJwR/F7
-	 55uapbzqrx1sE6psi4VAyHUC+D/mArx5ooB7wwR90Jm3Q5Q2x2m32mx71CpDNud7Ql
-	 0+EGSljYTSewzaz+DAbOKH8by3wxtDmKxsjPI2frMrPXcPdOdqYqLiNXz6oTJsS+vw
-	 QjKJcR1CdMiUg==
-Date: Wed, 18 Nov 2026 19:08:32 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ben Segall <bsegall@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	John Johansen <john.johansen@canonical.com>,
-	Juri Lelli <juri.lelli@redhat.com>, Kees Cook <kees@kernel.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Liam R. Howlett" <liam@infradead.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>, Neal Gompa <neal@gompa.dev>,
-	Paul Moore <paul@paul-moore.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v2 00/13] Namespace for namespace roots
-Message-ID: <av3bkDnwmjunTleX@kernel.org>
-References: <20261117231352.3816603-1-jarkko@kernel.org>
- <CALCETrVUkbpoFjwSAejyA4b_9qEauAP_36i=O8Op1ifp8aUkqA@mail.gmail.com>
- <av3akYFOYaeQZauZ@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=zu2Jn0fa
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV7Rq6FRvzKR;
+	Wed, 18 Nov 2026 18:11:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1795021895;
+	bh=7jx+RlrY6hDpG8QT3cFVyASFCwKqa6uSd484Aq4omxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zu2Jn0fa8u5u18uihYuSzHQIIUL2cQiGbptCFr4vhw8itb0vRYiEjTcu2wp3dTILe
+	 TkmE3FDRnpgVW9Y6bd/5w34wGkmx0KBsgPN5Qn5xZYSIoTihD3m9PqTGBt7yBBeRhp
+	 izzsq/IfFugIAK/KIetaSusUXgH4uaTvzP9Cy1qg=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jV7Rp3y56zBLc;
+	Wed, 18 Nov 2026 18:11:34 +0100 (CET)
+Date: Wed, 18 Nov 2026 18:11:31 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Ada Smith <adasmithgt@gmail.com>, Hungyu Lin <dennylin0707@gmail.com>, 
+	James Morris <jmorris@namei.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Serge Hallyn <sergeh@kernel.org>, kernel-team@cloudflare.com, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] landlock: Fix capability restriction documentation
+Message-ID: <20261118.Ee0ahpae0Qui@digikod.net>
+References: <20261117101157.2520463-1-mic@digikod.net>
+ <20261117101157.2520463-7-mic@digikod.net>
+ <avx_49eHcDPjyuDU@google.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -94,74 +71,130 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <av3akYFOYaeQZauZ@kernel.org>
+In-Reply-To: <avx_49eHcDPjyuDU@google.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Nov 18, 2026 at 07:04:21PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Nov 18, 2026 at 08:59:39AM -0800, Andy Lutomirski wrote:
-> > On Tue, Nov 17, 2026 at 3:14 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > >
-> > > OVERVIEW
-> > > ========
-> > >
-> > > A root namespace (rootns) is a kernel object backed by a file descriptor
-> > > that binds together:
-> > >
-> > > 1. A full or partial set of detached namespaces.
-> > > 2. A dedicated PID namespace for spawning processes into, signaling
-> > >    members, and polling or waiting on PID 1 exit.
-> > > 3. An initially empty mount namespace (CLONE_EMPTY_MNTNS) that must be
-> > >    populated before going live, without inheriting host mount-tree
-> > >    ancestors.
-> > >
-> > > Work on this feature started in 2025 from David Howells' container object
-> > > patch set [1], which I turned into a namespace for namespace roots and
-> > > rebuilt around that premise.
-> > >
-> > > While the patch set is manually written, the original motivation came
-> > > from isolating LLM agents. Running untrusted agent workloads made it
-> > > clear that OCI runtimes need to minimize their live configuration
-> > > surface.
-> > >
-> > > Assembling mounts, credentials, and namespaces inside helper processes
-> > > with a half-configured container is what I see as the main challenge,
-> > > and the existential debate around namespaces and container objects is an
-> > > unfocused discussion topic.
+On Tue, Nov 17, 2026 at 05:25:07PM +0100, Günther Noack wrote:
+> On Tue, Nov 17, 2026 at 11:11:56AM +0100, Mickaël Salaün wrote:
+> > Some documented claims about LANDLOCK_PERMISSION_CAPABILITY_USE do not
+> > hold for every capability check.  Remove them instead of listing their
+> > exceptions, and call it a permission instead of a hook.
 > > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge Hallyn <serge@hallyn.com>
+> > Acked-by: Serge Hallyn (AMD) <sergeh@kernel.org>
+> > Fixes: 97c8386f1d74 ("landlock: Enforce capability restrictions")
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
 > > 
-> > I've skimmed some of the series, and I see a bunch of good ideas that
-> > involve using an fd to manage a thing.  But I'm wondering how much of
-> > the value is added by that and how much is added by having a new
-> > *type* of thing: the "rootns".
+> > Changes since v1:
+> > https://patch.msgid.link/20261110202436.2408244-7-mic@digikod.net
+> > - Add Serge Hallyn's Acked-by.
+> > ---
+> >  Documentation/security/landlock.rst      | 8 ++++----
+> >  Documentation/userspace-api/landlock.rst | 8 ++++----
+> >  include/uapi/linux/landlock.h            | 6 +++---
+> >  3 files changed, 11 insertions(+), 11 deletions(-)
 > > 
-> > How much of the value comes from the rootns vs the new APIs to
-> > configure namespaces without entering them first?
-> > 
-> > For that matter, the cells series also seems to contain a (possibly
-> > very similar) variant of the same thing.
-> > 
-> > Would it make sense to come up with a patchset that does *just* the
-> > configure-a-namespace-by-fd part?  It seems to me that this should be
-> > an easier thing to agree on, and it's a big part of the complexity of
-> > all of this, and it solves a real problem even without
-> > cells/rootnses/jails/whatever.
+> > diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
+> > index d81f1c2cd236..98c2e7139e8d 100644
+> > --- a/Documentation/security/landlock.rst
+> > +++ b/Documentation/security/landlock.rst
+> > @@ -8,7 +8,7 @@ Landlock LSM: kernel documentation
+> >  ==================================
+> >  
+> >  :Author: Mickaël Salaün
+> > -:Date: October 2026
+> > +:Date: November 2026
+> >  
+> >  Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
+> >  harden a whole system, this feature should be available to any process,
+> > @@ -359,9 +359,9 @@ framework in ``log.c``, compiled under ``CONFIG_SECURITY_LANDLOCK_LOG``
+> >  (automatically selected by ``CONFIG_AUDIT`` or ``CONFIG_TRACEPOINTS``).
+> >  
+> >  Audit records respect audit configuration, the domain's Landlock log
+> > -flags, and ``LANDLOCK_LOG_DISABLED``.  Tracepoints fire unconditionally,
+> > -independent of these settings.  The denial counter (``num_denials``) is
+> > -always incremented regardless of logging configuration.
+> > +flags, and ``LANDLOCK_LOG_DISABLED``.  Tracepoints fire independently of
+> > +these settings.  The denial counter (``num_denials``) is
+> > +incremented regardless of logging configuration.
+> >  
+> >  Each denial tracepoint carries a ``logged`` field reporting the
+> >  audit-logging verdict: whether the denial would be written to the audit
+> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> > index 3d45b956b640..d00e94d8ed37 100644
+> > --- a/Documentation/userspace-api/landlock.rst
+> > +++ b/Documentation/userspace-api/landlock.rst
+> > @@ -8,7 +8,7 @@ Landlock: unprivileged access control
+> >  =====================================
+> >  
+> >  :Author: Mickaël Salaün
+> > -:Date: October 2026
+> > +:Date: November 2026
+> >  
+> >  The goal of Landlock is to enable restriction of ambient rights (e.g. global
+> >  filesystem or network access) for a set of processes.  Because Landlock
+> > @@ -532,7 +532,7 @@ acquisition via :manpage:`open_tree(2)` / :manpage:`fsmount(2)`.  Namespaces
+> >  the process is already a member of when the domain is enforced are implicitly
+> >  allowed (the process could not continue running otherwise); rules describe
+> >  which new namespace types the process may acquire.
+> > -``LANDLOCK_PERMISSION_CAPABILITY_USE`` gates every exercise of a capability
+> > +``LANDLOCK_PERMISSION_CAPABILITY_USE`` gates the exercise of capabilities
+> >  after the domain is enforced, regardless
+> >  of how the capability was obtained (inherited credentials, ``CLONE_NEWUSER``
+> >  grant, ``setuid``/file-cap-bearing :manpage:`execve(2)`, etc.).  Configuring
+> > @@ -641,9 +641,9 @@ after a domain is enforced through user namespace entry or :manpage:`capset(2)`;
+> >  privileged sandboxes that did not set ``PR_SET_NO_NEW_PRIVS`` may also gain
+> >  capabilities through :manpage:`execve(2)` of binaries with file capabilities.
+> >  In all cases, :manpage:`capget(2)` will report the credential's capability sets,
+> > -but any denied capability will fail with ``EPERM`` when exercised.  Do not rely
+> > +but any denied capability will fail when exercised.  Do not rely
+> >  on :manpage:`capget(2)` to determine whether the policy permits a given
+> > -capability; only the actual operation will return ``EPERM`` upon denial.
+> > +capability.
+> >  
+> >  Truncating files
+> >  ----------------
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 24510e5d8479..c9e4ce23778b 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -622,9 +622,9 @@ struct landlock_capability_attr {
+> >   * - %LANDLOCK_PERMISSION_CAPABILITY_USE: Restrict the use of specific Linux
+> >   *   capabilities.  A process in a Landlock domain that handles this permission
+> >   *   is denied from exercising capabilities that are not explicitly allowed by a
+> > - *   %LANDLOCK_RULE_CAPABILITY rule.  This hook is purely restrictive: it can
+> > - *   deny capabilities that the kernel would otherwise grant, but it can never
+> > - *   grant capabilities that the kernel already denied.  Support added in
+> > + *   %LANDLOCK_RULE_CAPABILITY rule.  This permission is purely restrictive: it
 > 
-> Is it  more accurately scope the part that is "just the fd-part" and
-> what you consider as "extra cruft"?
+> "The permission is purely restrictive"... that sounds like an
+> oxymoron, similar for "[The permission] can deny capabilities..." in
+> the sentence below.
 > 
-> I.e., where do you draw the border?
+> It is not complicated though; How about just shortening the sentences
+> "This hook is purely restrictive: it can deny ..., but it can never
+> grant capabilities that the kernel already denied" down to
+> 
+>   Landlock only reduces the capabilities that processes can use.  It
+>   does not let processes use capabilities that they don't already have
+>   without Landlock.
 
-I'm asking this because I had similar thoughts when I started this back
-in 2025. David had some good ideas but it did more than having a fd
-that does not go live before everything is set up properly.
-
-Then I thought that, I guess people who proactively on the topic do
-something more lean and compact, and never sent roonts patches.
-I'm not seeing anything more lean and compact.
+Much better, thanks!
 
 > 
+> ?
+> 
+> > + *   can deny capabilities that the kernel would otherwise grant, but it can
+> > + *   never grant capabilities that the kernel already denied.  Support added in
+> >   *   Landlock ABI version 12.
+> >   */
+> >  #define LANDLOCK_PERMISSION_NAMESPACE_USE			(1ULL << 0)
+> > -- 
+> > 2.56.0
 > > 
-> > --Andy
 > 
-> Br, Jarkko
-
-Br, Jarkko
+> Reviewed-by: Günther Noack <gnoack@google.com>
+> 
