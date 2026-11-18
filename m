@@ -1,75 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795018729;
-	b=H32W6I3IubV8eRhOM+DT+n/8JTE5qzD/dzIXpUtE1bEAgnWr+Mb1WpaNNuOj7y5AYZmL
-	 c4XpsGNCU7fzjaGD3BQVdnIE/JgDC4FkDtsGoWfouOSqlohijX6CrXXGRnFgPD37cdNOZ
-	 Ksg0h4rGw7SxiTH7BF7afZc0zdSu6EF6tI9uVqH+yP8gnhcqtlu8P0DEFjqEZ4I052I8t
-	 IqEzNAg3Bj37wz7+hSea7Gr/PKb0vD1a1oD6ov43jFXF3XxDcA15O/aGCkuXKG9fk42G6
-	 pd+1Atj9FsZqM93jvKqY9aLz9NZT/W7GM9bcmbvKw0RuHf0jMPNWCzkQ7uYy6VtDlgg==
+	t=1795019591;
+	b=1c7huxzimMeFrYdcb2etFz08IlrxmaGskV3nlyk8IT4w4z00mH7SGarbsLkSVtGtBwWU
+	 vgUKAMxKj5y1N3WXarQNmq5HGUjETsA3ZN4g2JjblFkNIZXfkIgCy+qZaILjX4F2MoOOY
+	 Aw6UPQVD97XvmmmBF2zkVEmOlqkuRBBAa9cFpIrrzNvgXbJTQW5ZXHWboyLvA/5/vUsak
+	 dgC1cWf48HF/WXoO1tT6IPiqnip2pY3V1L4cHRbEfgfJb+a+5Rcyz2Y6/h1eMjolCTAWm
+	 Fe4RLbQ5NoTf+LIH5i5cTObeX7u605hjz5CRPBATmtUL8gJmEKwKPzPnpNvsCyuQRsw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795018729;
-	h=DMARC-Filter:DKIM2-Signature:Message-Instance:DKIM-Signature:
-	 X-UI-Sender-Class:Received:Message-ID:Date:MIME-Version:User-Agent:To:
-	 Cc:References:Subject:Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:UI-OutboundReport;
-	bh=m/bYAf+dZPqaYiTr9U4wbR60qvam9O91KPznC9SM+Rw=;
-	b=U6n/YWCWfEnPXM1zv9cL3wxJIdfEo8tgRjDHeeFBDuUTASn48zNFGoaED1uW6zJOZWFg
-	 1NUPoQP280Qjvcqh6GmK2m2dzBxm/bgw0Dng+5MzJJJsRBQpA18/z6wfPwJMuKpn65TwU
-	 XLWiZh4k9lQUvsD9aeDEFZ6mSBWbAUbom3by/hX9pZrrHGtjpeH8Vz8HaK7hPzzM7GJlQ
-	 5dVyXleGPXM8Fin7WA99Y80/aqsZVdEeq220kNg7UddOq9re8f6k0NpzpLRwWOAmH27Ph
-	 7qpiy9x0DcXAkqXpetsI4kqPQDrocjqjxZT41zAWMTX+0IZOvx28ARXoGU1LIL28I7A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795019591;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Infomaniak-Routing;
+	bh=A61LQTX9WGjKy2HGXJtacyYexWHXKnWVzqJD1ZQC7iM=;
+	b=pmzlhOo522MwYTscBOE3aZDirm1iqJEvDYEe/UYKNSGEEbrXz7HLUGtooQA/HXYI8sj0
+	 HMWr8EEz6c2mg+0QgnEpSQgWWgygydiEuMKGACJH3EhML2JEGUZ/dG5OnUgIsNRDKyLxu
+	 aBH+H8o9BltB326CBaeh8e8/v4BAQc3mmbCGP1j1JW9ijmcoGucafNSOrPh5vyhUXgRt0
+	 soWUHvdQ+fuseOWuRyWyNozAzuwwbonVNytNKc7Kuzm/G4bml1y83OA0KSEINmu/Ul19P
+	 EvEa2rjA1C3mPsN9XibOv20RPec7fHeerDSGgdAQHxlshngJZN+BaPWGtXOzgutDdVQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=web.de;
-	spf=pass smtp.mailfrom=web.de;
-	dkim=pass header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=Sq2pZ4fJ;
-	arc=none smtp.remote-ip=212.227.15.3
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=zwelaHPN;
+	arc=none smtp.remote-ip=84.16.66.173
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314AD606A31C
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 16:18:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 314AD606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF96606A7D5
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 16:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7DF96606A7D5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=Sq2pZ4fJ
-DKIM2-Signature:  i=1; m=1; t=1795018726;
- mf=PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4=;
- rt=PGxpbnV4LXNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc+;
- d=web.de;
- s=s29768273:rsa-sha256:Pdp7UcqWX6QHq1SnaSANVSzUvI0F
-   m0PRGq/qFuvV9le9eeYiJ/v7SdEhguza2olxoQHOqtJtbbEUiYKUD+mRGeVNBysZyW75IHvn2Mk
-   nXk27PzbxuPZJBQAIufyRyRta2ubA7dYqhFM26+dWwWrOY67OjjZbpmeYDg9UB+DCvn+K05saHi
-   bfDBPMEhQT9WuuaGuffguVbTpEE0Qd8+QEavN07zMgS2HLMUNIjPE2Zjuaz3Cn6TvKUa0rQ7jOI
-   CxZMsMHUBiQ+2LGc+WdNyjbmM9z8/pN2ay/fk3hNTnCN8unpBo6tTBdu9yTkHyp2wRWpJoSdFN+
-   UD3QVTq37WGM3g==;
-Message-Instance:  m=1;
- h=sha256:
-   nmDQmRUZN+uSb6f41n1+u/twAW/9MOE+IlpKSrhtQ2c=:
-   m/bYAf+dZPqaYiTr9U4wbR60qvam9O91KPznC9SM+Rw=,
-  sha512:
-   zX2+2XXbx3o4gU2xku4GB4cqxrBOQp8b36AIme9KhpF2+Tfpfrq7eCVISoNBJrVOiHre2EOgPDAktIpuxKNcAA==:
-   zNQth83cxu+7P+zsMCoEGFA85dRG3Im3HA+UQSy2I1SSJBBxQex5ejV+UkYztj2FOXZaJDLzv8zHaeVc4P9ZvA==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1795018349; x=1795623149; i=markus.elfring@web.de;
-	bh=m/bYAf+dZPqaYiTr9U4wbR60qvam9O91KPznC9SM+Rw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Sq2pZ4fJs+BzhaIwvm8e/3/0HpxFCg7jQWws+b1dZ/6qneTU1yz+ROx/uwCCMRvJ
-	 6cvWqldKmn6ywVqDff9eoYeX+ZZmuPtD+rqT5QpvJT1FEobai3gW6WyNsPOwtIK5F
-	 gRHMeEL5J0/L5eFXiR1Ket8FnWRSbAtsEtA+BBRauRBAI2gDigW+LsPd9k5tRfvc/
-	 qluUE5UgtiNgvQOgZkgFpXPuCZynTDrXUouM5kVYdwyYoz9McgjoD1I/3HZXlxx/V
-	 DlsWkS0mG29EnRpCb72pLiglo7982hrmwcLVpI9gnFm21ve6N5p8BvpVAqJjc/uOn
-	 Mfr3yY0ERjq5An+ogw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSqXS-1x0Vzm49l8-00SiyN; Wed, 18
- Nov 2026 17:12:29 +0100
-Message-ID: <bfe10f1f-443e-4286-8172-6f941663c86e@web.de>
-Date: Wed, 18 Nov 2026 17:11:53 +0100
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=zwelaHPN
+Received: from smtp-4-0001 (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV6bQ2hS8zJ97;
+	Wed, 18 Nov 2026 17:33:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1795019586;
+	bh=A61LQTX9WGjKy2HGXJtacyYexWHXKnWVzqJD1ZQC7iM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=zwelaHPNyRRZKNgOQJaoyLxG7m+Ts7HKEdfYEPlh9dAtI8WVTZwN6IBzj2GNTkU0n
+	 he0n8XU2/p9fCPO4IUDQ12FehlfNQ9DxVM0CC0wEuJeygywP+CyhddzKJhEnloVYSA
+	 ZQKsYSBgv62bRQFSwOSDt8E+7czRlJsq4FH8EW+E=
+Received: from unknown by smtp-4-0001 (Postfix) with ESMTPA id 4jV6bP1X81zfJf;
+	Wed, 18 Nov 2026 17:33:05 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Paris <eparis@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	audit@vger.kernel.org,
+	kernel-team@cloudflare.com,
+	linux-security-module@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] landlock: Distinguish namespace creation and entry denials
+Date: Wed, 18 Nov 2026 17:32:49 +0100
+Message-ID: <20261118163254.2554413-2-mic@digikod.net>
+In-Reply-To: <20261118163254.2554413-1-mic@digikod.net>
+References: <20261118163254.2554413-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -79,210 +72,305 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Bence Csokas <bence.csokas@arm.com>, cocci@inria.fr,
- linux-hardening@vger.kernel.org, Julia Lawall <julia.lawall@inria.fr>
-Cc: GR-QLogic-Storage-Upstream@marvell.com,
- James.Bottomley@HansenPartnership.com, Jes.Sorensen@gmail.com,
- airlied@gmail.com, andrealmeid@igalia.com, andrew+netdev@lunn.ch,
- andrii@kernel.org, arm-scmi@vger.kernel.org, ast@kernel.org,
- bcm-kernel-feedback-list@broadcom.com, bharathsm@microsoft.com,
- bleung@chromium.org, bpf@vger.kernel.org, brauner@kernel.org,
- cem@kernel.org, christian.koenig@amd.com, chrome-platform@lists.linux.dev,
- cristian.marussi@arm.com, dakr@kernel.org, daniel@iogearbox.net,
- dave@stgolabs.net, davem@davemloft.net, decui@microsoft.com,
- dri-devel@lists.freedesktop.org, dsahern@kernel.org, dvhart@infradead.org,
- eddyz87@gmail.com, edumazet@kernel.org, emil@etsalapatis.com, g@b4.vu,
- gnoack@google.com, groeck@chromium.org, gustavoars@kernel.org,
- haiyangz@microsoft.com, hansg@kernel.org, herbert@gondor.apana.org.au,
- horms@kernel.org, huangjunxian6@hisilicon.com, idosch@nvidia.com,
- ihor.solodrai@linux.dev, intel-gfx@lists.freedesktop.org,
- ipsec@lists.linux.dev, jack@suse.cz, jani.nikula@linux.intel.com,
- jgg@ziepe.ca, jmorris@namei.org, johannes@sipsolutions.net,
- jolsa@kernel.org, joonas.lahtinen@linux.intel.com,
- kalesh-anakkur.purayil@broadcom.com, kees@kernel.org, kuba@kernel.org,
- laurent.pinchart@ideasonboard.com, leon@kernel.org,
- linaro-mm-sig@lists.linaro.org, linkinjeon@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-bluetooth@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-xfs@vger.kernel.org, luiz.dentz@gmail.com, lyude@redhat.com,
- maarten.lankhorst@linux.intel.com, marcel@holtmann.org,
- martin.lau@linux.dev, mchehab@kernel.org, memxor@gmail.com, mic@digikod.net,
- mingo@redhat.com, miriam.rachel.korenblit@intel.com, mkp@kernel.org,
- mripard@kernel.org, netdev@vger.kernel.org, nicolas.palix@imag.fr,
- njavali@marvell.com, nouveau@lists.freedesktop.org, pabeni@redhat.com,
- paul@paul-moore.com, pc@manguebit.org, perex@perex.cz, peterz@infradead.org,
- phasta@kernel.org, pkshih@realtek.com, rodrigo.vivi@intel.com,
- ronniesahlberg@gmail.com, samba-technical@lists.samba.org,
- selvin.xavier@broadcom.com, serge@hallyn.com, simona@ffwll.ch,
- song@kernel.org, sprasad@microsoft.com, steffen.klassert@secunet.com,
- sudeep.holla@kernel.org, sumit.semwal@linaro.org, tangchengchang@huawei.com,
- tglx@kernel.org, tiwai@suse.com, tom@talpey.com, tursulin@ursulin.net,
- tzimmermann@suse.de, tzungbi@kernel.org, viro@zeniv.linux.org.uk,
- wei.liu@kernel.org, willemdebruijn.kernel@gmail.com,
- yonghong.song@linux.dev, zack.rusin@broadcom.com
-References: <20261118-offsetof-v4-1-95b385c10b22@arm.com>
-Subject: Re: [PATCH v4 1/2] coccinelle: Add offsetofend() variant of
- struct_offset()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20261118-offsetof-v4-1-95b385c10b22@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6EPveX8Ri1t77eUHD87iadI+dVaiRGmKrcwX0pgqshl6eE/PUfu
- U/grdzqZeabqS0kEnnjyRXEVSYDjlvBsjC2oZG3t3rvYXHw3tr9N9kjJJpqOAEsA2vHBJqN
- AR+JHHmlfVSnKcJYWSJp1TR8Y5+Zu/geNXBYWb0YhnSvyDMYofveGe0n8eBYJD9wGvHxA8z
- U1kcbkwxGmL25oJsNUZfg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rM0ETHJyGqI=;7bapq5lffTVvrvQuskQh/L6Ng5n
- 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
- PVQaXLpHYtdr+cU6hxQLaJ5A8jw==
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-=E2=80=A6
-> +++ b/scripts/coccinelle/api/struct_offsetof.cocci
-> @@ -0,0 +1,18 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/// Use struct_offset() family of macros
-> +///
-> +// Confidence: High
-> +// Options: --no-includes --ignore ./tools/
-> +
-> +virtual patch
+Landlock reports denied namespace creation and entry with the same
+internal request type.  Before commit 08471914d6bb ("ns: allocate the
+namespace id before the namespace_init hook"), denied creation carried
+ID zero and could be distinguished from entry by ID alone.  That commit
+moved ID allocation before namespace_init(), so creation now carries the
+ID of an unreachable new namespace while entry carries the existing
+target ID.  Namespace IDs are object context, not operation
+discriminators.
 
-Can further coccicheck operation modes become more interesting here?
+Split the request type into creation and entry.  Keep the two namespace
+values together before capability; this renumbers the unreleased
+capability request in raw and typed trace context.  Report
+namespace_op=create or namespace_op=enter immediately after blockers in
+namespace audit records and trace event text.  Placing the operation
+before namespace_type and namespace_id lets consumers establish the
+semantics before interpreting the following namespace context,
+especially whether namespace_id is the creation-time value or identifies
+an existing entry target.
 
+Keep namespace.use as the policy blocker: the new value only describes
+the semantic hook context and does not add a policy control.
 
-> +
-> +@offsetof depends on patch@
-> +expression ptr, member;
-> +@@
-> +- offsetof(typeof(*(ptr)), member)
-> ++ struct_offset(ptr, member)
-> +@offsetofend depends on patch@
-> +expression ptr, member;
-> +@@
-> +- offsetofend(typeof(*(ptr)), member)
-> ++ struct_offsetofend(ptr, member)
+Cc: Günther Noack <gnoack@google.com>
+Fixes: 15dd86021b57 ("landlock: Enforce namespace use restrictions")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
-How do you think about to use the following SmPL rule variant instead?
+---
 
+Changes since v1:
+https://patch.msgid.link/20261117102110.2524197-2-mic@digikod.net
+- Trim syscall-path narration already covered by the hook documentation.
+---
+ include/trace/events/landlock.h            | 25 ++++++++++++++--------
+ security/landlock/audit.c                  | 10 +++++++--
+ security/landlock/log.c                    |  6 ++++--
+ security/landlock/log.h                    |  3 ++-
+ security/landlock/ns.c                     | 10 +++++----
+ security/landlock/trace.c                  |  3 ++-
+ tools/testing/selftests/landlock/ns_test.c | 18 +++++++++++-----
+ tools/testing/selftests/landlock/trace.h   |  1 +
+ 8 files changed, 52 insertions(+), 24 deletions(-)
 
-@replacement depends on patch@
-expression pointer, member;
-@@
-(
--offsetof
-+struct_offset
-|
--offsetofend
-+struct_offsetofend
-)(
--typeof(*
--(pointer)
-+pointer
--)
- , member
- )
+diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
+index b6fdc6e2eef8..9b3e24a613d8 100644
+--- a/include/trace/events/landlock.h
++++ b/include/trace/events/landlock.h
+@@ -36,7 +36,8 @@ static_assert(sizeof(access_mask_t) <= sizeof(u64));
+ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY);
+ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_FS_ACCESS);
+ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_NET_ACCESS);
+-TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_NAMESPACE);
++TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_NAMESPACE_CREATE);
++TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_NAMESPACE_ENTER);
+ TRACE_DEFINE_ENUM(LANDLOCK_REQUEST_CAPABILITY);
+ 
+ #ifdef CREATE_TRACE_POINTS
+@@ -990,7 +991,8 @@ TRACE_EVENT(landlock_deny_access_net,
+  * @namespace_id: Namespace ID, not directly visible from user space when
+  *                creation was denied.
+  *
+- * Emitted when a Landlock domain denies namespace use.
++ * Emitted when a Landlock domain denies namespace creation or entry.  The
++ * namespace_op field distinguishes these operations.
+  */
+ TRACE_EVENT(landlock_deny_permission_namespace,
+ 
+@@ -1021,13 +1023,18 @@ TRACE_EVENT(landlock_deny_permission_namespace,
+ 		__entry->namespace_id	= namespace_id;
+ 	),
+ 
+-	TP_printk("domain=%llx same_exec=%d logged=%d blockers=%s namespace_type=0x%x namespace_id=%llu",
+-		__entry->domain_id, __entry->same_exec, __entry->logged,
+-		__entry->blockers_type == LANDLOCK_REQUEST_NAMESPACE ?
+-			__print_flags(__entry->blockers_access, "|",
+-				      _LANDLOCK_PERMISSION_BLOCKER_NAMES) :
+-			"unknown",
+-		__entry->namespace_type, __entry->namespace_id)
++	TP_printk("domain=%llx same_exec=%d logged=%d blockers=%s namespace_op=%s namespace_type=0x%x namespace_id=%llu",
++		  __entry->domain_id, __entry->same_exec, __entry->logged,
++		  (__entry->blockers_type == LANDLOCK_REQUEST_NAMESPACE_CREATE ||
++		   __entry->blockers_type == LANDLOCK_REQUEST_NAMESPACE_ENTER) ?
++			  __print_flags(__entry->blockers_access, "|",
++					_LANDLOCK_PERMISSION_BLOCKER_NAMES) :
++			  "unknown",
++		  __entry->blockers_type == LANDLOCK_REQUEST_NAMESPACE_CREATE ?
++			  "create" :
++		  __entry->blockers_type == LANDLOCK_REQUEST_NAMESPACE_ENTER ?
++			  "enter" : "unknown",
++		  __entry->namespace_type, __entry->namespace_id)
+ );
+ 
+ /**
+diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+index be49ef47b4ea..6d9e54f5deed 100644
+--- a/security/landlock/audit.c
++++ b/security/landlock/audit.c
+@@ -80,7 +80,8 @@ get_blocker(const enum landlock_request_type type,
+ 		WARN_ON_ONCE(access_bit != -1);
+ 		return scope_strings[BIT_INDEX(LANDLOCK_SCOPE_SIGNAL)];
+ 
+-	case LANDLOCK_REQUEST_NAMESPACE:
++	case LANDLOCK_REQUEST_NAMESPACE_CREATE:
++	case LANDLOCK_REQUEST_NAMESPACE_ENTER:
+ 	case LANDLOCK_REQUEST_CAPABILITY:
+ 		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(permission_strings)))
+ 			return "unknown";
+@@ -115,7 +116,8 @@ blocker_prefix(const enum landlock_request_type type)
+ 	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
+ 		return "scope.";
+ 
+-	case LANDLOCK_REQUEST_NAMESPACE:
++	case LANDLOCK_REQUEST_NAMESPACE_CREATE:
++	case LANDLOCK_REQUEST_NAMESPACE_ENTER:
+ 		return _LANDLOCK_PERMISSION_NAMESPACE_NAME ".";
+ 
+ 	case LANDLOCK_REQUEST_CAPABILITY:
+@@ -212,6 +214,10 @@ void landlock_audit_denial(const struct landlock_request *const request,
+ 
+ 	audit_log_format(ab, "domain=%llx blockers=", youngest_denied->id);
+ 	log_blockers(ab, request->type, missing);
++	if (request->type == LANDLOCK_REQUEST_NAMESPACE_CREATE)
++		audit_log_format(ab, " namespace_op=create");
++	else if (request->type == LANDLOCK_REQUEST_NAMESPACE_ENTER)
++		audit_log_format(ab, " namespace_op=enter");
+ 	audit_log_lsm_data(ab, &request->audit);
+ 	audit_log_end(ab);
+ 
+diff --git a/security/landlock/log.c b/security/landlock/log.c
+index 43efbb95725c..c132b343f0ee 100644
+--- a/security/landlock/log.c
++++ b/security/landlock/log.c
+@@ -388,7 +388,8 @@ static bool is_valid_request(const struct landlock_request *const request)
+ 		return false;
+ 
+ 	switch (request->type) {
+-	case LANDLOCK_REQUEST_NAMESPACE:
++	case LANDLOCK_REQUEST_NAMESPACE_CREATE:
++	case LANDLOCK_REQUEST_NAMESPACE_ENTER:
+ 		if (WARN_ON_ONCE(request->permission !=
+ 				 LANDLOCK_PERMISSION_NAMESPACE_USE) ||
+ 		    WARN_ON_ONCE(request->audit.type != LSM_AUDIT_DATA_NS))
+@@ -485,7 +486,8 @@ is_denial_quieted(const struct landlock_request *const request,
+ 	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
+ 		return !!(youngest_denied->quiet_access.scope &
+ 			  LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
+-	case LANDLOCK_REQUEST_NAMESPACE:
++	case LANDLOCK_REQUEST_NAMESPACE_CREATE:
++	case LANDLOCK_REQUEST_NAMESPACE_ENTER:
+ 		return !!(youngest_denied->quiet_permission.ns_types &
+ 			  landlock_ns_type_to_bit(request->audit.u.ns.ns_type));
+ 	case LANDLOCK_REQUEST_CAPABILITY:
+diff --git a/security/landlock/log.h b/security/landlock/log.h
+index 596feeeb7aa6..641a2c3c78ed 100644
+--- a/security/landlock/log.h
++++ b/security/landlock/log.h
+@@ -25,7 +25,8 @@ enum landlock_request_type {
+ 	LANDLOCK_REQUEST_NET_ACCESS,
+ 	LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
+ 	LANDLOCK_REQUEST_SCOPE_SIGNAL,
+-	LANDLOCK_REQUEST_NAMESPACE,
++	LANDLOCK_REQUEST_NAMESPACE_CREATE,
++	LANDLOCK_REQUEST_NAMESPACE_ENTER,
+ 	LANDLOCK_REQUEST_CAPABILITY,
+ };
+ 
+diff --git a/security/landlock/ns.c b/security/landlock/ns.c
+index 06d9784746fe..3d443599b16f 100644
+--- a/security/landlock/ns.c
++++ b/security/landlock/ns.c
+@@ -90,6 +90,7 @@ static const struct access_masks ns_permission = {
+  * check_ns_type - Check namespace use permission
+  *
+  * @ns: The namespace being allocated or installed.
++ * @request_type: Namespace operation reported on denial.
+  *
+  * Shared check for namespace_init (creation via clone(2), unshare(2),
+  * open_tree(2), or fsmount(2)) and namespace_install (use via setns(2)): denies
+@@ -99,7 +100,8 @@ static const struct access_masks ns_permission = {
+  *
+  * Return: 0 if allowed, -EPERM if denied.
+  */
+-static int check_ns_type(struct ns_common *const ns)
++static int check_ns_type(struct ns_common *const ns,
++			 const enum landlock_request_type request_type)
+ {
+ 	const struct landlock_cred_security *subject;
+ 	size_t denied_layer;
+@@ -117,7 +119,7 @@ static int check_ns_type(struct ns_common *const ns)
+ 
+ 	landlock_log_denial(subject,
+ 			    &(struct landlock_request){
+-				    .type = LANDLOCK_REQUEST_NAMESPACE,
++				    .type = request_type,
+ 				    .audit.type = LSM_AUDIT_DATA_NS,
+ 				    .permission =
+ 					    LANDLOCK_PERMISSION_NAMESPACE_USE,
+@@ -130,13 +132,13 @@ static int check_ns_type(struct ns_common *const ns)
+ 
+ static int hook_namespace_init(struct ns_common *const ns)
+ {
+-	return check_ns_type(ns);
++	return check_ns_type(ns, LANDLOCK_REQUEST_NAMESPACE_CREATE);
+ }
+ 
+ static int hook_namespace_install(const struct nsset *const nsset,
+ 				  struct ns_common *const ns)
+ {
+-	return check_ns_type(ns);
++	return check_ns_type(ns, LANDLOCK_REQUEST_NAMESPACE_ENTER);
+ }
+ 
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+diff --git a/security/landlock/trace.c b/security/landlock/trace.c
+index 995c6b948e16..00cb497eaffb 100644
+--- a/security/landlock/trace.c
++++ b/security/landlock/trace.c
+@@ -81,7 +81,8 @@ void landlock_trace_denial(
+ 	const access_mask_t missing, const bool same_exec, const bool logged)
+ {
+ 	switch (request->type) {
+-	case LANDLOCK_REQUEST_NAMESPACE:
++	case LANDLOCK_REQUEST_NAMESPACE_CREATE:
++	case LANDLOCK_REQUEST_NAMESPACE_ENTER:
+ 		if (trace_landlock_deny_permission_namespace_enabled()) {
+ 			const struct landlock_blockers blockers = {
+ 				.access = missing,
+diff --git a/tools/testing/selftests/landlock/ns_test.c b/tools/testing/selftests/landlock/ns_test.c
+index 8f387fc47e21..d4a85cbebeae 100644
+--- a/tools/testing/selftests/landlock/ns_test.c
++++ b/tools/testing/selftests/landlock/ns_test.c
+@@ -1897,11 +1897,14 @@ TEST(setns_inherited_fd)
+ 
+ /* Audit tests */
+ 
++#define REGEX_LANDLOCK_NS_CREATE \
++	REGEX_LANDLOCK_PREFIX " blockers=namespace\\.use namespace_op=create"
++
+ static int matches_log_ns_create(int audit_fd, __u64 ns_type)
+ {
+ 	/* A denied creation logs the ID allocated for the new namespace. */
+-	static const char log_template[] = REGEX_LANDLOCK_PREFIX
+-		" blockers=namespace\\.use namespace_type=0x%x namespace_id=[1-9][0-9]*$";
++	static const char log_template[] = REGEX_LANDLOCK_NS_CREATE
++		" namespace_type=0x%x namespace_id=[1-9][0-9]*$";
+ 	char log_match[sizeof(log_template) + 10];
+ 	int log_match_len;
+ 
+@@ -1917,12 +1920,12 @@ static int matches_log_ns_create(int audit_fd, __u64 ns_type)
+ static int matches_log_ns_setns(int audit_fd, __u64 ns_type, __u64 ns_id)
+ {
+ 	static const char log_template[] = REGEX_LANDLOCK_PREFIX
+-		" blockers=namespace\\.use namespace_type=0x%x namespace_id=%llu$";
++		" blockers=namespace\\.use namespace_op=%s namespace_type=0x%x namespace_id=%llu$";
+ 	char log_match[sizeof(log_template) + 32];
+ 	int log_match_len;
+ 
+ 	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
+-				 (unsigned int)ns_type,
++				 "enter", (unsigned int)ns_type,
+ 				 (unsigned long long)ns_id);
+ 	if (log_match_len >= sizeof(log_match))
+ 		return -E2BIG;
+@@ -1958,7 +1961,7 @@ FIXTURE_TEARDOWN(ns_audit)
+ 
+ /*
+  * Verifies that a denied namespace creation produces the expected audit record
+- * with the namespace.use blocker string and namespace_type.
++ * with the namespace.use blocker string, namespace type, and create operation.
+  */
+ TEST_F(ns_audit, create_denied)
+ {
+@@ -2542,6 +2545,11 @@ static void test_ns_trace_denial(struct __test_metadata *const _metadata,
+ 	EXPECT_STRNE("0", field);
+ 	if (use_setns)
+ 		EXPECT_EQ(expected_ns_id, strtoull(field, NULL, 10));
++	ret = tracefs_extract_field(buf,
++				    REGEX_DENY_PERMISSION_NAMESPACE(TRACE_TASK),
++				    "namespace_op", field, sizeof(field));
++	ASSERT_EQ(0, ret);
++	EXPECT_STREQ(use_setns ? "enter" : "create", field);
+ 
+ 	free(buf);
+ }
+diff --git a/tools/testing/selftests/landlock/trace.h b/tools/testing/selftests/landlock/trace.h
+index 36e8f16171b0..e67f239a8507 100644
+--- a/tools/testing/selftests/landlock/trace.h
++++ b/tools/testing/selftests/landlock/trace.h
+@@ -185,6 +185,7 @@
+ 	"same_exec=[01] "                      \
+ 	"logged=[01] "                         \
+ 	"blockers=[a-z_|]* "                   \
++	"namespace_op=\\(create\\|enter\\) "   \
+ 	"namespace_type=0x[0-9a-f]\\+ "        \
+ 	"namespace_id=[0-9]\\+$"
+ 
+-- 
+2.56.0
 
-
-Regards,
-Markus
