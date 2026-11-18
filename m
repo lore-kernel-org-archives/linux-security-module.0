@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795011565;
-	b=UwoOhblscGpg+3AqlNBQZVuGye5/rvshuTJkXS9Eib1+/zukFGTWWRXxwI49pX0ao11v
-	 lyJHdWZ9yeYORSBCJs6T1wxKZm3wq8MS0DWxDfq4XviAXLdmJ4XKJivD8GaYjlqiKyZh0
-	 iP3sC/2/QpSu3+sf6mkec363T7Vja52Kx5MflCICLU/j8psKPZb7dkF7Ui7G8adAmqZgR
-	 fFtBjMWAweiEaV9jrvhhiovKfNT/0o0Hrxr7LiWchW7h+WRwCz6D6m+EsW0/SRZ/mrT9S
-	 wAihbutnsmGyCjhMcVhyO9M6uu5nxTUC1TsM1vxbD4P3f69eQPJHPy95whOdAZX8aCg==
+	t=1795011709;
+	b=jqT58dMKJ7A/TXSNUABXroNrVs0J06o6GTWSPyL9WpVt/3e5FAz2cTteBf3luFskjJmr
+	 G5C7UE9tg9mSl63pRI+EjMrCDjgSosdN/wY+wWIX+5Cgoj0oEvXoLbXk+99oGuytdftvS
+	 Rapsba/Ugskh3E6hiV1vILrdjbYwWwUOQWa3gtuHRyI+JIKKMxOHlZm6/ze1bkC4bxmXa
+	 K/i9oIFlP+V+Xfv6HE/dfUCG+RY/P0fLfhVLYkrdj3Osimqk88AMqw8+a+688fQYi21Xe
+	 sV4fO368gal3Ml9O/95Mico2RTXi8JEUJUG8en9xOBFTeiUkGg02IGsdLujnPn8H0dw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795011565;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795011709;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=VLe2TCRMik8IHizFrISvpU25yZW6J2eIY8nOBfPke3Q=;
-	b=rS3/9R5FIenR2R6GiU1P+w0UXOSYvFeS+vT6NTl/ZcRWsjwoIJSfNEYkS9G62Gr3JZ1E
-	 3q3Gsb4h7d7FHqQsnDB0QG5VSnulzwEjFfOE6lGUPgMiS3XJ91m3uHmcVpUp5lM/KaiLm
-	 DQ6MD++NVa/t6vBBDMT3NHlhcqUFcKDYNNpD+wwGbYIG2DePiTd5kiep5FMyhYhoc1M3v
-	 ypDXOAKpfNylRDwuc+0MCrL/kLAJKCeZN1FHtV2yTqozwdfMzr5A4mxR11xEC/JGsZfxj
-	 srY2j8YxxPpCFY3O53t8iFwPBw9fVZbmpYNJqjMYPTB97BF/iZ3RN6aPwBbvcT/jOdQ==
+	bh=PmNOFMPRkZkI2TL/atFGjmJngs7HdhLeCOXWAZV85XQ=;
+	b=nWqA3H4t9mW0ss8orZK5t1ynyqI2cvcaHATvVCwEQYU856pYkdYnMQ7CR+8pBjVYP2xA
+	 0HhvfYS+XFk1rObIuSr8xQOQ1nz2md4Xn5O/V0AOzmx8eIfslRCnZAdfazG3MCRQ4OrMH
+	 awXR1YOwsUM5UkHcpcgaL9dTR0J3dzrYGeimQ//93EdcyUpVEPtKaODWCBHXMzBEKUSzY
+	 nReiVSO+1mtgAd2aecRHjTqdJYJABgSQcUhsoBTQrMDxreVMRdWrMA2pi/CJM9vMEDA5T
+	 9ppPoSVOHRhBwjTnk1eQD7hM/pBVRgLP3s2695xD6v3tID5+4vv0iO35/pQFCYM4WWw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOSTHHC7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S7D4v+Bs;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D10F606A338
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041F2606A31C
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOSTHHC7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C531B1F000C7
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:19:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S7D4v+Bs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E941F000C4
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795011564;
-	bh=VLe2TCRMik8IHizFrISvpU25yZW6J2eIY8nOBfPke3Q=;
+	s=k20260515; t=1795011708;
+	bh=PmNOFMPRkZkI2TL/atFGjmJngs7HdhLeCOXWAZV85XQ=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=nOSTHHC7ao0mDwgO8cvT3FFYmQ5w3MlH6ySoDl+LSVajNVtGcCEgqKFvVZSj3J5Nj
-	 PE9k6a3vF6dqYb5LPJfchvnJr/erfsNFlxqtZhOitcTekl6r0gs9634HesKZlqSMtk
-	 Rw09kO8Oyj3oXTaA1XVQoSlFuSgsDu86LOvwL55hyNkMSl4Kxfhws6EoRCwqQ8h0Ki
-	 90Fkz151EGZbhShhmmPhxbemgjBCIowRuGjJPhUPKa+1dIUP8oYYzcnbwIwCqu3JcQ
-	 ZauQTuCbaSAkslSHWDj0fuVPKNOeNwdv7qHisUzQ0lg3JXTzMSCowalwSLMJMjtfWX
-	 X+NQvHnuz+gGA==
-Message-ID: <sashiko-outbox-221187@kernel.org>
+	b=S7D4v+BsW4+fUGYpurN3u9cwxCMjOh4Nc99bx97wXPXnRD4A90XkFLffvBNnUFB4R
+	 BrNXfmG4EpmcmDsgzb1/BR3TqFXrZiB2NHhm0NxDcDgHzFOIbGmmc0ahHSZj4G4Hmd
+	 WhMu7wXCt65KysvGU+xk5sRGbb86KrvIKuYrlJBzSlBBwXGOZucMrK0WdB5VDNuCtl
+	 +DZpXY/WqsLW9j/bgUd+noKSWFTUbNg8NRrNBcnll1YAundDTEU5mbVhQcS5dd3+kQ
+	 Ei2MdVwgv65mCwX06rrdmn9opllJ0VidnE9jXqgUIHba92g3nxG9B3apelWm/vpC0T
+	 BiL0DStBwz5Pw==
+Message-ID: <sashiko-outbox-221192@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 4/9] docs: keycrypt: document keycrypt keys
+Subject: Re: [RFC PATCH 2/9] KEYS: keycrypt: Add the sw backend
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261118140734.601772-1-giometti@enneenne.com>
+In-Reply-To: <20261118140421.584086-3-giometti@enneenne.com>
 References: <20261118140421.584086-1-giometti@enneenne.com>
- <20261118140734.601772-1-giometti@enneenne.com>
+ <20261118140421.584086-3-giometti@enneenne.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 14:19:24 +0000
+Date: Wed, 18 Nov 2026 14:21:48 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,12 +59,29 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Document the keycrypt key type: its model and tiers, what the core
-> enforces and what only a tee or hsm backend can guarantee against a
-> compromised kernel, the add_key() syntax and the blob, the kernel tier,
-> the OP-TEE backend, the operation context and its ioctls, CBC, MAC and
-> VERIFY, revocation and permissions, the system policies, why AF_ALG
-> and KEYCTL_PKEY_* do not cover this, and the errors.
+> Systems with neither a TEE nor a crypto engine able to keep keys still
+> want keys that user space cannot read and that are bound to one
+> algorithm and purpose, and the same interface on every device.
+>=20
+> Add the "sw" backend, of the kernel tier: it seals each key with
+> AES-256-GCM under a key derived with HMAC-SHA256 from a "trusted" key
+> named by master=3D, authenticating the keycrypt header with it, and runs
+> the operations with the kernel's crypto library. A loaded key is in
+> clear in kernel memory until revoked or destroyed, which the kernel
+> log says when the backend registers and when the first key is loaded;
+> the backend is chosen only by tier=3Dkernel, by backend=3Dsw, or when no
+> backend of a higher tier is registered, and a system that must not use
+> it raises the system tier above it (CONFIG_KEYCRYPT_SYSTEM_TIER_*), or
+> leaves this option off.
+>=20
+> In that derivation the trusted key's material is what the HMAC
+> processes, under a label and a random salt as its key, and not the
+> other way round: AF_ALG lets user space name a trusted key by its
+> serial number as the key of an HMAC socket, so with the material as the
+> key anyone allowed to search the master could recompute the sealing
+> key of every blob.
+>=20
+> It depends on TRUSTED_KEYS and is a module when trusted keys are one.
 >=20
 > Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
 
@@ -72,5 +89,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118140421.5840=
-86-1-giometti@enneenne.com?part=3D4
+86-1-giometti@enneenne.com?part=3D2
 
