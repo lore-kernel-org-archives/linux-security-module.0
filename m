@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795019942;
-	b=5ilHpFfW7NbQGsxp/rgRlSGllGkPKzYn/QgKNTx1Wv0Pe9vGgP2TzmCNNttvF+KTQ3OU
-	 MfLZrOci1v3tyzUf/bZTqltALcvl+oqL9gxyztt2bC2anOFyddtwNCt7gJJyUCo6oengY
-	 enuAtfc1eQIG0OwZNz7QCWzIhYS+7rlIVNX7NPhHMI5UmzW/QMom8pa4DLmUN+Tili4/x
-	 WKT7PLYE2OWHCY5qdHQDaOJwJFtu2KqMAiLhLDxdrmKLRSTvvBraRvRB2p2WifoElIZY4
-	 cAxN+Xtty+J4I4JNmLLaX9SGcGERp2yWeqkHnps/nFlMP3SfOsjzkLPKTHXwr17w9DQ==
+	t=1795019952;
+	b=YHz3XVM1ZKnKs2iZ/KC8pFni4JaUbdVsIksg6sRTpvytAmo2vC0d8NvGLqbWIMrmUKYP
+	 mYlBVmBftKq/aqtV5VqaGHVK1yg1WmH55W+iTX5mcxlZS41AtmV7I6x7vfeJ2frWtZosM
+	 qblb4I/A9d/ounVAPM112oC4G2IX32NG11cEzkw/NddGSzfwyKWP3y9ZFR7MdUTLdlCZe
+	 jHdi7IeHSDrzVQTiSVQOYO4nld/DeRPLCv/ciw0jWUZTitDgEbkgg/guWcd4jdCuy+BhR
+	 GoVsmcrE5fjNBKDZP02eYgskWcJ6ij4Am5adhcJ1rGs+g9/N6jkMyYRZWEawzEgAayA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795019942;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795019952;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=kd8LzbqT8cs1DMltZPBek5q3OO7iFYlyrqpzDjnZTXM=;
-	b=wsvb28TaAE4gOGiQilx83EunUalLxJmQOTMkWPypefoey9gflIWUB6yfyiIsJKfl14Ib
-	 D/h63eLprF+VHZBXiywRE/qJkr+J9cPAKkaWIUr4z/AS695OO03G6atnJcTWtAMgOI+3X
-	 Eth80EMK+b3xBG+jp4qKMZ/Rx6XoP9JISTlFVMELfSL7O1c6jt1aehAKYlcc8LHBIzZiG
-	 Bifs13NgVbNygKxnvSwHdPtsc4UvOduXpqzHk5x0+P3VAFJQlv6hjamHpyNOm6z+LHT+Y
-	 faVIYgrdGvmDcEmqdFmWm3dfz4DQ6d/Yi+isQtQYwGaNgkf23EXp82ye0rj0WlmKFOg==
+	bh=JdMwO4o/YW2yLXno/fQ6dnChRRXKEIJuepNS4m5gCBI=;
+	b=MKWAQ+Ui8xvEmoyQSk4Y2ziwY3w/lRIOF4+WFr+y8IlJ/qmaFL0RgzO2VRnC+kUhMiVq
+	 clzKED2sYUj+g0rw7AUVn7aUYmyq0LRfnXTfdK4B+ftD/6fl6uma5CC22bFWGwGgVNa0s
+	 DrA7T4m6Mtq04oTL+B8gsiU4Qh11u2r7rNpZx47JE2XoNi7o0pZLg5XOmF97dDUE3BYJs
+	 mstgp2OSRkBNiIeWvPbSVbOEKHYEvfwQrG+/ktDL5rxmtzsIdaVFnjmxPxDjHcXDhYCSU
+	 QNRgoFdWylJ0ZU7zt56TIAlvc2WuvkJ8cxA1AgEChUlFgjfq1gVaUmtejUzYKzH+8sQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FLDvzcji;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G+af+LmO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060D3606A335;
-	Wed, 18 Nov 2026 16:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B109F606A32C;
+	Wed, 18 Nov 2026 16:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FLDvzcji
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A18691F000C4;
-	Wed, 18 Nov 2026 16:39:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=G+af+LmO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50FAF1F000C5;
+	Wed, 18 Nov 2026 16:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795019941;
-	bh=kd8LzbqT8cs1DMltZPBek5q3OO7iFYlyrqpzDjnZTXM=;
+	s=k20260515; t=1795019952;
+	bh=JdMwO4o/YW2yLXno/fQ6dnChRRXKEIJuepNS4m5gCBI=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=FLDvzcji5OsBuKmoPABWCQSDNLQzOQCxpjiov1Dljjn4Sv6CYbpP0B9IkDbucvj71
-	 SUFlLsf0J3PG9XR6DJcMKVZgnuL9D94XIpuT2k+hPhzq1RrHNrkw/Vew58uMypz8v4
-	 83Q5+HTkzmTCrRUlSsgCcLXjUl3UlsxAwLiuqLn85AlHJDKdcXkxp2xZxWe9kpAGb2
-	 MK/6BpuZpQS1HOdqbW7GtMGBfOzVEv+hK+DDJ1wlrzuB5F4/aKMAcbbaXRRrUr9s5h
-	 BCXxSRL9LyXqtp+aHPMjBZpZh7EeV5d0eaEmfqmotkFJvUgFBBivC1/E3WXd4u86kF
-	 OkiO9WV7vIYLA==
-Message-ID: <sashiko-outbox-221516@kernel.org>
+	b=G+af+LmODsRQ478q2lXye+FhAeE2t1Cm93Cr1J54WU6HmaI99W8G1Qh1kLC1kYgOh
+	 basEHRbDMa63Mc9k4fwCV8qg6QuLk/in7mvcyk/T8p06efWDuYKZDGtoaGNNgIpkNg
+	 rsBFiC31v2Hgj6Zs5lDOb2QxBD7j2R3y6aXNB5IN9nByhBbJ+QTxZdUZn2PeO5Rsf1
+	 wiQl10wqJAwUpxIcJLFoZ0KgA6RBkdwTqhf3GGv7vZ5e9AmHry1F4qsHW2SkWXbiMY
+	 k5LQQMTTO0VOC42PlOQyl/eEj/PaTjz+XJYo/t2JRM6yBfoA0jE72Jh1HqhuwNDqE0
+	 nF8iWq1Ktjz+A==
+Message-ID: <sashiko-outbox-221517@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/4] landlock: Add capability objects to denial
- tracing
+Subject: Re: [PATCH v2 4/4] landlock: Document namespace denial operations
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: audit@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20261118163254.2554413-3-mic@digikod.net>
+In-Reply-To: <20261118163254.2554413-5-mic@digikod.net>
 References: <20261118163254.2554413-1-mic@digikod.net>
- <20261118163254.2554413-3-mic@digikod.net>
+ <20261118163254.2554413-5-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 16:39:01 +0000
+Date: Wed, 18 Nov 2026 16:39:11 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,34 +59,20 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> The capability denial tracepoint identifies the capability number but
-> not the credentials or user namespace against which it was checked.
-> Typed BPF consumers therefore cannot reconstruct the authoritative hook
-> context, especially when a check targets a user namespace other than the
-> caller's current namespace.
+> Namespace denial records now distinguish creation from entry.  Document
+> the namespace_op field in the audit and trace references, and clarify
+> that it describes the semantic namespace hook rather than exact syscall
+> provenance.
 >=20
-> Carry the exact cred and user_ns used by each commoncap check through
-> check_cap() to the tracepoint's BTF prototype.  The capable hook
-> forwards its arguments.  Other callers mirror old->user_ns for
-> CAP_SETPCAP, and init_user_ns for CAP_SYS_RAWIO and CAP_SYS_ADMIN.  The
-> latter checks protect global hardening and the global admin memory
-> reserve, so nested user-namespace capabilities must not authorize them.
->=20
-> Keep these pointers out of TP_STRUCT__entry and TP_printk so the raw
-> ring-buffer layout and textual format remain unchanged.  They provide
-> context only and do not participate in Landlock's verdict.
->=20
-> Do not carry the capability options.  CAP_OPT_NOAUDIT already suppresses
-> the complete denial record, and the remaining option bits do not explain
-> the checked security relationship.
+> Creation reports the ID allocated for a namespace that never becomes
+> reachable, whereas entry reports the existing target ID.
 >=20
 > Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Fixes: 97c8386f1d74 ("landlock: Enforce capability restrictions")
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118163254.2554=
-413-1-mic@digikod.net?part=3D2
+413-1-mic@digikod.net?part=3D4
 
