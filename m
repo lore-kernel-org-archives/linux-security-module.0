@@ -1,100 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.172
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795021194;
-	b=q80wv+woXFH6EM0YZ1L7CejBVvCY4bvHenXWz+9FVw5W1zGRpxoTVh525JLIfpNCvY0Y
-	 lpGvkUR0HigO2xOgf4FlbcTnqPYLnMvveY9X4MvzWS1OE5w3BJm8k0bsUNFnLiDVSsvI4
-	 wE8txKCtvft6fOJTfnanuyqo473I5mW8Y8E2n6oV7dxy5d+1mheLHpG4Z1qzvPs3Gs6ZD
-	 lHuxKy8r1MXbsdn9zb4F+rrniAWawznS0qs2uBMQPtpySPIovROCLrLMkUOP3nxHgmPTL
-	 DxqBkD6K//O+IPu0wDfLu+8+hf+nn7prJocTlJMjALl2qVry/R8mR6u4h1AAHq+Slyg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795021194;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=+eo4FKNzNbHf/eH43g1C8Z3to6Do7+2E27gt4uDxW08=;
-	b=Er6adzcCCcRBtWYCQUwdCtXGG4j1SQ0bcEPoqGro+9fXH0j/bYGfRUATg9gbiOh+f4K2
-	 OsXZZlMVoI7WQ06ybrLd266BclxbKdLUMnJBIkEdPTeSNJ7rUPaTO+L8qvb66NQwtE1LQ
-	 NuXisnim2OAJVP0foNtO9mtqZDABmkrw584AxYW4eYBQVvUSKAT4nkbwN1/hu/AjlSKLr
-	 hRlGO+Qk/E6Ch8/1iCL7eKA/5KoP7vZ1VOrBBiI+KV7Iz3jgPLvPbXvZoHCYKRdGj2ils
-	 Y1ufDiWj5LObY/8qjbjqnmw4gcsr+Lw2wA7/INNZK5V2+/hBjL4bNShRVPGsafUhadA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=amacapital.net;
-	spf=pass smtp.mailfrom=amacapital.net;
-	dkim=pass header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b="tsb3jtv/";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.172
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=83.166.143.175
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795021234;
+	b=U0J3qF6BpDhxQMzxyJnrSFVmNVhrVw7t+grK/6QigbwHld+Hzfx1luXojnB+y7Q4CfQm
+	 bIC4Sj38jBHgzEgiWTSatVbnga6ZaMN0ZAA7a9Hr1wFjC/eFkO7DnI8vnCZfOLq47fVdt
+	 i/B9UqUodwqpsHyZ++yuZWdYSFNNxYXL2ooUUMYURO7jbhlyiJWzflnlcD9/wPCJ6/M5R
+	 BhUgWqKfpqW1URJvcDwNSEkiVrXpwlB3OgBtnm72qqH3C5rBUvyUI8bIw15XzB7uUahxG
+	 5BpGuWouPL3yDAV4wg9iVtI1UUnEJOJL8eDFCoP/JeQqEjoS5M0aLfiYKgCEm+8IO4g==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795021234;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Infomaniak-Routing;
+	bh=o3t6ocqFvEquDP51sptBzlVVhSR5uyDVH+RFqB7EJg4=;
+	b=BAroJtn8369fNhDoueOOOhPVDTScg89j2od947NaLuVc2S0QsXurbEtPZ5/e0wEJzR2s
+	 Klpm0eFCdrZZdqtq+z381k38RnzqRvnLOY/XlLzR4enYDrUFIojS5VDPyYMCva0Yjfy8Z
+	 qCG22NC+/kI4DSCMmbYdrEZc7rHrC3dfrxAHVNMujwug9qxFIaJd037X3+XXf3nIUmtCg
+	 R7IHUaJnRbfFnomaeRB2kiKReCsvJAgSQN/16qnZhqtCzZ/9jrcIt55O3ZdLQj1jB/pNO
+	 oSIs5peBLUV9lDvxPuv+1oHyCnlCex7oKJoLHPumNWcbld1wGcO2Xc9uiT0MlCZY5bQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b="J1bjyA/p";
+	arc=none smtp.remote-ip=83.166.143.175
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8BA606A336
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 16:59:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4C8BA606A336
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8D5606A320
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 17:00:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0B8D5606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=tsb3jtv/
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3adfcafaabbso12774021fa.3
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 08:59:54 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795021192; cv=none;
-        d=google.com; s=arc-20260327;
-        b=awk4zkjImSL7xSb3AxV3OR+fdR7b8R5KyDcrOg3YkOcUOUoMfJ7lJOY8sbRfzDg5DP
-         o01yzI+M2HaaaUHqHnQHSyFVqGyGwf5szr9bN5lxTUEAVLzVI8iBaxvLcUutFdZ8L+qw
-         9PGphofqaDP1vsU3MsggNJmYOwjDKcicGcauHyKKQqnB2OATwo9aL6lN5WD4m/2V/odA
-         ix6zpzfeEHuU/mVmV9Awn3rVAV8aTjrv52IwptkL2oK7/lmRhr2XHh69HEcur0kNOl/S
-         38DhE5lKqGqVRr7Dddg3cUT6BYmwp5v+ZZNnT2rVIQdpCIEz9WgyxMZhu9rzhcSQbij5
-         jddQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=+eo4FKNzNbHf/eH43g1C8Z3to6Do7+2E27gt4uDxW08=;
-        fh=0vB8ydkiCJSv9lwhBcBvY7IJYssmm8QM18anUgMqHg8=;
-        b=ErLOHMr5ePCr8RZXHoodHjICnpazMT60Pkn2zrjhE7iZYJYwQkWyvpZZIxVlNNO+vp
-         25YKVbTIMZ0Odmm+DqoHrMf2jGkGQv+T2fvCL0hLRX49nFk5/zU0y54j/ENXdbNRWg5T
-         lt0G+P00XbJ+OIjEES502pqfHObvOaC9qSZQC3+RFJS/TzV2gLx8i9xXxqODYYQ3Spvz
-         Glyi0JvbYAC/Rv43UVWDSleW3jO4SVm9LZPZl4LBYICFMElItDWKmCel2WfALLx1dzq9
-         Cl12ubn+jsLlUKuFjlbyKtDK6LmCVbHohtL1vbPWtDYuwaU4vl5vcWOC6CIn85xlCSWS
-         leVg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20260707.gappssmtp.com; s=20260707; t=1795021192; x=1795625992; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=+eo4FKNzNbHf/eH43g1C8Z3to6Do7+2E27gt4uDxW08=;
-        b=tsb3jtv/d+zI1r94mKuk01oFSXaGJ5VfBd68Dm3Rzy3k/9SLJEJI9zvC5ERx83P8mh
-         L/1k5WahXt+pRRzhHcYHDMSRuJM1TjD5VHtPSmgdvcsE7bgjMsIlMo+YJOsxodt6BDKE
-         WgZi0KNeAOjP6r2GiyTfd+fHBUESbduG4DYdClB/Bqst6T6AYc3Y24sbaheI8lu+qMGX
-         3hhYwGZJIpgbaepiYwepZXr+V9cZ/bQz35fnXnkTNzQzPv5ISz2zAb8tKPjJ5JQ0vFBn
-         iosrC4gHAY/nVJ74V0i+yTKb1wxgWpU8SzcVufvUcALVry0duvdDvm8V8jy8r4h1xcDj
-         iTDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795021192; x=1795625992;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+eo4FKNzNbHf/eH43g1C8Z3to6Do7+2E27gt4uDxW08=;
-        b=aCPDEk6DATUWoRiu7dhIzxQvvn4HHO8agxV8WGtFZ83uUxPdA1z0jG1qxlb9CawN+2
-         uA+uDPHgI/eEr4gFb9SEkd81RSoMCwgnYXgN2Z9MleGCDcSDPZ0xOeR7OyOq1Eloolyf
-         r6KkMPwIAWe9PMbp+qxew1RXjzqU8NVQpeFseu3j0hik5IP/a2kZq3P9+K/cS51C9FRp
-         AefVxRBwmbzUQNGuG7eMvyA/DbTYT3C41WhXF80KqMKqMMsKkAWs6WPG7D3KAxkAt/t8
-         XcdGS5KI71LeQxbGfSF4OZK1wQSsAB2LxrNa8VBjepv2JILzk6nSZurXcZbC9Abdu6BF
-         LhbQ==
-X-Forwarded-Encrypted: i=1; AL+hErGmzQmISU0z3elX57rBmOFps+IqwNnfcyZHaugQZudXSJa/PRZAO5NVZ1z1s/ClMygA0gSIB1RNaZXyLEDsntQaw4BNR1A=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+LaimShxeu02r+Sevw9776QtvikbwbfAHUmNNimG2kyUCTSXrp
-	INjjV9YjNgdrm5HCdwZWBUtPjTMbcnXtiTg06WIFRE+qXoHNbhQWqGerZ/87dZ1u3P+OhPLJmDv
-	LRwLRGnlMYYjsBTji1dXuNy0pFLKi9bEv59OhQs8T
-X-Gm-Gg: AYBFou1lg/xTSBc5z7hrdlRi1/eKob7By+AOIIsvWIqi6WEMwkmVe4WSk4AT+ptn3kC
-	kVB0Gs4hg8F5Et36EXanPykVLYU6zpkRjqj9AvrGUYQc9dHj+UiLRZZ9GbTVAlG0/PObJBlFPLh
-	D5rRkF2tDUnta7Lx4MI+DL6lp9m9pDxV2t7BJ6HHAdR3W8SAUOPB0CdiFzuH9Y9HWgaZJfwhbAj
-	SYk0xeQttx/3HJ+H2CZVftK36qd/ZZjsdpD3YVtVbT5oXOIzecFhRIVR3Aut2ZGCjhK5BFsHVQ2
-	NasDhY4+YbOvCAF968ByZlYgyGWw1vlMKssRe5Cp5gAitYkvJp5+z5OkVoncwGgS+u5VmGF1o17
-	8oVtsr3sK/8GG3YNizEB/BYQDMWfvFN0uuQ==
-X-Received: by 2002:a05:6512:318a:b0:5c1:4e41:3cdf with SMTP id
- 2adb3069b0e04-5c1a9c09ccemr1012943e87.12.1795021192313; Wed, 18 Nov 2026
- 08:59:52 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=J1bjyA/p
+Received: from smtp-4-0001 (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV7C25sVKzffQ;
+	Wed, 18 Nov 2026 18:00:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1795021230;
+	bh=o3t6ocqFvEquDP51sptBzlVVhSR5uyDVH+RFqB7EJg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J1bjyA/pfmdrIMPC7ebXqWQpCSqcWMiNCnIK1xMdnh9v8CJ7p7Q7TgMaJg/KHjOkE
+	 qNwXrbntQy4+n9w8rXg6t52IHEw+lgig5uQTwFp4ZokIGTlNVYb9c/yYXkNdDnUvAd
+	 xwpt7WFQ++ZN63uhF9VRJ3AlI4DbNtjKxIKl8Dzc=
+Received: from unknown by smtp-4-0001 (Postfix) with ESMTPA id 4jV7Bz45JJz4RG;
+	Wed, 18 Nov 2026 18:00:27 +0100 (CET)
+Date: Wed, 18 Nov 2026 18:00:27 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Ada Smith <adasmithgt@gmail.com>, Hungyu Lin <dennylin0707@gmail.com>, 
+	James Morris <jmorris@namei.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Serge Hallyn <sergeh@kernel.org>, kernel-team@cloudflare.com, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] landlock: Mediate CAP_SYS_RAWIO for mappings
+ below mmap_min_addr
+Message-ID: <20261118.Phu0OoSh4ahY@digikod.net>
+References: <20261117101157.2520463-1-mic@digikod.net>
+ <20261117101157.2520463-3-mic@digikod.net>
+ <avxjfHybQBcATFKV@google.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,83 +69,135 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261117231352.3816603-1-jarkko@kernel.org>
-In-Reply-To: <20261117231352.3816603-1-jarkko@kernel.org>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Wed, 18 Nov 2026 08:59:39 -0800
-X-Gm-Features: Aa3M54p70wvOKpegO09-C-J-9l2I7cJO4B_J5hynU_tjApdK664yCTjVeFp42MQ
-Message-ID: <CALCETrVUkbpoFjwSAejyA4b_9qEauAP_36i=O8Op1ifp8aUkqA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/13] Namespace for namespace roots
-To: Jarkko Sakkinen <jarkko@kernel.org>, josef@toxicpanda.com
-Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Ben Segall <bsegall@google.com>, Christian Brauner <brauner@kernel.org>, 
-	David Hildenbrand <david@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, 
-	John Johansen <john.johansen@canonical.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Kees Cook <kees@kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	"Liam R. Howlett" <liam@infradead.org>, Lorenzo Stoakes <ljs@kernel.org>, 
-	Manfred Spraul <manfred@colorfullife.com>, Mel Gorman <mgorman@suse.de>, 
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Neal Gompa <neal@gompa.dev>, 
-	Paul Moore <paul@paul-moore.com>, Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Serge Hallyn <sergeh@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <avxjfHybQBcATFKV@google.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, Nov 17, 2026 at 3:14=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> OVERVIEW
-> =3D=3D=3D=3D=3D=3D=3D=3D
->
-> A root namespace (rootns) is a kernel object backed by a file descriptor
-> that binds together:
->
-> 1. A full or partial set of detached namespaces.
-> 2. A dedicated PID namespace for spawning processes into, signaling
->    members, and polling or waiting on PID 1 exit.
-> 3. An initially empty mount namespace (CLONE_EMPTY_MNTNS) that must be
->    populated before going live, without inheriting host mount-tree
->    ancestors.
->
-> Work on this feature started in 2025 from David Howells' container object
-> patch set [1], which I turned into a namespace for namespace roots and
-> rebuilt around that premise.
->
-> While the patch set is manually written, the original motivation came
-> from isolating LLM agents. Running untrusted agent workloads made it
-> clear that OCI runtimes need to minimize their live configuration
-> surface.
->
-> Assembling mounts, credentials, and namespaces inside helper processes
-> with a half-configured container is what I see as the main challenge,
-> and the existential debate around namespaces and container objects is an
-> unfocused discussion topic.
+On Tue, Nov 17, 2026 at 03:23:56PM +0100, Günther Noack wrote:
+> On Tue, Nov 17, 2026 at 11:11:52AM +0100, Mickaël Salaün wrote:
+> > Until now, a process in a domain that denies CAP_SYS_RAWIO could still
+> > map memory below the vm.mmap_min_addr limit if it held this capability.
+> > cap_mmap_addr() is commoncap's mmap_addr hook, and it checks
+> > CAP_SYS_RAWIO with cap_capable(), not security_capable(), so the check
+> > never reaches hook_capable().  Mapping the lowest pages is what this
+> > limit protects against, because it helps to exploit kernel NULL pointer
+> > dereferences.
+> > 
+> > Add a Landlock mmap_addr hook that checks CAP_SYS_RAWIO against the
+> > domain under the same condition as cap_mmap_addr().  With the same
+> > vm.mmap_min_addr value, the hook only denies mappings for which
+> > commoncap required the capability.  security_mmap_addr() stops at
+> > commoncap's error, so processes without the capability get the same
+> > result as before.  This also covers the x86 vm86(2) and vm86old(2)
+> > system calls, which use the same check for address 0.
+> > 
+> > Making cap_mmap_addr() call capable() would also fix this, but it would
+> > send every low mapping through the capable hook of all LSMs (SELinux,
+> > AppArmor, SafeSetID, BPF LSM programs), adding capability checks that
+> > their policies never had to handle.  For instance, SELinux checks
+> > mmap_zero in its own mmap_addr hook and keeps it separate from the
+> > capability on purpose.  LSMs with their own policy for low mappings
+> > implement it in this hook, so Landlock does the same.
+> > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge Hallyn <serge@hallyn.com>
+> > Acked-by: Serge Hallyn (AMD) <sergeh@kernel.org>
+> > Fixes: 97c8386f1d74 ("landlock: Enforce capability restrictions")
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> > 
+> > Changes since v1:
+> > https://patch.msgid.link/20261110202436.2408244-3-mic@digikod.net
+> > - Add Serge Hallyn's Acked-by.
+> > ---
+> >  security/landlock/cap.c | 22 ++++++++++++++++++++++
+> >  1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/security/landlock/cap.c b/security/landlock/cap.c
+> > index fa59118e3486..10e1ca772b9c 100644
+> > --- a/security/landlock/cap.c
+> > +++ b/security/landlock/cap.c
+> > @@ -9,6 +9,7 @@
+> >  #include <linux/cred.h>
+> >  #include <linux/lsm_audit.h>
+> >  #include <linux/lsm_hooks.h>
+> > +#include <linux/security.h>
+> >  #include <uapi/linux/landlock.h>
+> >  
+> >  #include "cap.h"
+> > @@ -90,8 +91,29 @@ static int hook_capable(const struct cred *cred, struct user_namespace *ns,
+> >  	return check_cap(cred, cap, opts);
+> >  }
+> >  
+> > +/**
+> > + * hook_mmap_addr - Restrict mappings below dac_mmap_min_addr
+> > + *
+> > + * @addr: Address of the new mapping.
+> > + *
+> > + * cap_mmap_addr() requires CAP_SYS_RAWIO to map below dac_mmap_min_addr, but
+> > + * calls cap_capable() directly, which skips hook_capable().  Check the same
+> > + * condition against the domain.  commoncap runs first, so this only sees
+> > + * mappings that commoncap allowed.
+> > + *
+> > + * Return: 0 if allowed, -EPERM if CAP_SYS_RAWIO use is denied.
+> > + */
+> > +static int hook_mmap_addr(unsigned long addr)
+> > +{
+> > +	if (addr >= dac_mmap_min_addr)
+> > +		return 0;
+> > +
+> > +	return check_cap(current_cred(), CAP_SYS_RAWIO, CAP_OPT_NONE);
+> > +}
+> > +
+> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >  	LSM_HOOK_INIT(capable, hook_capable),
+> > +	LSM_HOOK_INIT(mmap_addr, hook_mmap_addr),
+> >  };
+> >  
+> >  __init void landlock_add_cap_hooks(void)
+> > -- 
+> > 2.56.0
+> > 
+> 
+> Reviewed-by: Günther Noack <gnoack@google.com>
+> 
+> Looks good; I compared this against the commoncap implementation of
+> the same hook, and the logic checks out.
+> 
+> 
+> Minor nit, in case you end up sending a V3; I found the commit message
+> a bit wordy.
 
+Indeed, I'll send a v3 with your feedback.
 
-I've skimmed some of the series, and I see a bunch of good ideas that
-involve using an fd to manage a thing.  But I'm wondering how much of
-the value is added by that and how much is added by having a new
-*type* of thing: the "rootns".
+> 
+> It makes intuitively sense that the commoncap LSM does not want to
+> invoke functions which themselves call into LSM hooks, even if it's
+> just a safeguard to prevent accidental recursion or deep call stacks.
+> 
+> So for the few cases where commoncap checks capabilities directly, we
+> need to do the equivalent checks in the same LSM hooks in Landlock.
+> That means, we replicate the logic from the commoncap hook if
+> necessary and treat it like a capability use that came in through the
+> normal hook.  This is similar to what SELinux already does as well.
+> 
+> What I would have found useful to discuss in this commit message would
+> have been the story of PF_SUPERPRIV:
+> 
+> commoncap sets PF_SUPERPRIV when granting the capability use, and
+> Landlock does not undo that when it rejects the capability use.  In my
+> understanding this is OK because the flag only gets used in "legacy
+> accounting" use cases and the consequences are benign.  The
+> interaction with SELinux is already the same as well - it does not
+> unset that flag.
 
-How much of the value comes from the rootns vs the new APIs to
-configure namespaces without entering them first?
+Good catch!  I think it should not be addressed by this series but I
+just sent a fix for that:
+https://lore.kernel.org/r/20261118165603.2573289-1-mic@digikod.net
 
-For that matter, the cells series also seems to contain a (possibly
-very similar) variant of the same thing.
-
-Would it make sense to come up with a patchset that does *just* the
-configure-a-namespace-by-fd part?  It seems to me that this should be
-an easier thing to agree on, and it's a big part of the complexity of
-all of this, and it solves a real problem even without
-cells/rootnses/jails/whatever.
-
---Andy
+> 
+> —Günther
+> 
