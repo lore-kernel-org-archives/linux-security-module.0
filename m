@@ -1,56 +1,88 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795044332;
-	b=0XR6cgBjZh0mcbJt4vPlBzS0IcEXQRI4YjtDpQeHq14n3EaJfgKDeOIhaUWocU40mq7m
-	 6yrdjZR14ZWduIMN8ZOoXs1kHIptl07veAxM3Ch72Liy7u6goMwdbaXkpV8yQw7aQsNCq
-	 mZvHQLAOem+h+eD2ZH5MagnpKeAu5DxfH4DJUQhoyyaHCVjts6YOtpLTD0ZTfuh4MKwW6
-	 AmlplTjN2gEG6PZYokRETvm3dQTDRvJXCRYwMfTZorHNwxS59rcid9j+hJAILzsk5OgPA
-	 bblA+o3pteMjEIg1/DY0BqZ4TgVsk+wLrq9MVpDP8mNsUinMsE4YE3sCyULZwgIHdCQ==
+	t=1795044795;
+	b=CPlIcTdGizxVwTir/bryFJvhS+OoYiEuJdKXO40N1yvleNF91bTAvHxvcTE68zK/0lvd
+	 Ea+XvE9YWvdZk1tFbXq111b2nhgHW8ov5aFQ7IcsfpezDyS88nHeqMho/ED8A+pgKUHvb
+	 TjT086XXXL5zj5TkYg5XKXZO5d7DJ6P4BgW+pStYQs4XPJeVyyKfXwBKrGJIq1wPqFJ0v
+	 TQ8AeLAT1eFiPchUpU1NCrU3gsPHeO6HSGa0Oqlp+wi/qFxIwkknPU2g4f5Rkj5TIypBH
+	 bl0GGci0F2ftl3IOMLdMKdaW7Clw7djqck+3qDTX77kPZVLX45RznukAHstOvwoVTBw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795044332;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=svDEqioSRNFRy+oE4Hq/EVSrs01fmS9Z3iU9XWsYHgE=;
-	b=VcgLV7G5aN0VzqC8QJ+ARgNxuBAEQ46mC4EL7Rgj+2/PcWZTdqPHUSLI+1XcmiSDhCoZ
-	 5jJ9WorB0baKyXCY8UFBfHkTi0eAxj+YbxeSWEHUjfhulDZxn+4/1SITFrQocQQEyWYng
-	 H9Q/1EsY/hLB2uYWSzcrXDqWm8dpjgcf41UF7S7XVtR4EOe1oIVuN+fg9xw5xR07ebLgm
-	 4Oc2H8SMuCcE8wtNY/rqrg9daFKoits00l7kBkJtOrIT0GggN0obWEabeU4caRTu5aO5T
-	 O8fjsEseU5L67xQjKd95VkIbalCNfZFlLPr6IknxzBoB7KF93NkxpXfWR5OZ9UGTnwQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795044795;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=p9akWZSnCYRnWbaIGtILHQRc1MGkbrWkyT1jQUBXFMs=;
+	b=NRw3o4pbGpnMG/i1Je3+PXEEAq2Nos3W6rezGtnDgKxENmvBoUwwqMyISnkJG/czcT8z
+	 QCE6SEk4QGsl7BJyAWSDsiuIcPG4+ylz+Ev/9sLeJSV3deWF547+99O4bmRQ8WDJR+v73
+	 9lr8rZeN1V2L4d6kpESVGUuuJ4BhuDrSrdgh5uqisspBc8U/5w1gqLBzuOxZ6bLl71/06
+	 yvJpodDXwb05Whs1OLoJIbu1SQB28PrbvTefkKwDCcAmLDIIOTMzFgvpNsZNKChXoBLnA
+	 WpWt4n/qsrZDKtQ7XIEpTaJof0MXOZD+2JWDUa5mk/ZOnkCnIkLex2bnLRfe4pLhPow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifmAyr5V;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S152Qfzk;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087A9606A320
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 23:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id CCD6A60A3803;
+	Wed, 18 Nov 2026 23:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifmAyr5V
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C52E91F000C4
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 23:25:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S152Qfzk
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D36691F000C4;
+	Wed, 18 Nov 2026 23:33:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795044331;
-	bh=svDEqioSRNFRy+oE4Hq/EVSrs01fmS9Z3iU9XWsYHgE=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=ifmAyr5VVjDOBeVU4Keoiri5kmiNRq97REp/76IfK66QHkhmKGQxb3wWKNBD6Wi8A
-	 a6Yzdx2SSUWuHyf0vgsyvx6/ViP0VLYNqWIIc6G/DshZv8+idHE/DwoOT4TpRsCusp
-	 umFIBXAt9q6/2phffvvAbjpMNTjjmWx3nKK/8jZbis31QzZFTTPVkOr9jp6X9oJUDC
-	 SNSOvgC7m29cTeBM4HAsN54JceaH92ME2XbmBAzbMugfqLanT9XVn/e1UUxc3mc0x7
-	 tiG7q/P6HwixS4S1wgfxIBpuQfePpyQsnAYesAxlUVls1CVsjctKOhieYTfARlRpI6
-	 KqZKatEYbifdw==
-Message-ID: <sashiko-outbox-222178@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/2] KEYS: asymmetric: Fix PKCS#1 decryption of an
- empty message
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261119-keyctl-pkey-fixes-v2-2-9e2d1c7db7ec@cispa.de>
-References: <20261119-keyctl-pkey-fixes-v2-0-9e2d1c7db7ec@cispa.de>
- <20261119-keyctl-pkey-fixes-v2-2-9e2d1c7db7ec@cispa.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 23:25:31 +0000
+	s=k20260515; t=1795044795;
+	bh=p9akWZSnCYRnWbaIGtILHQRc1MGkbrWkyT1jQUBXFMs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=S152QfzkH/YqVHGzcaAyRIHXf05iUtkydNnkRs9gCIC04KoHBy3vN9DuOm1O3Q1eR
+	 Q6asZNJIfzOO8s55fR940xAjljy7DSHPQlNmAazhL4OBJpGf/2M+b3XU6dS6ylQVHT
+	 NwV1iVNwjV7fb+uYu4H3R2ow+82tgiBtGA+dYFfDOcNFN6HdfihgXLmH+ZRGm7Sewc
+	 ghLiT4JntEq1W9eHpsNzEgrxVl9GV9sYIfv+wgjPvGzCmoCG1CHMoNJJF4CJUBRLcb
+	 nYbcySuhRvuyXd3EJn5ttwyDsZz+kOlcBtjEISdkmYIHvY0cFueAOlZy+mnw8o/9Jv
+	 IEBuRomvBIcTg==
+Date: Thu, 19 Nov 2026 01:33:11 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ben Segall <bsegall@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <david@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
+	John Johansen <john.johansen@canonical.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Juri Lelli <juri.lelli@redhat.com>, Kees Cook <kees@kernel.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Liam R. Howlett" <liam@infradead.org>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>, Neal Gompa <neal@gompa.dev>,
+	Paul Moore <paul@paul-moore.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: Re: [RFC PATCH v3 00/13] Namespace for namespace roots
+Message-ID: <av41t-SRVZjOBqi7@kernel.org>
+References: <20261118193539.240065-1-jarkko@kernel.org>
+ <9bc43f9b-d721-408c-bf78-0f08f6ec4bb2@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,39 +91,31 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9bc43f9b-d721-408c-bf78-0f08f6ec4bb2@kernel.org>
 
-> From: Florian Bauckholt <florian.bauckholt@cispa.de>
->=20
-> KEYCTL_PKEY_DECRYPT with enc=3Dpkcs1 on a valid ciphertext of an empty
-> message returns the key size instead of 0, and the output buffer is
-> filled with the ciphertext.
->=20
-> crypto_akcipher_sync_encrypt() returns 0 on success, so
-> software_key_eds_op() maps a result of 0 to crypto_akcipher_maxsize().
-> The mapping is applied to decryption as well, but
-> crypto_akcipher_sync_decrypt() returns the length of the plaintext,
-> which is 0 for an empty message. By then crypto_akcipher_sync_post()
-> has copied its scratch buffer to the output. pkcs1pad copied nothing
-> into that buffer, so it still holds the ciphertext.
->=20
-> Only the caller's own input is returned, so nothing is disclosed, and
-> messages that are not empty are decrypted correctly. An empty message
-> is valid, though: RFC 8017 section 7.2 only limits the message length
-> to k - 11 octets.
->=20
-> Apply the mapping to encryption only.
->=20
-> Fixes: 63ba4d67594a ("KEYS: asymmetric: Use new crypto interface without =
-scatterlists")
-> Cc: stable@vger.kernel.org # v6.5+
-> Link: https://lore.kernel.org/all/20260919221742.3709658-1-benquike@gmail=
-.com/
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Florian Bauckholt <florian.bauckholt@cispa.de>
+On Wed, Nov 18, 2026 at 11:36:20PM +0100, Vlastimil Babka (SUSE) wrote:
+> On 11/18/26 20:35, Jarkko Sakkinen wrote:
+> > VERSIONS
+> > ========
+> > 
+> > v2: https://lore.kernel.org/linux-fsdevel/20261117231352.3816603-1-jarkko@kernel.org/
+> > v1: https://lore.kernel.org/linux-fsdevel/20261117050841.3289652-1-jarkko@kernel.org/
+> 
+> 3 versions in 2 days, with 13 patches and such a vast CC list? Maybe slow
+> down a bit, please?
 
-Sashiko has reviewed this patch and found no issues.
+It has been a version per day (or along the lines), which is not
+spectacular but I'll pause for now.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119-keyctl-pke=
-y-fixes-v2-0-9e2d1c7db7ec@cispa.de?part=3D2
+v2 and v3 address the initial architectural bottlenecks that came up.
+Those really required updated changes + kselftest providing the evidence
+because I was not immediately sure myself whether they can be addressed
+without experimentation.
 
+I would presume whatever happens to this would be more in details, and
+can be projected without extending feature and/or test coverage.
+
+Br, Jarkko
