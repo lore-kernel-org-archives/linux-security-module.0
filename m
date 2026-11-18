@@ -1,110 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795013259;
-	b=JsBhpZYA+CUPP0lMhcve41LzOugE8thkyNDmt2p2v70B3k9lBFv7lIOyIP31H8jffsUg
-	 GEsUBZ7iUoUUcl4YeQIw/R9XDthz8Fiiq/OzJOWVMLBuFLlmHEZMepZ7t00eEOz0qLHZc
-	 y2UmMDFiRUgTw02SKKhJ5jtHi4mCLzGRcZ9vbtDDggLGl4dhVw9O54jT0FBceoukSYNh9
-	 tmaZAEflEyCsVVsku5PIbx1wQl4ugUvEh33fDGwuhG+3+IDd0ilIVKxP25anhCliwUdTK
-	 dvdViqHY0yUQn1k9qj8GgH04Orx3N4Hj7X80Qddby14/oQpQjWlx7I3Baxqt8Shsknw==
+	t=1795013545;
+	b=npYUQ9RnbQBh9c+IDhbTPiqq25YoQoUlM+Cl3Op5srZ7qcE3+v88OmIkU3bFOXkplFma
+	 2BZC4pGw1mPKDZdd4/aB9Q5cU+yORvZ9zmuIeQhxaN5gQb4imcBrYYsFc+euZy5x97Dxf
+	 c7BSjCv2ZryWOJgiQwTQSUTv80nFd3mlCEeSuI28am23gjxQJHfN2ivJliE7FLIBA9vPz
+	 RnSfoDfeGefoA52AQb1qD89mzstzO+6CJcNo5r3TitGkSBWvqeshiZd81Z++pY9wSDDsN
+	 8jqhRVLt+JqhY5y8k/IE3ZLA7pCvv9R/j2oZ9eEX8s/1p9nciaQeAVuORlev+yOSXzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795013259;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=IgtmGgLwdp7YHZZLZXtmuM3LeEAEVVcvQiETOOFbu8o=;
-	b=yuRTcvr7W4Ybt+xaPCMpMckIKyi+R17wLaFjP32su52r5Qb1niNNjnzvL/EOZbd0QjbQ
-	 2PsO27Y/qJytNF6zkaTcn5K0X+4Klh1vGrUJMQQeys40yZmPvxBSdf64TBvFjBk5rY6tb
-	 y2FGrNeG4epM04GOxC67aE/krbU2I0vnhS+230XS1dyyvb2cCl25swxZq6reb77Xeqs1l
-	 YCHClvT8Yq2Yxyhlq2tW8jswOHKZU7Sd/ZTAoGgpWhFRi6OB7nDF7UvOF7BWog6su4LoV
-	 /8ltwZ0GLfwZOVYHX40ZxHhzqmGtjn0HMt7xNiD2pcnj4pPap2GB2e/ubdrw2SMTuvg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795013545;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
+	 Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Infomaniak-Routing;
+	bh=oq2Cd1yFf18VwmOtkNPlAlhRiU3WYkqjK5hmN0xUvYU=;
+	b=CtiyXjn4nLYZWqVTXCs4gfP5hzKWVwpLSoQSmWZ+XxzJGtWW2fB1oHTH1atHM7Qg+CRW
+	 zCodXzgaItAqHEvhqc0JQzCjqO4J3W8Riy37CmmCgzMzCt+E27flAFfhyAsAg2348je6p
+	 upiMZbx33cUl4EjEqMexRb+nUa3gExzN4m7KlD/0jv64hRZRO5pqSULZ864Z3kIQvcyy3
+	 u2U10z98bbvFHa/xtHM8A5qJkv8yGvnkMRIS3jkSjc3a8geYyJCVomSIraT/TxrQbK/o+
+	 IN9ItYWj+QnRVNOKO8nemP5HMZIFVmhE1UKvZSz9JeIqtBc8vuiRzFuoEHI/eWCqWZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=toxicpanda.com;
-	spf=pass smtp.mailfrom=toxicpanda.com;
-	dkim=pass header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=mce3LPT5;
-	arc=none smtp.remote-ip=209.85.222.171
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=bqm1zwis;
+	arc=none smtp.remote-ip=84.16.66.172
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1073F606A32F
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:47:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1073F606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toxicpanda.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF511606A325
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:52:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BF511606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda.com header.i=@toxicpanda.com header.a=rsa-sha256 header.s=google header.b=mce3LPT5
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-9495f083657so134880185a.0
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 06:47:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda.com; s=google; t=1795013258; x=1795618058; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=IgtmGgLwdp7YHZZLZXtmuM3LeEAEVVcvQiETOOFbu8o=;
-        b=mce3LPT5oG7C8F/QlXxfra+ftcUqbbosr68KVWr4liElvzqRdfBEqD/aEKIHceO+Aj
-         +7TrSS0VWnGw72sCUYxtMjkg2MrGffSmsRtSP06tlj7q26d8E2nSTu4Z0BSvWs0M5cd8
-         KB4LmsGi40TprWi9Dp8BnOyTEmFGkNYhFFanczHDzzKTNXuNvSPbFVnO0PIil/6+GCbK
-         TBiO4Rkq/COIB6DJcfaHVgLG+7qjvdh1LPzUR7FonRPcRWRDNzUcdJW0Rcnl2JL9lKHC
-         h5D0d4zczwBfyJqPh8GSUOsTeJtA1998BdswYK4nrDfVV55D9/VxOJDtpGtoQt8e5N5W
-         k9ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795013258; x=1795618058;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IgtmGgLwdp7YHZZLZXtmuM3LeEAEVVcvQiETOOFbu8o=;
-        b=AY7t9fjzX6Mpm168ZXWJV9PAMavBXsmnzpQkyfaMkl4tTBReWTcgwT9/My4El9u7Sr
-         VIseLJC/t8w1xky+E2cRvgXV0IDrCqw5b60ly8AoIcUnr568+J7uY9Nd5IlnZv+giOIi
-         UYw3hItzV6yvnOUyjcxRYBcJWcl649HAxgY7Lpb3XkmeZV4+ZPvKUUK8eIptuNACY/jU
-         8rdz9U0Ifs75KN961KbNbYDm+PiZOsd+ay9Ldlz2SsO9p7WNT/PsyvY6m4B0MfsQ0vm5
-         L7r+4nz/t1dfOk5s2cZ3VfMpJzc28aeicQe+WKRn/w/bhtDn5ByRHD4NqbyKoJPdyoEP
-         KBhA==
-X-Forwarded-Encrypted: i=1; AL+hErFjke8kRERv/9aK8v1veeB1uNwg5+aCrJOZ5f1eUyzJXkScsu7sWvotCwImfDWZ70ATYoh64ySCuCGPIeVuHpq2KJvbFZ4=@vger.kernel.org
-X-Gm-Message-State: APuU4Z++7gZDOiMYIsaxuiOeHMT/9/Jej+9bsOvwWuyBcmSyFZ1ULuXV
-	Fab99/y7HS2ASB7l4cpp3r3ex8JBIHUJFz0di5kTLoxcA7M0RQryaAz4OKe7U9ctTvk=
-X-Gm-Gg: AYBFou1Lqnh4Oxr7JsbmZDc6bImeaY+drrgkP9KIStUv+b/+3rZsK1BoQtjzAtupbh9
-	oGbaP/B33DtvbciTnC4dl5CqduSxypv1GK+v7u1kFzfmsQ3Jq11WMgTxDrXdPs/n2DklE+tcmw0
-	mLcDyvYN1mSG44Ej/RitM8EiPuDMYxiC/12PtXTAsq22KADTgNpvUjGLOISvpVzctgXMsduFVy2
-	BbuOC22dIp63OP2731KS9DO06kJtuzUYKRV7Ixb477medpQwG0NXfVaUEygSYghTmDyLjJ8V4DR
-	UpRq3qLZrm4J9mIFfkGsORfaNbNZ1yOKYv/4ujN6YRCkY5BoOtRVvsuSWk3Q+0py1rwR7QVonId
-	j5FiE6Zebb9bWmJTkVxHisSNTvaHJrzsrP6U5iqsdGX1xX0XaNnk7YwNCSKsrsDFLrYlU5U0msT
-	nZNin2k9MAKBseLY5hBA3z9Yp3CPyA1NlQPLpBEWG03q11sAjcZOVq7XFma83wMBnKWk/XB3Qyz
-	sWTnZh4DYN4HQI99qClht6BMDAW88jTDixC9j9HYPKm0OUv4zf7wMQ0EL7ZEr3FNzANOdvVmwy0
-	gV6fX2RwTVySwEIaD9ZM4D3q2Wf2zUBKPRGRa0UybzqSejQ=
-X-Received: by 2002:a05:620a:880a:b0:93c:b5fd:f33f with SMTP id af79cd13be357-94999722106mr491978585a.27.1795013257845;
-        Wed, 18 Nov 2026 06:47:37 -0800 (PST)
-Received: from toxicpanda.com ([153.61.196.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9499b81d4a0sm193898585a.43.2026.11.18.06.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 06:47:37 -0800 (PST)
-Date: Wed, 18 Nov 2026 14:47:34 +0000
-From: Josef Bacik <josef@toxicpanda.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@amacapital.net>, Ben Segall <bsegall@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <david@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>, 
-	Jonathan Corbet <corbet@lwn.net>, John Johansen <john.johansen@canonical.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Kees Cook <kees@kernel.org>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, "Liam R. Howlett" <liam@infradead.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, Manfred Spraul <manfred@colorfullife.com>, 
-	Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
-	Neal Gompa <neal@gompa.dev>, Paul Moore <paul@paul-moore.com>, 
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Serge Hallyn <sergeh@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>, alex@amutable.com
-Subject: Re: [RFC PATCH v2 00/13] Namespace for namespace roots
-Message-ID: <wdwc3b5edgtgvrgqfhlzhrachr5hrqb7ahipcuqdz5pffxlc5b@662cpwhxwjer>
-References: <20261117231352.3816603-1-jarkko@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=bqm1zwis
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV4M968WMzD6m;
+	Wed, 18 Nov 2026 15:52:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1795013541;
+	bh=oq2Cd1yFf18VwmOtkNPlAlhRiU3WYkqjK5hmN0xUvYU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bqm1zwisoguijpLPOlNZxGQiQWFJ/5GYwfA5I0b/Kc/VZMuzA7OE4a86XNVl12c97
+	 I4p6qan+hUBjFsz99ONfj7qvkPulGTFY6WJnaeQ7+0Ns6MjqQYeve4Q1sLJhw9VSd9
+	 HWTFl71imFlDxsvRhvlmDHg+vjDxi/xzCyDY2TTA=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jV4M84tHkzcMm;
+	Wed, 18 Nov 2026 15:52:20 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Ada Smith <adasmithgt@gmail.com>,
+	Hungyu Lin <dennylin0707@gmail.com>,
+	James Morris <jmorris@namei.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	kernel-team@cloudflare.com,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v3 1/6] landlock: Factor out capability denial checks
+Date: Wed, 18 Nov 2026 15:52:05 +0100
+Message-ID: <20261118145217.2551053-2-mic@digikod.net>
+In-Reply-To: <20261118145217.2551053-1-mic@digikod.net>
+References: <20261118145217.2551053-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -114,35 +72,99 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261117231352.3816603-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Wed, Nov 18, 2026 at 01:13:39AM +0200, Jarkko Sakkinen wrote:
-> OVERVIEW
-> ========
-> 
-> A root namespace (rootns) is a kernel object backed by a file descriptor
-> that binds together:
-> 
-> 1. A full or partial set of detached namespaces.
-> 2. A dedicated PID namespace for spawning processes into, signaling
->    members, and polling or waiting on PID 1 exit.
-> 3. An initially empty mount namespace (CLONE_EMPTY_MNTNS) that must be
->    populated before going live, without inheriting host mount-tree
->    ancestors.
+commoncap also makes capability decisions from LSM hooks other than
+capable, and the following commits add Landlock counterparts for them.
+Move the check and its denial logging from hook_capable() into
+check_cap() so that these hooks share it.
 
-This is what cells is doing https://lwn.net/Articles/1102593/, you may
-want to take a look at that work. Christian, Lennart, Alex, myself
-and others are working towards this in a more wholistic way. There's a
-lot more that goes into this outside of just the object itself. I've got
-my version deployed inside Anthropic for securing containers and I've
-tripped over a lot of pre-work that needs to come because we can tackle
-this. Alex has my rough outline for kuid64 for example, which is
-necessary for making sure we don't overlap UID's on the system and
-create holes this way. The cells work/anything that wants to have clear
-security boundaries is going to require that as a pre-requisite. If
-you'd like I can include you in our planning so we can get something
-that will solve all of our problems. Thanks,
+No functional change.
 
-Josef
+Cc: Günther Noack <gnoack@google.com>
+Acked-by: Serge Hallyn (AMD) <sergeh@kernel.org>
+Reviewed-by: Günther Noack <gnoack@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since v2:
+https://patch.msgid.link/20261117101157.2520463-2-mic@digikod.net
+- Shorten the commit message.
+- Add Günther Noack's Reviewed-by.
+
+Changes since v1:
+https://patch.msgid.link/20261110202436.2408244-2-mic@digikod.net
+- Add Serge Hallyn's Acked-by.
+---
+ security/landlock/cap.c | 36 +++++++++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
+
+diff --git a/security/landlock/cap.c b/security/landlock/cap.c
+index b4f491b09baa..fa59118e3486 100644
+--- a/security/landlock/cap.c
++++ b/security/landlock/cap.c
+@@ -24,25 +24,21 @@ static const struct access_masks cap_permission = {
+ };
+ 
+ /**
+- * hook_capable - Deny capability use for Landlock-sandboxed processes
++ * check_cap - Check a capability use against the domain of @cred
+  *
+  * @cred: Credentials being checked.
+- * @ns: Target user namespace (intentionally ignored; policy depends on the
+- *      acting credentials and @cap, not namespace ownership).
+  * @cap: Capability number (CAP_*).
+  * @opts: Capability check options.  CAP_OPT_NOAUDIT skips the denial record:
+  *        no audit record, no trace event, and no denial count.
+  *
+  * Pure bitmask check: denies the capability if it is not in the layer's allowed
+- * set.  This hook is purely restrictive: commoncap is registered with
+- * LSM_ORDER_FIRST so cap_capable() always runs first, which means Landlock can
+- * deny capabilities that commoncap would allow, but never grant capabilities
+- * that commoncap denied.
++ * set.  It does not check that @cred holds @cap: only call it for a capability
++ * that commoncap already granted.
+  *
+  * Return: 0 if allowed, -EPERM if capability use is denied.
+  */
+-static int hook_capable(const struct cred *cred, struct user_namespace *ns,
+-			int cap, unsigned int opts)
++static int check_cap(const struct cred *const cred, const int cap,
++		     const unsigned int opts)
+ {
+ 	const struct landlock_cred_security *subject;
+ 	size_t denied_layer;
+@@ -72,6 +68,28 @@ static int hook_capable(const struct cred *cred, struct user_namespace *ns,
+ 	return -EPERM;
+ }
+ 
++/**
++ * hook_capable - Deny capability use for Landlock-sandboxed processes
++ *
++ * @cred: Credentials being checked.
++ * @ns: Target user namespace (intentionally ignored; policy depends on the
++ *      acting credentials and @cap, not namespace ownership).
++ * @cap: Capability number (CAP_*).
++ * @opts: Capability check options, see check_cap().
++ *
++ * This hook is purely restrictive: commoncap is registered with LSM_ORDER_FIRST
++ * so cap_capable() always runs first, which means Landlock can deny
++ * capabilities that commoncap would allow, but never grant capabilities that
++ * commoncap denied.
++ *
++ * Return: 0 if allowed, -EPERM if capability use is denied.
++ */
++static int hook_capable(const struct cred *cred, struct user_namespace *ns,
++			int cap, unsigned int opts)
++{
++	return check_cap(cred, cap, opts);
++}
++
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(capable, hook_capable),
+ };
+-- 
+2.56.0
+
