@@ -1,55 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795012602;
-	b=wGqjfwhG8tISrMNKnl1JsjaI+l757OtW9YHt62k3MaA/AiWhkWqNMbNSkL+R2XaRZz1g
-	 qlRt4u0LZ/LCGb8rgXLufbfKSqTZTFQ1W4ib/sfdMueVw2ughoz78ifCGIdN0UC1HVMxu
-	 ksQdmoARCp23Ldy1Kb5XyDFMDN7cvMa8ydTittZJ3gybgfOEmScAWFKEHk5z7nBEmDrVE
-	 3XNgIWT+9aCwoUr4tKIbpJiQnWAFue+hpNNHyIrxdrLHU3TiEuRZWu01tmzdE7j0HtxXg
-	 juwqpwNxi/z7lrrQAeTCPVZWZHfs2mMuRaME+cxAxLTHRt47ZgXURLDd1KdbwJJomvQ==
+	t=1795012667;
+	b=TOpHp0B01jp3NDinsU1hUJ+xbHzp48/+HJvNECf1mKiWLUcfRJS4TwksN5nNwd12lVbY
+	 xrsr9Nv1u6jQsH5gBYXQ9KyUouniyrm4l+DvD9YEy5HdCMxeuWfYNUhz2Olrx19bXyDrV
+	 XwE1YiANurh+42cpjd/SzJoBFL22n0EiWs6KJWxDM4NsUmZtIgzZiaSuiagTpgHindUaJ
+	 okCjl9QbXAwi2EkdNDtRT30542wP5gwRQmgDhoeQLDErm8q9toBlBe1sxlYIPushUK4C0
+	 6wB7t4jeZetsolqsRvSCjXDeLKkbW7dHRfof7YviOSg1ZtSOAjPklTuNaVFLtpAzJYw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795012602;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=hKRyIDhr8ZKuipfRss9auUtntCKZz1DV6CwVMhLFjEg=;
-	b=lid01Gc8UZND/t5I60OI0FuW48dxv1x/9FX2korvJ6xA0yBl5r6x70tck47//hFyu+7U
-	 sIHmVtVv35hPpMmUcmV/EgWRc/oSiyksFlYhYS1z1Zq9aNoJhnprDXHwjqBxc8P3hwdKg
-	 gYAVDwNcHBM0JgXRnOQiTmBULcjiR2G8aRqFi2ZoI+Koy1jTcbIDCohIrkiTQ71cvNbxy
-	 0zGDkUijeniaG4UTi6o9HzN6copU3etJN5UeGBE0XCQXDtM23MvWKKe1h0lClgRHOGCLY
-	 Fr7eXbUzklw5Iil9tgE5DOq4DKhrGI80MzN0twIlPW99zRr4tv7W5KSoN2x/aS2W2cg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795012667;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=TGCJR4zjTobiyQoKxWsb3iZGFyjLJLrqRE8qO4niVBM=;
+	b=GFzga564wFX4Uhi/oeojPR76z4wydXkAt0SfjCs1GY6d7/pB+RGI3TUNNbWZx8cZbxPC
+	 p+VEHHNxB02eJyq2yHK24DuCxzyedWVJfBMKMETkqXOZS1szN7mEwfH96ETiKfHYDOr0J
+	 afSBhlzCymy0pfOqOjDQNT4Zvq5uFc4Bf/qHn88WqWJ5P4Z6M7Wk9TmqwlEcJMUq1Qeo+
+	 KG9s6ovUPMM6hTvuSmruCGw4/s1xuhQ1hi8KZQeTOXBBnVN4YDAoEJ7SvTMqGC+uIdPQd
+	 KdwO+9kP4lXGTs562LaJ6l1FIKlfBtVF7GxXrCcibzhC5Y5HkP2GsdwV9TgvWGmga6A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HDjcKKmM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oDYEomrR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CA7606A31C
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466C2606A33A;
+	Wed, 18 Nov 2026 14:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HDjcKKmM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF60E1F000C4
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:36:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oDYEomrR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93221F000C5;
+	Wed, 18 Nov 2026 14:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795012602;
-	bh=hKRyIDhr8ZKuipfRss9auUtntCKZz1DV6CwVMhLFjEg=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=HDjcKKmM56Sm0hHGsJoioCK/2vxFZ9VZdaZx/kpP9qLnF9ZzmX6G+tHNQQM2tGs9F
-	 LnMYS88yYXB7mq/iz6rKMTDVTuBngb4J9ut0eQniO+Pp5LsCDXoP1sTC+hXJCWrjua
-	 Rb6WPuMNnqL40FRp7pdSy2a+raTrIv3jFeAuUkVDYHW/cgruTdPSWuHMoH8KVR7+uV
-	 iWeDljw5JBNqn6KR4VyZmslZER1NCFGujEiniTiEEnNtO70bMNmEnYyPwqZPd70SD4
-	 SHW9ESNlFzL5+BTX/+AX7Z7+ApnZen2765zgwSXKGSgB/ShBDjg+mSN5uOp3zVhYnG
-	 1QgIm0Ir4UV4A==
-Message-ID: <sashiko-outbox-221227@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 8/9] KEYS: keycrypt: Add the CAAM backend
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261118141153.621958-1-giometti@enneenne.com>
-References: <20261118140421.584086-1-giometti@enneenne.com>
- <20261118141153.621958-1-giometti@enneenne.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 14:36:41 +0000
+	s=k20260515; t=1795012667;
+	bh=TGCJR4zjTobiyQoKxWsb3iZGFyjLJLrqRE8qO4niVBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=oDYEomrR5K3bZcWLm0BHnYdfLDrjEtOk4qUHQdu5CunnSlo0oFC3UsTYO8jE6lSD9
+	 F76UQG9vImqYqTbWD4XFluTG9540X3UfSEV7J1IT64rV791qG1V2aqHWpj2eEEXC80
+	 iFydZyWoqcURurJ29XPW1uomDD2wxiQwUKBkJ5jfol0bPu8oLrFNC363+LZZX2JFlu
+	 0lXrP6f+PZS9e0YXf/Q420vdQpjiKNUXdG+Xv74ttt6RcsPu1J2bvoCEeueGIWZQCF
+	 tlV858zc2JvxAAm2a7OE3YiHHYM8K2EvdjxcZ3zacFENgUmwAKsSqNYpQkGHkF2c4l
+	 yOe5ZJiJNSy0g==
+Date: Wed, 18 Nov 2026 15:37:40 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Koester <jan.koester@tuxist.de>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Jan Kara <jack@suse.cz>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
+	Paul Moore <paul@paul-moore.com>, Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, netdev@vger.kernel.org, audit@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 00/41] UUID and GUID user and group ids (*_r
+ system calls)
+Message-ID: <20261118-erleuchten-mitmischen-vorrecht-254c957863e1@brauner>
+References: <cover.1792552161.git.jan.koester@tuxist.de>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,30 +61,19 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1792552161.git.jan.koester@tuxist.de>
 
-> Add "caam", a backend of the engine tier for NXP SoCs with a CAAM:
-> once sealed, its keys exist outside the CAAM only as black blobs and
-> black keys, used through the CAAM's internal cbc(paes); a new key is
-> drawn in kernel memory and sealed at once. Each blob is encapsulated
-> with a key modifier derived from the blob's header, so a blob whose
-> metadata was changed does not open, and the blobs of the public
-> cbc(paes) and of trusted "pk" keys, made with another key modifier, do
-> not load.
->=20
-> This is a proposal for owners of CAAM hardware to try, not to be
-> applied as is: it has not been run on hardware, and the CAAM does not
-> check what a key is used for, which is why its tier is engine. Only
-> aes256-cbc is offered, with ECB-encrypted black keys, since the
-> driver's cbc(paes), with Richard Weinberger's paes fixes, refuses
-> CCM ones.
->=20
-> With it comes its section of the documentation.
->=20
-> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
+On Wed, Oct 21, 2026 at 05:15:20AM +0200, Jan Koester wrote:
+> - kuid_t and kgid_t become a tagged union (legacy number, UUID, GUID)
+>   instead of a u32.
 
-Sashiko has reviewed this patch and found no issues.
+Oh boy, I'm not sure this is going to happen.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118140421.5840=
-86-1-giometti@enneenne.com?part=3D8
-
+We are going to extend kuid_t to 64 bit for cells and isolated
+idmappings. But it stays a plain integer type though. Turning kuid_t and
+kgid_t into 20-byte tagged unions, adding a parallel *_r syscall family,
+a new POSIX ACL xattr format and new procfs fields seems very very
+unlikely.
