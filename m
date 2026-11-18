@@ -1,50 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=83.166.143.168
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795013552;
-	b=JUnl052QEKFnmsiqJFWiRkKJe/Y6AuFFe3Jci1Qn2lhTbk+nbN8j56am/hvcZB/+dv85
-	 hZcipJcgfDdahywNqU/7JdmIc5pmkY5wgp913LDPHBsTLulQPekURbi7JeDiF4OK+2lnO
-	 ompnp+FNorMXDxOXqYqylg6EkCeJAqBWF10Ex2BNC5x6bgiL4YAzRIL8amFyi4ITvs+5o
-	 StUSsP0olY9mBys7OfGIh4p/Auks1Oc8nlzWjRMsoWo8bH6nGx4kG4uGNf48TsUe4DJxy
-	 v5a99L666lWKr1NKGLxT7q6cBBrvc/4mHEZRO2YDNIYrnTmgRPtPoMjg4xzyPO366Hg==
+	t=1795013554;
+	b=Vil2UBKvmM5iaVVanrj0mQHJ5CfZOgVww1T4MDStk9KttttEKcqJTqQpkut3ZPPC/qBA
+	 55pQA/XZ4NQWSnkDn2d1IDps/YkAOa1WVgcwc6/ZY7quiLTNVijLVeGIpAmbErREuiBFr
+	 iLfoZbD81aGII5e6ZdFPCPcbKc437XWCJSCb1hjsR1gBg7uctsqnRoxYXTMzkcL+adbIS
+	 W+bkoS50fv7cgVOTYFvUdlUKQhJZuZRP0fJ4TeDqQxQKD7hEY4yyb0IAKCJ/vGZS1/H4D
+	 JhwaAMTs31lXfSMQCfx5tQGyLmaoJJ7LAOBlmjbVAm+0RVT0/NcePFkqS1BHW9MgEWQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795013552;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795013554;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
 	 Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:X-Infomaniak-Routing;
-	bh=zsBSk8e6/oJkNLn1IpP5IhtxydcFdIX1KS4HiB1G6KE=;
-	b=dxekF37FWVsx9uFceBw+U/PVimse10eCT7Q08yvqg3I2U/QvjIju44fcBruAXfwVInLS
-	 n9yRTwpW7C4sXsC/Q7XKLn5hG7FJSK2ZiZtXxiBHcXQhAlCTDA3BG5zQi/l9r23JXUEQ7
-	 xFxlP+Tey3JTt2Abct3lz2az9ZyS3+57p52v6XUiRBNyGWkOCAt8Tl/Ok7k7KpbO3V6Sx
-	 Ox2hQyVfSPoQvki2JZrfmtWf91b/gxU6qJl6kpnHDo1VWndSqjeDWTxih1RYcVZ7uX+HO
-	 zy54Xzl6rwWZpTqMzg1DoiYF4LJ4cfY3Q6ugccSjHbSor14IW2X69Ok9F8rQKqK93EQ==
+	bh=i2SaJ9gUHBIVMEOpLbqH7JalWM14u8n77eMtMyXyxbg=;
+	b=js5+Yo86I322Na0+UjVrtQO5OKab80dzEeHvkO7xde+yw8WCsofqc6IGmEiq7U7c56IX
+	 q6caE3unr0J6tQUwXwHyqNUmbHrB+c9A2gwNkEKBY/39+D1Gcb4rEtZ3b2UNsIOK1XG3f
+	 mKFO/Afh3tRm+jlr5g0YKHiqZ3zMI1cFQCYvUXWDwaBnSIXpUkJ4E24WJ6+j7ILrxcR1+
+	 bbLpVMW5+T6jZUjbEi8+YBLqPKEefi3uNraWe7YelxY7+eNkzHDUYdpzX3oFShryrFwzm
+	 dRrmjL+lDIKUaHHmJOM0vi2zik0V3dT3f43xv7hbFIVpq5tlVEfiGEW5qAxi/yrvs1Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=digikod.net;
 	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=LpkpSkR6;
-	arc=none smtp.remote-ip=185.125.25.9
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=XZK6+8kd;
+	arc=none smtp.remote-ip=83.166.143.168
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD5160A2630
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:52:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3DD5160A2630
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829C860A3804
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:52:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 829C860A3804
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=LpkpSkR6
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV4MF0VYNzvKM;
-	Wed, 18 Nov 2026 15:52:25 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=XZK6+8kd
+Received: from smtp-4-0001 (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV4MG49TYzFT3;
+	Wed, 18 Nov 2026 15:52:26 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1795013544;
-	bh=zsBSk8e6/oJkNLn1IpP5IhtxydcFdIX1KS4HiB1G6KE=;
+	s=20191114; t=1795013546;
+	bh=i2SaJ9gUHBIVMEOpLbqH7JalWM14u8n77eMtMyXyxbg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LpkpSkR6tcqCTea4pKrBlm5GqRev244ELMGAWibEyMmjzTTvd3K7zKeKLztonIoGB
-	 Lnwl1NdXU+F+x9t4aZP+WwiCOppiO/h2481+wTZJhipRXmGJ6wJx3DsqUdZ7WGsAHU
-	 bGT8WvK4n7ZhJOqqC+2EsruNZbNH6mDOl7CG+Kdk=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jV4MC4jNDzcHb;
-	Wed, 18 Nov 2026 15:52:23 +0100 (CET)
+	b=XZK6+8kd2frcBtAqTEFNLewPr+xbEAFfdkVzTEOPbQEoVElQ/HyU/+G3HiDP+AbK+
+	 D7q5kwB08IA7OYntK+6Ua4wIiYScuD8JdmvZvEtT94kv3eqP+q9ao45qb939OkFRuV
+	 5fb4ln61MHUF7bmC/xb495d1CX7Av6ODQ8VFCCFQ=
+Received: from unknown by smtp-4-0001 (Postfix) with ESMTPA id 4jV4MF1xhMzWhk;
+	Wed, 18 Nov 2026 15:52:25 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
 Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -58,9 +58,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	kernel-team@cloudflare.com,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 3/6] landlock: Mediate CAP_SETPCAP for inheritable capabilities
-Date: Wed, 18 Nov 2026 15:52:07 +0100
-Message-ID: <20261118145217.2551053-4-mic@digikod.net>
+Subject: [PATCH v3 4/6] landlock: Mediate CAP_SYS_ADMIN for the admin memory reserve
+Date: Wed, 18 Nov 2026 15:52:08 +0100
+Message-ID: <20261118145217.2551053-5-mic@digikod.net>
 In-Reply-To: <20261118145217.2551053-1-mic@digikod.net>
 References: <20261118145217.2551053-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -76,17 +76,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-cap_capset() checks CAP_SETPCAP with cap_capable() (through
-cap_inh_is_capped()), which skips the capable hook, so a domain denying
-CAP_SETPCAP cannot prevent adding capabilities outside of the old
-inheritable and permitted sets to the inheritable set.  Without
-no_new_privs (possible when a task with CAP_SYS_ADMIN enforced the
-domain), file inheritable capabilities can then grant permitted
-capabilities on execve().
+With vm.overcommit_memory=2, __vm_enough_memory() keeps the admin
+reserve for callers with CAP_SYS_ADMIN, which cap_vm_enough_memory()
+checks with cap_capable(), so a domain denying CAP_SYS_ADMIN cannot
+withhold this reserve, meant for an administrator to recover from memory
+exhaustion.
 
-Add a Landlock capset hook that checks CAP_SETPCAP against the domain
-under the same condition, as SELinux checks its own setcap permission in
-this hook.
+Add a Landlock vm_enough_memory hook that withholds the reserve when the
+domain denies CAP_SYS_ADMIN.  Like commoncap and SELinux, do not audit
+this check: it runs for every accounted mapping and only selects a
+limit.
 
 Cc: Günther Noack <gnoack@google.com>
 Cc: Paul Moore <paul@paul-moore.com>
@@ -98,68 +97,54 @@ Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
 Changes since v2:
-https://patch.msgid.link/20261117101157.2520463-4-mic@digikod.net
-- Describe the hook's condition from cap_capset()'s point of view in its
-  comment (suggested by Günther Noack).
+https://patch.msgid.link/20261117101157.2520463-5-mic@digikod.net
 - Shorten the commit message.
 - Add Günther Noack's Reviewed-by.
 
 Changes since v1:
-https://patch.msgid.link/20261110202436.2408244-4-mic@digikod.net
+https://patch.msgid.link/20261110202436.2408244-5-mic@digikod.net
 - Add Serge Hallyn's Acked-by.
 ---
- security/landlock/cap.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ security/landlock/cap.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/security/landlock/cap.c b/security/landlock/cap.c
-index 10e1ca772b9c..cdb95b979eaa 100644
+index cdb95b979eaa..caf514be3df0 100644
 --- a/security/landlock/cap.c
 +++ b/security/landlock/cap.c
-@@ -91,6 +91,36 @@ static int hook_capable(const struct cred *cred, struct user_namespace *ns,
- 	return check_cap(cred, cap, opts);
+@@ -141,10 +141,32 @@ static int hook_mmap_addr(unsigned long addr)
+ 	return check_cap(current_cred(), CAP_SYS_RAWIO, CAP_OPT_NONE);
  }
  
 +/**
-+ * hook_capset - Restrict inheritable capability changes
++ * hook_vm_enough_memory - Restrict the admin memory reserve
 + *
-+ * @new: New credentials (unused).
-+ * @old: Current credentials.
-+ * @effective: New effective set (unused).
-+ * @inheritable: New inheritable set.
-+ * @permitted: New permitted set (unused).
++ * @mm: Address space being charged (unused).
++ * @pages: Number of pages being charged (unused).
 + *
-+ * cap_capset() denies a new inheritable set that is not a subset of the old
-+ * inheritable and permitted sets, unless cap_inh_is_capped() finds CAP_SETPCAP.
-+ * This check uses cap_capable(), which skips hook_capable().  commoncap runs
-+ * first, so such a set reaching this hook means that commoncap granted
-+ * CAP_SETPCAP: check it against the domain.  capset(2) discards @new if this
-+ * hook fails, so nothing is committed.
++ * cap_vm_enough_memory() lets CAP_SYS_ADMIN use the vm.admin_reserve_kbytes
++ * reserve, but calls cap_capable() directly, which skips hook_capable().  Check
++ * the same capability against the domain.  commoncap runs first, so this only
++ * sees tasks that commoncap let use the reserve.  Like commoncap, do not log
++ * denials: this only selects a memory limit.
 + *
-+ * Return: 0 if allowed, -EPERM if CAP_SETPCAP use is denied.
++ * Return: 0 if the domain does not withhold the reserve, -EPERM if
++ * CAP_SYS_ADMIN use is denied.  An error does not fail the allocation by
++ * itself, but without the reserve, the allocation may fail with -ENOMEM.
 + */
-+static int hook_capset(struct cred *new, const struct cred *old,
-+		       const kernel_cap_t *effective,
-+		       const kernel_cap_t *inheritable,
-+		       const kernel_cap_t *permitted)
++static int hook_vm_enough_memory(struct mm_struct *mm, long pages)
 +{
-+	if (cap_issubset(*inheritable,
-+			 cap_combine(old->cap_inheritable, old->cap_permitted)))
-+		return 0;
-+
-+	return check_cap(old, CAP_SETPCAP, CAP_OPT_NONE);
++	return check_cap(current_cred(), CAP_SYS_ADMIN, CAP_OPT_NOAUDIT);
 +}
 +
- /**
-  * hook_mmap_addr - Restrict mappings below dac_mmap_min_addr
-  *
-@@ -113,6 +143,7 @@ static int hook_mmap_addr(unsigned long addr)
- 
  static struct security_hook_list landlock_hooks[] __ro_after_init = {
  	LSM_HOOK_INIT(capable, hook_capable),
-+	LSM_HOOK_INIT(capset, hook_capset),
+ 	LSM_HOOK_INIT(capset, hook_capset),
  	LSM_HOOK_INIT(mmap_addr, hook_mmap_addr),
++	LSM_HOOK_INIT(vm_enough_memory, hook_vm_enough_memory),
  };
  
+ __init void landlock_add_cap_hooks(void)
 -- 
 2.56.0
 
