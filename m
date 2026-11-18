@@ -1,62 +1,89 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795033700;
-	b=R29YlkqZ7Fx+2Fa7oktfKhVHafPDOjrEQSI9iUt6JoNbeM2ai8jCgRz68r3EXw8GYh+t
-	 WflO3aAhH92lTm6cshiR8gYIbFI2tEvUOvIQq3HYcY29oCWEKW/KLDukp4BBqRAa2241h
-	 6dtq0fidsZlqDCH5m4UNmXS5onmx24WWosjjJULydtfijuRWlzlo4DTltPNTDJcM4Ef+1
-	 Yc3WmuEUtQojo8F5u4S0Rfy8c+hV07Yqt6NPXB/BvXfN5aPrlgDblvm4bTJAT7z7YnPBf
-	 zFZjpbB0rvqjUn7j2x/ghF5jDkiiIvv4hIyiVRnlKRsjgPGKhfvZFduRKPfUnGiY8Ug==
+	t=1795034535;
+	b=x3oWyPi4dKun21ql5tRl9e+d6mrRDuU7itxLCcazVLTzIGKpVQ2KNA48dhQ+9Wte/mdj
+	 jU3TCB1zIv9y3H1g00dEnDQ2YgBeRa4ncwrFBa+Bk5/1Y7w8xro7FDu39tRzhgx1SCScY
+	 dM+uKY2YYxqGzwr6tefPuw5UNzx9voJ4PD8XeClDjQMxQI5dfkWCAip7AMWwOI9LPQ945
+	 twmAdo6wmyXOE5zhMr9yRsyu4JG2H95PWB9AfEULvVWcaaIDYoI3HQqRP61DXBUZi/MLu
+	 TnBnCmi7Xn5YexYYNg1G7L5YL8WbBYjDIDcL8hzCYwZNuiRF4zKyoLw0zJIAL/gRUyQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795033700;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795034535;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=90tAbqMzJaQia7XfxJtfvbD0HtWu+CPWAaXAGRp0tI0=;
-	b=eSxZsu+b/rtflfLLzeHw3EWO2dqnjau6vbdIF0NrtYvK5of2sUcmzNHvE4M0qYy9FYyE
-	 sdCLoWQ3mWzCBBaWO2TrhdJZTkG2Oe4uCWuTCa3OOZPL7NJAgbfc+nANfMcMUUcpD14Nc
-	 YmsiZ76In5kBhgiEFQjF8ICUBQbaUrAlwu5tbO3bodRGQm4wVxecGgWz1AaRGXy3F8rRD
-	 OdD8OGeueAZM8Bjj6Kfu8PMRN0px+0zBGLcdOljG/09CgN0RHyikZfqxpTLh3DJw2t0fC
-	 9CVLLgbK7ml3lUX7hnDTeihQ7PHWasZNvMw+GezHVT76iHcXiwc06rH76Yxi8u0YAOw==
+	bh=yGYFAZyPSCRNjDclcP1I3y+zEfg7NXEfs5NTufJGWEA=;
+	b=PwuLNJgYgfeDam+z4T14vCQJcUSIQ5fRaycpLzoWWCtrf5icsBZff/ah6UkUMCN6VO2O
+	 0kjVY2CfBscBx0vwezcNmxUfvTNcO/ve7Pj3wAUEUtoRn1rloLYgPmvxDlM4t2ymcqEe7
+	 2th4abS+Pi6RIt0tJa9Cn7PRvqkCwaLskGg+MsFK3mcunQISiYyaDc7SuwPzedgYmhI8s
+	 sJbSYp2mOk9sXWnqbXsemiKpgNE/Mlap/rUf/f0g5A68EgNZ7N3i0s8k9kFIr9AZjWMSO
+	 iGFJvzDNrvWZaYyNvT9s0V4M9LiKixYzGjZvhtSHaKdSYYoRirvOZKPV/+xODOPJi6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VrhzcSDi;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HOD98SOo;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D4E9F606A320;
-	Wed, 18 Nov 2026 20:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 0869F606A32C;
+	Wed, 18 Nov 2026 20:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VrhzcSDi
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1B5521F000C4;
-	Wed, 18 Nov 2026 20:28:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HOD98SOo
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 04AA41F000C5;
+	Wed, 18 Nov 2026 20:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795033700;
-	bh=90tAbqMzJaQia7XfxJtfvbD0HtWu+CPWAaXAGRp0tI0=;
+	s=k20260515; t=1795034534;
+	bh=yGYFAZyPSCRNjDclcP1I3y+zEfg7NXEfs5NTufJGWEA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VrhzcSDiurSe9ldgs2udIVaBrSIngIZY5+J7rZn/0s4/XzvcBKsorRzq2WWQW1CNY
-	 u8ARLcNfd0cl3AMLg239pXxuZjbzQtaabTPQkk+cbn1vePA8i9ZB5laJJCqlSPdvFx
-	 v1tX0CMNV+NlkcviWgBYN7koZAfiYUefuorAglHAnxdE751ZwnSe7gYIIsAbQSwLTQ
-	 NkYapB5um7nefemtlSVuqJ3HkD9gz8hUe52NtXZKKUrlBpUq4zh99CXvM8T1ly5djN
-	 tkWNZdxSYjkH85Fagx1MNjrsqvw1ov4vJlnVo/YndXiguh/cwuvuCJYhjdzsGZDJk7
-	 q1g3+CHj1u6lg==
-Date: Wed, 18 Nov 2026 22:28:16 +0200
+	b=HOD98SOo2y7LisIyear+vmT71uL7GcKw4TOcb4yz+HJhLShq9FVnXgPGBj0IeH7nB
+	 NkHXUPLZ6DRpt4YwIsK/2RvI8yv0k+FRz+5enF8Ej27HdLMrk4C6B2ytR0+pLqQK/z
+	 oMprkQ42FVzf6Xihen6u2RRCEMBBDP6MuBmjUaMjT1cdjCXVhnN+aewx89/JyIs4Gi
+	 z3B+N334YoohR8XLQNcnWbDUIliIcKGMIxLBPHjkMAQHHjbscX63CQ3tBhM7+cFll9
+	 GoLv7GUXN2rPT8+o/rRkgW8EvF037oveTAIM4TQRC1KdjuJH1V1Z49qgse9IJGO+tp
+	 XSe3e2bfxSr/A==
+Date: Wed, 18 Nov 2026 22:42:10 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: florian.bauckholt@cispa.de, David Howells <dhowells@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>, Ignat Korchagin <ignat@linux.win>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, Hui Peng <benquike@gmail.com>,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] KEYS: fix signature length passed to
- KEYCTL_PKEY_VERIFY
-Message-ID: <av4KYKy7pZHyErVs@kernel.org>
-References: <20261111-keyctl-pkey-fixes-v1-0-934ebaa267a7@cispa.de>
- <20261111-keyctl-pkey-fixes-v1-1-934ebaa267a7@cispa.de>
- <f38f6d32-16d3-4986-8d6a-9d65517f5317@linux.ibm.com>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ben Segall <bsegall@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <david@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
+	John Johansen <john.johansen@canonical.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Juri Lelli <juri.lelli@redhat.com>, Kees Cook <kees@kernel.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Liam R. Howlett" <liam@infradead.org>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>, Neal Gompa <neal@gompa.dev>,
+	Paul Moore <paul@paul-moore.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: Re: [RFC PATCH v3 00/13] Namespace for namespace roots
+Message-ID: <av4NonrcCxzMoDyz@kernel.org>
+References: <20261118193539.240065-1-jarkko@kernel.org>
+ <av4CdM-eW73oO4wB@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -68,46 +95,120 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f38f6d32-16d3-4986-8d6a-9d65517f5317@linux.ibm.com>
+In-Reply-To: <av4CdM-eW73oO4wB@kernel.org>
 
-On Wed, Nov 18, 2026 at 03:08:19PM -0500, Stefan Berger wrote:
+On Wed, Nov 18, 2026 at 09:54:32PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 18, 2026 at 09:35:26PM +0200, Jarkko Sakkinen wrote:
+> > OVERVIEW
+> > ========
+> > 
+> > A root namespace (rootns) is a kernel object backed by a file descriptor
+> > that binds together:
+> > 
+> > 1. A full set of detached namespaces owned by a fresh user namespace.
+> > 2. A dedicated PID namespace for spawning processes into, signaling
+> >    members, and polling or waiting on PID 1 exit.
+> > 3. An initially empty mount namespace (CLONE_EMPTY_MNTNS) populated
+> >    directly in its target user namespace before going live, without
+> >    inheriting host mounts or cloning staged trees, while still allowing
+> >    new mounts to be attached at runtime.
+> > 
+> > Work on this feature started in 2025 from David Howells' container object
+> > patch set [1], which I turned into a namespace for namespace roots and
+> > rebuilt around that premise.
+> > 
+> > While the patch set is manually written, the original motivation came
+> > from isolating LLM agents. Running untrusted agent workloads made it
+> > clear that OCI runtimes need to minimize their live configuration
+> > surface.
+> > 
+> > Assembling mounts, credentials, and namespaces inside helper processes
+> > with a half-configured container is what I see as the main challenge,
+> > and the existential debate around namespaces and container objects is an
+> > unfocused discussion topic.
+> > 
+> > [1] https://lore.kernel.org/all/155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk/
+> > 
+> > IMPLEMENTATION
+> > ==============
+> > 
+> > rootns_create() allocates a rootns instance backed by a pollable
+> > anonymous inode fd, creating a fresh owning user namespace and a full set
+> > of detached namespaces: empty mount (CLONE_EMPTY_MNTNS), PID, UTS, IPC,
+> > network, cgroup, and time. ioctl(rootnsfd, ROOTNS_GET_NSFD, nstype)
+> > returns nsfs file descriptors for individual member namespaces when
+> > standalone namespace operations are needed.
+> > 
+> > Superblocks are configured directly in the target user namespace via
+> > fsopen(), FSCONFIG_SET_ROOTNS, and fsmount(), allowing unprivileged
+> > callers to assemble FS_USERNS_MOUNT filesystems without holding
+> > CAP_SYS_ADMIN in their own user namespace or entering the target user
+> > namespace first. move_mount(..., MOVE_MOUNT_T_MNTNS) operates on any
+> > non-anonymous mount namespace fd: on an empty mount namespace it installs
+> > "/" onto the nullfs root once, and it attaches relative submounts both
+> > before entry and into live mount namespaces.
+> > 
+> > Once "/" is installed, processes are spawned into the rootns via clone3()
+> > with CLONE_INTO_ROOTNS and struct clone_args.rootns, without mutating the
+> > caller in place. Pairing CLONE_INTO_ROOTNS with CLONE_VM | CLONE_VFORK
+> > and opening the target binary via openat2(..., RESOLVE_IN_ROOT) on the
+> > retained "/" mount fd allows spawning with execveat() without copying
+> > page tables.
+> > 
+> > The first entrant becomes PID 1; once it exits and
+> > zap_pid_ns_processes() reaps all members, poll() reports EPOLLHUP and
+> > rootns_wait() returns init's exit status and rusage. rootns_kill() walks
+> > pid_ns->idr under tasklist_lock to signal member thread groups.
+> > 
+> > CHANGES
+> > =======
+> > 
+> > v3:
+> > - The patch set size increased predominantly because the coverage of
+> >   kselftest had to widened to cover the introduced changes.
+> > - Replace MOVE_MOUNT_T_ROOTNS_ROOT with MOVE_MOUNT_T_MNTNS targeting
+> >   mnt_ns nsfs fds, and add ioctl(ROOTNS_GET_NSFD) to open member
+> >   namespace fds (Andy Lutomirski).
+> > - Allow unprivileged fsopen(), FSCONFIG_SET_ROOTNS, and fsmount() to
+> >   configure and mount FS_USERNS_MOUNT filesystems directly in the target
+> >   user namespace without entering it first (Andy Lutomirski).
+> > - Fix locking, refcounting, credential/dumpability/timens setup,
+> >   pivot_root() lookup, and cross-userns mount checks across copy_rootns(),
+> >   CLONE_INTO_ROOTNS, rootns_kill(), FSCONFIG_SET_ROOTNS, and move_mount()
+> >   (Sashiko).
+> > - Mark PowerPC rootns syscalls nospu (Sashiko).
+> > - Update documentation and kselftests.
 > 
+> I.e. before PID 1 and /proc/<pid>/ns/* existss, nsfd for namespace other
+> than root nsfd can be acquired as follows:
 > 
-> On 11/11/26 10:56 AM, Florian Bauckholt via B4 Relay wrote:
-> > From: Florian Bauckholt <florian.bauckholt@cispa.de>
-> > 
-> > Commit cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
-> > made keyctl_pkey_params_get_2() set params->out_len to the maximum
-> > output size of the operation instead of the size provided by the caller.
-> > It does so for KEYCTL_PKEY_VERIFY as well, but verify has no output
-> > buffer: out_len shares a union with in2_len, the length of the
-> > signature.
-> > 
-> > As a result keyctl_pkey_verify() ignores the signature length passed by
-> > the caller. It copies max_sig_size bytes from the signature pointer and
-> > passes max_sig_size as the signature size to the verification.
-> > 
-> > This makes no difference for signatures that are always max_sig_size
-> > bytes long, such as RSA. A shorter signature, e.g. a DER-encoded ECDSA
-> > signature, is followed by whatever is behind it in the caller's memory,
-> > or the call fails with -EFAULT if that memory is not readable. The
-> > x962 ECDSA template currently ignores data following the signature,
-> > which hides the problem.
-> > 
-> > Use the length provided by the caller, which has already been checked
-> > against max_sig_size.
-> > 
-> > Fixes: cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
-> > Cc: stable@vger.kernel.org
-> > Link: https://lore.kernel.org/all/20260919221742.3709658-1-benquike@gmail.com/
-> > Signed-off-by: Florian Bauckholt <florian.bauckholt@cispa.de>
-> 
-> Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+> 	int mnts_fd = ioctl(root_fd, ROOTNS_GET_NSFD, CLONE_NEWNS);
 
-Can these patches be rebased? They don't apply.
 
-I've probably missed b4 shazam issue last time.
+Unprivileged caller becomes the owner of rootns->user_ns. Each mount
+syscall then just checks CAP_SYS_ADMIN against rootns->user_ns.
 
-Was just wondering why I don't have these yet.
+The user space wiring goes along the lines of:
+
+        int root_fd = rootns_create(ROOTNS_KILL_ON_CLOSE | ROOTNS_CLOSE_ON_EXEC);
+        int mntns_fd = ioctl(root_fd, ROOTNS_GET_NSFD, CLONE_NEWNS);
+
+        int tmpfs_fd = fsopen("tmpfs", 0);
+        fsconfig(tmpfs_fd, FSCONFIG_SET_ROOTNS, NULL, NULL, root_fd);
+        fsconfig(tmpfs_fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+        int rootfs_fd = fsmount(tmpfs_fd, 0, 0);
+
+        move_mount(rootfs_fd, "", mntns_fd, "/", MOVE_MOUNT_F_EMPTY_PATH | MOVE_MOUNT_T_MNTNS);
+
+        struct clone_args args = {
+                .flags  = CLONE_INTO_ROOTNS,
+                .rootns = root_fd,
+        };
+        pid_t pid = clone3(&args, sizeof(args));
+
+Note that example is uncompiled :-)
+
+This example makes me feel that perhaps RootNS is not the best possible
+name for this but this rather should be e.g., NullNS?
 
 Br, Jarkko
