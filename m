@@ -1,66 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795012390;
-	b=cuZxZ26pEXyEUZL9X3xvGQET3zUB4zYkoe9/eRXY9WCZAOY9XbPKd9NXwGow7BhcLKr+
-	 njIuAITQ2qQnUjrP/BiWtuaq0iXa7cNv702Yl9PXDyozsUjHdXmFp1mAb4T9SQcvxvWTf
-	 G6J4m1pVumF6VDSaiOSCdfLuyToN7prIZnrb57LeJYMMoWETuPt3yKannGXajErGQyc7A
-	 2jW96s48WicEEmDDspKdbaRCUqFgSXXOk7jJKjyHMwmV5DbOIf0dRy7VRw7tvD0sG593S
-	 2gotT2lJDTi6IFZ+p22vWxiguPDbbaepFM4MpFwYhx9jfZeg+DmZqyYZmRHKZ/BqDAg==
+	t=1795012602;
+	b=wGqjfwhG8tISrMNKnl1JsjaI+l757OtW9YHt62k3MaA/AiWhkWqNMbNSkL+R2XaRZz1g
+	 qlRt4u0LZ/LCGb8rgXLufbfKSqTZTFQ1W4ib/sfdMueVw2ughoz78ifCGIdN0UC1HVMxu
+	 ksQdmoARCp23Ldy1Kb5XyDFMDN7cvMa8ydTittZJ3gybgfOEmScAWFKEHk5z7nBEmDrVE
+	 3XNgIWT+9aCwoUr4tKIbpJiQnWAFue+hpNNHyIrxdrLHU3TiEuRZWu01tmzdE7j0HtxXg
+	 juwqpwNxi/z7lrrQAeTCPVZWZHfs2mMuRaME+cxAxLTHRt47ZgXURLDd1KdbwJJomvQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795012390;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795012602;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=UbKKKwuSqmqLTt5+7BE++XpAc29t2C2cKUALxdXI6xc=;
-	b=xqh24hPdJBD7+4WwLd+loHUVFpJkIktA1FDgOiKsoXTcNYh5QzrVqMKlHhDcp5ZxABxh
-	 tjW0qEQg+/mK8xBgXudA15ONwFIHn/JmiRt7TwoglbQnQS0cWP44QvrppdQGASd0BxfVx
-	 rfgR+5PPIH43fOw8ap6QTQ3214u4bavqqPCFewyZ2JNa/Qmhp2Tz8ZlWL+VeFHXvu+q0J
-	 uw8TKAIc2iJ2QpgBV4jobXJgbWH6UNpEAH7nLZbfrr4CtwHsVEsBIRMZlsGYgB/DvnLWZ
-	 x80/CtdIcUEDbbkYksmgGOpr+zLUNyJAAEN+U1DMrs9hpitHa34wkad3vBmV4akX+ag==
+	bh=hKRyIDhr8ZKuipfRss9auUtntCKZz1DV6CwVMhLFjEg=;
+	b=lid01Gc8UZND/t5I60OI0FuW48dxv1x/9FX2korvJ6xA0yBl5r6x70tck47//hFyu+7U
+	 sIHmVtVv35hPpMmUcmV/EgWRc/oSiyksFlYhYS1z1Zq9aNoJhnprDXHwjqBxc8P3hwdKg
+	 gYAVDwNcHBM0JgXRnOQiTmBULcjiR2G8aRqFi2ZoI+Koy1jTcbIDCohIrkiTQ71cvNbxy
+	 0zGDkUijeniaG4UTi6o9HzN6copU3etJN5UeGBE0XCQXDtM23MvWKKe1h0lClgRHOGCLY
+	 Fr7eXbUzklw5Iil9tgE5DOq4DKhrGI80MzN0twIlPW99zRr4tv7W5KSoN2x/aS2W2cg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aKsKwoar;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HDjcKKmM;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9AB606A339;
-	Wed, 18 Nov 2026 14:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CA7606A31C
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aKsKwoar
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D00781F000C6;
-	Wed, 18 Nov 2026 14:33:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=HDjcKKmM
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF60E1F000C4
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:36:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795012390;
-	bh=UbKKKwuSqmqLTt5+7BE++XpAc29t2C2cKUALxdXI6xc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=aKsKwoar7e0Ra6XiwKT/7z8u6kEiledf3bbg3prwX+2CfHTPA8N88AVHSkgadsRZk
-	 hEoeym3oodfOUSlx1z5W75iZ+EGi+35iK5jA7UzVK6CsT7ZsSnduqmqvCPCSgPqAG3
-	 41e6gDciB8zkAAkIM2YaJ+Ym/f6udYcdpYnS940I3GWzK4uuYa+PpPa3y/k59gNkKf
-	 4TLJhzKow5l/8qYR3UU+hplToQZNGAOns5IjU0MCnXO82m5hQm6TTy26FEqmAH8MOV
-	 1dbRNOsI7HLzIeVKpr82dKHZqJ8h3RT2AoPq7CKk5Gpmm63ubnxGacXHAN0nMuIoOy
-	 toD0PUObwlYVQ==
-Message-ID: <sashiko-outbox-221217@kernel.org>
+	s=k20260515; t=1795012602;
+	bh=hKRyIDhr8ZKuipfRss9auUtntCKZz1DV6CwVMhLFjEg=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=HDjcKKmM56Sm0hHGsJoioCK/2vxFZ9VZdaZx/kpP9qLnF9ZzmX6G+tHNQQM2tGs9F
+	 LnMYS88yYXB7mq/iz6rKMTDVTuBngb4J9ut0eQniO+Pp5LsCDXoP1sTC+hXJCWrjua
+	 Rb6WPuMNnqL40FRp7pdSy2a+raTrIv3jFeAuUkVDYHW/cgruTdPSWuHMoH8KVR7+uV
+	 iWeDljw5JBNqn6KR4VyZmslZER1NCFGujEiniTiEEnNtO70bMNmEnYyPwqZPd70SD4
+	 SHW9ESNlFzL5+BTX/+AX7Z7+ApnZen2765zgwSXKGSgB/ShBDjg+mSN5uOp3zVhYnG
+	 1QgIm0Ir4UV4A==
+Message-ID: <sashiko-outbox-221227@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 3/9] KEYS: keycrypt: Add the OP-TEE backend
+Subject: Re: [RFC PATCH 8/9] KEYS: keycrypt: Add the CAAM backend
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Rodolfo Giometti" <giometti@enneenne.com>, "David Howells" <dhowells@redhat.com>, "Jarkko
- Sakkinen" <jarkko@kernel.org>, keyrings@vger.kernel.org
-Cc: "Herbert Xu" <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, "Jens
- Wiklander" <jenswi@kernel.org>, "Sumit Garg" <sumit.garg@kernel.org>, op-tee@lists.trustedfirmware.org,
- =?utf-8?b?SG9yaWEgR2VhbnTEgw==?= <horia.geanta@nxp.com>, "Pankaj Gupta" <pankaj.gupta@nxp.com>, "Sahil
- Malhotra" <sahil.malhotra@nxp.com>, "Ahmad Fatoum" <a.fatoum@pengutronix.de>, "Richard
- Weinberger" <richard@nod.at>, =?utf-8?b?Q2hyaXN0b3BoZSBMZXJveSAoQ1MgR1JP?=
- =?utf-8?b?VVAp?= <chleroy@kernel.org>, "Eric Biggers" <ebiggers@kernel.org>, "Demi
- Marie Obenour" <demiobenour@gmail.com>, "Arnd Bergmann" <arnd@arndb.de>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20261118140421.584086-4-giometti@enneenne.com>
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261118141153.621958-1-giometti@enneenne.com>
 References: <20261118140421.584086-1-giometti@enneenne.com>
- <20261118140421.584086-4-giometti@enneenne.com>
+ <20261118141153.621958-1-giometti@enneenne.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 14:33:08 +0000
+Date: Wed, 18 Nov 2026 14:36:41 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -70,68 +59,29 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] keys: keycrypt: NULL dereference in kc_optee_remove() after
-  shutdown
---
+> Add "caam", a backend of the engine tier for NXP SoCs with a CAAM:
+> once sealed, its keys exist outside the CAAM only as black blobs and
+> black keys, used through the CAAM's internal cbc(paes); a new key is
+> drawn in kernel memory and sealed at once. Each blob is encapsulated
+> with a key modifier derived from the blob's header, so a blob whose
+> metadata was changed does not open, and the blobs of the public
+> cbc(paes) and of trusted "pk" keys, made with another key modifier, do
+> not load.
+>=20
+> This is a proposal for owners of CAAM hardware to try, not to be
+> applied as is: it has not been run on hardware, and the CAAM does not
+> check what a key is used for, which is why its tier is engine. Only
+> aes256-cbc is offered, with ECB-encrypted black keys, since the
+> driver's cbc(paes), with Richard Weinberger's paes fixes, refuses
+> CCM ones.
+>=20
+> With it comes its section of the documentation.
+>=20
+> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
 
-commit 8da0e0d8cf01260109b52bb935a051203beb3758
-Author: Rodolfo Giometti <giometti@enneenne.com>
-
-KEYS: keycrypt: Add the OP-TEE backend
-
-This commit adds the "optee" keycrypt backend driver for the tee tier,
-using sessions to the keycrypt OP-TEE Trusted Application to seal, load,
-and run operations on keys.
-
-> diff --git a/security/keys/keycrypt/optee.c b/security/keys/keycrypt/opte=
-e.c
-> new file mode 100644
-> index 0000000000000..5a3ab6f825f17
-> --- /dev/null
-> +++ b/security/keys/keycrypt/optee.c
-
-[ ... ]
-
-> +static void kc_optee_remove(struct tee_client_device *tdev)
-> +{
-> +	keycrypt_unregister_backend(&keycrypt_optee);
-> +	tee_client_close_session(kc_optee.tee, kc_optee.ctl);
-> +	tee_shm_free(kc_optee.ctl_shm);
-> +	tee_client_close_context(kc_optee.tee);
-> +	kc_optee.tee =3D NULL;
-> +}
-> +
-> +static const struct tee_client_device_id kc_optee_id_table[] =3D {
-> +	{ UUID_INIT(0x65a0d9f0, 0xf057, 0x414c,
-> +		    0x9d, 0x5a, 0x9a, 0xac, 0x7c, 0x8b, 0xa4, 0x61) },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(tee, kc_optee_id_table);
-> +
-> +static struct tee_client_driver kc_optee_driver =3D {
-> +	.probe		=3D kc_optee_probe,
-> +	.remove		=3D kc_optee_remove,
-> +	/* Sessions left open would outlive a kexec in the secure world */
-> +	.shutdown	=3D kc_optee_remove,
-
-[Severity: High]
-Can kc_optee_remove() run a second time when .remove is called after
-.shutdown?
-
-device_shutdown() invokes .shutdown without unbinding the driver.  On
-Arm FF-A OP-TEE platforms, device_shutdown() first calls
-tee_client_device_shutdown() -> kc_optee_remove() on the TA child device,
-setting kc_optee.tee to NULL, and then reaches the parent FF-A device
-whose .shutdown callback (ffa_remove() -> ... ->
-optee_unregister_devices()) unregisters the TA device and calls
-tee_client_device_remove() -> kc_optee_remove() again.
-
-The second call hits WARN_ON_ONCE(!h) in keycrypt_unregister_backend(),
-dereferences NULL kc_optee.tee in tee_client_close_session() and
-tee_client_close_context(), and double frees kc_optee.ctl_shm.
+Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118140421.5840=
-86-1-giometti@enneenne.com?part=3D3
+86-1-giometti@enneenne.com?part=3D8
+
