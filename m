@@ -1,74 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=134.76.10.21
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795043727;
-	b=Myc9PFCyJBjUZdn8rb/v54cVEpOY2i7EF51ocwPYIC7J1mIhhamgC8zN9nguV7zMMlrh
-	 TYP8yn5iL+OgAtP2RL0Sho5HWt35C0zi7VQC7LEcWnDu2w5c81c2vvK9h/0TZeDRphMNr
-	 bhFu5niSeCJoIn01dnsddXn9hez93T+pwlBYd1yEqCJtQXlCTl5LeNhE5MT/WDB90eBfu
-	 NOTLkS6N7ajFdRGntQIU3PJ/LZmVPKp69UlhGoKraptMdKNINVin8UcnheIrdIYMjp9RS
-	 dxoWhyvKj4M8T1zqbDBCoaAEtXOCXLRBAQ2PdjB3WYx6vkCvrEJma8+FjoNWruoctSQ==
+	t=1795043925;
+	b=4iAdF++B665jP8Sav+I9rnoIa6jOeJEdFiFXTduwPaF4rMgKGRVB2eJuNxfmvAWXg3kY
+	 pJN2nAz7fiBU05DtSvcOAVCt3uP610/bWGjEuYznKMmAzWuBVJz/cz95tIP1Pazv3jncv
+	 Iz74Xkg8U3mwouqwgMxOMxKQ780h2/boO36DBmjKjVuYjQAdJXOBjuw9/aCUhtHTgdGfh
+	 2LhpfFnOlKxg2dp4NM72OfscZAm397uDAMqgqdDzUIBH0AsYZFNClAEt7Z1aVBKbsGfVg
+	 iHMwyRF6o0q2PTnXVtL3tuPM2mS+I1UpX21zGOtygwNBI0lpHxRkJqaB01e07oHjDwQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795043727;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=mwmWAQshdigHpIdy3Qcm1XXYqTmHhApKgtFSeME4t04=;
-	b=hwNLZJh3nSX+ajYKqVHEmPhiVwdOv4rlu1+tN4Rq7tZEpNoAdOWfWCGhmPWV/HbuzzkM
-	 tIlmtTWS9GpYT0BNNSx6R60GrrIxgXpArG2k8o1TsbfRBAoRsRsCqTGO1qb5Z2lBThY3Q
-	 bAdR8O/1jNonUySLKVEvw3gu+fTv+zbSwvmKwJ5PHzRXzv5nDrHPp/CCriCWWp0NEu4Ff
-	 PmbOQipCByS8NwRfnd8rlrtjBMJfTM3xy68ze1BGLffQDrlQSZbiUNPaGeLusIgmXAyxZ
-	 XhLdJF0aRwh6xTx+SvFP/927c1iDXAmDHa959lM8XG53qRS7OlR/YjT91Bz5HO10d8Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795043925;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
+	 Content-Language:From:Autocrypt:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy:
+	 X-Virus-Scanned:X-Spam-Level;
+	bh=JDoxYPpMuMBE75pF/Op+Adyf6/VS3J3TnGd9XMcVHtg=;
+	b=D/6CE638MkNscUSymTk/WWjhNZ7CJD4fPA2LJh0bl+cxdNyt727FAGsBzelgUVTVQZrx
+	 W031bxftVnikARJaHQruRRY6bw3lSQqAtnUfpRIRX7iNiGMl/Shu+hyBZEIjEsNfsWlPN
+	 f9zbdIAPZDrRZqKnS7zH4u9htz3cU3GPga90ILS2y9YtvXbU09eBG78xsJNx1lcTmHADc
+	 IW/1yNbH6JrSZ3cPIUro2S5whyo6e3hwOwaz7sqx64vLYVYD5qghcwTrJr2owb/LDaLEn
+	 /57enf/cRs4wll6t7Z3FR/y8fcMSeFU0/CbIi6z7sZNgDtHeLZYfWkig8VijnpIIrQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P0RFipSi;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=cispa.de;
+	spf=pass smtp.mailfrom=cispa.de;
+	dkim=pass header.d=cispa.de header.i=@cispa.de header.a=rsa-sha256 header.s=2023-rsa header.b=YEBh6Uc+;
+	arc=none smtp.remote-ip=134.76.10.21
+Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA65606A320
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 23:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32460606A31C;
+	Wed, 18 Nov 2026 23:18:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 32460606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cispa.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cispa.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P0RFipSi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCC041F000C4;
-	Wed, 18 Nov 2026 23:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795043727;
-	bh=mwmWAQshdigHpIdy3Qcm1XXYqTmHhApKgtFSeME4t04=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=P0RFipSigDSpZXtTWMqbhT9ydNe9vL3SDc50iA0ZoZOeUNpM1x4J76EEzKQDHx9zE
-	 QswuhfZLIvS/0m99MHuIxUyw5SZhGOLfJJQIuT2gnlCaqs+jFl3f+wEj+nKRd3M4/Y
-	 z2GAz9PdZDHl5wzwiPGX2Pn9Q4EBNZ28aUO4N8DLM4TfRSfb0Fdfln+3uePk7EFGvO
-	 f+nPEZDYExxpqOJR4njY/HqxF7hkwVkWHJKo0fJSBn0INUp7ueGLaZ0XV6zt/MaSCA
-	 gVOefCSoqxeJzX8WdZogsxJVfhwLOMAJRyPQ4RNK0xFZ8v7bj0j6lJq6+EjTl95/WY
-	 9IdW5+EXTjPPg==
-Message-ID: <sashiko-outbox-222166@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v2 12/13] selftests/rootns: Add root namespace test
- suite
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jarkko Sakkinen" <jarkko@kernel.org>
-Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
- Viro" <viro@zeniv.linux.org.uk>, "Andrew Morton" <akpm@linux-foundation.org>, "Andy
- Lutomirski" <luto@amacapital.net>, "Ben Segall" <bsegall@google.com>, "Christian
- Brauner" <brauner@kernel.org>, "David Hildenbrand" <david@kernel.org>, "David
- Howells" <dhowells@redhat.com>, "Davidlohr Bueso" <dave@stgolabs.net>, "Dietmar
- Eggemann" <dietmar.eggemann@arm.com>, "Ingo Molnar" <mingo@redhat.com>, "Jan
- Kara" <jack@suse.cz>, "Jonathan Corbet" <corbet@lwn.net>, "John Johansen" <john.johansen@canonical.com>, "Juri
- Lelli" <juri.lelli@redhat.com>, "Kees Cook" <kees@kernel.org>, "K Prateek
- Nayak" <kprateek.nayak@amd.com>, "Liam R. Howlett" <liam@infradead.org>, "Lorenzo
- Stoakes" <ljs@kernel.org>, "Manfred Spraul" <manfred@colorfullife.com>, "Mel
- Gorman" <mgorman@suse.de>, "Michal Hocko" <mhocko@suse.com>, "Mike Rapoport" <rppt@kernel.org>, "Neal
- Gompa" <neal@gompa.dev>, "Paul Moore" <paul@paul-moore.com>, "Pavel
- Tikhomirov" <ptikhomirov@virtuozzo.com>, "Peter Zijlstra" <peterz@infradead.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Serge Hallyn" <sergeh@kernel.org>, "Shuah
- Khan" <skhan@linuxfoundation.org>, "Steven Rostedt" <rostedt@goodmis.org>, "Suren
- Baghdasaryan" <surenb@google.com>, "Valentin Schneider" <vschneid@redhat.com>, "Vincent
- Guittot" <vincent.guittot@linaro.org>, "Vlastimil Babka" <vbabka@kernel.org>, "Zygmunt
- Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261117231352.3816603-13-jarkko@kernel.org>
-References: <20261117231352.3816603-1-jarkko@kernel.org>
- <20261117231352.3816603-13-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 23:15:25 +0000
+	dkim=pass (2048-bit key) header.d=cispa.de header.i=@cispa.de header.a=rsa-sha256 header.s=2023-rsa header.b=YEBh6Uc+
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cispa.de;
+	s=2023-rsa; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:CC:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JDoxYPpMuMBE75pF/Op+Adyf6/VS3J3TnGd9XMcVHtg=; b=YEBh6Uc+Fs1XK1Yl0qcX4Zeyix
+	6zjDCC+x569jxsg0+bW78XiDg0PyvCTLuGO/WkBCPqpRDvrTCX7j7JvNparhMwKI0IJghR10/hFV1
+	7plvNq4OlPCeH1SUeADdyFj+FNBvuEPrV54xm2Q1lYGB232paeo2V/tW+JqGlkdC7NnzvMqEnjz67
+	I/RZ9vopvM/uhUtcYjz9FEbl7X7Y+EqxlexW947xyObD79W5KFAInY+keI99+82SaTdxNWth+y73P
+	a1OF/wGKISwqVzijHJqO0hWC+foDuG/M54V9MWWX6Z9KgQ9mKu465aOw6+JlsochB0iDHBrfZYZ1X
+	d0lAQwCw==;
+Received: from mailer.gwdg.de ([134.76.10.26]:37272)
+	by mailer.gwdg.de with esmtp (GWDG Mailer)
+	(envelope-from <florian.bauckholt@cispa.de>)
+	id 1xTovI-008jxB-2Y;
+	Thu, 19 Nov 2026 00:18:41 +0100
+Received: from mbx19-sub-11.um.gwdg.de ([10.108.142.88] helo=email.gwdg.de)
+	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+	(GWDG Mailer)
+	(envelope-from <florian.bauckholt@cispa.de>)
+	id 1xTovI-000AB3-36;
+	Thu, 19 Nov 2026 00:18:40 +0100
+Received: from [192.168.0.168] (10.250.9.200) by mbx19-sub-11.um.gwdg.de
+ (10.108.142.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.57; Thu, 19 Nov
+ 2026 00:18:40 +0100
+Message-ID: <db5a384d-e833-4ab0-baf3-619717b39f60@cispa.de>
+Date: Thu, 19 Nov 2026 00:18:39 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -77,361 +72,55 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] KEYS: fix signature length passed to
+ KEYCTL_PKEY_VERIFY
+To: Rodolfo Giometti <giometti@enneenne.com>, David Howells
+	<dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, Lukas Wunner
+	<lukas@wunner.de>, Ignat Korchagin <ignat@linux.win>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+CC: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Hui Peng <benquike@gmail.com>, Stefan Berger
+	<stefanb@linux.ibm.com>, <keyrings@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20261111-keyctl-pkey-fixes-v1-0-934ebaa267a7@cispa.de>
+ <20261111-keyctl-pkey-fixes-v1-1-934ebaa267a7@cispa.de>
+ <0e20f799-e389-40d2-aaee-2f174748faae@enneenne.com>
+Content-Language: en-US
+From: Florian Bauckholt <florian.bauckholt@cispa.de>
+Autocrypt: addr=florian.bauckholt@cispa.de; keydata=
+ xjMEav3GRRYJKwYBBAHaRw8BAQdAnELDrQj5frnVfDEzfgTLq+dYQyGwNlrF4RK4Lnh0EtLN
+ LkZsb3JpYW4gQmF1Y2tob2x0IDxmbG9yaWFuLmJhdWNraG9sdEBjaXNwYS5kZT7CjwQTFggA
+ NxYhBCzYgazhZyFPZBJ6GB4ZurGrnfo1BQJq/cZFBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
+ AQAACgkQHhm6saud+jWpqAEAvdY72AqnlDNhbzgaDPghigkZxQsXy0SguVI4rIFdkYoA/RRN
+ yQMEpqS/x1bseRnNFeLmtDviMLMoLUrKGY23VuUPzjgEav3GRhIKKwYBBAGXVQEFAQEHQElQ
+ tDrQlEp5XdrAZUWzYVj26t0q0BhMLOqKLXSMmA5xAwEIB8J+BBgWCAAmFiEELNiBrOFnIU9k
+ EnoYHhm6saud+jUFAmr9xkYFCQWjmoACGwwACgkQHhm6saud+jUl5AD/S78nLqAgIn53lOzT
+ A8NTSByrtVvDBb9G9heETfLzVBIBANDFhjZQpssjUeVZ7QV/1GDL9ZhGssjnTQmzHKavboEK
+In-Reply-To: <0e20f799-e389-40d2-aaee-2f174748faae@enneenne.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MBX19-SUB-07.um.gwdg.de (10.108.142.72) To
+ mbx19-sub-11.um.gwdg.de (10.108.142.88)
+X-Virus-Scanned: (clean) by clamav
+X-Spam-Level: -
 
-Thank you for your contribution! Sashiko AI review found 9 potential
-issues to consider:
-- [Medium] selftests/rootns: enter_unpriv_user_mntns() fails to restore
-  dumpability
-- [Medium] selftests/rootns: PID 1 exit race with sibling tasks in
-  clone_concurrent
-- [Medium] selftests/rootns: missing SKIP() in setup and silent skips in
-  child tests
-- [Medium] selftests/rootns: setns tests fail to open /proc/self/ns/mnt
-  and hang
-- [Medium] selftests/rootns: nested_ns fails with EPERM in unmapped user
-  namespace
-- [Medium] selftests/rootns: fsconfig test fails with EPERM at
-  sys_fsopen() for sysfs
-- [Low] selftests/rootns: stack direction and lifetime hazard in
-  clone_with_flags()
-- [Low] selftests/rootns: fd leak in create_rootns_as_uid() when
-  waitpid() fails
-- [Low] selftests/rootns: fallback syscall definitions omit MIPS ABI
-  offsets
---
+On 11/17/26 14:21, Rodolfo Giometti wrote:
+> The test suite of craf (https://github.com/giometti/crypto-afalg,
+> test3008) hits this with RSA too: it cuts a genuine 256-byte RSA-2048
+> PKCS#1 signature to 255 bytes and expects the verify to fail.
+> 
+> Maybe it is worth saying so in the commit message, since this is going
+> to stable?
 
-commit 29bf6658ccf4cdfdf8e29f5c0581be3d7fb38e3f
-Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-selftests/rootns: Add root namespace test suite
+Yes, I'll add it to v2 and link to your report.
 
-This commit adds a kselftest harness suite under
-tools/testing/selftests/rootns to test root namespace creation,
-clone3(CLONE_INTO_ROOTNS), mount configuration, and permission checks.
+> I'll send my Tested-by once test3008 has run 2000 times on a kernel
+> with your patch applied.
 
-> diff --git a/tools/testing/selftests/rootns/smoke.c b/tools/testing/selft=
-ests/rootns/smoke.c
-> new file mode 100644
-> index 0000000000000..350e6e8e25236
-> --- /dev/null
-> +++ b/tools/testing/selftests/rootns/smoke.c
-> @@ -0,0 +1,1381 @@
-[ ... ]
-> +#ifndef __NR_rootns_create
-> +#ifdef __alpha__
-> +#define __NR_rootns_create 583
-> +#define __NR_rootns_wait 584
-> +#define __NR_rootns_kill 585
-> +#else
-> +#define __NR_rootns_create 473
-> +#define __NR_rootns_wait 474
-> +#define __NR_rootns_kill 475
-> +#endif
-> +#endif
+Thanks. v2 is rebased but the code change is the same.
 
-[Severity: Low]
-Do these fallback syscall numbers need to account for the MIPS ABI base
-offsets (4000 for o32, 5000 for n64, and 6000 for n32)?  Without adding
- the _MIPS_SIM offset, a standalone build on MIPS without updated kernel
-headers will invoke the wrong syscalls.
-
-[ ... ]
-
-> +static int clone_with_flags(int flags)
-> +{
-> +	const size_t stack_size =3D 64 * 1024;
-> +	void *stack;
-> +	pid_t pid;
-> +	int status;
-> +	int ret;
-> +
-> +	stack =3D malloc(stack_size);
-> +	if (!stack)
-> +		return -ENOMEM;
-> +
-> +	pid =3D clone(clone_exit, (char *)stack + stack_size,
-> +		    SIGCHLD | flags, NULL);
-> +	if (pid < 0)
-> +		ret =3D -errno;
-> +	else if (waitpid(pid, &status, 0) < 0)
-> +		ret =3D -errno;
-> +	else if (!WIFEXITED(status) || WEXITSTATUS(status))
-> +		ret =3D -EIO;
-> +	else
-> +		ret =3D 0;
-> +
-> +	free(stack);
-> +	return ret;
-> +}
-
-[Severity: Low]
-Does passing (char *)stack + stack_size to clone() write past the end of
-stack on upward-growing stack architectures such as PA-RISC?  In addition,
-if waitpid() fails (for example on EINTR), free(stack) runs while the
-child may still be executing on that stack.  Using sys_clone3() with a
-NULL stack avoids both issues.
-
-[ ... ]
-
-> +	if (!err) {
-> +		*cfd =3D recv_fd(sv[0]);
-> +		if (*cfd < 0)
-> +			err =3D errno;
-> +	}
-> +	close(sv[0]);
-> +
-> +	if (waitpid(pid, &status, 0) !=3D pid && !err)
-> +		err =3D errno;
-> +	if (!err && (!WIFEXITED(status) || WEXITSTATUS(status)))
-> +		err =3D ECHILD;
-> +
-> +	return err ? -err : 0;
-> +}
-
-[Severity: Low]
-Does create_rootns_as_uid() leak *cfd if recv_fd() succeeds but waitpid()
-fails or the child exits non-zero?
-
-[ ... ]
-
-> +FIXTURE(rootns) {
-> +	int cfd;
-> +};
-> +
-> +FIXTURE_SETUP(rootns) {
-> +	self->cfd =3D create_test_rootns(false, ROOTNS_ALL_NAMESPACES |
-> +					ROOTNS_KILL_ON_CLOSE |
-> +					ROOTNS_CLOSE_ON_EXEC);
-> +	ASSERT_GE(self->cfd, 0);
-> +}
-
-[Severity: Medium]
-Should FIXTURE_SETUP(rootns) call SKIP() when create_test_rootns() fails
-with ENOSYS, EPERM, EACCES, or ENOSPC?  Because rootns is added to TARGETS
-in tools/testing/selftests/Makefile while CONFIG_ROOTNS defaults to n,
-asserting self->cfd >=3D 0 fails all 17 tests instead of skipping them when
-CONFIG_ROOTNS is disabled or when the test runs without mount/namespace
-privileges.
-
-Similarly, pivot_root and mount_empty_path do not skip on EPERM,
-mount_perms omits -ENOSPC from its SKIP() check, and the child processes
-in mount_perms, clone_perms, and fsconfig call _exit(0) when prerequisites
-are unavailable, reporting silent passes without a skip reason.
-
-[ ... ]
-
-> +TEST_F(rootns, nested_ns) {
-> +	pid_t pid;
-> +	int nsfd;
-> +
-> +	nsfd =3D open("/proc/self/ns/mnt", O_RDONLY | O_CLOEXEC);
-> +	ASSERT_GE(nsfd, 0);
-> +
-> +	pid =3D clone_into_rootns(self->cfd, 0);
-> +	ASSERT_GE(pid, 0);
-> +	if (pid =3D=3D 0) {
-> +		close(self->cfd);
-> +
-> +		if (unshare(CLONE_NEWNS))
-> +			_exit(1);
-> +		if (clone_with_flags(CLONE_NEWNS))
-> +			_exit(2);
-> +		if (unshare(CLONE_NEWUSER))
-> +			_exit(3);
-> +		if (clone_with_flags(CLONE_NEWUSER))
-> +			_exit(4);
-
-[Severity: Medium]
-Won't unshare(CLONE_NEWUSER) and clone_with_flags(CLONE_NEWUSER) here fail
-with EPERM?  self->cfd is created with ROOTNS_ALL_NAMESPACES (which
-includes ROOTNS_USER), but no uid_map or gid_map is written for its user
-namespace, so create_user_ns() rejects creating a child user namespace
-because the caller's UID and GID are unmapped in parent_ns.  Even if
-self->cfd's user namespace were mapped, unshare(CLONE_NEWUSER) moves the
-child into a second unmapped user namespace before
-clone_with_flags(CLONE_NEWUSER) runs.
-
-[ ... ]
-
-> +TEST_F(rootns, setns_same) {
-> +	ssize_t nwritten;
-> +	pid_t pid1;
-> +	pid_t pid2;
-> +	char ch;
-> +	int nsfd;
-> +	int sv[2];
-> +
-> +	ASSERT_EQ(socketpair(AF_UNIX, SOCK_DGRAM | SOCK_CLOEXEC, 0, sv), 0);
-> +
-> +	pid1 =3D clone_into_rootns(self->cfd, 0);
-> +	ASSERT_GE(pid1, 0);
-> +	if (pid1 =3D=3D 0) {
-> +		int ret;
-> +
-> +		close(self->cfd);
-> +		close(sv[0]);
-> +		ret =3D send_unshared_mntns_and_wait(sv[1]);
-> +		close(sv[1]);
-> +		_exit(ret);
-> +	}
-> +	close(sv[1]);
-> +
-> +	nsfd =3D recv_fd(sv[0]);
-
-[Severity: Medium]
-Does send_unshared_mntns_and_wait() fail with ENOENT here and leave the
-parent hanging in recv_fd(sv[0])?
-
-Both self->cfd (in setns_same) and beta_cfd (in setns_foreign below) are
-created with create_test_rootns(false, ...), which mounts an empty tmpfs
-at /proc instead of procfs.  When the child calls
-send_unshared_mntns_and_wait(), open("/proc/self/ns/mnt", ...) fails with
-ENOENT and the child exits without sending a descriptor.  Because sv is a
-SOCK_DGRAM socketpair, closing sv[1] does not deliver EOF to sv[0], so
-recv_fd(sv[0]) blocks until the test times out.
-
-[ ... ]
-
-> +static int enter_unpriv_user_mntns(uid_t drop_uid)
-> +{
-> +	char map[32];
-> +	uid_t uid;
-> +	gid_t gid;
-> +	int fd;
-> +	int len;
-> +
-> +	if (geteuid() =3D=3D 0 &&
-> +	    (setresgid(drop_uid, drop_uid, drop_uid) < 0 ||
-> +	     setresuid(drop_uid, drop_uid, drop_uid) < 0))
-> +		return -errno;
-> +
-> +	uid =3D geteuid();
-> +	gid =3D getegid();
-> +	if (unshare(CLONE_NEWUSER | CLONE_NEWNS) < 0)
-> +		return -errno;
-> +
-> +	fd =3D open("/proc/self/setgroups", O_WRONLY | O_CLOEXEC);
-> +	if (fd >=3D 0) {
-> +		(void)write(fd, "deny\n", 5);
-> +		close(fd);
-> +	}
-> +
-> +	fd =3D open("/proc/self/uid_map", O_WRONLY | O_CLOEXEC);
-> +	if (fd < 0)
-> +		return -errno;
-
-[Severity: Medium]
-When the test runs as root, does dropping privileges via setresgid() and
-setresuid() clear task dumpability and cause open("/proc/self/uid_map",
-O_WRONLY | O_CLOEXEC) to fail with EACCES?
-
-Without prctl(PR_SET_DUMPABLE, 1, 0, 0, 0) after setresuid(), files under
-/proc/self/ remain owned by global root (0:0), which is unmapped in the
-newly unshared user namespace.  enter_unpriv_user_mntns() then returns
--EACCES, and all three callers (mount_perms, clone_perms, and fsconfig)
-treat -EACCES as _exit(0), silently skipping their unprivileged permission
-checks.
-
-[ ... ]
-
-> +		ucfd =3D sys_rootns_create(ROOTNS_USER | ROOTNS_CLOSE_ON_EXEC);
-> +		if (ucfd < 0) {
-> +			if (errno =3D=3D EPERM || errno =3D=3D EACCES ||
-> +			    errno =3D=3D EINVAL || errno =3D=3D ENOSPC)
-> +				_exit(0);
-> +			_exit(2);
-> +		}
-> +
-> +		sfd =3D sys_fsopen("sysfs", 0);
-> +		if (sfd < 0) {
-> +			if (errno =3D=3D ENODEV) {
-> +				close(ucfd);
-> +				_exit(0);
-> +			}
-> +			_exit(3);
-> +		}
-> +
-> +		if (sys_fsconfig(sfd, FSCONFIG_SET_ROOTNS, NULL, NULL, ucfd) < 0)
-> +			_exit(4);
-> +		if (sys_fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0) !=3D -1 ||
-> +		    errno !=3D EPERM)
-> +			_exit(5);
-
-[Severity: Medium]
-Doesn't sys_fsopen("sysfs", 0) fail with EPERM here before reaching
-FSCONFIG_SET_ROOTNS?
-
-enter_unpriv_user_mntns() unshares CLONE_NEWUSER | CLONE_NEWNS but keeps
-the parent network namespace, so sysfs_init_fs_context() ->
-kobj_ns_current_may_mount(KOBJ_NS_TYPE_NET) rejects sys_fsopen("sysfs", 0)
-with EPERM and the child exits with status 3.  Furthermore, even if
-CLONE_NEWNET were unshared, sysfs_init_fs_context() sets fc->global =3D true
-and binds fc->user_ns to netns->user_ns, so FSCONFIG_CMD_CREATE would
-succeed rather than failing with EPERM.
-
-[ ... ]
-
-> +			ent_pid =3D clone_into_rootns(self->cfd, 0);
-> +			if (ent_pid < 0)
-> +				_exit(1);
-> +			if (ent_pid =3D=3D 0) {
-> +				unsigned char my_pid =3D (unsigned char)getpid();
-> +
-> +				if (write(ready_pipe[1], &my_pid, 1) !=3D 1)
-> +					_exit(2);
-> +				close(ready_pipe[1]);
-> +				(void)read(hold_pipe[0], &ch, 1);
-> +				close(hold_pipe[0]);
-> +				_exit(0);
-> +			}
-> +
-> +			close(ready_pipe[1]);
-> +			close(hold_pipe[0]);
-> +			close(self->cfd);
-> +			_exit(reap_child_exit_code(ent_pid) =3D=3D 0 ? 0 : 3);
-> +		}
-> +	}
-> +
-> +	close(start_pipe[0]);
-> +	close(ready_pipe[1]);
-> +	close(hold_pipe[0]);
-> +	close(start_pipe[1]);
-> +
-> +	for (i =3D 0; i < 4; i++) {
-> +		unsigned char pid_byte =3D 0;
-> +
-> +		ASSERT_EQ(read(ready_pipe[0], &pid_byte, 1), 1);
-> +		ASSERT_GE(pid_byte, 1);
-> +		ASSERT_LE(pid_byte, 4);
-> +		seen_mask |=3D 1U << pid_byte;
-> +	}
-> +	close(ready_pipe[0]);
-> +	close(hold_pipe[1]);
-> +
-> +	ASSERT_EQ(seen_mask, 0x1eU);
-> +
-> +	for (i =3D 0; i < 4; i++)
-> +		ASSERT_EQ(reap_child_exit_code(workers[i]), 0);
-
-[Severity: Medium]
-When close(hold_pipe[1]) wakes all four processes in the rootns PID
-namespace at once, can PID 1 exit before PIDs 2..4 and kill them via
-zap_pid_ns_processes()?
-
-CPU0 (rootns PID 1)               CPU1 (rootns PID 2)
-read(hold_pipe[0]) returns 0
-                                  read(hold_pipe[0]) returns 0
-_exit(0)
-  zap_pid_ns_processes()
-    send_sig_info(SIGKILL, p)
-                                  terminated by SIGKILL
-                                  worker: reap_child_exit_code() -> -2
-                                  worker exits with 3  <-- test fails
-
-Because reap_child_exit_code() requires WIFEXITED(status), any non-init
-sibling killed by SIGKILL before completing _exit(0) causes its worker to
-exit with code 3 and fails the test.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117231352.3816=
-603-1-jarkko@kernel.org?part=3D12
+Florian
