@@ -1,50 +1,50 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=83.166.143.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795013683;
-	b=wy45acApshy13/Z76UQOAvaZkijGye4TpTJUgXM4D2B6mLcDzYH8Y/bczRRstwFoIjaX
-	 8C8U/1L/l4lBZzNLz+vUhbmYBA/XPb+8TrqGb9El2QQaxi8ObIymp5Kr67sBXSpY6MAU2
-	 0ypSjMduOxr1nDri2wmR9Fhlx8ShhQVz6iG+7AfMCHuTGA3ODczD5q0DhVXOtRJPR/1jO
-	 vYRcv7Xqu2JV61jDfuwjquswnMJJ4LR2kfAwLDHGJltC4vj4PW9Qy1gZ4gFeXBaHWko3n
-	 Wi0l5PJal4K75/STnkAxoBUSR2nbuETytM/+/p2FAfsto931CTtW1p2JqXj1xuJ3vPQ==
+	t=1795013685;
+	b=EZb/fZFeAGB1ba0AbqlKk3uyTAi2dn3UjLVLPw+w2zI2Z186Kt5Pv2G2FGL9l1l1yIjh
+	 WEYNOdrJ5dvriHczZARF5RavNdSGfIErw27rNG8DyZRbogbpZy1oLkT2PdE95Irl9d7hC
+	 aPtjIGrp9cEdwHx1fw9PiPHbzfPXq96aQnkj86w6k3y9UN6n9bYwUV60S86fG0inof1vg
+	 rAJkkYJOYBRxdo5fJThBMZwoSbT3vNsmhWu9kU9IDT6o1DXA1fLkJs3/gV2/c4YsH+WQy
+	 YxhPdux6R9plDPU2m7p8rto/eW0I3WPSpRTKM3UFYYdx5HUvkMPVJtvDKeagP9TSMew==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795013683;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795013685;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
 	 Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:X-Infomaniak-Routing;
-	bh=RvfKLtJx1LzpSXU6MV8aotz6RXl92/Gwx2B+niglRns=;
-	b=uOO2GvpOWuKGXNE31fEAP4up7gf/5oCeQjEzh1LgCGU81juuAvJC6iiu6ohldQeXute+
-	 DFT88htRNkI9XAkDuXVbhLQeWYx0wrNXej8OY1d8RtEFehJLwTvVmkOHUUuYK5YF2LJZa
-	 Zs4V9nIajG5COrN31FhL8ty82R5b3JbuVVXpN29dPyJiDOiiR6aEV5PXNN9KtrJzCW8Sr
-	 JxA1acuNMazJYdyb6MZ5muUNN1/QoWR1uf90RZHgBG/vHWnQOHYFXi776hiJ1l4KjYFvd
-	 A9eqZNL9Hp1IBZiTOpIycWYXONJHbdWECrugpGCHA9f3LkXFCOM5ucoyd1J03mXQMvA==
+	bh=1KgLygsoydJnhHUwLFUyB2r9sha4fkJ/lYIIH1ct9ns=;
+	b=CxXhqeUrHUocVFmabeWZETApo953ViRZVt0RXU3qk3SiC6kIXFacw2+SjcIi+fS8BHUy
+	 ZVtJIcO6mU3ICisaG0UdIPEsryLG5RAJCw90q/9qfBMoLnWdGTxFjCgvJ/kATZ8J51OJT
+	 MQVZ9jSAeV++zzmQ17n/ZUyXOwMqpmIZ1i2p4kUpLocOAkFbnAbLjrJjONIvSNUBXnLqK
+	 KhOWBA0flQdbELQ1bqzfGyNFBN1L+w3CbD4TwNUaO21aUUQQb/JCFvk8nTnVJN3z2Z0q8
+	 +31UdrXWHWfQFrAHotfGeLi2L2o14Q+46hDo7in4TPr+9khclOlhyVrgwZJQS6ZmXWQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=digikod.net;
 	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=rBmTS5Xo;
-	arc=none smtp.remote-ip=84.16.66.168
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=k7yJ1sZI;
+	arc=none smtp.remote-ip=83.166.143.170
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFE7606A31C
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:54:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ACFE7606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1BE606A339
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7A1BE606A339
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=rBmTS5Xo
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV4Pl48m1zGPg;
-	Wed, 18 Nov 2026 15:54:35 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=k7yJ1sZI
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jV4Pn2BMDzDvV;
+	Wed, 18 Nov 2026 15:54:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1795013675;
-	bh=RvfKLtJx1LzpSXU6MV8aotz6RXl92/Gwx2B+niglRns=;
+	s=20191114; t=1795013676;
+	bh=1KgLygsoydJnhHUwLFUyB2r9sha4fkJ/lYIIH1ct9ns=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rBmTS5XoPbokeog/tEgSMTtjrEzyVaVkwDzSMdNsbq0CNYoJObSKlXTs+VCO5SRzE
-	 zDcNHGva7JX4xdDZGjjjH3BVaLfN+HJCjEgbF4nkg5csCb1N/P5X4GxN1AVpwTvKAx
-	 9ApYMgUJCoEC/VFc1ir3QZh9FGc5a7lDxDyVYDSk=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jV4Pj4tDXzfqW;
-	Wed, 18 Nov 2026 15:54:33 +0100 (CET)
+	b=k7yJ1sZIBk6Qni/9dxoL1v6O2YCLRi5n4EYzlOdmineub78bze0/iXPIDlwz37i2e
+	 de/s+qXEIwOeOdv30VZeT88Sb16DHUjOIQ5zUoiNni2jrz6RgyJmyFi04wJI7nRAm8
+	 jDdKQDmvg6pvKFVDYVfPlG6nOMJeZ6JzeDqwj3eM=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jV4Pl57xlzdBk;
+	Wed, 18 Nov 2026 15:54:35 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Paul Moore <paul@paul-moore.com>,
 	Serge Hallyn <sergeh@kernel.org>
@@ -62,12 +62,10 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org,
-	James Morris <jmorris@namei.org>,
-	Serge Hallyn <serge@hallyn.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 1/2] capabilities: Check PR_SET_SECUREBITS with ns_capable()
-Date: Wed, 18 Nov 2026 15:54:28 +0100
-Message-ID: <20261118145431.2551578-2-mic@digikod.net>
+	Serge Hallyn <serge@hallyn.com>
+Subject: [PATCH v3 2/2] selftests/landlock: Test PR_SET_SECUREBITS mediation
+Date: Wed, 18 Nov 2026 15:54:29 +0100
+Message-ID: <20261118145431.2551578-3-mic@digikod.net>
 In-Reply-To: <20261118145431.2551578-1-mic@digikod.net>
 References: <20261118145431.2551578-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -83,103 +81,111 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-PR_SET_SECUREBITS checks CAP_SETPCAP with cap_capable(), which skips the
-LSM capable hooks, so a task can change privileged securebits despite an
-LSM denial.
+Test that Landlock denies and logs a privileged PR_SET_SECUREBITS
+change, now that the previous commit routes its CAP_SETPCAP check
+through the capable hooks, and that an unprivileged change still
+succeeds.  The domain deallocation record must then report exactly one
+denial, which proves that the unprivileged change was not denied,
+without relying on a no-record timeout.
 
-Use ns_capable() instead, as PR_CAPBSET_DROP already does.  Move the
-check to a helper that only requires CAP_SETPCAP when needed, so that
-changes limited to the unprivileged securebits still do not reach the
-LSMs or set PF_SUPERPRIV.
+The check-exec selftests already cover commoncap's securebits semantics.
+Without the previous commit, this test fails.
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Günther Noack <gnoack@google.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: KP Singh <kpsingh@kernel.org>
-Cc: Matt Bobrowski <matt@bobrowski.net>
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Serge Hallyn (AMD) <sergeh@kernel.org>
-Fixes: 3898b1b4ebff ("capabilities: implement per-process securebits")
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
-Changes since v1:
-https://patch.msgid.link/20261110202811.2409395-2-mic@digikod.net
-- Check the non-change case separately, with its own comment (suggested
-  by Serge Hallyn).
-- Shorten the commit message (suggested by Serge Hallyn).
-- Add Serge Hallyn's Reviewed-by.
+Changes since v2:
+https://patch.msgid.link/20261117101738.2523492-3-mic@digikod.net
+- Use ASSERT_EQ() before checking errno (suggested by Günther Noack).
+- Shorten the commit message.
 ---
- security/commoncap.c | 45 ++++++++++++++++++++++----------------------
- 1 file changed, 23 insertions(+), 22 deletions(-)
+ tools/testing/selftests/landlock/cap_test.c | 69 +++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index d47ab3022343..9794a594bdd9 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1283,6 +1283,26 @@ static int cap_prctl_drop(unsigned long cap)
- 	return commit_creds(new);
+diff --git a/tools/testing/selftests/landlock/cap_test.c b/tools/testing/selftests/landlock/cap_test.c
+index 7c58ece1c6f0..35a419c46764 100644
+--- a/tools/testing/selftests/landlock/cap_test.c
++++ b/tools/testing/selftests/landlock/cap_test.c
+@@ -1071,6 +1071,75 @@ TEST_F(cap_audit, denied)
+ 	EXPECT_EQ(0, records.domain);
  }
  
 +/*
-+ * Doing anything with securebits requires privilege (go read about the
-+ * "sendmail capabilities bug"), except for unprivileged bits.  Indeed, the
-+ * SECURE_ALL_UNPRIVILEGED bits are not restrictions enforced by the kernel but
-+ * by user space on itself.  Only checking CAP_SETPCAP when it is needed keeps
-+ * LSMs from seeing (and logging) a capability check for unprivileged changes.
++ * A privileged denial allocates the domain ID.  The following unprivileged-only
++ * change must not create a hidden Landlock denial, so the domain's deallocation
++ * record must report exactly one denial.
 + */
-+static bool securebits_need_setpcap(unsigned long old, unsigned long new)
++TEST_F(cap_audit, securebits)
 +{
-+	const unsigned long unpriv_and_locks = SECURE_ALL_UNPRIVILEGED |
-+					       SECURE_ALL_UNPRIVILEGED << 1;
-+	const unsigned long changed = old ^ new;
++	const unsigned long unpriv = SECBIT_EXEC_RESTRICT_FILE |
++				     SECBIT_EXEC_RESTRICT_FILE_LOCKED;
++	__u64 *domain_id, deallocated_dom = 0;
++	unsigned long bits;
++	int err, ruleset_fd, status;
++	pid_t child;
 +
-+	/* For legacy reasons, a non-change requires privilege. */
-+	if (!changed)
-+		return true;
++	domain_id = mmap(NULL, sizeof(*domain_id), PROT_READ | PROT_WRITE,
++			 MAP_SHARED | MAP_ANONYMOUS, -1, 0);
++	ASSERT_NE(MAP_FAILED, domain_id);
++	*domain_id = 0;
 +
-+	return changed & ~unpriv_and_locks;
++	ruleset_fd = create_cap_ruleset();
++	ASSERT_LE(0, ruleset_fd);
++	/* Allow the child to replace the audit filter before exiting. */
++	ASSERT_EQ(0, add_cap_rule(ruleset_fd, CAP_AUDIT_CONTROL));
++
++	child = fork();
++	ASSERT_LE(0, child);
++	if (child == 0) {
++		enforce_ruleset(_metadata, ruleset_fd);
++		EXPECT_EQ(0, close(ruleset_fd));
++
++		set_cap(_metadata, CAP_SETPCAP);
++		bits = prctl(PR_GET_SECUREBITS);
++		ASSERT_EQ(-1, prctl(PR_SET_SECUREBITS,
++				    bits | SECBIT_NO_CAP_AMBIENT_RAISE));
++		EXPECT_EQ(EPERM, errno);
++
++		EXPECT_EQ(0, matches_log_cap(self->audit_fd, CAP_SETPCAP));
++		EXPECT_EQ(0, matches_log_domain_allocated(self->audit_fd,
++							  getpid(), domain_id));
++
++		EXPECT_EQ(0, prctl(PR_SET_SECUREBITS, bits | unpriv));
++		clear_cap(_metadata, CAP_SETPCAP);
++
++		/* Receive the asynchronous domain deallocation record. */
++		set_cap(_metadata, CAP_AUDIT_CONTROL);
++		EXPECT_EQ(0, audit_filter_drop(self->audit_fd, AUDIT_ADD_RULE));
++		EXPECT_EQ(0,
++			  audit_filter_exe(self->audit_fd, &self->audit_filter,
++					   AUDIT_DEL_RULE));
++		clear_cap(_metadata, CAP_AUDIT_CONTROL);
++
++		_exit(_metadata->exit_code);
++		return;
++	}
++
++	ASSERT_EQ(child, waitpid(child, &status, 0));
++	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
++	    WEXITSTATUS(status) != EXIT_SUCCESS)
++		_metadata->exit_code = KSFT_FAIL;
++
++	EXPECT_NE(0, *domain_id);
++	err = matches_log_domain_deallocated(self->audit_fd, 1, *domain_id,
++					     &deallocated_dom);
++	EXPECT_EQ(0, err);
++	EXPECT_EQ(*domain_id, deallocated_dom);
++	EXPECT_EQ(0, munmap(domain_id, sizeof(*domain_id)));
++	EXPECT_EQ(0, close(ruleset_fd));
 +}
 +
- /**
-  * cap_task_prctl - Implement process control functions for this security module
-  * @option: The process control function requested
-@@ -1346,28 +1366,9 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			/* cannot change a locked bit */
- 			return -EPERM;
- 
--		/*
--		 * Doing anything requires privilege (go read about the
--		 * "sendmail capabilities bug"), except for unprivileged bits.
--		 * Indeed, the SECURE_ALL_UNPRIVILEGED bits are not
--		 * restrictions enforced by the kernel but by user space on
--		 * itself.
--		 */
--		if (cap_capable(current_cred(), current_cred()->user_ns,
--				CAP_SETPCAP, CAP_OPT_NONE) != 0) {
--			const unsigned long unpriv_and_locks =
--				SECURE_ALL_UNPRIVILEGED |
--				SECURE_ALL_UNPRIVILEGED << 1;
--			const unsigned long changed = old->securebits ^ arg2;
--
--			/* For legacy reason, denies non-change. */
--			if (!changed)
--				return -EPERM;
--
--			/* Denies privileged changes. */
--			if (changed & ~unpriv_and_locks)
--				return -EPERM;
--		}
-+		if (securebits_need_setpcap(old->securebits, arg2) &&
-+		    !ns_capable(current_user_ns(), CAP_SETPCAP))
-+			return -EPERM;
- 
- 		new = prepare_creds();
- 		if (!new)
+ /*
+  * Denials in the capset and mmap_addr paths are audited like capable hook
+  * denials.  The vm_enough_memory hook only withholds the admin reserve, with
 -- 
 2.56.0
 
