@@ -1,56 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795014038;
-	b=cEoId2UbDOuZLc5pHl6pDknIcHYmrEad0CYm9CWS2FqwdL4bXrdBiR5A56oeGfAFxmpL
-	 +mYbX13QLz4ZmG8/KWgtrgbrVjYGD3E1I+xEH8jhL5BYdfoiR3ZLHDOqDBGAqOS88joDd
-	 v6pcTjhXgVE78gsVwTucpl/tCKKhlVEtQ7lvySjqp6N/OD4v3aGji7zkLriaRpvJkApvH
-	 p0SO+3RuRpj9vYlY4SxReab48rjFJH5CY6qaTIZCyIt5F63F2+E42TS6P/wvJhMBOFHPq
-	 Uy8sBcjWXZCQAZ+CqyzR5WjDHTKloStMW7610a2ElS9HSief8Pmaxk2K7BlQfeL6z5A==
+	t=1795014471;
+	b=i7xHja6TX4k2vyKVkTIxxZGJ9X9lDgKZeyQUGHeWihz2Ayxl0RJZBmawedv75lma9zWN
+	 8i/Nk7u7ojiSdk3GT8y0gnfvysRsokmn528PV12JIq+d2SOzFlk0CZoezrMWTTfN6FRuK
+	 vsfzB9qbFbMRUBrzKJVi/dmZyWZyELWSvdLB62kRJDEue3TVxZ/JCW3qac0Q9HblL9/jO
+	 3foVhJi/A85J1O5Pcq+u4VywX2CUOwbX13s7CvOzuoRz753TDtiI0OGLXgeI63Y/6olKy
+	 PKGUmYuJ/Q59N+5GbZUsj9c7DFu70rOHiIN2gjpWhMV45L8rQRiod4SvfDAVWgN3/8g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795014038;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ezpm6tnkNrVLJ/9C9tRQrJbTJ2IOv0u9LpdAmkC0xJE=;
-	b=Tfa/diwBVy35JCAuOPJw5GWg2tZgJYqgHYNVekwYBhMrSAj1bSOiS6GfRR+LKeiT0+Cc
-	 mkog7AKAAbYl/q9oWc9Z33Rp1uU9434LfjhikrjVnz6PSFzBLdQseW63QwdFQf8lCahN/
-	 Lgc0/nT3nMMpBjzsGxRrMySWYNUpjYcfg5SeR8iccPNFDeH9JWpSph/uE2mSUWBxtXDwr
-	 0Kp6aj+xFWLypSHw2YXCO6Di0OTxUkrTPUadWHmccgJIGIFvzRVUdoKMBlH5WTGN/+ISB
-	 9YE82QhB9irNmkKjAXP+suh/eHHloUIOm28JxED3N9CZnbNV5bF5abs6kylXd2yu91w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795014471;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=WpNvKlvQgWs4nlBDzrAzqY0K1wpz+T9bN3CMOunjYys=;
+	b=Fl/TV1qL8pXXYwQtwzaPISgKZqc9cgUbzPKdsyvhlL1vaPsX09DGzchUesLj8AqWekO6
+	 grFoSgSx3PEW1Fl6fN/1K/CPXsrj6jsXmYVQ7FDfex42qBz/4g+jxeIAR1LRyK34Po7oL
+	 fZ2sLD+g02DwI/Upn28HXV4tzv65YR46g6RHkGKIpiXoKRHjJhFXxC7FY217hpK5Dcm3D
+	 JoMIbttbo/E/0gTy+AF6FxrPQVHA5mqr8ePxveg9SGM7+R/7MSIUk4UsxVQXGmbkKV6vA
+	 wuPiyahEJTeeRXqrJM2HPCneGJbfJK0ubTpu0UZHZblMXQBLFKkSVJZzUf1T5PRfLyA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FXnK3ahs;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ik0wB+4P;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0615A606A31C;
-	Wed, 18 Nov 2026 15:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id CE5E0606A32A;
+	Wed, 18 Nov 2026 15:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FXnK3ahs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEB01F000C4;
-	Wed, 18 Nov 2026 15:00:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ik0wB+4P
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id C01C41F000C4;
+	Wed, 18 Nov 2026 15:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795014037;
-	bh=ezpm6tnkNrVLJ/9C9tRQrJbTJ2IOv0u9LpdAmkC0xJE=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=FXnK3ahsjhO5CDuOUckreO2//gZlQXA91xFKhqRoEbDyJ9Pd3ixNKdyx5OrL87V6m
-	 E7NgfsC7CEf5Dy2ogiG9WkYpz9PAf3BJvDZCtSaKvkT6H/vmUFA0XHwmZx3gPPzKD/
-	 RvXelWyW44rCzq4CeGox1563xVfWr0QgzjmC9wyztGh+orZaUDc5fX+7B+rsEI8DCS
-	 SYd6Ka47fLmquLKNyXRpnhQLrlJiYZyj8aDBOrgtFelUKFVcw3ifY54p3YUsWoFC9B
-	 LeA/KwXfldS8yZhKaCgeTulhGnOuLqttVQlhdMNUwk4HybGaaSqHongsRjj982jH1+
-	 wg6EoRisblezQ==
-Message-ID: <sashiko-outbox-221278@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 1/2] capabilities: Check PR_SET_SECUREBITS with
- ns_capable()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-In-Reply-To: <20261118145431.2551578-2-mic@digikod.net>
-References: <20261118145431.2551578-1-mic@digikod.net>
- <20261118145431.2551578-2-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 15:00:37 +0000
+	s=k20260515; t=1795014471;
+	bh=WpNvKlvQgWs4nlBDzrAzqY0K1wpz+T9bN3CMOunjYys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ik0wB+4PWOYL2hmQiNwFTeBBvupZ2nUcJiZ54iyfaa2tU77mnLlpFifyj8n1RAoxc
+	 JiFr1whbKGn9jctVHgQHsWlXlRxqGaOAejYgryvppYJ1hYUJPmJajsbl1RZNJZ2urH
+	 fAR3taWBeKxDwuMnnlsPRwbWW5GR06M9hA5dv1M1pEA51yEPNLWXKWfBsoGOA85JWU
+	 RdSwiNfRnISgDS/zRQ8IFyTjSctGJRDAEhTnp4ENDN8HwGtDmIypnNR9Lro8os8drC
+	 gH5m26+2mcTSgygYysYIO2BPjm0gAz6kctoO3OxBWgeB2Wg89nS8C+lhRUQ+5galCW
+	 RrUE6ZrvqIprA==
+Date: Wed, 18 Nov 2026 17:07:46 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Rodolfo Giometti <giometti@enneenne.com>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Wiklander <jenswi@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	op-tee@lists.trustedfirmware.org,
+	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Sahil Malhotra <sahil.malhotra@nxp.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Richard Weinberger <richard@nod.at>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [RFC PATCH 0/9] KEYS: keycrypt: keys that user space can use but
+ never read
+Message-ID: <av2_QoJHp1gMTFMp@kernel.org>
+References: <20261118140421.584086-1-giometti@enneenne.com>
+ <mvyqqjhvfka3kkumztixzozrthutkq6mfakkonxqbpm5gvzb62@eitzzleeyioe>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,33 +82,29 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mvyqqjhvfka3kkumztixzozrthutkq6mfakkonxqbpm5gvzb62@eitzzleeyioe>
 
-> PR_SET_SECUREBITS checks CAP_SETPCAP with cap_capable(), which skips the
-> LSM capable hooks, so a task can change privileged securebits despite an
-> LSM denial.
->=20
-> Use ns_capable() instead, as PR_CAPBSET_DROP already does.  Move the
-> check to a helper that only requires CAP_SETPCAP when needed, so that
-> changes limited to the unprivileged securebits still do not reach the
-> LSMs or set PF_SUPERPRIV.
->=20
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: KP Singh <kpsingh@kernel.org>
-> Cc: Matt Bobrowski <matt@bobrowski.net>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Serge Hallyn (AMD) <sergeh@kernel.org>
-> Fixes: 3898b1b4ebff ("capabilities: implement per-process securebits")
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+On Wed, Nov 18, 2026 at 03:57:27PM +0100, Marco Felsch wrote:
+> These are basically the trusted-key purpose.
 
-Sashiko has reviewed this patch and found no issues.
+This is it.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118145431.2551=
-578-1-mic@digikod.net?part=3D1
+If I was adding something like this, I would at least:
 
+1. Discuss the solution that would extend trusted keys to the level
+   that makes it crystal clear that this is won't work out too
+   well.
+2. Then show how the new thing addresses all of this.
+
+If there is any gist this should not require whole a lot of text
+dump.
+
+AI assistance should not be really even mentioned the cover letters in
+my opinion. It's equal to text editor; or smoke signals. It does not
+level down anything i.e., I'm equally dissatified however this was
+produced :-) 
+
+Br, Jarkko
