@@ -1,48 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794978585;
-	b=zH0am8esP+ig3XCYGEimOtSlvrDxxn+7wa6BQbRPwqqDNhkKy6VlwTnOpBovLtUJwC/N
-	 0jVGSehSy0MIijAuZdkHbkslpsW4t/3DWjhcM550oIQTi6glaKog/KIZoX/8HmXk0IBeT
-	 nyv5aR8IGZLuX2sm+Y0OfUoypMg1eT0iJlrvLxfw/PF7wQL5WaQWEJXaM3VXpdKL0DrD5
-	 3Je+msIHGvomIcjDwqknr6Gu8LOWR0DbPvVGERFh5ROGul4SvLyAC3Nj5+A6SFKz0fj/X
-	 QsRUK7FwbI7IsUvPIuI3tDoMWunXOgdegN63wysn+jsQFmVVrx/hYFjXVxx5tLQWk9A==
+	t=1794978587;
+	b=0Ap0uqD5uBxLVudDqJN2/5NtyG+qKq+IsFXeSLwwvL+/0/BS4Ni7pU50iuoLL7NsLrf5
+	 ly2syEavEpoP9cKbSVFtSypymjYldnZ4G1f0emNQTj6M2ESkcRi082y8e/r0C+n00vx8g
+	 Bp6AyHYUNUEP9BLw67cdyhXiZupzCQj2deMtRlGIZAUAq+lo5+AVh3+aDaeoGMO17byaw
+	 lHRTwErFmnmabxxnuxLMtWlrrIkfkxTyvpuOMhjY7QC9Y7pGO+DzPUY/l0I9zzdekl5Nw
+	 DNNZuT0jR7Eia/kLeteXWajMUlkDCRHN96Ka4OXfvUoYDycmy5JztEZNC+l/qGIBuaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794978585;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794978587;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=N8ecUXIE9NFI+o21qW2ZRILVB8vvpu2X3KPk366UveA=;
-	b=obJw3hwEr8zQw2ggevx7bim9O76QXaHAmd/Pbmpge3k+7sBRhhIgGCHS4sASEkx73Gdh
-	 ZgfJgN8ceF7jPRi75u2Q+isbG1RXEJM6azLS8aReixNRtDKoDoTBS7oAeZqMbxqP+E2rL
-	 IzSgYkI6q0zkUGg38llPhhKiL/8euBUN2p7FlvSUn6RDzAz9RCWukNGXVj3r3oEMykAdR
-	 aFUls31k2rkGlwpDkQsGc95rgOU/ZgFcQY3tGGVxrL2h/xDAoIUVv6FmV5wkMN6gI3Zve
-	 V4lCw9pVywcwEC4wulK+/+70R6LIx34I54clo2MkEY+oOlx8MJOlySAftpfcnXlHtNg==
+	bh=M1t0OG5hPXiCiaFk6hIj2QHLA/2XZTBsU25238l1JRs=;
+	b=T5nLnpmvtXaGd+iKL4ixC8EXayQL46/PpGtHH65ascIdHWWTJzGDY9p4PrGLNYXc1Fl2
+	 UH//9HdaRtsFWMDHETKQHRnWgxqradDWOtV6IBFpdDPybHY9VQz11BlTcigkMsAHunBWH
+	 4qyPh9cqnOHzgxX1WZG6fHJS/wk2V4N5xzcfAjj1G9ET6Pfn5WKgDf5wnBd9XRj0ZTfFn
+	 2dGJriwyfBQ9TELtJRkvJgeBQKkBj2JFKcGQqfO27bcaR3vLAMs8F6XIuYt+zHJKKdQPp
+	 bPO+vA3szgOLG7lLdt5lRcENQ1S6Ke6x08HwxpLkzoLNrLNvm4P5LtJvpsbbKBUCCDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="R/xqUGrj";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZwUzcB70;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7296606A31C
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 05:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F31B606A325
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 05:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=R/xqUGrj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C5701F000C4;
-	Wed, 18 Nov 2026 05:09:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZwUzcB70
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8291F000C4;
+	Wed, 18 Nov 2026 05:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794978584;
-	bh=N8ecUXIE9NFI+o21qW2ZRILVB8vvpu2X3KPk366UveA=;
+	s=k20260515; t=1794978587;
+	bh=M1t0OG5hPXiCiaFk6hIj2QHLA/2XZTBsU25238l1JRs=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=R/xqUGrjkpvyjh9rxGZyESrTZe0TORZlvBjonU+H/UBJFk8D/Zm0EDTrCQdVbSnFF
-	 Q43DKXUHgxz4Ta0Z+uPbAkwwdYmqum097ZagvjTjlY7Puxd/giCpIEh0R5sH/CeXgB
-	 wgdQtHzHDHVE0mnlV+CQOw2GjD5ZAG/YvN9iAicimqYlQOOnD6CiPzLKT2MYpTuyeq
-	 iaR+Mo2y87Fwv2ajL6w1y3ANyDU2FB6fvekv5/y+SOX+oUvYcs93yTc+1jMR4aXPA3
-	 2b8Z4WqbqjQ6h7W2NlUp6F1z9xLRje7q7ElsnCrcA3PS2JJN4r30LUhnwFEpzX4W7Z
-	 D5/3T3Z2U8kXg==
-Message-ID: <sashiko-outbox-220138@kernel.org>
+	b=ZwUzcB70grBFLs9IGOjbyF70guJqjsxk88ZAUaiytABfn6ddCHSRmOVmLhb7zEaRn
+	 HrFxNNyM1NhJLr9E+BEFYYCvbPvnEHixd6OvpfG9xzKUXgIlJWTONC5Rd1Jb1VioOq
+	 jhOSfj7leJNVLVPiKqDFqj5Y4n8AZj9pyozGacNzkix2nzC8LVNvDYlNdPSS6YhFUP
+	 qCCP0Py9RukHEw2pAJqhIt8ByUG1mNECibnNhlsqhrWSs8PPQ4oSOXLfHczy1EbThH
+	 kB1clV3JBRnp0IydGuampvhC6YsMD5LVx6fzvvuOtbOYZuJS2atXiNI/ZL5TIui8XM
+	 IRdyK02nsrf2A==
+Message-ID: <sashiko-outbox-220139@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 03/13] rootns: Track init lifecycle via
- copy_process() and pid_namespace
+Subject: Re: [RFC PATCH 04/13] rootns: Add rootns_create() system call
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
@@ -61,12 +60,12 @@ Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
  Khan" <skhan@linuxfoundation.org>, "Steven Rostedt" <rostedt@goodmis.org>, "Suren
  Baghdasaryan" <surenb@google.com>, "Valentin Schneider" <vschneid@redhat.com>, "Vincent
  Guittot" <vincent.guittot@linaro.org>, "Vlastimil Babka" <vbabka@kernel.org>
-In-Reply-To: <20261117050841.3289652-4-jarkko@kernel.org>
+In-Reply-To: <20261117050841.3289652-5-jarkko@kernel.org>
 References: <20261117050841.3289652-1-jarkko@kernel.org>
- <20261117050841.3289652-4-jarkko@kernel.org>
+ <20261117050841.3289652-5-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 05:09:42 +0000
+Date: Wed, 18 Nov 2026 05:09:44 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -76,186 +75,148 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 4 potential
+Thank you for your contribution! Sashiko AI review found 2 potential
 issues to consider:
-- [High] rootns: UAF and refcount imbalance in exit_rootns() via
-  unreferenced pid_ns->rootns
-- [High] rootns: unreferenced pid_ns->rootns pointer in exit_rootns()
-  causes UAF
-- [Medium] rootns: copy_rootns() publishes init_pid before
-  attach_pid(PIDTYPE_PID)
-- [Medium] rootns: missing is_child_reaper() and locked state checks in
-  copy_rootns()
+- [High] rootns: cred->user mismatch in create_rootns_creds() when
+  ROOTNS_USER is set
+- [High] rootns: UAF via unreferenced pid_ns_for_children->rootns in
+  create_rootns()
 --
 
-commit 257575ec869d3f0e55e6c1a6f99ef3b0751d2a44
+commit b0275fb9f88bbbd1444c1c6937b46e36c52e8fe7
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-rootns: Track init lifecycle via copy_process() and pid_namespace
+rootns: Add rootns_create() system call
 
-This commit adds rootns lifecycle tracking hooks to copy_process(),
-create_new_namespaces(), and zap_pid_ns_processes() to record the
-bootstrapped init task's PID and capture its exit status and resource usage
-when the PID namespace terminates.
-
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 5efceb8d58a78..99e22b3cd213e 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-[ ... ]
-> @@ -2565,6 +2566,7 @@ __latent_entropy struct task_struct *copy_process(
->  			attach_pid(p, PIDTYPE_TGID);
->  			attach_pid(p, PIDTYPE_PGID);
->  			attach_pid(p, PIDTYPE_SID);
-> +			copy_rootns(p, NULL);
->  			__this_cpu_inc(process_counts);
->  		} else {
->  			current->signal->nr_threads++;
-
-[Severity: Medium]
-Does calling copy_rootns() before attach_pid(p, PIDTYPE_PID) publish
-c->init_pid and ROOTNS_RUNNING before pid->tasks[PIDTYPE_PID] is populated?
-
-CPU0                                    CPU1
-copy_process()
-  attach_pid(p, PIDTYPE_TGID)
-  copy_rootns(p, c)
-    spin_lock(&c->lock)
-    c->init_pid =3D get_task_pid(p, ...)
-    c->state =3D ROOTNS_RUNNING
-    spin_unlock(&c->lock)
-                                        __rootns_kill()
-                                          spin_lock(&c->lock)
-                                          pid =3D get_pid(c->init_pid)
-                                          spin_unlock(&c->lock)
-                                          kill_pid(pid, sig, priv)
-                                            ...
-                                              pid_task(pid, PIDTYPE_PID)
-                                              --> NULL (-ESRCH)
-  attach_pid(p, PIDTYPE_PID)
-
-__rootns_kill() does not take tasklist_lock, so if a signal is sent during
-this window (for example from rootns_release() when ROOTNS_KILL_ON_CLOSE is
-set), kill_pid() fails with -ESRCH and drops the signal, leaving the
-container init process running.
+This commit adds the rootns_create() system call to allocate a detached
+root namespace with dedicated mount and PID namespaces plus optional
+namespaces selected by flags, returning a control file descriptor.
 
 > diff --git a/kernel/rootns.c b/kernel/rootns.c
-> index e75d918b93ec5..e3b203322ae23 100644
+> index e3b203322ae23..904d75ce9d909 100644
 > --- a/kernel/rootns.c
 > +++ b/kernel/rootns.c
-[ ... ]
-> @@ -105,3 +106,42 @@ bool is_rootns_file(struct file *file)
->  {
->  	return file->f_op =3D=3D &rootns_fops;
+> @@ -145,3 +145,143 @@ void exit_rootns(struct pid_namespace *pid_ns, stru=
+ct task_struct *tsk)
+>  	wake_up_poll(&c->waitq, EPOLLHUP);
+>  	put_rootns(c);
 >  }
 > +
-> +void copy_rootns(struct task_struct *tsk, struct rootns *c)
+> +/*
+> + * Create credentials for a rootns. Drop keyrings from the new credentia=
+l to
+> + * avoid unnecessary pinning.
+> + */
+> +static const struct cred *create_rootns_creds(unsigned int flags)
 > +{
-> +	if (likely(!c || READ_ONCE(c->state) !=3D ROOTNS_FORKING))
-> +		return;
+> +	struct cred *new;
+> +	int ret;
 > +
-> +	scoped_guard(spinlock, &c->lock) {
-> +		get_rootns(c);
-> +		WRITE_ONCE(c->init_pid, get_task_pid(tsk, PIDTYPE_TGID));
-> +		WRITE_ONCE(c->state, ROOTNS_RUNNING);
-> +	}
-> +	wake_up_all(&c->waitq);
-> +}
-
-[Severity: Medium]
-Can copy_rootns() record a non-reaper task as c->init_pid or race with
-exit_rootns() to overwrite ROOTNS_DEAD back to ROOTNS_RUNNING?
-
-In commit "rootns: Add rootns_create() system call", create_rootns() sets
-ns->pid_ns_for_children->rootns =3D c and marks the PID namespace active in
-pid_ns_tree before rootns_enter() is called. A host task with
-CAP_SYS_ADMIN can open that PID namespace via open_by_handle_at(), join it
-via setns(CLONE_NEWPID), and fork() PID 1 without bootstrapping c. Because
-copy_process() calls copy_rootns() for any thread_group_leader(p) rather
-than checking is_child_reaper(pid), a later rootns_enter() spawns PID 2 and
-commits it as c->init_pid.
-
-Furthermore, copy_rootns() checks c->state =3D=3D ROOTNS_FORKING outside
-c->lock without re-checking under the lock:
-
-CPU0                                    CPU1
-copy_rootns(tsk, c)
-  READ_ONCE(c->state) =3D=3D ROOTNS_FORKING
-                                        zap_pid_ns_processes(pid_ns)
-                                          exit_rootns(pid_ns, me)
-                                            spin_lock(&c->lock)
-                                            c->state =3D ROOTNS_DEAD
-                                            spin_unlock(&c->lock)
-                                            put_rootns(c)
-  spin_lock(&c->lock)
-  get_rootns(c)
-  c->init_pid =3D ...
-  c->state =3D ROOTNS_RUNNING  <-- overwrites ROOTNS_DEAD
-  spin_unlock(&c->lock)
-
-Checking is_child_reaper(pid) and re-checking c->state =3D=3D ROOTNS_FORKING
-under c->lock would prevent both issues.
-
+> +	new =3D prepare_creds();
+> +	if (!new)
+> +		return ERR_PTR(-ENOMEM);
 > +
-> +void exit_rootns(struct pid_namespace *pid_ns, struct task_struct *tsk)
-> +{
-> +	struct rootns *c =3D pid_ns->rootns;
-> +	struct task_struct *leader;
-> +	struct rusage rusage;
-> +	int status;
+> +#ifdef CONFIG_KEYS
+> +	key_put(new->thread_keyring);
+> +	new->thread_keyring =3D NULL;
+> +	key_put(new->process_keyring);
+> +	new->process_keyring =3D NULL;
+> +	key_put(new->session_keyring);
+> +	new->session_keyring =3D NULL;
+> +	key_put(new->request_key_auth);
+> +	new->request_key_auth =3D NULL;
+> +#endif
+> +	if (!(flags & ROOTNS_USER))
+> +		return new;
 > +
-> +	if (!c)
-> +		return;
+> +	ret =3D create_user_ns(new);
+> +	if (ret < 0)
+> +		goto err;
+> +	new->euid =3D new->user_ns->owner;
+> +	new->egid =3D new->user_ns->group;
 > +
-> +	leader =3D tsk->group_leader;
-> +	status =3D (tsk->signal->flags & SIGNAL_GROUP_EXIT) ?
-> +		 tsk->signal->group_exit_code : leader->exit_code;
-> +	getrusage(leader, RUSAGE_BOTH, &rusage);
-> +
-> +	scoped_guard(spinlock, &c->lock) {
-> +		c->exit_code =3D status;
-> +		c->rusage =3D rusage;
-> +		WRITE_ONCE(c->state, ROOTNS_DEAD);
-> +	}
-> +
-> +	pid_ns->rootns =3D NULL;
-> +	wake_up_poll(&c->waitq, EPOLLHUP);
-> +	put_rootns(c);
-> +}
+> +	new->uid =3D new->euid;
+> +	new->suid =3D new->euid;
+> +	new->fsuid =3D new->euid;
+> +	new->gid =3D new->egid;
+> +	new->sgid =3D new->egid;
+> +	new->fsgid =3D new->egid;
+> +	ret =3D set_cred_ucounts(new);
 
 [Severity: High]
-Can exit_rootns() drop an unheld reference on c when pid_ns was entered
-without copy_rootns()?
+Does updating new->uid to new->euid without updating new->user leave
+new->user pointing to the caller's old real UID user_struct?
 
-In commit "rootns: Add rootns_create() system call", create_rootns() sets
-ns->pid_ns_for_children->rootns =3D c without taking a reference on c; the
-matching get_rootns(c) only happens in copy_rootns() when bootstrapping in
-ROOTNS_FORKING state. If a privileged host process enters pid_ns via
-open_by_handle_at() and setns(CLONE_NEWPID) and forks a child reaper,
-copy_rootns() is called with c =3D=3D NULL and never increments c->usage. W=
-hen
-that child reaper exits, zap_pid_ns_processes() -> exit_rootns() sees
-pid_ns->rootns =3D=3D c and calls put_rootns(c), dropping the open rootns f=
-ile
-descriptor's own reference and freeing c while the file descriptor is still
-open.
+prepare_creds() clones new->user from current->cred->user.  When the
+caller's real UID differs from its effective UID (for example, a manager
+process with real UID 0 that switched its effective UID via seteuid()
+before calling rootns_create(ROOTNS_USER)), tasks entering the rootns
+inherit new->user =3D=3D INIT_USER while running as the unprivileged UID,
+bypassing RLIMIT_NPROC checks in copy_process() and misattributing
+per-user_struct resource accounting.
+
+Updating new->user via alloc_uid(new->uid) and freeing the old reference
+with free_uid(), as set_user() does in kernel/sys.c, would keep new->user
+consistent with new->uid.
+
+> +	if (ret < 0)
+> +		goto err;
+> +	return new;
+> +
+> +err:
+> +	abort_creds(new);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +/*
+> + * Create a new rootns.
+> + */
+> +static struct rootns *create_rootns(unsigned int flags)
+> +{
+
+[ ... ]
+
+> +	ns =3D create_new_namespaces(clone_flags, current->nsproxy, cred->user_=
+ns,
+> +				   NULL);
+> +	if (IS_ERR(ns)) {
+> +		ret =3D PTR_ERR(ns);
+> +		goto err_put;
+> +	}
+> +
+> +	c->ns =3D ns;
+> +	ns->rootns =3D c;
+> +	ns->pid_ns_for_children->rootns =3D c;
+> +	nsproxy_ns_active_get(ns);
 
 [Severity: High]
-Can exit_rootns() dereference a dangling pid_ns->rootns pointer after the
-rootns file descriptor has been closed?
+Can storing an uncounted pointer in ns->pid_ns_for_children->rootns before
+copy_rootns() runs lead to a use-after-free in exit_rootns()?
 
-Because create_rootns() stores an unreferenced c in pid_ns->rootns and
-put_rootns() frees c without clearing pid_ns->rootns, any reference that
-outlives the rootns file descriptor before rootns_enter() runs leaves
-pid_ns->rootns pointing to freed memory. If a process holds an nsfs file
-descriptor to pid_ns, closes the rootns file descriptor (freeing c), and
-then enters pid_ns via setns(CLONE_NEWPID), forks, and exits,
-zap_pid_ns_processes() -> exit_rootns() dereferences the freed c and
-double-frees it via put_rootns(c). Assigning pid_ns->rootns =3D get_rootns(=
-c)
-in copy_rootns() when the bootstrap init task is attached would avoid
-storing an unreferenced pointer in create_rootns().
+create_new_namespaces() adds ns->pid_ns_for_children to the namespace tree
+and nsproxy_ns_active_get() marks it active, while the reference on c that
+pairs with exit_rootns() -> put_rootns(c) is only taken later in
+copy_rootns() when c->state is ROOTNS_FORKING:
+
+kernel/rootns.c:copy_rootns() {
+    ...
+	scoped_guard(spinlock, &c->lock) {
+		get_rootns(c);
+		WRITE_ONCE(c->init_pid, get_task_pid(tsk, PIDTYPE_TGID));
+		WRITE_ONCE(c->state, ROOTNS_RUNNING);
+	}
+}
+
+A process with CAP_SYS_ADMIN in init_user_ns and init_pid_ns can open the
+active PID namespace via open_by_handle_at(FD_NSFS_ROOT, ...), enter it
+with setns(), and fork a child that becomes child_reaper without going
+through ROOTNS_FORKING.  If the rootns fd was already closed, put_rootns()
+frees c without clearing pid_ns->rootns, and when that child exits,
+zap_pid_ns_processes() -> exit_rootns() dereferences and frees c a second
+time.  If the rootns fd is still open when the child exits, exit_rootns()
+drops the control fd's sole reference on c, freeing it while the fd still
+references it.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117050841.3289=
-652-1-jarkko@kernel.org?part=3D3
+652-1-jarkko@kernel.org?part=3D4
