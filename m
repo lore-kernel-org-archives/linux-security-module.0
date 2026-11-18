@@ -1,47 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795043717;
-	b=N5uN41aQIJ0MbhqtlTNBsspWv/9i+hl3vLLVlhjamDfaOD4ZA9OmY+0Jd+M3Cya4OOif
-	 g4zaDG4MG7VUpDWfP9KupjDZNcGPZ/IoOxM3U5nItaowEFnYijU8xnxGocDuEcR+r1cso
-	 7rUnG1LYS1/fFVuzsrFjkjNhOe/dsgxTERRJFdpwNMgFAuxBEmjAsBljH+qVMUz/0NAzo
-	 bmOQq6YombDNxqcLa92bxFHa7Wot86Q1z6TNAVinGWBuMha/RuzmnBIMnYntxVtvUFO6z
-	 dxaVdaljSrAt/JNif3UVriJFNYkrArUx57/vV3zvsfkOj97I8QbJmwaF6YSbsORF21A==
+	t=1795043719;
+	b=q86pobF9IsUpen3qsTiWcqmzgkOLvKh//PJiG1YfhoNL+7XNsGfVHlRzwBSnZBGEK3lh
+	 e5RnJ6Wmv4NOuQqN9YJaOUfxIPDxG3dDcnE9bTjtzwSfp8hK21OxJX+VYlZyA01GpSCLX
+	 pcpQvNtXX9bNuIUTl5Qeqn6Fys5RrqqA6Ri7OnoJnO9GEFOGPCkANiDft/uq3pcH+dT55
+	 xsX4r6nvAiDumA8fcyps7PTFEwIgX70se65SfjYObq5qX5adCiB4Ba08Pdm8E3+HL21pT
+	 GKhkvIU9jDr7pH0HGr1WAw1Jf70PtC5YBR37K0fX1gVl15SzsZulhjTYe9a0oGGqYTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795043717;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795043719;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=F+/dq5bMDr1Qk9X1QNnZwwuwwn6jJ4gYLypHwsySwcY=;
-	b=Bjs/ZZqYulTeFEznLk8ZZ06UxUKjtSxaZesd7RAZJoh6Cza7mPKPX4jY3DNazlddeanB
-	 gAm/eSLm3Nwkps9haHnGhI1d42i+DzFEMVyesVKegK4NSyb0a95NzJijZJxMQVkkQLQoN
-	 vkdtekPrFGEkVMYGsJ6nUzxnCrfgb0d4mkX7fYaqliQ5cDhyHnu+ITotbE7AMPcGoHutD
-	 81SeYqH9+CeadfZ5QNdfy+EBsf42Sa0P4Ecfqylm0t3Rp3OH7vtuTCCY5acAKe8e56uKH
-	 73msnkxAz47jUtWWEIc0dXcADRzZst0lCu3lrQgKw4hYPgmCqTSz2WV/gYkAinYQq5Q==
+	bh=0UgqqzoOwyVS9t15jclCnf/wvXsyI8B5DG+Zmj+8bS0=;
+	b=DWZ066h1jF6Ve6QJHSl1J/vUAUw+Tn60fj1gSvBfn4IokrAWYO9l+tuvWJFGnopUzddF
+	 KywyYuI/xenN2HfpeuUCemgQQMjy951QTkA8zklrIjcpmpK8HLUcJ0tDk6hAazmo3AyKO
+	 LDN3ApkJVd+/XU25zyL2iOuWbplNJvEWgzALKVPrWEjFw/EWO6MTHgCPpwkR29WuTxAtS
+	 j/snbVgeMKNwU6gk40MMUs8VxlDB3Egh9ziBkx1j20CCLxIkL7mpki0GvuXH7jKY5qC5j
+	 jFfNb9x1AjBsaEURbPv2ZyiWb+F2Sw08qO34jHv7lM/BlabLgm1dIJApTgHDOhUw0ig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k2EHjrdO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="l6rtjrD/";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928DB606A325
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 23:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C36606A32C
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 23:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k2EHjrdO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835271F000C4;
-	Wed, 18 Nov 2026 23:15:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l6rtjrD/
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B36EB1F000C4;
+	Wed, 18 Nov 2026 23:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795043717;
-	bh=F+/dq5bMDr1Qk9X1QNnZwwuwwn6jJ4gYLypHwsySwcY=;
+	s=k20260515; t=1795043719;
+	bh=0UgqqzoOwyVS9t15jclCnf/wvXsyI8B5DG+Zmj+8bS0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=k2EHjrdOFeLkTioyxvuz2DLyPOHOOKRanzAIL1jkKtcYLFVmA4ztYe02aYf5BxWVd
-	 VUELinKB45mjXqRpk1/oxju8SVVYJtkqs1B1CqsRA7IMdtDJef2Pvy554AOQxosmQ5
-	 8J9nohPw9nyZ6J1xeQ8hvl1bgjt+oHdm/bKo/nSyOtDPMevQLiubzzPCrP98JLWWPH
-	 f/8JP/IRwQBlYmyrHa2aop0cua+dbt0avT6trSsyB0UGx3zaCJPFKK89KXPUAlMv7v
-	 wm6U6ZN5cQBbJfPuhvDyVY1y6BFRewpm2ThwbxH/7SKixBIb3PAHGUlSDP0rWRYJCd
-	 f4ocfHO29OKgA==
-Message-ID: <sashiko-outbox-222160@kernel.org>
+	b=l6rtjrD/sNF1zdIwQUSlHlBphcfKpLLr4193bBkAHPK8FY68i/X/NfFoBUGNOpPoA
+	 LRZQVsoIsRwnMg3sIZTFVhGppe3mCYht1bqttr3Hh38PkHCEzBwNK3H4iHPThgD861
+	 h7wo3ALRjMLuVZldJ+lLb168bg0GGE4xToxauIUgu3mT/gHcA2MZnlY3zrlCo0PIoM
+	 tr0nMPC5dxQa0ErvFEgseUTfuzwudaq8sQ/ZZ/AxR+IkocvOBLVxw6aER6oqQ3/quo
+	 W03kefwR4wQZ1LNVuB736EGIFrbHKq9gLY30K9PPXRlBzuQH6rX2SvNRJhxjkI0gZ4
+	 TEUKVe3qGkwIg==
+Message-ID: <sashiko-outbox-222161@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v2 06/13] rootns: Add rootns_kill() system call
+Subject: Re: [RFC PATCH v2 07/13] fork: Support CLONE_INTO_ROOTNS in
+ clone3()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
@@ -62,12 +63,12 @@ Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
  Baghdasaryan" <surenb@google.com>, "Valentin Schneider" <vschneid@redhat.com>, "Vincent
  Guittot" <vincent.guittot@linaro.org>, "Vlastimil Babka" <vbabka@kernel.org>, "Zygmunt
  Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261117231352.3816603-7-jarkko@kernel.org>
+In-Reply-To: <20261117231352.3816603-8-jarkko@kernel.org>
 References: <20261117231352.3816603-1-jarkko@kernel.org>
- <20261117231352.3816603-7-jarkko@kernel.org>
+ <20261117231352.3816603-8-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 23:15:15 +0000
+Date: Wed, 18 Nov 2026 23:15:17 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -77,135 +78,246 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
+Thank you for your contribution! Sashiko AI review found 5 potential
 issues to consider:
-- [High] rootns: fork() race in rootns_kill_members() missing
-  tasklist_lock
-- [High] rootns: missing PID namespace ancestry check in
-  rootns_kill_members()
+- [Critical] cred: missing dumpability reset and shared mm on
+  CLONE_INTO_ROOTNS
+- [Critical] cred: privilege escalation and LSM bypass in
+  may_enter_rootns_creds()
+- [High] rootns: UAF and refcount underflow on pid_ns->rootns without
+  CLONE_INTO_ROOTNS
+- [Medium] fork: copy_rootns() sets ROOTNS_RUNNING before
+  attach_pid(PIDTYPE_PID)
+- [Medium] nsproxy: missing timens_commit() and CLONE_VM check in
+  copy_namespaces()
 --
 
-commit ea67311730397795196206953e1b7e54d487cc13
+commit 32f57f44b3303d6e1266e96415fc759ba100f243
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-rootns: Add rootns_kill() system call
+fork: Support CLONE_INTO_ROOTNS in clone3()
 
-This commit adds the rootns_kill() system call to walk a root namespace's
-PID namespace IDR and deliver a signal to each member thread group.
+This commit adds CLONE_INTO_ROOTNS and struct clone_args.rootns to allow
+clone3() to spawn a child process directly into an initialized root
+namespace.
 
-> diff --git a/kernel/rootns.c b/kernel/rootns.c
-> index 83ab759a31ecd..90a070dbf4a82 100644
-> --- a/kernel/rootns.c
-> +++ b/kernel/rootns.c
+> diff --git a/kernel/cred.c b/kernel/cred.c
+> index d01df40a9a386..afc91eed26563 100644
+> --- a/kernel/cred.c
+> +++ b/kernel/cred.c
+
 [ ... ]
-> @@ -389,3 +390,67 @@ COMPAT_SYSCALL_DEFINE4(rootns_wait, int, rootnsfd,
->  	return ret;
+
+> @@ -251,6 +255,25 @@ struct cred *prepare_exec_creds(void)
+>  	return new;
 >  }
->  #endif
+> =20
+> +static bool cred_cap_issubset(const struct cred *set,
+> +			      const struct cred *subset);
 > +
-> +static int rootns_kill_members(struct rootns *rootns, int sig)
+> +static bool may_enter_rootns_creds(const struct cred *old,
+> +				   const struct cred *target)
 > +{
-> +	struct pid_namespace *pid_ns =3D rootns->ns->pid_ns_for_children;
+> +	if (cred_cap_issubset(old, target) &&
+> +	    uid_eq(old->euid, target->euid) &&
+> +	    gid_eq(old->egid, target->egid))
+> +		return true;
+> +
+> +	if (old->user_ns =3D=3D target->user_ns)
+> +		return false;
+> +
+> +	return ns_capable(target->user_ns->parent, CAP_SYS_ADMIN) &&
+> +	       ns_capable(target->user_ns->parent, CAP_SETUID) &&
+> +	       ns_capable(target->user_ns->parent, CAP_SETGID);
+> +}
 
-[Severity: High]
-Does rootns_kill_members() need to check that the caller's active PID
-namespace is an ancestor of pid_ns before delivering signals?
+[Severity: Critical]
+Can a caller escalate privileges or bypass LSM restrictions when
+copy_creds() replaces the child's credentials with dup_creds(rootns->cred)?
 
-kill_pid(pid, sig, 0) passes SEND_SIG_NOINFO to send_signal_locked():
+dup_creds(rootns->cred) copies all fields of struct cred from rootns->cred,
+including uid, suid, fsuid, gid, sgid, fsgid, group_info, cap_bset,
+cap_effective, cap_inheritable, cap_ambient, and security (passing
+rootns->cred as old to security_prepare_creds()).
 
-kernel/signal.c:send_signal_locked() {
-    ...
-	if (info =3D=3D SEND_SIG_NOINFO) {
-		/* Force if sent from an ancestor pid namespace */
-		force =3D !task_pid_nr_ns(current, task_active_pid_ns(t));
-	}
-    ...
+In the first branch of may_enter_rootns_creds(), only cap_permitted, euid,
+and egid are checked.  A process that creates or inherits a rootns fd and
+then drops its real/saved UIDs or GIDs, clears supplementary groups with
+setgroups(), drops capabilities from cap_bset or cap_effective, sets
+no_new_privs, or confines itself with an LSM such as Landlock still passes
+this check and spawns a child with the original unconfined rootns->cred.
+
+In the second branch, when old->user_ns !=3D target->user_ns, only
+ns_capable() on target->user_ns->parent is checked, without verifying
+cred_cap_issubset(old, target) or checking that target's UIDs, GIDs, and
+group_info are mapped into target->user_ns->parent.  If a process with
+GLOBAL_ROOT_UID enters a child user namespace whose parent is owned by an
+unprivileged user and calls rootns_create(0), the unprivileged owner of
+target->user_ns->parent can clone into that rootns and gain
+GLOBAL_ROOT_UID.
+
+Conversely, when old->user_ns =3D=3D target->user_ns and old->euid !=3D
+target->euid, the early return rejects callers even when they hold
+CAP_SYS_ADMIN, CAP_SETUID, and CAP_SETGID in target->user_ns.
+
+> @@ -260,7 +283,8 @@ struct cred *prepare_exec_creds(void)
+>   * The new process gets the current process's subjective credentials as =
+its
+>   * objective and subjective credentials
+>   */
+> -int copy_creds(struct task_struct *p, u64 clone_flags)
+> +int copy_creds(struct task_struct *p, u64 clone_flags,
+> +	       struct rootns *rootns)
+>  {
+>  	struct cred *new;
+>  	int ret;
+> @@ -283,7 +307,13 @@ int copy_creds(struct task_struct *p, u64 clone_flag=
+s)
+>  		return 0;
+>  	}
+> =20
+> -	new =3D prepare_creds();
+> +	if (rootns) {
+> +		if (!may_enter_rootns_creds(current_cred(), rootns->cred))
+> +			return -EPERM;
+> +		new =3D dup_creds(rootns->cred);
+> +	} else {
+> +		new =3D prepare_creds();
+> +	}
+>  	if (!new)
+>  		return -ENOMEM;
+
+[Severity: Critical]
+Does switching p to rootns->cred leave p->exec_state->dumpable set to
+TASK_DUMPABLE_OWNER and allow sharing current->mm across privilege
+boundaries?
+
+In copy_process(), copy_exec_state() runs before copy_creds() and copies
+current->exec_state (or refcount-shares it when CLONE_VM | CLONE_VFORK is
+used).  Unlike commit_creds(), copy_creds() does not reset dumpability to
+suid_dumpable when UIDs, GIDs, or capabilities change between
+current_cred() and rootns->cred:
+
+kernel/ptrace.c:task_still_dumpable() {
+	...
+	exec_state =3D task_exec_state_rcu(task);
+	if (READ_ONCE(exec_state->dumpable) =3D=3D TASK_DUMPABLE_OWNER)
+		return true;
+	return ptrace_has_cap(exec_state->user_ns, mode);
 }
 
-Without a PID namespace ancestry check (like access_pidfd_pidns() in
-sys_pidfd_send_signal()), a holder of rootnsfd in a sibling or disjoint
-PID namespace has task_pid_nr_ns(current, task_active_pid_ns(t)) =3D=3D 0.
-That sets force =3D true and bypasses SIGNAL_UNKILLABLE in
-sig_task_ignored(), allowing a non-ancestor process to kill or stop the
-PID namespace init with SIGKILL or SIGSTOP.  A caller in a descendant PID
-namespace created inside the rootns can also signal tasks upward in its
-ancestor pid_ns, while a caller inside pid_ns itself has force =3D false so
-SIGKILL and SIGSTOP are ignored on the rootns init process.
+When a dumpable privileged daemon spawns a child into a less-privileged
+rootns, unprivileged tasks in that rootns matching rootns->cred can attach
+via ptrace() or access /proc/<pid>/mem and /proc/<pid>/fd/* before the
+child calls execve().  Because clone3_args_valid() also allows CLONE_VM |
+CLONE_VFORK with CLONE_INTO_ROOTNS, the child shares current->mm with the
+parent daemon, allowing tasks in the target rootns to modify the parent
+daemon's live memory.
 
-> +	bool any_success =3D false;
-> +	bool any_other =3D false;
-> +	bool any_perm =3D false;
-> +	int other_err =3D 0;
-> +	struct pid *pid;
-> +	int nr;
-> +
-> +	if (READ_ONCE(rootns->state) !=3D ROOTNS_RUNNING)
-> +		return -ESRCH;
-> +
-> +	scoped_guard(rcu) {
-> +		idr_for_each_entry(&pid_ns->idr, pid, nr) {
-> +			int err;
-> +
-> +			if (!pid_task(pid, PIDTYPE_TGID))
-> +				continue;
-> +
-> +			err =3D kill_pid(pid, sig, 0);
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 99e22b3cd213e..978605de8428e 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+
+[ ... ]
+
+> @@ -2566,7 +2583,7 @@ __latent_entropy struct task_struct *copy_process(
+>  			attach_pid(p, PIDTYPE_TGID);
+>  			attach_pid(p, PIDTYPE_PGID);
+>  			attach_pid(p, PIDTYPE_SID);
+> -			copy_rootns(p, NULL);
+> +			copy_rootns(p, clone_args_rootns(args));
+>  			__this_cpu_inc(process_counts);
+>  		} else {
+>  			current->signal->nr_threads++;
 
 [Severity: High]
-Can a concurrent fork() still escape signal delivery in
-rootns_kill_members()?
+Can forking into a rootns PID namespace via setns(CLONE_NEWPID) without
+CLONE_INTO_ROOTNS cause a refcount underflow or use-after-free on struct
+rootns?
+
+create_rootns() sets ns->pid_ns_for_children->rootns =3D c without taking a
+reference on c and activates the namespace in ns_tree, while put_rootns()
+frees c without clearing pid_ns_for_children->rootns.  A caller with
+CAP_SYS_ADMIN can open an nsfs fd for pid_ns_for_children via
+open_by_handle_at(FD_NSFS_ROOT, ...), call setns(pidns_fd, CLONE_NEWPID),
+and fork() PID 1 without CLONE_INTO_ROOTNS.  Because clone_args_rootns() is
+NULL, copy_rootns() returns early without calling get_rootns(c), but when
+that PID 1 exits, zap_pid_ns_processes() -> exit_rootns() still
+dereferences pid_ns->rootns and calls put_rootns(c):
+
+kernel/rootns.c:copy_rootns() {
+	if (likely(!c || READ_ONCE(c->state) !=3D ROOTNS_FORKING))
+		return;
+
+	scoped_guard(spinlock, &c->lock) {
+		get_rootns(c);
+		WRITE_ONCE(c->init_pid, get_task_pid(tsk, PIDTYPE_TGID));
+		WRITE_ONCE(c->state, ROOTNS_RUNNING);
+	}
+	wake_up_all(&c->waitq);
+}
+
+If the rootns fd was already closed, exit_rootns() dereferences freed
+memory; if the rootns fd is still open, exit_rootns() drops the fd's
+reference and frees c prematurely.
+
+[Severity: Medium]
+Can a concurrent rootns_kill() or close() with ROOTNS_KILL_ON_CLOSE miss
+the init task because copy_rootns() transitions rootns->state to
+ROOTNS_RUNNING before attach_pid(p, PIDTYPE_PID)?
 
 CPU0                              CPU1
 copy_process()
-  /* queues delayed.node on
-   * current->signal->multiprocess
-   */
-  alloc_pid()
-    /* inserts child pid into
-     * pid_ns->idr (tasks[] empty)
-     */
-                                  rootns_kill_members()
-                                    idr_for_each_entry(&pid_ns->idr, ...)
-                                      /* child pid: pid_task(..., PIDTYPE_T=
-GID)
-                                       * is NULL -> skipped
-                                       */
-                                      /* parent pid: kill_pid() passes
-                                       * PIDTYPE_TGID
-                                       */
-                                        __send_signal_locked()
-                                          /* type > PIDTYPE_TGID is false;
-                                           * delayed.signal not updated
-                                           */
-  write_lock_irq(&tasklist_lock)
-  p->signal->shared_pending.signal =3D
-    delayed.signal;
   attach_pid(p, PIDTYPE_TGID)
+  copy_rootns(p, ...)
+    c->init_pid =3D ...
+    c->state =3D ROOTNS_RUNNING
+                                  SYSCALL_DEFINE2(rootns_kill, ...)
+                                    rootns_kill_members()
+                                      kill_pid(pid, sig, 0)
+                                        pid_task(pid, PIDTYPE_PID)
+                                        --> NULL (-ESRCH)
   attach_pid(p, PIDTYPE_PID)
-  write_unlock_irq(&tasklist_lock)
-                                  /* child never receives sig */
 
-__send_signal_locked() only records signals into t->signal->multiprocess
-for in-flight forks when type > PIDTYPE_TGID, whereas kill_pid() uses
-PIDTYPE_TGID.  For any signal that does not make fatal_signal_pending()
-true on the parent (such as SIGSTOP, SIGHUP, SIGINT, or a caught or
-blocked SIGTERM), the child finishes copy_process() without receiving the
-signal.
+Neither __rootns_kill() nor rootns_kill_members() takes tasklist_lock, so a
+signal sent in this window sees ROOTNS_RUNNING and PIDTYPE_TGID attached,
+but kill_pid() looks up PIDTYPE_PID and fails with -ESRCH.  Calling
+copy_rootns() after attach_pid(p, PIDTYPE_PID) avoids this window.
 
-Because pid_ns->idr is walked without read_lock(&tasklist_lock), a parent
-at a higher IDR index can also allocate a lower, already-visited IDR index
-for its child (after PID wrap-around or via clone3() set_tid) and finish
-attaching the child before the scan reaches the parent, escaping even
-SIGKILL.  In addition, copy_process() calls attach_pid(p, PIDTYPE_TGID)
-before attach_pid(p, PIDTYPE_PID) under tasklist_lock, so unlocked readers
-can see pid_task(pid, PIDTYPE_TGID) !=3D NULL while kill_pid() still sees
-pid_task(pid, PIDTYPE_PID) =3D=3D NULL and returns -ESRCH.
+> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> index 8a3c6d4e94e2a..78a1e1fb2cfd7 100644
+> --- a/kernel/nsproxy.c
+> +++ b/kernel/nsproxy.c
+> @@ -166,12 +167,18 @@ struct nsproxy *create_new_namespaces(u64 flags,
+>   * called from clone.  This now handles copy for nsproxy and all
+>   * namespaces therein.
+>   */
+> -int copy_namespaces(u64 flags, struct task_struct *tsk)
+> +int copy_namespaces(u64 flags, struct task_struct *tsk,
+> +		    struct rootns *rootns)
+>  {
+>  	struct nsproxy *old_ns =3D tsk->nsproxy;
+>  	struct user_namespace *user_ns =3D task_cred_xxx(tsk, user_ns);
+>  	struct nsproxy *new_ns;
+> =20
+> +	if (rootns) {
+> +		get_nsproxy(rootns->ns);
+> +		tsk->nsproxy =3D rootns->ns;
+> +		return 0;
+> +	}
 
-Holding read_lock(&tasklist_lock) and signaling via group_send_sig_info()
-with PIDTYPE_MAX (as zap_pid_ns_processes() and kill_something_info() do)
-would serialize against copy_process() and populate delayed.signal for
-ongoing forks.
+[Severity: Medium]
+Does returning early here skip time namespace VDSO setup when rootns->ns
+has a different time namespace from the caller?
+
+In copy_process(), copy_mm() duplicates current->mm (including any faulted
+[vvar] mappings for old_ns->time_ns) before copy_namespaces() runs.
+Returning early without calling timens_commit() or timens_on_fork() leaves
+the child's [vvar] mapping pointing at the parent's time namespace until
+execve(), and when CLONE_VM | CLONE_VFORK is used, allows tasks sharing an
+mm_struct to have different time namespaces.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117231352.3816=
-603-1-jarkko@kernel.org?part=3D6
+603-1-jarkko@kernel.org?part=3D7
