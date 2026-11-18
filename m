@@ -1,97 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.2
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794961022;
-	b=OAqjhafzEdE99D+pQR6x4+7LWi0EwfWZ3lVM18LnzwnLQDr7QRhfNAKrWYn2QGTQ15uv
-	 Xv6VEqVQ9PXkzt/u1MDPHJyoe1TruJEdDSW83DUGHiXI1AwqPTb+fZBcs4MJ7+1DY8qgI
-	 HzvyAcEX7ImnDDiCqIrSD6plxMArjM0b8ka2ij2JNABkM6IPmwtcLLCQwYlwEYVnfxhmC
-	 W+OZv3Nrk/vm4CytQt3OocY1I83afGV260EoOgTGS/cDmN5HrXUYAgmAy3umgNkx/8qNn
-	 b0NYizs6p4+e2FHmBaCEsbw0jHTRXrzLsQCpVbp5N/9kp+xMS8elus1Wql1pmAkNxkQ==
+	t=1794963165;
+	b=21s6KPRfyFsY/f0JINdrpe9S20zT0jwui8HLwIULYhgsihYm+sohAtjT+e5Br7WFXJ8O
+	 Q/rdFG5vgCbBAKJjMxeNTmN5uBLp//UOkc3AdJxvuhNdkUzdCzkRygDJ7ueX8sQ+r5ZSm
+	 3pfMy8TeUxHb5uRBMn8IRCyxPfXbXZBRLV2N4zQdK6VMBEt9z1rJT7clR97iEZlmMIjcq
+	 RHX3fyFoR8KNGW+utLfNS3qHlkKjY+UwdWMW2cuyySy768zrpbnrzihnsjOJHEod2h60L
+	 j5Ts1AdE+XIAWbjrV2BoHstsl2eHZx5YY9g7C2L6RjebMetSXQoO0qBrrKxGbTYsUZQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794961022;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To:Sender;
-	bh=7Cn7kvyEpPF81PEysHmt35Ci8fEqAoER3KXkfxx0oq8=;
-	b=vluiF4KKqBji1epkz8wi0C5Zr1RD/UccLBmYVBvzjHMW0Rsb1jsfIuYs9Jleglh/6LDE
-	 66ry5GQuO0QVghEvmWVwTCTLIJOQSKA/HBlIsRj1NQkPO/loIBLA54Qx2RyQASc+A8T52
-	 wStDvwk66otjeQCarZ+Lb8dXyHlxk3nKAhFDEQevcCGkZ0hdOhqhdo7PbM5+16/OP0ejm
-	 pgRcjI85jjBFbIQn6aIDoBFwiEv0RXHPDgHKSX5HlnV4aT+8NAlegfS1x/y6v74IR9/KM
-	 OEP5Jx/xx10fKSlWzSZFhazn+dpplMSUvlFsg9dXqB+XWrz2EY2CCIukPbO6xSeOThg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794963165;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=u4E0fQhmGCeFsbiKHI/HoTeHZ7lq7KvgeuRTX4/oJSY=;
+	b=ZYnnEGRDuLeLDxfQNJFTimQ/utzzz6/RCdUl6VNElOfuzhEMeQiTE2Gh8HNpcu1RwXPf
+	 RvVRzKp9vyWRurj8YBpkMO+13VIRvvFWQpGl/XrsTX4n8t26Jg5kLgxawlr8epEChz9n9
+	 +x1/tx2nXRLwEvDGXX6VOmxzqrBTGMc3sGO0DxTWsn2C7Z4ippCPrtxxb77WliS6Hp0gV
+	 Po7tBASF865L0p3dH/31NI1Ob44FppP6EGvdYHb74WyerkRj+D/lGgOmqAB+fQL41W9Kv
+	 hvQ9ixSDqQdjFKq9Nxi+oi4YOWa2LGRn5atbOqlFH7fcXSapsP2r3ISDfTghStFVt/A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zeniv.linux.org.uk;
-	spf=none smtp.mailfrom=ftp.linux.org.uk;
-	dkim=pass header.d=linux.org.uk header.i=@linux.org.uk header.a=rsa-sha256 header.s=zeniv-20220401 header.b=CHOH2EIm;
-	arc=none smtp.remote-ip=62.89.141.173
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=tOC4QT1z;
+	arc=none smtp.remote-ip=95.215.58.2
+Received: from mta1.migadu.com (out-2.mta1.migadu.com [95.215.58.2])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D3C606A31C;
-	Wed, 18 Nov 2026 00:17:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14D3C606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBFB606A32A
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 00:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1CBFB606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.a=rsa-sha256 header.s=zeniv-20220401 header.b=CHOH2EIm
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7Cn7kvyEpPF81PEysHmt35Ci8fEqAoER3KXkfxx0oq8=; b=CHOH2EImE32MCKC26QN/24GUrd
-	FBPcI8h/GIcU5ew7o/3rkJXl0BLdIeW7EOEQtMJdSJPzYII29UlVG2JTS5LXEJMYNgr1FvxHbgpd0
-	wrs3m/Xk7A7WTFbuCZuerSAToP2t1LgF0RJCQ1l4R5X2F8IxOGOhv0wJjpZ72x7SvOPqh8bMSNxFM
-	Q1x1tZUC1HinlKerwu2CcDccLmVm8IDK8gfVV57Chx/qlWsowc8nemFxbIXaBkhIjYmr72boTXSUL
-	GuwNXIlWTYrsD2IP9qolOSmjGc0P8Whak/ciC2rL8MnPtzJtyKRrxH3G3ntipwi7x8qAZ5yTkvBLb
-	NA4Y86WQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xTTLt-00000007BaR-1POq;
-	Wed, 18 Nov 2026 00:16:41 +0000
-Date: Wed, 18 Nov 2026 00:16:41 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Cai Xinchen <caixinchen1@huawei.com>
-Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com,
-	brauner@kernel.org, jack@suse.cz, amir73il@gmail.com,
-	andrii@kernel.org, apparmor@lists.ubuntu.com, ast@kernel.org,
-	axboe@kernel.dk, bpf@vger.kernel.org, casey@schaufler-ca.com,
-	cel@kernel.org, cem@kernel.org, chenxiaosong@chenxiaosong.com,
-	code@tyhicks.com, corbet@lwn.net, Dai.Ngo@oracle.com,
-	dakr@kernel.org, daniel@iogearbox.net, dhowells@redhat.com,
-	dlemoal@kernel.org, dmitry.kasatkin@gmail.com,
-	driver-core@lists.linux.dev, dsterba@suse.com,
-	ecryptfs@vger.kernel.org, eddyz87@gmail.com, emil@etsalapatis.com,
-	eric.snowberg@oracle.com, exfat@lists.linux.dev,
-	georgia.garcia@canonical.com, gregkh@linuxfoundation.org,
-	hch@lst.de, hirofumi@mail.parknet.co.jp, hyc.lee@gmail.com,
-	ihor.solodrai@linux.dev, jlayton@kernel.org, jmorris@namei.org,
-	johan@kernel.org, john.fastabend@gmail.com,
-	john.johansen@canonical.com, jolsa@kernel.org, kpsingh@kernel.org,
-	linkinjeon@kernel.org, linux-api@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, liubaolin12138@163.com,
-	martin.lau@linux.dev, mason@kernel.org,
-	mathieu.desnoyers@efficios.com, matt@bobrowski.net,
-	memxor@gmail.com, mhiramat@kernel.org, miklos@szeredi.hu,
-	neil@brown.name, netfs@lists.linux.dev, ntfs@lists.linux.dev,
-	okorniev@redhat.com, omosnacek@gmail.com,
-	penguin-kernel@i-love.sakura.ne.jp, rafael@kernel.org,
-	rdunlap@infradead.org, roberto.sassu@huawei.com,
-	rostedt@goodmis.org, selinux@vger.kernel.org,
-	senozhatsky@chromium.org, serge@hallyn.com, sj1557.seo@samsung.com,
-	skhan@linuxfoundation.org, song@kernel.org,
-	stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
-	tom@talpey.com, yonghong.song@linux.dev, yuezhang.mo@sony.com,
-	zohar@linux.ibm.com, utilityemal77@gmail.com, lujialin4@huawei.com
-Subject: Re: [PATCH -next -v4 02/17] LSM: pass struct path to the
- inode_setsecctx hook
-Message-ID: <20261118001641.GA1669148@ZenIV>
-References: <20261117150542.1169451-1-caixinchen1@huawei.com>
- <20261117150542.1169451-3-caixinchen1@huawei.com>
- <20261117184342.GR989762@ZenIV>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=tOC4QT1z
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=jAcKC7XNRVh0GKcOuxn1Fu7bTvbspwLeOY4x6dh/4d4=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1794963163; v=1; x=1795567963;
+ b=tOC4QT1z8jK2RG9eRb9Ibc70UQ38UNsYD2ncTafZVocMYFKDQVVZNcRrCtZZKGBpBINLUGu7
+ sxYkJz9l3DHtZCWCh21VQCm8Li49LLHKQyfcMt4DdyxpbyjW+1m4WR33PNKshm6SKBAermUeaF7
+ hMX6Akw9TjYfKdGzJwO20LPo=
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id c0217c32623d0320;
+	Wed, 18 Nov 2026 00:52:42 +0000
+X-Mizu-Trace-ID: c0217c32623d0320
+X-Migadu-Flow: FLOW_OUT
+Message-ID: <9695ec3d-7b81-488d-989f-0bd411d673f2@linux.dev>
+Date: Tue, 17 Nov 2026 17:52:38 -0700
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -101,52 +58,176 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261117184342.GR989762@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] bpf, lsm: new first argument in 7.4 inode hooks silently
+ breaks BPF LSMs
+To: roblabla <linux@roblab.la>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Paul Moore <paul@paul-moore.com>, Daan De Meyer <daan@amutable.com>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
+ paul.mabileau@harfanglab.fr, linux-kernel@vger.kernel.org,
+ Andrii Nakryiko <andrii@kernel.org>
+References: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com>
+ <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com>
+ <CAHC9VhR9sjunJRnM9gy-BkBZkapQTrr8a8FtmaK7JkAmUqTrLA@mail.gmail.com>
+ <CAEf4BzZKmn6g0SK8OddjKFj_vAmZFvpZv32Hs_S+GHgT7VNfrg@mail.gmail.com>
+ <9d6bdc31-e57c-4187-be78-29d82471f710@app.fastmail.com>
+Content-Language: en-US
+From: Ihor Solodrai <ihor.solodrai@linux.dev>
+In-Reply-To: <9d6bdc31-e57c-4187-be78-29d82471f710@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 17, 2026 at 06:43:42PM +0000, Al Viro wrote:
-> On Tue, Nov 17, 2026 at 11:05:27PM +0800, Cai Xinchen wrote:
-> > The inode_setsecctx hook and its security_inode_setsecctx() caller in
-> > fs/nfsd operate on a dentry even though both have a struct path
-> > available.  Pass a const struct path so that the coming conversion of the
-> > xattr helpers can be reflected in the implementations; for now SELinux
-> > and Smack keep passing path->dentry and &nop_mnt_idmap to
-> > __vfs_setxattr_locked().
-> > 
-> > Also document in lsm_hook_defs.h what a struct path argument may be used
-> > for: it can be passed to VFS helpers taking a struct path, but nothing is
-> > guaranteed about path->mnt.
+On 11/9/26 8:07 AM, roblabla wrote:
+> Hi,
 > 
-> No, with the side of Hell, No.
+> Thanks for the replies!
 > 
-> > + * Hooks that take a struct path argument: the VFS only sanctions passing
-> > + * the path to VFS helpers that take a struct path (e.g. notify_change());
-> > + * it makes no guarantees with regard to path->mnt, whose layout and
-> > + * implementation details are subject to change.  Implementations must
-> > + * not rely on its properties.
+>> [...]
 > 
-> NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
+> So what would be really nice is a way to make eBPF code robust against
+> kernel changes such that it either works, or fails to load, but doesn't
+> do the halfway "loads but silently misbehaves". Here are two ideas that
+> have been in the back of my mind that could help solve this issue (though
+> I understand that they may be rather large changes, I'm putting them out
+> there mostly as a conversation starter):
 > 
-> If that kind of stuff actually does get passed to any existing hooks, we need
-> to fix that ASAP.  If not, consider that a blanket NAK on any patch series
-> that would introduce such.
+> 1. Could libbpf/the kernel have a mismatch check on hook arguments? I
+>    understand that libbpf and the verifier don't know the types a
+>    program expects, since BPF_PROG() only casts u64s. But the macro
+>    does know the types at compile time. Could it (or an opt-in variant)
+>    record the expected prototype in the program's BTF, so that libbpf
+>    can compare it against the LSM hook's prototype in vmlinux BTF and
+>    refuse to load on a mismatch?
 > 
-> We are not going there.  At all.  "Must not rely on its properties" ==
-> "must make sure that no existing functions with struct path * arguments
-> ever have such malformed instances passed to them".  Which is not going
-> to be feasible to enforce.  And yes, that very much includes any VFS helpers.
+> 2. Since kernel BTF has parameter names for the bpf_lsm_* functions,
+>    could we maybe have CO-RE-style relocation to resolve "the argument
+>    named dentry" to the argument index at load time? This way, adding a
+>    new argument could happen anywhere in the argument list without
+>    breaking eBPFs, and removing an argument will (correctly) cause our
+>    eBPF to stop loading. It does mean the eBPF programs must provide the
+>    same argument names, but maybe that's an acceptable tradeoff?
 
-To elaborate a bit: correctness of quite a few places does depend upon the
-following invaraint:
-	path->mnt->mnt_sb == path->dentry->d_sb		(1)
-for all struct path pointers they might possibly run into.  _Some_
-functions might _currently_ be safe to call with that constraint violated;
-there's neither a list of such functions nor any promise whatsoever that
-call that is currently safe in such conditions will remain safe at any
-later point.
+Hi everyone.
 
-_IF_ you can guarantee that (1) is not violated, we have something to
-talk about; otherwise, don't call your object struct path and don't
-pass it to anything that expects to deal with struct path.
+roblabla's comments got me curious, and I spent some time with my
+helpful assistants poking at the problem.
+
+There is another workaround in addition to what Andrii suggested.
+A program can already make itself fail to load on a signature
+mismatch:
+
+	union security_list_options___mine {
+		int (*inode_create)(struct inode *dir,
+				    struct dentry *dentry, umode_t mode);
+	};
+
+	extern void lsm_proto_mismatch__inode_create(void) __ksym __weak;
+
+	SEC("lsm/inode_create")
+	int BPF_PROG(deny_create, struct inode *dir, struct dentry *dentry)
+	{
+		if (!bpf_core_type_matches(union security_list_options___mine))
+			lsm_proto_mismatch__inode_create();
+		...
+	}
+
+bpf_core_type_matches() checks the expected prototype against the
+hook's member of union security_list_options in kernel BTF.
+On a mismatch the call to the unresolved weak kfunc stays reachable,
+so the verifier rejects the program, and libbpf reports:
+
+  kfunc 'lsm_proto_mismatch__inode_create' is referenced but wasn't resolved
+
+It's positional and needs the exact argument count, but it turns
+silent misbehavior into a load failure. The same should work for
+tp_btf with the btf_trace_<tp> typedefs.
+
+But of course it's just a workaround..
+
+A bit more generally, expanding on roblabla's second idea, I think libbpf
+could resolve hook arguments by name with the existing CO-RE machinery,
+without kernel, verifier or LSM changes.
+
+The BPF side could look like this:
+
+	SEC("lsm/inode_create")
+	int BPF_PROG_ARGS(deny_create, struct inode *, dir,
+			  struct dentry *, dentry)
+	{ ... }
+
+BPF_PROG_ARGS() (name TBD) takes (type, name) pairs like BPF_PROG2(),
+but instead of casting ctx[0], ctx[1], ... it reads each argument
+through a local preserve_access_index-marked struct, so every argument
+access is a regular CO-RE field relocation:
+
+	struct bpf_func_args___deny_create {
+		const struct mnt_idmap *idmap;	/* 7.4+ */
+		struct inode *dir;
+		struct dentry *dentry;
+	} __attribute__((preserve_access_index));
+
+	SEC("lsm/inode_create")
+	int deny_create(u64 *ctx)
+	{
+		struct bpf_func_args___deny_create *args = (void *)ctx;
+
+		if (bpf_core_field_exists(args->idmap))
+			/* use args->idmap */;
+
+		return check(args->dir, args->dentry);
+	}
+
+Nothing changes on the loader side:
+
+	skel = deny_create__open_and_load();
+	if (!skel)	/* mismatch: load fails, libbpf logs why */
+		return -errno;
+	err = deny_create__attach(skel);
+
+To achieve this libbpf would need to do the following at load time:
+
+  - treat bpf_func_args___* as a reserved type in CO-RE relocations;
+  - find the program's attach target in kernel (or module) BTF:
+    bpf_lsm_<hook>, the fentry/fexit target, or the tracepoint stub for
+    tp_btf;
+  - build a struct from the target's prototype: one member per
+    parameter, named after it, at the parameter's ctx offset, plus 'ret'
+    for fexit, fmod_ret and LSM;
+  - resolve the relocations against it by name, with a strict type check
+    (pointee types must match, qualifiers ignored), since CO-RE normally
+    treats any two pointers as compatible.
+
+A missing argument or a type mismatch is a normal CO-RE relocation
+failure: the program fails to load with an error naming the argument,
+unless the access is guarded by bpf_core_field_exists().
+
+And this is not LSM specific, fentry/fexit/fmod_ret and tp_btf would
+work the same way.
+
+It doesn't help if a hook keeps its signature but changes semantics,
+or if the attach point goes away (that already fails to attach).
+
+Here is a vibe-coded prototype of the above:
+https://github.com/kernel-patches/bpf/compare/bpf-next_base...theihor:bpf:bpf-named-args
+
+It's an entirely new libbpf feature though.
+
+Andrii, what do you think of it?
+
+---
+
+And just my 2c re argument ordering:
+
+Paul, with all due respect, prioritizing code style and personal
+preferences over backwards compatibility is unreasonable even for
+unimportant applications. And here we are talking about apps
+implementing security policies, which many organizations (not just
+companies) in the world rely on. Given the recent flood of
+cybersecurity issues (in Linux and beyond), I don't see why would we,
+as in kernel devs, intentionally make the defenders' job harder.
+
+
+> 
+> Thanks,
+> roblabla
+
