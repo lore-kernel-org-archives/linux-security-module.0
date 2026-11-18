@@ -1,88 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=148.163.158.5
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795031672;
-	b=hMNGbPb60fVXE0OERe4R5FHEtrtPxDSSD0t8YSkaT5+62MSDvKGRL7lRcNRdStL9/W5c
-	 WKvjq0zQT2WqGi9gIc4Wx+FvOLKyy228SjYK2Cb5IS4EiKrRqq7VUtrzvfsbvQ92EEVtG
-	 k2eBC+9fwLKkvvb6jBAbVLJJrEUL4varDNzQazZ+RqUTLHJtkPLE0hbR9uD2ZS+qEBZHa
-	 0YWVafrrpeh0yu+GGLNRaoYD9wiSmB9W+NyfenJycSupjzqW8H16LsvGvjzt2hDT2tSfD
-	 612uNEpe6xbqQxsX0DF14Ew9PSzUUu7ORI5G0hbzzleda3+nuPmK/lgFVZNOQjyUoew==
+	t=1795032533;
+	b=4CgF2e7dfIYTzvc1f3THbCGi70PILrmm8DSxrhQlwmYti+N+SJ3xq/NHX0Qm1fyAP0P8
+	 ywSkAgMctUoBIwvBAw1Far9PzL1x8Wqf3LqHtW/Y9P3cKdE9DDvpO5CT52j+1BVtqiEHz
+	 SZadnCtdKrg630eNF888yCzdcsY1eHrd6OUHYGX3qtRg/k9ivPuqwYyIFIbeEPko4+2s8
+	 1D1TWFrj1sNiT5dQyY+wIHb3tgusZ9JZGG68MwmdvIkJPF5NWv6qHsJU8u72HTqgqIRaT
+	 OyLlR0f0S/JOJ6e3cTpaxlBWjV61SSlVg7tbLIHEVzPjGJZ4KNMqNsVDHF9jHMJdkVQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795031672;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=dOMAgC0XvS4nP90YCQcBU0h+fNv/5Kz+lJp/v4CzlRY=;
-	b=fKdO95ICercP4AkvPOQUL6U3pxdrGy9RTczD1uWNP8o1u92yPMPYdhrsCDJNYLBpQujs
-	 ynRDYujeM1fYPWC4z9k33uNqidZpvAgsVvEbwVmR9HAV9oU+MPwBUSgnP1aLfrXok4qN0
-	 a8fFsVfM4P0yISN/5Zw2A8MzXsfYpcHKgbSyBIKe98l/YafDv2JtMrOt9y9dBRhK8jYs8
-	 3ZZUJhhTyqYiq70dC0H8f38fDWnMvObF6gyTAfdizX/zHISlXqVM/Neuo8cAlYQUi7RIs
-	 K1nsIIaSe530F7wVFAp1btO2LgU5PzUZgewn3ON+1m/YjoIli9DNPYMiX4dY9MihLEg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795032533;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:Received:
+	 Received:Received:Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-TM-AS-GCONF:
+	 X-Proofpoint-Reinject:X-Proofpoint-GUID:X-Authority-Analysis:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=sdZwJGrljf/aq3KiOPvW8pwdl5/t+4Q9gbycn487dlw=;
+	b=GxXK3JSoadMDKmIH4NJR5in3pAqHygjh0lGDCFwQFxXg2vuIsIEulp7n88+Nn+V/xxQa
+	 /gW9pC+ZH96OctC1mOAlt1tAvqoCIN1ne3bXdxupZoOaqk5rRncxturkzDeiIR59pYmRC
+	 Jg3rP3hSGv4X5Dq4TKCgjceu1drm2UKAcIXgGuNQQD+N1eFxcmua+snutkkqBhEawQCF9
+	 h4JxGjwodPdUm/JhNuYRKNnojCpp7pyG7hWG7rzplyuz1W+Bf0jb3UIl+P2JoGcde+zxQ
+	 YKStzQ0RkCqmUtm9OoX6eEai7r1ET7L6F/DtOrbCpXe1Qn+X3EFzRMyk0dTRXCTC/Ig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eHGDS24t;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=linux.ibm.com;
+	spf=pass smtp.mailfrom=linux.ibm.com;
+	dkim=pass header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=YQ8hoMWV;
+	arc=none smtp.remote-ip=148.163.158.5
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 3A9CE606A32A;
-	Wed, 18 Nov 2026 19:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F6606A31C;
+	Wed, 18 Nov 2026 20:08:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C19F6606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eHGDS24t
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 409C51F000C4;
-	Wed, 18 Nov 2026 19:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795031671;
-	bh=dOMAgC0XvS4nP90YCQcBU0h+fNv/5Kz+lJp/v4CzlRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=eHGDS24tKkdUdQSDE+m8Q9U7FzbKLF5B1bDQj4MZxp+NpFTpVSXqOqxZkSbRrYUCu
-	 xtJKC8BPP86kLhKQWSGTmh00sX0NKvq9TjDCRYonSH8rUaaTLB11cllHumX66RUYyH
-	 ScOEhGBFrGL7aznIPo29PaJXS63D224351P4tQaIaa4C2w33oRPpGvjOVaJF1GWXp0
-	 yn3LJKcQWVn44OuzVcIAi7Xe0ILvDdblzEOdRn+tnrG+OFiaNe8nBeMUP2hyUdRH6G
-	 ezABsk4drujjXkdYoPEJuXtySKLyTCVIg2d2O1x+lXwN8EOL9gzFhw3UcfphSBmKst
-	 FR/hJTy4y6ubA==
-Date: Wed, 18 Nov 2026 21:54:28 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Ben Segall <bsegall@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@kernel.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
-	John Johansen <john.johansen@canonical.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Juri Lelli <juri.lelli@redhat.com>, Kees Cook <kees@kernel.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Liam R. Howlett" <liam@infradead.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>, Neal Gompa <neal@gompa.dev>,
-	Paul Moore <paul@paul-moore.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v3 00/13] Namespace for namespace roots
-Message-ID: <av4CdM-eW73oO4wB@kernel.org>
-References: <20261118193539.240065-1-jarkko@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=ibm.com header.i=@ibm.com header.a=rsa-sha256 header.s=pp1 header.b=YQ8hoMWV
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AIJQ9Vw755960;
+	Wed, 18 Nov 2026 20:08:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=sdZwJG
+	rljf/aq3KiOPvW8pwdl5/t+4Q9gbycn487dlw=; b=YQ8hoMWVFmrIikkdFNeW5W
+	KiJk40+P1pR4rOOWfLE3HviqqDOwuGUhqSg6QF1nJqkfTSpuO47xmotHa8w7bKYr
+	nuKK+cAp48TRppLSg1TLoSo29P6qLLVCUBJM2Vs51UvRBORta428Zew0LPtDdVB4
+	+tX1VhvkDG5grFhnsDhvuYnqrIT0Olz9uSUNKy10GLluEkyFaCzjGEzso54sUe4i
+	yhYYJ+AjvsJD0H52UKZDBECyNxmKGSCX2pJqcupRiGDHNuKzkH/Hw0VuZ1tZs9b/
+	YDBinqj6+klOwDqDv3iiufO53xYnan2XxfUJwYlImjk5BCIoWLPEO/1iEJNRZi7w
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4j105vvaus-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 18 Nov 2026 20:08:23 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.11/8.18.1.11) with ESMTP id 6AIJKGrc1356271;
+	Wed, 18 Nov 2026 20:08:22 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4j067nhay9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Nov 2026 20:08:22 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6AIK8MSK24249052
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 18 Nov 2026 20:08:22 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E79DE5805D;
+	Wed, 18 Nov 2026 20:08:21 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8E83758059;
+	Wed, 18 Nov 2026 20:08:20 +0000 (GMT)
+Received: from [9.47.158.153] (unknown [9.47.158.153])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 18 Nov 2026 20:08:20 +0000 (GMT)
+Message-ID: <f38f6d32-16d3-4986-8d6a-9d65517f5317@linux.ibm.com>
+Date: Wed, 18 Nov 2026 15:08:19 -0500
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -92,94 +86,104 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261118193539.240065-1-jarkko@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] KEYS: fix signature length passed to
+ KEYCTL_PKEY_VERIFY
+To: florian.bauckholt@cispa.de, David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Ignat Korchagin <ignat@linux.win>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Hui Peng <benquike@gmail.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20261111-keyctl-pkey-fixes-v1-0-934ebaa267a7@cispa.de>
+ <20261111-keyctl-pkey-fixes-v1-1-934ebaa267a7@cispa.de>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20261111-keyctl-pkey-fixes-v1-1-934ebaa267a7@cispa.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-GUID: HKXXmG-UC4fI07WkkUIKC_mzZd1qDZ8L
+X-Authority-Analysis: v=2.4 cv=Z8x5j3RA c=1 sm=1 tr=0 ts=6afe05b7 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=fjpi1DcuFi9e4zuLaT0A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: tqJB5qfQ6hOs4knfl_yxa9eK_24yXY4i
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA3NyBTYWx0ZWRfXzX4OhltihA4R
+ UjGEpAfYLdZIsa4xf1+UXd1ahOexugaiV5mO99pHy2W4TiwIPCp2DOYNENk8CDKrF/LCaB9IzYW
+ cHXHofYmbkjF6QtfAEFlf6+qbc8C8vA=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA3NyBTYWx0ZWRfXwCwSUwf0dsZa
+ 1nFeFGeo7vv/dnyEuuRVK6u4Hpuw3TtvSCtaN4wjakjj82yChlWHzk0xR9+K9vQQF0f02iWF21i
+ WqnUQXWsFwkTMuueCwCzOxqsW2vJTUpfaALf1O1CHw92uxXRc5nXCMcCIFPYoARtKaOw1xzP/0Q
+ eNcRThOMpS59MOPl6v7OVbjaDnnLuvj9lli/RArQy/EfsbeOqoKzuKmJ6gw4A+vDrPPYWD39nb5
+ 2xE/+0+wz2DKrBWT8OGat/lJT4pR6RupSbmaueYIuUIkU+QuA05RndKt3bWm/pvuO6eFMRmun0b
+ 9Sv9oQH2zrBXOyUWYTnIF5HOLfxvBx0niMlD4TNaBplrGzi7eL0EyAPCqWWkVki5l7cTEyWx9Sl
+ dX8GoqGH7sT5zFageKRgRQyvwwQBXFMpTQ955Qrto9viPavPscL7Ty7jNrlYDgf5XagQcqw412D
+ r4IuG8dt35wtodx5kSA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-18_06,2026-11-16_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 clxscore=1011 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611180077
 
-On Wed, Nov 18, 2026 at 09:35:26PM +0200, Jarkko Sakkinen wrote:
-> OVERVIEW
-> ========
-> 
-> A root namespace (rootns) is a kernel object backed by a file descriptor
-> that binds together:
-> 
-> 1. A full set of detached namespaces owned by a fresh user namespace.
-> 2. A dedicated PID namespace for spawning processes into, signaling
->    members, and polling or waiting on PID 1 exit.
-> 3. An initially empty mount namespace (CLONE_EMPTY_MNTNS) populated
->    directly in its target user namespace before going live, without
->    inheriting host mounts or cloning staged trees, while still allowing
->    new mounts to be attached at runtime.
-> 
-> Work on this feature started in 2025 from David Howells' container object
-> patch set [1], which I turned into a namespace for namespace roots and
-> rebuilt around that premise.
-> 
-> While the patch set is manually written, the original motivation came
-> from isolating LLM agents. Running untrusted agent workloads made it
-> clear that OCI runtimes need to minimize their live configuration
-> surface.
-> 
-> Assembling mounts, credentials, and namespaces inside helper processes
-> with a half-configured container is what I see as the main challenge,
-> and the existential debate around namespaces and container objects is an
-> unfocused discussion topic.
-> 
-> [1] https://lore.kernel.org/all/155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk/
-> 
-> IMPLEMENTATION
-> ==============
-> 
-> rootns_create() allocates a rootns instance backed by a pollable
-> anonymous inode fd, creating a fresh owning user namespace and a full set
-> of detached namespaces: empty mount (CLONE_EMPTY_MNTNS), PID, UTS, IPC,
-> network, cgroup, and time. ioctl(rootnsfd, ROOTNS_GET_NSFD, nstype)
-> returns nsfs file descriptors for individual member namespaces when
-> standalone namespace operations are needed.
-> 
-> Superblocks are configured directly in the target user namespace via
-> fsopen(), FSCONFIG_SET_ROOTNS, and fsmount(), allowing unprivileged
-> callers to assemble FS_USERNS_MOUNT filesystems without holding
-> CAP_SYS_ADMIN in their own user namespace or entering the target user
-> namespace first. move_mount(..., MOVE_MOUNT_T_MNTNS) operates on any
-> non-anonymous mount namespace fd: on an empty mount namespace it installs
-> "/" onto the nullfs root once, and it attaches relative submounts both
-> before entry and into live mount namespaces.
-> 
-> Once "/" is installed, processes are spawned into the rootns via clone3()
-> with CLONE_INTO_ROOTNS and struct clone_args.rootns, without mutating the
-> caller in place. Pairing CLONE_INTO_ROOTNS with CLONE_VM | CLONE_VFORK
-> and opening the target binary via openat2(..., RESOLVE_IN_ROOT) on the
-> retained "/" mount fd allows spawning with execveat() without copying
-> page tables.
-> 
-> The first entrant becomes PID 1; once it exits and
-> zap_pid_ns_processes() reaps all members, poll() reports EPOLLHUP and
-> rootns_wait() returns init's exit status and rusage. rootns_kill() walks
-> pid_ns->idr under tasklist_lock to signal member thread groups.
-> 
-> CHANGES
-> =======
-> 
-> v3:
-> - The patch set size increased predominantly because the coverage of
->   kselftest had to widened to cover the introduced changes.
-> - Replace MOVE_MOUNT_T_ROOTNS_ROOT with MOVE_MOUNT_T_MNTNS targeting
->   mnt_ns nsfs fds, and add ioctl(ROOTNS_GET_NSFD) to open member
->   namespace fds (Andy Lutomirski).
-> - Allow unprivileged fsopen(), FSCONFIG_SET_ROOTNS, and fsmount() to
->   configure and mount FS_USERNS_MOUNT filesystems directly in the target
->   user namespace without entering it first (Andy Lutomirski).
-> - Fix locking, refcounting, credential/dumpability/timens setup,
->   pivot_root() lookup, and cross-userns mount checks across copy_rootns(),
->   CLONE_INTO_ROOTNS, rootns_kill(), FSCONFIG_SET_ROOTNS, and move_mount()
->   (Sashiko).
-> - Mark PowerPC rootns syscalls nospu (Sashiko).
-> - Update documentation and kselftests.
 
-I.e. before PID 1 and /proc/<pid>/ns/* existss, nsfd for namespace other
-than root nsfd can be acquired as follows:
 
-	int mnts_fd = ioctl(root_fd, ROOTNS_GET_NSFD, CLONE_NEWNS);
+On 11/11/26 10:56 AM, Florian Bauckholt via B4 Relay wrote:
+> From: Florian Bauckholt <florian.bauckholt@cispa.de>
+> 
+> Commit cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
+> made keyctl_pkey_params_get_2() set params->out_len to the maximum
+> output size of the operation instead of the size provided by the caller.
+> It does so for KEYCTL_PKEY_VERIFY as well, but verify has no output
+> buffer: out_len shares a union with in2_len, the length of the
+> signature.
+> 
+> As a result keyctl_pkey_verify() ignores the signature length passed by
+> the caller. It copies max_sig_size bytes from the signature pointer and
+> passes max_sig_size as the signature size to the verification.
+> 
+> This makes no difference for signatures that are always max_sig_size
+> bytes long, such as RSA. A shorter signature, e.g. a DER-encoded ECDSA
+> signature, is followed by whatever is behind it in the caller's memory,
+> or the call fails with -EFAULT if that memory is not readable. The
+> x962 ECDSA template currently ignores data following the signature,
+> which hides the problem.
+> 
+> Use the length provided by the caller, which has already been checked
+> against max_sig_size.
+> 
+> Fixes: cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
+> Cc: stable@vger.kernel.org
+> Link: https://lore.kernel.org/all/20260919221742.3709658-1-benquike@gmail.com/
+> Signed-off-by: Florian Bauckholt <florian.bauckholt@cispa.de>
 
-Br, Jarkko
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+
+> ---
+>   security/keys/keyctl_pkey.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
+> index 15b6bf6399b5..794fa3d01911 100644
+> --- a/security/keys/keyctl_pkey.c
+> +++ b/security/keys/keyctl_pkey.c
+> @@ -160,7 +160,7 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
+>   		    uparams.in2_len > info.max_sig_size)
+>   			return -EINVAL;
+>   
+> -		params->out_len = info.max_sig_size;
+> +		params->in2_len = uparams.in2_len;
+>   		break;
+>   	default:
+>   		return -EOPNOTSUPP;
+> 
+
