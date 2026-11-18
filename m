@@ -1,140 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=62.149.156.117
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795010894;
-	b=KWbMdUxZStBczeeoNgIZb9SScHt4ybvJ/FYtaFQ19RPVG2XuuKKOe0HsPpvgoYaFhvgT
-	 E/rnp0dc6NfRB8aeUIgQtKnrjO5/MzghY40eobaZHhAY4pGilaTxRZbuuVHgxhBhue0VI
-	 H16K9UXrFY46KOOu1YTuZD6pAlET6UhKqQu4XEqMJHlvovqc9xHHTkuy15SMSGBmum8T6
-	 0vUFbi5ChCnwDrEHspR3yOKZWoNPISefxodaHiPLt8AZBf4ApBW7x+TpDP+NDuZTFrRnL
-	 CvNnr+c7ThoCzUMfcSRqJWpVkdEYfk5BUUIM4EjPmVeylgg/KDmmTvcacHSrYDTyC9Q==
+	t=1795010932;
+	b=Szxbqd3M54APGaOniYaLLFD3QscyTFpyXb1mg/JQskbwCYmfl7fy21ayaJjRm6xLDBKu
+	 lkEUDIs9MELflG3RtCyprilPUvi2EsCyD2C7w0c/0hYjMDhgHI3PrUGoIzvtr0ScILDfe
+	 83/lFnsuaNzN3o21XpB1aaUMysb9Z9evm87EMiVi0Zpe4uNXh58z2tVrv0hH/VVzB3HYz
+	 32OrVLyQTebREihCe7CdfSBj/t5lxGFUwU6l1reo5KwxuMRN9t9ysZyydleT5uhI+dly4
+	 gCcqMQ/cnu7bXHEZRE08KErdmjrA0xg0Z4Qmr070CiJsL4nT7mmhw5aDvRLb/SI9wcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795010894;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:Received:Date:From:To:cc:Subject:In-Reply-To:Message-ID:
-	 References:MIME-Version:Content-Type;
-	bh=kSUE/o5CqDYurph69R6wpud9Np7SIjoEFQ7s0L3TdZE=;
-	b=4EMIilZ8cQtQTU/9VXo4mmb8fbzLhKV+0okgLf0eKcOJXybmFA9VHsYRhNlbxqjq4+r9
-	 LWB2NKL62TBtc5gSUJVelUH9mxw3kwCj0gq+I1ejZItlHBAxodJUo+tzzaxLGQqnv6y2R
-	 OTOubtdXh1IT87QU24bIMWOfVggy+ObAODJZ4Ro71J4bTd0UZxjIckWs3GLj8vt/UhcF3
-	 kwfgkw+8Jx1wpv4BeCUD3WQGWsS1k4KUbOCsjoXtHiTnV02MgNTPmXWZ3/jAKSiKIPhOf
-	 YWcmltS3oip51jspxf3tqTjJnvMihuC6xyliU2UP8NmTvu6kwtuEfpbNzdj+kTsNeKw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795010932;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-CMAE-Envelope;
+	bh=+df84mPxPB2qRf0s9IWCLq+FM4mUd62n6vdVvrdC6HA=;
+	b=2EEuhtWXW2MNxXzAx2R+IXbfoHYDJk4rsKv4qy39ScjXG4qqGPqMD27UN/ryrIqVYGie
+	 hElKoUPRizPiD5NF69pob99EKYjTQl+fJrMFsT3W8Eij2cHn1VnNKJ6K2OhMQDTUAGrR+
+	 nfXPG29ZLNrwBR4oBeui+E78yl9GNn+SvDi7HrFqnwkY/WW2SU/gMDqUJDKc5CIUJeQZF
+	 pHFvKe0Dk+K4QqD9cnHG6CqnIZW9hq1kdKUTp91DvEqIC/kTuaXBc0h0rCPohXwxzwDF3
+	 TtbjQ+XzwViOc5NNg8KCuQ0BPrgj6MjoQpBh3hc3EmFD+7RkA3bzKGdpYKI3CV/XC6A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=inria.fr;
-	spf=pass smtp.mailfrom=inria.fr;
-	dkim=pass header.d=inria.fr header.i=@inria.fr header.a=rsa-sha256 header.s=dc header.b=lO8vUGAB;
-	arc=none smtp.remote-ip=192.134.164.83
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=enneenne.com;
+	spf=pass smtp.mailfrom=enneenne.com;
+	dkim=pass header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b="WxeeU/Gy";
+	arc=none smtp.remote-ip=62.149.156.117
+Received: from smtpcmd11117.aruba.it (smtpcmd11117.aruba.it [62.149.156.117])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3878B606A31C;
-	Wed, 18 Nov 2026 14:08:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3878B606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C726560A261F
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 14:08:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C726560A261F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.a=rsa-sha256 header.s=dc header.b=lO8vUGAB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=kSUE/o5CqDYurph69R6wpud9Np7SIjoEFQ7s0L3TdZE=;
-  b=lO8vUGABN3SRz8stmFI6GOw5EdtNndRF+CQvv0/fdjATmxkGTAFZQyyX
-   q3S3Iji9niTjJuaRWhbudJSEAZZKtnIYWDJnU5+hLPXuIFXtC4McFue5K
-   zJmH9mSahEE3uuCKvqXtwc7RUVjEQny86msZaIn/W22PRg53MToih5RN6
-   4=;
-X-CSE-ConnectionGUID: NpDResvMRHWEoFCgk5A11w==
-X-CSE-MsgGUID: tkj3zeBCTZKFS5tJsQM2+w==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.27,219,1787004000"; 
-   d="scan'208";a="306121450"
-Received: from 72-255-236-003.static.imsbiz.com (HELO hadrien) ([72.255.236.3])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 15:07:35 +0100
-Date: Wed, 18 Nov 2026 22:07:31 +0800 (+08)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Bence Csokas <bence.csokas@arm.com>
-cc: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-    Marcel Holtmann <marcel@holtmann.org>, 
-    Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-    Sumit Semwal <sumit.semwal@linaro.org>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    Philipp Stanner <phasta@kernel.org>, 
-    Sudeep Holla <sudeep.holla@kernel.org>, 
-    Cristian Marussi <cristian.marussi@arm.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, 
-    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Tvrtko Ursulin <tursulin@ursulin.net>, Lyude Paul <lyude@redhat.com>, 
-    Danilo Krummrich <dakr@kernel.org>, Zack Rusin <zack.rusin@broadcom.com>, 
-    Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-    Selvin Xavier <selvin.xavier@broadcom.com>, 
-    Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
-    Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-    Chengchang Tang <tangchengchang@huawei.com>, 
-    Junxian Huang <huangjunxian6@hisilicon.com>, 
-    Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-    Hans de Goede <hansg@kernel.org>, 
-    Mauro Carvalho Chehab <mchehab@kernel.org>, 
-    Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-    Dexuan Cui <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, 
-    Miri Korenblit <miriam.rachel.korenblit@intel.com>, 
-    Jes Sorensen <Jes.Sorensen@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>, 
-    Johannes Berg <johannes@sipsolutions.net>, 
-    Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-    Guenter Roeck <groeck@chromium.org>, Nilesh Javali <njavali@marvell.com>, 
-    GR-QLogic-Storage-Upstream@marvell.com, 
-    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-    "Martin K. Petersen" <mkp@kernel.org>, 
-    Julia Lawall <Julia.Lawall@inria.fr>, 
-    Nicolas Palix <nicolas.palix@imag.fr>, 
-    Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-    Paulo Alcantara <pc@manguebit.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-    Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-    Bharath SM <bharathsm@microsoft.com>, Carlos Maiolino <cem@kernel.org>, 
-    Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-    Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-    Davidlohr Bueso <dave@stgolabs.net>, 
-    =?ISO-8859-15?Q?Andr=E9_Almeida?= <andrealmeid@igalia.com>, 
-    Alexei Starovoitov <ast@kernel.org>, 
-    Daniel Borkmann <daniel@iogearbox.net>, 
-    Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-    Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
-    Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-    Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
-    Emil Tsalapatis <emil@etsalapatis.com>, 
-    Ihor Solodrai <ihor.solodrai@linux.dev>, Simon Horman <horms@kernel.org>, 
-    David Ahern <dsahern@kernel.org>, Ido Schimmel <idosch@nvidia.com>, 
-    Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-    Steffen Klassert <steffen.klassert@secunet.com>, 
-    Herbert Xu <herbert@gondor.apana.org.au>, 
-    =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, 
-    =?ISO-8859-15?Q?G=FCnther_Noack?= <gnoack@google.com>, 
-    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-    "Serge E. Hallyn" <serge@hallyn.com>, "Geoffrey D. Bennett" <g@b4.vu>, 
-    Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-    linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org, 
-    dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-    arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    intel-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-    linux-rdma@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-    netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-    chrome-platform@lists.linux.dev, linux-scsi@vger.kernel.org, 
-    cocci@inria.fr, linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-    samba-technical@lists.samba.org, linux-xfs@vger.kernel.org, 
-    bpf@vger.kernel.org, ipsec@lists.linux.dev, 
-    linux-security-module@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] overflow: Add offsetofend() variant of
- struct_offset()
-In-Reply-To: <20261118-offsetof-v4-1-95b385c10b22@arm.com>
-Message-ID: <c6fbb025-8de-b716-5d32-877c3d3fa2a6@inria.fr>
-References: <20261118-offsetof-v4-0-95b385c10b22@arm.com> <20261118-offsetof-v4-1-95b385c10b22@arm.com>
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b=WxeeU/Gy
+Received: from polimar.tail4f75e6.ts.net ([101.57.122.26])
+	by Aruba SMTP with ESMTPSA
+	id TgL3x51SR6VShTgL3xMvuh; Wed, 18 Nov 2026 15:08:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1795010922; bh=bQFBSzdwaul4KRf67gSRWGbR6PYoKg8o6esTEGD0jNs=;
+	h=From:To:Subject:Date:MIME-Version;
+	b=WxeeU/GyZZVGWKDWlav8NoEyVBhSiMpftt1sFyS7lgDkfZSf5ifjjw0YqP9kRK+6y
+	 gTywOI89xxLSFQqQLdMLZ5cqFUc4foUfziVVYQRMp8dbitFGiI6FEfkygAHC2aByxv
+	 XmjyDvWNxhZlHVVBpKN0XInRHNMvsFwcw0+6cX3am0X8dKjEaPsDYHGPvnTnoNgnOq
+	 gaB30NXCODTiYQaZvBcWf5h/d3wBg2DgCcTuja93TWUw8rhN8sjQsCnFa4fK47HFvv
+	 +fEZ6YWNW4oZXl1HHnC1EThzIW9P9QVSBnswY9meNS9+Oay5oj/jWSjySZa/Yn7Fa/
+	 ICqksqW0C4KOQ==
+From: Rodolfo Giometti <giometti@enneenne.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	keyrings@vger.kernel.org
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Wiklander <jenswi@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	op-tee@lists.trustedfirmware.org,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Sahil Malhotra <sahil.malhotra@nxp.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Richard Weinberger <richard@nod.at>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Rodolfo Giometti <giometti@enneenne.com>
+Subject: [RFC PATCH 5/9] MAINTAINERS: add KEYS-KEYCRYPT
+Date: Wed, 18 Nov 2026 15:08:38 +0100
+Message-ID: <20261118140838.606692-1-giometti@enneenne.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261118140421.584086-1-giometti@enneenne.com>
+References: <20261118140421.584086-1-giometti@enneenne.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -144,78 +94,58 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfKiEjT0uFTsYQNdRuokOTdmnkW3pULIFQvB3gvUGOb2nW6mxdjD+mMF9m5Re0nilbpCTtnbk8020gjP3W7f9zOh0nkfAeaXYYe3YEJxQiu6w1Obo1Ug2
+ P9jbfhopFkA9HutyhsZaXJJKLRyx2boRdom2oOXmG9Au1qLbd4NVPVMIP+P37Mb5GP3mOcgKzg4HOg+ynv22TBQl8n1fs+wHCmV1I8znSOEoV/wkAdYPldWP
+ 82YijmBgZb2WjCvpwvA7n2a4KQhpD8JQNZMMntiwVfFdnckFS561VPndNgMCAbvgB1RawKGId065rbUAQ6CYN/8PDn+SIhWsv9nTL9gqDDcpjxxe/ZwHG4/u
+ jPItmbgrxbA9jYbl1TsRPHrJW51lZJ+vgpYF7wemISH+J+Go3Ys5GcZ5PNj7I3aLwP9a5ajzKsUoNds/K+GqSYbd0sOx+RqsqD6lC69XHrGdQt0c+dJk/LqD
+ O7AQAUIx8gjWFVPiZ+Vuq99BORNo/6JvqaXSreAIryZCm2Dk8lCtRnHAm7iJBOQTk9wQRkTag0xNkqBB2yOAYs4peIDHlzYicyUTtc3AmeNHm1Trc11tw1Jn
+ 42EeGjPQpc1HmteaLWvHe+L8aTr8b4w70p2+0aCVwko+flPJ/bFcJGsAVBSnQLzpbUZ3XCdhGPVPqGH4lOliQwRlrqn27Gj7ZRlrlbUdmbas5jRXiO1Mey/P
+ J+qNj7JsVSmTEM54w7cwZTtT5C1JqEWsi7wBtAJLdcAAdYLwpxofHEbmCWFpY3vszYHU7MUkvuGXbAtp9YPDlDPJbFbCZqC5TU8PhY4JMJHdCgAM6bLt1HlB
+ cWiJ5G634M0t3Epd0mvyznAUk+GAHQnZXAHTTUMa8o7qjzh2BplNHtzf5ddmSO6bIV9eoaNVbE37bQApYKq5rmCkQzffmUXXnSywmC76aRqYk3TZuCtW9rLf
+ pcMfcjtps/7YSHZAK8rs8frBRrKvyaaC4APqkUMD4AencSJmafcAfQKkuJ6foxc9ZtAJd244MaeESe6dJdUN3i+W8uSGKExI3wRipOvW7Y485gAOr5ohkPHL
+ qKYFc7Kipw67yGIrs85Ku/s66zKUUgIJ02NQZYXdqy0qi7tCIM/bdTYPW9EN+MpdwMulW/R6k50lbClv7Qs2qiMzckD3NH2CLcTs5R0+7OBGzS3waKS3rWS6
+ zcs0GlKjLdQebbI3T7gulx7ubm0k45EvJKMM3f4JOodd9BwK2PTfO+1QJzogwF/l8yxiOSvD5yC7D8kMWlU14FtPUt41pNHPohz4qg1Lj3Qe958US/qjUHhb
+ 73Zzk0ssdMrlnK9Yjf3jLb+PM9sNE5DdCZlk6K52B9VwAPSwiSI=
 
+Add an entry for the keycrypt key type, its sw backend and its
+documentation, and one for its OP-TEE backend, so that changes to the
+backend also reach the OP-TEE list.
 
+Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
+---
+ MAINTAINERS | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-On Wed, 18 Nov 2026, Bence Csokas wrote:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 222b7fc2c3aa..41dc8fe1fb36 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14813,6 +14813,24 @@ F:	Documentation/security/keys/trusted-encrypted.rst
+ F:	include/keys/encrypted-type.h
+ F:	security/keys/encrypted-keys/
+ 
++KEYS-KEYCRYPT
++M:	Rodolfo Giometti <giometti@enneenne.com>
++L:	keyrings@vger.kernel.org
++L:	linux-crypto@vger.kernel.org
++L:	linux-integrity@vger.kernel.org
++S:	Maintained
++F:	Documentation/security/keys/keycrypt.rst
++F:	include/keys/keycrypt.h
++F:	include/uapi/linux/keycrypt.h
++F:	security/keys/keycrypt/
++
++KEYS-KEYCRYPT OP-TEE BACKEND
++M:	Rodolfo Giometti <giometti@enneenne.com>
++L:	keyrings@vger.kernel.org
++L:	op-tee@lists.trustedfirmware.org (moderated for non-subscribers)
++S:	Maintained
++F:	security/keys/keycrypt/optee*
++
+ KEYS-TRUSTED
+ M:	James Bottomley <James.Bottomley@HansenPartnership.com>
+ M:	Jarkko Sakkinen <jarkko@kernel.org>
+-- 
+2.43.0
 
-> Many call sites of offsetofend() use it for the purpose of pointer
-> artihmetic. Thus, a common usage pattern is:
->
->   offsetofend(typeof(*ptr), member)
->
-> Capturing this in one macro helps keep lines short and terse, while
-> still making the purpose clear. It also helps discourage spelling out
-> the type name on every callsite, leading to more maintainable code.
->
-> A similar struct_offset() macro already exists, so add an offsetofend()
-> variant in the same spirit.
->
-> Signed-off-by: Bence Csokas <bence.csokas@arm.com>
-> ---
->  include/linux/overflow.h                     | 12 ++++++++++++
->  scripts/coccinelle/api/struct_offsetof.cocci | 18 ++++++++++++++++++
->  2 files changed, 30 insertions(+)
->
-> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-> index d0f04436343e..c029d68daeca 100644
-> --- a/include/linux/overflow.h
-> +++ b/include/linux/overflow.h
-> @@ -464,6 +464,18 @@ static __always_inline size_t __must_check size_sub(size_t minuend, size_t subtr
->   */
->  #define struct_offset(p, member) (offsetof(typeof(*(p)), member))
->
-> +/**
-> + * struct_offsetofend() - Calculate the end of a member within a struct
-> + * @p: Pointer to the struct
-> + * @member: Name of the member to get the end offset of
-> + *
-> + * Calculates the offset of the end of a particular @member of the structure
-> + * pointed to by @p.
-> + *
-> + * Return: number of bytes to the end of @member.
-> + */
-> +#define struct_offsetofend(p, member) (offsetofend(typeof(*(p)), member))
-> +
->  /**
->   * __DEFINE_FLEX() - helper macro for DEFINE_FLEX() family.
->   * Enables caller macro to pass arbitrary trailing expressions
-> diff --git a/scripts/coccinelle/api/struct_offsetof.cocci b/scripts/coccinelle/api/struct_offsetof.cocci
-> new file mode 100644
-> index 000000000000..5a30647d3787
-> --- /dev/null
-> +++ b/scripts/coccinelle/api/struct_offsetof.cocci
-> @@ -0,0 +1,18 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/// Use struct_offset() family of macros
-> +///
-> +// Confidence: High
-> +// Options: --no-includes --ignore ./tools/
-> +
-> +virtual patch
-> +
-> +@offsetof depends on patch@
-> +expression ptr, member;
-> +@@
-> +- offsetof(typeof(*(ptr)), member)
-> ++ struct_offset(ptr, member)
-> +@offsetofend depends on patch@
-> +expression ptr, member;
-> +@@
-> +- offsetofend(typeof(*(ptr)), member)
-> ++ struct_offsetofend(ptr, member)
-
-Coccinelle script
-
-Reviewed-by: Julia Lawall <julia.lawall@inria.fr>
