@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794978582;
-	b=jkCs30Oi+9iUqPHm+cZ+1hLIvWVdZySB9+unzWVVpVXaus/A0eaNMDnpSzspFQIJnhik
-	 0q4ft0x+inr+eettr/SNokt3YNocSklG0xAmRcCCkoykVy/wNlT4fUjYcBnJTFUShvUf5
-	 GJRcME7xYCKtBY1q3MzLwF7dLgrAS92ojhd7XWFMNsbM4O9i/xNvKAkJlp9lq7qMzaXU+
-	 SYGy4VPSqbVLbNTe8Y8/q/z1ro2uDZb50PdAi/M5YBadoNkOEgA8pcyPy6Dafh4k3aXM+
-	 b3r423maokIENRxREaT78/c3opv/ODaGDUJsOUvxk8NzzaIS4PQ+zcAC8fMewI4gDGw==
+	b=tTa7ZgLKBzmSm1bYP+0TcBYA05KGT5qUvCEh5TsMWKSQ9V3UGc0trknPce1msphsMcz+
+	 cm2P19025kpELB2J8cKL816XYvdybbxmyx/f9Wxp/QM1hi0OZ3KXZVFGMmyKibPNGVeHB
+	 mOWoPrnBKVuW4d9rJx5Ybdt2npZO28hvWI0Nm6JBXbRp4hMrwRzQu3KFd5O1bK/hNQ3U4
+	 jNBCpFfChUFkGiub/tNs4Cezhe8O2KZgjyolLwUxD+F5PsfsgFl+YzEIThfBB7lMFrVmW
+	 jshtzzw1m7YVeFpf4YBzpqAeh34Zqfqa+WADdUodpshO1gf93GQOwkpt/nxQoMhNgwg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794978582;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=M5Knl13IIbVc9dPSbiLBJPrGvh+7DKNUaDoFc0NkDEA=;
-	b=dXU06w63Zacykrnx2Bj5XzKQD4GoPBvS3fUfj5eoApehFF50cGzRvneBDNnAIlce+rHN
-	 iyrzYB44aGHcmh/Q6Iq1LbiUcWHvbPJgJKd2RhDAZ7nEkiEsAylMQO1gkcFjh0UBeAN2/
-	 mYRZs7jtb+bqV+5Ri5lyHuU066gkiH07bbDAtBpoCYkfiJMTCGMQvgxIWL85F8jjXI+Fe
-	 mXi3LMs/XRsBsUXmZAIVaOrQRb5RlelvF6grOmOH5fGnkqIhYHlkPkJsa09lVdCeWNGKn
-	 V8rJraOEqBYuatXQPI5i2z5PMfQRzIq00fdNkIFfNfpLyU/H0Z+VpitVfy7e2EiVLqg==
+	bh=RFWLzJTa1F1qj6O6yJKnNQF1mekp8KXdHDa7LRiolFM=;
+	b=hCZSFuhxHAV3zvP2ybu7gdpnAuo8mwmjGL0xzRI1kddSEn1MIEGepMyaCdahhdsWQF4z
+	 FzYK8FAgphPmIlR1qgcECqVRFUDDqc3WhIsUX3ouhlOkV7aIRskr6dq+BWOJK/mo4RDT+
+	 CbuCSMaJv1nEVTCVgDv9JM2rscplMLbiz+2tgmf+kvNYURhD9eWcLiNLZWx5gdFjdlIaa
+	 LWFSMtZy/ka7KiAIU7GNGI7nU2zOmcZVmxVipVmdAsMz2GBliAlfDny5ynqzFU7AIpe5x
+	 nKR8Nstz0+tGOj4+skLHDOeAbBQk4kWqFI8wD98mbwvnXqrjTNpmeAwFmAn57gcRpYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RGE+GULj;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QVZ5eKDK;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF15606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA7A606A32A
 	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 05:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RGE+GULj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E82E1F000C4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QVZ5eKDK
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B9F1F000C5
 	for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2026 05:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794978582;
-	bh=M5Knl13IIbVc9dPSbiLBJPrGvh+7DKNUaDoFc0NkDEA=;
+	bh=RFWLzJTa1F1qj6O6yJKnNQF1mekp8KXdHDa7LRiolFM=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=RGE+GULjSdeYZUvKK73B4s/Xfi/1CYnXL0VMO/y9gN3YSMZUGAambmFBhA/VRgF/f
-	 PC3144mv2iDuB/9iNtB971VgtUDURBhyEBQ0/l7llqXpAzlR09NmxdEC6m8xaDXQIW
-	 05k74Wx+v+jvgQnhr63Oh/13IrWZxM++TnzOIWe8GOVf22cncJd+FFkkivUmbrxaB6
-	 cdS+5xsM5Pdr2vzOVtTTSviMLwW6+rCB8jWUWLhGr9JbC429QAZLgGO8PGXkURifce
-	 YH3u6YuGKHQC5nl8FrS6wbN5UdrZ5zfekuBcPiR0lD/EQaz7EvedBxIC166C9bpCkb
-	 Ki4A+/Vyq8zVw==
-Message-ID: <sashiko-outbox-220136@kernel.org>
+	b=QVZ5eKDKVssmgtpaM0d7ELjQQIKt+AxeEjzjVTMiOx9ceIOHXH0pH5dwpAWShBIo7
+	 rSBE/FgGzU3O3bTq59TcggTCuMu5nO5Wr3dt3b0LZsiENQLdS4c4XpvOz081LQpUVT
+	 OwFvr64xqpPPj746srzLT3BuIGWN9nIiCil64PklH2U/3XAYvoEdWmuI05QbpdXkEK
+	 QqSc8N/fJvv7JawhmRqrSOTlkWgqB8KJDuaFjaHjyH052sudRk7vFbrLa9yh+0se0C
+	 ipIpfA5xGwKaxXWNshJ1hrLiOKhKT4Xcf8l1z0SHih93TrKKRI9ZXPDgVMDSjeq/MK
+	 EpgwfB3V6prtw==
+Message-ID: <sashiko-outbox-220137@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 01/13] nsproxy: Pass nsproxy to
- create_new_namespaces()
+Subject: Re: [RFC PATCH 02/13] rootns: Add core infrastructure for root
+ namespaces
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261117050841.3289652-2-jarkko@kernel.org>
+In-Reply-To: <20261117050841.3289652-3-jarkko@kernel.org>
 References: <20261117050841.3289652-1-jarkko@kernel.org>
- <20261117050841.3289652-2-jarkko@kernel.org>
+ <20261117050841.3289652-3-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Nov 2026 05:09:41 +0000
+Date: Wed, 18 Nov 2026 05:09:42 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,13 +60,16 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> create_new_namespaces() takes a struct task_struct pointer even though
-> it only reads tsk->nsproxy, preventing callers outside kernel/nsproxy.c
-> from constructing a child nsproxy without mutating a task.
+> Linux namespaces can be created and entered individually, but userspace
+> orchestrators lack a single kernel object that binds a namespace set, a
+> root mount, and an init process behind a pollable file descriptor.
 >=20
-> Expose create_new_namespaces() and pass the source struct nsproxy
-> pointer directly so root namespace creation can allocate a detached
-> namespace set from current->nsproxy.
+> Add struct rootns, its lifecycle states, reference counting, uAPI
+> creation flags, and anonymous inode file operations under CONFIG_ROOTNS.
+> Drop active and passive namespace references on final release, send
+> SIGKILL to the rootns init thread group on close when
+> ROOTNS_KILL_ON_CLOSE is set, and report EPOLLHUP from poll() once the
+> rootns reaches ROOTNS_DEAD.
 >=20
 > Co-developed-by: David Howells <dhowells@redhat.com>
 > Signed-off-by: David Howells <dhowells@redhat.com>
@@ -76,5 +79,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117050841.3289=
-652-1-jarkko@kernel.org?part=3D1
+652-1-jarkko@kernel.org?part=3D2
 
