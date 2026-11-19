@@ -1,61 +1,52 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=62.149.156.116
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795082642;
-	b=cN8ZqqmfaDkJIh54nhrtyOWg14mS5JEEOuZVapbps8Q4dyGBxJ7Ewq5H3e4EF+m6nlFD
-	 S0dJCzgZKTbxx9rEOxOIAD1SZLwdEqtqPQ9lLkAwi7DDhI8o2I3nwRuh6tKoI5VUvyoxQ
-	 rJW/D6Du+WvZRoGwdcseYjD/zZIWbzFYj0P83DK837IOp1Q1+YCC20Kyoi3SfiuZEj1v0
-	 TZpXPQI3S6FTWim3vKLxpGfvI3qcPPwu49A6qtorUsnog5M+mP2uAXz00hyPP4l6oV1Up
-	 AzlUiBFOqd3W0KT2607IeV04nw9H3ZErTwHgzuvf5xy5MzwSMPVI+woWuBbhM16ccOA==
+	t=1795083523;
+	b=KIZuMQS73pbOIGQ99gNA7F3lmvvt2pXGjj8e0gDNE1EK7qUdUgbVBVOl8mZlRr8Kh+gB
+	 d8g8CGlAB9R/N6OVLjNKH3vp3DPpfCK8iH6Gr4HT0BLPufUAPkfgeslIzhXi9ABf9Ni/r
+	 0Ezlm48lsXgWCR71gN/sTLH6sUSirTbJFF+0uvPUS0IRBbbhHpwMVw4iojpyY0VOMmOrs
+	 FkPhPJN0j6M3BHIM/NebZrWN+bbPDMbhKTM1cmDLbIly3DHmcgg0lnjT/zVuB4dCvaau3
+	 lpSS9FfhRFPO1Qwb7yuu/IWzBKNVjudXdXU39zkBKihrCHlsOlsJe9rB7GYVg/IjStQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795082642;
-	h=DMARC-Filter:Received:Received:Received:Message-ID:Subject:From:To:
-	 Cc:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version:X-CM-TRANSID:X-Coremail-Antispam:
-	 X-CM-SenderInfo;
-	bh=zzyvBYRycK/PolxVws+3x07W7fjNSU/PymweqV0BGzg=;
-	b=fR+Y2pqS5ZZlg8i+jRKe6h5FOTh+9nbbk2Iz9GJf+OJy3WEjEi6Du2WAesstPaKe1wyV
-	 N2dLxuQ4/1YoY47wmEfVrimHqsze7BDwYV9PZ+je55CIFqgW8QJSvIObnTGUxYS7KBroi
-	 +rXo15qwZ1DL46zggPGXs6+7GEwWsOGDeKmx2ksp/qErNmSfEr3Yol/ShZMLUenz/Dlfm
-	 1u/nwEMiN4vO1tpwe0scKJa3wQEK9rdedroyGMz24crxK4WeuGxXy9oKwnzWuTpYIPhFf
-	 NmlPDnDUJhNOCYNm1Q0d1RHuode2uWqdiCGFcrAmLbz8BjJBna4jz1i/WvshlVr9W+w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795083523;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:Content-Language:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-CMAE-Envelope;
+	bh=vxF6EachACi14PY9ozrbae5qo5jIjGyvh8VwxPiTjtI=;
+	b=bS4KRlYSBqvBDcUxx7wNqUWLsHptOdhU+R0vqHqyMlDZjHgf1sLx4UnuvnJHsTZAhud8
+	 LDwN212PbDrXEW8kMXi+YWd/bzIWDAE0muamcahPGQWuf+J45VO7lc0n9VEbiHuMQSCCp
+	 ULNzTUJmVd2dzBhYmPTEoztjG0xKwb4FDKkD4sdAf6IDZ66oo+oXFclkJUlrtCuegDuBc
+	 B7Ll6+X5uWTh3B1bentxOq+sVq0Dv44girvDmxyErq6KZP9Kb3cHoFZrZavEclk5xsI1N
+	 7ML9q5bdbMS6Ym05ps42POE8X4POOSs1jpysNQQeqI39OydQcJVVpLCmQoBKX6fPKRA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=huaweicloud.com;
-	spf=pass smtp.mailfrom=huaweicloud.com;
-	arc=none smtp.remote-ip=14.137.139.154
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	dmarc=pass header.from=enneenne.com;
+	spf=pass smtp.mailfrom=enneenne.com;
+	dkim=pass header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b=JRdDZEM1;
+	arc=none smtp.remote-ip=62.149.156.116
+Received: from smtpcmd11116.aruba.it (smtpcmd11116.aruba.it [62.149.156.116])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D8D606A320;
-	Thu, 19 Nov 2026 10:03:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23D8D606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4jVYvB6jSfzt3HP;
-	Thu, 19 Nov 2026 18:03:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.157])
-	by mail.maildlp.com (Postfix) with ESMTP id 5BF0640558;
-	Thu, 19 Nov 2026 18:03:52 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by dep2_app1 (Coremail) with UTF8SMTPA id nRC2B0BGKV9+yf5qSSEeAA--.14516S2;
-	Thu, 19 Nov 2026 11:03:51 +0100 (CET)
-Message-ID: <70ebc38f7102d5f75ba1dcbf6df4b4b864c78ce7.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima: reject duplicate fsname= in a policy rule
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: weidongw@illinois.edu, Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
-	 <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
-	 <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Zijie Zhao <zijie4@illinois.edu>
-Date: Thu, 19 Nov 2026 11:03:39 +0100
-In-Reply-To: <20261112-c3-n204-v1-1-dd9400b9ece8@illinois.edu>
-References: <20261112-c3-n204-v1-1-dd9400b9ece8@illinois.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8391606A32C
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 10:18:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8391606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b=JRdDZEM1
+Received: from [192.168.0.186] ([101.57.122.26])
+	by Aruba SMTP with ESMTPSA
+	id TzDwxCivc6VShTzDwxQnb6; Thu, 19 Nov 2026 11:18:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1795083518; bh=aRc2mUQAMNF1zYaxkS0G15m7lGbkHwkBf36QtSll1JI=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=JRdDZEM1FxuLixVNZ93BzrJfxnVP/26ipIlHN+dp61SIDQlEQQop3o7sRPTCaTyPS
+	 rEay+jZzRTrnxEK0zIPwaMeKVAy3ZAJ4VSQUpUXySdP/ZTuPPa0VTySV40cWcpYl/i
+	 S2JPpoWNlrAeMVzaV315uHz1J6YigtiMU5Wtqsp450GlhhhX/GyktfzXt5dwFWoZUm
+	 HWLJnzLs5kW2Uj3Rt4AaM+Iv7+JwtiWWYhNFbx91v7byIKfcN7B9iIz9lu6wIVI2uZ
+	 aN8cHrCXdLEOj1XTbIELAWsvQb4tvcfjY3NvHr7VuatOojMKu2K095m2lBR3n4bmLD
+	 GFVq9L0+t/Kow==
+Message-ID: <3929b9f6-6c75-4118-8565-0fa815daad73@enneenne.com>
+Date: Thu, 19 Nov 2026 11:18:35 +0100
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -65,115 +56,232 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-CM-TRANSID:nRC2B0BGKV9+yf5qSSEeAA--.14516S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr15ur1fXF4UAr45KF1rWFg_yoW5uFW5pa
-	95KFnF9FsrAryIkay293WS9Fyxuw4UJr45GF95J342vasxWrn2vw43KFWY9w12yryrtr1F
-	vF4qg3Wqk34qqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIDWr+ac09DQAAsE
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/9] KEYS: keycrypt: keys that user space can use but
+ never read
+Content-Language: en-US
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ keyrings@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Jens Wiklander <jenswi@kernel.org>,
+ Sumit Garg <sumit.garg@kernel.org>, op-tee@lists.trustedfirmware.org,
+ =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+ Pankaj Gupta <pankaj.gupta@nxp.com>, Sahil Malhotra
+ <sahil.malhotra@nxp.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>,
+ Richard Weinberger <richard@nod.at>,
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+ Eric Biggers <ebiggers@kernel.org>,
+ Demi Marie Obenour <demiobenour@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap
+ <rdunlap@infradead.org>, linux-crypto@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de
+References: <20261118140421.584086-1-giometti@enneenne.com>
+ <mvyqqjhvfka3kkumztixzozrthutkq6mfakkonxqbpm5gvzb62@eitzzleeyioe>
+From: Rodolfo Giometti <giometti@enneenne.com>
+In-Reply-To: <mvyqqjhvfka3kkumztixzozrthutkq6mfakkonxqbpm5gvzb62@eitzzleeyioe>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfPjnEm0KRtHAk7Xu1+wSM4ggxCt0j1Q9+oPLJi/gROcWWTrg+bgdMN95hJiGJBFhXNd6tGxHzy6xI0wdizsmJC4J007C4HZ7TjGFtLcp5Xb8cbyhKvCM
+ Uzi07n/ZVC55gl/w9PVaRMiTc3bcpg7tO05693rsuDxzyWOix/VwRUOBhu1IueXjgkym+5pWn1ALjtRadwrLMRdaeSsJDiVh2ZQca0aoz4u7G/gCZQ5faMsr
+ ZbtImVL6pGG0os0vzUhZoUoOYpQPmsGag1CbEOAQmLosnRs3OlfqWoAerckw6+IMg/RhJ2Eqo25H29DY9g+9jqF0sRCX2cGsed1zipjVQIv107xJ4oWajlMV
+ khd+68I3cGge4Vn8ffNyLMkKKo/iJL/DNFFERF5Xakxk9jeQ1HM6duQORfrCdoY1+r8sEyvhQ/pV+NHocBjmHdx8pOOJz1IB6ViJUjggNpQ4pShQJ/Q0UioG
+ IhxEvjeG/QWEA24O0wocRyCijL5a2PS+26ayplel3SFPR3QFQ78J/d5ndiwPhgD97VXhsJ21Oh6X7XhAuPBfd3vRgWNmsIXv0v3kcvvMkgBG6p+6iL3Pxl/x
+ zavj84ZHUgLKZe6f1tIP5SJ1YyiTyHA1gZEUCVUrz+Cx1+ovBDp41C0+Tgh/TGV4+VzONZHmBN0PxjOcZMxCSHjE1ah9po0YrQdl7HncKrIofFRZWo3TaiN1
+ AnpZYBtmoIVWG5AplanALkXXkv9Zs/27M2XlGOUHeaKmTURpTQQr4hsshpVDhQNrneeSlqfvQqqPnrI4xqEIHpYAYYvdZeMANJjibaJ9mC4v6nqc1Bs+KRG2
+ jPkbn8KFBW7GbgfStZw917JtIBvEl6o76lQaHbEgtff8DHMJeGoZE71fqFn0JiGSt6EInCz15aMu6GfXfOqmM+19YtIuslmqlsHAL293EHy97V6+H4tud7on
+ +EE6whsmEew7X2WFgAmj9MCDrlU7j/BWptczETpDpe1q+Ii4p49RTfBYxWATznipdt0Be9TcrlrSDmhipimKEIXDdPxn8Xopaf3Aci3FLX8b8rhQB6Y74bYO
+ juodC91CjWzTz/WjX25ga1p4q+NdG2JyM0Nl/WTr+MzBTDhumuqGKwWXiAEw1hR0ErwXJ9rSCyoOWdXXIZkLYBTXUFfVLXLMnd7NefRGBM9W6EP6GYPqVsIU
+ n+BzVDWKBf0t3eOT+SK7VteJdFVad5smIFK5PmcTex31jZ6ojvJLxT++uqvnxnj0DNZ8ZH0wHYXggM4S9WepwdbJ93fO0vAIYYdgVBZEnbHghoP6l3JZCQ8u
+ +VYxcC/6t+H9Iwr0dfEQelnD5aSSELDw+McFe47W2bPEVApk2DO7csk6K6D+fTQa41wkTVX1
 
-On Thu, 2026-11-12 at 00:56 -0600, Weidong Wang via B4 Relay wrote:
-> From: Weidong Wang <weidongw@illinois.edu>
->=20
-> ima_parse_rule() stores the fsname=3D value with kstrdup() but, unlike
-> fsmagic=3D, fs_subtype=3D and the other options, does not check whether t=
-he
-> rule already has one. A rule that names fsname=3D twice overwrites
-> entry->fsname and leaks the first string.
->=20
-> Reject the duplicate with -EINVAL, as fs_subtype=3D does. Such a rule use=
-d
-> to be accepted with the last fsname=3D taking effect; giving the option
-> twice was never meaningful, and the other options already reject it.
->=20
-> Writing the policy requires CAP_SYS_ADMIN, so the leak is limited to a
-> few bytes per malformed rule loaded by a privileged user.
->=20
-> The leak was found by an AI code review agent (an LLM-based bug-finding
-> tool developed by Zijie Zhao and the submitter) and confirmed on an
-> unmodified kernel, without error injection, on x86_64 under QEMU with
-> kmemleak: loading 64 rules with a duplicated fsname=3D left 64
-> unreferenced objects allocated by kstrdup() in ima_parse_rule() (inlined
-> into ima_parse_add_rule()); the same rules with a single fsname=3D left
-> none. With this patch the duplicate rules are rejected and kmemleak
-> reports nothing; rules with a single fsname=3D are still accepted.
->=20
-> The reproducer, fix and changelog were drafted with AI assistance
-> (Claude), then reviewed and tested by the submitter.
->=20
-> Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the fil=
-esystem name")
-> Cc: Zijie Zhao <zijie4@illinois.edu>
-> Signed-off-by: Weidong Wang <weidongw@illinois.edu>
+On 18/11/2026 15:57, Marco Felsch wrote:
+> Hi Rodolfo,
 
-Thanks.
+Hi.
 
-Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> thanks for the RFC and bringing this up. Please see my comments below.
 
-Roberto
+Thanks to you for reading it!
 
-> ---
-> Tested on v7.4-rc1 (05441d697f7f), x86_64, QEMU/KVM, kmemleak, booted
-> with slab_debug=3DU. 64 rules written to the IMA policy file at once:
->=20
->   trigger  "dont_measure fsname=3DpocfsA<i> fsname=3DpocfsB<i>"
->   control  "dont_measure fsname=3DpocfsA<i>"
->=20
->                trigger                         control
->   unpatched    accepted; 64 unreferenced       accepted; none
->                objects, all "pocfsA<i>"
->   patched      write rejected; none            accepted; none
->=20
-> Without slab_debug=3DU kmemleak reports none of these leaks on this
-> kernel: stale pointers in the per-CPU slab sheaves keep the leaked
-> strings "referenced". Writing the policy more than once needs
-> CONFIG_IMA_WRITE_POLICY=3Dy, which the test kernel has. The code is
-> unchanged in mainline, linux-next (next-20261111) and next-integrity.
->=20
-> The reproducer is available on request.
-> ---
->  security/integrity/ima/ima_policy.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
-/ima_policy.c
-> index 2dc1d93aa..f08ca00bd 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -1619,6 +1619,11 @@ static int ima_parse_rule(char *rule, struct ima_r=
-ule_entry *entry)
->  		case Opt_fsname:
->  			ima_log_string(ab, "fsname", args[0].from);
-> =20
-> +			if (entry->fsname) {
-> +				result =3D -EINVAL;
-> +				break;
-> +			}
-> +
->  			entry->fsname =3D kstrdup(args[0].from, GFP_KERNEL);
->  			if (!entry->fsname) {
->  				result =3D -ENOMEM;
->=20
-> ---
-> base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
-> change-id: 20261112-c3-n204-a82e17864b76
->=20
-> Best regards,
-> -- =20
-> Weidong Wang <weidongw@illinois.edu>
->=20
->=20
->=20
+> On 26-11-18 15:04, Rodolfo Giometti wrote:
+>> This RFC proposes a key type, "keycrypt", whose material user space can
+> 
+> Albeit I'm not against a new key-type we already have plenty types.
+> 
+> Furthermore the keyctl API is very open, lacks a common API. E.g. for the
+> 'trusted-key' keytype userspace needs to know the actual used backend
+> because each backend handles it differently.
+> 
+> Therefore I wouldn't add further keytypes till we have a common API
+> which the userspace can rely on.
 
+I agree that a common API is missing. keycrypt is meant to be one, for
+keys that user space uses but never reads: the same ioctls on the fd
+for every backend, and the same add_key() strings but for the sw
+backend's master=, so user space does not need to know which backend
+holds the key (unless it asks for one with backend=). What is missing
+is a way to ask which backends and algorithms exist (see below).
+
+[snip]
+
+> So it's not a new keytype but a new mechanism to handle trusted-keys
+> from userspace?
+
+No, a keycrypt key is not a trusted key. Only the sw backend uses a
+trusted key, as the master that seals its blobs; the OP-TEE and CAAM
+backends use none. Also, an ELE backend, not written yet, would use
+none, and it could be the first hsm backend!
+
+[snip]
+
+>> An embedded product that encrypts its own data (a root filesystem
+>> archive, configuration backups, logs) needs a key that does not sit in
+>> the root filesystem and that a compromised user space cannot copy. Today
+> 								^
+> 					What exactly do you mean by copy?
+> 
+> If you're using the standard LUKS2 scheme, the (volume)key never sits
+> inside encrypted device. The key is part of the LUKS2 header. Maybe I
+> didn't got your use-case, can you please elaborate a bit more?
+
+By copy I mean getting the key's bytes to use them elsewhere. A user
+key can be read back; a logon key cannot, but its bytes come from user
+space at every boot, so they sit in a file. A trusted or encrypted key
+fixes that, and the cover letter was wrong there: AF_ALG can use one
+from user space. But, as you note below, once unsealed its bytes are
+in kernel memory, so it falls with the kernel, and nothing binds it to
+an algorithm or a purpose.
+
+My use case is not a block device: it is files that an application
+encrypts itself (an archive of the root filesystem, configuration
+backups, logs), with a key that must not be readable on the device and
+that ideally may only encrypt, or only decrypt.
+
+You can see keycrypt keys as the symmetric counterpart of the
+asymmetric keys that KEYCTL_PKEY_* already lets user space use without
+reading them. The difference is that a symmetric mode keeps state
+across calls (the CBC chain, a stream's segments), hence an fd instead
+of one keyctl call per operation. And, as for KEYCTL_PKEY_*, the open
+could become a key_type operation, so that keyctl knows no key type.
+
+[snip]
+
+> Above you mentioned trusted-keys, but trusted-keys don't let the key
+> stay inside the TEE. Albeit the key is only reachable kernel (EL1) it is
+> always reachable from normal world. So a kernel CVE could leak the key
+> as well. This is different compared to protected keys like
+> p(rotected)aes. Here the keys always stay within firmware/secure-world.
+
+Yes. With the OP-TEE backend a generated key never leaves the TA,
+which runs the operation, and the kernel only holds a blob it cannot
+open, so even a compromised kernel can only use the key, and only for
+what it was sealed for. An hsm backend, as ELE could become, would do
+the same in dedicated hardware.
+
+> I didn't get your problem from your above description, sorry and
+> therefore I'm asking.
+> Do you want to use trusted-keys for partition (rootfs, data, ...)
+> encryption? In such case I've developed another idea which I'm about to
+> post as RFC.
+
+No, file encryption from user space, as above. In one sentence:
+keycrypt gives the keyring keys that user space can use but never
+read, bound to one algorithm and purpose; with a TEE backend they are
+never in clear in the kernel either, and they work from a minimal
+initramfs, before any user-space crypto stack exists.
+
+That last part matters a lot on embedded systems. The initramfs
+usually sits in the FIT image that the secure-boot chain must
+authenticate, and often decrypt, before running it, so it must be as
+small as possible (on our i.MX93 boards this runs at about 2.4MiB/s
+through ELE). In such an initramfs, OP-TEE's PKCS#11 TA would also need
+secure storage set up before the root filesystem (tee-supplicant with
+a writable filesystem, or a provisioned RPMB); keycrypt's OP-TEE
+backend needs no storage and no daemon, just the keyctl syscall and a
+small tool driving the fd.
+
+[snip]
+
+>> 1. A key type, "keycrypt", created with add_key() from "new <alg>
+>>    <purposes> [tier=|min-tier=] [backend=]", "load <blob>
+>>    [accepted-min-tier=] [purpose=]" or, when allowed, "import <alg>
+>>    <purposes> [tier=|min-tier=] [backend=] <hex>". User space states the
+> 
+> This is exactly what I meant at the begining. I'm not a maintainer, but
+> this string parsing "API" is very error-prone. Furthermore, how can a
+> userspace enum available backends? Instead of try and error I would like
+> to see a query/enum phase and later on userspace can decide which
+> backend and tier to use.
+
+The strings follow what trusted and encrypted keys already take in
+add_key(), but I'm open to another form, such as a versioned binary
+struct like the one KEYCTL_CRYPT_OPEN already takes with
+copy_struct_from_user().
+
+On the enumeration you're right, there is none: a key's line in
+/proc/keys and KEYCRYPT_IOC_INFO on an open fd tell its backend and
+tier only after the fact. A list of the backends, with their tier and
+algorithms, would be easy to add, and it is needed since algorithms
+differ per backend (the CAAM one does aes256-cbc only): would a keyctl
+or a file under /proc be what you have in mind?
+
+[snip]
+
+>>   tier     key in clear    purpose enforced by   who may use the key
+>>            in the kernel
+>>   kernel   yes             the kernel            the kernel
+> 
+> These are basically the trusted-key purpose.
+
+Yes, the kernel tier gives the protection of a trusted key, and it does
+not meet the goal above. It is there only so that the same interface
+works on systems with nothing better; its only backend, sw, is
+optional and off by default, and it can go if it is considered wrong.
+
+>>   engine   no              the kernel            the kernel
+>>   tee      no              the TA                the kernel
+>>   hsm      no              the HSM               the kernel
+> 
+> These are protected keys which we have already (see S390, CAAM, DCP,
+> Zynqmp, ...).
+> 
+> I don't see what you want to solve with your approach. Do you want to
+> have a common interface for generating/loading protected keys?
+
+Yes, and for using them from user space, with a purpose bound to each
+key (encrypt-only, decrypt-only, verify-only) that the TA, or an HSM,
+enforces. keycrypt does not replace the protected keys you name: a
+backend is where such a key lives.
+
+> That beeing said, loading protected keys can already be done by just
+> specifying the correct key-cipher. Generating the key is platform
+> specific and would need a common API.
+
+For user space that means AF_ALG with cbc(paes) only (the CAAM,
+CryptoCell and s390 register one AF_ALG can reach; DCP's is internal),
+each driver with its own key format, and since v7.3 privileged by
+default (d9506e82ced5). Generating is what "new" does in keycrypt:
+with OP-TEE the TA generates the key itself. The CAAM patches are only
+a prototype there: they still generate the key in kernel memory, and
+the aim is to have the CAAM generate it and keep it black (one of the
+questions to the CAAM maintainers in the cover letter).
+
+> Thanks for sharing your ideas :)
+
+:)
+
+Ciao,
+
+Rodolfo
+
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
