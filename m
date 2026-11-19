@@ -1,75 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795117025;
-	b=jctiJUZzHT7ZUz0QZL50vbq/ZWfnQitD4iTz+PqUvOOxKh2vHKhyX4R+Jk25n9w0JtY5
-	 JEQalU8U1eygqJ9Qnvhlk4fjXLLylIXozqXT/q+b3u+kuCG0kSXRXINNmB6c34dE9nt1Z
-	 YcZRiV5v+9h+hmKj/U+xdqbTqVUr9CgUmA2reN9Jd71bsZTQBVLvYBydXC/ecp7I5e9x/
-	 v8wlorlYBKMv7INAXa3rDn512ZaOLr3qAj17N7A04rm+S28UKzZv/BoKvELNkItsXchAF
-	 BLAkgymtZtBnyBPdbf2dW3kCtPIcjidMKpc+5rTST5+GMvRB+9cK9Wkz4au/o9cUVOw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795117025;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=j3OHGDRLYJbgj/ErJ8HaxI5UhxRADPxZ13wjmhDTfns=;
-	b=KxGoCeKPE8NV2iCXQIczVxb6LYlIRrteEssBkHouyOTNWB7CtLCWEiN+9rsEdz4kKlx8
-	 quZbv6P/KX4DP/I2FF8azUaghoYrO9+Ymg0yzScXH7mp6oMG/f5dTQUMyvRL+6qqDS7Un
-	 LphJ4CkjKOuh8lKY/4uClb65Z3PepSTxlDka6H9mhtJyGmDgiqPOQazwRhN8cqi7NMBhi
-	 JQZ7/G6oT0FP8QBoPPM4tse+0WLrVbog/MYqsrbazxtXHViBo7LAL+Lp5pQEUi5C1K2um
-	 ozCYn85gMsQcswVX12hbuwF3z0AdhRhR7kJ3QREI7q49s8lg9twJ53FgYaGVSqDqJ1Q==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="CTP9jal/";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.53
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795117043;
+	b=SibSkvkOjlW+HETotxwiIzX8pWoVRSSZFPfShOUm3uyoD/VaCY517AsxlNjeiW2RT4r7
+	 XAfbqzerdUFedygre6cmqeyf7FajfDNgzJXm6EhvPYuwHi/pbLqK0ovkt6DkaBnFLcekh
+	 i3anFMsWC/dxQhAxTZm0HNMlJ9pXIlPFeGvNq5COHHO3xwndOdRJGJ5FutqpTY9ikRQof
+	 XKYsPS/Pg76Clce9t5/BxpCTN6yd3Cw3I8HZ1AyfEqPVXPvi1ZXdcKy68WWjKK5fk+iGu
+	 K7iYR/wWs5CpkGsk+Qawbn9jEQ2wUa/y1+2ZIwKYbQSEX5gDylqaggqSNKtks6a8McQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795117043;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=ki7N7oUyczI7L7J7QNsuIKVYOIpUcziCfllCfxy/ZJM=;
+	b=M5iCS7v57ujFeV9FQEUiFRi9hrjfeLXm5b06Kxr4rzIgoomzXYePvkwZyd+XBE+ipqHP
+	 Oc6URBvrf5geEqaS4GVmm7m3g2CV/Nk4jj3DDIk/6SXgWt/6WSeXTGUcE6MJN4wQxyQwP
+	 aCbFfsDanZjKxxa6cc/bemALMrvu8G++2svLOjHtpvlwYkCandwBm5qI6t26dwZlqyjWE
+	 /drMr9SiMWpkWVdi/nF55rFnUPaWzDt4rZCciDb9JqGD3oMxO00t/VnT2AAT+G2ldydpJ
+	 Kvwv5f9Dtfitt0GPJPwpYD5TF/sz1GbRP1WSMdXnAMBVtWyar+61/nskKxR1NJBwqrw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=XodjmMdN;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.53
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6422606A32A
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 19:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB38606A324
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 19:37:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EDB38606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CTP9jal/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B811F000C6;
-	Thu, 19 Nov 2026 19:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795117025;
-	bh=j3OHGDRLYJbgj/ErJ8HaxI5UhxRADPxZ13wjmhDTfns=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CTP9jal//bKnwBy4ySVLUylckhZpJ1oQ3RzkBH+MakR00H55hqpxMiM0UMyr2rTjy
-	 TPcuKjGT7gdm0mDNHbhwNfHF5fK6x6y0dizYyHP/0YBUVzz8gnV2m9Kr58qkSN/x5Z
-	 FpZbxkZm/2FivINqu78yjPSJbHekGGqs2zZrVjLrrQoUFOcL0WQJKDFCnk2oB5MDUT
-	 DELNUYxzCICjI+YJf6QDNm/ZouSn/w2qMx9chXaOiNsliTtgPUu63o2atye1YaUtLJ
-	 u7yBUphIJvQ35Mt9hI50jjUWoRFtf7HipHsXUomtppwVTjyTqmURVyTL7pFRQnd3Sr
-	 /fi/TVAO7R6ow==
-Message-ID: <sashiko-outbox-223954@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v3 12/13] selftests/rootns: Add root namespace test
- suite
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "David Howells" <dhowells@redhat.com>
-Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
- Viro" <viro@zeniv.linux.org.uk>, "Andrew Morton" <akpm@linux-foundation.org>, "Andy
- Lutomirski" <luto@amacapital.net>, "Anna-Maria Behnsen" <anna-maria@linutronix.de>, "Ben
- Segall" <bsegall@google.com>, "Christian Brauner" <brauner@kernel.org>, "David
- Hildenbrand" <david@kernel.org>, "Davidlohr Bueso" <dave@stgolabs.net>, "Dietmar
- Eggemann" <dietmar.eggemann@arm.com>, "Frederic Weisbecker" <frederic@kernel.org>, "Ingo
- Molnar" <mingo@redhat.com>, "Jan Kara" <jack@suse.cz>, "John Johansen" <john.johansen@canonical.com>, "Jonathan
- Corbet" <corbet@lwn.net>, "Juri Lelli" <juri.lelli@redhat.com>, "Kees Cook" <kees@kernel.org>, "K
- Prateek Nayak" <kprateek.nayak@amd.com>, "Liam R. Howlett" <liam@infradead.org>, "Lorenzo
- Stoakes" <ljs@kernel.org>, "Manfred Spraul" <manfred@colorfullife.com>, "Mel
- Gorman" <mgorman@suse.de>, "Michal Hocko" <mhocko@suse.com>, "Mike Rapoport" <rppt@kernel.org>, "Neal
- Gompa" <neal@gompa.dev>, "Paul Moore" <paul@paul-moore.com>, "Pavel
- Tikhomirov" <ptikhomirov@virtuozzo.com>, "Peter Zijlstra" <peterz@infradead.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Serge Hallyn" <sergeh@kernel.org>, "Shuah
- Khan" <skhan@linuxfoundation.org>, "Steven Rostedt" <rostedt@goodmis.org>, "Suren
- Baghdasaryan" <surenb@google.com>, "Thomas Gleixner" <tglx@kernel.org>, "Valentin
- Schneider" <vschneid@redhat.com>, "Vincent Guittot" <vincent.guittot@linaro.org>, "Vincenzo
- Frascino" <vincenzo.frascino@arm.com>, "Vlastimil Babka" <vbabka@kernel.org>, "Zygmunt
- Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261118193539.240065-13-jarkko@kernel.org>
-References: <20261118193539.240065-1-jarkko@kernel.org>
- <20261118193539.240065-13-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 19 Nov 2026 19:37:03 +0000
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=XodjmMdN
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3b08a162d4bso106855a91.3
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 11:37:22 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795117042; cv=none;
+        d=google.com; s=arc-20260327;
+        b=L6cF6kxNMmBDc15pxt/z1xD92t+D0UxDltM+jVV962iDowOlNGn8Xzfow7MgA7Ryku
+         D1nZy8DRT8Q10+NfVrMubzZWoGJi+u6DV09cPPTMn8q4+6sZBnkSnT2wt8jm7w63Up9k
+         EXgltoYdgET92yITFjev7j36hyQ8Td9VOIwQUSBqH8YERufoABJOvQkcbBetU7MB7g5m
+         ICzOTgr5rpaN7zZJXUsqCgiGfSfRIP4OOtemrxfNKtKvecHrDi7zucpQIh2xVoFTH3qx
+         Rpn7lR/W/mGQY/NMExmhUIiNWr+kpUglaBYQlkJZXVVkpPTYo/luBDI/hB9nGvi6gIx1
+         AHhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ki7N7oUyczI7L7J7QNsuIKVYOIpUcziCfllCfxy/ZJM=;
+        fh=uQ13iEMleHPIrR589WGH0ctkh1PCH09k6m0i2lwv/po=;
+        b=bSAfbYijlI+A5SPWISz/Wsw2x7eS+xYDdvzG/Slj6JWxUYi6OfrCYA2abUm7EjcGJl
+         a25nycFJp1Gl2Hd23KHtVxeSptC3jZpgOcIraUqVe302w0uYHLRgMnpO7FdlU1UfGxHc
+         6nY3N0UazynFQvHs0HK1/WfWTUegldQf4GVNaievepkmbMYDGIAaKNRkXqX3/0XL/i6o
+         KpTBzT9Q0uzIcU85B1v68+BNMAvvYrstNQDm8b1QA0ayRccm60WVSQeFIz78DBzYU2XM
+         toGveuys8JbOjHk/C5Kq8P9tbcQXwoXUZ+CpHQYGDI3sGiqvGPiCHqkKlklMPweB0bVM
+         CaIQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1795117042; x=1795721842; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=ki7N7oUyczI7L7J7QNsuIKVYOIpUcziCfllCfxy/ZJM=;
+        b=XodjmMdNd66sSQHPxgX0Iw77xrzUpXmpUh6FvrO/B/Hk8c1K7J/ubNP1xulYRVIUn7
+         0zNyz12Ie31a/acpAaE2JdzOyVZ1FIPVGXO2gq3/Xb7Bd1z8v8sJz+XnGPwAxvBt8xIt
+         nRTm2fO0Elbyrfw7YtQ+JmWuR1ealDi/ibMo7Imi71oY+hqZsiiaQQ9dG+C12cSBrwK/
+         yX57pzVy1ZeFaPnMkTQAWdMaSdjisCW3A9pZcG19vKHgRG7aioh+XHJFJMVZ6Bw9H536
+         yCz7GWX5rzmqjUzUXrTu98st6r2v67k8vlpr+1E/DOMY+/p5qBpWJAVdWcPbbrF9cIW6
+         mN0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795117042; x=1795721842;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ki7N7oUyczI7L7J7QNsuIKVYOIpUcziCfllCfxy/ZJM=;
+        b=pB5TVFpSMMCGQ7aMNmnLm4YstD8AHgHBtFgN6xy3Qq1n1hjYGIE7tOlC+IBKOevcvl
+         t8tVNg7G4qBPlNLDMRz1Wo991I89lfm8HZBxu4ajKvtgjJ+g/Oc5TlHXoVPUYTL8LKNJ
+         b3aYpelyspxoVSyuFWx9PFSWUSyQT3v61pzEcHObzr0pDyM5V16MAcTlukdtE77KdFef
+         VBfy9xxjpzSCn8z3EMDHwZUXtCPIXfm9MjpQWshekgabwwcwUPtLZOH/TgAKpoQye5ye
+         YoIdwTFv1yaurtp4ZDLjxBnVaCvi66pHSkUucyYUBv2SEqnmfG3rzCfmRuiKQvLJ7bXO
+         xYNg==
+X-Forwarded-Encrypted: i=1; AL+hErGoeyhvx5g2/UC1VOlaFjwyH92nReBTlMcw40fPYrZpFKEmJjrJ6HuODsMrZw3sbVhiY+P+7mbvPyXUUaXiieNN8GyRxpc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9gmwZTRRa6n4+PgLcK1qIaQ1Pz82PxKjgswGl9Qht+2iDYp8K6
+	LMjCtNxkNfzHfM8ydGuPUHp9eGCIcf2QDp/QZWjqFK6Ps6vn26TecYhfm3V4yjIAOxDV6PruABQ
+	CRNaD6VHYb3FKSaTY+GHxzoiYKVHBvgv207tfO7VN
+X-Gm-Gg: AZFdTZdDqvUkV8jQ0ra/wVpCYWGPK6ZjPIWbXSd6c4RcqxgIT8St4b46ACPqotl7X8s
+	pKN0Fn6Aw+QvQf+M+C5/IMbVv+UkPsZBbj6U+oYS99I1v/WjnVxpuEVN8OeOVkuSGJGgNI8USxF
+	Kx6aRCG4rXBFaHZjNCKLLn+BUaOR1b1DHR4PMrwpwUu89/WdgTC5CgfS++9LTOsoPPd8kj94Mqh
+	auUM7z7bvFcjticLTczqEHMxOwFC8Ng97JCuZj5RKZngQXhHxe1HZdCUzCOxQK2OwBGiGLToQOw
+	3fl0bDQiqA5QaMVUIKkpFpIUaShtMfUAtxKgQiXUMnixOrzFM9VDvP8cxTdKJPrpcz28DvJXN7M
+	Lvk5aMPcxQshI2ZwrkM8qsb0nEPLVA36Gk5xjP9R5ZwjOtkjKA1gbL2iyJ4fdgN+3aIp8Mw==
+X-Received: by 2002:a17:90b:4a48:b0:3ab:2d17:51c5 with SMTP id
+ 98e67ed59e1d1-3b41c7b60b5mr394543a91.6.1795117042197; Thu, 19 Nov 2026
+ 11:37:22 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -78,192 +103,70 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com>
+ <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com> <CAHC9VhR9sjunJRnM9gy-BkBZkapQTrr8a8FtmaK7JkAmUqTrLA@mail.gmail.com>
+ <CAEf4BzZKmn6g0SK8OddjKFj_vAmZFvpZv32Hs_S+GHgT7VNfrg@mail.gmail.com>
+ <9d6bdc31-e57c-4187-be78-29d82471f710@app.fastmail.com> <9695ec3d-7b81-488d-989f-0bd411d673f2@linux.dev>
+ <CAPa8sAh6b5xn4rZzPfM0nZ+_kkywWj22fy8deLq+6qYews0rdQ@mail.gmail.com>
+ <MRYP264MB7057096D13282544720793F2E67A2@MRYP264MB7057.FRAP264.PROD.OUTLOOK.COM>
+ <CAEf4BzZWEU24+ZC0W_20hc3t+qnEHncQA1ztTF7ZPPOf3DDPVA@mail.gmail.com>
+In-Reply-To: <CAEf4BzZWEU24+ZC0W_20hc3t+qnEHncQA1ztTF7ZPPOf3DDPVA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 19 Nov 2026 14:37:06 -0500
+X-Gm-Features: AclHuK8huO5hL8Cq37FykvhPQRmji6J0FCQEXOUl5eyoX-lYuZrqwKkD8osBd6E
+Message-ID: <CAHC9VhSFvOiP5Tyt=rOFMwg=Ro1jRw+hfcw4AdCkEyftZJHQCQ@mail.gmail.com>
+Subject: Re: [BUG] bpf, lsm: new first argument in 7.4 inode hooks silently
+ breaks BPF LSMs
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Paul Mabileau <paul.mabileau@harfanglab.fr>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Daan De Meyer <daan@amutable.com>, 
+	Ihor Solodrai <ihor.solodrai@linux.dev>, roblabla <linux@roblab.la>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issues to consider:
-- [Medium] selftests/rootns: shared mount propagation in
-  move_mount_existing_mntns()
-- [Medium] selftests/rootns: missing SKIP() on ENOSYS and silent skips
-  in child helpers
-- [Low] selftests/rootns: stack direction and lifetime hazard in
-  clone_with_flags()
---
+On Thu, Nov 19, 2026 at 12:59=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Wed, Nov 18, 2026 at 7:14=E2=80=AFAM Paul Mabileau
+> <paul.mabileau@harfanglab.fr> wrote:
+> >
+> > Hello,
+> >
+> > On our end, we also have already merged code to adapt our eBPFs to the =
+argument order change. However, we would still prefer if this easily-avoida=
+ble breakage could be fixed by moving the argument to the end, even if it m=
+eans having to revert our fix.
+> >
+> > This is motivated by the fact that such a change is not made in place o=
+n our end because we ship our software to environments we don't control, me=
+aning that any and potentially all versions ranging from 4.11 to the very l=
+atest should be supported, so the change is made by compiling and shipping =
+a new variant of the concerned eBPFs for the version interval it is valid f=
+or (7.4+ in this case). And that has to be done every time there is an upst=
+ream change like this, so the total installation size and overall complexit=
+y grows accordingly.
+> >
+> > If we could avoid that, especially for such trivial root causes, it wou=
+ld be nice.
+> >
+>
+> I agree, and that's why I'm asking Paul to accept the patch reordering
+> the newly added argument before 7.4 final is released.
+>
+> I do not think that the maintainer's personal preference for argument
+> ordering beats real user pain.
 
-commit 101069d69b43912a16a7832bfad97b5398c581ce
-Author: Jarkko Sakkinen <jarkko@kernel.org>
-
-selftests/rootns: Add root namespace test suite
-
-This commit adds a kselftest harness suite under
-tools/testing/selftests/rootns to verify the root namespace and mount
-namespace configuration uAPI and security invariants.
-
-> diff --git a/tools/testing/selftests/rootns/smoke.c b/tools/testing/selft=
-ests/rootns/smoke.c
-> new file mode 100644
-> index 0000000000000..f0e3158ea4bec
-> --- /dev/null
-> +++ b/tools/testing/selftests/rootns/smoke.c
-> @@ -0,0 +1,1934 @@
-
-[ ... ]
-
-> +static int clone_with_flags(int flags)
-> +{
-> +	const size_t stack_size =3D 64 * 1024;
-> +	void *stack;
-> +	pid_t pid;
-> +	int status;
-> +	int ret;
-> +
-> +	stack =3D malloc(stack_size);
-> +	if (!stack)
-> +		return -ENOMEM;
-> +
-> +	pid =3D clone(clone_exit, (char *)stack + stack_size,
-> +		    SIGCHLD | flags, NULL);
-> +	if (pid < 0)
-> +		ret =3D -errno;
-> +	else if (waitpid(pid, &status, 0) < 0)
-> +		ret =3D -errno;
-> +	else if (!WIFEXITED(status) || WEXITSTATUS(status))
-> +		ret =3D -EIO;
-> +	else
-> +		ret =3D 0;
-> +
-> +	free(stack);
-> +	return ret;
-> +}
-
-[Severity: Low]
-Can passing (char *)stack + stack_size to clone() write past the end of the
-heap buffer on architectures where the stack grows upward, such as PA-RISC?
-Also, if waitpid() fails (for example on EINTR), free(stack) runs while the
-child may still be executing on that stack.  Using sys_clone3() with stack =
-=3D 0
-and stack_size =3D 0 would avoid manual stack allocation and work regardles=
-s of
-stack growth direction.
-
-[ ... ]
-
-> +FIXTURE_SETUP(rootns) {
-> +	self->cfd =3D create_test_rootns(false, ROOTNS_KILL_ON_CLOSE |
-> +				       ROOTNS_CLOSE_ON_EXEC);
-> +	if (self->cfd < 0 && geteuid() !=3D 0 &&
-> +	    (errno =3D=3D EPERM || errno =3D=3D EACCES || errno =3D=3D EINVAL ||
-> +	     errno =3D=3D ENOSPC || errno =3D=3D EOVERFLOW))
-> +		SKIP(return, "pre-idmap submount setup requires mapped userns");
-> +	ASSERT_GE(self->cfd, 0);
-> +}
-
-[Severity: Medium]
-Will this fail instead of skipping when CONFIG_ROOTNS is disabled (errno =
-=3D=3D
-ENOSYS) or when geteuid() =3D=3D 0 hits EPERM, EACCES, or ENOSPC?  Because =
-rootns
-is added unconditionally to TARGETS in tools/testing/selftests/Makefile whi=
-le
-CONFIG_ROOTNS defaults to n, running make run_tests on a kernel without
-CONFIG_ROOTNS will fail all tests in this binary instead of skipping them.
-
-The same issue applies to TEST(get_nsfd), while TEST_F(rootns, mount_perms)
-omits -ENOSPC when checking the return value of create_rootns_as_uid().  In
-addition, the forked child helpers in mount_perms, clone_perms, fsconfig, a=
-nd
-unpriv_no_userns call _exit(0) when unprivileged namespace creation fails
-with EPERM, EACCES, EINVAL, or ENOSPC, causing the parent to report a silent
-pass instead of a skip with a reason string (and unpriv_no_userns fails with
-exit status 4 on ENOSYS).
-
-[ ... ]
-
-> +TEST_F(rootns, move_mount_existing_mntns) {
-> +	int ready_pipe[2];
-> +	int hold_pipe[2];
-> +	char path[64];
-> +	int marker_fd;
-> +	int mntns_fd;
-> +	char ch;
-> +	pid_t pid;
-> +	int fsfd;
-> +	int mfd;
-> +
-> +	ASSERT_EQ(pipe2(ready_pipe, O_CLOEXEC), 0);
-> +	ASSERT_EQ(pipe2(hold_pipe, O_CLOEXEC), 0);
-> +
-> +	pid =3D fork();
-> +	ASSERT_GE(pid, 0);
-> +	if (pid =3D=3D 0) {
-> +		struct statfs st;
-> +
-> +		close(self->cfd);
-> +		close(ready_pipe[0]);
-> +		close(hold_pipe[1]);
-> +
-> +		if (unshare(CLONE_NEWNS) < 0)
-> +			_exit(1);
-> +		if (write(ready_pipe[1], "r", 1) !=3D 1)
-> +			_exit(2);
-> +		close(ready_pipe[1]);
-> +
-> +		if (read(hold_pipe[0], &ch, 1) !=3D 1)
-> +			_exit(3);
-> +		close(hold_pipe[0]);
-> +
-> +		if (statfs("/tmp", &st) < 0)
-> +			_exit(4);
-> +		if ((unsigned long)st.f_type !=3D (unsigned long)TMPFS_MAGIC)
-> +			_exit(5);
-> +		if (access("/tmp/hot_mounted", F_OK) < 0)
-> +			_exit(6);
-> +		_exit(0);
-> +	}
-> +	close(ready_pipe[1]);
-> +	close(hold_pipe[0]);
-> +
-> +	ASSERT_EQ(read(ready_pipe[0], &ch, 1), 1);
-> +	close(ready_pipe[0]);
-> +
-> +	snprintf(path, sizeof(path), "/proc/%d/ns/mnt", (int)pid);
-> +	mntns_fd =3D open(path, O_RDONLY | O_CLOEXEC);
-> +	ASSERT_GE(mntns_fd, 0);
-> +
-> +	fsfd =3D sys_fsopen("tmpfs", 0);
-> +	ASSERT_GE(fsfd, 0);
-> +	ASSERT_EQ(sys_fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0), 0);
-> +	mfd =3D sys_fsmount(fsfd, 0, 0);
-> +	close(fsfd);
-> +	ASSERT_GE(mfd, 0);
-> +
-> +	marker_fd =3D openat(mfd, "hot_mounted",
-> +			   O_CREAT | O_WRONLY | O_CLOEXEC, 0644);
-> +	ASSERT_GE(marker_fd, 0);
-> +	close(marker_fd);
-> +
-> +	/* Existing mnt_ns already has "/", so "/" must fail with EBUSY. */
-> +	ASSERT_EQ(sys_move_mount(mfd, "", mntns_fd, "/",
-> +				 MOVE_MOUNT_F_EMPTY_PATH |
-> +				 MOVE_MOUNT_T_MNTNS), -1);
-> +	ASSERT_EQ(errno, EBUSY);
-> +
-> +	/* Hot-mounting onto a relative path inside the live mnt_ns succeeds. */
-> +	ASSERT_EQ(sys_move_mount(mfd, "", mntns_fd, "tmp",
-> +				 MOVE_MOUNT_F_EMPTY_PATH |
-> +				 MOVE_MOUNT_T_MNTNS), 0);
-
-[Severity: Medium]
-Does sys_move_mount() here propagate the new tmpfs mount onto /tmp in the
-host mount namespace?
-
-Because the child calls unshare(CLONE_NEWNS) without unsharing a user
-namespace or remounting "/" with MS_REC | MS_PRIVATE, its mounts stay in the
-same shared peer group as the host mount namespace when "/" or "/tmp" is
-mounted MS_SHARED (the default on systemd hosts).  Attaching mfd onto "tmp"
-in mntns_fd then propagates a peer tmpfs mount onto the host's /tmp that
-remains mounted after the child and mntns_fd exit, hiding the host's /tmp
-contents.
+As stated several times in the past, the problem lies not with the LSM
+framework but with the lack of an abstraction layer in the BPF LSM
+providing a stable API.  As far as I can tell the lack of an
+abstraction layer in the BPF LSM is by design, and while that does
+provide some advantages, one of the notable disadvantages is that the
+API is unstable.  If you want to be upset at anyone, direct your
+frustrations towards the design and current implementation of the BPF
+LSM.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261118193539.2400=
-65-1-jarkko@kernel.org?part=3D12
+paul-moore.com
