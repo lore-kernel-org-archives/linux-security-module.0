@@ -1,45 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795063972;
-	b=EQl6vI5EJGFOO+6MlsuZ5ep/W5TciMyu4xf5M3yugeRW0kgvMkWTY1TH6iU9R8QwJQwf
-	 XvSZjjflyK+GLv0+NGiBsEd8acrB18EphNhaIwYWTlLb7B1qu1Si4a6rEO+O6LQkrMM9y
-	 2C8SZRpXD/O95pnqgEDtHvhTt2H1F8qrEkYLRTD8hY9mAmJTV3rFKNtwpQTGGk284/4ON
-	 48rp9LFlLrA37P9+DzNqn+heJmaOD+jExuyqolDVfN/a9jOeJUlp+I2+5dSXsENMk3cyh
-	 OvgukGykxYHRGkABSX2Y++CkQbFLOZtJBOOV9d/EZs3vU+dgDHPp5C21SrHmOp2odAw==
+	t=1795064484;
+	b=DsaJ5SV0J36KJKDQF8Q5bjcL/pCsLK5vzzAAA8Dc3p3pBtwzUORm5WNKnVN8m/osQplW
+	 7HA9d7yjbzqLlc2SlpTQK4t/u3lB6jSsfJqubwKADTeePALHpXqMSEJ858IqSgmnF5zxD
+	 mUdB+S3491WmPoT8AS+M7aeFFVCE7KdaDtphQ1VD7DZYTe2BTh7iPanB3CSHcp/b30nk0
+	 scPZ0m9HnrRhpKziGwCkomme9xJDp3k0WVyrOxsHzZ7epP8QqVSVWlfjEFJ5rQKTy5A9r
+	 TudzBExBIYepHzHE7tsKlxlLkEBLu4d+G8aE0EL1cFTVThqXdZN08/bpfJXQb9KPBTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795063972;
-	h=Received:DKIM-Signature:Content-Type:MIME-Version:Message-Id:
-	 In-Reply-To:References:Subject:From:To:Cc:Date;
-	bh=9i+UKZPZ3OpK5ILgjI5giVoNBCsGXWxAGZS6reZxXwU=;
-	b=E/uz/8ynhXRDrARTjvvIaSSu0g3lah0HXGmFgmD7bDGIJOV55Yevz4PpM9Dr8vzGrYJZ
-	 EKAK/M5vgjkSQMCTlEioDkg05G5UTwWRSL/LBizcUwjj3c648qEr4VEhdTxJifmbRbA3j
-	 QZo5o2klfzPwq7j9uTiey7kamYkXQN0dZZewLDVxQIhLYKRF9/DD+bbG3WrTs6S5Wkku9
-	 GiZyH60jpzz1LQAo6XUCwAn0ieRRwg82bvH3a9eSg62HBPJWOMd8Ud5o7xPFOamZEDwhp
-	 D+14ujjwihhmCecx11JP0zxrSGkYjSvUMkWFcjeHAiPsr6VSqia23sIS9RR1dQGrQtQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795064484;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=/3gTc3OhQhIgQt6McVDsUOMeCjJgyS505Y5yzx9cgOs=;
+	b=K3eUu7NCQyFZJcfXRMxs4V6fNKBXp0XxGIiKmrJhTkOkXvF90Yg7vMCZcB6H37JzIYlV
+	 pxXS4kjk0grqO75f5swwRVZUaFss+/uZAsyWNpycZ1MQ6WS1JfRvnYWy0TbyXMawrMFIG
+	 KlQEz4tvPCZdhQwGvMZP63W1goHUO4diNpV9sjQbJJIsgpkuJNBtHAT3oM1COD40QfHsA
+	 ZhuCk5bQjVXlaoHYHLkXPW/1ZNicbKs6mDqeynD1gCfLMKxbcov3NYJ3z0LJMJLKzEbba
+	 6TA35hyZpIp8RG9m0mhHaYym2hO0ceeowYf2RsGf0lo8NV7IGq25w7z4o7T35XKS5ew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="O9/IEtKF";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RNbMjuDh;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED199606A320;
-	Thu, 19 Nov 2026 04:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id E08A6606A320;
+	Thu, 19 Nov 2026 05:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O9/IEtKF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554B31F000C4;
-	Thu, 19 Nov 2026 04:52:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RNbMjuDh
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E97521F000C5;
+	Thu, 19 Nov 2026 05:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795063971;
-	bh=9i+UKZPZ3OpK5ILgjI5giVoNBCsGXWxAGZS6reZxXwU=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=O9/IEtKFhAwxtSQQ20gIkbGS6jtMNiV9GameG4+c4WUkp0KXzIoV56y3DUCygFCne
-	 fLOud+eFCn0vUUTKCcGgs9SDjzHj3MKrR6vyohE+DDLorBYe6DssRYEfq0rgAX0Em3
-	 6y+r3abPLOZCLeXqdFTHbzKnqW4fCjm/eYlKSIaRDVGJgs4Z5XbZA36SFNeZZJEskZ
-	 01aM/ZQl8wSimCP9er9CJuwHazOkfp89Q/0VDE3Pe56NEroDcQy05tSe1gwi047e4D
-	 RWBycPCqVyiiMLFUxjkVeBaCfklppnp9a/xnU/HVQB8P0iwFXchJbxAD4BWDUX7j6y
-	 v617XEMvSWjDQ==
-Content-Type: multipart/mixed; boundary="===============5775708092211357052=="
+	s=k20260515; t=1795064483;
+	bh=/3gTc3OhQhIgQt6McVDsUOMeCjJgyS505Y5yzx9cgOs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RNbMjuDhiUDcZyHgp73D5m6ri7m8MwOWTKphR8qId5y/koRUl/2OZN2Idl4zlzkIl
+	 dOdKI+XMl7YQs9/bk56L+9i4m6IWT8HLT3iF42eJHckjuMzfvc5rRZrWsHnwuM/ZHQ
+	 YGbhJIDGZzqGlYZLisa2Ay9LO2FaNcUaL4BAX85XM1GxxqJsjGK4pFCETfjadu7E1x
+	 dAkJnY5r5ucSljqiEj5wXHjD+WfEV9UhBw+ZTLRV3/DfEvMceLdVv/oc1zlA4dj1M5
+	 y05y/wrthET2C0OByrOMJGoZFsx2wXuVRkQvWzAqvsik8xOg/dLOF3wagjWs8GbpU2
+	 jyibVMmksmzEQ==
+Date: Thu, 19 Nov 2026 07:01:20 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Demi Marie Obenour <demiobenour@gmail.com>
+Cc: Rodolfo Giometti <giometti@enneenne.com>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Wiklander <jenswi@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	op-tee@lists.trustedfirmware.org,
+	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Sahil Malhotra <sahil.malhotra@nxp.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Richard Weinberger <richard@nod.at>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/9] KEYS: keycrypt: keys that user space can use but
+ never read
+Message-ID: <av6CoKFTzLN5Ftbq@kernel.org>
+References: <20261118140421.584086-1-giometti@enneenne.com>
+ <650f89ef-9745-4f75-b254-80fa5ac4773d@gmail.com>
+ <av5EyVHnNzT27dyK@kernel.org>
+ <61ca7c37-7b42-48a3-be2e-95deb4d999a2@gmail.com>
+ <01692969-8e92-4a08-bde9-aad86674504f@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -49,71 +83,89 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-Id: <c90c3d1dfacea3d6a30445bc33ca8e0de75c9fae953a4b9e842dd3dc887a3dce@mail.kernel.org>
-In-Reply-To: <20261119040705.684987-3-atomlin@atomlin.com>
-References: <20261119040705.684987-3-atomlin@atomlin.com>
-Subject: Re: [PATCH v6 2/2] selftests/bpf: Verify task_setscheduler LSM hook parameters
-From: bot+bpf-ci@kernel.org
-To: atomlin@atomlin.com,tsbogend@alpha.franken.de,paul@paul-moore.com,jmorris@namei.org,serge@hallyn.com,andrii@kernel.org,ast@kernel.org,daniel@iogearbox.net,eddyz87@gmail.com,memxor@gmail.com,mingo@redhat.com,peterz@infradead.org,juri.lelli@redhat.com,vincent.guittot@linaro.org,stephen.smalley.work@gmail.com,casey@schaufler-ca.com,longman@redhat.com,tj@kernel.org,hannes@cmpxchg.org,mkoutny@suse.com
-Cc: ihor.solodrai@linux.dev,martin.lau@linux.dev,song@kernel.org,yonghong.song@linux.dev,jolsa@kernel.org,emil@etsalapatis.com,chenridong@huaweicloud.com,dietmar.eggemann@arm.com,rostedt@goodmis.org,bsegall@google.com,mgorman@suse.de,vschneid@redhat.com,kprateek.nayak@amd.com,omosnace@redhat.com,kees@kernel.org,atomlin@atomlin.com,neelx@suse.com,sean@ashe.io,chjohnst@gmail.com,steve@abita.co,mproche@gmail.com,nick.lange@gmail.com,cgroups@vger.kernel.org,linux-mips@vger.kernel.org,linux-fsdevel@vger.kernel.org,linux-security-module@vger.kernel.org,selinux@vger.kernel.org,bpf@vger.kernel.org,linux-kselftest@vger.kernel.org,linux-kernel@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
-Date: Thu, 19 Nov 2026 04:52:49 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01692969-8e92-4a08-bde9-aad86674504f@gmail.com>
 
---===============5775708092211357052==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+On Wed, Nov 18, 2026 at 11:35:40PM -0500, Demi Marie Obenour wrote:
+> On 11/18/26 7:43 PM, Demi Marie Obenour wrote:
+> > On 11/18/26 7:37 PM, Jarkko Sakkinen wrote:
+> >> On Wed, Nov 18, 2026 at 06:42:15PM -0500, Demi Marie Obenour wrote:
+> >>> On 11/18/26 9:04 AM, Rodolfo Giometti wrote:
+> >>>> This RFC proposes a key type, "keycrypt", whose material user space can
+> >>>> use for symmetric operations but never read: AES-256-CBC, HMAC-SHA256
+> >>>> and an authenticated AES-256-GCM stream, through a file descriptor that
+> >>>> KEYCTL_CRYPT_OPEN returns for one key and one operation.
+> >>>
+> >>> I haven't looked at the API, but from a cryptographic perspective,
+> >>> this encourages very poor practices.  AES-GCM even allows userspace
+> >>> to extract the secret authentication key.
+> >>>
+> >>> AES-256-CBC isn't a suitable mode on its own, unless it's combined
+> >>> with a MAC in encrypt-then-MAC.  Even then, it has a 2^64 birthday
+> >>> bound, so it should only be used 2^48 times with a single key unless
+> >>> the key is ephemeral.
+> >>>
+> >>> AES-GCM is not a suitable algorithm either.  If you allow encrypting
+> >>> with a key loaded from persistent storage, there is no way for the API
+> >>> to ensure it is only used with a unique nonce.  Nonce reuse leaks the
+> >>> authentication key and allows forgeries.  Using random nonces isn't
+> >>> good enough either: NIST only allows 2^32 encryptions in this case,
+> >>> and the API can't enforce that limit.
+> >>>
+> >>> For long-term keys, all of the following are much safer choices.
+> >>> They have 192-bit nonces, which means that one can generate them
+> >>> at random for each encryption without any problems.
+> >>>
+> >>> - XAES-256-GCM
+> >>> - XChaCha20-Poly1305
+> >>> - AEGIS-256
+> >>>
+> >>> AES-GCM-SIV is also okay, provided that you are fine with occasionally
+> >>> leaking if two plaintexts are equal.  This happens whenever there is
+> >>> a nonce collision, so with probability 2^-32 after 2^32 encryptions.
+> >>
+> >> The exitential problem here is that KEYCTL_CRYPT_OPEN creates a circular
+> >> relationship between the keyrings API and a specific key type.
+> >>
+> >> At hardware level I did not see any support for TPM, which narrows down
+> >> the potential user base.
+> >>
+> >> The remaining potential user base is further reduced by those that use
+> >> trusted keys; leaving out those who need to solve the assumed problem
+> >> that only this patch set can presumebly sort out.
+> >>
+> >> And we don't really know at this point that cut. This is pretty much
+> >> the break down of what is wrong here.
+> >>
+> >> If there is/was a problem to sort out, it should be so constrained that
+> >> it should be as quick to describe as stepping over a nail really.
+> >>
+> >> These are the main topics what I would focus on.
+> > 
+> > This whole patchset looks like a solution looking for a problem.
+> > 
+> > The usual solution to something like this is a userspace service
+> > like ssh-agent.  Then you can do whatever key management you want.
+> > That doesn't protect against root, but if someone can get root you
+> > have bigger problems.
+> 
+> Also, if you need keys stored in hardware for some reason (compliance,
+> time-limited exfiltration), you can use a userspace library or
+> daemon that abstracts over whatever the hardware-specific API is.
 
-> selftests/bpf: Verify task_setscheduler LSM hook parameters
+Pro-bab-ly but I'm not a huge fan of generalization ;-) 
 
-TL;DR: Nit only, in the new task_setscheduler selftest: the restore_sched flag
-and the saved_policy initializer look redundant, so the scheduler restore at
-out: could be unconditional.
-
-> diff --git a/tools/testing/selftests/bpf/prog_tests/test_lsm.c b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> --- a/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
-
-[ ... ]
-
-> +static int test_lsm_task_setscheduler(struct lsm *skel)
-> +{
-
-[ ... ]
-
-> +	int cpu, saved_policy = -1;
-> +	pid_t child_pid = -1, waited;
-> +	bool restore_sched = false;
-> +	bool restore_aff = false;
-> +	int len, ret = -1;
-> +
-> +	saved_policy = sched_getscheduler(0);
-> +	if (!ASSERT_GE(saved_policy, 0, "sched_getscheduler"))
-> +		return -1;
-> +	if (!ASSERT_OK(sched_getparam(0, &saved_param), "sched_getparam"))
-> +		return -1;
-> +	restore_sched = true;
-
-this isn't a bug, but since every "goto out" happens after
-"restore_sched = true", could the restore_sched flag (and the
-"saved_policy = -1" initializer, which is overwritten by the next
-statement) be dropped and the restore at out: done unconditionally?
-
-[ ... ]
-
-> +out:
-> +	skel->bss->setsched_deny = 0;
-
-[ ... ]
-
-> +	if (restore_sched)
-> +		sched_setscheduler(0, saved_policy, &saved_param);
-> +	return ret;
-> +}
+But when looking only at HSMs that is at least 99,999% true as they
+appear as PKCS#11 providing smart cards with a possible prorietary API.
+Other than generic smart card driver they ought not to require any
+special kernel support.
 
 
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+> -- 
+> Sincerely,
+> Demi Marie Obenour (she/her/hers)
 
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/44458173002
---===============5775708092211357052==--
+Br, Jarkko
+
+
