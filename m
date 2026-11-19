@@ -1,52 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=62.149.156.117
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.69
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795083911;
-	b=L6dnNMkYKgrDciJmLmHUdnnXwQyo+i1vqHyixNHgu04K+e9eUTdsvApZw8mNLxom3/Ag
-	 24b/UhNMMk0KMMQaw2TNJSj6bvpPiL5fsucrAnN4sALdzZJvEU3FTb+GCi34Y2itwyaWt
-	 BmoZWS2rD/+18xAoHzSNpSlaIVEqTLxshtDUWrFMBSZE7Kc3knuV23qsnWMI/9VuND3sl
-	 O/RwzQCy6ga0iDkA7o6BCxbH5JF8hIpHvVkWdWhDZJT4/mnd4AzlnljPVXP5VrGcFMDqZ
-	 0w9DsnIylOXqsDjuTTdo9ARuIYNPkpZtw9ceKk9F+zSfM9iORcfxFz//ReoETYafZpg==
+	t=1795084971;
+	b=gxFAOSVhiQpOIE4J3th5XeXF+gKlzUHTIhzfgEgc724fqpnpcL1Io2N7rXTJZb7ccIZP
+	 G7Ir/ERiR+aPjaaSNLnhsxmDnUkfrZvLtSPgwAJSGIm84ajpnD198YiDGrpI81Xnad6kW
+	 YCGctvChyBDmqXdykqnt5JmhmUt77v+lEUy6+7AjvN9wGmqjFblAiXaPSMpn0KMUHhZMH
+	 l1f8SMhZVNh0gkKoTmPi+oLBkLVmR+fgbwCtvR0iN2X2Ak6DsAtHy3+okeg1AjiAZlptn
+	 mqcBa3ZjzCAfnBqKBwRtvzfJjKsiPP4wGYOghg3eOJB6etgu37X86e5AM3c8DH6iWTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795083911;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:Content-Language:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:X-CMAE-Envelope;
-	bh=oENtBgDxQDILpdWFr9SR7q3ozaqUclSFojY+BQjWBhY=;
-	b=ClP5I1XaZh8+BnNNIxTt4BJtCamWzroDZ9NdOwsKCQ6Wt16UvCWJyiMPPXPKRzbcAcSU
-	 CQxlSNM2kGu7JoHQX61XllhWmVRa63djFX+ilWP5Z5qfOWjDeOOEETqW7hdyc+ygGeoHy
-	 OaSYUos888LcI8rgaN5qGlqQpox+Q+tBuvg87H2ztQ7RUhG3noLULgqXj9I3pre0TVlpf
-	 vnm4GfHDBi0by+zXDSK+G2NyJdyitaCXqtuaS6SHW6IdY7Nj40ZeiS1D4Yb6t+pMuX39n
-	 aFoQavoip9Hi8qaq4VpVrmmAezJ84tsYiMhIkCzZxyq7GTWzp243v39eFjlO5GBz+bg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795084971;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:Mime-Version:
+	 X-Mailer:Message-ID:Subject:From:To:Cc:Content-Type;
+	bh=vMWbbWSOkcM/Z7Vh8kox11muEBd1XkiAo3xwlvt0N24=;
+	b=xH2nRkIKSKa581jzvK7d+EHSDIWsyqtfBRRp7dCOTH82F1UFDYxaxj0Ame9cW+8IgR1G
+	 D04xUvdhdOmmabho/v5p5NaGwN6cyjGKjMIsXLiqQmL/Yljg7Alt3u8K2q0e24zU4zkGW
+	 6ScLXGIn6jhdK3SGn6kqnLOKDfowI946pH+9S7gwjf/TRVIifPFHOGTZriK0OACHsABaT
+	 AySbkocOG6XUTDGa6n3Xm8rFSikH/LQ4TCOUZHWoz54moz4xRDz+IpNwMOJaap8ZPd8HW
+	 1DGObwc0l/BiZ/jxR3+IuhiobNoqX+EKt6nvEqz00hkwPtXLD00yo+0QLJugTxD8WqQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=enneenne.com;
-	spf=pass smtp.mailfrom=enneenne.com;
-	dkim=pass header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b=NC1M5oxU;
-	arc=none smtp.remote-ip=62.149.156.117
-Received: from smtpcmd11117.aruba.it (smtpcmd11117.aruba.it [62.149.156.117])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--halg.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=oW11fiAh;
+	arc=none smtp.remote-ip=209.85.218.69
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4D3606A332
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 10:25:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B4D3606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1A360A2605
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 10:42:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4F1A360A2605
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--halg.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.a=rsa-sha256 header.s=a1 header.b=NC1M5oxU
-Received: from [192.168.0.186] ([101.57.122.26])
-	by Aruba SMTP with ESMTPSA
-	id TzKFxCnXp6VShTzKFxQr4y; Thu, 19 Nov 2026 11:25:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1795083908; bh=Q9zJrZ0wXnXWsmyjv9s33EBa7YlKOzYgFTENm8dVngg=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=NC1M5oxUUNCSSCHGiwV892TMLdF959kGeURs1nrEkqaWyTLh6YvXuV+5yvDOQeMKO
-	 fFjPL94Tw4hxZKRDpdib8mjHJncCTVsG0uppaf4Cs3SVx4chbIYxB/igZctOILjiDq
-	 eUTsh+T/xYooLfuM7ik1u26dEmK6GKx4wTXf/dvQPERuk1wJlRyRxMcHo0IJhiuSC3
-	 v1v1H8/3qKVWMuK6eZ1bKvIPE6n9SiKhZmXNUL4B0WRSVZTGePYhSJ7KKfzpeDK5We
-	 ixCsNxJpFemu5sDF2dViPAT34arQ5nL9ss8RFi+haABojG1U2wzpx6s7bK/b16EKsE
-	 LH+tkkZAMhwqA==
-Message-ID: <80ded1ae-51a7-46d1-bb67-02b4b06de71b@enneenne.com>
-Date: Thu, 19 Nov 2026 11:25:07 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=oW11fiAh
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-c51314820bfso25167566b.1
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 02:42:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1795084970; x=1795689770; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:mime-version:date:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=vMWbbWSOkcM/Z7Vh8kox11muEBd1XkiAo3xwlvt0N24=;
+        b=oW11fiAh1fVsy6xgq5IQLkJN98zWoYddIagqZkzDkpueCJDM5RIhtOWVt2Ibp+QeE4
+         vLVz/VN3IfukbMIEgIcSxtqVOJdjFTy1kTkm+xYeScSIN0agEKjQzNIglCtubHhdZahM
+         gW2PO3wR6vduTj/PsGUzsQ16G6wt3LnAgQJ0PlyesozFr9xxEvViV95OZVtK6h8LF1uW
+         qlrnxlMEFynQwmpWIygxK29xxqFPiAzMQbI3oAVcqzzu7lhaDtqAqhBqv4kQ6GXBoYCy
+         WseF3F/odDo7mOODaKXMCIpmLHus2gdb4ou41qfyP4iiaDg+6kgjD2md05OsgrD+rxPp
+         LRBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795084970; x=1795689770;
+        h=content-type:cc:to:from:subject:message-id:mime-version:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vMWbbWSOkcM/Z7Vh8kox11muEBd1XkiAo3xwlvt0N24=;
+        b=YswENldke8DHsyipku9pcI1KIdoRmj7AzUrNjXMaCAGW+ypv42mY2WKFpPc4sT7U7O
+         ICvEGOfsWAYUFl9s4klGvOSMQ7TGlJigtVcF2WKuKLxoxuFGFoXxjJhV1sKxVMtrpDyD
+         8YU4Jo3FcddLRU5j//hM/NSnmQbY9RzaLY5zenDUmAXw5TLg4QkscUPeSs6c4TSWg2ZW
+         j1qlM+U62bjQvbkypuzZGqy+o6gbrQmADQbEPr1OXvCk+c6rnLpDW+yhpp2GWaxnYKFG
+         Hvk1vZKY0WQOdGterLxQVJ+ZExOn/616hEpHXFSIeGJkBuqkJqXXFdv/2giOW7EAD2mi
+         Yq+Q==
+X-Forwarded-Encrypted: i=1; AL+hErEyeBfEndl5YxZ8xQ9y4S38/HFqaIkirNyI3tTIbEYQ/OoSOKbVWEHZN175qtK5kD5U4vZh74tPvFoa8kkN8iAq57RVrHk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/ogRMClzyZ0Ht8bQmw4cL19nadd/CSoNXUy9ugwoc/lho+Ma3K
+	bJz8s/sJ01bgV7UkeMeTeiq5Y5gRwE4DFDz3t2f4+nFNYGYtcITCsGOJt4ainprVgulu8gjCPw=
+	=
+X-Received: from ejak1.prod.google.com ([2002:a17:906:541:b0:c3f:7129:4c10])
+ (user=halg job=prod-delivery.src-stubby-dispatcher) by 2002:a17:906:9f8a:b0:c41:61b9:6ef6
+ with SMTP id a640c23a62f3a-c510e376c7dmr532576166b.27.1795084969312; Thu, 19
+ Nov 2026 02:42:49 -0800 (PST)
+Date: Thu, 19 Nov 2026 10:42:04 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,96 +75,140 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] KEYS: fix signature length passed to
- KEYCTL_PKEY_VERIFY
-Content-Language: en-US
-To: florian.bauckholt@cispa.de, David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Lukas Wunner <lukas@wunner.de>,
- Ignat Korchagin <ignat@linux.win>, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Hui Peng <benquike@gmail.com>,
- Stefan Berger <stefanb@linux.ibm.com>, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20261119-keyctl-pkey-fixes-v2-0-9e2d1c7db7ec@cispa.de>
- <20261119-keyctl-pkey-fixes-v2-1-9e2d1c7db7ec@cispa.de>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20261119-keyctl-pkey-fixes-v2-1-9e2d1c7db7ec@cispa.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfFykGQACKRhov2XIilpQECvM/aNjmfh3eHVua/dfX0mTSaGmrnTrp8wSFXmi+91PsZSR3CNox52tQk7OthlCbvK81cCmNr2Bq+elt3dYE8UB6ypJlI5Y
- R6Za03zQGsoH9FMve8bmQSnfKS6L998MsYSHzy+1ZLB8G48Be8og32QffVafXX/6AhPy1H3Wf3A/Ja5hG0sgpDB/wEha7FfezD863t0w5oBfizJmIm0srYEr
- YHpuz8HGd8f6mzCTH1apwOsDitXAdAj9C6I0YqJgxY/zU2TkGQgk9mfZpi8QoYj0KOdpTUYD9+ByTCLD0cuaVpmQEQFj+pSrmpl2hgr0YYcJmj0DCTDHR5py
- 3ec7oV1RE/duvtWRkdpC9VensJ3kFcZeUf2Tl4QWf+b45NgK8Hcy9StlAtigoYLQBdXKtWkZYnhN4ni1QYp8LtfKmBxIf34WD6EVfhqqVG66PoFMpbqLF0GW
- 3zSCJGMaAT2QN8PtAAH1uuyRETQeK1nsQlHYZqkPM0WirdN0Y+1EvdCPrS2dPD4unRGPnZxbrPotroy1KkotYaoVu8+O2vKSsis5foc+s8QSheZTuR2Rd+Bl
- iRzq7ymBlkPzMZtH8Fx8SKFF+wtsUkWXKYZ/ormRZ96Cv8JAkkPTkRD2U9RwSwseEghc3s73XPXHaw3udkQmr/ZzaINMARjij7rhJsYhW7gzGfljLka7To7V
- 5XwetE54oiYhcHLTlyBsNlQVPJWzubXg
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.56.1.708.g77570a6a1d-goog
+Message-ID: <20261119104208.782900-1-halg@google.com>
+Subject: [PATCH v2 0/4] userns: per-namespace capability bounding set
+From: "Hallgrimur H. Gunnarsson" <halg@google.com>
+To: Christian Brauner <brauner@kernel.org>, Serge Hallyn <sergeh@kernel.org>, 
+	Andy Lutomirski <luto@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, 
+	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Jonathan Calmels <jcalmels@3xx0.net>, Jann Horn <jannh@google.com>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, KP Singh <kpsingh@kernel.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	containers@lists.linux.dev, keyrings@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "Hallgrimur H. Gunnarsson" <halg@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/11/2026 00:19, Florian Bauckholt via B4 Relay wrote:
-> From: Florian Bauckholt <florian.bauckholt@cispa.de>
-> 
-> Commit cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
-> made keyctl_pkey_params_get_2() set params->out_len to the maximum
-> output size of the operation instead of the size provided by the caller.
-> It does so for KEYCTL_PKEY_VERIFY as well, but verify has no output
-> buffer: out_len shares a union with in2_len, the length of the
-> signature.
-> 
-> As a result keyctl_pkey_verify() ignores the signature length passed by
-> the caller and always reads max_sig_size bytes from the signature
-> pointer. A shorter signature is extended with whatever follows it in
-> the caller's memory, or the call fails with -EFAULT if that memory is
-> not readable.
-> 
-> The x962 ECDSA template currently ignores data following a DER-encoded
-> signature, which hides the problem there. A truncated RSA signature,
-> however, is accepted if the bytes following it happen to match the ones
-> that were cut off, as reported by Rodolfo Giometti [1].
-> 
-> Use the length provided by the caller, which has already been checked
-> against max_sig_size.
-> 
-> Fixes: cb481e59ea6c ("KEYS: fix overflow in keyctl_pkey_params_get_2()")
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/all/20260919221742.3709658-1-benquike@gmail.com/
-> Link: https://lore.kernel.org/all/0e20f799-e389-40d2-aaee-2f174748faae@enneenne.com/ [1]
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Tested-by: Stefan Berger <stefanb@linux.ibm.com>
-> Signed-off-by: Florian Bauckholt <florian.bauckholt@cispa.de>
-> ---
->  security/keys/keyctl_pkey.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-> index e7121523b9c9..722521a014ab 100644
-> --- a/security/keys/keyctl_pkey.c
-> +++ b/security/keys/keyctl_pkey.c
-> @@ -175,7 +175,7 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
->  			goto out_up_key_sem;
->  		}
->  
-> -		params->out_len = info.max_sig_size;
-> +		params->in2_len = uparams.in2_len;
->  		break;
->  	default:
->  		ret = -EOPNOTSUPP;
->
+When an unprivileged process creates a new user namespace, it is granted
+a full set of capabilities (CAP_FULL_SET) scoped to that namespace.
+While isolated to the namespace, these capabilities allow unprivileged
+local users to reach deep kernel subsystems (most notably networking
+configuration and raw sockets via CAP_NET_ADMIN and CAP_NET_RAW) that
+historically assumed a trusted caller and have accounted for a large
+share of local privilege escalation vulnerabilities.
 
-I ran test3008 of craf 2000 times on a UML kernel of current mainline
-(666539eecdf4) with this change applied: no failures, against 4 out of
-2000 without it.
+Many sandboxes and workloads use unprivileged user namespaces strictly
+for UID/GID, mount, PID, or network isolation and never need high-risk
+capabilities like CAP_NET_ADMIN. Likewise, system administrators,
+service managers, and container runtimes often want to enforce a
+capability ceiling across descendant user namespaces while still
+permitting exceptions for authorized workloads.
 
-Tested-by: Rodolfo Giometti <giometti@enneenne.com>
+Prior work by Jonathan Calmels [1, 2] proposed a per-thread userns
+capability set (cap_userns), while v1 of this series [3] proposed a
+capability bounding set (cap_bset) in struct user_namespace configured
+via a global sysctl and clone3().
 
-Ciao,
+During v1 review, both Christian Brauner and Andy Lutomirski had
+reservations about the sysctl and clone3() approach, and Andy pointed
+out the need to cover the single-deep container case. Christian then
+proposed combining per-cred cap_userns with the per-namespace cap_bset
+ceiling [4].
 
-Rodolfo
+This series implements that combined approach:
 
+1. Per-namespace cap_bset and per-cred cap_userns (Patch 1)
+   Introduce user_namespace->cap_bset and cred->cap_userns, controlled
+   via prctl(PR_CAP_USERNS) and SECBIT_CAP_USERNS_STRICT (named _STRICT
+   rather than SECURE_NO_USERNS_CAP_RAISE as it also disables the
+   default cap_permitted exemption). Clamp namespace creation,
+   set_cred_user_ns(), and parent-owner checks in cap_capable_helper()
+   against these ceilings.
+
+   One refinement over the v1 review sketch: set_cred_user_ns() also
+   intersects cred->cap_userns with user_ns->cap_bset on namespace
+   entry. Since userns transitions only move downward in the hierarchy,
+   excluded bits are permanently inert anyway. Clearing them keeps
+   CapUns and PR_CAP_USERNS_IS_SET accurate after setns() and gives all
+   six task capability masks a uniform user_ns->cap_bset subset
+   invariant.
+
+2. Ptrace and dumpability bounding (Patch 2)
+   Require the tracee's cred_userns_bset() to be a subset of the
+   tracer's in the same-namespace ptrace check (complementing the
+   cross-userns owner check in cap_capable_helper()), and update
+   cred_cap_issubset() so widening the effective userns ceiling resets
+   mm->dumpable and pdeath_signal.
+
+3. Introspection via /proc/<pid>/status (Patch 3)
+   Expose cred->cap_userns as CapUns in /proc/<pid>/status. Leave
+   AUDIT_CAPSET unchanged, as capset() never modifies cap_userns
+   (matching cap_bset, where prctl() changes are covered by syscall
+   auditing).
+
+4. Selftests (Patch 4)
+   Add kselftests covering PR_CAP_USERNS, CapUns, nested monotonicity,
+   creator capability retention, SECBIT_CAP_USERNS_STRICT, setns()
+   clamping, parent-owner bounding, ptrace restrictions, and dumpability
+   resets.
+
+Changes in v2:
+- Replace the global sysctl, CLONE_NEWUSER_BSET / struct clone_args
+  extension, and NS_USER_GET_INFO ioctl with per-cred cap_userns,
+  prctl(PR_CAP_USERNS), SECBIT_CAP_USERNS_STRICT, and CapUns in
+  /proc/<pid>/status.
+- Drop CLONE_NEWNET_LOOPBACK and UNSHARE_NEWNET_LOOPBACK to handle in a
+  separate series.
+- Clamp set_cred_user_ns() (including cred->cap_userns) against
+  user_ns->cap_bset and cred_userns_bset(cred).
+- In cap_capable_helper(), bound implicit parent-owner capabilities
+  by the owned namespace's cap_bset, and grant them only when that
+  cap_bset is a subset of cred_userns_bset(cred).
+- Bound same-namespace ptrace checks in cap_ptrace_access_check() and
+  cap_ptrace_traceme() and credential subset checks in
+  cred_cap_issubset() by userns capability ceilings.
+- Rebase onto v7.4-rc1, preserving SECURE_ALL_UNPRIVILEGED handling in
+  set_cred_user_ns().
+- Link to v1: https://lore.kernel.org/r/20261028221705.3915340-1-halg@google.com
+
+[1] https://lore.kernel.org/all/20240609104355.442002-1-jcalmels@3xx0.net/
+[2] https://lwn.net/Articles/978846/
+[3] https://lore.kernel.org/all/20261028221705.3915340-1-halg@google.com/
+[4] https://lore.kernel.org/all/20261111-behagen-faktisch-entgegen-e2e714373895@brauner/
+
+Hallgrimur H. Gunnarsson (4):
+  userns: introduce capability bounding set for user namespaces
+  capability: bound ptrace and cred subset checks by userns ceilings
+  proc: expose userns capability mask as CapUns in /proc/<pid>/status
+  selftests/capabilities: add userns capability bounding set tests
+
+ Documentation/filesystems/proc.rst            |    2 +
+ Documentation/security/credentials.rst        |   12 +-
+ fs/proc/array.c                               |    4 +-
+ include/linux/cred.h                          |   22 +
+ include/linux/user_namespace.h                |   12 +
+ include/uapi/linux/prctl.h                    |    7 +
+ include/uapi/linux/securebits.h               |   16 +-
+ init/init_task.c                              |    1 +
+ kernel/cred.c                                 |   13 +-
+ kernel/user.c                                 |    1 +
+ kernel/user_namespace.c                       |   33 +-
+ security/commoncap.c                          |   80 +-
+ security/keys/process_keys.c                  |    1 +
+ .../testing/selftests/capabilities/.gitignore |    1 +
+ tools/testing/selftests/capabilities/Makefile |    2 +-
+ .../capabilities/userns_bounding_set_test.c   | 1064 +++++++++++++++++
+ 16 files changed, 1246 insertions(+), 25 deletions(-)
+ create mode 100644 tools/testing/selftests/capabilities/userns_bounding_set_test.c
+
+
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
 -- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+2.56.1.708.g77570a6a1d-goog
+
