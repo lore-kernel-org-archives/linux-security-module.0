@@ -1,87 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795123341;
-	b=xoTiwFMyfti5PkEAoYZntIy5DJGzIHv0CrTcq3I9ima0TWgDf3nw5qE4DmPE4NDTmzOC
-	 1MPE+omCSgeL+cyzIR60wj2bDNYpspM4queMOzMfZxlFbsULba6Pry5u82K+HBcDZcBML
-	 k9CbqIfD3cTFEz59TLL369uXNl1/pwgDfpBNcA3WtJIFow1xnh9+53ax7rossQxgDZvNE
-	 7ZB78m5YXw0vzHQuCVxUvEuCFd+sWkx9zr6cG30Jvj9XtFLPquB5VSpYug4kUQDuShtpx
-	 F1O6S/W6VS0l3qekw024tfhRKXJ8RqvX2/jDLFyUoRvetu/UZrobr82V2nZpJrps6Qw==
+	t=1795126693;
+	b=x1jaNLHw1cGaO12AqNAIvMFyMWN0Iun5K8qxY1KgE30y7cRZZ1Zz0GOV2FLdaMXp6+G3
+	 YaTRFMQgYHs3QajMkhKKoV6AyqTtJjgtGjIMymino/qgcuBxSJvQMzmBeQtTjWrNwYOxL
+	 Le2V1s9uQB9bOZDkI9OQwb0uBbhFQyFDXhvANqyqqrlipsbaWoYSg2lWAt15VURVyQivb
+	 8ncQfNfLJcH6fA8m3llHQ5JZpK2nbqOyQ/yz/IMUQHPM9e8Be0e6q/M+o3kCNDzlZIeFn
+	 VCx0/DFRzlqeNOGmm3Y/asMbQQLETsPTHiScvN73QByfcJO35MwbPLK70ISPArA9P6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795123341;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795126693;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:Message-ID:From:To:Cc:Subject;
-	bh=qcjEcSxMerUyIcJCb5LoXrpksSMmt9uIaMrH55NR/bc=;
-	b=wlNrMS/kVkddo+Q0P7N/iogHwGr6EknnmmoZ69Io4DrSFjhjSh1/eug1s8olw0O1kZoM
-	 FLjfVC7f3dmw0Q302x8TytRLG2bnuBzrVW2SJFmXOkIDM45rigxnEnwHrYc72v+WpJKM9
-	 QKKW8sxX9zqMymG+CSTOhQ9z04LZx4lnaJb3bxXPeja57SRFthFsmYMh3O8BTv0X+7MR+
-	 dE35/hflGtMzbHa9yhGlJUMI/798mCf6U4N3EYzog+Dem8ZsVnAxpOqT2FKY7NdhgvfbW
-	 kbkD2njtCGjm8MrcagCy6M7JG0jXBmbDgWvNu3Y2qsvsNunW4/82S6okR9G7/BpzOlg==
+	 Received:X-Forwarded-Encrypted:X-Received:MIME-Version:References:
+	 In-Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=gA/aemZzQ9sPBTs414mU1ORatQGaaPpP3nEzIpSAJk4=;
+	b=OwJ/+Pf8Ae1mx3hzIO1uTx9McQ+M7xvgzJThufsfGTLXdcjt/F6jmuadh5h98t1jx8f6
+	 VBtuMVwpYAVLMZXCs9QnNfl11RF+sMu/7HC3+a7yupUJMbHxyZoh/ChCIaCpyOcuX9uk9
+	 YpRiLH4FFcQA65HAoKmgx0lyNfYh2EnDzmt3xKRJcjJfUU+0VwJkexP5eCLkWknBn4l0T
+	 m5nlqZB1ceN8yel+wvDKFzCgABiWmnmVjww7Lw33yQGdgBfePCx7eeNEKkNq5AqDvXp8n
+	 E7iBDkIxDZoyfyu5tcViyn0U6+EX9WMUNJ+fX3XnEeKbJM12mULs8PMS6zcGLBYW32A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=paul-moore.com;
-	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=b4kyZD6Q;
-	arc=none smtp.remote-ip=209.85.222.170
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dmarc=none header.from=linux-foundation.org;
+	spf=pass smtp.mailfrom=linuxfoundation.org;
+	dkim=pass header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=google header.b=ZldscqM+;
+	arc=none smtp.remote-ip=209.85.208.44
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C5D606A320
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 21:22:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 75C5D606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFEC606A320
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 22:18:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0FFEC606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=b4kyZD6Q
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-9496400270fso21382585a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 13:22:20 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=linux-foundation.org header.i=@linux-foundation.org header.a=rsa-sha256 header.s=google header.b=ZldscqM+
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6b587538a37so352420a12.2
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 14:18:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1795123339; x=1795728139; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qcjEcSxMerUyIcJCb5LoXrpksSMmt9uIaMrH55NR/bc=;
-        b=b4kyZD6QXm+GEEGwq7TKClxnDVyHew5vDgtJgHBG8EG2okFDdAH4+rLSZVU+CLaD27
-         o41y0HI1+10Tu+/uX0munx6pDHmyNXMuU6pm9SGYPVGwUwx2fb4wXToFvXHOtZq0A8Fk
-         SP1GtOx/ty2rXiaapHazDej2BF5Va1HQ5szRrQHS/IEB4oRVLnUKKNLbZEjHpj6NJ74D
-         DxAcyJmGCCCbf1Zddy8R9pc0U/RH5x2Tcdyb/c0uyv/yLHAhHCGr3JmSM0snMIgsZjXv
-         pPGZcRIGfXTTXb7GbMJgnft3SYyL7hVt6RS7H8CgK3fTS/WSANLNtm8c0B64tfnvIGS1
-         cNmw==
+        d=linux-foundation.org; s=google; t=1795126690; x=1795731490; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=gA/aemZzQ9sPBTs414mU1ORatQGaaPpP3nEzIpSAJk4=;
+        b=ZldscqM+w6KlyLRO82OGvVKpcNkMDSlzQnlKm1Jy7mLtXSui+gU2v6CYgiVnnKXTdn
+         9fzbQjkCRQyAbCXyKCWlAVC5b4UoUNY01GgGaQatwW0espx4lbEMhEWhqL1PnAv0TRlJ
+         yWN4IxNrJApTOAM6TRrnJ4nhKUWJhJH42cXCY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795123339; x=1795728139;
-        h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qcjEcSxMerUyIcJCb5LoXrpksSMmt9uIaMrH55NR/bc=;
-        b=026k70+zx6e7IRnWgGLj+4U3GA59JohDB6w3yulfa5d14hNqs1guJ/Wt4xojy5MqLp
-         wrEd/N/tF9+14rJfBrL2nXxANr4sov3RdzkeggE0LVAYpF4J2CPQNpR1ccQZVw4OsLtU
-         wWUSFgPZP9ju9j8vrppTlzOvN4l4x310Y0c8eJG83ucHOpPLp2drZpBubPEAI4OCW69g
-         PIAgCL7FXUPxN7rW7GVUIusaVNCp4SsosqT3yyaSAUy3LiZ3NGJUjOLNnP49pULs2Mh0
-         iAvlrhlV6h3TtpKZcw+hxofMnf8quf4Mu/VT/HCFgUhizNraptaJmsK7eUcy47cZMPLW
-         dffg==
-X-Forwarded-Encrypted: i=1; AL+hErGC0cvje+4d3Y5QAe1NCcv3nuP8aj4ZFjSEgYZvrgVF/En+dfS4N1sQZDdemM97D2JDv6h+cr2Df6PscmSeCnj2lG9x3+g=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/j01lbxs3r1B9EQ5hf559c/Zes1pszbkP8lM83ZMklTNQQMszC
-	omHkqJA2bZCIyjemvM17WsHzmckK1+WRxLQQ292O7TuBCpVPp9vCh3+E3Pi/bgVMxQ==
-X-Gm-Gg: AYBFou1S0aURzoQ/wkI2bwPShf7SXVEcxpi2q2gdjQB+VHo1EQFdhrUrpD9Uh4vtc9b
-	7bTn+GXYJWnTXHLkk27a66OGr95eRLdR30CnvQQ4ebrFwlv9SN89l2A7MTqrt0fyw814QqGZzXb
-	enXn2jq3tdE+iixy1LpHJUju6NGL0zHBya6yua9VdDZDrmOCvRD1m4FvTRkP3JmoW1yF+z9bNPk
-	4wTe3uGLaimsrvxeaqSWomuxGNBNYVKEKFsyQJl5t+t2Nlkt422sqop4l4m273VOpxkfn7OzmK/
-	EsWh35wRZ++OHNhapv9pAOychSlNiUWBr6mp5vx3Jfr4c6BbrX9wgCbMWKq2xUJX1ScXfs0nvUj
-	AUbXVsTKu3ObiCmj2KHiZwQz6V65ODUGrbnKk9B+k0RiqmEHz987ZzzXyhF3jW7i6EBKkL+2Mms
-	rHu8n8ftHccLwHzIqOCnaYEwvsa8UMX7DkDUoU5yoFGu4bozJcxjBFkvItzyG7aPe7GmkgHqYVS
-	CQyxnjTKcBi3Mvnj1bFntJZlhAXymfSSgDHJELCRpim64QbCNpm6oUeFCEcRaelRtQd04Gv+Sgr
-	YZAbfYn4wDmLI2Lf7h7kUiGG3KEXURgNSeIW+yLzitd9zhXwg1kMjxcZbMcOY6tvlyB+XlBfxlo
-	RN/vODiXOhMcfhEMuE/yAKBpjaylwsQ==
-X-Received: by 2002:a05:620a:6c18:b0:93a:11a4:223c with SMTP id af79cd13be357-949ba81a577mr150251485a.9.1795123339444;
-        Thu, 19 Nov 2026 13:22:19 -0800 (PST)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-949bb40ea12sm49176285a.35.2026.11.19.13.22.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 13:22:18 -0800 (PST)
-Date: Thu, 19 Nov 2026 16:22:18 -0500
-Message-ID: <d583b944b32f1a6f9bb27005d628ba9a@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20261119
+        d=1e100.net; s=20260707; t=1795126690; x=1795731490;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=gA/aemZzQ9sPBTs414mU1ORatQGaaPpP3nEzIpSAJk4=;
+        b=mdmkLQnINXWN3unNW/KTGo5CLeGUnuqc+yO6/uulRWf3WcidZPBRY0XMP4y6V60i5w
+         o/ls2WFQDElq5B6WSap0Y8MlCO05LFwFD6SdY968wbOCHmkT94miH+bjtpKQIoRRQrP3
+         VusD0i0fROMYSPyE1yAyCJ3vVqDYwiDVqgfGyIvjJ5q/iqTT5WPDLiUqtQlnTrr9PI+c
+         3xCPLikhAF3Sn252WRDvQisV5yKD5IzeprXkaUAjw5p8shkb/l+8fCpZQybwavNslFYB
+         73NZtOq1JcY5tuHkAKfL2E1p9bJcTYEorB46jqn6/WZ3Bf1gvmE5tlLMAAkyBdlz7Hx6
+         99Yw==
+X-Forwarded-Encrypted: i=1; AL+hErHuLn06F5+C2XDQ8NgIUadN67fFexxl/d48IJ9mErakl1hRbv+1kyCLSCHiu9BotlhWmgDfZ7SRQH5BUc4qhOkdh+5IMJc=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/RsEpLLHRJAUuLQDSRAwPzfPyBm+e/o6FC5K51rSO99WJ1+fC0
+	uALoN+xXyJK17iUfKLUZ7PEiX9k9DzSy25IWKj0ttP7nWW10KuEYD6wZF1BaC0kr+/9S4vlJPWy
+	FCS/g6ZE=
+X-Gm-Gg: AYBFou3RRO2QAatgoDpcCvdAv1Igfnf+RY5jS4kQvTOPnzyRmm8alh+pdKiv8EW/mX6
+	/v51jllUVzponiFhVb3QptuMT8khvDRGLgS1BWqYUK3xvtAiaMxKPpyuVZosJnaa2oZFqZZcMTv
+	sRFRvYG+tSCUK7eo16NDZyVpfg+9vejq84BE4mO9wROcm2xldj2wFH4o5fV9wcyarDBWDZz4Zf/
+	3DB7XVaIQkgtDU9Pt0140uWSVTpR/6yuctfIy7N8vXOJ8ghMnD8MZ0B1m7ef5Vbh2r7JmoNYtS3
+	LCDabnm5g2pI25N9ta35EwYx8FFywIc8otqgKmMYRGxbwoNQ977AmXmKZSCDis2xPFGQstOB7U8
+	/rlZur5UTceyYAGogQZ4IpjpM5hN2lFE2Qdp3HPhv/QV5FCQv4/8T/LkiKWO7VVXW0Ehao4TbXY
+	UaqQM47DSRfdFIRkl8buo03ywckeIQzyZdRZXO32gGdcBr1xYFEeggXlsXrvIg/K3BIAEHOmtvK
+	edg0YMHz4VdB88Xa0GxBKDzttm1aMqIaFVoWCm/CTQrle14YNGEcgjSAZlQro5Zk9V5sY8WwMyc
+	rSH9TfkhEZ6qgWKg/lFQC2z583g0EGp3P+oQMbSuNpe7DmNCyPey5mn1wQVD87LzDn0HTlgYw6v
+	grBg=
+X-Received: by 2002:a05:6402:400d:b0:6b7:b872:27b4 with SMTP id 4fb4d7f45d1cf-6ba37ea34c8mr549140a12.21.1795126690396;
+        Thu, 19 Nov 2026 14:18:10 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba36e355easm386690a12.3.2026.11.19.14.18.09
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Nov 2026 14:18:09 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c4cdc606b47so54151966b.0
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 14:18:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErGB9aywFmRrq3YhtGZD7ScrvNorLPNYZ96Od3Ji1ho8exXYNUJivaiQSU5dxUzUVcR+1GmYe+Pqpgj17oRdkqlqKWloFyI=@vger.kernel.org
+X-Received: by 2002:a17:906:fa82:b0:c50:4b6e:329 with SMTP id
+ a640c23a62f3a-c513a5eaea2mr95509666b.15.1795126689675; Thu, 19 Nov 2026
+ 14:18:09 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -90,39 +93,34 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <d583b944b32f1a6f9bb27005d628ba9a@paul-moore.com>
+In-Reply-To: <d583b944b32f1a6f9bb27005d628ba9a@paul-moore.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 19 Nov 2026 14:17:53 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjUjMpcaOikkbk-p9ohKdOO0yWX5KW7LGUJmGZcKu-gug@mail.gmail.com>
+X-Gm-Features: Aa3M54o9ZC0IsT5wgB2P0cNNI_yXbdHzih86Soy1GWfvNitkqUbm-kcgwt__74U
+Message-ID: <CAHk-=wjUjMpcaOikkbk-p9ohKdOO0yWX5KW7LGUJmGZcKu-gug@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20261119
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Linus,
+On Thu, 19 Nov 2026 at 13:22, Paul Moore <paul@paul-moore.com> wrote:
+>
+> A single SELinux fix for Linux v7.4 to fix a problem where we were not
+> properly handling MAP_SHARED_VALIDATE.  Please merge for the next v7.4-rcX
+> release.
 
-A single SELinux fix for Linux v7.4 to fix a problem where we were not
-properly handling MAP_SHARED_VALIDATE.  Please merge for the next v7.4-rcX
-release.
+Bah. Horrendous, We should probably never have passed in the raw
+flags, and instead passed in the flags we actually use and have
+already generated (ie 'vma_flags'). There the test is just
 
-Paul
+        if (vma_flags & (VM_SHARED | VM_MAYSHARE))
 
---
-The following changes since commit 7475ea8b58616b33c04afb976cf0fbaad9dd63fb:
+because we have already decoded the odd system call arguments.
 
-  Linux 7.4-rc2 (2026-11-08 16:22:20 -0800)
+Oh well. Pulled.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20261119
-
-for you to fetch changes up to beb0ae6bcd7505e2e61babe5d98a8dd3b3f03c7f:
-
-  selinux: check MAP_SHARED_VALIDATE mappings as shared
-    (2026-11-09 18:32:04 -0500)
-
-----------------------------------------------------------------
-selinux/stable-7.4 PR 20261119
-----------------------------------------------------------------
-
-Stephen Smalley (1):
-      selinux: check MAP_SHARED_VALIDATE mappings as shared
-
- security/selinux/hooks.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
---
-paul-moore.com
+              Linus
