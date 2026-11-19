@@ -1,56 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795085495;
-	b=n7CBPc7LySweMjZVOoKXBRX5gZJ6BIuki2uA1mEnZnWgKDr4C1GRWrCerVYNr9U4tMcB
-	 NPwnxEULcuKR9Qr9K0Sg8rAeUdZcgneh9Ce+VSEkmjkf8aocE2chMigTFriY9fAE67LBs
-	 e98jXsH2ttCbePfIkjYHdBlC5CRAHTLDFHy09Nd3+fbPVuOboAa1FArW0bRxyolK4bQcF
-	 LermHQN23OQ1bPN9F2XKLttL22UP0YJ6F2ChylwxEEplatJDIWd6VIH37/ZVqcRf5qiPO
-	 GlGNKhJPC4lskIE2Mo064TiVi49nzqK/lC3AOHGZu8ce+ZtMnMpsztedPLr+vLsX5oA==
+	t=1795086712;
+	b=vlB7t+E1hf1IkDbeBrORpQlrfGLt2UDFzzBVWVJCVCJdYVDPpZFy30e0rKstbMXk4exe
+	 JpNPzFoKsYHUdII8vDg/hR/5pHBIneP/txvjrNokCdbyzD21MTngjA2JOZ8mkihfC41mn
+	 Z2BVGs9zI646cqrXvO09VEFIJFMI1MsEmXm6hp3/ozJ+YzVLnL/9fpxVIqteYrslQkNJR
+	 N01zGmA4Zyom3rWQ9BAzmP9gyzKWv8t10HHTLLAVZZv+Mmohkx1rrCOt2XHa+8wOLecgF
+	 Vfg1fYf3hZys3lou9lDH3OSiloB2Y3KN9oYzwiQH32dXfKjdFeURSUpsr3X+4GMiXdQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795085495;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	a=rsa-sha256; c=relaxed/relaxed; t=1795086712;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ZLGBwtrRIauCP46AIpuxxPhRfKiCHVdDkGdEtH3K3vU=;
-	b=AkGjAom81SPRRDEm5XEmom3h0PAHbGSa9UlJFELK5P9i7bN72Duzvl5u9iYAS/L8Ohtr
-	 ZRoJk1IbkBMao2qdU+s5QEoZA+fe9HvAghs+2tDqBg213LLBVb7Qmno/FTqURwkTPBR9d
-	 X5nOWLTT+hNsPxfLEw3ZFo48jXGTEV0M4kDbt/lzq6K2QWRY0/C6lkzJy3HLY8isbwDxl
-	 02aWVaNQUFDnfNajcTHN2s7swN97in6xaGhzKtpwm03smWYD2iJ+pJL34n3wNeVosMtRY
-	 hVvNnolZwFf1bv+WgkC/AQtrbWMyiHs01P/m95r+BMC4ih/sHIbH43O9nxHn12W10fw==
+	bh=LCOapwdiJ/mxQK1vHFKgpgThzsZ2mfZKj0yvw8rC9Fs=;
+	b=i4PNWA5UKAkR/5y3FuSXOLh7LSMdS+lyonT1EBMZjmiKOZ+W+eje2W9LYSilEt1YX5sI
+	 iIE2Fvx5mFhygVnflDKvi3dSb2qncCIbUG/w+lL3iWF11I8RTVNY2n8snyx+wb+4fvW3S
+	 NvOCe3lbsi0JmAWI/Pt6FeBYDr0baQdM0BymKhnuY2BnFmewXY8/g6rNoUsYNCa8hC4xi
+	 HSGLX2nPeAHldsU05btHEsvFJ9+iLfeZo1ija3vZ6bZPuNJLMotLfXBICcIIISFHsyrOL
+	 H3jdeG64C1/T0Rl43jOu/IPeQQlutFAKkO/XYZpPsUy8aWpygETDRAYE0dAx/2I5cCQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gf6FDq5R;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jrh0CvRG;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B35606A325
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 10:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36C9606A320;
+	Thu, 19 Nov 2026 11:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gf6FDq5R
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6C71F000C4
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 10:51:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jrh0CvRG
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EF21F000C7;
+	Thu, 19 Nov 2026 11:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795085495;
-	bh=ZLGBwtrRIauCP46AIpuxxPhRfKiCHVdDkGdEtH3K3vU=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=gf6FDq5R/kAazt+e17bcIsMEVqgXqYmMW2/Lqhe5TbgaSySIShZ5U4BOl+iJ+YEpJ
-	 WYnYskCrc7i0dJQtgzSzCYy6uJt8LrrNUQ4fYvtwOyJZSGgMgw35TzjyzEJuNq/UCm
-	 YdwoUlo7GJz6SKe5Y7JmVeZXa2/LHqlR0gsc03I2K7gRf9Sjqvzx17aPxtEooQVKHW
-	 ceok4WiPOu8xdbrbhm7s39PY1+uVgd3ryecKYxqafU56YAz7l3BMVg1UDUAluSl45I
-	 vyMezaSuE43mjidzjy0TbLeohR3iyuOnQBrYO5Bp8uAMA3ffHtG1Td/BytNw6skpLo
-	 9RuG14VFLSBpg==
-Message-ID: <sashiko-outbox-222988@kernel.org>
+	s=k20260515; t=1795086711;
+	bh=LCOapwdiJ/mxQK1vHFKgpgThzsZ2mfZKj0yvw8rC9Fs=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=jrh0CvRGat3ns3SUcUqNHA2ku+OTgsog/fWII9YD65VL3zrd/DyiC9XTMepZCCZJW
+	 Gg2RsvMHhf7swE+80rfO3SzFBzpsLZFYroP9niCbVw+cMMIe5EV9twSYRYZt1wIm/+
+	 FDnZviWS95SSK99JrQA3akeqKG7qQrCiQ05WEPS/jkn5dSJt692uSbOdyRc/tX/hXh
+	 6S21LwUWLa6O0fBnQmYh+HG63fOdUKfHItZOaaKrVWvlKAJhAOMHF0O0iujX3UMVe3
+	 sUQgwlJF4ujO6hIotmfcHCSPbtCh84UKL5Dac7at48R+tPOdbJuNR4U736jQfUe6H4
+	 xvgcHHzFi3l4w==
+Message-ID: <sashiko-outbox-223014@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/4] capability: bound ptrace and cred subset checks
- by userns ceilings
+Subject: Re: [PATCH v2 1/4] userns: introduce capability bounding set for
+ user namespaces
 Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261119104208.782900-3-halg@google.com>
+To: "Hallgrimur H. Gunnarsson" <halg@google.com>, "Christian Brauner" <brauner@kernel.org>, "Serge
+ Hallyn" <sergeh@kernel.org>, "Andy Lutomirski" <luto@kernel.org>
+Cc: "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "David
+ Howells" <dhowells@redhat.com>, "Jarkko Sakkinen" <jarkko@kernel.org>, "Kees
+ Cook" <kees@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
+ Dunlap" <rdunlap@infradead.org>, =?utf-8?b?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, "Jonathan
+ Calmels" <jcalmels@3xx0.net>, "Jann Horn" <jannh@google.com>,
+ =?utf-8?b?R8O8bnRoZXIgTm9hY2s=?= <gnoack@google.com>, "KP Singh" <kpsingh@kernel.org>, "Casey
+ Schaufler" <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+In-Reply-To: <20261119104208.782900-2-halg@google.com>
 References: <20261119104208.782900-1-halg@google.com>
- <20261119104208.782900-3-halg@google.com>
+ <20261119104208.782900-2-halg@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 19 Nov 2026 10:51:34 +0000
+Date: Thu, 19 Nov 2026 11:11:50 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,29 +68,77 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> Same-namespace ptrace checks only compare cap_permitted (or
-> cap_effective), ignoring the userns capability ceiling. As a result, a
-> task with a lowered ceiling could trace a less-restricted same-UID task
-> in the same user namespace and use it to create a wider child user
-> namespace.
->=20
-> Require the tracee's cred_userns_bset() to be a subset of the tracer's
-> in the same-namespace check in cap_ptrace_access_check() and
-> cap_ptrace_traceme(). Cross-namespace implicit CAP_SYS_PTRACE via user
-> namespace ownership is already bounded by cap_capable_helper(), while
-> tracers holding explicit CAP_SYS_PTRACE retain access.
->=20
-> Also update cred_cap_issubset() so commit_creds() resets mm->dumpable
-> and pdeath_signal whenever a credential transition widens the effective
-> userns capability ceiling.
->=20
-> Suggested-by: Christian Brauner <brauner@kernel.org>
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Hallgrimur H. Gunnarsson <halg@google.com>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] userns: cap_ptrace_access_check() denies owner access without
+  CAP_SYS_PTRACE
+--
 
-Sashiko has reviewed this patch and found no issues.
+commit e4e71a2ec01bd6f7552fbbff2f1b525d5dbf74f6
+Author: Hallgrimur H. Gunnarsson <halg@google.com>
+
+userns: introduce capability bounding set for user namespaces
+
+This commit introduces a per-user-namespace capability bounding set
+(user_ns->cap_bset) and a per-credential userns capability set
+(cred->cap_userns) controlled via prctl(PR_CAP_USERNS) and
+SECBIT_CAP_USERNS_STRICT.
+
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index d47ab30223435..ddac8e9176808 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -88,11 +88,15 @@ static inline int cap_capable_helper(const struct cre=
+d *cred,
+>  		if (ns->level <=3D cred_ns->level)
+>  			return -EPERM;
+> =20
+> -		/*=20
+> +		/*
+>  		 * The owner of the user namespace in the parent of the
+> -		 * user namespace has all caps.
+> +		 * user namespace has all caps within the owned namespace's
+> +		 * bounding set, as long as it does not exceed the caller's
+> +		 * userns capability ceiling.
+>  		 */
+> -		if ((ns->parent =3D=3D cred_ns) && uid_eq(ns->owner, cred->euid))
+> +		if (ns->parent =3D=3D cred_ns && uid_eq(ns->owner, cred->euid) &&
+> +		    cap_issubset(ns->cap_bset, cred_userns_bset(cred)) &&
+> +		    userns_has_cap(ns, cap))
+>  			return 0;
+> =20
+>  		/*
+
+[Severity: Medium]
+Does bounding implicit owner capabilities by userns_has_cap(ns, cap) break
+cap_ptrace_access_check() and cap_ptrace_traceme() for a parent namespace
+owner when CAP_SYS_PTRACE is excluded from the child namespace's cap_bset?
+
+When an unprivileged task lowers CAP_SYS_PTRACE (or uses
+PR_CAP_USERNS_CLEAR_ALL) before creating a child user namespace,
+cap_ptrace_access_check() skips the capability subset check because
+cred->user_ns !=3D child_cred->user_ns and falls back to
+ns_capable(child_cred->user_ns, CAP_SYS_PTRACE):
+
+security/commoncap.c:cap_ptrace_access_check() {
+    ...
+	if (cred->user_ns =3D=3D child_cred->user_ns &&
+	    cap_issubset(child_cred->cap_permitted, *caller_caps))
+		goto out;
+	if (ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
+		goto out;
+	ret =3D -EPERM;
+    ...
+}
+
+Because CAP_SYS_PTRACE is not in child_cred->user_ns->cap_bset,
+ns_capable() now returns false even when the child task has an empty
+cap_permitted set or only capabilities covered by the owner's userns
+ceiling.  The parent owner is then denied ptrace_may_access() and
+PTRACE_TRACEME on its own same-UID child tasks in that namespace, breaking
+PTRACE_ATTACH, opening /proc/<child>/ns/*, setns(pidfd, ...), and
+pidfd_getfd().
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119104208.7829=
-00-1-halg@google.com?part=3D2
-
+00-1-halg@google.com?part=3D1
