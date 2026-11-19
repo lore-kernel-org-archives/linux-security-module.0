@@ -1,71 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.181
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795119260;
-	b=gGdr8ENWI0q8Z6e4Fq7fdHurMPtR5uz2N4r52+JklqU//ZSchlSQiKTBGbPLUdwgMDNG
-	 0bYs5yWvouIRQorbu9e8EOgcvqcxq7PXhLdg+Uv6cv+gMotu3iweSetTjJDtpls8Ts2zi
-	 CTwOIxsWumJrcp72h5goWuoQFMXfraOZgkHd3XjiqSYF4Pg/60+7nbLDGWr0q6DzrCMRn
-	 qnOYVe7bDdErcU43r7CCX7brE63IGnjVCiUSZWfkkXrHty/DaTQ264PVY23WfOktFL+gQ
-	 sKKCT7OTo41M/UmwB6NJP4JzMIxF6DkBHdNyxICT/s0vsUrGCeCnsfIB8TAzlPcxQdg==
+	t=1795120674;
+	b=h7XY0RQKV5xIbKDvdtoQeQxfv5xUaJYaVDhGttnWxTPfqZD9SzQn2NsgDTtyqFqBys1x
+	 evk5w5AzVaoM6oDxWaMOxIvZE05M0Y/roJCv6A5SxoveovbKWAjif2mCHt0070Ch0I+ts
+	 qN2zvZ7A+B7gNmT8Uqot+63odfWX5ee+5+WWbkbd4gfAe7KLeoWk8wwfE6QsaX7FfUWj8
+	 hCevhFZkbT5n6GGbW6YIWHyMI/Fk23dWC3B1zDm7zVOuDHbcCEM8+GYELTeMWBZOjRpA6
+	 +cUvbBDTyNyLGhZak+z20queD/r7E5wqWhDQNx6Optx8PbWGTB4ZEKwZv5zxTdqj8tA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795119260;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=ztZOYDDj4YBSqYLNwQGp2fMnE23YsKtU2LeiU8/UQwE=;
-	b=06irUZf2HB4Ectvcdb7wvcVagxxHKrs5DvB8x7t7J+g0umphTzd8llX3kj2BSe3nYVkh
-	 iXSjIl0g0X140S3DehYnfuv/kr91xb2JGp1bu59V9iPBZ/YQ1cE+jSnajnLEpGxuuGJL8
-	 qNwlAJjBIKLP2sICv/kNBNFw+G5ZzCL6qpi8WyiCviU4WqdmvXLHj8z6eLC6vX8HazSfX
-	 GD70vJwZUcr/CQM7smvFTFXr47LoUSBY2e/cywfSs/4r6wwMvbAy/fBjwbHt3SdjtXffK
-	 YApbK24sE+iOS/nQQ2U3WGDFA1eBgnidm5w9mtv1tJ9Uv4uJMcsNmknIcwhq9T80ouA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795120674;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=kEr31tcU68rglk/Zx5XyW3VAn0sFu+PMGSjGQk9S0TY=;
+	b=dqJrF8Birc2gGq7lI0Nf59y/5HIhz9Z1++GBDsevIqQA3BdEZjqOq6flVn//m3KCI/yQ
+	 I8hFaO6m/WKHapT0F6DGOXkOHkgQYKQsN3Eex4f6NFNnaG5hKMlCIi/WnPXIQCfM8cL2H
+	 9bHSayGT0DYWdwDuhpzl2Jv603PXtfufi+koUkcWsSUu2FqfJFoHVm58+OYNgli0QoTob
+	 hJUqDjb69Y0VrMJP61ADkQSrQlXkulViQXTk3v1ygvlmgQ5HTKAGlNrbEyVLFyM9afC8s
+	 RIL41d/gvO8SBncWaomoV0LbRPkbbNZh3DGQgbaiezH3J+h5OdKnstyoKCQTlAB5Whw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mNSYDVjJ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=xata.io;
+	spf=pass smtp.mailfrom=xata.io;
+	dkim=pass header.d=xata.io header.i=@xata.io header.a=rsa-sha256 header.s=google header.b="l/4cSUFN";
+	arc=none smtp.remote-ip=209.85.222.181
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 479D0606A320;
-	Thu, 19 Nov 2026 20:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6984A6074327
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 20:37:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6984A6074327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xata.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xata.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mNSYDVjJ
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9941C1F000C0;
-	Thu, 19 Nov 2026 20:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795119260;
-	bh=ztZOYDDj4YBSqYLNwQGp2fMnE23YsKtU2LeiU8/UQwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mNSYDVjJ/BEzpaUbevR2cNTUAwuX81DGs1T+9sVKjtaxqcTSGfvEPldgdpP7Jchji
-	 jqpAwSVXHOuhZ5aY45s9O9/0dgEPRPZniI/JiMbsnRUlbivecIuPENcjQqdjVBDKMp
-	 ekjPDsS5ooFm3VuggwXme6iPKovVVyVVkrEajuUi3jLY+wMwI1h/m47qU+VP6NkvTy
-	 OJdcoCeBw7o0G6JmK1KtFdtqiC+TMVFiC8s6nHvMHqMFbv5kUCCyPJ3qOPEzuA1gPs
-	 3pgHdelX/ywey3HjBAONozyA2zIkL89dLrU7ld9cbhT8mPqGmYi5dUa7nyPLlXjqpk
-	 YjQ8Z6Y9pHgwA==
-Date: Thu, 19 Nov 2026 22:14:16 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Hallgrimur H. Gunnarsson" <halg@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Serge Hallyn <sergeh@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Jonathan Calmels <jcalmels@3xx0.net>, Jann Horn <jannh@google.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	containers@lists.linux.dev, keyrings@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	dkim=pass (1024-bit key, unprotected) header.d=xata.io header.i=@xata.io header.a=rsa-sha256 header.s=google header.b=l/4cSUFN
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-943e8d35f74so22280485a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Nov 2026 12:37:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=xata.io; s=google; t=1795120673; x=1795725473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=kEr31tcU68rglk/Zx5XyW3VAn0sFu+PMGSjGQk9S0TY=;
+        b=l/4cSUFNleEq/Pc4NWDQbAUeSb/CBsRE0rCF48q/L0L4dSrgAJ863g/EZ3eQd6PcBQ
+         2izhajQsap0TKPh5306sdd09yrcodVc0q8uuiBRrgUUM5dZ/yDC3yMCZxfx2s8S++vyV
+         JSL2LPxwe8MjwMXVIgECs3ZDhsGY0IY0bJlCk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795120673; x=1795725473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=kEr31tcU68rglk/Zx5XyW3VAn0sFu+PMGSjGQk9S0TY=;
+        b=QhY0OIhmwuHchA/Cc2Fm5L/XLkd4tl0JZJRr6meg7AjnwgqTHRSkRa7cXsHW9b7kcr
+         keKXCsh7KzTGSRyNBVhjYAcURfk7JzH//YRCeBFnLyoZMQ/aytZoSUVGyy/mQOkOz/Lm
+         noMRa6Ot/1hjIVH5v7/+JBsth7CiBQ67ImCK8Wh5a83mCvmbCxDI6YnCSP1+WAR0rIge
+         ZpalBIvAgPlE6V0Mr8R/SimLbqZ6YatVwrvENrbPS+UqmS72bt2rXcIxwHSuwNU1xZXo
+         XRpBgDHlH/lSTyOX0yqyFW2xkimb1F0iUa8cnm30UAaEY1YM3uy8Etb8XpNL1EEGpYX8
+         MEZQ==
+X-Forwarded-Encrypted: i=1; AL+hErEza5gSLYx4FiluGanp26yhRfmBHzudAaCwcr4VlxhUHAxyIiiu13W5Jm/gl48to2zoAF+TQbpA3wEmW2bqMm+LJkocp0E=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8ld6upFpzFz5B0IJ5e+kd8nFBbwKbXeTe7eB71TDQvb1ETCwcF
+	avnj8bCw5FEqh5+EecIpWrrVttLNYmo2Dx+6QMVaR07UjYyKeDzVrC+izLi96odjBCWjT05rlbm
+	uYVJ169dFcg==
+X-Gm-Gg: AYBFou3wZD5txAArQs5gTmyiGpMrqHLhRw/yjfNbsQVMyA9bbLZLMWTeD+AQVfm8DbJ
+	FED8zhUciH8BfV4rG87qoJU6EIZKHfUqedr89HmSLHuxFz+FNm3p5gd9BcN1rY5zZmUDg/k5xdp
+	VIBkT1diFBxFnJIULcfVULk/ZDpcAjbHaa67fRqNI+M8unekT9fugiqGI2NWCq/9OqRjrQG53Ze
+	LuFt4P+5/Nx7b4XDyDdQXnjy/onudUl2Px5uUVPvYIhLYjO9TuJMZBSKakpX2JKzQ6TFgvxD6hW
+	NOxY8h2guKQwBXYb+UH2roXGTmyFdYkJP/TPXA8W8dcfarMsDwgvflhLOOE7fJIEJlYX2tqm0D8
+	x9aOIJWADtdsMhTlp9J6e3RgwNJEkWYaJZbvSUIDseJH4WWspWNasOZq3YyJPUHCo6uW1nYBpsl
+	zkOjbiiQSFOAWuflLptIyL9ZUu+frEJy7Q9PvSECwgZ3X3PC3v5B0PTIu4+4IKbqZH5JSdEy5yU
+	UEdHoLIy+IXq4ctZeuZDR8dD4sU9REmtRx3Q74AKH+WZPrtmYj7Davs59myKF910+n7Re7ueTtx
+	cxlvqVcsjClNqpgWeA0m6f7+8SiB9hjj/a716oM20/m+fKiFASu+oOUVf00i33hg0Oy4ldwku1O
+	JeqtMj0zbqy0uvIGLMBNZDOuk7KL+LlXBK2AVSRkMHGJm3niiz7Qbq7E=
+X-Received: by 2002:a05:620a:4724:b0:949:5e26:e92d with SMTP id af79cd13be357-949ba99cc02mr151492585a.31.1795120673241;
+        Thu, 19 Nov 2026 12:37:53 -0800 (PST)
+Received: from mac-m4-dongle.data.va.local.crowbird.com (pool-173-66-54-232.washdc.fios.verizon.net. [173.66.54.232])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-949bb3f7cf3sm41035685a.31.2026.11.19.12.37.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Nov 2026 12:37:52 -0800 (PST)
+From: Andrew Kroh <andrew.kroh@xata.io>
+To: John Johansen <john.johansen@canonical.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>
+Cc: apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] userns: introduce capability bounding set for
- user namespaces
-Message-ID: <av9YmPJexMJoCGWO@kernel.org>
-References: <20261119104208.782900-1-halg@google.com>
- <20261119104208.782900-2-halg@google.com>
- <av8QNiFcnGWocORy@kernel.org>
- <av9L2ez51erKkQNo@google.com>
+Subject: [PATCH] apparmor: fix label replacement compiled out of __label_insert()
+Date: Thu, 19 Nov 2026 15:36:50 -0500
+Message-ID: <20261119203650.51147-1-andrew.kroh@xata.io>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -75,46 +95,92 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <av9L2ez51erKkQNo@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 19, 2026 at 07:19:53PM +0000, Hallgrimur H. Gunnarsson wrote:
-> On Thu, Nov 19, 2026 at 05:05:26PM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Nov 19, 2026 at 10:42:05AM +0000, Hallgrimur H. Gunnarsson wrote:
-> > >  static void set_cred_user_ns(struct cred *cred, struct user_namespace *user_ns)
-> > 
-> > I read the diff through but this led me to dead end. Cannot find this
-> > function from anywhere. I look the changes again once this is sorted
-> > out becaus this is interesting.
-> > 
-> > I wanted to look at the call site to understand how cap_bset gets set,
-> > which is not now possible but I do get the gist and agree with it.
-> 
-> Thanks for taking a look. The series is based on v7.4-rc1 and
-> set_cred_user_ns() lives in kernel/user_namespace.c, where it is called
-> from create_user_ns() and userns_install(). ns->cap_bset itself is
-> initialized in create_user_ns() right before calling set_cred_user_ns().
-> 
-> > I'd figure getting this relates to my rootns patches (perhas). One key
-> > mechanism for me resolving the unprivileged in my use case is
-> > MOVE_MOUNT_T_MNTNS [1], which is orthogonal but just pointing out
-> > the problem space.
-> 
-> From a quick look, they appear complementary. Being able to do more
-> setup operations from the outside generally aligns with bounding
-> capabilities inside the user namespace.
-> 
-> > I read through https://lwn.net/Articles/978846/ to understand the topic
-> > overall. Just mentionining as a possible addition to the cover letter
-> > (not a priority/necessity).
-> 
-> That LWN article is actually linked in the cover letter as [2].
-> 
-> > Hope these help and can be kept in the loop :-)
-> 
-> Will do, I'll keep you CC'd on future revisions.
+__label_insert() replaces an equal label in the labelset from inside
+an assertion.
 
-Thank you.
+	AA_BUG(!__label_replace(this, label));
 
-Br, Jarkko
+AA_BUG() evaluates its argument only if
+CONFIG_SECURITY_APPARMOR_DEBUG_ASSERTS is set. That option depends on
+CONFIG_SECURITY_APPARMOR_DEBUG, which is off by default. Without it,
+the compiler discards the call to __label_replace(). The new label
+does not go into the tree and does not get FLAG_IN_TREE. The caller,
+__label_update(), then removes the old label from the tree.
+
+The proxy of the old label points to the new label. A task that
+holds the old label therefore moves to the new label after the first
+profile replacement. The new label is not in the labelset, so
+__labelset_update() cannot find it on later replacements. A task
+with a compound (stacked) label keeps the profile versions from the
+first replacement and ignores each later replacement until it execs.
+
+Containers that set no_new_privs and change confinement with a stack
+transition show the problem. To reproduce it, load two profiles.
+
+  profile a { ... /usr/bin/bash Px -> a//&b, }
+  profile b { ... }
+
+Start a long-lived bash under a//&b. Replace b with a version that
+denies a file, then with a version that allows the file again. The
+task continues to get the deny. A task under a plain profile follows
+every replacement.
+
+Call __label_replace() outside the assertion and assert on its
+result.
+
+Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrew Kroh <andrew.kroh@xata.io>
+---
+Reproduced on Ubuntu 6.8.0-149-generic, 7.0.0-43-generic and on
+apparmor-next (7.4-rc1) on arm64. These steps show the bug (as root):
+
+  echo 'profile a { file, capability, } profile b { file, capability, }' > /tmp/allow
+  echo 'profile a { file, capability, } profile b { file, capability, deny /etc/hostname r, }' > /tmp/deny
+  apparmor_parser -r /tmp/allow   # load a and b
+  aa-exec -p 'a//&b' -- bash      # shell confined by the stack a//&b
+  read x < /etc/hostname          # allowed
+  apparmor_parser -r /tmp/deny    # replace b: deny /etc/hostname
+  read x < /etc/hostname          # denied
+  apparmor_parser -r /tmp/allow   # replace b: allow it again
+  read x < /etc/hostname          # still denied; allowed with this patch
+
+The check must come from the long-lived task itself. A new exec
+(e.g. cat) gets a freshly built label and is not affected.
+
+No other AA_BUG() in security/apparmor has a side effect in its
+argument.
+
+ security/apparmor/label.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index fd67262330f9..0dc18743b04a 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -693,6 +693,8 @@ static struct aa_label *__label_insert(struct aa_labelset *ls,
+ 
+ 		parent = *new;
+ 		if (result == 0) {
++			bool replaced;
++
+ 			/* !__aa_get_label means queued for destruction,
+ 			 * so replace in place, however the label has
+ 			 * died before the replacement so do not share
+@@ -703,7 +705,8 @@ static struct aa_label *__label_insert(struct aa_labelset *ls,
+ 					return this;
+ 			} else
+ 				__proxy_share(this, label);
+-			AA_BUG(!__label_replace(this, label));
++			replaced = __label_replace(this, label);
++			AA_BUG(!replaced);
+ 			return aa_get_label(label);
+ 		} else if (result < 0)
+ 			new = &((*new)->rb_left);
+
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+-- 
+2.56.0
+
