@@ -1,47 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795214678;
-	b=sLZUez4StwkUchQC/uOjGxPyaEk/5P7Iqyo4vD/+PCgnaoyKMCA0+N4Hwkwtu5xsZIU3
-	 QFixBNAhKN3GSOh8GiNG6ivmsZezZ76DXHxz7WWCjlfAck8XvVsUir4wz+j6driHzTcUR
-	 5J7lfDKzagE/gwr9yr1c+Mf5AiT5E1i+nj2t1WVOdSKxFGVfUkjHrqdQYnhLeDp3XJEt7
-	 pDpZMvt8xQzhsL8uMP0amj99U4qAFR0QpIw67+kZLXPdyxtEPL2zGlQ2H5L32K9jnv0+k
-	 Ah31Uwd4vC8AAVWVhCiQmhjNjqC0mx9606FtEA022Yqls0Ap6fwMgOd0DxVqFietQVQ==
+	t=1795214683;
+	b=1+Q+7Dp5D3fSTrC9y2agSH7LGxCIEOm9p3MilaMj/mJoEPN5XTaoJ7rtGnG9IUXXY6Zb
+	 NIWPaY58khTsKj1R9YLRUlan8Bj2TsUBiVKJT2kq14sRxpGhehXqRHPlo2pvXlURm5RUw
+	 RMOv3TUIVc/R8E77qUyg0qmY5wNWmZblph/kceTff7+lTr0WbtWHVIJpacs9NGLYVOqBH
+	 tS4y32h9J19wAMCNVH0oxv7UJQbcTOpHf+bkm1tuMC/Qb9i+HJeQlR2GXPqdipE2/rSJ4
+	 CCI9L9EzuHFWSJlx/ef4QeS+Mx9nYbu+HClPqyfbJJ+cWgVzKZgoM0iWhtNJ2nJxQRA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795214678;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795214683;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=pSzNYLdaadW2jyufCcL13Oj3VYC0HwF6Ept2g9RqzPg=;
-	b=Ye4bHpmkr2jxHlOlHVBmh65xe4AcgGsprZf7StGXHqckxK0w2Iwtl0NZen/PlX09paI2
-	 A3etnZdxzrMgjaaoQpq5hYZo/KxzaZ876M9fTh6YWnt5Z5s6sOEGliagcjggtIppNbBZ/
-	 F3ZuUimA1chdXGEcdAofPOmfxZ336JG5ZAX9JPGxykdr5kr2NySTXgXyAHtpQ+ptg+TpL
-	 0XHkZLY+6f/5S3piE78pdbegiWvKPsH45g5CazXHFfOMCkOaIYCCGwNIzJVSXuX+ifhlQ
-	 Xj+PsVDndgordkn8HlluHMNIcOhc02eXqtQCRcRTH+mHpodp3TaEpC+fGMiiAhd1E8g==
+	bh=GDJBVsAd6JtWMDQ/ABjrxTbwcVxlwsrHr9o1YDsX7iE=;
+	b=Nq8+IcvIwLvS7gbavQrHPGD6TRnuRveOwB3Gx0pCu7o0xLAISl526ZhtJ4btWqAhhjIg
+	 iVZxgOCvlJmangcXSRW2i7JOkj0/MNqC/GQuUOaQijdUkifTBXgxa/oaEqacJmAfKs2fh
+	 IXP1b5nHzEdWrvZK2f4n7XQoQAlaXyNqsS4A0/pLuCW46RMMydChDtPkPtXE708t58CLU
+	 YiBwmoaQovZQugh96oJwUvMcT0Lrim+lFN6EdlwM+WW4m7seDgna0hcZzQhK4porHuv2Y
+	 8CvZN7KM2TlsfFzUn33XUR0lZZgoZ6J1U2/qTt/mmIKXfL3RSLYTFxsHeR9pOqxIfHw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qup3hZLM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TzyVXU3J;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0B7606A699
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AA3606A696
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qup3hZLM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C860C1F000C6;
-	Fri, 20 Nov 2026 22:44:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TzyVXU3J
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0081F000C4;
+	Fri, 20 Nov 2026 22:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795214677;
-	bh=pSzNYLdaadW2jyufCcL13Oj3VYC0HwF6Ept2g9RqzPg=;
+	s=k20260515; t=1795214682;
+	bh=GDJBVsAd6JtWMDQ/ABjrxTbwcVxlwsrHr9o1YDsX7iE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Qup3hZLMjJGy5Lby+02cC0Ks/w7DT7TF3QjQNKtLYIrpYBfrZFUyGinpDBZuHfkAi
-	 goJrpXp+gmkyCkj2JGhkb1jpnlX++Ja7j/A0y3YyPT1+NmGWQHVbUctnH/DTeGipYr
-	 cGfwI4AoENAdwdU0aF5VIdJLrOXZ8+3U76DRE12JxoCHMAbfJD27kbX9glPmUmwoVv
-	 x4pgmw3sdleN3TVxBg/sktHSOTGoErQgtvQ/2hZ+V6tNnxeys73mlAdroPHMmL/o2s
-	 CKQbuo4r4FV4JwF2Idjbka4Xb0uMahKxADIfW4RwvlkUYkwS2MkHZ17TDxpTswtEwA
-	 +ubPXlAFfK0LQ==
-Message-ID: <sashiko-outbox-226297@kernel.org>
+	b=TzyVXU3JZKz+G6iv26QMl86cOJH4T6cdW67UKDT+sTicT4bpZ6PRxigNNzsBN9Weg
+	 dX1wwwNonGIGAN79xQ294YlLIuJT5rNbXi0+x5jRleU4eSxz+RXrhhpS/n4gs/jMaj
+	 +E3rHJRAZQb4eS8x/aTfUrPfVUTT4z5RjsRJR+Ocjb8IfGW/gWqmliKG1zXAPCgUiP
+	 cgnsUESY+O2XpbIVy7OubMMFC+xjfg6+8+zrG/HWj0uuUkfN03o05o6qTNtxXEw8m6
+	 Mt2SaFlA+pIK9rxe3QoyDzdB16Mk/5+nIee49ePPRYUKoepHhzTZ14y968juTU3las
+	 bI1nF98MdMgbg==
+Message-ID: <sashiko-outbox-226299@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v4 05/14] rootns: Add ROOTNS_WAIT ioctl
+Subject: Re: [RFC PATCH v4 07/14] fork: Support CLONE_INTO_ROOTNS in
+ clone3()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexander
@@ -85,12 +86,12 @@ Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@
  Frascino" <vincenzo.frascino@arm.com>, "Vlastimil Babka" <vbabka@kernel.org>, "Will
  Deacon" <will@kernel.org>, "Yoshinori Sato" <ysato@users.sourceforge.jp>, "Zygmunt
  Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261119224312.1037966-6-jarkko@kernel.org>
+In-Reply-To: <20261119224312.1037966-8-jarkko@kernel.org>
 References: <20261119224312.1037966-1-jarkko@kernel.org>
- <20261119224312.1037966-6-jarkko@kernel.org>
+ <20261119224312.1037966-8-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 22:44:33 +0000
+Date: Fri, 20 Nov 2026 22:44:37 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -100,73 +101,116 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] rootns: delayed PID namespace visibility check in
-  rootns_wait()
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [Medium] rootns: rootns_finish_fork() rewrites copy_process() -EINVAL
+  to -EBUSY
+- [Low] rootns: unreachable PIDNS_ADDING check in rootns_prepare_fork()
 --
 
-commit 68c6e4532ee164e48940d00824536de847b1c5d0
+commit 1820863b7d5dcd4fd4778d2d64f24adcb966cc47
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-rootns: Add ROOTNS_WAIT ioctl
+fork: Support CLONE_INTO_ROOTNS in clone3()
 
-This commit adds the ROOTNS_WAIT ioctl to wait for a root namespace's init
-thread group to exit and retrieve its wait status and TGID.
+This commit adds CLONE_INTO_ROOTNS and struct clone_args.rootns to spawn a
+child process directly into a target root namespace via clone3().
 
 > diff --git a/kernel/rootns.c b/kernel/rootns.c
-> index d9ef68d603a24..5f03b6ba4a543 100644
+> index ce012a07e9828..865689eed69cb 100644
 > --- a/kernel/rootns.c
 > +++ b/kernel/rootns.c
-> @@ -115,6 +115,45 @@ static long rootns_get_nsfd(struct rootns *rootns, u=
-nsigned long nstype)
->  	return nsproxy_open_namespace(rootns->ns, rootns->user_ns, nstype);
+> @@ -423,3 +424,138 @@ SYSCALL_DEFINE1(rootns, unsigned int, flags)
+>  	return fd;
 >  }
-> =20
-> +static long rootns_wait(struct rootns *rootns, void __user *uarg)
+
+[ ... ]
+
+> +int rootns_prepare_fork(struct kernel_clone_args *args)
 > +{
-> +	struct pid_namespace *pid_ns =3D task_active_pid_ns(current);
-> +	struct rootns_wait_args args;
-> +	long ret;
+
+[ ... ]
+
+> +	for (;;) {
+> +		bool wait =3D false;
 > +
-> +	if (!uarg)
-> +		return -EINVAL;
-> +	if (copy_from_user(&args, uarg, sizeof(args)))
-> +		return -EFAULT;
-> +	if (args.flags & ~WNOHANG)
-> +		return -EINVAL;
-> +	if (READ_ONCE(rootns->state) =3D=3D ROOTNS_INIT)
-> +		return -ECHILD;
+> +		scoped_guard(spinlock, &rootns->lock) {
+> +			switch (rootns->state) {
+> +			case ROOTNS_INIT:
+> +				if (READ_ONCE(pid_ns->child_reaper))
+> +					return -EBUSY;
+> +				if (!(READ_ONCE(pid_ns->pid_allocated) & PIDNS_ADDING))
+> +					return -ESRCH;
+
+[Severity: Low]
+Can the PIDNS_ADDING check under ROOTNS_INIT ever be reached?
+
+PIDNS_ADDING is only cleared by disable_pid_allocation() in
+zap_pid_ns_processes() when the PID namespace's init process exits, and
+pid_ns->child_reaper is never reset to NULL afterwards.  Because
+pid_ns->child_reaper is non-NULL whenever PIDNS_ADDING is cleared, testing
+child_reaper first always returns -EBUSY here instead of -ESRCH.
+
+> +				WRITE_ONCE(rootns->state, ROOTNS_FORKING);
+> +				bootstrapping =3D true;
+> +				break;
+
+[ ... ]
+
+> +int rootns_finish_fork(struct kernel_clone_args *args, struct task_struc=
+t *p)
+> +{
+> +	struct file *file __free(fput) =3D args->rootns_file;
+> +	struct rootns *rootns =3D args->rootns;
+> +	struct pid_namespace *pid_ns =3D rootns->ns->pid_ns_for_children;
+> +	int ret;
 > +
-> +	if (!(args.flags & WNOHANG)) {
-> +		ret =3D wait_event_freezable(rootns->waitq,
-> +					   READ_ONCE(rootns->state) =3D=3D ROOTNS_DEAD ||
-> +					   READ_ONCE(rootns->state) =3D=3D ROOTNS_INIT);
-> +		if (ret)
-> +			return ret;
+> +	args->rootns_file =3D NULL;
+> +	args->rootns =3D NULL;
+> +	if (!IS_ERR(p)) {
+> +		if (current->nsproxy->time_ns !=3D rootns->ns->time_ns)
+> +			timens_commit(p, rootns->ns->time_ns);
+> +		return 0;
 > +	}
 > +
-> +	scoped_guard(spinlock, &rootns->lock) {
-> +		if (rootns->state =3D=3D ROOTNS_INIT)
-> +			return -ECHILD;
-> +		if (rootns->state !=3D ROOTNS_DEAD)
-> +			return 0;
-> +		ret =3D pid_nr_ns(rootns->init_pid, pid_ns);
-> +		if (ret <=3D 0)
-> +			return -ECHILD;
+> +	ret =3D PTR_ERR(p);
+> +	if (args->rootns_bootstrapping) {
+> +		scoped_guard(spinlock, &rootns->lock) {
+> +			if (rootns->state =3D=3D ROOTNS_FORKING)
+> +				WRITE_ONCE(rootns->state, ROOTNS_INIT);
+> +		}
+> +		wake_up_all(&rootns->waitq);
+> +		if (ret =3D=3D -EINVAL && !args->set_tid_size)
+> +			ret =3D -EBUSY;
+> +	}
 
 [Severity: Medium]
-Should rootns_wait() check whether the rootns PID namespace is visible in
-pid_ns before waiting or returning 0 for WNOHANG?
+Does this rewrite argument validation failures in copy_process() from
+-EINVAL to -EBUSY during bootstrap?
 
-Because pid_nr_ns() is only checked after rootns->state reaches
-ROOTNS_DEAD, a caller in a non-ancestor PID namespace gets 0 instead of
--ECHILD when calling ROOTNS_WAIT with WNOHANG on a running rootns, and a
-blocking call sleeps in wait_event_freezable() until init exits before
-failing with -ECHILD.  Checking
-pidns_is_ancestor(rootns->ns->pid_ns_for_children, pid_ns) upfront (as in
-rootns_get_nsfd()) would reject invisible targets immediately.
+rootns_prepare_fork() runs before copy_process(), where companion flags
+allowed by CLONE_INTO_ROOTNS_FLAGS (such as CLONE_PIDFD_AUTOKILL without
+CLONE_PIDFD, or CLONE_AUTOREAP with a non-zero exit_signal) and
+copy_thread() are validated:
+
+kernel/fork.c:copy_process() {
+    ...
+	if (clone_flags & CLONE_AUTOREAP) {
+		if (clone_flags & CLONE_THREAD)
+			return ERR_PTR(-EINVAL);
+		if (clone_flags & CLONE_PARENT)
+			return ERR_PTR(-EINVAL);
+		if (args->exit_signal)
+			return ERR_PTR(-EINVAL);
+	}
+    ...
+}
+
+When the initial bootstrap clone3(CLONE_INTO_ROOTNS) call with
+set_tid_size =3D=3D 0 fails one of those checks with -EINVAL,
+rootns_finish_fork() treats it as an alloc_pid() collision and returns
+-EBUSY to userspace instead of -EINVAL.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119224312.1037=
-966-1-jarkko@kernel.org?part=3D5
+966-1-jarkko@kernel.org?part=3D7
