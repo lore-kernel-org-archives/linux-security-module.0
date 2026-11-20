@@ -1,59 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.189
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795190684;
-	b=Ot7nv7fZdw++j/v5pDYc7pUCa8siOEnSqE4cZFn2EoN8t2C/SibmLLdmg1klyl+rVYRf
-	 fYjHcR/JMSOVpI/3t06+1zpRF3YyjCCPFnf7fNk1Z4Yur5mzcQ9bxQaG7T6QBnaJOsrKW
-	 nGuFdyk1h3BoQCKZfaXbpHhLgGUzIVhoNPIRvqoAP9nX5E76iPmTEKaRgrFFN1A513N54
-	 5qz1T1jIsAw0eorx1nl1ZB3GN0elxhnUGbGi4qxaddWkhZD/tR8ciJFvttDZCgwV5M9aG
-	 XlLo+Oc5JZFtEh7yE0FZKNlLhNR4PZudTTAcA7gUDIZLCkzFgUR6Wm8/TPKmu3RF7FA==
+	t=1795193467;
+	b=U3Tl9+mHr9boaYmXaRj1e5eTQhUNkpMKIOQtC858TiYkrfYUavYX1cy2KbtX4VC5GJiw
+	 x/5H7m4KWjWjVQ1LSsl3NyGUerTa/uvEqHVcCauRKjufxujYZl74cSbxqL3ltGKri7Y0Y
+	 aOB6Cqc6IryBfoXX8qCozZJYxDFetMyhTUwz6rMvJa+Q7oRb4ovhQRPK8gBMf/4efsLHj
+	 lgQRpewPrIojhp4UC6kS67aly8t0N1aGAXoKY9VFqsm8YU+rgf5ec0P9vPnyPx7O3HK7S
+	 lI0VVc//HsTLHaumiWHDL1cYHyVI67/qZZ4oP+e8wH28V5CN5mjkM1pYQ5gtR3GZ+RQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795190684;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=q9YON1OyDdbhVmSZ3qNdPEZ9E1LMVZlQqEKChXlKUBA=;
-	b=RY+X1KUjtT3Qk4lEEFQ7Y4wOvOPTBVKxGzNac5hZU9CfFKkcAx+sipSBKyAMlC6s61WL
-	 snjUVC4nJue4AsDJIsEHgtBVB0k6D5B4/ok8bCUT/pZZOE5tLRKJdjesGffbJQ9venui7
-	 M1PUkdrX/eJxBq+KvGEBix/KyL8RRzHeYz97p2L4p+yz25XpPMT9C71m45r+373oKnpLX
-	 ED7dfZOmt1uqHhsAlstWxhOnjbnhIHlH9dZwuh2NInS3ypIZgCCaND51x5XiamDXC1kag
-	 LZ/pPrtnrbyAAw4TTqTc6cSJE2XASowcensW0RVg7rMp3Xt3CgFpZz1gPmiauQ7Irbw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795193467;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:CC:Subject:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=K0ndYaDZoYcWVoVC7S2A9Vrq7y6IxfYnkplM3Ym75uw=;
+	b=A8TwRy+326ZQCE+UWJdKjCiC0WCVz4vTXkioahLbmCxhm2bl0XoFssza47CCKbe5GGj6
+	 oFajbqImaGUpXlVQH7q94nlHywUT6tY4E+ein1XL1ITlmwoV8SnTgq/TJkEAYfB2YvePt
+	 56OWkr5XO0hyBu4J6nWstxbOoTTPlQP7dy5kI6xpxBM13SJ27HV1uPXfdyrbxEg5Vb/zw
+	 Tqul7+WgWHVQ501ggEhvbHQm9Y2JNAGlojXlKC1N3BRnhYCItfrO1WrcEsMWpMLm03FSR
+	 gHkJoknqCFjHtJclyelR7HFopgCPCa7zvuyNlQRXHOboz8p5KvSyt2QINOQH+XCCgrA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hallyn.com;
-	spf=pass smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=M9qBDG2c;
-	arc=none smtp.remote-ip=178.63.66.53
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Ey+rgCPF;
+	arc=none smtp.remote-ip=91.218.175.189
+Received: from mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B222C606A325;
-	Fri, 20 Nov 2026 16:04:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B222C606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94C9606A32C
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 16:51:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D94C9606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=M9qBDG2c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1795190675; bh=JO6QMaohqpOpnglO+nbRvEH2R5s3p7FIcS9bHnt3aqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M9qBDG2cZM7LjFCfgpszJGBKKgicC0/vAIeHCbRTCISq50F4PiFn5sf6TBxNXtW+Y
-	 REgUYE3FsvLHP3fPuimDvBL6iD0fUqR9mJ+QAoXeNmFaV44OO7jsAHVQAdJrTl4KVG
-	 n/TEBCpTQpM6vi8XIZuzy0CRIkYsmktCtJSKW3+tGLDRWQ0gHr+C7viSVpoWGajpkP
-	 Eb9kgR6J/Md0jjzPLS2YA18PUp+6HDzOSgZ4sN8aMH824Ye51d/IBcPCImDsxNmOZd
-	 kUNxSPtlEm55pJGrXGRbmuOotLkN0toTYn2o1dgrloEzd6g7TVVwiYRPOxICb0i8mk
-	 ljWWZTYtcKo7g==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 941D71C4E; Fri, 20 Nov 2026 10:04:35 -0600 (CST)
-Date: Fri, 20 Nov 2026 10:04:35 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	bpf@vger.kernel.org, Zhiqi Zhang <zhiqizhangg@gmail.com>
-Subject: Re: [PATCH 0/2] ns: don't call the namespace LSM hooks for
- kernel-internal namespaces
-Message-ID: <awBvk4BlFqT4jukk@hallyn.com>
-References: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=Ey+rgCPF
+X-Envelope-To: linux-security-module@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=23aotKbVmZZK5ma89rsXnDW+52IBOiyRWRcBtbK9USc=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1795193464; v=1; x=1795798264;
+ b=Ey+rgCPFpVl5X6ujxwbd8djlXrPlNpJW74Q9Z4KSpVywMtwqWC00bkpuKkaJ21q37eCUg3TE
+ G5FcnQJOttW75EJOfY4ibCO/3OTnqWDvjZ83K/snpd4bDg0Fi1Bw/fZrFSlF3BXG40dJx5QiTW6
+ sO38Nl96M+MORTF06jZorKqg=
+X-Envelope-To: linux-security-module@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 2f79ea2b221504db;
+	Fri, 20 Nov 2026 16:51:04 +0000
+X-Mizu-Trace-ID: 2f79ea2b221504db
+X-Migadu-Flow: FLOW_OUT
+Date: Fri, 20 Nov 2026 16:51:05 +0000
+From: Bradley Morgan <bradley.morgan@linux.dev>
+To: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
+ Paul Moore <paul@paul-moore.com>, Josef Bacik <josef@toxicpanda.com>
+CC: James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, "Andrew G. Morgan" <morgan@kernel.org>,
+ Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_0/3=5D_capabilities=3A_close_the?=
+ =?US-ASCII?Q?_ways_around_the_CAP=5FSETFCAP_rule_for_uid_0?=
+In-Reply-To: <20261120-zutun-ausgearbeitet-erregen-ebd3834404ea@brauner>
+References: <20261117-b4-setfcap-userns-v11-0-2be11a2c32f4@toxicpanda.com> <20261120-zutun-ausgearbeitet-erregen-ebd3834404ea@brauner>
+Message-ID: <167100D4-9E3B-4412-A554-E3D09B5BE9DA@linux.dev>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -63,63 +71,65 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 20, 2026 at 01:29:57PM +0100, Christian Brauner wrote:
-> mount_subtree() allocates a private anonymous mount namespace so that
-> automounts during the path lookup have somewhere to go. btrfs goes
-> through it on every mount and NFS on every NFSv4 mount and whenever it
-> follows a referral.
-> 
-> Since the namespace LSM hooks went in that namespace goes through
-> security_namespace_init() like any other. Landlock enforces
-> LANDLOCK_PERMISSION_NAMESPACE_USE in its namespace_init hook. So a
-> sandbox that handles that permission without allowing CLONE_NEWNS can't
-> mount btrfs or NFSv4 anymore. mount(2) fails with EPERM even though
-> nobody asked for a mount namespace. Zhiqi reported that and sent a fix
-> that skips namespace_init for this namespace (cf. [1]).
-> 
-> But namespace_free needs to be skipped as well. Otherwise a bpf program
-> attached to namespace_free would see these namespaces go away without
-> ever having seen them being created. Right now that can't happen but
-> only because security_namespace_free() skips the hook if no LSM
-> requested a namespace blob. So mark such namespaces as kernel-internal
-> and keep them away from both hooks. The first patch turns the anon
-> argument of alloc_mnt_ns() into flags so we don't end up with two
-> booleans.
-> 
-> The anonymous mount namespaces created by open_tree(OPEN_TREE_CLONE)
-> and fsmount() are handed to userspace and keep going through the hooks.
-> Landlock covers them on purpose.
-> 
-> I tested this on v7.4-rc3 with a btrfs loop mount and an NFSv4 mount
-> in a Landlock domain that handles LANDLOCK_PERMISSION_NAMESPACE_USE but
-> doesn't allow CLONE_NEWNS. Both fail with EPERM without this series and
-> work with it. unshare(CLONE_NEWNS), clone(CLONE_NEWNS),
-> open_tree(OPEN_TREE_CLONE), fsmount() and setns() are still denied and
-> the Landlock namespace selftests pass.
-> 
-> [1]: https://lore.kernel.org/20261114141323.19029-1-zhiqizhangg@gmail.com
+On 20 November 2026 10:11:34 GMT, Christian Brauner <brauner@kernel.org>
+wrote:
+>On Tue, 17 Nov 2026 19:54:23 +0000, Josef Bacik wrote:
+>> v1:
+>https://lore.kernel.org/all/20261006-b4-setfcap-userns-v1-0-f47e7ed66072@toxicpanda.com/
+>> v2:
+>https://lore.kernel.org/all/20261014-b4-setfcap-userns-v2-0-fac4d19281d7@toxicpanda.com/
+>> v3:
+>https://lore.kernel.org/all/20261021-b4-setfcap-userns-v3-0-97c7ed4e43e1@toxicpanda.com/
+>> v4:
+>https://lore.kernel.org/all/20261022-b4-setfcap-userns-v4-0-88aa0ffaa08f@toxicpanda.com/
+>> v5:
+>https://lore.kernel.org/all/20261023-b4-setfcap-userns-v5-0-0620223be951@toxicpanda.com/
+>> v6:
+>https://lore.kernel.org/all/20261026-b4-setfcap-userns-v6-0-25f10b7ca497@toxicpanda.com/
+>> v7:
+>https://lore.kernel.org/all/20261026-b4-setfcap-userns-v7-0-bf8a576f7259@toxicpanda.com/
+>> v8:
+>https://lore.kernel.org/all/20261027-b4-setfcap-userns-v8-0-2674adc63f3c@toxicpanda.com/
+>> v9:
+>https://lore.kernel.org/all/20261109-b4-setfcap-userns-v9-0-0d3f00976ce2@toxicpanda.com/
+>> v10:
+>https://lore.kernel.org/all/20261112-b4-setfcap-userns-v10-0-84f6f7faa903@toxicpanda.com/
+>> 
+>> [...]
+>
+>Applied to the namespace-7.5.misc branch of the vfs/vfs.git tree.
+>Patches in the namespace-7.5.misc branch should appear in linux-next soon.
+>
+>Please report any outstanding bugs that were missed during review in a
+>new review to the original patch series allowing us to drop it.
+>
+>It's encouraged to provide Acked-bys and Reviewed-bys even though the
+>patch has now been applied. If possible patch trailers will be updated.
+>
+>Note that commit hashes shown below are subject to change due to rebase,
+>trailer updates or similar. If in doubt, please check the listed branch.
+>
+>tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+>branch: namespace-7.5.misc
+>
+>[1/3] userns: don't let setns() lend CAP_SETFCAP
+>      https://git.kernel.org/vfs/vfs/c/711bc24f1d8f
+>[2/3] capabilities: don't let ptrace borrow CAP_SETFCAP
+>      https://git.kernel.org/vfs/vfs/c/c1e5f4d36d2a
+>[3/3] selftests/namespaces: test the CAP_SETFCAP rule for user namespaces
+>      https://git.kernel.org/vfs/vfs/c/cbe977960cb3
 
-Thanks, both look good to me.
+Oops! Couldn't get to it. I had a look, looks ^Wsane^W
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Reviewed-by: Bradley Morgan <bradley.morgan@linux.dev>
 
-> 
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
-> Christian Brauner (2):
->       mount: pass flags to alloc_mnt_ns()
->       ns: don't call the namespace LSM hooks for kernel-internal namespaces
-> 
->  fs/namespace.c                     | 31 +++++++++++++++++++++----------
->  include/linux/ns/ns_common_types.h |  2 ++
->  include/linux/ns_common.h          | 20 +++++++++++++-------
->  kernel/nscommon.c                  |  9 ++++++---
->  4 files changed, 42 insertions(+), 20 deletions(-)
-> ---
-> base-commit: 666539eecdf4db623f5e3c3e55cf9f2dfad24aa4
-> change-id: 20261120-work-ns-mount_subtree-d429ad72f8ac
-> 
+
+
+
+>
+
+--- Thanks!
