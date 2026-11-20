@@ -1,87 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.168
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795186769;
-	b=ft4J5KSVawbto2kl9P/CEXA5ca/8Z+ZZRXvx3KhyLq6exv5sqmfCi6oHQ/y34BQIWIBI
-	 uGyVcdP+hPE0pR/qFNLPoggU6ZW62vRD7kmg65R9m/gP56tkR8ZJ3zTffvouzZmuZF4Vk
-	 a9dmcC+QLuB8qgJHhFACSirNOkdJ5xKsszFjvtYpoMVzgi/SozR6dy9h1ZndkEcz8Hv28
-	 VZB8t22HQpYOl/MNN0/l26F27ZHCDFjENr/GohxzQfazlAVnk8Dky6gLgDsWkGYJvB8CD
-	 SUgOUudXoTe5LgP7KrSke0RHH0kRuj/kkwuBCumO835tmFkRjIABEEk6yfH1SjtNrqA==
+	t=1795187772;
+	b=tbglV0IqdPWgPLMhoZYlY0k3ZphBCDhEY8iF8hMrAl3pMgFWcpAyX9ZSezM1+8YQMlWt
+	 xLjejW16sIQFmKsfzeqRd78Byqi9PAf22g39NWJt2ytjRFWYjEhSYW7XkBGrZnlgAVmpO
+	 JCfg59vUHyiGZ50URPdMbhdKsBB/seX+3PkFmCRU95h45UxiI8JUQspLev1A6xk2NteHl
+	 KcK1HKR2kcxqbMPUq8+IYrWKlabixKUKvrP6L2C6F/MwJ8zldEVStsQcGDW2Kfz9kJ7lf
+	 raXb+WTdvnwnCFgI5QsS31arBslIrrbdZ6c4CnKga2NnJQVPVqYmNDbH02BaR94L8xQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795186769;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 X-Received:MIME-Version:References:In-Reply-To:From:Date:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:X-Mimecast-Spam-Score:
-	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=Vz/9X/xDs27LNeUzfwpYSxQHLLpaMzHuDFNMaboauyg=;
-	b=5pkC30rrVHcUWZBHr6d8kxdq8euh9immUFzw8us+/ANexfY7qG4JEOcsEBq0jlwUS5Jo
-	 Vgn1mAZ4k0EQqN7EOLgRNVRfgTJxoYaPJD+ICCvhHuimcL5KYzSn7ld0B5IqDtXhuoRLi
-	 1De7OM1PMizl/uvMlsv4Sr2YK3jB/ZmhXCnoNyll++qVEXD1/lObIHKra/IIhb4tE0J+a
-	 CttlsPVdjBVJA3jOHlUpVs3ll4KOON8FtYHgxzioie5WbRWrg8BsmxOhIY53TUb3aRH6K
-	 gjoW71GBUGKcQj5TJsoqqrkMwaOE7o7d4xwcILz5bUCiDFdjSCOVJaJ68zJk+n1OOXA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795187772;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
+	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Infomaniak-Routing;
+	bh=VJY0pMaR2Hgf9iovNumsqArKUrBvWohEWSq9se+XYTE=;
+	b=N0qFcFaZClJDEicVbGnOx/bX9bWqTFdOhgptWEY/aNfvstoGzq72xIjBk00VF6xWIKMG
+	 mMCa+a+OD7wt1M92A8OA3IxVaSHzL94qWX7CaBksiIbb3+PF5Rd7PUZiGq3kNo2sRhRbT
+	 N5zOp+JeIBR5pGOXEJ0Zn2ppjtIsggcKIF21BalSHJNJwJD53QTyo700TuYE+hdmtHH52
+	 lquEGZMdJ9abVq7eSfAS5UEPNOWNlTxqaYgy1yylFOaxMIXtL66ZatEpOSFwqNtKSin5O
+	 J8rkepyueQc9wf1MPvppiDe2NVmRp1cBQE/Uhx+DjSeHexmkRo/IjrJZYz3NmJEBjeQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ZptrnP67;
-	arc=none smtp.remote-ip=170.10.133.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dmarc=none header.from=digikod.net;
+	spf=pass smtp.mailfrom=digikod.net;
+	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=DMxXhlY7;
+	arc=none smtp.remote-ip=84.16.66.168
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE67760A3813
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 14:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BE67760A3813
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266EA606A325
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 15:16:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 266EA606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=ZptrnP67
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1795186767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vz/9X/xDs27LNeUzfwpYSxQHLLpaMzHuDFNMaboauyg=;
-	b=ZptrnP67WiQVU2j1zJeeQFv1aG8LZ4jjW/epWS0XohtKgJeDshmaMVsWNwqJwqGPisfaqs
-	JPc2waxIqwJ7VdvTBV8EDQY89Yyr5w5WxicxQTq+Apzxs5fEYkffMYC3K0CH45lZfOn3Gl
-	Q8ylHhVggG8KM8td7j1c3QNuAnQXENA=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-690-yhxnfUHNMDmoz8RacDzSEg-1; Fri, 20 Nov 2026 14:59:23 +0000
-X-MC-Unique: yhxnfUHNMDmoz8RacDzSEg-1
-X-Mimecast-MFC-AGG-ID: yhxnfUHNMDmoz8RacDzSEg_1795186763
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-8b0e878f574so14918617b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 06:59:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795186763; x=1795791563;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Vz/9X/xDs27LNeUzfwpYSxQHLLpaMzHuDFNMaboauyg=;
-        b=aTvuAmgp4izffVRposP7Pd1nMS2JLNfRfT3e9xvp/u4mRKWH3ChsfX7c48KnqEUADo
-         FUNis7tLdcvk/eHiCH1pdo8KkjpAUli8F55sl2WVTNGcitprjJ+/fMSXcOUM13Wi2WBi
-         dqRnAz4uOhEqXyE3kmrnehsaiinkm6ce/hzVRf82JRfeGcPZl7IgdoizZU1BwGfXizGO
-         oQcawBVBEej9gu0XIDC2XAjnDWj2+OsmPBFgBeiMN4zLIajh/Jnj3jYFF5NZncVubcY3
-         l4evNdFVbHWBe9u1GWt0uOQa2a/mJmf+VXZCYxdytG9ExEw3NT1nmkkjpYsF47Lj58+s
-         VBuw==
-X-Forwarded-Encrypted: i=1; AL+hErHlCWgfsd7PvPErYki0FmXN5cDUezfJvzmD4r6h0fc2caZKN3wegOQT5dJuhuvOUebLNL+GVRtZUCrx4H8L3uPo4UwiBWo=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8G//JRdOnGlDaraMvE61u5OOidtK0KsZPCVcqMsZfh61mtINcZ
-	kXzcnbpMCxqUILT1dei+yuxKXVF1WLvI03dA9yfApOIkyepBVfmlypgljFjt6ClP0XBE2HMCaj6
-	KXhE2JQcD2Xkp14sOwAwFIw8KIzlHPKp6qOS3+FVPFvAddsi0YSf4KGHm0i+NFjIMkc6RpTFZNe
-	fPJEP9OiqiHnUeT66PQ1VGt99FUT+Hd/8nL+I/6HxWn003VEaO/ubD
-X-Gm-Gg: AZFdTZdDjSXLy6nEya+erCsbPAuKv2s+T/Ro0AARsH90XWVescprqUOw1iVaEymOiKc
-	snxOdB7QDa+lwoOPXcyVmWpWnOf9jfHzIoOhT15RotteP11cgAh5IfRN0elpkoUKLDHccqQ53/D
-	Yr8l+/NVwYxqrDb3ocGTrt+hBU0tcWZLsYrLBUFq9Kg7uEnljeIJieu8bXR0mEuKOZ4q+XWy2aC
-	N+LftZBzQui1ZbWqCYofWBWc/BQoSFKukb/zSKX4cXmhg==
-X-Received: by 2002:a05:690c:6893:b0:8b0:8a77:e9b8 with SMTP id 00721157ae682-8b518d25cadmr18702447b3.4.1795186762635;
-        Fri, 20 Nov 2026 06:59:22 -0800 (PST)
-X-Received: by 2002:a05:690c:6893:b0:8b0:8a77:e9b8 with SMTP id
- 00721157ae682-8b518d25cadmr18702267b3.4.1795186761947; Fri, 20 Nov 2026
- 06:59:21 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=DMxXhlY7
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jWJnf6BH9zL2l;
+	Fri, 20 Nov 2026 16:16:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1795187766;
+	bh=VJY0pMaR2Hgf9iovNumsqArKUrBvWohEWSq9se+XYTE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DMxXhlY7b8WQ7iO3RoUeGpysJ7YKzXsiMxhIZJUnFatuUWXdqZGlfWb50jMlw+SP5
+	 67adzrIb89Xrn+9QHD1uwQGdS++lQyx2F8vp4kUlVPlMSFCGE7q50yBMORlGiwcMxa
+	 H9SMbddNEeE7KbmvXBq/eRrZedld4qfVmnF5O148=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4jWJnZ5vbGz5M6;
+	Fri, 20 Nov 2026 16:16:02 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Tejun Heo <tj@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Cen Zhang <blbllhy@gmail.com>,
+	James Morris <jmorris@namei.org>,
+	Lee Seong Hyeon <ihopenre@gmail.com>,
+	Marco Elver <elver@google.com>,
+	NeilBrown <neil@brown.name>,
+	Nickolai Zeldovich <nickolai@csail.mit.edu>,
+	Paul Moore <paul@paul-moore.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Yihan Ding <dingyihan@uniontech.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC wait
+Date: Fri, 20 Nov 2026 16:15:52 +0100
+Message-ID: <20261120151554.2651743-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -91,156 +77,267 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261120031305.3561045-1-huangsj@hygon.cn>
-In-Reply-To: <20261120031305.3561045-1-huangsj@hygon.cn>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Fri, 20 Nov 2026 15:59:10 +0100
-X-Gm-Features: AclHuK92MT1vYW09O4Urhd7Yf7t3vir7SJ2k6LlnKDbNPNtVZYsZ96-h_yHunoE
-Message-ID: <CAHc6FU7URHetBU9XgP0DSEGjWQfq0tX+ohK8xRVZLEYzgJBeEw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/11] vfs: add inode iteration methods
-To: Huang Shijie <huangsj@hygon.cn>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	hch@infradead.org, mic@digikod.net, axboe@kernel.dk, gnoack@google.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, legion@kernel.org, 
-	aleksa@amutable.com, libaokun@linux.alibaba.com, ebiggers@kernel.org, 
-	djwong@kernel.org, sandeen@redhat.com, zhongyuan@hygon.cn, 
-	fangbaoshun@hygon.cn, yingzhiwei@hygon.cn, wujianyong@hygon.cn, 
-	shijie8@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	gfs2@lists.linux.dev, linux-security-module@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BKmQnVY0YONnNLBjbh298890Usn9n97vfDI9NBXz2nk_1795186763
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Fri, Nov 20, 2026 at 4:13=E2=80=AFAM Huang Shijie <huangsj@hygon.cn> wro=
-te:
-> This series adds two superblock inode iteration helpers,
-> super_iter_inodes() and super_iter_inodes_locked(), and converts the
-> open-coded sb->s_inodes walks in the VFS to them.  The design is based on
-> Dave Chinner's patch set:
->   "vfs: improving inode cache iteration scalability"
->   https://lore.kernel.org/all/20241002014017.3801899-1-david@fromorbit.co=
-m/
->
-> About the two helpers:
->
->   int super_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
->                         ino_iter_eligible_fn eligible, void *priv,
->                         int flags);
->
->   static inline int super_iter_inodes_locked(struct super_block *sb,
->                                              ino_iter_fn iter_fn,
->                                              void *priv);
->
->   - super_iter_inodes() runs @iter_fn with a referenced inode and with
->     sb->s_inode_list_lock __dropped__, so the callback is free to block a=
-nd
->     to do whatever it wants with the inode except drop the reference the
->     iterator holds.  The iterator releases that one reference per inode
->     itself, so the callback cannot leave a dangling inode behind.
->     It is exported because GFS2 can be built as a module.
->
->   - super_iter_inodes_locked() keeps sb->s_inode_list_lock held for the
->     whole walk and takes no inode references at all.  Its callback
->     therefore only has an existence guarantee: it must not block and
->     must do its own inode state checks and its own reference handling.
->     It is internal to the VFS, being declared in fs/internal.h.
->
->   - The callback is separate from the caller's data, so a caller keeps
->     its state in its own structure instead of filling in a shared
->     context:
->
->       typedef int (*ino_iter_fn)(struct inode *inode, void *priv);
->
->   - %INO_ITER_F_REFERENCED restricts the safe iterator to inodes that
->     still have a reference.  It preserves the "only handle referenced
->     inodes" rule of landlock's sb-delete walk.
->
->   - %INO_ITER_F_NOREF does the opposite: only inodes whose reference
->     count has already reached zero are handed out.  %INO_ITER_F_NOIGET
->     suppresses the reference.  Neither keeps the inode alive, so the
->     caller must make it unclaimable itself.
->
->    Patch 1 adds super_iter_inodes().
->    Patch 2 adds super_iter_inodes_locked().
->    Patch 3-5 convert the callers which cannot use referenced inodes
->            (dquot removal, nr_blockdev_pages() and the
->            generic_shutdown_super() poisoning loop).
->    Patch 6-11 convert the remaining callers (inode eviction, sync_bdevs,
->            drop_pagecache_sb, add_dquot_ref, landlock's hook_sb_delete
->            and gfs2_evict_inodes()).
->
->
-> BTW:
->   This patch set depends a small patch:
->   "fs/drop_caches: skip filesystems without fs writeback"
->   https://lkml.org/lkml/2026/9/23/675
+landlock_restrict_sibling_threads() write-locks
+current->signal->exec_update_lock to serialize TSYNC callers, and holds
+it until every sibling thread has run its task_work.  This wait is
+unbounded: TWA_SIGNAL does not wake a TASK_KILLABLE sleeper, so a
+sibling blocked as a vfork() parent runs it only once its child execs or
+exits.
 
-That link doesn't work for me. When referring to other postings, can
-you please use lore links?
+Meanwhile, readers of this lock block, mostly in D state:
+/proc/<pid>/stat, mm_access(), pidfd_getfd(), kcmp(), perf_event_open(),
+etc.  An unprivileged process can thus stall tools run by other users,
+including root, such as ps and top.
 
-There also is no posting of a patch with that title from that day on
-https://lore.kernel.org/linux-fsdevel/. You may be referring to
-https://lore.kernel.org/linux-fsdevel/20260920072811.2064247-2-huangsj@hygo=
-n.cn/,
-but that patch queue no longer applies. So please post patch queues in
-a state that applies and optionally, make a git branch available.
+Only a per-process "TSYNC in progress" marker is needed.  Use an unused
+signal_struct.flags bit, protected by sighand->siglock, which is held
+only to set or clear the marker.  A second caller still restarts the
+syscall, and a cleanup class releases the marker on every return.
 
-(Also, enabling "git config --global format.useAutoBase whenAble" is a
-possibility, but it wouldn't have helped in this case.
+Like de_thread(), treat a group exit or an ongoing exec as a held
+marker: a group exit may overwrite the flags, and both kill the other
+threads, which the restart lets the caller handle.
 
-> v2-->v3:
->    -the callers' state no longer goes through a shared struct, the
->     callback now takes the caller's own @priv.
->
->    -super_iter_inodes() takes @eligible directly, so a caller can reject
->     an inode before the reference is paid for.
->
->    -rename super_iter_inodes_unsafe() to super_iter_inodes_locked() and
->     drop the rcu_read_lock(), which the list lock already covers.
->
->    -drop @ctx->prev; the resume point is gone with the unsafe iterator.
->
->    -evict_inodes() no longer goes through the locked iterator.
->     it now uses the unlocked iterator with INO_ITER_F_NOREF | INO_ITER_F_=
-NOIGET.
->
->    -each caller gets its own patch.
->
->    v2: https://lore.kernel.org/all/20261113115702.586594-1-huangsj@hygon.=
-cn/
->    v1: https://lore.kernel.org/all/20261015093854.2082600-1-huangsj@hygon=
-.cn/
->
-> Huang Shijie (11):
->   vfs: add super_iter_inodes()
->   vfs: add super_iter_inodes_locked()
->   fs/quota: convert remove_dquot_ref() to super_iter_inodes_locked()
->   block: convert nr_blockdev_pages() to super_iter_inodes_locked()
->   fs: convert generic_shutdown_super() poison loop
->   fs/inode: convert evict_inodes() to super_iter_inodes()
->   block: convert sync_bdevs() to super_iter_inodes()
->   fs/drop_caches: convert drop_pagecache_sb() to super_iter_inodes()
->   fs/quota: convert add_dquot_ref() to super_iter_inodes()
->   landlock: convert hook_sb_delete() to super_iter_inodes()
->   gfs2: convert gfs2_evict_inodes() to super_iter_inodes()
->
->  block/bdev.c                   | 101 ++++++++++--------------
->  fs/drop_caches.c               |  45 ++++-------
->  fs/gfs2/ops_fstype.c           |  29 ++-----
->  fs/inode.c                     |  61 ++++++---------
->  fs/internal.h                  |  31 ++++++++
->  fs/quota/dquot.c               | 139 ++++++++++++++++-----------------
->  fs/super.c                     | 106 ++++++++++++++++++++++---
->  include/linux/fs/super_types.h |  29 +++++++
->  security/landlock/fs.c         | 138 ++++++++++++--------------------
->  9 files changed, 370 insertions(+), 309 deletions(-)
->
-> --
-> 2.53.0
+Add KUnit tests for taking a free marker and for rejecting a held one.
+A concurrent TSYNC caller cannot be started deterministically from user
+space, but a KUnit thread has no sibling and can hold the marker itself.
 
-Thanks,
-Andreas
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Nickolai Zeldovich <nickolai@csail.mit.edu>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Yihan Ding <dingyihan@uniontech.com>
+Cc: stable@vger.kernel.org
+Reported-by: Lee Seong Hyeon <ihopenre@gmail.com>
+Suggested-by: Lee Seong Hyeon <ihopenre@gmail.com>
+Fixes: ff88df67dbf7 ("landlock: Serialize TSYNC thread restriction")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since the initial report from Lee Seong Hyeon:
+- Rewrite the fix, storing the marker in an unused signal_struct.flags
+  bit protected by sighand->siglock instead of adding a signal_struct
+  field.
+- Treat group exit and ongoing exec as a held marker, because group exit
+  may overwrite the flags.
+- Release the marker with a cleanup class.
+- Clarify that not all readers wait in D state: perf_event_open() waits
+  interruptibly.
+- Add KUnit tests.
+- Credit Lee Seong Hyeon with Reported-by and Suggested-by instead of
+  authorship, because the implementation was rewritten.
+
+Christian, Oleg, and Tejun, this patch reserves a signal_struct.flags
+bit for Landlock and relies on group-exit paths overwriting these flags
+under siglock.  Please check that this use of signal-core state is
+acceptable.
+
+Lee, this rewrites the patch you sent with your report, so it credits
+you with Reported-by and Suggested-by.  Please tell me if you prefer a
+different credit.
+---
+ include/linux/sched/signal.h |   1 +
+ security/landlock/tsync.c    | 134 +++++++++++++++++++++++++++++++----
+ 2 files changed, 122 insertions(+), 13 deletions(-)
+
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 0adb51ab1542..f68bbaa3527a 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -262,6 +262,7 @@ struct signal_struct {
+ #define SIGNAL_STOP_STOPPED	0x00000001 /* job control stop in effect */
+ #define SIGNAL_STOP_CONTINUED	0x00000002 /* SIGCONT since WCONTINUED reap */
+ #define SIGNAL_GROUP_EXIT	0x00000004 /* group exit in progress */
++#define SIGNAL_LANDLOCK_TSYNC	0x00000008 /* Landlock TSYNC in progress */
+ /*
+  * Pending notifications to parent.
+  */
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index cfa73a2a67ca..a6fa9ce0ac78 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -5,6 +5,7 @@
+  * Copyright © 2025 Google LLC
+  */
+ 
++#include <kunit/test.h>
+ #include <linux/atomic.h>
+ #include <linux/cleanup.h>
+ #include <linux/completion.h>
+@@ -479,6 +480,46 @@ static void cancel_tsync_works(const struct tsync_works *works,
+ 	}
+ }
+ 
++/*
++ * try_set_current_tsync_marker - mark the current thread group as under TSYNC
++ *
++ * Returns false if another TSYNC operation, group exit, or exec is in progress.
++ */
++static bool try_set_current_tsync_marker(void)
++{
++	struct signal_struct *const signal = current->signal;
++
++	guard(spinlock_irq)(&current->sighand->siglock);
++
++	/*
++	 * Group-exit paths may replace all signal flags, including an active
++	 * marker.  Treat SIGNAL_GROUP_EXIT as a held marker to prevent another
++	 * TSYNC operation from starting during group teardown.
++	 *
++	 * Like de_thread(), also treat an ongoing exec as a group action in
++	 * progress.  de_thread() sets group_exec_task in the same siglock
++	 * critical section that sends SIGKILL to all other threads, including
++	 * current.  Instead of queuing task_work for exiting threads,
++	 * restart_syscall() lets current handle its pending SIGKILL.
++	 */
++	if ((signal->flags & (SIGNAL_GROUP_EXIT | SIGNAL_LANDLOCK_TSYNC)) ||
++	    signal->group_exec_task)
++		return false;
++
++	signal->flags |= SIGNAL_LANDLOCK_TSYNC;
++	return true;
++}
++
++static void clear_current_tsync_marker(void)
++{
++	guard(spinlock_irq)(&current->sighand->siglock);
++
++	current->signal->flags &= ~SIGNAL_LANDLOCK_TSYNC;
++}
++
++DEFINE_CLASS(current_tsync_marker, bool, if (_T) clear_current_tsync_marker(),
++	     try_set_current_tsync_marker(), void)
++
+ /*
+  * restrict_sibling_threads - enables a Landlock policy for all sibling threads
+  */
+@@ -492,6 +533,19 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 	size_t newly_discovered_threads;
+ 	bool found_more_threads;
+ 
++	/*
++	 * Serialize concurrent TSYNC operations to prevent deadlocks when
++	 * multiple threads call landlock_restrict_self() simultaneously.  If
++	 * another operation got there first, gracefully yield by restarting the
++	 * syscall.  This allows the current thread to process pending
++	 * task_works before retrying.
++	 *
++	 * sighand->siglock protects only the marker, not the wait below.
++	 */
++	CLASS(current_tsync_marker, marker)();
++	if (!marker)
++		return restart_syscall();
++
+ 	atomic_set(&shared_ctx.preparation_error, 0);
+ 	init_completion(&shared_ctx.all_prepared);
+ 	init_completion(&shared_ctx.ready_to_commit);
+@@ -503,16 +557,6 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 		(restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) ||
+ 		task_no_new_privs(current);
+ 
+-	/*
+-	 * Serialize concurrent TSYNC operations to prevent deadlocks when
+-	 * multiple threads call landlock_restrict_self() simultaneously.
+-	 * If the lock is already held, we gracefully yield by restarting the
+-	 * syscall. This allows the current thread to process pending
+-	 * task_works before retrying.
+-	 */
+-	if (!down_write_trylock(&current->signal->exec_update_lock))
+-		return restart_syscall();
+-
+ 	/*
+ 	 * We schedule a pseudo-signal task_work for each of the calling task's
+ 	 * sibling threads.  In the task work, each thread:
+@@ -536,8 +580,9 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 	 * 5) signals that it's done altogether (barrier synchronization
+ 	 *    "all_finished")
+ 	 *
+-	 * Unlike seccomp, which modifies sibling tasks directly, we do not
+-	 * need to acquire the cred_guard_mutex and sighand->siglock:
++	 * Unlike seccomp, which modifies sibling tasks directly, we do not need
++	 * to hold the cred_guard_mutex or sighand->siglock around the thread
++	 * walk:
+ 	 *
+ 	 * - As in our case, all threads are themselves exchanging their own
+ 	 *   struct cred through the credentials API, no locks are needed for
+@@ -634,6 +679,69 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 		wait_for_completion(&shared_ctx.all_finished);
+ 
+ 	tsync_works_release(&works);
+-	up_write(&current->signal->exec_update_lock);
+ 	return atomic_read(&shared_ctx.preparation_error);
+ }
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++static bool is_current_tsync_marker_set(void)
++{
++	return current->signal->flags & SIGNAL_LANDLOCK_TSYNC;
++}
++
++static void test_tsync_marker_free(struct kunit *const test)
++{
++	const struct cred *const cred = current_cred();
++
++	KUNIT_ASSERT_TRUE(test, thread_group_empty(current));
++	KUNIT_ASSERT_FALSE(test, is_current_tsync_marker_set());
++
++	KUNIT_EXPECT_TRUE(test, try_set_current_tsync_marker());
++	KUNIT_EXPECT_TRUE(test, is_current_tsync_marker_set());
++	clear_current_tsync_marker();
++	KUNIT_EXPECT_FALSE(test, is_current_tsync_marker_set());
++
++	/* Takes and releases the marker. */
++	KUNIT_EXPECT_EQ(test, 0,
++			landlock_restrict_sibling_threads(cred, cred, 0));
++	KUNIT_EXPECT_FALSE(test, is_current_tsync_marker_set());
++}
++
++static void test_tsync_marker_held(struct kunit *const test)
++{
++	const struct cred *const cred = current_cred();
++
++	KUNIT_ASSERT_TRUE(test, thread_group_empty(current));
++	KUNIT_ASSERT_TRUE(test, try_set_current_tsync_marker());
++
++	KUNIT_EXPECT_FALSE(test, try_set_current_tsync_marker());
++	KUNIT_EXPECT_TRUE(test, is_current_tsync_marker_set());
++
++	/* Restarts without releasing the marker held by another caller. */
++	KUNIT_EXPECT_EQ(test, -ERESTARTNOINTR,
++			landlock_restrict_sibling_threads(cred, cred, 0));
++	KUNIT_EXPECT_TRUE(test, is_current_tsync_marker_set());
++
++	/* Clears TIF_SIGPENDING set by restart_syscall(). */
++	scoped_guard(spinlock_irq, &current->sighand->siglock)
++		recalc_sigpending();
++
++	clear_current_tsync_marker();
++}
++
++static struct kunit_case test_cases[] = {
++	/* clang-format off */
++	KUNIT_CASE(test_tsync_marker_free),
++	KUNIT_CASE(test_tsync_marker_held),
++	{}
++	/* clang-format on */
++};
++
++static struct kunit_suite test_suite = {
++	.name = "landlock_tsync",
++	.test_cases = test_cases,
++};
++
++kunit_test_suite(test_suite);
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+
+base-commit: aebb7274476403040d582c61478df8f4a7bf9cd3
+-- 
+2.56.0
 
