@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795214692;
-	b=y5BxDMF/mPV4EcReUVuA/129a3QjZD0NY/w5vUHbI0seH6cTGq5zxKvB96dJntPjKR+1
-	 gjUQNsMpPskJ9nZPyllPD0vYOefS8j9IH2CqZMkQQYIGaZ5IN50XYjZ9pVqWdFZOQLraO
-	 tFp56AIVGvSgWqBh6RHvSpvuzy8MmOzATqF1D0BLlK/dVTGPluMUt1vCNNRhiBb5uO7eC
-	 BAxqkByJHi0QurTXOA9AmvZbSUybAXaI/ZjkL1mPISEt5P0jAgKlyFJcI2RjPXUDzaNm6
-	 X0Jc2f5JxkOk7yT/TO3p+JNz3vjO1W0MEbs3KhGWexoE0RGhmOXQyjnJVV0CVPES0Gw==
+	t=1795214697;
+	b=k55IUbyuXqz5Z6wJAl07DlWVQqjvY0IC+CfITORogde3WTmdC9GHY+yM/GH+ryncKMC/
+	 kCF/sMZSjisbLVHHUXP5Kp/Sk6Ix3D5WoL9ZOC7kMCHqsWyhoJV4u9NsBPnI9YspUisUq
+	 M/dk5k1ciP94jU5LFVwOS5nJxYy/JZlqDjSYqI3UoV42qs/wz7E1or/mJ75xUt4K5tzaO
+	 eVtYpBxb5ycd82KuAw1XFTKrT3z2beL2JMxPPeU4ytnihq3duGqPrmeRDjbMrXyHvNnb2
+	 JNZ0ln5LbqorZuTUpo6kpGbu8jtILxEqGpQfkZvLtNX5M4gRHKNcwbCCH2dYnQhyHbg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795214692;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795214697;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=CQuR/rEK9xvDJFqiz1UABVYdb4hEzkHLUCVdirqFjdI=;
-	b=v5d8J3k4yZiJtxdeRYHU/iWEfYQlVt7UXZ+OXp64wTa8hvkx6xe/3eUqKH+7Vo/11Vp7
-	 kZGewXvYl4Ojr/AR9jc1OVeQIRtRMfc0jhcDsLs5XhxWeJSf2JpKKrxkpHP7sP6QEQw+X
-	 p8ZPq20siTuldN8vRz8d3Wcr1AcNw2OphY9Drr1AEjHL8+7ythA0mz4S1TCW7JQgo4wU3
-	 GXkBDYy4Z+fASbOOmMcAkdB73BaFf+Ztr1NV7uVp+4SW8hsFhwewbOJpJ3/hmSZ60A75A
-	 3LZz5mG23NeaNQURgP1Ba/wmBzzH9WdK1WKYT99IjfLgikWdP10u17lfFd0t/F7tEmw==
+	bh=p2Lf6qpcYVJhQ5+q/779aR/iL3yLTW5qgQJ75weSGn4=;
+	b=hG21ps0OshoInEDU7soLfE+Dw4AWZc1NrzKUxNhF1hiCaUeKkebPOgdoLTmKAnsQ3F6m
+	 XQ5R2UT62lA+J8qcpSLM/T3MTWH5RdzjurAI69JXGzrURS1f5GqirZ2EWMVWX868r8HQ/
+	 eNWwuPjY+6MFgIzx912HFD2dACgLwVJx06fVM6dd+g3C+YRmIkDzldTko2R5F/fNQYTAw
+	 62/qHkdH/yA48dgl9aphW4Fp+APM7xpQRYmgEosS+tkoz1eBvdp/05YGyCZPR2WrHHIK3
+	 +Gsvehme4eJSoAQlzskCM6tUERH3ovH4zIg12z5HBo8wv1mrieUgFjejtU3RFUwjFwA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FHjb350R;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VS5VVo7j;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82565606A694
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B4F606A684
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FHjb350R
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7681F000D8;
-	Fri, 20 Nov 2026 22:44:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VS5VVo7j
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D168D1F000E0;
+	Fri, 20 Nov 2026 22:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795214692;
-	bh=CQuR/rEK9xvDJFqiz1UABVYdb4hEzkHLUCVdirqFjdI=;
+	s=k20260515; t=1795214697;
+	bh=p2Lf6qpcYVJhQ5+q/779aR/iL3yLTW5qgQJ75weSGn4=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=FHjb350RwdNDx+9XuxWJKnHSqDA9YpQtSsjVFqc5E/Z2DizU/rETAQCu+K6C4UQMw
-	 vJwKkDcVgW5PB4n+A5c9zJvU/QP4l4tJh45s0+W0RsNAdfjNeOtm3v9dLn/pajZQz6
-	 QaNsDlA0dPYdtiX6FaKpemMRh/bPS1Aa+aI315I2S9uJGjLxs929UVu7EQRtnguBaQ
-	 XmaEX1qKmqHj9Nss5jQXzZN9UgQOcwhWPoKWl9DcAcYgcSS9FPO/mlsF4+H+p4rVpJ
-	 ddeL+H/Pi2P2rGjrGj+7+AQPpF7Dk1aOkW1mkyHni3cZYWcJPXhVfnQeCMSkFM6L35
-	 7QPTv0XAAeqpw==
-Message-ID: <sashiko-outbox-226301@kernel.org>
+	b=VS5VVo7jR8o9HFGRVBMaebXWwvuWWI8YlUW/45Fk+GzxPhR5b82izYDOtFYH74FD4
+	 FkZtvDm5bTTPH1SyT+RSOm8jKHjtbdUmYWtBlCMGw4La2B3p1phgsBE4IW6yM9E2kv
+	 lqjxol/m+d7i9nSgiQBtoklLVYGFMrdxr9HiIQXEPW8HXqkbEmmJWKtu8Avuu4nkZz
+	 eJWeN1lEqr5xxU+JwV78FwX9nlLAaTRnEy3gP+htbeWSa3b/Vzfn+3ALeMpuMnN0R5
+	 uRP+RCU2x26NhQtg/3FHhW5NOh1eb50DR3FJem32SfLytVRCzBMlAEVWzwF2iPwFXM
+	 OszCw/wOYPplQ==
+Message-ID: <sashiko-outbox-226305@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v4 09/14] fs: Support MOVE_MOUNT_T_MNTNS in
- move_mount()
+Subject: Re: [RFC PATCH v4 13/14] selftests/rootns: Add root namespace test
+ suite
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexander
@@ -86,12 +86,12 @@ Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@
  Frascino" <vincenzo.frascino@arm.com>, "Vlastimil Babka" <vbabka@kernel.org>, "Will
  Deacon" <will@kernel.org>, "Yoshinori Sato" <ysato@users.sourceforge.jp>, "Zygmunt
  Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261119224312.1037966-10-jarkko@kernel.org>
+In-Reply-To: <20261119224312.1037966-14-jarkko@kernel.org>
 References: <20261119224312.1037966-1-jarkko@kernel.org>
- <20261119224312.1037966-10-jarkko@kernel.org>
+ <20261119224312.1037966-14-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 22:44:48 +0000
+Date: Fri, 20 Nov 2026 22:44:52 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -101,100 +101,109 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] fs: cross-userns mount locking bypass in attach_recursive_mnt()
+Thank you for your contribution! Sashiko AI review found 3 potential
+issues to consider:
+- [Medium] selftests/rootns: wrong _IOC_NONE direction in _io() on
+  wide-ioc archs
+- [Low] selftests/rootns: non-blocking accepted socket in
+  CellService._on_accept()
+- [Low] selftests/rootns: resource leaks on Cell init and test setUp()
+  failures
 --
 
-commit 5e90ce5c3ee9b66d7c6a41077c19c225ae139217
+commit 646cdbb1cf35062e2a914f151927bb968fe747a7
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-fs: Support MOVE_MOUNT_T_MNTNS in move_mount()
+selftests/rootns: Add root namespace test suite
 
-This commit adds the MOVE_MOUNT_T_MNTNS flag to move_mount() so that
-detached anonymous mount trees can be attached directly into a target
-mount namespace specified by an nsfs file descriptor.
+This commit adds a kselftest suite for the rootns and mount-namespace
+configuration uAPI, covering privileged, unprivileged, and edge-case
+scenarios.
 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index dfe0ee9ecdcd0..36ed48c3f6467 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
+> diff --git a/tools/testing/selftests/rootns/rootns_cells.py b/tools/testi=
+ng/selftests/rootns/rootns_cells.py
+> new file mode 100755
+> index 0000000000000..b690ed71a5211
+> --- /dev/null
+> +++ b/tools/testing/selftests/rootns/rootns_cells.py
+
 [ ... ]
-> @@ -2632,7 +2642,8 @@ enum mnt_tree_flags_t {
->   *         Otherwise a negative error code is returned.
->   */
->  static int attach_recursive_mnt(struct mount *source_mnt,
-> -				const struct pinned_mountpoint *dest)
-> +				const struct pinned_mountpoint *dest,
-> +				bool move_mntns)
->  {
->  	struct mount *dest_mnt =3D dest->parent;
->  	struct mountpoint *dest_mp =3D dest->mp;
-> @@ -2641,6 +2652,7 @@ static int attach_recursive_mnt(struct mount *sourc=
-e_mnt,
->  	struct user_namespace *user_ns =3D ns->user_ns;
->  	struct pinned_mountpoint root =3D {};
->  	struct mountpoint *shorter =3D NULL;
-> +	struct mnt_namespace *src_ns;
->  	struct mount *child, *p;
->  	struct mount *top;
->  	struct hlist_node *n;
-> @@ -2662,6 +2674,7 @@ static int attach_recursive_mnt(struct mount *sourc=
-e_mnt,
->  		user_ns =3D current->nsproxy->mnt_ns->user_ns;
->  	else
->  		user_ns =3D ns->user_ns;
-> +	src_ns =3D moving ? NULL : source_mnt->mnt_ns;
-> =20
->  	/*
->  	 * Preallocate a mountpoint in case the new mounts need to be
-> @@ -2694,6 +2707,12 @@ static int attach_recursive_mnt(struct mount *sour=
-ce_mnt,
->  	if (err)
->  		goto out_cleanup_ids;
-> =20
-> +	if (move_mntns && src_ns && src_ns->user_ns !=3D user_ns) {
-> +		lock_mnt_tree(source_mnt);
-> +		if (list_empty(&source_mnt->mnt_expire))
-> +			source_mnt->mnt.mnt_flags |=3D MNT_LOCKED;
-> +	}
 
-[Severity: High]
-Does calling lock_mnt_tree(source_mnt) after propagate_mnt() leave
-secondary copies unlocked when MOVE_MOUNT_T_MNTNS attaches a tree onto a
-shared destination mount across user namespaces?
+> +def _io(magic: int, nr: int) -> int:
+> +    return _ioc(0, magic, nr, 0)
+> +
+> +
+> +def _iowr(magic: int, nr: int, size: int) -> int:
+> +    rw =3D 6 if _is_wide_ioc_arch() else 3
+> +    return _ioc(rw, magic, nr, size)
 
-When IS_MNT_SHARED(dest_mnt) is true, propagate_mnt() clones source_mnt
-into tree_list before source_mnt is locked here, so the clones do not
-inherit MNT_LOCK_* or MNT_LOCKED (and copy_tree() silently skips unlocked
-nsfs submounts instead of failing with -EPERM).  Then the tree_list loop
-checks:
+[Severity: Medium]
+Should _io() pass direction 1 instead of 0 when _is_wide_ioc_arch() is
+True?
 
-fs/namespace.c:attach_recursive_mnt() {
-	...
-	hlist_for_each_entry_safe(child, n, &tree_list, mnt_hash) {
-		struct mount *q;
-		hlist_del_init(&child->mnt_hash);
-		/* Notice when we are propagating across user namespaces */
-		if (child->mnt_parent->mnt_ns->user_ns !=3D user_ns)
-			lock_mnt_tree(child);
-	...
-}
+On PowerPC, SPARC, Alpha, and MIPS, _IOC_NONE is 1U rather than 0U, so
+_IO() sets bit 29.  Passing 0 encodes the wrong ioctl numbers for
+ROOTNS_GET_NSFD, ROOTNS_KILL, and NS_GET_*, causing the kernel to reject
+them with ENOTTY.
 
-Because user_ns is dest_mnt->mnt_ns->user_ns rather than src_ns->user_ns,
-secondary copies propagated to peer or slave mounts in the target user
-namespace match user_ns and skip lock_mnt_tree(child), allowing root in
-the target user namespace to unmount masking submounts or clear read-only,
-nosuid, nodev, and noexec flags.
+[ ... ]
 
-In addition, if a foreign anonymous mount from another user namespace was
-previously attached via regular move_mount() as a submount of an anonymous
-mount tree already owned by the target user namespace, commit_tree() set
-the submount's mnt_ns to the anonymous tree without setting MNT_LOCKED on
-that submount's root, and attaching the anonymous tree with
-MOVE_MOUNT_T_MNTNS skips lock_mnt_tree() because src_ns->user_ns already
-equals user_ns.
+> +@dataclass
+> +class Cell:
+> +    name: str
+> +    flags: int =3D ROOTNS_KILL_ON_CLOSE | ROOTNS_CLOSE_ON_EXEC
+> +    cfd: int =3D field(init=3DFalse, default=3D-1)
+> +    mntns_fd: int =3D field(init=3DFalse, default=3D-1)
+> +    root_dfd: int =3D field(init=3DFalse, default=3D-1)
+> +    init_pid: int | None =3D field(init=3DFalse, default=3DNone)
+> +    exit_status: int | None =3D field(init=3DFalse, default=3DNone)
+> +
+> +    def __post_init__(self) -> None:
+> +        self.cfd =3D rootns(self.flags)
+> +        self.mntns_fd =3D rootns_get_nsfd(self.cfd, CLONE_NEWNS)
+
+[Severity: Low]
+Does Cell.__post_init__() leak self.cfd and the namespaces it pins if
+rootns_get_nsfd() raises OSError?
+
+Similarly, in rootns_test.py, unittest does not run tearDown() when
+setUp() fails or raises an exception, so CellServiceTest.setUp() leaks
+self.daemon_pid and self.tmpdir if the daemon readiness loop calls
+self.fail(), and RootnsUapiTest.setUp() leaks self.cell's file descriptors
+if setup_rootfs() fails.
+
+[ ... ]
+
+> +class CellService:
+> +    def __init__(self, sock_path: str) -> None:
+
+[ ... ]
+
+> +        self.srv.setblocking(False)
+> +        self.sel.register(self.srv, selectors.EVENT_READ, self._on_accep=
+t)
+
+[ ... ]
+
+> +    def _on_accept(self) -> None:
+> +        conn, _ =3D self.srv.accept()
+> +        with conn:
+> +            data =3D b""
+> +            while not data.endswith(b"\n"):
+> +                chunk =3D conn.recv(4096)
+> +                if not chunk:
+> +                    break
+> +                data +=3D chunk
+
+[Severity: Low]
+Can conn.recv(4096) raise an uncaught BlockingIOError here?
+
+In Python, socket.accept() on a non-blocking listening socket returns a
+non-blocking client socket.  If _on_accept() runs after connect() wakes the
+listening socket but before the client sends its request line, conn.recv()
+fails with EAGAIN and crashes serve_forever() unless conn.setblocking(True)
+is called first.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119224312.1037=
-966-1-jarkko@kernel.org?part=3D9
+966-1-jarkko@kernel.org?part=3D13
