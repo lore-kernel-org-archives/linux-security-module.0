@@ -1,81 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795176047;
-	b=UWSaCGLFWgx10XO1YrEQGwoOute28j22KFwh7s9bFC0dsbkNQSIKyEn1RH8UpuwWjT0w
-	 NJKxW74LjeMWB1ogfYRhE7x5/aFFTwYu9L4P/oJ8OKmcAG2ROOfhO/J9tmKJ/6Xwa1uaX
-	 c9L18UYBYIs3/RvndB1WlvSP+wQGTWTgKJHei0Qbs+TbRclQWx/90Xg0eiXqFxrw3HA5q
-	 hWkc8BWRkJUG1pAcliSJBOHTojs56RkC9fD7cURqjxc6d868N9rosxhq3ucZS6qC2ZE7c
-	 PAjoa/MZxjGf4MWhtn7GqN2WDQ3fEcXBi1ZHLxGFUljolUaAGZVo86R7Ti+wJ2Jhq+A==
+	t=1795177825;
+	b=oxgZVzUzs1bqJszZCVYZOr7sIA/IOa4yrR+8sS8uGWd0UjaqpYwXNSu5ArroOI5c9Lod
+	 +OpaHGWgW9daiLsMJ72YobJmPwVhAtfIEJqGacm4O7uBZRerMRU+UzrLx1t2AOpBQ9ICJ
+	 t/GC+vMjk/HXLKJAdxYXhP0DN0Mqua72z6AQ3ZJfZVLSwDvzialWtVWugL1elzF5Evoyz
+	 u5Oq9RFnve8uNtGhlwlQ0kyKCxfXsfcqmmlWLVQRyuRi/TpfQC1cito3MX0Z67qqYgzrp
+	 LqfsORL42KtZgNxqHQ79H5mHwehIEY9/CnnITbNgOV1MbHYQLPrXUJ+LEzPoVXHMFnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795176047;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=beQWb4LoAtDg8Zy+5AKtlfFZLus+EPwyn9DYxNFG6mU=;
-	b=nY8fMPcLeErqjvAYNJVx1B0AWZNWZG+kJcoPPkkvHYEQ/GwVzjcdE2tagt99qhVwy1h4
-	 OwQcRMOGLUlgnp302kgbrnoocubc2eFTgfPQtLSSoe0TgGM57TDboEzxuRLt3giTd/ryU
-	 MHoVlCj6Fj3nlhDmNSW73W7JTndAV+QdX+pB+45C4X3bSO3pn5sNBtC4jUY2loRQEOCYk
-	 i/9pC6Xx5+MMGvemVVLVzDduWLLD0UfE2IyVRpEsGLaJ3cLCYuUKczTeaD8g5clHfEv+5
-	 Ia8rmu42WHnrUME3R2us90PmLhIuLeisFI2Xqw03GaHa3aYfvH7HXpXUdb1xuu2iyvQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795177825;
+	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=Gx1n+U2+62ZGO/tCkqNlE96APS5Eqr7wuQE3cJg+neY=;
+	b=EM1RnUaQ214Lokkx3AHZpdsvQWAVCTeSAl9TjfVer/WfpEyUXrd1ruRdOTCiIf0BLiyI
+	 JDKx35b/mCUZbUFsalW5zP61e8UWWTS6AijLCRBGGgsdsq1ULuSUfjdKvnxmdsudsKNVB
+	 BRYx86SVtRAjcwLJhRkOXIXrlTQR80fgC57WoJMxN39w4kAfxPDbTHiaL98YzRJdGPvoM
+	 yu6hsp169kwZ5ocwZfv6q4jAwHzFFpT69M43qC1lcuat+AaPVIb7Dg9hQLDSoAX807+g4
+	 u7SEmWFFBCj3UEANEMLNpqi3B8UPkmxesse8Z1R71s4gdPjsiXOB9z90UDewgzGN9pg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EIYxJwKV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SYFDAAQn;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111F3606A338;
-	Fri, 20 Nov 2026 12:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F338C606A334;
+	Fri, 20 Nov 2026 12:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EIYxJwKV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F5811F000CA;
-	Fri, 20 Nov 2026 12:00:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SYFDAAQn
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D7F1F000D3;
+	Fri, 20 Nov 2026 12:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795176046;
-	bh=beQWb4LoAtDg8Zy+5AKtlfFZLus+EPwyn9DYxNFG6mU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EIYxJwKV6pKOzzIEBuRXOlDo0Y+HodiAO2ZB2R6VQEfoBQ/HvGlDsgCsZZD6G5Czz
-	 6Hw2mEq4W7WWL2M0khcowQ1ijdyhpl4Mf5E6jvjTXU3BGCjU3W7JH3HwTFePuk7BsW
-	 Zf0fcxra0plL9c0eF7Yjpx+CYN7bzoUzk/Q+FqleL9bhb1AcVGEf22bj+ScG5xaNBz
-	 T66Fe3ePBa9AIlYOk+9jLYdZIJzmgdv7gXFnPj3yOg7RrM21kpYHHujoSPlrAH4uP9
-	 arxmZfKtYgbrYZDY/oMy1BhaVWUrcfXk5RMw2HX+ZvgFLWMDcsj5WLUngXGiGzaopt
-	 u7hrJu5tbh8fQ==
-Date: Fri, 20 Nov 2026 13:00:27 +0100
+	s=k20260515; t=1795177824;
+	bh=Gx1n+U2+62ZGO/tCkqNlE96APS5Eqr7wuQE3cJg+neY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=SYFDAAQnSgqckbMBMoCL5Ij2R1hH2WpUuW6oANwIaCb7ZG08S7QJ++k1htnkghIdf
+	 F8XuQohZUVoCie7zcDd3Tzgnv3vnuKTfwiUzLfXGWFBPP07VG4NFmB5fdYIPR+Qc6m
+	 lkVxhOkxL6FcuAihmcXtLtwvWPWi4YCA4jbsFBAF3yzvg0YbtFqsiVYIpFp9GxXxzW
+	 Z2FWH5QbK6kBAho8gFefksTKHZACPg26kS2vL1Faiu7j98vC4uUpNw6NVPa59RzFt2
+	 zxtu+Ud+spOQ5yOxe/5mHv9jqiIkjm5WR3NXLEGNPwEiHkFObw3DR1MiiEh30ykHmp
+	 Kf673oLxZ5iYg==
 From: Christian Brauner <brauner@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Tamir Duberstein <tamird@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, 
-	Onur =?utf-8?B?w5Z6a2Fu?= <work@onurozkan.dev>, Lyude Paul <lyude@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Leon Romanovsky <leon@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Igor Korotin <igor.korotin@linux.dev>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Ira Weiny <iweiny@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
-	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Johan Hovold <johan@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Zhi Wang <zhiw@nvidia.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Markus Probst <markus.probst@posteo.de>
-Cc: Philipp Stanner <phasta@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, driver-core@lists.linux.dev, 
-	linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, linux-serial@vger.kernel.org, 
-	Oliver Mangold <oliver.mangold@pm.me>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: Re: [PATCH v22 4/5] rust: rename `AlwaysRefCounted` to `RefCounted`
-Message-ID: <20261120-belichtet-austoben-januar-9fca976c1371@brauner>
-References: <20261116-unique-ref-v22-0-12029383206d@kernel.org>
- <20261116-unique-ref-v22-4-12029383206d@kernel.org>
+Date: Fri, 20 Nov 2026 13:29:58 +0100
+Subject: [PATCH 1/2] mount: pass flags to alloc_mnt_ns()
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -85,12 +52,129 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261116-unique-ref-v22-4-12029383206d@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261120-work-ns-mount_subtree-v1-1-06337377f94a@kernel.org>
+References: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org>
+In-Reply-To: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ bpf@vger.kernel.org, Zhiqi Zhang <zhiqizhangg@gmail.com>, 
+ "Christian Brauner (Amutable)" <brauner@kernel.org>
+X-Mailer: b4 0.17-dev-04696
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3542; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=0pOZKkdJG8yPffhGzGvWVICHnrRKIWDIo4PU2IoSj3c=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQz2IY7TzQ5zCi6uCD988aKa2WKEcuXMZy/Ot8k8m1wx
+ uWitK3TOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyzobhN2tKXMoy5h9Su29E
+ 7b2x9Lrv956Vmw70L39UmnRu8xy2P02MDE8FhH0y1fJlTUtelbA9+ddkyL/RvufYm39Pp3owLe5
+ jZwUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Mon, Nov 16, 2026 at 03:21:01PM +0100, Andreas Hindborg wrote:
+Turn the anon argument of alloc_mnt_ns() into a flags argument. The
+next patch needs to pass another property of the new mount namespace
+and two booleans in a row would make the callers unreadable.
 
-For the fs and pid_namespace bits:
+No functional changes.
 
-Acked-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+---
+ fs/namespace.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index aecd05ac01705..756f9011cbf1d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2353,7 +2353,12 @@ void drop_collected_paths(const struct path *paths, const struct path *prealloc)
+ 		kfree(paths);
+ }
+ 
+-static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *, bool);
++enum mnt_ns_flags_t {
++	MNT_NS_ANON	= (1 << 0),
++};
++
++static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *,
++					  enum mnt_ns_flags_t);
+ 
+ /* Consumes the caller's reference to @mnt. */
+ void dissolve_on_fput(struct vfsmount *mnt)
+@@ -3149,7 +3154,7 @@ static struct mnt_namespace *get_detached_copy(const struct path *path, unsigned
+ 	struct user_namespace *user_ns = mnt_ns->user_ns;
+ 	struct mount *mnt, *p;
+ 
+-	ns = alloc_mnt_ns(user_ns, true);
++	ns = alloc_mnt_ns(user_ns, MNT_NS_ANON);
+ 	if (IS_ERR(ns))
+ 		return ns;
+ 
+@@ -3230,7 +3235,7 @@ static struct mnt_namespace *create_new_namespace(struct path *path,
+ 	if (foreign)
+ 		copy_flags |= CL_SLAVE | CL_COPY_UNBINDABLE;
+ 
+-	new_ns = alloc_mnt_ns(user_ns, false);
++	new_ns = alloc_mnt_ns(user_ns, 0);
+ 	if (IS_ERR(new_ns))
+ 		return ERR_CAST(new_ns);
+ 
+@@ -4369,7 +4374,8 @@ static void free_mnt_ns(struct mnt_namespace *ns)
+ 	mnt_ns_tree_remove(ns);
+ }
+ 
+-static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool anon)
++static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns,
++					  enum mnt_ns_flags_t flags)
+ {
+ 	struct mnt_namespace *new_ns;
+ 	struct ucounts *ucounts;
+@@ -4385,7 +4391,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	if (anon)
++	if (flags & MNT_NS_ANON)
+ 		ret = ns_common_init_inum(new_ns, MNT_NS_ANON_INO);
+ 	else
+ 		ret = ns_common_init(new_ns);
+@@ -4394,7 +4400,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
+ 		dec_mnt_namespaces(ucounts);
+ 		return ERR_PTR(ret);
+ 	}
+-	new_ns->is_anon = anon;
++	new_ns->is_anon = flags & MNT_NS_ANON;
+ 	refcount_set(&new_ns->passive, 1);
+ 	new_ns->mounts = RB_ROOT;
+ 	init_waitqueue_head(&new_ns->poll);
+@@ -4422,7 +4428,7 @@ struct mnt_namespace *copy_mnt_ns(u64 flags, struct mnt_namespace *ns,
+ 
+ 	old = ns->root;
+ 
+-	new_ns = alloc_mnt_ns(user_ns, false);
++	new_ns = alloc_mnt_ns(user_ns, 0);
+ 	if (IS_ERR(new_ns))
+ 		return new_ns;
+ 
+@@ -4509,7 +4515,7 @@ struct dentry *mount_subtree(struct vfsmount *m, const char *name)
+ 	struct path path;
+ 	int err;
+ 
+-	ns = alloc_mnt_ns(&init_user_ns, true);
++	ns = alloc_mnt_ns(&init_user_ns, MNT_NS_ANON);
+ 	if (IS_ERR(ns)) {
+ 		mntput(m);
+ 		return ERR_CAST(ns);
+@@ -4699,7 +4705,7 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 		return FD_ADD((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0,
+ 			      open_new_namespace(&new_path, MOUNT_COPY_NEW));
+ 
+-	ns = alloc_mnt_ns(current->nsproxy->mnt_ns->user_ns, true);
++	ns = alloc_mnt_ns(current->nsproxy->mnt_ns->user_ns, MNT_NS_ANON);
+ 	if (IS_ERR(ns))
+ 		return PTR_ERR(ns);
+ 	mnt = real_mount(new_path.mnt);
+
+-- 
+2.53.0
+
