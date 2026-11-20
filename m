@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795214688;
-	b=h9cMZ5kCuHSdvcWkAuckfpHCKvNLSoweW3lLQ9IipkY1TENvLP20BzZX2GpXkzrR9+j2
-	 KCWrfnNyVOiUk1R++mOgosIKX4d7pKEDmTrKlu5532e/KDXMsm4p9beCXcRdCaQ+RmWnq
-	 adNPfJ1VX/XvHDj1Efp00yKzI+sVzCE/6JjX5qhs1rgbzhoTbYmeZBxNhbMfCFRNNMWxU
-	 Ugrs6U1cldp8Xi014WjoHszpc40JkqaJ6mAF1wppFG9PxTFyIzafAGhH4AFoTFExetTzB
-	 8XAJzAoYuYd4Zbs7g1NdeufQI4HN8ShMH9lVtSywbvRW7RjmcXWH0akF1tn5ohfRppQ==
+	t=1795214692;
+	b=y5BxDMF/mPV4EcReUVuA/129a3QjZD0NY/w5vUHbI0seH6cTGq5zxKvB96dJntPjKR+1
+	 gjUQNsMpPskJ9nZPyllPD0vYOefS8j9IH2CqZMkQQYIGaZ5IN50XYjZ9pVqWdFZOQLraO
+	 tFp56AIVGvSgWqBh6RHvSpvuzy8MmOzATqF1D0BLlK/dVTGPluMUt1vCNNRhiBb5uO7eC
+	 BAxqkByJHi0QurTXOA9AmvZbSUybAXaI/ZjkL1mPISEt5P0jAgKlyFJcI2RjPXUDzaNm6
+	 X0Jc2f5JxkOk7yT/TO3p+JNz3vjO1W0MEbs3KhGWexoE0RGhmOXQyjnJVV0CVPES0Gw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795214688;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795214692;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=bn6mJHSwscuFX7EABuBC1QwU6RYMxp/Gn5afGYR9hiM=;
-	b=DZ9BISdCc4OkebwnUO00wW7OuPUha8nmIBholIl2vb3c56nTQfudPDWz0j9v46xQ12+n
-	 Ufz/LUOHRU2OoXsefG//2KCDhDF7sGPhhMKtvdYHEzPNhfJX0oOzeEgTb/lYjk4zpECM4
-	 jYYko1o1scvg6UFXhWG3j95OdrO3ozFZAZ8M6Nxs1VbgvOoS0g1LO7T64uJ4FDs3CjTCz
-	 IQbmga//qluA0RL0/10IZcvpTay+lyzUsdkMDewO4etKPJ0Qh7BzY9H2HQsBOaOhvl1QC
-	 5eD9kazUKpGVALpHRV5enlFrLcpuEWawDxbtUgs0xWZ3nZFPX8w1L6Y7sLyk4FtT2Mw==
+	bh=CQuR/rEK9xvDJFqiz1UABVYdb4hEzkHLUCVdirqFjdI=;
+	b=v5d8J3k4yZiJtxdeRYHU/iWEfYQlVt7UXZ+OXp64wTa8hvkx6xe/3eUqKH+7Vo/11Vp7
+	 kZGewXvYl4Ojr/AR9jc1OVeQIRtRMfc0jhcDsLs5XhxWeJSf2JpKKrxkpHP7sP6QEQw+X
+	 p8ZPq20siTuldN8vRz8d3Wcr1AcNw2OphY9Drr1AEjHL8+7ythA0mz4S1TCW7JQgo4wU3
+	 GXkBDYy4Z+fASbOOmMcAkdB73BaFf+Ztr1NV7uVp+4SW8hsFhwewbOJpJ3/hmSZ60A75A
+	 3LZz5mG23NeaNQURgP1Ba/wmBzzH9WdK1WKYT99IjfLgikWdP10u17lfFd0t/F7tEmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X1gDtaRA;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FHjb350R;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5841F606A69C
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82565606A694
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X1gDtaRA
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2F31F000D0;
-	Fri, 20 Nov 2026 22:44:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FHjb350R
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7681F000D8;
+	Fri, 20 Nov 2026 22:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795214687;
-	bh=bn6mJHSwscuFX7EABuBC1QwU6RYMxp/Gn5afGYR9hiM=;
+	s=k20260515; t=1795214692;
+	bh=CQuR/rEK9xvDJFqiz1UABVYdb4hEzkHLUCVdirqFjdI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=X1gDtaRAKXV2P8w+4EH9cg/ShOrrdn4aIzWA2optS29THkWlmz8GU8h+MWkoxb9ap
-	 scUjfx5IeIBaS/vwrOnL2U16+GZlaIdVXmKsblT4P8+swO/x45B45CFMoItVUQ30At
-	 X5D7eyaOp/3bt/WkWcRDgXjHq9uR8tASbD38IJXtB7lapOC4uBhQ4MJa4OLtNbnQVo
-	 XdFI2s6gNvgxMZxtXX16BY/VNfL3qrXPP0J/iXSfnXC+2R5GGBybJMRfEv4gAM32o8
-	 75i2QGX/cz7Cm69LExhTNldhPWYRXk11PAtpiCyjYgV0Y8TB1Oo/LAZhlWEjwtdFO5
-	 Fc1FyiDO9oBDQ==
-Message-ID: <sashiko-outbox-226300@kernel.org>
+	b=FHjb350RwdNDx+9XuxWJKnHSqDA9YpQtSsjVFqc5E/Z2DizU/rETAQCu+K6C4UQMw
+	 vJwKkDcVgW5PB4n+A5c9zJvU/QP4l4tJh45s0+W0RsNAdfjNeOtm3v9dLn/pajZQz6
+	 QaNsDlA0dPYdtiX6FaKpemMRh/bPS1Aa+aI315I2S9uJGjLxs929UVu7EQRtnguBaQ
+	 XmaEX1qKmqHj9Nss5jQXzZN9UgQOcwhWPoKWl9DcAcYgcSS9FPO/mlsF4+H+p4rVpJ
+	 ddeL+H/Pi2P2rGjrGj+7+AQPpF7Dk1aOkW1mkyHni3cZYWcJPXhVfnQeCMSkFM6L35
+	 7QPTv0XAAeqpw==
+Message-ID: <sashiko-outbox-226301@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v4 08/14] fs: Support FSCONFIG_SET_ROOTNS in
- fsconfig()
+Subject: Re: [RFC PATCH v4 09/14] fs: Support MOVE_MOUNT_T_MNTNS in
+ move_mount()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexander
@@ -86,12 +86,12 @@ Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@
  Frascino" <vincenzo.frascino@arm.com>, "Vlastimil Babka" <vbabka@kernel.org>, "Will
  Deacon" <will@kernel.org>, "Yoshinori Sato" <ysato@users.sourceforge.jp>, "Zygmunt
  Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261119224312.1037966-9-jarkko@kernel.org>
+In-Reply-To: <20261119224312.1037966-10-jarkko@kernel.org>
 References: <20261119224312.1037966-1-jarkko@kernel.org>
- <20261119224312.1037966-9-jarkko@kernel.org>
+ <20261119224312.1037966-10-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 22:44:43 +0000
+Date: Fri, 20 Nov 2026 22:44:48 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -101,172 +101,100 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issues to consider:
-- [High] fs: user_ns delegation and init_fs_context() mismatch in
-  fsconfig_set_rootns()
-- [High] fs: condition anon mnt_ns user_ns and seq_origin on
-  rootns_bound in fsmount()
-- [Medium] proc: allow pidns option to overwrite rootns binding in
-  proc_parse_param()
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] fs: cross-userns mount locking bypass in attach_recursive_mnt()
 --
 
-commit 08909a29107ff970d2d4b5a71eaa424398baf6f2
+commit 5e90ce5c3ee9b66d7c6a41077c19c225ae139217
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-fs: Support FSCONFIG_SET_ROOTNS in fsconfig()
+fs: Support MOVE_MOUNT_T_MNTNS in move_mount()
 
-This commit adds the FSCONFIG_SET_ROOTNS command to fsconfig() so callers
-holding CAP_SYS_ADMIN in a target rootns user namespace can bind a newly
-opened fs_context to that rootns before configuring parameters and mounting.
-
-> diff --git a/fs/fsopen.c b/fs/fsopen.c
-> index 70024870fefa2..85b31af68a4d6 100644
-> --- a/fs/fsopen.c
-> +++ b/fs/fsopen.c
-[ ... ]
-> +static int fsconfig_set_rootns(struct fs_context *fc, struct fs_paramete=
-r *param)
-> +{
-[ ... ]
-> +	put_net(fc->net_ns);
-> +	fc->net_ns =3D get_net(c->ns->net_ns);
-> +	put_user_ns(fc->user_ns);
-> +	if ((fc->fs_type->fs_flags & (FS_USERNS_MOUNT | FS_USERNS_DELEGATABLE))=
- &&
-> +	    ((kuid_has_mapping(user_ns, fc->cred->fsuid) &&
-> +	      kgid_has_mapping(user_ns, fc->cred->fsgid)) ||
-> +	     !ns_capable(fc->cred->user_ns, CAP_SYS_ADMIN)))
-> +		fc->user_ns =3D get_user_ns(user_ns);
-> +	else
-> +		fc->user_ns =3D get_user_ns(fc->cred->user_ns);
-> +
-> +	fc->rootns_bound =3D true;
-> +	fc->rootns_mnt_id =3D c->ns->mnt_ns->ns.ns_id;
-> +
-> +	ret =3D fc->fs_type->init_fs_context(fc);
-
-[Severity: High]
-Can fsconfig_set_rootns() leave fc->user_ns pointing to a user namespace
-other than c->user_ns while still marking fc->rootns_bound =3D true and
-fc->rootns_mnt_id =3D c->ns->mnt_ns->ns.ns_id?
-
-First, fsopen() sets priv from may_mount() (CAP_SYS_ADMIN in
-current->nsproxy->mnt_ns->user_ns), whereas the fallback here tests
-!ns_capable(fc->cred->user_ns, CAP_SYS_ADMIN).  If a task calls
-unshare(CLONE_NEWUSER) without CLONE_NEWNS (so priv is false in
-init_mnt_ns, but the caller has CAP_SYS_ADMIN in its new cred->user_ns U1)
-and binds to a child rootns (U2) before writing uid_map/gid_map,
-fc->user_ns falls back to U1 while fc->rootns_bound is true.  Subsequent
-FSCONFIG_CMD_CREATE and fsmount() calls then authorize against U1 despite
-!may_mount(), and fsmount() allocates an anonymous mount namespace in U1
-with ns->seq_origin set to U2's mount namespace ID.
-
-Second, a nested container manager with CAP_SYS_ADMIN in U1 that binds a
-context to a child rootns U2 before U2's uid_map/gid_map are written (or
-when U2 maps subordinate IDs excluding fc->cred->fsuid/fsgid) also hits
-the else branch, leaving the superblock in U1 instead of delegating it to
-U2.
-
-Third, calling fc->fs_type->init_fs_context(fc) after setting fc->user_ns
-allows filesystems without a ->set_rootns() hook to overwrite fc->user_ns
-from current->nsproxy (for example, cgroup_init_fs_context() resets
-fc->user_ns to current->nsproxy->cgroup_ns->user_ns).
+This commit adds the MOVE_MOUNT_T_MNTNS flag to move_mount() so that
+detached anonymous mount trees can be attached directly into a target
+mount namespace specified by an nsfs file descriptor.
 
 > diff --git a/fs/namespace.c b/fs/namespace.c
-> index 781380945d784..dfe0ee9ecdcd0 100644
+> index dfe0ee9ecdcd0..36ed48c3f6467 100644
 > --- a/fs/namespace.c
 > +++ b/fs/namespace.c
 [ ... ]
-> @@ -4658,6 +4661,15 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int,=
- flags,
->  	if (ret)
->  		return ret;
+> @@ -2632,7 +2642,8 @@ enum mnt_tree_flags_t {
+>   *         Otherwise a negative error code is returned.
+>   */
+>  static int attach_recursive_mnt(struct mount *source_mnt,
+> -				const struct pinned_mountpoint *dest)
+> +				const struct pinned_mountpoint *dest,
+> +				bool move_mntns)
+>  {
+>  	struct mount *dest_mnt =3D dest->parent;
+>  	struct mountpoint *dest_mp =3D dest->mp;
+> @@ -2641,6 +2652,7 @@ static int attach_recursive_mnt(struct mount *sourc=
+e_mnt,
+>  	struct user_namespace *user_ns =3D ns->user_ns;
+>  	struct pinned_mountpoint root =3D {};
+>  	struct mountpoint *shorter =3D NULL;
+> +	struct mnt_namespace *src_ns;
+>  	struct mount *child, *p;
+>  	struct mount *top;
+>  	struct hlist_node *n;
+> @@ -2662,6 +2674,7 @@ static int attach_recursive_mnt(struct mount *sourc=
+e_mnt,
+>  		user_ns =3D current->nsproxy->mnt_ns->user_ns;
+>  	else
+>  		user_ns =3D ns->user_ns;
+> +	src_ns =3D moving ? NULL : source_mnt->mnt_ns;
 > =20
-> +	if (fc->rootns_bound) {
-> +		if (flags & FSMOUNT_NAMESPACE)
-> +			return -EINVAL;
-> +		if (!ns_capable(fc->user_ns, CAP_SYS_ADMIN))
-> +			return -EPERM;
-> +	} else if (!(flags & FSMOUNT_NAMESPACE) && !priv) {
-> +		return -EPERM;
+>  	/*
+>  	 * Preallocate a mountpoint in case the new mounts need to be
+> @@ -2694,6 +2707,12 @@ static int attach_recursive_mnt(struct mount *sour=
+ce_mnt,
+>  	if (err)
+>  		goto out_cleanup_ids;
+> =20
+> +	if (move_mntns && src_ns && src_ns->user_ns !=3D user_ns) {
+> +		lock_mnt_tree(source_mnt);
+> +		if (list_empty(&source_mnt->mnt_expire))
+> +			source_mnt->mnt.mnt_flags |=3D MNT_LOCKED;
 > +	}
-> +
->  	/* There must be a valid superblock or we can't mount it */
->  	ret =3D -EINVAL;
->  	if (!fc->root)
-> @@ -4699,9 +4711,12 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int,=
- flags,
->  		return FD_ADD((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0,
->  			      open_new_namespace(&new_path, MOUNT_COPY_NEW));
-> =20
-> -	ns =3D alloc_mnt_ns(current->nsproxy->mnt_ns->user_ns, true);
-> +	ns =3D alloc_mnt_ns(priv ? current->nsproxy->mnt_ns->user_ns :
-> +			  fc->user_ns, true);
->  	if (IS_ERR(ns))
->  		return PTR_ERR(ns);
-> +	if (!priv)
-> +		ns->seq_origin =3D fc->rootns_mnt_id;
 
 [Severity: High]
-Should alloc_mnt_ns() and ns->seq_origin be conditioned on fc->rootns_bound
-rather than priv?
+Does calling lock_mnt_tree(source_mnt) after propagate_mnt() leave
+secondary copies unlocked when MOVE_MOUNT_T_MNTNS attaches a tree onto a
+shared destination mount across user namespaces?
 
-When a manager process already has CAP_SYS_ADMIN in its own mount
-namespace (priv =3D=3D true) and uses FSCONFIG_SET_ROOTNS to prepare a mount
-for a target rootns, testing priv allocates the anonymous mount namespace
-in current->nsproxy->mnt_ns->user_ns instead of fc->user_ns (causing
-attach_recursive_mnt() to lock the mount with MNT_LOCKED when moved into
-the target rootns) and leaves ns->seq_origin at 0 instead of restricting
-the detached mount to fc->rootns_mnt_id.
+When IS_MNT_SHARED(dest_mnt) is true, propagate_mnt() clones source_mnt
+into tree_list before source_mnt is locked here, so the clones do not
+inherit MNT_LOCK_* or MNT_LOCKED (and copy_tree() silently skips unlocked
+nsfs submounts instead of failing with -EPERM).  Then the tree_list loop
+checks:
 
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index 7fbbe92bf73a7..323296b030892 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-[ ... ]
-> @@ -323,6 +325,21 @@ static int proc_get_tree(struct fs_context *fc)
->  	return get_tree_nodev(fc, proc_fill_super);
->  }
-> =20
-> +static int proc_set_rootns(struct fs_context *fc, struct rootns *rootns)
-> +{
-> +	struct proc_fs_context *ctx =3D fc->fs_private;
-> +	struct pid_namespace *target =3D rootns->ns->pid_ns_for_children;
-> +
-> +	if (!pidns_is_ancestor(target, task_active_pid_ns(current)))
-> +		return invalfc(fc, "cannot set pidns to non-descendant pidns");
-> +
-> +	put_pid_ns(ctx->pid_ns);
-> +	ctx->pid_ns =3D get_pid_ns(target);
-> +	put_user_ns(fc->user_ns);
-> +	fc->user_ns =3D get_user_ns(ctx->pid_ns->user_ns);
-> +	return 0;
-> +}
-
-[Severity: Medium]
-After proc_set_rootns() binds a context to a rootns, can a subsequent
-"pidns" mount option overwrite ctx->pid_ns and fc->user_ns?
-
-fs/proc/root.c:proc_parse_param() {
+fs/namespace.c:attach_recursive_mnt() {
 	...
-	case Opt_pidns:
-		if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE) {
-			errorfc(fc, "cannot reconfigure pidns for existing procfs");
-			return -EBUSY;
-		}
-		err =3D proc_parse_pidns_param(fc, param, &result);
+	hlist_for_each_entry_safe(child, n, &tree_list, mnt_hash) {
+		struct mount *q;
+		hlist_del_init(&child->mnt_hash);
+		/* Notice when we are propagating across user namespaces */
+		if (child->mnt_parent->mnt_ns->user_ns !=3D user_ns)
+			lock_mnt_tree(child);
 	...
 }
 
-proc_parse_pidns_param() replaces ctx->pid_ns and sets fc->user_ns to the
-new PID namespace's user_ns while fc->rootns_bound remains true and
-fc->rootns_mnt_id retains the original rootns mount namespace ID.
-fsmount() then checks CAP_SYS_ADMIN and allocates the anonymous mount
-namespace against the overwritten fc->user_ns while pairing it with
-ns->seq_origin =3D fc->rootns_mnt_id from the original rootns.  Should
-Opt_pidns also be rejected when fc->rootns_bound is set?
+Because user_ns is dest_mnt->mnt_ns->user_ns rather than src_ns->user_ns,
+secondary copies propagated to peer or slave mounts in the target user
+namespace match user_ns and skip lock_mnt_tree(child), allowing root in
+the target user namespace to unmount masking submounts or clear read-only,
+nosuid, nodev, and noexec flags.
+
+In addition, if a foreign anonymous mount from another user namespace was
+previously attached via regular move_mount() as a submount of an anonymous
+mount tree already owned by the target user namespace, commit_tree() set
+the submount's mnt_ns to the anonymous tree without setting MNT_LOCKED on
+that submount's root, and attaching the anonymous tree with
+MOVE_MOUNT_T_MNTNS skips lock_mnt_tree() because src_ns->user_ns already
+equals user_ns.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119224312.1037=
-966-1-jarkko@kernel.org?part=3D8
+966-1-jarkko@kernel.org?part=3D9
