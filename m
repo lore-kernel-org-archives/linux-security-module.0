@@ -1,68 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795196049;
-	b=yB4xl0B4FTQkxBNsDy3BobZVk4IaqDHkHz/RyRZpJAfNXOZYqcAzQEIG6cXNIzihnAPi
-	 d3YL3SfWUxqk5YHZYoo4AutFbAkE/t1GzO9RDxlhLHXFJIO0EOZanyDEffE0N1oLGOE4J
-	 rICB+FZt5agOxeCT4F7EgjUCyMks0FMCu7XDEDA87NZ7r9hgS0gXeAUvFYxPuQrnwL0nD
-	 xO9eS9be02m+XMCwfkQceX0j54wDSi357LzE0IddWKVMUIUUCzGrl3czye4VUNEuC87PD
-	 6/VscNKhscm+B9BGL6KCb+1G/zNcZFf4Hdym9Ql+mFN6Lw+wFhb6Mgk29NCEFmn+Bzg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795196049;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=77/C6SYfI38rig3b5Xhp6zxSG4ayQ0fXmak+LEOxmn0=;
-	b=r6toZx8q7i0HBAymrwKhgmTDcJFrXSpB5R9iQl03ecjzkrf42l75CbvfUCN0WJF6HsQW
-	 kll2XdtWkG2IDQ3WmF85kcsPKm7cGoMjbahDJqcrVrSZcl0PM2/4c9b1iy33CTmoemQt7
-	 xxrnaOleb+NYIHjmSDjasTA+6UedbxqJoBDI3vquqBpbNPEaYZKp0R112fB7nZofF8yUW
-	 babA0PC8zVL8cxDtyfxX1RcaamVrKr8WAfXjD+sfQZPTU2B8xUT7ZESwp5P2SZVh6yMz+
-	 GnLVqV5f60hqWxTny4y/G2r4H0+1UPR3OH5hBAn9boHaM0aQQXxz7vHfpjpLjALJPpw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hallyn.com;
-	spf=pass smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=OjjnOtnM;
-	arc=none smtp.remote-ip=178.63.66.53
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.171
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795200278;
+	b=3fYpvXOzUlOI6k1vwM9tZOW072RIUezoUr8bWRmu5makTwmCYy1KXE9vZLH+Beu26C00
+	 Xb2ZUDfz0dUiaZApkt1wol7/VkbDQQprdIEQgI2zFXQI97lv1DRTYg60nLT3dn32Nm9Hy
+	 O1mHJOcwdTVYOrb1bgkqCVPvj/bX3wyHJOXfZDEgYjHI4MA0e/uMVau3FUtHjI+u9Fx7a
+	 e2i4gtRvzTx8oqgo5vZBzjFjYpyF453vuiS47Tz1OV+Z5lzUoq2Otk7GrRsF56gM5fdOQ
+	 Flgg5WtIoQT0OvqoDe+X/fIFjcFXzJRcMNL3ZCg1+OhWF5S1NtSFIFVLY5/buq2frdw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795200278;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=Ge3pmyLmXCv4hB1zhJ0eXKU1oHUklR6Msezg+VICCTM=;
+	b=tBF8WWxfr53QaswiVVDwDtxDHAe1JbspVkoIbCSNIsQMJv7K17lpIV+dDsaouuSIiC18
+	 Heq5Dl0vP8DEsBDSOXz3ctirIbI++xwA+oYrEscUaoApIvHoMa3RHh3v828neytxAz5Y5
+	 Y+h4QdWKb1nIRXaOJXv7+YQXS3gFV2tzZGdrIx8Zm5r7Q8y9yUecSJurIXJVMo1DYQSB1
+	 mYS94CJErW/+qBINKCTisxgSu3m21jx0vKzUgLSdCwxScFUNAi00F3wVC6v8K7EPSnjNW
+	 9Yf4ukQ9+fc0hjCHG4mEKV9B/XCa3Ku5o0dCBJk9lQnvxCs9a+fkV5JOTvLgILTob8Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=ZJr5zkin;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.171
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69514606A330;
-	Fri, 20 Nov 2026 17:34:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 69514606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A14B60A2616
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 18:44:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7A14B60A2616
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=OjjnOtnM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1795196044; bh=tqr7JujF5uPqlUHh7F9lKO+IL/G70y7dJOo/+zScl8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OjjnOtnMigu7ogGoTDg3h0S4qj/bYFjLfh33PSJkRSsFNOnUBQSWhxWWJAovRBcwt
-	 hVPlPBAgmHCGPIToIygykBN/mfX2J34V83UQwX8CG0zcuQF5Z5kWE9wmrao7Imq47K
-	 tTHrjTxlSwa/sbBf1m8nPUQsMXb/PYAIXJCMM03VoboukgKYezk4bK4rzZo5aAKLZH
-	 aGIGNi/6rGJHjFF61569cAgrSwXaqTHz8UCnMVup4sZOQVVPjWLVOOBx0NsbdE3Rj7
-	 AXHV8s7cM5CbPbMPTeW+r67raMu5DjCRZAb4M5kXUL82b0m+HM/EFOotIee/llvd4l
-	 lZZJOwtdmvqtQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id C11251B33; Fri, 20 Nov 2026 11:34:04 -0600 (CST)
-Date: Fri, 20 Nov 2026 11:34:04 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Christian Brauner <brauner@kernel.org>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"Andrew G. Morgan" <morgan@kernel.org>,
-	Serge Hallyn <sergeh@kernel.org>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	Bradley Morgan <brads@mainlining.org>
-Subject: Re: [PATCH v11 1/3] userns: don't let setns() lend CAP_SETFCAP
-Message-ID: <awCEjJ8syhv+f4vd@hallyn.com>
-References: <20261117-b4-setfcap-userns-v11-0-2be11a2c32f4@toxicpanda.com>
- <20261117-b4-setfcap-userns-v11-1-2be11a2c32f4@toxicpanda.com>
- <awCB3UkCPzLGRBTk@hallyn.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=ZJr5zkin
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5edf97136aaso734707e0c.2
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 10:44:35 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795200274; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Z+rsxbrnH9wRs15MqP70fERCD/lZsuW4YVNAd3+3sHVhRwiUZ6bsBuBoTYVhLJ5cm0
+         frcUThGqKneRUX+jC9sfVTCQD3HgJAKSt3+LeZCnWSdNRHeOTKW4xUoJ2toY2Q3sQcY8
+         xeH6hfKWi1ReYjDGJj7nt7LUGiXeHfDuvP0inGJcwy3WOQIHnZgv2vKTqEGVSkETUPNi
+         2n+kwvJAjxMSwrltsAA9RTdJX8JxrpYIHnNCMqTP3kW6TR6uubRfv7o6Ol2WMGIPFJHd
+         py0M2iBmB1igSwd/vzWQ4d4cskyql+f0zshfEtoKg+TnsVVkSge4SUqZq48jZ1KnVPE+
+         zGTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Ge3pmyLmXCv4hB1zhJ0eXKU1oHUklR6Msezg+VICCTM=;
+        fh=fWFVBDXGhP3GNx4gLtMkV5bLra0dPgcM5QgtL7PLTrs=;
+        b=qAcr6rva2Nl3xydDQZ2u0wiD9pG/tsKddNCw/xUtDtvARBwCSRPJT9/s9kofcn39eb
+         GbAwhc4cCS862P/tfX2kDgbQzNthVZggy/4cFOGbtE9rETwSqDDgg95m8nVqxF1NssM2
+         KAs0TlEncA8cVHb8oUkA8hA+V/Ltcw+nVmlkVOlc9TpL1FvbWBESOgeobkvTQGX22Bjr
+         HXnWyOzdEzPPPKUuCSmlYhqR/e8kQs2aARJx5tMKjbOAUf6skdtx68s3xchT627H6MKq
+         5AvB/Xyy+s32wlhXNm57wTK7K4eqHpbLc4W33tpMK6EDlDhfebAO63xTTAAR3MFtgrWm
+         Dpbg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1795200274; x=1795805074; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Ge3pmyLmXCv4hB1zhJ0eXKU1oHUklR6Msezg+VICCTM=;
+        b=ZJr5zkinlPUjzP75ruooLP7bnWorZ6KrEMUYaB2+nsH98WYaKEFKXiR9A5uKaBjlf2
+         a9k/J7Q8TeJU6JcxrwI04dMyEynnO7TSBGo7Qo4bfuE9VqxcaHZDV6dOjmqBndWcT5Du
+         9BDlJjShUnHIguuNKB4eF4mQRXny/A4cdZZfc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795200274; x=1795805074;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Ge3pmyLmXCv4hB1zhJ0eXKU1oHUklR6Msezg+VICCTM=;
+        b=2ffZYUpJw6uyAToptt7eLiw5+nibMbcw6F0fp8XUTClU5UuJRijio+nHd7ayeZDAk1
+         8TUpECcB09Z3EqkiB0laXSCYXfGyYGgry63BOqcUeOj43omSo/KTf76n0II0xFijOIEv
+         Fe//TeuEqOra9B2GCCpu6yEF9hJk0dQHMPfAkftZDIFNmgPCd2OyzYn97YvIxq/Xpbhl
+         /0TTSC41SIrgfjuy6txiknTPHLvOtPb1adYmOG7/LY/kjggrXte3AaB43C+MqWCcOs+e
+         8UrxbkI08OZe82oR++C8qdhA1igy9cc2NcJQXQjUHgMJO7yql5BR+tMGmrbZovmpxrE2
+         L/mA==
+X-Forwarded-Encrypted: i=1; AL+hErE7wd5+/yBpkHPVCHNugE71aGbL8A1hxaU4YNAaKI5zhogHmPJbf2ljoSxJuEJnk/KqoyIndp827niwpqTeEKkbuBa9A08=@vger.kernel.org
+X-Gm-Message-State: APuU4Z//FVgFnOx5kPex6QwW1ZkNAca7DK9aJyq2Ffe3u9FeCcu2hsQw
+	hjAsBnevgdgSSwarFDVR7QUqxg2cJw31hDTV6zDeFJ+vreFSKO8/aDq35FCC7k3kIRe6fuVpOtv
+	SjoKAWsn5PLduVaxDvBcKCREHqu66GO/BwKOkLA2S
+X-Gm-Gg: AZFdTZcVuDE8kpTV8zyQlNbaMS3BbU6DKppZS4vjDuCsyZ1HBSB0tC2vEpD8XVyB6xp
+	t/Vqjr1zpY82woT87Wp5XsgRBQEmFbXcB+7YYI66tCHRe7Toug+ba5bEwbHXiyUFuviFIhqTbwJ
+	9HPX8GQ0R0RlDKlyDeLQg9pCfd8JzmA7V3gOR4LLTi8NBNFcXYBI/G6PY6vktICHB3SKbyJhlPH
+	HdPbogYLEBWPU4YbsoKusiVH47Pj4FOxp4dTVL/yoieSQPnVeTQYateeg1Zuas7jB2nizeusYZS
+	n0xO5woWfczOjT91qPHLQj6cFzDabna+H9gB4siGgGIe5jp5bywtlpa0YfM9qgWUbvpT5dcpeWc
+	OZJRLZXJ/JkN0B4Va9LYPHQdq5vdI0/eBwXVvoVasEqfSKpAQEmZJzg1bDJbufRiNsloUdw==
+X-Received: by 2002:a05:6122:30d3:b0:5ec:3e18:a188 with SMTP id
+ 71dfb90a1353d-5ee8adf1536mr2653900e0c.1.1795200274471; Fri, 20 Nov 2026
+ 10:44:34 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -72,182 +101,97 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awCB3UkCPzLGRBTk@hallyn.com>
+References: <cover.1791023194.git.tjdqudcks0424@naver.com> <d7e10b50556ab3b79c7132018249f6f7c608411b.1791023194.git.tjdqudcks0424@naver.com>
+ <asLNxHYQ/xQ6KaWy@hallyn.com> <CAHC9VhRMCfahvx89HjSoHfyKR27swLdt2HZuM1enmoi_gxRyRg@mail.gmail.com>
+In-Reply-To: <CAHC9VhRMCfahvx89HjSoHfyKR27swLdt2HZuM1enmoi_gxRyRg@mail.gmail.com>
+From: Micah Morton <mortonm@chromium.org>
+Date: Fri, 20 Nov 2026 10:44:23 -0800
+X-Gm-Features: Aa3M54rASSxX4QbVhBp00t0f3m1HpQ0YSwFJsYfciMSYXLIVp5sGFTUKS5zqr18
+Message-ID: <CAJ-EccMjtVkvM5bZzUKDAPcOAKZbd1Lc59oNrW0U8m=s+4R9eg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] security: safesetid: use real GID for GID policy lookup
+To: Paul Moore <paul@paul-moore.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, tjdqudcks0424@naver.com, 
+	linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
+	Thomas Cedeno <thomascedeno@google.com>, Shuah Khan <shuah@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, security@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 20, 2026 at 11:22:37AM -0600, Serge E. Hallyn wrote:
-> On Tue, Nov 17, 2026 at 07:54:24PM +0000, Josef Bacik wrote:
-> > A uid 0 task that gave up CAP_SETFCAP can get it back by joining a user
-> > namespace that another root task created.  Commit db2e718a4798
-> > ("capabilities: require CAP_SETFCAP to map uid 0") keeps such a task
-> > from mapping uid 0 into a namespace it creates itself, because tasks in
-> > that namespace could then write file capabilities for its root user.
-> > setns() gives a joiner a full capability set in the namespace too, so
-> > it can do the same there:
-> > 
-> >   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
-> >   unshare(CLONE_NEWUSER)
-> >                                     setns(A's user ns)
-> >                                       allowed, euid == ns->owner
-> >                                     write "0 0 1" to /proc/self/uid_map
-> >                                       A had CAP_SETFCAP -> allowed
-> > 
-> > If A's namespace already maps host uid 0, at any uid, B can set
-> > security.capability on a file right away.  Either way uid 1000 can then
-> 
-> "Either way" here means whether it already maps host uid 0, or whether
-> it has no mappings yet?  I'd just drop 'Either way'.
-> 
-> > run that file with CAP_SYS_ADMIN, which the selftest at the end of this
-> > series shows on an unmodified kernel.
-> > 
-> > The check doesn't look at the joiner's uids, which it can change while
-> 
-> >From here until the 'Fix by', it is confusing whether any given statement
-> refers to the pre-patch or post-patch state.
-> 
-> > keeping its other capabilities, and CAP_SYS_PTRACE doesn't stand in for
-> 
-> Is this a reference to the next patch?  But that's a completely different
-> commit.
-> 
-> > CAP_SETFCAP.  What gets refused is a task without CAP_SETFCAP that has
-> > CAP_SYS_ADMIN over a namespace that maps the joiner's root user, or that
-> > has no uid_map yet while its parent maps that root user, so that it can
-> > still be mapped.  If that is uid 0 of the parent and the creator of the
-> > namespace didn't have CAP_SETFCAP, the join is let through: only a
-> > writer with CAP_SETFCAP in the parent could map it then.  Containers
-> > that don't map the joiner's root user, tasks with CAP_SETFCAP and
-> > unprivileged users are not affected.
-> > 
-> > Like verify_root_map(), the check is about uid 0 of the joiner's own
-> > namespace.  The root user of an ancestor that it maps at another uid,
-> > and a root user stored through an idmapped mount, are left to whoever
-> > set up that map or mount.
-> > 
-> > Fix by refusing setns() when the joiner doesn't have CAP_SETFCAP and
-> > tasks in the namespace can write file capabilities for the root user of
-> > the joiner's namespace.
-> > 
-> > Suggested-by: Serge Hallyn <serge@hallyn.com>
-> > Link: https://lore.kernel.org/all/fd159e68-c613-4c7d-bfba-8af0a3f3a96e@hallyn.com/
-> > Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> 
-> The code looks good to me,
-> 
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> 
-> If you don't mind making the commit message and comments shorter and
-> clearer, I think that would help.  In the words of the reverend
-> Maclean, "Half as long".  If you feel like I"m being unreasonable or
-> misguided, or would prefer I rewrite them, please let me know, but imo
-> it'd be good to keep this entirely yours :)
+On Thu, Nov 5, 2026 at 4:26=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Sun, Oct 4, 2026 at 6:05=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com>=
+ wrote:
+> > On Sat, Oct 03, 2026 at 07:34:15PM +0900, tjdqudcks0424@naver.com wrote=
+:
+> > > From: Sung Byeongchan <tjdqudcks0424@naver.com>
+> > >
+> > > SafeSetID policies constrain the ID transitions available to a task f=
+or
+> > > each source ID.  id_permitted_for_cred() always builds that source ke=
+y
+> > > from the old real UID, even when it is checking a GID transition.  If=
+ the
+> > > real UID and real GID differ, the policy attached to the real GID is
+> > > therefore missed and the lookup can return the unconstrained default.
+> > >
+> > > On current mainline, a test task with real UID 1000, real GID 2000 an=
+d
+> > > only CAP_SETGID obtained non-allowlisted GID 2002 despite a 2000:2001=
+ GID
+> > > policy.  The bypass reproduced for setgid(), setegid(), setregid(),
+> > > setresgid(), setfsgid() and setgroups() across three clean QEMU boots=
+,
+> > > and enabled access to a synthetic group-protected resource.  This sho=
+ws
+> > > a SafeSetID GID policy bypass and group privilege expansion; it does =
+not
+> > > show direct UID 0 elevation or a universal local privilege escalation=
+.
+> > >
+> > > Build the source key from the old real UID for UID policy checks and =
+the
+> > > old real GID for GID policy checks.  In three fixed-kernel boots, all
+> > > tested non-allowlisted transitions were blocked while the allowed tar=
+get,
+> > > existing-ID, no-policy and UID-policy controls, and the existing Safe=
+SetID
+> > > selftest continued to pass.
+> > >
+> > > Fixes: 5294bac97e12 ("LSM: SafeSetID: Add GID security policy handlin=
+g")
+> > > Cc: stable@vger.kernel.org
+> > > Assisted-by: OpenAI Codex
+> > > Signed-off-by: Sung Byeongchan <tjdqudcks0424@naver.com>
+> >
+> > Seems obviously correct.  Thanks for the find and the fix.
+> >
+> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+>
+> Looks good to me too, thanks!
+>
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
+>
+> Micah, assuming this looks good to you, are you planning to pick this
+> up?  If you would like me to take this via the LSM tree, please let me
+> know.
 
-Never mind.  I see it has been applied to Christian's tree.  Let's just
-leave it as is then.
+Hi guys,
 
-> > ---
-> >  include/linux/capability.h |  3 +++
-> >  kernel/user_namespace.c    |  4 ++++
-> >  security/commoncap.c       | 49 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 56 insertions(+)
-> > 
-> > diff --git a/include/linux/capability.h b/include/linux/capability.h
-> > index 622137f66f09..9ebcdab56937 100644
-> > --- a/include/linux/capability.h
-> > +++ b/include/linux/capability.h
-> > @@ -34,6 +34,7 @@ struct cpu_vfs_cap_data {
-> >  #define _USER_CAP_HEADER_SIZE  (sizeof(struct __user_cap_header_struct))
-> >  #define _KERNEL_CAP_T_SIZE     (sizeof(kernel_cap_t))
-> >  
-> > +struct cred;
-> >  struct file;
-> >  struct inode;
-> >  struct dentry;
-> > @@ -222,4 +223,6 @@ int get_vfs_caps_from_disk(const struct mnt_idmap *idmap,
-> >  int cap_convert_nscap(const struct mnt_idmap *idmap, struct dentry *dentry,
-> >  		      const void **ivalue, size_t size);
-> >  
-> > +bool cred_borrows_setfcap(const struct cred *cred, struct user_namespace *ns);
-> > +
-> >  #endif /* !_LINUX_CAPABILITY_H */
-> > diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> > index 50c374ed4687..34becacaccd6 100644
-> > --- a/kernel/user_namespace.c
-> > +++ b/kernel/user_namespace.c
-> > @@ -1390,6 +1390,10 @@ static int userns_install(struct nsset *nsset, struct ns_common *ns)
-> >  	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
-> >  		return -EPERM;
-> >  
-> > +	/* Don't hand back CAP_SETFCAP to a root task that gave it up. */
-> > +	if (cred_borrows_setfcap(current_cred(), user_ns))
-> > +		return -EPERM;
-> > +
-> >  	cred = nsset_cred(nsset);
-> >  	if (!cred)
-> >  		return -EINVAL;
-> > diff --git a/security/commoncap.c b/security/commoncap.c
-> > index d47ab3022343..96ac039fddad 100644
-> > --- a/security/commoncap.c
-> > +++ b/security/commoncap.c
-> > @@ -131,6 +131,55 @@ int cap_capable(const struct cred *cred, struct user_namespace *target_ns,
-> >  	return ret;
-> >  }
-> >  
-> > +/*
-> > + * @ns has no uid_map yet.  Could @caller_root_kuid still be mapped into it,
-> > + * so that tasks in @ns get CAP_SETFCAP over it?  A writer in the parent can
-> > + * map any uid that the parent maps.  If that is uid 0 of the parent, a task
-> > + * in @ns can only map it if the creator of @ns had CAP_SETFCAP, a writer in
-> > + * the parent only if it has CAP_SETFCAP there, see verify_root_map().
-> > + */
-> > +static inline bool userns_may_map_root(struct user_namespace *ns,
-> > +				       kuid_t caller_root_kuid)
-> > +{
-> > +	uid_t caller_root_in_parent = from_kuid(ns->parent, caller_root_kuid);
-> > +
-> > +	if (caller_root_in_parent == (uid_t)-1)
-> > +		return false;
-> > +	return caller_root_in_parent != 0 || ns->parent_could_setfcap;
-> > +}
-> > +
-> > +/**
-> > + * cred_borrows_setfcap - Check whether a userns gives back CAP_SETFCAP
-> > + * @cred: The credentials of a task that joins @ns or traces a task in it
-> > + * @ns: The user namespace
-> > + *
-> > + * A task without CAP_SETFCAP can't map uid 0 of its namespace into a user
-> > + * namespace it creates, see verify_root_map(), as tasks there could then
-> > + * write file capabilities that are honoured for that root user.  Tasks in
-> > + * @ns can do that if @ns maps it, at any uid, or if it can still be mapped
-> > + * into @ns, see userns_may_map_root().
-> > + *
-> > + * Like verify_root_map(), this only looks at uid 0 of @cred's namespace, not
-> > + * at the root users of ancestors that it maps at another uid, and a root
-> > + * user stored through an idmapped mount is up to whoever sets up the mount.
-> > + *
-> > + * Return: true if @cred doesn't have CAP_SETFCAP and tasks in @ns can write
-> > + * file capabilities for the root user of @cred's namespace.
-> > + */
-> > +bool cred_borrows_setfcap(const struct cred *cred, struct user_namespace *ns)
-> > +{
-> > +	kuid_t caller_root_kuid = make_kuid(cred->user_ns, 0);
-> > +
-> > +	if (!uid_valid(caller_root_kuid) ||
-> > +	    cap_raised(cred->cap_permitted, CAP_SETFCAP))
-> > +		return false;
-> > +
-> > +	if (READ_ONCE(ns->uid_map.nr_extents))
-> > +		return kuid_has_mapping(ns, caller_root_kuid);
-> > +
-> > +	return userns_may_map_root(ns, caller_root_kuid);
-> > +}
-> > +
-> >  /**
-> >   * cap_settime - Determine whether the current process may set the system clock
-> >   * @ts: The time to set
-> > 
-> > -- 
-> > 2.55.0
+Sorry for the delay! Yes this patch looks good to me -- thanks for
+catching this, Sung!
+
+It's been a really long time since I sent any pull requests to Linus,
+so it might be a good idea for this to come from the LSM tree if you
+are up for it, Paul.
+
+Let me know, if you think its better for me to dust off my old GitHub
+repo and pull request etiquette I'm fine to do so as well :)
+
+Thanks,
+Micah
+
+>
+> --
+> paul-moore.com
