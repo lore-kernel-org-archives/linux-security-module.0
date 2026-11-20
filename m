@@ -1,55 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795177949;
-	b=CHqTGts3Vn0iYUEkkxTHODaCT+zFy/00ORL5bsWc06jk5sNMC6ei21JSHWy8cpPwqHXM
-	 8DCaNiXVJG3zjSKnQ4UQRX80mwD88U8n57ZX/xKFrbXrx4LxwhuorZGxCKqyHTpEjPR9x
-	 o/sTHhIX+Jdv7ebjVGRUZSdaoISSYYUQP+R1BfH3Ju4Ih3wdyWWiE+k8m77aKQyKIeViS
-	 5uVQyiKSWDDpnAe5YlNKSaWryl4is8zHdRxNVJJ63/Axm2pUXvF5MLENzbCYEDotq3YO6
-	 vZW0XKMjvhPWfrkLReQo03N5t8ua7qEHER5XL8rJred5JZsJBwqyHshUc5Zsg8sVm5g==
+	t=1795177976;
+	b=b/oun2MBBWPQuFmYzpM57TVC7a4fb/3BC4xn7WAngcaE2B6xbJPpxLbcd5y50KZ77SEB
+	 P/l+TQD8ZibqA6bIUzt/Y4ng6RmukZ6KrCHSJelEGTz64kqoGDoJRLQWlN02xgYfOziCT
+	 u+gpTcshy8txkldhRfdBx7hvy06yWsTYIMoOyZGGqAYV3LwNw51TN9HiRRUAa74eFvBTC
+	 VgWwgUCLW9ahHTdgKS5Jl7RHvGtZ93gYZvpCDHGv9Di5rrk1p9wY8UrDT3FycnIbUwnTt
+	 MnL9dxqa3lo+eRdmc/fzbCUYE2U4m6crYY44+DZLVJYcjAAwY5dk3VuiTzN6lL6ER7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795177949;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=UK5xeADLNC2TeOtxq3qoAwgTUA7V289TGUGGmcouubk=;
-	b=SVKJ96+yQRdv+2rSUGsygnd+ir8c7MH7JXXNZo+Rmjxn9yxGHNO/1Wbmvs9o4pqRXfSd
-	 2/6GXs0My4vhhoDpCHguKVPisPVb6qOK2HWTjiS8DxhMWnF7KHB9VYh/wsJeWR3hTxJsw
-	 Rs2wbdXEMzZuGrMuvcmF0YlNfk7W+Ddpz1F7w4XNcIXnIOLhtcyUIRJHAiv0QE84UE6OR
-	 Vkm4hWV6VTRe0k80zGwlpZQFNzX0yDxF5urXVlJIIBk/KQACLReqI3VCfyRxUIMtQPo5G
-	 T9HUQsjlu7/wPYw2x5fCeETpv5Lv5lw9+PrtAehPU6RLYEsyinyeK9pPAjH2x5duAqA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795177976;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=EDpVY0aGzqBT374TIqs271yPZfzR3UZ/l7e+Hpa3g1Q=;
+	b=5Z6rGYqCrFN79tk6nKb3PbXN1RaWYcs/IB3b4EmLsxSaRxl3hYRymcAG9mIicV/ORSTT
+	 7uwXSbZijYePigqamU0bZLRbV4CtT/nggcmY7Z2R1UQtBfPQoHYUqFvg8OROffhkuMyTo
+	 v3YXhSIxJ2EkitUDCFrNgBkWDV/QS7MOqxPFGX0L9Tc4kktlntPKYNphikzaVnTpf+ZXV
+	 9viP18OsHM5N3Y7MfPETHvxSXagugCFSFFXnhgMjbvTwxtLY0iRcw4WI8y736Em8Xg63j
+	 tHXAYUPPkoP5+LzA+Z279fwqnKYOL9XCfgFvZ9d11vNvcl6evFMW3Ptc89kxzbRb0wQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="TI7RQp5/";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bq1M2Wbl;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92AD606A320
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 12:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801FD606A325;
+	Fri, 20 Nov 2026 12:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TI7RQp5/
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A9281F000D2
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 12:32:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bq1M2Wbl
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBED1F000D0;
+	Fri, 20 Nov 2026 12:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795177949;
-	bh=UK5xeADLNC2TeOtxq3qoAwgTUA7V289TGUGGmcouubk=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=TI7RQp5/ltoaQ3ZnBCikL3cofNsSsClb54HXUV6FcwaZqMoswSroIcvTAJJktL4MK
-	 amv+91atc/CwIeY5WaWYfg/QCgL9KHVW1STvI6i5mAzvqkbaVv2m0B4H3LmXYed4Mk
-	 h4OkjczN87zkLAYIRgXtf1RlkXacJ/h6jJ4VLskBjxd3setWeywYDP6hYK94q6oI7U
-	 z93210acU5hBrxlJzwY99+/c39JYwsf1v7ATBosnnnZmLeRNfqNNDosKgNLTQ/Z+sJ
-	 cVI7riDF0Zv2BN80Mae1Jn1X2a0Dp1T9Z/VQpPNSl/CDfKaoNTpN5L9xtZfUQUN7mf
-	 medlsbrxPOtYg==
-Message-ID: <sashiko-outbox-225145@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] mount: pass flags to alloc_mnt_ns()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261120-work-ns-mount_subtree-v1-1-06337377f94a@kernel.org>
-References: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org>
- <20261120-work-ns-mount_subtree-v1-1-06337377f94a@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 12:32:28 +0000
+	s=k20260515; t=1795177975;
+	bh=EDpVY0aGzqBT374TIqs271yPZfzR3UZ/l7e+Hpa3g1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Bq1M2WblwfHBV1H572oyFU8Jg8cpNSAJSxJ+fEpHf2I7qWHXLU+oasVdkAuIxSJie
+	 jKhfQDH530HH6VBk15LgJCY2pvw7EqF0BhPBatbe+Mn6P5JYsRNDjfHQCBQ80xaMrN
+	 U2DyoIgYFn22O+pcFswK9TSYy6F9ni4krGEUzI81HVk69GwdSouxWMej+SyUBzfGQ3
+	 u96WQnEElHgzQ2njUE7exwQpHgzIhz9wS5q4xXQhMCoXtRR40gHJ3Xg1JbyEVQUg/e
+	 z32TkXC2gNKMuzAk5tiDwPM6bK4O8zP9G83TsIxw7Zf0wQ6rZjejwK3E5rtbRe5eJN
+	 94T9rR8oeckhg==
+Date: Fri, 20 Nov 2026 13:32:49 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Zhiqi Zhang <zhiqizhangg@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ns: skip namespace_init LSM hook for internal namespaces
+Message-ID: <20261120-karawane-geadelt-jubel-318c60ec1a2e@brauner>
+References: <20261114141323.19029-1-zhiqizhangg@gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,18 +60,20 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261114141323.19029-1-zhiqizhangg@gmail.com>
 
-> Turn the anon argument of alloc_mnt_ns() into a flags argument. The
-> next patch needs to pass another property of the new mount namespace
-> and two booleans in a row would make the callers unreadable.
->=20
-> No functional changes.
->=20
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+On Sat, Nov 14, 2026 at 10:13:23PM +0800, Zhiqi Zhang wrote:
+> Skip LSM initialization for kernel-internal namespaces.
+> __ns_common_init() gains an lsm parameter, and a new
+> ns_common_init_inum_internal() passes false.  It is used by
+> mount_subtree() only; user-visible namespace allocations (clone,
+> unshare, setns, open_tree, fsmount) keep calling the hook.
 
-Sashiko has reviewed this patch and found no issues.
+Thanks for the report! I wrote a different fix that skips both
+namespace_init and namespace_free for such namespaces so the two hooks
+stay paired:
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261120-work-ns-mo=
-unt_subtree-v1-0-06337377f94a@kernel.org?part=3D1
-
+https://patch.msgid.link/20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org
