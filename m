@@ -1,100 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.42
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795214559;
-	b=GgIIduDUWZ08ZGf09UZePTZrtPRmUhbGrKbNiCh9U53PCRj4hbcGspboKu+5lkjq86Ip
-	 pbB5ntyZYzRp8Fko7vfjIVT6R8dQjMwymVRbTskJvMmzZTL4tciYpCtG8Y6pocVsjHl8+
-	 zfc2UKC5ANbodstSXKAV7hO70Ac8iBy6hE2qxJFrZ8x4L+1QjJWwjpYbefEbEGuF7/lU0
-	 WK3v+NPYnRM8IADnGWcSFmlwhNM1BW/VuxXm17gflFomR2tYMJYO5VCAwWZo7NSJmvoE0
-	 YZ6x4A8hIkD7g/S653dweZcSkUw6zgP597+55glkip9uV7RmGNM5ZY4qn3n/swxtz6w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795214559;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=vHqmqtUv3ldNxNv4goZfjp24sRWMWgjGzY8HbYBqnOI=;
-	b=HXz75FcuGYyK7yCngiNbHmY6Q2zHepoLyqx/ZWjGLcl1Xx0JDhtrazy38OvQS/k7G+2S
-	 VhcOq/FUOyGLwj2V5R0dLaSHuldqS+nrRbIzp92i3b8ucTDrvYlfG5axThUbEEoVDUO51
-	 m3oNtofBW+Nk51eo/VZAVpzZOV8F8oMXBJ8D0W7u636k0RE6tQ9fPTz/gE/hSgQhcsxPq
-	 Twu4KbAXzCRhsnojD2cbPu6gF1zq7iLhAB47j1zAeXqn0Z4Fq8N0y9AFCvGObV/GUeXYR
-	 ljNwubYgUlsDPpjoW7kCUz2WaV4SmQdIWKoWXqBSfN6S4EJsIRz5VWbsWJ1pWWCe7UQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=paul-moore.com;
-	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=OJwL4udw;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.42
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795214678;
+	b=sLZUez4StwkUchQC/uOjGxPyaEk/5P7Iqyo4vD/+PCgnaoyKMCA0+N4Hwkwtu5xsZIU3
+	 QFixBNAhKN3GSOh8GiNG6ivmsZezZ76DXHxz7WWCjlfAck8XvVsUir4wz+j6driHzTcUR
+	 5J7lfDKzagE/gwr9yr1c+Mf5AiT5E1i+nj2t1WVOdSKxFGVfUkjHrqdQYnhLeDp3XJEt7
+	 pDpZMvt8xQzhsL8uMP0amj99U4qAFR0QpIw67+kZLXPdyxtEPL2zGlQ2H5L32K9jnv0+k
+	 Ah31Uwd4vC8AAVWVhCiQmhjNjqC0mx9606FtEA022Yqls0Ap6fwMgOd0DxVqFietQVQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795214678;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=pSzNYLdaadW2jyufCcL13Oj3VYC0HwF6Ept2g9RqzPg=;
+	b=Ye4bHpmkr2jxHlOlHVBmh65xe4AcgGsprZf7StGXHqckxK0w2Iwtl0NZen/PlX09paI2
+	 A3etnZdxzrMgjaaoQpq5hYZo/KxzaZ876M9fTh6YWnt5Z5s6sOEGliagcjggtIppNbBZ/
+	 F3ZuUimA1chdXGEcdAofPOmfxZ336JG5ZAX9JPGxykdr5kr2NySTXgXyAHtpQ+ptg+TpL
+	 0XHkZLY+6f/5S3piE78pdbegiWvKPsH45g5CazXHFfOMCkOaIYCCGwNIzJVSXuX+ifhlQ
+	 Xj+PsVDndgordkn8HlluHMNIcOhc02eXqtQCRcRTH+mHpodp3TaEpC+fGMiiAhd1E8g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qup3hZLM;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B31606A32A
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:42:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0B31606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0B7606A699
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=OJwL4udw
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3b0bbdeae06so841654a91.1
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 14:42:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795214557; cv=none;
-        d=google.com; s=arc-20260327;
-        b=UXzGrfzpxu5pRK7/qwdmzM8SbsO//51Exg8Tu5SvdqEQ07J8h+XkNokMhA/MddDLV4
-         wYwatVh7e5pG0KEcG1TLNLYL6RjP/DKLiiZuzovrWkBw6ncx63cN54zEvVr8wGgg4iwA
-         nRruV4QhcuRPHL7Ttmn6Pi446D+bbmJuEnRbrwEScXCRXwz8rC0dw7ol115Ug5jTyWxI
-         SecWS7ihms/ntv4SJZPlddTcW6qE5D3qGHCkgzOd66NmiC944dcGVeqeOUJ2cinh7tI/
-         3OlvSWjuhfagGvq/i7K/jqVjRF116/rGqSDeqYKhn28KM0eK2X7ZB9x44nNEEgTvGagP
-         gm8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vHqmqtUv3ldNxNv4goZfjp24sRWMWgjGzY8HbYBqnOI=;
-        fh=kXOSLmDeYdJjrJdFhq0othJlNupY1D1aBLNOWcTSZjY=;
-        b=GjHGX8z8XRxQ4XABU5IJy3S1VDZxCePoYdVc7H/Oq+if/wLKL36MzNKaFMyQG2wqik
-         FuZe4jvSunj1ygFceMTcAmr7kEQsLQYoC86aLksIyNqNU3qh1LZ3dAqdHzOBrDF9UgWm
-         wFEyDoiCqvE98qTYPZuIZeo9cd53ssQTLD3J/Q3ECwnV6zIa3YbLfBss6lWHv3C7JxMm
-         YHjGLgTRCbGSpiPS2gGBDJTlu5hvFVkKJSjYEvpc9zRHFRMct7SJXF4X64TNjpt3Xu40
-         0GNNVa4NENJ15YzGiyhD+9VGAWdvgdc1KbuSvR8yod5JBqLoxUFw/Kw8SX1VQI+CeQbD
-         3POA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1795214557; x=1795819357; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=vHqmqtUv3ldNxNv4goZfjp24sRWMWgjGzY8HbYBqnOI=;
-        b=OJwL4udwjxpmrVlLHcONzEvKUwhIev56POEovLo3PpC21XYiIbCLjZym094IUqQtp1
-         SzD3eL2YEmvY3tysOdOdNwsBvOmiPtoMmHs9W1NuU9fUrWicTXKcvYPxfOCck86JHzvT
-         qbzhYmAnu4rs7/Vg9AJjp3SqzmuPPN3i0oIPTtuiuDD9ncyts0iF5uFGUBBego5huwqI
-         UqKAd2WvunRkHPwyE5dN3n7lAhAjzJHhnmA6+dI+i7PADtHvZY9fGm65FaQVH8h/LZyC
-         qOPtpKrdHbE2MqbsGQXCYLz9M1C9jJelpoD3tNstDXxXkAUrYEM8x00PwAvGX8rJVyE0
-         16Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795214557; x=1795819357;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vHqmqtUv3ldNxNv4goZfjp24sRWMWgjGzY8HbYBqnOI=;
-        b=SyJgVMrX6U15isUrFWzBOBjyNWOFa3ysadz6coNtaPz0iFcAu58KYvNTEYD5wMOi+b
-         QoroCEi6Xy46O5HX1h3YoBNjvYg2SmnWWsgj474RtewpxJsHxyt/7On0wWOW7GU9HyDH
-         MV6MstfR7GiLMtjnar4B6zlI/cANRYTubDUDvv2fecImZfCjtGdcPWnhMw/lu6rQrRb7
-         MGSlyMTfgahyC4ubBS9/1SRXl16OJv/yKdPuPETPI7vTuRzV9W3J/zff0tfJWJ3fmhkJ
-         nmQKOSggSmEtvTHs8S7lzqz9/qE8owRuBQIMsDYdOL2B84t54T5IfPrFK1a2L11pNbpM
-         8pDw==
-X-Forwarded-Encrypted: i=1; AL+hErH5UYW/RYQMGatmZiA+9qHDdqujw4aRFGBH13CEJz0Kl3dmawIWLHc9PQcR3oAn9etre+WVguskYNMZjjZEK9eaVV9ypCI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9QNxms24xnfscgbbGSKYLbZWRqp+ul6AQAqjYxEyWNsHeJZ/em
-	8VMnPToZyLLatZHCljcEaZAFFGwm1IMUqLuwtHrTCPe0gp4VbijOGzcQIxcveX4dL3EWY6a+iJP
-	H0K6lshvl43TnwidU2vv0gmDf7ZsMKnqJGeH2ha3a
-X-Gm-Gg: AZFdTZdqE44VgvRSm7Jq7IoC72tvbVDDhkRBRjgoczEvq2FGXvcQhmIFl3P2mMYKTU9
-	iy2aOWU8QGwZjAiQbxNZgYE5GEpKgQOHxMXBdUWGms0PavAUvXzoDxGw/w7xSU1za0hM5kctF0i
-	z3DKnBkWwK8v1SBWVXL4kTEVPmAFOiOXM0/HJl2I0+dTsW+Z2LxO260nSxRF+6LgOlZonO1pJ6I
-	FCNJFt+LdyKy46PIkeoJByEp77gqXGLqpqajncXqMssr/uwhUI6G3oxcpQaWNVf4+zJEu0ygLT2
-	ERQFYesNgjGZOtBbp8RTRmshJY7s6/ICUTyZ3JpFKROTxghrj3tkXz2uxt2s6jRMR/oBAKjyAl2
-	oYi40K6fwr/0t7+FAh9Ta0ybO9AVxm1/0mVz8CXZ9R9WO3Rl0BxREMN+Yw3yJLQJMkq9w
-X-Received: by 2002:a17:90b:2e4b:b0:3ab:884b:659e with SMTP id
- 98e67ed59e1d1-3b41c8e1705mr3678138a91.9.1795214557060; Fri, 20 Nov 2026
- 14:42:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qup3hZLM
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C860C1F000C6;
+	Fri, 20 Nov 2026 22:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795214677;
+	bh=pSzNYLdaadW2jyufCcL13Oj3VYC0HwF6Ept2g9RqzPg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Qup3hZLMjJGy5Lby+02cC0Ks/w7DT7TF3QjQNKtLYIrpYBfrZFUyGinpDBZuHfkAi
+	 goJrpXp+gmkyCkj2JGhkb1jpnlX++Ja7j/A0y3YyPT1+NmGWQHVbUctnH/DTeGipYr
+	 cGfwI4AoENAdwdU0aF5VIdJLrOXZ8+3U76DRE12JxoCHMAbfJD27kbX9glPmUmwoVv
+	 x4pgmw3sdleN3TVxBg/sktHSOTGoErQgtvQ/2hZ+V6tNnxeys73mlAdroPHMmL/o2s
+	 CKQbuo4r4FV4JwF2Idjbka4Xb0uMahKxADIfW4RwvlkUYkwS2MkHZ17TDxpTswtEwA
+	 +ubPXlAFfK0LQ==
+Message-ID: <sashiko-outbox-226297@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC PATCH v4 05/14] rootns: Add ROOTNS_WAIT ioctl
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jarkko Sakkinen" <jarkko@kernel.org>
+Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexander
+ Gordeev" <agordeev@linux.ibm.com>, "Alexander Viro" <viro@zeniv.linux.org.uk>, "Alexandre
+ Ghiti" <alex@ghiti.fr>, "Andreas Larsson" <andreas@gaisler.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, "Andy Lutomirski" <luto@amacapital.net>, "Andy
+ Lutomirski" <luto@kernel.org>, "Anna-Maria Behnsen" <anna-maria@linutronix.de>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Ben Segall" <bsegall@google.com>, "Borislav
+ Petkov" <bp@alien8.de>, "Casey Schaufler" <casey@schaufler-ca.com>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>, "Christian
+ Brauner" <brauner@kernel.org>, =?utf-8?b?Q2hyaXN0b3BoZSBMZXJveSAoQ1Mg?=
+ =?utf-8?b?R1JPVVAp?= <chleroy@kernel.org>, "Chris Zankel" <chris@zankel.net>, "Dave
+ Hansen" <dave.hansen@linux.intel.com>, "David Hildenbrand" <david@kernel.org>, "David
+ Howells" <dhowells@redhat.com>, "Davidlohr Bueso" <dave@stgolabs.net>, "David
+ S. Miller" <davem@davemloft.net>, "Dietmar Eggemann" <dietmar.eggemann@arm.com>, "Frederic
+ Weisbecker" <frederic@kernel.org>, "Geert Uytterhoeven" <geert@linux-m68k.org>, "Hallgrimur
+ H. Gunnarsson" <halg@google.com>, "Heiko Carstens" <hca@linux.ibm.com>, "Helge
+ Deller" <deller@gmx.de>, "H. Peter Anvin" <hpa@zytor.com>, "Ingo Molnar" <mingo@redhat.com>, "James
+ E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Jan Kara" <jack@suse.cz>, "John
+ Johansen" <john.johansen@canonical.com>, "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Josef Bacik" <josef@toxicpanda.com>, "Juri Lelli" <juri.lelli@redhat.com>, "Kees
+ Cook" <kees@kernel.org>, "K Prateek Nayak" <kprateek.nayak@amd.com>, "Liam
+ R. Howlett" <liam@infradead.org>, "Lorenzo Stoakes" <ljs@kernel.org>, "Madhavan
+ Srinivasan" <maddy@linux.ibm.com>, "Magnus Lindholm" <linmag7@gmail.com>, "Manfred
+ Spraul" <manfred@colorfullife.com>, "Mark Rutland" <mark.rutland@arm.com>, "Matt
+ Turner" <mattst88@gmail.com>, "Max Filippov" <jcmvbkbc@gmail.com>, "Mel
+ Gorman" <mgorman@suse.de>, "Michael Ellerman" <mpe@ellerman.id.au>, "Michal
+ Hocko" <mhocko@suse.com>, "Michal Simek" <monstr@monstr.eu>, "Mike Rapoport" <rppt@kernel.org>, "Neal
+ Gompa" <neal@gompa.dev>, "Nicholas Piggin" <npiggin@gmail.com>, "Palmer
+ Dabbelt" <palmer@dabbelt.com>, "Paul Moore" <paul@paul-moore.com>, "Paul
+ Walmsley" <pjw@kernel.org>, "Pavel Tikhomirov" <ptikhomirov@virtuozzo.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, "Randy Dunlap" <rdunlap@infradead.org>, "Richard
+ Henderson" <richard.henderson@linaro.org>, "Rich Felker" <dalias@libc.org>,
+ =?utf-8?b?Uml0ZXNoIEhhcmphbmkgKElCTSk=?= <ritesh.list@gmail.com>, "Russell
+ King" <linux@armlinux.org.uk>, "Serge Hallyn" <sergeh@kernel.org>, "Shrikanth
+ Hegde" <sshegde@linux.ibm.com>, "Shuah Khan" <skhan@linuxfoundation.org>, "Steven
+ Rostedt" <rostedt@goodmis.org>, "Suren Baghdasaryan" <surenb@google.com>, "Sven
+ Schnelle" <svens@linux.ibm.com>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, "Thomas
+ Gleixner" <tglx@kernel.org>, "Valentin Schneider" <vschneid@redhat.com>, "Vasily
+ Gorbik" <gor@linux.ibm.com>, "Vincent Guittot" <vincent.guittot@linaro.org>, "Vincenzo
+ Frascino" <vincenzo.frascino@arm.com>, "Vlastimil Babka" <vbabka@kernel.org>, "Will
+ Deacon" <will@kernel.org>, "Yoshinori Sato" <ysato@users.sourceforge.jp>, "Zygmunt
+ Krynicki" <zygmunt.krynicki@canonical.com>
+In-Reply-To: <20261119224312.1037966-6-jarkko@kernel.org>
+References: <20261119224312.1037966-1-jarkko@kernel.org>
+ <20261119224312.1037966-6-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 20 Nov 2026 22:44:33 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -103,112 +99,74 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-References: <cover.1791023194.git.tjdqudcks0424@naver.com> <d7e10b50556ab3b79c7132018249f6f7c608411b.1791023194.git.tjdqudcks0424@naver.com>
- <asLNxHYQ/xQ6KaWy@hallyn.com> <CAHC9VhRMCfahvx89HjSoHfyKR27swLdt2HZuM1enmoi_gxRyRg@mail.gmail.com>
- <CAJ-EccMjtVkvM5bZzUKDAPcOAKZbd1Lc59oNrW0U8m=s+4R9eg@mail.gmail.com>
-In-Reply-To: <CAJ-EccMjtVkvM5bZzUKDAPcOAKZbd1Lc59oNrW0U8m=s+4R9eg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 20 Nov 2026 17:42:25 -0500
-X-Gm-Features: AclHuK8McY1ik9ic5I54PqjcEuVP28e3vO7azigKd93SO_GqYl3O-C3M45QZMNo
-Message-ID: <CAHC9VhSZVo-TMR7Z9xM=ECVB5xFZhdnHK-OHpE_i=1g4dhTfNw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] security: safesetid: use real GID for GID policy lookup
-To: Micah Morton <mortonm@chromium.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, tjdqudcks0424@naver.com, 
-	linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	Thomas Cedeno <thomascedeno@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, security@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 20, 2026 at 1:44=E2=80=AFPM Micah Morton <mortonm@chromium.org>=
- wrote:
-> On Thu, Nov 5, 2026 at 4:26=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> > On Sun, Oct 4, 2026 at 6:05=E2=80=AFPM Serge E. Hallyn <serge@hallyn.co=
-m> wrote:
-> > > On Sat, Oct 03, 2026 at 07:34:15PM +0900, tjdqudcks0424@naver.com wro=
-te:
-> > > > From: Sung Byeongchan <tjdqudcks0424@naver.com>
-> > > >
-> > > > SafeSetID policies constrain the ID transitions available to a task=
- for
-> > > > each source ID.  id_permitted_for_cred() always builds that source =
-key
-> > > > from the old real UID, even when it is checking a GID transition.  =
-If the
-> > > > real UID and real GID differ, the policy attached to the real GID i=
-s
-> > > > therefore missed and the lookup can return the unconstrained defaul=
-t.
-> > > >
-> > > > On current mainline, a test task with real UID 1000, real GID 2000 =
-and
-> > > > only CAP_SETGID obtained non-allowlisted GID 2002 despite a 2000:20=
-01 GID
-> > > > policy.  The bypass reproduced for setgid(), setegid(), setregid(),
-> > > > setresgid(), setfsgid() and setgroups() across three clean QEMU boo=
-ts,
-> > > > and enabled access to a synthetic group-protected resource.  This s=
-hows
-> > > > a SafeSetID GID policy bypass and group privilege expansion; it doe=
-s not
-> > > > show direct UID 0 elevation or a universal local privilege escalati=
-on.
-> > > >
-> > > > Build the source key from the old real UID for UID policy checks an=
-d the
-> > > > old real GID for GID policy checks.  In three fixed-kernel boots, a=
-ll
-> > > > tested non-allowlisted transitions were blocked while the allowed t=
-arget,
-> > > > existing-ID, no-policy and UID-policy controls, and the existing Sa=
-feSetID
-> > > > selftest continued to pass.
-> > > >
-> > > > Fixes: 5294bac97e12 ("LSM: SafeSetID: Add GID security policy handl=
-ing")
-> > > > Cc: stable@vger.kernel.org
-> > > > Assisted-by: OpenAI Codex
-> > > > Signed-off-by: Sung Byeongchan <tjdqudcks0424@naver.com>
-> > >
-> > > Seems obviously correct.  Thanks for the find and the fix.
-> > >
-> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> >
-> > Looks good to me too, thanks!
-> >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> >
-> > Micah, assuming this looks good to you, are you planning to pick this
-> > up?  If you would like me to take this via the LSM tree, please let me
-> > know.
->
-> Hi guys,
->
-> Sorry for the delay! Yes this patch looks good to me -- thanks for
-> catching this, Sung!
->
-> It's been a really long time since I sent any pull requests to Linus,
-> so it might be a good idea for this to come from the LSM tree if you
-> are up for it, Paul.
->
-> Let me know, if you think its better for me to dust off my old GitHub
-> repo and pull request etiquette I'm fine to do so as well :)
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] rootns: delayed PID namespace visibility check in
+  rootns_wait()
+--
 
-I guess it's up to you Micah.  If you want an excuse to get current on
-merging patches and sending pull requests to Linus this would be a
-good one.  However, I also understand that it can be a non-trivial
-amount of work for one patch (which is why I made the offer).
+commit 68c6e4532ee164e48940d00824536de847b1c5d0
+Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-Let me know what you would like to do; both options are fine with me.
-If you need some help on the administrative side, e.g. sending stuff
-to Linus, let me know and I'll do my best to help you out.  If you
-would prefer me to include this in the LSM tree, please reply with an
-ACK tag so I can include that in the merge.
+rootns: Add ROOTNS_WAIT ioctl
 
-Thanks!
+This commit adds the ROOTNS_WAIT ioctl to wait for a root namespace's init
+thread group to exit and retrieve its wait status and TGID.
+
+> diff --git a/kernel/rootns.c b/kernel/rootns.c
+> index d9ef68d603a24..5f03b6ba4a543 100644
+> --- a/kernel/rootns.c
+> +++ b/kernel/rootns.c
+> @@ -115,6 +115,45 @@ static long rootns_get_nsfd(struct rootns *rootns, u=
+nsigned long nstype)
+>  	return nsproxy_open_namespace(rootns->ns, rootns->user_ns, nstype);
+>  }
+> =20
+> +static long rootns_wait(struct rootns *rootns, void __user *uarg)
+> +{
+> +	struct pid_namespace *pid_ns =3D task_active_pid_ns(current);
+> +	struct rootns_wait_args args;
+> +	long ret;
+> +
+> +	if (!uarg)
+> +		return -EINVAL;
+> +	if (copy_from_user(&args, uarg, sizeof(args)))
+> +		return -EFAULT;
+> +	if (args.flags & ~WNOHANG)
+> +		return -EINVAL;
+> +	if (READ_ONCE(rootns->state) =3D=3D ROOTNS_INIT)
+> +		return -ECHILD;
+> +
+> +	if (!(args.flags & WNOHANG)) {
+> +		ret =3D wait_event_freezable(rootns->waitq,
+> +					   READ_ONCE(rootns->state) =3D=3D ROOTNS_DEAD ||
+> +					   READ_ONCE(rootns->state) =3D=3D ROOTNS_INIT);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	scoped_guard(spinlock, &rootns->lock) {
+> +		if (rootns->state =3D=3D ROOTNS_INIT)
+> +			return -ECHILD;
+> +		if (rootns->state !=3D ROOTNS_DEAD)
+> +			return 0;
+> +		ret =3D pid_nr_ns(rootns->init_pid, pid_ns);
+> +		if (ret <=3D 0)
+> +			return -ECHILD;
+
+[Severity: Medium]
+Should rootns_wait() check whether the rootns PID namespace is visible in
+pid_ns before waiting or returning 0 for WNOHANG?
+
+Because pid_nr_ns() is only checked after rootns->state reaches
+ROOTNS_DEAD, a caller in a non-ancestor PID namespace gets 0 instead of
+-ECHILD when calling ROOTNS_WAIT with WNOHANG on a running rootns, and a
+blocking call sleeps in wait_event_freezable() until init exits before
+failing with -ECHILD.  Checking
+pidns_is_ancestor(rootns->ns->pid_ns_for_children, pid_ns) upfront (as in
+rootns_get_nsfd()) would reject invisible targets immediately.
 
 --=20
-paul-moore.com
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119224312.1037=
+966-1-jarkko@kernel.org?part=3D5
