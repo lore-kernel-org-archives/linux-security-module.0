@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.44
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795204425;
-	b=txqcHxtlU3MqSBRE+DhwHjjcCt2WOkR/xHrinDK23ooURfaPxxXT90D/x33eaP9C6sNj
-	 SMGHg+cZw2kA6+Mln+BBdv/IGEVP5clQJpOgLMDL2waRli7AX1BiQ4lqxyYIXiUSPWJ0K
-	 XejNHa4CJOcL4a7MEn5UicJjxj9y1wxJiVFwRa9doSbtcqCGO3o2kmZV0GwLscDiqWhCz
-	 b8IJ8Dmeg7+DQc6PHsvm5Eqg53igiT5CMwthRUv6ULVBu2I8iAteHDeF8VO09FDi5zZrD
-	 GmA+prNz9m2rHb2ivLJ7qLWl5RBvY/jcnAF1Akb+DM2f4xhRiCmArD8N4WFj5b560VQ==
+	t=1795211516;
+	b=UO0nC+5+5jwf+xCLkLSz+WDi9W8QdQM6bYoIqhzVE7w7/uPicS/ezd5I+Wa6liDCmUkK
+	 wZRbEiUxZfhmMWQap7oHo+BtICFyUtE/2KrTJbwJh834jrE9eiGM89wtJ15hSVEhmdudP
+	 Lfu/+8+uhxfESDOhsl2BqQQa/kF+qBWv61vwBPpInOvdP+w3fSmBHGTti2nQD9FkIGheo
+	 FqWotMGtmJrPtDqxdqK9ts0KJqqxQ2OSviN9Nhi7JRSixmiNAGQQp2XkWLazw0vdlH30d
+	 5MdASvHMvSMYRIGKG4evaDlxMDrJTZXl9MGeRPjDq0wME33hLm+elNuAAZBAvi5VEbA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795204425;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795211516;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Y76CwwbIFFZSLzT6VqrJeNVAmGacmUJL5O9mQNR1EcY=;
-	b=D76v8yKfhcVPzT1NcCphHdn5LkOB4sQNNd2N9kT/WDeXmWwCgsFX0AmV+fCG5BQ+gCxZ
-	 lrfzAM9anHCMhhwuZZi/F82k4tYhhkfJttMAqiy5m9Z6/AQxX6tHumgaklUp7FQ4mKUwU
-	 T3VueY5kC2r4vS+uEIi5CRluFfu9hIc6nODKBg/BbCU6Xwgqh0b8YC6Ggu28RXe4+IKzq
-	 im3NfHDYfHNtk1GESICWj/QAOw9CtyV0zJbEETrkFcDi1N/Vdm4PI5HQOqr/xHMPX0p3d
-	 MQGFmzBfHdV60lC9jmQN/isAQdb0FSSQqeA1XFYdErWwY2XPB83GXS2B+DQKDm+b/Dg==
+	bh=QXn3BxyfcaTRVPKnRds+vZOyXItuUDy8pAU3lM3mH/k=;
+	b=lxOHJFFoHRxJ6pA7TvkKbK1ErMWYUZnKIOyZI3mrHGSKsVHB+JHtOjRJUzsrqLwCZ17+
+	 S2IaXf1YOPX/gmsmu2WCpaYSzYOwMzgOnm4Qhy3d44sK2UgX+SFghVZP163BZhaG6GWHB
+	 gptBZZW5FvWwkiRjkIKzQbzAonwc16CqAoqCcYLjm2N8/eY5CPPhR3365NMxuSjmG25K4
+	 Vba94Kk+FVKC6IkZ8NKq+eifZTcHunPCNEV2mFVAeC2XI8+kN3CtwRDZBaeL0rnGo+OGT
+	 9ZxuEMD42oNaA5lyOvoYlwA6uDJilXzxX4Lw9JbAUJGslXTLur+ulwr/U7Pai55Eu5w==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=amacapital.net;
-	spf=pass smtp.mailfrom=amacapital.net;
-	dkim=pass header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=OIzOhE5i;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.179
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=AgPu5J62;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.44
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B243D606A338
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 19:53:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B243D606A338
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85748606A6AC
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 21:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 85748606A6AC
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=OIzOhE5i
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3adfc004920so11455841fa.3
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 11:53:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795204423; cv=none;
+	dkim=pass (2048-bit key, unprotected) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=AgPu5J62
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3ada4c06b7bso811531a91.2
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 13:51:54 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795211514; cv=none;
         d=google.com; s=arc-20260327;
-        b=b8UmlKU3e4mqTKXgF1F6mkDCaUDb88HEXD82SruYxM+QHP+5zrJbIqjCpZsGuRjiFw
-         64Qv+UB6xJnNzUvHCJTo83Egst0riPOVNN+x1nkSjBOVifWIGRKt+qpniq+iBFC2DQxP
-         L7CLNw6dOYn6jw8PFKFg69+oIte6/9RHsOT7G/Gh+HqB05MJDcxbLM3Iy+eM8Fn7DkvR
-         oLlPj8voKLpTTgSPjQNFZL0Yf8j4x++XZiGwC0cGS+7197QGov0/5fc5aJaPjNxy5t4f
-         ZzXz0l7ct8QvChoT5omB1N4FDktRWD8Ajl1fqf0IWz2tbomoDAZeeXTT47YIq4MD4+cZ
-         pbDQ==
+        b=Q+gbA6QC9xguJv8hLh+KPG2VImkLMoDeR/8NIwUzeep4dI/X7q66HLdMU3T55dgrik
+         hsUSvaPl3dnPsjgxRsm8eldQZ9VrxAhreAAeHPOwr5e/Ud7pWtwjoERAJw2VtQxCQQud
+         KC8E2ZRQxPfWAY+r5QhaMuZyrrVWG7psV0vggypyY53uW90wpbqLqx4TlBo6Hhjj4iCq
+         bUOwQ5aUzEsTHEG114reA0vGR3JQrKvc+m7DFu4DufLkw/fg9Bng8AMOY8UwJa1Dmq+b
+         gMPENDLgyXvz2o/TnFT3xItL69FVG2lL95KH5lPeXDp7TfqG349CEqvsmEGXcfSisV0p
+         DU3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=Y76CwwbIFFZSLzT6VqrJeNVAmGacmUJL5O9mQNR1EcY=;
-        fh=MBbRWEKlFwYc1tB+isV+tC1YFRV6j7i20uTcU50Jdrw=;
-        b=UP0uIyHR/fmY8nIxU75iacDDsAqFqvoaudQrXGUxZD9Xry2aQnjzWY62Tx2l5/391I
-         MxhPYyB+SxSbzgOSE+U/h7koAdd8K96Ms2qlBDLuD22LZkH5Kf7H74fQJOkCNBDqzR8S
-         6SrdwEpMAZhPvn4CcX2Ru+r4cjRc2zmtcBMnpluXjvg0kmptx1IY8kC21JLMRk5lmXeQ
-         GP62SBNI1c5IS3tVnAEfaknSft5OJTjLDofBisCzvTOii1nJnNvgawynPP3rYLH0s5ez
-         bao2xB1sSRhGEpqRzllvDy8PR/ZOQijjLhP7Prf+02snVYcRm6WfSvU+Oag9IUKOvKqy
-         oqMw==;
+        bh=QXn3BxyfcaTRVPKnRds+vZOyXItuUDy8pAU3lM3mH/k=;
+        fh=N3BMLAMrSGHvwqhxavASxZ6ldbtyjhwQ+68+SWCX5H4=;
+        b=P9FMCmOkGDXlZSyRnPBZaOc+crxJTrQCMIN0b47kl+oe2NGm0sxSiyUK07qhFlQiNr
+         Hk+MIMFai/ruTaUxr3uUrRO5clPBDp+GnHady9k3xpcIWCI+TogE8dUppuAGRN80p54T
+         TKv2LX16motUhwKVWw4y+/9JK2P3kYFAWg7n9pujQYt7mONE1f33+Pa0IM9shLvnror7
+         G/pIIY8EDWP5XkXoj277vqkoub5Ddz671OHpxMD03urDr3Tla3WP+wPs88iwWzBY2cfD
+         2z+NySzdVcHjkjYLoR8uJBTx2SPSQcIR6Lo4c7FstTPSfhDVNs2ziWSJIJlE4PH/wneg
+         E9QA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20260707.gappssmtp.com; s=20260707; t=1795204423; x=1795809223; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1795211514; x=1795816314; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=Y76CwwbIFFZSLzT6VqrJeNVAmGacmUJL5O9mQNR1EcY=;
-        b=OIzOhE5iObSc8vEouH0agFHpvADyEkxMoLtQygTw3RAog7Wv+L7LAKHBfx6tywTWla
-         XUmS9LeJ7PnxVQ8l/3h5q4xOUl+0sR1Yhl89cyUVCQFQ6WCNIJ01mU32NChKR7y23gEJ
-         n6jCSfPaTpMmvNA7KdBLfnQPGXRT46ttzJgAvgufnJa4wXOuJ17zrS9bXry+tvzH4oPw
-         y8KH2mJUm+Io56eSd80lF5wNq2JRo3v7s3MN3hIShmIFHlUZKroZclqXKbLIjGE9o4oI
-         gDJi5i5Hy/If+d9CSXWm+OtWA52rz2oh8TdXKQlysnEYYdN/92oAHLZ0UJRgGJo4WwVZ
-         xk2g==
+        bh=QXn3BxyfcaTRVPKnRds+vZOyXItuUDy8pAU3lM3mH/k=;
+        b=AgPu5J62QchcMUFXnKGeHGbhznBH6/4T7KsyEkUOY27M7C4mEFFSzy3D0ukukqTs+v
+         UdDLQh9qODUhqfGqFsRY3RqFnN8uTMHP1xeNP3cvDMwmgCPX4Mh9/RW5fC4sFN8V0uTn
+         rU7AJPDQYLS821tOzruzDeD6nTadcmIZcqcMg8/4CMjmseE7wxWIgYPV4emZX9th4PF/
+         eW1doKHM0VaUDJeBjIj5UGavF+VbJvuhjne7xwCi5+CvJ9jFe4lnge6932l/u3shVWyB
+         WP2/riBG8FPPVN5srrNlbcNZ/Er2N1sDRsJb8wvAsxiv4vGiQ3YH3XA0C+ow9fDDXmBH
+         jbfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795204423; x=1795809223;
+        d=1e100.net; s=20260707; t=1795211514; x=1795816314;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Y76CwwbIFFZSLzT6VqrJeNVAmGacmUJL5O9mQNR1EcY=;
-        b=BQeRI/bJh8moFz4p/oCN7ZsBhOvQs5dloYfEM+spk0t/r7/+TzpK9ynt3qjkzDpn7q
-         Dx8ueQeY14NKmdLB+6L7HNPUUsHuGwafI2KRX7qG6GLO0OiHmOnD2gYw85IC5olMMuFB
-         Xf3CU4yzKKQiy544xoMRlRfDYQy+BMCYsKl8bIFtymu1c2lHO0geM6JFamRY4jW84XWN
-         ynBxIyw0Lr/JVKtKXFPEB35X96DPxVVcBZc3Oe/KEuEWOVTjR/poGZS9KFTL3iE34QE/
-         1CIfpxC2Yu/o1Libb7Cp5MlPSqQUCuTbwJZp+jkZpk7wjDvZ3j2XPSGz45LG9DuThpSF
-         MEnQ==
-X-Forwarded-Encrypted: i=1; AL+hErH+Lwva4h9oaLWSgdWCshKDU0iLMcDe1dBHJlQrZddWra9GFHyNr6e4sVMlUGxLnnS26wIdaP4r9vXwlsWdbyWPKQOlSvg=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8FgEPGw5cs8zrJAW0YqmNpO4gvW5R5DI3FudXe7pEPPvurj53r
-	uL6PlcqEL0PGwseqBM3SHhPVIgFqsdklvDreo7E9eypZptzR5WPZUP1BkRqjmfBkUesbKt1k4QT
-	QCdLwzCHpKUBSEtwL5zU5RF4k3K92hFAJo8PWln70
-X-Gm-Gg: AZFdTZfkX5EkeTA3N0boY9q5DB5r+H/THaFk9L/joizhVrXswqxCgzV/pyX099MpTmP
-	IpGnFbI28vNnmwjJPLnzoOqCi6HhbKCfLOBi6FmnuNXYjkI1D0sc3a296mny4Rv7f2xGlb5mmXs
-	ZvxJt5YEYEP5H+Xy1WZFeSLsOBxlFu4vNZOJf+bkKUtcsGuL1Y15eNKuy9N9pAQMk5iwI5o4FxG
-	P9eAO0TjwufiG0vDTQCTKqjJtPgwoKNO5oe2tJx9BsqKE4M6JS2h+J7wV7EgwXxRBIkXz3l5pgl
-	7wNwOtnU3l/C1qx8p0To4rl7aXAKNVaMLfNdrd1A7t58GX3h/a5PJ6bvGHwfL+lFM5NpOJWR5n2
-	EUcnyIYRoFVDE+GA8qfJtmkEyfJ0tyC0dfg==
-X-Received: by 2002:a05:6512:1046:b0:5c1:acec:260e with SMTP id
- 2adb3069b0e04-5c1bc8432bamr1303866e87.55.1795204422738; Fri, 20 Nov 2026
- 11:53:42 -0800 (PST)
+        bh=QXn3BxyfcaTRVPKnRds+vZOyXItuUDy8pAU3lM3mH/k=;
+        b=HzkH1LZ3GNIrwm2HQWkXmb2YiSgq4Nn4DWB28xxgtuwNQzgrM8jqYIE4raiK0GR7uc
+         bk33h1kvuUGmZ7m7y/1RO84haTEVuuxyMIZOj2olWXLUAin9IC93P8R/CcCrucYxM4z2
+         zTTLy5OHA7ZZ8UyJLj7YGddMwi3Q2kQ7rA7QwtKW27fNtYFLgvkT4ySr7XT0HcfBrvYW
+         PbI3u7wCkoRGczX40chysYj6YUV5kvvp4r//DIPZlLa/SWwDP9/QkY05KYKMIsKLV1/f
+         YM0PDuLBhDOfwUp2x73359HMe2GaZoPdhEMmBnnVXcYKe395SKQM5JB6/ya5DUxYoNT6
+         gptw==
+X-Forwarded-Encrypted: i=1; AL+hErGirRTN2mm+HE/dua3RaYiFJDdFB13EiSHrinrWw9/8AW3oQDVJMl7F+tekTaKePoANFr9OAmClwA/0Blzg47hwU6l6sMs=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/eEH2pNhLGe2NAOehGa03fhQepZv/oe6p31vgWnBp1ErxSLN+0
+	wSYu4/PXuY2Kpy7uKUBCIkzKFesv3+hzhBxc6xKrStegR0WuUxTcvI7DOZeKdlsp/O2qFo2C/rF
+	Lwl0wiGwsmd81I12/QzzrTPsv0mo9iKa0N8iWdtkc
+X-Gm-Gg: AZFdTZcaz+k+bItAU41X+1qAsVEx0UXaoTfLHot4GbHS/AS/l7rSOc3a/mINUqpZ/SH
+	nvnlnhPtgPFtMbbxlW1Uwbsol0jryvfB9AQmUXZQkqQdo4vGv40IzshlHzxF3WBKbZujCyVklb0
+	WZiQTlVH6RjiZfbZjAfhGS4+wxeXlTTs3U9GdlefW6f6BI/vU+q9yBi5cAiC+2CUeFCrinN7lkp
+	qiOMdK5+k2TXt0M8FsFWLC6LTdgk05TSfbEcYVFAClttaxX7MdRuTF0432AC6TKG659ijGud/ts
+	1JNYygy/lWVou/0cLntvCn6GwrePxFFeSARt8LNpKZ/8NEiZGyrT2gUnTTZMc6xPKV6EKt9iFUD
+	4QcR6+rGlxE4utYNXI2bRlNkYzyP40YD5bNOzGvJsKzXtVtlsdRiHuJ+3z66RJBUYouPW
+X-Received: by 2002:a17:90b:4d86:b0:3ac:7c52:faeb with SMTP id
+ 98e67ed59e1d1-3b41c93b0dfmr4530278a91.41.1795211513818; Fri, 20 Nov 2026
+ 13:51:53 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -104,122 +104,109 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <av3bkDnwmjunTleX@kernel.org> <CALCETrXPLeUgxyhjP4XuWS46FKB0TUHF5PcMkdMf+qeEXbyXRA@mail.gmail.com>
- <9463a969d35a7d5ec5a56aeb67644b94.josef@toxicpanda.com> <CALCETrXt-Do28BHDpbrA98kEy-tQuorxD8c2XsW24Tt8Vspdtg@mail.gmail.com>
- <CALCETrUbe8rBoxrC+Q66AMsrJ8Fow7xt5KJKRAmobtXBvHWdqg@mail.gmail.com>
- <c301fff20a4920fcd3baa31dda2e31ad99c93436.camel@amutable.com>
- <awBHZO2VwWyJzvBN@kernel.org> <1f12636403bb7af3759cd933b2612d8a5d7317a2.camel@amutable.com>
- <awBRyKgOQlaEqpWX@kernel.org> <awCg5VYXKJvex9vy@kernel.org> <awCkANwNDox_99SR@kernel.org>
-In-Reply-To: <awCkANwNDox_99SR@kernel.org>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Fri, 20 Nov 2026 11:53:30 -0800
-X-Gm-Features: Aa3M54pKxDm6eU_2Sjm44hIEowicdxL9W6xw2PHKnbweFLV6y91fuj5aPjITmFQ
-Message-ID: <CALCETrUnQjrWmSzL-FOqFF+_enxVsEM0On7orydXLCO-L2f23w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/13] Namespace for namespace roots
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Alexander Mikhalitsyn <alex@amutable.com>, Josef Bacik <josef@toxicpanda.com>, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Serge Hallyn <sergeh@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20261115144508.71543-1-jiayuan.chen@linux.dev> <cbaa372f-6ec1-4ceb-a012-30eaac5ae8eb@redhat.com>
+In-Reply-To: <cbaa372f-6ec1-4ceb-a012-30eaac5ae8eb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 20 Nov 2026 16:51:42 -0500
+X-Gm-Features: AclHuK_GGiWFUVKZSpr8dYR-2FHgC-uowX04GimNX21-i66RpifdzgYCCqwHyG8
+Message-ID: <CAHC9VhTBf7wHMsneqUTT0p3pABkbD0GHuTJXFehKhA10NvWgxQ@mail.gmail.com>
+Subject: Re: [PATCH net] ipv6, calipso: fix data-race in calipso_cache_add()
+ bucketsize check
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Huw Davies <huw@codeweavers.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 20, 2026 at 11:48=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org=
-> wrote:
->
-> On Fri, Nov 20, 2026 at 09:35:06PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Nov 20, 2026 at 03:57:32PM +0200, Jarkko Sakkinen wrote:
-> > > On Fri, Nov 20, 2026 at 02:24:57PM +0100, Alexander Mikhalitsyn wrote=
-:
-> > > > Yeah, detached mounts API solves a security issue here, but it does=
- not
-> > > > fully enable the use-case Andy describes (if I understood it
-> > > > correctly). My interpretation here is that to fully cover it we nee=
-d
-> > > > some well-isolated communication channel between container and
-> > > > container manager (vsock for containers? :-D). And some well-define=
-d
-> > > > agreement of how PID 1 inside the container can get an information
-> > > > about a hotplugg-ed stuff. [ But it could be that I completely
-> > > > misunderstood and Andy meant something much more simple here. ]
+On Tue, Nov 17, 2026 at 7:26=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
+te:
+> On 11/15/26 15:45, Jiayuan Chen wrote:
+> > Issue found by sashiko when reviewing my data-races patch [1]. This is
+> > not a plain READ_ONCE() annotation like the rest of that series but a
+> > real fix, so it is sent separately.
 > >
-> > The sequence for hotplug (Andy's use case) breaks down like this and is
-> > doable:
+> > calipso_cache_add() reads calipso_cache_bucketsize twice: the "<=3D 0"
+> > guard on entry, then the "size < bucketsize" test after taking the
+> > bucket lock. A writer can flip it to 0 in between:
 > >
-> > 1. Host creates rootns(ROOTNS_SEAL_MNTNS).
-> > 2. Host sets uid/gid maps with NS_USERNS_SET_IDMAP.
-> > 3. Host populates "/" with MOVE_MOUNT_T_MNTNS, optionally combined with
-> >    MOVE_MOUNT_CLONE for bind mounts.
-> > 4. Host spawns PID 1 with clone3(CLONE_INTO_ROOTNS) (optionally passing
-> >    an AF_UNIX socketpair fd for communication).
-> > 5. PID 1 watches /proc/self/ns/mnt via fanotify(FAN_REPORT_MNT |
-> >    FAN_MARK_MNTNS, FAN_MNT_ATTACH) or polls /proc/self/mountinfo.
-> > 6. On hotplug, host mounts the filesystem via fsopen()/fsmount() (plus
-> >    optional MOUNT_ATTR_IDMAP).
-> > 7. Host creates the mountpoint with openat2(RESOLVE_IN_ROOT) + mkdirat(=
-)
-> >    and attaches the mount with MOVE_MOUNT_T_MNTNS.
-> > 8. PID 1 receives FAN_MNT_ATTACH and queries the new mount via
-> >    statmount().
+> >    CPU0                                    CPU1
+> >    calipso_cache_add()
+> >      calipso_cache_bucketsize =3D=3D 10 (> 0)
+> >                                            proc_dointvec()
+> >                                              calipso_cache_bucketsize =
+=3D 0
+> >      spin_lock_bh(&bucket.lock)
+> >      size(0) < calipso_cache_bucketsize(0) -> false
+> >      -> else branch, but the bucket is empty
 > >
-> > ROOTNS_SEAL_MNTS, NS_USERNS_SET_IDMAP and MOVE_MOUNT_CLONE new features
-> > that are yet to be submitted but they were not tedious to ramp up.
+> > On an empty bucket the else branch takes list.prev (the list head
+> > itself), list_del()s it and then list_add()s through the now poisoned
+> > head:
 > >
-> > I'll include them to v5 of the patch set. Thanks for underlining this
-> > part because that led to having those.
+> >   Oops: general protection fault, probably for non-canonical address
+> >   0xdead000000000108
+> >   RIP: 0010:calipso_cache_add+0x2f0/0x380
+> >   Call Trace:
+> >    <IRQ>
+> >    calipso_cache_add+0x4c/0x70
+> >    netlbl_cache_add+0x4a/0xa0
+> >    selinux_netlbl_skbuff_getsid+0x1ac/0x280
+> >    selinux_skb_peerlbl_sid+0x7d/0x100
+> >    selinux_socket_sock_rcv_skb+0x2d3/0x460
+> >    security_sock_rcv_skb+0x86/0x150
+> >    sk_filter_trim_cap+0x56/0x730
+> >    sock_queue_rcv_skb_reason+0x1e/0x80
+> >    rawv6_rcv+0x679/0xb20
+> >    raw6_local_deliver+0x1f0/0x5b0
+> >    ip6_protocol_deliver_rcu+0x215/0x9a0
+> >    ip6_input_finish+0xb0/0x1b0
+> >    ip6_input+0xa8/0x250
+> >    ipv6_rcv+0x14b/0x1c0
+> >    __netif_receive_skb_one_core+0x8f/0xe0
+> >    __netif_receive_skb+0x23/0xb0
+> >    process_backlog+0x27a/0x950
+> >    __napi_poll.constprop.0+0x61/0x2c0
+> >    net_rx_action+0x372/0x800
+> >    handle_softirqs+0x109/0x570
+> >    __do_softirq+0x10/0x18
+> >    do_softirq.part.0+0x47/0xd0
+> >    </IRQ>
+> >    <TASK>
+> >    __local_bh_enable_ip+0xf0/0x120
+> >    __dev_queue_xmit+0x578/0x23f0
+> >    neigh_resolve_output+0x278/0x3c0
+> >    ip6_finish_output2+0x4b1/0xcb0
+> >    ip6_finish_output+0x2b6/0x6b0
+> >    ip6_output+0x122/0x400
+> >    ip6_local_out+0x61/0xb0
+> >    ip6_send_skb+0xa0/0x260
+> >    ip6_push_pending_frames+0x2b/0x40
+> >    rawv6_sendmsg+0x1b7a/0x2750
+> >    inet_sendmsg+0xa1/0xb0
+> >    __sys_sendto+0x2fe/0x350
+> >    __x64_sys_sendto+0x7f/0xb0
+> >    do_syscall_64+0xe1/0x450
+> >    entry_SYSCALL_64_after_hwframe+0x76/0x7e
 > >
-> > Architecture scales to this even if my choices to address these details
-> > would need some adjustment.
+> > Snapshot the sysctl into a local once and use it for both tests, like
+> > cipso_v4_cache_add() has since commit dd44f04b9214 ("cipso: Fix
+> > data-races around sysctl.").
 > >
-> > The clear two-phase (build/live) progress with rootns sort of just give=
-s
-> > room to address stuff like this, and I have hard time to believe that i=
-t
-> > would get much better than this.
+> > [1] https://lore.kernel.org/netdev/179428999963.994134.1690454450089005=
+3668@kernel.org/
+> >
+> > Fixes: 4fee5242bf41 ("calipso: Add a label cache.")
+> > Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> LGTM, but let's wait for Paul's explicit ack.
 >
-> A completely new feature is NS_USERNS_SET_IDMAP:
->
->     nsfs: Support NS_USERNS_SET_IDMAP ioctl
->
->     Configuring UID, GID, and project ID mappings or disabling setgroups(=
-2)
->     for a user namespace currently requires writing to /proc/<pid>/uid_ma=
-p,
->     gid_map, projid_map, and setgroups, forcing container managers to spa=
-wn a
->     live process before populating a filesystem owned by that user namesp=
-ace.
->
->     Add the extensible NS_USERNS_SET_IDMAP ioctl on CLONE_NEWUSER nsfs fi=
-le
->     descriptors to atomically configure setgroups policy and UID, GID, an=
-d
->     project ID mappings before any process enters the namespace. Enforce =
-the
->     same single-write and capability invariants against both current_cred=
-()
->     and filp->f_cred under userns_state_mutex.
->
->     Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->
+> @Paul: please LMK if you prefer we apply this kind of
+> simple, clean fixes directly.
 
-I'm highly in favor of this.  But maybe not as an ioctl.
+Looks good to me too, thanks Jiayuan for working on this!
 
-If you have an nsfd for a userns and that nsfd is the "control" fd
-(however anyone decides this is formulated), why does f_cred matter?
-It should be possible to create a userns without privilege and
-SCM_RIGHTS the fd to a privileged uidmapd.  (I fixed the rather
-screwed up workflow for this in newuidmap/newgidmap a few weeks ago --
-this is remarkably easy to screw up.  It'll make it to a distro near
-you some day.  It's supposed to *work* even without CAP_SYS_ADMIN in
-the picture, and it did not.)
-
---Andy
-
-
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --=20
-Andy Lutomirski
-AMA Capital Management, LLC
+paul-moore.com
