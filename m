@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795214683;
-	b=1+Q+7Dp5D3fSTrC9y2agSH7LGxCIEOm9p3MilaMj/mJoEPN5XTaoJ7rtGnG9IUXXY6Zb
-	 NIWPaY58khTsKj1R9YLRUlan8Bj2TsUBiVKJT2kq14sRxpGhehXqRHPlo2pvXlURm5RUw
-	 RMOv3TUIVc/R8E77qUyg0qmY5wNWmZblph/kceTff7+lTr0WbtWHVIJpacs9NGLYVOqBH
-	 tS4y32h9J19wAMCNVH0oxv7UJQbcTOpHf+bkm1tuMC/Qb9i+HJeQlR2GXPqdipE2/rSJ4
-	 CCI9L9EzuHFWSJlx/ef4QeS+Mx9nYbu+HClPqyfbJJ+cWgVzKZgoM0iWhtNJ2nJxQRA==
+	t=1795214688;
+	b=h9cMZ5kCuHSdvcWkAuckfpHCKvNLSoweW3lLQ9IipkY1TENvLP20BzZX2GpXkzrR9+j2
+	 KCWrfnNyVOiUk1R++mOgosIKX4d7pKEDmTrKlu5532e/KDXMsm4p9beCXcRdCaQ+RmWnq
+	 adNPfJ1VX/XvHDj1Efp00yKzI+sVzCE/6JjX5qhs1rgbzhoTbYmeZBxNhbMfCFRNNMWxU
+	 Ugrs6U1cldp8Xi014WjoHszpc40JkqaJ6mAF1wppFG9PxTFyIzafAGhH4AFoTFExetTzB
+	 8XAJzAoYuYd4Zbs7g1NdeufQI4HN8ShMH9lVtSywbvRW7RjmcXWH0akF1tn5ohfRppQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795214683;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795214688;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=GDJBVsAd6JtWMDQ/ABjrxTbwcVxlwsrHr9o1YDsX7iE=;
-	b=Nq8+IcvIwLvS7gbavQrHPGD6TRnuRveOwB3Gx0pCu7o0xLAISl526ZhtJ4btWqAhhjIg
-	 iVZxgOCvlJmangcXSRW2i7JOkj0/MNqC/GQuUOaQijdUkifTBXgxa/oaEqacJmAfKs2fh
-	 IXP1b5nHzEdWrvZK2f4n7XQoQAlaXyNqsS4A0/pLuCW46RMMydChDtPkPtXE708t58CLU
-	 YiBwmoaQovZQugh96oJwUvMcT0Lrim+lFN6EdlwM+WW4m7seDgna0hcZzQhK4porHuv2Y
-	 8CvZN7KM2TlsfFzUn33XUR0lZZgoZ6J1U2/qTt/mmIKXfL3RSLYTFxsHeR9pOqxIfHw==
+	bh=bn6mJHSwscuFX7EABuBC1QwU6RYMxp/Gn5afGYR9hiM=;
+	b=DZ9BISdCc4OkebwnUO00wW7OuPUha8nmIBholIl2vb3c56nTQfudPDWz0j9v46xQ12+n
+	 Ufz/LUOHRU2OoXsefG//2KCDhDF7sGPhhMKtvdYHEzPNhfJX0oOzeEgTb/lYjk4zpECM4
+	 jYYko1o1scvg6UFXhWG3j95OdrO3ozFZAZ8M6Nxs1VbgvOoS0g1LO7T64uJ4FDs3CjTCz
+	 IQbmga//qluA0RL0/10IZcvpTay+lyzUsdkMDewO4etKPJ0Qh7BzY9H2HQsBOaOhvl1QC
+	 5eD9kazUKpGVALpHRV5enlFrLcpuEWawDxbtUgs0xWZ3nZFPX8w1L6Y7sLyk4FtT2Mw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TzyVXU3J;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X1gDtaRA;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AA3606A696
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5841F606A69C
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 22:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TzyVXU3J
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0081F000C4;
-	Fri, 20 Nov 2026 22:44:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=X1gDtaRA
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2F31F000D0;
+	Fri, 20 Nov 2026 22:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795214682;
-	bh=GDJBVsAd6JtWMDQ/ABjrxTbwcVxlwsrHr9o1YDsX7iE=;
+	s=k20260515; t=1795214687;
+	bh=bn6mJHSwscuFX7EABuBC1QwU6RYMxp/Gn5afGYR9hiM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TzyVXU3JZKz+G6iv26QMl86cOJH4T6cdW67UKDT+sTicT4bpZ6PRxigNNzsBN9Weg
-	 dX1wwwNonGIGAN79xQ294YlLIuJT5rNbXi0+x5jRleU4eSxz+RXrhhpS/n4gs/jMaj
-	 +E3rHJRAZQb4eS8x/aTfUrPfVUTT4z5RjsRJR+Ocjb8IfGW/gWqmliKG1zXAPCgUiP
-	 cgnsUESY+O2XpbIVy7OubMMFC+xjfg6+8+zrG/HWj0uuUkfN03o05o6qTNtxXEw8m6
-	 Mt2SaFlA+pIK9rxe3QoyDzdB16Mk/5+nIee49ePPRYUKoepHhzTZ14y968juTU3las
-	 bI1nF98MdMgbg==
-Message-ID: <sashiko-outbox-226299@kernel.org>
+	b=X1gDtaRAKXV2P8w+4EH9cg/ShOrrdn4aIzWA2optS29THkWlmz8GU8h+MWkoxb9ap
+	 scUjfx5IeIBaS/vwrOnL2U16+GZlaIdVXmKsblT4P8+swO/x45B45CFMoItVUQ30At
+	 X5D7eyaOp/3bt/WkWcRDgXjHq9uR8tASbD38IJXtB7lapOC4uBhQ4MJa4OLtNbnQVo
+	 XdFI2s6gNvgxMZxtXX16BY/VNfL3qrXPP0J/iXSfnXC+2R5GGBybJMRfEv4gAM32o8
+	 75i2QGX/cz7Cm69LExhTNldhPWYRXk11PAtpiCyjYgV0Y8TB1Oo/LAZhlWEjwtdFO5
+	 Fc1FyiDO9oBDQ==
+Message-ID: <sashiko-outbox-226300@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v4 07/14] fork: Support CLONE_INTO_ROOTNS in
- clone3()
+Subject: Re: [RFC PATCH v4 08/14] fs: Support FSCONFIG_SET_ROOTNS in
+ fsconfig()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexander
@@ -86,12 +86,12 @@ Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Albert Ou" <aou@
  Frascino" <vincenzo.frascino@arm.com>, "Vlastimil Babka" <vbabka@kernel.org>, "Will
  Deacon" <will@kernel.org>, "Yoshinori Sato" <ysato@users.sourceforge.jp>, "Zygmunt
  Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261119224312.1037966-8-jarkko@kernel.org>
+In-Reply-To: <20261119224312.1037966-9-jarkko@kernel.org>
 References: <20261119224312.1037966-1-jarkko@kernel.org>
- <20261119224312.1037966-8-jarkko@kernel.org>
+ <20261119224312.1037966-9-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 22:44:37 +0000
+Date: Fri, 20 Nov 2026 22:44:43 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -101,116 +101,172 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
+Thank you for your contribution! Sashiko AI review found 3 potential
 issues to consider:
-- [Medium] rootns: rootns_finish_fork() rewrites copy_process() -EINVAL
-  to -EBUSY
-- [Low] rootns: unreachable PIDNS_ADDING check in rootns_prepare_fork()
+- [High] fs: user_ns delegation and init_fs_context() mismatch in
+  fsconfig_set_rootns()
+- [High] fs: condition anon mnt_ns user_ns and seq_origin on
+  rootns_bound in fsmount()
+- [Medium] proc: allow pidns option to overwrite rootns binding in
+  proc_parse_param()
 --
 
-commit 1820863b7d5dcd4fd4778d2d64f24adcb966cc47
+commit 08909a29107ff970d2d4b5a71eaa424398baf6f2
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-fork: Support CLONE_INTO_ROOTNS in clone3()
+fs: Support FSCONFIG_SET_ROOTNS in fsconfig()
 
-This commit adds CLONE_INTO_ROOTNS and struct clone_args.rootns to spawn a
-child process directly into a target root namespace via clone3().
+This commit adds the FSCONFIG_SET_ROOTNS command to fsconfig() so callers
+holding CAP_SYS_ADMIN in a target rootns user namespace can bind a newly
+opened fs_context to that rootns before configuring parameters and mounting.
 
-> diff --git a/kernel/rootns.c b/kernel/rootns.c
-> index ce012a07e9828..865689eed69cb 100644
-> --- a/kernel/rootns.c
-> +++ b/kernel/rootns.c
-> @@ -423,3 +424,138 @@ SYSCALL_DEFINE1(rootns, unsigned int, flags)
->  	return fd;
+> diff --git a/fs/fsopen.c b/fs/fsopen.c
+> index 70024870fefa2..85b31af68a4d6 100644
+> --- a/fs/fsopen.c
+> +++ b/fs/fsopen.c
+[ ... ]
+> +static int fsconfig_set_rootns(struct fs_context *fc, struct fs_paramete=
+r *param)
+> +{
+[ ... ]
+> +	put_net(fc->net_ns);
+> +	fc->net_ns =3D get_net(c->ns->net_ns);
+> +	put_user_ns(fc->user_ns);
+> +	if ((fc->fs_type->fs_flags & (FS_USERNS_MOUNT | FS_USERNS_DELEGATABLE))=
+ &&
+> +	    ((kuid_has_mapping(user_ns, fc->cred->fsuid) &&
+> +	      kgid_has_mapping(user_ns, fc->cred->fsgid)) ||
+> +	     !ns_capable(fc->cred->user_ns, CAP_SYS_ADMIN)))
+> +		fc->user_ns =3D get_user_ns(user_ns);
+> +	else
+> +		fc->user_ns =3D get_user_ns(fc->cred->user_ns);
+> +
+> +	fc->rootns_bound =3D true;
+> +	fc->rootns_mnt_id =3D c->ns->mnt_ns->ns.ns_id;
+> +
+> +	ret =3D fc->fs_type->init_fs_context(fc);
+
+[Severity: High]
+Can fsconfig_set_rootns() leave fc->user_ns pointing to a user namespace
+other than c->user_ns while still marking fc->rootns_bound =3D true and
+fc->rootns_mnt_id =3D c->ns->mnt_ns->ns.ns_id?
+
+First, fsopen() sets priv from may_mount() (CAP_SYS_ADMIN in
+current->nsproxy->mnt_ns->user_ns), whereas the fallback here tests
+!ns_capable(fc->cred->user_ns, CAP_SYS_ADMIN).  If a task calls
+unshare(CLONE_NEWUSER) without CLONE_NEWNS (so priv is false in
+init_mnt_ns, but the caller has CAP_SYS_ADMIN in its new cred->user_ns U1)
+and binds to a child rootns (U2) before writing uid_map/gid_map,
+fc->user_ns falls back to U1 while fc->rootns_bound is true.  Subsequent
+FSCONFIG_CMD_CREATE and fsmount() calls then authorize against U1 despite
+!may_mount(), and fsmount() allocates an anonymous mount namespace in U1
+with ns->seq_origin set to U2's mount namespace ID.
+
+Second, a nested container manager with CAP_SYS_ADMIN in U1 that binds a
+context to a child rootns U2 before U2's uid_map/gid_map are written (or
+when U2 maps subordinate IDs excluding fc->cred->fsuid/fsgid) also hits
+the else branch, leaving the superblock in U1 instead of delegating it to
+U2.
+
+Third, calling fc->fs_type->init_fs_context(fc) after setting fc->user_ns
+allows filesystems without a ->set_rootns() hook to overwrite fc->user_ns
+from current->nsproxy (for example, cgroup_init_fs_context() resets
+fc->user_ns to current->nsproxy->cgroup_ns->user_ns).
+
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 781380945d784..dfe0ee9ecdcd0 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+[ ... ]
+> @@ -4658,6 +4661,15 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int,=
+ flags,
+>  	if (ret)
+>  		return ret;
+> =20
+> +	if (fc->rootns_bound) {
+> +		if (flags & FSMOUNT_NAMESPACE)
+> +			return -EINVAL;
+> +		if (!ns_capable(fc->user_ns, CAP_SYS_ADMIN))
+> +			return -EPERM;
+> +	} else if (!(flags & FSMOUNT_NAMESPACE) && !priv) {
+> +		return -EPERM;
+> +	}
+> +
+>  	/* There must be a valid superblock or we can't mount it */
+>  	ret =3D -EINVAL;
+>  	if (!fc->root)
+> @@ -4699,9 +4711,12 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int,=
+ flags,
+>  		return FD_ADD((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0,
+>  			      open_new_namespace(&new_path, MOUNT_COPY_NEW));
+> =20
+> -	ns =3D alloc_mnt_ns(current->nsproxy->mnt_ns->user_ns, true);
+> +	ns =3D alloc_mnt_ns(priv ? current->nsproxy->mnt_ns->user_ns :
+> +			  fc->user_ns, true);
+>  	if (IS_ERR(ns))
+>  		return PTR_ERR(ns);
+> +	if (!priv)
+> +		ns->seq_origin =3D fc->rootns_mnt_id;
+
+[Severity: High]
+Should alloc_mnt_ns() and ns->seq_origin be conditioned on fc->rootns_bound
+rather than priv?
+
+When a manager process already has CAP_SYS_ADMIN in its own mount
+namespace (priv =3D=3D true) and uses FSCONFIG_SET_ROOTNS to prepare a mount
+for a target rootns, testing priv allocates the anonymous mount namespace
+in current->nsproxy->mnt_ns->user_ns instead of fc->user_ns (causing
+attach_recursive_mnt() to lock the mount with MNT_LOCKED when moved into
+the target rootns) and leaves ns->seq_origin at 0 instead of restricting
+the detached mount to fc->rootns_mnt_id.
+
+> diff --git a/fs/proc/root.c b/fs/proc/root.c
+> index 7fbbe92bf73a7..323296b030892 100644
+> --- a/fs/proc/root.c
+> +++ b/fs/proc/root.c
+[ ... ]
+> @@ -323,6 +325,21 @@ static int proc_get_tree(struct fs_context *fc)
+>  	return get_tree_nodev(fc, proc_fill_super);
 >  }
-
-[ ... ]
-
-> +int rootns_prepare_fork(struct kernel_clone_args *args)
+> =20
+> +static int proc_set_rootns(struct fs_context *fc, struct rootns *rootns)
 > +{
-
-[ ... ]
-
-> +	for (;;) {
-> +		bool wait =3D false;
+> +	struct proc_fs_context *ctx =3D fc->fs_private;
+> +	struct pid_namespace *target =3D rootns->ns->pid_ns_for_children;
 > +
-> +		scoped_guard(spinlock, &rootns->lock) {
-> +			switch (rootns->state) {
-> +			case ROOTNS_INIT:
-> +				if (READ_ONCE(pid_ns->child_reaper))
-> +					return -EBUSY;
-> +				if (!(READ_ONCE(pid_ns->pid_allocated) & PIDNS_ADDING))
-> +					return -ESRCH;
-
-[Severity: Low]
-Can the PIDNS_ADDING check under ROOTNS_INIT ever be reached?
-
-PIDNS_ADDING is only cleared by disable_pid_allocation() in
-zap_pid_ns_processes() when the PID namespace's init process exits, and
-pid_ns->child_reaper is never reset to NULL afterwards.  Because
-pid_ns->child_reaper is non-NULL whenever PIDNS_ADDING is cleared, testing
-child_reaper first always returns -EBUSY here instead of -ESRCH.
-
-> +				WRITE_ONCE(rootns->state, ROOTNS_FORKING);
-> +				bootstrapping =3D true;
-> +				break;
-
-[ ... ]
-
-> +int rootns_finish_fork(struct kernel_clone_args *args, struct task_struc=
-t *p)
-> +{
-> +	struct file *file __free(fput) =3D args->rootns_file;
-> +	struct rootns *rootns =3D args->rootns;
-> +	struct pid_namespace *pid_ns =3D rootns->ns->pid_ns_for_children;
-> +	int ret;
+> +	if (!pidns_is_ancestor(target, task_active_pid_ns(current)))
+> +		return invalfc(fc, "cannot set pidns to non-descendant pidns");
 > +
-> +	args->rootns_file =3D NULL;
-> +	args->rootns =3D NULL;
-> +	if (!IS_ERR(p)) {
-> +		if (current->nsproxy->time_ns !=3D rootns->ns->time_ns)
-> +			timens_commit(p, rootns->ns->time_ns);
-> +		return 0;
-> +	}
-> +
-> +	ret =3D PTR_ERR(p);
-> +	if (args->rootns_bootstrapping) {
-> +		scoped_guard(spinlock, &rootns->lock) {
-> +			if (rootns->state =3D=3D ROOTNS_FORKING)
-> +				WRITE_ONCE(rootns->state, ROOTNS_INIT);
-> +		}
-> +		wake_up_all(&rootns->waitq);
-> +		if (ret =3D=3D -EINVAL && !args->set_tid_size)
-> +			ret =3D -EBUSY;
-> +	}
+> +	put_pid_ns(ctx->pid_ns);
+> +	ctx->pid_ns =3D get_pid_ns(target);
+> +	put_user_ns(fc->user_ns);
+> +	fc->user_ns =3D get_user_ns(ctx->pid_ns->user_ns);
+> +	return 0;
+> +}
 
 [Severity: Medium]
-Does this rewrite argument validation failures in copy_process() from
--EINVAL to -EBUSY during bootstrap?
+After proc_set_rootns() binds a context to a rootns, can a subsequent
+"pidns" mount option overwrite ctx->pid_ns and fc->user_ns?
 
-rootns_prepare_fork() runs before copy_process(), where companion flags
-allowed by CLONE_INTO_ROOTNS_FLAGS (such as CLONE_PIDFD_AUTOKILL without
-CLONE_PIDFD, or CLONE_AUTOREAP with a non-zero exit_signal) and
-copy_thread() are validated:
-
-kernel/fork.c:copy_process() {
-    ...
-	if (clone_flags & CLONE_AUTOREAP) {
-		if (clone_flags & CLONE_THREAD)
-			return ERR_PTR(-EINVAL);
-		if (clone_flags & CLONE_PARENT)
-			return ERR_PTR(-EINVAL);
-		if (args->exit_signal)
-			return ERR_PTR(-EINVAL);
-	}
-    ...
+fs/proc/root.c:proc_parse_param() {
+	...
+	case Opt_pidns:
+		if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE) {
+			errorfc(fc, "cannot reconfigure pidns for existing procfs");
+			return -EBUSY;
+		}
+		err =3D proc_parse_pidns_param(fc, param, &result);
+	...
 }
 
-When the initial bootstrap clone3(CLONE_INTO_ROOTNS) call with
-set_tid_size =3D=3D 0 fails one of those checks with -EINVAL,
-rootns_finish_fork() treats it as an alloc_pid() collision and returns
--EBUSY to userspace instead of -EINVAL.
+proc_parse_pidns_param() replaces ctx->pid_ns and sets fc->user_ns to the
+new PID namespace's user_ns while fc->rootns_bound remains true and
+fc->rootns_mnt_id retains the original rootns mount namespace ID.
+fsmount() then checks CAP_SYS_ADMIN and allocates the anonymous mount
+namespace against the overwritten fc->user_ns while pairing it with
+ns->seq_origin =3D fc->rootns_mnt_id from the original rootns.  Should
+Opt_pidns also be rejected when fc->rootns_bound is set?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119224312.1037=
-966-1-jarkko@kernel.org?part=3D7
+966-1-jarkko@kernel.org?part=3D8
