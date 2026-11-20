@@ -1,130 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795188276;
-	b=RfAFeDH1PfbhtfH2Bh/YaxGqKegF7yDFH95Z1b8df+ItcZWkUvuylINwZgBRkv6qm5on
-	 D3h1ikB5f5QwQBNVknf16//xcRnXCGn5EJpq4lm0DCk8garWyV71H6D75D6AdsnLLR6AU
-	 3QtN0Tzq90qerFr6Ng1JjfTuZYvjaCeb8OSdIH9KwdSfHtKH5YBwVmQdbZqXaq0je7muM
-	 kV/WfR/omefUc6cXvBrK9bM77zdpCFoAmtgZ+Fpkwe0d4CVScJrZz0XUj8Qu5z5qte6UB
-	 0w8sDsO8XID522AXeq+wkvOgF2KJ6EiyxDgBzk0A4U41EyhpvzFDSeDnY5tFcpX0Cfg==
+	t=1795190684;
+	b=Ot7nv7fZdw++j/v5pDYc7pUCa8siOEnSqE4cZFn2EoN8t2C/SibmLLdmg1klyl+rVYRf
+	 fYjHcR/JMSOVpI/3t06+1zpRF3YyjCCPFnf7fNk1Z4Yur5mzcQ9bxQaG7T6QBnaJOsrKW
+	 nGuFdyk1h3BoQCKZfaXbpHhLgGUzIVhoNPIRvqoAP9nX5E76iPmTEKaRgrFFN1A513N54
+	 5qz1T1jIsAw0eorx1nl1ZB3GN0elxhnUGbGi4qxaddWkhZD/tR8ciJFvttDZCgwV5M9aG
+	 XlLo+Oc5JZFtEh7yE0FZKNlLhNR4PZudTTAcA7gUDIZLCkzFgUR6Wm8/TPKmu3RF7FA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795188276;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=zOo2EfGngcl3fu/kIhqZadaO75pP0lk1DR/lRHlyrtU=;
-	b=3Bf/JDupGMB0NF5YT0guaBMQxASzyBt8w/bQYuZjpy4pLXvc+1ZMyFO9n8Eev5Ed6Alx
-	 4Y7MlAXroEFDChrhA0V7TYlbTNnQKvpgcH3nTww9GJ+kb1Tfjbiohr3ZglABng4Kdh5l2
-	 9iwPgdwu2OaDjYcbe9Zszk4crOqJ4hHKxZe+bcxYqgvAa5efSUBO+33YuHvzuCgBjiaBz
-	 ETVN/fdmBwFGMjRFpx/o1Vl9SwdSSq2kSbCnJxpM3nU067pguiwACOZxEYHmK3ZLW4kg8
-	 5Pyljq0m9B4+A3HhzhGgRqznESzl+j6HVugTTO0IJiWzmdRO+Xz99CjZcXXH5PLORHA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795190684;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=q9YON1OyDdbhVmSZ3qNdPEZ9E1LMVZlQqEKChXlKUBA=;
+	b=RY+X1KUjtT3Qk4lEEFQ7Y4wOvOPTBVKxGzNac5hZU9CfFKkcAx+sipSBKyAMlC6s61WL
+	 snjUVC4nJue4AsDJIsEHgtBVB0k6D5B4/ok8bCUT/pZZOE5tLRKJdjesGffbJQ9venui7
+	 M1PUkdrX/eJxBq+KvGEBix/KyL8RRzHeYz97p2L4p+yz25XpPMT9C71m45r+373oKnpLX
+	 ED7dfZOmt1uqHhsAlstWxhOnjbnhIHlH9dZwuh2NInS3ypIZgCCaND51x5XiamDXC1kag
+	 LZ/pPrtnrbyAAw4TTqTc6cSJE2XASowcensW0RVg7rMp3Xt3CgFpZz1gPmiauQ7Irbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XCQUtSSf;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=hallyn.com;
+	spf=pass smtp.mailfrom=hallyn.com;
+	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=M9qBDG2c;
+	arc=none smtp.remote-ip=178.63.66.53
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 1ADE6606A320;
-	Fri, 20 Nov 2026 15:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B222C606A325;
+	Fri, 20 Nov 2026 16:04:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B222C606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XCQUtSSf
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9CC851F000CA;
-	Fri, 20 Nov 2026 15:24:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795188275;
-	bh=zOo2EfGngcl3fu/kIhqZadaO75pP0lk1DR/lRHlyrtU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XCQUtSSf00g2G/Jpzjl9LRNQEFXNNRnYGZWzdtuiZBHk7dosmqWBMrC+L7eGsuwT3
-	 6Y8qXJypfh+8W03R5Msm4iQvi0clPna6Y5oqS1fK2fMBPqPJtncagCqPrZrgwYA61c
-	 Ir7DESMb/dns84I6WWtY5IQnf73sTx8SIKL9bvZjYjcc9pfyT2D4A8Rsc/CYWyagj2
-	 DltATLAp/YBb7+MwnvRYS7P7+HT3f1+jlJHOL7W4kb+l4QjcUeVm9fOWhMSveLYD4Q
-	 IO8nsOvMP1W4FNm+RhhQIMrsrDM1nc6imjdTxfwsnAexYb35pl8AoQ1Ir88SqmYiNe
-	 v0OZ/2yfr0Tjg==
-Date: Fri, 20 Nov 2026 17:24:31 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Alexander Mikhalitsyn <alex@amutable.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>, Ben Segall <bsegall@google.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Christian Brauner <brauner@kernel.org>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Chris Zankel <chris@zankel.net>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	"Hallgrimur H. Gunnarsson" <halg@google.com>,
-	Heiko Carstens <hca@linux.ibm.com>, Helge Deller <deller@gmx.de>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Jan Kara <jack@suse.cz>,
-	John Johansen <john.johansen@canonical.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Juri Lelli <juri.lelli@redhat.com>, Kees Cook <kees@kernel.org>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Liam R. Howlett" <liam@infradead.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Magnus Lindholm <linmag7@gmail.com>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Mel Gorman <mgorman@suse.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Hocko <mhocko@suse.com>, Michal Simek <monstr@monstr.eu>,
-	Mike Rapoport <rppt@kernel.org>, Neal Gompa <neal@gompa.dev>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Moore <paul@paul-moore.com>, Paul Walmsley <pjw@kernel.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Rich Felker <dalias@libc.org>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Vlastimil Babka <vbabka@kernel.org>, Will Deacon <will@kernel.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v4 03/14] rootns: Track init lifecycle via
- copy_process() and pid_namespace
-Message-ID: <awBmL_4VqwinHuVN@kernel.org>
-References: <20261119224312.1037966-1-jarkko@kernel.org>
- <20261119224312.1037966-4-jarkko@kernel.org>
- <e376c8f0ec5c50b417375197a5589a210f151d9b.camel@amutable.com>
- <awBLafK4jqB8fTF2@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=M9qBDG2c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1795190675; bh=JO6QMaohqpOpnglO+nbRvEH2R5s3p7FIcS9bHnt3aqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M9qBDG2cZM7LjFCfgpszJGBKKgicC0/vAIeHCbRTCISq50F4PiFn5sf6TBxNXtW+Y
+	 REgUYE3FsvLHP3fPuimDvBL6iD0fUqR9mJ+QAoXeNmFaV44OO7jsAHVQAdJrTl4KVG
+	 n/TEBCpTQpM6vi8XIZuzy0CRIkYsmktCtJSKW3+tGLDRWQ0gHr+C7viSVpoWGajpkP
+	 Eb9kgR6J/Md0jjzPLS2YA18PUp+6HDzOSgZ4sN8aMH824Ye51d/IBcPCImDsxNmOZd
+	 kUNxSPtlEm55pJGrXGRbmuOotLkN0toTYn2o1dgrloEzd6g7TVVwiYRPOxICb0i8mk
+	 ljWWZTYtcKo7g==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 941D71C4E; Fri, 20 Nov 2026 10:04:35 -0600 (CST)
+Date: Fri, 20 Nov 2026 10:04:35 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	bpf@vger.kernel.org, Zhiqi Zhang <zhiqizhangg@gmail.com>
+Subject: Re: [PATCH 0/2] ns: don't call the namespace LSM hooks for
+ kernel-internal namespaces
+Message-ID: <awBvk4BlFqT4jukk@hallyn.com>
+References: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -134,30 +63,63 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <awBLafK4jqB8fTF2@kernel.org>
+In-Reply-To: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org>
 
-On Fri, Nov 20, 2026 at 03:30:21PM +0200, Jarkko Sakkinen wrote:
-> On Fri, Nov 20, 2026 at 02:18:43PM +0100, Alexander Mikhalitsyn wrote:
-> > Dear Jarkko,
-> > 
-> > >  	acct_exit_ns(pid_ns);
-> > > +	exit_rootns(pid_ns, me);
-> > 
-> > We have a very similar mechanism around pidfd's to track exit
-> > information for a task. As far as I can see we already have (struct
-> > rootns *)->init_pid reference, so we can get exit information for free
-> > (look for PIDFD_INFO_EXIT).
+On Fri, Nov 20, 2026 at 01:29:57PM +0100, Christian Brauner wrote:
+> mount_subtree() allocates a private anonymous mount namespace so that
+> automounts during the path lookup have somewhere to go. btrfs goes
+> through it on every mount and NFS on every NFSv4 mount and whenever it
+> follows a referral.
 > 
-> Thanks for mentioning. I'll see if I can leverage it.
+> Since the namespace LSM hooks went in that namespace goes through
+> security_namespace_init() like any other. Landlock enforces
+> LANDLOCK_PERMISSION_NAMESPACE_USE in its namespace_init hook. So a
+> sandbox that handles that permission without allowing CLONE_NEWNS can't
+> mount btrfs or NFSv4 anymore. mount(2) fails with EPERM even though
+> nobody asked for a mount namespace. Zhiqi reported that and sent a fix
+> that skips namespace_init for this namespace (cf. [1]).
 > 
-> If something like this is found, it is partly due long history of this
-> code i.e., not planned/opionated choice :-) 
+> But namespace_free needs to be skipped as well. Otherwise a bpf program
+> attached to namespace_free would see these namespaces go away without
+> ever having seen them being created. Right now that can't happen but
+> only because security_namespace_free() skips the hook if no LSM
+> requested a namespace blob. So mark such namespaces as kernel-internal
+> and keep them away from both hooks. The first patch turns the anon
+> argument of alloc_mnt_ns() into flags so we don't end up with two
+> booleans.
+> 
+> The anonymous mount namespaces created by open_tree(OPEN_TREE_CLONE)
+> and fsmount() are handed to userspace and keep going through the hooks.
+> Landlock covers them on purpose.
+> 
+> I tested this on v7.4-rc3 with a btrfs loop mount and an NFSv4 mount
+> in a Landlock domain that handles LANDLOCK_PERMISSION_NAMESPACE_USE but
+> doesn't allow CLONE_NEWNS. Both fail with EPERM without this series and
+> work with it. unshare(CLONE_NEWNS), clone(CLONE_NEWNS),
+> open_tree(OPEN_TREE_CLONE), fsmount() and setns() are still denied and
+> the Landlock namespace selftests pass.
+> 
+> [1]: https://lore.kernel.org/20261114141323.19029-1-zhiqizhangg@gmail.com
 
-This non-doable or incompatible at least. I'm not sure if that would
-have gain. I think this goes to acceptable redundancy. Or at least,
-currently think this way.
+Thanks, both look good to me.
 
-Br, Jarkko
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
+> 
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> ---
+> Christian Brauner (2):
+>       mount: pass flags to alloc_mnt_ns()
+>       ns: don't call the namespace LSM hooks for kernel-internal namespaces
+> 
+>  fs/namespace.c                     | 31 +++++++++++++++++++++----------
+>  include/linux/ns/ns_common_types.h |  2 ++
+>  include/linux/ns_common.h          | 20 +++++++++++++-------
+>  kernel/nscommon.c                  |  9 ++++++---
+>  4 files changed, 42 insertions(+), 20 deletions(-)
+> ---
+> base-commit: 666539eecdf4db623f5e3c3e55cf9f2dfad24aa4
+> change-id: 20261120-work-ns-mount_subtree-d429ad72f8ac
+> 
