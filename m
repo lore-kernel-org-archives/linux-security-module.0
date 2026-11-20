@@ -1,58 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.204.27.37
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795142197;
-	b=AMJVTKP2n/Cfg4Fvi941xhMK5jgGmF+6um0PZS9Ko+0ISOJPahfL6qAxAAxsGOGFSFR9
-	 OFcLZ1SyJkznYUYJo5tLZmVhZtvw90XoCv9Pq/UC5EEK/945uDuUqSrcgG/v/K+ZaQLC0
-	 n0OByZRkBPBnjYpwtgBtmsTVCezYqd2I73jVnWdDMS90Zg8nRBb6jN91nhX0pZalM1Skg
-	 t1OPn3EthHj+yMwO3i6KoSwsW6edd89iv+9UsVFh5hR70VJCwXM6wU7WGurkJ/POWoV57
-	 7q/vcPncaXQgShlA8etkV1cRHqrzNkCYVip4XPpeMMrRUEIj+SxoJvfzbhHZwI7+BQQ==
+	t=1795144409;
+	b=DNuE0Qk6VAq7Kj1TRUOzVJ+Oj+KiN6v4QggmJBKWeWxWky09LvCyzKBMz6cyKLMP/2Ue
+	 g1bb36rav/T3dXOd6roUpo6yRSY+rM+OPqy5TgAKq2S2mZ7ge5lvYxI5wlbAFGSSTdahJ
+	 e6rfP02zU8Qlt1OIrSjKrPRpMZgwHySg/dJO2VUR350NBs75aKWNFtoEP7WKwTF8hGw6N
+	 Ok/b9VJ8UwjOc0U3xvOEXQTuEpsy/uPIciB0822M8Os1TyUT6Pf1TJKTZkZgxRegPpcUq
+	 IBioOONbFzZGLeaPc5vwJ2deu+GawLasOA0Dh0qFuAw6G/WhcbGcnmptBvg62f205JA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795142197;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=PCnFkSkImsEmBbHnJFfPGtEMMmugbuMVDng24j/AWqI=;
-	b=zZFGw97sbJdgrd84xDxP3/qP7ja4FdMvc6692wSEPFyJhIK4xKKLH+224oS3PcI2xXY/
-	 7yqwIs7NQcOufngB+BvXGT1fDgy8V/AFrBPHpsE/TuzlAw7UvC8tu4deEpqs05rDaImrf
-	 syy6k/QJpr4yccAktxKSrA+fkPFR3NBTIk6heoHizxu+pR2dwKxWj4b+vV8tRSeJIz6Zd
-	 IHcxSJ8TBiv98toryKL8KgKK3k9fzRgK7LU4YkMt1OENFRjk0BrVBQ+1JyACtopFMP33j
-	 iD1RYn3KxQujqoy7zliykMaLETPWWbkcsju1zHVN3J1Y2Sdfjn/jW0aZEkxhj7OWOmA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795144409;
+	h=DMARC-Filter:Received:Received:Received:Received:From:To:CC:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy;
+	bh=VzitFVl3uFCd//sxJWT9xWn8rNYxjausEpqwSdmmrtY=;
+	b=l6jgQe9pTw4h9Gqwfa9F+uCJ16HQQBjEyr3bfTkSibp+dCV5/n0fRs4BTyV74q3HaMqb
+	 qSAeyh3TMli/AgrqT1PSTJvSz7LCLwDpImu1/A6gKoENg1bE31ILsZYK6ACIoinAbLvXF
+	 yxpBiWe+1fHgbyjZxX0/JhACcNwxwkk/4AAOYDpWSzvt4ZXKKwatgiqOYx0vgpMgGqu9e
+	 /edjJ17FOOtPYUUswTGEvGr9mFeX0Oobwcy6Wu9TsFlq1v1JI8V5lUb6DHSo+1AIFyKeL
+	 KlBBsJzwkBMWjbke7vvmI76bzQeQ8ofhZ62g3R6q+BAfKIrF6G/u8qiCtxkl0hStDCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aBhyt2v5;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E16606A320;
-	Fri, 20 Nov 2026 02:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aBhyt2v5
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D5C1F000C4;
-	Fri, 20 Nov 2026 02:36:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795142197;
-	bh=PCnFkSkImsEmBbHnJFfPGtEMMmugbuMVDng24j/AWqI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=aBhyt2v5JvsXGn1h8uWVHO886SeCjCtaaBrOUOgZWfVzdt07uqe49n7sRSFPMViAO
-	 QSPqkcQg5q/BnREk3pM2uHAXHIBRVlHencmZIGVPtgOWxKJjLf50mZFGTgG6lJx2ID
-	 yXxGCcEEupL6Dc75YHcMNWNr9GXKZS7mvdk7VD7rOWRKUj6hh6gzINcVH+j53ahfR9
-	 JQlmTIefRLU5+ECYD25Noe42oyAkaAt7xpNWeUsNPmAA8lFetTVzuUVlf1Vij7dXeO
-	 AnFbZFZlPfucY2DELmbrt1BOu6GYPw6SyjP0BEKgyJa1orT/ISkOrRpd0UeIJILGOR
-	 DaZt/G54qVXDQ==
-Message-ID: <sashiko-outbox-224374@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] KEYS: fix userspace buffer overflow in
- keyctl_pkey_e_d_s()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Guicai Ma" <maguicai@kylinos.cn>, "David Howells" <dhowells@redhat.com>, "Jarkko
- Sakkinen" <jarkko@kernel.org>
-Cc: "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge
- E . Hallyn" <serge@hallyn.com>, "Florian Bauckholt" <florian.bauckholt@cispa.de>, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20261120022447.789625-1-maguicai@kylinos.cn>
-References: <20261120022447.789625-1-maguicai@kylinos.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 02:36:36 +0000
+	dmarc=pass header.from=hygon.cn;
+	spf=pass smtp.mailfrom=hygon.cn;
+	arc=none smtp.remote-ip=101.204.27.37
+Received: from spam01.hygon.cn (unknown [101.204.27.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCABF606A326;
+	Fri, 20 Nov 2026 03:13:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BCABF606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jW0lg3DN9zVcB5;
+	Fri, 20 Nov 2026 11:13:19 +0800 (CST)
+Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jW0lc3zZvzVcB8;
+	Fri, 20 Nov 2026 11:13:16 +0800 (CST)
+Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
+	by maildlp1.hygon.cn (Postfix) with ESMTPS id 4277EC087;
+	Fri, 20 Nov 2026 11:13:07 +0800 (CST)
+Received: from hsj-2U-Workstation.hygon.cn (172.19.24.226) by
+ cncheex04.Hygon.cn (172.23.18.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Fri, 20 Nov 2026 11:13:14 +0800
+From: Huang Shijie <huangsj@hygon.cn>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<hch@infradead.org>, <agruenba@redhat.com>, <mic@digikod.net>,
+	<axboe@kernel.dk>
+CC: <gnoack@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>, <legion@kernel.org>, <aleksa@amutable.com>,
+	<libaokun@linux.alibaba.com>, <ebiggers@kernel.org>, <djwong@kernel.org>,
+	<sandeen@redhat.com>, <zhongyuan@hygon.cn>, <fangbaoshun@hygon.cn>,
+	<yingzhiwei@hygon.cn>, <wujianyong@hygon.cn>, <shijie8@gmail.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-block@vger.kernel.org>, <gfs2@lists.linux.dev>,
+	<linux-security-module@vger.kernel.org>, Huang Shijie <huangsj@hygon.cn>
+Subject: [PATCH v3 01/11] vfs: add super_iter_inodes()
+Date: Fri, 20 Nov 2026 11:12:55 +0800
+Message-ID: <20261120031305.3561045-2-huangsj@hygon.cn>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261120031305.3561045-1-huangsj@hygon.cn>
+References: <20261120031305.3561045-1-huangsj@hygon.cn>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -61,80 +67,182 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: cncheex05.Hygon.cn (172.23.18.115) To cncheex04.Hygon.cn
+ (172.23.18.114)
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [High] KEYS: in2_len overwritten with max_sig_size in
-  keyctl_pkey_params_get_2() [1]
---
+Iterating the cached inodes of a superblock is open coded in the
+kernel. Add super_iter_inodes() for the callers which can work without
+holding the sb->s_inode_list_lock.
 
-commit a87f672b96b4f7c3b4eabf969b369139c77f96be
-Author: Guicai Ma <maguicai@kylinos.cn>
+For super_iter_inodes():
+-- By default, it runs @iter_fn with a referenced inode and with
+  sb->s_inode_list_lock dropped, so the callback is free to block and to
+  do whatever it wants with the inode except drop the reference the
+  iterator holds.
 
-KEYS: fix userspace buffer overflow in keyctl_pkey_e_d_s()
+-- Three flags change the default behaviour.
 
-This commit passes the caller-supplied uparams.out_len back from
-keyctl_pkey_params_get_2() to keyctl_pkey_e_d_s() and returns -EOVERFLOW if
-the operation output exceeds the userspace buffer size.
+  INO_ITER_F_REFERENCED restricts the walk to inodes which still have a
+  reference.
 
-> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-> index e7121523b9c9a..b5f82804b5ad1 100644
-> --- a/security/keys/keyctl_pkey.c
-> +++ b/security/keys/keyctl_pkey.c
-> @@ -113,7 +113,8 @@ static int keyctl_pkey_params_get(key_serial_t id,
->  static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __us=
-er *_params,
->  				    const char __user *_info,
->  				    int op,
-> -				    struct kernel_pkey_params *params)
-> +				    struct kernel_pkey_params *params,
-> +				    u32 *user_out_len)
->  {
->  	struct keyctl_pkey_params uparams;
->  	struct kernel_pkey_query info;
-> @@ -183,6 +184,8 @@ static int keyctl_pkey_params_get_2(const struct keyc=
-tl_pkey_params __user *_par
->  	}
-> =20
->  	params->in_len  =3D uparams.in_len;
-> +	if (user_out_len)
-> +		*user_out_len =3D uparams.out_len;
-> =20
->  	switch (op) {
->  	case KEYCTL_PKEY_VERIFY:
+  INO_ITER_F_NOREF does the opposite: only inodes whose reference count
+  has already reached zero are handed out.
 
-[Severity: High]
-This problem wasn't introduced by this patch, but in the
-KEYCTL_PKEY_VERIFY case just above this hunk, commit cb481e59ea6c ("KEYS:
-fix overflow in keyctl_pkey_params_get_2()") also overwrote params->out_len
-(which aliases params->in2_len in struct kernel_pkey_params) with
-info.max_sig_size instead of preserving uparams.in2_len [1]:
+  INO_ITER_F_NOIGET tells the iterator do not call __iget for the inode.
+  Used with INO_ITER_F_NOREF in evict_inodes().
 
-security/keys/keyctl_pkey.c:keyctl_pkey_params_get_2() {
-	...
-	case KEYCTL_PKEY_VERIFY:
-		if (uparams.in_len  > info.max_data_size ||
-		    uparams.in2_len > info.max_sig_size) {
-			ret =3D -EINVAL;
-			goto out_up_key_sem;
-		}
+  The flags are not orthogonal, so super_iter_inodes() warns if an unknown
+  bit is set or if INO_ITER_F_REFERENCED is combined with either of the
+  no-reference flags.
 
-		params->out_len =3D info.max_sig_size;
-		break;
-	...
-}
+Signed-off-by: Huang Shijie <huangsj@hygon.cn>
+---
+ fs/super.c                     | 87 ++++++++++++++++++++++++++++++++++
+ include/linux/fs/super_types.h | 29 ++++++++++++
+ 2 files changed, 116 insertions(+)
 
-When keyctl_pkey_verify() verifies a variable-length signature shorter than
-info.max_sig_size (such as an ASN.1 DER-encoded ECDSA signature), does
-memdup_user(_in2, params.in2_len) read past the end of the userspace _in2
-buffer and either fail with -EFAULT or pass trailing garbage bytes to
-asym_verify_signature()?
+diff --git a/fs/super.c b/fs/super.c
+index c5a0658f7aaf..204c70c7f179 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -171,6 +171,93 @@ static void super_wake(struct super_block *sb, unsigned int flag)
+ 	wake_up_var(&sb->s_flags);
+ }
+ 
++static bool super_iter_check(struct inode *inode, int flags,
++			     ino_iter_eligible_fn eligible, void *priv)
++{
++	bool ret = false;
++
++	if ((flags & INO_ITER_F_REFERENCED) && !icount_read_once(inode))
++		return false;
++	if ((flags & INO_ITER_F_NOREF) && icount_read_once(inode))
++		return false;
++
++	spin_lock(&inode->i_lock);
++
++	if ((flags & INO_ITER_F_NOREF) && icount_read(inode))
++		goto out_unlock;
++
++	if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE))
++		goto out_unlock;
++
++	if (eligible && !eligible(inode, priv))
++		goto out_unlock;
++
++	if (!(flags & INO_ITER_F_NOIGET))
++		__iget(inode);
++
++	ret = true;
++out_unlock:
++	spin_unlock(&inode->i_lock);
++	return ret;
++}
++
++/**
++ * super_iter_inodes - iterate all the cached inodes on a superblock
++ * @sb: superblock to iterate
++ * @iter_fn: called for each inode, with a reference held
++ * @eligible: optional filter, called before the reference is taken
++ * @priv: caller data, passed to @iter_fn and @eligible
++ * @flags: INO_ITER_F_* control flags
++ *
++ * This function iterates all cached inodes on a superblock that are not in
++ * the process of being initialised or torn down. By default it runs @iter_fn
++ * with a valid, referenced inode, so it is safe for the caller to do anything
++ * it wants with the inode except drop the reference the iterator holds.
++ *
++ * The flag INO_ITER_F_NOIGET changes that contract. It runs @iter_fn without
++ * grabbing the inode with __iget().
++ *
++ * Return INO_ITER_RET_DONE if the iteration runs to the end.
++ * Return other value if the iteration breaks.
++ */
++int super_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
++		      ino_iter_eligible_fn eligible, void *priv, int flags)
++{
++	struct inode *inode, *old_inode = NULL;
++	int ret;
++
++	WARN_ON_ONCE(flags & ~INO_ITER_F_ALL);
++	WARN_ON_ONCE((flags & INO_ITER_F_REFERENCED) &&
++		     (flags & (INO_ITER_F_NOREF | INO_ITER_F_NOIGET)));
++
++	spin_lock(&sb->s_inode_list_lock);
++	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
++		if (!super_iter_check(inode, flags, eligible, priv))
++			continue;
++
++		spin_unlock(&sb->s_inode_list_lock);
++
++		if (!(flags & INO_ITER_F_NOIGET))
++			iput(old_inode);
++
++		ret = iter_fn(inode, priv);
++
++		old_inode = inode;
++		if (ret != INO_ITER_RET_NEXT)
++			goto out_loop;
++
++		cond_resched();
++		spin_lock(&sb->s_inode_list_lock);
++	}
++	spin_unlock(&sb->s_inode_list_lock);
++	ret = INO_ITER_RET_DONE;
++out_loop:
++	if (!(flags & INO_ITER_F_NOIGET))
++		iput(old_inode);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(super_iter_inodes);
++
+ /*
+  * One thing we have to be careful of with a per-sb shrinker is that we don't
+  * drop the last active reference to the superblock from within the shrinker.
+diff --git a/include/linux/fs/super_types.h b/include/linux/fs/super_types.h
+index 72f4288e16c5..974d3c087952 100644
+--- a/include/linux/fs/super_types.h
++++ b/include/linux/fs/super_types.h
+@@ -80,6 +80,35 @@ enum freeze_holder {
+ 	FREEZE_EXCL		= (1U << 3),
+ };
+ 
++/* Inode iteration callback return values */
++#define INO_ITER_RET_DONE	0
++#define INO_ITER_RET_ABORT	1
++#define INO_ITER_RET_NEXT	2
++
++/* Inode iteration control flags */
++/* Only iterate inodes that still have a reference. */
++#define INO_ITER_F_REFERENCED	BIT(0)
++/* Only iterate inodes whose reference count has reached zero. */
++#define INO_ITER_F_NOREF	BIT(1)
++/* Do not take a reference on the inodes handed to the callback. */
++#define INO_ITER_F_NOIGET	BIT(2)
++
++/* REFERENCED and NOREF ask for opposite things, so only one may be set. */
++#define INO_ITER_F_ALL		(INO_ITER_F_REFERENCED | INO_ITER_F_NOREF | \
++				 INO_ITER_F_NOIGET)
++
++typedef int (*ino_iter_fn)(struct inode *inode, void *priv);
++
++/*
++ * Optional filter, called from inside the inode's i_lock and before
++ * __iget(), so that an inode can be rejected without paying for a
++ * reference.
++ */
++typedef bool (*ino_iter_eligible_fn)(struct inode *inode, void *priv);
++
++int super_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
++		      ino_iter_eligible_fn eligible, void *priv, int flags);
++
+ struct super_operations {
+ 	struct inode *(*alloc_inode)(struct super_block *sb);
+ 	void (*destroy_inode)(struct inode *inode);
+-- 
+2.53.0
 
-Should KEYCTL_PKEY_VERIFY set params->in2_len =3D uparams.in2_len instead?
 
-[1] https://sashiko.dev/#/bug/linux-dd9ad2ca-a846-4d0d-89d6-aa262ffd40f1
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261120022447.7896=
-25-1-maguicai@kylinos.cn?part=3D1
