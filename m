@@ -1,63 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795290870;
-	b=H+iD7wbe0+GFgkyHvNR5wSFBbiuKC+PDs2M4bQYah56/s45Uc7cRq40le+TC5wvJ5vD1
-	 QAnx0///P9YfaCxMfKmAsWZfHxMWdwtB0YpPVSrWU5b666Z5NO2xO7VWqeC+wEe5J5Eo5
-	 TZyV+Xw3403Ao0kyIEF2AQ89MpgLU1GxVwNLXkjsNNTy2CVY1alKW8Sxbi7hL4ccieiH+
-	 rQXkm2GHvInuUhqd/x7MPJUkIjerImD4RxYeeh2NVwbDdIem64Zgs0eDaSKWlboLy6Nb/
-	 jEx0yAgKbXUlK9i/ou/mySLk/IBL1BrPq/rU1VLF5R/0pITaVkUSoj8xyNAcKfNK13A==
+	t=1795290890;
+	b=PFcUVTVigieH9H4Yud+p/gcBqVh+vJ0pVux+ltwLwgr9ennTBElbPd+eXDlj+mpIR4g6
+	 93PXREgAviSNY4cs/7YsoEwhP3ND9pctLcMGbrGx6mXYGcRHbRblddoLeN8+XEfaW9X+Y
+	 /JzBhRtq5QBvTcaBp3mdQZs+g9Hn3sSls/Vfz/MatnW8OGxQ8YAvslAVf29+QxKz/7dQ6
+	 h38NjxhGiYoz5uczVZoD0CIRj5h6aEMtyB2v5BHcFstrHpO/rdBJkg80NBCvQgnWfyoMC
+	 470+BKB7llPjlwoFzMaAAFnfxDkwVLftvjWIHAilB5LdX0p7hFjVDPMg8/1ImOSaB6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795290870;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:From:To:Cc:Subject:
-	 Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Infomaniak-Routing;
-	bh=Bcg6serWzzJut+m/VDVYqdkm+Bbwlucwp+T1gHr1Az4=;
-	b=FkMNbPkV0D0t1J/rnfNDeoG+uijxmX4yBiVe1iyKXDP9t7hNrapK6JSfLqK5rFKy/Pju
-	 4Mo8fP7aVpmaPvQgMeRrlG2biWTqbU3cOnuj2GC1qP1U8wnb5Ym/96KWJuke08B87Y+GH
-	 hl5TvDHjcNSIQLGTk+jh1+zd14GXzSISiGXhD0XpbbAvNj6yVpWgomZz6WvTmpxu3hQD+
-	 J2hgDinTmLIwon1o56fG04+IUaPX/irvgI/wR84LO53hsz02YCFKApqlanr6xd9Xyctf4
-	 LHAT9Y2qfYoEAXBzs7EoRTusukEyDD9YS2K4Ino92LNyQJwNXzlRpJwMdxRbzPoPFEg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795290890;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=k3pGh/Nf6VGkSVannc1t1HSa1H+w+EAysJ0+xryVXV8=;
+	b=PPp0+sYjfmAA1SQt8rJl4ZlomQe24hYMteIILeXEOOpceDAaGzFyYYNj+7ULh91bzozb
+	 IQCoYCYAh5WuXEN03S7/lemKSK48w7s9f7+eyXJapShzWVA+B6zWxc/R8+yR6Jg6XCS9b
+	 3WgbrLRzw2iRR8LMDNPtSB0L8bktqOdDTI1DbFEe+FnBOvw5qFpBeKaLV0AQkHXXboi4O
+	 tYPqh0HqtY30Mr6MTySiA3ZCJS9iySRQqJMO8RYp4AaIoaVTuZsmjQysGZgB6J/A0w+1Z
+	 RgNTLllwMRiWpTP7HBcWFTy1oj44ZTjKXhq8miwvor0AAIC5uw8a5VKP75kNMZ4nQ+Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=lrp1DGXF;
-	arc=none smtp.remote-ip=84.16.66.172
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d7Ozz2wb;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52D9606A320
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 19:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A52D9606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2EE03606A320;
+	Sat, 21 Nov 2026 19:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=lrp1DGXF
-Received: from smtp-4-0001 (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jX2wC2ctHzJnk;
-	Sat, 21 Nov 2026 20:54:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1795290859;
-	bh=Bcg6serWzzJut+m/VDVYqdkm+Bbwlucwp+T1gHr1Az4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lrp1DGXF4sMHXSB3dtPD0en1W8ZbNQqcUk0qSl+hXng2yaAiv4JfOL4HSkavI/gyp
-	 q20acMGCiabqFSv9uLS8PtZejk73WjxFCjde9H26R0qKwOKUikHKp9hQ4uoJwytvnB
-	 epYTtoDF8nBsb67W0+/F0YH2f7rWwLwn4lQC2iAU=
-Received: from unknown by smtp-4-0001 (Postfix) with ESMTPA id 4jX2wB2QdWzCSW;
-	Sat, 21 Nov 2026 20:54:18 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Dwi Siswanto <me@dw1.io>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=d7Ozz2wb
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 39FA31F000C4;
+	Sat, 21 Nov 2026 19:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795290889;
+	bh=k3pGh/Nf6VGkSVannc1t1HSa1H+w+EAysJ0+xryVXV8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=d7Ozz2wbWDdWuTNONSLPuo43rI9mXsAtcpQviZ2TpeM6KVoRdztLFFZihLhC9YOo4
+	 d3eKmkFXEetcuCZ9G4+sdWZl8ixRE02VNs2YBIZFvvc1sUUs84h1hu1NPNQyBSmI6g
+	 Fb2SGh3KWHgnt/RWcd4GdMO6CEBCKUpRNfWJhey/ix8VC2+L2LTKCxGIZeGI8nNi4h
+	 6HjCcVHNq35yMBZwBS3A4nM0Ubvt1DztlVj/Wr9djhOADA2T+ACJmy2JezPrKfzp7B
+	 jXHaF8iQZkKNh+gpgb8nmCc6QFo/ofQ79XDWm6nmUbUZH82+u97zhW34GWT5nxZJHm
+	 93jBTnsZk9nZw==
+Date: Sat, 21 Nov 2026 21:54:45 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	Alexander Mikhalitsyn <alex@amutable.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
+	Neal Gompa <neal@gompa.dev>, Paul Moore <paul@paul-moore.com>,
 	Serge Hallyn <sergeh@kernel.org>,
-	Tingmao Wang <m@maowtm.org>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock fixes for v7.4-rc4
-Date: Sat, 21 Nov 2026 20:54:04 +0100
-Message-ID: <20261121195404.2775730-1-mic@digikod.net>
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: Re: [RFC PATCH v5 13/25] rootns: Add rootns() system call
+Message-ID: <awH3BUHarwfCPJwi@kernel.org>
+References: <20261121000844.1863324-1-jarkko@kernel.org>
+ <20261121000844.1863324-14-jarkko@kernel.org>
+ <awHsvz1vdlwsink0@kernel.org>
+ <awHtKMkyGEPTB17G@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -67,103 +70,39 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <awHtKMkyGEPTB17G@kernel.org>
 
-Hi,
+On Sat, Nov 21, 2026 at 09:12:44PM +0200, Jarkko Sakkinen wrote:
+> On Sat, Nov 21, 2026 at 09:10:59PM +0200, Jarkko Sakkinen wrote:
+> > On Sat, Nov 21, 2026 at 02:08:32AM +0200, Jarkko Sakkinen wrote:
+> > > Setting up an isolated namespace environment from a multithreaded
+> > > manager process currently requires helper processes to call unshare()
+> > > and pass file descriptors back over sockets.
+> > > 
+> > > Add the rootns() system call to allocate a detached rootns instance
+> > > owning a fresh user namespace alongside dedicated empty mount
+> > > (CLONE_EMPTY_MNTNS), PID, UTS, IPC, network, cgroup, and time
+> > > namespaces, and return its control file descriptor. Finalize the nsproxy
+> > > time namespace and pin active references for the lifetime of the rootns.
+> > > 
+> > > Co-developed-by: David Howells <dhowells@redhat.com>
+> > > Signed-off-by: David Howells <dhowells@redhat.com>
+> > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > 
+> > Syscall name is outdated. I'll rename it as container_create(). Does
+> > not have to be final name, but is a better wip name.
+> 
+> Something more non-generic as it inevitably would collide to something
+> (did not check). I'll figure something out.
 
-This fixes several Landlock and LSM issues:
+At least for the next iteration I call the object as "vault" and rename the
+syscall as vault_open(), and that is based on:
 
- - prevent composed rulesets from denying link and rename operations
-   that each ruleset allows separately;
+	$ cat /proc/kallsyms | sed -n '/call_meta__/p' | sed 's/.*call_meta__\(.*\)/\1/g; s/\(.*\)/SYS_\1 \1/; 1i #include <sys/syscall.h>' | gcc -E -P - | grep -v 'SYS_' | sort -n | uniq | grep _open
+	240 mq_open
+	298 perf_event_open
+	434 pidfd_open
 
- - close capability-mediation gaps for low-address mappings, inheritable
-   capabilities, the admin memory reserve, and PR_SET_SECUREBITS, so LSM
-   capability denials apply consistently;
-
- - distinguish namespace creation from entry in denial records and
-   expose the checked capability context to BPF tracepoint consumers, so
-   they can interpret denials correctly.
-
-Tests and documentation are updated.  This also fixes clang-format's
-handling of guard() and a missing landlock_add_rule(2) error
-description.
-
-Please pull these changes for v7.4-rc4 .  These commits merge cleanly
-with your master branch.  Kernel changes have been tested in the latest
-linux-next releases.
-
-Test coverage for security/landlock is 91.8% of 2894 lines according to
-LLVM 23, and it was 91.8% of 2864 lines before this PR.
-
-Regards,
- Mickaël
-
---
-The following changes since commit aebb7274476403040d582c61478df8f4a7bf9cd3:
-
-  Linux 7.4-rc3 (2026-11-15 14:30:11 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.4-rc4
-
-for you to fetch changes up to 4feb6879b9ab42cacb905f27a44160b7f1f49d85:
-
-  landlock: Add missing EINVAL case in the doc for landlock_add_rule (2026-11-19 17:51:43 +0100)
-
-----------------------------------------------------------------
-Landlock fixes for v7.4-rc4
-
-----------------------------------------------------------------
-Günther Noack (5):
-      landlock: Fix layer composition of LANDLOCK_ACCESS_FS_REFER
-      landlock: Add KUnit test for landlock_get_fs_access_mask()
-      selftests/landlock: Test that layering does not break refer
-      landlock: Simplify landlock_get_fs_access_mask()
-      landlock: Clarify implicit handling of LANDLOCK_ACCESS_FS_REFER
-
-Mickaël Salaün (13):
-      landlock: Factor out capability denial checks
-      landlock: Mediate CAP_SYS_RAWIO for mappings below mmap_min_addr
-      landlock: Mediate CAP_SETPCAP for inheritable capabilities
-      landlock: Mediate CAP_SYS_ADMIN for the admin memory reserve
-      selftests/landlock: Test capability checks outside the capable hook
-      landlock: Fix capability restriction documentation
-      capabilities: Check PR_SET_SECUREBITS with ns_capable()
-      selftests/landlock: Test PR_SET_SECUREBITS mediation
-      landlock: Distinguish namespace creation and entry denials
-      landlock: Add capability objects to denial tracing
-      selftests/landlock: Test namespace denial operations
-      landlock: Document namespace denial operations
-      clang-format: Fix formatting of guard()
-
-Tingmao Wang (1):
-      landlock: Add missing EINVAL case in the doc for landlock_add_rule
-
- .clang-format                               |   1 -
- Documentation/admin-guide/LSM/landlock.rst  |  21 +-
- Documentation/security/landlock.rst         |   8 +-
- Documentation/trace/events-landlock.rst     |  26 +-
- Documentation/userspace-api/landlock.rst    |  11 +-
- include/trace/events/landlock.h             |  36 ++-
- include/uapi/linux/landlock.h               |  24 +-
- security/commoncap.c                        |  45 ++--
- security/landlock/access.h                  |  11 +-
- security/landlock/audit.c                   |  10 +-
- security/landlock/cap.c                     | 130 ++++++++-
- security/landlock/domain.c                  |  44 +++
- security/landlock/domain.h                  |   9 +-
- security/landlock/errata/abi-4.h            |  21 ++
- security/landlock/log.c                     |   6 +-
- security/landlock/log.h                     |  12 +-
- security/landlock/ns.c                      |  10 +-
- security/landlock/syscalls.c                |   1 +
- security/landlock/trace.c                   |  12 +-
- tools/testing/selftests/landlock/cap_test.c | 397 ++++++++++++++++++++++++++++
- tools/testing/selftests/landlock/common.h   |   4 +-
- tools/testing/selftests/landlock/fs_test.c  |  61 ++++-
- tools/testing/selftests/landlock/ns_test.c  |  25 +-
- tools/testing/selftests/landlock/trace.h    |   1 +
- 24 files changed, 815 insertions(+), 111 deletions(-)
+Br, Jarkko
