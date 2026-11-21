@@ -1,65 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795220294;
-	b=q/Ms9PkA22vrABY1qRj4yvnuOyHH6C8MkG40v1MxLHnvrPtpwsIezK+qI77WFQs8WbfG
-	 0wnCu49vMk43hDIUmPy0lNnkXB6wZ99preILAnyF42Vc/QvHOtDKIAyWl69Fr0Dg5OW88
-	 vDyK8w29xHVtlwhIwW8fSI/E857FqILYKgz5g1H9q296C1p9u0UiEojrMS9MtMyBbwTWK
-	 19DV89TT0lHhMLtdDh3fp83TWBnhshhrFW8gyO709aTMeWCI7LoCGn6fZgXqDTZXjNEh9
-	 wz3jrZew01YD95Q5iRNYzi0JJAmirpKOC89/x+B2AWEugIfBSNp+cO1J8269GEw+1Lg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795220294;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=ffPWhV24l7aV34qwodVY7b49pMX0mUgfsIkMN9/2TPc=;
-	b=BBiyLTdnB9iUNOcK9All9OzEdvnP4qL2eDTIkG4CpShaW6ykNnweiwPkoM+kqK+p0qzk
-	 JuaJjYjg5eGmidOf0HWeAApetXJd0FQOFQ1t3EgAGwkTQPOSetSB2W0r1uIZObBExiLYi
-	 g8vHslsim8v5iZK+dSwyrNiNNq0RwlQRDA7LQgIRuQFwcK4QvDMOtDKq067EF3z9tnYJw
-	 GY3RG4EfmSGUF7YQ7VElMhHNlXcepBlQppoF74gwQ1wkk67fIJHJKhLrN6HiullzdMlR7
-	 oHqfC0Q+TP7zlpci0jOIHlkMHB+oe/Twu61vMMU56hXy4v5uPoALRkNbpLLFJ65WX+A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=laXyyUuZ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.175
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795220447;
+	b=y0FlAFTpj59FJB+mmujNzN+GicYIO22B4TzsehZZX7So8fHEHGZapUe/COB5/x2pGQbv
+	 FdtCgUPa6gMGUpft6Q0jIwkzNJ/SchteXikgnyUxZMUVqQqDkkaS5g4XdUR663imJ1WgR
+	 OlpScJNpXz6V8XIHIOOeWXyfPho8V08SzYb/JUrrxhshlE6KARVjIwD4IubBLXuVu1erU
+	 1CsgxcaueLektJHBKZ9iMfdvhsw067bLBULmiQRAOlrp8yz4QAKn4S9HpSAeHlJuc+m17
+	 TMsLN+d6X6IDFi+JkuGtwty7eLUDSyliMZkzmpBpOKXFXBtRNauB7grZVMLtCCLRKYw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795220447;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=oTW1ECUqKZPFZMGwmFF0XG/dMWrRIOOKKmtz6Ts2T3U=;
+	b=rIvx4XlmXNQVqcthWDSRWudrlx12/g3aBEtjY2T5wm4eJ/F+cQ/mnBGiGiAJSofLZLx8
+	 noxJEQ4JS+MMV0yV0KTarHPoNDk5VZASdulAMIU26foYAsyOFEUmmvnTynJkBEig/SN+E
+	 NBrR9dk4TdNZZqj+hLMxz0Iqr0m26nyCwJWOflvMT2STuIxTPs5oiVVh+MzpHwJdhmcII
+	 BYogag0Cmj8dR/tcz/C66PgZT53yFlxe3Y0C0LtvHoRXyDm7pvYexCreYqNtomE+hoc9H
+	 NRHBG9pVUK1nXUMZ1fLLuRenTAPe7I8m9wy4J8RdTsVJn3gujdfrbBGQ4IXFxVovyjA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=LklpZjfD;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.175
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 1356E606A695;
-	Sat, 21 Nov 2026 00:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5051A606A6A5
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 00:20:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5051A606A6A5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=laXyyUuZ
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id DE4E51F000C6;
-	Sat, 21 Nov 2026 00:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795220293;
-	bh=ffPWhV24l7aV34qwodVY7b49pMX0mUgfsIkMN9/2TPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=laXyyUuZTT0f1BgWfsRs3hbfvkYEWRTNIHzPq4IJ69OLR0lsi9wF7blAtcps3JLYo
-	 dDMN4oi+/CNtoR/45odtOA9HbsLlkq2nyJ5gnGxfOs/7e9fj/YGLaUAjLSUvLULAO3
-	 DsLKgXzm1aOVL7r3Qdc/mhGN/rXlUtbtZh8yjmioYivekgq56W+/8pu/DxQROV1KwC
-	 7FzIy8hIHURS2EBqZ3LWj9/7tZkgq3x7tgXUidMh14L5rba/b96Sy5fyQLj6CEpkyc
-	 TWVmZpBJw7lplo03GrGiIK55vUGWTUVWf9nmwG/aBWWtR5TTxDHbYZpCO8inWg9HhG
-	 VdfRBSXOI0Yaw==
-Date: Sat, 21 Nov 2026 02:18:09 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Alexander Mikhalitsyn <alex@amutable.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
-	Neal Gompa <neal@gompa.dev>, Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v5 14/25] rootns: Add ROOTNS_WAIT ioctl
-Message-ID: <awDjQeXjqrhNHoWQ@kernel.org>
-References: <20261121000844.1863324-1-jarkko@kernel.org>
- <20261121000844.1863324-15-jarkko@kernel.org>
- <awDjC9hcKSRnCPgJ@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=LklpZjfD
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2f0481b35c9so7289745ad.0
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2026 16:20:43 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795220442; cv=none;
+        d=google.com; s=arc-20260327;
+        b=jTOJKNmck6GG+/FrQz2fSQNeg4MKNeXrpxSfIaki50rxR1TDg3s5Rv0QIvtc1zCV8E
+         UEkPDV1HpIvBntQqERhJRmOb9Z8V51iyZl41/qQ5oTWGiG13/nlBFx6g23Cwz3fhzXSj
+         SsxWBaJ5XZte5Bhp7p2naqdTFN5PcEgadgtu7Y8eeORdigmMz6g+h2sxoULr2lJHx73K
+         mVyBArwGRgmXgULuBjGLdUIRPxdKqXhlgaY0y4arbshLIVgrLFqyG357nsC5cRkEWf5h
+         VsRXRHWMLoRtuJ302Hezk1EXqPW1c44cS9lt+RvD4GjGVC+/wG64z21frfgoZ05uYmda
+         n7SA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=oTW1ECUqKZPFZMGwmFF0XG/dMWrRIOOKKmtz6Ts2T3U=;
+        fh=J4vZsYgbKCpK1Zrpjclq+KVbaZxjgWWdTDHqdjGnAJ4=;
+        b=T6iNJkH7HfAdudYXGPcpgfFGLZZuviGcGcdqi9V7F4JEqKHpnJsImZ36LEbPwjREFr
+         +u7DvLwJHg7g1PMHsC83Q4AZyDn7DHPfOLUhgJOCD2qz/8y+xETarzdYJSWg+uNDPuPw
+         wc51wayNVBfW0xPE33Ea1iEtzBA6MZ9Xu5hhtPIZitWFFIQxBwEbiTFFdI8sRInsG2aJ
+         znR9BoTfZ5bZ8T1yCBYHnI3OpRxLC+FQflO/30ZBiUb/zbHOW1n0I+WQufZBas2opqef
+         vvjSS7RhoCHvSYMZ64TwnIW95PX+JNTqgWw5a25zuy0tul3b+iGGVp2EXSwSyvKfLJsk
+         olHw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1795220442; x=1795825242; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=oTW1ECUqKZPFZMGwmFF0XG/dMWrRIOOKKmtz6Ts2T3U=;
+        b=LklpZjfDtnvNwzndHIjW8ZNQ8zMlt3I98Fdj6dWCKzaDJHMX2vBYb0r30EuTxy9M06
+         eQGhuC7Yd00TmtaxH7l61w5nkPpoOIydtVskUsiv/RWg/4GHNeQZO7yXThSxIg/cMJvq
+         s55skHl3XgM2Hjtfb2lXYxlXe5AyNPaWs8TDCRw2j2xcvkU6RSPUD6Qj2LEElOHa+vRt
+         Ke+/y0j0acY9FV8MnSNLvTrorvLnJ9CFyO7xdWgnxq4unh+56/00JLLA9wfiUbOJAafX
+         uJk0bi/Qov+0va5b24OMN8H+By8PZUz/+csFTkmKtGJ2Y66fsZIybqh8WSdpGQQaP42R
+         PWzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795220442; x=1795825242;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=oTW1ECUqKZPFZMGwmFF0XG/dMWrRIOOKKmtz6Ts2T3U=;
+        b=S7hh6BrdbxRhThbFTTUbngj2JO0bMe7/+z8PEkd9MedsUgrXgWW5Z9GxAmAVROa2D8
+         AKKKMMCCs7GJk9ZbEMu2/bVREnzcoiH1uy6F4s9MwpNVw91RpkfoOEwwQ5Nsem+auTbc
+         2mXgAtVNenRaxHwCgjrZOhAS4ncy57mXMTOQLzxG9RcwFEl7xadIXRUfM8l0pQYTrPdc
+         XTuOkrJrXN7bt8yUIM0ttdUAlsowwwHLL3TP4TZ/sCW06k1VZEddczGnynOW3KaX60Ho
+         VGSNGi+9frXrD3hJNazIzYGtcZA1Bv/fRBH4f7cM28ehAxLOixRBcVdthF2SrfnNHgaV
+         bygw==
+X-Forwarded-Encrypted: i=1; AL+hErHxqj2ie75Hq4aDFLpet1pBBKfnd0qKIgXUSvschJuLcinjFnN93gY4OavWHBT5vR9MJJ1MTJ/NaPmVINIDhZayUoZa0FI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9eB4YN0Jhz+FtMhtmEjcJr2FiZrlj2+xLnxKZ05QDer5/hZvpL
+	8d4BWHdVHf3S6fUYuySlgom/eyoZsrg7Vj1xF/fd5nSn+7qoPH8k1p9ZTCf0SghEWXIE1L8KLLX
+	jo7han06EVjNEyr8JrPlK2+YmTtZUSwrbzrA40qbQ
+X-Gm-Gg: AZFdTZcGwxrTxDyhfbmd0UQVucA6xuMm8SZ0Sjxt8KMU3tjGMfpr0cYbs+R+95qgFU7
+	xGuPn14ALoMrEXI0GvH/mm4DeXbOvaMNVaPg0rvRDr185H/Y0+W97f74A92XVgvS3grpge+JowH
+	vX+iqs5AtumJNdikB+PTN8QPHvOwuS4TGHz8sRa1C+1XdZtaBOeUzxTU6Tdslr7xRCnyfvKh52k
+	R4S5asBPIHHNQdcEjRDyQ3ZbbY/PHez4/bE14J02pnXPKx85hOZUIVpLMtj/vnNqFEbFpxCPtIu
+	jeGLvuooBYsyxq5QICU3QBbGZyUjfSuLURH5zZ3q63imJYWTJyDYJXmRaqObmo6dnLb5NMwX/yv
+	CA0G6ChiqKKnDKv3J4BXha14GML6g2ml8BqwJ8fgLiwNLYNoo7Z7zsW22nWUobbp8lxM+
+X-Received: by 2002:a17:902:e811:b0:2f0:22b2:bfe2 with SMTP id
+ d9443c01a7336-2f03f201151mr45499255ad.31.1795220442596; Fri, 20 Nov 2026
+ 16:20:42 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -69,163 +104,131 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awDjC9hcKSRnCPgJ@kernel.org>
+References: <20261120-work-ns-mount_subtree-v1-0-06337377f94a@kernel.org> <20261120-work-ns-mount_subtree-v1-2-06337377f94a@kernel.org>
+In-Reply-To: <20261120-work-ns-mount_subtree-v1-2-06337377f94a@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 20 Nov 2026 19:20:30 -0500
+X-Gm-Features: Aa3M54rUKAyhudO_NMmwLoQSP6nA25xTN_t_G9kBgfIIkvZyJM13Qz-1vfwego8
+Message-ID: <CAHC9VhQrbBEX7tHtCUSPGgUqLLObCdBCRPkNLgDdtcgxTC3V_w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ns: don't call the namespace LSM hooks for
+ kernel-internal namespaces
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
+	Zhiqi Zhang <zhiqizhangg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 21, 2026 at 02:17:20AM +0200, Jarkko Sakkinen wrote:
-> On Sat, Nov 21, 2026 at 02:08:33AM +0200, Jarkko Sakkinen wrote:
-> > wait4() and waitid() only allow a parent or subreaper to collect exit
-> > status, so an external manager holding a rootns file descriptor cannot
-> > wait on a rootns init process forked by another process or observe exit
-> > status multiple times across observers.
-> > 
-> > Add the ROOTNS_WAIT ioctl and struct rootns_wait_args to wait freezably
-> > and interruptibly on a rootns file descriptor until its init thread group
-> > exits and report the recorded wait status. Return the init TGID
-> > translated into the caller's active PID namespace, 0 for WNOHANG while
-> > running, or -ECHILD if init was never started or is not visible to the
-> > caller.
-> > 
-> > Co-developed-by: David Howells <dhowells@redhat.com>
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> >  include/uapi/linux/rootns.h | 26 +++++++++++++++++++++
-> >  kernel/rootns.c             | 46 +++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 72 insertions(+)
-> > 
-> > diff --git a/include/uapi/linux/rootns.h b/include/uapi/linux/rootns.h
-> > index bd643bdfb43c..3fd215185398 100644
-> > --- a/include/uapi/linux/rootns.h
-> > +++ b/include/uapi/linux/rootns.h
-> > @@ -8,6 +8,7 @@
-> >  #define _UAPI_LINUX_ROOTNS_H
-> >  
-> >  #include <linux/ioctl.h>
-> > +#include <linux/types.h>
-> >  
-> >  /**
-> >   * enum rootns_flags - Flags for rootns()
-> > @@ -24,6 +25,16 @@ enum rootns_flags {
-> >  	ROOTNS_ALL_FLAGS	= 0x00000003,
-> >  };
-> >  
-> > +/**
-> > + * struct rootns_wait_args - Arguments for %ROOTNS_WAIT
-> > + * @flags: Wait options (0 or %WNOHANG).
-> > + * @status: Output wait status of rootns init in waitpid(2) format.
-> > + */
-> > +struct rootns_wait_args {
-> > +	__u32 flags;
-> > +	__s32 status;
-> > +};
-> > +
-> >  #define ROOTNS_IOCTL_MAGIC	0xB9
-> >  
-> >  /**
-> > @@ -41,4 +52,19 @@ enum rootns_flags {
-> >   */
-> >  #define ROOTNS_GET_NSFD		_IO(ROOTNS_IOCTL_MAGIC, 0x01)
-> >  
-> > +/**
-> > + * DOC: ROOTNS_WAIT
-> > + *
-> > + * ``ioctl(rootnsfd, ROOTNS_WAIT, &args)`` waits interruptibly (unless
-> > + * ``WNOHANG`` is set in ``args.flags``) until ``rootnsfd`` reaches
-> > + * ``ROOTNS_DEAD``, then writes the recorded exit status of ``rootns`` init
-> > + * into ``args.status``.
-> > + *
-> > + * Returns the caller-visible TGID of ``rootns`` init on success, ``0`` if
-> > + * ``WNOHANG`` is set and the ``rootns`` has not terminated, or ``-1`` with
-> > + * ``errno`` set to ``ECHILD`` if init was never started or is not visible in
-> > + * the caller's active PID namespace.
-> > + */
-> > +#define ROOTNS_WAIT		_IOWR(ROOTNS_IOCTL_MAGIC, 0x02, struct rootns_wait_args)
-> > +
-> >  #endif /* _UAPI_LINUX_ROOTNS_H */
-> > diff --git a/kernel/rootns.c b/kernel/rootns.c
-> > index 5d59fc9a591d..cb74ddc8363c 100644
-> > --- a/kernel/rootns.c
-> > +++ b/kernel/rootns.c
-> > @@ -117,6 +117,47 @@ static long rootns_get_nsfd(struct rootns *rootns, unsigned long nstype)
-> >  	return nsproxy_open_namespace(rootns->ns, rootns->user_ns, nstype);
-> >  }
-> >  
-> > +static long rootns_wait(struct rootns *rootns, void __user *uarg)
-> > +{
-> > +	struct pid_namespace *pid_ns = task_active_pid_ns(current);
-> > +	struct rootns_wait_args args;
-> > +	long ret;
-> > +
-> > +	if (!uarg)
-> > +		return -EINVAL;
-> > +	if (copy_from_user(&args, uarg, sizeof(args)))
-> > +		return -EFAULT;
-> > +	if (args.flags & ~WNOHANG)
-> > +		return -EINVAL;
-> > +	if (!pidns_is_ancestor(rootns->ns->pid_ns_for_children, pid_ns))
-> > +		return -ECHILD;
-> > +	if (READ_ONCE(rootns->state) == ROOTNS_INIT)
-> > +		return -ECHILD;
-> > +
-> > +	if (!(args.flags & WNOHANG)) {
-> > +		ret = wait_event_freezable(rootns->waitq,
-> > +					   READ_ONCE(rootns->state) == ROOTNS_DEAD ||
-> > +					   READ_ONCE(rootns->state) == ROOTNS_INIT);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	scoped_guard(spinlock, &rootns->lock) {
-> > +		if (rootns->state == ROOTNS_INIT)
-> > +			return -ECHILD;
-> > +		if (rootns->state != ROOTNS_DEAD)
-> > +			return 0;
-> > +		ret = pid_nr_ns(rootns->init_pid, pid_ns);
-> > +		if (ret <= 0)
-> > +			return -ECHILD;
-> > +		args.status = rootns->exit_code;
-> > +	}
-> > +
-> > +	if (copy_to_user(uarg, &args, sizeof(args)))
-> > +		return -EFAULT;
-> > +	return ret;
-> > +}
-> > +
-> >  static long rootns_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> >  {
-> >  	struct rootns *rootns = file->private_data;
-> > @@ -124,6 +165,8 @@ static long rootns_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> >  	switch (cmd) {
-> >  	case ROOTNS_GET_NSFD:
-> >  		return rootns_get_nsfd(rootns, arg);
-> > +	case ROOTNS_WAIT:
-> > +		return rootns_wait(rootns, (void __user *)arg);
-> >  	default:
-> >  		return -ENOIOCTLCMD;
-> >  	}
-> > @@ -134,6 +177,8 @@ static long rootns_compat_ioctl(struct file *file, unsigned int cmd,
-> >  				unsigned long arg)
-> >  {
-> >  	switch (cmd) {
-> > +	case ROOTNS_WAIT:
-> > +		return rootns_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-> >  	case ROOTNS_GET_NSFD:
-> >  		return rootns_ioctl(file, cmd, arg);
-> >  	default:
-> > @@ -328,3 +373,4 @@ SYSCALL_DEFINE1(rootns, unsigned int, flags)
-> >  
-> >  	return fd;
-> >  }
-> > +
-> > -- 
-> > 2.47.3
-> > 
-> 
-> Ought to be dropped but seemed too irrelevant detail for the time
-> being.
+On Fri, Nov 20, 2026 at 7:30=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> mount_subtree() allocates a private anonymous mount namespace so that
+> automounts triggered while it looks up the path have somewhere to go.
+> That namespace never becomes anyone's namespace and it's gone again
+> before mount_subtree() returns. btrfs goes through it on every mount:
+>
+>   btrfs_get_tree()
+>   -> btrfs_get_tree_subvol()
+>      -> mount_subvol()
+>         -> mount_subtree()
+>
+> and NFS on every NFSv4 mount and whenever it follows a referral:
+>
+>   nfs4_try_get_tree() / nfs4_get_referral_tree()
+>   -> do_nfs4_mount()
+>      -> mount_subtree()
+>
+> But __ns_common_init() calls security_namespace_init() for it like for
+> any other namespace. Since commit 15dd86021b57a ("landlock: Enforce
+> namespace use restrictions") Landlock enforces
+> LANDLOCK_PERMISSION_NAMESPACE_USE in its namespace_init hook. So a task
+> in a domain that handles that permission without allowing CLONE_NEWNS
+> can't mount btrfs or NFSv4 anymore. mount(2) fails with EPERM even
+> though the caller never asked for a mount namespace.
+>
+> Mark such namespaces as kernel-internal and don't call the namespace
+> LSM hooks for them at all. That includes namespace_free. Currently
+> security_namespace_free() only calls the hook if an LSM requested a
+> namespace blob and none does. But we shouldn't rely on that. Otherwise
+> a bpf program attached to namespace_free would see namespaces go away
+> that it never saw being created.
+>
+> The anonymous mount namespaces created by open_tree(OPEN_TREE_CLONE)
+> and fsmount() are handed to userspace and keep going through the hooks.
+> Landlock covers them on purpose.
+>
+> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> Reported-by: Zhiqi Zhang <zhiqizhangg@gmail.com>
+> Closes: https://lore.kernel.org/20261114141323.19029-1-zhiqizhangg@gmail.=
+com
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> ---
+>  fs/namespace.c                     |  9 +++++++--
+>  include/linux/ns/ns_common_types.h |  2 ++
+>  include/linux/ns_common.h          | 20 +++++++++++++-------
+>  kernel/nscommon.c                  |  9 ++++++---
+>  4 files changed, 28 insertions(+), 12 deletions(-)
 
-I mean replaced with a syscall path.
+...
 
-Br, Jarkko
+> diff --git a/kernel/nscommon.c b/kernel/nscommon.c
+> index 4438c6b663f91..20fc0d0e98212 100644
+> --- a/kernel/nscommon.c
+> +++ b/kernel/nscommon.c
+
+...
+
+> @@ -66,6 +66,7 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type,=
+ const struct proc_ns_ope
+>  #endif
+>         ns->ops =3D ops;
+>         ns->ns_type =3D ns_type;
+> +       ns->ns_flags =3D flags;
+>         ns_tree_node_init(&ns->ns_tree_node);
+>         ns_tree_node_init(&ns->ns_unified_node);
+>         ns_tree_node_init(&ns->ns_owner_node);
+> @@ -85,7 +86,8 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type,=
+ const struct proc_ns_ope
+>         /* Allocate the id before the LSM hook so it can track the namesp=
+ace by it. */
+>         __ns_tree_gen_id(ns, ns_id);
+>
+> -       ret =3D security_namespace_init(ns);
+> +       if (!(flags & NS_COMMON_KERNEL))
+> +               ret =3D security_namespace_init(ns);
+
+We try not to make calls into LSM hooks conditional whenever possible,
+preferring to leave that up to the individual LSMs.  In some cases it
+isn't possible due the state used for the decision not being visible
+in all of the cases where it is needed inside the LSM, but in this
+case the flags/NS_COMMON_KERNEL state should already be present in the
+ns_common variable passed to the LSM hook so we should be able to drop
+the flags check and always call security_namespace_init(), letting the
+LSM decide how to handle NS_COMMON_KERNEL namespaces.
+
+The LSM could make a similar decision in the security_namespace_free()
+hook below.
+
+The update to Landlock's hook_namespace_init() should be as trivial as
+the check here.
+
+>         if (ret) {
+>                 if (!inum)
+>                         proc_free_inum(ns->inum);
+> @@ -106,7 +108,8 @@ int __ns_common_init(struct ns_common *ns, u32 ns_typ=
+e, const struct proc_ns_ope
+>
+>  void __ns_common_free(struct ns_common *ns)
+>  {
+> -       security_namespace_free(ns);
+> +       if (!(ns->ns_flags & NS_COMMON_KERNEL))
+> +               security_namespace_free(ns);
+>
+>         if (ns->inum > MNT_NS_INO_SPECIAL_MAX)
+>                 proc_free_inum(ns->inum);
+>
+> --
+> 2.53.0
+
+--=20
+paul-moore.com
