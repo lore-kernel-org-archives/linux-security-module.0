@@ -1,78 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795296556;
-	b=YZvxHBCUutKPayfY8edgwND2g7h32CcfuVgMGyn+qc5Y5v6VTWaLr4x3CfjcooLJz7FB
-	 UMGUxha0tZHLW2MGTIjBAEJBUH77VcZkoIUwsOqc0cqs2rOG70PPrVmxxsuYiaAqaiRxj
-	 xwnT4zxV6qxjH0d4ogql5pQzYsZi4CUFaKnHpZ1K9xTZGPg0X3g59jvmPMMPigR3VDgUT
-	 oCe1Yv9tVJv8xsdid6IXt0qbpNZd/fjbr6qdop03IdWmWwEtxvP1PA4p35x6kW41mdwO3
-	 LWAR71K8mCIAuGQWvLOBjxrIFXgVSptEy+f1KSe75iEbvD2P5q3su2JO4wXT7E/pn/w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795296556;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=23sDc1ULNMm1ETHtvpZrl9E+BXwKGdL/Xa3E7VzeDL0=;
-	b=fL1DzZaKWbvUpYLXaveuOrs2McStyPSUFBdk8HtgHQhEn05kInPg0ipxw3hAwe4sAyXS
-	 wExGoVaMa2KQypgVRopwhY64y6OKdA7qEb2sxrxtQGQA3Qvgv6uTgy8BIE82b2ikz2LK+
-	 G4oab4W/i6CZtV4fRvnG6PgKj790BXUxMXDGndSvYYS6Tjs0AccXaYaRZOslfPDVv2yLI
-	 5HqNn7u2YUEijsQXBV+M7c34VyqqeEC/p7a+rI9OaUMCoZgXe5YNN5U9Ddsc90RFd2Tdt
-	 2UnH4QrW/ZYRqa6C8GfPAXlS6NmaH2gi3+gJdVGiZsy6I8ukociB4vg85jNj1+1h1hA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mZuJ4dw0;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795297366;
+	b=LgHCXvCBERQDd6sf5WF+e4HNNFVsK2CTHjMTqazvtAjUJXZqTPKl0vZ9M4HNasAjZ0Fi
+	 jhMYZghIIsGTF7DQzQuUBmmqZGpgpdRks59Fr5JVnsfPIgFRALCPeDDRM/K67r9czdP9h
+	 1UyGQeZaNru28R1qqQGjWl9lnjhThzVlal6QiQJg4hG3+3Z7V23QpMEWNCUdIiXN7aWeF
+	 iIdEO6XvSQIDPV9YCe8r2Q6lCquG0qfzjJDL39ws2TNH7sWiGS0cpMUZk+8AjGEaArVLL
+	 50Ih1ZWhMO6SkuWELZGZhXs3sc2T7xvNyMaD/4SaCHwIG9X0BKGfjE16NM71op0NFrg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795297366;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Drxc7qxNTP9/BRaF1WqAVtABWP9tV6uKIiuQgO5CPjM=;
+	b=xRUJP5jxjxCm/AcOKkCgG6iI7zY4fy9p2Poze+eM3VLyUkAHzpnVonjfJsjLlxIpBMUf
+	 tz1n3l/LTss/UZ6G7TA2HmFvAgIdSBugS8xfhTadUTBmsThVNZrEdQ/wG/jispzXzH2On
+	 52O0maYfrdzSPUjc792+0myDeTEVoYOa1VPkuoAnaOrjd/fe01Sk+SXfhxFPeobN7YNh5
+	 KiGyeaxrA3YvjxGgA9mUyNEGUsuSQDGVZ8DmPNr2hhGhssqBhBh4uNflEZMOdc+kTJDMH
+	 SxGJKw2lGEiTnv/C5W3ezISmPKMsd9jqPR1BiTyxsrES8+phCm4ZnE2VHD/Li/NN5Qg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6pYyCvy;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B972606A320;
-	Sat, 21 Nov 2026 21:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472EC606A320
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 21:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mZuJ4dw0
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795296556;
-	b=jJjLmy+eLmZEv8lU7DDLaff9T02xDT8/z6Zad0qYOwSSQIbg5rapGIrQhMiX7g1wWiZQ
-	 SmH7deMdrOMzWId+6mOChHpY8Rrosx5odtUl6hy4WfDaOAwx64/BUrMkxTdjwYdSH/UnM
-	 8wpVjT82rRdMBmyYaG9/89bb4AholIzVH2pCdfJJV78N+EpiKaInKdnzf3zVi6xnpUG3X
-	 zhPVEJfqO+wpaoX2FI9ZwZ++ysz5RJzAHPjbl7jvQQpGBT7xqOknXiwwcYM1b81pR4Pj2
-	 B5ey7mbt+MRgXzu7pnROMZeFHiVeEBp09UVP/w2B3AOgAyrdJgfZfJM2Z59duBvDr+g==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795296556;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=23sDc1ULNMm1ETHtvpZrl9E+BXwKGdL/Xa3E7VzeDL0=;
-	b=CgMNS6LrBxVjl/HAAPHgL6Cc6PlbsU6jVmErIdkqEE98qQLFmYtuU+WBdDmaIpOlE39s
-	 tSoQ9xjum4EyxzrZFLhrKSeP1cwYi0vYLkXkzJHtJLbtDE/JdF+LCuDTGG+oBZgXsPMvG
-	 ECTnUwG3XROMRiw5258XwJIcLcoUlkk0UMTOKUmAh7zbJ45zwOX9hi4hX5w3L350S8ly7
-	 jSLZnHTzFtf2YGfxzLQoQZ8GgdvxFq18baVylmX9k0k29CzMxHnmjYU9SSqEiVWV1Jrjb
-	 uZS2N3h5LJCwsCkHNv7zLEn4xT++PrBQznrTcv/Rhn7w0nZthCwX5nOGBdVBNExSurw==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 599C51F000C6;
-	Sat, 21 Nov 2026 21:29:15 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=m6pYyCvy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD8AE1F000C0
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 21:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795296556;
-	bh=23sDc1ULNMm1ETHtvpZrl9E+BXwKGdL/Xa3E7VzeDL0=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=mZuJ4dw0vpIZSjgIBWNUGYc6UeRX63ZMt92Fz+da1TKVLxio6sIbr0SpPLQ+QgECW
-	 4Ozhfsd/1N2n/LmnVoTotAGkcTVLSvxjDKkqn4ugkTSep6ztsp2hUiLk2UtobQ2NMJ
-	 ITrYNlRXIwlOj5TH6B9z28sZPrlbYfdwudhJOiWlk5W6F/5Zrmb6P5bae5iblI3K84
-	 fg9Il7fq8fcughOfAQe30oYbdi1Tx9LisB87D9LnuIhoBrYCgZuU3esm2NZQFtm6jk
-	 ++bBkh4L/Gd2LJcQFPdOQb2T6BvNWJnjJ1igJ0lygP7SfGwUSi+ks1aJPOy5Fm141p
-	 p9dTz5p7xiMJg==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id ACFE64BDCA;
-	Sat, 21 Nov 2026 21:29:14 +0000 (UTC)
-From: Arun Iyengar via B4 Relay <devnull+aiyengar1990.gmail.com@kernel.org>
-Date: Sat, 21 Nov 2026 21:29:15 +0000
-Subject: [PATCH] apparmor: don't sleep in unix peer checks for path sockets
+	s=k20260515; t=1795297365;
+	bh=Drxc7qxNTP9/BRaF1WqAVtABWP9tV6uKIiuQgO5CPjM=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=m6pYyCvyE8aUBWy3cHKelmJS1nyQ7OQ7floh4agDW4dTunA+B+fXudeCtVI6UCgCN
+	 VvJKb82Wor0VBJH6eo5nOswF550U9f6dlRQ5bS8tqh1ulGBmlQ1xNmFMKoEAEerx4B
+	 8nNAbYMMbmYcRCt5FEpm8KzBhz8+rbBpMRdSnEP/AACxi08XzCUAUWvOwvV4HTr74h
+	 MqQVwyu+Q8NpBHUJloigIderAZdA4HJLY7P7wKPFCPUnZbVmTj1VUpYzQDnj2B/N26
+	 qSW5JBXdYB+sOUB1dRNuShqXwWKvrjogNYEs+z2WqaSd7OSroGhFj6TO244nVW9lyQ
+	 GJAODNN1d+i8Q==
+Message-ID: <sashiko-outbox-227419@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] apparmor: don't sleep in unix peer checks for path
+ sockets
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261121-apparmor-unix-peer-v1-1-99dd1cdb1e27@gmail.com>
+References: <20261121-apparmor-unix-peer-v1-1-99dd1cdb1e27@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 21 Nov 2026 21:42:45 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -81,253 +58,81 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261121-apparmor-unix-peer-v1-1-99dd1cdb1e27@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDMBBG4avIrDtgIrrwKqWLmPzqCI1hUkUQ7
- 27aLr/FeydlqCBTX52k2CXLGgvMoyI/uziBJRSTrW1njDXsUnL6XpW3KAcnQLn1ocEYuqF2LZU
- wKUY5ftPn6++8DQv853ui67oBdLNkxXYAAAA=
-X-Change-ID: 20261121-apparmor-unix-peer-5cd3efd6b0a5
-To: John Johansen <john.johansen@canonical.com>, 
- Georgia Garcia <georgia.garcia@canonical.com>, 
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Arun Iyengar <aiyengar1990@gmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795296554; l=8688;
- i=aiyengar1990@gmail.com; s=20261110; h=from:subject:message-id;
- bh=A5OtpOORF1rmexmWn52E93grd3HwLsXwp4br7SvH2fw=;
- b=j6rwvZp3KydRjXdqhSMSZ8F1s28gbIeK042Zcvm8g2r+RaqvcIpJ6fZGstSI0VM2QqZW2syz3
- A+w1j4XLwyUBhBqbts6U3FAMV+h8dT492gm9aNEQQyDEag4tcayrgdd
-X-Developer-Key: i=aiyengar1990@gmail.com; a=ed25519;
- pk=zXpRgUTrhaFe6jLyPqbBy3ccfkj04w0g2690Wv3mg+0=
-X-Endpoint-Received: by B4 Relay for aiyengar1990@gmail.com/20261110 with
- auth_id=1480
-X-Original-From: Arun Iyengar <aiyengar1990@gmail.com>
-Reply-To: aiyengar1990@gmail.com
-Content-Transfer-Encoding: 7bit
 
-From: Arun Iyengar <aiyengar1990@gmail.com>
+Thank you for your contribution! Sashiko AI review found no new issues
+in this patch, but noticed 1 related pre-existing issue it does not
+introduce:
+- [Critical] apparmor: unsafe RCU label reference acquisition in
+  aa_unix_file_perm() [1]
+--
 
-security_unix_may_send() and security_unix_stream_connect() run under
-unix_state_lock(), but the path check of a path-bound peer calls
-aa_path_perm(), which gets its buffer with aa_get_buffer(false):
+commit effda5eb5a50afb4aa0bf1fcfad7c08d47306526
+Author: Arun Iyengar <aiyengar1990@gmail.com>
 
-  BUG: sleeping function called from invalid context at security/apparmor/lsm.c:2301
-   aa_get_buffer+0x348/0x3a0
-   aa_path_perm+0xdc/0x268
-   unix_fs_perm+0x1d8/0x1e8
-   unix_peer_perm+0x1d8/0x588
-   aa_unix_peer_perm+0xe8/0x150
-   apparmor_unix_may_send+0x108/0x260
+apparmor: don't sleep in unix peer checks for path sockets
 
-Pass in_atomic down to aa_path_perm() and set it for peer checks.
+This commit passes an in_atomic parameter through unix_fs_perm() to
+aa_path_perm() so that unix peer checks performed under unix_state_lock()
+allocate buffers without sleeping.
 
-Fixes: c05e705812d1 ("apparmor: add fine grained af_unix mediation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Arun Iyengar <aiyengar1990@gmail.com>
----
-Seen once on v7.3 (arm64, systemd-detect-virt sending to the journal
-socket). It needs an empty buffer pool, so I tested with a test-only
-knob that forces the kmalloc path: 189 splats without the patch, 0 with it.
+> diff --git a/security/apparmor/af_unix.c b/security/apparmor/af_unix.c
+> index 58c638830afc4..ff851ddd43b44 100644
+> --- a/security/apparmor/af_unix.c
+> +++ b/security/apparmor/af_unix.c
+[ ... ]
+> @@ -775,7 +776,7 @@ int aa_unix_file_perm(const struct cred *subj_cred, s=
+truct aa_label *label,
+> =20
+>  			last_error(error,
+>  				   unix_fs_perm(op, request, subj_cred, label,
+> -						&peer_path));
+> +						&peer_path, false));
+>  			if (peer_path.dentry)
+>  				path_put(&peer_path);
+>  		} else {
 
-Not fixed here: a chroot_relative profile still reaches path_put() in
-d_namespace_path() under the lock (from reading the code, not tested).
+[Severity: Critical]
+This problem wasn't introduced by this patch, but in the else branch right
+below, can passing pctx->label directly to aa_get_newest_label() cause a
+use-after-free [1]?
 
-Claude (AI) helped write this patch; I reviewed and tested it.
----
- security/apparmor/af_unix.c      | 19 ++++++++++---------
- security/apparmor/file.c         |  5 +++--
- security/apparmor/include/file.h |  3 ++-
- security/apparmor/lsm.c          | 13 +++++++------
- 4 files changed, 22 insertions(+), 18 deletions(-)
+security/apparmor/af_unix.c:aa_unix_file_perm() {
+    ...
+		} else {
+			struct aa_sk_ctx *pctx =3D aa_sock(peer_sk);
 
-diff --git a/security/apparmor/af_unix.c b/security/apparmor/af_unix.c
-index 58c638830afc..ff851ddd43b4 100644
---- a/security/apparmor/af_unix.c
-+++ b/security/apparmor/af_unix.c
-@@ -32,7 +32,8 @@ static inline struct sock *aa_unix_sk(struct unix_sock *u)
- }
- 
- static int unix_fs_perm(const char *op, u32 mask, const struct cred *subj_cred,
--			struct aa_label *label, const struct path *path)
-+			struct aa_label *label, const struct path *path,
-+			bool in_atomic)
- {
- 	AA_BUG(!label);
- 	AA_BUG(!path);
-@@ -54,7 +55,7 @@ static int unix_fs_perm(const char *op, u32 mask, const struct cred *subj_cred,
- 		};
- 
- 		return aa_path_perm(op, subj_cred, label, path,
--				    PATH_SOCK_COND, mask, &cond);
-+				    PATH_SOCK_COND, mask, &cond, in_atomic);
- 	} /* else implicitly delegated */
- 
- 	return 0;
-@@ -240,7 +241,7 @@ static int profile_sk_perm(struct aa_profile *profile,
- 		if (is_unix_fs(sk))
- 			return unix_fs_perm(ad->op, request, ad->subj_cred,
- 					    &profile->label,
--					    &unix_sk(sk)->path);
-+					    &unix_sk(sk)->path, false);
- 
- 		state = match_to_sk(rules->policy, state, request, unix_sk(sk),
- 				    &p, &ad->info);
-@@ -302,7 +303,7 @@ static int profile_listen_perm(struct aa_profile *profile, struct sock *sk,
- 		if (is_unix_fs(sk))
- 			return unix_fs_perm(ad->op, AA_MAY_LISTEN,
- 					    ad->subj_cred, &profile->label,
--					    &unix_sk(sk)->path);
-+					    &unix_sk(sk)->path, false);
- 
- 		state = match_to_cmd(rules->policy, state, AA_MAY_LISTEN,
- 				     unix_sk(sk), CMD_LISTEN, &p, &ad->info);
-@@ -337,7 +338,7 @@ static int profile_accept_perm(struct aa_profile *profile,
- 		if (is_unix_fs(sk))
- 			return unix_fs_perm(ad->op, AA_MAY_ACCEPT,
- 					    ad->subj_cred, &profile->label,
--					    &unix_sk(sk)->path);
-+					    &unix_sk(sk)->path, false);
- 
- 		state = match_to_sk(rules->policy, state, AA_MAY_ACCEPT,
- 				    unix_sk(sk), &p, &ad->info);
-@@ -368,7 +369,7 @@ static int profile_opt_perm(struct aa_profile *profile, u32 request,
- 		if (is_unix_fs(sk))
- 			return unix_fs_perm(ad->op, request,
- 					    ad->subj_cred, &profile->label,
--					    &unix_sk(sk)->path);
-+					    &unix_sk(sk)->path, false);
- 
- 		state = match_to_cmd(rules->policy, state, request, unix_sk(sk),
- 				     CMD_OPT, &p, &ad->info);
-@@ -409,10 +410,10 @@ static int profile_peer_perm(struct aa_profile *profile, u32 request,
- 
- 		if (peer_path)
- 			return unix_fs_perm(ad->op, request, ad->subj_cred,
--					    &profile->label, peer_path);
-+					    &profile->label, peer_path, true);
- 		else if (path)
- 			return unix_fs_perm(ad->op, request, ad->subj_cred,
--					    &profile->label, path);
-+					    &profile->label, path, true);
- 		state = match_to_peer(rules->policy, state, request,
- 				      unix_sk(sk),
- 				      peer_addr, peer_addrlen, &p, &ad->info);
-@@ -775,7 +776,7 @@ int aa_unix_file_perm(const struct cred *subj_cred, struct aa_label *label,
- 
- 			last_error(error,
- 				   unix_fs_perm(op, request, subj_cred, label,
--						&peer_path));
-+						&peer_path, false));
- 			if (peer_path.dentry)
- 				path_put(&peer_path);
- 		} else {
-diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-index baca370ddfc0..056b670894c5 100644
---- a/security/apparmor/file.c
-+++ b/security/apparmor/file.c
-@@ -281,13 +281,14 @@ static int profile_path_perm(const char *op, const struct cred *subj_cred,
-  * @flags: any additional path flags beyond what the profile specifies
-  * @request: requested permissions
-  * @cond: conditional info for this request  (NOT NULL)
-+ * @in_atomic: whether allocations need to be done in atomic context
-  *
-  * Returns: %0 else error if access denied or other error
-  */
- int aa_path_perm(const char *op, const struct cred *subj_cred,
- 		 struct aa_label *label,
- 		 const struct path *path, int flags, u32 request,
--		 struct path_cond *cond)
-+		 struct path_cond *cond, bool in_atomic)
- {
- 	struct aa_perms perms = {};
- 	struct aa_profile *profile;
-@@ -296,7 +297,7 @@ int aa_path_perm(const char *op, const struct cred *subj_cred,
- 
- 	flags |= PATH_DELEGATE_DELETED | (S_ISDIR(cond->mode) ? PATH_IS_DIR :
- 								0);
--	buffer = aa_get_buffer(false);
-+	buffer = aa_get_buffer(in_atomic);
- 	if (!buffer)
- 		return -ENOMEM;
- 	error = fn_for_each_confined(label, profile,
-diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
-index 1614c07fc53e..aee493604333 100644
---- a/security/apparmor/include/file.h
-+++ b/security/apparmor/include/file.h
-@@ -90,7 +90,8 @@ int __aa_path_perm(const char *op, const struct cred *subj_cred,
- 		   struct aa_perms *perms);
- int aa_path_perm(const char *op, const struct cred *subj_cred,
- 		 struct aa_label *label, const struct path *path,
--		 int flags, u32 request, struct path_cond *cond);
-+		 int flags, u32 request, struct path_cond *cond,
-+		 bool in_atomic);
- 
- int aa_path_link(const struct cred *subj_cred, struct aa_label *label,
- 		 struct dentry *old_dentry, const struct path *new_dir,
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index eaebc3c60c5a..8224529cfbba 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -229,7 +229,7 @@ static int common_perm(const char *op, const struct path *path, u32 mask,
- 	label = __begin_current_label_crit_section(&needput);
- 	if (!unconfined(label))
- 		error = aa_path_perm(op, current_cred(), label, path, 0, mask,
--				     cond);
-+				     cond, false);
- 	__end_current_label_crit_section(label, needput);
- 
- 	return error;
-@@ -421,12 +421,12 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
- 					     label, &new_path, 0,
- 					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
- 					     AA_MAY_SETATTR | AA_MAY_DELETE,
--					     &cond_exchange);
-+					     &cond_exchange, false);
- 			if (!error)
- 				error = aa_path_perm(OP_RENAME_DEST, current_cred(),
- 						     label, &old_path,
- 						     0, MAY_WRITE | AA_MAY_SETATTR |
--						     AA_MAY_CREATE, &cond_exchange);
-+						     AA_MAY_CREATE, &cond_exchange, false);
- 		}
- 
- 		if (!error)
-@@ -434,12 +434,12 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
- 					     label, &old_path, 0,
- 					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
- 					     AA_MAY_SETATTR | AA_MAY_DELETE,
--					     &cond);
-+					     &cond, false);
- 		if (!error)
- 			error = aa_path_perm(OP_RENAME_DEST, current_cred(),
- 					     label, &new_path,
- 					     0, MAY_WRITE | AA_MAY_SETATTR |
--					     AA_MAY_CREATE, &cond);
-+					     AA_MAY_CREATE, &cond, false);
- 
- 	}
- 	end_current_label_crit_section(label, needput);
-@@ -497,7 +497,8 @@ static int apparmor_file_open(struct file *file)
- 
- 		error = aa_path_perm(OP_OPEN, file->f_cred,
- 				     label, &file->f_path, 0,
--				     aa_map_file_to_perms(file), &cond);
-+				     aa_map_file_to_perms(file), &cond,
-+				     false);
- 		/* todo cache full allowed permissions set and state */
- 		fctx->allow = aa_map_file_to_perms(file);
- 	}
+			rcu_read_lock();
+			plabel =3D aa_get_newest_label(pctx->label);
+			rcu_read_unlock();
+    ...
+}
 
----
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-change-id: 20261121-apparmor-unix-peer-5cd3efd6b0a5
+aa_get_newest_label() assumes the caller already holds a reference to the
+label and calls aa_get_label() (an unconditional kref_get()) when
+label_is_stale() is false.  Because pctx->label is only RCU-protected here,
+a concurrent profile update and socket label update can drop its refcount
+to zero before kref_get() runs:
 
-Best regards,
---  
-Arun Iyengar <aiyengar1990@gmail.com>
+CPU0                                  CPU1
+aa_unix_file_perm()
+  rcu_read_lock()
+  aa_get_newest_label(pctx->label)
+    label_is_stale(l) -> false
+                                      __aa_proxy_redirect()
+                                        l->flags |=3D FLAG_STALE
+                                        aa_put_label(l)
+                                      update_sk_ctx()
+                                        aa_put_label(sk_ctx->label)
+                                          /* refcount reaches 0 */
+    aa_get_label(l)
+      kref_get()  <-- refcount addition on zero
+  rcu_read_unlock()
+  /* plabel used after RCU grace period <-- use-after-free */
 
+Should this use aa_get_newest_rcu_label(&pctx->label) instead?
 
+[1] https://sashiko.dev/#/bug/linux-43381a05-e5da-4626-9e59-010765c6af53
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121-apparmor-u=
+nix-peer-v1-1-99dd1cdb1e27@gmail.com?part=3D1
