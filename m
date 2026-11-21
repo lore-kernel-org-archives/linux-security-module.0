@@ -1,65 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795224728;
-	b=pfQPOdeZZYQTzcy/f15kB/NsdiWSnmTT6Ch7+zgmSRJK9YYuk04oyZRlKfZRM5x5ehu2
-	 ONaozgOU0jTSJkd38uEdHhF09JO6BgrL14p3hXfdD1ZvnEp3NJxIUA+QFteLYw6aGygk1
-	 fjkRtgMNVUY4gPiO9cXOPBfCgq3xYjHrg0d4/qNY8EXndEIcHEQPkNyjpEZwLAAilZIXg
-	 jrveE1YPZKmsuhcK+quOcsX96cqtz2G9Nk3KPihHVPHQyKhzeueVN0Ab1ACZiLyxyEk7p
-	 Agnr7rTW+xQdqyHhprg6NWY3idz5B+YoQBDbYFeOx5BtFHyhJHCDXjXLodCQny4sayA==
+	t=1795255716;
+	b=SqrDBpuj5dOQZl5vk6xHFmADQCgmiT/NOpzj84t99A2ErFoMa69GXkbDe2x2h3kN1YvI
+	 GqmAzoC9V5dJ0xNbwe2ktuSKXeIMBTXC20FhZG9OGoPWGmLiTs20dT5wIvAKKkF3tojGP
+	 NP+CDjxlmJhYyzTNe69ZxyhqhkzmQTp7sYKea89hd6y8NpXrSM8JD6G0NPocjVbS+u2zV
+	 WYfzo3p24iRIVGILZNXF6UBxQ7rjYjthZGS7xlQS/hrZ8SWh1vBL3qFJSEnBW+B6sP85X
+	 N3ydp0R7RxSIJdPjBBD33420xOYE4zfdHhdQzQP0O3ktmviFO1ONqFb2WKjQHfGocbA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795224728;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=5/7MyMIXr0GDno34tV42HvOi56g013l0wGScJy1uGp0=;
-	b=xIbBfZHZCvRm++Hp6sOxsszaRfEN2dq7npW89yE5SIumZWDcOvjjiDNwCASC/w46a4yO
-	 F3f5MzacZnZATqr+83WcL1DYRSv4YxqnWxQrvBotqH/c4Fc5UQWXIyVYF4pJ/QLh1iUKP
-	 ZJhcCuGYCDCkQQd31Z9jjzl6rPpO0jE7aB3duR2AxFEW0Ah3/cZs8tDK0jntzoQ43N9wV
-	 /8dhn68HI1L84X5Tmjd5s8zbBBIpOY7UpOzJIBeBUHYXsrjQRAkhLa5pzqS1V9zLddTii
-	 GZS1T3iIdaT8NHimU+jj+FuQOXWr9y6vRNSqFdxrDweH9KTK9jQMAFAj9rahbfequrw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795255716;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=M3bV9m2HMGmaCwO2iKbHIS6yi+cpxYoMn1NsouoZxXQ=;
+	b=xL//hriQVpjr58b2gVW0kxw8x/mCkqS99VoWER71ugbic2auhYGuDj+qeXw9ROdenFVf
+	 PBwSkbHaHyZ3oVtcsoS+GFoHcKsqf4gWBc7gtz+FlIyCpQX+rMOfUWEy640CHYh2zraxj
+	 6Rvio5oJ5giDWMu926eHbmaOIMdetUbhW9KgUmLtmop1f/Fhobi6KRq/HGyHe8EQBfdxn
+	 VLaG9E5ij7RJBUpUlYHkaCBbJxmOx+WHlG8WBfnzgYMHgsoSagSSv0jEkiAgvqk5jbGKT
+	 Ayyri1P9YIuOEEcrn/fEKvceMdLElBU6gYVm5OlqyWzy106XwPkNCxVh8twoQHWJWww==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V1FYfrGT;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vIjejmKx;
+	arc=none smtp.remote-ip=209.85.128.49
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 9552A606A6AB;
-	Sat, 21 Nov 2026 01:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5FD606A325
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 10:08:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7B5FD606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V1FYfrGT
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8B58A1F000D2;
-	Sat, 21 Nov 2026 01:32:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795224728;
-	bh=5/7MyMIXr0GDno34tV42HvOi56g013l0wGScJy1uGp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=V1FYfrGTatK4t00vmPWVjtv5HLsnbLBQJryhm1RAw1jnSsFpourNb3t1IjzSNXxX9
-	 6Bq0R9I4WaCdpXZX3hs2TSXWe+ogMvOxCYptsDe9heLB/DRu3jnf1Ra6f6JDEemD1j
-	 7Ztegvu2jmd0It2EtCck+YGJjbblBujYOojylXdkcLxQW+4YV4lXpMp4fzKNiIc96d
-	 zWTi4ICSpKYW7JvYV71KxHiIMYRy0vFhI0sCj4pcDHT8NJHbwAYCAZIa4sbRh/LMYQ
-	 Q2vVzh7EY9qiZrVGlr9vAi90q99Jbd7CoOV5MuyrCPk6oRrhEKBAi7Y4to5qFVrlj3
-	 tsOSq4fsG9ZWw==
-Date: Sat, 21 Nov 2026 03:32:04 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Alexander Mikhalitsyn <alex@amutable.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
-	Neal Gompa <neal@gompa.dev>, Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v5 12/25] rootns: Track init lifecycle via
- copy_process() and pid_namespace
-Message-ID: <awD0lNmhRPaXI9Pg@kernel.org>
-References: <20261121000844.1863324-1-jarkko@kernel.org>
- <20261121000844.1863324-13-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=vIjejmKx
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a210470b49so15327365e9.2
+        for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 02:08:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795255715; x=1795860515; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=M3bV9m2HMGmaCwO2iKbHIS6yi+cpxYoMn1NsouoZxXQ=;
+        b=vIjejmKx+awfWvtxbaiVdjBrjmiWjacQOxqPsZUI0CqGCDW0fuIiZRQXVDudTZGOTR
+         gju5da9tDZjUyLhePRxMGltOIhPeBE99/TXalHSZJxFwMd2nSXfj/NxgATCe0LqtdlUl
+         zckXDAqUVxmrB6H3i/aAMoJt1OqMT1zQ4QELOVm5EJMHsQHN6XIozmQwDAcFpaTGe1FJ
+         kzBgVYJr/RM5r+BgnefB75i+A+nbhCubEQMkKMT+c012le4aDcLPSP1Tv3b/eFsVO8YK
+         BrQMgijnUDiONQ99FXmLVxrum8UhLJCHLtkwN18C5zeOB1xqLvThyeguoPisJgItezGP
+         A4LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795255715; x=1795860515;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=M3bV9m2HMGmaCwO2iKbHIS6yi+cpxYoMn1NsouoZxXQ=;
+        b=woiEN5EtbVe3kHkhVgFfpA4ZPlI510y0ocdRynByWbOJbnzTiaacMkN27jsoDWsbj/
+         ywxgByj/kUlgD/Uoi4hHhahexoeXVh4Dq/1WkS7i//Ih2r/OgytJPST0z3562BHnEUj/
+         ZGjg/pdb2iiZqTDPBFOroWnWrbFlQXncTS7NiQNlSXrJDqb5o0lzLdDPpbu0NcGg9Huh
+         bEgVkQY2+pFjZADlA7kzMsLLdrKpZo9CPL5cFIGuD2gRq3VQVGa+WQ4HSTENY1JuA4Id
+         kNvtKT++AL1swcsoGYO/Imgwt+rDzV4AXdEknR4Fe/KmqbiSQCUFv+XWbPayM+KGgL9x
+         48yw==
+X-Gm-Message-State: APuU4Z8pW56r/BgZDOwsv0XZTzkWjhT9n4eiF8lCSWVF8PDVDOkxxSwq
+	puyUNmoyAwQk2pkfyisKEy5aOhEQ89CJHkQ2DHxZDUobWJ1u/PO90KLg
+X-Gm-Gg: AZFdTZfdQn0DtPuAHotshL3KqSmiZWyl4KnQLLoZXfDUpZv2t5XBBMkXqm7VmD9Phh7
+	bxdzSx7Lpbqvca8KGfIHZAMKupGQP/BQT3Uxh5/djJNZU73sHKLn/ZDh6njx8xgJgAzGZrDe/QP
+	+EFn2IGoUCqFVC01ROUWwMb1M3HOvKnewLjiAlXnxe6bPov+lmjAD05G+G1aKl3JmSLoi3segWq
+	O9Vwyde0JLdNSZPqHuREBLHdTyhSOBwKaIsNmn5Vgwr1WvMLmnRJ2YfEegXk8pgkQQeJm21krfd
+	HYHa9OOYt3pEfgWHnSySAZtLH6gZ8pK00vWMoewutFCREOlXczIv2Zw0/0AtnNyv1NV+9gulM5f
+	hzpJbmPJG6bo6wIyH97Uj6zTQU6dpALKqrbU6Kirv3lgRVW9NGo01fvFAaBmhdTd2MPLidhKXge
+	oxrmSbHiQvMIBtUbHI8kW1U1n3f4uRDFMUcoV+1FgF+Xt7VNEsaZPbhYNzoQTWKpOI2NUQ/el+v
+	y83evecoJuD3pozQacMvhftto0+2tceN30fouJDyGuikH3l3WldYSmYAjaiWTga4RvxLUDbxKcr
+	xpqRjocmPyaEFHYj+YaXiuVFDy3Rr4oLGQPYeymizHDXBNmjN2czimazq+p0SEeB7TL3eqNL619
+	0gBCa1JOUda2Vym4ffMHi91e+sF76vr8OdFAcXeRakm3PuePtDbE=
+X-Received: by 2002:a05:600c:3b8a:b0:4a3:59c9:a754 with SMTP id 5b1f17b1804b1-4bb8892da25mr128310005e9.22.1795255714723;
+        Sat, 21 Nov 2026 02:08:34 -0800 (PST)
+Received: from DESKTOP-IR7J1S9.localdomain ([197.118.31.178])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb906635c7sm44631505e9.2.2026.11.21.02.08.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 02:08:34 -0800 (PST)
+From: Drif Abdelmalek Mohamed Said <drifabdelmalekmohamedsaid@gmail.com>
+To: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] lsm: don't call d_path() when current->fs is NULL
+Date: Sat, 21 Nov 2026 11:08:32 +0100
+Message-ID: <20261121100832.499-1-drifabdelmalekmohamedsaid@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <481c20b898f003247763475ef417c321@paul-moore.com>
+References: <481c20b898f003247763475ef417c321@paul-moore.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -69,33 +101,41 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261121000844.1863324-13-jarkko@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 21, 2026 at 02:08:31AM +0200, Jarkko Sakkinen wrote:
-> A root namespace needs to record its init thread group's PID when
-> bootstrapped and capture its exit status once all processes in the root
-> namespace have terminated, without serializing normal fork() and exit()
-> paths inside the container.
-> 
-> Commit the bootstrap child reaper and bind pid_ns->rootns in
-> copy_rootns() after attach_pid(PIDTYPE_PID), and invoke exit_rootns()
-> from zap_pid_ns_processes() after the root namespace's PID namespace has
-> killed and reaped all member tasks.
-> 
-> Co-developed-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Hello Paul,
+Thanks for the reply,
 
-ROOTNS_GET_NSFD will be the only surviving ioctl, which make access
-control wise sense.
+>  static void audit_log_lsm_path(ab, inode, path)
+>  {
+>    if (current->fs)
+>      audit_log_d_path(...);
+>    else if (inode)
+>      audit_log_lsm_inode(ab, inode)
+>    else
+>      audit_log_format(ab, " path=?");
+>  }
 
-This leaves room for ROOTNS_SHARE_NSFD, which would share a namespace
-from host. This makes whole a lot more sense than unsharing security
-wise as it is allow listing (instead of deny listing).
+I got your intention in your v1's reply, but i think that changes the current behaviour,
+if current->fs is not NULL, then this would only log path, without inode, whereas current
+code for example here:
 
-It can be post-clone3 disabled. This is what we do in SGX driver i.e.,
-have build phase enabled ioctls.
+case LSM_AUDIT_DATA_PATH: {
+	struct inode *inode;
 
-Br, Jarkko
+	audit_log_d_path(ab, " path=", &a->u.path);
+
+	inode = d_backing_inode(a->u.path.dentry);
+	if (inode) {
+		audit_log_format(ab, " dev=");
+		audit_log_untrustedstring(ab, inode->i_sb->s_id);
+		audit_log_format(ab, " ino=%llu", inode->i_ino);
+	}
+	break;
+}
+
+if path is logged, and most probably also inode, and your suggested change only logs one of them,
+Is that intentional, or am i not getting something right?
+In either case, i would happily send v3 with suggested change.
+
+Cordially,
