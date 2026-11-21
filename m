@@ -1,55 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795260379;
-	b=M133vVzCgrJt28aSnNzrccyRqe0F1SmgO4lnGKNlE7fCXjB9JE9Itm5d2m1d1zO2dxgV
-	 v5ZqLb6193fAUDrpAuLk+HFXAnFc8RXVyt5lBkC4wzwom8Ye6RDmTbMT4Oe5eWr6JI8CP
-	 AHgD0PMses12RbPwtGM35m1yQ1y13vmylMmyUqtTEXCmPagQOAt/myEF5KHyXr6eOmh/a
-	 h/O5Ivl/sVjJHo1XMUfQcv1Nx8CcBo5lm8G2ixICv3lSeljWpYroFFL3Hg/4ZLH6yh0d5
-	 uRSFh6Gml4IbDPzwygCkyzFilKSbmspWY6IkoqZXoCBd2uYHUxQWERpVuvSRNCJhGXg==
+	t=1795260566;
+	b=iEH6yoxvtSt87ScZshQbv0RkiUiUgDu4OJ1esbhJ5OYLHBjQL7LafNp+O9Ozfcihki2/
+	 c3nOsyP1rz/K9u9zC6/dNfNtp99WjPovL4IMxDeRwGRgY7kbIXuOis14wZkf7sEkaLbnW
+	 Bh1eWkbIkOY3s9U50A2z9U9NalOebTocRlQXK2pZ0C1fDhEsw44KmV3CufSqK3wIGChWR
+	 m7dMH1zkq3An22ZfaKrkQTPLF8pH+5PXALc86ZV69p0OlN5YTuBM8CjIkrX0f5z4B/cWL
+	 I8svLpkjvqCEuVQ9cJwEB0ey13rErjIJXzh9nD3FBvPjr9/oczngQ0zkSPdPtXzJShA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795260379;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Al83ExmFboZI8F/VtrwC9ONocMCKtiId0ncP111tvmc=;
-	b=V529opLGJ00MMsx+OIK7uMzI+V3KDTd7DK/IrqoSvIfLUat4NvE8jdKn+G61bCQFEJDy
-	 jWbSO/ERx845rQZ4rhZAzyxerfEWUZER9xp5rf+3cpDjsFU9EdiBj/Uwg/b1RrH8wYOUc
-	 Dhtwu8BUTE+CGtqhHJAUORIg8HNowcij5S8RM63XIxMKg3pmc6zvyn6ihilmlmXMAGbwz
-	 nb96AnaB9PuoGZfvjtbAdB6toTDJEZkzrOqO98FJWZGUDN1HIEyOrkcS5TtAosTYSO7x9
-	 gkPAp/uFvDmCwHecHo2mrK7Sun5RcDRuo8IKnyxlq9exAo3EQfHyqE5kFV0ZfDaVM7A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795260566;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=umQx8DxNkvnGJlvvds4sRbKDPuEqjAlh1ZTdHWdFhho=;
+	b=mHQBI1QLqS3s2hJcW4dfP/3QFNxJfnlY7Y1zyNVfgg8gY/cJLs7rWTWRhH5iiwPbFoLX
+	 M0z2p54c5+z8aBV+LBuA6b2+BUjixFKz/Eouj7MVgnmn1+V0ylzbm+QGSqveYM+6IY8Lk
+	 hD5/KxzwRrjYE0ba1dDKtrgG3j+3Gr5/SKf7UyYJy/FNjcNuWErhA978SC0fAg7koUCdS
+	 nX6Z5cviclssSOqRvsb9rTjCgY5RtCaXPfUeA35u2iD/hJQY/EijpnSeUG0F3gzbpKdWg
+	 CO8sAo/Aiqc9YEYv0bStfd6aUnmkpy6HnilMoiLTC2ip+dpMdG+EpAV4z7tI2BrWkKA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=onruuKY7;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Wndv97v0;
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785DA606A325
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 11:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1838606A325
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 11:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F1838606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=onruuKY7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B8571F000C4
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 11:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795260379;
-	bh=Al83ExmFboZI8F/VtrwC9ONocMCKtiId0ncP111tvmc=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=onruuKY7mCM+3e/eniMbZ7EUTELezPdXEUSePjFpNoUruoocPxK7ldeX1EsTFyY4U
-	 88r5j/JnM52gpA9TOieI/iSsIq+yZg+VX6ihiyQJcspGFjhSkjov3ItwxRaoblnjvs
-	 fsr4SmKCoofl7xixcDb13vLpAS2cFpVTZK8T69ksSJRQm7LlC8EC69QywM8IVbHF/A
-	 sTL+xwJuJjeMvtHGzYn7YuMsjCb4nCOyfgZGuxCTyQtOk6HWnsEgTH2tAjAxkzF7wY
-	 3AmYayArPPYWt7bKbHdMHLnTZ6uW6Qh6mvNib8ukNlE5vI+2yZq9pLcpajwd58Zo0j
-	 W9FqpQO7CcCTA==
-Message-ID: <sashiko-outbox-226977@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3] keys: serialise key instantiation against
- keyctl_chown_key()
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261121111246.3478-1-enscrpt@pm.me>
-References: <20261121111246.3478-1-enscrpt@pm.me>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 21 Nov 2026 11:26:18 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Wndv97v0
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4bb64c99d2fso18043945e9.3
+        for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 03:29:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795260564; x=1795865364; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=umQx8DxNkvnGJlvvds4sRbKDPuEqjAlh1ZTdHWdFhho=;
+        b=Wndv97v0xNPaFveqPJE73z2hBy2mVbS4EQLfhSu3Qr/NEtlcenEomJW44MLGRSN0NK
+         4ebXbUWqFYFshtpdLkIu4G+V+8BBmM4hyxvT3t8kA+Oxvm2IVXPxSvGwwul3fcxE0VQq
+         HIs2yWfKLdXI7nxF4IPMSF/TR+8a3cnWWtx2k85gPjqLFLunNFD8vv9NlusF/pG0iaq7
+         +VRUjMsc2SpfichnmWjWT5E+IL35HOomym2W//nn2utskrI50B/79Ztt9kmhc4C+HvIe
+         4sGG3nqOPrBEJuFMaS80zwwswZrzMx4Wr0D9XlEh+IYg6SwXxZju8DRH6xr/BPT7Vemr
+         9ahQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795260564; x=1795865364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=umQx8DxNkvnGJlvvds4sRbKDPuEqjAlh1ZTdHWdFhho=;
+        b=b7Se2WriqjGSrJOSX9Ruy1rgZ10ToQE0Fhq8Vfu1dA6JhmEgDm4UoYRHDwh0VyASWj
+         ZhHmDRJ6o7Lk5atghtffPwG0iitTdSNO/MICLQOLUNkt95ToECA4/dvWaEBbJciwtQmG
+         77A3Ev0zrulLUt55SgoZPkowinshWvU96B+VgLP/gq1csfJNAnxdMzGFrBj/D6s9neRH
+         uL03f12bh6BZGUHCElKDbQpt/cL/UvikylIJ5ejeTIvXnB6xb3gb/z2PtLRqL5NCyo+t
+         9X5SukYJvkPt6jd5rMjwN0edCuW+aexS0HKqoEA7SI28QeYHmpotMhQPpdKECOPoBL5E
+         eJzQ==
+X-Forwarded-Encrypted: i=1; AL+hErHHKjQK3iEnbKkrgF07hVA4xTuK05Scs98zeS6Py1ZacdS1j0vNpEXhFb3CDvuHFrw6hWzuZKm+v/co24pny2+EwKN3G/Q=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/bwnmXTPFHJ0PyC5PNVPUFfbgKgUBc5ge/41fO8/BSJAdgYAJQ
+	ZEG648/QuO+Svd1JLH3i7ufoYf9pCWe39OWTZBsQDy2QiTrVfkLgEHU=
+X-Gm-Gg: AZFdTZf/kyV9KnevfW7FnKED03hm6/0MpPnrM8BmiE5ntEjHIQbvbx9ClTcph0BTK4+
+	9jdyP2fVLBfkOb2KviITbQaT9TXouzpEV3Mr8ZkL4K1N7STDyeSlVqaqYze84PT6BOHJGWMlwaR
+	QmUbCqNZZnQ53BISbE+hci2RqSP+pZTlZU+FjsT/e+6unbESsXl/ESGPLFbQGwW/Rhi/bqkVpc/
+	spP2I20KxdVG5ws6hNHsk8le3XkZIshadCHbduT/nurVpafraUcNJe/Aabf2NC81bSeXItuyu8Z
+	R73jBL5AboKvovI2v0qgEURq7jCqjtMAmwfXlVXowUfRc5w+HO1IK7Qhulw/1Jf7QZ06lQyB3BM
+	+PuUidc6FiK8rgZL+uPcxdDde6YqSjg34sc9nUuASxsevhbIATC3XGtGEuB/HsNONmkLqBWHny0
+	n0UJgqhv9e8GnxqQRQ4U0FhdG00Sr/4Ew4/UivaLC7IGMNhWmy7yicCRaW/4kBhtDVEnoD40HsZ
+	hOBS2J5EPy1BbvvFleut7wbnrA8RAD6o7qVlD3umSyR9IYLk7UzZDALucDKmE5xNUxeKtYOcDcf
+	+58OfmzH/LdxjmdaAjKgGlo9ZukZSeqd2dD2bQ==
+X-Received: by 2002:a05:600c:3511:b0:4ba:73f:ef5 with SMTP id 5b1f17b1804b1-4bb88828304mr137787085e9.34.1795260564182;
+        Sat, 21 Nov 2026 03:29:24 -0800 (PST)
+Received: from localhost.localdomain ([2001:41d0:303:db6b::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb9066f6e6sm37210385e9.3.2026.11.21.03.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 03:29:23 -0800 (PST)
+From: Tristan Madani <tristmd@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Tristan Madani <tristan@talencesecurity.com>
+Subject: [PATCH] KEYS: protect construct_key type dereference with key semaphore
+Date: Sat, 21 Nov 2026 11:28:53 +0000
+Message-ID: <20261121112853.2175119-1-tristmd@gmail.com>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,32 +100,50 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> keyctl_chown_key() looks up the target key by calling lookup_user_key()
-> with the KEY_LOOKUP_PARTIAL flag. That flag lets a caller with
-> CAP_SYS_ADMIN change the UID of an uninstantiated key during construction.
-> When the UID changes, keyctl_chown_key() replaces key->user under key->sem
-> and drops the old reference with key_user_put().
->=20
-> __key_instantiate_and_link() and key_reject_and_link() hold
-> key_construction_mutex during instantiation, but neither function takes
-> key->sem. Both functions increment key->user->nikeys, and
-> __key_instantiate_and_link() also calls key->type->instantiate() without
-> holding key->sem. When a key is in quota and its size changes,
-> key_payload_reserve() reads key->user seven times without key->sem. Those
-> reads include spin_lock_irqsave(&key->user->lock, flags) at the start and
-> spin_unlock_irqrestore(&key->user->lock, flags) at the end.
->=20
-> [ ... ]
-> key_reject_and_link().
->=20
-> Fixes: 5801649d8b83 ("[PATCH] keys: let keyctl_chown() change a key's own=
-er")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sinan Turunc <enscrpt@pm.me>
+From: Tristan Madani <tristan@talencesecurity.com>
 
-Sashiko has reviewed this patch and found no issues.
+construct_key() reads key->type->request_key without holding key->sem.
+A key reference keeps the key alive but does not pin the module that
+provides its type. If the module is unloaded concurrently, the key GC
+retypes the key to key_type_dead under key->sem, and the module text is
+freed. Without the lock, construct_key can read a stale type pointer
+after the method has been unmapped.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121111246.3478=
--1-enscrpt@pm.me?part=3D1
+This is the same class of issue fixed for other key type methods in
+commits 925c84e3cc21 ("KEYS: Protect the read method check against type
+removal"), 51bcd09b9ffca ("KEYS: Protect the update method check against
+type removal"), and bab48a1044475 ("KEYS: Protect the pkey method checks
+against type removal"). construct_key was missed because request_key is
+less commonly used than read/update/asym operations.
+
+Take key->sem for reading around the key->type->request_key access to
+prevent the type from changing while the method pointer is read.
+
+Fixes: b5f545c880a2 ("[PATCH] keys: Permit running process to instantiate keys")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tristan Madani <tristan@talencesecurity.com>
+---
+ security/keys/request_key.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 22cd66a44da56..eff67c5fb9015 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -241,8 +241,10 @@ static int construct_key(struct key *key, const void *callout_info,
+ 
+ 	/* Make the call */
+ 	actor = call_sbin_request_key;
++	down_read(&key->sem);
+ 	if (key->type->request_key)
+ 		actor = key->type->request_key;
++	up_read(&key->sem);
+ 
+ 	ret = actor(authkey, aux);
+ 
+-- 
+2.47.3
+
