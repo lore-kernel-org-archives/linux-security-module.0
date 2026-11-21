@@ -1,65 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795260258;
-	b=3BSIjyjV35iqqK2sNXbZSPj/NfH4zXVTzhhWVqpI8Z/HsyYZUnaAVZz0FQj2htGQHt7g
-	 yKKi28yQOe2cxFuth9ls58EEvr+jJo/wLuSJGvBvEurUwB1nASjfPvswVIwUpRNtlFsSn
-	 IuJALcXm7LrlzQrAQxV2PXZzftK7hfFaMBfeClaKdexjUK2UoU+G+oj4uaZ3o5OGPa5Bb
-	 YzE4m66CavpoWT+jGZwWkVNhotrIcJD1a8Tlw+t/d0efPqTi4dQcld8JwCP6j7fq7IRvH
-	 KiQ/DlUT5doe1AmPyBcKaIWVPhlM3l6PXtkGZpmpUa59nvUOXn5Hip5sy6BRAZgm4mw==
+	t=1795260379;
+	b=M133vVzCgrJt28aSnNzrccyRqe0F1SmgO4lnGKNlE7fCXjB9JE9Itm5d2m1d1zO2dxgV
+	 v5ZqLb6193fAUDrpAuLk+HFXAnFc8RXVyt5lBkC4wzwom8Ye6RDmTbMT4Oe5eWr6JI8CP
+	 AHgD0PMses12RbPwtGM35m1yQ1y13vmylMmyUqtTEXCmPagQOAt/myEF5KHyXr6eOmh/a
+	 h/O5Ivl/sVjJHo1XMUfQcv1Nx8CcBo5lm8G2ixICv3lSeljWpYroFFL3Hg/4ZLH6yh0d5
+	 uRSFh6Gml4IbDPzwygCkyzFilKSbmspWY6IkoqZXoCBd2uYHUxQWERpVuvSRNCJhGXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795260258;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=GHbQtC6gIc0jGnYZ6s00mCvjyoI1Kvae0ypDCzK5JU0=;
-	b=fYqbib2n19WMsoWLd0nftQhaGf5q6ZRQFDwbGA+lufDzrw5YxIyM8Be/Ow0v1uTBtKAf
-	 x3Dvx/OuFC8wTu68W2XRYIoZ6igDGAcGVTMf3feTBaBgKeBRJsNFmI8bvXhOUWh6zNBg4
-	 m7XQcDDcEaMZhGGcDdM68zc4gLjvmmPHozgOH5W4nuZMz8cqsUWg+QYd4nFvPIp+evD3s
-	 g23lj5ME/SOqtnOhEaeuPxpbeR2EW/TPha2oCh+FRThV6mjDrN/5oIpPBfo+zUk1FqvWs
-	 Fu5miR0fnEsA89ncYHlZ3fGH3DHYEvm5hAq5nFeUQs3Paqhqe5E3QyoOzryYuDcuIng==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795260379;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Al83ExmFboZI8F/VtrwC9ONocMCKtiId0ncP111tvmc=;
+	b=V529opLGJ00MMsx+OIK7uMzI+V3KDTd7DK/IrqoSvIfLUat4NvE8jdKn+G61bCQFEJDy
+	 jWbSO/ERx845rQZ4rhZAzyxerfEWUZER9xp5rf+3cpDjsFU9EdiBj/Uwg/b1RrH8wYOUc
+	 Dhtwu8BUTE+CGtqhHJAUORIg8HNowcij5S8RM63XIxMKg3pmc6zvyn6ihilmlmXMAGbwz
+	 nb96AnaB9PuoGZfvjtbAdB6toTDJEZkzrOqO98FJWZGUDN1HIEyOrkcS5TtAosTYSO7x9
+	 gkPAp/uFvDmCwHecHo2mrK7Sun5RcDRuo8IKnyxlq9exAo3EQfHyqE5kFV0ZfDaVM7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mB0YRm3j;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=onruuKY7;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id BD9AF606A320;
-	Sat, 21 Nov 2026 11:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785DA606A325
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 11:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mB0YRm3j
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id EFF371F000C4;
-	Sat, 21 Nov 2026 11:24:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=onruuKY7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B8571F000C4
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 11:26:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795260258;
-	bh=GHbQtC6gIc0jGnYZ6s00mCvjyoI1Kvae0ypDCzK5JU0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mB0YRm3jiQg6+dAG4Uh+kh+x0CIpL21NhV92OyKjRc4Nza2T3tFWotVyy2F3LVDkP
-	 TDWkq9Ns3VJKWe9ABDZH8j4zYwrx7d9HbeCjrlBUun5+r7vTyh0N/tLEKFB5z8ICp8
-	 qxYpXHkhVSTOh/LCRPqYeZKg+ZB7e4/9BbBfT5R9OcvwUtzYXz4ilD9CAeuOvXx81g
-	 Dp8xUFM1/TAxBbErZPKEA/4uf/7MxVON2JR7/HEbHbLOa29JUDaZ2np/MQ/wBSCjBn
-	 X1ArG35BUmmZXAPBQRSM66IPm6GHxeW8BlPy0LNZdkeKdtQiZyQ44rkuf+WoHNXFGO
-	 8tMX0FG52frPQ==
-Date: Sat, 21 Nov 2026 13:24:14 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Alexander Mikhalitsyn <alex@amutable.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
-	Neal Gompa <neal@gompa.dev>, Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v5 15/25] rootns: Add ROOTNS_KILL ioctl
-Message-ID: <awF_XiObSZVSARoh@kernel.org>
-References: <20261121000844.1863324-1-jarkko@kernel.org>
- <20261121000844.1863324-16-jarkko@kernel.org>
- <awDxps7uLbikjV5B@kernel.org>
+	s=k20260515; t=1795260379;
+	bh=Al83ExmFboZI8F/VtrwC9ONocMCKtiId0ncP111tvmc=;
+	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
+	b=onruuKY7mCM+3e/eniMbZ7EUTELezPdXEUSePjFpNoUruoocPxK7ldeX1EsTFyY4U
+	 88r5j/JnM52gpA9TOieI/iSsIq+yZg+VX6ihiyQJcspGFjhSkjov3ItwxRaoblnjvs
+	 fsr4SmKCoofl7xixcDb13vLpAS2cFpVTZK8T69ksSJRQm7LlC8EC69QywM8IVbHF/A
+	 sTL+xwJuJjeMvtHGzYn7YuMsjCb4nCOyfgZGuxCTyQtOk6HWnsEgTH2tAjAxkzF7wY
+	 3AmYayArPPYWt7bKbHdMHLnTZ6uW6Qh6mvNib8ukNlE5vI+2yZq9pLcpajwd58Zo0j
+	 W9FqpQO7CcCTA==
+Message-ID: <sashiko-outbox-226977@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] keys: serialise key instantiation against
+ keyctl_chown_key()
+Reply-To: sashiko-reviews@lists.linux.dev
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <20261121111246.3478-1-enscrpt@pm.me>
+References: <20261121111246.3478-1-enscrpt@pm.me>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 21 Nov 2026 11:26:18 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -68,39 +58,32 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awDxps7uLbikjV5B@kernel.org>
 
-On Sat, Nov 21, 2026 at 03:19:38AM +0200, Jarkko Sakkinen wrote:
-> On Sat, Nov 21, 2026 at 02:08:34AM +0200, Jarkko Sakkinen wrote:
-> > Signaling every process inside a container from userspace via /proc is
-> > racy against concurrent fork() calls.
-> > 
-> > Add the ROOTNS_KILL ioctl to require an ancestor active PID namespace,
-> > walk the root namespace's PID namespace IDR under tasklist_lock, and
-> > deliver a validated signal once to each thread group including in-flight
-> > forks, aggregating per-process delivery results.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> Will be gone i.e., can do also  pidfd_send_signal(fd, signum, NULL, 0).
+> keyctl_chown_key() looks up the target key by calling lookup_user_key()
+> with the KEY_LOOKUP_PARTIAL flag. That flag lets a caller with
+> CAP_SYS_ADMIN change the UID of an uninstantiated key during construction.
+> When the UID changes, keyctl_chown_key() replaces key->user under key->sem
+> and drops the old reference with key_user_put().
+>=20
+> __key_instantiate_and_link() and key_reject_and_link() hold
+> key_construction_mutex during instantiation, but neither function takes
+> key->sem. Both functions increment key->user->nikeys, and
+> __key_instantiate_and_link() also calls key->type->instantiate() without
+> holding key->sem. When a key is in quota and its size changes,
+> key_payload_reserve() reads key->user seven times without key->sem. Those
+> reads include spin_lock_irqsave(&key->user->lock, flags) at the start and
+> spin_unlock_irqrestore(&key->user->lock, flags) at the end.
+>=20
+> [ ... ]
+> key_reject_and_link().
+>=20
+> Fixes: 5801649d8b83 ("[PATCH] keys: let keyctl_chown() change a key's own=
+er")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sinan Turunc <enscrpt@pm.me>
 
-Wiring:
+Sashiko has reviewed this patch and found no issues.
 
-        case PIDFD_SELF_THREAD_GROUP:
-                pid = get_task_pid(current, PIDTYPE_TGID);
-                type = PIDTYPE_TGID;
-                break;
-        default: {
-                CLASS(fd, f)(pidfd);
-                if (fd_empty(f))
-                        return -EBADF;
-
-                if (is_rootns_file(fd_file(f)))
-                        return rootns_send_signal(fd_file(f), sig, info, flags);
-
-After this only ROONTS_GET_NSFD remains.
-
-Br, Jarkko
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121111246.3478=
+-1-enscrpt@pm.me?part=3D1
