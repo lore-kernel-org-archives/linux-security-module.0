@@ -1,64 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.50
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795261660;
-	b=E2l4eaE8UvFM1GAUpbupwhxGM12p+usWpDTdiar8nD/h0RjVatZAiZSYuHjPsUckMQkv
-	 GlKPD9Lxi5g+k9Y9HMyBEiw1Krc5g3S48i9DT3ITcfnMD22Md0Nz3cqJG/Xtu2Yacns8L
-	 W2UudwBpXYBTo9/SZaax4ZRriFl7lNqsMf+DGS9OVj+7/ICCrLeSA+0p58hLHjlQm7uEX
-	 CzUKig7y9v6LDNG2shh7fiol4tjaJrkMFuab6XvGbfseAbe4me/DUSvZ9OudE3H7lUsy3
-	 ihsCPJ2FogyDbW6xwssoqgY/xRyqmdpqLiM2eTSO0bXO18lbV3gnotHZ3f4ht0aTF+A==
+	t=1795265451;
+	b=QiSx5BDxTRuVekeJGHWfXioOIt+z7eWGf2mu6QTtw6gN1mG8aB2zxjClqpsK4qhsotcG
+	 ABDDzffjapAQg94fVd4Q1EeSbgt4hnyh6YZgg9Nhm9TutIa+N2DXvWMLI5WnUR8BUPV3b
+	 AUzgtgdIyMYbxWDsl1Gyt97TpYsVlrBMGWXQDzSR4ZOBaDLCv+CjddxzeD7/Kif70RGjZ
+	 rYqjmct6rYyrTHu8T5X1bvUi95QOeTycH31JCtWpwtTeOMtEvx9EZ+4HtQ4MHII1NWtvX
+	 EHd6KzXV/P/zMy6OOvq5MM7JqbL+PASLqp8kwDHzMw1LZjHS4rfIHrnBVcgSPjIpBsQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795261660;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=4ALx0sJpj+pkFds0WlOLPKL1r0Eodz+uXw3XkI0BnJQ=;
-	b=0cyf9QfaMxbqYvf+G5jzZ6zo0rtqXO8H9w/Ba2XWF4jY3zKvl6I+iTViQmdlZXgyhSZN
-	 EgHGtQTzljqM/Wq5VNtA73C3e2WMaTIAZ/8tDGBu65J2T8CZbXFo3BqliBpmDdQ9QMMlX
-	 /LvWK2SptkkUiW/DBm+GrR/y+ODtusS4uqIN/PAS/l+U1HCQUyBN+J0RbzO34bbpJQ8Ks
-	 mznhRdD25/kLjRQgW4FiGOLOfIja38a1gQLvPu8ICGj0UzuvVciaHI2PB7RYC6uy7bLsN
-	 lPMwwwxwKx57MzXSgQWFPFWLrslIeNrbGUTgyS3HIra/gdhLbNVXUAKeuD868/1TyGw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795265451;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=a+JvEByhjl3Q0eRtUPeklA/fZjCl5bKRc9fdhPzK8Ac=;
+	b=4eg+SWWRIGmuVI5LGfhZHrU9Lh8uQpIQoW8TR/2r6QI/mlC1AQpRQY3p5OP/gkE5knqu
+	 5dPiiHm0fpBi2VHg0yMYws5BudOBQs3OF3vLLhkA8gowFjtjTq2rLSZlCNO19RXovQOlp
+	 XtA/fT22m+qK9zfTMgKvkb72ExdaomTxYYO4rChS7iAM4rZGXfkoRdtNVXOr6RxqpK44W
+	 BOX4rz3EJUgewpDLKaUOTHXWu2KuiHK2f9Z9sU9BG+jHvdsERbCfOR+SEQKNA/L8BlFTz
+	 lDZeuGgBjfYkNfHdoOu9IjtLfm651NeWwO5LhArhJRxWbpPuzN1lvpx/T5RnRxrtcOw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IkROlQ0P;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Imsir6fH;
+	arc=none smtp.remote-ip=209.85.128.50
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 67F4A606A320;
-	Sat, 21 Nov 2026 11:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07F1606A331
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 12:50:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D07F1606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IkROlQ0P
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7B4521F000C0;
-	Sat, 21 Nov 2026 11:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795261660;
-	bh=4ALx0sJpj+pkFds0WlOLPKL1r0Eodz+uXw3XkI0BnJQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IkROlQ0Pq+Rut8U64pvIUJTh/oAnChCaeNYg7hBVBuRUnEhRsa7xNq/JRarTXK2K/
-	 1SrKwVoY5oIeDiNoie/5u8U8GgnhTmyy0YX6Ld+DcqlRzwJDYG0Roi6EYh/NSo328Z
-	 gtWd1bE18xVGxRviE+EdpOnXwrmVQ8V4R2Hep+47tEdMGgvQkfsf4DeY503xo0UrGz
-	 +bmeCFDEAe5+Uy7+IO+cUFDQVBzUpeFHqWg93+bOiVNe0hghenDK7O9YRFT43oKEgj
-	 ETQw/sww4Y0GKJuijqz84K+iCyImKpbC8/fpbl33gqZ6lI9qEE90ukgklczuRo0UYy
-	 qfTMs+JqLTQJQ==
-Date: Sat, 21 Nov 2026 13:47:36 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Alexander Mikhalitsyn <alex@amutable.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
-	Neal Gompa <neal@gompa.dev>, Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v5 20/25] security: Add rootns LSM hooks
-Message-ID: <awGE2FTQ6kpWEMJh@kernel.org>
-References: <20261121000844.1863324-1-jarkko@kernel.org>
- <20261121000844.1863324-21-jarkko@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Imsir6fH
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4a35a60499eso14038235e9.0
+        for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 04:50:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795265449; x=1795870249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=a+JvEByhjl3Q0eRtUPeklA/fZjCl5bKRc9fdhPzK8Ac=;
+        b=Imsir6fH8V7hOExu52NV554HH3pwtbhoLh70BMUw8H1FaFiWt7W9gMtzLxzyAWqEK7
+         PDd4FwlbIR16ulmMWV/RrrEnkjme74mNISBwO15zVGJctYBCbuEexnAVhvDw7EChJweE
+         CNJLlHu9Ia5dmdb8RBOiBLwhc4OjapiV+Cd5c2mU4ujK3opQq7DLiS0fxDOUOEmQUNcn
+         Oc/JxNmuUt/GSKQYXe7LuWKLqWlVmLBpBDpHOHXdMcuoVtBhj0Cs7C48GQHHVRpGJLnx
+         57FfYipZk9L0sk23f1CityQxeUziuI/F0K8U0AB14i0DdHS5Ft9RaNWxa8xeiGMaq5aa
+         bU8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795265449; x=1795870249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=a+JvEByhjl3Q0eRtUPeklA/fZjCl5bKRc9fdhPzK8Ac=;
+        b=QP0Cwz3rju030FcLPVotcbD2waUl/rOpfaspXhg4C4h1RtSU9Pyhra20S032HkaH/i
+         vjl4nZQ8AwNc2u8P6sc03qCyt19wK+m12VgQXv0ePbCnRkkb7oQ5PahX/5xCfA/qXkqy
+         G/TLVyKpigbiDPmmRE79sMs/LKaywyaN4BqOiLozXo/bXpnJYf+qpiHMDYYRes74WaNg
+         5jsF+0YS8y1jwkbvUAalbiKwpuQzcrGewMGDHU9M4QQP9pPS/9MlX04yj7CJs0kt/Nt8
+         Ay4bazlxnUryFOgsu6sTyefaqkgkzK0HvzLO3S3Bw8TuW2vspEZycfe9UOV2wPm1v01w
+         srAA==
+X-Forwarded-Encrypted: i=1; AL+hErGmI7VonRcaTtxv6NBjRMRrYsoN2D1KMND4yhsicGQ+UHhYWyy9EL10iK7rOUWRis92KALYjP7Q9oc66gNJPTU+vBmGvNU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z87YdTr9zHxDR5WtBlykcX/RnlGA6pHt6NcMf5IuxcQR9A7xQr3
+	YqmNhkyiofx6/efyMs74eyBeTp/czd7FbnX5CvR7tCPQYq/LQua/RFA=
+X-Gm-Gg: AZFdTZdtNz9HDLqHtAcAH0g0g/e1LS1RHDqJ1S5rO9GYoXe+JfJfOLJ3ndIYVHZCphE
+	4/KkFSPgJL5Oux63SvTN++Q+WbzqwgcFoOExOhwZ+ooBha2MRcdzeh5lY80CjNwyZbe4P6oGlTJ
+	dpMolUlGjS5O/rEgXUmqTQ7PmmWgcAU+p/dY6rpCm57Uo+DmISx1ct7Din20YkxLjo2zJGuL7sA
+	k7k7/6giCusPJaNN9bhKKxyN6U4dAmnwOLIsiKPJsoTSRFs6g10GO7iyzm+iMUQJ2KkS61McEaV
+	Y7CqWu+FOsKi5AtQe11ZObak1AOg691MasQOIYmNWgXvesuQqpFGkIoneIJhevqrVEH5ApDK/rb
+	VpdwuA+WzffLqt0joZH7jQtpSxZFaeO3lg7zjKPNuUZX0TCZRUcrRFthVXToIFjxbFV5/ZXZASr
+	FcT6DyXzYmXKRwzfDN05+h+iJktcbsAt36IHY43lSrSW86c29HxdOJNzJ1o7x1rZNa1OeWRkCLu
+	cJvs2hef5Mtx+hJOYbAPznYUJhZ96bIHcmZOx5dpYXwZnotnt3ECzAE04WslefwCbtsOd1XyZow
+	1jkVtwcuu1iXUVqv8sKZTUA+Jtgnnp3fmABS
+X-Received: by 2002:a05:600c:820d:b0:4bb:6cef:d14b with SMTP id 5b1f17b1804b1-4bb887c34f1mr145440935e9.2.1795265448967;
+        Sat, 21 Nov 2026 04:50:48 -0800 (PST)
+Received: from localhost.localdomain ([2001:41d0:303:db6b::])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab69bf685asm10803003f8f.20.2026.11.21.04.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2026 04:50:48 -0800 (PST)
+From: Tristan Madani <tristmd@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tristan Madani <tristan@talencesecurity.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] KEYS: protect construct_key type dereference with key semaphore
+Date: Sat, 21 Nov 2026 12:50:39 +0000
+Message-ID: <20261121125039.2532663-1-tristmd@gmail.com>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -68,63 +101,58 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261121000844.1863324-21-jarkko@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 21, 2026 at 02:08:39AM +0200, Jarkko Sakkinen wrote:
-> Security modules need visibility into root namespace creation, teardown,
-> process entry, and container-wide signal delivery so policies can attach
-> per-rootns security state and mediate operations on rootns file
-> descriptors.
-> 
-> Add lbs_rootns and rootns->security blob management alongside
-> security_rootns_alloc(), security_rootns_free(), security_rootns_clone(),
-> and security_rootns_kill().
-> 
-> Co-developed-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
->  include/linux/lsm_hook_defs.h |  7 +++
->  include/linux/lsm_hooks.h     |  3 ++
->  include/linux/rootns.h        |  3 ++
->  include/linux/security.h      | 30 ++++++++++++
->  kernel/rootns.c               | 44 +++++++++++++-----
->  security/lsm_init.c           |  6 +++
->  security/security.c           | 86 +++++++++++++++++++++++++++++++++++
->  7 files changed, 167 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 87d9d06710cb..2cb90ddedc14 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -480,3 +480,10 @@ LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
->  LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
->  LSM_HOOK(int, 0, bdev_setintegrity, struct block_device *bdev,
->  	 enum lsm_integrity_type type, const void *value, size_t size)
-> +
-> +#ifdef CONFIG_ROOTNS
-> +LSM_HOOK(int, 0, rootns_alloc, struct rootns *rootns, unsigned int flags)
-> +LSM_HOOK(void, LSM_RET_VOID, rootns_free, struct rootns *rootns)
-> +LSM_HOOK(int, 0, rootns_clone, struct rootns *rootns)
-> +LSM_HOOK(int, 0, rootns_kill, struct rootns *rootns, int sig)
+From: Tristan Madani <tristan@talencesecurity.com>
 
+construct_key() reads key->type->request_key without holding key->sem,
+then calls the resulting actor function pointer.  While the
+sys_request_key() syscall path holds key_types_sem for reading (via
+key_type_lookup()), which prevents concurrent type removal, in-kernel
+request_key() callers pass struct key_type directly without holding
+key_types_sem.  If unregister_key_type() races with such a caller,
+key_garbage_collector() can retype the key to key_type_dead and the
+module text backing the original request_key method can be freed before
+the actor call executes.
 
-Rootns objects have a security model:
+Take key->sem for reading around both the key->type->request_key lookup
+and the actor() call, consistent with the approach used by 925c84e3cc21
+("KEYS: Protect the read method check against type removal"),
+51bcd09b9ffc ("KEYS: Protect the update method check against type
+removal") and bab48a104447 ("KEYS: Protect the pkey method checks
+against type removal") which protect analogous method dereferences in
+the keyctl paths.
 
-1. No embryonic state by design. Especially staircase initialization
-   contributes to this property.
-2. Unshare logic is inverted. Right now ROOTNS_SHARE ioctl does not
-   exist right now but it is (obviously) doable.
-3. Dead obvious and transparent LSM hooks. Really hard to get them
-   wrong.
-4. We already know by experience that opaque fd-bound objects with
-   two-phase state machine (build, live) works. It's what make this
-   secure and policy-free implementatiion.
+Fixes: b5f545c880a2 ("[PATCH] keys: Permit running process to instantiate keys")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tristan Madani <tristan@talencesecurity.com>
+---
+Changes in v2:
+- Hold key->sem across the actor() call, not just the type pointer read,
+  matching the established pattern from the three prior fixes (Sashiko)
+- Clarify that in-kernel request_key() callers do not hold key_types_sem
+  so the race is reachable outside the syscall path (Sashiko)
 
-The choices how to do things with closures used in SGX driver are
-translatable and they are also pretty well reviewed choices, given all
-those years... I would put some weight on this too.
+ security/keys/request_key.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Br, Jarkko
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 22cd66a44da56..60a8cb5924e11 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -241,10 +241,12 @@ static int construct_key(struct key *key, const void *callout_info,
+ 
+ 	/* Make the call */
+ 	actor = call_sbin_request_key;
++	down_read(&key->sem);
+ 	if (key->type->request_key)
+ 		actor = key->type->request_key;
+ 
+ 	ret = actor(authkey, aux);
++	up_read(&key->sem);
+ 
+ 	/* check that the actor called complete_request_key() prior to
+ 	 * returning an error */
+-- 
+2.47.3
+
