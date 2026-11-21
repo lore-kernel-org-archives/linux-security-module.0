@@ -1,55 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795271505;
-	b=VmenHJg+2yGvCqqHn7nH+LzBt6h/AP8LNHBCnQtzuTTKy35yX+orvqZ8qwp17fG9H4gN
-	 Rjy6FSxj7qop9WeEFXZ2BeutFhhRkkj7lPi7t7otdGzuS05ZnExyD1sanz6SLJ4rkRfZe
-	 VVxENMBlcyer0k6iDbNc52gaBcQT1kEExMsu6B8s+xa8sUdW9DIg2kRrkwpEMAMSuZTXa
-	 cJPSIQ785ab/y1l6mAVd/PpOZ0MYp2ZWdbDoGHoUUULHgOGbmgBxX0XOUiZ3f3VzWJmbq
-	 Vrr1OsDgP4Q1yjueSXZ/k3wcaMnB6xLxteDF8qmd9D7lgQgtCKK0RYXrX37LSGCyZhg==
+	t=1795276704;
+	b=frhmcBqQhzf9tTfl159M2JmUkFOnJ+qs8w0PBKKkYORMEMfOPOAw3Mi5D4v/ap7veD1a
+	 tRKaz7tNkErnIS/hn1I9UqBHdYjxszss1Xnhi7Ie3ZPwUjviz7qGqHKT9QTX2y+07KHa5
+	 N7YSz2h8Il3Beu6j8mfln+N3rpjJFmDcnURn5f3Z/Ac53Sb4190OUrDOhVUSVr8nUC1Ot
+	 YoTCKIpBs7BTlByYDXr2dpqcLJflj3GWINqUWyuwOFOyyb5AMVZE4e6RpdW209l6IBaoz
+	 onpWOJbD6hAlRTjs+DvwrYNicYC/nRWow9MuPjwxP2xG8+0DU4ghHLVSgd5hKWb3OSA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795271505;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795276704;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=uyOE8Ay4ZFWz1zTavYu6tu+l5AyqoVpkO8APGAtFXwE=;
-	b=FW08vNBb2RimeM03aWteXniARqAhT4ipW3ZZse1JjwpJ4UELVvND7o5Wy7m+0tIiI6G1
-	 qhIVpw7fumZhK9h88x2Ml+PJxsxPvJGYxhGClv3dW1jgJKIV1CVGrgdRKadLoVrvh9QXb
-	 ajAU3EsqwfPeqp4/da18y7cinM7LOH0dEvgxwJ36rm8Hkg9A1QxNcOjqtFVmMp39WvwzL
-	 ADDMe3FQr7UROYhFUQWl8ncoHawYYU70dMMnavpMFtd7P3AZkNM1krgT1A7eZoQq062Jb
-	 WvRKSIqba3p2vV0/VdTcE/zQJ/P/AyPVdtixPnha8gVi4puiLPH+4GyrjD6zTGfEIiA==
+	bh=v59nU/2/9ru5K4MWt6NBStp2evSJmM0oxZDWWYQAtDI=;
+	b=0JL6xAV00bIeAmdy65OkntNQ6/gOve1YRLAsgo1ifLPBGfQPLTSnuz5mMRUFf2cLgM9J
+	 843QfDOMijL3/d9UWWPwjz4am5I0p1fPBhLb0NKqEVxvrJOd5JfmFDoMhJ2gsbUNOSe/B
+	 AIGxBhTkRsR4Xwav0rvvwb7rCI9t78aJFiMY77FlgLMkb1H+6EDETWzHi+BZfuDy++Nhm
+	 uKca+VTEjwluL8NnNjutu7RvpQyb0QvTiZ2A4NMjSRHHObHVPq/z3VW76lblva3b8615h
+	 J4sz7mMfnQisiF/hsE5YTlJTHMTngN8x5gDzQ7zBPcynP8boBjpaV7brbJVR3pUmn3A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Ixa87/9v";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U08EaliS;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 416EC606A320;
-	Sat, 21 Nov 2026 14:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 97BD2606A320;
+	Sat, 21 Nov 2026 15:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ixa87/9v
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 44FF01F000C4;
-	Sat, 21 Nov 2026 14:31:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U08EaliS
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id CCAC31F000CA;
+	Sat, 21 Nov 2026 15:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795271504;
-	bh=uyOE8Ay4ZFWz1zTavYu6tu+l5AyqoVpkO8APGAtFXwE=;
+	s=k20260515; t=1795276704;
+	bh=v59nU/2/9ru5K4MWt6NBStp2evSJmM0oxZDWWYQAtDI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ixa87/9vUcJtEdIU63RABmV1aW7O1alGdKpEBkYD6ynqqUPteiTu0T/hZ7yDcj8to
-	 bjUCMOfVQjJDWnc9ffj56tZNW5Auz9HiC01XAy5YyUOoYaCNiCsBIrfvTlNpuBqGbo
-	 nqWsqkao28BAzdI1v3Da1uuh/b0yS0OUnr3N3vFsdyT3+LB/0o8OzO6PtT4lmYb2VE
-	 06DGJBCxqCkFg4BRT9mwnR+qmgyq29AU7iJbN81RLG5TPtvGtCcGKZSy9JN2zaw6PG
-	 aH5N5KwS5pgIlp3Ogmcml62ZB4NM7/uVg0bQ0UnKyVQ1T929ZmXPezKUjudUflmKox
-	 lN5vE9KZj89sw==
-Date: Sat, 21 Nov 2026 16:31:41 +0200
+	b=U08EaliSbWubcMuaRUSpPl/xtocKTKRG5+LWCQtIwOvf1KyYvw7cQGTtMNjwQj+jx
+	 Ng4QuX/N5lAp9jx7j2hYITxmWQlgrLoVVYa7nA2uyLxoanOfvKHnmbqHjP3p/WCFrD
+	 wR2GLYIVuzGz9NvoACIKUCu691qClsGC87Em4zfKUaOoSmXlVErC63uKS9A8IKcQXV
+	 JshEx6xACR1YzyWXaG3Je89a0VlL+//Y5PN4Fs+llD0UvUh/DHsT+RER+LdFLuuIYI
+	 qeEI4tunehkM1Hw5Lm2kKHa7grtpMKogAQdxNcFXoeymOIsJD6zKuEuZzxuJLG15Uh
+	 +W0MW70agCpIw==
+Date: Sat, 21 Nov 2026 17:58:20 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Sinan Turunc <enscrpt@pm.me>
-Cc: David Howells <dhowells@redhat.com>, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] keys: serialise key instantiation against
- keyctl_chown_key()
-Message-ID: <awGrTTKldMOVxITI@kernel.org>
-References: <20261121111246.3478-1-enscrpt@pm.me>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	Alexander Mikhalitsyn <alex@amutable.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
+	Neal Gompa <neal@gompa.dev>, Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: Re: [RFC PATCH v5 03/25] arch: Wire up userns_set_idmap() system call
+Message-ID: <awG_nK9E-UjkVgK6@kernel.org>
+References: <20261121000844.1863324-1-jarkko@kernel.org>
+ <20261121000844.1863324-4-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -61,111 +70,35 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261121111246.3478-1-enscrpt@pm.me>
+In-Reply-To: <20261121000844.1863324-4-jarkko@kernel.org>
 
-On Sat, Nov 21, 2026 at 11:13:07AM +0000, Sinan Turunc wrote:
-> keyctl_chown_key() looks up the target key by calling lookup_user_key()
-> with the KEY_LOOKUP_PARTIAL flag. That flag lets a caller with
-> CAP_SYS_ADMIN change the UID of an uninstantiated key during construction.
-> When the UID changes, keyctl_chown_key() replaces key->user under key->sem
-> and drops the old reference with key_user_put().
+On Sat, Nov 21, 2026 at 02:08:22AM +0200, Jarkko Sakkinen wrote:
+> Expose userns_set_idmap() (473, 583 on Alpha) across all architecture
+> system call tables and asm-generic unistd.h.
 > 
-> __key_instantiate_and_link() and key_reject_and_link() hold
-> key_construction_mutex during instantiation, but neither function takes
-> key->sem. Both functions increment key->user->nikeys, and
-> __key_instantiate_and_link() also calls key->type->instantiate() without
-> holding key->sem. When a key is in quota and its size changes,
-> key_payload_reserve() reads key->user seven times without key->sem. Those
-> reads include spin_lock_irqsave(&key->user->lock, flags) at the start and
-> spin_unlock_irqrestore(&key->user->lock, flags) at the end.
-> 
-> If keyctl_chown_key() swaps key->user between those two calls,
-> key_payload_reserve() unlocks the new owner's spinlock and leaves the old
-> spinlock held. By source inspection, key_user_put() can also kfree() the
-> old struct key_user while instantiation still dereferences it. That struct
-> key_user use-after-free was found by reading the code and did not trigger
-> during our KASAN runs.
-> 
->   =====================================
->   WARNING: bad unlock balance detected!
->   7.4.0-rc2-g23c62304dde2 #3 Not tainted
->   -------------------------------------
->   request-key/163 is trying to release lock (&candidate->lock) at:
->   [<ffffffff82698fff>] key_payload_reserve+0x29f/0x370
->   but there are no more locks to release!
-> 
->   other info that might help us debug this:
->   locks held by request-key/163: 2, on CPU#3:
->    #0: ffffffff871c10a0 (key_construction_mutex){+.+.}-{4:4}, at: __key_instantiate_and_link+0x38/0x370
->    #1: ffff88800de4a8b8 (&candidate->lock){..-.}-{3:3}, at: key_payload_reserve+0x160/0x370
-> 
->   Call Trace:
->    lock_release+0x286/0x2e0
->    _raw_spin_unlock_irqrestore+0x1a/0x50
->    key_payload_reserve+0x29f/0x370
->    generic_key_instantiate+0x42/0x230
->    __key_instantiate_and_link+0xd7/0x370
->    key_instantiate_and_link+0x40d/0x4b0
->    keyctl_instantiate_key_common+0x2d2/0x450
->    keyctl_instantiate_key+0x167/0x180
->    __do_sys_keyctl+0x391/0x550
-> 
-> Take key->sem for write with down_write_nested(&key->sem, 2) inside
-> key_construction_mutex in __key_instantiate_and_link() and
-> key_reject_and_link().
-> 
-> Fixes: 5801649d8b83 ("[PATCH] keys: let keyctl_chown() change a key's owner")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sinan Turunc <enscrpt@pm.me>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 > ---
-> In v3 I removed the tool paragraph and the two lockdep subclass sentences.
-> 
->  security/keys/key.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 3f1f0fc..df31d10 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -441,6 +441,7 @@ static int __key_instantiate_and_link(struct key *key,
->  	ret = -EBUSY;
->  
->  	mutex_lock(&key_construction_mutex);
-> +	down_write_nested(&key->sem, 2);
->  
->  	/* can't instantiate twice */
->  	if (key->state == KEY_IS_UNINSTANTIATED) {
-> @@ -473,6 +474,7 @@ static int __key_instantiate_and_link(struct key *key,
->  		}
->  	}
->  
-> +	up_write(&key->sem);
->  	mutex_unlock(&key_construction_mutex);
->  
->  	/* wake up anyone waiting for a key to be constructed */
-> @@ -609,6 +611,7 @@ int key_reject_and_link(struct key *key,
->  	}
->  
->  	mutex_lock(&key_construction_mutex);
-> +	down_write_nested(&key->sem, 2);
->  
->  	/* can't instantiate twice */
->  	if (key->state == KEY_IS_UNINSTANTIATED) {
-> @@ -632,6 +635,7 @@ int key_reject_and_link(struct key *key,
->  			key_invalidate(authkey);
->  	}
->  
-> +	up_write(&key->sem);
->  	mutex_unlock(&key_construction_mutex);
->  
->  	if (keyring && link_ret == 0)
-> -- 
-> 2.56.0
-> 
+>  arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
+>  arch/arm/tools/syscall.tbl                  | 1 +
+>  arch/arm64/tools/syscall_32.tbl             | 1 +
+>  arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
+>  arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
+>  arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
+>  arch/s390/kernel/syscalls/syscall.tbl       | 1 +
+>  arch/sh/kernel/syscalls/syscall.tbl         | 1 +
+>  arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
+>  arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
+>  include/uapi/asm-generic/unistd.h           | 6 +++++-
+>  scripts/syscall.tbl                         | 1 +
+>  18 files changed, 22 insertions(+), 1 deletion(-)
 
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Thanks.
+I'll populate remaining arch's at the time when I split this. It has
+enough coverage for the time being.
 
 Br, Jarkko
