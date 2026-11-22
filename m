@@ -1,54 +1,85 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795306262;
-	b=e+QdWcCPmyAixKSj7JZVj+PineZfDWLYT4OfCYvxu0D1j9oms0+YAM6Tn2Xlibc8facx
-	 rOsSi0figS6uMpwTuYtNKyJQ5LgOV2Y5W9RjRbN/2rzNGKfdCPLhRulG4M9a+W0ni2nhI
-	 NSAM9WBErVCLKKb7qC14Ydyd2FUJSk+JlMslD63sTb2Ch/Bh3PiQhNlJ+f7pSnf4TgWIs
-	 VA3Cbdrg+5eNqavgEDI2oaFDFBSbMIYLfyUqDGV2+QYWVL+vVz1n6hA8/Qln1GzFjRP+b
-	 LgSoXwtEzft8h0jOe3UyR9QZWAkHNCYKsiCeTYwFFMMkQpiWMmBXpAyYBQcH46QXJcw==
+	t=1795310303;
+	b=uOD4aw9V+8vwcGbkv83hmrcrn49D+fz5OxxFkf73zKUA5gzqvEe6ZKoyBR5MMwmoi8aO
+	 ErKiszlu41HvFoD366+6YyR2YXh0eGZHRjtIX3Luu1+YW+61VkLzJU+NiBcJQyD2/5qD+
+	 E7RhmKiqiFkGyf0TCGtEsy1mkJqt6XLfH3OKDIx14EuBYorQa7u2fL22II0vAzef1UQmL
+	 3poCkIs8AjZxQ1TQEUXQxDODGOXJxzsT3G+JBkRLOb8xULZryheEEJrg47RyjmfFy4oHs
+	 2/7KucqGYxdzjmeJxWhGQ2BpQDyWK7Ont/5WMakKzvZfJsNR0c6PYDZRZpjnx3ZlpFQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795306262;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=c6jSPovGVfErAI2cg1uJoM9igKPWiAN7zuJvwb+jGVI=;
-	b=c7gfTHuWKK11YXgXuMj3ML10a+ASpDca+Q5OTsnK8JKmFtBVSj6Mpu9SVGOjruXh6285
-	 Is6mIdCrWnQdE4nb0nf89fX7BkWVEeF3vG0i9WOa4O0JV7SwXS7/inchJ65pDpCebh21v
-	 nyuh81jeoHLjMd+W0qtyb2ksvhYCtXeuGA9lOtV8Iya7excEmjr3pIfyOGCQ7wYrPJ/Fw
-	 4/vHVzN/lAosFQ5tRtDdR7+ui+3V1BQhohpAswRPGiBPB2nF4ahcuIHB1/VsW0IGPV3kh
-	 6s80958TeutGyNCHbLdzsKIcXYiwZ3cgBhspx9unCz6GG3JCl0HZG6rmaU1Ktw+m/QA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795310303;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=HMiFFGmw0v9nxAge20cDn397wiErWOHZ9jOEttk4raU=;
+	b=xafJ4zx6oGoGCvrJT09P7toy1SehiELXx55PNc9B2RIh9QuRx6Xv06faISncLGoOJPQz
+	 Djs4DDL5SG1eZ2H0odV5bSF122yhUBJhuazhuvb9hv0bT6Ul5BTSvJogBhTFpjP6BqaX3
+	 wAM4AWCYXJ4qTXhqpbOhH2xAj7BIT/pcnmK5iE8QTeaa41RhzD/271atwoBZOyZMv4gcR
+	 GEorMheGS/brhn4pFZqbVeLAOWblmjsU81kZFiOUfuncVIrK/mwwW4EEhJZByQuqfuWji
+	 qEtl8kD6An1bkwj+IbbLVWHCGqohsQBV3B7EMve+x8CF+mhBL49Ol3WwQVKjZqC8iCQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RHPDVsW7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C+j1UvVg;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1DF606A332
-	for <linux-security-module@vger.kernel.org>; Sun, 22 Nov 2026 00:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id C6C5E606A337;
+	Sun, 22 Nov 2026 01:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RHPDVsW7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBAD1F000C0
-	for <linux-security-module@vger.kernel.org>; Sun, 22 Nov 2026 00:11:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C+j1UvVg
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id C33471F000D8;
+	Sun, 22 Nov 2026 01:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795306261;
-	bh=c6jSPovGVfErAI2cg1uJoM9igKPWiAN7zuJvwb+jGVI=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=RHPDVsW7sOFe+auj86PjpKEEThv1I2c9EhI/S4pDcVyhg1GgmXcaWxUbXE3w9Vvl2
-	 LMpSckg/p4cm/e0MwK0f+Tq8xDqe9TAZZwJPDB6qU57HaD13gpxUxVabIaF+1+KfF5
-	 7z/xib3ImZoeSM2Hl+trxdQifTld0rGJLpK8V+HRyVdHGVMWOMXNNrpPpQR6eIf9FP
-	 vVFoZ1O8jCvgw6OkbX2fz34nusZ+tFZyxZfbOp7T6ZLTZ3EDISiQ1KV0NMu1KEIgTE
-	 Rwdf+TrWNlj0ILM42VViACdSgYjzlFTKANuaaqQXJmuXWnB7XyxKCxjK8C0Pb3u2ai
-	 SqpSVVLkaVRhw==
-Message-ID: <sashiko-outbox-227560@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v5 00/25] rootns: fd-bound process closures
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261121000844.1863324-1-jarkko@kernel.org>
-References: <20261121000844.1863324-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 22 Nov 2026 00:11:01 +0000
+	s=k20260515; t=1795310303;
+	bh=HMiFFGmw0v9nxAge20cDn397wiErWOHZ9jOEttk4raU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=C+j1UvVgDWtOAPt8XWSNPgtEmRheZe6p/Zxa5yvM0BnC7U/nigoPkIixtcmaJImOi
+	 3bKXBQ3MOJIzEnifXGq/e4j6MycalZFXvzccUFfqe9dI1TGndLSr5PGcnFIe8Jje/c
+	 Q45wK8DaPan0bFAhyCLTJ/VugRrIdKTx7SsBmubhLWb71wBhFL+FmC770a6SWMn0p7
+	 rb7BVXLInShRYT1vDUWHFaI4l9Zhn+nYRWiuTjtW7hVb3sLAee7jcAxJ9Dsg14rE2M
+	 cYT2ig/iuchjBheqZ2yuUXfTO8JDZcnPGiCXGoh2ZP8TLIoxv2Uv3+q/r0KUsU+iO4
+	 JD2osQs1N+zog==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	bpf@vger.kernel.org,
+	containers@lists.linux.dev,
+	linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	Aleksa Sarai <aleksa@amutable.com>,
+	Alexander Mikhalitsyn <alex@amutable.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Giuseppe Scrivano <giuseppe@scrivano.org>,
+	Hugh Dickins <hughd@google.com>,
+	Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Kees Cook <kees@kernel.org>,
+	KP Singh <kpsingh@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: [RFC PATCH v6 01/26] userns: Factor out idmap validation and commit helpers
+Date: Sun, 22 Nov 2026 03:17:44 +0200
+Message-ID: <20261122011809.2667684-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261122011809.2667684-1-jarkko@kernel.org>
+References: <20261122011809.2667684-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -57,29 +88,231 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sashiko has finished reviewing this 25-patch series:
+map_write() validates extent ranges, translates parent ID ranges, sorts
+extents, and installs the resulting map inline for procfs text writes,
+preventing non-procfs callers from reusing the same validation and
+commit path.
 
-- Patches 1, 4, 5, 8-15, 18-21, 23, and 24: no issues found.
-- Patch 2 ("userns: Add userns_set_idmap() system call"): 3 potential
-  issues (1 High, 2 Medium)
-- Patch 3 ("arch: Wire up userns_set_idmap() system call"): 1 potential
-  issue (1 High)
-- Patch 6 ("mount: Support MOVE_MOUNT_T_MNTNS in move_mount()"): 1
-  potential issue (1 High)
-- Patch 7 ("mount: Support MOVE_MOUNT_CLONE with MOVE_MOUNT_T_MNTNS"): 1
-  potential issue (1 Medium)
-- Patch 16 ("fork: Support CLONE_INTO_ROOTNS in clone3()"): 1 potential
-  issue (1 Medium)
-- Patch 17 ("fs: Support FSCONFIG_SET_ROOTNS in fsconfig()"): 2
-  potential issues (1 High, 1 Medium)
-- Patch 22 ("arch: Wire up rootns() system call"): 2 potential issues (2
-  High)
-- Patch 25: skipped (not reviewed).
+Extract validate_and_insert_extent(), free_new_idmap(),
+resolve_new_idmap(), and commit_new_idmap() out of map_write() with no
+functional change.
 
-Detailed reviews have been sent as separate replies to patches 2, 3, 6,
-7, 16, 17, and 22.
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ kernel/user_namespace.c | 159 ++++++++++++++++++++--------------------
+ 1 file changed, 80 insertions(+), 79 deletions(-)
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121000844.1863=
-324-1-jarkko@kernel.org
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index cd748e1cbace..6b9673dcdc67 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -938,6 +938,80 @@ static bool verify_root_map(const struct file *file,
+ 	return true;
+ }
+ 
++static int validate_and_insert_extent(struct uid_gid_map *new_map,
++				      struct uid_gid_extent *extent)
++{
++	if ((extent->first == (u32)-1) || (extent->lower_first == (u32)-1))
++		return -EINVAL;
++
++	if ((extent->first + extent->count) <= extent->first)
++		return -EINVAL;
++	if ((extent->lower_first + extent->count) <= extent->lower_first)
++		return -EINVAL;
++
++	if (mappings_overlap(new_map, extent))
++		return -EINVAL;
++
++	if (new_map->nr_extents >= UID_GID_MAP_MAX_EXTENTS)
++		return -EINVAL;
++
++	return uid_gid_map_insert_extent(new_map, extent);
++}
++
++static void free_new_idmap(struct uid_gid_map *new_map)
++{
++	if (new_map->nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
++		kfree(new_map->forward);
++		kfree(new_map->reverse);
++	}
++	memset(new_map, 0, sizeof(*new_map));
++}
++
++static int resolve_new_idmap(struct uid_gid_map *new_map,
++			     struct uid_gid_map *parent_map)
++{
++	unsigned int idx;
++
++	if (new_map->nr_extents == 0)
++		return -EINVAL;
++
++	for (idx = 0; idx < new_map->nr_extents; idx++) {
++		struct uid_gid_extent *e;
++		u32 lower_first;
++
++		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
++			e = &new_map->extent[idx];
++		else
++			e = &new_map->forward[idx];
++
++		lower_first = map_id_range_down(parent_map,
++						e->lower_first,
++						e->count);
++		if (lower_first == (u32)-1)
++			return -EPERM;
++
++		e->lower_first = lower_first;
++	}
++
++	return uid_gid_map_sort(new_map);
++}
++
++static void commit_new_idmap(struct uid_gid_map *map,
++			     struct uid_gid_map *new_map)
++{
++	if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
++		memcpy(map->extent, new_map->extent,
++		       new_map->nr_extents * sizeof(new_map->extent[0]));
++	} else {
++		map->forward = new_map->forward;
++		map->reverse = new_map->reverse;
++	}
++	/* Pairs with smp_rmb() in map_id_range_down() / map_id_up(). */
++	smp_wmb();
++	map->nr_extents = new_map->nr_extents;
++	memset(new_map, 0, sizeof(*new_map));
++}
++
+ /*
+  * Parse the decimal u32 at *pos, up to the next whitespace or NUL, and
+  * leave *pos pointing at that character.
+@@ -966,8 +1040,7 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ {
+ 	struct seq_file *seq = file->private_data;
+ 	struct user_namespace *map_ns = seq->private;
+-	struct uid_gid_map new_map;
+-	unsigned idx;
++	struct uid_gid_map new_map = {};
+ 	struct uid_gid_extent extent;
+ 	char *kbuf, *pos, *next_line;
+ 	ssize_t ret;
+@@ -1002,8 +1075,6 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ 	 */
+ 	mutex_lock(&userns_state_mutex);
+ 
+-	memset(&new_map, 0, sizeof(struct uid_gid_map));
+-
+ 	ret = -EPERM;
+ 	/* Only allow one successful write to the map */
+ 	if (map->nr_extents != 0)
+@@ -1052,98 +1123,28 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ 		if (*pos != '\0')
+ 			goto out;
+ 
+-		/* Verify we have been given valid starting values */
+-		if ((extent.first == (u32) -1) ||
+-		    (extent.lower_first == (u32) -1))
+-			goto out;
+-
+-		/* Verify count is not zero and does not cause the
+-		 * extent to wrap
+-		 */
+-		if ((extent.first + extent.count) <= extent.first)
+-			goto out;
+-		if ((extent.lower_first + extent.count) <=
+-		     extent.lower_first)
+-			goto out;
+-
+-		/* Do the ranges in extent overlap any previous extents? */
+-		if (mappings_overlap(&new_map, &extent))
+-			goto out;
+-
+-		if ((new_map.nr_extents + 1) == UID_GID_MAP_MAX_EXTENTS &&
+-		    (next_line != NULL))
+-			goto out;
+-
+-		ret = uid_gid_map_insert_extent(&new_map, &extent);
++		ret = validate_and_insert_extent(&new_map, &extent);
+ 		if (ret < 0)
+ 			goto out;
+ 		ret = -EINVAL;
+ 	}
+-	/* Be very certain the new map actually exists */
++
+ 	if (new_map.nr_extents == 0)
+ 		goto out;
+ 
+ 	ret = -EPERM;
+-	/* Validate the user is allowed to use user id's mapped to. */
+ 	if (!new_idmap_permitted(file, map_ns, cap_setid, &new_map))
+ 		goto out;
+ 
+-	ret = -EPERM;
+-	/* Map the lower ids from the parent user namespace to the
+-	 * kernel global id space.
+-	 */
+-	for (idx = 0; idx < new_map.nr_extents; idx++) {
+-		struct uid_gid_extent *e;
+-		u32 lower_first;
+-
+-		if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+-			e = &new_map.extent[idx];
+-		else
+-			e = &new_map.forward[idx];
+-
+-		lower_first = map_id_range_down(parent_map,
+-						e->lower_first,
+-						e->count);
+-
+-		/* Fail if we can not map the specified extent to
+-		 * the kernel global id space.
+-		 */
+-		if (lower_first == (u32) -1)
+-			goto out;
+-
+-		e->lower_first = lower_first;
+-	}
+-
+-	/*
+-	 * If we want to use binary search for lookup, this clones the extent
+-	 * array and sorts both copies.
+-	 */
+-	ret = uid_gid_map_sort(&new_map);
++	ret = resolve_new_idmap(&new_map, parent_map);
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	/* Install the map */
+-	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+-		memcpy(map->extent, new_map.extent,
+-		       new_map.nr_extents * sizeof(new_map.extent[0]));
+-	} else {
+-		map->forward = new_map.forward;
+-		map->reverse = new_map.reverse;
+-	}
+-	smp_wmb();
+-	map->nr_extents = new_map.nr_extents;
+-
++	commit_new_idmap(map, &new_map);
+ 	*ppos = count;
+ 	ret = count;
+ out:
+-	if (ret < 0 && new_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+-		kfree(new_map.forward);
+-		kfree(new_map.reverse);
+-		map->forward = NULL;
+-		map->reverse = NULL;
+-		map->nr_extents = 0;
+-	}
+-
++	free_new_idmap(&new_map);
+ 	mutex_unlock(&userns_state_mutex);
+ 	kfree(kbuf);
+ 	return ret;
+-- 
+2.47.3
+
