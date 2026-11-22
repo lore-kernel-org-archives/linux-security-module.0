@@ -1,48 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795306260;
-	b=gMWS8CRXppem+Ul9IbupwbBEwU9denXRH7YhcoTJCTHNQprRF914W/FNMubcR7O8h+86
-	 VXsAV5jjP8p5esb+eW1IjByTMQamQuOWQVQ+i9wGaBrtVFBCKNfUHnlqJM3C5mNTSypjJ
-	 eQ3GDmdCz4/5mVXFeObdVtGvg1pbuVjCR24MD169Eh5x2WPWyAqDErqe5wO1+DhyXco4Y
-	 soCa6tTnreVhnVMuFRgEWprnd+fawyDBmpsNkIzVDD1Q/ngJs5ec4R3Pq0+I+qDWwtLA+
-	 EZrHVWXiKMenP6G28eZn0ZKGnV+SicN01fMLP6fxmM3GlQcQHd3EMkazFgFOK1ln6OA==
+	t=1795306261;
+	b=huXdncFQJKsKtAUOhGi6mNOlyeH+yc/uQqfk5MX+j0vBVWIlFH9sRHkKisZuzVLgy6FF
+	 jEUY2f75wVUrA0LBHaZuLQS9bomBaS0dQQOT3Pti9rB8vsYZFDDCsc0YJchr0alZfag4l
+	 JQ8vOFiLqbwvXksJ8wZB7dLvsbJn5cftCwWVzDsp/5HSJI8LJtGUy6ycqtkGPpK9pqTmQ
+	 E4/S3y1rU3d1zRzm7KvAKfVjT9Uo3jQUDUe6JiXoW8Qa1dN+VyK2UWYKJUgyu0dre+A55
+	 2TF6p5iLxkuOfMbG5V7fwtHWXCm1mveABPW+lchfD49VGUf4knweVzft42XJVGCPJ+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795306260;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795306261;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=mJnzJ1/4fleHoLG1FgU2nPuff2XTKEAtpi6kFgEvrTI=;
-	b=S9zgjfD4QjS6LLRYgW1OXPg+qURwOhzWTI2f4v6tEU9v4Bkwwvt8ZNdiOMKyMwetR6QO
-	 Bcu1ovgox21sbW6dPvim7if5C0psub2t3ph3hSnc5gfgKFQG0g4YO9Aj4Sh1AVPAvnQFx
-	 WKUemmr5e9VsWvk7YIg0ZSOGqFQq6VK03Iu/kMUAwg1iu27XHcw97y9OTKKiqUNcq4a4Z
-	 hXkiZOqS5uDYKqUe0WPF9mmpaqIoeLK92A8czlwe9EotKY+MvPpH/a7reZrEyfP1n0M3q
-	 H+LSpccNOdBQ4SiXjwVup4KJvupx/92/+Zh4pqXTwb+AjnoX/QdhPwG1ALx4w6AxPPQ==
+	bh=+Xl9s4gVpPKCKd7J+OHDCYJawIfMHN2GfmrNwppsbQA=;
+	b=MfN4n6kgsLm+OGLxqkrRWkTTtviYHNM+MC05x0v013mh4n9nvSi4bjib6LzvGPs16K35
+	 sgfm3QFL3Ke6MZcuATmKkwWsuv8dE7YXyDh10FtaXnV3NRjbIB+u+d8gMbdRDheqjVVdV
+	 hvpaGwchQKY/rWFLR4WOoFe/YSNqawbKs0/vCa6HhYOACmlW8pDghP6W9den5JUZ39A8w
+	 JWxNtDvrat4ONROn2TCtsOjZcsO8sTUtQm1SCf4K6g742WL/q8dZ0q0T//1vQD5cbG90p
+	 /qf0Ho+HZvGn0VpE2HFxO/PI+ZiSdp2vx7id5XtdyNphDQcajhT7VzKtNgOcZ2jGk4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lytczblw;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cF2Bdve8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A4B606A320
-	for <linux-security-module@vger.kernel.org>; Sun, 22 Nov 2026 00:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD2D606A320
+	for <linux-security-module@vger.kernel.org>; Sun, 22 Nov 2026 00:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lytczblw
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4B81F000C4;
-	Sun, 22 Nov 2026 00:10:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cF2Bdve8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B40A1F000CF;
+	Sun, 22 Nov 2026 00:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795306260;
-	bh=mJnzJ1/4fleHoLG1FgU2nPuff2XTKEAtpi6kFgEvrTI=;
+	s=k20260515; t=1795306261;
+	bh=+Xl9s4gVpPKCKd7J+OHDCYJawIfMHN2GfmrNwppsbQA=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=lytczblw7VPLLPzLQ2VWXouheglnC1Jn8pzaJeH2QnyvHLYUvW1QVfVNNFn7cEhgU
-	 nFN5K4Odc9zHnq54Tnz0zs7L6Si0eDV0BvmLti3Xz1EoMqwjO4C+oirtMXgmA7TyA3
-	 dOGSDJtKYDhGxuXeKMI++8Lh98qTzlrtLkBksZIFwq7Gl8qQYSkt/tCrX+SJS0lZdL
-	 4G4uUwvYUZTed5aQiW+yLhOa+GZNDQ3jeiKyJRAnjvPf/Man5uefi27rffR7jcLIVo
-	 vNJ1tZJASO177H4m/nWZxiKxzgl3EqM9nUJYWDIeoxkigKwginxdyMU6kyp2eiuq7K
-	 BC3Uhvy1Qnb8Q==
-Message-ID: <sashiko-outbox-227552@kernel.org>
+	b=cF2Bdve8/qznSQsfnd1xYEgiUrcxCrd7V58WAGmCRzQrPkGOc+Dd625R2Ma6n7R+O
+	 et24swcuuqW8cHlZg5kHSDaKVHyNZhvhVQe87bKpUk2IWXWmG8W5XfHOdsjnhg7htm
+	 1968X1SwcsHOJvx8NNn9GVQ3Bn04m50MMi4vzuDup9JHeEa6LXdZwm/qsunbUWOshZ
+	 Lc086RdEgiT5YfVTyEBAbTccD2SKjAbd5hHw6bar7loHKG/cNn2Mf0pCeN09bSe/DM
+	 olsiQ6BhOR9pJJRyj3GzLxY3XT7+ME7uyM8Ym4ADyXcRnDE5kgfnfNzd42dbc5PDrr
+	 XdF/d7hu2CXnQ==
+Message-ID: <sashiko-outbox-227557@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v5 17/25] fs: Support FSCONFIG_SET_ROOTNS in
- fsconfig()
+Subject: Re: [RFC PATCH v5 22/25] arch: Wire up rootns() system call
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
@@ -52,12 +51,12 @@ Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
  Bacik" <josef@toxicpanda.com>, "Kees Cook" <kees@kernel.org>, "Neal Gompa" <neal@gompa.dev>, "Paul
  Moore" <paul@paul-moore.com>, "Serge Hallyn" <sergeh@kernel.org>, "Zygmunt
  Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261121000844.1863324-18-jarkko@kernel.org>
+In-Reply-To: <20261121000844.1863324-23-jarkko@kernel.org>
 References: <20261121000844.1863324-1-jarkko@kernel.org>
- <20261121000844.1863324-18-jarkko@kernel.org>
+ <20261121000844.1863324-23-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 22 Nov 2026 00:10:59 +0000
+Date: Sun, 22 Nov 2026 00:11:00 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -69,108 +68,52 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 2 potential
 issues to consider:
-- [High] fs: incomplete namespace binding validation in
-  fsconfig_set_rootns()
-- [Medium] fs: stale fsopen() credentials retained in fc->cred by
-  fsconfig_set_rootns()
+- [High] arch: syscall tables wire rootns() to non-existent
+  sys_sys_rootns symbol
+- [High] arch: syscall tables wire userns_set_idmap() to
+  sys_sys_userns_set_idmap
 --
 
-commit f8ec195808901fb7269d7229635728d247b672b9
+commit a98066c1928facdce930fb742694c04361f3d11f
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-fs: Support FSCONFIG_SET_ROOTNS in fsconfig()
+arch: Wire up rootns() system call
 
-This commit adds FSCONFIG_SET_ROOTNS and the ->set_rootns() fs_context
-operation so callers with CAP_SYS_ADMIN in a target rootns user namespace
-can bind a newly opened fs_context to that rootns before supplying mount
-parameters.
+This commit wires up the rootns() system call across the architecture
+system call tables and asm-generic unistd.h.
 
-> diff --git a/fs/fsopen.c b/fs/fsopen.c
-> index 70024870fefa2..e0d65f6018a7e 100644
-> --- a/fs/fsopen.c
-> +++ b/fs/fsopen.c
-[ ... ]
-> +static int fsconfig_set_rootns(struct fs_context *fc, struct fs_paramete=
-r *param)
-> +{
-[ ... ]
-> +	put_net(fc->net_ns);
-> +	fc->net_ns =3D get_net(c->ns->net_ns);
-> +	put_user_ns(fc->user_ns);
-> +	fc->user_ns =3D get_user_ns(user_ns);
-
-[Severity: Medium]
-Should fsconfig_set_rootns() also replace fc->cred with get_current_cred()?
-
-alloc_fs_context() sets fc->cred at fsopen() time, when an unprivileged
-FS_CONTEXT_AWAITING_NS context has not yet been authorized against any
-target namespace.  If the fscontext fd is passed to another task or
-credentials change before FSCONFIG_SET_ROOTNS, consumers such as
-dentry_open(..., fc->cred) in fsmount() and proc_fill_super()
-(fs_info->mounter_cred) will use the fsopen() caller's credentials rather
-than the credentials that authorized FSCONFIG_SET_ROOTNS.
-
-> +
-> +	fc->rootns_bound =3D true;
-> +	fc->rootns_mnt_id =3D c->ns->mnt_ns->ns.ns_id;
-> +
-> +	ret =3D fc->fs_type->init_fs_context(fc);
-> +	if (ret < 0) {
-> +		fc->rootns_bound =3D false;
-> +		fc->phase =3D FS_CONTEXT_FAILED;
-> +		return ret;
-> +	}
-> +	fc->need_free =3D true;
-> +
-> +	if (fc->ops->set_rootns) {
-> +		ret =3D fc->ops->set_rootns(fc, c);
-> +		if (ret < 0) {
-> +			fc->rootns_bound =3D false;
-> +			fc->phase =3D FS_CONTEXT_FAILED;
-> +			return ret;
-> +		}
-> +	}
-> +	if (fc->user_ns !=3D user_ns) {
-> +		fc->rootns_bound =3D false;
-> +		fc->phase =3D FS_CONTEXT_FAILED;
-> +		return -EOPNOTSUPP;
-> +	}
+> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/s=
+yscalls/syscall.tbl
+> index 9384d59a44dcd..2087b83d6d2ce 100644
+> --- a/arch/alpha/kernel/syscalls/syscall.tbl
+> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
+> @@ -513,3 +513,4 @@
+>  581	common	rseq_slice_yield		sys_rseq_slice_yield
+>  582	common	fchroot				sys_fchroot
+>  583	common	userns_set_idmap		sys_sys_userns_set_idmap
 
 [Severity: High]
-Is checking fc->user_ns !=3D user_ns enough to verify that the filesystem
-supports binding to the target rootns?
+Should the userns_set_idmap entry added by commit "arch: Wire up
+userns_set_idmap() system call" in this series use sys_userns_set_idmap
+instead of sys_sys_userns_set_idmap here and in the other 16 syscall
+tables?
 
-binder_fs_type sets FS_USERNS_MOUNT, and binderfs_init_fs_context() neither
-changes fc->user_ns nor implements ->set_rootns(), so fsconfig_set_rootns()
-succeeds with fc->user_ns set to c->user_ns.  When FSCONFIG_CMD_CREATE then
-runs binderfs_fill_super(), it captures the caller's current IPC namespace
-instead of c->ns->ipc_ns:
+kernel/user_namespace.c defines the entry point with
+SYSCALL_DEFINE4(userns_set_idmap, ...), so the doubled sys_ prefix causes
+syscall table compilation or linking to fail with an undeclared or
+undefined sys_sys_userns_set_idmap symbol.
 
-drivers/android/binder/rust_binderfs.c:binderfs_fill_super() {
-    ...
-	info->ipc_ns =3D get_ipc_ns(current->nsproxy->ipc_ns);
-    ...
-}
+> +584	common	rootns				sys_sys_rootns
 
-drivers/android/binder/rust_binderfs.c:binderfs_binder_device_create() {
-    ...
-	bool use_reserve =3D (info->ipc_ns =3D=3D &init_ipc_ns);
-    ...
-}
+[Severity: High]
+Should the rootns entry use sys_rootns instead of sys_sys_rootns here and
+in all 16 other syscall.tbl files modified by this patch?
 
-An unprivileged caller in init_ipc_ns that binds a binderfs context to an
-unprivileged rootns gets a superblock owned by c->user_ns with
-info->ipc_ns =3D=3D &init_ipc_ns, allowing it to bypass
-BINDERFS_MAX_MINOR_CAPPED and allocate from the minor pool reserved for the
-initial IPC namespace.
-
-Similarly, sysfs_init_fs_context() and cgroup_init_fs_context() capture
-current's net or cgroup namespace and overwrite fc->user_ns with that
-namespace's owning user_ns without implementing ->set_rootns(); if
-current's net or cgroup namespace happens to be owned by c->user_ns,
-fc->user_ns =3D=3D user_ns holds and the context silently binds to current's
-namespace instead of c->ns.
+kernel/rootns.c defines the entry point via SYSCALL_DEFINE1(rootns, ...)
+and include/uapi/asm-generic/unistd.h maps __NR_rootns to sys_rootns, so
+the doubled sys_ prefix causes the build or vmlinux link to fail across
+all architectures using syscall.tbl files.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121000844.1863=
-324-1-jarkko@kernel.org?part=3D17
+324-1-jarkko@kernel.org?part=3D22
