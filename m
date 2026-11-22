@@ -1,45 +1,69 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795313660;
-	b=VEkihWfpkCa+ZQUrTwd/M6NqbfSPH9X9s5Gp4NLmx3tiJIQJ04spxCZ/Q64k8bo3wFkO
-	 iN+Z4BdSOUTwE+/bUHLaRoZLFoL2+1zKX8rGXnBq/L4YBzT5duGJE1gsFQ3UlazEeu9SA
-	 VbdgDBIKcEjOBcnbmjyVTbmOOtx169Yxr7Hcr2LSmi3NTLk90XaUq/LvYxpNOAsRM6bpE
-	 PoMHIDEY2tQmy4ByQisa8d/8MaSq3rWPCgtCBPiAEMm3DMjxn370bmovrDJrhlbVSRcqR
-	 797lkBcgZg5r/qQ5u/KxSBJdT4Atbbts0fo/iYafxftcXbvqlGP1T//UERxjgF/za5Q==
+	t=1795364108;
+	b=TO66DzSngxwlhZntLJHBL8azNqYiCfwDDLT+GzPsW9qDxx0SKsNXKHrHdgr7q4CsApBl
+	 KriANjJeAbX5E3uxiZDXunot+tA8LYk0AtGater+yQe1yHmzK3mvCAmXmjN9Oi9EL5ffm
+	 dJndI5snOyIGMd8O6OOeH+VAD8EK0AEkTjvu0J5g7z44FpVHcZhs4SSWYFeiU2QW+v4xw
+	 GTwhTTD++bBKADJM+GWvcyNGXGkg4zVdQ0cZuqg4uqFFP8cOLbk3B2sUjDbIBDSDZ1Fwl
+	 L16yU+VwGrMf7xFRzEd6rdr5yblv5djiVmd7iD/l90ME+pVFJnm7ZQzFkd9Q+hBwPUA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795313660;
-	h=Received:DKIM-Signature:Content-Type:MIME-Version:Message-Id:
-	 In-Reply-To:References:Subject:From:To:Cc:Date;
-	bh=h5VA1YE3lZnMuc4pgcwx05FrLM8HqoJ1Sdgg4XfYCTc=;
-	b=0pxUXSYS/a+jr6132xQWid6fslWnrTiSDkR1IJfs8/4g6ZwX/s9RRLmUE3TF/jFoHVPT
-	 Jv/ddEUf3h2av0JHqt6llyCbrAf/NsShdRe+6WiVsMZM+RkC4nrSyJi9jQr5wvx65JCQx
-	 vgjFBEl7cBEDNPWUhN/cx4K5S3yj3QaBc8bacxLAYAm0TBmE7WTQDjGPo2qd2YJKK1efY
-	 KTWdi6J+EzjfqzOSYhKdl7yc+K3jqZv4j69VwlVMt76Ul8ffoJyZCAJr/dY+FXAu8gnmC
-	 aunBt14RscXrFFdmUy1fByUbJ3TqTpNwPTIHaAUAHfHyOpLE8QYVIYByGWBXMxOiUYA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795364108;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=sidA8Eikj4NCuusYzJo7PSjkBiaXOdmJGfqzy6mhVLA=;
+	b=DJfr1Sj2bqo6lmqncaN3UoxfeGrPUKSB1l6P4RhY0KBuAujEV+iXyg8hGl7A7d2gSAcp
+	 9xUYJOiW3E+mFGSpr/breMMGTMHNicSu/0KyD2iXlOagGljaLTq9DI/+dPvv5wwSlyqRP
+	 BSKFbjaiNAgIlGpHM1Sa3FM5Xje8SSCnIwxszuoZyKWzIGVArHz33OUAiV8d4zpDQaBaE
+	 91uIaJ4dmcTPISYYYNjTcEzj3KwkJR7P5A4WdIWDSwkfE3cpzLmeDXWRjxa6q7NlVuKPm
+	 DoELAq9s2MepojZkBGwrL9LRJr/aOreNSHJRNBI8XUoyrL3bYf0igvEwhibvjdozXQg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FeZXY1bn;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=hallyn.com;
+	spf=pass smtp.mailfrom=hallyn.com;
+	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=bS7tYBYm;
+	arc=none smtp.remote-ip=178.63.66.53
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6029F606A332;
-	Sun, 22 Nov 2026 02:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A6E60A3820;
+	Sun, 22 Nov 2026 16:15:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98A6E60A3820
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FeZXY1bn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 585771F000CA;
-	Sun, 22 Nov 2026 02:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795313660;
-	bh=h5VA1YE3lZnMuc4pgcwx05FrLM8HqoJ1Sdgg4XfYCTc=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=FeZXY1bnXRjfWfDhdd9xvxA2C1PvOyxAVG/K78D8Kl9qL79GS5Qc997rcaK+Aa0DZ
-	 jl7mxVscPW7m/j4p3AR8o7Pgfv7EdqDS7MMMUdCmSkdniwuxKXU0nZ1MvJtABdS0To
-	 MGbUtZ0CeNa6NIJe+6hVKxEcz0iQdZ5UtGu4oMb0/TY1/v48944cY4nucneJ6g6kNI
-	 rwBf2H2sqlK4Eqycd2/wLe9kB2+F3DlVJHlbuudR+Wj4FMYMVYloWJ2vmPZtPUaCsz
-	 JYGGcRSqFRIHgjga3nhOPl0vDkmiDNg/9CgrfDzA44h72yk+os9ZejeY4N1M/xJOfN
-	 H4vWAxohEgGEA==
-Content-Type: multipart/mixed; boundary="===============3579480507848251298=="
+	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=bS7tYBYm
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1795364099; bh=Jg096sU21vyNh6oEq9d3agCbhZ6LbEQFdC1QhQMToUA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bS7tYBYm1lS0vPKSrdKUJYU9IiyMuYvvtKSx0tDvDXpq7HM6gtnFxFLxmIStcH3et
+	 3ppCZ5Iz36iQZInpcEZVc1mPA+YAeLLFfvzVXpt8CbPOhYma9+AY/1obg1N510ZcFT
+	 TNoAIDzvrKJKCwbU6vc/PIYu+nYulKUZlZg9pWzcqrNHITN/Dcuf2QiiR0NwZelPKL
+	 nXxLf/hXrLq8tRiJWlY4hjGeZD4uK2Mzb8/pEEfr+8h/bo6vOfpXTQGLrOf+XmgHIO
+	 YeaepmOCdyiVrEZnXDVakTd3N2UHZTW8viQjzWFI8QwLR0BJj4VkcduEUpm1I5hdgx
+	 9nQqWY3upTuHw==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 937EFB8C; Sun, 22 Nov 2026 10:14:59 -0600 (CST)
+Date: Sun, 22 Nov 2026 10:14:59 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Christian Brauner <brauner@kernel.org>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"Andrew G. Morgan" <morgan@kernel.org>,
+	Serge Hallyn <sergeh@kernel.org>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	Bradley Morgan <brads@mainlining.org>
+Subject: Re: [PATCH v11 1/3] userns: don't let setns() lend CAP_SETFCAP
+Message-ID: <awMVA+9Q+7mF7naH@hallyn.com>
+References: <20261117-b4-setfcap-userns-v11-0-2be11a2c32f4@toxicpanda.com>
+ <20261117-b4-setfcap-userns-v11-1-2be11a2c32f4@toxicpanda.com>
+ <awCB3UkCPzLGRBTk@hallyn.com>
+ <awCEjJ8syhv+f4vd@hallyn.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -49,203 +73,79 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Message-Id: <a20bfb0569b8af98b16097472118dd35c85fc9c1e258860871b01bfa9c6c9384@mail.kernel.org>
-In-Reply-To: <20261122011809.2667684-26-jarkko@kernel.org>
-References: <20261122011809.2667684-26-jarkko@kernel.org>
-Subject: Re: [RFC PATCH v6 25/26] selftests/userland: Add userland test suite
-From: bot+bpf-ci@kernel.org
-To: jarkko@kernel.org,linux-fsdevel@vger.kernel.org
-Cc: jarkko@kernel.org,bpf@vger.kernel.org,containers@lists.linux.dev,linux-api@vger.kernel.org,linux-arch@vger.kernel.org,linux-doc@vger.kernel.org,linux-kernel@vger.kernel.org,linux-kselftest@vger.kernel.org,linux-mm@kvack.org,linux-security-module@vger.kernel.org,aleksa@amutable.com,alex@amutable.com,viro@zeniv.linux.org.uk,luto@amacapital.net,arnd@arndb.de,brauner@kernel.org,dhowells@redhat.com,giuseppe@scrivano.org,hughd@google.com,jack@suse.cz,jlayton@kernel.org,corbet@lwn.net,josef@toxicpanda.com,kees@kernel.org,kpsingh@kernel.org,lennart@poettering.net,neal@gompa.dev,oleg@redhat.com,paul@paul-moore.com,ptikhomirov@virtuozzo.com,sergeh@kernel.org,skhan@linuxfoundation.org,zygmunt.krynicki@canonical.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
-Date: Sun, 22 Nov 2026 02:14:16 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <awCEjJ8syhv+f4vd@hallyn.com>
 
---===============3579480507848251298==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+On Fri, Nov 20, 2026 at 11:34:04AM -0600, Serge E. Hallyn wrote:
+> On Fri, Nov 20, 2026 at 11:22:37AM -0600, Serge E. Hallyn wrote:
+> > On Tue, Nov 17, 2026 at 07:54:24PM +0000, Josef Bacik wrote:
+> > > A uid 0 task that gave up CAP_SETFCAP can get it back by joining a user
+> > > namespace that another root task created.  Commit db2e718a4798
+> > > ("capabilities: require CAP_SETFCAP to map uid 0") keeps such a task
+> > > from mapping uid 0 into a namespace it creates itself, because tasks in
+> > > that namespace could then write file capabilities for its root user.
+> > > setns() gives a joiner a full capability set in the namespace too, so
+> > > it can do the same there:
+> > > 
+> > >   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
+> > >   unshare(CLONE_NEWUSER)
+> > >                                     setns(A's user ns)
+> > >                                       allowed, euid == ns->owner
+> > >                                     write "0 0 1" to /proc/self/uid_map
+> > >                                       A had CAP_SETFCAP -> allowed
+> > > 
+> > > If A's namespace already maps host uid 0, at any uid, B can set
+> > > security.capability on a file right away.  Either way uid 1000 can then
+> > 
+> > "Either way" here means whether it already maps host uid 0, or whether
+> > it has no mappings yet?  I'd just drop 'Either way'.
+> > 
+> > > run that file with CAP_SYS_ADMIN, which the selftest at the end of this
+> > > series shows on an unmodified kernel.
+> > > 
+> > > The check doesn't look at the joiner's uids, which it can change while
+> > 
+> > >From here until the 'Fix by', it is confusing whether any given statement
+> > refers to the pre-patch or post-patch state.
+> > 
+> > > keeping its other capabilities, and CAP_SYS_PTRACE doesn't stand in for
+> > 
+> > Is this a reference to the next patch?  But that's a completely different
+> > commit.
+> > 
+> > > CAP_SETFCAP.  What gets refused is a task without CAP_SETFCAP that has
+> > > CAP_SYS_ADMIN over a namespace that maps the joiner's root user, or that
+> > > has no uid_map yet while its parent maps that root user, so that it can
+> > > still be mapped.  If that is uid 0 of the parent and the creator of the
+> > > namespace didn't have CAP_SETFCAP, the join is let through: only a
+> > > writer with CAP_SETFCAP in the parent could map it then.  Containers
+> > > that don't map the joiner's root user, tasks with CAP_SETFCAP and
+> > > unprivileged users are not affected.
+> > > 
+> > > Like verify_root_map(), the check is about uid 0 of the joiner's own
+> > > namespace.  The root user of an ancestor that it maps at another uid,
+> > > and a root user stored through an idmapped mount, are left to whoever
+> > > set up that map or mount.
+> > > 
+> > > Fix by refusing setns() when the joiner doesn't have CAP_SETFCAP and
+> > > tasks in the namespace can write file capabilities for the root user of
+> > > the joiner's namespace.
+> > > 
+> > > Suggested-by: Serge Hallyn <serge@hallyn.com>
+> > > Link: https://lore.kernel.org/all/fd159e68-c613-4c7d-bfba-8af0a3f3a96e@hallyn.com/
+> > > Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
+> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > 
+> > The code looks good to me,
+> > 
+> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-> selftests/userland: Add userland test suite
+I've tested that unprivileged lxc still works with these two patches, so feel
+free to add
 
-TL;DR:
-- Selftest may fail on out-of-tree builds: ksft.py helper isn't installed
-  (TEST_INCLUDES)
-- Plain i386 userspace on x86_64 may get x32 syscall numbers and wrongly skip
-- Time-namespace case may fail without TIME_NS; a socket recv may hang on
-  failure
+Tested-by: Serge Hallyn <serge@hallyn.com>
 
-> diff --git a/tools/testing/selftests/userland/Makefile b/tools/testing/selftests/userland/Makefile
-> new file mode 100644
-> index 000000000000..baf26c6780bb
-> --- /dev/null
-> +++ b/tools/testing/selftests/userland/Makefile
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +include ../lib.mk
-> +
-> +TEST_PROGS := test_smoke.sh
-> +TEST_FILES := userland_cells.py userland_test.py
+to the first two as well.
 
-Will this suite run under an out-of-tree build such as
-"make O=/tmp/kselftest kselftest"?
-
-With O= set, the run_tests recipe in lib.mk copies only $(TEST_PROGS) and
-$(TEST_FILES) into $(OUTPUT), and INSTALL_INCLUDES copies nothing because
-TEST_INCLUDES is not set.
-
-test_smoke.sh then execs userland_test.py from the copied location, and
-KtapRunner._load_ksft() looks for the helper relative to that file:
-
-    ksft_dir = str(Path(__file__).resolve().parents[1] / "kselftest")
-    ...
-    return importlib.import_module("ksft")
-
-Nothing in that flow creates <dir>/kselftest/kselftest, so
-import_module() raises ModuleNotFoundError and run_one() records
-"not ok ... selftests: userland: test_smoke.sh # exit=1" even on a kernel
-with CONFIG_USERLAND=y.
-
-Would adding the helper to TEST_INCLUDES keep the layout that
-_load_ksft() expects?
-
-    TEST_INCLUDES := ../kselftest/ksft.py
-
-net/packetdrill/Makefile does this for ../../kselftest/ktap_helpers.sh.
-
-[ ... ]
-
-> diff --git a/tools/testing/selftests/userland/userland_cells.py b/tools/testing/selftests/userland/userland_cells.py
-> new file mode 100644
-> --- /dev/null
-> +++ b/tools/testing/selftests/userland/userland_cells.py
-
-[ ... ]
-
-> +        elif mach == "x86_64" and ptr_size == 4:
-> +            base = 0x40000000
-> +            arch_legacy = {
-> +                "pivot_root": base + 155,
-> +                "umount2": base + 166,
-> +                "waitid": base + 529,
-> +                "execveat": base + 545,
-> +            }
-
-Does this branch also catch plain i386 userspace running on an x86_64
-kernel?
-
-platform.machine() comes from uname(), and a 32-bit task only sees the
-compat machine string when it runs with PER_LINUX32:
-
-    #define override_architecture(name) \
-            (personality(current->personality) == PER_LINUX32 && \
-             copy_to_user(name->machine, COMPAT_UTS_MACHINE, ...
-
-So an i386 Docker image or chroot entered without linux32 reports
-mach == "x86_64" with ptr_size == 4, and gets the x32 numbering.  The
-test then calls userland_open as 0x40000000 + 474 instead of 474, and
-do_syscall_32_irqs_on() returns -ENOSYS for nr >= IA32_NR_syscalls.
-
-ENOSYS is in SKIP_ERRNOS, so probe_pre_idmap_mkdir() reports
-"userland_open() unavailable" and the suite exits KSFT_SKIP.  The compat
-entry paths of userland_open, userns_set_idmap, clone3, fsconfig and
-waitid(P_USERLAND) are then never exercised in the configuration that
-needs them.
-
-The function already tells these cases apart on other architectures.
-Would gating this branch on "x32" in multiarch, and sending the remaining
-x86_64/ptr_size == 4 case to the i386 numbers (217/52/284/358), work?
-
-[ ... ]
-
-> diff --git a/tools/testing/selftests/userland/userland_test.py b/tools/testing/selftests/userland/userland_test.py
-> new file mode 100755
-> --- /dev/null
-> +++ b/tools/testing/selftests/userland/userland_test.py
-
-[ ... ]
-
-> +    def test_get_nsfd(self) -> None:
-> +        try:
-> +            rns = Userland()
-> +        except OSError as exc:
-> +            if exc.errno in SKIP_ERRNOS:
-> +                self.skipTest(f"userland_open() unavailable: {exc}")
-> +            raise
-> +        with rns:
-> +            for case in NS_TYPE_CASES:
-> +                with self.subTest(ns=case.name):
-> +                    with self.closing_fd(rns.get_nsfd(case.nstype)) as nsfd:
-
-A subsystem pattern flags this as potentially concerning: test_get_nsfd()
-requires USERLAND_GET_NSFD to succeed for every entry in NS_TYPE_CASES,
-including NsTypeCase("time", CloneFlag.NEWTIME).
-
-CONFIG_USERLAND does not depend on TIME_NS, and userland_get_nsfd()
-handles that configuration explicitly:
-
-    case CLONE_NEWTIME:
-    #ifdef CONFIG_TIME_NS
-            ns = to_ns_common(userland->ns->time_ns);
-            break;
-    #else
-            return -EOPNOTSUPP;
-    #endif
-
-On a CONFIG_USERLAND=y, CONFIG_TIME_NS=n kernel, the OSError(EOPNOTSUPP)
-is raised inside subTest(ns="time"), the test is marked failed, and
-KtapRunner.main() exits KSFT_FAIL.  The selftest config fragment sets
-CONFIG_TIME_NS=y, so a run that follows it does not hit this.
-
-Should the time case be skipped on EOPNOTSUPP?  test_share_nsfd() already
-handles a missing time namespace with "if not os.path.exists(ns_path):
-continue".
-
-[ ... ]
-
-> +        def check_dead_ancestor_pidns() -> None:
-> +            self.enter_userns_if_unpriv()
-> +            s_p, s_c = socket.socketpair(socket.AF_UNIX, socket.SOCK_DGRAM)
-> +            p1 = os.fork()
-> +            if p1 == 0:
-> +                s_p.close()
-> +                try:
-> +                    os.unshare(CloneFlag.NEWPID)
-> +                    p2 = os.fork()
-> +                    if p2 == 0:
-> +                        with Userland() as nested_u:
-> +                            socket.send_fds(s_c, [b"U"], [nested_u.fd])
-> +                        os._exit(0)
-> +                    os._exit(self.reap_exit_code(p2))
-> +                finally:
-> +                    s_c.close()
-> +            s_c.close()
-> +            try:
-> +                _, recv_u, _, _ = socket.recv_fds(s_p, 1, 1)
-> +            finally:
-> +                s_p.close()
-
-Can this recv_fds() block forever?
-
-If p1's os.unshare(CloneFlag.NEWPID) fails, or p2's Userland() or
-send_fds() fails, nothing is ever sent.  Closing the other end of an
-AF_UNIX SOCK_DGRAM socketpair does not wake the reader, because
-unix_release_sock() only sets the peer's sk_shutdown for SOCK_STREAM and
-SOCK_SEQPACKET.
-
-p1 and p2 are forks of the run_forked() child, so their exceptions end in
-_exit(1) after writing a fail payload, while the run_forked() child stays
-blocked in recv_fds() and keeps the pipe's write end open.  The parent
-then blocks in pipe.read_all(), so a failure turns into a hang.  Under
-run_kselftest.sh the 45s default timeout kills it, and the tests that sort
-after test_clone_flags_and_pidns_ancestry never run.
-
-create_userland_as_uid() in the same file guards the same fd-passing
-pattern with select.select([s_parent], [], [], 5.0).  Would the same
-timeout, or a SOCK_SEQPACKET socketpair, turn this into a normal test
-failure?
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/44972669664
---===============3579480507848251298==--
+-serge
