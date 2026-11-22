@@ -1,48 +1,48 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795311827;
-	b=w4yC8fH+Jhw4D5zWExdTEd2stMkJ30p4ZUfiTMdYf31cZ7zMl6vn8zYE5ANCx1osmWRb
-	 PNW0Hetr17/tnI18kaR+ieu2D3htX/IpiF+6UgkSa8kFmTVbBHKsTeHHj7fkWoTjR0Y29
-	 aRpijKBS83LvmHcHnupvE4VrH7uFjViUtQgryjbnRFlxIVPRLdC7CoT4y2RMuuYy9E/v3
-	 V9T2NBuLy5NG5Ec/UjnN3KLHp4UeTf36AvF7kNwWWGGOF0gIGF+AeDnbcNblTNUVReMTu
-	 no8M47S1vjQWryAH7qbOptNKckFkXZ9HUzynB93LFFqssRzZfr2rf6Dt0VF+dQGmFsQ==
+	t=1795311934;
+	b=T2J6ZlGvrol+XngT3c3GbFUzYSgPYfnV1mR1d80JMv2IukBSAcCbKiI7ujaHbql8jTEm
+	 o9yygS3m/CyyVU0Y4jCqviPDrU2ozEcSnJxf6YlaxxW577jzFZgoVstYAFtYriIkXaJsU
+	 kPuSta4ggfymHmSjJ686y86B0SHIAwxzlS4/vFuUY45PJEIDSp2eaBpE/OO8DgpavjANK
+	 rxeGVZ7LKKQxAHskXpLXMdHH3JpNK0rlwkVdTsMEbvpAklBpiyOOLWFyjnR9+/9V6tdkR
+	 oVqrL+NW91XRh9rNh4d49UshSZuA/YuhxN3dDjNOkV5csBEcvca5LmJOuCZ+JdNrhaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795311827;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795311934;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=xcFuD9TGh+7BMax0WCH9B1L1wKwMb5cO3D0UHkJWHqQ=;
-	b=ajFjifNG257khmhHQtQxenFpBgcqq+812jcZh5f7mxvULFIT8kwK83dwqeXnqFTelXm2
-	 jUxIt4edHhBi/FUEFscNdyBjsfC9QNmfYUo43ZepQQFgPx4tYh1uYAhBWA/kAppC4qtf7
-	 oBEBBI0JZeJEd/yfYn9fDOsNK2tIAJIxo/9sP/22ynymzVw9+5g/upRCDiGbs+kbPVatl
-	 zihTBQR+dz1DLn71SVJ5pQvChCjKvfGZK27hJBIlsvFjtK0OkcFIDOysBOYG3xsiqRmvG
-	 R5qZ447lRlNB82l4IoCAMxyNEQ0ZISne2e1ii33Z/OFiZafGsbVLS/in0TZFXNvh51Q==
+	bh=EM4+43T1scJ6GiZV72AEDDRm99LdMgBsCTmaQ1zQpII=;
+	b=J7eTQ/3dVc6vursv4aaT4aZuF3NhWzs+TADnZLKe7l9dbvfJt79cY3VqbKLI7nmFtS5z
+	 nXNnLcaDCVwNrVP6Ca+qBG9aeWWvvjQxjkGvZez8YGlYwjnmajYcupW0VsuK7Ct433sNW
+	 HKemL45ghSsvD8aqFRJQkXhC4puSiZdmhAIozS1ory6C1YXyw5x9S3DyOphKFtX5IBSGm
+	 RF4vS2HB+Rffd/l8cP4IFDThtQWu1jNEv9P73DrQNv6Rpujq1UzxJvjOsVNg/awvSH2FN
+	 5jvLP0sonqZguchqCtVrCCOI2jneAkS1nAHf7gePHo+THoX+JjH4tfkS8RcIrPEpk2g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VLWTIuAh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7ylMQXH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461D6606A320;
-	Sun, 22 Nov 2026 01:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D8A606A32A;
+	Sun, 22 Nov 2026 01:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VLWTIuAh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E012D1F000C0;
-	Sun, 22 Nov 2026 01:43:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7ylMQXH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3827C1F000C6;
+	Sun, 22 Nov 2026 01:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795311827;
-	bh=xcFuD9TGh+7BMax0WCH9B1L1wKwMb5cO3D0UHkJWHqQ=;
+	s=k20260515; t=1795311934;
+	bh=EM4+43T1scJ6GiZV72AEDDRm99LdMgBsCTmaQ1zQpII=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=VLWTIuAhQt1tfpWhTGgW1y5jlgcDPw6b7NhvZCIJ4LOL8s++76W2WziW1Q5WPwu50
-	 NdinTg0Mwu24toCH2Uph1RpQdf2aK+JRJ/3yPJXDxFI0EiOBaKhX6NIT8wJq0XXSS7
-	 C8glbI7Efo/3v2t9ZjFlR2HPKxb0PtJgH6arVy5NPW47dDkLcJuIzGKukmeb0/SYBC
-	 9S8lKmVEU00v8Vb0Bf/t2dGOnrcb+3e+ZTheievcuR+Jq7mfDCSblXACon9Z/yHToJ
-	 Z7KPFfIlGLtVKWv9DpibvbokRjif2y0tXyTDLa+T+gZWFCut2S00zW3suMzVS5xExf
-	 FmudS+V0Qsr9A==
-Message-ID: <sashiko-outbox-227629@kernel.org>
+	b=k7ylMQXHqxOS6ixuIq1rwku3yNvoV4i3bvxJugzgrobnxWDANUB5vTb2Qh3Wcvbr6
+	 4Nrcq8Gc2yLW2lzX5pnlaRyDCCXFFus4TRRqV3JalRCqnme8teQjct66FX8MRxbNbY
+	 bPaSHEkoGM4oR3YZrRj8z6ZrkSllUsJ6f1jp2XupqeJVuqHxgdd3mENwQiB3NIoRU1
+	 B6iL1iv0L9jre2aNbiSYdTCaEKWAK1BOxVQjQh6T1Lf1XuYr5DhJM6FFGsC8vtGiDY
+	 1mjb5uOFb/GcMDqwaEXENYoj0/SyWymdtbyzwaGVRzdaxd04BiiG4IY3vEy+cx6oDl
+	 J5AVekoLhjPUg==
+Message-ID: <sashiko-outbox-227631@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v6 17/26] fork: Support CLONE_INTO_USERLAND in
- clone3()
+Subject: Re: [RFC PATCH v6 18/26] fs: Support FSCONFIG_SET_USERLAND in
+ fsconfig()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Jarkko Sakkinen" <jarkko@kernel.org>
 Cc: bpf@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Aleksa
@@ -56,12 +56,12 @@ Cc: bpf@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.o
  Gompa" <neal@gompa.dev>, "Oleg Nesterov" <oleg@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "Pavel
  Tikhomirov" <ptikhomirov@virtuozzo.com>, "Serge Hallyn" <sergeh@kernel.org>, "Shuah
  Khan" <skhan@linuxfoundation.org>, "Zygmunt Krynicki" <zygmunt.krynicki@canonical.com>
-In-Reply-To: <20261122011809.2667684-18-jarkko@kernel.org>
+In-Reply-To: <20261122011809.2667684-19-jarkko@kernel.org>
 References: <20261122011809.2667684-1-jarkko@kernel.org>
- <20261122011809.2667684-18-jarkko@kernel.org>
+ <20261122011809.2667684-19-jarkko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 22 Nov 2026 01:43:45 +0000
+Date: Sun, 22 Nov 2026 01:45:32 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -71,103 +71,64 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [High] userland: missing namespace owner permission check in
-  userland_prepare_fork()
-- [Medium] userland: missing namespace_install LSM check in
-  userland_prepare_fork()
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] devpts: missing fc->user_ns uid/gid mapping check in
+  devpts_parse_param()
 --
 
-commit 705db8da85300ec68db1d2ce6e9711aa2f376bb1
+commit 3b686423ce72875c03141d25884aa118403b95e4
 Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-fork: Support CLONE_INTO_USERLAND in clone3()
+fs: Support FSCONFIG_SET_USERLAND in fsconfig()
 
-This commit adds CLONE_INTO_USERLAND and struct clone_args.userland to
-allow clone3() to spawn a child process directly into an initialized
-userland's namespaces and root mount.
+This commit adds FSCONFIG_SET_USERLAND to bind an fs_context to a target
+userland's user and network namespaces before parameter configuration, and
+opts tmpfs, ramfs, and devpts into FS_USERLAND_MOUNT.
 
-> diff --git a/kernel/userland.c b/kernel/userland.c
-> index 739f6b98c1035..283b90869d2c6 100644
-> --- a/kernel/userland.c
-> +++ b/kernel/userland.c
-> @@ -541,3 +542,135 @@ SYSCALL_DEFINE1(userland_open, unsigned int, flags)
-> =20
->  	return fd;
->  }
-> +
-
+> diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
+> index bd1e8eb26edb7..921b67d18fa2e 100644
+> --- a/fs/devpts/inode.c
+> +++ b/fs/devpts/inode.c
 [ ... ]
-
-> +int userland_prepare_fork(struct kernel_clone_args *args)
-> +{
-> +	struct file *file __free(fput) =3D fget(args->userland_fd);
-> +	struct path root __free(path_put) =3D {};
-> +	struct pid_namespace *pid_ns;
-> +	bool bootstrapping =3D false;
-> +	struct userland *userland;
-> +	int ret;
-> +
-> +	if (!file)
-> +		return -EBADF;
-> +	if (!userland_is_file(file))
-> +		return -EINVAL;
-> +
-> +	userland =3D file->private_data;
-> +	if (!ns_capable(userland->user_ns, CAP_SYS_ADMIN) ||
-> +	    !ns_capable(userland->user_ns, CAP_SYS_CHROOT))
-> +		return -EPERM;
-
-[Severity: Medium]
-Should userland_prepare_fork() also invoke security_namespace_install() or
-a matching LSM check for the target namespaces in userland->user_ns and
-userland->ns?
-
-Landlock enforces LANDLOCK_PERMISSION_NAMESPACE_USE via its
-namespace_install hook when entering pre-opened namespaces with setns(),
-and commit "security: Add userland LSM hooks" later in this series does
-not wire Landlock up to security_userland_clone().  Without an LSM check
-on those namespaces, a Landlock-sandboxed task holding a pre-opened
-userland fd can use clone3(CLONE_INTO_USERLAND) to enter namespaces that
-its Landlock domain denies.
-
-> +	if (current_chrooted() && !ns_capable(current_user_ns(), CAP_SYS_CHROOT=
-))
-> +		return -EPERM;
-> +
-> +	pid_ns =3D userland->ns->pid_ns_for_children;
-> +	if (!pidns_is_ancestor(pid_ns, task_active_pid_ns(current)))
-> +		return -EXDEV;
+> @@ -457,7 +459,7 @@ static struct file_system_type devpts_fs_type =3D {
+>  	.init_fs_context =3D devpts_init_fs_context,
+>  	.parameters	=3D devpts_param_specs,
+>  	.kill_sb	=3D devpts_kill_sb,
+> -	.fs_flags	=3D FS_USERNS_MOUNT,
+> +	.fs_flags	=3D FS_USERNS_MOUNT | FS_USERLAND_MOUNT,
+>  };
 
 [Severity: High]
-Does userland_prepare_fork() need to verify that current either already
-belongs to each namespace in userland->ns or holds CAP_SYS_ADMIN in that
-namespace's owning user namespace?
+Can opting devpts into FS_USERLAND_MOUNT allow an unprivileged user to
+create slave PTY device nodes owned by arbitrary host UIDs and GIDs that
+are not mapped in fc->user_ns?
 
-In userland_share_nsfd(), a cgroup, IPC, UTS, network, or time namespace
-owned by a more privileged user namespace (such as init_user_ns) can be
-attached to userland->ns without CAP_SYS_ADMIN in ns->ops->owner(ns) as
-long as the caller is currently in that namespace:
+When a process in init_user_ns binds a devpts context to a child userland
+via FSCONFIG_SET_USERLAND and passes uid or gid options, fs_param_is_uid()
+and fs_param_is_gid() resolve them against current_user_ns() rather than
+fc->user_ns.  Unlike shmem_parse_one(), devpts_parse_param() does not
+verify kuid_has_mapping(fc->user_ns, result.uid) or
+kgid_has_mapping(fc->user_ns, result.gid):
 
-kernel/userland.c:userland_share_nsfd() {
+fs/devpts/inode.c:devpts_parse_param() {
     ...
-	if (!ns_capable(c->user_ns, CAP_SYS_ADMIN))
-		return -EPERM;
-	if (!is_current_namespace(ns) &&
-	    !ns_capable(ns->ops->owner(ns), CAP_SYS_ADMIN))
-		return -EPERM;
+	case Opt_uid:
+		opts->uid =3D result.uid;
+		opts->setuid =3D 1;
+		break;
+	case Opt_gid:
+		opts->gid =3D result.gid;
+		opts->setgid =3D 1;
+		break;
     ...
 }
 
-Because userland_prepare_fork() only checks capabilities against
-userland->user_ns and current_user_ns() before copy_namespaces() installs
-userland->ns on the child, a process that shares a parent or host
-namespace into a userland and later isolates itself with unshare() (for
-example, unshare(CLONE_NEWNET)) can call clone3(CLONE_INTO_USERLAND) to
-spawn a child back into the unisolated namespace without holding
-CAP_SYS_ADMIN in its owning user namespace.
+devpts_pty_new() then assigns opts->uid and opts->gid directly to
+inode->i_uid and inode->i_gid on the userns-owned superblock, allowing
+slave PTY device nodes to be created with unmapped host IDs such as
+GLOBAL_ROOT_UID.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261122011809.2667=
-684-1-jarkko@kernel.org?part=3D17
+684-1-jarkko@kernel.org?part=3D18
