@@ -1,105 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795297616;
-	b=E3WfW6anp7SpClJ+dD+ZiwJVP+6gkuBJ75NPlPYfK9+aDOxdOBcm3Ov0VvcW47zm/tuG
-	 ChulYWsJy09dp6lPv/dJGyZ2hF0Yaos0ffgj5zNsDtySWLVAAgELm9TK47R4evF8h3FHR
-	 UAS4U5lqB/Egsc9DFTBDhXxNourIfJT1U92FOFb8IixpF9ndMUNcwZ3i1etsHy8WnlFSu
-	 ExqqR86KHXFUKDDIuI2TFtLY6VoFdUTuT/fwh5XgoCQCPMdMECkUwgrKxeZvOiTKt+jO1
-	 JCQ+mlLfcSA2xWpQ79MYVInVxOiTSZPs42lc4FANaXK010LkPgluYrK7n+pKWAKNdPQ==
+	t=1795306254;
+	b=I/1zmgoYgB/Yp1FcZ0XkM4W9K75hzBhxM7HhBPOE9hsC6X0Ecqwx+6tJ5lvwdM/ooNSK
+	 tKSkgKjERuyBpsIaN6hiMmbK9eWOkKenmldyAujKDAo13XVyCKQvy6oFdp1Ich5cSuwfp
+	 cSxZkr8ltsOCBSjOkeSLQEFgdprbvGk9j2g91kvx/x3uNfFXb1HMfQdVf6GwWNxj7BOBi
+	 ZWQs65cyUwgI6lm7x5ctfbiNgtqLdvT3EMy55zp6cQHty2z95R4TSCrWpuNSyrW30xJ0I
+	 zovYReGqKq0NZAqh9JpoKi1KvM5mwVhdNMcjurpCAHdMQKYdmOkRegSv1UJ9+rORQuQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795297616;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
-	 In-Reply-To;
-	bh=TWNBM4X5o3GcOyIN6ILVF1WfQ9yHkncXfpMuWBwbaI0=;
-	b=19DMozrHYeF3rz/H9Sll9XIR31aLqUcED6jcwzHxDI9wAfyHa6hldyA25S/eaCdPHVJh
-	 nLyQ0oX16Fer2Pgihv/OXve/yHEzyhHD4A/3RC3M2MrnohBNmEYNk9ftfZwGwJ0mWIB1Y
-	 0ww2V9V0C3JDXLKlbpCP6sXQtA8Y+45vkSfZiHuPyiO8f8VUifQfvLO/ghT2sTdXxpy20
-	 LVKyI/FLEoxrFk7bTti6lh2EDdmr+cmY9MTuVt/at4o33J9Xu62O2gxqUPSox0E2cFm1I
-	 JrkEAKUU2rMc0aOYBtOyjE/k2zVDih7njNiZMhUX29akLjjNUt9VSikmyvEHNVpUpIw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795306254;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Iqb1sxGXVs+ZBL2YO1Gxpd58VvwV2+dlg9RG8sovwRk=;
+	b=rflNS8CBi1VZLeiMwI3aq8f93keH6QEogu/kNO3wbrbLXfVSdU/M1As40ufgYHakjVQ+
+	 HuJzNOPlLw0DZBlVmGGDckiv15+bEk7L+yfyGG3Och9CSHjQoqcCwqmrs8kT9e6sOuM6Y
+	 hUv55lvftWKY/d6XmR+Vm9WyJiElm4QIOYaJC2B5y+JMVvl7QNm6nnstohklvmvEuBd12
+	 aJ5m7oVqjPS39kegGK4rEoZClBbTnRdGjHDul3ZENxKtdryx2LLYKqhsjjtcWBRD5p11a
+	 MwozckAsAJ2coLOFC189dK3cvWTT4mi0JmDm8gOb5ut+VhIqhKJ3Sr5WGhYt6oWCHvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jSsSuIyv;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jdzme6jD;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE5A606A320
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 21:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEE5A606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8691F606A320
+	for <linux-security-module@vger.kernel.org>; Sun, 22 Nov 2026 00:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=jSsSuIyv
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4b79502c27aso17514225e9.1
-        for <linux-security-module@vger.kernel.org>; Sat, 21 Nov 2026 13:46:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795297614; x=1795902414; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=TWNBM4X5o3GcOyIN6ILVF1WfQ9yHkncXfpMuWBwbaI0=;
-        b=jSsSuIyv+nr0WU2tkwLYJqsObng/5bFZYVRN7hJwQZJdjy9JHvI9MlUHcLrpUhkzKQ
-         cClPDOemgU9H/pXDSRDs/UcL6r37lycX57cBVTcxRMimY1Aa075NxhBjPVDTj670AByL
-         dxYs4x3o/9mYTzoShOtazjfrQdkmcUZFgqOl9aTnm8gA3rgk113M4mE7ZvnEGyX+Ky5D
-         uMsg17vkPH/Rph2ZifV/CtfxxPUuTtP7MQdlP1gWPxo2GzP7H8x0VlLJzefr9CBc+Ayc
-         7NSWD9V+GDaBqwR6jGwFz7SUGOTv9+pQsC8jx3UC/Zs6vTJOW+YemaDs2/AQ8b6Ocy+H
-         149g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795297614; x=1795902414;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=TWNBM4X5o3GcOyIN6ILVF1WfQ9yHkncXfpMuWBwbaI0=;
-        b=M39GiueGUYVgk85Nx8qvQn8oSEX79GVkaFRgJVehi9LVe1QO8H4s0ckHpbjm277Gz3
-         TDxu5/r2PSRKYNEuYl1zymo7vio/1uEiDEWvaUBkE3NZ05bPcSbJMu3f/afC3bLRCg6+
-         +f7w3Pqvw9FAd+G0z9WeM+rIPmBeTWE6awmc26hjDleBf3oQwmF6rJy75IbIEoQ0yEqU
-         Ky9W+Ky6jTL7qbqJ/Qc3UcWTNEm/d6HMsIKhneIs9AujfwROceDLumsn9U1fweiz8Vf4
-         WlOtT0gMkQrCbrZD4ELDhTeshW5YRfvGbbuUnnLXKmQzKkwz0JP4BgVUQERl7J440mpY
-         F1GQ==
-X-Forwarded-Encrypted: i=1; AL+hErEusiE6D6sEz71A/cUE2dmPcrDz70roNpThYHYH/I8tQW5GeIbq50+RplsIez9eswFN049flzAxMOfwPSW+mXDCQ7ayOa4=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+LVdQD/z9E3Z2NT7p+Lx0+Y3ADNuftKQqfpD1oWVgkijgckaNF
-	I2fbGNNUnH3DRGGvyzsRjHzkL3N1xCKgCrVQ3zxCgmG62SvyDDXffpa8iFjmys9G
-X-Gm-Gg: AZFdTZfiF1+NXZCX1D7jkvNsrrXSzqKtYYV4UzmTZ3GScmAGxjWktU7vQPGBR/7wgWP
-	LRnDVec5X4b6cS2uqG0cuIpaadnAxCFIVMD0NPvdxtWsaEQf7Y1P/TG3RqW2+RapFiSZem03j2+
-	OG+wymqMS64DzSgM0wheRy/VbeWWnFWjsioOmKcYMkhrenKpeb9HICVvsSkAlt8eHinKEIkS0UD
-	N9hq6yUCD1HBDn/v6JXDpg3Es/N4mpxySjLjs2xg/XvzBgubVzRdgPw37u+rnwqpY+MpMmdTo/7
-	NiK7mdZcsiDw9o6d2RfXnWIqt1KbaLavwjHfZbr+ke/aeRDRI2KCTv2VSdPigROaduXYyy9Qcoz
-	r2SAOAVBrjYAswgNjIrMtFURsz3aV/33Vt7sfevzaQRmS3xnT0wzsg1jmx4KBJ7y457IWKBcaXs
-	mrUmAovyHx/44WFLukKklEq7sroEeCnruQay92bHBzxaeb/muHotZ6CIUgMAqEqkPwRPqL6sLfp
-	14k1LolICwPajSTwZqOAUwRZmhkWtxcZr1CLnEpQE5ZqbfGXSjeBKcdxyFrF+Nhu4kxwNaqUlnw
-	Bai7iq49RUrr5/6iQ+4xXxjU/ob4VbWbFEnh/xY3ZC7oqn7//ML75g==
-X-Received: by 2002:a05:600c:3b1d:b0:4bb:6991:2330 with SMTP id 5b1f17b1804b1-4bb8881a890mr155037435e9.22.1795297613938;
-        Sat, 21 Nov 2026 13:46:53 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884a15absm182082365e9.9.2026.11.21.13.46.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2026 13:46:53 -0800 (PST)
-Date: Sat, 21 Nov 2026 22:46:49 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Oleg Nesterov <oleg@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>, Cen Zhang <blbllhy@gmail.com>,
-	James Morris <jmorris@namei.org>,
-	Lee Seong Hyeon <ihopenre@gmail.com>,
-	Marco Elver <elver@google.com>, NeilBrown <neil@brown.name>,
-	Nickolai Zeldovich <nickolai@csail.mit.edu>,
-	Paul Moore <paul@paul-moore.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC
- wait
-Message-ID: <20261121.bd9ab1ba5f9f@gnoack.org>
-References: <20261120151554.2651743-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jdzme6jD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F6A91F000C0;
+	Sun, 22 Nov 2026 00:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795306254;
+	bh=Iqb1sxGXVs+ZBL2YO1Gxpd58VvwV2+dlg9RG8sovwRk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Jdzme6jDlPEH9sXHNBaFkNO/jgmbvC1G2RSo97+cJNY67STD7lrt2j1TZm/bun4Qv
+	 sCVAI5JtJ9kPPD2C4c6IOFkgIOSrQplvNb7vhkTwXldlDssVbaY4UImqvq8ysBamCH
+	 oHxbnqxB49eL8sokvPPJlRl9qX2nk38biae/yynw9WPyOM+nBS2ii/J4RQqZjxVzji
+	 wjPHBlUdt46uLlvpf+ruGWd0e8/3iXMuv6dXr6ENWr+PmA+QBPtZ96Z5r7pkdnj93s
+	 ovP0x7nnHWgP+LSUqxzr+iej73HAjJEpro00U2O1yyU+LaV052sRgZrW9CBbC99t59
+	 QqfW2Jv5S1/4g==
+Message-ID: <sashiko-outbox-227537@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC PATCH v5 02/25] userns: Add userns_set_idmap() system call
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Jarkko Sakkinen" <jarkko@kernel.org>
+Cc: linux-mm@kvack.org, linux-security-module@vger.kernel.org, "Alexander
+ Mikhalitsyn" <alex@amutable.com>, "Alexander Viro" <viro@zeniv.linux.org.uk>, "Andy
+ Lutomirski" <luto@amacapital.net>, "Christian Brauner" <brauner@kernel.org>, "David
+ Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>, "Jonathan Corbet" <corbet@lwn.net>, "Josef
+ Bacik" <josef@toxicpanda.com>, "Kees Cook" <kees@kernel.org>, "Neal Gompa" <neal@gompa.dev>, "Paul
+ Moore" <paul@paul-moore.com>, "Serge Hallyn" <sergeh@kernel.org>, "Zygmunt
+ Krynicki" <zygmunt.krynicki@canonical.com>
+In-Reply-To: <20261121000844.1863324-3-jarkko@kernel.org>
+References: <20261121000844.1863324-1-jarkko@kernel.org>
+ <20261121000844.1863324-3-jarkko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 22 Nov 2026 00:10:52 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -108,278 +65,209 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261120151554.2651743-1-mic@digikod.net>
 
-On Fri, Nov 20, 2026 at 04:15:52PM +0100, Mickaël Salaün wrote:
-> landlock_restrict_sibling_threads() write-locks
-> current->signal->exec_update_lock to serialize TSYNC callers, and holds
-> it until every sibling thread has run its task_work.  This wait is
-> unbounded: TWA_SIGNAL does not wake a TASK_KILLABLE sleeper, so a
-> sibling blocked as a vfork() parent runs it only once its child execs or
-> exits.
-> 
-> Meanwhile, readers of this lock block, mostly in D state:
-> /proc/<pid>/stat, mm_access(), pidfd_getfd(), kcmp(), perf_event_open(),
-> etc.  An unprivileged process can thus stall tools run by other users,
-> including root, such as ps and top.
-> 
-> Only a per-process "TSYNC in progress" marker is needed.  Use an unused
-> signal_struct.flags bit, protected by sighand->siglock, which is held
-> only to set or clear the marker.  A second caller still restarts the
-> syscall, and a cleanup class releases the marker on every return.
-> 
-> Like de_thread(), treat a group exit or an ongoing exec as a held
-> marker: a group exit may overwrite the flags, and both kill the other
-> threads, which the restart lets the caller handle.
-> 
-> Add KUnit tests for taking a free marker and for rejecting a held one.
-> A concurrent TSYNC caller cannot be started deterministically from user
-> space, but a KUnit thread has no sibling and can hold the marker itself.
-> 
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Nickolai Zeldovich <nickolai@csail.mit.edu>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Yihan Ding <dingyihan@uniontech.com>
-> Cc: stable@vger.kernel.org
-> Reported-by: Lee Seong Hyeon <ihopenre@gmail.com>
-> Suggested-by: Lee Seong Hyeon <ihopenre@gmail.com>
-> Fixes: ff88df67dbf7 ("landlock: Serialize TSYNC thread restriction")
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
-> 
-> Changes since the initial report from Lee Seong Hyeon:
-> - Rewrite the fix, storing the marker in an unused signal_struct.flags
->   bit protected by sighand->siglock instead of adding a signal_struct
->   field.
-> - Treat group exit and ongoing exec as a held marker, because group exit
->   may overwrite the flags.
-> - Release the marker with a cleanup class.
+Thank you for your contribution! Sashiko AI review found 3 potential
+issues to consider:
+- [High] userns: missing target CAP_SYS_ADMIN and caller checks in
+  sys_userns_set_idmap()
+- [Medium] userns: unbounded size passed to copy_struct_from_user() in
+  sys_userns_set_idmap()
+- [Medium] userns: transient ns->flags mutation in
+  sys_userns_set_idmap() before validation
+--
 
-It's not clear to me why the cleanup class and the fix are bundled in
-one commit here.  (I do find the cleanup class useful, but shouldn't a
-bugfix commit be as minimal as possible so that it is easy for people
-to apply to their downstream kernels?)
+commit cd58304550496b7580b53ae3de9d67b848eccae2
+Author: Jarkko Sakkinen <jarkko@kernel.org>
 
-–Günther
+userns: Add userns_set_idmap() system call
 
-> - Clarify that not all readers wait in D state: perf_event_open() waits
->   interruptibly.
-> - Add KUnit tests.
-> - Credit Lee Seong Hyeon with Reported-by and Suggested-by instead of
->   authorship, because the implementation was rewritten.
-> 
-> Christian, Oleg, and Tejun, this patch reserves a signal_struct.flags
-> bit for Landlock and relies on group-exit paths overwriting these flags
-> under siglock.  Please check that this use of signal-core state is
-> acceptable.
-> 
-> Lee, this rewrites the patch you sent with your report, so it credits
-> you with Reported-by and Suggested-by.  Please tell me if you prefer a
-> different credit.
-> ---
->  include/linux/sched/signal.h |   1 +
->  security/landlock/tsync.c    | 134 +++++++++++++++++++++++++++++++----
->  2 files changed, 122 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-> index 0adb51ab1542..f68bbaa3527a 100644
-> --- a/include/linux/sched/signal.h
-> +++ b/include/linux/sched/signal.h
-> @@ -262,6 +262,7 @@ struct signal_struct {
->  #define SIGNAL_STOP_STOPPED	0x00000001 /* job control stop in effect */
->  #define SIGNAL_STOP_CONTINUED	0x00000002 /* SIGCONT since WCONTINUED reap */
->  #define SIGNAL_GROUP_EXIT	0x00000004 /* group exit in progress */
-> +#define SIGNAL_LANDLOCK_TSYNC	0x00000008 /* Landlock TSYNC in progress */
->  /*
->   * Pending notifications to parent.
->   */
-> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> index cfa73a2a67ca..a6fa9ce0ac78 100644
-> --- a/security/landlock/tsync.c
-> +++ b/security/landlock/tsync.c
-> @@ -5,6 +5,7 @@
->   * Copyright © 2025 Google LLC
->   */
->  
-> +#include <kunit/test.h>
->  #include <linux/atomic.h>
->  #include <linux/cleanup.h>
->  #include <linux/completion.h>
-> @@ -479,6 +480,46 @@ static void cancel_tsync_works(const struct tsync_works *works,
->  	}
->  }
->  
-> +/*
-> + * try_set_current_tsync_marker - mark the current thread group as under TSYNC
-> + *
-> + * Returns false if another TSYNC operation, group exit, or exec is in progress.
-> + */
-> +static bool try_set_current_tsync_marker(void)
+This commit introduces the userns_set_idmap() system call to atomically
+configure setgroups policy and UID, GID, and project ID mappings directly
+on a user namespace file descriptor.
+
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 6b9673dcdc670..d7f2cad388c8c 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+
+[ ... ]
+
+> +static bool caller_idmap_permitted(struct user_namespace *ns, int cap_se=
+tid,
+> +				   const struct uid_gid_map *new_map)
 > +{
-> +	struct signal_struct *const signal = current->signal;
+> +	const struct cred *cred =3D current_cred();
 > +
-> +	guard(spinlock_irq)(&current->sighand->siglock);
+> +	if (cap_setid =3D=3D CAP_SETUID && idmap_maps_root(new_map)) {
+> +		if (cred->user_ns =3D=3D ns) {
+> +			if (!ns->parent_could_setfcap)
+> +				return false;
+> +		} else {
+> +			if (!ns_capable(ns->parent, CAP_SETFCAP))
+> +				return false;
+> +		}
+> +	}
 > +
-> +	/*
-> +	 * Group-exit paths may replace all signal flags, including an active
-> +	 * marker.  Treat SIGNAL_GROUP_EXIT as a held marker to prevent another
-> +	 * TSYNC operation from starting during group teardown.
-> +	 *
-> +	 * Like de_thread(), also treat an ongoing exec as a group action in
-> +	 * progress.  de_thread() sets group_exec_task in the same siglock
-> +	 * critical section that sends SIGKILL to all other threads, including
-> +	 * current.  Instead of queuing task_work for exiting threads,
-> +	 * restart_syscall() lets current handle its pending SIGKILL.
-> +	 */
-> +	if ((signal->flags & (SIGNAL_GROUP_EXIT | SIGNAL_LANDLOCK_TSYNC)) ||
-> +	    signal->group_exec_task)
-> +		return false;
+> +	if (new_map->nr_extents =3D=3D 1 && new_map->extent[0].count =3D=3D 1 &&
+> +	    uid_eq(ns->owner, cred->euid)) {
+> +		u32 id =3D new_map->extent[0].lower_first;
 > +
-> +	signal->flags |= SIGNAL_LANDLOCK_TSYNC;
-> +	return true;
+> +		if (cap_setid =3D=3D CAP_SETUID) {
+> +			kuid_t uid =3D make_kuid(ns->parent, id);
+> +
+> +			if (uid_eq(uid, cred->euid))
+> +				return true;
+> +		} else if (cap_setid =3D=3D CAP_SETGID) {
+> +			kgid_t gid =3D make_kgid(ns->parent, id);
+> +
+> +			if (!(ns->flags & USERNS_SETGROUPS_ALLOWED) &&
+> +			    gid_eq(gid, cred->egid))
+> +				return true;
+> +		}
+> +	}
+> +
+> +	if (!cap_valid(cap_setid))
+> +		return true;
+> +
+> +	return ns_capable(ns->parent, cap_setid);
 > +}
-> +
-> +static void clear_current_tsync_marker(void)
+
+[ ... ]
+
+> +SYSCALL_DEFINE4(userns_set_idmap, int, fd,
+> +		const struct userns_idmap __user *, map,
+> +		size_t, size, unsigned int, flags)
 > +{
-> +	guard(spinlock_irq)(&current->sighand->siglock);
+
+[ ... ]
+
+> +	if (!map || size < USERNS_IDMAP_SIZE_VER0)
+> +		return -EINVAL;
 > +
-> +	current->signal->flags &= ~SIGNAL_LANDLOCK_TSYNC;
-> +}
+> +	ret =3D copy_struct_from_user(&req, sizeof(req), map, size);
+> +	if (ret)
+> +		return ret;
+
+[Severity: Medium]
+Should sys_userns_set_idmap() reject size > PAGE_SIZE with -E2BIG before
+calling copy_struct_from_user()?  When size exceeds sizeof(req),
+copy_struct_from_user() calls check_zeroed_user() on the trailing bytes,
+which scans the user range word-by-word inside user_read_access_begin()
+without rescheduling or checking for pending signals.  An unprivileged
+caller can pass a multi-gigabyte zero-filled mapping and stall a CPU in
+the kernel.
+
 > +
-> +DEFINE_CLASS(current_tsync_marker, bool, if (_T) clear_current_tsync_marker(),
-> +	     try_set_current_tsync_marker(), void)
+> +	if (!req.flags || (req.flags & ~USERNS_IDMAP_ALL_FLAGS))
+> +		return -EINVAL;
+> +	if (!(req.flags & USERNS_IDMAP_UID) &&
+> +	    (req.nr_uid_extents || req.uid_extents))
+> +		return -EINVAL;
+> +	if (!(req.flags & USERNS_IDMAP_GID) &&
+> +	    (req.nr_gid_extents || req.gid_extents))
+> +		return -EINVAL;
+> +	if (!(req.flags & USERNS_IDMAP_PROJID) &&
+> +	    (req.nr_projid_extents || req.projid_extents))
+> +		return -EINVAL;
 > +
->  /*
->   * restrict_sibling_threads - enables a Landlock policy for all sibling threads
->   */
-> @@ -492,6 +533,19 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  	size_t newly_discovered_threads;
->  	bool found_more_threads;
->  
-> +	/*
-> +	 * Serialize concurrent TSYNC operations to prevent deadlocks when
-> +	 * multiple threads call landlock_restrict_self() simultaneously.  If
-> +	 * another operation got there first, gracefully yield by restarting the
-> +	 * syscall.  This allows the current thread to process pending
-> +	 * task_works before retrying.
-> +	 *
-> +	 * sighand->siglock protects only the marker, not the wait below.
-> +	 */
-> +	CLASS(current_tsync_marker, marker)();
-> +	if (!marker)
-> +		return restart_syscall();
+> +	if (!ns->parent)
+> +		return -EPERM;
+> +	if (current_user_ns() !=3D ns && current_user_ns() !=3D ns->parent)
+> +		return -EPERM;
 > +
->  	atomic_set(&shared_ctx.preparation_error, 0);
->  	init_completion(&shared_ctx.all_prepared);
->  	init_completion(&shared_ctx.ready_to_commit);
-> @@ -503,16 +557,6 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  		(restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) ||
->  		task_no_new_privs(current);
->  
-> -	/*
-> -	 * Serialize concurrent TSYNC operations to prevent deadlocks when
-> -	 * multiple threads call landlock_restrict_self() simultaneously.
-> -	 * If the lock is already held, we gracefully yield by restarting the
-> -	 * syscall. This allows the current thread to process pending
-> -	 * task_works before retrying.
-> -	 */
-> -	if (!down_write_trylock(&current->signal->exec_update_lock))
-> -		return restart_syscall();
-> -
->  	/*
->  	 * We schedule a pseudo-signal task_work for each of the calling task's
->  	 * sibling threads.  In the task work, each thread:
-> @@ -536,8 +580,9 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  	 * 5) signals that it's done altogether (barrier synchronization
->  	 *    "all_finished")
->  	 *
-> -	 * Unlike seccomp, which modifies sibling tasks directly, we do not
-> -	 * need to acquire the cred_guard_mutex and sighand->siglock:
-> +	 * Unlike seccomp, which modifies sibling tasks directly, we do not need
-> +	 * to hold the cred_guard_mutex or sighand->siglock around the thread
-> +	 * walk:
->  	 *
->  	 * - As in our case, all threads are themselves exchanging their own
->  	 *   struct cred through the credentials API, no locks are needed for
-> @@ -634,6 +679,69 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  		wait_for_completion(&shared_ctx.all_finished);
->  
->  	tsync_works_release(&works);
-> -	up_write(&current->signal->exec_update_lock);
->  	return atomic_read(&shared_ctx.preparation_error);
->  }
+> +	if (req.flags & (USERNS_IDMAP_UID | USERNS_IDMAP_GID |
+> +			 USERNS_SETGROUPS_DENY)) {
+> +		bool file_ok =3D (filp->f_cred->user_ns =3D=3D ns ||
+> +				filp->f_cred->user_ns =3D=3D ns->parent) &&
+> +			       file_ns_capable(filp, ns, CAP_SYS_ADMIN);
 > +
-> +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> +		if (!ns_capable(ns, CAP_SYS_ADMIN) && !file_ok)
+> +			return -EPERM;
+> +	}
+
+[Severity: High]
+Does omitting USERNS_IDMAP_PROJID from this CAP_SYS_ADMIN check allow any
+unprivileged process holding a read-only userns fd to write ns->projid_map?
+
+For /proc/<pid>/projid_map, writing requires opening the procfs file
+(mode 0644, owned by the target task) for write, so VFS permission checks
+block unrelated users in ns->parent and unprivileged non-owner tasks inside
+ns.  By contrast, nsfs files have mode 0444 and are always opened O_RDONLY,
+and caller_idmap_permitted() returns true unconditionally when cap_setid is
+-1.  As a result, an unprivileged task inside ns that dropped capabilities,
+or an unrelated user in ns->parent that obtained an nsfs fd (for example via
+NS_GET_USERNS), can call userns_set_idmap() with USERNS_IDMAP_PROJID and
+lock in the write-once projid_map.
+
+In addition, when file_ok is true on a delegated nsfs fd and the caller
+lacks ns_capable(ns, CAP_SYS_ADMIN), neither USERNS_SETGROUPS_DENY nor
+USERNS_IDMAP_PROJID verifies any privilege on current_cred() in ns->parent,
+allowing an unprivileged recipient of a read-only userns fd to disable
+setgroups(2) or configure projid_map on ns.
+
+[ ... ]
+
+> +	if (req.flags & USERNS_SETGROUPS_DENY)
+> +		ns->flags &=3D ~USERNS_SETGROUPS_ALLOWED;
 > +
-> +static bool is_current_tsync_marker_set(void)
-> +{
-> +	return current->signal->flags & SIGNAL_LANDLOCK_TSYNC;
-> +}
+> +	if (req.flags & USERNS_IDMAP_UID) {
+> +		ret =3D prepare_caller_idmap(ns, CAP_SETUID, &new_uid,
+> +					   &ns->parent->uid_map);
+> +		if (ret < 0)
+> +			goto out_restore;
+> +	}
+> +	if (req.flags & USERNS_IDMAP_GID) {
+> +		ret =3D prepare_caller_idmap(ns, CAP_SETGID, &new_gid,
+> +					   &ns->parent->gid_map);
+> +		if (ret < 0)
+> +			goto out_restore;
+> +	}
+> +	if (req.flags & USERNS_IDMAP_PROJID) {
+> +		ret =3D prepare_caller_idmap(ns, -1, &new_projid,
+> +					   &ns->parent->projid_map);
+> +		if (ret < 0)
+> +			goto out_restore;
+> +	}
 > +
-> +static void test_tsync_marker_free(struct kunit *const test)
-> +{
-> +	const struct cred *const cred = current_cred();
+> +	if (req.flags & USERNS_IDMAP_UID)
+> +		commit_new_idmap(&ns->uid_map, &new_uid);
+> +	if (req.flags & USERNS_IDMAP_GID)
+> +		commit_new_idmap(&ns->gid_map, &new_gid);
+> +	if (req.flags & USERNS_IDMAP_PROJID)
+> +		commit_new_idmap(&ns->projid_map, &new_projid);
 > +
-> +	KUNIT_ASSERT_TRUE(test, thread_group_empty(current));
-> +	KUNIT_ASSERT_FALSE(test, is_current_tsync_marker_set());
+> +	mutex_unlock(&userns_state_mutex);
+> +	return 0;
 > +
-> +	KUNIT_EXPECT_TRUE(test, try_set_current_tsync_marker());
-> +	KUNIT_EXPECT_TRUE(test, is_current_tsync_marker_set());
-> +	clear_current_tsync_marker();
-> +	KUNIT_EXPECT_FALSE(test, is_current_tsync_marker_set());
-> +
-> +	/* Takes and releases the marker. */
-> +	KUNIT_EXPECT_EQ(test, 0,
-> +			landlock_restrict_sibling_threads(cred, cred, 0));
-> +	KUNIT_EXPECT_FALSE(test, is_current_tsync_marker_set());
-> +}
-> +
-> +static void test_tsync_marker_held(struct kunit *const test)
-> +{
-> +	const struct cred *const cred = current_cred();
-> +
-> +	KUNIT_ASSERT_TRUE(test, thread_group_empty(current));
-> +	KUNIT_ASSERT_TRUE(test, try_set_current_tsync_marker());
-> +
-> +	KUNIT_EXPECT_FALSE(test, try_set_current_tsync_marker());
-> +	KUNIT_EXPECT_TRUE(test, is_current_tsync_marker_set());
-> +
-> +	/* Restarts without releasing the marker held by another caller. */
-> +	KUNIT_EXPECT_EQ(test, -ERESTARTNOINTR,
-> +			landlock_restrict_sibling_threads(cred, cred, 0));
-> +	KUNIT_EXPECT_TRUE(test, is_current_tsync_marker_set());
-> +
-> +	/* Clears TIF_SIGPENDING set by restart_syscall(). */
-> +	scoped_guard(spinlock_irq, &current->sighand->siglock)
-> +		recalc_sigpending();
-> +
-> +	clear_current_tsync_marker();
-> +}
-> +
-> +static struct kunit_case test_cases[] = {
-> +	/* clang-format off */
-> +	KUNIT_CASE(test_tsync_marker_free),
-> +	KUNIT_CASE(test_tsync_marker_held),
-> +	{}
-> +	/* clang-format on */
-> +};
-> +
-> +static struct kunit_suite test_suite = {
-> +	.name = "landlock_tsync",
-> +	.test_cases = test_cases,
-> +};
-> +
-> +kunit_test_suite(test_suite);
-> +
-> +#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
-> 
-> base-commit: aebb7274476403040d582c61478df8f4a7bf9cd3
-> -- 
-> 2.56.0
-> 
+> +out_restore:
+> +	ns->flags =3D old_flags;
+
+[Severity: Medium]
+Can clearing USERNS_SETGROUPS_ALLOWED in ns->flags before
+prepare_caller_idmap() expose a transient "deny" state to concurrent
+readers if preparation fails?
+
+proc_setgroups_show() reads READ_ONCE(ns->flags) without holding
+userns_state_mutex:
+
+kernel/user_namespace.c:proc_setgroups_show() {
+	struct user_namespace *ns =3D seq->private;
+	unsigned long userns_flags =3D READ_ONCE(ns->flags);
+
+	seq_printf(seq, "%s\n",
+		   (userns_flags & USERNS_SETGROUPS_ALLOWED) ?
+		   "allow" : "deny");
+	return 0;
+}
+
+While prepare_caller_idmap() needs USERNS_SETGROUPS_ALLOWED cleared when
+checking an unprivileged caller's GID mapping, mutating ns->flags in place
+and restoring old_flags on failure lets a concurrent reader of
+/proc/<pid>/setgroups observe "deny" before it reverts to "allow". Could
+caller_idmap_permitted() check the effective flags value and leave the
+update to ns->flags until the commit phase after all prepare_caller_idmap()
+calls succeed?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121000844.1863=
+324-1-jarkko@kernel.org?part=3D2
