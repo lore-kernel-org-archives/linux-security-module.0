@@ -1,87 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795368929;
-	b=beQfVZlohoZ2olC6gPzCkRlZ0t8/B2vMeTuucFB1fJWpGSrUhrc7exup3khfJdElM+Dr
-	 QVAljwOU1n4BurUyHX3ka2VNo9e21lFlEA1ensucxoGIfG2AVoI5mwMlUtA18PD0cBY+5
-	 3pPRgwMjHxaXCUxCnAib4u0xY/KpyuW+aKv3y/vEyWU7SpALhCHiqZKYugYp3ht8zsbl/
-	 jOyQ9/bxs+vCGw9HUJMhPMz9tIIbF7Awj/+Ol3SWwUctOtGqVmxvNaWEFtZ8a0GnLeZbq
-	 Or0uTRksbGY4mtLX4AYhyDwSap8wH18/EUuTVEkDYkPvKjE3EQzuaGhYIgWFFvFZSqQ==
+	t=1795376161;
+	b=I/m/WknjkepquTHZzeigYfg3TxX3yHJGFeZfWf1fPwQLWNhCKsKr+E32Oo7UGqq4QW/T
+	 a1F8fBZzwQnt/2Dfk+1mqjZXN8xadmAlIkhqLicWOm4/pNTAnXDwNoOFuHewaGTVYgWjR
+	 tEMhkALAOzYh+RqGu9qR1msJyyoubRXP8sVr7CuKPPuNslN08qayV1z5BTRlUn/OOuMVh
+	 Ipbx9lxEDBPF+0NOzjRv+dalwwHXdka3MBi2r+tC9cm35y3J/R0rajarHqWtGhpHscULz
+	 x3yPOzXECz779wsn+Shs5CWicnWaDfcWHKGEjBU46yN/UwpiVrCgN5kKs4qfprSoAng==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795368929;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:In-Reply-To:X-Scanned-By:
-	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding;
-	bh=sJM5U0UMt7klljmQpHi8pFYazE6ZZS3AuyiLULRE4vg=;
-	b=xXEqyEA3jIgY1u8Gtim2bQnBCBW4w6HscNz/BbdNNolNAxxWyP/Wajp875rYQYW6iz8Y
-	 gIK/RMlgg9++luN72kwSfdp5wCIxH3jDSIPfWUwzwQFHPHIN6hhKH8dT1c7fkGHmcfb7f
-	 IJvumt7NJHNqoGxz6elYNbdsB8R+93eOYl1CKRnGTrZZYSrmGxRnXVLoTvQx9R3GNsZJb
-	 /qnkLHgkCx62okFP+LWp+uou+IVtmfa4oUU3IoANw5Ci4iSk6BSKUt76izFYyytuizhM4
-	 vEQ2HC/PmGrQ3lpGGusM71pCkMPP3i0DeZxrP1IK6L3aP2nt+cvu0zGqFPRL3r8yhBw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795376161;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=PxWsspzEioIIwUqnuiIeYKp1fTe5D8PzGx83Wd5XdHY=;
+	b=uN4bDiJt4K/gBOp0Yn3/NndacLmnAE+IyoCelvck80qqMIZGAvvmyjvI8X88GN6rcruG
+	 GRu2l5J0+29shwyprW+y2jRfMq83R80fA1GAQABpqRyC5EYBSCKenzGNOM8E+1MjsgALo
+	 mdgmnk49UzvCAGa3JtAzCqzPkxOkuhReDQEpjgjiqfVddGOtZ82osQX3kVEVk1ylsz19M
+	 MSkv/FXYiN30KJsLXbOfQaAqTu2EtgFnCPDWgUBHAe5Gnd2q8ImBS3zCjHQF3Hjto00dm
+	 buovwfa83f7qkSZAhsBlb1ouPDfeGEAj/kkPU7Ia8zgByPmobEcXMcYcclxgmj3CcMA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=QSydsZyE;
-	arc=none smtp.remote-ip=170.10.129.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DFiqTxJB;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60C606A33C
-	for <linux-security-module@vger.kernel.org>; Sun, 22 Nov 2026 17:35:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1F60C606A33C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 46200606A32C;
+	Sun, 22 Nov 2026 19:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=QSydsZyE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1795368927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sJM5U0UMt7klljmQpHi8pFYazE6ZZS3AuyiLULRE4vg=;
-	b=QSydsZyE+PmJj8GEtBnQZzd4yYFiXGZq+SeQOat7S7XSJDadPUzwHdefG6NLaoYFsRwqSz
-	pZUwiIR9NShaieH3FJA5NBuz4Lzlzn8SDhAauXHprrDC4Zah34X7lmoxhxzPXbLpz3KPfc
-	hAxT5OdxgK4Offfwl4PoUOUC7t57ZA4=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-49qdmpqANlG9np73tUhOVQ-1; Sun,
- 22 Nov 2026 17:35:22 +0000
-X-MC-Unique: 49qdmpqANlG9np73tUhOVQ-1
-X-Mimecast-MFC-AGG-ID: 49qdmpqANlG9np73tUhOVQ_1795368920
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E3CC180047B;
-	Sun, 22 Nov 2026 17:35:19 +0000 (UTC)
-Received: from onestero-thinkpadp1gen7.tpbc.csb (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
-	by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0C54F41F;
-	Sun, 22 Nov 2026 17:35:13 +0000 (UTC)
-Received: by onestero-thinkpadp1gen7.tpbc.csb (nbSMTP-1.00) for uid 13628
-	oleg@redhat.com; Sun, 22 Nov 2026 18:35:18 +0100 (CET)
-Date: Sun, 22 Nov 2026 18:35:12 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Tejun Heo <tj@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
-	Cen Zhang <blbllhy@gmail.com>, James Morris <jmorris@namei.org>,
-	Lee Seong Hyeon <ihopenre@gmail.com>,
-	Marco Elver <elver@google.com>, NeilBrown <neil@brown.name>,
-	Nickolai Zeldovich <nickolai@csail.mit.edu>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DFiqTxJB
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id C697E1F000C0;
+	Sun, 22 Nov 2026 19:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795376160;
+	bh=PxWsspzEioIIwUqnuiIeYKp1fTe5D8PzGx83Wd5XdHY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=DFiqTxJBeq3OOH2VDJJY2sRb16klNa8m8RHt5Abh/YsPImOZ5nu0uM/UuMH+1ycLe
+	 S+SXiQ9ZdkEJGKkPN8frshQVWuicTWsoG5qYiFtE16U0SbJ6N0d/pprgRSmcbMWB0L
+	 0fc+vdB1MX5xOtwmvvCKQVbCxtNDWEr972W+bhnrLZB08bFuYj96P+xs8sX24UVzV5
+	 vR6e0SgrDbPp5c3KER4nWHsM3H80dhGu3haKOn8CZtqET9eS+adDfRk0TJeYI2DcSh
+	 DNDD/KxSNtFTnTtbxIpVpUpwPU2Jqbe3L0B6Jmlu7Ie34V9iCvX0vbkLcG4h/jk/TN
+	 FUckdOsdfl/JQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	bpf@vger.kernel.org,
+	containers@lists.linux.dev,
+	linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	Aleksa Sarai <aleksa@amutable.com>,
+	Alexander Mikhalitsyn <alex@amutable.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Giuseppe Scrivano <giuseppe@scrivano.org>,
+	Hugh Dickins <hughd@google.com>,
+	Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Kees Cook <kees@kernel.org>,
+	KP Singh <kpsingh@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Oleg Nesterov <oleg@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC
- wait
-Message-ID: <awMn0L7RaQO_6qUc@redhat.com>
-References: <20261120151554.2651743-1-mic@digikod.net>
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: [RFC PATCH v7 01/26] userns: Factor out idmap validation and commit helpers
+Date: Sun, 22 Nov 2026 21:35:14 +0200
+Message-ID: <20261122193539.3334213-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261122193539.3334213-1-jarkko@kernel.org>
+References: <20261122193539.3334213-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -91,98 +90,324 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-In-Reply-To: <20261120151554.2651743-1-mic@digikod.net>
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
-X-Mimecast-MFC-PROC-ID: TN3CcObsDEPwUZdBlSjNP3R-yIsVvD7HiRgNYPiYRO0_1795368920
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-On 11/20, Mickaël Salaün wrote:
->
-> @@ -492,6 +533,19 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  	size_t newly_discovered_threads;
->  	bool found_more_threads;
->  
-> +	/*
-> +	 * Serialize concurrent TSYNC operations to prevent deadlocks when
-> +	 * multiple threads call landlock_restrict_self() simultaneously.  If
-> +	 * another operation got there first, gracefully yield by restarting the
-> +	 * syscall.  This allows the current thread to process pending
-> +	 * task_works before retrying.
-> +	 *
-> +	 * sighand->siglock protects only the marker, not the wait below.
-> +	 */
-> +	CLASS(current_tsync_marker, marker)();
-> +	if (!marker)
-> +		return restart_syscall();
-> +
->  	atomic_set(&shared_ctx.preparation_error, 0);
->  	init_completion(&shared_ctx.all_prepared);
->  	init_completion(&shared_ctx.ready_to_commit);
-> @@ -503,16 +557,6 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  		(restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) ||
->  		task_no_new_privs(current);
->  
-> -	/*
-> -	 * Serialize concurrent TSYNC operations to prevent deadlocks when
-> -	 * multiple threads call landlock_restrict_self() simultaneously.
-> -	 * If the lock is already held, we gracefully yield by restarting the
-> -	 * syscall. This allows the current thread to process pending
-> -	 * task_works before retrying.
-> -	 */
-> -	if (!down_write_trylock(&current->signal->exec_update_lock))
-> -		return restart_syscall();
+map_write() and its permission helpers validate extent ranges, check
+root and unprivileged self-mappings, translate parent ID ranges, sort
+extents, and install the resulting map inline for procfs text writes,
+preventing non-procfs callers from reusing the same validation and
+commit path.
 
-Just in case, the patch looks obviously correct, so feel free to add
+Extract idmap_maps_root(), unpriv_idmap_permitted(),
+validate_and_insert_extent(), free_new_idmap(), resolve_new_idmap(), and
+commit_new_idmap() with no functional change.
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ kernel/user_namespace.c | 229 +++++++++++++++++++++-------------------
+ 1 file changed, 122 insertions(+), 107 deletions(-)
 
--------------------------------------------------------------------------------
-But when I look at this code...
-
-Well, if we change landlock_restrict_sibling_threads() to rely on ->siglock,
-it seems that it can be greatly simplified? I mean, it can roughly do:
-
-	...
-
-	for (nt nr_threads = 0;; tsync_works_grow_by(&works, nr_threads))
-	{
-		guard(spinlock_irq)(&current->sighand->siglock);
-
-		if (!nr_threads) {
-			if (signal->flags & SIGNAL_LANDLOCK_TSYNC || ...)
-				return restart_syscall();
-			else
-				signal->flags |= SIGNAL_LANDLOCK_TSYNC;
-		}
-
-		if (nr_threads < get_nr_threads(current)) {
-			nr_threads = get_nr_threads(current));
-			continue;
-		}
-
-		for_other_threads(current, thread) {
-			if (thread->flags & PF_EXITING)	// stable under siglock
-				continue;
-
-			ctx = tsync_works_provide(...); // can't fail
-
-			...
-
-			task_work_add(thread, &ctx->work, TWA_SIGNAL); // can't fail
-		}
-
-		break;
-	}
-
-	complete_all(&shared_ctx.ready_to_commit);
-	...
-
-We can kill tsync_works_trim/tsync_works_contains_task/count_additional_threads/etc.
-
-Sure, this needs another change even if I am right.
-
-Oleg.
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index cd748e1cbace..caba2ac33077 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -884,6 +884,22 @@ VISIBLE_IF_KUNIT int uid_gid_map_sort(struct uid_gid_map *map)
+ }
+ EXPORT_SYMBOL_IF_KUNIT(uid_gid_map_sort);
+ 
++static bool idmap_maps_root(const struct uid_gid_map *new_map)
++{
++	unsigned int idx;
++
++	for (idx = 0; idx < new_map->nr_extents; idx++) {
++		const struct uid_gid_extent *e;
++
++		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
++			e = &new_map->extent[idx];
++		else
++			e = &new_map->forward[idx];
++		if (e->lower_first == 0)
++			return true;
++	}
++	return false;
++}
+ /**
+  * verify_root_map() - check the uid 0 mapping
+  * @file: idmapping file
+@@ -900,22 +916,9 @@ static bool verify_root_map(const struct file *file,
+ 			    struct user_namespace *map_ns,
+ 			    struct uid_gid_map *new_map)
+ {
+-	int idx;
+ 	const struct user_namespace *file_ns = file->f_cred->user_ns;
+-	struct uid_gid_extent *extent0 = NULL;
+-
+-	for (idx = 0; idx < new_map->nr_extents; idx++) {
+-		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+-			extent0 = &new_map->extent[idx];
+-		else
+-			extent0 = &new_map->forward[idx];
+-		if (extent0->lower_first == 0)
+-			break;
+-
+-		extent0 = NULL;
+-	}
+ 
+-	if (!extent0)
++	if (!idmap_maps_root(new_map))
+ 		return true;
+ 
+ 	if (map_ns == file_ns) {
+@@ -938,6 +941,103 @@ static bool verify_root_map(const struct file *file,
+ 	return true;
+ }
+ 
++static int validate_and_insert_extent(struct uid_gid_map *new_map,
++				      struct uid_gid_extent *extent)
++{
++	if ((extent->first == (u32)-1) || (extent->lower_first == (u32)-1))
++		return -EINVAL;
++
++	if ((extent->first + extent->count) <= extent->first)
++		return -EINVAL;
++	if ((extent->lower_first + extent->count) <= extent->lower_first)
++		return -EINVAL;
++
++	if (mappings_overlap(new_map, extent))
++		return -EINVAL;
++
++	if (new_map->nr_extents >= UID_GID_MAP_MAX_EXTENTS)
++		return -EINVAL;
++
++	return uid_gid_map_insert_extent(new_map, extent);
++}
++
++static void free_new_idmap(struct uid_gid_map *new_map)
++{
++	if (new_map->nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
++		kfree(new_map->forward);
++		kfree(new_map->reverse);
++	}
++	memset(new_map, 0, sizeof(*new_map));
++}
++
++static int resolve_new_idmap(struct uid_gid_map *new_map,
++			     struct uid_gid_map *parent_map)
++{
++	unsigned int idx;
++
++	if (new_map->nr_extents == 0)
++		return -EINVAL;
++
++	for (idx = 0; idx < new_map->nr_extents; idx++) {
++		struct uid_gid_extent *e;
++		u32 lower_first;
++
++		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
++			e = &new_map->extent[idx];
++		else
++			e = &new_map->forward[idx];
++
++		lower_first = map_id_range_down(parent_map,
++						e->lower_first,
++						e->count);
++		if (lower_first == (u32)-1)
++			return -EPERM;
++
++		e->lower_first = lower_first;
++	}
++
++	return uid_gid_map_sort(new_map);
++}
++
++static void commit_new_idmap(struct uid_gid_map *map,
++			     struct uid_gid_map *new_map)
++{
++	if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
++		memcpy(map->extent, new_map->extent,
++		       new_map->nr_extents * sizeof(new_map->extent[0]));
++	} else {
++		map->forward = new_map->forward;
++		map->reverse = new_map->reverse;
++	}
++	/*
++	 * Pairs with smp_rmb() in map_id_range_down(), map_id_range_up(),
++	 * and m_start().
++	 */
++	smp_wmb();
++	map->nr_extents = new_map->nr_extents;
++	memset(new_map, 0, sizeof(*new_map));
++}
++
++static bool unpriv_idmap_permitted(const struct user_namespace *ns,
++				   const struct cred *cred, int cap_setid,
++				   unsigned long ns_flags,
++				   const struct uid_gid_map *new_map)
++{
++	u32 id;
++
++	if (new_map->nr_extents != 1 || new_map->extent[0].count != 1 ||
++	    !uid_eq(ns->owner, cred->euid))
++		return false;
++
++	id = new_map->extent[0].lower_first;
++	if (cap_setid == CAP_SETUID)
++		return uid_eq(make_kuid(ns->parent, id), cred->euid);
++	if (cap_setid == CAP_SETGID)
++		return !(ns_flags & USERNS_SETGROUPS_ALLOWED) &&
++		       gid_eq(make_kgid(ns->parent, id), cred->egid);
++	return false;
++}
++
+ /*
+  * Parse the decimal u32 at *pos, up to the next whitespace or NUL, and
+  * leave *pos pointing at that character.
+@@ -966,8 +1066,7 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ {
+ 	struct seq_file *seq = file->private_data;
+ 	struct user_namespace *map_ns = seq->private;
+-	struct uid_gid_map new_map;
+-	unsigned idx;
++	struct uid_gid_map new_map = {};
+ 	struct uid_gid_extent extent;
+ 	char *kbuf, *pos, *next_line;
+ 	ssize_t ret;
+@@ -1002,8 +1101,6 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ 	 */
+ 	mutex_lock(&userns_state_mutex);
+ 
+-	memset(&new_map, 0, sizeof(struct uid_gid_map));
+-
+ 	ret = -EPERM;
+ 	/* Only allow one successful write to the map */
+ 	if (map->nr_extents != 0)
+@@ -1052,98 +1149,28 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ 		if (*pos != '\0')
+ 			goto out;
+ 
+-		/* Verify we have been given valid starting values */
+-		if ((extent.first == (u32) -1) ||
+-		    (extent.lower_first == (u32) -1))
+-			goto out;
+-
+-		/* Verify count is not zero and does not cause the
+-		 * extent to wrap
+-		 */
+-		if ((extent.first + extent.count) <= extent.first)
+-			goto out;
+-		if ((extent.lower_first + extent.count) <=
+-		     extent.lower_first)
+-			goto out;
+-
+-		/* Do the ranges in extent overlap any previous extents? */
+-		if (mappings_overlap(&new_map, &extent))
+-			goto out;
+-
+-		if ((new_map.nr_extents + 1) == UID_GID_MAP_MAX_EXTENTS &&
+-		    (next_line != NULL))
+-			goto out;
+-
+-		ret = uid_gid_map_insert_extent(&new_map, &extent);
++		ret = validate_and_insert_extent(&new_map, &extent);
+ 		if (ret < 0)
+ 			goto out;
+ 		ret = -EINVAL;
+ 	}
+-	/* Be very certain the new map actually exists */
++
+ 	if (new_map.nr_extents == 0)
+ 		goto out;
+ 
+ 	ret = -EPERM;
+-	/* Validate the user is allowed to use user id's mapped to. */
+ 	if (!new_idmap_permitted(file, map_ns, cap_setid, &new_map))
+ 		goto out;
+ 
+-	ret = -EPERM;
+-	/* Map the lower ids from the parent user namespace to the
+-	 * kernel global id space.
+-	 */
+-	for (idx = 0; idx < new_map.nr_extents; idx++) {
+-		struct uid_gid_extent *e;
+-		u32 lower_first;
+-
+-		if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+-			e = &new_map.extent[idx];
+-		else
+-			e = &new_map.forward[idx];
+-
+-		lower_first = map_id_range_down(parent_map,
+-						e->lower_first,
+-						e->count);
+-
+-		/* Fail if we can not map the specified extent to
+-		 * the kernel global id space.
+-		 */
+-		if (lower_first == (u32) -1)
+-			goto out;
+-
+-		e->lower_first = lower_first;
+-	}
+-
+-	/*
+-	 * If we want to use binary search for lookup, this clones the extent
+-	 * array and sorts both copies.
+-	 */
+-	ret = uid_gid_map_sort(&new_map);
++	ret = resolve_new_idmap(&new_map, parent_map);
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	/* Install the map */
+-	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+-		memcpy(map->extent, new_map.extent,
+-		       new_map.nr_extents * sizeof(new_map.extent[0]));
+-	} else {
+-		map->forward = new_map.forward;
+-		map->reverse = new_map.reverse;
+-	}
+-	smp_wmb();
+-	map->nr_extents = new_map.nr_extents;
+-
++	commit_new_idmap(map, &new_map);
+ 	*ppos = count;
+ 	ret = count;
+ out:
+-	if (ret < 0 && new_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+-		kfree(new_map.forward);
+-		kfree(new_map.reverse);
+-		map->forward = NULL;
+-		map->reverse = NULL;
+-		map->nr_extents = 0;
+-	}
+-
++	free_new_idmap(&new_map);
+ 	mutex_unlock(&userns_state_mutex);
+ 	kfree(kbuf);
+ 	return ret;
+@@ -1213,20 +1240,8 @@ static bool new_idmap_permitted(const struct file *file,
+ 	/* Don't allow mappings that would allow anything that wouldn't
+ 	 * be allowed without the establishment of unprivileged mappings.
+ 	 */
+-	if ((new_map->nr_extents == 1) && (new_map->extent[0].count == 1) &&
+-	    uid_eq(ns->owner, cred->euid)) {
+-		u32 id = new_map->extent[0].lower_first;
+-		if (cap_setid == CAP_SETUID) {
+-			kuid_t uid = make_kuid(ns->parent, id);
+-			if (uid_eq(uid, cred->euid))
+-				return true;
+-		} else if (cap_setid == CAP_SETGID) {
+-			kgid_t gid = make_kgid(ns->parent, id);
+-			if (!(ns->flags & USERNS_SETGROUPS_ALLOWED) &&
+-			    gid_eq(gid, cred->egid))
+-				return true;
+-		}
+-	}
++	if (unpriv_idmap_permitted(ns, cred, cap_setid, ns->flags, new_map))
++		return true;
+ 
+ 	/* Allow anyone to set a mapping that doesn't require privilege */
+ 	if (!cap_valid(cap_setid))
+-- 
+2.47.3
 
