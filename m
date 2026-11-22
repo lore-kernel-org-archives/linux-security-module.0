@@ -1,69 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795364108;
-	b=TO66DzSngxwlhZntLJHBL8azNqYiCfwDDLT+GzPsW9qDxx0SKsNXKHrHdgr7q4CsApBl
-	 KriANjJeAbX5E3uxiZDXunot+tA8LYk0AtGater+yQe1yHmzK3mvCAmXmjN9Oi9EL5ffm
-	 dJndI5snOyIGMd8O6OOeH+VAD8EK0AEkTjvu0J5g7z44FpVHcZhs4SSWYFeiU2QW+v4xw
-	 GTwhTTD++bBKADJM+GWvcyNGXGkg4zVdQ0cZuqg4uqFFP8cOLbk3B2sUjDbIBDSDZ1Fwl
-	 L16yU+VwGrMf7xFRzEd6rdr5yblv5djiVmd7iD/l90ME+pVFJnm7ZQzFkd9Q+hBwPUA==
+	t=1795368929;
+	b=beQfVZlohoZ2olC6gPzCkRlZ0t8/B2vMeTuucFB1fJWpGSrUhrc7exup3khfJdElM+Dr
+	 QVAljwOU1n4BurUyHX3ka2VNo9e21lFlEA1ensucxoGIfG2AVoI5mwMlUtA18PD0cBY+5
+	 3pPRgwMjHxaXCUxCnAib4u0xY/KpyuW+aKv3y/vEyWU7SpALhCHiqZKYugYp3ht8zsbl/
+	 jOyQ9/bxs+vCGw9HUJMhPMz9tIIbF7Awj/+Ol3SWwUctOtGqVmxvNaWEFtZ8a0GnLeZbq
+	 Or0uTRksbGY4mtLX4AYhyDwSap8wH18/EUuTVEkDYkPvKjE3EQzuaGhYIgWFFvFZSqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795364108;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=sidA8Eikj4NCuusYzJo7PSjkBiaXOdmJGfqzy6mhVLA=;
-	b=DJfr1Sj2bqo6lmqncaN3UoxfeGrPUKSB1l6P4RhY0KBuAujEV+iXyg8hGl7A7d2gSAcp
-	 9xUYJOiW3E+mFGSpr/breMMGTMHNicSu/0KyD2iXlOagGljaLTq9DI/+dPvv5wwSlyqRP
-	 BSKFbjaiNAgIlGpHM1Sa3FM5Xje8SSCnIwxszuoZyKWzIGVArHz33OUAiV8d4zpDQaBaE
-	 91uIaJ4dmcTPISYYYNjTcEzj3KwkJR7P5A4WdIWDSwkfE3cpzLmeDXWRjxa6q7NlVuKPm
-	 DoELAq9s2MepojZkBGwrL9LRJr/aOreNSHJRNBI8XUoyrL3bYf0igvEwhibvjdozXQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795368929;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:In-Reply-To:X-Scanned-By:
+	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding;
+	bh=sJM5U0UMt7klljmQpHi8pFYazE6ZZS3AuyiLULRE4vg=;
+	b=xXEqyEA3jIgY1u8Gtim2bQnBCBW4w6HscNz/BbdNNolNAxxWyP/Wajp875rYQYW6iz8Y
+	 gIK/RMlgg9++luN72kwSfdp5wCIxH3jDSIPfWUwzwQFHPHIN6hhKH8dT1c7fkGHmcfb7f
+	 IJvumt7NJHNqoGxz6elYNbdsB8R+93eOYl1CKRnGTrZZYSrmGxRnXVLoTvQx9R3GNsZJb
+	 /qnkLHgkCx62okFP+LWp+uou+IVtmfa4oUU3IoANw5Ci4iSk6BSKUt76izFYyytuizhM4
+	 vEQ2HC/PmGrQ3lpGGusM71pCkMPP3i0DeZxrP1IK6L3aP2nt+cvu0zGqFPRL3r8yhBw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hallyn.com;
-	spf=pass smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=bS7tYBYm;
-	arc=none smtp.remote-ip=178.63.66.53
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=QSydsZyE;
+	arc=none smtp.remote-ip=170.10.129.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A6E60A3820;
-	Sun, 22 Nov 2026 16:15:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98A6E60A3820
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60C606A33C
+	for <linux-security-module@vger.kernel.org>; Sun, 22 Nov 2026 17:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1F60C606A33C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=bS7tYBYm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1795364099; bh=Jg096sU21vyNh6oEq9d3agCbhZ6LbEQFdC1QhQMToUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bS7tYBYm1lS0vPKSrdKUJYU9IiyMuYvvtKSx0tDvDXpq7HM6gtnFxFLxmIStcH3et
-	 3ppCZ5Iz36iQZInpcEZVc1mPA+YAeLLFfvzVXpt8CbPOhYma9+AY/1obg1N510ZcFT
-	 TNoAIDzvrKJKCwbU6vc/PIYu+nYulKUZlZg9pWzcqrNHITN/Dcuf2QiiR0NwZelPKL
-	 nXxLf/hXrLq8tRiJWlY4hjGeZD4uK2Mzb8/pEEfr+8h/bo6vOfpXTQGLrOf+XmgHIO
-	 YeaepmOCdyiVrEZnXDVakTd3N2UHZTW8viQjzWFI8QwLR0BJj4VkcduEUpm1I5hdgx
-	 9nQqWY3upTuHw==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 937EFB8C; Sun, 22 Nov 2026 10:14:59 -0600 (CST)
-Date: Sun, 22 Nov 2026 10:14:59 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Christian Brauner <brauner@kernel.org>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"Andrew G. Morgan" <morgan@kernel.org>,
-	Serge Hallyn <sergeh@kernel.org>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	Bradley Morgan <brads@mainlining.org>
-Subject: Re: [PATCH v11 1/3] userns: don't let setns() lend CAP_SETFCAP
-Message-ID: <awMVA+9Q+7mF7naH@hallyn.com>
-References: <20261117-b4-setfcap-userns-v11-0-2be11a2c32f4@toxicpanda.com>
- <20261117-b4-setfcap-userns-v11-1-2be11a2c32f4@toxicpanda.com>
- <awCB3UkCPzLGRBTk@hallyn.com>
- <awCEjJ8syhv+f4vd@hallyn.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=QSydsZyE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1795368927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sJM5U0UMt7klljmQpHi8pFYazE6ZZS3AuyiLULRE4vg=;
+	b=QSydsZyE+PmJj8GEtBnQZzd4yYFiXGZq+SeQOat7S7XSJDadPUzwHdefG6NLaoYFsRwqSz
+	pZUwiIR9NShaieH3FJA5NBuz4Lzlzn8SDhAauXHprrDC4Zah34X7lmoxhxzPXbLpz3KPfc
+	hAxT5OdxgK4Offfwl4PoUOUC7t57ZA4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-49qdmpqANlG9np73tUhOVQ-1; Sun,
+ 22 Nov 2026 17:35:22 +0000
+X-MC-Unique: 49qdmpqANlG9np73tUhOVQ-1
+X-Mimecast-MFC-AGG-ID: 49qdmpqANlG9np73tUhOVQ_1795368920
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E3CC180047B;
+	Sun, 22 Nov 2026 17:35:19 +0000 (UTC)
+Received: from onestero-thinkpadp1gen7.tpbc.csb (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+	by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0C54F41F;
+	Sun, 22 Nov 2026 17:35:13 +0000 (UTC)
+Received: by onestero-thinkpadp1gen7.tpbc.csb (nbSMTP-1.00) for uid 13628
+	oleg@redhat.com; Sun, 22 Nov 2026 18:35:18 +0100 (CET)
+Date: Sun, 22 Nov 2026 18:35:12 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Tejun Heo <tj@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
+	Cen Zhang <blbllhy@gmail.com>, James Morris <jmorris@namei.org>,
+	Lee Seong Hyeon <ihopenre@gmail.com>,
+	Marco Elver <elver@google.com>, NeilBrown <neil@brown.name>,
+	Nickolai Zeldovich <nickolai@csail.mit.edu>,
+	Paul Moore <paul@paul-moore.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC
+ wait
+Message-ID: <awMn0L7RaQO_6qUc@redhat.com>
+References: <20261120151554.2651743-1-mic@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,79 +91,98 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20261120151554.2651743-1-mic@digikod.net>
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-MFC-PROC-ID: TN3CcObsDEPwUZdBlSjNP3R-yIsVvD7HiRgNYPiYRO0_1795368920
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <awCEjJ8syhv+f4vd@hallyn.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 20, 2026 at 11:34:04AM -0600, Serge E. Hallyn wrote:
-> On Fri, Nov 20, 2026 at 11:22:37AM -0600, Serge E. Hallyn wrote:
-> > On Tue, Nov 17, 2026 at 07:54:24PM +0000, Josef Bacik wrote:
-> > > A uid 0 task that gave up CAP_SETFCAP can get it back by joining a user
-> > > namespace that another root task created.  Commit db2e718a4798
-> > > ("capabilities: require CAP_SETFCAP to map uid 0") keeps such a task
-> > > from mapping uid 0 into a namespace it creates itself, because tasks in
-> > > that namespace could then write file capabilities for its root user.
-> > > setns() gives a joiner a full capability set in the namespace too, so
-> > > it can do the same there:
-> > > 
-> > >   task A: uid 0, full caps          task B: uid 0, no CAP_SETFCAP
-> > >   unshare(CLONE_NEWUSER)
-> > >                                     setns(A's user ns)
-> > >                                       allowed, euid == ns->owner
-> > >                                     write "0 0 1" to /proc/self/uid_map
-> > >                                       A had CAP_SETFCAP -> allowed
-> > > 
-> > > If A's namespace already maps host uid 0, at any uid, B can set
-> > > security.capability on a file right away.  Either way uid 1000 can then
-> > 
-> > "Either way" here means whether it already maps host uid 0, or whether
-> > it has no mappings yet?  I'd just drop 'Either way'.
-> > 
-> > > run that file with CAP_SYS_ADMIN, which the selftest at the end of this
-> > > series shows on an unmodified kernel.
-> > > 
-> > > The check doesn't look at the joiner's uids, which it can change while
-> > 
-> > >From here until the 'Fix by', it is confusing whether any given statement
-> > refers to the pre-patch or post-patch state.
-> > 
-> > > keeping its other capabilities, and CAP_SYS_PTRACE doesn't stand in for
-> > 
-> > Is this a reference to the next patch?  But that's a completely different
-> > commit.
-> > 
-> > > CAP_SETFCAP.  What gets refused is a task without CAP_SETFCAP that has
-> > > CAP_SYS_ADMIN over a namespace that maps the joiner's root user, or that
-> > > has no uid_map yet while its parent maps that root user, so that it can
-> > > still be mapped.  If that is uid 0 of the parent and the creator of the
-> > > namespace didn't have CAP_SETFCAP, the join is let through: only a
-> > > writer with CAP_SETFCAP in the parent could map it then.  Containers
-> > > that don't map the joiner's root user, tasks with CAP_SETFCAP and
-> > > unprivileged users are not affected.
-> > > 
-> > > Like verify_root_map(), the check is about uid 0 of the joiner's own
-> > > namespace.  The root user of an ancestor that it maps at another uid,
-> > > and a root user stored through an idmapped mount, are left to whoever
-> > > set up that map or mount.
-> > > 
-> > > Fix by refusing setns() when the joiner doesn't have CAP_SETFCAP and
-> > > tasks in the namespace can write file capabilities for the root user of
-> > > the joiner's namespace.
-> > > 
-> > > Suggested-by: Serge Hallyn <serge@hallyn.com>
-> > > Link: https://lore.kernel.org/all/fd159e68-c613-4c7d-bfba-8af0a3f3a96e@hallyn.com/
-> > > Fixes: db2e718a4798 ("capabilities: require CAP_SETFCAP to map uid 0")
-> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > 
-> > The code looks good to me,
-> > 
-> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+On 11/20, Mickaël Salaün wrote:
+>
+> @@ -492,6 +533,19 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+>  	size_t newly_discovered_threads;
+>  	bool found_more_threads;
+>  
+> +	/*
+> +	 * Serialize concurrent TSYNC operations to prevent deadlocks when
+> +	 * multiple threads call landlock_restrict_self() simultaneously.  If
+> +	 * another operation got there first, gracefully yield by restarting the
+> +	 * syscall.  This allows the current thread to process pending
+> +	 * task_works before retrying.
+> +	 *
+> +	 * sighand->siglock protects only the marker, not the wait below.
+> +	 */
+> +	CLASS(current_tsync_marker, marker)();
+> +	if (!marker)
+> +		return restart_syscall();
+> +
+>  	atomic_set(&shared_ctx.preparation_error, 0);
+>  	init_completion(&shared_ctx.all_prepared);
+>  	init_completion(&shared_ctx.ready_to_commit);
+> @@ -503,16 +557,6 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+>  		(restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) ||
+>  		task_no_new_privs(current);
+>  
+> -	/*
+> -	 * Serialize concurrent TSYNC operations to prevent deadlocks when
+> -	 * multiple threads call landlock_restrict_self() simultaneously.
+> -	 * If the lock is already held, we gracefully yield by restarting the
+> -	 * syscall. This allows the current thread to process pending
+> -	 * task_works before retrying.
+> -	 */
+> -	if (!down_write_trylock(&current->signal->exec_update_lock))
+> -		return restart_syscall();
 
-I've tested that unprivileged lxc still works with these two patches, so feel
-free to add
+Just in case, the patch looks obviously correct, so feel free to add
 
-Tested-by: Serge Hallyn <serge@hallyn.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-to the first two as well.
+-------------------------------------------------------------------------------
+But when I look at this code...
 
--serge
+Well, if we change landlock_restrict_sibling_threads() to rely on ->siglock,
+it seems that it can be greatly simplified? I mean, it can roughly do:
+
+	...
+
+	for (nt nr_threads = 0;; tsync_works_grow_by(&works, nr_threads))
+	{
+		guard(spinlock_irq)(&current->sighand->siglock);
+
+		if (!nr_threads) {
+			if (signal->flags & SIGNAL_LANDLOCK_TSYNC || ...)
+				return restart_syscall();
+			else
+				signal->flags |= SIGNAL_LANDLOCK_TSYNC;
+		}
+
+		if (nr_threads < get_nr_threads(current)) {
+			nr_threads = get_nr_threads(current));
+			continue;
+		}
+
+		for_other_threads(current, thread) {
+			if (thread->flags & PF_EXITING)	// stable under siglock
+				continue;
+
+			ctx = tsync_works_provide(...); // can't fail
+
+			...
+
+			task_work_add(thread, &ctx->work, TWA_SIGNAL); // can't fail
+		}
+
+		break;
+	}
+
+	complete_all(&shared_ctx.ready_to_commit);
+	...
+
+We can kill tsync_works_trim/tsync_works_contains_task/count_additional_threads/etc.
+
+Sure, this needs another change even if I am right.
+
+Oleg.
+
