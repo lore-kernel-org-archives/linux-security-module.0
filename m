@@ -1,11 +1,11 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.254.200.92
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795436065;
-	b=SvS/eDTb46Dg3iPL9ObXIzJ5NTuwM6qgrfxiXsvQeJiIMoEY6wAKe74RnaFCIuD0Zb50
-	 mWMExjok10rhCDKal0/EIE/q4y+JfDBjuI2bZlZ51Ldmj6AbH1XX2gGGlWdm9tktqlVxv
-	 R4xx1lUbpIrv8QVWY2Re0mjY4Vl/+QQXoiIo9caekwA/1OJO5UqWDpORK+reV5xoTnqKr
-	 leN5VFEQcIQ3o4/H67yh7xK30X/ueLQU14vxZyfp8tgQT6rRDIUEgINhfS9/pY0oYWiWi
-	 VHJnyp4VciHrOCQ2spm6YtkcaRxmFbI2kfqiTXuiNor4fhFE0vEyNSZeUj93SsX/gfg==
+	b=sllI5nQQLu6HAy7bxjclrB1V+fQnMzrJBn152VrdbbDcvrvXbCqRd6LWJYmZuTJJMZbs
+	 k7G9A1LVWJYwBCzUK1Jhew+xLxTgifOEXDzzaDXyndfYUzdGwuFB4Edm+12EICENzMTNF
+	 0gxxzfonVcCf3uMvCfzeBX6F+7IxbFpWs1nSnEggwBdC7AqCbWp2R4t69Qh75wHoffmdg
+	 0f/Sz7aOFopi+HdX+l8R46mdH+SsZO8tQbPGQQUEq+qdIJR624l5p3ne+rSQFq5OVKAMG
+	 bwg/4uxH+7KEwtTAqR9uH4yGeKzTzKfHd04y9EISqfNKcHX7Hk6rdtHua27EyDE7v4A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795436065;
 	h=DMARC-Filter:DKIM-Signature:X-QQ-mid:X-QQ-Originating-IP:Received:
@@ -13,42 +13,42 @@ ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:
 	 X-QQ-XMRINFO:X-QQ-RECHKSPAM;
-	bh=8R9rIHAaFsMnWQxjknfOOfJ/h7LG3sqQ6sKXVu0+NAQ=;
-	b=dw8VtX0oexMMe201h+w5eaWnt6kjOI853HBcAQx+zaie3JhWAbgXcNyS3DxQUPGOt8xB
-	 +PU/h7gLlhu56wj00nFTuAu+88Nk1DWmtlOEjrdmvl0UndoscQ1VzejJorc1GolF2Vfr/
-	 l7GAphrcL9qzCgJKlrpD3MZaxLFNbrvzMXFzfLDSqWjuHeBP1NS1srJzMCl8Am/cG96LO
-	 bNYYn2radv0iUjxm+MR0eGAdBHLTJyJX3acuPJG6rpfdG5wTsfalHMKrz/gRfVsluSyfY
-	 JW7RsAtYiej4il2thZzYdQhxS6+g/ynq/gkyC5BXRF97V8xP+7z+x0SBKsXLcdbzxrA==
+	bh=iuaztd9yx6VkqQ5UQ+yE4rzihO3Tu1VlOmhtEuRmI1c=;
+	b=gmYYxFDdkGBJMzwkuNcOlcT475QPRTxh0nb6KZiiKAW6P0wHv9I6kxb4ekf031HbKuen
+	 wOmNwi7MFPVMwblPIdamkiS2cBq3zpDfTVEr5ePIqggO8i3bRcPXNNPGxZnOlrmdc85WH
+	 DjJDuuiTw25zOPIT0clsk2K/sfaD5UWYn2ZK12l92xQlo3vZHxCWOOVt+g9h6p+/8QOvX
+	 5vyMUXEdne86NfBHTlWzVZ6ijNDuf5jJB28LRpdPDpPTFocQUalr6yJ0mOZDtgaNoXorH
+	 XlScX6HqOxE5mOJ+V+pEM3+7XjXMtD107a+hkqQFh3xGiCuViX1aAyBG8A6YuaPB4tA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=mail.sustech.edu.cn;
 	spf=pass smtp.mailfrom=mail.sustech.edu.cn;
-	dkim=pass header.d=mail.sustech.edu.cn header.i=@mail.sustech.edu.cn header.a=rsa-sha256 header.s=oemc2211 header.b=28225ABk;
-	arc=none smtp.remote-ip=54.204.34.130
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	dkim=pass header.d=mail.sustech.edu.cn header.i=@mail.sustech.edu.cn header.a=rsa-sha256 header.s=oemc2211 header.b=KapevXzo;
+	arc=none smtp.remote-ip=54.254.200.92
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18D3606A334;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F389606A336;
 	Mon, 23 Nov 2026 12:14:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E18D3606A334
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2F389606A336
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sustech.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sustech.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.sustech.edu.cn header.i=@mail.sustech.edu.cn header.a=rsa-sha256 header.s=oemc2211 header.b=28225ABk
+	dkim=pass (1024-bit key) header.d=mail.sustech.edu.cn header.i=@mail.sustech.edu.cn header.a=rsa-sha256 header.s=oemc2211 header.b=KapevXzo
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mail.sustech.edu.cn;
-	s=oemc2211; t=1795436035;
-	bh=8R9rIHAaFsMnWQxjknfOOfJ/h7LG3sqQ6sKXVu0+NAQ=;
+	s=oemc2211; t=1795436032;
+	bh=iuaztd9yx6VkqQ5UQ+yE4rzihO3Tu1VlOmhtEuRmI1c=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=28225ABk1Kj/kDd++ThI0/cRaD8DjObloCIyrhKXk5zvu7nxmCHN88Q/wv59htwQ4
-	 ou6ZAnywinLC+/5LUkCbE9e2bkgMJjkJBRDc9PnapFmGxoKVQj0M1vHUYLPworUZal
-	 8VdJfjA1GVCuYn+biNVfD+20Px5IZNHJN3staQ+E=
-X-QQ-mid: zesmtpip3t1795436029t3564dbb0
-X-QQ-Originating-IP: EIGnwNkguwPdO7+iV1EMKMS19lW+TOqDQgtTB6ad0ac=
+	b=KapevXzo3JMfM8r3mQw96m7AQizBuakrPjNkI/q0a2M9vxflqhPECjl62PukDPo+E
+	 VTE6EZqCfRGfbf01UUE4VNyZ3xyB9Thh4nXTiv9/U469yqmIc7LenYQiXKPp3OtNb+
+	 fzrJqcGeqbKsNHKpnGKPgTBG3o6XiYjC/xLJexNc=
+X-QQ-mid: zesmtpip3t1795436026t827a7a79
+X-QQ-Originating-IP: cPCzjRp8BDjqQ6cKpUPcv9c0MUGUthSUFv1Vp8Qwn/4=
 Received: from szdytom-matebook.sustech.edu.cn ( [localhost])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 23 Nov 2026 20:13:47 +0800 (CST)
+	id ; Mon, 23 Nov 2026 20:13:44 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16777655916794046371
+X-BIZMAIL-ID: 18281765574563463588
 EX-QQ-RecipientCnt: 18
 From: Shi Lecun <shilc2025@mail.sustech.edu.cn>
 To: John Johansen <john.johansen@canonical.com>,
@@ -69,9 +69,9 @@ Cc: Paul Moore <paul@paul-moore.com>,
 	linux-kernel@vger.kernel.org,
 	Fengwei Zhang <zhangfw@sustech.edu.cn>,
 	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v2 2/2] apparmor: mediate file-generated signals
-Date: Mon, 23 Nov 2026 20:13:39 +0800
-Message-ID: <CA5F08835E9B673D+4c9dbc21026e6b6ad4acb1f90255da95c3bbc0b1.1795434950.git.shilc2025@mail.sustech.edu.cn>
+Subject: [PATCH v2 1/2] fcntl: recheck signal permissions before falling back to SIGIO
+Date: Mon, 23 Nov 2026 20:13:38 +0800
+Message-ID: <54EBCABD3ACBF0A5+9d780112081161e2f99fe501c2c38f1614a68a42.1795434950.git.shilc2025@mail.sustech.edu.cn>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <cover.1795434950.git.shilc2025@mail.sustech.edu.cn>
 References: <cover.1795434950.git.shilc2025@mail.sustech.edu.cn>
@@ -87,82 +87,58 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpip:mail.sustech.edu.cn:qybglogicsvrsz:qybglogicsvrsz4b-0
-X-QQ-XMAILINFO: MQYXLRAkMyaeY8wpkqo7jZgOBxw+kgqczKIw9EnwJXRTVKutOVAZul2Y
-	AY4XBAPeoTg5XfTFMN3FDd4yboSkRX3wPM2fqiuv6/nnze/YDxMI+tAodXAYpFPWj/eRySs
-	64UK7y+W2nkYo303dohVglbi6purY+Yy/2janZ7xzWI4cv3Z626G9df5VGLb5Dv1XOKSZXP
-	ABeqCduf9+RT77uvj7J4n7m2wElVjibGI4PeE+ji8H6OaqVwPoD9wh7ylt84hE3gBzgckhd
-	vsBIatBAlSFe0Um9msBGcNIZVOGslfGCi61mkWuB3+pZQJyvBVhU7GjVzT/yL/Y6KXVN5Gq
-	wSqtw3NkCB/LtfoPXnGF1Ssx7TUI5rGhgX+250b36uDnK06eYuYsLlKwLZcuDRTIVlPhIZQ
-	QNa9Cm+XdVidml1mAZ8tWsnEjmO8qNHt5Fb3nrVlO1jBFNPbcSVoQO2KONgy8oRwgH+xHtc
-	AppzWIk95QkaEFt1ifdTZqIkWBX454B2zVc/9ocwd3dCFsgtZ6x8CCbBy0QHacR2OJNRMi1
-	2qIOfcZ2LtS/LE0sI/AtxgNEk9ygYa4xgv4u1+G6pQSRIJx2PupgOySSh1y63uoA9Gg08hT
-	stMUUStEuwN5B3sVYqJ2YIA/ex77miGArLxQnTe5YCDpVUsDj8FpT/6O95KITtaYNQOQ57+
-	gBVDXWqtqiO+0On9oxkfdmtNMN3HA8r6F46WdyUyR4YcVimTkmfMunzZsCV00mPuBoWaD94
-	c3p9TOd/1V3aB+XSbK8uXl8++2i9hMpGs0qZjFht5UwwgNN71adToNSAFZBwZAR/dwy255H
-	q0eGc2Vorsqo33vIE/dSJFceA/FJmEIbJWp5cGQUM1Iz7QZskZB4ZcpOyQbmcBBg/WEZXhy
-	vcU0ruBHKC8t/k4JaqhmLcwvQPzLxSKZ8KOQuN92GJWyCa1ofSXcvzSytUo8iHi9BW74u+3
-	8L/DrcMOVx346IBXTJLZKel9uf/W0gMD0yN8eKXYoYngtlicPx6GIwpHko6C0xtW6QT11xm
-	e82kDBvAGOgq6h8Gm6rTst9GRuNSuDrVM51+DlJne9veC7YXj+7LfML2Jc1XaUS9p0buV4l
-	/ounfBABtnz45AV08nKBGRXqcPMj0ThnIUbDkkiqiGL
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
+X-QQ-XMAILINFO: OCFGt05vYz7Ytzp63Cg6hCiQeQi5Wd7uPvYcEpp7Mdw3flt8GdQ0ZSkZ
+	TE7cErZJnJ4zJq6IiJQHPIgEatx92VBmw0+yi1PCJYM5eL5Ji3WuTeBgGQAxb+vqMPBcnCh
+	PAy1GQECkgUrnsGUE0rGH33aneswyYXhcZ9cX6X8tlFqhX0iRtHXDbkRu606LXhHIchIBPk
+	Cs8sn1cOUU26wVmN7U8+3h5NrK/CZl6QKMoEWCUopaaZhvDNVvNXlYdikIDT4sU/n1IA4hL
+	JN1U+zFMqIApgomsMj/OhKHRLPw0EIojPrrAydOZ/DtGb9RbjpzvGtfwnJUTabtV2FfCe7b
+	WfDczdFZ1cEk2yhb9y+8dmTCttKTd0pNvGrJokoTgSMNq4VX1tzxZn53Mx1d6QfMircfZas
+	v15tCNcT9vn75LWslFUKovY+nY/PH7Tcpm+cgh13jpGJOsHkH5MNs1UpUOGPwUM3xm5j1no
+	4fMlbJouCoNW9HdZ1bL7JxMRoKnfHq4TEEAMHYgz+D30SOFfzWeFZK3Vc/KKnVcOlyU6l+K
+	CydZ9iUgX/ivtl8XzTGiiCZ+zpzPQiPnfGO63uvd2F0VlP3stvd2fc31cuyyhS0KfNRWCdE
+	GUtnrE/hTCndoFtz3jaG4IPDG3enMQk4hcYhloel81T9mTgoLlHoIHlQcXTKUWOApRefNXO
+	pMmHr9SIDM97K+f3CM6sZSy6wAkr7hEZ2TEaPB26m6CjlkEtMPOrJl6UHkNWZ3+2MGQXpE9
+	ANcHOQbZvrdOjj3GbUHQpWcGl2Px1fJ2VPhXI1jnnGXo3UZWSfmb48qn4mN0mgPNyaxZMfM
+	DkyNl5lNmNkwiRXTbZAfzz0tlgJRztjiQ/ujf9MiYkjslcls9fBmjkqDgx5QespctLaKN5y
+	NKS19VIz3F/D9/Kt9GcTAPLWMq0uzqn+o9hN+jzRuf2v7xPyrYs+kUSEfkP1WqVhm3i8dIj
+	Zw68Pvr6Gv8a2NX4NH9G0eV2I+o17P/YePtFo/GPz+TX0qyj0ApDyoJGDiqoqqemC1OsSTY
+	tFQHFwYtrp3Ruop7D91V6Ndhw3jsNi9+uiyCBQF4d6m4c0xJ5rGo+zksWPOHQKImf8jaioN
+	o+SGNZLtcVoI66Z8SBVhoBxryeQrBCBng==
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 
-File-generated SIGIO and SIGURG notifications use file_send_sigiotask
-rather than task_kill. AppArmor does not implement that hook, so its
-signal send and receive rules are not enforced on this path.
+F_SETSIG allows a file owner to request a signal other than SIGIO.
+send_sigio_to_task() checks permission for the configured signal, but
+if queuing fails, it falls back to SIGIO without checking permission
+for the fallback. An LSM can grant different permissions for the two
+signals.
 
-Implement file_send_sigiotask using the credentials of the task that
-set the file owner. The VFS holds those credentials in fown->cred under
-fown->lock, which is held during signal delivery. This also supplies the
-sender identity when delivery runs in interrupt context.
+Recheck permission before falling back from a different signal to
+SIGIO. Keep the existing behavior when SIGIO itself has already been
+checked.
 
-Reuse the AppArmor signal permission check with the saved credentials
-so it resolves both labels and enforces the send and receive rules.
-Treat a zero signal argument as SIGIO, as specified by the hook.
-
-Fixes: cd1dbf76b23d ("apparmor: add the ability to mediate signals")
-Link: https://lore.kernel.org/all/20261120-unrentabel-bambus-genuss-0db3576a8f57@brauner/
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Link: https://lore.kernel.org/all/20261120-appetit-undankbar-bankraub-d2f1994e97b3@brauner/
+Acked-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Shi Lecun <shilc2025@mail.sustech.edu.cn>
 ---
- security/apparmor/lsm.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/fcntl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index eaebc3c60c5a..c5f4abc4eab8 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1031,9 +1031,6 @@ static int apparmor_task_kill(struct task_struct *target, struct kernel_siginfo
- 	tc = get_task_cred(target);
- 	tl = aa_get_newest_cred_label(tc);
- 	if (cred) {
--		/*
--		 * Dealing with USB IO specific behavior
--		 */
- 		cl = aa_get_newest_cred_label(cred);
- 		error = aa_may_signal(cred, cl, tc, tl, sig);
- 		aa_put_label(cl);
-@@ -1048,6 +1045,13 @@ static int apparmor_task_kill(struct task_struct *target, struct kernel_siginfo
- 	return error;
- }
- 
-+static int apparmor_file_send_sigiotask(struct task_struct *target,
-+					struct fown_struct *fown, int sig)
-+{
-+	lockdep_assert_held(&fown->lock);
-+	return apparmor_task_kill(target, NULL, sig ? sig : SIGIO, fown->cred);
-+}
-+
- static int apparmor_userns_create(const struct cred *cred)
- {
- 	struct aa_label *label;
-@@ -1810,6 +1814,7 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(file_permission, apparmor_file_permission),
- 	LSM_HOOK_INIT(file_alloc_security, apparmor_file_alloc_security),
- 	LSM_HOOK_INIT(file_free_security, apparmor_file_free_security),
-+	LSM_HOOK_INIT(file_send_sigiotask, apparmor_file_send_sigiotask),
- 	LSM_HOOK_INIT(mmap_file, apparmor_mmap_file),
- 	LSM_HOOK_INIT(file_mprotect, apparmor_file_mprotect),
- 	LSM_HOOK_INIT(file_lock, apparmor_file_lock),
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 07fe32330bec..320cdb0c6780 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -905,6 +905,9 @@ static void send_sigio_to_task(struct task_struct *p,
+ 			si.si_fd    = fd;
+ 			if (!do_send_sig_info(signum, &si, p, type))
+ 				break;
++			/* The fallback signal may have different permissions. */
++			if (signum != SIGIO && !sigio_perm(p, fown, SIGIO))
++				break;
+ 		}
+ 			fallthrough;	/* fall back on the old plain SIGIO signal */
+ 		case 0:
 -- 
 2.56.1
 
