@@ -1,78 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795440349;
-	b=YCXhsfJ4MG/DAeHl6a4L+HAy+M+EqMc68HO7pto55B3avvewZnkNRMNxJLWk5eGdWikj
-	 i3UWwP8mJMO0QMnNAFcegkc3x4IzIzm/kFsl7X5JYfq1mLe8USz8nORO5XHmTVNS+tmez
-	 YdpZNqHdTQyXWS/Utm2VtIuFKzYREmzDvLLupewCRwkihEM6TpmAKBrXA8jkjfc2LCQa6
-	 4pccVrK4ovQXtN2ol6D9JmJ/Lsewkg5Pw8oh0n1VEIhBarqGJmyutsgJv71HjQmTzgHuw
-	 3stkWldm0LK41lN/7O9Si7upTfcCi+qJBmxTGrdvAIAs0H8iguqcRDSlGVVR7HBCBEA==
+	t=1795441770;
+	b=JqWVUao+WyfktftLX2LPqn1klrekZYeFWpMWL8VDfm56Ja2qJAmNJp5RlvO4UYrb1Hho
+	 lTliBTKEYT/JLSeL1j4IdCg1aIFylnTUIzCf37xVMoA6flcVBuq0TbML7m2YlDmGXLutC
+	 D/xRCVAtq21PzpaGZn+YPAE1rrOfPZswXYYYXu9ttWI82iH39z93Xk7jJrML/LYfVJfrc
+	 A4AZxAjsAxFnM+OJYNlr5gehRfW5jX6j/G3QAbP9WpUvLLOAl/TnQIVsbQehGPn/0DHb6
+	 wCWTna78a5YauQzGX9y5uJsR8VOEGVGYdF6EEtfqAQGuyUeSNGMmCaptxeTgwn/mmvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795440349;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=C+AcgEGNVf8XGbfJ61gaQU4lgyQ1Y5lkSyO2e7jckEI=;
-	b=dMfi2AzyZ65Fnb6kg3HiXxcvAI97epTvxR0TPh+xa0+CcTobQlD/C8vwirfLPFFzwXMs
-	 0gbbqdQQRKSoGyBVFxJe9UEo3PzZVo7sD7Wruz+uecSxpVtFLps8uSiAHtklk/eH0IUeq
-	 UmJ0oVg82MPE3uiTLNlkOl2cMHsXJ/lrNz12JUHjx5kV0Xjm2cZQmrdHoc++GRyI5J7aW
-	 Zz7nyjQtlxghbu9hjCb0TF+AmXerFYaTM/m4hU1O2Q/yY8oWr4qcNFWLxez+J4VqPvia/
-	 PB+iaMS4lIkJja/0LfbNUvt0aiA2frOLHj4BAFADmKlop6W1yRNEufPi2rvr1Jdktug==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795441770;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:In-Reply-To:X-Scanned-By:
+	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding;
+	bh=kNEpRXv0Qjfeq3BAGqbQG/HWKXbqAXTDOCqw54GskJA=;
+	b=ovPJ96ie1ddzqPiM782DqRPyIamz+1LnoGDA2Y8Mbhgc8VGYeADPxwoxWYofyuWEiPX2
+	 eFQLU0oFpukztjD9yaUGUFM/k9JOXK2CpXaIqT5HzD6WfqNtVvhq4tx5olza6u21wH4M8
+	 owviZ/s3s28hlHJVu09ulOanLeN4NPv7fzUOJd0cjodNINv6cWkDITujldDbCRzBR9Ao9
+	 XSJu05wfRkE0tg6C+ChkFQcEtS3Tp4DAKYQEsTOy5vUkdDfeFyQW3DxYd9RHEUrerGLhk
+	 GOpGN64cjwGkWuEEJEekzceyKkA8Z2MlqXlEBU3+x+48f10ctZVoZ7vtuO7chO7EMeQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="IG/CW4cv";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=DYFYHScT;
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 4ED8860A263F;
-	Mon, 23 Nov 2026 13:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3793606A6A4
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 13:49:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3793606A6A4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IG/CW4cv
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2272D1F00A3D;
-	Mon, 23 Nov 2026 13:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795440348;
-	bh=C+AcgEGNVf8XGbfJ61gaQU4lgyQ1Y5lkSyO2e7jckEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IG/CW4cvGp7/2EHOxmS095yYCn3GkihksF+fkHnCoFwx6rbFuVB66JTeqhPXWQyku
-	 zaFFso/3daE8Z53QdIhOFp0amXkx7o/6ekzhmYy5YcEh2Ll3QkH8fkiF3fAmDIYMFq
-	 qnSTGKqAaLSspfKaAzMYc5/lnGsoQdIpujd+J58VCB85TDcGwvBMgf42xRTukHTejE
-	 fdDWUpyNGnUlyoG4I8BBzO+MltP0IbtJWRgAPVF0vE2l4egwT7mfFigjz5Nts0kXXW
-	 0J3zLJo0uIGtZUyLJLxsRWXxespCl3VF1hxfl4Q7HLsAN10wSwuEnnHwGIFO/Pwkbh
-	 r298B2xOxSF+w==
-Date: Mon, 23 Nov 2026 15:25:45 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-	containers@lists.linux.dev, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	Aleksa Sarai <aleksa@amutable.com>,
-	Alexander Mikhalitsyn <alex@amutable.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Giuseppe Scrivano <giuseppe@scrivano.org>,
-	Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
-	KP Singh <kpsingh@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Neal Gompa <neal@gompa.dev>, Oleg Nesterov <oleg@redhat.com>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=DYFYHScT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1795441768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kNEpRXv0Qjfeq3BAGqbQG/HWKXbqAXTDOCqw54GskJA=;
+	b=DYFYHScTFnOgVVysdqQ7hv9HAmcVjOaTr6QZIZBKlWkwaMKzsmJQbehEeGwMcSHVRHdcdf
+	6R7JgMcRuBVbFmdeIZys7SRm9q3Kk3YTiwnyWltGvvd5x9m57MjrhhVwvw7l1McvYmdfu9
+	vTXJ6waZr7qxVIzT0kuXxukyh502ISk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-Ez8w3PEcPnyyQ11_yNywQw-1; Mon,
+ 23 Nov 2026 13:49:21 +0000
+X-MC-Unique: Ez8w3PEcPnyyQ11_yNywQw-1
+X-Mimecast-MFC-AGG-ID: Ez8w3PEcPnyyQ11_yNywQw_1795441759
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 31AF9180076D;
+	Mon, 23 Nov 2026 13:49:18 +0000 (UTC)
+Received: from onestero-thinkpadp1gen7.tpbc.csb (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A985430000E3;
+	Mon, 23 Nov 2026 13:49:12 +0000 (UTC)
+Received: by onestero-thinkpadp1gen7.tpbc.csb (nbSMTP-1.00) for uid 13628
+	oleg@redhat.com; Mon, 23 Nov 2026 14:49:17 +0100 (CET)
+Date: Mon, 23 Nov 2026 14:49:11 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Tejun Heo <tj@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
+	Cen Zhang <blbllhy@gmail.com>, James Morris <jmorris@namei.org>,
+	Lee Seong Hyeon <ihopenre@gmail.com>,
+	Marco Elver <elver@google.com>, NeilBrown <neil@brown.name>,
+	Nickolai Zeldovich <nickolai@csail.mit.edu>,
 	Paul Moore <paul@paul-moore.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v7 00/26] userland: Userland containers
-Message-ID: <awQ-2UtDRtrv9fNu@kernel.org>
-References: <20261122193539.3334213-1-jarkko@kernel.org>
- <DN25ST0D5K1J.1NI5236BF2BPY@gmail.com>
- <awOQDOel_72Xwjm7@kernel.org>
- <awOUJCbB_j0BuHvo@kernel.org>
+	Peter Zijlstra <peterz@infradead.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC
+ wait
+Message-ID: <awREVxuPMpPXjA6I@redhat.com>
+References: <20261120151554.2651743-1-mic@digikod.net>
+ <awMn0L7RaQO_6qUc@redhat.com>
+ <20261123.ungeuh7Taish@digikod.net>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -82,57 +94,21 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20261123.ungeuh7Taish@digikod.net>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-MFC-PROC-ID: gE0knod_ov_D0SpUAcZZAXAHWxNiDkfIzV0NolpGVa4_1795441759
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <awOUJCbB_j0BuHvo@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 23, 2026 at 03:17:28AM +0200, Jarkko Sakkinen wrote:
-> > > The way you're spamming people you're only reducing chances of anything going in.
-> > 
-> > I personally think that "getting in" should not be a goal in the first
-> > place. I care more about that whaever gets in has a high bar of
-> > quality enough. It can be something different than this but
-> > when I read the LWN article about Cells I was alarmed enough
-> > so that I had to do this and prove my point.
-> 
-> For completeness: I'll consider this final RFC.
+On 11/23, Mickaël Salaün wrote:
+>
+> That would indeed be simpler, but a single pass would misses threads
+> that a sibling is creating at the same time: the cred is copied before
+> taking siglock and only fatal_signal_pending is checked.
 
-Random throws that would not be this but something else (but could be
-derived from this basis):
+Aaah, I see. Thanks for your explanation!
 
-1. It is possible to use file a instead of syscall for container
-   creation. This allows to split the framework in two pieces:
-   the core piece and the driver piece.
-2. It would be possible to create Linux Container Module framework i.e.
-   LCMs. I'm underlining the technical side here, not sure if this makes
-   sense or not.
+Oleg.
 
-Both alt's can be quantatively proven given the existence of this patch
-set.
-
-Kernel LOC growth when kselftest is taken into account:
-
-1. v1: 1211 LOC
-2. v7: 2149 LOC
-
-It's not exceptional growth, as for a compact implementation like this
-that easily comes up from e.g., LSM hooks that were later included.
-
-Further the number of patches has only grown because I wanted to more
-accurately slice everything up until they are exactly in logical chunks.
-
-For later issues, I've fixed those that are known ATM to but hold on for
-sending any further patch set versions:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=vault
-
-I also think that v7 made most of sense for the reason because  I
-realized that the cover letter would better have enumrated all syscall
-extensions in addition to new syscalls. It was the primary season
-for v7.
-
-If this was skijumping, I would get worse style points, and will
-improve on that for sure, but as a feature this does fly further
-distance.
-
-Br, Jarkko
