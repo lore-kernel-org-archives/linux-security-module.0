@@ -1,77 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795474470;
-	b=XZwjmNhQF49xJWz5dtI37xPi6xpOThE0Ltde+5Mi0uBqZo7nnEK7kKGaWoTC5K7LtvNi
-	 lmntZzbhTsKfuvyKikn75K9fHPYLIEYBgcXhPimKQwoLz1i3R2VW1ZQVIJWd3H7b9/TTf
-	 0H9vQto474f2vclYnOaOmOB6xYtx5oJPYjqY1PcIvWsxf0kPXsg7TLbYKG271kXoxxO2y
-	 5DAFEdEZCk8jRsuwKER8mdXKS3gnHMQoRMW7V5OW1PnF8z7pFZi6VM/glqvU8VKGE0CRY
-	 m2Jn5YTzfhZSSdJZqU8JwNN8CRJH/bKboDTKWiljpbpbt7oLH4Y/K9YhQt2ke4ZZo5Q==
+	t=1795475564;
+	b=WfJU26mJlLYPV4VKIbf08gIOOQn4HDL0ekwKFXfqXzlDC3uRh5UKoqJTePtECT3KT2AR
+	 o+kAcmIkcCG/QyPYPVx1PH7M3dARXLebQl4WehfFL2gNt7resUoHvUNNPqlwK12CVIaJb
+	 fTmwajhuH+axQe0XluoAyUTt44HSqknFUoPxAxhS5lNcLA4iI/1JbL4UB3yUsfnKjO8wf
+	 HatJPyhkdgKN7eCEUMrgpDXAGSubPC9hvVZjfibfvUxg0VJQdkIkh2kHx5B9xEvdTeh+a
+	 Kgxb2e+qji66OV4X6adUmtpA8dWVVugOWW+KM5FLAJF2+DNUBUYXc4JqtYAeF/HH3Hw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795474470;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=uxm7cLwrZsIM4FY8CLhKRgjetTXm1POR2deWfop5jak=;
-	b=zDhp9BB9rYretkxnvoo+FRA1eneWRfKrhaizzFkPcFkD3g5mq6s2fm4YFv3A7tocg1xN
-	 WUnalVO0ufZ1vxYWijpMuTqdRP7qbGbF3QZMbq+Sj/nXlFKL1Na8IGMsA4czsxWLVJega
-	 2bgZ9yjZ5xqoiKFYekPAQAMCItNKY+g9/6VIAEmhVZos7WlYjrKmBMopH2q12b2xjnS/K
-	 z/d9kw5+1YlCGYys3QpfTWZ5iC6QI5sjnta7L5P25KRKajRgBJsx9Nd1gciEHmddkTk/W
-	 Lts8bgjIq2y9HfKL2PXdEeuSkJp0XRnAo3uqpV0jOlvXMEiIRcraWvRIWBqfXKr4mSg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795475564;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:From:To:
+	 Cc:Subject:References:In-Reply-To;
+	bh=q2TFBSFs2Zy87zyz/nbhCDASHv4d4kOnFRJqrbZETyI=;
+	b=BEzedujdiRVxEJJyHSklyEsojllD+HfC63+M08nYFi27NnljllccLXE9G7hVYCDR2Z8s
+	 9z5rofJYIhX31YvYb3p8NSIqbU6NPcX4Y7jQEOCaEhk7fXzjjd/gSIVXNKjqz1CcRNGc0
+	 l1SwV9l/1wJaghHxCY6H+mC+9nAluNQ3WxzyZZ/fyHYq8Iye4+/D9P95nEU4U9HChwMbg
+	 Zlk96ZGyGBxq0bB4aht4MbH64pMO2PHkQPQAjJXcszNSfHebEFKchusSnkzOQxXF8JQSL
+	 inT9ZG9atcERAf5/jSFqvMa6Y+dO9d+zVdhdHuELrLdQ+oxBNaUaFUt2TQ2tsdSCE6A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i1LdxNlp;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=paul-moore.com;
+	spf=pass smtp.mailfrom=paul-moore.com;
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=NwQuR+rd;
+	arc=none smtp.remote-ip=209.85.222.170
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 931C0606A321;
-	Mon, 23 Nov 2026 22:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756E4606A69A
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 23:12:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 756E4606A69A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=i1LdxNlp
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A2A331F000E0;
-	Mon, 23 Nov 2026 22:54:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795474470;
-	bh=uxm7cLwrZsIM4FY8CLhKRgjetTXm1POR2deWfop5jak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=i1LdxNlp/1zyBaviNuUf/h4QPiP4GfqVT5G2k+cWvyL7/22tImxQR6Z2/bQIXxh64
-	 Io6U8QMXfs81Zdk5ZwyX8et/r6I7bs59qT+Gw3gbWbT9S/+wWJiCGrFzyH1smhIlr5
-	 Ywcm3Hqr0VUr+Qar8O+jVtHMrdE7lSanS5T/pI46OzAXZUSIh3Y7l8AVp0zKyepT4M
-	 yScBuk23/btShriRh1vunn17kUM7At5ojanxd7lCacX6IZwKunMV5M5hrQmpLAQ7FO
-	 Bl3yFVwWC62Yk/r/gR7Mptgth8KTuhNaq8dhZDOPUtQeZY5mKPqsBqxKTwagNy433V
-	 g6ej6r3HtxkzA==
-Date: Tue, 24 Nov 2026 00:54:26 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Hallgrimur H. Gunnarsson" <halg@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Serge Hallyn <sergeh@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	David Howells <dhowells@redhat.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Jonathan Calmels <jcalmels@3xx0.net>, Jann Horn <jannh@google.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Singh KP <kpsingh@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	containers@lists.linux.dev, keyrings@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] userns: introduce capability bounding set for
- user namespacesg
-Message-ID: <awTEIj-S7ODioVv0@kernel.org>
-References: <20261119104208.782900-1-halg@google.com>
- <20261119104208.782900-2-halg@google.com>
- <CALCETrVqc+1bjH1bhqHee9bsUdk2B6314z7PMexbsnNpMhk14g@mail.gmail.com>
- <CALCETrV=zSxb6sgA08DLiK2bQovdMEj9ycG=Cc71mLn2C5Pgeg@mail.gmail.com>
- <4db941ba-3001-4019-8910-63e534b29f89@schaufler-ca.com>
- <awSVO9Zc-233M7_P@kernel.org>
- <6a0539de-1a66-4dfd-a21d-aee48ab18f3f@schaufler-ca.com>
- <awTDm_EpFNwH9uEy@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=NwQuR+rd
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-949dcf80821so164753185a.0
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 15:12:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1795475556; x=1796080356; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=q2TFBSFs2Zy87zyz/nbhCDASHv4d4kOnFRJqrbZETyI=;
+        b=NwQuR+rdudvF44s8WBteFdxW7kQ1HOg/x9RZBnpoGf407WA2apwsVFTAMqugIsJvQ4
+         jz/xenkD0cc2o1gP9+B3hZCnSxd60ZA5FgXnQAHds3CcccSaRrxxM2wEhV0kEtXNDfFM
+         kjpo5QZy6aQYLwi+WtVNjfIzVyLFVj/EyaeFvNt7nefp4C9EXKzOSQ0Be6gls731RDE9
+         YmOE+YO75sf+1J3CMOXS1KCVmDxjK9ypsRzeT5NNQWm9vmJgjXJJwrBoyazIbc5d9WlK
+         EL/LpGQOcctRSMhBqXF8L2OGf1NP+bUAo4LKyeLCYrfwTIjhDrCdxfpno5fl9ZIJ67Ci
+         KwOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795475556; x=1796080356;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=q2TFBSFs2Zy87zyz/nbhCDASHv4d4kOnFRJqrbZETyI=;
+        b=SpcaGiQMkYEEwD/kthCKAMUZrca2dTZoT8fgfDfDZwrQBapI9mR/o2rlCKihRhtcB4
+         kgcd1FMxqFgixn+sI+mGXDSznG+7jc4oNtcyTaGEAxIQm6t2YZC4efPCDMS08NvSA4Me
+         o6grQSVaxlOUoGjS+uAFNgOZpwzYyk+jgkp0Mr69fMOAYxjrftpiaHse4ZVWPmHg3tDa
+         xhGjLKNG0y2ryxDmhZ8bWCUnkDIWshv0iJTJwNBAZ9hYbZzBR6XWM5MfZqKOXZX2CwGX
+         REBPrkll1o7pc2nucFfLYug12fwhLi5q3H3MRVWLuLwVKn68hqHH773a6H4RWW8uiPM/
+         bsCA==
+X-Gm-Message-State: APuU4Z8U0x+KvKktZad8D6Aiy4jBa3wflWg+lqF/kSOrB5PIk2yuD1M0
+	GtoMR9glBA7wZG8GNTo3sTKOPp6Z7/cy9SZFaihULYQ5eBgJ97Cu5qr8JJpz6YIKttU2Ed1hxGT
+	njClV/Q==
+X-Gm-Gg: AZFdTZeDudJ1VCkgJ8r9lwWGvDRmBaj7f8H+igivxdlKzTZn0KRjURBwuiU6im7dXyz
+	4AktAvuDwjoMQW5opgPinG89IAJ3OJjm6fdEvVKS5KE8jhDdV+hQfR+JWzTq/jbNSM2j7i3g6uW
+	QL9aTpxyrGPLVASCjgFheql+p4+ddOLL7bi4XbXzQGaUKF5OggFxOLG4oupQgIgdtrp7mbfmswY
+	MjOoIRWJPCjF1NVCrWKvJ6IifGnniuuc4+lUkdQfZvIiuc7b8G/vMZSpABfB+extYEUAcyylMa/
+	AoxSvVh0PnstciRfaXvisXI4FkKcstL4uhGFBb1qDMidlY2QyHVLvXT0u2JPMGI0c9BFuNYeszf
+	AaHF1Bfmo68hdw3am4u2MuGS5jHGWGtPxv021ASfyNzrEam3JUOSK89bSe2q/yq6nsph4GDripb
+	GKz/qj88D+p0+3c6jpwNQsPZZs9lMAytm3CE+aK/5jAy2QmJIX9uxWydw/HgfNO1Tkzs9RrOo8A
+	SBWWaZTc8QBUN/R+9AuGcA6gE7QUly97jqHO3+MZ7DHxtQL6nkQrXklm0Sa6oX6vKqEYfYiL6Mw
+	zwLJYpv2t4e2i7BK9E3BUhGRDpC5uKehw+B5Xa0sNR1RSEilpNIUZQBRYn//JxqOxSOU8mRXL9Z
+	m1zx7NWbVyeWUSIw8nE94VeEgt+zfWg==
+X-Received: by 2002:a05:620a:448e:b0:949:673f:72b8 with SMTP id af79cd13be357-949bab7c484mr2132887585a.82.1795475556414;
+        Mon, 23 Nov 2026 15:12:36 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-949bb34ae74sm908987385a.8.2026.11.23.15.12.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 15:12:35 -0800 (PST)
+Date: Mon, 23 Nov 2026 18:12:35 -0500
+Message-ID: <20a5e5372530caa583c57003dfcd009d@paul-moore.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -80,95 +90,65 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <awTDm_EpFNwH9uEy@kernel.org>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20261123_1724/pstg-lib:20261123_1443/pstg-pwork:20261123_1724
+From: Paul Moore <paul@paul-moore.com>
+To: sashiko-bot@kernel.org
+Cc: linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] lsm: always call the namespace_free hook
+References: <20261029-work-security-namespace_free-v2-1-65591dbba7b3@kernel.org>
+In-Reply-To: <20261029-work-security-namespace_free-v2-1-65591dbba7b3@kernel.org>
 
-On Tue, Nov 24, 2026 at 12:52:15AM +0200, Jarkko Sakkinen wrote:
-> On Mon, Nov 23, 2026 at 01:58:41PM -0800, Casey Schaufler wrote:
-> > On 11/23/2026 11:35 AM, Jarkko Sakkinen wrote:
-> > > On Mon, Nov 23, 2026 at 09:22:29AM -0800, Casey Schaufler wrote:
-> > >> On 11/20/2026 9:09 AM, Andy Lutomirski wrote:
-> > >>>> On Nov 19, 2026, at 2:52 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> > >>>> ﻿On Thu, Nov 19, 2026 at 2:43 AM Hallgrimur H. Gunnarsson
-> > >>>> <halg@google.com> wrote:
-> > >>>>> When a process creates a new user namespace, it receives a full set of
-> > >>>>> capabilities (CAP_FULL_SET) scoped to that namespace. While namespaced
-> > >>>>> in scope, several of these capabilities (such as CAP_NET_ADMIN and
-> > >>>>> CAP_NET_RAW) expose broad kernel attack surface that many sandboxes and
-> > >>>>> containers never need. However, there is currently no configurable way
-> > >>>>> to withhold such capabilities from user namespaces while still granting
-> > >>>>> them to workloads that require them.
-> > >>>> One thought (from the rootns thread): the other decent sized attack
-> > >>>> surface here is CAP_MOUNT_ADMIN.  Which doesn't exist as a capability
-> > >>>> bit.
-> > >>>>
-> > >>>> A sort of horrible solution (but maybe not so awful) would be to
-> > >>>> declare that the bits in cap_userns aren't actually capability bits,
-> > >>>> and that you need the bit in cap_userns *and* the bit in cap_effective
-> > >>>> to do sensitive things, and that mounting needs cap_userns to have
-> > >>>> NSCAP_MOUNT_ADMIN *and* cap_effective to have CAP_SYS_ADMIN.
-> > >>>>
-> > >>>> I want to sleep on this.  It might actually solve several problems,
-> > >>>> e.g. controlling creation of ipv4 and ipv6 loopback or tunnel devices
-> > >>>> or whatever.
-> > >>> I slept on it. Here’s a counterproposal.  I’m not saying I think this
-> > >>> is better than this patch set, but I think it’s worth weighting the
-> > >>> options.
-> > >>>
-> > >>> Define a whole new set of privilege bits.  As a
-> > >>> poorly-painted-bikeshed option, I’ll call them eprivs (for exposure
-> > >>> privileges - it’s a crappy name but at least it’s pronounceable).
-> > >> I played with a mechanism I called "chits" (all the good terms for security
-> > >> bits have been consumed for a very long time) that looks a lot like
-> > >> what you're proposing. I did it to address the CAP_SYS_ADMIN problem,
-> > >> where any use of the capability opens up a whole barrel of worms.
-> > >> I cannot, unfortunately, find my patches. :( The basic approach is:
-> > >>
-> > >> A process has an optional set of chits. A process without a chit set is
-> > >> unaffected by the mechanism. A process with a chit set is allowed only
-> > >> those operations for which it has a chit. The existing but empty chit set
-> > >> allows no operations. A process may drop a chit, but not the set, which,
-> > >> again, can be empty.
-> > >>
-> > >> Because I was after CAP_SYS_ADMIN, I envisioned a call
-> > >> 	cap_able_chit(capability, chit-list)
-> > >> but there's no reason there couldn't be a
-> > >> 	chit_able(chit-list)
-> > >> as well.
-> > >>
-> > >> I wrote this as an LSM, but the system-wide aspect of it made that
-> > >> a questionable choice.
-> > >>
-> > >> If you have any interest, I could dig more deeply to try to find the
-> > >> patches. Otherwise, I'm happy to look at what you come up with.
-> > > What if eprivs or chits would take each capability and subvidide
-> > > them into pieces? CAP_MAC_ADMIN would be formally a set of chits
-> > > (or eprivs).
-> > >
-> > > And process having e.g., CAP_MAC_ADMIN, would actually have the
-> > > set of chits that are included to CAP_MAC_ADMIN.
-> > 
-> > That would require that chits have the same inheritance rules as
-> > capabilities, and I think that's a really bad idea. I was an active
-> > member of the P1003.1e/2c committee that defined capabilities, and
-> > was a major advocate of their inclusion in Linux. I wish that I
-> > could say they've been successful, but root still rules the roost.
-> > I attribute that to the complexity that arose from trying to address
-> > privilege via setuid and privilege bracketing at the same time.
-> > Chits (or eprivs) as a finer granularity version of capabilities
-> > would make granular privilege even harder to sell than it is now.
+On Oct 29, 2026 sashiko-bot@kernel.org wrote:
 > 
-> Perhaps (or likely'ish). I'm just unpurging what I meant (even if it
-> ought to be wrong):
+> security_namespace_free() returns early if ns->ns_security is NULL and
+> skips the namespace_free hook. But ns->ns_security is only allocated if
+> an LSM requests a namespace blob via lbs_ns and currently no LSM does.
+> So the namespace_free hook is never called at all.
 > 
-> 1. You can create F(C) -> S where C is set of caps and S is a set
->    of chits.
+> Landlock only uses namespace_init and namespace_install so it doesn't
+> care. But the bpf LSM attaches to every hook and a program attached to
+> namespace_free never runs. We want to use it in systemd-nsresourced to
+> get notified when a user namespace goes away. Right now it has to kprobe
+> retire_userns_sysctls() for that.
+> 
+> Note that a bpf program can't work around this. The size of the
+> namespace blob is fixed at boot and the bpf LSM doesn't request one.
+> And security_namespace_init() allocates the blob before the
+> namespace_init hooks are called anyway.
+> 
+> The check isn't needed. __ns_common_free() is only ever called after
+> __ns_common_init() succeeded and security_namespace_init() only calls
+> security_namespace_free() after the blob has been allocated. So if an
+> LSM requests a namespace blob it is always there when the hook runs.
+> Call the hook unconditionally like security_sb_free(),
+> security_file_free() and security_bpf_map_free() do.
+> 
+> The bpf LSM attaches programs to its bpf_lsm_*() stubs so fentry on the
+> stubs shows what a bpf LSM program sees. Booted with lsm.debug, which
+> prints "LSM: blob(ns) size 0", and created 100 user and uts namespaces:
+> 
+>   bpftrace -e 'fentry:bpf_lsm_namespace_init { @init = count(); }
+>                fentry:bpf_lsm_namespace_free { @free = count(); }' &
+>   for i in $(seq 100); do unshare -Uu true; done
+> 
+>   before: @init: 200 @free: 0
+>   after:  @init: 200 @free: 200
+> 
+> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
+> Cc: stable@kernel.org # mainline only
+> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+> ---
+>  security/security.c | 3 ---
+>  1 file changed, 3 deletions(-)
 
-s/You can create//
+I just merged this into the lsm/topic-7.5-02-lsm_ns_free_change branch
+with a corrected subject line (namespace_free is the callback to
+security_namespace_free()) and the stable tag removed; both changes are
+annotated in the metadata section.  I'll be pushing that branch up to
+kernel.org shortly.
 
-(left by accident)
-
-Br, Jarkko
+--
+paul-moore.com
