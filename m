@@ -1,67 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=84.16.66.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795439725;
-	b=DcYFt8d6xqDCIA+KAqxdcJhUqFlC6JJwoNomy2Xv5xrQvA+e6v8ROdxez20rLiJIx4CE
-	 96libHGwC5JfQadCh5AEvEtiF8QVWToEmBxWRZLVYyux+S3+6gkB5WfS9+akZaNv3ybB1
-	 wulzVhWe7LQ0LLUFAUoHTFWfhQNsZQV3REPNVUMwrgMZZjUUP1IlUVM9cRak7Pf/hg85k
-	 MxjwvYYHhN9te3oy0kGGR8fbFBBiDsWxAmx0tERs6hKVOj2TflNoL7TF5WZ5M3rik2KJV
-	 CI+AddG+yDaiYrodo8LezWiye/KX5qH7v1PuoBPunX9J7WYP2GIPoUMpGFD7PELa+fQ==
+	t=1795440349;
+	b=YCXhsfJ4MG/DAeHl6a4L+HAy+M+EqMc68HO7pto55B3avvewZnkNRMNxJLWk5eGdWikj
+	 i3UWwP8mJMO0QMnNAFcegkc3x4IzIzm/kFsl7X5JYfq1mLe8USz8nORO5XHmTVNS+tmez
+	 YdpZNqHdTQyXWS/Utm2VtIuFKzYREmzDvLLupewCRwkihEM6TpmAKBrXA8jkjfc2LCQa6
+	 4pccVrK4ovQXtN2ol6D9JmJ/Lsewkg5Pw8oh0n1VEIhBarqGJmyutsgJv71HjQmTzgHuw
+	 3stkWldm0LK41lN/7O9Si7upTfcCi+qJBmxTGrdvAIAs0H8iguqcRDSlGVVR7HBCBEA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795439725;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 X-Infomaniak-Routing;
-	bh=UJEHxXF/5pMLfBqyK2opmHzobbKfrsrl25vYEW02sVg=;
-	b=MzHFVFwOFdgw36snRYMZxFd+SlY0yMQlsyowjSVnDwTtLbWJwKIBTVimfM6tm9Hnyv/p
-	 068Kq19ZJ534zOyg/vwfPxjXAulSf/9TkPbWmP5pliIkluWEsC4oFeAwWqoAnBIkMxPjq
-	 orhlWSqsj5FRM94joxWgMgAzeLH7N/IobbzW9suTYa9+P7DByTVyncxwX+IxAO+QdA2Yp
-	 05xlfyq+AfLvKmgmVhrtYMtfXIKbTT5CgEW+5nb3I/auawPMhDFPb0OuHlEkZLbUyND9K
-	 BNmPsIxlxq9YLfKqlCdNzaOc+EYqblW04bCnJoYj4a5xZ6ecrgSEs2o2Xdv+Nq3melw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795440349;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=C+AcgEGNVf8XGbfJ61gaQU4lgyQ1Y5lkSyO2e7jckEI=;
+	b=dMfi2AzyZ65Fnb6kg3HiXxcvAI97epTvxR0TPh+xa0+CcTobQlD/C8vwirfLPFFzwXMs
+	 0gbbqdQQRKSoGyBVFxJe9UEo3PzZVo7sD7Wruz+uecSxpVtFLps8uSiAHtklk/eH0IUeq
+	 UmJ0oVg82MPE3uiTLNlkOl2cMHsXJ/lrNz12JUHjx5kV0Xjm2cZQmrdHoc++GRyI5J7aW
+	 Zz7nyjQtlxghbu9hjCb0TF+AmXerFYaTM/m4hU1O2Q/yY8oWr4qcNFWLxez+J4VqPvia/
+	 PB+iaMS4lIkJja/0LfbNUvt0aiA2frOLHj4BAFADmKlop6W1yRNEufPi2rvr1Jdktug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=digikod.net;
-	spf=pass smtp.mailfrom=digikod.net;
-	dkim=pass header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=q2xRatod;
-	arc=none smtp.remote-ip=84.16.66.174
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="IG/CW4cv";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D89606A31A
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 13:15:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 59D89606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 4ED8860A263F;
+	Mon, 23 Nov 2026 13:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.a=rsa-sha256 header.s=20191114 header.b=q2xRatod
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4jY5yq2jrjzgLG;
-	Mon, 23 Nov 2026 14:15:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1795439715;
-	bh=UJEHxXF/5pMLfBqyK2opmHzobbKfrsrl25vYEW02sVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q2xRatodVs0aVY5gvrIZedGIV2AmdavchdO+ISnVK/wgv3rrUJeCxzDuJ+UYz7lX+
-	 dXGQVFHFB27+Zh9896JHqbAMIvPDi7FkqH12wPGw/NUUkedhM/Q9Af6eXYMLFL1KDs
-	 RhqwZBX+NahvV8/UGW/i0qjRn1Saly9oGiajI/OI=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4jY5yl0F5hzTSL;
-	Mon, 23 Nov 2026 14:15:10 +0100 (CET)
-Date: Mon, 23 Nov 2026 14:15:07 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Tejun Heo <tj@kernel.org>, Bart Van Assche <bvanassche@acm.org>, 
-	Cen Zhang <blbllhy@gmail.com>, James Morris <jmorris@namei.org>, 
-	Lee Seong Hyeon <ihopenre@gmail.com>, Marco Elver <elver@google.com>, NeilBrown <neil@brown.name>, 
-	Nickolai Zeldovich <nickolai@csail.mit.edu>, Paul Moore <paul@paul-moore.com>, 
-	Peter Zijlstra <peterz@infradead.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC
- wait
-Message-ID: <20261123.ungeuh7Taish@digikod.net>
-References: <20261120151554.2651743-1-mic@digikod.net>
- <awMn0L7RaQO_6qUc@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IG/CW4cv
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2272D1F00A3D;
+	Mon, 23 Nov 2026 13:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795440348;
+	bh=C+AcgEGNVf8XGbfJ61gaQU4lgyQ1Y5lkSyO2e7jckEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IG/CW4cvGp7/2EHOxmS095yYCn3GkihksF+fkHnCoFwx6rbFuVB66JTeqhPXWQyku
+	 zaFFso/3daE8Z53QdIhOFp0amXkx7o/6ekzhmYy5YcEh2Ll3QkH8fkiF3fAmDIYMFq
+	 qnSTGKqAaLSspfKaAzMYc5/lnGsoQdIpujd+J58VCB85TDcGwvBMgf42xRTukHTejE
+	 fdDWUpyNGnUlyoG4I8BBzO+MltP0IbtJWRgAPVF0vE2l4egwT7mfFigjz5Nts0kXXW
+	 0J3zLJo0uIGtZUyLJLxsRWXxespCl3VF1hxfl4Q7HLsAN10wSwuEnnHwGIFO/Pwkbh
+	 r298B2xOxSF+w==
+Date: Mon, 23 Nov 2026 15:25:45 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+	containers@lists.linux.dev, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	Aleksa Sarai <aleksa@amutable.com>,
+	Alexander Mikhalitsyn <alex@amutable.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Giuseppe Scrivano <giuseppe@scrivano.org>,
+	Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
+	KP Singh <kpsingh@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Neal Gompa <neal@gompa.dev>, Oleg Nesterov <oleg@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: Re: [RFC PATCH v7 00/26] userland: Userland containers
+Message-ID: <awQ-2UtDRtrv9fNu@kernel.org>
+References: <20261122193539.3334213-1-jarkko@kernel.org>
+ <DN25ST0D5K1J.1NI5236BF2BPY@gmail.com>
+ <awOQDOel_72Xwjm7@kernel.org>
+ <awOUJCbB_j0BuHvo@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -71,116 +82,57 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <awMn0L7RaQO_6qUc@redhat.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <awOUJCbB_j0BuHvo@kernel.org>
 
-On Sun, Nov 22, 2026 at 06:35:12PM +0100, Oleg Nesterov wrote:
-> On 11/20, Mickaël Salaün wrote:
-> >
-> > @@ -492,6 +533,19 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
-> >  	size_t newly_discovered_threads;
-> >  	bool found_more_threads;
-> >  
-> > +	/*
-> > +	 * Serialize concurrent TSYNC operations to prevent deadlocks when
-> > +	 * multiple threads call landlock_restrict_self() simultaneously.  If
-> > +	 * another operation got there first, gracefully yield by restarting the
-> > +	 * syscall.  This allows the current thread to process pending
-> > +	 * task_works before retrying.
-> > +	 *
-> > +	 * sighand->siglock protects only the marker, not the wait below.
-> > +	 */
-> > +	CLASS(current_tsync_marker, marker)();
-> > +	if (!marker)
-> > +		return restart_syscall();
-> > +
-> >  	atomic_set(&shared_ctx.preparation_error, 0);
-> >  	init_completion(&shared_ctx.all_prepared);
-> >  	init_completion(&shared_ctx.ready_to_commit);
-> > @@ -503,16 +557,6 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
-> >  		(restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) ||
-> >  		task_no_new_privs(current);
-> >  
-> > -	/*
-> > -	 * Serialize concurrent TSYNC operations to prevent deadlocks when
-> > -	 * multiple threads call landlock_restrict_self() simultaneously.
-> > -	 * If the lock is already held, we gracefully yield by restarting the
-> > -	 * syscall. This allows the current thread to process pending
-> > -	 * task_works before retrying.
-> > -	 */
-> > -	if (!down_write_trylock(&current->signal->exec_update_lock))
-> > -		return restart_syscall();
+On Mon, Nov 23, 2026 at 03:17:28AM +0200, Jarkko Sakkinen wrote:
+> > > The way you're spamming people you're only reducing chances of anything going in.
+> > 
+> > I personally think that "getting in" should not be a goal in the first
+> > place. I care more about that whaever gets in has a high bar of
+> > quality enough. It can be something different than this but
+> > when I read the LWN article about Cells I was alarmed enough
+> > so that I had to do this and prove my point.
 > 
-> Just in case, the patch looks obviously correct, so feel free to add
-> 
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> For completeness: I'll consider this final RFC.
 
-Thanks for the review.
+Random throws that would not be this but something else (but could be
+derived from this basis):
 
-> 
-> -------------------------------------------------------------------------------
-> But when I look at this code...
-> 
-> Well, if we change landlock_restrict_sibling_threads() to rely on ->siglock,
-> it seems that it can be greatly simplified? I mean, it can roughly do:
-> 
-> 	...
-> 
-> 	for (nt nr_threads = 0;; tsync_works_grow_by(&works, nr_threads))
-> 	{
-> 		guard(spinlock_irq)(&current->sighand->siglock);
-> 
-> 		if (!nr_threads) {
-> 			if (signal->flags & SIGNAL_LANDLOCK_TSYNC || ...)
-> 				return restart_syscall();
-> 			else
-> 				signal->flags |= SIGNAL_LANDLOCK_TSYNC;
-> 		}
-> 
-> 		if (nr_threads < get_nr_threads(current)) {
-> 			nr_threads = get_nr_threads(current));
-> 			continue;
-> 		}
-> 
-> 		for_other_threads(current, thread) {
-> 			if (thread->flags & PF_EXITING)	// stable under siglock
-> 				continue;
-> 
-> 			ctx = tsync_works_provide(...); // can't fail
-> 
-> 			...
-> 
-> 			task_work_add(thread, &ctx->work, TWA_SIGNAL); // can't fail
-> 		}
-> 
-> 		break;
-> 	}
-> 
-> 	complete_all(&shared_ctx.ready_to_commit);
-> 	...
-> 
-> We can kill tsync_works_trim/tsync_works_contains_task/count_additional_threads/etc.
+1. It is possible to use file a instead of syscall for container
+   creation. This allows to split the framework in two pieces:
+   the core piece and the driver piece.
+2. It would be possible to create Linux Container Module framework i.e.
+   LCMs. I'm underlining the technical side here, not sure if this makes
+   sense or not.
 
-That would indeed be simpler, but a single pass would misses threads
-that a sibling is creating at the same time: the cred is copied before
-taking siglock and only fatal_signal_pending is checked.
+Both alt's can be quantatively proven given the existence of this patch
+set.
 
-Keeping the rescan loop and walking under siglock would be correct and
-would drop tsync_works_trim() and count_additional_threads().  However,
-it would hold siglock with IRQ disabled across a task_work_add() for
-every thread, which /proc/<pid>/stat readers would then wait for.  That
-is bounded and not worse than what SIGCONT already does, but the RCU
-walk avoids it entirely, so I'm wondering if it's worth it.
+Kernel LOC growth when kselftest is taken into account:
 
-> 
-> Sure, this needs another change even if I am right.
+1. v1: 1211 LOC
+2. v7: 2149 LOC
 
-Yes, I'll send a follow-up if needed.
+It's not exceptional growth, as for a compact implementation like this
+that easily comes up from e.g., LSM hooks that were later included.
 
-> 
-> Oleg.
-> 
-> 
+Further the number of patches has only grown because I wanted to more
+accurately slice everything up until they are exactly in logical chunks.
+
+For later issues, I've fixed those that are known ATM to but hold on for
+sending any further patch set versions:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=vault
+
+I also think that v7 made most of sense for the reason because  I
+realized that the cover letter would better have enumrated all syscall
+extensions in addition to new syscalls. It was the primary season
+for v7.
+
+If this was skijumping, I would get worse style points, and will
+improve on that for sure, but as a feature this does fly further
+distance.
+
+Br, Jarkko
