@@ -1,90 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795441770;
-	b=JqWVUao+WyfktftLX2LPqn1klrekZYeFWpMWL8VDfm56Ja2qJAmNJp5RlvO4UYrb1Hho
-	 lTliBTKEYT/JLSeL1j4IdCg1aIFylnTUIzCf37xVMoA6flcVBuq0TbML7m2YlDmGXLutC
-	 D/xRCVAtq21PzpaGZn+YPAE1rrOfPZswXYYYXu9ttWI82iH39z93Xk7jJrML/LYfVJfrc
-	 A4AZxAjsAxFnM+OJYNlr5gehRfW5jX6j/G3QAbP9WpUvLLOAl/TnQIVsbQehGPn/0DHb6
-	 wCWTna78a5YauQzGX9y5uJsR8VOEGVGYdF6EEtfqAQGuyUeSNGMmCaptxeTgwn/mmvw==
+	t=1795442763;
+	b=HteVB1HhEutf87ilxpD5kpg5PuC/OE7/9Yf2TnACs95+KhJggJz6I6Q47tRnUAmcejvx
+	 wRyEmFweEh6uCMHabSaf8LYSipq8R2Rj+HMFzlRyojM1gjl+DlRpjtFGA51utvWFmbNFu
+	 wn4Il1WFxKA/GDkxaBGNILnoH6hjLuKCZzc0cYi9e6fOreuOmKXAFQMLHLa/8K7me4WfL
+	 IorkaSKlpHZ6zOLT3JenhxXieB9iQ4rxREesa0vy67lGYV53BUAGka7NOF7AYQBMlzfRy
+	 /lqJLD7xwmdPtPm+OfjOlHPslFJ8OH/Vz+E4Ds5sljTybXhjWY3TwrYSilcSB+LUhmA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795441770;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:In-Reply-To:X-Scanned-By:
-	 X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding;
-	bh=kNEpRXv0Qjfeq3BAGqbQG/HWKXbqAXTDOCqw54GskJA=;
-	b=ovPJ96ie1ddzqPiM782DqRPyIamz+1LnoGDA2Y8Mbhgc8VGYeADPxwoxWYofyuWEiPX2
-	 eFQLU0oFpukztjD9yaUGUFM/k9JOXK2CpXaIqT5HzD6WfqNtVvhq4tx5olza6u21wH4M8
-	 owviZ/s3s28hlHJVu09ulOanLeN4NPv7fzUOJd0cjodNINv6cWkDITujldDbCRzBR9Ao9
-	 XSJu05wfRkE0tg6C+ChkFQcEtS3Tp4DAKYQEsTOy5vUkdDfeFyQW3DxYd9RHEUrerGLhk
-	 GOpGN64cjwGkWuEEJEekzceyKkA8Z2MlqXlEBU3+x+48f10ctZVoZ7vtuO7chO7EMeQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795442763;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=ZhrfZY0fbfvRqh4m81PmC72i9FRlptZs7yDrySCwPr4=;
+	b=SYtFgVqelkAzocufmb4qojWHGB8xkuvXRGmKrM6PPGSK35VaDLCnoDSC4QGgt/nek7/o
+	 qHfjOlW2H+PscwYdVzezYjdNvL6Wrua5wLeyl46JTlzhYzr1ZlxZmeZBr+P9moG0aaGqq
+	 qlMLfhWNTEb1Z+pSrQtBsHud9zP+ylMlZk6sJaIDJEAL5aUCXGxi11jsGfrWQ0yc07bii
+	 kP4T505oFx8IotoZgBUQUf+dYi29rZh5N9tJGFNgdK2ktGtFYhTuiFyL/wGn7ARAtcAEp
+	 CpdMGqbIdyHwj3yRub7uzfaoxVlpz7+vBtbwmPuZSQKAfrQGMRaUihRenvFomFD3Hrg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=redhat.com;
-	spf=pass smtp.mailfrom=redhat.com;
-	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=DYFYHScT;
-	arc=none smtp.remote-ip=170.10.133.124
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RNxcIodY;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3793606A6A4
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 13:49:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3793606A6A4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id F0193606A32A;
+	Mon, 23 Nov 2026 14:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=DYFYHScT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1795441768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kNEpRXv0Qjfeq3BAGqbQG/HWKXbqAXTDOCqw54GskJA=;
-	b=DYFYHScTFnOgVVysdqQ7hv9HAmcVjOaTr6QZIZBKlWkwaMKzsmJQbehEeGwMcSHVRHdcdf
-	6R7JgMcRuBVbFmdeIZys7SRm9q3Kk3YTiwnyWltGvvd5x9m57MjrhhVwvw7l1McvYmdfu9
-	vTXJ6waZr7qxVIzT0kuXxukyh502ISk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-Ez8w3PEcPnyyQ11_yNywQw-1; Mon,
- 23 Nov 2026 13:49:21 +0000
-X-MC-Unique: Ez8w3PEcPnyyQ11_yNywQw-1
-X-Mimecast-MFC-AGG-ID: Ez8w3PEcPnyyQ11_yNywQw_1795441759
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 31AF9180076D;
-	Mon, 23 Nov 2026 13:49:18 +0000 (UTC)
-Received: from onestero-thinkpadp1gen7.tpbc.csb (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A985430000E3;
-	Mon, 23 Nov 2026 13:49:12 +0000 (UTC)
-Received: by onestero-thinkpadp1gen7.tpbc.csb (nbSMTP-1.00) for uid 13628
-	oleg@redhat.com; Mon, 23 Nov 2026 14:49:17 +0100 (CET)
-Date: Mon, 23 Nov 2026 14:49:11 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Tejun Heo <tj@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
-	Cen Zhang <blbllhy@gmail.com>, James Morris <jmorris@namei.org>,
-	Lee Seong Hyeon <ihopenre@gmail.com>,
-	Marco Elver <elver@google.com>, NeilBrown <neil@brown.name>,
-	Nickolai Zeldovich <nickolai@csail.mit.edu>,
-	Paul Moore <paul@paul-moore.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC
- wait
-Message-ID: <awREVxuPMpPXjA6I@redhat.com>
-References: <20261120151554.2651743-1-mic@digikod.net>
- <awMn0L7RaQO_6qUc@redhat.com>
- <20261123.ungeuh7Taish@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RNxcIodY
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D36961F000CF;
+	Mon, 23 Nov 2026 14:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795442762;
+	bh=ZhrfZY0fbfvRqh4m81PmC72i9FRlptZs7yDrySCwPr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=RNxcIodYicyykOWzJV9ac41R/wLtMtTMT0f/m7QOJ6ld+W2V4NCjmrvht5+ezWSqk
+	 Dy3cclszSYRA92VabFyR/cC0uPGOyYPHssIDBCdfY+KgqULwwUey6pUnHB73Wz2LlR
+	 hkvMBoXjf7CrpiBPOawkWFvKWPg3qpI0I0BA69XEEhog6RMMjCMYfTFgbRasThroj3
+	 3VZZgT2wtToaSR3IXgQGEzMZxs3Ms6FWViRaFd9Loduz7vVzijOuh6nSFxj66HY9ck
+	 NEhojYrvdZmhi6MyoIHwjX3SFqytTuELhGvYjoQLWNYl5Hp0HF12MLor0raNKqJDPd
+	 nl02fB8BrjaLw==
+Date: Mon, 23 Nov 2026 16:05:58 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: bot+bpf-ci@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+	containers@lists.linux.dev, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	aleksa@amutable.com, alex@amutable.com, viro@zeniv.linux.org.uk,
+	luto@amacapital.net, arnd@arndb.de, brauner@kernel.org,
+	dhowells@redhat.com, ebiggers@kernel.org, giuseppe@scrivano.org,
+	hughd@google.com, jack@suse.cz, jlayton@kernel.org, corbet@lwn.net,
+	josef@toxicpanda.com, kees@kernel.org, kpsingh@kernel.org,
+	lennart@poettering.net, neal@gompa.dev, oleg@redhat.com,
+	paul@paul-moore.com, ptikhomirov@virtuozzo.com, sergeh@kernel.org,
+	skhan@linuxfoundation.org, zygmunt.krynicki@canonical.com,
+	ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
+	martin.lau@kernel.org, eddyz87@gmail.com, yonghong.song@linux.dev,
+	mason@kernel.org, ihor.solodrai@linux.dev
+Subject: Re: [RFC PATCH v7 07/26] mount: Support MOVE_MOUNT_CLONE with
+ MOVE_MOUNT_T_MNTNS
+Message-ID: <awRIRrGwOi97H15D@kernel.org>
+References: <20261122193539.3334213-8-jarkko@kernel.org>
+ <cac1fa0b133e15e7c67629319df17a0d25747093535aa246f44a75cb1073e2ed@mail.kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -94,21 +72,88 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-In-Reply-To: <20261123.ungeuh7Taish@digikod.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-MFC-PROC-ID: gE0knod_ov_D0SpUAcZZAXAHWxNiDkfIzV0NolpGVa4_1795441759
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cac1fa0b133e15e7c67629319df17a0d25747093535aa246f44a75cb1073e2ed@mail.kernel.org>
 
-On 11/23, Mickaël Salaün wrote:
->
-> That would indeed be simpler, but a single pass would misses threads
-> that a sibling is creating at the same time: the cred is copied before
-> taking siglock and only fatal_signal_pending is checked.
+On Sun, Nov 22, 2026 at 08:28:11PM +0000, bot+bpf-ci@kernel.org wrote:
+> Should the clone be reported to LSMs as a bind, for example through a
+> separate hook, a flag passed to security_move_mount(), or a call to the
+> bind-mount mediation?
 
-Aaah, I see. Thanks for your explanation!
+Mediation can be trivially achieved:
 
-Oleg.
+diff --git a/security/apparmor/include/mount.h b/security/apparmor/include/mount.h
+index 46834f828179..d771ee240d42 100644
+--- a/security/apparmor/include/mount.h
++++ b/security/apparmor/include/mount.h
+@@ -43,7 +43,7 @@ int aa_move_mount_old(const struct cred *subj_cred,
+                      const char *old_name);
+ int aa_move_mount(const struct cred *subj_cred,
+                  struct aa_label *label, const struct path *from_path,
+-                 const struct path *to_path);
++                 const struct path *to_path, unsigned int flags);
 
+ int aa_new_mount(const struct cred *subj_cred,
+                 struct aa_label *label, const char *dev_name,
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index aefa71bc1cd2..797944de8273 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -751,7 +751,7 @@ static int apparmor_move_mount(const struct path *from_path,
+        label = __begin_current_label_crit_section(&needput);
+        if (!unconfined(label))
+                error = aa_move_mount(current_cred(), label, from_path,
+-                                     to_path);
++                                     to_path, flags);
+        __end_current_label_crit_section(label, needput);
+
+        return error;
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index 4ed7b9136beb..8d3db6bfdfb6 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -423,13 +423,15 @@ int aa_mount_change_type(const struct cred *subj_cred,
+
+ int aa_move_mount(const struct cred *subj_cred,
+                  struct aa_label *label, const struct path *from_path,
+-                 const struct path *to_path)
++                 const struct path *to_path, unsigned int flags)
+ {
+        struct aa_profile *profile;
+        char *to_buffer = NULL, *from_buffer = NULL;
++       unsigned long mnt_flags = (flags & MOVE_MOUNT_CLONE) ?
++                                 (MS_BIND | MS_REC) : MS_MOVE;
+        int error;
+        DEFINE_AUDIT_MOUNT(ad, OP_MOUNT, subj_cred);
+-       ad.mnt.flags = MS_MOVE;
++       ad.mnt.flags = mnt_flags;
+
+        AA_BUG(!label);
+        AA_BUG(!from_path);
+@@ -441,12 +443,12 @@ int aa_move_mount(const struct cred *subj_cred,
+        if (!to_buffer || !from_buffer)
+                goto out;
+
+-       if (!our_mnt(from_path->mnt))
++       if (!(flags & MOVE_MOUNT_CLONE) && !our_mnt(from_path->mnt))
+                /* moving a mount detached from the namespace */
+                from_path = NULL;
+        error = fn_for_each(label, profile,
+                        match_mnt(profile, to_path, to_buffer, from_path,
+-                                 from_buffer, NULL, MS_MOVE, NULL, false,
++                                 from_buffer, NULL, mnt_flags, NULL, false,
+                                  &ad));
+ out:
+        aa_put_buffer(to_buffer);
+@@ -467,7 +469,7 @@ int aa_move_mount_old(const struct cred *subj_cred, struct aa_label *label,
+        if (error)
+                return error;
+
+-       error = aa_move_mount(subj_cred, label, &old_path, path);
++       error = aa_move_mount(subj_cred, label, &old_path, path, 0);
+        path_put(&old_path);
+
+        return error;
+
+Br, Jarkko
