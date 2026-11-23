@@ -1,100 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.181
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795475973;
-	b=y9igr1wnXLopVM+OlfkeV2WJ9pLkF+wYFyNn7mLdfXS+1+BVuNVpPc8zJ8hDS02wSngR
-	 yG5I0rRVxzOVc/uR+ptafUOzzTfz5/X+oY4CSUKWhCT//04FT1M/yCsm9yy3BEd3UB1NQ
-	 UzUZoOgsrgR02BJwQcDnhHNY5KFlfcJDFVMPb56WiUyfQRkif8EfDQ7s1kgOXqHAo9vNv
-	 kMsKsRD3uonSQ+Xpt8002WyZ5FZaFudYwVQ962I9ewk/9wpYpGJRDGR19m3VJNguH/Szx
-	 SjFx5tt/fzLPks2jg07/ri5Ej9SsdzdIEN/UsY/UuaOP+STJjQIvF3XPol26XVNDnRA==
+	t=1795475980;
+	b=Dx3h9MsepGijssN7CJ/LcI2Xpg60RlB1CTI/B8+E6iCqW5UqJmSMFLX5ckyUJjzhjTiW
+	 wRrmubEGL+jm/xmyKQFJlOZ2l8tWqtzshYWuoIv9PjgxyM8eEEc8g9Svxoywp97PKFM4C
+	 B9aI/4EYWbmKmubi9CgBafgAQfFRILbZgPm4GpzRQy4VGU+w/tgc7j/FDATnIGHpHCVKG
+	 KFfIfDTYM8pQ4rsoKygm+PuH7LUDbhJp7yk8xN8RAZUNuwO7bTNtqMqtrA9U5ERvSzKSk
+	 ZCCDxZhAB8prz3xRA4PWRTKvgmJzaymB9suQKu9GaH+e93R6Jh8TafkpLq+NoIhSodA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795475973;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795475980;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=cLhWqv/VagBjB5zuhR0ieKg5bnQX3hK7LoyWZzsgt5I=;
-	b=glj7r/yYYlpOJQkcMGv1j6h8ifHCJdfOVWJnDtavDCY2hacDttlRofC7CJTPNdp/yQji
-	 a8jT0vvV7pzHd+90CfVROuU7id55SVY1K8+1MhakJsHmiR07fply/4Gym4qgfU3GPOZhL
-	 r3tvRFAQ41Nrulj7S/3MwyD3E60+Q68MMS3+Z1ImJqQjoMSDj9Ufdx/WhrIyvMHDEfBkg
-	 UkAYLv7gmpyPzIxkardIg368JkSg+1xUX20p8y5LA5QYX1uTyfPrAxdPKXd2Gtp2OcBqI
-	 UNGxUiYxmWIxdqlV7UEYxjoMKLyNM9xK/pxSbwF4wMOgtgGHPw+jnAxJ5u+SlHtd7sw==
+	bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
+	b=0nlL1dZsbPFE8DuohJhChdExFOfabNFNZ73sj4Fjv4C96KZZgiV6HkxqsgA7uQS7avYC
+	 QJ7KlNQto1jRpuWyfAuVRI6vQ5zfMhw6Z0IQAnX4+fmAThcDr3xwWQhdOrrH8mHc5TJ9P
+	 z3/jR9Bs0mQpZB5O78+0LbPwY309fukbEjt2HWAxPRXsb8NgSryVia/QoVgOTm9NEgtwh
+	 dT3NRghgDLASNA3Y5NVyWRC5MSi7fvutEuGqjkM0AS8piicJKqZarlZZkXC6v0pw+93GY
+	 TkGHfpbO0HGvuA48rDqR7aQ9H43+NU+aYLhCx+f09V31QUu9/9Dq+rk1YbwGBdOa6Yw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=paul-moore.com;
 	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=YhXtktK3;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.210.177
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b="RH0V0w/Y";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.181
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20469606A326
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 23:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 20469606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC65606A332
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 23:19:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4FC65606A332
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=YhXtktK3
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-8b612fd74e1so1261367b3a.0
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 15:19:31 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795475971; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=RH0V0w/Y
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2f02b9c1f6fso25891965ad.0
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 15:19:39 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795475979; cv=none;
         d=google.com; s=arc-20260327;
-        b=H+6e2Qd6Ucuvy3sO3VT8iLbaRsKdsU72Ubs0Xk5labxYnu+JfmqvBspwj/hsRQM+wX
-         70lX7+PVxk7zJP2+MmS/b/JbskSFlYtpMoC/NZ4bs2OOqHpNQ+YKl7K8v3naozCNBqKo
-         r1OSVHQsAXGndwtUkaO6FSU8JxgJfgzoJgBUSIfyRnPSNkcpCDitTXssziqweqpHNBVf
-         hKu9dbhxHhGa2AnLVKVgncxNSRbyvbwONbp+zkTyjimqIL0feMGsUHiasv5Gx+8cyFtb
-         JVAFK8o+8ZiGVekaZrXC8yPc5/iFNf92J/fuO74aXhe/FHR3Xmv5Fy6DXh4KGId6PPbG
-         GKWA==
+        b=Au2XRw+SJdHLqgp3F9JfPO9gdMFPUKhQyw+FAQ+ssrBD74coFV3OVPIhGdmi44oqI0
+         CAn1Wn7QSh1IO7vEqobSP6YzivMFz/ZCxUcoIwE3xL4CaDWae7kelOFWYsHxAFF4bAJ7
+         ZAsdor5QZQa5ADODQrc504HVodcwqGHk8TgSqLtY22J6/pBB+LNKz7/Sv1g9/IoEWpG7
+         xDVG5APx+2pnk+Yt/FuL0YSVSbHIf+/+pWgUf7mZRLBmc8azQyo4G73T0yF4HXsDdlHz
+         WEoBHDhDzjLXHe3OSjapUHKLS7PaAQeGJjYbU7kQNPExQIRbtA4N56ftlihylvNhMzm7
+         JzFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=cLhWqv/VagBjB5zuhR0ieKg5bnQX3hK7LoyWZzsgt5I=;
-        fh=RHS54fyBYaWtNZMTyP7CLA2Svi/S3gNtj+o/m8rYX98=;
-        b=QS8BmMNKgntQlYJ9UZtVopvfkoWuUrjfTK5+QKT45TC1v/pcSziPDYmvIInH8oGR7h
-         vqBx3iIB50b6SicY7412GfvKLZjsNEo3hSZBmCGT6Pyz0Q0cQOntkMtcYrNrr9I8yNea
-         PUfgHnZGUOKy5ZIQ9ok5vQ9R3ABpZ4KRLQSFuT9g8HffZmNGowNufGkGsAPzaeL5fZBZ
-         HqHiCzMJdhveLCRFfaWSgsiYIPT7xoAn5FgRQW1QEI7u91Wu33He9XQKvA1OuxPVrkH7
-         MIRg/fAWxD2T4EoPSWQwZPzRvEPTbI0WS0Uc2ueridyGXOJiHsZluNbhY2ClWyC4vJSL
-         tOCw==;
+        bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
+        fh=qBBEho+3HxCXRMb2Pmo/+nvadzHwzecLHZDwvwKFQa8=;
+        b=lmb7DY5ta9o+m4J0UnEeXUTm4vRdDJBb1YAZB1eaXren6o/c8ltLM7ZIqzwGyAFg0i
+         mIk/sd9Y0+INqVfXkIKn8526u7envW4wZPE68vQjJ+LiUh0K/1kfTOP4KPrOD3vhh6nP
+         35X4JcWdVRQG4fB2lUMV/vUaqotfAQtFgzO9DbgRJFwn/HcMlTQux1h+ztLnwo/FPDYN
+         lMdB0kxqtgxgnH9kgeqaLrQEOknsxGI26cVBQ3ySc77d+LNhZNFF8hc01lFyiFPbLAgg
+         dwC9iMv9/BkTDDeZQBYWkAqFTWTTWIgbMrKZ/elhMmb4VYTIvygGajZkPQQB6Ch1uX5V
+         4L7A==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1795475971; x=1796080771; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1795475979; x=1796080779; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=cLhWqv/VagBjB5zuhR0ieKg5bnQX3hK7LoyWZzsgt5I=;
-        b=YhXtktK3TaxHoEAlQRblBl5NwaiIJzMRG08xeTEasVOlhXF9VzuYseXJhgLWW2EHGt
-         JukoaxQupFfWcUqLaF5oxSvwZynvmpg5wICI4n+s01aIPBDvOkU0KbknfNARAEWMBVN7
-         OKYXJaegBPz6ilzvzpEe6ACY1YEwIQVhkcYg5inow+PiZfU/wA6/6QKhD3ePBVWJhPrL
-         ERwCuv/jfq+xLZhDIsBTa0sAaLtawlsX3BJ5AfDooQoz4b2oyft7coosdea7B7X0T8EA
-         b4VjDkmEl/GIJJrySearV1rDJhdFqmMygt7PmizPlzGdZTWHEWeZjplLfY0n2sMGlpjv
-         8/dg==
+        bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
+        b=RH0V0w/Yr/Z4AMRG2tN8F5gjksBm5yKNRTXUsuF/1NCZKbxj6Px+gUwAwti0vvEIpt
+         ze3b0AYAjegli3ajVz8reHPYaQTczy5D/5H8TnUyeIVMRhXGJnsSb2RnhkLCYbicZhtS
+         ZETTU1BDFAWMBEqZg2gXH/dKYu5ciTgugb+pbPvjad24YoECg7uC1XTQp+k2Mtqfn/u4
+         yQUYcoahFdNOsiB3bh3TXDCfyjppcwNpsbv48RHxu13sF+IUnNZLd7/GZ4I98ylOdH7Q
+         mlftfwPpLhqmf1SaXDEf4Z+0c98TbjBQ/xj4UXn4EhbvPUieaPwitbh/1GX9QXJhge1z
+         U98w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795475971; x=1796080771;
+        d=1e100.net; s=20260707; t=1795475979; x=1796080779;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=cLhWqv/VagBjB5zuhR0ieKg5bnQX3hK7LoyWZzsgt5I=;
-        b=T+iIF3k2blKfF/sdLXdTvwNSrRbfCiQJMnX+VLgQINzffb2KEvNfHQMqqWytjalfjn
-         evklXpRon0pH4BbvokOXAOfJ/QkPc/w5UGOJi8zAmgMHfXsNxmMT7Wfn4idW7xxBVMIJ
-         M9C7wmA84ONH4lJltIeElbm3ZA3atVBIxc9q2EjdmvARDFiUbEuh4Do4l4HM3OaPfeMx
-         YT5jYh0g/fhN9ebNb1g9NBTcH66w1NWocOCakOqO1F4q/B9Ug/zfO96Rz9U9HnbmTPqO
-         49zON0q0eDDBoGi8lLkN9/YQaE/SoXL9X1ZaShQrbjRORG7s+NOgT0IsNTJDAI/oXjI+
-         6AoA==
-X-Forwarded-Encrypted: i=1; AL+hErFCc41Uh7q2Y+kjx+98RadoKV/XRlkI2RWDPbBwZgkf10K+904m9TmC6s3EWFVzFbHBHuKf9AenNJHFEBn6d2Id3JdbstU=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8jCLHNZl5k5ak3iWPlNRuj/c2NPtwr73IVOyAL79QTSZyNBe5j
-	YhrtvI133fwJxS8uc6qqkyyV2OVpCgUI509oFau8mSS1IicQYEl9kWbvuWyqqyT4MGkOjIilCZ3
-	+h3f/ANOZ+WTkpXO7p26s80//PXiYrk/nwAGxmqrQ
-X-Gm-Gg: AZFdTZczkDu5me/aO4KD0uBYGyS14KTPuz+2wk38fD6XPT/+QGuDbOUOr4YvmPmE08c
-	9osN+O/BY9F6wB+pBL1DiOnVR68FgeY0DjZN2rXEw95QrUOoQo1svurib5V/zJdwFAX2dwr0RVD
-	YbL6qKpklk+6PJq33iiEi4svSPNm+v1dS5pIZ+CM06CfZbXP7o3u+1ssecaqHoGOFEy6hK8fKdY
-	oSuU9ieAzodne8WnOKy6zoL+CIAhr01U+skBLLrgLfsc7GW1u9rkOXEv8CUlJ8InBbdJjTq/5jd
-	YpxGyPWjxDFRZrPjB0JbjRJ+zGjyZAwTr3zpV0UhfxcrS1G3Ir4EMLuLyqXfnnbDKBtyLgCKJCo
-	qW5jWcv5azhHUJY1q7O8v5mMwY/fZfowtgMySvqWJv3K/VmiNyRiH9kS3JRPhK/ivfkmsJg==
-X-Received: by 2002:a05:6a21:7111:b0:3fa:f23f:a1ef with SMTP id
- adf61e73a8af0-4014da5d430mr11922129637.61.1795475971432; Mon, 23 Nov 2026
- 15:19:31 -0800 (PST)
+        bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
+        b=LfRb9O4Mt7Akof6IMeVvKJ0HI5JQN9lAjgX/UX5lvGHlGL2SVPzBN4O5jcmKOflAmt
+         Iwpkz9F0iTFNK1xeRH2unallE6oT0vitlURjm7+N91mUK+kaOkYiab6bUrrCtUgHyYDD
+         IDYyx/yh/ZB5QFINQ5n2Et+60gh+KYrSBNwT1wlpAhOKox24bMC8UuERhctPLZ0ngsdn
+         96T8nW0b4/6VX0XDnHUvYktDCBI14l9bn02WUnMxQTJ8uYNNeYYdn3Rjd/ifUtuGk67G
+         IeM4BeKmrnLFdYM7eff6a7hrdHbPI7Mt+iZdoVFel7Ia320ezc9tXuh7jbYfVHRze5m/
+         m/Iw==
+X-Forwarded-Encrypted: i=1; AL+hErE0F97tcyvSXBwoTp5J8WIz9hIdgY4+95a1D1K1/QSs9wE3LYjqNgMaScOTQ5Ez9hifaKxqE3iih8yaldBq7CMk5SgA8Do=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9h5e+tOuYqOOAA6WNLP8IbBJqcJXLI0xI+4Y9qMqNNAN/U0xNx
+	yt6HKIFoE7RbGwfDWdwelsK6E67EtKbPwD1SweCrNtUFpfMSgHZo79KZvacMfY+doVp+aNQ7wfV
+	a3Ar3IHiavmvSENfN0SzFGli0mCg/lPGAD4b3QoKc
+X-Gm-Gg: AZFdTZfP6ApCm5NMO+D6wt4sQ+1zYCt+JhGTGqntAODhm2PVRdpb/tyo0aT//21OgwL
+	0aX7zXGjWeTiAI+RWsV7x3MISZvwpv1/Zb4vcxiQedvoAK6/fvlKsuAdTgQYZNGiKr+qJKdaDEB
+	0XblV91FL4vVC9rIo9yrHNobViJDhymtb8bSf4Klk6B3/2LjhMYQGIbth/GN1JZrQnBrhpducvR
+	G+VkJwKokHV0YIXRX/NrlPpCNIX2D4VQUctOJIlMuXcLU6wkhGw4CkEZeYRxgSR6ntAV/2QPNaB
+	Jlr4asZEk59zg4S98JItuboiYBrMyYBU9iRBE5lNOlJtbeEuwJo+J1xhMaYuL7P9HbhAB9y5keQ
+	NM/CpqOsBKuBg5Bf+Mu9azxIFuNI+3BhiTi7hUB+6MUtH3RJVowX2uwlOpo2ZKXY6fmF7zsgbvX
+	FHJPdRvnQr9eFo9w==
+X-Received: by 2002:a17:902:e5c5:b0:2e9:528c:b9ea with SMTP id
+ d9443c01a7336-2f03f18ed69mr94092915ad.11.1795475978663; Mon, 23 Nov 2026
+ 15:19:38 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,14 +106,13 @@ List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 References: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
- <20261029-work-security-namespace_free-v2-4-65591dbba7b3@kernel.org>
-In-Reply-To: <20261029-work-security-namespace_free-v2-4-65591dbba7b3@kernel.org>
+ <20261029-work-security-namespace_free-v2-6-65591dbba7b3@kernel.org>
+In-Reply-To: <20261029-work-security-namespace_free-v2-6-65591dbba7b3@kernel.org>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 23 Nov 2026 18:19:16 -0500
-X-Gm-Features: Aa3M54pQLfC4vU3-6-r9j0PdP3_OAJ4uOdt5cmk3KHNndD-uhH08FyqH6wqPWRk
-Message-ID: <CAHC9VhSq+VXrs-M0ezGGW66d=-w8rjqCggpnS=ORiRZwMRPdmw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] ns: allocate the namespace id before the
- namespace_init hook
+Date: Mon, 23 Nov 2026 18:19:27 -0500
+X-Gm-Features: Aa3M54p84nMzXEsFfUh5-yY_9m2RQyZXUhbb-xh5PHe7PIY590iycN_cOXWciDA
+Message-ID: <CAHC9VhTXzxXECV6fwt0BaJC8jF9EBzmzoon4f7fWaJotv1PyRQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] lsm: fix the security_namespace_init() kernel-doc
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
@@ -125,69 +125,30 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Oct 29, 2026 at 12:41=E2=80=AFPM Christian Brauner <brauner@kernel.=
 org> wrote:
 >
-> Currently the namespace id is allocated only after __ns_common_init()
-> has called the namespace_init LSM hook. Most namespace types allocate it
-> in ns_tree_add() right before the namespace is added to the namespace
-> trees. So the namespace_init hook always sees an id of zero.
+> The kernel-doc claims that the owning user namespace is available via
+> ns->ops->owner(ns). But security_namespace_init() is called from
+> __ns_common_init() before the namespace has been set up. Apart from
+> network namespaces the owning user namespace isn't set at that point so
+> ->owner() returns NULL. And for init_net with CONFIG_NET_NS=3Dn ns->ops
+> itself is NULL.
 >
-> The namespace id is the only identifier of a namespace that is never
-> recycled. A bpf LSM wants to use it to track a namespace from
-> namespace_init until namespace_free, e.g., by using it as the key into a
-> map that associates data with the namespace. The inode number doesn't
-> work for that as it is quickly recycled.
+> What a namespace_init hook can rely on is the namespace type and, now
+> that it is allocated before the hook is called, the namespace id. So
+> document that instead.
 >
-> So allocate the id in __ns_common_init() before calling the
-> namespace_init hook. Every namespace then has its id by the time it is
-> added to the namespace trees. The initial namespaces still get their
-> fixed ids, either statically from NS_COMMON_INIT() or for init_net from
-> ns_common_init(). So ns_tree_add() doesn't need to allocate an id
-> anymore. Ids are still handed out in creation order so mnt_ns_loop()
-> keeps working. Mount and ipc namespaces already allocated their id right
-> after ns_common_init() anyway.
->
-> If creating the namespace fails after the id has been allocated the id
-> is simply never used.
->
-> Landlock logs the namespace id when it denies the use of a namespace.
-> For a denied namespace creation that used to be zero. Now it's the id
-> that was allocated for the new namespace. That namespace never becomes
-> visible to userspace but it's the same id that other LSMs see in
-> namespace_init. Update the Landlock documentation and selftests
-> accordingly. The selftests can't know the id of a namespace whose
-> creation was denied so they only check that it isn't zero.
->
-> While at it, drop ns_tree_gen_id() as it has no users left.
->
-> Reproducer, 100 user and uts namespaces:
->
->   bpftrace -e 'fentry:bpf_lsm_namespace_init {
->       @[args.ns->ns_id ? "set" : "zero"] =3D count(); }' &
->   for i in $(seq 100); do unshare -Uu true; done
->
->   before: @[zero]: 200
->   after:  @[set]: 200
+> No functional changes.
 >
 > Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
 > Cc: <stable@kernel.org> # mainline only
 > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 > ---
->  Documentation/admin-guide/LSM/landlock.rst |  5 +++--
->  Documentation/trace/events-landlock.rst    |  5 +++--
->  fs/namespace.c                             |  2 --
->  include/linux/ns_common.h                  | 16 +++++++++-------
->  include/linux/nstree.h                     | 18 +++---------------
->  include/trace/events/landlock.h            |  3 ++-
->  ipc/namespace.c                            |  1 -
->  kernel/nscommon.c                          |  7 +++++--
->  net/core/net_namespace.c                   |  2 +-
->  security/landlock/ns.c                     |  3 ++-
->  tools/testing/selftests/landlock/ns_test.c |  7 +++++--
->  11 files changed, 33 insertions(+), 36 deletions(-)
+>  security/security.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-See my comment in patch 6/7 as it impacts this patch.
+The way this patchset is structured this probably should be folded
+into patch 4/7 as it doesn't make sense by itself.
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
-
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --
 paul-moore.com
