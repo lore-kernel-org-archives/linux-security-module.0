@@ -1,101 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.43
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795463738;
-	b=b4Y3V5dpPqMv/kJaDnxF6eE3WLvHHR9ms1qZ6DZ4YpLnuyyzq96JyWxz84SoUrz8Ctty
-	 LKjtDKMVQcTR0QQNIGR1b0j0txLvrgTDB7dGA4dPb3XudHnucBDgcR/ti8cqnclwlPQ92
-	 Qi5ItsjUtKWekDlgVES0dZL+w5nFZw2tSQ2E6Hi/eKI5Wv803f9Va+9aZghA+pEB8MguE
-	 v6DlWtxTF4Wh97JlkT2y3mlwUgk69iNzdwiBXRFJpYLb+e8cPm4adOH/3HzPzlNAg2J+r
-	 oXG6yE4/YOm+F5VuxDLicAwx+ngT3tfixmNavSgIsRv6NpAYXoKXJ9N5MyyxskQb3qA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795463738;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Gd5vkS8rekRzrNw14AZBHfRH+N9fBKRzF69D+TwAlOc=;
-	b=yzHrWcCkrHlh+uc2ZYyFMOmAFzUpx/cNFKz/wHxOwlMIbOO27Rplip8nn4YTjvKZ0N+X
-	 5uosIJvndR70yqDqhou15EsndB8tNz6jVTdzJJUS5xjyKHJl703+C4YtB9/9T7YM0dnf3
-	 JnagMX8QdfY8Fc6sJa7V/9SW7FlNj9qjDhHPxkSXjNKH9Izz4+aReO3ZGh4eePEcH2Se1
-	 au5jJEc8djBLuwra1sQgiOvyASanbgXNjXRxvfj3Tk7ZGSWu0QGwmR2EU/QuEsc0kyf3n
-	 3yWeqpwdpcB4I0tJQ3ztKxScl5RHeeWRB0Acb3IwsaiQPhyBd5qPcx6rIfeAH9o+wXg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=klX4BZ2S;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.221.43
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795465106;
+	b=uuobfx5mWKgz5kza50QY5/70Uc/XRhBPsLJP0vYZCmsi5lIA6rqrEZZaTTXTdeKmkRQW
+	 wHGEFZXTNyYzDyg4ZFrQ328aklsuKRdSYJriR/hp6zEdvVi9SQjEwLIcAHDeynAqyJ4XG
+	 8Wo2j731CD0KzNy/JyEcPCQyV3+Cfh5fNDL/pwzo7zcWUMObfQWhdmoWOZZwhZjIYYpHz
+	 zIuRnFCBm+gvjYeJfvbIhPqfksUXjrJRY8thHYlH3o4lfo3akzak7mjsk+fBUOTBHmETG
+	 yXx8cnp/xJoyUqU+EephDdXxPqZGe2VKHyx4O7fNJRTBIQXiQdBtBqKEur7sd3+pdqQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795465106;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=8AUjLkJf+AzfntX6iFDwsoJRr0FO8Zc2d0H24MDxBvI=;
+	b=5qjDrhLWQJ2tBo552pH8dySfLUau+cXiTrfAMuWXsF8E2SqhCYgfd2JOtoDfOKs8s+Bb
+	 CZjo2TOO2UCPWMMauUueGXtZ9MrwU4MegOL0CyxBTpOYqYsKJmmT6yE7cRD5HZUtdSib8
+	 2D9mxI6hEM1SV7rAZN3kM6GZDALitg235KDkFTVcHLJGkj4bpzrQMA6+opoDEmIV0zsyw
+	 E9QvfvQKdbxYfjv2jh9iNny+L6RJQhjQ5w4aFwSKLUxPYilHDQTzALS74kecZXbLDccsW
+	 5uoTSEdMFtjkD0W9E6J+Vu3a+QlzY9VS8WB4X0THdrPjcyk1P8YEgfs9/WsTGpc/SIA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UVyzKebp;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6012A606A31E
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 19:55:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6012A606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D833A606A31E;
+	Mon, 23 Nov 2026 20:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=klX4BZ2S
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4a358881793so1903716f8f.0
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 11:55:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795463737; cv=none;
-        d=google.com; s=arc-20260327;
-        b=SWrqyWAAv6Y9M3pECbaCVFQTR2FM6bh6xGsbgahVE/TVK+ylh6hoWXlR9n6W4NLsI7
-         EqW4Dhf6JDzv/EAV4nvjqE+QEVnhkhemIfY9WSTnKz3BYm5UOwisnA2veKyMUE5u4yoW
-         TQ7njGzrv7HikJLKILsd1WCkj95o1B7QJNdnwzYd/+SNfnk1lui3sXgBUOce+cg1ejSv
-         cERcjrpKPN/Imx3hBadLrhzh9mymKJI+i4qfHKobibciGaej2n0/vWdXT8FJJ1nOPhCb
-         3roy/sl7eryuzRJrB9PEXmSwWUBJuO9r65tHXl0TwF5JgPieKsypAZQKg1dHUl/7eH6a
-         I4jA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Gd5vkS8rekRzrNw14AZBHfRH+N9fBKRzF69D+TwAlOc=;
-        fh=QJP/LpyOUpQHM/T1FXtAHmUOleIzj5bMhWTc3urGSiA=;
-        b=X8rDONSdwnLaJb/ug+yy/NOltiR0ij2KwbKfgN/e1YrkAYtaPx2wwqqsVNHllL++cJ
-         WNTi69+/6dmnbyOrRygf2ZNUvYODCsNiKYe4CbO4/ch2zbN1cv3ZL3HAVZrCAOMob0s5
-         Bl/gHYQNTiVItT0tFAtFKVphv4o9cLgdOHbJEDBu0fLV9eJDm/ZUy8jUAE1HWIZnEHXi
-         3MwNRyD4T75eJ3JKaYiauVGB6ztbAWvf6wjLuDtfT+jTsLLopoHbc944Y4pnkCKGb9ts
-         B3FVDuGwE4VGpHwKGJf8ODXGUT2DciGOZYeO9NdcUhX4zrtTmKMRvlAZlRXtE3Q+05pd
-         cAFQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795463737; x=1796068537; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Gd5vkS8rekRzrNw14AZBHfRH+N9fBKRzF69D+TwAlOc=;
-        b=klX4BZ2SJNTMSrywDGSIV/16noC15wpAvjoBOkCL6VprZy61rDcD9QTHuztfR9Tuzg
-         ya2nK4c06Oxw/VjQ01rYZooWGjRYhIlcehQDLDYYHAihJcTUhaX+DcZEH7BVZC7b8DdI
-         3VE9xpA6SNF0jRhObUVsSkdyTgO/dD9XZSshAODtcgr/63eyBQDMfk2w21S/AWnlOAmx
-         C6Nxy8ygfimfdk7a67J7QXglsWVIVZ87KpZL0j3iWCA02hOY1H6mCULb6CwOnFGgqsaJ
-         Z1GsKqUmNaVZa85kFWwKTasKVepJYI+oWjQPr8BOLjrBomj0HKFEKJN0TbNA9qYZJyZo
-         rGiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795463737; x=1796068537;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Gd5vkS8rekRzrNw14AZBHfRH+N9fBKRzF69D+TwAlOc=;
-        b=ZsI88Owtpcn5QvvUznF0c6g1uOaMoEJBfElxco0kgefFeBHKelXDyn5CUktpxrAI5y
-         ub/yuNqDagTI0zBhRJJSQVlbhJjf4Q2ACcq0J3jP2dIsp2OwRaQduMOhfBdh7V5H1UYZ
-         fgKfc5TPJRy00qX9p/VsVcEWlsP7udmFRDRPqN47CLjSyZHN4o+x0KxHrRSoQpFUvWkE
-         2I6Q8+lujq9Zvwyb218KKj2+mlxBoiLXpjDkGMoN6y6zHb1tSO3FYqQ7BtBimv7kjg4H
-         A9gqhKvEIGxOQgDBtaxCd0z3fxQvJ4ZkBdKeIaAE1MrtKqL9OAWf+sapcmVFgmAY7Drz
-         rBdA==
-X-Forwarded-Encrypted: i=1; AL+hErEpIGamtd4kt3mRw8VHXK2EVcuTHgDp5E9LBefW6u7uOsr62j7b777bH8uyluUnulL0BPPXcWMkPmrBnpvY5jw6FdH4vT8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/glS7iiHsrOBqwI/d4nP11P5Kuuepnb3YW2L4YfGxcX+iXlUq1
-	FoRRZwQ2GNBK+42cL6eQuQdNx3KttUom64ejCP6kIxJVkN8t0Q2aJxsTcuM723ynQh6+Kl4FNmt
-	znQyMGB9o4RInnYdE5IRnVMq408K22vI=
-X-Gm-Gg: AZFdTZcCh1RM9LyGr6oU+8F+Nv9kfszlhG/xmmiXSBb5i3NRpDt03lB8p1u255JGVK/
-	i4gW84jQcBYD3yWrq07ysfgnl/MUr0+hingdfWleLNMY01/Q0g8Dbxbd4Ttr8I/bdgMRYSEz4CT
-	g7u+WYo5/PdICWVr0bCQbGHhk+V3BvIjAC4k6Sc5ewpCO4cp8cdFPP2sezk8skDh3TlgqDYF8Yi
-	GwHs9qJd6QQpFukSLBFN3Mvu+jixPl9kRCj9M5BQ3XRC/TTz7tcTaVem4+zxKBs8bxQ1bvGD/vi
-	hociNwvFbAiZqc+dj91QamQjO9jG9i5fQIvZukWyaWzKwQrm2VJ3padY28QdLm18KfDgkYY7hqK
-	gW2MOkwn5Pw61LNkq7IjzNOOR6z6txlqAJbMsV7ZVtfdYET16nokMbzDOE94RCzN4n9ZmZPPqS5
-	Uuh4BlpV5eMCgAmtx/i3XGI9OtgSQtSYPgdw==
-X-Received: by 2002:a05:6000:29d2:b0:4aa:831a:d0eb with SMTP id
- ffacd0b85a97d-4abb3c37a50mr16976489f8f.9.1795463736432; Mon, 23 Nov 2026
- 11:55:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UVyzKebp
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 674E81F000C0;
+	Mon, 23 Nov 2026 20:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795465106;
+	bh=8AUjLkJf+AzfntX6iFDwsoJRr0FO8Zc2d0H24MDxBvI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UVyzKebpzwIv1Yn/drpovJ7QjKcAtXZdZD3OApmocb00ceKrmEfJyDHHIOPR6rxGL
+	 dTlkkM2zSU+UbZRpUQ+0dvozMcV8vxWcZeWOo0r5n6suKMFSxE8JBMe1jVb3u4rql3
+	 ms3Ao00f7Pon1f08VL7Hn46kMq6Iz6j3sYGeU35V56ovusnZnR6pYUrnDPbWr/p+wb
+	 gIPYdrgT9PV8u20SWsFW944fnSAR4vKt9Jf/y5k3dQM9rNHyJbrWrSx4gBe9b8kfLw
+	 1jiBkulqoMOpNt8DLyxG67WYmZUqfyURRMTL1VvHecFgRyFtDF6VEFNUqMvhuv5ulT
+	 aypeV1ThO2hjw==
+Date: Mon, 23 Nov 2026 22:18:22 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Hallgrimur H. Gunnarsson" <halg@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Serge Hallyn <sergeh@kernel.org>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	David Howells <dhowells@redhat.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Jonathan Calmels <jcalmels@3xx0.net>, Jann Horn <jannh@google.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Singh KP <kpsingh@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+	containers@lists.linux.dev, keyrings@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] userns: introduce capability bounding set for
+ user namespacesg
+Message-ID: <awSfjslSDxyWvrHt@kernel.org>
+References: <20261119104208.782900-1-halg@google.com>
+ <20261119104208.782900-2-halg@google.com>
+ <CALCETrVqc+1bjH1bhqHee9bsUdk2B6314z7PMexbsnNpMhk14g@mail.gmail.com>
+ <CALCETrV=zSxb6sgA08DLiK2bQovdMEj9ycG=Cc71mLn2C5Pgeg@mail.gmail.com>
+ <4db941ba-3001-4019-8910-63e534b29f89@schaufler-ca.com>
+ <awSVO9Zc-233M7_P@kernel.org>
+ <awSWK7o9PCk4ApM8@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,90 +80,91 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com>
- <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com> <CAHC9VhR9sjunJRnM9gy-BkBZkapQTrr8a8FtmaK7JkAmUqTrLA@mail.gmail.com>
- <CAEf4BzZKmn6g0SK8OddjKFj_vAmZFvpZv32Hs_S+GHgT7VNfrg@mail.gmail.com>
- <9d6bdc31-e57c-4187-be78-29d82471f710@app.fastmail.com> <9695ec3d-7b81-488d-989f-0bd411d673f2@linux.dev>
- <CAPa8sAh6b5xn4rZzPfM0nZ+_kkywWj22fy8deLq+6qYews0rdQ@mail.gmail.com>
- <MRYP264MB7057096D13282544720793F2E67A2@MRYP264MB7057.FRAP264.PROD.OUTLOOK.COM>
- <CAEf4BzZWEU24+ZC0W_20hc3t+qnEHncQA1ztTF7ZPPOf3DDPVA@mail.gmail.com> <CAHC9VhSFvOiP5Tyt=rOFMwg=Ro1jRw+hfcw4AdCkEyftZJHQCQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSFvOiP5Tyt=rOFMwg=Ro1jRw+hfcw4AdCkEyftZJHQCQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 23 Nov 2026 11:55:24 -0800
-X-Gm-Features: Aa3M54rW4zsDQnYRhxM3Ycfdbtgyp7iJNkovd2OcGLgGuI-HlydZfB9BSFPhl3s
-Message-ID: <CAEf4BzZqjiWR4EzBFdV-czH-GnxqOeOAsMLgXtQ6TwN2ZiiT8w@mail.gmail.com>
-Subject: Re: [BUG] bpf, lsm: new first argument in 7.4 inode hooks silently
- breaks BPF LSMs
-To: Paul Moore <paul@paul-moore.com>
-Cc: Paul Mabileau <paul.mabileau@harfanglab.fr>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Daan De Meyer <daan@amutable.com>, 
-	Ihor Solodrai <ihor.solodrai@linux.dev>, roblabla <linux@roblab.la>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <awSWK7o9PCk4ApM8@kernel.org>
 
-On Thu, Nov 19, 2026 at 11:37=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Thu, Nov 19, 2026 at 12:59=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> > On Wed, Nov 18, 2026 at 7:14=E2=80=AFAM Paul Mabileau
-> > <paul.mabileau@harfanglab.fr> wrote:
-> > >
-> > > Hello,
-> > >
-> > > On our end, we also have already merged code to adapt our eBPFs to th=
-e argument order change. However, we would still prefer if this easily-avoi=
-dable breakage could be fixed by moving the argument to the end, even if it=
- means having to revert our fix.
-> > >
-> > > This is motivated by the fact that such a change is not made in place=
- on our end because we ship our software to environments we don't control, =
-meaning that any and potentially all versions ranging from 4.11 to the very=
- latest should be supported, so the change is made by compiling and shippin=
-g a new variant of the concerned eBPFs for the version interval it is valid=
- for (7.4+ in this case). And that has to be done every time there is an up=
-stream change like this, so the total installation size and overall complex=
-ity grows accordingly.
-> > >
-> > > If we could avoid that, especially for such trivial root causes, it w=
-ould be nice.
-> > >
-> >
-> > I agree, and that's why I'm asking Paul to accept the patch reordering
-> > the newly added argument before 7.4 final is released.
-> >
-> > I do not think that the maintainer's personal preference for argument
-> > ordering beats real user pain.
->
-> As stated several times in the past, the problem lies not with the LSM
-> framework but with the lack of an abstraction layer in the BPF LSM
-> providing a stable API.  As far as I can tell the lack of an
+On Mon, Nov 23, 2026 at 09:38:23PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Nov 23, 2026 at 09:35:16PM +0200, Jarkko Sakkinen wrote:
+> > On Mon, Nov 23, 2026 at 09:22:29AM -0800, Casey Schaufler wrote:
+> > > On 11/20/2026 9:09 AM, Andy Lutomirski wrote:
+> > > >> On Nov 19, 2026, at 2:52 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> > > >> ﻿On Thu, Nov 19, 2026 at 2:43 AM Hallgrimur H. Gunnarsson
+> > > >> <halg@google.com> wrote:
+> > > >>> When a process creates a new user namespace, it receives a full set of
+> > > >>> capabilities (CAP_FULL_SET) scoped to that namespace. While namespaced
+> > > >>> in scope, several of these capabilities (such as CAP_NET_ADMIN and
+> > > >>> CAP_NET_RAW) expose broad kernel attack surface that many sandboxes and
+> > > >>> containers never need. However, there is currently no configurable way
+> > > >>> to withhold such capabilities from user namespaces while still granting
+> > > >>> them to workloads that require them.
+> > > >>
+> > > >> One thought (from the rootns thread): the other decent sized attack
+> > > >> surface here is CAP_MOUNT_ADMIN.  Which doesn't exist as a capability
+> > > >> bit.
+> > > >>
+> > > >> A sort of horrible solution (but maybe not so awful) would be to
+> > > >> declare that the bits in cap_userns aren't actually capability bits,
+> > > >> and that you need the bit in cap_userns *and* the bit in cap_effective
+> > > >> to do sensitive things, and that mounting needs cap_userns to have
+> > > >> NSCAP_MOUNT_ADMIN *and* cap_effective to have CAP_SYS_ADMIN.
+> > > >>
+> > > >> I want to sleep on this.  It might actually solve several problems,
+> > > >> e.g. controlling creation of ipv4 and ipv6 loopback or tunnel devices
+> > > >> or whatever.
+> > > > I slept on it. Here’s a counterproposal.  I’m not saying I think this
+> > > > is better than this patch set, but I think it’s worth weighting the
+> > > > options.
+> > > >
+> > > > Define a whole new set of privilege bits.  As a
+> > > > poorly-painted-bikeshed option, I’ll call them eprivs (for exposure
+> > > > privileges - it’s a crappy name but at least it’s pronounceable).
+> > > 
+> > > I played with a mechanism I called "chits" (all the good terms for security
+> > > bits have been consumed for a very long time) that looks a lot like
+> > > what you're proposing. I did it to address the CAP_SYS_ADMIN problem,
+> > > where any use of the capability opens up a whole barrel of worms.
+> > > I cannot, unfortunately, find my patches. :( The basic approach is:
+> > > 
+> > > A process has an optional set of chits. A process without a chit set is
+> > > unaffected by the mechanism. A process with a chit set is allowed only
+> > > those operations for which it has a chit. The existing but empty chit set
+> > > allows no operations. A process may drop a chit, but not the set, which,
+> > > again, can be empty.
+> > > 
+> > > Because I was after CAP_SYS_ADMIN, I envisioned a call
+> > > 	cap_able_chit(capability, chit-list)
+> > > but there's no reason there couldn't be a
+> > > 	chit_able(chit-list)
+> > > as well.
+> > > 
+> > > I wrote this as an LSM, but the system-wide aspect of it made that
+> > > a questionable choice.
+> > > 
+> > > If you have any interest, I could dig more deeply to try to find the
+> > > patches. Otherwise, I'm happy to look at what you come up with.
+> > 
+> > What if eprivs or chits would take each capability and subvidide
+> > them into pieces? CAP_MAC_ADMIN would be formally a set of chits
+> > (or eprivs).
+> > 
+> > And process having e.g., CAP_MAC_ADMIN, would actually have the
+> > set of chits that are included to CAP_MAC_ADMIN.
+> > 
+> > Without that type of relation there's just a space full of chit
+> > ;-)
+> 
+> This would not prevent from combining your own collections of chit
+> that do not map to any specific cap, only that each cap should map
+> to a specific set.
 
-I think the problem lies neither in the LSM framework itself nor in
-the BPF LSM in particular. Neither have any abstractions built on top
-of LSM hook prototypes to guard against argument reshuffling. And
-that's fine and basically inevitable. If you change LSM hook
-prototype, you'd need to adjust source code of all LSM frameworks
-relying on that LSM hook (which is easy for in-tree source code, of
-course). For BPF LSM, if argument is added at the end, that pain can
-be avoided completely.
+With decompose/compose relation it would neither matter if caps
+would have for some reason the same chit. Internally task could
+have just this sets and caps can be dynamically refreshed if
+the process' set has all the chits that compose it.
 
-> abstraction layer in the BPF LSM is by design, and while that does
-> provide some advantages, one of the notable disadvantages is that the
-> API is unstable.  If you want to be upset at anyone, direct your
-> frustrations towards the design and current implementation of the BPF
-> LSM.
+I.e., that would make caps a cached result refresh, and chits
+the actually stored security tokens.
 
-What upsets me is that your personal grudges against BPF community
-(or, perhaps, just particular members of it, doesn't matter) gets in
-the way of doing the right thing as a maintainer and putting Linux
-users' pain above your personal preferences and/or dislikes. And
-hiding this behind "I like this specific order of arguments" or "BPF
-LSM should have better architecture" is just petty.
-
->
-> --
-> paul-moore.com
+Br, Jarkko
