@@ -1,67 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795523148;
-	b=0MOXEym76qN9X9QW37f2oES+fz/l1KZExKzL9TAT9RZcIKR/JM95QbToT7F01kjH74vJ
-	 VzHDjYsEjgdkY5xi/10tGHJG1zwtEHScgdH8rol8fisjeJATi5jcxBtAUYyGL+rOvItY5
-	 Hd66vAXL14tbr/FTcBdhFx2a1w9ftelkaEDXOYBq3zffOJVeckSnNQbrIdRtghXZDFdff
-	 ksgV1NL+IWHLYjz5Z5Y5uN608HRsQqSqTNYSlNEngSMo/4jxgSRMai1c6TCZMUVwy/okf
-	 CviOP52Q4+cgvzeu2oI7tJ8IlllhOBVlDzoueanA4MbFhiZ52Qn/sdlhWsLfjxXTWOw==
+	t=1795525462;
+	b=1hFO1KoVl40ufffGmC0IkbJbX7T3IbJYW1z7TK9LR6e5eM4Xvi/ey6Svtabx6T79LWwP
+	 qap6gdU9uDVh9kyHClJQhKuTSxfrwZm62Z+ZQFOZ+tZ/l83onwLc9GfekO2K7Tx5Un8dW
+	 oJDuBbQIL6EV7j7YPYrE1zKcd/iS3vBHEXfO31tFC8w1Eejd+1hauykm8+e+z8iS39n/6
+	 sCiVRIpBZrQ24EYpGgqnMlfVVtFsa0ASiH6GjqdimnSwCOyFBWGJpUyhviCJCnFOf/+7j
+	 klcsFGr7bS9XsXi0wz3D+vJ+/hwvlXU0G29YCrhvGfb0XqUtELlMbmGa5SPPnxxua7A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795523148;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=tSOYltX4QNcDiHz2028+EWsSXO1m1H4x04+sAWIROUA=;
-	b=xaqrxVuAjY6Wr2/emevxKZTgMDe5eo6pDC+XpeGo8p2MQVohNAvqvtZ+xUz4Fc7xkSkw
-	 QLWroPRHHNJjo0EOvta6Zdjxv3FgoCmQIFIncEvmqsrVX/VRuYzh25YEcuVuD9Wn/gnZd
-	 s4Ix0zXzv7hlldwtmcw60rIl/3NT97bYiaambAtLUVXhA2qcnu7g3G9Qsq4CyI4YSK9Ip
-	 Rn9gMS4mvKsugkCuup1oknO/nfS/zYgkKv6KN++JBy8jWiOV8YebY1Fwv5MUJyDYcMB/w
-	 pC3hmgsBFFkHf5hNiAh97MGnTwA2lUv22bIs0pN9IoCslu/F7r4VzZ4nm3p3HSJSzSQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795525462;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:X-B4-Tracking:X-Change-ID:To:Cc:X-Developer-Signature:
+	 X-Developer-Key:X-Scanned-By:X-Mimecast-MFC-PROC-ID:
+	 X-Mimecast-Originator:Content-Type:Content-Transfer-Encoding;
+	bh=1VGhrilOrIVUd7NQcN6hWODsfVyfTY1/1MG6x6kIma0=;
+	b=0HboOPtEJTskTBbVdJ+6r6/fExJVI2i6hS2xxRHsPNQUyJtyVkt/7HGAz2BopU/+uNxX
+	 iWGTLPuS0A+KdV882eWoI4P7zVdDfALJGEq/xjBFx3D4iKyC1OlX98HewSiO6Flvbx79z
+	 eQ7gcLHXUsF+PHu7OpA1GV36XzwiEwNmoN0cNNmods8bSOVgafjdxrmtTsOHgje13Ypw2
+	 vl6N3RVzDurdSgqNbN8/3jIbBu7qHjX8QBkDSrKGg9LWwhS62P2/zB1YLlaho80Arc0+f
+	 RpQnCdBQiIbbSOXe2PCPAukJyKA9gVg8nNY8WMV8WuGoWj5vglxKS9DotxVdkmCjaBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="TuE2+Z/s";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=iYA78xEB;
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB230606A31E;
-	Tue, 24 Nov 2026 12:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52559606A31E
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2026 13:04:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 52559606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TuE2+Z/s
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 681C61F000CF;
-	Tue, 24 Nov 2026 12:25:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795523146;
-	bh=tSOYltX4QNcDiHz2028+EWsSXO1m1H4x04+sAWIROUA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TuE2+Z/sAuCcbGgFz2/FokuqyaInILB38mxwMPHz3ZjlbD7I41q/exTjGfnoLMzMd
-	 tCAU+oUX59GQNY64kNMdzilR/OgvpDxlEFnEX2TljN0M9cR7/T0bUCuJV0khwcAChn
-	 llEGFk2P3QpYZJ/qso0ODdgLpX6QzaHJsSDE8xejHQ/PKDNrfLCy1+lXc6YpWqki/a
-	 jTt1FWsIEXHfnz11LCETEMxherMh0UK1wg6RxLoX72LvydFC+NpJbtWipU1aAdMGCW
-	 FDwf/EBlfIg7Icz3Gpuo5atIXmCd1jGyTNzE7ydgHRnw6lTEGOM0WnbBr0GQiGwyFh
-	 1L4ID8cGA1mlQ==
-Message-ID: <sashiko-outbox-231131@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 9/9] KEYS: trusted: Add asymmetric key support for TPM2
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, keyrings@vger.kernel.org
-Cc: dm-devel@lists.linux.dev, linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org, "Alasdair
- Kergon" <agk@redhat.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Benjamin
- Marzinski" <bmarzins@redhat.com>, "David Howells" <dhowells@redhat.com>, "David
- S. Miller" <davem@davemloft.net>, "David Woodhouse" <dwmw2@infradead.org>, "Herbert
- Xu" <herbert@gondor.apana.org.au>, "Ignat Korchagin" <ignat@linux.win>, "James
- Bottomley" <James.Bottomley@HansenPartnership.com>, "James Morris" <jmorris@namei.org>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Jonathan Corbet" <corbet@lwn.net>, "Lukas
- Wunner" <lukas@wunner.de>, "Mike Snitzer" <snitzer@kernel.org>, "Mikulas
- Patocka" <mpatocka@redhat.com>, "Mimi Zohar" <zohar@linux.ibm.com>, "Paul
- Moore" <paul@paul-moore.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Shuah
- Khan" <skhan@linuxfoundation.org>, "James Prestwood" <prestwoj@gmail.com>
-In-Reply-To: <20261124120044.1481752-10-jarkko@kernel.org>
-References: <20261124120044.1481752-1-jarkko@kernel.org>
- <20261124120044.1481752-10-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 12:25:44 +0000
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=iYA78xEB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1795525460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1VGhrilOrIVUd7NQcN6hWODsfVyfTY1/1MG6x6kIma0=;
+	b=iYA78xEBTLwFu/juY1o991mIqkTESiN3rrcxrEuLhnRpr6lpmHJiuzZlemXQX14O/AioVX
+	F9GEd+dnTWSy0IzHNFjORHOBl0L6xvjNqI9BwkcBq5F/bNk/9CuOm4Zm74uN2xXcc0viH7
+	g3b0EpuHN1NYEuFo424DbqPN36X2u5A=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-692-K65r4GWQN3uUAcKHjQCkKA-1; Tue,
+ 24 Nov 2026 13:04:15 +0000
+X-MC-Unique: K65r4GWQN3uUAcKHjQCkKA-1
+X-Mimecast-MFC-AGG-ID: K65r4GWQN3uUAcKHjQCkKA_1795525450
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D38B51944B1C;
+	Tue, 24 Nov 2026 13:03:57 +0000 (UTC)
+Received: from aesteve-thinkpadp1gen8.rmtes.csb (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F8AF1956087;
+	Tue, 24 Nov 2026 13:03:46 +0000 (UTC)
+From: Albert Esteve <aesteve@redhat.com>
+Subject: [PATCH v6 0/7] memcg: dma-buf cgroup accounting and charge
+ transfer
+Date: Tue, 24 Nov 2026 14:03:34 +0100
+Message-Id: <20261124-v2_20230123_tjmercier_google_com-v6-0-dce12fa03ad6@redhat.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -70,108 +73,236 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43O3WrDMAwF4Fcpvl6GJP8lvdp7lBISW0481mY4I
+ WyUvPucMraOXCx3OhJ8Rzcxcoo8iuPhJhLPcYzDNQfzdBCub64dF9HnLAjIgIaymKnOswQkWU+
+ vF04ucqq7YejeuHbDpQhKBRdaNFqCyMx74hA/7hWnc859HKchfd4bZ1y33zjS//iMBRRGkrGAT
+ poKXxL7vpme81Gs+kw/IgLhDpGyyMEwk/el024jykfR7hBlFm3pySnXlkbZjah+RQS1Q1RZxBK
+ rBtACQLsR9YOIe37Uq+i4sjpQUzX+j7gsyxcDO6a/GQIAAA==
+X-Change-ID: 20260508-v2_20230123_tjmercier_google_com-f44fcfb16530
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+ "T.J. Mercier" <tjmercier@google.com>, 
+ Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ Shuah Khan <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+ =?utf-8?q?Ondrej_Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>, 
+ Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
+ Philipp Stanner <phasta@kernel.org>, 
+ =?utf-8?q?Ondrej_Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>
+Cc: airlied@gmail.com, cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ op-tee@lists.trustedfirmware.org, Albert Esteve <aesteve@redhat.com>, 
+ echanude@redhat.com, mripard@kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795525424; l=9579;
+ i=aesteve@redhat.com; s=20260827; h=from:subject:message-id;
+ bh=si3R7b0kcAGLEUfejc/PsZKusnANP7SCv7uuLauSWDw=;
+ b=tJGGA22KuFlVrI5rdm5SUwjA4Gc4/fTVuyvaq/v/YYF5DA/eXjf40+QU/bS9kCDYD82+zs2Hm
+ Dxn5Vd7+N1LC5MIaX9NH1jtOk0iod58Bz11JySE6hKyVamsSmtm8lMS
+X-Developer-Key: i=aesteve@redhat.com; a=ed25519;
+ pk=zI2RBeZgocwYm3AkJW4CtjoJnKoDZrfBl1xe5Ed6h+U=
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-MFC-PROC-ID: a2tvbq1ppC_gHTrOzGUw2uE4QKHSpmJMw8EwixOIu5A_1795525450
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Medium] KEYS: trusted: 32-bit param_size overflow in
-  tpm2_asym_rsa_decrypt()
-- [Low] KEYS: trusted: blob_len mismatch in tpm2_load_cmd() and
-  tpm2_asym_load()
---
+Shared-memory allocator services (e.g., Android's gralloc)
+allocate dma-bufs on behalf of client processes in different
+cgroups. Today those allocations are charged to the allocator's
+own cgroup, leaving client cgroups with no visibility into their
+actual memory consumption and defeating resource limits.
 
-commit 9a2d1dec7eb8e2fb4164f93f474ab53d2345c7be
-Author: Jarkko Sakkinen <jarkko@kernel.org>
+This series adds memory cgroup accounting for dma-buf allocations,
+building on T.J. Mercier's earlier series [1] and incorporating
+feedback from previous versions and LPC discussions [2].
 
-KEYS: trusted: Add asymmetric key support for TPM2
+Patch 1 introduces the MEMCG_DMABUF stat and the
+obj_cgroup_reserve_dmabuf()/obj_cgroup_cancel_dmabuf() and
+mem_cgroup_commit_dmabuf()/mem_cgroup_uncharge_dmabuf() helpers
+in mm/memcontrol.c
 
-This commit extends the TPM 2.0 trusted key backend to load
-OID_TPMLoadableKey RSA and ECC keys and expose query, sign, verify, and
-RSA encrypt/decrypt operations through key_type_trusted.
+Patch 2 wires up the charging policy: dma_buf_export() stores
+exp_info.objcg and updates the stat, a new charge_fd field in
+DMA_HEAP_IOCTL_ALLOC accepts a pidfd or cgroupfd to identify
+the target cgroup, and __GFP_ACCOUNT is removed from system-heap
+allocations to avoid double counting.
 
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/tr=
-usted-keys/trusted_tpm2.c
-> index e3cd02e19857e..e4731724908a7 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
-[ ... ]
-> @@ -750,10 +987,799 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->  	if (rc)
->  		goto out;
-> =20
-> -	rc =3D tpm2_unseal_cmd(chip, payload, options, blob_handle);
-> +	if (!private->alg_type)
-> +		rc =3D tpm2_unseal_cmd(chip, payload, options, blob_handle);
->  	tpm2_flush_context(chip, blob_handle);
-> =20
->  out:
->  	tpm_put_ops(chip);
->  	return tpm_ret_to_err(rc);
->  }
-> +
-> +#ifdef CONFIG_TRUSTED_KEYS_ASYMMETRIC
-> +static int tpm2_asym_load(struct tpm_chip *chip,
-> +			  const struct trusted_key_payload *payload,
-> +			  struct trusted_key_tpm *private,
-> +			  u32 *key_handle)
-> +{
-> +	u8 *blob __free(kfree) =3D NULL;
-> +	unsigned int blob_len;
-> +	int rc;
-> +
-> +	rc =3D tpm2_key_decode(payload, private, NULL, &blob, &blob_len, NULL);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return tpm2_load_blob(chip, private, blob, blob_len, key_handle);
-> +}
+Patch 3 adds DMA_BUF_IOCTL_XFER_CHARGE, a general ioctl on any
+dma-buf fd to transfer charges post-allocation. This covers the
+double-hop allocator case (SurfaceFlinger -> gralloc -> kernel)
+and works for buffers from any exporter that opts in. Charging
+is gated by dmabuf->objcg being set at export time, ensuring that
+transfer is only applied for buffers backed by system memory where
+size reflects actual bytes. If the receiving cgroup lacks capacity
+for the charge, the ioctl returns -ENOMEM and the original charge
+is preserved.
 
-[Severity: Low]
-Can tpm2_asym_load() pass a different blob_len to tpm2_load_blob() than
-tpm2_load_cmd() did when the key was instantiated?
+Patches 4-6 add access control for cross-cgroup charging. Letting
+userspace decide who to charge needs to be a privileged operation
+because it has material impact on OOM decisions and resource limits.
+Charging outside the caller's own memcg subtree requires
+CAP_SYS_RESOURCE. On top of that, LSM hooks gate the two charge_fd
+flavours: security_current_memcg_charge_task() for the pidfd path
+and security_current_memcg_charge_cgroup() for the cgroupfd path.
 
-In tpm2_load_cmd(), blob_len is clamped to private_len + public_len + 4,
-which strips any trailing bytes in the ASN.1 OCTET STRINGs before loading.
-tpm2_asym_load() passes the untruncated ctx.priv_len + ctx.pub_len from
-tpm2_key_decode() directly to tpm2_load_blob(), so a key with trailing
-bytes will load during add_key() but fail on subsequent pkey operations.
+Both flavours ultimately charge a cgroup, so the SELinux
+implementation gates the two with a single cgroup:charge_to
+permission. The target type keeps the distinction.
+The checks run at target resolution, before the CAP_SYS_RESOURCE
+baseline, and cover the caller's own subtree, so policy needs
+a rule even for self-charging. The SELinux controls are covered
+by new selinux-testsuite tests [4].
 
-[ ... ]
+Patch 7 adds selftests. The tests and vmtest script were mostly
+written by an LLM, closely following the style of the surrounding
+tests and the virtme-ng setup. All code has been reviewed and tested.
 
-> +static int tpm2_asym_rsa_decrypt(struct tpm_chip *chip,
-> +				 const struct trusted_key_payload *payload,
-> +				 struct trusted_key_tpm *private,
-> +				 struct kernel_pkey_params *params,
-> +				 const void *in, void *out)
-> +{
-[ ... ]
-> +	offset =3D TPM_HEADER_SIZE;
-> +	param_size =3D tpm_buf_read_u32(buf, &offset);
-> +	decrypted_len =3D tpm_buf_read_u16(buf, &offset);
-> +	if ((buf->flags & TPM_BUF_INVALID) ||
-> +	    param_size < 2 + decrypted_len ||
-> +	    offset - 2 + param_size > buf->length) {
-> +		rc =3D -EIO;
-> +		goto out_key;
-> +	}
-> +	if (params->out_len < decrypted_len) {
-> +		rc =3D -EMSGSIZE;
-> +		goto out_key;
-> +	}
-> +
-> +	memcpy(out, &buf->data[offset], decrypted_len);
+Known limitations:
 
-[Severity: Medium]
-Can offset - 2 + param_size wrap around on 32-bit architectures?
+- Single-owner model: a dma-buf carries one memcg charge regardless
+  of how many processes share it. The owner is deterministic, set
+  at allocation time and moved only by an explicit XFER_CHARGE.
+- Only memcg accounting. CMA heaps would additionally need dmem
+  controller integration.
+- If a transfer fails (e.g., the receiving cgroup is at its limit),
+  the buffer remains charged to the original cgroup. The allocator
+  (userspace) is expected to handle failures (retry, free, ...).
+- The LSM hooks are intentionally narrow. Broader cgroup access
+  controls (e.g., for the memfd/kexec handover case [2]) could be
+  a separate effort reusing the same pattern.
+- Only system heap sets exp_info.objcg today. Other exporters
+  (DRM, V4L2, etc.) can opt in by setting it, but are not
+  covered by this series.
+- Related to the above: lazy backing-store allocation is not supported.
+  This can be extended later, e.g., by adding a flag on the dma-buf
+  struct for explicitly marking when memory is committed.
 
-When off_t is 32-bit, a malformed unauthenticated TPM response with
-param_size >=3D 0xfffffff2 wraps offset - 2 + param_size past buf->length
-while satisfying param_size >=3D 2 + decrypted_len, allowing memcpy() to
-read up to decrypted_len bytes past buf->length from buf->data.  The same
-32-bit overflow can occur in tpm2_asym_parse_signature() at
-offset + param_size > buf->length.  Checking
-param_size > buf->length - (offset - 2) and
-param_size > buf->length - offset avoids the wraparound.
+Note on TTM/GPU accounting [3]: that effort charges system memory
+allocated for GPU buffers per page, with its own stats (gpu_active
+and gpu_reclaim). This series charges at the dma-buf level, for
+memory with no memory.stat category of its own; exporters whose
+memory is already charged by their allocator must not opt in, so
+the two do not overlap.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261124120044.1481=
-752-1-jarkko@kernel.org?part=3D9
+[1] https://lore.kernel.org/cgroups/20230109213809.418135-1-tjmercier@google.com/
+[2] https://lpc.events/event/20/contributions/2416/
+[3] https://lore.kernel.org/all/20260706052330.1110909-1-airlied@gmail.com/
+[4] https://github.com/SELinuxProject/selinux-testsuite/pull/111
+
+Signed-off-by: Albert Esteve <aesteve@redhat.com>
+---
+Changes in v6:
+- Unify SELinux perms into cgroup:charge_to
+- Drop the current cred argument from the LSM hooks
+  and rename signatures to security_current_memcg_charge_*
+- Add selinux-testsuite coverage for the charge_to controls
+- Rebased to v7.4-rc4
+- Link to v5: https://patch.msgid.link/20261117-v2_20230123_tjmercier_google_com-v5-0-1ce975f2a9ad@redhat.com
+
+Changes in v5:
+- Reject dma-buf reservations above INT_MAX pages to avoid
+  nr_pages truncation (Sashiko)
+- Require CAP_SYS_RESOURCE for charge requests targeting outside
+  caller's own memcg subtree (Sashiko)
+- Hold an obj_cgroup instead of a memcg in the dma-buf struct (Thomas Hellström)
+- Restore mem_cgroup_commit_dmabuf() so dma_buf_export() does not
+  reach into memcg stat internals
+- Resolve the cgroup and run the LSM check against the same file
+  in get_obj_cgroup_from_fd()
+- The cgroupfd hook now takes the file and checks the inode SID,
+  so genfscon-labeled cgroups are covered
+- Rename the LSM hooks to security_memcg_charge_{task,cgroup}()
+- Replace dma_buf object class in SELinux with process2:charge_to
+  and cgroup:charge_to
+- Link to v4: https://lore.kernel.org/r/20261104-v2_20230123_tjmercier_google_com-v4-0-1819a017000b@redhat.com
+
+Changes in v4:
+- Remove memcg_account flag; exp_info.memcg != NULL is the opt-in
+- Centralize memcg bookkeeping in dma_buf_export()
+- Drop mem_cgroup_commit_dmabuf()
+- Make mem_cgroup_transfer_charge() generic (not dma-buf specific)
+- Add EXPORT_SYMBOL_GPL for reserve/cancel (system_heap is tristate)
+- Reorder: move xfer ioctl before LSM patches
+- Serialize dmabuf->memcg updates with the dma-buf resv lock instead of cmpxchg
+- Link to v3: https://lore.kernel.org/r/20261027-v2_20230123_tjmercier_google_com-v3-0-78d2c4cb8647@redhat.com
+
+Changes in v3:
+- Split mem_cgroup_charge_dmabuf() into reserve/commit/cancel three-phase API
+- Extract mem_cgroup_get_from_fd() helper shared by allocate and xfer paths
+- Rename __padding to flags in struct dma_buf_transfer_charge
+- Fix UAF race: move mod_memcg_state() before cmpxchg in transfer
+- Add memcg_account opt-in flag; xfer returns -EOPNOTSUPP if unset
+- Wrap dma_buf_charge_cgroup hook in #ifdef CONFIG_CGROUPS
+- Fix TOCTOU in SELinux charge_cgroup xattr length handling
+- Link to v2: https://lore.kernel.org/r/20261021-v2_20230123_tjmercier_google_com-v2-0-ef6ee2dd8c5c@redhat.com
+
+Changes in v2:
+- Move charge_pid_fd to charge_fd, accepting cgroupfd in addition
+  to pidfd per Christian König.
+- New DMA_BUF_IOCTL_XFER_CHARGE ioctl for post-allocation charge
+  transfer on any dma-buf, not just dma-heap buffers per Christian König
+  and T.J. Mercier.
+- Moved __GFP_ACCOUNT removal to patch 1 per Barry Song.
+- dma-buf charge/uncharge helpers take struct dma_buf * directly
+  to avoid the need for caller to manage size calculations.
+- Added test_xfer_charge_cgroupfd_self to dmabuf-heap selftests.
+- Added LSM and SELinux hooks for cgroupfd-based charging.
+- Rebased to v7.3-rc7.
+- Link to v1: https://lore.kernel.org/r/20260512-v2_20230123_tjmercier_google_com-v1-0-6326701c3691@redhat.com
+
+---
+Albert Esteve (6):
+      dma-heap: charge dma-buf memory via explicit memcg
+      dma-buf: transfer objcg charges via DMA_BUF_IOCTL_XFER_CHARGE
+      lsm: Add memcg_charge_task LSM hook
+      lsm: Add memcg_charge_cgroup LSM hook
+      selinux: Restrict cross-cgroup memcg charging
+      selftests/dmabuf-heaps: Add dma-buf memcg accounting tests
+
+T.J. Mercier (1):
+      memcg: Add MEMCG_DMABUF accounting infrastructure
+
+ Documentation/admin-guide/cgroup-v2.rst            |   6 +
+ drivers/dma-buf/dma-buf.c                          |  45 +++
+ drivers/dma-buf/dma-heap.c                         |  27 +-
+ drivers/dma-buf/heaps/cma_heap.c                   |   3 +-
+ drivers/dma-buf/heaps/system_heap.c                |  19 +-
+ drivers/tee/tee_heap.c                             |   3 +-
+ include/linux/dma-buf.h                            |  10 +
+ include/linux/dma-heap.h                           |   4 +-
+ include/linux/lsm_hook_defs.h                      |   2 +
+ include/linux/memcontrol.h                         |  56 +++
+ include/linux/security.h                           |  12 +
+ include/uapi/linux/dma-buf.h                       |  26 ++
+ include/uapi/linux/dma-heap.h                      |   7 +
+ mm/memcontrol.c                                    | 271 +++++++++++++
+ security/security.c                                |  31 ++
+ security/selinux/hooks.c                           |  19 +
+ security/selinux/include/classmap.h                |   1 +
+ tools/testing/selftests/cgroup/Makefile            |   2 +-
+ tools/testing/selftests/cgroup/test_memcontrol.c   | 447 ++++++++++++++++++++-
+ tools/testing/selftests/dmabuf-heaps/config        |   1 +
+ tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c | 237 ++++++++++-
+ tools/testing/selftests/dmabuf-heaps/vmtest.sh     | 226 +++++++++++
+ 22 files changed, 1440 insertions(+), 15 deletions(-)
+---
+base-commit: 8d7fe9885c62fc9a95bf55d9db244d9672a8aadc
+change-id: 20260508-v2_20230123_tjmercier_google_com-f44fcfb16530
+
+Best regards,
+--  
+Albert Esteve <aesteve@redhat.com>
+
