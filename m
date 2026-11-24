@@ -1,79 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795561665;
-	b=ZnOOxnYRMlaGTRh7UFEoPI4b2cocRoIEk8oD1Qr5YV1h67cy29WxB9ix1wyBYFeRVueX
-	 6WflLrZQ0yGglSvUOpLZA2N8TQjg1mpLMyv5XlbjhLH8/1ew9fuGxWqA38x5wyDeymWzj
-	 QH0Vn6dwx2caqCG/4+WUgGCDDqG1b5lIZIhJFaIGRLqE2ZgTuHz3Jet3is9aGCWrcRHxi
-	 4vhXrm3tfN3Hzkl+rVSGybJGfRkqMclQdhfSw/bLFAteQdocOClcStgsQvk6gaZWn+znA
-	 5xB8fGY9h7xvqlwaeF51Gbo56DHzxd4xlVqL++CxyRaZ35VAdNIb0oYblNDkgKCvIDQ==
+	t=1795561761;
+	b=ZdCo2zntDYTWo8Jgl6+REa2scx63G/a6idZ2ERcyfzmWtg09T7+9u2ZSE3vyWyWs3NaF
+	 4rkOe8iCqpuKYLpGb3psaWwbszD9+BTzVUx6CzC0UgCOcf0X8IanbqZ7ZOHxeytLUNpRh
+	 sqqDPcSxrhCKhZY7UUoDYV0ddYWLLUlUHlLg2OM9rY0syeYmOrauQ6ec59xNi8SumuqJi
+	 /BDbjScBdQGbsVOoCmAwPJ4hiVIaMtyc2hOrNLbjnHWEKw4f0VJ/LjmGBLoV+rO4/87gh
+	 7qLLuXzhz3eaLb+Vl4TPy2zw0zG3BBYsBq/Nye8qy8uQyPdqwo5FECK6UcrE7/OKwWA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795561665;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=+1ShINOhrETVckZgwkDQ2yDcTAY5roVvnqnqdvL+Hbk=;
-	b=sTNKiREt5E7Ijj8nD5jPS62/i59+NwkTiq73IYHiDCq6sdjPmVfb34ZreB6j/eP+YzUB
-	 CqCgdDLj01MQI70AOwCoDTzJ4Qaww1KXFQosz6BBl4Q+p5fcGZA6CkO3HbajkRceOpGoR
-	 Ua++/EIRj9XzIBmB2+fnX1SqKuuF5uEf/X0ITYoKZpkzAOOhSEsQtCmif4pc6d25Ts1HO
-	 hmB95eNe2lduJJCTmJ+rnw+nlkpn4KGPIiXJybO9mYLJck8hAt+tpRc3u5kAaau4HYA/R
-	 4nNExNE27B7WSparM8mOy7N55eZj0+pWCwsFFPVZ/+Dl/bkkJGSNbQAmU88VijnWx1w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795561761;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=V2OmqIyRYNn84fTcJ7B76gimFKbuWcXbIw+xjPcSzkA=;
+	b=iupYWw0WTWXx63pe2zS+caQ4xdt0yWpr1d9t5awUJF0XPfMi29/nfx9+pqzm2onO4Saa
+	 kQp73c1KeTKlGJHp5hljRLQtoOgbhoZZBT9QMZIoZhLeCDlmC1yBOnQyxWo48yGk6YNKe
+	 z2kaWQOEPQgFrutTVz6qwUMep9rrqBaC8mfCAC5I7QNuPNtUo6BFjltbjOoGwZJiGIvml
+	 bWtvtMavqzjq/kCvHd4ODNL2IaMx4yrpwZEpikhKSC/4hjhxGP9ksQWEsX0wmGpEob7V4
+	 VvDM5EqHxxbDvRAbBBh2uEqzA/P4YNVcZ8+N7RIRmLuB/G2jMLo4iQhJ5TRU5Pnt+Yg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dVQjkdi+;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cIkS9woo;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id B2DA4606A327;
-	Tue, 24 Nov 2026 23:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2043A606A31E;
+	Tue, 24 Nov 2026 23:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dVQjkdi+
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BB17D1F000C0;
-	Tue, 24 Nov 2026 23:07:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cIkS9woo
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3601F000C0;
+	Tue, 24 Nov 2026 23:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795561665;
-	bh=+1ShINOhrETVckZgwkDQ2yDcTAY5roVvnqnqdvL+Hbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dVQjkdi+8IRvs0yX8C9we8uPqfWBw4PBtDidtovyXGmo6jzND4pqoWA5i9nS9C16q
-	 QmLLotzAOsH2d0e60fdXLQtsyWOyGdQCIec0Ay0nbE7jmq22QyPYcs8RZ5HwD3Xi9s
-	 1qykf2nNARtiKwl0Mlk3Oa8IpONRCgo8OPbdnFl6ggM4gbpUbqOiYI0zGyt0NHq86+
-	 2KqZuQppqAg996IAnB+YYMytFDCsHeqTsjq1nEzBb/xDsgy5GH137DtiREGq1+rj+V
-	 J6JKuWDX6n5j3AK4UQWTIKSlrTAhrhnf/UMaJd2hHtqM/9yygrwRJ+tYb39hwxi7IN
-	 HIZeeC4eAP7fw==
-Date: Wed, 25 Nov 2026 01:07:41 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Alasdair Kergon <agk@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Benjamin Marzinski <bmarzins@redhat.com>,
-	David Gstir <david@sigma-star.at>,
-	David Howells <dhowells@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ignat Korchagin <ignat@linux.win>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	James Morris <jmorris@namei.org>,
-	James Prestwood <prestwoj@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
-	Lukas Wunner <lukas@wunner.de>, Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Sumit Garg <sumit.garg@kernel.org>
-Subject: Re: [PATCH v2 6/9] KEYS: Factor out KEYCTL_PKEY
-Message-ID: <awYYvQwk6AWHhtNU@kernel.org>
-References: <20261124194043.1651679-1-jarkko@kernel.org>
- <20261124194043.1651679-7-jarkko@kernel.org>
- <20261124215035.GE2227373@google.com>
- <awYLCuCIG8--aa2Z@kernel.org>
+	s=k20260515; t=1795561761;
+	bh=V2OmqIyRYNn84fTcJ7B76gimFKbuWcXbIw+xjPcSzkA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=cIkS9wooJ7ryPDd26vHC20ZQO3Zxtf7rslQEkHJ0huW94PgSBPlsm+VyL2xH6uOOS
+	 NTSb/OxkWuteyzM3VHtDUuv2F3lvni1lP8dAafx1caQsoOshGwiSpQLFB8dg2f+OKp
+	 OLWu+kzZv1jW+JToXxr6un6lL2zluzmSel+vueb2JaA7IxqNqHIEM6WSR09t/7X3Co
+	 m71At3Z+MPGdE84VIuQw0QHM6DoAisaW/V92zsAjnhqB9RPDa1WXZOfEnyTWdyE39L
+	 ES/JAyWdJJA10/OhROMGYeAhaS/Z37rjyD1qgtLTdNEoGxBjeHQA3+5eswrsji95XN
+	 hDJnULqenHi2g==
+Message-ID: <sashiko-outbox-232207@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RFC 17/19] proc: look up map_files vma without
+ exec_update_lock held
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Christian Brauner" <brauner@kernel.org>, "Jann Horn" <jannh@google.com>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>, "Arnaldo Carvalho de
+ Melo" <acme@kernel.org>, linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org, "Kees
+ Cook" <kees@kernel.org>, linux-mm@kvack.org, linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com, "David
+ Hildenbrand" <david@kernel.org>
+In-Reply-To: <20261124-work-exec-update_lock-v1-17-e489035395b8@kernel.org>
+References: <20261124-work-exec-update_lock-v1-0-e489035395b8@kernel.org>
+ <20261124-work-exec-update_lock-v1-17-e489035395b8@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 24 Nov 2026 23:09:19 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -82,38 +63,47 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awYLCuCIG8--aa2Z@kernel.org>
 
-On Wed, Nov 25, 2026 at 12:09:18AM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 24, 2026 at 09:50:35PM +0000, Eric Biggers wrote:
-> > On Tue, Nov 24, 2026 at 09:40:40PM +0200, Jarkko Sakkinen wrote:
-> > > diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-> > > index c73979b2e98e..1c78a9a663c5 100644
-> > > --- a/crypto/asymmetric_keys/Kconfig
-> > > +++ b/crypto/asymmetric_keys/Kconfig
-> > > @@ -2,6 +2,7 @@
-> > >  menuconfig ASYMMETRIC_KEY_TYPE
-> > >  	bool "Asymmetric (public-key cryptographic) key type"
-> > >  	depends on KEYS
-> > > +	select KEYCTL_PKEY
-> > >  	help
-> > >  	  This option provides support for a key type that holds the data for
-> > >  	  the asymmetric keys used for public key cryptographic operations such
-> > 
-> > Could we use this opportunity to give CONFIG_KEYCTL_PKEY an
-> > off-by-default prompt like CONFIG_KEY_DH_OPERATIONS, please?  There are
-> > a lot of systems that need ASYMMETRIC_KEY_TYPE for verifying signatures
-> > but don't the KEYCTL_PKEY keyctls.  The fact that the KEYCTL_PKEY
-> > keyctls get pulled in too has always been a huge problem, given the
-> > additional attack surface they expose as well as other issues like the
-> > kernel's RSA code not being resistant to timing attacks.
-> 
-> We can do that.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] proc: separate __free() declaration and initialization in
+  map_files_mm()
+--
 
-I'd be also interested to hear, if there are any wishes from non-TPM
-trusted backend side. Thus, increased Cc-list.
+commit 6e8b44b478838f53cfc44f13f68cf03b45a869ce
+Author: Christian Brauner <brauner@kernel.org>
 
-Br, Jarkko
+proc: look up map_files vma without exec_update_lock held
+
+This commit restricts holding exec_update_lock during /proc/<pid>/map_files
+symlink resolution to the access check and mm pinning in map_files_mm(),
+performing the VMA lookup after releasing the lock.
+
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 7685660c36241..b28bd6c57e1d8 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2228,18 +2228,40 @@ static const struct dentry_operations tid_map_fil=
+es_dentry_operations =3D {
+>  	.d_delete	=3D pid_delete_dentry,
+>  };
+> =20
+> -static int map_files_get_link(struct dentry *dentry, struct path *path,
+> -			      struct task_struct *task)
+> +/* Check the access and pin the mm with exec_update_lock held. */
+> +static struct mm_struct *map_files_mm(struct inode *inode)
+> +{
+> +	struct task_struct *task __free(put_task) =3D NULL;
+> +	struct mm_struct *mm;
+> +	int err;
+> +
+> +	task =3D get_proc_task(inode);
+
+[Severity: Low]
+This isn't a bug, but per the cleanup.h convention, task can be defined
+and initialized with get_proc_task(inode) in a single statement rather
+than being initialized to NULL and assigned right after.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261124-work-exec-=
+update_lock-v1-0-e489035395b8@kernel.org?part=3D17
