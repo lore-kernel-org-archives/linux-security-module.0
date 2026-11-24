@@ -1,54 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=124.126.103.232
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795495555;
-	b=ZmfKjMCzNwmP6ayP/ABrrMKzPJti/bKzHvg2FvFf1XzY7a5J7Jd1pyIjNMCZkK1T5+vJ
-	 /RPw+OC0rvM0bEyTGa1ktx8/5FQtuP5hnEcjXmGNDZ3afzhTA8nB0sLC9dYzFLIsxGwFX
-	 CaVAZ6EeMZ9Kuk1MjgtzcLTBKoah+kYJJVfPsfl39IvpZOxzYc0WPcpj0KhNg029ug/es
-	 fniPeiWKQaSoxiehAYi0LnerGDbvDhfoOrPpCEFXMtieU0gJk+38ysSgEuXYSOz135yCz
-	 GUZoZQc9T++bycYUg1U4SIH7jv78AyPrkyuYl2pWSQ7SpqH39vZnjv6a2+q5JL9t8Qg==
+	t=1795497939;
+	b=PXwGuVo7qKJr16hBsc41PU9MSgYeoZ9St+2Sb7IyycobRNsQDZxEcSGaapUIM0cXPLFg
+	 Q2CeasGR0VtbiNflEUXdVlJwkWPaNDZgP3zyZBKevDKUBUVaGPYjX4EqmIUBdmH7PfsOf
+	 TrYZAVk4/TeH4cmg9aoewp0fMShVQ7CbDPcJaFBqwMgCxYf3hr2kJRhwJEqLyGDQwlxvG
+	 HaNBzWhOXVLDehbQoFphJOaKeIjkBLh/rrU15Vv8vaTcEbaPjqXSvR0tQ9FW5orGu9r7d
+	 bbEZo/jByN09l/UV5LT5ccruga+c9wVN+XfymU3Vcz/repvPwYwoQRq/bUiKwLJetYg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795495555;
-	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:MIME-Version:X-Received:Date:In-Reply-To:
-	 X-Google-Appengine-App-Id:X-Google-Appengine-App-Id-Alias:Message-ID:
-	 Subject:From:To:Content-Type;
-	bh=uyV6ROrO1CtSDtUiRySsm1MrJZ9iaX3jNj12OZgR3iU=;
-	b=A5rWhAsvGtsUiV4UkGOv5f2Df35K47xsZcaN3bdAEO3PGR5qysKP8kZ4eF0fRLlW1AiC
-	 fr1mI4lM3tYn4QLyK8mMTHWUeOVAoF8+exd14FPWy4DaAxBdMTai1ZZ6uSC5WWpXfQ+gV
-	 iF7bbEF/WuDyVhnkIK/L5I1B2U/sNl6kJGN9Xbov2sAIodjD5hqkMCof1XlOYoPOWRrgh
-	 6svzTSUbo/xhPMA4pW7Gj9v2QHvegfvnFelK6FfucJ8GN2owwA0H1sVp69Rj7W5XwIn5Y
-	 UMtC5ci5QRUzQrsx9f47AThc9Kft8Pu8M7AwgMRGQj9A1181JAbAZugr7wYnEQz5XXg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795497939;
+	h=DMARC-Filter:X-UUID:X-CTIC-Tags:X-CID-P-RULE:X-CID-O-INFO:X-CID-INFO:
+	 X-CID-META:X-CID-BVR:X-CID-BAS:X-CID-FACTOR:X-CID-RHF:X-UUID:X-User:
+	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding;
+	bh=gt7qPrM9qdKVWUQeM+5YYRxWTA6OuBqueaSihtYdXpM=;
+	b=bClzzMeNDwQWtDIt2x83Foka4GVQjKla6I3oAWtJS7HmkXus4R82thkTaRdJz1duDyz8
+	 YY0Lurt4ycL7wywZkecbXzsBaSuvkMmeb4kQCnrzgpepz8Xbn6+ZrAdwpEf+XQO+0+vrF
+	 Kn9OuHvFfK5N4y+eaZ131TtKpIP23qLEIxdWeisnM9GwX8zli0J6MQDDecugReD5TxWau
+	 eGmGUHlp+mn0bfQ0M5VcpjeUGrSifsfkmKS+Jc8NHffemZIprdJLBlNCdynkSz7JdDHmD
+	 erRdZGireNAraOSO3KQ9rMD8lH4Z6XHBV4H1mfjqX2N8bIOtASKJRMih7h4WNqUg4Yw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=fail header.from=syzkaller.appspotmail.com;
-	spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-	arc=none smtp.remote-ip=209.85.167.198
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=kylinos.cn;
+	spf=pass smtp.mailfrom=kylinos.cn;
+	arc=none smtp.remote-ip=124.126.103.232
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12EC606A326
-	for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2026 04:45:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F12EC606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-4c7f887ac6bso7651673b6e.3
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 20:45:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795495554; x=1796100354;
-        h=content-type:to:from:subject:message-id:in-reply-to:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=uyV6ROrO1CtSDtUiRySsm1MrJZ9iaX3jNj12OZgR3iU=;
-        b=PbP6gdwSqrcGD2r79v/P0pp1YdOOWE6E6W6caOBN0/UbGBgqvob4WnegeDl4Zlw+rB
-         bP7tWzL3KXm/ALl8YSFOBdidHFtEwqmektX87JIjtxNh/1TSWsfP8mjImhfi4Qm7LQAa
-         XkM3nTL/LHiUocCgV+UPZ0nXmxp5iy+guyYIhZnlXQj7aBxFgMs6FTOXjzfs1n8C8bBY
-         RNujE4fcG4GRzfF/87CAMaCD5GRfBcqQWK9BwtqtRm0zqwB09zQm86kFwsEEqEbcaSQj
-         quxQa5ZTViF1Yvi89r1LmiG6A6VpuYr09+Y7QfdsC5UNYmb7bPCALLXqX+pHWm9OIRWH
-         j7Zw==
-X-Forwarded-Encrypted: i=1; AL+hErEv/1u3Lb5yMZjgKcTtAREu87qI6v5x28FgbHAFrRRkvC8PWTlFpDS4bYsPZ7T0yHFC8qTxUTkE6UY7LDp8dceiZBiM3eQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/hHitn+Gge1ZBAA76o1D/yNpR3pl+OMaLxqm0liXXzVIQOvaKB
-	XnjfGiwRNP33oqy4/Zcael49qEDZu34vA/kqCa/voGtjOr6BPeIOK7Y7vWFw/o0lLihc0PA33Mw
-	ElNEvJo0whs3byK5Csg41CPSCYZ+lFBVFR3FaPjG/XsvykUM7bxLue1oyXS0=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5B3606A326;
+	Tue, 24 Nov 2026 05:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9B5B3606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 7534ae96e7c711f19a56ed5b684f684d-20261124
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NAME, SA_EXISTED, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.19,REQID:2ac807dd-1c9a-4e57-9293-8dfcc65ffee5,IP:10,
+	URL:0,TC:0,Content:7,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:17
+X-CID-INFO: VERSION:1.3.19,REQID:2ac807dd-1c9a-4e57-9293-8dfcc65ffee5,IP:10,UR
+	L:0,TC:0,Content:7,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:17
+X-CID-META: VersionHash:7db8b62,CLOUDID:6525c901083e2b5399c99180e13d4bee,BulkI
+	D:261124052649EMM1JUQD,BulkQuantity:1,SF:17|19|64|66|78|80|81|82|83|102|12
+	7|136|153|841|850|865|898|915,TC:nil,Content:4|15|50|99,EDM:-3|-100,IP:-2,
+	URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 7534ae96e7c711f19a56ed5b684f684d-20261124
+X-User: maguicai@kylinos.cn
+Received: from localhost.localdomain [(36.106.123.207)] by mailgw.kylinos.cn
+	(envelope-from <maguicai@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 917687200; Tue, 24 Nov 2026 13:25:27 +0800
+From: Guicai Ma <maguicai@kylinos.cn>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	James Morris <jmorris@namei.org>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Guicai Ma <maguicai@kylinos.cn>
+Subject: Re: [PATCH 2/2] KEYS: Fix asym key overflow in keyctl_pkey_verify()
+Date: Tue, 24 Nov 2026 00:25:23 -0500
+Message-ID: <20261124052524.939642-1-maguicai@kylinos.cn>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261123211959.4102708-3-jarkko@kernel.org>
+References: <20261123211959.4102708-3-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,118 +87,30 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:f07:b0:4cb:f21b:6f91 with SMTP id
- 5614622812f47-57a0a719e9bmr15482730b6e.36.1795495554014; Mon, 23 Nov 2026
- 20:45:54 -0800 (PST)
-Date: Mon, 23 Nov 2026 20:45:53 -0800
-In-Reply-To: <673fdc18.050a0220.363a1b.012c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6b051681.58b41460.7037.0590.GAE@google.com>
-Subject: Re: [syzbot] [tomoyo?] [mm?] INFO: rcu detected stall in
- security_file_ioctl (9)
-From: syzbot <syzbot+b6f8640465bdf47ca708@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, andrii@kernel.org, ast@kernel.org, 
-	bpf@vger.kernel.org, brauner@kernel.org, daniel@iogearbox.net, jack@suse.cz, 
-	jmorris@namei.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
-	tomoyo-users_en@lists.sourceforge.net, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+On Mon, Nov 23, 2026 at 11:19:59PM +0200, Jarkko Sakkinen wrote:
+> While verifying a variable-length signature shorter than info.max_sig_size,
+> memdup_user() reads past the end of the caller's _in2 and passes trailing
+> bytes to ->asym_verify_signature().
+> 
+> Set params->in2_len to uparams.in2_len in the KEYCTL_PKEY_VERIFY case.
+[...]
+> @@ -176,7 +176,7 @@ static int keyctl_pkey_params_get_2(const struct keyctl_pkey_params __user *_par
+>  			goto out_up_key_sem;
+>  		}
+>  
+> -		params->out_len = info.max_sig_size;
+> +		params->in2_len = uparams.in2_len;
+>  		break;
+>  	default:
+>  		ret = -EOPNOTSUPP;
 
-HEAD commit:    3896ae4adf5f tun: complete the zerocopy buffer of packets ..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=16305bbe580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d44b06612b68f56
-dashboard link: https://syzkaller.appspot.com/bug?extid=b6f8640465bdf47ca708
-compiler:       Debian clang version 22.1.8 (1~deb13u4), Debian LLD 22.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1740f363580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11305bbe580000
+Tested this series with an RSA-2048 key (enc=pkcs1 hash=sha256) on
+arm64. A truncated signature with the remaining bytes still present in
+userspace memory and a short signature placed right before an unmapped
+page now both fail with -EINVAL, and normal signature verification
+still passes.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ca6f81eb80f4/disk-3896ae4a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e88582fee6d7/vmlinux-3896ae4a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a978638f7ba7/bzImage-3896ae4a.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b6f8640465bdf47ca708@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	0-....: (10499 ticks this GP) idle=f474/1/0x4000000000000000 softirq=18751/18751 fqs=4770
-rcu: 	         hardirqs   softirqs   csw/system
-rcu: 	 number:     5264          0            0
-rcu: 	cputime:      138      52351           25   ==> 52490(ms)
-rcu: 	(t=10500 jiffies g=18789 q=10129 ncpus=2)
-CPU: 0 UID: 0 PID: 5837 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/06/2026
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:211 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0x47/0x80 kernel/locking/spinlock.c:221
-Code: f7 e8 3d d4 99 f5 f7 c3 00 02 00 00 74 05 e8 10 79 c6 f5 9c 58 a9 00 02 00 00 75 29 f7 c3 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> c4 c4 8a f5 65 48 8b 05 8c 0d d7 08 48 85 c0 74 18 5b 41 5e e9
-RSP: 0018:ffffc90000007e18 EFLAGS: 00000206
-RAX: 0000000000000002 RBX: 0000000000000287 RCX: 0000000000000101
-RDX: 0000000000000003 RSI: ffffffff8e6a85cd RDI: 0000000000000001
-RBP: ffff88807ed35538 R08: ffffffff91be1bbf R09: 1ffffffff237c377
-R10: dffffc0000000000 R11: fffffbfff237c378 R12: ffff8880b8228600
-R13: ffffffff89fd0480 R14: ffff8880b8228600 R15: 1ffff1101704514a
-FS:  000055557acc5500(0000) GS:ffff8881233ff000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005612e0743768 CR3: 0000000077760000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- __run_hrtimer kernel/time/hrtimer.c:2075 [inline]
- __hrtimer_run_queues+0x2bf/0xa10 kernel/time/hrtimer.c:2136
- hrtimer_run_softirq+0x1e3/0x2e0 kernel/time/hrtimer.c:2153
- handle_softirqs+0x265/0x8d0 kernel/softirq.c:669
- __do_softirq kernel/softirq.c:703 [inline]
- invoke_softirq kernel/softirq.c:542 [inline]
- __irq_exit_rcu+0xc6/0x220 kernel/softirq.c:786
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:809
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1062 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1062
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:674
-RIP: 0010:lock_acquire+0x232/0x350 kernel/locking/lockdep.c:5947
-Code: ff ff ff e8 50 07 64 0a f7 44 24 10 00 02 00 00 0f 84 38 ff ff ff 65 48 8b 05 12 e1 3d 13 48 3b 44 24 50 75 33 fb 48 83 c4 58 <5b> 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc 48 8d 3d 37 27 1d
-RSP: 0018:ffffc9000326f700 EFLAGS: 00000296
-RAX: 3c7ff0ca9698f600 RBX: 0000000000000000 RCX: 0000000000000046
-RDX: 000000000e8f2ff9 RSI: ffffffff8e936150 RDI: ffffffff8c8e9880
-RBP: ffff8880281e8000 R08: ffffffff817889cf R09: 0000000000000000
-R10: ffffc9000326f838 R11: ffffffff81b3b880 R12: ffffffff9015a2e0
-R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000246
- rcu_lock_acquire include/linux/rcupdate.h:309 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- class_rcu_constructor include/linux/rcupdate.h:1216 [inline]
- unwind_next_frame+0xac/0x2550 arch/x86/kernel/unwind_orc.c:495
- arch_stack_walk+0x11b/0x150 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0xa9/0x100 kernel/stacktrace.c:122
- kasan_save_stack mm/kasan/common.c:57 [inline]
- kasan_save_track+0x3f/0x90 mm/kasan/common.c:79
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:599
- poison_slab_object mm/kasan/common.c:267 [inline]
- __kasan_slab_free+0x70/0x90 mm/kasan/common.c:299
- kasan_slab_free include/linux/kasan.h:239 [inline]
- slab_free_hook mm/slub.c:2780 [inline]
- slab_free mm/slub.c:6637 [inline]
- kfree+0x1c7/0x650 mm/slub.c:6930
- tomoyo_path_number_perm+0x4ba/0x5f0 security/tomoyo/file.c:741
- security_file_ioctl+0xc3/0x2a0 security/security.c:2534
- __do_sys_ioctl fs/ioctl.c:592 [inline]
- __se_sys_ioctl+0x47/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
- do_syscall_64+0x171/0x540 arch/x86/entry/syscall_64.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2e4e9a91ab
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:00007fffff379100 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f2e4e9a91ab
-RDX: 00007fffff379160 RSI: 0000000000008933 RDI: 0000000000000005
-RBP: 00007f2e4ea394f3 R08: 0000000000000000 R09: 00007fffff379470
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-R13: 00007f2e4f764620 R14: 0000000000000006 R15: 0000000000000000
- </TASK>
-sched: DL replenish lagged too much
+Reviewed-by: Guicai Ma <maguicai@kylinos.cn>
+Tested-by: Guicai Ma <maguicai@kylinos.cn>
