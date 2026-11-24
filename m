@@ -1,58 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795563500;
-	b=3THerpewfRnblsVVP92zQX4zjZNxAfkQhw8y11/5Q4IuUP5vVgyOGyF7hP2BZfWbDFrb
-	 9AMfUTxWK4Gl7BQHVQ/HsEy9+WjvlsPfef0dt5wWH/RA1CQ3AmdoDYXmcOa2wGUEs48oX
-	 ZPVFPbKZGRx6O5piCPuRoW+A+ZppUb9XIlU3BimAYCZ2vRe5mBtUBafwwIw4tunJ7ZipY
-	 vjpEGA46VMaqLFvut/vH/IBdnwVWf2U5DojPWbvgaupp1mlyTuCn8u7XsOPgnlLGZvpYq
-	 9ZrT/CEJxXQoMz3+18ixHdnoTlQ2+XqZHkJz0qx1A8KkikBSjixrkcchLCmRPPnOAmA==
+	t=1795564150;
+	b=0fUnQcNowPcykCD0hPNotktd9PPPP+FSk+6RFarjKKU2F0Ne2z9kg+hd6GU7IcS9nqXk
+	 x2jkI00XMpNu8zvB4149pa9+3uXloJFPFr+oYNFxxaBwTaX/sPScyKFf7TjTN+4g/gjOM
+	 7oErfW6qWL+Ja7WETvFGWjF96/BRXOAVXUGH5DVqW0WJ8gktXmSishNvtytqWCJ2V0Tgf
+	 xFtdQtlmDh3mJQZ0f9cfDEGKw6nT39TFg+JjchiMjhEnfS8oROLrNN30Gj8GQygeoLJ67
+	 NMHiaxQBVwc+gqrM6f40hBiS2CxkPpmU41yMRyegUYaDgiGSVY8l2SGGMaygjBk0gbA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795563500;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=mCjuELGPbtop55uOSySBfQQgI7D0AQe8nbyG+v53Igw=;
-	b=oHq3WWvHWWYYoZRCJ+hO7JGkYtx53ATaLvmwZo+Bz0oLa1xvmnJZ7VmVlObxLTOi8Ptj
-	 bHOBq8TRrLiFDrkx20Hev9zyhdwyK+q0d29Po1C+CPnC4uApn97wdI5TaeUI7jAbvTxjE
-	 onSNC+bUrGX/+mJUtATrwv5jG3hmOKW4NoTbdpAIRUokzShbseoro/ALSjUL7TNa3jDNQ
-	 gDC2BJRZFiPFNA+KCbdX0HXt3d4MjvSLsFlpWYymb7QJZDpHrRKpx9pOl47ElaRE8E5Tf
-	 UTqOX+bdEAHvlUxD13xxHg99c2epzrSptfiUzrYB/F+S/s/sJEkxVy5xwM/3DhvUXqA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795564150;
+	h=Received:DKIM-Signature:Content-Type:MIME-Version:Message-Id:
+	 In-Reply-To:References:Subject:From:To:Cc:Date;
+	bh=lKDulksU0CH8kWxQ0HqONqWmjOATVYmG6DnvF0rQk9k=;
+	b=Df01HCrWPj0Q3n4nrHlyeIFmA1p3p9yVy60+ZJBob5EbtGfuritfBcOjC+yewkVM1LSw
+	 /MlGV0vlauKUrfziVM8ypgF4yPwx17F7r4iEi7stkLlVXOL9on1t/jamDbItqcCHiTfjo
+	 YRpmNGxvJ4LBDzl1EjcjBcSijuOw4iUjMxuCkmpHb2PGS35QT+dDBn/9E4Q7N83tSgwXG
+	 uvJMCeXLPEVhTxxXnUeTxs+4Fw3puo9BeOekLr0/ScBgpX0dn6BZE6+w87wkzm+57Hiyx
+	 boj4Z/Oh0iwlc+pu906GwuSYAmZp5C8qiuwpqjwtTg1216p9TYdeytx8VtvP/iMgyWw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQrSL760;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IlpI7jOH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D3AF7606A334;
-	Tue, 24 Nov 2026 23:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2371606A31E;
+	Tue, 24 Nov 2026 23:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQrSL760
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E60F61F000CF;
-	Tue, 24 Nov 2026 23:38:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IlpI7jOH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1521F000CA;
+	Tue, 24 Nov 2026 23:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795563500;
-	bh=mCjuELGPbtop55uOSySBfQQgI7D0AQe8nbyG+v53Igw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EQrSL760s7fgQe0h/rjjFEvpuCz77AcI3AyRSc9H+yM6I+L/r3CiOhtXj23DUxpAO
-	 o7QLpK+hxeP/ofUJMU6MEho+Rt8Qs4D+6n2iw54ZJghcGmSYtkiIFtRaDzmwqfyAPW
-	 OWyNQpX3StGC4M8orT7QRxX0QRHzj4Qlr9mXlpJuzIBM9b3pBQGBnVser5ssKTcs9k
-	 UnF29Vl5e4CaZKQf+LvL9vvzS8nfKsMabtAmj+ElsQf4I129sU8h9rHsjuTAOcIgAb
-	 PHA9GjWfCc7kBrOzifj1ztGkbp3d4XXZnUf93vu/3oiqH5ty1kBy0ODyevRdEymz4H
-	 2+phr4L/q+1hQ==
-Date: Wed, 25 Nov 2026 01:38:16 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Guicai Ma <maguicai@kylinos.cn>
-Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH] KEYS: Prevent key type removal during
- key_instantiate_and_link()
-Message-ID: <awYf6EKzMMvQ3525@kernel.org>
-References: <20261124174035.1614480-1-jarkko@kernel.org>
- <20261124230016.1211738-1-maguicai@kylinos.cn>
- <awYcnWU4I8vYGBaQ@kernel.org>
+	s=k20260515; t=1795564149;
+	bh=lKDulksU0CH8kWxQ0HqONqWmjOATVYmG6DnvF0rQk9k=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=IlpI7jOHHg6tzDJtT7dUsw9yL6fpvZ9HKK1m6TkLc2LiZZ3UD8SsdCYQOPTGUoh4Z
+	 NipXRVpiqDCGW1FPX4Aj+JWvOWuaH7yh47kJrzJMMgWYxRGBiXlzu1T/MZUWUC4g0W
+	 vMNK/n0rsVJnt4+MwUB+9ab95GUxpkKWlaQFELGgsxYF/A92uqHyYjG81QXhlUvaqv
+	 UyJ18+lF5X1JslR+TZbpCj/oUXLo5lcdp3gbMbe0ryI4vzplir4QZl2zv7zCVHIKE6
+	 KKnfsBtZ25FkDGwWmWDCI+A50sHcwbB23XU+Xd+0/5dBGydMv0HgkDtdDiR3r5CDs1
+	 IEQtda9ZYTz+A==
+Content-Type: multipart/mixed; boundary="===============2510359726493679342=="
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -62,62 +49,63 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <awYcnWU4I8vYGBaQ@kernel.org>
+Message-Id: <fd2115bde2e78440a8c28b057e22f7a7a3064cb74e9030b92ee2f4498ea6046a@mail.kernel.org>
+In-Reply-To: <20261124-work-exec-update_lock-v1-18-e489035395b8@kernel.org>
+References: <20261124-work-exec-update_lock-v1-18-e489035395b8@kernel.org>
+Subject: Re: [PATCH RFC 18/19] vfork: wake up the parent once the child has left the mm
+From: bot+bpf-ci@kernel.org
+To: brauner@kernel.org,jannh@google.com
+Cc: torvalds@linux-foundation.org,linux-fsdevel@vger.kernel.org,acme@kernel.org,linux-perf-users@vger.kernel.org,bpf@vger.kernel.org,selinux@vger.kernel.org,kees@kernel.org,linux-mm@kvack.org,linux-security-module@vger.kernel.org,apparmor@lists.ubuntu.com,david@kernel.org,brauner@kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,mason@kernel.org,ihor.solodrai@linux.dev
+Date: Tue, 24 Nov 2026 23:49:07 +0000 (UTC)
 
-On Wed, Nov 25, 2026 at 01:24:17AM +0200, Jarkko Sakkinen wrote:
-> On Tue, Nov 24, 2026 at 06:00:16PM -0500, Guicai Ma wrote:
-> > On Tue, 24 Nov 2026 19:40:35 +0200, Jarkko Sakkinen wrote:
-> > > @@ -610,11 +628,12 @@ int key_reject_and_link(struct key *key,
-> > >  		}
-> > >  	}
-> > >
-> > > -	mutex_lock(&key_construction_mutex);
-> > >  	down_write_nested(&key->sem, 2);
-> > >
-> > >  	/* can't instantiate twice */
-> > >  	if (key->state == KEY_IS_UNINSTANTIATED) {
-> > > +		mutex_lock(&key_construction_mutex);
-> > 
-> > Here __key_link_begin() still runs before key->sem is taken and there is
-> > no KEY_FLAG_DEAD check, so the link path is still taken: on 7.4-rc3 with
-> > KASAN and PROVE_LOCKING, KEYCTL_REJECT with a target keyring on a dead
-> > key returns 0 instead of -EKEYREVOKED. If pass 3 retypes the key before
-> > key->sem is taken, __key_link() inserts it with an edit built from the
-> > old type.
-> > 
-> > Taking key->sem before __key_link_begin() and skipping the link with
-> > link_ret = -EKEYREVOKED when KEY_FLAG_DEAD is set avoids that, and still
-> > lets the negative instantiation finish so request_key() waiters wake up.
-> > 
-> > In key_instantiate_and_link():
-> > > +	down_write_nested(&key->sem, 2);
-> > > +
-> > > +	if (test_bit(KEY_FLAG_DEAD, &key->flags)) {
-> > > +		ret = -EKEYREVOKED;
-> > > +		goto out_unlock;
-> > > +	}
-> > 
-> > After a modular type is unloaded, key->sem still carries the module's
-> > lock_class_key, which lockdep_free_key_range() dropped. In the post-rmmod
-> > instantiate test up_write() here warns "trying to release lock
-> > (&type->lock_class) ... no more locks to release". Module pinning would
-> > remove this; it still matters for stable backports.
-> > 
-> > The 200-round instantiate/reject race and encrypted-key instantiation
-> > pass.
-> 
-> I'm with you on backports part of course, and apparently you are right
-> what you're saying. Thanks for pointing this out.
-> 
-> Addin SCRU just feels a bit heavy measure but the concurrency case is
-> also somewhat nasty. But in the end of the day it's only +10 LOC and
-> I understand why it works, and I also under why this does not :-)
-> 
-> It was not that much more complicated. Can you put the commit message
-> more brief and exactly put emphasis on SCRU part?
+--===============2510359726493679342==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-Take your time, as I won't be sending PRs before next week.
+> vfork: wake up the parent once the child has left the mm
 
-Br, Jarkko
+TL;DR: Commit message only: it cites "[1]" for the 2.5.56 change but has no
+matching link; the review asks for the history.git URL to be added.
+
+>     vfork: wake up the parent once the child has left the mm
+>
+>     A task that called vfork() sleeps until the child has released the mm in
+>     mm_release(). But exec_mmap() releases the old mm, then waits for
+>     exec_update_lock and only then switches to the new mm. And exit_mm()
+>     releases the mm and only then drops it. So the parent is woken up while
+>     the child is still on its mm.
+>
+>     It wasn't meant to be that way. When mm_release() was added in 2.2 it
+>     was called after the task had been switched away from the mm. exec only
+>     moved it in front of the switch in 2.5.56 because deactivate_mm() and
+>     the write to the child tid address need the old mm (cf. [1]).
+>
+>     The release has to stay where it is as it can sleep in a page fault for
+>     as long as userspace likes. So take the wakeup out of mm_release(). Wake
+>     up the parent in exec_mmap() once the task has switched to its new mm
+>     and in exit_mm() once it has dropped the mm.
+>
+>     While at it, fix the comment above mm_release(). It hasn't been called
+>     after the mm was removed from the task since 2.5.56.
+>
+>     Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+
+This isn't a bug, but the changelog cites "(cf. [1])" for the 2.5.56 change
+that moved mm_release() in front of the mm switch, and there is no
+"[1]: https://..." line or Link: tag anywhere in the message.
+
+The previous commit in the series, d0c33c04297e ("exit: don't take the mmap
+lock in exit_mm()"), uses the same "(cf. [1])" form and does end with a
+"[1]: https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/..."
+line.
+
+Could the history.git link for the 2.5.56 change be added here as well?
+
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/45508356147
+--===============2510359726493679342==--
