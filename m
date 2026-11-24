@@ -1,69 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795538283;
-	b=NeAZPRVp2bMzAzzBkE1osYIFnP1Xqyla9J16jULD+Nt4plxxFnNQ2VCy+UWZje63Whmg
-	 xlqEVpTqGJ2YaTfK4uEC6cfdPYtBn+LHirW2u8uaf4puhMh4UW4pl6BIfaZ4av6Q2vg+w
-	 VABBErcG5IyfzUp3cXTYvD15uEP+UMcNbuYin3G+ZdRozaBBClajpV+wKQ5/nWX+A1d89
-	 2QCyuon8wFtyMyLyhoo3SGYCfsFieSRvejM0TSZpy9RW7F+UyPZ4dYti4gv8yHKAoTLMK
-	 /TQ/GiQZCIfKlngZk6JktLU+XCkvCWqhDe/M2GLpsWFyrZr9m1smJJYCABzpdPLRqvg==
+	t=1795539221;
+	b=wGcCBMqDa/9ZKeYSUXTa003u19QyuUtz2CPS8itMURYcYwDYHX18gxfjPEO4jmDNoLAo
+	 t3sEoyYFJjvy26RE0y2JUz4gg+GE+BnG0NWABphRBtlDfKdoEVn1lPuLvRKkBvoRnhdqs
+	 BXBoMfJK1VE4k73sAqrSyF3J1wEZkLd2rImg8Z+cw1MWu98PSt6KeNOtkAZK8HxCRm6qW
+	 rC0cNAEWh2leTCuuF0Ns2hOZBVCYPKoyV4alrw0HFUBl/MtFa6RIBBt3w+vE6uzmXaeWb
+	 VUJrvZ5/ome4EKDVy16keQmn4KdVlHEfe6IxwJamASlk0oYdVtNO848ro3v77jfJbAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795538283;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=zEWnkRahKuJva+EOdM9aoJAlXIBskSC96lQmEW7AFzQ=;
-	b=FFF7AE03cSdBzD38IOpP3cfHLF/ImJVQDwqUItMtfh1LdMDPbZQ5s++IWzVW+CFOLU2+
-	 Asr1fLgcerzpocHan3lXYmmKKkMrXC2nXUrRHgGA8jxUUgrlkgdNNNbdlcgNsGRsrpd8N
-	 nICBZ1r3JB4o3S7rJGk2YKbv1UItu1PIwF4ebFv4puJrZ8fvsRoVMJo3UogpAy1Q1G/Bu
-	 qhGiORsUN1yO3YlYwPihDht0MJb5LnJGKx/H+ns4J3I9vef/poref0pLtHUuX++MmIO3O
-	 61j8xi8P8nTpw5bqfP1cEZ8a4t8UEk+ISue+1WGHvIY0w5r11i3Fro5RWAZ1TtDWFQQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795539221;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=hzW3l9V1ca76O/GAJMuhxZ7Oshk3Ho6LJEjIUjIXpy8=;
+	b=qHLBOTUbw1oNR+SElFJPtMSRwcNENjG3CNFlu+d4gRTQbTHFo1aD50H+Lp1lTOXkivJB
+	 G8KfUgE5rRfZFwt+ZDyxGS9wY9wjAKnFAv/UORTbBWpJEuz4wvQe5YurVBrM2j5BzPsRV
+	 S3XJDjui9xEXcQ+pGchGUaBXVAf2wXb+Bj+6TKQYVjOFAWObZJc1XQw5afHFWYglJSD0Q
+	 p9JTc62fO12ojXnW6+7i5H805gHkutA1+Eips7fNaGHtKi2ATTH654MZAGdW6vdxhI4VK
+	 d/po/rQXG4mqQZkAIxfIGnaTg2yApnlg7d+B6VDlHWtfeoURDvn85sxumwJpQMV481g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=hallyn.com;
-	spf=(null) smtp.mailfrom=hallyn.com;
-	dkim=pass header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=v9YcfGyK;
-	arc=none smtp.remote-ip=178.63.66.53
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Sv7F+Pq3;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A83F606A326;
-	Tue, 24 Nov 2026 16:38:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0A83F606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hallyn.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0A9606A332;
+	Tue, 24 Nov 2026 16:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=hallyn.com header.i=@hallyn.com header.a=rsa-sha256 header.s=mail header.b=v9YcfGyK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1795538274; bh=gVNMqSzHWFVNsBvzejWuL1IJS9TsIWZJdXA/XbrBWyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=v9YcfGyKwCXUY2FxrBRj0yodJwse7j9ISVnVCIxxdF1hIU4FWhYIdPDjTLHP7ek4K
-	 pg3V6vtGF+Bha4u5Ina7ZfdHdd+kni2O+NdmSy3Eg5Deno2nb2tHLrAPKwx14xpWEi
-	 QpwZg6TRNFUjJ+Ndgv0DRwChyQVEbWT/gfk8xnasqjRBMj5kC6lBVZf3WwGPQE9SWl
-	 9L4rh5Q0Zfk4nbtkKFwHDRnAXLXaZ8x2ZwJQz96SPifWPWRKh8A2R9LqFJ9a47tVDu
-	 dvOPZ29augFzVArx0VjSwI4qk150x2GdsH7abRvl2l3z9ElcS/DnJMedc/uhtqm1Sb
-	 DmtZkDEQ+9HTQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 64804177; Tue, 24 Nov 2026 10:37:54 -0600 (CST)
-Date: Tue, 24 Nov 2026 10:37:54 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Keisuke Tsukuda <tkdkei@outlook.jp>,
-	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>
-Cc: "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"James.Bottomley@HansenPartnership.com" <James.Bottomley@hansenpartnership.com>,
-	"jarkko@kernel.org" <jarkko@kernel.org>,
-	"zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-	"dhowells@redhat.com" <dhowells@redhat.com>,
-	"paul@paul-moore.com" <paul@paul-moore.com>,
-	"jmorris@namei.org" <jmorris@namei.org>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KEYS: trusted: caam: propagate protected key option
- parsing errors
-Message-ID: <awW9YvoCRAXXiq27@hallyn.com>
-References: <20261124155310.32044-1-tkdkei@outlook.jp>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Sv7F+Pq3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3AFD1F000C0;
+	Tue, 24 Nov 2026 16:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795539220;
+	bh=hzW3l9V1ca76O/GAJMuhxZ7Oshk3Ho6LJEjIUjIXpy8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Sv7F+Pq3b4lQoY+bkvtMygoW5FQbi7b8AhW0Th/NMNexLFvNityGRvaCCnTm52wb6
+	 Re02MmAzBNp//QtjQvNfz96lHB3XBn7TtltVWOYJKLm24GdI6fGKckf29okjLY4uWH
+	 3MZ5Oqn+434nmFGtoM/vr+fY/OKoRiSE/wIHeNgjEPXyh9jKfbt8oWp1Z4EEwosvta
+	 4p525n1UUfqKCr29KNcHKqVJsntOsdg/KKH6ovAGcUcmmhxCmPQJYinvDsFoDU9bir
+	 e9YSpAwtYXU0L1EEYXgrPXDnsaK7c685tud2MNOMPgqxQrBj06C5mc/PsLJbRi61/n
+	 lNYAQd36eTnnQ==
+Date: Tue, 24 Nov 2026 17:53:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jan Kara <jack@suse.cz>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ima/evm: security.ima and security.evm get written to frozen
+ filesystems
+Message-ID: <20261124-eisstadion-burgen-kommt-c27ea3d3bf74@brauner>
+References: <20261114-erstmal-vererben-leibhaftig-63db6f0c66ba@brauner>
+ <7cbff903ec83459cb9779246feae1fb7f09f1ff9.camel@linux.ibm.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -73,69 +61,61 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261124155310.32044-1-tkdkei@outlook.jp>
+In-Reply-To: <7cbff903ec83459cb9779246feae1fb7f09f1ff9.camel@linux.ibm.com>
 
-On Tue, Nov 24, 2026 at 03:53:39PM +0000, Keisuke Tsukuda wrote:
-> From: Keisuke Tsukuda <tkdkei@outlook.jp>
-> 
-> get_pkey_options() returns -EINVAL for invalid protected key options,
-> such as "key_enc_algo=GG". trusted_caam_seal() and trusted_caam_unseal()
-> ignore this error and return 0. The trusted key core then instantiates
-> a key without a blob for "new", or with a zero-length key for "load".
-> 
-> On an i.MX6Q running a 7.4.0-rc2-based kernel, adding a key with
-> "new 32 pk key_enc_algo=GG" succeeds, but KEYCTL_READ returns zero
-> bytes because no blob was created. The key cannot be saved and
-> reloaded.
-> 
-> Return the parsing error from both paths. On the patched kernel,
-> "new" and "load" with "key_enc_algo=GG" both fail with -EINVAL, while
-> valid requests succeed.
-> 
-> Fixes: a703a4c2a328 ("KEYS: trusted: caam based protected key")
-> Signed-off-by: Keisuke Tsukuda <tkdkei@outlook.jp>
+On Mon, Nov 23, 2026 at 04:10:00PM -0500, Mimi Zohar wrote:
+> The only option I came up with is to try sb_start_write_trylock() in
+> ima_update_xattr(), after the hashing and just before the xattr write, and if it
+> fails, defer only that write to a workqueue.
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+A workqueue doesn't work. It would cause spurious EBUSY and break uapi
+guarantees. The worker has to pin the filesystem until after the thaw.
 
-But, it looks like these were both added by
+If it pins the mount then umount() after the last close() fails with
+EBUSY until the worker has run. A simple
 
-  commit a703a4c2a3280835003d4d0eb8845bac0f1a6ef1
-  Author: Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>
-  Date:   Mon Oct 6 09:17:52 2025 +0200
-  
-      KEYS: trusted: caam based protected key
+  fsfreeze -u /mnt
+  umount /mnt
 
-Adding Meenakshi to the thread to make sure this wasn't intentional,
-and serving some purpose we're overlooking.
+would do it.
 
-> ---
->  security/keys/trusted-keys/trusted_caam.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-> index 6a33dbf2a..33000d7bb 100644
-> --- a/security/keys/trusted-keys/trusted_caam.c
-> +++ b/security/keys/trusted-keys/trusted_caam.c
-> @@ -110,7 +110,7 @@ static int trusted_caam_seal(struct trusted_key_payload *p, char *datablob)
->  		info.pkey_info.is_pkey = 1;
->  		ret = get_pkey_options(datablob, &info.pkey_info);
->  		if (ret < 0)
-> -			return 0;
-> +			return ret;
->  		dump_options(&info.pkey_info);
->  	}
->  
-> @@ -142,7 +142,7 @@ static int trusted_caam_unseal(struct trusted_key_payload *p, char *datablob)
->  		info.pkey_info.is_pkey = 1;
->  		ret = get_pkey_options(datablob, &info.pkey_info);
->  		if (ret < 0)
-> -			return 0;
-> +			return ret;
->  		dump_options(&info.pkey_info);
->  
->  		p->key_len = p->blob_len + sizeof(struct caam_pkey_info);
-> -- 
-> 2.50.1 (Apple Git-155)
-> 
+If it pins the superblock instead then umount() succeeds but the device
+stays busy and mkfs or mounting it again fails with EBUSY.
+
+It's the same reason the final fput() is done from task_work and not
+from a workqueue. Userspace expects devices and filesystem remounts to
+work after umount() and last close().
+
+> After thaw, an open could flush the
+> pending update inline before verifying, so only the window during the freeze is
+> affected.
+>
+> Options for that window:
+>
+>   1. Accept -EACCES for files closed during a freeze until thaw.
+
+(1) is fine. And then we don't need the workqueue at all afaict.
+
+close() uses sb_start_write_trylock() and if the filesystem is frozen it
+leaves the update pending in the iint. The next open after the thaw
+flushes it inline before verifying.
+
+If the inode is evicted or the filesystem is unmounted before the next
+open you are back at a stale hash.
+
+>   2. Make the open wait for thaw. That changes behavior for read opens, and
+>      the wait would have to happen before taking iint->mutex.
+
+No, the read side never waits for a thaw. Even touch_atime() only uses a
+trylock.
+
+We could block in close() but only when an update may be needed. So that
+could mean, takes sb_start_write() before iint->mutex if the file was
+opened for writing and IMA_UPDATE_XATTR is set.
+
+Iirc, close() already blocks on a frozen filesystem today. The last
+close of an unlinked file on ext4 ends up in ext4_evict_inode() which
+waits in sb_start_intwrite(). So it's not unheard of. Still disgusting
+though.
