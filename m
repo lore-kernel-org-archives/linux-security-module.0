@@ -1,101 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.47
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795475980;
-	b=Dx3h9MsepGijssN7CJ/LcI2Xpg60RlB1CTI/B8+E6iCqW5UqJmSMFLX5ckyUJjzhjTiW
-	 wRrmubEGL+jm/xmyKQFJlOZ2l8tWqtzshYWuoIv9PjgxyM8eEEc8g9Svxoywp97PKFM4C
-	 B9aI/4EYWbmKmubi9CgBafgAQfFRILbZgPm4GpzRQy4VGU+w/tgc7j/FDATnIGHpHCVKG
-	 KFfIfDTYM8pQ4rsoKygm+PuH7LUDbhJp7yk8xN8RAZUNuwO7bTNtqMqtrA9U5ERvSzKSk
-	 ZCCDxZhAB8prz3xRA4PWRTKvgmJzaymB9suQKu9GaH+e93R6Jh8TafkpLq+NoIhSodA==
+	t=1795481693;
+	b=lOZjOUvXIqII5CNumi91306/bP8RbHKrAquXYX2DpFGkpAi0MSFEjyXtDdeaUl6cYVJv
+	 2LFGM38LPiT3kmJ/0fyitkeuGGSxocmFkbjFCVlGtPtplhiVnvd0BgrpMPoFQ3fNcPT4T
+	 FVwzKEQ6Mop6AelfbXVgfL+ZJPsKs/7RzvMEBJCgiCF6ST5LWSYZc6qWPCNSUxa92WPda
+	 0/OkIM9xY8ZgD0wZq3qilPvRqa380AfDE+iML0lNz6m4GgfLRmVBivXJkjKH56Ki2U2uI
+	 c+RIAlNm6dFdghf0M1ryHngEEEP+aAPwSsmaH6pXU8IQ9aRIDlbXdj5bbBSL0L3yxgA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795475980;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795481693;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
-	b=0nlL1dZsbPFE8DuohJhChdExFOfabNFNZ73sj4Fjv4C96KZZgiV6HkxqsgA7uQS7avYC
-	 QJ7KlNQto1jRpuWyfAuVRI6vQ5zfMhw6Z0IQAnX4+fmAThcDr3xwWQhdOrrH8mHc5TJ9P
-	 z3/jR9Bs0mQpZB5O78+0LbPwY309fukbEjt2HWAxPRXsb8NgSryVia/QoVgOTm9NEgtwh
-	 dT3NRghgDLASNA3Y5NVyWRC5MSi7fvutEuGqjkM0AS8piicJKqZarlZZkXC6v0pw+93GY
-	 TkGHfpbO0HGvuA48rDqR7aQ9H43+NU+aYLhCx+f09V31QUu9/9Dq+rk1YbwGBdOa6Yw==
+	bh=iEKEeKCLRaE3702Za70pxElLp2Z9ygHS6e2aDItiwcY=;
+	b=bhpJ/dO0ocH5thJ5zBkmYJJOCXNC46bOxYQGKZbzhOaQRRpDCWTztYq3THpvfDwypECo
+	 uzD1bdAErnrO978d+f47R1PngwcZIsH8Gm9NlRAVDzIEzdT1HOYVapD+laX8j4UQIcUrd
+	 vhdor79WYDuebrqEN5f2wU+oOdm6jqlTbjMzEMFsdh9uJ97XTiU5MNtyIhpHmZ8TNq/jV
+	 Nx+wrf1CYpYAW+T2nwFZBfUIixJYNDoG3z8uoCUAiGRpUrSk8wUSobGAAI+yRODZyy+P1
+	 zOvCM2mNCRZGTPkEYJ0FKJIndZVjIsq08Iz0W9vN+G6O3t+805Ekmll67MaEpYIE8OA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=paul-moore.com;
-	spf=pass smtp.mailfrom=paul-moore.com;
-	dkim=pass header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b="RH0V0w/Y";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.214.181
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dmarc=none header.from=amacapital.net;
+	spf=pass smtp.mailfrom=amacapital.net;
+	dkim=pass header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=o5Dxd8NH;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.167.47
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC65606A332
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 23:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4FC65606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6FD606A327
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2026 00:54:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2A6FD606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.a=rsa-sha256 header.s=google header.b=RH0V0w/Y
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2f02b9c1f6fso25891965ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 15:19:39 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795475979; cv=none;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20260707.gappssmtp.com header.i=@amacapital-net.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=o5Dxd8NH
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5c14f3dab09so1917085e87.0
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2026 16:54:52 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795481691; cv=none;
         d=google.com; s=arc-20260327;
-        b=Au2XRw+SJdHLqgp3F9JfPO9gdMFPUKhQyw+FAQ+ssrBD74coFV3OVPIhGdmi44oqI0
-         CAn1Wn7QSh1IO7vEqobSP6YzivMFz/ZCxUcoIwE3xL4CaDWae7kelOFWYsHxAFF4bAJ7
-         ZAsdor5QZQa5ADODQrc504HVodcwqGHk8TgSqLtY22J6/pBB+LNKz7/Sv1g9/IoEWpG7
-         xDVG5APx+2pnk+Yt/FuL0YSVSbHIf+/+pWgUf7mZRLBmc8azQyo4G73T0yF4HXsDdlHz
-         WEoBHDhDzjLXHe3OSjapUHKLS7PaAQeGJjYbU7kQNPExQIRbtA4N56ftlihylvNhMzm7
-         JzFg==
+        b=ZkGgFnbhLuhOffLo8zglZhmliuSfAuYf8TmnPyAPNVuUdBKYf8cYTcoqsKLPHJeGUE
+         1JB0+BBGfJzcOEMSDMysvEQa4oue1sEkW/SbjeE/ZCWPGWXYsG0Kc93gdx2e6xZxWuUY
+         gUGOZ0+XMt4JZAXbk6TbCNxTmUSqHF4GNVpOCIoqLz65B0y2LzvFO+/u3yVOEyQ/JjCs
+         YcpuQkY++C4cGph/ol5oC2q9DbY7lDyAxYhMjhDtkvChuXaUS88mBYQlfIEQpeGvVIx5
+         2AUwdhN5TZz2JcI8KruoCg8Gsu02H48BcmdMfhcP6l+p+AQnLq6iAX684D6mUaCszqp/
+         vcxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
-        fh=qBBEho+3HxCXRMb2Pmo/+nvadzHwzecLHZDwvwKFQa8=;
-        b=lmb7DY5ta9o+m4J0UnEeXUTm4vRdDJBb1YAZB1eaXren6o/c8ltLM7ZIqzwGyAFg0i
-         mIk/sd9Y0+INqVfXkIKn8526u7envW4wZPE68vQjJ+LiUh0K/1kfTOP4KPrOD3vhh6nP
-         35X4JcWdVRQG4fB2lUMV/vUaqotfAQtFgzO9DbgRJFwn/HcMlTQux1h+ztLnwo/FPDYN
-         lMdB0kxqtgxgnH9kgeqaLrQEOknsxGI26cVBQ3ySc77d+LNhZNFF8hc01lFyiFPbLAgg
-         dwC9iMv9/BkTDDeZQBYWkAqFTWTTWIgbMrKZ/elhMmb4VYTIvygGajZkPQQB6Ch1uX5V
-         4L7A==;
+        bh=iEKEeKCLRaE3702Za70pxElLp2Z9ygHS6e2aDItiwcY=;
+        fh=HO35Jsbotj5i3KQRVFs35lCCZkXOLVz+IRX0uAcmnR4=;
+        b=LU6Jw2TyfPl1pP6SXN6LsGGeaNJPOXopr76WkQdyw64v9YF4iPqzbUX6PqZ3Tjs09q
+         1QdNFU1LffWYJ29q2pEut2iQwrzBdFsWwOl4V16d8MtJn2WAotNZJ3N/hNxh8qVGu8uY
+         mOARNf5n5C4Uj+ESkMclOW7UICBg1NKWxKiTIBeeppM8hWC3bO2+v1/tVRWVqi3mBNdT
+         QDF0NQnQRkQSpdZvP9NUH/U03+gn2irjdV65JU63gajhflyKPY/bOviD4UK+nd+eD0V9
+         etQBFtnYOZW28iQJnOhQU9okvGva+C+zST8E4q9Q+elkKKiI2oBPlowtykufk6NfiVOb
+         AhJA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1795475979; x=1796080779; darn=vger.kernel.org;
+        d=amacapital-net.20260707.gappssmtp.com; s=20260707; t=1795481691; x=1796086491; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
-        b=RH0V0w/Yr/Z4AMRG2tN8F5gjksBm5yKNRTXUsuF/1NCZKbxj6Px+gUwAwti0vvEIpt
-         ze3b0AYAjegli3ajVz8reHPYaQTczy5D/5H8TnUyeIVMRhXGJnsSb2RnhkLCYbicZhtS
-         ZETTU1BDFAWMBEqZg2gXH/dKYu5ciTgugb+pbPvjad24YoECg7uC1XTQp+k2Mtqfn/u4
-         yQUYcoahFdNOsiB3bh3TXDCfyjppcwNpsbv48RHxu13sF+IUnNZLd7/GZ4I98ylOdH7Q
-         mlftfwPpLhqmf1SaXDEf4Z+0c98TbjBQ/xj4UXn4EhbvPUieaPwitbh/1GX9QXJhge1z
-         U98w==
+        bh=iEKEeKCLRaE3702Za70pxElLp2Z9ygHS6e2aDItiwcY=;
+        b=o5Dxd8NHFXX2cE4R0WwhlruqtyJ5oTB6aI2dShZR/o5Rl58IMbHEEZjajXUrFyVu6/
+         8mXqmn+2VD5DRqMrlSibhb4wjce6v4IMfd8hvEFR7waf34/GvyabBuqgI4p+wbzUebY0
+         PtVFDm2OmwUbfHnzZpw5hKcBjamTr9Fljw9+QPc3P/TonvAJ4LRkPwKgsZdKsQQj+mTE
+         gHnJr5r7k81sZSurhg7E3ROWf7AMbZ6pikX+mz0df5BOgQbMUJnldE9O9hdgpAtnaY8t
+         3eeU1jniYS96HJMurxAIjQuVWVUuh1b/3Y2+peQtrHa7ShTn5WwZEpwbSSr9cvsD8FqF
+         /4qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795475979; x=1796080779;
+        d=1e100.net; s=20260707; t=1795481691; x=1796086491;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=PoobtMyoDnc+gxXLqB2HvjfkYgUQiC23/ftHCG2Qu/k=;
-        b=LfRb9O4Mt7Akof6IMeVvKJ0HI5JQN9lAjgX/UX5lvGHlGL2SVPzBN4O5jcmKOflAmt
-         Iwpkz9F0iTFNK1xeRH2unallE6oT0vitlURjm7+N91mUK+kaOkYiab6bUrrCtUgHyYDD
-         IDYyx/yh/ZB5QFINQ5n2Et+60gh+KYrSBNwT1wlpAhOKox24bMC8UuERhctPLZ0ngsdn
-         96T8nW0b4/6VX0XDnHUvYktDCBI14l9bn02WUnMxQTJ8uYNNeYYdn3Rjd/ifUtuGk67G
-         IeM4BeKmrnLFdYM7eff6a7hrdHbPI7Mt+iZdoVFel7Ia320ezc9tXuh7jbYfVHRze5m/
-         m/Iw==
-X-Forwarded-Encrypted: i=1; AL+hErE0F97tcyvSXBwoTp5J8WIz9hIdgY4+95a1D1K1/QSs9wE3LYjqNgMaScOTQ5Ez9hifaKxqE3iih8yaldBq7CMk5SgA8Do=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9h5e+tOuYqOOAA6WNLP8IbBJqcJXLI0xI+4Y9qMqNNAN/U0xNx
-	yt6HKIFoE7RbGwfDWdwelsK6E67EtKbPwD1SweCrNtUFpfMSgHZo79KZvacMfY+doVp+aNQ7wfV
-	a3Ar3IHiavmvSENfN0SzFGli0mCg/lPGAD4b3QoKc
-X-Gm-Gg: AZFdTZfP6ApCm5NMO+D6wt4sQ+1zYCt+JhGTGqntAODhm2PVRdpb/tyo0aT//21OgwL
-	0aX7zXGjWeTiAI+RWsV7x3MISZvwpv1/Zb4vcxiQedvoAK6/fvlKsuAdTgQYZNGiKr+qJKdaDEB
-	0XblV91FL4vVC9rIo9yrHNobViJDhymtb8bSf4Klk6B3/2LjhMYQGIbth/GN1JZrQnBrhpducvR
-	G+VkJwKokHV0YIXRX/NrlPpCNIX2D4VQUctOJIlMuXcLU6wkhGw4CkEZeYRxgSR6ntAV/2QPNaB
-	Jlr4asZEk59zg4S98JItuboiYBrMyYBU9iRBE5lNOlJtbeEuwJo+J1xhMaYuL7P9HbhAB9y5keQ
-	NM/CpqOsBKuBg5Bf+Mu9azxIFuNI+3BhiTi7hUB+6MUtH3RJVowX2uwlOpo2ZKXY6fmF7zsgbvX
-	FHJPdRvnQr9eFo9w==
-X-Received: by 2002:a17:902:e5c5:b0:2e9:528c:b9ea with SMTP id
- d9443c01a7336-2f03f18ed69mr94092915ad.11.1795475978663; Mon, 23 Nov 2026
- 15:19:38 -0800 (PST)
+        bh=iEKEeKCLRaE3702Za70pxElLp2Z9ygHS6e2aDItiwcY=;
+        b=M517o117+lFjd9+h2WjIxV17U0XWpxXtfYkMZoIaBj4NAN7gvk4rOeBYDnaIb+tAZa
+         2+6BwcDQSkR+vPdb7JhAHa2uyWvKt4rKUcB4qkEtCJIb7I3Nhhldy+3M18KZRcTiaZUj
+         8L3drUzxntfyRcDbFGINHnYZFCc6XfpjQe3tDAe+Jz/TgK3MlQE2NM1hYl+sAZVW2WGp
+         jbHc5s2H3k6rJ4zZAppfWnxrYiWBxp+AYD9h3ig1Zzq5oPXCoY/rG5V7csDlnfgf5rD4
+         fhLXlx8FkT5LXsSGswNGunfUIk/Kp5ngGPAZvBMoN0carziyTc/dTpUoPKWRdn/81bQ7
+         Y4Ig==
+X-Forwarded-Encrypted: i=1; AL+hErHvuPiDNjvgJwFTERZm9g7O0fUwGbwQKsfC39tESSvisU+VVFx9sfnkOJfQISkyX32KgNOqxVZxhraLBHpX5KxTEV5CxwU=@vger.kernel.org
+X-Gm-Message-State: APuU4Z88um5DLJSQmHwq3C3M09dN06OIDchshrIBienblW5vILaFvvIy
+	wTdGc6PAeE3OjnfuTqh19I6MvY7+Hhz6mgeciGKD/YaCP8g5mrqycic+nQjZylpDSvksH1m659v
+	2mIixSYpJqRqO0iw0SehpbYyjPv2TJ2Bklv63y21q
+X-Gm-Gg: AZFdTZcx71p2V9S3NFl9nHG/s1VXiKJNTk64K4Ziy6mX9r4C4FrWaZYqQ7RNQ5QEvs8
+	7KSrNSWKDnWjd5mLFuQLGPfZ7EMe1phC7QaVk818CldjhRv3w4fHAUfuB7SpHy0vsWLixkVbRDI
+	HoAwH2KjP5if/cscoo4Lo3XLztfCzV7+j95yKmQFcGAb8Ev/yHha+KRg3Kjz286qlCBmLnQ6YJF
+	BwkDRL1bqAwWnc+S4VOdTIc7X+VOWiPnv2OFg2WSlhNOAtxxElbfzp3UXTdYlMkphdEOnt5mRVf
+	uVZy90z01/v1zCP0j4kWt4G03Yy/lUAzroflINXQiK6xBvRNPJ2PawhHIptNPSMVPAkfCdCGOn1
+	ujIgWQYA6BaSYd0vEKEaLwNOtI6w8YnrbiuzNb3Q=
+X-Received: by 2002:a05:6512:618:20b0:5c0:165:16c3 with SMTP id
+ 2adb3069b0e04-5c1bc85f246mr2665281e87.64.1795481691103; Mon, 23 Nov 2026
+ 16:54:51 -0800 (PST)
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -105,50 +104,312 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261029-work-security-namespace_free-v2-0-65591dbba7b3@kernel.org>
- <20261029-work-security-namespace_free-v2-6-65591dbba7b3@kernel.org>
-In-Reply-To: <20261029-work-security-namespace_free-v2-6-65591dbba7b3@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 23 Nov 2026 18:19:27 -0500
-X-Gm-Features: Aa3M54p84nMzXEsFfUh5-yY_9m2RQyZXUhbb-xh5PHe7PIY590iycN_cOXWciDA
-Message-ID: <CAHC9VhTXzxXECV6fwt0BaJC8jF9EBzmzoon4f7fWaJotv1PyRQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] lsm: fix the security_namespace_init() kernel-doc
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, netdev@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, stable@kernel.org
+References: <20261119104208.782900-1-halg@google.com> <20261119104208.782900-2-halg@google.com>
+ <CALCETrVqc+1bjH1bhqHee9bsUdk2B6314z7PMexbsnNpMhk14g@mail.gmail.com>
+ <CALCETrV=zSxb6sgA08DLiK2bQovdMEj9ycG=Cc71mLn2C5Pgeg@mail.gmail.com> <4db941ba-3001-4019-8910-63e534b29f89@schaufler-ca.com>
+In-Reply-To: <4db941ba-3001-4019-8910-63e534b29f89@schaufler-ca.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Mon, 23 Nov 2026 16:54:39 -0800
+X-Gm-Features: Aa3M54oMS94l-c6quSe09sYNPHMWYafhDwaB4QCI_jHSdqjrERKiY6yBrUdD7_4
+Message-ID: <CALCETrX7_HidtLAjAh=D0m2Fn=1ZkfMBiXUVXbjyu+xDY19u0A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] userns: introduce capability bounding set for user namespaces
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Andy Lutomirski <luto@kernel.org>, "Hallgrimur H. Gunnarsson" <halg@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Serge Hallyn <sergeh@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <kees@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Jonathan Calmels <jcalmels@3xx0.net>, Jann Horn <jannh@google.com>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Singh KP <kpsingh@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	containers@lists.linux.dev, keyrings@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 29, 2026 at 12:41=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
+On Mon, Nov 23, 2026 at 9:22=E2=80=AFAM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
 >
-> The kernel-doc claims that the owning user namespace is available via
-> ns->ops->owner(ns). But security_namespace_init() is called from
-> __ns_common_init() before the namespace has been set up. Apart from
-> network namespaces the owning user namespace isn't set at that point so
-> ->owner() returns NULL. And for init_net with CONFIG_NET_NS=3Dn ns->ops
-> itself is NULL.
+> On 11/20/2026 9:09 AM, Andy Lutomirski wrote:
+> >> On Nov 19, 2026, at 2:52=E2=80=AFPM, Andy Lutomirski <luto@kernel.org>=
+ wrote:
+> >> =EF=BB=BFOn Thu, Nov 19, 2026 at 2:43=E2=80=AFAM Hallgrimur H. Gunnars=
+son
+> >> <halg@google.com> wrote:
+> >>> When a process creates a new user namespace, it receives a full set o=
+f
+> >>> capabilities (CAP_FULL_SET) scoped to that namespace. While namespace=
+d
+> >>> in scope, several of these capabilities (such as CAP_NET_ADMIN and
+> >>> CAP_NET_RAW) expose broad kernel attack surface that many sandboxes a=
+nd
+> >>> containers never need. However, there is currently no configurable wa=
+y
+> >>> to withhold such capabilities from user namespaces while still granti=
+ng
+> >>> them to workloads that require them.
+> >>
+> >> One thought (from the rootns thread): the other decent sized attack
+> >> surface here is CAP_MOUNT_ADMIN.  Which doesn't exist as a capability
+> >> bit.
+> >>
+> >> A sort of horrible solution (but maybe not so awful) would be to
+> >> declare that the bits in cap_userns aren't actually capability bits,
+> >> and that you need the bit in cap_userns *and* the bit in cap_effective
+> >> to do sensitive things, and that mounting needs cap_userns to have
+> >> NSCAP_MOUNT_ADMIN *and* cap_effective to have CAP_SYS_ADMIN.
+> >>
+> >> I want to sleep on this.  It might actually solve several problems,
+> >> e.g. controlling creation of ipv4 and ipv6 loopback or tunnel devices
+> >> or whatever.
+> > I slept on it. Here=E2=80=99s a counterproposal.  I=E2=80=99m not sayin=
+g I think this
+> > is better than this patch set, but I think it=E2=80=99s worth weighting=
+ the
+> > options.
+> >
+> > Define a whole new set of privilege bits.  As a
+> > poorly-painted-bikeshed option, I=E2=80=99ll call them eprivs (for expo=
+sure
+> > privileges - it=E2=80=99s a crappy name but at least it=E2=80=99s prono=
+unceable).
 >
-> What a namespace_init hook can rely on is the namespace type and, now
-> that it is allocated before the hook is called, the namespace id. So
-> document that instead.
+> I played with a mechanism I called "chits" (all the good terms for securi=
+ty
+> bits have been consumed for a very long time) that looks a lot like
+> what you're proposing. I did it to address the CAP_SYS_ADMIN problem,
+> where any use of the capability opens up a whole barrel of worms.
+> I cannot, unfortunately, find my patches. :( The basic approach is:
 >
-> No functional changes.
+> A process has an optional set of chits. A process without a chit set is
+> unaffected by the mechanism. A process with a chit set is allowed only
+> those operations for which it has a chit. The existing but empty chit set
+> allows no operations. A process may drop a chit, but not the set, which,
+> again, can be empty.
 >
-> Fixes: f675d2e95569 ("lsm: add LSM blob and hooks for namespaces")
-> Cc: <stable@kernel.org> # mainline only
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
->  security/security.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Because I was after CAP_SYS_ADMIN, I envisioned a call
+>         cap_able_chit(capability, chit-list)
+> but there's no reason there couldn't be a
+>         chit_able(chit-list)
+> as well.
 
-The way this patchset is structured this probably should be folded
-into patch 4/7 as it doesn't make sense by itself.
+This is quite pronounceable, but I'm not sure I could submit a
+patchset with a chitlist with a straight face :)
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+I feel like, in our brave new world, much of the work here is defining
+the interface and how it should work, and our little AI interns have
+gotten quite good at actually writing the code.  So my grand plan is
+to let people contemplate it until next week (i.e. after the
+Thanksgiving holiday) before actually producing any code here.
 
---
-paul-moore.com
+I was imagining something like:
+
+prctl(PR_EPRIVS_AND, mask1, mask2, mask3, mask4);
+
+(i.e. define the things to be 64 * 4 bits max until we add a new
+prctl, which will hopefully be along time.)  And to maybe make mask4
+be specifically arch-dependent bits, because I think EPRIV_X86_LDT
+would be an excellent addition.  (I say this with some chagrin because
+I fixed some gnarly vulns quite a while ago in modify_ldt, and I
+missed smp_mb(), and someone rooted it.)
+
+>
+> I wrote this as an LSM, but the system-wide aspect of it made that
+> a questionable choice.
+
+I'm thinking not an LSM.  The goal would be to make it available everywhere=
+.
+
+(If you missed the other thread, I'm also imagining adding
+CLONE_NO_NNP, only allowed with CLONE_NEWUSER, which would *clear*
+no_new_privs.  LSM would have a chance to veto this, but the default
+behavior would be to allow it.  This would allow running an entire
+system with no_new_privs set for all normal tasks including PID1 while
+still running conventional distros in containers.)
+
+>
+> If you have any interest, I could dig more deeply to try to find the
+> patches. Otherwise, I'm happy to look at what you come up with.
+>
+> >
+> > An epriv is not permission to do something *to* an object; it=E2=80=99s
+> > permission to do something that exposes a meaningful attack surface
+> > within the kernel. So there=E2=80=99s no ns_has_epriv because there is =
+no
+> > object.  These are kind of the opposite of object capabilities.
+> > Additionally, an epriv never grants the ability to do something that
+> > one couldn=E2=80=99t do in an epriv-less world.
+> >
+> > For now, all tasks have all eprivs, even not-yet-defined ones, unless
+> > user code or config explicitly changes this.  (Maybe some day secure
+> > boot might remove certain eprivs.)
+> >
+> > There should never be a check like ns_capable || has_epriv. It=E2=80=99=
+s also
+> > &&, or perhaps caps are not checked at all.
+> >
+> > Example eprivs include:
+> >
+> > EPRIV_FSOPEN_VIRT: may fsconfig, fsopen, etc a virtual fs like fuse or
+> > tmpfs or overlayfs.
+> >
+> > EPRIV_CLONE_TREE: may clone a mount tree
+> >
+> > EPRIV_MOVE_MOUNT: may move mounts around (but only if you also have
+> > CAP_SYS_ADMIN on the correct namespace, of course)
+> >
+> > EPRIV_FIREWALL_TC: may configure any firewalling configuration or tc
+> > configuration (this includes iptables, nftables, and ebtables)
+> >
+> > EPRIV_NET_RAW: may use raw/packet sockets (like CAP_NET_RAW)
+> >
+> > EPRIV_TUNTAP: may create and attach to tun/tap interfaces
+> >
+> > EPRIV_IP_LOOPBACK: may set up IPv4 and IPv6 loopback using whatever
+> > new facility we add
+> >
+> > EPRIV_NETLINK: may use netlink at all
+> >
+> > EPRIV_NET_ADMIN: may use traditional CAP_NET_ADMIN abilities (all
+> > CAP_NET_ADMIN checks will also check EPRIV_NET_ADMIN)
+> >
+> > EPRIV_OPEN_FILE_HANDLE: May use open_by_handle_at, etc.
+> >
+> > EPRIV_UNSHARE_USERNS: may unshare userns
+> >
+> > EPRIV_UNSHARE_NONUSERNS: may unshare any other namespace
+> >
+> > EPRIV_MOUNT_CGROUPv1, EPRIV_MOUNT_CGROUPv2: may create a new mount of
+> > these subsystems
+> >
+> > EPRIV_PTRACE: there are lots of different variations that might make se=
+nse.
+> >
+> > EPRIV_MOUNT_PROC_PIDONLY: may mount proc-pidonly
+> >
+> > EPRIV_MOUNT_PROC_NOTPIDONLY: may mount proc not-pidonly
+> >
+> > EPRIV_MOUNT_SYSFS: may mount sysfs
+> >
+> > Example eprivs that are questionable:
+> >
+> > EPRIV_DMESG: the kernel log is a specific object, and I think it's
+> > better to control access using something kernel-log-specific.
+> >
+> >
+> >
+> > There is no operation that increases eprivs -- even without
+> > no_new_privs set, a task will never gain an epriv, nor will a child
+> > ever have an epriv that its creator did not have at the time the child
+> > was created.
+> >
+> > The evolution rules could be as simple as, on fork/clone, the child
+> > inheriting exactly the parent's eprivs.
+> >
+> > Or we could bind eprivs to a userns instead of a task, but that could
+> > be more limiting and awkward than we want.
+> >
+> >
+> > What do you all think?
+> >
+> >
+> > FWIW, I had an LLM make an inventory (surely not exhaustive) of
+> > recent-ish CVEs and how they relate to this list.  (The below is the
+> > only part of this email that is LLM-generated, although I added
+> > EPRIV_SYSFS because I didn't realize that nonroot userns could mount
+> > it until I asked an LLM, sigh.)  To me, the list and its breakdown
+> > suggests that there is quite a lot of room for meaningful attack
+> > surface reductions while still leaving large parts of userns
+> > available, and that my epriv proposal captures much of this but the
+> > cap_userns proposal may be too coarse-grained.
+> >
+> > (I also asked about eBPF, and my LLM came up with a lot of CVEs, but
+> > there's an existing BPF token mechanism and I therefore did not
+> > propose EPRIV_LOAD_EBPF.)
+> >
+> > --- begin LLM output ---
+> >
+> > **EPRIV_FSOPEN_VIRT:** CVE-2022-0185*, CVE-2023-0386*, CVE-2023-2640*,
+> > CVE-2023-32629*, CVE-2025-38499*
+> >
+> > **EPRIV_CLONE_TREE:** CVE-2025-38499* (only if the check also covers
+> > the relevant internal mount-cloning path; explicit `open_tree()`
+> > restrictions alone are insufficient)
+> >
+> > **EPRIV_MOVE_MOUNT:** CVE-2025-37988
+> >
+> > **EPRIV_FIREWALL_TC:** CVE-2022-25636, CVE-2022-1015, CVE-2022-1016,
+> > CVE-2022-32250, CVE-2022-34918, CVE-2022-48911*, CVE-2022-2588,
+> > CVE-2023-32233, CVE-2023-35001, CVE-2023-4004, CVE-2023-4015,
+> > CVE-2023-4244, CVE-2023-5197, CVE-2023-6817, CVE-2023-3609,
+> > CVE-2023-4623, CVE-2023-4921, CVE-2024-1086, CVE-2024-0607,
+> > CVE-2024-27397, CVE-2024-26925, CVE-2025-38001, CVE-2026-23111
+> >
+> > **EPRIV_NET_RAW:** None identified.
+> >
+> > **EPRIV_TUNTAP:** None identified as requiring TUN/TAP. Some
+> > packet-triggered exploits may optionally use it, but that does not
+> > establish it as a necessary blocker.
+> >
+> > **EPRIV_IP_LOOPBACK:** None identified.
+> >
+> > **EPRIV_NETLINK:** Also those blocked by `EPRIV_FIREWALL_TC`, insofar
+> > as the documented attack paths use netlink. No additional CVEs
+> > identified.
+> >
+> > **EPRIV_NET_ADMIN:** Also those blocked by `EPRIV_FIREWALL_TC`,
+> > insofar as the vulnerable operations require `CAP_NET_ADMIN`. No
+> > additional CVEs identified.
+> >
+> > **EPRIV_OPEN_FILE_HANDLE:** CVE-2025-38306*
+> >
+> > **EPRIV_UNSHARE_USERNS:** Also those blocked by `EPRIV_FSOPEN_VIRT`,
+> > `EPRIV_MOVE_MOUNT`, `EPRIV_FIREWALL_TC`, `EPRIV_OPEN_FILE_HANDLE`,
+> > `EPRIV_MOUNT_CGROUPv1`, and `EPRIV_MOUNT_SYSFS`, plus CVE-2025-38058*.
+> > More generally, blocks the documented unprivileged user-namespace
+> > setup for the entire inventory when no usable user namespace already
+> > exists.
+> >
+> > **EPRIV_UNSHARE_NONUSERNS:** Also the namespace-dependent attack paths
+> > blocked by `EPRIV_FIREWALL_TC`, `EPRIV_MOVE_MOUNT`,
+> > `EPRIV_MOUNT_CGROUPv1`, `EPRIV_MOUNT_SYSFS`, and many of those blocked
+> > by `EPRIV_FSOPEN_VIRT`. Coverage depends on whether the necessary
+> > non-user namespaces already exist.
+> >
+> > **EPRIV_MOUNT_CGROUPv1:** CVE-2022-0492*
+> >
+> > **EPRIV_MOUNT_CGROUPv2:** None identified.
+> >
+> > **EPRIV_PTRACE:** None identified.
+> >
+> > **EPRIV_LOAD_EBPF:** None identified.
+> >
+> > **EPRIV_MOUNT_PROC_PIDONLY:** None identified.
+> >
+> > **EPRIV_MOUNT_PROC_NOTPIDONLY:** None identified.
+> >
+> > **EPRIV_MOUNT_SYSFS:** CVE-2025-22089*
+> >
+> > CVEs not cleanly blocked by an operation-specific bit
+> > Excluding the two EPRIV_UNSHARE_* gates:
+> >
+> > - CVE-2025-38058: No explicit unmount privilege. The vulnerable race
+> > involves umount(2) and path lookup.
+> >
+> > - CVE-2022-0492: The cgroup-v1 mount bit covers the documented
+> > new-mount attack path, but not necessarily configuration of
+> > release_agent on an existing writable hierarchy.
+> >
+> > - CVE-2025-38499: The correct gate depends on which filesystem-context
+> > or internal cloning operation reaches clone_private_mnt(). I would not
+> > count EPRIV_CLONE_TREE as a definitive blocker without checking the
+> > exact call paths.
+
+
+
+--=20
+Andy Lutomirski
+AMA Capital Management, LLC
