@@ -1,60 +1,73 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795532955;
-	b=L4FcXvlvxLYUts1Py4BffmNPVVcviBOm92ry9isrFvjFRF5MfuXnEJlLSBxADDM1V/zh
-	 kAh/DudJlyQp9Napt2aCP4yQ+bivrzWYel8leDl16T5tO7ip9VFzL7597S9g4IlmEQVK3
-	 gY5NNmFKT5Gwn9auwjZEN2TpjF6XciBj+gRdPUKf95nKMfJuGqHkBRLEhGDS655s/HOp5
-	 3D8t9cWp6WrbGyMW63D6jro4MxY6+y/MzIkC8ze41aiveAgcAj2LnHUINIy9mNg88FIF0
-	 k9vu6Uspy+FoveSxJRFO85hFKQnzoXDpvLMxfEpYD3z2D38MXRrSibIcIJQNI0C8Rew==
+	t=1795532963;
+	b=MTT5tTv0rrRVeW4dOXB8E7LgPBa6PVxoN5Y0DpDOVpSDRJ+oN9pR/HsehJbPKHZuoCcf
+	 RVBdwFIcOBqe4NOQ3EEN3mkbN8OHAqo0/PuLxxs3idu0B5Rl2CR97jfp6Rh43fVyED3u9
+	 3Q11jP41NX/vJZFgI9Lp2cGU0mSOXQsdVDKV2pv0oiqTiUZGmrh0oigJZLsA/pBPcPoOO
+	 AWpP+AG3iqQzhRml1hCzJpZD0H1Rv+TPRfnwe1XOfsH016DcSmqUpqiTCq08z5XpXQ04O
+	 g+HqFE48BuYvoxMUmyZaDeW3AMhwHmhe8WXSg0dfroOecZ/BqCQ4Tk83j6y7vGPMeJA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795532955;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795532963;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=enBVvX1k6DHuUyx9bzwRXTq+Qx99sH7KK0CGQinMRgw=;
-	b=H0XPX7dySQU4xudGvEbXHEexHhyGPCUvEiHgeFNTz+IQej+MbBPmE7z6cNOX+ejdkmN5
-	 nev9XDb+r8psuCRiclS5rB4qY1nqSL3GgFyH6NyNCDLuUqTIhKwOZMfp/GjZEutZysh2e
-	 FYEnQC6l3VcIvR4wcLbl8c4DAk0XDHzftmoLeaRB1YaBthM65QXAbJizHwS2vUPh/8LRb
-	 //Ba+UnRe8XWEtydOh3qRqTlNkCJIeTdNFy/Tl4YloBk7QsHcyqSahouvTz6U3P+ppaVc
-	 NOwaY06shf2WXzPVwnyw3J1ZkDWVdjUhCs3/U5QXSe9A7y8d9ZEf6MQTyu1ifxwy5Ug==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=K+IekPDE+jkqEoJ25TetgowrP8a4LUWhHnBuiLXn8A8=;
+	b=D/ZQuH8RJb5ohZPVopFV6q1o+rlMLEWwXsjgY8PPSBC8YQsnnNthgHkBgZH1xymVO5+A
+	 wOQsYEuDGfsnNZH4IkQVO/D8QRQOZ2FR/tm4AsmfByjRyjSxf5XUAd6S2qSAtdh9au5dO
+	 L4H62+JNEH1T9yFam9BFtnOx16uKOELHA2oxAZTLAp0lMTmR0Rdmwd3px0rEQ7iSUdXZ1
+	 pjtkslSLI6cxtgSIfswPF/xNH7BhNe3kf7Flds3VmRePn5jtKtZfLnZPoziHOaoJbktHG
+	 c0ku1P5TgENr6lt/Mit5V1beeCjoF219CVN6SM3P2yjm5eUHpwiM+A8Fxt+LVbLz53g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y+rVKpr2;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AxiV7WZS;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B72F606A31E;
-	Tue, 24 Nov 2026 15:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 3ED24606A321;
+	Tue, 24 Nov 2026 15:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y+rVKpr2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAAAF1F000D1;
-	Tue, 24 Nov 2026 15:09:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AxiV7WZS
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 36FD81F000D4;
+	Tue, 24 Nov 2026 15:09:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795532954;
-	bh=enBVvX1k6DHuUyx9bzwRXTq+Qx99sH7KK0CGQinMRgw=;
+	s=k20260515; t=1795532962;
+	bh=K+IekPDE+jkqEoJ25TetgowrP8a4LUWhHnBuiLXn8A8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Y+rVKpr2Rj4o9vcYMYCo4+t0vsY7Gws87i5Zuk7jaF2TYerlKqKlfKLm9QDpF/COk
-	 NH+EFy7IcRYxW4blMHZcm9A1+6mekg7iD2VBtZFFfMX71XhO2PLSe3Ftznh3vUrYfS
-	 4HVC+MSWisXjPx+FCsAw6crsewKKEHYCojQXCBjTICmIyegobxmodSSSI+XoCMJLC9
-	 SQ7lcOZUDoHBOGQtF3it9vkYGm6CVbV9LnEB8f4C1Rl9Ja+/yOYcvtU6jNIhRnhRRP
-	 Od/cgS/IdR8WZ7wA8M3mXJwrEq5PpX5dXamlXSQYJv2cCPTWcFlMyFQEV5VmanMp0k
-	 pbfHWffYbaxvA==
-Date: Tue, 24 Nov 2026 16:09:08 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Tejun Heo <tj@kernel.org>, Bart Van Assche <bvanassche@acm.org>, 
-	Cen Zhang <blbllhy@gmail.com>, James Morris <jmorris@namei.org>, 
-	Lee Seong Hyeon <ihopenre@gmail.com>, Marco Elver <elver@google.com>, NeilBrown <neil@brown.name>, 
-	Nickolai Zeldovich <nickolai@csail.mit.edu>, Paul Moore <paul@paul-moore.com>, 
-	Peter Zijlstra <peterz@infradead.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] landlock: Do not hold exec_update_lock across the TSYNC
- wait
-Message-ID: <20261124-gehisst-modeerscheinung-hermelin-b3e1d5983901@brauner>
-References: <20261120151554.2651743-1-mic@digikod.net>
+	b=AxiV7WZSd4PJ6njfHxHjci8C4W3rlHZiStM2FsIJxUt9/7C+Ank9ouOae768ogJKt
+	 +S54ua88UepNEkPBO6qjzgCWCZWeSY7Nr1RNSJqOcNds+Ygoe+HJyxY11VPr0ZLXxk
+	 iaYHYERsCjcwthMRREuWi033qD+cFkVBdv3YAl5YuA6D6WGV+a3YtT6hT9u5hLYoA8
+	 02P71nq4V8c8pfqRkWRA5AXuZdmYn/SbEgClf0uNzk3s1IfiIu7l0hhXIe/KlG+hbA
+	 Oj+FZwYYVRWGv5aCyggVQaFSCQHBF64t+o1e+Quhe9huy6dUrx1Rwf5Cj1zg3Ygmba
+	 3b0AD2lJpQAyg==
+Date: Tue, 24 Nov 2026 17:09:18 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	David Howells <dhowells@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ignat Korchagin <ignat@linux.win>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	James Morris <jmorris@namei.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Corbet <corbet@lwn.net>, Lukas Wunner <lukas@wunner.de>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	James Prestwood <prestwoj@gmail.com>
+Subject: Re: [PATCH 9/9] KEYS: trusted: Add asymmetric key support for TPM2
+Message-ID: <awWonunbfilZrzQV@kernel.org>
+References: <20261124120044.1481752-1-jarkko@kernel.org>
+ <20261124120044.1481752-10-jarkko@kernel.org>
+ <sashiko-outbox-231131@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -64,53 +77,26 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261120151554.2651743-1-mic@digikod.net>
+In-Reply-To: <sashiko-outbox-231131@kernel.org>
 
-On Fri, Nov 20, 2026 at 04:15:52PM +0100, Mickaël Salaün wrote:
-> landlock_restrict_sibling_threads() write-locks
-> current->signal->exec_update_lock to serialize TSYNC callers, and holds
-> it until every sibling thread has run its task_work.  This wait is
-> unbounded: TWA_SIGNAL does not wake a TASK_KILLABLE sleeper, so a
-> sibling blocked as a vfork() parent runs it only once its child execs or
-> exits.
-> 
-> Meanwhile, readers of this lock block, mostly in D state:
-> /proc/<pid>/stat, mm_access(), pidfd_getfd(), kcmp(), perf_event_open(),
-> etc.  An unprivileged process can thus stall tools run by other users,
-> including root, such as ps and top.
-> 
-> Only a per-process "TSYNC in progress" marker is needed.  Use an unused
-> signal_struct.flags bit, protected by sighand->siglock, which is held
-> only to set or clear the marker.  A second caller still restarts the
-> syscall, and a cleanup class releases the marker on every return.
-> 
-> Like de_thread(), treat a group exit or an ongoing exec as a held
-> marker: a group exit may overwrite the flags, and both kill the other
-> threads, which the restart lets the caller handle.
-> 
-> Add KUnit tests for taking a free marker and for rejecting a held one.
-> A concurrent TSYNC caller cannot be started deterministically from user
-> space, but a KUnit thread has no sibling and can hold the marker itself.
-> 
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Nickolai Zeldovich <nickolai@csail.mit.edu>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Yihan Ding <dingyihan@uniontech.com>
-> Cc: stable@vger.kernel.org
-> Reported-by: Lee Seong Hyeon <ihopenre@gmail.com>
-> Suggested-by: Lee Seong Hyeon <ihopenre@gmail.com>
-> Fixes: ff88df67dbf7 ("landlock: Serialize TSYNC thread restriction")
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
+On Tue, Nov 24, 2026 at 12:25:44PM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential
+> issues to consider:
+> - [Medium] KEYS: trusted: 32-bit param_size overflow in
+>   tpm2_asym_rsa_decrypt()
 
-Yes please, this came up in another series that I'm about to send and
-this has been bothering me. exec_update_lock should not be taken lightly
-at all. We really need a way to limit the exposure of this forsaken
-lock,
+I've now learned that sometimes people expect you to fix these before
+they will review, or they get upset if you fix them and iterate the
+series. Someone will be rip their trousers whatever you do.
 
-Acked-by: Christian Brauner (Amutable) <brauner@kernel.org>
+Or then, some gets pissed when some random bot gives feedback pm
+the next day.
+
+Since this is the worst of the worst I'll mark it down and let's
+consider it addressed.
+
+I like Sashiko but don't know how to dance the dance.
+
+Br, Jarkko
