@@ -1,111 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795520651;
-	b=OfBJRyCHqoPEy1FiranWKoWoDT6Lk9ye47XikgaHaMG8FYDe/ttpSeMq/pPC5KDF1KaV
-	 3mJZOyUbFWEHPrFolP56XfbsMyuCuGlJH+fhaRyD+pzwxdMRpLpNpMY7CwC+62FLyWiMC
-	 aKv8wGBMwwiqk6/vaJKxRK72pjilVPsC95yGpxMGqGz933av3Kty3QB2iz2re2Hsl1Qim
-	 BPAWrNjUP4YUgmdYyKRUhZmQHtab9Ml7kuxO8V1BHPmn0nX8ZhUOskKIRtJlhPaoFxJWU
-	 8ENBMXluN9QJpKO5gMPkOSVGnzj0gcwFGoCoAAGmGfSIFdmNRBIzar9thgUfC0UkTjA==
+	t=1795521669;
+	b=q4AIeslkZqwWmWYsrTdxWNiB1lDWLxGnbxtfjUrL12dpyrvYs21bQs7XbgrP8kjVIqf4
+	 6FqMYUz0+ZmiMsZ3PG6Jm0YGikGfYtQJNy14vtVj6aBFNwR6FJvQze/DC7w1jB9c3fElv
+	 1M9HfOBwduS1cB/gkth/vzOkttdCKF0PTUj3VCwrSYHuKLBT/QEZFs5Rdy0EKckvZNwk4
+	 w3/i7fxMXieTLQm0+DlZGgmpsQakVclT64t9GC1UFwnxcsSmeKiqxsrN+0Gc8znWAtZu5
+	 n1h3jYh1NwQWmx+AD7pw2RrcOWBiTTzjtMahyPCueEeHv8E57ZOa5FKeFi1zAMeQdkw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795520651;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=N8ZwPvRdVQ5w2lgcEQVZGVC5oZ+OtkHzlUcaoTKvjTw=;
-	b=mie7VfxJDBn1bGhiY0naozi7HkTN9zyrsjbP6RuDmZxiceVwiMqEdskT9Y0Qw2DehZfv
-	 FAZE2q0P0uYPM3Lwest4qAuvx2b7N+agSZXf9dcqjR1puOonLwKmcpHabbKq60GMcNmnS
-	 ygluhMnUmJll8nsA4bBBpUZimShN5ye6BCxglj9znV1ChGuQd0MsvORd4XnPpbUHRp9fp
-	 fudoc07rrOC6ylDy8uPHjQi7KefjTdAaqxxPP27Pf6FdpzIRCxzUXxW2hvHkviehx8OwN
-	 9Ag6hb5rbWqNHGHY+tn7AQmW/RHe8iQEgHaQI4O1yltdn3x3D0dCZsKyGqf7Is+Vi/A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795521669;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=G3HDr+rlUwMTz5EXde1gL4gZLnJyvEJHBt9n0Z6ARZQ=;
+	b=WJFIJyT/4VgT6PfbzuRsDLSQ9CSgrZRcKo8CW8WgUzOqMpyiWxxTAq5TjcCi0YtHNZxy
+	 hi/aAGfuaJLgFKUxXN+H64H+nnHD6ockxtGVjJs7NlKoL7kDmE4JR+EjmHI00RQhKmB34
+	 4RJcyQhzSseNa/WBX+cBS5YX3xazsZ7LpMfmeV4yzhuiBcXgPlj0o0fNsHKReIaJqy9h0
+	 J0szBKIIiq1tuGXwZnh3Sjzmsbh+3W2yypHaOZfqd+CxDPkSE+nMu4J5MP4skzW+DrMPT
+	 sVaL3BquSSh+Ab68h/WkjJh42lLDeT0b5nyChQDunrrObgbN2KftC+RtKzicvybDwnQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=roblab.la;
-	spf=pass smtp.mailfrom=roblab.la;
-	dkim=pass header.d=roblab.la header.i=@roblab.la header.a=rsa-sha256 header.s=fm2 header.b=zDYFYC3w;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=uhXj6dU2;
-	arc=none smtp.remote-ip=103.168.172.151
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GNTb5Qoz;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79537606A32E
-	for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2026 11:44:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 79537606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=roblab.la
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=roblab.la
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 94DAC606A31E;
+	Tue, 24 Nov 2026 12:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=roblab.la header.i=@roblab.la header.a=rsa-sha256 header.s=fm2 header.b=zDYFYC3w;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=uhXj6dU2
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6CB4BEC0CC1
-	for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2026 06:44:10 -0500 (EST)
-Received: from ams-imap-01 ([10.64.2.21])
-  by ams-compute-02.internal (MEProxy); Tue, 24 Nov 2026 06:44:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=roblab.la; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795520646;
-	 x=1795607046; bh=N8ZwPvRdVQ5w2lgcEQVZGVC5oZ+OtkHzlUcaoTKvjTw=; b=
-	zDYFYC3wexfaIgx8zNffpg9ogZuJCVHAUEMlO1YAALQu/uHNMHYmysXehwFaIhk2
-	jf8g1/u/EIZt19wPWRWjL/r5FqDdL2O0M7QHh3eILktcqrsiZHHbHz6qlD5SIR2j
-	NXpT8W6mosEgGglIku4J6hN0NycewfAKVoL0BB/EuIeelPselkwnR2ZqC7ON9Jxe
-	XmslgP6I3ilwoaYcsuqGcPiXsr22JOkXTzkdrPfh9Szu8iFtPKD+6qCHrOyQQjrK
-	pE8fVC4r4Z/0MpPH4JC7CHOWl9YbU2ZZ080u9byBOWfWqD8D5emK2D1w5Q2nJbcX
-	VUUg75+pPjyBTND/0sH/BA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795520646; x=
-	1795607046; bh=N8ZwPvRdVQ5w2lgcEQVZGVC5oZ+OtkHzlUcaoTKvjTw=; b=u
-	hXj6dU2NGsl5yxC6Ru2m4kQ3+TiBA6m8WdWFlpm/d3+SLSF79ds/pGE74jRTdQ6z
-	7fHMSpLlkviKhdlipGtw3Dy7HutCaGVtq30JGeEWPnqQy9yKy/sC5zI8gLGjWbeP
-	/bhxTWsMs7kQmtx0Jb9jLgQ72RISnkiM4aSF9pHneE2iTumLQEtZSmIcNiS2AHjR
-	6Cy1+dFOTiKvPyIyVY7THOg+4aOpnc3z+3u6XgO6hwRsRF59YUN8VINoI6yMWPFL
-	vJPLe6ViF54KkUFS72pXxseoAW17X8CcGZsgrXmKaHSri9G+1bQqAmAkSesxv/ys
-	HRfyqc47rjb5EY0VnRlXQ==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=roblab.la a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795520646; d=roblab.la;
-	mf=PGxpbnV4QHJvYmxhYi5sYT4=;
-	rt=PGxpbnV4LXNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc+;
-	s=fm2:rsa-sha256:k/O+RAthsulvgj7YFr/i4HRb7sb2bhIzAL1ojZ1R4CMEl84
-	DIXjiKrEqcJCgrKDI4lHItv4wHmQ9tp2jOneQvabMNPmXV+eXDcuT+JxsSRLOdIj
-	V1y8yENnnvBx1UrlhNzJaoj2oLurJ+ediww7lPHcbMF6iTpq8HEyO44aFsKKe30g
-	NZwu/Ctk0MMwGWkpx4NXbTXhnrVd5Sx6dgGhxV4PNuc3jGtwjV8LjS4KcoYeVfEt
-	77QGyvWyX3cH3dIpWMPXYdHtnVQa5PzM+P/HsvHP6rIp5+s6Ga3rdLJkXlX9ImMR
-	sRO7SeFLZGyK7Qg14DA0z4YA/Y8rT7wFwxVJfeA==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:Dd8hp7MIhTLV2jC/7YXbyY2mKFfMZQ04/wOAlib3Rss=:N8ZwPvRdVQ5w2lgcEQVZGVC5oZ+OtkHzlUcaoTKvjTw=;
-X-ME-Sender: <xms:gXgFa6GG2StYcMpBXf_HbgR4FCnxHnN2Qv-VKOei6ZQhOaRn3Dw_Bw>
-    <xme:gXgFa2LMjbBsIIFKzDdTEzVsx50wK0horskny35SEyBU6IA0PkuzLjMoL2rZU9-QC
-    695IOx4cF-faVXi5wjI_hNH1TbPAFGVhk2mHDAYm4n-ZFZi4nbtdf0>
-X-ME-Proxy-Cause: dmFkZTGybzWXWqi2KfGEkkNVWKjEvPW7MWzRp/je3r72i5X5OVhLIMGFKlkE/o4YYFL/XL
-    EhTJCQvrT0we6f5gxwoZHshPN8e8IrJojlT9BiLsxDkwUT5d7kSsjSJ0wCncBKmA4edGnf
-    g8mYMO2Qj9QR+Yz5PTQmJEeSs4qsYX4ebd19Xkxnd58eE9nIn7V6DiwwYlIUpn8YDypv+F
-    OUy8A/xnvS36+4L3ijBtClHiSUp++G51hZ3HqErC/f5F5jrr6C+06yV35Zf9p5+TsDC8K7
-    Yg1LjG73zqGuQIGFczUdmiV269uUoG2DkoKIRITA/hJmJ0/M9WkQivlfVzh+IdslSHdhrq
-    H0b2ulxivTTWq36moJSL8GYCIKMLEyRDLVVd1Bt4YvH15qX7uhyJ0pV2GuEEvTPv2sjn0N
-    +4MmLo/OMu999wUmV2HGwi2Y7j6oreXiXD6R9zZV977mikbPYxbL8ES4Xc0mIfEAsDI38g
-    o7YT84mSWoj6n+TayN1RK18uR8+blPHo9Ml1uTwIyeA377cuvDYiRdar0+edyS8Wc27XRW
-    kXVeSBthOlxdZqENbqqvhhTCn2Ng+SvD0WNd3RFTMWLsm5qKaL9qIaxvGg1Se2FkYqubSe
-    DML+ZVCR7n1hHJSuF3eH0XseTVgxIib1recs5Yg+lKNtiisHVSb+0+veEbmg
-X-ME-Proxy: <xmx:g3gFa1mztdhIl612jbwONHEnMFs4Djrca8Ng7pBxemMeNCzShp0U-g>
-    <xmx:g3gFaz5UADkFtw7rZdjdC-TnhuKtJvW7ZNg8Nnr_VERO2JuhFVBVWg>
-    <xmx:g3gFa2RqGVpYXZLMj2EYtdsR5VxyYOqkOu3Ox_X2WqGtyRgFWaSq8g>
-    <xmx:g3gFaxycmteoiHwreKBe2slpCRPuUhFIdY1KT0YkwlfIuyjrehf-Aw>
-    <xmx:hngFa7QwAvFFa2l7pGE8LkpDUYes36fcqNVPwQl7zHx05UxNEI9KAPRk>
-Feedback-ID: iddd147b3:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 42652FA009D; Tue, 24 Nov 2026 06:44:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GNTb5Qoz
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8EAD21F000E0;
+	Tue, 24 Nov 2026 12:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795521669;
+	bh=G3HDr+rlUwMTz5EXde1gL4gZLnJyvEJHBt9n0Z6ARZQ=;
+	h=From:To:Cc:Subject:Date;
+	b=GNTb5QozUrSxKzyzzcv4Q2v8rkGNOqMbQ72p7tucOe3ayS3iNCjw3EcGTpfTi3nWM
+	 yLYmeb13NYLhXxMnMjPoZCcS7/M+Foiq5R6HfBmUbwiHlNyX14BIWOzZr2jdN7KYJ9
+	 OsVmLomDFU0QjapgGcaqT4Z1WQpFRNssOcg8iDgkFEZ+PmHL6QCemEcIGo7ts7wvNn
+	 I+JG6Gwx/JyiPr1eKvzZZWHN7ITbVE/+2+7VaxskuwBbPJvQujJ9EUytj7v0fH/FZC
+	 ETureQXTNn3Jg0jmy31RNXP08r1ZjEVvw3GQQUwZvN/62MH4PG1bEWf9yrbhj2i+GW
+	 5/osVEamRrKhw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: keyrings@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	dm-devel@lists.linux.dev,
+	linux-crypto@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	David Howells <dhowells@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ignat Korchagin <ignat@linux.win>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	James Morris <jmorris@namei.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Lukas Wunner <lukas@wunner.de>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH 0/9] KEYS: trusted: asymmetric keys
+Date: Tue, 24 Nov 2026 14:00:35 +0200
+Message-ID: <20261124120044.1481752-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -115,38 +82,93 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: AgAAt5wBJ-mw
-Date: Tue, 24 Nov 2026 12:42:17 +0100
-From: roblabla <linux@roblab.la>
-To: "Ihor Solodrai" <ihor.solodrai@linux.dev>,
- "Andrii Nakryiko" <andrii.nakryiko@gmail.com>,
- "Paul Moore" <paul@paul-moore.com>, "Daan De Meyer" <daan@amutable.com>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
- "Paul Mabileau" <paul.mabileau@harfanglab.fr>, linux-kernel@vger.kernel.org,
- "Andrii Nakryiko" <andrii@kernel.org>
-Message-Id: <05507d51-651e-4ff8-aa6e-4bbb1e788f64@app.fastmail.com>
-In-Reply-To: <9695ec3d-7b81-488d-989f-0bd411d673f2@linux.dev>
-References: <d85ece6e-27f9-4d9f-83af-4101bc76fef6@app.fastmail.com>
- <356db94e-f5d6-4fb2-839a-b97aef72256b@app.fastmail.com>
- <CAHC9VhR9sjunJRnM9gy-BkBZkapQTrr8a8FtmaK7JkAmUqTrLA@mail.gmail.com>
- <CAEf4BzZKmn6g0SK8OddjKFj_vAmZFvpZv32Hs_S+GHgT7VNfrg@mail.gmail.com>
- <9d6bdc31-e57c-4187-be78-29d82471f710@app.fastmail.com>
- <9695ec3d-7b81-488d-989f-0bd411d673f2@linux.dev>
-Subject: Re: [BUG] bpf, lsm: new first argument in 7.4 inode hooks silently breaks BPF
- LSMs
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-For what it's worth, I don't particularly care about the argument order in this particular case. Like yes, it'd be nice to avoid the split, but I've already made the necessary changes to deal with it, so I just need to tell people stuck on an old version of my software to be careful when updating the kernel past 7.4. I can live with that.
+OVERVIEW
+========
 
-I'm much more interested in a way to avoid a repeat of this when an argument is inevitably added/removed/changed in the LSM hooks - ergo a way to fail to load on prototype mismatch in eBPF LSM. To that end, I implemented Ihor's suggestion (using `bpf_core_type_matches` to verify the signature matches `security_list_options`) in my eBPFs, which resolves the immediate issue. While doing so, I found two problems in libbpf's implementation of `bpf_core_type_matches()`:
+Extend  TPM 2.0 trusted keys to load ASN.1 TPMKey [1] asymmetric keys
+(OID_TPMLoadableKey, 2.23.133.10.1.3) and expose keyctl pkey-operations
+directly on key_type_trusted. In addition there are some TPMKey
+interoperability fixes.
 
-1. https://github.com/libbpf/libbpf/issues/995 : GCC and clang spell some integer types differently - for instance an `unsigned short` will be encoded as `short unsigned int` by gcc, while clang keeps the original name. `libbpf` claims to only compare the length/signedness of integer, but the code also checks the type name. In practice, this means an eBPF built with clang cannot use `bpf_core_type_matches` for this use-case.
+I.e. this my old series with a twist: instead of introducing a separate
+subtype for asymmetric keys, factor out pkey-operations into a separate
+CONFIG_KEYCTL_PKEY-feature, and wire asymmetric operations to
+key_type_trusted.
 
-2. https://github.com/libbpf/libbpf/issues/996 : `char` has an annoying story: In old versions of the kernel, its signedness followed platform ABI (ergo signed on x86_64), but because of a bug in pahole (fixed in 1.24), it was categorized as "unsigned" in the BTF. Then, in recent versions of the kernel, the `-funsigned-char` flag was added. This makes matching a prototype containing a char with `bpf_core_type_matches` essentially a coin toss whether it will work or not.
+This work was originally derived from [3] and is direct offspring of
+[2].
 
-Now, in my case, I use a fork of aya to load my eBPFs, so I can afford to workaround both of these issues - see this PR adding the necessary machinery https://github.com/aya-rs/aya/pull/1889 - it has a commit to fix each of these. For the former I simply removed the typename check when looking at an integer type, and for the later, I relaxed the signedness check when looking at a `char`.
+[1] https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.html
+[2] https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+[3] https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
 
-With these two fixes in place, the check does work properly across all the kernel versions and distros in my test matrix, and in fact it caught a (thankfully benign) mismatch in RedHat kernels caused by a backported commit that slipped through my monitoring.
+Cc: dm-devel@lists.linux.dev
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Benjamin Marzinski <bmarzins@redhat.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Ignat Korchagin <ignat@linux.win>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Mike Snitzer <snitzer@kernel.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>
 
-So thanks a lot for the suggestion Ihor! I also looked at your branch with `BPF_PROG_ARGS` - that'd be great to have as well, making other kind of probes like tracepoints more robust against arguments being shuffled would be a welcome addition as well. While I'm a lot less worried about them (they don't run the risk of rendering a machine inoperable if they produce garbage output), being more robust is always nice. If this ends up in libbpf, I'll switch to it in a heartbeat (well, as soon as I add the equivalent code in aya anyways ^^').
+Jarkko Sakkinen (9):
+  KEYS: trusted: Allow ASN.1 TPM2 sealed data shorter than MIN_KEY_SIZE
+  lib/asn1_encoder: Add asn1_encode_integer_bytes()
+  tpm: Export tpm2_create_primary()
+  tpm: Add persistent hierarchies to tpm2_create_primary()
+  KEYS: trusted: Extend TPMKey support
+  KEYS: Factor out KEYCTL_PKEY
+  KEYS: trusted: Reject zero-length keys in symmetric consumers
+  KEYS: trusted: Factor out TPM2 blob loading
+  KEYS: trusted: Add asymmetric key support for TPM2
+
+ .../security/keys/trusted-encrypted.rst       |   25 +-
+ crypto/af_alg.c                               |    2 +
+ crypto/asymmetric_keys/Kconfig                |    1 +
+ drivers/char/tpm/Kconfig                      |    2 +-
+ drivers/char/tpm/tpm2-sessions.c              |  203 +--
+ drivers/md/dm-crypt.c                         |    2 +-
+ include/keys/trusted-type.h                   |    5 +-
+ include/keys/trusted_tpm.h                    |   16 +-
+ include/linux/asn1_encoder.h                  |    3 +
+ include/linux/tpm.h                           |    2 +
+ include/linux/tpm_command.h                   |   13 +
+ lib/asn1_encoder.c                            |   62 +
+ security/keys/Kconfig                         |    3 +
+ security/keys/Makefile                        |    2 +-
+ .../keys/encrypted-keys/masterkey_trusted.c   |    5 +
+ security/keys/internal.h                      |    2 +-
+ security/keys/keyctl.c                        |    2 +-
+ security/keys/trusted-keys/Kconfig            |   10 +
+ security/keys/trusted-keys/tpm2key.asn1       |   19 +
+ security/keys/trusted-keys/trusted_core.c     |   20 +-
+ security/keys/trusted-keys/trusted_tpm1.c     |   26 +
+ security/keys/trusted-keys/trusted_tpm2.c     | 1332 ++++++++++++++++-
+ 22 files changed, 1558 insertions(+), 199 deletions(-)
+
+--
+2.47.3
+
