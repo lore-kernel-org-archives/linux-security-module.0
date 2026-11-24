@@ -1,56 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795500683;
-	b=z6rX7gWPF6GAiVo0DUFcnL86hnlYbEro3Du3zaRX8718xR2ZX0gqCOpHBZK22JNg8J1r
-	 vV6zVi+WJTDjpmpeIlk+M5D4rJHAHXgGmq3889tAacVqUhODXGXveNqeBerTOotzsx59b
-	 hXvNsuPmVijyVo4j7ugxzo3MRFkGmqKrjGzTj0IslnjNWFMRaosgvai4qPH7uieuFfhtZ
-	 3HdpKJFhR7nk2sAsPZqu/GD8iV2HscFFJKtqDBBoZc9e/weFuJ3x6A0dRxzCR6ytlDtfa
-	 2O3aTfaY2mk6W0Z0pG1OqOLNKkSiJ9G/ovT8uBbNHANyn5LmJqBG4W7Ac+qHd4d+HMQ==
+	t=1795508386;
+	b=qBVsg27/PaLnQYPMMUnW0MLKjUBgqrX4Od9xISpNxKL2fQQaXxyj7XbfqSTFx24g85Kh
+	 8I4F3VfanQSKQ5zM5jQXwIelu5f666ekMJrbAGeczGmkAhc4tmPXB+HC8RL1TS/mlgI2v
+	 jdV3ay23uUth84zG9ChAVylsDtleGNNUrTop7agQoGb2wEPHT9kgvsvuDthlLNX7JUvs7
+	 FIe5zx/k35v0Jq7eAljWA49ri7fNIo063nTwfXDdphZN7+G8bZf1CiVRVsIT1Fmv1P2zg
+	 6LkKB7QS4Lq717zpbyhxopLCMAfWYKkC/g9rGoQ6YXO/mlPJqt4YHFx4yGT72udsDOw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795500683;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=iVWYT+ReEjp92DC/COPfTT4+iY+7/LKwunieQrCYZRs=;
-	b=KLwW7cO6LVgM735WycMNa51b5eBHJUXTe+dKrdQq2UsaaKurCoxbA9DnAAvDNU+GBvCk
-	 C5W4WfFSCixdXPDMlM++oT6+P4j9kkStdpmaDysu+MviLg9y2mtMWlyoiwkW1VLZQymAp
-	 vVe1v6B1/L9RpLeJgnsSpEdNNulJaSoC3tHyuGWc0L5v1lRNUHGGpTGyEd/nJWPKt2EpR
-	 xNfDeV1Gfpt8mF1FzLjAnChTPGVmDm8m42FH7NJ1yy1GOj4e6y3l3adSVOY6Dnp7qdn5v
-	 K4p2JGZsTgXV4rTeZDiNaD/zsUt2I85y9FxYeKCAkbjoWAjq5wP0KyC2OepusvhJXJA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795508386;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=E9abjPcthtIyY+MMEtQrTLzJvidQaqZjoo58q53HUoc=;
+	b=4bL36zJAWuFafEASIHo+41ON0b9Uclh5QYwRub0Szu22knTeTYftxtDPxYgRBgrZKwgO
+	 1bm7S1Ua8X1btUZss8aZa0fb1AGoQkbbcDbAR3C31m7wUEPBMlefzk1cO2W7vk3++FhiF
+	 vaEzOe0WY6WqQG+j71x9PKfQtLkCYxwwxe/pCcGWq7BJyImQ2ffgJf8Aqgj3R8GN6Faol
+	 0NRyY5Q/6YkXoRt0Ed08s73iseo7U0h9jThxh0GTKoPLgwo4Ao/CGJ7D+KIjW+Zpec1Vi
+	 08hE+A35CEE3Dvz2VHTqguR8+evlzlPpXGjYh/A4tGXaNmxyD7ecnXVl3zS3gszc7AQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Ldk6v/fq";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e3O83Rok;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C64606A31E;
-	Tue, 24 Nov 2026 06:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 10324606A330;
+	Tue, 24 Nov 2026 08:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ldk6v/fq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B185E1F000C0;
-	Tue, 24 Nov 2026 06:11:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e3O83Rok
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id CDE391F000CA;
+	Tue, 24 Nov 2026 08:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795500682;
-	bh=iVWYT+ReEjp92DC/COPfTT4+iY+7/LKwunieQrCYZRs=;
-	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
-	b=Ldk6v/fqGLh4UU8tyr0PpPqolMjgBCj1T7glBs4eAhEz/xhfnabHBUoRM+Xxx0H6O
-	 4oEqnAilstUOj6rCrwYUKygfuPefnAW/XBSrh7AaGArHULVLbo/+N+r1hGzMOFqfvg
-	 nC9l5eUyNRZJmlkLOmA8aGTfVOZTkO0uUMPdKugb8XCblH79BPQkvxtDSry5P3nFKN
-	 mAfFxbHWRjA/kAPD1wLnHCO0WJXPKfG9gl2CtHAU2TX+fbT0Z0kyW6oyU8M9qEgQCl
-	 Tv2SWu36VsR8tP2AlgQ4ZwnU7nAQ+x20Eo7p9I13nlZNwJYEgC8rYaZpCJx0e4vwaw
-	 5Di63bjNpeCNA==
-Message-ID: <sashiko-outbox-230577@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: net: act_gate bug. was: [syzbot] [tomoyo?] [mm?] INFO: rcu
- detected stall in security_file_ioctl (9)
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>, syzbot <syzbot+b6f8640465bdf47ca708@syzkaller.appspotmail.com>, akpm@linux-foundation.org, andrii@kernel.org, bpf@vger.kernel.org, brauner@kernel.org, daniel@iogearbox.net, jack@suse.cz, jmorris@namei.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, paul@paul-moore.com, penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, jhs@mojatatu.com, viro@zeniv.linux.org.uk
-In-Reply-To: <DN37NBGPJJG9.2DSVDCKS3UYTV@gmail.com>
-References: <6b051681.58b41460.7037.0590.GAE@google.com>
- <DN37NBGPJJG9.2DSVDCKS3UYTV@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 06:11:20 +0000
+	s=k20260515; t=1795508385;
+	bh=E9abjPcthtIyY+MMEtQrTLzJvidQaqZjoo58q53HUoc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=e3O83RokhWRQvZwd1DE9oTpgGvx6IqeB+fzR6eFpiyChO2W7NR7MJQGtBcoiAgXR8
+	 Wn3CnXsXOg60lEc79jyvbWLaENSpj7epk3SWKZSxsfG/TzzsD96HViD8sVrUPvjHiI
+	 Uu3bfmaxPEXAcEMAc1H7CfoY+IZGDYCSroILEOWmGmLpFtMqe71KxLTvROwTUBBEjK
+	 ZVvaTxYXqgEAgFgyKpJXSMDUSEV3VLF1gE9e9SbjHCr8Ql87moA1+n2j36wPzWax7i
+	 zLVJg4VgAJDdKWFmBmBJnIeOjxrS95srOseTu7pz6bMmjmadSVRv7TQ8qDqTHAkRSB
+	 BmAIIyq5qxSzQ==
+Date: Tue, 24 Nov 2026 10:19:41 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: bpf@vger.kernel.org, containers@lists.linux.dev,
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	Aleksa Sarai <aleksa@amutable.com>,
+	Alexander Mikhalitsyn <alex@amutable.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Giuseppe Scrivano <giuseppe@scrivano.org>,
+	Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
+	KP Singh <kpsingh@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Neal Gompa <neal@gompa.dev>, Oleg Nesterov <oleg@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
+Subject: Re: [RFC PATCH v7 00/26] userland: Userland containers
+Message-ID: <awVInf04kGC0uZZo@kernel.org>
+References: <20261122193539.3334213-1-jarkko@kernel.org>
+ <awTmJIErjasO4lqq@kernel.org>
+ <awToL2PFNKVgIfqs@kernel.org>
+ <awUGkYoyDXp4P5LJ@kernel.org>
+ <awULfmZR-pESj2EC@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -59,68 +82,92 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <awULfmZR-pESj2EC@kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [High] net/sched: act_gate: missing Signed-off-by trailer in commit
-  message
-- [Low] net/sched: act_gate: missing Fixes trailer in commit message
---
+On Tue, Nov 24, 2026 at 05:58:58AM +0200, Jarkko Sakkinen wrote:
+> On Tue, Nov 24, 2026 at 05:37:58AM +0200, Jarkko Sakkinen wrote:
+> > On Tue, Nov 24, 2026 at 03:28:19AM +0200, Jarkko Sakkinen wrote:
+> > > On Tue, Nov 24, 2026 at 03:19:36AM +0200, Jarkko Sakkinen wrote:
+> > > > On Sun, Nov 22, 2026 at 09:35:13PM +0200, Jarkko Sakkinen wrote:
+> > > > > SYSCALLS
+> > > > > ========
+> > > > > 
+> > > > > Two new system calls are proposed:
+> > > > > 
+> > > > > 1. userland_open(): open an opaque staircase-initialized container
+> > > > >    object (modeled on Intel SGX enclave initialization with separate
+> > > > >    build and live states) with no embryonic state, opting selected
+> > > > >    shared namespaces in via an allow-list instead of unshare semantics.
+> > > > > 2. userns_set_idmap(): configure all UID, GID, and project ID map
+> > > > >    extents for a container user namespace in a single atomic system
+> > > > >    call.
+> > > > 
+> > > > I played on patching systemd and userns_set_idmap() alone does already
+> > > > a lot of good. I'm figuring out userland_open() integration next.
+> > > > 
+> > > > For the test implementation I probe the opcode's and dependening on that
+> >                                             ~~~~~~~~
+> > 					    syscalls
+> > 
+> > > > use either "userland path" or "fallback path".
+> > > > 
+> > > > This auto-probing is done so that I can commit the patches to my kernel
+> > > > test harness, which already has systemd, and try them out when built
+> > > > against userland-enabled kernel (via LINUX_OVERRIDE_SRCDIR):
+> > > > 
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/tree/?h=main
+> > > > 
+> > > > The project builds a hybrid ISO, which is a bootable bootc/composefs
+> > > > based operating system, and has toolbx bundled i.e., a reasonable test
+> > > > environment for all of this. It is also device-installable via "npx
+> > > > @puu/install"
+> > > > 
+> > > > I had to level the harness up a lot so that I could realistically test
+> > > > lockdown-hibernate but it is is also pretty good emulation environment
+> > > > for any possible container features.
+> > > 
+> > > Kernel is ukified and systemd-boot is used as the boot loader i.e., for
+> > > kernel testing purposes corresponds to something like Silverblue except
+> > > not using GRUB.
+> > 
+> > Experimental systemd patches:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd-test.git/commit/?h=main&id=e4d6b15da3376ad09c0c575cedf467f69db32a52
+> > 
+> > The patches are layered per syscall feature:
+> > 
+> > - 1-5: userns_set_idmap
+> > - 6-10: userland_open()
+> > 
+> > Virtual device would add path/mount complexity and generally dependency
+> > to mounts i.e., I think it was an awful idea. At least initially this
+> > feels fairly lean way of doing container things now that I've trialed
+> > systemd-nspawn a bit.
+> > 
+> > I'll update the patches over time.
+> 
+> "userland_open" is just a name as I don't have anything better for the
+> time being (perhaps <something>fd() e.g., containerfd(), would work
+> better).
 
-commit 1dfca74c316eb54b3672929b3411874232eb4ee7
-Author: Alexei Starovoitov <ast@kernel.org>
+What I did at late 2025 was simply going through the old ML discussions
+for David's patches and addressed the remarks one by one. Then I
+improved the patch set bit further until other stuff came along, and I
+forgot the whole thing for some time.  Last week's burst was really
+unwritten todo list starting to remind about itself in flashbacks.
 
-> net: act_gate bug. was: [syzbot] [tomoyo?] [mm?] INFO: rcu detected stall=
- in security_file_ioctl (9)
->
-> On Mon, Nov 23, 2026 at 08:45 PM syzbot <syzbot+b6f8640465bdf47ca708@syzk=
-aller.appspotmail.com> wrote:
-> > rcu:           hardirqs   softirqs   csw/system
-> > rcu:   number:     5264          0            0
-> > rcu:  cputime:      138      52351           25   =3D=3D> 52490(ms)
->
-> It's not tomoyo, mm or bpf. Looks like act_gate.
-> Zero new softirqs in 52 sec, so one hrtimer_run_softirq() doesn't return.
->
-> > RBP: ffff88807ed35538 R08: ffffffff91be1bbf R09: 1ffffffff237c377
-> > R10: dffffc0000000000 R11: fffffbfff237c378 R12: ffff8880b8228600
-> > R13: ffffffff89fd0480 R14: ffff8880b8228600 R15: 1ffff1101704514a
->
-> The registers with lockdep struct sizes:
->
->   reg       value             points to
->   --------  ----------------  --------------------------------------
->   R14       ffff8880b8228600  cpu_base
->   R15 << 3  ffff8880b8228a50  clock_base[HRTIMER_BASE_TAI_SOFT].seq
->   RBP       ffff88807ed35538  kmalloc-512 + 0x138, tcf_gate->hitimer
->
-> act_gate has the only soft hrtimer that can be on CLOCK_TAI.
-> bpf_timer_init() rejects that clock.
->
-> TCA_GATE_CYCLE_TIME is an unchecked u64. In gate_timer_func():
->
->   n =3D div64_u64(ktime_sub_ns(now, base), cycle);
->   close_time =3D ktime_add_ns(base, (n + 1) * cycle);
->
-> With base =3D 0 and cycle =3D U64_MAX, n is 0 and close_time is -1.
-> The timer restarts in the past and __hrtimer_run_queues() runs it again.
-> It's there since
-> commit a51c328df310 ("net: qos: introduce a gate control flow action").
->
-> Jamal,
-> taprio's INT_MAX limit doesn't fit. tdc uses cycle-time of 600 sec.
-> The diff saturates the sum instead.
-> Here is a potential fix:
+There's not much more in API sense to do except maybe syscall rename and
+associated prefixes in constants etc. My Git branch has additional fixes
+(e.g., more LSM plumbing) on top of this but they don't change the gist
+of this by any possible way so no new RFCs for the time being.
 
-[Severity: High]
-The commit message is missing a Signed-off-by: trailer.
+The most up to date version:
 
-[Severity: Low]
-Since this fixes an infinite softirq loop when TCA_GATE_CYCLE_TIME overflows
-the timer expiration timestamp, should this include a Fixes: trailer?
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=vault
 
-  Fixes: a51c328df310 ("net: qos: introduce a gate control flow action")
+Br, Jarkko
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/DN37NBGPJJG9.2DSVDC=
-KS3UYTV@gmail.com?part=3D1
+
