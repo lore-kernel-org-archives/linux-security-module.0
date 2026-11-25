@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642741;
-	b=dZWx5pma4OgBMthQuwQJ7GyeMrepWtctWFci76jAkGtkcFlO9NzE8U884meEJe/InSax
-	 DIgozzd30s8D6ChHtAjtWOtqjODtzXKreb4Ij3d7Prw3wnozxhzUWI/+B4YokApRSUHpM
-	 r8q4pf6RbwTEcPikSaFiMf1zU563aP1B9NGFTAMdbpwQyXYPYsDU+CifG5KMYDo/ujIK2
-	 SiJ73360V2Xbym7MfKCHsaJLpjiBwa+5wO60+RFLRzgFG92JKgTIpeOnJEtfUknU1Wk0O
-	 hZZ0nmlHkKHPACl5zfQnIFHJgXQJO0NBX/6aAs24VKkvOL/n4yrvXWz/qPbXDeEeHtw==
+	t=1795642731;
+	b=mTJMJCtlH8VZyKtouwV/HVG0u+7fbCJSiEJxEbiQhwdOX7XT3CLC6z9/F2QId9UiFg6I
+	 XxbYLLQl1LNePka4B1oSlApkUbuUNjqul9PDbj71iw9n7jJYVjDODCB8ZTBt3LYcoepzU
+	 vto/5JAv355c82LY9t/RLLpsFUXBcXSCMcwCpoAX0ou3W+eZp45s6e1N4jDsbtKBDjaL1
+	 +AY7HDsA2JBopMuq5N4miGZzDzNgq41iPr84RSLFAYMcYtQrC9yZfHCCn3otqZJ1Zi0r/
+	 nY3cMPedzx8i8P9RC9Zi0FOKvxeR+pRi2aH0dy6XQppTChPaKxVfgRnbMHB6jv3c6NA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642741;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795642731;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=g9HZ6CESqCC3IbuIZeeH60D+MFwI+V+ns81lV3Y2LAA=;
-	b=JODN8UFKkGC3z/maifzSbDRz0XVWbp8aCJGIW9E8NbW5MDbrkf1nZKPwD7TjM8fX0BFU
-	 bxSo44+jvPeVBcg8Yl4UQ/jS1Kk+5P+ldXHz5q3ufLKrA1LFjafUKwZA3D0vf1OmgI+uB
-	 2wiZn8AaaqaggHzqJCjQ2FkMPVs5hj5xOMoLwWdkAEttGz/Rq5ifWwtjBv21OSNfq7xYi
-	 rCo6yJXc45zIQrH9FKx6DkkPXru9tnGSjG4iEi/SxpQlOUAr+uX0l04u6pWDlVhwgm4WV
-	 ld9mIQtHUQdB+++8ONJKZUPU2nlMpexuSKgWpXFAJS4NwcIKDey+lHo8m8SRj4eyesQ==
+	bh=ByO1Pw16aQvedrcgFe2HrJirDf0exfH7Ey8rwMSwazA=;
+	b=fsUfGHvJuxCUqFbH5q6PkVp1xujQVmqCFvYFBvOG1KXeMzDFaB0R51IzIW4nKsfvgwAG
+	 HuYH8vlc/o+eESFs0meRuRfxhlFYryNZe787feh2r4jh1/hF7+FTUc5n4C1ctMbsz+7GJ
+	 JIiNHgXb9L3IIDQmK6YJqseHr+KmEQfoK2llKjt4dWB5kO5xGhor729Cz7/fKxFRNXvVw
+	 J1zGLQPfW55jZJvtpTZKkM5WbxAgWOQR6JWh99sb356vvd3MSD8RYMqJEk7yRnf8gPptz
+	 acJT2z/6FuRrGuvimSHTHuVU9/aJl66viPJfVRqeVMW7KDQhs15mYc8gV6JPYGe5Rrg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Ntc1/cKL";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FlU8mmj0;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16367606A321;
-	Wed, 25 Nov 2026 21:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ntc1/cKL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04021F000F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6ED606A323;
 	Wed, 25 Nov 2026 21:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FlU8mmj0
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D1B1F000CF;
+	Wed, 25 Nov 2026 21:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642740;
-	bh=g9HZ6CESqCC3IbuIZeeH60D+MFwI+V+ns81lV3Y2LAA=;
+	s=k20260515; t=1795642731;
+	bh=ByO1Pw16aQvedrcgFe2HrJirDf0exfH7Ey8rwMSwazA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Ntc1/cKLKb+8Patxe9n6wstPGCvrq26H4Tcsn38Rhk6RuSCvvN46w3x1WtKqjTuOA
-	 6st+MQ4ErxaBFPr0iiLA0fbC0+q1sHT5uY9eBtF6toWf4QJOozqgr8246o9Rzfqm4g
-	 RHwhhKuQMiZ8zzD4OaV26wbGQkS7DXl1kA5wJMECEtgr5olYRPAVYaMKkB2Bk3jpRS
-	 Q3E3wfxkOTNHJTPnAp0ciFAqfe2zPqsJWRcSel/MMjcwW/BNLifvygBPDi7qNcmch0
-	 Ed3INnmHFEy58vB79VTuatorZxZdMk1K/cLZHwSDHdgKhe9Xv+lHnWHjgGzXv/Kk0X
-	 OrI6evbyW9T7w==
+	b=FlU8mmj063INtxbA61Kmn9BCIjFoO2qoXtDLU02uGNjLyL7N+54YBlL8RxKhJklsT
+	 BaS06QObcBGTEGrKXHSLbHlxAwxRtqpgfCQ8ih92lrA3bC4Y3zryTSCJoyPP3/1LBf
+	 fR4uoV8HaWN9R+DzUryOg0VSZpL5HeP/sQ9cfHHqxnRl/DRse1iSz1p5WNs3oIdpEG
+	 g14ZTdv+6oB3XCmo45jN594zRelczIARhGk8sC1n9OtRH8UrfBRQpHOBsWHvBJoK4E
+	 xdG4ua9i9jsaTVyQbyLRmyr9L9S4ZWlDlCsWopErNsBDYVQizk39Jc8fRKsh5IIvNI
+	 c0EmSdoTtMFgw==
 From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:08 +0000
-Subject: [PATCH slab/for-next v2 07/14] arm64/mm: specify SLAB_MAY_ACCOUNT
- for pgd_cache
+Date: Wed, 25 Nov 2026 21:37:07 +0000
+Subject: [PATCH slab/for-next v2 06/14] kernel/fork: specify
+ SLAB_MAY_ACCOUNT for thread_stack cache
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-7-7c680f02a734@kernel.org>
+Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-6-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 To: Vlastimil Babka <vbabka@kernel.org>, 
@@ -89,39 +89,59 @@ Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
  linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
  Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
  Johannes Berg <johannes@sipsolutions.net>, 
- Eric Dumazet <edumazet@kernel.org>, 
- Anshuman Khandual <anshuman.khandual@arm.com>, 
- linux-arm-kernel@lists.infradead.org
+ Eric Dumazet <edumazet@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+ Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ K Prateek Nayak <kprateek.nayak@amd.com>
 X-Mailer: b4 0.16.0
 
-When PGD_SIZE != PAGE_SIZE, user PGDs are allocated from pgd_cache
-with GFP_PGTABLE_USER, which includes __GFP_ACCOUNT. Specify
+When THREAD_SIZE < PAGE_SIZE, thread stacks are allocated from a slab
+cache with THREADINFO_GFP, which includes __GFP_ACCOUNT. Specify
 SLAB_MAY_ACCOUNT when the object may be charged to a memcg.
 __GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
 
-Path (e.g. 64K pages): copy_process() -> mm_init() -> pgd_alloc()
-  -> kmem_cache_alloc(pgd_cache, GFP_PGTABLE_USER)
+Path (e.g. ppc64le, 64K pages, !VMAP_STACK): copy_process()
+  -> dup_task_struct() -> alloc_thread_stack_node()
+  -> kmem_cache_alloc_node(thread_stack_cache, THREADINFO_GFP)
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Kees Cook <kees@kernel.org>
+Cc: David Hildenbrand <david@kernel.org>
+Cc: Lorenzo Stoakes <ljs@kernel.org>
+Cc: "Liam R. Howlett" <liam@infradead.org>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>
 Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 ---
- arch/arm64/mm/pgd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/fork.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/pgd.c b/arch/arm64/mm/pgd.c
-index bf5110b91e2f..0fd5b90b5160 100644
---- a/arch/arm64/mm/pgd.c
-+++ b/arch/arm64/mm/pgd.c
-@@ -63,5 +63,5 @@ void __init pgtable_cache_init(void)
- 	 * Naturally aligned pgds required by the architecture.
- 	 */
- 	pgd_cache = kmem_cache_create("pgd_cache", PGD_SIZE, PGD_SIZE,
--				      SLAB_PANIC, NULL);
-+				      SLAB_PANIC | SLAB_MAY_ACCOUNT, NULL);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 5efceb8d58a7..d0e49a81e7cf 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -459,7 +459,8 @@ static void free_thread_stack(struct task_struct *tsk)
+ void thread_stack_cache_init(void)
+ {
+ 	thread_stack_cache = kmem_cache_create_usercopy("thread_stack",
+-					THREAD_SIZE, THREAD_SIZE, 0, 0,
++					THREAD_SIZE, THREAD_SIZE,
++					SLAB_MAY_ACCOUNT, 0,
+ 					THREAD_SIZE, NULL);
+ 	BUG_ON(thread_stack_cache == NULL);
  }
 
 -- 
