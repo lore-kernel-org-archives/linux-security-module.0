@@ -1,46 +1,46 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.204.27.37
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795597949;
-	b=MKDALV7D+JSZAQk0HMk3iymY7QiE7LpKW55CvlDgQW1btBuXvkGAZxwt2VTozruljnAm
-	 Qb7RUsNzXjd+qqwjkLfM5t/W5ddYMVTa02y6bdomTfDA0gH1YE9Mdada2uZuv6bUtBvY/
-	 hGkFFU6Z0tbyv4bV3i9hOzYKIiFCuKDZ5+B5EJq15KTt3Ukx8doSKxOfhZULI2BPh4tHL
-	 6IfXv3HFbRzOUj+rXV2acSj8d/P/RDb2YqatfMvHtf15xgMgk0Cd+Zs+FgI5Hciau4J/w
-	 Fjw5qdXTiSXBnvV0evSJl2RGu5Z1AZIbadK44IpIFUFafgNtvwxQAexgyBfnffoLvQw==
+	t=1795597955;
+	b=MQmKRg+fWx5znjqf+CCJ5zTXET6b18Sh0Pav3p2zO2bOOaCUaJCHNeRbKuz01zCf4rS3
+	 eECzqNbXbp3bqeblaK+TufMyI1frJELvG1cdOIyf+L/PvGNFZGAh2xncIezTLVCCeqAAX
+	 G3mO9vg8c0ZybZJWynCldyoK/v9YyJje7PZ9JrcGZV0qGLQ+MSwYW2ydmrLecdbKqF0bA
+	 VNw1X3ZHB/aNYI6N9KutwdB/JtTZDA7Yz5Ny6zzlWsaeq+TD3b2Iz2N5RR9V0uDh6gwI5
+	 NLo5oup19+IVyktiwyulAuwPXuFZLH7p+1gokNSylFl4C7DgeNFoUUz/+IwvTECCcYw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795597949;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795597955;
 	h=DMARC-Filter:Received:Received:Received:Received:From:To:CC:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy;
-	bh=XOPSQ2NrjBZFeAm9d8OQld6nLV4J+utsGW23PSfWRsE=;
-	b=YUB4RIJUCpoZ524TP2i/hIMMLvSJsTihxuTXUvEKNN6hP4tOU91USfHMqJu8jTlCSRH6
-	 w+P3TFAr5+nz0IiC5F2ROO1xgPUxvq07ERGOjvLXHgLsWbpMiO9rs2zdwWuukt5Cq+4z9
-	 JRFXBHhKGg3lmHfr9pBA9Bt+Nn+G/7ReAIX+6xkydCm94g6TkFfv1iPQHZJRFAlrd8GHp
-	 Mk3cL+RNuGFDRqWsqeiw7N67FFyukREDu6rj6Z2F3P4ZxRdOnhB/59FybX/KnzUYZtpqC
-	 hIuL5zXeAyzKnde3KoNNY9I/XszrEAIlXYdgVGbE+Vsd5ikh4Lg9ObE/PenWxYfvN0A==
+	bh=W5xTPhBqbOYvt1pbc0+N0zz1+MkA79aoENSFmoHeo0U=;
+	b=rbAOdj4+OOAHvaLpvPX+izpUU11p+4h1h84xlyZo83jm5M8adfONHE56ZRZed/FcCi63
+	 /sJRuqXWF/v3z2biXTnsFJ0bzwSg3/mlbmQCkCpvKafl0ATyzXMDvyA80s/pzbImMzeUM
+	 CN9feH9W7x3nLc9RHx/HvHm4p2Kh+Kud/TtR80KsEv8AAOmUH+bJ+I/WO+0xT2A6cgTwK
+	 Z9vdGyd35KubfNqaT3h8m+4aZAUCMhGQZNUjDZfNooUB9QOFRd/RblHXLHXyc0cY9nisS
+	 cTb9nS8kjaa1zgLALPWTxE2j6n/ls7ufoGBy2aZMyIC/XBloivbcoY2bMXfDTwZr82w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=hygon.cn;
 	spf=pass smtp.mailfrom=hygon.cn;
 	arc=none smtp.remote-ip=101.204.27.37
 Received: from spam01.hygon.cn (unknown [101.204.27.37])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AE3606A32A;
-	Wed, 25 Nov 2026 09:12:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68AE3606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C590860A260F;
+	Wed, 25 Nov 2026 09:12:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C590860A260F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
-Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
-	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTl29P6zVcBB;
-	Wed, 25 Nov 2026 17:12:27 +0800 (CST)
-Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
-	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTj75JFzVcBB;
-	Wed, 25 Nov 2026 17:12:25 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [127.0.0.1])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTs29cZzVcBQ;
+	Wed, 25 Nov 2026 17:12:33 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTr6kFyzVcBM;
+	Wed, 25 Nov 2026 17:12:32 +0800 (CST)
 Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
-	by maildlp1.hygon.cn (Postfix) with ESMTPS id 511FC1548;
-	Wed, 25 Nov 2026 17:12:19 +0800 (CST)
+	by maildlp2.hygon.cn (Postfix) with ESMTPS id 4D687300B6F1;
+	Wed, 25 Nov 2026 17:11:20 +0800 (CST)
 Received: from hsj-2U-Workstation.hygon.cn (172.19.24.226) by
  cncheex04.Hygon.cn (172.23.18.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 25 Nov 2026 17:12:23 +0800
+ 15.2.1544.36; Wed, 25 Nov 2026 17:12:30 +0800
 From: Huang Shijie <huangsj@hygon.cn>
 To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
 	<hch@infradead.org>, <agruenba@redhat.com>, <mic@digikod.net>,
@@ -53,9 +53,9 @@ CC: <gnoack@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
 	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-block@vger.kernel.org>, <gfs2@lists.linux.dev>,
 	<linux-security-module@vger.kernel.org>, Huang Shijie <huangsj@hygon.cn>
-Subject: [PATCH v4 08/11] fs/drop_caches: convert drop_pagecache_sb() to sb_inode_iter
-Date: Wed, 25 Nov 2026 17:11:54 +0800
-Message-ID: <20261125091157.1822521-9-huangsj@hygon.cn>
+Subject: [PATCH v4 11/11] gfs2: convert gfs2_evict_inodes() to sb_inode_iter
+Date: Wed, 25 Nov 2026 17:11:57 +0800
+Message-ID: <20261125091157.1822521-12-huangsj@hygon.cn>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261125091157.1822521-1-huangsj@hygon.cn>
 References: <20261125091157.1822521-1-huangsj@hygon.cn>
@@ -73,50 +73,36 @@ Content-Type: text/plain
 X-ClientProxiedBy: cncheex05.Hygon.cn (172.23.18.115) To cncheex04.Hygon.cn
  (172.23.18.114)
 
-Convert drop_pagecache_sb() to sb_inode_iter.
+Convert gfs2_evict_inodes to sb_inode_iter.
 
-No functional change.
+The original code also handed out an inode which was already being
+torn down when need_resched() was set. That is not preserved: taking a
+reference on an I_FREEING inode whose count has already reached zero
+lets a second iput() run on it once the reference is dropped again.
 
 Signed-off-by: Huang Shijie <huangsj@hygon.cn>
 ---
- fs/drop_caches.c | 36 ++++++++++++------------------------
- 1 file changed, 12 insertions(+), 24 deletions(-)
+ fs/gfs2/ops_fstype.c | 26 ++++++--------------------
+ 1 file changed, 6 insertions(+), 20 deletions(-)
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index 28c5fb9c7357..bfe9b8cbb45c 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -17,39 +17,27 @@
- /* A global variable is a bit ugly, but it keeps the code simple */
- static int sysctl_drop_caches;
- 
-+static bool invalidate_inode_eligible(struct inode *inode, void *priv)
-+{
-+	/*
-+	 * Skip inodes without pages, unless we need to reschedule: then take
-+	 * one anyway so that a long scan of empty inodes cannot stall.
-+	 */
-+	return !mapping_empty(inode->i_mapping) || need_resched();
-+}
-+
- static void drop_pagecache_sb(struct super_block *sb, void *unused)
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index 6ec47376aecf..130b116627a3 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -1739,31 +1739,17 @@ static int gfs2_meta_init_fs_context(struct fs_context *fc)
+  */
+ static void gfs2_evict_inodes(struct super_block *sb)
  {
 -	struct inode *inode, *toput_inode = NULL;
-+	struct inode *inode;
+ 	struct gfs2_sbd *sdp = sb->s_fs_info;
  
- 	if (sb->s_bdi == &noop_backing_dev_info)
- 		return;
+ 	set_bit(SDF_EVICTING, &sdp->sd_flags);
  
 -	spin_lock(&sb->s_inode_list_lock);
 -	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
 -		spin_lock(&inode->i_lock);
--		/*
--		 * We must skip inodes in unusual state. We may also skip
--		 * inodes without pages but we deliberately won't in case
--		 * we need to reschedule to avoid softlockups.
--		 */
--		if ((inode_state_read(inode) & (I_FREEING | I_WILL_FREE | I_NEW)) ||
--		    (mapping_empty(inode->i_mapping) && !need_resched())) {
+-		if ((inode_state_read(inode) & (I_FREEING | I_WILL_FREE | I_NEW)) &&
+-		    !need_resched()) {
 -			spin_unlock(&inode->i_lock);
 -			continue;
 -		}
@@ -124,20 +110,23 @@ index 28c5fb9c7357..bfe9b8cbb45c 100644
 -		spin_unlock(&inode->i_lock);
 -		spin_unlock(&sb->s_inode_list_lock);
 -
-+	CLASS(sb_inode_iter, iter)(sb, invalidate_inode_eligible, NULL, 0);
-+	while ((inode = sb_inode_iter_next(&iter))) {
- 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
 -		iput(toput_inode);
 -		toput_inode = inode;
 -
++	/*
++	 * Nothing to do with each inode: we only want to bounce it through
++	 * iput() so that it is evicted while the list lock is dropped.
++	 */
++	CLASS(sb_inode_iter, iter)(sb, NULL, NULL, 0);
++	while (sb_inode_iter_next(&iter))
  		cond_resched();
 -		spin_lock(&sb->s_inode_list_lock);
- 	}
+-	}
 -	spin_unlock(&sb->s_inode_list_lock);
 -	iput(toput_inode);
  }
  
- static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+ static void gfs2_kill_sb(struct super_block *sb)
 -- 
 2.53.0
 
