@@ -1,104 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=124.126.103.232
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795611199;
-	b=U2NHOUy1VTp281XYpwPwFooTeVHQPHnIuSVI/PNwHQjdBB1uaekKi3cD8+sl7PoT7odZ
-	 dDSU8iLQuSA55r4f15p8gvX/gU4WeZyHoQBhB6zPPUQNP7lWLB31V5PCnRAdCN8pWN/wY
-	 8bKAzVGoKfSvVcu0Vm8IO6sesP2EqVWahNrDKOw2yX3KtWOWVOADGrrxps8WRlx1IRFyr
-	 ENQG/cR/cMiLSl/oIJarUk15pqMbIi37IXk9H6s3l+nAKWJhZ2N/dpnx5NOHNLVW6fZ9k
-	 6uu9gD50c5C1lGIx8BXyso7u4tiqZOfjjGRRwUoYpbckD5aiH02HWC8X28ok2Hyx8Ng==
+	t=1795611595;
+	b=RaVbH7XmWX/tQSUEgS5hfewYkXWv9F0fA4ljV+BKw1aAu2GeEmSPEuIl/jSJmZ0Q68Dx
+	 pqWbme4NX5wXquItaOyTCZ80zY2kkF00wCgaku1f+oqWjokyA6FNdLNgGq5T4EyTeSui9
+	 Wvmo3D+MAMaGrgh6atiyY0M8dBnUb1EkX7bR2arE3AKeffXAp4Ercr7++S70/eqUIZV5U
+	 PkxUsj3h5lUO/oFVlyJYXX5in5inf55r8eIa21xlhOVzMmvrzOzeFVzOEJXCeh7XG304q
+	 p9ZyDz4z5y0ZhwsDwNerOII2a4iaPSGnMxKw/p6rPvw3ur35dDsvRP9RO1F05QWMSLA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795611199;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=wb5N99RF+uLplURkem29zNIHwOiV4iL5+6TcWsB08Yc=;
-	b=P9TM5cXefrp4PJp4i/9wlwl97c719FNcRlXlGoGig6ZpBKTo7AxJ1vFaC1eSksYghRV/
-	 JoELBqX7hHTuVVJR1sRtovD8ZqP5MlnAgxvm/BOMa5B7ce8m7gRiMe1cGXVqKSwfA4N7b
-	 eoi13o573P/NcudZ/z3LRGcrDou+jjULtEF7Iuzr79EggE4Y1WGya91CwqlqPkIbOuajg
-	 G0W9JLFuIFUN5Zsgbc4e/WTOHkTMRM2kJ4Klcjqp81tRdA02fiABcCwg2hymzv9DGa6tD
-	 YqRdvHuAf+PdqHi53xIIGO0QGogk6aQnstDSguGLyOOYq52fwUR9Ipx3jki8PfMeckA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795611595;
+	h=DMARC-Filter:X-UUID:X-CID-P-RULE:X-CID-O-INFO:X-CID-INFO:X-CID-META:
+	 X-CID-BVR:X-CID-BAS:X-CID-FACTOR:X-CID-RHF:X-UUID:X-User:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=Oz3Sg2286vdogq9Q4FAdVDvDlIdy4qx1XTFTIaQMdP0=;
+	b=gIe4b7u1emL+DlusowlY9zkKxqZvi25sKoI80Iou5esjxy/Xv6AFRdYObXbWdIrSi33R
+	 yHcYuGY3FqeFGj7pSzyqLlZvzFVjVYYL37dmBUo8BIKklGzrcvMUARmORwnodxktndgfH
+	 lXVhY66pwU0BDS4NHNwGTUOCy7GxZC2YcI73eyRvEwN98T8QNN6kchiH12Vgh+mleX4iA
+	 bfMvVYvlxmuYrhJd/kJwnkRimriHmiDAFLoOROzPyOaoGdsMyE0hZ53QdPTRU7dgEcTnl
+	 RCSkKzk9ON6Qy3nkAAioErE4OaGfOcprA7wEAvPAww9mG9WZBjhZF1h1ievZ/cMYtxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=amutable.com;
-	spf=pass smtp.mailfrom=amutable.com;
-	dkim=pass header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=QOXEZ5Pu;
-	arc=none smtp.remote-ip=209.85.128.48
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=kylinos.cn;
+	spf=pass smtp.mailfrom=kylinos.cn;
+	arc=none smtp.remote-ip=124.126.103.232
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DD1606A687
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Nov 2026 12:53:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 44DD1606A687
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amutable.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amutable.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amutable-com.20260707.gappssmtp.com header.i=@amutable-com.20260707.gappssmtp.com header.a=rsa-sha256 header.s=20260707 header.b=QOXEZ5Pu
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4bb77a462c6so49500255e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Nov 2026 04:53:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amutable-com.20260707.gappssmtp.com; s=20260707; t=1795611197; x=1796215997; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=wb5N99RF+uLplURkem29zNIHwOiV4iL5+6TcWsB08Yc=;
-        b=QOXEZ5Pu/EPca6q7kzgJRCmLrmsoVFR/ZRe4q5d58yeOdbJoHTuz9y0u/Nmk0CktwI
-         CoxL971qgH9IAeYEJL9OV04KK9hoZrCZxCXphCDmaMaCEIiYAFkXm9z/Jipc+urQTX/j
-         Fk8I31Tuids+3mCeGda6Q/7DCnEHSLo9OC+CFzZ1uqDLrPjUm6OialCUSj83o9zL6oVG
-         iksZBRXktSiMRqpVyhlcQqbeKVyrA1zYnXNdKX3aSHnLNR56AH4l3EmMwrecUL/g6kYv
-         65m48YXn1HMJU4OXkynxAivRZrQT+c7z3fBFxX7gT5o5ijKHn00slucTC0ZtqVCasBEY
-         yyiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795611197; x=1796215997;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wb5N99RF+uLplURkem29zNIHwOiV4iL5+6TcWsB08Yc=;
-        b=al09ggZ3E/qgvSo6qn4VHJrJcn/+GEWHBpxHdqV/eS9Hh45C0uq8q0n2EcoQn7n/jf
-         Bzz3J9JYyRf0MSX6Po6C/7AJ6afrF2+rKuIQ6ZqtufZ3ZyjFeJr2bytEncIKuD9c6x23
-         BJew+Rz4SFYWQi9If0iA1nUk0mp5nAzLIHz/tXuuSgvBYLTZadbX/H0g0byxpllQlnU6
-         XYx7hhU547w8uSYBdRpzH0baCxQwbBk+gola5s6N9Wfds3xXK/WXwBHARyeIeIdmXYqG
-         v5b2C/hPJNR79VvNtfIGe5aAsfva6cjql6cpPKYVtn3y/auPzcz+e4pYDaBBNnLt2HNF
-         tVkA==
-X-Forwarded-Encrypted: i=1; AL+hErGdGRPxkwzqE5GXxQJdJK9lDxC3XL4IHxEPYkJOJEi/ZjtMoX50vj8pPDJF2WuHogIOqOMmiYsPxr0iCJ29Z94R6aVI4Xk=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/HfZA4I0+23dkzPIn7bKSjFTg4zyMr/n+7PjAO2eDNGVScp4Eu
-	BPuvEP9FcrTVBIaWDEyNba18NmMXIT552soOlyyvz2uyEF/cEmCK0pJCCOSRXnyERHo1
-X-Gm-Gg: AZFdTZdJ/GzzOvjwye0y55wEljzZDmhyeSbf5QLLxiJLT3NWw+7Co7qtIXzm2WWoczr
-	blnb8IuM/JeJC6fQueqO6FFyFsDg/UJuB7Px0AY4g9UglpMvbIE6vPSSUmGzJrS3lpk+mLl7tmO
-	R2hb4phNFKUwE2harUyBRjYi7JB3AfUnGiHG7cUHEFThYnjUZ+odzI+5voYr+yTl8uth7ZhJKDD
-	x2+owxu/YNCWVU3M9gdHeDwp1FoezliCTj3Dp7fmemOCiAAByrNu6U9dYRwJtEQy8Gr2TzGuABx
-	XZeEiBbHilO3E/LJJVnrYmB+tJq+u64ms2CtnL1EYOLfzSNSt2aTsreGyiqm6VCEYFVIqe3oecb
-	yzqEFUndi0jhf3oKnsZJRtRyXOs3vFUi+Ll9y3Kp/OC6Zycz4GxIKjWUQmoty5QK/HQSuimskPK
-	kuo5vgQWam5cphu/2/yYKsdACuLD7KNRWi9RoU1jJm14M4CCyT6rLd5rLkrnuRL4JcEZsB2QvVI
-	miE3X3y8OWu0Y3R6ndv7lVuTmOTAqRmPGq/e3Pr1VxA656nTfrW+qbX5p8DzOixq05k/+VmLXl+
-	oF3iQE5sDXvYhyVOce8h7u2OS6Nf4Ksz8ldVmiOZ5WKcQ3hHi2Q+U4n5A2+oxA+XblY9APWvDpN
-	mq557i4Ncu0ORkjKRgvPDNedLbuDTzHgjJ7bOCYYSUTuJMRnFywyvf4R+AfHyc3UcSX0t6+QaxJ
-	I=
-X-Received: by 2002:a05:600c:b8a:b0:4a0:20b4:ba93 with SMTP id 5b1f17b1804b1-4bb88818156mr356853675e9.16.1795611196651;
-        Wed, 25 Nov 2026 04:53:16 -0800 (PST)
-Received: from ?IPv6:2003:cf:572c:2800:c235:97b:8b16:8928? (p200300cf572c2800c235097b8b168928.dip0.t-ipconnect.de. [2003:cf:572c:2800:c235:97b:8b16:8928])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853b2437sm736573735e9.13.2026.11.25.04.53.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 04:53:16 -0800 (PST)
-Message-ID: <45510e886330ade6013838f94cd84c688b263aa8.camel@amutable.com>
-Subject: Re: [PATCH v2 08/13] ipe: handle errors from resolving the real
- inode
-From: Alexander Mikhalitsyn <alex@amutable.com>
-To: Christian Brauner <brauner@kernel.org>, Amir Goldstein
- <amir73il@gmail.com>, 	linux-fsdevel@vger.kernel.org
-Cc: Chris Down <chris@chrisdown.name>, Miklos Szeredi <mszeredi@redhat.com>,
- 	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, 	linux-trace-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, 	linux-security-module@vger.kernel.org,
- linux-mm@kvack.org, Fan Wu	 <wufan@kernel.org>
-Date: Wed, 25 Nov 2026 13:53:15 +0100
-In-Reply-To: <20261116-work-ovl-d_real-v2-8-90564c4ae347@kernel.org>
-References: <20261116-work-ovl-d_real-v2-0-90564c4ae347@kernel.org>
-	 <20261116-work-ovl-d_real-v2-8-90564c4ae347@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6885F606A32D;
+	Wed, 25 Nov 2026 12:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6885F606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 178704a6e8d011f19a56ed5b684f684d-20261125
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.19,REQID:cc248436-75e0-480d-913d-5473fc487b15,IP:10,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:5
+X-CID-INFO: VERSION:1.3.19,REQID:cc248436-75e0-480d-913d-5473fc487b15,IP:10,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:5
+X-CID-META: VersionHash:7db8b62,CLOUDID:5e38f9953fc0ae00a7900448149155f6,BulkI
+	D:261125205949LFIJQMAI,BulkQuantity:0,SF:17|19|66|78|101|102|127|153|850|8
+	65|898|915,TC:nil,Content:0|15|50|99,EDM:-3,IP:-2,URL:99|1,File:nil,RT:nil
+	,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,B
+	RR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 178704a6e8d011f19a56ed5b684f684d-20261125
+X-User: maguicai@kylinos.cn
+Received: from localhost.localdomain [(36.106.123.207)] by mailgw.kylinos.cn
+	(envelope-from <maguicai@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 313751556; Wed, 25 Nov 2026 20:59:47 +0800
+From: Guicai Ma <maguicai@kylinos.cn>
+To: Kees Cook <kees@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 0/2] selftests/yama: add ptrace_scope and PR_SET_PTRACER tests
+Date: Wed, 25 Nov 2026 07:59:42 -0500
+Message-ID: <20261125125944.1768182-1-maguicai@kylinos.cn>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -108,63 +74,48 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2026-11-16 at 10:44 +0100, Christian Brauner wrote:
-> d_real() is about to be able to fail for D_REAL_DATA. So switch
-> ipe_build_eval_ctx() from d_real_inode() to d_real_data_inode() and
-> deal
-> with the error.
->=20
-> Currently, if overlayfs fails to resolve the data of a file it hands
-> back the overlayfs inode and IPE evaluates the policy against that.
-> The
-> overlayfs inode has neither a block device nor any fs-verity state so
-> none of the properties of the file hosting the data are visible.
->=20
-> Instead, leave the block device and inode state of the evaluation
-> context unset if the data can't be resolved so the file is evaluated
-> without any dm-verity or fs-verity state. IOW, IPE reaches the same
-> verdict as today but without looking at the overlayfs inode.
->=20
-> This is a no-op until d_real() can actually fail.
->=20
-> Suggested-by: Fan Wu <wufan@kernel.org>
-> Link:
-> https://lore.kernel.org/all/4e9a39ac-9ad5-49d8-b0c4-09e665504609@kernel.o=
-rg
-> Acked-by: Fan Wu <wufan@kernel.org>
+Yama has no selftest coverage.  This series adds a new selftests/yama
+directory: 1/2 provides the scaffolding and covers the ptrace_scope
+sysctl and the attach matrix, 2/2 adds the PR_SET_PTRACER exception
+tests.
 
-Reviewed-by: Alexander Mikhalitsyn <alex@amutable.com>
+The PR_SET_PTRACER lifecycle tests exercise the same grant, replacement
+and revocation semantics as the recent tracer-lifetime fix linked below,
+and pass both on mainline and with that fix applied.
 
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
-> =C2=A0security/ipe/eval.c | 13 ++++++++++---
-> =C2=A01 file changed, 10 insertions(+), 3 deletions(-)
->=20
-> diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-> index 4a7be96c84f03..a2366eb9a47b3 100644
-> --- a/security/ipe/eval.c
-> +++ b/security/ipe/eval.c
-> @@ -102,9 +102,16 @@ void ipe_build_eval_ctx(struct ipe_eval_ctx
-> *ctx,
-> =C2=A0
-> =C2=A0	if (file) {
-> =C2=A0		build_ipe_sb_ctx(ctx, file);
-> -		ino =3D d_real_inode(file->f_path.dentry);
-> -		build_ipe_bdev_ctx(ctx, ino);
-> -		build_ipe_inode_ctx(ctx, ino);
-> +		/*
-> +		 * If the real data inode cannot be resolved, leave
-> the bdev
-> +		 * and inode fields unset so the file is evaluated
-> without
-> +		 * dm-verity/fs-verity state.
-> +		 */
-> +		ino =3D d_real_data_inode(file->f_path.dentry);
-> +		if (!IS_ERR(ino)) {
-> +			build_ipe_bdev_ctx(ctx, ino);
-> +			build_ipe_inode_ctx(ctx, ino);
-> +		}
-> =C2=A0	}
-> =C2=A0}
-> =C2=A0
+Scope 3 is irreversible until reboot, so it is only tested when
+ptrace_scope is already 3, or when YAMA_TEST_NO_ATTACH=1 opts in.
+Privileged cases are skipped when the capability set does not allow
+them, so the tests also run in restricted containers.
+
+Tested on arm64 (QEMU/KVM, KASAN + lockdep): 10 rounds of both binaries
+as root and as an unprivileged user, plus a final ptrace_scope=3 pass;
+a boot with lsm=capability verifies that every test skips cleanly when
+Yama is inactive.
+
+Link: https://lore.kernel.org/r/20261123165357.4092273-1-bsdhenrymartin@gmail.com
+
+Guicai Ma (2):
+  selftests/yama: add ptrace_scope selftests
+  selftests/yama: add PR_SET_PTRACER tests
+
+ MAINTAINERS                                   |   1 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/yama/.gitignore       |   3 +
+ tools/testing/selftests/yama/Makefile         |  13 +
+ tools/testing/selftests/yama/common.h         | 233 +++++++++
+ tools/testing/selftests/yama/config           |   4 +
+ .../selftests/yama/ptrace_scope_test.c        | 452 ++++++++++++++++++
+ tools/testing/selftests/yama/ptracer_test.c   | 403 ++++++++++++++++
+ 8 files changed, 1110 insertions(+)
+ create mode 100644 tools/testing/selftests/yama/.gitignore
+ create mode 100644 tools/testing/selftests/yama/Makefile
+ create mode 100644 tools/testing/selftests/yama/common.h
+ create mode 100644 tools/testing/selftests/yama/config
+ create mode 100644 tools/testing/selftests/yama/ptrace_scope_test.c
+ create mode 100644 tools/testing/selftests/yama/ptracer_test.c
+
+-- 
+2.47.3
