@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642750;
-	b=C9CtLyDYkvy7QUYESDAiSFV+w/dKAHmLGFSs4X63Lsf+fMCaYeVsudp0XGsXkgFFWq4y
-	 KOBEdFpU6kALbqLqfwfu2yJHstPnyw8E96IHRwD+hEdyFIvpm98y5Km/TEdLz1DGROUeD
-	 lBqqZVAhJym4E6Bj1gjWzUtseicQybNGPQh5JE3tSKVZgxLmQMxm89p34FqwzPKfgtV1o
-	 m7c2F7HOtxV9iSsF1xUMRa20MRT73Ft89PINLJWZt6xMS+2O46eDzqq+n9CAl2zBqtK3A
-	 P/stFM9WnrJVYQWU0TxlaW3utHwQOvcY0Px7HzJJNGOdi1iQiXDNkuroIbTipWDzCXA==
+	t=1795642770;
+	b=PRFNSbMHBojbE35sjhn5TRrI0UUc/VGkNnx9SpOOkVflFxJrPGBArCHkR5bg1lMV9/GK
+	 oW5GPonQRYWJXS+uvgEexDKGfg+F6v8hl9YQaUkoo6s5WLC4xNSdzsPID94KeB+HQMEkw
+	 Qu4NXcoToK7IZPHYiTGUda3INiRBKelXR8A+MmjGMivFGLClKdIUf7AXp0QOH2mn5uoDd
+	 zhqFRfReuxLDNITwwu8uY7+RkiyhQrYLQj+BOqTDA/sb6w1yX+lOoViEJWDpoE1E0LmYU
+	 jPz0NVMl7jrviktOigbv+eXlbjVOl0lCxJsoWWEpWyR3vkyg4YOj0fKhssnMXw6r8WQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642750;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795642770;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=rUM6DDgN644lwBMuVOf8hCvlUKG7RqWtFvmySpiCJP4=;
-	b=Q6NcXRiSM4z8Atynk5Tl9smrm+c0X6au33o/iK+2NPeewsIhlwBiaWGBq8tKS+xzK5F3
-	 11TTNzgNBQfYyya1NQ8iS4EZdEvulyTlknU0e21pvS3hAGCIBm3jFFCk6gjQo+N+zqOzK
-	 4/gIh6qit+KlaA3jB9WLFHVs+m6LNjAK5ifqSPgUGPOPRnE3W2HdT0RnzDKhoK5QIqOOy
-	 vvlAOwO9xcfchYo9x9zpkBnsqtvUbuLllKJeVzeAGWDZn6Hf9nvJOH93Pe8WdkuUhF5Sq
-	 J6xOnA9yBiSE1pjq3/e5VPULF79Auohq0MBc9uudjm3TjQatfr54UX3oJRuyA1+ThAA==
+	bh=uchKMQEbun1KGuNSoqThhgELpVgiokvVWjr9mK1k/A4=;
+	b=IXCQbRAEYnUjs0asrdJjcgga38CR81EWAursB4jY4Xsr7NYwPQb7W2OdKtBVjLOdgp7M
+	 qUQyXPrT/Sgnr/UyrdGFMtecIXFpB1ctUNU9DrMJusQ1dd3Jo5YtY3VUcVAbyPVtnM2zQ
+	 pWSWzOyIDG4e/SvGIUYOLoycLPA53cdOeJBvl+JtrQC/oCLNjVlBgzW+7IZLsN7nHqueE
+	 4/wmwsBEtJRqFuY60l6WkWA0A99DM4C+49Zgo+hxeiM1Mx48izVD0AY7tQL1rkQ/xN5xS
+	 BUCrD38u3vV4aZhBCH1L+Sdo09uQ8LpTJGwJzoRQg4l2f/X8IJuNP/JH0ODtlRrtlqw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=csHVXRqO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cnxwhmZD;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3154A606A32A;
-	Wed, 25 Nov 2026 21:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01D4606A323;
+	Wed, 25 Nov 2026 21:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=csHVXRqO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3346D1F000ED;
-	Wed, 25 Nov 2026 21:39:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cnxwhmZD
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FC941F000EB;
+	Wed, 25 Nov 2026 21:39:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642749;
-	bh=rUM6DDgN644lwBMuVOf8hCvlUKG7RqWtFvmySpiCJP4=;
+	s=k20260515; t=1795642769;
+	bh=uchKMQEbun1KGuNSoqThhgELpVgiokvVWjr9mK1k/A4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=csHVXRqONzw+Zf2W4mIiRNX44yIJY5CyRbFbcCR0+M/3R+GAiOMw3psRBPN1SgjKG
-	 e3zbCETZaMq3pe/kSpHAtZiGstZ7Nel3amY5pdz9XV8gqjeM1AXeDT7jpyIny0bOe9
-	 SuomrZaO2RHa2qG2CVi5VaWOYXyVZrW1FAihaRpWfvGCbxdLN/suOU+Wc2dERbKl8o
-	 boj2OWLoGU/PW20RgzAeGTnGgWZWL7274PUZOHFuSASuVtqK5eYFytXfIwSwwoOCk0
-	 g7EEMg5orzdhHYvJnZxuXFqRuBz9YUo0FhIUT/VJHPoRhMgzSPogevaDBmoXEyezPE
-	 LcFWpym+IE1LQ==
+	b=cnxwhmZDXM+Gsf0EhyO5VD88+p/C9GrSlfOXwoM8uURHlT5OqfIyp2Rk5t4izPM3P
+	 UUx1iGYMBxTWs0cL3dCa2FA04NGRrpI4ftwFOBvtbII2klixx84KhPEvfJOjk+TwJo
+	 DFc6Qi1OlbLb6T2cbEG1CRPNtaCZk/R58jMv+IibTCsr8BptHZoUgMiJ2jnJbsExBK
+	 Q+MoCouRcesMmoAwbmZrOxAbLuJxUupraT9lUd2s7+j6/4EPjYtXHaUu0/aXvLlyvR
+	 SEBhBNJRRsmdB4Q6buLNKRmyi35fpFhzWJhgqoKVgCyvDfHsSFNTIFHNt4CE5+GaCp
+	 TsEGvbU9H6XSA==
 From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:09 +0000
-Subject: [PATCH slab/for-next v2 08/14] powerpc/mm: specify
- SLAB_MAY_ACCOUNT for pgtable caches
+Date: Wed, 25 Nov 2026 21:37:11 +0000
+Subject: [PATCH slab/for-next v2 10/14] fanotify: specify SLAB_MAY_ACCOUNT
+ for event caches
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-8-7c680f02a734@kernel.org>
+Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-10-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 To: Vlastimil Babka <vbabka@kernel.org>, 
@@ -89,44 +89,51 @@ Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
  linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
  Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
  Johannes Berg <johannes@sipsolutions.net>, 
- Eric Dumazet <edumazet@kernel.org>, 
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
- linuxppc-dev@lists.ozlabs.org
+ Eric Dumazet <edumazet@kernel.org>
 X-Mailer: b4 0.16.0
 
-User page tables are allocated from PGT_CACHE() with
-pgtable_gfp_flags(), which adds __GFP_ACCOUNT for non-kernel mms.
-Specify SLAB_MAY_ACCOUNT when the object may be charged to a memcg.
-__GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
+fanotify events are allocated with GFP_KERNEL_ACCOUNT and charged to
+the memcg of the listener. Specify SLAB_MAY_ACCOUNT when the object
+may be charged to a memcg. __GFP_ACCOUNT without SLAB_MAY_ACCOUNT
+will not be allowed.
 
-Path: copy_process() -> mm_init() -> pgd_alloc()
-  -> kmem_cache_alloc(PGT_CACHE(PGD_INDEX_SIZE),
-                      pgtable_gfp_flags(mm, GFP_KERNEL))
+Path: fsnotify() -> fanotify_handle_event()
+  -> fanotify_alloc_event(GFP_KERNEL_ACCOUNT)
+  -> kmem_cache_alloc(fanotify_{fid,path,perm,mnt}_event_cachep)
 
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 ---
- arch/powerpc/mm/init-common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/notify/fanotify/fanotify_user.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/mm/init-common.c b/arch/powerpc/mm/init-common.c
-index 745097554bea..72dfcc559630 100644
---- a/arch/powerpc/mm/init-common.c
-+++ b/arch/powerpc/mm/init-common.c
-@@ -140,7 +140,8 @@ void pgtable_cache_add(unsigned int shift)
- 	align = max_t(unsigned long, align, minalign);
- 	name = kasprintf(GFP_KERNEL, "pgtable-2^%d", shift);
- 	if (name)
--		new = kmem_cache_create(name, table_size, align, 0, ctor(shift));
-+		new = kmem_cache_create(name, table_size, align,
-+					SLAB_MAY_ACCOUNT, ctor(shift));
- 	if (!new)
- 		panic("Could not allocate pgtable cache for order %d", shift);
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 63c9759fc3b0..3575c681abc1 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -2184,14 +2184,16 @@ static int __init fanotify_user_setup(void)
+ 	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
+ 					 SLAB_PANIC|SLAB_ACCOUNT);
+ 	fanotify_fid_event_cachep = KMEM_CACHE(fanotify_fid_event,
+-					       SLAB_PANIC);
++					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
+ 	fanotify_path_event_cachep = KMEM_CACHE(fanotify_path_event,
+-						SLAB_PANIC);
++						SLAB_PANIC|SLAB_MAY_ACCOUNT);
+ 	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
+ 		fanotify_perm_event_cachep =
+-			KMEM_CACHE(fanotify_perm_event, SLAB_PANIC);
++			KMEM_CACHE(fanotify_perm_event,
++				   SLAB_PANIC|SLAB_MAY_ACCOUNT);
+ 	}
+-	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event, SLAB_PANIC);
++	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event,
++					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
  
+ 	fanotify_max_queued_events = FANOTIFY_DEFAULT_MAX_EVENTS;
+ 	init_user_ns.ucount_max[UCOUNT_FANOTIFY_GROUPS] =
 
 -- 
 2.54.0
