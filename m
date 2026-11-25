@@ -1,58 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=124.126.103.232
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795596571;
-	b=dmE+rR1q5UvkXWIXyFzKMORQyiWPSx7LmKdG8DGZ6GTksZHulFItX941KVLcvD/j+GC3
-	 RKsvH56Kso+byDs0mScCEd2fcYA631Tih7NQFiL7Fmd7nDj3SqX2uO0PVbKunWjjw7u1X
-	 sGvku6Vl4o5r7odyqdbyUHQfP0M4zf6JfCUVqHJLz2TdeYTle6jUa1hFk8p2QLmu72JsG
-	 RzanJlgVyDeXD8qQCaZJgJJE7SNaWdbG8plKiLSuLv9agD/UoQaCJqDPgBmKKvUtTRTVW
-	 4MyMtRCBznHq3oR8znwWrd/XirRCMYOLAubjkXvJMDuTXg79barEO5DDXSJJTBd6HjA==
+	t=1795596720;
+	b=JZt5YLUaxx9Eca7ag49Smw5CPY6XMktmulR9lilwDv4OOfn+2uC6t0Csj5UL6S5bGqQH
+	 khExAdW0rUu59pBVffhJ9jJOVuNMqHMwvdNz8SWY3Dj46Rjs9HAYIbgEeYQ35GXKdZyXl
+	 9n+6WIgqNFwQbynbgbtklqbn5bvJBGqvx20mN8SmU8uswr2Ko0h1ek/mqmTwyc/+GKlXS
+	 1XJvVh15plLS1oDeURwbr5hS7gFwHSpnXKqsKNOt2aftcBkl+xEEkEXrhssiOvm8UU5l0
+	 CaSq8+pW6cx89wFfVo1pgbmINOZyQnENZnFVdMCHqO9IuURmdRWHZwMn+E2607DFzKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795596571;
-	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Originating-IP:
-	 X-ClientProxiedBy;
-	bh=06PO7r5fywxUcb1upikYj195xr8JzyPRVP1dBZO2gWM=;
-	b=fwJnUZ8rJklD1/73oD2ThFNf++Mff1iKUQiSXuDT++LZ1QlG001Ff5o2y5EXvNiClVW/
-	 /hrcQiJhdPPVoS0NsjPKAiNdvcUfDzMfUNM+1+5h+O50SdDMDDkOt3UkjrTylvobMHcdp
-	 ieGEWRDvvwUvGt+oEWG7k48GnpWqdnKWkYhoWHJ3qhC62Vjm+5Z6WwvGAE4cu1AYHIici
-	 0WaY69ElbjRYv882Px0ZBqc/4B4SN8+vRxIuP76EnQG4Mw4CCqs6+oz5NiaJfXaFLhC8f
-	 HL56tQ6uI+YbFfNz8Mv1L5d/WQF00pG3f/UAResWCT0HifQ4yza5fZzlnfoRICI2aYQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795596720;
+	h=DMARC-Filter:X-UUID:X-CID-P-RULE:X-CID-O-INFO:X-CID-INFO:X-CID-META:
+	 X-CID-BVR:X-CID-BAS:X-CID-FACTOR:X-CID-RHF:X-UUID:X-User:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=dX3JEVRhx/vWlwQxJ/iqwhzvMvaIPgw/wLTA3isfI1M=;
+	b=BPYN+HLtnJekGWEYaNGa4HRV6nSUc5jvERCCL4DY249X0Jqhbtv3rZVxMKoz18wyaMp+
+	 4Jp05++qNte1ytiKTwAkqHLWCrz6mZMjYe7/fdzPN3CpxaZvyfGpftyKbi4mJWnWvmKG/
+	 kbPHyDDDyxr3QOiPHx0JDy4ZxU0Ypsx/fj88eqR3dkTEiPzC7+1qZpRqwMPzFlvA54ipK
+	 /8lgTFvTxhf3Xxl69SjcNSiekLTyJcpZETmGbGX5Rd3nU1CqLrK/YoSqmKEL+betMZ7C4
+	 76FpJH4QR4kkC+aqp9QAqwKKwjdP5NAJTbJ/YdoQD0uB52fP0Z4QF1Rn2R7cB3hx9nA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=huawei.com;
-	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=JO6GoKUr;
-	arc=none smtp.remote-ip=113.46.200.216
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dmarc=none header.from=kylinos.cn;
+	spf=pass smtp.mailfrom=kylinos.cn;
+	arc=none smtp.remote-ip=124.126.103.232
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307CD606A326;
-	Wed, 25 Nov 2026 08:49:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 307CD606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=JO6GoKUr
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=06PO7r5fywxUcb1upikYj195xr8JzyPRVP1dBZO2gWM=;
-	b=JO6GoKUrYIQ1Q/CtomcPhUsGSMJNu09OP53TAY4OZ8LFILvTKj0c2EVoGl1PyxEefItW6XMFm
-	gXXRBQz912EBRwKwl/EJPKZR0G9imlYG8ylzqbtp3wTOkLRNNuYUFoqwcxg23bv45VFb8Ri2htX
-	MEE/k1BPuGN7EbJIahNz43A=
-Received: from mail.maildlp.com (unknown [172.19.162.197])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4jZCy70pPpz1T4Gk;
-	Wed, 25 Nov 2026 16:48:31 +0800 (CST)
-Received: from kwepemk300018.china.huawei.com (unknown [7.202.194.246])
-	by mail.maildlp.com (Postfix) with ESMTPS id C6AE64057D;
-	Wed, 25 Nov 2026 16:49:20 +0800 (CST)
-Received: from [10.34.206.67] (10.34.206.67) by kwepemk300018.china.huawei.com
- (7.202.194.246) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Wed, 25 Nov
- 2026 16:49:20 +0800
-Message-ID: <dfb1128d-feef-4729-b31c-a52f937dd92b@huawei.com>
-Date: Wed, 25 Nov 2026 16:49:19 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0DF606A321;
+	Wed, 25 Nov 2026 08:51:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6D0DF606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 7261866ce8ad11f19a56ed5b684f684d-20261125
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.19,REQID:99bff6ad-bb37-4aa4-a860-64fc8b30cd03,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:10
+X-CID-INFO: VERSION:1.3.19,REQID:99bff6ad-bb37-4aa4-a860-64fc8b30cd03,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:10
+X-CID-META: VersionHash:7db8b62,CLOUDID:0e3476b13cc8e03fb9e0fd0fc43405a2,BulkI
+	D:261125165151PWJ4DRX9,BulkQuantity:0,SF:17|19|64|66|78|80|81|82|83|102|12
+	7|136|153|841|850|865|898|915,TC:nil,Content:0|15|50|99,EDM:-3|-100,IP:-2,
+	URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1
+	,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 7261866ce8ad11f19a56ed5b684f684d-20261125
+X-User: maguicai@kylinos.cn
+Received: from localhost.localdomain [(36.106.123.207)] by mailgw.kylinos.cn
+	(envelope-from <maguicai@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1440950153; Wed, 25 Nov 2026 16:51:47 +0800
+From: Guicai Ma <maguicai@kylinos.cn>
+To: Sung Byeongchan <tjdqudcks0424@naver.com>
+Cc: Micah Morton <mortonm@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	James Morris <jmorris@namei.org>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] security: safesetid: use real GID for GID policy lookup
+Date: Wed, 25 Nov 2026 03:51:43 -0500
+Message-ID: <20261125085143.1577709-1-maguicai@kylinos.cn>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <d7e10b50556ab3b79c7132018249f6f7c608411b.1791023194.git.tjdqudcks0424@naver.com>
+References: <cover.1791023194.git.tjdqudcks0424@naver.com> <d7e10b50556ab3b79c7132018249f6f7c608411b.1791023194.git.tjdqudcks0424@naver.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -62,51 +77,27 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next -v2 2/8] lockdown: remove useless decrement
- operation
-To: Cai Xinchen <caixinchen1@huawei.com>,
-	<nicolas.bouchinet@oss.cyber.gouv.fr>, <xiujianfeng@huawei.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<shuah@kernel.org>, <kalevi@kolttonen.fi>
-CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<lujialin4@huawei.com>
-References: <20261110132818.2231593-1-caixinchen1@huawei.com>
- <20261110132818.2231593-3-caixinchen1@huawei.com>
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-In-Reply-To: <20261110132818.2231593-3-caixinchen1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk300018.china.huawei.com (7.202.194.246)
+Content-Transfer-Encoding: 8bit
 
-On 11/10/2026 9:28 PM, Cai Xinchen wrote:
-> From: Kalevi Kolttonen <kalevi@kolttonen.fi>
-> 
-> Signed-off-by: Kalevi Kolttonen <kalevi@kolttonen.fi>
+On Sat, 3 Oct 2026 19:34:15 +0900, Sung Byeongchan wrote:
+> SafeSetID policies constrain the ID transitions available to a task for
+> each source ID.  id_permitted_for_cred() always builds that source key
+> from the old real UID, even when it is checking a GID transition.  If the
+> real UID and real GID differ, the policy attached to the real GID is
+> therefore missed and the lookup can return the unconstrained default.
 
-Nit: checkpatch.pl warns on this patch, it's better to have a commit 
-description.
+Reproduced the bypass and verified the fix on arm64 under KVM with KASAN
+(v7.4-rc3-178-g20eef29b7c84, CONFIG_LSM="safesetid,yama").
 
-> ---
->   security/lockdown/lockdown.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index 263dcc80d839..8648508d49b2 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -130,10 +130,8 @@ static ssize_t lockdown_write(struct file *file, const char __user *buf,
->   		return PTR_ERR(state);
->   
->   	len = strlen(state);
-> -	if (len && state[len-1] == '\n') {
-> +	if (len && state[len-1] == '\n')
->   		state[len-1] = '\0';
-> -		len--;
-> -	}
->   
->   	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
->   		enum lockdown_reason level = lockdown_levels[i];
+On the unpatched kernel, a task with real UID 1000, real GID 2000 and
+only CAP_SETGID reached GID 2002 under a 2000:2001 GID policy via
+setresgid(), setgroups() and setfsgid(), while a matching 1000:1001 UID
+policy still blocked setresuid(1002). With this patch applied, all three
+GID transitions are killed with SIGKILL, and the allowed 2000:2001
+transition, existing-GID transitions, the existing safesetid selftest
+and the new test in 2/2 all pass with no KASAN warnings.
 
+Tested-by: Guicai Ma <maguicai@kylinos.cn>
+
+Thanks,
+Guicai
