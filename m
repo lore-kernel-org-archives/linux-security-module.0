@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642778;
-	b=yV7Sp+RHTmY0mWyJ7RIQKYy3uqHLisnwDTErmHpe24BGNwAJxDY9+zsO4Nvs+WkIm8hQ
-	 Eb6/BOQgviy1Q7+cfWvVzi1zqyBcQT1NR1tqvfQ2gTGHvA55j9XNkhozAzwKTxHG8eTYu
-	 Axq5czUrHCVtSGucBVdix+XtAwOnrSLWeB6SPdUPdAYKCAyGBtiDvj4SMHJ0agx9HH5wK
-	 MEQyNNiILR7hDDkOPvpvcRZeNyzHafKhXSlayDz6IlzKu47TaRqmu6ER3cDyVaAvpN+Zy
-	 VNRYtmHXz3a80smQlHJIgEF+ONQJh03YOxus/cpmHixHqUDD2ns1IqGEk8fDrvyxfKg==
+	t=1795642787;
+	b=ItNRqS1iiGyoAK1gXzTBpDUJrsJzC/IVyLpgAFqc1v7HVTPrnjgxt766bB6ufM7kRt4m
+	 bfAVIyr/ZVyRhmSRZqxvjdmh4kqJR/XysK1740HqOnqzdP3EF4KA3fhpNE/ph5L7f2tH6
+	 uL8LJQKhIaEG5OakNlitlQnr1lR0PnyqKCmPT/XEjyUcDs/rhUmXubd/IHg85yaqfde9p
+	 dNSHMBoPwdAbkFpL88R+T8XQiDPeQTgoI0AfwkWjyVhl0gXBtzTb81PoH9YdS2D97FUZJ
+	 ZBp6oPwAehqh75FyUaXVwUSMVwtHE5iKQNsUC5CXTxXkqFuI8b2f4ayl5iHKqMdbVVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642778;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795642787;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=vEcqqNm19OuH8f10/Y2MYPCdnWCdxBstah0njeHlZsU=;
-	b=IBMpy5U/oKSIQWvulpDeecf3FvfE4m5r4xa080EoGZgb9zgb3fzNwWk0iMjtdbm0hZ3t
-	 zPb4ZFXB5RfHm9y4FmnQQKVwOASSjlDD427V3iawxNWRZ5h7xp82AuQGGP3kM5Z0a8n5+
-	 qefDSOQEHKRWHh4N9fxpjcVdhHYgXf3+T9gCYPuf/FLz599g5t84WoM3Mb22Isbgk4aQE
-	 Y+xyw0VVdTpws6mFUDr7bS2dZlBLmUOQrxyktqwwC1FCLanq55oZvyr6y7d9xeEr5f9kM
-	 TkWbpcJS+ll96y3OAi7KdQchWW8RkqPAKkRMlShNq7G+9AmTtCMbSN+CGLt/vangHKQ==
+	bh=EmbHvxSdAW/q1vOhxvKGf/qq9lAABR8oLeslWOTBY9M=;
+	b=SvrWT0xwh2dGanLsu0uHW5bMWbTSmcq8iDI/RSctvaP1zF6b6BiWddqUVBqn1AXxuN6/
+	 7Qri1z1bpkY7XmyX3OmycJ8zQv43OpmHFZcjkIWvNKqxQheWrMrAggOQ7Y7SLXMBOKhjk
+	 S3M0kDhulnUejaV01Cbc85ns7lSqwn9jdKzwszb5fuxx+bCzkIJLT1O1qLkGdLmamZbfE
+	 WcawtDkFYEMWq1Q+bCfSg1QACI+nD27OGf3TuwQvTqBAw+eEaqKCwUDT3dol2VNk+BNtL
+	 HXMVB1zLFgkIyjSSSN/QphpEOrEVae+Zi57lhIgRXDQh15RLRSUTF34k9h6VrD9HSeg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JJ7DXGEs;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PuifylfB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD96F606A323;
-	Wed, 25 Nov 2026 21:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73860606A31E;
+	Wed, 25 Nov 2026 21:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JJ7DXGEs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE611F0089F;
-	Wed, 25 Nov 2026 21:39:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PuifylfB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F741F000C4;
+	Wed, 25 Nov 2026 21:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642777;
-	bh=vEcqqNm19OuH8f10/Y2MYPCdnWCdxBstah0njeHlZsU=;
+	s=k20260515; t=1795642787;
+	bh=EmbHvxSdAW/q1vOhxvKGf/qq9lAABR8oLeslWOTBY9M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=JJ7DXGEs5MKX+mzY34S5pcC47lEO+Z3xW5ExnajvXeyp6B4cTkEBKBLKwRfYJ30Fz
-	 lLNpO7huIkAceYpnk7nrSIDfc3PjICL3cqJQOiLMp7p5bm9TWqZxiN8Ef/M95VULzT
-	 fHuKQo0NOfAybTCSxsCbnnpdX681msyNEwt4gK3mAOyU7j1c+c+DPuJH8a/Ket8aRT
-	 gbr4kXFfaBWZDxC3OE8WLPrq1UI42pL+JEsiyxGoNQ/cgvNany+6roREwPJkRXgvWA
-	 wEQW3ZqS1Ng6/z3Q84rN0+87qHe/dj7XUTNrb7i4h4TviMkgm/tk1TPgKT9zYetvzs
-	 wkLns7a/xnjJA==
+	b=PuifylfBLGxCFHUkMhv/Mi8wFziI0lMC4HyaLotkpoyRMiK/TrqZX1AG36tnHuzoq
+	 1WDRGhx+pHP7Nh965qPGtyLktzTqHZnDX+4Gh6hbSSD1omJfsf6XgD4SsJGobQnmI3
+	 1feZaKZDJZvZVS7LexZ5PqMQicYfd5h8t+kiTsAk+fqrXTEZwdyxXYwnoq9TKkYv9Y
+	 6UoVFGwIcQjP0rlrQartx7T9JCZdrZOPwM1GlbC3TJPbh16Dk3C0rtWzKA0VySGrC0
+	 ld/K3k6FWZZbjgdKZNNrbnwCNGJ2AOltLaYpYBFbkIbdiXNq+qiPT3Hv4zKdppHG6x
+	 vYPnf/H0PmEVA==
 From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:12 +0000
-Subject: [PATCH slab/for-next v2 11/14] smack: specify SLAB_MAY_ACCOUNT for
- smack_rule cache
+Date: Wed, 25 Nov 2026 21:37:13 +0000
+Subject: [PATCH slab/for-next v2 12/14] hostfs: specify SLAB_MAY_ACCOUNT
+ for inode cache
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-11-7c680f02a734@kernel.org>
+Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-12-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 To: Vlastimil Babka <vbabka@kernel.org>, 
@@ -89,42 +89,38 @@ Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
  linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
  Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
  Johannes Berg <johannes@sipsolutions.net>, 
- Eric Dumazet <edumazet@kernel.org>
+ Eric Dumazet <edumazet@kernel.org>, linux-um@lists.infradead.org
 X-Mailer: b4 0.16.0
 
-smk_copy_rules() allocates rules with the gfp passed from
-security_prepare_creds(), which is GFP_KERNEL_ACCOUNT. Specify
+hostfs inodes are allocated with GFP_KERNEL_ACCOUNT. Specify
 SLAB_MAY_ACCOUNT when the object may be charged to a memcg.
 __GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
 
-Path: fork() -> copy_creds() -> prepare_creds()
-  -> security_prepare_creds(GFP_KERNEL_ACCOUNT) -> smack_cred_prepare()
-  -> smk_copy_rules() -> kmem_cache_zalloc(smack_rule_cache)
+Path: lookup -> hostfs_iget() -> hostfs_alloc_inode()
+  -> alloc_inode_sb(sb, hostfs_inode_cache, GFP_KERNEL_ACCOUNT)
 
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-um@lists.infradead.org
 Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 ---
- security/smack/smack_lsm.c | 2 +-
+ fs/hostfs/hostfs_kern.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 3a4a33568297..f4454dc8e232 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -5359,7 +5359,7 @@ static __init int smack_init(void)
- 	struct cred *cred = (struct cred *) current->cred;
- 	struct task_smack *tsp;
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index 613146e76dec..8d748ff838f3 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -1078,7 +1078,7 @@ MODULE_ALIAS_FS("hostfs");
  
--	smack_rule_cache = KMEM_CACHE(smack_rule, 0);
-+	smack_rule_cache = KMEM_CACHE(smack_rule, SLAB_MAY_ACCOUNT);
- 	if (!smack_rule_cache)
+ static int __init init_hostfs(void)
+ {
+-	hostfs_inode_cache = KMEM_CACHE(hostfs_inode_info, 0);
++	hostfs_inode_cache = KMEM_CACHE(hostfs_inode_info, SLAB_MAY_ACCOUNT);
+ 	if (!hostfs_inode_cache)
  		return -ENOMEM;
- 
+ 	return register_filesystem(&hostfs_type);
 
 -- 
 2.54.0
