@@ -1,76 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795623860;
-	b=KVxZ50CvBSDEdeFgqO1NZUbcGMhHqlagx4/YqhqM0XVSTP40QNmWiq5f6Qq4X14hWv9Z
-	 FZBVmr/JYKLIMrWh9INc6AViqFOBW+Ab5hVVohdSYqk4zuHQGiMpNW8nDR52USc5ekUpk
-	 cfREcPFdSuaMD3uFRbGNi/rF2kbi/J45EfwgY/nTc9s5ET6bozFFurLGw5NmCzmSF0yPI
-	 ZBqfUAe7pL8eZEr9Py7l3UL8GDC8s5Q5eGyZWAZFNzZbVCUEmFBp45zW9FAR6B+UNY+TJ
-	 vfhfdHVqazeippqgbSepTH8letnLEekAX0j2/Xit1bEzmchiKgy1Gq9BjwoTvAf2vrA==
+	t=1795627165;
+	b=z2aInozAMHczVnKUP++fhbctVLVNYSY5AMbeD0qEgsXUCNQvyhehFfemO6UyeMbFD4ck
+	 D+Y51owe2hPzkmg/3LuSs4n6Iv7wDzmxZUus63SlDlIUORTiIvl9KMdlwdzzhSqfNQliH
+	 NAOqGMG1hNDWRe4aF3bZb3VvhQXCA3JuvavNuUs4/ZVYmiZZzhPoVzPk5AKJtBoAcfjqR
+	 RCLJZJ7kh4Ba7bX3kZh/ZBZPLglQM5JusKo+WkYzwKOetFvojtPzrWwLsnkLIUYRkVRje
+	 rVKnMT1DWQRI1Cu+MCBpMArj201SYPr2LjLUq/MvffUvDGv67ZDWhzXjSVL4nZA3ePA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795623860;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795627165;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=93PlHQzdBd5hDciyifgipa2sETM6WYe2vvJEu0EdaIE=;
-	b=bJZOpm1IZ0A82i3YDiShiViJwET2+8aO2LMc6QN72srhNwAxWdeOozGJZe4YZDeyzy4m
-	 XJ+/yNfqLiPyYCmosAqPm+q5ZtiPyxzwFJ5N5MBfjaOmxhtUJpI2tR6sE95WZgS7hocvT
-	 T6t3pgtFvu8HNhsJC/MlRA09ICtfCPTH2RH8MR/wPDfylFaFrnUpW4wOvI+fBOY1UQ2cv
-	 ZrvIPGwVIV1jx1MZ+TkfbGqXDA+dr6mguBultnUMnxZ5iYe/2XeJt6YuSCwjtPB4ST+je
-	 CS3VFeTOgN/Tb19YkLTiDlkcpXxxjF/u4KstiGqWPVjVrUQZXBS8uE9ZxHKDuFywx9g==
+	bh=zlUDtLSedtGVqw9aJT44i6qtvT7PvK8DE79lqMDex5I=;
+	b=4dmDzzq/LU3XnwapslHzM7T75zM07hNLHjn0zCpkImZJMm9wT58VThkDnY4Jw4S5cUXd
+	 /XkoXxjmmELobYIpetUv3k8Err/imCY4Qv7qqxyIHuhBzEGAwnN0Q3o87nlXk/3Cug8jT
+	 AAbH3/Qc+zFnUVvw0NHVvaL7bJ3Qu938IUvzZjSnfM77sX4dyVWiPhRLz/XV71SuEfChJ
+	 4SQuZuJxVL6DLKvRheLzaRm5Xgag2cuevkhJHtVSOoYvnex83RwbcK/eyPTxecpyEprjX
+	 qtM18Qrh1+DN5bAm0Kxts2GXDJUGO4G4d7pRUU/zWkVRB5VKePE6I6wae+zHtSoPXKA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UqK2qb3F;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mY2vPG6c;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A6CEF606A31E;
-	Wed, 25 Nov 2026 16:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id F1A84606A31E;
+	Wed, 25 Nov 2026 17:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UqK2qb3F
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 7624A1F000C4;
-	Wed, 25 Nov 2026 16:24:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mY2vPG6c
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A03911F000CA;
+	Wed, 25 Nov 2026 17:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795623860;
-	bh=93PlHQzdBd5hDciyifgipa2sETM6WYe2vvJEu0EdaIE=;
+	s=k20260515; t=1795627164;
+	bh=zlUDtLSedtGVqw9aJT44i6qtvT7PvK8DE79lqMDex5I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UqK2qb3FQVwmTqV8oUUCeEtkJg9SD6RlxBIdsewlju3Y6yf64LEDRua/CP8PuokUM
-	 o1vJ05+rehtnQ3lsUqLX4G48iP71LMVhvqDAURRrlVkTETRCB1t1zf1GLgSh8PC6ov
-	 hrTGvDOKmlnQrx8Cvm6tsUTJp5p4ASihgzfEEEV9BP/JDjAgo9v0Ev7deWEw5eoLci
-	 fb4P7fSbUfxBYC/3IBYMbAUeM92yF05ODOER00oMYavQQn/fmId7+9baSwIFZ01rf+
-	 WElptmHmI3QPFYytegFUZC4SluG5bFEfaeSzufIKLwi0d+u4kuLU63S4GkWl1Ozxst
-	 DzmuADMR9Ln/A==
-Date: Wed, 25 Nov 2026 18:24:16 +0200
+	b=mY2vPG6cNcQZRH4rhcFHA18JmcAtiNBnjCZT8VLygTsLVlMZdxX08/dKKCICB7hv0
+	 R8xFabYiDqcsN+O4lHBLmHvQgrPW3tktJqHIi3eI7zgo0SODliFaJmqXMaK9TGzBDT
+	 j3YBrxmxYzaM+V4nzatSZ2zCgV4ftIwDyKhK3n3LGsqUd1dW8kFeL7qSFJrvQ0g4L9
+	 i6TDaRWPJagM+A07gCFstmKbcYTSonQW6F7CUlle0psrT9GL3uL/zfxXGgm/nBKSIB
+	 nrGVO+z9xpJlzUBroTzItfiHGWfVMP1Q5fNCIMRpKtPuiTPygDvtEenhjbwabIcmMU
+	 /HTPb4Z4LKT1Q==
+Date: Wed, 25 Nov 2026 19:19:20 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: bpf@vger.kernel.org, containers@lists.linux.dev,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	Aleksa Sarai <aleksa@amutable.com>,
-	Alexander Mikhalitsyn <alex@amutable.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Giuseppe Scrivano <giuseppe@scrivano.org>,
-	Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>, Kees Cook <kees@kernel.org>,
-	KP Singh <kpsingh@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Neal Gompa <neal@gompa.dev>, Oleg Nesterov <oleg@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Zygmunt Krynicki <zygmunt.krynicki@canonical.com>
-Subject: Re: [RFC PATCH v7 00/26] userland: Userland containers
-Message-ID: <awcLsCALUwJ1Qlcc@kernel.org>
-References: <20261122193539.3334213-1-jarkko@kernel.org>
- <awYJnFNt9kkBqj59@kernel.org>
+To: Guicai Ma <maguicai@kylinos.cn>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] KEYS: Protect key instantiation and rejection against
+ type removal
+Message-ID: <awcYmOxzJ9TfsdjJ@kernel.org>
+References: <20261124091243.1019217-1-maguicai@kylinos.cn>
+ <20261125032605.1327954-1-maguicai@kylinos.cn>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -82,166 +62,291 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <awYJnFNt9kkBqj59@kernel.org>
+In-Reply-To: <20261125032605.1327954-1-maguicai@kylinos.cn>
 
-On Wed, Nov 25, 2026 at 12:03:12AM +0200, Jarkko Sakkinen wrote:
-> On Sun, Nov 22, 2026 at 09:35:13PM +0200, Jarkko Sakkinen wrote:
-> > OVERVIEW
-> > ========
-> > 
-> > A userland is an anonymous-inode control object with separate build and
-> > live phases that binds together:
-> > 
-> > 1. A full set of detached namespaces owned by a fresh user namespace,
-> >    with optional build-phase opt-in sharing (USERLAND_SHARE_NSFD).
-> > 2. A dedicated PID namespace for spawning processes into, signaling
-> >    members, and polling or waiting on PID 1 exit.
-> > 3. An initially empty mount namespace (CLONE_EMPTY_MNTNS) populated
-> >    directly in its target user namespace before going live, without
-> >    inheriting host mounts or cloning staged trees, while still allowing
-> >    new mounts to be attached at runtime.
-> > 
-> > Work on this feature started in 2025 after reviewing David Howells'
-> > container object patch set [1], whose underlying mechanics made sense to
-> > me as a continuation of earlier container object efforts [2]. The
-> > lifecycle follows a staircase initialization model similar to the Intel
-> > SGX driver, without an embryonic task state or a parallel namespace
-> > syscall API, pairing a compact policy-agnostic implementation with an
-> > allow-list security model (with LSM hooks) and runtime mount hotplug.
-> > 
-> > While the patch set is manually written, the original motivation came
-> > from isolating LLM agents. Running untrusted agent workloads made it
-> > clear that OCI runtimes need to minimize their live configuration
-> > surface.
-> > 
-> > Assembling mounts, credentials, and namespaces inside helper processes
-> > with a half-configured container is what I see as the main challenge,
-> > and the existential debate around namespaces and container objects is an
-> > unfocused discussion topic.
-> > 
-> > [1] https://lore.kernel.org/all/155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk/
-> > [2] https://lwn.net/Articles/1102593/
-> > 
-> > IMPLEMENTATION
-> > ==============
-> > 
-> > Standalone fd-based namespace configuration (patches 01-07) decouples
-> > user and mount namespace setup from live helper tasks. userns_set_idmap()
-> > atomically configures USERNS_SETGROUPS_ALLOWED policy and UID, GID, and
-> > project ID mappings on a CLONE_NEWUSER nsfs fd, checking current_cred()
-> > so an unprivileged creator can delegate the fd via SCM_RIGHTS to a
-> > privileged mapping daemon. move_mount(..., MOVE_MOUNT_T_MNTNS) operates
-> > on any non-anonymous mount namespace fd: on an empty mount namespace it
-> > installs "/" onto the nullfs root once, attaches relative submounts both
-> > before entry and into live mount namespaces, and supports
-> > MOVE_MOUNT_CLONE for recursive bind mounts without OPEN_TREE_CLONE.
-> > 
-> > userland_open() allocates a userland instance backed by a pollable
-> > anonymous-inode fd, creating a fresh owning user namespace and a full
-> > set of detached namespaces: empty mount (CLONE_EMPTY_MNTNS), PID, UTS,
-> > IPC, network, cgroup, and time. ioctl(ufd, USERLAND_GET_NSFD, nstype)
-> > returns nsfs file descriptors for member namespaces, and
-> > ioctl(ufd, USERLAND_SHARE_NSFD, ns_fd) replaces a member cgroup, IPC,
-> > UTS, network, or time namespace while the userland is in USERLAND_INIT.
-> > 
-> > Superblocks are configured directly in the target user namespace via
-> > fsopen(), FSCONFIG_SET_USERLAND, and fsmount() for filesystems opting
-> > into FS_USERLAND_MOUNT (tmpfs, ramfs, devpts, proc, mqueue) or
-> > FS_USERNS_DELEGATABLE, allowing unprivileged callers to assemble mounts
-> > without holding CAP_SYS_ADMIN in their own user namespace or entering
-> > the target user namespace first.
-> > 
-> > Once "/" is installed, processes are spawned into the userland via
-> > clone3() with CLONE_INTO_USERLAND and struct clone_args.userland,
-> > without modifying the calling process's own live state first. Pairing
-> > CLONE_INTO_USERLAND with CLONE_VFORK and opening the target binary via
-> > openat2(..., RESOLVE_IN_ROOT) on the retained "/" mount fd allows
-> > spawning with execveat() directly into the target root.
-> > 
-> > The first entrant becomes PID 1; once it exits and
-> > zap_pid_ns_processes() reaps all members, poll() reports EPOLLHUP and
-> > waitid(P_USERLAND, ufd, infop, options, NULL) returns init's exit
-> > status without consuming it. pidfd_send_signal(ufd, sig, NULL, 0) walks
-> > pid_ns->idr under tasklist_lock to signal member thread groups, and
-> > dedicated LSM hooks mediate userland allocation, teardown, namespace
-> > sharing, process entry, and signal delivery.
-> > 
-> > SYSCALLS
-> > ========
-> > 
-> > Two new system calls are proposed:
-> > 
-> > 1. userland_open(): open an opaque staircase-initialized container
-> >    object (modeled on Intel SGX enclave initialization with separate
-> >    build and live states) with no embryonic state, opting selected
-> >    shared namespaces in via an allow-list instead of unshare semantics.
-> > 2. userns_set_idmap(): configure all UID, GID, and project ID map
-> >    extents for a container user namespace in a single atomic system
-> >    call.
-> > 
-> > Extensions to existing system calls:
-> > 
-> > 1. move_mount() (MOVE_MOUNT_T_MNTNS, MOVE_MOUNT_CLONE): install "/" and
-> >    relative submounts into a mount namespace fd before entry or at
-> >    runtime, and recursively bind-clone mount trees without
-> >    OPEN_TREE_CLONE.
-> > 2. clone3() (CLONE_INTO_USERLAND, struct clone_args.userland): spawn
-> >    PID 1 and subsequent processes directly into a userland without
-> >    modifying the calling process's own live state first.
-> > 3. fsopen() / fsconfig() / fsmount() (FSCONFIG_SET_USERLAND): bind a
-> >    filesystem context to a userland's namespaces and create mounts
-> >    without entering its user namespace.
-> > 4. waitid() (P_USERLAND): wait on a userland fd for PID 1 exit and read
-> >    its exit status without consuming it.
-> > 5. pidfd_send_signal(): broadcast signals to member thread groups via a
-> >    userland fd.
-> > 6. ioctl() (USERLAND_GET_NSFD, USERLAND_SHARE_NSFD): open member nsfs
-> >    file descriptors and opt selected namespaces into existing nsfs fds
-> >    during USERLAND_INIT.
-> > 
-> > HOTPLUG
-> > =======
-> > 
-> > 1. Host calls userland_open().
-> > 2. Host sets uid/gid maps with userns_set_idmap().
-> > 3. Host populates "/" with MOVE_MOUNT_T_MNTNS, optionally combined with
-> >    MOVE_MOUNT_CLONE for bind mounts.
-> > 4. Host spawns PID 1 with clone3(CLONE_INTO_USERLAND) (optionally
-> >    passing an AF_UNIX socketpair fd for communication).
-> > 5. PID 1 watches /proc/self/ns/mnt via fanotify(FAN_REPORT_MNT |
-> >    FAN_MARK_MNTNS, FAN_MNT_ATTACH) or polls /proc/self/mountinfo.
-> > 6. On hotplug, host mounts the filesystem via fsopen() /
-> >    fsconfig(FSCONFIG_SET_USERLAND) / fsmount() (plus optional
-> >    MOUNT_ATTR_IDMAP).
-> > 7. Host creates the mountpoint with openat2(RESOLVE_IN_ROOT) + mkdirat()
-> >    and attaches the mount with MOVE_MOUNT_T_MNTNS.
-> > 8. PID 1 receives FAN_MNT_ATTACH and queries the new mount via
-> >    statmount().
+On Tue, Nov 24, 2026 at 10:26:05PM -0500, Guicai Ma wrote:
+> key_instantiate_and_link() and key_reject_and_link() access key->type
+> and link keys without synchronizing against unregister_key_type(). If
+> the type is removed while a key is under construction, GC retypes it to
+> key_type_dead (where ->instantiate is NULL) or links a dead key before
+> pass 3 rewrites key->type.
 > 
-> The initial ad-hoc testing of hotplug using a bare metal x86-64 machine
-> and systemd-nspawn has been successful. The kselftest seems provide
-> pretty good guarantees for the basic stability; using the syscalls has
-> caused no issues so far.
+> key->sem cannot be used here because it inverts lock order against
+> encrypted_instantiate() and references a freed lockdep class after a
+> modular type unloads, while callers may already hold key_types_sem and
+> ->preparse() or ->instantiate() may sleep. Guard both paths with
+> key_type_srcu and a KEY_FLAG_DEAD check, and wait for in-flight calls
+> with synchronize_srcu(&key_type_srcu) at the end of GC pass 1.
 > 
-> I took some time to go through my experimental SystemD patch files and
-> sliced them so that they ought to be easy to bisect and refactor. They
-> should be also quite easy to read, understand and evaluate. Finally, I
-> removed the shitty patch files from my test harness repository.
+> Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guicai Ma <maguicai@kylinos.cn>
+> ---
+> v3:
+> - Shorten the commit message and focus on why SRCU is used.
+> - Change Fixes tag to 0c061b5707ab.
+> - No code changes.
 > 
-> Resulting outcomes of all of this are:
+> v2:
+> - Switch from key->sem to key_type_srcu and check KEY_FLAG_DEAD in
+>   key_instantiate_and_link() and key_reject_and_link().
 > 
-> 1. Rebased RFC v7 patches with refined LSM support and fixes to the
->    known issues as of today:
->    https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=userland
-> 2. SystemD patches:
->    https://github.com/jarkkojs/systemd/commits/userland/
+>  security/keys/gc.c       |  13 +++++
+>  security/keys/internal.h |   2 +
+>  security/keys/key.c      | 108 +++++++++++++++++++++++++++++----------
+>  3 files changed, 95 insertions(+), 28 deletions(-)
 > 
-> No new issues were found during testing, other than fixing the issues
-> reported to this thread. This is all feels fairly nice, clean and
-> stable.
+> diff --git a/security/keys/gc.c b/security/keys/gc.c
+> index eda445f815d4..61cb2b9a7aaf 100644
+> --- a/security/keys/gc.c
+> +++ b/security/keys/gc.c
+> @@ -35,6 +35,8 @@ static unsigned long key_gc_flags;
+>  #define KEY_GC_REAP_KEYTYPE	1	/* A keytype is being unregistered */
+>  #define KEY_GC_REAPING_KEYTYPE	2	/* Cleared when keytype reaped */
+>  
+> +DEFINE_SRCU(key_type_srcu);
+> +
+>  
+>  /*
+>   * Any key whose type gets unregistered will be re-typed to this if it can't be
+> @@ -286,6 +288,17 @@ static void key_garbage_collector(struct work_struct *work)
+>  		key_schedule_gc(new_timer);
+>  	}
+>  
+> +	if (unlikely((gc_state & KEY_GC_REAPING_DEAD_1) &&
+> +		     (gc_state & KEY_GC_FOUND_DEAD_KEY))) {
+> +		/* Wait for any in-flight key_instantiate_and_link() or
+> +		 * key_reject_and_link() calls that did not observe
+> +		 * KEY_FLAG_DEAD before pass 2 unlinks dead keys from keyrings
+> +		 * and pass 3 retypes them to key_type_dead.
+> +		 */
+> +		kdebug("gc dead type sync");
+> +		synchronize_srcu(&key_type_srcu);
+> +	}
+> +
+>  	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
+>  	    !list_empty(&graveyard)) {
+>  		/* Make sure that all pending keyring payload destructions are
+> diff --git a/security/keys/internal.h b/security/keys/internal.h
+> index b7b622bc36a1..73d71de274c2 100644
+> --- a/security/keys/internal.h
+> +++ b/security/keys/internal.h
+> @@ -19,6 +19,7 @@
+>  #include <linux/compat.h>
+>  #include <linux/mm.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/srcu.h>
+>  
+>  struct iovec;
+>  
+> @@ -86,6 +87,7 @@ extern struct kmem_cache *key_jar;
+>  extern struct rb_root key_serial_tree;
+>  extern spinlock_t key_serial_lock;
+>  extern struct mutex key_construction_mutex;
+> +extern struct srcu_struct key_type_srcu;
+>  extern wait_queue_head_t request_key_conswq;
+>  
+>  extern void key_set_index_key(struct keyring_index_key *index_key);
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 3f1f0fc13710..d923ddf457e9 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -422,9 +422,10 @@ static void mark_key_instantiated(struct key *key, int reject_error)
+>  
+>  /*
+>   * Instantiate a key and link it into the target keyring atomically.  Must be
+> - * called with the target keyring's semaphore writelocked.  The target key's
+> - * semaphore need not be locked as instantiation is serialised by
+> - * key_construction_mutex.
+> + * called with the target keyring's semaphore writelocked.  The caller must
+> + * hold key_type_srcu (after checking !KEY_FLAG_DEAD) or key_types_sem for
+> + * reading via key_type_lookup(), so the type cannot be retyped to
+> + * key_type_dead or its module unloaded while its methods run.
+>   */
+>  static int __key_instantiate_and_link(struct key *key,
+>  				      struct key_preparsed_payload *prep,
+> @@ -496,7 +497,9 @@ static int __key_instantiate_and_link(struct key *key,
+>   *
+>   * If successful, 0 is returned, the authorisation token is revoked and anyone
+>   * waiting for the key is woken up.  If the key was already instantiated,
+> - * -EBUSY will be returned.
+> + * -EBUSY will be returned.  If the key's type has been removed, -EKEYREVOKED
+> + * will be returned.  If the key type does not provide an instantiate method,
+> + * -EOPNOTSUPP will be returned.
+>   */
+>  int key_instantiate_and_link(struct key *key,
+>  			     const void *data,
+> @@ -506,7 +509,28 @@ int key_instantiate_and_link(struct key *key,
+>  {
+>  	struct key_preparsed_payload prep;
+>  	struct assoc_array_edit *edit = NULL;
+> -	int ret;
+> +	int ret, srcu_idx;
+> +
+> +	/*
+> +	 * A reference on the key does not pin the module that provides its
+> +	 * type.  Hold key_type_srcu across every use of key->type
+> +	 * (def_datalen, preparse, restrict_link->check, instantiate and
+> +	 * free_preparse) and across linking into @keyring.  Pass 1 of
+> +	 * key_garbage_collector() sets KEY_FLAG_DEAD and waits for
+> +	 * synchronize_srcu(&key_type_srcu) before pass 2 unlinks dead keys
+> +	 * and pass 3 retypes them to key_type_dead.
+> +	 */
+> +	srcu_idx = srcu_read_lock(&key_type_srcu);
+> +
+> +	if (test_bit(KEY_FLAG_DEAD, &key->flags)) {
+> +		ret = -EKEYREVOKED;
+> +		goto out;
+> +	}
+> +
+> +	if (!key->type->instantiate) {
+> +		ret = -EOPNOTSUPP;
+> +		goto out;
+> +	}
+>  
+>  	memset(&prep, 0, sizeof(prep));
+>  	prep.orig_description = key->description;
+> @@ -517,17 +541,17 @@ int key_instantiate_and_link(struct key *key,
+>  	if (key->type->preparse) {
+>  		ret = key->type->preparse(&prep);
+>  		if (ret < 0)
+> -			goto error;
+> +			goto out_free_preparse;
+>  	}
+>  
+>  	if (keyring) {
+>  		ret = __key_link_lock(keyring, &key->index_key);
+>  		if (ret < 0)
+> -			goto error;
+> +			goto out_free_preparse;
+>  
+>  		ret = __key_link_begin(keyring, &key->index_key, &edit);
+>  		if (ret < 0)
+> -			goto error_link_end;
+> +			goto out_link_end;
+>  
+>  		if (keyring->restrict_link && keyring->restrict_link->check) {
+>  			struct key_restriction *keyres = keyring->restrict_link;
+> @@ -535,19 +559,22 @@ int key_instantiate_and_link(struct key *key,
+>  			ret = keyres->check(keyring, key->type, &prep.payload,
+>  					    keyres->key);
+>  			if (ret < 0)
+> -				goto error_link_end;
+> +				goto out_link_end;
+>  		}
+>  	}
+>  
+>  	ret = __key_instantiate_and_link(key, &prep, keyring, authkey, &edit);
+>  
+> -error_link_end:
+> +out_link_end:
+>  	if (keyring)
+>  		__key_link_end(keyring, &key->index_key, edit);
+>  
+> -error:
+> +out_free_preparse:
+>  	if (key->type->preparse)
+>  		key->type->free_preparse(&prep);
+> +
+> +out:
+> +	srcu_read_unlock(&key_type_srcu, srcu_idx);
+>  	return ret;
+>  }
+>  
+> @@ -581,7 +608,8 @@ int key_reject_and_link(struct key *key,
+>  			struct key *authkey)
+>  {
+>  	struct assoc_array_edit *edit = NULL;
+> -	int ret, awaken, link_ret = 0;
+> +	int ret, awaken, link_ret = 0, srcu_idx;
+> +	bool dead;
+>  
+>  	key_check(key);
+>  	key_check(keyring);
+> @@ -589,22 +617,42 @@ int key_reject_and_link(struct key *key,
+>  	awaken = 0;
+>  	ret = -EBUSY;
+>  
+> +	/*
+> +	 * Hold key_type_srcu across linking into @keyring and
+> +	 * key_set_expiry() (which reads key->type->flags).  If the key is
+> +	 * already marked dead, skip linking and expiry but still complete
+> +	 * negative instantiation so waiters are woken and @authkey is
+> +	 * invalidated.
+> +	 */
+> +	srcu_idx = srcu_read_lock(&key_type_srcu);
+> +	dead = test_bit(KEY_FLAG_DEAD, &key->flags);
+> +
+>  	if (keyring) {
+> -		link_ret = __key_link_lock(keyring, &key->index_key);
+> -		if (link_ret == 0) {
+> -			/*
+> -			 * Check the restriction under the keyring semaphore.
+> -			 * keyring_restrict() installs it while holding the
+> -			 * semaphore, so testing it beforehand races with a
+> -			 * concurrent restriction install.
+> -			 */
+> -			if (keyring->restrict_link) {
+> -				__key_link_end(keyring, &key->index_key, edit);
+> -				return -EPERM;
+> +		if (dead) {
+> +			link_ret = -EKEYREVOKED;
+> +		} else {
+> +			link_ret = __key_link_lock(keyring, &key->index_key);
+> +			if (link_ret == 0) {
+> +				/*
+> +				 * Check the restriction under the keyring
+> +				 * semaphore. keyring_restrict() installs it
+> +				 * while holding the semaphore, so testing it
+> +				 * beforehand races with a concurrent
+> +				 * restriction install.
+> +				 */
+> +				if (keyring->restrict_link) {
+> +					__key_link_end(keyring, &key->index_key,
+> +						       edit);
+> +					ret = -EPERM;
+> +					goto out;
+> +				}
+> +				link_ret = __key_link_begin(keyring,
+> +							    &key->index_key,
+> +							    &edit);
+> +				if (link_ret < 0)
+> +					__key_link_end(keyring, &key->index_key,
+> +						       edit);
+>  			}
+> -			link_ret = __key_link_begin(keyring, &key->index_key, &edit);
+> -			if (link_ret < 0)
+> -				__key_link_end(keyring, &key->index_key, edit);
+>  		}
+>  	}
+>  
+> @@ -616,7 +664,8 @@ int key_reject_and_link(struct key *key,
+>  		atomic_inc(&key->user->nikeys);
+>  		mark_key_instantiated(key, -error);
+>  		notify_key(key, NOTIFY_KEY_INSTANTIATED, -error);
+> -		key_set_expiry(key, ktime_get_real_seconds() + timeout);
+> +		if (!dead)
+> +			key_set_expiry(key, ktime_get_real_seconds() + timeout);
+>  
+>  		if (test_and_clear_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags))
+>  			awaken = 1;
+> @@ -641,7 +690,10 @@ int key_reject_and_link(struct key *key,
+>  	if (awaken)
+>  		wake_up_bit(&key->flags, KEY_FLAG_USER_CONSTRUCT);
+>  
+> -	return ret == 0 ? link_ret : ret;
+> +	ret = ret == 0 ? link_ret : ret;
+> +out:
+> +	srcu_read_unlock(&key_type_srcu, srcu_idx);
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL(key_reject_and_link);
+>  
+> -- 
+> 2.47.3
+> 
+o
 
-Possibly userns_set_idmap() should be cut into a patch set of its own,
-as it stands as a feature on its own, and is likely agreeable part for
-any possible solution. I'm open to that.
+LGTM with quick skim. I'll revisit later with time
 
 Br, Jarkko
