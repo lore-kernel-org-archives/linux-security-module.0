@@ -1,69 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795630586;
-	b=2b5IWSe6amoCGunvUYPvwzUa9GcoUFGbgQJo6C7XxN2bzS0Qc4nno4CwW6Uz2VquBgD3
-	 jsPkuO8mCB7CPk5yiL42q6kjieoM0NozN8lHWRd+zNi6mThwCgNXSpVTgEApSNkFqBy+W
-	 3Slie4nfsPlwD3lut1gF4EJKlMPdZvZ/qXet5OuzAIs+xzGkzpttzj+wTHG2XdFnerx0d
-	 r2w+Z4PJczAt1W+YXIXkqzHftQmzBEew3vIYwuBwAuhxBR1Q8Qg8qtN9AlzJ8z7PmwCAF
-	 72z0TmAWYV4Er+1VNtwLeZEVKhvzDP9GWBFxCmJuWOl/1p665DkkgKI7QrYOxHcCNZw==
+	t=1795630965;
+	b=bX0zpOIz6Zp1nRnMfK4JjW4zQMXm0DJr9uduJk/nTJabkZAcMTqEs2z20mMVtZmaRHoQ
+	 ubS52Xlg4CGY/IayZSI4JWx70JBi9ipoY2jDekwsV3F0/r767eNCg6JQq30n/D6quvu5/
+	 q6Kp9QZnbI26003w4ZNL+Z/MDCDgglvevivSuTlYQ1sHaYdhMPb5Ktwr/UGtUv0KjG7OS
+	 VHOO5xn7zOvF/LA65T5WQxn+qaARJegoOebag3WTIskTedW67Lyopn5Zc6ZBjWHWFxSvm
+	 654iOmXFqWLfly8nNp8M4/rKL89jj8Gpg67AAk4mD3JQV59x5aNORCub8jVGlxsCcHA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795630586;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ItE++LU8TqRI5uK7Gs6LAsm2atS10aLNL14Kugvc9Uw=;
-	b=h4kgIOA7rL4z2pA1i+onQQzk3u+wfEvHmH8XBZ3ZALydxZF0DSIsL9qPh0MV2QR6qa/c
-	 TOHBjG1eADEg9qBXrEJHRX7f4Xm7lZ2eQ8UUCkbu2fnFLmv+hmglmEO5cbYBeeWPig5XI
-	 +PBq88K0o7nnWGKVZPTPAuBuQU43+NA7y4o5oil3lYIs0PI79E6zP1B5mrY7r5Jv2hok2
-	 Bgl/T96rrZfYC/7l+dtS7vlHhXozr7sPT0hK1xZ3shPkAwekCEUzkwJSc49snNrvDzz/r
-	 OdvyyTRUDC5rYR0/oZBCFWKzoLG9FrtTYex6tZNjJvkO32fEuAfq3aweRLQy40oWOHQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795630965;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:X-Mailer:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=GRTUDrVuWJdRQcNk9NIFRLd7KZVNXD7cWbP3H9tK13E=;
+	b=IwYt+H/kg2whHDN4akngrHJ9ciEzP/YHoVREtO8QYZqx8zN1V0h5zOz+ClkZEFYUuxrN
+	 grvkHmFUEOJPtS5QQpQq25+G0ZE4mGQEn1f1pU2Hxj4Omepe55rHmfYckX1rDTmfLGcng
+	 cUdz1Nu2ZEF0MtnlQotjZIlBdLRlVy9b9oVTQmTOjOFLezmoPAnHgMo9GGehoBxeSFsVz
+	 pp5g0+ril8sAzjJDq5OMzDBsa6LGLVf+Cm3BHaJRwy8VrGaz4dI7E4VhDEkhRF+1H7d0L
+	 HXtgU6HojCVEAUVXx9s7RHlrhRX79tXFOdUbcsDL9HjNfuMQNiRXRmNv6Sr953j3naw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nJ6Bjuz3;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mTvUcm4g;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D5E606A337;
-	Wed, 25 Nov 2026 18:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74087606A680
+	for <linux-security-module@vger.kernel.org>; Wed, 25 Nov 2026 18:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nJ6Bjuz3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F90A1F000C0;
-	Wed, 25 Nov 2026 18:16:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mTvUcm4g
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AD461F01564;
+	Wed, 25 Nov 2026 18:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795630585;
-	bh=ItE++LU8TqRI5uK7Gs6LAsm2atS10aLNL14Kugvc9Uw=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=nJ6Bjuz3fmmoHjdiLDCMLyP1UOstkuqTbgO8ivNdvSKr9k78qx2vRf0hA05DS70jk
-	 p9RzNOIg3GbFM8BFfZLo1xur4Zu+1ho9gIfDHjEDvX4aBVPTLVWnCn3HETEDHRUrYA
-	 I6fxzfOrOWKy5IjbJxpmELKaYW/50kVHCDqOryiVLF5gGXyQ2amixbI2HWMOSuUx5q
-	 oOwhayZFSAsplJHdEF2/NuVZpN4ClFX3GjWSMQzs5tPeOKrvBlDiSVEcDccg+bIz8z
-	 L+chIqaYI0ceCWqH0B4X9HAlyTH1GI/NjcYpEutzTYVCBJrxch10D3P//R+VaY5+bW
-	 1ifNxyL9uus0w==
-Message-ID: <sashiko-outbox-233944@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 8/9] KEYS: trusted: Factor out TPM2 blob loading
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, keyrings@vger.kernel.org
-Cc: dm-devel@lists.linux.dev, linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org, "Ahmad
- Fatoum" <a.fatoum@pengutronix.de>, "Alasdair Kergon" <agk@redhat.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, "Benjamin Marzinski" <bmarzins@redhat.com>, "David
- Gstir" <david@sigma-star.at>, "David Howells" <dhowells@redhat.com>, "David
- Laight" <david.laight.linux@gmail.com>, "David S. Miller" <davem@davemloft.net>, "David
- Woodhouse" <dwmw2@infradead.org>, "Eric Biggers" <ebiggers@kernel.org>, "Herbert
- Xu" <herbert@gondor.apana.org.au>, "Ignat Korchagin" <ignat@linux.win>, "James
- Bottomley" <James.Bottomley@HansenPartnership.com>, "James Morris" <jmorris@namei.org>, "James
- Prestwood" <prestwoj@gmail.com>, "Jason Gunthorpe" <jgg@ziepe.ca>, "Jonathan
- Corbet" <corbet@lwn.net>, "Lukas Wunner" <lukas@wunner.de>, "Mike Snitzer" <snitzer@kernel.org>, "Mikulas
- Patocka" <mpatocka@redhat.com>, "Mimi Zohar" <zohar@linux.ibm.com>, "Paul
- Moore" <paul@paul-moore.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Shuah
- Khan" <skhan@linuxfoundation.org>, "Sumit Garg" <sumit.garg@kernel.org>
-In-Reply-To: <20261125180616.1854753-9-jarkko@kernel.org>
-References: <20261125180616.1854753-1-jarkko@kernel.org>
- <20261125180616.1854753-9-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 18:16:23 +0000
+	s=k20260515; t=1795630965;
+	bh=GRTUDrVuWJdRQcNk9NIFRLd7KZVNXD7cWbP3H9tK13E=;
+	h=Date:From:To:Cc:Subject;
+	b=mTvUcm4gTTTBXZxTszoi9gnGcoJ9qhbxkHmvRZ+7Es/UoDUB9L7CNkDjewkHMPbb2
+	 dnqAn2CjLQi4WUOlGrkllTPt9fv2iz2Qtme01yfAFeuSaIkSrxHEh/bnNWlzAd4pWB
+	 cH4cj6onio3H51P7UK1q3w5fd76ntigxMGJ0D8wHvFywhnimMfW1nPVaeIyB4adiip
+	 kndKDssae6j1QN4Cn+yYSR03Lx1VFJP6AV+1RvtcXOPUzhTOjxLDWsLz4TzGQwa65x
+	 4mYvpDN2twbNoyFSOgorRaj4TME9RfxuavL3kOIODcMpd8f6Xqbjo3itpKOofwbk03
+	 ZlGsHfwA/OMbA==
+Date: Wed, 25 Nov 2026 19:22:42 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>
+Subject: [PATCH] security: Add missing const
+Message-ID: <41df4fcaea9d5eb41d07ffb4119621fb2f233b79.1795630921.git.alx@kernel.org>
+X-Mailer: git-send-email 2.55.0
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -72,87 +55,77 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b3uhcrqyifu3vntd"
+Content-Disposition: inline
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Low] KEYS: trusted: changelog omits payload->private and
-  tpm2_load_cmd() check
---
 
-commit 94f02a37d277c89d23fb05c1b5c6ea51d598832f
-Author: Jarkko Sakkinen <jarkko@kernel.org>
+--b3uhcrqyifu3vntd
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>
+Subject: [PATCH] security: Add missing const
+Message-ID: <41df4fcaea9d5eb41d07ffb4119621fb2f233b79.1795630921.git.alx@kernel.org>
+MIME-Version: 1.0
 
-> KEYS: trusted: Factor out TPM2 blob loading
->
-> Factor out TPM2 blob loading:
->
-> 1. tpm2_key_decode() from trusted_key_options.
-> 2. tpm2_load_blob() and tpm2_buf_append_key_auth() from tpm2_load_cmd()
->    and tpm2_unseal_cmd().
->
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+This pointer is derived from other const pointers.
 
-> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-> index 3db61b57cf73d..790ffabb0d184 100644
-> --- a/include/keys/trusted-type.h
-> +++ b/include/keys/trusted-type.h
-> @@ -33,6 +33,7 @@ struct trusted_key_payload {
->  	unsigned int blob_len;
->  	unsigned char migratable;
->  	unsigned char old_format;
-> +	void *private;
->  	unsigned char key[MAX_KEY_SIZE + 1];
->  	unsigned char blob[MAX_BLOB_SIZE];
->  };
-> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/tr=
-usted-keys/trusted_core.c
-> index 3721980ed83af..b8f980da606d1 100644
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -149,6 +149,14 @@ static struct trusted_key_payload *trusted_payload_a=
-lloc(struct key *key)
->  	return p;
->  }
-> =20
-> +static void trusted_payload_free(struct trusted_key_payload *p)
-> +{
-> +	if (!p)
-> +		return;
-> +	kfree_sensitive(p->private);
-> +	kfree_sensitive(p);
-> +}
-> +
+Signed-off-by: Alejandro Colomar <alx@kernel.org>
+---
 
-[ ... ]
+Hi,
 
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/tr=
-usted-keys/trusted_tpm2.c
-> index 0a81608844ff6..231062fd17b6b 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+This was found while changing some <linux/string.h> APIs to preserve the
+const qualifier in the return type.
 
-[ ... ]
 
-> @@ -527,6 +595,9 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
->  	if (private_len + 2 + public_len + 2 > blob_len)
->  		return -E2BIG;
-> =20
-> +	if (public_len < 8)
-> +		return -EINVAL;
-> +
->  	pub =3D blob + 2 + private_len + 2;
->  	/* key attributes are always at offset 4 */
->  	attrs =3D get_unaligned_be32(pub + 4);
+Have a lovely night!
+Alex
 
-[Severity: Low]
-This isn't a bug, but the commit message only mentions factoring out
-tpm2_key_decode(), tpm2_load_blob(), and tpm2_buf_append_key_auth(),
-without explaining why this refactoring is needed (to prepare for
-asymmetric key support in the following patch).  It also omits adding
-payload->private and trusted_payload_free() in the core trusted keys code,
-as well as the new public_len < 8 bounds check before reading pub + 4 in
-tpm2_load_cmd().
+ security/apparmor/lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+index 73b88bde40bb..48c527170916 100644
+--- a/security/apparmor/lib.c
++++ b/security/apparmor/lib.c
+@@ -193,7 +193,7 @@ const char *aa_splitn_fqname(const char *fqname, size_t=
+ n, const char **ns_name,
+ 		return NULL;
+=20
+ 	if (name[0] =3D=3D ':') {
+-		char *split =3D strnchr(&name[1], end - &name[1], ':');
++		const char *split =3D strnchr(&name[1], end - &name[1], ':');
+ 		*ns_name =3D skipn_spaces(&name[1], end - &name[1]);
+ 		if (!*ns_name)
+ 			return NULL;
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125180616.1854=
-753-1-jarkko@kernel.org?part=3D8
+2.55.0
+
+
+--b3uhcrqyifu3vntd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmsHJ3IACgkQ64mZXMKQ
+wqn3OQ//RQJDpw+E6MXOfzn99sGWw5VSkMQMf4doosPdjPGydeF57SfzOjE4sLcM
+jZ82r+tpq/gtgyT2+YJkSnn0xwUlq03iQKU+Ff6AZXEDtO39k7FdAFw5PoQOJg0B
+w3QkI63Jkhn7N4epvgIhWY38iarspFwYxwGkz6VRVFVE8geevhDVe8kniqba3cxN
+6C0svytjWmD0UbgLbksUKZ0jUt66ay98xRK4ZhvSHQtJ/UoZwzznmLmoxO0M8dnZ
+y8qwxMa8TikN4BjuTzZbiNQtvdWtWnhGZLN+33oTGCa0Bqa8bU3cKIgOiMHjmbGo
+wl/Y2PgcMPqgxESZDYSzEfSdzoI7Yc+T81KK+M4bctuLpDfb5vRkP7qyYs8A6LKS
+27+sPwarKXNVzkjYJ59AWJsvBvGITIpEVHoiHJPFa4eJWXnHPNASYbjvLeBeGdIF
+Oq+B1LQqb1mkqBArCYB8/bSOx82sI2vDLYSHTCEaLLhg3nBegX4HfImNcIs8vhEN
+LUSWlSVPNwngGMkqtdPsBeeiC3eElgI6wlXRKylzoLdEiPBUXCmu/M/vMou6FESr
+gGyVAxQWSg+07ra81vH5Qj15RCFLhCt7AcYFHBOzORf6czBJiXJ2fXatklhjhGGV
+4mpm1IsFFTyhnwIzTMjrYMqamBKiQDXK/rsSSPo2BgVQ1QZu8Fo=
+=GP9F
+-----END PGP SIGNATURE-----
+
+--b3uhcrqyifu3vntd--
