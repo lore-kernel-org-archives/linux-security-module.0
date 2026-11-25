@@ -1,58 +1,73 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=124.126.103.232
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795594693;
-	b=35FQmQA2ySmb8KSfPPwlyMU3+QdGV8aTe+djUAS/EvFxNzBAR0neSz8EjC1lnVm0jyWi
-	 5wXW7jmKSew2myjiQZZANh6AwvFZhjd4+9O1SnFg8GgYp0pbsDk8iPp2DWUoyRgeWJXS3
-	 wqUMrtzCjEOmHsTWdDps6EhXC1FVg91UFCIozN93W6Ub3M0RKdVQ5eKKKrzCjDq2EY3a2
-	 2qdKWuZihYbe1y4ARdp667Z5IsoIw4Jhgw2AAx4BFnKjw/jcuiRQzG5vuvN70hXSLpFNn
-	 ZYAqtUlEB2vyEm2UiDFJI47VsVKGJtJm2kjhZXG9hrOzWWS6JLNZM4tKSEuSpq+iE6w==
+	t=1795595059;
+	b=HgGtLDws6yv+TzfmGPRrkofwoLGmstpYf2IMs4z1wjTL/iKH+jQ2u7Ha4EKW9uf0mT3L
+	 hrl2SCCeu8tqDFXInrrX1k0PLLpFDkgh05voeA5RBM5E68vOOmDX9Mo4BtlL70VaQS17X
+	 hXC0t7ffJmgCJvqNLjWRCMApEf+vI7mupWvcCrT8QvoTchjpg0/9+h4YO4eyveelz3fRG
+	 RjjU5rTBYqpM/Ii7KCDJ68uSoSFqXOvbOc9T0cKQmnBMw9TXfihmbtELw5eHla87cIe11
+	 RkGrTO6vRKx5IEv0pDM7L9uxCFpp7V3TU7XIA6pGAcg1vEdVHKJxB+M1FD7kOlX3CNw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795594693;
-	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Originating-IP:
-	 X-ClientProxiedBy;
-	bh=MbyGB8U9YRrniG9snzlWgjemL8IXXkOYk25rFewhrkE=;
-	b=zcGDSqfdkexhsYqIX0HuTFYOWsFhwpn7kALZWHzjq4nocJTntyK9qAOj2WkwJarGcO9u
-	 L7MhDOrlhJKYEZ8P+IZ6ADWJ/scSSLI5Vp8IPg/N7oNMN1TRDrOQu4nvfGToqaQv+Zpp/
-	 CNAUmH7Kj1E3NtFs5xQaJB5T56OilqX0b77z6H12W/e6WK88fNjsHfvS2MPGzRMRY6A/T
-	 EoGiBAq1OhLZkxXprgJ/Y2ILjXlGT2DjFnAtISPqyYuNYR3S3xBwmeSmZehefBHaFkvW8
-	 UqunvrKQa7Occerx3vDasNBkwMlkCAeXMRvahwLLgb53ULhxYue4FLYKCn5Dh6JclbQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795595059;
+	h=DMARC-Filter:X-UUID:X-CID-P-RULE:X-CID-O-INFO:X-CID-INFO:X-CID-META:
+	 X-CID-BVR:X-CID-BAS:X-CID-FACTOR:X-CID-RHF:X-UUID:X-User:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=tvASh848fJMA5vteecjZFmNY2W1voJmJDbb9Kyjqx6o=;
+	b=T61hzlLJUG0IwDAIbuhVRvPl3BL5i53yRRs36yptyxSyozYCTIdfhZn4TDRYpI8R+5+w
+	 V+66iAHXZqtSaEdHCJzVZWIxnuzKAo2xHQUpFBLjKQzN6N1IF9MpScVfooHpfKv3gwQxJ
+	 1oOGKgRDxIzGwTw1wfQDC24zGZWT5C/wsAVVKWGDQdw+8a28t+E98iylWK6fC8ZBnDeog
+	 OyfbRFRlKprzuk0dS0viYhnu6UbsV+O3q0tcROgsvetcqoT/tAgxW1rr9cTo0lGLzLsvB
+	 UOIjE29IHekhpqI08VV87RN5j2/MQsYJkdKYy/lBFOpbfig7LXsPtFhbA2zW5fc6dxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=huawei.com;
-	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=Ycn2FL+t;
-	arc=none smtp.remote-ip=113.46.200.216
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dmarc=none header.from=kylinos.cn;
+	spf=pass smtp.mailfrom=kylinos.cn;
+	arc=none smtp.remote-ip=124.126.103.232
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEEA606A327;
-	Wed, 25 Nov 2026 08:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3AEEA606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=Ycn2FL+t
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=MbyGB8U9YRrniG9snzlWgjemL8IXXkOYk25rFewhrkE=;
-	b=Ycn2FL+tIkW1u9EHTKdSwJpvHnV15x8giz6KN/9y5ezCzneFIfeGfOxKe4NyUIApTEOQh4Dla
-	LDNrQ2Y+DenE39xInHvztvM4CrczFu3AC2fGRJ0QkdpSEvvHRHQzV4rNgKxvGBpKQNhuzM2DgTF
-	oYFztxIbNZ16gF5xCo2eLRc=
-Received: from mail.maildlp.com (unknown [172.19.162.197])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4jZCG62Fvmz1T4fK;
-	Wed, 25 Nov 2026 16:17:18 +0800 (CST)
-Received: from kwepemk300018.china.huawei.com (unknown [7.202.194.246])
-	by mail.maildlp.com (Postfix) with ESMTPS id F249F40579;
-	Wed, 25 Nov 2026 16:18:07 +0800 (CST)
-Received: from [10.34.206.67] (10.34.206.67) by kwepemk300018.china.huawei.com
- (7.202.194.246) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Wed, 25 Nov
- 2026 16:18:07 +0800
-Message-ID: <bbc7ff8b-ef89-45e1-9f6c-3596c5e5c921@huawei.com>
-Date: Wed, 25 Nov 2026 16:18:06 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968E4606A31E;
+	Wed, 25 Nov 2026 08:24:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 968E4606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 95d3b77ce8a911f19a56ed5b684f684d-20261125
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.19,REQID:7e9d3075-1ce8-49fb-bb03-8f262bf8c56c,IP:10,
+	URL:0,TC:0,Content:9,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:19
+X-CID-INFO: VERSION:1.3.19,REQID:7e9d3075-1ce8-49fb-bb03-8f262bf8c56c,IP:10,UR
+	L:0,TC:0,Content:9,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:19
+X-CID-META: VersionHash:7db8b62,CLOUDID:8c8c890b99896bbf54089eb9b950923c,BulkI
+	D:261125162411DDZ563PP,BulkQuantity:0,SF:17|19|64|66|78|80|81|82|83|102|12
+	7|153|841|850|865|898|915,TC:nil,Content:4|15|50|99,EDM:-3,IP:-2,URL:0,Fil
+	e:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,D
+	KR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 95d3b77ce8a911f19a56ed5b684f684d-20261125
+X-User: maguicai@kylinos.cn
+Received: from localhost.localdomain [(36.106.123.207)] by mailgw.kylinos.cn
+	(envelope-from <maguicai@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 2035325445; Wed, 25 Nov 2026 16:24:08 +0800
+From: Guicai Ma <maguicai@kylinos.cn>
+To: Ethan Ferguson <ethan.ferguson@zetier.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/1] yama: clean-up ptrace relations upon activating YAMA_SCOPE_NO_ATTACH
+Date: Wed, 25 Nov 2026 03:24:05 -0500
+Message-ID: <20261125082405.1505471-1-maguicai@kylinos.cn>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260526153542.105483-2-ethan.ferguson@zetier.com>
+References: <20260526153542.105483-2-ethan.ferguson@zetier.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -62,118 +77,45 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next -v2 6/8] lockdown: bound the status string with
- scnprintf
-To: Cai Xinchen <caixinchen1@huawei.com>,
-	<nicolas.bouchinet@oss.cyber.gouv.fr>, <xiujianfeng@huawei.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<shuah@kernel.org>, <kalevi@kolttonen.fi>
-CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<lujialin4@huawei.com>
-References: <20261110132818.2231593-1-caixinchen1@huawei.com>
- <20261110132818.2231593-7-caixinchen1@huawei.com>
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-In-Reply-To: <20261110132818.2231593-7-caixinchen1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk300018.china.huawei.com (7.202.194.246)
+Content-Transfer-Encoding: 8bit
 
-On 11/10/2026 9:28 PM, Cai Xinchen wrote:
-> Use scnprintf() instead of sprintf() when composing the lockdown status
-> string in lockdown_read().  The current set of levels fits well within the
-> 80 byte buffer, but sprintf() provides no protection if more or longer
-> labels are added later.  scnprintf() makes the buffer bounds explicit.
-> 
-> Store the level label strings in named arrays and point the matching
-> lockdown_reasons[] entries at them.  Their sizes are compile-time
-> constants, so a BUILD_BUG_ON() can verify that the status buffer is large
-> enough for all level labels, their trailing spaces, and the brackets
-> around the active one.
-> 
-> Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
-> ---
->   security/lockdown/lockdown.c | 28 +++++++++++++++++++++++-----
->   1 file changed, 23 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index 84efd533fe5a..26cac7628a48 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -14,13 +14,17 @@
->   #include <linux/lsm_hooks.h>
->   #include <uapi/linux/lsm.h>
->   
-> +static const char lockdown_label_none[] = "none";
-> +static const char lockdown_label_integrity[] = "integrity";
-> +static const char lockdown_label_confidentiality[] = "confidentiality";
+On Tue, 26 May 2026 11:35:42 -0400, Ethan Ferguson wrote:
+> @@ -224,6 +226,9 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  	int rc = -ENOSYS;
+>  	struct task_struct *myself;
+>  
+> +	if (ptrace_scope == max_scope)
+> +		return -EPERM;
 > +
->   /*
->    * These are descriptions of the reasons that can be passed to the
->    * security_locked_down() LSM hook, used for the denial message and the
->    * securityfs status file.
->    */
->   static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
-> -	[LOCKDOWN_NONE] = "none",
-> +	[LOCKDOWN_NONE] = lockdown_label_none,
->   	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
->   	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
->   	[LOCKDOWN_EFI_TEST] = "/dev/efi_test access",
-> @@ -41,7 +45,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
->   	[LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
->   	[LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
->   	[LOCKDOWN_XEN_USER_ACTIONS] = "Xen guest user action",
-> -	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
-> +	[LOCKDOWN_INTEGRITY_MAX] = lockdown_label_integrity,
->   	[LOCKDOWN_KCORE] = "/proc/kcore access",
->   	[LOCKDOWN_KPROBES] = "use of kprobes",
->   	[LOCKDOWN_BPF_READ_KERNEL] = "use of bpf to read kernel RAM",
-> @@ -50,7 +54,7 @@ static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
->   	[LOCKDOWN_TRACEFS] = "use of tracefs",
->   	[LOCKDOWN_XMON_RW] = "xmon read and write access",
->   	[LOCKDOWN_XFRM_SECRET] = "xfrm SA secret",
-> -	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
-> +	[LOCKDOWN_CONFIDENTIALITY_MAX] = lockdown_label_confidentiality,
->   };
->   
->   static enum lockdown_reason kernel_locked_down;
-> @@ -137,6 +141,16 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
->   	char temp[80] = "";
->   	int i, offset = 0;
->   
-> +	/*
-> +	 * Size the buffer for the worst case: the active level is
+>  	switch (option) {
 
-The comment is incorrect, the total length is the same whichever level 
-is active.
+This check sits above the switch, so it runs for every prctl() option,
+not just PR_SET_PTRACER. security_task_prctl() propagates any return
+value other than -ENOSYS straight back to userspace, so once
+ptrace_scope is set to 3 every prctl() in the system fails with -EPERM,
+including PR_SET_NAME, PR_SET_DUMPABLE and PR_SET_NO_NEW_PRIVS. The
+check needs to live inside `case PR_SET_PTRACER:`.
 
-> +	 * confidentiality, with brackets and trailing spaces, plus the
-> +	 * terminating NUL.  The label sizeof() values include their own
-> +	 * NULs, so only three more bytes are needed.
-> +	 */
-> +	BUILD_BUG_ON(sizeof(temp) < sizeof(lockdown_label_none) +
-> +				    sizeof(lockdown_label_integrity) +
-> +				    sizeof(lockdown_label_confidentiality) + 3);
-> +
->   	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
->   		enum lockdown_reason level = lockdown_levels[i];
->   
-> @@ -144,9 +158,13 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
->   			const char *label = lockdown_reasons[level];
->   
->   			if (kernel_locked_down == level)
-> -				offset += sprintf(temp+offset, "[%s] ", label);
-> +				offset += scnprintf(temp + offset,
-> +						    sizeof(temp) - offset,
-> +						    "[%s] ", label);
->   			else
-> -				offset += sprintf(temp+offset, "%s ", label);
-> +				offset += scnprintf(temp + offset,
-> +						    sizeof(temp) - offset,
-> +						    "%s ", label);
->   		}
->   	}
->   
+> @@ -204,7 +205,8 @@ static void yama_ptracer_del(struct task_struct *tracer,
+>   */
+>  static void yama_task_free(struct task_struct *task)
+>  {
+> -	yama_ptracer_del(task, task);
+> +	if (ptrace_scope <= max_scope)
+> +		yama_ptracer_del(task, task);
+>  }
 
+ptrace_scope is clamped to [0, max_scope] by the sysctl handler, so this
+condition is always true and the hunk is a no-op. Changing it to
+`< max_scope` would not be safe either: a prctl(PR_SET_PTRACER) that passes
+the scope check just before the sysctl raises it to 3 can insert a relation
+after yama_relation_cleanup() has already run, and since scope 3 is
+irreversible nothing would mark that entry invalid again. Walking the list
+in yama_ptracer_del() is cheap, so dropping this hunk looks safer.
+
+This is a static review against v7.4-rc3; I have not booted the patch.
+Are you still working on a respin? I can test one on arm64 with
+KASAN/lockdep if that helps.
+
+Thanks,
+Guicai
