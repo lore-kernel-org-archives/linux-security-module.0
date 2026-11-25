@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642770;
-	b=PRFNSbMHBojbE35sjhn5TRrI0UUc/VGkNnx9SpOOkVflFxJrPGBArCHkR5bg1lMV9/GK
-	 oW5GPonQRYWJXS+uvgEexDKGfg+F6v8hl9YQaUkoo6s5WLC4xNSdzsPID94KeB+HQMEkw
-	 Qu4NXcoToK7IZPHYiTGUda3INiRBKelXR8A+MmjGMivFGLClKdIUf7AXp0QOH2mn5uoDd
-	 zhqFRfReuxLDNITwwu8uY7+RkiyhQrYLQj+BOqTDA/sb6w1yX+lOoViEJWDpoE1E0LmYU
-	 jPz0NVMl7jrviktOigbv+eXlbjVOl0lCxJsoWWEpWyR3vkyg4YOj0fKhssnMXw6r8WQ==
+	t=1795642760;
+	b=Z8/508s2Zwf8AQFbJS9hvacFe0DB3QxL2STLvApPqa+uqN51UhuJce4bmUe9vD6kuVaV
+	 8M4IEhlCYtmfMKvAawmE6Jv+amILkG8k7Gg9D/JtH5gKrk5D0CwH8tqoCO4k59LzacQvC
+	 d8t30tKasy9hbGUgsYmOw59YwKPhDJxxiWgy2YV73eTWvJn4B5ERtyJnsHkr1wmS705Ap
+	 dU54V2TJFh2qM0AOxtlsNNIwftzVugfNPcnFDXkWjEcXJPb4Oje8GlyhpLIclGHB31goO
+	 1WTCGM/Q7fCkaThJp5lY4wmxrQKBLO9hFVV4p3aauzKCr3o2/l4042TYNTJ8fXuJekA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642770;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795642760;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=uchKMQEbun1KGuNSoqThhgELpVgiokvVWjr9mK1k/A4=;
-	b=IXCQbRAEYnUjs0asrdJjcgga38CR81EWAursB4jY4Xsr7NYwPQb7W2OdKtBVjLOdgp7M
-	 qUQyXPrT/Sgnr/UyrdGFMtecIXFpB1ctUNU9DrMJusQ1dd3Jo5YtY3VUcVAbyPVtnM2zQ
-	 pWSWzOyIDG4e/SvGIUYOLoycLPA53cdOeJBvl+JtrQC/oCLNjVlBgzW+7IZLsN7nHqueE
-	 4/wmwsBEtJRqFuY60l6WkWA0A99DM4C+49Zgo+hxeiM1Mx48izVD0AY7tQL1rkQ/xN5xS
-	 BUCrD38u3vV4aZhBCH1L+Sdo09uQ8LpTJGwJzoRQg4l2f/X8IJuNP/JH0ODtlRrtlqw==
+	bh=dJBjtHj/U35Sno9olpkCbmU3J1nhzHn1TeUoFt7nUEY=;
+	b=yw8yR0Fuk510mtQ1ndMPIdMFcShLCThiFdhiO2BwUgJERVk6M2zBzu8yXBQRBUOyAOTu
+	 4K7UBdbeu5LkwJZm26FVBjs+/hs8faW0zGiCatULW6my0tj91SH4OOXWfSXbbVYmpJ+Sp
+	 Uef4N5749Vo6OYcpRcbxjqassXX6m8z9yYE1MXGSy0i9t3g4XhzOHSGIhkSJqPxsg4UUz
+	 XL/2mI1MMdnsu/d8mdliRTt79KxHqNeYdxLKgRjLTVvqH9XHsn/DHFUNobeT0MK1B6SyJ
+	 vRkgkJtGTqxQSsHy/s9nT0nGSoK9cXwED8vW5wGq6DQo+8mxZZw1eEXXCyDIT1mExKQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cnxwhmZD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZLxiR+T+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01D4606A323;
-	Wed, 25 Nov 2026 21:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cnxwhmZD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FC941F000EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D52606A321;
 	Wed, 25 Nov 2026 21:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZLxiR+T+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D9A51F000C6;
+	Wed, 25 Nov 2026 21:39:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642769;
-	bh=uchKMQEbun1KGuNSoqThhgELpVgiokvVWjr9mK1k/A4=;
+	s=k20260515; t=1795642759;
+	bh=dJBjtHj/U35Sno9olpkCbmU3J1nhzHn1TeUoFt7nUEY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=cnxwhmZDXM+Gsf0EhyO5VD88+p/C9GrSlfOXwoM8uURHlT5OqfIyp2Rk5t4izPM3P
-	 UUx1iGYMBxTWs0cL3dCa2FA04NGRrpI4ftwFOBvtbII2klixx84KhPEvfJOjk+TwJo
-	 DFc6Qi1OlbLb6T2cbEG1CRPNtaCZk/R58jMv+IibTCsr8BptHZoUgMiJ2jnJbsExBK
-	 Q+MoCouRcesMmoAwbmZrOxAbLuJxUupraT9lUd2s7+j6/4EPjYtXHaUu0/aXvLlyvR
-	 SEBhBNJRRsmdB4Q6buLNKRmyi35fpFhzWJhgqoKVgCyvDfHsSFNTIFHNt4CE5+GaCp
-	 TsEGvbU9H6XSA==
+	b=ZLxiR+T+BsSHG3qnraIpxEnw1AKOgXqd27CskrcQcAzCnBPEROUGkHQ8M0dOTuEF2
+	 v+HG/9GIvXXDfUR31xFyycfQ9BqVveug3KmxNw+/KUHejD9Dw8OxWGOT7AkAbAYqaT
+	 Bs21TaIArqigX5/IgmXaw3xKR13el4OxMviNGy8OOXCDyLAW+ABLAZZbBJ7r0stztO
+	 4ZEv3kwQgp8dwDKSvLjxBmW1Ewm+SI2tnMzo2CVHfUk7ACK07Kg7xPgzSFzRuheuRW
+	 ngbOq2z34xaqRnUG5TtsT/BktFuqrdfK3SdlzvKrnRgA7O2Oxvd1C32/9p3Wcuxnu5
+	 EZnqfS6cvgYpA==
 From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:11 +0000
-Subject: [PATCH slab/for-next v2 10/14] fanotify: specify SLAB_MAY_ACCOUNT
- for event caches
+Date: Wed, 25 Nov 2026 21:37:10 +0000
+Subject: [PATCH slab/for-next v2 09/14] iommu: specify SLAB_MAY_ACCOUNT for
+ slab-backed page table caches
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-10-7c680f02a734@kernel.org>
+Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-9-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 To: Vlastimil Babka <vbabka@kernel.org>, 
@@ -89,51 +89,98 @@ Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
  linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
  Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
  Johannes Berg <johannes@sipsolutions.net>, 
- Eric Dumazet <edumazet@kernel.org>
+ Eric Dumazet <edumazet@kernel.org>, 
+ Niklas Schnelle <schnelle@linux.ibm.com>, 
+ Matthew Rosato <mjrosato@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org, 
+ iommu@lists.linux.dev, linux-s390@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev
 X-Mailer: b4 0.16.0
 
-fanotify events are allocated with GFP_KERNEL_ACCOUNT and charged to
-the memcg of the listener. Specify SLAB_MAY_ACCOUNT when the object
-may be charged to a memcg. __GFP_ACCOUNT without SLAB_MAY_ACCOUNT
-will not be allowed.
+vfio, iommufd and vhost-vdpa call iommu_map() with GFP_KERNEL_ACCOUNT
+and the gfp is passed down to the drivers' page table allocations.
+Specify SLAB_MAY_ACCOUNT when the object may be charged to a memcg.
+__GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
 
-Path: fsnotify() -> fanotify_handle_event()
-  -> fanotify_alloc_event(GFP_KERNEL_ACCOUNT)
-  -> kmem_cache_alloc(fanotify_{fid,path,perm,mnt}_event_cachep)
+Paths:
+  VFIO_IOMMU_MAP_DMA -> iommu_map(GFP_KERNEL_ACCOUNT)
+    -> s390_iommu_map_pages() -> dma_walk_cpu_trans()
+    -> kmem_cache_alloc(dma_{region,page}_table_cache)
+  iommu_map(GFP_KERNEL_ACCOUNT) -> arm_v7s_map_pages()
+    -> __arm_v7s_alloc_table() -> kmem_cache_zalloc(data->l2_tables)
+  iommu_map(GFP_KERNEL_ACCOUNT) -> sun50i_iommu_map()
+    -> sun50i_dte_get_page_table() -> kmem_cache_zalloc(iommu->pt_pool)
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
+Cc: Will Deacon <will@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: "Joerg Roedel (AMD)" <joro@8bytes.org>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Matthew Rosato <mjrosato@linux.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Chen-Yu Tsai <wens@kernel.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Samuel Holland <samuel@sholland.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: iommu@lists.linux.dev
+Cc: linux-s390@vger.kernel.org
+Cc: linux-sunxi@lists.linux.dev
 Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 ---
- fs/notify/fanotify/fanotify_user.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/iommu/io-pgtable-arm-v7s.c | 2 +-
+ drivers/iommu/s390-iommu.c         | 4 ++--
+ drivers/iommu/sun50i-iommu.c       | 3 ++-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 63c9759fc3b0..3575c681abc1 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -2184,14 +2184,16 @@ static int __init fanotify_user_setup(void)
- 	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
- 					 SLAB_PANIC|SLAB_ACCOUNT);
- 	fanotify_fid_event_cachep = KMEM_CACHE(fanotify_fid_event,
--					       SLAB_PANIC);
-+					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
- 	fanotify_path_event_cachep = KMEM_CACHE(fanotify_path_event,
--						SLAB_PANIC);
-+						SLAB_PANIC|SLAB_MAY_ACCOUNT);
- 	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
- 		fanotify_perm_event_cachep =
--			KMEM_CACHE(fanotify_perm_event, SLAB_PANIC);
-+			KMEM_CACHE(fanotify_perm_event,
-+				   SLAB_PANIC|SLAB_MAY_ACCOUNT);
- 	}
--	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event, SLAB_PANIC);
-+	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event,
-+					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
+diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+index 1dbef8c55007..b544e5da237a 100644
+--- a/drivers/iommu/io-pgtable-arm-v7s.c
++++ b/drivers/iommu/io-pgtable-arm-v7s.c
+@@ -706,7 +706,7 @@ static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
+ 	data->l2_tables = kmem_cache_create("io-pgtable_armv7s_l2",
+ 					    ARM_V7S_TABLE_SIZE(2, cfg),
+ 					    ARM_V7S_TABLE_SIZE(2, cfg),
+-					    slab_flag, NULL);
++					    slab_flag | SLAB_MAY_ACCOUNT, NULL);
+ 	if (!data->l2_tables)
+ 		goto out_free_data;
  
- 	fanotify_max_queued_events = FANOTIFY_DEFAULT_MAX_EVENTS;
- 	init_user_ns.ucount_max[UCOUNT_FANOTIFY_GROUPS] =
+diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
+index a280ad4f63b7..467b97ec18dc 100644
+--- a/drivers/iommu/s390-iommu.c
++++ b/drivers/iommu/s390-iommu.c
+@@ -198,14 +198,14 @@ static int __init dma_alloc_cpu_table_caches(void)
+ 	dma_region_table_cache = kmem_cache_create("PCI_DMA_region_tables",
+ 						   ZPCI_TABLE_SIZE,
+ 						   ZPCI_TABLE_ALIGN,
+-						   0, NULL);
++						   SLAB_MAY_ACCOUNT, NULL);
+ 	if (!dma_region_table_cache)
+ 		return -ENOMEM;
+ 
+ 	dma_page_table_cache = kmem_cache_create("PCI_DMA_page_tables",
+ 						 ZPCI_PT_SIZE,
+ 						 ZPCI_PT_ALIGN,
+-						 0, NULL);
++						 SLAB_MAY_ACCOUNT, NULL);
+ 	if (!dma_page_table_cache) {
+ 		kmem_cache_destroy(dma_region_table_cache);
+ 		return -ENOMEM;
+diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
+index acdccb7c9eef..604a357cc1fb 100644
+--- a/drivers/iommu/sun50i-iommu.c
++++ b/drivers/iommu/sun50i-iommu.c
+@@ -1011,7 +1011,8 @@ static int sun50i_iommu_probe(struct platform_device *pdev)
+ 
+ 	iommu->pt_pool = kmem_cache_create(dev_name(&pdev->dev),
+ 					   PT_SIZE, PT_SIZE,
+-					   SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA32,
++					   SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA32 |
++					   SLAB_MAY_ACCOUNT,
+ 					   NULL);
+ 	if (!iommu->pt_pool)
+ 		return -ENOMEM;
 
 -- 
 2.54.0
