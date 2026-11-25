@@ -1,112 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.204.27.37
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795597779;
-	b=D+RvMWxr7V0iwnMhGiY0bbM4GKCMh/GthkieVtvHMxm89P+MT7UQozEV+bwpthlTf2+R
-	 +mxk4Y3sROoQD5cGEr/7gjikzB9xn9+ASZLkVJXkOFb2qZiNw94QAzZacepN8dO9TGTLd
-	 Tj1GZN5IAozcrkKnvkJUAnuBySWhpEuQQr9dOQ1XutZEbozBO39TvmNUcG/+XSuC6Ps/j
-	 yh6htFoYyTtnRMtJlTgumy9vqos4uqo6G2YeK702NvdY5hZsfRwqWO6/QpXgQWrobUIC7
-	 66KeVJF0ps7vhLboOr5cMwFuqPsnhpc8ylxt48kHNDQemSBkSyKc2ADxQQ/LufFGR9w==
+	t=1795597941;
+	b=CLeYnD12wzFmqs4tARxlbFLegrz1yfI1QBdof5GtXZCq4Dih93ct8SJcgCYZ1ZOJxCeH
+	 TC9XaJnzBq6vsnRe/D1aUh50JB/Sehb/sC0QeQjbJ4dII1E2hNqYe0Hoz/I7fHi2cUirJ
+	 dXJ+gaL6TeoJ8zS0wclZctspU6kdJtKIuFJ36bR4mEs0MjBn7lOdapqeLrpqbR13SR6Oi
+	 wygD3hafSRL0TcxzQK5dpy80VPT8IFC6R3i5lc/xPC1b5beSRiGcAvkZoNjU6kLiYDIEQ
+	 qZo9cj1hPBc9Cu/hKgowzMY0FMU3OJTbfnvhYkx/G9aZwzxbYRXGcAlLVLQk06/cJUg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795597779;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=qm/FI2mE1ewe632JTFSK32XwvOS0GNyWzPRE758QoDs=;
-	b=mrzzgiHyQW9Y8IUkRbYEBRXEOcIJgPvwttLPGu8EapbaWH43RnHP1ci85u1srn/VF2cc
-	 LCRoBAlu1NOGNFGkDznpfBzU1+UGdyrlWj7E9DawUS+zuwFNlMgvrUtJz62lcWJ4uzxFX
-	 XV/R56ApHhSOqZrpJ1+NLb549vXoK0dJzlQDGH3g8rNeTOmwr6nivjNRpMjAUdaN3GKTW
-	 z4HJzB+HS6AYSN4dpKhzdxEPRXGMWsXOI05qJ5Iin1AsU19Pc91qCWLz/+KpxupQKLJPb
-	 Zhnu/rzIDQXaucIB9Ynhmd9tcLrS1mlqUNlQu45VQ9lY47s1XMGyzR8Ys8V2xswGPPg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795597941;
+	h=DMARC-Filter:Received:Received:Received:Received:From:To:CC:Subject:
+	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
+	 X-ClientProxiedBy;
+	bh=y3AlrLrmzijoOmmLMUS871ALaIug8w67kopjsTk4pe4=;
+	b=OFx5lB1V/yTIKn0sczN3RxFeMm4qm5N0raTVy47BudO3TDzwfeqyzpm/LOON+HQqg6vi
+	 k7bqDsxgm+dPB7egtWd7D1rAhu13jqGV+Q0c+V8+H6FK+GODnpVCw6YrKUX40b0c9hkTk
+	 exsCX4Mci/pBwCvyX5BjJeMr5AROf5uC7Kqye3BRwTA8O7aay6XEnaSHsTL5OzAL5gD3X
+	 cZQ/LpqEgxyNW+07T/3iX75FKqSYU3eFWPTOyrvAObwUU+lXtMGCZqM3SCjJ3iI1GqrFb
+	 BIlLv4bonMb1eXAjc1MhkBGbEdLObCZWvhGLC5SHzkfXzAS3i7AjPa/zpxICJ3ORHSA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AGuiiqVQ;
-	arc=none smtp.remote-ip=209.85.128.44
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EF3606A32C
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Nov 2026 09:09:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 26EF3606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AGuiiqVQ
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4bb64c99d2fso52230415e9.3
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Nov 2026 01:09:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795597776; x=1796202576; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=qm/FI2mE1ewe632JTFSK32XwvOS0GNyWzPRE758QoDs=;
-        b=AGuiiqVQqunjoBCYAQf0+aaIX9u8Idwr4BsqXiFG1Y2GXVcd2nGAwNB2bzu0OZsqvt
-         JBQWV39Rzw0Nejmv3JjqTkzRxtSB81AvLEnWqd3BIlVhavaIMQto0Hj4ItwMuVJN5t9m
-         qDDTsY+zGckYze/eL0Fh35Cvy9GGXbsePdi8hxB00PegW5V2xSwtYpgnQ+XID8ik3L5c
-         ETRwW6xnMEEQ916w2d83q83ZxbDdUag/69/1p5CzvXoFbS+9l6yLn8rKodkjDPPM+Rpi
-         9t2xYHAx0GtrAFVGzYv5GsoMxIqDShH+sPkkV4Fh0S/+l/GBUcpTn7YbFICB2vlEmz20
-         X+gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795597776; x=1796202576;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=qm/FI2mE1ewe632JTFSK32XwvOS0GNyWzPRE758QoDs=;
-        b=ZMa0wdqXF+rZMu5UAegLEKpo7p0FrnOJsqc9rhosJSb8SnWCOmb5HTqiku5DWLJwmN
-         b6fnfBDBazr7njFreFGWNQV7tIqMQR6SOl2TmZKHWxF+xnZOxHWy5WD/WuVfrRQUsRtC
-         Sf0YwskCEfCw4xufCdJK6vQg/sxnxBTC219K6HsW7TJZQSQQTJgtYU05E2lMBgdpa6mG
-         uOKoH/9tWRK/1XN3ioy59eE/qaUOjpWEAKD9A9wMnjB5XJtat1K8mdM4+agVd3RWy9+e
-         keFdzQBOSVX/RVfs7BquSrwDEPL4wEn+eA+z12Yr7WTUIDmsXr30K1O/Gmg7lLNWna40
-         vWpw==
-X-Forwarded-Encrypted: i=1; AL+hErGe8oqy2WJW44Oe5ssoIzMyrzjKogJSgKTrfuvFYhVwH/MN7eyz6/Zv/w9u1iLeOQznwYVjGRBhZMJa4inTL2oOzZqlaq8=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9YYS/g0zNjUrh9G5Nd7u00xUFY59d5Y3NQ3V6cni4gyUVO6cxk
-	JG9DimMmHXJ0Hbque0fe2yKMHnFyZfquqLlgSX+mWjXjuBKBp7aUbT0m
-X-Gm-Gg: AZFdTZc4ujpe/X2ZNTTH/QCPBXh3h/zdxKNeMFEVjC/Xpvfuj4S6DV0HOWj0tZEE62o
-	O6mnxJl7idR/YfcnXvvlETgI6HqAM6lMTL2pm9XNTJ1uCijuPi3a81+hri/t7HwFWZ78u8b4G7B
-	v/Zs7XREafJgU0kzQFtPC00TS9zYM/ktvUHSdtCkJirHDCyM0hObSrxXYMXLKDWgCZwSDg6JhKO
-	n+xdLe5KNVJ2qbx4NG1maofDhqrlkcqajeglbgUl1IejdC4DSSa9bR8wtrf1yZnI/T0GZ8CNma+
-	L12QaFAQ/4pfflpvKtYM8kcM1zoNf+uIMZNTijb51aEjDym3nhSlemUALq0mS6oHE8yaz+N65kS
-	kTyETlADqwui36MaUz8KBXNMgaOvt429l1kUdqf5C5mhHHNgpoEUD1K1BGxGqE23+/uN7L5QfL2
-	o9NKUzhAZmwJ2/kJptOiLAVfApEImmvTUh7DVrCbxh1PDktGf6ro2ODvXAFAxqsocGMxsm5l5L3
-	gI55/UfA8yrnRpzUwwJUwyZ8XffP08+Xn4mI+atS1zq4lPd40XgIfinVO+BSboUHu6O3+33F/Lr
-	c2m0LASVMNzzMg2inq2twuBhw5hQu9rfEXCYioSlSqlnq4c51Ooo+aony3Jm3yPinA==
-X-Received: by 2002:a05:600c:3509:b0:4bb:76f6:d23a with SMTP id 5b1f17b1804b1-4bb88814d16mr374824975e9.21.1795597776397;
-        Wed, 25 Nov 2026 01:09:36 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853b216esm558503985e9.12.2026.11.25.01.09.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 01:09:36 -0800 (PST)
-Date: Wed, 25 Nov 2026 09:09:30 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, Ahmad Fatoum
- <a.fatoum@pengutronix.de>, Alasdair Kergon <agk@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, Benjamin Marzinski <bmarzins@redhat.com>,
- David Gstir <david@sigma-star.at>, David Howells <dhowells@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, David Woodhouse
- <dwmw2@infradead.org>, Herbert Xu <herbert@gondor.apana.org.au>, Ignat
- Korchagin <ignat@linux.win>, James Bottomley
- <James.Bottomley@HansenPartnership.com>, James Morris <jmorris@namei.org>,
- James Prestwood <prestwoj@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Jonathan Corbet <corbet@lwn.net>, Lukas Wunner <lukas@wunner.de>, Mike
- Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Mimi
- Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>, Peter Huewe
- <peterhuewe@gmx.de>, Randy Dunlap <rdunlap@infradead.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, Shuah Khan <skhan@linuxfoundation.org>, Sumit
- Garg <sumit.garg@kernel.org>
-Subject: Re: [PATCH v2 1/9] KEYS: trusted: Allow ASN.1 TPM2 sealed data
- shorter than MIN_KEY_SIZE
-Message-ID: <20261125090930.698d8f1b@pumpkin>
-In-Reply-To: <20261124194043.1651679-2-jarkko@kernel.org>
-References: <20261124194043.1651679-1-jarkko@kernel.org>
-	<20261124194043.1651679-2-jarkko@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dmarc=pass header.from=hygon.cn;
+	spf=pass smtp.mailfrom=hygon.cn;
+	arc=none smtp.remote-ip=101.204.27.37
+Received: from spam01.hygon.cn (unknown [101.204.27.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D249606A329;
+	Wed, 25 Nov 2026 09:12:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2D249606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp2.hygon.cn (unknown [127.0.0.1])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTP28vrzVcB8;
+	Wed, 25 Nov 2026 17:12:09 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTP1HGTzVhfS;
+	Wed, 25 Nov 2026 17:12:09 +0800 (CST)
+Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
+	by maildlp2.hygon.cn (Postfix) with ESMTPS id 84690300B6F1;
+	Wed, 25 Nov 2026 17:10:56 +0800 (CST)
+Received: from hsj-2U-Workstation.hygon.cn (172.19.24.226) by
+ cncheex04.Hygon.cn (172.23.18.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Wed, 25 Nov 2026 17:12:06 +0800
+From: Huang Shijie <huangsj@hygon.cn>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<hch@infradead.org>, <agruenba@redhat.com>, <mic@digikod.net>,
+	<axboe@kernel.dk>
+CC: <gnoack@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>, <legion@kernel.org>, <aleksa@amutable.com>,
+	<libaokun@linux.alibaba.com>, <ebiggers@kernel.org>, <djwong@kernel.org>,
+	<sandeen@redhat.com>, <zhongyuan@hygon.cn>, <fangbaoshun@hygon.cn>,
+	<yingzhiwei@hygon.cn>, <wujianyong@hygon.cn>, <shijie8@gmail.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-block@vger.kernel.org>, <gfs2@lists.linux.dev>,
+	<linux-security-module@vger.kernel.org>, Huang Shijie <huangsj@hygon.cn>
+Subject: [PATCH v4 01/11] vfs: add sb_inode_iter_next()
+Date: Wed, 25 Nov 2026 17:11:47 +0800
+Message-ID: <20261125091157.1822521-2-huangsj@hygon.cn>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261125091157.1822521-1-huangsj@hygon.cn>
+References: <20261125091157.1822521-1-huangsj@hygon.cn>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -116,50 +68,199 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: cncheex05.Hygon.cn (172.23.18.115) To cncheex04.Hygon.cn
+ (172.23.18.114)
 
-On Tue, 24 Nov 2026 21:40:35 +0200
-Jarkko Sakkinen <jarkko@kernel.org> wrote:
+Walking sb->s_inodes requires taking sb->s_inode_list_lock, grabbing a
+reference on the next inode, dropping the lock and then working on the
+inode.  That sequence is open coded in several places, each with its own
+subtleties around rescheduling and iput().
 
-> tpm2_unseal_cmd() rejects unsealed payloads shorter than MIN_KEY_SIZE (32
-> bytes) with -EFAULT even when loading an ASN.1 TPMKey (OID_TPMSealedData,
-> 2.23.133.10.1.5) blob.
-> 
-> While kernel-generated trusted keys ("new <keylen>") and legacy old_format
-> blobs are at least 32 bytes long, external TPM2 tools allow sealing any
-> non-empty payload up to 128 bytes.
-> 
-> Keep MIN_KEY_SIZE for legacy old_format blobs and accept 1..MAX_KEY_SIZE
-> bytes for ASN.1 TPMKey sealed blobs.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> ---
->  security/keys/trusted-keys/trusted_tpm2.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> index 30188a0ec676..d7336f25b514 100644
-> --- a/security/keys/trusted-keys/trusted_tpm2.c
-> +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> @@ -559,9 +559,11 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
->  	rc = tpm_buf_check_hmac_response(chip, buf, rc);
->  
->  	if (!rc) {
-> +		u16 min_len = payload->old_format ? MIN_KEY_SIZE : 1;
+Add struct sb_inode_iter, which the caller declares and owns, plus
+sb_inode_iter_next() to step through the list and sb_inode_iter_end() to
+release the last reference.
 
-There is no point using u16, just use unsigned int.
+As the cursor inode is referenced or pinned by other method, it cannot be
+unlinked from sb->s_inodes, so the walk resumes from it after the caller
+has dropped the lock.
 
-The same goes for data_len.
+Callers that need to filter inodes can provide iter->eligible,
+which is called with inode->i_lock held, and callers that need to
+stop early can set iter->status.
 
-David
+Signed-off-by: Huang Shijie <huangsj@hygon.cn>
+---
+ fs/super.c                     | 102 +++++++++++++++++++++++++++++++++
+ include/linux/fs/super_types.h |  40 +++++++++++++
+ 2 files changed, 142 insertions(+)
 
-> +
->  		data_len = be16_to_cpup(
->  			(__be16 *)&buf->data[TPM_HEADER_SIZE + 4]);
-> -		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE)
-> +		if (data_len < min_len || data_len > MAX_KEY_SIZE)
->  			return -EFAULT;
->  
->  		if (tpm_buf_length(buf) < TPM_HEADER_SIZE + 6 + data_len)
+diff --git a/fs/super.c b/fs/super.c
+index c5a0658f7aaf..077e772fa19b 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -171,6 +171,108 @@ static void super_wake(struct super_block *sb, unsigned int flag)
+ 	wake_up_var(&sb->s_flags);
+ }
+ 
++static bool sb_inode_iter_check(struct sb_inode_iter *iter, struct inode *inode)
++{
++	bool ret = false;
++
++	if ((iter->flags & INO_ITER_F_REFERENCED) && !icount_read_once(inode))
++		return false;
++
++	if ((iter->flags & INO_ITER_F_NOREF) && icount_read_once(inode))
++		return false;
++
++	spin_lock(&inode->i_lock);
++
++	if ((iter->flags & INO_ITER_F_NOREF) && icount_read(inode))
++		goto out_unlock;
++
++	if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE))
++		goto out_unlock;
++
++	if (iter->eligible && !iter->eligible(inode, iter->priv))
++		goto out_unlock;
++
++	if (!(iter->flags & INO_ITER_F_NOIGET))
++		__iget(inode);
++
++	ret = true;
++out_unlock:
++	spin_unlock(&inode->i_lock);
++	return ret;
++}
++
++static inline bool sb_inode_iter_flags_valid(int flags)
++{
++	switch (flags) {
++	case 0:
++	case INO_ITER_F_REFERENCED:
++	case INO_ITER_F_NOREF | INO_ITER_F_NOIGET:
++		/* only used by evict_inodes() */
++		return true;
++	default:
++		return false;
++	}
++}
++
++/**
++ * sb_inode_iter_next - return the next inode of @iter->sb
++ * @iter: iterator state
++ *
++ * The returned inode stays on sb->s_inodes for the next round
++ * without holding sb->s_inode_list_lock:
++ *  -- By default, this inode has an increased reference count.
++ *  -- If INO_ITER_F_NOIGET is set, this inode will not change
++ *	its reference count.
++ *
++ * Return the next inode, or NULL once the walk is over or @iter->status is
++ * negative.
++ */
++struct inode *sb_inode_iter_next(struct sb_inode_iter *iter)
++{
++	struct super_block *sb = iter->sb;
++	struct inode *prev = iter->inode, *inode;
++
++	if (!sb_inode_iter_flags_valid(iter->flags)) {
++		VFS_WARN_ON_ONCE(1);
++		iter->status = -EINVAL;
++		return NULL;
++	}
++
++	if (iter->status || iter->done)
++		return NULL;
++
++	spin_lock(&sb->s_inode_list_lock);
++	VFS_WARN_ON_ONCE(prev && list_empty(&prev->i_sb_list));
++	inode = list_prepare_entry(prev, &sb->s_inodes, i_sb_list);
++	list_for_each_entry_continue(inode, &sb->s_inodes, i_sb_list) {
++		if (!sb_inode_iter_check(iter, inode))
++			continue;
++
++		spin_unlock(&sb->s_inode_list_lock);
++		iter->inode = inode;
++		if (!(iter->flags & INO_ITER_F_NOIGET))
++			iput(prev);
++		return inode;
++	}
++	spin_unlock(&sb->s_inode_list_lock);
++
++	iter->inode = NULL;
++	iter->done = true;
++	if (!(iter->flags & INO_ITER_F_NOIGET))
++		iput(prev);
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(sb_inode_iter_next);
++
++void sb_inode_iter_end(struct sb_inode_iter *iter)
++{
++	if (!(iter->flags & INO_ITER_F_NOIGET))
++		iput(iter->inode);
++	iter->inode = NULL;
++	iter->done = true;
++}
++EXPORT_SYMBOL_GPL(sb_inode_iter_end);
++
+ /*
+  * One thing we have to be careful of with a per-sb shrinker is that we don't
+  * drop the last active reference to the superblock from within the shrinker.
+diff --git a/include/linux/fs/super_types.h b/include/linux/fs/super_types.h
+index 72f4288e16c5..b844e5259360 100644
+--- a/include/linux/fs/super_types.h
++++ b/include/linux/fs/super_types.h
+@@ -80,6 +80,46 @@ enum freeze_holder {
+ 	FREEZE_EXCL		= (1U << 3),
+ };
+ 
++/* Caller-owned state for walking sb->s_inodes. */
++struct sb_inode_iter {
++	struct super_block	*sb;
++	struct inode		*inode;
++	bool			(*eligible)(struct inode *inode, void *priv);
++	void			*priv;
++	bool			done;
++	int			status;
++	int			flags;
++};
++
++/* Only hand out inodes that still have a reference. */
++#define INO_ITER_F_REFERENCED	BIT(0)
++/* Only hand out inodes whose reference count has reached zero. */
++#define INO_ITER_F_NOREF	BIT(1)
++/* Do not take a reference on the inodes handed out. */
++#define INO_ITER_F_NOIGET	BIT(2)
++
++struct inode *sb_inode_iter_next(struct sb_inode_iter *iter);
++void sb_inode_iter_end(struct sb_inode_iter *iter);
++
++static inline struct sb_inode_iter
++sb_inode_iter_init(struct super_block *sb,
++		   bool (*eligible)(struct inode *inode, void *priv),
++		   void *priv, int flags)
++{
++	return (struct sb_inode_iter){
++		.sb		= sb,
++		.eligible	= eligible,
++		.priv		= priv,
++		.flags		= flags,
++	};
++}
++
++DEFINE_CLASS(sb_inode_iter, struct sb_inode_iter,
++	     sb_inode_iter_end(&_T),
++	     sb_inode_iter_init(sb, eligible, priv, flags),
++	     struct super_block *sb, bool (*eligible)(struct inode *, void *),
++	     void *priv, int flags)
++
+ struct super_operations {
+ 	struct inode *(*alloc_inode)(struct super_block *sb);
+ 	void (*destroy_inode)(struct inode *inode);
+-- 
+2.53.0
+
 
