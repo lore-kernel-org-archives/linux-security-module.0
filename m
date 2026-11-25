@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642697;
-	b=pNaKPzpE5m8GJJixr4Vp2DmDuRD54jx8V+WBkhF7zXK8mUNCR8HVlf0F7StVWH+n9E/M
-	 bdFxNYtQKGAwY4E0diVMk+gtuBqn8SUd0foVR48hugMkos9HEd8R+xkyFR1IWDoHHhJfK
-	 nB50zkC1jcJOvJA+nlrzqm/qft0QCcG+46WweCofzVcUqp51GuVS+dW5ztwK+dkslwcXe
-	 RLyuf4ewEKPWWjbqjOaOdn8PHuF0BnwlEBl5sOeAw7Ow9cvj7zsJgx6fAo4LZh7cDvwEQ
-	 XZEpV0RKegsi+7UMa1k6CZxuv118aG32zKJ0JS2xBSbkMfKHkNP24JSp0+U22yVWeGQ==
+	t=1795642705;
+	b=X9LlK5e2hgp1u8xQA0jhNS/nDichO9mrOi4YIlin3Obfipv6kI3PwsXuUjMgtcPBxR4+
+	 hM01cY6LsyjgMBtgS6QvC1RRBFapBYLpXChT6hz7WQU4xLLSYl62tQ65+UUNN2rNkJn6u
+	 QPg9KYr1TxN+7i5fALSRRBTVMnMnjs9HciSROLMWwd3ImnxAgT1bvgfj9mtpmysI5wwv8
+	 5JbmCEA3Hy+tZMgpu7BYO2Vy9Iri8g4whLArufN2lRPXO/u+Knvcoybo3QkdgLdhouCh7
+	 S/NWXwS4U4eJ6cdG3z9VNWxfkCPTX1Z6zJSqOYxSpevMxdJ+jJw7sH/DwPwiJdtx7Qg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642697;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795642705;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=UM83AueIbriLogzPnL1gmpRK12x4S9EwiEfofGFCsLc=;
-	b=d79IH88R5UEfmNuADeB1nKNHKn4707WUDLe/xsSCznRQCZH0Qjo9KYLpj0E4UJOWP/RJ
-	 c/LdzR8tt0FxuBXz+3LGu2t2yOm0bnYrIl9dy8X5Rf0N7PPjbEbBHT7RkpBqNhc87w7YU
-	 HC8+36gQ3MGMDSzpyK3xZuYW2C2XngaBwimF2kyqk98Ke1/PMV438OFSp9cRGFOH5teW2
-	 sZX6HHok5/pMww6qtvqd5I0bGtBS3EKoSZMfKzjVBGq2dq44x5sSUI25zyPaPeRwJuJB4
-	 9F+ONfRUmzOqV7jVdN4MXmDveILn3f8/NlhK6zHtNE8frytxgQx63wDmO+UTFn4NLwg==
+	bh=VtvhyDNbnaCNct3RDhNs8SkFhauT52QXx/BClCdBvMA=;
+	b=i7mHVutZNQMVdAanaCFkYc7FRdQzoulCcoJoyEeJNJfnZKahJT34jfeJtAu8UDRFD0w8
+	 QMz+EMesUOdiBP1URRQhrAPnr7YHXHu6HpsxZOhRxHs6Y0cF01RkfNnNSPg9bJmzPQ286
+	 dgPBqGfEYmPuETPQyHrHOrB/Fs/ekNHXsqPN9NeRj0F026GBHCd0I5Q63SwBKRWWUDMjO
+	 e+y6+o706u4+dBTlp2vzuGVxMH9o8aZBY3p4M3pjlOEi6MEmK88Z1tb0TMMeEF7y7FD8z
+	 cshJ361+GqpHOAXpxl9Ea/6twuWXRxGCT1QLqoXJPShsdOfx2edR6VGoBDBr/ljb4Ag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JiLOw1bW;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n6q2xfHr;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42719606A321;
-	Wed, 25 Nov 2026 21:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8243606A32C;
+	Wed, 25 Nov 2026 21:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JiLOw1bW
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C554C1F000C0;
-	Wed, 25 Nov 2026 21:38:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n6q2xfHr
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 494501F000EB;
+	Wed, 25 Nov 2026 21:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642696;
-	bh=UM83AueIbriLogzPnL1gmpRK12x4S9EwiEfofGFCsLc=;
+	s=k20260515; t=1795642705;
+	bh=VtvhyDNbnaCNct3RDhNs8SkFhauT52QXx/BClCdBvMA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=JiLOw1bWEd30G9oXaQN32F+Pb9icWosyt3uKYE9QF1k9PLNJs6k+4lqPu/MWNgtOR
-	 FfkQur3a0vwok67T4oRXGB1inbNNGPmOYmWf9Xm2xkmTxlgSXmvN4PO4kiaEZq9gIN
-	 Chg24jcYoI1pM/FLPmfYzc9KsVkJXvQ4L1BiNLoSZ5nxwCeh9GQiFdqglA7ZG2W6rS
-	 auRTp9xQZcqXsY3t5duaIHrH/9BhBmCmV0itVkr1IgQf5hqV7TyMkvcJcTq4J9DpUX
-	 bv/sxzcCjqt8JaMwn5uS5uenbF/A7ALKTGMHugjMW/UcMcJzMf78ZxlA+41dpV6yyh
-	 5BK4ZTylBEFLw==
+	b=n6q2xfHrGBuWnpZqpTh6pf2C0390tzgmRh7DKN1gnFHk0AQmX84qzkWsTtMlQMrLc
+	 svRe4uDwGMbaCc0ORb/4eYjHPaJEXt9+0CG6S2sgrj5zO56NZLESt0E0WsTBLPZgHg
+	 4szD6xpfXlB7VdAqk4n58y0Mn+XQGISbxcsm0peXnjcedc1s6oscnD5cELpIM2+Bas
+	 GV6nHvljwiC3FXB6b7KnWmnzSlZJrtH9ICY4rkDePq6A3dru3yjm3Ps7sz3UPn5Eae
+	 qqotYuMecl6pP17UXUrJsGdR+LchYf2VnQkKlBD029/iN7zPzhq2DOWgAKvKRY2xN7
+	 WahdfDmjlIiSA==
 From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:04 +0000
-Subject: [PATCH slab/for-next v2 03/14] lib/xarray: specify
- SLAB_MAY_ACCOUNT for radix_tree_node cache
+Date: Wed, 25 Nov 2026 21:37:05 +0000
+Subject: [PATCH slab/for-next v2 04/14] fs/buffer: specify SLAB_MAY_ACCOUNT
+ for buffer_head cache
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-3-7c680f02a734@kernel.org>
+Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-4-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 To: Vlastimil Babka <vbabka@kernel.org>, 
@@ -92,35 +92,36 @@ Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
  Eric Dumazet <edumazet@kernel.org>
 X-Mailer: b4 0.16.0
 
-XArrays with XA_FLAGS_ACCOUNT (e.g. the page cache) allocate nodes with
-__GFP_ACCOUNT, and xarray/IDR callers can also pass GFP_KERNEL_ACCOUNT
-directly. Specify SLAB_MAY_ACCOUNT when the object may be charged to a
-memcg. __GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
+Buffer heads are allocated with __GFP_ACCOUNT to charge them to the
+memcg of the folio they are attached to. Specify SLAB_MAY_ACCOUNT when
+the object may be charged to a memcg. __GFP_ACCOUNT without
+SLAB_MAY_ACCOUNT will not be allowed.
 
-Path: __filemap_add_folio() (i_pages has XA_FLAGS_ACCOUNT)
-  -> xas_store() -> xas_alloc() (gfp |= __GFP_ACCOUNT)
-  -> kmem_cache_alloc_lru(radix_tree_node_cachep)
+Path: ext4_getblk() -> folio_alloc_buffers(GFP_NOFS | __GFP_ACCOUNT)
+  -> alloc_buffer_head() -> kmem_cache_zalloc(bh_cachep)
 
-Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 ---
- lib/radix-tree.c | 2 +-
+ fs/buffer.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index 976b9bd02a1b..2c7531deb0df 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -1600,7 +1600,7 @@ void __init radix_tree_init(void)
- 	BUILD_BUG_ON(XA_CHUNK_SIZE > 255);
- 	radix_tree_node_cachep = kmem_cache_create("radix_tree_node",
- 			sizeof(struct radix_tree_node), 0,
--			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
-+			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT | SLAB_MAY_ACCOUNT,
- 			radix_tree_node_ctor);
- 	ret = cpuhp_setup_state_nocalls(CPUHP_RADIX_DEAD, "lib/radix:dead",
- 					NULL, radix_tree_cpu_dead);
+diff --git a/fs/buffer.c b/fs/buffer.c
+index f951559e7d32..4c24f4546106 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -3006,7 +3006,7 @@ void __init buffer_init(void)
+ 	int ret;
+ 
+ 	bh_cachep = KMEM_CACHE(buffer_head,
+-				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC);
++				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_MAY_ACCOUNT);
+ 	/*
+ 	 * Limit the bh occupancy to 10% of ZONE_NORMAL
+ 	 */
 
 -- 
 2.54.0
