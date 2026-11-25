@@ -1,46 +1,46 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.204.27.37
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795597948;
-	b=MvpDK7c9ssx9YzYYY/4EbtWxuG7h/UDzeMj4rqfD8zYirnjPhVO3eJY/ImdXEgMmqLJ0
-	 eJQ225tTGaXxJ2iCPciTe42eqVoJHZfc0VMyTl/trutQYFYFV/+qB36wrmGO9Jw+FBEjb
-	 bq8BP0UY8sVYA51iHD5jDizBXSPoIlA6QiB7Ibhcfg8YUnpGSjtWGmPJ3ztTufpgggrZc
-	 ZT0tkd/5N/Jcm/pxJ3f5GHbz8JahU52HKqWU9wzzxqONgJKaCGbHg3c2WMc2PpCySId5E
-	 A8Ci+EPSy4BlgSPzjSHd8JUIUpekwisJ88StWKEBYUFi5BenpyH9CGSsNk2iaB0F3kA==
+	t=1795597953;
+	b=u3T4PA9AdoWVE6qe5zt/xufunJPekLkXsWs2ZeT+a5BRaSqmfZZJvfJ5ACSOlye9r3XN
+	 GMxWjdD55uXM/tPZFMbr82o0mdFHKmhhi1u66vkhHHDs1fBI4Tf8BXl1/NE1oEuHka7nY
+	 Z9Ikx89Xf1ApRquSy8Gd2WtfnlWAlkchNdGI7HhoS/QvuvpSOONtwO9dOgqnqo2Oyw2Vp
+	 VcOQdy/ElY+fj11wR+P6h3mloOIGBIG0EaQ87VYDRpkP85rdaboaZoEkdl6joldcN8ubH
+	 UAMxwv7X86Cp2G+RK+A0UKfEOSYevvFq9k8R2J5HiR0L2RqdWSLs0pakJab1K7OBLsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795597948;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795597953;
 	h=DMARC-Filter:Received:Received:Received:Received:From:To:CC:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:Content-Type:X-Originating-IP:
 	 X-ClientProxiedBy;
-	bh=/6O+blZWFeGtJIpYuxgB4qiZ+0l3PmKkDlPDd+QWUBU=;
-	b=NpVNQ9s6Imh+lmzhwFZLAPxjJaKmJEcEzBwKy5/NbhyWrStckIrZ08DO+3Av/XMMP/TS
-	 xT/HB6XKL5dGMV6seVXFgPe1ZkDI9JI0jRsH37IoZLaLFMgH6bjk0RYzmED0qe89MvOkN
-	 tm/DMxZxSDCWnGxgUR8ceRAd1GXrk+zy29ytS63AzFaDHVV1kga//8ZlWMSQNTvxBS3ha
-	 oxUVXG/S6LKfhDUveNLhmuExK+q99pKQCKQIcjhUAL0uJq+Q89YgjaBjBflLO6adM3P8B
-	 LVq3rPUKBHO56sVook/tBxPAFPXXe7rUtmZSaC5F7E54EIRn8vZkeDA/B8PwBAF6/Aw==
+	bh=PZApHeOyVFfHJcYU8jllKoaZGZcNH5itsU2DEbproM8=;
+	b=QtyRaVCs2hTDG3G7GZbfrxUiIp9wo2wXxo+gebzaUW7b7ECLVjLJW2wSGdDPjLGN33sk
+	 l0pXfo+mIrnOLqigUn7vlyo2/urkY5Khn27u33tZ8aSiDnT5eZDyjsxYFqpdDR8wP5WMf
+	 i0XUt7jaMQDHozAxjA0i6yYw/mbtik6K2tGOCP2YpkWh8N+q666anUqLb3/8aOL0YWm/q
+	 la223yVroOsDHdyIXSRGOHUX3Xg4Zrh2PJ/ymuN7HuzXYirj8PJjtj34bfkLm0dKn8sF3
+	 JB4PlvWx9bmayNhVN1/GNJhX9gKiJbw2iJbg40AuWipZ1WpQWwWxDV7NNhFETKxTlAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=hygon.cn;
 	spf=pass smtp.mailfrom=hygon.cn;
 	arc=none smtp.remote-ip=101.204.27.37
 Received: from spam01.hygon.cn (unknown [101.204.27.37])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BEE606A326;
-	Wed, 25 Nov 2026 09:12:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 78BEE606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C21606A68F;
+	Wed, 25 Nov 2026 09:12:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99C21606A68F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
-Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
-	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTh29FjzVcBJ;
-	Wed, 25 Nov 2026 17:12:24 +0800 (CST)
-Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
-	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTd2x4vzVcBC;
-	Wed, 25 Nov 2026 17:12:21 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [127.0.0.1])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTp29NpzVcBF;
+	Wed, 25 Nov 2026 17:12:30 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jZDTm28LNzVcBC;
+	Wed, 25 Nov 2026 17:12:28 +0800 (CST)
 Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
-	by maildlp1.hygon.cn (Postfix) with ESMTPS id B62751548;
-	Wed, 25 Nov 2026 17:12:14 +0800 (CST)
+	by maildlp2.hygon.cn (Postfix) with ESMTPS id A4193300B6F1;
+	Wed, 25 Nov 2026 17:11:15 +0800 (CST)
 Received: from hsj-2U-Workstation.hygon.cn (172.19.24.226) by
  cncheex04.Hygon.cn (172.23.18.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 25 Nov 2026 17:12:19 +0800
+ 15.2.1544.36; Wed, 25 Nov 2026 17:12:26 +0800
 From: Huang Shijie <huangsj@hygon.cn>
 To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
 	<hch@infradead.org>, <agruenba@redhat.com>, <mic@digikod.net>,
@@ -53,9 +53,9 @@ CC: <gnoack@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
 	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-block@vger.kernel.org>, <gfs2@lists.linux.dev>,
 	<linux-security-module@vger.kernel.org>, Huang Shijie <huangsj@hygon.cn>
-Subject: [PATCH v4 06/11] fs/inode: convert evict_inodes() to sb_inode_iter
-Date: Wed, 25 Nov 2026 17:11:52 +0800
-Message-ID: <20261125091157.1822521-7-huangsj@hygon.cn>
+Subject: [PATCH v4 09/11] fs/quota: convert add_dquot_ref() to sb_inode_iter
+Date: Wed, 25 Nov 2026 17:11:55 +0800
+Message-ID: <20261125091157.1822521-10-huangsj@hygon.cn>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261125091157.1822521-1-huangsj@hygon.cn>
 References: <20261125091157.1822521-1-huangsj@hygon.cn>
@@ -73,76 +73,94 @@ Content-Type: text/plain
 X-ClientProxiedBy: cncheex05.Hygon.cn (172.23.18.115) To cncheex04.Hygon.cn
  (172.23.18.114)
 
-Use sb_inode_iter with %INO_ITER_F_NOREF | %INO_ITER_F_NOIGET, which
-hands out only zero-count inodes and takes no reference on them.
+Convert add_dquot_ref() to sb_inode_iter.
+
+No functional change.
 
 Signed-off-by: Huang Shijie <huangsj@hygon.cn>
 ---
- fs/inode.c | 33 ++++++++++-----------------------
- 1 file changed, 10 insertions(+), 23 deletions(-)
+ fs/quota/dquot.c | 54 ++++++++++++++++--------------------------------
+ 1 file changed, 18 insertions(+), 36 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index f63535ee3629..0830a11a37e9 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -865,6 +865,13 @@ static void dispose_list(struct list_head *head)
- 	}
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 538578c79b5c..d047a3353b79 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -1066,56 +1066,38 @@ static int dqinit_needed(struct inode *inode, int type)
+ 	return 0;
  }
  
-+static bool evict_inode_eligible(struct inode *inode, void *data)
++static bool add_dquot_ref_eligible(struct inode *inode, void *priv)
 +{
-+	inode_state_set(inode, I_FREEING);
-+	inode_lru_list_del(inode);
-+	return true;
++	struct dquot_ref_data *ref = priv;
++
++	return atomic_read(&inode->i_writecount) &&
++	       dqinit_needed(inode, ref->type);
 +}
 +
- /**
-  * evict_inodes	- evict all evictable inodes for a superblock
-  * @sb:		superblock to operate on
-@@ -879,40 +886,20 @@ void evict_inodes(struct super_block *sb)
- 	struct inode *inode;
- 	LIST_HEAD(dispose);
+ /* This routine is guarded by s_umount semaphore */
+ static int add_dquot_ref(struct super_block *sb, int type)
+ {
+-	struct inode *inode, *old_inode = NULL;
+-#ifdef CONFIG_QUOTA_DEBUG
+-	int reserved = 0;
+-#endif
++	struct dquot_ref_data ref = {
++		.type = type,
++	};
++	struct inode *inode;
+ 	int err = 0;
  
 -	spin_lock(&sb->s_inode_list_lock);
 -	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
--		if (icount_read_once(inode))
--			continue;
--
 -		spin_lock(&inode->i_lock);
--		if (icount_read(inode)) {
+-		if ((inode_state_read(inode) & (I_FREEING | I_WILL_FREE | I_NEW)) ||
+-		    !atomic_read(&inode->i_writecount) ||
+-		    !dqinit_needed(inode, type)) {
 -			spin_unlock(&inode->i_lock);
 -			continue;
 -		}
--		if (inode_state_read(inode) & (I_NEW | I_FREEING | I_WILL_FREE)) {
--			spin_unlock(&inode->i_lock);
--			continue;
--		}
--
--		inode_state_set(inode, I_FREEING);
--		inode_lru_list_del(inode);
+-		__iget(inode);
 -		spin_unlock(&inode->i_lock);
+-		spin_unlock(&sb->s_inode_list_lock);
 -
-+	CLASS(sb_inode_iter, iter)(sb, evict_inode_eligible, &dispose,
-+				   INO_ITER_F_NOREF | INO_ITER_F_NOIGET);
++	CLASS(sb_inode_iter, iter)(sb, add_dquot_ref_eligible, &ref, 0);
 +	while ((inode = sb_inode_iter_next(&iter))) {
- 		/*
- 		 * Keep this inode out of dispose so it stays on s_inodes while
- 		 * the list lock is dropped. I_FREEING prevents new references
- 		 * and leaves eviction to us, so we can resume the walk from it.
- 		 */
- 		if (need_resched()) {
--			spin_unlock(&sb->s_inode_list_lock);
- 			cond_resched();
- 			dispose_list(&dispose);
--			spin_lock(&sb->s_inode_list_lock);
+ #ifdef CONFIG_QUOTA_DEBUG
+ 		if (unlikely(inode_get_rsv_space(inode) > 0))
+-			reserved = 1;
++			ref.reserved++;
+ #endif
+-		iput(old_inode);
+ 		err = __dquot_initialize(inode, type);
+ 		if (err) {
+-			iput(inode);
+-			goto out;
++			iter.status = err;
++			break;
  		}
- 		list_add(&inode->i_lru, &dispose);
+-
+-		/*
+-		 * We hold a reference to 'inode' so it couldn't have been
+-		 * removed from s_inodes list while we dropped the
+-		 * s_inode_list_lock. We cannot iput the inode now as we can be
+-		 * holding the last reference and we cannot iput it under
+-		 * s_inode_list_lock. So we keep the reference and iput it
+-		 * later.
+-		 */
+-		old_inode = inode;
+ 		cond_resched();
+-		spin_lock(&sb->s_inode_list_lock);
  	}
 -	spin_unlock(&sb->s_inode_list_lock);
--
- 	dispose_list(&dispose);
- }
- EXPORT_SYMBOL_GPL(evict_inodes);
+-	iput(old_inode);
+-out:
+ #ifdef CONFIG_QUOTA_DEBUG
+-	if (reserved) {
++	if (ref.reserved) {
+ 		quota_error(sb, "Writes happened before quota was turned on "
+ 			"thus quota information is probably inconsistent. "
+ 			"Please run quotacheck(8)");
 -- 
 2.53.0
 
