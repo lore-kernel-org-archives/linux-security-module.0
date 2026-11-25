@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642787;
-	b=ItNRqS1iiGyoAK1gXzTBpDUJrsJzC/IVyLpgAFqc1v7HVTPrnjgxt766bB6ufM7kRt4m
-	 bfAVIyr/ZVyRhmSRZqxvjdmh4kqJR/XysK1740HqOnqzdP3EF4KA3fhpNE/ph5L7f2tH6
-	 uL8LJQKhIaEG5OakNlitlQnr1lR0PnyqKCmPT/XEjyUcDs/rhUmXubd/IHg85yaqfde9p
-	 dNSHMBoPwdAbkFpL88R+T8XQiDPeQTgoI0AfwkWjyVhl0gXBtzTb81PoH9YdS2D97FUZJ
-	 ZBp6oPwAehqh75FyUaXVwUSMVwtHE5iKQNsUC5CXTxXkqFuI8b2f4ayl5iHKqMdbVVg==
+	t=1795642797;
+	b=JjuEmCGDAy7Vy7V7PIf5C4U7MmdTl7XJEF0adZ/df9bCZ1EkSk9BSmwmu/wVvf/WidlM
+	 a6RuCObg4lSPXY1KmDfCcVHUVNyvzWyrggklRst9V4Wpue8hZrAdRuvUOPLg4LkGx7ozR
+	 yEUQCe2XXkMfvjOInv+LfvqDNkdDKKTC5o7fifMdC8+bglXuwlcZO4Kj8BtDo7pLI/OpV
+	 9ZVjkDxaBiwhnzNiYnJm9EVC/08AWBB+4UHJnrgezUCuKoFjixhVsEkxGW9/M7bjFrWQV
+	 pcTw+t6PjOhgzJsOxZEUUosE6izLHbpYZOWbVi4xVJB97So4AL04jiWHAfZ0NAXWCjw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642787;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795642797;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=EmbHvxSdAW/q1vOhxvKGf/qq9lAABR8oLeslWOTBY9M=;
-	b=SvrWT0xwh2dGanLsu0uHW5bMWbTSmcq8iDI/RSctvaP1zF6b6BiWddqUVBqn1AXxuN6/
-	 7Qri1z1bpkY7XmyX3OmycJ8zQv43OpmHFZcjkIWvNKqxQheWrMrAggOQ7Y7SLXMBOKhjk
-	 S3M0kDhulnUejaV01Cbc85ns7lSqwn9jdKzwszb5fuxx+bCzkIJLT1O1qLkGdLmamZbfE
-	 WcawtDkFYEMWq1Q+bCfSg1QACI+nD27OGf3TuwQvTqBAw+eEaqKCwUDT3dol2VNk+BNtL
-	 HXMVB1zLFgkIyjSSSN/QphpEOrEVae+Zi57lhIgRXDQh15RLRSUTF34k9h6VrD9HSeg==
+	bh=5x95mFtq9SsOz7VWm3eLFqsSut3QNXOjHk0FlS/OEJY=;
+	b=VboMGiZuJ+Pg/3yQx6B80uFccTbW3evBBtr1hWA5ScvXITHEJKl0eh+xOh0+gLZFhnS0
+	 te0stextwEQ1z2pyQ6GiNd26dQ3L4+tdQaVOJQeVzmO4XN3SbAfDYabMqgcnJDkYbf0cf
+	 HlcB3JlFTEANSxPDZC9AJSn3UHuCIsGhATsTcUXndBfHtBZmMGYxL09dCCQWHirCxAiXi
+	 QPONNmUbBwuDYP9oV19dgIitMEzr2fQrtUpn+TzZi2uVgS0OIvAfPvey4kEbNFz34hPnP
+	 M3z2MGyBYDRIoEpiGhXabaKNFVU56ijsWTI621aasWYZIOTl7XWOrym5Lf0eY8RxCGQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PuifylfB;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gR7IJgfO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73860606A31E;
-	Wed, 25 Nov 2026 21:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FB3606A323;
+	Wed, 25 Nov 2026 21:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PuifylfB
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F741F000C4;
-	Wed, 25 Nov 2026 21:39:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gR7IJgfO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1478B1F000C6;
+	Wed, 25 Nov 2026 21:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642787;
-	bh=EmbHvxSdAW/q1vOhxvKGf/qq9lAABR8oLeslWOTBY9M=;
+	s=k20260515; t=1795642796;
+	bh=5x95mFtq9SsOz7VWm3eLFqsSut3QNXOjHk0FlS/OEJY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=PuifylfBLGxCFHUkMhv/Mi8wFziI0lMC4HyaLotkpoyRMiK/TrqZX1AG36tnHuzoq
-	 1WDRGhx+pHP7Nh965qPGtyLktzTqHZnDX+4Gh6hbSSD1omJfsf6XgD4SsJGobQnmI3
-	 1feZaKZDJZvZVS7LexZ5PqMQicYfd5h8t+kiTsAk+fqrXTEZwdyxXYwnoq9TKkYv9Y
-	 6UoVFGwIcQjP0rlrQartx7T9JCZdrZOPwM1GlbC3TJPbh16Dk3C0rtWzKA0VySGrC0
-	 ld/K3k6FWZZbjgdKZNNrbnwCNGJ2AOltLaYpYBFbkIbdiXNq+qiPT3Hv4zKdppHG6x
-	 vYPnf/H0PmEVA==
+	b=gR7IJgfOkEVQt+Kjd5Lhv9/b2kVV8yRkGEde2GpliNCOVGS04lYkQSSULOJDv53Px
+	 2Jekw39TzKqHcUDkbuoYJCn4S1gmvYLWPkpuJUCpoFdw3elJJ7zWe1+xTfJHApgEiK
+	 P/qQpkx14FJESeSKPtOdFd17NKyU3J6ilRq5E+0WakHtwQXwFkW8NGI4pXgUznisYD
+	 rHkqysyl38T7vPQqLMCGxrCLYc15vSWMv8Mtbx/OlEhREtZmOooXaG3WLLIMn7ebg7
+	 Sv768LnK5Hpwl/Tk+Rc/AyiB0N22eVUhJz1rai3YDYmpTQusukjx69daAQV6QwFd6R
+	 NEmZ1eWYWrp6w==
 From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:13 +0000
-Subject: [PATCH slab/for-next v2 12/14] hostfs: specify SLAB_MAY_ACCOUNT
- for inode cache
+Date: Wed, 25 Nov 2026 21:37:14 +0000
+Subject: [PATCH slab/for-next v2 13/14] mm/memcontrol: do not allow
+ charging objects without SLAB_MAY_ACCOUNT
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-12-7c680f02a734@kernel.org>
+Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-13-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 To: Vlastimil Babka <vbabka@kernel.org>, 
@@ -89,38 +89,45 @@ Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
  linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
  Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
  Johannes Berg <johannes@sipsolutions.net>, 
- Eric Dumazet <edumazet@kernel.org>, linux-um@lists.infradead.org
+ Eric Dumazet <edumazet@kernel.org>, cgroups@vger.kernel.org
 X-Mailer: b4 0.16.0
 
-hostfs inodes are allocated with GFP_KERNEL_ACCOUNT. Specify
-SLAB_MAY_ACCOUNT when the object may be charged to a memcg.
-__GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
+Objects of a cache without SLAB_MAY_ACCOUNT cannot store the objcg
+pointer once slabobj_ext space is no longer reserved for every cache.
+Skip charging when __GFP_ACCOUNT hits such a cache, and warn once under
+CONFIG_DEBUG_VM to catch callers that did not opt in.
 
-Path: lookup -> hostfs_iget() -> hostfs_alloc_inode()
-  -> alloc_inode_sb(sb, hostfs_inode_cache, GFP_KERNEL_ACCOUNT)
+Refusing the charge here is sufficient for correctness: an object that
+is never charged does not access the objcg slot again, and the free
+path already skips such caches via slab_needs_objcg().
 
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-um@lists.infradead.org
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: cgroups@vger.kernel.org
 Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 ---
- fs/hostfs/hostfs_kern.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memcontrol.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 613146e76dec..8d748ff838f3 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -1078,7 +1078,7 @@ MODULE_ALIAS_FS("hostfs");
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index a07cc73acfc7..0eddb16173fd 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3707,6 +3707,12 @@ bool __memcg_slab_post_alloc_hook(struct kmem_cache *s, struct list_lru *lru,
+ 	if (unlikely(*p == NULL))
+ 		return true;
  
- static int __init init_hostfs(void)
- {
--	hostfs_inode_cache = KMEM_CACHE(hostfs_inode_info, 0);
-+	hostfs_inode_cache = KMEM_CACHE(hostfs_inode_info, SLAB_MAY_ACCOUNT);
- 	if (!hostfs_inode_cache)
- 		return -ENOMEM;
- 	return register_filesystem(&hostfs_type);
++	/* Do not allow __GFP_ACCOUNT without SLAB_MAY_ACCOUNT */
++	if (unlikely(!cache_needs_objcg(s))) {
++		VM_WARN_ON_ONCE(1);
++		return true;
++	}
++
+ 	flags &= gfp_allowed_mask;
+ 
+ 	if (lru) {
 
 -- 
 2.54.0
