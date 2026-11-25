@@ -1,49 +1,80 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642806;
-	b=1rRGWwIV77TRlrEwlThVMPBDF03GzX6oCEVXQX2TsO5L8ZD3fRXG8EwmbXr4Zr2QNVif
-	 tB0qFNtTM3ioquGw+s27KNe79x9r+RIoYa/eh8e4dZc3fWEK5x8/apjnxU6j85KDpXzbB
-	 twH0xjUXX7hdQ57Ke7rn9ssjvTBveQsDBnjWpfV4VWRU/5d1pRjjo9cwzzynDCswOt+z+
-	 jtHqQVoLCpwSboEQG8vZYxMc/NR6XLPguAAR80YzGx3zmgkdm8UhETouc9j6T0INS6gkr
-	 udRN7hmoOJHuOJAl7FsoSwj/8v4Lpah6LHUCQqu7GLO2DE3vdNAFMjHrjOQ0FX0iydQ==
+	t=1795644633;
+	b=zbINbZDTIm358XMssYkPhKrB9LMwGQf+m8rOgPoCBf1krT7sBOGRTFoF1cD+hXS8/V07
+	 gBNXXkW47FLNJ4SZ0rVaLB1+4fEbszbIdJM38OxXmHAshdUI+z1lb4tIzVRHsG3bSEhUt
+	 nMKYGTqaZhQ214+slxRvbRout7Gn3dDLbQCa5e5uub/FyrHZ4CSDGngACR2gJOEXO88RV
+	 Xf6cxcL/KsNAdGCS3cFDdop3otvBwizXZXlSxMvg+dzuH5VD71gHgar9jvY3eaciooT3+
+	 qSqm88WyLeD9lFPYQcKmc9b5QEY62yXBPXacD1vowVcm5i2n5stKkf+DWNXXph+MtXw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642806;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer;
-	bh=vTpYbw5ItroGz0DZO7PAjQShiM8iXjTmR55aJhYUH3g=;
-	b=gW2nB0fNdtylwvmMXWsiqzPc/zL8+sNZ89LEWqlCbG8Ubh6dZIpqraxmXxwq16crZEwe
-	 llHpWByolIDau1Tzr0G9zvo5t3y/VwGhPxf87XCZtyvsnk7p9drZW1raOeT8qXCg6eH7V
-	 /E++J7EKruKWhZLlXlmE3TapC8VKpaVFyZ8BkfRt8+96sInOe4nglO2MW0Vy+eb8TD2zu
-	 fxK0AdkvV61/IIG9V+UABSVe6mrnZVgHXnVRzJi1IzGzgkbu7qJ6nimhxixLrYT+JKMky
-	 ZOeWo2Mprv4+Astws44viTbxqEFlS58H+klC8UVI2iWPEBRttd+0FU70OQ9dcjB726Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795644633;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=HSHUYSAKe2yMTBtSGFVKjWD8rNTq+HH3Hx/MlNX0q80=;
+	b=bDCoraCuNjbV2N0rvC6aczeQByE3CSJu8sV1LByYU3ji28ygCF2o08NgyonH2oTl/tjV
+	 pjPH8FctFl/5iz3Gn6sL7wEy0Sc4Xmvp9GH7lXyevDm8Ur0LJT/Re7BoQjFMwfV6g4XFP
+	 mAmIKyhIirmB8g8Eoxx+sKLWC+7uu4CeOUpXzmoq8RA/fUfiuSlRM+93UEi1FL7INjtyY
+	 0FbiLnkmI0WAOWhoydE+Q59AZjvzROXoR4wIlEhu4CsA/3z0/VEnCXC+xVYqMNKmV/f9F
+	 u+WC2na/3PIWCDXJf5SIQpFYMkVEco2ttVGb+reARXRkkTZ/NsCum7OXZrY/9OHAuag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GRSsjREO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hf+8p3yj;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E807D606A329;
-	Wed, 25 Nov 2026 21:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id D2ED1606A32A;
+	Wed, 25 Nov 2026 22:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GRSsjREO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B041F000EE;
-	Wed, 25 Nov 2026 21:39:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hf+8p3yj
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9AC521F000C4;
+	Wed, 25 Nov 2026 22:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642805;
-	bh=vTpYbw5ItroGz0DZO7PAjQShiM8iXjTmR55aJhYUH3g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=GRSsjREOeODhI5QM3n2jnFfutP8TiC2UDlmMdp0c86+anFTcws9MuEdgcZWJgWP0c
-	 5BHn5mQMtmswZRaAL2973a9k4bOpstS04RzDP3QBv4UvxC01O4sXMSXh52Ox23gxTq
-	 VZybPONqkOJfx9yY92XNGRQpyENEFbDh6eE+IgK0Jn/cJaWaySXbOteZhO3hd2ts8L
-	 XK6ADqs3lQJnK9wJgFqKSlSOKs0TDHR1RizgROWdlolXgbucx9A1WlxtnGSYcSb/Xu
-	 5YAZ5xl6hAPVJPR3oCBUPgDbUmduQ8vG6K8fDxNIXc7HR7aR3mvU+/BH/TMQ5YGGed
-	 ADuzLhxw7XKvA==
-From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:15 +0000
-Subject: [PATCH slab/for-next v2 14/14] mm/slab: do not set
- SLAB_MAY_ACCOUNT for all caches
+	s=k20260515; t=1795644633;
+	bh=HSHUYSAKe2yMTBtSGFVKjWD8rNTq+HH3Hx/MlNX0q80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hf+8p3yjBQmkFdqzDqRGCdc/Kw7VJnWjauP4BWPSdrBnME5F+/8HwAiVOwwK5FLYR
+	 nxN9Rau8JRv4oGJrBX6RBc/HO9ObnB9LezNhFVoULBNWVC0czVcf0VTdeS23VxLG5n
+	 xOveEKOcE8jFKJdHBIJokiTLhRU/e1DaTMYVfX0wOhOAFsX33ADJ7wSeF6tnIcYcKM
+	 kkArb/irEn1RhrVBegtpBUPtjT1OsDtJQzFQAl9fJ5kZUrUMUaeHmQpUEChD03IDOU
+	 BaspgZhpp689cUVYVu6ruJOowfU02VCiSLEnwUg65EGHFe7LDxpDgQBOlKEqD65eWY
+	 jUh/a2jbUDX9w==
+Date: Thu, 26 Nov 2026 00:10:29 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Alasdair Kergon <agk@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	David Gstir <david@sigma-star.at>,
+	David Howells <dhowells@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ignat Korchagin <ignat@linux.win>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	James Morris <jmorris@namei.org>,
+	James Prestwood <prestwoj@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
+	Lukas Wunner <lukas@wunner.de>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Garg <sumit.garg@kernel.org>
+Subject: Re: [PATCH v2 2/9] lib/asn1_encoder: Add asn1_encode_integer_bytes()
+Message-ID: <awdc1TmFwwICFmR7@kernel.org>
+References: <20261124194043.1651679-1-jarkko@kernel.org>
+ <20261124194043.1651679-3-jarkko@kernel.org>
+ <20261125091921.4bf40279@pumpkin>
+ <awcBD-bp27JCVpc-@kernel.org>
+ <20261125213333.23eedef1@pumpkin>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -53,110 +84,46 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-14-7c680f02a734@kernel.org>
-References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
-In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
-To: Vlastimil Babka <vbabka@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Suren Baghdasaryan <surenb@google.com>, 
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
- Shakeel Butt <shakeel.butt@linux.dev>, 
- Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>, 
- David Rientjes <rientjes@google.com>, Muchun Song <muchun.song@linux.dev>, 
- Hao Ge <hao.ge@linux.dev>, Pedro Falcato <pfalcato@suse.de>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
- "Harry Yoo (Meta)" <harry@kernel.org>, 
- "Liam R. Howlett" <liam@infradead.org>, Alice Ryhl <aliceryhl@google.com>, 
- Andrew Ballance <andrewjballance@gmail.com>, 
- Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org, 
- Kees Cook <kees@kernel.org>, David Hildenbrand <david@kernel.org>, 
- Lorenzo Stoakes <ljs@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
- Amir Goldstein <amir73il@gmail.com>, 
- Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
- Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Eric Dumazet <edumazet@kernel.org>
-X-Mailer: b4 0.16.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261125213333.23eedef1@pumpkin>
 
-Now that all caches whose objects may be allocated with __GFP_ACCOUNT
-specify SLAB_MAY_ACCOUNT (or SLAB_ACCOUNT, which implies it), stop
-assuming any cache may be used with __GFP_ACCOUNT. This avoids wasting
-the objcg slot in slabobj_ext for caches that are never charged to a
-memcg.
+On Wed, Nov 25, 2026 at 09:33:33PM +0000, David Laight wrote:
+> On Wed, 25 Nov 2026 17:38:55 +0200
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> 
+> > On Wed, Nov 25, 2026 at 09:19:21AM +0000, David Laight wrote:
+> > > On Tue, 24 Nov 2026 21:40:36 +0200
+> > > Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > >   
+> > > > Add a helper encoding a positive integer from a byte array in big-endian
+> > > > format.  
+> > > 
+> > > Interesting...
+> > > You allow for integer values longer than 127 bytes but don't allow for the
+> > > much more common likelyhood of the encoding being 'implicit'.  
+> > 
+> > This is the first thing I wrote in 2024 and have not touched since
+> > without further feedback :-)
+> 
+> I wrote an ASN.1 encoder/decoder for a tcap library a few years back.
+> Pretty much everything was implicit and some of the tags exceed 5 bits.
+> About the only things that needed multi-byte lengths were constructed.
+> Oh - and you can't fit in a maximal length SMS if you use the indefinite
+> length for constructed items between 128 and 255 bytes, you have to use
+> the two-byte encoding.
+> 
+> There were a few functions for 'add item to buffer', but I didn't need
+> this one.
 
-Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
----
- include/linux/slab.h | 16 +++++++++++++---
- mm/slab_common.c     |  8 +++-----
- 2 files changed, 16 insertions(+), 8 deletions(-)
+TCAP/SMS has pretty much the opposite profile from crypto DER in the
+kernel, which deals with big numbers.
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index ad645967a3ee..8525e70eaa76 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -201,14 +201,24 @@ enum _slab_flag_bits {
- /**
-  * define SLAB_ACCOUNT - Account allocations to memcg.
-  *
-- * All object allocations from this cache will be memcg accounted, regardless of
-- * __GFP_ACCOUNT being or not being passed to individual allocations.
-+ * All object allocations from this cache will be memcg accounted.
-+ * SLAB_ACCOUNT implies SLAB_MAY_ACCOUNT.
-  */
- #ifdef CONFIG_MEMCG
- # define SLAB_ACCOUNT		__SLAB_FLAG_BIT(_SLAB_ACCOUNT)
--# define SLAB_MAY_ACCOUNT	__SLAB_FLAG_BIT(_SLAB_MAY_ACCOUNT)
- #else
- # define SLAB_ACCOUNT		__SLAB_FLAG_UNUSED
-+#endif
-+
-+/**
-+ * define SLAB_MAY_ACCOUNT
-+ *
-+ * Objects will be memcg accounted when __GFP_ACCOUNT flag is specified.
-+ * Requesting __GFP_ACCOUNT allocations without SLAB_MAY_ACCOUNT is not allowed.
-+ */
-+#ifdef CONFIG_MEMCG
-+# define SLAB_MAY_ACCOUNT	__SLAB_FLAG_BIT(_SLAB_MAY_ACCOUNT)
-+#else
- # define SLAB_MAY_ACCOUNT	__SLAB_FLAG_UNUSED
- #endif
- 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 193b5a03bc47..464695504248 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -367,12 +367,10 @@ struct kmem_cache *__kmem_cache_create_args(const char *name,
- 		goto out_unlock;
- 	}
- 
--	/*
--	 * For now we assume any cache can be used with __GFP_ACCOUNT and thus
--	 * may need to store objcg pointers for objects
--	 */
--	if (!mem_cgroup_kmem_disabled())
-+	if (flags & SLAB_ACCOUNT)
- 		flags |= SLAB_MAY_ACCOUNT;
-+	if (mem_cgroup_kmem_disabled())
-+		flags &= ~SLAB_MAY_ACCOUNT;
- 
- 	/* Fail closed on bad usersize of useroffset values. */
- 	if (!IS_ENABLED(CONFIG_HARDENED_USERCOPY) ||
+None of the other primitives in lib/asn1_encoder.c take an IMPLICIT tag
+override either, so better to leave that out until something in-tree
+actually needs it.
 
--- 
-2.54.0
+> 
+> David
 
+Br, Jarkko
