@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795642688;
-	b=kCnPzx0x0SdEHgkc8m1Mtg00n7ONZDx4d+P8WWSS/VkxBy8uGH0Gde6yciYk7nQjEurx
-	 Xlijt+0jcBvIfAKKhg1LY1sRrhKessuDF6Rysp3y+2ZfHOEo/mp472yA5EbO+dufsdZv7
-	 bFRoNl5vTOMJK7Drn0g79mgTMRmhn+lfe7oye/ZaqC0xuxBNIXxjrYw+Hlr8eZEYT+AYF
-	 YXmPjUZqIW0oZ1dicxGxbnZN7WxM8elaWleQ8fs34zXlRP1sPcMdsvwyYLicBCOA0JZxw
-	 BUSJJ1bnNdS58UC2/sXaMkyfok2eqK2cNEL+IdqFuZqE+2wv0+olL/5IZKFRxt8cWdw==
+	t=1795642697;
+	b=pNaKPzpE5m8GJJixr4Vp2DmDuRD54jx8V+WBkhF7zXK8mUNCR8HVlf0F7StVWH+n9E/M
+	 bdFxNYtQKGAwY4E0diVMk+gtuBqn8SUd0foVR48hugMkos9HEd8R+xkyFR1IWDoHHhJfK
+	 nB50zkC1jcJOvJA+nlrzqm/qft0QCcG+46WweCofzVcUqp51GuVS+dW5ztwK+dkslwcXe
+	 RLyuf4ewEKPWWjbqjOaOdn8PHuF0BnwlEBl5sOeAw7Ow9cvj7zsJgx6fAo4LZh7cDvwEQ
+	 XZEpV0RKegsi+7UMa1k6CZxuv118aG32zKJ0JS2xBSbkMfKHkNP24JSp0+U22yVWeGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795642688;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795642697;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=xCsoMM2SYli9GoRF0mLPGTdzPc1rzk/bVTpp4cBDCP4=;
-	b=s7Zc5r7E4ZKW3/KDIGttdOGxQ+jHbEy33FAfstxsA8CT0VuGHj9nZWFzutGsrysFTnw/
-	 QtWZGPtjnnbt5ioIwGHY1wVb6vU0WWdXJ2r41/IZRCTFCsQ+ZWn5HBNTI6qM5Yz3KZmHp
-	 IJtVMVAPNMxqVyjBiNNwqr7v+0PJ+/O99v/18rLiR3e+1FkV6wlj8OklarPaSMsdk9fCn
-	 HeY5vrmEKVxSy9pQ+FWsNP6gqSQNdId9EIuCxwLdmRAMEi2I7Pj2sFBFjC1zjmC9GKKSx
-	 7XiB8hNX30v3FYAYfy7VHj0kIyEUL5Beg1jlLY4pOPmIzGzgvrStzFvmwzfYK/v3HUQ==
+	bh=UM83AueIbriLogzPnL1gmpRK12x4S9EwiEfofGFCsLc=;
+	b=d79IH88R5UEfmNuADeB1nKNHKn4707WUDLe/xsSCznRQCZH0Qjo9KYLpj0E4UJOWP/RJ
+	 c/LdzR8tt0FxuBXz+3LGu2t2yOm0bnYrIl9dy8X5Rf0N7PPjbEbBHT7RkpBqNhc87w7YU
+	 HC8+36gQ3MGMDSzpyK3xZuYW2C2XngaBwimF2kyqk98Ke1/PMV438OFSp9cRGFOH5teW2
+	 sZX6HHok5/pMww6qtvqd5I0bGtBS3EKoSZMfKzjVBGq2dq44x5sSUI25zyPaPeRwJuJB4
+	 9F+ONfRUmzOqV7jVdN4MXmDveILn3f8/NlhK6zHtNE8frytxgQx63wDmO+UTFn4NLwg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="bgub/jGu";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JiLOw1bW;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A917E606A31E;
-	Wed, 25 Nov 2026 21:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42719606A321;
+	Wed, 25 Nov 2026 21:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bgub/jGu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBDB31F00A01;
-	Wed, 25 Nov 2026 21:37:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JiLOw1bW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C554C1F000C0;
+	Wed, 25 Nov 2026 21:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795642688;
-	bh=xCsoMM2SYli9GoRF0mLPGTdzPc1rzk/bVTpp4cBDCP4=;
+	s=k20260515; t=1795642696;
+	bh=UM83AueIbriLogzPnL1gmpRK12x4S9EwiEfofGFCsLc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=bgub/jGuSEEzlxOWoTN7Ri1uIOUtEnJPzRZ7jyIAu/Ja9fIAdurhc8RTtdT1s+Cu8
-	 rKWwPTC3yFW1CmOupwJi1qUMhA1LnLYi94769K29JPagk7GVbdXviTD2ZD5NZyLVbu
-	 hrJXLTjlWhzAH9rUFY5yKCQ7OPf5lglAy/d7JRIBKJjUXCIK9CQGFNwpXFAa4crnjE
-	 P3+WDFuxzA2FpXgHO/xwdjxoY+/ViEg6k6KF/4l4z70Bt0yFXuheeXEo5KwewFCs3S
-	 YzL7SGRJglCp8vhbDDPAxIVK/YBg+YuEbDqUfSU4CtgnuZ+Koj59Y3kZGjZbISaO+N
-	 2cbb3QvteIhvg==
+	b=JiLOw1bWEd30G9oXaQN32F+Pb9icWosyt3uKYE9QF1k9PLNJs6k+4lqPu/MWNgtOR
+	 FfkQur3a0vwok67T4oRXGB1inbNNGPmOYmWf9Xm2xkmTxlgSXmvN4PO4kiaEZq9gIN
+	 Chg24jcYoI1pM/FLPmfYzc9KsVkJXvQ4L1BiNLoSZ5nxwCeh9GQiFdqglA7ZG2W6rS
+	 auRTp9xQZcqXsY3t5duaIHrH/9BhBmCmV0itVkr1IgQf5hqV7TyMkvcJcTq4J9DpUX
+	 bv/sxzcCjqt8JaMwn5uS5uenbF/A7ALKTGMHugjMW/UcMcJzMf78ZxlA+41dpV6yyh
+	 5BK4ZTylBEFLw==
 From: "Harry Yoo (Meta)" <harry@kernel.org>
-Date: Wed, 25 Nov 2026 21:37:03 +0000
-Subject: [PATCH slab/for-next v2 02/14] lib/maple_tree: specify
- SLAB_MAY_ACCOUNT for maple_node cache
+Date: Wed, 25 Nov 2026 21:37:04 +0000
+Subject: [PATCH slab/for-next v2 03/14] lib/xarray: specify
+ SLAB_MAY_ACCOUNT for radix_tree_node cache
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -55,7 +55,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-2-7c680f02a734@kernel.org>
+Message-Id: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-3-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
 To: Vlastimil Babka <vbabka@kernel.org>, 
@@ -89,39 +89,38 @@ Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
  linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
  Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
  Johannes Berg <johannes@sipsolutions.net>, 
- Eric Dumazet <edumazet@kernel.org>, maple-tree@lists.infradead.org
+ Eric Dumazet <edumazet@kernel.org>
 X-Mailer: b4 0.16.0
 
-Maple tree users can pass accounted gfp flags down to node allocations
-(e.g. arm64 KVM's smccc_filter uses GFP_KERNEL_ACCOUNT). Specify
-SLAB_MAY_ACCOUNT when the object may be charged to a memcg.
-__GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
+XArrays with XA_FLAGS_ACCOUNT (e.g. the page cache) allocate nodes with
+__GFP_ACCOUNT, and xarray/IDR callers can also pass GFP_KERNEL_ACCOUNT
+directly. Specify SLAB_MAY_ACCOUNT when the object may be charged to a
+memcg. __GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
 
-Path: mtree_insert_range(GFP_KERNEL_ACCOUNT) -> mas_nomem()
-  -> mas_alloc_nodes() -> kmem_cache_alloc(maple_node_cache)
+Path: __filemap_add_folio() (i_pages has XA_FLAGS_ACCOUNT)
+  -> xas_store() -> xas_alloc() (gfp |= __GFP_ACCOUNT)
+  -> kmem_cache_alloc_lru(radix_tree_node_cachep)
 
-Cc: "Liam R. Howlett" <liam@infradead.org>
-Cc: Alice Ryhl <aliceryhl@google.com>
-Cc: Andrew Ballance <andrewjballance@gmail.com>
-Cc: maple-tree@lists.infradead.org
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 ---
- lib/maple_tree.c | 2 +-
+ lib/radix-tree.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index f7f51f1b40d9..5ff176f1a021 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -5815,7 +5815,7 @@ void __init maple_tree_init(void)
- 
- 	maple_node_cache = kmem_cache_create("maple_node",
- 			sizeof(struct maple_node), &args,
--			SLAB_PANIC);
-+			SLAB_PANIC | SLAB_MAY_ACCOUNT);
- }
- 
- /**
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index 976b9bd02a1b..2c7531deb0df 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -1600,7 +1600,7 @@ void __init radix_tree_init(void)
+ 	BUILD_BUG_ON(XA_CHUNK_SIZE > 255);
+ 	radix_tree_node_cachep = kmem_cache_create("radix_tree_node",
+ 			sizeof(struct radix_tree_node), 0,
+-			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
++			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT | SLAB_MAY_ACCOUNT,
+ 			radix_tree_node_ctor);
+ 	ret = cpuhp_setup_state_nocalls(CPUHP_RADIX_DEAD, "lib/radix:dead",
+ 					NULL, radix_tree_cpu_dead);
 
 -- 
 2.54.0
