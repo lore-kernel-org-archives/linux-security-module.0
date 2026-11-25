@@ -1,56 +1,86 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795627165;
-	b=z2aInozAMHczVnKUP++fhbctVLVNYSY5AMbeD0qEgsXUCNQvyhehFfemO6UyeMbFD4ck
-	 D+Y51owe2hPzkmg/3LuSs4n6Iv7wDzmxZUus63SlDlIUORTiIvl9KMdlwdzzhSqfNQliH
-	 NAOqGMG1hNDWRe4aF3bZb3VvhQXCA3JuvavNuUs4/ZVYmiZZzhPoVzPk5AKJtBoAcfjqR
-	 RCLJZJ7kh4Ba7bX3kZh/ZBZPLglQM5JusKo+WkYzwKOetFvojtPzrWwLsnkLIUYRkVRje
-	 rVKnMT1DWQRI1Cu+MCBpMArj201SYPr2LjLUq/MvffUvDGv67ZDWhzXjSVL4nZA3ePA==
+	t=1795629993;
+	b=tAE6OKAZTGNgj17j320zyXlFx+0lhVpI9SgpPpr17cJBtRL8g2d6GS53IwZay4haDvft
+	 i5X9GsFkDqwVV1Kcs2ijJOEL8r0rLs0AucJHa2Q3lX7uBPWKEHykCag7bKaejKM7aFHXJ
+	 nbrVyKxTknSZCWY3kPYVuMbH4/j112ly0cSYqr0Iz2kQ8HahkdnVMw3wiMQPDA6EKsLzE
+	 g9XDymtHPMOePykMdt6Huqtg/A+Lm3USbIa5cf036O6v2Lv4fKiY58WhnVjLrPYu++NcI
+	 ZhWXyPEHOTCYw7PZvj5FbVKPva7vBVRxA7/dSTJhrLb2rwBW3B6ukJcZHTGgqqLoJXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795627165;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=zlUDtLSedtGVqw9aJT44i6qtvT7PvK8DE79lqMDex5I=;
-	b=4dmDzzq/LU3XnwapslHzM7T75zM07hNLHjn0zCpkImZJMm9wT58VThkDnY4Jw4S5cUXd
-	 /XkoXxjmmELobYIpetUv3k8Err/imCY4Qv7qqxyIHuhBzEGAwnN0Q3o87nlXk/3Cug8jT
-	 AAbH3/Qc+zFnUVvw0NHVvaL7bJ3Qu938IUvzZjSnfM77sX4dyVWiPhRLz/XV71SuEfChJ
-	 4SQuZuJxVL6DLKvRheLzaRm5Xgag2cuevkhJHtVSOoYvnex83RwbcK/eyPTxecpyEprjX
-	 qtM18Qrh1+DN5bAm0Kxts2GXDJUGO4G4d7pRUU/zWkVRB5VKePE6I6wae+zHtSoPXKA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795629993;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=U00yWHIo8HhrdyFuKMDRdBiL8d54KG7YlSUEsh2C5MM=;
+	b=WHP+fzdJNolBS8vSq4ONiFfx/bt8UOKBBrbNQi5C0gzJqYknaEHoUtCupaG3KmI2aacn
+	 MAIM2bsmOgQ61ZsQFjMBx3dpxgvjpfnkDPt25HR6t2fiwsVhbiAMjnqU5l7oF0A/4fpyT
+	 1GxNd0s9s6tkxLq9ZE9AdLjSpg4yNrWtps7a9Fc9vDvOEk5JUYPpPzYhigMXtlfa6cE0s
+	 vNhahNtekGK2dURCAdW+6o5XzwIL1TNdh/XVcDgeMgRLPUMVhTV/P37p7azhun1xa8kCB
+	 0mrq4NB6Y4g+HJRk79h65mkgx4IcC2C9s2vGLcTieibICZ2n1Pnqxktxo7G9faYQFnw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mY2vPG6c;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SzJaPlqJ;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id F1A84606A31E;
-	Wed, 25 Nov 2026 17:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 1FCE2606A31E;
+	Wed, 25 Nov 2026 18:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mY2vPG6c
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id A03911F000CA;
-	Wed, 25 Nov 2026 17:19:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SzJaPlqJ
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3E3F71F00A3E;
+	Wed, 25 Nov 2026 18:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795627164;
-	bh=zlUDtLSedtGVqw9aJT44i6qtvT7PvK8DE79lqMDex5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mY2vPG6cNcQZRH4rhcFHA18JmcAtiNBnjCZT8VLygTsLVlMZdxX08/dKKCICB7hv0
-	 R8xFabYiDqcsN+O4lHBLmHvQgrPW3tktJqHIi3eI7zgo0SODliFaJmqXMaK9TGzBDT
-	 j3YBrxmxYzaM+V4nzatSZ2zCgV4ftIwDyKhK3n3LGsqUd1dW8kFeL7qSFJrvQ0g4L9
-	 i6TDaRWPJagM+A07gCFstmKbcYTSonQW6F7CUlle0psrT9GL3uL/zfxXGgm/nBKSIB
-	 nrGVO+z9xpJlzUBroTzItfiHGWfVMP1Q5fNCIMRpKtPuiTPygDvtEenhjbwabIcmMU
-	 /HTPb4Z4LKT1Q==
-Date: Wed, 25 Nov 2026 19:19:20 +0200
+	s=k20260515; t=1795629993;
+	bh=U00yWHIo8HhrdyFuKMDRdBiL8d54KG7YlSUEsh2C5MM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=SzJaPlqJ0DMwNK1s6wL3Pkh568FjgSIq0691VFOmewOFIDORl9wUV04BtlYS60a7/
+	 mWivwg/9pA0xq+MoYzyaP24iHOAlXE1/YRbpPdwrybKyV8GH5rlvGV5gjSO/4TVDNF
+	 fVaF75ksLGuVHnE9HTUX1h1e5QzxWuummGvaAUg6F6GzW8AE5z7PcPxxNN7pA0G4Yi
+	 ShgfC8FAAWnbUV951C7RX1xr8Ch56ZwZKnqdHGApP4YOs2TZqSZvgIHGWvT8WzYAMO
+	 /AcZrqpO8pOqm/n/XmVTjftPrfWeb87YAJv0Z4JZJjcrxIKsg8Kk+EaY24F7mXBlRh
+	 xkaEfCG6QHcxA==
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Guicai Ma <maguicai@kylinos.cn>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+To: keyrings@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	dm-devel@lists.linux.dev,
+	linux-crypto@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Alasdair Kergon <agk@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	David Gstir <david@sigma-star.at>,
+	David Howells <dhowells@redhat.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ignat Korchagin <ignat@linux.win>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
 	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] KEYS: Protect key instantiation and rejection against
- type removal
-Message-ID: <awcYmOxzJ9TfsdjJ@kernel.org>
-References: <20261124091243.1019217-1-maguicai@kylinos.cn>
- <20261125032605.1327954-1-maguicai@kylinos.cn>
+	James Prestwood <prestwoj@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Lukas Wunner <lukas@wunner.de>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Garg <sumit.garg@kernel.org>
+Subject: [PATCH v3 1/9] KEYS: Factor out opt-in KEYCTL_PKEY
+Date: Wed, 25 Nov 2026 20:06:07 +0200
+Message-ID: <20261125180616.1854753-2-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261125180616.1854753-1-jarkko@kernel.org>
+References: <20261125180616.1854753-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -60,293 +90,82 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261125032605.1327954-1-maguicai@kylinos.cn>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 24, 2026 at 10:26:05PM -0500, Guicai Ma wrote:
-> key_instantiate_and_link() and key_reject_and_link() access key->type
-> and link keys without synchronizing against unregister_key_type(). If
-> the type is removed while a key is under construction, GC retypes it to
-> key_type_dead (where ->instantiate is NULL) or links a dead key before
-> pass 3 rewrites key->type.
-> 
-> key->sem cannot be used here because it inverts lock order against
-> encrypted_instantiate() and references a freed lockdep class after a
-> modular type unloads, while callers may already hold key_types_sem and
-> ->preparse() or ->instantiate() may sleep. Guard both paths with
-> key_type_srcu and a KEY_FLAG_DEAD check, and wait for in-flight calls
-> with synchronize_srcu(&key_type_srcu) at the end of GC pass 1.
-> 
-> Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Guicai Ma <maguicai@kylinos.cn>
-> ---
-> v3:
-> - Shorten the commit message and focus on why SRCU is used.
-> - Change Fixes tag to 0c061b5707ab.
-> - No code changes.
-> 
-> v2:
-> - Switch from key->sem to key_type_srcu and check KEY_FLAG_DEAD in
->   key_instantiate_and_link() and key_reject_and_link().
-> 
->  security/keys/gc.c       |  13 +++++
->  security/keys/internal.h |   2 +
->  security/keys/key.c      | 108 +++++++++++++++++++++++++++++----------
->  3 files changed, 95 insertions(+), 28 deletions(-)
-> 
-> diff --git a/security/keys/gc.c b/security/keys/gc.c
-> index eda445f815d4..61cb2b9a7aaf 100644
-> --- a/security/keys/gc.c
-> +++ b/security/keys/gc.c
-> @@ -35,6 +35,8 @@ static unsigned long key_gc_flags;
->  #define KEY_GC_REAP_KEYTYPE	1	/* A keytype is being unregistered */
->  #define KEY_GC_REAPING_KEYTYPE	2	/* Cleared when keytype reaped */
->  
-> +DEFINE_SRCU(key_type_srcu);
-> +
->  
->  /*
->   * Any key whose type gets unregistered will be re-typed to this if it can't be
-> @@ -286,6 +288,17 @@ static void key_garbage_collector(struct work_struct *work)
->  		key_schedule_gc(new_timer);
->  	}
->  
-> +	if (unlikely((gc_state & KEY_GC_REAPING_DEAD_1) &&
-> +		     (gc_state & KEY_GC_FOUND_DEAD_KEY))) {
-> +		/* Wait for any in-flight key_instantiate_and_link() or
-> +		 * key_reject_and_link() calls that did not observe
-> +		 * KEY_FLAG_DEAD before pass 2 unlinks dead keys from keyrings
-> +		 * and pass 3 retypes them to key_type_dead.
-> +		 */
-> +		kdebug("gc dead type sync");
-> +		synchronize_srcu(&key_type_srcu);
-> +	}
-> +
->  	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
->  	    !list_empty(&graveyard)) {
->  		/* Make sure that all pending keyring payload destructions are
-> diff --git a/security/keys/internal.h b/security/keys/internal.h
-> index b7b622bc36a1..73d71de274c2 100644
-> --- a/security/keys/internal.h
-> +++ b/security/keys/internal.h
-> @@ -19,6 +19,7 @@
->  #include <linux/compat.h>
->  #include <linux/mm.h>
->  #include <linux/vmalloc.h>
-> +#include <linux/srcu.h>
->  
->  struct iovec;
->  
-> @@ -86,6 +87,7 @@ extern struct kmem_cache *key_jar;
->  extern struct rb_root key_serial_tree;
->  extern spinlock_t key_serial_lock;
->  extern struct mutex key_construction_mutex;
-> +extern struct srcu_struct key_type_srcu;
->  extern wait_queue_head_t request_key_conswq;
->  
->  extern void key_set_index_key(struct keyring_index_key *index_key);
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 3f1f0fc13710..d923ddf457e9 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -422,9 +422,10 @@ static void mark_key_instantiated(struct key *key, int reject_error)
->  
->  /*
->   * Instantiate a key and link it into the target keyring atomically.  Must be
-> - * called with the target keyring's semaphore writelocked.  The target key's
-> - * semaphore need not be locked as instantiation is serialised by
-> - * key_construction_mutex.
-> + * called with the target keyring's semaphore writelocked.  The caller must
-> + * hold key_type_srcu (after checking !KEY_FLAG_DEAD) or key_types_sem for
-> + * reading via key_type_lookup(), so the type cannot be retyped to
-> + * key_type_dead or its module unloaded while its methods run.
->   */
->  static int __key_instantiate_and_link(struct key *key,
->  				      struct key_preparsed_payload *prep,
-> @@ -496,7 +497,9 @@ static int __key_instantiate_and_link(struct key *key,
->   *
->   * If successful, 0 is returned, the authorisation token is revoked and anyone
->   * waiting for the key is woken up.  If the key was already instantiated,
-> - * -EBUSY will be returned.
-> + * -EBUSY will be returned.  If the key's type has been removed, -EKEYREVOKED
-> + * will be returned.  If the key type does not provide an instantiate method,
-> + * -EOPNOTSUPP will be returned.
->   */
->  int key_instantiate_and_link(struct key *key,
->  			     const void *data,
-> @@ -506,7 +509,28 @@ int key_instantiate_and_link(struct key *key,
->  {
->  	struct key_preparsed_payload prep;
->  	struct assoc_array_edit *edit = NULL;
-> -	int ret;
-> +	int ret, srcu_idx;
-> +
-> +	/*
-> +	 * A reference on the key does not pin the module that provides its
-> +	 * type.  Hold key_type_srcu across every use of key->type
-> +	 * (def_datalen, preparse, restrict_link->check, instantiate and
-> +	 * free_preparse) and across linking into @keyring.  Pass 1 of
-> +	 * key_garbage_collector() sets KEY_FLAG_DEAD and waits for
-> +	 * synchronize_srcu(&key_type_srcu) before pass 2 unlinks dead keys
-> +	 * and pass 3 retypes them to key_type_dead.
-> +	 */
-> +	srcu_idx = srcu_read_lock(&key_type_srcu);
-> +
-> +	if (test_bit(KEY_FLAG_DEAD, &key->flags)) {
-> +		ret = -EKEYREVOKED;
-> +		goto out;
-> +	}
-> +
-> +	if (!key->type->instantiate) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out;
-> +	}
->  
->  	memset(&prep, 0, sizeof(prep));
->  	prep.orig_description = key->description;
-> @@ -517,17 +541,17 @@ int key_instantiate_and_link(struct key *key,
->  	if (key->type->preparse) {
->  		ret = key->type->preparse(&prep);
->  		if (ret < 0)
-> -			goto error;
-> +			goto out_free_preparse;
->  	}
->  
->  	if (keyring) {
->  		ret = __key_link_lock(keyring, &key->index_key);
->  		if (ret < 0)
-> -			goto error;
-> +			goto out_free_preparse;
->  
->  		ret = __key_link_begin(keyring, &key->index_key, &edit);
->  		if (ret < 0)
-> -			goto error_link_end;
-> +			goto out_link_end;
->  
->  		if (keyring->restrict_link && keyring->restrict_link->check) {
->  			struct key_restriction *keyres = keyring->restrict_link;
-> @@ -535,19 +559,22 @@ int key_instantiate_and_link(struct key *key,
->  			ret = keyres->check(keyring, key->type, &prep.payload,
->  					    keyres->key);
->  			if (ret < 0)
-> -				goto error_link_end;
-> +				goto out_link_end;
->  		}
->  	}
->  
->  	ret = __key_instantiate_and_link(key, &prep, keyring, authkey, &edit);
->  
-> -error_link_end:
-> +out_link_end:
->  	if (keyring)
->  		__key_link_end(keyring, &key->index_key, edit);
->  
-> -error:
-> +out_free_preparse:
->  	if (key->type->preparse)
->  		key->type->free_preparse(&prep);
-> +
-> +out:
-> +	srcu_read_unlock(&key_type_srcu, srcu_idx);
->  	return ret;
->  }
->  
-> @@ -581,7 +608,8 @@ int key_reject_and_link(struct key *key,
->  			struct key *authkey)
->  {
->  	struct assoc_array_edit *edit = NULL;
-> -	int ret, awaken, link_ret = 0;
-> +	int ret, awaken, link_ret = 0, srcu_idx;
-> +	bool dead;
->  
->  	key_check(key);
->  	key_check(keyring);
-> @@ -589,22 +617,42 @@ int key_reject_and_link(struct key *key,
->  	awaken = 0;
->  	ret = -EBUSY;
->  
-> +	/*
-> +	 * Hold key_type_srcu across linking into @keyring and
-> +	 * key_set_expiry() (which reads key->type->flags).  If the key is
-> +	 * already marked dead, skip linking and expiry but still complete
-> +	 * negative instantiation so waiters are woken and @authkey is
-> +	 * invalidated.
-> +	 */
-> +	srcu_idx = srcu_read_lock(&key_type_srcu);
-> +	dead = test_bit(KEY_FLAG_DEAD, &key->flags);
-> +
->  	if (keyring) {
-> -		link_ret = __key_link_lock(keyring, &key->index_key);
-> -		if (link_ret == 0) {
-> -			/*
-> -			 * Check the restriction under the keyring semaphore.
-> -			 * keyring_restrict() installs it while holding the
-> -			 * semaphore, so testing it beforehand races with a
-> -			 * concurrent restriction install.
-> -			 */
-> -			if (keyring->restrict_link) {
-> -				__key_link_end(keyring, &key->index_key, edit);
-> -				return -EPERM;
-> +		if (dead) {
-> +			link_ret = -EKEYREVOKED;
-> +		} else {
-> +			link_ret = __key_link_lock(keyring, &key->index_key);
-> +			if (link_ret == 0) {
-> +				/*
-> +				 * Check the restriction under the keyring
-> +				 * semaphore. keyring_restrict() installs it
-> +				 * while holding the semaphore, so testing it
-> +				 * beforehand races with a concurrent
-> +				 * restriction install.
-> +				 */
-> +				if (keyring->restrict_link) {
-> +					__key_link_end(keyring, &key->index_key,
-> +						       edit);
-> +					ret = -EPERM;
-> +					goto out;
-> +				}
-> +				link_ret = __key_link_begin(keyring,
-> +							    &key->index_key,
-> +							    &edit);
-> +				if (link_ret < 0)
-> +					__key_link_end(keyring, &key->index_key,
-> +						       edit);
->  			}
-> -			link_ret = __key_link_begin(keyring, &key->index_key, &edit);
-> -			if (link_ret < 0)
-> -				__key_link_end(keyring, &key->index_key, edit);
->  		}
->  	}
->  
-> @@ -616,7 +664,8 @@ int key_reject_and_link(struct key *key,
->  		atomic_inc(&key->user->nikeys);
->  		mark_key_instantiated(key, -error);
->  		notify_key(key, NOTIFY_KEY_INSTANTIATED, -error);
-> -		key_set_expiry(key, ktime_get_real_seconds() + timeout);
-> +		if (!dead)
-> +			key_set_expiry(key, ktime_get_real_seconds() + timeout);
->  
->  		if (test_and_clear_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags))
->  			awaken = 1;
-> @@ -641,7 +690,10 @@ int key_reject_and_link(struct key *key,
->  	if (awaken)
->  		wake_up_bit(&key->flags, KEY_FLAG_USER_CONSTRUCT);
->  
-> -	return ret == 0 ? link_ret : ret;
-> +	ret = ret == 0 ? link_ret : ret;
-> +out:
-> +	srcu_read_unlock(&key_type_srcu, srcu_idx);
-> +	return ret;
->  }
->  EXPORT_SYMBOL(key_reject_and_link);
->  
-> -- 
-> 2.47.3
-> 
-o
+Factor out CONFIG_KEYCTL_PKEY from CONFIG_ASYMMETRIC_KEY_TYPE as an
+off-by-default option so that systems that only need asymmetric keys for
+in-kernel signature verification can choose not expose KEYCTL_PKEY_*
+operations, and other key types can use them without pulling in
+crypto/asymmetric_keys.
 
-LGTM with quick skim. I'll revisit later with time
+Suggested-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ security/keys/Kconfig    | 9 +++++++++
+ security/keys/Makefile   | 2 +-
+ security/keys/internal.h | 2 +-
+ security/keys/keyctl.c   | 2 +-
+ 4 files changed, 12 insertions(+), 3 deletions(-)
 
-Br, Jarkko
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index 3f64d60d0f8a..75cc4043ca64 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -22,6 +22,15 @@ menuconfig KEYS
+ 
+ if KEYS
+ 
++config KEYCTL_PKEY
++	bool "Public-key operations on retained keys"
++	help
++	  This option provides support for querying, encrypting, decrypting,
++	  signing, and verifying signatures via keyctl using public or
++	  asymmetric keys retained in the kernel.
++
++	  If you are unsure as to whether this is required, answer N.
++
+ config KEYS_REQUEST_CACHE
+ 	bool "Enable temporary caching of the last request_key() result"
+ 	help
+diff --git a/security/keys/Makefile b/security/keys/Makefile
+index 5f40807f05b3..aafd28f7ee2f 100644
+--- a/security/keys/Makefile
++++ b/security/keys/Makefile
+@@ -22,7 +22,7 @@ obj-$(CONFIG_PROC_FS) += proc.o
+ obj-$(CONFIG_SYSCTL) += sysctl.o
+ obj-$(CONFIG_PERSISTENT_KEYRINGS) += persistent.o
+ obj-$(CONFIG_KEY_DH_OPERATIONS) += dh.o
+-obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += keyctl_pkey.o
++obj-$(CONFIG_KEYCTL_PKEY) += keyctl_pkey.o
+ 
+ #
+ # Key types
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index c452d71cce03..28c6cd942c59 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -314,7 +314,7 @@ static inline long compat_keyctl_dh_compute(
+ #endif
+ #endif
+ 
+-#ifdef CONFIG_ASYMMETRIC_KEY_TYPE
++#ifdef CONFIG_KEYCTL_PKEY
+ extern long keyctl_pkey_query(key_serial_t,
+ 			      const char __user *,
+ 			      struct keyctl_pkey_query __user *);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index d6b10fd67627..417bba539bb1 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -28,7 +28,7 @@ static const unsigned char keyrings_capabilities[2] = {
+ 	[0] = (KEYCTL_CAPS0_CAPABILITIES |
+ 	       (IS_ENABLED(CONFIG_PERSISTENT_KEYRINGS)	? KEYCTL_CAPS0_PERSISTENT_KEYRINGS : 0) |
+ 	       (IS_ENABLED(CONFIG_KEY_DH_OPERATIONS)	? KEYCTL_CAPS0_DIFFIE_HELLMAN : 0) |
+-	       (IS_ENABLED(CONFIG_ASYMMETRIC_KEY_TYPE)	? KEYCTL_CAPS0_PUBLIC_KEY : 0) |
++	       (IS_ENABLED(CONFIG_KEYCTL_PKEY)		? KEYCTL_CAPS0_PUBLIC_KEY : 0) |
+ 	       (IS_ENABLED(CONFIG_BIG_KEYS)		? KEYCTL_CAPS0_BIG_KEY : 0) |
+ 	       KEYCTL_CAPS0_INVALIDATE |
+ 	       KEYCTL_CAPS0_RESTRICT_KEYRING |
+-- 
+2.47.3
+
