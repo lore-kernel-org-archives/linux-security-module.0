@@ -1,78 +1,131 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795682682;
-	b=EX1TtPH0Aw+YkfUxqB6Ic7uBGfdrruBn0RwQhiX6NX2doBFup+XJP+Nshc0Ki4J+23Bk
-	 NMjx6qyqjrgaxPPQvBXzxM0swxNJoTyNicmv5QUO2udFwMRF+CKH2ocWov9UD9nDBj42Q
-	 fBUyQmJj9UJgKPYoygytH6ASnoY18v01LmBCZX1FPLy37yef0UlzkFrAZiyx2srwRI0Ua
-	 tYWbkR9FJPBRe0IOrREEWXypUYswvFFBKoKKIB1M1Qn4tWZFK/U/v/madJfq5lwjx/Bhw
-	 pvyZRfMPn0JIpw5xX2m5G8CL+V4dFcymC8KVdbH1lYLUCy4mj1a+NrkvvSkIWQVNHnA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795682682;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=YKcLweyW7rqQhUKSTjq85KM55V3zvJpsJlb9dgd9Bjw=;
-	b=L/mRvgOV7AO/oZRCOWXih2XnMs1iF59PwehnRoUrMlfi0LusA8Iz5+dl933vFG0m4+1z
-	 RywxSjSChVxoMB5EadpyuFmTIhKYoyZoiBDjetaFkKzK7B4Fh5CNJ8T3rSocFjxasxvQ8
-	 loOJnWUbqBXvzDxpoxIVUYCFVe4jgSynJyMr9+UndbLFcwKFNAEwFu5gLeDKMW19Whonr
-	 0yVhTXpYiZRF7w7XMtKK9QwqNHsZYq+/8RlufAVxvAaJS989A2gmBmImAGmQFiAAX10L+
-	 z8IgGh4mBBFyQepHW76UO85OhvJekzCqTgJ0D8iPqygXE5sUMUSBsJGyzoJLkCkYHHQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=EHN2EP3P;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795683945;
+	b=SeAdvMxZsUHgyeGW69bhd0JSOk47m7w/8zesQZUKD1taeFt9A749NC6A1t+KKUP7QseY
+	 uyKYsr6YArmyRlxoCCA7bafKrZ2wZFgpo166Roa4b51hQS9GkWCbQsM5b1R6fPyZAr6cH
+	 FEjZzJonO51YqxtoGuSasUC47cA7NQ5hhiX7B7y7tjR2hLTrhqMzgEtGuebAxHbtD1yRR
+	 XUWQmJ2bhRPXtXIIRSCvup9jSusxHXT9Qf2PXYSsQr9izSZzng+bFpZ2YddEi3LA+1kKa
+	 FkGsOxYfoQ3fcYXH6G3Lso5SXOUPAlv83s3rU7pkaXb4FeLj5aHK9dce2wSSoW+ABBQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795683945;
+	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
+	 DKIM-Signature:Received:Received:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To:X-Spamd-Result:X-Rspamd-Server:X-Rspamd-Action:
+	 X-Spam-Flag:X-Spam-Score:X-Spam-Level:X-Rspamd-Queue-Id;
+	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
+	b=klSnt5/4bCucfrqxssMYsig50aJrmmqE5VmAOChXwHq3Rc2w0YP+/TiBzZd0yT+Dp1HV
+	 BVz5RdVpPUVzwTz2iMf7awM5cMZRhJYAGacLDRr2XPsEdw9NMIAZJAetET/iz0DdxN7cm
+	 TvzHBv0jkIiVu4Ur4cjfYJtVkQK/uR+cqSuRRvkR0NVGUQsv7de0lO41/l5r1fDFR1AUZ
+	 bOlitl6ot+yS9j3VqnjAKf+zy+ozbeaGu0sNn+8Ewy47WW+zwzNQEZn8pLnjVJA4HFSPk
+	 xMUE39qu0D5rloa64ooaEnIRAUOCN+PpZQUeVAIS/M+omdsUViC9f9hmV9TDm1OfUTQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=suse.cz;
+	spf=pass smtp.mailfrom=suse.cz;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex;
+	arc=none smtp.remote-ip=195.135.223.130
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D60606A31C;
-	Thu, 26 Nov 2026 08:44:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23D60606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75616606A31E;
+	Thu, 26 Nov 2026 09:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 75616606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=EHN2EP3P
-Received: from [0.0.0.0] (ptz.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::77])
-	(Authenticated sender: afa@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id B431A201DCB;
-	Thu, 26 Nov 2026 09:44:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795682679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A246D21D8F;
+	Thu, 26 Nov 2026 09:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1795683936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YKcLweyW7rqQhUKSTjq85KM55V3zvJpsJlb9dgd9Bjw=;
-	b=EHN2EP3Po6xToGBTFwplBkmMRCxLwpnyF2f3lcdNfbKywjQ6ozA1sQSU7M2QR3RIKp6TwA
-	cHKbLPWR3O3WALWbXQx/qKEnWdhECYC8Kdrdg+6u5+Q2OqNphblBoGDDgkfhda5SkT7Ypv
-	v1RVc67hOT633f9i4a/+DwMpAoej+Ovr5qcmSmP/jaMWQEN7Pfot2V2ynTZdEcfJNJgZMY
-	9M6Y5+pXI4CgxinpEw5cQSGM4MkwHiFjWJIaa9CsrAZdy8uyAMAmmTQ7HFXX7JK3ba3CXK
-	+M5AsV8dfdWG52ACC82RmAwdXtomLv5H4Z9hTc81kkTPJZqTUon6HqF0K5EXSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795682679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
+	b=2Aj1MXJlIYpqdmjnsQ0sPyQux4kSV5g4Dsvpn6MzW7FExaq2EkvverSLjQXcNc+6bKKtoy
+	XxcllSyZ+V7edM65UBTv09Yhg3V1KYx1lxcmjqqR+CDO5ZEFQHWH+N1a/+UGiHumsuLmTt
+	ctIrIlDk/wLwqOwjhdBQgfX+DCCOWFs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1795683936;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YKcLweyW7rqQhUKSTjq85KM55V3zvJpsJlb9dgd9Bjw=;
-	b=TO9kexPkrcxH+ceLFAfk2OnUMNHyGKLHQp+o1gYkdE53u2y77l9Eb1JtrSQ514ZBFjiM5j
-	VckRFIs/gEtNFYwMI1KSDxuAlASuCl2osSTRqHgZDOY8V/yF+vlZ4aoxoMjXleIe8IfRQu
-	d+Xfo79fsUuXuSy+5UNqybX54md9MgpHZdsgYXW9di1rCgNWjfySije3RBGjhNNg+USf8Q
-	3tb20FvlUlPeNzfDdoueX3jX7wH71cMdyrXuQtU7zHSif8tmkMltxZmYgNOsMb/pIIH8+/
-	7iDIWssb0QT/YvsGiRGmn/Zl6CfEdgPXpmw3aph6xPaUOizryXeQ3+r2eHZV3Q==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=afa@pengutronix.de smtp.mailfrom=a.fatoum@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795682679; a=rsa-sha256;
-	cv=none;
-	b=OpuWA3Wq5qd4bZ0m92XxbgfmopMrV25U97lgCuYOphVbc87roszgc+YvortwdWIF2JhyAC
-	XYcrgAT0vJ3GA0jZD/kwUWGZMcNJytvMvsE5Kia9uLalBGbhRJYiVO1JO4mDj6cBa599cI
-	ap0+1Qx4jUxw1WCJf4x/K3V6IsKFreAehOhzKb2ADxBSuc7tGxV8ewBm8rq2ZSP8nPp557
-	tRCzyTvslF1D5r9QEGHm5BioBDr1/jWEH/6ZspF3FB2KuzmK4ctzQed1epC7k44+0brU9t
-	4jiwSH/rF0UbpASl5xjjkNP398fCYs+Uyyczrdzh1RdBfhKaC38TnRrC4yJnRw==
-Message-ID: <078b7a65-e378-4536-b4af-26a29e328c1a@pengutronix.de>
-Date: Thu, 26 Nov 2026 09:44:38 +0100
+	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
+	b=aKDUHDexsKNu7mk1FQDN4+wzC9n5YJr8g3hfI3/jNWMmzqqRUZXH69IyO/q+qyDg6RgAIb
+	u9PtFijfU1TL7JCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2Aj1MXJl;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=aKDUHDex
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1795683936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
+	b=2Aj1MXJlIYpqdmjnsQ0sPyQux4kSV5g4Dsvpn6MzW7FExaq2EkvverSLjQXcNc+6bKKtoy
+	XxcllSyZ+V7edM65UBTv09Yhg3V1KYx1lxcmjqqR+CDO5ZEFQHWH+N1a/+UGiHumsuLmTt
+	ctIrIlDk/wLwqOwjhdBQgfX+DCCOWFs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1795683936;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
+	b=aKDUHDexsKNu7mk1FQDN4+wzC9n5YJr8g3hfI3/jNWMmzqqRUZXH69IyO/q+qyDg6RgAIb
+	u9PtFijfU1TL7JCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73C03134C3;
+	Thu, 26 Nov 2026 09:05:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /qoxFGD2B2ufTAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 26 Nov 2026 09:05:36 +0000
+Received: by quack.suse.cz (Postfix, from userid 1000)
+	id F321627D9A; Thu, 26 Nov 2026 10:05:35 +0100 (CET)
+Date: Thu, 26 Nov 2026 10:05:35 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Harry Yoo (Meta)" <harry@kernel.org>
+Cc: Vlastimil Babka <vbabka@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Muchun Song <muchun.song@linux.dev>, Hao Ge <hao.ge@linux.dev>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, "Liam R. Howlett" <liam@infradead.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Robin Murphy <robin.murphy@arm.com>, 
+	"Joerg Roedel (AMD)" <joro@8bytes.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Eric Dumazet <edumazet@kernel.org>
+Subject: Re: [PATCH slab/for-next v2 04/14] fs/buffer: specify
+ SLAB_MAY_ACCOUNT for buffer_head cache
+Message-ID: <gmnosp2u47xewnszzrx4asmldxsyjtejyrbrng2ckrcfedymeu@evhwupv3iwhf>
+References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
+ <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-4-7c680f02a734@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -82,83 +135,88 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KEYS: trusted: caam: propagate protected key option
- parsing errors
-To: Keisuke Tsukuda <tkdkei@outlook.jp>
-Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "jarkko@kernel.org" <jarkko@kernel.org>,
- "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
- "dhowells@redhat.com" <dhowells@redhat.com>,
- "paul@paul-moore.com" <paul@paul-moore.com>,
- "jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com"
- <serge@hallyn.com>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20261124155310.32044-1-tkdkei@outlook.jp>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20261124155310.32044-1-tkdkei@outlook.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-4-7c680f02a734@kernel.org>
+X-Spamd-Result: default: False [-13.01 / 50.00];
+	SUSE_INTERNAL_BYPASS(-9.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,google.com,cmpxchg.org,linux.dev,gentwo.org,suse.de,kvack.org,vger.kernel.org,meta.com,infradead.org,gmail.com,zeniv.linux.org.uk,suse.cz,davemloft.net,linutronix.de,arm.com,linux.ibm.com,ellerman.id.au,8bytes.org,schaufler-ca.com,paul-moore.com,namei.org,hallyn.com,nod.at,cambridgegreys.com,sipsolutions.net];
+	R_RATELIMIT(0.00)[to_ip_from(RLpgg91yox7uqmadgh65wjkwtw)];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCPT_COUNT_GT_50(0.00)[51];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -13.01
+X-Spam-Level: 
+X-Rspamd-Queue-Id: A246D21D8F
 
-On 11/24/26 16:53, Keisuke Tsukuda wrote:
-> From: Keisuke Tsukuda <tkdkei@outlook.jp>
+On Wed 25-11-26 21:37:05, Harry Yoo (Meta) wrote:
+> Buffer heads are allocated with __GFP_ACCOUNT to charge them to the
+> memcg of the folio they are attached to. Specify SLAB_MAY_ACCOUNT when
+> the object may be charged to a memcg. __GFP_ACCOUNT without
+> SLAB_MAY_ACCOUNT will not be allowed.
 > 
-> get_pkey_options() returns -EINVAL for invalid protected key options,
-> such as "key_enc_algo=GG". trusted_caam_seal() and trusted_caam_unseal()
-> ignore this error and return 0. The trusted key core then instantiates
-> a key without a blob for "new", or with a zero-length key for "load".
+> Path: ext4_getblk() -> folio_alloc_buffers(GFP_NOFS | __GFP_ACCOUNT)
+>   -> alloc_buffer_head() -> kmem_cache_zalloc(bh_cachep)
 > 
-> On an i.MX6Q running a 7.4.0-rc2-based kernel, adding a key with
-> "new 32 pk key_enc_algo=GG" succeeds, but KEYCTL_READ returns zero
-> bytes because no blob was created. The key cannot be saved and
-> reloaded.
-> 
-> Return the parsing error from both paths. On the patched kernel,
-> "new" and "load" with "key_enc_algo=GG" both fail with -EINVAL, while
-> valid requests succeed.
-> 
-> Fixes: a703a4c2a328 ("KEYS: trusted: caam based protected key")
-> Signed-off-by: Keisuke Tsukuda <tkdkei@outlook.jp>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Looks good. Feel free to add:
+
+Acked-by: Jan Kara <jack@suse.cz>
+
+								Honza
 
 > ---
->  security/keys/trusted-keys/trusted_caam.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  fs/buffer.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-> index 6a33dbf2a..33000d7bb 100644
-> --- a/security/keys/trusted-keys/trusted_caam.c
-> +++ b/security/keys/trusted-keys/trusted_caam.c
-> @@ -110,7 +110,7 @@ static int trusted_caam_seal(struct trusted_key_payload *p, char *datablob)
->  		info.pkey_info.is_pkey = 1;
->  		ret = get_pkey_options(datablob, &info.pkey_info);
->  		if (ret < 0)
-> -			return 0;
-> +			return ret;
->  		dump_options(&info.pkey_info);
->  	}
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index f951559e7d32..4c24f4546106 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -3006,7 +3006,7 @@ void __init buffer_init(void)
+>  	int ret;
 >  
-> @@ -142,7 +142,7 @@ static int trusted_caam_unseal(struct trusted_key_payload *p, char *datablob)
->  		info.pkey_info.is_pkey = 1;
->  		ret = get_pkey_options(datablob, &info.pkey_info);
->  		if (ret < 0)
-> -			return 0;
-> +			return ret;
->  		dump_options(&info.pkey_info);
->  
->  		p->key_len = p->blob_len + sizeof(struct caam_pkey_info);
-
-
+>  	bh_cachep = KMEM_CACHE(buffer_head,
+> -				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC);
+> +				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_MAY_ACCOUNT);
+>  	/*
+>  	 * Limit the bh occupancy to 10% of ZONE_NORMAL
+>  	 */
+> 
+> -- 
+> 2.54.0
+> 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
