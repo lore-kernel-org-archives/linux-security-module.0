@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.221
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795697241;
-	b=o5Y/N62y7Pq2Jcc2vANulSgKMx4ZV3S960zZGwD3FGVyRb6FjKzJ//KItRsor8cY3c93
-	 w9237kMpg9vaPQV5bx/HatIVUe/sf5Jjw/om4li5nPNmNpm95qel0mT2S3HIptwezRMk0
-	 FCcsjk+GDErIxvSMympcLe6ZHhbf2nb6aPdmRfj6c4GJ0yQD1U5I1JZHSNF9VLHbpbgZC
-	 oLz7jVH7Ek2WuyHscAW8rUVa5JWUZMHhTYaqWXbza3K+ZdjBBNE+SMyH2EmU1A8JfxzUR
-	 yVB4BlyaXuQm7FdJikmlH5vESK805LJkm2YJLFkDQe6nxNWBwsE8T2/JjDRbgfydkqg==
+	b=kmqCwVYl/QYox9RPp2lnUw5oXGolfslipokGmHIxAAhP0oDM2C7n8qGt32pzGKuIyZGf
+	 QQEd4sBXVGz4VvIYzz19vZoXqZbAijnGBrbyZ6zBr9y9gcQ4aMl3jsOPkh2+q00uJopgQ
+	 bSlLYm1yhcsB4d4bA2DxPP+xkPRWd6bYNBfSXsfUvSrPQ0w/bm7Eq8lKXGd0RCXyq0d8q
+	 8FktnNmZgK+wqyEHqb9U+up9N8IkezcgcumhCW7AiYu0n+PthyQG2mITwLH7ySPoGkqXt
+	 TmH7jJ3YmRaeA6PeOhYjh1BUlCPqFjyJRVYFAjJsSi8hIbiJ3WCb08yX5kHuOhSU9Lw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795697241;
 	h=DMARC-Filter:dkim-signature:Received:Received:Received:From:To:CC:
 	 Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Type:X-Originating-IP:X-ClientProxiedBy;
-	bh=EQV7kCe2Aqjf0syoNQfrKGpUjzSheyxOLsD3FQtpa8I=;
-	b=bqJGmoSY0vfWbKJOkA9DV5EETY9zACgvBnCwPfiosY3crM05yLBVdebvEBVsk4ZQMwdL
-	 daVP+2r+35JaMa25ob0G3IEVrIp13wMdngkV+NZXHjr9OFaG8rXOJe2al8qLXkX4LhpdK
-	 N3UD+xfiCtDA1Vj/vr8TS7L4T+N35MliZ90MkvzQrcCu867mdFJk2ymU7ctBp7fmSA27M
-	 YL3Pm6lg6Vi4NKe6VWZS02ke0KarAk6CqLoxUJNgsjTKQGUXPUOFiJ76e+EViM150lLEo
-	 zzr1/6365odHIKtAr4azIYb6RLpfppic61bucrOMjB/HRNy6w1+FiIoPSr1/xSVgQKQ==
+	bh=7HB80arrzZyCBom3sXuXwuYgBXzCAd4JNuZqsg2qCWA=;
+	b=Moi5mdVxUCM40A/0XbzQwxMRtDZc96WZ+6hmUcjZKDEvTPsm+ctgOM9e5sV2ymBq+35S
+	 D5uKDd3dyZvPVD0eBelBIXLQCiILTiWTJ0nxf4oCzK3gqJ+s8KcKSKx7mfS0JCI6iWqYx
+	 J0SqC/DEn0+7qm0HXM57P7iKGXtVOtWV3LbmQq2bGfmHLSO/bSKIG92cEoi+UYdhffmdz
+	 6n4GLlnvANP3QjQxxhVAIbHnPeSqr4A3pTVjlJ/59IFHlkcs53MshKomujNULPPPAcyOI
+	 Lya1dBudtbbhRBH+a/00wmoNG5X3RB59ry+6vN2iRtSIydscnOOajU+pOtaaiY4sWEw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=huawei.com;
 	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=TWwouNln;
+	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b="W/KgnyiU";
 	arc=none smtp.remote-ip=113.46.200.221
 Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CD8606A699;
-	Thu, 26 Nov 2026 12:47:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 32CD8606A699
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699CB606A6AF;
+	Thu, 26 Nov 2026 12:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 699CB606A6AF
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=TWwouNln
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=W/KgnyiU
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
 	c=relaxed/relaxed; q=dns/txt;
 	h=From;
-	bh=EQV7kCe2Aqjf0syoNQfrKGpUjzSheyxOLsD3FQtpa8I=;
-	b=TWwouNlnisJhj1ydaO9SZ+fz6RR3HZkCvF+PwgyFdrkkYZith7UeLEXlluujFXEArR/5SwWJu
-	LW49nbrdTQb0lSN7QWx3D9h7YrFpZefp6Z3ocm1ZUufeLuv/WFT6VcLzcD8yL50hkO2D5esykvu
-	jQip8AXg6jxGlzzMpg82RAw=
-Received: from mail.maildlp.com (unknown [172.19.162.197])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4jZxBp3khnzRhT8;
-	Thu, 26 Nov 2026 20:46:58 +0800 (CST)
+	bh=7HB80arrzZyCBom3sXuXwuYgBXzCAd4JNuZqsg2qCWA=;
+	b=W/KgnyiUqD5JT5wgdZTEAuJt2HsBgGvYM8oZsp6JW82GQ4oewYuqDlIcZNoIr9mmzjQN9bO4f
+	HfoPu7iYbxMXZTq2t0JS154DEtcC48L+ah+4DrLw0tXJAkoP/rHGthjqTK6Jq3YZNAp08QEHTi6
+	eO1EZBSQUicOqNV2vNzMi0g=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4jZxBl19kCzRhQT;
+	Thu, 26 Nov 2026 20:46:55 +0800 (CST)
 Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id D68884057D;
-	Thu, 26 Nov 2026 20:47:17 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 7F1DF40561;
+	Thu, 26 Nov 2026 20:47:14 +0800 (CST)
 Received: from octopus.huawei.com (10.67.174.191) by
  whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Thu, 26 Nov 2026 20:47:16 +0800
+ 15.2.2562.56; Thu, 26 Nov 2026 20:47:13 +0800
 From: Cai Xinchen <caixinchen1@huawei.com>
 To: <nicolas.bouchinet@oss.cyber.gouv.fr>, <xiujianfeng@huawei.com>,
 	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
@@ -57,9 +57,9 @@ To: <nicolas.bouchinet@oss.cyber.gouv.fr>, <xiujianfeng@huawei.com>,
 CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
 	<lujialin4@huawei.com>
-Subject: [PATCH v3 5/8] lockdown: drop an unused include and move lockdown_reasons
-Date: Thu, 26 Nov 2026 21:13:12 +0800
-Message-ID: <20261126131315.1256553-6-caixinchen1@huawei.com>
+Subject: [PATCH v3 2/8] lockdown: remove useless decrement operation
+Date: Thu, 26 Nov 2026 21:13:09 +0800
+Message-ID: <20261126131315.1256553-3-caixinchen1@huawei.com>
 X-Mailer: git-send-email 2.18.0.huawei.25
 In-Reply-To: <20261126131315.1256553-1-caixinchen1@huawei.com>
 References: <20261126131315.1256553-1-caixinchen1@huawei.com>
@@ -76,142 +76,37 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
  whupemk100010.china.huawei.com (7.152.184.41)
 
-linux/export.h is not needed since the file has no EXPORT_SYMBOL() usage.
+From: Kalevi Kolttonen <kalevi@kolttonen.fi>
 
-lockdown_reasons[] is only used by the lockdown LSM after the audit data
-was removed from lsm_audit.  Move it into security/lockdown/lockdown.c,
-make it static, and drop the now stale extern declaration.  The existing
-enum comment in include/linux/security.h already pointed at
-security/lockdown/lockdown.c and becomes accurate now that the array has
-moved there.
+The length of the written state is only used to strip the trailing
+newline; it is never read afterwards, so decrementing it while
+stripping the newline serves no purpose.  Drop the decrement, and with
+it the braces around the now single-statement if.
 
 No functional change.
 
+Signed-off-by: Kalevi Kolttonen <kalevi@kolttonen.fi>
 Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
 ---
- include/linux/security.h     |  2 --
- security/lockdown/lockdown.c | 40 +++++++++++++++++++++++++++++++++++-
- security/security.c          | 40 ------------------------------------
- 3 files changed, 39 insertions(+), 43 deletions(-)
+ security/lockdown/lockdown.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 40831fab5470..9d3a1eaa90ff 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -170,8 +170,6 @@ struct lsm_prop {
- 	struct lsm_prop_bpf bpf;
- };
- 
--extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
--
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, unsigned int opts);
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 8648508d49b2..84efd533fe5a 100644
+index 263dcc80d839..8648508d49b2 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -11,10 +11,48 @@
-  */
+@@ -130,10 +130,8 @@ static ssize_t lockdown_write(struct file *file, const char __user *buf,
+ 		return PTR_ERR(state);
  
- #include <linux/security.h>
--#include <linux/export.h>
- #include <linux/lsm_hooks.h>
- #include <uapi/linux/lsm.h>
+ 	len = strlen(state);
+-	if (len && state[len-1] == '\n') {
++	if (len && state[len-1] == '\n')
+ 		state[len-1] = '\0';
+-		len--;
+-	}
  
-+/*
-+ * These are descriptions of the reasons that can be passed to the
-+ * security_locked_down() LSM hook, used for the denial message and the
-+ * securityfs status file.
-+ */
-+static const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
-+	[LOCKDOWN_NONE] = "none",
-+	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
-+	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
-+	[LOCKDOWN_EFI_TEST] = "/dev/efi_test access",
-+	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
-+	[LOCKDOWN_HIBERNATION] = "hibernation",
-+	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
-+	[LOCKDOWN_IOPORT] = "raw io port access",
-+	[LOCKDOWN_MSR] = "raw MSR access",
-+	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
-+	[LOCKDOWN_DEVICE_TREE] = "modifying device tree contents",
-+	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
-+	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
-+	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
-+	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
-+	[LOCKDOWN_DEBUGFS] = "debugfs access",
-+	[LOCKDOWN_XMON_WR] = "xmon write access",
-+	[LOCKDOWN_BPF_WRITE_USER] = "use of bpf to write user RAM",
-+	[LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
-+	[LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
-+	[LOCKDOWN_XEN_USER_ACTIONS] = "Xen guest user action",
-+	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
-+	[LOCKDOWN_KCORE] = "/proc/kcore access",
-+	[LOCKDOWN_KPROBES] = "use of kprobes",
-+	[LOCKDOWN_BPF_READ_KERNEL] = "use of bpf to read kernel RAM",
-+	[LOCKDOWN_DBG_READ_KERNEL] = "use of kgdb/kdb to read kernel RAM",
-+	[LOCKDOWN_PERF] = "unsafe use of perf",
-+	[LOCKDOWN_TRACEFS] = "use of tracefs",
-+	[LOCKDOWN_XMON_RW] = "xmon read and write access",
-+	[LOCKDOWN_XFRM_SECRET] = "xfrm SA secret",
-+	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
-+};
-+
- static enum lockdown_reason kernel_locked_down;
- 
- static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
-diff --git a/security/security.c b/security/security.c
-index e8b0c4691659..0241f1357c6a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -35,46 +35,6 @@
- 
- #include "lsm.h"
- 
--/*
-- * These are descriptions of the reasons that can be passed to the
-- * security_locked_down() LSM hook. Placing this array here allows
-- * all security modules to use the same descriptions for auditing
-- * purposes.
-- */
--const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX + 1] = {
--	[LOCKDOWN_NONE] = "none",
--	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
--	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
--	[LOCKDOWN_EFI_TEST] = "/dev/efi_test access",
--	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
--	[LOCKDOWN_HIBERNATION] = "hibernation",
--	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
--	[LOCKDOWN_IOPORT] = "raw io port access",
--	[LOCKDOWN_MSR] = "raw MSR access",
--	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
--	[LOCKDOWN_DEVICE_TREE] = "modifying device tree contents",
--	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
--	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
--	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
--	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
--	[LOCKDOWN_DEBUGFS] = "debugfs access",
--	[LOCKDOWN_XMON_WR] = "xmon write access",
--	[LOCKDOWN_BPF_WRITE_USER] = "use of bpf to write user RAM",
--	[LOCKDOWN_DBG_WRITE_KERNEL] = "use of kgdb/kdb to write kernel RAM",
--	[LOCKDOWN_RTAS_ERROR_INJECTION] = "RTAS error injection",
--	[LOCKDOWN_XEN_USER_ACTIONS] = "Xen guest user action",
--	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
--	[LOCKDOWN_KCORE] = "/proc/kcore access",
--	[LOCKDOWN_KPROBES] = "use of kprobes",
--	[LOCKDOWN_BPF_READ_KERNEL] = "use of bpf to read kernel RAM",
--	[LOCKDOWN_DBG_READ_KERNEL] = "use of kgdb/kdb to read kernel RAM",
--	[LOCKDOWN_PERF] = "unsafe use of perf",
--	[LOCKDOWN_TRACEFS] = "use of tracefs",
--	[LOCKDOWN_XMON_RW] = "xmon read and write access",
--	[LOCKDOWN_XFRM_SECRET] = "xfrm SA secret",
--	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
--};
--
- bool lsm_debug __ro_after_init;
- 
- unsigned int lsm_active_cnt __ro_after_init;
+ 	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
+ 		enum lockdown_reason level = lockdown_levels[i];
 -- 
 2.18.0.huawei.25
 
