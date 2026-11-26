@@ -1,58 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795697452;
-	b=Doh0isXi1d8m+pgrQ5BK49oti2HbGNNMrYSGjSYQBfzw2F3ulkPNti+O/wN/+o3Dl5Hn
-	 14s0ZkZbQr4hRxa0nYZM78X33Wo6DQMTcAp92DLXdWDpCNy7cyVgWuAZuNa2MmOuGlQ51
-	 uRFjxSHUDCPcdXE7ooHn3Wgt5j/JDEVLFGhgefM3XKJH2NK4jwG+7C2KomTqvPDJjPEAJ
-	 d7KZJyHZqEVXVNpivh3x1wK4Y0+HxFp6MiB2XpM7M/U94NnxuUpRJArDYB/A/rLiIBtLJ
-	 eO1dK15ZhndroUtfBRWdONERDn28j0405zFrl6reDd1YM2xlYHglflDFrNNSZUXYI1w==
+	t=1795697564;
+	b=WwFs4E2Jni4Kt/iZYlP1KUDBAyOJIbtNBwPeOhhnCH3YkX/uWukT3bwmw9cnbg3nm9Ny
+	 uryqskqyyOL9Q5KnnlYWrQ37aPzPBQFfSc03XEeJctby6IDcUIHma0NmcMRZUSdc0XMc4
+	 +Gk/Ax2v0RZs0cEjBa/d4XxmKSV177NU0kc+7IWkhvNdYdxqu+C1l/yA2hCL4fYP7G7oL
+	 xJbw05lQy8yZb3QT0kmzBPa93J7H+c/PX0lNS4+vfCpSFRM+wy6r9rO4c783G4+ZERH0d
+	 14CMPaJ0H288uXXgweGmGkVdCJNDRiKe5mTOwAfysGQ2bimxwkI16zyC+AeydH2xVAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795697452;
-	h=DMARC-Filter:dkim-signature:Received:Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:CC:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-	bh=lUFCf/i33f0gFEHdJJLi5vE7e9M4uWkbvzZAlGrisW8=;
-	b=m39UoD/XRhuZ0J1hWw6q1HWZAC1LUqQZIRLwwoz+JEODRn6a4+tOy3m0jvIEQ5EtyGqR
-	 hhkilWqUbLOo75YPi8qhLUU8NvXafWFYBTqPAbhLYP5Dlq2gOkkH/mnVf/LQFoJoIprul
-	 nnyQci4bms2cIR6Zd/BAL0JYtFKjInrOSBxL2607iWIQrIHhLe7G5uA4s6kgvnyx/QJ2o
-	 Yx8XWUkTdIF3Lys/nZWM0TH/UJSF3xtqOGIDgZdkKFECnZYe0BhhEHYknB3t9hrW9Hao1
-	 npaK9CMLwtBnTK5NPyGk+KM03VQAikjFGo3ZiLQxJ3QoAWmmhcEseT+5ZgDyXpXLIEQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795697564;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=+I5XcSrnP8TgJZUCankF3qECrXYmR/61VulC5nacIOI=;
+	b=qh75bwHMLxa0tUqK/J3B7GaMB0kNKgfotoaXxXnUEDgfZK1K/dFdQg3O+fKs/iQCA7b+
+	 GDhopMXwJQAV8CKBIUE0lL9qAakkAF+yooVJJgc8hAcjDGE+ISZHBV6iliDPOvZlRX3CC
+	 /h9M0NmB7EHEdnqsMOdKhtfc+AK9hsby9OTmMCSrp0LPfJey6VZRno1bFpzb46TZrSY9y
+	 dVQO2vf9kQHY0PwMFw1kByfON8M42m/Wkt3Ce5rdX4HrS/ZV6bpogI0Y5nkP3Dx+PgIJW
+	 szkMNrz07PErCKqHztuxwztV5yrFg0VhoVUDqUr42g/BjnKV80edIr61p/JHpPZMBqA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=huawei.com;
-	spf=pass smtp.mailfrom=huawei.com;
-	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=47+3007Y;
-	arc=none smtp.remote-ip=113.46.200.224
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZRogLsTq;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CC6606A323;
-	Thu, 26 Nov 2026 12:50:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 84CC6606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E6A606A31C;
+	Thu, 26 Nov 2026 12:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=47+3007Y
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=lUFCf/i33f0gFEHdJJLi5vE7e9M4uWkbvzZAlGrisW8=;
-	b=47+3007YhjxQwZG0R5za/zsqMyQW7tRu8Zd+abGNeBJ5+rj85f+FRKzOp1l/5mYeLUPfE1HvT
-	5CP0MzbyNbTDW+COXLrP8ByfdcWTmULbA+t+zYeBT37GLIfuKfnUQ4NH3hhD3KdeX5MTbjicjWt
-	wGbMONsRxjOSqtfXa6lq3Uo=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4jZxGg64F5z1cyRy;
-	Thu, 26 Nov 2026 20:50:19 +0800 (CST)
-Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id B5A3240563;
-	Thu, 26 Nov 2026 20:50:44 +0800 (CST)
-Received: from [10.67.110.140] (10.67.110.140) by
- whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.56; Thu, 26 Nov 2026 20:50:43 +0800
-Message-ID: <00eed8d3-2444-4517-ab47-731a1a987386@huawei.com>
-Date: Thu, 26 Nov 2026 20:50:42 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZRogLsTq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5341F000CA;
+	Thu, 26 Nov 2026 12:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795697563;
+	bh=+I5XcSrnP8TgJZUCankF3qECrXYmR/61VulC5nacIOI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ZRogLsTqTrtfUgCMPsM4cP6jekpIS1U1DFKsmCZAjxSF7Om8j2+1lXgUCUvd72kJA
+	 7fVOUzq0O/893Jt1u6tAJ+7I6WbEk7WcKhF//exEnE9wNuwT8CwMVdkfeEGPocvRyD
+	 mlCrWADD2lGebtgMtjuFqdP73YcFZm6BxaCgqzgfEArTy0J0lDNkTtcWhy+WvFMJll
+	 WAeD1IXXhKO4vCZ+IeIQPQGm1K6kGaVHagk1qBNT+iDjCNndlShcBHabTv+Itv4Faj
+	 25caGxcY62YbHfaVz1V4JL3xEpShYoj1/YW4whRbpLV5YU5XU1kZb65D0pGzIqR9yi
+	 JZBY+vdLGPYVA==
+Message-ID: <sashiko-outbox-235539@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 6/8] lockdown: bound the status string with scnprintf
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cai Xinchen" <caixinchen1@huawei.com>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+In-Reply-To: <20261126131315.1256553-7-caixinchen1@huawei.com>
+References: <20261126131315.1256553-1-caixinchen1@huawei.com>
+ <20261126131315.1256553-7-caixinchen1@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 26 Nov 2026 12:52:43 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -61,38 +59,101 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next -v2 0/8] lockdown: fix the securityfs interface and
- add tests
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	"xiujianfeng@huawei.com" <xiujianfeng@huawei.com>
-CC: <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<shuah@kernel.org>, <kalevi@kolttonen.fi>,
-	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<lujialin4@huawei.com>
-References: <20261110132818.2231593-1-caixinchen1@huawei.com>
- <179553449228.44882.5530794140051904297.b4-review@b4>
-Content-Language: en-US
-From: Cai Xinchen <caixinchen1@huawei.com>
-In-Reply-To: <179553449228.44882.5530794140051904297.b4-review@b4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- whupemk100010.china.huawei.com (7.152.184.41)
 
-Hi, Nicolas
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] lockdown: status string truncation in lockdown_read() on
+  concurrent write
+--
 
-Thank you for your review. I have revised following the comments above, 
-including Xiu's,
-and sent v3.
+commit 66eac39b9c466fbdeff2afcfbf4a18a53ab7e3f1
+Author: Cai Xinchen <caixinchen1@huawei.com>
 
-On 11/24/2026 11:34 PM, Nicolas Bouchinet wrote:
+lockdown: bound the status string with scnprintf
 
-> For your information, your e-mail subjects starts with '[PATCH -next -v2 x/8]'
-> and break tools like b4 that help tracking your contributions, could you
-> fix it to [PATCH v3 x/8] ?
->
-> Thanks in advance,
->
+This commit replaces sprintf() with scnprintf() in lockdown_read() and
+sizes the status buffer to the exact length of the three level labels with
+one bracketed active level.
+
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index 84efd533fe5a6..239dbcdbabb40 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -14,13 +14,28 @@
+>  #include <linux/lsm_hooks.h>
+>  #include <uapi/linux/lsm.h>
+> =20
+> +static const char lockdown_label_none[] =3D "none";
+> +static const char lockdown_label_integrity[] =3D "integrity";
+> +static const char lockdown_label_confidentiality[] =3D "confidentiality";
+> +
+> +/*
+> + * The size of the lockdown status string: all three level labels
+> + * with their trailing spaces, the brackets around the active one,
+> + * and the terminating NUL.  Whichever level is active, the string
+> + * has the same length.  The label sizeof() values include their
+> + * own NULs, so only three more bytes are needed.
+> + */
+> +#define LOCKDOWN_STATUS_LEN	(sizeof(lockdown_label_none) +		\
+> +				 sizeof(lockdown_label_integrity) +	\
+> +				 sizeof(lockdown_label_confidentiality) + 3)
+
+[ ... ]
+
+> @@ -134,7 +149,7 @@ static int __init lockdown_lsm_init(void)
+>  static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t=
+ count,
+>  			     loff_t *ppos)
+>  {
+> -	char temp[80] =3D "";
+> +	char temp[LOCKDOWN_STATUS_LEN] =3D "";
+>  	int i, offset =3D 0;
+> =20
+>  	for (i =3D 0; i < ARRAY_SIZE(lockdown_levels); i++) {
+> @@ -144,9 +159,13 @@ static ssize_t lockdown_read(struct file *filp, char=
+ __user *buf, size_t count,
+>  			const char *label =3D lockdown_reasons[level];
+> =20
+>  			if (kernel_locked_down =3D=3D level)
+> -				offset +=3D sprintf(temp+offset, "[%s] ", label);
+> +				offset +=3D scnprintf(temp + offset,
+> +						    sizeof(temp) - offset,
+> +						    "[%s] ", label);
+>  			else
+> -				offset +=3D sprintf(temp+offset, "%s ", label);
+> +				offset +=3D scnprintf(temp + offset,
+> +						    sizeof(temp) - offset,
+> +						    "%s ", label);
+>  		}
+>  	}
+
+[Severity: Low]
+Can a concurrent lockdown_write() cause lockdown_read() to truncate the
+status string in temp[]?
+
+LOCKDOWN_STATUS_LEN (34 bytes) only leaves room for one pair of brackets,
+and kernel_locked_down is re-read on each iteration of the loop:
+
+CPU0                              CPU1
+lockdown_read()
+  i =3D 0 (LOCKDOWN_NONE):
+    kernel_locked_down =3D=3D level
+    scnprintf(..., "[none] ")
+                                  lockdown_write()
+                                    lock_kernel_down(...,
+                                      LOCKDOWN_INTEGRITY_MAX)
+  i =3D 1 (LOCKDOWN_INTEGRITY_MAX):
+    kernel_locked_down =3D=3D level
+    scnprintf(..., "[integrity] ")
+  i =3D 2 (LOCKDOWN_CONFIDENTIALITY_MAX):
+    scnprintf(..., "confidentiality ")
+      <-- truncated to "confidentialit"
+
+temp[offset - 1] =3D '\n' then overwrites the last character of the label,
+returning "[none] [integrity] confidentiali\n" to userspace.  Reading
+kernel_locked_down once with READ_ONCE() before the loop would avoid
+matching more than one level.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261126131315.1256=
+553-1-caixinchen1@huawei.com?part=3D6
