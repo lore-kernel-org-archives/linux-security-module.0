@@ -1,129 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795684005;
-	b=k7iKrtb7quyCotECu37SGzxDdaBYmmbJaYc4n/ccsVKaiy5HKoks73sP++zTpsFdjVV7
-	 NJ0jBx7pvUatzS40TyHnbGq4buf559c9+gVr5LZ5CzRplSr5HqGj/kswYcfXKaIou2LUR
-	 sqn7GKvOxgsj9GHq7rOLl9+ovKiyF97Duqf8Jfs1mVuN69v4fsNgksWOP0PYhPieEy0tA
-	 qi9GUC0F1I3/oaxJ1OAjQHr6F1wsnS85AKExLhcd4ImD+GQdAiYG2KF4DhUTcxIGJACnx
-	 Rs166jeyzs4b9QiMykaOoZxD/Cyr1O3ohX/78ljmXdcJBsAhaIitz6ZeKH3a/fVP7Lw==
+	t=1795691453;
+	b=3Ou3rE6it77h12vTNyGKOnaq86Qxe1aHW/INUY6J/rRHQHrbOUjhNpzgEyZzaKT2wFoE
+	 FhEYLHieyuFJVT2DaO2m3qjKAdL8l6RPtYShTqdyx07yWFHUar4ag13AImda/o6g9VJxH
+	 V1iyW41ieFUJz5qQS49rzADIfcbyCU81fNsolfZHBOdJqdaHSMw++iA4ehi7OO2fuysI1
+	 Srm9kOxWHwc52Z6g8RmWi8fxifDi145Bvf053BUwj72uvE3hxIBg18jd9hqXjsgt/NRAt
+	 scnwqWX7zHPqBY4PwEHwy9ZvA/SMxWullhNMQix79rnxlJhZeEC19D7QjZtuYJ3O3hw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795684005;
-	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To:X-Spamd-Result:X-Spam-Score:X-Spam-Level:X-Spam-Flag;
-	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
-	b=F5HnWLxX1Nlprmzc6XD3jiJpL+eKC2sO67MEkB66DIEweLGC/A8raw5L451sOPgcX5UJ
-	 UZfbPaJjGntHotmVH0Id79U88KNEOH5Cd/Sr/+0pj39DiJNB68kzKbnTj7Sd3mZPKV2CG
-	 WpzC7nAnY3cPR5MIa/gUTU9I2NOg8xojr95UP0g7JhwKA9jKvcJo/gVqwZ39RXbDK5XYw
-	 hhfb+7SH63OoAxT/3DPRAUPc1cCI9utgqtE1jQ14C//dkvsNyEtXkEsge55QbMnLpy9cS
-	 EV3KVfV8wZke6K7HmJWg+MxEHMNUa6GkHCJKoXidBerI7ZIC6UgfNYY2Os5rHy+vL6Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795691453;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=mzhfHYOTAiWX4/4QQvlE4sNDOxtXiB/zhUzzBPto7Gg=;
+	b=ZT/LGV0rqYwv7RH40yysjiOGofOTosbcYJe6yKDC9r6HfD0Sx3bGS1laU0mvuJnbfRgr
+	 N0PCwNBOoO1H101sNUWEbWjJiV+NErQGp/Q+AwGnRxGhVRLknsEyLwAVmocWschSqErAV
+	 lT/6Pe7rl4FWHf6ujwyaAX07cISgtlnJM1BCZ1me8FkPwG+6grlnaf8muZIPtnAgViyEH
+	 Aod/AIyE+qb2yUBj47PGPvyV2WaAqddDqC5Pz2veC/7RUfdI6cEDZaFjDMQFBR6qQPkka
+	 wnn+vGwWENgpfALlwC0VOYmoTg4VTmwhlctG5D6G6SVaUiOf+LApnzUq9p5gkYYDvvQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=suse.cz;
-	spf=pass smtp.mailfrom=suse.cz;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
-	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN;
-	arc=none smtp.remote-ip=195.135.223.130
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A+nXzGi6;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A72606A31E;
-	Thu, 26 Nov 2026 09:06:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9A72606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC5A606A31C
+	for <linux-security-module@vger.kernel.org>; Thu, 26 Nov 2026 11:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
-	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0E71922688;
-	Thu, 26 Nov 2026 09:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1795684003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
-	b=FrHK60xiPLeKlT1sSH5Q20B2+d/AbScE9RcAHGXZhrD/3jTYyClPEpX92WSF1W0zEnuV7i
-	JW1gzl5z4Tq3LoafQjvoXXo5LfTiVX5bpn3tC2r77oUsrGutCcvbQhOQTXLAOYiGrUDiKq
-	aM3Dq+nCb8seaEN7ZI5shQrPOsllFZE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1795684003;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
-	b=9SPaV1VNP8RzeVfIHQf1g3LXlIJAsbPen6y8ZFMgxQS707IWLOlJe4SyZ2PL7gEkznrvW+
-	p294Re6jlcOzVBCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1795684003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
-	b=FrHK60xiPLeKlT1sSH5Q20B2+d/AbScE9RcAHGXZhrD/3jTYyClPEpX92WSF1W0zEnuV7i
-	JW1gzl5z4Tq3LoafQjvoXXo5LfTiVX5bpn3tC2r77oUsrGutCcvbQhOQTXLAOYiGrUDiKq
-	aM3Dq+nCb8seaEN7ZI5shQrPOsllFZE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1795684003;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
-	b=9SPaV1VNP8RzeVfIHQf1g3LXlIJAsbPen6y8ZFMgxQS707IWLOlJe4SyZ2PL7gEkznrvW+
-	p294Re6jlcOzVBCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6906134C3;
-	Thu, 26 Nov 2026 09:06:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hMxfJKL2B2ubTgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 26 Nov 2026 09:06:42 +0000
-Received: by quack.suse.cz (Postfix, from userid 1000)
-	id 5978B27D9C; Thu, 26 Nov 2026 10:06:42 +0100 (CET)
-Date: Thu, 26 Nov 2026 10:06:42 +0100
-From: Jan Kara <jack@suse.cz>
-To: "Harry Yoo (Meta)" <harry@kernel.org>
-Cc: Vlastimil Babka <vbabka@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>, 
-	David Rientjes <rientjes@google.com>, Muchun Song <muchun.song@linux.dev>, Hao Ge <hao.ge@linux.dev>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, "Liam R. Howlett" <liam@infradead.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Andrew Ballance <andrewjballance@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, David Hildenbrand <david@kernel.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Robin Murphy <robin.murphy@arm.com>, 
-	"Joerg Roedel (AMD)" <joro@8bytes.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Eric Dumazet <edumazet@kernel.org>
-Subject: Re: [PATCH slab/for-next v2 10/14] fanotify: specify
- SLAB_MAY_ACCOUNT for event caches
-Message-ID: <5ubs2kqiytosrur35di2zlg26c7tfjjadjvqrp447utjxaozbl@vrjndb7avfa4>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A+nXzGi6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5161F000C0;
+	Thu, 26 Nov 2026 11:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795691453;
+	bh=mzhfHYOTAiWX4/4QQvlE4sNDOxtXiB/zhUzzBPto7Gg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=A+nXzGi6hA1waDmMchthGQIFQF53hls5vuEY0MNWl8ro9oCLwWl1SiqufjiNXVqyA
+	 KlZtB/DTEanOQ9KDlavO2hm+TxpBobgPkG5aecpDsqcXjDGn0xJFFghvOMZhQMRE4s
+	 MpZmDd2noaNyR23VJVt5hIQdE96YwmPNeOEj9jUZojYIM+GlSv3zI4ZTxCwlraux2R
+	 bZPSQATVGWzO2K2FAvf6zXqNmKAs9WIKiMhICBCwMRIpfEmEgfNdwzrGvQrpHsDqaH
+	 v7Lkug97REhA8Gqaa7sjCAy0Cf6na6PQqzu2a2lgjSD8xz8t3VXexLak/FXubRTfHG
+	 tX4ad4XqZ1deg==
+Message-ID: <sashiko-outbox-235347@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH slab/for-next v2 14/14] mm/slab: do not set
+ SLAB_MAY_ACCOUNT for all caches
+Reply-To: sashiko-reviews@lists.linux.dev
+To: =?utf-8?b?SGFycnkgWW9vIChNZXRhKQ==?= <harry@kernel.org>, "Vlastimil
+ Babka" <vbabka@kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>, "Suren
+ Baghdasaryan" <surenb@google.com>, "Johannes Weiner" <hannes@cmpxchg.org>, "Michal
+ Hocko" <mhocko@kernel.org>, "Shakeel Butt" <shakeel.butt@linux.dev>, "Roman
+ Gushchin" <roman.gushchin@linux.dev>
+Cc: "Hao Li" <hao.li@linux.dev>, "Christoph Lameter" <cl@gentwo.org>, "David
+ Rientjes" <rientjes@google.com>, "Muchun Song" <muchun.song@linux.dev>, "Hao
+ Ge" <hao.ge@linux.dev>, "Pedro Falcato" <pfalcato@suse.de>, linux-mm@kvack.org, kernel-team@meta.com, "Liam
+ R. Howlett" <liam@infradead.org>, "Alice Ryhl" <aliceryhl@google.com>, "Andrew
+ Ballance" <andrewjballance@gmail.com>, "Matthew Wilcox" <willy@infradead.org>, "Alexander
+ Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>, "Jan
+ Kara" <jack@suse.cz>, "David S. Miller" <davem@davemloft.net>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>, "Jiayuan
+ Chen" <jiayuan.chen@linux.dev>, "Kees Cook" <kees@kernel.org>, "David
+ Hildenbrand" <david@kernel.org>, "Lorenzo Stoakes" <ljs@kernel.org>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>, "Mark
+ Rutland" <mark.rutland@arm.com>, "Madhavan Srinivasan" <maddy@linux.ibm.com>, "Michael
+ Ellerman" <mpe@ellerman.id.au>, "Nicholas Piggin" <npiggin@gmail.com>, "Robin
+ Murphy" <robin.murphy@arm.com>, =?utf-8?b?Sm9lcmcgUm9lZGVsIChBTUQp?= <joro@8bytes.org>, "Amir
+ Goldstein" <amir73il@gmail.com>, "Casey Schaufler" <casey@schaufler-ca.com>, "Paul
+ Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, "Richard
+ Weinberger" <richard@nod.at>, "Anton Ivanov" <anton.ivanov@cambridgegreys.com>, "Johannes
+ Berg" <johannes@sipsolutions.net>, "Eric Dumazet" <edumazet@kernel.org>
+In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-14-7c680f02a734@kernel.org>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
- <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-10-7c680f02a734@kernel.org>
+ <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-14-7c680f02a734@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 26 Nov 2026 11:10:51 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -132,91 +82,57 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-10-7c680f02a734@kernel.org>
-X-Spamd-Result: default: False [-12.80 / 50.00];
-	SUSE_INTERNAL_BYPASS(-9.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,google.com,cmpxchg.org,linux.dev,gentwo.org,suse.de,kvack.org,vger.kernel.org,meta.com,infradead.org,gmail.com,zeniv.linux.org.uk,suse.cz,davemloft.net,linutronix.de,arm.com,linux.ibm.com,ellerman.id.au,8bytes.org,schaufler-ca.com,paul-moore.com,namei.org,hallyn.com,nod.at,cambridgegreys.com,sipsolutions.net];
-	R_RATELIMIT(0.00)[to_ip_from(RLj6phwcdhphrxdye3znxh4wb5)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[51];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
-X-Spam-Score: -12.80
-X-Spam-Level: 
-X-Spam-Flag: NO
 
-On Wed 25-11-26 21:37:11, Harry Yoo (Meta) wrote:
-> fanotify events are allocated with GFP_KERNEL_ACCOUNT and charged to
-> the memcg of the listener. Specify SLAB_MAY_ACCOUNT when the object
-> may be charged to a memcg. __GFP_ACCOUNT without SLAB_MAY_ACCOUNT
-> will not be allowed.
-> 
-> Path: fsnotify() -> fanotify_handle_event()
->   -> fanotify_alloc_event(GFP_KERNEL_ACCOUNT)
->   -> kmem_cache_alloc(fanotify_{fid,path,perm,mnt}_event_cachep)
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] mm/slab: missing short description in SLAB_MAY_ACCOUNT
+  kernel-doc comment
+--
 
-Looks good. Feel free to add:
+commit b34eae19fad88ae1a8ba755676d1139c330f19f8
+Author: Harry Yoo (Meta) <harry@kernel.org>
 
-Acked-by: Jan Kara <jack@suse.cz>
+mm/slab: do not set SLAB_MAY_ACCOUNT for all caches
 
-								Honza
+This commit stops unconditionally setting SLAB_MAY_ACCOUNT on all slab
+caches and updates the kernel-doc comments for SLAB_ACCOUNT and
+SLAB_MAY_ACCOUNT.
 
-> ---
->  fs/notify/fanotify/fanotify_user.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 63c9759fc3b0..3575c681abc1 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -2184,14 +2184,16 @@ static int __init fanotify_user_setup(void)
->  	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
->  					 SLAB_PANIC|SLAB_ACCOUNT);
->  	fanotify_fid_event_cachep = KMEM_CACHE(fanotify_fid_event,
-> -					       SLAB_PANIC);
-> +					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
->  	fanotify_path_event_cachep = KMEM_CACHE(fanotify_path_event,
-> -						SLAB_PANIC);
-> +						SLAB_PANIC|SLAB_MAY_ACCOUNT);
->  	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
->  		fanotify_perm_event_cachep =
-> -			KMEM_CACHE(fanotify_perm_event, SLAB_PANIC);
-> +			KMEM_CACHE(fanotify_perm_event,
-> +				   SLAB_PANIC|SLAB_MAY_ACCOUNT);
->  	}
-> -	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event, SLAB_PANIC);
-> +	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event,
-> +					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
->  
->  	fanotify_max_queued_events = FANOTIFY_DEFAULT_MAX_EVENTS;
->  	init_user_ns.ucount_max[UCOUNT_FANOTIFY_GROUPS] =
-> 
-> -- 
-> 2.54.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index ad645967a3eea..8525e70eaa76b 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -201,14 +201,24 @@ enum _slab_flag_bits {
+>  /**
+>   * define SLAB_ACCOUNT - Account allocations to memcg.
+>   *
+> - * All object allocations from this cache will be memcg accounted, regar=
+dless of
+> - * __GFP_ACCOUNT being or not being passed to individual allocations.
+> + * All object allocations from this cache will be memcg accounted.
+> + * SLAB_ACCOUNT implies SLAB_MAY_ACCOUNT.
+>   */
+>  #ifdef CONFIG_MEMCG
+>  # define SLAB_ACCOUNT		__SLAB_FLAG_BIT(_SLAB_ACCOUNT)
+> -# define SLAB_MAY_ACCOUNT	__SLAB_FLAG_BIT(_SLAB_MAY_ACCOUNT)
+>  #else
+>  # define SLAB_ACCOUNT		__SLAB_FLAG_UNUSED
+> +#endif
+> +
+> +/**
+> + * define SLAB_MAY_ACCOUNT
+> + *
+> + * Objects will be memcg accounted when __GFP_ACCOUNT flag is specified.
+> + * Requesting __GFP_ACCOUNT allocations without SLAB_MAY_ACCOUNT is not =
+allowed.
+> + */
+
+[Severity: Low]
+Should the identifier line for SLAB_MAY_ACCOUNT include a "- <short
+description>" suffix, like SLAB_ACCOUNT above?  Without it, running
+kernel-doc with -Wall or -Wshort-desc warns about a missing initial short
+description.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125-memalloc-p=
+rof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org?part=3D14
