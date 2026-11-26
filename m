@@ -1,100 +1,98 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795683945;
-	b=SeAdvMxZsUHgyeGW69bhd0JSOk47m7w/8zesQZUKD1taeFt9A749NC6A1t+KKUP7QseY
-	 uyKYsr6YArmyRlxoCCA7bafKrZ2wZFgpo166Roa4b51hQS9GkWCbQsM5b1R6fPyZAr6cH
-	 FEjZzJonO51YqxtoGuSasUC47cA7NQ5hhiX7B7y7tjR2hLTrhqMzgEtGuebAxHbtD1yRR
-	 XUWQmJ2bhRPXtXIIRSCvup9jSusxHXT9Qf2PXYSsQr9izSZzng+bFpZ2YddEi3LA+1kKa
-	 FkGsOxYfoQ3fcYXH6G3Lso5SXOUPAlv83s3rU7pkaXb4FeLj5aHK9dce2wSSoW+ABBQ==
+	t=1795684005;
+	b=k7iKrtb7quyCotECu37SGzxDdaBYmmbJaYc4n/ccsVKaiy5HKoks73sP++zTpsFdjVV7
+	 NJ0jBx7pvUatzS40TyHnbGq4buf559c9+gVr5LZ5CzRplSr5HqGj/kswYcfXKaIou2LUR
+	 sqn7GKvOxgsj9GHq7rOLl9+ovKiyF97Duqf8Jfs1mVuN69v4fsNgksWOP0PYhPieEy0tA
+	 qi9GUC0F1I3/oaxJ1OAjQHr6F1wsnS85AKExLhcd4ImD+GQdAiYG2KF4DhUTcxIGJACnx
+	 Rs166jeyzs4b9QiMykaOoZxD/Cyr1O3ohX/78ljmXdcJBsAhaIitz6ZeKH3a/fVP7Lw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795683945;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795684005;
 	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
 	 DKIM-Signature:Received:Received:Received:Date:From:To:Cc:Subject:
 	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To:X-Spamd-Result:X-Rspamd-Server:X-Rspamd-Action:
-	 X-Spam-Flag:X-Spam-Score:X-Spam-Level:X-Rspamd-Queue-Id;
-	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
-	b=klSnt5/4bCucfrqxssMYsig50aJrmmqE5VmAOChXwHq3Rc2w0YP+/TiBzZd0yT+Dp1HV
-	 BVz5RdVpPUVzwTz2iMf7awM5cMZRhJYAGacLDRr2XPsEdw9NMIAZJAetET/iz0DdxN7cm
-	 TvzHBv0jkIiVu4Ur4cjfYJtVkQK/uR+cqSuRRvkR0NVGUQsv7de0lO41/l5r1fDFR1AUZ
-	 bOlitl6ot+yS9j3VqnjAKf+zy+ozbeaGu0sNn+8Ewy47WW+zwzNQEZn8pLnjVJA4HFSPk
-	 xMUE39qu0D5rloa64ooaEnIRAUOCN+PpZQUeVAIS/M+omdsUViC9f9hmV9TDm1OfUTQ==
+	 In-Reply-To:X-Spamd-Result:X-Spam-Score:X-Spam-Level:X-Spam-Flag;
+	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
+	b=F5HnWLxX1Nlprmzc6XD3jiJpL+eKC2sO67MEkB66DIEweLGC/A8raw5L451sOPgcX5UJ
+	 UZfbPaJjGntHotmVH0Id79U88KNEOH5Cd/Sr/+0pj39DiJNB68kzKbnTj7Sd3mZPKV2CG
+	 WpzC7nAnY3cPR5MIa/gUTU9I2NOg8xojr95UP0g7JhwKA9jKvcJo/gVqwZ39RXbDK5XYw
+	 hhfb+7SH63OoAxT/3DPRAUPc1cCI9utgqtE1jQ14C//dkvsNyEtXkEsge55QbMnLpy9cS
+	 EV3KVfV8wZke6K7HmJWg+MxEHMNUa6GkHCJKoXidBerI7ZIC6UgfNYY2Os5rHy+vL6Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=suse.cz;
 	spf=pass smtp.mailfrom=suse.cz;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
-	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN;
 	arc=none smtp.remote-ip=195.135.223.130
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75616606A31E;
-	Thu, 26 Nov 2026 09:05:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 75616606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A72606A31E;
+	Thu, 26 Nov 2026 09:06:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C9A72606A31E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
-	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=2Aj1MXJl;
-	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=aKDUHDex
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
+	dkim=pass header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.a=rsa-sha256 header.s=susede2_rsa header.b=FrHK60xi;
+	dkim=neutral header.d=suse.cz header.i=@suse.cz header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=9SPaV1VN
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A246D21D8F;
-	Thu, 26 Nov 2026 09:05:36 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0E71922688;
+	Thu, 26 Nov 2026 09:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1795683936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1795684003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
-	b=2Aj1MXJlIYpqdmjnsQ0sPyQux4kSV5g4Dsvpn6MzW7FExaq2EkvverSLjQXcNc+6bKKtoy
-	XxcllSyZ+V7edM65UBTv09Yhg3V1KYx1lxcmjqqR+CDO5ZEFQHWH+N1a/+UGiHumsuLmTt
-	ctIrIlDk/wLwqOwjhdBQgfX+DCCOWFs=
+	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
+	b=FrHK60xiPLeKlT1sSH5Q20B2+d/AbScE9RcAHGXZhrD/3jTYyClPEpX92WSF1W0zEnuV7i
+	JW1gzl5z4Tq3LoafQjvoXXo5LfTiVX5bpn3tC2r77oUsrGutCcvbQhOQTXLAOYiGrUDiKq
+	aM3Dq+nCb8seaEN7ZI5shQrPOsllFZE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1795683936;
+	s=susede2_ed25519; t=1795684003;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
-	b=aKDUHDexsKNu7mk1FQDN4+wzC9n5YJr8g3hfI3/jNWMmzqqRUZXH69IyO/q+qyDg6RgAIb
-	u9PtFijfU1TL7JCg==
+	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
+	b=9SPaV1VNP8RzeVfIHQf1g3LXlIJAsbPen6y8ZFMgxQS707IWLOlJe4SyZ2PL7gEkznrvW+
+	p294Re6jlcOzVBCw==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2Aj1MXJl;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=aKDUHDex
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1795683936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1795684003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
-	b=2Aj1MXJlIYpqdmjnsQ0sPyQux4kSV5g4Dsvpn6MzW7FExaq2EkvverSLjQXcNc+6bKKtoy
-	XxcllSyZ+V7edM65UBTv09Yhg3V1KYx1lxcmjqqR+CDO5ZEFQHWH+N1a/+UGiHumsuLmTt
-	ctIrIlDk/wLwqOwjhdBQgfX+DCCOWFs=
+	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
+	b=FrHK60xiPLeKlT1sSH5Q20B2+d/AbScE9RcAHGXZhrD/3jTYyClPEpX92WSF1W0zEnuV7i
+	JW1gzl5z4Tq3LoafQjvoXXo5LfTiVX5bpn3tC2r77oUsrGutCcvbQhOQTXLAOYiGrUDiKq
+	aM3Dq+nCb8seaEN7ZI5shQrPOsllFZE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1795683936;
+	s=susede2_ed25519; t=1795684003;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e5FM9vVnkaYr5oiSZF4qGOvuP/i123ZW74JzPvuX6pg=;
-	b=aKDUHDexsKNu7mk1FQDN4+wzC9n5YJr8g3hfI3/jNWMmzqqRUZXH69IyO/q+qyDg6RgAIb
-	u9PtFijfU1TL7JCg==
+	bh=39yPdNuJb0udHLAJFrorC5cCcHhnCJIncBEZ1J342vU=;
+	b=9SPaV1VNP8RzeVfIHQf1g3LXlIJAsbPen6y8ZFMgxQS707IWLOlJe4SyZ2PL7gEkznrvW+
+	p294Re6jlcOzVBCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73C03134C3;
-	Thu, 26 Nov 2026 09:05:36 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6906134C3;
+	Thu, 26 Nov 2026 09:06:42 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /qoxFGD2B2ufTAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 26 Nov 2026 09:05:36 +0000
+	id hMxfJKL2B2ubTgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 26 Nov 2026 09:06:42 +0000
 Received: by quack.suse.cz (Postfix, from userid 1000)
-	id F321627D9A; Thu, 26 Nov 2026 10:05:35 +0100 (CET)
-Date: Thu, 26 Nov 2026 10:05:35 +0100
+	id 5978B27D9C; Thu, 26 Nov 2026 10:06:42 +0100 (CET)
+Date: Thu, 26 Nov 2026 10:06:42 +0100
 From: Jan Kara <jack@suse.cz>
 To: "Harry Yoo (Meta)" <harry@kernel.org>
 Cc: Vlastimil Babka <vbabka@kernel.org>, 
@@ -121,11 +119,11 @@ Cc: Vlastimil Babka <vbabka@kernel.org>,
 	linux-security-module@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
 	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
 	Eric Dumazet <edumazet@kernel.org>
-Subject: Re: [PATCH slab/for-next v2 04/14] fs/buffer: specify
- SLAB_MAY_ACCOUNT for buffer_head cache
-Message-ID: <gmnosp2u47xewnszzrx4asmldxsyjtejyrbrng2ckrcfedymeu@evhwupv3iwhf>
+Subject: Re: [PATCH slab/for-next v2 10/14] fanotify: specify
+ SLAB_MAY_ACCOUNT for event caches
+Message-ID: <5ubs2kqiytosrur35di2zlg26c7tfjjadjvqrp447utjxaozbl@vrjndb7avfa4>
 References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
- <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-4-7c680f02a734@kernel.org>
+ <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-10-7c680f02a734@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -137,56 +135,46 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-4-7c680f02a734@kernel.org>
-X-Spamd-Result: default: False [-13.01 / 50.00];
+In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-10-7c680f02a734@kernel.org>
+X-Spamd-Result: default: False [-12.80 / 50.00];
 	SUSE_INTERNAL_BYPASS(-9.00)[];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,google.com,cmpxchg.org,linux.dev,gentwo.org,suse.de,kvack.org,vger.kernel.org,meta.com,infradead.org,gmail.com,zeniv.linux.org.uk,suse.cz,davemloft.net,linutronix.de,arm.com,linux.ibm.com,ellerman.id.au,8bytes.org,schaufler-ca.com,paul-moore.com,namei.org,hallyn.com,nod.at,cambridgegreys.com,sipsolutions.net];
-	R_RATELIMIT(0.00)[to_ip_from(RLpgg91yox7uqmadgh65wjkwtw)];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
+	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,google.com,cmpxchg.org,linux.dev,gentwo.org,suse.de,kvack.org,vger.kernel.org,meta.com,infradead.org,gmail.com,zeniv.linux.org.uk,suse.cz,davemloft.net,linutronix.de,arm.com,linux.ibm.com,ellerman.id.au,8bytes.org,schaufler-ca.com,paul-moore.com,namei.org,hallyn.com,nod.at,cambridgegreys.com,sipsolutions.net];
+	R_RATELIMIT(0.00)[to_ip_from(RLj6phwcdhphrxdye3znxh4wb5)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
 	RCPT_COUNT_GT_50(0.00)[51];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -13.01
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+X-Spam-Score: -12.80
 X-Spam-Level: 
-X-Rspamd-Queue-Id: A246D21D8F
+X-Spam-Flag: NO
 
-On Wed 25-11-26 21:37:05, Harry Yoo (Meta) wrote:
-> Buffer heads are allocated with __GFP_ACCOUNT to charge them to the
-> memcg of the folio they are attached to. Specify SLAB_MAY_ACCOUNT when
-> the object may be charged to a memcg. __GFP_ACCOUNT without
-> SLAB_MAY_ACCOUNT will not be allowed.
+On Wed 25-11-26 21:37:11, Harry Yoo (Meta) wrote:
+> fanotify events are allocated with GFP_KERNEL_ACCOUNT and charged to
+> the memcg of the listener. Specify SLAB_MAY_ACCOUNT when the object
+> may be charged to a memcg. __GFP_ACCOUNT without SLAB_MAY_ACCOUNT
+> will not be allowed.
 > 
-> Path: ext4_getblk() -> folio_alloc_buffers(GFP_NOFS | __GFP_ACCOUNT)
->   -> alloc_buffer_head() -> kmem_cache_zalloc(bh_cachep)
+> Path: fsnotify() -> fanotify_handle_event()
+>   -> fanotify_alloc_event(GFP_KERNEL_ACCOUNT)
+>   -> kmem_cache_alloc(fanotify_{fid,path,perm,mnt}_event_cachep)
 > 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
 > Cc: Jan Kara <jack@suse.cz>
+> Cc: Amir Goldstein <amir73il@gmail.com>
 > Cc: linux-fsdevel@vger.kernel.org
 > Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
 
@@ -197,22 +185,34 @@ Acked-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/buffer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/notify/fanotify/fanotify_user.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index f951559e7d32..4c24f4546106 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -3006,7 +3006,7 @@ void __init buffer_init(void)
->  	int ret;
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 63c9759fc3b0..3575c681abc1 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -2184,14 +2184,16 @@ static int __init fanotify_user_setup(void)
+>  	fanotify_mark_cache = KMEM_CACHE(fanotify_mark,
+>  					 SLAB_PANIC|SLAB_ACCOUNT);
+>  	fanotify_fid_event_cachep = KMEM_CACHE(fanotify_fid_event,
+> -					       SLAB_PANIC);
+> +					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
+>  	fanotify_path_event_cachep = KMEM_CACHE(fanotify_path_event,
+> -						SLAB_PANIC);
+> +						SLAB_PANIC|SLAB_MAY_ACCOUNT);
+>  	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
+>  		fanotify_perm_event_cachep =
+> -			KMEM_CACHE(fanotify_perm_event, SLAB_PANIC);
+> +			KMEM_CACHE(fanotify_perm_event,
+> +				   SLAB_PANIC|SLAB_MAY_ACCOUNT);
+>  	}
+> -	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event, SLAB_PANIC);
+> +	fanotify_mnt_event_cachep = KMEM_CACHE(fanotify_mnt_event,
+> +					       SLAB_PANIC|SLAB_MAY_ACCOUNT);
 >  
->  	bh_cachep = KMEM_CACHE(buffer_head,
-> -				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC);
-> +				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_MAY_ACCOUNT);
->  	/*
->  	 * Limit the bh occupancy to 10% of ZONE_NORMAL
->  	 */
+>  	fanotify_max_queued_events = FANOTIFY_DEFAULT_MAX_EVENTS;
+>  	init_user_ns.ucount_max[UCOUNT_FANOTIFY_GROUPS] =
 > 
 > -- 
 > 2.54.0
