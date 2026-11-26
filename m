@@ -1,84 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.198
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795721686;
-	b=Onbf3gqeKVEvzGIAllhZJzppjULe0FmJJs1krTo3r2vYP5ptsFb5cwwxn7xhVx1KPg9h
-	 f0+x5ASzg19K8UxHFZj9E2vtLkJMeKTmW7SM2qk9bQS1RJxdtF/+37s2JgWgAG7u754uz
-	 on8Ga80NzYtqopFnU7tEXPHRhXGAGHSOxLZ9P6dmBM5iByr3p4Snr9CbnVmAwnELacFec
-	 GxiuB2MyvyACe89dtEeOpWhhqfog6RaiJcCuc/lhM9QlvwdyLQ8BKKkNtz7qRPzf/f3JW
-	 uM2vmVejNqDroNpzL1JLHG8dkeSo+0Kv5knx/erPBunR3jJNcyeUxjPDYYpU3u19DdQ==
+	t=1795723262;
+	b=vqYYdvwgnFWykqgSYwRhsSkw2aje+2XL9PTqhBFz4y36kI58OeYkHiYtWX9pw/8+Rfki
+	 u5P6ZzIzWLSULYrH0LJhdCGyDq7ryuHCookM55hcJbJM5PlIozcZ8ll0NF8djbFUgsas1
+	 Xku4wvhi3o8FkkjDiTilfbMCQA+7RInfsBQApQH3c7eZAG4WiF+XOUmRfVv6/phOtvILs
+	 WBbxBqybrt0OKcF063doV1HeUl+5C6z6Px2m9HRqAmpt1tXlpG+iAXQ/dKjN3zB9gI3dc
+	 yu20KnMmxhjLTfKIwB4X493dxv9BVrljCRJWqfrtEDl9DChAL1KDRaqVAa/KirVktWw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795721686;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=CcH6oOCLJBBWhqHrt9WVxq1zAIk+ultz0SBaXp1cDE4=;
-	b=fdS3l8x6oGd0pkXtQSxyn3DhT9gkguDscdGGuMMqrplJMB8ugocx8JpS85WZtHwdsDlP
-	 ER+NBRadP4vgG76NgF15byTfldaV9XaS0ezM3p9Dmm4WtTGc4yJMRs8vlhsAnsmkVMRlQ
-	 d7YrfpqsTF2/20HcWG4tT7CXGQmHDQPq33k7LSDcBwucK7f7bk5ZV3VPVDyi+ev7Mej7v
-	 DETUezq+JVuGFcvjR/ezhCzCfYbiUwWVEuZ5EfhRSjSn3Qq5ogVqJIQD+LlxUFPZCp5T7
-	 dvrnL1LMqwQHB9ne4tAtBZttihqMRJeLVRTuzsbAEOGbkudN4MCwLrL1yf59mGpxIxQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795723262;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Received:Date:In-Reply-To:
+	 Mime-Version:References:X-Mailer:Message-ID:Subject:From:To:Cc:
+	 Content-Type;
+	bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
+	b=KAauev+pVUgvM999dB/44syC8aYNcSZblFnweYpOQ4hQkCtyCzERADM7LRzwCvm80+eo
+	 J0+nET2Wmuzt/d4cjgT3D2lxeoCly9iwco2fsScMeCjkUVz0i8Yis13YfWiorA0A9P51U
+	 dFIawkTLLP5sGjJ1iXYKQMD7N3tNEgHzh9Wu90LLk/QZ2JKZJCgIweq6jtsqH9mHJIpn0
+	 NS7RBTaNlrSMxg+5E/N155Su0ogaglZOI0tlNqfw83B4skBvYyUMXBpI5x10hH64OrSRa
+	 4fVfV7r4LK1C1fWHUM+lJtX/WbV+jo1I7JNeuFnTGYpzsnjG+pLkuJ23tf7JU5vRzhA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=infradead.org;
-	spf=pass smtp.mailfrom=infradead.org;
-	dkim=pass header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=qWvyQKeQ;
-	arc=none smtp.remote-ip=198.137.202.133
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=google.com;
+	spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com;
+	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=DWn5Adbn;
+	arc=none smtp.remote-ip=209.85.167.198
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E525606A31C;
-	Thu, 26 Nov 2026 19:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5E525606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1950606A31E
+	for <linux-security-module@vger.kernel.org>; Thu, 26 Nov 2026 20:01:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1950606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zhenwenliang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=qWvyQKeQ
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CcH6oOCLJBBWhqHrt9WVxq1zAIk+ultz0SBaXp1cDE4=; b=qWvyQKeQwbC/z1BY2GkLz0UzOD
-	XegLn6T94yjcn2nVjUdWRaaleQjLq1RjmxthJWdvlonwNaGWtM/NlFaCfIf3PshccI/ejRHJ+5K7Q
-	zgp/wX2KR/OGQpPRIZPoj0A2rCRY04RxqlCzcWekLcUSyGLdu2etxwu5ZtT/TWshE9UvBu4D6c4Q9
-	+uAI0Th7ZElX6+eO9BNVIl9Lp14WC/FOnZ9aILkUAOaZ0ajIysojz2zDaD6tQEXBv7hLLLb4gTlRJ
-	LWjiQjH1F5FX5RJUAt4QSIqMy+u3pby41I0dX7mWeqPmf3x9fZ9YeJpPC19Ts1zmD7pq7pTyVnFC5
-	GydaSJzQ==;
-Received: from [38.23.173.23] (helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xWfEr-0000000ELfa-2nqt;
-	Thu, 26 Nov 2026 19:34:37 +0000
-Date: Thu, 26 Nov 2026 14:34:30 -0500
-From: "Liam R. Howlett" <liam@infradead.org>
-To: "Harry Yoo (Meta)" <harry@kernel.org>
-Cc: Vlastimil Babka <vbabka@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>, 
-	David Rientjes <rientjes@google.com>, Muchun Song <muchun.song@linux.dev>, Hao Ge <hao.ge@linux.dev>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, Alice Ryhl <aliceryhl@google.com>, 
-	Andrew Ballance <andrewjballance@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Jiayuan Chen <jiayuan.chen@linux.dev>, netdev@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Eric Dumazet <edumazet@kernel.org>, 
-	maple-tree@lists.infradead.org
-Subject: Re: [PATCH slab/for-next v2 02/14] lib/maple_tree: specify
- SLAB_MAY_ACCOUNT for maple_node cache
-Message-ID: <baf4kjajb6c6xndnmizgp7uujbleuiuzcv77z3nvn7mpgidls4@rruuv76wtgdq>
-References: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-0-7c680f02a734@kernel.org>
- <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-2-7c680f02a734@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=DWn5Adbn
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-4ea2c058e67so7812529b6e.1
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Nov 2026 12:01:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20260707; t=1795723260; x=1796328060; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
+        b=DWn5Adbn/TnNY1xH6jgc26TeZjfcHBww+a2kKpHR/5eZOfNI4t4Z8aZ+omqwN2qsgm
+         yCCY+enUXphkASUrR2TQTtRUsbfdpo/dOnwNQidEPIzUBdvoLll/U7bOMSQrkFBhmlgC
+         LFdps5bXzAbXF8KyZGclTM8zxvQawERuH7hjUYr8k8TiLMccakam0RxJTH5Ras1LDvAU
+         tqiDFp4hF8T13krvROhq/XaDdR0fXEqWiqmsuLW5RV0vKZWaPH9gnzcEwwXLg0rLFctj
+         ZGkqJQtLYChkZZAgCZjAT1GFaA/XkgDu+1xVJ/ICK7iYXkodppDvgxd5LykFlB9tdHlW
+         VOkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795723260; x=1796328060;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6kyFcKzeGDxm7QHLL2jhZm3kVHS8REfuYCj505/rh+w=;
+        b=qbV00S9JuwakYHCQiGtNAetOq1x2Pwf+SAx5M2zYGmZwqQQalMhvU2JduWsQY9nlCo
+         P5mQjRPUiL1gyakDh9+GC9cktooCas8tibjC7UtwzZZO1C/kzUsQem5HSw5yh3q16JhF
+         EEVEuL1V8wK24zvfthLL3/9p2BTqyu7Fe8b03aLwXRmFPWexaiD9ORnOUsCeE0FV51sx
+         zOkxxEC6rQZoSQYheNSjRYYi01ecZv4m1yO6EyCzvSHkvwzfqHAWKTj0je0AZ3EaecaA
+         /1LsbBoi/Cm3XWvfnec2l98kEqfkjymkgr9y/WXabo5iFZ1aYJT8kLcSIW0/Aos0AauU
+         QhXA==
+X-Forwarded-Encrypted: i=1; AL+hErG27Wxzk2trauKQ+c4zxvRG7+3FXdHRnMyrDv9hwU9I3so8T8J7dap7ogVeqd9zcFHJXRK+k7nHSoiFHpOnADuLhVl3uNk=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8Eku+zo6pHVhDgWoDH+/faNGylV9zHfBmZFsJT3/XRwAU3FnAk
+	tTLdjA5mNRshzmA+RB3oa7JMcdZfG5yexrd0PLZ3Gm7CBirXVkC8SdnVznLfTlx/7PkJq7RGw06
+	LTn+WdsIVpf5/HXuIv3hKXsNxxoJyvg==
+X-Received: from ilbdv4-n1.prod.google.com ([2002:a05:6e02:4004:10b0:53b:d747:38b5])
+ (user=zhenwenliang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6808:4fe7:b0:4f6:5279:5c75 with SMTP id 5614622812f47-57a0a50337emr26068171b6e.28.1795723260332;
+ Thu, 26 Nov 2026 12:01:00 -0800 (PST)
+Date: Thu, 26 Nov 2026 20:00:58 +0000
+In-Reply-To: <awiDY0d9pRUzkV4Z@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -87,46 +78,53 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261125-memalloc-prof-dont-waste-slabobj-ext-metadata-v2-2-7c680f02a734@kernel.org>
+Mime-Version: 1.0
+References: <awiDY0d9pRUzkV4Z@kernel.org>
+X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
+Message-ID: <20261126200058.2806412-1-zhenwenliang@google.com>
+Subject: Re: KEYS: encrypted: encrypted_rcu_free() callbacks can outlive the module
+From: Zhenwen Liang <zhenwenliang@google.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/11/25 09:37PM, Harry Yoo (Meta) wrote:
-> Maple tree users can pass accounted gfp flags down to node allocations
-> (e.g. arm64 KVM's smccc_filter uses GFP_KERNEL_ACCOUNT). Specify
-> SLAB_MAY_ACCOUNT when the object may be charged to a memcg.
-> __GFP_ACCOUNT without SLAB_MAY_ACCOUNT will not be allowed.
-> 
-> Path: mtree_insert_range(GFP_KERNEL_ACCOUNT) -> mas_nomem()
->   -> mas_alloc_nodes() -> kmem_cache_alloc(maple_node_cache)
-> 
-> Cc: "Liam R. Howlett" <liam@infradead.org>
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Andrew Ballance <andrewjballance@gmail.com>
-> Cc: maple-tree@lists.infradead.org
-> Signed-off-by: Harry Yoo (Meta) <harry@kernel.org>
+On Thu, Nov 26, 2026 at 09:07:15PM +0200, Jarkko Sakkinen wrote:
+> This will be ultimately addressed by:
+[...]
+> As then operations will be always drained.
+>
+> It's actually somewhat tedious to address this particular issue
+> without this type of architectural change but I'm open for fixes.
 
-Reviewed-by: Liam R. Howlett (Google) <liam@infradead.org>
+Thanks. For trees that will not get the series, I think a minimal fix
+is possible here, because unregister_key_type() already guarantees that
+no new ->update() can run once it returns: key_create_or_update() holds
+key_types_sem across __key_update(), key_update() checks
+key->type->update under key->sem, and the dead-type GC pass retypes
+each remaining key to key_type_dead under key->sem before
+unregister_key_type() returns. So every encrypted_rcu_free() has been
+queued by then, and an rcu_barrier() after unregister_key_type() in
+cleanup_encrypted() waits for all of them. trusted.ko has the same
+pattern (trusted_update() uses call_rcu(), and none of the exit paths
+waits for pending callbacks), so cleanup_trusted() needs the same.
 
-> ---
->  lib/maple_tree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index f7f51f1b40d9..5ff176f1a021 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -5815,7 +5815,7 @@ void __init maple_tree_init(void)
->  
->  	maple_node_cache = kmem_cache_create("maple_node",
->  			sizeof(struct maple_node), &args,
-> -			SLAB_PANIC);
-> +			SLAB_PANIC | SLAB_MAY_ACCOUNT);
->  }
->  
->  /**
-> 
-> -- 
-> 2.54.0
-> 
+I reproduced it in QEMU with KASAN and CONFIG_RCU_LAZY=y: add an
+encrypted key, update it 20 times, and unload the module right away.
+The rcuop kthread hit int3 at encrypted_rcu_free+0x1 in the freed
+module text in 5 of 5 runs. With the barrier, 5 of 5 runs were clean.
+
+With your series applied, the barrier is still needed as far as I can
+see: the GC calls synchronize_rcu() before the module_put() in
+key_gc_unused_keys(), and key_gc_flush() is only used by dns_resolver,
+NFS idmap, the SMB client and rxrpc. On top of the series, the barrier
+could become a key_gc_flush() call.
+
+I will send two small patches (encrypted, trusted) with Fixes: tags and
+Cc: stable; feel free to drop the stable tag if you think it is not
+worth it.
+
+Thanks,
+Zhenwen Liang
