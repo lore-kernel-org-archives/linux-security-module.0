@@ -1,82 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=113.46.200.219
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795762122;
-	b=wUgYoYYi6w8iXwAzRKkW4lzZ+zinHeip4Fy3YErn+vX/loJuRd+IevuLoXQxRCggX/55
-	 U3eGDCbSvjCZ4a7/aSPPEetvinLsHinjWuh+h7vXZCSpt2Trtp8zLo1kvPUhmlhKGlvdz
-	 GEofM9Xjr8nsQVb54ZyI1cu4XGG6KqBGG/Mw66OP/5XJSHl7UE05R1i1ETBMBXJ0DG5l5
-	 xtLo0IKlFZl8+QeHZ1OCAxjIku8vUqTz2H47ooJRTtY74hTWenx1LufVakSpB9t8iTSek
-	 9LHcjrRh/stCBt3duWi9sQUUPjhbwiOiyhK306EXSXvkxElHFk5dkC1hj0ntUrByHfw==
+	t=1795762237;
+	b=x/I/TJqfGqAID1bTko7FXYuhn6rbuaMI/qawxWeni8oILtI2maG4EmfFB8AQXMZaeybo
+	 wfpD+kGc4gl7qq62+1xKTBUdBw/PPyo0STXl3bj+Bpi0Q5/uUdtnUoZDQEzU8v2zwucIe
+	 5P41VnjeZGqzW1xIeuYxE2Mdf0FKBzNFnvgSY9gen1e4F9DnaVyZxunuXE/Y8SSojsGwQ
+	 myhn8112S67guirlSGGifKzwHYBoU6QDIupMWp7U3vQhwLu1YjYyQvR9NfIV2moHH8EgT
+	 iCXvbPDI+/DaDYJ9rdA9wdvAKXCJYXOC8i2cAv1qpuCZlfWJWffXSdyiCUBrs/G9Hrw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795762122;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=D2qAvffQz1/Kmxq2R231WWzgGRVz04WJrtHpdL6qOoA=;
-	b=5chvar1Vx1iXUIWYw32pFN0CKbTgQHak/CHK7fWaFvV3dOppwo1DepFhLxe7OB95CZk6
-	 ytlTTB/eCvJvL3d1VWJr+G2Xfvi9mYAZHKdBIw5tmU8T9ThqV/f2xiZMMDF8y4Dm6ADRf
-	 9pX54PknM491HjUy2+eIdt6SzU60OhW6wi63xFRZNqCyoaCX0E5nqZJuj1qXF4isVhKkv
-	 gb27DizTEbAXYkWbf4xAMjqW0EQVEkB+5o+Ol6uhjjaAUoq2IEZOT7l8RMaC7DdQS5R97
-	 fvBdJd0UWi/xq4Ue9bAbDWp+j5KtDxeZeJQ2GXpHdzPmUWD3QYE7qoI1RhHodpLvuTA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795762237;
+	h=DMARC-Filter:dkim-signature:Received:Received:Received:From:To:CC:
+	 Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 X-Originating-IP:X-ClientProxiedBy;
+	bh=KZFupaYaw2l2hiD+l4s1N1CQ+SbjqIzWQZ47VhByxFY=;
+	b=2RA8Suv26tQICuIB/9MhqIRXXYoDG/stKgU428NhKZD0KxumfJk1B9T2fNW0UJ6x0YWM
+	 +D0OzMCCkh3fgC0Tr7+J22ZOSXMi33xXgktzgy66FdJkoNBz6Onn/nXu/Ybdyc5q8WD9e
+	 t4dexwiQ+C0pODt7iHX9o09zMlcAZJS9r4zk9jdDR8UERro7TOsEAWPHgh4d+L8G0Hoeb
+	 LOqgpS0Gc5L3BtFGd7iGAfGRNBe+Gd9Bc8hHhKJzWrR1ntkkxTMkR9AeihcF9WieQcZsL
+	 PlMaay6o3xvg0g25CU+rXo/H3oi8wK1e9kCqdnMqBuOwWWfcyjvZcngMNbkR5hD3tIw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V41pLXPv;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=huawei.com;
+	spf=pass smtp.mailfrom=huawei.com;
+	dkim=pass header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=jbsJnURw;
+	arc=none smtp.remote-ip=113.46.200.219
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id CA902606A323;
-	Fri, 27 Nov 2026 06:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77943606A31C;
+	Fri, 27 Nov 2026 06:50:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 77943606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V41pLXPv
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6362B1F00897;
-	Fri, 27 Nov 2026 06:48:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795762122;
-	bh=D2qAvffQz1/Kmxq2R231WWzgGRVz04WJrtHpdL6qOoA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=V41pLXPvWT6oPTKTANy9bd9W4sNgLSL+0i5tp/MR1tMtCmOFp0DO9rnlY0D7oe6Rd
-	 /p9O0pctXPxCKz6vB8sw36rTYwcjiY3I1wpHJZXlGKL1e6odFl93Pm8Oij+zz2iYjV
-	 vfDYN4hMkQfIEqhFKoSHexzAN7vjI4Dvy1196UXc9tPVBYWEnJI//51smoO6sd0huz
-	 Wb8NF4Clb4BOC+GUY6ZI2wUdj6W/oMYbV3F6aAzIyZc98DR88EE8s34U13LFq3B+OS
-	 wBMfwkHep26ELC67urdD+x76WHLjeRaXuNC9VzDZJuzE7hiuhHFF9qD9fIdNvv6gEQ
-	 22w29sWexd2Ow==
-Date: Fri, 27 Nov 2026 08:48:38 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: keyrings@vger.kernel.org
-Cc: dm-devel@lists.linux.dev, linux-crypto@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Alasdair Kergon <agk@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Benjamin Marzinski <bmarzins@redhat.com>,
-	David Gstir <david@sigma-star.at>,
-	David Howells <dhowells@redhat.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ignat Korchagin <ignat@linux.win>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	James Morris <jmorris@namei.org>,
-	James Prestwood <prestwoj@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
-	Jonathan McDowell <noodles@meta.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Sumit Garg <sumit.garg@kernel.org>
-Subject: Re: [PATCH v5 17/17] KEYS: trusted: Add asymmetric key support for
- TPM2
-Message-ID: <awknxh-Q0eHKt2ZY@kernel.org>
-References: <20261127055602.2357884-1-jarkko@kernel.org>
- <20261127055602.2357884-18-jarkko@kernel.org>
+	dkim=pass (1024-bit key, unprotected) header.d=huawei.com header.i=@huawei.com header.a=rsa-sha256 header.s=dkim header.b=jbsJnURw
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=KZFupaYaw2l2hiD+l4s1N1CQ+SbjqIzWQZ47VhByxFY=;
+	b=jbsJnURw+andRErr8ZkNglhEAFuDQ7RrG3MdggxEX4WGqLQoJ2+bGYEN5PI/Y8QfB3xEjNYSg
+	IpgdhRfkjncQ7jEKhEC2n+LzYODCLjfeYtLnZASLkjn5oFjp0RGVmWTjUPcZlHW8n/CLVoPtI11
+	jDWHVdS8DKjbg+tQgAQ8sPc=
+Received: from mail.maildlp.com (unknown [172.19.163.104])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4jbPDd1skxz1prRJ;
+	Fri, 27 Nov 2026 14:50:09 +0800 (CST)
+Received: from whupemk100010.china.huawei.com (unknown [7.152.184.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 65DFD4058C;
+	Fri, 27 Nov 2026 14:50:27 +0800 (CST)
+Received: from octopus.huawei.com (10.67.174.191) by
+ whupemk100010.china.huawei.com (7.152.184.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.56; Fri, 27 Nov 2026 14:50:26 +0800
+From: Cai Xinchen <caixinchen1@huawei.com>
+To: <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
+	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+	<amir73il@gmail.com>, <caixinchen1@huawei.com>
+CC: <linux-integrity@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, <lujialin4@huawei.com>
+Subject: [PATCH RESEND v2] ima: initialize the real inode attributes of the iint cache
+Date: Fri, 27 Nov 2026 15:21:29 +0800
+Message-ID: <20261127072129.2162668-1-caixinchen1@huawei.com>
+X-Mailer: git-send-email 2.18.0.huawei.25
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -86,29 +71,51 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261127055602.2357884-18-jarkko@kernel.org>
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ whupemk100010.china.huawei.com (7.152.184.41)
 
-On Fri, Nov 27, 2026 at 07:56:02AM +0200, Jarkko Sakkinen wrote:
-> Extend the TPM 2.0 trusted key backend to load OID_TPMLoadableKey
-> (2.23.133.10.1.3) RSA (2048/3072/4096) and ECC (NIST P-256/P-384/P-521)
-> keys and wire query, sign, verify, and RSA encrypt/decrypt operations to
-> trusted_key_tpm_ops.
-> 
-> Select HAVE_TRUSTED_KEYS_ASYMMETRIC when CONFIG_TRUSTED_KEYS_TPM is
-> enabled.
-> 
-> Co-developed-by: James Prestwood <prestwoj@gmail.com>
-> Signed-off-by: James Prestwood <prestwoj@gmail.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+ima_iint_cache objects are allocated with kmem_cache_alloc() from a
+dedicated slab whose constructor only runs once, when the slab is first
+created; the constructor does not run again when a freed object is
+reallocated.  ima_iint_init_always() resets all iint fields except
+real_inode.ino and real_inode.dev, which therefore keep the values of
+the previously freed iint.
 
-This should be in fairly safe grounds because the patch has been
-manually written (with TCG specs), both TPM2 protocol and ASN.1
-shenanigans, and reviewed and tested countless of times (over the
-years).
+integrity_inode_attrs_changed() reads those fields in
+process_measurement() to detect changes to the backing file on stacked
+filesystems.  The fields are normally written by
+integrity_inode_attrs_store() from ima_collect_measurement(), but the
+IMA_HASH path sets IMA_HASHED without calling it, so on the next file
+open the stale, uninitialized ino and dev are read.  Depending on the
+residual values, IMA may skip re-evaluating a file whose backing data
+or metadata changed, or needlessly re-evaluate it.
 
-Further, it has pretty much passed all Sashiko reviews so far, and
-thus this patch likely is not all that wrong.
+At allocation time there are no valid real-inode attributes yet, so
+clear the entire real_inode structure.  On stacked filesystems the
+first comparison against the underlying real inode will then fail until
+ima_collect_measurement() stores the real inode's attributes, which is
+the safe, conservative direction.
 
-Br, Jarkko
+Fixes: b836c4d29f27 ("ima: detect changes to the backing overlay file")
+Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
+---
+ security/integrity/ima/ima_iint.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
+index 00b249101f98..c25f41a4dede 100644
+--- a/security/integrity/ima/ima_iint.c
++++ b/security/integrity/ima/ima_iint.c
+@@ -59,7 +59,7 @@ static void ima_iint_init_always(struct ima_iint_cache *iint,
+ 				 struct inode *inode)
+ {
+ 	iint->ima_hash = NULL;
+-	iint->real_inode.version = 0;
++	memset(&iint->real_inode, 0, sizeof(iint->real_inode));
+ 	iint->flags = 0UL;
+ 	iint->atomic_flags = 0UL;
+ 	iint->ima_file_status = INTEGRITY_UNKNOWN;
+-- 
+2.18.0.huawei.25
+
