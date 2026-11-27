@@ -1,54 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795782367;
-	b=Bd5OURfFNGl36tImX4Dl4/P+Vva9q74IEPn8dUfc5vKx/lfUY6GOHzYfKlF/zno9UEIQ
-	 v9xfT3+U7BV069tfASmW0YFPYPK+WOJpSk+1mBvDRg8VHgbxdst5aWo0mD32TZUAii+BB
-	 nb1UI+Bj/LqlTSbkdzgGX0JDO37fln9Q2IlNFnzEqsbU1XHPC9DcPztMHnqHWGHfLAKzK
-	 zoBlRDcDssJnXVwB0HyLlB93GtpB+OA3xurJt/fY7T82PxPkodZ0PWLGZHy2hXMXkg2oJ
-	 T9n4whl1416r2VCvlFmvFPKILRB4EiJEW92t9ItbTjinNCf8H8NeEOAM6iomZdMm98A==
+	t=1795785975;
+	b=b3KaC5h8bjhdHbd6KNtJA94cuecqKbt0R3yOvK0eQ9DjhjT6czdpN//ckzSb5xYQ+dKw
+	 UFgt7az747dKTgWW2miYtFwEx65vgK1DLmFcadazMqvtOfqPavjMAdADahq8PziJtiKqJ
+	 CBhJJf/GU+Z/K+HWcI6qfIJgBbBBLN/kQLn5uCMVMvd3xLPjoGnOri+cVlb9mICXQBMAT
+	 tZhnCUiz2rNtL9oPBiyYPTDYAutp5yerJHpye4DLdhvYkcVAa5CND1KTVSiVYfHXp/HvI
+	 zwX2Ks6hogPuX/xhDq4AGvNBVS2QJ4JSTnwqDEBQOin/VH3+8Yod5CC0n6A0pPSM+Ag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795782367;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=kV6HCkHg17aUv/4nxrZTcQI4vk7oT2OxJpFiIoiOVLQ=;
-	b=HAPDTKGR81w2uZHUsL++9Q/WT5lq++AjvkY7hCJi2+VwsJfcX5nO3FGE+IaJFruv9OJB
-	 JIBqQeJFDqTIZ/w4STfv/LyggADubD5h/Fk6U9l/I2Pb4sv+/uSWZ3Bld7scXmaocEaMc
-	 /XiJOZM4ND1v1DjctJfuBlKPp+EceU9b/sJOCiolNBRwcJI5SXU9SXJbJ6Fhj3i8CDeFv
-	 QVjeabKheN/TDt3mFXnrhCyUVSaYBWTkU8Pq/3Th5MGnBMwh0xOpxjMVgIPDfdSWS3Z5p
-	 yMy3Hr/2g8HOR6E0eexF8ZTBYo0njF5/Jh60XlftzRuXZhmjvw4eCPZmKlWKZxec0cQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795785975;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=+GC/+u0KPD+4/whVqI0q7ymfNcD13KUJ/8A03NmmIeQ=;
+	b=vgsVi36dLa/0SBbX2qv7Nk6iyzEVe+LmnkUTsQn7mzlu3wE8HH/Ent+ebpTHpV2Z6KsZ
+	 YrJB+B3AgGfIo8aXmExUxdaL2S/c3DflZvHsY5rYcbLJG9ahMpGy0sytrtF29PjMfwDPb
+	 TiJCg5wVadClsau7YA3voziYkxTMHwQR4I7kgRvzOhwnRXfWp0TWZJQOFqngz9+uUaJRG
+	 YPC6pFhSRWsJ3h3EWuxv7CxHEuIZmxymTFGi/CHRi+pRA2LvuZnBc7/L48uoK6KzBzHhd
+	 oDuc6kvF2hNecnKxptHWoMJKoNTLNP9uKjzypjIRJgvRXttaZFE3LUGt0gxLgkXS1hQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GiHqdEnT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F86eSM27;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A449606A339
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 12:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 79E63606A31E;
+	Fri, 27 Nov 2026 13:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GiHqdEnT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F4181F000C1
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 12:26:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=F86eSM27
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 77F9A1F00893;
+	Fri, 27 Nov 2026 13:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795782366;
-	bh=kV6HCkHg17aUv/4nxrZTcQI4vk7oT2OxJpFiIoiOVLQ=;
-	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=GiHqdEnTQRVXMHt4ZcEXIVQ0eUlBVkWr6sXUU0XMKDlLZ442e9ApBoZU4k5OgxEBS
-	 72WTdb5oNVK8gEteQVYCsWHzpARp0HwCE0xMW0roRHlado9FpIj0zbXxMRT+6SnTwJ
-	 YzwraIJhPAC0v0aHTmpgWAsqQRIuveD79iVYQ2i0pmEAf/wiyfZCHpDpxPBBLMXmlO
-	 OHbYj0np2ILvnob4IEWms1myrKbFcWHl6lQylGykC7YNxvboeuii9J8Ui1X4PbgHXL
-	 PpaEOpYX90THxg0n4sNsgp26jb2b3NcoCCxgU7+G0Qs3tID/XHtSGQCwC73jalSV61
-	 Xg6YNmqRLBK2Q==
-Message-ID: <sashiko-outbox-237382@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 1/2] KEYS: Return user session keyring on lookup
-Reply-To: sashiko-reviews@lists.linux.dev
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261127121433.2400766-1-jarkko@kernel.org>
-References: <20261127121433.2400766-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Nov 2026 12:26:06 +0000
+	s=k20260515; t=1795785975;
+	bh=+GC/+u0KPD+4/whVqI0q7ymfNcD13KUJ/8A03NmmIeQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=F86eSM27/gLh9DeCYeu9AM8s8s90gP7Oy1GWXCRF/JfDZEGmgAXZov9XdCZhHjJWb
+	 LbLUs3/e6GtTW5hecoj/u8IC5glAj5Ye9c/upnwIfEN/jiNjQ2kp30SmRWKurb82zD
+	 Ry12xhWxKuWeg6EPUcRDvRBbyRScOyT5Ky8SokRkqINQbH7x4IRMr6nGjn8jpNQRPM
+	 Uqdq82bXneqfeENvvnR7kOweEFK8sVDhq55DvazIiD7SGFaq2cvdAkNMOKLoATb5Zw
+	 X0sZqJGtrDk/JEsmBeAruczdlwiSaR1wHT9q+HZl/8svzocCvBFptqvCkzgrkgHG6O
+	 NHIrjRJCIQujA==
+Date: Fri, 27 Nov 2026 15:26:11 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Guicai Ma <maguicai@kylinos.cn>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] KEYS: Protect key instantiation and rejection against
+ type removal
+Message-ID: <awmE8ykDdfSqPxgw@kernel.org>
+References: <20261125032605.1327954-1-maguicai@kylinos.cn>
+ <20261126023920.1981107-1-maguicai@kylinos.cn>
+ <awhb3uC83WDzQup3@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -57,9 +61,70 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <awhb3uC83WDzQup3@kernel.org>
 
-Sashiko has reviewed this 2-patch series and found no issues.
+On Thu, Nov 26, 2026 at 06:18:38PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 25, 2026 at 09:39:20PM -0500, Guicai Ma wrote:
+> > key_instantiate_and_link() and key_reject_and_link() access key->type
+> > and link keys without synchronizing against unregister_key_type(). If
+> > the type is removed during construction, key_instantiate_and_link() can
+> > call key_type_dead.instantiate, which is NULL, and either function can
+> > link a dead key into the keyring before GC pass 3 retypes it.
+> > 
+> > key->sem cannot be used here because it inverts lock order with
+> > encrypted_instantiate() and uses a freed lockdep class after a modular
+> > type unloads, while key_types_sem may be held and methods may sleep.
+> > Guard both paths with key_type_srcu and a KEY_FLAG_DEAD check, waiting
+> > with synchronize_srcu(&key_type_srcu) after GC pass 1; for a dead key in
+> > key_reject_and_link(), just wake waiters and invalidate @authkey under
+> > key_construction_mutex, leaving the key uninstantiated.
+> > 
+> > Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Guicai Ma <maguicai@kylinos.cn>
+> > ---
+> > v4:
+> > - Rebase onto jarkko/master.
+> > - In key_reject_and_link(), handle KEY_FLAG_DEAD under
+> >   key_construction_mutex alone without taking key->sem or changing
+> >   key->state, and document the result in the kerneldoc.
+> > 
+> > v3:
+> > - Shorten the commit message and focus on why SRCU is used.
+> > - Change Fixes tag to 0c061b5707ab.
+> > 
+> > v2:
+> > - Switch from key->sem to key_type_srcu and check KEY_FLAG_DEAD in
+> >   key_instantiate_and_link() and key_reject_and_link().
+> > 
+> >  security/keys/gc.c       |  13 ++++
+> >  security/keys/internal.h |   2 +
+> >  security/keys/key.c      | 160 ++++++++++++++++++++++++++++-----------
+> >  3 files changed, 129 insertions(+), 46 deletions(-)
+> 
+> It's unfortunate that the fix needs to be this complicated but as we've
+> looked this through, also with failed alternatives, I still think this
+> is a feasible fix.
+> 
+> And it's good to now before I even consider moving forward with my
+> keyring GC overhaul, which ties keys to their key type's LKM, and
+> removes racy key types altogether.
+> 
+> Linus, I'll give a forewarning on this fix because is not every day
+> thing to introduce SRCU in stable fixes.
+> 
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127121433.2400=
-766-1-jarkko@kernel.org
+I rebased my series on top of this and yeah, it will be erased by the
+last commit:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?h=keyring_gc&id=5028b0336d35f14981116926d9ee5e131ff7c7ed
+
+That does not make the fix less important. On contrary, it is good to
+have it in place for stable kernels.
+
+Br, JArkko
