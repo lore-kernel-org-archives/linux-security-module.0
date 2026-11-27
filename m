@@ -1,54 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795766733;
-	b=l8pd/XoPtn0lG6iQPSZKOnOmZXJ/Hdm7XxjaKonsZRt89WNG5F0mPhKf8r6WTZOPeE/I
-	 F95/KPv7XyDJRQjFl3HN63mbS18qmWkYyohjIJahcbRTkD1XZcENoHUX4CGWHE6mfdM7/
-	 2VZBNGAPFkxPmBR35umkld8sgew3bSfxM/yK3j8D3yYRvYWQJjRBcJbMxqrg0VxzwmldZ
-	 p7KBjzW3bKULtZ2BrMIGuGcW1cHmd5W7JneBL5TO/Q4g3KMDtgSAOnd0Y+N09GcexkDVb
-	 KIQhWeTC2c/m0Iw+TI7yrhX4SEvr21Jg7vDMYqiCf48vLF7t3/dIKkb3F8HUb3d7ryw==
+	t=1795766874;
+	b=becZSZDBj75eAKLu1MwInquKFMmjpBkQe+2wFpsjpT9WWv6RJVXytEUw9xyMQj42ToxI
+	 juLxBhZY5wtm3vco9JyiRr8H2D1KR9wvSokc3sZksOmJocSGjULA5Sbavf1iWXxqdhEZ8
+	 Lvet7zzZgxfDk3SghW2T4C/ZFHsWhpGwKGPFZJb0q4KnIEyO1GuaFQBeRjueYYUEePulF
+	 2xwOD/N0sAXHRRRJO5kXVly53ZaU7VUXXoLDgPXvRWrReL+BqMnqAtaFXVbmEBjx9Lha5
+	 Pj4Jvc43Ev7kR4Mw9rXQVCRDWBtMijUxvS7YhE+uNoDHw4z5uJmgfl/fa7Ty0hxDQwQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795766733;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795766874;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=w8chAV23OP8ImZeB/ixVto7EvFpsOsFneavxj8XR2uI=;
-	b=s6bPLVd/eZTcmXyxliti/iZZDr3BmOyDeB0R0eTClrUFg/YpSKVd3c5HmjzWq8lN+Bmg
-	 jZgflx6gTUKmS/Yn7tA8gC0Iqdv24fPjFPun0vcB0m21xMmkM7cvHCrllhqNnfKkZ/ToL
-	 h6Xe6EBn7cDPehwvTvwfGPmLhSfYP4v1mHaf0Z80bLICk1u8JFPYGviFbObm3KwbtKrY8
-	 gQzaeAVKPW62PyI63gjfE35YZDA4+AoTpXS3D2taJ8AOB/JIIrCCYnzRsjPwI+wgK7Yip
-	 7PMJ4GKcaL3GTWajnRxlaHxIpUimcgM6MBf5Eyo40ix4X87Y5l+nhIE8H3SlU5pOPrw==
+	bh=Py81VRWuH8DWI735x20Lg3IvPXj0Jm5nzDFjQsTFa3U=;
+	b=i8ltHwVbZWAFb1GPm81uG/WC3+P6tCLZ2Djt9+oYGlh+wbYCqlf04vA46GW9BgfuySxQ
+	 khH/ltIKLiz5ncsmDdkrj9U1xuxrf2GLrYr8j+bcRVaahTLRs+NKA88rvB/AD29THd9sT
+	 EL1VRVYnn97eT/nWgd0rGK74E9UT7/cSfHgUwVWMqACBz2cu/dNFEY6K5/yDLeWrNsryA
+	 yLIWSfyg6vNZiestpl5Z8r1o+yiMYHQSuxNnH0I356b5sZbHCWwBh6nDZQ94IdWWSfW4E
+	 oZwa0q+Vd8TyL8fB7stSfYIK1ekBUKlfm6Q0VDK208xqu0+DAeVV5096/h26dFEfoFA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fm42teNp;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UYtGNLn9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C38606A31C
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 08:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762E2606A31E
+	for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 08:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Fm42teNp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497541F000C1
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 08:05:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UYtGNLn9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9696A1F00893
+	for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 08:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795766733;
-	bh=w8chAV23OP8ImZeB/ixVto7EvFpsOsFneavxj8XR2uI=;
+	s=k20260515; t=1795766873;
+	bh=Py81VRWuH8DWI735x20Lg3IvPXj0Jm5nzDFjQsTFa3U=;
 	h=From:Subject:Reply-To:Cc:In-Reply-To:References:Date;
-	b=Fm42teNpCm1Rj3i8o3/6vlhINNQhqm17KGgR6t/jPY0lkSImTJcWUtBcA81KhC5+P
-	 uoqZs2CQS8zt/Y2kPptjvoVOIU6cPlh+gKypmtjIo6A11dppPQdx2c4QCHPC9hoO46
-	 ADiIdp1qT4ftes4YJfhiI1JJQKWgieUSPbOWg0eHxGop3qkIix08sbKcZpzOYl2JV9
-	 8ZCcbvXZnzQ+/8PV6j41KTYuBfzC8ldDieVAneJocRvgNBxVHoUaEpvaj6C9NkbYpk
-	 kDHJVnDiG39U5ynNdM/y31p8Y0RdWZxLs7G9l7LVwPZRZxV+os4KI/6smmDlyrR8lY
-	 cYLZAi1J58zWQ==
-Message-ID: <sashiko-outbox-236856@kernel.org>
+	b=UYtGNLn9cap16/z+x1P9xw+Gc1pWRU3vodSxhdKDkCARf8FES0H3WUpCSpmfS4Q5P
+	 fZZws3xl9AeqG1ZgzI0kS1by6xLisJz4lutdQG0yMXQVnvErZzpZ2zEl7CuIUDXjxp
+	 JgWtLw2LaXCiME0IEFuOPXm4pmsDJHEz8U3JU6nB+NQMRtAZqxs2wLHPaRWlWslHp/
+	 0lnHfb+uyxmAPHbw5mdAPj6xozdXtEpG7bR1KXF96yk/n7+VNjV5K4JUzAbRla91Kt
+	 KiHGdaPwhyRv70k/S5RTds/LkDU+mpEzsPm/efv9B/jW4MpvG23JhjdWCWG2aqyf7T
+	 DvHr6s1cG17VQ==
+Message-ID: <sashiko-outbox-236861@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] apparmor: return 0 from unpack_tag_headers() on success
+Subject: Re: [PATCH] apparmor: set xattr_count only after the xattrs array
+ is allocated
 Reply-To: sashiko-reviews@lists.linux.dev
 Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <20261127080132.266236-1-congnt264@gmail.com>
-References: <20261127080132.266236-1-congnt264@gmail.com>
+In-Reply-To: <20261127080400.275982-1-congnt264@gmail.com>
+References: <20261127080400.275982-1-congnt264@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Nov 2026 08:05:32 +0000
+Date: Fri, 27 Nov 2026 08:07:53 +0000
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,23 +59,20 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 
-> unpack_tag_headers() returns int, where 0 means success and a negative
-> errno means failure, like unpack_strs_table() and unpack_tagsets() which
-> unpack_tags() calls next to it. On success it returns true, which is 1.
+> unpack_xattrs() sets profile->attach.xattr_count before it allocates
+> profile->attach.xattrs with kcalloc(). If the allocation fails, the load
+> fails and free_attachment() runs on the profile. It loops over
+> xattr_count entries and reads attach->xattrs[i], which is NULL, so it
+> dereferences a NULL pointer.
 >=20
-> unpack_tags() tests the result with "if (error)", so a successfully
-> unpacked "hdrs" array is treated as a failure: unpack_tags() destroys the
-> tags, rewinds e->pos and returns 1. Its caller, unpack_pdb(), only checks
-> for "< 0", so it continues without the tags.
+> Set xattr_count after the allocation has succeeded.
 >=20
-> Return 0 on success.
->=20
-> Fixes: 3d28e2397af7 ("apparmor: add support loading per permission taggin=
-g")
+> Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xa=
+ttr, presence and value")
 > Signed-off-by: Cong Nguyen <congnt264@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127080132.2662=
-36-1-congnt264@gmail.com?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127080400.2759=
+82-1-congnt264@gmail.com?part=3D1
