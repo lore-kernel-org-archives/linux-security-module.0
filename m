@@ -1,51 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795793605;
-	b=ChSqixz2kk9+opGD6lRQYp+0ulQkRdmfeB+wkGErJWvUp28UrWMWugeNY9TRKUiMRKwN
-	 llM+A7jqYghiXmBVqxHmi9hhlKf+RT2FrIDNwq27FUblEnE20xF3jiP/yiV8uZABN1Jaf
-	 zhYZhm3xpNdAgNu0nH5PA0GuRJ4U1bs6Vwqxcvnudvd4oDAlcmn93wBFHaEl80lW49slR
-	 XHsj5hSMBocB5CitT5MnAgwrKR5/2nvr6mkPocjMthMEv5ZYhZNpCANnfFhzIGGJnSYYv
-	 pLfO3/9ItVCo6rX41y62OjsYEQemTkTgUUB4NNTxv2ie3x4M6zN2MDL146mv3wywrug==
+	t=1795793612;
+	b=vgd8kk+kfGMDeeoIyyuZ3klla6NL9Wt7jtowzd7QDqqriVhVPhjTjrrF8NATP/1S6zL0
+	 n+ZCo14tWofPhqlSn7MMptXJDPNOhFryz/mMdwJbsBp4og+NY13cqKDeFDISixD15GsFD
+	 OBYkQGAWdSzd22Ah+M5GMDki6jKc6Kq6VR7L3bKn/GJNrT6UEoRiBPXJ1RLnLAHqWngUQ
+	 n2Heeqj/1IvF9wptjxdekZ9yz78IcOjEWFYorGYg1i99oiKF6YUdiD+U3KBEgQVVa2cHH
+	 ffqeKyi95VGYfSP4Glk/zTGs8Geu4Z8xmL77Bx+PKaGikVU0M5oXr2zQ8Y2EO6RnSbw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795793605;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795793612;
 	h=DMARC-Filter:Received:Received:DKIM-Signature:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
 	 X-Developer-Key;
-	bh=oRtgKudCp/VASC+XZuTjAPaIg7QOvB2qmO6nzhhb1yI=;
-	b=NXn2WZzQOujR9LaY4X1se9XPcHB/FOc4zgJ27o3F0D6tn9KADU+yGUtdN/slAsvZbklS
-	 lz135YfgkBFKADPYgJU5Gpalrghz5RpGvKM/G5XmoJ2QxiDyWYSgi3SioFTgcAHjqQghx
-	 MceFnbsF9AIUJuSY89ZOdE4DfOp+FfSU5aLJXyO9YeXB3FPfGpZJjqfOKOkCwgev93zJF
-	 T45Dv8ucLhPhHCddFyR6W69cnDtG9lXTHyYZ1vuwpijoBeA4083FeWsGMtQMbINqUxd7A
-	 pq03SY+RR6SOEQ60gayWhyv+oysx0y65McWPGwhaJXse4iYItI4c//IRG4KgUnG/Z5Q==
+	bh=pzaufg475Pz57QmsAGv8bsWqQ/JTVhnbVONLRz926U8=;
+	b=WIL6pOhDAZmYbW/D11WbRIC+Ru+Yqf0g4M22yabEdUNFXo+y5JvvFOm58qfkQje/hTIG
+	 3uhvQGf8zv+TIkKgeRTLAN0AK+rFSbfrYAQpCPl1IAIm6r/GL/Vj/npR+AEYxcviiavBF
+	 FxDJBg0KC7SoTXVF8cRN25pKsrihOwVyvUf03MEjx0+JVgbzg2pFdDWz8jm9TkQgXgqE+
+	 DgqgFSh1XaOxHCV4RXdxZA/B0ztPBAqsfdgE+RjrxoVtARO4ttPLgqaxjC6nvnUzLyDRi
+	 momT+Loa0FeorSBHeIlR4jAa2V7Wvpn+NkO1xqs/WpVTRdUwRRkDYsOEYjER6Nc3csg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=arm.com;
 	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=rSJCPZmA;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=neA65pEZ;
 	arc=none smtp.remote-ip=217.140.110.172
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698C1606A31C;
-	Fri, 27 Nov 2026 15:33:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 698C1606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9ADF606A31C;
+	Fri, 27 Nov 2026 15:33:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B9ADF606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=rSJCPZmA
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=neA65pEZ
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB4421D70;
-	Fri, 27 Nov 2026 07:33:21 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74A281E5E;
+	Fri, 27 Nov 2026 07:33:28 -0800 (PST)
 Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 366003F632;
-	Fri, 27 Nov 2026 07:33:21 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 200513F632;
+	Fri, 27 Nov 2026 07:33:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1795793604; bh=LRigvAJhp+2eLJBX6kefUPGIgYbEzkL9gINj2qEXMik=;
+	t=1795793611; bh=6IbfmMlcFJ0SexEz6nfHhm7Xm35bKzPkYbQ2hmLmI4U=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rSJCPZmAVLAT6McHtVMqDDZNAWlk36c1D4BkzXv1OrFuevUAlQbVlJbPEGWUFYlOl
-	 c9a4RVnb0n7aYlcqSYAcLpWU4HHrKS9XbUSynUtZ7erovk9Jf6qZD4jPYetKZh29LK
-	 IFrx2faozQTDi9MlxebS7vlc+alv5cDBsOcRTGCw=
+	b=neA65pEZy27k1Ot3bsHIGQbz1OnGJXkS6+Hl/omESdNhMD58if34LqKQ/CYSfAzjB
+	 u/TamZoTGacrHrDNtDq9hDjWMYLq4eWC/2ky4VlXxputYAKgQ5j7yJJA1pNTeYl/jZ
+	 kjpk6JrtZMMN7zNA17DENwajnjsCsmDO/K5x/VMQ=
 From: Yeoreum Yun <yeoreum.yun@arm.com>
-Date: Fri, 27 Nov 2026 15:32:58 +0000
-Subject: [PATCH RFC v3 3/8] arm64: acpi: Enable ACPI CCEL support
+Date: Fri, 27 Nov 2026 15:33:00 +0000
+Subject: [PATCH RFC v3 5/8] Documentation/ctlv: introduce
+ ctlv-attestation-cca-guest family
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -57,7 +58,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261127-arm_cca_mr-v3-3-df3230afce8f@arm.com>
+Message-Id: <20261127-arm_cca_mr-v3-5-df3230afce8f@arm.com>
 References: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
 In-Reply-To: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
@@ -75,64 +76,135 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
  Shuah Khan <shuah@kernel.org>, Len Brown <lenb@kernel.org>, 
  Shuah Khan <skhan@linuxfoundation.org>, 
  Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@kernel.org>, 
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Gavin Shan <gshan@redhat.com>, 
- Yeoreum Yun <yeoreum.yun@arm.com>, Sudeep Holla <sudeep.holla@kernel.org>
+ Yeoreum Yun <yeoreum.yun@arm.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1464; i=yeoreum.yun@arm.com;
- h=from:subject:message-id; bh=Y0OSdCtnotPMPPdxEFeJ/K5QTuVjcFwxETs3OgoHwHU=;
- b=owEB7QES/pANAwAKAW3Vw9FaxTEzAcsmYgBrCaK0QrrxLQz97qermy0wQEP8E7gn26M5bOINn
- UgzQQ/WVl+JAbMEAAEKAB0WIQQtg+CS3QUzuFh1pJ1t1cPRWsUxMwUCawmitAAKCRBt1cPRWsUx
- M4f9C/9nSjXn69EzPPM8K6RQUBfOMIwloMkG7YJrYryOPA6cDfPFdBXQ25/PEFaQcSup+8bb4Nw
- 4+x4uL3xbUC8AhRWTOxCg1GjmcS27c7YHiOvPGoZsOodsBVKKPMWyfeAzKFeH4u9eEv+AzFggCw
- sRseP1c+bM7A+H/wuCkVXVZ5UG9bM0llrALZ6UQjHVHcEijB/L/wxiDPuJkf1rvvbgXg0nMPGhK
- /qEoZaLWBqgfULONIvsSKj0ODieQS32ZZ9fQkqRvw+7QoqGkvopVcXWm9ry+jNkn7D6PI0smsRC
- s35Arw0UiAVaKXOU0zvobWotKX3HuXCwA8p1w+BxpPJ2pXuIMXVqhGvgq5UMUuqZeL9Tp3BZ7hT
- 93bgAIGg5e02FL0/gKMZHUqTSLdi836xgQwUq4NP7uJSH8bnIP1VxwdPfkkbZ26VpI4HXO5XiMm
- eurk7irjMBevkbZfjQd732DS+10uukqYTpUAHqnDsE6LxpzOeLPIzQKOWTmAX9gwiwxFA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4752; i=yeoreum.yun@arm.com;
+ h=from:subject:message-id; bh=6IbfmMlcFJ0SexEz6nfHhm7Xm35bKzPkYbQ2hmLmI4U=;
+ b=owEB7QES/pANAwAKAW3Vw9FaxTEzAcsmYgBrCaK1XlWtJHGD9n/sRRxrxOOlhNWD2MGxeQuQm
+ aaglJkIywmJAbMEAAEKAB0WIQQtg+CS3QUzuFh1pJ1t1cPRWsUxMwUCawmitQAKCRBt1cPRWsUx
+ Mxc3DADZ3ulTuRyXibZkkPKxNV4ALf3+ksFTkkq6txkulZC3oXW24lheszgnsp14WEcaAzkih1/
+ hlSJ+tRcw5kmuKkBzYhSyc4yfGJeBSUlGKMIh5ba6pP+n0mT4pO4DGUShg7VrHlgVSePWEsDLVK
+ U6VpmwoxLiruIFJCyzRYBglBy0Xm82gpcql5j/67jcY1YAcUamx8wkQqvRVBLLeo8oMDdt43Ku0
+ 35OLsIDDK/FzaAQMrvng9Gl8nAWT5DnLA7olUNPbw0K+xEiLLK5X0eEsoLEzSXygrmgBOTIfPP4
+ FyDeI788xIyiX5kNpDaCnAoYMSTOVCZ2T0DgQpSSALSvnyMHqx7KdqsBVjVwdiIi4KHi4LhXLc+
+ G3fADFeb5ggNvnKosibrKydGOw+coG2jOBKOA3vD6eBaWekxkjytlSWtV9s7oYDQKDwIn/rc6jD
+ axP6mEWkB8LjAj5h0U5UPnudxFN3LczLJWaIiXXlkBkEmE1zeVf2oWxsBpQY2azZPcFsY=
 X-Developer-Key: i=yeoreum.yun@arm.com; a=openpgp;
  fpr=2D83E092DD0533B85875A49D6DD5C3D15AC53133
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Introduce ctlv-attestation-cca-guest family and auto-generated abi files
+via make -C tools/ctlv regen
 
-Add support for ACPI CCEL by handling the EfiACPIMemoryNVS type memory.
-As per UEFI specifications NVS memory is reserved for Firmware use even
-after exiting boot services. Thus map the region as read-only.
-
-Cc: Sami Mujawar <sami.mujawar@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-Cc: Steven Price <steven.price@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Gavin Shan <gshan@redhat.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 ---
- arch/arm64/kernel/acpi.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../ctlv/abi/ctlv-attestation-cca-guest.yaml         | 19 +++++++++++++++++++
+ Documentation/ctlv/abi/families.registry.yaml        |  1 +
+ Documentation/ctlv/families.yaml                     |  1 +
+ Documentation/ctlv/generated-files.yaml              | 11 +++++++++++
+ .../ctlv/specs/ctlv-attestation-cca-guest.yaml       | 20 ++++++++++++++++++++
+ include/uapi/ctlv/ctlv_families_gen.h                |  1 +
+ 6 files changed, 53 insertions(+)
 
-diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-index 681aa2bbc3995..3d6335db882d3 100644
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -354,6 +354,17 @@ void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size)
- 			prot = PAGE_KERNEL_RO;
- 			break;
- 
-+		case EFI_ACPI_MEMORY_NVS:
-+			/*
-+			 * ACPI NVS marks an area reserved for use by the
-+			 * firmware, even after exiting the boot service.
-+			 * This may be used by the firmware for sharing dynamic
-+			 * tables/data (e.g., ACPI CCEL) with the OS. Map it
-+			 * as read-only.
-+			 */
-+			prot = PAGE_KERNEL_RO;
-+			break;
+diff --git a/Documentation/ctlv/abi/ctlv-attestation-cca-guest.yaml b/Documentation/ctlv/abi/ctlv-attestation-cca-guest.yaml
+new file mode 100644
+index 0000000000000..27b1977da13e8
+--- /dev/null
++++ b/Documentation/ctlv/abi/ctlv-attestation-cca-guest.yaml
+@@ -0,0 +1,19 @@
++# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
++%YAML 1.2
++---
++# Checked-in ABI snapshot of the ctlv-attestation-cca-guest family, from
++# Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml, written by
++# "make -C tools/ctlv regen".
++#
++# Updating the file is how a UAPI change gets reviewed; an update that
++# removes or renumbers anything, narrows a bound, or makes a member required
++# is an ABI break, whatever the file says afterwards.
++family: {name: ctlv-attestation-cca-guest, id: 7, inherits: ctlv-attestation}
++enums:
++  evidence-vendor-format: {cca-attestation-token: 1}
++records:
++  device-info:
++    id: 0x00010000
++    fields:
++      version: {number: 1, type: uint, max: s32-max}
++fills: {device-info: device-info}
+diff --git a/Documentation/ctlv/abi/families.registry.yaml b/Documentation/ctlv/abi/families.registry.yaml
+index 0784747a3ac87..21c6c3f978fbe 100644
+--- a/Documentation/ctlv/abi/families.registry.yaml
++++ b/Documentation/ctlv/abi/families.registry.yaml
+@@ -11,3 +11,4 @@ families:
+   - ctlv-test-child
+   - ctlv-attestation-sim
+   - ctlv-attestation-firme
++  - ctlv-attestation-cca-guest
+diff --git a/Documentation/ctlv/families.yaml b/Documentation/ctlv/families.yaml
+index 49121305e3282..810bc07b4e5b0 100644
+--- a/Documentation/ctlv/families.yaml
++++ b/Documentation/ctlv/families.yaml
+@@ -21,3 +21,4 @@ families:
+   - ctlv-test-child
+   - ctlv-attestation-sim
+   - ctlv-attestation-firme
++  - ctlv-attestation-cca-guest
+diff --git a/Documentation/ctlv/generated-files.yaml b/Documentation/ctlv/generated-files.yaml
+index b286e28c2b5b7..d388ca3e4bdd6 100644
+--- a/Documentation/ctlv/generated-files.yaml
++++ b/Documentation/ctlv/generated-files.yaml
+@@ -78,3 +78,14 @@ families:
+         tools/testing/selftests/attestation/ctlv_attestation_firme_user_gen.h
+       user-source: >-
+         tools/testing/selftests/attestation/ctlv_attestation_firme_user_gen.c
 +
- 		case EFI_ACPI_RECLAIM_MEMORY:
- 			/*
- 			 * ACPI reclaim memory is used to pass firmware tables
++  - name: ctlv-attestation-cca-guest
++    source: Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml
++    outputs:
++      uapi-header: include/uapi/ctlv/ctlv_attestation_cca_guest_gen.h
++      kernel-header: drivers/attestation/generated/ctlv_attestation_cca_guest_gen.h
++      kernel-source: drivers/attestation/generated/ctlv_attestation_cca_guest_gen.c
++      user-header: >-
++        tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.h
++      user-source: >-
++        tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.c
+diff --git a/Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml b/Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml
+new file mode 100644
+index 0000000000000..66dee6be4bb03
+--- /dev/null
++++ b/Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml
+@@ -0,0 +1,20 @@
++# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
++%YAML 1.2
++---
++#
++# The attestation device of cca for guest: CCA attestation token 
++#
++family: ctlv-attestation-cca-guest
++inherits: ctlv-attestation
++
++enums:
++  # Fills ctlv-attestation's evidence-vendor-format.
++  evidence-vendor-format:
++    # CCA attestation token.
++    - cca-attestation-token
++
++records:
++  # Fills ctlv-attestation's device-info.
++  device-info:
++    # RSI version.
++    version: uint(..s32-max)
+diff --git a/include/uapi/ctlv/ctlv_families_gen.h b/include/uapi/ctlv/ctlv_families_gen.h
+index e4c0b06a6d7eb..209fbc8d61f0b 100644
+--- a/include/uapi/ctlv/ctlv_families_gen.h
++++ b/include/uapi/ctlv/ctlv_families_gen.h
+@@ -18,6 +18,7 @@ enum _ctlv_family {
+ 	CTLV_FAMILY_TEST_CHILD = 4,
+ 	CTLV_FAMILY_ATTESTATION_SIM = 5,
+ 	CTLV_FAMILY_ATTESTATION_FIRME = 6,
++	CTLV_FAMILY_ATTESTATION_CCA_GUEST = 7,
+ };
+ 
+ #endif /* _UAPI_CTLV_CTLV_FAMILIES_GEN_H */
 
 -- 
 2.43.0
