@@ -1,44 +1,44 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795758982;
-	b=iWgpJ4ohq9OS8RF8lLIGqaWEdLYRiluNiBV/UNh/Ew0ZVToifySbyV2QLdYYzGKvqJik
-	 xNJZ7lZucWRDIqQGO97cx0leXRW8LUt4g0xL1kjXWBbhp7XR17smhM4cd0r1Sco9wTZXA
-	 PJ3uYVqVJIVlpURGP8HVZNlLKDzmdH1809ic6W13tqu7zyU+KE8+Se4KGjRg3KgAmiHCa
-	 ZwC0BPGwk0JRBU2HIjdJFnmzccoLlarEmVOV/3zDSXEjyedATV1eCSnHfeWXjx+ZHRVm+
-	 0/1epZo9dLqLu++0cCEOuvkLI5Eidv85fOKhJQel7bDbY1JTiNKF2zRZ7jPebKJbucg==
+	t=1795758991;
+	b=sSTMooJY+drgTRFGv3Py0TUIb72eum+66tER9WxnGKTC393xahSEc95SWD7xiLYstiMm
+	 SH51y8vTz3ikTgdhBvqd9j7llgad3JtbQGQvPZvW+KoQ4LMCOiO+JUalwnSMvAtrs1FwV
+	 +S6wfXlRgS5sZvB5MiK5D4ROBKKh5/xJ1HE1IBCf/wEHOv4r1mtsxNkuReqLABD78TSRx
+	 qzq8m8bDLDx9FKYIQmTXuDTJ09BdA/MOYzZFMOiXc127PdIcDYrJqsDGHX3Oejb7aI8ad
+	 o12B7UZGKcv3wa80E3aRudbACV1Y94GIdrd1D9DZfK+PLLpEgZtGHDcoMC6g1t4oFCw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795758982;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795758991;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=QUS127OQPTmIdakw/CoBN9+3F8uXf7GAgSpHTspKrTs=;
-	b=0XRvpe/XOEgw7Fr5NZMjnGzhN6PAhrZ6QRSg3dCufvSLsD6N9AL3ReBDZFjbUOKqwKRy
-	 0KPiyof/cCCJq+bG38beI63NVhQ9cltcVPQhpeM4fAJsPpqy9qscUBbG1v++9csRmVEEm
-	 1vF4AJ8pfV5ktjHHlwaC9OZA7clc72cDKrCK79SX2iSG+PpHsPyqH8aQ7iatmnpu71zsC
-	 SggpKDsi14pp1Le3qcxItBIsl7TgkMtzTC+7GRJSnTXdPczmlw3LadPC22nxOrGgwGILW
-	 TF9o9b7tE/+kzgA0K42nr5C+uzhMB88mcKXz/hByY8tDglo8DeN9zd3w4u1dfMrPBJA==
+	bh=dfgO1RGrnv98J61ymk/ujJOkUWitq9+kj7YC0YWUmRQ=;
+	b=jcLs04H0GoifodVVS1vM1p5v+Y3rMnN5W3V+LwLdtvBiw8+1zarCE6NrPV/Smd51MxT7
+	 AldQjKCK46R2dGR2bbJKY7abzJ370V0MEnkIA+CD+m3/pIinUEil06xXNCmD63VsOTxrH
+	 VNb7R5kMIXvs+e44QTwOPRGCXIkxRkzJpL6mfqyIJZwjzsnsxcrbgmdigbtJazXGPYc2t
+	 aUOgj+/F4DET7botSiSfHmMo2+teLoodgRNEmf1HrZRHouiPk8YHuwXm1L6BNlozVSPFU
+	 qwNzZ8oEmSY9a63SkU1Bjf5DDJFuIALnm8BS7ph5pdZcfYxuFKPM9X8thbVAvoxEuMA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kIkJg9QG;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Dp6VPuEA;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 2673B606A326;
-	Fri, 27 Nov 2026 05:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id EE392606A31C;
+	Fri, 27 Nov 2026 05:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kIkJg9QG
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 41CD91F00899;
-	Fri, 27 Nov 2026 05:56:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Dp6VPuEA
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 055CB1F00893;
+	Fri, 27 Nov 2026 05:56:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795758981;
-	bh=QUS127OQPTmIdakw/CoBN9+3F8uXf7GAgSpHTspKrTs=;
+	s=k20260515; t=1795758990;
+	bh=dfgO1RGrnv98J61ymk/ujJOkUWitq9+kj7YC0YWUmRQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kIkJg9QGN82dHsBmIyqhVhvRePiC7SEsCic/b3HrrseRHF3hj+Dt3Lkuycz9aEzor
-	 xJuefQsna3qIMzC04WBpCKosMGSKmDnn5sxZ+knFoRS5v4S8he4ZyoGm6XA8OmTjlg
-	 lJrJ1EaO/e0QTXMQpE6daD1Wlc4LvDH5rL6VPTMN9zQYs/daLh8VqlFMW4v/3oJRWp
-	 yvjFTnNMJGK/6X+NTOJ7qX6FfxR9W2EZP9xtpjtAvphXSjsGNlE8ZdqIZL3rSM0BSK
-	 o3Pxhf41T/mjZ9O9XoFitpQpX17OgdBXdLVkCQVli4EF00qWT3CChN2M+c4xpiCym+
-	 Q+A5sWdbPa67Q==
+	b=Dp6VPuEAsquEiLOPmBmYLBxegFaTHQBoI+/Seyvhw7sUrcTeNmkXwTdcWA3IEHBnp
+	 ByMXQJtZXhnCu/Wbiav4bDzQnQDRu+Ag3b5ZFmhoxOASb3Lb0dtxcXh6o3Zv5+xbl3
+	 uZwlAO9olRkR88JrFGYY3jhDg06+9otUmvpQVS7oek849nuEd4KIgYKJ2087eUN7oO
+	 wz92vuefAXaYyCkGiuLk5V59IVu79lyh/BtLBBqA16U6q25M+h3BYqhO+c6FWIuuI9
+	 XeYghYWpUHQBnJ3eiJ/5IyqxpRMm0dlT0frUS1B6DLcmh3YW54yz5K9mvLOUvEKcYH
+	 J/nytgqSwLZ+w==
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: keyrings@vger.kernel.org
 Cc: Jarkko Sakkinen <jarkko@kernel.org>,
@@ -76,10 +76,11 @@ Cc: Jarkko Sakkinen <jarkko@kernel.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
 	Shuah Khan <skhan@linuxfoundation.org>,
-	Sumit Garg <sumit.garg@kernel.org>
-Subject: [PATCH v5 02/17] KEYS: Factor out KEYCTL_PKEY
-Date: Fri, 27 Nov 2026 07:55:47 +0200
-Message-ID: <20261127055602.2357884-3-jarkko@kernel.org>
+	Sumit Garg <sumit.garg@kernel.org>,
+	Jonathan McDowell <noodles@earth.li>
+Subject: [PATCH v5 04/17] KEYS: trusted: Open code tpm2_buf_append_auth()
+Date: Fri, 27 Nov 2026 07:55:49 +0200
+Message-ID: <20261127055602.2357884-5-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261127055602.2357884-1-jarkko@kernel.org>
 References: <20261127055602.2357884-1-jarkko@kernel.org>
@@ -94,182 +95,74 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out CONFIG_KEYCTL_PKEY from CONFIG_ASYMMETRIC_KEY_TYPE as a hidden
-helper symbol and make keyctl public-key support a per-subsystem choice:
+tpm2_buf_append_auth() has a single call site and most of its parameters
+are redundant. Open code it to the call site so that less cross-referencing
+is required while browsing the source code.
 
-- Add off-by-default CONFIG_ASYMMETRIC_KEY_PKEY to gate keyctl public-key
-  operations on software asymmetric keys so systems that only need
-  CONFIG_ASYMMETRIC_KEY_TYPE for in-kernel signature verification do not
-  expose KEYCTL_PKEY_* operations.
-- Switch TURRIS_SIGNING_KEY, TURRIS_OMNIA_MCU_KEYCTL, and
-  TURRIS_MOX_RWTM_KEYCTL from CONFIG_ASYMMETRIC_KEY_TYPE to
-  CONFIG_KEYCTL_PKEY while keeping them enabled by default.
-
-Suggested-by: Eric Biggers <ebiggers@kernel.org>
+Reviewed-by: Jonathan McDowell <noodles@earth.li>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- crypto/asymmetric_keys/Kconfig           | 11 +++++++++++
- crypto/asymmetric_keys/asymmetric_keys.h |  2 ++
- crypto/asymmetric_keys/asymmetric_type.c |  4 ++++
- drivers/firmware/Kconfig                 |  1 -
- drivers/platform/cznic/Kconfig           |  3 +--
- security/keys/Kconfig                    |  3 +++
- security/keys/Makefile                   |  2 +-
- security/keys/internal.h                 |  2 +-
- security/keys/keyctl.c                   |  2 +-
- 9 files changed, 24 insertions(+), 6 deletions(-)
+ security/keys/trusted-keys/trusted_tpm2.c | 40 ++++-------------------
+ 1 file changed, 7 insertions(+), 33 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index c73979b2e98e..a1fa64a38f24 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -10,6 +10,17 @@ menuconfig ASYMMETRIC_KEY_TYPE
- 
- if ASYMMETRIC_KEY_TYPE
- 
-+config ASYMMETRIC_KEY_PKEY
-+	bool "Asymmetric key keyctl public-key operations"
-+	select KEYCTL_PKEY
-+	help
-+	  This option exposes keyctl public-key operations (query, encrypt,
-+	  decrypt, sign, and verify) on asymmetric keys to userspace.
-+	  In-kernel signature verification (such as module and kexec
-+	  verification) does not require this option.
-+
-+	  If you are unsure as to whether this is required, answer N.
-+
- config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- 	tristate "Asymmetric public-key crypto algorithm subtype"
- 	select MPILIB
-diff --git a/crypto/asymmetric_keys/asymmetric_keys.h b/crypto/asymmetric_keys/asymmetric_keys.h
-index dc854cb737fb..7b669f41f297 100644
---- a/crypto/asymmetric_keys/asymmetric_keys.h
-+++ b/crypto/asymmetric_keys/asymmetric_keys.h
-@@ -13,5 +13,7 @@ extern int __asymmetric_key_hex_to_key_id(const char *id,
- 					  struct asymmetric_key_id *match_id,
- 					  size_t hexlen);
- 
-+#ifdef CONFIG_ASYMMETRIC_KEY_PKEY
- extern int asymmetric_key_eds_op(struct kernel_pkey_params *params,
- 				 const void *in, void *out);
-+#endif
-diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-index 16a7ae16593c..8b8a75b70527 100644
---- a/crypto/asymmetric_keys/asymmetric_type.c
-+++ b/crypto/asymmetric_keys/asymmetric_type.c
-@@ -565,6 +565,7 @@ static struct key_restriction *asymmetric_lookup_restriction(
- 	return ret;
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 621f8ffba17e..2f7c8e571522 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -197,36 +197,6 @@ int tpm2_key_priv(void *context, size_t hdrlen,
+ 	return 0;
  }
  
-+#ifdef CONFIG_ASYMMETRIC_KEY_PKEY
- int asymmetric_key_eds_op(struct kernel_pkey_params *params,
- 			  const void *in, void *out)
- {
-@@ -603,6 +604,7 @@ static int asymmetric_key_verify_signature(struct kernel_pkey_params *params,
- 
- 	return verify_signature(params->key, &sig);
- }
-+#endif
- 
- struct key_type key_type_asymmetric = {
- 	.name			= "asymmetric",
-@@ -614,9 +616,11 @@ struct key_type key_type_asymmetric = {
- 	.destroy		= asymmetric_key_destroy,
- 	.describe		= asymmetric_key_describe,
- 	.lookup_restriction	= asymmetric_lookup_restriction,
-+#ifdef CONFIG_ASYMMETRIC_KEY_PKEY
- 	.asym_query		= query_asymmetric_key,
- 	.asym_eds_op		= asymmetric_key_eds_op,
- 	.asym_verify_signature	= asymmetric_key_verify_signature,
-+#endif
- };
- EXPORT_SYMBOL_GPL(key_type_asymmetric);
- 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 43e2e2a64594..9f382ba10fc9 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -288,7 +288,6 @@ config TURRIS_MOX_RWTM_KEYCTL
- 	bool "Turris Mox rWTM ECDSA message signing"
- 	default y
- 	depends on KEYS
--	depends on ASYMMETRIC_KEY_TYPE
- 	select CZNIC_PLATFORMS
- 	select TURRIS_SIGNING_KEY
- 	help
-diff --git a/drivers/platform/cznic/Kconfig b/drivers/platform/cznic/Kconfig
-index 61cff5f7e02e..850319fb8c67 100644
---- a/drivers/platform/cznic/Kconfig
-+++ b/drivers/platform/cznic/Kconfig
-@@ -80,7 +80,6 @@ config TURRIS_OMNIA_MCU_KEYCTL
- 	bool "Turris Omnia MCU ECDSA message signing"
- 	default y
- 	depends on KEYS
--	depends on ASYMMETRIC_KEY_TYPE
- 	depends on TURRIS_OMNIA_MCU_GPIO
- 	select TURRIS_SIGNING_KEY
- 	help
-@@ -93,6 +92,6 @@ endif # TURRIS_OMNIA_MCU
- config TURRIS_SIGNING_KEY
- 	tristate
- 	depends on KEYS
--	depends on ASYMMETRIC_KEY_TYPE
-+	select KEYCTL_PKEY
- 
- endif # CZNIC_PLATFORMS
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 3f64d60d0f8a..c0cd894d306c 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -22,6 +22,9 @@ menuconfig KEYS
- 
- if KEYS
- 
-+config KEYCTL_PKEY
-+	bool
+-/**
+- * tpm2_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+- *
+- * @buf: an allocated tpm_buf instance
+- * @session_handle: session handle
+- * @nonce: the session nonce, may be NULL if not used
+- * @nonce_len: the session nonce length, may be 0 if not used
+- * @attributes: the session attributes
+- * @hmac: the session HMAC or password, may be NULL if not used
+- * @hmac_len: the session HMAC or password length, maybe 0 if not used
+- */
+-static void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
+-				 const u8 *nonce, u16 nonce_len,
+-				 u8 attributes,
+-				 const u8 *hmac, u16 hmac_len)
+-{
+-	tpm_buf_append_u32(buf, 9 + nonce_len + hmac_len);
+-	tpm_buf_append_u32(buf, session_handle);
+-	tpm_buf_append_u16(buf, nonce_len);
+-
+-	if (nonce && nonce_len)
+-		tpm_buf_append(buf, nonce, nonce_len);
+-
+-	tpm_buf_append_u8(buf, attributes);
+-	tpm_buf_append_u16(buf, hmac_len);
+-
+-	if (hmac && hmac_len)
+-		tpm_buf_append(buf, hmac, hmac_len);
+-}
+-
+ /**
+  * tpm2_seal_trusted() - seal the payload of a trusted key
+  *
+@@ -540,9 +510,13 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 		 * could repeat our actions with the exfiltrated
+ 		 * password.
+ 		 */
+-		tpm2_buf_append_auth(buf, private->policyhandle,
+-				     NULL /* nonce */, 0, 0,
+-				     private->blobauth, private->blobauth_len);
++		tpm_buf_append_u32(buf, 9 + private->blobauth_len);
++		tpm_buf_append_u32(buf, private->policyhandle);
++		tpm_buf_append_u16(buf, 0);
++		tpm_buf_append_u8(buf, 0);
++		tpm_buf_append_u16(buf, private->blobauth_len);
++		tpm_buf_append(buf, private->blobauth, private->blobauth_len);
 +
- config KEYS_REQUEST_CACHE
- 	bool "Enable temporary caching of the last request_key() result"
- 	help
-diff --git a/security/keys/Makefile b/security/keys/Makefile
-index 5f40807f05b3..aafd28f7ee2f 100644
---- a/security/keys/Makefile
-+++ b/security/keys/Makefile
-@@ -22,7 +22,7 @@ obj-$(CONFIG_PROC_FS) += proc.o
- obj-$(CONFIG_SYSCTL) += sysctl.o
- obj-$(CONFIG_PERSISTENT_KEYRINGS) += persistent.o
- obj-$(CONFIG_KEY_DH_OPERATIONS) += dh.o
--obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += keyctl_pkey.o
-+obj-$(CONFIG_KEYCTL_PKEY) += keyctl_pkey.o
- 
- #
- # Key types
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 4cf6b8070227..1821ba1165c1 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -316,7 +316,7 @@ static inline long compat_keyctl_dh_compute(
- #endif
- #endif
- 
--#ifdef CONFIG_ASYMMETRIC_KEY_TYPE
-+#ifdef CONFIG_KEYCTL_PKEY
- extern long keyctl_pkey_query(key_serial_t,
- 			      const char __user *,
- 			      struct keyctl_pkey_query __user *);
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index d6b10fd67627..417bba539bb1 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -28,7 +28,7 @@ static const unsigned char keyrings_capabilities[2] = {
- 	[0] = (KEYCTL_CAPS0_CAPABILITIES |
- 	       (IS_ENABLED(CONFIG_PERSISTENT_KEYRINGS)	? KEYCTL_CAPS0_PERSISTENT_KEYRINGS : 0) |
- 	       (IS_ENABLED(CONFIG_KEY_DH_OPERATIONS)	? KEYCTL_CAPS0_DIFFIE_HELLMAN : 0) |
--	       (IS_ENABLED(CONFIG_ASYMMETRIC_KEY_TYPE)	? KEYCTL_CAPS0_PUBLIC_KEY : 0) |
-+	       (IS_ENABLED(CONFIG_KEYCTL_PKEY)		? KEYCTL_CAPS0_PUBLIC_KEY : 0) |
- 	       (IS_ENABLED(CONFIG_BIG_KEYS)		? KEYCTL_CAPS0_BIG_KEY : 0) |
- 	       KEYCTL_CAPS0_INVALIDATE |
- 	       KEYCTL_CAPS0_RESTRICT_KEYRING |
+ 		if (tpm2_chip_auth(chip)) {
+ 			tpm_buf_append_hmac_session(chip, buf, TPM2_SA_ENCRYPT,
+ 						    NULL, 0);
 -- 
 2.47.3
 
