@@ -1,77 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795808465;
-	b=jynA8EdtESCiphk34F46TTprPFLrNm07sAOOQ91VG8uvPhvQgvO/tknblB9QPxne8FSg
-	 IjOIHD2gsf4bpgLre12y3Eg6iTnUOJRa8sJ79/2U2sELm2i6UWFx7sVgGMLeeBDkIHXkp
-	 khTuZJG+MksILGpS3hfGfE1GxmjQJQd/OlgolyEFK3ZTtDmgIgsRsnZ1M13+QA6V39jgV
-	 UKnTCtEMbR273fZ4RkaIpDvp9I0uHFvzJY51oBSrZO41r06hDvr97/UxoG5ea2LhdGeay
-	 NRwzdnKvn2ME2lLnajDsm4alPdgPJ+N1nNAdSlWtNxgsyRCIE1HV7v2xRLLfcX9wZsQ==
+	t=1795812243;
+	b=yg+K8F7Y0qJZQlpgbOmVH9GmrsOXlrr/iDCPHWhVJkXpeDrM87zEsxmUuVDj0d8N9fe1
+	 9AJYGSxN8cozSuwht9JX8Rc/Yx6r9UHOx1a1DdYVJ2zsu48UKIAsLUGj/7BfHMMr+S2JX
+	 N6SqKu+cArVhe5aZnRZ8RhGlp+drly0vU19pF5RMBoZ6fjw/dEGVZQdK9NnhZRVq+oGC0
+	 aON5DHCIF6rk+WM5SLk+4lVJVGZ3yJ6PHXwA6cq2J+UHiG6lhu9wqZtudMyH2mgI8czc6
+	 An7GoW1GbrvAgij+79/ea9IbxDs9L1I4rRcQsiKc+nOw2PnaywnfLu7z8CpMh8z5ykA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795808465;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=ULn49rq+foRUnRGBMXBuYjS8gpikS5WyQEKWls+yMRA=;
-	b=Kws7iS6dBeBT1e/5doXcDLOYn7oTQHBfjEXJiaMRg/enHYEwByyvpdirkveLhtk1Ox3/
-	 fGhK1UvcbXXQeGbMUuXSJgSZ9dJp5V1u+qP6QIkUb2RiNQoU/kXBATnTruBMGD2jaxQsZ
-	 +IETZ9wUEWjxJ8Y7uLYRLgz/lDzTrNNaTKIUAFldZIlipQMrNbbA4Ft4flM/3oTcy0+5K
-	 gfn+U6UKGRmLcjCHvIPdZuCmy2VLvdKB8If3nTVvCsKXjb6Jtj8kK8i0+IXJL+2d6c52/
-	 ww8ufJysoktZH1fUJSWrGqDh0LrNhLqMCz5afmbG1LwYjpRA26Yov8vuHBM1fJ8WjFg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795812243;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=ZBHkKQincwwB272MrdNqAk8PnfXID8CFl6lizGEkOSc=;
+	b=QK+/liET9W4fpkwu306nFA4MB22senB3msNvezB0j1ErEffkb8hEHt7A2cFzvpk6FvUY
+	 mh9YzoF3MXm1lVZZFQqXxEZQHgQClMtnO+Zuc/KoOUgPx31j5mPOXsgXDLcNMlO/7dwLt
+	 3RvXLrpBlz5dAbHrj5nZ2UQT1k4VXpiYkUfXpqE1fUGzURf4RRrN4oYA83Pdak9xrZNlF
+	 o94dLxVouhWA1ckkHBEfwLBVXBoxj5wothsBesuLZf2odl/IFq6f3bOKJWfs4Zj25tD2F
+	 n+YCWe9rEPtsBiZgHzp3fJ/E10nW6HJtja4WVUH6+VjAQLJb/sjycmlkB+Zcx5j8U4g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=lSncp5uC;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A63606A32C;
-	Fri, 27 Nov 2026 19:41:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 03A63606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FX6Eud+x;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 7F7C5606A31C;
+	Fri, 27 Nov 2026 20:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=lSncp5uC
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DE1D1575;
-	Fri, 27 Nov 2026 11:41:01 -0800 (PST)
-Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 432D53F632;
-	Fri, 27 Nov 2026 11:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1795808464; bh=fioucID+8fbbj8tWzFHzFZGEV4eCYp3bOFGBcaxc55s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lSncp5uCSksq2jem0pQF5wGdzZG7o7CpSitT4QZGqkwrt6CNnmOzoN58im0X0EIRL
-	 WpgDd/dGqrL5y414OIyTYa55gA9fzjEksDtUygbJJgVt46+2393rtwIcj9kfxjGrXv
-	 PLiwn5Oj7+2c7mutFKeiwqwYxHDE9B/nNcZ8tZpU=
-Date: Fri, 27 Nov 2026 19:40:58 +0000
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Sami Mujawar <sami.mujawar@arm.com>, thuth@redhat.com,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Pawel Chmielewski <pawel.chmielewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>, Len Brown <lenb@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FX6Eud+x
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8E0611F00897;
+	Fri, 27 Nov 2026 20:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795812243;
+	bh=ZBHkKQincwwB272MrdNqAk8PnfXID8CFl6lizGEkOSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=FX6Eud+x4+J1YgI2GxXH6bhpsoOPDPbHKjKgzvmwL2uRtf+rl+aMF3Zcbl1+pY3rb
+	 4h1awcWBTTsiNpH5gB/i9EPZ2iXMZkQ1AMvirq1k11xGlRtDLuEHPO1QxHSOcnfW5U
+	 +eEbPHkD047zlQGpo8Rbu3XnctIR7uhaVFLAjSoM9CGTl0fq+je/4WKHDaDYx+obfz
+	 1VmiY7EzSu2xuCAiPLXAOrCMlcq8o50q4+ZMe1+djt3riYyyFDKQOfM9P4Y94Q/JMn
+	 xXzuG5OrbRp/lpanG7u84TK1QFj34aZT3SyfnyT03GK1bupzpkFuPPhPoI1H9mEdoV
+	 4ACu+QJO0Uuqg==
+Date: Fri, 27 Nov 2026 22:43:59 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Alasdair Kergon <agk@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	David Gstir <david@sigma-star.at>,
+	David Howells <dhowells@redhat.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ignat Korchagin <ignat@linux.win>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	James Morris <jmorris@namei.org>,
+	James Prestwood <prestwoj@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
+	Jonathan McDowell <noodles@meta.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
 	Randy Dunlap <rdunlap@infradead.org>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RFC v3 7/8] attestation: providers: introduce CCA Guest
- attestation provider
-Message-ID: <awncytx4Nqd8HuNx@e129823.arm.com>
-References: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
- <20261127-arm_cca_mr-v3-7-df3230afce8f@arm.com>
- <20261127170722.GT246011@ziepe.ca>
- <awnK2c3kMq8p2a_7@e129823.arm.com>
- <20261127183550.GV246011@ziepe.ca>
- <awnV5S703Rgf5sh5@e129823.arm.com>
- <20261127191822.GA1856591@ziepe.ca>
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Garg <sumit.garg@kernel.org>
+Subject: Re: [PATCH v5 00/17] KEYS: trusted: asymmetric keys
+Message-ID: <awnrj-s1qL0Bw0nI@kernel.org>
+References: <20261127055602.2357884-1-jarkko@kernel.org>
+ <20261127193133.GE8300@quark>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -83,51 +87,80 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261127191822.GA1856591@ziepe.ca>
+In-Reply-To: <20261127193133.GE8300@quark>
 
-On Fri, Nov 27, 2026 at 03:18:22PM -0400, Jason Gunthorpe wrote:
-> On Fri, Nov 27, 2026 at 07:11:33PM +0000, Yeoreum Yun wrote:
-> > I think the problem is the *max-token-size* could be changed.
-> > once the LFA updates the Realm definitely the contents of hash of
-> > firmware binary can be changed. this means the token's content could be
-> > change including the *max-token-size*.
-> 
-> I think that is broken, there is no good way to make that work in a
-> sane manner.
-> 
-> LFA must stay under the hard wired max-token-size limit, not try to
-> change it while a realm is running. Take this to your spec team.
-
-Yeap. if max-token-size is hard wired. then will not be a problem.
-And need to talk them.
-
-Thanks!
-
-> 
-> > For this, the RSI host call interface has the way to get LFA eventlog.
-> > IOW, after LFA, there will be LFA log is genreated and then for the
-> > time of re-attestation, it should deliver the LFA logs together.
-> 
-> The detached event log is even more reason the token should not ever
-> be changed by a LFA.
-> 
-> > > I saw in your FIRME series a solution to this problem, I think that
-> > > would be good to get out on its own and apply it first to RSI as
-> > > well. We will have the core RSI stuff, the realm attestation and TSM
-> > > driver at a minimum..
+On Fri, Nov 27, 2026 at 11:31:33AM -0800, Eric Biggers wrote:
+> On Fri, Nov 27, 2026 at 07:55:45AM +0200, Jarkko Sakkinen wrote:
+> > OVERVIEW
+> > ========
 > > 
-> > Hm,, Does this mean do we need to create two device one for TSM and
-> > one for attestation even the functionality same?
+> > Extend TPM 2.0 trusted keys to load ASN.1 TPMKey [1] asymmetric keys
+> > (OID_TPMLoadableKey, 2.23.133.10.1.3) and expose keyctl pkey-operations
+> > directly on key_type_trusted. In addition there are some TPMKey
+> > interoperability fixes.
+> > 
+> > I.e. this my old series with a twist: instead of introducing a separate
+> > subtype for asymmetric keys, factor out pkey-operations into a separate
+> > CONFIG_KEYCTL_PKEY-feature, and wire asymmetric operations to
+> > key_type_trusted.
+> > 
+> > This work was originally derived from [3], is direct offspring of [2],
+> > and folds in the prerequisite tpm2-sessions and tpm-buf cleanups from
+> > [4].
+> > 
+> > [1] https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.html
+> > [2] https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+> > [3] https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
+> > [4] https://lore.kernel.org/linux-integrity/20261116005105.1573016-1-jarkko@kernel.org/
 > 
-> They won't have the same functionality. It will be the same as you had
-> with FIRME where there is a driver doing CPU attestation and another
-> one (the TSM driver actually) doing link IDE.
+> Could you describe the motivation for these changes here?  And also
+> include more context directly, for people who aren't already familiar
+> with all the earlier patches linked to above.
+> 
+> Also, this series is missing a base-commit, and I don't know how to
+> apply it for review.
 
-Right, I've missed the link IDE.
-Yeap. in the next-spin let me make two device for it.
+Sure, I'll do that if this moves forward.
 
-Thanks ;)
+The feature allows to provision an external key so that private portion
+is secured by TPM, and used for e.g., signing and authentication. One
+example of a program that might use this is iwd.
 
--- 
-Sincerely,
-Yeoreum Yun
+First, a parent is needed.
+
+0x40000001 (Owner) primary following TCG H-2 ECC P-256 template:
+
+	tpm2_createprimary -C o -g sha256 -G ecc256:null:aes128cfb \
+      		-a "fixedtpm|fixedparent|sensitivedataorigin|userwithauth|noda|restricted|decrypt" \
+      		-c primary.ctx
+
+    	tpm2_import -C primary.ctx -G ecc -i key.pem -u key.pub -r key.priv
+    	tpm2_encodeobject -C primary.ctx -u key.pub -r key.priv -o key.tpm.pem
+    	tpm2_flushcontext primary.ctx
+	
+Alternatively, a persistent handle can be used. This follows TPMKey
+specification recommendations.
+
+Then external key can be imported an used as follows:
+
+	openssl ecparam -name prime256v1 -genkey -noout -out key.pem
+    	openssl pkey -in key.pem -pubout -out pub.pem
+ 	openssl asn1parse -in key.tpm.pem -out key.tpm.der -noout
+    	HEX=$(xxd -p -c 0 key.tpm.der)
+    	TPM_KEY=$(keyctl add trusted tpm-key "load $HEX" @u)
+    	keyctl pkey_query "$TPM_KEY" 0 enc=x962 hash=sha256
+
+	echo "secret sauce" > plain.txt
+	openssl dgst -sha256 -binary -out plain.sha256 plain.txt
+	keyctl pkey_sign "$TPM_KEY" 0 plain.sha256 enc=x962 hash=sha256 > plain.sig
+
+> 
+> - Eric
+
+Another document that is source for what should be supported is:
+
+https://datatracker.ietf.org/doc/draft-woodhouse-cert-best-practice/
+
+Althought, I'm not sure how relevant this is anymore.
+
+Br, Jarkko
