@@ -1,52 +1,51 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795793612;
-	b=vgd8kk+kfGMDeeoIyyuZ3klla6NL9Wt7jtowzd7QDqqriVhVPhjTjrrF8NATP/1S6zL0
-	 n+ZCo14tWofPhqlSn7MMptXJDPNOhFryz/mMdwJbsBp4og+NY13cqKDeFDISixD15GsFD
-	 OBYkQGAWdSzd22Ah+M5GMDki6jKc6Kq6VR7L3bKn/GJNrT6UEoRiBPXJ1RLnLAHqWngUQ
-	 n2Heeqj/1IvF9wptjxdekZ9yz78IcOjEWFYorGYg1i99oiKF6YUdiD+U3KBEgQVVa2cHH
-	 ffqeKyi95VGYfSP4Glk/zTGs8Geu4Z8xmL77Bx+PKaGikVU0M5oXr2zQ8Y2EO6RnSbw==
+	t=1795793608;
+	b=EamWBjJ+iYwyb1oLDBDyCSZ4kxdECrivp/GvaKpuYmu2ESMv+019ub9b5rHeBRj6jc+W
+	 QwXDajESpZIYYkWOAFXaGjxBaYTdYHmY7tetTBu84lof5UCuUJO6I0hlp3hV0ZiWpoXQC
+	 PtbKoBcE9QQRwroEGEiagxqA7rUr9Qf60oUdJ8HXWKH2fstTX08H5nbZFs2pwOimhxXqa
+	 BeOjcKi410dnul/mHQJQ0q3kxEp4bp6sKTcPLQOkPRDI+s5UHipAGbqtfDw4XWLRzawjz
+	 0AdZPet14SDy1aPso5J2AB4BskqpTevG6VNdBpTY5orr3fmI0RMBEB0f2JgWqd4oAOg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795793612;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795793608;
 	h=DMARC-Filter:Received:Received:DKIM-Signature:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
 	 X-Developer-Key;
-	bh=pzaufg475Pz57QmsAGv8bsWqQ/JTVhnbVONLRz926U8=;
-	b=WIL6pOhDAZmYbW/D11WbRIC+Ru+Yqf0g4M22yabEdUNFXo+y5JvvFOm58qfkQje/hTIG
-	 3uhvQGf8zv+TIkKgeRTLAN0AK+rFSbfrYAQpCPl1IAIm6r/GL/Vj/npR+AEYxcviiavBF
-	 FxDJBg0KC7SoTXVF8cRN25pKsrihOwVyvUf03MEjx0+JVgbzg2pFdDWz8jm9TkQgXgqE+
-	 DgqgFSh1XaOxHCV4RXdxZA/B0ztPBAqsfdgE+RjrxoVtARO4ttPLgqaxjC6nvnUzLyDRi
-	 momT+Loa0FeorSBHeIlR4jAa2V7Wvpn+NkO1xqs/WpVTRdUwRRkDYsOEYjER6Nc3csg==
+	bh=UbxRM54/x3gsaWN6jkFOgoIZhRMewegV72A+3q3F3mc=;
+	b=1FLCxFl73rcBKRlKBM7x7pYBjPxgPeMrbLanvpZaiHgggNEY5yKb7UyZr2j6tvbCPB1h
+	 Q2H97YEtN0QPDDT57wTlgdhW05JK5prxd8krFo3yeaTlf9OgJoHpHylzEupAkLffbFncs
+	 qGOgGRZ+mOf1bF6W+YVXkPZ5CaPLLsW8xscZXdBPXsPuIY25LB3wv28JAynwRQf6IXwkJ
+	 DSDEuKn28MTj4kDqqXYaJ82Oib41flM2tZGKYAOPU++jYWLtZ54rxa2MskjkNo/z2FUL9
+	 T0zZa+52MPYGLVAIveaxcdk7rWULKMRV6urwY3c7VNPdFd84Fy2qtJqrKrfUdO+UtWQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=arm.com;
 	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=neA65pEZ;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Yg3r4HXa;
 	arc=none smtp.remote-ip=217.140.110.172
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9ADF606A31C;
-	Fri, 27 Nov 2026 15:33:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B9ADF606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758A4606A327;
+	Fri, 27 Nov 2026 15:33:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 758A4606A327
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=neA65pEZ
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=Yg3r4HXa
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74A281E5E;
-	Fri, 27 Nov 2026 07:33:28 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E2DE1E4D;
+	Fri, 27 Nov 2026 07:33:25 -0800 (PST)
 Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 200513F632;
-	Fri, 27 Nov 2026 07:33:28 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEB413F632;
+	Fri, 27 Nov 2026 07:33:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1795793611; bh=6IbfmMlcFJ0SexEz6nfHhm7Xm35bKzPkYbQ2hmLmI4U=;
+	t=1795793607; bh=ZYYAWoxKreiy1oLbAXptBMHxGm45wgu9yoV+MxOg3ow=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=neA65pEZy27k1Ot3bsHIGQbz1OnGJXkS6+Hl/omESdNhMD58if34LqKQ/CYSfAzjB
-	 u/TamZoTGacrHrDNtDq9hDjWMYLq4eWC/2ky4VlXxputYAKgQ5j7yJJA1pNTeYl/jZ
-	 kjpk6JrtZMMN7zNA17DENwajnjsCsmDO/K5x/VMQ=
+	b=Yg3r4HXagVrv3zl20I12s8HoFBmHuH72UcKqi9rQuzUlpUciR7eDUV37XMbjpwrkj
+	 Pc7MewOHm6Z8N6/9OGvMDhLazIxhcNZh25RZcBDsP4UWUrZDTwJHEvRrxF0Pd9VM7i
+	 OtwrHGIegGCxZkSYGCBkkdTYvQ9xm+zuWxwoI7TU=
 From: Yeoreum Yun <yeoreum.yun@arm.com>
-Date: Fri, 27 Nov 2026 15:33:00 +0000
-Subject: [PATCH RFC v3 5/8] Documentation/ctlv: introduce
- ctlv-attestation-cca-guest family
+Date: Fri, 27 Nov 2026 15:32:59 +0000
+Subject: [PATCH RFC v3 4/8] acpi: add CCtype value macros for CCEL table
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,7 +57,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261127-arm_cca_mr-v3-5-df3230afce8f@arm.com>
+Message-Id: <20261127-arm_cca_mr-v3-4-df3230afce8f@arm.com>
 References: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
 In-Reply-To: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
@@ -78,133 +77,46 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
  Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@kernel.org>, 
  Yeoreum Yun <yeoreum.yun@arm.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4752; i=yeoreum.yun@arm.com;
- h=from:subject:message-id; bh=6IbfmMlcFJ0SexEz6nfHhm7Xm35bKzPkYbQ2hmLmI4U=;
- b=owEB7QES/pANAwAKAW3Vw9FaxTEzAcsmYgBrCaK1XlWtJHGD9n/sRRxrxOOlhNWD2MGxeQuQm
- aaglJkIywmJAbMEAAEKAB0WIQQtg+CS3QUzuFh1pJ1t1cPRWsUxMwUCawmitQAKCRBt1cPRWsUx
- Mxc3DADZ3ulTuRyXibZkkPKxNV4ALf3+ksFTkkq6txkulZC3oXW24lheszgnsp14WEcaAzkih1/
- hlSJ+tRcw5kmuKkBzYhSyc4yfGJeBSUlGKMIh5ba6pP+n0mT4pO4DGUShg7VrHlgVSePWEsDLVK
- U6VpmwoxLiruIFJCyzRYBglBy0Xm82gpcql5j/67jcY1YAcUamx8wkQqvRVBLLeo8oMDdt43Ku0
- 35OLsIDDK/FzaAQMrvng9Gl8nAWT5DnLA7olUNPbw0K+xEiLLK5X0eEsoLEzSXygrmgBOTIfPP4
- FyDeI788xIyiX5kNpDaCnAoYMSTOVCZ2T0DgQpSSALSvnyMHqx7KdqsBVjVwdiIi4KHi4LhXLc+
- G3fADFeb5ggNvnKosibrKydGOw+coG2jOBKOA3vD6eBaWekxkjytlSWtV9s7oYDQKDwIn/rc6jD
- axP6mEWkB8LjAj5h0U5UPnudxFN3LczLJWaIiXXlkBkEmE1zeVf2oWxsBpQY2azZPcFsY=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=863; i=yeoreum.yun@arm.com;
+ h=from:subject:message-id; bh=ZYYAWoxKreiy1oLbAXptBMHxGm45wgu9yoV+MxOg3ow=;
+ b=owEB7QES/pANAwAKAW3Vw9FaxTEzAcsmYgBrCaK0gZOUA742VqK9FJfMhVcJaXrr7xKAygARy
+ x13Y7F9iu2JAbMEAAEKAB0WIQQtg+CS3QUzuFh1pJ1t1cPRWsUxMwUCawmitAAKCRBt1cPRWsUx
+ M8wnC/9VJBXCWG+gOzZuz2ss/tFA4X+la5ksWYTxTfHm5ve+cobHAcb1Zo4GemS5btOdabBxcoh
+ 7QbP+39jdw5hj/IOMwOflVHAV+XaW2QWkEcK4chkBa90FX/oZv6/BrrgGLemi+hUkRjJxSP9KeA
+ 5zkHNhTIKPjfCqBBwxIBELeW1sMIHqnh5Z8GBTmLLfX6al+BB4w4I97bypqyRuW/4fWZFggzjmz
+ NXeNVNr5hmDvVmjTjDfaV3gL/HOtFnUQxXI/VJ71SX7Lp+mYkU9MornF3dqbr0CsaCw918OS6Yn
+ zoPv4TDe1n+71g/AIG8I2mkkarcnDFhw2FgZZEU1BCpPWa9HVV1xC33GpOENp2Yn9gQYO6PJ0Aj
+ QSMYvXWMZHfHMIQw7+cG4dAllTMdTI1ESVGVNOHEvceR7l9fsMoJRc41UF0e5pOL5QzF+SFQBHH
+ CifCMNmWDPNlmDBCOV2n6MeHoH0qt5GjF3EM4faTMg1rjcvy0yVkCfoHYf2p6umzUlpfc=
 X-Developer-Key: i=yeoreum.yun@arm.com; a=openpgp;
  fpr=2D83E092DD0533B85875A49D6DD5C3D15AC53133
 
-Introduce ctlv-attestation-cca-guest family and auto-generated abi files
-via make -C tools/ctlv regen
+Add CCtype value macros for CCEL table.
 
+Link: [0] https://github.com/tianocore/edk2/issues/11384
 Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 ---
- .../ctlv/abi/ctlv-attestation-cca-guest.yaml         | 19 +++++++++++++++++++
- Documentation/ctlv/abi/families.registry.yaml        |  1 +
- Documentation/ctlv/families.yaml                     |  1 +
- Documentation/ctlv/generated-files.yaml              | 11 +++++++++++
- .../ctlv/specs/ctlv-attestation-cca-guest.yaml       | 20 ++++++++++++++++++++
- include/uapi/ctlv/ctlv_families_gen.h                |  1 +
- 6 files changed, 53 insertions(+)
+ include/acpi/actbl2.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/ctlv/abi/ctlv-attestation-cca-guest.yaml b/Documentation/ctlv/abi/ctlv-attestation-cca-guest.yaml
-new file mode 100644
-index 0000000000000..27b1977da13e8
---- /dev/null
-+++ b/Documentation/ctlv/abi/ctlv-attestation-cca-guest.yaml
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
-+%YAML 1.2
-+---
-+# Checked-in ABI snapshot of the ctlv-attestation-cca-guest family, from
-+# Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml, written by
-+# "make -C tools/ctlv regen".
-+#
-+# Updating the file is how a UAPI change gets reviewed; an update that
-+# removes or renumbers anything, narrows a bound, or makes a member required
-+# is an ABI break, whatever the file says afterwards.
-+family: {name: ctlv-attestation-cca-guest, id: 7, inherits: ctlv-attestation}
-+enums:
-+  evidence-vendor-format: {cca-attestation-token: 1}
-+records:
-+  device-info:
-+    id: 0x00010000
-+    fields:
-+      version: {number: 1, type: uint, max: s32-max}
-+fills: {device-info: device-info}
-diff --git a/Documentation/ctlv/abi/families.registry.yaml b/Documentation/ctlv/abi/families.registry.yaml
-index 0784747a3ac87..21c6c3f978fbe 100644
---- a/Documentation/ctlv/abi/families.registry.yaml
-+++ b/Documentation/ctlv/abi/families.registry.yaml
-@@ -11,3 +11,4 @@ families:
-   - ctlv-test-child
-   - ctlv-attestation-sim
-   - ctlv-attestation-firme
-+  - ctlv-attestation-cca-guest
-diff --git a/Documentation/ctlv/families.yaml b/Documentation/ctlv/families.yaml
-index 49121305e3282..810bc07b4e5b0 100644
---- a/Documentation/ctlv/families.yaml
-+++ b/Documentation/ctlv/families.yaml
-@@ -21,3 +21,4 @@ families:
-   - ctlv-test-child
-   - ctlv-attestation-sim
-   - ctlv-attestation-firme
-+  - ctlv-attestation-cca-guest
-diff --git a/Documentation/ctlv/generated-files.yaml b/Documentation/ctlv/generated-files.yaml
-index b286e28c2b5b7..d388ca3e4bdd6 100644
---- a/Documentation/ctlv/generated-files.yaml
-+++ b/Documentation/ctlv/generated-files.yaml
-@@ -78,3 +78,14 @@ families:
-         tools/testing/selftests/attestation/ctlv_attestation_firme_user_gen.h
-       user-source: >-
-         tools/testing/selftests/attestation/ctlv_attestation_firme_user_gen.c
-+
-+  - name: ctlv-attestation-cca-guest
-+    source: Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml
-+    outputs:
-+      uapi-header: include/uapi/ctlv/ctlv_attestation_cca_guest_gen.h
-+      kernel-header: drivers/attestation/generated/ctlv_attestation_cca_guest_gen.h
-+      kernel-source: drivers/attestation/generated/ctlv_attestation_cca_guest_gen.c
-+      user-header: >-
-+        tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.h
-+      user-source: >-
-+        tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.c
-diff --git a/Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml b/Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml
-new file mode 100644
-index 0000000000000..66dee6be4bb03
---- /dev/null
-+++ b/Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml
-@@ -0,0 +1,20 @@
-+# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
-+%YAML 1.2
-+---
-+#
-+# The attestation device of cca for guest: CCA attestation token 
-+#
-+family: ctlv-attestation-cca-guest
-+inherits: ctlv-attestation
-+
-+enums:
-+  # Fills ctlv-attestation's evidence-vendor-format.
-+  evidence-vendor-format:
-+    # CCA attestation token.
-+    - cca-attestation-token
-+
-+records:
-+  # Fills ctlv-attestation's device-info.
-+  device-info:
-+    # RSI version.
-+    version: uint(..s32-max)
-diff --git a/include/uapi/ctlv/ctlv_families_gen.h b/include/uapi/ctlv/ctlv_families_gen.h
-index e4c0b06a6d7eb..209fbc8d61f0b 100644
---- a/include/uapi/ctlv/ctlv_families_gen.h
-+++ b/include/uapi/ctlv/ctlv_families_gen.h
-@@ -18,6 +18,7 @@ enum _ctlv_family {
- 	CTLV_FAMILY_TEST_CHILD = 4,
- 	CTLV_FAMILY_ATTESTATION_SIM = 5,
- 	CTLV_FAMILY_ATTESTATION_FIRME = 6,
-+	CTLV_FAMILY_ATTESTATION_CCA_GUEST = 7,
+diff --git a/include/acpi/actbl2.h b/include/acpi/actbl2.h
+index 76e4a5bc79b42..44810b9b9ddc5 100644
+--- a/include/acpi/actbl2.h
++++ b/include/acpi/actbl2.h
+@@ -454,6 +454,13 @@ struct acpi_table_ccel {
+ 	u64 log_area_start_address;
  };
  
- #endif /* _UAPI_CTLV_CTLV_FAMILIES_GEN_H */
++/* Values for CCtype */
++#define ACPI_CCEL_CCTYPE_RESERVED	0
++#define ACPI_CCEL_CCTYPE_AMD_SEV	1
++#define ACPI_CCEL_CCTYPE_INTEL_TDX	2
++#define ACPI_CCEL_CCTYPE_RISCV_AP_TEE	3
++#define ACPI_CCEL_CCTYPE_ARM_CCA	4
++
+ /*******************************************************************************
+  *
+  * ERDT - Enhanced Resource Director Technology (ERDT) table
 
 -- 
 2.43.0
