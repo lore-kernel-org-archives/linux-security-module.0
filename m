@@ -1,82 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=101.204.27.37
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795730580;
-	b=a4RyzSy4z0GxySChewTD/Aqqtjk3iQbonHGx6WiN/nbd007Oc/WXNOsl1ODTJvp6+ytU
-	 NhnB5St+tSSet8lJduKUG9v9h4KXNfYrT+3EqNCxGl7ZBHTGyDtE6L199n8ww4qi4t2E6
-	 PaqU6HQzCmU1Wqcm/Cf+4Kne8MMkq2GzTlqJbkZ5jcuDZ9ZrK7oC4KImW/ZdxS0PRcWt2
-	 zrNX9z+W0RI8Ik6H54riP9mLG63G+K5eKW0bMHfD6aoAavFMYA+2vcA7ELEqAUrN3m3Uw
-	 rM/Rkr3IwQRN7StKncH2zEfYsONqZ6gLVvSukzRHhl/FYlPrGxucB/VboDA4dEPhWDw==
+	t=1795745120;
+	b=s5w2gqIa2as+wnLHUkYe0//mKq/DbgcVIQi7Lb3FAPigLZ6ZmRuDRYHseKi+hADaoufi
+	 5IbG9O3DCSbYlfTl5wD8MQ58qFaEY1WxbUrDT9BXCq9lmZi414t/590+eu2pQFURCpMtI
+	 7PxPInVmM/9gU47vkwkTYCFdaNIO0qMjfaWMEO/WLJFuE79Av+CWynERrT2Ccch2TAcrk
+	 bN7wRT0KdbbOId1NWaA8FWNvoGJeF+oJVMRaIjpmoydMiZDCIxHhxe1lN1FEfy+sIAcuO
+	 L6wl1peV3h7lqC//PSHlXoWW8d7x1Iq6e8oLxLaMp3n+AoePhiBJQhk7fGshgPzKSlg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795730580;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=1GBNGDQ+Fpfo32tn2P/7vFYAKjTUM17/Hl82GZJuG7w=;
-	b=yyENHXM1Hpf+mf2AKZxhfTMKYumtfvuwv4MpTH0ou8n6otUJU88V/ewwxc8XcssBC1oV
-	 fn27kBTgzOct+F91/m+AyjInb/0TmXRve2GOHA1FCJMwQPBlPicMCBj/J3UMNqqI7i2Ln
-	 KNm6++nzORs318nNZFY3ccGYZN4rfpAooCfbOppmofIXZfVc2iI3MInGI5+jxy2Ld91Km
-	 Yw4argYlqnqnpZ3V4DbVO1cFOuiYGN2/s1BeQ4D4WW8vDX9kP66ia0TtUlfvT0HeJji7b
-	 YUqqmSK815qWVI3SwWGU3w2hL7ULTL3JjBoPWDkdHFYXS8kSck2ElKbG4vUPDKZbJNg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795745120;
+	h=DMARC-Filter:Received:Received:Received:Received:Date:From:To:CC:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+	 X-Originating-IP:X-ClientProxiedBy;
+	bh=Vt8/L4ecYvwNmeRLxuD0Q0YLKG91gPCwqmvKaWbtGcE=;
+	b=Yf3ExdkJ8piBUjEKEaQ8z1b1ivPavd1GqHy4KCPqJPDYpLsUJFp1dQ2ObdR44kJ4G/G/
+	 Kd3PtYKGMhjVOvsQ7YeDECLlzguieosCQq6MFIBJMruUz5CT0dEwke7A7py57hTFMxpMP
+	 s7Apk1Wy16Et6Ke3Gw0Ln4G3eqsqTpY7CR8c2ThD15UF/7yT+OXJlYIvioszOZQAYd6mT
+	 5CcwQVbmP3TFW3gzZSjSAXsEyWcuA/QIfcPWCCmvOGiTBIEVsP27bl0mjQ1ygObPk7TM6
+	 /3erUebAj7KTuidgaPqqQxnpMnuyQbuqpfXhyaZluaHkprla8dcRznZlkUfQ43rpV5g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="kloLMIr/";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id A1AD0606A31E;
-	Thu, 26 Nov 2026 22:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kloLMIr/
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5CD7A1F00893;
-	Thu, 26 Nov 2026 22:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795730580;
-	bh=1GBNGDQ+Fpfo32tn2P/7vFYAKjTUM17/Hl82GZJuG7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kloLMIr/z/Btp/nwC2OoOb1UbP0q6ypeSKRdfR3rE2MOQIwKwBZ5o/k2ebOyed+du
-	 Fkf1Bwx0tcxg47MqWNjZlglXVda8wXy6zPPSNEjpijpc6CnOMcXPG0D7RkVyvrZtrT
-	 55DUghWoZGWkrbFSq4oPr3Br9F1+gzesE3SvwQYz4Ev+FsaekI9mSMVKU07JLaHEzY
-	 N+VHwAxlEiviW2tGSPUWYjRKXy5Z6Gi0/mXaWCOWBdlRVdYFD1K1BlILlcOn3pXbY6
-	 QvibMQz58YXXeaRaUHyppP2R9VnCh0J2pJ1AYmYERWMvzEDR6IPdZMyI2QSH5s8tWl
-	 NNM3QO68EC3Rw==
-Date: Fri, 27 Nov 2026 00:02:56 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: keyrings@vger.kernel.org
-Cc: dm-devel@lists.linux.dev, linux-crypto@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Alasdair Kergon <agk@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Benjamin Marzinski <bmarzins@redhat.com>,
-	David Gstir <david@sigma-star.at>,
-	David Howells <dhowells@redhat.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ignat Korchagin <ignat@linux.win>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	James Morris <jmorris@namei.org>,
-	James Prestwood <prestwoj@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
-	Lukas Wunner <lukas@wunner.de>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Sumit Garg <sumit.garg@kernel.org>
-Subject: Re: [PATCH v4 11/11] KEYS: trusted: Add asymmetric key support for
- TPM2
-Message-ID: <awiskMGvLb5HINaj@kernel.org>
-References: <20261126205021.2200819-1-jarkko@kernel.org>
- <20261126205021.2200819-12-jarkko@kernel.org>
- <awipQFkjoBSEXnLh@kernel.org>
+	dmarc=pass header.from=hygon.cn;
+	spf=pass smtp.mailfrom=hygon.cn;
+	arc=none smtp.remote-ip=101.204.27.37
+Received: from spam01.hygon.cn (unknown [101.204.27.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE55606A31E;
+	Fri, 27 Nov 2026 02:05:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6EE55606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp2.hygon.cn (unknown [127.0.0.1])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jbGvf4vHdzg1cV;
+	Fri, 27 Nov 2026 10:05:02 +0800 (CST)
+Received: from maildlp2.hygon.cn (unknown [172.23.18.61])
+	by spam01.hygon.cn (Postfix) with ESMTP id 4jbGvd6sBVzg1cV;
+	Fri, 27 Nov 2026 10:05:01 +0800 (CST)
+Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
+	by maildlp2.hygon.cn (Postfix) with ESMTPS id 40151300B6ED;
+	Fri, 27 Nov 2026 10:03:47 +0800 (CST)
+Received: from hsj-2U-Workstation (172.19.24.226) by cncheex04.Hygon.cn
+ (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Fri, 27 Nov
+ 2026 10:05:00 +0800
+Date: Fri, 27 Nov 2026 10:04:58 +0800
+From: Huang Shijie <huangsj@hygon.cn>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<hch@infradead.org>, <mic@digikod.net>, <axboe@kernel.dk>,
+	<gnoack@google.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>, <legion@kernel.org>, <aleksa@amutable.com>,
+	<libaokun@linux.alibaba.com>, <ebiggers@kernel.org>, <djwong@kernel.org>,
+	<sandeen@redhat.com>, <zhongyuan@hygon.cn>, <fangbaoshun@hygon.cn>,
+	<yingzhiwei@hygon.cn>, <wujianyong@hygon.cn>, <shijie8@gmail.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-block@vger.kernel.org>, <gfs2@lists.linux.dev>,
+	<linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v4 00/11] vfs: add inode iteration methods
+Message-ID: <awjlSpzDdAXAt2-k@hsj-2U-Workstation>
+References: <20261125091157.1822521-1-huangsj@hygon.cn>
+ <CAHc6FU4h-FRvLkO_0ouTey9MbX=n61t3abt4hPNFOthsRGG9mQ@mail.gmail.com>
+ <awgi6a0Hayug7RJH@hsj-2U-Workstation>
+ <CAHc6FU4KLxzoQ6NJQUnFfcbKufqwqdhfcGhva9V44K=J7HCXRg@mail.gmail.com>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -86,38 +69,165 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-security-module+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <awipQFkjoBSEXnLh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHc6FU4KLxzoQ6NJQUnFfcbKufqwqdhfcGhva9V44K=J7HCXRg@mail.gmail.com>
+X-ClientProxiedBy: cncheex06.Hygon.cn (172.23.18.116) To cncheex04.Hygon.cn
+ (172.23.18.114)
 
-On Thu, Nov 26, 2026 at 11:48:52PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 26, 2026 at 10:50:21PM +0200, Jarkko Sakkinen wrote:
-> > Extend the TPM 2.0 trusted key backend to load OID_TPMLoadableKey
-> > (2.23.133.10.1.3) RSA (2048/3072/4096) and ECC (NIST P-256/P-384/P-521)
-> > keys and expose query, sign, verify, and RSA encrypt/decrypt operations
-> > through key_type_trusted.
-> > 
-> > The feature is controlled by CONFIG_TRUSTED_KEYS_ASYMMETRIC, which
-> > defaults to y when CONFIG_TRUSTED_KEYS_TPM is enabled.
-> > 
-> > Co-developed-by: James Prestwood <prestwoj@gmail.com>
-> > Signed-off-by: James Prestwood <prestwoj@gmail.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+在 Thu, Nov 26, 2026 at 03:32:08PM +0100，Andreas Gruenbacher 写道：
+> On Thu, 26 Nov 2026 at 13:20, Huang Shijie <huangsj@hygon.cn> wrote:
+> > 在 Wed, Nov 25, 2026 at 11:25:12PM +0100，Andreas Gruenbacher 写道：
+> > > Huang,
+> > >
+> > > I have some thoughts ...
+> > >
+> > > On Wed, 25 Nov 2026 at 10:18, Huang Shijie <huangsj@hygon.cn> wrote:
+> > > > This series adds a superblock inode iterator and converts the open-coded
+> > > > sb->s_inodes walks in the VFS to it.  The design follows the cursor-based
+> > > > construct proposed by Christian Brauner:
+> > > >
+> > > >   https://lore.kernel.org/all/20261120-mitverantwortlich-drehbaren-kantholz-241300d20168@brauner/
+> > > >
+> > > > and is the same direction as Dave Chinner's patch set:
+> > > >
+> > > >   "vfs: improving inode cache iteration scalability"
+> > > >   https://lore.kernel.org/all/20241002014017.3801899-1-david@fromorbit.com/
+> > > >
+> > > > The caller owns the iterator state and drives the walk itself:
+> > > >
+> > > >   CLASS(sb_inode_iter, iter)(sb, eligible, priv, flags);
+> > > >   while ((inode = sb_inode_iter_next(&iter)))
+> > > >           /* do stuff */;
+> > >
+> > > The pattern should be:
+> > >
+> > >   for (CLASS(...); ...; ...) {
+> > >       /* ... */
+> > >       if (/* end iteration early */)
+> > >           break;
+> > >       /* ... */
+> > >   }
+> > >
+> > > so that the iterator goes out of scope immediately when the loop ends.
+> > > Hide the details of the loop header in a macro and that this becomes:
+> > >
+> > >   for_each_inode(inode, sb) {
+> >
+> > The fs/jffs2/build.c has used this for_each_inode.
+> > Maybe change to for_each_sb_inode?
 > 
-> By rebasing this on top of these patches, I could drop tpm2_read*()
-> from this and use tpm_buf_read_*():
+> That's the least of all problems; just rename the jfs macro.
 > 
-> https://lore.kernel.org/keyrings/20261115233156.1485238-1-jarkko@kernel.org/
+> > >       /* inode is referenced and unlocked here */
+> > >   }
+> > >
+> > > Use that to convert the simple cases.
+> > >
+> > > And then we've got preconditions that are checked while the inode is
+> > > locked. Those can probably go in an expression:
+> > >
+> > >   for_each_inode(inode, sb, expression) {
+> > We still need add flags here.
+> >
+> > In evict_inodes() and hook_sb_delete(), only the expression is not enough.
 > 
-> See, also:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=tpm2-asymmetric
+> I know, these are the two cases that check i_count before the inode is
+> even locked. Leave them as they are for now; we can get back to that
+> later.
+okay.
 
-Also as a result of this tpm2_load_parent(), tpm2_load_blob(),
-tpm2_asym_rsa_decrypt(), and tpm2_asym_sign() resolve names via
-tpm2_read_public().
+> 
+> > How about add a raw code like this:
+> >
+> >     for_each_inode_raw(inode, sb, expression, flags) {
+> >     }
+> >
+> > And add a macro for_each_inode:
+> >   #define for_each_inode(inode, sb, expression)  for_each_inode_raw(inode, sb, expression, 0)
+> >
+> > Most of the cases, we can use the for_each_inode.
+> >
+> > But in the evict_inodes() and hook_sb_delete() we can use the for_each_inode_raw.
+> 
+> No. Convert the simple cases first, with iterator constructs that are
+> as simple as possible. Later, worry about the more complicated cases.
+Got it.
 
-By combining these series pre-existing code is leveraged
-to its best extent.
+> 
+> > >       /* expression was true */
+> > >       /* inode is referenced and unlocked here */
+> > >   }
+> > >
+> > > This unfortunately cannot be implemented on top of the
+> > > sb_inode_iter_next() pattern, at least not in a reasonable way, so we
+> > > actually shouldn't use that pattern.
+> > >
+> > > The locked iterator would look like this:
+> > >
+> > >   for_each_inode_locked(inode, sb) {
+> >
+> > I tried this way today.
+> >
+> > The macro for_each_inode_locked is complicated.
+> > When I tried to add more hooks to super_operations to implement the
+> > procfs issue, the for_each_inode_locked becomes more complicated.
+> >
+> > BTW: the procfs issue see the link:
+> >   https://lore.kernel.org/all/20260920072811.2064247-1-huangsj@hygon.cn/
+> 
+> Introducing reasonable inode iteration constructs is a completely
+> separate problem from introducing per-super block inode iterators.
+> Please keep those issues apart.
+okay.
 
-Br, Jarkko
+> 
+> > >       /* inode is locked here */
+> > >   }
+> > >
+> > > This doesn't cover all existing cases, but that's okay. Don't force
+> > > things into this pattern that are not a match.
+> > >
+> > > We can always extend things further if it makes sense.
+> > >
+> > > > The lock does not span iterations.  sb_inode_iter_next() takes
+> > > > sb->s_inode_list_lock, takes a reference on the next inode, drops the lock
+> > > > again and hands the inode out; the reference is what keeps the cursor on
+> > > > sb->s_inodes so that the next call can resume from it.  As the iterator
+> > > > is a cleanup class, a caller that breaks out early does not have to call
+> > > > sb_inode_iter_end() explicitly.
+> > > >
+> > > > Two optional channels let a caller keep its own state instead of filling in
+> > > > a shared context:
+> > > >
+> > > >   - iter->eligible is called with inode->i_lock held, so that a caller can
+> > > >     reject an inode before a reference is paid for.
+> > > >
+> > > >   - iter->status carries an error out of the walk.  Setting it to a
+> > > >     negative value makes sb_inode_iter_next() return NULL.
+> > >
+> > > Nobody needs that. Just break out of the loop.
+> > >
+> > > > Most callers just want a referenced inode and use no flags at all.  Three
+> > > > flags cover the walks that need something else:
+> > > >
+> > > >   - %INO_ITER_F_REFERENCED restricts the walk to inodes that still have a
+> > > >     reference, preserving the "only handle referenced inodes" rule of
+> > > >     landlock's sb-delete walk.
+> > > >
+> > > >   - %INO_ITER_F_NOREF hands out only inodes whose reference count has
+> > > >     already reached zero, and %INO_ITER_F_NOIGET suppresses the reference.
+> > > >     Neither keeps the inode alive, so the caller has to make the inode
+> > > >     unclaimable itself.
+> > >
+> > > No flags.
+> > If we do not add flags, we cannot convert the evict_inodes() and hook_sb_delete().
+> 
+> No flags.
+
+Okay. I will start the V5 right now.
+
+Thanks
+Huang Shijie
+
