@@ -1,117 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795807105;
-	b=u7iQ3bFoJlE5t3pJZsqv/DkZkqZyjW6u6H2iXn7ATyjiC5KWXB0LI7qV8wRBNyCin4GZ
-	 WpkAK8f3+MtAu3YnyeHv6uRDY1KdBogbv7gOMEn1NyfmLArVW/hnRWxjTN/UFgFE8qNdF
-	 BEqRfvlyj++3JPDDT+5mjPtFHLBRcJWALMUe9FB89qczRZ21Ker66SgOc0VLEudbyFIdy
-	 wcfp4Pd5WVqo4bz1Zo+xd4JVy7B+Ma9noTS6zO0pOLcWeDpPu33tF9n1JU6iqnaK4Nfxt
-	 oK2JIW/lumVE4R4gf0k82K2FknwpkMNLq63HHyDjgHqjIGE6qLZfV95BrXPtbQqbnTQ==
+	t=1795807896;
+	b=Bpo17JD+026T7U9+mUVyyUrvJN758oFtyJZV5ptnLCxPMg2V00Q8uHxWKJMwJV5cHab4
+	 7EDRl5G0aGiBsSnnhSiTi2fUnd/qPqTfBGh+SGezqK76sp9ZoWsmVVG/k0QC1DY+0mOv8
+	 qhUV1wWnmSkVB+961uBEPO8jvTQfDKXzKtKFB+nFZM8EP0Gm3YsNpRglIV1zevlSin2Lr
+	 Li6q0KMHVWuMr6LuGFlG8BXF55CYtV+LQffTD7liprRrdQsvsmVWqil/Xbf69us5HmbIc
+	 +RfSanPatndjXr6461dE+rZ8WzpdeI5U7ubeTYnHAjsSQIbikepVequZNoW5pp4C1pg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795807105;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=W1FdGtSZDb7NmxvDylEt54duEw4UgMOOnUX7lvsLEnY=;
-	b=quZiKIeF8RZCpT9KpzdqPFdxImS1smBywzDj/Gx5a69o1VzhxC0Fa55Iaksnj73thiWH
-	 +OvHuzEijXEkiIcPemgRUTt3dkpgiCFlUiSFPfz7q1MgZaFVNJyVkLIDlPblcE3AjL1Jo
-	 PSVs+0XhGQrM60VmSfdVKVgUFqChY3dLNeV3lxl8QLpJs7DY3OdRAVD+1sU+tx8+KYsq1
-	 rHdJ6AY0bzTnzsix+MATHRQNJKZ3q/qXv5fQNWsjYfCu7edJhm8ZVdDSBc5V8en75sHr2
-	 mLm2d6mKMEw15INBNgjBEOQniWmOhdL5700N3NqJ6H8HdB0rXdYVie059nULjPAzKAA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795807896;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=FHm7smnuLcPbXOnsOL9bzFTWbe21BP4HbT3iZXqu3Z4=;
+	b=rsEPe2ebT/THFixc6vMaGT5ZNoOwwuIFZcxPVCSjRY+tw9ddwTWW7wKIO92S0CbNeyjh
+	 Tfk81YN4quBNHmQXesxoyQrbWFzDLvJWDlS6LL7aRRa8PoyOJS9ai3loYPOCTzPLsx22Q
+	 b3uHaIKc4F4b1d4gc40ES+qi8kKxYmQ+O503Gpu3yPDAxmdK+ku/onmBakWc1IGS6NFWz
+	 Yr0fHart2wAa6Byhwv+fwWVotNxhpH4pkP+OLk3GuhzhqcHpRL0auMfysqoW5WYoBl+8E
+	 hJrqxfvOgONR5xqimMqWx/eZDFoCPzriVuZWDV3LSoHLPI3FAwhV1whlmAsyL+IA6kw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=ziepe.ca;
-	spf=pass smtp.mailfrom=ziepe.ca;
-	dkim=pass header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=Au2hPQjf;
-	arc=none smtp.remote-ip=209.85.222.171
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hmfHF8HW;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E146E606A31C
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 19:18:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E146E606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDFA606A31C;
+	Fri, 27 Nov 2026 19:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.a=rsa-sha256 header.s=google header.b=Au2hPQjf
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-94960131b30so745440085a.0
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2026 11:18:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1795807104; x=1796411904; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=W1FdGtSZDb7NmxvDylEt54duEw4UgMOOnUX7lvsLEnY=;
-        b=Au2hPQjfRRLKqpzLdUlS4qTuMZfutWDMs3nxeZ6kBFtz5N2Xk2LtgNA1S5U0oOtM1F
-         pUH04r+cU6kZ0kDgUOxrstM7z2Im5gAyxPSe4aD83cFjmAwAj+Fkxac12C/8nN6ofeLR
-         MFElkoYfleQYMRT7phF4+sDQ9A/GDPgp08AagWSlO9SiwrCyijC940FqmwCDAQns8SPF
-         vr8fSP2KNc3B6d+8S0JwcH7uT18lonZeGkS87z1MJOqJgxKlovDuQgZgrTINI217fher
-         UuRXmrGlqd2cTXfhETi+BHgGNRW6PAqgPj4iVvWnFYjeFdjgAOpMLRYBPKKqoDP1GfuD
-         ymIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795807104; x=1796411904;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=W1FdGtSZDb7NmxvDylEt54duEw4UgMOOnUX7lvsLEnY=;
-        b=g+1x8TuOwa3ti3ctFxYbgTGZtWlUw1wAyl+Z9jFPjP/79yiOC/yYQlGZ2x/Tu7UHlS
-         UVReIZQPw+Tbif5U/NTGz98pIDvqOmLHHyAeeO0zml11HxOZw0cQ8VkgXYvKO++OjVFU
-         lsfVKeXS2lXS41C55qyb5Xm9ZriCGtMg7eL5QqmPzxmtbcBSR7iJ2rtNMc1qbbXfRAUk
-         y/HHAeA72sxxpNZeJpe1TzHgWmpachNH3/+WnSSq7JUV+9fzDQrRJla8M02He/TkYx/p
-         4H4RwpB9G9f1JcPuFCA7Ws5UDqEK9Gqgrvr9xvB0eeIL57mhKPxUSGR+5zcnNu7H2FUe
-         htHg==
-X-Forwarded-Encrypted: i=1; AL+hErFm4Wtyvp+k2FD9ntIczJt1Tbjvz62gjiBV9xGcF6QCvb9lOJ7qtSUv+xeipc9vCRBbuskJCHrtzLXiGRv1Fvkc0jvnzWM=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/2jo33HwpgulaBmeUCLR5czcnb2u8KJoQHZPcwGhOAnl31SDhV
-	XCCR6sw3jLrZk8BSYDgL5v1pAmXiNiyWSL/7RG5sz3wzSYn3ue87iKT3nKe7odqoGL8=
-X-Gm-Gg: AZFdTZcHtrQRwF6uKopNHtfKNBwkvUg9KUg9wZLP3Kh0SMoSeS37UUwMSBsW0AKVQXT
-	ocFX/YrHtiGss0PQ+VIH8/TqxZV/rgbKZn48+qN8Pc5c8lwdfm/gEE8ExYAmofMXgok67vCN0iN
-	rQgT/ciPMldSxkaIQMcsECns4PXL1SUrUovk8y4SMR7jcLLmqh5GRwoLwVAMaVGZvdjbLQZIVGG
-	FznC6XiPGKRW2SZUS/hcklxMptmv9QUV4GlAMKbLYhFgfMTgw+WXck1SQmGxouNnhe1GrTCNN+B
-	Wzhtqlqj19CvgfYRbLXq2TKy0uCxj0oPy1mkDVYSDJ+/CvYf7c3vxnx1WKY5e3hXqgHlQUOVkUL
-	amIwqehO0maULxQPDdzq6qRFezQ8L5aHZ+81P1N18+hTnKpXGRz/szjcpxQBEE9MV8VIgHAHH8K
-	B+zaRDJkmEmbyvg8PzsY3S4XHRspcQZ30c2YVfp5WTlzdDUZVJ9sIcs15aWY+o5RcpQ8haZecHv
-	6EipMLMtLcpx7wOToJ8DaTun2MPc6t32XXAvWtKt2KQM0mwBNdxNgKbw0JEcFNcxFYDnrnfIBAz
-	wGuY8g==
-X-Received: by 2002:a05:620a:6f0d:b0:939:6dea:374d with SMTP id af79cd13be357-949ba9d1fa6mr4395559985a.49.1795807103939;
-        Fri, 27 Nov 2026 11:18:23 -0800 (PST)
-Received: from ziepe.ca ([142.177.118.84])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-949bb418241sm1867466985a.38.2026.11.27.11.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 11:18:23 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1xX1Sg-00000007nGK-3YSV;
-	Fri, 27 Nov 2026 15:18:22 -0400
-Date: Fri, 27 Nov 2026 15:18:22 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-acpi@vger.kernel.org,
-	acpica-devel@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Sami Mujawar <sami.mujawar@arm.com>, thuth@redhat.com,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Pawel Chmielewski <pawel.chmielewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>, Len Brown <lenb@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hmfHF8HW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF6B1F00893;
+	Fri, 27 Nov 2026 19:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795807896;
+	bh=FHm7smnuLcPbXOnsOL9bzFTWbe21BP4HbT3iZXqu3Z4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hmfHF8HWqGe9fllK3m+JO8EXWm/LlKZRc9dNB9YqTNuggAx0G8a+Jj92V8Br5uMBM
+	 4GbLWKMkZX56Q9MNagn3luHmpx8DRomhIUaccCA5bYwVDNW7H3I0fIP3X2DiCXVke1
+	 feG0pkah19v53e+ijbWKvejGyFD7stt1D7yIlVpTqkC7iGpNLbdXVqm2PZhPFufYWI
+	 hr3LVPJhflalZ9baVdkgJ7CY0JgGdrJWiWBrTok18WJ4tTr24i9TJdLp9mcWeKNl2G
+	 +5du+ascO34JTp+ITfMPe5cpMVHQMsGSZOSfSp5DLq2b8kw3xOdAs98HkY4Jysh8zQ
+	 MLxSpvwVm0dLQ==
+Date: Fri, 27 Nov 2026 11:31:33 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: keyrings@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Alasdair Kergon <agk@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Benjamin Marzinski <bmarzins@redhat.com>,
+	David Gstir <david@sigma-star.at>,
+	David Howells <dhowells@redhat.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ignat Korchagin <ignat@linux.win>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	James Morris <jmorris@namei.org>,
+	James Prestwood <prestwoj@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>,
+	Jonathan McDowell <noodles@meta.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
 	Randy Dunlap <rdunlap@infradead.org>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RFC v3 7/8] attestation: providers: introduce CCA Guest
- attestation provider
-Message-ID: <20261127191822.GA1856591@ziepe.ca>
-References: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
- <20261127-arm_cca_mr-v3-7-df3230afce8f@arm.com>
- <20261127170722.GT246011@ziepe.ca>
- <awnK2c3kMq8p2a_7@e129823.arm.com>
- <20261127183550.GV246011@ziepe.ca>
- <awnV5S703Rgf5sh5@e129823.arm.com>
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Sumit Garg <sumit.garg@kernel.org>
+Subject: Re: [PATCH v5 00/17] KEYS: trusted: asymmetric keys
+Message-ID: <20261127193133.GE8300@quark>
+References: <20261127055602.2357884-1-jarkko@kernel.org>
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -123,37 +86,36 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <awnV5S703Rgf5sh5@e129823.arm.com>
+In-Reply-To: <20261127055602.2357884-1-jarkko@kernel.org>
 
-On Fri, Nov 27, 2026 at 07:11:33PM +0000, Yeoreum Yun wrote:
-> I think the problem is the *max-token-size* could be changed.
-> once the LFA updates the Realm definitely the contents of hash of
-> firmware binary can be changed. this means the token's content could be
-> change including the *max-token-size*.
-
-I think that is broken, there is no good way to make that work in a
-sane manner.
-
-LFA must stay under the hard wired max-token-size limit, not try to
-change it while a realm is running. Take this to your spec team.
-
-> For this, the RSI host call interface has the way to get LFA eventlog.
-> IOW, after LFA, there will be LFA log is genreated and then for the
-> time of re-attestation, it should deliver the LFA logs together.
-
-The detached event log is even more reason the token should not ever
-be changed by a LFA.
-
-> > I saw in your FIRME series a solution to this problem, I think that
-> > would be good to get out on its own and apply it first to RSI as
-> > well. We will have the core RSI stuff, the realm attestation and TSM
-> > driver at a minimum..
+On Fri, Nov 27, 2026 at 07:55:45AM +0200, Jarkko Sakkinen wrote:
+> OVERVIEW
+> ========
 > 
-> Hm,, Does this mean do we need to create two device one for TSM and
-> one for attestation even the functionality same?
+> Extend TPM 2.0 trusted keys to load ASN.1 TPMKey [1] asymmetric keys
+> (OID_TPMLoadableKey, 2.23.133.10.1.3) and expose keyctl pkey-operations
+> directly on key_type_trusted. In addition there are some TPMKey
+> interoperability fixes.
+> 
+> I.e. this my old series with a twist: instead of introducing a separate
+> subtype for asymmetric keys, factor out pkey-operations into a separate
+> CONFIG_KEYCTL_PKEY-feature, and wire asymmetric operations to
+> key_type_trusted.
+> 
+> This work was originally derived from [3], is direct offspring of [2],
+> and folds in the prerequisite tpm2-sessions and tpm-buf cleanups from
+> [4].
+> 
+> [1] https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.html
+> [2] https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+> [3] https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
+> [4] https://lore.kernel.org/linux-integrity/20261116005105.1573016-1-jarkko@kernel.org/
 
-They won't have the same functionality. It will be the same as you had
-with FIRME where there is a driver doing CPU attestation and another
-one (the TSM driver actually) doing link IDE.
+Could you describe the motivation for these changes here?  And also
+include more context directly, for people who aren't already familiar
+with all the earlier patches linked to above.
 
-Jason
+Also, this series is missing a base-commit, and I don't know how to
+apply it for review.
+
+- Eric
