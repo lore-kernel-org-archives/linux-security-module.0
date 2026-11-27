@@ -1,52 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795793616;
-	b=E1Jemh3Dsjg0xNXWIPucRldk4Dl/WaCCYhs34gM+Wz8Mp7ibYFaVIorOqzXFPlDdE1Kn
-	 k5kxM7Hn+IJ4JGaD0zwOAw/djN16N8B+wjLSPF8qIHhXZnW8tPvN6HO42+8UL1Z4m1+7r
-	 DoU4h/C77S8xDiZO6HZQ2OL5VXcJFH/yAHeVRJ1/QdJ9u4tRQzmFs98SC+NaYV+2xHBY6
-	 YE4ZpqJo9VX2v2ldUX7zLPbnGNrgvXqm2Pz2ayPz4YA39jFX9XEtVIqYgjw9d4E3ZG6IW
-	 YDlC3ED8k0czuxl8FjqRWUvL/T3/0Nc9TzRJklN3L96LZx1GsQal7GwQRZ7gxfUUM1w==
+	t=1795793622;
+	b=AXwae1jgYcS3zAw0zwuahBxKxUVwkXqz0Hit6nloTOHPbVpB8QflzXpY+I5nf3dgTyw1
+	 ijqqKnW0vXoaizX9/ia5n8uTpkHK6UiGAnE4XmlaRNVridHhIibOuwv5ZCkJrS0QHlL2j
+	 VY8j6uafPmxApPpBttjzImMIE1ItN2g4X4Q6ofj/+8iK+QFmci6b8dFfmNT1jVXnXY6sT
+	 2lRIrDkHwmsuFFKNFgsj+4RX4m6i4HSMOU1jtE6D9ul89avcSn2HsrwtChlZXJYvavYFb
+	 Na9gwUEvfcCzD3tKnFlIjnHlRnCSOzRBx0fVeSOmo/Cg2f3Ewj/ZJhtJZTxsrFm/i7w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795793616;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795793622;
 	h=DMARC-Filter:Received:Received:DKIM-Signature:From:Date:Subject:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
 	 References:In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:
 	 X-Developer-Key;
-	bh=36mS16KHJ5EvIAFgaPnIslU8Occor1k3iwEMx7sez0Y=;
-	b=NOi1JcjrNu19lb58FTxh6tcU7M8xTzH2rWPCstcuR6/LlmFIOGbvdlvScJcQVqlFtCeP
-	 hfSW5avssmXwQeJDbfcCfG9xorrwGoL6EYenLx9lXYGXZOmWKFNiQawdZZiNSKOBKL85C
-	 a6XxG4CuDdhvyF5HZFLRrEfk4nXpaBE2IqIjpSWJFXWAnv1ELInYNmh7f6mmYF+SVRaH9
-	 cHNxklIP6diZJCCZHbc1TCKVyuKtz3hUMwHh1FUAKMlOcrHxglOGxaYnwx5qmXCnB1q4l
-	 mvxazkZ4GdEAow6A60qK1d3sZJioHlnNfU2Uy7k8Q8L1TuIlnv9zxpgD5LblXPUUIXw==
+	bh=vhR6IsG+Rk+VWXlr+ir06fuP3Aj8UKRDlJ6r0XXQ2X8=;
+	b=YDZ+oD0QBPR2BQaeI+/LLkdPBn3E5kjI6uxT0n/AFVXKwsZg+9EyZTjA6HJQ6T6yip+U
+	 0d2Ga79zZzAg29OozZXFVYR+3TZ3M8RI3MtKeulKwILAh2a9c3pDv9zjD+gsESE+y1xdx
+	 9r6yDjGGOgPREd1QKBZcEBLJ9jyQu+5lSsHsV5bYDXMMjjiM/6UplNg1tfeo+nySLOBsC
+	 npYN+qGzdw0NFo522HKILzr//Io8y1ey61rJcHCF4s9OjNGUOHByy07CMcjmZ74hYs9f7
+	 Crui7hO0qiRvOklZy6WTz/8Xesz4EAttYg01oaN7Z/7y2E3DJac96anipMEDhQNeoDQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=arm.com;
 	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=arE8Jqpi;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=UwsntyAk;
 	arc=none smtp.remote-ip=217.140.110.172
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919D6606A33D;
-	Fri, 27 Nov 2026 15:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 919D6606A33D
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D88606A684;
+	Fri, 27 Nov 2026 15:33:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E7D88606A684
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=arE8Jqpi
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=UwsntyAk
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1A2B1E7D;
-	Fri, 27 Nov 2026 07:33:31 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8980D1EA6;
+	Fri, 27 Nov 2026 07:33:38 -0800 (PST)
 Received: from e129823.arm.com (e129823.arm.com [10.2.213.3])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 66C573F632;
-	Fri, 27 Nov 2026 07:33:31 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 337853F632;
+	Fri, 27 Nov 2026 07:33:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1795793614; bh=rVG3Coqy9VPauEdkIhTaQYUy6IgI1PS58uzVzrDeNrs=;
+	t=1795793621; bh=qMOM7DQ0sgq5yTKvksMRjqHLxSAWZJcGOYDwTILlBFw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=arE8JqpipEfofkurKA0Jphh1P5gbbCfS8yccdI9+bbRiiva/5FEUEEMlOUR66pSeR
-	 xE01vtX5pl8Y573623xRwSso3Vr/B6+N9upMVAd0yYold1P1fntk5tLQREtppcktH7
-	 3sD0cCeNpAQXXDB2G4YLWjJgP6pPLkZAoEJOCAKg=
+	b=UwsntyAk3EvvMQ7NNAnNwZBDAiwOohDVWpmJ/5HOTKX/HROalC3otlIErFpkfMem6
+	 nLvmRYy8pRlCZkbQkbs+UxtQXDf7zW2UER+wrg99IuwcDBejTPOZxTNsZqh2REv+/1
+	 11eWoPvdGGf5IvZkibe/Lep1KaiDkcqu6BBUBXRY=
 From: Yeoreum Yun <yeoreum.yun@arm.com>
-Date: Fri, 27 Nov 2026 15:33:01 +0000
-Subject: [PATCH RFC v3 6/8] ctlv: add auto-generated files for
- ctlv-attestation-cca-guest
+Date: Fri, 27 Nov 2026 15:33:03 +0000
+Subject: [PATCH RFC v3 8/8] selftest: attestation: add
+ cca_guest_attestation_test selftest
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Post: <mailto:linux-security-module@vger.kernel.org>
@@ -58,7 +58,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261127-arm_cca_mr-v3-6-df3230afce8f@arm.com>
+Message-Id: <20261127-arm_cca_mr-v3-8-df3230afce8f@arm.com>
 References: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
 In-Reply-To: <20261127-arm_cca_mr-v3-0-df3230afce8f@arm.com>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
@@ -78,1796 +78,598 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
  Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@kernel.org>, 
  Yeoreum Yun <yeoreum.yun@arm.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=56743; i=yeoreum.yun@arm.com;
- h=from:subject:message-id; bh=rVG3Coqy9VPauEdkIhTaQYUy6IgI1PS58uzVzrDeNrs=;
- b=owEB7QES/pANAwAKAW3Vw9FaxTEzAcsmYgBrCaK1MrtoVGY13atx7EeATT4KKZiB2E5MFREUP
- OkJVJf9xlGJAbMEAAEKAB0WIQQtg+CS3QUzuFh1pJ1t1cPRWsUxMwUCawmitQAKCRBt1cPRWsUx
- M7YLDADKJTP8V0uFL8cnMlaVMgXqv3+vLy6sq8w+PFXKLBrs2bCBJ8AW830uX0qyHi4GcVEekaO
- EZS6gEUQwWETAqZJX9VnZM1C/VwKtZ44ERmSagPxsLLkxfHyQq68adLWABuKOLB7496bB6PBFvT
- /uz9pq28L7KaRLbI1JF3kEI0FGhExvtA02sgnzv5SWUQUps9e7TyQGxFZS8saonjdratCGRB6rx
- eZZbPZVs5BOUGf7IecybE+uGU9UYbm/QxRxYrXNe27dTkMqGAV0pNQrCDmFVndu5JuKcL8AEp81
- u0j3g+yGvTkoYvwTxJGZtfyaFpetF2yl16TFdZO4GQuDQgkn1vb6GfSdZV4uu3kAIRUNSpA4n4u
- e+9xK0AzqrF2nhuXcIwdwP5eI+YdpigQ3XbeIppdCWlOSyb2rPz3kTV1FqjHqofO7nzYSLkdxKN
- OYTfn7o3lerdJkcg3Y5JfZhgxVmHUp/LvwIqCmkvMAQJ0w6ejfDZz6X3SZkU+zIY0W3fU=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=17380; i=yeoreum.yun@arm.com;
+ h=from:subject:message-id; bh=qMOM7DQ0sgq5yTKvksMRjqHLxSAWZJcGOYDwTILlBFw=;
+ b=owEB7QES/pANAwAKAW3Vw9FaxTEzAcsmYgBrCaK2VJe6b3BqSaIwfhduUKb/9stMF6YV1SktY
+ jKzdLAm+WWJAbMEAAEKAB0WIQQtg+CS3QUzuFh1pJ1t1cPRWsUxMwUCawmitgAKCRBt1cPRWsUx
+ M11gDADLkIqjnqHEbebnT6bfBEdC0jLB3YptcAD/djs4CMNe0dNZL8JXHWCgxMLNuR8BicovyWk
+ vZAoPV05TFsajtlkia9me8/H1YExGNUJmNe/b7FBJPUFA+k4YOk3ww35RXskZTgH+4dt3Kxvmqj
+ rp5CtDdDGhSVn3BRK8rbHZ+3sjlixIc5YBrl63QMibQBY+oUzFc9fBfPWEznnFux+tRaabE/uEl
+ p1MKdfFOhK1Ka5VHNBbToqo+rM9AMH8P2Gtoxmc5PBegoIgJNWMBiLvQKFSYhfS8Wl102q+OnWZ
+ fplQIocAraCvAgvbK2F8/fZus1wIn3Td5RkBd8UednDrI7Pi8+MPAAb9bcTi7L5op2jvdN4XIst
+ fsJDWjmw5Agbr5xQ7ElGE9ZzyICKMwLh7zBTqAUnnVceQcZIp9ezcrKVcy/d2Q/iNbQwfQr0tQH
+ 2f9PP/jucGhqSxHsFQ9df/JuHMlduz/ll/fddbsNRllEHaddBCmVnQA4Av1aipT+hvLW0=
 X-Developer-Key: i=yeoreum.yun@arm.com; a=openpgp;
  fpr=2D83E092DD0533B85875A49D6DD5C3D15AC53133
 
-Add auto-generated files for ctlv-attestation-cca-guest via
-tools/ctlv/ctlv-regen.sh.
+Add CCA Realm Guest attestation selftest to test evidence-get, mr_read
+and mr_extend interfaces.
 
 Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 ---
- .../generated/ctlv_attestation_cca_guest_gen.c     |   64 +
- .../generated/ctlv_attestation_cca_guest_gen.h     |   40 +
- include/uapi/ctlv/ctlv_attestation_cca_guest_gen.h |   34 +
- .../ctlv_attestation_cca_guest_user_gen.c          | 1547 ++++++++++++++++++++
- .../ctlv_attestation_cca_guest_user_gen.h          |   49 +
- 5 files changed, 1734 insertions(+)
+ tools/testing/selftests/attestation/.gitignore     |   1 +
+ tools/testing/selftests/attestation/Makefile       |   9 +-
+ .../attestation/cca_guest_attestation_test.c       | 517 +++++++++++++++++++++
+ 3 files changed, 524 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/attestation/generated/ctlv_attestation_cca_guest_gen.c b/drivers/attestation/generated/ctlv_attestation_cca_guest_gen.c
+diff --git a/tools/testing/selftests/attestation/.gitignore b/tools/testing/selftests/attestation/.gitignore
+index e10d0c9e4723c..9ae9baec654d1 100644
+--- a/tools/testing/selftests/attestation/.gitignore
++++ b/tools/testing/selftests/attestation/.gitignore
+@@ -3,3 +3,4 @@ attestation_test
+ ima_attestation_test
+ tdx_attestation_test
+ firme_attestation_test
++cca_guest_attestation_test
+diff --git a/tools/testing/selftests/attestation/Makefile b/tools/testing/selftests/attestation/Makefile
+index d4875652b4a14..f5a1ae68c0c4a 100644
+--- a/tools/testing/selftests/attestation/Makefile
++++ b/tools/testing/selftests/attestation/Makefile
+@@ -4,13 +4,14 @@ CFLAGS += -I../../../ctlv/libctlv
+ LDLIBS += -lpthread
+ 
+ TEST_GEN_PROGS := attestation_test ima_attestation_test tdx_attestation_test \
+-		  firme_attestation_test
++		  firme_attestation_test cca_guest_attestation_test
+ 
+ LIBCTLV_DIR := ../../../ctlv/libctlv
+ BINDINGS := ctlv_attestation_user_gen.c \
+ 	    ctlv_attestation_sim_user_gen.c \
+ 	    ctlv_attestation_tdx_user_gen.c \
+-	    ctlv_attestation_firme_user_gen.c
++	    ctlv_attestation_firme_user_gen.c \
++	    ctlv_attestation_cca_guest_user_gen.c
+ 
+ EXTRA_CLEAN = $(OUTPUT)/libctlv
+ 
+@@ -30,6 +31,9 @@ $(OUTPUT)/tdx_attestation_test: tdx_attestation_test.c $(BINDINGS) $(LIBCTLV)
+ $(OUTPUT)/firme_attestation_test: firme_attestation_test.c $(BINDINGS) $(LIBCTLV)
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) $^ $(LDLIBS) -o $@
+ 
++$(OUTPUT)/cca_guest_attestation_test: cca_guest_attestation_test.c $(BINDINGS) $(LIBCTLV)
++	$(CC) $(CFLAGS) $(CPPFLAGS) $^ $(LDLIBS) -o $@
++
+ $(LIBCTLV): FORCE
+ 	$(Q)mkdir -p $(OUTPUT)/libctlv
+ 	$(Q)$(MAKE) -C $(LIBCTLV_DIR) CC="$(CC)" OUTPUT=$(OUTPUT)/libctlv/ \
+@@ -38,4 +42,3 @@ $(LIBCTLV): FORCE
+ FORCE:
+ 
+ .PHONY: FORCE
+-
+diff --git a/tools/testing/selftests/attestation/cca_guest_attestation_test.c b/tools/testing/selftests/attestation/cca_guest_attestation_test.c
 new file mode 100644
-index 0000000000000..316fb6379ff64
+index 0000000000000..c6dc0452f79d6
 --- /dev/null
-+++ b/drivers/attestation/generated/ctlv_attestation_cca_guest_gen.c
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
-+/*
-+ * Generated from Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml by
-+ * tools/ctlv/ctlv-regen.sh. Do not edit.
-+ */
-+/* CTLV-GEN kernel source */
++++ b/tools/testing/selftests/attestation/cca_guest_attestation_test.c
+@@ -0,0 +1,517 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <errno.h>
++#include <fcntl.h>
++#include <stdbool.h>
++#include <stdlib.h>
++#include <string.h>
 +
-+#define _CTLV_GENERATED_METADATA_ONLY
-+#include <linux/array_size.h>
-+#include <linux/build_bug.h>
-+#include <linux/ctlv_family.h>
-+#include <linux/export.h>
-+#include <linux/limits.h>
++#include <linux/bits.h>
++#include <linux/hash_info.h>
 +
-+#include <uapi/ctlv/ctlv_gen.h>
-+#include <uapi/ctlv/ctlv_attestation_cca_guest_gen.h>
-+
-+#include "ctlv_attestation_cca_guest_gen.h"
-+
-+static const struct ctlv_node_schema device_info_fill_node_schemas[] = {
-+	CTLV_NODE_SCHEMA_ROOT(1, 1, 1),
-+	CTLV_NODE_SCHEMA_UINT(CTLV_ATTESTATION_CCA_GUEST_T_DEVICE_INFO_VERSION, 1, 0, S32_MAX),
-+};
-+
-+/* The extension points this family fills. */
-+static const struct ctlv_ext_fill_schema ctlv_attestation_cca_guest_ext_fill_schemas[] = {
-+	CTLV_EXT_FILL_SCHEMA(CTLV_FAMILY_ATTESTATION, CTLV_ATTESTATION_EXT_DEVICE_INFO,
-+			     device_info),
-+};
-+
-+/* The enum extension points this family fills. */
-+static const struct ctlv_enum_fill_schema ctlv_attestation_cca_guest_enum_fill_schemas[] = {
-+	CTLV_ENUM_FILL_SCHEMA(CTLV_FAMILY_ATTESTATION,
-+			      CTLV_ATTESTATION_ENUM_EXT_EVIDENCE_VENDOR_FORMAT, 1),
-+};
-+
-+/* The family ID is its position in the central registry. */
-+const struct ctlv_family_schema ctlv_attestation_cca_guest_schema = {
-+	.name = "ctlv-attestation-cca-guest",
-+	.family_id = 7,
-+	.ext_fill_schemas = ctlv_attestation_cca_guest_ext_fill_schemas,
-+	.ext_fill_schemas_count = ARRAY_SIZE(ctlv_attestation_cca_guest_ext_fill_schemas),
-+	.enum_fill_schemas = ctlv_attestation_cca_guest_enum_fill_schemas,
-+	.enum_fill_schemas_count = ARRAY_SIZE(ctlv_attestation_cca_guest_enum_fill_schemas),
-+};
-+
-+/* Maximum uevent cost for this family chain. */
-+static_assert(162 <= CTLV_UEVENT_MAX_LEN);
-+static_assert(5 <= CTLV_UEVENT_MAX_VARS);
-+
-+/* Extension-point callbacks. */
-+static const struct ctlv_ext_ops ctlv_attestation_cca_guest_ext_ops[] = {
-+	CTLV_EXT_OPS(CTLV_FAMILY_ATTESTATION, CTLV_ATTESTATION_EXT_DEVICE_INFO,
-+		     ctlv_attestation_cca_guest_device_info),
-+};
-+
-+/* Family descriptor used by ctlv_init(). */
-+const struct ctlv_family ctlv_attestation_cca_guest_family = {
-+	.schema = &ctlv_attestation_cca_guest_schema,
-+	.parent = &ctlv_attestation_family,
-+	.ext_ops = ctlv_attestation_cca_guest_ext_ops,
-+	.ext_ops_count = ARRAY_SIZE(ctlv_attestation_cca_guest_ext_ops),
-+};
-+EXPORT_SYMBOL_NS_GPL(ctlv_attestation_cca_guest_family, "CTLV");
-diff --git a/drivers/attestation/generated/ctlv_attestation_cca_guest_gen.h b/drivers/attestation/generated/ctlv_attestation_cca_guest_gen.h
-new file mode 100644
-index 0000000000000..ceace64f5fe17
---- /dev/null
-+++ b/drivers/attestation/generated/ctlv_attestation_cca_guest_gen.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/*
-+ * Generated from Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml by
-+ * tools/ctlv/ctlv-regen.sh. Do not edit.
-+ */
-+/* CTLV-GEN kernel header */
-+
-+/* Kernel metadata and family API of the ctlv-attestation-cca-guest CTLV family. */
-+
-+#ifndef _LINUX_CTLV_ATTESTATION_CCA_GUEST_GEN_H
-+#define _LINUX_CTLV_ATTESTATION_CCA_GUEST_GEN_H
-+
-+#include <linux/ctlv_family.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+
-+#include <uapi/ctlv/ctlv_attestation_cca_guest_gen.h>
-+
-+#include "ctlv_attestation_gen.h"
-+
-+extern const struct ctlv_family_schema ctlv_attestation_cca_guest_schema;
-+
-+/* device-info of ctlv-attestation: fill and read callbacks. */
-+int ctlv_attestation_cca_guest_device_info_fill(struct ctlv *ctlv, struct ctlv_op_ctx *ctx,
-+						const struct ctlv_cursor *request,
-+						struct ctlv_cursor *record);
-+void ctlv_attestation_cca_guest_device_info_read(struct ctlv *ctlv, struct ctlv_op_ctx *ctx,
-+						 const struct ctlv_cursor *record);
-+
-+extern const struct ctlv_family ctlv_attestation_cca_guest_family;
-+
-+#ifndef _CTLV_GENERATED_METADATA_ONLY
-+
-+/* Writing a reply. An append is atomic; a record ends with ctlv_record_end(). */
-+/* RSI version. */
-+CTLV_PUT_U64(ctlv_attestation_cca_guest_device_info_version,
-+	     CTLV_ATTESTATION_CCA_GUEST_T_DEVICE_INFO_VERSION, CTLV_SCHEMA_UINT)
-+#endif /* _CTLV_GENERATED_METADATA_ONLY */
-+
-+#endif /* _LINUX_CTLV_ATTESTATION_CCA_GUEST_GEN_H */
-diff --git a/include/uapi/ctlv/ctlv_attestation_cca_guest_gen.h b/include/uapi/ctlv/ctlv_attestation_cca_guest_gen.h
-new file mode 100644
-index 0000000000000..405494ac956a2
---- /dev/null
-+++ b/include/uapi/ctlv/ctlv_attestation_cca_guest_gen.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/*
-+ * Generated from Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml by
-+ * tools/ctlv/ctlv-regen.sh. Do not edit.
-+ */
-+/* CTLV-GEN uapi header */
-+
-+/*
-+ * Constants of the ctlv-attestation-cca-guest CTLV family. Types and op IDs are complete; the
-+ * message format carrying them is in <ctlv/ctlv.h>.
-+ *
-+ * The inherited ctlv-attestation header is included here, so one include covers the whole effective
-+ * schema.
-+ */
-+
-+#ifndef _UAPI_CTLV_CTLV_ATTESTATION_CCA_GUEST_GEN_H
-+#define _UAPI_CTLV_CTLV_ATTESTATION_CCA_GUEST_GEN_H
-+
-+#include <ctlv/ctlv.h>
-+#include <ctlv/ctlv_attestation_gen.h>
-+#include <ctlv/ctlv_families_gen.h>
-+
-+/* enum evidence-vendor-format, an extension point of ctlv-attestation */
-+enum _ctlv_attestation_cca_guest_evidence_vendor_format {
-+	/* CCA attestation token. */
-+	CTLV_ATTESTATION_CCA_GUEST_EVIDENCE_VENDOR_FORMAT_CCA_ATTESTATION_TOKEN = 1,
-+};
-+
-+/* device-info */
-+/* RSI version. */
-+#define CTLV_ATTESTATION_CCA_GUEST_T_DEVICE_INFO_VERSION \
-+	CTLV_TYPE(CTLV_FAMILY_ATTESTATION_CCA_GUEST, 0x00010000, 1)
-+
-+#endif /* _UAPI_CTLV_CTLV_ATTESTATION_CCA_GUEST_GEN_H */
-diff --git a/tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.c b/tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.c
-new file mode 100644
-index 0000000000000..4fd8c162ba1e3
---- /dev/null
-+++ b/tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.c
-@@ -0,0 +1,1547 @@
-+// SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
-+/*
-+ * Generated from Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml by
-+ * tools/ctlv/ctlv-regen.sh. Do not edit.
-+ */
-+/* CTLV-GEN user source */
-+
-+#include <stdint.h>
-+
-+#include <ctlv.h>
-+
++#include "../kselftest_harness.h"
 +#include "ctlv_attestation_cca_guest_user_gen.h"
 +
-+/* Effective request and reply schemas. */
-+
-+static const struct ctlv_node_schema device_get_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+};
-+
-+/* device-get caps.evidence.objects.challenge-lengths, optional fields */
-+static const struct ctlv_node_schema
-+	device_get_reply_caps_evidence_objects_challenge_lengths_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_CHALLENGE_LENGTHS_LENGTH,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX |
-+			   CTLV_NODE_SCHEMA_HAS_UNIT | CTLV_NODE_SCHEMA_HAS_SCALE,
-+		.min = 1,
-+		.max = 4096,
-+		.unit = CTLV_UNIT_BYTES,
-+		.scale = 0,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_CHALLENGE_LENGTHS_MIN_LENGTH,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX |
-+			   CTLV_NODE_SCHEMA_HAS_UNIT | CTLV_NODE_SCHEMA_HAS_SCALE,
-+		.min = 1,
-+		.max = 4096,
-+		.unit = CTLV_UNIT_BYTES,
-+		.scale = 0,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_CHALLENGE_LENGTHS_MAX_LENGTH,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX |
-+			   CTLV_NODE_SCHEMA_HAS_UNIT | CTLV_NODE_SCHEMA_HAS_SCALE,
-+		.min = 1,
-+		.max = 4096,
-+		.unit = CTLV_UNIT_BYTES,
-+		.scale = 0,
-+	},
-+};
-+
-+/* device-get caps.evidence.objects, fields */
-+static const struct ctlv_node_schema device_get_reply_caps_evidence_objects_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 15,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_CLASS,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 4,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_MAX_LENGTH,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = UINT64_MAX,
-+	},
-+};
-+
-+/* device-get caps.evidence.objects, optional fields */
-+static const struct ctlv_node_schema
-+	device_get_reply_caps_evidence_objects_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_FORMATS,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 4,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 8,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_VENDOR_FORMATS,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 4,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_CHALLENGE_LENGTHS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 8,
-+		.optional_fields =
-+	device_get_reply_caps_evidence_objects_challenge_lengths_optional_field_node_schemas,
-+		.optional_fields_count = 3,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_INSTANCE,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_TCB_DIGEST_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+};
-+
-+/* device-get caps.evidence, fields */
-+static const struct ctlv_node_schema device_get_reply_caps_evidence_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_EVIDENCE_OBJECTS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 16,
-+		.fields = device_get_reply_caps_evidence_objects_field_node_schemas,
-+		.fields_count = 3,
-+		.optional_fields =
-+			device_get_reply_caps_evidence_objects_optional_field_node_schemas,
-+		.optional_fields_count = 5,
-+	},
-+};
-+
-+/* device-get caps.evidence, optional fields */
-+static const struct ctlv_node_schema
-+	device_get_reply_caps_evidence_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_EVIDENCE_FLAGS,
-+		.kind = CTLV_SCHEMA_FLAGS,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_FLAGS_MASK,
-+		.flags_mask = 15,
-+	},
-+};
-+
-+/* device-get caps.mr, fields */
-+static const struct ctlv_node_schema device_get_reply_caps_mr_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_MR_FLAGS,
-+		.kind = CTLV_SCHEMA_FLAGS,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_FLAGS_MASK,
-+		.flags_mask = 3,
-+	},
-+};
-+
-+/* device-get caps, optional fields */
-+static const struct ctlv_node_schema device_get_reply_caps_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_CAPS_EVIDENCE,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = device_get_reply_caps_evidence_field_node_schemas,
-+		.fields_count = 1,
-+		.optional_fields = device_get_reply_caps_evidence_optional_field_node_schemas,
-+		.optional_fields_count = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_CAPS_MR,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = device_get_reply_caps_mr_field_node_schemas,
-+		.fields_count = 1,
-+	},
-+};
-+
-+/* device-get info, fields */
-+static const struct ctlv_node_schema device_get_reply_info_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_CCA_GUEST_T_DEVICE_INFO_VERSION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0x7fffffffULL,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema device_get_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_CAPS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.optional_fields = device_get_reply_caps_optional_field_node_schemas,
-+		.optional_fields_count = 2,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GET_INFO,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = device_get_reply_info_field_node_schemas,
-+		.fields_count = 1,
-+	},
-+};
-+
-+static const struct ctlv_node_schema device_get_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = device_get_reply_field_node_schemas,
-+	.fields_count = 3,
-+};
-+
-+/* evidence-get objects, fields */
-+static const struct ctlv_node_schema evidence_get_request_objects_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_OBJECTS_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 15,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_OBJECTS_DATA,
-+		.kind = CTLV_SCHEMA_BLOB,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_BLOB,
-+		.blob_direction = CTLV_BLOB_DIRECTION_OUTPUT,
-+		.blob_backings = 14,
-+		.blob_max_length = 0xffffffffULL,
-+		.blob_alignment = 1,
-+	},
-+};
-+
-+/* evidence-get selection, fields */
-+static const struct ctlv_node_schema evidence_get_request_selection_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_SELECTION_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_SELECTION_HASH_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema evidence_get_request_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_OBJECTS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 16,
-+		.fields = evidence_get_request_objects_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema evidence_get_request_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_CHALLENGE,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 4096,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_SELECTION,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 256,
-+		.fields = evidence_get_request_selection_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_PRIVLEVEL,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_SERVICE_PROVIDER,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_SERVICE_GUID,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 16,
-+		.max_length = 16,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_SERVICE_MANIFEST_VERSION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_OPTIONS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+	},
-+};
-+
-+static const struct ctlv_node_schema evidence_get_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = evidence_get_request_field_node_schemas,
-+	.fields_count = 1,
-+	.optional_fields = evidence_get_request_optional_field_node_schemas,
-+	.optional_fields_count = 8,
-+};
-+
-+/* evidence-get results.tcb-digest, fields */
-+static const struct ctlv_node_schema evidence_get_reply_results_tcb_digest_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_TCB_DIGEST_HASH_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_TCB_DIGEST_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 16,
-+		.max_length = 64,
-+	},
-+};
-+
-+/* evidence-get results, fields */
-+static const struct ctlv_node_schema evidence_get_reply_results_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_RESULTS_LENGTH,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = UINT64_MAX,
-+	},
-+};
-+
-+/* evidence-get results, optional fields */
-+static const struct ctlv_node_schema evidence_get_reply_results_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_RESULTS_FORMAT,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 8,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_RESULTS_VENDOR_FORMAT,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_RESULTS_TCB_DIGEST,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = evidence_get_reply_results_tcb_digest_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema evidence_get_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_RESULTS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 16,
-+		.fields = evidence_get_reply_results_field_node_schemas,
-+		.fields_count = 1,
-+		.optional_fields = evidence_get_reply_results_optional_field_node_schemas,
-+		.optional_fields_count = 3,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema evidence_get_reply_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_GET_EVIDENCE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+static const struct ctlv_node_schema evidence_get_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = evidence_get_reply_field_node_schemas,
-+	.fields_count = 2,
-+	.optional_fields = evidence_get_reply_optional_field_node_schemas,
-+	.optional_fields_count = 2,
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema mr_get_request_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GET_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_get_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.optional_fields = mr_get_request_optional_field_node_schemas,
-+	.optional_fields_count = 1,
-+};
-+
-+/* mr-get items, fields */
-+static const struct ctlv_node_schema mr_get_reply_items_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GET_ITEMS_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_DESC_NAME,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_DESC_SUPPORTED_HASH_ALGORITHMS,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 23,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_DESC_CAPS,
-+		.kind = CTLV_SCHEMA_FLAGS,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_FLAGS_MASK,
-+		.flags_mask = 3,
-+	},
-+};
-+
-+/* mr-get items, optional fields */
-+static const struct ctlv_node_schema mr_get_reply_items_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_DESC_REGISTER_INDEX,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_DESC_STATE_FLAGS,
-+		.kind = CTLV_SCHEMA_FLAGS,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_FLAGS_MASK,
-+		.flags_mask = 1,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema mr_get_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GET_ITEMS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 0, /* unlimited */
-+		.fields = mr_get_reply_items_field_node_schemas,
-+		.fields_count = 4,
-+		.optional_fields = mr_get_reply_items_optional_field_node_schemas,
-+		.optional_fields_count = 2,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_get_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = mr_get_reply_field_node_schemas,
-+	.fields_count = 1,
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema mr_read_request_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_READ_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema mr_read_request_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_READ_OPTIONS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_read_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = mr_read_request_field_node_schemas,
-+	.fields_count = 1,
-+	.optional_fields = mr_read_request_optional_field_node_schemas,
-+	.optional_fields_count = 2,
-+};
-+
-+/* mr-values, fields */
-+static const struct ctlv_node_schema mr_read_reply_mr_values_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_HASH_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 16,
-+		.max_length = 64,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema mr_read_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUES,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 23,
-+		.fields = mr_read_reply_mr_values_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_read_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = mr_read_reply_field_node_schemas,
-+	.fields_count = 3,
-+};
-+
-+/* mr-values, fields */
-+static const struct ctlv_node_schema mr_extend_request_mr_values_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_HASH_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 16,
-+		.max_length = 64,
-+	},
-+};
-+
-+/* mr-extend record, fields */
-+static const struct ctlv_node_schema mr_extend_request_record_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_EXTEND_RECORD_FORMAT,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_EXTEND_RECORD_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 0,
-+		.max_length = 4096,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema mr_extend_request_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_EXTEND_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema mr_extend_request_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUES,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 23,
-+		.fields = mr_extend_request_mr_values_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_EXTEND_RAW_DATA,
-+		.kind = CTLV_SCHEMA_BLOB,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_BLOB,
-+		.blob_direction = CTLV_BLOB_DIRECTION_INPUT,
-+		.blob_backings = 14,
-+		.blob_max_length = 0xffffffffULL,
-+		.blob_alignment = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_EXTEND_OPTIONS,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_EXTEND_RECORD,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_extend_request_record_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_extend_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = mr_extend_request_field_node_schemas,
-+	.fields_count = 1,
-+	.optional_fields = mr_extend_request_optional_field_node_schemas,
-+	.optional_fields_count = 5,
-+};
-+
-+/* mr-values, fields */
-+static const struct ctlv_node_schema mr_extend_reply_mr_values_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_HASH_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 16,
-+		.max_length = 64,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema mr_extend_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUES,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 23,
-+		.fields = mr_extend_reply_mr_values_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_extend_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = mr_extend_reply_field_node_schemas,
-+	.fields_count = 3,
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema device_state_changed_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+static const struct ctlv_node_schema device_state_changed_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = device_state_changed_reply_field_node_schemas,
-+	.fields_count = 1,
-+};
-+
-+/* mr-values, fields */
-+static const struct ctlv_node_schema
-+	mr_log_entry_appended_reply_entry_mr_values_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_HASH_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 16,
-+		.max_length = 64,
-+	},
-+};
-+
-+/* mr-log-entry.mr, fields */
-+static const struct ctlv_node_schema mr_log_entry_appended_reply_entry_mr_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_NAME,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_SUPPORTED_HASH_ALGORITHMS,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 23,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_CAPS,
-+		.kind = CTLV_SCHEMA_FLAGS,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_FLAGS_MASK,
-+		.flags_mask = 3,
-+	},
-+};
-+
-+/* mr-log-entry.mr, optional fields */
-+static const struct ctlv_node_schema
-+	mr_log_entry_appended_reply_entry_mr_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_REGISTER_INDEX,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+/* mr-log-entry.ima, fields */
-+static const struct ctlv_node_schema mr_log_entry_appended_reply_entry_ima_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA_TEMPLATE_NAME,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA_TEMPLATE_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 0,
-+		.max_length = 0x10000ULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA_VIOLATION,
-+		.kind = CTLV_SCHEMA_BOOL,
-+		.max_occurrences = 1,
-+	},
-+};
-+
-+/* mr-log-entry.record, fields */
-+static const struct ctlv_node_schema
-+	mr_log_entry_appended_reply_entry_record_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_RECORD_FORMAT,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_RECORD_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 0,
-+		.max_length = 4096,
-+	},
-+};
-+
-+/* mr-log-entry-appended entry, fields */
-+static const struct ctlv_node_schema mr_log_entry_appended_reply_entry_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_EVENT,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 2,
-+	},
-+};
-+
-+/* mr-log-entry-appended entry, optional fields */
-+static const struct ctlv_node_schema
-+	mr_log_entry_appended_reply_entry_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUES,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 23,
-+		.fields = mr_log_entry_appended_reply_entry_mr_values_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_log_entry_appended_reply_entry_mr_field_node_schemas,
-+		.fields_count = 3,
-+		.optional_fields = mr_log_entry_appended_reply_entry_mr_optional_field_node_schemas,
-+		.optional_fields_count = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_log_entry_appended_reply_entry_ima_field_node_schemas,
-+		.fields_count = 3,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_RECORD,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_log_entry_appended_reply_entry_record_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema mr_log_entry_appended_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_APPENDED_ENTRY,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_log_entry_appended_reply_entry_field_node_schemas,
-+		.fields_count = 4,
-+		.optional_fields = mr_log_entry_appended_reply_entry_optional_field_node_schemas,
-+		.optional_fields_count = 4,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_log_entry_appended_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = mr_log_entry_appended_reply_field_node_schemas,
-+	.fields_count = 1,
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema evidence_accept_request_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_ACCEPT_EVIDENCE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+static const struct ctlv_node_schema evidence_accept_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = evidence_accept_request_field_node_schemas,
-+	.fields_count = 2,
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema evidence_accept_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+static const struct ctlv_node_schema evidence_accept_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = evidence_accept_reply_field_node_schemas,
-+	.fields_count = 1,
-+};
-+
-+static const struct ctlv_node_schema devsec_state_get_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema devsec_state_get_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema devsec_state_get_reply_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVSEC_STATE_GET_TDISP_STATE,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 4,
-+	},
-+};
-+
-+static const struct ctlv_node_schema devsec_state_get_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = devsec_state_get_reply_field_node_schemas,
-+	.fields_count = 1,
-+	.optional_fields = devsec_state_get_reply_optional_field_node_schemas,
-+	.optional_fields_count = 1,
-+};
-+
-+/* root, fields */
-+static const struct ctlv_node_schema evidence_state_changed_reply_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema evidence_state_changed_reply_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_EVIDENCE_STATE_CHANGED_EVIDENCE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+static const struct ctlv_node_schema evidence_state_changed_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.fields = evidence_state_changed_reply_field_node_schemas,
-+	.fields_count = 1,
-+	.optional_fields = evidence_state_changed_reply_optional_field_node_schemas,
-+	.optional_fields_count = 1,
-+};
-+
-+/* mr-log-get selection, fields */
-+static const struct ctlv_node_schema mr_log_get_request_selection_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_GET_SELECTION_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema mr_log_get_request_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_GET_SELECTION,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 256,
-+		.fields = mr_log_get_request_selection_field_node_schemas,
-+		.fields_count = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_START_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_END_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_log_get_request_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.optional_fields = mr_log_get_request_optional_field_node_schemas,
-+	.optional_fields_count = 3,
-+};
-+
-+/* mr-values, fields */
-+static const struct ctlv_node_schema mr_log_get_reply_entries_mr_values_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_HASH_ALGO,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUE_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 16,
-+		.max_length = 64,
-+	},
-+};
-+
-+/* mr-log-entry.mr, fields */
-+static const struct ctlv_node_schema mr_log_get_reply_entries_mr_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_NAME,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_SUPPORTED_HASH_ALGORITHMS,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 23,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = HASH_ALGO_MD4,
-+		.max = HASH_ALGO__LAST - 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_CAPS,
-+		.kind = CTLV_SCHEMA_FLAGS,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_FLAGS_MASK,
-+		.flags_mask = 3,
-+	},
-+};
-+
-+/* mr-log-entry.mr, optional fields */
-+static const struct ctlv_node_schema mr_log_get_reply_entries_mr_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_REGISTER_INDEX,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+};
-+
-+/* mr-log-entry.ima, fields */
-+static const struct ctlv_node_schema mr_log_get_reply_entries_ima_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA_TEMPLATE_NAME,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA_TEMPLATE_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 0,
-+		.max_length = 0x10000ULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA_VIOLATION,
-+		.kind = CTLV_SCHEMA_BOOL,
-+		.max_occurrences = 1,
-+	},
-+};
-+
-+/* mr-log-entry.record, fields */
-+static const struct ctlv_node_schema mr_log_get_reply_entries_record_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_RECORD_FORMAT,
-+		.kind = CTLV_SCHEMA_STRING,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 1,
-+		.max_length = 128,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_RECORD_DATA,
-+		.kind = CTLV_SCHEMA_BINARY,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN_LENGTH | CTLV_NODE_SCHEMA_HAS_MAX_LENGTH,
-+		.min_length = 0,
-+		.max_length = 4096,
-+	},
-+};
-+
-+/* mr-log-get entries, fields */
-+static const struct ctlv_node_schema mr_log_get_reply_entries_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_DEVICE_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR_ID,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_EVENT,
-+		.kind = CTLV_SCHEMA_ENUM,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 1,
-+		.max = 2,
-+	},
-+};
-+
-+/* mr-log-get entries, optional fields */
-+static const struct ctlv_node_schema mr_log_get_reply_entries_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_VALUES,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 23,
-+		.fields = mr_log_get_reply_entries_mr_values_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_MR,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_log_get_reply_entries_mr_field_node_schemas,
-+		.fields_count = 3,
-+		.optional_fields = mr_log_get_reply_entries_mr_optional_field_node_schemas,
-+		.optional_fields_count = 1,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_IMA,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_log_get_reply_entries_ima_field_node_schemas,
-+		.fields_count = 3,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_ENTRY_RECORD,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 1,
-+		.fields = mr_log_get_reply_entries_record_field_node_schemas,
-+		.fields_count = 2,
-+	},
-+};
-+
-+/* root, optional fields */
-+static const struct ctlv_node_schema mr_log_get_reply_optional_field_node_schemas[] = {
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_START_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_END_GENERATION,
-+		.kind = CTLV_SCHEMA_UINT,
-+		.max_occurrences = 1,
-+		.present = CTLV_NODE_SCHEMA_HAS_MIN | CTLV_NODE_SCHEMA_HAS_MAX,
-+		.min = 0,
-+		.max = 0xffffffffULL,
-+	},
-+	{
-+		.type = CTLV_ATTESTATION_T_MR_LOG_GET_ENTRIES,
-+		.kind = CTLV_SCHEMA_RECORD,
-+		.max_occurrences = 0, /* unlimited */
-+		.fields = mr_log_get_reply_entries_field_node_schemas,
-+		.fields_count = 4,
-+		.optional_fields = mr_log_get_reply_entries_optional_field_node_schemas,
-+		.optional_fields_count = 4,
-+	},
-+};
-+
-+static const struct ctlv_node_schema mr_log_get_reply_node_schema = {
-+	.type = CTLV_TYPE_ROOT,
-+	.kind = CTLV_SCHEMA_RECORD,
-+	.max_occurrences = 1,
-+	.optional_fields = mr_log_get_reply_optional_field_node_schemas,
-+	.optional_fields_count = 3,
-+};
-+
-+/* Effective ops in declaration order. */
-+static const struct ctlv_op_spec ctlv_attestation_cca_guest_op_specs[] = {
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_DEVICE_GET,
-+		.type = CTLV_OP_TYPE_ACTION,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ,
-+		.availability = CTLV_OP_AVAILABILITY_FIXED,
-+		.request_max_len = 16,
-+		.action_reply_max_len = 16688,
-+		.error_info_max_len = 456,
-+		.request = &device_get_request_node_schema,
-+		.reply = &device_get_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_EVIDENCE_GET,
-+		.type = CTLV_OP_TYPE_ACTION,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ_WRITE,
-+		.availability = CTLV_OP_AVAILABILITY_DYNAMIC,
-+		.optional = true,
-+		.request_max_len = 23216,
-+		.action_reply_max_len = 3416,
-+		.error_info_max_len = 456,
-+		.request = &evidence_get_request_node_schema,
-+		.reply = &evidence_get_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_MR_GET,
-+		.type = CTLV_OP_TYPE_QUERY,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ,
-+		.availability = CTLV_OP_AVAILABILITY_FIXED,
-+		.optional = true,
-+		.request_max_len = 40,
-+		.query_reply_min_len = 184,
-+		.query_reply_suggested_len = 4096,
-+		.error_info_max_len = 456,
-+		.request = &mr_get_request_node_schema,
-+		.reply = &mr_get_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_MR_READ,
-+		.type = CTLV_OP_TYPE_QUERY,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ,
-+		.availability = CTLV_OP_AVAILABILITY_FIXED,
-+		.optional = true,
-+		.request_max_len = 80,
-+		.query_reply_min_len = 112,
-+		.query_reply_suggested_len = 4096,
-+		.error_info_max_len = 456,
-+		.request = &mr_read_request_node_schema,
-+		.reply = &mr_read_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_MR_EXTEND,
-+		.type = CTLV_OP_TYPE_ACTION,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ_WRITE,
-+		.availability = CTLV_OP_AVAILABILITY_FIXED,
-+		.optional = true,
-+		.request_max_len = 7232,
-+		.action_reply_max_len = 2824,
-+		.error_info_max_len = 456,
-+		.request = &mr_extend_request_node_schema,
-+		.reply = &mr_extend_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_DEVICE_STATE_CHANGED,
-+		.type = CTLV_OP_TYPE_EVENT,
-+		.event_max_len = 64,
-+		.reply = &device_state_changed_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_MR_LOG_ENTRY_APPENDED,
-+		.type = CTLV_OP_TYPE_EVENT,
-+		.event_max_len = 73704,
-+		.reply = &mr_log_entry_appended_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_EVIDENCE_ACCEPT,
-+		.type = CTLV_OP_TYPE_ACTION,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ_WRITE,
-+		.availability = CTLV_OP_AVAILABILITY_DYNAMIC,
-+		.optional = true,
-+		.request_max_len = 64,
-+		.action_reply_max_len = 40,
-+		.error_info_max_len = 456,
-+		.request = &evidence_accept_request_node_schema,
-+		.reply = &evidence_accept_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_DEVSEC_STATE_GET,
-+		.type = CTLV_OP_TYPE_QUERY,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ,
-+		.availability = CTLV_OP_AVAILABILITY_FIXED,
-+		.optional = true,
-+		.request_max_len = 16,
-+		.query_reply_min_len = 40,
-+		.query_reply_suggested_len = 1024,
-+		.error_info_max_len = 456,
-+		.request = &devsec_state_get_request_node_schema,
-+		.reply = &devsec_state_get_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_EVIDENCE_STATE_CHANGED,
-+		.type = CTLV_OP_TYPE_EVENT,
-+		.event_max_len = 88,
-+		.reply = &evidence_state_changed_reply_node_schema,
-+	},
-+	{
-+		.op_id = CTLV_ATTESTATION_OP_MR_LOG_GET,
-+		.type = CTLV_OP_TYPE_QUERY,
-+		.fd_access = CTLV_OP_FD_ACCESS_READ,
-+		.availability = CTLV_OP_AVAILABILITY_FIXED,
-+		.optional = true,
-+		.request_max_len = 10304,
-+		.query_reply_min_len = 65600,
-+		.query_reply_suggested_len = 131072,
-+		.error_info_max_len = 456,
-+		.request = &mr_log_get_request_node_schema,
-+		.reply = &mr_log_get_reply_node_schema,
-+	},
-+};
-+
-+/* Family specification descriptor. */
-+const struct ctlv_family_spec ctlv_attestation_cca_guest_spec = {
-+	.name = "ctlv-attestation-cca-guest",
-+	.family_id = 7,
-+	.parent = &ctlv_attestation_spec,
-+	.ops = ctlv_attestation_cca_guest_op_specs,
-+	.ops_count = 11,
-+};
-diff --git a/tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.h b/tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.h
-new file mode 100644
-index 0000000000000..3086bdaf0dad0
---- /dev/null
-+++ b/tools/testing/selftests/attestation/ctlv_attestation_cca_guest_user_gen.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/*
-+ * Generated from Documentation/ctlv/specs/ctlv-attestation-cca-guest.yaml by
-+ * tools/ctlv/ctlv-regen.sh. Do not edit.
-+ */
-+/* CTLV-GEN user header */
-+
-+/* Userspace binding of the ctlv-attestation-cca-guest CTLV family. */
-+
-+#ifndef _CTLV_CTLV_ATTESTATION_CCA_GUEST_USER_GEN_H
-+#define _CTLV_CTLV_ATTESTATION_CCA_GUEST_USER_GEN_H
-+
-+#include <ctlv.h>
-+
-+#include <ctlv/ctlv_attestation_cca_guest_gen.h>
-+
-+#include "ctlv_attestation_user_gen.h"
-+
-+/* What this family's specification says, for holding a device against it. */
-+extern const struct ctlv_family_spec ctlv_attestation_cca_guest_spec;
-+
-+/* Building a request. ctlv_msg_err() reports the first failure. */
-+
-+/* RSI version. */
-+static inline int ctlv_attestation_cca_guest_device_info_version_put(struct ctlv_msg *msg,
-+								     __u64 value)
++#define EVENT_WAIT_MS 5000
++#define TDX_REPORTDATA_LEN 64
++#define TDX_REPORT_LEN 1024
++#define TDX_REPORTDATA_OFFSET 128
++#define TDX_QUOTE_MAX_LEN ((128 * 1024) - 24)
++
++static const char *error_text(const struct ctlv_error *error)
 +{
-+	return ctlv_put_u64(msg, CTLV_ATTESTATION_CCA_GUEST_T_DEVICE_INFO_VERSION, value);
++	static char text[512];
++
++	return ctlv_error_str(error, text, sizeof(text));
 +}
 +
-+/* Reading a reply or an event. A getter answers whether it could read. */
-+
-+/* RSI version. */
-+static inline bool
-+ctlv_attestation_cca_guest_device_info_version_present(const struct ctlv_hdr *record)
++static void dump_hex(const void *data, __u64 size)
 +{
-+	return ctlv_hdr_find(record, CTLV_ATTESTATION_CCA_GUEST_T_DEVICE_INFO_VERSION);
++	__u64 i;
++
++	if (!TH_LOG_ENABLED)
++		return;
++
++	for (i = 0; i < size; i++) {
++		if (!(i % 16)) {
++			if (i)
++				fprintf(TH_LOG_STREAM, "\n");
++			fprintf(TH_LOG_STREAM, "\t");
++		}
++		fprintf(TH_LOG_STREAM, "%02x ", ((uint8_t *)(data))[i]);
++	}
++	fprintf(TH_LOG_STREAM, "\n");
 +}
 +
-+static inline bool ctlv_attestation_cca_guest_device_info_version_get(const struct ctlv_hdr *record,
-+								      __u64 *value)
++static int mr_hash_info_get(struct ctlv_dev *dev, __u64 *hash_alg, size_t *digest_size)
 +{
-+	const struct ctlv_hdr *hdr;
++	const struct ctlv_hdr *item, *algorithm;
++	struct ctlv_error error;
++	struct ctlv_reply *reply;
++	__u64 id, hash = HASH_ALGO__LAST;
++	int ret;
++	bool got;
 +
-+	hdr = ctlv_hdr_find(record, CTLV_ATTESTATION_CCA_GUEST_T_DEVICE_INFO_VERSION);
-+	return hdr && !ctlv_get_u64(hdr, value);
++	ret = ctlv_attestation_mr_get(dev, NULL, &reply, &error);
++	if (ret)
++		return ret;
++
++	ret = -EIO;
++	ctlv_attestation_mr_get_items_for_each(item, ctlv_reply_root(reply)) {
++		got = ctlv_attestation_mr_get_items_id_get(item, &id);
++		if (!got)
++			goto err_out;
++		algorithm = NULL;
++		ctlv_attestation_mr_desc_supported_hash_algorithms_for_each(algorithm, item) {
++			break;
++		}
++		if (!algorithm)
++			goto err_out;
++
++		got = ctlv_attestation_mr_desc_supported_hash_algorithms_get(algorithm,
++								 	     &hash, NULL);
++		if (!got)
++			goto err_out;
++
++		break;
++	}
++
++	if (hash != HASH_ALGO_SHA256 && hash != HASH_ALGO_SHA384 &&
++	    hash != HASH_ALGO_SHA512) {
++		ret = -EINVAL;
++		goto err_out;
++	}
++
++	*hash_alg = hash;
++
++	if (hash == HASH_ALGO_SHA256)
++		*digest_size = 32;
++	else if (hash == HASH_ALGO_SHA384)
++		*digest_size = 48;
++	else
++		*digest_size = 64;
++
++	ret = 0;
++
++err_out:
++	ctlv_reply_free(reply);
++	return ret;
 +}
 +
-+#endif /* _CTLV_CTLV_ATTESTATION_CCA_GUEST_USER_GEN_H */
++static int cca_guest_token_get(struct ctlv_dev *dev, __u64 id,
++			       const unsigned char *challenge, size_t challenge_length,
++			       void *output, size_t output_length,
++			       struct ctlv_reply **reply, struct ctlv_error *error)
++{
++	struct ctlv_msg *request;
++	int ret;
++
++	ret = ctlv_attestation_evidence_get_request_new(&request);
++	if (ret)
++		return ret;
++	ctlv_attestation_evidence_get_challenge_put(request, challenge,
++						    challenge_length);
++
++	ctlv_attestation_evidence_get_objects_start(request);
++	ctlv_attestation_evidence_get_objects_id_put(request, id);
++	ctlv_attestation_evidence_get_objects_data_put_va(request, output, output_length);
++	ctlv_record_end(request);
++
++	ret = ctlv_msg_err(request);
++	if (!ret)
++		ret = ctlv_attestation_evidence_get(dev, request, reply, error);
++	ctlv_msg_free(request);
++	return ret;
++}
++
++static int cca_guest_eventlog_get(struct ctlv_dev *dev, __u64 id,
++				  void *output, size_t output_length,
++				  struct ctlv_reply **reply, struct ctlv_error *error)
++{
++	struct ctlv_msg *request;
++	int ret;
++
++	if (!id)
++		return -EOPNOTSUPP;
++
++	ret = ctlv_attestation_evidence_get_request_new(&request);
++	if (ret)
++		return ret;
++
++	ctlv_attestation_evidence_get_objects_start(request);
++	ctlv_attestation_evidence_get_objects_id_put(request, id);
++	ctlv_attestation_evidence_get_objects_data_put_va(request, output, output_length);
++	ctlv_record_end(request);
++	
++	ret = ctlv_msg_err(request);
++	if (!ret)
++		ret = ctlv_attestation_evidence_get(dev, request, reply, error);
++	ctlv_msg_free(request);
++	return ret;
++}
++
++static int cca_guest_mr_read(struct ctlv_dev *dev, unsigned int id,
++			     struct ctlv_reply **reply, struct ctlv_error *error)
++{
++	struct ctlv_msg *request;
++	int ret;
++
++	ret = ctlv_attestation_mr_read_request_new(&request);
++	if (ret)
++		return ret;
++	ctlv_attestation_mr_read_id_put(request, id);
++	ret = ctlv_msg_err(request);
++	if (!ret)
++		ret = ctlv_attestation_mr_read(dev, request, reply, error);
++	ctlv_msg_free(request);
++	return ret;
++}
++
++static int cca_guest_mr_extend(struct ctlv_dev *dev, unsigned int id,
++			       const unsigned char digest[64],
++			       struct ctlv_reply **reply, struct ctlv_error *error)
++{
++	struct ctlv_msg *request;
++	__u64 hash_alg;
++	size_t digest_size;
++	int ret;
++
++	ret = mr_hash_info_get(dev, &hash_alg, &digest_size);
++	if (ret)
++		return ret;
++
++	ret = ctlv_attestation_mr_extend_request_new(&request);
++	if (ret)
++		return ret;
++
++	ctlv_attestation_mr_extend_id_put(request, id);
++	ctlv_attestation_mr_values_start(request);
++	ctlv_attestation_mr_value_hash_algo_put(request, hash_alg);
++	ctlv_attestation_mr_value_data_put(request, digest, digest_size);
++	ctlv_record_end(request);
++
++	ret = ctlv_msg_err(request);
++	if (!ret)
++		ret = ctlv_attestation_mr_extend(dev, request, reply, error);
++	ctlv_msg_free(request);
++	return ret;
++}
++
++FIXTURE(cca_guest_attestation)
++{
++	struct ctlv_dev *dev;
++	struct ctlv_error error;
++	__u64 max_challenge_size;
++	__u64 max_token_size;
++	__u64 max_eventlog_size;
++	__u64 token_id;
++	__u64 ccel_id;
++};
++
++FIXTURE_SETUP(cca_guest_attestation)
++{
++	const struct ctlv_hdr *caps, *evidence, *obj, *format, *challenge;
++	struct ctlv_reply *reply;
++	__u64 value, class;
++	__u32 obj_count = 0;
++	int ret;
++	bool got, known;
++
++	ret = ctlv_open("ctlv-attestation-cca-guest", 0, O_RDWR, &self->dev);
++	if (ret)
++		SKIP(return, "no CCA Realm guest attestation device: %s", strerror(-ret));
++
++	ASSERT_EQ(0, ctlv_attestation_device_get(self->dev, NULL, &reply,
++						 &self->error))
++	{
++		TH_LOG("%s", error_text(&self->error));
++	}
++
++	caps = ctlv_attestation_device_get_caps_get(ctlv_reply_root(reply));
++	ASSERT_NE(NULL, caps);
++
++	evidence = ctlv_attestation_device_get_caps_evidence_get(caps);
++	ASSERT_NE(NULL, evidence);
++
++	ctlv_attestation_device_get_evidence_objects_for_each(obj, evidence) {
++		obj_count++;
++	}
++
++	obj = ctlv_hdr_find(evidence, CTLV_ATTESTATION_T_DEVICE_GET_EVIDENCE_OBJECTS);
++	ASSERT_NE(NULL, obj);
++
++	got = ctlv_attestation_device_get_objects_class_get(obj, &class, &known);
++	ASSERT_TRUE(got);
++	ASSERT_EQ(class, CTLV_ATTESTATION_EVIDENCE_CLASS_SIGNED);
++
++	got = ctlv_attestation_device_get_objects_id_get(obj, &value);
++	ASSERT_TRUE(got);
++	self->token_id = value;
++	ASSERT_EQ(0, self->token_id);
++
++	got = ctlv_attestation_device_get_objects_max_length_get(obj, &value);
++	ASSERT_TRUE(got);
++	self->max_token_size = value;
++	ASSERT_NE(0, self->max_token_size);
++
++	challenge = ctlv_hdr_find(obj, CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_CHALLENGE_LENGTHS);
++	ASSERT_NE(NULL, challenge);
++
++	got = ctlv_attestation_device_get_challenge_lengths_max_length_get(challenge, &value);
++	ASSERT_TRUE(got);
++	self->max_challenge_size = value;
++	ASSERT_NE(0, self->max_challenge_size);
++
++	if (obj_count < 2) {
++		self->ccel_id = 0;
++		goto out;
++	}
++
++	obj = ctlv_hdr_find_next(evidence, obj, CTLV_ATTESTATION_T_DEVICE_GET_EVIDENCE_OBJECTS);
++	ASSERT_NE(NULL, obj);
++
++	format = ctlv_hdr_find(obj, CTLV_ATTESTATION_T_DEVICE_GET_OBJECTS_FORMATS);
++	ASSERT_NE(NULL, format);
++
++	got = ctlv_attestation_device_get_objects_formats_get(format, &value, &known);
++	ASSERT_TRUE(got);
++	ASSERT_EQ(value, CTLV_ATTESTATION_EVIDENCE_FORMAT_CCEL);
++
++	got = ctlv_attestation_device_get_objects_id_get(obj, &value);
++	ASSERT_TRUE(got);
++	self->ccel_id = value;
++
++	got = ctlv_attestation_device_get_objects_max_length_get(obj, &value);
++	ASSERT_TRUE(got);
++	self->max_eventlog_size = value;
++	ASSERT_NE(0, self->max_eventlog_size);
++
++out:
++	ctlv_reply_free(reply);
++}
++
++FIXTURE_TEARDOWN(cca_guest_attestation)
++{
++	if (self->dev)
++		ctlv_close(self->dev);
++}
++
++TEST_F(cca_guest_attestation, discovery_and_construction_fields)
++{
++	const struct ctlv_hdr *caps, *evidence, *mr, *info;
++	struct ctlv_reply *reply;
++	__u64 flags, unknown, value;
++	bool got;
++
++	EXPECT_TRUE(ctlv_dev_inherits(self->dev, "ctlv-attestation"));
++	ASSERT_EQ(0, ctlv_attestation_device_get(self->dev, NULL, &reply,
++						 &self->error))
++	{
++		TH_LOG("%s", error_text(&self->error));
++	}
++	caps = ctlv_attestation_device_get_caps_get(ctlv_reply_root(reply));
++	ASSERT_NE(NULL, caps);
++	evidence = ctlv_attestation_device_get_caps_evidence_get(caps);
++	mr = ctlv_attestation_device_get_caps_mr_get(caps);
++	ASSERT_NE(NULL, evidence);
++	ASSERT_NE(NULL, mr);
++	got = ctlv_attestation_device_get_evidence_flags_get(evidence, &flags,
++							     &unknown);
++	ASSERT_TRUE(got);
++	EXPECT_EQ(0, flags);
++	EXPECT_EQ(0, unknown);
++
++	got = ctlv_attestation_device_get_mr_flags_get(mr, &flags, &unknown);
++	ASSERT_TRUE(got);
++	EXPECT_EQ(flags, CTLV_ATTESTATION_MR_DEVICE_CAPS_EXTEND);
++	EXPECT_EQ(0, unknown);
++
++	info = ctlv_attestation_device_get_info_get(ctlv_reply_root(reply));
++	ASSERT_NE(NULL, info);
++
++	got = ctlv_attestation_cca_guest_device_info_version_get(info, &value);
++	ASSERT_TRUE(got);
++	TH_LOG("CCA Realm Guest attestation version: %lld.%lld\n",
++		(value & __GENMASK_ULL(31, 16)) >> 16,
++		value & __GENMASK_ULL(15, 0));
++
++	ctlv_reply_free(reply);
++}
++
++TEST_F(cca_guest_attestation, cca_attestation_token_get)
++{
++	void *challenge, *token;
++	struct ctlv_reply *reply;
++	const struct ctlv_hdr *root, *result;
++	unsigned int index;
++	__u64 token_size;
++	bool got;
++	int ret;
++
++	ASSERT_EQ(0, posix_memalign(&challenge, 8, self->max_challenge_size));
++	ASSERT_EQ(0, posix_memalign(&token, 8, self->max_token_size));
++
++	for (index = 0; index < self->max_challenge_size; index++)
++		((uint8_t *)challenge)[index] = index;
++
++	ret = cca_guest_token_get(self->dev, self->token_id,
++				  challenge, self->max_challenge_size,
++				  token, self->max_token_size,
++				  &reply, &self->error);
++	if (ret == -EIO || ret == -ETIMEDOUT || ret == -EOPNOTSUPP) {
++		free(token);
++		free(challenge);
++		SKIP(return, "CCA atesation token is unavailable: %s", strerror(-ret));
++	}
++
++	ASSERT_EQ(0, ret)
++	{
++		TH_LOG("%s", error_text(&self->error));
++	}
++
++	root = ctlv_reply_root(reply);
++	got = ctlv_attestation_evidence_get_evidence_generation_present(root);
++	EXPECT_FALSE(got);
++
++	got = ctlv_attestation_mr_generation_present(root);
++	EXPECT_TRUE(got);
++
++	result = ctlv_hdr_find(root, CTLV_ATTESTATION_T_EVIDENCE_GET_RESULTS);
++	ASSERT_NE(NULL, result);
++
++	got = ctlv_attestation_evidence_get_results_length_get(result, &token_size);
++	ASSERT_TRUE(got);
++	ASSERT_GT(token_size, 0);
++	ASSERT_LE(token_size, self->max_token_size);
++	TH_LOG("CCA attestation token size: 0x%llx\n", token_size);
++
++	fprintf(TH_LOG_STREAM, "CCA attestation token:\n");
++	dump_hex(token, token_size);
++
++	ctlv_reply_free(reply);
++	free(token);
++	free(challenge);
++}
++
++TEST_F(cca_guest_attestation, cca_eventlog_get)
++{
++	void *eventlog;
++	struct ctlv_reply *reply;
++	const struct ctlv_hdr *root, *result;
++	__u64 log_size;
++	bool got;
++	int ret;
++
++	ASSERT_EQ(0, posix_memalign(&eventlog, 8, self->max_eventlog_size));
++
++	ret = cca_guest_eventlog_get(self->dev, self->ccel_id,
++				     eventlog, self->max_eventlog_size,
++				     &reply, &self->error);
++	if (ret == -EIO || ret == -ETIMEDOUT || ret == -EOPNOTSUPP) {
++		free(eventlog);
++		SKIP(return, "CCA eventlog is unavailable: %s", strerror(-ret));
++	}
++
++	ASSERT_EQ(0, ret)
++	{
++		TH_LOG("%s", error_text(&self->error));
++	}
++
++	root = ctlv_reply_root(reply);
++	got = ctlv_attestation_evidence_get_evidence_generation_present(root);
++	EXPECT_FALSE(got);
++
++	result = ctlv_hdr_find(root, CTLV_ATTESTATION_T_EVIDENCE_GET_RESULTS);
++	ASSERT_NE(NULL, result);
++
++	got = ctlv_attestation_evidence_get_results_length_get(result, &log_size);
++	ASSERT_TRUE(got);
++	ASSERT_GT(log_size, 0);
++	ASSERT_LE(log_size, self->max_eventlog_size);
++	TH_LOG("CCA attestation eventlog size: 0x%llx\n", log_size);
++
++	fprintf(TH_LOG_STREAM, "CCA attestation eventlog:\n");
++	dump_hex(eventlog, log_size);
++
++	ctlv_reply_free(reply);
++	free(eventlog);
++}
++
++TEST_F(cca_guest_attestation, read_measurement_registers)
++{
++	const struct ctlv_hdr *item, *algorithm, *value;
++	struct ctlv_reply *reply;
++	const void *digest;
++	__u64 id, hash = HASH_ALGO__LAST;
++	__u32 length;
++	unsigned int count = 0;
++	bool got;
++
++	ASSERT_EQ(0, ctlv_attestation_mr_get(self->dev, NULL, &reply,
++					     &self->error));
++	ctlv_attestation_mr_get_items_for_each(item, ctlv_reply_root(reply)) {
++		ASSERT_TRUE(ctlv_attestation_mr_get_items_id_get(item, &id));
++		EXPECT_EQ(count, id);
++		algorithm = NULL;
++		ctlv_attestation_mr_desc_supported_hash_algorithms_for_each(algorithm, item) {
++			break;
++		}
++		ASSERT_NE(NULL, algorithm);
++		got = ctlv_attestation_mr_desc_supported_hash_algorithms_get(algorithm,
++									     &hash, NULL);
++		ASSERT_TRUE(got);
++		count++;
++	}
++	ASSERT_EQ(5, count);
++	ASSERT_TRUE(hash == HASH_ALGO_SHA256 || hash == HASH_ALGO_SHA384 ||
++		    hash == HASH_ALGO_SHA512);
++	ctlv_reply_free(reply);
++
++	for (id = 0; id < 5; id++) {
++		ASSERT_EQ(0, cca_guest_mr_read(self->dev, id, &reply, &self->error));
++		value = NULL;
++		ctlv_attestation_mr_values_for_each(value, ctlv_reply_root(reply)) {
++			break;
++		}
++		ASSERT_NE(NULL, value);
++		got = ctlv_attestation_mr_value_data_get(value, &digest, &length);
++		ASSERT_TRUE(got);
++		if (hash == HASH_ALGO_SHA256) {
++			EXPECT_EQ(32, length);
++		} else if (hash == HASH_ALGO_SHA384) {
++			EXPECT_EQ(48, length);
++		} else {
++			EXPECT_EQ(64, length);
++		}
++
++		fprintf(TH_LOG_STREAM, "mr_id(%llu):\n", id);
++		dump_hex(digest, length);
++
++		ctlv_reply_free(reply);
++	}
++}
++
++TEST_F(cca_guest_attestation, extend_measurment_registers)
++{
++	const __u64 subscriptions[] = {
++		CTLV_ATTESTATION_OP_MR_LOG_ENTRY_APPENDED,
++	};
++	unsigned char digest[64] = { 0xa5 };
++	struct ctlv_event *event;
++	struct ctlv_reply *reply;
++	unsigned long id;
++
++	ASSERT_EQ(0, ctlv_subscribe(self->dev, subscriptions,
++				    ARRAY_SIZE(subscriptions), &self->error));
++
++	for (id = 1; id < 5; id++) {
++		ASSERT_EQ(0, cca_guest_mr_extend(self->dev, id, digest,
++						 &reply, &self->error));
++		ctlv_reply_free(reply);
++		ASSERT_EQ(0, ctlv_event_wait(self->dev, EVENT_WAIT_MS));
++		ASSERT_EQ(0, ctlv_event_read(self->dev, &event));
++		EXPECT_TRUE(ctlv_attestation_mr_log_entry_appended_is(event));
++		ctlv_event_free(event);
++	}
++}
++
++TEST_HARNESS_MAIN
 
 -- 
 2.43.0
