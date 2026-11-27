@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795771802;
-	b=zuGBx9vvCB9j8w70Y9qJMDFOr+F2rjWfAknjntOZf185Z6J1BgOaSraz9E3GvKyWEUKR
-	 Ei/x44/3gRakNSs1Hvk0cvVNzkWOmA8XE1gIC0KykBKXhuT9sqXS36JSt7N3ihuQ1j+bS
-	 IJOVY2wzrrUFjWQmt79xQaZNWr38/9ORFirTACwab9+EIpWIp5XcRL1pCfk+FMAl7ijUz
-	 jAkYmXpks8spe4kpX7UtnCqnKuxAuEveqPId3PXQfTqzZmxbTwCWa2o7/jGb6Wl1JkO9P
-	 Cz5UlTkM6xT21VQ79n6yKfsC/awRUTx3O+x1ShpqZ6PNN3WXn/LONGoN/P1S5W3y17g==
+	t=1795771811;
+	b=fT4mUwLhY0VCuYDrklkkYOjC4PMfzBVH7r1ctrrpTHMm141BCu8+wnJuKwGYsr3FTTyG
+	 uAbavrYpBU4L7pOPVjAjuW+LCmqz/XVf3qnAhi3eIcEiR+SNnCvFN/XQsiUX01NOdRpZN
+	 9OQR/PWTRd8y/SGMDDDw+8AW+yST25A5TgwtpmcfF4yGcucCCnrrarCqRAdKVh43A+Yxy
+	 KISd2D1/yN1uzZZ2PyHSPVeI9C50oU5yANmX1AH36ErifjeBxT0S+/tcAHQkLlkf1TiHr
+	 rkBoGpW2Jn92xT7FdXjuaagKn/4ynBS2uELxo8tFxG7Zqku+Hh6jH/5W3LGpBhNdcLQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795771802;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795771811;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
 	 In-Reply-To:References:Auto-Submitted:Content-Type:
 	 Content-Transfer-Encoding:MIME-Version;
-	bh=oj2zs7YpNjut+Fle9NDI2/nVbuq1xcuWOh/20pAlrQ0=;
-	b=gvgzPw8D8k+kkg7rWfbysHZfPCRmpyNjqT+ls5yJwDLPucAWrZJbo5YxbxD1N0U/XWfP
-	 SQSV2naV7ngGy1904TXhYLsQoMwXgHk3+0OMdBrVCfGJ9MmFP01QY6o0Faxi8jHJPqyQI
-	 K7ZY1yWpso5un7KBz8bLOu+iULkbCM6pui8KFQoCzIw8uzMqf0CZg3n4ga6i1BrpKo0JH
-	 5mMH+80swSfyyPCiAQIn7jtlf6grvx18puz3qZsRLuueHF2BadZwGbskRoY1BuCOwW9q/
-	 pP2YQ9DqqLZ3xomgPjMdnoJUUwqQZbAm+R+9cnxaZlcRGfQ7EAw5wNYdon/FiuJOlfg==
+	bh=sS9FIrfW22SIhehTvpH3rdvmtslwIeEYozBr0OvaZe8=;
+	b=u61xyLkBEKui5b/hZjDVoIFylH0RkHZhOLpPTJn5Blk2wfqsHMqeCm2I/4BXtDon/Hcc
+	 9oBA/Qm74qP5P5WrRh6cyWmWYEnm9DvgOWY7ywqbRA9mwAKoGt6eqcgjWfUjhpu+ckO8+
+	 m50PScVGlpKH9ilbdIro9WD1xQ5QhsYULzYin3F87FUDaHd0+/aJP+1Ei65o+D5wZCwkW
+	 hy8HuUbZ9AQjwAm+fWis0MdJu07Y35nKS9yq4eJegdl2GQ6p+smddpZCHMybdaRS5Pv7K
+	 ZNFdJeYB4zVWwdu/QJbW0TmpFY+QrF9ARSEAbDl+yVBuWrM1sLhGmF0Wi7MwpPebdHw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OQxtStAT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=em7+NEQm;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A286D606A323;
-	Fri, 27 Nov 2026 09:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3986C606A326;
+	Fri, 27 Nov 2026 09:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OQxtStAT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C5321F0089C;
-	Fri, 27 Nov 2026 09:30:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=em7+NEQm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1321F00926;
+	Fri, 27 Nov 2026 09:30:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795771802;
-	bh=oj2zs7YpNjut+Fle9NDI2/nVbuq1xcuWOh/20pAlrQ0=;
+	s=k20260515; t=1795771810;
+	bh=sS9FIrfW22SIhehTvpH3rdvmtslwIeEYozBr0OvaZe8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OQxtStAT4Tan2k3a5Y/wXcqjjer5povqz7NT4oMrd/LVYTWxo2GDFLQq0qKFVpv7X
-	 ZQkrqKGdPDR7VZzOfsPgOIuFwpfcj+jeHm0zdYvrd92z947cQkzvxiI+P8kLSyXBxZ
-	 c7Ef6Hcei7uWp7xVN69IbafKrLXwHBLAxJHm/5ADpboPmCA9XwV9AhTiNjEt/25p1s
-	 zwgrA8sexhqJTRwJZRcjSCLTo0T33TI0y+y81NipB6+FpeZPKFY5m3u/noW5WuaQGs
-	 Kwld15lEt5Vs/uIYPYOA7PIlLyITpWleC7I4k7n6F3lW1XoFuA02QT9lKHaBbFUeau
-	 28MsVugJZSVMw==
+	b=em7+NEQmBXzuUweQeu0bwV0KcXjZrQlnz14TitHjwEu853W2L+9ZPtImfxQr7FCHb
+	 qW+I6vL4MUHCuJx0TU0Omeks69phWbHLVGiNtLIYGbBnWCEIMi//ZHyukPfj5QV/17
+	 lA+nB+Ae40gCWHt4JKFLn5khhepnM/6aGdmZbGooCCVkJBmAZ6fPpNVG9InflXzdJt
+	 L2/imUlmLSxTBV4g7a4QNW5vew/C6LY6glisQ1s7/JqV/AbHjjUy2wgdR1A2pwvt6l
+	 z/6IRy3hRm/6sOIko/AsbEI0PNu4ybiXO7oeSkT4f5+I/7+qQaQRyDSCe4qjV139Uz
+	 kgjjrP5LoX8ug==
 From: netdev-bot+sinfo@kernel.org
 To: Linkui Xiao <xiaolinkui@126.com>
 Cc: Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org,
@@ -49,11 +49,12 @@ Cc: Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org,
  linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
  Linkui Xiao <xiaolinkui@kylinos.cn>
 Subject: 
- Re: [PATCH net] netlabel: fix a race in netlbl_unlhsh_condremove_iface()
-Date: Fri, 27 Nov 2026 09:30:00 +0000
-Message-ID: <179577180092.3294.8221608635673838533@kernel.org>
-In-Reply-To: <20261127092325.3563681-1-xiaolinkui@126.com>
+ Re: [PATCH net] netlabel: fix duplicate IPv4 entries in the staticlist dump
+Date: Fri, 27 Nov 2026 09:30:09 +0000
+Message-ID: <179577180965.3294.12209541123439066397@kernel.org>
+In-Reply-To: <20261127092325.3563681-2-xiaolinkui@126.com>
 References: <20261127092325.3563681-1-xiaolinkui@126.com>
+ <20261127092325.3563681-2-xiaolinkui@126.com>
 Auto-Submitted: auto-generated
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -75,10 +76,6 @@ commit messages seem to be missing some information:
  - How the issue was discovered, e.g. hit in production, hit during
    development, syzbot report, manual code inspection, LLM or static
    analysis tool scan.
-
- - Whether the issue was actually triggered, or is only theoretical
-   (e.g. found by LLM and not proven at runtime). If it was triggered
-   please include the symptoms, like the stack trace or kernel messages.
 
 Please do not repost the series just to address the above. Instead,
 reply to this email with the missing information, so that reviewers
